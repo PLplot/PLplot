@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/03/17 17:01:44  mjl
-   Eliminated some dead assignments that turned up when running with SAS/C's
-   global optimizer enabled on the Amiga.
+   Revision 1.4  1993/07/01 21:59:54  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.3  1993/03/17  17:01:44  mjl
+ * Eliminated some dead assignments that turned up when running with SAS/C's
+ * global optimizer enabled on the Amiga.
+ *
  * Revision 1.2  1993/03/16  06:49:26  mjl
  * Changed driver functions that check for events to do so only after a
  * specified number of calls, to reduce overhead.
@@ -19,7 +24,7 @@
 	PLPLOT Amiga window device driver.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -183,13 +188,13 @@ struct NewMenu PlplotNewMenu[] = {
     NM_END, NULL, NULL, 0, 0L, NULL };
 
 /*----------------------------------------------------------------------*\
-* amiwn_init()
+* plD_init_amiwn()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-amiwn_init(PLStream *pls)
+plD_init_amiwn(PLStream *pls)
 {
     PLFLT Initdpmx, Initdpmy;
     struct Screen *wb_screen;
@@ -283,18 +288,18 @@ amiwn_init(PLStream *pls)
     if (pla->screen->ViewPort.Modes & LACE)
 	Initdpmy *= 2.;
 
-    setpxl((PLFLT) (Initdpmx / 40.), (PLFLT) (Initdpmy / 40.));
-    setphy(0, (pla->init_width - 1), 0, (pla->init_height - 1));
+    plP_setpxl((PLFLT) (Initdpmx / 40.), (PLFLT) (Initdpmy / 40.));
+    plP_setphy(0, (pla->init_width - 1), 0, (pla->init_height - 1));
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_line()
+* plD_line_amiwn()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_amiwn(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     static long count = 0, max_count = 10;
@@ -316,13 +321,13 @@ amiwn_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_polyline()
+* plD_polyline_amiwn()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_amiwn (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i, j;
     static long count = 0, max_count = 5;
@@ -335,7 +340,7 @@ amiwn_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 /* Old way */
 /*
     for (i=0; i<npts-1; i++) 
-      amiwn_line(pls, xa[i], ya[i], xa[i+1], ya[i+1]);
+      plD_line_amiwn(pls, xa[i], ya[i], xa[i+1], ya[i+1]);
 */
 /* New way */
 
@@ -353,27 +358,27 @@ amiwn_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_eop()
+* plD_eop_amiwn()
 *
 * End of page. 
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_eop(PLStream *pls)
+plD_eop_amiwn(PLStream *pls)
 {
 /*    DisplayBeep(pla->screen);*/
     WaitForPage(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_bop()
+* plD_bop_amiwn()
 *
 * Set up for the next page.  
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_bop(PLStream *pls)
+plD_bop_amiwn(PLStream *pls)
 {
     setpen(0);
     RectFill(pla->WRPort, pla->xoffset, pla->yoffset,
@@ -386,13 +391,13 @@ amiwn_bop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_tidy()
+* plD_tidy_amiwn()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_tidy(PLStream *pls)
+plD_tidy_amiwn(PLStream *pls)
 {
     myproc->pr_WindowPtr = oldwinptr;
 
@@ -405,7 +410,7 @@ amiwn_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_color()
+* plD_color_amiwn()
 *
 * Set pen color.
 * Best to never draw in color 0, since for the Amiga driver that is
@@ -413,7 +418,7 @@ amiwn_tidy(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_color(PLStream *pls)
+plD_color_amiwn(PLStream *pls)
 {
     U_CHAR icol0;
 
@@ -427,49 +432,49 @@ amiwn_color(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_text()
+* plD_text_amiwn()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_text(PLStream *pls)
+plD_text_amiwn(PLStream *pls)
 {
     HandleEvents(pls);	/* Check for intuition messages */
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_graph()
+* plD_graph_amiwn()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_graph(PLStream *pls)
+plD_graph_amiwn(PLStream *pls)
 {
     HandleEvents(pls);	/* Check for intuition messages */
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_width()
+* plD_width_amiwn()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_width(PLStream *pls)
+plD_width_amiwn(PLStream *pls)
 {
     HandleEvents(pls);	/* Check for intuition messages */
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_esc()
+* plD_esc_amiwn()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwn_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_amiwn(PLStream *pls, PLINT op, char *ptr)
 {
     HandleEvents(pls);	/* Check for intuition messages */
 }

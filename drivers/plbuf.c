@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/15 21:39:16  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.9  1993/07/01 21:59:42  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.8  1993/03/15  21:39:16  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.7  1993/03/06  04:59:22  mjl
  * Changed the way the temporary plot buffer file is opened.  Should fix
  * X-window refresh problem observed under SunOS.
@@ -13,7 +18,7 @@
  * to fit into a 16 bit address space (reasonable, and good for performance).
  *
  * Revision 1.5  1993/02/27  04:46:39  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.4  1993/02/25  18:29:08  mjl
@@ -22,9 +27,9 @@
  * page.  Fixed bug in redisplaying backed up page.
  *
  * Revision 1.3  1993/02/22  23:11:00  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.2  1993/01/23  05:41:49  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -54,7 +59,7 @@
 
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -72,7 +77,7 @@ static void	process_next	( PLStream *pls, U_CHAR );
 void rdbuf_init		(PLStream *);
 void rdbuf_line		(PLStream *);
 void rdbuf_polyline	(PLStream *);
-void rdbuf_eop	(PLStream *);
+void rdbuf_eop		(PLStream *);
 void rdbuf_bop		(PLStream *);
 void rdbuf_tidy		(PLStream *);
 void rdbuf_color	(PLStream *);
@@ -83,7 +88,6 @@ void rdbuf_esc		(PLStream *);
 
 /* Static variables */
 
-static short xy[4];
 static short xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
 
 /* INDENT ON */
@@ -121,11 +125,13 @@ plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     if (pls->plbuf_write) {
 	(void) wr_command(pls, (U_CHAR) LINE);
 
-	xy[0] = x1a;
-	xy[1] = y1a;
-	xy[2] = x2a;
-	xy[3] = y2a;
-	(void) fwrite(xy, sizeof(short), 4, pls->plbufFile);
+	xpoly[0] = x1a;
+	xpoly[1] = x2a;
+	ypoly[0] = y1a;
+	ypoly[1] = y2a;
+
+	(void) fwrite(xpoly, sizeof(short), 2, pls->plbufFile);
+	(void) fwrite(ypoly, sizeof(short), 2, pls->plbufFile);
     }
 }
 
@@ -190,8 +196,8 @@ plbuf_bop(PLStream *pls)
     if (pls->plbuf_write) {
 	rewind(pls->plbufFile);
 	(void) wr_command(pls, (U_CHAR) PAGE);
-	grcol();
-	grwid();
+	plP_col();
+	plP_wid();
     }
 }
 
@@ -301,7 +307,7 @@ plbuf_width(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-plbuf_esc(PLStream *pls, PLINT op, char *ptr)
+plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 {
     if (pls->plbuf_read)
 	return;
@@ -341,9 +347,10 @@ rdbuf_init(PLStream *pls)
 void
 rdbuf_line(PLStream *pls)
 {
-    (void) fread(xy, sizeof(short), 4, pls->plbufFile);
+    (void) fread(xpoly, sizeof(short), 2, pls->plbufFile);
+    (void) fread(ypoly, sizeof(short), 2, pls->plbufFile);
 
-    grline(xy[0], xy[1], xy[2], xy[3]);
+    plP_line(xpoly, ypoly);
 }
 
 /*----------------------------------------------------------------------*\
@@ -361,7 +368,7 @@ rdbuf_polyline(PLStream *pls)
     (void) fread(xpoly, sizeof(short), npts, pls->plbufFile);
     (void) fread(ypoly, sizeof(short), npts, pls->plbufFile);
 
-    grpolyline(xpoly, ypoly, npts);
+    plP_polyline(xpoly, ypoly, npts);
 }
 
 /*----------------------------------------------------------------------*\
@@ -428,7 +435,7 @@ rdbuf_color(PLStream *pls)
     pls->curcolor.g = g;
     pls->curcolor.b = b;
 
-    grcol();
+    plP_col();
 }
 
 /*----------------------------------------------------------------------*\
@@ -440,7 +447,7 @@ rdbuf_color(PLStream *pls)
 void
 rdbuf_text(PLStream *pls)
 {
-    grtext();
+    plP_text();
 }
 
 /*----------------------------------------------------------------------*\
@@ -452,7 +459,7 @@ rdbuf_text(PLStream *pls)
 void
 rdbuf_graph(PLStream *pls)
 {
-    grgra();
+    plP_gra();
 }
 
 /*----------------------------------------------------------------------*\
@@ -468,7 +475,7 @@ rdbuf_width(PLStream *pls)
 
     (void) fread(&width, sizeof(U_CHAR), 1, pls->plbufFile);
     pls->width = width;
-    grwid();
+    plP_wid();
 }
 
 /*----------------------------------------------------------------------*\
@@ -487,7 +494,7 @@ void
 rdbuf_esc(PLStream *pls)
 {
     U_CHAR op;
-    char *ptr = NULL;
+    void *ptr = NULL;
 
     (void) fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
 
@@ -496,7 +503,7 @@ rdbuf_esc(PLStream *pls)
 	break;
     }
 
-    gresc(op, ptr);
+    plP_esc(op, ptr);
 }
 
 /*----------------------------------------------------------------------*\
@@ -514,6 +521,7 @@ plRemakePlot(PLStream *pls)
     if (!pls->plbuf_write)
 	return;
 
+    fflush(pls->plbufFile);
     rewind(pls->plbufFile);
     pls->plbuf_write = FALSE;
     pls->plbuf_read = TRUE;
@@ -598,9 +606,9 @@ rd_command(PLStream *pls, U_CHAR *p_c)
     count = fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
 #ifdef DEBUG
     if (count == 0) {
-	grtext();
+	plP_text();
 	fprintf(stderr, "Cannot read from plot buffer\n");
-	grgra();
+	plP_gra();
     }
 #endif
     return (count);
@@ -621,9 +629,9 @@ wr_command(PLStream *pls, U_CHAR c)
     count = fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
 #ifdef DEBUG
     if (count == 0) {
-	grtext();
-	fprintf(stderr, "Cannot read from plot buffer\n");
-	grgra();
+	plP_text();
+	fprintf(stderr, "Cannot write to plot buffer\n");
+	plP_gra();
     }
 #endif
     return (count);

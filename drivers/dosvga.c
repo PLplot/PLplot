@@ -1,21 +1,26 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/15 21:39:04  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.9  1993/07/01 21:59:32  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.8  1993/03/15  21:39:04  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.7  1993/03/03  19:41:54  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
  *
  * Revision 1.6  1993/02/27  04:46:31  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.5  1993/02/22  23:10:50  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.4  1993/01/23  05:41:39  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -61,7 +66,7 @@
 */
 #ifdef MSDOS			/* Only compile for MSDOS */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
 #include <graph.h>
@@ -96,13 +101,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* vga_init()
+* plD_init_vga()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-vga_init(PLStream *pls)
+plD_init_vga(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
@@ -123,21 +128,21 @@ vga_init(PLStream *pls)
     dev->ymin = 0;
     dev->ymax = VGAY;
 
-    setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
+    plP_setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
 
-    setphy((PLINT) 0, (PLINT) VGAX, (PLINT) 0, (PLINT) VGAY);
+    plP_setphy((PLINT) 0, (PLINT) VGAX, (PLINT) 0, (PLINT) VGAY);
 
-    vga_graph(pls);
+    plD_graph_vga(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* vga_line()
+* plD_line_vga()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-vga_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -154,28 +159,28 @@ vga_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* vga_polyline()
+* plD_polyline_vga()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-vga_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_vga(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	vga_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_vga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* vga_eop()
+* plD_eop_vga()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-vga_eop(PLStream *pls)
+plD_eop_vga(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
@@ -184,41 +189,41 @@ vga_eop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vga_bop()
+* plD_bop_vga()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-vga_bop(PLStream *pls)
+plD_bop_vga(PLStream *pls)
 {
     pls->page++;
-    vga_eop(pls);
+    plD_eop_vga(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* vga_tidy()
+* plD_tidy_vga()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-vga_tidy(PLStream *pls)
+plD_tidy_vga(PLStream *pls)
 {
-    vga_text(pls);
+    plD_text_vga(pls);
     pls->page = 0;
     pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
-* vga_color()
+* plD_color_vga()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-vga_color(PLStream *pls)
+plD_color_vga(PLStream *pls)
 {
     static long cmap[16] = {
 	_WHITE, _RED, _LIGHTYELLOW, _GREEN,
@@ -235,13 +240,13 @@ vga_color(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vga_text()
+* plD_text_vga()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-vga_text(PLStream *pls)
+plD_text_vga(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
@@ -252,13 +257,13 @@ vga_text(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vga_graph()
+* plD_graph_vga()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-vga_graph(PLStream *pls)
+plD_graph_vga(PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	if (!_setvideomode(_VRES16COLOR)) {
@@ -271,24 +276,24 @@ vga_graph(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vga_width()
+* plD_width_vga()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-vga_width(PLStream *pls)
+plD_width_vga(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* vga_esc()
+* plD_esc_vga()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-vga_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

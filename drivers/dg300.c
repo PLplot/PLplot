@@ -1,21 +1,26 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/15 21:39:03  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.10  1993/07/01 21:59:31  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.9  1993/03/15  21:39:03  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.8  1993/03/03  19:41:53  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
  *
  * Revision 1.7  1993/02/27  04:46:30  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.6  1993/02/22  23:10:49  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.5  1993/01/23  05:41:38  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -43,7 +48,7 @@
 */
 #ifdef DG300
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
 
@@ -66,13 +71,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* dg_init()
+* plD_init_dg()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-dg_init(PLStream *pls)
+plD_init_dg(PLStream *pls)
 {
     /* Request terminal configuration report */
     printf("\n\036\107\051\n");
@@ -102,18 +107,18 @@ dg_init(PLStream *pls)
     dev->ymin = 0;
     dev->ymax = DGY;
 
-    setpxl((PLFLT) (3.316 * 16), (PLFLT) (1.655 * 16));
-    setphy(0, DGX * 16, 0, DGY * 16);
+    plP_setpxl((PLFLT) (3.316 * 16), (PLFLT) (1.655 * 16));
+    plP_setphy(0, DGX * 16, 0, DGY * 16);
 }
 
 /*----------------------------------------------------------------------*\
-* dg_line()
+* plD_line_dg()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-dg_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_dg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -124,28 +129,28 @@ dg_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* dg_polyline()
+* plD_polyline_dg()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-dg_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_dg(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	dg_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_dg(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* dg_eop()
+* plD_eop_dg()
 *
 * End of page.  User must hit a <CR> to continue.
 \*----------------------------------------------------------------------*/
 
 void
-dg_eop(PLStream *pls)
+plD_eop_dg(PLStream *pls)
 {
     /* Before clearing wait for CR */
     putchar('\007');
@@ -155,25 +160,25 @@ dg_eop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* dg_bop()
+* plD_bop_dg()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
-dg_bop(PLStream *pls)
+plD_bop_dg(PLStream *pls)
 {
     pls->page++;
 }
 
 /*----------------------------------------------------------------------*\
-* dg_tidy()
+* plD_tidy_dg()
 *
 * Close graphics file
 \*----------------------------------------------------------------------*/
 
 void
-dg_tidy(PLStream *pls)
+plD_tidy_dg(PLStream *pls)
 {
     printf("\036\107\042\060\n");
     fflush(stdout);
@@ -183,57 +188,57 @@ dg_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* dg_color()
+* plD_color_dg()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-dg_color(PLStream *pls)
+plD_color_dg(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* dg_text()
+* plD_text_dg()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-dg_text(PLStream *pls)
+plD_text_dg(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* dg_graph()
+* plD_graph_dg()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-dg_graph(PLStream *pls)
+plD_graph_dg(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* dg_width()
+* plD_width_dg()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-dg_width(PLStream *pls)
+plD_width_dg(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* dg_esc()
+* plD_esc_dg()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-dg_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_dg(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

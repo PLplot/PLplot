@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/03/15 21:39:11  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.11  1993/07/01 21:59:37  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.10  1993/03/15  21:39:11  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.9  1993/03/10  05:00:25  mjl
  * Actually works now.  Yay!
  *
@@ -15,9 +20,9 @@
  * Fixed orientation-swapping code.
  *
  * Revision 1.6  1993/02/22  23:10:55  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.5  1993/01/23  05:41:45  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -44,12 +49,12 @@
 	PLPLOT Laser Jet II device driver.
 	Note only the 150 dpi mode is supported.  The others (75,100,300)
 	should work by just changing the value of DPI and changing the
-	values passed to setphy().
+	values passed to plP_setphy().
 */
 #ifdef LJII
 
 #define PL_NEED_MALLOC
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -99,13 +104,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* jet_init()
+* plD_init_jet()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-jet_init(PLStream *pls)
+plD_init_jet(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
@@ -129,7 +134,7 @@ jet_init(PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    setpxl((PLFLT) 5.905, (PLFLT) 5.905);
+    plP_setpxl((PLFLT) 5.905, (PLFLT) 5.905);
 
 /* Because portrait mode addressing is used by the LJII, we need to
    rotate by 90 degrees to get the right mapping. */
@@ -150,7 +155,7 @@ jet_init(PLStream *pls)
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
-    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
 /* Allocate storage for bit map matrix */
 
@@ -168,13 +173,13 @@ jet_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_line()
+* plD_line_jet()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-jet_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int i;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
@@ -214,28 +219,28 @@ jet_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_polyline()
+* plD_polyline_jet()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-jet_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_jet(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	jet_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_jet(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* jet_eop()
+* plD_eop_jet()
 *
 * End of page.(prints it here).
 \*----------------------------------------------------------------------*/
 
 void
-jet_eop(PLStream *pls)
+plD_eop_jet(PLStream *pls)
 {
     PLINT i, j;
 
@@ -264,14 +269,14 @@ jet_eop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_bop()
+* plD_bop_jet()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-jet_bop(PLStream *pls)
+plD_bop_jet(PLStream *pls)
 {
     if (!pls->termin)
 	plGetFam(pls);
@@ -280,13 +285,13 @@ jet_bop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_tidy()
+* plD_tidy_jet()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-jet_tidy(PLStream *pls)
+plD_tidy_jet(PLStream *pls)
 {
 /* Reset Printer */
 
@@ -299,57 +304,57 @@ jet_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_color()
+* plD_color_jet()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-jet_color(PLStream *pls)
+plD_color_jet(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jet_text()
+* plD_text_jet()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-jet_text(PLStream *pls)
+plD_text_jet(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jet_graph()
+* plD_graph_jet()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-jet_graph(PLStream *pls)
+plD_graph_jet(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jet_width()
+* plD_width_jet()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-jet_width(PLStream *pls)
+plD_width_jet(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jet_esc()
+* plD_esc_jet()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-jet_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_jet(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

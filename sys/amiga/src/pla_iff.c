@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/03/15 21:34:20  mjl
-   Reorganization and update of Amiga drivers.  Window driver now uses Amiga
-   OS 2.0 capabilities.
+   Revision 1.2  1993/07/01 21:59:50  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.1  1993/03/15  21:34:20  mjl
+ * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
+ * OS 2.0 capabilities.
+ *
 */
 
 /*	pla_iff.c
@@ -12,7 +17,7 @@
 	Originally written by Tomas Rokicki (Radical Eye Software).
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
 #include "plamiga.h"
@@ -28,13 +33,13 @@ static PLDev device;
 static PLDev (*dev) = &device;
 
 /*----------------------------------------------------------------------*\
-* iff_init()
+* plD_init_iff()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_init(PLStream *pls)
+plD_init_iff(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
@@ -64,12 +69,12 @@ iff_init(PLStream *pls)
     dev->ymax = pls->ylength;
 
     if (!pls->orient) {
-	setpxl((PLFLT) (pls->xdpi * 25. / 25.4), (PLFLT) (pls->ydpi * 25 / 25.4));
-	setphy(0, vxwidth, 0, vywidth);
+	plP_setpxl((PLFLT) (pls->xdpi * 25. / 25.4), (PLFLT) (pls->ydpi * 25 / 25.4));
+	plP_setphy(0, vxwidth, 0, vywidth);
     }
     else {
-	setpxl((PLFLT) (pls->ydpi * 25 / 25.4), (PLFLT) (pls->xdpi * 25 / 25.4));
-	setphy(0, vywidth, 0, vxwidth);
+	plP_setpxl((PLFLT) (pls->ydpi * 25 / 25.4), (PLFLT) (pls->xdpi * 25 / 25.4));
+	plP_setphy(0, vywidth, 0, vxwidth);
     }
 
     xsubw = pls->xlength - 2;
@@ -82,13 +87,13 @@ iff_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* iff_line()
+* plD_line_iff()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
-iff_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_iff(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     long xn1, yn1, xn2, yn2;
@@ -126,36 +131,36 @@ iff_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* iff_polyline()
+* plD_polyline_iff()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_iff (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i=0; i<npts-1; i++) 
-      iff_line( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
+      plD_line_iff( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
 }
 
 /*----------------------------------------------------------------------*\
-* iff_eop()
+* plD_eop_iff()
 *
 * End of page. 
 * Here need to close file since only 1 page/file is allowed (for now).
 \*----------------------------------------------------------------------*/
 
 void 
-iff_eop(PLStream *pls)
+plD_eop_iff(PLStream *pls)
 {
     iffwritefile((PLINT) pls->xdpi, (PLINT) pls->ydpi, pls->OutFile);
     fclose(pls->OutFile);
 }
 
 /*----------------------------------------------------------------------*\
-* iff_bop()
+* plD_bop_iff()
 *
 * Set up for the next page.  
 * Advance to next family file if necessary (file output).
@@ -163,7 +168,7 @@ iff_eop(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void 
-iff_bop(PLStream *pls)
+plD_bop_iff(PLStream *pls)
 {
     pls->page++;
     mapclear();
@@ -171,13 +176,13 @@ iff_bop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* iff_tidy()
+* plD_tidy_iff()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_tidy(PLStream *pls)
+plD_tidy_iff(PLStream *pls)
 {
     mapfree();
     pls->fileset = 0;
@@ -186,46 +191,46 @@ iff_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* iff_color()
+* plD_color_iff()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_color(PLStream *pls)
+plD_color_iff(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* iff_text()
+* plD_text_iff()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_text(PLStream *pls)
+plD_text_iff(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* iff_graph()
+* plD_graph_iff()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_graph(PLStream *pls)
+plD_graph_iff(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* iff_width()
+* plD_width_iff()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_width(PLStream *pls)
+plD_width_iff(PLStream *pls)
 {
     if (pls->width < 1)
 	pls->width = 1;
@@ -234,12 +239,12 @@ iff_width(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* iff_esc()
+* plD_esc_iff()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
-iff_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_iff(PLStream *pls, PLINT op, char *ptr)
 {
 }

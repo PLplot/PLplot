@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/03/15 21:39:12  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.11  1993/07/01 21:59:39  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.10  1993/03/15  21:39:12  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.9  1993/03/06  04:57:23  mjl
  * Fix to ensure that a new segment is begun after a line width change.
  *
@@ -12,13 +17,13 @@
  * to fit into a 16 bit address space (reasonable, and good for performance).
  *
  * Revision 1.7  1993/02/27  04:46:37  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.6  1993/02/22  23:10:56  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.5  1993/01/23  05:41:46  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -46,7 +51,7 @@
 */
 #ifdef NEXT
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
 
@@ -77,13 +82,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* nx_init()
+* plD_init_nx()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-nx_init(PLStream *pls)
+plD_init_nx(PLStream *pls)
 {
     pls->termin = 1;		/* not an interactive terminal */
     pls->icol0 = 1;
@@ -101,19 +106,19 @@ nx_init(PLStream *pls)
     dev->ymin = 0;
     dev->ymax = PSY;
 
-    setpxl((PLFLT) 11.81, (PLFLT) 11.81);	/* 300 dpi */
+    plP_setpxl((PLFLT) 11.81, (PLFLT) 11.81);	/* 300 dpi */
 
-    setphy(0, PSX, 0, PSY);
+    plP_setphy(0, PSX, 0, PSY);
 }
 
 /*----------------------------------------------------------------------*\
-* nx_line()
+* plD_line_nx()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-nx_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_nx(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int ori;
@@ -155,28 +160,28 @@ nx_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* nx_polyline()
+* plD_polyline_nx()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-nx_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_nx(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	nx_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_nx(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* nx_eop()
+* plD_eop_nx()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-nx_eop(PLStream *pls)
+plD_eop_nx(PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\n");
 
@@ -188,14 +193,14 @@ nx_eop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nx_bop()
+* plD_bop_nx()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-nx_bop(PLStream *pls)
+plD_bop_nx(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -268,57 +273,57 @@ nx_bop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nx_tidy()
+* plD_tidy_nx()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-nx_tidy(PLStream *pls)
+plD_tidy_nx(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nx_color()
+* plD_color_nx()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-nx_color(PLStream *pls)
+plD_color_nx(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nx_text()
+* plD_text_nx()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-nx_text(PLStream *pls)
+plD_text_nx(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nx_graph()
+* plD_graph_nx()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-nx_graph(PLStream *pls)
+plD_graph_nx(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nx_width()
+* plD_width_nx()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-nx_width(PLStream *pls)
+plD_width_nx(PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 10)
 	fprintf(stderr, "\nInvalid pen width selection.");
@@ -330,16 +335,13 @@ nx_width(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nx_esc()
+* plD_esc_nx()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-nx_esc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+plD_esc_nx(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

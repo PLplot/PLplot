@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/04/26 20:01:59  mjl
-   Changed time type from long to time_t.
+   Revision 1.15  1993/07/01 21:59:43  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.14  1993/04/26  20:01:59  mjl
+ * Changed time type from long to time_t.
+ *
  * Revision 1.13  1993/03/28  08:44:21  mjl
  * Eliminated name conflict of getdate() function with builtin of same name
  * on some systems.
@@ -22,16 +27,16 @@
  * Cleaned up prolog block, fixed (?) default line width setting.
  *
  * Revision 1.8  1993/02/27  04:46:40  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.7  1993/02/22  23:15:12  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by recent
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by recent
  * changes to plmeta and plrender.  Also eliminated page clear commands from
- * grtidy() -- plend now calls grclr() and grtidy() explicitly.  Eliminated
+ * plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.  Eliminated
  * the (atend) specification for BoundingBox, since this isn't recognized by
  * some programs; instead enough space is left for it and a rewind and
- * subsequent write is done from ps_tidy().  Familying is no longer directly
+ * subsequent write is done from plD_tidy_ps().  Familying is no longer directly
  * supported by the PS driver as a result.  The output done by the @end
  * function was eliminated to reduce aggravation when viewing with ghostview.
  *
@@ -64,7 +69,7 @@
 */
 #ifdef PS
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -105,13 +110,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* ps_init()
+* plD_init_ps()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-ps_init(PLStream *pls)
+plD_init_ps(PLStream *pls)
 {
     float r, g, b;
 
@@ -143,7 +148,7 @@ ps_init(PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    setpxl((PLFLT) 11.81, (PLFLT) 11.81);	/* 300 dpi */
+    plP_setpxl((PLFLT) 11.81, (PLFLT) 11.81);	/* 300 dpi */
 
 /* Because portrait mode addressing is used by postscript, we need to
    rotate by 90 degrees to get the right mapping. */
@@ -164,7 +169,7 @@ ps_init(PLStream *pls)
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
-    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
 /* Header comments into PostScript file */
 
@@ -323,13 +328,13 @@ ps_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_line()
+* plD_line_ps()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-ps_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -376,40 +381,40 @@ ps_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_polyline()
+* plD_polyline_ps()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-ps_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_ps(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	ps_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_ps(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* ps_eop()
+* plD_eop_ps()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-ps_eop(PLStream *pls)
+plD_eop_ps(PLStream *pls)
 {
     fprintf(OF, " S\neop\n");
 }
 
 /*----------------------------------------------------------------------*\
-* ps_bop()
+* plD_bop_ps()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
-ps_bop(PLStream *pls)
+plD_bop_ps(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -421,13 +426,13 @@ ps_bop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_tidy()
+* plD_tidy_ps()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-ps_tidy(PLStream *pls)
+plD_tidy_ps(PLStream *pls)
 {
     fprintf(OF, "@end\n\n");
     fprintf(OF, "%%%%Trailer\n");
@@ -456,13 +461,13 @@ ps_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_color()
+* plD_color_ps()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-ps_color(PLStream *pls)
+plD_color_ps(PLStream *pls)
 {
     float r, g, b;
 
@@ -476,35 +481,35 @@ ps_color(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_text()
+* plD_text_ps()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-ps_text(PLStream *pls)
+plD_text_ps(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* ps_graph()
+* plD_graph_ps()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-ps_graph(PLStream *pls)
+plD_graph_ps(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* ps_width()
+* plD_width_ps()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-ps_width(PLStream *pls)
+plD_width_ps(PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 10)
 	fprintf(stderr, "\nInvalid pen width selection.");
@@ -516,13 +521,13 @@ ps_width(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_esc()
+* plD_esc_ps()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-ps_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_ps(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

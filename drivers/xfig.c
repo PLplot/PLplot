@@ -1,17 +1,22 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/15 21:39:22  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.10  1993/07/01 21:59:45  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.9  1993/03/15  21:39:22  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.8  1993/03/03  19:42:09  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
  *
  * Revision 1.7  1993/02/22  23:11:03  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.6  1993/01/23  05:41:54  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -43,7 +48,7 @@
 #ifdef XFIG
 
 #define PL_NEED_MALLOC
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -73,13 +78,13 @@ static PLDev *dev = &device;
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
-* xfig_init()
+* plD_init_xfig()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_init(PLStream *pls)
+plD_init_xfig(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
@@ -105,9 +110,9 @@ xfig_init(PLStream *pls)
     dev->ymin = 0;
     dev->ymax = FIGY;
 
-    setpxl(3.1496, 3.1496);	/* 80 DPI */
+    plP_setpxl(3.1496, 3.1496);	/* 80 DPI */
 
-    setphy(0, FIGX, 0, FIGY);
+    plP_setphy(0, FIGX, 0, FIGY);
 
     /* Write out header */
 
@@ -121,13 +126,13 @@ xfig_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_line()
+* plD_line_xfig()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-xfig_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_xfig(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     short *tempptr;
@@ -172,42 +177,42 @@ xfig_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_polyline()
+* plD_polyline_xfig()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_xfig(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	xfig_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_xfig(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_eop()
+* plD_eop_xfig()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_eop(PLStream *pls)
+plD_eop_xfig(PLStream *pls)
 {
     if (!firstline)
 	flushbuffer(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_bop()
+* plD_bop_xfig()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-xfig_bop(PLStream *pls)
+plD_bop_xfig(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -220,13 +225,13 @@ xfig_bop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_tidy()
+* plD_tidy_xfig()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_tidy(PLStream *pls)
+plD_tidy_xfig(PLStream *pls)
 {
     flushbuffer(pls);
     free((char *) buffptr);
@@ -237,46 +242,46 @@ xfig_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_color()
+* plD_color_xfig()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_color(PLStream *pls)
+plD_color_xfig(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_text()
+* plD_text_xfig()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_text(PLStream *pls)
+plD_text_xfig(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_graph()
+* plD_graph_xfig()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_graph(PLStream *pls)
+plD_graph_xfig(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_width()
+* plD_width_xfig()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_width(PLStream *pls)
+plD_width_xfig(PLStream *pls)
 {
     flushbuffer(pls);
     firstline = 1;
@@ -290,13 +295,13 @@ xfig_width(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_esc()
+* plD_esc_xfig()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/03/15 21:34:19  mjl
-   Reorganization and update of Amiga drivers.  Window driver now uses Amiga
-   OS 2.0 capabilities.
+   Revision 1.2  1993/07/01 21:59:49  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.1  1993/03/15  21:34:19  mjl
+ * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
+ * OS 2.0 capabilities.
+ *
 */
 
 /*	pla_gstskel.c
@@ -12,7 +17,7 @@
 	table. 
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

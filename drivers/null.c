@@ -1,21 +1,26 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/03/15 21:39:13  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.8  1993/07/01 21:59:40  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.7  1993/03/15  21:39:13  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.6  1993/03/03  19:42:02  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
  *
  * Revision 1.5  1993/02/27  04:46:38  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.4  1993/02/22  23:10:58  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.3  1993/01/23  05:41:47  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -35,7 +40,7 @@
 */
 #ifdef NULLDEV
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
 
@@ -46,13 +51,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* null_init()
+* plD_init_null()
 *
 * Initialize device (terminal).
 \*----------------------------------------------------------------------*/
 
 void
-null_init(PLStream *pls)
+plD_init_null(PLStream *pls)
 {
     printf("Sending output to Null device..\n");
 
@@ -75,118 +80,118 @@ null_init(PLStream *pls)
     dev->pxlx = (dev->xmax - dev->xmin) / lpage_x;
     dev->pxly = (dev->ymax - dev->ymin) / lpage_y;
 
-    setpxl(dev->pxlx, dev->pxly);
-    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setpxl(dev->pxlx, dev->pxly);
+    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 }
 
 /*----------------------------------------------------------------------*\
-* null_line()
+* plD_line_null()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-null_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_null(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_polyline()
+* plD_polyline_null()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-null_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_null(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_eop()
+* plD_eop_null()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-null_eop(PLStream *pls)
+plD_eop_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_bop()
+* plD_bop_null()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-null_bop(PLStream *pls)
+plD_bop_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_tidy()
+* plD_tidy_null()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-null_tidy(PLStream *pls)
+plD_tidy_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_color()
+* plD_color_null()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-null_color(PLStream *pls)
+plD_color_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_text()
+* plD_text_null()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-null_text(PLStream *pls)
+plD_text_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_graph()
+* plD_graph_null()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-null_graph(PLStream *pls)
+plD_graph_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_width()
+* plD_width_null()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-null_width(PLStream *pls)
+plD_width_null(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* null_esc()
+* plD_esc_null()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-null_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_null(PLStream *pls, PLINT op, void *ptr)
 {
 }
 

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/03/15 21:39:23  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.14  1993/07/01 21:59:46  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".
 
+ * Revision 1.13  1993/03/15  21:39:23  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.12  1993/03/10  05:00:57  mjl
  * Added device-level orientation handling, for testing purposes.
  *
@@ -19,16 +24,16 @@
  * (didn't affect xterms, but did affect certain vt100/tek emulators).
  *
  * Revision 1.8  1993/02/27  04:46:42  mjl
- * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
  * always be included first.
  *
  * Revision 1.7  1993/02/26  06:23:21  mjl
  * Changed char->int in input parameter to EventHandler.
  *
  * Revision 1.6  1993/02/22  23:11:04  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.5  1993/01/23  05:41:55  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -55,7 +60,7 @@
 */
 #ifdef XTERM
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
 #include "plevent.h"
@@ -89,13 +94,13 @@ static exit_eventloop = 0;
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
-* xte_init()
+* plD_init_xte()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_init (PLStream *pls)
+plD_init_xte (PLStream *pls)
 {
     pls->termin = 1;
     pls->icol0 = 1;
@@ -112,18 +117,18 @@ xte_init (PLStream *pls)
     if (pls->orient%2 == 1) {
 	dev->xmax = TEKY * 16;
 	dev->ymax = TEKX * 16;
-	setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
+	plP_setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
     }
     else {
 	dev->xmax = TEKX * 16;
 	dev->ymax = TEKY * 16;
-	setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
+	plP_setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
     }
 
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
-    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
     printf("%c[?38h", ESC);	/* open graphics window */
     printf("%c", GS);		/* set to vector mode */
@@ -133,13 +138,13 @@ xte_init (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_line()
+* plD_line_xte()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
-xte_line (PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_xte (PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
@@ -180,28 +185,28 @@ xte_line (PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_polyline()
+* plD_polyline_xte()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_xte (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i=0; i<npts-1; i++) 
-      xte_line( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
+      plD_line_xte( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
 }
 
 /*----------------------------------------------------------------------*\
-* xte_eop()
+* plD_eop_xte()
 *
 * End of page.  User must hit a <CR> to continue.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_eop (PLStream *pls)
+plD_eop_xte (PLStream *pls)
 {
     putchar(BEL);
     fflush(stdout);
@@ -210,13 +215,13 @@ xte_eop (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_bop()
+* plD_bop_xte()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_bop (PLStream *pls)
+plD_bop_xte (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -224,16 +229,16 @@ xte_bop (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_tidy()
+* plD_tidy_xte()
 *
 * Close graphics file
 \*----------------------------------------------------------------------*/
 
 void 
-xte_tidy (PLStream *pls)
+plD_tidy_xte (PLStream *pls)
 {
     fflush(stdout);
-    xte_graph(pls);
+    plD_graph_xte(pls);
 
     pls->graphx = TEXT_MODE;
     printf("%c%c", US, CAN);
@@ -247,24 +252,24 @@ xte_tidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_color()
+* plD_color_xte()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_color (PLStream *pls)
+plD_color_xte (PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xte_text()
+* plD_text_xte()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_text (PLStream *pls)
+plD_text_xte (PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	pls->graphx = TEXT_MODE;
@@ -275,13 +280,13 @@ xte_text (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_graph()
+* plD_graph_xte()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_graph (PLStream *pls)
+plD_graph_xte (PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	pls->graphx = GRAPHICS_MODE;
@@ -290,24 +295,24 @@ xte_graph (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_width()
+* plD_width_xte()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_width (PLStream *pls)
+plD_width_xte (PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xte_esc()
+* plD_esc_xte()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_esc (PLStream *pls, PLINT op, char *ptr)
+plD_esc_xte (PLStream *pls, PLINT op, void *ptr)
 {
 }
 
