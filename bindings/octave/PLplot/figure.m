@@ -142,8 +142,10 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	if (! exist("tk_start") && nargin == 6)
 	  error("Can't use this Tk feature of PLplot until tk_octave \
 	      is installed!\n")
-	elseif (exist("tk_start") && !exist("__tk_name"))
-	  tk_init; 
+	elseif (exist("tk_start"))
+	 if (!exist("__tk_name"))
+	  tk_init;
+	 endif
 
 	  init_file = tmpnam();
 	  fp = fopen (init_file,"w");
