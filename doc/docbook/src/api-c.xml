@@ -15,6 +15,94 @@
   is whatever C-explicit code we are trying to understand at the time.
   </para>
 
+  <sect1 id="plP_checkdriverinit" renderas="sect3">
+    <title>
+      <function>plP_checkdriverinit</function>: Checks to see if any 
+      of the specified drivers have been initialized
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plP_checkdriverinit</function>
+	</funcdef>
+        <paramdef><parameter>list</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> Checks to see if any of the specified drivers have been
+     initialized. Function tests a space-delimited list of driver names to
+     see how many of the given drivers have been initialized, and how often.
+     The return code of the function is: <literal>0</literal> if no matching
+     drivers were found to have been initialized; <literal>-1</literal> if
+     an error occurred allocating the internal buffer; or, a positive number
+     indicating the number of streams encountered that belong to drivers on
+     the provided list. This function invokes &plP_getinitdriverlist;
+     internally to get a <emphasis>complete</emphasis> list of drivers that have been initialized
+     in order to compare with the driver names specified in the argument list
+     to &plP_checkdriverinit;.
+     </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>list</parameter>
+	  (<literal>char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	   Pointer to character string specifying a space-delimited 
+	   list of driver names, e.g., <literal>"bmp jpeg tiff"</literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plP_getinitdriverlist" renderas="sect3">
+    <title>
+      <function>plP_getinitdriverlist</function>: Get the initialized-driver
+      list
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plP_getinitdriverlist</function>
+	</funcdef>
+        <paramdef><parameter>text_buffer</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> Get the initialized-driver list. Function returns a 
+    space-delimited list of the currently initialized drivers or streams. If more
+    than one stream is using the same driver, then its name will be returned
+    more than once. The function can be analogously thought of as also
+    returning the names of the active streams.  Invoked internally by
+    &plP_checkdriverinit;. </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>text_buffer</parameter>
+	  (<literal>char *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a user-allocated buffer to hold the result. The user 
+            must ensure the buffer is big enough to hold the result.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plexit" renderas="sect3">
     <title>
       <function>plexit</function>: Error abort

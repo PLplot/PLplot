@@ -2340,6 +2340,45 @@ from color map0
 
   </sect1>
 
+  <sect1 id="plgcompression" renderas="sect3">
+    <title>
+      <function>plgcompression</function>: Get the current 
+      device-compression setting
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plgcompression</function>
+	</funcdef>
+        <paramdef><parameter>compression</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Get the current device-compression setting.  This parameter is
+      only used for drivers that provide compression.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>compression</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+           Pointer to a variable to be filled with the current 
+	   device-compression setting.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plgdev" renderas="sect3">
     <title>
       <function>plgdev</function>: Get the current device (keyword) name
@@ -5615,6 +5654,45 @@ linkend="color-map-0"/>).
 	    Color flag (Boolean).  If zero, color is turned off.  If
 	    non-zero, color is turned on.
           </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plscompression" renderas="sect3">
+    <title>
+      <function>plscompression</function>: Set device-compression level
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plscompression</function>
+	</funcdef>
+        <paramdef><parameter>compression</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set device-compression level.  Only used for drivers that provide
+      compression.  This function, if used, should be invoked
+      before a call to &plinit;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>compression</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The desired compression level. This is a device-dependent 
+	    value.
+	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
