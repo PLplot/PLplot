@@ -1084,7 +1084,7 @@ AC_ARG_WITH(pkg-config,
   [with_pkg_config=no])
 
 if test "$with_pkg_config" = yes ; then
-  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
+  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, [not found])
   test "$PKG_CONFIG" != found  &&  with_pkg_config=no
   if test "$has_perl" = no ; then
     AC_MSG_WARN([pkg-config support needs perl to be built.])
