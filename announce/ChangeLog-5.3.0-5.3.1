@@ -1,3 +1,1537 @@
+Commit from arjenmarkus (2004-02-26 10:31 CET)
+-----------------------
+
+Added note about bash instead of Bourne shell
+
+  plplot  INSTALL  1.15
+
+
+Commit from arjenmarkus (2004-02-26 09:21 CET)
+-----------------------
+
+Added instructions for building PLplot on IRIX systems
+
+  plplot  INSTALL  1.14
+
+
+Commit from rlaboiss (2004-02-26 02:17 CET)
+--------------------
+
+Removed superfluous tar command
+
+  plplot  scripts/make-cvs-tarball.sh  1.22
+
+
+Commit from rlaboiss (2004-02-26 02:10 CET)
+--------------------
+
+Fixed some interdependencies among the cf/*.ac files.  First, cf/tk.ac must
+be included after cf/xwin.ac, otherwise the have_x variable is not set.
+Second, the variables incdirs and libdirs as defined in cf/tcl.ac must also
+be used in tk.ac.
+
+  plplot  configure.ac  1.170
+  plplot  cf/tk.ac      1.2
+
+
+Commit from rlaboiss (2004-02-26 01:40 CET)
+--------------------
+
+Removed white space after trailing backslashes
+
+  plplot  cf/Makefile.am  1.4
+
+
+Commit from rlaboiss (2004-02-26 01:39 CET)
+--------------------
+
+Added forgotten semicolon
+
+  plplot  scripts/make-cvs-tarball.sh  1.21
+
+
+Commit from rlaboiss (2004-02-25 23:22 CET)
+--------------------
+
+Included the cf directory in the SUBDIRS list in Makefile.am.  Removed the
+*.ac entries in EXTRA_DIST of cf/Makefile.am, because automake is smart
+enough to include them in the distribution tarball (since they are
+my_include'd in configure.ac).  Added cf/Makefile to the list of
+AC_CONFIG_FILES in configure.ac.
+
+  plplot  Makefile.am     1.39
+  plplot  configure.ac    1.169
+  plplot  cf/Makefile.am  1.3
+
+
+Commit from rlaboiss (2004-02-25 08:29 CET)
+--------------------
+
+Fixed typo in dnl macro
+
+  plplot  cf/acinclude.m4  1.3
+
+
+Commit from rlaboiss (2004-02-24 13:28 CET)
+--------------------
+
+Remove DISTDIR after make check and make install
+
+  plplot  scripts/make-cvs-tarball.sh  1.20
+
+
+Commit from rlaboiss (2004-02-24 12:12 CET)
+--------------------
+
+Drop --enable-octave as option to configure, but keep the config_opt
+variable for future use.
+
+  plplot  scripts/make-cvs-tarball.sh  1.19
+
+
+Commit from rlaboiss (2004-02-24 12:10 CET)
+--------------------
+
+Make it 80-columns friendly, both the code and the output of printf.
+
+  plplot  examples/c/x01c.c  1.37
+
+
+Commit from rlaboiss (2004-02-24 12:08 CET)
+--------------------
+
+There was interference between the Tcl binding and the Tk driver
+configurations, which prevented compilation of the Tk driver.  The
+Tk-related code in tcl.ac is now in cf/tk.ac and is included in configure.ac
+after inclusion of cf/drivers-pre.ac.  The Tk-related code in
+cf/drivers-post.ac was removed.
+
+  plplot  configure.ac        1.168
+  plplot  cf/tcl.ac           1.3
++ plplot  cf/tk.ac            1.1
+  plplot  cf/drivers-post.ac  1.3
+
+
+Commit from rlaboiss (2004-02-24 11:06 CET)
+--------------------
+
+Merged the CFDIR branch into MAIN
+
+  plplot  .cvsignore                        1.13
+  plplot  Makefile.am                       1.38
+- plplot  acinclude.m4                      1.21
+- plplot  bootstrap.sh                      1.31
+  plplot  configure.ac                      1.167
+- plplot  sysloc.in                         1.79
+  plplot  bindings/c++/plstream.cc          1.24
+  plplot  bindings/c++/plstream.h           1.18
+  plplot  bindings/f77/plstubs.h            1.36
+  plplot  bindings/f77/sccont.c             1.11
+  plplot  bindings/f77/scstubs.c            1.36
+  plplot  bindings/f77/sfstubs.fm4          1.14
++ plplot  cf/.cvsignore                     1.5
++ plplot  cf/Makefile.am                    1.2
++ plplot  cf/README                         1.11
++ plplot  cf/acinclude.m4                   1.2
++ plplot  cf/bootstrap.sh                   1.2
++ plplot  cf/c++.ac                         1.2
++ plplot  cf/cgm.ac                         1.2
++ plplot  cf/csiro.ac                       1.2
++ plplot  cf/docbook.ac                     1.2
++ plplot  cf/docbook.m4                     1.2
++ plplot  cf/double.ac                      1.2
++ plplot  cf/drivers-post.ac                1.2
++ plplot  cf/drivers-pre.ac                 1.2
++ plplot  cf/f77.ac                         1.2
++ plplot  cf/freetype.ac                    1.2
++ plplot  cf/gd.ac                          1.2
++ plplot  cf/gnome.ac                       1.2
++ plplot  cf/gnome.m4                       1.2
++ plplot  cf/gnu-make.m4                    1.2
++ plplot  cf/gtk.m4                         1.2
++ plplot  cf/instdirs.ac                    1.2
++ plplot  cf/java.ac                        1.2
++ plplot  cf/libtool.ac                     1.2
++ plplot  cf/linuxvga.ac                    1.2
++ plplot  cf/octave.ac                      1.2
++ plplot  cf/pkg-config.ac                  1.2
++ plplot  cf/pthread.ac                     1.2
++ plplot  cf/python.ac                      1.2
++ plplot  cf/rpath.ac                       1.2
++ plplot  cf/summary.ac                     1.2
++ plplot  cf/swig.ac                        1.2
++ plplot  cf/swig.m4                        1.2
++ plplot  cf/tcl.ac                         1.2
++ plplot  cf/test.ac                        1.2
++ plplot  cf/xwin.ac                        1.2
+  plplot  doc/docbook/Makefile.am           1.32
+- plplot  doc/docbook/docbook.m4            1.18
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.35
+  plplot  drivers/linuxvga.c                1.17
+  plplot  examples/c/x22c.c                 1.6
+  plplot  examples/c++/x22.cc               1.5
+  plplot  examples/f77/x14f.fm4             1.2
+  plplot  examples/f77/x22f.fm4             1.2
+  plplot  examples/java/x01.java            1.16
+  plplot  examples/java/x14.java            1.6
+  plplot  include/plplot.h                  1.151
+  plplot  scripts/make-cvs-tarball.sh       1.18
+  plplot  src/plcore.c                      1.133
+  plplot  src/plvect.c                      1.3
+  plplot  test/plplot-test.sh.in            1.22
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-24 10:55 CET)
+------------------------------------
+
+Removed useless tests for Tk drivers in cf/tcl.ac.  Fixed wording in
+commentary in cf/drivers-post.ac.
+
+  plplot  cf/drivers-post.ac  1.1.2.3
+  plplot  cf/tcl.ac           1.1.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-24 09:06 CET)
+------------------------------------
+
+Disable the Tk drivers if Tcl is disabled
+
+  plplot  configure.ac                 1.162.2.20
+  plplot  cf/drivers-post.ac           1.1.2.2
+  plplot  scripts/make-cvs-tarball.sh  1.14.2.4
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 19:32 CET)
+------------------------------------
+
+Created macro PL_CONFIG_FILE_EXE in cf/acinclude.m4.  This macro is called
+in ct/test.ac to make the files test_f77.sh, test_python.sh and
+plplot-test.sh executables after AC_SUBSTitution.  The previous method of
+using a second argument in aC_CONFIG_FILES to do the chmod +x was not
+working properly, because the chmod command was being executed for every
+file in the list.  This was harmless, but caused an annoying waring message
+during configure.
+
+  plplot  cf/acinclude.m4  1.1.2.13
+  plplot  cf/test.ac       1.1.2.4
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 19:20 CET)
+------------------------------------
+
+Call libtoolize before automake and autoconf, as usual
+
+  plplot  cf/bootstrap.sh  1.1.2.7
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 18:44 CET)
+------------------------------------
+
+Fixed sed command
+
+  plplot  scripts/make-cvs-tarball.sh  1.14.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 18:39 CET)
+------------------------------------
+
+* Call cf/bootstrap.sh, instead of ./bootstrap.sh
+
+* Added option -c to unpack the tarball and run make check.
+
+  plplot  scripts/make-cvs-tarball.sh  1.14.2.2
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 09:30 CET)
+------------------------------------
+
+Reverting my last changes regarding matwrap, as in HEAD
+
+  plplot  cf/octave.ac                 1.1.2.7
+  plplot  bindings/octave/Makefile.am  1.41.4.2
+
+
+Commit from rlaboiss (2004-02-23 09:27 CET)
+--------------------
+
+Reverting my last changes
+
+  plplot  bindings/octave/Makefile.am  1.44
+  plplot  sysloc.in                    1.78
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 09:16 CET)
+------------------------------------
+
+In configure.ac, include cf/double.ac before cf/octave.ac, such that the
+substitution of DEFINE_PL_DOUBLE is correct in plplot_octave.h.  Also,
+removed the double definition of DEFINE_PL_DOUBLE in cf/octave.ac.
+
+  plplot  configure.ac  1.162.2.19
+  plplot  cf/octave.ac  1.1.2.6
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-23 07:39 CET)
+------------------------------------
+
+Made exec_prefix to be the same as prefix by default
+
+  plplot  configure.ac  1.162.2.18
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 22:23 CET)
+------------------------------------
+
+Set prefix exec_prefix and to autoconf default value when they are equal to
+"NONE".
+
+  plplot  configure.ac  1.162.2.17
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 21:57 CET)
+------------------------------------
+
+Merged with HEAD.  Documentation for the CFDIR branch is extensively added
+to cf/README.  The CFDIR branch is now ready for testing.
+
+  plplot  scripts/make-cvs-tarball.sh    1.14.2.1
+  plplot  scripts/upload-cvs-tarball.sh  1.3.2.1
+  plplot  src/plcore.c                   1.130.2.1
+  plplot  src/plvect.c                   1.1.2.1
+  plplot  test/.cvsignore                1.6.4.1
+  plplot  test/plplot-test.sh.in         1.18.2.1
+
+
+Commit from rlaboiss (2004-02-22 21:57 CET)
+--------------------
+
+
+
+  plplot  scripts/Makefile.am  1.9.2.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 21:57 CET)
+------------------------------------
+
+Merged with HEAD.  Documentation for the CFDIR branch is extensively added
+to cf/README.  The CFDIR branch is now ready for testing.
+
+  plplot  bindings/python/.cvsignore                 1.6.4.1
+  plplot  bindings/python/Makefile.am                1.27.2.1
+  plplot  bindings/swig-support/plplotcapi.i         1.2.2.1
+  plplot  cf/README                                  1.10.2.3
+  plplot  cf/drivers-pre.ac                          1.1.2.2
+  plplot  debian/.cvsignore                          1.6.4.1
+  plplot  debian/changelog                           1.74.2.1
+  plplot  debian/control                             1.46.2.1
+  plplot  debian/rules                               1.44.4.1
++ plplot  debian/patches/00list                      1.1.2.1
++ plplot  debian/patches/octave-2.1.53-demos.dpatch  1.1.2.1
+  plplot  doc/docbook/Makefile.am                    1.29.4.2
+  plplot  doc/docbook/src/api-fortran.xml            1.7.4.1
+  plplot  doc/docbook/src/api.xml                    1.62.4.1
+  plplot  doc/docbook/src/plplotdoc.xml.in           1.33.4.1
+  plplot  drivers/linuxvga.c                         1.15.4.1
+  plplot  examples/c/x22c.c                          1.3.2.1
+  plplot  examples/c++/x22.cc                        1.2.2.1
+  plplot  examples/f77/Makefile.am                   1.20.2.1
+  plplot  examples/f77/Makefile.examples.in          1.19.4.1
++ plplot  examples/f77/x14f.fm4                      1.1.2.1
++ plplot  examples/f77/x22f.fm4                      1.1.2.1
+  plplot  examples/java/x01.java                     1.14.2.1
+  plplot  examples/java/x14.java                     1.4.2.1
+  plplot  examples/python/Makefile.am                1.11.2.1
+  plplot  examples/tcl/Makefile.am                   1.9.4.1
+  plplot  examples/tk/Makefile.am                    1.14.4.1
+  plplot  include/plplot.h                           1.149.2.1
+
+
+Commit from rlaboiss (2004-02-22 21:57 CET)
+--------------------
+
+Removing all files in the obsolete bindings/perl5 directory.  The canonical
+perl bindings (through PDL) will be exemplified in examples/perl.
+
+- plplot  bindings/perl5/Makefile.PL.in    1.4
+- plplot  bindings/perl5/PLplot.i.in       1.13
+- plplot  bindings/perl5/PLplot.pm-add.in  1.6
+- plplot  bindings/perl5/README            1.6
+- plplot  bindings/perl5/TODO              1.3
+- plplot  bindings/perl5/api2bind.pl       1.6
+- plplot  bindings/perl5/pkg_perl5.in      1.7
+- plplot  bindings/perl5/x01.pl            1.10
+- plplot  bindings/perl5/x02.pl            1.2
+- plplot  bindings/perl5/x09.pl            1.4
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 21:56 CET)
+------------------------------------
+
+Merged with HEAD.  Documentation for the CFDIR branch is extensively added
+to cf/README.  The CFDIR branch is now ready for testing.
+
+  plplot  AUTHORS                       1.4.4.1
+  plplot  INSTALL                       1.12.2.1
+  plplot  bindings/Makefile.am          1.14.2.1
+  plplot  bindings/c++/plstream.cc      1.22.2.1
+  plplot  bindings/c++/plstream.h       1.16.2.1
+  plplot  bindings/f77/Makefile.am      1.18.2.1
+  plplot  bindings/f77/README.f77API    1.3.4.1
+  plplot  bindings/f77/plstubs.h        1.34.4.1
+  plplot  bindings/f77/sccont.c         1.9.4.1
+  plplot  bindings/f77/scstubs.c        1.34.4.1
+  plplot  bindings/f77/sfstubs.fm4      1.12.4.1
+  plplot  bindings/java/Makefile.am     1.25.2.1
+  plplot  bindings/java/README.javaAPI  1.7.4.1
+  plplot  bindings/java/plplotjavac.i   1.9.4.1
+  plplot  bindings/octave/Makefile.am   1.41.4.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 20:57 CET)
+------------------------------------
+
+Added check for dirname, as in HEAD
+
+  plplot  cf/test.ac  1.1.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 19:46 CET)
+------------------------------------
+
+Synch with HEAD.  Also, added a check for Automake >= 1.8.2.
+cf/bootstrap.sh will abort if this condition is not met.
+
+  plplot  cf/bootstrap.sh  1.1.2.6
+
+
+Commit from rlaboiss (2004-02-22 19:45 CET)
+--------------------
+
+file drivers.ac was initially added on branch CFDIR.
+
+- plplot  cf/drivers.ac  1.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 19:45 CET)
+------------------------------------
+
+In configure.ac, do not include cf/drivres.ac, because nested m4_include
+cause problems with aclocal.  cf/drivers.ac is removed from the project and
+broken into two smaller parts, cf/drivers-post.ac and cf/drivers-pre.ac.
+
+The inclusion of cf/swig.ac should happen after cf/python.ac and cf/java.ac,
+otherwise the swig support will not be configured properly.
+
+Finally, the logic involving enable_dyndrivers is correctly done in
+cf/libtool.ac now.  Unfortunately, this forces some code that should belong
+to cf/drivers-pre.ac to be put in cf/libtool.ac.  This convoluted situation
+existed already in the previous configuration scheme, but has been made
+clear now with the cf/*.ac modularization.
+
+  plplot  configure.ac        1.162.2.16
+  plplot  cf/libtool.ac       1.1.2.6
++ plplot  cf/drivers-post.ac  1.1.2.1
++ plplot  cf/drivers-pre.ac   1.1.2.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 19:37 CET)
+------------------------------------
+
+Drop docbook.m4 from EXTRA_DIST, since the file is moved to cf
+
+  plplot  doc/docbook/Makefile.am  1.29.4.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-22 19:34 CET)
+------------------------------------
+
+Synch with HEAD
+
+  plplot  Makefile.am                  1.35.2.1
+  plplot  cf/octave.ac                 1.1.2.5
+  plplot  doc/docbook/src/Makefile.am  1.55.4.1
+
+
+Commit from rlaboiss (2004-02-22 18:46 CET)
+--------------------
+
+Include Matwrap-generated files in the distribution tarball.  Matwrap is not
+required to build PLplot from the tarball anymore.  Therefore, the directory
+bindings/octave/matwrap is not included in the tarball. When the matwrap
+check fails in sysloc.in, the matwrap command is replaced by a perl script
+that outputs an error message.  Since enable_octave=no by default now,
+enable it in make-cvs-tarball.sh.
+
+  plplot  sysloc.in                    1.77
+  plplot  bindings/octave/Makefile.am  1.43
+  plplot  scripts/make-cvs-tarball.sh  1.17
+
+
+Commit from rlaboiss (2004-02-22 13:24 CET)
+--------------------
+
+Adjustments to allow bootstrapping of PLplot with Automake 1.8.2.  These
+changes should have not impact with Automake 1.7, but I cannot really test,
+because I already upgraded to 1.8 and am not willing to revert.  Please test
+and report problems to plplot-devel.
+
+In detail, the changes are:
+
+* Explicit definition of DIST_SUBDIRS variable in Makeflie.am.  When this
+  definition is absent, Automake infers it from SUBDIRS.  However, our
+  SUBDIR is set conditionally on with_ltdlsystem and enble_dyndrivers.  This
+  was confusing Automake.
+
+* In bootstrap.sh, call automake in the libltdl directory.  This was causing
+  strange dependencies on inexistent libtool.m4 and ltdl.m4 files.
+
+  plplot  Makefile.am   1.37
+  plplot  bootstrap.sh  1.30
+
+
+Commit from airwin (2004-02-22 02:01 CET)
+------------------
+
+AWI for Brian D. Wright.  Solve name clash caused by using pause.
+pause ==> lxvga_pause.
+
+  plplot  drivers/linuxvga.c  1.16
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-21 17:29 CET)
+------------------------------------
+
+Final cleanup of configure.ac.  This file is close to release quality now.
+Some of the other cf/*.ac files are still messy, albeit functional.
+
+I finally succeed to get aroung the nested m4_include calls in
+cf/drivers.ac, thanks to definition of the environment variable M4PATH in
+cf/bootstrap.sh.
+
+  plplot  configure.ac     1.162.2.15
+  plplot  cf/acinclude.m4  1.1.2.12
+  plplot  cf/bootstrap.sh  1.1.2.5
+  plplot  cf/drivers.ac    1.1.2.4
+  plplot  cf/libtool.ac    1.1.2.5
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-21 14:03 CET)
+------------------------------------
+
+Further reorganization, cleanup and removal of old cruft.  The configure.ac
+file is starting to look nice.
+
+Added some meat to cf/README, most of it is just boilerplate.
+
+  plplot  configure.ac    1.162.2.14
+  plplot  cf/README       1.10.2.2
+  plplot  cf/drivers.ac   1.1.2.3
++ plplot  cf/instdirs.ac  1.1.2.1
+  plplot  cf/libtool.ac   1.1.2.4
+  plplot  cf/python.ac    1.1.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-21 13:20 CET)
+------------------------------------
+
+Merged recent changes by AWI from HEAD
+
+  plplot  cf/gd.ac    1.1.2.3
+  plplot  cf/swig.m4  1.1.2.2
+
+
+Commit from airwin (2004-02-20 21:30 CET)
+------------------
+
+Tweak message logic so that you only report on SWIG and SWIG_RUNTIME_LIBS_DIR
+only in the case when swig passes the version tests and has not been disabled.
+
+  plplot  acinclude.m4  1.20
+
+
+Commit from airwin (2004-02-20 20:59 CET)
+------------------
+
+Disable warning messages from our invocation of the swig.m4 macros.
+
+  plplot  configure.ac  1.166
+
+
+Commit from airwin (2004-02-20 20:58 CET)
+------------------
+
+Improve the swig.m4 subset of acinclude.m4.
+
+* Improve the messages.
+
+* Disable swig in a self-documenting way when the version check does not succeed.
+
+  plplot  acinclude.m4  1.19
+
+
+Commit from rlaboiss (2004-02-20 19:34 CET)
+--------------------
+
+Do not include mention to detached signature in the uploaded index.html when
+the GPG command fails.  If the environment variable NOGPG is set, then gpg
+signing is not done, like this (in bash):
+
+    NOGPG=1 upload-cvs-tarball.sh tarball
+
+  plplot  scripts/upload-cvs-tarball.sh  1.4
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-20 18:56 CET)
+------------------------------------
+
+Reorganization of the code in configure.ac. Code was moved around to be
+grouped logically.  Dated comments and legacy cruft removed (why were that
+stuff about ARLIB_* and SHLIB_* still here?).  Better shell constructs.
+Improved modularization with two new configuration files (rpath.ac and
+double.ac).
+
+There is still a lot to do before releasing this for public consumption.
+
+  plplot  configure.ac  1.162.2.13
++ plplot  cf/double.ac  1.1.2.1
+  plplot  cf/octave.ac  1.1.2.4
++ plplot  cf/rpath.ac   1.1.2.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-20 13:52 CET)
+------------------------------------
+
+Added files to EXTRA_DIST
+
+  plplot  cf/Makefile.am  1.1.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-20 13:48 CET)
+------------------------------------
+
+Merged latest changes in the Swig configuration from HEAD
+
+  plplot  configure.ac     1.162.2.12
+  plplot  cf/bootstrap.sh  1.1.2.4
+  plplot  cf/swig.ac       1.1.2.2
++ plplot  cf/swig.m4       1.1.2.1
+
+
+Commit from rlaboiss (2004-02-20 09:04 CET)
+--------------------
+
+Added patched to exclusion list
+
+  plplot  debian/.cvsignore  1.7
+
+
+Commit from rlaboiss (2004-02-20 09:03 CET)
+--------------------
+
+Debian release 5.3.0-3.  From the changelog:
+
+  * Get Octave bindings to work with octave2.1-2.1.53, the version
+    available in unstable.  Using dpatch for that.
+  * debian/rules:
+    - Include dpatch.make.
+    - Targets build and clean depend on patch and unpatch, respectively.
+  * debian/control:
+    - Build-Depends on dpatch.
+    - Drop alternative build-dependency to octave2.0-headers and force
+      versioned dependency on octave2.1-headers (>= 2.1.54-2)
+
+  plplot  debian/changelog  1.76
+  plplot  debian/control    1.48
+  plplot  debian/rules      1.46
+
+
+Commit from rlaboiss (2004-02-20 07:49 CET)
+--------------------
+
+Changed wording in usage string for the -v option, as suggested by Alan
+
+  plplot  scripts/make-cvs-tarball.sh  1.16
+
+
+Commit from rlaboiss (2004-02-19 22:58 CET)
+--------------------
+
+The make-cvs-tarball.sh script accepts now command line options, for setting
+the login name, the branch to be checked out, and the version string, among
+other things.  Particularly useful is the option -n, which prevents the
+building of the DocBook documentation, as well as its inclusion ion the
+tarball.
+
+  plplot  scripts/make-cvs-tarball.sh  1.15
+
+
+Commit from rlaboiss (2004-02-19 22:45 CET)
+--------------------
+
+Call mktclIndex with the appropriate option when iTcl is disabled.
+
+  plplot  examples/tcl/Makefile.am  1.11
+  plplot  examples/tk/Makefile.am   1.15
+
+
+Commit from rlaboiss (2004-02-19 22:41 CET)
+--------------------
+
+Added $(top_builddir)/config.status dependencies to all x??f.f files.  This
+means that whenever cofigure is run, the x??f.f files will be generated from
+the x??f.fm4 sources.  This is a brute-force approach to the case where
+PLplot is reconfigured with a chnge in the double precision option.
+
+  plplot  examples/f77/Makefile.am  1.24
+
+
+Commit from rlaboiss (2004-02-19 17:39 CET)
+--------------------
+
+Do not include plplotdoc.xml in the distribution tarball
+
+  plplot  doc/docbook/src/Makefile.am  1.57
+
+
+Commit from rlaboiss (2004-02-19 17:38 CET)
+--------------------
+
+Prevent inclusion of generated file www/index.html.in into the distribution
+tarball.
+
+  plplot  doc/docbook/Makefile.am  1.31
+
+
+Commit from rlaboiss (2004-02-19 17:31 CET)
+--------------------
+
+Prevent inclusion of api2man.pl in the distribution tarball
+
+  plplot  doc/docbook/Makefile.am  1.30
+
+
+Commit from rlaboiss (2004-02-19 17:29 CET)
+--------------------
+
+Judicious use of dist_ and nodist_ prefixes.  This prevents
+plplot_python_start.py from inclusion in the distribution tarball and avoids
+extra entries in EXTRA_DIST.
+
+  plplot  examples/python/Makefile.am  1.12
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-19 17:26 CET)
+------------------------------------
+
+Removed the redefinitions of AC_CACHE_LOAD and AC_CACHE_SAVE macros.  The
+purpose of these redefinitions is not clear to, probably to avoid problems
+with cached variable not being overridden.  However, at least for Autoconf
+2.59, making AC_CACHE_LOAD and AC_CACHE_SAVE ineffective is a big mistake,
+because it prevents users to use cache files through the configure option
+--cache-file (something really useful, you should learn about that).  The
+default value for that option is /dev/null, so that no caching is done
+without explicitly asking for it.
+
+  plplot  cf/acinclude.m4  1.1.2.11
+
+
+Commit from rlaboiss (2004-02-19 17:15 CET)
+--------------------
+
+Prevent inclusion of generated file tclIndex into the distribution tarball.
+Also, drop the definition of EXTRA_DIST.  It is enough to prefix
+the variables of interest with dist_.
+
+  plplot  examples/tcl/Makefile.am  1.10
+
+
+Commit from rlaboiss (2004-02-19 17:10 CET)
+--------------------
+
+Force inclusion of scripts in the distribution tarball
+
+  plplot  scripts/Makefile.am  1.12
+
+
+Commit from rlaboiss (2004-02-19 16:43 CET)
+--------------------
+
+Prevent the file bindings/tk-x-plat/pkgIndex.tcl, which is generated by
+configure, from getting included in the tarball.
+
+  plplot  bindings/Makefile.am  1.15
+
+
+Commit from rlaboiss (2004-02-19 15:48 CET)
+--------------------
+
+Removed useless variable $(scripts)
+
+  plplot  scripts/Makefile.am  1.11
+
+
+Commit from rlaboiss (2004-02-19 15:47 CET)
+--------------------
+
+Prevent inclusion of the generated plplot-config script into the
+distribution tarball.  Also, removed $(scripts) from the EXTRA_DIST list,
+because this is done automatically by Automake.
+
+  plplot  scripts/Makefile.am  1.10
+
+
+Commit from rlaboiss (2004-02-19 15:44 CET)
+--------------------
+
+Added Arjen Markus to the list of authors
+
+  plplot  AUTHORS  1.5
+
+
+Commit from rlaboiss (2004-02-19 14:20 CET)
+--------------------
+
+Avoid inclusion of sfstubs.f and configurable.f in the tarball
+
+  plplot  bindings/f77/Makefile.am  1.19
+
+
+Commit from rlaboiss (2004-02-19 14:09 CET)
+--------------------
+
+Avoid inclusion of x??f.f files in the tarball
+
+  plplot  examples/f77/Makefile.am  1.23
+
+
+Commit from airwin (2004-02-19 05:48 CET)
+------------------
+
+Initial commit of two-stream (14th) example that gives identical results
+to the other interfaces.
+
+Credit should go to Arjen Markus for most of this which was privately
+communicated to AWI.  AWI sorted out the last bugs (notably an extra
+plinit call that was screwing things up completely).
+
++ plplot  examples/f77/x14f.fm4  1.1
+
+
+Commit from airwin (2004-02-19 05:48 CET)
+------------------
+
+
+
+  plplot  examples/f77/Makefile.examples.in  1.21
+
+
+Commit from airwin (2004-02-19 05:48 CET)
+------------------
+
+Initial commit of two-stream (14th) example that gives identical results
+to the other interfaces.
+
+Credit should go to Arjen Markus for most of this which was privately
+communicated to AWI.  AWI sorted out the last bugs (notably an extra
+plinit call that was screwing things up completely).
+
+  plplot  examples/f77/Makefile.am  1.22
+
+
+Commit from airwin (2004-02-18 22:40 CET)
+------------------
+
+Fix PYTHON_DEVEL macro problems when more than one file is found by find
+commands.
+
+  plplot  acinclude.m4  1.17
+
+
+Commit from rlaboiss (2004-02-18 19:17 CET)
+--------------------
+
+Adding dpatch files for Debian
+
++ plplot  debian/patches/00list                      1.1
++ plplot  debian/patches/octave-2.1.53-demos.dpatch  1.1
+
+
+Commit from andrewross (2004-02-18 17:11 CET)
+----------------------
+
+Update documentation to include new plvect and plsvect functions (and
+fortran counterparts).
+
+  plplot  doc/docbook/src/api-fortran.xml   1.8
+  plplot  doc/docbook/src/api.xml           1.63
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.34
+
+
+Commit from airwin (2004-02-17 23:15 CET)
+------------------
+
+New install instructions (no FLIBS) and good results for solaris using
+plplot-5.3.0.cvs.20040217.tar.gz.
+
+  plplot  INSTALL  1.13
+
+
+Commit from airwin (2004-02-17 20:42 CET)
+------------------
+
+Allow make dist to work when no documentation has been built or prebuilt.
+
+  plplot  bindings/octave/Makefile.am  1.42
+  plplot  doc/docbook/src/Makefile.am  1.56
+
+
+Commit from airwin (2004-02-17 19:16 CET)
+------------------
+
+Drop CHANGES from dist list.
+
+  plplot  Makefile.am  1.36
+
+
+Commit from airwin (2004-02-17 18:40 CET)
+------------------
+
+Change back to export command style that is acceptable to solaris bourne shell
+and all other bourne shells.
+
+  plplot  test/plplot-test.sh.in  1.21
+
+
+Commit from andrewross (2004-02-17 15:19 CET)
+----------------------
+
+Change the default arrow to a prettier style.
+Alternative example 22 (C only for now).
+
+  plplot  examples/c/x22c.c  1.5
+  plplot  src/plcore.c       1.132
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-17 11:37 CET)
+------------------------------------
+
+Fixed problem with inclusion of octave.ac
+
+  plplot  configure.ac     1.162.2.11
+  plplot  cf/acinclude.m4  1.1.2.10
+  plplot  cf/octave.ac     1.1.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-17 11:05 CET)
+------------------------------------
+
+Quick & dirty hacks to get aclocal-1.8 working.  The situation is not yet
+satisfactory, since m4_inclusion of octave.ac is excluded.  At least, I have a
+working "cf/boostrap.sh ; ./configure ; make check".
+
+Leaving this for now.  Will revisit the issues in a couple of days.
+
+  plplot  configure.ac      1.162.2.10
+  plplot  cf/acinclude.m4   1.1.2.9
+  plplot  cf/bootstrap.sh   1.1.2.3
+  plplot  cf/c++.ac         1.1.2.3
+  plplot  cf/csiro.ac       1.1.2.2
+  plplot  cf/docbook.ac     1.1.2.3
+  plplot  cf/drivers.ac     1.1.2.2
+  plplot  cf/f77.ac         1.1.2.3
+  plplot  cf/gnome.ac       1.1.2.3
+  plplot  cf/gnu-make.m4    1.1.2.2
+  plplot  cf/java.ac        1.1.2.2
+  plplot  cf/libtool.ac     1.1.2.3
+  plplot  cf/pkg-config.ac  1.1.2.3
+  plplot  cf/python.ac      1.1.2.2
+  plplot  cf/tcl.ac         1.1.2.2
+  plplot  cf/test.ac        1.1.2.2
+  plplot  cf/xwin.ac        1.1.2.2
+
+
+Commit from airwin (2004-02-17 04:10 CET)
+------------------
+
+Restore -no-undefined to *la_LDFLAGS.
+
+This flag was removed as a temporary workaround for MacOSX for python, but
+we now have a better solution.  The PYTHON_DEVEL macro supplies
+PYTHON_LDFLAGS which gives us the required library so that all symbols
+should be resolved on all platforms when linking UNDERSCORE_plplotcmodule
+(a.k.a _plplotcmodule) and plplot_widgetmodule.
+
+All symbols were resolved already for the java case without requiring any
+extra libraries so it was never necessary to remove -no-undefined in the
+first place for that case.
+
+  plplot  bindings/java/Makefile.am    1.26
+  plplot  bindings/python/Makefile.am  1.28
+
+
+Commit from airwin (2004-02-17 04:02 CET)
+------------------
+
+*.ps
+
+  plplot  test/.cvsignore  1.7
+
+
+Commit from airwin (2004-02-17 04:01 CET)
+------------------
+
+*.pyc
+
+  plplot  bindings/python/.cvsignore  1.7
+
+
+Commit from airwin (2004-02-17 03:24 CET)
+------------------
+
+Import swig-1.3.21 version of swig.m4 into acinclude.m4, and use SWIG_PROG
+macro in configure.ac to find swig executable with version check.  Also, use
+PYTHON_DEVEL macro in configure.ac to obtain PYTHON_LDFLAGS (which is
+essential for sorting out python linking on some platforms).
+
+  plplot  acinclude.m4  1.16
+  plplot  configure.ac  1.165
+  plplot  sysloc.in     1.76
+
+
+Commit from airwin (2004-02-17 02:25 CET)
+------------------
+
+Simplify GDLIBCMD when libgd.la is present.  We don't want to impose our
+outdated ideas of what the dependent libraries are for libgd when the exact
+information is available from libgd.la for newer builds of libgd. Our
+outdated ideas do work okay for older builds of libgd on Linux so we keep
+them as a fallback.
+
+  plplot  sysloc.in  1.75
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 23:21 CET)
+------------------------------------
+
+Finally got rid of sysloc.in!  Its contents are scattered now throughout
+many cf/*.ac files.  Also, the list in AC_CONFIG_FILES in configure.ac has
+been distributed across the cf files.
+
+aclocal breaks now with these changes.  I am committing anyway, will
+investigate later.
+
++ plplot  cf/tcl.ac   1.1.2.1
++ plplot  cf/test.ac  1.1.2.1
+
+
+Commit from rlaboiss (2004-02-16 23:21 CET)
+--------------------
+
+Removed obsolete files
+
+- plplot  cf/sysloc.in  1.114
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 23:21 CET)
+------------------------------------
+
+Finally got rid of sysloc.in!  Its contents are scattered now throughout
+many cf/*.ac files.  Also, the list in AC_CONFIG_FILES in configure.ac has
+been distributed across the cf files.
+
+aclocal breaks now with these changes.  I am committing anyway, will
+investigate later.
+
+  plplot  configure.ac      1.162.2.9
+  plplot  cf/c++.ac         1.1.2.2
+  plplot  cf/cgm.ac         1.1.2.2
++ plplot  cf/csiro.ac       1.1.2.1
+  plplot  cf/docbook.ac     1.1.2.2
+  plplot  cf/docbook.m4     1.1.2.4
+  plplot  cf/f77.ac         1.1.2.2
++ plplot  cf/freetype.ac    1.1.2.1
+  plplot  cf/gnome.ac       1.1.2.2
+  plplot  cf/gtk.m4         1.1.2.2
++ plplot  cf/java.ac        1.1.2.1
+  plplot  cf/libtool.ac     1.1.2.2
+  plplot  cf/octave.ac      1.1.2.2
+  plplot  cf/pkg-config.ac  1.1.2.2
++ plplot  cf/pthread.ac     1.1.2.1
++ plplot  cf/python.ac      1.1.2.1
+
+
+Commit from andrewross (2004-02-16 19:40 CET)
+----------------------
+
+Fixes to ensure results are identical with C example
+
+  plplot  examples/c++/x22.cc  1.4
+
+
+Commit from andrewross (2004-02-16 19:30 CET)
+----------------------
+
+Change plarrows2 and plsarrow to plvect and plsvect to avoid any possible
+confusion with the old plarrow interface. plarrow can then be depreciated
+and hopefully removed at some stage soon. Update C and C++ example 22.
+Add f77 binding and example.
+
+  plplot  bindings/c++/plstream.cc           1.23
+  plplot  bindings/c++/plstream.h            1.17
+  plplot  bindings/f77/README.f77API         1.4
+  plplot  bindings/f77/plstubs.h             1.35
+  plplot  bindings/f77/sccont.c              1.10
+  plplot  bindings/f77/scstubs.c             1.35
+  plplot  bindings/f77/sfstubs.fm4           1.13
+  plplot  examples/c/x22c.c                  1.4
+  plplot  examples/c++/x22.cc                1.3
+  plplot  examples/f77/Makefile.am           1.21
+  plplot  examples/f77/Makefile.examples.in  1.20
++ plplot  examples/f77/x22f.fm4              1.1
+  plplot  include/plplot.h                   1.150
+  plplot  src/plcore.c                       1.131
+  plplot  src/plvect.c                       1.2
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 18:02 CET)
+------------------------------------
+
+Move some variables from sysloc.in into gd.ac, such that GD support is
+configured correctly.
+
+Boy, this legacy code is badly convoluted!
+
+  plplot  cf/gd.ac      1.1.2.2
+  plplot  cf/sysloc.in  1.114.2.5
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 16:30 CET)
+------------------------------------
+
+This is a blind try to break configure.ac, sysloca.in,a nd docbook.m4 into
+smaller pieces.
+
+GD library configurationis temporarily broken (this issue will be
+investigated later) and the jave, tcl, and python stuff accross configure.ac
+and sysloc.in are quite messy.  I am living like that for now.
+
++ plplot  cf/docbook.m4     1.1.2.3
++ plplot  cf/drivers.ac     1.1.2.1
++ plplot  cf/f77.ac         1.1.2.1
++ plplot  cf/gd.ac          1.1.2.1
++ plplot  cf/gnome.ac       1.1.2.1
++ plplot  cf/gnome.m4       1.1.2.1
++ plplot  cf/gnu-make.m4    1.1.2.1
++ plplot  cf/libtool.ac     1.1.2.1
++ plplot  cf/linuxvga.ac    1.1.2.1
++ plplot  cf/octave.ac      1.1.2.1
++ plplot  cf/pkg-config.ac  1.1.2.1
++ plplot  cf/summary.ac     1.1.2.1
++ plplot  cf/swig.ac        1.1.2.1
+  plplot  cf/sysloc.in      1.114.2.4
++ plplot  cf/xwin.ac        1.1.2.1
+
+
+Commit from rlaboiss (2004-02-16 16:30 CET)
+--------------------
+
+file docbook.in was initially added on branch CFDIR.
+
+- plplot  cf/docbook.in  1.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 16:30 CET)
+------------------------------------
+
+This is a blind try to break configure.ac, sysloca.in,a nd docbook.m4 into
+smaller pieces.
+
+GD library configurationis temporarily broken (this issue will be
+investigated later) and the jave, tcl, and python stuff accross configure.ac
+and sysloc.in are quite messy.  I am living like that for now.
+
+  plplot  configure.ac     1.162.2.8
+  plplot  cf/acinclude.m4  1.1.2.8
++ plplot  cf/c++.ac        1.1.2.1
++ plplot  cf/cgm.ac        1.1.2.1
++ plplot  cf/docbook.ac    1.1.2.1
+
+
+Commit from rlaboiss (2004-02-16 14:31 CET)
+--------------------
+
+Removing all files in the obsolete bindings/perl5 directory.  The canonical
+perl bindings (through PDL) will be exemplified in examples/perl.
+
+- plplot  bindings/perl5/Makefile.PL.in    1.4
+- plplot  bindings/perl5/PLplot.i.in       1.13
+- plplot  bindings/perl5/PLplot.pm-add.in  1.6
+- plplot  bindings/perl5/README            1.6
+- plplot  bindings/perl5/TODO              1.3
+- plplot  bindings/perl5/api2bind.pl       1.6
+- plplot  bindings/perl5/pkg_perl5.in      1.7
+- plplot  bindings/perl5/x01.pl            1.10
+- plplot  bindings/perl5/x02.pl            1.2
+- plplot  bindings/perl5/x09.pl            1.4
+
+
+Commit from rlaboiss (2004-02-16 14:17 CET)
+--------------------
+
+Preparation for Debian release 5.3.0-3
+
+  plplot  debian/changelog  1.75
+  plplot  debian/control    1.47
+  plplot  debian/rules      1.45
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 13:07 CET)
+------------------------------------
+
+Move around some code, to get the java configuration right.
+
+  plplot  configure.ac  1.162.2.7
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-16 12:40 CET)
+------------------------------------
+
+I finally succeeded to implement something that I have been dreaming of for
+ages (more precisely since April 2001, when I started to port the
+configuration scheme of PLplot to the Autotools): I got rid of all the
+diversions at the beginning of configure.ac!  [Keep cool, this in on the
+CFDIR branch...]
+
+Although the amount of changes in this commit is huge, configuration and
+build runs smoothly from a freshly checked out CVS tree, by doing:
+
+    cf/bootstrap.sh
+    ./configure
+    make check
+
+The code in configure.ac and cf/sysloc.in is still quite messy (BTW, this
+later file will soon disappear), because I have to move code around to get
+everything working.  This state of affairs showed me how fragile and
+unmaintainable the previous scheme was.  The files configure.ac,
+cf/sysloc.in and cf/docbook.m4 will be soon broken down in smaller pieces
+(cf/*.ac).
+
+The diverted stuff at the beginning of configure.ac have served many
+purposes in the past:
+
+    (1) Allow default settings of the enable_* and with_* configuration
+        variables.
+
+    (2) Allow sourceing of user configuration files.
+
+    (3) Define all the driver/device options and variables through a
+        non-recursive m4 macro.
+
+    (4) Set the $system variable and fix it for braindead Cray.
+
+I am sure that my changes regarding (1) will generate a lot of debate.
+People get used to have all the default values for the enable_* and with_*
+variables to be concentrated at the beginning of the configure.ac.  That
+could be handy for the experienced developer, but is pretty
+non-maintainable and confusing for the new developers.
+
+I think it is better to have the definition of default values close to
+where the definition is actually defined.  For that, two new macros were
+created:
+
+    PL_ARG_WITH(option, [help string], default)
+    PL_ARG_ENABLE(option, [help string], default)
+
+These macros are now used uniformly throughout the project (well,
+cf/docbook.m4 has not yet been ported).  Notice that the help string should
+not contain --with-* or --enable-* at the beginning.  PL_ARG_* take care of
+this, by using the nice AS_HELP_STRING macro.
+
+The very nice side effect of these changes is that ./configure --help shows
+now (at last!) the default values for all options.  The problem before was
+that we tried to use the shell variables in the help string, but they were
+not being interpolated.  Only for this reason, my changes are already
+worth.
+
+As regards (2), Maurice cleaned up the diversion section of configure.ac
+recently, by noticing that there is now an official way to do it, namely
+through the environment variable CONFIG_SITE.  However, this solution is
+broken in HEAD, since the values set in the CONFIG_SITE file override the
+values set by the options --with-* and --enable-* (it should be the
+contrary).  In CFDIR, the situation is the same.  Hence, in her private
+configuration startup file $CONFIG_SITE, the user has to do something like
+this:
+
+    if test -z "$enable_octave" ; then enable_octave=yes ; fi
+
+It can also set a shell function for that:
+
+    my_default() { eval "if test -z \"\$$1\"; then $1=$2 ; fi" ; }
+    my_default enable_octave no
+    my_default enable_f77 yes
+    # etc.
+
+[This is plain Bourne shell, no bashisms here.]
+
+The previous system for setting driver/device options and variables was
+quite convoluted.  It contained three redundant lists: PL_DRIVER_LIST,
+PL_DYNAMIC_DRIVER_LIST, and PL_device_driver_pair_list.  This has been
+overly simplified now.  There is a single comma-separated list now
+(PL_DEVICE_DRIVER_LIST) whose components are like:
+
+    device:driver:default
+
+Notice that the default value is now set here, as either "yes" or "no".
+This list is called in two places:
+
+    PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+    [...]
+    PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+
+Between the two should come parts of the code that used to be in sysloc.in.
+
+The setting of the $system variable in (4) is completely obsoleted by the
+AC_CANONICAL_HOST variable.  Besides that, it was just used to set the
+with_opt variable for the Cray system.  BTW, this variable is not used
+anywhere else in PLplot.  I got rid of it, together with other legacy stuff
+like with_profile and with_warn.
+
+Besides the diversion cleanup, several other minor changes have been done.
+One of them was to get rid of the has_tcl and has_tk variables, which were
+redundant to enable_tcl and enable_tk.  Also, a cf/README is added to the
+project.  It contains just a boilerplate now, but will be filled
+progressively.
+
+  plplot  configure.ac     1.162.2.6
++ plplot  cf/README        1.10.2.1
+  plplot  cf/acinclude.m4  1.1.2.7
+  plplot  cf/sysloc.in     1.114.2.3
+
+
+Commit from rlaboiss (2004-02-16 01:24 CET)
+--------------------
+
+Avoid '+' in regular expression by using '*'
+
+  plplot  test/plplot-test.sh.in  1.20
+
+
+Commit from airwin (2004-02-15 23:59 CET)
+------------------
+
+Update this java interface documentation to reflect the latest situation.
+
+  plplot  bindings/java/README.javaAPI  1.8
+
+
+Commit from airwin (2004-02-15 23:18 CET)
+------------------
+
+Use recent plgdev addition to Java interface to handle device drivers for
+the two streams just like in corresponding C example.
+
+  plplot  examples/java/x14.java  1.5
+
+
+Commit from airwin (2004-02-15 23:16 CET)
+------------------
+
+Use recent plgver addition to Java interface to output library version
+string just like corresponding C example.
+
+  plplot  examples/java/x01.java  1.15
+
+
+Commit from airwin (2004-02-15 23:13 CET)
+------------------
+
+At last!  Finally figured out how to return C character arrays to Java
+using SWIG-1.3.21/Examples/java/typemap/example.i.
+
+Implement plgdev, plgfnam, an plgver using this new knowledge.
+
+  plplot  bindings/java/plplotjavac.i         1.10
+  plplot  bindings/swig-support/plplotcapi.i  1.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 21:02 CET)
+------------------------------------
+
+Forced inclusion of gtk.m4 in acinclude.m4 and removed the AC_REQUIRE hack
+in configure.ac.
+
+  plplot  configure.ac     1.162.2.5
+  plplot  cf/acinclude.m4  1.1.2.6
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 17:54 CET)
+------------------------------------
+
+Prefixed the last macros in acinclude.m4 with PL_
+
+  plplot  cf/acinclude.m4  1.1.2.5
+  plplot  cf/sysloc.in     1.114.2.2
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 17:19 CET)
+------------------------------------
+
+Test of automatic inclusion of macros defined in files cf/*.m4 by aclocal.
+The file cf/gtk.m4 is added to the project.  This will be the canonical way
+to add third-party m4 macros file here.
+
+Also, get the PL_INCLUDE macro working.  It includes file from the cf/ dir.
+For now, we have sysloc.in and docbook.in, but these will soon disappear.
+
+The only thing that I do not fully understand yet is why aclocal-1.8 does
+not follow the inclusions of other files in configure.ac.  Hence the
+AC_REQUIRE([AM_PATH_GTK]).  It seems that mentions to external macros must
+be mentioned in configure.ac and not in included files.  This will need more
+study in the future, but AC_REQUIRE works for now.
+
+  plplot  configure.ac     1.162.2.4
+  plplot  cf/Makefile.am   1.1.2.2
+  plplot  cf/acinclude.m4  1.1.2.4
++ plplot  cf/gtk.m4        1.1.2.1
+
+
+Commit from rlaboiss (2004-02-15 16:57 CET)
+--------------------
+
+file docbook.m4 was initially added on branch CFDIR.
+
+- plplot  cf/docbook.m4  1.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 16:57 CET)
+------------------------------------
+
+Rename docbook.m4 to docbook.in to pursue the tests
+
++ plplot  cf/docbook.in  1.1.2.1
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 16:17 CET)
+------------------------------------
+
+Move sysloc.in and docbook.m4 into cf/.  This is temporary, just to finish
+some tests for now.  These files will ultimately disappear and its contents
+scattered among other cf/*.ac files.
+
++ plplot  cf/sysloc.in   1.114.2.1
++ plplot  cf/docbook.m4  1.1.2.1
+
+
+Commit from rlaboiss (2004-02-15 16:17 CET)
+--------------------
+
+Oops, typo, lib -> sgml
+
+- plplot  doc/docbook/docbook.m4  1.17
+
+
+Commit from rlaboiss (2004-02-15 16:17 CET)
+--------------------
+
+Allow the AC_SUBSTITuted variable OCTAVE (defined in sysloc.in) to be used
+in test_octave.sh, instead of the hard coded command name "octave".  It is
+passed from plplot-test.sh to test_octave.sh as the environment variable
+$octave.
+
+Also, removed a comment indicating that this is work in progress.
+
+- plplot  sysloc.in  1.74
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 15:03 CET)
+------------------------------------
+
+Added prefix PL_ to GET_DLNAME and GET_DLLNAME macros
+
+  plplot  configure.ac     1.162.2.3
+  plplot  cf/acinclude.m4  1.1.2.3
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 14:58 CET)
+------------------------------------
+
+Make the Autotools start to use the cf dir, really.
+
+  plplot  .cvsignore       1.12.4.1
+  plplot  configure.ac     1.162.2.2
++ plplot  cf/.cvsignore    1.4.2.1
+  plplot  cf/bootstrap.sh  1.1.2.2
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 14:32 CET)
+------------------------------------
+
+Added prefix PL_ to EXPAND_EXPRESSION macro
+
+  plplot  configure.ac     1.162.2.1
+  plplot  cf/acinclude.m4  1.1.2.2
+
+
+Commit from rlaboiss (2004-02-15 14:06 CET)
+--------------------
+
+Get m4 quoting right in call to  AC_CHECK_PROG for pkg-config
+
+  plplot  configure.ac  1.164
+
+
+Commit from rlaboiss (2004-02-15 13:55 CET)
+--------------------
+
+Use dirname (when available) instead of echo+sed to extract the dirname of
+$0 in test/plplot-test.sh.  If dirname is not avialable (as detected by
+configure) fall back to the echo+sed method.
+
+  plplot  configure.ac            1.163
+  plplot  test/plplot-test.sh.in  1.19
+
+
+Commit from rlaboiss on branch CFDIR (2004-02-15 12:50 CET)
+------------------------------------
+
+Move files acinclude.m4 and bootstrap.sh and create cf/Makefile.am for
+starting the CFDIR branch.
+
++ plplot  cf/Makefile.am   1.1.2.1
++ plplot  cf/acinclude.m4  1.1.2.1
++ plplot  cf/bootstrap.sh  1.1.2.1
+
+
+Commit from rlaboiss (2004-02-15 12:50 CET)
+--------------------
+
+Removed the following m4 macros, which seem to be obsolete:
+
+    AC_PREFIX_PROGRAM
+    AC_ISC_POSIX
+    AC_OUTPUT_FILES
+    AC_OUTPUT_HEADER
+
+- plplot  acinclude.m4  1.15
+
+
+Commit from airwin (2004-02-15 02:44 CET)
+------------------
+
+It was agreed on list this file is completely out of date and ChangeLog should
+be used instead.  Therefore remove it from CVS.
+
+- plplot  CHANGES  1.5
+
+
+Commit from rlaboiss (2004-02-14 15:26 CET)
+--------------------
+
+Include the upload-cvs-tarball.sh script in the distribution tarball
+
+  plplot  scripts/Makefile.am  1.9
+
+
 Commit from rlaboiss (2004-02-14 13:38 CET)
 --------------------
 
