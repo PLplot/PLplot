@@ -19,12 +19,16 @@ static void	grfill		(short *, short *, PLINT);
 static void	difilt		(PLINT *, PLINT *, PLINT,
 				 PLINT *, PLINT *, PLINT *, PLINT *);
 static void	plGetDev	(void);
+static void	plSelectDev	(void);
 static void	pldi_ini	(void);
 static void	calc_diplt	(void);
 static void	calc_didev	(void);
 static void	calc_diori	(void);
 static void	calc_dimap	(void);
 static void	plgdevlst	(char **, char **, int *, int);
+
+static void	plInitDispatchTable	(void);
+static PLINT dispatch_table_inited = 0;
 
 /* Static variables */
 
@@ -127,7 +131,10 @@ typedef struct {
  * most systems.)
 \*--------------------------------------------------------------------------*/
 
-static PLDispatchTable dispatch_table[] = {
+static PLDispatchTable *dispatch_table = 0;
+static int npldrivers = 0;
+
+static PLDispatchTable static_devices[] = {
 
     /* Terminal types */
 
@@ -532,7 +539,7 @@ static PLDispatchTable dispatch_table[] = {
 
 #ifdef PLD_plmeta
     {
-	"PLPLOT Native Meta-File",
+	"PLplot Native Meta-File",
 	"plmeta",
 	0,
 	plD_init_plm,
@@ -784,6 +791,6 @@ static PLDispatchTable dispatch_table[] = {
 #endif
 };
 
-static int npldrivers = (sizeof(dispatch_table)/sizeof(PLDispatchTable));
+static int nplstaticdevices = (sizeof(static_devices)/sizeof(PLDispatchTable));
 
 #endif	/* __PLCORE_H__ */
