@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/08/09 22:12:36  mjl
+ * Revision 1.14  1993/08/18 20:30:10  mjl
+ * Switched over to new page description variables mar, aspect, jx, and jy,
+ * and deleted the old ones.  Added a variable widthlock that is set when
+ * -width is used to modify the pen width, so that subsequent plwid() calls
+ * are ignored.
+ *
+ * Revision 1.13  1993/08/09  22:12:36  mjl
  * Changed call syntax to plRotPhy to allow easier usage.
  *
  * Revision 1.12  1993/07/31  08:13:39  mjl
@@ -86,8 +92,6 @@ typedef struct {
 * output_type	0 for file, 1 for stream
 *
 * fileset	Set if file name or file pointer was specified
-* pageset	Set if page dimensions were specified
-* widthset	Set if pen width was specified
 *
 * bytecnt	Byte count for output stream
 * page		Page count for output stream
@@ -189,10 +193,13 @@ typedef struct {
 * dipyay 	PLFLT
 * dipyb 	PLFLT	  y' = dipyay * y + dipyb
 *
-* didxmin	PLFLT	
-* didymin	PLFLT	Min, max relative device coordinates
-* didxmax	PLFLT
-* didymax	PLFLT	
+* aspdev	PLFLT	Original device aspect ratio
+* aspect	PLFLT	Page aspect ratio
+* aspori	PLFLT	Rotation-induced aspect ratio
+* mar		PLFLT	Page margin (minimum)
+* jx		PLFLT	Page justification in x
+* jy		PLFLT	Page justification in y
+*
 * didxax 	PLFLT	Device window transformation:
 * didxb 	PLFLT	  x' = didxax * x + didxb
 * didyay 	PLFLT
@@ -253,6 +260,8 @@ typedef struct {
 * nsub...	Number of subpages on physical device
 * cursub	Current subpage
 * width		Current pen width
+* widthset	Set if pen width was specified
+* widthlock	Set if pen width is locked
 * esc		Text string escape character
 * scale		Scaling factor for chr, sym, maj, min.
 * chr...	Character default height and current (scaled) height
@@ -264,6 +273,7 @@ typedef struct {
 * xdigmax..	Allowed #digits in axes labels
 * xdigits..	Actual field widths (returned)
 *
+* pageset	Set if page dimensions were specified
 * vpp..		Viewport boundaries in physical coordinates
 * spp..		Subpage  boundaries in physical coordinates
 * clp..		Clip     boundaries in physical coordinates
@@ -314,8 +324,6 @@ typedef struct {
     int  output_type;
 
     PLINT fileset;
-    PLINT pageset;
-    PLINT widthset;
 
     PLINT bytecnt;
     PLINT page;
@@ -367,7 +375,7 @@ typedef struct {
     PLINT difilt, diclpxmi, diclpxma, diclpymi, diclpyma;
     PLFLT dipxmin, dipymin, dipxmax, dipymax;
     PLFLT dipxax, dipxb, dipyay, dipyb;
-    PLFLT didxmin, didymin, didxmax, didymax;
+    PLFLT aspdev, aspect, aspori, mar, jx, jy;
     PLFLT didxax, didxb, didyay, didyb;
     PLFLT diorot;
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
@@ -392,6 +400,7 @@ typedef struct {
     PLFLT sclx, scly;
     PLINT nsubx, nsuby, cursub;
     PLINT width, style;
+    PLINT widthset, widthlock;
     char  esc;
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
@@ -404,6 +413,7 @@ typedef struct {
     PLFLT symdef, symht;
     PLFLT majdef, majht;
     PLFLT mindef, minht;
+    PLINT pageset;
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;
     PLINT clpxmi, clpxma, clpymi, clpyma;
