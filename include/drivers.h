@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.17  1994/05/25 09:36:57  mjl
-   All VGA driver function names now end with "_vga", a nice simplification.
-   Since all are compiler-dependent and mutually exclusive, this should pose
-   no problem.  Also HP pen plotter driver were consolidated.  Both
-   contributions by Mark Olesen (olesen@weber.me.queensu.ca).
+   Revision 1.18  1994/05/25 21:58:25  mjl
+   Function prototypes for Win3 driver, contributed by Paul Casteels.
 
+ * Revision 1.17  1994/05/25  09:36:57  mjl
+ * All VGA driver function names now end with "_vga", a nice simplification.
+ * Since all are compiler-dependent and mutually exclusive, this should pose
+ * no problem.  Also HP pen plotter driver were consolidated.  Both
+ * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
+ *
  * Revision 1.16  1994/04/08  12:09:37  mjl
  * Added prototypes for new ljiip driver.
  *
@@ -202,6 +205,15 @@ void plD_bop_vga		(PLStream *);
 void plD_tidy_vga		(PLStream *);
 void plD_state_vga		(PLStream *, PLINT);
 void plD_esc_vga		(PLStream *, PLINT, void *);
+
+void plD_init_win3		(PLStream *);
+void plD_line_win3		(PLStream *, short, short, short, short);
+void plD_polyline_win3		(PLStream *, short *, short *, PLINT);
+void plD_eop_win3		(PLStream *);
+void plD_bop_win3		(PLStream *);
+void plD_tidy_win3		(PLStream *);
+void plD_state_win3		(PLStream *, PLINT);
+void plD_esc_win3		(PLStream *, PLINT, void *);
 
 void plD_init_os2		(PLStream *);				 
 void plD_line_os2		(PLStream *, short, short, short, short);
