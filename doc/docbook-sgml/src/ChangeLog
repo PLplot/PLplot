@@ -1,18 +1,30 @@
 2000-11-17  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* plplotdoc.sgml.in, conf/test.sgml.in, inline-html.ent,
+	inline-print.ent, intro.sgml, simple.sgml, advanced.sgml, api.sgml:
+	Converted to XML.
+	* Makefile.in (XML_DECL): Added variable declaration (for autoconf
+	substitution). 
+	($(BASE).tex) (html): Added XML declaration file to jade commands.
+
+	* configure.in (XML_DECL): Added support for system wide XML
+	declaration. 
+	(DOCBOOK_DTD_PUBID): Changed top XML version of DocBook.
+	(CHECK_DTD): Call jade with XML declaration.
+
 	* Makefile.in (print): changed target name from ps.
 	(all): Added autoconf substitution variables.
 	(install-stamp): Create symbolic link index.html.
 	($(BASE).dvi): Do not remove prior.aux after jadetex run.  This
 	avoids running jadetex more than necessary.
 	(clean): Remove prior.aux here. 
-	
+
 	* configure.in: configure does not stop anymore when a program is
 	not found.  Instead, the user is informed at the end of the run.
 	Also, define HTML and PRINT for future use in the Makefile.in.
         (CHECK_DTD): Output log from jade command in individual file.
 	Concatenated them into $jadelog. 
-
+        
 2000-11-16  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* configure.in, plplotdoc-print.dsl.in, plplotdoc-html.dsl.in,

@@ -13,6 +13,12 @@ ac_default_prefix=/usr/local
 # Any additions from configure.in:
 ac_help="$ac_help
 
+  --with-xml-declaration=FILE     System wide file containing the SGML 
+                                  declaration for XML.  Must be a absolute
+                                  file name.
+                                  Default: /usr/lib/sgml/declaration/xml.dcl"
+ac_help="$ac_help
+
   --with-sgml-catalogs=CATALOGS   SGML catalogs in a colon (:) separated
                                   list.  Must contain only existent files."
 ac_help="$ac_help
@@ -563,6 +569,18 @@ PLPLOTDOC=plplotdoc
 
 
 
+
+XML_DECL=/usr/lib/sgml/declaration/xml.dcl
+# Check whether --with-xml-declaration or --without-xml-declaration was given.
+if test "${with_xml_declaration+set}" = set; then
+  withval="$with_xml_declaration"
+  XML_DECL=$withval
+fi
+
+
+
+
+
 jadelog=jadeout.log
 rm -f $jadelog
 JADELOG=$jadelog
@@ -573,7 +591,7 @@ JADELOG=$jadelog
 DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
 DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
 DB_SS_PRINT_PUBID="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
-DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook V3.1//EN"
+DOCBOOK_DTD_PUBID="-//Norman Walsh//DTD DocBk XML V3.1.3//EN"
 
 
 
@@ -641,7 +659,7 @@ fi
 # Extract the first word of "$prog_jade", so it can be a program name with args.
 set dummy $prog_jade; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:645: checking for $ac_word" >&5
+echo "configure:663: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_has_jade'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -693,7 +711,7 @@ fi
 # Extract the first word of "$prog_jadetex", so it can be a program name with args.
 set dummy $prog_jadetex; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:697: checking for $ac_word" >&5
+echo "configure:715: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_has_jadetex'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -745,7 +763,7 @@ fi
 # Extract the first word of "$prog_perl", so it can be a program name with args.
 set dummy $prog_perl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:749: checking for $ac_word" >&5
+echo "configure:767: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_has_perl'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -797,7 +815,7 @@ fi
 # Extract the first word of "$prog_mogrify", so it can be a program name with args.
 set dummy $prog_mogrify; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:801: checking for $ac_word" >&5
+echo "configure:819: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_has_mogrify'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -849,7 +867,7 @@ fi
 # Extract the first word of "$prog_latex", so it can be a program name with args.
 set dummy $prog_latex; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:853: checking for $ac_word" >&5
+echo "configure:871: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_has_latex'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -901,7 +919,7 @@ fi
 # Extract the first word of "$prog_dvips", so it can be a program name with args.
 set dummy $prog_dvips; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:905: checking for $ac_word" >&5
+echo "configure:923: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_has_dvips'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -942,7 +960,7 @@ fi
 
 
 echo $ac_n "checking DSSSL Style Sheet DTD""... $ac_c" 1>&6
-echo "configure:946: checking DSSSL Style Sheet DTD" >&5
+echo "configure:964: checking DSSSL Style Sheet DTD" >&5
 if eval "test \"`echo '$''{'pldb_cv_dsssl_dtd'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -951,9 +969,9 @@ echo -e "\nChecking for DSSSL Style Sheet DTD" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@||" \
   -e "s|@STYLE_SPEC_USE@||" -e "s|@EXTERNAL_SPECIFICATION@||" \
   < conf/test.dsl.in > conftest.dsl
-sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
-$prog_jade $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
-   > $jadelog.x 2>&1
+sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - O (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
+$prog_jade $SGML_CATALOGS -d conftest.dsl -t sgml $XML_DECL \
+   conftest.sgml > $jadelog.x 2>&1
 jade_result=`egrep ":(E|W):" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
@@ -976,7 +994,7 @@ fi
 
 
 echo $ac_n "checking DocBook HTML Stylesheet""... $ac_c" 1>&6
-echo "configure:980: checking DocBook HTML Stylesheet" >&5
+echo "configure:998: checking DocBook HTML Stylesheet" >&5
 if eval "test \"`echo '$''{'pldb_cv_html_ss'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -985,9 +1003,9 @@ echo -e "\nChecking for DocBook HTML Stylesheet" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$DB_SS_HTML_PUBID\" CDATA DSSSL>]|" \
   -e "s|@STYLE_SPEC_USE@|use="docbook"|" -e "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" \
   < conf/test.dsl.in > conftest.dsl
-sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
-$prog_jade $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
-   > $jadelog.x 2>&1
+sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - O (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
+$prog_jade $SGML_CATALOGS -d conftest.dsl -t sgml $XML_DECL \
+   conftest.sgml > $jadelog.x 2>&1
 jade_result=`egrep ":(E|W):" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
@@ -1010,7 +1028,7 @@ fi
   
 
 echo $ac_n "checking DocBook Print Stylesheet""... $ac_c" 1>&6
-echo "configure:1014: checking DocBook Print Stylesheet" >&5
+echo "configure:1032: checking DocBook Print Stylesheet" >&5
 if eval "test \"`echo '$''{'pldb_cv_print_ss'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1019,9 +1037,9 @@ echo -e "\nChecking for DocBook Print Stylesheet" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$DB_SS_PRINT_PUBID\" CDATA DSSSL>]|" \
   -e "s|@STYLE_SPEC_USE@|use="docbook"|" -e "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" \
   < conf/test.dsl.in > conftest.dsl
-sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
-$prog_jade $SGML_CATALOGS -d conftest.dsl -t tex conftest.sgml \
-   > $jadelog.x 2>&1
+sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - O (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
+$prog_jade $SGML_CATALOGS -d conftest.dsl -t tex $XML_DECL \
+   conftest.sgml > $jadelog.x 2>&1
 jade_result=`egrep ":(E|W):" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
@@ -1044,7 +1062,7 @@ fi
 
 
 echo $ac_n "checking DocBook DTD""... $ac_c" 1>&6
-echo "configure:1048: checking DocBook DTD" >&5
+echo "configure:1066: checking DocBook DTD" >&5
 if eval "test \"`echo '$''{'pldb_cv_db_dtd'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1054,8 +1072,8 @@ sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@||" \
   -e "s|@STYLE_SPEC_USE@||" -e "s|@EXTERNAL_SPECIFICATION@||" \
   < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|PUBLIC \"$DOCBOOK_DTD_PUBID\"|" < conf/test.sgml.in > conftest.sgml
-$prog_jade $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
-   > $jadelog.x 2>&1
+$prog_jade $SGML_CATALOGS -d conftest.dsl -t sgml $XML_DECL \
+   conftest.sgml > $jadelog.x 2>&1
 jade_result=`egrep ":(E|W):" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
@@ -1230,6 +1248,7 @@ s%@VERSION@%$VERSION%g
 s%@PLPLOTDOC_HTML@%$PLPLOTDOC_HTML%g
 s%@MANIFEST@%$MANIFEST%g
 s%@PLPLOTDOC@%$PLPLOTDOC%g
+s%@XML_DECL@%$XML_DECL%g
 s%@JADELOG@%$JADELOG%g
 s%@DSSSL_DTD_PUBID@%$DSSSL_DTD_PUBID%g
 s%@DB_SS_HTML_PUBID@%$DB_SS_HTML_PUBID%g
@@ -1468,8 +1487,8 @@ if test $pldb_cv_db_dtd = no ; then
     the default SGML catalogs:
         $dtd_db_dtd
     Its system identifier, i.e. a file usually called 
-        \"declaration/docbook.dtd\" 
-    is distributed with the docbook (v3.1) package.  Install it in your 
+        \"docbookx.dtd\" 
+    is distributed with the docbook-xml (DTD version 3.1.3) package.  Install it in your 
     system and put the correct entry in the catalog file.
     You might also use the configure option --with-sgml-catalog to specify 
     alternative SGML catalogs." 1>&2

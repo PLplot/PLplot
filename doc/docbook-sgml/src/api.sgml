@@ -646,7 +646,7 @@ origin
     <para>
       Draws axes, numeric and text labels for a three-dimensional surface
       plot.  For a more complete description of three-dimensional plotting
-      see <xref linkend="tri-d-plots">.
+      see <xref linkend="tri-d-plots"/>.
     </para>
 
     <variablelist>
@@ -1104,7 +1104,7 @@ origin
       <literal><parameter>lx</parameter></literal> and from
       <literal><parameter>ky</parameter></literal> to
       <literal><parameter>ly</parameter></literal> is plotted out.  See
-      <xref linkend="contour-plots"> for more information.
+      <xref linkend="contour-plots"/> for more information.
     </para>
 
     <variablelist>
@@ -1223,7 +1223,7 @@ origin
       arrays <literal><parameter>xg</parameter></literal> and
       <literal><parameter>yg</parameter></literal> are used to specify the
       transformation between array indices and world coordinates.  See
-      <xref linkend="contour-plots"> for more information.
+      <xref linkend="contour-plots"/> for more information.
     </para>
 
     <variablelist>
@@ -1359,7 +1359,7 @@ origin
       arrays <literal><parameter>xg</parameter></literal> and
       <literal><parameter>yg</parameter></literal> are used to specify the
       transformation between array indices and world coordinates.  See
-      <xref linkend="contour-plots"> for more information.
+      <xref linkend="contour-plots"/> for more information.
     </para>
 
     <variablelist>
@@ -1493,7 +1493,7 @@ origin
       <literal><parameter>ky</parameter></literal> to
       <literal><parameter>ly</parameter></literal> is plotted out.  A
       transformation routine &pltr; is used to map indices within the array
-      to the world coordinates.  See <xref linkend="contour-plots"> for
+      to the world coordinates.  See <xref linkend="contour-plots"/> for
       more information.
     </para>
 
@@ -1586,7 +1586,7 @@ origin
 	  </para>
 	  
 	  
-	  <para><anchor id="pltr">
+	  <para><anchor id="pltr"/>
 	      <funcsynopsis> 
 		<funcdef>
 		  <function>pltr</function>
@@ -3231,7 +3231,7 @@ space for this (80 characters is safe).
       axis.  <literal><parameter>digits</parameter></literal> is updated
       after the plot is drawn, so this routine should only be called
       <emphasis>after</emphasis> the call to &plbox; (or &plbox3;) is
-      complete.  See <xref linkend="annotation"> for more information.
+      complete.  See <xref linkend="annotation"/> for more information.
     </para>
 
     <variablelist>
@@ -3840,7 +3840,7 @@ space for this (80 characters is safe).
       spaced, but must be stored in ascending order.  The parameter
       <literal><parameter>opt</parameter></literal> controls the way in
       which the surface is displayed.  For further details see <xref
-      linkend="tri-d-plots">.
+      linkend="tri-d-plots"/>.
     </para>
 
     <variablelist>
@@ -4203,7 +4203,7 @@ default
       spaced, but must be stored in ascending order.  The parameter
       <literal><parameter>opt</parameter></literal> controls the way in
       which the surface is displayed.  For further details see <xref
-      linkend="tri-d-plots">.
+      linkend="tri-d-plots"/>.
     </para>
 
     <variablelist>
@@ -5362,8 +5362,8 @@ piece-wise linear relationship
       rev=NULL is equivalent to setting rev[]=0 for every control point.
     </para>
     <para>
-<table frame=none><title> Bounds on coordinates</title>
-<tgroup cols=4 align=center colsep=0 rowsep=0>
+<table frame="none"><title> Bounds on coordinates</title>
+<tgroup cols="4" align="center" colsep="0" rowsep="0">
 <tbody>
 <row><entry>RGB</entry><entry>R</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
 <row><entry>RGB</entry><entry>G</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
@@ -7894,7 +7894,7 @@ stripchart
       axis.  <literal><parameter>digits</parameter></literal> is updated
       after the plot is drawn, so so this routine should only be called
       <emphasis>after</emphasis> the call to &plbox; (or &plbox3;) is
-      complete.  See <xref linkend="annotation"> for more information.
+      complete.  See <xref linkend="annotation"/> for more information.
     </para>
 
     <variablelist>
@@ -8360,9 +8360,9 @@ stripchart
       <literal><parameter>height</parameter></literal>.  The resulting
       world-coordinate box is then viewed by an observer at altitude
       <literal><parameter>alt</parameter></literal> and azimuth
-      <literal<parameter>az</parameter></literal>.  This routine must be
+      <literal><parameter>az</parameter></literal>.  This routine must be
       called before &plbox3; or &plot3d;.  For a more complete description
-      of three-dimensional plotting see <xref linkend="tri-d-plots">.
+      of three-dimensional plotting see <xref linkend="tri-d-plots"/>.
     </para>
 
     <variablelist>

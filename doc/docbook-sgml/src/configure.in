@@ -17,6 +17,19 @@ AC_SUBST(MANIFEST)
 PLPLOTDOC=plplotdoc
 AC_SUBST(PLPLOTDOC)
 
+
+dnl System wide XML declaration
+
+XML_DECL=/usr/lib/sgml/declaration/xml.dcl
+AC_ARG_WITH(xml-declaration, [
+  --with-xml-declaration=FILE     System wide file containing the SGML 
+                                  declaration for XML.  Must be a absolute
+                                  file name.
+                                  Default: /usr/lib/sgml/declaration/xml.dcl],
+  [XML_DECL=$withval])
+AC_SUBST(XML_DECL)
+
+
 dnl Jade output log
 
 jadelog=jadeout.log
@@ -33,7 +46,7 @@ dnl SGML source files.
 DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
 DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
 DB_SS_PRINT_PUBID="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
-DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook V3.1//EN"
+DOCBOOK_DTD_PUBID="-//Norman Walsh//DTD DocBk XML V3.1.3//EN"
 
 AC_SUBST(DSSSL_DTD_PUBID)
 AC_SUBST(DB_SS_HTML_PUBID)
@@ -83,8 +96,8 @@ sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@|$3|" \
   -e "s|@STYLE_SPEC_USE@|$4|" -e "s|@EXTERNAL_SPECIFICATION@|$5|" \
   < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|$6|" < conf/test.sgml.in > conftest.sgml
-$prog_jade $SGML_CATALOGS -d conftest.dsl -t $7 conftest.sgml \
-   > $jadelog.x 2>&1
+$prog_jade $SGML_CATALOGS -d conftest.dsl -t $7 $XML_DECL \
+   conftest.sgml > $jadelog.x 2>&1
 jade_result=`egrep ":(E|W):" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
@@ -168,7 +181,7 @@ CHECK_DTD(
   [],
   [],
   [],
-  [[[<!ELEMENT book - o (#PCDATA)>]]],
+  [[[<!ELEMENT book - O (#PCDATA)>]]],
   [sgml],
   [\"$DSSSL_DTD_PUBID\"],
   [style-sheet.dtd],
@@ -181,7 +194,7 @@ CHECK_DTD(
   [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_HTML_PUBID\" CDATA DSSSL>]]],
   [use="docbook"],
   [<external-specification id="docbook" document="dbstyle">],
-  [[[<!ELEMENT book - o (#PCDATA)>]]],
+  [[[<!ELEMENT book - O (#PCDATA)>]]],
   [sgml],
   [\"$DB_SS_HTML_PUBID\"],
   [html/docbook.dsl],
@@ -194,7 +207,7 @@ CHECK_DTD(
   [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_PRINT_PUBID\" CDATA DSSSL>]]],
   [use="docbook"],
   [<external-specification id="docbook" document="dbstyle">],
-  [[[<!ELEMENT book - o (#PCDATA)>]]],
+  [[[<!ELEMENT book - O (#PCDATA)>]]],
   [tex],
   [\"$DB_SS_PRINT_PUBID\"],
   [print/docbook.dsl],
@@ -210,8 +223,8 @@ CHECK_DTD(
   [PUBLIC \"$DOCBOOK_DTD_PUBID\"],
   [sgml],
   [\"$DOCBOOK_DTD_PUBID\"],
-  [declaration/docbook.dtd],
-  [docbook (v3.1)],
+  [docbookx.dtd],
+  [docbook-xml (DTD version 3.1.3)],
   [PRINT HTML])
 
 AC_SUBST(HTML)

@@ -335,9 +335,9 @@
     
     <para>
       More complex labels can be drawn using the function &plmtex;.  For
-      discussion of writing text in a plot see <xref linkend="text">, and
+      discussion of writing text in a plot see <xref linkend="text"/>, and
       for more detailed discussion about label generation see <xref
-      linkend="text">.
+      linkend="text"/>.
     </para>
     
   </sect1>
@@ -352,7 +352,7 @@
       by &plenv;, and any lines crossing the boundary are clipped.
       Functions are also provided for drawing surface and contour
       representations of multi-dimensional functions.  See <xref
-	linkend="advanced"> for discussion of finer control of plot
+	linkend="advanced"/> for discussion of finer control of plot
 	generation.
     </para>
     
@@ -441,7 +441,7 @@
       <para>
 	PLplot provides two functions for drawing line graphs.  All lines are
 	drawn in the currently selected color, style and width.  See <xref
-	  linkend="line-attributes"> for information about changing these
+	  linkend="line-attributes"/> for information about changing these
 	  parameters.
       </para>
       
@@ -706,7 +706,7 @@
       <para>
 	Functions &plbin; and &plhist; are provided for drawing histograms,
 	and functions &plerrx; and &plerry; draw error bars about specified
-	points.  There are lots more too (see <xref linkend="API">).
+	points.  There are lots more too (see <xref linkend="API"/>).
       </para>
       
     </sect2>

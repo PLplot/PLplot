@@ -98,5 +98,5 @@
 <!ENTITY leq      "&lt;=">
 <!ENTITY mdash    "--">
 <!ENTITY over-under
-  '<graphic fileref="over-under.jpeg" align="CENTER" format="JPEG"></graphic>'>
+  '<graphic fileref="over-under.jpeg" align="center" format="JPEG"></graphic>'>
 

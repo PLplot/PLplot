@@ -114,7 +114,7 @@ Enter device number or keyword: <!--
       <function>plssub</function>.  Subpages are useful for placing several
       graphs on a page, but all subpages are constrained to be of the same
       size.  For greater flexibility, viewports can be used (see <xref
-      linkend="viewports"> for more info on viewports).  The routine
+      linkend="viewports"/> for more info on viewports).  The routine
 	&pladv; is used to advance to a particular subpage or to the next
 	subpage.  The screen is cleared (or a new piece of paper loaded) if a
 	new subpage is requested when there are no subpages left on the
@@ -346,7 +346,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
       side of the viewport.  This may be used for simple graphs, as it
       leaves enough room for axis labels and a title.  This standard
       viewport is that used by &plenv; (See <xref
-      linkend="standard-window">).
+      linkend="standard-window"/>).
     </para>
 
     <para>
@@ -438,7 +438,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
 
     <para>
       Note that <literal>#d</literal> and <literal>#u</literal> are escape
-      sequences (see <xref linkend="escape-sequences">) which allow
+      sequences (see <xref linkend="escape-sequences"/>) which allow
       subscripts and superscripts to be used in text.  They are described
       more fully later in this chapter.
     </para>
@@ -821,153 +821,153 @@ dependent.  Please see the plplot reference document for more detail.<!--
 
     <para>
       Greek letters are obtained by <literal>#g</literal> followed by a
-      Roman letter.  <xref LINKEND="greek"> shows how these letters map
+      Roman letter.  <xref linkend="greek"/> shows how these letters map
       into Greek characters.
     </para>
 
-    <TABLE FRAME="all" ID="greek">
-      <TITLE>Roman characters corresponding to Greek characters</TITLE>
-      <TGROUP ALIGN="center" COLS="13">
-	<COLSPEC ALIGN="center" COLNUM="1" COLWIDTH="2*">
-	<TBODY valign="top">
-	  <ROW>
-	    <ENTRY>Roman</ENTRY>
-	    <ENTRY>A</ENTRY>
-	    <ENTRY>B</ENTRY>
-	    <ENTRY>G</ENTRY>
-	    <ENTRY>D</ENTRY>
-	    <ENTRY>E</ENTRY>
-	    <ENTRY>Z</ENTRY>
-	    <ENTRY>Y</ENTRY>
-	    <ENTRY>H</ENTRY>
-	    <ENTRY>I</ENTRY>
-	    <ENTRY>K</ENTRY>
-	    <ENTRY>L</ENTRY>
-	    <ENTRY>M</ENTRY>
-	  </ROW>
-	  <ROW>
-	    <ENTRY>Greek</ENTRY>
-	    <ENTRY>&Alpha;</ENTRY>
-	    <ENTRY>&Beta;</ENTRY>
-	    <ENTRY>&Gamma;</ENTRY>
-	    <ENTRY>&Delta;</ENTRY>
-	    <ENTRY>&Epsilon;</ENTRY>
-	    <ENTRY>&Zeta;</ENTRY>
-	    <ENTRY>&Eta;</ENTRY>
-	    <ENTRY>&Theta;</ENTRY>
-	    <ENTRY>&Iota;</ENTRY>
-	    <ENTRY>&Kappa;</ENTRY>
-	    <ENTRY>&Lambda;</ENTRY>
-	    <ENTRY>&Mu;</ENTRY>
-	  </ROW>
-	</TBODY>
-      </TGROUP>
-      <TGROUP ALIGN="center" COLS="13">
-	<COLSPEC ALIGN="center" COLNUM="1" COLWIDTH="2*">
-	<TBODY>
-	  <ROW>
-	    <ENTRY>Roman</ENTRY>
-	    <ENTRY>N</ENTRY>
-	    <ENTRY>C</ENTRY>
-	    <ENTRY>O</ENTRY>
-	    <ENTRY>P</ENTRY>
-	    <ENTRY>R</ENTRY>
-	    <ENTRY>S</ENTRY>
-	    <ENTRY>T</ENTRY>
-	    <ENTRY>U</ENTRY>
-	    <ENTRY>F</ENTRY>
-	    <ENTRY>X</ENTRY>
-	    <ENTRY>Q</ENTRY>
-	    <ENTRY>W</ENTRY>
-	  </ROW>
-	  <ROW>
-	    <ENTRY>Greek</ENTRY>
-	    <ENTRY>&Nu;</ENTRY>
-	    <ENTRY>&Xi;</ENTRY>
-	    <ENTRY>&Omicron;</ENTRY>
-	    <ENTRY>&Pi;</ENTRY>
-	    <ENTRY>&Rho;</ENTRY>
-	    <ENTRY>&Sigma;</ENTRY>
-	    <ENTRY>&Tau;</ENTRY>
-	    <ENTRY>&Upsilon;</ENTRY>
-	    <ENTRY>&Phi;</ENTRY>
-	    <ENTRY>&Chi;</ENTRY>
-	    <ENTRY>&Psi;</ENTRY>
-	    <ENTRY>&Omega;</ENTRY>
-	  </ROW>
-	</TBODY>
-      </TGROUP>
-      <TGROUP ALIGN="center" COLS="13">
-	<COLSPEC ALIGN="center" COLNUM="1" COLWIDTH="2*">
-	<TBODY>
-	  <ROW>
-	    <ENTRY>Roman</ENTRY>
-	    <ENTRY>a</ENTRY>
-	    <ENTRY>b</ENTRY>
-	    <ENTRY>g</ENTRY>
-	    <ENTRY>d</ENTRY>
-	    <ENTRY>e</ENTRY>
-	    <ENTRY>z</ENTRY>
-	    <ENTRY>y</ENTRY>
-	    <ENTRY>h</ENTRY>
-	    <ENTRY>i</ENTRY>
-	    <ENTRY>k</ENTRY>
-	    <ENTRY>l</ENTRY>
-	    <ENTRY>m</ENTRY>
-	  </ROW>
-	  <ROW>
-	    <ENTRY>Greek</ENTRY>
-	    <ENTRY>&alpha;</ENTRY>
-	    <ENTRY>&beta;</ENTRY>
-	    <ENTRY>&gamma;</ENTRY>
-	    <ENTRY>&delta;</ENTRY>
-	    <ENTRY>&epsilon;</ENTRY>
-	    <ENTRY>&zeta;</ENTRY>
-	    <ENTRY>&eta;</ENTRY>
-	    <ENTRY>&theta;</ENTRY>
-	    <ENTRY>&iota;</ENTRY>
-	    <ENTRY>&kappa;</ENTRY>
-	    <ENTRY>&lambda;</ENTRY>
-	    <ENTRY>&mu;</ENTRY>
-	  </ROW>
-	</TBODY>
-      </TGROUP>
-      <TGROUP ALIGN="center" COLS="13">
-	<COLSPEC ALIGN="center" COLNUM="1" COLWIDTH="2*">
-	<TBODY>
-	  <ROW>
-	    <ENTRY>Roman</ENTRY>
-	    <ENTRY>n</ENTRY>
-	    <ENTRY>c</ENTRY>
-	    <ENTRY>o</ENTRY>
-	    <ENTRY>p</ENTRY>
-	    <ENTRY>r</ENTRY>
-	    <ENTRY>s</ENTRY>
-	    <ENTRY>t</ENTRY>
-	    <ENTRY>u</ENTRY>
-	    <ENTRY>f</ENTRY>
-	    <ENTRY>x</ENTRY>
-	    <ENTRY>q</ENTRY>
-	    <ENTRY>w</ENTRY>
-	  </ROW>
-	  <ROW>
-	    <ENTRY>Greek</ENTRY>
-	    <ENTRY>&nu;</ENTRY>
-	    <ENTRY>&xi;</ENTRY>
-	    <ENTRY>&omicron;</ENTRY>
-	    <ENTRY>&pi;</ENTRY>
-	    <ENTRY>&rho;</ENTRY>
-	    <ENTRY>&sigma;</ENTRY>
-	    <ENTRY>&tau;</ENTRY>
-	    <ENTRY>&upsilon;</ENTRY>
-	    <ENTRY>&phi;</ENTRY>
-	    <ENTRY>&chi;</ENTRY>
-	    <ENTRY>&psi;</ENTRY>
-	    <ENTRY>&omega;</ENTRY>
-	  </ROW>
-	</TBODY>
-      </TGROUP>
-    </TABLE>
+    <table frame="all" id="greek">
+      <title>Roman characters corresponding to Greek characters</title>
+      <tgroup align="center" cols="13">
+	<colspec align="center" colnum="1" colwidth="2*"/>
+	<tbody valign="top">
+	  <row>
+	    <entry>Roman</entry>
+	    <entry>A</entry>
+	    <entry>B</entry>
+	    <entry>G</entry>
+	    <entry>D</entry>
+	    <entry>E</entry>
+	    <entry>Z</entry>
+	    <entry>Y</entry>
+	    <entry>H</entry>
+	    <entry>I</entry>
+	    <entry>K</entry>
+	    <entry>L</entry>
+	    <entry>M</entry>
+	  </row>
+	  <row>
+	    <entry>Greek</entry>
+	    <entry>&Alpha;</entry>
+	    <entry>&Beta;</entry>
+	    <entry>&Gamma;</entry>
+	    <entry>&Delta;</entry>
+	    <entry>&Epsilon;</entry>
+	    <entry>&Zeta;</entry>
+	    <entry>&Eta;</entry>
+	    <entry>&Theta;</entry>
+	    <entry>&Iota;</entry>
+	    <entry>&Kappa;</entry>
+	    <entry>&Lambda;</entry>
+	    <entry>&Mu;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+      <tgroup align="center" cols="13">
+	<colspec align="center" colnum="1" colwidth="2*"/>
+	<tbody>
+	  <row>
+	    <entry>Roman</entry>
+	    <entry>N</entry>
+	    <entry>C</entry>
+	    <entry>O</entry>
+	    <entry>P</entry>
+	    <entry>R</entry>
+	    <entry>S</entry>
+	    <entry>T</entry>
+	    <entry>U</entry>
+	    <entry>F</entry>
+	    <entry>X</entry>
+	    <entry>Q</entry>
+	    <entry>W</entry>
+	  </row>
+	  <row>
+	    <entry>Greek</entry>
+	    <entry>&Nu;</entry>
+	    <entry>&Xi;</entry>
+	    <entry>&Omicron;</entry>
+	    <entry>&Pi;</entry>
+	    <entry>&Rho;</entry>
+	    <entry>&Sigma;</entry>
+	    <entry>&Tau;</entry>
+	    <entry>&Upsilon;</entry>
+	    <entry>&Phi;</entry>
+	    <entry>&Chi;</entry>
+	    <entry>&Psi;</entry>
+	    <entry>&Omega;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+      <tgroup align="center" cols="13">
+	<colspec align="center" colnum="1" colwidth="2*"/>
+	<tbody>
+	  <row>
+	    <entry>Roman</entry>
+	    <entry>a</entry>
+	    <entry>b</entry>
+	    <entry>g</entry>
+	    <entry>d</entry>
+	    <entry>e</entry>
+	    <entry>z</entry>
+	    <entry>y</entry>
+	    <entry>h</entry>
+	    <entry>i</entry>
+	    <entry>k</entry>
+	    <entry>l</entry>
+	    <entry>m</entry>
+	  </row>
+	  <row>
+	    <entry>Greek</entry>
+	    <entry>&alpha;</entry>
+	    <entry>&beta;</entry>
+	    <entry>&gamma;</entry>
+	    <entry>&delta;</entry>
+	    <entry>&epsilon;</entry>
+	    <entry>&zeta;</entry>
+	    <entry>&eta;</entry>
+	    <entry>&theta;</entry>
+	    <entry>&iota;</entry>
+	    <entry>&kappa;</entry>
+	    <entry>&lambda;</entry>
+	    <entry>&mu;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+      <tgroup align="center" cols="13">
+	<colspec align="center" colnum="1" colwidth="2*"/>
+	<tbody>
+	  <row>
+	    <entry>Roman</entry>
+	    <entry>n</entry>
+	    <entry>c</entry>
+	    <entry>o</entry>
+	    <entry>p</entry>
+	    <entry>r</entry>
+	    <entry>s</entry>
+	    <entry>t</entry>
+	    <entry>u</entry>
+	    <entry>f</entry>
+	    <entry>x</entry>
+	    <entry>q</entry>
+	    <entry>w</entry>
+	  </row>
+	  <row>
+	    <entry>Greek</entry>
+	    <entry>&nu;</entry>
+	    <entry>&xi;</entry>
+	    <entry>&omicron;</entry>
+	    <entry>&pi;</entry>
+	    <entry>&rho;</entry>
+	    <entry>&sigma;</entry>
+	    <entry>&tau;</entry>
+	    <entry>&upsilon;</entry>
+	    <entry>&phi;</entry>
+	    <entry>&chi;</entry>
+	    <entry>&psi;</entry>
+	    <entry>&omega;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
     
     
   </sect1>
@@ -1196,7 +1196,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
 	to <literal>nx-1</literal> in the first index and from
 	<literal>0</literal> to <literal>ny-1</literal> in the second
 	index.  Before these can be drawn in the current window (see <xref
-	linkend="windows">), it is necessary to convert from these array
+	linkend="windows"/>), it is necessary to convert from these array
 	indices into world coordinates.  This is done by passing a pointer
 	to a user-defined function to &plcont; This function pointer is
 	the last argument &pltr;.  
@@ -1288,19 +1288,19 @@ PLFLT x, y, *tx, *ty;
 	that 
 
 	<informaltable frame="none" pgwide="0">
-	  <TGROUP ALIGN="center" COLS="3">
-	  <colspec colnum="1" align="right" colwidth="1*">
-	  <colspec colnum="2" align="center" colwidth="1*">
-	  <colspec colnum="3" align="left" colwidth="1*">
-	    <TBODY>
-	      <ROW>
-		<ENTRY>tx</ENTRY><ENTRY>=</ENTRY><ENTRY>0.2x</ENTRY>
-	      </ROW>
-	      <ROW>
-	        <ENTRY>ty</ENTRY><ENTRY>=</ENTRY><ENTRY>0.4y - 8</ENTRY>
-              </ROW>
-	    </TBODY>
-	  </TGROUP>
+	  <tgroup align="center" cols="3">
+	  <colspec colnum="1" align="right" colwidth="1*"/>
+	  <colspec colnum="2" align="center" colwidth="1*"/>
+	  <colspec colnum="3" align="left" colwidth="1*"/>
+	    <tbody>
+	      <row>
+		<entry>tx</entry><entry>=</entry><entry>0.2x</entry>
+	      </row>
+	      <row>
+	        <entry>ty</entry><entry>=</entry><entry>0.4y - 8</entry>
+              </row>
+	    </tbody>
+	  </tgroup>
         </informaltable>
  
 	and so <literal>tr[0] = 0.2</literal>,

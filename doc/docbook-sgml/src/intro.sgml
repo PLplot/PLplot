@@ -105,7 +105,7 @@
       HP-UX, A/IX, DG/UX, UNICOS, Ultrix, VMS, Amiga/Exec, MS-DOS, OS/2,
       and NeXT, with more expected.  The PLplot package is freely
       distributable, but <emphasis>not</emphasis> in the public domain.
-      See <xref linkend="copyrights"> for distribution criteria.
+      See <xref linkend="copyrights"/> for distribution criteria.
     </para>
     <para>
       We welcome suggestions on how to improve this code, especially in
@@ -175,12 +175,12 @@
       may be necessary, and these are accommodated by providing lower-level
       routines which change the system defaults.  The manual first describes
       the overall process of producing a graph using the high-level
-      routines (see <xref linkend="Simple-graph">).  For a discussion of
+      routines (see <xref linkend="simple-graph"/>).  For a discussion of
       the underlying concepts of the plotting process and an introduction
-      to some of the more complex routines (see <xref linkend="advanced">).
+      to some of the more complex routines (see <xref linkend="advanced"/>).
       An alphabetical list of the user-accessible PLplot functions with
       detailed descriptions is given in the reference section of the manual
-      (see <xref linkend="API">).
+      (see <xref linkend="API"/>).
     </para>
     <para>
       Because the PLplot kernel is written in C, standard C syntax is used

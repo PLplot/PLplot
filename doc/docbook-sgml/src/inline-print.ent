@@ -49,5 +49,5 @@
 <!ENTITY omega    "&#969;">
 <!ENTITY less     "&#60;">
 <!ENTITY leq      "&#8804;">
-<!ENTITY over-under '<inlinegraphic fileref="over-under.eps" align="CENTER" format="EPS"></inlinegraphic>'>
+<!ENTITY over-under '<inlinegraphic fileref="over-under.eps" align="center" format="EPS"></inlinegraphic>'>
 
