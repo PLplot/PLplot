@@ -37,6 +37,7 @@ tar cvf plplot.tar \
 	! -path \*~ \
 	! -path \*.o \
 	! -path \*.a \
+	! -path \*.sl \
 	! -path \*.dat \
         -type f`
 
