@@ -106,7 +106,7 @@ install-data-hook: plplot_octave-libdir.oct
 	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
 	$(mkinstalldirs) $(DESTDIR)$(docdir)
 	for i in $(docfiles) ; do \
-	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.octave ; \
+	  $(INSTALL) $(srcdir)/$$i $(DESTDIR)$(docdir)/$$i.octave ; \
 	done
 
 octavesharedir = $(OCTAVE_OCT_DIR)
