@@ -425,7 +425,7 @@ AM_MAINTAINER_MODE
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
-AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030213)
+AM_INIT_AUTOMAKE(plplot, 5.2.0)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
