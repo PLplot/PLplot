@@ -853,7 +853,7 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	include/Makefile
-	lib/Makefile
+	data/Makefile
 	bindings/Makefile
 	bindings/c++/Makefile
 	bindings/f77/Makefile
