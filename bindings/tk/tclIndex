@@ -6,6 +6,7 @@
 # element name is the name of a command and the value is
 # a script that loads the command.
 
+set auto_index(PLWin) "source $dir/PLWin.tcl"
 set auto_index(about) "source $dir/about.tcl"
 set auto_index(help_gui) "source $dir/help_gui.tcl"
 set auto_index(help_keys) "source $dir/help_keys.tcl"
