@@ -13,7 +13,7 @@
 
 #include <unistd.h>
 
-#define DEBUG
+#undef DEBUG
 
 #undef ANTIALISED_CANVAS
 
@@ -37,8 +37,10 @@
 void
 debug (char* msg)
 {
-  //      printf (msg);
-  //      fflush (stdout);
+#ifdef DEBUG
+  printf (msg);
+  fflush (stdout);
+#endif
 }
 
 G_LOCK_DEFINE_STATIC (canvas);
@@ -47,7 +49,7 @@ static pthread_t tid;
 
 static guint gnome_is_initialized = FALSE;
 
-// FIXME : Terribel global variable hack
+// FIXME : Terrible global variable hack
 static GtkStatusbar* sb;
 
 typedef enum {
@@ -107,15 +109,15 @@ void change_mode (GnomePLdevPage* page, GnomePLdevCanvasMode mode)
 
   switch (mode) {
   case GNOME_PLDEV_LOCATE_MODE:
-    // FIXME : Terribel global variable hack
+    // FIXME : Terrible global variable hack
     gtk_statusbar_pop (sb, context);
-    // FIXME : Terribel global variable hack
+    // FIXME : Terrible global variable hack
     gtk_statusbar_push (sb, context, "Locate Mode");
     break;
   case GNOME_PLDEV_ZOOM_MODE:
-    // FIXME : Terribel global variable hack
+    // FIXME : Terrible global variable hack
     gtk_statusbar_pop (sb, context);
-    // FIXME : Terribel global variable hack
+    // FIXME : Terrible global variable hack
     gtk_statusbar_push (sb, context, "Zoom Mode");
     break;
   default:
@@ -129,19 +131,40 @@ void *init(void *args)
   gdk_threads_enter();
   gtk_main();
   gdk_threads_leave ();
-  debug ("Leaving init\n");
-}
- 
-static void 
-quit (void)
-{
-  
-  gdk_threads_enter ();
-  gtk_main_quit ();
-  gdk_threads_leave ();
-  debug ("Quitting\n");
-
   pthread_exit(NULL);
+
+}
+
+static gboolean
+quit_dialog (void)
+{
+
+  GtkWidget* dialog;
+  gint answer;
+
+  fflush (stderr);
+
+  dialog = gnome_dialog_new ("PLplot Gnome driver",
+			     GNOME_STOCK_BUTTON_OK,
+			     GNOME_STOCK_BUTTON_CANCEL,
+			     NULL);
+  
+  gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+		      gtk_label_new ("Quit PLplot?"), 
+		      TRUE, 
+		      TRUE,
+		      0);
+  
+  gtk_widget_show_all (GTK_WIDGET (GNOME_DIALOG (dialog)->vbox));
+
+  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);  
+  answer = gnome_dialog_run_and_close (GNOME_DIALOG (dialog));
+  if (answer == 0) {
+    gtk_main_quit ();
+    return TRUE;
+  }
+  else
+    return FALSE;
 }
 
 static gint 
@@ -155,12 +178,13 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
   PLGraphicsIn* gin = &(page->gin);
 
   move = FALSE;
+
   switch (event->type) {
-
+    
   case GDK_2BUTTON_PRESS:
-
+    
   case GDK_3BUTTON_PRESS:
-
+    
   case GDK_BUTTON_PRESS:
     
     if (event->button.button == 1) {
@@ -181,20 +205,16 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 			     event->button.time);
       gdk_cursor_destroy(cursor);
 
-      // FIXME : Terribel global variable hack
+      // FIXME : Terrible global variable hack
       gtk_statusbar_push (sb, page->context, "");
 
       dragging = TRUE;
     }
-    //    printf ("Button press\n");
-    //    fflush (stdout);
     break;
 
   case GDK_MOTION_NOTIFY:
     if (dragging && (event->motion.state & GDK_BUTTON1_MASK)) 
       move = TRUE;
-    //    printf ("Mouse motion\n");
-    //    fflush (stdout);
     break;
     
   case GDK_BUTTON_RELEASE:
@@ -203,7 +223,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
       dragging = FALSE;
       gnome_canvas_item_hide (page->hlocline);
       gnome_canvas_item_hide (page->vlocline);
-      // FIXME : Terribel global variable hack
+      // FIXME : Terrible global variable hack
       gtk_statusbar_pop (sb, page->context);
       //      printf ("Button release\n");
       //      fflush (stdout);
@@ -233,9 +253,9 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
     plTranslateCursor (gin);
 
     sprintf (buffer, "   x = %f   y = %f", gin->wX, gin->wY);
-    // FIXME : Terribel global variable hack
+    // FIXME : Terrible global variable hack
     gtk_statusbar_pop (sb, page->context);
-    // FIXME : Terribel global variable hack
+    // FIXME : Terrible global variable hack
     gtk_statusbar_push (sb, page->context, buffer);
 
   }
@@ -247,22 +267,17 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 static gint 
 delete_event_cb (GtkWidget* widget, GdkEventAny* e, gpointer data)
 {
-  printf ("Entered delete_event_cb\n");
-  fflush (stdout);
-  gdk_threads_enter ();
-  gtk_widget_destroy (widget);
-  gdk_threads_leave ();
-  quit ();
+  if (quit_dialog () == TRUE) 
+    gtk_widget_destroy (widget);
   return FALSE;
 }
+
 
 static gint
 item_event(GnomeCanvasItem *item, GdkEvent *event, gpointer data)
 {
   switch (event->type) {
   case GDK_BUTTON_PRESS:
-    printf("item_event\n");
-    fflush (stdout);
     break;
   }
 
@@ -302,23 +317,18 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
   case GDK_equal:
     ppu *= 1.4142;
     break;
-  case GDK_q:
-    gdk_threads_enter ();
-    gtk_signal_emit_by_name
-      (GTK_OBJECT (gtk_widget_get_ancestor
-		   (GTK_WIDGET (widget), GTK_TYPE_WINDOW)),
-       "destroy");
-    gdk_threads_leave ();
+  case GDK_Return:
+    quit_dialog ();
     break;
   case GDK_l:
-    gdk_threads_enter ();
+    //gdk_threads_enter ();
     change_mode (page, GNOME_PLDEV_LOCATE_MODE);
-    gdk_threads_leave ();
+    //gdk_threads_leave ();
     break;
   case GDK_z:
-    gdk_threads_enter ();
+    //gdk_threads_enter ();
     change_mode (page, GNOME_PLDEV_ZOOM_MODE);
-    gdk_threads_leave ();
+    //gdk_threads_leave ();
     break;
   default:
     break;
@@ -372,19 +382,13 @@ new_page (PLStream* pls)
   guint32 loclinecolor;
   char buffer[32];
 
-  debug("Entered new_page\n");
-
   dev = pls->dev;
   page = g_malloc (sizeof (GnomePLdevPage));
   page->mode = GNOME_PLDEV_LOCATE_MODE;
 
   np = dev->npages;
 
-  debug("Before gdk_init_rgb\n");
-
   gdk_threads_enter ();
-
-  debug("After gdk_init_rgb\n");
 
 #ifdef ANTIALISED_CANVAS
 
@@ -408,12 +412,8 @@ new_page (PLStream* pls)
   gnome_canvas_set_scroll_region(GNOME_CANVAS(canvas),
 				 0, -page->height, page->width, 0);
 
-  debug("After scroll_region\n");
-
   gtk_widget_pop_visual();
   gtk_widget_pop_colormap();
-
-  debug("Before gnome_canvas_root\n");
 
   group = gnome_canvas_root (GNOME_CANVAS (canvas));
 
@@ -496,10 +496,6 @@ new_page (PLStream* pls)
                       (GtkSignalFunc) canvas_pressed_cb,
                       page);
 
-  debug("After setup_item\n");
-
-  //gtk_window_set_focus (GTK_WINDOW (window), canvas);
-
   gtk_signal_connect (GTK_OBJECT (canvas), "key_press_event",
 		      GTK_SIGNAL_FUNC (key_cb), pls);
 
@@ -518,12 +514,8 @@ new_page (PLStream* pls)
 			   (np+1) * sizeof (GnomePLdevPage*));
 
   
-  debug ("After g_realloc\n");
-
   dev->page[np] = page;
   
-  debug ("Before gtk_notebook_append_page\n");
-
   gtk_notebook_set_show_tabs (dev->notebook, (np > 0));
 
   sprintf (buffer, "Page %d", np+1);
@@ -537,8 +529,6 @@ new_page (PLStream* pls)
   gdk_threads_leave ();
 
   dev->npages++;
-
-  debug("End of new_page\n");
 
 }
 
@@ -560,33 +550,18 @@ gnome_pldev_create (PLStream* pls)
   gtk_box_pack_end (GTK_BOX (dev->root), GTK_WIDGET (dev->statusbar),
 		    FALSE, FALSE, 0);
   
-  debug("Before gtk_notebook_new\n");
-
   dev->notebook = GTK_NOTEBOOK (gtk_notebook_new ());
 
-  // FIXME : this crashed the driver when the 4th page is displayed 
   gtk_signal_connect (GTK_OBJECT (dev->notebook), "switch_page",
     		      GTK_SIGNAL_FUNC (page_switch), dev);
   
   gtk_notebook_set_scrollable (dev->notebook, TRUE);
   
-  debug ("Before gtk_box_pack_start\n");
-
   gtk_box_pack_start (GTK_BOX (dev->root), GTK_WIDGET (dev->notebook),
 		      TRUE, TRUE, 0);
   
-  debug ("After gtk_box_pack_start\n");
-
-  debug ("Before gtk_widget_show_all\n");
-
   gtk_widget_show_all (GTK_WIDGET (dev->notebook));
   
-  debug ("Before gtk_notebook_set_page\n");
-
-
-  //  new_page (pls);
-  debug("(gnome_pldev_create): After new_page\n");
-
   dev->parent_is_from_driver = FALSE;
 }
 
@@ -615,7 +590,7 @@ plD_init_gnome (PLStream *pls)
   
   /* The real meat of the initialization done here */
 
-  atexit (quit);
+  //  atexit (do_quit);
 
   /* init threads */                                                       
   g_thread_init (NULL);                                                     
@@ -623,29 +598,23 @@ plD_init_gnome (PLStream *pls)
   if (pls->dev == NULL) {
 
     if (! gnome_is_initialized ) {
-      debug ("Before gnome_init\n");
 
       gnome_init ("GnomePLplotDriver", "0.0.1", 1, argv);
       gnome_sound_shutdown ();
 
-      debug ("After gnome_init\n");
-
     }
-      debug ("Before gnome_pldev_create\n");
 
-      gdk_rgb_init ();
-
+    gdk_rgb_init ();
+    
     gnome_pldev_create (pls);
-
-      debug ("After gnome_pldev_create\n");
-
+    
     dev = pls->dev;
 
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     dev->parent = window;
 
     gtk_signal_connect (GTK_OBJECT (window),
-			"destroy_event",
+			"delete_event",
 			GTK_SIGNAL_FUNC (delete_event_cb),
 			NULL);
 
@@ -666,12 +635,7 @@ plD_init_gnome (PLStream *pls)
 
   gnome_is_initialized = TRUE;
 
-      debug ("Before pthread_create\n");
-
-      pthread_create (&tid, NULL, init, NULL); 
-
-      debug ("After pthread_create\n");
-
+  pthread_create (&tid, NULL, init, NULL); 
 
 }
 
@@ -693,33 +657,15 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   GnomeCanvas* canvas;
   guint i;
 
-  debug ("Entered plD_polyline_gnome\n");
-
-  debug ("Before threads_enter\n");
-
   gdk_threads_enter ();
-
-  debug ("Before getting dev\n");
 
   dev = pls->dev;
   
-  debug ("Got dev\n");
-
-
-  //  printf ("npages = %d\n", dev->npages);
-  //  fflush (stdout);
-
   page = dev->page[dev->npages-1];
-
-  debug ("Before canvas = page->canvas\n");
 
   canvas = page->canvas;
 
-  debug ("Before gnome_canvas_root\n");
-
   group = gnome_canvas_root (canvas);
-
-  debug ("After gnome_canvas_root\n");
 
   points = gnome_canvas_points_new (npts);
 
@@ -739,19 +685,13 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
                                 NULL);
 
-  debug ("After gnome_canvas_item_new\n");
-
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
                       page);
 
-  //  setup_item (item);
-
   gnome_canvas_points_unref (points);
 
   gdk_threads_leave ();
-
-  debug ("Left plD_polyline_gnome\n");
 
 }
 
@@ -850,8 +790,6 @@ plD_bop_gnome(PLStream *pls)
 void
 plD_tidy_gnome(PLStream *pls)
 {
-  debug("plD_tidy_gnome");
-
   pthread_join (tid, NULL);
 }
 
@@ -894,26 +832,13 @@ fill_polygon (PLStream* pls)
   GnomeCanvas* canvas;
   guint i;
 
-  debug ("Entered fill_polygon\n");
-
   dev = pls->dev;
 
-  debug ("Got dev\n");
-  
   gdk_threads_enter ();
-
-  //  printf("npages = %d\n", dev->npages);
-  //  fflush (stdout);
 
   page = dev->page[dev->npages-1];
 
-  debug ("Got page\n");
-  
   canvas = page->canvas;
-
-  debug ("Got canvas\n");
-  
-  debug ("Before gnome_canvas_root\n");
 
   group = gnome_canvas_root (canvas);
 
@@ -923,8 +848,6 @@ fill_polygon (PLStream* pls)
     points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
     points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
   }
-
-  debug ("Before gnome_canvas_item_new\n");
 
   item = gnome_canvas_item_new(group,
                                 gnome_canvas_polygon_get_type (),
@@ -938,13 +861,9 @@ fill_polygon (PLStream* pls)
                       (GtkSignalFunc) canvas_pressed_cb,
                       page);
 
-  //  setup_item (item);
-
   gnome_canvas_points_unref (points);
 
   gdk_threads_leave ();
-
-  debug ("Left fill_polygon\n");
 
 }  
 
