@@ -2,22 +2,10 @@
 Areas currently under development
 ---------------------------------
 
- - The manual needs BADLY to be updated.
-
- - Install custom colormaps under X.  The current scheme will work even
-   for multiple plplot apps, as long as there are enough colors for just
-   one of the colormaps and the plplot apps use the same color schemes
-   (because identical rgb color cells will be shared).  Either that, or
-   the color allocations have to fail in exactly the same way (a stretch).
-   The custom color maps that are eventually installed should copy colors
-   in use by existing apps (such as the window manager) if reasonable
-   in order to reduce flicker.  Not sure how to do that, though.
+ - Continue updating the manual.
 
  - improve color dialogs for TK driver:
 
-   . use custom color map to make allocation easier and faster (big one)
-   . add arrows to end of cmap1 control point location sliders
-   . change so that colors are allocated dynamically when editing color
    . inform client side that colors have been changed (right now only
      plserver side knows about it)
    . put in a better file selector for palette files
