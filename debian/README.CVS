@@ -9,7 +9,8 @@ $Id$
 Background and repository location (how to access)
 
   export CVS_RSH=ssh
-  cvs -z3 -drlaboiss@cvs.plplot.sourceforge.net:/cvsroot/plplot co plplot
+  export CVSROOT=rlaboiss@cvs.plplot.sourceforge.net:/cvsroot/plplot
+  cvs -z3 co plplot
 
 
 Tags
@@ -22,11 +23,15 @@ Upgrading
 
   CURRENT_VERSION=5.0.1
   NEW_VERSION=5.0.2
+  rm -rf plplot-$NEW_VERSION
   cvs co -rDEBIAN -d plplot-$NEW_VERSION plplot
-  tar xfz plplot-${NEW_VERSION}.tar.gz
   cd plplot-$NEW_VERSION
-  FILES=`cvs status | fgrep "Locally Modified" | cut -f2 -d" "`
-  cvs co -rDEBIAN -d plplot-$NEW_VERSION $FILES
+  FILES=`find . -type f | fgrep -v CVS/ | sed 's,./,,'`
+  cd ..
+  tar xfz plplot_${NEW_VERSION}.orig.tar.gz
+  cd plplot-$NEW_VERSION
+  rm -f $FILES
+  cvs update -rDEBIAN
   cvs update -j v`echo $CURRENT_VERSION | tr . -` \
              -j v`echo $NEW_VERSION | tr . -` $FILES
 
