@@ -1,5 +1,17 @@
 2000-11-15  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* Makefile.in ($(BASE).dvi): Simpler way to implement Adam Di
+	Carlo's trick (does not need pprior.aux).  Also, redirects stderr
+	to /dev/null when comparing files to avoid error when prior.aux
+	does not exist.
+
+2000-11-15  Alan W. Irwin  <irwin@beluga.phys.uvic.ca>
+
+	* Makefile.in (OTHER_SOURCES): NEWS and ChangeLog include in src
+	tarball, CHANGES (which was renamed to NEWS) dropped. 
+
+2000-11-15  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
 	* Makefile.in: Trick for calling jadetex "just enough times".
 
 2000-11-11  Rafael Laboissiere  <rafael@icp.inpg.fr>
