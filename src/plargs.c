@@ -147,9 +147,6 @@ static int opt_tcl_cmd		(char *, char *, void *);
 static int opt_auto_path	(char *, char *, void *);
 static int opt_bufmax		(char *, char *, void *);
 static int opt_server_name	(char *, char *, void *);
-static int opt_server_host	(char *, char *, void *);
-static int opt_server_port	(char *, char *, void *);
-static int opt_user		(char *, char *, void *);
 static int opt_tk_file          (char *, char *, void *);
 static int opt_dpi		(char *, char *, void *);
 static int opt_dev_compression	(char *, char *, void *);
@@ -505,37 +502,13 @@ static PLOptionTable ploption_table[] = {
     "-server_name name",
     "Main window name of PLplot server (tk driver)" },
 {
-    "server_host",		/* Host to run server on */
-    opt_server_host,
-    NULL,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ARG,
-    "-server_host name",
-    "Host to run PLplot server on (dp driver)" },
-{
-    "server_port",		/* Port to talk to server on */
-    opt_server_port,
-    NULL,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ARG,
-    "-server_port name",
-    "Port to talk to PLplot server on (dp driver)" },
-{
-    "user",			/* user name on remote node */
-    opt_user,
-    NULL,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ARG,
-    "-user name",
-    "User name on remote node (dp driver)" },
-{
     "plserver",			/* PLplot server name */
     opt_plserver,
     NULL,
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plserver name",
-    "Invoked name of PLplot server (tk or dp driver)" },
+    "Invoked name of PLplot server (tk driver)" },
 {
     "plwindow",			/* PLplot container window name */
     opt_plwindow,
@@ -543,7 +516,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plwindow name",
-    "Name of PLplot container window (tk or dp driver)" },
+    "Name of PLplot container window (tk driver)" },
 {
     "tcl_cmd",			/* TCL initialization command */
     opt_tcl_cmd,
@@ -559,7 +532,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-auto_path dir",
-    "Additional directory(s) to autoload (tk or dp driver)" },
+    "Additional directory(s) to autoload (tk driver)" },
 {
     "tk_file",      /* -file option for plserver */
     opt_tk_file,
@@ -567,7 +540,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-tk_file file",
-    "file for plserver (tk or dp driver)" },
+    "file for plserver (tk driver)" },
 {
     "dpi",			/* Dots per inch */
     opt_dpi,
@@ -1973,7 +1946,7 @@ opt_bufmax(char *opt, char *optarg, void *client_data)
  * opt_server_name()
  *
  * Performs appropriate action for option "server_name":
- * Sets main window name of server (Tcl/TK/DP driver only)
+ * Sets main window name of server (Tcl/TK driver only)
 \*--------------------------------------------------------------------------*/
 
 static int
@@ -1984,52 +1957,10 @@ opt_server_name(char *opt, char *optarg, void *client_data)
 }
 
 /*--------------------------------------------------------------------------*\
- * opt_server_host()
- *
- * Performs appropriate action for option "server_host":
- * Sets host to run server on (Tcl/TK/DP driver only)
-\*--------------------------------------------------------------------------*/
-
-static int
-opt_server_host(char *opt, char *optarg, void *client_data)
-{
-    plsc->server_host = plstrdup(optarg);
-    return 0;
-}
-
-/*--------------------------------------------------------------------------*\
- * opt_server_port()
- *
- * Performs appropriate action for option "server_port":
- * Sets port to talk to server on (Tcl/TK/DP driver only)
-\*--------------------------------------------------------------------------*/
-
-static int
-opt_server_port(char *opt, char *optarg, void *client_data)
-{
-    plsc->server_port = plstrdup(optarg);
-    return 0;
-}
-
-/*--------------------------------------------------------------------------*\
- * opt_user()
- *
- * Performs appropriate action for option "user":
- * Sets user name on remote node (for remsh), dp driver only
-\*--------------------------------------------------------------------------*/
-
-static int
-opt_user(char *opt, char *optarg, void *client_data)
-{
-    plsc->user = plstrdup(optarg);
-    return 0;
-}
-
-/*--------------------------------------------------------------------------*\
  * opt_plserver()
  *
  * Performs appropriate action for option "plserver":
- * Sets name to use when invoking server (Tcl/TK/DP driver only)
+ * Sets name to use when invoking server (Tcl/TK driver only)
 \*--------------------------------------------------------------------------*/
 
 static int
