@@ -768,6 +768,32 @@ AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
+
+### pkg-config checks and settings.  See examples/*/Makefile.examples.am for
+### the use of the AM_CONDITIONAL have_pkg_config.
+
+AC_ARG_WITH(pkg-config,
+  AC_HELP_STRING([--with-pkg-config],
+                 [Use pkg-config in Makefile.examples.  If value is "check"
+                  then check for availability of the program in the system.
+                  Default value is "check".]),
+  [with_pkg_config="$withval"],
+  [with_pkg_config=check])
+
+if test "$with_pkg_config" = check ; then
+  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
+  test "$PKG_CONFIG" = found  &&  with_pkg_config=yes
+else 
+  if test "$with_pkg_config" != yes -o "$with_pkg_config" != no ; then
+    AC_MSG_WARN([--with-pkg-config must be given one of "yes", "no",])
+    AC_MSG_WARN([or "check".  Setting its value to "no".])
+    with_pkg_config=no
+  fi
+fi
+
+AM_CONDITIONAL(have_pkg_config, [test "$with_pkg_config" = yes])
+
+
 ### C++ binding
 
 MY_ARG_ENABLE(cxx,
