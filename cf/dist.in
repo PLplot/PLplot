@@ -24,7 +24,6 @@ CORE_C = \
 	plcvt.c \
 	pldtik.c \
 	plfill.c \
-	plfont.c \
 	plhist.c \
 	plline.c \
 	plmap.c \
@@ -33,7 +32,6 @@ CORE_C = \
 	plsdef.c \
 	plshade.c \
 	plstream.c \
-	plstring.c \
 	plsym.c \
 	pltick.c \
 	plvpor.c \
@@ -49,7 +47,6 @@ CORE_OBJ = \
 	plcvt$O \
 	pldtik$O \
 	plfill$O \
-	plfont$O \
 	plhist$O \
 	plline$O \
 	plmap$O \
@@ -58,7 +55,6 @@ CORE_OBJ = \
 	plsdef$O \
 	plshade$O \
 	plstream$O \
-	plstring$O \
 	plsym$O \
 	pltick$O \
 	plvpor$O \

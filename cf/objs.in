@@ -8,7 +8,6 @@ plctrl$O: plctrl.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plcvt$O: plcvt.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 pldtik$O: pldtik.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plfill$O: plfill.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
-plfont$O: plfont.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plhist$O: plhist.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plline$O: plline.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plmap$O: plmap.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
@@ -17,7 +16,6 @@ plpage$O: plpage.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plsdef$O: plsdef.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plshade$O: plshade.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plstream$O: plstream.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
-plstring$O: plstring.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plsym$O: plsym.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 pltick$O: pltick.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
 plvpor$O: plvpor.c plplotP.h plConfig.h plplot.h plstream.h pdf.h
