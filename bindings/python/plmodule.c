@@ -60,31 +60,7 @@
 */
 
 #include "plplot/plmodule.h"
-/*
-#include <Python.h>
-#include "plplot/plplot.h"	
-#include "plplot/plplotP.h"
-#include "plplot/arrayobject.h"	
 
-extern void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-	                             PLFLT scale, PLFLT dx, PLFLT dy);
-
-#if defined(PL_DOUBLE) || defined(DOUBLE)
-#define PL_ARGS(a, b) (a)
-#define PyArray_PLFLT PyArray_DOUBLE
-#else
-#define PL_ARGS(a, b) (b)
-#define PyArray_PLFLT PyArray_FLOAT
-#endif
-
-#define TRY(E) if(! (E)) return NULL
-
-static int pl_PyArray_AsFloatArray (PyObject **, PLFLT **, PLINT *);
-static int pl_PyArray_AsIntArray (PyObject **, PLINT **, PLINT *);
-static int pl_PyArray_AsFloatMatrix (PyObject **, PLINT*, PLINT*, PLFLT ***);
-static int pl_PyList_AsStringArray (PyObject *, char ***, int *);
-static int pl_PyList_SetFromStringArray (PyObject *, char **, int);
-*/
 /*static*/ int pl_PyArray_AsFloatArray(PyObject **op, PLFLT **pitems, PLINT *pn)
 {
     PyArrayObject *mp;
