@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 
 /* Pick one ... */
 
-/*	r    = 1. - ( (float) i / (float) NPTS ); */
+/*	r    = 1. - ( (PLFLT) i / (PLFLT) NPTS ); */
 	r    = z[i];
 
 	x[i] = r * cos( 2. * PI * 6. * i / NPTS );
@@ -88,7 +88,7 @@ void test_poly(int k)
 {
     PLFLT *x, *y, *z;
     int i, j;
-    float pi, two_pi;
+    PLFLT pi, two_pi;
     int draw[][4] = { { 1, 1, 1, 1 },
 		      { 1, 0, 1, 0 },
 		      { 0, 1, 0, 1 },

@@ -143,10 +143,10 @@ main(int argc, char *argv[])
     }
     f2mnmx(z, nx, ny, &zmin, &zmax);
     for (i = 0; i < ns; i++)
-	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (float) ns;
+	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (PLFLT) ns;
 
     for (i = 0; i < ns+1; i++)
-	shedge[i] = zmin + (zmax - zmin) * (float) i / (float) ns;
+	shedge[i] = zmin + (zmax - zmin) * (PLFLT) i / (PLFLT) ns;
 
 /* Set up coordinate grids */
 
