@@ -23,9 +23,12 @@
  * express or implied warranty.
 \*----------------------------------------------------------------------*/
 
+#define DEBUG
+
 #include "plserver.h"
 #include "tkConfig.h"
 #include "tk.h"
+#include "xwin.h"
 
 #define NDEV	20		/* Max number of output device types */
 #define plframe_cmd(code) \
@@ -37,6 +40,9 @@
  */
 
 typedef struct {
+
+    /* This is stuff taken from tkFrame.c */
+
     Tk_Window tkwin;		/* Window that embodies the frame.  NULL
 				 * means that the window has been destroyed
 				 * but the data structures haven't yet been
@@ -66,20 +72,37 @@ typedef struct {
     int flags;			/* Various flags;  see below for
 				 * definitions. */
 
-    /* The rest are all additions to frame */
+    /* These are new to plframe widgets */
 
-    char *client;		/* Client main window.  Malloc'ed. */
-    PLRDev *plr;		/* Renderer state information.  Malloc'ed */
+    /* control stuff */
+
+    int tkwin_initted;		/* Set first time widget is mapped */
+    int plplot_initted;		/* Set first time plplot is initialized */
     PLINT ipls;			/* Plplot stream number */
     PLINT ipls_save;		/* Plplot stream number, save files */
 
+    char *client;		/* Client main window.  Malloc'ed. */
+    PLRDev *plr;		/* Renderer state information.  Malloc'ed */
+    XColor *bgColor;		/* Background color */
+
+    /* Used to distinguish resize from expose events */
+
     int prevWidth;		/* Previous window width */
     int prevHeight;		/* Previous window height */
+
+    /* These are used in building menu for "save" command */
+
+    char **devDesc;		/* Descriptive names for file-oriented 
+				 * devices.  Malloc'ed. */
+    char **devName;		/* Keyword names of file-oriented devices.
+				 * Malloc'ed. */
+
+    /* Used in selecting & modifying plot or device area */
+
     GC xorGC;			/* GC used for rubber-band drawing */
     XPoint pts[5];		/* Points for rubber-band drawing */
     int continue_draw;		/* Set when doing rubber-band draws */
     Cursor draw_cursor;		/* cursor used for drawing */
-    int once_mapped;		/* Set first time widget is mapped */
     PLFLT pxl, pxr, pyl, pyr;	/* Bounds on plot viewing area */
     PLFLT dxl, dxr, dyl, dyr;	/* Bounds on device viewing area */
     char *yScrollCmd;		/* Command prefix for communicating with
@@ -88,10 +111,6 @@ typedef struct {
     char *xScrollCmd;		/* Command prefix for communicating with
 				 * horizontal scrollbar.  NULL means no
 				 * command to issue.  Malloc'ed. */
-    char **devDesc;		/* Descriptive names for file-oriented 
-				 * devices.  Malloc'ed. */
-    char **devName;		/* Keyword names of file-oriented devices.
-				 * Malloc'ed. */
 } PlFrame;
 
 /*
@@ -121,7 +140,7 @@ typedef struct {
  */
 
 #define DEF_PLFRAME_BG_COLOR		"Black"
-#define DEF_PLFRAME_BG_MONO		"Black"
+#define DEF_PLFRAME_BG_MONO		"White"
 #define DEF_PLFRAME_BORDER_WIDTH	"0"
 #define DEF_PLFRAME_CURSOR		((char *) NULL)
 #define DEF_PLFRAME_GEOMETRY		((char *) NULL)
@@ -133,9 +152,17 @@ typedef struct {
 
 static Tk_ConfigSpec configSpecs[] = {
     {TK_CONFIG_BORDER, "-background", "background", "Background",
-	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, border), TK_CONFIG_COLOR_ONLY},
+	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, border),
+	TK_CONFIG_COLOR_ONLY},
+    {TK_CONFIG_COLOR, (char *) NULL, (char *) NULL, (char *) NULL,
+	(char *) NULL, Tk_Offset(PlFrame, bgColor),
+	TK_CONFIG_COLOR_ONLY},
     {TK_CONFIG_BORDER, "-background", "background", "Background",
-	DEF_PLFRAME_BG_MONO, Tk_Offset(PlFrame, border), TK_CONFIG_MONO_ONLY},
+	DEF_PLFRAME_BG_MONO, Tk_Offset(PlFrame, border),
+	TK_CONFIG_MONO_ONLY},
+    {TK_CONFIG_COLOR, (char *) NULL, (char *) NULL, (char *) NULL,
+	(char *) NULL, Tk_Offset(PlFrame, bgColor),
+	TK_CONFIG_MONO_ONLY},
     {TK_CONFIG_SYNONYM, "-bd", "borderWidth", (char *) NULL,
 	(char *) NULL, 0, 0},
     {TK_CONFIG_SYNONYM, "-bg", "background", (char *) NULL,
@@ -179,6 +206,7 @@ static void  MapPlFrame 	(ClientData);
 
 /* These are invoked by PlFrameWidgetCmd to process widget commands */
 
+static int   Cmd		(Tcl_Interp *, PlFrame *, int, char **);
 static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
 static int   Draw		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Info		(Tcl_Interp *, PlFrame *, int, char **);
@@ -312,7 +340,9 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->continue_draw = 0;
     plFramePtr->ipls = 0;
     plFramePtr->ipls_save = 0;
-    plFramePtr->once_mapped = 0;
+    plFramePtr->tkwin_initted = 0;
+    plFramePtr->plplot_initted = 0;
+    plFramePtr->bgColor = NULL;
     plFramePtr->yScrollCmd = NULL;
     plFramePtr->xScrollCmd = NULL;
     plFramePtr->pxl = 0.;
@@ -430,6 +460,12 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	}
     }
 
+/* cmd -- issue a command to the plplot library */
+
+    else if ((c == 'c') && (strncmp(argv[1], "cmd", length) == 0)) {
+	result = Cmd(interp, plFramePtr, argc-2, argv+2);
+    }
+
 /* configure */
 
     else if ((c == 'c') && (strncmp(argv[1], "configure", length) == 0)) {
@@ -482,15 +518,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 /* info -- returns requested info */
 
     else if ((c == 'i') && (strncmp(argv[1], "info", length) == 0)) {
-	if (argc == 2) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " info option\"", (char *) NULL);
-	    result = TCL_ERROR;
-	    goto done;
-	}
-	else {
-	    result = Info(interp, plFramePtr, argc-2, argv+2);
-	}
+	result = Info(interp, plFramePtr, argc-2, argv+2);
     }
 
 /* orient -- Set plot orientation */
@@ -591,7 +619,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
-	 "\":  must be attach, configure, draw, detach, dump, info, ",
+	 "\":  must be attach, cmd, configure, draw, detach, info, ",
 	 "openfifo, orient, page, read, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
@@ -631,6 +659,9 @@ DestroyPlFrame(ClientData clientData)
 
     if (plFramePtr->border != NULL) {
 	Tk_Free3DBorder(plFramePtr->border);
+    }
+    if (plFramePtr->bgColor != NULL) {
+	Tk_FreeColor(plFramePtr->bgColor);
     }
     if (plFramePtr->geometry != NULL) {
 	ckfree(plFramePtr->geometry);
@@ -674,7 +705,8 @@ DestroyPlFrame(ClientData clientData)
 /* Tell plplot to clean up */
 
     plend();
-    plFramePtr->once_mapped = 0;
+    plFramePtr->tkwin_initted = 0;
+    plFramePtr->plplot_initted = 0;
 }
 
 /*
@@ -773,15 +805,17 @@ PlFrameInit(ClientData clientData)
     plFramePtr->flags &= REFRESH_PENDING;
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
 
-/* Plplot initialization */
+/* First-time initialization */
+/* Plplot calls to set driver and related variables are made. */
+/* The call to plinit() must come AFTER this section of code */
+/* This part will require modification to support >1 embedded widgets */
 
-    if ( ! plFramePtr->once_mapped) {
+    if ( ! plFramePtr->tkwin_initted) {
 	plsdev("xwin");
 	plsxwin(Tk_WindowId(tkwin));
 	plspause(0);
-	plinit();
-	pladv(0);
-	plFramePtr->once_mapped = 1;
+
+	plFramePtr->tkwin_initted = 1;
 	plFramePtr->prevWidth = Tk_Width(tkwin);
 	plFramePtr->prevHeight = Tk_Height(tkwin);
 
@@ -861,6 +895,13 @@ DisplayPlFrame(ClientData clientData)
 		plFramePtr->borderWidth, plFramePtr->relief);
     }
 
+/* If plplot not initialized yet, return and cancel pending refresh */
+
+    if ( ! plFramePtr->plplot_initted) {
+	plFramePtr->flags &= ~REFRESH_PENDING;
+	return;
+    }
+
 /* All refresh events */
 
     if (plFramePtr->flags & REFRESH_PENDING) {
@@ -909,6 +950,84 @@ DisplayPlFrame(ClientData clientData)
 * Routines to process widget commands.
 \*----------------------------------------------------------------------*/
 
+/*----------------------------------------------------------------------*\
+* Cmd
+*
+* Processes "cmd" widget command.
+* Handles commands that go more or less directly to the plplot library.
+* This function will probably become much larger, as additional direct
+* plplot commands are supported.
+\*----------------------------------------------------------------------*/
+
+static int
+Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
+    int argc, char **argv)
+{
+    int length;
+    char c;
+    int result = TCL_OK;
+
+/* no option -- return list of available plplot commands */
+
+    if (argc == 0) {
+	Tcl_SetResult(interp, "init setopt", TCL_VOLATILE);
+	return TCL_OK;
+    }
+
+    c = argv[0][0];
+    length = strlen(argv[0]);
+
+/* init -- starts the library up and advances to the first page */
+
+    if ((c == 'i') && (strncmp(argv[0], "init", length) == 0)) {
+	if (argc > 1) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], (char *) NULL);
+	    result = TCL_ERROR;
+	}
+	else if ( ! plFramePtr->tkwin_initted) {
+	    Tcl_AppendResult(interp, "widget creation must precede plplot",
+		    "init command", (char *) NULL);
+	    result = TCL_ERROR;
+	}
+	else {
+	    plFramePtr->plplot_initted = 1;
+	    plinit();
+	    pladv(0);
+	}
+    }
+
+/* setopt -- set a plplot option (command-line syntax) */
+/* Just calls plSetInternalOpt() */
+
+    else if ((c == 's') && (strncmp(argv[0], "setopt", length) == 0)) {
+	if (argc < 2 || argc > 3) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], " option ?argument?\"", (char *) NULL);
+	    result = TCL_ERROR;
+	}
+	else {
+#ifdef DEBUG
+	    fprintf(stderr, "Processing command: %s\n", argv[1]);
+	    if (argv[2] != NULL)
+		fprintf(stderr, "Processing option: %s\n", argv[2]);
+#endif
+	    plSetInternalOpt(argv[1], argv[2]);
+	}
+    }
+
+/* unrecognized */
+
+    else {
+	Tcl_AppendResult(interp, "bad option to \"cmd\": must be ", 
+	 "init or setopt", (char *) NULL);
+
+	result = TCL_ERROR;
+    }
+
+    return result;
+}
+
 /*
  *---------------------------------------------------------------------------
  *
@@ -935,6 +1054,7 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		 int argc, char **argv, int flags)
 {
     int i=0, j=0;
+    PLColor plbg;
 
     dbug_enter("ConfigurePlFrame");
 #ifdef DEBUG_ENTER
@@ -950,7 +1070,21 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	return TCL_ERROR;
     }
 
+/* Set background color.  Need to store in the plplot stream structure */
+/* since redraws are handled from the plplot X driver. */
+
     Tk_SetBackgroundFromBorder(plFramePtr->tkwin, plFramePtr->border);
+    PLColor_from_XColor(&plbg, plFramePtr->bgColor);
+    plscolbg(plbg.r, plbg.g, plbg.b);
+#ifdef DEBUG
+    fprintf(stderr, "Background XColor is r: %x, g: %x, b: %x\n",
+	    plFramePtr->bgColor->red,
+	    plFramePtr->bgColor->green,
+	    plFramePtr->bgColor->blue);
+    fprintf(stderr, "Background PLColor is r: %x, g: %x, b: %x\n",
+	    plbg.r, plbg.g, plbg.b);
+#endif
+
     Tk_SetInternalBorder(plFramePtr->tkwin, plFramePtr->borderWidth);
     if (plFramePtr->geometry != NULL) {
 	int height, width;
@@ -1065,9 +1199,19 @@ static int
 Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int i, result = TCL_OK;
-    char c = argv[0][0];
-    int length = strlen(argv[0]);
+    int i, length;
+    char c;
+    int result = TCL_OK;
+
+/* no option -- return list of available info commands */
+
+    if (argc == 0) {
+	Tcl_SetResult(interp, "devices", TCL_VOLATILE);
+	return TCL_OK;
+    }
+
+    c = argv[0][0];
+    length = strlen(argv[0]);
 
 /* devices -- return list of supported device types */
 
@@ -1082,8 +1226,8 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* unrecognized */
 
     else {
-	Tcl_AppendResult(interp, "bad option \"", argv[0],
-	 "\":  info options are: devices", (char *) NULL);
+	Tcl_AppendResult(interp, "bad option to \"info\": must be ", 
+	 "devices", (char *) NULL);
 
 	result = TCL_ERROR;
     }
@@ -1182,16 +1326,14 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* page <xmin> <ymin> <xmax> <ymax> -- set window into device space */
 
+    if (argc < 4) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 " page xmin ymin xmax ymax\"", (char *) NULL);
+	return TCL_ERROR;
+    } 
     else {
-	if (argc < 4) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-			     " page xmin ymin xmax ymax\"", (char *) NULL);
-	    return TCL_ERROR;
-	} 
-	else {
-	    gbox(&xl, &yl, &xr, &yr, argv);
-	    plsdidev(xl, yl, xr, yr);
-	}
+	gbox(&xl, &yl, &xr, &yr, argv);
+	plsdidev(xl, yl, xr, yr);
     }
 
     plFramePtr->dxl = xl;
