@@ -9,9 +9,10 @@
 # -----------------------------------------------------------------------------
 
 # Cleanup
+# Get rid of directories, then files.
 
 clean:
-	-if test -d shared; then $(RM) -r shared; fi
+	-$(RM) -rf shared plplot ti_files
 	-$(RM) *
 
 distclean: clean
