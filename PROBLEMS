@@ -2,26 +2,57 @@ This file is designed to keep track of various problem fixes and new
 features being worked on for the current PLplot CVS HEAD version and who is
 taking responsibility for following up on each item.
 
-The items are divided into 4 lists that are classified as major (essential,
-and "would-be-nice") and minor (essential, and "would-be-nice")
+The items are divided into Essential and "Would be nice" (i.e., release
+critical versus not) with each of those categories further classified into
+minor or major effort required.
 
-The "major" versus "minor" classification has nothing to do with the impact
-of the item.  Instead, this classification is an attempt to estimate whether
-a major or minor amount of work will be required to fix the problem, add a
-feature, etc.  
+Essential, major effort required.
 
-The "essential" versus "would-be-nice" classification trys to estimate
-whether the problem fix or new feature is release critical or not. 
+* The new Unix/Linux configuration scheme must be tested for as wide a
+variety of Unix/Linux platforms as possible.  This is the responsibility of
+everybody on the development team with access to different platforms.
 
-Major, essential
+* -dev tk problem finding the tcl scripts.  One of Joao, Maurice, or Geoffrey?
 
-*  Although additional help would be most appreciated, Alan is taking
-ultimatate responsibility for getting the library linking in good shape
-cross-platform.  This includes rationalizing the libraries some more, static
-drivers on Linux, static libraries on Linux, plus generalization of the
-Linux solution to cross-platform.
+Essential, minor effort required.
 
-Major, "would be nice"
+* http://sourceforge.net/mailarchive/message.php?msg_id=1785861 documents
+the many minor memory leaks found by valgrind throughout the dynloader area.
+Anybody with good understanding of that code section?
+
+* Problems with plplot-test.sh and test_octave.sh segfaulting on any
+attempt to run the "x" examples.  Joao.
+
+* Linking problems on xtk0[124].  For static devices these work fine, but
+  for dynamic devices there are problems.  Alan
+
+* Move to modern autoconf API.  There are lots of warnings now about the
+deprecated functions that we use.
+
+* plplot-config is currently not supported under the autotools approach. We
+should bring this back (including targets for libplplotcxx, f77, and tcltk),
+but to make it cross-platform we should put in a warning that the results
+are meant to be used with plplot_libtool.  Alan
+
+* Alan has some documentation backlog to clear.
+
+* If x08.tcl (or any other multi-page example) is executed first, then the
+first page is skipped.
+
+"Would be nice", major effort required.
+
+* Finish Java API or else completely reimplement it with swig (which might
+be a much faster way of solving the problem).  Also, Java currently
+unimplemented with new configuration approach, but that is straightforward
+to do once the Java API problem is sorted out.
+
+* Sort out state problems in repository.  These make every merge of two
+different branchs or the -D (date) option on cvs commands problematic since
+deleted files with the wrong state information are brought back like zombies
+rising from the grave.....;-) Note that the cvs permissions problems
+detailed below should also be fixed at the same time.  Maurice.
+
+* Make our documentation buildable on RH 7.3?  Alan
 
 * Maurice plans to finish his changes to implement handling strings as
 strings in the metafile format.
@@ -42,65 +73,40 @@ supported python interface for their pyqt GUI work. They require two output
 devices (one for the GUI and one to store results more permanently).  This
 is possible with -dev tk.  If a simple solution for the pyqt GUI following
 what is done for the plframe widget for -dev tk is possible, then this item
-should be reclassified to minor, "would be nice"
+should be reclassified to "Would be nice", minor effort.
 
-Minor, essential.
-
-* plplot-config needs flags for linking in libplplottcltk and libtclmatrix
-if a user is developing apps that directly reference symbols in those
-libraries.
-
-* Alan has some documentation backlog to clear.
-
-* If x08.tcl (or any other multi-page example) is executed first, then the
-first page is skipped.
-
-* ./xtk02 -f tk02
-invalid command name "Pltkwin"
-    while executing
-"Pltkwin .plw"
-    (file "tk02" line 48)
-    invoked from within
-"source tk02"
-
-and similarly for tk04.
+"Would be nice", minor effort required.
 
 * Permissions problem with generated plplot-config and plplot-test.sh in
-plplot/tmp.  How do you get autoconf to generate the files with the correct
-permissions?
+plplot/test.  Using new autoconf API allows you to set permissions of results
+so this will automatically get sorted out when we move to a modern autoconf
+API.  Also, this issue only affect "make check" environment since the
+installed versions should have the correct permissions using the autotools
+approach.
 
 * bindings/tk/plcolor.tcl has execute permissions that should be removed.
-examples/tcl/stats.log should be made world-readable.  Both these permission
-problems need access to the CVS repository to fix.
-
-* website update.  In particular Joao is experimenting with possibilities
-at http://www.fe.up.pt/~jcard/plplot-www/index.html which we should polish
-and bring to the official site before our next release.
-
-Minor, "would be nice"
+examples/tcl/stats.log should be made world-readable.  Both these cvs 
+permission problems need access to the CVS repository to fix and should be
+done at the same time as the CVS state changes mentioned above.  However,
+under autotools you can change the permissions at will in the installed
+product so this issue only affects "make check" for uninstalled testing.
 
 * Alan plans to try to adjust our python interface from swig-1.3.1[1-3] to
 swig-2.0 if that is released before the PLplot release.
 
-* Joao is working on an update to plotfc3d.c to also have contour lines.
-Definitely would be nice!
-
-* Alan has documented on the plplot devel list (but cannot take
-responsibility for) many minor memory leaks found by valgrind throughout the
-dynloader area.  These should be cleaned up.
-
-* Finish Java API or else completely reimplement it with swig (which might
-be a much faster way of solving the problem).
-
 * debian subdirectory made part of HEAD so can build debs directly
-from HEAD.
+from HEAD.  Careful here! Any further cvs merges are going to have to
+wait getting the state problems in our cvs repository sorted out.
 
-* fortran, C++, and octave "x" examples made consistent with the C, tcl,
-Java, and python examples as a test that the various interfaces to PLplot
-produce the same results.
+* fortran, and C++ examples made consistent with the C, tcl, Java, python,
+and octave examples as a test that the various interfaces to PLplot produce
+the same results.  Those latter interface examples currently need some
+maintenance as well due to the C example changes done recently by Joao.
 
 * fortran API used to be our most complete non-C interface, but now it has
 fallen behind python (and would also fall behind java and perl if/when those
 interfaces become based on swig).  We need a volunteer (or volunteers) to
 make sure all our additions/changes to the common API over the last few
 years are implemented in fortran. 
+
+* PLplot documentation of python, java, etc., interfaces.

@@ -6,7 +6,10 @@
 	* bindings/t*/pkgIndex.tcl.in: search for Pltk and Plplotter entry
 	  points in libplplot if a search in the dynamic drivers fails.
 	  This is required for static drivers since in that case the entry 
-	  points are put in libplplot.
+	  points (and drivers) are put in libplplot.
+	  
+	* PROBLEMS: reorganization and updating to help set our priorities
+	  for what must be accomplished before the next release.
 
 2002-12-06  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
