@@ -39,10 +39,10 @@ libraries = ["@PLLIB_NAME@@LIB_TAG@"]
 # Done with --flat or not plplot logic to decide extra_link_args, include_dirs,
 # library_dirs and libraries.
 
-# Now sort out the LDC_LIBS mixture of -l and -L options
-LDC_LIBS = "@LIBS@"
-ldc_libs_list = LDC_LIBS.split(" ")
-for option in ldc_libs_list:
+# Now sort out the LIBS mixture of -l and -L options
+libs = "@LIBS@"
+libs_list = libs.split(" ")
+for option in libs_list:
     if option == "":
 	# Do nothing if any extra blank space makes for empty string
 	continue
@@ -51,7 +51,19 @@ for option in ldc_libs_list:
     elif option[0:2] =="-l":
 	libraries.append(option[2:len(option)])
     else:
-	raise "bad LDC_LIBS"
+	raise "bad LIBS"
+
+# Now sort out other additions to include_dirs
+incs = "@INCS@"
+incs_list = incs.split(" ")
+for option in incs_list:
+    if option == "":
+	# Do nothing if any extra blank space makes for empty string
+	continue
+    elif option[0:2] == "-I":
+	include_dirs.append(option[2:len(option)])
+    else:
+	raise "bad INCS"
 
 #Now get on with usual setup.py stuff.
 module1 = Extension( "plplotcmodule", 
