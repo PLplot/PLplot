@@ -516,6 +516,14 @@ else
 fi
 
 
+# check whether --enable-drivers was given
+enableval="$enable_drivers"
+if test -n "$enableval"; then
+  :
+else
+  enable_drivers="yes"
+fi
+
 # check whether --enable-f77 was given
 enableval="$enable_f77"
 if test -n "$enableval"; then
@@ -530,6 +538,14 @@ if test -n "$enableval"; then
   :
 else
   enable_CXX="yes"
+fi
+
+# check whether --enable-tcl was given
+enableval="$enable_tcl"
+if test -n "$enableval"; then
+  :
+else
+  enable_tcl="yes"
 fi
 
 
@@ -1339,7 +1355,7 @@ enableval="$enable_xwin"
 if test -n "$enableval"; then
   :
 else
-  enable_xwin="yes"
+  enable_xwin=$enable_drivers
 fi
 
 
@@ -1645,14 +1661,6 @@ fi
 # tcl.h
 # -----------------------------------------------------------------------
 
-# check whether --enable-tcl was given
-enableval="$enable_tcl"
-if test -n "$enableval"; then
-  :
-else
-  enable_tcl=$enable_xwin
-fi
-
 header="tcl.h"
 
 if test "$enable_tcl" = "yes"; then
@@ -1739,9 +1747,12 @@ enableval="$enable_dp"
 if test -n "$enableval"; then
   :
 else
-  enable_dp=$enable_tcl
+  enable_dp=$enable_drivers
 fi
 
+if test "$enable_tcl" = "no"; then
+    enable_dp="no"
+fi
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPINCDIR"; then
@@ -1912,9 +1923,12 @@ enableval="$enable_tk"
 if test -n "$enableval"; then
   :
 else
-  enable_tk=$enable_tcl
+  enable_tk=$enable_drivers
 fi
 
+if test "$enable_tcl" = "no"; then
+    enable_tk="no"
+fi
 header="tk.h"
 
 if test "$enable_tk" = "yes"; then
@@ -2811,23 +2825,25 @@ cat cf/miscdemo.in	>>tmp/Makedemo.in
 
 # --------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
+#
+# You can enable/disable drivers either by the command line
+# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
+# (remember to use underscores instead of dashes here).  You can disable
+# all drivers by default by using --disable-drivers.
 # --------------------------------------------------------------------
 
 
 
 
-# Including a driver in this list includes it by default.  Maybe not
-# complete, but most of the devices of interest under Unix.  You can
-# enable/disable drivers either by the command line (--enable-<driver> or
-# --disable-<driver>) or via the cf_plplot.in file (remember to use
-# underscores instead of dashes here).
+
+
 
 # check whether --enable-plmeta was given
 enableval="$enable_plmeta"
 if test -n "$enableval"; then
   :
 else
-  enable_plmeta="yes"
+  enable_plmeta=$enable_drivers
 fi
 
 if test "$enable_plmeta" = "yes"; then
@@ -2850,7 +2866,7 @@ enableval="$enable_null"
 if test -n "$enableval"; then
   :
 else
-  enable_null="yes"
+  enable_null=$enable_drivers
 fi
 
 if test "$enable_null" = "yes"; then
@@ -2873,7 +2889,7 @@ enableval="$enable_xterm"
 if test -n "$enableval"; then
   :
 else
-  enable_xterm="yes"
+  enable_xterm=$enable_drivers
 fi
 
 if test "$enable_xterm" = "yes"; then
@@ -2896,7 +2912,7 @@ enableval="$enable_tek4010"
 if test -n "$enableval"; then
   :
 else
-  enable_tek4010="yes"
+  enable_tek4010=$enable_drivers
 fi
 
 if test "$enable_tek4010" = "yes"; then
@@ -2919,7 +2935,7 @@ enableval="$enable_tek4107"
 if test -n "$enableval"; then
   :
 else
-  enable_tek4107="yes"
+  enable_tek4107=$enable_drivers
 fi
 
 if test "$enable_tek4107" = "yes"; then
@@ -2942,7 +2958,7 @@ enableval="$enable_mskermit"
 if test -n "$enableval"; then
   :
 else
-  enable_mskermit="yes"
+  enable_mskermit=$enable_drivers
 fi
 
 if test "$enable_mskermit" = "yes"; then
@@ -2965,7 +2981,7 @@ enableval="$enable_conex"
 if test -n "$enableval"; then
   :
 else
-  enable_conex="yes"
+  enable_conex=$enable_drivers
 fi
 
 if test "$enable_conex" = "yes"; then
@@ -2988,7 +3004,7 @@ enableval="$enable_vlt"
 if test -n "$enableval"; then
   :
 else
-  enable_vlt="yes"
+  enable_vlt=$enable_drivers
 fi
 
 if test "$enable_vlt" = "yes"; then
@@ -3011,7 +3027,7 @@ enableval="$enable_versaterm"
 if test -n "$enableval"; then
   :
 else
-  enable_versaterm="yes"
+  enable_versaterm=$enable_drivers
 fi
 
 if test "$enable_versaterm" = "yes"; then
@@ -3034,7 +3050,7 @@ enableval="$enable_dg300"
 if test -n "$enableval"; then
   :
 else
-  enable_dg300="yes"
+  enable_dg300=$enable_drivers
 fi
 
 if test "$enable_dg300" = "yes"; then
@@ -3057,7 +3073,7 @@ enableval="$enable_ps"
 if test -n "$enableval"; then
   :
 else
-  enable_ps="yes"
+  enable_ps=$enable_drivers
 fi
 
 if test "$enable_ps" = "yes"; then
@@ -3080,7 +3096,7 @@ enableval="$enable_xfig"
 if test -n "$enableval"; then
   :
 else
-  enable_xfig="yes"
+  enable_xfig=$enable_drivers
 fi
 
 if test "$enable_xfig" = "yes"; then
@@ -3103,7 +3119,7 @@ enableval="$enable_ljii"
 if test -n "$enableval"; then
   :
 else
-  enable_ljii="yes"
+  enable_ljii=$enable_drivers
 fi
 
 if test "$enable_ljii" = "yes"; then
@@ -3126,7 +3142,7 @@ enableval="$enable_hp7470"
 if test -n "$enableval"; then
   :
 else
-  enable_hp7470="yes"
+  enable_hp7470=$enable_drivers
 fi
 
 if test "$enable_hp7470" = "yes"; then
@@ -3149,7 +3165,7 @@ enableval="$enable_hp7580"
 if test -n "$enableval"; then
   :
 else
-  enable_hp7580="yes"
+  enable_hp7580=$enable_drivers
 fi
 
 if test "$enable_hp7580" = "yes"; then
@@ -3172,7 +3188,7 @@ enableval="$enable_lj_hpgl"
 if test -n "$enableval"; then
   :
 else
-  enable_lj_hpgl="yes"
+  enable_lj_hpgl=$enable_drivers
 fi
 
 if test "$enable_lj_hpgl" = "yes"; then
@@ -3195,7 +3211,7 @@ enableval="$enable_imp"
 if test -n "$enableval"; then
   :
 else
-  enable_imp="yes"
+  enable_imp=$enable_drivers
 fi
 
 if test "$enable_imp" = "yes"; then
@@ -3218,7 +3234,7 @@ enableval="$enable_xwin"
 if test -n "$enableval"; then
   :
 else
-  enable_xwin="yes"
+  enable_xwin=$enable_drivers
 fi
 
 if test "$enable_xwin" = "yes"; then
@@ -3241,7 +3257,7 @@ enableval="$enable_tk"
 if test -n "$enableval"; then
   :
 else
-  enable_tk="yes"
+  enable_tk=$enable_drivers
 fi
 
 if test "$enable_tk" = "yes"; then
@@ -3264,7 +3280,7 @@ enableval="$enable_dp"
 if test -n "$enableval"; then
   :
 else
-  enable_dp="yes"
+  enable_dp=$enable_drivers
 fi
 
 if test "$enable_dp" = "yes"; then
