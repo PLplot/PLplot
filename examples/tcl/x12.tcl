@@ -12,7 +12,6 @@ proc x12 {{w loopback}} {
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 1980.0 1990.0 0.0 35.0
-    $w cmd plcol0 1
     $w cmd plbox "bc" 1.0 0 "bcnv" 10.0 0
     $w cmd plcol0 2
     $w cmd pllab "Year" "Widget Sales (millions)" "#frPLplot Example 12"
@@ -33,6 +32,8 @@ proc x12 {{w loopback}} {
 	set string [format "%d" [expr 1980 + $i] ]
 	$w cmd plmtex "b" 1.0 [expr ($i + 1) * .1 - .05] 0.5 $string
     }
+# Restore defaults
+    $w cmd plcol0 1
 }
 
 proc plfbox  {w x0 y0} {
