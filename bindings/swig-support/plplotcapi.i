@@ -998,7 +998,6 @@ plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 /* Functions for converting between HLS and RGB color space */
 
-#ifndef SWIG_JAVA
 void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
@@ -1006,7 +1005,6 @@ void
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
 /* Wait for graphics input event and translate to world coordinates */
-#endif
 
 #ifndef SWIG_JAVA
 DOC(plGetCursor, "Wait for graphics input event and translate to world coordinates")

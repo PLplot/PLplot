@@ -793,4 +793,16 @@ public void OptUsage() {
     plplotjavac.plOptUsage();
 }
 
+public void HLS_RGB(double h, double l, double s, double[] r, double[] g, double[] b) {
+    if (set_stream() == -1) return;
+    plplotjavac.plHLS_RGB(h,l,s,r,g,b);
+}
+
+public void RGB_HLS(double r, double g, double b, double[] h, double[] l, double[] s) {
+    if (set_stream() == -1) return;
+    plplotjavac.plRGB_HLS(r,g,b,h,l,s);
+}
+
+
+
 }

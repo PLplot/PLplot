@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2002  Alan W. Irwin
-// Copyright (C) 2004  Andrew Ross
+// Copyright (C) 2004,2005  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -36,6 +36,8 @@ import java.text.*;
 
 class x02 {
 
+    private  PLStream pls;
+
     public static void main( String[] args ) 
     {
         x02 x = new x02( args );
@@ -45,27 +47,118 @@ class x02 {
     {
         int i, j;
         double vmin, vmax;
-        NumberFormat nf = NumberFormat.getNumberInstance();
 
-        PLStream pls = new PLStream();
+        pls = new PLStream();
 
-    // Divide screen into 16 regions.
-
-        pls.ssub(4, 4);
-
-    // Parse and process command line arguments.
+	// Parse and process command line arguments.
 
         pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
-    // Initialize plplot.
+	// Initialize plplot.
 
         pls.init();
+	demo1();
+	demo2();
+
+        pls.end();
+    }
+
+    void demo1()
+    {
+
+	pls.bop();
+
+	// Divide screen into 16 regions.
+
+        pls.ssub(4, 4);
+
+	draw_windows(16,0);
+
+	pls.eop();
+    }
+
+    void demo2()
+    {
+	// Set up cmap0
+	// Use 100 custom colors in addition to base 16
+	int[] r = new int[116];
+	int[] g = new int[116];
+	int[] b = new int[116];
+	int[] r1i = new int[1];
+	int[] g1i = new int[1];
+	int[] b1i = new int[1];
+	
+	// Min and max lightness values
+	double lmin = 0.15, lmax = 0.85;
+
+	int i;
+	
+	pls.bop();
+
+	// Divide screen into 100 regions.
+	pls.ssub(10,10);
+
+	for (i = 0; i <= 99; i++) {
+	    double h, l, s;
+	    double[] r1 = new double[1];
+	    double[] g1 = new double[1];
+	    double[] b1 = new double[1];
+
+    
+	    // Bounds on HLS, from plHLS_RGB() commentary --
+	    //	hue		[0., 360.]	degrees
+	    //	lightness	[0., 1.]	magnitude
+	    //	saturation	[0., 1.]	magnitude
+	    //
+	    
+	    // Vary hue uniformly from left to right
+	    h = (360. / 10. ) * ( i % 10 );
+	    // Vary lightness uniformly from top to bottom, between min & max
+	    l = lmin + (lmax - lmin) * (i / 10) / 9.;
+	    // Use max saturation
+	    s = 1.0;
+	    
+	    pls.HLS_RGB(h, l, s, r1, g1, b1);
+    
+	    r[i+16] = (int)(r1[0] * 255);
+	    g[i+16] = (int)(g1[0] * 255);
+	    b[i+16] = (int)(b1[0] * 255);
+	}
+  
+	// Load default cmap0 colors into our custom set
+	for (i = 0; i <= 15; i++) {
+	    pls.gcol0(i, r1i, g1i, b1i);
+	    r[i] = r1i[0];
+	    g[i] = g1i[0];
+	    b[i] = b1i[0];
+	}
+	
+
+	// Now set cmap0 all at once (faster, since fewer driver calls)
+	pls.scmap0(r, g, b);
+  
+	draw_windows( 100, 16 );
+	
+	pls.eop();
+
+    }
+
+    // --------------------------------------------------------------------
+    // draw_windows
+    //
+    // Draws a set of numbered boxes with colors according to cmap0 entry.
+    // --------------------------------------------------------------------
+    void draw_windows(int nw, int cmap0_offset) {
+	int i,j;
+	double vmin, vmax;
+        NumberFormat nf = NumberFormat.getNumberInstance();
+
 
         pls.schr(0.0, 3.5);
         pls.font(4);
 
-        for (i = 0; i <= 15; i++) {
-            pls.col0(i);
+        for (i = 0; i < nw; i++) {
+            pls.col0(i+cmap0_offset);
 
             String text = nf.format(i);
 
@@ -83,8 +176,6 @@ class x02 {
             pls.wid(1);
             pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
         }
-
-        pls.end();
     }
 }
 
