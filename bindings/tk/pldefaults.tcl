@@ -164,6 +164,7 @@ proc pldefaults {} {
 # Key shortcut definitions -- change them if you want!
 # Turn them into an empty string to disable.
 
+    global key_resume;		set key_resume		"Return"
     global key_zoom_select;	set key_zoom_select	"z"
     global key_zoom_back;	set key_zoom_back	"b"
     global key_zoom_forward;	set key_zoom_forward	"f"    
