@@ -918,8 +918,9 @@ AC_CONFIG_FILES([
 	utils/Makefile
 	scripts/Makefile
 	doc/Makefile
-	plplot.pc
-	plplot-double.pc
+	pkgcfg/Makefile	
+	pkgcfg/plplot.pc
+	pkgcfg/plplot-double.pc
 	doc/docbook/Makefile
 	doc/docbook/src/Makefile
 	doc/docbook/src/plplotdoc.xml

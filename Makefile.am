@@ -27,19 +27,13 @@ else
 drivers_src_dirs = drivers $(src_dirs)
 endif
 
-SUBDIRS = libltdl $(drivers_src_dirs) examples test utils scripts doc
+SUBDIRS = libltdl $(drivers_src_dirs) examples test utils scripts doc \
+          pkgcfg
 
 bin_SCRIPTS = plplot_libtool
 
 plplot_libtool: libtool
 	cp libtool plplot_libtool
-
-pkgconfigdir = $(libdir)/pkgconfig
-if with_double
-pkgconfig_DATA = plplot-double.pc
-else
-pkgconfig_DATA = plplot.pc
-endif
 
 docdir = $(datadir)/doc/plplot
 
