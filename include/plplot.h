@@ -473,9 +473,11 @@ typedef struct {
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
 #define    plmesh	c_plmesh
+#define    plmeshc	c_plmeshc
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
+#define    plot3dc	c_plot3dc
 #define    plsurf3d	c_plsurf3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
@@ -601,9 +603,11 @@ typedef struct {
 #define    c_plline3	plline3
 #define    c_pllsty	pllsty
 #define    c_plmesh	plmesh
+#define    c_plmeshc	plmeshc
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
+#define    c_plot3dc	plot3dc
 #define    c_plsurf3d	plsurf3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
@@ -1047,6 +1051,12 @@ plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
 void
 c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
 
+/* Plots a mesh representation of the function z[x][y] with contour */
+
+void
+c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+	  PLFLT *clevel, PLINT nlevel);
+
 /* Creates a new stream and makes it the default.  */
 
 void
@@ -1064,26 +1074,46 @@ void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
-/* definitions for the opt argument in plot3d() and plmesh() */
+/* Plots a 3-d representation of the function z[x][y] with contour. */
 
-#define DRAW_LINEX 0x01 /* draw lines parallel to the X axis */
-#define DRAW_LINEY 0x02 /* draw lines parallel to the Y axis */
+void
+c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT opt,
+	 PLFLT *clevel, PLINT nlevel);
+
+/* 
+ * definitions for the opt argument in plot3dc() and plsurf3d()
+ * 
+ * DRAW_LINEX must be 1 and DRAW_LINEY must be 2, because of legacy code!
+ */
+
+#define DRAW_LINEX  (1 << 0) /* draw lines parallel to the X axis */
+#define DRAW_LINEY  (1 << 1) /* draw lines parallel to the Y axis */
 #define DRAW_LINEXY (DRAW_LINEX | DRAW_LINEY) /* draw lines parallel to both the X and Y axis */
-#define MAG_COLOR 0x04 /* draw the mesh with a color dependent of the magnitude */
+#define MAG_COLOR   (1 << 2) /* draw the mesh with a color dependent of the magnitude */
+#define BASE_CONT   (1 << 3) /* draw contour plot at bottom xy plane */
+#define TOP_CONT    (1 << 4) /* draw contour plot at top xy plane */
+#define SURF_CONT   (1 << 5) /* draw contour plot at surface */
+#define DRAW_SIDES  (1 << 6) /* draw sides */
+#define FACETED     (1 << 7) /* draw outline for each square that makes up the surface */
+#define PLMESH      (1 << 8) /* draw mesh */
+
+  /*
+   *  valid options for plot3dc():
+   *
+   *  DRAW_SIDES, BASE_CONT, TOP_CONT (not yet),
+   *  MAG_COLOR, DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY.
+   *
+   *  valid options for plsurf3dc():
+   *
+   *  MAG_COLOR, BASE_CONT, SURF_CONT, FACETED, DRAW_SIDES.
+   */
 
 /* Plots the 3d surface representation of the function z[x][y]. */
 
 void
 c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	   PLINT opt, PLFLT *clevel, PLINT nlevel);
-
-/* definitions for the opt argument in plsurf3d() */
-
-#define SURF_CONT 0x10 /* draw contour plot at surface */
-#define BASE_CONT 0x20 /* draw contour plot at xy plane */
-#define DRAW_SIDES 0x40 /* draw sides */
-#define FACETED   0x80 /* draw outline for each square that makes up the surface */
-#define MAG_COLOR 0x04 /* draw the mesh with a color dependent of the magnitude */
 
 /* Set fill pattern directly. */
 
