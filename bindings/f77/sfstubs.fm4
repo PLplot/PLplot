@@ -1,6 +1,18 @@
+divert(-1)dnl
+!***********************************************************************
+!
+!  sfstubs.fm4
+!
+! This file contains all the fortran stub routines.
+! It must be passed through m4 before it becomes legal Fortran.
+!
 ! $Id$
+!
 ! $Log$
-! Revision 1.2  1994/04/08 12:27:25  mjl
+! Revision 1.3  1994/07/12 19:22:10  mjl
+! Various cleaning up and robustifications.
+!
+! Revision 1.2  1994/04/08  12:27:25  mjl
 ! Added missing variable declarations.
 !
 ! Revision 1.1  1994/03/30  07:29:40  mjl
@@ -10,14 +22,9 @@
 ! of either the single or double precision library without copying files.
 ! Files with .fm4 suffix must be run through m4 to become normal fortran
 ! files.
-!
-
 !***********************************************************************
-!
-!  sfstubs.f
-!
-!  This file contains all the fortran stub routines.
 
+divert(1)dnl
 include(fmacs.m4)dnl
 define(include_strings,{
 	integer maxlen
@@ -35,6 +42,13 @@ define(include_strings,{
 	common /zzplstr5/ string5
 	common /zzplstr6/ string6
 })dnl
+!***********************************************************************
+!
+!  sfstubs.f
+!
+!  This file contains all the fortran stub routines.
+!  {REAL} variables correspond to: REAL
+!
 !***********************************************************************
 
 	subroutine plsdev(dnam)
@@ -92,7 +106,7 @@ define(include_strings,{
 	subroutine plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub)
 
         implicit_none
-	REAL	x0, y0, xtick, ytick
+	REAL x0, y0, xtick, ytick
 	integer nxsub, nysub
 	character*(*) xopt,yopt
         include_strings
@@ -109,7 +123,7 @@ define(include_strings,{
 	subroutine plbox(xopt,xtick,nxsub,yopt,ytick,nysub)
 
         implicit_none
-	REAL	xtick, ytick
+	REAL xtick, ytick
 	integer nxsub, nysub
 	character*(*) xopt,yopt
         include_strings
@@ -127,7 +141,7 @@ define(include_strings,{
      &		    zopt,zlabel,ztick,nzsub)
 
         implicit_none
-	REAL	xtick, ytick, ztick
+	REAL xtick, ytick, ztick
 	character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
 	integer nxsub, nysub, nzsub
         include_strings
@@ -151,7 +165,7 @@ define(include_strings,{
 
         implicit_none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL	z(nx, ny), clevel(nlevel)
+	REAL z(nx, ny), clevel(nlevel)
 
 	call plcon07(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
@@ -163,7 +177,7 @@ define(include_strings,{
 
         implicit_none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL	z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
+	REAL z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
 
 	call plcon17(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -175,7 +189,7 @@ define(include_strings,{
 
         implicit_none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL	z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
+	REAL z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
 
 	call plcon27(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -187,8 +201,8 @@ define(include_strings,{
 
         implicit_none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL	z(nx, ny), clevel(nlevel)
-	REAL	tr(6)
+	REAL z(nx, ny), clevel(nlevel)
+	REAL tr(6)
 	common /plplot/ tr
 
 	call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
@@ -207,8 +221,8 @@ define(include_strings,{
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
-        REAL	shade_min, shade_max, sh_color
-	REAL	z(nx, ny), xmin, xmax, ymin, ymax
+        REAL shade_min, shade_max, sh_color
+	REAL z(nx, ny), xmin, xmax, ymin, ymax
         include_strings
 
 !	call plstrf2c(dnam, string1, maxlen)
@@ -234,8 +248,8 @@ define(include_strings,{
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
-        REAL	shade_min, shade_max, sh_color
-	REAL	z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
+        REAL shade_min, shade_max, sh_color
+	REAL z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
         include_strings
 
 !	call plstrf2c(dnam, string1, maxlen)
@@ -262,8 +276,8 @@ define(include_strings,{
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width, rectangular
-        REAL	shade_min, shade_max, sh_color
-	REAL	z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
+        REAL shade_min, shade_max, sh_color
+	REAL z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
         include_strings
 
 !	call plstrf2c(dnam, string1, maxlen)
@@ -298,7 +312,7 @@ define(include_strings,{
 	subroutine plmtex(side,disp,pos,xjust,text)
 
         implicit_none
-	REAL	disp, pos, xjust
+	REAL disp, pos, xjust
 	character*(*) side, text
         include_strings
 
@@ -314,7 +328,7 @@ define(include_strings,{
 	subroutine plptex(x,y,dx,dy,xjust,text)
 
         implicit_none
-	REAL	x, y, dx, dy, xjust
+	REAL x, y, dx, dy, xjust
 	character*(*) text
         include_strings
 
