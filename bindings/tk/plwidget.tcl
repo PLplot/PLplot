@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.12  1993/10/04 21:48:09  mjl
+# Revision 1.13  1993/10/06 19:50:45  mjl
+# Changed Form2d invocations to include a long description on each call.
+# Fixed the description of page setup parameters (mar, jx, jy, aspect).
+#
+# Revision 1.12  1993/10/04  21:48:09  mjl
 # Fixed "Save As" command under TK 3.3, broken because of the change in the
 # way glob works.  The old way was better.
 #
@@ -536,7 +540,7 @@ proc plw_zoom_enter {w} {
     set fn10 xmax
     set fn11 ymax
 
-    Form2d .e "window coordinates for zoom"
+    Form2d .e "Enter window coordinates for zoom.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner."
     tkwait window .e
 
     pl_view_select $w $fv00 $fv01 $fv10 $fv11
@@ -594,7 +598,7 @@ proc plw_page_enter {w} {
     set fn10 jx
     set fn11 jy
 
-    Form2d .e "area of page to use for plotting"
+    Form2d .e "Enter page setup parameters.  mar denotes the fractional page area on each side to use as a margin (0 to 0.5).  jx and jy are the fractional justification relative to the center (-0.5 to 0.5).  aspect is the page aspect ratio (0 preserves original aspect ratio)."
     tkwait window .e
 
     $w.plwin page $fv00 $fv01 $fv10 $fv11
