@@ -366,7 +366,7 @@ CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
 CHECK_PM(XML::Writer, xml_writer, [INFO])
 
 AC_MSG_CHECKING([for docbook2X specific module XML::DOM::Map])
-if test -f ${DOCBOOK2X_INC/-I/}/XML/DOM/Map.pm ; then
+if test -f ${DOCBOOK2X_INC#-I}/XML/DOM/Map.pm ; then
   has_db2xpm=yes
 else
   has_db2xpm=no
