@@ -1,10 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1995/01/09 21:48:34  mjl
+ * Revision 1.32  1995/01/10 09:37:00  mjl
+ * Fixed braindamage incurred last update.  Now switches to transparent
+ * background mode (no page fill) automatically if background color is white.
+ * Useful for including color EPSF files into TeX or whatever.
+ *
+ * Revision 1.31  1995/01/09  21:48:34  mjl
  * Fixed background color fill to cover the entire page, including margin
- * area.  Changed to skip background fill if pls->nobg is set.  You can set
- * pls->nobg by specifying a negative number for the background color.
- * Useful for including color EPSF files into a document.
+ * area.  
  *
  * Revision 1.30  1994/09/23  07:36:27  mjl
  * Now generates ps files with the correct PLplot version number written.
@@ -247,17 +250,25 @@ ps_init(PLStream *pls)
     fprintf(OF, "   } def\n");
 
 /* bop -  -- begin a new page */
+/* Only fill background if we are using color and if the bg isn't white */
 
     fprintf(OF, "/bop\n");
     fprintf(OF, "   {\n");
     fprintf(OF, "    /SaveImage save def\n");
-    if (pls->color && !pls->nobg) {
-	fprintf(OF, "    Z %d %d M %d %d D %d %d D %d %d D %d %d closepath\n",
-		XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN);
-	r = ((float) pls->cmap0[0].r) / 255.;
-	g = ((float) pls->cmap0[0].g) / 255.;
-	b = ((float) pls->cmap0[0].b) / 255.;
-	fprintf(OF, "    %.4f %.4f %.4f setrgbcolor fill\n", r, g, b);
+    if (pls->color) {
+	if (pls->cmap0[0].r != 0xFF ||
+	    pls->cmap0[0].g != 0xFF ||
+	    pls->cmap0[0].b != 0xFF ) {
+
+	    fprintf(OF, " Z %d %d M %d %d D %d %d D %d %d D %d %d closepath\n",
+		    XMIN, YMIN, XMIN, YMAX,
+		    XMAX, YMAX, XMAX, YMIN, XMIN, YMIN);
+
+	    r = ((float) pls->cmap0[0].r) / 255.;
+	    g = ((float) pls->cmap0[0].g) / 255.;
+	    b = ((float) pls->cmap0[0].b) / 255.;
+	    fprintf(OF, "    %.4f %.4f %.4f setrgbcolor fill\n", r, g, b);
+	}
     }
     fprintf(OF, "   } def\n");
 
