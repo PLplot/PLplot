@@ -10,6 +10,7 @@
   Copyright (C) 2004  Joao Cardoso
   Copyright (C) 2004  Rafael Laboissiere
   Copyright (C) 2004  Andrew Ross
+  Copyright (C) 2004  Andrew Roach
 
   This file is part of PLplot.
 
@@ -351,21 +352,89 @@ plP_fill(short *x, short *y, PLINT npts)
 #define DEBUG_TEXT
 */
 
+unsigned int unicode_buffer[1024];
+
 void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	 PLINT refx, PLINT refy, const char *string)
 {
-    if (plsc->dev_text) {
-	EscText args;
 
-	args.base = base;
-	args.just = just;
-	args.xform = xform;
-	args.x = x;
-	args.y = y;
-	args.refx = refx;
-	args.refy = refy;
-	args.string = string;
+    if (plsc->dev_text)  /* Does the device render it's own text ? */
+    {
+
+    	EscText args;
+      short len=0;
+      int i;
+      char skip;
+      unsigned short j;
+      char esc;
+      int idx;
+
+    	args.base = base;
+    	args.just = just;
+    	args.xform = xform;
+    	args.x = x;
+    	args.y = y;
+    	args.refx = refx;
+    	args.refy = refy;
+      if (plsc->dev_unicode)        /* Does the device also understand unicode  ? */
+        {
+
+          if (string!=NULL)         /* If the string isn't blank, then we will continute */
+          {
+            len=strlen(string);     /* this length is only used in the loop counter, we will work out the lenght of the unicode string as we go */
+            plgesc(&esc);
+
+          /*  At this stage we will do some translations into unicode, like conversion to
+           *  Greek, and will save other translations (like font changes) for the driver to
+           *  do later on. As we move through the string and do the translations, we will get
+           * rid of the esc character sequence, just replacing it with unicode.
+           */
+
+            for (j=i=0;i<len;i++)     /* Walk through the stings, and convert some stuff to unicode on the fly */
+              {
+                skip=0;
+
+                if (string[i]==esc)
+                  {
+                    switch(string[i+1])
+                      {
+                        case 'g':  /* Greek font */
+                   	   idx=plhershey2unicode(string[i+2]-97+627); /* Get the index in the lookup table */
+                   	                                              /* 97 = ASC-II position of 'a'
+                   	                                              /* 627 = displacement in Hershey Table
+                   	                                               */
+                        unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+                        i+=2;
+                        skip=1;  /* skip is set if we have copied something into the unicode table */
+                        break;
+
+                  	   case 'G':   /* Greek font */
+                        idx=plhershey2unicode(string[i+2]-65+527); /* Get the index in the lookup table */
+                                                                   /* 65 = ASC-II position of 'A'
+                                                                   /* 527 = displacement in Hershey Table
+                                                                    */
+                        unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+                        i+=2;
+                        skip=1;
+                        break;
+                      }
+                  }
+
+
+                if (skip==0) unicode_buffer[j]=string[i];
+                j++;
+              }
+              args.unicode_array_len=j; /* Much easier to set the lenght than work it out later :-) */
+              args.unicode_array=&unicode_buffer[0];   /* Get address of the unicode buffer (even though it is currently static) */
+              args.string=NULL;  /* Since we are using unicode, we want this to be NULL */
+
+          }
+        }
+      else
+        {
+       	args.string = string;
+	     }
 
 	if (plsc->plbuf_write)
 	    plbuf_esc(plsc, PLESC_HAS_TEXT, &args);

@@ -5,6 +5,8 @@
 	the search path used in finding the font files.
 
    Copyright (C) 2004  Rafael Laboissiere
+   Copyright (C) 2004  Andrew Roach
+
 
    This file is part of PLplot.
 
@@ -23,9 +25,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef __PLSYM_H__
+#define __PLSYM_H__
+
 #include "plplotP.h"
 #include <float.h>
 #include <ctype.h>
+#include "plhershey-unicode.h"
 
 /* Declarations */
 
@@ -47,6 +53,8 @@ static char greek[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
 static short symbol_buffer[PLMAXSTR];
 static signed char xygrid[STLEN];
 
+int hershey2unicode ( int in );
+
 /* Static function prototypes */
 
 static void
@@ -62,6 +70,9 @@ plcvec(PLINT ch, signed char **xygr);
 
 static void
 plhrsh(PLINT ch, PLINT x, PLINT y);
+
+static void
+plhrsh2(PLINT ch, PLINT x, PLINT y);
 
 /*--------------------------------------------------------------------------*\
  * void plsym()
@@ -84,7 +95,9 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
     }
 
     for (i = 0; i < n; i++)
-	plhrsh(code, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
+      {
+        plhrsh(code, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
+      }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -184,13 +197,79 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 }
 
 /*--------------------------------------------------------------------------*\
- * void plhrsh()
+ * static void plhrsh(PLINT ch, PLINT x, PLINT y)
+ *    PLINT ch - hershey code to plot
+ *    PLINT x - device-world x coordinate of hershey character
+ *    PLINT y - device-world y coordinate of hershey character
+ *
+ *  Writes the Hershey symbol "ch" centred at the physical coordinate (x,y).
+ *  This function is now just a "spoof" front end to the old plhersh,
+ *  which has now been renamed to plhrsh2(). All this function does is
+ *  decide whether or not we should render natively as unicode, and then
+ *  convert between hershey and unicode.
+ *
+ *  If the function KNOWS there isn't a unicode equivalent, then it will
+ *  try to render it as a hershey font. Understandably, this might make
+ *  testing out the unicode functions a little tricky, so if you want
+ *  to disable this behaviour, recompile with TEST_FOR_MISSING_GLYPHS
+ *  defined.
+\*--------------------------------------------------------------------------*/
+
+static void
+plhrsh(PLINT ch, PLINT x, PLINT y)
+{
+EscText args;
+int idx;
+unsigned int unicode_char;
+
+  if ((plsc->dev_text)&&(plsc->dev_unicode))       /* Check to see if the device understands unicode */
+    {
+      idx=plhershey2unicode(ch);                     /* Get the index in the lookup table */
+      unicode_char=hershey_to_unicode_lookup_table[idx].Unicode;
+
+    /*
+     *  Test to see if there is a defined unicode glpy for this hershey code;
+     *  if there isn't, then we pass the glyph to plhersh, and have it
+     *  rendered the old fashioned way.
+     *  Otherwise, we let the driver render it as unicode
+     */
+
+      if ((unicode_char==0)||(idx==-1))
+        {
+#ifndef TEST_FOR_MISSING_GLYPHS
+          plhrsh2(ch, x, y);
+#endif
+        }
+      else
+        {
+          args.unicode_char=unicode_char;
+          args.font_face=hershey_to_unicode_lookup_table[idx].Font;
+          args.base = 1;
+          args.just = .5;
+          args.xform = 0;
+          args.string=0;
+          args.unicode_array_len=0;
+          args.x = x;
+          args.y = y;
+
+          plP_esc(PLESC_HAS_TEXT, &args);
+        }
+
+    }
+  else
+    {
+       plhrsh2(ch, x, y);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plhrsh2()
  *
  * Writes the Hershey symbol "ch" centred at the physical coordinate (x,y).
 \*--------------------------------------------------------------------------*/
 
 static void
-plhrsh(PLINT ch, PLINT x, PLINT y)
+plhrsh2(PLINT ch, PLINT x, PLINT y)
 {
     PLINT cx, cy, k, penup, style;
     signed char *vxygrid = 0;
@@ -989,3 +1068,67 @@ plfontrel(void)
 	fontloaded = 0;
     }
 }
+
+/*--------------------------------------------------------------------------*\
+ *  int plhershey2unicode ( int in )
+ *
+ *  Function takes an inputted hershey code, looks through the conversation
+ *  table, then returns an INDEX to the value in the table.
+ *  Using this INDEX you can work out the unicode equivalent as well as
+ *  the closest approximate to the font-face. If the returned index is
+ *  -1 then no match was possible.
+ *
+ *  Two versions of the function exist, a simple linear search version,
+ *  and a more complex, but significantly faster, shell-sort like version.
+ *  If there seem to be problems with the shell method, the brain-dead
+ *  linear search can be enabled by defining SIMPLE_BUT_SAFE_HERSHEY_LOOKUP
+ *  at compile time.
+\*--------------------------------------------------------------------------*/
+
+int plhershey2unicode ( int in )
+{
+#ifdef SIMPLE_BUT_SAFE_HERSHEY_LOOKUP
+  int ret=-1;
+  int i;
+
+  for (i=0;(i<number_of_entries_in_hershey_to_unicode_table)&&(ret==-1);i++)
+    {
+      if (hershey_to_unicode_lookup_table[i].Hershey==in) ret=i;
+    }
+
+  return(ret);
+
+#else
+
+int jump=number_of_entries_in_hershey_to_unicode_table/2; /* starting point for search - 1/2 though the table */
+int i=jump;      /* actual index into the table, jump is just used for moving around */
+int leave=0;     /* once we start searching through 1 entry at a time, this is used to keep a count, so we know when to give up */
+
+do {
+    if (hershey_to_unicode_lookup_table[i].Hershey==in)
+      {
+        return(i);
+      }
+
+    if (jump>2)
+      jump/=2;
+    else
+      jump=1;
+
+    if (hershey_to_unicode_lookup_table[i].Hershey>in)
+      i-=jump;
+    else
+      i+=jump;
+
+    if (jump==1) leave++;
+
+  } while(leave < 8);   /* 8 works... 7 doesn't... no magic other than that ! */
+
+return(-1);
+
+#endif
+
+}
+
+#undef PLSYM_H
+#endif

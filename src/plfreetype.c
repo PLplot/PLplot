@@ -113,19 +113,20 @@ void plD_render_freetype_text (PLStream *pls, EscText *args);
 void plD_FreeType_Destroy(PLStream *pls);
 void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
 void pl_RemakeFreeType_text_from_buffer (PLStream *pls);
+void plD_render_freetype_sym (PLStream *pls, EscText *args);
 
 /*  Private prototypes for use in this file only */
 
-static void FT_WriteStr(PLStream *pls,const char *text, int x, int y);
-static void FT_StrX_Y(PLStream *pls,const char *text,int *xx, int *yy);
 static void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, int y, short colour );
 static void FT_SetFace( PLStream *pls, int fnt );
 static PLFLT CalculateIncrement( int bg, int fg, int levels);
 static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
 static FT_ULong hershey_to_unicode (char in);
+static void FT_WriteStrW(PLStream *pls,const unsigned int  *text, short len, int x, int y);
+static void FT_StrX_YW(PLStream *pls,const unsigned int *text, short len, int *xx, int *yy);
 
 /*----------------------------------------------------------------------*\
- * FT_StrX_Y()
+ * FT_StrX_YW()
  *
  * Returns the dimensions of the text box. It does this by fully parsing
  * the supplied text through the rendering engine. It does everything
@@ -135,10 +136,9 @@ static FT_ULong hershey_to_unicode (char in);
 \*----------------------------------------------------------------------*/
 
 void
-FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
+FT_StrX_YW(PLStream *pls, const unsigned int *text, short len, int *xx, int *yy)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
-    short len=strlen(text);
     short i=0;
     FT_Vector  akerning;
     int x=0,y=0;
@@ -238,7 +238,7 @@ FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
 }
 
 /*----------------------------------------------------------------------*\
- * FT_WriteStr()
+ * FT_WriteStrW()
  *
  * Writes a string of FT text at the current cursor location.
  * most of the code here is identical to "FT_StrX_Y" and I will probably
@@ -246,19 +246,12 @@ FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
 \*----------------------------------------------------------------------*/
 
 void
-FT_WriteStr(PLStream *pls, const char *text, int x, int y)
+FT_WriteStrW(PLStream *pls, const unsigned int *text, short len, int x, int y)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
-    short len=strlen(text);
     short i=0,last_char=-1;
     FT_Vector  akerning, adjust;
     char esc;
-
-
-/* copy string to modifiable memory */
-    strncpy(FT->textbuf, text, NTEXT_ALLOC-1);
-    if (len >= NTEXT_ALLOC)
-	plwarn("FT_StrX_Y: string too long!");
 
     plgesc(&esc);
 
@@ -293,14 +286,14 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 /* walk through the text character by character */
 
     for (i=0; i<len; i++) {
-	if ((FT->textbuf[i]==esc)&&(FT->textbuf[i-1]!=esc)) {
-	    if (FT->textbuf[i+1]==esc) continue;
+	if ((text[i]==esc)&&(text[i-1]!=esc)) {
+	    if (text[i+1]==esc) continue;
 
-	    switch(FT->textbuf[i+1]) {
+	    switch(text[i+1]) {
 
 	    case 'f':  /* Change Font */
 	    case 'F':
-                switch (FT->textbuf[i+2]) {
+                switch (text[i+2]) {
 		case 'r':
 		case 'R':
 		    FT_SetFace( pls,2);
@@ -323,38 +316,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
                 i+=2;
                 break;
 
-	    case 'g':  /* Greek font */
-	    case 'G':
-                FT->greek = FT->cfont;
-                FT_SetFace( pls, 5 );
 
-                FT=(FT_Data *)pls->FT;
-
-/*                if (FT->face->charmap==NULL)
-                   if (FT_Select_Charmap(FT->face, ft_encoding_symbol ))
-                       plexit("Could not access a chamap for greek font");
-
- To get the greek symbol to work it should just be a case of specifying that
- we want to use a symbol charmap. for some reason, this doesn't work. but
- this commented out code SHOULD work. Instead we will manually change the
- value of the greek code to get it working. I doubt this will work on all
- platforms, and all font types, but it does work for DOS/windows and
- truetype fonts.
-*/
-
-                FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
-
-/* RL on 2004-12-11: 
- * 
- * The following offset is apparently valid only for the TT font available 
- * in Windows systems.  In Unix/Linux, we use a Unicode encoding for 
- * accessing the Greek characters.  See below.
- */
-#if defined(MSDOS) || defined(WIN32)
-		FT->textbuf[i+2]-=29;
-#endif	      
-                i++;
-                break;
 
 /*
  *  We run the OFFSET for the super-script and sub-script through the
@@ -390,48 +352,21 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 	/* see if we have kerning for the particular character pair */
 	    if ((last_char!=-1)&&(i>0)&&FT_HAS_KERNING(FT->face)) {
 		FT_Get_Kerning( FT->face,
-				FT->textbuf[last_char],
-				FT->textbuf[i],
+				text[last_char],
+				text[i],
 				ft_kerning_default, &akerning );
 		x+= (akerning.x >> 6);        /* add (or subtract) the kerning */
 		y-= (akerning.y >> 6);        /* Do I need this in case of rotation ? */
 
             }
 
-	  
-/* RL on 2004-12-11: 
- * 
- * The following code adds an offset for the Greek symbols according to the 
- * Unicode encoding.  This works with the Arial.ttf and FreeSans.ttf fonts, 
- * so that the offset is only added in non-Windows systems.
- */
 
-#if defined(MSDOS) || defined(WIN32)
-	    if (FT->smooth_text==0)
-		FT_Load_Char( FT->face, (FT->textbuf[i] > 0 ? FT->textbuf[i] : FT->textbuf[i] + 255), FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
-	    else
-		FT_Load_Char( FT->face, (FT->textbuf[i] > 0 ? FT->textbuf[i] : FT->textbuf[i] + 255), FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
-#else
-	    FT_Load_Char( FT->face, 
-		FT->greek 
-	           ? hershey_to_unicode (FT->textbuf[i])
-		   : FT->textbuf[i] > 0 
-		       ? FT->textbuf[i] 
-		       : FT->textbuf[i] + 255,
-	        FT->smooth_text == 0
-		   ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER 
-		   : FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT);
-#endif	  
+       FT_Load_Char( FT->face, text[i], (FT->smooth_text==0) ? FT_LOAD_MONOCHROME+FT_LOAD_RENDER : FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
 	    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, 2 ); /* render the text */
+
 	    x += (FT->face->glyph->advance.x >> 6);
 	    y -= (FT->face->glyph->advance.y >> 6);
 
-	    if (FT->greek!=0) {
-		FT_SetFace( pls, FT->greek );
-		FT=(FT_Data *)pls->FT;
-		FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
-		FT->greek=0;
-            }
 	    last_char=i;
 	}
     } /* end for */
@@ -705,6 +640,9 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     if ((pls->plbuf_write==1)&&(FT->redraw==0))
        pl_save_FreeType_text_to_buffer (pls, args);
 
+if ((args->string!=NULL)||(args->unicode_array_len>0))
+{
+
 /*
  *   Work out if the either the font size, or the font face has changed.
  *   If it has, then we will reload the font face with the new dimentions
@@ -738,8 +676,7 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     FT_Vector_Transform( &FT->pos, &FT->matrix);
     FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
-    FT_StrX_Y(pls,args->string,&w, &h);
-    Debug("%s %d,%d;",args->string,w, h);
+    FT_StrX_YW(pls,args->unicode_array,args->unicode_array_len,&w, &h);
 
 /*
  *      Set up the transformation Matrix
@@ -871,7 +808,13 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     x-=adjust.x;
     y+=adjust.y;
 
-    FT_WriteStr(pls,args->string,x,y); /* write it out */
+    FT_WriteStrW(pls,args->unicode_array,args->unicode_array_len,x,y); /* write it out */
+}
+else
+{
+plD_render_freetype_sym (pls, args);
+}
+
 }
 
 /*----------------------------------------------------------------------*\
@@ -981,17 +924,24 @@ void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org)
 static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
 {
   FT_Data *FT=(FT_Data *)pls->FT;
-  unsigned short len=strlen(args->string);
+  unsigned short len=0;
+  unsigned short unicode_len=0,mem_used_by_unicode=0;
   unsigned short total_mem;
   int i;
 
+
+  if (args->string!=NULL) len=strlen(args->string); /* If no string, then the length will be 0 */
+  unicode_len=args->unicode_array_len;      /* Length of the unicode string */
+  mem_used_by_unicode=sizeof(unsigned int)*unicode_len;
+
+
 /*
  * Calcualte how much memory this piece of text will take up
- * We have to add in the text structure, text colour, the transform matrix, 
+ * We have to add in the text structure, text colour, the transform matrix,
  * the font size, and the text itself
  */
 
-  total_mem=len+sizeof(unsigned short)+sizeof(PLINT)+sizeof(EscText)+(4*sizeof(PLFLT))+1;
+  total_mem=len+mem_used_by_unicode+sizeof(unsigned short)+sizeof(PLINT)+sizeof(EscText)+(4*sizeof(PLFLT))+1;
 
   i=FT->mem_pointer;
 
@@ -1028,45 +978,34 @@ static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
 
   memcpy(&FT->text_cache[i],&pls->chrht,sizeof(PLFLT));  /* Text size */
   i+=sizeof(PLFLT);
-  
+
   memcpy(&FT->text_cache[i],&FT->scale,sizeof(PLFLT));  /* scale */
   i+=sizeof(PLFLT);
-  
+
   memcpy(&FT->text_cache[i],args,sizeof(EscText));
   i+=sizeof(EscText);
-  
-  memcpy(&FT->text_cache[i],args->xform,(4*sizeof(PLFLT)));
+
+  if (args->xform!=NULL)   /* Do not try to copy the matrix if it is blank, or BAD THINGS will happen */
+    {
+      memcpy(&FT->text_cache[i],args->xform,(4*sizeof(PLFLT)));
+    }
   i+=(4*sizeof(PLFLT));
-  
-  memcpy(&FT->text_cache[i],args->string,len+1); /* Add the "len+1" at the end to get the terminating NULL */
+
+  if (args->string!=NULL)
+    {
+      memcpy(&FT->text_cache[i],args->string,len+1); /* Add the "len+1" at the end to get the terminating NULL */
+    }
+  else if (args->unicode_array_len>0)
+    {
+      memcpy(&FT->text_cache[i],args->unicode_array,mem_used_by_unicode); /* Add the "len+1" at the end to get the terminating NULL */
+      i+=mem_used_by_unicode;
+    }
+
   i+=(len+1);
 
   FT->mem_pointer=i; /* Advance the memory pointer */
   FT->num_strings++;
-}
 
-
-/*--------------------------------------------------------------------------*\
- * char hershey_to_unicode (char in)
- *
- * Translates the Hershey codes for Greek symbols into the corresponding 
- * character in the Unicode encoding.  This is a temporary hack and should go 
- * away when Unicode support is introduced into the PLplot core.
-\*--------------------------------------------------------------------------*/
-
-static char hershey_to_unicode_table [58] = {
-  'A', 'B', 'N', 'D', 'E', 'V', 'C', 'H', 'I',   0, 'J', 'K', 'L', 'M', 
-  'O', 'P', 'X', 'Q', 'S', 'T', 'U',   0, 'Y', 'W', 'G', 'F', 0, 0, 0, 0, 0, 0,
-  'a', 'b', 'n', 'd', 'e', 'v', 'c', 'h', 'i',   0, 'j', 'k', 'l', 'm', 
-  'o', 'p', 'x', 'q', 's', 't', 'u',   0, 'y', 'w', 'g', 'f'
-};
-      
-FT_ULong hershey_to_unicode (char in)
-{
-  in = in + (in > 0 ? 0 : 255);
-  return (in < 'A' || in > 'z') 
-      ? in 
-      : 848 + hershey_to_unicode_table [in - 'A'];
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1091,7 +1030,7 @@ void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
     /*
      *  Save the current colours and font size so we can restore stuff later. Should not
      *  be needed since this function should ONLY be getting called at the END of pages,
-     *  when all plotting is done, and since the BOP functions should be setting these 
+     *  when all plotting is done, and since the BOP functions should be setting these
      *  up anyway before the start of each page... BUT best done just in case.
      */
 
@@ -1113,13 +1052,21 @@ void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
           memcpy(&scale,&FT->text_cache[i],sizeof(PLFLT));  /* driver scale */
           i+=sizeof(PLFLT);
 
-          memcpy(&text,&FT->text_cache[i],sizeof(EscText));
+          memcpy(&text,&FT->text_cache[i],sizeof(EscText)); /* Structure which holds everything */
           i+=sizeof(EscText);
 
           text.xform=(PLFLT *)&FT->text_cache[i]; /* We just point back to our buffer :-) */
           i+=(4*sizeof(PLFLT));
 
-          text.string=&FT->text_cache[i];  /* Again, we just point to the copy in our buffer */
+          if (len>0)
+            {
+              text.string=&FT->text_cache[i];  /* Again, we just point to the copy in our buffer */
+            }
+          else if (text.unicode_array_len>0)
+            {
+              text.unicode_array=&FT->text_cache[i];
+              i+=text.unicode_array_len*sizeof(unsigned int);
+            }
           i+=(len+1);
 
           pls->chrht=chrht*scale/FT->scale;
@@ -1140,6 +1087,83 @@ void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
 
     }
 }
+
+/*----------------------------------------------------------------------*\
+ * plD_render_freetype_sym( PLStream *pls, EscText *args )
+ *   PLStream *pls - pointer to plot stream
+ *   EscText *args - pointer to standard "string" object.
+ *
+ *  This function is a simple rendering function which draws a single
+ *  character at a time. The function is an alternative to the text
+ *  functions which are considerably, and needlessly, more complicated
+ *  than what we need here.
+\*----------------------------------------------------------------------*/
+
+
+void plD_render_freetype_sym (PLStream *pls, EscText *args)
+{
+    FT_Data *FT=(FT_Data *)pls->FT;
+    int x,y;
+    FT_Vector  adjust;
+
+    x=args->x/FT->scale;
+
+ if (FT->invert_y==1)
+    y=FT->ymax-(args->y/FT->scale);
+ else
+    y=args->y/FT->scale;
+
+
+
+/*
+ *  Adjust for the descender - make sure the font is nice and centred
+ *  vertically. Freetype assumes we have a base-line, but plplot thinks of
+ *  centre-lines, so that's why we have to do this. Since this is one of our
+ *  own adjustments, rather than a freetype one, we have to run it through
+ *  the transform matrix manually.
+ *
+ *  For some odd reason, this works best if we triple the
+ *  descender's height and then adjust the height later on...
+ *  Don't ask me why, 'cause I don't know. But it does seem to work.
+ *
+ *  I really wish I knew *why* it worked better though...
+ *
+ *   y-=FT->face->descender >> 6;
+ */
+
+#ifdef DODGIE_DECENDER_HACK
+    adjust.y= (FT->face->descender >> 6)*3;
+#else
+    adjust.y= (FT->face->descender >> 6);
+#endif
+
+    adjust.x=0;
+    FT_Vector_Transform( &adjust, &FT->matrix);
+    x+=adjust.x;
+    y-=adjust.y;
+
+    if ((args->font_face<1)||(args->font_face>4)) args->font_face=1;
+    FT_SetFace( pls,args->font_face);
+
+    FT=(FT_Data *)pls->FT;
+    FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+
+    FT_Load_Char( FT->face, args->unicode_char, (FT->smooth_text==0) ? FT_LOAD_MONOCHROME+FT_LOAD_RENDER : FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT );
+
+/*
+ * Now we have to try and componsate for the fact that the freetype glyphs are left
+ * justified, and plplot's glyphs are centred. To do this, we will just work out the
+ * advancment, halve it, and take it away from the x position. This wont be 100%
+ * accurate because "spacing" is factored into the right hand side of the glyph,
+ * but it is as good a way as I can think of.
+ */
+
+    x -= (FT->face->glyph->advance.x >> 6)/2;
+    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, pls->icol0 ); /* render the text */
+
+}
+
+
 
 
 #else

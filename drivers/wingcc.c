@@ -389,7 +389,7 @@ plD_init_wingcc(PLStream *pls)
 
 /*
  *  Read registry to see if the user has set up default values
- *  for text and smoothing. These will be overridden by anything that
+ *  for text and smoothing. These will be overriden by anything that
  *  might be given on the command line, so we will load the
  *  values right into the same memory slots we pass to plParseDrvOpts
  */
@@ -501,6 +501,7 @@ dev->hdc = GetDC (dev->hwnd);
 if (freetype)
    {
     pls->dev_text = 1; /* want to draw text */
+    pls->dev_unicode = 1; /* want unicode */
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
     FT->want_smooth_text=smooth_text;
@@ -717,7 +718,6 @@ plD_bop_wingcc(PLStream *pls)
 #ifdef HAVE_FREETYPE
   FT_Data *FT=(FT_Data *)pls->FT;
 #endif
-
   Debug("Start of Page\t");
 
 /*
@@ -725,12 +725,13 @@ plD_bop_wingcc(PLStream *pls)
  *  reset freetype, if we have to, then reset the colours and pen width
  */
 
-  BusyCursor();
-  RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE);
-
 #ifdef HAVE_FREETYPE
  pl_FreeTypeBOP();
 #endif
+
+  BusyCursor();
+  RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE);
+
 
   plD_state_wingcc(pls, PLSTATE_COLOR0);
 }
@@ -814,6 +815,11 @@ plD_esc_wingcc(PLStream *pls, PLINT op, void *ptr)
      case PLESC_HAS_TEXT:
         plD_render_freetype_text(pls, (EscText *)ptr);
         break;
+
+/*     case PLESC_LIKES_UNICODE:
+        plD_render_freetype_sym(pls, (EscText *)ptr);
+        break;*/
+
 #endif
 
       }

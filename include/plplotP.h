@@ -10,6 +10,8 @@
 
     Copyright (C) 2004  Rafael Laboissiere
     Copyright (C) 2004  Joao Cardoso
+    Copyright (C) 2004  Andrew Roach
+
 
     This file is part of PLplot.
 
@@ -355,6 +357,27 @@ extern PLStream	*plsc;
 #define PLPLOT_TCL_ENV          "PLPLOT_TCL"
 #define PLPLOT_HOME_ENV         "PLPLOT_HOME"
 
+/*
+ *   Some stuff that is included (and compiled into) plsym.h
+ *   Other modules might want this, so we will "extern" it
+ *
+ */
+
+#ifndef __PLSYM_H__
+
+typedef struct {
+	unsigned int Hershey;
+	unsigned int Unicode;
+	char Font;
+} Hershey_to_Unicode_table;
+
+extern int number_of_entries_in_hershey_to_unicode_table;
+extern Hershey_to_Unicode_table hershey_to_unicode_lookup_table[];
+
+
+#endif
+
+
 /*--------------------------------------------------------------------------*\
  *		Function Prototypes
  *
@@ -487,6 +510,10 @@ typedef struct {
   PLINT y;
   PLINT refx; /* processed ref. point--after justification, displacement, etc, processing */
   PLINT refy;
+  char font_face; /* font face OPTIONALLY used for rendering hershey codes */
+  unsigned int  unicode_char;   /* an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls */
+  unsigned int *unicode_array;   /* a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym */
+  unsigned short unicode_array_len;
   const char *string; /* text to draw */
 }EscText;
 
@@ -910,6 +937,13 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLINT nx, PLINT ny, PLFLT scale,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		PLPointer pltr_data);
+
+/*
+ *  Function to get an index to the hershey table
+ */
+int
+plhershey2unicode ( int in );
+
 
 #ifdef __cplusplus
 }

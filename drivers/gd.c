@@ -3,6 +3,7 @@
          PNG, GIF, and JPEG device driver based on libgd
 
    Copyright (C) 2004  Joao Cardoso
+   Copyright (C) 2002, 2003, 2004  Andrew Roach
 
    This file is part of PLplot.
 
@@ -436,6 +437,8 @@ plD_init_png_Dev(PLStream *pls)
 if (freetype)
    {
     pls->dev_text = 1; /* want to draw text */
+    pls->dev_unicode = 1; /* want unicode */
+
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
     FT->want_smooth_text=smooth_text;
@@ -589,6 +592,8 @@ plD_init_gif_Dev(PLStream *pls)
 if (freetype)
    {
     pls->dev_text = 1; /* want to draw text */
+    pls->dev_unicode = 1; /* want unicode */
+
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
     FT->want_smooth_text=smooth_text;
