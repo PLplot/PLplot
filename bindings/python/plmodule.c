@@ -1452,9 +1452,7 @@ static PyObject * pl_sfnam(PyObject *self, PyObject *args)
     Py_INCREF(Py_None);
     return Py_None;
 }
-/*
 #include "plmodule2.c"
-*/
 /* 
 Not done yet...
 

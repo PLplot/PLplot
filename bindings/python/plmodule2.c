@@ -3,7 +3,7 @@
 #define PyAssert(c,m) if (!(c)) { PyErr_SetString( PyExc_RuntimeError, m ); \
                                   return NULL; }
 
-/*static*/ char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
+static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 
 /*
   Allowable syntaxes:
@@ -26,7 +26,7 @@
   plcont( z, clev, pltr, xg, yg, wrap )
  */
 
-/*static*/ PyObject *pl_cont( PyObject *self, PyObject *args )
+static PyObject *pl_cont( PyObject *self, PyObject *args )
 {
     PyObject *zop, *xop, *yop;
     PLfGrid2 grid;
@@ -302,9 +302,9 @@
  * 	    rect [pltr x y] [wrap]
 \*--------------------------------------------------------------------------*/
 
-/*static*/ char doc_plshade[] = "Color fill plot";
+static char doc_plshade[] = "Color fill plot";
 
-/*static*/ PyObject *pl_shade( PyObject *self, PyObject *args )
+static PyObject *pl_shade( PyObject *self, PyObject *args )
 {
     PyObject *zop, *xop=NULL, *yop=NULL;
     PLfGrid2 grid;
