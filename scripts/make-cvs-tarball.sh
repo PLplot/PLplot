@@ -23,12 +23,48 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+usage () {
+  local prog=`basename $0`
+  echo "Usage: $prog [-n] [-u user] [-t tmpdir] [-w remote dir] \\"
+  echo "          [-r branch] [-v version]"
+  echo "       $prog -d"
+  echo "       $prog -h"
+  echo
+  echo "Option -n prevents building of the DocBook manual."
+  echo "Option -d prints the default values."
+  echo "When option -v is not given, a dated tarball is produced."
+  exit $1
+}
+
+DOC_ARG=${DOC_ARG:---enable-builddoc}
 WWW_USER=${WWW_USER:-rlaboiss}
-CVSROOTDIR=cvs.plplot.sourceforge.net:/cvsroot/plplot
-VERSION=${1:+--version=$1}
-BRANCH=${2:+-r $2}
+CVSROOTDIR=${CVSROOTDIR:-cvs.plplot.sourceforge.net:/cvsroot/plplot}
+VERSION=${VERSION:+--version=$1}
 BRANCH=${BRANCH:--D now}
-CVSTMPDIR=plplot-cvs-tarball
+CVSTMPDIR=${CVSTMPDIR:-plplot-cvs-tarball}
+
+print_defaults () {
+  local v
+  for v in DOC_ARG WWW_USER CVSROOTDIR VERSION BRANCH CVSTMPDIR ; do
+    eval "echo $v=\\\"\$$v\\\""
+  done
+  exit 0
+}
+
+while getopts "dhnv:r:u:t:w:" option
+do
+  case $option in
+    d) print_defaults ;;
+    h) usage 0 ;;
+    n) DOC_ARG= ;;
+    r) test -n "$OPTARG" || usage 1 ; BRANCH="-r $OPTARG" ;;
+    t) test -n "$OPTARG" || usage 1 ; CVSTMPDIR=$OPTARG ;;
+    v) test -n "$OPTARG" || usage 1 ; VERSION=$OPTARG ;;
+    u) test -n "$OPTARG" || usage 1 ; WWW_USER=$OPTARG ;;
+    w) test -n "$OPTARG" || usage 1 ; CVSROOTDIR=$OPTARG ;;
+    *) usage 1 ;;
+  esac
+done
 
 cleanup ( ) {
     rm -rf $CVSTMPDIR
@@ -41,7 +77,7 @@ cleanup
 cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
   && ./bootstrap.sh ${VERSION:---date-version} \
-  && ./configure --enable-builddoc \
+  && ./configure $DOC_ARG \
   && make dist \
   && TARBALL=`ls plplot-*.tar.gz` \
   && mv $TARBALL .. \
