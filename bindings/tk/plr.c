@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/04/30 16:14:58  mjl
+ * Revision 1.15  1994/05/14 05:41:33  mjl
+ * Added a bit more debugging information.
+ *
+ * Revision 1.14  1994/04/30  16:14:58  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -86,7 +89,8 @@ if ((code) == -1) return(-1);
 /* Error termination */
 
 #define barf(msg) \
-{ fprintf(stderr, "%s\nCurrent command code: %d\n", msg, csave); return(-1); }
+{ fprintf(stderr, "%s\nCommand code: %d, byte count: %ld\n", \
+	  msg, csave, plr->pdfs->bp); return(-1); }
 
 /* Static function prototypes. */
 
@@ -223,7 +227,7 @@ plr_init(PLRDev *plr)
 
     plr_cmd( pdf_rd_header(plr->pdfs, tk_magic) );
     if (strcmp(tk_magic, PLSERV_HEADER))
-	barf("Invalid header");
+	barf("plr_init: Invalid header");
 
 /* Read version field of header.  We need to check that we can read the */
 /* byte stream, in case this is an old version of plserver. */
@@ -232,7 +236,7 @@ plr_init(PLRDev *plr)
     if (strcmp(tk_version, PLSERV_VERSION) > 0) {
 	fprintf(stderr,
 	    "Error: incapable of reading output of version %s.\n", tk_version);
-	barf("Please obtain a newer copy of plserver.");
+	barf("plr_init: Please obtain a newer copy of plserver.");
     }
 
 /* Read tagged initialization info. */
@@ -556,7 +560,6 @@ plr_get(PLRDev *plr)
 
     c = pdf_getc(plr->pdfs);
     if (c == EOF) {
-	fprintf(stderr, "plr_get: at byte count: %ld\n", plr->pdfs->bp);
 	barf("plr_get: Unable to read character");
     }
 
