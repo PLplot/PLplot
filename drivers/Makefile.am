@@ -486,3 +486,4 @@ libplplotdrv_la_DEPENDENCIES = $(libplplotdrv_la_LIBADD)
 # end of static driver case.
 endif
 CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c 
+DISTCLEANFILES = $(drivers_DATA)
