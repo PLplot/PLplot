@@ -412,3 +412,6 @@ AC_DEFUN([PL_COMPARE_VERSIONS],[
   test $pl_cmp = eq && eval $4
   test $pl_cmp = gt && eval $5    
 ])
+dnl ------------------------------------------------------------------------
+dnl Define PKG_CHECK_MODULES to no-op if not already defined
+m4_ifdef(PKG_CHECK_MODULES,[],AC_DEFUN([PKG_CHECK_MODULES],[]))
