@@ -35,6 +35,7 @@ binding_m_files = \
 	clip.m \
 	closeallfig.m \
 	closefig.m \
+	colormap.m \
 	comet.m \
 	contour.m \
 	cool.m \
