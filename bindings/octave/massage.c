@@ -57,15 +57,15 @@ main()
 
 	while (! feof(fp)){
 		fgets(b, sizeof(b), fp);
-		if (p2 = strchr(b, '(')){		// function ... = ...(
+		if (p2 = strchr(b, '(')){		/* function ... = ...( */
 			p1 = p2;
 			while(*p1-- != ' ');p1+=2;
-			if (*(p1+1) == '_')			// c_...
+			if (*(p1+1) == '_')			/* c_... */
 				p1+=2;
 			strncpy(tok, p1, p2-p1);
 			*(tok+(int)(p2-p1))='\0';
 			printf("%s", b);
-			fgets(b, sizeof(b), fp);printf("%s%%\n", b);	// % function ... = ...(
+			fgets(b, sizeof(b), fp);printf("%s%%\n", b);	/* % function ... = ...(*/
 				
 			sprintf(b,"plplot_octave_txt/%s.txt", tok);
 			if (stat(b, &buf) && errno == ENOENT) {
@@ -73,7 +73,7 @@ main()
 				strcat(tok, "\t");
 				for (j=0; j<item; j++){
 					if (strncmp(doc[j], tok, strlen(tok)) == 0){
-						printf("%% %s", &doc[j][strlen(tok)+4]);	// strip func --
+					  printf("%% %s", &doc[j][strlen(tok)+4]);	/* strip func --*/
 						break;}
 					if (j == item) {
 						fprintf(stderr,"%s not found in plplot.doc!", tok);
@@ -89,9 +89,9 @@ main()
 				}
 				fclose(fp1);
 			}
-			fgets(b, sizeof(b), fp);	// % No doc...
-			fgets(b, sizeof(b), fp);printf("%s", b); // plplot_oct...
-			fgets(b, sizeof(b), fp);printf("%s\n", b); // endfunction
+			fgets(b, sizeof(b), fp);	/* % No doc...*/
+			fgets(b, sizeof(b), fp);printf("%s", b); /* plplot_oct...*/
+			fgets(b, sizeof(b), fp);printf("%s\n", b); /* endfunction*/
 		}
 	}
 	fclose(fp);
