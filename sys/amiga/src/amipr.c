@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/10/12 17:11:19  mjl
-   Amiga-specific mods, including ANSI-fication.
+   Revision 1.3  1993/01/23 06:12:41  mjl
+   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
 
+ * Revision 1.2  1992/10/12  17:11:19  mjl
+ * Amiga-specific mods, including ANSI-fication.
+ *
  * Revision 1.1  1992/05/20  21:35:21  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -17,7 +20,7 @@
 
 #include "plplot.h"
 #include <stdio.h>
-#include "dispatch.h"
+#include "drivers.h"
 #include "plamiga.h"
 
 /* top level declarations */
@@ -31,21 +34,24 @@ static PLDev device;
 static PLDev (*dev) = &device;
 
 /*----------------------------------------------------------------------*\
-* amiprinit()
+* amipr_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-amiprinit(PLStream *pls)
+amipr_init(PLStream *pls)
 {
     int mode;
 
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (!pls->colorset)
+        pls->color = 0;		/* no color by default: user can override */
 
     if (openprinter())
 	plexit("");
@@ -94,13 +100,13 @@ amiprinit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiprline()
+* amipr_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
-amiprline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+amipr_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     long xn1, yn1, xn2, yn2;
@@ -138,13 +144,28 @@ amiprline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* amiprclear()
+* amipr_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void 
+amipr_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i=0; i<npts-1; i++) 
+      amipr_line( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
+}
+
+/*----------------------------------------------------------------------*\
+* amipr_clear()
 *
 * Clear page. 
 \*----------------------------------------------------------------------*/
 
 void 
-amiprclear(PLStream *pls)
+amipr_clear(PLStream *pls)
 {
     dmpport(0L, bmapx, bmapy);
     /* Eject the page. */
@@ -152,40 +173,40 @@ amiprclear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiprpage()
+* amipr_page()
 *
 * Set up for the next page.  
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void 
-amiprpage(PLStream *pls)
+amipr_page(PLStream *pls)
 {
     mapclear();
     pls->page++;
 }
 
 /*----------------------------------------------------------------------*\
-* amipradv()
+* amipr_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
 void 
-amipradv(PLStream *pls)
+amipr_adv(PLStream *pls)
 {
-    amiprclear(pls);
-    amiprpage(pls);
+    amipr_clear(pls);
+    amipr_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* amiprtidy()
+* amipr_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void 
-amiprtidy(PLStream *pls)
+amipr_tidy(PLStream *pls)
 {
     dmpport(0L, bmapx, bmapy);
     mapfree();
@@ -195,46 +216,46 @@ amiprtidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiprcolor()
+* amipr_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void 
-amiprcolor(PLStream *pls)
+amipr_color(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* amiprtext()
+* amipr_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void 
-amiprtext(PLStream *pls)
+amipr_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* amiprgraph()
+* amipr_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void 
-amiprgraph(PLStream *pls)
+amipr_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* amiprwidth()
+* amipr_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void 
-amiprwidth(PLStream *pls)
+amipr_width(PLStream *pls)
 {
     if (pls->width < 1)
 	pls->width = 1;
@@ -243,12 +264,12 @@ amiprwidth(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amipresc()
+* amipr_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
-amipresc(PLStream *pls, PLINT op, char *ptr)
+amipr_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }

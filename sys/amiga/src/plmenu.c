@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/10/12 17:11:24  mjl
-   Amiga-specific mods, including ANSI-fication.
+   Revision 1.3  1993/01/23 06:12:47  mjl
+   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
 
+ * Revision 1.2  1992/10/12  17:11:24  mjl
+ * Amiga-specific mods, including ANSI-fication.
+ *
  * Revision 1.1  1992/05/20  21:35:26  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -11,6 +14,7 @@
 #include "plplot.h"
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include "plamiga.h"
 
 void 
@@ -448,7 +452,7 @@ MakePLMenu(void)
 	    item->Height = fheight;
 	    if (ichk) {
 		item->Width += CHECKWIDTH;
-		itext = (struct IntuiTest *) item->ItemFill;
+		itext = (struct IntuiText *) item->ItemFill;
 		itext->LeftEdge = CHECKWIDTH;
 	    }
 	    itedge += fheight;
@@ -470,7 +474,7 @@ MakePLMenu(void)
 		subitem->Height = fheight;
 		if (schk) {
 		    subitem->Width += CHECKWIDTH;
-		    itext = (struct IntuiTest *) subitem->ItemFill;
+		    itext = (struct IntuiText *) subitem->ItemFill;
 		    itext->LeftEdge = CHECKWIDTH;
 		}
 		stedge += fheight;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/10/12 17:11:23  mjl
-   Amiga-specific mods, including ANSI-fication.
+   Revision 1.2  1993/01/23 06:12:46  mjl
+   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
 
+ * Revision 1.1  1992/10/12  17:11:23  mjl
+ * Amiga-specific mods, including ANSI-fication.
+ *
  * Revision 1.2  1992/09/29  04:45:31  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -99,11 +102,12 @@ void	SetPLDefs	(void);
 void	setlimits	(void);
 void	plcolreq	(void);
 void	RestorePrefs	(void);
-void	setpen		(PLINT color);
 void	MakePLMenu	(void);
 void	enablemenus	(void);
 void	disablemenus	(void);
 void	menuselect	(ULONG class, USHORT code);
+
+char *	plfilereq	(void);
 void	eventwait	(void);
 PLINT	eventhandler	(ULONG class, USHORT code);
 PLINT	procmess	(void);
@@ -113,6 +117,12 @@ void	PLMove		(PLINT x, PLINT y);
 void	prepupdate	(void);
 int	getpoint	(long *com, long *x, long *y);
 void	finiupdate	(void);
+
+void	dmpport		(long, int, int);
+int	openprinter	(void);
+void	closeprinter	(void);
+int	queryprint	(long *, long *, long *, long *, long *, long *);
+void	ejectpage	(void);
 
 void	screendump	(PLINT type);
 void	saveiff		(void);

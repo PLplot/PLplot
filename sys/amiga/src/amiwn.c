@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/10/12 17:11:20  mjl
-   Amiga-specific mods, including ANSI-fication.
+   Revision 1.3  1993/01/23 06:12:43  mjl
+   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
 
+ * Revision 1.2  1992/10/12  17:11:20  mjl
+ * Amiga-specific mods, including ANSI-fication.
+ *
  * Revision 1.1  1992/05/20  21:35:23  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -15,7 +18,7 @@
 
 #include "plplot.h"
 #include <stdio.h>
-#include "dispatch.h"
+#include "drivers.h"
 #include "plamiga.h"
 
 /* Function prototypes */
@@ -40,21 +43,24 @@ static PLDev device;
 static PLDev (*dev) = &device;
 
 /*----------------------------------------------------------------------*\
-* amiwninit()
+* amiwn_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-amiwninit(PLStream *pls)
+amiwn_init(PLStream *pls)
 {
     PLFLT Initdpmx, Initdpmy;
-
+    
     pls->termin = 1;		/* is an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (!pls->colorset)
+        pls->color = 1;
 
     /* Scan defaults file */
 
@@ -100,13 +106,13 @@ amiwninit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwnline()
+* amiwn_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+amiwn_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     short comm, xshrt, yshrt;
@@ -150,18 +156,33 @@ amiwnline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwnclear()
+* amiwn_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void 
+amiwn_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i=0; i<npts-1; i++) 
+      amiwn_line( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
+}
+
+/*----------------------------------------------------------------------*\
+* amiwn_clear()
 *
 * Clear page. 
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnclear(PLStream *pls)
+amiwn_clear(PLStream *pls)
 {
     beepw();
     setpen(0);
     RectFill(PLWRPort, XOffset, YOffset, PLWidth + XOffset, PLHeight + YOffset);
-    setpen(pls->color);
+    setpen(pls->icol0);
     if (fbuffer) {
 	fclose(PlotFile);
 	remove(PLOTBFFR);
@@ -169,23 +190,20 @@ amiwnclear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwnpage()
+* amiwn_page()
 *
 * Set up for the next page.  
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnpage(PLStream *pls)
+amiwn_page(PLStream *pls)
 {
     fbuffer = 0;
     if (PLCurPrefs.WinType & PLBUFF) {
 	PlotFile = fopen(PLOTBFFR, "w+");
 	if (PlotFile == NULL) {
-	    fprintf(stderr, "\nError opening plot data storage file.\n");
-	    ClosePLWind();
-	    CloseLibs();
-	    exit(1);
+	    plexit("Error opening plot data storage file.");
 	}
 	fbuffer = 1;
     }
@@ -195,26 +213,26 @@ amiwnpage(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwnadv()
+* amiwn_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnadv(PLStream *pls)
+amiwn_adv(PLStream *pls)
 {
-    amiwnclear(pls);
-    amiwnpage(pls);
+    amiwn_clear(pls);
+    amiwn_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* amiwntidy()
+* amiwn_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwntidy(PLStream *pls)
+amiwn_tidy(PLStream *pls)
 {
     beepw();
     ClosePLWind();
@@ -228,60 +246,60 @@ amiwntidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwncolor()
+* amiwn_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwncolor(PLStream *pls)
+amiwn_color(PLStream *pls)
 {
     short shcol, comm;
 
-    if (pls->color >= 0 && pls->color < 16) {
-	shcol = pls->color;
+    if (pls->icol0 >= 0 && pls->icol0 < 16) {
+	shcol = pls->icol0;
 	comm = SPEN;
 	if (fbuffer) {
 	    fwrite((char *) &comm, sizeof(short), 1, PlotFile);
 	    fwrite((char *) &shcol, sizeof(short), 1, PlotFile);
 	}
-	if (pls->color >= MaxColors)
-	    pls->color = 1;
-	CurColor = pls->color;
+	if (pls->icol0 >= MaxColors)
+	    pls->icol0 = 1;
+	CurColor = pls->icol0;
 	setpen(CurColor);
     }
 }
 
 /*----------------------------------------------------------------------*\
-* amiwntext()
+* amiwn_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwntext(PLStream *pls)
+amiwn_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* amiwngraph()
+* amiwn_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwngraph(PLStream *pls)
+amiwn_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* amiwnwidth()
+* amiwn_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnwidth(PLStream *pls)
+amiwn_width(PLStream *pls)
 {
     short shwid, comm;
 
@@ -296,13 +314,13 @@ amiwnwidth(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwnesc()
+* amiwn_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnesc(PLStream *pls, PLINT op, char *ptr)
+amiwn_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -386,7 +404,6 @@ remakeplot(void)
 {
     long cxy, x1, y1;
     long x, y;
-    void setpen();
 
     setpen(0);
     RectFill(PLWRPort, PLWindow->BorderLeft, PLWindow->BorderTop,
