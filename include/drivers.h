@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/08/26 19:17:42  mjl
+ * Revision 1.22  1995/04/11 09:40:25  mjl
+ * Prototypes for Mac driver.
+ *
+ * Revision 1.21  1994/08/26  19:17:42  mjl
  * Entries for conex device added; contributed by Mark Olesen.
  *
  * Revision 1.20  1994/07/25  06:04:58  mjl
@@ -17,22 +20,6 @@
  * Since all are compiler-dependent and mutually exclusive, this should pose
  * no problem.  Also HP pen plotter driver were consolidated.  Both
  * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
- *
- * Revision 1.16  1994/04/08  12:09:37  mjl
- * Added prototypes for new ljiip driver.
- *
- * Revision 1.15  1994/03/23  06:57:46  mjl
- * Changed function names in prototypes for xterm, mskermit, and added
- * prototypes for versaterm and vlt drivers (minor tek devices).
- *
- * Revision 1.14  1994/01/15  17:32:14  mjl
- * Added include of pdf.h.
- *
- * Revision 1.13  1993/12/21  10:34:40  mjl
- * Added prototype for new dp driver initialization function.
- *
- * Revision 1.12  1993/12/08  20:26:21  mjl
- * Changes to support MS-Kermit output device.
 */
 
 /*	drivers.h
@@ -190,6 +177,15 @@ void plD_tidy_vga		(PLStream *);
 void plD_state_vga		(PLStream *, PLINT);
 void plD_esc_vga		(PLStream *, PLINT, void *);
 
+void plD_init_mac		(PLStream *);
+void plD_line_mac		(PLStream *, short, short, short, short);
+void plD_polyline_mac		(PLStream *, short *, short *, PLINT);
+void plD_eop_mac		(PLStream *);
+void plD_bop_mac		(PLStream *);
+void plD_tidy_mac		(PLStream *);
+void plD_state_mac		(PLStream *, PLINT);
+void plD_esc_mac		(PLStream *, PLINT, void *);
+
 void plD_init_win3		(PLStream *);
 void plD_line_win3		(PLStream *, short, short, short, short);
 void plD_polyline_win3		(PLStream *, short *, short *, PLINT);
@@ -253,9 +249,7 @@ void plD_tidy_null		(PLStream *);
 void plD_state_null		(PLStream *, PLINT);
 void plD_esc_null		(PLStream *, PLINT, void *);
 
-/*----------------------------------------------------------------------*\
-* Prototypes for plot buffer calls.
-\*----------------------------------------------------------------------*/
+/* Prototypes for plot buffer calls. */
 
 void plbuf_init		(PLStream *);
 void plbuf_line		(PLStream *, short, short, short, short);
