@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/05/20 22:25:14  mjl
+ * Revision 1.21  1994/06/30 18:36:06  mjl
+ * Removed prototypes for deleted accessor functions.  Inserted an extern
+ * PLStream *plsc declaration for easier access to PLplot state info (only
+ * plcore.h, which declares the real plsc, doesn't see this declaration).
+ * Now includes plstream.h.
+ *
+ * Revision 1.20  1994/05/20  22:25:14  mjl
  * Switched order of inclusion of plplot.h with system-specific defines to
  * ensure that all sick hacks are made before too much damage occurs
  * (specifically to fix a problem on the Cray, caddr_t again, sigh).
@@ -17,25 +23,6 @@
  * or marginally ANSI compliant compilers (special treatment for malloc
  * includes, etc).  New function prototypes, and new defines for PLSTATE
  * settings governing changes to cmap 1 and/or the color palette.
- *
- * Revision 1.16  1994/01/15  17:34:27  mjl
- * Minor documentation addition.
- *
- * Revision 1.15  1993/12/08  06:20:04  mjl
- * Miscellaneous cleaning up.
- *
- * Revision 1.14  1993/11/19  07:41:52  mjl
- * define NO_ANSI_LIBC if on Convex (may be overkill but it works..)
- *
- * Revision 1.13  1993/11/15  08:34:23  mjl
- * Prototype section completely reworked.  Now each prototype taken directly
- * from the definition (so includes variable names) and is accompanied by a
- * brief description of what the function does.  This makes the header file
- * much more useful as a quick reminder of the argument syntax for each
- * function (i.e. a poor man's manual).
- *
- * Revision 1.12  1993/11/07  09:03:42  mjl
- * Added escape code for flush handling.
 */
 
 /*
@@ -138,9 +125,16 @@
 #endif
 
 /* Include all externally-visible definitions and prototypes */
-/* This also includes stdio.h */
+/* plplot.h also includes some handy system header files */
 
 #include "plplot.h"
+#include "plstream.h"
+
+/* If not including this file from inside of plcore.h, declare plsc */
+
+#ifndef __PLCORE_H__
+extern PLStream	*plsc;
+#endif
 
 /*----------------------------------------------------------------------*\
 *			Data types
@@ -372,76 +366,21 @@ plxtik(PLINT x, PLINT y, PLINT below, PLINT above);
 void
 plytik(PLINT x, PLINT y, PLINT left, PLINT right);
 
-/* Get plot level */
-
-void
-plP_glev(PLINT *p_n);
-
-/* Set plot level */
-
-void
-plP_slev(PLINT n);
-
-/* Get parameters for 3d plot base */
-
-void
-plP_gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc);
-
-/* Set parameters for 3d plot base */
-
-void
-plP_sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc);
-
-/* Get number of elements for current broken line style */
-
-void
-plP_gnms(PLINT *p_n);
-
-/* Set number of elements for current broken line style */
-
-void
-plP_snms(PLINT n);
-
-/* Get physical coordinates of current point */
-
-void
-plP_gcurr(PLINT *p_ix, PLINT *p_iy);
-
-/* Set physical coordinates of current point */
-
-void
-plP_scurr(PLINT ix, PLINT iy);
-
 /* Get x-y domain in world coordinates for 3d plots */
 
 void
 plP_gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
-
-/* Set x-y domain in world coordinates for 3d plots */
-
-void
-plP_sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 /* Get vertical (z) scale parameters for 3-d plot */
 
 void
 plP_grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax);
 
-/* Set vertical (z) scale parameters for 3-d plot */
-
-void
-plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax);
-
 /* Get parameters used in 3d plots */
 
 void
 plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy,
 	  PLFLT *p_dyz);
-
-/* Set parameters used in 3d plots */
-
-void
-plP_sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz);
 
 /* Get viewport boundaries in physical coordinates */
 
@@ -457,11 +396,6 @@ plP_svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
 void
 plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
-
-/* Set subpage boundaries in physical coordinates */
-
-void
-plP_sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
 /* Get clip boundaries in physical coordinates */
 
@@ -493,6 +427,11 @@ plP_gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs);
 void
 plP_ssub(PLINT nx, PLINT ny, PLINT cs);
 
+/* Set up plot parameters according to the number of subpages. */
+
+void
+plP_subpInit(void);
+
 /* Get number of micrometers in a pixel */
 
 void
@@ -513,35 +452,10 @@ plP_gatt(PLINT *p_ifnt, PLINT *p_icol0);
 void
 plP_satt(PLINT ifnt, PLINT icol0);
 
-/* Get current color, map 0 */
-
-void
-plP_gcol(PLINT *p_icol0);
-
-/* Set current color, map 0 */
-
-void
-plP_scol(PLINT icol0);
-
-/* Get pen width */
-
-void
-plP_gwid(PLINT *p_pwid);
-
-/* Set pen width */
-
-void
-plP_swid(PLINT pwid);
-
 /* Get subpage boundaries in normalized device coordinates */
 
 void
 plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
-
-/* Set subpage boundaries in normalized device coordinates */
-
-void
-plP_sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 /* Get viewport boundaries in normalized device coordinates */
 
@@ -578,16 +492,6 @@ plP_spixmm(PLFLT x, PLFLT y);
 void
 plP_setpxl(PLFLT xpmm0, PLFLT ypmm0);
 
-/* Get transformation variables for world to physical conversion */
-
-void
-plP_gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
-
-/* Set transformation variables for world to physical conversion */
-
-void
-plP_swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
-
 /* Get transformation variables for world coordinates to mm */
 
 void
@@ -598,16 +502,6 @@ plP_gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
 void
 plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
 
-/* Get transformation variables for device to physical conversion */
-
-void
-plP_gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
-
-/* Set transformation variables for device to physical conversion */
-
-void
-plP_sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
-
 /* Get transformation variables for millimeters from bottom left */
 
 void
@@ -617,41 +511,6 @@ plP_gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
 
 void
 plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
-
-/* Set character default height and current (scaled) height */
-
-void
-plP_schr(PLFLT def, PLFLT ht);
-
-/* Get symbol default height and current (scaled) height */
-
-void
-plP_gsym(PLFLT *p_def, PLFLT *p_ht);
-
-/* Set symbol default height and current (scaled) height */
-
-void
-plP_ssym(PLFLT def, PLFLT ht);
-
-/* Get major tick default height and current (scaled) height */
-
-void
-plP_gmaj(PLFLT *p_def, PLFLT *p_ht);
-
-/* Set major tick default height and current (scaled) height */
-
-void
-plP_smaj(PLFLT def, PLFLT ht);
-
-/* Get minor tick default height and current (scaled) height */
-
-void
-plP_gmin(PLFLT *p_def, PLFLT *p_ht);
-
-/* Set minor tick default height and current (scaled) height */
-
-void
-plP_smin(PLFLT def, PLFLT ht);
 
 /* Get background parameters for 3d plot. */
 
@@ -698,46 +557,6 @@ plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax);
 
 void
 plP_setsub(void);
-
-/* Get defining parameters for broken lines */
-
-void
-plP_gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms);
-
-/* Get work variables used in broken line draws */
-
-void
-plP_gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala);
-
-/* Get defining parameters for pattern fill */
-
-void
-plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin);
-
-/* Set defining parameters for pattern fill */
-
-void
-plP_spat(PLINT inc[], PLINT del[], PLINT nlin);
-
-/* Get pattern fill number */
-
-void
-plP_gpsty(PLINT *patt);
-
-/* Set pattern fill number */
-
-void
-plP_spsty(PLINT patt);
-
-/* Set defining parameters for broken lines */
-
-void
-plP_smark(PLINT mar[], PLINT spa[], PLINT nms);
-
-/* Set work variables used in broken line draws */
-
-void
-plP_scure(PLINT cur, PLINT pen, PLINT tim, PLINT ala);
 
 /* Get the floating point precision (in number of places) in numeric labels. */
 
