@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/03/23 06:59:00  mjl
+ * Revision 1.18  1994/04/08 12:10:37  mjl
+ * Added dispatch table entries for new ljiip driver.
+ *
+ * Revision 1.17  1994/03/23  06:59:00  mjl
  * Name changes for xterm & mskermit driver functions, addition of versaterm
  * and vlt driver functions.
  *
@@ -524,17 +527,30 @@ static PLDispatchTable dispatch_table[] = {
 
 #ifdef LJII
     {
+	"LaserJet IIp/deskjet compressed graphics",
+	"ljiip",
+	0,
+	plD_init_ljiip,
+	plD_line_ljiip,
+	plD_polyline_ljiip,
+	plD_eop_ljiip,
+	plD_bop_ljiip,
+	plD_tidy_ljiip,
+	plD_state_ljiip,
+	plD_esc_ljiip
+    },
+    {
 	"LaserJet II Bitmap File (150 dpi)",
 	"ljii",
 	0,
-	plD_init_jet,
-	plD_line_jet,
-	plD_polyline_jet,
-	plD_eop_jet,
-	plD_bop_jet,
-	plD_tidy_jet,
-	plD_state_jet,
-	plD_esc_jet
+	plD_init_ljii,
+	plD_line_ljii,
+	plD_polyline_ljii,
+	plD_eop_ljii,
+	plD_bop_ljii,
+	plD_tidy_ljii,
+	plD_state_ljii,
+	plD_esc_ljii
     },
 #endif
 
