@@ -22,10 +22,6 @@
 
 if enable_octave
 
-octavesharedir = $(datadir)/plplot_octave
-
-octaveshare_SCRIPTS = plplot_octave.oct
-
 if with_double
 sed_command = 's/REPLACE_ME/typedef double PLFLT;/'
 octave_libs = -lplplotd
@@ -37,14 +33,29 @@ endif
 plplot_octave.h: plplot_octave_org.h
 	sed plplot_octave_org.h -e $(sed_command) > plplot_octave.h
 
+# Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
+# also still works on gcc 2.95
 plplot_octave.cc tmp_stub: plplot_octave.h
 	@MATWRAP@ -language octave plplot_octave.h -o plplot_octave.cc \
 	-stub tmp_stub
+	mv -f plplot_octave.cc tmp_plplot_octave.cc
+	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
 plplot_octave.oct plplot_octave.o: plplot_octave.cc
 	LD_RUN_PATH=$(libdir) @MKOCTFILE@ -v -I. -L../../src/.libs \
 	plplot_octave.cc $(octave_libs)
+
+octavesharedir = $(datadir)/plplot_octave
+
+# Ultimately, we may want to switch to the normal LT method of building
+# shared objects cross-platform, using 
+# octaveshare_LTLIBRARIES = plplot_octave.la
+# but octave may not be able to handle libtool-created .la files for now
+# and the old-fashioned way with octave's attempt to be cross-platform
+# (using the mkoctfile command) is good enough for now.
+# SCRIPTS rather than DATA because you want to preserve the permissions.
+octaveshare_SCRIPTS = plplot_octave.oct
 
 #5 From Joao's notes:
 plplot_stub.m: etc/plplot.doc tmp_stub massage
@@ -56,8 +67,8 @@ plplot_stub.m: etc/plplot.doc tmp_stub massage
 	@echo >> plplot_stub.m
 	./massage >> plplot_stub.m 2> missing_help
 
-CLEANFILES = plplot_octave.h plplot_octave.cc plplot_octave.o \
-	tmp_stub plplot_octave.oct
+CLEANFILES = plplot_octave.h tmp_plplot_octave.cc plplot_octave.cc \
+	plplot_octave.o tmp_stub plplot_octave.oct
 
 #enable_octave
 endif
