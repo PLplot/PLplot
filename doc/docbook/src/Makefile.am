@@ -59,17 +59,11 @@ EXTRA_DIST = \
 CLEANFILES = \
   $(INFO_MANIFEST) \
   *.jadetex *.aux inline.ent *.log *.eps TMP.* \
-  *.out *.texi *.txml *.xml-info *-tmp 
+  *.out *.txml *.xml-info *-tmp *.texi
 
 MAINTAINERCLEANFILES = \
   $(HTML_MANIFEST) $(MAN_MANIFEST) \
   $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
-
-if enable_docbook
-
-MAX_TEX_RECURSION = 4
-
-BINDIR = ../bin
 
 htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
@@ -82,6 +76,12 @@ man3_MANS = $(shell ls *.$(MANVOL))
 geninfodir = $(infodir)
 geninfo_DATA = $(shell ls *.info*)
 
+if enable_docbook
+
+MAX_TEX_RECURSION = 4
+
+BINDIR = ../bin
+
 all: $(TARGETS)
 
 html: $(HTML_MANIFEST)
@@ -92,7 +92,6 @@ $(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML) inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
-
 
 print: $(print_DATA)
 
