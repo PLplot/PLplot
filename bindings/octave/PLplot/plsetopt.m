@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -73,15 +73,20 @@ function ret = plsetopt(option, value)
 	     "finc";  "Increment between family members";
 	     "fflen"; "Family member number minimum field width";
 	     "dpi"; "Resolution, in dots per inch (e.g. -dpi 360x360)";
+	     "drvopt"; "Driver dependent option";
 	     "compression"; "Sets compression level in supporting devices"];
   
-  global set_options = "";
+  global __pl set_options = "";
 
   ret = "";
 
   if (nargin == 0 || (nargin >= 1 && !isstr(option)) || (nargin == 2 && !isstr(value)))
     help "plsetopt"
     return
+  endif
+
+  if (!exist("__pl") || !struct_contains (__pl,"inited"))
+    __pl_init;
   endif
 
   nr = rows(options);
@@ -126,7 +131,7 @@ function ret = plsetopt(option, value)
     if (strcmp(deblank(option), deblank(options(i,:))));
       set_options = __pl_matstr(set_options, value, i);
       found = 1;
-      break
+      break;
     endif
   endfor
  
