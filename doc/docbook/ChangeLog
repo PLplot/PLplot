@@ -1,3 +1,7 @@
+2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in, Makefile.am: Added Info translation.
+
 2000-11-26  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am ($(TARBALL)): Include PDF file.

@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Sun Nov 26 14:37:21 CET 2000
+# Last modified on: Mon Nov 27 01:07:24 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -36,7 +36,9 @@ STYLESHEETS_IN = \
 EXTRA_DIST = $(SOURCE_FILES) $(STYLESHEETS_IN)
 CLEANFILES = \
   *.$(HTML_EXT) *.$(JPEG_EXT) $(HTML_MANIFEST) $(JPEG_MANIFEST) \
-  *.jadetex *.aux *.dvi *.ps.gz *.pdf* inline.ent *.log *.eps TMP.*
+  *.jadetex *.aux *.dvi *.ps.gz *.pdf* inline.ent *.log *.eps TMP.* \
+  *.info* *.texi *.txml *.xml-info
+
 
 JADE = @JADE@
 JADETEX = @JADETEX@
@@ -100,4 +102,31 @@ $(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT).in inline-print.ent
 	  -o $@ $(XML_DECL) $(MASTER_XML)
 
 
-.PHONY: all html print
+DOCBOOK2TEXIXML = @DOCBOOK2TEXIXML@
+TEXI_XML = @TEXI_XML@
+
+INFO_TMPDIR = info
+
+info: $(PACKAGE).info
+
+%.info: %.texi
+	rm -rf $(INFO_TMPDIR)
+	mkdir -p $(INFO_TMPDIR)
+	-makeinfo --force -o $(INFO_TMPDIR)/$@ $<
+	( cd $(INFO_TMPDIR) ; ls ) | cat > $(INFO_MANIFEST)
+	mv $(INFO_TMPDIR)/* .
+	rmdir $(INFO_TMPDIR)
+
+%.texi: %.txml
+	$(PERL) $(DOCBOOK2X_INC) $(TEXI_XML) $<
+
+%.txml: %.xml-info $(SOURCE_FILES) inline-info.ent
+	ln -fs inline-info.ent inline.ent
+	$(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@
+
+%.xml-info: %.xml
+	$(PERL) $(BINDIR)/info-clean.pl $< > $@
+
+.PHONY: all html print info
+.PRECIOUS: %.info %.texi %.txml %.xml-info
+
