@@ -11,10 +11,10 @@
 
 /* Options data structure definition. */
 
-static int pts = 500;
-static int xp = 25;
-static int yp = 20;
-static int nl = 15;
+static PLINT pts = 500;
+static PLINT xp = 25;
+static PLINT yp = 20;
+static PLINT nl = 15;
 static int knn_order = 20;
 static PLFLT threshold = 1.001;
 static PLFLT wmin = -1e3;
@@ -133,7 +133,8 @@ main(int argc, char *argv[])
   PLFLT *xg, *yg, **zg, **szg;
   PLFLT zmin, zmax, lzm, lzM;
   long ct;
-  int i, j, k, alg;
+  int i, j, k;
+  PLINT alg;
   char ylab[40], xlab[40];
   char *title[] = {"Cubic Spline Approximation",
 		   "Delaunay Linear Interpolation",

@@ -665,9 +665,9 @@ void plstream::gra()
 }
 
 // grid irregularly sampled data
-void plstream::griddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-                        PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
-                        PLFLT **zg, int type, PLFLT data)
+void plstream::griddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
+                        PLFLT *xg, PLINT nptsx, PLFLT *yg,  PLINT nptsy,
+                        PLFLT **zg, PLINT type, PLFLT data)
 {
     set_stream();
 

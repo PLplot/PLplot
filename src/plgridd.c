@@ -87,9 +87,9 @@ static PT items[KNN_MAX_ORDER];
 \*----------------------------------------------------------------------*/
 
 void
-c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
-	   PLFLT **zg, int type, PLFLT data)
+c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
+	   PLFLT *xg, PLINT nptsx, PLFLT *yg,  PLINT nptsy,
+	   PLFLT **zg, PLINT type, PLFLT data)
 {
   int i, j;
 

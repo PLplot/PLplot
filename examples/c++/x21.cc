@@ -60,10 +60,10 @@ private:
   PLFLT xm, xM, ym, yM;
 
   // Options data structure definition.  
-  static int pts;
-  static int xp;
-  static int yp;
-  static int nl;
+  static PLINT pts;
+  static PLINT xp;
+  static PLINT yp;
+  static PLINT nl;
   static int knn_order;
   static PLFLT threshold;
   static PLFLT wmin;
@@ -165,7 +165,8 @@ x21::x21( int argc, char ** argv ) {
   PLFLT *xg, *yg, **zg, **szg;
   PLFLT zmin, zmax, lzm, lzM;
   long ct;
-  int i, j, k, alg;
+  int i, j, k;
+  PLINT alg;
   char ylab[40], xlab[40];
   char *title[] = {"Cubic Spline Approximation",
 		   "Delaunay Linear Interpolation",
