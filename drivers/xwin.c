@@ -34,9 +34,11 @@ static int nobuffered = 0;      /* make it a buffered device by default */
 static int noinitcolors = 0;    /* Call InitColors by default */
                                 /* use "-drvopt noinitcolors" to leave colors uninitialized */ 
 
-/* When USE_DEFAULT_VISUAL is defined, DefaultVisual() is used to get the
- * visual.  Otherwise, the visual is obtained using XGetVisualInfo() to make a
- * match.  USE_DEFAULT_VISUAL is set by the configure script.
+static int defaultvisual = 0;   /* use "-drvopt defvis" to use the default visual */ 
+
+/* 
+ * When -drvopt defvis is defined, DefaultVisual() is used to get the visual.
+ * Otherwise, the visual is obtained using XGetVisualInfo() to make a match.
  */
 
 /*#define HACK_STATICCOLOR*/
@@ -174,6 +176,7 @@ static void  PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
 static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X server operation (0|1)"},
 				{"nobuffered", DRV_INT, &nobuffered, "Sets unbuffered operation (0|1)"},
 				{"noinitcolors", DRV_INT, &noinitcolors, "Sets cmap0 allocation (0|1)"},
+				{"defvis", DRV_INT, &defaultvisual, "Use the Default Visual (0|1)"},
 				{NULL, DRV_INT, NULL, NULL}};
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
@@ -2306,7 +2309,7 @@ GetVisual(PLStream *pls)
 
     dbug_enter("GetVisual");
 
-#ifndef USE_DEFAULT_VISUAL
+    if (!defaultvisual)
     {
 	XVisualInfo vTemplate, *visualList;
 
@@ -2368,7 +2371,6 @@ GetVisual(PLStream *pls)
 	}
 #endif /* HACK_STATICCOLOR */
     }
-#endif /* USE_DEFAULT_VISUAL */
 
     if ( ! visuals_matched) {
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
