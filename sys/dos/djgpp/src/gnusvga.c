@@ -4,7 +4,7 @@
 
 #include "plplot/plDevs.h"
 
-#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined (PLD_gnusvga) || defined(PLD_bmp) || defined(PLD_jpg) || defined(PLD_tiff)  
+#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined (PLD_gnusvga) || defined(PLD_bmp) || defined(PLD_jpg) || defined(PLD_tiff)
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
@@ -19,16 +19,17 @@
  * If, in future, this gets fixed on its own, then don't define
  * "use_experimental_hidden_line_hack"
  */
- 
+
 #define use_experimental_hidden_line_hack
 
+#define isTrueColour() (GrNumColors()>256)
 
 #ifndef bzero   /* not stanrard ANSI (boo hoo) */
 #define bzero(a,b) memset(a,0,b)
 #endif
 
 #ifdef PLD_gnusvga
-#undef _POSIX_SOURCE    /* Turn off POSIX to get around "problem" with <keys.h> header. 
+#undef _POSIX_SOURCE    /* Turn off POSIX to get around "problem" with <keys.h> header.
 			   Ugly, but it works *sigh* */
 #include <keys.h>
 #endif
@@ -82,9 +83,9 @@ static void     fill_polygon    (PLStream *pls);
 static void     setcmap         (PLStream *pls);
 static void     plD_init_gnu_grx_dev(PLStream *pls);
 static void     XorMod          (PLStream *pls, PLINT *mod);
- 
+
 #if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined(PLD_tiff) || defined(PLD_jpg) || defined(PLD_bmp)
-#if GRX_VERSION_API >= 0x0229 
+#if GRX_VERSION_API >= 0x0229
 char            *newname        (char *ext);
 #endif
 #endif
@@ -98,7 +99,7 @@ static exit_eventloop = 0;
 
 static page_state;
 
-/* 
+/*
  *  The "device structure" for the gnusvga driver holding all sorts of stuff
  *  that once would have been "global".
  */
@@ -106,7 +107,7 @@ static page_state;
 typedef struct {
 
 #ifdef PLD_gnusvga
-       
+
 	PLGraphicsIn gin;                       /* Graphics input structure     */
 	GrMouseEvent mevent;                    /* mouse event handler          */
 	GrLineOption gnusvgaline;               /* Line Options                 */
@@ -117,22 +118,22 @@ typedef struct {
 
 /*
  *  Originally I didn't realise it was possible to "XOR" a line, so I
- *  blitted the cross hair in. Then by accident (I read the instructions, 
+ *  blitted the cross hair in. Then by accident (I read the instructions,
  *  for something else I wanted to do, and stumbled across it !),
  *  I found out how to XOR a line, so got rid of the blitting. I have kept
  *  it in case it's quicker. It can be put back in a jiff by defining
  *  "BLIT_CROSSHAIR".
  */
 
-#ifdef BLIT_CROSSHAIR   
+#ifdef BLIT_CROSSHAIR
 	GrContext *Xhair_X;                    /* Screen pointer for XhairX line  */
 	GrContext *Xhair_Y;                    /* Screen pointer for XhairY line  */
 #endif
 
 #endif
 	GrVideoDriver *Old_Driver_Vector;       /* Pointer for old driver      */
- 
-	PLINT vgax;               
+
+	PLINT vgax;
 	PLINT vgay;
 
 	int scale;                              /* scaling factor to "blow up" to */
@@ -150,7 +151,7 @@ typedef struct {
 	char dont_copy_screen;                  /* set to non-zero before existing */
 	char Xhair_on;                          /* set if the cross hair is on and displayed */
 	char toggle_xhair;                      /* set if the cross hair is being "toggled" off for fixing top of screen */
-	
+
 	     } gnu_grx_Dev;
 
 #ifdef PLD_gnusvga
@@ -165,7 +166,7 @@ static void     RestoreTopOfScreen      ( gnu_grx_Dev *dev );
 
 #endif
 
-	
+
 /*--------------------------------------------------------------------------*\
  * plD_init_gnu_grx_dev()
  *
@@ -193,7 +194,7 @@ plD_init_gnu_grx_dev(PLStream *pls)
        pls->dev_compression=90;
 
     if (pls->width<=0) pls->width=1;
-    
+
     dev->colour=1;
     dev->totcol=16;
     dev->vgax = 1023;
@@ -211,7 +212,7 @@ plD_init_gnu_grx_dev(PLStream *pls)
 
 static void init_double_buffer ( gnu_grx_Dev *dev )
 {
-  if ( (dev->double_buffer==NULL)&&(dev->visual_screen==NULL) ) 
+  if ( (dev->double_buffer==NULL)&&(dev->visual_screen==NULL) )
      {
       dev->visual_screen=GrSaveContext(NULL);
       dev->double_buffer=GrCreateContext(GrScreenX(), GrScreenY(),NULL,NULL);
@@ -236,7 +237,7 @@ plD_init_vga(PLStream *pls)
 {
     gnu_grx_Dev *dev;
 
- 
+
     pls->termin = 1;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
@@ -275,9 +276,9 @@ plD_init_vga(PLStream *pls)
 
    dev->scale=1;
 
-#endif   
+#endif
 
-    if (pls->xdpi==0) 
+    if (pls->xdpi==0)
        {
 	plP_setpxl(2.5*dev->scale, 2.5*dev->scale);   /* My best guess.  Seems to work okay. */
        }
@@ -285,16 +286,16 @@ plD_init_vga(PLStream *pls)
        {
 	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
 	plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
-       } 
- 
+       }
+
     plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
 
     dev->gnusvgaline.lno_width=pls->width;
     dev->gnusvgaline.lno_pattlen=0;
 
-/* Check and set up for Double buffering */    
-    
-    if (pls->db!=0) 
+/* Check and set up for Double buffering */
+
+    if (pls->db!=0)
        init_double_buffer(dev);
 
 }
@@ -312,7 +313,7 @@ plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
     int x1 = x1a/dev->scale, y1 = y1a/dev->scale, x2 = x2a/dev->scale, y2 = y2a/dev->scale;
-    
+
     y1 = dev->vgay - y1;
     y2 = dev->vgay - y2;
 
@@ -381,65 +382,40 @@ setcmap(PLStream *pls)
     PLFLT tmp_colour_pos;
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-    GrResetColors();
 
-    if (GrNumColors()<pls->ncol0)
-       ncol0=GrNumColors();
-    else
-       ncol0=pls->ncol0;
 
-/* Initialize cmap 0 colors */
-       
-    for (i = 0; i < ncol0; i++)
-	{
-/*_GrAllocCell	GrAllocCell();*/
-	GrSetColor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
-	}
-
-/* 
- * Do a kludge to add a "black" colour back to the palette if the
- * background isn't black (ie changed through -bg), and at the same time,
- * fix the mouse up colours so they will work with "non-black" 
- * backgrounds.
- * 
- * Also includes an "optional" change to swap the red colour with the 
- * black colour, which is on by default. (I don't like the red being
- * the 'default' colour "1" on a "white" background, or for that matter
- * yellow being "2", but I can live more with yellow at number two.)
- * Just use "-hack" from the command line to make it take effect.
- *
- */
-
-if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
-   {
-    if (pls->hack!=1)
+    if (isTrueColour())
        {
-       GrSetColor(15, 0, 0, 0);
+        GrSetRGBcolorMode();
 #ifdef PLD_gnusvga
     if (pls->termin==1)
-       GrMouseSetColors(0,15);
+       GrMouseSetColors(GrAllocColor(255,255, 255),GrAllocColor(0,0,0));
 #endif
-       dev->fg=15;
+       dev->fg=GrAllocColor(255,255, 255);
+
        }
     else
        {
-	GrSetColor(15, pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
-	GrSetColor(1, 0, 0, 0);
-#ifdef PLD_gnusvga
-	if (pls->termin==1)
-	   GrMouseSetColors(0,1);
-#endif
-	dev->fg=1;
-      }
-   }
-else
-   {
+
+        GrResetColors();
+
+        if (GrNumColors()<pls->ncol0)
+           ncol0=GrNumColors();
+        else
+           ncol0=pls->ncol0;
+
+/* Initialize cmap 0 colors */
+
+    for (i = 0; i < ncol0; i++)
+	{
+	GrSetColor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
+	}
+
 #ifdef PLD_gnusvga
     if (pls->termin==1)
        GrMouseSetColors(15,0);
 #endif
    dev->fg=15;
-   }
 
 /* Initialize any remaining slots for cmap1 */
 
@@ -447,7 +423,7 @@ else
 
     if (pls->ncol1<ncol1) ncol1=pls->ncol1;
 
-    for (i = 0; i < ncol1; i++) 
+    for (i = 0; i < ncol1; i++)
 	{
 
 	 if (ncol1<pls->ncol1)       /* Check the dynamic range of colours */
@@ -463,18 +439,18 @@ else
 
 	     tmp_colour_pos= i>0 ? pls->ncol1*((PLFLT)i/ncol1) : 0;
 	     plcol_interp(pls, &cmap1col, (int) tmp_colour_pos, pls->ncol1);
-            
+
 	    }
 	else
-	    { 
+	    {
 	     plcol_interp(pls, &cmap1col, i, ncol1);
 	    }
 
-/*_GrAllocCell             GrAllocCell();*/
              GrSetColor(i + pls->ncol0, cmap1col.r, cmap1col.g, cmap1col.b);
 
     }
 
+}
 
 }
 
@@ -502,7 +478,7 @@ XorMod(PLStream *pls, PLINT *mod)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void 
+void
 plD_state_vga(PLStream *pls, PLINT op)
 {
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
@@ -515,21 +491,30 @@ PLFLT tmp_colour_pos;
 	break;
 
     case PLSTATE_COLOR0:
-	dev->colour = pls->icol0;
-	if (dev->colour == PL_RGB_COLOR) {
-	    int r = pls->curcolor.r;
-	    int g = pls->curcolor.g;
-	    int b = pls->curcolor.b;
-	    if (dev->totcol < GrNumColors()) 
+	if ( (pls->icol0 == PL_RGB_COLOR)||     /*  Should never happen since PL_RGB_COLOR is depreciated, but here for backwards compatibility */
+             (isTrueColour()) )  /*  We will do this if we are in "TrueColour" mode */
+           {
+	    if ( (dev->totcol < GrNumColors())||         /* See if there are slots left, if so we will allocate a new colour */
+                 (isTrueColour()) )  /* In TrueColour mode we allocate each colour as we come to it */
 	       {
-/*_GrAllocCell		GrAllocCell();*/
-		GrSetColor(++dev->totcol, r, g, b);
-		dev->colour = dev->totcol;
+                if (isTrueColour())
+                    dev->colour=GrAllocColor(pls->curcolor.r,pls->curcolor.g, pls->curcolor.b);
+                else
+                    {
+                     GrSetColor(++dev->totcol, pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+                     dev->colour = dev->totcol;
+                    }
 	       }
-	}
+
+           }
+         else  /* just a normal colour allocate, so don't worry about the above stuff, just grab the index */
+           {
+            dev->colour = pls->icol0;
+           }
 	break;
 
     case PLSTATE_COLOR1:
+       if (!isTrueColour())
 	{ int ncol1=GrNumColors() - pls->ncol0;
          if (ncol1<pls->ncol1)
            {
@@ -541,6 +526,10 @@ PLFLT tmp_colour_pos;
            dev->colour = pls->ncol0 + pls->icol1;
            }
 	}
+        else    /* it is a truecolour image */
+           {
+             dev->colour = GrAllocColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+           }
 	break;
 
     case PLSTATE_CMAP0:
@@ -564,20 +553,20 @@ plD_eop_vga(PLStream *pls)
 {
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-    if (page_state == DIRTY) 
+    if (page_state == DIRTY)
        {
-	if ( (dev->double_buffer!=NULL)&&(pls->db!=0)&&(dev->visual_screen!=NULL) ) 
+	if ( (dev->double_buffer!=NULL)&&(pls->db!=0)&&(dev->visual_screen!=NULL) )
 	   {
 	    GrSetContext(dev->visual_screen);
 	    GrBitBlt(NULL,0,0,dev->double_buffer,0,0,
 		      GrScreenX(), GrScreenY(),GrWRITE);
 	   }
-	else if ( (pls->db!=0) && ((dev->double_buffer==NULL)||(dev->visual_screen==NULL)) ) 
+	else if ( (pls->db!=0) && ((dev->double_buffer==NULL)||(dev->visual_screen==NULL)) )
 	   {
 	    plexit("Wacko error with double buffering I think");
 	   }
 
-	if ( ! pls->nopause ) 
+	if ( ! pls->nopause )
 	    WaitForPage(pls);
       }
 
@@ -606,8 +595,16 @@ plD_bop_vga(PLStream *pls)
 	GrSetContext(dev->double_buffer);
 	GrClearContext(0);
        }
-    else    
+    else
 	GrClearScreen(0);
+
+if (((pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||
+     (pls->cmap0[0].b!=0) )&&(isTrueColour()))
+   {
+     GrFilledBox(0,0, GrScreenX(), GrScreenY(),
+                 GrAllocColor(pls->cmap0[0].r,pls->cmap0[0].g,
+                              pls->cmap0[0].b));
+   }
 
 }
 
@@ -615,10 +612,10 @@ plD_bop_vga(PLStream *pls)
  * plD_tidy_vga()
  *
  * Close graphics file or otherwise clean up.
- * Checks to see if memory was allocated to a "saved screen" and 
+ * Checks to see if memory was allocated to a "saved screen" and
  * destroys if necessary.
  * Since I use the same "svga_text()" function to rest the screen as I
- * do for swapping between text and graphics, I use a "dev->don't_copy_screen" 
+ * do for swapping between text and graphics, I use a "dev->don't_copy_screen"
  * field to make sure the "svga_text()" doesn't copy the screen.
 \*----------------------------------------------------------------------*/
 
@@ -632,30 +629,30 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
     GrMouseUnInit();
     dev->dont_copy_screen=1;
     svga_text(pls);
-    
-    if (dev->switch_screen!=NULL) 
+
+    if (dev->switch_screen!=NULL)
        {
 	GrDestroyContext(dev->switch_screen);
 	dev->switch_screen=NULL;
-       } 
+       }
 
-    if (dev->visual_screen!=NULL) 
+    if (dev->visual_screen!=NULL)
        {
 	GrDestroyContext(dev->visual_screen);
 	dev->visual_screen=NULL;
        }
-       
-    if (dev->double_buffer!=NULL) 
+
+    if (dev->double_buffer!=NULL)
        {
 	GrDestroyContext(dev->double_buffer);
 	dev->double_buffer=NULL;
-       } 
+       }
 
     if (pls->dev!=NULL)
        {
 	free(pls->dev);
 	pls->dev=NULL;
-       } 
+       }
 }
 
 
@@ -678,7 +675,7 @@ do {
        {
 
 	GrMouseGetEvent(flags|GR_M_MOTION,event);
-	
+
 	if (event->flags & GR_M_MOTION)
 	   {
 
@@ -686,7 +683,7 @@ do {
 
 	    GrBitBlt(NULL,0,dev->last_y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
 	    GrBitBlt(NULL,dev->last_x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
-	
+
 	    GrBitBlt(NULL,0,event->y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
 	    GrBitBlt(NULL,event->x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
 
@@ -815,9 +812,9 @@ plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
 	svga_graph(pls);
 	break;
 
-    case PLESC_GETC:    
+    case PLESC_GETC:
 	gnusvga_GetCursorCmd(pls, (PLGraphicsIn *) ptr);
-	break; 
+	break;
 
       case PLESC_FILL:  /* fill */
 	fill_polygon(pls);
@@ -859,14 +856,14 @@ svga_text(PLStream *pls)
 {
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-    if (pls->graphx == GRAPHICS_MODE) 
+    if (pls->graphx == GRAPHICS_MODE)
        {
 	if ( dev->Xhair_on == 1 ) DestroyXhair ( dev );
-	   
-	if ( (dev->switch_screen==NULL)&&(dev->dont_copy_screen==0) ) 
+
+	if ( (dev->switch_screen==NULL)&&(dev->dont_copy_screen==0) )
 	   {
 	    dev->switch_screen=GrCreateContext(GrScreenX(), GrScreenY(),NULL,NULL);
-	    GrBitBlt(dev->switch_screen,0,0,NULL,0,0,GrScreenX(), GrScreenY(),GrWRITE);               
+	    GrBitBlt(dev->switch_screen,0,0,NULL,0,0,GrScreenX(), GrScreenY(),GrWRITE);
 	   }
 
 	GrSetMode(GR_default_text);
@@ -901,7 +898,7 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 	    setcmap(pls);
 	if (dev->switch_screen!=NULL) /* Ok, seems like we saved a copy of the screen */
 	   {
-	    GrBitBlt(NULL,0,0,dev->switch_screen,0,0,GrScreenX(), GrScreenY(),GrWRITE);               
+	    GrBitBlt(NULL,0,0,dev->switch_screen,0,0,GrScreenX(), GrScreenY(),GrWRITE);
 	    GrDestroyContext(dev->switch_screen);
 	    dev->switch_screen=NULL;
 	   }
@@ -924,15 +921,15 @@ plpause(PLStream *pls)
 GrMouseEvent event;
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-    if (pls->nopause) 
+    if (pls->nopause)
 	return;
 
-    SaveTopOfScreen(dev);    
+    SaveTopOfScreen(dev);
 
     GrTextXY(0, 0, "Pause->", dev->fg, 0);       /* Prompt for pausing */
     gnusvga_GrMouseGetEvent(GR_M_LEFT_DOWN+GR_M_KEYPRESS,pls,&event);       /* Wait for a mouse event */
-    
-    RestoreTopOfScreen(dev);    
+
+    RestoreTopOfScreen(dev);
 
 }
 
@@ -949,10 +946,10 @@ WaitForPage(PLStream *pls)
 {
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-    while ( ! exit_eventloop ) 
+    while ( ! exit_eventloop )
 	  {
 	   gnusvga_GrMouseGetEvent(GR_M_LEFT_DOWN+GR_M_KEYPRESS,pls,&dev->mevent);
-	   EventHandler(pls, &dev->mevent); 
+	   EventHandler(pls, &dev->mevent);
 	 }
     exit_eventloop = FALSE;
 }
@@ -971,7 +968,7 @@ void do_location(PLStream *pls)
     PLGraphicsIn *gin = &(dev->gin);
     char buf[80];
     GrMouseEvent event;
-    
+
     bzero(buf,80);
 
 /* Call user locate mode handler if provided */
@@ -982,12 +979,12 @@ void do_location(PLStream *pls)
 /* Use default procedure */
 
     else {
-    
+
 	  SaveTopOfScreen(dev);
-	  
+
 	  for (;;) {
-		
-		if (plTranslateCursor(gin)) 
+
+		if (plTranslateCursor(gin))
 		     {
 		       sprintf(buf,"Value at cursor is : X = %f, Y = %f   ", gin->wX, gin->wY);
 		       GrTextXY(0, 0, buf, dev->fg, 0);
@@ -1001,16 +998,16 @@ void do_location(PLStream *pls)
 
 		 if ((event.flags & GR_M_MOTION)!=1)    /* leave on anything *but* a movement */
 		     break;
-		 
+
 		 gin->pX = event.x;
 		 gin->pY = event.y;
 		 gin->dX = (PLFLT) event.x / dev->vgax;
 		 gin->dY = 1.0 - (PLFLT) event.y / dev->vgay;
-    
+
 		   } /* End loop */
-		   
+
 	   RestoreTopOfScreen( dev );
-	 
+
 	  }
 
 }
@@ -1040,7 +1037,7 @@ EventHandler(PLStream *pls, GrMouseEvent *event)
       sprintf(buf, "Input char 0x%x, Keycode 0x%x, string: %s               ",
 	      event->key, dev->gin.keysym, dev->gin.string);
       GrTextXY(0, 50, buf, 15, 0);
-      sprintf(buf, "button %d, pX %d, pY %d, state 0x%x                     ", 
+      sprintf(buf, "button %d, pX %d, pY %d, state 0x%x                     ",
 	      dev->gin.button, dev->gin.pX, dev->gin.pY, dev->gin.state);
       GrTextXY(0, 100, buf, 15, 0);
     }
@@ -1053,7 +1050,7 @@ EventHandler(PLStream *pls, GrMouseEvent *event)
     if (dev->gin.button) {
 	if (pls->ButtonEH != NULL)
 	    (*pls->ButtonEH) (&dev->gin, pls->ButtonEH_data, &exit_eventloop);
-    } 
+    }
     else {
 	if (pls->KeyEH != NULL)
 	    (*pls->KeyEH) (&dev->gin, pls->KeyEH_data, &exit_eventloop);
@@ -1094,8 +1091,8 @@ switch(dev->gin.keysym)
 	    DestroyXhair( dev );
 	   }
 	break;
-	
-#if GRX_VERSION_API >= 0x0229 
+
+#if GRX_VERSION_API >= 0x0229
 #ifdef GRX_DO_TIFF
        case PLK_F10:  /* F10 */
        SaveContextToTiff(NULL, newname("tif"), 0,"Created by GNUSVGA");
@@ -1130,7 +1127,7 @@ switch(dev->gin.keysym)
 /*--------------------------------------------------------------------------*\
  * TranslateEvent()
  *
- * Fills in the PLGraphicsIn from a MouseEvent.  All keys are not yet 
+ * Fills in the PLGraphicsIn from a MouseEvent.  All keys are not yet
  * translated correctly.
 \*--------------------------------------------------------------------------*/
 
@@ -1142,21 +1139,21 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 
 /* Translate DJGPP GrMouseEvent into PlPLot event */
 
-    if (event->flags & GR_M_KEYPRESS) 
+    if (event->flags & GR_M_KEYPRESS)
        {
-	gin->keysym = event->key; 
-	if ((isprint(event->key))&&(event->key<255)) 
+	gin->keysym = event->key;
+	if ((isprint(event->key))&&(event->key<255))
 	   {
 	    gin->string[0] = event->key;
 	    gin->string[1] = '\0';
 	   }
-	else 
+	else
 	   {
 	    switch (event->key) {
 
-	    case K_F1: case K_F2: case K_F3: 
+	    case K_F1: case K_F2: case K_F3:
 	    case K_F4: case K_F5: case K_F6:
-	    case K_F7: case K_F8: case K_F9: 
+	    case K_F7: case K_F8: case K_F9:
 	    case K_F10:
 	      gin->keysym = event->key  + (PLK_F1- K_F1);
 	      break;
@@ -1169,7 +1166,7 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 		 gin->keysym=PLK_F12;
 		 break;
 
-	    case K_Home: 
+	    case K_Home:
 	    case K_EHome:
 	      gin->keysym=PLK_Home;
 	      break;
@@ -1191,7 +1188,7 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 	      break;
 
 	    case K_PageDown: case K_EPageDown:
-	      gin->keysym = PLK_Prior; 
+	      gin->keysym = PLK_Prior;
 	      break;
 
 	    case K_PageUp: case K_EPageUp:
@@ -1210,9 +1207,9 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 	gin->state = event->kbstat;
     }
 
-    else if (event->flags & GR_M_BUTTON_DOWN) 
+    else if (event->flags & GR_M_BUTTON_DOWN)
        {
-	 switch (event->flags) 
+	 switch (event->flags)
 		{
 		case GR_M_LEFT_DOWN:
 		     gin->button = 1;
@@ -1237,7 +1234,7 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 /*----------------------------------------------------------------------*\
  * CreateXhair()
  *
- * Creates the cross hairs. 
+ * Creates the cross hairs.
  * Cross hairs can be implimented as "blits" or lines.
 \*----------------------------------------------------------------------*/
 
@@ -1250,10 +1247,10 @@ GrContext *swap_context=NULL;
  /*
   *  create the contexts holding the two cross hairs
   */
-  
+
  dev->Xhair_X=GrCreateContext(GrScreenX(),1,NULL,NULL);
  dev->Xhair_Y=GrCreateContext(1, GrScreenY(),NULL,NULL);
- 
+
  swap_context=GrSaveContext(NULL);    /* save a temp copy of the current context */
  GrSetContext(dev->Xhair_X);          /* Set the context to the "X" line */
  GrClearContext(dev->fg);             /* Clear it out with forground colour */
@@ -1279,14 +1276,14 @@ GrContext *swap_context=NULL;
 
      dev->last_x=event->x;
      dev->last_y=event->y;
-    } 
+    }
  else
     {
 #ifdef BLIT_CROSSHAIR
 
      GrBitBlt(NULL,0,dev->last_y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
      GrBitBlt(NULL,dev->last_x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
-     
+
 #else
 
     GrHLine(0,GrScreenX(),dev->last_y,dev->fg|GrXOR);
@@ -1311,11 +1308,11 @@ GrContext *swap_context=NULL;
 static void DestroyXhair ( gnu_grx_Dev *dev )
 {
 
-   
-#ifdef BLIT_CROSSHAIR   
+
+#ifdef BLIT_CROSSHAIR
 
   GrBitBlt(NULL,0,dev->last_y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
-  GrBitBlt(NULL,dev->last_x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR); 
+  GrBitBlt(NULL,dev->last_x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
 
   if (dev->Xhair_X!=NULL)
     {
@@ -1334,14 +1331,14 @@ static void DestroyXhair ( gnu_grx_Dev *dev )
   GrVLine(dev->last_x,0,GrScreenY(),dev->fg|GrXOR);
 
 #endif
- 
+
  if (dev->toggle_xhair==0)
     {
      dev->last_x=0;
      dev->last_y=0;
-   }  
+   }
 
- 
+
  dev->Xhair_on=0;
 
 }
@@ -1356,7 +1353,7 @@ static void DestroyXhair ( gnu_grx_Dev *dev )
 static void SaveTopOfScreen ( gnu_grx_Dev *dev )
 
 {
-	  /* Turn off Cross Hairs if they were turned on (nasty if not) 
+	  /* Turn off Cross Hairs if they were turned on (nasty if not)
 	   * since it causes problems with the top of the line
 	   */
 
@@ -1367,14 +1364,14 @@ static void SaveTopOfScreen ( gnu_grx_Dev *dev )
 	     }
 
 	  /*  Save the top bit of the screen so we can overwrite
-	   *  without too many problems 
+	   *  without too many problems
 	   */
 
 	  dev->top_line=GrCreateContext(GrScreenX(), 16,NULL,NULL);
 	  GrBitBlt(dev->top_line,0,0,NULL,0,0,GrScreenX(), 16,GrWRITE);
-	  
+
 	  /*
-	   * Turn back on cross hair now if necessary 
+	   * Turn back on cross hair now if necessary
 	   */
 
 	  if (dev->toggle_xhair==1)
@@ -1388,7 +1385,7 @@ static void SaveTopOfScreen ( gnu_grx_Dev *dev )
 /*----------------------------------------------------------------------*\
  * RestoreTopOfScreen()
  *
- * Function restores the saved top "line" of the screen to a buffer 
+ * Function restores the saved top "line" of the screen to a buffer
  * (using blitting) so damage caused by writing can be undone.
 \*----------------------------------------------------------------------*/
 
@@ -1396,14 +1393,14 @@ static void RestoreTopOfScreen ( gnu_grx_Dev *dev )
 
 {
 	    if (dev->top_line!=NULL)    /* Ok, seems like we saved a copy of the top line */
-	       {                        
-	       
+	       {
+
 		if (dev->Xhair_on==1)   /* Turn off cross hair while fixing top */
 		   {
 		    dev->toggle_xhair=1;
 		    DestroyXhair(dev);
 		   }
-	       
+
 		GrBitBlt(NULL,0,0,dev->top_line,0,0,GrScreenX(), 16,GrWRITE); /* So we will restore anything the top line overwrote */
 		GrDestroyContext(dev->top_line);        /* remove copy of original top line */
 		dev->top_line=NULL;
@@ -1416,7 +1413,7 @@ static void RestoreTopOfScreen ( gnu_grx_Dev *dev )
 		   CreateXhair(dev, NULL);
 		   dev->toggle_xhair=0;
 		  }
-		
+
 	       }
 }
 
@@ -1493,8 +1490,8 @@ return(name);
 /*----------------------------------------------------------------------*\
  * gnusvga_get_a_file_name()
  *
- * Checks to see if there is a file name already, if there isn't then 
- * it asks the user for one, allocates memory for the name, and makes 
+ * Checks to see if there is a file name already, if there isn't then
+ * it asks the user for one, allocates memory for the name, and makes
  * one.
 \*----------------------------------------------------------------------*/
 
@@ -1503,18 +1500,18 @@ void gnusvga_get_a_file_name ( PLStream *pls )
 int i=0;
    if (pls->BaseName==NULL)  /* Check to see if a File name has been defined yet */
      {
-     
-      /* 
+
+      /*
        *  Allocate memory for the file name.
        *  Should I be doing this like this ?
-       *  I *think* this will be cleaned up later on by plplot, so i will do it anyway 
+       *  I *think* this will be cleaned up later on by plplot, so i will do it anyway
        */
-       
+
       if ((pls->BaseName=malloc(80))==NULL)
 	 plexit("Could not allocate some memory");
       if ((pls->FileName=malloc(80))==NULL)
 	 plexit("Could not allocate some memory");
-	 
+
       do { /* Continue to ask for the file name until we get an answer we like */
 	  fprintf(stderr,"Enter file name (include \"0\" or \"00\" if defining a family, or use \"auto\" to \ndo automatic naming): ");
 	  fgets(pls->BaseName, 79, stdin);
@@ -1524,10 +1521,10 @@ int i=0;
 		    {
 		     if ((pls->BaseName[i]==10)||(pls->BaseName[i]==13))
 			pls->BaseName[i]=0;
-		     ++i; 
+		     ++i;
 		     if (i>79) break;
 		    }
-	 
+
 	      strncpy(pls->FileName,pls->BaseName,79); /* Copy BaseName to FileName */
 	      if (strchr(pls->BaseName,'0')!=NULL) /* Test to see if we might have Family support */
 		 pls->family=1;
@@ -1572,7 +1569,7 @@ if (pls->page>1)
 	       }
 	   }
        }
-	    
+
     if (pls->family==0) /* See if families aren't specified */
        {
 	free(pls->BaseName);
@@ -1594,11 +1591,11 @@ if (pls->page>1)
 	   }
 	else if ((pls->page-1)>35)
 	   plabort("Number of files exceeded (next time try \"00\" in filename instead of \"0\")");
-   
+
 	zero[0]=gnu_alphabet[(pls->page-1)%36];
 	}
      }
-		 
+
    }
 }
 #endif
@@ -1673,13 +1670,13 @@ void plD_init_tiff(PLStream *pls)
 	   {
 	    GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
 	   }
-	   
+
 	setcmap(pls);
 	dev->totcol = 16;               /* Reset RGB map so we don't run out of
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
-		
+
 
     dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
@@ -1698,9 +1695,9 @@ void plD_init_tiff(PLStream *pls)
 
    dev->scale=1;
 
-#endif   
+#endif
 
-    if (pls->xdpi==0) 
+    if (pls->xdpi==0)
        {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
 	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
@@ -1708,7 +1705,7 @@ void plD_init_tiff(PLStream *pls)
     else
        {
 	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-       } 
+       }
 
     plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
     plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
@@ -1748,9 +1745,9 @@ void plD_esc_tiff(PLStream *pls, PLINT op, void *ptr)
 void plD_eop_tiff(PLStream *pls)
 {
 
-    if (page_state == DIRTY) 
+    if (page_state == DIRTY)
        {
-  
+
 	gnusvga_get_a_file_name(pls);
 
 	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
@@ -1779,6 +1776,15 @@ void plD_bop_tiff(PLStream *pls)
     pls->page++;
     plD_eop_tiff(pls);
     GrClearScreen(0);
+
+    if (((pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||
+        (pls->cmap0[0].b!=0) )&&(isTrueColour()))
+      {
+        GrFilledBox(0,0, GrScreenX(), GrScreenY(),
+                    GrAllocColor(pls->cmap0[0].r,pls->cmap0[0].g,
+                                 pls->cmap0[0].b));
+      }
+
 }
 
 /*----------------------------------------------------------------------*\
@@ -1791,7 +1797,7 @@ void plD_tidy_tiff(PLStream *pls)
 {
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-      if (dev->Old_Driver_Vector) 
+      if (dev->Old_Driver_Vector)
 	 {
 	  GrSetDriver (dev->Old_Driver_Vector->name);
 	  dev->Old_Driver_Vector=NULL;
@@ -1872,7 +1878,7 @@ void plD_init_jpg(PLStream *pls)
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
-		
+
 
     dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
@@ -1891,10 +1897,10 @@ void plD_init_jpg(PLStream *pls)
 
    dev->scale=1;
 
-#endif   
+#endif
 
 
-    if (pls->xdpi==0) 
+    if (pls->xdpi==0)
        {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
 	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
@@ -1902,7 +1908,7 @@ void plD_init_jpg(PLStream *pls)
     else
        {
 	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-       } 
+       }
 
     plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
     plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
@@ -1924,7 +1930,7 @@ void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr)
 {
     switch (op) {
 
-    case PLESC_FILL: 
+    case PLESC_FILL:
 	fill_polygon(pls);
 	break;
 
@@ -1934,7 +1940,7 @@ void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr)
 	     pls->dev_compression=(int) ptr;
 	    }
 	break;
-	
+
     }
 }
 
@@ -1948,9 +1954,9 @@ void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr)
 void plD_eop_jpg(PLStream *pls)
 {
 
-    if (page_state == DIRTY) 
+    if (page_state == DIRTY)
        {
-  
+
 	gnusvga_get_a_file_name(pls);
 
 	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
@@ -1979,6 +1985,15 @@ void plD_bop_jpg(PLStream *pls)
     pls->page++;
     plD_eop_jpg(pls);
     GrClearScreen(0);
+
+    if (((pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||
+        (pls->cmap0[0].b!=0) )&&(isTrueColour()))
+      {
+        GrFilledBox(0,0, GrScreenX(), GrScreenY(),
+                    GrAllocColor(pls->cmap0[0].r,pls->cmap0[0].g,
+                                 pls->cmap0[0].b));
+      }
+
 }
 
 /*----------------------------------------------------------------------*\
@@ -1991,7 +2006,7 @@ void plD_tidy_jpg(PLStream *pls)
 {
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-      if (dev->Old_Driver_Vector) 
+      if (dev->Old_Driver_Vector)
 	 {
 	  GrSetDriver (dev->Old_Driver_Vector->name);
 	  dev->Old_Driver_Vector=NULL;
@@ -2062,7 +2077,7 @@ void plD_init_bmp(PLStream *pls)
  * or plspage */
 	 plspage(0., 0., 800, 600, 0, 0);
       }
-       
+
 	if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
 	   {
 	    GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 2);
@@ -2081,7 +2096,7 @@ void plD_init_bmp(PLStream *pls)
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
-		
+
 
     dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
@@ -2100,10 +2115,10 @@ void plD_init_bmp(PLStream *pls)
 
    dev->scale=1;
 
-#endif   
+#endif
 
 
-    if (pls->xdpi==0) 
+    if (pls->xdpi==0)
        {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
 	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
@@ -2111,7 +2126,7 @@ void plD_init_bmp(PLStream *pls)
     else
        {
 	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-       } 
+       }
 
     plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
     plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
@@ -2149,9 +2164,9 @@ void plD_esc_bmp(PLStream *pls, PLINT op, void *ptr)
 void plD_eop_bmp(PLStream *pls)
 {
 
-    if (page_state == DIRTY) 
+    if (page_state == DIRTY)
        {
-  
+
 	gnusvga_get_a_file_name(pls);
 
 	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
@@ -2181,6 +2196,15 @@ void plD_bop_bmp(PLStream *pls)
     pls->page++;
     plD_eop_bmp(pls);
     GrClearScreen(0);
+
+    if (((pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||
+        (pls->cmap0[0].b!=0) )&&(isTrueColour()))
+      {
+        GrFilledBox(0,0, GrScreenX(), GrScreenY(),
+                    GrAllocColor(pls->cmap0[0].r,pls->cmap0[0].g,
+                                 pls->cmap0[0].b));
+      }
+
 }
 
 /*----------------------------------------------------------------------*\
@@ -2193,7 +2217,7 @@ void plD_tidy_bmp(PLStream *pls)
 {
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
-      if (dev->Old_Driver_Vector) 
+      if (dev->Old_Driver_Vector)
 	 {
 	  GrSetDriver (dev->Old_Driver_Vector->name);
 	  dev->Old_Driver_Vector=NULL;
@@ -2205,7 +2229,7 @@ pls->dev=NULL;
 
 
 #else
-int 
+int
 pldummy_gnusvga()
 {
     return 0;
