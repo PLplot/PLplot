@@ -1009,7 +1009,7 @@ if test "$enable_octave" = "yes"; then
 
 # check for user supplied Octave
     if test "$enable_octave" = "yes"; then
-        AC_ARG_WITH(octavexe, [  --with-octave=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
+        AC_ARG_WITH(octavex, [  --with-octavex=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
         OCTAVE=`basename $OCTAVE`
         AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
         if test "$has_octave" = "no"; then
