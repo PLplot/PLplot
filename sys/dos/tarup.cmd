@@ -1,0 +1,44 @@
+@rem #!/bin/sh
+@rem #
+@rem # File: tarup
+@rem # Usage: tarup
+@rem # 
+@rem # Builds tar archive of plplot files for distribution.
+@rem # No binary files should be included.
+@
+@rem # Build archive from parent directory.  It must also be unpacked from there.
+@
+cd ..
+@
+@rem # top level text files & scripts
+@
+tar cf plplot.tar plplot/README
+tar rf plplot.tar plplot/README.1st
+tar rf plplot.tar plplot/COPYRIGHTS
+tar rf plplot.tar plplot/Changes.log
+tar rf plplot.tar plplot/ToDo
+tar rf plplot.tar plplot/tarup
+tar rf plplot.tar plplot/zipup
+tar rf plplot.tar plplot/zooup
+@
+@rem # Make sure tar creates these subdirectories to make installation easier.
+@
+tar rf plplot.tar plplot/tmp/.dummy
+@
+@rem # Font files
+@
+tar rf plplot.tar plplot/lib/*.fnt
+@
+@rem # Source code & docs.
+@
+tar rf plplot.tar plplot/doc 
+tar rf plplot.tar plplot/drivers
+tar rf plplot.tar plplot/examples
+tar rf plplot.tar plplot/fonts
+tar rf plplot.tar plplot/include
+tar rf plplot.tar plplot/m4
+tar rf plplot.tar plplot/new
+tar rf plplot.tar plplot/utils
+tar rf plplot.tar plplot/scripts
+tar rf plplot.tar plplot/src
+tar rf plplot.tar plplot/sys
