@@ -49,6 +49,9 @@ plw_page_reset plwidget.tcl
 pl_zoom_start plwidget.tcl
 pl_zoom_draw plwidget.tcl
 pl_zoom_select plwidget.tcl
-pl_view plwidget.tcl
+pl_view_select plwidget.tcl
+pl_view_zoom plwidget.tcl
+pl_fixview plwidget.tcl
+plw_update_view plwidget.tcl
 status_msg plwidget.tcl
 tkdemo1_init tkdemo1.tcl
