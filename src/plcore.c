@@ -325,6 +325,9 @@ plP_fill(short *x, short *y, PLINT npts)
 }
 
 /* Account for driver ability to draw text itself */
+/*
+#define DEBUG_TEXT
+*/
 
 void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
@@ -346,8 +349,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	    plbuf_esc(plsc, PLESC_HAS_TEXT, &args);
 
 	plP_esc(PLESC_HAS_TEXT, &args);
-
+#ifndef DEBUG_TEXT
     } else {
+#endif
 	plstr(base, xform, refx, refy, string);
     }
 }
