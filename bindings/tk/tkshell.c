@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/07/22 22:21:16  mjl
+ * Revision 1.22  1994/07/25 06:44:27  mjl
+ * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
+ *
+ * Revision 1.21  1994/07/22  22:21:16  mjl
  * Eliminated a gcc -Wall warning.
  *
  * Revision 1.20  1994/07/19  22:31:50  mjl
@@ -34,7 +37,9 @@
  */
 
 #include "plserver.h"
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 /* Static functions */
 

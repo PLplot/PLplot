@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/06/30 18:22:03  mjl
+ * Revision 1.21  1994/07/25 06:44:31  mjl
+ * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
+ *
+ * Revision 1.20  1994/06/30  18:22:03  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -77,7 +80,9 @@
 #ifdef __unix
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <errno.h>
 #endif
 

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.43  1994/07/23 04:45:42  mjl
+ * Revision 1.44  1994/07/25 06:44:25  mjl
+ * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
+ *
+ * Revision 1.43  1994/07/23  04:45:42  mjl
  * Added code to start plserver with sigprocmask set so that a ^C doesn't
  * kill it (enabled if pls->server_nokill is set).  Contributed by Ian
  * Searle.
@@ -62,7 +65,9 @@
 #include "metadefs.h"
 #include "plevent.h"
 
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
