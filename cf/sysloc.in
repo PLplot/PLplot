@@ -472,21 +472,13 @@ if test "$enable_python" = "yes"; then
 	fi
 
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
-        # Changed by Rafael Laboissiere <rafael@icp.inpg.fr>
-	# on Mon Oct 12 11:12:00 CEST 1998
-        # (For the Debian plplot package).
-	# PYTHON_MOD_DIR=$python_dir/lib/python
-        PYTHON_MOD_DIR=$prefix/lib/python
+	PYTHON_MOD_DIR=$python_dir/lib/python
 	PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
 	    # account for the usual case where python directories 
 	    # have a version number now.
 	    python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
-            # Changed by Rafael Laboissiere <rafael@icp.inpg.fr>
-	    # on Mon Oct 12 11:12:00 CEST 1998
-	    # (For the Debian plplot package).
-	    # PYTHON_MOD_DIR=$python_dir/lib/$python_ver
-            PYTHON_MOD_DIR=$prefix/lib/$python_ver
+	    PYTHON_MOD_DIR=$python_dir/lib/$python_ver
 	    PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
 	    if test ! -d "$PYTHON_MOD_DIR"; then
 		enable_python=no
@@ -501,21 +493,12 @@ if test "$enable_python" = "yes"; then
 	    fi
 
 	fi
-<<<<<<< sysloc.in
-	# Changed by Rafael Laboissiere <rafael@icp.inpg.fr>
-        # on Mon Oct 12 11:12:00 CEST 1998
-	# (For the Debian plplot package).
-	# PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
-        PYTHON_CFG_DIR=$python_dir/lib/$python_ver/config
-    fi
-=======
 	PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
     fi
     if test -z "$PYTHON_DIR"; then
         #default location for installing plmodule.so if versioned logic failed above.
         PYTHON_DIR=$prefix/python
     fi
->>>>>>> 1.56
 fi
 
 AC_SUBST(PYTHON_INC_DIR)
@@ -628,8 +611,8 @@ if test "$with_shlib" = "yes"; then
     SHLIB_LIBS=$LIBS
 
     if test "$with_gcc" = "yes"; then
-	SHLIB_CCFLAGS="-fPIC"
-	SHLIB_CXXFLAGS="-fPIC"
+	SHLIB_CCFLAGS=-fPIC
+	SHLIB_CXXFLAGS=-fPIC
 	SHLIB_BUILD="gcc -shared -fPIC -o"
     else
 	SHLIB_CCFLAGS=
@@ -659,14 +642,9 @@ if test "$with_shlib" = "yes"; then
         SHLIB_BUILD="gcc -shared -fPIC -o"
     ;;
 	Linux* )
-            # Added by Rafael Laboissiere <rafael@icp.inpg.fr>
-            # on Sat Nov  6 20:57:55 CET 1999  
-	    SHLIB_F77FLAGS="-fpic -fPIC"
-
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
-#	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    SHLIB_BUILD="gcc -shared -fPIC -o"
 
 	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
@@ -758,7 +736,6 @@ AC_SUBST(SONAME_FLAGS)
 AC_SUBST(SA)
 AC_SUBST(SO)
 AC_SUBST(LDSHARED)
-AC_SUBST(RPATH)
 AC_SUBST(RPATH)
 AC_SUBST(INSTALL_RPATH)
 
