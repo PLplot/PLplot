@@ -142,10 +142,10 @@ class x08 {
 		pls.plot3d( x, y, z, opt[k], 1 );
 	      else if (ifshade == 1) { /* 3D shaded plot */
 		cmap1_init(1);
-		pls.plotsh3d( x, y, z, 0 );
+		pls.plsurf3d( x, y, z, 0);
 	      } else {                 /* false color plot */
 		 cmap1_init(0);
-		 pls.plotfc3d(x, y, z, 0);
+		 pls.plsurf3d(x, y, z, 0);
 		 if (ifshade == 3) {    /* add wireframe to false color plot */
 		    pls.col0(0);
 		    pls.plot3d(x, y, z, opt[k], 0);
