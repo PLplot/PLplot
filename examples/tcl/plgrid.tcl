@@ -2,6 +2,11 @@
 # $Id$
 #
 # Demo polar grid plotter
+#
+#
+# To run this demo execute pltcl and type plinit to get a selection of
+# device types.  Choose one of the devices then type
+# "source plgrid.tcl" (this file), then type "plgrid" with no arguments.
 #----------------------------------------------------------------------------
 
 proc plgrid {{w loopback}} {
