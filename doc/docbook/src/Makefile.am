@@ -43,7 +43,8 @@ SOURCE_FILES = \
   python.xml \
   simple.xml \
   tcl.xml \
-  wish.xml
+  wish.xml \
+  math.ent
 
 STYLESHEET_HTML = plplotdoc-html.dsl
 STYLESHEET_PRINT = plplotdoc-print.dsl
@@ -60,7 +61,7 @@ built_files = \
 EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
   jadetex.cfg stylesheet.css $(built_files) \
-  inline-info.ent math.ent pdftex.map
+  inline-info.ent pdftex.map
 
 CLEANFILES = \
   *.aux inline.ent *.log *.eps TMP.* *-tmp *.out
@@ -142,7 +143,6 @@ info: plplotdoc.info
 	$(PERL) $(DOCBOOK2X_INC) $(TEXI_XML) $<
 
 %.txml: %.xml-info $(SOURCE_FILES) inline-info.ent
-	ln -fs inline-info.ent inline.ent
 	if $(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@-tmp ; then \
 	  mv $@-tmp $@ ; \
 	else \
@@ -150,6 +150,7 @@ info: plplotdoc.info
 	fi
 
 plplotdoc.xml-info: $(SOURCE_FILES)
+	ln -fs inline-info.ent inline.ent
 	$(PERL) $(BINDIR)/info-clean.pl plplotdoc.xml > $@
 
 man: $(MAN_MANIFEST)
