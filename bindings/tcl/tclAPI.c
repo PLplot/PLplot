@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1995/05/07 03:14:26  mjl
+ * Revision 1.12  1995/06/09 22:46:37  mjl
+ * Eliminated vestigial lookup of TclMatrix variable in favor of new syntax.
+ *
+ * Revision 1.11  1995/05/07  03:14:26  mjl
  * Added new Tcl API functions plscol0 and plscolbg for color setting.
  *
  * Revision 1.10  1995/03/17  07:54:33  mjl
@@ -529,7 +532,6 @@ static int
 plcontCmd(ClientData clientData, Tcl_Interp *interp,
 	 int argc, char **argv)
 {
-    char *mat;
     tclMatrix *matPtr, *pclev;
 
     if (argc != 3 ) {
@@ -539,11 +541,8 @@ plcontCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
 
-    mat = Tcl_GetVar( interp, argv[1], 0 );
-    matPtr = Tcl_GetMatrixPtr( interp, mat );
-
-    mat = Tcl_GetVar( interp, argv[2], 0 );
-    pclev = Tcl_GetMatrixPtr( interp, mat );
+    matPtr = Tcl_GetMatrixPtr( interp, argv[1] );
+    pclev = Tcl_GetMatrixPtr( interp, argv[2] );
 
     if (matPtr->dim != 2) {
 	interp->result = "Must use 2-d data.";
@@ -1116,7 +1115,6 @@ plshadeCmd(ClientData clientData, Tcl_Interp *interp,
 	 int argc, char **argv)
 {
     int result = TCL_OK;
-    char *mat;
     tclMatrix *matPtr;
 
     PLFLT xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
@@ -1134,8 +1132,7 @@ plshadeCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
 
-    mat = Tcl_GetVar( interp, argv[1], 0 );
-    matPtr = Tcl_GetMatrixPtr( interp, mat );
+    matPtr = Tcl_GetMatrixPtr( interp, argv[1] );
 
     if (matPtr->dim != 2) {
 	interp->result = "Must plot a 2-d matrix.";
