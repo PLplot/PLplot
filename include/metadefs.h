@@ -1,31 +1,14 @@
 /* $Id$
-   $Log$
-   Revision 1.7  1993/07/31 08:08:40  mjl
-   Added macro CHANGE_STATE for new state driver function.
-
+ * $Log$
+ * Revision 1.8  1993/08/09 22:16:39  mjl
+ * Miscellaneous cleaning up.
+ *
+ * Revision 1.7  1993/07/31  08:08:40  mjl
+ * Added macro CHANGE_STATE for new state driver function.
+ *
  * Revision 1.6  1993/07/02  07:21:12  mjl
  * Added header definitions for use by TK driver.  Also new macros for plplot
  * bop/eop commands.
- *
- * Revision 1.5  1993/03/06  05:03:49  mjl
- * Bumped the metafile format ID, to allow a hack on old metafiles with bad
- * linewidth commands (WIDTH commands in the body of the metafile are now
- * ignored for metafiles version 1993a and older).  WIDTH commands prior to
- * the INIT on old metafiles are still honored.
- *
- * Revision 1.4  1993/02/27  04:47:26  mjl
- * Changed def'n of plm_wr macro to avoid a circular call chain.
- *
- * Revision 1.3  1993/02/23  04:51:08  mjl
- * Changed PLPLOT_HEADER and PLPLOT_VERSION to PLMETA_HEADER and PLMETA_VERSION
- * so that plplot could have its own distinct version number.
- *
- * Revision 1.2  1993/01/23  05:29:18  mjl
- * Added support for polylines and new color model.
- *
- * Revision 1.1  1992/05/20  21:33:39  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
