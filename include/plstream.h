@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/01/15 17:35:09  mjl
+ * Revision 1.23  1994/01/25 06:22:17  mjl
+ * Added pls->db variable.
+ *
+ * Revision 1.22  1994/01/15  17:35:09  mjl
  * Added new variables for use in Tcl/TK/DP driver: server_name, server_host,
  * server_port.
  *
@@ -190,7 +193,9 @@ typedef struct {
 * geometry	char*	Window geometry (malloc'ed)
 * window_id	long	X-window window ID
 * nopixmap	int	Set if you want to forbid allocation of pixmaps
-*
+* db		int	Set if you want to double buffer output
+*			(only pixmap is drawn to directly; it is blitted
+*			to output window on EOP or an Expose)
 ***********************************************************************
 *
 * These are for support of the TK driver.
@@ -392,7 +397,7 @@ typedef struct {
 
     char *geometry;
     long window_id;
-    int  nopixmap;
+    int  nopixmap, db;
 
 /* Stuff used by TK driver */
 
