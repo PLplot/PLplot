@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1995/01/29 07:04:18  mjl
+ * Revision 1.18  1995/03/16 23:59:07  mjl
+ * Eliminated some temporary variables and variables not in use.
+ *
+ * Revision 1.17  1995/01/29  07:04:18  mjl
  * Fix to increase spacing between inverted tics and numeric labels; in some
  * cases they were running into each other.  Contributed by John Interrante.
  *
@@ -64,15 +67,15 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
 static void
 label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1);
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plbox()
  *
- * This draws a box around the current viewport, complete with axes,
- * ticks, numeric labels, and grids, according to input specification.
- * Just a front-end to plaxes(), which allows arbitrary placement of
- * coordinate axes when plotted (here the origin is at 0,0).  See the
- * documentation for plaxes() for more info.
-\*----------------------------------------------------------------------*/
+ * This draws a box around the current viewport, complete with axes, ticks,
+ * numeric labels, and grids, according to input specification.  Just a
+ * front-end to plaxes(), which allows arbitrary placement of coordinate
+ * axes when plotted (here the origin is at 0,0).  See the documentation for
+ * plaxes() for more info.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
@@ -81,7 +84,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     c_plaxes(0.0, 0.0, xopt, xtick, nxsub, yopt, ytick, nysub);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plaxes()
  *
  * This draws a box around the current viewport, complete with axes,
@@ -110,14 +113,13 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
  *
  * nxsub, nysub are the number of subtick intervals in a major tick
  * interval
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plaxes(PLFLT x0, PLFLT y0,
 	 const char *xopt, PLFLT xtick, PLINT nxsub,
 	 const char *yopt, PLFLT ytick, PLINT nysub)
 {
-    static char string[40];
     PLINT lax, lbx, lcx, lgx, lix, llx, lsx, ltx;
     PLINT lay, lby, lcy, lgy, liy, lly, lsy, lty;
     PLINT xmajor, xminor, ymajor, yminor;
@@ -127,7 +129,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
     PLINT pxmin, pxmax, pymin, pymax;
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT xp0, yp0, pos, tn, tp, temp, offset, height;
+    PLFLT xp0, yp0, tn, tp, temp;
 
     if (plsc->level < 3) {
 	plabort("plbox: Please set up window first");
@@ -140,7 +142,10 @@ c_plaxes(PLFLT x0, PLFLT y0,
     plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
     plP_sclp(pxmin, pxmax, pymin, pymax);
 
-    plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
+    vppxmi = plsc->vppxmi;
+    vppxma = plsc->vppxma;
+    vppymi = plsc->vppymi;
+    vppyma = plsc->vppyma;
 
 /* Convert world coordinates to physical */
 
@@ -431,11 +436,11 @@ c_plaxes(PLFLT x0, PLFLT y0,
     plP_sclp(lxmin, lxmax, lymin, lymax);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plbox3()
  *
  * This is the 3-d analogue of plbox().
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
@@ -445,7 +450,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT ln, font;
+    PLINT ln;
     PLINT *zbflg, *zbcol;
     PLFLT *zbtck;
     PLINT xdigmax, xdigits;
@@ -475,8 +480,8 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     plP_gzback(&zbflg, &zbcol, &zbtck);
     *zbflg = plP_stsearch(zopt, 'd');
     if (*zbflg) {
-	*zbtck = ztick;
-	plP_gatt(&font, zbcol);	/* save tick spacing and color */
+	*zbtck = ztick;		/* save tick spacing */
+	*zbcol = plsc->icol0;	/* and color */
     }
 
     if (cxx >= 0.0 && cxy <= 0.0) {
@@ -588,11 +593,11 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     plszax(zdigmax, zdigits);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Support routines for 3d box draw.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plxybx()
  *
  * This draws a sloping line from (wx1,wy1) to (wx2,wy2) which represents an
@@ -609,7 +614,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
  * t: Draw major tick marks
  * s: Draw minor tick marks
  * u: Write label on line
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
@@ -650,7 +655,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	return;
 
     if (ll)
-	tick1 = (vmax > vmin) ? (PLFLT) 1.0 : (PLFLT) -1.0 ;
+	tick1 = (vmax > vmin) ? 1.0 : -1.0 ;
     if (lt)
 	pldtik(vmin, vmax, &tick1, &nsub1);
 
@@ -735,47 +740,45 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plxytx()
  *
  * Prints out text along a sloping axis joining world coordinates
  * (wx1,wy1) to (wx2,wy2). Parameters are as for plmtext.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
        PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
     PLINT refx, refy;
-    PLFLT shift, cc, ss, def, ht;
-    PLFLT xform[4], diag;
-    PLFLT xscl, xoff, yscl, yoff, wx, wy;
+    PLFLT shift, cc, ss, def, ht, wx, wy;
+    PLFLT xpmm, ypmm, xform[4], diag;
 
     plgchr(&def, &ht);
-    plP_gwm(&xscl, &xoff, &yscl, &yoff);
-    cc = xscl * (wx2 - wx1);
-    ss = yscl * (wy2 - wy1);
+    cc = plsc->wmxscl * (wx2 - wx1);
+    ss = plsc->wmyscl * (wy2 - wy1);
     diag = sqrt(cc * cc + ss * ss);
-    cc = cc / diag;
-    ss = ss / diag;
+    cc /= diag;
+    ss /= diag;
+    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+    wx = wx1 + pos * (wx2 - wx1);
+    wy = wy1 + pos * (wy2 - wy1);
+
+    xpmm = plP_wcmmx(wx) - shift * cc;
+    ypmm = plP_wcmmy(wy) - shift * ss - disp * ht;
+    refx = plP_mmpcx(xpmm);
+    refy = plP_mmpcy(ypmm);
 
     xform[0] = cc;
     xform[1] = 0.0;
     xform[2] = ss;
     xform[3] = 1.0;
 
-    shift = 0.0;
-    if (just != 0.0)
-	shift = plstrl(text) * just;
-    wx = wx1 + pos * (wx2 - wx1);
-    wy = wy1 + pos * (wy2 - wy1);
-
-    refx = plP_mmpcx((PLFLT) (plP_wcmmx(wx) - shift * cc));
-    refy = plP_mmpcy((PLFLT) (plP_wcmmy(wy) - shift * ss - disp * ht));
     plstr(0, xform, refx, refy, text);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plzbx()
  *
  * This draws a vertical line from (wx,wy1) to (wx,wy2) which represents the
@@ -795,7 +798,7 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
  * t: Draw major tick marks
  * u: Writes left-hand label
  * v: Writes right-hand label
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
@@ -808,7 +811,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     PLINT nsub1, lstring;
     PLFLT pos, tn, tp, temp, height, tick1;
     PLFLT dwy, lambda, diag, major, minor, xmajor, xminor;
-    PLFLT ymajor, yminor, dxm, dym, xscl, xoff, yscl, yoff;
+    PLFLT ymajor, yminor, dxm, dym;
 
     dwy = wy2 - wy1;
 
@@ -855,9 +858,8 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	major = -major;
     }
 
-    plP_gwm(&xscl, &xoff, &yscl, &yoff);
-    dxm = dx * xscl;
-    dym = dy * yscl;
+    dxm = dx * plsc->wmxscl;
+    dym = dy * plsc->wmyscl;
     diag = sqrt(dxm * dxm + dym * dym);
 
     xminor = minor * dxm / diag;
@@ -941,46 +943,42 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plztx()
  *
  * Prints out text along a vertical axis for a 3d plot joining
  * world coordinates (wx,wy1) to (wx,wy2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
-    PLINT refx = 0, refy = 0;
-    PLINT vert = 0;
-    PLFLT shift, cc, ss, def, ht;
-    PLFLT xform[4], diag;
-    PLFLT xscl, xoff, yscl, yoff, wy;
+    PLINT refx = 0, refy = 0, vert = 0;
+    PLFLT shift, cc, ss, def, ht, wy;
+    PLFLT xmm, ymm, xform[4], diag;
 
     plgchr(&def, &ht);
-    plP_gwm(&xscl, &xoff, &yscl, &yoff);
-    cc = xscl * dx;
-    ss = yscl * dy;
+    cc = plsc->wmxscl * dx;
+    ss = plsc->wmyscl * dy;
     diag = sqrt(cc * cc + ss * ss);
-    cc = cc / diag;
-    ss = ss / diag;
-    plP_gmp(&xscl, &xoff, &yscl, &yoff);
-
-    shift = 0.0;
-    if (just != 0.0)
-	shift = plstrl(text) * just;
+    cc /= diag;
+    ss /= diag;
+    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
     wy = wy1 + pos * (wy2 - wy1);
 
     if (plP_stsearch(opt, 'v')) {
 	vert = 0;
-	refx = plP_mmpcx((PLFLT) (plP_wcmmx(wx) - (disp * ht + shift) * cc));
-	refy = plP_mmpcy((PLFLT) (plP_wcmmy(wy) - (disp * ht + shift) * ss));
+	xmm = plP_wcmmx(wx) - (disp * ht + shift) * cc;
+	ymm = plP_wcmmy(wy) - (disp * ht + shift) * ss;
+	refx = plP_mmpcx(xmm);
+	refy = plP_mmpcy(ymm);
     }
     else if (plP_stsearch(opt, 'h')) {
 	vert = 1;
-	refy = plP_wcpcy(wy) - yscl * (disp * ht * ss + shift);
-	refx = plP_mmpcx((PLFLT) (plP_wcmmx(wx) - disp * ht * cc));
+	xmm = plP_wcmmx(wx) - disp * ht * cc;
+	refx = plP_mmpcx(xmm);
+	refy = plP_wcpcy(wy) - plsc->ypmm * (disp * ht * ss + shift);
     }
     if (vert) {
 	xform[0] = 0.0;
@@ -997,7 +995,7 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     plstr(0, xform, refx, refy, text);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void grid_box()
  *
  * Draws grids at tick locations (major and/or minor).
@@ -1005,7 +1003,7 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
  * Note that 'tspace' is the minimim distance away (in fractional number
  * of ticks or subticks) from the boundary a grid line can be drawn.  If
  * you are too close, it looks bad.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
@@ -1014,7 +1012,7 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
     PLINT lgx, lhx, llx;
     PLINT lgy, lhy, lly;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT tn, tp, temp, tcrit, tspace = 0.1;
+    PLFLT tn, temp, tcrit, tspace = 0.1;
     PLINT i;
 
 /* Set plot options from input */
@@ -1096,11 +1094,11 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void label_box()
  *
  * Writes numeric labels on side(s) of box.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
@@ -1109,7 +1107,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     PLINT lfx, lix, llx, lmx, lnx, ltx;
     PLINT lfy, liy, lly, lmy, lny, lty, lvy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT pos, tn, tp, temp, offset, height;
+    PLFLT pos, tn, tp, offset, height;
 
 /* Set plot options from input */
 
@@ -1220,7 +1218,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plform()
  *
  * Formats a PLFLT value in one of the following formats.
@@ -1240,7 +1238,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
  *    -	If scale == 1, use scientific notation with one place before the
  *	decimal point and "prec" places after.  In this case, the value
  *	must be divided by 10^scale.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT ll, PLINT lf)
@@ -1282,10 +1280,10 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT ll, PLINT lf)
 
 	plP_gprec(&setpre, &precis);
 
-	if(setpre)
+	if (setpre)
 	    prec = precis;
 
-	if(scale)
+	if (scale)
 	    value /= pow(10.,(double)scale);
 
     /* This is necessary to prevent labels like "-0.0" on some systems */
