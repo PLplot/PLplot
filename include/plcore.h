@@ -176,22 +176,6 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PLD_amiga
-   {
-	"Amiga Window",
-	"amiwn",
-	1,
-	plD_init_amiwn,
-	plD_line_amiwn,
-	plD_polyline_amiwn,
-	plD_eop_amiwn,
-	plD_bop_amiwn,
-	plD_tidy_amiwn,
-	plD_state_amiwn,
-	plD_esc_amiwn
-   },
-#endif
-
 #ifdef PLD_os2pm
     {
 	"OS/2 PM Screen",
@@ -602,54 +586,6 @@ static PLDispatchTable dispatch_table[] = {
 	plD_state_ljii,
 	plD_esc_ljii
     },
-#endif
-
-#ifdef PLD_amiga
-    {
-	"Amiga Printer (prefs settings)",
-	"amipr",
-	0,
-	plD_init_amipr,
-	plD_line_amipr,
-	plD_polyline_amipr,
-	plD_eop_amipr,
-	plD_bop_amipr,
-	plD_tidy_amipr,
-	plD_state_amipr,
-	plD_esc_amipr
-    },
-#endif
-
-#ifdef PLD_iff	/* probably only of interest on the Amiga */
-   {
-	"IFF Graphics File",
-	"iff",
-	0,
-	plD_init_iff,
-	plD_line_iff,
-	plD_polyline_iff,
-	plD_eop_iff,
-	plD_bop_iff,
-	plD_tidy_iff,
-	plD_state_iff,
-	plD_esc_iff
-   },
-#endif
-
-#ifdef PLD_aegis	/* probably only of interest on the Amiga */
-   {
-	"Aegis Draw File",
-	"aegis",
-	0,
-	plD_init_aegis,
-	plD_line_aegis,
-	plD_polyline_aegis,
-	plD_eop_aegis,
-	plD_bop_aegis,
-	plD_tidy_aegis,
-	plD_state_aegis,
-	plD_esc_aegis
-   },
 #endif
 
 #ifdef PLD_hp7470

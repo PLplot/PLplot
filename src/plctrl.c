@@ -45,12 +45,7 @@ plcmap1_def(void);
 /* An additional hardwired location for lib files. */
 /* I have no plans to change these again, ever. */
 
-#if defined(AMIGA)
-#ifndef PLLIBDEV
-#define PLLIBDEV  "plplot:lib"
-#endif
-
-#elif defined(GNU386)
+#if defined(GNU386)
 #ifndef PLLIBDEV
 #define PLLIBDEV "c:/plplot/lib"
 #endif
@@ -1307,8 +1302,7 @@ plGetName(char *dir, char *subdir, char *filename, char **filespec)
  * void strcat_delim()
  *
  * Append path name deliminator if necessary (does not add one if one's
- * there already, or if dealing with a colon-terminated device name as
- * used on the Amiga).
+ * there already, or if dealing with a colon-terminated device name).
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -1318,9 +1312,6 @@ strcat_delim(char *dirspec)
 #if defined (MSDOS)
     if (dirspec[ldirspec-1] != '\\')
 	strcat(dirspec, "\\");
-#elif defined (AMIGA)
-    if (dirspec[ldirspec-1] != '/' && dirspec[ldirspec-1] != ':')
-	strcat(dirspec, "/");
 #elif defined (macintosh)
     if (dirspec[ldirspec-1] != ':')
         strcat(dirspec, ":");

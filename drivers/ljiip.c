@@ -4,7 +4,7 @@
 	Based on old LJII driver, modifications by Wesley Ebisuzaki
 
 	DPI = 300, 150, 100	(dots per inch)
-		default: Amiga/Unix 300 dpi, MS-DOS 150 dpi
+		default: Unix 300 dpi, MS-DOS 150 dpi
 		higher = better output, more memory, longer to print
 	GCMODE = 0, 2 (graphics compression mode)
 		default: 2,  old laser jets should use 0

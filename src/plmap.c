@@ -28,7 +28,6 @@
  * v1.4: machine independant version
  * v1.3: replaced plcontinent by plmap, added plmeridians
  * v1.2: 2 arguments:  mapform, type of plot
- * v1.1: change buffersize for amiga - faster reads
  *
  * mapform(PLINT n, PLFLT *x, PLFLT *y) is a routine to transform the
  * coordinate longitudes and latitudes to a plot coordinate system.  By
@@ -79,11 +78,6 @@ c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
     int n;
     long int t;
 
-#ifdef AMIGA
-    int error;
-    char *io_buffer;
-#endif	
-
     /*
      * read map outline 
      */
@@ -92,22 +86,6 @@ c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
     if ((in = plLibOpen(filename)) == NULL)
 	return;
-
-#ifdef AMIGA
-    /* increase the size of the IO buffer = faster reads */
-    /* ANSI C -- however haven't found it necessary on UNIX */
-    io_buffer = (char *) malloc(W_BUFSIZ);
-    if (io_buffer == NULL) {
-	fprintf(stderr, "ran out of memory: plmap\n");
-	return;
-    }
-    error = setvbuf(in,io_buffer,_IOFBF,W_BUFSIZ);
-    if (error != 0) {
-	fprintf(stderr, "plmap: setvbuf err %d\n",error);
-	free(io_buffer);
-	return;
-    }
-#endif
 
     for (;;) {
 	/* read in # points in segment */
@@ -189,9 +167,6 @@ c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	    }
 	}
     }
-#ifdef AMIGA
-    free(io_buffer);
-#endif
 }
 
 /*----------------------------------------------------------------------*\
