@@ -40,6 +40,7 @@ O		= .o
 A		= .a
 E		=
 RPATH		= @RPATH@
+INSTALL_RPATH	= @INSTALL_RPATH@
 
 # Library names
 # (PLLIB_NAME) is for ld/linking
