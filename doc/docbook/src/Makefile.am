@@ -53,7 +53,8 @@ STYLESHEETS_IN = \
 
 EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
-  jadetex.cfg stylesheet.css
+  jadetex.cfg stylesheet.css \
+  $(html_DATA) $(pdf_DATA) $(man3_MANS) $(geninfo_DATA)
 CLEANFILES = \
   *.$(HTML_EXT) $(HTML_MANIFEST) $(INFO_MANIFEST) $(MAN_MANIFEST) \
   *.jadetex *.aux *.dvi *.ps* *.pdf* inline.ent *.log *.eps TMP.* \
