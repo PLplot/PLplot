@@ -115,8 +115,10 @@ if docbook_build
 # The following files are included in api-compat.sml
 
 plplot-symbols.txt: $(BINDIR)/get-library-symbols.pl                  \
-                    $(top_builddir)/src/.libs/libplplot$(LIB_TAG).so  \
 	            $(top_srcdir)/include/plplot.h
+	( cd $(top_builddir)/lib ; make )
+	( cd $(top_builddir)/libltdl ; make )	
+	( cd $(top_builddir)/src ; make )
 	$(PERL) $(BINDIR)/get-library-symbols.pl > plplot-symbols.txt \
 	  $(top_builddir)/src/.libs/libplplot$(LIB_TAG).so            \
           $(top_srcdir)/include/plplot.h 3
