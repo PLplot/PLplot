@@ -2469,9 +2469,9 @@ AllocCmap0(PLStream *pls)
                 XColor screen_def, exact_def;
 
                 if (pls->verbose)
-                    printf( stderr,
-                            "color alloc failed, trying by name: %s.\n",
-                            pls->cmap0[i].name );
+                    fprintf( stderr,
+                             "color alloc failed, trying by name: %s.\n",
+                             pls->cmap0[i].name );
 
             /* Hmm, didn't work, try another approach. */
                 r = XAllocNamedColor( xwd->display, xwd->map,
