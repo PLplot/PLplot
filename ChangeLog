@@ -1,3 +1,10 @@
+2002-12-05  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* Configure test executables in examples/c/Makefile.am
+	
+	* Clean up Makefile.am files and also switch from LIBADD to LDFLAG
+	  for interlibrary dependencies as suggested by documentation.
+
 2002-12-04  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Begin configuration of octave using autotools.  plplot_octave.oct

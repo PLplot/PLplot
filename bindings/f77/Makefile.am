@@ -21,16 +21,16 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 if with_double
-  libplplot = ../../src/libplplotd.la
+libplplot = -L../../src -lplplotd
 else
-  libplplot = ../../src/libplplot.la
+libplplot = -L../../src -lplplot
 endif
 
 if enable_f77
 if with_double
-  lib_LTLIBRARIES = libplf77d.la
+lib_LTLIBRARIES = libplf77d.la
 else
-  lib_LTLIBRARIES = libplf77.la
+lib_LTLIBRARIES = libplf77.la
 endif
 endif
 
@@ -38,20 +38,18 @@ AM_CPPFLAGS = @INCLTDL@
 version = -version-info @SOVERSION@
 
 sources = \
-  plstubs.h \
-  sc3d.c \
-  sccont.c \
-  scstubs.c \
-  strutil.f \
-  sfstubs.f
+	plstubs.h \
+	sc3d.c \
+	sccont.c \
+	scstubs.c \
+	strutil.f \
+	sfstubs.f
 
 libplf77_la_SOURCES  = $(sources)
-libplf77_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined
-libplf77_la_LIBADD = $(libplplot)
+libplf77_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 
 libplf77d_la_SOURCES = $(libplf77_la_SOURCES)
 libplf77d_la_LDFLAGS = $(libplf77_la_LDFLAGS)
-libplf77d_la_LIBADD = $(libplf77_la_LIBADD)
 
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 

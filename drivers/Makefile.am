@@ -84,14 +84,15 @@ endif
 
 driversdir = ${prefix}/@DATA_DIR@/../drivers
 drivers_LTLIBRARIES = @DYNAMIC_DRIVERS@
+
 if with_double
-   drivers_DATA = driversd.db
-   libplplot = ../src/libplplotd.la
-   libplplottcltk = ../bindings/tcl/libplplottcltkd.la
+drivers_DATA = driversd.db
+libplplot = -L../src -lplplotd
+libplplottcltk = -L../bindings/tcl -lplplottcltkd
 else
-   drivers_DATA = drivers.db
-   libplplot = ../src/libplplot.la
-   libplplottcltk = ../bindings/tcl/libplplottcltk.la
+drivers_DATA = drivers.db
+libplplot = -L../src -lplplot
+libplplottcltk = -L../bindings/tcl -lplplottcltk
 endif
 
 # All -I preprocessor flags apparently must be lumped together for all source
@@ -139,170 +140,130 @@ ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version
 # Single precision versions of the dynamic drivers.
 
 cgm_drv_la_SOURCES = cgm.c
-cgm_drv_la_LDFLAGS = $(ldflags)
-cgm_drv_la_LIBADD = $(libplplot) @CDLIBCMD@
+cgm_drv_la_LDFLAGS = $(ldflags) $(libplplot) @CDLIBCMD@
 
 dg300_drv_la_SOURCES = dg300.c
-dg300_drv_la_LDFLAGS = $(ldflags)
-dg300_drv_la_LIBADD = $(libplplot)
+dg300_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 gd_drv_la_SOURCES = gd.c
-gd_drv_la_LDFLAGS = $(ldflags)
-gd_drv_la_LIBADD = $(libplplot) @GDLIBCMD@
+gd_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GDLIBCMD@
 
 gnome_drv_la_SOURCES = gnome.c
-gnome_drv_la_LDFLAGS = $(ldflags)
-gnome_drv_la_LIBADD = $(libplplot) @GNOMELIBS@
+gnome_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GNOMELIBS@
 
 hpgl_drv_la_SOURCES = hpgl.c
-hpgl_drv_la_LDFLAGS = $(ldflags)
-hpgl_drv_la_LIBADD = $(libplplot)
+hpgl_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 impress_drv_la_SOURCES = impress.c
-impress_drv_la_LDFLAGS = $(ldflags)
-impress_drv_la_LIBADD = $(libplplot)
+impress_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 linuxvga_drv_la_SOURCES = linuxvga.c
-linuxvga_drv_la_LDFLAGS = $(ldflags)
-linuxvga_drv_la_LIBADD = $(libplplot) @LINUXVGALIBS@
+linuxvga_drv_la_LDFLAGS = $(ldflags) $(libplplot) @LINUXVGALIBS@
 
 ljii_drv_la_SOURCES = ljii.c
-ljii_drv_la_LDFLAGS = $(ldflags)
-ljii_drv_la_LIBADD = $(libplplot)
+ljii_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 ljiip_drv_la_SOURCES = ljiip.c
-ljiip_drv_la_LDFLAGS = $(ldflags)
-ljiip_drv_la_LIBADD = $(libplplot)
+ljiip_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 ntk_drv_la_SOURCES = ntk.c
-ntk_drv_la_LDFLAGS = $(ldflags)
-ntk_drv_la_LIBADD = $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
+ntk_drv_la_LDFLAGS = $(ldflags) $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
 
 null_drv_la_SOURCES = null.c
-null_drv_la_LDFLAGS = $(ldflags)
-null_drv_la_LIBADD = $(libplplot)
+null_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 pbm_drv_la_SOURCES = pbm.c
-pbm_drv_la_LDFLAGS = $(ldflags)
-pbm_drv_la_LIBADD = $(libplplot)
+pbm_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 plmeta_drv_la_SOURCES = plmeta.c
-plmeta_drv_la_LDFLAGS = $(ldflags)
-plmeta_drv_la_LIBADD = $(libplplot)
+plmeta_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 ps_drv_la_SOURCES = ps.c pstex.c
-ps_drv_la_LDFLAGS = $(ldflags)
-ps_drv_la_LIBADD = $(libplplot)
+ps_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 pstex_drv_la_SOURCES = ps.c pstex.c
-pstex_drv_la_LDFLAGS = $(ldflags)
-pstex_drv_la_LIBADD = $(libplplot)
+pstex_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 tek_drv_la_SOURCES = tek.c
-tek_drv_la_LDFLAGS = $(ldflags)
-tek_drv_la_LIBADD = $(libplplot)
+tek_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 tk_drv_la_SOURCES = tk.c
-tk_drv_la_LDFLAGS = $(ldflags)
-tk_drv_la_LIBADD = $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
+tk_drv_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
 
 tkwin_drv_la_SOURCES = \
 	tkwin.c \
 	../bindings/tk-x-plat/Plplotter_Init.c \
 	../bindings/tk-x-plat/plplotter.c
 
-tkwin_drv_la_LDFLAGS = $(ldflags)
-tkwin_drv_la_LIBADD = $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
+tkwin_drv_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
 
 xfig_drv_la_SOURCES = xfig.c
-xfig_drv_la_LDFLAGS = $(ldflags)
-xfig_drv_la_LIBADD = $(libplplot)
+xfig_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
 xwin_drv_la_SOURCES = xwin.c
-xwin_drv_la_LDFLAGS = $(ldflags)
-xwin_drv_la_LIBADD = $(libplplot) @X_LIBS@ -lX11
+xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) @X_LIBS@ -lX11
 
 # Double precision versions of the dynamic drivers.
 
 cgmd_drv_la_SOURCES = $(cgm_drv_la_SOURCES)
 cgmd_drv_la_LDFLAGS = $(cgm_drv_la_LDFLAGS)
-cgmd_drv_la_LIBADD = $(cgm_drv_la_LIBADD)
 
 dg300d_drv_la_SOURCES = $(dg300_drv_la_SOURCES)
 dg300d_drv_la_LDFLAGS = $(dg300_drv_la_LDFLAGS)
-dg300d_drv_la_LIBADD = $(dg300_drv_la_LIBADD)
 
 gdd_drv_la_SOURCES = $(gd_drv_la_SOURCES)
 gdd_drv_la_LDFLAGS = $(gd_drv_la_LDFLAGS)
-gdd_drv_la_LIBADD = $(gd_drv_la_LIBADD)
 
 gnomed_drv_la_SOURCES = $(gnome_drv_la_SOURCES)
 gnomed_drv_la_LDFLAGS = $(gnome_drv_la_LDFLAGS)
-gnomed_drv_la_LIBADD = $(gnome_drv_la_LIBADD)
 
 hpgld_drv_la_SOURCES = $(hpgl_drv_la_SOURCES)
 hpgld_drv_la_LDFLAGS = $(hpgl_drv_la_LDFLAGS)
-hpgld_drv_la_LIBADD = $(hpgl_drv_la_LIBADD)
 
 impressd_drv_la_SOURCES = $(impress_drv_la_SOURCES)
 impressd_drv_la_LDFLAGS = $(impress_drv_la_LDFLAGS)
-impressd_drv_la_LIBADD = $(impress_drv_la_LIBADD)
 
 linuxvgad_drv_la_SOURCES = $(linuxvga_drv_la_SOURCES)
 linuxvgad_drv_la_LDFLAGS = $(linuxvga_drv_la_LDFLAGS)
-linuxvgad_drv_la_LIBADD = $(linuxvga_drv_la_LIBADD)
 
 ljiid_drv_la_SOURCES = $(ljii_drv_la_SOURCES)
 ljiid_drv_la_LDFLAGS = $(ljii_drv_la_LDFLAGS)
-ljiid_drv_la_LIBADD = $(ljii_drv_la_LIBADD)
 
 ljiipd_drv_la_SOURCES = $(ljiip_drv_la_SOURCES)
 ljiipd_drv_la_LDFLAGS = $(ljiip_drv_la_LDFLAGS)
-ljiipd_drv_la_LIBADD = $(ljiip_drv_la_LIBADD)
 
 ntkd_drv_la_SOURCES = $(ntk_drv_la_SOURCES)
 ntkd_drv_la_LDFLAGS = $(ntk_drv_la_LDFLAGS)
-ntkd_drv_la_LIBADD = $(ntk_drv_la_LIBADD)
 
 nulld_drv_la_SOURCES = $(null_drv_la_SOURCES)
 nulld_drv_la_LDFLAGS = $(null_drv_la_LDFLAGS)
-nulld_drv_la_LIBADD = $(null_drv_la_LIBADD)
 
 pbmd_drv_la_SOURCES = $(pbm_drv_la_SOURCES)
 pbmd_drv_la_LDFLAGS = $(pbm_drv_la_LDFLAGS)
-pbmd_drv_la_LIBADD = $(pbm_drv_la_LIBADD)
 
 plmetad_drv_la_SOURCES = $(plmeta_drv_la_SOURCES)
 plmetad_drv_la_LDFLAGS = $(plmeta_drv_la_LDFLAGS)
-plmetad_drv_la_LIBADD = $(plmeta_drv_la_LIBADD)
 
 psd_drv_la_SOURCES = $(ps_drv_la_SOURCES)
 psd_drv_la_LDFLAGS = $(ps_drv_la_LDFLAGS)
-psd_drv_la_LIBADD = $(ps_drv_la_LIBADD)
 
 pstexd_drv_la_SOURCES = $(pstex_drv_la_SOURCES)
 pstexd_drv_la_LDFLAGS = $(pstex_drv_la_LDFLAGS)
-pstexd_drv_la_LIBADD = $(pstex_drv_la_LIBADD)
 
 tekd_drv_la_SOURCES = $(tek_drv_la_SOURCES)
 tekd_drv_la_LDFLAGS = $(tek_drv_la_LDFLAGS)
-tekd_drv_la_LIBADD = $(tek_drv_la_LIBADD)
 
 tkd_drv_la_SOURCES = $(tk_drv_la_SOURCES)
 tkd_drv_la_LDFLAGS = $(tk_drv_la_LDFLAGS)
-tkd_drv_la_LIBADD = $(tk_drv_la_LIBADD)
 
 tkwind_drv_la_SOURCES = $(tkwin_drv_la_SOURCES)
 tkwind_drv_la_LDFLAGS = $(tkwin_drv_la_LDFLAGS)
-tkwind_drv_la_LIBADD = $(tkwin_drv_la_LIBADD)
 
 xfigd_drv_la_SOURCES = $(xfig_drv_la_SOURCES)
 xfigd_drv_la_LDFLAGS = $(xfig_drv_la_LDFLAGS)
-xfigd_drv_la_LIBADD = $(xfig_drv_la_LIBADD)
 
 xwind_drv_la_SOURCES = $(xwin_drv_la_SOURCES)
 xwind_drv_la_LDFLAGS = $(xwin_drv_la_LDFLAGS)
-xwind_drv_la_LIBADD = $(xwin_drv_la_LIBADD)
 
 #enable_dyndrivers
 endif

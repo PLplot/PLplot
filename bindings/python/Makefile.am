@@ -26,11 +26,11 @@
 ourpythondir = ${prefix}/@PYTHON_INSTDIR@
 
 if with_double
-  libplplot = ../../src/libplplotd.la
-  swig_double = -DPL_DOUBLE
+libplplot = -L../../src -lplplotd
+swig_double = -DPL_DOUBLE
 else
-  libplplot = ../../src/libplplot.la
-  swig_double =
+libplplot = -L../../src -lplplot
+swig_double =
 endif
 
 if enable_python
@@ -48,12 +48,15 @@ endif
 AM_CPPFLAGS = @INCLTDL@ -I/@PYTHON_INC_DIR@ -I/@PYTHON_NUM_DIR@
 
 plplotcmodule_la_SOURCES  = plplotcmodule.c
-plplotcmodule_la_LDFLAGS  = -rpath $(ourpythondir) -no-undefined -module -avoid-version
-plplotcmodule_la_LIBADD = $(libplplot)
+plplotcmodule_la_LDFLAGS  = \
+	-rpath $(ourpythondir) \
+	-no-undefined \
+	-module \
+	-avoid-version \
+	$(libplplot)
 
 plplot_widgetmodule_la_SOURCES  = plplot_widgetmodule.c
 plplot_widgetmodule_la_LDFLAGS = $(plplotcmodule_la_LDFLAGS)
-plplot_widgetmodule_la_LIBADD = $(plplotcmodule_la_LIBADD)
 
 CLEANFILES = plplotcmodule_p.c plplotcmodule.c setup.py 
   

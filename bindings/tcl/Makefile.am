@@ -22,11 +22,11 @@
 tcldir = ${prefix}/@DATA_DIR@/../tcl
 
 if with_double
-libplplot = ../../src/libplplotd.la
-libmatrix = libtclmatrixd.la
+libplplot = -L../../src -lplplotd
+libmatrix = -L. -ltclmatrixd
 else
-libplplot = ../../src/libplplot.la
-libmatrix = libtclmatrix.la
+libplplot = -L../../src -lplplot
+libmatrix = -L. -ltclmatrix
 endif
 
 if enable_tcl
@@ -103,13 +103,12 @@ libplplottcltk_la_LDFLAGS  = \
 	@TCLLIBCMD@ \
         @ITCLLIBCMD@ \
 	@ITKLIBCMD@ \
-	@TKLIBCMD@
-
-libplplottcltk_la_LIBADD = $(libplplot) $(libmatrix)
+	@TKLIBCMD@ \
+	$(libplplot) \
+	$(libmatrix)
 
 libtclmatrixd_la_SOURCES = $(libtclmatrix_la_SOURCES)
 libtclmatrixd_la_LDFLAGS = $(libtclmatrix_la_LDFLAGS)
 
 libplplottcltkd_la_SOURCES = $(libplplottcltk_la_SOURCES)
 libplplottcltkd_la_LDFLAGS = $(libplplottcltk_la_LDFLAGS)
-libplplottcltkd_la_LIBADD  = $(libplplottcltk_la_LIBADD)
