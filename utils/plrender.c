@@ -29,6 +29,7 @@ char ident[] = "@(#) $Id$";
 
 /*#define DEBUG*/
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #include "plplot/plevent.h"
 #include "plplot/metadefs.h"
