@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/12/21 10:21:06  mjl
+ * Revision 1.19  1993/12/22 21:26:32  mjl
+ * Last commit was botched on this file.
+ *
+ * Revision 1.18  1993/12/21  10:21:06  mjl
  * Changed -client arg name to -client_name to be more transparent (stands
  * for client program main window name).  Substantially rewrote
  * initialization to be better suited for Tcl-DP or TK style communication.
@@ -50,11 +53,14 @@
  * contains the functionality of each of these (except the -notk Tcl-DP
  * command-line option is not supported).  In the source code I've changed
  * as few lines as possible from the source for "wish" in order to make it
- * easier to track future changes to Tcl/TK and Tcl-DP.
+ * easier to track future changes to Tcl/TK and Tcl-DP.  Tcl_AppInit (in
+ * tkshell.c) was copied from the Tcl-DP sources and modified accordingly.
  */
 
 #include "plserver.h"
-
+/*
+#define DEBUG
+*/
 /* Externals */
 
 extern int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
@@ -91,11 +97,13 @@ static char *geometry = NULL;
 
 /* plserver additions */
 
-static char *client;		/* Name of client main window */
+static char *client_name;	/* Name of client main window */
 static char *auto_path;		/* addition to auto_path */
 static int child;		/* set if child of TK driver */
 static int mkidx;		/* Create a new tclIndex file */
 static int pass_thru;		/* Skip normal error termination when set */
+static char *cmdbuf = NULL;	/* Buffer to hold evalled commands */
+static int cmdbuf_len = 100;
 
 /* These are for supporting Tcl-DP communication */
 
@@ -117,12 +125,12 @@ static Tk_ArgvInfo argTable[] = {
 
 /* plserver additions */
 
-    {"-client", TK_ARGV_STRING, (char *) NULL, (char *) &client,
-	 "Client to connect to at startup"},
+    {"-client_name", TK_ARGV_STRING, (char *) NULL, (char *) &client_name,
+	 "Client main window name to connect to"},
     {"-client_host", TK_ARGV_STRING, (char *) NULL, (char *) &client_host,
-	 "Host to connect to at startup"},
+	 "Client host to connect to"},
     {"-client_port", TK_ARGV_STRING, (char *) NULL, (char *) &client_port,
-	 "Communications port to connect to at startup"},
+	 "Client port (Tcl-DP) to connect to"},
     {"-auto_path", TK_ARGV_STRING, (char *) NULL, (char *) &auto_path,
 	 "Additional directory(s) to autoload"},
     {"-mkidx", TK_ARGV_CONSTANT, (char *) 1, (char *) &mkidx,
@@ -135,13 +143,13 @@ static Tk_ArgvInfo argTable[] = {
 
 /* Support routines for plserver */
 
-static void  configure		(void);
-static void  InitLink_tk	(ClientData);
-static void  InitLink_dp	(ClientData);
+static void  configure_plserver	(void);
+static void  InitLink		(ClientData);
 static void  abort_session	(char *);
 static void  client_cmd		(char *);
 static void  tcl_cmd		(char *);
 static int   tcl_eval		(char *);
+static void  copybuf		(char *);
 
 /*
  * Forward declarations for procedures defined later in this file:
@@ -170,8 +178,6 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  *----------------------------------------------------------------------
  */
 
-#define DEBUG
-
 int
 main(argc, argv)
     int argc;				/* Number of arguments. */
@@ -190,6 +196,7 @@ main(argc, argv)
     fprintf(stderr, "\n");
 }
 #endif
+
     interp = Tcl_CreateInterp();
 #ifdef TCL_MEM_DEBUG
     Tcl_InitMemory(interp);
@@ -272,18 +279,16 @@ main(argc, argv)
      * Invoke application-specific initialization.
      */
 
-    configure();
     if (Tcl_AppInit(interp) != TCL_OK) {
 	abort_session(interp->result);
 	Tcl_Eval(interp, "exit");
     }
+    configure_plserver();
 
 /* Create new tclIndex file -- a convenience */
 
     if (mkidx != 0) {
 	tcl_cmd("auto_mkindex . *.tcl");
-	client = NULL;
-	abort_session("");
 	exit(1);
     }
 
@@ -304,19 +309,9 @@ main(argc, argv)
      * main window.
      */
 
-    if (client_port != NULL) {
-#ifdef TCL_DP
+    if (client_name != NULL || client_port != NULL) {
 	tcl_cmd("$plserver_init_proc");
-	Tk_DoWhenIdle(InitLink_dp, (ClientData) client);
-	tty = 0;
-#else
-	abort_session("no Tcl-DP support in this version of plserver");
-	exit(1);
-#endif
-    }
-    else if (client != NULL) {
-	tcl_cmd("$plserver_init_proc");
-	Tk_DoWhenIdle(InitLink_tk, (ClientData) client);
+	Tk_DoWhenIdle(InitLink, (ClientData) NULL);
 	tty = 0;
     }
     else if (fileName != NULL) {
@@ -547,22 +542,26 @@ abort_session(char *errmsg)
 
 /* If client exists, tell it to self destruct */
 
-    if (client != NULL)
+    if (client_name != NULL)
 	client_cmd("abort");
 
     Tcl_Eval(interp, "exit");
 }
 
 /*----------------------------------------------------------------------*\
-* configure
+* configure_plserver
 *
 * Does global variable & command initialization for interpreter.
 \*----------------------------------------------------------------------*/
 
 static void
-configure(void)
+configure_plserver(void)
 {
-    dbug_enter("configure");
+#ifdef DEBUG
+    char *path;
+#endif
+
+    dbug_enter("configure_plserver");
 
 /* Tell interpreter about commands. */
 
@@ -578,87 +577,103 @@ configure(void)
 
 /* Set program name as main window name and initialize send command */
 
-    Tcl_SetVar(interp, "plserver", Tk_Name(mainWindow), 0);
+    Tcl_SetVar(interp, "server", Tk_Name(mainWindow), 0);
 
-/* Pass client, host, port, and child variables to interpreter if set. */
-
-    if (client != NULL)
-	Tcl_SetVar(interp, "client", client, 0);
-
-    if (client_host != NULL)
-	Tcl_SetVar(interp, "client_host", client_host, 0);
-    else
-	Tcl_SetVar(interp, "client_host", "localhost", 0);
-
-    if (client_port != NULL)
-	Tcl_SetVar(interp, "client_port", client_port, 0);
+/* Pass child variable to interpreter if set. */
 
     if (child != 0)
 	Tcl_SetVar(interp, "child", "1", 0);
-}
 
-/*----------------------------------------------------------------------*\
-* InitLink_tk
-*
-* Sets up link to client program using tk send
-\*----------------------------------------------------------------------*/
+/* If client_name is set, TK send is being used to communicate. */
+/* If client_port is set, Tcl-DP RPC is being used to communicate. */
+/* In the latter case, need to create server communications port */
 
-static void
-InitLink_tk(ClientData clientData)
-{
-    client_cmd("set plserver [list $plserver]");
-    client_cmd("set server_is_ready 1");
-}
+    dp = 0; tcl_cmd("set dp 0");
 
-/*----------------------------------------------------------------------*\
-* InitLink_dp
-*
-* Sets up link to client program using Tcl-DP
-\*----------------------------------------------------------------------*/
-
-static void
-InitLink_dp(ClientData clientData)
-{
+    if (client_port != NULL) {
 #ifdef TCL_DP
-    tcl_cmd("set plsend dp_RPC");
-    tcl_cmd("set client [dp_MakeRPCClient $client_host $client_port]");
-    tcl_cmd("set server_host localhost");
-    tcl_cmd("set server_port [dp_MakeRPCServer]");
-
-    client_cmd("[list set client $client]");
-    client_cmd("[list set server_host $server_host]");
-    client_cmd("[list set server_port $server_port]");
-    client_cmd("set server_is_ready 1");
+	dp = 1; tcl_cmd("set dp 1");
+#else
+	abort_session("no Tcl-DP support in this version of plserver");
+	exit(1);
 #endif
+    }
+
+/* Add user-specified directory(s) to auto_path */
+
+    if (auto_path != NULL) {
+	Tcl_SetVar(interp, "dir", auto_path, 0);
+	tcl_cmd("set auto_path \"$dir $auto_path\"");
+
+#ifdef DEBUG
+	fprintf(stderr, "adding %s to auto_path\n", auto_path);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "auto_path is %s\n", path);
+#endif
+    }
 }
 
 /*----------------------------------------------------------------------*\
-* server_cmd
+* InitLink
 *
-* Sends specified command to server, aborting on an error.
+* Sets up link to client program
 \*----------------------------------------------------------------------*/
 
 static void
-server_cmd(char *cmd)
+InitLink(ClientData clientData)
+{
+    if (dp) {
+	Tcl_SetVar(interp, "client_port", client_port, 0);
+	if (client_host != NULL)
+	    Tcl_SetVar(interp, "client_host", client_host, 0);
+	else
+	    Tcl_SetVar(interp, "client_host", "localhost", 0);
+
+	tcl_cmd("set server_host localhost");
+	tcl_cmd("set server_port [dp_MakeRPCServer]");
+	tcl_cmd("set client [dp_MakeRPCClient $client_host $client_port]");
+
+	client_cmd("set server_host $server_host");
+	client_cmd("set server_port $server_port");
+	client_cmd("set client $client");
+	client_cmd("set server_is_ready 1");
+    }
+    else {
+	Tcl_SetVar(interp, "client", client_name, 0);
+
+	client_cmd("set server [list $server]");
+	client_cmd("set server_is_ready 1");
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* client_cmd
+*
+* Sends specified command to client, aborting on an error.
+* Always either send command in background or continue to process events,
+* because client may be busy and unable to respond.
+\*----------------------------------------------------------------------*/
+
+static void
+client_cmd(char *cmd)
 {
     int result;
+    static char dpsend_cmd[] = "dp_RPC $client -events all ";
+    static char tksend_cmd[] = "send $client after 1 ";
 
-    dbug_enter("server_cmd");
+    dbug_enter("client_cmd");
 #ifdef DEBUG_ENTER
     fprintf(stderr, "Sending command: %s\n", cmd);
 #endif
 
-    if (tcl_dp)
-	result = Tcl_VarEval(interp,
-			     "dp_RPC $plserver -events all ", cmd,
-			     (char **) NULL);
+    copybuf(cmd);
+    if (dp)
+	result = Tcl_VarEval(interp, dpsend_cmd, cmdbuf, (char **) NULL);
     else
-	result = Tcl_VarEval(interp,
-			     "send $plserver after 1 ", cmd,
-			     (char **) NULL);
+	result = Tcl_VarEval(interp, tksend_cmd, cmdbuf, (char **) NULL);
 
     if (result) {
-	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
+	fprintf(stderr, "Client command \"%s\" failed:\n\t %s\n",
 		cmd, interp->result);
 	abort_session("");
     }
@@ -687,21 +702,19 @@ tcl_cmd(char *cmd)
 }
 
 /*----------------------------------------------------------------------*\
-* tcl_eval
+* copybuf
 *
-* Evals the specified string, returning the result.
-* Use a static string buffer to hold the command, to ensure it's in
-* writable memory (grrr...).
+* Puts command in a static string buffer, to ensure it's in writable
+* memory (grrr...).
 \*----------------------------------------------------------------------*/
 
-static char *cmdbuf = NULL;
-static int cmdbuf_len = 100;
-
-static int
-tcl_eval(char *cmd)
+static void
+copybuf(char *cmd)
 {
-    if (cmdbuf == NULL) 
+    if (cmdbuf == NULL) {
+	cmdbuf_len = 100;
 	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
 
     if (strlen(cmd) >= cmdbuf_len) {
 	free((void *) cmdbuf);
@@ -710,5 +723,19 @@ tcl_eval(char *cmd)
     }
 
     strcpy(cmdbuf, cmd);
+}
+
+/*----------------------------------------------------------------------*\
+* tcl_eval
+*
+* Evals the specified string, returning the result.
+* Use a static string buffer to hold the command, to ensure it's in
+* writable memory (grrr...).
+\*----------------------------------------------------------------------*/
+
+static int
+tcl_eval(char *cmd)
+{
+    copybuf(cmd);
     return(Tcl_VarEval(interp, cmdbuf, (char **) NULL));
 }
