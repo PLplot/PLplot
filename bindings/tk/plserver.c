@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/09/18 07:14:58  mjl
+ * Revision 1.31  1994/09/23 07:40:19  mjl
+ * Now does a bit more complete cleanup at exit when communicating with the
+ * Tcl-DP driver, to avoid potential problems.
+ *
+ * Revision 1.30  1994/09/18  07:14:58  mjl
  * Changed the syntax for pltkMain() in order for it to work better with
  * shared libraries.  In particular, Tcl_AppInit is no longer external but
  * passed as a function pointer.
@@ -109,8 +113,9 @@ main(int argc, char **argv)
 
 #ifdef DEBUG
     fprintf(stderr, "Program %s called with arguments :\n", argv[0]);
-    for (i = 1; i < argc; i++) 
+    for (i = 1; i < argc; i++) {
 	fprintf(stderr, "%s ", argv[i]);
+    }
     fprintf(stderr, "\n");
 #endif
 
@@ -120,8 +125,9 @@ main(int argc, char **argv)
 
 /* Save arglist to get around tk_ParseArgv limitations */
 
-    for (i = 0; i < argc; i++)
+    for (i = 0; i < argc; i++) {
 	myargv[i] = argv[i];
+    }
 
 /* Parse args */
 /* Examine the result string to see if an error return is really an error */
@@ -284,7 +290,11 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     }
     else if (client_port != NULL) {
 	client_port = NULL;
+	Tcl_VarEval(interp, "dp_RDO $client set plserver_exited 1",
+		    (char **) NULL);
 	Tcl_VarEval(interp, "dp_RDO $client abort", (char **) NULL);
+	Tcl_VarEval(interp, "catch dp_CloseRPC $client", (char **) NULL);
+	Tcl_VarEval(interp, "dp_update", (char **) NULL);
     }
 
 /* Now really exit */
