@@ -200,7 +200,13 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   u[n] = u[0];
   v[n] = v[0];
 
+#ifdef SHADE_DEBUG /* show triangles */
+  plcol0(1);
+  x[3]=x[0]; y[3]=y[0]; z[3]=z[0]; 
+  plline3(4,x,y,z);
+#else /* fill triangles */
   plP_fill(u, v, n+1);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -225,7 +231,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  * This code is a complete departure from the approach taken in the old version
  * of this routine. Formerly to code attempted to use the logic for the hidden
  * line algorithm to draw the hidden surface. This was really hard. This code
- * below uses a simple back to front (painters) algorithm. All the the
+ * below uses a simple back to front (painters) algorithm. All the
  * triangles are drawn.
  *
  * There are multitude of ways this code could be optimized. Given the
@@ -421,6 +427,8 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
        *       1--3
        */
 
+      xm = ym = zm = 0.;
+
       for(i=0; i<2; i++) {
 	for(j=0; j<2; j++) {
 	  /* we're transforming from Fast/Slow coordinates to x/y coordinates */
@@ -428,21 +436,15 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	  ix = ixFast * (iFast+i) + ixSlow * (iSlow+j) + ixOrigin;
 	  iy = iyFast * (iFast+i) + iySlow * (iSlow+j) + iyOrigin;
 
-	  px[2*i+j] = x[ix];
-	  py[2*i+j] = y[iy];
-	  pz[2*i+j] = z[ix][iy];
+	  xm += px[2*i+j] = x[ix];
+	  ym += py[2*i+j] = y[iy];
+	  zm += pz[2*i+j] = z[ix][iy];
 	}
       }
 
       /* the "mean point" of the quad, common to all four triangles
 	 -- perhaps not a good thing to do for the light shading */
 
-      xm = ym = zm = 0.;
-      for (i=0;i<4;i++) {
-	xm += px[i];
-	ym += py[i];
-	zm += pz[i];
-      }
       xm /= 4.; ym /= 4.; zm /= 4.;
 
       /* now draw the quad as four triangles */
@@ -483,12 +485,6 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		  /* yes, xx and yy are the intersection points of the triangle with
 		   * the contour line -- draw a straight line betweeen the points
 		   * -- at the end this will make up the contour line */
-
-		  if (0 && opt & BASE_CONT) { /* previous version of base contour */
-		    /* base contour with surface color*/
-		    zz[0] = zz[1] =  plsc->ranmi;
-		    plline3(2, xx, yy, zz);
-		  }
 
 		  if (opt & SURF_CONT) {
 		    /* surface contour with black color (suggestions?) */
@@ -937,6 +933,8 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	    y2d = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	    u[n] = plP_wcpcx(x2d);
 	    v[n] = plP_wcpcy(y2d);
+	    if (c != NULL)
+	      c[n] = (z[x0 - 1][y0 - 1] - fc_minz)/(fc_maxz-fc_minz);
 	    n++;
 	}
     }
@@ -1253,23 +1251,24 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 static void
 plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 {
-  PLINT i = 0, j = 0, first = 1;
-  PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
-  PLINT su1, su2, sv1, sv2;
-  PLINT cx, cy, px, py;
-  PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
+    PLINT i = 0, j = 0, first = 1;
+    PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
+    PLINT su1, su2, sv1, sv2;
+    PLINT cx, cy, px, py;
+    PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
 
-  /*
-   * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
-   * (u[j], v[j]) is the j'th point in the new array
-   */
+/*
+ * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
+ * (u[j], v[j]) is the j'th point in the new array
+ */
 
-  /* 
-   * First attempt at 3d shading.  It works ok for simple plots, but
-   * will just not draw faces, or draw them overlapping for very
-   * jagged plots
-   */
-  while (i < mhi || j < n) {
+/* 
+ * First attempt at 3d shading.  It works ok for simple plots, but
+ * will just not draw faces, or draw them overlapping for very
+ * jagged plots
+ */
+
+    while (i < mhi || j < n) {
 
     /*
      * The coordinates of the point under consideration are (px,py).  The
@@ -1448,8 +1447,8 @@ plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move)
     if (move)
       plP_movphy(x, y);
     else {
-      if (c != NULL && c[--j] >= 0. && c[j] <= 1.)
-	plcol1(c[j]);
+      if (c != NULL)
+	plcol1(c[j-1]);
       plP_draphy(x, y);
     }
 }
@@ -1480,7 +1479,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
 
     oldloview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
     if ( ! oldloview)
-      myexit("plnxtvlo: Out of memory.");
+      myexit("\nplnxtvlo: Out of memory.");
 
     plP_draw3d(u[0], v[0], c, 0, 1);
     oldloview[0] = u[0];
