@@ -17,7 +17,7 @@
 #----------------------------------------------------------------------------
 
 # For backwards compatibility
-proc plw_create {args} { uplevel 1 plw::create $args ]
+proc plw_create {args} { uplevel 1 plw::create $args }
 
 #----------------------------------------------------------------------------
 # plw::create

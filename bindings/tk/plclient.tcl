@@ -18,16 +18,16 @@
 # to do various jobs.  Specifically, they are:
 #
 # plserver_init_proc	proc to initialize plserver
-# plw::create_proc	proc to create the plframe widget
-# plw::start_proc	proc to manage the plframe widget
-# plw::flash_proc	proc to handle end of page condition
-# plw::end_proc		proc to detach the plframe widget from the client 
+# plw_create_proc	proc to create the plframe widget
+# plw_start_proc	proc to manage the plframe widget
+# plw_flash_proc	proc to handle end of page condition
+# plw_end_proc		proc to detach the plframe widget from the client 
 #----------------------------------------------------------------------------
 
 proc plclient_init {} {
 
-    global plserver_init_proc plw::create_proc \
-	plw::start_proc plw::end_proc \
+    global plserver_init_proc plw_create_proc \
+	plw_start_proc plw_end_proc \
 	dp client_host client_port
 
 # This initializes plserver
@@ -36,9 +36,9 @@ proc plclient_init {} {
 
 # These govern the plframe and associated widgets
 
-    set plw::create_proc		plw::create
-    set plw::start_proc		plw::start
-    set plw::end_proc 		plw::end
+    set plw_create_proc		plw::create
+    set plw_start_proc		plw::start
+    set plw_end_proc 		plw::end
 
 # Set up communications port
 
@@ -90,7 +90,7 @@ proc plclient_link_init {} {
 #----------------------------------------------------------------------------
 
 proc plclient_link_end {} {
-    global dp server plserver_exiting plw::end_proc
+    global dp server plserver_exiting plw_end_proc
 
     if { [info exists server] } then {
 
@@ -108,7 +108,7 @@ proc plclient_link_end {} {
 	    global plwindow
 	    if { $dp } then {
 		dp_update
-		dp_RPC $server after 1 $plw::end_proc $plwindow
+		dp_RPC $server after 1 $plw_end_proc $plwindow
 	    } else {
 		update
 		send $server "after 1 plw::end $plwindow"
