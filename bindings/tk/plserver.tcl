@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.3  1993/07/31 08:05:49  mjl
+# Revision 1.4  1993/08/03 20:29:27  mjl
+# Put security hole plug in a more useful spot.
+#
+# Revision 1.3  1993/07/31  08:05:49  mjl
 # Enabled help menu entries; split off resource initialization into another
 # file for more flexibility.
 #
@@ -29,14 +32,19 @@
 
 proc plserver_init {} {
     
-# Hack to plug TK's gaping security hole.  This is a minimal set.
-
-    rename exec {}
-    rename open {}
-
 # Set up configuration options.
 
     plconfig
+
+# Hack to plug TK's gaping security hole.  This is a minimal set.  
+#
+# Note: if you want to do some fancy autoload stuff, the open command will
+# be necessary.  It is a real security risk to keep it in, however.  You
+# should probably autoload or source all the files you want procs from
+# before this point is reached.
+
+    rename exec {}
+    rename open {}
 
 # Create the main window
 # Use the default window title.
