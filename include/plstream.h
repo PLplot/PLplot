@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/11/15 08:34:43  mjl
+ * Revision 1.19  1993/12/06 07:45:23  mjl
+ * Modifications for new color model.
+ *
+ * Revision 1.18  1993/11/15  08:34:43  mjl
  * Documentation changes.
  *
  * Revision 1.17  1993/11/07  09:04:17  mjl
@@ -140,7 +143,7 @@ typedef struct {
 *
 * icol0		PLINT	Color map 0 entry, current color (0 <= icol0 <= 15)
 * ncol0		PLINT	Number of colors allocated in color map 0.
-* htlvl		PLINT	Color map 1 current height level (0.0 <= htlvl <= 1.0)
+* icol1		PLINT	Color map 1 entry, current color (0 <= icol1 <= 255)
 * bgcolor	RGB	Background color, if specified
 * fgcolor	RGB	Foreground color, if specified
 * curcolor	RGB[]	Current color, for convenience
@@ -355,9 +358,8 @@ typedef struct {
 
 /* Colormaps */
 
-    PLINT icol0, ncol0, bgcolorset;
+    PLINT icol0, ncol0, icol1, bgcolorset;
     int   cmap0setcol[16], cmap1set;
-    PLFLT htlvl;
 
     PLColor fgcolor;
     PLColor bgcolor;

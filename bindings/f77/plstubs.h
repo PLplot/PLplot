@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.18  1993/11/15 08:35:22  mjl
-   Name definitions added for new stubs -- PLEOP, PLBOP, PLSCOLBG.
+   Revision 1.19  1993/12/06 07:45:25  mjl
+   Modifications for new color model.
 
+ * Revision 1.18  1993/11/15  08:35:22  mjl
+ * Name definitions added for new stubs -- PLEOP, PLBOP, PLSCOLBG.
+ *
  * Revision 1.17  1993/10/21  19:27:03  mjl
  * Changed all names that ended with an underscore (as part of the C/Fortran
  * linkage) to end with a '7' instead, to avoid problems with f2c.
@@ -162,6 +165,8 @@
 #define    PLBOX7	FNAME(PLBOX7,plbox7)
 #define    PLCLR	FNAME(PLCLR,plclr)
 #define    PLCOL	FNAME(PLCOL,plcol)
+#define    PLCOL0	FNAME(PLCOL0,plcol0)
+#define    PLCOL1	FNAME(PLCOL1,plcol1)
 #define    PLCON07	FNAME(PLCON07,plcon07)
 #define    PLCON17	FNAME(PLCON17,plcon17)
 #define    PLCON27	FNAME(PLCON27,plcon27)
@@ -207,10 +212,9 @@
 #define    PLRGB1	FNAME(PLRGB1,plrgb1)
 #define    PLSASP       FNAME(PLSASP,plsasp)
 #define    PLSCHR	FNAME(PLSCHR,plschr)
-#define    PLSCM0	FNAME(PLSCM0,plscm0)
-#define    PLSCM0N	FNAME(PLSCM0N,plscm0n)
-#define    PLSCM1	FNAME(PLSCM1,plscm1)
-#define    PLSCM1F1	FNAME(PLSCM1F1,plscm1f1)
+#define    PLSCMAP0	FNAME(PLSCMAP0,plscmap0)
+#define    PLSCMAP1	FNAME(PLSCMAP1,plscmap1)
+#define    PLSCMAP1F1	FNAME(PLSCMAP1F1,plscmap1f1)
 #define    PLSCOL0	FNAME(PLSCOL0,plscol0)
 #define    PLSCOLBG	FNAME(PLSCOLBG,plscolbg)
 #define    PLSCOLOR	FNAME(PLSCOLOR,plscolor)
