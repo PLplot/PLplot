@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.18  1994/07/01 20:39:17  mjl
+# Revision 1.19  1994/09/23 07:41:41  mjl
+# Some cleanup code at exit moved into plserver.c, and the exit_app proc was
+# eliminated (in favor of just exit).
+#
+# Revision 1.18  1994/07/01  20:39:17  mjl
 # Moved "standard" initialization code to proc plstdwin in pltools.tcl,
 # so it can be used by the demos.
 #
@@ -71,10 +75,10 @@ proc plserver_init {} {
 
     .menu.file.m add command \
 	-label "Exit" \
-	-command {exit_app} \
+	-command exit \
 	-underline 0
 
-    bind . <Control-x> {exit_app}
+    bind . <Control-x> exit
 
     pack append .menu .menu.file {left}
 
@@ -131,23 +135,6 @@ proc plserver_init {} {
 }
 
 #----------------------------------------------------------------------------
-# exit_app
-#
-# Destroys main window and does any other cleanup necessary.
-# Eventually this will have to be completely redone to handle multiple
-# client widgets.
-#----------------------------------------------------------------------------
-
-proc exit_app {} {
-    global client
-
-    if { [ info exists client ] } then {
-	client_cmd $client "unset server"
-    }
-    after 1 exit
-}
-
-#----------------------------------------------------------------------------
 # client_cmd
 #
 # Send string to client.  Does it in the background and catches errors
@@ -155,12 +142,12 @@ proc exit_app {} {
 #
 # The first "after 1" ensures the command is issued in the server's
 # background, so that we always continue processing events.  This is
-# important for handshaking and for good performance.
+# important for handshaking and good for performance.
 #
 # The second "after 1" (or the dp_RDO if Tcl-DP rpc is used) ensures that
 # the client process doesn't try to send a reply.  Also good for
-# performance but also prevents the client from timing out if the server
-# exits before it can reply.
+# performance but mainly to prevent problems if the server exits before
+# the client can reply (so there is nothing to reply to).
 #----------------------------------------------------------------------------
 
 proc client_cmd {client msg} {
@@ -176,7 +163,7 @@ proc client_cmd {client msg} {
 #----------------------------------------------------------------------------
 # plserver_link_init
 #
-# Set up initial link to client.
+# Set up link between client and server interpreters.
 #----------------------------------------------------------------------------
 
 proc plserver_link_init {} {
