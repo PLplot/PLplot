@@ -1,3 +1,9 @@
+plplot (5.3.0-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 29 Jan 2004 16:37:54 +0100
+
 plplot (5.2.1.rc2.5.3.0-1) unstable; urgency=low
 
   * Second release candiate tarball for version 5.3.0.

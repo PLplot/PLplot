@@ -24,8 +24,8 @@ function p18
   colormap(bgr);
 
   title("Set and drag button 1");
-  xlabel "Button 3 to finish";
-  ylabel "Button 2 to restart";
+  xlabel "Button 2 to finish";
+  ylabel "Button 3 to restart";
   meshc( x, y, z);
 
   set_view("meshc", x, y, z);
