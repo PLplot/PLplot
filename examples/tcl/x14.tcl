@@ -40,13 +40,13 @@ proc x14 {{w loopback}} {
     set xoff 0.0
     set yoff 0.0
 
-    plot1 $w
+    plot141 $w
 
 # Set up the data & plot
 
     set xscale 1.
     set yscale 1.e+6
-    plot1 $w
+    plot141 $w
 	    
 # Set up the data & plot
     
@@ -54,7 +54,7 @@ proc x14 {{w loopback}} {
     set yscale 1.e-6
     set digmax 2
     $w cmd plsyax digmax 0
-    plot1 $w
+    plot141 $w
     
 # Set up the data & plot
     
@@ -63,25 +63,25 @@ proc x14 {{w loopback}} {
     set yoff 0.0185
     set digmax 5
     $w cmd plsyax digmax 0
-    plot1 $w
+    plot141 $w
     
 # To slave
 # The pleop() ensures the eop indicator gets lit.
 
     $w cmd plsstrm 1
-    plot4 $w
+    plot144 $w
     $w cmd pleop 
     
 # Back to master
     
     $w cmd plsstrm 0
-    plot2 $w
-    plot3 $w
+    plot142 $w
+    plot143 $w
 							
 # To slave */
 
     $w cmd plsstrm 1
-    plot5 $w
+    plot145 $w
     
     $w cmd pleop 
     
@@ -97,7 +97,7 @@ proc x14 {{w loopback}} {
 
 # This is supposed to work just like the plot1() in x01c.c
 
-proc plot1 {w} {
+proc plot141 {w} {
     global xscale yscale xoff yoff
 
     set npts 60
@@ -142,7 +142,7 @@ proc plot1 {w} {
 
 # This is supposed to work just like the plot2() in x01c
 
-proc plot2 {w} {
+proc plot142 {w} {
     $w cmd plcol0 1
     $w cmd plenv -2 10 -.4 1.2 0 1
     $w cmd plcol0 2
@@ -167,7 +167,7 @@ proc plot2 {w} {
 
 # This is supposed to work just like the plot3() in x01c.c
 
-proc plot3 {w} {
+proc plot143 {w} {
 
     set pi 3.14159265358979323846
     $w cmd pladv 0
@@ -213,7 +213,7 @@ proc plot3 {w} {
 }
 
 # This is supposed to work like example 3.
-proc plot4 {w} {
+proc plot144 {w} {
     set twopi  [expr 2. * 3.14159265358979323846]
 # Set up viewport and window, but do not draw box 
 
@@ -293,7 +293,7 @@ proc plot4 {w} {
 }
 
 # This is supposed to work like first page of example 9.
-proc plot5 {w} {
+proc plot145 {w} {
     set xpts 35
     set ypts 46
 
