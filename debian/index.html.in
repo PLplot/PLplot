@@ -20,7 +20,7 @@ while (<>) {
   $f = $_;
   if ( -f $f ) {
     $s = `ls -sh $f`;
-    $s =~ s/\s*([0-9.]+[Mk])\s+.*/$1/;
+    $s =~ s/\s*([0-9.]+)([Mk])\s+.*/$1 $2/;
     chomp $s;
     $m = `md5sum $f`;
     $m =~ s/\s*([0-9a-f]+)\s+.*/$1/;
@@ -42,7 +42,7 @@ while (<>) {
     <address><a href="mailto:rafael@icp.inpg.fr">Rafael Laboissiere</a></address>
 <!-- Created: Thu Feb 15 08:39:05 CET 2001 -->
 <!-- hhmts start -->
-Last modified: Thu Feb 15 09:34:35 CET 2001
+Last modified: Thu Feb 15 09:45:12 CET 2001
 <!-- hhmts end -->
   </body>
 </html>
