@@ -1,6 +1,11 @@
 /* -*-C-*-
 /* $Id$
  * $Log$
+ * Revision 1.2  2001/01/22 20:17:14  airwin
+ * Change these files to windows-style line termination to be consistent
+ * with all other files in the sys/dos/djgpp tree.  This change also makes
+ * it easier to accept patches from dos/djgpp developers.
+ *
  * Revision 1.1  1994/08/10 01:08:25  mjl
  * New directory structure, config files, and other modifications for PLplot
  * 4.99h/djgpp DOS port, submitted by Paul Kirschner.  New driver supports

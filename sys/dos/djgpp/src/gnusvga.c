@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.5  2001/01/22 20:17:14  airwin
+ * Change these files to windows-style line termination to be consistent
+ * with all other files in the sys/dos/djgpp tree.  This change also makes
+ * it easier to accept patches from dos/djgpp developers.
+ *
  * Revision 1.4  2000/12/18 21:01:50  airwin
  * Change to new style plplot/*.h header file locations.
  *
