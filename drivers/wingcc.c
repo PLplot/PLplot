@@ -28,7 +28,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 #include "plevent.h"
-
+#include <string.h>
 #include <windows.h>
 
 #ifdef HAVE_FREETYPE
@@ -66,33 +66,33 @@ char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:5:wingcc";
 /* Struct to hold device-specific info. */
 
 typedef struct {
-PLFLT       scale;               /* scaling factor to "blow up" to the "virtual" page in removing hidden lines*/
-PLINT       width;               /* Window width (which can change) */
-PLINT       height;              /* Window Height */
+    PLFLT       scale;               /* scaling factor to "blow up" to the "virtual" page in removing hidden lines*/
+    PLINT       width;               /* Window width (which can change) */
+    PLINT       height;              /* Window Height */
 
 /*
  * WIN32 API variables
  */
 
-COLORREF    colour;              /* Current Colour               */
-MSG		   msg;		            /* A Win32 message structure. */
-WNDCLASSEX	wndclass;	         /* An extended window class structure. */
-HWND        hwnd;                /* Handle for the main window. */
-HPEN        pen;                 /* Windows pen used for drawing */
-HDC         hdc;                 /* Driver Context */
-PAINTSTRUCT	ps;                  /* used to paint the client area of a window owned by that application */
-RECT		   rect;                /* defines the coordinates of the upper-left and lower-right corners of a rectangle */
-HBRUSH      bgbrush;             /* brush used for filling the background */
-HCURSOR     cursor;              /* Current windows cursor for this window */
+    COLORREF      colour;              /* Current Colour               */
+    MSG		      msg;		            /* A Win32 message structure. */
+    WNDCLASSEX	   wndclass;	         /* An extended window class structure. */
+    HWND          hwnd;                /* Handle for the main window. */
+    HPEN          pen;                 /* Windows pen used for drawing */
+    HDC           hdc;                 /* Driver Context */
+    PAINTSTRUCT   ps;                  /* used to paint the client area of a window owned by that application */
+    RECT		      rect;                /* defines the coordinates of the upper-left and lower-right corners of a rectangle */
+    HBRUSH        bgbrush;             /* brush used for filling the background */
+    HCURSOR       cursor;              /* Current windows cursor for this window */
 
-PLINT       draw_mode;
-char        truecolour;          /* Flag to indicate 24 bit mode */
-char        waiting;             /* Flag to indicate drawing is done, and it is waiting; */
-                                 /* we only do a windows redraw if plplot is plotting */
-char        enterresize;         /* Used to keep track of reszing messages from windows */
-char        resize;              /* When "entersize" is set and "reszie" isnt, user maximised the window */
+    PLINT         draw_mode;
+    char          truecolour;          /* Flag to indicate 24 bit mode */
+    char          waiting;             /* Flag to indicate drawing is done, and it is waiting; */
+                                       /* we only do a windows redraw if plplot is plotting */
+    char          enterresize;         /* Used to keep track of reszing messages from windows */
+    char          resize;              /* When "entersize" is set and "reszie" isnt, user maximised the window */
 
-} wingcc_Dev;
+  } wingcc_Dev;
 
 
 void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
@@ -109,6 +109,7 @@ void plD_esc_wingcc        (PLStream *, PLINT, void *);
 #ifdef HAVE_FREETYPE
 
 static void plD_pixel_wingcc (PLStream *pls, short x, short y);
+static void plD_pixelV_wingcc (PLStream *pls, short x, short y);
 static void init_freetype_lv1 (PLStream *pls);
 static void init_freetype_lv2 (PLStream *pls);
 
@@ -116,7 +117,7 @@ extern void plD_FreeType_init(PLStream *pls);
 extern void plD_render_freetype_text (PLStream *pls, EscText *args);
 extern void plD_FreeType_Destroy(PLStream *pls);
 extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
-
+extern void pl_RemakeFreeType_text_from_buffer (PLStream *pls);
 #endif
 
 
@@ -246,7 +247,12 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
               	 BusyCursor();
                 BeginPaint (hwnd, &dev->ps);
                 if (dev->waiting==1)
+                {
                     plRemakePlot(pls);
+                    #ifdef HAVE_FREETYPE
+                    pl_RemakeFreeType_text_from_buffer(pls);
+                    #endif
+                 }
                 EndPaint (hwnd, &dev->ps);
                 NormalCursor();
          		 return(0);
@@ -351,8 +357,7 @@ plD_init_wingcc(PLStream *pls)
 
     dev = (wingcc_Dev *) pls->dev;
 
-    dev->colour=1;               /* Set a fall back pen colour in case user doesn't */
-    pls->icol0 = 1;
+    pls->icol0 = 1;              /* Set a fall back pen colour in case user doesn't */
 
     pls->termin = 1;             /* interactive device */
     pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
@@ -369,18 +374,6 @@ plD_init_wingcc(PLStream *pls)
 
     plParseDrvOpts(wingcc_options);
 
-
-#ifdef HAVE_FREETYPE
-
-if (freetype)
-   {
-    pls->dev_text = 1; /* want to draw text */
-    init_freetype_lv1(pls);
-    FT=(FT_Data *)pls->FT;
-    FT->want_smooth_text=smooth_text;
-   }
-
-#endif
 
 /* Set up device parameters */
 
@@ -460,6 +453,20 @@ if (freetype)
 
 SetWindowLong(dev->hwnd,GWL_USERDATA,(long)pls);
 dev->hdc = GetDC (dev->hwnd);
+
+#ifdef HAVE_FREETYPE
+
+if (freetype)
+   {
+    pls->dev_text = 1; /* want to draw text */
+    init_freetype_lv1(pls);
+    FT=(FT_Data *)pls->FT;
+    FT->want_smooth_text=smooth_text;
+   }
+
+#endif
+
+
 
 plD_state_wingcc(pls, PLSTATE_COLOR0);
 	/*
@@ -603,7 +610,7 @@ plD_fill_polygon_wingcc(PLStream *pls)
           points[i].y = dev->height -(pls->dev_y[i]/dev->scale);
         }
 
-      dev->bgbrush = CreateSolidBrush(RGB(pls->curcolor.r,pls->curcolor.g,pls->curcolor.b));
+      dev->bgbrush = CreateSolidBrush(dev->colour);
       SelectObject (dev->hdc, dev->bgbrush);
       Polygon(dev->hdc,points,pls->dev_npts);
       DeleteObject (dev->bgbrush);
@@ -658,15 +665,30 @@ plD_eop_wingcc(PLStream *pls)
     }
 }
 
+/*--------------------------------------------------------------------------*\
+ *  Beginning of the new page
+\*--------------------------------------------------------------------------*/
 void
 plD_bop_wingcc(PLStream *pls)
 {
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+#ifdef HAVE_FREETYPE
+  FT_Data *FT=(FT_Data *)pls->FT;
+#endif
 
   Debug("Start of Page\t");
 
+/*
+ *  Turn the cursor to a busy sign, clear the page by "invalidating" it
+ *  reset freetype, if we have to, then reset the colours and pen width
+ */
+
   BusyCursor();
   RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE);
+
+#ifdef HAVE_FREETYPE
+ pl_FreeTypeBOP();
+#endif
 
   plD_state_wingcc(pls, PLSTATE_COLOR0);
 }
@@ -685,10 +707,12 @@ plD_tidy_wingcc(PLStream *pls)
     }
 #endif
 
-
   if (pls->dev!=NULL)
     free(pls->dev);
 }
+
+
+
 
 /*----------------------------------------------------------------------*\
  * plD_state_png()
@@ -771,6 +795,9 @@ plD_esc_wingcc(PLStream *pls, PLINT op, void *ptr)
 static void Resize( PLStream *pls )
 {
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+#ifdef HAVE_FREETYPE
+  FT_Data *FT=(FT_Data *)pls->FT;
+#endif
 
  	if (dev->waiting==1)     /* Only resize the window IF plplot has finished with it */
   	{
@@ -787,6 +814,15 @@ static void Resize( PLStream *pls )
             {
               dev->scale=(PLFLT)PIXELS_Y/dev->height;
             }
+
+#ifdef HAVE_FREETYPE
+          if (FT)
+            {
+              FT->scale=dev->scale;
+              FT->ymax=dev->height;
+            }
+#endif
+
           RedrawWindow(dev->hwnd,NULL,NULL,RDW_INVALIDATE|RDW_ERASE);
         }
      }
@@ -872,6 +908,15 @@ void plD_pixel_wingcc (PLStream *pls, short x, short y)
 
 }
 
+void plD_pixelV_wingcc (PLStream *pls, short x, short y)
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+
+   SetPixelV(dev->hdc, x, y,dev->colour);
+
+}
+
+
 /*----------------------------------------------------------------------*\
  *  void init_freetype_lv1 (PLStream *pls)
  *
@@ -884,11 +929,25 @@ void plD_pixel_wingcc (PLStream *pls, short x, short y)
 static void init_freetype_lv1 (PLStream *pls)
 {
 FT_Data *FT;
+int x;
+wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
 
 plD_FreeType_init(pls);
 
 FT=(FT_Data *)pls->FT;
-FT->pixel= (plD_pixel_fp)plD_pixel_wingcc;
+
+
+/*
+ *  Work out if our device support "fast" pixel setting
+ *  and if so, use that instead of "slow" pixel setting
+ */
+
+x=GetDeviceCaps(dev->hdc,RASTERCAPS);
+
+if (x&&RC_BITBLT)
+  FT->pixel= (plD_pixel_fp)plD_pixelV_wingcc;
+else
+  FT->pixel= (plD_pixel_fp)plD_pixel_wingcc;
 
 
 }
