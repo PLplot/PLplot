@@ -25,16 +25,23 @@ output_cflags () {
 output_libs () {
     # Set up library spec
     plplot_libspec="-L${prefix}/lib -lplplot@LIB_TAG@"
+    LINKER=@CC@
     if test "$with_cxx" = "yes" -a "$enable_cxx" = "yes" ; then
-	plplot_libspec="$plplot_libspec -lplcxx@LIB_TAG@"
+	plplot_libspec="-L${prefix}/lib -lplplotcxx@LIB_TAG@"
+	LINKER=@CXX@
     fi
-    if test "$enable_tcl" = "yes"; then
-	plplot_libspec="$plplot_libspec -lplplottcltk@LIB_TAG@"
+    if test "$with_f77" = "yes" -a "$enable_f77" = "yes" ; then
+	plplot_libspec="-L${prefix}/lib -lplplotf77@LIB_TAG@"
+	LINKER=@F77@
+    fi
+    if test "$with_tcl" = "yes" -a "$enable_tcl" = "yes" ; then
+	plplot_libspec="-L${prefix}/lib -lplplottcltk@LIB_TAG@"
+	LINKER=@CC@
     fi
 
     # Snarf libs from plplot_libtool output & process
     process_libtool_output \
-     `plplot_libtool -n --mode=link LINKER ${plplot_libspec} -o OUTPUT`
+     `plplot_libtool -n --mode=link ${LINKER} ${plplot_libspec} -o OUTPUT`
 }
 
 #----------------------------------------------------------------------------
@@ -79,6 +86,8 @@ Options:
 	[--libs]
 	[--cflags]
         [--with-c++]
+        [--with-f77]
+        [--with-tcl]
 	[--help]
 EOF
 	exit $1
@@ -90,8 +99,9 @@ EOF
 plplot_cflags=""
 prefix=@prefix@
 version=@VERSION@
-enable_tcl=@enable_tcl@
 enable_cxx=@enable_cxx@
+enable_f77=@enable_f77@
+enable_tcl=@enable_tcl@
 
 if test $# -eq 0; then
     usage 1 1>&2
@@ -123,6 +133,12 @@ while test $# -gt 0; do
 	    ;;
 	--with-c++)
 	    with_cxx=yes
+	    ;;
+	--with-f77)
+	    with_f77=yes
+	    ;;
+	--with-tcl)
+	    with_tcl=yes
 	    ;;
 	--help)
 	    usage 1 1>&2
