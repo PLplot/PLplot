@@ -30,6 +30,10 @@ XLIBSTR=-lX11
 # found, I have to assume that X isn't available (it happens).  Can disable
 # explicitly by specifying --disable-xwin or --without-x (the latter switch
 # is built into autoconf so I might as well support it).
+#
+# Note:  ac_path_x gets it wrong sometimes.  If you need to specify
+# the path yourself in cf_plplot.in, you should probably plan to
+# provide both XINCDIR and XLIBDIR.
 # ----------------------------------------------------------------------------
 
 if test "$with_x" = "no"; then
@@ -261,6 +265,10 @@ if test "$enable_itk" = "yes"; then
 	done
 	FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
     fi
+fi
+
+if test "$enable_itcl" = "yes"; then
+    AC_DEFINE(HAVE_ITCL)
 fi
 
 if test "$enable_itk" = "yes"; then
