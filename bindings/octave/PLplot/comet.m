@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -21,6 +21,13 @@
 ##	    comet(t,tan(sin(t))-sin(tan(t)))
 
 function comet(x, y, p)
+
+  ax_s = axis "state";
+  ax_s = deblank(ax_s(1,:));
+  if (strcmp("auto", ax_s) == 1)
+    warning("comet: FIXME: axis is 'auto', turning it to 'tight'.");
+    axis "tight"
+  endif
 
   if (nargin == 0)
     x = -pi:pi/200:pi;
@@ -88,5 +95,9 @@ function comet(x, y, p)
     plscol0(1, r, g, b);
 
   end_unwind_protect
+
+  if (strcmp("auto", ax_s) == 1)
+    axis "auto"
+  endif
 
 endfunction
