@@ -85,11 +85,17 @@ static int usepthreads = 1;     /* use "-drvopt usepth=0" to not use pthreads to
 
 /* Set constants for dealing with colormap.  In brief:
  *
+ *      --- custom colormaps ---
  * ccmap		When set, turns on custom color map
+ * CCMAP_XWM_COLORS	Number of low "pixel" values to copy.
  *
- * XWM_COLORS		Number of low "pixel" values to copy.
- * CMAP1_COLORS		Color map 1 entries.
- * MAX_COLORS		Maximum colors period (rw colormaps only).
+ *      --- r/w colormaps --
+ * RWMAP_CMAP1_COLORS	Color map 1 entries.
+ * RWMAP_MAX_COLORS	Maximum colors in RW colormaps
+ *
+ *      --- r/o colormaps --
+ * ROMAP_CMAP1_COLORS	Color map 1 entries.
+ * TC_CMAP1_COLORS	TrueColor visual Color map 1 entries.
  *
  * See Init_CustomCmap() and  Init_DefaultCmap() for more info.
  * Set ccmap at your own risk -- still under development.
@@ -98,17 +104,19 @@ static int usepthreads = 1;     /* use "-drvopt usepth=0" to not use pthreads to
 /* plplot_ccmap is statically defined in plxwd.h.  Note that
  * plframe.c also includes that header and uses the variable. */
 
-#define XWM_COLORS 70
-#define CMAP1_COLORS 50
+#define CCMAP_XWM_COLORS 70
 
-/* Note: read-only colormaps aren't affected by this. */
-#define MAX_COLORS 256
+#define RWMAP_CMAP1_COLORS 50
+#define RWMAP_MAX_COLORS 256
+
+#define ROMAP_CMAP1_COLORS 50
+#define TC_CMAP1_COLORS 200
 
 /* Variables to hold RGB components of given colormap. */
 /* Used in an ugly hack to get past some X11R5 and TK limitations. */
 
 static int  sxwm_colors_set;
-static XColor sxwm_colors[MAX_COLORS];
+static XColor sxwm_colors[RWMAP_MAX_COLORS];
 
 /* Keep pointers to all the displays in use */
 
@@ -944,15 +952,11 @@ OpenXwin(PLStream *pls)
 	}
 
     /* Allocate space for colors */
+    /* Note cmap1 allocation is deferred */
         xwd->ncol0_alloc = pls->ncol0;
         xwd->cmap0 = (XColor *) calloc(pls->ncol0, (size_t) sizeof(XColor));
         if (xwd->cmap0 == 0)
             plexit("couldn't allocate space for cmap0 colors");
-
-        xwd->ncol1_alloc = CMAP1_COLORS;
-        xwd->cmap1 = (XColor *) calloc(CMAP1_COLORS, (size_t) sizeof(XColor));
-        if (xwd->cmap1 == 0)
-            plexit("couldn't allocate space for cmap1 colors");
 
     /* Allocate & set background and foreground colors */
 	AllocBGFG(pls);
@@ -2521,34 +2525,35 @@ AllocBGFG(PLStream *pls)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     int i, j, npixels;
-    unsigned long plane_masks[1], pixels[MAX_COLORS];
+    unsigned long plane_masks[1], pixels[RWMAP_MAX_COLORS];
 
     dbug_enter("AllocBGFG");
 
 /* If not on a color system, just return */
-
     if ( ! xwd->color)
 	return;
 
-/* Allocate r/w color cell for background */
-
     if ( xwd->rw_cmap &&
+     /* r/w color maps */
 	 XAllocColorCells(xwd->display, xwd->map, False,
-			  plane_masks, 0, pixels, 1)) {
+			  plane_masks, 0, pixels, 1) )
+    {
+    /* background */
 	xwd->cmap0[0].pixel = pixels[0];
     }
     else {
+    /* r/o color maps */
 	xwd->cmap0[0].pixel = BlackPixel(xwd->display, xwd->screen);
 	xwd->fgcolor.pixel = WhitePixel(xwd->display, xwd->screen);
-	xwd->rw_cmap = 0;
-	if (pls->verbose)
+	if ( xwd->rw_cmap && pls->verbose )
 	    fprintf( stderr, "Downgrading to r/o cmap.\n" );
+	xwd->rw_cmap = 0;
 	return;
     }
 
 /* Allocate as many colors as we can */
 
-    npixels = MAX_COLORS;
+    npixels = RWMAP_MAX_COLORS;
     for (;;) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
 			     plane_masks, 0, pixels, npixels))
@@ -2673,16 +2678,18 @@ InitColors(PLStream *pls)
  *
  * Assuming all color X displays do 256 colors, the breakdown is as follows:
  *
- * XWM_COLORS	Number of low "pixel" values to copy.  These are typically
- *		allocated first, thus are in use by the window manager. I
- *		copy them to reduce flicker.
+ * CCMAP_XWM_COLORS
+ *	Number of low "pixel" values to copy.  These are typically allocated
+ *	first, thus are in use by the window manager. I copy them to reduce
+ *	flicker.
+
  *
- * CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
- *		available for smooth shading.  On the order of 50-100 is
- *		pretty reasonable.  You don't really need all 256,
- *		especially if all you're going to do is to print it to
- *		postscript (which doesn't have any intrinsic limitation on
- *		the number of colors).
+ * RWMAP_CMAP1_COLORS
+ *	Color map 1 entries.  There should be as many as practical available
+ *	for smooth shading.  On the order of 50-100 is pretty reasonable.  You
+ *	don't really need all 256, especially if all you're going to do is to
+ *	print it to postscript (which doesn't have any intrinsic limitation on
+ *	the number of colors).
  *
  * It's important to leave some extra colors unallocated for Tk.  In
  * particular the palette tools require a fair amount.  I recommend leaving
@@ -2695,18 +2702,18 @@ AllocCustomMap(PLStream *pls)
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    XColor xwm_colors[MAX_COLORS];
+    XColor xwm_colors[RWMAP_MAX_COLORS];
     int i, npixels;
-    unsigned long plane_masks[1], pixels[MAX_COLORS];
+    unsigned long plane_masks[1], pixels[RWMAP_MAX_COLORS];
 
     dbug_enter("AllocCustomMap");
 
 /* Determine current default colors */
 
-    for (i = 0; i < MAX_COLORS; i++) {
+    for (i = 0; i < RWMAP_MAX_COLORS; i++) {
 	xwm_colors[i].pixel = i;
     }
-    XQueryColors(xwd->display, xwd->map, xwm_colors, MAX_COLORS);
+    XQueryColors(xwd->display, xwd->map, xwm_colors, RWMAP_MAX_COLORS);
 
 /* Allocate cmap0 colors in the default colormap.
  * The custom cmap0 colors are later stored at the same pixel values.
@@ -2723,7 +2730,7 @@ AllocCustomMap(PLStream *pls)
 
 /* Now allocate all colors so we can fill the ones we want to copy */
 
-    npixels = MAX_COLORS;
+    npixels = RWMAP_MAX_COLORS;
     for (;;) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
 			     plane_masks, 0, pixels, npixels))
@@ -2735,7 +2742,7 @@ AllocCustomMap(PLStream *pls)
 
 /* Fill the low colors since those are in use by the window manager */
 
-    for (i = 0; i < XWM_COLORS; i++) {
+    for (i = 0; i < CCMAP_XWM_COLORS; i++) {
 	XStoreColor(xwd->display, xwd->map, &xwm_colors[i]);
 	pixels[xwm_colors[i].pixel] = 0;
     }
@@ -2754,7 +2761,7 @@ AllocCustomMap(PLStream *pls)
  */
 
     if (sxwm_colors_set) {
-	for (i = 0; i < MAX_COLORS; i++) {
+	for (i = 0; i < RWMAP_MAX_COLORS; i++) {
 	    if ((xwm_colors[i].red != sxwm_colors[i].red) ||
 		(xwm_colors[i].green != sxwm_colors[i].green) ||
 		(xwm_colors[i].blue != sxwm_colors[i].blue) ) {
@@ -2811,7 +2818,7 @@ AllocCmap0(PLStream *pls)
 
     if (xwd->rw_cmap) {
         int npixels;
-        unsigned long plane_masks[1], pixels[MAX_COLORS];
+        unsigned long plane_masks[1], pixels[RWMAP_MAX_COLORS];
 
     /* Allocate and assign colors in cmap 0 */
 
@@ -2893,8 +2900,7 @@ AllocCmap0(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * AllocCmap1()
  *
- * Allocate & initialize cmap1 entries.  If using the default color map,
- * must severely limit number of colors otherwise TK won't have enough.
+ * Allocate & initialize cmap1 entries.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -2904,14 +2910,19 @@ AllocCmap1(PLStream *pls)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     int i, j, npixels;
-    unsigned long plane_masks[1], pixels[MAX_COLORS];
+    unsigned long plane_masks[1], pixels[RWMAP_MAX_COLORS];
 
     dbug_enter("AllocCmap1");
 
     if (xwd->rw_cmap) {
-    /* Allocate colors in cmap 1 */
 
-	npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
+	if (pls->verbose)
+	    fprintf( stderr, "Attempting to allocate r/w colors in cmap1.\n" );
+
+    /* If using the default color map, must severely limit number of colors
+       otherwise TK won't have enough. */
+
+	npixels = MAX(2, MIN(RWMAP_CMAP1_COLORS, pls->ncol1));
 	for (;;) {
 	    if (XAllocColorCells(xwd->display, xwd->map, False,
 				 plane_masks, 0, pixels, npixels))
@@ -2923,29 +2934,33 @@ AllocCmap1(PLStream *pls)
 
 	if (npixels < 2) {
 	    xwd->ncol1 = -1;
-	    fprintf(stderr,
-		    "Warning: unable to allocate sufficient colors in cmap1.\n");
+	    fprintf(stderr, "Warning: unable to allocate sufficient colors in cmap1.\n");
 	    return;
 	}
-	else {
-	    xwd->ncol1 = npixels;
-	    if (pls->verbose)
-		fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1.\n", npixels);
-	}
 
-/* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
-/* Skipping by 2 seems to do the job best */
+        xwd->ncol1 = npixels;
+        if (pls->verbose)
+            fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1.\n", npixels);
+
+    /* Allocate space if it hasn't been done yet */
+        if ( !xwd->cmap1 ) {
+            xwd->ncol1_alloc = xwd->ncol1;
+            xwd->cmap1 = (XColor *) calloc(xwd->ncol1, (size_t) sizeof(XColor));
+            if ( !xwd->cmap1 )
+                plexit("couldn't allocate space for cmap1 colors");
+        }
+
+    /* Don't assign pixels sequentially, to avoid strange problems with xor
+       GC's.  Skipping by 2 seems to do the job best. */
 
 	for (j = i = 0; i < xwd->ncol1; i++) {
-	    while (pixels[j] == 0)
-		j++;
+	    while (pixels[j] == 0) j++;
 
 	    xwd->cmap1[i].pixel = pixels[j];
 	    pixels[j] = 0;
 
 	    j += 2;
-	    if (j >= xwd->ncol1)
-		j = 0;
+	    if (j >= xwd->ncol1) j = 0;
 	}
 
 	StoreCmap1(pls);
@@ -2960,11 +2975,19 @@ AllocCmap1(PLStream *pls)
 
 	switch(xwd->visual->class) {
 	case TrueColor:
-	    ncolors = 200;
+	    ncolors = TC_CMAP1_COLORS;
 	    break;
 	default:
-	    ncolors = 50;
+	    ncolors = ROMAP_CMAP1_COLORS;
 	}
+
+    /* Allocate space if it hasn't been done yet */
+        if ( !xwd->cmap1 ) {
+            xwd->ncol1_alloc = ncolors;
+            xwd->cmap1 = (XColor *) calloc(ncolors, (size_t) sizeof(XColor));
+            if ( !xwd->cmap1 )
+                plexit("couldn't allocate space for cmap1 colors");
+        }
 
 	for( i = 0; i < ncolors; i++ ) {
 	    plcol_interp( pls, &cmap1color, i, ncolors );
@@ -3142,13 +3165,13 @@ SaveColormap(Display *display, Colormap colormap)
 	return;
 
     sxwm_colors_set = 1;
-    for (i = 0; i < MAX_COLORS; i++) {
+    for (i = 0; i < RWMAP_MAX_COLORS; i++) {
 	sxwm_colors[i].pixel = i;
     }
-    XQueryColors(display, colormap, sxwm_colors, MAX_COLORS);
+    XQueryColors(display, colormap, sxwm_colors, RWMAP_MAX_COLORS);
 /*
     printf("\nAt startup, default colors are: \n\n");
-    for (i = 0; i < MAX_COLORS; i++) {
+    for (i = 0; i < RWMAP_MAX_COLORS; i++) {
 	printf(" i: %d,  pixel: %d,  r: %d,  g: %d,  b: %d\n",
 	       i, sxwm_colors[i].pixel,
 	       sxwm_colors[i].red, sxwm_colors[i].green, sxwm_colors[i].blue);
