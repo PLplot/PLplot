@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/07/23 04:46:26  mjl
+ * Revision 1.25  1994/07/24 07:41:46  mjl
+ * Eliminated some more system-dependent stuff, in view of plConfig.h
+ * providing us with the _POSIX_SOURCE define (or not).
+ *
+ * Revision 1.24  1994/07/23  04:46:26  mjl
  * Decreased the amount of custom system handling due to use of plConfig.h.
  * Need to do some more yet...
  *
@@ -88,25 +92,12 @@
 
 #include "plConfig.h"
 
+#ifdef _POSIX_SOURCE
 #define POSIX_TTY
+#endif
 
 #ifdef CRAY			/* Cray */
 #undef _POSIX_SOURCE		/* because of moronic broken X headers */
-#endif
-
-#ifdef SX			/* NEC SX-3 */
-#undef POSIX_TTY		/* Not POSIX.1 compliant */
-#endif
-
-#ifdef MSDOS			/* MSDOS */
-#undef POSIX_TTY		/* Not POSIX.1 compliant */
-#endif
-
-#ifdef AMIGA			/* Amiga */
-#undef POSIX_TTY		/* Not POSIX.1 compliant */
-#ifdef STDC_HEADERS		/* Required by SAS/C 5.X */
-#define STDC_HEADERS 1		/* (still pretty prevalent, so..) */
-#endif
 #endif
 
 /* Hacks to deal with non-ANSI libc */
