@@ -146,9 +146,9 @@ proc plxframe {w {client_id {}}} {
 
 proc plw::setup_defaults {w} {
 
-# In the two cases below, the options can be specified in advance through
-# the global variables zoomopt_0, etc, and saveopt_0, etc.  Not a great
-# solution but will have to do for now.
+# In the two cases below, the options can be overridden through the global
+# variables zoomopt_0, etc, and saveopt_0, etc.  Only for backward
+# compatibility, since options are a much better way of handling this.
 
 # zoom options:
 #  0:	0=don't preserve aspect ratio, 1=do
@@ -156,8 +156,15 @@ proc plw::setup_defaults {w} {
 
     global zoomopts zoomopt_0 zoomopt_1
 
-    set zoomopts($w,0) 1
-    set zoomopts($w,1) 1
+# Get zoom options from options db
+    set zoom_fixaspect [option get $w zoom_fixaspect {}]
+    set zoom_startfrom [option get $w zoom_startfrom {}]
+
+# Note: legacy default behavior is both "1"
+# Use a negative condition so that if you bogotify your option value, the
+# default behavior is retained.
+    set zoomopts($w,0) [expr { "$zoom_fixaspect" != "false" }]
+    set zoomopts($w,1) [expr { "$zoom_startfrom" != "corner" }]
     if { [info exists zoomopt_0] } {set zoomopts($w,0) $zoomopt_0}
     if { [info exists zoomopt_1] } {set zoomopts($w,1) $zoomopt_1}
 
@@ -167,8 +174,12 @@ proc plw::setup_defaults {w} {
 
     global saveopts saveopt_0 saveopt_1
 
-    set saveopts($w,0) "psc"
-    set saveopts($w,1) 0
+# Get save options from options db
+    set save_dev   [option get $w save_dev {}]
+    set save_multi [option get $w save_multi {}]
+
+    set saveopts($w,0) $save_dev
+    set saveopts($w,1) [expr { "$save_multi" != "false" }]
     if { [info exists saveopt_0] } {set saveopts($w,0) $saveopt_0}
     if { [info exists saveopt_1] } {set saveopts($w,1) $saveopt_1}
 
@@ -1031,11 +1042,7 @@ proc plw::zoom_enter {w} {
     global fn00 fn01 fn10 fn11
 
     set coords [$w.plwin view]
-
-    set fv00 [lindex "$coords" 0]
-    set fv01 [lindex "$coords" 1]
-    set fv10 [lindex "$coords" 2]
-    set fv11 [lindex "$coords" 3]
+    unlist $coords fv00 fv01 fv10 fv11
 
     set fn00 xmin
     set fn01 ymin
@@ -1117,11 +1124,7 @@ proc plw::page_enter {w} {
     global fn00 fn01 fn10 fn11
 
     set coords [$w.plwin page]
-
-    set fv00 [lindex "$coords" 0]
-    set fv01 [lindex "$coords" 1]
-    set fv10 [lindex "$coords" 2]
-    set fv11 [lindex "$coords" 3]
+    unlist $coords fv00 fv01 fv10 fv11
 
     set fn00 mar
     set fn01 aspect
@@ -1380,9 +1383,8 @@ proc plw::zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
 
     set coords [plw::zoom_coords $w $wx0 $wy0 $wx1 $wy1 0]
 
-    $w.plwin draw rect \
-	[lindex "$coords" 0] [lindex "$coords" 1] \
-	[lindex "$coords" 2] [lindex "$coords" 3] 
+    unlist $coords xmin ymin xmax ymax
+    $w.plwin draw rect $xmin $ymin $xmax $ymax
 }
 
 #----------------------------------------------------------------------------
@@ -1403,10 +1405,9 @@ proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
 # Select new plot region
 
     set coords [plw::zoom_coords $w $wx0 $wy0 $wx1 $wy1 1]
+    unlist $coords xmin ymin xmax ymax
 
-    plw::view_zoom $w \
-	[lindex "$coords" 0] [lindex "$coords" 1] \
-	[lindex "$coords" 2] [lindex "$coords" 3] 
+    plw::view_zoom $w $xmin $ymin $xmax $ymax
 }
 
 #----------------------------------------------------------------------------
@@ -1508,10 +1509,7 @@ proc plw::view_zoom {w x0 y0 x1 y1} {
 # Adjust arguments to be in bounds (in case margins are in effect).
 
     set bounds [$w.plwin view bounds]
-    set xmin [lindex "$bounds" 0]
-    set ymin [lindex "$bounds" 1]
-    set xmax [lindex "$bounds" 2]
-    set ymax [lindex "$bounds" 3]
+    unlist $bounds xmin ymin xmax ymax
 
     set xl [max $xmin [min $xmax $xl]]
     set yl [max $ymin [min $ymax $yl]]
@@ -1597,6 +1595,54 @@ proc plw::zoom_forward {w} {
 }
 
 #----------------------------------------------------------------------------
+# plw::get_scroll_multiplier
+#
+# Returns scroll multiplier given currently pressed keys.  If base_speed not
+# specified, the global key_scroll_speed is used.
+#----------------------------------------------------------------------------
+
+proc plw::get_scroll_multiplier {state {base_speed 0}} {
+    global key_scroll_mag
+    global key_scroll_speed
+
+# Set up base multiplication factor
+
+    if { $base_speed < 0 } {
+        error "illegal base_speed $base_speed (must be nonnegative)"
+    }
+
+    if { $base_speed == 0 } {
+        set mult $key_scroll_speed
+    } else {
+        set mult $base_speed
+    }
+
+# Now handle modifier keys
+
+# shift
+    if { $state & 0x01 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+
+# caps-lock
+    if { $state & 0x02 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+
+# control
+    if { $state & 0x04 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+
+# alt
+    if { $state & 0x08 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+
+    return $mult
+}
+
+#----------------------------------------------------------------------------
 # plw::view_scroll
 #
 # Scrolls view incrementally.
@@ -1605,29 +1651,9 @@ proc plw::zoom_forward {w} {
 #----------------------------------------------------------------------------
 
 proc plw::view_scroll {w dx dy s} {
-    global key_scroll_mag
-    global key_scroll_speed
 
 # Set up multiplication factor
-
-    set mult $key_scroll_speed
-
-# shift key
-    if { $s & 0x01 } then {
-	set mult [expr $mult * $key_scroll_mag]
-    }
-# caps-lock
-    if { $s & 0x02 } then {
-	set mult [expr $mult * $key_scroll_mag]
-    }
-# control key
-    if { $s & 0x04 } then {
-	set mult [expr $mult * $key_scroll_mag]
-    }
-# alt key
-    if { $s & 0x08 } then {
-	set mult [expr $mult * $key_scroll_mag]
-    }
+    set mult [get_scroll_multiplier $s]
 
 # Now scroll
 
@@ -1719,11 +1745,7 @@ proc plw::fixview {w hscroll vscroll} {
 
 proc plw::update_view {w} {
     set coords [$w.plwin view]
-
-    set xl [lindex "$coords" 0]
-    set yl [lindex "$coords" 1]
-    set xr [lindex "$coords" 2]
-    set yr [lindex "$coords" 3]
+    unlist $coords xl yl xr yr
 
     plw::view_select $w $xl $yl $xr $yr
 }
@@ -1763,7 +1785,12 @@ proc plw::label_refresh {w} {
 
     global plmenu_lstat plmenu_lstat_depth
 
-    set msg $plmenu_lstat($w,$plmenu_lstat_depth($w))
+    set depth $plmenu_lstat_depth($w)
+    if { $depth >= 0 } {
+        set msg $plmenu_lstat($w,$depth)
+    } else {
+        set msg ""
+    }
     $w.ftop.lstat configure -text "$msg"
 }
 
@@ -1805,16 +1832,34 @@ proc plw::label_pop {w} {
 	puts stderr "plw::label_pop: no stack defined yet, strange.."
 	return
     }
-    if {$plmenu_lstat_depth($w) > 0} {
+    if {$plmenu_lstat_depth($w) >= 0} {
 	incr plmenu_lstat_depth($w) -1
     } {
-	puts stderr "plw::label_pop: you just hit the min stack depth"
+	puts stderr "plw::label_pop: end of stack!"
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw::unlist
+#
+# Dumps a list into parts, as specified by variable list.  Should be standard.
+# Written from scratch by mjl on 7/12/04.  Example syntax:
+#
+#   unlist $coords xmin ymin xmax ymax
+#----------------------------------------------------------------------------
+
+proc plw::unlist {mylist args} {
+
+    foreach i $args j $mylist {
+        upvar $i x
+        set x $j
     }
 }
 
 #----------------------------------------------------------------------------
 # plw::dplink
 #
+# NOTE: **OBSOLETE** kept only for reference
 # Initializes socket data link between widget and client code.
 # In addition, as this is the last client/server connection needed, I
 # disable further connections.
