@@ -473,6 +473,14 @@ plD_state_tk(PLStream *pls, PLINT op)
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].g) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].b) );
 	}
+    /* Need to send over the control points too! */
+	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncp1) );
+	for (i = 0; i < pls->ncp1; i++) {
+	    tk_wr( pdf_wr_ieeef(pls->pdfs, pls->cmap1cp[i].h) );
+	    tk_wr( pdf_wr_ieeef(pls->pdfs, pls->cmap1cp[i].l) );
+	    tk_wr( pdf_wr_ieeef(pls->pdfs, pls->cmap1cp[i].s) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1cp[i].rev) );
+	}
 	break;
     }
 
