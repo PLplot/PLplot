@@ -154,7 +154,9 @@ plP_tidy(void)
 	plbuf_tidy(plsc);
 
     plsc->OutFile = NULL;
-    free_mem(plsc->FileName);
+
+    if (plsc->tcl_cmd) 
+	free_mem(plsc->tcl_cmd);
 }
 
 /* Change state. */
@@ -1352,6 +1354,9 @@ c_plend1(void)
 	plP_tidy();
 	plsc->level = 0;
     }
+    /* Move from plP_tidy because FileName may be set even if level == 0 */
+    if (plsc->FileName)
+	free_mem(plsc->FileName);
 
 /* Free all malloc'ed stream memory */
 

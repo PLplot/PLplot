@@ -281,6 +281,8 @@ main(int argc, char *argv[])
 	    ;
     }
     plend();
+    if (myargv) 
+      free(myargv);
     exit(EX_SUCCESS);
 }
 
