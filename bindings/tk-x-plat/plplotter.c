@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.6  2002/07/10 16:12:11  airwin
+ * Need these #include's for Linux/Unix.
+ *
  * Revision 1.5  2002/07/10 14:02:28  vincentdarley
  * remove need for internal tcl
  *
@@ -255,7 +258,7 @@ extern void XWarpPointer(
 #if defined(__WIN32__) || defined (MAC_TCL)
 #include <tkInt.h>
 #else
-#include <tk.h>
+#include <tkInt.h>
 #endif
 #endif
 
@@ -269,6 +272,7 @@ extern void XWarpPointer(
 #ifndef __WIN32__
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#include <fcntl.h>
 #endif
 #endif
 
