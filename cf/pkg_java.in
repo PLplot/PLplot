@@ -19,6 +19,8 @@ JAVA_STUFF := java_build_target
 # be done via some Jar-related mechanism, but I'll have to learn how
 # that works before I can do that.  For now, we just replicate the
 # compiled Java class files into the appropriate structure.
+# AWI change: for the examples copy the source java files, not the class files.
+# Also copy the README file
 
 install_java:
 	-@if test ! -d $(LIB_DIR)/java/plplot/core; \
@@ -26,7 +28,8 @@ install_java:
 	 if test ! -d $(LIB_DIR)/java/plplot/examples; \
 		then mkdir -p $(LIB_DIR)/java/plplot/examples; fi; \
 	 $(CP) java/plplot/core/*.class $(LIB_DIR)/java/plplot/core; \
-	 $(CP) java/plplot/examples/*.class $(LIB_DIR)/java/plplot/examples
+	 $(CP) ../examples/java/*.java $(LIB_DIR)/java/plplot/examples; \
+	 $(CP) ../examples/java/README $(LIB_DIR)/java/plplot/examples
 
 
 jsrcs := $(wildcard java/plplot/core/*.java)
