@@ -19,9 +19,15 @@
 # Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA. 
 
+if with_double
+lib_LTLIBRARIES = libplplotd.la
+else
 lib_LTLIBRARIES = libplplot.la
+endif
 
-libplplot_la_SOURCES = \
+version = -version-info @SOVERSION@
+
+sources = \
   pdfutils.c \
   plargs.c \
   plbox.c \
@@ -44,4 +50,9 @@ libplplot_la_SOURCES = \
   plvpor.c \
   plwind.c
 
-libplplot_la_LDFLAGS = -version-info 6:0:1
+libplplot_la_SOURCES  = $(sources)
+libplplotd_la_SOURCES = $(sources)
+
+libplplot_la_LDFLAGS  = $(version)
+libplplotd_la_LDFLAGS = $(version)
+

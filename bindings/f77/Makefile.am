@@ -20,18 +20,30 @@
 # 02111-1307, USA. 
 
 if enable_f77
+if with_double
+lib_LTLIBRARIES = libplf77d.la
+else
 lib_LTLIBRARIES = libplf77.la
 endif
+endif
 
-libplf77_la_SOURCES = \
+version = -version-info @SOVERSION@
+
+sources = \
   plstubs.h \
   sc3d.c \
   sccont.c \
   scstubs.c \
   strutil.f
 
-libplf77_la_DEPENDENCIES = sfstubs.lo
-libplf77_la_LDFLAGS = -version-info 6:0:1
+libplf77_la_SOURCES  = $(sources)
+libplf77d_la_SOURCES = $(sources)
+
+libplf77_la_DEPENDENCIES  = sfstubs.lo
+libplf77d_la_DEPENDENCIES = sfstubs.lo
+
+libplf77_la_LDFLAGS  = $(version)
+libplf77d_la_LDFLAGS = $(version)
 
 EXTRA_DIST = sfstubs.fm4
 

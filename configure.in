@@ -25,6 +25,11 @@ AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
 AM_INIT_AUTOMAKE(plplot, 5.1.0)
 
+### Version number for the shared libraries, conforming to libtool standard 
+
+SOVERSION=6:0:1
+AC_SUBST(SOVERSION)
+
 ### Test for programs
 
 AM_PROG_CC_STDC
@@ -87,8 +92,16 @@ AC_SUBST(DATA_DIR)
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 
+### Double vs single precison
+
+MY_ARG_WITH(double,
+  [  --with-double           use double precision floats ($with_double)])
+if test "$with_double" = yes; then
+  AC_DEFINE(PL_DOUBLE)
+fi
+AM_CONDITIONAL(with_double, test "$with_double" = yes)
+
 ### Build Makefiles
 
 AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile
            bindings/Makefile bindings/c++/Makefile bindings/f77/Makefile])
-

@@ -22,9 +22,20 @@
 pkginclude_HEADERS = plstream.h
 
 if enable_cxx
+if with_double
+lib_LTLIBRARIES = libplcxxd.la
+else
 lib_LTLIBRARIES = libplcxx.la
 endif
+endif
 
-libplcxx_la_SOURCES = plstream.cc
-libplcxx_la_LDFLAGS = -version-info 6:0:1
+version = -version-info @SOVERSION@
+
+sources = plstream.cc
+
+libplcxx_la_SOURCES  = $(sources)
+libplcxxd_la_SOURCES = $(sources)
+
+libplcxx_la_LDFLAGS  = $(version)
+libplcxxd_la_LDFLAGS = $(version)
 
