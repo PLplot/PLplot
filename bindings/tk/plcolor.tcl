@@ -1,7 +1,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.6  1995/01/13 23:19:30  mjl
+# Revision 1.7  1995/05/06 17:08:14  mjl
+# Shave and a haircut.
+#
+# Revision 1.6  1995/01/13  23:19:30  mjl
 # Implemented new cmap1 selector to handle additional control point
 # attribute.  Improved widget layout some.
 #
@@ -108,7 +111,7 @@ class ColorEditor {
     member r 255
     member g 0
     member b 0
-    member color #ff0000
+    member color "#ff0000"
     member updating 0
     member name ""
     member w .ceditor
@@ -678,9 +681,9 @@ class ColorPalette1 {
 		-orient horizontal \
 		-command "ColorPalette1:posChanged $this $i $plot"
 
-# I only decorate the movable sliders (i.e. not endpoints) by +/- buttons.
-# But the sliders themselves are a good visual cue as to what's going on
-# so they get to stay.
+	# I only decorate the movable sliders (i.e. not endpoints) by +/-
+	# buttons.  But the sliders themselves are a good visual cue as to
+	# what's going on so they get to stay.
 
 	    if {$i == 0 || $i == $ncol1-1} {
 		pack append $w.l.$i \
@@ -702,7 +705,8 @@ class ColorPalette1 {
 	    pack append $w.l $w.l.$i "top fillx"
 	}
 
-# Reverse button -- indicates hue interpolation to be done around back side.
+    # Reverse button -- indicates hue interpolation to be done around back
+    # side.
 
 	for {set i 0} {$i < $ncol1} {incr i} {
 

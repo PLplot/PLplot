@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.14  1995/03/16 23:15:25  mjl
+# Revision 1.15  1995/05/06 17:08:15  mjl
+# Shave and a haircut.
+#
+# Revision 1.14  1995/03/16  23:15:25  mjl
 # Allow exec's since some people need them.  Shouldn't be a problem unless
 # you compile TK without security (don't do this).  If you have a problem
 # running the plplot/TK driver using Xauthority style authentication, use
@@ -36,9 +39,9 @@ proc plstdwin {w} {
 
     if { ! [info exists plstdwin_skip_startup]} {
 
-# Set up configuration options.
-# The first is to hold default values of everything, the second is for
-# user customization.  See pldefaults.tcl for more info.
+    # Set up configuration options.
+    # The first is to hold default values of everything, the second is for
+    # user customization.  See pldefaults.tcl for more info.
 
 	pldefaults
 	plconfig
@@ -131,11 +134,11 @@ proc normal_text_setup {w {width 60} {height 30}} {
     $w.t tag configure bold -font $dialog_bold_font
 
     if {[tk colormodel $w] == "color"} {
-	$w.t tag configure color1 -background #eed5b7
+	$w.t tag configure color1 -background "#eed5b7"
 	$w.t tag configure color2 -foreground red
-	$w.t tag configure raised -background #eed5b7 -relief raised \
+	$w.t tag configure raised -background "#eed5b7" -relief raised \
 		-borderwidth 1
-	$w.t tag configure sunken -background #eed5b7 -relief sunken \
+	$w.t tag configure sunken -background "#eed5b7" -relief sunken \
 		-borderwidth 1
     } else {
 	$w.t tag configure color1 -background black -foreground white
@@ -152,7 +155,7 @@ proc normal_text_setup {w {width 60} {height 30}} {
 
 # Set up bindings to be as useful as possible.
 
-    bind $w <Any-Enter> "focus $w.t"
+    bind $w <Any-Enter>	  "focus $w.t"
 
     bind $w.t <Return>	  "destroy $w"
 
@@ -330,26 +333,24 @@ proc mkDialog {w msgArgs args} {
     wm title $w "Dialog box"
     wm iconname $w "Dialog"
 
-    # Create two frames in the main window. The top frame will hold the
-    # message and the bottom one will hold the buttons.  Arrange them
-    # one above the other, with any extra vertical space split between
-    # them.
+# Create two frames in the main window. The top frame will hold the message
+# and the bottom one will hold the buttons.  Arrange them one above the
+# other, with any extra vertical space split between them.
 
     frame $w.top -relief raised -border 1
     frame $w.bot -relief raised -border 1
     pack append $w $w.top {top fill expand} $w.bot {top fill expand}
     
-    # Create the message widget and arrange for it to be centered in the
-    # top frame.
+# Create the message widget and arrange for it to be centered in the top
+# frame.
     
     eval message $w.top.msg -justify center $msgArgs
     pack append $w.top $w.top.msg {top expand padx 10 pady 10}
     
-    # Create as many buttons as needed and arrange them from left to right
-    # in the bottom frame.  Embed the left button in an additional sunken
-    # frame to indicate that it is the default button, and arrange for that
-    # button to be invoked as the default action for clicks and returns in
-    # the dialog.
+# Create as many buttons as needed and arrange them from left to right in
+# the bottom frame.  Embed the left button in an additional sunken frame to
+# indicate that it is the default button, and arrange for that button to be
+# invoked as the default action for clicks and returns in the dialog.
 
     if {[llength $args] > 0} {
 	set arg [lindex $args 0]
@@ -573,7 +574,7 @@ proc class {class_name spec} {
     }
     if {$members != ""} {
 	set ctor_body [format {
-	    upvar #0 $_this this
+	    upvar "#0" $_this this
 	    foreach member {%s} {
 		set this([lindex $member 0]) [lindex $member 1]
 	    }
@@ -585,7 +586,7 @@ proc class {class_name spec} {
 	set objects ""
 	for {set i 0} {$i < $count} {incr i} {
 	    set var O_[incr object_counter]
-	    upvar #0 $var object
+	    upvar "#0" $var object
 	    lappend objects $var
 	    set object(class) %s
 	    if %d {
@@ -614,7 +615,7 @@ proc pop_scope {} {
 }
 
 proc in {_object expr} {
-    upvar #0 $_object object
+    upvar "#0" $_object object
     global in_counter errorInfo class_methods
     set cleanup ""
     if ![in_scope? $_object] {
