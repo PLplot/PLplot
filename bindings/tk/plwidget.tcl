@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.29  1994/10/11 18:57:58  mjl
+# Revision 1.30  1995/03/16 23:17:01  mjl
+# Key filtering changed to new modifier magnification scheme.  Changed style
+# of reports (of keypress or mouse events) back to client code in order to be
+# more complete.
+#
+# Revision 1.29  1994/10/11  18:57:58  mjl
 # Default zooming behavior changed -- now it zooms outward from the center
 # (first point clicked on), preserving aspect ratio.  This works correctly
 # even if the orientation or the aspect ratio is changed.  The old behavior
@@ -147,16 +152,7 @@ proc plxframe {w {client {}}} {
 # performed twice -- once during the bind and once before execution.
 
     bind $w.plwin <Any-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 0 0"
-
-    bind $w.plwin <Shift-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 1 0"
-
-    bind $w.plwin <Control-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 0 1"
-
-    bind $w.plwin <Shift-Control-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 1 1"
+	"plw_key_filter $w [list $client] %N %s %x %y %K %A"
 
     bind $w.plwin <Any-ButtonPress> \
 	"plw_user_mouse $w [list $client] %b %s %x %y"
@@ -463,7 +459,7 @@ proc plw_start {w {client {}}} {
 }
 
 #----------------------------------------------------------------------------
-# key_filter
+# plw_key_filter
 #
 # Front-end to key handler.
 # For supported operations it's best to modify the global key variables
@@ -472,7 +468,7 @@ proc plw_start {w {client {}}} {
 # so it can be added to the default behavior.
 #----------------------------------------------------------------------------
 
-proc key_filter {w client k n a shift control} {
+proc plw_key_filter {w client keycode state x y keyname ascii} {
     global user_key_filter
 
     global key_zoom_select
@@ -483,40 +479,90 @@ proc key_filter {w client k n a shift control} {
     global key_scroll_left
     global key_scroll_up
     global key_scroll_down
-    global key_scroll_slow
-    global key_scroll_fast
-    global key_scroll_faster
 
-#    puts "keypress: $k $n $a"
+#    puts "keypress: $keyname $keycode $ascii $state"
+
+# Call user-defined key filter, if one exists
 
     if { [info exists user_key_filter] } then {
-	$user_key_filter $w $client $k $n $a
+	$user_key_filter $w $client $keyname $keycode $ascii
     }
 
-    if { $shift } then {
-	if { $control } then {
-	    set s $key_scroll_faster
-	} else {
-	    set s $key_scroll_fast
-	}
-    } else {
-	set s $key_scroll_slow
-    }
+# Interpret keystroke
 
-    switch $k \
-	$key_zoom_select	"plw_zoom_select $w" \
-	"b"			"plw_zoom_back $w" \
-	"f"			"plw_zoom_forward $w" \
-	$key_zoom_reset		"plw_zoom_reset $w" \
-	$key_print		"plw_print $w" \
-	$key_save_again		"plw_save $w" \
-	$key_scroll_right	"plw_view_scroll $w  $s  0" \
-	$key_scroll_left	"plw_view_scroll $w -$s  0" \
-	$key_scroll_up		"plw_view_scroll $w  0 -$s" \
-	$key_scroll_down	"plw_view_scroll $w  0  $s" 
+    switch $keyname \
+	$key_zoom_select  "plw_zoom_select $w" \
+	"b"		  "plw_zoom_back $w" \
+	"f"		  "plw_zoom_forward $w" \
+	$key_zoom_reset	  "plw_zoom_reset $w" \
+	$key_print	  "plw_print $w" \
+	$key_save_again	  "plw_save $w" \
+	$key_scroll_right "plw_view_scroll $w  1  0 $state" \
+	$key_scroll_left  "plw_view_scroll $w -1  0 $state" \
+	$key_scroll_up	  "plw_view_scroll $w  0 -1 $state" \
+	$key_scroll_down  "plw_view_scroll $w  0  1 $state" 
 
+# Pass keypress event info back to client.
+
+    plw_user_key $w [list $client] $keycode $state $x $y $keyname $ascii
+}
+
+#----------------------------------------------------------------------------
+# plw_user_key
+#
+# Passes keypress event information back to client.
+# Based on plw_user_mouse.
+#----------------------------------------------------------------------------
+
+proc plw_user_key {w client keycode state x y keyname ascii} {
     if { $client != "" } then {
-	client_cmd [list $client] "keypress $k $n $a"
+
+    # calculate relative window coordinates.
+
+	set xw [expr "$x / [winfo width $w.plwin]."]
+	set yw [expr "1.0 - $y / [winfo height $w.plwin]."]
+
+    # calculate normalized device coordinates into original window.
+
+	set view [$w.plwin view]
+	set xrange [expr "[lindex $view 2] - [lindex $view 0]"]
+	set xnd [expr "($xw * $xrange) + [lindex $view 0]"]
+	set yrange [expr "[lindex $view 3] - [lindex $view 1]"]
+	set ynd [expr "($yw * $yrange ) + [lindex $view 1]"]
+
+    # send them back to the client.
+
+	client_cmd [list $client] \
+	    [list keypress $keycode $state $x $y $xnd $ynd $keyname $ascii]
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_user_mouse
+#
+# Passes buttonpress event information back to client.
+# Written by Radey Shouman
+#----------------------------------------------------------------------------
+
+proc plw_user_mouse {w client button state x y} {
+    if { $client != "" } then {
+
+    # calculate relative window coordinates.
+
+	set xw [expr "$x / [winfo width $w.plwin]."]
+	set yw [expr "1.0 - $y / [winfo height $w.plwin]."]
+
+    # calculate normalized device coordinates into original window.
+
+	set view [$w.plwin view]
+	set xrange [expr "[lindex $view 2] - [lindex $view 0]"]
+	set xnd [expr "($xw * $xrange) + [lindex $view 0]"]
+	set yrange [expr "[lindex $view 3] - [lindex $view 1]"]
+	set ynd [expr "($yw * $yrange ) + [lindex $view 1]"]
+
+    # send them back to the client.
+
+	client_cmd [list $client] [list button $button $state $x $y $xnd $ynd]
     }
 }
 
@@ -1150,17 +1196,39 @@ proc plw_zoom_forward {w} {
 # controllable).
 #----------------------------------------------------------------------------
 
-proc plw_view_scroll {w dx dy} {
-    
+proc plw_view_scroll {w dx dy s} {
+    global key_scroll_mag
+    global key_scroll_speed
+
+# Set up multiplication factor
+
+    set mult $key_scroll_speed
+    if { $s & 0x01 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+    if { $s & 0x02 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+    if { $s & 0x04 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+    if { $s & 0x08 } then {
+	set mult [expr $mult * $key_scroll_mag]
+    }
+
+# Now scroll
+
     if {($dx != 0) && \
 	    [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll] } then {
 
+	set dx [expr $dx * $mult]
 	set first  [lindex [$w.hscroll get] 2]
 	$w.plwin xscroll [expr $first+$dx]
     }
     if {($dy != 0) && \
 	    [winfo exists $w.vscroll] && [winfo ismapped $w.vscroll] } then {
 
+	set dy [expr $dy * $mult]
 	set first  [lindex [$w.vscroll get] 2]
 	$w.plwin yscroll [expr $first+$dy]
     }
@@ -1272,35 +1340,6 @@ proc plw_label_reset {w} {
 proc plw_label_set {w msg} {
 
     $w.ftop.lstat configure -text " $msg"
-}
-
-#----------------------------------------------------------------------------
-# plw_user_mouse
-#
-# Passes buttonpress event information back to client.
-# Written by Radey Shouman
-#----------------------------------------------------------------------------
-
-proc plw_user_mouse {w client button state x y} {
-
-# calculate relative window coordinates.
-
-    set xw [expr "$x / [winfo width $w.plwin]."]
-    set yw [expr "1.0 - $y / [winfo height $w.plwin]."]
-
-# calculate normalized device coordinates into original window.
-
-    set view [$w.plwin view]
-    set xrange [expr "[lindex $view 2] - [lindex $view 0]"]
-    set xnd [expr "($xw * $xrange) + [lindex $view 0]"]
-    set yrange [expr "[lindex $view 3] - [lindex $view 1]"]
-    set ynd [expr "($yw * $yrange ) + [lindex $view 1]"]
-	
-# send them back to the client.
-
-    if { $client != "" } then {
-	client_cmd [list $client] [list mouse $button $state $xnd $ynd]
-    }
 }
 
 #----------------------------------------------------------------------------
