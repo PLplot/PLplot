@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:51:56  mjl
-   Added for the high level routines that don't result in something being
-   plotted ("control" routines) that don't need direct access to the stream
-   or dispatch table data.
+   Revision 1.2  1993/02/23 05:12:49  mjl
+   Eliminated plbeg: it is now illegal to specify the device by device number.
 
+ * Revision 1.1  1993/01/23  05:51:56  mjl
+ * Added for the high level routines that don't result in something being
+ * plotted ("control" routines) that don't need direct access to the stream
+ * or dispatch table data.
+ *
 */
 
 /*	plctrl.c
@@ -14,41 +17,9 @@
 */
 
 #include "plplot.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-
-/*----------------------------------------------------------------------*\
-* void plbeg()
-*
-* Set up the device "dev" for plotting, dividing the page into
-* "nx" by "ny" subpages.
-\*----------------------------------------------------------------------*/
-
-void
-c_plbeg(PLINT dev, PLINT nx, PLINT ny)
-{
-    PLFLT scale, def, ht;
-
-    if ((nx <= 0) || (ny <= 0))
-	plexit("plbeg: Cannot have negative number of subpages.");
-
-    scale = 1.0 / sqrt((double) ny);
-    grbeg(dev);
-    ssub(nx, ny, 0);
-
-    /* Set up character, symbol and tick sizes for requested number of */
-    /* subpages */
-
-    gchr(&def, &ht);
-    schr((PLFLT) (def * scale), (PLFLT) (def * scale));
-    gsym(&def, &ht);
-    ssym((PLFLT) (def * scale), (PLFLT) (def * scale));
-    gmaj(&def, &ht);
-    smaj((PLFLT) (def * scale), (PLFLT) (def * scale));
-    gmin(&def, &ht);
-    smin((PLFLT) (def * scale), (PLFLT) (def * scale));
-}
 
 /*----------------------------------------------------------------------*\
 * void plend()
@@ -83,6 +54,8 @@ c_plend1()
     glev(&level);
     if (level == 0)
 	return;
+
+    grclr();
     grtidy();
     slev(0);
 }
@@ -131,7 +104,7 @@ c_plgra()
     PLINT level;
     glev(&level);
     if (level < 1)
-	plexit("plgra: Please call plstar first.");
+	plexit("plgra: Please call plinit first.");
     grgra();
 }
 
@@ -148,7 +121,7 @@ c_pltext()
 
     glev(&level);
     if (level < 1)
-	plexit("pltext: Please call plstar first.");
+	plexit("pltext: Please call plinit first.");
 
     grtext();
 }
