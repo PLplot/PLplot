@@ -69,6 +69,10 @@ permissions?
 examples/tcl/stats.log should be made world-readable.  Both these permission
 problems need access to the CVS repository to fix.
 
+* website update.  In particular Joao is experimenting with possibilities
+at http://www.fe.up.pt/~jcard/plplot-www/index.html which we should polish
+and bring to the official site before our next release.
+
 Minor, "would be nice"
 
 * Alan plans to try to adjust our python interface from swig-1.3.1[1-3] to
