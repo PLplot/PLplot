@@ -24,13 +24,15 @@ debinfo		:= $(debshr)/info
 debex		:= $(deblib)/plplot$(version)/examples
 deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
 
-config:
+config: config-stamp
+config-stamp:
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers        \
                     --disable-static --enable-python --enable-octave   \
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
-                    --without-rpath --disable-docbook
+                    --without-rpath --enable-docbook
+	touch config-stamp
 
 build: build-stamp
 build-stamp: config
@@ -41,7 +43,7 @@ build-stamp: config
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp install-stamp
+	rm -f build-stamp install-stamp config-stamp
 	-$(MAKE) clean
 	find . -name config.log -o -name config.status | xargs rm -f
 	dh_clean

@@ -1,3 +1,13 @@
+plplot (5.2.0.cvs.20030227-1) unstable; urgency=low
+
+  * Built with new CVS sources.  Many DocBook related configuration
+    problems have been fixed.
+  * debian/rules: Added config-stamp creation to avoid double run of
+    configure.  Run configure with --enable-docbook now.
+  * debian/plplot-doc.prerm: Added file.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 27 Feb 2003 23:19:45 +0100
+
 plplot (5.2.0.cvs.20030225-1) unstable; urgency=low
 
   * Built with new CVS sources.  Some rpath problems have been fixed, so
