@@ -47,8 +47,7 @@
 /* Define if usleep is available */
 #undef HAVE_USLEEP
 
-/* PLplot's PLFLT floating-point is "double" by default, undefine PL_DOUBLE 
-   if single precision is required */
+/* Define if you want PLplot's float type to be double */
 #undef PL_DOUBLE
 
 /* Install directories. */
@@ -57,5 +56,8 @@
 #undef DATA_DIR
 #undef BIN_DIR
 #undef TCL_DIR
+
+/* build directory */
+#undef BUILD_DIR
 
 #endif	/* __PLCONFIG_H__ */

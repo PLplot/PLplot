@@ -911,6 +911,8 @@ if test -z "$DRV_DIR"; then
     DRV_DIR="../drivers$LIB_TAG"
 fi
 
+BUILD_DIR=`pwd`
+
 # Location substitutions for makefiles only
 
 AC_SUBST(INCLUDE_DIR)
@@ -927,12 +929,15 @@ AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR",
                    [Location of Tcl stuff])
 AC_DEFINE_UNQUOTED(DRV_DIR, "$DRV_DIR",
                    [Location of dynamically loaded drivers (relative to DATA_DIR])
+AC_DEFINE_UNQUOTED(BUILD_DIR, "$BUILD_DIR",
+                   [Location of Build tree])
 
 AC_SUBST(DATA_DIR)
 AC_SUBST(LIB_DIR)
 AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
 AC_SUBST(DRV_DIR)
+AC_SUBST(BUILD_DIR)
 
 ### Drivers
 
