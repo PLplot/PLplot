@@ -1,34 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.4  1993/08/03 01:46:55  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
-
+ * $Log$
+ * Revision 1.5  1993/08/11 19:20:03  mjl
+ * Changed debugging code to print to stderr instead of stdout, plugged
+ * a hole where possible failure of fwrite went undetected.
+ *
+ * Revision 1.4  1993/08/03  01:46:55  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.3  1993/07/01  22:07:38  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl", device driver functions start with "plD_", PDF functions
- * start with "pdf_".
- *
- * Revision 1.2  1993/02/23  05:00:24  mjl
- * Added some casts for more portable code (found when compiling with all
- * warnings on).
- *
- * Revision 1.1  1993/01/23  05:44:39  mjl
- * Moved to src/ directory since that is more relevant.
- *
- * Revision 1.4  1992/10/22  17:04:55  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.3  1992/09/30  18:24:56  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:44:46  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:40  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Changed all plplot source files to include plplotP.h (private) rather
+ * than plplot.h.  Rationalized namespace -- all externally-visible plplot
+ * functions now start with "pl", device driver functions start with
+ * "plD_", PDF functions start with "pdf_".
 */
 
 /*--------------------------------------------------------------------------*\
@@ -75,7 +58,7 @@ static int debug = 0;
 void
 pdf_set(char *option, int value)
 {
-    if (!strcmp(option, "debug"))
+    if ( ! strcmp(option, "debug"))
 	debug = value;
 }
 
@@ -141,7 +124,7 @@ pdf_wr_1byte(FILE *file, U_CHAR s)
     U_CHAR x[1];
 
     x[0] = s;
-    if (!fwrite(x, 1, 1, file))
+    if (fwrite(x, 1, 1, file) != 1)
 	return (PDF_WRERR);
 
     return (0);
@@ -158,7 +141,7 @@ pdf_rd_1byte(FILE *file, U_CHAR *ps)
 {
     U_CHAR x[1];
 
-    if (!fread(x, 1, 1, file))
+    if ( ! fread(x, 1, 1, file))
 	return (PDF_RDERR);
 
     *ps = ((U_CHAR) x[0]);
@@ -182,7 +165,7 @@ pdf_wr_2bytes(FILE *file, U_SHORT s)
     x[0] = (U_CHAR) lo;
     x[1] = (U_CHAR) hi;
 
-    if (!fwrite(x, 1, 2, file))
+    if (fwrite(x, 1, 2, file) != 2)
 	return (PDF_WRERR);
 
     return (0);
@@ -199,7 +182,7 @@ pdf_rd_2bytes(FILE *file, U_SHORT *ps)
 {
     U_CHAR x[2];
 
-    if (!fread(x, 1, 2, file))
+    if ( ! fread(x, 1, 2, file))
 	return (PDF_RDERR);
 
     *ps = (U_SHORT) x[0] + ((U_SHORT) x[1] << 8);
@@ -225,7 +208,7 @@ pdf_wr_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 	x[0] = (U_CHAR) lo;
 	x[1] = (U_CHAR) hi;
 
-	if (!fwrite(x, 1, 2, file))
+	if (fwrite(x, 1, 2, file) != 2)
 	    return (PDF_WRERR);
     }
     return (0);
@@ -244,7 +227,7 @@ pdf_rd_2nbytes(FILE *file, U_SHORT *s, PLINT n)
     U_CHAR x[2];
 
     for (i = 0; i < n; i++) {
-	if (!fread(x, 1, 2, file))
+	if ( ! fread(x, 1, 2, file))
 	    return (PDF_RDERR);
 
 	s[i] = (U_SHORT) x[0] + ((U_SHORT) x[1] << 8);
@@ -283,7 +266,7 @@ pdf_wr_4bytes(FILE *file, U_LONG s)
     lo = s - (hi << 8);
     x[3] = (U_CHAR) lo;
 
-    if (!fwrite(x, 1, 4, file))
+    if (fwrite(x, 1, 4, file) != 4)
 	return (PDF_WRERR);
 
     return (0);
@@ -300,7 +283,7 @@ pdf_rd_4bytes(FILE *file, U_LONG *ps)
 {
     U_CHAR x[4];
 
-    if (!fread(x, 1, 4, file))
+    if ( ! fread(x, 1, 4, file))
 	return (PDF_RDERR);
 
     *ps = ((U_LONG) x[0])
@@ -409,7 +392,7 @@ pdf_wr_ieeef(FILE *file, float f)
 
     if (e_ieee > 255) {
 	if (debug)
-	    printf("Warning -- overflow in pdf_wr_ieeef()\n");
+	    fprintf(stderr, "pdf_wr_ieeef: Warning -- overflow\n");
 	e_ieee = 255;
     }
 
@@ -422,7 +405,7 @@ pdf_wr_ieeef(FILE *file, float f)
 	return (istat);
 
     if (debug) {
-	printf("Float value (written):       %g\n", fsgl);
+	fprintf(stderr, "Float value (written):      %g\n", fsgl);
 	print_ieeef(&fsgl, &value);
     }
 
@@ -468,7 +451,7 @@ pdf_rd_ieeef(FILE *file, float *pf)
     *pf = fsgl;
 
     if (debug) {
-	printf("Float value (read):          %g\n", fsgl);
+	fprintf(stderr, "Float value (read):      %g\n", fsgl);
 	print_ieeef(&fsgl, &value);
     }
 
@@ -501,8 +484,8 @@ print_ieeef(void *vx, void *vy)
 	    bitrep[32 - i - 1] = '0';
 	f = f >> 1;
     }
-    printf("Binary representation:      ");
-    printf("%s\n", bitrep);
+    fprintf(stderr, "Binary representation:      ");
+    fprintf(stderr, "%s\n", bitrep);
 
     f = *y;
     for (i = 0; i < 32; i++) {
@@ -512,8 +495,8 @@ print_ieeef(void *vx, void *vy)
 	    bitrep[32 - i - 1] = '0';
 	f = f >> 1;
     }
-    printf("Converted representation:   ");
-    printf("%s\n\n", bitrep);
+    fprintf(stderr, "Converted representation:   ");
+    fprintf(stderr, "%s\n\n", bitrep);
 
     return;
 }
