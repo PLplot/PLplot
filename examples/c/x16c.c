@@ -253,7 +253,7 @@ main(int argc, char *argv[])
 
     plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
 	     shedge, ns+1, fill_width,
-	     2, 9,
+	     2, 3,
 	     plfill, 0, pltr2, (void *) &cgrid2);
 
     plcol0(1);
