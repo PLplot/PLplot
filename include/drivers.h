@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/07/16 22:25:12  mjl
-   Added explicit support for color vs monochrome postscript output.
+   Revision 1.8  1993/07/28 05:48:24  mjl
+   Removed unnecessary function prototypes for old xterm driver, added new
+   ones for tek4107 terminal & file driver.
 
+ * Revision 1.7  1993/07/16  22:25:12  mjl
+ * Added explicit support for color vs monochrome postscript output.
+ *
  * Revision 1.6  1993/07/02  07:19:58  mjl
  * Changed over to new namespace.
  *
@@ -41,18 +45,6 @@
 extern "C" {
 #endif
 
-void plD_init_xte		(PLStream *);
-void plD_line_xte		(PLStream *, short, short, short, short);
-void plD_polyline_xte		(PLStream *, short *, short *, PLINT);
-void plD_eop_xte		(PLStream *);
-void plD_bop_xte		(PLStream *);
-void plD_tidy_xte		(PLStream *);
-void plD_color_xte		(PLStream *);
-void plD_text_xte		(PLStream *);
-void plD_graph_xte		(PLStream *);
-void plD_width_xte		(PLStream *);
-void plD_esc_xte		(PLStream *, PLINT, void *);
-
 void plD_init_tk		(PLStream *);
 void plD_line_tk		(PLStream *, short, short, short, short);
 void plD_polyline_tk		(PLStream *, short *, short *, PLINT);
@@ -77,8 +69,12 @@ void plD_graph_xw		(PLStream *);
 void plD_width_xw		(PLStream *);
 void plD_esc_xw			(PLStream *, PLINT, void *);
 
+void plD_init_xte		(PLStream *);
 void plD_init_tekt		(PLStream *);
 void plD_init_tekf		(PLStream *);
+void plD_init_t4107t		(PLStream *);
+void plD_init_t4107f		(PLStream *);
+
 void plD_line_tek		(PLStream *, short, short, short, short);
 void plD_polyline_tek		(PLStream *, short *, short *, PLINT);
 void plD_eop_tek		(PLStream *);
