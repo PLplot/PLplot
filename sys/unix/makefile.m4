@@ -19,6 +19,7 @@ define(if_sysv,	    {ifdef({SYSV},	{$1},{$2})})dnl
 define(if_bsd,	    {ifdef({BSD},	{$1},{$2})})dnl
 define(if_unicos,   {ifdef({UNICOS},	{$1},{$2})})dnl
 define(if_sunos,    {ifdef({SUNOS},	{$1},{$2})})dnl
+define(if_irix,     {ifdef({IRIX},	{$1},{$2})})dnl
 define(if_ultrix,   {ifdef({ULTRIX},	{$1},{$2})})dnl
 define(if_next,	    {ifdef({NEXT},	{$1},{$2})})dnl
 define(if_linux,    {ifdef({LINUX},	{$1},{$2})})dnl
@@ -30,6 +31,7 @@ if_hpux(    {define({UNIX},)})dnl
 if_dgux(    {define({UNIX},)})dnl
 if_sysv(    {define({UNIX},)})dnl
 if_bsd(     {define({UNIX},)})dnl
+if_irix(    {define({UNIX},)})dnl
 if_unicos(  {define({UNIX},)})dnl
 if_sunos(   {define({UNIX},)})dnl
 if_next(    {define({UNIX},)})dnl
@@ -46,9 +48,13 @@ if_linux( {define({RANLIB},)})dnl
 
 define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
 define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
-define(if_motif, {ifdef({MOTIF}, {$1},{$2})})dnl
-define(if_tk,    {ifdef({TK},    {$1},{$2})})dnl
 define(if_xwin,	 {ifdef({XWIN},  {$1},{$2})})dnl
+
+ifdef({NO_TK},{dnl
+define(if_tk,    {$2})dnl
+},{dnl
+define(if_tk,    {ifdef({TK},    {$1},{$2})})dnl
+})dnl
 
 define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
 define(if_dbl,     {ifdef({DOUBLE},    {$1},{$2})})dnl
@@ -152,13 +158,12 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 
 ##############################################################################
 #
-# Set up compiler & linker macros, to make invocation look as similar as
-# possible from system to system.
+# Setup macros for a Unix-like system.  These can be changed in the section
+# for your system.
 #
 ##############################################################################
 
-# Generic macros for make.  If any of these do not fit your particular
-# system, add the appropriate defines in a section for your system.
+if_unix({
 
 # Directory structure.  Note most of these aren't used at present.
 # See right before rule declaration for plot library specifications.
@@ -178,11 +183,9 @@ SYS_LIBS=
 if_dbl({
 DBL_FLAG_C	= -DPL_DOUBLE
 DBL_FLAG_F      =
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotd.a
 },{
 DBL_FLAG_C	=
 DBL_FLAG_F      =
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotf.a
 })
 
 if_profile({
@@ -211,24 +214,18 @@ OPT_FLAG_C	=
 OPT_FLAG_F	= 
 })
 
-PLLIB_C		= $(PLLIB_MAIN)
-PLLIB_F		= $(PLLIB_MAIN)
-PLLIB_LDC	= $(PLLIB_C)
-
 # Enable X driver by default if a Unix system.
 
 if_unix({define({XWIN},)})
 
-LIB_MOTIF = -lXm -lXt -lPW
 LIB_XWIN  = -lX11
-LIB_TK    = 
+LIB_TK    = -ltk -ltcl
 
-define(DEF_MOTIF,{if_motif({-DMOTIF})})
 define(DEF_TK,   {if_tk({-DTK})})
 define(DEF_XWIN, {if_xwin({-DXWIN})})
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_MOTIF() DEF_TK()
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 # Compiler/linker macros.
 # These are pretty generic to many unix systems and may work as-is.
@@ -243,7 +240,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm
@@ -255,6 +252,8 @@ LDF	= $(F77)
 LN	= ln -s
 TO	= -o
 STARTUP =
+
+})
 
 ##############################################################################
 #
@@ -310,18 +309,9 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 })if_hpux({
 #		HP-UX definitions
 
+define({TK},)
+
 PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_TK()
-
-LIB_XWIN	=
-LIB_MOTIF	=
-
-if_xwin({
-LIB_XWIN = -lX11
-})
-
-if_motif({
-LIB_MOTIF = -lXm -lXt -lPW
-})
 
 if_dbl({dnl
 DBL_FLAG_F      = -R8
@@ -354,8 +344,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm -g
 #		SYSV definitions
 # Do we need to have different sections for SVR4 vs older versions?
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DXFIG \
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -372,13 +362,32 @@ LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
+})if_irix({
+#		IRIX definitions (SGI machines)
+
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DXFIG \
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+
+CFLAGS	= -c -ansi $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
+
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
+
+LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
+LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
+
+#----------------------------------------------------------------------#
 })if_sx({
 #		NEC Super-UX definitions
 
 SYS_FLAGS_C = -hansi
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DXFIG \
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -396,7 +405,7 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 })if_dgux({
 #		DG/UX definitions
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
 SYS_FLAGS_C = -Dunix -DSTUB_LAU -ansi
 SYS_FLAGS_F = -novms
 
@@ -415,7 +424,7 @@ LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 })if_linux({
 #		LINUX definitions
 
-PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_XWIN() 
+PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
 CC	= gcc
@@ -429,9 +438,6 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
-
-# Note that the ljii.c driver doesn't work yet, but we need to have it
-# in if it's ever gonna get fixed.
 
 #----------------------------------------------------------------------#
 })if_next({
@@ -450,8 +456,8 @@ SYS_FLAGS_C = -Dunix -DSTUB_LAU
 #  libplplotf.a in /usr/local/lib/
 #  fonts        in /usr/local/lib/plplot/
 #  plrender     in /usr/local/bin/
-#  plplot.h     in /usr/local/include/
-#  chdr.h       in /usr/local/include/
+#  *.h          in /usr/local/include/
+#
 # cc will automatically look in these locations for the libraries and
 # include files, so you can compile with a minimum of command line
 # options (just -lplplotf).
@@ -502,6 +508,9 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm
 })if_unicos({
 #	UNICOS defs.
 
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+
 SYS_FLAGS_C =
 
 # These settings are appropriate for UNICOS 6.x.
@@ -542,14 +551,6 @@ if_opt({
 OPT_FLAG_C = -O1
 })
 
-if_xwin({
-LIB_XWIN = -lX11
-})
-
-if_motif({
-LIB_MOTIF = -lXm -lXt -lPW
-})
-
 if_dbl({dnl
 DBL_FLAG_F      = -r8
 })dnl
@@ -569,8 +570,37 @@ LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 LDCFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 
+})
 #----------------------------------------------------------------------#
-})if_amiga({
+# Finish up definitions for Unix-like systems.
+# These may depend on system-specific settings.
+
+if_unix({
+
+# Library names
+
+if_dbl({
+if_tk({
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotdtk.a
+},{
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotd.a
+})
+},{
+if_tk({
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotftk.a
+},{
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotf.a
+})
+})
+
+PLLIB_C		= $(PLLIB_MAIN)
+PLLIB_F		= $(PLLIB_MAIN)
+PLLIB_LDC	= $(PLLIB_C)
+
+})
+
+#----------------------------------------------------------------------#
+if_amiga({
 #	Amiga defs.
 
 # Note this makefile for the PD make utility ported by Steve Walton.
@@ -762,12 +792,18 @@ FSTUB_OBJ = \
 
 # System-specific files.
 
-# Motif
+# TK
 
-MOTIF_OBJ = \
-	xm.o \
-	xmsupport.o \
-	xmMenu.o 
+TK_OBJ = \
+	tk.o \
+	tkshell.o
+
+# TK server
+
+SERVER_OBJ = \
+	plserver.o \
+	plframe.o \
+	plr.o
 
 # Amiga
 
@@ -780,7 +816,8 @@ AMIGA_OBJ = \
 
 # Drivers
 
-DRIVERS_OBJ = if_tk({$(TK_OBJ)}) \
+DRIVERS_OBJ = \
+	if_tk({$(TK_OBJ)}) \
 	dg300.o \
 	hp7470.o \
 	hp7580.o \
@@ -812,7 +849,7 @@ DRIVERS_OBJ = if_tk({$(TK_OBJ)}) \
 # but you must create the links ('make links') beforehand.
 
 default: libs
-everything: libs plrender pltek
+everything: libs plrender plserver pltek
 
 libs:	$(PLLIB_MAIN)
 
@@ -873,32 +910,32 @@ $(PLFNT_PATH)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
 
 # source files
 
-plargs.o:	plplot.h plstream.h plargs.c
-plbox.o:	plplot.h plbox.c 
-plcont.o:	plplot.h plcont.c 
-plctrl.o:	plplot.h plctrl.c 
-plcvt.o:	plplot.h plcvt.c 
-pldtik.o:	plplot.h pldtik.c 
-plfill.o:	plplot.h plfill.c 
-plfont.o:	plplot.h plfont.c 
-plhist.o:	plplot.h plhist.c 
-plline.o:	plplot.h plline.c 
-plot3d.o:	plplot.h plot3d.c 
-plpage.o:	plplot.h plpage.c 
-plsdef.o:	plplot.h plsdef.c 
-plstream.o:	plplot.h plstream.h plstream.c
-plstring.o:	plplot.h plstring.c 
-plsym.o:	plplot.h plsym.c 
-pltick.o:	plplot.h pltick.c 
-plvpor.o:	plplot.h plvpor.c 
-plwind.o:	plplot.h plwind.c 
-pdfutils.o:	plplot.h pdfutils.c
+plargs.o:	plplotP.h plplot.h plstream.h plargs.c
+plbox.o:	plplotP.h plplot.h plbox.c 
+plcont.o:	plplotP.h plplot.h plcont.c 
+plctrl.o:	plplotP.h plplot.h plctrl.c 
+plcvt.o:	plplotP.h plplot.h plcvt.c 
+pldtik.o:	plplotP.h plplot.h pldtik.c 
+plfill.o:	plplotP.h plplot.h plfill.c 
+plfont.o:	plplotP.h plplot.h plfont.c 
+plhist.o:	plplotP.h plplot.h plhist.c 
+plline.o:	plplotP.h plplot.h plline.c 
+plot3d.o:	plplotP.h plplot.h plot3d.c 
+plpage.o:	plplotP.h plplot.h plpage.c 
+plsdef.o:	plplotP.h plplot.h plsdef.c 
+plstream.o:	plplotP.h plplot.h plstream.h plstream.c
+plstring.o:	plplotP.h plplot.h plstring.c 
+plsym.o:	plplotP.h plplot.h plsym.c 
+pltick.o:	plplotP.h plplot.h pltick.c 
+plvpor.o:	plplotP.h plplot.h plvpor.c 
+plwind.o:	plplotP.h plplot.h plwind.c 
+pdfutils.o:	plplotP.h plplot.h pdfutils.c
 
 # C language stubs for linking Plplot to Fortran.
 
-sc3d.o:		plstubs.h plplot.h sc3d.c
-sccont.o:	plstubs.h plplot.h sccont.c
-scstubs.o:	plstubs.h plplot.h scstubs.c
+sc3d.o:		plstubs.h plplotP.h plplot.h sc3d.c
+sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
+scstubs.o:	plstubs.h plplotP.h plplot.h scstubs.c
 
 # Fortran language stubs for linking Plplot to Fortran.
 
@@ -909,14 +946,15 @@ sfstubs.o:	sfstubs.f
 
 if_amiga({
 
-pla_pr.o:	plplot.h drivers.h plamiga.h pla_pr.c
-pla_iff.o:	plplot.h drivers.h plamiga.h pla_iff.c
-pla_menu.o:	plplot.h plamiga.h pla_menu.c
-plsupport.o:	plplot.h plamiga.h plsupport.c
-pla_wn.o:	plplot.h drivers.h plamiga.h pla_wn.c
+pla_pr.o:	plplotP.h plplot.h drivers.h plamiga.h pla_pr.c
+pla_iff.o:	plplotP.h plplot.h drivers.h plamiga.h pla_iff.c
+pla_menu.o:	plplotP.h plplot.h plamiga.h pla_menu.c
+plsupport.o:	plplotP.h plplot.h plamiga.h plsupport.c
+pla_wn.o:	plplotP.h plplot.h drivers.h plamiga.h pla_wn.c
 
 ifdef({GST},{
-GST :		plplot.h plamiga.h
+GST :		plplotP.h plplot.h plamiga.h
+	gst unload GST
 	$(CC) makegst GST $(CFLAGS) $(PLDEVICES) pla_gstskel.c
 })
 })
@@ -926,7 +964,7 @@ GST :		plplot.h plamiga.h
 #
 # plfont.c may have font flags passed in
 
-plfont.o:	plplot.h plfont.c
+plfont.o:	plplotP.h plplot.h plfont.c
 	$(CC) $(CFLAGS) $(FONTFLAG) plfont.c
 
 # plcore.c and all the drivers need to know $(PLDEVICES).  The guts
@@ -934,66 +972,80 @@ plfont.o:	plplot.h plfont.c
 # the device list.  You may want to leave drivers for specific systems
 # (Amiga, MS-DOS, OS/2, etc) out of this list.
 
-plcore.o:	plplot.h plcore.h drivers.h plstream.h plcore.c
+plcore.o:	plplotP.h plplot.h plcore.h drivers.h plstream.h plcore.c
 	$(CC) $(CFLAGS) $(PLDEVICES) plcore.c
 
-dg300.o:	plplot.h plstream.h drivers.h dg300.c
+dg300.o:	plplotP.h plplot.h plstream.h drivers.h dg300.c
 	$(CC) $(CFLAGS) $(PLDEVICES) dg300.c
 
-hp7470.o:	plplot.h plstream.h drivers.h hp7470.c
+hp7470.o:	plplotP.h plplot.h plstream.h drivers.h hp7470.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7470.c
 
-hp7580.o:	plplot.h plstream.h drivers.h hp7580.c
+hp7580.o:	plplotP.h plplot.h plstream.h drivers.h hp7580.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7580.c
 
-impress.o:	plplot.h plstream.h drivers.h impress.c
+impress.o:	plplotP.h plplot.h plstream.h drivers.h impress.c
 	$(CC) $(CFLAGS) $(PLDEVICES) impress.c
 
-ljii.o:		plplot.h plstream.h drivers.h ljii.c
+ljii.o:		plplotP.h plplot.h plstream.h drivers.h ljii.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ljii.c
 
-next.o:		plplot.h plstream.h drivers.h next.c
+next.o:		plplotP.h plplot.h plstream.h drivers.h next.c
 	$(CC) $(CFLAGS) $(PLDEVICES) next.c
 
-null.o:		plplot.h plstream.h drivers.h null.c
+null.o:		plplotP.h plplot.h plstream.h drivers.h null.c
 	$(CC) $(CFLAGS) $(PLDEVICES) null.c
 
-ps.o:		plplot.h plstream.h drivers.h ps.c
+ps.o:		plplotP.h plplot.h plstream.h drivers.h ps.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ps.c
 
-tek.o:		plplot.h plstream.h drivers.h tek.c
+tek.o:		plplotP.h plplot.h plstream.h drivers.h tek.c
 	$(CC) $(CFLAGS) $(PLDEVICES) tek.c
 
-plbuf.o:	plplot.h plstream.h drivers.h metadefs.h plbuf.c
+plbuf.o:	plplotP.h plplot.h plstream.h drivers.h metadefs.h plbuf.c
 	$(CC) $(CFLAGS) plbuf.c
 
-plmeta.o:	plplot.h plstream.h drivers.h metadefs.h plmeta.c
+plmeta.o:	plplotP.h plplot.h plstream.h drivers.h metadefs.h plmeta.c
 	$(CC) $(CFLAGS) $(PLDEVICES) plmeta.c
 
-xfig.o:		plplot.h plstream.h drivers.h xfig.c
+xfig.o:		plplotP.h plplot.h plstream.h drivers.h xfig.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xfig.c
 
-xwin.o:		plplot.h plstream.h drivers.h xwin.c
+xwin.o:		plplotP.h plplot.h plstream.h drivers.h xwin.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xwin.c
 
-xterm.o:	plplot.h plstream.h drivers.h xterm.c
+xterm.o:	plplotP.h plplot.h plstream.h drivers.h xterm.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xterm.c
 
 # TK driver
 
-tk.o:		plplot.h plstream.h drivers.h tk.h tk.c
-	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) $(PLDEVICES) tk.c
+tk.o:		plserver.h plplotP.h plplot.h plstream.h \
+		drivers.h metadefs.h pdf.h plevent.h tk.c
+	$(CC) $(CFLAGS) $(PLDEVICES) tk.c
+
+tkshell.o:	plserver.h plplotP.h plplot.h plstream.h tkshell.c
+	$(CC) $(CFLAGS) $(PLDEVICES) tkshell.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
 
-plrender.o:	plplot.h metadefs.h pdf.h plrender.c
+plrender.o:	plplotP.h plplot.h metadefs.h pdf.h plrender.c
 
-pltek:	pltek.o
+pltek:		pltek.o
 	$(LDC) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-plrender: plrender.o  $(PLLIB_MAIN)
+plrender:	$(PLLIB_MAIN) plrender.o
 	$(LDC) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
+
+plserver.o:	plserver.h plplotP.h plplot.h plstream.h plserver.c
+
+plframe.o:	plframe.c
+
+plr.o:		plserver.h plplotP.h plplot.h plstream.h \
+		metadefs.h pdf.h plevent.h plr.c
+
+plserver:	$(PLLIB_MAIN) $(SERVER_OBJ)
+	$(LDC) $(STARTUP) $(SERVER_OBJ) $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 #----------------------------------------------------------------------#
 # Example programs, in c.
@@ -1003,49 +1055,49 @@ CDEMOS= x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
 
 cdemos:	$(CDEMOS)
 
-x01c:	x01c.o $(PLLIB_C)
+x01c:	$(PLLIB_C) x01c.o
 	$(LDC) $(STARTUP) x01c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x02c:	x02c.o $(PLLIB_C)
+x02c:	$(PLLIB_C) x02c.o
 	$(LDC) $(STARTUP) x02c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x03c:	x03c.o $(PLLIB_C)
+x03c:	$(PLLIB_C) x03c.o
 	$(LDC) $(STARTUP) x03c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x04c:	x04c.o $(PLLIB_C)
+x04c:	$(PLLIB_C) x04c.o
 	$(LDC) $(STARTUP) x04c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x05c:	x05c.o $(PLLIB_C)
+x05c:	$(PLLIB_C) x05c.o
 	$(LDC) $(STARTUP) x05c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x06c:	x06c.o $(PLLIB_C)
+x06c:	$(PLLIB_C) x06c.o
 	$(LDC) $(STARTUP) x06c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x07c:	x07c.o $(PLLIB_C)
+x07c:	$(PLLIB_C) x07c.o
 	$(LDC) $(STARTUP) x07c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x08c:	x08c.o $(PLLIB_C)
+x08c:	$(PLLIB_C) x08c.o
 	$(LDC) $(STARTUP) x08c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x09c:	x09c.o $(PLLIB_C)
+x09c:	$(PLLIB_C) x09c.o
 	$(LDC) $(STARTUP) x09c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x10c:	x10c.o $(PLLIB_C)
+x10c:	$(PLLIB_C) x10c.o
 	$(LDC) $(STARTUP) x10c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x11c:	x11c.o $(PLLIB_C)
+x11c:	$(PLLIB_C) x11c.o
 	$(LDC) $(STARTUP) x11c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x12c:	x12c.o $(PLLIB_C)
+x12c:	$(PLLIB_C) x12c.o
 	$(LDC) $(STARTUP) x12c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x13c:	x13c.o $(PLLIB_C)
+x13c:	$(PLLIB_C) x13c.o
 	$(LDC) $(STARTUP) x13c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-x14c:	x14c.o $(PLLIB_C)
+x14c:	$(PLLIB_C) x14c.o
 	$(LDC) $(STARTUP) x14c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-tutor:	tutor.o $(PLLIB_C)
+tutor:	$(PLLIB_C) tutor.o
 	$(LDC) $(STARTUP) tutor.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 #----------------------------------------------------------------------#
@@ -1055,43 +1107,43 @@ FDEMOS = x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f
 
 fdemos:	$(FDEMOS)
 
-x01f:	x01f.o $(PLLIB_F)
+x01f:	$(PLLIB_F) x01f.o
 	$(LDF) x01f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x02f:	x02f.o $(PLLIB_F)
+x02f:	$(PLLIB_F) x02f.o
 	$(LDF) x02f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x03f:	x03f.o $(PLLIB_F)
+x03f:	$(PLLIB_F) x03f.o
 	$(LDF) x03f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x04f:	x04f.o $(PLLIB_F)
+x04f:	$(PLLIB_F) x04f.o
 	$(LDF) x04f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x05f:	x05f.o $(PLLIB_F)
+x05f:	$(PLLIB_F) x05f.o
 	$(LDF) x05f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x06f:	x06f.o $(PLLIB_F)
+x06f:	$(PLLIB_F) x06f.o
 	$(LDF) x06f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x07f:	x07f.o $(PLLIB_F)
+x07f:	$(PLLIB_F) x07f.o
 	$(LDF) x07f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x08f:	x08f.o $(PLLIB_F)
+x08f:	$(PLLIB_F) x08f.o
 	$(LDF) x08f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x09f:	x09f.o $(PLLIB_F)
+x09f:	$(PLLIB_F) x09f.o
 	$(LDF) x09f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x10f:	x10f.o $(PLLIB_F)
+x10f:	$(PLLIB_F) x10f.o
 	$(LDF) x10f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x11f:	x11f.o $(PLLIB_F)
+x11f:	$(PLLIB_F) x11f.o
 	$(LDF) x11f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x12f:	x12f.o $(PLLIB_F)
+x12f:	$(PLLIB_F) x12f.o
 	$(LDF) x12f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
-x13f:	x13f.o $(PLLIB_F)
+x13f:	$(PLLIB_F) x13f.o
 	$(LDF) x13f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
 
 #----------------------------------------------------------------------#
@@ -1118,8 +1170,9 @@ if_dbl({dnl
 		../utils/*.c \
 		../{include}/*.h \
 		../drivers/*.c \
-		../drivers/motif/*.c \
-		../drivers/motif/*.h \
+		../drivers/tk/*.c \
+		../drivers/tk/*.h \
+		../drivers/tk/*.tcl \
 		.
 })
 if_amiga({
@@ -1136,7 +1189,8 @@ clean:
 	-rm $(CDEMOS) $(FDEMOS) *.plm* *.tek* *.ps
 
 realclean:
-	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps makefile
+	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps \
+	*.tcl makefile
 })
 
 #----------------------------------------------------------------------#
@@ -1144,7 +1198,8 @@ realclean:
 # It is usually not difficult to get a system administrator to give you
 # ownership of a directory under /usr/local, such as /usr/local/plplot.
 # Since this is the most common case I make an install target for it.
-# There must also be a directory /usr/local/plplot/include.
+# There must also be directories /usr/local/plplot/include and 
+# /usr/local/plplot/tcl.
 
 INSTALL_DIR = /usr/local/plplot
 
@@ -1153,5 +1208,8 @@ install:
 	-cp plrender ../lib/libplplot*.a ../lib/*.fnt $(INSTALL_DIR)
 	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
 	-cd ../{include}; \
-		cp plplot.h plplotio.h plevent.h plstream.h pdf.h \
+		cp plplotP.h plplot.h plplotio.h plevent.h plstream.h pdf.h \
 		$(INSTALL_DIR)/{include}
+if_tk({	-strip plserver
+	-cp plserver $(INSTALL_DIR)
+	-cp ../drivers/tk/*.tcl ../drivers/tk/tclIndex $(INSTALL_DIR)/tcl })
