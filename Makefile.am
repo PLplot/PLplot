@@ -19,12 +19,15 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+src_dirs = src include lib bindings
+
 if enable_dyndrivers
-DRIVERSDIR = drivers
+drivers_src_dirs = $(src_dirs) drivers
+else
+drivers_src_dirs = drivers $(src_dirs)
 endif
 
-SUBDIRS = libltdl src include lib bindings $(DRIVERSDIR) examples \
-          test utils scripts doc
+SUBDIRS = libltdl $(drivers_src_dirs) examples test utils scripts doc
 
 bin_SCRIPTS = plplot_libtool
 
