@@ -48,3 +48,4 @@ install_tcl:
 install_mat:
 	cp tclMatrix.h $(INCLUDE_DIR)
 	cp libMatrix* $(LIB_DIR)
+
