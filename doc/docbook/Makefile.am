@@ -18,6 +18,8 @@ INFO_TARBALL = $(BASE_INFO).tar.gz
 MAN_TARBALL = $(BASE_MAN).tar.gz
 INDEX_HTML = www/index.html
 
+noinst_DATA = $(TARBALL)
+
 $(HTML_TARBALL):
 	rm -rf $(BASE_HTML)
 	mkdir $(BASE_HTML)
