@@ -36,7 +36,9 @@ import xw13
 import xw14
 import xw15
 import xw16
-import xw17
+# Comment out xw17.py until can figure a way to bypass this for 
+# non-interactive plotting devices where it cannot work.
+# import xw17
 import xw18
 import xw19
 
