@@ -743,18 +743,15 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 /* If program name is first argument, save and advance */
 
     if ( ! mode_noprogram) {
-	program = argv[0];
-	plsc->program = argv[0];
-
+	plsc->program = program = argv[0];
 	--myargc; ++argv;
-	argsave = argv;
     }
-
     if (myargc == 0)
 	return 0;
 
 /* Process the command line */
 
+    argsave = argv;
     for (; myargc > 0; --myargc, ++argv) {
 
     /* Allow for "holes" in argv list */
