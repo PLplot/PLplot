@@ -50,4 +50,5 @@ endif
 examples_SCRIPTS = $(scripts) plplot-test.sh
 
 EXTRA_DIST = test_*.sh plplot-test.sh.in
+CLEANFILES = *.ps *.png *.jpeg *.cgm *.fig *.plmeta
 DISTCLEANFILES = plplot-test.sh
