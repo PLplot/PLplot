@@ -425,6 +425,7 @@ case $system in
 	SHLIB_F77FLAGS="-pic"
 	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
     ;;
     HP-UX-* )
 	SHLIB_CCFLAGS="+z"
@@ -471,6 +472,7 @@ fi
 
 AC_SUBST(SHLIB_BUILD)
 AC_SUBST(SHLIB_SUFFIX)
+AC_SUBST(SALIB_SUFFIX)
 
 # -----------------------------------------------------------------------
 # Assemble finished compiler flags.
