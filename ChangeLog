@@ -6,8 +6,8 @@
 
 	* drivers/Makefile.am, configure.ac: xflags and lmflag activated for
 	  drivers which need linking to X libraries or the math library.
-	  Needs additional AM_CONDITIONALS in configure.ac to be
-	  implemented.
+	  Additional AM_CONDITIONALS were done in configure.ac to help
+	  implement this.
 
 2002-12-09  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

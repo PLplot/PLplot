@@ -19,6 +19,8 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+if enable_python
+
 examples_pythondir = ${prefix}/@DATA_DIR@/../examples/python
 
 examples_python_SCRIPTS = \
@@ -50,3 +52,4 @@ examples_python_DATA = \
 
 EXTRA_DIST = $(examples_python_SCRIPTS) $(examples_python_DATA)
 DISTCLEANFILES = plplot_python_start.py
+endif

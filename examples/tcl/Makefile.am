@@ -19,9 +19,9 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-examples_tcldir = ${prefix}/@DATA_DIR@/../examples/tcl
-
 if enable_tcl
+
+examples_tcldir = ${prefix}/@DATA_DIR@/../examples/tcl
 
 if enable_itcl
   mkindex = ../../scripts/mktclIndex -itcl
@@ -59,10 +59,10 @@ examples_tcl_DATA = \
 	x19.tcl \
 	tclIndex
 
-endif
-
 tclIndex:
 	$(mkindex)
 
 EXTRA_DIST = $(examples_tcl_DATA) $(mkindex)
 CLEANFILES = tclIndex
+
+endif
