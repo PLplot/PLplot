@@ -62,10 +62,10 @@ void plD_esc_vga		(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_vga( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  = "DJGPP (GRX20) Vga driver";
+    pdt->pl_MenuStr  = "SVGA Screen (GRX20)";
     pdt->pl_DevName  = "vga";
     pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 1;
+    pdt->pl_seq      = 13;
     pdt->pl_init     = (plD_init_fp)     plD_init_vga;
     pdt->pl_line     = (plD_line_fp)     plD_line_vga;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
@@ -389,7 +389,7 @@ setcmap(PLStream *pls)
        
     for (i = 0; i < ncol0; i++)
 	{
-//_GrAllocCell	GrAllocCell();
+/*_GrAllocCell	GrAllocCell();*/
 	GrSetColor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
 	}
 
@@ -467,7 +467,7 @@ else
 	     plcol_interp(pls, &cmap1col, i, ncol1);
 	    }
 
-//_GrAllocCell             GrAllocCell();
+/*_GrAllocCell             GrAllocCell();*/
              GrSetColor(i + pls->ncol0, cmap1col.r, cmap1col.g, cmap1col.b);
 
     }
@@ -491,6 +491,7 @@ XorMod(PLStream *pls, PLINT *mod)
     else
       dev->draw_mode=GrXOR;
 }
+
 
 /*----------------------------------------------------------------------*\
  * plD_state_vga()
@@ -518,7 +519,7 @@ PLFLT tmp_colour_pos;
 	    int b = pls->curcolor.b;
 	    if (dev->totcol < GrNumColors()) 
 	       {
-//_GrAllocCell		GrAllocCell();
+/*_GrAllocCell		GrAllocCell();*/
 		GrSetColor(++dev->totcol, r, g, b);
 		dev->colour = dev->totcol;
 	       }
@@ -1012,6 +1013,7 @@ void do_location(PLStream *pls)
 }
 
 
+
 /*----------------------------------------------------------------------*\
  * EventHandler()
  *
@@ -1092,19 +1094,19 @@ switch(dev->gin.keysym)
 	
 #if GRX_VERSION_API >= 0x0229 
 #ifdef GRX_DO_TIFF
-       case PLK_F10:  // F10 
+       case PLK_F10:  /* F10 */
        SaveContextToTiff(NULL, newname("tif"), 0,"Created by GNUSVGA");
        break;
 #endif
 
 #ifdef GRX_DO_JPEG
-       case PLK_F11:  // F11
+       case PLK_F11:  /* F11 */
        SaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
        break;
 #endif
 
 #ifdef GRX_DO_BMP
-       case PLK_F12:   // F12
+       case PLK_F12:   /* F12 */
        GrSaveBmpImage(newname("bmp"), NULL, 0, 0, GrScreenX(), GrScreenY());
        break;
 #endif
@@ -1156,11 +1158,11 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 	      gin->keysym = event->key  + (PLK_F1- K_F1);
 	      break;
 
-	    case K_F11: // F11
+	    case K_F11: /* F11 */
 		 gin->keysym=PLK_F11;
 		 break;
 
-	    case K_F12: // F12
+	    case K_F12: /* F12 */
 		 gin->keysym=PLK_F12;
 		 break;
 
@@ -1531,6 +1533,7 @@ int i=0;
      }
 }
 
+
 /*----------------------------------------------------------------------*\
  * gnusvga_expand_BaseName()
  *
@@ -1607,10 +1610,10 @@ void plD_eop_tiff(PLStream *pls);
 
 void plD_dispatch_init_tiff( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  = "GRX20 Tiff driver";
+    pdt->pl_MenuStr  = "TIFF File (TIFFLIB / GRX20)";
     pdt->pl_DevName  = "tiff";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 21;
+    pdt->pl_seq      = 14;
     pdt->pl_init     = (plD_init_fp)     plD_init_tiff;
     pdt->pl_line     = (plD_line_fp)     plD_line_vga;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
@@ -1697,7 +1700,7 @@ void plD_init_tiff(PLStream *pls)
     if (pls->xdpi==0) 
        {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
-	plspage(4.*25.4*dev->scale, 4.*25.4*dev->scale, 0, 0, 0, 0);
+	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
        }
     else
        {
@@ -1805,19 +1808,19 @@ void plD_bop_jpg(PLStream *pls);
 void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr);
 void plD_eop_jpg(PLStream *pls);
 
-void plD_dispatch_init_vga( PLDispatchTable *pdt )
+void plD_dispatch_init_jpg( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  = "GRX20 JPEG driver";
+    pdt->pl_MenuStr  = "JPEG File (Independent JPEG Group based on GRX20)";
     pdt->pl_DevName  = "jpg";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 23;
+    pdt->pl_seq      = 15;
     pdt->pl_init     = (plD_init_fp)     plD_init_jpg;
     pdt->pl_line     = (plD_line_fp)     plD_line_vga;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
     pdt->pl_eop      = (plD_eop_fp)      plD_eop_jpg;
     pdt->pl_bop      = (plD_bop_fp)      plD_bop_jpg;
     pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_jpg;
-    pdt->pl_state    = (plD_state_fp)    plD_state_tiff;
+    pdt->pl_state    = (plD_state_fp)    plD_state_vga;
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_jpg;
 }
 
@@ -2003,12 +2006,12 @@ void plD_bop_bmp(PLStream *pls);
 void plD_esc_bmp(PLStream *pls, PLINT op, void *ptr);
 void plD_eop_bmp(PLStream *pls);
 
-void plD_dispatch_init_vga( PLDispatchTable *pdt )
+void plD_dispatch_init_bmp( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  = "GRX20 windows bitmap driver";
+    pdt->pl_MenuStr  = "Windows Bitmap File (GRX20)";
     pdt->pl_DevName  = "bmp";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 25;
+    pdt->pl_seq      = 16;
     pdt->pl_init     = (plD_init_fp)     plD_init_bmp;
     pdt->pl_line     = (plD_line_fp)     plD_line_vga;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
@@ -2206,3 +2209,4 @@ pldummy_gnusvga()
 }
 
 #endif                          /* GNUSVGA */
+
