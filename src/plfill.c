@@ -77,8 +77,11 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 void
 c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 {
+    PLFLT tx[PL_MAXPOLY], ty[PL_MAXPOLY], tz[PL_MAXPOLY];
+    PLFLT *V[3];
     PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
     PLINT i;
+    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
 
     if (plsc->level < 3) {
 	plabort("plfill3: Please set up window first");
@@ -92,15 +95,29 @@ c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 	plwarn("plfill3: too many points in polygon");
 	n = PL_MAXPOLY;
     }
+
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
+    
+    /* copy the vertices so we can clip without corrupting the input */
     for( i=0; i < n; i++ ) {
-	xpoly[i] = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
-	ypoly[i] = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
-	}
-    if (x[0] != x[n-1] || y[0] != y[n-1] || z[0] != z[n-1]) {
-	n++;
-	xpoly[n-1] = xpoly[0];
-	ypoly[n-1] = ypoly[0];
+      tx[i] = x[i]; ty[i] = y[i]; tz[i] = z[i];
     }
+    if (tx[0] != tx[n-1] || ty[0] != ty[n-1] || tz[0] != tz[n-1]) {
+      tx[n] = tx[0]; ty[n] = ty[0]; tz[n] = tz[0];
+      n++;
+    }
+    V[0] = tx; V[1] = ty; V[2] = tz;
+    n = plP_clip_poly(n, V, 0,  1, -xmin);
+    n = plP_clip_poly(n, V, 0, -1,  xmax);
+    n = plP_clip_poly(n, V, 1,  1, -ymin);
+    n = plP_clip_poly(n, V, 1, -1,  ymax);
+    n = plP_clip_poly(n, V, 2,  1, -zmin);
+    n = plP_clip_poly(n, V, 2, -1,  zmax);
+    for( i=0; i < n; i++ ) {
+	xpoly[i] = plP_wcpcx(plP_w3wcx( tx[i], ty[i], tz[i] ));
+	ypoly[i] = plP_wcpcy(plP_w3wcy( tx[i], ty[i], tz[i] ));
+	}
 
 /* AWI: in the past we have used
  *  plP_fill(xpoly, ypoly, n);
