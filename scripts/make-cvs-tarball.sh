@@ -14,7 +14,7 @@ CVSTMPDIR=plplot-cvs-tarball
 rm -rf $CVSTMPDIR
 cvs -d${SF_USER}@$SF_CVSROOT co -d$CVSTMPDIR  plplot
 cd $CVSTMPDIR
-rm -f `find . -name CVS`
+rm -rf `find . -name CVS`
 
 CVSREL=.cvs.`date '+%Y%m%d'`
 
