@@ -20,15 +20,17 @@
 # along with the file; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+JAVAC = javac
+
 SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
 PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
 
 SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -DPL_DOUBLE -DSWIG_JAVA -java 
 
 swigjavafiles = \
+	plplotjavacJNI.java \
 	SWIGTYPE_p_p_char.java \
-	plplotjavac.java \
-	plplotjavacJNI.java
+	plplotjavac.java 
 
 # This required for swig-1.3.21, but not for swig-1.3.17
 swigjavafiles += plplotjavacConstants.java
@@ -41,6 +43,14 @@ javafiles = \
 	config.java \
 	PLStreamc.java \
 	$(swigjavafiles)
+
+javaclasses = \
+	plplot/core/config.class \
+	plplot/core/plplotjavacJNI.class \
+	plplot/core/PLStreamc.class \
+	plplot/core/SWIGTYPE_p_p_char.class\
+	plplot/core/plplotjavacConstants.class \
+	plplot/core/plplotjavac.class 
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
@@ -80,39 +90,22 @@ if enable_java
 # widespread.
 
 # Can't use java support for now since jikes doesn't handle dependencies 
-# properly - instead do it by hand in plplot.jar
+# properly - instead do it using DATA and with an explicit rule.
 #noinst_JAVA = $(javafiles)
-plplotjavaexecdir = $(DATA_DIR)/java/
-plplotjavaexec_DATA = plplot.jar
+#plplotjavadir = $(DATA_DIR)/java/
+#plplotjava_DATA = plplot.jar
 
-plplot.jar: $(javafiles)
-	(CLASSPATH=.:$(CLASSPATH) javac -d . $(JAVACFLAGS) config.java && \
-	CLASSPATH=.:$(CLASSPATH) javac -d . $(JAVACFLAGS) PLStreamc.java $(swigjavafiles) && \
-	jar -cf plplot.jar plplot/core/*.class )
-
-#ourexecjava_DATA = README.javaAPI $(javafiles)
+ourexecjava_DATA = $(javaclasses) README.javaAPI
 
 execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 
 # if enable_java
 endif
 
-### Use install-hook to remove the unneeded (by java) *.a and *.la files
-### and also compile the java files that have been installed.
-
-install-exec-hook:
-if enable_java
-#	( cd $(DESTDIR)$(execjavawrapperdir) ; \
-#	  rm -f plplotjavac_wrap*.a plplotjavac_wrap*.la ; \
-#	  cd $(DESTDIR)$(DATA_DIR) ; \
-#	  javac -classpath java -d java java/plplot/core/*.java ; \
-#	  cd java; jar -c -f plplot.jar plplot/core/*.class)
-
-endif
+plplot/core/%.class : %.java
+	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath .
 
 clean-local:
 	rm -rf plplot
-
-CLEANFILES = plplot.jar
 
 MAINTAINERCLEANFILES = $(swiggenfiles)

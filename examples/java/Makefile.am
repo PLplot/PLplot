@@ -45,9 +45,7 @@ javademos = README.javademos $(javafiles) Makefile.examples
 
 # These are for make check compilation of examples.
 JAVAC = javac
-PLPLOT_CLASSPATH = `pwd`/$(top_builddir)/bindings/java/plplot.jar
-
-examples_jar = plplot-examples.jar
+PLPLOT_CLASSPATH= `pwd`/$(top_builddir)/bindings/java
 
 example_classes = \
                  plplot/examples/x01.class \
@@ -78,21 +76,23 @@ if enable_java
 examples_javadir = $(DATA_DIR)/examples/java
 examples_java_DATA = $(javademos)
 
-check-local: $(examples_jar)
-
-$(examples_jar): $(example_classes)
-	jar -cf $(examples_jar) plplot/examples/*.class
-
-endif
+examples_execjavadir = $(DATA_DIR)/java/plplot/examples
+examples_execjava_DATA = $(javademos) $(example_classes) README.javademos
 
 install-data-hook:
 	( cd $(DESTDIR)$(examples_javadir) ; mv -f Makefile.examples Makefile )
+	( cd $(DESTDIR)$(DATA_DIR)/java ; jar -cf plplot.jar plplot ; \
+	rm -rf plplot)
 
-clean-local:
-	rm -rf plplot $(examples_jar)
+endif
 
+# Note the java package is actually assembled in the java bindings directory.
+# Fastjar doesn't update packages properly so we need to do it all in one go.
 plplot/examples/%.class : %.java
 	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH)
+
+clean-local:
+	rm -rf plplot
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]

@@ -56,7 +56,7 @@ examples_SCRIPTS = $(scripts) plplot-test.sh
 # construct below works because top_builddir is always relative.
 
 TESTS = plplot-test.sh
-TESTS_ENVIRONMENT = EXAMPLES_DIR=`pwd`/$(top_builddir)/examples PLPLOT_JAVA_WRAP_DIR=`pwd`/$(top_builddir)/bindings/java/.libs/ PLPLOT_CLASSPATH=`pwd`/$(top_builddir)/bindings/java/plplot.jar $(SHELL)
+TESTS_ENVIRONMENT = EXAMPLES_DIR=`pwd`/$(top_builddir)/examples PLPLOT_JAVA_WRAP_DIR=`pwd`/$(top_builddir)/bindings/java/.libs/ PLPLOT_CLASSPATH=`pwd`/$(top_builddir)/bindings/java/ $(SHELL)
 
 EXTRA_DIST = test_c.sh             \
              test_cxx.sh           \
