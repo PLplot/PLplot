@@ -200,6 +200,7 @@
 #define    PLMTEX7	FNAME(PLMTEX7,plmtex7)
 #define    PLOT3D	FNAME(PLOT3D,plot3d)
 #define    PLOT3DC	FNAME(PLOT3DC,plot3dc)
+#define    PLPARSEOPTS7	FNAME(PLPARSEOPTS7,plparseopts7)
 #define    PLPAT	FNAME(PLPAT,plpat)
 #define    PLPOIN	FNAME(PLPOIN,plpoin)
 #define    PLPOIN3	FNAME(PLPOIN3,plpoin3)

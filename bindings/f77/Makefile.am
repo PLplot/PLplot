@@ -36,7 +36,8 @@ sources = \
 	scstubs.c \
 	strutil.f \
 	sfstubs.h \
-	sfstubs.f
+	sfstubs.f \
+	configurable.f
 
 libplplotf77@LIB_TAG@_la_SOURCES  = $(sources)
 libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)

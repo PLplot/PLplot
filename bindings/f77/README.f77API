@@ -3,6 +3,9 @@ The general rule is
 
 * use sfstubs.fm4 for routines that have character strings;
 
+* use configurable.f.in for fortran routines that must be configurable
+(i.e, plparseopts).
+
 * use sc3d.c for 3D perspective routines (plmesh, plot3d, and plsurf3d and
 friends [which necessarily must have special handling of 2D arrays]);
 

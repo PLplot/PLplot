@@ -4,7 +4,8 @@
 
 	The stubs contained here are the ones that are relatively simple,
 	i.e. involving only a call convention change or integer-to-string
-	conversion.
+	conversion.  Exceptions are plparseopts and  plstripc  which have 
+        a few more complications in them.
 */
 
 #include "plstubs.h"
@@ -376,6 +377,23 @@ void
 PLMTEX7(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
 {
     c_plmtex(side, *disp, *pos, *just, text);
+}
+
+void
+PLPARSEOPTS7(PLINT *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
+{
+/* Same as in plparseopts fortran subroutine that calls this one. */
+#define MAXARGS 20
+   if(*numargs <= MAXARGS) {
+      char *argv[MAXARGS];
+      PLINT i;
+      for(i = 0; i < *numargs; i++) {
+	 argv[i] = iargs + (i* *maxindex);
+/*	 fprintf(stderr, "%s\n", argv[i]); */
+      }
+      plParseOpts(numargs, argv, *mode);
+   }  else
+     fprintf(stderr,"plparseopts7: numargs too large\n");
 }
 
 void
