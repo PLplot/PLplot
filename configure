@@ -65,6 +65,8 @@ ac_help="$ac_help
 ac_help="$ac_help
   --with-dbmalloc         link with libdbmalloc (default: no)"
 ac_help="$ac_help
+  --with-pkgdir           first place to look for libraries and includes)"
+ac_help="$ac_help
   --enable-drivers        enable all device drivers (default: yes)"
 ac_help="$ac_help
   --enable-f77            compile Fortran-77 interface code (default: yes)"
@@ -775,6 +777,20 @@ fi
 enableval="$enable_dbmalloc"
 if test -n "$enableval"; then
   { echo "configure: error: unrecognized variable: enable_dbmalloc" 1>&2; exit 1; }
+fi
+
+
+# Check whether --with-pkgdir or --without-pkgdir was given.
+withval="$with_pkgdir"
+if test -n "$withval"; then
+  :
+else
+  with_pkgdir=""
+fi
+# Check whether --enable-pkgdir or --disable-pkgdir was given.
+enableval="$enable_pkgdir"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_pkgdir" 1>&2; exit 1; }
 fi
 
 
@@ -2021,7 +2037,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 2025 "configure"
+#line 2041 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -2035,7 +2051,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 2039 "configure"
+#line 2055 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -2091,8 +2107,18 @@ fi
 # Includes code and ideas taken from the BLT (Tk extension) configure.
 # ----------------------------------------------------------------------------
 
-inc_path=
-lib_path=
+INCPATH=
+LIBPATH=
+
+# Default linker library commands.  These may need version numbers
+# appended to them though.
+
+DPLIBSTR=-ldpnetwork
+ITKLIBSTR=-litk
+TKLIBSTR=-ltk
+ITCLLIBSTR=-litcl
+TCLLIBSTR=-ltcl
+XLIBSTR=-lX11
 
 # ----------------------------------------------------------------------------
 # Run xmkmf to check for location of X libraries and includes.  If not
@@ -2182,7 +2208,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 2186 "configure"
+#line 2212 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -2245,7 +2271,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2249 "configure"
+#line 2275 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2331,7 +2357,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 2335 "configure"
+#line 2361 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -2344,7 +2370,7 @@ else
   echo "$ac_err" >&5
   rm -rf conftest*
   
-	    places="\
+	    incdirs="\
 	    /usr/include \
 	    /usr/include/X11 \
 	    /usr/include/X11R5 \
@@ -2368,7 +2394,7 @@ else
 		fi
 	    done
 	    if test -z "$XINCDIR"; then
-		echo "$ac_t""warning: couldn't find any X11 include files" 1>&6
+		echo "$ac_t""warning: X11 include files not found" 1>&6
 		XINCDIR=default
 		enable_xwin=no
 	    fi 
@@ -2388,7 +2414,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2392 "configure"
+#line 2418 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2413,7 +2439,7 @@ if eval "test \"`echo '$ac_cv_lib_'X11`\" = yes"; then
 else
   echo "$ac_t""no" 1>&6
 
-	    places="\
+	    libdirs="\
 	    /lib \
 	    /usr/lib \
 	    /usr/lib/X11R5 \
@@ -2434,7 +2460,7 @@ else
 		fi
 	    done
 	    if test -z "$XLIBDIR"; then
-		echo "$ac_t""warning: couldn't find the X11 library archive" 1>&6
+		echo "$ac_t""warning: X11 library not found" 1>&6
 		XLIBDIR=default
 	    fi 
 fi
@@ -2454,10 +2480,39 @@ fi
 #
 # Note: it is important to check in user directories _before_ checking
 # anywhere else.  That way you can easily compile custom versions (of Tcl,
-# Tk, etc), put them in your file space, and have them be found first.
-# Some examples: libraries compiled with debugging turned on, or from a
-# different revision of the (Tcl, Tk, etc) package.
+# Tk, etc), put them in your file space, and have them be found first.  Some
+# examples: libraries compiled with debugging turned on, or from a different
+# revision of the (Tcl, Tk, etc) package.  Also, when dealing with multiple
+# versions (e.g. libtcl7.4.a vs the older libtcl.a), check for the newer
+# version first.
 # ----------------------------------------------------------------------------
+
+# Default directories to search for include files
+
+incdirs_default="\
+$prefix/include \
+$HOME/local/include \
+$HOME/include \
+/usr/local/include \
+/usr/include/tcl \
+/usr/include"
+
+# Default directories to search for library files
+
+libdirs_default="\
+$prefix/lib \
+$HOME/local/lib \
+$HOME/lib \
+/usr/local/lib \
+/usr/lib"
+
+incdirs=$incdirs_default
+libdirs=$libdirs_default
+
+if test -n "$with_pkgdir"; then
+    incdirs="$with_pkgdir/include $incdirs"
+    libdirs="$with_pkgdir/lib $libdirs"
+fi
 
 # ----------------------------------------------------------------------------
 # tcl.h
@@ -2479,40 +2534,32 @@ fi
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
-	places="\
-	$prefix/include \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tcl7.3 \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	$XINCDIR/tk \
-	$XINCDIR \
-	/usr/include"
-
 	
+    
     echo $ac_n "checking for tcl.h""... $ac_c" 1>&6
     TCLINCDIR=""
 
-    for dir in $places; do
+    
+    for dir in $incdirs; do
 	if test -r "$dir/tcl.h"; then
 	    TCLINCDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    echo "$ac_t""$dir/tcl.h" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$TCLINCDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find tcl.h, setting enable_tcl to no" 1>&6
-	enable_tcl="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find tcl.h, setting enable_tcl to no" 1>&6
+	    enable_tcl="no"
+	
     fi
     if test "$TCLINCDIR" = "/usr/include"; then
 	TCLINCDIR="default"
     fi
+
 
     fi
 fi
@@ -2523,35 +2570,32 @@ fi
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/tcl7.3/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tcl7.3 \
-	/usr/local/lib \
-	/usr/local/tk3.6/lib \
-	/usr/local/tcl7.3/lib \
-	$XLIBDIR \
-	/usr/lib"
-
 	
     echo $ac_n "checking for libtcl""... $ac_c" 1>&6
     TCLLIBDIR=""
 
-    for dir in $places; do
-	ls $dir/libtcl.* >/dev/null 2>&1
-	if test $? = 0; then
+	for version in 7.4 ""; do
+	    if test -n "$TCLLIBDIR"; then
+		break
+	    fi
+	    
+    for dir in $libdirs; do
+	if test -f "$dir/libtcl$version.a"; then
 	    TCLLIBDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    TCLLIBSTR="-ltcl$version"
+	    echo "$ac_t""$dir/libtcl$version.a" 1>&6
 	    break
 	fi
     done
+
+	done
+	
     if test -z "$TCLLIBDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find libtcl, setting enable_tcl to no" 1>&6
-	enable_tcl="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find libtcl, setting enable_tcl to no" 1>&6
+	    enable_tcl="no"
+	
     fi
     if test "$TCLLIBDIR" = "/usr/lib"; then
 	TCLLIBDIR="default"
@@ -2562,8 +2606,6 @@ fi
 
 # ----------------------------------------------------------------------------
 # itcl.h
-#
-# If not in $TCLINCDIR, probably in the user's area.
 # ----------------------------------------------------------------------------
 
 # Check whether --enable-itcl or --disable-itcl was given.
@@ -2582,39 +2624,32 @@ fi
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLINCDIR"; then
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../itcl-1.5
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
 	
+    
     echo $ac_n "checking for itcl.h""... $ac_c" 1>&6
     ITCLINCDIR=""
 
-    for dir in $places; do
+    
+    for dir in $incdirs; do
 	if test -r "$dir/itcl.h"; then
 	    ITCLINCDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    echo "$ac_t""$dir/itcl.h" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$ITCLINCDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find itcl.h, setting enable_itcl to no" 1>&6
-	enable_itcl="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find itcl.h, setting enable_itcl to no" 1>&6
+	    enable_itcl="no"
+	
     fi
     if test "$ITCLINCDIR" = "/usr/include"; then
 	ITCLINCDIR="default"
     fi
+
 
     fi
 fi
@@ -2625,48 +2660,38 @@ fi
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../itcl-1.5 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
 	
     echo $ac_n "checking for libitcl""... $ac_c" 1>&6
     ITCLLIBDIR=""
 
-    for dir in $places; do
-	ls $dir/libitcl.* >/dev/null 2>&1
-	if test $? = 0; then
+	for version in 2.0 ""; do
+	    if test -n "$ITCLLIBDIR"; then
+		break
+	    fi
+	    
+    for dir in $libdirs; do
+	if test -f "$dir/libitcl$version.a"; then
 	    ITCLLIBDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    ITCLLIBSTR="-litcl$version"
+	    echo "$ac_t""$dir/libitcl$version.a" 1>&6
 	    break
 	fi
     done
+
+	done
+	
     if test -z "$ITCLLIBDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find libitcl, setting enable_itcl to no" 1>&6
-	enable_itcl="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find libitcl, setting enable_itcl to no" 1>&6
+	    enable_itcl="no"
+	
     fi
     if test "$ITCLLIBDIR" = "/usr/lib"; then
 	ITCLLIBDIR="default"
     fi
 
     fi
-fi
-
-if test "$enable_itcl" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define HAVE_ITCL 1
-EOF
-
 fi
 
 # ----------------------------------------------------------------------------
@@ -2693,40 +2718,32 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tk3.6 \
-	$XINCDIR/tk \
-	$XINCDIR \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
 	
+    
     echo $ac_n "checking for tk.h""... $ac_c" 1>&6
     TKINCDIR=""
 
-    for dir in $places; do
+    
+    for dir in $incdirs; do
 	if test -r "$dir/tk.h"; then
 	    TKINCDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    echo "$ac_t""$dir/tk.h" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$TKINCDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find tk.h, setting enable_tk to no" 1>&6
-	enable_tk="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find tk.h, setting enable_tk to no" 1>&6
+	    enable_tk="no"
+	
     fi
     if test "$TKINCDIR" = "/usr/include"; then
 	TKINCDIR="default"
     fi
+
 
     fi
 fi
@@ -2737,35 +2754,32 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tk3.6 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
 	
     echo $ac_n "checking for libtk""... $ac_c" 1>&6
     TKLIBDIR=""
 
-    for dir in $places; do
-	ls $dir/libtk.* >/dev/null 2>&1
-	if test $? = 0; then
+	for version in 4.0 ""; do
+	    if test -n "$TKLIBDIR"; then
+		break
+	    fi
+	    
+    for dir in $libdirs; do
+	if test -f "$dir/libtk$version.a"; then
 	    TKLIBDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    TKLIBSTR="-ltk$version"
+	    echo "$ac_t""$dir/libtk$version.a" 1>&6
 	    break
 	fi
     done
+
+	done
+	
     if test -z "$TKLIBDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find libtk, setting enable_tk to no" 1>&6
-	enable_tk="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find libtk, setting enable_tk to no" 1>&6
+	    enable_tk="no"
+	
     fi
     if test "$TKLIBDIR" = "/usr/lib"; then
 	TKLIBDIR="default"
@@ -2775,9 +2789,59 @@ if test "$enable_tk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# libitk
+# ----------------------------------------------------------------------------
+
+enable_itk="yes"
+if test "$enable_tk" = "no" -o "$enable_itcl" = "no"; then
+    enable_itk="no"
+fi
+
+if test "$enable_itk" = "yes"; then
+    if test -z "$ITKLIBDIR"; then
+	
+    echo $ac_n "checking for libitk""... $ac_c" 1>&6
+    ITKLIBDIR=""
+
+	for version in 2.0 ""; do
+	    if test -n "$ITKLIBDIR"; then
+		break
+	    fi
+	    
+    for dir in $libdirs; do
+	if test -f "$dir/libitk$version.a"; then
+	    ITKLIBDIR="$dir"
+	    ITKLIBSTR="-litk$version"
+	    echo "$ac_t""$dir/libitk$version.a" 1>&6
+	    break
+	fi
+    done
+
+	done
+	
+    if test -z "$ITKLIBDIR"; then
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find libitk, setting enable_itk to no" 1>&6
+	    enable_itk="no"
+	
+    fi
+    if test "$ITKLIBDIR" = "/usr/lib"; then
+	ITKLIBDIR="default"
+    fi
+
+    fi
+fi
+
+if test "$enable_itk" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define HAVE_ITK 1
+EOF
+
+fi
+
+# ----------------------------------------------------------------------------
 # dp.h
-#
-# If not in $TCLINCDIR, probably in the user's area.
 # ----------------------------------------------------------------------------
 
 # Check whether --enable-dp or --disable-dp was given.
@@ -2800,40 +2864,32 @@ fi
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPINCDIR"; then
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2 \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
 	
+    
     echo $ac_n "checking for dp.h""... $ac_c" 1>&6
     DPINCDIR=""
 
-    for dir in $places; do
+    
+    for dir in $incdirs; do
 	if test -r "$dir/dp.h"; then
 	    DPINCDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    echo "$ac_t""$dir/dp.h" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$DPINCDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find dp.h, setting enable_dp to no" 1>&6
-	enable_dp="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find dp.h, setting enable_dp to no" 1>&6
+	    enable_dp="no"
+	
     fi
     if test "$DPINCDIR" = "/usr/include"; then
 	DPINCDIR="default"
     fi
+
 
     fi
 fi
@@ -2844,40 +2900,33 @@ fi
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
 	
+    
     echo $ac_n "checking for libdpnetwork""... $ac_c" 1>&6
     DPLIBDIR=""
 
-    for dir in $places; do
-	ls $dir/libdpnetwork.* >/dev/null 2>&1
-	if test $? = 0; then
+    
+    for dir in $libdirs; do
+	if test -f "$dir/libdpnetwork.a"; then
 	    DPLIBDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    DPLIBSTR="-ldpnetwork"
+	    echo "$ac_t""$dir/libdpnetwork.a" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$DPLIBDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find libdpnetwork, setting enable_dp to no" 1>&6
-	enable_dp="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find libdpnetwork, setting enable_dp to no" 1>&6
+	    enable_dp="no"
+	
     fi
     if test "$DPLIBDIR" = "/usr/lib"; then
 	DPLIBDIR="default"
     fi
+
 
     fi
 fi
@@ -2893,7 +2942,7 @@ if test "$enable_xwin" = "yes"; then
     if test "$XINCDIR" != "default"; then
 	INCSW="-I$XINCDIR"
     fi
-    for dir in $inc_path; do
+    for dir in $INCPATH; do
 	if test "$XINCDIR" = "$dir"; then
 	    INCSW=""
 	    break
@@ -2902,7 +2951,7 @@ if test "$enable_xwin" = "yes"; then
     if test -n "$INCSW"; then
 	INCS="$INCS $INCSW"
     fi
-    inc_path="$inc_path $XINCDIR"
+    INCPATH="$INCPATH $XINCDIR"
 
 fi
 if test "$enable_tcl" = "yes"; then
@@ -2911,7 +2960,7 @@ if test "$enable_tcl" = "yes"; then
     if test "$TCLINCDIR" != "default"; then
 	INCSW="-I$TCLINCDIR"
     fi
-    for dir in $inc_path; do
+    for dir in $INCPATH; do
 	if test "$TCLINCDIR" = "$dir"; then
 	    INCSW=""
 	    break
@@ -2920,7 +2969,7 @@ if test "$enable_tcl" = "yes"; then
     if test -n "$INCSW"; then
 	INCS="$INCS $INCSW"
     fi
-    inc_path="$inc_path $TCLINCDIR"
+    INCPATH="$INCPATH $TCLINCDIR"
 
 fi
 if test "$enable_dp" = "yes"; then
@@ -2929,7 +2978,7 @@ if test "$enable_dp" = "yes"; then
     if test "$DPINCDIR" != "default"; then
 	INCSW="-I$DPINCDIR"
     fi
-    for dir in $inc_path; do
+    for dir in $INCPATH; do
 	if test "$DPINCDIR" = "$dir"; then
 	    INCSW=""
 	    break
@@ -2938,7 +2987,7 @@ if test "$enable_dp" = "yes"; then
     if test -n "$INCSW"; then
 	INCS="$INCS $INCSW"
     fi
-    inc_path="$inc_path $DPINCDIR"
+    INCPATH="$INCPATH $DPINCDIR"
 
 fi
 if test "$enable_itcl" = "yes"; then
@@ -2947,7 +2996,7 @@ if test "$enable_itcl" = "yes"; then
     if test "$ITCLINCDIR" != "default"; then
 	INCSW="-I$ITCLINCDIR"
     fi
-    for dir in $inc_path; do
+    for dir in $INCPATH; do
 	if test "$ITCLINCDIR" = "$dir"; then
 	    INCSW=""
 	    break
@@ -2956,7 +3005,7 @@ if test "$enable_itcl" = "yes"; then
     if test -n "$INCSW"; then
 	INCS="$INCS $INCSW"
     fi
-    inc_path="$inc_path $ITCLINCDIR"
+    INCPATH="$INCPATH $ITCLINCDIR"
 
 fi
 if test "$enable_tk" = "yes"; then
@@ -2965,7 +3014,7 @@ if test "$enable_tk" = "yes"; then
     if test "$TKINCDIR" != "default"; then
 	INCSW="-I$TKINCDIR"
     fi
-    for dir in $inc_path; do
+    for dir in $INCPATH; do
 	if test "$TKINCDIR" = "$dir"; then
 	    INCSW=""
 	    break
@@ -2974,7 +3023,7 @@ if test "$enable_tk" = "yes"; then
     if test -n "$INCSW"; then
 	INCS="$INCS $INCSW"
     fi
-    inc_path="$inc_path $TKINCDIR"
+    INCPATH="$INCPATH $TKINCDIR"
 
 fi
 
@@ -2993,38 +3042,38 @@ if test "$enable_dp" = "yes"; then
     if test "$DPLIBDIR" != "default"; then
 	LIBSW="-L$DPLIBDIR"
     fi
-    for dir in $lib_path; do
+    for dir in $LIBPATH; do
 	if test "$DPLIBDIR" = "$dir"; then
 	    LIBSW=""
 	    break
 	fi
     done
     if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW -ldpnetwork"
+	LIBS="$LIBS $LIBSW $DPLIBSTR"
     else
-	LIBS="$LIBS -ldpnetwork"
+	LIBS="$LIBS $DPLIBSTR"
     fi
-    lib_path="$lib_path $DPLIBDIR"
+    LIBPATH="$LIBPATH $DPLIBDIR"
 
 fi
-if test "$enable_itcl" = "yes"; then
+if test "$enable_itk" = "yes"; then
     
     LIBSW=""
-    if test "$ITCLLIBDIR" != "default"; then
-	LIBSW="-L$ITCLLIBDIR"
+    if test "$ITKLIBDIR" != "default"; then
+	LIBSW="-L$ITKLIBDIR"
     fi
-    for dir in $lib_path; do
-	if test "$ITCLLIBDIR" = "$dir"; then
+    for dir in $LIBPATH; do
+	if test "$ITKLIBDIR" = "$dir"; then
 	    LIBSW=""
 	    break
 	fi
     done
     if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW -litk -litcl"
+	LIBS="$LIBS $LIBSW $ITKLIBSTR"
     else
-	LIBS="$LIBS -litk -litcl"
+	LIBS="$LIBS $ITKLIBSTR"
     fi
-    lib_path="$lib_path $ITCLLIBDIR"
+    LIBPATH="$LIBPATH $ITKLIBDIR"
 
 fi
 if test "$enable_tk" = "yes"; then
@@ -3033,18 +3082,38 @@ if test "$enable_tk" = "yes"; then
     if test "$TKLIBDIR" != "default"; then
 	LIBSW="-L$TKLIBDIR"
     fi
-    for dir in $lib_path; do
+    for dir in $LIBPATH; do
 	if test "$TKLIBDIR" = "$dir"; then
 	    LIBSW=""
 	    break
 	fi
     done
     if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW -ltk"
+	LIBS="$LIBS $LIBSW $TKLIBSTR"
     else
-	LIBS="$LIBS -ltk"
+	LIBS="$LIBS $TKLIBSTR"
     fi
-    lib_path="$lib_path $TKLIBDIR"
+    LIBPATH="$LIBPATH $TKLIBDIR"
+
+fi
+if test "$enable_itcl" = "yes"; then
+    
+    LIBSW=""
+    if test "$ITCLLIBDIR" != "default"; then
+	LIBSW="-L$ITCLLIBDIR"
+    fi
+    for dir in $LIBPATH; do
+	if test "$ITCLLIBDIR" = "$dir"; then
+	    LIBSW=""
+	    break
+	fi
+    done
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW $ITCLLIBSTR"
+    else
+	LIBS="$LIBS $ITCLLIBSTR"
+    fi
+    LIBPATH="$LIBPATH $ITCLLIBDIR"
 
 fi
 if test "$enable_tcl" = "yes"; then
@@ -3053,18 +3122,18 @@ if test "$enable_tcl" = "yes"; then
     if test "$TCLLIBDIR" != "default"; then
 	LIBSW="-L$TCLLIBDIR"
     fi
-    for dir in $lib_path; do
+    for dir in $LIBPATH; do
 	if test "$TCLLIBDIR" = "$dir"; then
 	    LIBSW=""
 	    break
 	fi
     done
     if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW -ltcl"
+	LIBS="$LIBS $LIBSW $TCLLIBSTR"
     else
-	LIBS="$LIBS -ltcl"
+	LIBS="$LIBS $TCLLIBSTR"
     fi
-    lib_path="$lib_path $TCLLIBDIR"
+    LIBPATH="$LIBPATH $TCLLIBDIR"
 
 fi
 if test "$enable_xwin" = "yes"; then
@@ -3073,18 +3142,18 @@ if test "$enable_xwin" = "yes"; then
     if test "$XLIBDIR" != "default"; then
 	LIBSW="-L$XLIBDIR"
     fi
-    for dir in $lib_path; do
+    for dir in $LIBPATH; do
 	if test "$XLIBDIR" = "$dir"; then
 	    LIBSW=""
 	    break
 	fi
     done
     if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW -lX11"
+	LIBS="$LIBS $LIBSW $XLIBSTR"
     else
-	LIBS="$LIBS -lX11"
+	LIBS="$LIBS $XLIBSTR"
     fi
-    lib_path="$lib_path $XLIBDIR"
+    LIBPATH="$LIBPATH $XLIBDIR"
 
 fi
 
@@ -3096,7 +3165,7 @@ fi
 
 if test "$with_dbmalloc" = "yes"; then
     if test -z "$DBMALLOCLIBDIR"; then
-	places="\
+	libdirs="\
 	$prefix/lib \
 	$HOME/local/lib \
 	$HOME/dbmalloc/lib \
@@ -3106,25 +3175,31 @@ if test "$with_dbmalloc" = "yes"; then
 	/usr/lib"
 
 	
+    
     echo $ac_n "checking for libdbmalloc""... $ac_c" 1>&6
     DBMALLOCLIBDIR=""
 
-    for dir in $places; do
-	ls $dir/libdbmalloc.* >/dev/null 2>&1
-	if test $? = 0; then
+    
+    for dir in $libdirs; do
+	if test -f "$dir/libdbmalloc.a"; then
 	    DBMALLOCLIBDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    with_dbmalloc="-ldbmalloc"
+	    echo "$ac_t""$dir/libdbmalloc.a" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$DBMALLOCLIBDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find libdbmalloc, setting with_dbmalloc to no" 1>&6
-	with_dbmalloc="no"
+	
+	    echo "$ac_t""not found -- exiting" 1>&6
+	    exit 1
+	
     fi
     if test "$DBMALLOCLIBDIR" = "/usr/lib"; then
 	DBMALLOCLIBDIR="default"
     fi
+
 
     fi
     if test -n "$DBMALLOCLIBDIR"; then
@@ -3133,7 +3208,7 @@ if test "$with_dbmalloc" = "yes"; then
     if test "$DBMALLOCLIBDIR" != "default"; then
 	LIBSW="-L$DBMALLOCLIBDIR"
     fi
-    for dir in $lib_path; do
+    for dir in $LIBPATH; do
 	if test "$DBMALLOCLIBDIR" = "$dir"; then
 	    LIBSW=""
 	    break
@@ -3144,14 +3219,14 @@ if test "$with_dbmalloc" = "yes"; then
     else
 	LIBS="$LIBS -ldbmalloc"
     fi
-    lib_path="$lib_path $DBMALLOCLIBDIR"
+    LIBPATH="$LIBPATH $DBMALLOCLIBDIR"
 
     fi
 fi
 
 if test "$with_dbmalloc" = "yes"; then
     if test -z "$DBMALLOCINCDIR"; then
-	places="\
+	incdirs="\
 	$prefix/include \
 	$HOME/local/include \
 	$HOME/local/dbmalloc/include \
@@ -3161,24 +3236,31 @@ if test "$with_dbmalloc" = "yes"; then
 	/usr/local/debug_include"
 
 	
+    
     echo $ac_n "checking for malloc.h""... $ac_c" 1>&6
     DBMALLOCINCDIR=""
 
-    for dir in $places; do
+    
+    for dir in $incdirs; do
 	if test -r "$dir/malloc.h"; then
 	    DBMALLOCINCDIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    echo "$ac_t""$dir/malloc.h" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$DBMALLOCINCDIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find malloc.h, setting with_dbmalloc to no" 1>&6
-	with_dbmalloc="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find malloc.h, setting with_dbmalloc to no" 1>&6
+	    with_dbmalloc="no"
+	
     fi
     if test "$DBMALLOCINCDIR" = "/usr/include"; then
 	DBMALLOCINCDIR="default"
     fi
+
 
     fi
     if test -n "$DBMALLOCINCDIR"; then
@@ -3187,7 +3269,7 @@ if test "$with_dbmalloc" = "yes"; then
     if test "$DBMALLOCINCDIR" != "default"; then
 	INCSW="-I$DBMALLOCINCDIR"
     fi
-    for dir in $inc_path; do
+    for dir in $INCPATH; do
 	if test "$DBMALLOCINCDIR" = "$dir"; then
 	    INCSW=""
 	    break
@@ -3196,7 +3278,7 @@ if test "$with_dbmalloc" = "yes"; then
     if test -n "$INCSW"; then
 	INCS="$INCS $INCSW"
     fi
-    inc_path="$inc_path $DBMALLOCINCDIR"
+    INCPATH="$INCPATH $DBMALLOCINCDIR"
 
     fi
 fi
@@ -3221,7 +3303,7 @@ fi
 
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
-	places="\
+	incdirs="\
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -3231,24 +3313,31 @@ if test "$enable_python" = "yes"; then
 	/usr/local/include/Py"
 
 	
+    
     echo $ac_n "checking for Python.h""... $ac_c" 1>&6
     PYTHON_INC_DIR=""
 
-    for dir in $places; do
+    
+    for dir in $incdirs; do
 	if test -r "$dir/Python.h"; then
 	    PYTHON_INC_DIR="$dir"
-	    echo "$ac_t""$dir" 1>&6
+	    echo "$ac_t""$dir/Python.h" 1>&6
 	    break
 	fi
     done
+
+    
     if test -z "$PYTHON_INC_DIR"; then
-	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find Python.h, setting enable_python to no" 1>&6
-	enable_python="no"
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find Python.h, setting enable_python to no" 1>&6
+	    enable_python="no"
+	
     fi
     if test "$PYTHON_INC_DIR" = "/usr/include"; then
 	PYTHON_INC_DIR="default"
     fi
+
 
     fi
 fi
@@ -3267,7 +3356,7 @@ if test "$enable_python" = "yes"; then
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[^/]*/[^/]*$,,'`
 	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    echo "$ac_t""couldn't find PYTHON_MOD_DIR, setting enable_python to no" 1>&6
+	    echo "$ac_t""PYTHON_MOD_DIR not found, setting enable_python to no" 1>&6
 	    enable_python=no
 	fi
     fi
@@ -3288,7 +3377,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3292 "configure"
+#line 3381 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3312,7 +3401,7 @@ if eval "test \"`echo '$ac_cv_lib_'f2c`\" = yes"; then
   LIBS="$LIBS -lf2c"
 else
   echo "$ac_t""no" 1>&6
-echo "$ac_t""warning: couldn't find libf2c" 1>&6
+echo "$ac_t""warning: libf2c not found" 1>&6
 fi
 
 fi
@@ -3355,7 +3444,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3359 "configure"
+#line 3448 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3388,7 +3477,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3392 "configure"
+#line 3481 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3421,7 +3510,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3425 "configure"
+#line 3514 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3454,7 +3543,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3458 "configure"
+#line 3547 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3487,7 +3576,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3491 "configure"
+#line 3580 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3663,7 +3752,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3667 "configure"
+#line 3756 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3684,7 +3773,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3688 "configure"
+#line 3777 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3706,7 +3795,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3710 "configure"
+#line 3799 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3724,7 +3813,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3728 "configure"
+#line 3817 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3745,7 +3834,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3749 "configure"
+#line 3838 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3782,7 +3871,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3786 "configure"
+#line 3875 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3843,7 +3932,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3847 "configure"
+#line 3936 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3875,7 +3964,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3879 "configure"
+#line 3968 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3909,7 +3998,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3913 "configure"
+#line 4002 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -4024,7 +4113,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4028 "configure"
+#line 4117 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -4079,7 +4168,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4083 "configure"
+#line 4172 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
