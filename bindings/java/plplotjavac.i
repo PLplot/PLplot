@@ -775,42 +775,35 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 
 /***************************
 	String returning functions
+	Adopt method in SWIG-1.3.21/Examples/java/typemap/example.i
 ****************************/
 
-%typemap(jni) char *OUTPUT "jstring"
-%typemap(jtype) char *OUTPUT "String"
-%typemap(jstype) char *OUTPUT "String"
-%typemap(javain) char *OUTPUT "$javainput"
-%typemap(javaout) char *OUTPUT {
-   return $jnicall;
-}
+/* Define the types to use in the generated JNI C code and Java code */
+%typemap(jni) char *OUTPUT "jobject"
+%typemap(jtype) char *OUTPUT "StringBuffer"
+%typemap(jstype) char *OUTPUT "StringBuffer"
 
-/* The code below updates the jstring argument rather than returning a 
- * jstring because the fundamental function we are wrapping here has type
- * void, and that is wrapped by swig as a void JNI function, etc.  Anyhow, I
- * think the generated code is fine and should work for say, plgver, but it
- * doesn't.  (See commented out code in x01.java).
- * Probably, the best thing to do is to make a helper function for
- * each of plgdev, plgfnam, and plgver which returns a character string, and
- * then allow swig to wrap these helper functions, but I will leave that to
- * someone else.  Thus, for now, comment out all of this as well as
- * the plgdev, plgfnam, and plgver prototypes. */
-
-// temporary
-#if 0
-/* This currently just used for plgdev, plgfnam, and plgver which apparently
- * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
- * have a 1000 byte limit here. */
-%typemap(in) char* OUTPUT (char buff[1000]){
-  $1 = buff;
-}
+/* How to convert the C type to the Java(JNI) type */
 %typemap(argout) char *OUTPUT {
-   $input = (*jenv)->NewStringUTF(jenv, buff$argnum);
-}
-%typemap(freearg) char *OUTPUT {}
 
-// temporary
-#endif
+   if($1 != NULL) {
+      /* Append the result to the empty StringBuffer */
+      jstring newString = (*jenv)->NewStringUTF(jenv, $1);
+      jclass sbufClass = (*jenv)->GetObjectClass(jenv, $input);
+      jmethodID appendStringID = (*jenv)->GetMethodID(jenv, sbufClass, "append", "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+      (*jenv)->CallObjectMethod(jenv, $input, appendStringID, newString);
+      
+      /* Clean up the string object, no longer needed */
+      free($1);
+      $1 = NULL;
+   }  
+}
+/* Prevent the default freearg typemap from being used */
+%typemap(freearg) char *OUTPUT ""
+
+/* Convert the jstype to jtype typemap type */
+%typemap(javain) char *OUTPUT "$javainput"
+
 /* Character arrays: */
 
 %typemap(jni) (PLINT *p_argc, char **argv) "jobjectArray"

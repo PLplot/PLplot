@@ -286,11 +286,9 @@ DOC(plgcompression, "Get the current compression setting.")
 void
 plgcompression(PLINT *OUTPUT);
 
-#ifndef SWIG_JAVA
 DOC(plgdev, "Get the current device (keyword) name.")
 void
 plgdev(char *OUTPUT);
-#endif
 
 DOC(plgdidev, "Retrieve current window into device space.")
 void
@@ -308,11 +306,9 @@ DOC(plgfam, "Get family file parameters.")
 void
 plgfam(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT);
 
-#ifndef SWIG_JAVA
 DOC(plgfnam, "Get the (current) output file name.")
 void
 plgfnam(char *OUTPUT);
-#endif
 
 DOC(plglevel, "Get the (current) run level.")
 void
@@ -335,11 +331,9 @@ DOC(plgstrm, "Get current stream number.")
 void
 plgstrm(PLINT *OUTPUT);
 
-#ifndef SWIG_JAVA
 DOC(plgver, "Get current library version number.")
 void
 plgver(char *OUTPUT);
-#endif
 
 DOC(plgvpd, "Get viewport boundaries in normalized device coordinates.")
 void
