@@ -39,6 +39,7 @@ f77m4_source = \
   x16f.fm4
 
 examples_f77_DATA = \
+  Makefile.examples \
   x01f.f \
   x02f.f \
   x03f.f \
@@ -90,4 +91,4 @@ SUFFIXES = .fm4
 .fm4.f:
 	$(M4) @M4_FLAGS@ $< >$*.f
 
-EXTRA_DIST = $(f77m4_source)
+EXTRA_DIST = $(f77m4_source) Makefile.examples.in

@@ -22,6 +22,7 @@
 AM_CPPFLAGS = @INCLTDL@
 examples_cdir = ${prefix}/@DATA_DIR@/../examples/c
 examples_c_DATA = \
+  Makefile.examples \
   plcdemos.h \
   lena.pgm \
   tutor.c \
@@ -45,4 +46,4 @@ examples_c_DATA = \
   x18c.c \
   x19c.c \
   x20c.c
-EXTRA_DIST = $(examples_c_DATA)
+EXTRA_DIST = $(examples_c_DATA) Makefile.examples.in

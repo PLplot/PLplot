@@ -487,6 +487,15 @@ DATA_DIR=lib/${PACKAGE}${VERSION}/data
 AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR")
 AC_SUBST(DATA_DIR)
 
+### Other install locations needed.
+if test -z "$LIB_DIR"; then
+    LIB_DIR=$prefix/lib
+fi
+if test -z "$INCLUDE_DIR"; then
+    INCLUDE_DIR=$prefix/include/plplot
+fi
+AC_SUBST(LIB_DIR)
+AC_SUBST(INCLUDE_DIR)
 ### Configuration headers
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
@@ -658,11 +667,23 @@ fi
 
 ### Build Makefiles
 
-AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile
-           bindings/Makefile bindings/c++/Makefile bindings/f77/Makefile
-           drivers/Makefile
-	   examples/Makefile examples/c/Makefile examples/c++/Makefile
-	   examples/f77/Makefile])
+AC_OUTPUT([
+	Makefile 
+	src/Makefile 
+	include/Makefile
+	lib/Makefile
+	bindings/Makefile
+	bindings/c++/Makefile
+	bindings/f77/Makefile
+	drivers/Makefile
+	examples/Makefile
+	examples/c/Makefile
+	examples/c/Makefile.examples
+	examples/c++/Makefile
+	examples/c++/Makefile.examples
+	examples/f77/Makefile
+	examples/f77/Makefile.examples
+	])
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
