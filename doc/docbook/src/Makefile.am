@@ -182,11 +182,14 @@ endif
 
 # Everything below here has to do with www-install.
 
-RSH_COMMAND = $(RSH) $(WWW_USER)$(WWW_HOST)
-RCP_PREFIX = $(shell if test -z "$(WWW_USER)$(WWW_HOST)" ; then \
+# Append @ if WWW_USER non-empty
+WWW_USERAT = $(shell if test "$(WWW_USER)" ; then echo $(WWW_USER)@ ; fi)
+
+RSH_COMMAND = $(RSH) $(WWW_USERAT)$(WWW_HOST)
+RCP_PREFIX = $(shell if test -z "$(WWW_USERAT)$(WWW_HOST)" ; then \
                        echo "" ; \
                      else \
-                       echo "$(WWW_USER)$(WWW_HOST):" ; \
+                       echo "$(WWW_USERAT)$(WWW_HOST):" ; \
                      fi)
 
 $(HTML_TARBALL): $(HTML_MANIFEST) stylesheet.css

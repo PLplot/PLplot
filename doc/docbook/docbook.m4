@@ -27,7 +27,7 @@ dnl Web site Installation
 
 AC_ARG_WITH(www-user,
   AC_HELP_STRING([--with-www-user=NAME], [User name at WWW host]),
-  [WWW_USER="$withval@"],
+  [WWW_USER="$withval"],
   [WWW_USER=""])
 AC_SUBST(WWW_USER)
 
