@@ -8,6 +8,7 @@
   Copyright (C) 2001, 2002  Joao Cardoso  
   Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
   Copyright (C) 2004  Thomas J. Duck
+  Copyright (C) 2005  Andrew Ross
 
   This file is part of PLplot.
 
