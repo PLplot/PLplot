@@ -69,25 +69,6 @@ case "$system" in
     ;;
 esac
 
-# Source site-specific variables file, if present.  Very nice for setting up
-# site-specific defaults or for reducing the time spent configuring.
-#
-# This MUST MUST MUST be done before command-line flags are handled (i.e.
-# before expanding ac_init) so that the user can override if necessary.
-
-with_defaults=yes
-for option
-    do
-    case "$option" in
-	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
-	    with_defaults=yes
-	;;
-	-without-defaults | --without-defaults | -with-defaults=no | --with-defaults=no )
-	    with_defaults=no
-	;;
-    esac
-done
-
 # Default settings
 
 with_debug=no
@@ -187,7 +168,24 @@ case "$system" in
     ;;
 esac
 
-# Source defaults file
+# Source site-specific variables file, if present.  Very nice for setting up
+# site-specific defaults or for reducing the time spent configuring.
+#
+# This MUST MUST MUST be done before command-line flags are handled (i.e.
+# before expanding ac_init) so that the user can override if necessary.
+
+with_defaults=yes
+for option
+    do
+    case "$option" in
+	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
+	    with_defaults=yes
+	;;
+	-without-defaults | --without-defaults | -with-defaults=no | --with-defaults=no )
+	    with_defaults=no
+	;;
+    esac
+done
 
 if test "$with_defaults" = "no"; then
     echo "Performing full configure."
