@@ -123,7 +123,7 @@ enable_drivers=yes
 enable_dyndrivers=no
 enable_f77=yes
 enable_cxx=yes
-enable_python=no
+enable_python=yes
 enable_java=no
 enable_tcl=no
 enable_itcl=no
@@ -366,6 +366,7 @@ AC_SUBST(LIBLTDL)
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
+AM_PATH_PYTHON(1.5)
 
 MY_ARG_WITH(freetype,
   [  --with-freetype         enable driver options for using freetype library for fonts ($with_freetype)])
@@ -510,6 +511,8 @@ AC_SUBST(MODULES)
 AC_INCLUDE(sysloc.in)
 #disable LIBS so we don't have all libraries mentioned
 LIBS=""
+
+AM_CONDITIONAL(enable_python, test "$enable_python" = yes)
 
 ### automake symbols for system-dependent results
 if test "$with_freetype" = yes; then
@@ -675,6 +678,8 @@ AC_OUTPUT([
 	bindings/Makefile
 	bindings/c++/Makefile
 	bindings/f77/Makefile
+	bindings/python/Makefile
+	bindings/python/setup.py
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile
@@ -683,6 +688,8 @@ AC_OUTPUT([
 	examples/c++/Makefile.examples
 	examples/f77/Makefile
 	examples/f77/Makefile.examples
+	examples/python/Makefile
+	examples/python/plplot_python_start.py
 	])
 
 # ----------------------------------------------------------------------------

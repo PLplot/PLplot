@@ -1,8 +1,7 @@
-# bindings/c++/Makefile.am for PLplot
+# examples/c/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002 Rafael Laboissiere
 # Copyright (C) 2002 Alan W. Irwin
 # 
 #This file is part of PLplot.
@@ -20,31 +19,34 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-pkginclude_HEADERS = plstream.h
+examples_pythondir = ${prefix}/@DATA_DIR@/../examples/python
 
-if with_double
-  libplplot = ../../src/libplplotd.la
-else
-  libplplot = ../../src/libplplot.la
-endif
+examples_python_SCRIPTS = \
+	plplot_python_start.py \
+	prova.py \
+	pythondemos.py
+examples_python_DATA = \
+	README.pythondemos \
+	qplplot.py \
+	xw01.py \
+	xw02.py \
+	xw03.py \
+	xw04.py \
+	xw05.py \
+	xw06.py \
+	xw07.py \
+	xw08.py \
+	xw09.py \
+	xw10.py \
+	xw11.py \
+	xw12.py \
+	xw13.py \
+	xw14.py \
+	xw15.py \
+	xw16.py \
+	xw17.py \
+	xw18.py \
+	xw19.py
 
-if enable_cxx
-if with_double
-    lib_LTLIBRARIES = libplcxxd.la
-else
-    lib_LTLIBRARIES = libplcxx.la
-endif
-endif
-
-AM_CPPFLAGS = @INCLTDL@
-version = -version-info @SOVERSION@
-
-sources = plstream.cc
-
-libplcxx_la_SOURCES  = $(sources)
-libplcxx_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined
-libplcxx_la_LIBADD = $(libplplot)
-
-libplcxxd_la_SOURCES = $(libplcxx_la_SOURCES)
-libplcxxd_la_LDFLAGS = $(libplcxx_la_LDFLAGS)
-libplcxxd_la_LIBADD  = $(libplcxx_la_LIBADD)
+EXTRA_DIST = $(examples_python_SCRIPTS) $(examples_python_DATA)
+CLEANFILES = plplot_python_start.py

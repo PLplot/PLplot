@@ -23,7 +23,7 @@
 if with_double
   libplplot = ../../src/libplplotd.la
 else
-  libplplot = ../../src/libplplotd.la
+  libplplot = ../../src/libplplot.la
 endif
 
 if enable_f77

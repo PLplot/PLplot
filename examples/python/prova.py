@@ -2,16 +2,10 @@
 
 # Qt tutorial 1.
 
+# Append to effective python path so that can find plplot modules.
+from plplot_python_start import *
+
 import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from qt import *
 from Numeric import *
 import math

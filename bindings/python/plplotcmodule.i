@@ -44,8 +44,8 @@ far).
 #include <Numeric/arrayobject.h> 
  once we no longer support python1.5 */
 #include <arrayobject.h>        
-#include "plplot/plplot.h"      
-#include "plplot/plplotP.h"
+#include "plplot.h"      
+#include "plplotP.h"
 
 #ifdef PL_DOUBLE
 #define  PyArray_PLFLT PyArray_DOUBLE

@@ -1,3 +1,17 @@
+2002-11-27  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* Creation of python extension modules now works.  Replaced the
+	  setup.py method (which had some cross-platform question marks)
+	  with a libtools method.
+
+	* Fixed build of xwin_drv.so so it links to libplplot.  Without this
+	  the python examples won't work with the xwin driver.
+	
+	* Install of python examples including new plplot_python_start.py
+	  which is configured to make accessible to python the
+	  directory which contains the installed plplot python extensions
+	  (assuming that might not be in the standard system location).
+
 2002-11-26  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Support for examples/c examples/c++ and examples/f77 on AT

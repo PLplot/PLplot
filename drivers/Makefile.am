@@ -46,7 +46,7 @@ if with_double
    libplplot = ../src/libplplotd.la
 else
    drivers_DATA = drivers.db
-   libplplot = ../src/libplplotd.la
+   libplplot = ../src/libplplot.la
 endif
 
 # All -I compile flags apparently must be lumped together for all source
@@ -57,7 +57,7 @@ AM_CPPFLAGS = @X_CFLAGS@ @INCLTDL@
 xwin_drv_la_SOURCES = xwin.c
 #xwin_drv_la_INCLUDES = @X_CFLAGS@
 xwin_drv_la_LDFLAGS = -rpath $(driversdir) -no-undefined -module -avoid-version 
-xwin_drv_la_LIBADD = @X_LIBS@ -lX11
+xwin_drv_la_LIBADD = $(libplplot) @X_LIBS@ -lX11
 ps_drv_la_SOURCES = ps.c
 ps_drv_la_LDFLAGS = -rpath $(driversdir) -no-undefined -module -avoid-version 
 ps_drv_la_LIBADD = $(libplplot)

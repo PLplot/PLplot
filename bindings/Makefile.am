@@ -1,1 +1,1 @@
-SUBDIRS = c++ f77
+SUBDIRS = c++ f77 python
