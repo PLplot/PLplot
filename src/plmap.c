@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/08/25 04:04:49  mjl
+ * Revision 1.3  1999/06/25 04:18:47  furnish
+ * Add the c_ namespace control thing to plmap and plmeridians, which
+ * somehow slipped in without this protection.
+ *
+ * Revision 1.2  1994/08/25  04:04:49  mjl
  * Eliminated unnecessary variable decls.
  *
  * Revision 1.1  1994/07/29  20:26:10  mjl
@@ -76,8 +80,8 @@
 #define W_BUFSIZ	(32*1024)
 
 void
-plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
-      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat)
+c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     PLINT wrap, sign;
     int i, j;
@@ -240,9 +244,9 @@ plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 #define NSEG 100
 
 void 
-plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
-	    PLFLT dlong, PLFLT dlat,
-	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat)
+c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+               PLFLT dlong, PLFLT dlat,
+               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     PLFLT yy, xx, temp, x[2], y[2], dx, dy;
 
