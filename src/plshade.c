@@ -127,15 +127,20 @@ static PLFLT int_val;
 /* Function prototypes */
 
 static void 
-set_cond(register int *cond, register PLFLT *a,
-	 register const char *defined, register PLINT n);
+set_cond(register int *cond, register PLFLT *a, register PLINT n);
 
 static int 
 find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x);
 
 static void 
 poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
+     PLINT (*defined) (PLFLT, PLFLT),     
      PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4);
+
+static void 
+exfill(void (*fill) (PLINT, PLFLT *, PLFLT *),
+       PLINT (*defined) (PLFLT, PLFLT),
+       int n, PLFLT *x, PLFLT *y);
 
 static void 
 big_recl(int *cond_code, register int ny, int dx, int dy,
@@ -156,7 +161,8 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	PLPointer f2eval_data,
 	PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
 	PLPointer c2eval_data, 
-	const char *defined, PLFLT missing_min, PLFLT missing_max,
+	PLINT (*defined) (PLFLT, PLFLT),
+	PLFLT missing_min, PLFLT missing_max,
 	PLINT nx, PLINT ny, 
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLFLT shade_min, PLFLT shade_max,
@@ -180,7 +186,7 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
  * (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
 \*----------------------------------------------------------------------*/
 
-void c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 		PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 		PLFLT *clevel, PLINT nlevel, PLINT fill_width,
 		PLINT cont_color, PLINT cont_width,
@@ -226,7 +232,7 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
  * via a (PLFLT **), and is column-dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
-void c_plshade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -260,7 +266,7 @@ void c_plshade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
  * via a (PLFLT *), and is column-dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
-void c_plshade1( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+void c_plshade1( PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -361,7 +367,8 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	PLPointer f2eval_data,
 	PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
 	PLPointer c2eval_data, 
-	const char *defined, PLFLT missing_min, PLFLT missing_max,
+	PLINT (*defined) (PLFLT, PLFLT),
+	PLFLT missing_min, PLFLT missing_max,
 	PLINT nx, PLINT ny, 
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLFLT shade_min, PLFLT shade_max,
@@ -377,7 +384,6 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     int count, i, j, nxny;
     PLFLT *a, *a0, *a1, dx, dy;
     PLFLT x[8], y[8], xp[2], tx, ty;
-    char *new_defined;
     int *c, *c0, *c1;
 
     if (plsc->level < 3) {
@@ -445,32 +451,7 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     sh_min = shade_min;
     sh_max = shade_max;
 
-    /* setup new_defined */
-    if (defined == NULL && missing_max < missing_min) {
-	new_defined = NULL;
-    }
-    else {
-        if ((new_defined = (char *) malloc(nxny * sizeof(char))) == NULL) {
-	    plabort("plfshade: unable to allocate memory for condition codes");
-	    free(c);
-	    free(a);
-            return;
-	}
-	if (defined == NULL) {
-	    for (i = 0; i < nxny; i++) new_defined[i] = 1;
-	}
-	else {
-	    memcpy(new_defined, defined, nxny);
-	}
-	for (i = 0; i < nxny; i++) {
-	    if (new_defined[i] == 1 && a[i] >= missing_min &&
-		a[i] <= missing_max) new_defined[i] = 0;
-	}
-    }
-
-    /* Ignore defined array for now */
-
-    set_cond(c, a, new_defined, nxny);
+    set_cond(c, a, nxny);
     dx = (xmax - xmin) / (nx - 1);
     dy = (ymax - ymin) / (ny - 1);
     a0 = a;
@@ -521,8 +502,8 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 			y[i] = ymin + y[i]*dy;
 		    }
 		}
-		if (fill)
-		    (*fill) ((PLINT) 4, x, y);
+		if (fill != NULL)
+		    exfill (fill, defined, (PLINT) 4, x, y);
 		iy += j - 1;
 		continue;
 	    }
@@ -589,40 +570,40 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      case 020:
 	      case 002:
 	      case 022:
-		if (fill && n > 0)
-		    (*fill) (n, x, y);
+		if (fill != NULL && n > 0)
+		    exfill (fill, defined, n, x, y);
 		break;
 	      case 040:	/* 2 contour lines in box */
 	      case 004:
 		if (n != 6)
 		    fprintf(stderr, "plfshade err n=%d !6", (int) n);
 		if (slope == 1 && c0[iy] == OK) {
-		    if (fill)
-			(*fill) (n, x, y);
+		    if (fill != NULL)
+			exfill (fill, defined, n, x, y);
 		}
 		else if (slope == 1) {
-		    poly(fill, x, y, 0, 1, 2, -1);
-		    poly(fill, x, y, 3, 4, 5, -1);
+		    poly(fill, defined, x, y, 0, 1, 2, -1);
+		    poly(fill, defined, x, y, 3, 4, 5, -1);
 		}
 		else if (c0[iy + 1] == OK) {
-		    if (fill)
-			(*fill) (n, x, y);
+		    if (fill != NULL)
+			exfill (fill, defined, n, x, y);
 		}
 		else {
-		    poly(fill, x, y, 0, 1, 5, -1);
-		    poly(fill, x, y, 2, 3, 4, -1);
+		    poly(fill, defined, x, y, 0, 1, 5, -1);
+		    poly(fill, defined, x, y, 2, 3, 4, -1);
 		}
 		break;
 	      case 044:
 		if (n != 8)
 		    fprintf(stderr, "plfshade err n=%d !8", (int) n);
 		if (slope == 1) {
-		    poly(fill, x, y, 0, 1, 2, 3);
-		    poly(fill, x, y, 4, 5, 6, 7);
+		    poly(fill, defined, x, y, 0, 1, 2, 3);
+		    poly(fill, defined, x, y, 4, 5, 6, 7);
 		}
 		else {
-		    poly(fill, x, y, 0, 1, 6, 7);
-		    poly(fill, x, y, 2, 3, 4, 5);
+		    poly(fill, defined, x, y, 0, 1, 6, 7);
+		    poly(fill, defined, x, y, 2, 3, 4, 5);
 		}
 		break;
 	      case 024:
@@ -632,29 +613,29 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		    fprintf(stderr, "plfshade err n=%d !7", (int) n);
 
 		if ((c0[iy] == OK || c1[iy+1] == OK) && slope == 1) {
-		    if (fill)
-		        (*fill) (n, x, y);
+		    if (fill != NULL)
+		        exfill (fill, defined, n, x, y);
 		}
 		else if ((c0[iy+1] == OK || c1[iy] == OK) && slope == 0) {
-		    if (fill)
-		        (*fill) (n, x, y);
+		    if (fill !=NULL)
+		        exfill (fill, defined, n, x, y);
 		}
 
 		else if (c0[iy] == OK) {
-		    poly(fill, x, y, 0, 1, 6, -1);
-		    poly(fill, x, y, 2, 3, 4, 5);
+		    poly(fill, defined, x, y, 0, 1, 6, -1);
+		    poly(fill, defined, x, y, 2, 3, 4, 5);
 		}
 		else if (c0[iy+1] == OK) {
-		    poly(fill, x, y, 0, 1, 2, -1);
-		    poly(fill, x, y, 3, 4, 5, 6);
+		    poly(fill, defined, x, y, 0, 1, 2, -1);
+		    poly(fill, defined, x, y, 3, 4, 5, 6);
 		}
 		else if (c1[iy+1] == OK) {
-		    poly(fill, x, y, 0, 1, 5, 6);
-		    poly(fill, x, y, 2, 3, 4, -1);
+		    poly(fill, defined, x, y, 0, 1, 5, 6);
+		    poly(fill, defined, x, y, 2, 3, 4, -1);
 		}
 		else if (c1[iy] == OK) {
-		    poly(fill, x, y, 0, 1, 2, 3);
-		    poly(fill, x, y, 4, 5, 6, -1);
+		    poly(fill, defined, x, y, 0, 1, 2, 3);
+		    poly(fill, defined, x, y, 4, 5, 6, -1);
 		}
 		else {
 		    fprintf(stderr, "plfshade err logic case 024:042\n");
@@ -681,7 +662,6 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
     free(c);
     free(a);
-    if (new_defined) free(new_defined);
     plwid(init_width);
 }
 
@@ -692,32 +672,16 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 \*----------------------------------------------------------------------*/
 
 static void 
-set_cond(register int *cond, register PLFLT *a,
-	 register const char *defined, register PLINT n)
+set_cond(register int *cond, register PLFLT *a, register PLINT n)
 {
-    if (defined) {
-	while (n--) {
-	    if (*defined++ == 0)
-		*cond++ = UNDEF;
-	    else if (*a < sh_min)
-		*cond++ = NEG;
-	    else if (*a > sh_max)
-		*cond++ = POS;
-	    else
-		*cond++ = OK;
-	    a++;
-	}
-    }
-    else {
-	while (n--) {
-	    if (*a < sh_min)
-		*cond++ = NEG;
-	    else if (*a > sh_max)
-		*cond++ = POS;
-	    else
-		*cond++ = OK;
-	    a++;
-	}
+    while (n--) {
+        if (*a < sh_min)
+	    *cond++ = NEG;
+	else if (*a > sh_max)
+	    *cond++ = POS;
+	else
+	    *cond++ = OK;
+	a++;
     }
 }
 
@@ -777,6 +741,7 @@ find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x)
 
 static void 
 poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
+     PLINT (*defined) (PLFLT, PLFLT),
      PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4)
 {
     register PLINT n = 0;
@@ -800,7 +765,98 @@ poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
 	xx[n] = x[v4];
 	yy[n++] = y[v4];
     }
-    (*fill) (n, xx, yy);
+    exfill (fill, defined, n, xx, yy);
+}
+
+/*----------------------------------------------------------------------*\
+ * bissect()
+ *
+ * Find boundary recursively by bissection.  
+ * (x1, y1) is in the defined region, while (x2, y2) in the undefined one.
+ * The result is returned in 
+\*----------------------------------------------------------------------*/
+
+static void 
+bissect(PLINT (*defined) (PLFLT, PLFLT), PLINT niter,
+        PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2, PLFLT* xb, PLFLT* yb)
+{
+    PLFLT xm;
+    PLFLT ym;
+
+    if (niter == 0) {
+        *xb = x1;
+        *yb = y1;
+        return;
+    }
+
+    xm = (x1 + x2) / 2;
+    ym = (y1 + y2) / 2;
+
+    if (defined (xm, ym))
+      bissect (defined, niter - 1, xm, ym, x2, y2, xb, yb);
+    else
+      bissect (defined, niter - 1, x1, y1, xm, ym, xb, yb);      
+}
+
+/*----------------------------------------------------------------------*\
+ * exfill()
+ *
+ * Draws a polygon from points in x[] and y[] by taking into account 
+ * eventual exclusions
+\*----------------------------------------------------------------------*/
+
+static void 
+exfill(void (*fill) (PLINT, PLFLT *, PLFLT *),
+       PLINT (*defined) (PLFLT, PLFLT),
+       int n, PLFLT *x, PLFLT *y)
+{
+    if (defined == NULL)
+
+        (*fill) (n, x, y);
+
+    else {
+        PLFLT xx[16];  
+	PLFLT yy[16];
+	PLFLT xb, yb;  
+	PLINT count = 0;
+	PLINT is_inside = defined (x[n-1], y[n-1]);
+	PLINT i;
+
+        for (i = 0; i < n; i++) {
+
+	    if (defined(x[i], y[i])) {
+	        if (!is_inside) {
+		    if (i > 0)
+		        bissect (defined, 10,
+				 x[i], y[i], x[i-1], y[i-1], &xb, &yb);
+		    else
+		        bissect (defined, 10,
+				 x[i], y[i], x[n-1], y[n-1], &xb, &yb);
+		    xx[count] = xb;
+		    yy[count++] = yb;
+		}
+		xx[count] = x[i];
+		yy[count++] = y[i];
+		is_inside = 1;
+	    }
+	    else {
+	        if (is_inside) {
+		    if (i > 0)
+		        bissect (defined, 4,
+				 x[i-1], y[i-1], x[i], y[i], &xb, &yb);
+		    else
+		        bissect (defined, 4,
+				 x[n-1], y[n-1], x[i], y[i], &xb, &yb);
+		    xx[count] = xb;
+		    yy[count++] = yb;
+		    is_inside = 0;
+		}
+	    }
+	}
+	
+	if (count)
+  	    (*fill) (count, xx, yy);
+    }
 }
 
 /*----------------------------------------------------------------------*\
