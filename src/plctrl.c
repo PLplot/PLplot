@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1995/05/07 03:13:12  mjl
+ * Revision 1.32  1995/05/11 04:22:00  furnish
+ * Fix overrun of allocated memory.  Can now call plinit() again without
+ * getting an immediate core dump.
+ *
+ * Revision 1.31  1995/05/07  03:13:12  mjl
  * Changed debugging output to use new function pldebug().  Added static
  * functions plcmap0_def() and plcmap1_def() for setting up default color maps;
  * eliminated old global functions plCmap0_init() and plCmap1_init().  Changed
@@ -552,7 +556,7 @@ c_plscmap0n(PLINT ncol0)
     else if (ncol0 <= 0)
 	ncol = plsc->ncol0;
 
-    imax = ncol;
+    imax = ncol-1;
     size = ncol * sizeof(PLColor);
 
 /* Allocate the space */
