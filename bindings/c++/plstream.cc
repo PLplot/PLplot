@@ -6,10 +6,12 @@
 // @> Source file plstream.
 //---------------------------------------------------------------------------//
 
+using namespace std;
+
 #include "plplot.h"
 #include "plstream.h"
 
-#include <iostream.h>
+#include <iostream>
 
 PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p )
 {
