@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/06/30 18:43:02  mjl
+ * Revision 1.17  1994/07/18 20:29:58  mjl
+ * Fixed the escape function to pass ALL received escape commands.
+ *
+ * Revision 1.16  1994/06/30  18:43:02  mjl
  * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
  *
 */
@@ -466,15 +469,9 @@ plr_state(PLRDev *plr)
  * plr_esc()
  *
  * Handle all escape functions.
- * Note that most escape functions in the TK driver make direct widget
- * commands.
- *
- * Functions:
- *
- *	PLESC_EXPOSE	Force an expose
- *	PLESC_REDRAW	Force a redraw
- *	PLESC_FILL	Fill polygon
- *
+ * Only those that require additional data to be read need to be
+ * explicitly handled; the others are merely passed on to the actual
+ * driver. 
 \*----------------------------------------------------------------------*/
 
 static int
@@ -486,13 +483,12 @@ plr_esc(PLRDev *plr)
 
     switch (op) {
 
-    case PLESC_EXPOSE:
-    case PLESC_REDRAW:
-        pl_cmd((PLINT) op, NULL);
-	break;
-
     case PLESC_FILL:
 	plr_cmd( plresc_fill(plr) );
+	break;
+
+    default:
+        pl_cmd((PLINT) op, NULL);
 	break;
     }
 
