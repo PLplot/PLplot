@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.18  1993/08/03 01:46:41  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
-
+ * $Log$
+ * Revision 1.19  1993/08/11 19:18:05  mjl
+ * Changed debugging code to print to stderr instead of stdout.
+ *
+ * Revision 1.18  1993/08/03  01:46:41  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.17  1993/07/31  07:56:41  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
@@ -144,9 +147,9 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 	y1 < dev->ymin || y1 > dev->ymax ||
 	y2 < dev->ymin || y2 > dev->ymax) {
 
-	printf("PLPLOT: coordinates out of bounds in driver.\n");
-	printf("  Actual: (%i,%i), (%i,%i)   Bounds: (%i,%i,%i,%i)\n",
-	       x1, y1, x2, y2, dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+	fprintf(stderr, "PLPLOT: coordinates out of bounds in driver.\n");
+	fprintf(stderr, "  Actual: (%i,%i), (%i,%i)   Bounds: (%i,%i,%i,%i)\n",
+		x1, y1, x2, y2, dev->xmin, dev->xmax, dev->ymin, dev->ymax);
     }
 #endif
 
@@ -259,7 +262,8 @@ plD_bop_plm(PLStream *pls)
     if (pls->lp_offset > 0) {
 #ifdef DEBUG
 	U_LONG foo;
-	printf("Location: %d, seeking to: %d\n", cp_offset, pls->lp_offset);
+	fprintf(stderr, "Location: %d, seeking to: %d\n",
+		cp_offset, pls->lp_offset);
 #endif
 	fwbyte_offset = pls->lp_offset + 7;
 	if (pl_fsetpos(pls->OutFile, &fwbyte_offset))
@@ -269,7 +273,8 @@ plD_bop_plm(PLStream *pls)
 	if (pl_fgetpos(pls->OutFile, &fwbyte_offset))
 	    plexit("plD_bop_plm: fgetpos call failed");
 
-	printf("Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
+	fprintf(stderr, "Now at: %d, to write: %d\n",
+		fwbyte_offset, cp_offset);
 #endif
 
 	plm_wr(pdf_wr_4bytes(pls->OutFile, (U_LONG) cp_offset));
@@ -280,7 +285,7 @@ plD_bop_plm(PLStream *pls)
 	    plexit("plD_bop_plm: fsetpos call failed");
 
 	plm_rd(pdf_rd_4bytes(pls->OutFile, &foo));
-	printf("Value read as: %d\n", foo);
+	fprintf(stderr, "Value read as: %d\n", foo);
 #endif
 
 	if (pl_fsetpos(pls->OutFile, &cp_offset))

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1993/08/09 22:18:56  mjl
+ * Revision 1.3  1993/08/11 19:19:17  mjl
+ * Changed debugging code to print to stderr instead of stdout.
+ *
+ * Revision 1.2  1993/08/09  22:18:56  mjl
  * Miscellaneous cleaning up.
  *
  * Revision 1.1  1993/07/16  22:38:13  mjl
@@ -86,7 +89,7 @@ plctest(PLFLT *x, PLFLT level)
     negative = left * left + bottom * bottom +
 	(1.0 - top) * (1.0 - top) + (1.0 - right) * (1.0 - right);
 #ifdef DEBUG
-    printf("ctest pos %f neg %f lev %f\n", positive, negative, level);
+    fprintf(stderr, "ctest pos %f neg %f lev %f\n", positive, negative, level);
 #endif
     if (RATIO_SQ * positive < negative)
 	return POSITIVE_SLOPE;
@@ -96,7 +99,7 @@ plctest(PLFLT *x, PLFLT level)
     a = X(1, 2) - X(2, 1);
     b = X(1, 1) - X(2, 2);
 #ifdef DEBUG
-    printf("ctest a %f  b %f\n", a, b);
+    fprintf(stderr, "ctest a %f  b %f\n", a, b);
 #endif
     if (fabs(a) > fabs(b))
 	return NEGATIVE_SLOPE;
