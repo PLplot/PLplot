@@ -80,6 +80,15 @@ proc plconfig {} {
 	option add *Scrollbar.foreground	$gen_bg
 	option add *Scrollbar.activeForeground	$gen_bg
 	option add *Scrollbar.background	$gen_darker_bg
+
+# This specifies the default plplot widget background color.
+
+	option add *plwin.background		black
+
+    } else {
+
+	option add *plwin.background		white
+
     }
 
 #----------------------------------------------------------------------------
