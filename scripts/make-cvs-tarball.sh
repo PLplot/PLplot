@@ -12,13 +12,12 @@ SF_CVSROOT=cvs.plplot.sourceforge.net:/cvsroot/plplot
 CVSTMPDIR=plplot-cvs-tarball
 
 rm -rf $CVSTMPDIR
-cvs -d${SF_USER}@$SF_CVSROOT co -d$CVSTMPDIR  plplot
+cvs -d${SF_USER}@$SF_CVSROOT export -d$CVSTMPDIR -D now plplot
 cd $CVSTMPDIR
-rm -rf `find . -name CVS`
 
 VERSION=${1:+--version=$1}
-echo ./bootstrap.sh ${VERSION:---date-version}
-./configure --enable-builddoc --enable-python --enable-octave --enable-f77
+./bootstrap.sh ${VERSION:---date-version}
+./configure --enable-builddoc
 make dist
 TARBALL=`ls plplot-*.tar.gz`
 mv $TARBALL ..
