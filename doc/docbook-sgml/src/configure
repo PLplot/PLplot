@@ -1142,7 +1142,7 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "Makefile eps2jpeg.pl  tex2eps.pl" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "Makefile inline-greek.pl eps2jpeg.pl tex2eps.pl" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -1222,7 +1222,7 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"Makefile eps2jpeg.pl  tex2eps.pl"}
+CONFIG_FILES=\${CONFIG_FILES-"Makefile inline-greek.pl eps2jpeg.pl tex2eps.pl"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

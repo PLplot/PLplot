@@ -134,4 +134,4 @@ CHECK_DTD(
   [declaration/docbook.dtd],
   [docbook (v3.1)])
 
-AC_OUTPUT([Makefile eps2jpeg.pl  tex2eps.pl])
+AC_OUTPUT([Makefile inline-greek.pl eps2jpeg.pl tex2eps.pl])
