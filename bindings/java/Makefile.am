@@ -38,10 +38,10 @@ sources = plplotjavac_wrap.c
 plplotjavac_wrap.c plplotjavac.java: plplotjavac.i plplotcapi.i
 	swig -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
-libplplotjava_la_SOURCES  = $(sources)
+nodist_libplplotjava_la_SOURCES  = $(sources)
 libplplotjava_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 
-libplplotjavad_la_SOURCES = $(libplplotjava_la_SOURCES)
+nodist_libplplotjavad_la_SOURCES = $(libplplotjava_la_SOURCES)
 libplplotjavad_la_LDFLAGS = $(libplplotjava_la_LDFLAGS)
 
 javadir = $(libdir)/java/plplot/core

@@ -46,7 +46,7 @@ plplotcmodule_p_double.c plplotc.py: plplotcmodule.i
 plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 	@PYTHON@ makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
 
-_plplotcmodule_la_SOURCES  = plplotcmodule_double.c
+nodist__plplotcmodule_la_SOURCES  = plplotcmodule_double.c
 
 else
 libplplot = -L../../src -lplplot
@@ -57,7 +57,7 @@ plplotcmodule_p_single.c plplotc.py: plplotcmodule.i
 plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
 	@PYTHON@ makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
 
-_plplotcmodule_la_SOURCES  = plplotcmodule_single.c
+nodist__plplotcmodule_la_SOURCES  = plplotcmodule_single.c
 endif
 
 # plplot.py is our hand-crafted user-friendly interface wrapper to plplotc.py
