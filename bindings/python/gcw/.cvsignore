@@ -1,8 +1,0 @@
-.deps
-.libs
-Makefile
-Makefile.in
-*.defs
-*.lo
-*.la
-cplplotcanvas.c
