@@ -164,7 +164,8 @@ main(int argc, char *argv[])
 void
 plot1(int do_test)
 {
-  int i, st;
+  int i;
+  PLINT st;
     PLFLT xmin, xmax, ymin, ymax;
 
     for (i = 0; i < 60; i++) {
