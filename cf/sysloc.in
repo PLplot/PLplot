@@ -25,7 +25,7 @@ if test "$enable_x11" = "yes"; then
 	AC_FIND_X
 
 	XINCDIR="$x_includes"
-	if test -z "$XINCDIR" ; then
+	if test -z "$XINCDIR"; then
 	    AC_TEST_CPP([#include <X11/Intrinsic.h>], [ XINCDIR="default" ], [
 	    places="\
 	    /usr/include \
@@ -45,23 +45,23 @@ if test "$enable_x11" = "yes"; then
 	    /usr/unsupported/include"
 
 	    for dir in $places; do
-		if test -r $dir/X11/Intrinsic.h; then
+		if test -r "$dir/X11/Intrinsic.h"; then
 		    XINCDIR=$dir
 		    break
 		fi
 	    done
-	    if test -z "$XINCDIR" ; then
+	    if test -z "$XINCDIR"; then
 		echo "Warning:  couldn't find any X11 include files."
 		XINCDIR="default"
 		enable_x11="no"
 	    fi ])
 	fi
-	if test "$XINCDIR" = "/usr/include" ; then
+	if test "$XINCDIR" = "/usr/include"; then
 	    XINCDIR="default"
 	fi
 
 	XLIBDIR="$x_libraries"
-	if test -z "$XLIBDIR" ; then
+	if test -z "$XLIBDIR"; then
 	    AC_HAVE_LIBRARY(X11, [ XLIBDIR="default" ], [
 	    places="\
 	    /lib \
@@ -78,27 +78,27 @@ if test "$enable_x11" = "yes"; then
 	    /usr/unsupported/lib"
 
 	    for dir in $places; do
-		if test -r $dir/libX11.a; then
+		if test -r "$dir/libX11.a"; then
 		    XLIBDIR=$dir
 		    break
 		fi
 	    done
-	    if test -z "$XLIBDIR" ; then
+	    if test -z "$XLIBDIR"; then
 		echo "Warning:  couldn't find the X11 library archive. "
 		XLIBDIR="default"
 	    fi ])
 	fi
-	if test "$XLIBDIR" = "/usr/lib" ; then
+	if test "$XLIBDIR" = "/usr/lib"; then
 	    XLIBDIR="default"
 	fi
     fi
 
     XINCSW=""
-    if test "$XINCDIR" != "default" ; then
+    if test "$XINCDIR" != "default"; then
 	XINCSW="-I$XINCDIR"
     fi
     XLIBSW=""
-    if test "$XLIBDIR" != "default" ; then
+    if test "$XLIBDIR" != "default"; then
 	XLIBSW="-L$XLIBDIR"
     fi
 
@@ -141,16 +141,16 @@ if test "$enable_tcl" = "yes"; then
 	$XINCDIR"
 
 	for dir in $places; do
-	    if test -r $dir/tcl.h ; then
+	    if test -r "$dir/tcl.h"; then
 		TCLINCDIR=$dir
 		break
 	    fi
 	done
-	if test -z "$TCLINCDIR" ; then
+	if test -z "$TCLINCDIR"; then
 	    echo "can't find tcl.h, disabling Tcl support. "
 	    enable_tcl="no"
 	fi
-	if test "$TCLINCDIR" = "/usr/include" ; then
+	if test "$TCLINCDIR" = "/usr/include"; then
 	    TCLINCDIR= "default"
 	fi
     fi
@@ -159,10 +159,10 @@ fi
 if test "$enable_tcl" = "yes"; then
     AC_SUBST(TCLINCDIR)
     TCLINCSW=""
-    if test "$TCLINCDIR" != "default" ; then
+    if test "$TCLINCDIR" != "default"; then
 	TCLINCSW="-I$TCLINCDIR"
     fi
-    if test "$TCLINCDIR" != "$XINCDIR" ; then
+    if test "$TCLINCDIR" != "$XINCDIR"; then
 	INCS="$INCS $TCLINCSW"
     fi
 fi
@@ -173,7 +173,7 @@ fi
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
-	echo "checking for libtcl"
+	echo "checking for -ltcl"
 	TCLLIBDIR=""
 	places="\
 	/usr/local/lib \
@@ -187,17 +187,17 @@ if test "$enable_tcl" = "yes"; then
 	/usr/lib"
 
 	for dir in $places; do
-	    if test -r $dir/libtcl.a -o -r $dir/libtcl.sl ; then
+	    if test -r "$dir/libtcl.a" -o -r "$dir/libtcl.sl"; then
 		TCLLIBDIR=$dir
 		break
 	    fi
 	done
 
-	if test -z "$TCLLIBDIR" ; then
+	if test -z "$TCLLIBDIR"; then
 	    echo "can't find Tcl library, disabling Tcl support. "
 	    enable_tcl="no"
 	fi
-	if test "$TCLLIBDIR" = "/usr/lib" ; then
+	if test "$TCLLIBDIR" = "/usr/lib"; then
 	    TCLLIBDIR= "default"
 	fi
     fi
@@ -213,7 +213,7 @@ AC_ENABLE(dp, , enable_dp=$enable_tcl)
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPLIBDIR"; then
-	echo "checking for libdpnetwork"
+	echo "checking for -ldpnetwork"
 	DPLIBDIR=""
 	places="\
 	$TCLLIBDIR \
@@ -226,16 +226,16 @@ if test "$enable_dp" = "yes"; then
 	/usr/lib"
 
 	for dir in $places; do
-	    if test -r $dir/libdpnetwork.a -o -r $dir/libdpnetwork.sl ; then
-		DPLIBDIR=$dir
+	    if test -r "$dir/libdpnetwork.a" -o -r "$dir/libdpnetwork.sl"; then
+		DPLIBDIR="$dir"
 		break
 	    fi
 	done
-	if test -z "$DPLIBDIR" ; then
+	if test -z "$DPLIBDIR"; then
 	    echo "can't find Tcl-DP library, disabling Tcl-DP support. "
 	    enable_dp="no"
 	fi
-	if test "$DPLIBDIR" = "/usr/lib" ; then
+	if test "$DPLIBDIR" = "/usr/lib"; then
 	    DPLIBDIR="default"
 	fi
     fi
@@ -251,7 +251,7 @@ AC_ENABLE(itcl, , enable_itcl=$enable_tcl)
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
-	echo "checking for libitcl"
+	echo "checking for -litcl"
 	ITCLLIBDIR=""
 	places="\
 	$TCLLIBDIR \
@@ -264,16 +264,16 @@ if test "$enable_itcl" = "yes"; then
 	/usr/lib"
 
 	for dir in $places; do
-	    if test -r $dir/libitcl.a -o -r $dir/libitcl.sl ; then
+	    if test -r "$dir/libitcl.a" -o -r "$dir/libitcl.sl"; then
 		ITCLLIBDIR=$dir
 		break
 	    fi
 	done
-	if test -z "$ITCLLIBDIR" ; then
+	if test -z "$ITCLLIBDIR"; then
 	    echo "can't find Itcl library, disabling Itcl support. "
 	    enable_itcl="no"
 	fi
-	if test "$ITCLLIBDIR" = "/usr/lib" ; then
+	if test "$ITCLLIBDIR" = "/usr/lib"; then
 	    ITCLLIBDIR="default"
 	fi
     fi
@@ -301,16 +301,16 @@ if test "$enable_tk" = "yes"; then
 	/usr/include"
 
 	for dir in $places; do
-	    if test -r $dir/tk.h ; then
+	    if test -r "$dir/tk.h"; then
 		TKINCDIR=$dir
 		break
 	    fi
 	done
-	if test -z "$TKINCDIR" ; then
+	if test -z "$TKINCDIR"; then
 	    echo "can't find tk.h, disabling Tk support. "
 	    enable_tk="no"
 	fi
-	if test "$TKINCDIR" = "/usr/include" ; then
+	if test "$TKINCDIR" = "/usr/include"; then
 	    TKINCDIR="default"
 	fi
     fi
@@ -319,7 +319,7 @@ fi
 if test "$enable_tk" = "yes"; then
     AC_SUBST(TKINCDIR)
     TKINCSW=""
-    if test "$TKINCDIR" != "default" ; then
+    if test "$TKINCDIR" != "default"; then
 	TKINCSW="-I$TKINCDIR"
     fi
     if test "$TKINCDIR" != "$TCLINCDIR"; then
@@ -333,7 +333,7 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
-	echo "checking for libtk"
+	echo "checking for -ltk"
 	TKLIBDIR=""
 	places="\
 	$TCLLIBDIR \
@@ -346,16 +346,16 @@ if test "$enable_tk" = "yes"; then
 	/usr/lib"
 
 	for dir in $places; do
-	    if test -r $dir/libtk.a -o -r $dir/libtk.sl ; then
+	    if test -r "$dir/libtk.a" -o -r "$dir/libtk.sl"; then
 		TKLIBDIR=$dir
 		break
 	    fi
 	done
-	if test -z "$TKLIBDIR" ; then
+	if test -z "$TKLIBDIR"; then
 	    echo "can't find TK library, disabling Tk support. "
 	    enable_tk="no"
 	fi
-	if test "$TKLIBDIR" = "/usr/lib" ; then
+	if test "$TKLIBDIR" = "/usr/lib"; then
 	    TKLIBDIR="default"
 	fi
     fi
@@ -370,7 +370,7 @@ fi
 if test "$enable_tk" = "yes"; then
     AC_SUBST(TKLIBDIR)
     TKLIBSW=""
-    if test "$TKLIBDIR" != "default" ; then
+    if test "$TKLIBDIR" != "default"; then
 	TKLIBSW="-L$TKLIBDIR"
     fi
     LIBS="$LIBS $TKLIBSW -ltk"
@@ -379,7 +379,7 @@ fi
 if test "$enable_itcl" = "yes"; then
     AC_SUBST(ITCLLIBDIR)
     ITCLLIBSW=""
-    if test "$ITCLLIBDIR" != "default" ; then
+    if test "$ITCLLIBDIR" != "default"; then
 	ITCLLIBSW="-L$ITCLLIBDIR"
     fi
     if test "$ITCLLIBDIR" = "$TKLIBDIR"; then
@@ -392,7 +392,7 @@ fi
 if test "$enable_dp" = "yes"; then
     AC_SUBST(DPLIBDIR)
     DPLIBSW=""
-    if test "$DPLIBDIR" != "default" ; then
+    if test "$DPLIBDIR" != "default"; then
 	DPLIBSW="-L$DPLIBDIR"
     fi
     if test "$DPLIBDIR" = "$TKLIBDIR" -o \
@@ -406,12 +406,12 @@ fi
 if test "$enable_tcl" = "yes"; then
     AC_SUBST(TCLLIBDIR)
     TCLLIBSW=""
-    if test "$TCLLIBDIR" != "default" ; then
+    if test "$TCLLIBDIR" != "default"; then
 	TCLLIBSW="-L$TCLLIBDIR"
     fi
     if test "$TCLLIBDIR" = "$TKLIBDIR" -o \
 	"$TCLLIBDIR" = "$ITCLLIBDIR" -o \
-	"$TCLLIBDIR" = "$DPLIBDIR" ; then
+	"$TCLLIBDIR" = "$DPLIBDIR"; then
 	LIBS="$LIBS -ltcl"
     else
 	LIBS="$LIBS $TCLLIBSW -ltcl"
@@ -422,7 +422,7 @@ if test "$enable_x11" = "yes"; then
     if test "$XLIBDIR" = "$TKLIBDIR" -o \
 	"$XLIBDIR" = "$ITCLLIBDIR" -o \
 	"$XLIBDIR" = "$DPLIBDIR" -o \
-	"$XLIBDIR" = "$TCLLIBDIR" ; then
+	"$XLIBDIR" = "$TCLLIBDIR"; then
 	LIBS="$LIBS -lX11"
     else
 	LIBS="$LIBS $XLIBSW -lX11"
@@ -445,8 +445,8 @@ if test -z "$EXTRA_LIBS"; then
     AC_HAVE_LIBRARY(Xbsd,   [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
     AC_HAVE_LIBRARY(socket, [EXTRA_LIBS="$EXTRA_LIBS -lsocket"])
     AC_HAVE_LIBRARY(nsl,    [EXTRA_LIBS="$EXTRA_LIBS -lnsl"])
-    AC_HAVE_LIBRARY(-lieee, [EXTRA_LIBS="$EXTRA_LIBS -lieee"])
-    AC_HAVE_LIBRARY(-lm,    [EXTRA_LIBS="$EXTRA_LIBS -lm"])
+    AC_HAVE_LIBRARY(ieee,   [EXTRA_LIBS="$EXTRA_LIBS -lieee"])
+    AC_HAVE_LIBRARY(m,      [EXTRA_LIBS="$EXTRA_LIBS -lm"])
 fi
 LIBS="$LIBS $EXTRA_LIBS"
 
@@ -458,7 +458,7 @@ AC_SUBST(LIBS)
 # -----------------------------------------------------------------------
 
 if test "$with_f2c" = "yes"; then
-    AC_HAVE_LIBRARY(-lf2c, [LIBS="$LIBS -lf2c"],
+    AC_HAVE_LIBRARY(f2c, [LIBS="$LIBS -lf2c"],
     [echo "Warning:  couldn't find libf2c."])
 fi
 
