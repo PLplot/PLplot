@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1994/07/01 20:44:23  mjl
+# Revision 1.2  1994/07/24 07:42:59  mjl
+# Eliminated "destroy ." in favor of "exit".
+#
+# Revision 1.1  1994/07/01  20:44:23  mjl
 # Added to illustrate multiple toplevels containing plframes.
 #
 ###############################################################################
@@ -90,7 +93,7 @@ pack append .1 .1.plw {left expand fill}
 # Punch eject and hold onto your seat !!!
 
 proc quit a {
-    destroy .
+    exit
 }
 
 # Utility routine.
