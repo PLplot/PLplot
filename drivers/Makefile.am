@@ -411,9 +411,7 @@ endif
 docdir = $(DOCDIR)
 doc_DATA = README.drivers
 
-EXTRA_DIST = $(doc_DATA) next.c
+EXTRA_DIST = $(doc_DATA) next.c $(drivers_DATA)
 
 CLEANFILES = *.rc
 DISTCLEANFILES = $(drivers_DATA)
-
-

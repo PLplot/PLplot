@@ -24,7 +24,8 @@ cleanup
 cvs -d${SF_USER}@$SF_CVSROOT export -d$CVSTMPDIR -D now plplot \
   && cd $CVSTMPDIR \
   && ./bootstrap.sh ${VERSION:---date-version} \
-  && ./configure --enable-builddoc \
+  && ./configure --enable-builddoc --enable-gnome \
+  && make \
   && make dist \
   && TARBALL=`ls plplot-*.tar.gz` \
   && mv $TARBALL .. \
