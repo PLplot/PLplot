@@ -31,7 +31,7 @@ static void	StructureProc	(ClientData, XEvent *);
 *
 * tk_toplevel --
 *
-*	Creates top level window.
+*	Create top level window.
 *
 * Results:
 *	Returns 1 on error.
@@ -43,7 +43,7 @@ static void	StructureProc	(ClientData, XEvent *);
 
 int
 tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	    char *display, char *name, int options)
+	    char *display, char *basename, char *classname, int options)
 {
     char *new_name;
     char wcmd[] = "wm withdraw .";
@@ -53,14 +53,21 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 * use the part following the last "/" so that name can be loaded with 
 * argv[0] by caller.
 */
-    new_name = strrchr(name, '/');
-    if (new_name != NULL) {
-	name = ++new_name;
-    }
+    new_name = strrchr(basename, '/');
+    if (new_name != NULL) 
+	basename = ++new_name;
+
+    new_name = strrchr(classname, '/');
+    if (new_name != NULL) 
+	classname = ++new_name;
 
 /* Create the main window */
 
-    *w = Tk_CreateMainWindow(interp, display, name);
+#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 3)
+    *w = Tk_CreateMainWindow(interp, display, basename);
+#else
+    *w = Tk_CreateMainWindow(interp, display, basename, classname);
+#endif
     if (*w == NULL) {
 	fprintf(stderr, "%s\n", (interp)->result);
 	return(1);
