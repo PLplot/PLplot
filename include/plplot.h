@@ -159,6 +159,7 @@ typedef void* PLPointer;
 #define PLESC_DOUBLEBUFFERING	15	/* configure double buffering */
 #define PLESC_XORMOD		16	/* jc: set xor mode */
 #define PLESC_SET_COMPRESSION	17	/* AFR: set compression */
+#define PLESC_CLEAR		18      /* RL: clear graphics region */
 
 /* Window parameter tags */
 
@@ -400,6 +401,7 @@ typedef struct {
 #ifndef __PLSTUBS_H__	/* i.e. do not expand this in the stubs */
 
 #define    pladv	c_pladv
+#define    plclear	c_plclear
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
 #define    plbop	c_plbop

@@ -149,6 +149,7 @@ fi
 incdirs_default="\
 /usr/include/tcl8.2/generic \
 $prefix/include/itcl \
+/usr/include/itcl3.1/generic/ \
 $prefix/include \
 $HOME/local/include \
 $HOME/include \
@@ -363,6 +364,61 @@ fi
 if test ! -z "$TCL_DL_LIBS"; then
     ADD_TO_LIBS( default, $TCL_DL_LIBS, LIBS, LIBPATH)
 fi
+
+# ----------------------------------------------------------------------------
+# Gnome/GTK configuration tests
+# Added by Rafael Laboissier on Fri Feb 23 21:34:40 CET 2001
+# ----------------------------------------------------------------------------
+
+if test "$enable_gnome" = "yes"; then
+
+  AC_LANG_SAVE
+  AC_LANG_C
+  AM_PATH_GTK(1.2.7,
+    [ GNOME_INIT
+      if test "$GNOME_CONFIG" = "no"; then
+        enable_gnome=no 
+      fi ], 
+    [ enable_gnome=no ], 
+    gthread)
+
+  if test "$enable_gnome" = "yes"; then
+
+    # Include Gtk and Gnome libs
+    for i in $GTK_LIBS $GNOME_LIBDIR $GNOMEUI_LIBS ; do
+      case $i in 
+      -L* )
+        d=`echo $i | sed 's/-L//'`
+        ADD_TO_LIBS( $d, "", LIBS, LIBPATH)
+      ;;
+      -l* )
+        ADD_TO_LIBS( default, $i, LIBS, LIBPATH)
+      ;;
+      *)
+      ;;
+      esac
+    done
+
+    # Include Gtk and Gnome include dirs
+    GNOME_FLAGS=""
+    for i in $GTK_CFLAGS $GNOME_INCLUDEDIR ; do
+      case $i in 
+      -I* )
+        ADD_TO_INCS( `echo $i | sed 's/-I//'`, INCS, INCPATH)
+      ;;
+      -D* )
+        GNOME_FLAGS="$GNOME_FLAGS $i"
+      ;;
+      *)
+      ;;
+      esac
+    done
+    
+  fi
+
+  AC_LANG_RESTORE
+
+fi 
 
 # ----------------------------------------------------------------------------
 # Debugging malloc

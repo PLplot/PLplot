@@ -1,0 +1,10 @@
+# -*-makefile-*----------------------------------------------------------------
+# $Id$
+#
+# Rafael Laboissiere
+# Fri Feb 23 22:43:54 CET 2001
+#
+# Make assignments for Gnome driver support.
+# -----------------------------------------------------------------------------
+
+GNOME_OBJ	= gnome$O

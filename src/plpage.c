@@ -40,6 +40,24 @@ c_pladv(PLINT page)
 }
 
 /*--------------------------------------------------------------------------*\
+ * void plclear()
+ *
+ * Clear current subpage.  Subpages can be set with pladv before 
+ * calling plclear. Not all drivers support this.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plclear()
+{
+    if (plsc->level < 1) {
+	plabort("plclear: Please call plinit first");
+	return;
+    }
+
+    plP_esc(PLESC_CLEAR, NULL);
+}
+
+/*--------------------------------------------------------------------------*\
  * void pleop()
  *
  * End current page.

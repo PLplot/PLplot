@@ -32,6 +32,15 @@ void plD_tidy_xw		(PLStream *);
 void plD_state_xw		(PLStream *, PLINT);
 void plD_esc_xw			(PLStream *, PLINT, void *);
 
+void plD_init_gnome		(PLStream *);
+void plD_line_gnome		(PLStream *, short, short, short, short);
+void plD_polyline_gnome		(PLStream *, short *, short *, PLINT);
+void plD_eop_gnome		(PLStream *);
+void plD_bop_gnome		(PLStream *);
+void plD_tidy_gnome		(PLStream *);
+void plD_state_gnome		(PLStream *, PLINT);
+void plD_esc_gnome		(PLStream *, PLINT, void *);
+
 void plD_init_xterm		(PLStream *);
 void plD_init_tekt		(PLStream *);
 void plD_init_tekf		(PLStream *);
