@@ -131,7 +131,7 @@ export cdir=$EXAMPLES_DIR/c           \
        tcldir=$EXAMPLES_DIR/tcl       \
        octave=@OCTAVE@                \
        octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//: \
-       PATH=@prefix@/bin:$EXAMPLES_DIR/../utils:$PATH
+       PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
 
 fe=""
 
