@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/27 01:41:39  mjl
-   Changed from ftell/fseek to fgetpos/fsetpos.
+   Revision 1.8  1993/02/27 04:50:33  mjl
+   Simplified fgetpos/fsetpos usage, to where it will now actually work on rays,
+   and I hope the Amiga and Linux also.  Lesson to all: seeking in C is fragile!
+   Also added lots of diagnostics, enabled when DEBUG is defined.
 
+ * Revision 1.7  1993/02/27  01:41:39  mjl
+ * Changed from ftell/fseek to fgetpos/fsetpos.
+ *
  * Revision 1.6  1993/02/22  23:11:01  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -51,10 +56,10 @@
 */
 #ifdef PLMETA
 
+#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
 
-#include "plplot.h"
 #include "drivers.h"
 #include "metadefs.h"
 #include "pdf.h"
@@ -259,38 +264,47 @@ void
 plm_page(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
-
-    fpos_t cp_offset;
-    U_LONG o_lp_offset;
-    U_CHAR o_c;
-    U_SHORT o_page;
+    U_LONG foo;
+    fpos_t cp_offset, fwbyte_offset, bwbyte_offset;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
+    fflush(pls->OutFile);
     if (fgetpos(pls->OutFile, &cp_offset))
 	plexit("plm_page: fgetpos call failed");
 
-/* Seek back to beginning of last page and write byte offset. */
+/* Seek back to previous page header and write forward byte offset. */
 
     if (pls->lp_offset > 0) {
-	if (fsetpos(pls->OutFile, &pls->lp_offset))
+#ifdef DEBUG
+	printf("Location: %d, seeking to: %d\n", cp_offset, pls->lp_offset);
+#endif
+
+	fwbyte_offset = pls->lp_offset + 7;
+	if (fsetpos(pls->OutFile, &fwbyte_offset))
 	    plexit("plm_page: fsetpos call failed");
 
-	plm_rd(read_1byte(pls->OutFile, &o_c));
-	plm_rd(read_2bytes(pls->OutFile, &o_page));
-	plm_rd(read_4bytes(pls->OutFile, &o_lp_offset));
-	fflush(pls->OutFile);
+#ifdef DEBUG
+	if (fgetpos(pls->OutFile, &fwbyte_offset))
+	    plexit("plm_page: fgetpos call failed");
+
+	printf("Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
+#endif
 
 	plm_wr(write_4bytes(pls->OutFile, (U_LONG) cp_offset));
 	fflush(pls->OutFile);
 
+#ifdef DEBUG
+	if (fsetpos(pls->OutFile, &fwbyte_offset))
+	    plexit("plm_page: fsetpos call failed");
+
+	plm_rd(read_4bytes(pls->OutFile, &foo));
+	printf("Value read as: %d\n", foo);
+#endif
+
 	if (fsetpos(pls->OutFile, &cp_offset))
 	    plexit("plm_page: fsetpos call failed");
-#ifdef DEBUG
-	printf("Page cmd: %d, old page: %d, lpoff: %d, cpoff: %d\n",
-	       o_c, o_page, pls->lp_offset, cp_offset);
-#endif
     }
 
 /* Start next family file if necessary. */
@@ -300,15 +314,14 @@ plm_page(PLStream *pls)
 /* Write new page header */
 
     pls->page++;
-    if (fgetpos(pls->OutFile, &cp_offset))
-	plexit("plm_page: fgetpos call failed");
+    bwbyte_offset = pls->lp_offset;
 
     plm_wr(write_1byte(pls->OutFile, c));
     plm_wr(write_2bytes(pls->OutFile, (U_SHORT) pls->page));
-    plm_wr(write_4bytes(pls->OutFile, (U_LONG) pls->lp_offset));
-    plm_wr(write_4bytes(pls->OutFile, (U_LONG) (0)));
-    pls->bytecnt += 11;
+    plm_wr(write_4bytes(pls->OutFile, (U_LONG) bwbyte_offset));
+    plm_wr(write_4bytes(pls->OutFile, (U_LONG) 0));
 
+    pls->bytecnt += 11;
     pls->lp_offset = cp_offset;
 }
 
