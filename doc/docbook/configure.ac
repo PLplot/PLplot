@@ -40,6 +40,7 @@ AC_ARG_WITH(rcp-command,
   [RCP="scp"])
 AC_SUBST(RCP)
 
+
 dnl Website of the PLplot project
 
 AC_ARG_WITH(plplot-website,
@@ -47,18 +48,6 @@ AC_ARG_WITH(plplot-website,
   [PLPLOT_WEBSITE="$withval"],
   [PLPLOT_WEBSITE="plplot.sf.net"])
 AC_SUBST(PLPLOT_WEBSITE)
-
-
-dnl Controlling were the HTML files should go
-
-HTML_MANIFEST=HTML-MANIFEST
-AC_SUBST(HTML_MANIFEST)
-
-BASE=$PACKAGE-$VERSION
-AC_SUBST(BASE)
-
-BASE_HTML=$PACKAGE-html-$VERSION
-AC_SUBST(BASE_HTML)
 
 
 dnl System wide XML declaration
@@ -288,12 +277,6 @@ CHECK_DTD(
 
 dnl Info building
 
-INFO_MANIFEST=INFO-MANIFEST
-AC_SUBST(INFO_MANIFEST)
-
-BASE_INFO=$PACKAGE-info-$VERSION
-AC_SUBST(BASE_INFO)
-
 AC_DEFUN(CHECK_PERL_SCRIPT, [
 
 pushdef([PROG], translit($1, [a-z], [A-Z]))
@@ -368,17 +351,6 @@ AC_SUBST(DOCBOOK2X_INC)
 CHECK_PM(XML::DOM, xml_dom, [INFO])
 CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
 CHECK_PM(XML::Writer, xml_writer, [INFO])
-
-dnl Man pages building
-
-MAN_MANIFEST=MAN-MANIFEST
-AC_SUBST(MAN_MANIFEST)
-
-BASE_MAN=$PACKAGE-man-$VERSION
-AC_SUBST(BASE_MAN)
-
-MANVOL=3plplot
-AC_SUBST(MANVOL)
 
 dnl Output commands
 
