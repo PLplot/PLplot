@@ -47,7 +47,7 @@ endif
 
 use_plplot_lcd = pwd;
 cd (use_plplot_path);
-for use_plplot_i = [ glob("*.m "); glob("support/*.m ") ]'
+for  use_plplot_i = [ char(glob("*.m ")); char(glob("support/*.m ")) ]'
   clear (strrep (strrep (deblank(use_plplot_i'), ".m", ""), "support/", ""));
 end
 cd (use_plplot_lcd);
