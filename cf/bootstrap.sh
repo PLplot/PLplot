@@ -22,7 +22,9 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# Filter "underquoted definitions" warnings from aclocal output
+# Filter "underquoted definitions" warnings from aclocal output.  This
+# should not be necessary in teh distant future (today is 2004-02),
+# when all the third party m4 macros will be properly quoted.
 
 function filter {
   fgrep -v underquoted | fgrep -v "run info" | fgrep -v sources.redhat
@@ -113,7 +115,7 @@ fi
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
 # aclocal -I option below must be given the absolute path of the cf/ dir,
-# otherwise it is not considered as ëxternal"to the project (this is, 
+# otherwise it is not considered as ëxternal"to the project (this is,
 # at least, the case for aclocal-1.8)
 
 run aclocal -I `pwd`/cf $aclocal_opts \

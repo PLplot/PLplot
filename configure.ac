@@ -205,13 +205,9 @@ PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
 ### Modify system-dependent results based on availability
 m4_include(cf/freetype.ac)
-
 m4_include(cf/octave.ac)
-
 m4_include(cf/csiro.ac)
-
 m4_include(cf/swig.ac)
-
 m4_include(cf/pthread.ac)
 
 # ----------------------------------------------------------------------------
