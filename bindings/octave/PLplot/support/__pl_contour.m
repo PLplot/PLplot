@@ -84,7 +84,7 @@ function __pl_contour(x, y, z, n)
   for i=1:n
     plcol(__pl.plcol(__pl_strm)); pllsty(__pl.pllsty(__pl_strm));
     plcont(z, 1, xlen, 1, ylen, clevel(i), tr);
-    __pl.lab_str = [__pl.lab_str; sprintf("% .2G", clevel(i))];
+    __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", clevel(i))];
     __pl.lab_col(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.plcol(__pl_strm);
     __pl.lab_lsty(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.pllsty(__pl_strm);
     __pl.lab_pos(__pl_strm) = __pl.lab_pos(__pl_strm) + 1;				
