@@ -839,7 +839,7 @@ ymax	PLFLT
 # Process input strings, treating them as an option and argument pair.
 
 # int
-# plSetOpt(char *opt, char *optarg);
+# plsetopt(char *opt, char *optarg);
 
 # Process options list using current options info.
 

@@ -1809,14 +1809,14 @@ int plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_tabl
 	    void (*usage_handler) (char *));
 */
 
-static char doc_plSetOpt[]="Process input strings, treating them as an option and argument pair";
+static char doc_plsetopt[]="Process input strings, treating them as an option and argument pair";
 
-static PyObject * pl_SetOpt(PyObject *self, PyObject *args)
+static PyObject * pl_setopt(PyObject *self, PyObject *args)
 {
     char *opt, *optarg;
     int status;
     TRY (PyArg_ParseTuple(args, "ss", &opt, &optarg));
-    status = plSetOpt(opt, optarg);
+    status = plsetopt(opt, optarg);
     return Py_BuildValue("i", status);
 }
 
@@ -1948,7 +1948,7 @@ static PyMethodDef pl_methods[] = {
     {"plwid",			pl_wid, 1, doc_plwid},
     {"plwind",		pl_wind, 1, doc_plwind},
     {"plParseOpts",	pl_ParseOpts, 1, doc_plParseOpts},
-    {"plSetOpt",		pl_SetOpt, 1, doc_plSetOpt},
+    {"plsetopt",		pl_setopt, 1, doc_plsetopt},
     {"plGetCursor",	pl_GetCursor, 1, doc_plGetCursor},
 
     /* These are a few functions from plplotP.h that I found I needed

@@ -1014,7 +1014,7 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
 
-    plSetOpt(argv[1], argv[2]);
+    plsetopt(argv[1], argv[2]);
 
     plflush();
     return TCL_OK;

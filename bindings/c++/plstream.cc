@@ -1581,7 +1581,7 @@ int plstream::SetOpt( char *opt, char *optarg )
 {
     set_stream();
 
-    return ::plSetOpt(opt, optarg);
+    return ::plsetopt(opt, optarg);
 }
 
 /* Process options list using current options info. */
