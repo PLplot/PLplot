@@ -13,9 +13,11 @@
 #include "plplot/drivers.h"
 #include "plplot/plevent.h"
 
-static int synchronize = 0;	/* change to 1 for synchronized operation */
-				/* for debugging only. */
+static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */
+
+static int buffered = 1;        /* make it a buffered device by default */
+                                /* use "-drvopt buffered=0" to make it unbuffered */ 
 
 /* When USE_DEFAULT_VISUAL is defined, DefaultVisual() is used to get the
  * visual.  Otherwise, the visual is obtained using XGetVisualInfo() to make a
@@ -153,7 +155,8 @@ static void  StoreCmap1		(PLStream *pls);
 static void  imageops           (PLStream *pls, int *ptr);
 
 static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X server operation (0|1)"},
-			      {NULL, DRV_INT, NULL, NULL}};
+				{"buffered", DRV_INT, &buffered, "Sets buffered operation (0|1)"},
+				{NULL, DRV_INT, NULL, NULL}};
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
 {
@@ -193,11 +196,16 @@ plD_init_xw(PLStream *pls)
     pls->termin = 1;		/* Is an interactive terminal */
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
-    pls->plbuf_write = 1;	/* Activate plot buffer */
+    /* pls->plbuf_write = 1; */	/* Activate plot buffer */
     pls->dev_fastimg = 1;       /* is a fast image device */
     pls->dev_xor = 1;           /* device support xor mode */
 
     plParseDrvOpts(xwin_options);
+
+    if (buffered)
+      pls->plbuf_write = 1;	/* Activate plot buffer */
+    else
+      pls->plbuf_write = 0;	/* Dont activate plot buffer */
 
 /* The real meat of the initialization done here */
 
@@ -530,6 +538,8 @@ plD_state_xw(PLStream *pls, PLINT op)
     switch (op) {
 
     case PLSTATE_WIDTH:
+        XSetLineAttributes( xwd->display, dev->gc, pls->width, 
+			    LineSolid, CapRound, JoinMiter);
 	break;
 
     case PLSTATE_COLOR0:{
@@ -2862,9 +2872,8 @@ DrawImage(PLStream *pls)
   
   nx = pls->dev_nptsX;
   ny = pls->dev_nptsY;
-  //printf("%d %d %d %d - %d %d\n", xmin, xmax, ymin, ymax, dev->width, dev->height);
 
-  /* the XGetImage() call fails if either the pixmap or window is not fully viewable! */
+  /* XGetImage() call fails if either the pixmap or window is not fully viewable! */
   oldErrorHandler = XSetErrorHandler(GetImageErrorHandler);
 
   XFlush(xwd->display); 
@@ -2879,7 +2888,7 @@ DrawImage(PLStream *pls)
   XSetErrorHandler(oldErrorHandler);
 
   if (ximg == NULL) {
-    plabort("Can't get image, it must be partly obscured.");
+    plabort("Can't get image, the window must be partly obscured.");
     return;
   }
 
@@ -2901,7 +2910,8 @@ DrawImage(PLStream *pls)
   }
 
   /* after rotation and coordinate translation, each fill
-     lozangue will have coordinates, slopes and y intercepts:
+     lozangue will have coordinates (Ppts), slopes (m...)
+     and y intercepts (b...):
 
            Ppts[3]
              /\
@@ -2943,8 +2953,13 @@ DrawImage(PLStream *pls)
 	Ppts[3].y = MIN(Ppts[3].y, ymax);
 	
 	/* the Z array has size (nx-1)*(ny-1) */
-	icol1 = plsc->dev_z[ix*(ny-1)+iy]/65535. * (xwd->ncol1-1);
+	icol1 = plsc->dev_z[ix*(ny-1)+iy];
 
+	/* only plot points within zmin/zmax range */
+	if (icol1 < plsc->dev_zmin || icol1 > plsc->dev_zmax)
+	  continue;
+
+	icol1 = icol1/(float)USHRT_MAX * (xwd->ncol1-1);
 	if (xwd->color)
 	  curcolor = xwd->cmap1[icol1];
 	else 
