@@ -34,7 +34,7 @@ include_dirs = [include_directory]
 include_dirs.append("@PYTHON_NUM_DIR@")
 
 library_dirs = [library_directory]
-libraries = ["plplotd"]
+libraries = ["@PLLIB_NAME@"]
 
 # Done with --flat or not plplot logic to decide extra_link_args, include_dirs,
 # library_dirs and libraries.
