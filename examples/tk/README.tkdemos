@@ -1,6 +1,10 @@
 Running the Tk Demos.
 
-PLplot must be installed before you can run these demos.
+PLplot doesn't need to be installed to run these demos.
+However, different commands might be needed to run the demos when PLplot
+is installed or not; in these cases, the first command must be used for
+the installed situation, while the second, separated by a `|´, is for the
+uninstalled situation.
 
 To run the plot.tcl demo follow the directions in that file to run it
 under plserver using the plframe widget.
@@ -12,14 +16,15 @@ following way:
 
 ./xtk01 -f tk01
 ./xtk02 -f tk02
-./tk03
+./tk03 		# to run this demo in the build tree, change line 11
+		# from "plserver" to "../../bindings/plserver"
 ./xtk04 -f tk04
 
 There are two ways to run tkdemos.tcl which exercises all the x??.tcl
 examples using the plframe widget:
 
 (1) 
-plserver
+plserver | ../../bindings/tk/plserver
 source tkdemos.tcl
 1
 2
@@ -33,7 +38,7 @@ prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
 you are running at this time (5.2.0 or whatever).
 
 wish
-lappend auto_path $prefix/lib/plplot$VERSION
+lappend auto_path $prefix/lib/plplot$VERSION | ../../bindings/tk
 package require Pltk
 source tkdemos.tcl
 1
@@ -56,6 +61,6 @@ plserver
 source runAllDemos.tcl
 
 wish
-lappend auto_path $prefix/lib/plplot$VERSION
+lappend auto_path $prefix/lib/plplot$VERSION | ../../bindings/tk-x-plat
 package require Plplotter
 source runAllDemos.tcl

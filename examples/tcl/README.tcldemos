@@ -1,10 +1,15 @@
 Running the Tcl Demos.
 
-PLplot must be installed before you can run these demos.
+PLplot doesn't need to be installed to run these demos.
+However, different commands might be needed to run the demos when PLplot
+is installed or not; in these cases, the first command must be used for
+the installed situation, while the second, separeted by a `|´, is for the
+uninstalled situation.
 
 To run individual examples, run the x?? script corresponding to the x??.tcl
 example, where ?? is 01 through 19.  To find out all the possible command-line
 options run pltcl -h (every x?? script runs pltcl).
+For the uninstalled situation, do PATH=../../utils:$PATH x??
 
 To run the plot.tcl demo follow the directions in that file to run it
 under pltcl with the various standard devices.
@@ -17,7 +22,7 @@ tcldemos.tcl runs all 19 examples.
 There are two ways to run tcldemos.tcl:
 
 (1) 
-pltcl
+pltcl | ../../utils/pltcl
 plinit
 source tcldemos.tcl
 1
@@ -32,8 +37,7 @@ prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
 you are running at this time (5.2.0 or whatever).
 
 tclsh
-lappend auto_path $prefix/lib/plplot$VERSION
-
+lappend auto_path $prefix/lib/plplot$VERSION | ../../bindings/tcl
 package require Pltcl
 plinit
 source tcldemos.tcl
