@@ -124,6 +124,7 @@ static int min_pts[4], max_pts[4];
 static PLINT pen_col_min, pen_col_max;
 static PLINT pen_wd_min, pen_wd_max;
 static PLFLT int_val;
+
 /* Function prototypes */
 
 static void 
@@ -477,7 +478,7 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    /* Entire rectangle can be filled */
 
 	    if (count == 4 * OK) {
-		/* find bigest rectangle that fits */
+		/* find biggest rectangle that fits */
 		if (rectangular) {
 		    big_recl(c0 + iy, ny, nx - ix, ny - iy, &i, &j);
 		}
@@ -769,16 +770,16 @@ poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
 }
 
 /*----------------------------------------------------------------------*\
- * bissect()
+ * bisect()
  *
- * Find boundary recursively by bissection.  
+ * Find boundary recursively by bisection.  
  * (x1, y1) is in the defined region, while (x2, y2) in the undefined one.
  * The result is returned in 
 \*----------------------------------------------------------------------*/
 
 static void 
-bissect(PLINT (*defined) (PLFLT, PLFLT), PLINT niter,
-        PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2, PLFLT* xb, PLFLT* yb)
+bisect(PLINT (*defined) (PLFLT, PLFLT), PLINT niter,
+       PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2, PLFLT* xb, PLFLT* yb)
 {
     PLFLT xm;
     PLFLT ym;
@@ -793,9 +794,9 @@ bissect(PLINT (*defined) (PLFLT, PLFLT), PLINT niter,
     ym = (y1 + y2) / 2;
 
     if (defined (xm, ym))
-      bissect (defined, niter - 1, xm, ym, x2, y2, xb, yb);
+      bisect (defined, niter - 1, xm, ym, x2, y2, xb, yb);
     else
-      bissect (defined, niter - 1, x1, y1, xm, ym, xb, yb);      
+      bisect (defined, niter - 1, x1, y1, xm, ym, xb, yb);      
 }
 
 /*----------------------------------------------------------------------*\
@@ -827,11 +828,11 @@ exfill(void (*fill) (PLINT, PLFLT *, PLFLT *),
 	    if (defined(x[i], y[i])) {
 	        if (!is_inside) {
 		    if (i > 0)
-		        bissect (defined, 10,
-				 x[i], y[i], x[i-1], y[i-1], &xb, &yb);
+		        bisect (defined, 10,
+				x[i], y[i], x[i-1], y[i-1], &xb, &yb);
 		    else
-		        bissect (defined, 10,
-				 x[i], y[i], x[n-1], y[n-1], &xb, &yb);
+		        bisect (defined, 10,
+				x[i], y[i], x[n-1], y[n-1], &xb, &yb);
 		    xx[count] = xb;
 		    yy[count++] = yb;
 		}
@@ -842,11 +843,11 @@ exfill(void (*fill) (PLINT, PLFLT *, PLFLT *),
 	    else {
 	        if (is_inside) {
 		    if (i > 0)
-		        bissect (defined, 4,
-				 x[i-1], y[i-1], x[i], y[i], &xb, &yb);
+		        bisect (defined, 10,
+				x[i-1], y[i-1], x[i], y[i], &xb, &yb);
 		    else
-		        bissect (defined, 4,
-				 x[n-1], y[n-1], x[i], y[i], &xb, &yb);
+		        bisect (defined, 10,
+				x[n-1], y[n-1], x[i], y[i], &xb, &yb);
 		    xx[count] = xb;
 		    yy[count++] = yb;
 		    is_inside = 0;
