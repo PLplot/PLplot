@@ -1,6 +1,10 @@
 /*
-  These definitions are for the Postscript (ps.c) and Postscript/LaTeX (pstex.c) drivers
-*/
+ * These definitions are for the Postscript (ps.c) and 
+ * Postscript/LaTeX (pstex.c) drivers
+ */
+
+#ifndef __PS_H__
+#define __PS_H__
 
 /* top level declarations */
 
@@ -43,3 +47,5 @@ typedef struct {
 
     int llx, lly, urx, ury, ptcnt;
 } PSDev;
+
+#endif /* __PS_H__ */
