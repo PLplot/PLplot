@@ -83,9 +83,9 @@ $(PLFNT_PATH)plxtnd5.fnt: xtndfont$E pdfutils$O $(FONT_OBJ)
 
 stndfont$E:	$(PLLIBS) stndfont$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont$O $(FONT_OBJ) \
- 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 xtndfont$E:	$(PLLIBS) xtndfont$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont$O $(FONT_OBJ) \
- 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
