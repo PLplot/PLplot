@@ -1,7 +1,6 @@
 /* $Id$
 */
 
-
 #include "plplot/plDevs.h"
 
 #if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined (PLD_gnusvga) || defined(PLD_bmp) || defined(PLD_jpg) || defined(PLD_tiff)
@@ -11,6 +10,38 @@
 #include "plplot/plevent.h"
 
 #include <grx20.h>
+
+#ifdef HAVE_FREETYPE
+
+/*
+ *  Freetype support has been added to the GNUSVGA family of drivers using
+ *  the plfreetype.c module, and implemented as a driver-specific optional
+ *  extra invoked via the -drvopt command line toggle. It uses the
+ *  "PLESC_HAS_TEXT" command for rendering within the driver.
+ *  
+ *  Freetype support is turned on/off at compile time by defining
+ *  "HAVE_FREETYPE".
+ *  
+ *  To give the user some level of control over the fonts that are used,
+ *  environmental variables can be set to over-ride the definitions used by
+ *  the five default plplot fonts.
+ *  
+ *  Freetype rendering is used with the command line "-drvopt text".
+ *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
+ *  
+ *  Freetype rendering, and smoothing, can be turned on by default by
+ *  setting any of the following environmental variables to 1:
+ *  PLPLOT_GNUSVGA_TEXT,PLPLOT_GNUSVGA_SMOOTH,PLPLOT_TIFF_TEXT,
+ *  PLPLOT_TIFF_SMOOTH,PLPLOT_JPG_TEXT PLPLOT_JPG_SMOOTH,PLPLOT_BMP_TEXT,
+ *  and PLPLOT_BMP_SMOOTH.
+ *  
+ *  If it has been set by default from enviro variables, it can be turned
+ *  off on the command line like thus: "-drvopt text=0,smooth=0" 
+ */
+
+#include "plplot/plfreetype.h"
+
+#endif
 
 /* In an attempt to fix a problem with the hidden line removal functions
  * that results in hidden lines *not* being removed from "small" plot
@@ -40,10 +71,22 @@
 
 /* Prototypes:  Since GNU CC, we can rest in the safety of ANSI prototyping. */
 
-
 void plD_line_vga		(PLStream *, short, short, short, short);
 void plD_polyline_vga		(PLStream *, short *, short *, PLINT);
 void plD_state_vga		(PLStream *, PLINT);
+
+#ifdef HAVE_FREETYPE
+
+static void init_freetype_lv1 (PLStream *pls);
+static void init_freetype_lv2 (PLStream *pls);
+static void plD_pixel_vga (PLStream *, short, short);
+
+extern void plD_FreeType_init(PLStream *pls);
+extern void plD_render_freetype_text (PLStream *pls, EscText *args);
+extern void plD_FreeType_Destroy(PLStream *pls);
+extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
+
+#endif
 
 #ifdef PLD_gnusvga
 
@@ -115,6 +158,10 @@ typedef struct {
 	GrContext *double_buffer;               /* Screen pointer for double buffering  */
 	GrContext *visual_screen;               /* Screen pointer for visual screen  */
 	GrContext *top_line;                    /* Screen pointer for top line  */
+
+#ifdef HAVE_FREETYPE
+        FT_Data   FT;
+#endif
 
 /*
  *  Originally I didn't realise it was possible to "XOR" a line, so I
@@ -236,6 +283,38 @@ void
 plD_init_vga(PLStream *pls)
 {
     gnu_grx_Dev *dev;
+#ifdef HAVE_FREETYPE
+    FT_Data *FT;
+    int freetype=0;
+    int smooth_text=0;
+    char *a;
+    DrvOpt vga_options[] = {{"text", DRV_INT, &freetype, "Turn FreeType for text on (1) or off (0)"},
+                              {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+			      {NULL, DRV_INT, NULL, NULL}};
+
+/*
+ *  Next, we parse the driver options to set some driver specific stuff.
+ *  Before passing it though, we check for any environmental variables which
+ *  might be set for the default behaviour of these "features" of the
+ *  drivers. Naturally, the command line equivalent overrides it, hence why
+ *  we check the enviro vars first.
+ */
+
+    a=getenv("PLPLOT_GNUSVGA_TEXT");
+    if (a!=NULL)
+       {
+        freetype=atol(a);
+       }
+
+    a=getenv("PLPLOT_GNUSVGA_SMOOTH");
+    if (a!=NULL)
+       {
+        smooth_text=atol(a);
+       }
+
+    plParseDrvOpts(vga_options);
+
+#endif
 
 
     pls->termin = 1;            /* is an interactive terminal */
@@ -249,10 +328,21 @@ plD_init_vga(PLStream *pls)
     if (!pls->colorset)
 	pls->color = 1;
 
+#ifdef HAVE_FREETYPE
+    if (freetype)
+       {
+        pls->dev_text = 1; /* want to draw text */
+        init_freetype_lv1(pls);     /* first level initialisation of freertype. Must be done before plD_init_gnu_grx_dev(pls) */
+        FT=(FT_Data *)pls->FT;
+        FT->smooth_text=smooth_text;
+       }
+#endif
+
     if (pls->dev==NULL)
        plD_init_gnu_grx_dev(pls);
 
     dev=(gnu_grx_Dev *)pls->dev;
+
 
 /* Set up device parameters */
 
@@ -297,6 +387,15 @@ plD_init_vga(PLStream *pls)
 
     if (pls->db!=0)
        init_double_buffer(dev);
+
+#ifdef HAVE_FREETYPE
+
+    if (pls->dev_text)
+       {
+        init_freetype_lv2(pls);      /* second level initialisation of freetype. Must be done AFTER plD_init_gnu_grx_dev(pls) */
+       }
+
+#endif
 
 }
 
@@ -368,6 +467,7 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
 }
 
+
 /*----------------------------------------------------------------------*\
  * setcmap()
  *
@@ -382,6 +482,25 @@ setcmap(PLStream *pls)
     PLFLT tmp_colour_pos;
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
+#ifdef HAVE_FREETYPE
+/*
+ *  Set up the "extended" cmap0 palette with the entries for anti-aliasing
+ *  the text.
+ */
+
+    FT_Data *FT=(FT_Data *)pls->FT;
+
+if ((pls->dev_text==1)&&(FT->smooth_text==1))
+   {
+    FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
+    FT->ncol0_xtra=GrNumColors()-(pls->ncol1+pls->ncol0);       /* work out how many free slots we have */
+    FT->ncol0_width=FT->ncol0_xtra/(pls->ncol0-1);              /* find out how many different shades of anti-aliasing we can do */
+    if (FT->ncol0_width>64) FT->ncol0_width=64;                 /* set a maximum number of shades */
+    plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
+    pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
+   }
+
+#endif
 
 
     if (isTrueColour())
@@ -653,6 +772,11 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 	free(pls->dev);
 	pls->dev=NULL;
        }
+
+#ifdef HAVE_FREETYPE
+  plD_FreeType_Destroy(pls);
+#endif
+
 }
 
 
@@ -827,6 +951,12 @@ plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
     case PLESC_XORMOD:
 	XorMod(pls, (PLINT *) ptr);
 	break;
+
+#ifdef HAVE_FREETYPE
+    case PLESC_HAS_TEXT:
+      plD_render_freetype_text(pls, (EscText *)ptr);
+      break;
+#endif
 
 #ifdef GRX_DO_JPEG
     case PLESC_SET_COMPRESSION:
@@ -1633,6 +1763,38 @@ void plD_dispatch_init_tiff( PLDispatchTable *pdt )
 void plD_init_tiff(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
+#ifdef HAVE_FREETYPE
+    FT_Data *FT;
+    int freetype=0;
+    int smooth_text=0;
+    char *a;
+    DrvOpt tiff_options[] = {{"text", DRV_INT, &freetype, "Turn FreeType for text on (1) or off (0)"},
+                              {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+			      {NULL, DRV_INT, NULL, NULL}};
+
+/*
+ *  Next, we parse the driver options to set some driver specific stuff.
+ *  Before passing it though, we check for any environmental variables which
+ *  might be set for the default behaviour of these "features" of the
+ *  drivers. Naturally, the command line equivalent overrides it, hence why
+ *  we check the enviro vars first.
+ */
+
+    a=getenv("PLPLOT_TIFF_TEXT");
+    if (a!=NULL)
+       {
+        freetype=atol(a);
+       }
+
+    a=getenv("PLPLOT_TIFF_SMOOTH");
+    if (a!=NULL)
+       {
+        smooth_text=atol(a);
+       }
+
+    plParseDrvOpts(tiff_options);
+
+#endif
 
     pls->termin = 0;            /* is an interactive terminal */
     pls->icol0 = 1;
@@ -1643,6 +1805,16 @@ void plD_init_tiff(PLStream *pls)
 
     if (!pls->colorset)
 	pls->color = 1;
+
+#ifdef HAVE_FREETYPE
+    if (freetype)
+       {
+        pls->dev_text = 1; /* want to draw text */
+        init_freetype_lv1(pls);     /* first level initialisation of freertype. Must be done before plD_init_gnu_grx_dev(pls) */
+        FT=(FT_Data *)pls->FT;
+        FT->smooth_text=smooth_text;
+       }
+#endif
 
     if (pls->dev==NULL)
        plD_init_gnu_grx_dev(pls);
@@ -1713,6 +1885,15 @@ void plD_init_tiff(PLStream *pls)
 dev->gnusvgaline.lno_width=pls->width;
 dev->gnusvgaline.lno_pattlen=0;
 
+#ifdef HAVE_FREETYPE
+
+    if (freetype)
+       {
+        init_freetype_lv2(pls);      /* second level initialisation of freetype. Must be done AFTER plD_init_gnu_grx_dev(pls) */
+       }
+
+#endif
+
 }
 
 
@@ -1730,6 +1911,13 @@ void plD_esc_tiff(PLStream *pls, PLINT op, void *ptr)
       case PLESC_FILL:  /* fill */
 	fill_polygon(pls);
 	break;
+
+#ifdef HAVE_FREETYPE
+    case PLESC_HAS_TEXT:
+      plD_render_freetype_text(pls, (EscText *)ptr);
+      break;
+#endif
+
     }
 }
 
@@ -1806,6 +1994,10 @@ void plD_tidy_tiff(PLStream *pls)
    free (pls->dev);
    pls->dev=NULL;
 
+#ifdef HAVE_FREETYPE
+  plD_FreeType_Destroy(pls);
+#endif
+
 }
 #endif
 
@@ -1843,6 +2035,40 @@ void plD_dispatch_init_jpg( PLDispatchTable *pdt )
 void plD_init_jpg(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
+#ifdef HAVE_FREETYPE
+    FT_Data *FT;
+    int freetype=0;
+    int smooth_text=0;
+    char *a;
+    DrvOpt jpg_options[] = {{"text", DRV_INT, &freetype, "Turn FreeType for text on (1) or off (0)"},
+                              {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+			      {NULL, DRV_INT, NULL, NULL}};
+
+/*
+ *  Next, we parse the driver options to set some driver specific stuff.
+ *  Before passing it though, we check for any environmental variables which
+ *  might be set for the default behaviour of these "features" of the
+ *  drivers. Naturally, the command line equivalent overrides it, hence why
+ *  we check the enviro vars first.
+ */
+
+    a=getenv("PLPLOT_JPG_TEXT");
+    if (a!=NULL)
+       {
+        freetype=atol(a);
+       }
+
+    a=getenv("PLPLOT_JPG_SMOOTH");
+    if (a!=NULL)
+       {
+        smooth_text=atol(a);
+       }
+
+    plParseDrvOpts(jpg_options);
+
+#endif
+
+
     pls->termin = 0;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
@@ -1853,6 +2079,16 @@ void plD_init_jpg(PLStream *pls)
 
     if (!pls->colorset)
 	pls->color = 1;
+
+#ifdef HAVE_FREETYPE
+    if (freetype)
+       {
+        pls->dev_text = 1; /* want to draw text */
+        init_freetype_lv1(pls);     /* first level initialisation of freertype. Must be done before plD_init_gnu_grx_dev(pls) */
+        FT=(FT_Data *)pls->FT;
+        FT->smooth_text=smooth_text;
+       }
+#endif
 
     if (pls->dev==NULL)
        plD_init_gnu_grx_dev(pls);
@@ -1916,6 +2152,16 @@ void plD_init_jpg(PLStream *pls)
     dev->gnusvgaline.lno_width=pls->width;
     dev->gnusvgaline.lno_pattlen=0;
 
+#ifdef HAVE_FREETYPE
+
+    if (freetype)
+       {
+        init_freetype_lv2(pls);      /* second level initialisation of freetype. Must be done AFTER plD_init_gnu_grx_dev(pls) */
+       }
+
+#endif
+
+
 }
 
 
@@ -1940,6 +2186,12 @@ void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr)
 	     pls->dev_compression=(int) ptr;
 	    }
 	break;
+
+#ifdef HAVE_FREETYPE
+    case PLESC_HAS_TEXT:
+      plD_render_freetype_text(pls, (EscText *)ptr);
+      break;
+#endif
 
     }
 }
@@ -2013,6 +2265,11 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 	 }
 free(pls->dev);
 pls->dev=NULL;
+
+#ifdef HAVE_FREETYPE
+  plD_FreeType_Destroy(pls);
+#endif
+
 }
 #endif
 
@@ -2051,6 +2308,39 @@ void plD_dispatch_init_bmp( PLDispatchTable *pdt )
 void plD_init_bmp(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
+#ifdef HAVE_FREETYPE
+    FT_Data *FT;
+    int freetype=0;
+    int smooth_text=0;
+    char *a;
+    DrvOpt bmp_options[] = {{"text", DRV_INT, &freetype, "Turn FreeType for text on (1) or off (0)"},
+                              {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+			      {NULL, DRV_INT, NULL, NULL}};
+
+/*
+ *  Next, we parse the driver options to set some driver specific stuff.
+ *  Before passing it though, we check for any environmental variables which
+ *  might be set for the default behaviour of these "features" of the
+ *  drivers. Naturally, the command line equivalent overrides it, hence why
+ *  we check the enviro vars first.
+ */
+
+    a=getenv("PLPLOT_BMP_TEXT");
+    if (a!=NULL)
+       {
+        freetype=atol(a);
+       }
+
+    a=getenv("PLPLOT_BMP_SMOOTH");
+    if (a!=NULL)
+       {
+        smooth_text=atol(a);
+       }
+
+    plParseDrvOpts(bmp_options);
+
+#endif
+
     pls->termin = 0;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
@@ -2061,6 +2351,16 @@ void plD_init_bmp(PLStream *pls)
 
     if (!pls->colorset)
 	pls->color = 1;
+
+#ifdef HAVE_FREETYPE
+    if (freetype)
+       {
+        pls->dev_text = 1; /* want to draw text */
+        init_freetype_lv1(pls);     /* first level initialisation of freertype. Must be done before plD_init_gnu_grx_dev(pls) */
+        FT=(FT_Data *)pls->FT;
+        FT->smooth_text=smooth_text;
+       }
+#endif
 
     if (pls->dev==NULL)
        plD_init_gnu_grx_dev(pls);
@@ -2133,6 +2433,16 @@ void plD_init_bmp(PLStream *pls)
 
     dev->gnusvgaline.lno_width=pls->width;
     dev->gnusvgaline.lno_pattlen=0;
+
+#ifdef HAVE_FREETYPE
+
+    if (freetype)
+       {
+        init_freetype_lv2(pls);      /* second level initialisation of freetype. Must be done AFTER plD_init_gnu_grx_dev(pls) */
+       }
+
+#endif
+
 
 }
 
@@ -2222,11 +2532,74 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 	  GrSetDriver (dev->Old_Driver_Vector->name);
 	  dev->Old_Driver_Vector=NULL;
 	 }
+
+#ifdef HAVE_FREETYPE
+  plD_FreeType_Destroy(pls);
+#endif
+
 free(pls->dev);
 pls->dev=NULL;
 }
 #endif
 
+
+#ifdef HAVE_FREETYPE
+
+/*----------------------------------------------------------------------*\
+ *  void plD_pixel_vga (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is set in the current colour.
+\*----------------------------------------------------------------------*/
+
+void plD_pixel_vga (PLStream *pls, short x, short y)
+{
+gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
+
+ GrPlot(x,y,dev->colour);
+}
+
+/*----------------------------------------------------------------------*\
+ *  void init_freetype_lv1 (PLStream *pls)
+ *
+ *  "level 1" initialisation of the freetype library.
+ *  "Level 1" initialisation calls plD_FreeType_init(pls) which allocates
+ *  memory to the pls->FT structure, then sets up the pixel callback
+ *  function.
+\*----------------------------------------------------------------------*/
+
+static void init_freetype_lv1 (PLStream *pls)
+{
+FT_Data *FT;
+
+plD_FreeType_init(pls);
+
+FT=(FT_Data *)pls->FT;
+FT->pixel= (plD_pixel_fp)plD_pixel_vga;
+
+}
+
+/*----------------------------------------------------------------------*\
+ *  void init_freetype_lv2 (PLStream *pls)
+ *
+ *  "Level 2" initialisation of the freetype library.
+ *  "Level 2" fills in a few setting that aren't public until after the
+ *  graphics sub-syetm has been initialised.
+\*----------------------------------------------------------------------*/
+
+static void init_freetype_lv2 (PLStream *pls)
+{
+gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
+FT_Data *FT=(FT_Data *)pls->FT;
+
+FT->scale=dev->scale;
+FT->ymax=dev->vgay;
+FT->invert_y=1;
+
+}
+
+
+#endif
 
 #else
 int
