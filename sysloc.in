@@ -976,6 +976,7 @@ fi
 
 # make test on simple NaN operations
 
+AC_MSG_CHECKING([for NaN awareness in C compiler])
 AC_RUN_IFELSE(
 	[AC_LANG_PROGRAM([[#include <stdio.h>
 #if defined(__GNUC__)
@@ -991,6 +992,7 @@ static const long long lNaN = 0xfff8000000000000;
 if (x != x) return 0;
 else return 1;]])] ,
 [with_nan="yes"],[with_nan="no"])
+AC_MSG_RESULT([$with_nan])
 
 if test "$with_nan" = "no"; then
 	AC_MSG_WARN([System is not NaN aware, setting with_csa=no and with_qhull=no])
