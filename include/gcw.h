@@ -63,6 +63,10 @@ typedef struct {
   gboolean use_text;
   gboolean use_fast_rendering;
 
+  gboolean use_pixmap;
+  gboolean pixmap_has_data;
+  GdkPixmap* pixmap;
+
 } GcwPLdev;
 
 

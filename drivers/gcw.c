@@ -151,12 +151,16 @@ static int hrshsym = 0;
 
 static int fast = 0; 
 
+int pixmap = 0;
+
+
 static DrvOpt gcw_options[] = 
   {
     {"aa", DRV_INT, &aa, "Use antialiased canvas (aa=0|1)"},
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
     {"hrshsym", DRV_INT, &hrshsym, "Don't use Hershey symbol set (hrshsym=0|1)"},
     {"fast", DRV_INT, &fast, "Use fast rendering (fast=0|1)"},
+    {"pixmap", DRV_INT, &pixmap, "Use pixmap for plotting shades (pixmap=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
   };
 
@@ -616,6 +620,58 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
 
 
 /*--------------------------------------------------------------------------*\
+ * gcw_use_pixmap()
+ *
+ * Used to turn pixmap usage on and off for polygon fills (used during
+ * shading calls).
+\*--------------------------------------------------------------------------*/
+
+void clear_pixmap(PLStream* pls)
+{
+  GcwPLdev* dev=pls->dev;
+  GdkGC* gc;
+  GdkColor color;
+  PLColor plcolor = pls->cmap0[0];
+
+  /* Allocate the background color*/
+  color.red=(guint16)(plcolor.r/255.*65535); 
+  color.green=(guint16)(plcolor.g/255.*65535); 
+  color.blue=(guint16)(plcolor.b/255.*65535);
+  gdk_colormap_alloc_color(dev->colormap,&color,FALSE,TRUE);
+
+  /* Clear the pixmap with the background color */
+  gc = gdk_gc_new(dev->pixmap);
+  gdk_gc_set_foreground(gc,&color);
+  gdk_draw_rectangle(dev->pixmap,gc,TRUE,0,0,dev->width,dev->height);
+  gdk_gc_unref(gc);
+}
+
+void gcw_use_pixmap(GnomeCanvas* canvas,gboolean use_pixmap)
+{
+  GcwPLdev* dev;
+
+  if(!GNOME_IS_CANVAS(canvas)) {
+    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
+    return;
+  }
+
+  /* Retrieve the device */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+
+  dev->use_pixmap=use_pixmap;
+
+  /* Allocate the pixmap */
+  if(use_pixmap) {
+    dev->pixmap = gdk_pixmap_new(NULL,dev->width,
+				 dev->height,gdk_visual_get_best_depth());
+
+  }
+
+  dev->pixmap_has_data=FALSE;
+}
+
+
+/*--------------------------------------------------------------------------*\
  * gcw_use_text()
  *
  * Used to turn text usage on and off.
@@ -842,6 +898,11 @@ void plD_init_gcw(PLStream *pls)
   /* Set fast rendering for polylines */
   dev->use_fast_rendering = fast;
 
+  /* Set up the pixmap support */
+  dev->use_pixmap = pixmap;
+  dev->pixmap = NULL;
+  dev->pixmap_has_data = FALSE;
+
   /* Only initialize the zoom after all other initialization is complete */
   dev->zoom_is_initialized = FALSE;
 
@@ -1008,6 +1069,9 @@ void plD_eop_gcw(PLStream *pls)
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
 
+  GdkPixbuf* pixbuf;
+  GnomeCanvasItem* item;
+
   int i;
   short x, y;
 
@@ -1018,6 +1082,39 @@ void plD_eop_gcw(PLStream *pls)
   if(dev->canvas!=NULL) {
 
     canvas = dev->canvas;
+
+    /* Render the pixmap to a pixbuf on the canvas and move it to the back
+     * of the current group */
+    if(dev->pixmap_has_data) {
+
+      if((pixbuf=gdk_pixbuf_get_from_drawable(NULL,
+					      dev->pixmap,
+					      dev->colormap,
+					      0,0,
+					      0,0,
+					      dev->width,dev->height))==NULL) {
+	fprintf(stderr,"\n\nGCW driver error: Can't draw pixmap into pixbuf\n\n");
+	fflush(stderr);
+	return;
+      }
+
+      item = gnome_canvas_item_new (dev->group_current,
+				    GNOME_TYPE_CANVAS_PIXBUF,
+				    "pixbuf",pixbuf,
+				    "x", 0.,
+				    "y", -dev->height+0.,
+				    "width", dev->width,
+				    "height", dev->height,
+				    NULL);
+      gnome_canvas_item_lower_to_bottom(item);
+      gnome_canvas_item_lower_to_bottom (dev->background);
+
+      /* Set the pixmap as unused */
+      dev->pixmap_has_data = FALSE;
+
+      /* Free the pixbuf */
+      gdk_pixbuf_unref(pixbuf);
+    }
 
     /* Make the hidden group visible */
     gnome_canvas_item_show((GnomeCanvasItem*)(dev->group_hidden));
@@ -1212,6 +1309,9 @@ static void fill_polygon (PLStream* pls)
   GnomeCanvas* canvas;
   guint i;
 
+  GdkColor color;
+  GdkPoint* gdkpoints;
+
   guint tmp;
 
 #ifdef DEBUG_GCW
@@ -1235,34 +1335,74 @@ static void fill_polygon (PLStream* pls)
 #endif
   points = gnome_canvas_points_new (pls->dev_npts);
 
-  for (i=0; i<pls->dev_npts; i++) {
-    points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
-    points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
-  }
+  if(dev->use_pixmap) { /* Write to a pixmap */
 
-  if(!GNOME_IS_CANVAS_ITEM(
-    item = gnome_canvas_item_new (group,
-				GNOME_TYPE_CANVAS_POLYGON,
-				"points", points,
-				"fill-color-rgba",dev->color,
-				/* "outline-color-rgba",dev->color, */
-				NULL)
-    )) {
-    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-    return;
+    /* Allocate a new pixmap if needed */
+    if(dev->pixmap == NULL) gcw_use_pixmap(canvas,TRUE);
+
+    /* Clear the pixmap if required */
+    if(dev->pixmap_has_data==FALSE) clear_pixmap(pls);
+
+    gc = gdk_gc_new(dev->pixmap);
+
+    color.red=(guint16)(pls->curcolor.r/255.*65535); 
+    color.green=(guint16)(pls->curcolor.g/255.*65535); 
+    color.blue=(guint16)(pls->curcolor.b/255.*65535);
+
+    gdk_colormap_alloc_color(gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
+			     &color,FALSE,TRUE);
+    gdk_gc_set_foreground(gc,&color);
+
+    if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL) {
+      fprintf(stderr,"\n\nGCW driver error: Insufficient memory\n\n");
+      fflush(stderr);
+      return;
+    }
+
+    for(i=0;i<pls->dev_npts;i++) {
+      gdkpoints[i].x = pls->dev_x[i] * PIXELS_PER_DU;
+      gdkpoints[i].y = dev->height-pls->dev_y[i] * PIXELS_PER_DU;
+    }
+
+    gdk_draw_polygon(dev->pixmap,gc,TRUE,gdkpoints,pls->dev_npts);
+
+    dev->pixmap_has_data=TRUE;
+
+    gdk_gc_unref(gc);
+    free(gdkpoints);
   }
+  else { /* Use Gnome Canvas polygons */
+
+    for (i=0; i<pls->dev_npts; i++) {
+      points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
+      points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
+    }
+
+    if(!GNOME_IS_CANVAS_ITEM(
+      item = gnome_canvas_item_new (group,
+				    GNOME_TYPE_CANVAS_POLYGON,
+				    "points", points,
+				    "fill-color-rgba",dev->color,
+				    /* "outline-color-rgba",dev->color, */
+				    NULL)
+      )) {
+      fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+      return;
+    }
   
-  gnome_canvas_points_free (points);
+    gnome_canvas_points_free (points);
 
 
-  /* Draw a thin outline for each polygon */
+    /* Draw a thin outline for each polygon */
 #ifdef OUTLINE_POLYGON_GCW
     tmp = pls->width;
     pls->width=1;
     plD_polyline_gcw(pls,pls->dev_x,pls->dev_y,pls->dev_npts);
     pls->width = tmp;
 #endif
+  }
 }
+
 
 /*--------------------------------------------------------------------------*\
  * dashed_line()
