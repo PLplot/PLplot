@@ -462,7 +462,9 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 
     if (plsc->dev_text) {
       plP_text(0, just, xform, x, y, refx, refy, text);
-      /* return; /* just for comparition */
+#ifndef DEBUG
+       return; /* just for comparition */
+#endif
     }
 
     plstr(0, xform, refx, refy, text);
@@ -513,7 +515,9 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
 
     if (plsc->dev_text) {
       plP_text(0, just, xform, plP_wcpcx(x), plP_wcpcy(y), refx, refy, text);      
-      /* return; /* just for comparition */
+#ifndef DEBUG
+	  return; /* just for comparition */
+#endif
     }
 
     plstr(0, xform, refx, refy, text);
@@ -544,8 +548,11 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 	PLFLT r,g,b;
 
 	/* program flow should never arrive here if dev_text == 1, but if it does */
-	if (plsc->dev_text)
-	  /* return; /* for comparition only */
+	if (plsc->dev_text) {
+#ifndef DEBUG
+	   return; /* for comparition only */
+#endif
+	}
 
     plgchr(&def, &ht);
     dscale = 0.05 * ht;
