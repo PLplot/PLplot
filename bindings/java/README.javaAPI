@@ -1,0 +1,86 @@
+Here is some notes from Geoffrey Furnish (with some minor editing from Alan
+W. Irwin) about how to add additional PLplot API to Java under jdk 1.3.1.
+This may well work for other jdk versions, but it has not been tested for
+them.
+
+1) Edit PLStream.java, add "native" prototype for a new PLplot API
+   function. 
+
+2) Do all the java setup mentioned in plplot/examples/java/README.javademos
+and execute ./configure and make from the plplot directory.  This should
+compile PLStream.java with javac.
+
+3) (from the tmp directory) javah plplot/core/PLStream.
+
+4) less the big hairy file that comes out.  I forget its name, but
+   you'll see it, its the one whose name is 40 characters long.  It
+   has in it, the prototypes for all the functions that are marked 
+   native in PLStream.java.
+
+5) Find the prototypes for the JNI functions corresponding to the new
+   API(s) you prototyped in 1) above.
+
+6) Paste that (comment block plus function decl) into javabind.c, in
+   the appropriate place.  I am more-or-less trying to keep javabind.c
+   and PLStream.java ordered the same way as they're declared in
+   plplot.h.  But plplot.h's function decls aren't actually all
+   alphabetical for one thing, and also for the Java binding, I
+   hoisted a few things to the top of javabind.c, just because it made
+   sense to me at the time.  I forget the exact justification, but it
+   had something to do with some things seeming to me that they were
+   only useful inside the JNI code (javabind.c), and not really
+   something we wanted to expose to the (Java-side) user of
+   PLStream.java.  Also, I kept the (only partially implemented) arg
+   parsing stuff together, irrespective of alphabetization.
+
+7) Note that the JNI function name has some bizarre "0002f" characters
+   in the middle of it for some reason.  This happens to me regularly,
+   although I think there was once or twice when I ran javah, it
+   didn't do that to me.  I have no idea what makes this bizardom
+   happen or not happen.  Anyway, if you don't see what I'm talking
+   about, compare the function names in some of the comment blocks in
+   javabind.c, to the actual function name, and in some of them you'll
+   see how I edited out the stupid "0002f" stuff.  Wierd, I have no
+   idea what that's about.
+
+8) Fill in the function parameter names.
+
+9) Implement the function.  For this, what I do, is cut and paste.  I
+   find an existing function with argument signature similar to the
+   one I'm doing now, copy its function body into place, and tweak as
+   required.  Maybe arg names have to be changed, or maybe only the
+   actual embedded call to the PLplot API function.  For instance,
+   last night I build fill by copying line's body, and changing the
+   call from plline(...) to plfill(...), and that was it.  For fill3 I
+   took fill's body, added handling for z, changed plfill(...) to
+   plfill3(...), and that was it.  Then line3 was made from fill3 in
+   the same way that fill was made from line.
+
+10) make (builds javabind.c, libplplot)
+
+11) Edit x??.java to use the new api, then make jdemos
+
+12) java plplot/examples/x??, be happy.  Or fix bugs :-/, as
+    required. 
+
+I think you'll be able to do the monkey-see-monkey-do thing easily
+enough to cover many of the cases.  I think the existing functions are
+fairly solid examples of how to do JNI code.
+
+There are some problems.  I think I probably have a pretty bad bug in
+some of the code that handles 2-d arrays.  There are some comments
+about this in there somewhere, how I tried to do something I thought
+was obvious but it didn't work, so I left it somehow that works, but
+am concerned that it isn't right.  I've had some more thoughts about
+those things, but haven't had time to try to set it straight.  I think
+it comes down to lifetime management of stuff you fetch from JNI, and
+probably I have to hold onto things more carefully.  Those sections of
+code will probably become substantially more complex than they are
+now, which is part of why I haven't attacked it yet.
+
+But the simpler things you should be able to handle uneventfully.
+Things that take scalars, or simple arrays, I think you can follow in
+the footsteps of plline(), or other simple/similar signature
+functions, and be okay.
+
+Geoffrey, 28 December 2001
