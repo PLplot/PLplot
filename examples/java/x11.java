@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002, 2003  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -34,8 +35,7 @@ import java.lang.Math;
 
 class x11 {
 
-    PLStreamc plsdummy = new PLStreamc();
-    plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
 
     static final int XPTS = 35;
     static final int YPTS = 46;
@@ -74,8 +74,8 @@ class x11 {
         rev[0] = 0;         // interpolate on front side of colour wheel.
         rev[1] = 0;         // interpolate on front side of colour wheel.
 	  
-        pls.plscmap1n(256);
-        pls.plscmap1l(0, i, h, l, s, rev);
+        pls.scmap1n(256);
+        pls.scmap1l(0, i, h, l, s, rev);
     }
 
 // Does a series of mesh plots for a given data set, with different viewing
@@ -103,11 +103,11 @@ class x11 {
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
         for( i=0; i < XPTS; i++ )
             x[i] = 3.* (double) (i - (XPTS/2)) / (double) (XPTS/2);
@@ -142,26 +142,26 @@ class x11 {
         cmap1_init();
         for( k = 0; k < 2; k++ ) {
 	    for ( i = 0; i < 4; i++) {
-	       pls.pladv(0);
-	       pls.plcol0(1);
-	       pls.plvpor(0.0, 1.0, 0.0, 0.9);
-	       pls.plwind(-1.0, 1.0, -1.0, 1.5);
+	       pls.adv(0);
+	       pls.col0(1);
+	       pls.vpor(0.0, 1.0, 0.0, 0.9);
+	       pls.wind(-1.0, 1.0, -1.0, 1.5);
 
-	       pls.plw3d( 1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax,
+	       pls.w3d( 1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax,
 			  alt[k], az[k] );
-	       pls.plbox3( "bnstu", "x axis", 0.0, 0,
+	       pls.box3( "bnstu", "x axis", 0.0, 0,
 			   "bnstu", "y axis", 0.0, 0,
 			   "bcdmnstuv", "z axis", 0.0, 4 );
 
-	       pls.plcol0(2);
+	       pls.col0(2);
 
 	       /* wireframe plot */
 	       if (i==0)
-		 pls.plmesh(x, y, z, opt[k]);
+		 pls.mesh(x, y, z, opt[k]);
 	       
 	       /* magnitude colored wireframe plot */
 	       else if (i==1)
-		 pls.plmesh(x, y, z, opt[k] | pls.MAG_COLOR);
+		 pls.mesh(x, y, z, opt[k] | pls.MAG_COLOR);
 	       
 	       /* magnitude colored wireframe plot with sides */
 	       else if (i==2)
@@ -169,16 +169,16 @@ class x11 {
 	       
 	       /* magnitude colored wireframe plot with base contour */
 	       else if (i==3)
-		 pls.plmeshc(x, y, z, opt[k] | pls.MAG_COLOR | pls.BASE_CONT,
+		 pls.meshc(x, y, z, opt[k] | pls.MAG_COLOR | pls.BASE_CONT,
 			 clevel);
 	       
 	       
-	       pls.plcol0(3);
-	       pls.plmtex("t", 1.0, 0.5, 0.5, title[k]);
+	       pls.col0(3);
+	       pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
 	    }
 	}
 
-        pls.plend();
+        pls.close();
     }
 }
 

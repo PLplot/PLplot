@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -34,8 +35,7 @@ import java.lang.Math;
 
 class x04 {
 
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
 
     public static void main( String[] args ) 
     {
@@ -46,19 +46,19 @@ class x04 {
     {
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
-        pls.plinit();
-        pls.plfont(2);
+        pls.init();
+        pls.font(2);
 
     // Make log plots using two different styles.
 
         plot1(0);
         plot1(1);
 
-        pls.plend();
+        pls.close();
     }
 
 // Log-linear plot.
@@ -71,7 +71,7 @@ class x04 {
         double[] phase = new double[101];
         double f0, freq;
 
-        pls.pladv(0);
+        pls.adv(0);
 
     // Set up data for log plot.
 
@@ -84,46 +84,46 @@ class x04 {
             phase[i] = -(180.0 / Math.PI) * Math.atan(freq / f0);
         }
 
-        pls.plvpor(0.15, 0.85, 0.1, 0.9);
-        pls.plwind(-2.0, 3.0, -80.0, 0.0);
+        pls.vpor(0.15, 0.85, 0.1, 0.9);
+        pls.wind(-2.0, 3.0, -80.0, 0.0);
 
     // Try different axis and labelling styles.
 
-        pls.plcol0(1);
+        pls.col0(1);
         switch (type) {
         case 0:
-            pls.plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0);
+            pls.box("bclnst", 0.0, 0, "bnstv", 0.0, 0);
             break;
         case 1:
-            pls.plbox("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0);
+            pls.box("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0);
             break;
         }
 
     // Plot ampl vs freq.
 
-        pls.plcol0(2);
-        pls.plline(freql, ampl);
-        pls.plcol0(1);
-        pls.plptex(1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
+        pls.col0(2);
+        pls.line(freql, ampl);
+        pls.col0(1);
+        pls.ptex(1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
 
     // Put labels on.
 
-        pls.plcol0(1);
-        pls.plmtex("b", 3.2, 0.5, 0.5, "Frequency");
-        pls.plmtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter");
-        pls.plcol0(2);
-        pls.plmtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)");
+        pls.col0(1);
+        pls.mtex("b", 3.2, 0.5, 0.5, "Frequency");
+        pls.mtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter");
+        pls.col0(2);
+        pls.mtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)");
 
     // For the gridless case, put phase vs freq on same plot.
 
         if (type == 0) {
-            pls.plcol0(1);
-            pls.plwind(-2.0, 3.0, -100.0, 0.0);
-            pls.plbox("", 0.0, 0, "cmstv", 30.0, 3);
-            pls.plcol0(3);
-            pls.plline(freql, phase);
-            pls.plcol0(3);
-            pls.plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
+            pls.col0(1);
+            pls.wind(-2.0, 3.0, -100.0, 0.0);
+            pls.box("", 0.0, 0, "cmstv", 30.0, 3);
+            pls.col0(3);
+            pls.line(freql, phase);
+            pls.col0(3);
+            pls.mtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
         }
     }
 }

@@ -7,6 +7,7 @@
 // Copyright (C) 2001, 2002, 2003, 2004  Alan W. Irwin
 // Copyright (C) 2002  Maurice LeBrun
 // Copyright (C) 2002  Joao Cardoso
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -39,8 +40,7 @@ class x08 {
     static final int XPTS = 35;
     static final int YPTS = 46;
 
-    PLStreamc plsdummy = new PLStreamc();
-    plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
 
     static double alt[] = {60.0, 20.0};
     static double az[] = {30.0, 60.0};
@@ -93,8 +93,8 @@ class x08 {
         rev[0] = 0;         // interpolate on front side of colour wheel.
         rev[1] = 0;         // interpolate on front side of colour wheel.
 
-        pls.plscmap1n(256);
-        pls.plscmap1l(0, i, h, l, s, rev);
+        pls.scmap1n(256);
+        pls.scmap1l(0, i, h, l, s, rev);
     }
 
 // Does a series of 3-d plots for a given data set, with different viewing
@@ -123,12 +123,12 @@ class x08 {
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
         boolean rosen = true;
 
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
         for( i=0; i < XPTS; i++ ) {
 	   x[i] = (double) (i - (XPTS/2)) / (double) (XPTS/2);
@@ -172,45 +172,45 @@ class x08 {
 	for (i=0; i<LEVELS; i++)
 	    clevel[i] = zmin + step*(i+1);
 
-        pls.pllightsource( 1., 1., 1. );
+        pls.lightsource( 1., 1., 1. );
         for( k = 0; k < 2; k++ )
         {
 	   for( ifshade = 0; ifshade < 4; ifshade++)
 	   {
-	      pls.pladv(0);
-	      pls.plvpor(0.0, 1.0, 0.0, 0.9);
-	      pls.plwind(-1.0, 1.0, -0.9, 1.1);
-	      pls.plcol0(3);
-	      pls.plmtex("t", 1.0, 0.5, 0.5, title[k]);
-	      pls.plcol0(1);
+	      pls.adv(0);
+	      pls.vpor(0.0, 1.0, 0.0, 0.9);
+	      pls.wind(-1.0, 1.0, -0.9, 1.1);
+	      pls.col0(3);
+	      pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
+	      pls.col0(1);
 	      if(rosen)
-		pls.plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
+		pls.w3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
 			   alt[k], az[k] );
 	      else
-		pls.plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
+		pls.w3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
 			   alt[k], az[k] );
-	      pls.plbox3( "bnstu", "x axis", 0.0, 0,
+	      pls.box3( "bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0 );
 
-	      pls.plcol0(2);
+	      pls.col0(2);
 
 	      if (ifshade == 0) { /* diffuse light surface plot */
 		 cmap1_init(1);
 		 // with new interface haven't yet made null work so have
 		 // to put in specific zero-length array.
-		 pls.plsurf3d( x, y, z, 0, clev_null );
+		 pls.surf3d( x, y, z, 0, clev_null );
 	      } else if (ifshade == 1) { /* magnitude colored plot */
 		 cmap1_init(0);
-		 pls.plsurf3d( x, y, z, pls.MAG_COLOR, clev_null );
+		 pls.surf3d( x, y, z, pls.MAG_COLOR, clev_null );
 	      } else if (ifshade == 2) { /*  magnitude colored plot with faceted squares */
-		 pls.plsurf3d( x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null );
+		 pls.surf3d( x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null );
 	      } else                     /* magnitude colored plot with contours */
-		 pls.plsurf3d( x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clevel );
+		 pls.surf3d( x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clevel );
 	   }
         }
 
-        pls.plend();
+        pls.close();
     }
 }
 

@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -37,8 +38,7 @@ class x12 {
 
     static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
    
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
    
     public static void main( String[] args ) 
     {
@@ -53,29 +53,29 @@ class x12 {
 	DecimalFormat nf4 = new DecimalFormat("####");
 	int i;
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
-        pls.plinit();
+        pls.init();
 
-        pls.pladv(0);
-        pls.plvsta();
-        pls.plwind(1980.0, 1990.0, 0.0, 35.0);
-        pls.plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
-        pls.plcol0(2);
-        pls.pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
+        pls.adv(0);
+        pls.vsta();
+        pls.wind(1980.0, 1990.0, 0.0, 35.0);
+        pls.box("bc", 1.0, 0, "bcnv", 10.0, 0);
+        pls.col0(2);
+        pls.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
         for (i = 0; i < 10; i++) {
-            pls.plcol0(i + 1);
-//             pls.plcol1((double) ((i + 1)/10.0));
-            pls.plpsty(0);
+            pls.col0(i + 1);
+//             pls.col1((double) ((i + 1)/10.0));
+            pls.psty(0);
             plfbox((1980. + i), y0[i]);
 //	   sprintf(string, "%.0f", y0[i]);
             String text = nf.format( (int) (y0[i]+0.5));
-            pls.plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, text);
+            pls.ptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, text);
 //	   sprintf(string, "%d", 1980 + i);
             String text1 = nf4.format( 1980 + i );
-            pls.plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
+            pls.mtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
 	}
-        pls.plend();
+        pls.close();
     }
 
     void plfbox(double x0, double y0)
@@ -91,10 +91,10 @@ class x12 {
 	y[2] = y0;
 	x[3] = x0 + 1.;
 	y[3] = 0.;
-        pls.plfill(x, y);
-	pls.plcol0(1);
-        pls.pllsty(1);
-	pls.plline(x, y);
+        pls.fill(x, y);
+	pls.col0(1);
+        pls.lsty(1);
+	pls.line(x, y);
     }
 }
 

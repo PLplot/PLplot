@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -43,8 +44,7 @@ class x05 {
 
     public x05( String[] args )
     {
-       PLStreamc plsdummy = new PLStreamc();
-       plplotjavac pls = new plplotjavac();
+       Plplot pls = new Plplot();
 
         int i;
         double[] data = new double[NPTS];
@@ -52,11 +52,11 @@ class x05 {
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
     // Fill up data points.
 
@@ -64,13 +64,13 @@ class x05 {
         for (i = 0; i < NPTS; i++)
             data[i] = Math.sin(i * delta);
 
-        pls.plcol0(1);
-        pls.plhist(data, -1.1, 1.1, 44, 0);
-        pls.plcol0(2);
-        pls.pllab( "#frValue", "#frFrequency",
+        pls.col0(1);
+        pls.hist(data, -1.1, 1.1, 44, 0);
+        pls.col0(2);
+        pls.lab( "#frValue", "#frFrequency",
                  "#frPLplot Example 5 - Probability function of Oscillator" );
 
-        pls.plend();
+        pls.close();
     }
 }
 

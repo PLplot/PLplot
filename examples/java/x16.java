@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -45,8 +46,7 @@ class x16 {
    static final double YSPA =  2./(YPTS-1);
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
+   Plplot pls = new Plplot();
 
    double fmin, fmax;
 
@@ -90,15 +90,15 @@ class x16 {
 	final int fill_width = 2, cont_color = 0, cont_width = 0;
 
 	// Parse and process command line arguments.
-	pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+	pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
-	pls.plscmap0n(3);
+	pls.scmap0n(3);
 
 	//Initialize plplot
          
-          pls.plinit();
+          pls.init();
 	// Set up data array
 
 	for (i = 0; i < XPTS; i++) {
@@ -148,79 +148,79 @@ class x16 {
 
 	// Plot using identity transform
 
-	pls.pladv(0);
-	pls.plvpor(0.1, 0.9, 0.1, 0.9);
-	pls.plwind(-1.0, 1.0, -1.0, 1.0);
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.plpsty(0);
+	pls.psty(0);
 
-	pls.plshades(z, -1., 1., -1., 1., 
+	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 cont_color, cont_width,
 		 1, xg0, yg0);
 
-	pls.plcol0(1);
-	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.plcol0(2);
-	pls.pllab("distance", "altitude", "Bogon density");
+	pls.col0(1);
+	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.col0(2);
+	pls.lab("distance", "altitude", "Bogon density");
 
 	// Plot using 1d coordinate transform
     
-	pls.pladv(0);
-	pls.plvpor(0.1, 0.9, 0.1, 0.9);
-	pls.plwind(-1.0, 1.0, -1.0, 1.0);
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.plpsty(0);
+	pls.psty(0);
 
-	pls.plshades(z, -1., 1., -1., 1., 
+	pls.shades(z, -1., 1., -1., 1., 
 	     shedge, fill_width,
 	     cont_color, cont_width,
 	     1, xg1, yg1);
 
-	pls.plcol0(1);
-	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.plcol0(2);
+	pls.col0(1);
+	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.col0(2);
 
-	pls.pllab("distance", "altitude", "Bogon density");
+	pls.lab("distance", "altitude", "Bogon density");
 
 	// Plot using 2d coordinate transform
 
-	pls.pladv(0);
-	pls.plvpor(0.1, 0.9, 0.1, 0.9);
-	pls.plwind(-1.0, 1.0, -1.0, 1.0);
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.plpsty(0);
+	pls.psty(0);
 
-	pls.plshades(z, -1., 1., -1., 1., 
+	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 cont_color, cont_width,
 		 0, xg2, yg2);
 
-	pls.plcol0(1);
-	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.plcol0(2);
-	pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2);
+	pls.col0(1);
+	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.col0(2);
+	pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2);
 
-	pls.pllab("distance", "altitude", "Bogon density, with streamlines");
+	pls.lab("distance", "altitude", "Bogon density, with streamlines");
 
 	// Plot using 2d coordinate transform
 
-	pls.pladv(0);
-	pls.plvpor(0.1, 0.9, 0.1, 0.9);
-	pls.plwind(-1.0, 1.0, -1.0, 1.0);
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.plpsty(0);
+	pls.psty(0);
 
-	pls.plshades(z, -1., 1., -1., 1., 
+	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 2, 3,
 		 0, xg2, yg2);
 
-	pls.plcol0(1);
-	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.plcol0(2);
+	pls.col0(1);
+	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.col0(2);
 
-	pls.pllab("distance", "altitude", "Bogon density");
+	pls.lab("distance", "altitude", "Bogon density");
 
 	// Note this exclusion API will probably change so don't bother
 	// with it for x16.java example.
@@ -228,11 +228,11 @@ class x16 {
 
 	//Example with polar coordinates.
 
-	pls.pladv(0);
-	pls.plvpor( .1, .9, .1, .9 );
-	pls.plwind( -1., 1., -1., 1. );
+	pls.adv(0);
+	pls.vpor( .1, .9, .1, .9 );
+	pls.wind( -1., 1., -1., 1. );
 
-	pls.plpsty(0);
+	pls.psty(0);
 
 	// Build new coordinate matrices.
     
@@ -255,7 +255,7 @@ class x16 {
 	for (i = 0; i < NSHADES+1; i++)
 	  shedge[i] = zmin + (zmax - zmin) * (double) i / (double) NSHADES;
 
-	pls.plshades(z, -1., 1., -1., 1., 
+	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 cont_color, cont_width,
 		 0, xg2, yg2);
@@ -266,17 +266,17 @@ class x16 {
 	   px[i] = Math.cos(t);
 	   py[i] = Math.sin(t);
 	}
-	pls.plcol0(1);
-	pls.plline(px, py);
+	pls.col0(1);
+	pls.line(px, py);
                   
 	// And label the plot.
 
-	pls.plcol0(2);
-	pls.pllab( "", "",  "Tokamak Bogon Instability" );
+	pls.col0(2);
+	pls.lab( "", "",  "Tokamak Bogon Instability" );
 
 	// Clean up 
 
-	pls.plend();
+	pls.close();
 
      }
 }

@@ -4,6 +4,7 @@
 
 //---------------------------------------------------------------------------//
 // Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 
 //
@@ -37,8 +38,7 @@ import java.text.*;
 class x14 {
 
     double xscale, yscale, xoff, yoff;
-    PLStreamc plsdummy = new PLStreamc();
-    plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
 
    public static void main( String[] args ) 
      {
@@ -52,11 +52,11 @@ class x14 {
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
 
 	StringBuffer driver = new StringBuffer(80);
 	
-	pls.plgdev(driver);
+	pls.gdev(driver);
 	String sdriver = new String(driver);
 	System.out.println("Demo of multiple output streams via the " + sdriver +  " driver.");
 	System.out.println("Running with the second stream as slave to the first.");
@@ -64,27 +64,27 @@ class x14 {
 
 	// Set up first stream
 
-	pls.plsetopt("geometry", geometry_master);
+	pls.setopt("geometry", geometry_master);
 
-	pls.plsdev(sdriver);
-	pls.plssub(2, 2);
-	pls.plinit();
+	pls.sdev(sdriver);
+	pls.ssub(2, 2);
+	pls.init();
 	
 	// Start next stream
 	
-	pls.plsstrm(1);
+	pls.sstrm(1);
 	
 	// Turn off pause to make this a slave (must follow master)
 	
-	pls.plsetopt("geometry", geometry_slave);
-	pls.plspause(0);
-	pls.plsdev(sdriver);
-	pls.plinit();
+	pls.setopt("geometry", geometry_slave);
+	pls.spause(0);
+	pls.sdev(sdriver);
+	pls.init();
 	
 	//Set up the data & plot
 	// Original case
 	
-	pls.plsstrm(0);
+	pls.sstrm(0);
 	
         xscale = 6.;
         yscale = 1.;
@@ -103,7 +103,7 @@ class x14 {
 	xscale = 1.;
 	yscale = 1.e-6;
 	int digmax = 2;
-	pls.plsyax(digmax, 0);
+	pls.syax(digmax, 0);
 	plot1();
 	
 	// Set up the data & plot
@@ -112,36 +112,36 @@ class x14 {
 	yscale = 0.0014;
 	yoff = 0.0185;
 	digmax = 5;
-	pls.plsyax(digmax, 0);
+	pls.syax(digmax, 0);
 	plot1();
 	
 	// To slave
 	// The pleop() ensures the eop indicator gets lit.
 	
-	pls.plsstrm(1);
+	pls.sstrm(1);
 	plot4();
-	pls.pleop();
+	pls.eop();
 	
 	// Back to master
 	
-	pls.plsstrm(0);
+	pls.sstrm(0);
 	plot2();
 	plot3();
 	
 	// To slave
 	
-	pls.plsstrm(1);
+	pls.sstrm(1);
 	plot5();
-	pls.pleop();
+	pls.eop();
 	
 	// Back to master to wait for user to advance
 	
-	pls.plsstrm(0);
-	pls.pleop();
+	pls.sstrm(0);
+	pls.eop();
 	
 	// Call plend to finish off.
 
-        pls.plend();
+        pls.close();
     }
 
     void plot1()
@@ -174,21 +174,21 @@ class x14 {
     // 6.0, and the range in Y is 0.0 to 30.0. The axes are scaled separately
     // (just = 0), and we just draw a labelled box (axis = 0).
 
-        pls.plcol0(1);
-        pls.plenv( xmin, xmax, ymin, ymax, 0, 0 );
-        pls.plcol0(6);
-        pls.pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
+        pls.col0(1);
+        pls.env( xmin, xmax, ymin, ymax, 0, 0 );
+        pls.col0(6);
+        pls.lab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
     // Plot the data points.
 
-        pls.plcol0(9);
-        pls.plpoin( xs, ys, 9 );
+        pls.col0(9);
+        pls.poin( xs, ys, 9 );
 
     // Draw the line through the data.
 
-        pls.plcol0(4);
-        pls.plline(x, y);
-        pls.plflush();
+        pls.col0(4);
+        pls.line(x, y);
+        pls.flush();
     }
 
     void plot2()
@@ -201,10 +201,10 @@ class x14 {
     // 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled
     // separately (just = 0), and we draw a box with axes (axis = 1).
 
-        pls.plcol0(1);
-        pls.plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
-        pls.plcol0(2);
-        pls.pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
+        pls.col0(1);
+        pls.env(-2.0, 10.0, -0.4, 1.2, 0, 1);
+        pls.col0(2);
+        pls.lab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
     // Fill up the arrays.
 
@@ -217,9 +217,9 @@ class x14 {
 
     // Draw the line.
 
-        pls.plcol0(3);
-        pls.plline(x, y);
-        pls.plflush();
+        pls.col0(3);
+        pls.line(x, y);
+        pls.flush();
     }
 
     void plot3()
@@ -235,29 +235,29 @@ class x14 {
     // For the final graph we wish to override the default tick intervals,
     // and so do not use plenv().
 
-        pls.pladv(0);
+        pls.adv(0);
 
     // Use standard viewport, and define X range from 0 to 360 degrees, Y
     // range from -1.2 to 1.2.
 
-        pls.plvsta();
-        pls.plwind( 0.0, 360.0, -1.2, 1.2 );
+        pls.vsta();
+        pls.wind( 0.0, 360.0, -1.2, 1.2 );
 
     // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-        pls.plcol0(1);
-        pls.plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
+        pls.col0(1);
+        pls.box("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
     // Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
     // plstyl expects a pointer!
 
-        pls.plstyl(mark1, space1);
-        pls.plcol0(2);
-        pls.plbox("g", 30.0, 0, "g", 0.2, 0);
-        pls.plstyl(mark0, space0);
+        pls.styl(mark1, space1);
+        pls.col0(2);
+        pls.box("g", 30.0, 0, "g", 0.2, 0);
+        pls.styl(mark0, space0);
 
-        pls.plcol0(3);
-        pls.pllab( "Angle (degrees)", "sine",
+        pls.col0(3);
+        pls.lab( "Angle (degrees)", "sine",
                  "#frPLplot Example 1 - Sine function" );
 
         for (i = 0; i < 101; i++) {
@@ -265,9 +265,9 @@ class x14 {
             y[i] = Math.sin(x[i] * Math.PI / 180.0);
         }
 
-        pls.plcol0(4);
-        pls.plline(x, y);
-        pls.plflush();
+        pls.col0(4);
+        pls.line(x, y);
+        pls.flush();
     }
 
     void plot4()
@@ -292,7 +292,7 @@ class x14 {
 
     // Set up viewport and window, but do not draw box.
 
-        pls.plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
+        pls.env(-1.3, 1.3, -1.3, 1.3, 1, -2);
         for (i = 1; i <= 10; i++) {
             for (j = 0; j <= 360; j++) {
                 x[j] = 0.1 * i * x0[j];
@@ -301,10 +301,10 @@ class x14 {
 
         // Draw circles for polar grid.
 
-            pls.plline(x, y);
+            pls.line(x, y);
         }
 
-        pls.plcol0(2);
+        pls.col0(2);
         for (i = 0; i <= 11; i++) {
             theta = 30.0 * i;
             dx = Math.cos(dtr * theta);
@@ -312,16 +312,16 @@ class x14 {
 
         // Draw radial spokes for polar grid.
 
-            pls.pljoin(0.0, 0.0, dx, dy);
+            pls.join(0.0, 0.0, dx, dy);
             String text = nf.format(theta);
 
         // Write labels for angle.
 
 	//Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
             if (dx >= -0.00001)
-                pls.plptex(dx, dy, dx, dy, -0.15, text);
+                pls.ptex(dx, dy, dx, dy, -0.15, text);
             else
-                pls.plptex(dx, dy, -dx, -dy, 1.15, text);
+                pls.ptex(dx, dy, -dx, -dy, 1.15, text);
         }
 
     // Draw the graph.
@@ -331,12 +331,12 @@ class x14 {
             x[i] = x0[i] * r;
             y[i] = y0[i] * r;
         }
-        pls.plcol0(3);
-        pls.plline(x, y);
+        pls.col0(3);
+        pls.line(x, y);
 
-        pls.plcol0(4);
-        pls.plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
-        pls.plflush();
+        pls.col0(4);
+        pls.mtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
+        pls.flush();
     }
 
     static final int XPTS = 35;
@@ -395,16 +395,16 @@ class x14 {
 
     // Plot using scaled identity transform used to create xg0 and yg0
 
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-        pls.plflush();
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.styl(mark, space);
+	pls.col0(3);
+        pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+        pls.flush();
     }
 }
 

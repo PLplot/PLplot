@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -42,8 +43,7 @@ class x06 {
 
     public x06( String[] args )
     {
-       PLStreamc plsdummy = new PLStreamc();
-       plplotjavac pls = new plplotjavac();
+       Plplot pls = new Plplot();
 
         NumberFormat nf = NumberFormat.getNumberInstance();
 
@@ -53,30 +53,30 @@ class x06 {
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot
 
-        pls.plinit();
+        pls.init();
 
-        pls.pladv(0);
+        pls.adv(0);
 
     // Set up viewport and window.
 
-        pls.plcol0(2);
-        pls.plvpor(0.1, 1.0, 0.1, 0.9);
-        pls.plwind(0.0, 1.0, 0.0, 1.3);
+        pls.col0(2);
+        pls.vpor(0.1, 1.0, 0.1, 0.9);
+        pls.wind(0.0, 1.0, 0.0, 1.3);
 
     // Draw the grid using plbox.
 
-        pls.plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0);
+        pls.box("bcgt", 0.1, 0, "bcgt", 0.1, 0);
 
     // Write the digits below the frame.
 
-        pls.plcol0(15);
+        pls.col0(15);
         for( i = 0; i <= 9; i++ ) {
             String text = nf.format(i);
-            pls.plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+            pls.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
         }
 
         k = 0;
@@ -85,7 +85,7 @@ class x06 {
         // Write the digits to the left of the frame.
 
             String text = nf.format( 10*i);
-            pls.plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
+            pls.mtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
             for( j = 0; j <= 9; j++ ) {
                 x[0] = 0.1 * j + 0.05;
                 y[0] = 1.25 - 0.1 * i;
@@ -94,13 +94,13 @@ class x06 {
             // that is what we feed it).
 
                 if (k < 128)
-                    pls.plpoin( x, y, k );
+                    pls.poin( x, y, k );
                 k = k + 1;
             }
         }
 
-        pls.plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
-        pls.plend();
+        pls.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
+        pls.close();
     }
 }
 

@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002  Alan W. Irwin
+// Copyright (C) 2001  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -47,8 +48,7 @@ class x07 {
 
     public x07( String[] args )
     {
-       PLStreamc plsdummy = new PLStreamc();
-       plplotjavac pls = new plplotjavac();
+       Plplot pls = new Plplot();
 
 //        NumberFormat nf = NumberFormat.getNumberInstance();
 //        Change to this custom format to get stupid locale commas
@@ -61,32 +61,32 @@ class x07 {
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
-        pls.plfontld(1);
+        pls.fontld(1);
         for( l = 0; l < base.length; l++ ) {
-            pls.pladv(0);
+            pls.adv(0);
 
         // Set up viewport and window.
 
-            pls.plcol0(2);
-            pls.plvpor(0.15, 0.95, 0.1, 0.9);
-            pls.plwind(0.0, 1.0, 0.0, 1.0);
+            pls.col0(2);
+            pls.vpor(0.15, 0.95, 0.1, 0.9);
+            pls.wind(0.0, 1.0, 0.0, 1.0);
 
         // Draw the grid using plbox.
 
-            pls.plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0);
+            pls.box("bcgt", 0.1, 0, "bcgt", 0.1, 0);
 
         // Write the digits below the frame.
 
-            pls.plcol0(15);
+            pls.col0(15);
             for (i = 0; i <= 9; i++) {
                 String text = nf.format(i);
-                pls.plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+                pls.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
             }
 
             k = 0;
@@ -95,7 +95,7 @@ class x07 {
             // Write the digits to the left of the frame.
 
                 String text = nf.format( base[l] + 10*i );
-                pls.plmtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, text);
+                pls.mtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, text);
                 for( j = 0; j <= 9; j++ ) {
                     x[0] = 0.1 * j + 0.05;
                     y[0] = 0.95 - 0.1 * i;
@@ -103,14 +103,14 @@ class x07 {
                 // Display the symbols.
 		// N.B. plsym expects arrays so that is what we give it.
 
-                    pls.plsym( x, y, base[l] + k );
+                    pls.sym( x, y, base[l] + k );
                     k = k + 1;
                 }
             }
 
-            pls.plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols");
+            pls.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols");
         }
-        pls.plend();
+        pls.close();
     }
 }
 

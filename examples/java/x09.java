@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001, 2002  Geoffrey Furnish
 // Copyright (C) 2002, 2003  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -54,8 +55,7 @@ class x09 {
 // Transformation function
     final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
    
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
 
 // State data used by f2mnmx
     double fmin, fmax;
@@ -88,10 +88,10 @@ class x09 {
 	
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
     /* Initialize plplot */
        
-	pls.plinit();
+	pls.init();
 
     /* Set up function arrays */
        
@@ -134,86 +134,86 @@ class x09 {
 
 
     // Plot using scaled identity transform used to create xg0 and yg0
-/*	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont( z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-	pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+/*	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont( z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.styl(mark, space);
+	pls.col0(3);
+	pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 */
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.styl(mark, space);
+	pls.col0(3);
+        pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 
     // Plot using 1d coordinate transform
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-	pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1) ;
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+	pls.styl(mark, space);
+	pls.col0(3);
+	pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1) ;
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-/*	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+/*	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+	pls.styl(mark, space);
+	pls.col0(3);
+        pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 */
     // Plot using 2d coordinate transform
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.styl(mark, space);
+	pls.col0(3);
+        pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-/*	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-	pls.plcol0(2);
-        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
-	pls.plstyl(mark, space);
-	pls.plcol0(3);
-        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
-	pls.plstyl(mark0, space0);
-	pls.plcol0(1);
-	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+/*	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+	pls.col0(2);
+        pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.styl(mark, space);
+	pls.col0(3);
+        pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.styl(mark0, space0);
+	pls.col0(1);
+	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+        pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 */
 	polar();
-/*        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+/*        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	polar();
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 */
         potential();
-/*        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+/*        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	potential();
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 */
-	pls.plend();
+	pls.close();
     }
 
     void polar()
@@ -228,8 +228,8 @@ class x09 {
 	double t, r, theta;
 	double [] lev = new double[10];
 
-	pls.plenv(-1., 1., -1., 1., 0, -2);
-	pls.plcol0(1);
+	pls.env(-1., 1., -1., 1., 0, -2);
+	pls.col0(1);
        
     // Perimeter
 	for (i = 0; i < PERIMETERPTS; i++) {
@@ -237,7 +237,7 @@ class x09 {
             px[i] = Math.cos(t);
             py[i] = Math.sin(t);
 	}
-	pls.plline(px, py);
+	pls.line(px, py);
 	       
     // Create data to be contoured.
    
@@ -255,10 +255,10 @@ class x09 {
             lev[i] = 0.05 + 0.10*(double) i;
 	}
 
-	pls.plcol0(2);
-        pls.plcont( z, 1, RPTS, 1, THETAPTS, lev, xg, yg );
-	pls.plcol0(1);
-	pls.pllab("", "", "Polar Contour Plot");
+	pls.col0(2);
+        pls.cont( z, 1, RPTS, 1, THETAPTS, lev, xg, yg );
+	pls.col0(1);
+	pls.lab("", "", "Polar Contour Plot");
     }
 
 // Compute min and max value of a 2-d array.
@@ -388,32 +388,32 @@ class x09 {
 	ncollab = 2;
 
     // Finally start plotting this page!
-	pls.pladv(0);
-	pls.plcol0(ncolbox);
+	pls.adv(0);
+	pls.col0(ncolbox);
 
-	pls.plvpas(0.1, 0.9, 0.1, 0.9, 1.0);
-	pls.plwind(xpmin, xpmax, ypmin, ypmax);
-	pls.plbox("", 0., 0, "", 0., 0);
+	pls.vpas(0.1, 0.9, 0.1, 0.9, 1.0);
+	pls.wind(xpmin, xpmax, ypmin, ypmax);
+	pls.box("", 0., 0, "", 0., 0);
 
-	pls.plcol0(ncollin);
+	pls.col0(ncollin);
 	if(nlevelneg >0) {
 	   // Negative contours
-	   pls.pllsty(2);
+	   pls.lsty(2);
 	   // The point here is to copy results into an array of the correct size
 	   // which is essential for the java wrapper of plplot to work correctly.
 	   double [] clevelneg = new double[nlevelneg];
 	   System.arraycopy(clevelneg_store, 0, clevelneg, 0, nlevelneg);
-	   pls.plcont( z, 1, PRPTS, 1, PTHETAPTS, clevelneg, xg, yg );
+	   pls.cont( z, 1, PRPTS, 1, PTHETAPTS, clevelneg, xg, yg );
 	}
 
 	if(nlevelpos >0) {
 	   // Positive contours
-	   pls.pllsty(1);
+	   pls.lsty(1);
 	   double [] clevelpos = new double[nlevelpos];
 	   // The point here is to copy results into an array of the correct size
 	   // which is essential for the java wrapper of plplot to work correctly.
 	   System.arraycopy(clevelpos_store, 0, clevelpos, 0, nlevelpos);
-	   pls.plcont( z, 1, PRPTS, 1, PTHETAPTS, clevelpos, xg, yg );
+	   pls.cont( z, 1, PRPTS, 1, PTHETAPTS, clevelpos, xg, yg );
 	}
 		 
     // Draw outer boundary
@@ -423,11 +423,11 @@ class x09 {
             py[i] = y0 + rmax*Math.sin(t);
 	}
 
-	pls.plcol0(ncolbox);
-	pls.plline(px, py);
+	pls.col0(ncolbox);
+	pls.line(px, py);
 	       
-	pls.plcol0(ncollab);
-	pls.pllab("", "", "Shielded potential of charges in a conducting sphere");
+	pls.col0(ncollab);
+	pls.lab("", "", "Shielded potential of charges in a conducting sphere");
     }
 }
 

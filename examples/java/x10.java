@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -41,27 +42,26 @@ class x10 {
 
     public x10( String[] args )
     {
-       PLStreamc plsdummy = new PLStreamc();
-       plplotjavac pls = new plplotjavac();
+       Plplot pls = new Plplot();
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
-        pls.pladv(0);
-        pls.plvpor(0.0, 1.0, 0.0, 1.0);
-        pls.plwind(0.0, 1.0, 0.0, 1.0);
-        pls.plbox("bc", 0.0, 0, "bc", 0.0, 0);
+        pls.adv(0);
+        pls.vpor(0.0, 1.0, 0.0, 1.0);
+        pls.wind(0.0, 1.0, 0.0, 1.0);
+        pls.box("bc", 0.0, 0, "bc", 0.0, 0);
 
-        pls.plsvpa(50.0, 150.0, 50.0, 100.0);
-        pls.plwind(0.0, 1.0, 0.0, 1.0);
-        pls.plbox("bc", 0.0, 0, "bc", 0.0, 0);
-        pls.plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
-        pls.plend();
+        pls.svpa(50.0, 150.0, 50.0, 100.0);
+        pls.wind(0.0, 1.0, 0.0, 1.0);
+        pls.box("bc", 0.0, 0, "bc", 0.0, 0);
+        pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
+        pls.close();
     }
 }
 

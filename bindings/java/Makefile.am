@@ -42,21 +42,26 @@ swiggenfiles = $(swigjavafiles) $(swigcfiles)
 javafiles = \
 	config.java \
 	PLStreamc.java \
+	Plplot.java \
 	$(swigjavafiles)
 
+# Note : the order of these is important since there is no formal 
+# dependency checking.
 javaclasses = \
 	plplot/core/config.class \
 	plplot/core/PLStreamc.class \
 	plplot/core/plplotjavacJNI.class \
 	plplot/core/SWIGTYPE_p_p_char.class\
+	plplot/core/plplotjavacConstants.class \
 	plplot/core/plplotjavac.class \
-	plplot/core/plplotjavacConstants.class
+	plplot/core/Plplot.class
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
 	PLStream.java \
 	PLStreamc.java \
+	Plplot.java \
 	README.javaAPI \
 	javabind.c \
 	plplotjavac.i \

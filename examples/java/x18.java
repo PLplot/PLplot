@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -39,8 +40,7 @@ class x18 {
    static int opt[] = { 1, 0, 1, 0 };
    static double alt[] = {20.0, 35.0, 50.0, 65.0};
    static double az[] = {30.0, 40.0, 50.0, 60.0};
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
+   Plplot pls = new Plplot();
 
    double THETA(int a)
      {
@@ -64,16 +64,16 @@ class x18 {
 	double [] y = new double [5];
 	double [] z = new double [5];
 
-	pls.pladv(0);
-	pls.plvpor(0.0, 1.0, 0.0, 0.9);
-	pls.plwind(-1.0, 1.0, -0.9, 1.1);
-	pls.plcol0(1);
-	pls.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	pls.plbox3("bnstu", "x axis", 0.0, 0,
+	pls.adv(0);
+	pls.vpor(0.0, 1.0, 0.0, 0.9);
+	pls.wind(-1.0, 1.0, -0.9, 1.1);
+	pls.col0(1);
+	pls.w3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	pls.box3("bnstu", "x axis", 0.0, 0,
 		 "bnstu", "y axis", 0.0, 0,
 		 "bcdmnstuv", "z axis", 0.0, 0);
 	
-	pls.plcol0(2);
+	pls.col0(2);
 
 	// x = r sin(phi) cos(theta)
 	// y = r sin(phi) sin(theta)
@@ -102,12 +102,12 @@ class x18 {
 	      y[4] = Math.sin( PHI(j) ) * Math.sin( THETA(i) );
 	      z[4] = Math.cos( PHI(j) );
 
-	      pls.plpoly3(x, y, z, draw[k], 1 );
+	      pls.poly3(x, y, z, draw[k], 1 );
 	   }
 	}
 
-	pls.plcol0(3);
-	pls.plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
+	pls.col0(3);
+	pls.mtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
      }
    // Does a series of 3-d plots for a given data set, with different
    // viewing options in each plot.
@@ -124,10 +124,10 @@ class x18 {
 	double r;
 
         // Parse and process command line arguments.
-	pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+	pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
 	// Initialize plplot.
-	pls.plinit();
+	pls.init();
 
 	for( k=0; k < 4; k++ )
 	  test_poly(k);
@@ -151,31 +151,31 @@ class x18 {
 	}
 
 	for (k = 0; k < 4; k++) {
-	   pls.pladv(0);
-	   pls.plvpor(0.0, 1.0, 0.0, 0.9);
-	   pls.plwind(-1.0, 1.0, -0.9, 1.1);
-	   pls.plcol0(1);
-	   pls.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	   pls.plbox3("bnstu", "x axis", 0.0, 0,
+	   pls.adv(0);
+	   pls.vpor(0.0, 1.0, 0.0, 0.9);
+	   pls.wind(-1.0, 1.0, -0.9, 1.1);
+	   pls.col0(1);
+	   pls.w3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	   pls.box3("bnstu", "x axis", 0.0, 0,
 		    "bnstu", "y axis", 0.0, 0,
 		    "bcdmnstuv", "z axis", 0.0, 0);
 	   
-	   pls.plcol0(2);
+	   pls.col0(2);
 	   
 	   if (opt[k]>0)
-	     pls.plline3( x, y, z );
+	     pls.line3( x, y, z );
 	   else
-	     pls.plpoin3( x, y, z, 1 );
+	     pls.poin3( x, y, z, 1 );
 	   
-	   pls.plcol0(3);
+	   pls.col0(3);
 	   String title =  "#frPLplot Example 18 - Alt=" + 
 	     nf.format((int) alt[k]) +
 	     ", Az=" + 
 	     nf.format((int) az[k]);
-	   pls.plmtex("t", 1.0, 0.5, 0.5, title);
+	   pls.mtex("t", 1.0, 0.5, 0.5, title);
 	}
 	
-	pls.plend();
+	pls.close();
      }
    
 }

@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -46,45 +47,44 @@ class x02 {
         double vmin, vmax;
         NumberFormat nf = NumberFormat.getNumberInstance();
 
-       PLStreamc plsdummy = new PLStreamc();
-       plplotjavac pls = new plplotjavac();
+        Plplot pls = new Plplot();
 
     // Divide screen into 16 regions.
 
-        pls.plssub(4, 4);
+        pls.ssub(4, 4);
 
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
-        pls.plschr(0.0, 3.5);
-        pls.plfont(4);
+        pls.schr(0.0, 3.5);
+        pls.font(4);
 
         for (i = 0; i <= 15; i++) {
-            pls.plcol0(i);
+            pls.col0(i);
 
             String text = nf.format(i);
 
-            pls.pladv(0);
+            pls.adv(0);
             vmin = 0.1;
             vmax = 0.9;
             for (j = 0; j <= 2; j++) {
-                pls.plwid(j + 1);
-                pls.plvpor(vmin, vmax, vmin, vmax);
-                pls.plwind(0.0, 1.0, 0.0, 1.0);
-                pls.plbox("bc", 0.0, 0, "bc", 0.0, 0);
+                pls.wid(j + 1);
+                pls.vpor(vmin, vmax, vmin, vmax);
+                pls.wind(0.0, 1.0, 0.0, 1.0);
+                pls.box("bc", 0.0, 0, "bc", 0.0, 0);
                 vmin = vmin + 0.1;
                 vmax = vmax - 0.1;
             }
-            pls.plwid(1);
-            pls.plptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
+            pls.wid(1);
+            pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
         }
 
-        pls.plend();
+        pls.close();
     }
 }
 

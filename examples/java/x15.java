@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001, 2002  Geoffrey Furnish
 // Copyright (C) 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -42,8 +43,7 @@ class x15 {
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
 
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
+   Plplot pls = new Plplot();
 
     double fmin, fmax;
 
@@ -83,11 +83,11 @@ class x15 {
 	
     // Parse and process command line arguments.
 
-        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 	
     // Initialize plplot.
 
-        pls.plinit();
+        pls.init();
 
     // no need to fiddle with color maps since example uses default cmap0
     // and the cmap1 fiddling that x15c.c does is completely irrelevant
@@ -118,7 +118,7 @@ class x15 {
 	plot1( xg0, yg0, z, zmin, zmax );
 	plot2( xg0, yg0, z, zmin, zmax );
 	
-        pls.plend();
+        pls.close();
     }
 
 // Illustrates a single shaded region.
@@ -129,9 +129,9 @@ class x15 {
 	int sh_cmap = 0, sh_width;
 	int min_color = 0, min_width = 0, max_color = 0, max_width = 0;
 	
-	pls.pladv(0);
-	pls.plvpor(0.1, 0.9, 0.1, 0.9);
-	pls.plwind(-1.0, 1.0, -1.0, 1.0);
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
 	
     /* Plot using identity transform */
 
@@ -144,18 +144,18 @@ class x15 {
 	min_width = 2;
 	max_width = 2;
      
-	pls.plpsty(8);
+	pls.psty(8);
 
-        pls.plshade( z, -1., 1., -1., 1.,
+        pls.shade( z, -1., 1., -1., 1.,
                    shade_min, shade_max,
                    sh_cmap, sh_color, sh_width,
                    min_color, min_width, max_color, max_width,
 		     1, xg0, yg0 );
 
-	pls.plcol0(1);
-	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.plcol0(2);
-	pls.pllab("distance", "altitude", "Bogon flux");
+	pls.col0(1);
+	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.col0(2);
+	pls.lab("distance", "altitude", "Bogon flux");
     }
 
 // Illustrates multiple adjacent shaded regions, using different fill
@@ -169,9 +169,9 @@ class x15 {
 	int i;
 	sh_width = 2;
 	
-	pls.pladv(0);
-	pls.plvpor(0.1, 0.9, 0.1, 0.9);
-	pls.plwind(-1.0, 1.0, -1.0, 1.0);
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
 	
     /* Plot using identity transform */
 
@@ -179,19 +179,19 @@ class x15 {
             shade_min = zmin + (zmax - zmin) * i / 10.0;
             shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
             sh_color = i+6;
-            pls.plpsty((i + 2) % 8 + 1);
+            pls.psty((i + 2) % 8 + 1);
        
-            pls.plshade( z, -1., 1., -1., 1.,
+            pls.shade( z, -1., 1., -1., 1.,
                        shade_min, shade_max,
                        sh_cmap, sh_color, sh_width,
                        min_color, min_width, max_color, max_width,
 			 1, xg0, yg0 );
 	}
 
-	pls.plcol0(1);
-	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.plcol0(2);
-	pls.pllab("distance", "altitude", "Bogon flux");
+	pls.col0(1);
+	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.col0(2);
+	pls.lab("distance", "altitude", "Bogon flux");
     }
 
 }

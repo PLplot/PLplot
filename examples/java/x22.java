@@ -4,7 +4,7 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2004  Andrew Ross <andrewross@users.sourceforge.net>
+// Copyright (C) 2004  Andrew Ross 
 //
 // This file is part of PLplot.
 //
@@ -38,8 +38,7 @@ class x22 {
     double MIN(double x, double y) { return (x<y?x:y);}
     double MAX(double x, double y) { return (x>y?x:y);}
 
-    PLStreamc plsdummy = new PLStreamc();
-    plplotjavac pls = new plplotjavac();
+    Plplot pls = new Plplot();
   
     double[][] u = null;
     double[][] v = null;
@@ -75,11 +74,11 @@ class x22 {
 	}
 
 	// Plot vectors with default arrows
-	pls.plenv(xmin, xmax, ymin, ymax, 0, 0);
-	pls.pllab("(x)", "(y)", "#frPLplot Example 22 - circulation");
-	pls.plcol0(2);
-	pls.plvect(u,v,0.0,xg,yg);
-	pls.plcol0(1);
+	pls.env(xmin, xmax, ymin, ymax, 0, 0);
+	pls.lab("(x)", "(y)", "#frPLplot Example 22 - circulation");
+	pls.col0(2);
+	pls.vect(u,v,0.0,xg,yg);
+	pls.col0(1);
 
     }
 
@@ -119,11 +118,11 @@ class x22 {
 	    }
 	}
 
-	pls.plenv(xmin, xmax, ymin, ymax, 0, 0);
-	pls.pllab("(x)", "(y)", "#frPLplot Example 22 - constriction");
-	pls.plcol0(2);
-	pls.plvect(u,v,-0.5,xg,yg);
-	pls.plcol0(1);
+	pls.env(xmin, xmax, ymin, ymax, 0, 0);
+	pls.lab("(x)", "(y)", "#frPLplot Example 22 - constriction");
+	pls.col0(2);
+	pls.vect(u,v,-0.5,xg,yg);
+	pls.col0(1);
 
     }
 
@@ -196,23 +195,23 @@ class x22 {
 	f2mnmx(yg, nr, ntheta, ymaxmin);
 	f2mnmx(z, nr, ntheta, zmaxmin);
 
-	pls.plenv(xmaxmin[1], xmaxmin[0], ymaxmin[1], ymaxmin[0], 0, 0);
-	pls.pllab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot");
+	pls.env(xmaxmin[1], xmaxmin[0], ymaxmin[1], ymaxmin[0], 0, 0);
+	pls.lab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot");
 	// Plot contours of the potential
 	dz = (zmaxmin[0]-zmaxmin[1])/(double) nlevel;
 	for (i = 0; i < nlevel; i++) {
 	    clevel[i] = zmaxmin[1] + ((double) i + 0.5)*dz;
 	}
-	pls.plcol0(3);
-	pls.pllsty(2);
-	pls.plcont(z,1,nr,1,ntheta,clevel,xg,yg);
-	pls.pllsty(1);
-	pls.plcol0(1);
+	pls.col0(3);
+	pls.lsty(2);
+	pls.cont(z,1,nr,1,ntheta,clevel,xg,yg);
+	pls.lsty(1);
+	pls.col0(1);
     
 	// Plot the vectors of the gradient of the potential
-	pls.plcol0(2);
-	pls.plvect(u,v,25.0,xg,yg);
-	pls.plcol0(1);
+	pls.col0(2);
+	pls.vect(u,v,25.0,xg,yg);
+	pls.col0(1);
 
 	// Plot the perimeter of the cylinder
 	for (i=0;i<nper;i++) {
@@ -220,7 +219,7 @@ class x22 {
 	    px[i] = rmax*Math.cos(theta);
 	    py[i] = rmax*Math.sin(theta);
 	}
-	pls.plline(px,py);
+	pls.line(px,py);
     
     }
 
@@ -253,11 +252,11 @@ class x22 {
 
 	// Parse and process command line arguments 
 
-	pls.plParseOpts(args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM);
+	pls.ParseOpts(args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM);
 
 	// Initialize plplot 
 
-	pls.plinit();
+	pls.init();
 
 	nx = 20;
 	ny = 20;
@@ -274,18 +273,18 @@ class x22 {
 
 	// Set arrow style using arrow_x and arrow_y then 
 	// plot uMath.sing these arrows.
-	pls.plsvect(arrow_x, arrow_y, fill);
+	pls.svect(arrow_x, arrow_y, fill);
 	constriction();
 
 	// Set arrow style using arrow2_x and arrow2_y then 
 	// plot using these filled arrows.
 	fill = 1;
-	pls.plsvect(arrow2_x, arrow2_y, fill);
+	pls.svect(arrow2_x, arrow2_y, fill);
 	constriction();
 
 	potential();
 
-	pls.plend();
+	pls.close();
     }
 
     public static void main( String[] args ) {
