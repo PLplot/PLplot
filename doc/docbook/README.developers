@@ -68,26 +68,24 @@ both Debian and Cygnus/RedHat 6.2 systems.)
 
 Within this directory execute
 
-./bootstrap.sh
+./bootstrap.sh #if you are using a fresh copy
+rm -f config.cache #if you are rebuilding with new configuration from old copy
 
-./configure --with-www-user=$YOUR_SHELL1_USERNAME
+You must define the DOCBOOK2X variable appropriately (see INFO NOTE below)
+and also YOUR_SHELL1_USERNAME (airwin in my case).  This last variable is
+only used if you are updating the live website (see below).
 
-($YOUR_SHELL1_USERNAME is set to airwin in my case.  Drop the
---with-www-user altogether if you don't have a shell1.sourceforge.net
-account.  This username is only used for updating the live web site, and you
-won't be able to do that if you don't have a shell1 account with the
-appropriate privileges.
-
-The above ./configure will have lots of warning messages
-because it doesn't allow for the possibility of building the info
-documentation.  If you want to do that, check the INFO NOTE below.
+./configure --with-www-user=$YOUR_SHELL1_USERNAME \
+--with-docbook2texixml=$DOCBOOK2X/docbook2X/docbook2texixml \
+--with-texi_xml=$DOCBOOK2X/docbook2X/texi_xml \
+--with-docbook2x-incdir=$DOCBOOK2X/docbook2X/
 
 The configure script checks for the following programs: jade, jadetex,
-pdfjadetex, perl, and dvips  You should have them installed and present in
-the path in order to build the HTML and PostScript versions of the PLplot
-manual (see package lists below).  You may also specify the locations of
-these programs with the configure options --with-<prog>.  Type `./configure
---help' for details.
+pdfjadetex, perl, and dvips. You should have them installed (see package list
+below) and present in the path in order to build the varous versions of the
+output documentation.  You may also specify the locations of these programs
+with the configure options --with-<prog>.  Type `./configure --help' for
+details.
 
 The jade program needs to access several DTDs (Document Type Definition).
 The availability of the DTDs in the system is checked as well by the
@@ -102,8 +100,8 @@ The configure script also checks for certain essential perl modules (see
 package list below).
 
 
-After the ./configure is completed (possibly with warning messages but
-no error messages are allowed), execute
+After the ./configure is completed (normally without warning messages
+or error messages which are usually a sign of something missing), execute
 
 make
 
@@ -111,33 +109,34 @@ to build all forms of the documentation.
 
 (II) Cygnus DocBook systems on RedHat 6.2
 
-Although Cygnus has been bought out by RedHat, Cygnus actively
-maintains a DocBook system that has much higher recommendations than the
-vanilla RedHat DocBook.  See the Cygnus package list comments below for
-instructions about how to remove vanilla RedHat DocBook and replace it
-with Cygnus.  Once you have Cygnus DocBook installed here is what you do.
+Although Cygnus has been bought out by RedHat, Cygnus is hosting a version
+of DocBook that is maintained by volunteers and which has much higher
+recommendations than the vanilla RedHat DocBook.  See the Cygnus package
+list comments below for instructions about how to remove vanilla RedHat
+DocBook and replace it with Cygnus.  Once you have Cygnus DocBook installed
+here is what you do.
 
 Within this directory execute
 
-./bootstrap.sh
+./bootstrap.sh #if you are using a fresh copy
+rm -f config.cache #if you are rebuilding with new configuration from old copy
+
+You must define the DOCBOOK2X variable appropriately (see INFO NOTE below)
+and also YOUR_SHELL1_USERNAME (airwin in my case).  This last variable is
+only used if you are updating the live website (see below).
 
 ./configure --with-www-user=$YOUR_SHELL1_USERNAME \
+--with-docbook2texixml=$DOCBOOK2X/docbook2X/docbook2texixml \
+--with-texi_xml=$DOCBOOK2X/docbook2X/texi_xml \
+--with-docbook2x-incdir=$DOCBOOK2X/docbook2X/ \
 --with-sgml-catalogs=/etc/sgml/catalog \
 --with-xml-declaration=/usr/share/sgml/xml.dcl
 
-The configure with have lots of warnings (just as for Debian) if you
-don't have the info-generating software installed.  If you want to
-build info, then see NOTE INFO below.
-
 make
 
-The make finds a major bug in the Cygnus system; it cannot currently build
-pdf, but that may change soon.  If you want to build the info and man
-documentation you must load the required additional software (NOTE INFO
-below) and also work around this final major bug for pdf by executing:
-
-cd src; make info man
-
+If you have an older version of Cygnus jadetex (see package list),
+this make will find a major bug in the old version; it cannot build
+pdf.  The solution is to update to the latest Cygnus.
 
 (see the Debian instructions above for other details).
 
@@ -192,23 +191,23 @@ why you have to specify that non-default catalog in the Cygnus
 
 The current configure script has some stringent tests for checking that the
 appropriate catalog entries are found with working maps between the pubid's
-and sysid's.  Thus, on other systems if ./configure works without error
-messages, you probably have no catalog problems.  if ./configure output
-indicates there is a problem finding any of the sysid's corresponding to the
-above 4 pubid's, then it will be necessary to find a system catalog that
-points to the correct files or to make such a catalog.  If you need help
-with this procedure, feel free to consult with either Alan or Rafael.
+and sysid's.  Thus, on other systems if ./configure works without error or
+warning messages, you probably have no catalog problems.  if ./configure
+output indicates there is a problem finding any of the sysid's corresponding
+to the above 4 pubid's, then it will be necessary to find a system catalog
+that points to the correct files or to make such a catalog.  If you need
+help with this procedure, feel free to consult with either Alan or Rafael.
 
-INFO NOTE
+INFO NOTES
 =========
 
-Here is the cookbook for building the info documentation.  This has
+Here is the cookbook for preparing the software for info builds.  This has
 been checked both on Debian and Cygnus systems.
 
 Please, customize the two first lines.  In particular you may want to
 put DOCBOOK2X in a more permanent spot.
 
-setenv DOCBOOK2X /var/tmp
+setenv DOCBOOK2X /var/tmp (or some other permanent location)
 setenv PLPLOTDOCBOOK /path/to/plplot/doc/docbook
 cd $PLPLOTDOCBOOK
 cvs update    
@@ -219,26 +218,8 @@ cd docbook2X
 patch < $PLPLOTDOCBOOK/docbook2texixml.patch
 patch < $PLPLOTDOCBOOK/texi_xml.patch
 
-n.b. this downloading and patching only has to be done once and the
-following lines should then work from then on without fooling around with
-docbook2x any more.  However, you do have to have the two customized variables
-DOCBOOK2X and PLPLOTDOCBOOK defined.
-
-cd $PLPLOTDOCBOOK
-rm -f config.cache #if you are not using a fresh copy, otherwise use
-                   #./bootstrap.sh as above
-./configure --with-www-user=$YOUR_SHELL1_USERNAME \
---with-docbook2texixml=$DOCBOOK2X/docbook2X/docbook2texixml \
---with-texi_xml=$DOCBOOK2X/docbook2X/texi_xml \
---with-docbook2x-incdir=$DOCBOOK2X/docbook2X/
-
-This is the Debian version.  For the Cygnus version you must, of course, add
-the continuation lines
-
---with-sgml-catalogs=/etc/sgml/catalog \
---with-xml-declaration=/usr/share/sgml/xml.dcl
-
-to the above command.
+n.b. this downloading and patching only has to be done once per
+docbook2x or patch change.
 
 Package Lists
 =============
@@ -247,21 +228,20 @@ Package Lists
 Here is the list of packages needed for building the PLplot DocBook
 documentation:
 
-Debian potato:
+Debian: Currently, we have a mixture of potato and woody packages which
+must be installed in the order given.
 
-    tetex-bin (to obtain dvips)
-    perl-5.005 (to obtain perl)
-    task-sgml-dev and task-sgml
-(Metapackages containing dependencies for a complete SGML and XML support
-environment.  This includes, jade, jadetex, pdfjadetex, required
-perl extension modules for processing XML, and all required DocBook packages.)
-    
-    docbook-xml_4.1.2-1.deb
-This last package is from woody. The potato 3.1 XML version (a dependency of
-task-sgml) is grossly out of date.  Eventually we will move to the woody
-versions of everything once woody (or more likely testing, the more stable
-version of woody) becomes stable enough for production work.
-    
+(1) first strip out most tetex and docbook stuff if you have a pure potato
+setup.  Under dselect, remove tetex-base and sgml-base and recurse through
+all packages that depend on those two packages.
+
+(2) woody install of tetex-base
+
+(3) potato install of tetex-bin and tetex-lib (bringing in the woody version
+means changing libc6 and virtually your entire potato system to woody).
+
+(4) woody install of task-tex and task-sgml
+
 RedHat 6.2 vanilla DocBook is not recommended, but we list the package
 list so you can strip it out in favor of the Cygnus DocBook version
 that we do support on RedHat 6.2.
@@ -273,8 +253,8 @@ sgml-common-0.1-8.noarch.rpm
 sgml-tools-1.0.9-5.i386.rpm
 stylesheets-1.54.13rh-1.noarch.rpm
 
-Although The Cygnus company is now part of RedHat they maintain their own
-set of DocBook packages which are discussed at
+Although The Cygnus company is now part of RedHat they host a set
+of volunteer-maintained DocBook packages which are discussed at
 http://sources.redhat.com/docbook-tools.  These come highly recommended by
 the KDE2 documentation project and can be accessed from
 ftp://sourceware.cygnus.com/pub/docbook-tools/new-trials/RPMS.  (Note this
@@ -289,10 +269,13 @@ docbook-style-dsssl-1.59-2.noarch.rpm (CHANGE)
 docbook-utils-0.6-1.noarch.rpm
 jade-1.2.1-6.i386.rpm
 jadetex-2.20-4.noarch.rpm
-libxml-1.8.6-2.i386.rpm
-libxml-devel-1.8.6-2.i386.rpm
 perl-SGMLSpm-1.03ii-3.noarch.rpm
 sgml-common-0.5-1.noarch.rpm          (CHANGE)
+
+Note jadetex-2.20-4.noarch.rpm is currently (2000 December 14) being
+upgraded with a fix so that pdfjadetex works for the first time.  If
+the new version has not been made at the time of reading, then apply
+the fix distributed on the plplot_core list.
 
 You also need the following RedHat 6.2 packages:
 
@@ -344,7 +327,8 @@ Installing at the live site for www.plplot.org
 After the output results are tested (man pages checked with nroff -man, html
 browsed with a browser, dvi viewed with xdvi, postscript viewed with gv, pdf
 viewed with acroread (or gv), info files viewed with the info command), the
-results should be copied to the plplot live web site if you have an account
+results should be copied (assuming you have made a significant change
+to the documentation) to the plplot live web site if you have an account
 on shell1.sourceforge.net.
 
 The following command uses ssh a lot so you will be entering your password
