@@ -1,8 +1,10 @@
-! Illustration of 1-1 scaling for polar plot
+!
+! Generates polar plot with, 1-1 scaling
+!
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384)
-		
+
       character*3 text
       real*8 x0(0:360), y0(0:360)
       real*8 x(0:360), y(0:360), dtr, theta, dx, dy, r
@@ -14,7 +16,11 @@
         y0(i) = sin(dtr * dble (i))
     1 continue
 
-! Ask user to specify the output device.
+! Parse and process command line arguments
+
+      ! TODO: plParseOpts()
+
+! Initialize plplot
 
       call plinit()
 
@@ -33,7 +39,7 @@
         call plline(361,x,y)
     2 continue
 
-      call plcol(2)
+      call plcol0(2)
       do 4 i = 0,11
         theta = 30.0*i
         dx = cos(dtr*theta)
@@ -61,12 +67,12 @@
         x(i) = x0(i) * r
         y(i) = y0(i) * r
     5 continue
-      call plcol(3)
+      call plcol0(3)
       call plline(361,x,y)
 
-      call plcol(4)
+      call plcol0(4)
       call plmtex
-     &  ('t', dble (2.0), dble (0.5), dble (0.5), 
+     &  ('t', dble (2.0), dble (0.5), dble (0.5),
      &  '#frPLPLOT Example 3 - r(#gh)=sin 5#gh')
 
 ! Close the plot at end
