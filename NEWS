@@ -81,3 +81,5 @@ Primarily a bug-fix release.  Major changes:
   (SAS/C 6.2, IEEE single precision floats, optimized) and plrender are
   now available in the ~ftp/plplot/amiga directory on dino.ph.utexas.edu.
 
+- The "plpr" script (used when choosing "Print" from Tk driver) now
+  defaults to using color postscript as output.
