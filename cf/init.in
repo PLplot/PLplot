@@ -46,10 +46,16 @@ INSTALL_RPATH	= @INSTALL_RPATH@
 # (PLLIB_NAME) is for ld/linking
 # (PLLIB_BASE) is the base library name for installation
 #
-# good for filesystems that truncate names (eg, DOS)
+# good for filesystems that truncate names (eg, DOS), but need
+# unique names that don't clash with other system names, hence
+# pl prefix.
 
 PLLIB_NAME	= plplot
-PLLIB_BASE	= libplplot
+CXXLIB_NAME	= plcxx
+MATLIB_NAME	= plmat
+PLLIB_BASE	= lib$(PLLIB_NAME)
+CXXLIB_BASE	= lib$(CXXLIB_NAME)
+MATLIB_BASE	= lib$(MATLIB_NAME)
 
 # Install directories
 
