@@ -129,18 +129,15 @@ The configure with have lots of warnings (just as for Debian) if you
 don't have the info-generating software installed.  If you want to
 build info, then see NOTE INFO below.
 
-make; make; make
+make
 
-The 3 makes are required to get by some minor errors that are still in
-the Cygnus packages.  The final make finds a major bug
-in the Cygnus system; it cannot currently build pdf, but that may change
-soon.  If you want to build the info documentation you must load
-the software (NOTE INFO below) and also work around this final
-major bug for pdf by executing:
+The make finds a major bug in the Cygnus system; it cannot currently build
+pdf, but that may change soon.  If you want to build the info and man
+documentation you must load the required additional software (NOTE INFO
+below) and also work around this final major bug for pdf by executing:
 
 cd src; make info man
 
-(the man is also needed to build the new man documentation after the pdf crash).
 
 (see the Debian instructions above for other details).
 
@@ -283,18 +280,19 @@ the KDE2 documentation project and can be accessed from
 ftp://sourceware.cygnus.com/pub/docbook-tools/new-trials/RPMS.  (Note this
 site has high traffic so you may have to use a mirror.) The current set of
 Cygnus rpm's that allow building the DocBook documentation are
+(NOTE THIS PACKAGE LIST CHANGED SIGNIFICANTLY AS OF 2000 8 DECEMBER)
 
 docbook-dtd31-sgml-1.0-6.noarch.rpm
 docbook-dtd41-sgml-1.0-6.noarch.rpm
-docbook-dtd41-xml-1.0-2.noarch.rpm
-docbook-style-dsssl-1.57-2.noarch.rpm
+docbook-dtd41-xml-1.0-3.noarch.rpm    (CHANGE)
+docbook-style-dsssl-1.59-2.noarch.rpm (CHANGE)
 docbook-utils-0.6-1.noarch.rpm
 jade-1.2.1-6.i386.rpm
 jadetex-2.20-4.noarch.rpm
 libxml-1.8.6-2.i386.rpm
 libxml-devel-1.8.6-2.i386.rpm
 perl-SGMLSpm-1.03ii-3.noarch.rpm
-sgml-common-0.4-1.noarch.rpm
+sgml-common-0.5-1.noarch.rpm          (CHANGE)
 
 You also need the following RedHat 6.2 packages:
 
@@ -314,7 +312,7 @@ Process in this order since later steps depend on earlier:
 obtained expat-1.95.1.tar.gz from http://sourceforge.net/projects/expat/
 ./configure; make; make install (last step with root)
 
-All the perl module tarballs can be obtained from a search of
+All the following perl module tarballs can be obtained from a search of
 http://www.cpan.org/ and are installed with the commands
 perl Makefile.PL ; make; make test; make install (last as root)
 
@@ -343,11 +341,11 @@ make test failed for XML-DOM.)
 Installing at the live site for www.plplot.org
 ==============================================
 
-After the output results are tested (man pages checked with nroff -man,
-html browsed with a browser, dvi viewed with xdvi, postscript
-viewed with gv, pdf viewed with acroread (or gv), info files viewed
-with the info command), the results should be copied
-to the plplot live web site if you have an account on shell1.sourceforge.net.
+After the output results are tested (man pages checked with nroff -man, html
+browsed with a browser, dvi viewed with xdvi, postscript viewed with gv, pdf
+viewed with acroread (or gv), info files viewed with the info command), the
+results should be copied to the plplot live web site if you have an account
+on shell1.sourceforge.net.
 
 The following command uses ssh a lot so you will be entering your password
 a lot at shell1 unless you remember to execute ssh-agent and ssh-add
