@@ -52,7 +52,9 @@ examples_cxx_DATA = \
 	Makefile.examples
 
 install-data-hook:
-	( cd $(DESTDIR)/$(examples_cxxdir) ; mv -f Makefile.examples Makefile )
+	( cd $(DESTDIR)/$(examples_cxxdir) ;\
+	mv -f Makefile.examples Makefile; \
+	$(LN_S) ../c/lena.pgm lena.pgm)
 	
 libplplotcxx = ../../bindings/c++/libplplotcxx$(LIB_TAG).la
 
