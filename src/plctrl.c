@@ -1670,7 +1670,7 @@ plGetFlt(char *s)
 \*--------------------------------------------------------------------------*/
 
 char *
-plstrdup(char *src)
+plstrdup(const char *src)
 {
     char *dest = (char *) malloc( (strlen(src) + 1) * sizeof(char) );
     if (dest != NULL)

@@ -368,7 +368,7 @@ plfontrel(void);
 /* A replacement for strdup(), which isn't portable. */
 
 char *
-plstrdup(char *src);
+plstrdup(const char *src);
 
 /* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
 
