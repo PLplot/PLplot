@@ -191,7 +191,8 @@ plD_init_xw(PLStream *pls)
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->plbuf_write = 1;	/* Activate plot buffer */
-    pls->is_a_fast_image_device = 1; /* is a fast image device */
+    pls->dev_fastimg = 1;       /* is a fast image device */
+    pls->dev_xor = 1;           /* device support xor mode */
 
 /* The real meat of the initialization done here */
 
@@ -684,6 +685,7 @@ GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
 	MasterEH(pls, &event);
     }
     *ptr = *gin;
+    dev->locate_mode = 0;
     DestroyXhairs(pls);
 }
 
@@ -1063,8 +1065,8 @@ MasterEH(PLStream *pls, XEvent *event)
   
   switch (event->type) {
     
-  case KeyPress:
-	KeyEH(pls, event);
+    case KeyPress:
+        KeyEH(pls, event);
 	break;
 
     case ButtonPress:
