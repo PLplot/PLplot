@@ -30,8 +30,10 @@ device.  The printer dumps will be incorporated into this scheme.
 2. The IFF driver is virtually unchanged.  I am planning to upgrade this
 to support color.
 
-3. The printer driver is unchanged, and works OK I think (but I haven't
-tested it recently).
+3. The printer driver is unchanged, but somewhere I introduced a bug
+so that plots come out extremely small.  I will fix this when I get a
+chance but it'll be fixed a lot faster if someone sends me a patch..
+
 
 Building plplot on the Amiga
 ----------------------------
@@ -73,6 +75,10 @@ The following utilities are also needed:
 	make		(PD version, ported from mod.sources posting)
 	m4		(also PD)
 	SKsh's "join"	(freely distributable)
+
+I may eventually switch to GNU make, I just haven't had the time to look
+into it.  Also, the copy of m4 that I have gives enforcer hits, but they
+don't appear to be serious.
 
 The SKsh join command is used in the makefile, since the Amiga join does not
 work correctly from inside make.  The command syntax used is: skshbin:join
@@ -130,7 +136,8 @@ To build plrender:
 	% make plrender
 
 Don't forget to copy the font files from the lib directory to a more
-suitable place, preferably fonts:plplot (this is the default).
+suitable place, preferably fonts:plplot (this is the default).  You do
+NOT have to rebuild the fonts; just copy the supplied files.
 
 ------------------------------------------------------------------------------
 Miscellaneous notes:
