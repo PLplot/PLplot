@@ -35,16 +35,17 @@ dist_pkginclude_HEADERS = \
 # Installed header files that should not be distributed
 nodist_pkginclude_HEADERS = \
 	plConfig.h \
-	plDevs.h \
-	plhershey-unicode.h
+	plDevs.h
 
-# Uninstalled header files that should be distributed
-EXTRA_DIST = \
+# uninstalled header files that should be distributed
+noinst_HEADERS = \
 	metadefs.h \
 	plcore.h \
 	plfreetype.h \
 	ps.h \
-	plhershey-unicode.h
+	plhershey-unicode.h \
+	plunicode-type1.h \
+	plfci.h
 
 BUILT_SOURCES = plhershey-unicode.h
 MAINTAINERCLEANFILES = plhershey-unicode.h
