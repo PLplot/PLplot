@@ -1,5 +1,5 @@
-! Demonstration program for PLPLOT illustrating absolute positioning
-!  of graphs on a page
+C      Demonstration program for PLplot illustrating absolute positioning
+C      of graphs on a page
       implicit none
 
       call plinit()

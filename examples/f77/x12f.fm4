@@ -1,4 +1,4 @@
-!     Demonstration program for PLPLOT: Bar chart example.
+C      Demonstration program for PLplot: Bar chart example.
       implicit none
 
       character*20 string
@@ -11,9 +11,9 @@
       call plvsta
       call plwind( 1980.d0, 1990.d0, 0.d0, 35.d0 )
       call plbox( 'bc', 1.d0, 0, 'bcnv', 10.d0, 0 )
-      call plcol(2)
+      call plcol0(2)
       call pllab( 'Year', 'Widget Sales (millions)',
-     &            '#frPLPLOT Example 12' )
+     &            '#frPLplot Example 12' )
 
       y0(1) = 5
       y0(2) = 15
@@ -26,26 +26,25 @@
       y0(9) = 12
       y0(10) = 3
 
-      do 1 i = 0, 9
-         call plcol(i + 1)
-         call plpsty(0)
-         call plfbox( dble (1980.d0+i), y0(i+1) )
-         write (string, '(i8)')int(y0(i+1))
-         call lalign(string)
-         call plptex( dble (1980.d0+i+0.5d0), y0(i+1)+1.d0,
-     &     1.d0, 0.d0, 0.5d0, string )
-         write (string, '(i8)')1980+i
-         call lalign(string)
-         call plmtex( 'b', 1.d0, dble ((i+1)*0.1d0-0.05d0),
-     &     0.5d0, string )
-1     continue
+      do i = 0, 9
+        call plcol0(i + 1)
+        call plpsty(0)
+        call plfbox( dble (1980.d0+i), y0(i+1) )
+        write (string, '(i8)')int(y0(i+1))
+        call lalign(string)
+        call plptex( dble (1980.d0+i+0.5d0), y0(i+1)+1.d0,
+     &    1.d0, 0.d0, 0.5d0, string )
+        write (string, '(i8)')1980+i
+        call lalign(string)
+        call plmtex( 'b', 1.d0, dble ((i+1)*0.1d0-0.05d0),
+     &    0.5d0, string )
+      enddo
 
-!     Don't forget to call PLEND to finish off!
+C      Don't forget to call PLEND to finish off!
       call plend
-
       end
 
-!     Suck up leading spaces
+C      Suck up leading spaces
 
       subroutine lalign(string)
       implicit none
@@ -54,21 +53,20 @@
 
       max = len(string)
 
-      do 1 i = 1, max
-         if (string(i:i) .ne. ' ') then
-            if (i .eq. 1) return
-            k = 1
-            do 2 j = i, max
-               string(k:k) = string(j:j)
-               k = k + 1
-2           continue
-            do 3 j = k, max
-               string(j:j) = ' '
-3           continue
-            return
-         endif
-1     continue
-
+      do i = 1, max
+        if (string(i:i) .ne. ' ') then
+          if (i .eq. 1) return
+          k = 1
+          do j = i, max
+            string(k:k) = string(j:j)
+            k = k + 1
+          enddo
+          do j = k, max
+            string(j:j) = ' '
+          enddo
+          return
+        endif
+      enddo
       end
 
       subroutine plfbox(x0, y0)
@@ -85,8 +83,7 @@
       x(4) = x0+1.d0
       y(4) = 0.d0
       call plfill( 4, x, y )
-      call plcol(1)
+      call plcol0(1)
       call pllsty(1)
       call plline( 4, x, y )
-
       end
