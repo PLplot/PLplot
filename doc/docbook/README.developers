@@ -275,8 +275,9 @@ sgml-tools-1.0.9-5.i386.rpm
 stylesheets-1.54.13rh-1.noarch.rpm
 
 Although The Cygnus company is now part of RedHat they maintain their own
-set of DocBook packages.  These come highly recommended by the KDE2
-documentation project and can be accessed from
+set of DocBook packages which are discussed at
+http://sources.redhat.com/docbook-tools.  These come highly recommended by
+the KDE2 documentation project and can be accessed from
 ftp://sourceware.cygnus.com/pub/docbook-tools/new-trials/RPMS.  (Note this
 site has high traffic so you may have to use a mirror.) The current set of
 Cygnus rpm's that allow building the DocBook documentation are
