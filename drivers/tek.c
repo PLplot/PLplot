@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/04/30 16:14:48  mjl
+ * Revision 1.24  1994/05/14 08:30:41  mjl
+ * Changed to correctly set background color.  Added initialization hack to
+ * improve color fill behavior using the vlt driver.
+ *
+ * Revision 1.23  1994/04/30  16:14:48  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -121,6 +125,7 @@ void tty_atexit		(void);
 /* Graphics control characters. */
 
 #define ETX  3
+#define ENQ  5
 #define BEL  7
 #define FF   12
 #define CAN  24
@@ -244,10 +249,12 @@ static void
 tek_init(PLStream *pls)
 {
     PLDev *dev;
+    int i;
 
     pls->icol0 = 1;
     pls->width = 1;
     pls->graphx = TEXT_MODE;
+    curcolor = 1;
 
 /* Allocate and initialize device-specific data */
 
@@ -288,17 +295,29 @@ tek_init(PLStream *pls)
     switch (pls->dev_minor) {
     case tek4107:
 	pls->graphx = GRAPHICS_MODE;
-	fprintf(pls->OutFile, "%c%%!0", ESC);    /* set tek mode */
-	fprintf(pls->OutFile, "%cKN1", ESC);     /* clear the view */
-	fprintf(pls->OutFile, "%cLZ", ESC);      /* clear dialog buffer */
-	fprintf(pls->OutFile, "%cML1", ESC);     /* set default color */
+	fprintf(pls->OutFile, "%c%%!0", ESC);	/* set tek mode */
+	fprintf(pls->OutFile, "%cKN1", ESC);	/* clear the view */
+	fprintf(pls->OutFile, "%cLZ", ESC);	/* clear dialog buffer */
+	fprintf(pls->OutFile, "%cML1", ESC);	/* set default color */
 	break;
+
+/* A sneaky hack: VLT sometimes has leftover panel information, causing 
+ * garbage at the beginning of a sequence of color fills.  Since 
+ * there is no clear panel command, instead I set the fill color to the
+ * same as background and issue an end panel command.
+ */
+
+    case vlt:{
+	char fillcol[4];
+	tek_graph(pls);
+	encode_int(fillcol, 0);
+	fprintf(pls->OutFile, "%cMP%s", ESC, fillcol);
+	fprintf(pls->OutFile, "%cLE", ESC);
+	break;
+    }
 
     default:
 	tek_graph(pls);
-	fprintf(pls->OutFile, "%c", GS);		/* Enter vector mode */
-	if (pls->termin)
-	    fprintf(pls->OutFile, "%c%c", ESC, FF);	/* erase and home */
     }
 
 /* Initialize palette */
@@ -307,6 +326,14 @@ tek_init(PLStream *pls)
 	printf("%cTM111", ESC);		/* Switch to RGB colors */
 	setcmap(pls);
     }
+
+/* Finish initialization */
+
+    fprintf(pls->OutFile, "%c", GS);		/* Enter vector mode */
+    if (pls->termin)
+	fprintf(pls->OutFile, "%c%c", ESC, FF);	/* erase and home */
+
+    fflush(pls->OutFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -497,7 +524,6 @@ plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
 * fill_polygon()
 *
 * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-* Only solid color fill supported.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -665,6 +691,7 @@ encode_vector(char *c, int x, int y)
     c[1] = y - (y / 32) * 32 + 96;
     c[2] = x / 32 + 32;
     c[3] = x - (x / 32) * 32 + 64;
+    c[4] = '\0';
 }
 
 /*----------------------------------------------------------------------*\
@@ -722,7 +749,7 @@ setcmap(PLStream *pls)
 
 /* Initialize cmap 0 colors */
 
-    for (i = 1; i < pls->ncol0; i++) 
+    for (i = 0; i < pls->ncol0; i++) 
 	scolor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
 
 /* Initialize any remaining slots for cmap1 */
