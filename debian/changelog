@@ -1,3 +1,9 @@
+plplot (5.3.1.cvs.20040822-0.sarge.1) unstable; urgency=low
+
+  * Build on Debian testing (NOT OFFICIALLY RELEASED!).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 22 Aug 2004 20:56:09 +0200
+
 plplot (5.3.1.cvs-1) unstable; urgency=low
 
   * New upstream release (DEBIAN PACKAGES NOT YET RELEASED!!!). A Java
