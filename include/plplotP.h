@@ -413,10 +413,10 @@ typedef struct {
  */
 
 typedef struct {
-  char *opt;
-  PLINT type;
-  void *var_ptr;
-  char *hlp_msg;
+  char *opt;     /* a string with the name of the option */
+  PLINT type;    /* the type of the variable to be set, see bellow the available types */
+  void *var_ptr; /* a pointer to the variable to be set */
+  char *hlp_msg; /* help message of the option */
 } DrvOpt;
 
   /* the available variable types, DrvOpt.type, for driver specific options */
