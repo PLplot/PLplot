@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1993/08/11 19:24:03  mjl
+ * Revision 1.8  1993/08/18 19:03:49  mjl
+ * Fixed a minor type error.
+ *
+ * Revision 1.7  1993/08/11  19:24:03  mjl
  * Fixed some type errors.
  *
  * Revision 1.6  1993/08/10  04:51:32  mjl
@@ -115,7 +118,7 @@ main(int argc, char **argv)
 
 /* Create new tclIndex file -- a convenience */
 
-    if (mkidx != NULL) {
+    if (mkidx != 0) {
 	tcl_cmd("auto_mkindex . *.tcl");
 	client = NULL;
 	abort_session("");
