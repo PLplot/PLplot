@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/07/29 20:26:10  mjl
+ * Revision 1.2  1994/08/25 04:04:49  mjl
+ * Eliminated unnecessary variable decls.
+ *
+ * Revision 1.1  1994/07/29  20:26:10  mjl
  * Function to plot map backgrounds, read from the specified map data file.
  * Contributed by Wesley Ebisuzaki.
  *
@@ -81,7 +84,7 @@ plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
     PLFLT bufx[200], bufy[200], x[2], y[2];
     short int test[400];
     register FILE *in;
-    char filename[100], file[120], *env;
+    char filename[100];
 
     unsigned char n_buff[2], buff[800];
     int n;
