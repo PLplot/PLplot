@@ -440,7 +440,7 @@ AC_SUBST(RELEASE_DATE)
 ### N.B. [Rafael]: The above statement is not generally true.  In HPUX, for
 ### instance, 8:0:3 ==> 8.3.
 
-SOVERSION=8:0:3
+SOVERSION=9:0:0
 AC_SUBST(SOVERSION)
 
 ### Version number for the shared C++ library.  After version 5.2.1 was
