@@ -63,13 +63,8 @@ get_drv_info_CFLAGS = @INCLTDL@
 %.rc: %.la get-drv-info
 	./get-drv-info $(<:.la=) > $@
 		
-if with_double
-libplplot = -L../src -lplplotd
-libplplottcltk = -L../bindings/tcl -lplplottcltkd
-else
-libplplot = -L../src -lplplot
-libplplottcltk = -L../bindings/tcl -lplplottcltk
-endif
+libplplot = -L../src -lplplot$(LIB_TAG)
+libplplottcltk = -L../bindings/tcl -lplplottcltk$(LIB_TAG)
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
