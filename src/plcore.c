@@ -289,7 +289,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y, PLINT refx, PLI
 {
   EscText args;
 
-  args.base = 0;
+  args.base = base;
   args.just = just;
   args.xform = xform;
   args.x = x;
