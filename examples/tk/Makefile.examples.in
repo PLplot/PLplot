@@ -43,7 +43,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .c$(EXEEXT):
-@pkg_config_true@	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(CC) $< -o $@ `pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
+@pkg_config_true@	$(CC) $< -o $@ `PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
 @pkg_config_false@	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .c $(EXEEXT)

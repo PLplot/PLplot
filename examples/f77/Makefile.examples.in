@@ -57,7 +57,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .f$(EXEEXT):
-@pkg_config_true@	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(F77) $< -o $@ `pkg-config --cflags --libs plplot$(LIB_TAG)-f77`
+@pkg_config_true@	$(F77) $< -o $@ `PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags --libs plplot$(LIB_TAG)-f77`
 @pkg_config_false@	plplot_libtool --mode=link $(F77) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .f $(EXEEXT)
