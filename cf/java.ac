@@ -6,7 +6,7 @@ dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
 dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
-dnl Copyright (C) 2004  Andrew Ross
+dnl Copyright (C) 2004, 2005  Andrew Ross
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -50,19 +50,18 @@ if test "$enable_java" = "yes"; then
 
     if test -n "$with_java_home" ; then
         JAVA_HOME=$with_java_home
+    else
     fi
 
     # Check in with_java_home subdirs
-    AC_MSG_CHECKING([for jni.h (Java Native Interface)])
-    if test -n "$JAVA_HOME"; then
+    if test -n "$JAVA_HOME" && test -z "$JAVAINCDIR" ; then
+        AC_MSG_CHECKING([for jni.h (Java Native Interface) in JAVA_HOME])
         if test -r "$JAVA_HOME/include/jni.h"; then
             JAVAINCDIR="$JAVA_HOME/include"
 	    AC_MSG_RESULT(yes)
 	else
 	    AC_MSG_RESULT(no)
-        fi
-    else
-        AC_MSG_RESULT(no)    
+	fi
     fi
 
     # Check usual search path
