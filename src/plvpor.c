@@ -12,11 +12,9 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 /*--------------------------------------------------------------------------*\
  * void plenv()
  *
- * Simple interface for defining viewport and window. If "just"=1,
- * X and Y scales will be the same, otherwise they are scaled
- * independently.
+ * Simple interface for defining viewport and window. 
  *
- * The "just" parameter control how axis will be scaled:
+ * The "just" parameter control how the axes will be scaled:
  *
  *       just= 1 : X and Y scales will be the same;
  *       just= 0 : they are scaled independently using some defaults;
@@ -24,7 +22,6 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
  *                 calling plenv(), using plsvpa(), plvasp() or other.
  * 
  * The "axis" parameter is interpreted as follows:
- *
  *
  *	axis=-2 : draw no box, no tick marks, no numeric tick labels, no axes.
  *	axis=-1 : draw box only.
