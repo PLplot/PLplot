@@ -704,6 +704,7 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT *t = args->xform, tt[4]; /* Transform matrices */
   PLFLT theta, shear;  /* Rotation angle and shear from the matrix */
   PLFLT ft_ht, offset; /* Font height and offset */
+  PLFLT cs,sn,l1,l2;
   PSDev *dev = (PSDev *) pls->dev;
   char *font, esc;
   /* Be generous.  Used to store lots of font changes which take
@@ -972,14 +973,25 @@ proc_str (PLStream *pls, EscText *args)
 	 * keep driver happy -- needed for background and orientation.
 	 * arghhh! can't calculate it, as I only have the string reference
 	 * point, not its extent!
-	 * Quick (and final?) *hack*, ASSUME that no more than two char height
-	 * extents after/before the string reference point.
+	 * Still a hack - but at least it takes into account the string
+	 * length and justification. Character width is assumed to be
+	 * 0.6 * character height. Add on an extra 1.5 * character height 
+	 * for safety. 
 	 */
+	cs = cos(theta/180.*PI);
+	sn = sin(theta/180.*PI);
+	l1 = -i*args->just;
+	l2 = i*(1.-args->just);
+	/* Factor of 0.6 is an empirical fudge to convert character 
+	 * height to average character width */
+	l1 *= 0.6;
+	l2 *= 0.6;
 	
-	dev->llx = MIN(dev->llx, args->x - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
-	dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
-	dev->urx = MAX(dev->urx, args->x + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
-	dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
+	dev->llx = MIN(dev->llx, args->x + (MIN(l1*cs,l2*cs)-1.5) * font_factor * ft_ht * ENLARGE );
+	dev->lly = MIN(dev->lly, args->y + (MIN(l1*sn,l2*sn)-1.5) * font_factor * ft_ht * ENLARGE );
+	dev->urx = MAX(dev->urx, args->x + (MAX(l1*cs,l2*cs)+1.5) * font_factor * ft_ht * ENLARGE );
+	dev->ury = MAX(dev->ury, args->y + (MAX(l1*sn,l2*sn)+1.5) * font_factor * ft_ht * ENLARGE );
+
      }
 }
 
