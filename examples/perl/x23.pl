@@ -171,47 +171,52 @@ for (my $page = 0; $page < 11; $page++) {
 
   plvpor (0.02, 0.98, 0.02, 0.90);
   plwind (0.0, 1.0, 0.0, 1.0);
-  plgspa (&xmin, &xmax, &ymin, &ymax);
+  my ($xmin, $xmax, $ymin, $ymax) = 
+      (PDL->new(0), PDL->new(0), PDL->new(0), PDL->new(0));
+  plgspa ($xmin, $xmax, $ymin, $ymax);
   plschr (0., 0.8);
-  ycharacter_scale = (1.0 - 0.0) / (ymax-ymin);
+  my $ycharacter_scale = (1.0 - 0.0) / ($ymax->at (0) - $ymin->at (0));
 
   # Factor should be 0.5, but heuristically it turns out to be larger
-  plgchr (&chardef, &charht);
-  yoffset = 1.0 * charht * ycharacter_scale;
+  my ($chardef, $charht) = (PDL->new(0), PDL->new(0));
+
+  plgchr ($chardef, $charht);
+  my $yoffset = 1.0 * $charht->at (0) * $ycharacter_scale;
 
   # Draw the grid using plbox
 
   plcol0 (2);
-  deltax = 1.0 / ((PLFLT) nxcells [page]);
-  deltay = 1.0 / ((PLFLT) nycells [page]);
-  plbox ("bcg", deltax, 0, "bcg", deltay, 0);
+  my $deltax = 1.0 / ($nxcells [$page]);
+  my $deltay = 1.0 / ($nycells [$page]);
+  plbox ($deltax, 0, $deltay, 0, "bcg", "bcg");
   plcol0 (15);
-  length = hi[page] - lo[page];
-  slice = 0;
-  for (j = nycells [page] - 1; j >= -1; j--) {
-    y = (0.5 + j) * deltay;
-    for (i = 0; i < nxcells [page]; i++) {
-      x  = (0.5 + i) * deltax;
-      if (slice < length) {
-        if (page == 0) {
-          sprintf (cmdString, "#%s", Greek [slice]);
+  my $length = $hi [$page] - $lo [$page];
+  $slice = 0;
+  for (my $j = $nycells [$page] - 1; $j >= -1; $j--) {
+    my $y = (0.5 + $j) * $deltay;
+    for (my $i = 0; $i < $nxcells [$page]; $i++) {
+      $x  = (0.5 + $i) * $deltax;
+      if ($slice < $length) {
+	my $cmsString;
+        if ($page == 0) {
+          $cmdString = $Greek[$slice];
         }
-        else if ((page >= 1) && (page <= 3)) {
-          sprintf (cmdString, "##[0x%.4x]", Type1 [offset [page] + slice]);
+        elsif (($page >= 1) and ($page <= 3)) {
+          $cmdString = sprintf ("[0x%.4x]", $Type1 [$offset [$page] + $slice]);
 	}
-	else if (page >= 4) {
-	  sprintf (cmdString, "##[0x%.4x]", lo [page] + slice);
+	else {
+	  $cmdString = sprintf ("[0x%.4x]", $lo [$page] + $slice);
         }
-        plptex (x, y + yoffset, 1., 0., 0.5, &cmdString [1]);
-        plptex (x, y - yoffset, 1., 0., 0.5, cmdString);
+        plptex ($x, $y + $yoffset, 1., 0., 0.5, $cmdString);
+        plptex ($x, $y - $yoffset, 1., 0., 0.5, "#$cmdString");
       }
-      slice += 1;
+      $slice++;
     }
   }
 
   plschr (0., 1.0);
   # Page title
-  plmtex ("t", 1.5, 0.5, 0.5, title [page]);
+  plmtex (1.5, 0.5, 0.5, "t", $title [$page]);
 }
 
 # Restore defaults
