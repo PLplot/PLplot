@@ -691,6 +691,7 @@ plr_init(U_CHAR c)
  * plots to come out correctly.  Note: this could also be done using the
  * driver interface function plsdimap.
  */
+
     if (ratio <= 0)
 	fprintf(stderr, "Aspect ratio error: ratio = %f\n", ratio);
     else if (ratio < 1)
@@ -886,13 +887,31 @@ plr_state(U_CHAR op)
     }
 
     case PLSTATE_COLOR0:{
-	U_SHORT icol;
-	U_CHAR icol0, r, g, b;
+	if (strcmp(mf_version, "2005a") >= 0)
+        {
+            short icol0;
+	    plm_rd( pdf_rd_2bytes(pdfs, &icol0) );
 
-	if (strcmp(mf_version, "1993a") >= 0) {
+	    if (icol0 == PL_RGB_COLOR)
+            {
+                U_CHAR r, g, b;
+		plm_rd( pdf_rd_1byte(pdfs, &r) );
+		plm_rd( pdf_rd_1byte(pdfs, &g) );
+		plm_rd( pdf_rd_1byte(pdfs, &b) );
+		plrgb1(r, g, b);
+	    }
+	    else {
+		plcol(icol0);
+	    }
+        }
+	else if (strcmp(mf_version, "1993a") >= 0)
+        {
+            U_CHAR icol0;
 	    plm_rd( pdf_rd_1byte(pdfs, &icol0) );
 
-	    if (icol0 == PL_RGB_COLOR) {
+	    if (icol0 == 1<<7)
+            {
+                U_CHAR r, g, b;
 		plm_rd( pdf_rd_1byte(pdfs, &r) );
 		plm_rd( pdf_rd_1byte(pdfs, &g) );
 		plm_rd( pdf_rd_1byte(pdfs, &b) );
@@ -902,7 +921,9 @@ plr_state(U_CHAR op)
 		plcol(icol0);
 	    }
 	}
-	else {
+	else
+        {
+            U_SHORT icol;
 	    plm_rd( pdf_rd_2bytes(pdfs, &icol) );
 	    plcol(icol);
 	}
@@ -928,10 +949,18 @@ plr_state(U_CHAR op)
     }
 
     case PLSTATE_CMAP0:{
-	U_CHAR ncol0;
-
-	plm_rd(pdf_rd_1byte(pdfs, &ncol0));
-	plscmap0n(ncol0);
+	if (strcmp(mf_version, "2005a") >= 0)
+        {
+            U_SHORT ncol0;
+            plm_rd(pdf_rd_2bytes(pdfs, &ncol0));
+            plscmap0n(ncol0);
+        }
+        else
+        {
+            U_CHAR ncol0;
+            plm_rd(pdf_rd_1byte(pdfs, &ncol0));
+            plscmap0n(ncol0);
+        }
 	for (i = 0; i < plsc->ncol0; i++) {
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].r));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].g));
@@ -1703,6 +1732,7 @@ ReadFileHeader(void)
 	fprintf(stderr, "Please obtain a newer copy of plrender.\n");
 	return 1;
     }
+    pldebug( "ReadFileHeader", "Metafile version %s\n", mf_version );
 
 /* Disable page seeking on versions without page links */
 
