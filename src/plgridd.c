@@ -545,7 +545,7 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   PLFLT *xt, *yt, *zt;
   point *pin, *pgrid, *pt;
   int i, j, nptsg;
-  nn_algorithm = NON_SIBSONIAN;
+  nn_rule = NON_SIBSONIAN;
 
   if (sizeof(realT) != sizeof(double)) {
     plabort("plgridata: QHull was compiled for floats instead of doubles");

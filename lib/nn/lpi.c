@@ -9,11 +9,11 @@
  *
  * Purpose:        2D linear interpolation
  *
- * Description:    `l_point_interpolator' -- "Linear Point Interpolator" -- is
+ * Description:    `lpi' -- "Linear Point Interpolator" -- is
  *                 a structure for conducting linear interpolation on a given
  *                 data on a "point-to-point" basis. It interpolates linearly
  *                 within each triangle resulted from the Delaunay
- *                 triangluation of input data. `l_point_interpolator' is much
+ *                 triangluation of input data. `lpi' is much
  *                 faster than all Natural Neighbours interpolators in `nn'
  *                 library.
  *
@@ -30,7 +30,7 @@ typedef struct {
     double w[3];
 } lweights;
 
-struct l_point_interpolator {
+struct lpi {
     delaunay* d;
     lweights* weights;
 };
@@ -42,10 +42,10 @@ int delaunay_xytoi(delaunay* d, point* p, int seed);
  * @param d Delaunay triangulation
  * @return Linear interpolator
  */
-l_point_interpolator* lpi_build(delaunay* d)
+lpi* lpi_build(delaunay* d)
 {
     int i;
-    l_point_interpolator* l = malloc(sizeof(l_point_interpolator));
+    lpi* l = malloc(sizeof(lpi));
 
     l->d = d;
     l->weights = malloc(d->ntriangles * sizeof(lweights));
@@ -91,7 +91,7 @@ l_point_interpolator* lpi_build(delaunay* d)
  *
  * @param l Structure to be destroyed
  */
-void lpi_destroy(l_point_interpolator* l)
+void lpi_destroy(lpi* l)
 {
     free(l->weights);
     free(l);
@@ -102,20 +102,18 @@ void lpi_destroy(l_point_interpolator* l)
  * @param l Linear interpolation
  * @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
  */
-void lpi_interpolate_point(l_point_interpolator* l, point* p)
+void lpi_interpolate_point(lpi* l, point* p)
 {
     delaunay* d = l->d;
     int tid = delaunay_xytoi(d, p, d->first_id);
-    lweights* lw = &l->weights[tid];
 
-    if (tid >= 0)
+    if (tid >= 0) {
+        lweights* lw = &l->weights[tid];
+
         d->first_id = tid;
-    else {
+        p->z = p->x * lw->w[0] + p->y * lw->w[1] + lw->w[2];
+    } else
         p->z = NaN;
-        return;
-    }
-
-    p->z = p->x * lw->w[0] + p->y * lw->w[1] + lw->w[2];
 }
 
 /* Linearly interpolates data from one array of points for another array of
@@ -129,7 +127,7 @@ void lpi_interpolate_point(l_point_interpolator* l, point* p)
 void lpi_interpolate_points(int nin, point pin[], int nout, point pout[])
 {
     delaunay* d = delaunay_build(nin, pin, 0, NULL, 0, NULL);
-    l_point_interpolator* l = lpi_build(d);
+    lpi* l = lpi_build(d);
     int seed = 0;
     int i;
 

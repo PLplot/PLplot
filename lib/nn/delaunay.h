@@ -55,10 +55,10 @@ struct delaunay {
     int* n_point_triangles;     /* n_point_triangles[i] is number of
                                  * triangles i-th point belongs to */
     int** point_triangles;      /* point_triangles[i][j] is index of j-th
-                                 * triangle i-th pont belongs to */
+                                 * triangle i-th point belongs to */
 
     int nedges;
-    int* edges;                 /* n-th edge is formed by points[edges[n*2]] 
+    int* edges;                 /* n-th edge is formed by points[edges[n*2]]
                                  * and points[edges[n*2+1]] */
 
     /*
@@ -67,7 +67,7 @@ struct delaunay {
      * needed. 
      */
     int* flags;
-    int first_id;               /* last search result, used in start up of a 
+    int first_id;               /* last search result, used in start up of a
                                  * new search */
     istack* t_in;
     istack* t_out;

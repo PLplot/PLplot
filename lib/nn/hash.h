@@ -17,14 +17,8 @@
 #ifndef _HASH_H
 #define _HASH_H
 
-/** A hash table consists of an array of these buckets.
- */
-typedef struct ht_bucket {
-    void* key;
-    void* data;
-    int id;                     /* unique id -- just in case */
-    struct ht_bucket* next;
-} ht_bucket;
+struct hashtable;
+typedef struct hashtable hashtable;
 
 /** Copies a key. The key must be able to be deallocated by free().
  */
@@ -37,21 +31,6 @@ typedef int (*ht_keyeq) (void*, void*);
 /** Converts key to an unsigned integer (not necessarily unique).
  */
 typedef unsigned int (*ht_key2hash) (void*);
-
-/** Hash table structure. 
- * Note that more nodes than `size' can be inserted in the table,
- * but performance degrades as this happens.
- */
-typedef struct hashtable {
-    int size;                   /* table size */
-    int n;                      /* current number of entries */
-    int naccum;                 /* number of inserted entries */
-    int nhash;                  /* number of used table elements */
-    ht_keycp cp;
-    ht_keyeq eq;
-    ht_key2hash hash;
-    ht_bucket** table;
-} hashtable;
 
 /** Creates a hash table of specified size.
  *
@@ -91,7 +70,7 @@ void* ht_insert(hashtable* table, void* key, void* data);
  *
  * @param table The hash table
  * @param key The key
- * @return The associated data
+ * @return The associated data or NULL
  */
 void* ht_find(hashtable* table, void* key);
 
@@ -101,7 +80,7 @@ void* ht_find(hashtable* table, void* key);
  *
  * @param table The hash table
  * @param key The key
- * @return Associated data
+ * @return The associated data or NULL
  */
 void* ht_delete(hashtable* table, void* key);
 

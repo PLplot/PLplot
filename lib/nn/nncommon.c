@@ -12,6 +12,11 @@
  * Description:    None
  *
  * Revisions:      15/11/2002 PS: Changed name from "utils.c"
+ *                 28/02/2003 PS: Modified points_read() to do the job without
+ *                   rewinding the file. This allows to read from stdin when
+ *                   necessary.
+ *                 09/04/2003 PS: Modified points_read() to read from a
+ *                   file specified by name, not by handle.
  *
  *****************************************************************************/
 
@@ -20,8 +25,10 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <math.h>
+#include <limits.h>
 #include <float.h>
 #include <string.h>
+#include <errno.h>
 #include "nan.h"
 #include "delaunay.h"
 
@@ -29,7 +36,7 @@
 
 int nn_verbose = 0;
 int nn_test_vertice = -1;
-NN_ALGORITHM nn_algorithm = SIBSON;
+NN_RULE nn_rule = SIBSON;
 
 #include "version.h"
 
@@ -40,6 +47,7 @@ void nn_quit(char* format, ...)
     fflush(stdout);             /* just in case, to have the exit message
                                  * last */
 
+    fprintf(stderr, "error: nn: ");
     va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
@@ -47,26 +55,25 @@ void nn_quit(char* format, ...)
     exit(1);
 }
 
-/* I am not 100% happy with this procedure as it allows loss of precision for
- * small "A"s (see the code) in nearly singular cases. Still, there should be
- * very minor practical difference (if any), so we use this version for now to
- * avoid unnecessary code complication.
- */
-int circle_build(point* p0, point* p1, point* p2, circle* c)
+int circle_build(circle* c, point* p1, point* p2, point* p3)
 {
-    double A = p0->x * p1->y + p1->x * p2->y + p2->x * p0->y - p2->x * p1->y - p0->x * p2->y - p1->x * p0->y;
-    double r1 = p0->x * p0->x + p0->y * p0->y;
-    double r2 = p1->x * p1->x + p1->y * p1->y;
-    double r3 = p2->x * p2->x + p2->y * p2->y;
-    double B = r1 * p1->y + r2 * p2->y + r3 * p0->y - r3 * p1->y - r1 * p2->y - r2 * p0->y;
-    double C = r1 * p1->x + r2 * p2->x + r3 * p0->x - r3 * p1->x - r1 * p2->x - r2 * p0->x;
-    double D = r1 * p1->x * p2->y + r2 * p2->x * p0->y + r3 * p0->x * p1->y - r3 * p1->x * p0->y - r1 * p2->x * p1->y - r2 * p0->x * p2->y;
+    double x1sq = p1->x * p1->x;
+    double x2sq = p2->x * p2->x;
+    double x3sq = p3->x * p3->x;
+    double y1sq = p1->y * p1->y;
+    double y2sq = p2->y * p2->y;
+    double y3sq = p3->y * p3->y;
+    double t1 = x3sq - x2sq + y3sq - y2sq;
+    double t2 = x1sq - x3sq + y1sq - y3sq;
+    double t3 = x2sq - x1sq + y2sq - y1sq;
+    double D = (p1->x * (p2->y - p3->y) + p2->x * (p3->y - p1->y) + p3->x * (p1->y - p2->y)) * 2.0;
 
-    if (A == 0.0)
+    if (D == 0.0)
         return 0;
-    c->x = B / 2.0 / A;
-    c->y = -C / 2.0 / A;
-    c->r = sqrt(fabs(((B * B + C * C) / 4.0 / A + D) / A));
+
+    c->x = (p1->y * t1 + p2->y * t2 + p3->y * t3) / D;
+    c->y = -(p1->x * t1 + p2->x * t2 + p3->x * t3) / D;
+    c->r = hypot(c->x - p1->x, c->y - p1->y);
 
     return 1;
 }
@@ -213,10 +220,11 @@ void points_thin(int* pn, point** ppoints, int nx, int ny)
  * @param points Array of points [n]
  * @param nx Number of x nodes
  * @param ny Number of y nodes
+ * @param zoom Zoom coefficient
  * @param nout Pointer to number of output points
  * @param pout Pointer to array of output points [*nout]
  */
-void points_generate1(int nin, point pin[], int nx, int ny, int* nout, point** pout)
+void points_generate1(int nin, point pin[], int nx, int ny, double zoom, int* nout, point** pout)
 {
     double xmin = DBL_MAX;
     double xmax = -DBL_MAX;
@@ -243,6 +251,21 @@ void points_generate1(int nin, point pin[], int nx, int ny, int* nout, point** p
             ymin = p->y;
         if (p->y > ymax)
             ymax = p->y;
+    }
+
+    if (isnan(zoom) || zoom <= 0.0)
+        zoom = 1.0;
+
+    if (zoom != 1.0) {
+        double xdiff2 = (xmax - xmin) / 2.0;
+        double ydiff2 = (ymax - ymin) / 2.0;
+        double xav = (xmax + xmin) / 2.0;
+        double yav = (ymax + ymin) / 2.0;
+
+        xmin = xav - xdiff2 * zoom;
+        xmax = xav + xdiff2 * zoom;
+        ymin = yav - ydiff2 * zoom;
+        ymax = yav + ydiff2 * zoom;
     }
 
     *nout = nx * ny;
@@ -335,19 +358,22 @@ static int str2double(char* token, double* value)
     return 1;
 }
 
+#define NALLOCATED_START 1024
+
 /* Reads array of points from a columnar file.
  *
- * @param f File handle
+ * @param fname File name (can be "stdin" for standard input)
  * @param dim Number of dimensions (must be 2 or 3)
  * @param n Pointer to number of points (output)
  * @param points Pointer to array of points [*n] (output) (to be freed)
  */
-void points_read(FILE* f, int dim, int* n, point** points)
+void points_read(char* fname, int dim, int* n, point** points)
 {
+    FILE* f = NULL;
+    int nallocated = NALLOCATED_START;
     char buf[BUFSIZE];
     char seps[] = " ,;\t";
     char* token;
-    int i;
 
     if (dim < 2 || dim > 3) {
         *n = 0;
@@ -355,41 +381,29 @@ void points_read(FILE* f, int dim, int* n, point** points)
         return;
     }
 
-    i = 0;
-    while (fgets(buf, BUFSIZE, f) != NULL) {
-        double v;
-
-        if (buf[0] == '#')
-            continue;
-        if ((token = strtok(buf, seps)) == NULL)
-            continue;
-        if (!str2double(token, &v))
-            continue;
-        if ((token = strtok(NULL, seps)) == NULL)
-            continue;
-        if (!str2double(token, &v))
-            continue;
-        if (dim == 3) {
-            if ((token = strtok(NULL, seps)) == NULL)
-                continue;
-            if (!str2double(token, &v))
-                continue;
+    if (fname == NULL)
+        f = stdin;
+    else {
+        if (strcmp(fname, "stdin") == 0 || strcmp(fname, "-") == 0)
+            f = stdin;
+        else {
+            f = fopen(fname, "r");
+            if (f == NULL)
+                nn_quit("%s: %s\n", fname, strerror(errno));
         }
-        i++;
     }
 
-    *n = i;
-    if (i == 0) {
-        *points = NULL;
-        return;
-    }
-    *points = malloc(i * sizeof(point));
+    *points = malloc(nallocated * sizeof(point));
+    *n = 0;
+    while (fgets(buf, BUFSIZE, f) != NULL) {
+        point* p;
 
-    rewind(f);
+        if (*n == nallocated) {
+            nallocated *= 2;
+            *points = realloc(*points, nallocated * sizeof(point));
+        }
 
-    i = 0;
-    while (fgets(buf, BUFSIZE, f) != NULL && i < *n) {
-        point* p = &(*points)[i];
+        p = &(*points)[*n];
 
         if (buf[0] == '#')
             continue;
@@ -409,6 +423,73 @@ void points_read(FILE* f, int dim, int* n, point** points)
             if (!str2double(token, &p->z))
                 continue;
         }
-        i++;
+        (*n)++;
     }
+
+    if (*n == 0) {
+        free(*points);
+        *points = NULL;
+    } else
+        *points = realloc(*points, *n * sizeof(point));
+
+    if (f != stdin)
+        if (fclose(f) != 0)
+            nn_quit("%s: %s\n", fname, strerror(errno));
+}
+
+/** Scales Y coordinate so that the resulting set fits into square:
+ ** xmax - xmin = ymax - ymin
+ *
+ * @param n Number of points
+ * @param points The points to scale
+ * @return Y axis compression coefficient
+ */
+double points_scaletosquare(int n, point* points)
+{
+    double xmin, ymin, xmax, ymax;
+    double k;
+    int i;
+
+    if (n <= 0)
+        return NaN;
+
+    xmin = xmax = points[0].x;
+    ymin = ymax = points[0].y;
+
+    for (i = 1; i < n; ++i) {
+        point* p = &points[i];
+
+        if (p->x < xmin)
+            xmin = p->x;
+        else if (p->x > xmax)
+            xmax = p->x;
+        if (p->y < ymin)
+            ymin = p->y;
+        else if (p->y > ymax)
+            ymax = p->y;
+    }
+
+    if (xmin == xmax || ymin == ymax)
+        return NaN;
+    else
+        k = (ymax - ymin) / (xmax - xmin);
+
+    for (i = 0; i < n; ++i)
+        points[i].y /= k;
+
+    return k;
+}
+
+/** Compresses Y domain by a given multiple.
+ *
+ * @param n Number of points
+ * @param points The points to scale
+ * @param Y axis compression coefficient as returned by points_scaletosquare()
+ */
+void points_scale(int n, point* points, double k)
+{
+    int i;
+
+    for (i = 0; i < n; ++i)
+        points[i].y /= k;
 }

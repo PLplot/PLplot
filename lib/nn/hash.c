@@ -21,6 +21,30 @@
 
 #define INT_PER_DOUBLE 2
 
+/** A hash table consists of an array of these buckets.
+ */
+typedef struct ht_bucket {
+    void* key;
+    void* data;
+    int id;                     /* unique id -- just in case */
+    struct ht_bucket* next;
+} ht_bucket;
+
+/** Hash table structure. 
+ * Note that more nodes than `size' can be inserted in the table,
+ * but performance degrades as this happens.
+ */
+struct hashtable {
+    int size;                   /* table size */
+    int n;                      /* current number of entries */
+    int naccum;                 /* number of inserted entries */
+    int nhash;                  /* number of used table elements */
+    ht_keycp cp;
+    ht_keyeq eq;
+    ht_key2hash hash;
+    ht_bucket** table;
+};
+
 /* Creates a hashtable of specified size.
  */
 hashtable* ht_create(int size, ht_keycp cp, ht_keyeq eq, ht_key2hash hash)
@@ -171,7 +195,7 @@ void* ht_insert(hashtable* table, void* key, void* data)
  *
  * @param table The hash table
  * @param key The key
- * @return The associated data
+ * @return The associated data or NULL
  */
 void* ht_find(hashtable* table, void* key)
 {
@@ -194,7 +218,7 @@ void* ht_find(hashtable* table, void* key)
  *
  * @param table The hash table
  * @param key The key
- * @return Associated data
+ * @return The associated data or NULL
  */
 void* ht_delete(hashtable* table, void* key)
 {

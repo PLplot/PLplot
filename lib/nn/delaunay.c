@@ -11,7 +11,10 @@
  *
  * Description:    None
  *
- * Revisions:      None
+ * Revisions:      10/06/2003 PS: delaunay_build(); delaunay_destroy();
+ *                 struct delaunay: from now on, only shallow copy of the
+ *                 input data is contained in struct delaunay. This saves
+ *                 memory and is consistent with libcsa.
  *
  * Modified:       Joao Cardoso, 4/2/2003
  *                 Adapted for use with Qhull instead of "triangle".
@@ -24,21 +27,19 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
-#include <stdarg.h>
 #include <string.h>
 #include <limits.h>
 #include <float.h>
-#include <sys/time.h>
 #ifdef USE_QHULL
 #include <qhull/qhull_a.h>
 #else
 #include "triangle.h"
 #endif
 #include "istack.h"
+#include "nan.h"
 #include "delaunay.h"
 
-
-int circle_build(point* p0, point* p1, point* p2, circle* c);
+int circle_build(circle* c, point* p0, point* p1, point* p2);
 int circle_contains(circle* c, point* p);
 
 #ifdef USE_QHULL
@@ -104,6 +105,131 @@ static void tio_destroy(struct triangulateio* tio)
     if (tio->normlist != NULL)
         free(tio->normlist);
 }
+
+static delaunay* delaunay_create()
+{
+    delaunay* d = malloc(sizeof(delaunay));
+
+    d->npoints = 0;
+    d->points = NULL;
+    d->xmin = DBL_MAX;
+    d->xmax = -DBL_MAX;
+    d->ymin = DBL_MAX;
+    d->ymax = -DBL_MAX;
+    d->ntriangles = 0;
+    d->triangles = NULL;
+    d->circles = NULL;
+    d->neighbours = NULL;
+    d->n_point_triangles = NULL;
+    d->point_triangles = NULL;
+    d->nedges = 0;
+    d->edges = NULL;
+    d->flags = NULL;
+    d->first_id = -1;
+    d->t_in = NULL;
+    d->t_out = NULL;
+
+    return d;
+}
+
+static void tio2delaunay(struct triangulateio* tio_out, delaunay* d)
+{
+    int i, j;
+
+    /*
+     * I assume that all input points appear in tio_out in the same order as 
+     * they were written to tio_in. I have seen no exceptions so far, even
+     * if duplicate points were presented. Just in case, let us make a couple
+     * of checks. 
+     */
+    assert(tio_out->numberofpoints == d->npoints);
+    assert(tio_out->pointlist[2 * d->npoints - 2] == d->points[d->npoints - 1].x && tio_out->pointlist[2 * d->npoints - 1] == d->points[d->npoints - 1].y);
+
+    for (i = 0, j = 0; i < d->npoints; ++i) {
+        point* p = &d->points[i];
+
+        if (p->x < d->xmin)
+            d->xmin = p->x;
+        if (p->x > d->xmax)
+            d->xmax = p->x;
+        if (p->y < d->ymin)
+            d->ymin = p->y;
+        if (p->y > d->ymax)
+            d->ymax = p->y;
+    }
+    if (nn_verbose) {
+        fprintf(stderr, "input:\n");
+        for (i = 0, j = 0; i < d->npoints; ++i) {
+            point* p = &d->points[i];
+
+            fprintf(stderr, "  %d: %15.7g %15.7g %15.7g\n", i, p->x, p->y, p->z);
+        }
+    }
+
+    d->ntriangles = tio_out->numberoftriangles;
+    if (d->ntriangles > 0) {
+        d->triangles = malloc(d->ntriangles * sizeof(triangle));
+        d->neighbours = malloc(d->ntriangles * sizeof(triangle_neighbours));
+        d->circles = malloc(d->ntriangles * sizeof(circle));
+        d->n_point_triangles = calloc(d->npoints, sizeof(int));
+        d->point_triangles = malloc(d->npoints * sizeof(int*));
+        d->flags = calloc(d->ntriangles, sizeof(int));
+    }
+
+    if (nn_verbose)
+        fprintf(stderr, "triangles:\n");
+    for (i = 0; i < d->ntriangles; ++i) {
+        int offset = i * 3;
+        triangle* t = &d->triangles[i];
+        triangle_neighbours* n = &d->neighbours[i];
+        circle* c = &d->circles[i];
+
+        t->vids[0] = tio_out->trianglelist[offset];
+        t->vids[1] = tio_out->trianglelist[offset + 1];
+        t->vids[2] = tio_out->trianglelist[offset + 2];
+
+        n->tids[0] = tio_out->neighborlist[offset];
+        n->tids[1] = tio_out->neighborlist[offset + 1];
+        n->tids[2] = tio_out->neighborlist[offset + 2];
+
+        circle_build(c, &d->points[t->vids[0]], &d->points[t->vids[1]], &d->points[t->vids[2]]);
+
+        if (nn_verbose)
+            fprintf(stderr, "  %d: (%d,%d,%d)\n", i, t->vids[0], t->vids[1], t->vids[2]);
+    }
+
+    for (i = 0; i < d->ntriangles; ++i) {
+        triangle* t = &d->triangles[i];
+
+        for (j = 0; j < 3; ++j)
+            d->n_point_triangles[t->vids[j]]++;
+    }
+    if (d->ntriangles > 0) {
+        for (i = 0; i < d->npoints; ++i) {
+            if (d->n_point_triangles[i] > 0)
+                d->point_triangles[i] = malloc(d->n_point_triangles[i] * sizeof(int));
+            else
+                d->point_triangles[i] = NULL;
+            d->n_point_triangles[i] = 0;
+        }
+    }
+    for (i = 0; i < d->ntriangles; ++i) {
+        triangle* t = &d->triangles[i];
+
+        for (j = 0; j < 3; ++j) {
+            int vid = t->vids[j];
+
+            d->point_triangles[vid][d->n_point_triangles[vid]] = i;
+            d->n_point_triangles[vid]++;
+        }
+    }
+
+    if (tio_out->edgelist != NULL) {
+        d->nedges = tio_out->numberofedges;
+        d->edges = malloc(d->nedges * 2 * sizeof(int));
+        memcpy(d->edges, tio_out->edgelist, d->nedges * 2 * sizeof(int));
+    }
+}
 #endif
 
 /* Builds Delaunay triangulation of the given array of points.
@@ -117,10 +243,9 @@ static void tio_destroy(struct triangulateio* tio)
  * @return Delaunay triangulation structure with triangulation results
  */
 delaunay* delaunay_build(int np, point points[], int ns, int segments[], int nh, double holes[])
-
 #ifndef USE_QHULL
 {
-    delaunay* d = malloc(sizeof(delaunay));
+    delaunay* d = delaunay_create();
     struct triangulateio tio_in;
     struct triangulateio tio_out;
     char cmd[64] = "eznC";
@@ -174,117 +299,13 @@ delaunay* delaunay_build(int np, point points[], int ns, int segments[], int nh,
     if (nn_verbose)
         fflush(stderr);
 
-    /*
-     * I assume that all input points appear in tio_out in the same order as 
-     * they were written to tio_in. I have seen no exceptions so far, even
-     * if duplicate points were presented. Just to be reasonably sure, let
-     * us make a couple of checks. 
-     */
-    assert(tio_out.numberofpoints == np);
-    assert(tio_out.pointlist[2 * np - 2] == points[np - 1].x && tio_out.pointlist[2 * np - 1] == points[np - 1].y);
-
-    d->xmin = DBL_MAX;
-    d->xmax = -DBL_MAX;
-    d->ymin = DBL_MAX;
-    d->ymax = -DBL_MAX;
-
     d->npoints = np;
-    d->points = malloc(np * sizeof(point));
-    for (i = 0, j = 0; i < np; ++i) {
-        point* p = &d->points[i];
+    d->points = points;
 
-        p->x = tio_out.pointlist[j++];
-        p->y = tio_out.pointlist[j++];
-        p->z = points[i].z;
-
-        if (p->x < d->xmin)
-            d->xmin = p->x;
-        if (p->x > d->xmax)
-            d->xmax = p->x;
-        if (p->y < d->ymin)
-            d->ymin = p->y;
-        if (p->y > d->ymax)
-            d->ymax = p->y;
-    }
-    if (nn_verbose) {
-        fprintf(stderr, "input:\n");
-        for (i = 0, j = 0; i < np; ++i) {
-            point* p = &d->points[i];
-
-            fprintf(stderr, "  %d: %15.7g %15.7g %15.7g\n", i, p->x, p->y, p->z);
-        }
-    }
-
-    d->ntriangles = tio_out.numberoftriangles;
-    d->triangles = malloc(d->ntriangles * sizeof(triangle));
-    d->neighbours = malloc(d->ntriangles * sizeof(triangle_neighbours));
-    d->circles = malloc(d->ntriangles * sizeof(circle));
-
-    if (nn_verbose)
-        fprintf(stderr, "triangles:\tneighbors:\n");
-    for (i = 0; i < d->ntriangles; ++i) {
-        int offset = i * 3;
-        triangle* t = &d->triangles[i];
-        triangle_neighbours* n = &d->neighbours[i];
-        circle* c = &d->circles[i];
-
-        t->vids[0] = tio_out.trianglelist[offset];
-        t->vids[1] = tio_out.trianglelist[offset + 1];
-        t->vids[2] = tio_out.trianglelist[offset + 2];
-
-        n->tids[0] = tio_out.neighborlist[offset];
-        n->tids[1] = tio_out.neighborlist[offset + 1];
-        n->tids[2] = tio_out.neighborlist[offset + 2];
-
-        circle_build(&d->points[t->vids[0]], &d->points[t->vids[1]], &d->points[t->vids[2]], c);
-
-        if (nn_verbose)
-            fprintf(stderr, "  %d: (%d,%d,%d)\t(%d,%d,%d)\n", i, t->vids[0], t->vids[1], t->vids[2], n->tids[0], n->tids[1], n->tids[2]);
-    }
-
-    d->flags = calloc(d->ntriangles, sizeof(int));
-
-    d->n_point_triangles = calloc(d->npoints, sizeof(int));
-    for (i = 0; i < d->ntriangles; ++i) {
-        triangle* t = &d->triangles[i];
-
-        for (j = 0; j < 3; ++j)
-            d->n_point_triangles[t->vids[j]]++;
-    }
-    d->point_triangles = malloc(d->npoints * sizeof(int*));
-    for (i = 0; i < d->npoints; ++i) {
-        if (d->n_point_triangles[i] > 0)
-            d->point_triangles[i] = malloc(d->n_point_triangles[i] * sizeof(int));
-        else
-            d->point_triangles[i] = NULL;
-        d->n_point_triangles[i] = 0;
-    }
-    for (i = 0; i < d->ntriangles; ++i) {
-        triangle* t = &d->triangles[i];
-
-        for (j = 0; j < 3; ++j) {
-            int vid = t->vids[j];
-
-            d->point_triangles[vid][d->n_point_triangles[vid]] = i;
-            d->n_point_triangles[vid]++;
-        }
-    }
-
-    if (tio_out.edgelist != NULL) {
-        d->nedges = tio_out.numberofedges;
-        d->edges = malloc(d->nedges * 2 * sizeof(int));
-        memcpy(d->edges, tio_out.edgelist, d->nedges * 2 * sizeof(int));
-    } else {
-        d->nedges = 0;
-        d->edges = NULL;
-    }
+    tio2delaunay(&tio_out, d);
 
     tio_destroy(&tio_in);
     tio_destroy(&tio_out);
-
-    d->t_in = NULL;
-    d->t_out = NULL;
-    d->first_id = -1;
 
     return d;
 }
@@ -435,8 +456,8 @@ delaunay* delaunay_build(int np, point points[], int ns, int segments[], int nh,
 	  n->tids[2] = tmp;
 	}
 
-	circle_build(&d->points[t->vids[0]], &d->points[t->vids[1]],
-		     &d->points[t->vids[2]], c);
+	circle_build(c, &d->points[t->vids[0]], &d->points[t->vids[1]],
+		     &d->points[t->vids[2]]);
 
 	if (nn_verbose)
             fprintf(stderr, "  %d: (%d,%d,%d)\t(%d,%d,%d)\n",
@@ -517,22 +538,33 @@ static int cw(delaunay *d, triangle *t)
  */
 void delaunay_destroy(delaunay* d)
 {
-    int i;
+    if (d == NULL)
+        return;
 
-    for (i = 0; i < d->npoints; ++i)
-        if (d->point_triangles[i] != NULL)
-            free(d->point_triangles[i]);
+    if (d->point_triangles != NULL) {
+        int i;
+
+        for (i = 0; i < d->npoints; ++i)
+            if (d->point_triangles[i] != NULL)
+                free(d->point_triangles[i]);
+        free(d->point_triangles);
+    }
     if (d->nedges > 0)
         free(d->edges);
-    free(d->point_triangles);
-    free(d->n_point_triangles);
-    free(d->flags);
-    free(d->circles);
-    free(d->neighbours);
-    free(d->triangles);
-    free(d->points);
-    istack_destroy(d->t_in);
-    istack_destroy(d->t_out);
+    if (d->n_point_triangles != NULL)
+        free(d->n_point_triangles);
+    if (d->flags != NULL)
+        free(d->flags);
+    if (d->circles != NULL)
+        free(d->circles);
+    if (d->neighbours != NULL)
+        free(d->neighbours);
+    if (d->triangles != NULL)
+        free(d->triangles);
+    if (d->t_in != NULL)
+        istack_destroy(d->t_in);
+    if (d->t_out != NULL)
+        istack_destroy(d->t_out);
     free(d);
 }
 

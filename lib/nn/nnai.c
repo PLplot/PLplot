@@ -10,11 +10,11 @@
  * Purpose:        Code for:
  *                 -- Natural Neighbours Array Interpolator
  *
- * Description:    `nn_array_interpolator' is a tructure for conducting
+ * Description:    `nnai' is a tructure for conducting
  *                 consequitive Natural Neighbours interpolations on a given
  *                 spatial data set in a given array of points. It allows to
  *                 modify Z coordinate of data in between interpolations.
- *                 `nn_array_interpolator' is the fastest of the three Natural
+ *                 `nnai' is the fastest of the three Natural
  *                 Neighbours interpolators in `nn' library.
  *
  * Revisions:      None
@@ -35,7 +35,7 @@ typedef struct {
     double* weights;            /* vertex weights [nvertices] */
 } nn_weights;
 
-struct nn_array_interpolator {
+struct nnai {
     delaunay* d;
     double wmin;
     double n;                   /* number of output points */
@@ -45,13 +45,13 @@ struct nn_array_interpolator {
 };
 
 void nn_quit(char* format, ...);
-void nnpi_calculate_weights(nn_point_interpolator* nn);
-int nnpi_get_nvertices(nn_point_interpolator* nn);
-int* nnpi_get_vertices(nn_point_interpolator* nn);
-double* nnpi_get_weights(nn_point_interpolator* nn);
-void nnpi_normalize_weights(nn_point_interpolator* nn);
-void nnpi_reset(nn_point_interpolator* nn);
-void nnpi_set_point(nn_point_interpolator* nn, point* p);
+void nnpi_calculate_weights(nnpi* nn);
+int nnpi_get_nvertices(nnpi* nn);
+int* nnpi_get_vertices(nnpi* nn);
+double* nnpi_get_weights(nnpi* nn);
+void nnpi_normalize_weights(nnpi* nn);
+void nnpi_reset(nnpi* nn);
+void nnpi_set_point(nnpi* nn, point* p);
 
 /* Builds Natural Neighbours array interpolator. This includes calculation of
  * weights used in nnai_interpolate().
@@ -59,17 +59,16 @@ void nnpi_set_point(nn_point_interpolator* nn, point* p);
  * @param d Delaunay triangulation
  * @return Natural Neighbours interpolation
  */
-nn_array_interpolator* nnai_build(delaunay* d, int n, double* x, double* y)
+nnai* nnai_build(delaunay* d, int n, double* x, double* y)
 {
-    nn_array_interpolator* nn = malloc(sizeof(nn_array_interpolator));
-    nn_point_interpolator* nnpi = nnpi_create(d);
-    int nvertices = nnpi_get_nvertices(nnpi);
-    int* vertices = nnpi_get_vertices(nnpi);
-    double* weights = nnpi_get_weights(nnpi);
+    nnai* nn = malloc(sizeof(nnai));
+    nnpi* nnpi = nnpi_create(d);
+    int* vertices;
+    double* weights;
     int i;
 
     if (n <= 0)
-        nn_quit("error: nnai_create(): n = %d\n", n);
+        nn_quit("nnai_create(): n = %d\n", n);
 
     nn->d = d;
     nn->n = n;
@@ -81,18 +80,24 @@ nn_array_interpolator* nnai_build(delaunay* d, int n, double* x, double* y)
 
     for (i = 0; i < n; ++i) {
         nn_weights* w = &nn->weights[i];
-        point p = { x[i], y[i] };
+        point p;
+
+        p.x = x[i];
+        p.y = y[i];
 
         nnpi_reset(nnpi);
         nnpi_set_point(nnpi, &p);
         nnpi_calculate_weights(nnpi);
         nnpi_normalize_weights(nnpi);
 
-        w->nvertices = nvertices;
-        w->vertices = malloc(nvertices * sizeof(int));
-        memcpy(w->vertices, vertices, nvertices * sizeof(int));
-        w->weights = malloc(nvertices * sizeof(double));
-        memcpy(w->weights, weights, nvertices * sizeof(double));
+        vertices = nnpi_get_vertices(nnpi);
+        weights = nnpi_get_weights(nnpi);
+
+        w->nvertices = nnpi_get_nvertices(nnpi);
+        w->vertices = malloc(w->nvertices * sizeof(int));
+        memcpy(w->vertices, vertices, w->nvertices * sizeof(int));
+        w->weights = malloc(w->nvertices * sizeof(double));
+        memcpy(w->weights, weights, w->nvertices * sizeof(double));
     }
 
     nnpi_destroy(nnpi);
@@ -104,7 +109,7 @@ nn_array_interpolator* nnai_build(delaunay* d, int n, double* x, double* y)
  *
  * @param nn Structure to be destroyed
  */
-void nnai_destroy(nn_array_interpolator* nn)
+void nnai_destroy(nnai* nn)
 {
     int i;
 
@@ -129,7 +134,7 @@ void nnai_destroy(nn_array_interpolator* nn)
  * @param zin input data [nn->d->npoints]
  * @param zout output data [nn->n]. Must be pre-allocated!
  */
-void nnai_interpolate(nn_array_interpolator* nn, double* zin, double* zout)
+void nnai_interpolate(nnai* nn, double* zin, double* zout)
 {
     int i;
 
@@ -156,7 +161,7 @@ void nnai_interpolate(nn_array_interpolator* nn, double* zin, double* zout)
  * @param nn Natural Neighbours array interpolator
  * @param wmin Minimal allowed weight
  */
-void nnai_setwmin(nn_array_interpolator* nn, double wmin)
+void nnai_setwmin(nnai* nn, double wmin)
 {
     nn->wmin = wmin;
 }
@@ -190,7 +195,7 @@ static void usage()
     printf(
 "Usage: nn_test [-v|-V] [-n <nin> <nxout>]\n"
 "Options:\n"
-"  -a              -- use non-Sibsonian interpolation algorithm\n"
+"  -a              -- use non-Sibsonian interpolation rule\n"
 "  -n <nin> <nout>:\n"
 "            <nin> -- number of input points (default = 10000)\n"
 "           <nout> -- number of output points per side (default = 64)\n"
@@ -208,7 +213,7 @@ int main(int argc, char* argv[])
     point* pin = NULL;
     delaunay* d = NULL;
     point* pout = NULL;
-    nn_array_interpolator* nn = NULL;
+    nnai* nn = NULL;
     double* zin = NULL;
     double* xout = NULL;
     double* yout = NULL;
@@ -223,7 +228,7 @@ int main(int argc, char* argv[])
         switch (argv[i][1]) {
         case 'a':
             i++;
-            nn_algorithm = NON_SIBSONIAN;
+            nn_rule = NON_SIBSONIAN;
             break;
         case 'n':
             i++;
@@ -335,11 +340,8 @@ int main(int argc, char* argv[])
         printf("    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
     }
 
-    if (!nn_verbose) {
-        point p = { xout[cpi], yout[cpi], zout[cpi] };
-
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", p.x, p.y, p.z, franke(p.x, p.y));
-    }
+    if (!nn_verbose)
+        printf("    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke(xout[cpi], yout[cpi]));
 
     printf("  interpolating one more time:\n");
     fflush(stdout);
@@ -356,11 +358,8 @@ int main(int argc, char* argv[])
         printf("    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
     }
 
-    if (!nn_verbose) {
-        point p = { xout[cpi], yout[cpi], zout[cpi] };
-
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", p.x, p.y, p.z, franke(p.x, p.y));
-    }
+    if (!nn_verbose)
+        printf("    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke(xout[cpi], yout[cpi]));
 
     printf("  entering new data:\n");
     fflush(stdout);
@@ -380,11 +379,8 @@ int main(int argc, char* argv[])
         for (i = 0; i < nout; ++i)
             printf("    (%f, %f, %f)\n", xout[i], yout[i], zout[i]);
 
-    if (!nn_verbose) {
-        point p = { xout[cpi], yout[cpi], zout[cpi] };
-
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", p.x, p.y, p.z, p.x * p.x - p.y * p.y);
-    }
+    if (!nn_verbose)
+        printf("    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], xout[cpi] * xout[cpi] - yout[cpi] * yout[cpi]);
 
     printf("  restoring data:\n");
     fflush(stdout);
@@ -404,11 +400,8 @@ int main(int argc, char* argv[])
         for (i = 0; i < nout; ++i)
             printf("    (%f, %f, %f)\n", xout[i], yout[i], zout[i]);
 
-    if (!nn_verbose) {
-        point p = { xout[cpi], yout[cpi], zout[cpi] };
-
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", p.x, p.y, p.z, franke(p.x, p.y));
-    }
+    if (!nn_verbose)
+        printf("    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke(xout[cpi], yout[cpi]));
 
     printf("\n");
 
