@@ -12,9 +12,10 @@ require 5.002;
 #
 # Some stuff needed by the automatic install:
 #
-$PREFIX = `pwd`;
+use Cwd;
+$PREFIX = &Cwd::cwd();
 				# This is the location of our source tree.
-unshift(@INC, "$PREFIX");
+unshift(@INC, "$PREFIX"."/matwrap");
 				# Add our library directory.
 
 #
