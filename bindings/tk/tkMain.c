@@ -49,6 +49,9 @@
 #include <tcl.h>
 #include <tk.h>
 #ifdef HAVE_ITCL
+# ifndef HAVE_ITCLDECLS_H
+#  define RESOURCE_INCLUDED
+# endif
 # include <itcl.h>
 #endif
 

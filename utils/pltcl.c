@@ -12,6 +12,9 @@
 #include "plplot/plplotP.h"
 #include "plplot/pltcl.h"
 #ifdef HAVE_ITCL
+# ifndef HAVE_ITCLDECLS_H
+#  define RESOURCE_INCLUDED
+# endif
 # include <itcl.h>
 #endif
 
