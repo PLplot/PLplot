@@ -25,7 +25,7 @@ EXTRA_DIST = \
   bin cnf perl www
 
 dist-hook:
-	rm -f $(distdir)/bin/api2man.pl
+	rm -f $(distdir)/bin/api2man.pl $(distdir)/www/index.html.in
 
 CLEANFILES = conftest.*
 
