@@ -5,83 +5,132 @@
 # Last modified on: Mon Oct 30 11:55:29 CET 2000
 # $Id$
 
-stylesheet_html = plplotdoc-html.dsl
-stylesheet_print = plplotdoc-print.dsl
-html_destdir = ../html
-sgml_sources = $(shell ls *.sgml *.ent)
-perl_scripts = $(shell ls *.pl)
-sources = $(sgml_sources) $(perl_scripts)
-plplotdoc_html=plplotdoc-html
-jade = @JADE@
-jadetex = @JADETEX@
-perl = @PERL@
-sgml_catalogs=@SGML_CATALOGS@
+STYLESHEET_HTML = plplotdoc-html.dsl
+STYLESHEET_PRINT = plplotdoc-print.dsl
+HTML_DESTDIR = ../html
 
-base = plplotdoc
-main_html = book1.html
+#the combination of these 3 file lists gives everything in the cvs.  This is
+#all that is required to build docbook results from source.  These 3 lists
+#need to be maintained in parallel with deleting or adding to the cvs.
+
+SGML_SOURCES = \
+	advanced.sgml   api.sgml     cplus.sgml \
+	drivers.sgml  gui.sgml  intro.sgml \
+	perl.sgml plplotdoc.sgml  python.sgml \
+	scheme.sgml  simple.sgml   tcl.sgml  wish.sgml \
+	inline-html.ent  inline-print.ent
+
+OTHER_SOURCES = \
+	Makefile.in README configure configure.in \
+	eps2jpeg.pl.in included-html-files.pl inline-greek.pl.in \
+	jadetex.cfg over-under.tex parse-api.pl parse.pl tex2eps.pl.in \
+	$(STYLESHEET_HTML) $(STYLESHEET_PRINT)
+
+CONFDIR_SOURCES = \
+	conf/test.dsl.in  conf/test.sgml.in
+
+
+PLPLOTDOC_HTML=plplotdoc-html
+PLPLOTDOC_SRC=plplotdoc-src
+JADE = @JADE@
+JADETEX = @JADETEX@
+PERL = @PERL@
+SGML_CATALOGS=@SGML_CATALOGS@
+
+BASE = plplotdoc
+MAIN_HTML = book1.html
 
 all: html ps
 
+#inline.manifest is a list of all the in-line jpeg images made by inline-greek.pl
+#These same jpeg images are referred to by inline-html.ent (see below)
 inline.manifest: inline-greek.pl
-	$(perl) inline-greek.pl
+	$(PERL) inline-greek.pl
 
-over-under.eps: over-under.tex
-	$(perl) tex2eps.pl -s `cat over-under.tex` -x 1000 -o over-under.eps
+over-under.eps: over-under.tex tex2eps.pl
+	$(PERL) tex2eps.pl -s `cat over-under.tex` -x 1000 -o over-under.eps
 
-over-under-big.eps: over-under.tex
-	$(perl) tex2eps.pl -s `cat over-under.tex` -x 5000 \
+over-under-big.eps: over-under.tex tex2eps.pl
+	$(PERL) tex2eps.pl -s `cat over-under.tex` -x 5000 \
           -o over-under-big.eps
 
-over-under.jpeg: over-under-big.eps
-	$(perl) eps2jpeg.pl -g 35% -i over-under-big.eps -o over-under.jpeg
+over-under.jpeg: over-under-big.eps eps2jpeg.pl
+	$(PERL) eps2jpeg.pl -g 35% -i over-under-big.eps -o over-under.jpeg
 
-html: html-stamp 
-html-stamp: $(sgml_sources) $(stylesheet_html) inline-html.ent \
+
+
+#This dependency is incomplete.  $(MAIN_HTML) should be replaced by a
+#complete list of all html files produced by this stanza of commands, but I
+#have decided to wait until we specify meaningful file names (api.html, etc.)
+#to replace the current numerical file names.
+
+html: $(MAIN_HTML)
+$(MAIN_HTML): $(SGML_SOURCES) $(STYLESHEET_HTML) inline-html.ent \
             over-under.jpeg inline.manifest
 	ln -fs inline-html.ent inline.ent
-	$(jade) $(sgml_catalogs) -d $(stylesheet_html) -t sgml $(base).sgml
-	touch html-stamp
+	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml $(BASE).sgml
 
-ps: ps-stamp
-ps-stamp: $(base).tex over-under.eps
-	$(jadetex) $(base).tex
-	$(jadetex) $(base).tex
-	dvips -f $(base) | gzip -c > $(base).ps.gz
-	touch ps-stamp
+ps: $(BASE).ps.gz
 
-$(base).tex: $(sgml_sources) $(stylesheet_print) inline-print.ent
+$(BASE).ps.gz: $(BASE).dvi over-under.eps
+	dvips -f $(BASE).dvi | gzip -c > $(BASE).ps.gz
+
+$(BASE).dvi: $(BASE).tex over-under.eps
+	$(JADETEX) $(BASE).tex
+	$(JADETEX) $(BASE).tex
+
+$(BASE).tex: $(SGML_SOURCES) $(STYLESHEET_PRINT) inline-print.ent
 	ln -fs inline-print.ent inline.ent
-	$(jade) $(sgml_catalogs) -d $(stylesheet_print) -t tex $(base).sgml
+	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex $(BASE).sgml
 
-version: 
-	echo '0.0.1' > version
+#temporary kludge to be replaced by a real version number system
+VERSION=0.0.1
 
 
 install: install-stamp
-install-stamp: version html-stamp ps-stamp index.html
-	mkdir -p $(html_destdir)
-	rm -rf $(html_destdir)/*
-	mkdir $(plplotdoc_html)-`cat version`
-	cp `$(perl) included-html-files.pl < $(main_html)` $(main_html) \
-	   index.html `cat inline.manifest` \
-           over-under.jpeg $(plplotdoc_html)-`cat version` 
-	cp $(plplotdoc_html)-`cat version`/* $(html_destdir)
-	tar cfz $(plplotdoc_html)-`cat version`.tar.gz \
-            $(plplotdoc_html)-`cat version`
-	rm -rf $(plplotdoc_html)-`cat version`
-	mkdir -p $(html_destdir)/$(srcdir)
-	cp $(sources) Makefile $(stylesheet_html) $(stylesheet_print) \
-          included-html-files.pl $(html_destdir)/$(srcdir)
-	mv $(base).ps.gz $(plplotdoc_html)-`cat version`.tar.gz \
-          $(html_destdir)
-	ln -sf ./$(plplotdoc_html)-`cat version`.tar.gz \
-               $(html_destdir)/$(plplotdoc_html).tar.gz
+install-stamp: src_tar html_tar $(BASE).dvi $(BASE).ps.gz
+	mkdir -p $(HTML_DESTDIR)
+	rm -rf $(HTML_DESTDIR)/*
+	cp $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	cp $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	cp $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
+	cp $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
 	touch install-stamp
 
-clean:
-	rm -f *.html $(base).{tex,dvi,aux,log,ps.gz} *-stamp version \
-	      TMP* inline.ent *.eps *.jpeg inline.manifest \
-	      conftest.* config.*
-	rm -rf $(html_destdir)
+src_tar: $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
+$(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
+	$(OTHER_SOURCES) $(CONFDIR_SOURCES)
+	mkdir -p $(PLPLOTDOC_SRC)-$(VERSION)/conf
+	cp ../README.developers $(SGML_SOURCES) $(OTHER_SOURCES) $(PLPLOTDOC_SRC)-$(VERSION)
+	cp $(CONFDIR_SOURCES) $(PLPLOTDOC_SRC)-$(VERSION)/conf
+	tar cfz $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(PLPLOTDOC_SRC)-$(VERSION)
 
-.PHONY: all html ps install clean
+#(AWI discussion: as our documentation gets more complicated, book1.html may
+#not have all cross-references to *.html files although perhaps this is the
+#docbook standard, I am not sure.  How about doing a simple
+#shell ls *.html instead of using included-html-files.pl, or better yet, use
+#meaningful names rather than numerical ones and keep a maintained file
+#list earlier in this Makefile?)
+
+html_tar: $(PLPLOTDOC_HTML)-$(VERSION).tar.gz
+$(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
+	   inline.manifest over-under.jpeg
+	mkdir $(PLPLOTDOC_HTML)-$(VERSION)
+	cp `$(PERL) included-html-files.pl < $(MAIN_HTML)` $(MAIN_HTML) \
+	   `cat inline.manifest` \
+           over-under.jpeg $(PLPLOTDOC_HTML)-$(VERSION) 
+	tar cfz $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
+            $(PLPLOTDOC_HTML)-$(VERSION)
+
+clean:
+	rm -f *.html $(BASE).{tex,dvi,aux,log,ps.gz} \
+	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp\
+	      conftest.* config.*
+	rm -rf $(HTML_DESTDIR)
+	rm -rf $(PLPLOTDOC_HTML)-$(VERSION)
+	rm -rf $(PLPLOTDOC_SRC)-$(VERSION)
+
+distclean: clean
+	rm -f Makefile eps2jpeg.pl inline-greek.pl  tex2eps.pl
+
+.PHONY: all html ps src_tar html_tar install clean distclean
