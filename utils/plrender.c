@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1994/01/17 20:45:02  mjl
+ * Revision 1.36  1994/03/23 09:03:05  mjl
+ * Added support for cmap1, color map state changes, hardware polygon fills.
+ *
+ * Revision 1.35  1994/01/17  20:45:02  mjl
  * Converted to new syntax for PDF function calls.
  *
  * Revision 1.34  1993/11/15  08:42:15  mjl
@@ -30,29 +33,6 @@
  * Updated command line parsing utils to work better with the new command
  * line utils, especially as regards invisible options.  Fixed a rarely
  * encountered bug in seeking.
- *
- * Revision 1.28  1993/08/09  22:15:11  mjl
- * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
- *
- * Revision 1.27  1993/08/03  01:47:04  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.26  1993/07/31  08:20:53  mjl
- * Removed code that is now handled in the driver interface, also changes
- * to reflect new driver functions.
- *
- * Revision 1.25  1993/07/16  22:20:18  mjl
- * Eliminated obsolete flags and processing of metafile tags (still read for
- * backward compatibility).  To be replaced by operations in the driver
- * interface.
- *
- * Revision 1.24  1993/07/02  07:19:21  mjl
- * Changed over to new namespace, new options parser.  Some options handlers
- * removed (no longer necessary).
- *
- * Revision 1.23  1993/04/26  19:58:03  mjl
- * Fixes to allow (once again) output to stdout and plrender to function as
- * a filter.  A type flag was added to handle file vs stream differences.
 */
 
 /*
@@ -80,15 +60,13 @@
 char ident[] = "@(#) $Id$";
 
 #include "plplotP.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
+#include "plstream.h"
 #include "plevent.h"
 #include "metadefs.h"
 #include "pdf.h"
+
+#include <string.h>
+#include <ctype.h>
 
 static char *program_name = "plrender";
 
@@ -103,6 +81,7 @@ static void	plr_eop 	(U_CHAR c);
 static void	plr_bop 	(U_CHAR c);
 static void	plr_state	(U_CHAR c);
 static void	plr_esc		(U_CHAR c);
+static void	plresc_fill	(void);
 static void	plresc_rgb	(void);
 static void	plresc_ancol	(void);
 
@@ -151,6 +130,11 @@ static int mode_plrender = PL_PARSE_OVERRIDE;
 static int mode_plplot = 0;
 static int mode_showall = 0;
 
+/* Stream pointer.  */
+/* Fetched by some routines to directly set plplot state data */
+
+static PLStream	*plsc;
+
 /* Page info */
 
 static PLINT	disp_beg=1;	/* Where to start plotting */
@@ -181,7 +165,7 @@ static int	input_type;	/* 0 for file, 1 for stream */
 static PDFstrm	*pdfs;		/* PDF stream handle */
 static FILE	*MetaFile;	/* Actual metafile handle, for seeks etc */
 
-static char	BaseName[70] = "", FamilyName[80] = "", FileName[90] = "";
+static char	BaseName[80] = "", FileName[90] = "";
 static PLINT	is_family, member=1;
 static char	mf_magic[40], mf_version[40];
 
@@ -212,7 +196,7 @@ static U_CHAR 	c_old, c1;
 static U_SHORT	npts;
 static int	direction_flag, isanum, at_eop;
 static char	num_buffer[20];
-static PLFLT	x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
+static PLFLT	x[PL_MAXPOLY], y[PL_MAXPOLY];
 
 /* Exit codes */
 
@@ -348,10 +332,10 @@ main(int argc, char *argv[])
 /* Done */
 
     pdf_close(pdfs);
-    if (strcmp(mf_version, "1993a") < 0) 
-	plP_eop();
+    if (strcmp(mf_version, "1993a") >= 0) 
+	plspause(0);
 
-    plP_tidy();
+    plend();
     exit(EX_SUCCESS);
 }
 
@@ -364,11 +348,10 @@ main(int argc, char *argv[])
 *
 * Process a command.
 * Typically plrender issues commands to plplot much like an application
-* program would.  This results in a more robust and flexible API.  On
-* the other hand, it is sometimes necessary to directly call low-level
-* plplot routines to achieve certain special effects.  This is probably
-* tolerable if used sparingly (and points to areas where the plplot API
-* needs improvement!).
+* program would.  This results in a more robust and flexible API.  On the
+* other hand, it is sometimes necessary to directly call low-level plplot
+* routines to achieve certain special effects, increase performance, or
+* simplify the code.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -376,54 +359,51 @@ process_next(U_CHAR c)
 {
     switch ((int) c) {
 
-      case INITIALIZE:
+    case INITIALIZE:
 	plr_init(c);
 	break;
 
-      case LINE:
-      case LINETO:
-      case POLYLINE:
+    case LINE:
+    case LINETO:
+    case POLYLINE:
 	plr_line(c);
 	break;
 
-      case EOP:
+    case EOP:
 	plr_eop(c);
 	break;
 
-      case BOP:
+    case BOP:
 	plr_bop(c);
 	break;
 
-      case ADVANCE:
-	plr_eop(c);
-	plr_bop(c);
-	break;
-
-      case CHANGE_STATE:
+    case CHANGE_STATE:
 	plr_state(getcommand());
 	break;
 
-      case NEW_COLOR0:
-	plr_state(PLSTATE_COLOR0);
-	break;
-
-      case NEW_COLOR1:
-	plr_state(PLSTATE_COLOR1);
-	break;
-
-      case NEW_WIDTH:
-	plr_state(PLSTATE_WIDTH);
-	break;
-
-      case SWITCH_TO_TEXT:
-      case SWITCH_TO_GRAPH:
-	break;
-
-      case ESCAPE:
+    case ESCAPE:
 	plr_esc(c);
 	break;
 
-      default:
+/* These are all commands that should be absent from current metafiles but */
+/* are recognized here for backward compatibility with old metafiles */
+
+    case ADVANCE:
+	plr_eop(c);
+	plr_bop(c);
+	break;
+
+    case NEW_WIDTH:
+    case NEW_COLOR0:
+    case NEW_COLOR1:
+	plr_state(c);
+	break;
+
+    case SWITCH_TO_TEXT:
+    case SWITCH_TO_GRAPH:
+	break;
+
+    default:
 	plexit("process_next: Unrecognized command");
     }
 }
@@ -524,17 +504,18 @@ static void
 plr_line(U_CHAR c)
 {
     npts = 1;
+
     switch ((int) c) {
 
-      case LINE:
+    case LINE:
 	get_ncoords(x, y, 1);
 
-      case LINETO:
+    case LINETO:
 	for (;;) {
 	    get_ncoords(x + npts, y + npts, 1);
 
 	    npts++;
-	    if (npts == PL_MAXPOLYLINE)
+	    if (npts == PL_MAXPOLY)
 		break;
 
 	    c1 = getcommand();
@@ -545,7 +526,7 @@ plr_line(U_CHAR c)
 	}
 	break;
 
-      case POLYLINE:
+    case POLYLINE:
 	plm_rd( pdf_rd_2bytes(pdfs, &npts) );
 	get_ncoords(x, y, npts);
 	break;
@@ -566,8 +547,8 @@ plr_line(U_CHAR c)
 static void
 get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 {
+    short xs[PL_MAXPOLY], ys[PL_MAXPOLY];
     PLINT i;
-    short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
     plm_rd( pdf_rd_2nbytes(pdfs, (U_SHORT *) xs, n) );
     plm_rd( pdf_rd_2nbytes(pdfs, (U_SHORT *) ys, n) );
@@ -646,6 +627,8 @@ plr_bop(U_CHAR c)
 static void 
 plr_state(U_CHAR op)
 {
+    int i;
+
     dbug_enter("plr_state");
 
     switch (op) {
@@ -683,8 +666,52 @@ plr_state(U_CHAR op)
 	break;
     }
 
-    case PLSTATE_COLOR1:
+    case PLSTATE_COLOR1:{
+	U_SHORT icol1;
+	PLFLT col1;
+
+	plm_rd( pdf_rd_2bytes(pdfs, &icol1) );
+	plgpls(&plsc);
+	col1 = (float) icol1 / (float) plsc->ncol1;
+	plcol1(col1);
 	break;
+    }
+
+    case PLSTATE_FILL:{
+	signed char patt;
+
+	plm_rd( pdf_rd_1byte(pdfs, (U_CHAR *) &patt) );
+	plpsty(patt);
+	break;
+    }
+
+    case PLSTATE_CMAP0:{
+	U_CHAR ncol0;
+
+	plgpls(&plsc);
+	plm_rd(pdf_rd_1byte(pdfs, &ncol0));
+	plsc->ncol0 = ncol0;
+	for (i = 0; i < plsc->ncol0; i++) {
+	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].r));
+	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].g));
+	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].b));
+	}
+	break;
+    }
+
+    case PLSTATE_CMAP1:{
+	U_SHORT ncol1;
+
+	plgpls(&plsc);
+	plm_rd(pdf_rd_2bytes(pdfs, &ncol1));
+	plsc->ncol1 = ncol1;
+	for (i = 0; i < plsc->ncol1; i++) {
+	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].r));
+	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].g));
+	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].b));
+	}
+	break;
+    }
     }
 }
 
@@ -702,23 +729,47 @@ plr_esc(U_CHAR c)
     dbug_enter("plr_esc");
 
     plm_rd( pdf_rd_1byte(pdfs, &op) );
+
     switch (op) {
 
-      case PLESC_SET_RGB:	/* Now obsolete */
+    case PLESC_FILL:
+	plresc_fill();
+	break;
+
+/* These are all commands that should be absent from current metafiles but */
+/* are recognized here for backward compatibility with old metafiles */
+
+    case PLESC_SET_RGB:
 	plresc_rgb();
 	return;
 
-      case PLESC_ALLOC_NCOL:	/* Now obsolete */
+    case PLESC_ALLOC_NCOL:
 	plresc_ancol();
 	return;
 
-      case PLESC_SET_LPB:	/* Now obsolete */
+    case PLESC_SET_LPB:
 	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	return;
     }
+}
+
+/*----------------------------------------------------------------------*\
+* plresc_fill()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*----------------------------------------------------------------------*/
+
+static void
+plresc_fill(void)
+{
+    dbug_enter("plresc_fill");
+
+    plm_rd( pdf_rd_2bytes(pdfs, &npts) );
+    get_ncoords(x, y, npts);
+    plfill(npts, x, y);
 }
 
 /*----------------------------------------------------------------------*\
@@ -784,7 +835,7 @@ NextFamilyFile(U_CHAR *c)
 
     (void) fclose(MetaFile);
     member++;
-    (void) sprintf(FileName, "%s.%i", FamilyName, member);
+    (void) sprintf(FileName, "%s.%i", BaseName, member);
 
     if ((MetaFile = fopen(FileName, "rb")) == NULL) {
 	is_family = 0;
@@ -798,10 +849,16 @@ NextFamilyFile(U_CHAR *c)
 
 /*
 * If the family file was created correctly, the first instruction in the
-* file MUST be an INITIALIZE.  We throw this away and put a page advance in
-* its place.
+* file (after state information) MUST be an INITIALIZE.  We throw this
+* away and put a page advance in its place. 
 */
+
     *c = getcommand();
+    while (*c == CHANGE_STATE) {
+	plr_state(getcommand());
+	*c = getcommand();
+    }
+
     if (*c != INITIALIZE)
 	fprintf(stderr,
 		"Warning, first instruction in member file not an INIT\n");
@@ -1346,6 +1403,8 @@ Init(int argc, char **argv)
 static void
 OpenMetaFile(int *p_argc, char **argv)
 {
+    char name[70];
+
     dbug_enter("OpenMetaFile");
 
     if ( ! strcmp(FileName, "-"))
@@ -1379,28 +1438,28 @@ OpenMetaFile(int *p_argc, char **argv)
 #ifdef DEBUG
 	fprintf(stderr, "Trying to open metafile %s.\n", FileName);
 #endif
-	strncpy(BaseName, FileName, sizeof(BaseName) - 1);
-	BaseName[sizeof(BaseName) - 1] = '\0';
+	strncpy(name, FileName, sizeof(name) - 1);
+	name[sizeof(name) - 1] = '\0';
 
-	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
 	    return;
 	}
 
-	(void) sprintf(FileName, "%s.%i", BaseName, member);
-	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
-	    (void) sprintf(FamilyName, "%s", BaseName);
+	(void) sprintf(FileName, "%s.%i", name, member);
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
+	    (void) sprintf(BaseName, "%s", name);
 	    is_family = 1;
 	    return;
 	}
 
-	(void) sprintf(FileName, "%s.plm", BaseName);
-	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
+	(void) sprintf(FileName, "%s.plm", name);
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
 	    return;
 	}
 
-	(void) sprintf(FileName, "%s.plm.%i", BaseName, member);
-	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
-	    (void) sprintf(FamilyName, "%s.plm", BaseName);
+	(void) sprintf(FileName, "%s.plm.%i", name, member);
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
+	    (void) sprintf(BaseName, "%s.plm", name);
 	    is_family = 1;
 	    return;
 	}
