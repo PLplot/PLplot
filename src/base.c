@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/12 17:07:59  mjl
-   Added PL_NEED_SIZE_T define to those files that need to know the value
-   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
-   to include <stddef.h> to get it.
+   Revision 1.5  1992/10/20 20:15:44  mjl
+   Arguments to plspage() now have no effect if zero.
 
+ * Revision 1.4  1992/10/12  17:07:59  mjl
+ * Added PL_NEED_SIZE_T define to those files that need to know the value
+ * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+ * to include <stddef.h> to get it.
+ *
  * Revision 1.3  1992/09/30  18:25:38  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -239,12 +242,15 @@ c_plgpage( PLFLT *pxp, PLFLT *pyp,
 void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 {
-    pls[ipls].xdpi = xp;
-    pls[ipls].ydpi = yp;
-    pls[ipls].xlength = xleng;
-    pls[ipls].ylength = yleng;
-    pls[ipls].xoffset = xoff;
-    pls[ipls].yoffset = yoff;
+    if (!xp) pls[ipls].xdpi = xp;
+    if (!yp) pls[ipls].ydpi = yp;
+
+    if (!xleng) pls[ipls].xlength = xleng;
+    if (!yleng) pls[ipls].ylength = yleng;
+
+    if (!xoff) pls[ipls].xoffset = xoff;
+    if (!yoff) pls[ipls].yoffset = yoff;
+
     pls[ipls].pageset = 1;
 }
 
@@ -366,6 +372,12 @@ c_plsfam( PLINT fam, PLINT num, PLINT bmax )
     pls[ipls].family = fam;
     pls[ipls].member = num;
     pls[ipls].bytemax = bmax;
+}
+
+void 
+c_plfamadv( void )
+{
+    pls[ipls].famadv = 1;
 }
 
 /*----------------------------------------------------------------------*\
