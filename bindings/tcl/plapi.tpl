@@ -15,6 +15,20 @@
 # eliminated from this file.
 ###############################################################################
 
+# Set contour label format
+
+pltclcmd pl_setcontlabelformat void
+lexp	PLINT
+sigprec	PLINT
+
+# Set contour label parameters
+
+pltclcmd pl_setcontlabelparam void
+offset	PLFLT
+size	PLFLT
+spacing	PLFLT
+active	PLINT
+
 # Advance to subpage "page", or to the next one if "page" = 0.
 
 pltclcmd pladv void
