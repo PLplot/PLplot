@@ -21,10 +21,10 @@ class x08 {
 
     static String[] title =
     {
-        "#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
-        "#frPLplot Example 8 - Alt=20, Az=60, Opt=2",
-        "#frPLplot Example 8 - Alt=60, Az=120, Opt=3",
-        "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"
+        "#frPLplot Example 8 - Alt=60, Az=30",
+        "#frPLplot Example 8 - Alt=20, Az=60",
+        "#frPLplot Example 8 - Alt=60, Az=120",
+        "#frPLplot Example 8 - Alt=60, Az=160"
     };
 
     PLStream pls;
@@ -89,12 +89,15 @@ class x08 {
         pls = new PLStream();
 
         int i, j, k;
+	final int LEVELS = 10;
 
         double[] x = new double[ XPTS ];
         double[] y = new double[ YPTS ];
         double[][] z = new double[XPTS][YPTS];
+	double clev[] = new double[LEVELS];
 
         double xx, yy, r;
+	double zmin=Double.MAX_VALUE, zmax=Double.MIN_VALUE;;
 
         int ifshade;
 
@@ -120,39 +123,51 @@ class x08 {
                 yy = y[j];
                 r = Math.sqrt(xx * xx + yy * yy);
                 z[i][j] = Math.exp(-r * r) * Math.cos(2.0 * Math.PI * r);
+		if (zmin > z[i][j])
+		    zmin = z[i][j];
+		if (zmax < z[i][j])
+		    zmax = z[i][j];
             }
         }
+
+	double step = (zmax-zmin)/LEVELS;
+	for (i=0; i<LEVELS; i++)
+	    clev[i] = zmin + step*i;
 
         pls.lightsource( 1., 1., 1. );
         for( k = 0; k < 4; k++ )
         {
-	   for( ifshade = 0; ifshade < 4; ifshade++)
+	   for( ifshade = 0; ifshade < 6; ifshade++)
 	   {
 	      pls.adv(0);
 	      pls.vpor(0.0, 1.0, 0.0, 0.9);
 	      pls.wind(-1.0, 1.0, -0.9, 1.1);
+	      pls.col0(3);
+	      pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
 	      pls.col0(1);
 	      pls.w3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
 		       alt[k], az[k] );
 	      pls.box3( "bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0 );
+
 	      pls.col0(2);
-	      if( ifshade == 0) /* wireframe plot */
+	      if( ifshade == 0) // wireframe plot
 		pls.plot3d( x, y, z, opt[k], 1 );
-	      else if (ifshade == 1) { /* 3D shaded plot */
+	      else if (ifshade == 1) { // mag colored mesh plot
+		cmap1_init(0);
+		pls.mesh( x, y, z, opt[k] | pls.MAG_COLOR);
+	      } else if (ifshade == 2) { // reflected light surface plot
 		cmap1_init(1);
-		pls.plsurf3d( x, y, z, 0);
-	      } else {                 /* false color plot */
+		pls.surf3d( x, y, z, 0, null);
+	      } else if (ifshade == 3) { // magnitude colored surface
 		 cmap1_init(0);
-		 pls.plsurf3d(x, y, z, 0);
-		 if (ifshade == 3) {    /* add wireframe to false color plot */
-		    pls.col0(0);
-		    pls.plot3d(x, y, z, opt[k], 0);
-		 }
+		 pls.surf3d(x, y, z, pls.MAG_COLOR, null);
+	      } else if (ifshade == 4) { //  magnitude colored surface with faceted squares
+		  pls.surf3d(x, y, z, pls.MAG_COLOR | pls.FACETED, null);
+	      } else { //  magnitude colored surface with surface and xy plane contour lines
+		  pls.surf3d(x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clev);
 	      }
-	      pls.col0(3);
-	      pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
 	   }
         }
 
