@@ -22,6 +22,7 @@
 INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplotcxx@LIB_TAG@
 
 CXX = @CXX@
+CXXFLAGS = @CXXFLAGS@
 EXEEXT = @EXEEXT@
 
 EXECUTABLES_list = \
@@ -54,6 +55,6 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .cc$(EXEEXT):
-	plplot_libtool --mode=link $(CXX) $< $(INCLUDEANDLIB) -o $@
+	plplot_libtool --mode=link $(CXX) $(CXXFLAGS) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .c $(EXEEXT)
