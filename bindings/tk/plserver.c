@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1996/06/26 21:35:15  furnish
+ * Revision 1.38  1996/10/18 19:59:11  furnish
+ * Remember to initialize Itk if so configured.
+ *
+ * Revision 1.37  1996/06/26  21:35:15  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
  * Revision 1.36  1995/06/01  21:24:27  mjl
@@ -238,6 +241,11 @@ AppInit(Tcl_Interp *interp)
 #endif
 #ifdef HAVE_ITCL
     if (Itcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+#endif
+#ifdef HAVE_ITK
+    if (Itk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
 #endif
