@@ -20,7 +20,7 @@ proc load_pkg_Pltk {dir} {
 	set bLen [string length $buildDir] 
 	if {![string compare -length $bLen $buildDir $thisDir]}	then { 
 		set searchdirs "../../drivers/.libs"} else {
-		set searchdirs "driversd drivers"}
+		set searchdirs "@DRV_HARDDIR@"}
 	#puts $searchdirs
 	set suf [info sharedlibextension]
 
@@ -36,7 +36,7 @@ proc load_pkg_Pltk {dir} {
 	}
 	if { $file == "" } {
 	# Dynamic driver location failed, now try static driver location.
-	set searchdirs ". ..";		# Need ".." for installed image
+	set searchdirs "@LIB_HARDDIR@";
 	# prefer double precision version
 	set dlnames "@DLNAME_LIBPLPLOTD@ @DLNAME_LIBPLPLOT@";
 	set file ""

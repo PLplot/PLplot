@@ -19,7 +19,7 @@ proc load_pkg_Pltcl {dir} {
 	set bLen [string length $buildDir] 
 	if {![string compare -length $bLen $buildDir $thisDir]}	then { 
 		set searchdirs ".libs"} else {
-		set searchdirs ". .."}
+		set searchdirs "@LIB_HARDDIR@"}
 	#puts $searchdirs
 	# prefer double precision version
 	set dlnames "@DLNAME_LIBPLPLOTTCLTKD@ @DLNAME_LIBPLPLOTTCLTK@";
