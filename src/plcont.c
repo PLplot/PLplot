@@ -1,12 +1,18 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/01/23 05:47:12  mjl
-   Now holds all contouring routines.  The multiple contour functions have been
-   removed, since now a function is passed in instead of an array.  Through use
-   of a suitable function evaluator and array evaluator, the same contouring
-   code can now be used from Fortran (with no transpose necessary), C with
-   C-like 2d arrays, C with 2d arrays stored as 1d, etc.
+   Revision 1.7  1993/02/23 05:02:25  mjl
+   Replaced (void *) declaration for user data structures to (PLPointer), in
+   the spirit of Xt's XtPointer.  It was hoped that this would eliminate
+   certain warnings having to do with alignment (only showing up with all
+   warnings turned on), but it didn't.
 
+ * Revision 1.6  1993/01/23  05:47:12  mjl
+ * Now holds all contouring routines.  The multiple contour functions have been
+ * removed, since now a function is passed in instead of an array.  Through use
+ * of a suitable function evaluator and array evaluator, the same contouring
+ * code can now be used from Fortran (with no transpose necessary), C with
+ * C-like 2d arrays, C with 2d arrays stored as 1d, etc.
+ *
  * Revision 1.5  1992/10/12  17:08:02  mjl
  * Added PL_NEED_SIZE_T define to those files that need to know the value
  * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
@@ -34,8 +40,8 @@
 
 #define PL_NEED_MALLOC
 #define PL_NEED_SIZE_T
-
 #include "plplot.h"
+
 #include <stdlib.h>
 #include <math.h>
 
@@ -47,27 +53,27 @@
 /* Static function prototypes. */
 
 static void
-plcntr(PLFLT (*plf2eval) (PLINT, PLINT, void *),
-       void *plf2eval_data,
+plcntr(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
+       PLPointer plf2eval_data,
        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
        PLINT ky, PLINT ly, PLFLT flev, PLINT *iscan,
        PLINT *ixstor, PLINT *iystor, PLINT nstor,
-       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-       void *pltr_data);
+       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+       PLPointer pltr_data);
 
 static void
-pldrawcn(PLFLT (*plf2eval) (PLINT, PLINT, void *),
-	 void *plf2eval_data,
+pldrawcn(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
+	 PLPointer plf2eval_data,
 	 PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT flev, PLINT kcol, PLINT krow,
 	 PLINT *p_kscan, PLINT *p_kstor, PLINT *iscan,
 	 PLINT *ixstor, PLINT *iystor, PLINT nstor,
-	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-	 void *pltr_data);
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data);
 
 static void
-plccal(PLFLT (*plf2eval) (PLINT, PLINT, void *),
-       void *plf2eval_data,
+plccal(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
+       PLPointer plf2eval_data,
        PLFLT flev, PLINT ix, PLINT iy,
        PLINT ixg, PLINT iyg, PLFLT *dist);
 
@@ -85,7 +91,7 @@ plr135 (PLINT *ix, PLINT *iy, PLINT isens);
 \*----------------------------------------------------------------------*/
 
 PLFLT
-plf2eval2(PLINT ix, PLINT iy, void *plf2eval_data)
+plf2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 {
     PLFLT value;
     PLfGrid2 *grid = (PLfGrid2 *) plf2eval_data;
@@ -104,7 +110,7 @@ plf2eval2(PLINT ix, PLINT iy, void *plf2eval_data)
 \*----------------------------------------------------------------------*/
 
 PLFLT
-plf2eval(PLINT ix, PLINT iy, void *plf2eval_data)
+plf2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 {
     PLFLT value;
     PLfGrid *grid = (PLfGrid *) plf2eval_data;
@@ -123,7 +129,7 @@ plf2eval(PLINT ix, PLINT iy, void *plf2eval_data)
 \*----------------------------------------------------------------------*/
 
 PLFLT
-plf2evalr(PLINT ix, PLINT iy, void *plf2eval_data)
+plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 {
     PLFLT value;
     PLfGrid *grid = (PLfGrid *) plf2eval_data;
@@ -151,13 +157,13 @@ plf2evalr(PLINT ix, PLINT iy, void *plf2eval_data)
 void
 c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-	 void *pltr_data)
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data)
 {
     PLfGrid2 grid;
 
     grid.f = f;
-    plcontf(plf2eval2, (void *) &grid,
+    plcontf(plf2eval2, (PLPointer) &grid,
 	    nx, ny, kx, lx, ky, ly, clevel, nlevel,
 	    pltr, pltr_data);
 }
@@ -178,12 +184,12 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 \*----------------------------------------------------------------------*/
 
 void
-plcontf(PLFLT (*f2eval) (PLINT, PLINT, void *),
-	void *f2eval_data,
+plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+	PLPointer f2eval_data,
 	PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-	void *pltr_data)
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	PLPointer pltr_data)
 {
     PLINT i, mx, my, nstor, *heapc;
 
@@ -203,7 +209,7 @@ plcontf(PLFLT (*f2eval) (PLINT, PLINT, void *),
 	       nx, ny, kx-1, lx-1, ky-1, ly-1, clevel[i], &heapc[0],
 	       &heapc[nx], &heapc[nx + nstor], nstor, pltr, pltr_data);
     }
-    free((VOID *) heapc);
+    free((void *) heapc);
 }
 
 /*----------------------------------------------------------------------*\
@@ -216,13 +222,13 @@ plcontf(PLFLT (*f2eval) (PLINT, PLINT, void *),
 \*----------------------------------------------------------------------*/
 
 static void
-plcntr(PLFLT (*f2eval) (PLINT, PLINT, void *),
-       void *f2eval_data,
+plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+       PLPointer f2eval_data,
        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
        PLINT ky, PLINT ly, PLFLT flev, PLINT *iscan,
        PLINT *ixstor, PLINT *iystor, PLINT nstor,
-       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-       void *pltr_data)
+       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+       PLPointer pltr_data)
 {
     PLINT kcol, krow, kstor, kscan, l, ixt, iyt, jstor, next;
 
@@ -280,14 +286,14 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, void *),
 \*----------------------------------------------------------------------*/
 
 static void
-pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, void *),
-	 void *f2eval_data,
+pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+	 PLPointer f2eval_data,
 	 PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT flev, PLINT kcol, PLINT krow,
 	 PLINT *p_kscan, PLINT *p_kstor, PLINT *iscan,
 	 PLINT *ixstor, PLINT *iystor, PLINT nstor,
-	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-	 void *pltr_data)
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data)
 {
     PLINT iwbeg, ixbeg, iybeg, izbeg;
     PLINT iboun, iw, ix, iy, iz, ifirst, istep, ixgo, iygo;
@@ -470,8 +476,8 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, void *),
 \*----------------------------------------------------------------------*/
 
 static void
-plccal(PLFLT (*f2eval) (PLINT, PLINT, void *),
-       void *f2eval_data,
+plccal(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+       PLPointer f2eval_data,
        PLFLT flev, PLINT ix, PLINT iy,
        PLINT ixg, PLINT iyg, PLFLT *dist)
 {
@@ -554,7 +560,7 @@ plr135 (PLINT *ix, PLINT *iy, PLINT isens)
 \*----------------------------------------------------------------------*/
 
 void
-pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 {
     *tx = x;
     *ty = y;
@@ -570,7 +576,7 @@ pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 \*----------------------------------------------------------------------*/
 
 void
-pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 {
     PLINT ul, ur, vl, vr;
     PLFLT du, dv;
@@ -631,7 +637,7 @@ pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 \*----------------------------------------------------------------------*/
 
 void
-pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 {
     PLINT ul, ur, vl, vr;
     PLFLT du, dv;
@@ -792,7 +798,7 @@ pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 \*----------------------------------------------------------------------*/
 
 void
-pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 {
     PLINT ul, ur, vl, vr;
     PLFLT du, dv;
