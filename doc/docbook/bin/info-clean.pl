@@ -35,6 +35,24 @@ while (<>) {
     $_ = "$2\n";
     redo;
   }
-print;
+
+  # The hacks below are necessary because docbook2texixml does
+  # not know hot to include system entities
+  if (m{(.*)<!ENTITY % ([^\s]+) SYSTEM "([^"]+)">(.*)}) {
+    $sysent{$2} = $3;
+    print "$1";
+    $_ = "$4\n";
+    redo;
+  }
+  if (m{(.*)%([^;]+);(.*)}) {
+    print "$1";
+    $tmp = "$3\n";
+    print `cat $sysent{$2}`
+      if (not m{%Math-Entities;});
+    $_ = $tmp;
+    redo
+  }
+
+  print;
 }
 
