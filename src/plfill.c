@@ -77,7 +77,7 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 void
 c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 {
-    short xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+    PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
     PLINT i;
 
     if (plsc->level < 3) {
