@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/01/23 06:12:46  mjl
-   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
+   Revision 1.3  1993/03/15 21:34:28  mjl
+   Reorganization and update of Amiga drivers.  Window driver now uses Amiga
+   OS 2.0 capabilities.
 
+ * Revision 1.2  1993/01/23  06:12:46  mjl
+ * Preliminary work on new graphical interface (2.04-specific) for the Amiga.
+ *
  * Revision 1.1  1992/10/12  17:11:23  mjl
  * Amiga-specific mods, including ANSI-fication.
  *
@@ -14,124 +18,110 @@
  *
 */
 
+/* These are needed by GadTools-generated display routines */
+
 #include <exec/types.h>
-#include <exec/ports.h>
-#include <exec/memory.h>
-#include <devices/printer.h>
-#include <devices/prtbase.h>
-#include <graphics/display.h>
-#include <graphics/gfxbase.h>
-#include <graphics/view.h>
-#include <graphics/gfxmacros.h>
 #include <intuition/intuition.h>
-#include <intuition/intuitionbase.h>
-#include <intuition/screens.h>
+#include <intuition/classes.h>
+#include <intuition/classusr.h>
+#include <intuition/imageclass.h>
+#include <intuition/gadgetclass.h>
+#include <libraries/gadtools.h>
+#include <graphics/displayinfo.h>
+#include <graphics/gfxbase.h>
+#include <clib/exec_protos.h>
+#include <clib/intuition_protos.h>
+#include <clib/gadtools_protos.h>
+#include <clib/graphics_protos.h>
+#include <clib/utility_protos.h>
+#include <string.h>
 
-#ifdef LATTICE_50
-#include <proto/exec.h>
-#include <proto/graphics.h>
-#include <proto/intuition.h>
+/* Everything else */
+/* Includes header files for using reqtools.library and iff.library */
+
+#include <libraries/reqtools.h>
+#include <libraries/iff.h>
 #include <proto/dos.h>
-#endif
+#include <proto/reqtools.h>
 
-#ifdef AZTEC_C
-#include <functions.h>
-#endif
+extern struct IntuiMessage   PlplotMsg;
 
-/* Graphics data buffer file. */
-#define PLOTBFFR      "t:plplot.plt"
+/*
+* This structure holds just about everything needed to describe the drawing
+* area, including window, screen, geometry, etc.  
+*/
 
-#ifndef PLARGS
-#ifdef LATTICE_50
-#define a)   a
-#else
-#define a)   ()
-#endif
-#endif
+typedef struct {
+    int			exit_eventloop;
+    int			restart;
 
+    long		init_width;
+    long		init_height;
+    long		cur_width;
+    long		cur_height;
+    long		xoffset;
+    long		yoffset;
 
-/* Flags for variables in PLPrefs structure. */
-/* WinType defines */
-#define PLCUST      01		/* Open on custom screen */
-#define PLASP       02		/* Maintain initial aspect */
-#define PLBUFF      04		/* Buffer plot in t:plplot.plt */
+    double		xscale;
+    double		yscale;
+    double		xscale_dev;
+    double		yscale_dev;
 
-/* ScrType defines */
-#define PLLACE      01
-#define PLHIRES     02
+    struct Screen	*screen;
+    struct Window	*window;
+    struct Menu         *menus;
+    APTR		visual;
 
-struct PLPrefs {
-    USHORT WinType;
-    USHORT ScrType;
-    USHORT WXPos, WYPos;	/* Position of Window (WorkBench) */
-    USHORT WWidth, WHeight;	/* Window width, height (WorkBench) */
-    USHORT CXPos, CYPos;	/* Position of Window (Custom) */
-    USHORT CWidth, CHeight;	/* Window width, height (Custom) */
-    USHORT Depth;		/* Screen Depth (1, 2, 3, 4) (Custom) */
-    USHORT Color[16];		/* Color RGB values (Custom Only) */
-};
+    struct TextAttr	*font;
 
-/* Define graphics operation types */
-#define PENU  10
-#define PEND  20
-#define SPEN  30
-#define PWID  40
+    WORD		scr_left;
+    WORD		scr_top;
+    WORD		scr_width;
+    WORD		scr_height;
+    UWORD		scr_depth;
+    UWORD		scr_type;
+    long		scr_displayID;
+    long		maxcolors;
+
+    struct RastPort 	*SRPort;	/* Screen rastport */
+    struct RastPort 	*WRPort;	/* Window rastport */
+    struct ViewPort 	*VPort;
+    struct ColorMap 	*CMap;
+
+} PlAmigaWin;
+
+extern PlAmigaWin *pla;
 
 extern struct IntuitionBase *IntuitionBase;
 extern struct GfxBase *GfxBase;
-
-extern struct Screen *PLScreen;
-extern struct Window *PLWindow;
-extern struct RastPort *PLSRPort;	/* Screen rastport */
-extern struct RastPort *PLWRPort;	/* Window rastport */
-extern struct ViewPort *PLVPort;
-extern struct ColorMap *PLCMap;
-
-extern struct PLPrefs PLCurPrefs;
-extern PLINT XOffset, YOffset, PLWidth, PLHeight;
-extern PLINT InitPLWidth, InitPLHeight;
+extern struct ReqToolsBase *ReqToolsBase;
+extern struct Library *IFFBase;
 
 /* Function prototypes */
 
-void	OpenPLWind	(void);
-void	OpenLibs	(void);
-void	ClosePLWind	(void);
-void	CloseLibs	(void);
-void	GetPLDefs	(void);
-void	SetPLDefs	(void);
-void	setlimits	(void);
-void	plcolreq	(void);
-void	RestorePrefs	(void);
-void	MakePLMenu	(void);
-void	enablemenus	(void);
-void	disablemenus	(void);
-void	menuselect	(ULONG class, USHORT code);
+int  HandlePlplotIDCMP	(void);
 
-char *	plfilereq	(void);
-void	eventwait	(void);
-PLINT	eventhandler	(ULONG class, USHORT code);
-PLINT	procmess	(void);
-void	remakeplot	(void);
-void	PLDraw		(PLINT x, PLINT y);
-void	PLMove		(PLINT x, PLINT y);
-void	prepupdate	(void);
-int	getpoint	(long *com, long *x, long *y);
-void	finiupdate	(void);
+void  pla_InitDisplay	(void);
+int   pla_OpenScreen	(void);
+void  pla_CloseScreen	(void);
+int   pla_OpenWindow	(void);
+void  pla_CloseWindow	(void);
+void  pla_SetFont	(void);
 
-void	dmpport		(long, int, int);
-int	openprinter	(void);
-void	closeprinter	(void);
-int	queryprint	(long *, long *, long *, long *, long *, long *);
-void	ejectpage	(void);
+void  pla_OpenLibs	(void);
+void  pla_CloseLibs	(void);
 
-void	screendump	(PLINT type);
-void	saveiff		(void);
-void	disablegads	(PLINT flag);
-void	enablegads	(void);
+void  dmpport		(long, int, int);
+int   openprinter	(void);
+void  closeprinter	(void);
+int   queryprint	(long *, long *, long *, long *, long *, long *);
+void  ejectpage		(void);
+void  screendump	(PLINT type);
 
-int	mapinit		(long bmapx, long bmapy);
-void	mapclear	(void);
-void	mapfree		(void);
-void	mapline		(register int x1, register int y1,
+int   mapinit		(long bmapx, long bmapy);
+void  mapclear		(void);
+void  mapfree		(void);
+void  mapline		(register int x1, register int y1,
 			 register int x2, register int y2);
-void	iffwritefile	(PLINT xdpi, PLINT ydpi, FILE *File);
+void  iffwritefile	(PLINT xdpi, PLINT ydpi, FILE *File);
+
