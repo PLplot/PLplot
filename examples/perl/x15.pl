@@ -162,7 +162,6 @@ sub cmap1_init2 () {
 #
 # Illustrates a single shaded region
 
-sub mypltr0 {my ($x, $y) = @_; print "$x, $y\n"; return ($x, $y) }
 sub plot1 () {
   my $sh_cmap = 0;
   my $min_color = 0;
