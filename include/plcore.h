@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/07/16 22:26:14  mjl
-   Added explicit support for color vs monochrome postscript output,
-   arrays and constant definitions used in driver interface.
+   Revision 1.9  1993/07/28 05:49:10  mjl
+   Modified table entries for xterm driver, added new ones for tek4107
+   terminal & file driver.
 
+ * Revision 1.8  1993/07/16  22:26:14  mjl
+ * Added explicit support for color vs monochrome postscript output,
+ * arrays and constant definitions used in driver interface.
+ *
  * Revision 1.7  1993/07/02  07:22:14  mjl
  * Namespace changes.
  *
@@ -305,25 +309,44 @@ static PLDispatchTable dispatch_table[] = {
 	"xterm",
 	1,
 	plD_init_xte,
-	plD_line_xte,
-	plD_polyline_xte,
-	plD_eop_xte,
-	plD_bop_xte,
-	plD_tidy_xte,
-	plD_color_xte,
-	plD_text_xte,
-	plD_graph_xte,
-	plD_width_xte,
-	plD_esc_xte
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_color_tek,
+	plD_text_tek,
+	plD_graph_tek,
+	plD_width_tek,
+	plD_esc_tek
     },
 #endif
 
-#ifdef TEK
+#ifdef TEK4010
     {
-	"Tektronix Terminal",
+	"Tektronix Terminal (4010)",
 	"tekt",
 	1,
 	plD_init_tekt,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_color_tek,
+	plD_text_tek,
+	plD_graph_tek,
+	plD_width_tek,
+	plD_esc_tek
+    },
+#endif
+
+#ifdef TEK4107
+    {
+	"Tektronix Terminal (4105/4107)",
+	"t4107t",
+	1,
+	plD_init_t4107t,
 	plD_line_tek,
 	plD_polyline_tek,
 	plD_eop_tek,
@@ -377,12 +400,31 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TEK
+#ifdef TEK4010
     {
-	"Tektronix File",
+	"Tektronix File (4010)",
 	"tekf",
 	0,
 	plD_init_tekf,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_color_tek,
+	plD_text_tek,
+	plD_graph_tek,
+	plD_width_tek,
+	plD_esc_tek
+    },
+#endif
+
+#ifdef TEK4107
+    {
+	"Tektronix File (4105/4107)",
+	"t4107f",
+	0,
+	plD_init_t4107f,
 	plD_line_tek,
 	plD_polyline_tek,
 	plD_eop_tek,
