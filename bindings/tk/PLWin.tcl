@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.7  1994/10/10 19:44:45  furnish
+# Revision 1.8  1995/06/09 22:48:07  mjl
+# Lots of fleshing out.  Now supports every Tcl API call available so far.
+#
+# Revision 1.7  1994/10/10  19:44:45  furnish
 # Stub method for plshade.
 #
 # Revision 1.6  1994/10/10  17:22:32  furnish
@@ -46,37 +49,153 @@ itcl_class PLWin {
 
     method configure {config} {}
 
-    method plcol {color} {
-	$this.plwin cmd plcol0 $color
+    method pladv {{subwindow {}}} {
+	$this.plwin cmd pladv $subwindow
+    }
+
+    method plbop {} {
+	$this.plwin cmd plbop
+    }
+
+    method plbox {xopt xtick nxsub yopt ytick nysub} {
+	$this.plwin cmd plbox $xopt $xtick $nxsub $yopt $ytick $nysub
+    }
+
+    method plcol0 {col0} {
+	$this.plwin cmd plcol0 $col0
+    }
+
+    method plcol {col0} {
+	$this.plwin cmd plcol0 $col0
     }
 
     method plcont {data clev} {
-	upvar $data d
-	upvar $clev c
-	$this.plwin cmd plcont d c
+	$this.plwin cmd plcont $data $clev
+    }
+
+    method plend {} {
+	$this.plwin cmd plend 
+    }
+
+    method plend1 {} {
+	$this.plwin cmd plend1 
     }
 
     method plenv {xmin xmax ymin ymax just axis} {
 	$this.plwin cmd plenv $xmin $xmax $ymin $ymax $just $axis
     }
 
-    method pllab {xlab ylab toplab} {
-	$this.plwin cmd pllab $xlab $ylab $toplab
+    method pleop {} {
+	$this.plwin cmd pleop 
     }
 
-    method plline {n x y} {
-	$this.plwin cmd plline $n $x $y
+    method plfont {font} {
+	$this.plwin cmd plfont $font
     }
 
-    method plpoin {n x y code} {
-	$this.plwin cmd plpoin $n $x $y $code
+    method plfontld {font} {
+	$this.plwin cmd plfontld $font
+    }
+
+    method plgra {} {
+	$this.plwin cmd plgra 
+    }
+
+    method plhist {n data datmin datmax nbin oldwin} {
+	$this.plwin cmd plhist $n $data $datmin $datmax $nbin $oldwin
+    }
+
+    method plinit {} {
+	$this.plwin cmd plinit 
+    }
+
+    method pljoin {x1 y1 x2 y2} {
+	$this.plwin cmd pljoin $x1 $y1 $x2 $y2
+    }
+
+    method pllab {xlabel ylabel tlabel} {
+	$this.plwin cmd pllab $xlabel $ylabel $tlabel
+    }
+
+    method plline {n xarray yarray} {
+	$this.plwin cmd plline $n $xarray $yarray
+    }
+
+    method plmtex {side disp pos just text} {
+	$this.plwin cmd plmtex $side $disp $pos $just $text
+    }
+
+    method plpoin {n xarray yarray code} {
+	$this.plwin cmd plpoin $n $xarray $yarray $code
+    }
+
+    method plptex {x y dx dy just text} {
+	$this.plwin cmd plptex $x $y $dx $dy $just $text
+    }
+
+    method plschr {def scale} {
+	$this.plwin cmd plschr $def $scale
+    }
+
+    method plscol0 {index r g b} {
+	$this.plwin cmd plscol0 $index $r $g $b
+    }
+
+    method plscolbg {r g b} {
+	$this.plwin cmd plscolbg $r $g $b
+    }
+
+    method plsetopt {option arg} {
+	$this.plwin cmd plsetopt $option $arg
     }
 
     method plshade {data xmin xmax ymin ymax sh_min sh_max sh_col} {
-	upvar $data d
-
-	$this.plwin cmd plshade d $xmin $xmax $ymin $ymax \
+	$this.plwin cmd plshade $data $xmin $xmax $ymin $ymax \
 	    $sh_min $sh_max $sh_col
+    }
+
+    method plsstrm {stream} {
+	$this.plwin cmd plsstrm $stream
+    }
+
+    method plssub {nsubx nsuby} {
+	$this.plwin cmd plssub $nsubx $nsuby
+    }
+
+    method plstyl {nels mark space} {
+	$this.plwin cmd plstyl $nels $mark $space
+    }
+
+    method plsxax {digmax} {
+	$this.plwin cmd plsxax $digmax
+    }
+
+    method plsyax {digmax} {
+	$this.plwin cmd plsyax $digmax
+    }
+
+    method plsym {n xarray yarray code} {
+	$this.plwin cmd plsym $n $xarray $yarray $code
+    }
+
+    method pltext {} {
+	$this.plwin cmd pltext 
+    }
+
+    method plvpor {xmin xmax ymin ymax} {
+	$this.plwin cmd plvpor $xmin $xmax $ymin $ymax
+    }
+
+    method plvsta {} {
+	$this.plwin cmd plvsta 
+    }
+
+    method plwid {width} {
+	$this.plwin cmd plwid $width
+    }
+
+    method plwind {xmin xmax ymin ymax} {
+	$this.plwin cmd plwind $xmin $xmax $ymin $ymax
     }
 
     public name
