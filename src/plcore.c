@@ -1482,13 +1482,15 @@ static int plDispatchSequencer( const void *p1, const void *p2 )
 static void
 plInitDispatchTable()
 {
+    int n;
+
+#ifdef ENABLE_DYNDRIVERS
     char buf[300];
     char *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
     int seq;
-    int i, j, n, driver_found, done=0;
+    int i, j, driver_found, done=0;
     FILE *fp_drvdb = 0;
 
-#ifdef ENABLE_DYNDRIVERS
     fp_drvdb = plLibOpen( "drivers/drivers.db" );
 
     if (!fp_drvdb)

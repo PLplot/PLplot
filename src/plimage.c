@@ -58,15 +58,11 @@ plimageslow(PLFLT *data, PLINT nx, PLINT ny,
 
   PLINT ix, iy, i;
   PLFLT x[4], y[4];
-  PLFLT xm, ym;
 
   for (ix = 0; ix < nx ; ix++) {
     for (iy = 0; iy < ny ; iy++) {
 
       plcol1((data[ix*ny+iy]-zmin) / (zmax-zmin));
-
-      xm = xmin + ix*dx;
-      ym = ymin + iy*dy;
 
       x[0] = x[1] = ix;
       x[2] = x[3] = ix+1;
