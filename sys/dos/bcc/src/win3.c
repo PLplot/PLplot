@@ -316,8 +316,8 @@ plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 	 dev->newCursor = 0;
 	 while (!dev->newCursor)
 		checkMessage();
-	 ((PLCursor *)ptr)->vpX = dev->cursorX;
-	 ((PLCursor *)ptr)->vpY = dev->cursorY;
+	 ((PLCursor *)ptr)->vpX = dev->cursorX / pls->xlength;
+	 ((PLCursor *)ptr)->vpY = dev->cursorY / pls->ylength;;
 	 SetClassWord(GetActiveWindow(),
 					  GCW_HCURSOR,
 					  holdcursor);
