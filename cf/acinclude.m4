@@ -312,7 +312,9 @@ AC_DEFUN([PL_GET_DLNAME],[
     rm -rf $TMP_DIR
     mkdir -p $TMP_DIR
     cd $TMP_DIR
-    ../libtool --mode=link $CC -rpath /usr/lib -version-info $2 \
+    echo "void f(void){}" > foo.c
+    ../libtool --mode=compile $CC -c foo.c > /dev/null
+    ../libtool --mode=link $CC foo.lo -rpath /usr/lib -version-info $2 \
         -o lib$1.la > /dev/null
     $3=`grep ^dlname= lib$1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
@@ -338,7 +340,9 @@ AC_DEFUN([PL_GET_DLLNAME],[
     rm -rf $TMP_DIR
     mkdir -p $TMP_DIR
     cd $TMP_DIR
-    ../libtool --mode=link $CC -rpath /usr/lib -avoid-version -module \
+    echo "void f(void){}" > foo.c
+    ../libtool --mode=compile $CC -c foo.c > /dev/null
+    ../libtool --mode=link $CC foo.lo -rpath /usr/lib -avoid-version -module \
         -o $1.la > /dev/null
     $2=`grep ^dlname= $1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
