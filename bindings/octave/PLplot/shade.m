@@ -69,14 +69,14 @@ function shade(x, y, z, levels, cont )
     if (__pl.axis_st(__pl_strm))
       xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);
       ix = find(x >= xm & x <= xM); 
-      x=x(ix); z=z(ix,:);
+      x=x(ix); z=z(:,ix);
       xlen = length (x);
       xmm = min(x); 
 
       if (length(__pl.axis(__pl_strm,:)) >= 4)	
 	ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
 	iy = find(y >= ym & y <= yM);
-	y=y(iy); z=z(:,iy);
+	y=y(iy); z=z(iy,:);
 	ylen = length (y);
 	ymm = min(y);
       else
@@ -104,12 +104,11 @@ function shade(x, y, z, levels, cont )
     xmm = xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);
     ymm = ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
     zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
-    z = z(find(x >= xm & x <= xM), find(y >= ym & y <= yM));	
+    z = z( find(y >= ym & y <= yM), find(x >= xm & x <= xM));	
   endif
 
   maxx = max(x); maxy = max(y); minx = min(x); miny = min(y);
-  
-  
+    
   if (!is_scalar(levels))
     n = length(levels)-1;
     clevel = levels;
