@@ -110,7 +110,7 @@ $(MATLIB_SO): $(MAT_OBJS:%=shared/%)
 	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
 	@echo ""
 
-$(CXXLIB_SO): $(CXX_OBJS:%=shares/%)
+$(CXXLIB_SO): $(CXX_OBJS:%=shared/%)
 	-$(RM) $(CXXLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
