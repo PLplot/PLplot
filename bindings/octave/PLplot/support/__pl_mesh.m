@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000, 2001, 2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -15,24 +15,26 @@
 function __pl_mesh(caller, ...)
 
   global __pl
-  __pl_strm = __pl_init;
+  global DRAW_LINEXY MAG_COLOR BASE_CONT
+  global TOP_CONT SURF_CONT DRAW_SIDES FACETED MESH
+
+  strm = __pl_init;
   
   caller(length(caller)+1:5)=" "; ## compatibility with 2.0.16. Notice
                                   ## the blank spaces at the "case"s bellow.
-
   switch (caller)
     case ("mesh ")
-      type = 0;
+      __pl.type(strm) = 100;
     case ("meshc")
-      type = 1;
+      __pl.type(strm) = 101;
     case ("meshz")
-      type = 2;
+      __pl.type(strm) = 102;
     case ("surf ")
-      type = 3;
+      __pl.type(strm) = 103;
     case ("surfc")
-      type = 4;
+      __pl.type(strm) = 104;
     case ("surfl")
-      type = 5;     
+      __pl.type(strm) = 105;     
     otherwise
       error("__pl_mesh: FIXME")
   endswitch
@@ -75,89 +77,30 @@ function __pl_mesh(caller, ...)
     return
   endif
 
-  xm = min(min(x)); xM = max(max(x));
-  ym = min(min(y)); yM = max(max(y));
-  zm = min(min(z)); zM = max(max(z));
-
-  if (xm == xM)
-    xM = xm +10*eps;
-  endif
-  if (ym == yM)
-    yM = ym +10*eps;
-  endif
-  if (zm == zM)
-    zM = zm +10*eps;
+  if (!ishold)
+    __pl.items(strm) = 0;
+    __pl.lxm(strm) = __pl.lym(strm) = __pl.lzm(strm) = realmax;
+    __pl.lxM(strm) = __pl.lyM(strm) = __pl.lzM(strm) = -realmax;
   endif
 
-  if (__pl.axis_st(__pl_strm))
-    xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);	# at least x always exist
+  items = __pl.items(strm);
 
-    if (length(__pl.axis) >= 4)	
-      ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
-    else
-      __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-    endif
-    if (length(__pl.axis) == 6)
-      zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
-    else
-      __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
-    endif
-  else	# make axis() return current axis
-    __pl.axis(__pl_strm,1) = xm; __pl.axis(__pl_strm,2) = xM;
-    __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-    __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
-  endif
+  ## find the max/min x/y values. Currently reset at ??
+  __pl.lxm(strm) = min([__pl.lxm(strm), min(min(x))]);
+  __pl.lxM(strm) = max([__pl.lxM(strm), max(max(x))]);
+
+  __pl.lym(strm) = min([__pl.lym(strm), min(min(y))]);
+  __pl.lyM(strm) = max([__pl.lyM(strm), max(max(y))]);
+
+  __pl.lzm(strm) = min([__pl.lzm(strm), min(min(z))]);
+  __pl.lzM(strm) = max([__pl.lzM(strm), max(max(z))]);
+
+  ## kludge, use "fmt" as plot type. But __pl_plotit still uses __pl.type
+  eval(sprintf("__pl.x%d_%d=x; __pl.y%d_%d=y; __pl.z%d_%d=z; __pl.fmt%d_%d=__pl.type(strm);",\
+	       items, strm, items, strm, items, strm, items, strm));
   
-  plcol(15);pllsty(1);
-  ##__pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
-  if (__pl.multi(__pl_strm) == 1)	# multiplot, erase current subwindow
-    plclear;
-  else
-    pladv(0);
-  endif
+  __pl.items(strm) = __pl.items(strm) + 1;
 
-  plvpor(0, 1, 0, 0.95);
-  plwind(-1.6, 1.6, -1.3, 2.2);
-  plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, __pl.alt(__pl_strm), __pl.az(__pl_strm))
-  plbox3("bnstu", tdeblank(__pl.xlabel(__pl_strm,:)), 0.0, 0,
-	 "bnstu", tdeblank(__pl.ylabel(__pl_strm,:)), 0.0, 0,
-	 "bcmnstuv", tdeblank(__pl.zlabel(__pl_strm,:)), 0.0, 0);
-  plcol(1)
-
-  LINE_XY = 2^0 + 2^1;
-  MAG_COLOR = 2^2;
-  BASE_CONT = 2^3;
-  SURF_CONT = 2^5;
-  DRAW_SIDES = 2^6;
-  FACETED = 2^7;
-
-  switch (__pl.shading(__pl_strm,:))
-    case "flat   "
-      sh = 0;
-    case "faceted"
-      sh = FACETED;
-  endswitch
-    
-  switch (type)
-    case 0  ## mesh
-      plmesh(x, y, z', LINE_XY + MAG_COLOR);
-    case 1  ## meshc
-      plmeshc(x, y, z', LINE_XY + MAG_COLOR + BASE_CONT, linspace(min(min(z)), max(max(z)), 10)');
-    case 2  ## meshz
-      plot3d(x, y, z', LINE_XY + MAG_COLOR, 1); 
-    case 3  ## surf
-      plsurf3d(x, y, z', MAG_COLOR + sh, 0);
-    case 4   ## surfc
-      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT + sh,
-	       linspace(min(min(z)), max(max(z)), 10)') 
-   case 5   ## surfl
-     pllightsource(__pl.light(1), __pl.light(2), __pl.light(3));
-     plsurf3d(x, y, z', sh, 0);
- endswitch	
-  
-  plcol(15);
-  ##pllab(" ", " ", tdeblank(__pl.tlabel(__pl_strm,:)));
-  plmtex("t", 1, 0.5,0.5, tdeblank(__pl.tlabel(__pl_strm,:)));
-  plflush;
+  __pl_meshplotit;
 
 endfunction
