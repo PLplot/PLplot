@@ -2530,6 +2530,8 @@ plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
 {
   PLINT i, npts;
   PLINT *xscl, *yscl;
+  int   plbuf_write;
+
   plsc->page_status = DRAWING;
 
   if (plsc->plbuf_write) {
@@ -2541,6 +2543,10 @@ plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
 
     plbuf_esc(plsc, PLESC_IMAGE, NULL);
   }
+
+  /* avoid re-saving plot buffer in plP_esc() */
+  plbuf_write = plsc->plbuf_write;
+  plsc->plbuf_write = 0; 
 
   npts = nx*ny;
   if (plsc->difilt) {
@@ -2569,4 +2575,5 @@ plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
     plsc->imclymax = plsc->phyyma;
     grimage(x, y, z, nx, ny );
   }
+  plsc->plbuf_write = plbuf_write;
 }
