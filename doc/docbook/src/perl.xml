@@ -41,10 +41,29 @@
     PLplot sources.  However, a PLplot interface has been added to the Perl
     Data Language (PDL) since version 2.4.0.  If the PLplot library is
     installed in the system, it is automatically detected by the PDL
-    configuration script, such that PLplot support for PDL should work out of
-    the box.
-     For further informations see the <ulink url="http://pdl.perl.org">PDL
-     homepage</ulink>.
+    configuration script, such that PLplot support for PDL should work out
+    of the box.  For further informations see the <ulink
+    url="http://pdl.perl.org">PDL homepage</ulink>.  Here is an usage
+    example:
+  </para>
+
+    <para>
+      <programlisting>
+use PDL;
+use PDL::Graphics::PLplot;
+
+$x = pdl (0..5);
+$y = $x ** 2;
+
+plsdev ("xwin");
+plinit ();
+plcol0 (1);
+
+plenv (-0.5, 5.5, -1, 26, 0, 0);
+plline ($x, $y);
+
+plend ();
+    </programlisting>
   </para>
 
   <para>
@@ -55,8 +74,8 @@
     appropriate for small data arrays.  The API is very similar to the C
     API except that if the number of elements in an array is required by
     the C function the perl interface calculates it automatically.  Also,
-    return values are returned and not supplied as arguments.  Here is an
-    usage example:
+    return values are returned and not supplied as arguments.  Here is the
+    PDL example above translated to Graphics::PLPLOT:
   </para>
 
     <para>
@@ -64,7 +83,6 @@
 use Graphics::PLPLOT qw/ :all /;
 
 @x = (0..5);
-print scalar @x;
 @y = map {$_ * $_} @x;
 
 plsdev ("xwin");
