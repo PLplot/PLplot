@@ -857,7 +857,7 @@ pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
 /* Example linear transformation function for contour plotter. */
 
 void
-xform(PLFLT x, PLFLT y, PLFLT * OUTPUT, PLFLT * OUTPUT);
+xform(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT);
 	/* Function evaluators */
 /* Does a lookup from a 2d function array.  Array is of type (PLFLT **), */
 /* and is column dominant (normal C ordering). */
