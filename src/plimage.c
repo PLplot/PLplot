@@ -51,34 +51,45 @@ enabledisplay()
 }
 
 void
-plimageslow(PLFLT *data, PLINT nx, PLINT ny, 
-	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
-	    PLFLT zmin, PLFLT zmax)
+plimageslow(unsigned short *data, PLINT nx, PLINT ny, 
+	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy)
 {
 
   PLINT ix, iy, i;
   PLFLT x[4], y[4];
+  short xs[4], ys[4];
+
+  if (plsc->plbuf_read == 1)
+    printf("Replot to a slow device, not working.\n");fflush(stdout);
 
   for (ix = 0; ix < nx ; ix++) {
     for (iy = 0; iy < ny ; iy++) {
 
-      plcol1((data[ix*ny+iy]-zmin) / (zmax-zmin));
+      plcol1(data[ix*ny+iy]/65535.);
 
       x[0] = x[1] = ix;
       x[2] = x[3] = ix+1;
       y[0] = y[3] = iy;
       y[1] = y[2] = iy+1;
-      for (i = 0; i < 4; i++) {
-	x[i] = xmin + x[i]*dx;
-	y[i] = ymin + y[i]*dy;
+      if (plsc->plbuf_read == 1) { /* buffer read, is a replot to a slow device. Not working when the old device is a fast one. Device scale problems */
+	for (i = 0; i < 4; i++) {
+	  xs[i] = (xmin + x[i]*dx)*30; /* 30: just to see something in the output file */
+	  ys[i] = (ymin + y[i]*dy)*30;
+	}
+	plP_fill(xs, ys, 4);
+      } else {
+	for (i = 0; i < 4; i++) {
+	  x[i] = xmin + x[i]*dx;
+	  y[i] = ymin + y[i]*dy;
+	}
+	plfill(4, x, y);
       }
-      plfill(4, x, y);
     }
   }
 }
 
 void
-grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny)
+grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
 {
     plsc->dev_ix = x;
     plsc->dev_iy = y;
@@ -114,10 +125,11 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
-  PLINT nnx, nny, ix, iy, j;
-  PLFLT dx, dy, xm, ym;
-  PLINT *Xf, *Yf;
-  PLFLT *Zf, *data, zmin, zmax;
+  PLINT nnx, nny, ix, iy, ixx, iyy, xm, ym;
+  PLFLT dx, dy;
+  unsigned short *Zf;
+  short *Xf, *Yf;
+  PLFLT zmin, zmax, tz;
   
   if (plsc->level < 3) {
     plabort("plimage: window must be set up first");
@@ -129,51 +141,50 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
     return;
   }
 
-  plMinMax2dGrid(idata, nx, ny, &zmax, &zmin);
+  if (Dxmin < xmin || Dxmax > xmax || Dymin < ymin || Dymax > ymax){
+    plabort("plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xminor xmax or ymin or ymax.");
+    return;
+  }
+
   dx = (xmax - xmin) / (nx - 1);
   dy = (ymax - ymin) / (ny - 1);
   nnx = (Dxmax-Dxmin)/dx + 1;
   nny = (Dymax-Dymin)/dy + 1;
 
-  data = (PLFLT *) malloc(nny*nnx*sizeof(PLFLT));
+  Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short));
 
-  j=0;
-  for (ix=0; ix<nx; ix++)
-    for (iy=0; iy<ny; iy++) {
-      xm = xmin + ix*dx;
-      ym = ymin + iy*dy;
-      if( Dxmin <= xm && Dxmax >= xm && Dymin <= ym && Dymax >= ym)
-	data[j++] = idata[ix][iy];
+  xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
+  zmin = zmax = idata[xm][ym];
+  
+  for (ix=xm; ix<xm+nnx; ix++) {
+    for (iy=ym; iy<ym+nny; iy++) {
+      tz = idata[ix][iy];
+      if (zmax < tz)
+	zmax = tz;
+      if (zmin > tz)
+	zmin = tz;
     }
+  }
+
+  ixx=-1;
+  for (ix=xm; ix<xm+nnx; ix++) {
+    ixx++; iyy=0;
+    for (iy=ym; iy<ym+nny; iy++)
+      Zf[ixx*nny+iyy++] = (idata[ix][iy] - zmin)/(zmax-zmin)*65535.;
+  }
 
   xmin = Dxmin;  xmax = Dxmax;
   ymin = Dymin;  ymax = Dymax;
 
+  /* The X and Y arrays has size nnx*nny */
+  nnx++; nny++;
+
+  Xf = (short *) malloc(nny*nnx*sizeof(short));
+  Yf = (short *) malloc(nny*nnx*sizeof(short));
+
   /* adjust the step for the X/Y arrays */
   dx = dx*(nx-1)/nx;
   dy = dy*(ny-1)/ny;
-
-  if( plsc->dev_fastimg == 0) {
-    plimageslow( data, nnx,  nny, 
-		 xmin, ymin, dx, dy,
-		 zmin, zmax);
-    free(data);
-    return ;
-  }
-
-  /* compose the arrays to pass to plP_image */
-
-  /* the Z array has size (nnx-1)*(nny-1) */
-
-  Zf = (PLFLT *) malloc(nny*nnx*sizeof(PLFLT));  
-  for (ix = 0; ix < nnx; ix++)
-    for (iy = 0; iy < nny; iy++)
-      Zf[ix*nny+iy] =  (data[ix*nny+iy]-zmin) / (zmax-zmin) ; 
-
-  /* while the X and Y arrays has size nnx*nny */
-  nnx++; nny++;
-  Xf = (PLINT *) malloc(nny*nnx*sizeof(PLINT));
-  Yf = (PLINT *) malloc(nny*nnx*sizeof(PLINT));
 
   for (ix = 0; ix < nnx; ix++)
     for (iy = 0; iy < nny; iy++) {      
@@ -181,10 +192,9 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
       Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
     }
 
-  plP_image(Xf, Yf, Zf, nnx, nny);
+  plP_image(Xf, Yf, Zf, nnx, nny, xmin, ymin, dx, dy);
 
   free(Xf);
   free(Yf);
   free(Zf);
-  free(data);
 }
