@@ -544,9 +544,13 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	   void (*draw) (short *, short *, PLINT))
 {
     PLINT x1, x2, y1, y2;
-    PLINT i, iclp = -1;
-    short xclp[PL_MAXPOLY], yclp[PL_MAXPOLY];
+    int i, iclp = -1;
+    short xclp[2*PL_MAXPOLY], yclp[2*PL_MAXPOLY];
     int drawable;
+    int crossed_xmin1 = 0, crossed_xmax1 = 0;
+    int crossed_ymin1 = 0, crossed_ymax1 = 0;
+    int crossed_xmin2 = 0, crossed_xmax2 = 0;
+    int crossed_ymin2 = 0, crossed_ymax2 = 0;
 
     for (i = 0; i < npts - 1; i++) {
 	x1 = x[i];
@@ -559,120 +563,131 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	    drawable = ! clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
 
 	if (drawable) {
+	/* Boundary crossing condition -- coming in. */
+	    crossed_xmin2 = (x1 == xmin); crossed_xmax2 = (x1 == xmax);
+	    crossed_ymin2 = (y1 == ymin); crossed_ymax2 = (y1 == ymax);
 
-/* Not first point.  If first point of this segment matches up to the
-   previous point, just add it.  */
+	/* If the first point of this segment, just add it. */
 
-	    if (iclp >= 0 && x1 == xclp[iclp] && y1 == yclp[iclp]) {
-		iclp++;
-		xclp[iclp] = x2;
-		yclp[iclp] = y2;
+	    if (iclp == 0) {
+		iclp++; xclp[iclp] = x1; yclp[iclp] = y1;
+		iclp++; xclp[iclp] = x2; yclp[iclp] = y2;
 	    }
 
-/* First point of polyline, OR . */
+	/* Not first point.  If first point of this segment matches up to the
+	   previous point, just add it.  */
 
-/* If not, we need to add both points, to connect the points in the
- * polygon along the clip boundary.  If any of the previous points were
- * outside one of the 4 corners, assume the corner was encircled and add
- * it first. 
- */
+	    else if (x1 == xclp[iclp] && y1 == yclp[iclp]) {
+		iclp++; xclp[iclp] = x2; yclp[iclp] = y2;
+	    }
+
+	/* Otherwise, we need to add both points, to connect the points in the
+	 * polygon along the clip boundary.  If we encircled a corner, we have
+	 * to add that first.
+	 */
+
 	    else {
-		iclp++;
-		xclp[iclp] = x1;
-		yclp[iclp] = y1;
-
-		if ((x1 == xmin && y2 == ymin) ||
-		    (x2 == xmin && y1 == ymin)) {
-		    iclp++;
-		    xclp[iclp] = xmin;
-		    yclp[iclp] = ymin;
-		}
-		else if ((x1 == xmax && y2 == ymin) ||
-			 (x2 == xmax && y1 == ymin)) {
-		    iclp++;
-		    xclp[iclp] = xmax;
-		    yclp[iclp] = ymin;
-		}
-		else if ((x1 == xmax && y2 == ymax) ||
-			 (x2 == xmax && y1 == ymax)) {
-		    iclp++;
-		    xclp[iclp] = xmax;
-		    yclp[iclp] = ymax;
-		}
-		else if ((x1 == xmin && y2 == ymax) ||
-			 (x2 == xmin && y1 == ymax)) {
-		    iclp++;
-		    xclp[iclp] = xmin;
-		    yclp[iclp] = ymax;
-		}
-	    /* Experimental code from way back.
-	       Polygon clipping is HARD.
+	    /* Treat the case where we encircled two corners */
+	    /* Upper two */
+		if ( (crossed_xmin1 && crossed_xmax2 && y[i] >= ymax) )
 		{
-		    int j;
-		    for (j = 0; j < i; j++) {
-			if (x[j] < xmin && y[j] < ymin) {
-			    break;
-			}
-			else if (x[j] < xmin && y[j] > ymax) {
-			    iclp++;
-			    xclp[iclp] = xmin;
-			    yclp[iclp] = ymax;
-			    break;
-			}
-			else if (x[j] > xmax && y[j] < ymin) {
-			    iclp++;
-			    xclp[iclp] = xmax;
-			    yclp[iclp] = ymin;
-			    break;
-			}
-			else if (x[j] > xmax && y[j] > ymax) {
-			    iclp++;
-			    xclp[iclp] = xmax;
-			    yclp[iclp] = ymax;
-			    break;
-			}
-		    }
+		    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymax;
+		    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymax;
+		} 
+	    /* Lower two */
+		else if ( (crossed_xmin1 && crossed_xmax2 && y[i] <= ymin) )
+		{
+		    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymin;
+		    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymin;
+		} 
+	    /* Left two */
+		else if ( (crossed_ymin1 && crossed_ymax2 && x[i] <= xmin) )
+		{
+		    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymin;
+		    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymax;
+		} 
+	    /* Right two */
+		else if ( (crossed_ymin1 && crossed_ymax2 && x[i] >= xmax) )
+		{
+		    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymin;
+		    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymin;
+		} 
+	    /* Now the case where we encircled one corner */
+	    /* Lower left */
+		if ( (crossed_xmin1 && crossed_ymin2) ||
+		     (crossed_ymin1 && crossed_xmin2) )
+		{
+		    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymin;
+		} 
+	    /* Lower right */
+		else if ( (crossed_xmax1 && crossed_ymin2) ||
+			  (crossed_ymin1 && crossed_xmax2) )
+		{
+		    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymin;
 		}
-	    */
-		iclp++;
-		xclp[iclp] = x2;
-		yclp[iclp] = y2;
+	    /* Upper left */
+		else if ( (crossed_xmin1 && crossed_ymax2) ||
+			  (crossed_ymax1 && crossed_xmin2) )
+		{
+		    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymax;
+		} 
+	    /* Upper right */
+		else if ( (crossed_xmax1 && crossed_ymax2) ||
+			  (crossed_ymax1 && crossed_xmax2) )
+		{
+		    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymax;
+		}
+
+	    /* Now add current segment. */
+		iclp++; xclp[iclp] = x1; yclp[iclp] = y1;
+		iclp++; xclp[iclp] = x2; yclp[iclp] = y2;
 	    }
+
+	/* Boundary crossing condition -- going out. */
+	    crossed_xmin1 = (x2 == xmin); crossed_xmax1 = (x2 == xmax);
+	    crossed_ymin1 = (y2 == ymin); crossed_ymax1 = (y2 == ymax);
+	}
+    }
+
+/* Limit case - all vertices are outside of bounding box.  So just fill entire
+   box. */
+
+    if (iclp == 0 && npts >= 4) {
+	iclp++; xclp[iclp] = xmin; yclp[iclp] = ymin;
+	iclp++; xclp[iclp] = xmin; yclp[iclp] = ymax;
+	iclp++; xclp[iclp] = xmax; yclp[iclp] = ymax;
+	iclp++; xclp[iclp] = xmax; yclp[iclp] = ymin;
+    }
+
+/* Is this still needed? */
+
+    if (iclp + 1 >= 2) {
+	if ((xclp[0] == xmin && yclp[iclp] == ymin) ||
+	    (xclp[iclp] == xmin && yclp[0] == ymin))
+	{
+	    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymin;
+	}
+	else if ((xclp[0] == xmax && yclp[iclp] == ymin) ||
+		 (xclp[iclp] == xmax && yclp[0] == ymin))
+	{
+	    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymin;
+	}
+	else if ((xclp[0] == xmax && yclp[iclp] == ymax) ||
+		 (xclp[iclp] == xmax && yclp[0] == ymax))
+	{
+	    iclp++; xclp[iclp] = xmax; yclp[iclp] = ymax;
+	}
+	else if ((xclp[0] == xmin && yclp[iclp] == ymax) ||
+		 (xclp[iclp] == xmin && yclp[0] == ymax))
+	{
+	    iclp++; xclp[iclp] = xmin; yclp[iclp] = ymax;
 	}
     }
 
 /* Draw the sucker */
 
-    if (iclp + 1 >= 2) {
-	if ((xclp[0] == xmin && yclp[iclp] == ymin) ||
-	    (xclp[iclp] == xmin && yclp[0] == ymin)) {
-	    iclp++;
-	    xclp[iclp] = xmin;
-	    yclp[iclp] = ymin;
-	}
-	else if ((xclp[0] == xmax && yclp[iclp] == ymin) ||
-		 (xclp[iclp] == xmax && yclp[0] == ymin)) {
-	    iclp++;
-	    xclp[iclp] = xmax;
-	    yclp[iclp] = ymin;
-	}
-	else if ((xclp[0] == xmax && yclp[iclp] == ymax) ||
-		 (xclp[iclp] == xmax && yclp[0] == ymax)) {
-	    iclp++;
-	    xclp[iclp] = xmax;
-	    yclp[iclp] = ymax;
-	}
-	else if ((xclp[0] == xmin && yclp[iclp] == ymax) ||
-		 (xclp[iclp] == xmin && yclp[0] == ymax)) {
-	    iclp++;
-	    xclp[iclp] = xmin;
-	    yclp[iclp] = ymax;
-	}
-    }
-    if (iclp + 1 >= 3) {
-      if(draw)
+    if (iclp >= 2 && draw)
 	(*draw)(xclp, yclp, iclp + 1);
-    }
 }
 
 /*----------------------------------------------------------------------*\
