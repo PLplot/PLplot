@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.52  1995/08/22 16:17:22  mjl
+ * Revision 1.53  1995/09/18 20:15:46  furnish
+ * Some changes to mirror what was done to Tk in the newest itcl 2.
+ *
+ * Revision 1.52  1995/08/22  16:17:22  mjl
  * Widget configure command now only calls for a refresh when required (i.e.
  * when geometry is changed).  Bug in ConfigureNotify event handling fixed
  * (first seen under Tk4 for some reason).  Locator report changed to be
@@ -162,6 +165,7 @@ typedef struct {
     Tcl_Interp *interp;		/* Interpreter associated with
 				 * widget.  Used to delete widget
 				 * command.  */
+    Tcl_Command widgetCmd;	/* Token for frame's widget command. */
     Tk_3DBorder border;		/* Structure used to draw 3-D border and
 				 * background. */
     int borderWidth;		/* Width of 3-D border (if any). */
@@ -469,10 +473,19 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask,
 			  PlFrameExposeEH, (ClientData) plFramePtr);
 
+#ifdef HAVE_ITCL
+    plFramePtr->widgetCmd =
+#endif
     Tcl_CreateCommand(interp, Tk_PathName(plFramePtr->tkwin),
 	    PlFrameWidgetCmd, (ClientData) plFramePtr, (void (*)()) NULL);
+#ifdef HAVE_ITCL
+    Itk_SetWidgetCommand( plFramePtr->tkwin, plFramePtr->widgetCmd);
+#endif
 
     if (ConfigurePlFrame(interp, plFramePtr, argc-2, argv+2, 0) != TCL_OK) {
+#ifdef HAVE_ITCL
+	Itk_SetWidgetCommand(plFramePtr->tkwin, (Tcl_Command)NULL);
+#endif
 	Tk_DestroyWindow(plFramePtr->tkwin);
 	return TCL_ERROR;
     }
@@ -801,7 +814,12 @@ PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
 
     case DestroyNotify:
 	pldebug("PLFrameConfigureEH", "DestroyNotify\n");
+#ifdef HAVE_ITCL
+	Itk_SetWidgetCommand( plFramePtr->tkwin, (Tcl_Command)NULL);
+	Tcl_DeleteCommand2( plFramePtr->interp, plFramePtr->widgetCmd);
+#else
 	Tcl_DeleteCommand(plFramePtr->interp, Tk_PathName(tkwin));
+#endif
 	plFramePtr->tkwin = NULL;
 	if (plFramePtr->flags & REFRESH_PENDING) {
 	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
