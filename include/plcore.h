@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1993/08/18 19:07:03  mjl
+ * Revision 1.13  1993/09/08 02:34:13  mjl
+ * Added static function prototype for calc_dimap.
+ *
+ * Revision 1.12  1993/08/18  19:07:03  mjl
  * Fixed function prototype.
  *
  * Revision 1.11  1993/08/03  03:26:52  mjl
@@ -54,6 +57,7 @@ static void	pldi_ini	(void);
 static void	calc_diplt	(void);
 static void	calc_didev	(void);
 static void	calc_diori	(void);
+static void	calc_dimap	(void);
 
 /* Static variables */
 
