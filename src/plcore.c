@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.49  1995/06/29 18:10:44  mjl
+ * Revision 1.50  1995/10/16 18:20:28  mjl
+ * Added plgdev API function to return current device name.
+ *
+ * Revision 1.49  1995/06/29  18:10:44  mjl
  * Moved invocation of plP_subpInit() to a less bogus place in plP_bop().
  *
  * Revision 1.48  1995/06/23  02:57:08  mjl
@@ -1647,6 +1650,15 @@ c_plsdev(const char *devname)
 	strncpy(plsc->DevName, devname, sizeof(plsc->DevName) - 1);
 	plsc->DevName[sizeof(plsc->DevName) - 1] = '\0';
     }
+}
+
+/* Get the current device (keyword) name */
+/* Note: you MUST have allocated space for this (80 characters is safe) */
+
+void
+c_plgdev(char *p_dev)
+{
+    strcpy(p_dev, plsc->DevName);
 }
 
 /* Get the current stream pointer */
