@@ -10,9 +10,17 @@
 #-----------------------------------------------------------------------------#
 #\
 exec tclsh "$0" ${1+"$@"}
-catch {package require Itcl}
 
+if {[catch {package require Itcl}]} {
+
+# Error including Itcl -- only include tcl files
+    auto_mkindex . *.tcl
+
+} else {
+
+# Package require succeeded -- include all itcl, itk files.
 # Think there are enough naming conventions?
-auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
+    auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
+}
 
 exit
