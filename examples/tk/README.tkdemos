@@ -38,7 +38,7 @@ prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
 you are running at this time (5.2.0 or whatever).
 
 wish
-lappend auto_path $prefix/lib/plplot$VERSION | ../../bindings/tk
+lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk
 package require Pltk
 source tkdemos.tcl
 1
@@ -61,6 +61,6 @@ plserver
 source runAllDemos.tcl
 
 wish
-lappend auto_path $prefix/lib/plplot$VERSION | ../../bindings/tk-x-plat
+lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk-x-plat
 package require Plplotter
 source runAllDemos.tcl

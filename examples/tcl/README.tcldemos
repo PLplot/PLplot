@@ -37,7 +37,7 @@ prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
 you are running at this time (5.2.0 or whatever).
 
 tclsh
-lappend auto_path $prefix/lib/plplot$VERSION | ../../bindings/tcl
+lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tcl
 package require Pltcl
 plinit
 source tcldemos.tcl
