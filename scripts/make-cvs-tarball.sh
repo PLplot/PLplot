@@ -46,7 +46,9 @@ VERSION=${VERSION:+--version=$1}
 BRANCH=${BRANCH:--D now}
 CVSTMPDIR=${CVSTMPDIR:-plplot-cvs-tarball}
 
-config_opt="--enable-octave"
+# Put here extra configure options that should always be used when
+# generating a tarball
+config_opt=""
 
 print_defaults () {
   local v
