@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.1  1994/04/08 12:07:31  mjl
+# Revision 1.2  1994/04/25 18:50:18  mjl
+# Added resource setting for scale fonts (used in palette widgets).
+# Also added variables governing fast and faster scrolling speed.
+#
+# Revision 1.1  1994/04/08  12:07:31  mjl
 # Proc to set up defaults.  Should not be modified by the user (use
 # plconfig instead).
 #
@@ -50,19 +54,23 @@ proc pldefaults {} {
 
 # Font-related resources.
 
-    set gen_font	-*-helvetica-medium-r-normal-*-*-180-*-*-*-*-*-*
-    set gen_bold_font	-*-helvetica-bold-r-normal-*-*-180-*-*-*-*-*-*
-    set gen_menu_font	-*-helvetica-medium-o-normal-*-*-180-*-*-*-*-*-*
-    set gen_italic_font	-*-helvetica-bold-o-normal-*-*-180-*-*-*-*-*-*
+    set gen_font		-*-helvetica-medium-r-normal-*-*-180-*
+    set gen_bold_font		-*-helvetica-bold-r-normal-*-*-180-*
+    set gen_menu_font		-*-helvetica-medium-o-normal-*-*-180-*
+    set gen_italic_font		-*-helvetica-bold-o-normal-*-*-180-*
+    set gen_font_small		-*-helvetica-medium-r-normal-*-*-120-*
+    set gen_bold_font_small	-*-helvetica-bold-r-normal-*-*-120-*
+    set gen_fixed_font		-*-courier-medium-r-normal-*-*-180-*
 
-    set dialog_font	 -*-times-medium-r-normal-*-*-180-*-*-*-*-*-*
-    set dialog_bold_font -*-times-bold-r-normal-*-*-180-*-*-*-*-*-*
+    set dialog_font		-*-times-medium-r-normal-*-*-180-*
+    set dialog_bold_font	-*-times-bold-r-normal-*-*-180-*
 
     option add *font		$gen_font
     option add *Entry.font	$gen_font
     option add *Menu*font	$gen_menu_font
     option add *Menubutton*font	$gen_menu_font
-    option add *Scale.font	$gen_italic_font
+    option add *Scale.font	$gen_bold_font_small
+    option add *color.font	$gen_fixed_font
 
 #----------------------------------------------------------------------------
 # Color-related resources. 
@@ -136,5 +144,7 @@ proc pldefaults {} {
     global key_scroll_left;	set key_scroll_left	"Left"
     global key_scroll_up;	set key_scroll_up	"Up"
     global key_scroll_down;	set key_scroll_down	"Down"
-    global key_scroll_speed;	set key_scroll_speed	"3"
+    global key_scroll_slow;	set key_scroll_slow	"3"
+    global key_scroll_fast;	set key_scroll_fast	"15"
+    global key_scroll_faster;	set key_scroll_faster	"75"
 }
