@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1994/06/16 19:13:10  mjl
+ * Revision 1.38  1994/06/30 18:43:04  mjl
+ * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
+ *
+ * Revision 1.37  1994/06/16  19:13:10  mjl
  * Moved Tk initialization specific to the tk driver into this file.  Changed
  * plserver startup to include the -e <script> option, for running the
  * plserver_init proc at startup.
@@ -11,15 +14,15 @@
 */
 
 /*	tk.c
-*
-*	Maurice LeBrun
-*	30-Apr-93
-*
-*	PLPLOT TCL/TK device driver.
-*
-*	Passes graphics commands to renderer and certain X
-*	events back to user if requested.
-*/
+ *
+ *	Maurice LeBrun
+ *	30-Apr-93
+ *
+ *	PLPLOT TCL/TK device driver.
+ *
+ *	Passes graphics commands to renderer and certain X
+ *	events back to user if requested.
+ */
 
 /*
 #define DEBUG_ENTER
@@ -28,10 +31,16 @@
 
 #ifdef TK
 
-#include "plserver.h"
+#include "plplotP.h"
+#include "plplotTK.h"
+#include "plplotX.h"
 #include "drivers.h"
 #include "metadefs.h"
 #include "plevent.h"
+
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <errno.h>
 
 /* A handy command wrapper */
@@ -45,22 +54,44 @@ if (code) { abort_session(pls, "Unable to write to pipe"); }
 #define FORK fork
 #endif
 
-/* INDENT OFF */
 /*----------------------------------------------------------------------*/
 /* Function prototypes */
 
-static void  init		(PLStream *pls);
-static void  tk_start		(PLStream *pls);
-static void  tk_stop		(PLStream *pls);
-static void  tk_di		(PLStream *pls);
-static void  tk_fill		(PLStream *pls);
-static void  WaitForPage	(PLStream *pls);
-static void  HandleEvents	(PLStream *pls);
-static void  init_server	(PLStream *pls);
-static void  launch_server	(PLStream *pls);
-static void  flush_output	(PLStream *pls);
-static void  plwindow_init	(PLStream *pls);
-static void  link_init		(PLStream *pls);
+static void
+init(PLStream *pls);
+
+static void
+tk_start(PLStream *pls);
+
+static void
+tk_stop(PLStream *pls);
+
+static void
+tk_di(PLStream *pls);
+
+static void
+tk_fill(PLStream *pls);
+
+static void
+WaitForPage(PLStream *pls);
+
+static void
+HandleEvents(PLStream *pls);
+
+static void
+init_server(PLStream *pls);
+
+static void
+launch_server(PLStream *pls);
+
+static void
+flush_output(PLStream *pls);
+
+static void
+plwindow_init(PLStream *pls);
+
+static void
+link_init(PLStream *pls);
 
 /* performs Tk-driver-specific initialization */
 
@@ -69,28 +100,44 @@ pltkdriver_Init(PLStream *pls);
 
 /* Tcl/TK utility commands */
 
-static void  tk_wait		(PLStream *pls, char *);
-static void  abort_session	(PLStream *pls, char *);
-static void  server_cmd		(PLStream *pls, char *, int);
-static void  tcl_cmd		(PLStream *pls, char *);
-static int   tcl_eval		(PLStream *pls, char *);
-static void  copybuf		(PLStream *pls, char *cmd);
+static void
+tk_wait(PLStream *pls, char *);
+
+static void
+abort_session(PLStream *pls, char *);
+
+static void
+server_cmd(PLStream *pls, char *, int);
+
+static void
+tcl_cmd(PLStream *pls, char *);
+
+static void
+copybuf(PLStream *pls, char *cmd);
+
+static int
+pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
+	      char *display, char *basename, char *classname);
 
 /* These are internal TCL commands */
 
-static int   Abort		(ClientData, Tcl_Interp *, int, char **);
-static int   KeyEH		(ClientData, Tcl_Interp *, int, char **);
-static int   MouseEH		(ClientData, Tcl_Interp *, int, char **);
+static int
+Abort(ClientData, Tcl_Interp *, int, char **);
 
-/* INDENT ON */
+static int
+KeyEH(ClientData, Tcl_Interp *, int, char **);
+
+static int
+MouseEH(ClientData, Tcl_Interp *, int, char **);
+
 /*----------------------------------------------------------------------*\
-* plD_init_dp()
-* plD_init_tk()
-* init_tk()
-*
-* Initialize device.
-* TK-dependent stuff done in tk_start().  You can set the display by
-* calling plsfnam() with the display name as the (string) argument.
+ * plD_init_dp()
+ * plD_init_tk()
+ * init_tk()
+ *
+ * Initialize device.
+ * TK-dependent stuff done in tk_start().  You can set the display by
+ * calling plsfnam() with the display name as the (string) argument.
 \*----------------------------------------------------------------------*/
 
 void
@@ -217,9 +264,9 @@ init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_tk()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
+ * plD_line_tk()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
@@ -261,9 +308,9 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_tk()
-*
-* Draw a polyline in the current color from (x1,y1) to (x2,y2).
+ * plD_polyline_tk()
+ *
+ * Draw a polyline in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
@@ -292,10 +339,10 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_tk()
-*
-* End of page.  
-* User must hit <RETURN> to continue.
+ * plD_eop_tk()
+ *
+ * End of page.  
+ * User must hit <RETURN> to continue.
 \*----------------------------------------------------------------------*/
 
 void
@@ -312,9 +359,9 @@ plD_eop_tk(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_tk()
-*
-* Set up for the next page.
+ * plD_bop_tk()
+ *
+ * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
@@ -332,9 +379,9 @@ plD_bop_tk(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_tk()
-*
-* Close graphics file
+ * plD_tidy_tk()
+ *
+ * Close graphics file
 \*----------------------------------------------------------------------*/
 
 void
@@ -349,9 +396,9 @@ plD_tidy_tk(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_tk()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+ * plD_state_tk()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -412,18 +459,18 @@ plD_state_tk(PLStream *pls, PLINT op)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_tk()
-*
-* Escape function.
-* Functions:
-*
-*	PLESC_EXPOSE	Force an expose (just passes token)
-*	PLESC_RESIZE	Force a resize (just passes token)
-*	PLESC_REDRAW	Force a redraw
-*	PLESC_FLUSH	Flush X event buffer
-*	PLESC_FILL	Fill polygon
-*	PLESC_EH	Handle events only
-*
+ * plD_esc_tk()
+ *
+ * Escape function.
+ * Functions:
+ *
+ *	PLESC_EXPOSE	Force an expose (just passes token)
+ *	PLESC_RESIZE	Force a resize (just passes token)
+ *	PLESC_REDRAW	Force a redraw
+ *	PLESC_FLUSH	Flush X event buffer
+ *	PLESC_FILL	Fill polygon
+ *	PLESC_EH	Handle events only
+ *
 \*----------------------------------------------------------------------*/
 
 void
@@ -458,10 +505,10 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* tk_di
-*
-* Process driver interface command.
-* Just send the command to the remote plplot library.
+ * tk_di
+ *
+ * Process driver interface command.
+ * Just send the command to the remote plplot library.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -535,9 +582,9 @@ tk_di(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tk_fill()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * tk_fill()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
 \*----------------------------------------------------------------------*/
 
 static void
@@ -557,10 +604,10 @@ tk_fill(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tk_start
-*
-* Create TCL interpreter and spawn off server process.
-* Each stream that uses the tk driver gets its own interpreter.
+ * tk_start
+ *
+ * Create TCL interpreter and spawn off server process.
+ * Each stream that uses the tk driver gets its own interpreter.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -630,9 +677,9 @@ tk_start(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tk_stop
-*
-* Normal termination & cleanup.
+ * tk_stop
+ *
+ * Normal termination & cleanup.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -674,10 +721,10 @@ tk_stop(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* abort_session
-*
-* Terminates with an error.  
-* Cleanup is done by plD_tidy_tk(), called by plexit().
+ * abort_session
+ *
+ * Terminates with an error.  
+ * Cleanup is done by plD_tidy_tk(), called by plexit().
 \*----------------------------------------------------------------------*/
 
 static void
@@ -774,83 +821,83 @@ pltkdriver_Init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* init_server
-*
-* Starts interaction with server process, launching it if necessary.
-*
-* There are several possibilities we must account for, depending on the
-* message protocol, input flags, and whether plserver is already running
-* or not.  From the point of view of the code, they are:
-*
-*    1. Driver: tk
-*	Flags: <none>
-*	Meaning: need to start up plserver (same host)
-*	Actions: fork plserver, passing it our TK main window name
-*		 for communication.  Once started, plserver will send
-*		 back its main window name.
-* 
-*    2. Driver: dp
-*	Flags: <none>
-*	Meaning: need to start up plserver (same host)
-*	Actions: fork plserver, passing it our Tcl-DP communication port
-*		 for communication. Once started, plserver will send
-*		 back its created message port number.
-* 
-*    3. Driver: tk
-*	Flags: -server_name
-*	Meaning: plserver already running (same host)
-*	Actions: communicate to plserver our TK main window name.
-* 
-*    4. Driver: dp
-*	Flags: -server_port
-*	Meaning: plserver already running (same host)
-*	Actions: communicate to plserver our Tcl-DP port number.
-* 
-*    5. Driver: dp
-*	Flags: -server_host
-*	Meaning: need to start up plserver (remote host)
-*	Actions: remsh (rsh) plserver, passing it our host ID and Tcl-DP
-*		 port for communication. Once started, plserver will send
-*		 back its created message port number.
-* 
-*    6. Driver: dp
-*	Flags: -server_host -server_port
-*	Meaning: plserver already running (remote host)
-*	Actions: communicate to remote plserver our host ID and Tcl-DP
-*		 port number.
-*
-* For a bit more flexibility, you can change the name of the process
-* invoked from "plserver" to something else, using the -plserver flag.
-* 
-* The startup procedure involves some rather involved handshaking 
-* between client and server.  This is made easier by using the Tcl
-* variables:
-*
-*	client_host client_port server_host server_port 
-*
-* when using Tcl-DP sends and
-*
-*	client_name server_name
-*
-* when using TK sends.  The global Tcl variables 
-*
-*	client server
-*
-* are used for the defining identification for the client and server,
-* respectively -- they denote the main window name when TK sends are used
-* and the respective process's listening socket when Tcl-DP sends are
-* used.  Note that in the former case, $client is just the same as
-* $client_name.  In addition, since the server may need to communicate
-* with many different processes, every command to the server contains the
-* sender's client id (so it knows how to report back if necessary).  Thus
-* this interpreter must know both $server as well as $client.  It is most
-* convenient to set $client from the server, as a way to signal that
-* communication has been set up and it is safe to proceed.
-*
-* Often it is necessary to use constructs such as [list $server] instead
-* of just $server.  This occurs since you could have multiple copies
-* running on the display (resulting in names of the form "plserver #2",
-* etc).
+ * init_server
+ *
+ * Starts interaction with server process, launching it if necessary.
+ *
+ * There are several possibilities we must account for, depending on the
+ * message protocol, input flags, and whether plserver is already running
+ * or not.  From the point of view of the code, they are:
+ *
+ *    1. Driver: tk
+ *	Flags: <none>
+ *	Meaning: need to start up plserver (same host)
+ *	Actions: fork plserver, passing it our TK main window name
+ *		 for communication.  Once started, plserver will send
+ *		 back its main window name.
+ * 
+ *    2. Driver: dp
+ *	Flags: <none>
+ *	Meaning: need to start up plserver (same host)
+ *	Actions: fork plserver, passing it our Tcl-DP communication port
+ *		 for communication. Once started, plserver will send
+ *		 back its created message port number.
+ * 
+ *    3. Driver: tk
+ *	Flags: -server_name
+ *	Meaning: plserver already running (same host)
+ *	Actions: communicate to plserver our TK main window name.
+ * 
+ *    4. Driver: dp
+ *	Flags: -server_port
+ *	Meaning: plserver already running (same host)
+ *	Actions: communicate to plserver our Tcl-DP port number.
+ * 
+ *    5. Driver: dp
+ *	Flags: -server_host
+ *	Meaning: need to start up plserver (remote host)
+ *	Actions: remsh (rsh) plserver, passing it our host ID and Tcl-DP
+ *		 port for communication. Once started, plserver will send
+ *		 back its created message port number.
+ * 
+ *    6. Driver: dp
+ *	Flags: -server_host -server_port
+ *	Meaning: plserver already running (remote host)
+ *	Actions: communicate to remote plserver our host ID and Tcl-DP
+ *		 port number.
+ *
+ * For a bit more flexibility, you can change the name of the process
+ * invoked from "plserver" to something else, using the -plserver flag.
+ * 
+ * The startup procedure involves some rather involved handshaking 
+ * between client and server.  This is made easier by using the Tcl
+ * variables:
+ *
+ *	client_host client_port server_host server_port 
+ *
+ * when using Tcl-DP sends and
+ *
+ *	client_name server_name
+ *
+ * when using TK sends.  The global Tcl variables 
+ *
+ *	client server
+ *
+ * are used for the defining identification for the client and server,
+ * respectively -- they denote the main window name when TK sends are used
+ * and the respective process's listening socket when Tcl-DP sends are
+ * used.  Note that in the former case, $client is just the same as
+ * $client_name.  In addition, since the server may need to communicate
+ * with many different processes, every command to the server contains the
+ * sender's client id (so it knows how to report back if necessary).  Thus
+ * this interpreter must know both $server as well as $client.  It is most
+ * convenient to set $client from the server, as a way to signal that
+ * communication has been set up and it is safe to proceed.
+ *
+ * Often it is necessary to use constructs such as [list $server] instead
+ * of just $server.  This occurs since you could have multiple copies
+ * running on the display (resulting in names of the form "plserver #2",
+ * etc).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -893,9 +940,9 @@ init_server(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* launch_server
-*
-* Launches plserver, locally or remotely.
+ * launch_server
+ *
+ * Launches plserver, locally or remotely.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1036,36 +1083,36 @@ launch_server(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plwindow_init
-*
-* Configures the widget hierarchy we are sending the data stream to.  
-*
-* If a widget name (identifying the actual widget or a container widget)
-* hasn't been supplied already we assume it needs to be created.
-*
-* In order to achieve maximum flexibility, the plplot tk driver requires
-* only that certain TCL procs must be defined in the server interpreter.
-* These can be used to set up the desired widget configuration.  The procs
-* invoked from this driver currently include:
-*
-*    $plw_create_proc		Creates the widget environment
-*    $plw_start_proc		Does any remaining startup necessary
-*    $plw_end_proc		Prepares for shutdown
-*    $plw_flash_proc		Invoked when waiting for page advance
-*
-* Since all of these are interpreter variables, they can be trivially
-* changed by the user.
-*
-* Each of these utility procs is called with a widget name ($plwindow)
-* as argument.  "plwindow" is set from the value of pls->plwindow, and
-* if null is generated from the name of the client main window (to
-* ensure uniqueness).  $plwindow usually indicates the container frame
-* for the actual plplot widget, but can be arbitrary -- as long as the
-* usage in all the TCL procs is consistent.
-*
-* In order that the TK driver be able to invoke the actual plplot
-* widget, the proc "$plw_create_proc" deposits the widget name in the local
-* interpreter variable "plwidget".
+ * plwindow_init
+ *
+ * Configures the widget hierarchy we are sending the data stream to.  
+ *
+ * If a widget name (identifying the actual widget or a container widget)
+ * hasn't been supplied already we assume it needs to be created.
+ *
+ * In order to achieve maximum flexibility, the plplot tk driver requires
+ * only that certain TCL procs must be defined in the server interpreter.
+ * These can be used to set up the desired widget configuration.  The procs
+ * invoked from this driver currently include:
+ *
+ *    $plw_create_proc		Creates the widget environment
+ *    $plw_start_proc		Does any remaining startup necessary
+ *    $plw_end_proc		Prepares for shutdown
+ *    $plw_flash_proc		Invoked when waiting for page advance
+ *
+ * Since all of these are interpreter variables, they can be trivially
+ * changed by the user.
+ *
+ * Each of these utility procs is called with a widget name ($plwindow)
+ * as argument.  "plwindow" is set from the value of pls->plwindow, and
+ * if null is generated from the name of the client main window (to
+ * ensure uniqueness).  $plwindow usually indicates the container frame
+ * for the actual plplot widget, but can be arbitrary -- as long as the
+ * usage in all the TCL procs is consistent.
+ *
+ * In order that the TK driver be able to invoke the actual plplot
+ * widget, the proc "$plw_create_proc" deposits the widget name in the local
+ * interpreter variable "plwidget".
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1097,7 +1144,7 @@ plwindow_init(PLStream *pls)
 	if (pls->ipls == 0)
 	    sprintf(pls->plwindow, ".%s", pname);
 	else
-	    sprintf(pls->plwindow, ".%s_%ld", pname, pls->ipls);
+	    sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
 
 /* Replace any blanks with underscores to avoid quoting problems. */
 
@@ -1145,11 +1192,11 @@ plwindow_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* link_init
-*
-* Initializes the link between the client and the plplot widget for
-* data transfer.  Defaults to a FIFO when the TK driver is selected and
-* a socket when the DP driver is selected.
+ * link_init
+ *
+ * Initializes the link between the client and the plplot widget for
+ * data transfer.  Defaults to a FIFO when the TK driver is selected and
+ * a socket when the DP driver is selected.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1218,9 +1265,9 @@ link_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* WaitForPage()
-*
-* Waits for a page advance.
+ * WaitForPage()
+ *
+ * Waits for a page advance.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1240,9 +1287,9 @@ WaitForPage(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleEvents()
-*
-* Just a front-end to the update command.  
+ * HandleEvents()
+ *
+ * Just a front-end to the update command.  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1254,16 +1301,16 @@ HandleEvents(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* flush_output()
-*
-* Sends graphics instructions to the {FIFO|socket} via a packet send.
-*
-* The i/o routines are modified versions of the ones from the Tcl-DP
-* package.  They have been altered to take a pointer to a PDFstrm struct,
-* and read-to or write-from pdfs->buffer.  The length of the buffer is
-* stored in pdfs->bp (the original Tcl-DP routine assume the message is
-* character data and use strlen).  Also, they can send/receive from 
-* either a fifo or a socket.
+ * flush_output()
+ *
+ * Sends graphics instructions to the {FIFO|socket} via a packet send.
+ *
+ * The i/o routines are modified versions of the ones from the Tcl-DP
+ * package.  They have been altered to take a pointer to a PDFstrm struct,
+ * and read-to or write-from pdfs->buffer.  The length of the buffer is
+ * stored in pdfs->bp (the original Tcl-DP routine assume the message is
+ * character data and use strlen).  Also, they can send/receive from 
+ * either a fifo or a socket.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1292,9 +1339,9 @@ flush_output(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* Abort
-*
-* Just a TCL front-end to abort_session().
+ * Abort
+ *
+ * Just a TCL front-end to abort_session().
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1309,21 +1356,21 @@ Abort(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 }
 
 /*----------------------------------------------------------------------*\
-* KeyEH()
-*
-* This TCL command handles keyboard events.
-*
-* Arguments:
-*	command name
-*	keysym name (textual string)
-*	keysym value
-*	ASCII equivalent (optional)
-*
-* The first argument is keysym name -- this is all that's really required 
-* although it's better to send the numeric keysym value since then we
-* can avoid a long lookup procedure.  Sometimes, when faking input, it
-* is inconvenient to have to worry about what the numeric keysym value
-* is, so in a few cases a missing keysym value is tolerated.
+ * KeyEH()
+ *
+ * This TCL command handles keyboard events.
+ *
+ * Arguments:
+ *	command name
+ *	keysym name (textual string)
+ *	keysym value
+ *	ASCII equivalent (optional)
+ *
+ * The first argument is keysym name -- this is all that's really required 
+ * although it's better to send the numeric keysym value since then we
+ * can avoid a long lookup procedure.  Sometimes, when faking input, it
+ * is inconvenient to have to worry about what the numeric keysym value
+ * is, so in a few cases a missing keysym value is tolerated.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1423,18 +1470,18 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 }
 
 /*----------------------------------------------------------------------*\
-* MouseEH()
-*
-* This TCL command handles mouse buttonpress events.
-* Written by Radey Shouman
-*
-* Arguments:
-*	command name
-*       button number
-*	state (decimal string)
-*	x coordinate normalized to [0.0 1.0]
-*	y coordinate normalized to [0.0 1.0]
-*
+ * MouseEH()
+ *
+ * This TCL command handles mouse buttonpress events.
+ * Written by Radey Shouman
+ *
+ * Arguments:
+ *	command name
+ *       button number
+ *	state (decimal string)
+ *	x coordinate normalized to [0.0 1.0]
+ *	y coordinate normalized to [0.0 1.0]
+ *
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1475,14 +1522,62 @@ MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 }
 
 /*----------------------------------------------------------------------*\
-* tk_wait()
-*
-* Waits for the specified expression to evaluate to true before
-* proceeding.  While we are waiting to proceed, all events (for this
-* or other interpreters) are handled.  
-*
-* Use a static string buffer to hold the command, to ensure it's in
-* writable memory (grrr...).
+ *
+ * pltk_toplevel --
+ *
+ *	Create top level window without mapping it.
+ *
+ * Results:
+ *	Returns 1 on error.
+ *
+ * Side effects:
+ *	Returns window ID as *w.
+ *
+\*----------------------------------------------------------------------*/
+
+static int
+pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
+	      char *display, char *basename, char *classname)
+{
+    char *new_name;
+    static char wcmd[] = "wm withdraw .";
+
+/*
+ * Determine server name.  If it contains any forward slashes ("/"), only
+ * use the part following the last "/" so that name can be loaded with 
+ * argv[0] by caller.
+ */
+    new_name = strrchr(basename, '/');
+    if (new_name != NULL) 
+	basename = ++new_name;
+
+    new_name = strrchr(classname, '/');
+    if (new_name != NULL) 
+	classname = ++new_name;
+
+/* Create the main window without mapping it */
+
+    *w = Tk_CreateMainWindow(interp, display, basename, classname);
+
+    if (*w == NULL) {
+	fprintf(stderr, "%s\n", (interp)->result);
+	return(1);
+    }
+
+    Tcl_VarEval(interp, wcmd, (char *) NULL);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+ * tk_wait()
+ *
+ * Waits for the specified expression to evaluate to true before
+ * proceeding.  While we are waiting to proceed, all events (for this
+ * or other interpreters) are handled.  
+ *
+ * Use a static string buffer to hold the command, to ensure it's in
+ * writable memory (grrr...).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1508,18 +1603,18 @@ tk_wait(PLStream *pls, char *cmd)
 }
 
 /*----------------------------------------------------------------------*\
-* server_cmd
-*
-* Sends specified command to server, aborting on an error.
-* If nowait is set, the command is issued in the background.
-*
-* If commands MUST proceed in a certain order (e.g. initialization), it
-* is safest to NOT run them in the background.
-*
-* In order to protect args that have embedded spaces in them, I enclose
-* the entire command in a [list ...], but for TK sends ONLY.  If done with
-* Tcl-DP RPC, the sent command is no longer recognized.  Evidently an
-* extra scan of the line is done with TK sends for some reason.
+ * server_cmd
+ *
+ * Sends specified command to server, aborting on an error.
+ * If nowait is set, the command is issued in the background.
+ *
+ * If commands MUST proceed in a certain order (e.g. initialization), it
+ * is safest to NOT run them in the background.
+ *
+ * In order to protect args that have embedded spaces in them, I enclose
+ * the entire command in a [list ...], but for TK sends ONLY.  If done with
+ * Tcl-DP RPC, the sent command is no longer recognized.  Evidently an
+ * extra scan of the line is done with TK sends for some reason.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1537,25 +1632,24 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
     fprintf(stderr, "Sending command: %s\n", cmd);
 #endif
 
-    copybuf(pls, cmd);
     if (pls->dp) {
 	if (nowait) 
-	    result = Tcl_VarEval(dev->interp, dpsend_cmd1, dev->cmdbuf,
+	    result = Tcl_VarEval(dev->interp, dpsend_cmd1, cmd,
 				 (char **) NULL);
 	else
-	    result = Tcl_VarEval(dev->interp, dpsend_cmd0, dev->cmdbuf,
+	    result = Tcl_VarEval(dev->interp, dpsend_cmd0, cmd,
 				 (char **) NULL);
     } 
     else {
 	if (nowait) 
 	    result = Tcl_VarEval(dev->interp, tksend_cmd1, "[list ",
-				 dev->cmdbuf, "]", (char **) NULL);
+				 cmd, "]", (char **) NULL);
 	else
 	    result = Tcl_VarEval(dev->interp, tksend_cmd0, "[list ",
-				 dev->cmdbuf, "]", (char **) NULL);
+				 cmd, "]", (char **) NULL);
     }
 
-    if (result) {
+    if (result != TCL_OK) {
 	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
 		cmd, dev->interp->result);
 	abort_session(pls, "");
@@ -1563,9 +1657,9 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
 }
 
 /*----------------------------------------------------------------------*\
-* tcl_cmd
-*
-* Evals the specified command, aborting on an error.
+ * tcl_cmd
+ *
+ * Evals the specified command, aborting on an error.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1578,7 +1672,7 @@ tcl_cmd(PLStream *pls, char *cmd)
     fprintf(stderr, "Evaluating command: %s\n", cmd);
 #endif
 
-    if (tcl_eval(pls, cmd)) {
+    if (Tcl_VarEval(dev->interp, cmd, (char **) NULL) != TCL_OK) {
 	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
 		cmd, dev->interp->result);
 	abort_session(pls, "");
@@ -1586,25 +1680,10 @@ tcl_cmd(PLStream *pls, char *cmd)
 }
 
 /*----------------------------------------------------------------------*\
-* tcl_eval
-*
-* Evals the specified string, returning the result.
-\*----------------------------------------------------------------------*/
-
-static int
-tcl_eval(PLStream *pls, char *cmd)
-{
-    TkDev *dev = (TkDev *) pls->dev;
-
-    copybuf(pls, cmd);
-    return(Tcl_VarEval(dev->interp, dev->cmdbuf, (char **) NULL));
-}
-
-/*----------------------------------------------------------------------*\
-* copybuf
-*
-* Puts command in a static string buffer, to ensure it's in writable
-* memory (grrr...).
+ * copybuf
+ *
+ * Puts command in a static string buffer, to ensure it's in writable
+ * memory (grrr...).
 \*----------------------------------------------------------------------*/
 
 static void

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1994/06/23 22:32:47  mjl
+ * Revision 1.35  1994/06/30 18:40:15  mjl
+ * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
+ *
+ * Revision 1.34  1994/06/23  22:32:47  mjl
  * Split off bulk of Tcl API in to separate file, where it can be used
  * more flexibly.
  *
@@ -52,6 +55,9 @@
 
 #include "plserver.h"
 #include "plstream.h"
+
+#include <unistd.h>
+#include <fcntl.h>
 
 extern int plplot_ccmap;
 
@@ -274,10 +280,6 @@ static int   yScroll		(Tcl_Interp *, PlFrame *, int, char **);
 static void  gbox		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, char **);
 static void  UpdateVScrollbar	(register PlFrame *);
 static void  UpdateHScrollbar	(register PlFrame *);
-static int   tcl_cmd		(Tcl_Interp *interp, char *cmd);
-static int   tcl_eval		(Tcl_Interp *interp, char *cmd);
-static void  client_cmd		(Tcl_Interp *interp, char *cmd, int nowait,
-				 int dp);
 
 /*
  *---------------------------------------------------------------------------
@@ -817,10 +819,6 @@ PlFrameInit(ClientData clientData)
 /* First-time initialization */
 
     if ( ! plFramePtr->tkwin_initted) {
-	XwDev *dev;
-	Window top, parent, colormap_windows[5];
-	int count = 0;
-
 	plsstrm(plFramePtr->ipls);
 	plsdev("xwin");
 	plsxwin(Tk_WindowId(tkwin));
@@ -865,15 +863,14 @@ static void
 Install_cmap(PlFrame *plFramePtr)
 {
     XwDev *dev;
-    Window top, parent, colormap_windows[5];
-    int count = 0;
 
 #define INSTALL_COLORMAP_IN_TK
 #ifdef  INSTALL_COLORMAP_IN_TK
-	dev = (XwDev *) plFramePtr->plsc->dev;
-	Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->map);
+    dev = (XwDev *) plFramePtr->plsc->dev;
+    Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->map);
 
-/* If the colormap is local to this widget, the WM must be informed that
+/*
+ * If the colormap is local to this widget, the WM must be informed that
  * it should be installed when the widget gets the focus.  The top level
  * window must be added to the end of its own list, because otherwise the
  * window manager adds it to the front (as required by the ICCCM).  Thanks
@@ -881,14 +878,17 @@ Install_cmap(PlFrame *plFramePtr)
  */
 
 #else
-	top = Tk_WindowId(Tk_MainWindow(plFramePtr->interp));
+    int count = 0;
+    Window top, colormap_windows[5];
 
-	colormap_windows[count++] = Tk_WindowId(plFramePtr->tkwin);
-	colormap_windows[count++] = top;
+    top = Tk_WindowId(Tk_MainWindow(plFramePtr->interp));
 
-	if ( ! XSetWMColormapWindows( plFramePtr->display,
-				      top, colormap_windows, count))
-	    fprintf(stderr, "Unable to set color map property!\n");
+    colormap_windows[count++] = Tk_WindowId(plFramePtr->tkwin);
+    colormap_windows[count++] = top;
+
+    if ( ! XSetWMColormapWindows(plFramePtr->display,
+				 top, colormap_windows, count))
+      fprintf(stderr, "Unable to set color map property!\n");
 #endif
 }
 
@@ -999,15 +999,15 @@ DisplayPlFrame(ClientData clientData)
 }
 
 /*----------------------------------------------------------------------*\
-* Routines to process widget commands.
+ * Routines to process widget commands.
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* Cmd
-*
-* Processes "cmd" widget command.
-* Handles commands that go more or less directly to the PLPlot library.
-* Most of these come out of the PLplot Tcl API support file.
+ * Cmd
+ *
+ * Processes "cmd" widget command.
+ * Handles commands that go more or less directly to the PLPlot library.
+ * Most of these come out of the PLplot Tcl API support file.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1018,8 +1018,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int length;
     char c3;
     int result = TCL_OK;
-    char cmdlist[] = "\
-plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
+    char cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 
 /* no option -- return list of available PLPlot commands */
 
@@ -1038,14 +1037,14 @@ plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 	unsigned long plcolor;
 	char str[10];
 
-	sprintf(str, "%ld", plsc->ncol0);
+	sprintf(str, "%d", (int) plsc->ncol0);
 	Tcl_AppendElement(interp, str);
 	for (i = 0; i < plsc->ncol0; i++) {
 	    plcolor = ((plsc->cmap0[i].r << 16) | 
 		       (plsc->cmap0[i].g << 8) |
 		       (plsc->cmap0[i].b));
 
-	    sprintf(str, "#%06x", (plcolor & 0xFFFFFF));
+	    sprintf(str, "#%06lx", (plcolor & 0xFFFFFF));
 	    Tcl_AppendElement(interp, str);
 	}
 	result = TCL_OK;
@@ -1062,7 +1061,7 @@ plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 	PLFLT h, l, s, r, g, b;
 	int r1, g1, b1;
 
-	sprintf(str, "%ld", plsc->ncp1);
+	sprintf(str, "%d", (int) plsc->ncp1);
 	Tcl_AppendElement(interp, str);
 	for (i = 0; i < plsc->ncp1; i++) {
 	    h = plsc->cmap1cp[i].h;
@@ -1077,7 +1076,7 @@ plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 
 	    plcolor = ((r1 << 16) | (g1 << 8) | (b1));
 
-	    sprintf(str, "#%06x", (plcolor & 0xFFFFFF));
+	    sprintf(str, "#%06lx", (plcolor & 0xFFFFFF));
 	    Tcl_AppendElement(interp, str);
 
 	    sprintf(str, "%02d", (int) (100*plsc->cmap1cp[i].p));
@@ -1363,10 +1362,10 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Draw
-*
-* Processes "draw" widget command.
-* Handles rubber-band drawing.
+ * Draw
+ *
+ * Processes "draw" widget command.
+ * Handles rubber-band drawing.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1442,10 +1441,10 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Info
-*
-* Processes "info" widget command.
-* Returns requested info.
+ * Info
+ *
+ * Processes "info" widget command.
+ * Returns requested info.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1489,11 +1488,11 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Openlink
-*
-* Processes "openlink" widget command.
-* Opens channel (FIFO or socket) for data transfer between client and
-* server.
+ * Openlink
+ *
+ * Processes "openlink" widget command.
+ * Opens channel (FIFO or socket) for data transfer between client and
+ * server.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1565,9 +1564,9 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* process_data
-*
-* Utility function for processing data and other housekeeping.
+ * process_data
+ *
+ * Utility function for processing data and other housekeeping.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1607,10 +1606,10 @@ process_data(Tcl_Interp *interp, register PlFrame *plFramePtr)
 }
 
 /*----------------------------------------------------------------------*\
-* ReadData
-*
-* Reads & processes data.
-* Intended to be installed as a filehandler command.
+ * ReadData
+ *
+ * Reads & processes data.
+ * Intended to be installed as a filehandler command.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1651,10 +1650,10 @@ ReadData(ClientData clientData, int mask)
 }
 
 /*----------------------------------------------------------------------*\
-* Orient
-*
-* Processes "orient" widget command.
-* Handles orientation of plot.
+ * Orient
+ *
+ * Processes "orient" widget command.
+ * Handles orientation of plot.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1686,21 +1685,21 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Print
-*
-* Processes "print" widget command.
-* Handles printing of plot, duh.
-*
-* Creates a temporary file, dumps the current plot to it in metafile form,
-* and then execs the "plpr" script to actually print it.  Since we output
-* it in metafile form here, plpr must invoke plrender to drive the output
-* to the appropriate file type.  The script is responsible for the deletion
-* of the plot metafile.
-*
-* This way of printing is reasonably flexible while retaining a measure
-* of security.  Methods involving setting up the command to print from
-* the Tcl side are not recommended at present since the print command
-* could be changed to something dangerous (like an rm *).
+ * Print
+ *
+ * Processes "print" widget command.
+ * Handles printing of plot, duh.
+ *
+ * Creates a temporary file, dumps the current plot to it in metafile
+ * form, and then execs the "plpr" script to actually print it.  Since we
+ * output it in metafile form here, plpr must invoke plrender to drive the
+ * output to the appropriate file type.  The script is responsible for the
+ * deletion of the plot metafile.
+ *
+ * This way of printing is reasonably flexible while retaining a measure
+ * of security.  Methods involving setting up the command to print from
+ * the Tcl side are not recommended at present since the print command
+ * could be changed to something dangerous (like an rm *).
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1770,11 +1769,11 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Page
-*
-* Processes "page" widget command.
-* Handles parameters such as margin, aspect ratio, and justification
-* of final plot.
+ * Page
+ *
+ * Processes "page" widget command.
+ * Handles parameters such as margin, aspect ratio, and justification
+ * of final plot.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1809,11 +1808,11 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Redraw
-*
-* Processes "redraw" widget command.
-* Turns loose a DoWhenIdle command to redraw plot by replaying contents
-* of plot buffer.
+ * Redraw
+ *
+ * Processes "redraw" widget command.
+ * Turns loose a DoWhenIdle command to redraw plot by replaying contents
+ * of plot buffer.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1834,10 +1833,10 @@ Redraw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Save
-*
-* Processes "save" widget command.
-* Saves plot to a file.
+ * Save
+ *
+ * Processes "save" widget command.
+ * Saves plot to a file.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1948,10 +1947,10 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* View
-*
-* Processes "view" widget command.
-* Handles translation & scaling of view into plot.
+ * View
+ *
+ * Processes "view" widget command.
+ * Handles translation & scaling of view into plot.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -2054,10 +2053,10 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* xScroll
-*
-* Processes "xscroll" widget command.
-* Handles horizontal scroll-bar invoked translation of view into plot.
+ * xScroll
+ *
+ * Processes "xscroll" widget command.
+ * Handles horizontal scroll-bar invoked translation of view into plot.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -2088,10 +2087,10 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* yScroll
-*
-* Processes "yscroll" widget command.
-* Handles vertical scroll-bar invoked translation of view into plot.
+ * yScroll
+ *
+ * Processes "yscroll" widget command.
+ * Handles vertical scroll-bar invoked translation of view into plot.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -2122,13 +2121,13 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* Utility routines
+ * Utility routines
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* UpdateVScrollbar
-*
-* Updates vertical scrollbar if needed.
+ * UpdateVScrollbar
+ *
+ * Updates vertical scrollbar if needed.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -2157,9 +2156,9 @@ UpdateVScrollbar(register PlFrame *plFramePtr)
 }
 
 /*----------------------------------------------------------------------*\
-* UpdateHScrollbar
-*
-* Updates horizontal scrollbar if needed.
+ * UpdateHScrollbar
+ *
+ * Updates horizontal scrollbar if needed.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -2188,11 +2187,10 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
 }
 
 /*----------------------------------------------------------------------*\
-* gbox
-*
-* Returns selection box coordinates.
-* It's best if the TCL script does bounds checking on the input but I do
-* it here as well just to be safe.
+ * gbox
+ *
+ * Returns selection box coordinates.  It's best if the TCL script does
+ * bounds checking on the input but I do it here as well just to be safe.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -2269,125 +2267,4 @@ MapPlFrame(ClientData clientData)
     }
     Tk_MapWindow(plFramePtr->tkwin);
     Tk_Release((ClientData) plFramePtr);
-}
-
-/*----------------------------------------------------------------------*\
-* copybuf
-*
-* Puts command in a static string buffer, to ensure it's in writable
-* memory (grrr...).
-\*----------------------------------------------------------------------*/
-
-static char *cmdbuf = NULL;
-static int cmdbuf_len = 100;
-
-static void
-copybuf(char *cmd)
-{
-    if (cmdbuf == NULL) {
-	cmdbuf_len = 100;
-	cmdbuf = (char *) malloc(cmdbuf_len);
-    }
-
-    if (strlen(cmd) >= cmdbuf_len) {
-	free((void *) cmdbuf);
-	cmdbuf_len = strlen(cmd) + 20;
-	cmdbuf = (char *) malloc(cmdbuf_len);
-    }
-
-    strcpy(cmdbuf, cmd);
-}
-
-/*----------------------------------------------------------------------*\
-* tcl_cmd
-*
-* Evals the specified command, aborting on an error.
-\*----------------------------------------------------------------------*/
-
-static int
-tcl_cmd(Tcl_Interp *interp, char *cmd)
-{
-    dbug_enter("tcl_cmd");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "evaluating command %s\n", cmd);
-#endif
-
-    if (tcl_eval(interp, cmd)) {
-	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
-		cmd, interp->result);
-	return TCL_ERROR;
-    }
-    return TCL_OK;
-}
-
-/*----------------------------------------------------------------------*\
-* tcl_eval
-*
-* Evals the specified string, returning the result.
-* Use a static string buffer to hold the command, to ensure it's in
-* writable memory (grrr...).
-\*----------------------------------------------------------------------*/
-
-static int
-tcl_eval(Tcl_Interp *interp, char *cmd)
-{
-    if (cmdbuf == NULL) 
-	cmdbuf = (char *) malloc(cmdbuf_len);
-
-    if (strlen(cmd) >= cmdbuf_len) {
-	free((void *) cmdbuf);
-	cmdbuf_len = strlen(cmd) + 20;
-	cmdbuf = (char *) malloc(cmdbuf_len);
-    }
-
-    strcpy(cmdbuf, cmd);
-    return(Tcl_VarEval(interp, cmdbuf, (char **) NULL));
-}
-
-/*----------------------------------------------------------------------*\
-* client_cmd
-*
-* Sends specified command to client, aborting on an error.
-* If nowait is set, the command is issued in the background.
-*
-* If commands MUST proceed in a certain order (e.g. initialization), it
-* is safest to NOT run them in the background.
-\*----------------------------------------------------------------------*/
-
-static void
-client_cmd(Tcl_Interp *interp, char *cmd, int nowait, int dp)
-{
-    static char dpsend_cmd0[] = "dp_RPC $client ";
-    static char dpsend_cmd1[] = "dp_RDO $client ";
-    static char tksend_cmd0[] = "send $client ";
-    static char tksend_cmd1[] = "send $client after 1 ";
-    int result;
-
-    dbug_enter("client_cmd");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "Sending command: %s\n", cmd);
-#endif
-
-    copybuf(cmd);
-    if (dp) {
-	if (nowait) 
-	    result = Tcl_VarEval(interp, dpsend_cmd1, cmdbuf,
-				 (char **) NULL);
-	else
-	    result = Tcl_VarEval(interp, dpsend_cmd0, cmdbuf,
-				 (char **) NULL);
-    } 
-    else {
-	if (nowait) 
-	    result = Tcl_VarEval(interp, tksend_cmd1, cmdbuf,
-				 (char **) NULL);
-	else
-	    result = Tcl_VarEval(interp, tksend_cmd0, cmdbuf,
-				 (char **) NULL);
-    }
-
-    if (result) {
-	fprintf(stderr, "Client command \"%s\" failed:\n\t %s\n",
-		cmd, interp->result);
-    }
 }

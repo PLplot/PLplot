@@ -1,29 +1,8 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/05/14 05:41:33  mjl
- * Added a bit more debugging information.
+ * Revision 1.16  1994/06/30 18:43:02  mjl
+ * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
  *
- * Revision 1.14  1994/04/30  16:14:58  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.13  1994/04/08  11:49:30  mjl
- * No longer keep track of byte count, letting the PDF read routines do it
- * for us.  Now recognizes and acts upon the PLESC_EXPOSE and PLESC_REDRAW
- * escape commands.
- *
- * Revision 1.12  1994/03/23  06:52:34  mjl
- * Added support for: color map 1 color selection, color map 0 or color map 1
- * state change (palette change), polygon fills.
- *
- * Revision 1.11  1994/02/07  22:56:18  mjl
- * Fixed error messages to use new iodev data structure.
- *
- * Revision 1.10  1994/02/01  22:43:47  mjl
- * Slight change to error handling for unrecognized commands.
- *
- * Revision 1.9  1994/01/15  17:38:12  mjl
- * Changed to new PDF function call syntax.
 */
 
 /*
@@ -42,28 +21,28 @@
     responsibility and liability with respect to this software's usage or
     its effect upon hardware or computer systems.
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*
-* Support routines to render a PLPLOT byte stream, interpreting the PLPLOT
-* metacode.  
-*
-* Although this code is duplicated to some extent by plrender and the
-* plot buffer redraw code (in plbuf.c), they are all different in some
-* significant ways, namely:
-*
-*    - plrender must always retain backward compatibility code to 
-*      handle old metafiles, as well as stuff to support seeking.
-*
-*    - plbuf by definition is redrawing on the same machine so no 
-*      special effort is necessary to make the byte stream portable,
-*      also, only low-level graphics calls are used (grline, etc)
-*
-* The rendering code here must (by contrast to plbuf) use the high level
-* plot routines (as does plrender), to support local zooms as well as the
-* ability to dump the associated window into plot space to a file, but is
-* otherwise pretty minimal.  A portable byte stream is used since
-* network communication over a socket may be used.
-*
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * Support routines to render a PLPLOT byte stream, interpreting the PLPLOT
+ * metacode.  
+ *
+ * Although this code is duplicated to some extent by plrender and the
+ * plot buffer redraw code (in plbuf.c), they are all different in some
+ * significant ways, namely:
+ *
+ *    - plrender must always retain backward compatibility code to 
+ *      handle old metafiles, as well as stuff to support seeking.
+ *
+ *    - plbuf by definition is redrawing on the same machine so no 
+ *      special effort is necessary to make the byte stream portable,
+ *      also, only low-level graphics calls are used (grline, etc)
+ *
+ * The rendering code here must (by contrast to plbuf) use the high level
+ * plot routines (as does plrender), to support local zooms as well as the
+ * ability to dump the associated window into plot space to a file, but is
+ * otherwise pretty minimal.  A portable byte stream is used since network
+ * communication over a socket may be used.
+ *
 \*----------------------------------------------------------------------*/
 
 /*
@@ -113,15 +92,10 @@ static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
 static PLFLT	x[PL_MAXPOLY], y[PL_MAXPOLY];
 
-/* Stream pointer.  */
-/* Fetched by some routines to directly set plplot state data */
-
-static PLStream	*plsc;
-
 /*----------------------------------------------------------------------*\
-* plr_start()
-*
-* Set default state parameters before anyone else has a chance to.
+ * plr_start()
+ *
+ * Set default state parameters before anyone else has a chance to.
 \*----------------------------------------------------------------------*/
 
 void
@@ -139,9 +113,9 @@ plr_start(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_process()
-*
-* Read & process commands until plr->nbytes bytes have been read.
+ * plr_process()
+ *
+ * Read & process commands until plr->nbytes bytes have been read.
 \*----------------------------------------------------------------------*/
 
 int
@@ -160,13 +134,13 @@ plr_process(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_process1()
-*
-* Process a command.  Note: because of line->polyline compression, this
-* may actually process an arbitrary number of LINE or LINETO commands.
-* Since the data buffer (fifo or socket) is only flushed after a complete
-* command, there should be no danger in rushing blindly ahead to execute
-* each plot command.
+ * plr_process1()
+ *
+ * Process a command.  Note: because of line->polyline compression, this
+ * may actually process an arbitrary number of LINE or LINETO commands.
+ * Since the data buffer (fifo or socket) is only flushed after a complete
+ * command, there should be no danger in rushing blindly ahead to execute
+ * each plot command.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -210,9 +184,9 @@ plr_process1(PLRDev *plr, int c)
 }
 
 /*----------------------------------------------------------------------*\
-* void plr_init()
-*
-* Handle initialization.
+ * void plr_init()
+ *
+ * Handle initialization.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -284,9 +258,9 @@ plr_init(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_line()
-*
-* Draw a line or polyline.
+ * plr_line()
+ *
+ * Draw a line or polyline.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -335,16 +309,16 @@ plr_line(PLRDev *plr, int c)
 }
 
 /*----------------------------------------------------------------------*\
-* get_ncoords()
-*
-* Read n coordinate vectors.
+ * get_ncoords()
+ *
+ * Read n coordinate vectors.
 \*----------------------------------------------------------------------*/
 
 #define plr_rdn(code) \
 if (code) { fprintf(stderr, \
-"Unable to read from %s in %s at line %d, bytecount %ld\n\
-Bytes requested: %ld\n", \
-plr->iodev->typename, __FILE__, __LINE__, plr->pdfs->bp, 2*n); return(-1); }
+"Unable to read from %s in %s at line %d, bytecount %d\n\
+Bytes requested: %d\n", plr->iodev->typename, __FILE__, __LINE__, \
+(int) plr->pdfs->bp, (int) 2*n); return(-1); }
 
 static int
 get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
@@ -363,9 +337,9 @@ get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_eop()
-*
-* Clear screen.
+ * plr_eop()
+ *
+ * Clear screen.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -378,9 +352,9 @@ plr_eop(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_bop()
-*
-* Page advancement.
+ * plr_bop()
+ *
+ * Page advancement.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -398,9 +372,10 @@ plr_bop(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_state()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+ * plr_state()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute,
+ * etc).
 \*----------------------------------------------------------------------*/
 
 static int
@@ -444,7 +419,6 @@ plr_state(PLRDev *plr)
 	PLFLT col1;
 
 	plr_rd( pdf_rd_2bytes(plr->pdfs, &icol1) );
-	plgpls(&plsc);
 	col1 = (double) icol1 / (double) plsc->ncol1;
 	plcol1(col1);
 	break;
@@ -461,7 +435,6 @@ plr_state(PLRDev *plr)
     case PLSTATE_CMAP0:{
 	U_CHAR ncol0;
 
-	plgpls(&plsc);
 	plr_rd( pdf_rd_1byte(plr->pdfs, &ncol0) );
 	plsc->ncol0 = ncol0;
 	for (i = 0; i < plsc->ncol0; i++) {
@@ -475,7 +448,6 @@ plr_state(PLRDev *plr)
     case PLSTATE_CMAP1:{
 	U_SHORT ncol1;
 
-	plgpls(&plsc);
 	plr_rd( pdf_rd_2bytes(plr->pdfs, &ncol1) );
 	plsc->ncol1 = ncol1;
 	for (i = 0; i < plsc->ncol1; i++) {
@@ -491,18 +463,18 @@ plr_state(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_esc()
-*
-* Handle all escape functions.
-* Note that most escape functions in the TK driver make direct widget
-* commands.
-*
-* Functions:
-*
-*	PLESC_EXPOSE	Force an expose
-*	PLESC_REDRAW	Force a redraw
-*	PLESC_FILL	Fill polygon
-*
+ * plr_esc()
+ *
+ * Handle all escape functions.
+ * Note that most escape functions in the TK driver make direct widget
+ * commands.
+ *
+ * Functions:
+ *
+ *	PLESC_EXPOSE	Force an expose
+ *	PLESC_REDRAW	Force a redraw
+ *	PLESC_FILL	Fill polygon
+ *
 \*----------------------------------------------------------------------*/
 
 static int
@@ -528,9 +500,9 @@ plr_esc(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plresc_fill()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * plresc_fill()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
 \*----------------------------------------------------------------------*/
 
 static int
@@ -548,9 +520,9 @@ plresc_fill(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_get()
-*
-* Read & return the next command
+ * plr_get()
+ *
+ * Read & return the next command
 \*----------------------------------------------------------------------*/
 
 static int
@@ -567,9 +539,9 @@ plr_get(PLRDev *plr)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_unget()
-*
-* Push back the last command read.
+ * plr_unget()
+ *
+ * Push back the last command read.
 \*----------------------------------------------------------------------*/
 
 static int
