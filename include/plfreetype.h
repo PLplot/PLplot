@@ -83,6 +83,7 @@ typedef struct FT_Data {
  *  fonts have been changed .
  */
 
+    PLFLT chrht; /* Mirror of pls's copy so we can detect when the font SIZE has been changed */
 
     FT_Matrix           matrix;         /* used for rotating etc... the font. */
     FT_Vector           pos;            /* used for calculating offsets of text boxes/sizes */

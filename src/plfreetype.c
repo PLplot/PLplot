@@ -241,6 +241,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
     FT_Vector  akerning, adjust;
     char esc;
 
+
 /* copy string to modifiable memory */
     strncpy(FT->textbuf, text, NTEXT_ALLOC-1);
     if (len >= NTEXT_ALLOC)
@@ -282,6 +283,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 	    if (FT->textbuf[i+1]==esc) continue;
 
 	    switch(FT->textbuf[i+1]) {
+
 	    case 'f':  /* Change Font */
 	    case 'F':
                 switch (FT->textbuf[i+2]) {
@@ -616,6 +618,7 @@ void FT_SetFace( PLStream *pls, int fnt )
 {
     FT_Data *FT=(FT_Data *)pls->FT;
     double font_size = pls->chrht * 72/25.4; /* font_size in points, chrht is in mm */
+    FT->chrht=pls->chrht;
 
     if (FT->face!=NULL) {
 	FT_Done_Face(FT->face);
@@ -659,7 +662,12 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     if ((pls->plbuf_write==1)&&(FT->redraw==0))
        pl_save_FreeType_text_to_buffer (pls, args);
 
-    if (FT->cfont!=pls->cfont) FT_SetFace(pls,pls->cfont);
+/*
+ *   Work out if the either the font size, or the font face has changed.
+ *   If it has, then we will reload the font face with the new dimentions
+ */
+    if ((FT->cfont!=pls->cfont)||(FT->chrht!=pls->chrht))
+        FT_SetFace(pls,pls->cfont);
 
 
 /*  this will help work out underlining and overlining
