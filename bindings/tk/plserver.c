@@ -1,0 +1,369 @@
+/* 
+ * plserver.c
+ * Maurice LeBrun
+ * 30-Apr-93
+ *
+ * Plplot graphics server.
+ *
+ * Can be run as a child process from the plplot TK driver.
+ *
+ * Alternately it can be used as a generic code server (with the appropriate
+ * TCL initialization) for launching applications that plot into plplot
+ * graphics widgets.
+ */
+
+#include "plserver.h"
+
+/* Externals */
+
+extern int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
+
+/* Global variables */
+
+static Tk_Window w;			/* Main window */
+static Tcl_Interp *interp;		/* Interpreter */
+
+static char *program;			/* Name of program */
+
+/* Command line arguments */
+
+static char *client;			/* Name of client main window */
+static char *init;			/* TCL initialization proc */
+static char *display;			/* X-windows display */
+static char *geometry;			/* x window dimension */
+static char *auto_path;			/* addition to auto_path */
+static char *child;			/* set if child of TK driver */
+static char *mkidx;			/* Create a new tclIndex file */
+
+Tk_ArgvInfo argTable[] = {
+{"-client", TK_ARGV_STRING, (char *) NULL, (char *) &client,
+     "Client to notify at startup, if any"},
+{"-auto_path", TK_ARGV_STRING, (char *) NULL, (char *) &auto_path,
+     "Additional directory(s) to autoload"},
+{"-init", TK_ARGV_STRING, (char *) NULL, (char *) &init,
+     "TCL initialization proc"},
+{"-display", TK_ARGV_STRING, (char *) NULL, (char *) &display,
+     "Display to use"},
+{"-geometry", TK_ARGV_STRING, (char *) NULL, (char *) &geometry,
+     "Initial window geometry"},
+{"-mkidx", TK_ARGV_CONSTANT, (char *) 1, (char *) &mkidx,
+     "Create new tclIndex file"},
+{"-child", TK_ARGV_CONSTANT, (char *) 1, (char *) &child,
+     "Set ONLY when child of plplot TK driver"},
+{(char *) NULL, TK_ARGV_END, (char *) NULL, (char *) NULL,
+     (char *) NULL}
+};
+
+/* Support routine prototypes */
+
+static void  configure		(void);
+static void  parse_cmdline	(int *, char **);
+static void  abort_session	(char *);
+static void  set_auto_path	(void);
+static void  NotifyClient	(ClientData);
+static void  tcl_cmd		(char *);
+static int   tcl_eval		(char *);
+
+/*----------------------------------------------------------------------*\
+* main
+*
+* Main program for server process.
+\*----------------------------------------------------------------------*/
+
+int
+main(int argc, char **argv)
+{
+    program = argv[0];
+
+#ifdef DEBUG
+    fprintf(stderr, "%s -- PID: %d, PGID: %d, PPID: %d\n",
+	    program, getpid(), getpgrp(), getppid());
+#endif
+
+/* Instantiate a TCL interpreter. */
+
+    interp = Tcl_CreateInterp();
+
+/* Parse command-line arguments. */
+
+    parse_cmdline(&argc, argv);
+
+/* Initialize top level window */
+
+    if (tk_toplevel(&w, interp, display, argv[0], 0))
+	abort_session("");
+
+/* Initialize stuff known to interpreter */
+
+    configure();
+
+/* Run startup code */
+
+    if (tk_source(w, interp, "$tk_library/wish.tcl"))
+	abort_session("");
+
+/* Create new tclIndex file -- a convenience */
+
+    if (mkidx != NULL) {
+	tcl_cmd("auto_mkindex . *.tcl");
+	client = NULL;
+	abort_session("");
+    }
+
+/* Set up auto_path */
+
+    set_auto_path();
+
+/* Configure main window */
+
+    tcl_cmd(init);
+
+/* Send notification to client if necessary */
+
+    if (client != NULL) 
+	Tk_DoWhenIdle(NotifyClient, (ClientData) client);
+
+/* Main loop */
+
+    Tk_MainLoop();
+
+/* Normal clean up */
+
+    Tcl_DeleteInterp(interp);
+
+    exit(0);
+}
+
+/*----------------------------------------------------------------------*\
+* abort_session
+*
+* Terminates with an error, doing whatever cleanup appears to be necessary.
+\*----------------------------------------------------------------------*/
+
+static void
+abort_session(char *errmsg)
+{
+    dbug_enter("abort_session");
+
+    if (*errmsg != '\0')
+	fprintf(stderr, "%s\n", errmsg);
+
+/* If client exists, tell it to self destruct */
+
+    if (client != NULL)
+	Tcl_Eval(interp, "send $client after 1 abort", 0, (char **) NULL);
+
+/* If main window exists, blow it away */
+
+    if (w != NULL)
+	Tcl_Eval(interp, "destroy .", 0, (char **) NULL);
+
+    exit(1);
+}
+
+/*----------------------------------------------------------------------*\
+* parse_cmdline
+*
+* Handles parsing of command line and some diagnostic output.
+\*----------------------------------------------------------------------*/
+
+static void
+parse_cmdline(int *p_argc, char **argv)
+{
+    dbug_enter("parse_cmdline");
+
+    if (Tk_ParseArgv(interp, w, p_argc, argv, argTable, 0) != TCL_OK) {
+	fprintf(stderr, "%s\n", interp->result);
+	abort_session("");
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "\
+	\n In server, client:   %s\
+	\n            display:  %s\
+	\n            geometry: %s\
+	\n            init:     %s\
+	\n",
+	    client, display, geometry, init);
+#endif
+}
+
+/*----------------------------------------------------------------------*\
+* configure
+*
+* Does global variable & command initialization, mostly for interpreter.
+\*----------------------------------------------------------------------*/
+
+static void
+configure(void)
+{
+    dbug_enter("configure");
+
+/* Use main window name as program name, now that we have it */
+
+    program = Tk_Name(w);
+
+/* Tell interpreter about commands. */
+
+    Tcl_CreateCommand(interp, "plframe", plFrameCmd,
+                      (ClientData) w, (void (*)()) NULL);
+
+/* Now variable information. */
+/* For uninitialized variables it's better to skip the Tcl_SetVar. */
+
+    if (geometry != NULL)
+	Tcl_SetVar(interp, "geometry", geometry, 0);
+
+/* Pass client variable to interpreter if set.  Sometimes useful. */
+
+    if (client != NULL)
+	Tcl_SetVar(interp, "client", client, 0);
+
+/* Tell interpreter about plserver's ancestry */
+
+    if (child != NULL)
+	Tcl_SetVar(interp, "child", child, 0);
+}
+
+/*----------------------------------------------------------------------*\
+* set_autopath
+*
+* Sets up auto_path variable
+* Note: there is no harm in adding extra directories, even if they don't
+* actually exist (aside from a slight increase in processing time when
+* the autoloaded proc is first found).
+\*----------------------------------------------------------------------*/
+
+static void
+set_auto_path(void)
+{
+    char *buf, *ptr, *path;
+
+    dbug_enter("set_auto_path");
+    buf = malloc(256 * sizeof(char));
+
+/* Add /usr/local/plplot/tcl */
+
+    Tcl_SetVar(interp, "dir", "/usr/local/plplot/tcl", 0);
+    Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
+	     (char **) NULL);
+
+#ifdef DEBUG
+    fprintf(stderr, "plserver: adding %s to auto_path\n", "/usr/local/plplot");
+    path = Tcl_GetVar(interp, "auto_path", 0);
+    fprintf(stderr, "plserver: auto_path is %s\n", path);
+#endif
+
+/* Add $HOME/bin */
+
+    ptr = getenv("HOME");
+    if (ptr != NULL) {
+	strcpy(buf, ptr);
+	strcat(buf, "/bin");
+	Tcl_SetVar(interp, "dir", buf, 0);
+	Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
+		 (char **) NULL);
+#ifdef DEBUG
+	fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "plserver: auto_path is %s\n", path);
+#endif
+
+    }
+
+/* Add $PL_LIBRARY */
+
+    ptr = getenv("PL_LIBRARY");
+    if (ptr != NULL) {
+	Tcl_SetVar(interp, "dir", ptr, 0);
+	Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
+		 (char **) NULL);
+#ifdef DEBUG
+	fprintf(stderr, "plserver: adding %s to auto_path\n", ptr);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "plserver: auto_path is %s\n", path);
+#endif
+    }
+
+/* Add cwd */
+
+    if (getcwd(buf, 256) == NULL) {
+	abort_session("could not determine cwd");
+    }
+    Tcl_SetVar(interp, "dir", buf, 0);
+    Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
+	     (char **) NULL);
+
+#ifdef DEBUG
+    fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
+    path = Tcl_GetVar(interp, "auto_path", 0);
+    fprintf(stderr, "plserver: auto_path is %s\n", path);
+#endif
+
+/* Add user-specified directory(s) */
+
+    if (auto_path != NULL) {
+	Tcl_SetVar(interp, "dir", auto_path, 0);
+	Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
+		 (char **) NULL);
+#ifdef DEBUG
+	fprintf(stderr, "plserver: adding %s to auto_path\n", auto_path);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "plserver: auto_path is %s\n", path);
+#endif
+
+    }
+
+    free ((void *) buf);
+}
+
+/*----------------------------------------------------------------------*\
+* NotifyClient
+*
+* Sends client program notification
+\*----------------------------------------------------------------------*/
+
+static void
+NotifyClient(ClientData clientData)
+{
+    char *client = (char *) clientData;
+
+    Tcl_SetVar(interp, "plserver", program, 0);
+    Tcl_SetVar(interp, "client", client, 0);
+    tcl_cmd("send $client set plserver $plserver");
+}
+
+/*----------------------------------------------------------------------*\
+* tcl_cmd
+*
+* Evals the specified command, aborting on an error.
+\*----------------------------------------------------------------------*/
+
+static void
+tcl_cmd(char *cmd)
+{
+
+    dbug_enter("tcl_cmd");
+#ifdef DEBUG_ENTER
+    fprintf(stderr, "plserver: evaluating command %s\n", cmd);
+#endif
+
+    if (tcl_eval(cmd)) {
+	fprintf(stderr, "plserver: TCL command \"%s\" failed:\n\t %s\n",
+		cmd, interp->result);
+	abort_session("");
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* tcl_eval
+*
+* Evals the specified string, returning the result.
+* A front-end to Tcl_Eval just to make it easier to use here.
+\*----------------------------------------------------------------------*/
+
+static int
+tcl_eval(char *cmd)
+{
+    return(Tcl_Eval(interp, cmd, 0, (char **) NULL));
+}
