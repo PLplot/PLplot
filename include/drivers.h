@@ -262,6 +262,7 @@ void plD_bop_png                (PLStream *);
 void plD_tidy_png               (PLStream *);
 void plD_state_png              (PLStream *, PLINT);
 void plD_esc_png                (PLStream *, PLINT, void *);
+void plD_eop_jpg                (PLStream *);
    
 void plD_init_null		(PLStream *);
 void plD_line_null		(PLStream *, short, short, short, short);

@@ -748,6 +748,22 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
+#ifdef PLD_jpg
+    {
+        "JPG File (Independent JPEG Group/GD)",
+	"jpg",
+	0,
+	plD_init_png,
+	plD_line_png,
+	plD_polyline_png,
+	plD_eop_jpg,
+	plD_bop_png,
+	plD_tidy_png,
+	plD_state_png,
+	plD_esc_png
+    },
+#endif
+
 #ifdef PLD_null
     {
 	"Null device",
