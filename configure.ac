@@ -7,6 +7,7 @@ dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
 dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
 dnl Copyright (C) 2004  Andrew Roach
+dnl Copyright (C) 2005  Thomas J. Duck
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -230,6 +231,7 @@ dnl =======================================================================
 
 m4_include(cf/drivers-init.ac)
 m4_include(cf/cgm.ac)
+m4_include(cf/gcw.ac)
 m4_include(cf/gd.ac)
 m4_include(cf/gnome.ac)
 m4_include(cf/linuxvga.ac)
@@ -256,6 +258,9 @@ dnl =======================================================================
 dnl Notice that there are other calls to AC_CONFIG_FILES in the cf/*.ac
 dnl files.
 
+dnl Note: Must build the python/gcw binding *after* building drivers; hence
+dnl separate entry.  TJD
+
 AC_CONFIG_FILES([
     Makefile
     fonts/Makefile
@@ -263,6 +268,7 @@ AC_CONFIG_FILES([
     include/Makefile
     data/Makefile
     bindings/Makefile
+    bindings/python/gcw/Makefile
     cf/Makefile
     drivers/Makefile
     examples/Makefile
