@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.58  1994/04/18 20:02:59  furnish
+ * Revision 1.59  1994/04/25 19:04:51  mjl
+ * Added typedef for PLControlPt, used in specifying cmap1.  Added function
+ * prototypes for plHLS_RGB (new) and plRGB_HLS (now global), for converting
+ * between HLS and RGB color specifications.
+ *
+ * Revision 1.58  1994/04/18  20:02:59  furnish
  * Autodetect inclusion of tk.h.
  *
  * Revision 1.57  1994/04/18  19:23:25  furnish
@@ -327,6 +332,12 @@ typedef struct {
 typedef struct {
     unsigned char r, g, b;
 } PLColor;
+
+/* PLControlPt is how cmap1 control points are represented. */
+
+typedef struct {
+    PLFLT h, l, s, i;
+} PLControlPt;
 
 /*----------------------------------------------------------------------*\
 *		BRAINDEAD-ness
@@ -1389,6 +1400,14 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
 
 void
 plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
+
+/* Functions for converting between HLS and RGB color space */
+
+void
+plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+
+void
+plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
 /* plframe widget command */
 
