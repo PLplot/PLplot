@@ -34,6 +34,12 @@ This was to be a quick bug fix update, but I got going on several major
 changes plus addition of user contributions.  So there are some important
 new capabilities as well as a lot of bug fixes.
 
+Note: as a result of a lack of time, most of the DOS drivers and the Amiga
+driver have not been upgraded to work with the new configure/build files.
+The DOS DJGPP port is one exception.  So these are essentially useless
+until these are done.  I will issue another beta as soon as these are
+done, hopefully within a week or two.
+
 ------------------------------------------------------------------------
 Configuration, building, and installation:
 
