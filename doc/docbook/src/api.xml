@@ -1701,7 +1701,7 @@ reference stream to the current stream
 
   <sect1 id="plenv0" renderas="sect3">
     <title>
-      <function>plenv0</function>: Same as plenv() but if in multiplot
+      <function>plenv0</function>: Same as &plenv; but if in multiplot
       mode does not advance the subpage, instead clears it.
     </title>
     <para>
@@ -1787,7 +1787,7 @@ reference stream to the current stream
 	  <para>
 	    <literal>-1</literal>: the scales
             will not be set, the user must set up the scale before calling
-            plenv0() using plsvpa(), plvasp() or other.
+            &plenv0; using &plsvpa;, &plvasp; or other.
          </para>
 	</listitem>
 	<listitem>
@@ -2036,7 +2036,7 @@ positions in both coordinates.
 	  <para>
 	    <literal>-1</literal>: the scales
             will not be set, the user must set up the scale before calling
-            plenv() using plsvpa(), plvasp() or other.
+            &plenv; using &plsvpa;, &plvasp; or other.
          </para>
 	</listitem>
 	<listitem>
@@ -5276,8 +5276,8 @@ default
       <literal><parameter>opt</parameter></literal> controls the way in
       which the surface is displayed.  For further details see <xref
       linkend="tri-d-plots"/>.
-      The only difference between plmesh() and plot3d() is that plmesh() draws
-      the botton side of the surface, while plot3d() only draws the surface as
+      The only difference between &plmesh; and &plot3d; is that &plmesh; draws
+      the botton side of the surface, while &plot3d; only draws the surface as
       view from the top.
     </para>
 
@@ -5427,8 +5427,8 @@ default
     a contour plot can be drawn at the base XY plane, and a curtain can be drawn between
     the plotted function border and the base XY plane.
     The arguments are identical to <function>plmeshc</function>. The only difference between
-    plmeshc() and plot3dc() is that plmeshc() draws the botton side of the surface, while
-    plot3dc() only draws the surface as viewed from the top.
+    &plmeshc; and &plot3dc; is that &plmeshc; draws the botton side of the surface, while
+    &plot3dc; only draws the surface as viewed from the top.
     </para>
 
     </sect1>
