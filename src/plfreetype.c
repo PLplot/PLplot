@@ -1,13 +1,13 @@
 
 /*                  Support routines for freetype font engine
- *  
+ *
  *  This file contains a series of support routines for drivers interested
  *  in using freetype rendered fonts instead of plplot plotter fonts.
  *  Freetype supports a gerth of font formats including TrueType, OpenType,
  *  Adobe Type1, Type42 etc... the list seems almost endless. Any bitmap
  *  driver should be able to use any of these freetype fonts from plplot if
- *  these routines are properly initialised. 
- *  
+ *  these routines are properly initialised.
+ *
  *  Freetype support is not intended to be a "feature" of the common API,
  *  but is  implemented as a driver-specific optional extra invoked via the
  *  -drvopt command line toggle. It is intended to be used in the context of
@@ -19,25 +19,25 @@
  *  things that you can do with a plotter font however, like greek
  *  characters superscripting, and selecting one of the four "pre-defined"
  *  plplot font types. At present underlining and overlining are not
- *  supported. 
- *  
+ *  supported.
+ *
  *  To give the user some level of control over the fonts that are used,
  *  environmental variables can be set to over-ride the definitions used by
  *  the five default plplot fonts.
- *  
+ *
  *  The exact syntax for evoking freetype fonts is dependant on each
  *  driver, but for the GD and GNUSVGA drivers I have followed the syntax of
  *  the PS driver and use the command-line switch of "-drvopt text" to
  *  activate the feature, and suggest other programmers do the same for
  *  commonality.
- *  
+ *
  *  Both anti-aliased and monochrome font rendering is supported by these
  *  routines. How these are evoked depends on the programmer, but with the
  *  GD and GNUSVGA driver families I have used the command-line switch
  *  "-drvopt smooth" to activate the feature; but, considering you also need
  *  to turn freetype on, it would probably really be more like "-drvopt
  *  text,smooth".
- *  
+ *
  */
 
 
@@ -98,24 +98,15 @@ static PLFLT CalculateIncriment( int bg, int fg, int levels);
 
 void FT_StrX_Y(PLStream *pls,const char *text,int *xx, int *yy)
 {
-FT_Data *FTx=(FT_Data *)pls->FT;
+FT_Data *FT=(FT_Data *)pls->FT;
 short len=strlen(text);
 short i=0;
 FT_Vector  akerning;
-FT_Data FT;
 int x=0,y=0;
 char esc;
 
 plgesc(&esc);
 
-/*
- * We want to non-destructively do some "simulated" FT calls, so we will copy
- * the FT_data structure. Most of it will be scrambled at the end, so we will
- * just leave it to the pixies, and use the info we obtain with the real data
- * in another function.
- */
-
-memcpy(&FT,FTx,sizeof(FT_Data));
 
 /*
  *  y is negative since Freetype goes "bottom up" rather than "top down"
@@ -127,7 +118,7 @@ memcpy(&FT,FTx,sizeof(FT_Data));
  * and this is the best thing I could think of.
  */
 
-y -= FT.face->size->metrics.height;
+y -= FT->face->size->metrics.height;
 
 for (i=0;i<len;i++)     /* walk through the text character by character */
     {
@@ -153,7 +144,7 @@ for (i=0;i<len;i++)     /* walk through the text character by character */
                         FT_SetFace( pls ,1);
                         break;
                        }
-                FT_Set_Transform( FT.face, &FT.matrix, &FT.pos );
+                FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
                 i+=2;
                 break;
                 case 'u': /* super script */
@@ -165,9 +156,9 @@ for (i=0;i<len;i++)     /* walk through the text character by character */
      else
         {
 
-     if ((i>0)&&FT_HAS_KERNING(FT.face))  /* see if we have kerning for the particular character pair */
+     if ((i>0)&&FT_HAS_KERNING(FT->face))  /* see if we have kerning for the particular character pair */
         {
-         FT_Get_Kerning( FT.face,
+         FT_Get_Kerning( FT->face,
                          text[i-1],
                          text[i],
                   ft_kerning_default,
@@ -185,7 +176,7 @@ for (i=0;i<len;i++)     /* walk through the text character by character */
       * cache support is added, naturally this will have to change.
       */
 
-     FT_Load_Char( FT.face, text[i], FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
+     FT_Load_Char( FT->face, text[i], FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
 
      /*
       * Add in the "advancement" needed to position the cursor for the next
@@ -193,8 +184,8 @@ for (i=0;i<len;i++)     /* walk through the text character by character */
       * Y is negative because freetype does things upside down
       */
 
-     x += (FT.face->glyph->advance.x);
-     y -= (FT.face->glyph->advance.y);
+     x += (FT->face->glyph->advance.x);
+     y -= (FT->face->glyph->advance.y);
     }
     }
 
@@ -670,9 +661,9 @@ FT_WriteStr(pls,args->string,x,y); /* write it out */
 /*----------------------------------------------------------------------*\
  * plD_FreeType_Destroy()
  *
- * Deallocates memory to Freerty structure
- * Cloeses the freetype library.
- * closes fonts
+ * Restores cmap0 if it had been modifed for anti-aliasing
+ * closes the freetype library.
+ * Deallocates memory to the Freetype structure
 \*----------------------------------------------------------------------*/
 
 void plD_FreeType_Destroy(PLStream *pls)
@@ -681,6 +672,7 @@ FT_Data *FT=(FT_Data *)pls->FT;
 
 if (FT!=NULL)
    {
+    if (FT->smooth_text==1) plscmap0n(FT->ncol0_org);
     FT_Done_Library(FT->library);
     free(pls->FT);
     pls->FT=NULL;
@@ -702,11 +694,13 @@ static PLFLT CalculateIncriment( int bg, int fg, int levels)
 {
 PLFLT ret=0;
 
-if (fg>bg)
-   ret=((fg+1)-bg)/levels;
-else if (fg<bg)
-   ret=(((fg-1)-bg)/levels);
-
+if (levels>1)
+   {
+    if (fg>bg)
+       ret=((fg+1)-bg)/levels;
+    else if (fg<bg)
+       ret=(((fg-1)-bg)/levels);
+   }
 return(ret);
 }
 
