@@ -748,9 +748,8 @@ AC_DEFUN([PYTHON_DEVEL],[
 			break
 		fi
 	done
-	for i in $python_path ; do
+	while test "$python_path" != "${python_path%/Python.h}"; do
 		python_path=${python_path%/Python.h}
-		break
 	done
 	AC_MSG_RESULT([$python_path])
 	if test -z "$python_path" ; then
@@ -767,9 +766,8 @@ AC_DEFUN([PYTHON_DEVEL],[
 			break
 		fi
 	done
-	for i in $python_path ; do
+	while test "$python_path" != "${python_path%/libpython*}"; do
 		python_path=${python_path%/libpython*}
-		break
 	done
 	AC_MSG_RESULT([$python_path])
 	if test -z "$python_path" ; then
