@@ -16,7 +16,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.1  1995/01/27 02:48:03  mjl
+# Revision 1.2  1995/04/24 21:27:24  mjl
+# Removed the "loopback" parameter since it's no longer necessary.
+#
+# Revision 1.1  1995/01/27  02:48:03  mjl
 # New front-end demo file for use from pltcl.  Uses new "loopback" command
 # to run scripts also used with a plframe widget.
 #
@@ -25,5 +28,5 @@
 for {set i 1} {$i <= 16} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
-    proc $i {} "$demo loopback"
+    proc $i {} "$demo"
 }
