@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/03/16 06:47:35  mjl
-   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
-   more robust.
+   Revision 1.13  1993/03/18 07:05:17  mjl
+   Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
+   driver and renderer.  These are really not necessary when a metafile is
+   being used and can be aggravating when using the xterm driver.
 
+ * Revision 1.12  1993/03/16  06:47:35  mjl
+ * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+ * more robust.
+ *
  * Revision 1.11  1993/03/15  21:39:18  mjl
  * Changed all _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -395,10 +400,6 @@ plm_color(PLStream *pls)
 void
 plm_text(PLStream *pls)
 {
-    U_CHAR c = (U_CHAR) SWITCH_TO_TEXT;
-
-    plm_wr(write_1byte(pls->OutFile, c));
-    pls->bytecnt++;
 }
 
 /*----------------------------------------------------------------------*\
@@ -410,10 +411,6 @@ plm_text(PLStream *pls)
 void
 plm_graph(PLStream *pls)
 {
-    U_CHAR c = (U_CHAR) SWITCH_TO_GRAPH;
-
-    plm_wr(write_1byte(pls->OutFile, c));
-    pls->bytecnt++;
 }
 
 /*----------------------------------------------------------------------*\

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.20  1993/03/16 06:47:43  mjl
-   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
-   more robust.
+   Revision 1.21  1993/03/18 07:05:23  mjl
+   Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
+   driver and renderer.  These are really not necessary when a metafile is
+   being used and can be aggravating when using the xterm driver.
 
+ * Revision 1.20  1993/03/16  06:47:43  mjl
+ * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+ * more robust.
+ *
  * Revision 1.19  1993/03/15  21:49:21  mjl
  * Change to allow plrender to abort a plot mid-page in order to respond to
  * a user seek request.  Now it processes <backspace> or <page up> or <delete>
@@ -125,7 +130,6 @@ static void	plr_line	(U_CHAR c);
 static void	plr_clr		(U_CHAR c);
 static void	plr_page	(U_CHAR c);
 static void	plr_color	(U_CHAR c);
-static void	plr_switch	(U_CHAR c);
 static void	plr_width	(U_CHAR c);
 static void	plr_esc		(U_CHAR c);
 static void	plresc_rgb	(void);
@@ -425,7 +429,6 @@ process_next(U_CHAR c)
 
       case SWITCH_TO_TEXT:
       case SWITCH_TO_GRAPH:
-	plr_switch(c);
 	break;
 
       case NEW_WIDTH:
@@ -731,22 +734,6 @@ plr_color(U_CHAR c)
 	plm_rd(read_2bytes(MetaFile, &icol));
 	plcol(icol);
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plr_switch()
-*
-* Switch between graphics/text modes.
-\*----------------------------------------------------------------------*/
-
-static void
-plr_switch(U_CHAR c)
-{
-    if (c == SWITCH_TO_TEXT)
-	pltext();
-
-    else if (c == SWITCH_TO_GRAPH)
-	plgra();
 }
 
 /*----------------------------------------------------------------------*\
