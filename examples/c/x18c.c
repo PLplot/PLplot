@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/06/01 21:40:15  mjl
+ * Revision 1.10  1998/12/01 20:47:12  furnish
+ * Minor corrections to float decls.
+ *
+ * Revision 1.9  1995/06/01  21:40:15  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
  *
@@ -121,7 +124,7 @@ main(int argc, char *argv[])
 
 void test_poly(int k)
 {
-    float *x, *y, *z;
+    PLFLT *x, *y, *z;
     float theta, phi;
     int i, j;
     float pi, two_pi;
