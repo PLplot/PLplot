@@ -12,11 +12,17 @@
 #
 # -----------------------------------------------------------------------------
 
-TCL_C		= tclAPI.c tclMain.c tclMatrix.c
-TCL_OBJ		= tclAPI$O tclMatrix$O
+TCL_C		= tclAPI.c tclMain.c
+TCL_OBJ		= tclAPI$O
 TCL_OBJ_SA	= tclMain$O 
 TCL_EXE		= pltcl$E tclIndex
 TCL_INSTALL	= install_tcl
+
+MAT_C		= tclMatrix.c matrixInit.c
+MAT_OBJS	= tclMatrix$O matrixInit$O
+MATLIB_AR	= libMatrix.a
+MAT_INSTALL	= install_mat
+MAT_LINK	= -lMatrix
 
 tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 
@@ -35,7 +41,10 @@ install_tcl:
 	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
 	-cp tclIndex $(TCL_DIR)
 	-cd $(top_srcdir)/bindings/tcl; \
-	 cp pltcl.h tclMatrix.h $(INCLUDE_DIR)
+	 cp pltcl.h $(INCLUDE_DIR)
 	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
 	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
 
+install_mat:
+	cp tclMatrix.h $(INCLUDE_DIR)
+	cp libMatrix* $(LIB_DIR)
