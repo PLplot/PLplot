@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.51  1995/05/06 17:15:14  mjl
+ * Revision 1.52  1995/06/01 21:37:16  mjl
+ * Changes to header file inclusion.
+ *
+ * Revision 1.51  1995/05/06  17:15:14  mjl
  * Now saves the child process PID and uses it to wait for it to complete at
  * exit, for a bit nicer of error termination.  Still needs to be tested on
  * more platforms.  Improved debugging output and switched to new pldebug()
@@ -53,7 +56,7 @@
  *	30-Apr-93
  *
  *	PLplot Tcl/Tk and Tcl-DP device drivers.
- *	Should be broken up somewhat better to prepare for DP w/o X.
+ *	Should be broken up somewhat better to allow use of DP w/o X.
  */
 
 /*
@@ -66,11 +69,10 @@
 
 #ifdef PLD_tk
 
-#include "plplotP.h"
-#include "pltk.h"
-#include "plplotTK.h"
-#include "plplotX.h"
+#include "pltkd.h"
+#include "plxwd.h"
 #include "pltcl.h"
+#include "tcpip.h"
 #include "drivers.h"
 #include "metadefs.h"
 #include "plevent.h"

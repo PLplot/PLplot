@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.63  1995/05/19 22:16:58  mjl
+ * Revision 1.64  1995/06/01 21:37:23  mjl
+ * Changes to header file inclusion.
+ *
+ * Revision 1.63  1995/05/19  22:16:58  mjl
  * Undid some of the damage from the last commit.  It turns out that while
  * writes to the screen first look better on a resize, writes to the pixmap
  * first (which is blitted to the screen when the write is finished) look
@@ -102,7 +105,7 @@
 
 #ifdef PLD_xwin
 #include "plplotP.h"
-#include "plplotX.h"
+#include "plxwd.h"
 #include "drivers.h"
 #include "plevent.h"
 
