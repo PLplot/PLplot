@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.54  1994/03/22 23:18:01  furnish
+ * Revision 1.55  1994/03/23 07:03:36  mjl
+ * plplot.h now includes stdio.h and stdlib.h !  This change afforded a
+ * significant simplification of the header file structure, and should
+ * rarely be an imposition (most files require these anyway).  Many new
+ * function prototypes added, such as the color and colormap setting
+ * functions for dealing with cmap 1, and plshade and its siblings.
+ *
+ * Revision 1.54  1994/03/22  23:18:01  furnish
  * Include a prototype for plFrameCmd if using Tk.
  *
  * Revision 1.53  1994/01/17  21:34:21  mjl
@@ -92,6 +99,12 @@
 * "plplotP.h", which includes this file as well as all the internally-
 * visible declarations, etc.  
 \*----------------------------------------------------------------------*/
+
+/* The majority of PLPLOT source files require these, so.. */
+/* Under ANSI C, they can be included any number of times */
+
+#include <stdio.h>
+#include <stdlib.h>
 
 /*----------------------------------------------------------------------*\
 *        SYSTEM IDENTIFICATION
@@ -308,12 +321,12 @@ typedef struct {
 /*----------------------------------------------------------------------*\
 *		BRAINDEAD-ness
 *
-*  Some systems allow the Fortran & C namespaces to clobber each other.
-*  For plplot to work from Fortran on these systems, we must name the the
-*  externally callable C functions something other than their Fortran entry
-*  names.  In order to make this as easy as possible for the casual user,
-*  yet reversible to those who abhor my solution, I have done the
-*  following:
+* Some systems allow the Fortran & C namespaces to clobber each other.
+* For plplot to work from Fortran on these systems, we must name the the
+* externally callable C functions something other than their Fortran entry
+* names.  In order to make this as easy as possible for the casual user,
+* yet reversible to those who abhor my solution, I have done the
+* following:
 *
 *	The C-language bindings are actually different from those
 *	described in the manual.  Macros are used to convert the
@@ -321,24 +334,38 @@ typedef struct {
 *	user MUST include plplot.h in order to get the name
 *	redefinition correct.
 *
-*  Sorry to have to resort to such an ugly kludge, but it is really the
-*  best way to handle the situation at present.  If all available compilers
-*  offer a way to correct this stupidity, then perhaps we can eventually
-*  reverse it (there is a way now, by throwing the -DNOBRAINDEAD switch,
-*  but I discourage you from doing this unless you know what you are
-*  doing).  If you feel like screaming at someone (I sure do), please
-*  direct it at your nearest system vendor who has a braindead shared
-*  C/Fortran namespace.  Some vendors do offer compiler switches that
-*  change the object names, but then everybody who wants to use the package
-*  must throw these same switches, leading to no end of trouble.
+* Sorry to have to resort to such an ugly kludge, but it is really the
+* best way to handle the situation at present.  If all available compilers
+* offer a way to correct this stupidity, then perhaps we can eventually
+* reverse it (there is a way now, by throwing the -DNOBRAINDEAD switch,
+* but I discourage you from doing this unless you know what you are
+* doing).  If you feel like screaming at someone (I sure do), please
+* direct it at your nearest system vendor who has a braindead shared
+* C/Fortran namespace.  Some vendors do offer compiler switches that
+* change the object names, but then everybody who wants to use the package
+* must throw these same switches, leading to no end of trouble.
 *
-*  Note that this definition should not cause any noticable effects, with
-*  the exception of when doing PLPLOT debugging, in which case you will
-*  need to remember the real function names (same as before but with a 'c_'
-*  prepended).
+* Note that this definition should not cause any noticable effects, with
+* the exception of when doing PLPLOT debugging, in which case you will
+* need to remember the real function names (same as before but with a 'c_'
+* prepended).
 *
-*  Also, to avoid macro conflicts, the BRAINDEAD part must not be expanded
-*  in the stub routines.
+* Also, to avoid macro conflicts, the BRAINDEAD part must not be expanded
+* in the stub routines.
+*
+* Aside: the reason why a shared Fortran/C namespace is deserving of the
+* BRAINDEAD characterization is that it completely precludes the the kind
+* of universal API that is attempted with PLPLOT, without Herculean
+* efforts (e.g. remapping all of the c bindings by macros as done here).
+* The vendors of such a scheme, in order to allow a SINGLE type of
+* argument to be passed transparently to both C and Fortran, namely, a
+* pointer to a conformable data type, have slammed the door on insertion
+* of stub routines to handle the conversions needed for other data types.
+* Intelligent linkers could solve this problem, but these are not anywhere
+* close to becoming universal.  So meanwhile, one must live with either
+* stub routines for the inevitable data conversions, or a different API.
+* The former is what is used here, but is made far more difficult in a
+* braindead shared Fortran/C namespace.
 \*----------------------------------------------------------------------*/
 
 #ifndef BRAINDEAD
@@ -351,7 +378,7 @@ typedef struct {
 
 #ifdef BRAINDEAD
 
-#ifndef INCLUDED_PLSTUBS	/* i.e. do not expand this in the stubs */
+#ifndef __PLSTUBS_H__	/* i.e. do not expand this in the stubs */
 
 #define    pladv	c_pladv
 #define    plaxes	c_plaxes
@@ -376,6 +403,7 @@ typedef struct {
 #define    plfontld	c_plfontld
 #define    plgchr	c_plgchr
 #define    plgcol0	c_plgcol0
+#define    plgcolbg	c_plgcolbg
 #define    plgdidev	c_plgdidev
 #define    plgdiori	c_plgdiori
 #define    plgdiplt	c_plgdiplt
@@ -413,7 +441,9 @@ typedef struct {
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
 #define    plscmap1	c_plscmap1
-#define    plscmap1f1	c_plscmap1f1
+#define    plscmap0n	c_plscmap0n
+#define    plscmap1n	c_plscmap1n
+#define    plscmap1l	c_plscmap1l
 #define    plscol0	c_plscol0
 #define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
@@ -426,6 +456,8 @@ typedef struct {
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
+#define    plshade	c_plshade
+#define    plshade1	c_plshade1
 #define    plslpb	c_plslpb
 #define    plsmaj	c_plsmaj
 #define    plsmin	c_plsmin
@@ -452,7 +484,7 @@ typedef struct {
 #define    plwid	c_plwid
 #define    plwind	c_plwind
 
-#endif /* INCLUDED_PLSTUBS */
+#endif /* __PLSTUBS_H__ */
 
 #else
 
@@ -479,6 +511,7 @@ typedef struct {
 #define    c_plfontld	plfontld
 #define    c_plgchr	plgchr
 #define    c_plgcol0	plgcol0
+#define    c_plgcolbg	plgcolbg
 #define    c_plgdidev	plgdidev
 #define    c_plgdiori	plgdiori
 #define    c_plgdiplt	plgdiplt
@@ -515,7 +548,9 @@ typedef struct {
 #define    c_plschr	plschr
 #define    c_plscmap0	plscmap0
 #define    c_plscmap1	plscmap1
-#define    c_plscmap1f1	plscmap1f1
+#define    c_plscmap0n	plscmap0n
+#define    c_plscmap1n	plscmap1n
+#define    c_plscmap1l	plscmap1l
 #define    c_plscol0	plscol0
 #define    c_plscolbg	plscolbg
 #define    c_plscolor	plscolor
@@ -528,6 +563,8 @@ typedef struct {
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
+#define    c_plshade	plshade
+#define    c_plshade1	plshade1
 #define    c_plslpb	plslpb
 #define    c_plsmaj	plsmaj
 #define    c_plsmin	plsmin
@@ -558,13 +595,16 @@ typedef struct {
 
 /* Redefine some old function names for backward compatibility */
 
-#ifndef INCLUDED_PLSTUBS	/* i.e. do not expand this in the stubs */
+#ifndef __PLSTUBS_H__	/* i.e. do not expand this in the stubs */
 
 #define    plclr	pleop
 #define    plpage	plbop
 #define    plcol	plcol0
+#define    plcontf	plfcont
+#define	   Alloc2dGrid	plAlloc2dGrid
+#define	   Free2dGrid	plFree2dGrid
 
-#endif /* INCLUDED_PLSTUBS */
+#endif /* __PLSTUBS_H__ */
 
 /*----------------------------------------------------------------------*\
 *		Function Prototypes
@@ -624,7 +664,7 @@ void
 c_plcol1(PLFLT col1);
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
-* plcontf, with a particular choice for f2eval and f2eval_data. */
+* plfcont, with a particular choice for f2eval and f2eval_data. */
 
 void
 c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
@@ -637,7 +677,7 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 * of 2d array data to be used. */
 
 void
-plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	PLPointer f2eval_data,
 	PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
@@ -727,6 +767,11 @@ c_plgchr(PLFLT *p_def, PLFLT *p_ht);
 void
 c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
+/* Returns the background color by 8 bit RGB value */
+
+void
+c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
+
 /* Retrieve current window into device space */
 
 void
@@ -761,7 +806,7 @@ c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
 /* Switches to graphics screen. */
 
 void
-c_plgra();
+c_plgra(void);
 
 /* Get subpage boundaries in absolute coordinates */
 
@@ -901,6 +946,16 @@ c_plsasp(PLFLT asp);
 void
 c_plschr(PLFLT def, PLFLT scale);
 
+/* Set number of colors in cmap 0 */
+
+void
+c_plscmap0n(PLINT ncol0);
+
+/* Set number of colors in cmap 1 */
+
+void
+c_plscmap1n(PLINT ncol1);
+
 /* Set color map 0 colors by 8 bit RGB values */
 
 void
@@ -909,13 +964,14 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0);
 /* Set color map 1 colors by 8 bit RGB values */
 
 void
-c_plscmap1(PLINT *r, PLINT *g, PLINT *b);
+c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 
-/* Set color map 1 colors using a linear relationship between function */
-/*  height and position in HLS or RGB color space. */
+/* Set color map 1 colors using a piece-wise linear relationship between */
+/* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
 void
-c_plscmap1f1(PLINT itype, PLFLT *param);
+c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
+	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3);
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
@@ -982,13 +1038,41 @@ c_plsfnam(const char *fnam);
 /* Shade region. */
 
 void 
-plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
-	PLFLT right, PLFLT bottom, PLFLT top,
-	void (*mapform) (PLINT, PLFLT *, PLFLT *),
-	PLFLT shade_min, PLFLT shade_max,
-	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-	PLINT max_color, PLINT max_width,
-	void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular);
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	  PLFLT shade_min, PLFLT shade_max,
+	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	  PLINT min_color, PLINT min_width,
+	  PLINT max_color, PLINT max_width,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  PLPointer pltr_data);
+
+void 
+plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	 PLFLT shade_min, PLFLT shade_max,
+	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	 PLINT min_color, PLINT min_width,
+	 PLINT max_color, PLINT max_width,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data);
+
+void 
+plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+	 PLPointer f2eval_data,
+	 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
+	 PLPointer c2eval_data,
+	 PLINT nx, PLINT ny, 
+	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	 PLFLT shade_min, PLFLT shade_max,
+	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	 PLINT min_color, PLINT min_width,
+	 PLINT max_color, PLINT max_width,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data);
 
 /* I've canned this for now */
 
@@ -1084,7 +1168,7 @@ c_plszax(PLINT digmax, PLINT digits);
 /* Switches to text screen. */
 
 void
-c_pltext();
+c_pltext(void);
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
 /* room for labels. */
@@ -1238,6 +1322,16 @@ plSetInternalOpt(char *opt, char *optarg);
 
 	/* Miscellaneous */
 
+/* Set the output file pointer */
+
+void
+plgfile(FILE **p_file);
+
+/* Get the output file pointer */
+
+void
+plsfile(FILE *file);
+
 /* Get the escape character for text strings. */
 
 void
@@ -1279,12 +1373,14 @@ plGetFlt(char *s);
 /* Allocates a block of memory for use as a 2-d grid of PLFLT's.  */
 
 void
-Alloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
+plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
 
-/* Frees a block of memory allocated with Alloc2dGrid(). */
+/* Frees a block of memory allocated with plAlloc2dGrid(). */
 
 void
-Free2dGrid(PLFLT **f, PLINT nx, PLINT ny);
+plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
+
+/* plframe widget command */
 
 #ifdef TK
 #include <tk.h>
