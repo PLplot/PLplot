@@ -54,7 +54,7 @@ static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
-static void plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move);
+static void plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move);
 static void plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		      PLINT opt, PLFLT *clevel, PLINT nlevel);
 
@@ -90,6 +90,7 @@ c_pllightsource(PLFLT x, PLFLT y, PLFLT z)
  *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
  *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
  *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
+ *  opt = 4 (MAG_COLOR):    Magnitude coloring of wire frame
  *
 \*--------------------------------------------------------------------------*/
 
@@ -98,7 +99,6 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 {
     pl3mode = 1;
     plot3d(x, y, z, nx, ny, opt, 0);
-
     pl3mode = 0;
 }
 
@@ -221,7 +221,7 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 }
 
 /*--------------------------------------------------------------------------*\
- * void plotfc3d(x, y, z, nx, ny, side)
+ * void plotfc3d(x, y, z, nx, ny, opt, clevel, nlevel)
  *
  * Plots a false-color 3-d representation of the function z[x][y].
  * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
@@ -243,33 +243,10 @@ void
 c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	   PLINT opt, PLFLT *clevel, PLINT nlevel)
 {
-
-    PLFLT step;
-    extern int cont3d;
-    PLcGrid grid;
-    int i;
-
-    /*
-    step = (fc_maxz-fc_minz)/nlevel;
-    for (i=0; i<LEVELS; i++)
-	clevel[i] = fc_minz + i*step;
-    */
-
-    falsecolor = 1;
-    plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
-    plotsh3di(x, y ,z, nx, ny, opt, clevel, nlevel);
-    falsecolor = 0;
-
-    /*
-    cont3d = 1;
-    grid.nx = nx; grid.ny = ny; grid.xg = x; grid.yg = y;
-
-    plcont(z, nx, ny, 1, nx, 1, ny, clevel, nlevel,
-	    pltr1,  (void *) & grid );
-
-    cont_cl_store();
-    cont3d = 0;
-    */
+  falsecolor = 1;
+  plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+  plotsh3di(x, y ,z, nx, ny, opt, clevel, nlevel);
+  falsecolor = 0;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -297,6 +274,8 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
   PLFLT xx[3],yy[3],zz[3];
   PLFLT px[4], py[4], pz[4];
+  CONT_LEVEL *cont, *clev;
+  CONT_LINE *cline;
   int   ct, ix, iy;
 
   if (plsc->level < 3) {
@@ -367,7 +346,6 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     iyDir = 1;
     iyOrigin = iymin;
   }
-
   /* figure out which dimension is dominant */
   if (fabs(cxx) > fabs(cxy)) {
     /* X is dominant */
@@ -415,6 +393,38 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plcol(color);
   }
 
+  /* If enabled, draw the contour at the base */
+
+  /* The contour ploted at the base will be identical to the one obtained
+   * with c_plcont(). The contour ploted at the surface is simple minded, but
+   * can be improved by using the contour data available.
+   */
+  
+  if (opt & BASE_CONT) {
+    PLFLT zz[1000];
+
+    /* get the contour lines */
+    cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
+
+    /* follow the contour levels and lines */
+    clev = cont;
+    do { /* for each contour level */
+      cline = clev->line;
+      do { /* there are several lines that makes up the contour */
+	for (j=0; j<cline->npts; j++)
+	  zz[j] = plsc->ranmi; /* clev->level; */
+	plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
+	plline3(cline->npts, cline->x, cline->y, zz);
+	cline = cline->next;
+      }
+      while(cline != NULL);
+      clev = clev->next;
+    }
+    while(clev != NULL);
+  
+    cont_clean_store(cont); /* now release the memory */
+  }
+
   /* Now we can iterate over the grid drawing the quads */
   for(iSlow=0; iSlow < nSlow-1; iSlow++) {
     for(iFast=0; iFast < nFast-1; iFast++) {
@@ -432,12 +442,7 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	}
       }
 
-      /* now draw the quad as two triangles (4 might be better) */
-
-      /* 
-       * two/four triangles. Four is better, but slower, as
-       *  it takes more 50% of execution time. Is it worth? 
-       */
+      /* now draw the quad as four triangles */
 
       xm = ym = zm = 0.;
       for (i=0;i<4;i++) {
@@ -450,7 +455,9 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       for (i=1; i<3; i++) {
 	for (j=0; j<4; j+=3) {
 	  shade_triangle(px[j], py[j], pz[j], xm, ym, zm, px[i], py[i], pz[i]);
-	 
+
+	  /* after shading, see if the triangle crosses	a contour line */
+
 #define min3(a,b,c) (MIN((MIN(a,b)),c))
 #define max3(a,b,c) (MAX((MAX(a,b)),c))
 
@@ -477,7 +484,8 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		}
 		
 		if (ct == 2) {
-		  if (opt & BASE_CONT) {
+/* yes, xx and yy are the intersection points of the triangle with the contour line--draw a straigh line betweeen the points -- this will make up the contour line */
+		  if (0 && opt & BASE_CONT) { /* previous version of base contour */
 		    /* base contour with surface color*/
 		    zz[0] = zz[1] =  plsc->ranmi;
 		    plline3(2, xx, yy, zz);
@@ -490,7 +498,7 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		    plline3(2, xx, yy, zz);
 		  }
 
-		  /* break; one triangle can span various contour levels */
+		  /* don't break; one triangle can span various contour levels */
 
 		} else
 		  plexit("plot3d.c:plotsh3di() ***ERROR***\n");
@@ -503,7 +511,7 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     }
   }
 
-  if (opt & DRAW_SIDE) {
+  if (0 && opt & DRAW_SIDE) { /* disable, the sides look horrible */
     /* draw one more row with all the Z's set to zmin */
     PLFLT zscale, zmin, zmax;
 
@@ -535,6 +543,7 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
  *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
  *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
  *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
+ *  opt = 4 (MAG_COLOR):    Magnitude coloring of wire frame
 \*--------------------------------------------------------------------------*/
 
 void
@@ -552,7 +561,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	return;
     }
 
-    if (opt < 1 || opt > 3) {
+    if (opt < 1 || opt > 7) {
 	myabort("plot3d: Bad option");
 	return;
     }
@@ -673,12 +682,19 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       nx = _nx;
       ny = _ny;	  
     }
+
 /* Allocate work arrays */
 
     utmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
     vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-    ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
-    
+
+    if (opt & MAG_COLOR) {
+      plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+      ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
+      opt &= ~MAG_COLOR; /* next logic checks for absolute values of opt */
+    } else
+      ctmp = NULL;
+
     if ( ! utmp || ! vtmp)
 	myexit("plot3d: Out of memory.");
 
@@ -689,61 +705,61 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     if (cxx >= 0.0 && cxy <= 0.0) {
 	if (opt == 2) 
-	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
 	else {
 	    for (iy = 2; iy <= ny; iy++)
-		plt3zz(1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
 	}
 	if (opt == 1)
-	    plt3zz(1, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(1, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = 1; ix <= nx - 1; ix++)
-		plt3zz(ix, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(ix, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
     }
 
     else if (cxx <= 0.0 && cxy <= 0.0) {
         if (opt == 1)
-	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = 2; ix <= nx; ix++) 
-		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
 	if (opt == 2)
-	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (iy = ny; iy >= 2; iy--)
-	      plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	      plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
     }
 
     else if (cxx <= 0.0 && cxy >= 0.0) {
 	if (opt == 2) 
-	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (iy = ny - 1; iy >= 1; iy--) 
-		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
 	if (opt == 1)
-	    plt3zz(nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = nx; ix >= 2; ix--)
-		plt3zz(ix, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(ix, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
     }
 
     else if (cxx >= 0.0 && cxy >= 0.0) {
 	if (opt == 1) 
-	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = nx - 1; ix >= 1; ix--) 
-		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
 	if (opt == 2)
-	    plt3zz(1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	    plt3zz(1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (iy = 1; iy <= ny - 1; iy++)
-		plt3zz(1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+		plt3zz(1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
     }
 
@@ -852,16 +868,14 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 {
     PLINT n = 0;
     PLFLT x2d, y2d;
-    PLFLT zmin, zmax;
 
-    plMinMax2dGrid(z, nx, ny, &zmax, &zmin);
-    
     while (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	x2d = plP_w3wcx(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	y2d = plP_w3wcy(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	u[n] = plP_wcpcx(x2d);
 	v[n] = plP_wcpcy(y2d);
-	ctmp[n] = (zmax - z[x0 - 1][y0 - 1])/(zmax-zmin);
+	if (c != NULL)
+	  c[n] = (z[x0 - 1][y0 - 1] - fc_minz)/(fc_maxz-fc_minz);
 
 	switch (flag) {
 	case -3:
@@ -1163,11 +1177,11 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 
 	oldhiview[0] = u[0];
 	oldhiview[1] = v[0];
-	plP_draw3d(u[0],v[0],0,1);
+	plP_draw3d(u[0],v[0],c,0,1);
 	for (i = 1; i < n; i++) {
 	    oldhiview[2 * i] = u[i];
 	    oldhiview[2 * i + 1] = v[i];
-	    plP_draw3d(u[i],v[i],i,0);
+	    plP_draw3d(u[i],v[i],c,i,0);
 	}
 	mhi = n;
 	return;
@@ -1293,7 +1307,7 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
      * state of "newhi" changes.
      */
 	if (first) {
-	    plP_draw3d(px, py, j, 1);
+	    plP_draw3d(px, py, c, j, 1);
 	    first = 0;
 	    lstold = ptold;
 	    savehipoint(px, py);
@@ -1306,13 +1320,13 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 	 * endpoints are not connected to the old view.
 	 */
 	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		plP_draw3d(px, py, j, 1);
+		plP_draw3d(px, py, c, j, 1);
 		lstold = ptold;
 		pthi = 0;
 		ochange = 0;
 	    } else if (pl3upv == 0 &&
 		       (( ! ptold && i >= mhi) || (ptold && j >= n))) {
-		plP_draw3d(px, py, j, 1);
+		plP_draw3d(px, py, c, j, 1);
 		lstold = ptold;
 		pthi = 0;
 		ochange = 0;
@@ -1362,18 +1376,18 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
 		if (cx == px && cy == py) {
 		    if (lstold && !ochange)
-			plP_draw3d(px, py, j, 1);
+			plP_draw3d(px, py, c, j, 1);
 		    else
-			plP_draw3d(px, py, j, 0);
+			plP_draw3d(px, py, c, j, 0);
 
 		    savehipoint(px, py);
 		    lstold = 1;
 		    pthi = 0;
 		} else {
 		    if (lstold && !ochange)
-			plP_draw3d(cx, cy, j, 1);
+			plP_draw3d(cx, cy, c, j, 1);
 		    else
-			plP_draw3d(cx, cy, j, 0);
+			plP_draw3d(cx, cy, c, j, 0);
 
 		    lstold = 1;
 		    savehipoint(cx, cy);
@@ -1386,9 +1400,9 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 
 	if (pthi) {
 	    if (lstold && ptold)
-		plP_draw3d(px, py, j, 1);
+		plP_draw3d(px, py, c, j, 1);
 	    else
-		plP_draw3d(px, py, j, 0);
+		plP_draw3d(px, py, c, j, 0);
 
 	    savehipoint(px, py);
 	    lstold = ptold;
@@ -1406,19 +1420,17 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 /*--------------------------------------------------------------------------*\
  * void  plP_draw3d()
  *
- * If threedshading is set, moves and then fills a series of triangles using
- * colours previously assigned.  Otherwise does a simple move and line draw.
+ * Does a simple move or line draw.
 \*--------------------------------------------------------------------------*/
 
 #define MAX_POLY 3
 
 static void
-plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
+plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move)
 {
-    static int count = 0;
-    static int vcount = 0;
+    if (c != NULL)
+      plcol1(c[j]);
 
-    plcol1(1.-ctmp[j]);
     if (move)
       plP_movphy(x, y);
     else
@@ -1768,21 +1780,12 @@ static void
 freework(void)
 {
     free_mem(oldhiview);
-    oldhiview = NULL;
     free_mem(oldloview);
-    oldloview  = NULL;
     free_mem(newhiview);
-    newhiview = NULL;
     free_mem(newloview);
-    newloview = NULL;
     free_mem(vtmp);
-    vtmp = NULL;
     free_mem(utmp);
-    utmp = NULL;
-    if(ctmp) {
-	free_mem(ctmp);
-    }
-    ctmp = 0;
+    free_mem(ctmp);
 }
 
 /*--------------------------------------------------------------------------*\
