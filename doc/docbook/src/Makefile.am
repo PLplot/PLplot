@@ -171,6 +171,7 @@ endif # docbook_build
 
 validate: plplotdoc.xml
 if has_onsgmls
+	@ln -fs inline-html.ent inline.ent
 	@echo Validating $<:
 	@$(ONSGMLS) $(XML_DECL) $< > /dev/null
 	@echo "No problems found."
