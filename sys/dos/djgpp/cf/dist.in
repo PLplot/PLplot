@@ -34,6 +34,7 @@ CORE_C = \
 	plshade.c \
 	plsym.c \
 	pltick.c \
+	plvect.c \
 	plvpor.c \
 	plwind.c \
 	plstripc.c \
@@ -59,7 +60,8 @@ CORE_OBJ = \
 	plshade$O \
 	plsym$O \
 	pltick$O \
-	plvpor$O \
+	plvect$O \
+   plvpor$O \
 	plwind$O \
 	plstripc$O \
 	plimage$O

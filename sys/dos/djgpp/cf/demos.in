@@ -29,7 +29,7 @@
 
 CDEMOS= x01c$E x02c$E x03c$E x04c$E x05c$E x06c$E x07c$E x08c$E x09c$E \
 	x10c$E x11c$E x12c$E x13c$E x14c$E x15c$E x16c$E x17c$E x18c$E \
-	x19c$E x20c$E tutor$E
+	x19c$E x20c$E x21c$E x22c$E tutor$E
 
 cdemos:	$(CDEMOS)
 
@@ -81,6 +81,11 @@ x19c$O: x19c.c
 	$(CC) $(CC_FLAGS_DEMOS) x19c.c
 x20c$O: x20c.c
 	$(CC) $(CC_FLAGS_DEMOS) x20c.c
+x21c$O: x21c.c
+	$(CC) $(CC_FLAGS_DEMOS) x21c.c
+x22c$O: x22c.c
+	$(CC) $(CC_FLAGS_DEMOS) x22c.c
+
 endif
 
 x01c$E:	$(PLLIBS) x01c$O
@@ -161,6 +166,14 @@ x19c$E:	$(PLLIBS) x19c$O
 
 x20c$E:	$(PLLIBS) x20c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x20c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+
+x21c$E:	$(PLLIBS) x21c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x21c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+
+x22c$E:	$(PLLIBS) x22c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x22c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
 
 tutor$O: tutor.c
