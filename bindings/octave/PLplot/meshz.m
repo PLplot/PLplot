@@ -17,11 +17,14 @@
 ## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 ## 02111-1307, USA.
 
-## usage: mesh ([x, y,] z)
+## usage: meshz ([x, y,] z)
 ##
-## Surface plot.  If x, y, and z are matrices with the same dimensions,
-## then corresponding elements represent vertices of the plot.  If x and
-## y are vectors, then a typical vertex is (x(j), y(i), z(i,j)).  Thus,
+## Surface plot.
+##
+## If x, y, and z are matrices with the same dimensions,
+## then corresponding elements represent vertices of the plot.
+##
+## If x and y are vectors, then a typical vertex is (x(j), y(i), z(i,j)).  Thus,
 ## columns of z correspond to different x values and rows of z correspond
 ## to different y values.
 ##
@@ -31,8 +34,8 @@
 ## Author: jwe
 ## Modified: jc
 
-function mesh (...)
+function meshz (...)
 
-  __pl_mesh ("mesh", all_va_args);
+  __pl_mesh ("meshz", all_va_args);
 
 endfunction
