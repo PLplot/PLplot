@@ -673,8 +673,8 @@ void plD_bop_cgm(PLStream *pls)
 
     pls->page++;
 
-    dev->im_out = cdImageCreate(pls->xlength, pls->ylength);
-
+    if (pls->page==1)
+        dev->im_out = cdImageCreate(pls->xlength, pls->ylength);
     
     setcmap(pls);
 
@@ -724,6 +724,17 @@ void plD_tidy_cgm(PLStream *pls)
 {
    cgm_Dev *dev=(cgm_Dev *)pls->dev;
 
+    if (pls->family != 1) 
+       {
+        cdImageCgm(dev->im_out, pls->OutFile);
+       }
+
+   cdImageDestroy(dev->im_out);
+   if (dev!=NULL) 
+      { 
+       free(dev);
+       dev=NULL;
+      }
    fclose(pls->OutFile);
 }
 
@@ -738,13 +749,17 @@ void plD_eop_cgm(PLStream *pls)
 cgm_Dev *dev=(cgm_Dev *)pls->dev;
 int i;
 
-    if (pls->family || pls->page == 1) {
-       cdImageCgm(dev->im_out, pls->OutFile);
+    if (pls->family==1) 
+       {
+        cdImageCgm(dev->im_out, pls->OutFile);
+       }
+    else
+       {
+        cdCgmNewPic(dev->im_out,0);
+       }
 
-    for (i=0;i<cdMaxColors;++i) dev->colour_index[i]=-1;
+   for (i=0;i<cdMaxColors;++i) dev->colour_index[i]=-1;
 
-       cdImageDestroy(dev->im_out);
-    }
 }
 
 
