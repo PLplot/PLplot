@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.2  1994/10/18 16:12:39  furnish
+// Revision 1.3  1995/01/16 19:24:19  mjl
+// Fixed arglists for scmap1l and plscmap1l.
+//
+// Revision 1.2  1994/10/18  16:12:39  furnish
 // Beginnings of 2-d abstraction for contouring and shading.  Better
 // constructors.  Names for colors.  Other minor stuff.  Still need to do
 // major hacking on the 2-d abstraction, and also need to remove large
@@ -19,6 +22,7 @@
 //
 //---------------------------------------------------------------------------//
 
+#include "plplot.h"
 #include "stream.h"
 
 #include <iostream.h>
@@ -1013,11 +1017,11 @@ plstream::scmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 
 void
 plstream::scmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
+		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
 {
     set_stream();
 
-    plscmap1l(itype,npts,intensity,coord1,coord2,coord3);
+    plscmap1l(itype,npts,intensity,coord1,coord2,coord3,rev);
 }
 
 /* Set a given color from color map 0 by 8 bit RGB value */
