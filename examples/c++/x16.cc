@@ -256,7 +256,7 @@ x16::x16( int argc, char ** argv ) {
   pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
-	       plstream::fill, 1, pls->tr1, (void *) &cgrid1);
+	       plstream::fill, 1, plstream::tr1, (void *) &cgrid1);
 
   pls->col0(1);
   pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -275,12 +275,12 @@ x16::x16( int argc, char ** argv ) {
   pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
-	       plstream::fill, 0, pls->tr2, (void *) &cgrid2);
+	       plstream::fill, 0, plstream::tr2, (void *) &cgrid2);
 
   pls->col0(1);
   pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   pls->col0(2);
-  pls->cont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
+  pls->cont(w, nx, ny, 1, nx, 1, ny, clevel, ns, plstream::tr2, (void *) &cgrid2);
 
   pls->lab("distance", "altitude", "Bogon density, with streamlines");
 
@@ -295,7 +295,7 @@ x16::x16( int argc, char ** argv ) {
   pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       2, 3,
-	       plstream::fill, 0, pls->tr2, (void *) &cgrid2);
+	       plstream::fill, 0, plstream::tr2, (void *) &cgrid2);
 
   pls->col0(1);
   pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -316,7 +316,7 @@ x16::x16( int argc, char ** argv ) {
     pls->shades(z, nx, ny, zdefined, -1., 1., -1., 1.,
              shedge, ns+1, fill_width,
              cont_color, cont_width,
-             plstream::fill, 0, pls->tr2, (void *) &cgrid2);
+             plstream::fill, 0, plstream::tr2, (void *) &cgrid2);
 
     pls->col0(1);
     pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -355,7 +355,7 @@ x16::x16( int argc, char ** argv ) {
   pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
-	       plstream::fill, 0, pls->tr2, (void *) &cgrid2);
+	       plstream::fill, 0, plstream::tr2, (void *) &cgrid2);
 
   // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
   for (i = 0; i < PERIMETERPTS; i++) {
