@@ -836,12 +836,13 @@ AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
 
 ### rpath setting
 
-if test "$with_rpath"= yes ; then
+if test "$with_rpath" = yes ; then
   RPATH='-rpath $(libdir)'
 else
   RPATH=
 fi  
 AC_SUBST(RPATH)
+AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
 
 ### Build Makefiles
 
