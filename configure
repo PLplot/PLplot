@@ -1108,28 +1108,25 @@ INCS=""
 # Configure library recognition for various systems.
 # ----------------------------------------------------------------------------
 
-LIBEXTNS="a"
+LIBEXTNS="so a"
 
 case "$system" in 
 #    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 #	CC=xlc
 #    ;;
-    alpha*|ALPHA*|Alpha*|OSF* ) 
-	LIBEXTNS="so a"
-    ;;
-#    convex*|ConvexOS* ) 
-#	CC="cc -std"
-#	with_gcc=no
+#    alpha*|ALPHA*|Alpha*|OSF* ) 
+#	LIBEXTNS="so a"
+#    ;;
 #    ;;
     hp*|HP* ) 
 	LIBEXTNS="sl a"
     ;;
-    irix*|IRIX*|Irix*|sgi*|SGI* ) 
-	LIBEXTNS="so a"
-    ;;
-    Linux* )
-	LIBEXTNS="so a"
-    ;;
+#    irix*|IRIX*|Irix*|sgi*|SGI* ) 
+#	LIBEXTNS="so a"
+#    ;;
+#    Linux* )
+#	LIBEXTNS="so a"
+#    ;;
 #    SunOS-4* )
 #	CC=acc
 #    ;;
@@ -1279,7 +1276,7 @@ if test "$enable_cxx" = "yes"; then
 	# Extract the first word of "KCC", so it can be a program name with args.
 set dummy KCC; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1283: checking for $ac_word" >&5
+echo "configure:1280: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_found_kcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1345,7 +1342,7 @@ fi
 	# Extract the first word of "$CXX", so it can be a program name with args.
 set dummy $CXX; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1349: checking for $ac_word" >&5
+echo "configure:1346: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_found_cxx'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1436,10 +1433,10 @@ if test "$enable_f77" = "yes"; then
     # Try to locate the executable now.  If it can't be found, look
     # for g77.
 
-    # Extract the first word of "$F77", so it can be a program name with args.
+    found_f77=""; # Extract the first word of "$F77", so it can be a program name with args.
 set dummy $F77; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1443: checking for $ac_word" >&5
+echo "configure:1440: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_found_F77'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1467,10 +1464,10 @@ else
 fi
 
     if test "$found_F77" = "no"; then
-	# Extract the first word of "g77", so it can be a program name with args.
+	found_g77=""; # Extract the first word of "g77", so it can be a program name with args.
 set dummy g77; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1474: checking for $ac_word" >&5
+echo "configure:1471: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_found_g77'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1497,7 +1494,10 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-	if test "$found_g77" = "yes"; then
+	if test "$found_g77" = "no"; then
+	    echo "$ac_t""warning: cannot find Fortran compiler, setting enable_f77=no" 1>&6
+	    enable_f77=no
+	else
 	    F77=g77
 	fi
     fi
@@ -2401,7 +2401,7 @@ echo "configure:2398: checking for libtcl" >&5
 	    
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libtcl$version.$suffix"; then
@@ -2505,7 +2505,7 @@ echo "configure:2499: checking for libitcl" >&5
 	    
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libitcl$version.$suffix"; then
@@ -2597,7 +2597,7 @@ echo "configure:2591: checking for libtk" >&5
 	    
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libtk$version.$suffix"; then
@@ -2648,7 +2648,7 @@ echo "configure:2642: checking for libitk" >&5
 	    
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libitk$version.$suffix"; then
@@ -2747,7 +2747,7 @@ echo "configure:2745: checking for libdpnetwork" >&5
     
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libdpnetwork.$suffix"; then
@@ -3051,7 +3051,7 @@ echo "configure:3049: checking for libdbmalloc" >&5
     
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libdbmalloc.$suffix"; then
@@ -3336,7 +3336,7 @@ echo "configure:3334: checking for libvga" >&5
     
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/libvga.$suffix"; then
