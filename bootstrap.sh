@@ -41,6 +41,20 @@ while test $# -gt 0 ; do
   shift
 done
 
+# Override the user choice of aclocal_opts, but only if the found version
+# passes some rigourous tests.
+prefix=`which libtool | sed 's:/bin/libtool::'`
+if test -n "$prefix" ; then
+  acdir=${prefix}/share/libtool/libltdl
+  if test -d $acdir ; then
+    if test -f ${acdir}/aclocal.m4 ; then
+      aclocal_opts="-I $acdir"
+    fi
+  fi
+fi
+
+echo aclocal_opts: $aclocal_opts
+
 curver=`grep ^AM_INIT_AUTOMAKE configure.ac \
         | perl -ne 'if (/plplot, (\d+\.\d+\.\d+)/) {print $1}'`
 
