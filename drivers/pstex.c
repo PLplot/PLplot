@@ -349,6 +349,7 @@ parse_str(const char *str, char *dest)
       break;
 
     case '(': /* Hershey symbol number (nnn) (any number of digits) FIXME ???*/
+      plwarn("'g(...)' text escape sequence not processed.");
       while (*str++ != ')');
       break;
 
