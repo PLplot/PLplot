@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.5  1995/04/12 08:07:29  mjl
+# Revision 1.6  1995/05/06 17:16:14  mjl
+# Tweaks to exit handling.
+#
+# Revision 1.5  1995/04/12  08:07:29  mjl
 # Offloaded the C code for cleaning up from tk.c into the proc
 # plclient_link_end in plclient.tcl.  The Tcl code was modified to better
 # handshake with plserver.
@@ -47,7 +50,7 @@ proc plclient_init {} {
 
     global plserver_init_proc plw_create_proc \
 	plw_start_proc plw_end_proc \
-	dp client_host client_port update_proc
+	dp client_host client_port
 
 # This initializes plserver
 
@@ -59,15 +62,11 @@ proc plclient_init {} {
     set plw_start_proc		plw_start
     set plw_end_proc 		plw_end
 
-# Set up communications port and other junk
+# Set up communications port
 
     if { $dp } {
 	set client_host [host_id]
 	set client_port [dp_MakeRPCServer]
-	set update_proc dp_update
-
-    } else {
-	set update_proc update
     }
 }
 
@@ -104,11 +103,11 @@ proc plclient_link_init {} {
 # Note: due to some apparent bogosity in Tcl 7.3 and/or Tcl-DP 3.2,
 # Tcl_DeleteInterp() doesn't always provide all the necessary cleanup when
 # exiting, and a filehandler event for the old interpreter is generated
-# /after/ the old interpreter has been deleted.  This results in an attempt
-# to use a hash table that has already been deleted, and a panic.  I tried
-# to find the offending code while in the debugger but it looks like a tough
-# one to crack.  Only seen when using multiple DP output streams
-# (e.g. from x14c or pltcl).
+# /after/ the old interpreter has been deleted.  When multiple interpreters
+# are in use, this results in an attempt to use a hash table that has
+# already been deleted, and a panic.  I tried to find the offending code
+# while in the debugger but it looks like a tough one to crack.  Only seen
+# when using multiple DP output streams (e.g. from x14c or pltcl).
 #----------------------------------------------------------------------------
 
 proc plclient_link_end {} {
@@ -116,7 +115,7 @@ proc plclient_link_end {} {
 
     if { [info exists server] } then {
 
-	# Tell server we are exiting.
+    # Tell server we are exiting.
 
 	if { $dp } then {
 	    dp_RPC $server set plclient_exiting 1
@@ -124,7 +123,7 @@ proc plclient_link_end {} {
 	    send $server "set plclient_exiting 1"
 	}
 
-	# If the server isn't exiting, cause it to.
+    # If the server isn't exiting, cause it to.
 
 	if { ! [info exists plserver_exiting] } then {
 	    global plwindow
@@ -138,7 +137,7 @@ proc plclient_link_end {} {
 	    wait_until {[info exists plserver_exiting]}
 	}
 
-	# Clean up socket communications if using Tcl-DP.
+    # Clean up socket communications if using Tcl-DP.
 
 	if { $dp } {
 	    catch dp_CloseRPC $server
