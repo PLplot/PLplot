@@ -102,6 +102,10 @@ cf_depend.m4 to get around it temporarily.
 Ultrix: The stock Bourne shell on some systems will not run the configure
 script correctly.  Look for a shell named "sh5" or try ksh if this is so.
 
+f2c users: Make sure you link with the f2c support lib.  On unix systems,
+f2c generally comes with an "f77" script, which takes care of this
+transparently.
+
 --
 The other platforms on which I know plplot 4.99d works fine includes:
 Unicos, Super-UX (NEC), Linux.  If changes to the config files are required
