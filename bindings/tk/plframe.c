@@ -80,6 +80,7 @@ typedef struct {
     char *client;		/* Client main window.  Malloc'ed. */
     PLRDev *plr;		/* Renderer state information.  Malloc'ed */
     XColor *bgColor;		/* Background color */
+    char *plpr_cmd;		/* Holds print command name.  Malloc'ed */
 
     /* Used to distinguish resize from expose events */
 
@@ -341,6 +342,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->tkwin_initted = 0;
     plFramePtr->plplot_initted = 0;
     plFramePtr->bgColor = NULL;
+    plFramePtr->plpr_cmd = NULL;
     plFramePtr->yScrollCmd = NULL;
     plFramePtr->xScrollCmd = NULL;
     plFramePtr->xl = 0.;
@@ -655,6 +657,9 @@ DestroyPlFrame(ClientData clientData)
     }
     if (plFramePtr->bgColor != NULL) {
 	Tk_FreeColor(plFramePtr->bgColor);
+    }
+    if (plFramePtr->plpr_cmd != NULL) {
+	ckfree(plFramePtr->plpr_cmd);
     }
     if (plFramePtr->geometry != NULL) {
 	ckfree(plFramePtr->geometry);
@@ -1359,15 +1364,19 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* So far so good.  Time to exec the print script. */
 
-    if ( (pid = fork()) < 0) {
+    if (plFramePtr->plpr_cmd == NULL)
+	plFramePtr->plpr_cmd = plFindCommand("plpr");
+
+    if ((plFramePtr->plpr_cmd == NULL) || (pid = fork()) < 0) {
 	Tcl_AppendResult(interp, 
 			 "Error -- cannot fork print process",
 			 (char *) NULL);
 	result = TCL_ERROR;
     }
     else if (pid == 0) {
-	if (execlp("plpr", "plpr", sfnam, (char *) 0)) {
-	    fprintf(stderr, "execlp error.\n");
+	if (execl(plFramePtr->plpr_cmd, plFramePtr->plpr_cmd, sfnam, 
+		  (char *) 0)) {
+	    fprintf(stderr, "Unable to exec print command.\n");
 	    _exit(1);
 	}
     }
