@@ -103,7 +103,7 @@ if $file_menu_on then {
 	-underline 3
 
     pack append .menu .menu.help {right}
-}
+
 
     bind . <Control-x> exit
 

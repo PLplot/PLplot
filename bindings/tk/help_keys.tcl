@@ -28,7 +28,7 @@ follows:
 	"z"			enter zoom	(Cliking once zooms x 2)
 	"b"			back zoom
 	"f"			forward zoom
-	"z"			reset zoom
+	"r"			reset zoom
 	"P"			print
 	"s"			save again
 	"5"			scroll magnification factor ??
