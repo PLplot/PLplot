@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/07/28 07:42:39  mjl
+ * Revision 1.13  1994/08/05 21:50:22  mjl
+ * Fixed bug responsible for DP driver not working on a Cray.  Works great
+ * now, including distributed rendering.  Added much debug code.
+ *
+ * Revision 1.12  1994/07/28  07:42:39  mjl
  * Fix for side-effect of defining caddr_t in plConfig.h.
  *
  * Revision 1.11  1994/07/26  21:08:47  mjl
@@ -88,6 +92,10 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+/*
+#define DEBUG
+*/
+
 #include "plDevs.h"
 
 #if defined(PLD_dp) || defined (PLD_tk)
@@ -137,6 +145,10 @@
 #include <errno.h>
 
 extern int errno;
+
+#ifndef MIN
+#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
+#endif
 
 /*
  * This is a "magic number" prepended to the beginning of the packet
@@ -275,6 +287,15 @@ pl_Read (fd, buffer, numReq)
      */
     if (readList == NULL) {
 	numRead = read(fd, buffer, numReq);
+#ifdef DEBUG
+	{
+	    int j;
+	    fprintf(stderr, "received %d bytes starting with:", numRead);
+	    for (j = 0; j < MIN(8,numRead); j++)
+		fprintf(stderr, " %x", 0x000000FF & (unsigned long) buffer[j]);
+	    fprintf(stderr, "\n");
+	}
+#endif
 	return numRead;
     }
 
@@ -426,6 +447,9 @@ pl_PacketReceive(interp, iodev, pdfs)
     numRead = pl_Read (iodev->fd, (char *) hbuf, headerSize);
 
     if (numRead <= 0) {
+#ifdef DEBUG
+	fprintf(stderr, "Incorrect header read, numRead = %d\n", numRead);
+#endif
 	goto readError;
     }
 
@@ -433,6 +457,9 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Check for incomplete read.  If so, put it back and return.
      */
     if (numRead < headerSize) {
+#ifdef DEBUG
+	fprintf(stderr, "Incomplete header read, numRead = %d\n", numRead);
+#endif
 	pl_Unread (iodev->fd, (char *) hbuf, numRead, 1);
 	Tcl_ResetResult(interp);
 	return TCL_OK;
@@ -468,7 +495,7 @@ pl_PacketReceive(interp, iodev, pdfs)
      *		Next packetLen-headerSize is zero terminated string
      */
     if (header[0] != PACKET_MAGIC) {
-	fprintf(stderr, "Badly formatted packet\n");
+	fprintf(stderr, "Badly formatted packet, numRead = %d\n", numRead);
         Tcl_AppendResult(interp, "Error reading from ", iodev->typename,
 			 ": badly formatted packet", (char *) NULL);
 	return TCL_ERROR;
@@ -500,6 +527,9 @@ pl_PacketReceive(interp, iodev, pdfs)
 	if (Tdp_FDIsReady(iodev->fd) & TCL_FILE_READABLE) {
 	    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
 	} else {
+#ifdef DEBUG
+	    fprintf(stderr, "Packet not ready, putting back header\n");
+#endif
 	    pl_Unread (iodev->fd, (char *) hbuf, headerSize, 1);
 	    Tcl_ResetResult(interp);
 	    return TCL_OK;
@@ -512,12 +542,21 @@ pl_PacketReceive(interp, iodev, pdfs)
     }
 
     if (numRead != packetLen) {
+#ifdef DEBUG
+	fprintf(stderr, "Incomplete packet read, numRead = %d\n", numRead);
+#endif
 	pl_Unread (iodev->fd, (char *) pdfs->buffer, numRead, 1);
 	pl_Unread (iodev->fd, (char *) hbuf, headerSize, 1);
 	return TCL_OK;
     }
 
     pdfs->bp = numRead;
+#ifdef DEBUG
+    fprintf(stderr, "received %d byte packet starting with:", numRead);
+    for (j = 0; j < 4; j++)
+	fprintf(stderr, " %x", 0x000000FF & (unsigned long) pdfs->buffer[j]);
+    fprintf(stderr, "\n");
+#endif
 
     return TCL_OK;
 
@@ -630,12 +669,18 @@ pl_PacketSend(interp, iodev, pdfs)
      * the msg so it can go out in a single write() call.
      */
 
-    len = pdfs->bp + 2 * sizeof(int);
+    len = pdfs->bp + 8;
     buffer = (char *) malloc(len);
 
-    memcpy(buffer, (char *) hbuf, 2 * sizeof(int));
-    memcpy(buffer + 2 * sizeof(int), pdfs->buffer, pdfs->bp);
+    memcpy(buffer, (char *) hbuf, 8);
+    memcpy(buffer + 8, (char *) pdfs->buffer, pdfs->bp);
 
+#ifdef DEBUG
+    fprintf(stderr, "sending  %d byte packet starting with:", len);
+    for (j = 0; j < 12; j++)
+	fprintf(stderr, " %x", 0x000000FF & (unsigned long) buffer[j]);
+    fprintf(stderr, "\n");
+#endif
     numSent = write(iodev->fd, buffer, len);
 
     free(buffer);
