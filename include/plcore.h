@@ -211,10 +211,11 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_tkwin) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tkwin,
 #endif
+    NULL
 };
 
 static int nplstaticdevices = ( sizeof(static_device_initializers) /
-                                sizeof(PLDispatchInit) );
+                                sizeof(PLDispatchInit) ) - 1;
 static int npldynamicdevices = 0;
 
 /*--------------------------------------------------------------------------*\
