@@ -8,8 +8,8 @@
 #include "plplot/plevent.h"
 #include <math.h>
 
-#define XDIM 200
-#define YDIM 300
+#define XDIM 160
+#define YDIM 120
 
 int
 main(int argc, char *argv[])
@@ -35,43 +35,38 @@ main(int argc, char *argv[])
   /* Initialize plplot */
 
   plinit();
-  plenv(1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 0); /* no plot box */
 
   plAlloc2dGrid(&z, XDIM, YDIM);
   plAlloc2dGrid(&r, XDIM, YDIM);
 
-  /* build a square -- diagnostics */
-  for (i=0; i<XDIM; i++)
-    z[i][YDIM-1] = 1.; /* right */
-  for (i=0; i<XDIM; i++)
-    z[i][0] = 1.; /* left */
+  if (0) { /* view image border pixels */
+    plenv(1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, -2); /* no plot box */
+
+    /* build a square -- diagnostics */
+    for (i=0; i<XDIM; i++)
+      z[i][YDIM-1] = 1.; /* right */
+    for (i=0; i<XDIM; i++)
+      z[i][0] = 1.; /* left */
   
-  for (i=0; i<YDIM; i++)
-    z[0][i] = 1.; /* top */
-  for (i=0; i<YDIM; i++)
-    z[XDIM-1][i] = 1.; /* botton */
+    for (i=0; i<YDIM; i++)
+      z[0][i] = 1.; /* top */
+    for (i=0; i<YDIM; i++)
+      z[XDIM-1][i] = 1.; /* botton */
 
-  /*
-    for (i=0; i<XDIM; i++) {
-    for (j=0; j<YDIM; j++)
-    printf("%d ", (int) z[i][j]);
-    printf("\n");}
-  */
-
-  pllab("...around a blue square."," ","A red border should appear...");
-  plimage(z, XDIM, YDIM,
-	  1., (PLFLT) XDIM, 1., (PLFLT) YDIM,
-	  1., (PLFLT) XDIM, 1., (PLFLT) YDIM);
-  plptex(XDIM/2., YDIM-20, 0.0, 0.0, 0.5, "Matrix bottom"); 
-  pladv(0);
+    pllab("...around a blue square."," ","A red border should appear...");
+    plimage(z, XDIM, YDIM,
+	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM,
+	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM);
+    pladv(0);
+  }
 
   plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
   plenv(0., 2.*PI, 0, 3.*PI, 1, 0);
 
   for (i=0; i<XDIM; i++)
-    x[i] = i*2.*PI/XDIM;
+    x[i] = i*2.*PI/(XDIM-1);
   for (i=0; i<YDIM; i++)
-    y[i] = i*4.*PI/YDIM;
+    y[i] = i*3.*PI/(YDIM-1);
 
   for (i=0; i<XDIM; i++)
     for (j=0; j<YDIM; j++) {
@@ -79,9 +74,8 @@ main(int argc, char *argv[])
       z[i][j] = sin(r[i][j]) / (r[i][j]);
     }
 
-  pllab("...around the plot."," ","A yellow box should appear...");
+  //pllab("...around the plot."," ","A yellow box should appear...");
   plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0., 2.*PI, 0, 3.*PI); 
-
 
   pladv(0);
   plFree2dGrid(z, XDIM, YDIM);
@@ -105,7 +99,7 @@ main(int argc, char *argv[])
   ungetc(i, fp);
 
   fscanf(fp,"%d%d%d", &width, &height, &num_col); /* width, height num colors */
-  printf("width=%d height=%d\n", width, height);
+  /* printf("width=%d height=%d\n", width, height); */
 
   img = (unsigned char *) malloc(width*height*sizeof(char));
   plAlloc2dGrid(&img_f, width, height);
@@ -118,17 +112,14 @@ main(int argc, char *argv[])
       img_f[i][j] = img[(height-j)*width+i];
 
   plenv(1., width, 1., height, 1, -1);
-  pllab("Set and drag Button 1 to (re)set selection, Button 3 to finish."," ","Lena...");
+  pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
   plimage(img_f, width, height, 1., width, 1., height, 1., width, 1., height);
-
-  /* the code bellow should only be executed by an interative device.
-     How to get this info? */
 
   xi = 200.; xe = 330.;
   yi = 280.; ye = 220.;
 
   plxormod(1, &st); /* enter xor mode to draw a selection rectangle */
-  if (st) {
+  if (st) { /* driver has xormod capability */
     start = 0;
 
     while(1) {
@@ -179,32 +170,37 @@ main(int argc, char *argv[])
     if (gin.keysym == 'Q')
       exit(0);
   }  
-    /* 
-       I'm unable to continue, clearing the plot and advancing to the next
-       one, without hiting the enter key, or pressing the button... help!
+  /* 
+     I'm unable to continue, clearing the plot and advancing to the next
+     one, without hiting the enter key, or pressing the button... help!
 
-       Forcing the xwin driver to leave locate mode and destroying the
-       xhairs (in GetCursorCmd()) solves some problems, but I still have
-       to press the enter key or press Button-3 to go to next plot, even
-       if a pladv() is not present!  Using plbop() solves the problem, but
-       it should'nt be needed! 
-    */
+     Forcing the xwin driver to leave locate mode and destroying the
+     xhairs (in GetCursorCmd()) solves some problems, but I still have
+     to press the enter key or press Button-2 to go to next plot, even
+     if a pladv() is not present!  Using plbop() solves the problem, but
+     it should'nt be needed! 
+  */
 
-    /*  plbop(); */
+  /* plbop(); */
 
-    /* this also works, plspause(0), pladv(0), plspause(1),
-       but the above question remains.
-       With this approach, the previous pause state is lost,
-       as there is no API call to get it. */
-    plspause(0);
-    pladv(0);
-    plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
-    plspause(1);
-    pladv(0);
- 
-    plenv(xi, xe, ye, yi, 1, -1);
-    plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
-    pladv(0);
+  /* 
+     plspause(0), pladv(0), plspause(1), also works,
+     but the above question remains.
+     With this approach, the previous pause state is lost,
+     as there is no API call to get its current state.
+  */
+
+  plspause(0);
+  pladv(0);
+
+  plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
+
+  plspause(1);
+  pladv(0);
+
+  plenv(xi, xe, ye, yi, 1, -1);
+  plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
+  pladv(0);
 
   plFree2dGrid(img_f, width, height);
   free(img);
