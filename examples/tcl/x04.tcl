@@ -1,25 +1,28 @@
+#----------------------------------------------------------------------------
+# PLplot Tcl demo #4
+#
 # $Id$
 # $Log$
-# Revision 1.2  1994/08/09 08:23:24  mjl
+# Revision 1.3  1995/01/27 02:49:48  mjl
+# New Tcl example files.  Can now be run from either pltcl -- using the
+# "loopback" command as argument, or from plserver (or other plplot-aware
+# extended wish) -- using the widget name as argument.
+#
+# Revision 1.2  1994/08/09  08:23:24  mjl
 # Changed to new tclMatrix notation.
 #
 # Revision 1.1  1994/06/30  18:49:36  mjl
 # Tcl demo programs, which fully reproduce their x??c counterpart.
-#
-#----------------------------------------------------------------------------
-# PLplot Tcl demo #4
-#
-# After sourcing, just type "4".
 #----------------------------------------------------------------------------
 
-proc 4 {} {
+proc x04 {w} {
     matrix freql f 101
     matrix ampl f 101
     matrix phase f 101
 
-    plssub 1 1
-    plbop
-    plfont 2
+    $w cmd plssub 1 1
+    $w cmd plbop
+    $w cmd plfont 2
 
     set f0 1000.0
     for {set i 1} {$i <= 100} {incr i} {
@@ -29,32 +32,32 @@ proc 4 {} {
 	phase $i = [expr -(180.0 / 3.141592654) * atan($freq/$f0)]
     }
 
-    plvpor 0.15 0.85 0.1 0.9
-    plwind 1.0 6.0 -80.0 0.0
+    $w cmd plvpor 0.15 0.85 0.1 0.9
+    $w cmd plwind 1.0 6.0 -80.0 0.0
 
-    plcol 1
-    plbox "bclnst" 0.0 0 "bnstv" 0.0 0
+    $w cmd plcol 1
+    $w cmd plbox "bclnst" 0.0 0 "bnstv" 0.0 0
 
-    plcol 2
-    plline 101 freql ampl
+    $w cmd plcol 2
+    $w cmd plline 101 freql ampl
 
-    plcol 1
-    plptex 5.0 -30.0 1.0 -20.0 0.5 "-20 dB/decade"
-    plwind 1.0 6.0 -100.0 0.0
-    plbox "" 0.0 0 "cmstv" 30.0 3
+    $w cmd plcol 1
+    $w cmd plptex 5.0 -30.0 1.0 -20.0 0.5 "-20 dB/decade"
+    $w cmd plwind 1.0 6.0 -100.0 0.0
+    $w cmd plbox "" 0.0 0 "cmstv" 30.0 3
 
-    plcol 3
-    plline 101 freql phase
+    $w cmd plcol 3
+    $w cmd plline 101 freql phase
 
-    plcol 1
-    plmtex "b" 3.2 0.5 0.5 "Frequency"
-    plmtex "t" 2.0 0.5 0.5 "Single Pole Low-Pass Filter"
+    $w cmd plcol 1
+    $w cmd plmtex "b" 3.2 0.5 0.5 "Frequency"
+    $w cmd plmtex "t" 2.0 0.5 0.5 "Single Pole Low-Pass Filter"
 
-    plcol 2
-    plmtex "l" 5.0 0.5 0.5 "Amplitude (dB)"
+    $w cmd plcol 2
+    $w cmd plmtex "l" 5.0 0.5 0.5 "Amplitude (dB)"
 
-    plcol 3
-    plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)"
+    $w cmd plcol 3
+    $w cmd plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)"
 
-    pleop
+    $w cmd pleop
 }
