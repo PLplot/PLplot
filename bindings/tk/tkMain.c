@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1998/12/01 20:49:24  furnish
+ * Revision 1.10  1999/01/23 05:08:23  furnish
+ * When itcl and itk are enabled, set up the interpretter the same way
+ * that itkwish does.  This makes it much easier to use Itk components.
+ *
+ * Revision 1.9  1998/12/01  20:49:24  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
  * Revision 1.8  1998/11/18  06:12:39  furnish
@@ -262,6 +266,30 @@ pltkMain(int argc, char **argv, char *RcFileName,
 #ifdef HAVE_ITK
     if ( Itk_Init( interp ) == TCL_ERROR ) {
 	return TCL_ERROR;
+    }
+
+/*
+  Pulled in this next section from itkwish in itcl3.0.1.
+*/
+
+    /*
+     *  This is itkwish, so import all [incr Tcl] commands by
+     *  default into the global namespace.  Fix up the autoloader
+     *  to do the same.
+     */
+    if (Tcl_Import(interp, Tcl_GetGlobalNamespace(interp),
+            "::itk::*", /* allowOverwrite */ 1) != TCL_OK) {
+        return TCL_ERROR;
+    }
+
+    if (Tcl_Import(interp, Tcl_GetGlobalNamespace(interp),
+            "::itcl::*", /* allowOverwrite */ 1) != TCL_OK) {
+        return TCL_ERROR;
+    }
+
+    if (Tcl_Eval(interp, "auto_mkindex_parser::slavehook { _%@namespace import -
+force ::itcl::* ::itk::* }") != TCL_OK) {
+        return TCL_ERROR;
     }
 #endif
 #endif
