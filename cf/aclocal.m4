@@ -310,35 +310,6 @@ fi; done
 
 ])
 dnl> ------------------------------------------------------------------------
-dnl> Bug fix to Autoconf 2.3
-undefine([AC_PROG_CPP])dnl
-AC_DEFUN([AC_PROG_CPP],
-[AC_MSG_CHECKING(how to run the C preprocessor)
-# On Suns, sometimes $CPP names a directory.
-if test -n "$CPP" && test -d "$CPP"; then
-  CPP=
-fi
-if test -z "$CPP"; then
-AC_CACHE_VAL(ac_cv_prog_CPP,
-[  # This must be in double quotes, not single quotes, because CPP may get
-  # substituted into the Makefile and "${CC-cc}" will confuse make.
-  CPP="${CC-cc} -E"
-  # On the NeXT, cc -E runs the code through the compiler's parser,
-  # not just through cpp.
-dnl Use a header file that comes with gcc, so configuring glibc
-dnl with a fresh cross-compiler works.
-  AC_TRY_CPP([#include <assert.h>
-Syntax Error], ,
-  CPP="${CC-cc} -E -traditional-cpp"
-  AC_TRY_CPP([#include <assert.h>
-Syntax Error], , CPP=/lib/cpp))
-  ac_cv_prog_CPP="$CPP"])dnl
-  CPP="$ac_cv_prog_CPP"
-fi
-AC_MSG_RESULT($CPP)
-AC_SUBST(CPP)dnl
-])
-dnl> ------------------------------------------------------------------------
 dnl> The following macro searches a list of directories for the given
 dnl> include file and takes appropriate actions if found or not.
 dnl
