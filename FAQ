@@ -377,13 +377,18 @@ Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
 
 You can get the Tcl/TK package by anonymous ftp from sprite.berkeley.edu
 in the tcl subdirectory (or from harbor.ecn.purdue.edu in directory
-pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.  The
-most recent version at the time of this writing is Tcl 7.3 and TK 3.6, and
-if you are just starting out make sure to get that.  Plplot may eventually
-require these versions but for now works with earlier releases (it once
-worked with Tcl 6.7, TK 3.2, but may no longer).  Note: to build, you need
-to have the Tcl/TK header files where they can be found by the C compiler
-(e.g. /usr/local/include, or softlinks to it will work fine).
+pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.  Pick
+up Tcl-DP too, since the DP driver is the best one.  At the time of this
+writing, the minimum versions that are fairly certain to work with PLplot
+are:
+
+tcl7.3
+tk3.6
+tcl-dp3.1
+
+Note: to build, you need to have the Tcl/TK header files where they can be
+found by the C compiler (e.g. /usr/local/include, or softlinks to it will
+work fine).
 
 
  3.2  How do I use "xauth"?
@@ -397,6 +402,27 @@ for your local node.  To grant remote nodes access, just ftp your
 ~/.Xauthority file (server machine) to your remote home directory.  There
 are some notes on setting this up in the file Xauthority in the doc
 directory.
+
+I know from experience that setting up and using xauth security can be
+a major pain in the neck.  For example, a site that's basically secure
+can be configured by the system manager to enable xhost access to all
+local nodes automatically through the /etc/X0.hosts file.  At such sites
+the users are unaccustomed to explicitly granting permission and on a
+secure group of machines there's no real security risk.  HOWEVER, a user
+may need to occasionally access an "outside" machine, and since you can't
+mix xhost and xauth, you are hosed.  And compiling TK without xauth
+security is a gargantuan, tremendous security hazard.  A sickeningly vile,
+disgusting mess.
+
+Therefore I recommend that in ALL cases when you run plplot/TK on a
+machine connected to the network, you just forget about the TK driver
+altogether and use the DP driver instead.  The DP driver is superior in
+every way except that it has a slightly longer startup time.  Only when
+you are running on a machine off the network (where maybe you don't have
+a full TCP/IP implementation) is it a good idea to use the TK driver
+instead.  The DP driver only allows open connects between the time it
+takes to launch the server and they do their initial handshaking, a hole
+that is almost impossible to take advantage of.
 
 
  3.3  How do I use the Tcl/TK driver?
@@ -523,7 +549,7 @@ name since it corresponds to your main window name (to which X property
 messages are sent).  If there is a previous Tcl interpreter of that name
 hanging around (say, as a result of some sort of abnormal exit like a core
 dump) you will get the mysterious _#2 appended (and _#3, and so on; note
-there is a utility called delinterp that will delete these zombie
+there are utilities [zapinterps or delinterp] that will delete these zombie
 interpreters).
 
 ==============================================================================
@@ -542,21 +568,21 @@ Super-UX, Amiga, and maybe not at all on any others.  I'd love to have
 volunteers to pick up the slack here.  I could get prerelease versions to
 you in order to make whatever fixes are needed ahead of time.  I am
 gradually moving away from supporting the Amiga driver so could use some
-help here.  Geoff has abandoned the DOS drivers and is leaning away from
-supporting the OS/2 driver, so here target platform developers are
-needed.  Tony Richardson no longer has access to a NeXT, so also the 
-NeXT is no longer supported by anyone.
+help here.  Geoff has abandoned the DOS and OS/2 drivers, so here target
+platform developers are needed.  Tony Richardson no longer has access to a
+NeXT, so also the NeXT is no longer supported by anyone.
 
 
  4.2  What about plplot support for VMS?
 
 It's true, I did support plplot under VMS at one time, although I never
 DID see the X driver running on it (supposedly it did).  However after
-exclusively using Unix for a while I vowed never to go back to VMS :-).
-It certainly caused me lots of pain to get up, but at least I learned a
-few things about portability.  Anyway, there may still be people out there
-who would find it useful under VMS, so if anyone succeeds in making plplot
-work and want to continue supporting it there, the job is yours for the
-asking.  I certainly don't have the time or patience for it.
+exclusively using a fast Unix workstation for a while I vowed never to go
+back to VMS :-).  The VMS plplot port caused me lots of pain to get up,
+but at least I learned a few things about portability.  Anyway, there may
+still be people out there who would find it useful under VMS, so if anyone
+succeeds in making plplot work and want to continue supporting it there,
+the job is yours for the asking.  I don't have the time or patience for
+it.
 
 ==============================================================================
