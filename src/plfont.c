@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/02/23 05:14:13  mjl
-   Changed reference in error message from plstar to plinit.
+   Revision 1.7  1993/07/01 22:15:32  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Improved code that locates fonts, and changed the default font
+   locations on the Amiga.
 
+ * Revision 1.6  1993/02/23  05:14:13  mjl
+ * Changed reference in error message from plstar to plinit.
+ *
  * Revision 1.5  1993/01/23  05:54:32  mjl
  * Added support for device-independent font files.
  *
@@ -49,13 +54,13 @@
 * Amiga:
 *	current directory
 *	$(PLFONTS)
-*	PLFONTDEV1	(fonts:plplot/)
-*	PLFONTDEV2	(plfonts:)
-*	PLFONTDEV3	not specified
+*	PLFONTDEV1	(s:plplot/)
+*	PLFONTDEV2	(fonts:plplot/)
+*	PLFONTDEV3	(plfonts:)
 */
 
 #define PL_NEED_MALLOC
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +81,7 @@
 
  /* Unix search path */
 
-#ifdef unix
+#ifdef __unix
 #define HOME_LIB
 #define PLFONTENV  "PLFONTS"
 
@@ -135,11 +140,17 @@
 #endif
 #endif
 
-#define NFILEN	256		/* Max length for font path+file specification */
+/* Font directory */
+/* Total length for total path+file spec limited to 256 chars */
+
+#define NFILEN	256
+static char fontdir[NFILEN];
 
 /* Function prototypes. */
 
-static FILE *plfontopen(char *);
+static FILE	*plfontopen	(char *);
+static void	barf		(char *);
+
 char *getenv();
 
 /* Declarations */
@@ -164,15 +175,15 @@ c_plfont(PLINT ifont)
     PLINT ifnt, icol;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plfont: Please call plinit first.");
 
     if (ifont < 1 || ifont > 4)
 	plexit("plfont: Invalid font.");
 
-    gatt(&ifnt, &icol);
-    satt(ifont, icol);
+    plP_gatt(&ifnt, &icol);
+    plP_satt(ifont, icol);
 }
 
 /*----------------------------------------------------------------------*\
@@ -191,9 +202,9 @@ plfntld(PLINT fnt)
     if (fontloaded) {
 	if (charset == fnt)
 	    return;
-	free((VOID *) fntindx);
-	free((VOID *) fntbffr);
-	free((VOID *) fntlkup);
+	free((void *) fntindx);
+	free((void *) fntbffr);
+	free((void *) fntlkup);
     }
 
     fontloaded = 1;
@@ -206,56 +217,38 @@ plfntld(PLINT fnt)
 
 /* Read fntlkup[] */
 
-#ifdef PLPLOT5_FONTS
-    read_2bytes(fontfile, (U_SHORT *) &bffrleng);
-#else
-    fread((void *) &bffrleng, (size_t) sizeof(short), (size_t) 1, fontfile);
-#endif
+    pdf_rd_2bytes(fontfile, (U_SHORT *) &bffrleng);
     numberfonts = bffrleng / 256;
     numberchars = bffrleng & 0xff;
     bffrleng = numberfonts * numberchars;
     fntlkup = (short int *) malloc(bffrleng * sizeof(short int));
-    if (!fntlkup)
-	plexit("plfntld: Out of memory while allocating font buffer.");
-
-#ifdef PLPLOT5_FONTS
-    read_2nbytes(fontfile, (U_SHORT *) fntlkup, bffrleng);
-#else
-    fread((void *) fntlkup, (size_t) sizeof(short int), (size_t) bffrleng,
-	  fontfile);
-#endif
+    if (!fntlkup) {
+	barf("plfntld: Out of memory while allocating font buffer.");
+    }
+    pdf_rd_2nbytes(fontfile, (U_SHORT *) fntlkup, bffrleng);
 
 /* Read fntindx[] */
 
-#ifdef PLPLOT5_FONTS
-    read_2bytes(fontfile, (U_SHORT *) &indxleng);
-#else
-    fread((void *) &indxleng, (size_t) sizeof(short), (size_t) 1, fontfile);
-#endif
+    pdf_rd_2bytes(fontfile, (U_SHORT *) &indxleng);
     fntindx = (short int *) malloc(indxleng * sizeof(short int));
-    if (!fntindx)
-	plexit("plfntld: Out of memory while allocating font buffer.");
-
-#ifdef PLPLOT5_FONTS
-    read_2nbytes(fontfile, (U_SHORT *) fntindx, indxleng);
-#else
-    fread((void *) fntindx, (size_t) sizeof(short int), (size_t) indxleng,
-	  fontfile);
-#endif
+    if (!fntindx) {
+	free((void *) fntlkup);
+	barf("plfntld: Out of memory while allocating font buffer.");
+    }
+    pdf_rd_2nbytes(fontfile, (U_SHORT *) fntindx, indxleng);
 
 /* Read fntbffr[] */
+/* Since this is an array of char, there are no endian problems */
 
-#ifdef PLPLOT5_FONTS
-    read_2bytes(fontfile, (U_SHORT *) &bffrleng);
-#else
-    fread((void *) &bffrleng, (size_t) sizeof(short), (size_t) 1, fontfile);
-#endif
+    pdf_rd_2bytes(fontfile, (U_SHORT *) &bffrleng);
     fntbffr = (SCHAR *) malloc(2 * bffrleng * sizeof(SCHAR));
-    if (!fntbffr)
-	plexit("plfntld: Out of memory while allocating font buffer.");
-
-    fread((void *) fntbffr, (size_t) sizeof(SCHAR), (size_t) (2 * bffrleng),
-	  fontfile);
+    if (!fntbffr) {
+	free((void *) fntindx);
+	free((void *) fntlkup);
+	barf("plfntld: Out of memory while allocating font buffer.");
+    }
+    fread((void *) fntbffr, (size_t) sizeof(SCHAR),
+	  (size_t) (2 * bffrleng), fontfile);
 
 /* Done */
 
@@ -273,11 +266,21 @@ static FILE *
 plfontopen(char *fn)
 {
     FILE *plfp;
-    char fnb[NFILEN];
+    char fs[NFILEN];
     char *dn;
+
+/****	use results of previous search	****/
+
+    if (fontdir != NULL) {
+	strcpy(fs, fontdir);
+	strcat(fs, fn);
+	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+	    return (plfp);
+    }
 
 /****	search current directory	****/
 
+    strcpy(fontdir, "");
     if ((plfp = fopen(fn, BINARY_READ)) != NULL)
 	return (plfp);
 
@@ -286,13 +289,14 @@ plfontopen(char *fn)
 #ifdef HOME_LIB
     if ((dn = getenv("HOME")) != NULL) {
 	if ((strlen(dn) + 5 + strlen(fn)) > NFILEN)
-	    plexit("plfontopen: Too many characters in font file name.\n");
+	    barf("plfontopen: Too many characters in font file name.\n");
 
-	(VOID) strcpy(fnb, dn);
-	(VOID) strcat(fnb, "/lib/");
-	(VOID) strcat(fnb, fn);
+	strcpy(fontdir, dn);
+	strcat(fontdir, "/lib/");
+	strcpy(fs, fontdir);
+	strcat(fs, fn);
 
-	if ((plfp = fopen(fnb, BINARY_READ)) != NULL)
+	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
 	    return (plfp);
     }
 #endif
@@ -302,12 +306,13 @@ plfontopen(char *fn)
 #ifdef PLFONTENV
     if ((dn = getenv(PLFONTENV)) != NULL) {
 	if ((strlen(dn) + strlen(fn)) > NFILEN)
-	    plexit("plfontopen: Too many characters in font file name.\n");
+	    barf("plfontopen: Too many characters in font file name.\n");
 
-	(VOID) strcpy(fnb, dn);
-	(VOID) strcat(fnb, fn);
+	strcpy(fontdir, dn);
+	strcpy(fs, fontdir);
+	strcat(fs, fn);
 
-	if ((plfp = fopen(fnb, BINARY_READ)) != NULL)
+	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
 	    return (plfp);
     }
 #endif
@@ -316,9 +321,9 @@ plfontopen(char *fn)
 
 #ifdef PLFONTDEV1
     if ((strlen(PLFONTDEV1) + strlen(fn)) > NFILEN)
-	plexit("plfontopen: Too many characters in font file name.\n");
+	barf("plfontopen: Too many characters in font file name.\n");
 
-    (VOID) strcpy(fnb, PLFONTDEV1);
+    strcpy(fontdir, PLFONTDEV1);
 #ifdef MSDOS
     /* Strip off the trailing space.  No way to get PLFONTDEV1 to be
     the dir path without a space before the final quote.  Unbelievalbe idiots
@@ -333,49 +338,69 @@ plfontopen(char *fn)
     value specified on the command line.  With standards committees like
     these, maybe we should go back to abacci.
     */
-    fnb[strlen(fnb) - 1] = '\0';
+    fontdir[strlen(fontdir) - 1] = '\0';
 #endif
-    (VOID) strcat(fnb, fn);
+    strcpy(fs, fontdir);
+    strcat(fs, fn);
 
-    if ((plfp = fopen(fnb, BINARY_READ)) != NULL)
+    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
 	return (plfp);
 #endif
 
 #ifdef PLFONTDEV2
     if ((strlen(PLFONTDEV2) + strlen(fn)) > NFILEN)
-	plexit("plfontopen: Too many characters in font file name.\n");
+	barf("plfontopen: Too many characters in font file name.\n");
 
-    (VOID) strcpy(fnb, PLFONTDEV2);
+    strcpy(fontdir, PLFONTDEV2);
 #ifdef MSDOS
-    fnb[strlen(fnb) - 1] = '\0';
+    fontdir[strlen(fontdir) - 1] = '\0';
 #endif
-    (VOID) strcat(fnb, fn);
+    strcpy(fs, fontdir);
+    strcat(fs, fn);
 
-    if ((plfp = fopen(fnb, BINARY_READ)) != NULL)
+    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
 	return (plfp);
 #endif
 
 #ifdef PLFONTDEV3
     if ((strlen(PLFONTDEV3) + strlen(fn)) > NFILEN)
-	plexit("plfontopen: Too many characters in font file name.\n");
+	barf("plfontopen: Too many characters in font file name.\n");
 
-    (VOID) strcpy(fnb, PLFONTDEV3);
+    strcpy(fontdir, PLFONTDEV3);
 #ifdef MSDOS
-    fnb[strlen(fnb) - 1] = '\0';
+    fontdir[strlen(fontdir) - 1] = '\0';
 #endif
-    (VOID) strcat(fnb, fn);
+    strcpy(fs, fontdir);
+    strcat(fs, fn);
 
-    if ((plfp = fopen(fnb, BINARY_READ)) != NULL)
+    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
 	return (plfp);
 #endif
 
-/**** 	not found, give up (do NOT use plexit)	****/
+/**** 	not found, give up 	****/
 
     fprintf(stderr, "\nUnable to open font file: %s.\n", fn);
+    barf("");
+
+    return (NULL);		/* don't ask */
+}
+
+/*----------------------------------------------------------------------*\
+* barf
+*
+* Terminates program --
+* don't use plexit since we don't want plfontrel to be called.
+\*----------------------------------------------------------------------*/
+
+static void
+barf(char *msg)
+{
+    if (*msg != '\0')
+	fprintf(stderr, "%s\n", msg);
+
     fprintf(stderr, "Plplot aborted.\n");
     pl_exit();
     exit(1);
-    return (NULL);		/* don't ask */
 }
 
 /*----------------------------------------------------------------------*\
@@ -388,9 +413,9 @@ void
 plfontrel(void)
 {
     if (fontloaded) {
-	free((VOID *) fntindx);
-	free((VOID *) fntbffr);
-	free((VOID *) fntlkup);
+	free((void *) fntindx);
+	free((void *) fntbffr);
+	free((void *) fntlkup);
 	fontloaded = 0;
     }
 }
