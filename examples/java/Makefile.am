@@ -79,11 +79,13 @@ examples_java_DATA = $(javademos)
 examples_execjavadir = $(DATA_DIR)/java/plplot/examples
 examples_execjava_DATA = $(javademos) $(example_classes) README.javademos
 
+endif
+
 install-data-hook:
+if enable_java
 	( cd $(DESTDIR)$(examples_javadir) ; mv -f Makefile.examples Makefile )
 	( cd $(DESTDIR)$(DATA_DIR)/java ; jar -cf plplot.jar plplot ; \
 	rm -rf plplot)
-
 endif
 
 # Note the java package is actually assembled in the java bindings directory.
