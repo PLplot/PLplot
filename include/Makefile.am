@@ -43,9 +43,13 @@ EXTRA_DIST = \
 	metadefs.h \
 	plcore.h \
 	plfreetype.h \
-	ps.h
+	ps.h \
+	plhershey-unicode.h
 
-plhershey-unicode.h: ../fonts/plhershey-unicode-gen \
-	../fonts/plhershey-unicode.csv
-	../fonts/plhershey-unicode-gen \
-	../fonts/plhershey-unicode.csv plhershey-unicode.h
+BUILT_SOURCES = plhershey-unicode.h
+MAINTAINERCLEANFILES = plhershey-unicode.h
+
+plhershey-unicode.h: $(top_builddir)/fonts/plhershey-unicode-gen \
+	$(top_srcdir)/fonts/plhershey-unicode.csv
+	$(top_builddir)/fonts/plhershey-unicode-gen \
+	$(top_srcdir)/fonts/plhershey-unicode.csv plhershey-unicode.h
