@@ -19,7 +19,8 @@ install_fonts:
 	@-cd $(top_srcdir)/lib; $(CP) *.fnt *.map $(DATA_DIR)
 
 install_libbase:
-	@-$(CP) $(PLLIB_BASE)* $(LIB_DIR); \
+	@-( cd $(LIB_DIR); $(RM) $(PLLINKS) ) ; \
+	  $(CP) $(PLLIB_BASE)* $(LIB_DIR); \
 	  if test -r $(PLLIB_BASE)$(LIB_TAG)$A; then \
 	     $(RANLIB) $(LIB_DIR)/$(PLLIB_BASE)$(LIB_TAG)$A; \
 	  fi
