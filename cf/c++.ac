@@ -60,7 +60,7 @@ using namespace std;
 	 AC_MSG_RESULT(yes)],
         [AC_MSG_RESULT(no)])
 
-    if test HAVE_ISNAN ; then
+    if test "$have_isnan" = yes ; then
       AC_MSG_CHECKING([for broken <cmath> missing definition of isnan])
       AC_COMPILE_IFELSE([
 #include <cmath>

@@ -186,8 +186,10 @@ AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
                                [Define if isinf is available]))
 AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
                                [Define if finite is available]))
-AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
-                               [Define if isnan is available]))
+AC_CHECK_FUNC(isnan,
+    [AC_DEFINE(HAVE_ISNAN, [], [Define if isnan is available])
+     have_isnan=yes],
+    [have_isnan=no])
 
 dnl =======================================================================
 dnl Compilation and build options (PLFLT, rpath, install locations)
