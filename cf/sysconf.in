@@ -195,9 +195,11 @@ if test "$enable_cxx" = "yes"; then
 	    # (the default).
 
 	    KCC_THREAD_SAFE_FLAG="--thread_safe"
+	    AC_LANG_SAVE
 	    AC_LANG_CPLUSPLUS
 	    CXXFLAGS=$KCC_THREAD_SAFE_FLAG
 	    AC_TRY_COMPILE(, , , KCC_THREAD_SAFE_FLAG="")
+	    AC_LANG_RESTORE
 
 	    SYS_FLAGS_CXX=$KCC_THREAD_SAFE_FLAG
 	    SYS_FLAGS_LCXX=$KCC_THREAD_SAFE_FLAG
