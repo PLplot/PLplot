@@ -1,3 +1,454 @@
+Commit from rlaboiss (2004-01-04 01:09 CET)
+--------------------
+
+Fixed use of rpath option in compile commands under the pkg-config paradigm.
+
+A new AC_SUBST variable RPATHCMD is created in configure.ac containing
+"-Wl,-rpath -Wl,$libdir".  This solution has portability issues, but should
+work now for a large spectrum of systems/compilers.  I will revisit this
+issue in the future.
+
+  plplot  configure.ac                       1.138
+  plplot  examples/c/Makefile.examples.in    1.17
+  plplot  examples/c++/Makefile.examples.in  1.16
+  plplot  examples/f77/Makefile.examples.in  1.17
+  plplot  examples/tk/Makefile.examples.in   1.12
+
+
+Commit from airwin (2004-01-03 21:56 CET)
+------------------
+
+Get rid of lots of "default" linking cruft in configure.ac. Instead, use
+ADD_TO_INCS and ADD_TO_LIBS in sysloc.in.
+
+There is more of this to do for the (i)tcl/tk flags, but that is a more
+complicated situation, and in any case tcl/tk configuration needs a complete
+rewrite in other ways as well.
+
+  plplot  configure.ac  1.137
+  plplot  sysloc.in     1.61
+
+
+Commit from airwin (2004-01-03 21:44 CET)
+------------------
+
+Fixed continuation issue.
+
+  plplot  examples/tk/Makefile.examples.in  1.11
+
+
+Commit from rlaboiss (2004-01-03 20:22 CET)
+--------------------
+
+
+* Created the AC_SUBSTituted variable PKG_CONFIG_ENV. This variable replaces
+  the previous PKG_CONFIG_PATH.  It defaults to the usual
+  "PKG_CONFIG_PATH=$PKG_CONFIG_DIR", but can be overriden by using the
+  environment variable of same name.  This is done in debian/rules for
+  instance , since setting PKG_CONFIG_PATH is not necessary in Debian.  The
+  echo from the make command in the installed examples directories is much
+  cleaner now (in Debian, at least):
+
+      $ cd examples/c
+      $ make -n x01c
+      gcc x01c.c -o x01c  `pkg-config --cflags --libs plplotd`
+
+
+* Added $(RPATH) to the compilation command under the pkg-config approach in
+  the examples/*/Makefile.examples.in.
+
+
+* In examples/tk/Makefile.examples.in, added include flags specific to
+  Tcl/Tk in the compilation command under the pkg-config approach.  A new
+  variable TCLTKINCCMD was created, which is also used in INCLUDEANDLIB.
+
+  plplot  configure.ac                       1.136
+  plplot  debian/changelog                   1.64
+  plplot  debian/rules                       1.44
+  plplot  examples/c/Makefile.examples.in    1.16
+  plplot  examples/c++/Makefile.examples.in  1.15
+  plplot  examples/f77/Makefile.examples.in  1.16
+  plplot  examples/tk/Makefile.examples.in   1.10
+
+
+Commit from airwin (2004-01-03 18:14 CET)
+------------------
+
+Add top-level Makefile to installed examples tree.  To do this and to
+avoid name clashes with existing Makefiles, the configurable file is
+called Makefile.examples.in which is configured to Makefile.examples which
+is renamed on install to Makefile.
+
+The resulting Makefile in the installed examples tree is of considerable
+usefulness.  Previous instructions were "cd c; make; cd c++; make; cd f77;
+make; cd tk; make; cd ..; ./plplot-test.sh".  Those are now simply replace
+(in the _installed_ examples tree or a copy of it) by "make;
+./plplot-test.sh".  Also, the subdirectories are now configured in the
+generated Makefile so the instructions don't have to be modified if, e.g.,
+fortran, is not enabled.
+
+  plplot  configure.ac                   1.135
+  plplot  examples/.cvsignore            1.4
+  plplot  examples/Makefile.am           1.5
++ plplot  examples/Makefile.examples.in  1.1
+
+
+Commit from airwin (2004-01-03 16:58 CET)
+------------------
+
+Include 18th fortran example in plplot-test.sh tests.
+
+  plplot  test/test_f77.sh  1.6
+
+
+Commit from airwin (2004-01-03 05:39 CET)
+------------------
+
+Bug fix for unique prefix case: put PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) inside
+backwards quotes rather than at start of command line.
+
+  plplot  examples/c/Makefile.examples.in    1.15
+  plplot  examples/c++/Makefile.examples.in  1.14
+  plplot  examples/f77/Makefile.examples.in  1.15
+  plplot  examples/tk/Makefile.examples.in   1.9
+
+
+Commit from airwin (2004-01-03 04:33 CET)
+------------------
+
+* Define the expanded variables LIB_HARDDIR and DRV_HARDDIR (expanded or
+"hard" versions of LIB_DIR and DRV_DIR).
+
+* These variables are used to configure bindings/*/pkgIndex.tcl which are
+then concatanated into bindings/pkgIndex.tcl.  The latter file is installed
+in the $prefix/share tree.  It allows needed PLplot libraries or plug-in
+drivers to be found in the $prefix/lib tree directly from the tclsh or wish
+environments using the lappend command.
+
+* With these changes (which adjust for moving all the installed PLplot
+tcl/tk scripts from the $prefix/lib tree to the $prefix/share tree) I can
+once again execute PLplot commands from tclsh and wish environments
+following the instructions in examples/README.tcldemos and
+examples/README.tkdemos.
+
+  plplot  configure.ac                        1.134
+  plplot  bindings/tcl/pkgIndex.tcl.in        1.7
+  plplot  bindings/tk/pkgIndex.tcl.in         1.9
+  plplot  bindings/tk-x-plat/pkgIndex.tcl.in  1.9
+
+
+Commit from airwin (2004-01-03 04:16 CET)
+------------------
+
+Change documentation from "lib" to "share" location used for lappend command.
+
+  plplot  examples/tcl/README.tcldemos  1.10
+  plplot  examples/tk/README.tkdemos    1.12
+
+
+Commit from airwin (2004-01-03 03:10 CET)
+------------------
+
+Get rid of trailing whitespace on the list of executables that was screwing
+up the make.
+
+  plplot  examples/f77/Makefile.examples.in  1.14
+
+
+Commit from rlaboiss (2004-01-03 01:43 CET)
+--------------------
+
+Preparation to Debian release 5.2.1.cvs.20031231-2
+
+  plplot  debian/changelog  1.63
+  plplot  debian/rules      1.43
+
+
+Commit from rlaboiss (2004-01-03 01:42 CET)
+--------------------
+
+Fixed several issues related to the *_DIR variables
+
+* Made the treatment of the *_DIR even more systematic now.  These variables
+  are really intended to AC_SUBSTitution in the Makefile.in generated from
+  Automake.  As such, they are always relative, never hard paths.
+
+* When it is needed to get them substituted as hard paths (like in config.h
+  via AC_DEFINE_UNQUOTED, or in the examples/*/Makefile.examples), then new
+  variables are defined.  In particular, this is the case of the new
+  variables INCLUDE_DIR_CMD and LIB_DIR_CMD, which should be used in
+  examples/*/Makefile.examples and fix the problems with the plplot_libtool
+  approach.
+
+* In order to help expansion of hard paths, the macro EXPAND_EXPRESSION was
+  added to acinclude.m4.
+
+* Support for pkg-config was added to examples/tk/Makefile.examples.in.
+  Build of the examples in examples/tk with pkg-config is not working yet,
+  though.  The Tcl/Tk include directories are not being included.  I will
+  fix this later.
+
+  plplot  configure.ac                       1.133
+  plplot  acinclude.m4                       1.12
+  plplot  examples/c/Makefile.examples.in    1.14
+  plplot  examples/c++/Makefile.examples.in  1.13
+  plplot  examples/f77/Makefile.examples.in  1.13
+  plplot  examples/tk/Makefile.examples.in   1.8
+  plplot  pkgcfg/Makefile.am                 1.8
+
+
+Commit from airwin (2004-01-03 00:31 CET)
+------------------
+
+* Stylistic changes: (comments, indentation, do loops)
+
+* Removed bugs (notably some incorrect types, off-by-one indices, and
+incorrect format statements).
+
+* Removed redundant phi and theta routines whose functionality was already
+done by statement functions.
+
+* The updated example now produces identical results to the equivalent C
+example without any valgrind problems.  This tests the implementation of
+the fortran interface wrappers for plline3, plpoin3, and plpoly3.
+
+  plplot  examples/f77/x18f.fm4  1.3
+
+
+Commit from airwin (2004-01-02 22:42 CET)
+------------------
+
+* Style changes (comments, indentation, do loops).
+
+* Make this fortran "chart recorder example" work for first time.  There are
+some inevitable differences relative to the C version.
+
+  . Used g77 (and solaris fortran and ?) library rand function to generated
+    random numbers.  Users will probably have to substitute some other
+    library call for random numbers for other compilers.  Note the numbers
+    returned by rand are different from those of the C Library routine
+    drand48 so the interactive results look different (but still it looks
+    like a chart recorder which is cool.)
+
+  . plsError not part of the PLplot common API so bypassed it and let PLplot
+    do its own error handling.
+
+  . Dropped sleep interval from loop.  10 ms is about right, but the g77
+    sleep routine only has a resolution of 1 second (which is like watching
+    paint dry).  Actually eliminating the loop delay altogether still makes
+    a good-looking "chart-recorder" example (at least on my 600MHz machine).
+
+  plplot  examples/f77/x17f.fm4  1.3
+
+
+Commit from airwin (2004-01-02 22:25 CET)
+------------------
+
+Implement fortran interface wrapper for plstripc.
+
+  plplot  bindings/f77/scstubs.c    1.31
+  plplot  bindings/f77/sfstubs.fm4  1.10
+
+
+Commit from airwin (2004-01-02 22:24 CET)
+------------------
+
+Expand number of strings that can be simultanously handled to 9 (fortran
+plstripc needs this).
+
+  plplot  bindings/f77/sfstubs.h  1.2
+
+
+Commit from airwin (2004-01-02 18:54 CET)
+------------------
+
+Change docmentation of id parameter of plstripc: input ==> output.
+
+  plplot  doc/docbook/src/api.xml  1.61
+
+
+Commit from rlaboiss (2004-01-02 17:22 CET)
+--------------------
+
+Move back to the non-Automake method for generating the
+examples/*/Makefile.examples.
+
+configure option --with-pkg-config is an opt-in now and defaults to "no".
+
+  plplot  configure.ac                       1.132
++ plplot  examples/c/Makefile.examples.in    1.13
+- plplot  examples/c/Makefile.examples.am    1.2
++ plplot  examples/c++/Makefile.examples.in  1.12
+- plplot  examples/c++/Makefile.examples.am  1.2
++ plplot  examples/f77/Makefile.examples.in  1.12
+- plplot  examples/f77/Makefile.examples.am  1.2
+
+
+Commit from airwin (2004-01-02 04:35 CET)
+------------------
+
+Fix for -dev tk on Linux.  src/plctrl.c requires BIN_DIR to be set to the
+hard install path in order for -dev tk to find things.  To accomplish this
+make the following fix:
+
+-AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR",
++AC_DEFINE_UNQUOTED(BIN_DIR, "`eval eval echo $BIN_DIR`",
+
+This follows what was done for most (not all) other _DIR variables. I could
+find no other use of BIN_DIR in the build tree other than above so I think
+this is okay.
+
+Nevertheless, it is a tentative fix because I have spot-rezoned what Rafael
+has done recently for his massive changes of all the _DIR variables, and he
+may have had something else in mind.
+
+  plplot  configure.ac  1.131
+
+
+Commit from rlaboiss (2004-01-01 22:33 CET)
+--------------------
+
+In src/plctrl.c, implemented plsabort, that does for plabort the same as
+plsexit does for plexit (i.e., set a user abort handler).
+
+The API sections for plsexit, plabort, and plsabort have been added to
+doc/docbook/src/api-c.xml.  The plexit section was updated, since the
+description of plsexit was not accurate.
+
+  plplot  include/plplot.h                  1.146
+  plplot  src/plctrl.c                      1.75
+  plplot  doc/docbook/src/api-c.xml         1.8
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.31
+
+
+Commit from airwin (2004-01-01 21:19 CET)
+------------------
+
+Greatly modified the 16th fortran example (the old version has been kept as
+x16af.fm4) to mimic equivalent C example results exactly.  This tests the
+implementation of the new fortran interface (PLSHADES0, PLSHADES1, and
+PLSHADES2) to plshades.
+
+  plplot  examples/f77/x16f.fm4  1.8
+
+
+Commit from airwin (2004-01-01 21:14 CET)
+------------------
+
+Implement fortran PLSHADE API (in analogy with fortran PLCONT) and
+PLSHADES0, PLSHADES1, PLSHADES2, and PLSHADES.
+
+  plplot  bindings/f77/plstubs.h    1.31
+  plplot  bindings/f77/sccont.c     1.7
+  plplot  bindings/f77/sfstubs.fm4  1.9
+
+
+Commit from airwin (2004-01-01 21:06 CET)
+------------------
+
+Fix bugs in handling transformations of zero-length or completely blank
+character strings.
+
+  plplot  bindings/f77/strutil.f  1.4
+
+
+Commit from rlaboiss (2004-01-01 19:18 CET)
+--------------------
+
+Reintroduced AC_F77_LIBRARY_LDFLAGS, because the linking error that I was
+observing with plplot_libtool was actually a bug in Debian package g77-3.3.
+
+  plplot  configure.ac  1.130
+
+
+Commit from rlaboiss (2004-01-01 19:17 CET)
+--------------------
+
+  * debian/control: Added pkg-config to build-dependencies and to
+    libplplot-dev Recommends:.
+
+  plplot  debian/changelog  1.62
+  plplot  debian/control    1.41
+
+
+Commit from rlaboiss (2004-01-01 19:06 CET)
+--------------------
+
+Use pkg-config in examples/*/Makefile.examples when appropriate
+
+   - Makefile.examples are now under Automake control.  This means that
+     Makefile.examples.in are removed from the CVS repository and replaced
+     by Makefile.examples.am.  The Makefile.examples.in are automatically
+     generated by bootstrap.sh (no change to the script was needed for
+     that).
+
+   - In the Makefile.examples.am, the rule to build the examples look
+     like this:
+
+     .c$(EXEEXT):
+     if have_pkg_config
+             $(CC) $< -o $@ `pkg-config --cflags --libs plplot$(LIB_TAG)`
+     else
+             plplot_libtool --mode=link $(CC) $(CFLAGS) $< $(INCLUDEANDLIB) -o
++$@
+     endif
+
+   - The AM_CONDITIONAL have_pkg_config is exercised in configure.ac and
+     will be "true" when the pkg-config program is found in the system.
+     Also, there is a configure option --without-pkg-config (or
+     --with-pkg-config=no) that will disable the use of pkg-config and
+     fallback to plplot_libtool.
+
+  plplot  configure.ac                       1.129
+- plplot  examples/c/Makefile.examples.in    1.12
++ plplot  examples/c/Makefile.examples.am    1.1
++ plplot  examples/c++/Makefile.examples.am  1.1
+- plplot  examples/c++/Makefile.examples.in  1.11
++ plplot  examples/f77/Makefile.examples.am  1.1
+- plplot  examples/f77/Makefile.examples.in  1.11
+
+
+Commit from airwin (2004-01-01 18:07 CET)
+------------------
+
+Change the logic of the previous bug fix so the test for what to do with the
+plcont case is now identical to the test (pltr && pltr_data) done inside
+plshade.
+
+  plplot  src/plshade.c  1.24
+
+
+Commit from airwin (2004-01-01 01:41 CET)
+------------------
+
+Fixed subtle bug for the corner case when pltr == NULL AND contouring is
+wanted.  In this case, plshades is supposed to have the same interpretation
+as plshade, that is if pltr == NULL then transform the x and y index ranges
+to the ranges xmin to xmax, and ymin to ymax.  Normally, that transformation
+was accomplished by simply passing on pltr to plshade to deal with using the
+correct transformation.  But a complication arose for pltr == NULL when
+plshades was asked to also invoke plcont after its invocations of plshade.
+The plcont interpretation of pltr is different, and in fact it must be
+specified so the NULL was causing a segfault.  The solution for the case of
+pltr == NULL and contouring is to generate the appropriate x and y grids
+ranging from xmin to xmax and ymin to ymax on the fly and set up the
+invocation of plcont from plshades appropriately.
+
+I copied the ideas for the necessary memory management from other plplot code
+and tested the result with valgrind to make sure no memory management issues
+have been introduced by this bug fix.
+
+  plplot  src/plshade.c  1.23
+
+
+Commit from rlaboiss (2003-12-31 14:16 CET)
+--------------------
+
+Preparation for Debian release 5.2.1.cvs.20031231-1
+
+  plplot  debian/changelog  1.61
+
+
 Commit from rlaboiss (2003-12-31 14:14 CET)
 --------------------
 
