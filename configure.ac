@@ -361,19 +361,19 @@ for option in $*; do
 done
 
 if test "$with_defaults" = "no"; then
-    echo "Performing full configure."
+    echo "Performing full configure." 1>&2
 else
     initfile="./cf_plplot.in"
     if test -f $initfile; then
-	echo "Getting default settings from $initfile."
+	echo "Getting default settings from $initfile." 1>&2
 	. $initfile
     else
 	initfile="$HOME/config/cf_plplot.in"
 	if test -f $initfile; then
-	    echo "Getting default settings from $initfile."
+	    echo "Getting default settings from $initfile." 1>&2
 	    . $initfile
 	else
-	    echo "No defaults file found, performing full configure."
+	    echo "No defaults file found, performing full configure." 1>&2
 	fi
     fi
 fi
