@@ -1,17 +1,56 @@
 /* 
 /* $Id$
  * $Log$
- * Revision 1.3  1994/06/10 20:47:34  furnish
+ * Revision 1.4  1994/06/16 19:30:25  mjl
+ * Changes to use pltkMain() for creating extended wish.  Should be more
+ * portable and robust than old method.
+ *
+ * Revision 1.3  1994/06/10  20:47:34  furnish
  * Big time clean up.
  *
  * Revision 1.2  1994/05/26  22:38:08  mjl
  * Added missing CVS Id and Log fields.
+ */
+
+#include <plplot.h>
+#include <tk.h>
+#include <itcl.h>
+#include <math.h>
+
+/*----------------------------------------------------------------------*\
+ * main --
  *
+ * Just a stub routine to call pltkMain.  The latter is nice to have
+ * when building extended wishes, since then you don't have to rely on
+ * sucking the Tk main out of libtk (which doesn't work correctly on all
+ * systems/compilers/linkers/etc).  Hopefully in the future Tk will
+ * supply a sufficiently capable tkMain() type function that can be used
+ * instead. 
+\*----------------------------------------------------------------------*/
+
+int
+main(int argc, char **argv)
+{
+    exit(pltkMain(argc, argv));
+}
+
+/*
+ *----------------------------------------------------------------------
  *
- * tkAppInit.c --
+ * Tcl_AppInit --
  *
- *	Provides a default version of the Tcl_AppInit procedure for
- *	use in wish and similar Tk-based applications.
+ *	This procedure performs application-specific initialization.
+ *	Most applications, especially those that incorporate additional
+ *	packages, will have their own version of this procedure.
+ *
+ * Results:
+ *	Returns a standard Tcl completion code, and leaves an error
+ *	message in interp->result if an error occurs.
+ *
+ * Side effects:
+ *	Depends on the startup script.
+ *
+ * Taken from tkAppInit.c --
  *
  * Copyright (c) 1993 The Regents of the University of California.
  * All rights reserved.
@@ -32,6 +71,8 @@
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+<<<<<<< xtk02.c
+=======
  */
 
 #ifndef lint
@@ -68,6 +109,7 @@ int *tclDummyMainPtr = (int *) main;
  * Side effects:
  *	Depends on the startup script.
  *
+>>>>>>> 1.3
  *----------------------------------------------------------------------
  */
 

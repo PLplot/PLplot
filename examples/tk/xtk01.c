@@ -1,7 +1,11 @@
 /* 
 /* $Id$
  * $Log$
- * Revision 1.4  1994/06/09 20:29:54  mjl
+ * Revision 1.5  1994/06/16 19:30:14  mjl
+ * Changes to use pltkMain() for creating extended wish.  Should be more
+ * portable and robust than old method.
+ *
+ * Revision 1.4  1994/06/09  20:29:54  mjl
  * Minor cleaning up.
  *
  * Revision 1.3  1994/05/26  22:38:07  mjl
@@ -38,18 +42,27 @@
 static char rcsid[] = "$Header$ SPRITE (Berkeley)";
 #endif /* not lint */
 
-#include "tk.h"
+#include <plplot.h>
+#include <tk.h>
+#include <math.h>
 
-/*
- * The following variable is a special hack that allows applications
- * to be linked using the procedure "main" from the Tk library.  The
- * variable generates a reference to "main", which causes main to
- * be brought in from the library (and all of Tk and Tcl with it).
- */
+/*----------------------------------------------------------------------*\
+ * main --
+ *
+ * Just a stub routine to call pltkMain.  The latter is nice to have
+ * when building extended wishes, since then you don't have to rely on
+ * sucking the Tk main out of libtk (which doesn't work correctly on all
+ * systems/compilers/linkers/etc).  Hopefully in the future Tk will
+ * supply a sufficiently capable tkMain() type function that can be used
+ * instead. 
+\*----------------------------------------------------------------------*/
 
-extern int main();
-int *tclDummyMainPtr = (int *) main;
-
+int
+main(int argc, char **argv)
+{
+    exit(pltkMain(argc, argv));
+}
+
 /*
  *----------------------------------------------------------------------
  *
@@ -75,8 +88,6 @@ int
 Tcl_AppInit(interp)
     Tcl_Interp *interp;		/* Interpreter for application. */
 {
-int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
-
     Tk_Window main;
 
     main = Tk_MainWindow(interp);
@@ -121,11 +132,6 @@ void myplot4();
 /* Plots several simple functions */
 /* Note the compiler should automatically convert all non-pointer arguments
    to satisfy the prototype, but some have problems with constants. */
-
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 static PLFLT xs[6] =
 {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
