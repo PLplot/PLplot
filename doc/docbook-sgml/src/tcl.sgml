@@ -5,7 +5,7 @@ PLplot has historically had C and Fortran language bindings.  PLplot
 version 5.0 introduces a plethora of new programming options including
 C++ (described earlier) and several script language bindings.  The Tcl
 interface to PLplot (which the PLplot maintainers regard as the
-``primary'' script language binding) is described in this chapter,
+<quote>primary</quote> script language binding) is described in this chapter,
 with further discussion of Tcl related issues following in additional
 chapters.  But Tcl is certainly not the only script language option.
 Bindings to Perl, Python, and Scheme (which is actually another
@@ -24,7 +24,7 @@ having a profound effect upon the art of computer programming.  Tasks
 which have traditionally been handled by C or Fortran, are beginning
 to be seen in a new light.  With relatively fast processors now widely
 available, many programming jobs are no longer bound by execution
-time, but by ``human time''.  Rapidity of initial development and
+time, but by <quote>human time</quote>.  Rapidity of initial development and
 continued maintenance, for a surprisingly wide class of applications,
 is far more important than execution time.  Result: in a very short
 period of time, say from 1993 to 1995, script languages have exploded
@@ -32,7 +32,7 @@ onto the scene, becoming essential tools for any serious programmer.
 </para>
 
 <para>
-Moreover, the entire concept of ``speed of execution'' needs revising
+Moreover, the entire concept of <quote>speed of execution</quote> needs revising
 in the face of the gains made in computer hardware in recent years.
 Saying that script language processing is slower than compiled
 language processing may be undeniable and simultaneously irrelevant.
@@ -84,10 +84,10 @@ on and on.  Dive into the Tcl archive, and see what it has for you!
 </para>
 
 <para>
-So, the answer to the question ``Why do we want a Tcl interface to
-PLplot?'' is very simple.  ``Because we we are using Tcl anyway, as
+So, the answer to the question <quote>Why do we want a Tcl interface to
+PLplot?</quote> is very simple.  <quote>Because we we are using Tcl anyway, as
 the command language for our project, and would like to be able to do
-plotting in the command language just as we do so many other things.''
+plotting in the command language just as we do so many other things.</quote>
 </para>
 
 <para>
@@ -468,15 +468,14 @@ authors codes in which Tcl matrices are passed in from Tcl to a C++
 routine which is supposed to fill them in with values from some
 matrices used in the compiled side of the code:
 </para>
-<!-- replace ???float??? by <float>, but I don't know how to escape it
--->
+
 <programlisting>
 ...
 if (item == "vertex_coords") {
     tclMatrix *matxg = Tcl_GetMatrixPtr( interp, argv[1] );
     tclMatrix *matyg = Tcl_GetMatrixPtr( interp, argv[2] );
 
-    Mat2???float??? xg(ncu, ncv), yg(ncu, ncv);
+    Mat2&lt;float> xg(ncu, ncv), yg(ncu, ncv);
     cg->Get_Vertex_Coords( xg, yg );
 
     TclMatFloat txg( matxg ), tyg( matyg );
@@ -759,15 +758,15 @@ without requiring special data preparation, again just like for
   <title>Understanding the Performance Characteristics of Tcl</title>
 
 <para>
-Newcomers to Tcl, and detractors (read, ``proponents of other
-paradigms'') often do not have a clear (newcomers) or truthful
+Newcomers to Tcl, and detractors (read, <quote>proponents of other
+paradigms</quote>) often do not have a clear (newcomers) or truthful
 (detractors) perspective on Tcl performance.  In this section we try
 to convey a little orientation which may be helpful in working with
 the PLplot Tcl interface.
 </para>
 
 <para>
-``Tcl is slow!''  ``Yeah, so what?''
+<quote>Tcl is slow!</quote>  <quote>Yeah, so what?</quote>
 </para>
 
 <para>
