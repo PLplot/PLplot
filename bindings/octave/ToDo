@@ -3,9 +3,9 @@ This keeps growing. Can't be! And will not!
 o DONE -- Enable fmt to be a string array, so matrices can get a separated line
   legend for each row/column.
 o DONE -- Add function to enable/disable automatic increase in line style as each
-  line is ploted. In color, a solid linestlyle looks better, in b&w can't be.
+  line is plotted. In color, a solid linestyle looks better, in b&w can't be.
 o DONE -- mesh() should take into account the user axis()
-o shade() should have a legend. Doing it, however, is very complicated,
+o DONE -- shade() should have a legend. Doing it, however, is very complicated,
   if possible. One never knows what the current fill color really is; in
   addition, the user can change the color pallete, number of colors...
   The only way seems to be superimposing a small "rectangle" on the grid
@@ -36,8 +36,8 @@ o DONE - add lines to the legend, `a la` gnuplot
 o DONE - draw a box around the legend, in opaque mode
 o DONE - advance line style at the same time as line colour. This is important
   if printing on B&W.
-o HACKED - NO -- solve the log plot problem (plot values <= 0)
-  The hack is buggy, no arrays can be passed as arguments! And is uglly.
+o HACKED -- solve the log plot problem (plot values <= 0)
+  The hack is buggy, no arrays can be passed as arguments! And is ugly.
   I think the best is not to plot anything, just return an error/warning
 
 o offset the grid legend values in polar plots
@@ -55,7 +55,7 @@ o IMPOSSIBLE -- plplot dont support it!.
 o DONE --in multiplot mode plotting on a subwindow don't clear the previous plot.
   Don't know how to avoid it. Perhaps  painting with background color? yes.
 o remove cross-lines after ginput has terminated. If plflush() is called in
-  the command line, the cross-hair disapears! but not if called in the 
+  the command line, the cross-hair disappears! but not if called in the 
   ginput function or any function that call ginput!
 o DONE - avoid CTRL-C killing the tk driver (hack in tk.c)
 o make hist.m use plplot plhist()
@@ -63,12 +63,12 @@ o DONE - solve the waitforkey(button)press problem in tk driver. hack in tk.c
 
 o DONE -- change all global variables to a structure, and keep information on a per
   window base.
-o optimize some scripts that suffered from the automatic convertion from globals
+o optimize some scripts that suffered from the automatic conversion from globals
   to multifigure globals structure
-o DONE -- make atributes (axis, color, linestyle, etc) on a per figure basis
-o change figure() to be matlab compliant. This implies globals in structure
+o DONE -- make attributes (axis, color, linestyle, etc) on a per figure basis
+o change figure() to be Matlab compliant. This implies globals in structure
   and in array mode, one per window.
 
-o DONE ??? -- make shure that having to specify -lplplotdtk -lMatrix -ltk -ltcl -lX11 
+o DONE -- make sure that having to specify -lplplotdtk -lMatrix -ltk -ltcl -lX11 
   when linking *Octave*, and not when making the .oct file is an SCO bug
   related with shared libs!

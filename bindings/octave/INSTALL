@@ -1,126 +1,82 @@
+Install:
 
-To build, you need first to get PLplot. You can find it at
+plplot_octave_org.h is the main (only) important file. It is a massaged
+version of plplot's plplot.h file, ready for use with Holt's matwrap,
+which you can find at
 
-	ftp://plplot.sourceforge.net/pub/plplot/plplot-5.0.0.tar.gz
+	http://www.klab.caltech.edu/~holt/matwrap/
 
-Unpack it in a suitable directory, such as /usr/local/src:
+As usual, you should get the last version, 0.57 at the time of this
+writing. *But you don't need it*, the included 'plplot_octave.cc' is
+the result of running matwrap on 'plplot.h'.
 
-	cd /usr/local/src
-	gunzip -c plplot-5.0.0.tar.gz | tar xvf -
+If you need or want to regenerate plplot_octave.cc, than you need
+matwrap, and you must run 'make' in directory plplot/bindings/octave.
+After that you should 'cd' to the base directory and 'configure' plplot
+in the usual way.
 
-Apply the following patch:
+Because PLplot can be built with floats or doubles, using the
+'configure' option --with-double, there are two versions of
+plplot_octave.cc and plplot_octave.h, being the correct one copied
+during 'configure' to directory plplot/tmp, where all the plplot
+compilation takes place.
 
-	cd plplot-5.0.0
-	patch -c -l	< <this_directory>/plplot-5.0.patch 
+What you get:
 
-Then ./configure. You *must* use the 'double' version of the library.
-
-# plplot configure example with Tcl/Tk and shared libs (your platform might
-not be supported)
-
-	./configure --with-gcc=yes --enable-f77=no --enable-cxx=no \
-	--with-double --with-shlib --disable-itcl --disable-dp
-
-If you want Tk support, you can use Tcl/Tk versions 7.6/4.2 up to 8.0 (tested)
-They must be already installed.
-
-There are some problems making plplot. All trivial.
-
-Then 'make', 'make cdemos', 'cd tmp', and run the demos:
-
-Run the xwin demos:
-
-	for i in x??c; do ./$i -dev xwin; done	
-
-Run the tk demos, if you build with tk support
-
-	for i in x??c; do ./$i -dev tk; done	
-
-and finaly, install,
-
-	make install
-
-You might have some minor problems again.
-
-Then, unpack this distribution (you have already done it).
-
-You have a 'demo' directory, which has the plplot demos C sources,
-x??c.c, the equivalent octave script files, x??c.m, and some new demos,
-p??.m.
+You have a 'demo' directory, with the equivalent octave script files
+x??c.m of PLplot C demos, and some new demos, p??.m.
 
 You have a 'PLplot' directory with modified versions of the standard
 octave plot command, plus a lot of new ones ready for Octave use. You
 must have it on your LOADPATH before the standard octave/gnuplot plot
-scripts. If you install it in the octave 'm' directory, usually
-/usr/local/share/octave/<version>/m/ this will happen automatically.
-Else, use the octave command `octave_plplot_path' to setup the path. You
-can change between the default gnuplot plotter and octave_plplot using
-the octave command `use_plplot'.
+scripts. If you install it in the default directory, use the octave
+command `octave_plplot_path' to setup the path. You can change between
+the default gnuplot plotter and octave_plplot using the octave command
+`use_plplot'.
 
 You have a misc directory with some other octave demos/utilities.
 
-You have an etc directory where the "documentation" is. You are not advised
-to do a 'make distclean' in this directory, as you might lack some
-needed utilities.
+You have an etc directory where the "documentation" is.
 
 You have the directory where the LICENCE, README, INSTALL, PROBLEMS,
 BUGS, ToDo, are, plus 'plplot.h', 'plplot_octave.cc', 'plplot_stub.m',
 massage.c, etc.
 
-plplot.h is the main (only) important file. It is a massaged version of plplot's
-plplot.h file, ready for use with Holt's matwrap, which you can find at
+Testing:
 
-	http://www.klab.caltech.edu/~holt/matwrap/ (but you dont need it)
+Before installing, you can test plplot_octave:
 
-As usual, you should get the last version, 0.57 at the time of this
-writing. But you don't need it, the included 'plplot_octave.cc' is
-the result of running matwrap on 'plplot.h'. See the Makefile.
+'cd' to directory plplot/tmp.
 
-You might have some warnings. These are normal.
+If you build plplot with shared libs, using option --with-shlibs during
+'configure', you might have problems. Try issuing the command 'ldconfig `pwd`'.
 
-Now, you are finally ready to build what you really want, plplot support
-under octave. You have a Makefile, but it is mainly for my use, so you might
-have to change it.
+If you have another version of plplot installed, check, after invoking
+octave and making same plots, the plplot version, typing "plgver'" (note
+the apostrophe in plgver, meaning transpose).
 
-# double precision library with tk support
-# The  -lsocket -lm libraries might not be needed in your system
+Invoke octave, and set the LOADPATH, typing
+	LOADPATH="../bindings/octave//::"
 
-mkoctfile plplot_octave.cc -lplplotdtk -lMatrix \
- -ltk8.0 -ltcl8.0 -lX11 -lsocket -lm
+There have several Octave demos, 'p1' up to 'p20'. Try them:
 
-Or, just 'make'.
+octave> for i=[1:15 19:20]; feval(sprintf("p%d",i));kbhit;endfor;oneplot
 
-Now, make shure that the current directory is in octave loadpath,
-*before* the standard loadpath, and
- 
-$ octave
-octave> LOADPATH
-LOADPATH = .//:/usr/local/share/octave/2.1.30/m//
-
-octave> p1
-octave> p2
-
-# you have several Octave demos, up to p20. Try them:
-
-octave> for i=[1:9 11:14 19:20]; feval(sprintf("p%d",i));kbhit;endfor;oneplot
+and a set of script files that emulate the well known x??c plplot demos. Try:
 
 octave> plplot_octave_demo
 
-# theses are the same demos of the plplot distribution, but adapted for
-# running under Octave
-
 # demo x14c might fail, if you have problems with tk.
 
-You can set some preferences in the file pldef.m
+You can set some preferences in the file 'pldef.m'
 
-to install,
-
-	cp -r PLplot <where you want it/PLplot>
+The default path to instalation is $prefix/share/plplot_octave. You must
+set your LOADPATH to include it *before* the standard Octave LOADPATH.
 
 As with every program, except D. Knuth ones, the programs in this
 package are not finished nor bug free. Please report bugs and send
-patches.
+patches. I will not send checks for each bug discovered :-)
 
 Enjoy,
 
-Joao, jcardoso@inescn.pt
+Joao
