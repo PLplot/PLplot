@@ -4,13 +4,15 @@
 
 #	Contour plot demo.
 
-use PLplot;
+use PLplot qw(:all);
+
+$PI = 3.14159265;
 
 $XPTS = 35;		# Data points in x
 $YPTS = 46;		# Data points in y
 
-$XSPA = 2./(XPTS-1);
-$YSPA = 2./(YPTS-1);
+$XSPA = 2./($XPTS-1);
+$YSPA = 2./($YPTS-1);
 
 @clevel = (-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.);
 
@@ -20,13 +22,17 @@ $YSPA = 2./(YPTS-1);
 
 sub mypltr
 {
-    my $x = shift;
-    my $y = shift;
-    my $tx = shift;
-    my $ty = shift;
+  my $x = shift;
+  my $y = shift;
+  my $tx = shift;
+  my $ty = shift;
+  my $data = shift;
+  
+  $$tx = $tr[0] * $x + $tr[1] * $y + $tr[2];
+  $$ty = $tr[3] * $x + $tr[4] * $y + $tr[5];
 
-    $$tx = $tr[0] * $x + $tr[1] * $y + $tr[2];
-    $$ty = $tr[3] * $x + $tr[4] * $y + $tr[5];
+  print "Called with $data\n";
+    
 }
 
 # --------------------------------------------------------------------------
@@ -52,47 +58,42 @@ for ($i = 0; $i < $XPTS; $i++) {
     $w[$i][$j] = 2 * $xx * $yy;
   }
 }
+
+# Set up grids
+
+for ($i = 0; $i < $XPTS; $i++) {
+  for ($j = 0; $j < $YPTS; $j++) {
+
+    mypltr ( $i, $j, \$xx, \$yy, 0);
+    
+    $argx = $xx * $PI/2;
+    $argy = $yy * $PI/2;
+    $distort = 0.4;
+    
+    $cgrid1{xg}[$i] = $xx + $distort * cos($argx);
+    $cgrid1{yg}[$j] = $yy - $distort * cos($argy);
+    
+    $cgrid2{xg}[$i][$j] = $xx + $distort * cos($argx) * cos($argy);
+    $cgrid2{yg}[$i][$j] = $yy - $distort * cos($argx) * cos($argy);
+
+  }
+}
+
+# Plot using identity transform
+
+plenv (-1.0, 1.0, -1.0, 1.0, 0, 0);
+plcol0 (2);
+plcont (\@z, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11, "mypltr", "z");
+plstyl (1, $mark, $space);
+plcol0 (3);
+plcont (\@w, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11, \&mypltr, "w");
+plstyl (0, $mark, $space);
+plcol0 (1);
+pllab ("X Coordinate", "Y Coordinate", "Streamlines of flow");
+
+plend ();
+
 __DATA__
-
-/* Set up grids */
-
-    cgrid1.xg = xg1;
-    cgrid1.yg = yg1;
-    cgrid1.nx = XPTS;
-    cgrid1.ny = YPTS;
-
-    plAlloc2dGrid(&cgrid2.xg, XPTS, YPTS);
-    plAlloc2dGrid(&cgrid2.yg, XPTS, YPTS);
-    cgrid2.nx = XPTS;
-    cgrid2.ny = YPTS;
-
-    for (i = 0; i < XPTS; i++) {
-	for (j = 0; j < YPTS; j++) {
-	    mypltr((PLFLT) i, (PLFLT) j, &xx, &yy, NULL);
-
-	    argx = xx * PI/2;
-	    argy = yy * PI/2;
-	    distort = 0.4;
-
-	    cgrid1.xg[i] = xx + distort * cos(argx);
-	    cgrid1.yg[j] = yy - distort * cos(argy);
-
-	    cgrid2.xg[i][j] = xx + distort * cos(argx) * cos(argy);
-	    cgrid2.yg[i][j] = yy - distort * cos(argx) * cos(argy);
-	}
-    }
-
-/* Plot using identity transform */
-
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol0(2);
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
-    plstyl(1, &mark, &space);
-    plcol0(3);
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
-    plstyl(0, &mark, &space);
-    plcol0(1);
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
@@ -170,3 +171,20 @@ __DATA__
     free((void *) z);
     exit(0);
 }
+
+sub cb {
+  my $a1 = shift;
+  my $a2 = shift;
+  my $a3 = shift;
+  my $a4 = shift;
+  my $a5 = shift;
+
+  print "$a1:$a2:$$a3:$$a4:$a5:\n";
+
+  $$a3 = 5 * $a1;
+  $$a4 = 6 * $a2;
+
+}
+
+PLplot::test_fp ("cb", "Hello");
+
