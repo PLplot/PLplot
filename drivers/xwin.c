@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.49  1994/08/25 03:58:15  mjl
+ * Revision 1.50  1994/09/16 05:35:45  mjl
+ * Inserted workaround for cases where NULL was being used as argument to
+ * strcmp (some systems don't like it).
+ *
+ * Revision 1.49  1994/08/25  03:58:15  mjl
  * Change to use default visual for now, since otherwise the current
  * procedure results in a BadMatch when calling XCreateWindow on some systems
  * (Suns).  To really get it right, XGetRGBColormaps or something similar
@@ -564,13 +568,16 @@ Init(PLStream *pls)
 
     dev->xwd = NULL;
     for (i = 0; i < PLXDISPLAYS; i++) {
-	if (xwDisplay[i] == NULL)
-	    continue;
-
-	if (strcmp(xwDisplay[i]->displayName, pls->FileName) == 0) {
+	if (pls->FileName == NULL && xwDisplay[i] == NULL) {
 	    dev->xwd = xwDisplay[i];
-	    break;
 	}
+	else if (pls->FileName == NULL || xwDisplay[i] == NULL) {
+	    continue;
+	}
+	else if (strcmp(xwDisplay[i]->displayName, pls->FileName) == 0) {
+	    dev->xwd = xwDisplay[i];
+	}
+	break;
     }
 
 /* If no display matched, create a new one */
