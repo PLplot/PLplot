@@ -8,6 +8,10 @@
 # PLplot source and object file lists.
 # -----------------------------------------------------------------------
 
+# The default target -- a convenient forward reference
+
+default: everything
+
 # Core library files.
 
 CORE_C = \
@@ -119,9 +123,4 @@ UTIL_C = \
 strutil.o:	strutil.f
 sfstubs.o:	sfstubs.f
 sfstubs.f:	sfstubs.fm4 fmacs.m4
-
-# -----------------------------------------------------------------------
-# All the basic targets
-
-everything: plplotP.h libs plrender $(TK_EXE) $(TCL_EXE) pltek
 
