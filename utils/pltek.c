@@ -1,8 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/06/30 18:55:52  mjl
- * Minor changes to eliminate gcc -Wall warnings.
+ * Revision 1.6  1994/08/10 01:15:11  mjl
+ * Changed/improved page prompt, enabled both forward and backward relative
+ * seeking, eliminated system dependent input code.
  *
+ * Revision 1.5  1994/06/30  18:55:52  mjl
+ * Minor changes to eliminate gcc -Wall warnings.
 */
 
 /*
@@ -16,11 +19,11 @@
  */
 
 #include <stdio.h>
+#include <math.h>
 #include <ctype.h>
 
 static long start[1000];
 void describe();
-#define UNSELECTED -999
 
 /* Define graphics control characters. */
 
@@ -36,7 +39,7 @@ main(int argc, char *argv[])
 {
     FILE *fd;
     char infile[128];
-    int i, j, nb, nframe, iframe, ifirst, oldframe;
+    int i, j, nb, npage, ipage, nextpage, ifirst, oldpage;
     int istop;
     char xtra;
     char buf[1024], lastchar;
@@ -55,9 +58,9 @@ main(int argc, char *argv[])
 	exit(1);
     }
 
-/* Find out how many frames there are in file. */
+/* Find out how many pages there are in file. */
 
-    iframe = 0;
+    ipage = 0;
     start[0] = 0;
     for (i = 0; i < 10000; i++) {
 	nb = fread(buf, 1, 1024, fd);
@@ -67,59 +70,44 @@ main(int argc, char *argv[])
 	for (j = 0; j < nb; j++) {
 	    if ((lastchar = buf[j]) == '\f') {
 		ifirst = j - 1;
-		iframe++;
-		start[iframe] = 1024 * i + ifirst + 2;
+		ipage++;
+		start[ipage] = 1024 * i + ifirst + 2;
 	    }
 	}
     }
 
-/* don't count a FF at the end of the file as a separate frame */
+/* don't count a FF at the end of the file as a separate page */
 
     if (lastchar == '\f')
-	iframe--;
+	ipage--;
 
-    nframe = iframe + 1;
-    printf("found %d frames\n", nframe);
+    npage = ipage + 1;
+    printf("found %d pages\n", npage);
 
 /* Loop until the user quits */
 
-    iframe = 0;
+    ipage = 0;
     while (1) {
-	oldframe = iframe;
-	iframe++;
-	if (iframe >= 1 && iframe <= nframe)
-	    printf("Frame Number? [%d] ", iframe);
-	else {
-	    iframe = UNSELECTED;
-	    printf("Command? ");
-	}
+	oldpage = ipage;
+	printf("Page %d> ", ipage);
 
 	gets(ibuf);
 	c = ibuf[0];
 
-/* User input a frame number or a return */
+/* User input a page number or a return */
 /* A carriage return in response to the prompt proceeds to the next page. */
 
-	if (isdigit(c) || c == '\0') {
-#ifdef MSDOS
-	    igrame = atoi(ibuf);
-#else
-	    sscanf(ibuf, " %d", &iframe);
-#endif
-	    if (iframe == UNSELECTED)
-		continue;
-	    if (iframe > nframe) {
-		printf("  Last frame = %d.\n", nframe);
-		continue;
-	    }
-	    if (iframe < 0) {
-		iframe += oldframe;
-		if (iframe < 0) {
-		    printf("  Illegal frame number.\n");
-		    continue;
-		}
-	    }
-	}
+	if (c == '\0')
+	    ipage++;
+
+	else if (c == '+') 
+	    ipage += atoi(ibuf+1);
+
+	else if (c == '-') 
+	    ipage -= atoi(ibuf+1);
+
+	else if (isdigit(c)) 
+	    ipage = atoi(ibuf);
 
 /* User input a command or garbage */
 
@@ -136,12 +124,26 @@ main(int argc, char *argv[])
 	    }
 	}
 
-	istop = fseek(fd, start[iframe - 1], 0);
+/* Bounds checking */
+
+	if (ipage > npage) {
+	    printf("  Last page = %d.\n", npage);
+	    ipage = npage;
+	    if (ipage == oldpage)
+		continue;
+	}
+	else if (ipage < 0) {
+	    ipage = 1;
+	}
+
+/* Time to actually plot something. */
+
+	istop = fseek(fd, start[ipage - 1], 0);
 	xtra = '\0';
 	istop = 0;
-	printf("%c[?38h", ESC);	/* open graphics window */
-	printf("%c", GS);	/* set to vector mode */
-	printf("%c%c", ESC, FF);/* clear screen */
+	printf("%c[?38h", ESC);		/* open graphics window */
+	printf("%c", GS);		/* set to vector mode */
+	printf("%c%c", ESC, FF);	/* clear screen */
 
 	for (i = 0; i < 10000; i++) {
 	    if (xtra != '\0') {
@@ -195,9 +197,10 @@ At the prompt, the following replies are recognized:\n\
     h	  Gives this help message.\n\
     ?     As above.\n\
     q	  Quits program.\n\
-   <n>	  Goes to the specified frame number (surprise!).\n\
-	  If negative, will go back the specified number of frames.\n\
- <Return> Goes to the next frame (first frame, if initial reply).\n\
+   <n>	  Goes to the specified page number (surprise!).\n\
+   -<n>   Goes back <n> pages.\n\
+   +<n>   Goes forward <n> pages.\n\
+ <Return> Goes to the next page (first page, if initial reply).\n\
 \n\
 ", stdout);
 }
