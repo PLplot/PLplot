@@ -7,15 +7,17 @@ them.
    function. 
 
 2) Do all the java setup mentioned in plplot/examples/java/README.javademos
-and execute ./configure and make from the plplot directory.  This should
-compile PLStream.java with javac.
+   and execute ./configure and make from the plplot directory.  This
+   should compile PLStream.java with javac.
 
 3) (from the tmp directory) javah plplot/core/PLStream.
 
-4) less the big hairy file that comes out.  I forget its name, but
-   you'll see it, its the one whose name is 40 characters long.  It
-   has in it, the prototypes for all the functions that are marked 
-   native in PLStream.java.
+4) less the big hairy file that comes out.  The name of this file may
+   be something like:
+      plplot_0002fcore_0002fPLStream.h
+   or maybe it will not have the exasperating 0002f strings in it.
+   I've seen javah do it both ways, and don't know what determines
+   whether or not it embeds this annoying token.
 
 5) Find the prototypes for the JNI functions corresponding to the new
    API(s) you prototyped in 1) above.
@@ -50,7 +52,7 @@ compile PLStream.java with javac.
    one I'm doing now, copy its function body into place, and tweak as
    required.  Maybe arg names have to be changed, or maybe only the
    actual embedded call to the PLplot API function.  For instance,
-   last night I build fill by copying line's body, and changing the
+   last night I built fill by copying line's body, and changing the
    call from plline(...) to plfill(...), and that was it.  For fill3 I
    took fill's body, added handling for z, changed plfill(...) to
    plfill3(...), and that was it.  Then line3 was made from fill3 in
@@ -77,6 +79,11 @@ it comes down to lifetime management of stuff you fetch from JNI, and
 probably I have to hold onto things more carefully.  Those sections of
 code will probably become substantially more complex than they are
 now, which is part of why I haven't attacked it yet.
+
+[Update, 1/18/02:  The plcont wrappers do the 2-d lifetime management
+stuff right.  Other 2-d functions (using jobjectarrays) should be
+retrofitted, and certainly new wrappers involving 2-d data args should
+be modelled after the plcont memory management style.]
 
 But the simpler things you should be able to handle uneventfully.
 Things that take scalars, or simple arrays, I think you can follow in
