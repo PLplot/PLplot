@@ -12,6 +12,12 @@
 	* src/plcore.c: Change from lt_dlopen to lt_dlopenext for more
 	  cross-platform suffix generality.
 
+	* sysloc.in: has_tcl is now set to enable_tcl.
+
+	* bindings/Makefile.am: pkgIndex.tcl now only built if tcl enabled.
+
+	* utils/Makefile.am: pltcl now only built if tcl enabled.
+
 2002-12-07  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* drivers/Makefile.am: Make tk and tkwin static drivers work. This

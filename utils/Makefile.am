@@ -29,7 +29,11 @@ endif
 
 AM_CPPFLAGS = @INCLTDL@ -I../bindings/tcl @TCLINCCMD@ @ITCLINCCMD@
 
+if enable_tcl
 bin_PROGRAMS = plrender pltek pltcl
+else
+bin_PROGRAMS = plrender pltek
+endif
 
 plrender_SOURCES = plrender.c
 plrender_LDFLAGS = -rpath $(libdir) -no-undefined

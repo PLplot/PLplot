@@ -597,7 +597,8 @@ if test "$enable_tcl" = "yes"; then
 		if test "$version" = "$oldversion"; then
 		    echo "Tcl version $oldversion not supported.. please upgrade!"
 		    enable_tcl="no"
-		    has_tcl="no"
+# See comment below
+#		    has_tcl="no"
 		    break
 		fi
 	    done
@@ -610,6 +611,9 @@ if test "$enable_tcl" = "yes"; then
 	fi
     fi
 fi
+# AWI does not understand the purpose of a distinction between has_tcl and 
+# enable_tcl so make them the same for now.
+has_tcl=$enable_tcl
 
 # ----------------------------------------------------------------------------
 # itcl.h
