@@ -285,6 +285,9 @@ fi
 if test -z "$LDC"; then
     LDC="$CC"
 fi
+if test -z "$LDCXX"; then
+    LDCXX="$CXX"
+fi
 if test -z "$LDF"; then
     LDF="$F77"
 fi
@@ -349,6 +352,11 @@ case "$system" in
 	    SYS_FLAGS_C="+w1 +ESlit"
 	    SYS_FLAGS_F="-w"
 	fi
+
+	# Handling of C++ exceptions
+
+	SYS_FLAGS_CXX="+eh"
+	SYS_FLAGS_LCXX="+eh"
 
 	# Profiling
 	# Should not be used with shared libraries.
@@ -571,11 +579,13 @@ AC_SUBST(CXX)
 AC_SUBST(OCC)
 AC_SUBST(F77)
 AC_SUBST(LDC)
+AC_SUBST(LDCXX)
 AC_SUBST(LDF)
 
 AC_SUBST(CXX_FLAGS)
 AC_SUBST(CC_FLAGS)
 AC_SUBST(LDC_FLAGS)
+AC_SUBST(LDCXX_FLAGS)
 AC_SUBST(F77_FLAGS)
 AC_SUBST(LDF_FLAGS)
 AC_SUBST(SHLIB_CCFLAGS)

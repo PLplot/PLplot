@@ -393,6 +393,7 @@ if test ! -f tmp/plcore.c; then
     ../examples/tk/*.c \
     ../examples/tk/tk* \
     ../examples/c++/*.cc \
+    ../examples/c++/*.h \
     ../utils/*.c \
     ../fonts/*.c \
     ../scripts/pl* \

@@ -299,3 +299,16 @@ xtk04$E:  $(PLLIBS) xtk04$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk04$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
+# -----------------------------------------------------------------------
+# C++ example programs.
+
+CXXDEMOS = x01cc$E
+
+cxxdemos: $(CXXDEMOS)
+
+x01cc$O: x01cc.cc
+	$(CXX) $(CXX_FLAGS_DEMOS) x01cc.cc	
+
+x01cc$E:  $(PLLIBS) x01cc$O
+	$(LDCXX) $(LDCXX_FLAGS) $(STARTUP) x01cc$O \
+	       	$(PLLIB_LDC) $(TO) $@ $(LDCXX_LIBS)

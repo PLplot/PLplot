@@ -974,6 +974,9 @@ fi
 if test -z "$LDC"; then
     LDC="$CC"
 fi
+if test -z "$LDCXX"; then
+    LDCXX="$CXX"
+fi
 if test -z "$LDF"; then
     LDF="$F77"
 fi
@@ -1038,6 +1041,11 @@ case "$system" in
 	    SYS_FLAGS_C="+w1 +ESlit"
 	    SYS_FLAGS_F="-w"
 	fi
+
+	# Handling of C++ exceptions
+
+	SYS_FLAGS_CXX="+eh"
+	SYS_FLAGS_LCXX="+eh"
 
 	# Profiling
 	# Should not be used with shared libraries.
@@ -1254,6 +1262,8 @@ LDF_FLAGS=\
 "$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
 
 M4_FLAGS="-S2000 -B8192"
+
+
 
 
 
@@ -3363,6 +3373,7 @@ if test ! -f tmp/plcore.c; then
     ../examples/tk/*.c \
     ../examples/tk/tk* \
     ../examples/c++/*.cc \
+    ../examples/c++/*.h \
     ../utils/*.c \
     ../fonts/*.c \
     ../scripts/pl* \
@@ -3508,10 +3519,12 @@ CXX='$CXX'
 OCC='$OCC'
 F77='$F77'
 LDC='$LDC'
+LDCXX='$LDCXX'
 LDF='$LDF'
 CXX_FLAGS='$CXX_FLAGS'
 CC_FLAGS='$CC_FLAGS'
 LDC_FLAGS='$LDC_FLAGS'
+LDCXX_FLAGS='$LDCXX_FLAGS'
 F77_FLAGS='$F77_FLAGS'
 LDF_FLAGS='$LDF_FLAGS'
 SHLIB_CCFLAGS='$SHLIB_CCFLAGS'
@@ -3591,10 +3604,12 @@ s%@CXX@%$CXX%g
 s%@OCC@%$OCC%g
 s%@F77@%$F77%g
 s%@LDC@%$LDC%g
+s%@LDCXX@%$LDCXX%g
 s%@LDF@%$LDF%g
 s%@CXX_FLAGS@%$CXX_FLAGS%g
 s%@CC_FLAGS@%$CC_FLAGS%g
 s%@LDC_FLAGS@%$LDC_FLAGS%g
+s%@LDCXX_FLAGS@%$LDCXX_FLAGS%g
 s%@F77_FLAGS@%$F77_FLAGS%g
 s%@LDF_FLAGS@%$LDF_FLAGS%g
 s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g

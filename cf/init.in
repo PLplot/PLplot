@@ -12,6 +12,7 @@
 # Utilities
 
 CXX		= @CXX@
+LDCXX		= @LDCXX@
 CC		= @CC@
 LDC		= @LDC@
 OCC		= @OCC@
@@ -24,8 +25,10 @@ LN		= ln -s
 
 F77_FLAGS	= @F77_FLAGS@
 LDC_FLAGS	= @LDC_FLAGS@
+LDCXX_FLAGS	= @LDCXX_FLAGS@
 LDF_FLAGS	= @LDF_FLAGS@
 LDC_LIBS	= @LIBS@
+LDCXX_LIBS	= @LIBS@
 LDF_LIBS	= @LIBS@
 LIB_TAG		= @LIB_TAG@
 TO		= -o
