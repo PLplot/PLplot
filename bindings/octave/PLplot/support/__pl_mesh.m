@@ -124,27 +124,35 @@ function __pl_mesh(caller, ...)
 	 "bcmnstuv", tdeblank(__pl.zlabel(__pl_strm,:)), 0.0, 0);
   plcol(1)
 
-  LINE_XY = 3;
-  MAG_COLOR = 4;
-  SURF_CONT = hex2dec("10");
-  BASE_CONT = hex2dec("20");
-  DRAW_SIDES = hex2dec("40");
-  FACETED = hex2dec("80");
+  LINE_XY = 2^0 + 2^1;
+  MAG_COLOR = 2^2;
+  BASE_CONT = 2^3;
+  SURF_CONT = 2^5;
+  DRAW_SIDES = 2^6;
+  FACETED = 2^7;
+
+  switch (__pl.shading(__pl_strm,:))
+    case "flat   "
+      sh = 0;
+    case "faceted"
+      sh = FACETED;
+  endswitch
     
   switch (type)
-    case  0
+    case 0  ## mesh
       plmesh(x, y, z', LINE_XY + MAG_COLOR);
-    case 1
-      plmesh(x, y, z', LINE_XY + MAG_COLOR + BASE_CONT);
-    case 2
+    case 1  ## meshc
+      plmeshc(x, y, z', LINE_XY + MAG_COLOR + BASE_CONT, linspace(min(min(z)), max(max(z)), 10)');
+    case 2  ## meshz
       plot3d(x, y, z', LINE_XY + MAG_COLOR, 1); 
-    case 3
-      plsurf3d(x, y, z', MAG_COLOR, 0);
-    case 4
-      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT, linspace(min(min(z)), max(max(z)), 10)') 
-   case 5
+    case 3  ## surf
+      plsurf3d(x, y, z', MAG_COLOR + sh, 0);
+    case 4   ## surfc
+      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT + sh,
+	       linspace(min(min(z)), max(max(z)), 10)') 
+   case 5   ## surfl
      pllightsource(__pl.light(1), __pl.light(2), __pl.light(3));
-     plsurf3d(x, y, z', 0, 0);
+     plsurf3d(x, y, z', sh, 0);
  endswitch	
   
   plcol(15);
