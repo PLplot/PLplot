@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/02/23 05:54:25  mjl
-   A couple of minor documentation and code changes.
+   Revision 1.9  1993/02/25 18:33:09  mjl
+   Fixed an inconsistency in reading the metafile page headers.
 
+ * Revision 1.8  1993/02/23  05:54:25  mjl
+ * A couple of minor documentation and code changes.
+ *
  * Revision 1.7  1993/02/23  05:35:47  mjl
  * Converted to new plplot command-line handling functions, resulting in
  * a considerable reduction in the amount of actual code.  Miscellaneous bugs in
@@ -1004,12 +1007,12 @@ SeekToPage(long target_page)
 	    return;
 	fseek(MetaFile, curpage_loc, 0);
     }
-    ReadPageHeader();
     delta = target_page - curpage;
 
 /* Now loop until we arrive at the target page */
 
     while (delta != 0) {
+	ReadPageHeader();
 	if (delta > 0) {
 	    if (nextpage_loc == 0) 
 		break;
@@ -1030,7 +1033,6 @@ SeekToPage(long target_page)
 		curpage--;
 	    }
 	}
-	ReadPageHeader();
 	delta = target_page - curpage;
     }
 }
