@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1993/08/28 06:39:14  mjl
+ * Revision 1.34  1993/11/15 08:42:15  mjl
+ * Added code to support seeks to the specified number of pages before EOF.
+ * Number is specified using "--", i.e. -b --3 to start 3 pages before EOF.
+ * Also works while interactively seeking.
+ *
+ * Revision 1.33  1993/08/28  06:39:14  mjl
  * Option table and handlers modified to include & accept new client data
  * pointer.
  *
@@ -132,6 +137,8 @@ static void	myNotes		(void);
 static int Opt_h	(char *, char *, void *);
 static int Opt_v	(char *, char *, void *);
 static int Opt_i	(char *, char *, void *);
+static int Opt_b	(char *, char *, void *);
+static int Opt_e	(char *, char *, void *);
 static int Opt_p	(char *, char *, void *);
 
 /* Global variables */
@@ -143,7 +150,7 @@ static int mode_showall = 0;
 
 /* Page info */
 
-static PLINT	disp_begin=1;	/* Where to start plotting */
+static PLINT	disp_beg=1;	/* Where to start plotting */
 static PLINT	disp_end=-1;	/* Where to stop (0 to disable) */
 static PLINT	curdisp;	/* Current page number */
 static PLINT	cursub;		/* Current subpage */
@@ -153,10 +160,13 @@ static PLINT	nsuby;		/* subpages in y */
 static PLINT	target_disp;	/* Page we are seeking to */
 static PLINT	target_page;	/* Plot we are seeking to */
 static PLINT	delta;		/* Number of pages to go forward/back */
+static PLINT	pages;		/* Number of pages in file */
 
 static int	no_pagelinks;	/* Set if metafile doesn't have page links */
 static int	end_of_page;	/* Set when we're at the end of a page */
 static int	seek_mode;	/* Set after a seek, before a BOP */
+static int	addeof_beg;	/* Set when we are counting back from eof */
+static int	addeof_end;	/* Set when we are counting back from eof */
 
 static FPOS_T	prevpage_loc;	/* Byte position of previous page header */
 static FPOS_T	curpage_loc;	/* Byte position of current page header */
@@ -252,18 +262,18 @@ static PLOptionTable option_table[] = {
     "Filter option -- equivalent to \"-i - -o -\"" },
 {
     "b",			/* Beginning page number */
+    Opt_b,
     NULL,
     NULL,
-    &disp_begin,
-    PL_OPT_INT | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-b number",
     "Beginning page number" },
 {
     "e",			/* End page number */
+    Opt_e,
     NULL,
     NULL,
-    &disp_end,
-    PL_OPT_INT | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-e number",
     "End page number" },
 {
@@ -488,12 +498,12 @@ plr_init(U_CHAR c)
 /* Seek to first page */
 
     cursub = nsubx*nsuby;
-    if (disp_begin > 1) {
+    if (disp_beg > 1) {
 	if (no_pagelinks) 
 	    plwarn("plrender: Metafile does not support page seeks");
 	else {
 	    ReadPageHeader();
-	    SeekToDisp(disp_begin);
+	    SeekToDisp(disp_beg);
 	}
     }
 }
@@ -839,6 +849,7 @@ ungetcommand(U_CHAR c)
 * -<num><CR>	Seek backward <num> pages.
 *
 * <num><CR>	Seek to page <num>.
+* --<num><CR>	Seek to <num> pages before EOF.
 *
 * Both <BS> and <DEL> are recognized for a back-page since the target
 * system may use either as its erase key.  <Page Up> is present on some
@@ -876,10 +887,10 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 /* Forward (+) or backward (-) */
 
     if (key->string[0] == '+')
-	direction_flag = 1;
+	direction_flag++;
 
     else if (key->string[0] == '-')
-	direction_flag = -1;
+	direction_flag--;
 
 /* If a number, store into num_buffer */
 
@@ -907,10 +918,12 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 	    if (input_num >= 0) {
 		if (direction_flag == 0)
 		    target_disp = input_num;
-		else if (direction_flag > 0)
+		else if (direction_flag == 1)
 		    target_disp = curdisp + input_num;
-		else if (direction_flag < 0)
+		else if (direction_flag == -1)
 		    target_disp = curdisp - input_num;
+		else if (direction_flag == -2)
+		    target_disp = pages - input_num;
 
 		SeekToDisp(target_disp);
 		dun_seek = 1;
@@ -1284,6 +1297,9 @@ Init(int argc, char **argv)
 
 /* Other miscellaneous housekeeping */
 
+    if (addeof_beg) disp_beg += pages;
+    if (addeof_end) disp_end += pages;
+
     plSetInternalOpt("-tcl_cmd", "set plw_create plr_create");
 
 /* Finally, give the rest of the command line to plplot to process. */
@@ -1435,6 +1451,12 @@ ReadFileHeader(void)
 	plm_rd(pdf_rd_header(MetaFile, tag));
 	if (*tag == '\0')
 	    break;
+
+	if ( ! strcmp(tag, "pages")) {
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    pages = dum_ushort;
+	    continue;
+	}
 
 	if ( ! strcmp(tag, "xmin")) {
 	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
@@ -1690,6 +1712,46 @@ Opt_i(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
+* Opt_b()
+*
+* Performs appropriate action for option "b".
+\*----------------------------------------------------------------------*/
+
+static int
+Opt_b(char *opt, char *optarg, void *client_data)
+{
+/* Beginning page */
+
+    if (*optarg == '-') {
+	optarg++;
+	addeof_beg = 1;
+    }
+    disp_beg = atoi(optarg);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* Opt_e()
+*
+* Performs appropriate action for option "e".
+\*----------------------------------------------------------------------*/
+
+static int
+Opt_e(char *opt, char *optarg, void *client_data)
+{
+/* Ending page */
+
+    if (*optarg == '-') {
+	optarg++;
+	addeof_end = 1;
+    }
+    disp_end = atoi(optarg);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
 * Opt_p()
 *
 * Performs appropriate action for option "p".
@@ -1700,8 +1762,13 @@ Opt_p(char *opt, char *optarg, void *client_data)
 {
 /* Specified page only */
 
-    disp_begin = atoi(optarg);
-    disp_end = disp_begin;
+    if (*optarg == '-') {
+	optarg++;
+	addeof_beg = 1;
+	addeof_end = 1;
+    }
+    disp_beg = atoi(optarg);
+    disp_end = disp_beg;
 
     return 0;
 }
