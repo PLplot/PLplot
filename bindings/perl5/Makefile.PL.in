@@ -8,6 +8,7 @@ WriteMakefile(
               LIBS => "@LIBS@",
 	      OBJECT => 'PLplot_wrap.o', 
 	      MAKEFILE => "Makeperl",
+	      PM => {'PLplot.pm' => '$(INST_LIBDIR)/PLplot.pm'},
 	      INST_LIB => '.',
 	      INST_ARCHLIB => '.',
 	     );
