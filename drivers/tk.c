@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/03/23 06:53:36  mjl
+ * Revision 1.32  1994/04/08 12:05:21  mjl
+ * Mouse event handler added, also escape function support for the
+ * PLESC_EXPOSE, PLESC_RESIZE, PLESC_REDRAW, PLESC_EH commands (contributed
+ * by Radey Shouman).  Device-specific data typedef moved into plplotTK.h
+ * to allow access by determined users.  nopause handling moved back into
+ * here where it belongs.  Byte count no longer kept track of here in favor
+ * of doing it in the PDF write routines.
+ *
+ * Revision 1.31  1994/03/23  06:53:36  mjl
  * Added support for: color map 1 color selection, color map 0 or color map 1
  * state change (palette change), polygon fills.
  *
@@ -107,19 +115,6 @@ if (code) { abort_session(pls, "Unable to write to pipe"); }
 
 /* INDENT OFF */
 /*----------------------------------------------------------------------*/
-/* Struct to hold device-specific info. */
-
-typedef struct {
-    Tk_Window w;		/* Main window */
-    Tcl_Interp *interp;		/* Interpreter */
-    PLINT xold, yold;		/* Coordinates of last point plotted */
-    int   exit_eventloop;	/* Flag for breaking out of event loop */
-    int   pass_thru;		/* Skips normal error termination when set */
-    char  *cmdbuf;		/* Command buffer */
-    int   cmdbuf_len;		/* and its length */
-    PLiodev *iodev;		/* I/O device info */
-} TkDev;
-
 /* Function prototypes */
 
 static void  init		(PLStream *pls);
@@ -149,6 +144,7 @@ static void  copybuf		(PLStream *pls, char *cmd);
 
 static int   Abort		(ClientData, Tcl_Interp *, int, char **);
 static int   KeyEH		(ClientData, Tcl_Interp *, int, char **);
+static int   MouseEH		(ClientData, Tcl_Interp *, int, char **);
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
@@ -184,7 +180,6 @@ static void
 tk_wr_header(PLStream *pls, char *header)
 {
     tk_wr( pdf_wr_header(pls->pdfs, header) );
-    pls->bytecnt += strlen(header)+1;
 }
 
 static void
@@ -205,7 +200,6 @@ init(PLStream *pls)
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
     pls->width = 1;
-    pls->bytecnt = 0;
     pls->page = 0;
     pls->dev_di = 1;
     pls->dev_flush = 1;		/* Want to handle our own flushes */
@@ -233,7 +227,7 @@ init(PLStream *pls)
 
     dev = (TkDev *) pls->dev;
 
-    dev->iodev = calloc(1, (size_t) sizeof(PLiodev));
+    dev->iodev = (PLiodev *) calloc(1, (size_t) sizeof(PLiodev));
     if (dev->iodev == NULL)
 	plexit("plD_init_tk: Out of memory.");
 
@@ -254,7 +248,6 @@ init(PLStream *pls)
 /* Send init info */
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt++;
 
 /* The header and version fields will be useful when the client & server */
 /* reside on different machines */
@@ -264,19 +257,15 @@ init(PLStream *pls)
 
     tk_wr_header(pls, "xmin");
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) xmin) );
-    pls->bytecnt += 2;
 
     tk_wr_header(pls, "xmax");
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) xmax) );
-    pls->bytecnt += 2;
 
     tk_wr_header(pls, "ymin");
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) ymin) );
-    pls->bytecnt += 2;
 
     tk_wr_header(pls, "ymax");
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) ymax) );
-    pls->bytecnt += 2;
 
     tk_wr_header(pls, "");
 
@@ -313,29 +302,25 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
     if (x1 == dev->xold && y1 == dev->yold) {
 	c = (U_CHAR) LINETO;
 	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-	pls->bytecnt += 1;
 
 	xy[0] = x2;
 	xy[1] = y2;
 	tk_wr( pdf_wr_2nbytes(pls->pdfs, xy, 2) );
-	pls->bytecnt += 4;
     }
     else {
 	c = (U_CHAR) LINE;
 	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-	pls->bytecnt += 1;
 
 	xy[0] = x1;
 	xy[1] = y1;
 	xy[2] = x2;
 	xy[3] = y2;
 	tk_wr( pdf_wr_2nbytes(pls->pdfs, xy, 4) );
-	pls->bytecnt += 8;
     }
     dev->xold = x2;
     dev->yold = y2;
 
-    if (pls->bytecnt > pls->bufmax)
+    if (pls->pdfs->bp > pls->bufmax)
 	flush_output(pls);
 }
 
@@ -359,16 +344,14 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) npts) );
-    pls->bytecnt += 3;
 
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) xa, npts) );
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) ya, npts) );
-    pls->bytecnt += 4*npts;
 
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
 
-    if (pls->bytecnt > pls->bufmax)
+    if (pls->pdfs->bp > pls->bufmax)
 	flush_output(pls);
 }
 
@@ -387,8 +370,9 @@ plD_eop_tk(PLStream *pls)
     dbug_enter("plD_eop_tk");
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt += 1;
-    WaitForPage(pls);
+
+    if ( ! pls->nopause)
+	WaitForPage(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -409,7 +393,6 @@ plD_bop_tk(PLStream *pls)
     dev->yold = UNDEFINED;
     pls->page++;
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt += 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -445,60 +428,50 @@ plD_state_tk(PLStream *pls, PLINT op)
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     tk_wr( pdf_wr_1byte(pls->pdfs, op) );
-    pls->bytecnt += 2;
 
     switch (op) {
 
     case PLSTATE_WIDTH:
 	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) (pls->width)) );
-	pls->bytecnt += 3;
 	break;
 
     case PLSTATE_COLOR0:
 	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
-	pls->bytecnt += 3;
 	if (pls->icol0 == PL_RGB_COLOR) {
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.g) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.b) );
-	    pls->bytecnt += 3;
 	}
 	break;
 
     case PLSTATE_COLOR1:
 	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->icol1) );
-	pls->bytecnt += 2;
 	break;
 
     case PLSTATE_FILL:
 	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->patt) );
-	pls->bytecnt ++;
 	break;
 
     case PLSTATE_CMAP0:
 	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->ncol0) );
-	pls->bytecnt += 1;
 	for (i = 0; i < pls->ncol0; i++) {
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].r) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].g) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].b) );
-	    pls->bytecnt += 3;
 	}
 	break;
 
     case PLSTATE_CMAP1:
 	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncol1) );
-	pls->bytecnt += 2;
 	for (i = 0; i < pls->ncol1; i++) {
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].r) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].g) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].b) );
-	    pls->bytecnt += 3;
 	}
 	break;
     }
 
-    if (pls->bytecnt > pls->bufmax)
+    if (pls->pdfs->bp > pls->bufmax)
 	flush_output(pls);
 }
 
@@ -508,9 +481,12 @@ plD_state_tk(PLStream *pls, PLINT op)
 * Escape function.
 * Functions:
 *
-*	PLESC_DI	Driver interface command
-*	PLESC_FLUSH	Flush output
+*	PLESC_EXPOSE	Force an expose (just passes token)
+*	PLESC_RESIZE	Force a resize (just passes token)
+*	PLESC_REDRAW	Force a redraw
+*	PLESC_FLUSH	Flush X event buffer
 *	PLESC_FILL	Fill polygon
+*	PLESC_EH	Handle events only
 *
 \*----------------------------------------------------------------------*/
 
@@ -522,10 +498,8 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_tk");
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt += 1;
 
     tk_wr( pdf_wr_1byte(pls->pdfs, op) );
-    pls->bytecnt += 1;
 
     switch (op) {
 
@@ -539,6 +513,10 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 
     case PLESC_FILL:
 	tk_fill(pls);
+	break;
+
+    case PLESC_EH:
+	HandleEvents(pls);
 	break;
     }
 }
@@ -634,11 +612,9 @@ tk_fill(PLStream *pls)
     dbug_enter("tk_fill");
 
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->dev_npts) );
-    pls->bytecnt += 2;
 
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
-    pls->bytecnt += 4 * pls->dev_npts;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -674,8 +650,8 @@ tk_start(PLStream *pls)
     }
     else {
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
-	if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
-			pls->program))
+	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
+			  pls->program))
 	    abort_session(pls, "Unable to create top-level window");
     }
 
@@ -686,7 +662,7 @@ tk_start(PLStream *pls)
 
 /* Eval startup procs */
 
-    if (plTcl_AppInit(dev->interp) != TCL_OK) {
+    if (pltk_Init(dev->interp) != TCL_OK) {
 	abort_session(pls, "");
     }
 
@@ -694,6 +670,12 @@ tk_start(PLStream *pls)
 /* Autoloaded, so the user can customize it if desired */
 
     tcl_cmd(pls, "plclient_init"); 
+
+/* A different way to customize the interface. */
+/* E.g. used by plrender to add a back page button. */
+
+    if (pls->tcl_cmd) 
+	tcl_cmd(pls, pls->tcl_cmd);
 
 /* Initialize server process */
 
@@ -796,6 +778,9 @@ tk_configure(PLStream *pls)
 
     Tcl_CreateCommand(dev->interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
+
+    Tcl_CreateCommand(dev->interp, "mouse", MouseEH,
+		      (ClientData) pls, (void (*)()) NULL);
 
 /* Set some relevant interpreter variables */
 
@@ -1278,7 +1263,7 @@ WaitForPage(PLStream *pls)
 
     dbug_enter("WaitForPage");
 
-    if (pls->bytecnt > 0) 
+    if (pls->pdfs->bp > 0) 
 	flush_output(pls);
 
     while ( ! dev->exit_eventloop)
@@ -1323,8 +1308,8 @@ flush_output(PLStream *pls)
     dbug_enter("flush_output");
 
 #ifdef DEBUG
-    fprintf(stderr, "%s: Flushing buffer, bytecnt = %d\n",
-	    __FILE__, pls->bytecnt);
+    fprintf(stderr, "%s: Flushing buffer, bytes = %d\n",
+	    __FILE__, pdfs->bp);
 #endif
 
     tcl_cmd(pls, "$update_proc");
@@ -1337,7 +1322,6 @@ flush_output(PLStream *pls)
 	abort_session(pls, "");
     }
     pdfs->bp = 0;
-    pls->bytecnt = 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1452,7 +1436,6 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 	(*pls->KeyEH) (&key, pls->KeyEH_data, &advance);
 
 /* Handle internal events */
-
 /* Advance to next page (i.e. terminate event loop) on a <eol> */
 /* Check for both <CR> and <LF> for portability, also a <Page Down> */
 
@@ -1469,6 +1452,58 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     if (key.string[0] == 'Q') 
 	tcl_cmd(pls, "abort");
 
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+* MouseEH()
+*
+* This TCL command handles mouse buttonpress events.
+* Written by Radey Shouman
+*
+* Arguments:
+*	command name
+*       button number
+*	state (decimal string)
+*	x coordinate normalized to [0.0 1.0]
+*	y coordinate normalized to [0.0 1.0]
+*
+\*----------------------------------------------------------------------*/
+
+static int
+MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+{
+    PLStream *pls = (PLStream *) clientData;
+    TkDev *dev = (TkDev *) pls->dev;
+
+    PLMouse mouse;
+    int advance = 0;
+
+    dbug_enter("MouseEH");
+
+    if (argc != 5) {
+        Tcl_AppendResult(interp, "wrong # args: should be \"",
+		argv[0], " button-number state x y\"", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    mouse.button = atol(argv[1]);
+    mouse.state = atol(argv[2]);
+    mouse.x = atof(argv[3]);
+    mouse.y = atof(argv[4]);
+
+#ifdef DEBUG
+    printf("MouseEH: button %d, state %d, x: %f, y: %f\n",
+	   mouse.button, mouse.state, mouse.x, mouse.y);
+#endif
+
+/* Call user event handler */
+
+    if (pls->MouseEH != NULL) {
+        (*pls->MouseEH) (&mouse, pls->MouseEH_data, &advance);
+	if (advance)
+	  Tcl_SetVar(dev->interp, "advance", "1", 0);
+    }
     return TCL_OK;
 }
 
