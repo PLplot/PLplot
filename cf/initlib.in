@@ -48,13 +48,6 @@ PLFNT_DIR	= .
 PLLIB_PATH	= 
 PLFNT_PATH	= $(PLFNT_DIR)/
 
-# Driver stuff
-
-STATIC_DRIVERS	= @STATIC_DRIVERS@
-DYNAMIC_DRIVERS	= @DYNAMIC_DRIVERS@
-
-static_drivers_obj := $(STATIC_DRIVERS:%=%$(O))
-
 # The library components
 
 LIB_OBJS_SO	= $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(GNOME_OBJ) $(static_drivers_obj) $(FSTUB_OBJ) $(CXX_OBJ)
@@ -89,7 +82,7 @@ CDEMO_HEADERS	= plplot/plcdemos.h plplot/plplot.h
 
 # Default is to build library(s) and utils.
 
-everything: libs plrender$E pltek$E $(PYTHON_EXE) $(TCL_EXE) $(TK_EXE) $(OCTAVE_EXE)
+everything: libs plrender$E pltek$E $(PYTHON_EXE) $(TCL_EXE) $(TK_EXE) $(OCTAVE_EXE) $(DYNLOAD_STUFF)
 
 # Clear the suffix list to prevent problems.
 
