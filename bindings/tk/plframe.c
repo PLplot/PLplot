@@ -813,8 +813,8 @@ PlFrameInit(ClientData clientData)
 	plFramePtr->prevWidth = Tk_Width(tkwin);
 	plFramePtr->prevHeight = Tk_Height(tkwin);
 
-	plFramePtr->devDesc = ckalloc(NDEV * sizeof(char **));
-	plFramePtr->devName = ckalloc(NDEV * sizeof(char **));
+	plFramePtr->devDesc = (char **) ckalloc(NDEV * sizeof(char **));
+	plFramePtr->devName = (char **) ckalloc(NDEV * sizeof(char **));
 	for (i = 0; i < NDEV; i++) {
 	    plFramePtr->devDesc[i] = NULL;
 	    plFramePtr->devName[i] = NULL;
@@ -1244,7 +1244,7 @@ OpenFifo(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* Open fifo */
 
-    if ((fd = open (plr->filename, O_RDONLY | O_NONBLOCK)) == -1) {
+    if ((fd = open (plr->filename, O_RDONLY)) == -1) {
 	Tcl_AppendResult(interp, "cannot open fifo ", plr->filename,
 			 " for read", (char *) NULL);
 	return TCL_ERROR;
