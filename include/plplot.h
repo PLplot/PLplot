@@ -164,6 +164,10 @@ typedef void* PLPointer;
 #define PLESC_HAS_TEXT		20	/* driver draws text */
 #define PLESC_IMAGE		21	/* handle image */
 #define PLESC_IMAGEOPS          22      /* plimage related operations */
+#define PLESC_PL2DEVCOL		23	/* convert PLColor to device color */
+#define PLESC_DEV2PLCOL		24	/* convert device color to PLColor */
+#define PLESC_SETBGFG		25	/* set BG, FG colors */
+#define PLESC_DEVINIT		26	/* alternate device initialization */
 
 /* image operations */
 #define ZEROW2B   1
