@@ -92,6 +92,11 @@ enable_tcl=yes
 enable_itcl=yes
 
 divert(-1)
+
+MY_ARG_ENABLE(drivers,
+  [  --enable-drivers        enable all device drivers ($enable_drivers)])
+
+
 # ------------------------------------------------------------------------
 # Support macros for driver inclusion and help entries.
 
@@ -102,23 +107,12 @@ define(PL_DRIVER_LIST,
 conex, linuxvga, vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580,
 lj_hpgl, imp, xwin, tk, dp])
 
-# Macro to set one default value
-
-define(PL_ADD_DRIVER_DEFAULT,[dnl
-enable_$1=$enable_drivers
-])
-
-# Recursive macro to set all default values
-
-define(PL_DRIVERS_DEFAULT,[ifelse($1,,,[PL_ADD_DRIVER_DEFAULT($1)dnl
-PL_DRIVERS_DEFAULT(builtin([shift],$*))])])
-
 # Macro to set one driver enable value
 
 define(PL_ADD_DRIVER,[dnl
 MY_ARG_ENABLE($1, builtin(format,
 [  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
-if test "$enable_$1" = "yes"; then
+if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes"; then
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
 fi
@@ -132,20 +126,7 @@ PL_DRIVERS(builtin([shift],$*))])])
 # ------------------------------------------------------------------------
 divert(0)dnl
 
-# Set default driver enable values
-
-PL_DRIVERS_DEFAULT(PL_DRIVER_LIST)
-
 # Special cases
-
-case $system in
-    Linux* )
-	enable_linuxvga=$enable_drivers
-    ;;
-    * )
-	enable_linuxvga="no"
-    ;;
-esac
 
 case "$system" in
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
@@ -291,9 +272,6 @@ MY_ARG_WITH(fseek,
 
 MY_ARG_WITH(nobraindead)
 
-MY_ARG_ENABLE(drivers,
-  [  --enable-drivers        enable all device drivers ($enable_drivers)])
-
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
 
@@ -315,6 +293,19 @@ MY_ARG_ENABLE(itcl,
 # (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
 # (remember to use underscores instead of dashes here).  You can disable
 # all drivers by default by using --disable-drivers.
+
+# Special cases
+
+case $system in
+    Linux* )
+	if test -z "$enable_linuxvga"; then
+ 	   enable_linuxvga=$enable_drivers
+	fi
+    ;;
+    * )
+	enable_linuxvga="no"
+    ;;
+esac
 
 PL_DRIVERS(PL_DRIVER_LIST)
 
