@@ -426,7 +426,7 @@ fi
 # ----------------------------------------------------------------------------
 
 PLLIB_NAME=plplot
-MATLIB_NAME=plmatrix
+MATLIB_NAME=tclmatrix
 CXXLIB_NAME=plcxx
 
 AC_SUBST(PLLIB_NAME)
