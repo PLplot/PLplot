@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/09/23 07:42:39  mjl
+ * Revision 1.15  1995/06/01 21:29:45  mjl
+ * Change to header file inclusion.
+ *
+ * Revision 1.14  1994/09/23  07:42:39  mjl
  * Eliminated a bogus call to Tk_DeleteFileHandler() and other cleaning up.
  *
  * Revision 1.13  1994/08/05  21:50:22  mjl
@@ -136,7 +139,7 @@
 #include <unistd.h>
 #endif
 
-#include "pdf.h"
+#include "tcpip.h"
 #include <tcl.h>
 #include <tk.h>
 
