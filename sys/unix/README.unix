@@ -6,8 +6,9 @@ configurations to be easily supported, similar to 'imake'.  Macros for system
 type include: HPUX, SUNOS, AIX, UNICOS, SYSV, DGUX, LINUX, NEXT, ULTRIX, BSD,
 AMIGA.  One of these *must* be specified, or if necessary you can add system
 specific defines analogous to the existing ones.  There are also the macros
-DOUBLE (for double precision), DEBUG (debugging), and OPT (optimization).
-Please look at the comments in makefile.m4 for more info.
+DOUBLE (for double precision), DEBUG (debugging), PROFILE (for enabling
+profiling code, if supported by the compiler) and OPT (optimization).  Please
+look at the comments in makefile.m4 for more info.
 
 To use, from the plplot directory:
 
