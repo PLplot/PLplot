@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/04/30 16:14:56  mjl
+ * Revision 1.27  1994/05/07 03:09:52  mjl
+ * After initializing plplot, now installs the X window colormap as the top
+ * level Tk color map.  This is necessary so that the color palette tools
+ * display the same colors as the plot.
+ *
+ * Revision 1.26  1994/04/30  16:14:56  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -1011,8 +1016,27 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    result = TCL_ERROR;
 	}
 	else {
+	    XwDev *dev;
+	    Window top, parent, colormap_windows[5];
+	    int count = 0;
+
 	    plFramePtr->plplot_initted = 1;
 	    plinit();
+
+/* Install custom color map in main window */
+
+	    dev = (XwDev *) plFramePtr->plsc->dev;
+	    Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->map);
+
+	    top = Tk_WindowId(Tk_MainWindow(plFramePtr->interp));
+
+	    colormap_windows[count++] = Tk_WindowId(plFramePtr->tkwin);
+	    colormap_windows[count++] = top;
+
+	    if ( ! XSetWMColormapWindows( dev->display,
+					  top, colormap_windows, count))
+		fprintf(stderr, "Unable to set color map property!\n");
+
 	    pladv(0);
 	}
     }
