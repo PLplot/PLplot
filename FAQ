@@ -426,6 +426,19 @@ instead.  The DP driver only allows open connects between the time it
 takes to launch the server and they do their initial handshaking, a hole
 that is almost impossible to take advantage of.
 
+There is another way in which Tcl-DP communication is vastly superior to
+TK send: the latter allows only one channel for communication, since there
+can be only one main window per application.  By contrast, with Tcl-DP you
+can have lots of interpreters each communicating by their own set of
+sockets, as it should be.  Check out the x14c demo program to see how
+important this can be.  A useful exercise is to change the driver to Tk
+and see how that differs.  What happens is that the <RET> in the master
+window is ignored.  The reason is that the second plot stream is creating
+its own interpreter (OK so far) which takes over the communication channel
+(not OK), by registering its commands with the same main window.  It might
+be workable to make a switcher routine but why bother?  Tcl-DP is perfect
+for this application.
+
 
  3.3  How do I use the Tcl/TK driver?
 
