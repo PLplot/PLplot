@@ -153,9 +153,10 @@ sub plot3
   plcol0 (3);
   pllab ("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
-  @x = map { 3.6 * i } (0..100);
+  @x = map { 3.6 * $_ } (0..100);
   @y = map { sin($_ * 3.141592654 / 180.0) } @x;
-  
+
   plcol0 (4);
+  plline (101, \@x, \@y);
   plline (101, \@x, \@y);
 }
