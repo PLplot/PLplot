@@ -34,7 +34,7 @@ install_textfiles:
 	  fi
 
 install_scriptfiles:
-	@-cd $(top_srcdir)/scripts; $(CP) pl* $(BIN_DIR)
+	@-cd $(top_srcdir)/scripts; $(CP) pl* pstex2eps $(BIN_DIR)
 
 install_includes:
 	@-$(CP) plConfig.h plDevs.h $(INCLUDE_DIR); \

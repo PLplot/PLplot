@@ -161,6 +161,7 @@ typedef void* PLPointer;
 #define PLESC_SET_COMPRESSION	17	/* AFR: set compression */
 #define PLESC_CLEAR		18      /* RL: clear graphics region */
 #define PLESC_DASH		19	/* RL: draw dashed line */
+#define PLESC_HAS_TEXT		20	/* jc: driver draws text */
 
 /* Window parameter tags */
 

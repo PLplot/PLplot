@@ -116,7 +116,7 @@ divert(-1)
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, hp7470, hp7580,
-lj_hpgl, imp, xwin, tk, pbm, gnome])
+lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
 
 # Macro to set one driver enable value
 

@@ -282,6 +282,25 @@ plP_fill(short *x, short *y, PLINT npts)
     }
 }
 
+/* Driver wants to draw text itself */
+
+void
+plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y, PLINT refx, PLINT refy, const char *string)
+{
+  EscText args;
+
+  args.base = 0;
+  args.just = just;
+  args.xform = xform;
+  args.x = x;
+  args.y = y;
+  args.refx = refx;
+  args.refy = refy;
+  args.string = string;
+  
+  plP_esc(PLESC_HAS_TEXT, &args);
+}
+
 static void
 grline(short *x, short *y, PLINT npts)
 {
@@ -1044,6 +1063,7 @@ c_plinit(void)
 
 /* Load fonts */
 
+    plsc->cfont = 1;
     plfntld(initfont);
 
 /* Set up subpages */

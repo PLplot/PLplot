@@ -124,7 +124,10 @@ plwind$O: plwind.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
  plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
 ps$O: ps.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
  plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/drivers.h plplot/ps.h
+pstex$O: pstex.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
+ plplot/drivers.h plplot/ps.h
 sc3d$O: sc3d.c plplot/plstubs.h plplot/plplotP.h plplot/plConfig.h \
  plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
 sccont$O: sccont.c plplot/plstubs.h plplot/plplotP.h plplot/plConfig.h \
