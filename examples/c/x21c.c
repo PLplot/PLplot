@@ -290,7 +290,7 @@ create_grid(PLFLT **xi, int px, PLFLT **yi, int py)
     *x++ = xm + (xM-xm)*i/(px-1.);
 
   for (i=0; i<py; i++)
-    *y++ = ym + (xM-xm)*i/(py-1.);
+    *y++ = ym + (yM-ym)*i/(py-1.);
 }
 
 void
@@ -322,11 +322,12 @@ create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
       *y = sqrt(-2.*log(xt)) * sin(2.*PI*yt) + ym;
     }
     if (!rosen) {
-      r = sqrt((*x) * (*x++) + (*y) * (*y++));
-      *z++ = exp(-r * r) * cos(2.0 * PI * r);
+      r = sqrt((*x) * (*x) + (*y) * (*y));
+      *z = exp(-r * r) * cos(2.0 * PI * r);
     } else {
-      *z++ = log(pow(1. - *x,2) + 100 * pow(*y++ - pow(*x++,2),2));
+      *z = log(pow(1. - *x, 2.) + 100. * pow(*y - pow(*x, 2.), 2.));
     }
+    x++; y++; z++;
   }
 }
 
