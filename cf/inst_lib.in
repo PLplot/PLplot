@@ -25,9 +25,9 @@ install_lib:
 	    mklinks $(DOC_DIR)
 	-if test ! -f $(DOC_DIR)/README.local; then \
 	 cp $(top_srcdir)/doc/README.local $(DOC_DIR); fi
-	 for file in $(wildcard $(top_srcdir)/doc/*.info); do \
-		cp $file $(INFO_DIR); \
-	 done
+#	 for file in $(wildcard) $(top_srcdir)/doc/*.info; do \
+#		cp $file $(INFO_DIR); \
+#	 done
 	-cd $(top_srcdir)/scripts; cp pl* $(BIN_DIR)
 	-cd $(top_srcdir)/include; \
 	 cp plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
