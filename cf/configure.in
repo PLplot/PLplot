@@ -397,12 +397,11 @@ if test ! -f tmp/plcore.c; then
     ../src/*.cc \
     ../src/tcl/*.c \
     ../src/stubc/*.c \
-    ../examples/c/*.c \
+    ../examples/c/*.* \
     ../examples/tcl/*.tcl \
     ../examples/tk/*.c \
     ../examples/tk/tk* \
-    ../examples/c++/*.cc \
-    ../examples/c++/*.h \
+    ../examples/c++/*.* \
     ../utils/*.c \
     ../fonts/*.c \
     ../scripts/pl* \
