@@ -1,7 +1,7 @@
 #!/bin/sh
 
 matrix_lib="@MATLIB_NAME@"
-plplot_libs="@LDC_FLAGS@ -L@LIB_DIR@ -l@PLLIB_NAME@@LIB_TAG@ ${matrix_lib:+-l$matrix_lib@LIB_TAG@} @LIBS@ @INSTALL_RPATH@"
+plplot_libs="@LDC_FLAGS@ -L@LIB_DIR@ -l@PLLIB_NAME@@LIB_TAG@ ${matrix_lib:+-l${matrix_lib}@LIB_TAG@} @LIBS@ @INSTALL_RPATH@"
 plplot_cflags="@INCS@"
 plplot_cxx_lib="-l@CXXLIB_NAME@@LIB_TAG@"
 
