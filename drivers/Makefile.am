@@ -29,6 +29,7 @@ lmflag = -lm
 if enable_dyndrivers
 
 EXTRA_LTLIBRARIES = \
+	aqt.la \
 	cgm.la \
 	dg300.la \
 	gd.la \
@@ -100,6 +101,7 @@ SUFFIXES = .la .rc
 
 cgm_la_CFLAGS = $(CDINCCMD)
 gd_la_CFLAGS = $(GDINCCMD)
+aqt_la_CFLAGS = $(AQTINCCMD)
 gnome_la_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
 libgcw_la_CFLAGS = $(GCW_CFLAGS)
 ntk_la_CFLAGS = \
@@ -143,6 +145,9 @@ dg300_la_LDFLAGS = $(ldflags) $(libplplot)
 
 gd_la_SOURCES = gd.c
 gd_la_LDFLAGS = $(ldflags) $(libplplot) $(GDLIBCMD)
+
+aqt_la_SOURCES = aqt.c
+aqt_la_LDFLAGS = $(ldflags) $(libplplot) $(AQTLIBCMD)
 
 wingcc_la_SOURCES = wingcc.c
 wingcc_la_LDFLAGS = $(ldflags) $(libplplot) $(GDI32LIBCMD)
@@ -288,6 +293,7 @@ endif
 # For AM_CONDITIONALS must use SOURCES, not LIBADD
 libplplotdrv_la_SOURCES = $(tksources) $(matrixsources) $(tkwinsources)
 EXTRA_libplplotdrv_la_SOURCES = \
+	aqt.c \
 	cgm.c \
 	dg300.c \
 	gcw.c \
@@ -329,6 +335,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 
 cgm_lo_CFLAGS = $(CDINCCMD)
 gd_lo_CFLAGS = $(GDINCCMD)
+aqt_lo_CFLAGS = $(AQTINCCMD)
 gnome_lo_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
 libgcw_lo_CFLAGS = $(GCW_CFLAGS)
 ntk_lo_CFLAGS = \
@@ -362,6 +369,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	$(cgm_lo_CFLAGS) \
 	$(gd_lo_CFLAGS) \
+	$(aqt_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
 	$(libgcw_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
@@ -390,6 +398,7 @@ libplplotdrv_la_LDFLAGS = \
 	$(TCLLIBCMD) \
 	$(FREETYPELIBCMD) \
 	$(GDI32LIBCMD) \
+	$(AQTLIBCMD) \
 	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.
