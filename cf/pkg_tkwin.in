@@ -14,7 +14,7 @@ TKWIN_DRV	= tkwin_drv
 # target for preparing the tkxwin driver for installation with correct rpath.
 # The tkwin shared object includes TKWIN_OBJ (because the tkwin object
 # depends on the functions in TKWIN_OBJ).
-tkwin_drv: shared/tkwin$O $(TKWIN_OBJ:%=shared/%) $(TCLLIB_SO)
+tkwin_drv:
 	$(SHLIB_BUILD) drivers/tkwin$(LIB_TAG)_drv.so \
 	$(TKWIN_OBJ:%=shared/%) \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)

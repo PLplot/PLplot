@@ -56,7 +56,7 @@ install_tk: install_plserver install_tk_scripts install_tk_demos
 ifneq ($(DYNAMIC_DRIVERS),)
 TK_DRV		= tk_drv
 #target for preparing the tk driver for installation with correct rpath.
-tk_drv: shared/tk$O $(TCLLIB_SO)
+tk_drv:
 	$(SHLIB_BUILD) drivers/tk$(LIB_TAG)_drv.so \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)
 endif
