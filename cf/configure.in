@@ -97,7 +97,7 @@ enable_octave=no
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
 enable_png=yes 
-enable_jpg=yes 
+enable_jpeg=yes 
 enable_tk=yes
 enable_xwin=yes
 
@@ -115,7 +115,7 @@ divert(-1)
 
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
-conex, linuxvga, vlt, versaterm, dg300, png, jpg, ps, xfig, ljii, hp7470, hp7580,
+conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, hp7470, hp7580,
 lj_hpgl, imp, xwin, tk, pbm, gnome])
 
 # Macro to set one driver enable value
