@@ -48,6 +48,7 @@ dist_examples_python_SCRIPTS = \
 	x17 \
 	x18 \
 	x22 \
+	x23 \
 	xw14.py \
 	xw17.py
 
@@ -72,6 +73,7 @@ dist_examples_python_DATA = \
 	xw16.py \
 	xw18.py \
 	xw19.py \
+	xw22.py \
 	xw22.py
 
 nodist_examples_python_DATA = plplot_python_start.py
