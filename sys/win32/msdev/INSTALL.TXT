@@ -145,6 +145,12 @@ environment, if you use the C++ or C bindings. Previous versions
 used an obsolete keyword which the C compiler under .NET complained
 about.
 
+Note:
+It appears that the C/C++ compiler in .NET2003 has an optimisation
+bug/quirk which can make contour and shade drawings look bad. This means
+that you have to turn off the optimisation for this compiler (by default
+it is turned on in the PLplot makefile!)
+
 
 9. Some build details
 
