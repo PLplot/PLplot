@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 """
 demo.py - Demonstrates the simplest use of the plplot canvas widget with gtk.
 
@@ -32,6 +32,9 @@ NOTICE
   Foundation, Inc., 59 Temple Place, Suite 330, Boston,
   MA  02111-1307  USA
 """
+# Append to effective python path so that can find plplot modules.
+from plplot_python_start import *
+
 import Numeric
 import plplotcanvas
 import gtk

@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 """
 animation.py - Demonstrates the use of the plplot canvas widget with gtk.
 
@@ -40,6 +40,9 @@ DESCRIPTION
   two different waves progress through the graph in real time.  Plotting
   to the two graphs is handled in two different threads.
 """
+# Append to effective python path so that can find plplot modules.
+from plplot_python_start import *
+
 import sys,threading
 import Numeric
 import plplotcanvas
