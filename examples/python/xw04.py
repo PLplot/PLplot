@@ -15,8 +15,6 @@ def main():
     plfont(1)
     plcol0(1)
     
-    plend()
-
 def plot1(type):
 
     pladv(0)
