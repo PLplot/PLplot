@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.15  1994/06/09 20:16:28  mjl
+# Revision 1.16  1994/06/16 19:08:22  mjl
+# exit_app proc simplified -- some of its previous tasks have been absorbed
+# into the redefined exit proc.
+#
+# Revision 1.15  1994/06/09  20:16:28  mjl
 # Moved the key_filter proc to plwidget.tcl, since it is better put there.
 # Some cleaning up also.
 #
@@ -141,7 +145,10 @@ proc plserver_init {} {
     tk_bindForTraversal . .menu
 
     focus default .
-    update
+
+# Set up initial link to client.
+
+    plserver_link_init
 }
 
 #----------------------------------------------------------------------------
@@ -157,7 +164,6 @@ proc exit_app {} {
 
     if { [ info exists client ] } then {
 	client_cmd $client "unset server"
-	client_cmd $client "abort"
 	update
     }
     after 1 exit
