@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.71  1994/09/16 04:50:07  mjl
+ * Revision 1.72  1994/09/23 07:48:24  mjl
+ * Fixed prototype for pltkMain().
+ *
+ * Revision 1.71  1994/09/16  04:50:07  mjl
  * Bumped version to 4.99j.
  *
  * Revision 1.70  1994/08/25  05:19:18  mjl
@@ -1480,7 +1483,8 @@ Pltk_Init( Tcl_Interp *interp );
 /* Main program for wish, with PLplot extensions. */
 
 int
-pltkMain(int argc, char **argv);
+pltkMain(int argc, char **argv, char *RcFileName,
+	 int (*AppInit)(Tcl_Interp *interp))
 #endif
 
 #ifdef __cplusplus
