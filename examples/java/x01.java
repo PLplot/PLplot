@@ -183,7 +183,9 @@ class x01 {
     // Draw the line.
 
         pls.col0(3);
+        pls.wid(2);
         pls.line(100, x, y);
+        pls.wid(1);
     }
 
     void plot3()

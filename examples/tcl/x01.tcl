@@ -104,7 +104,9 @@ proc plot2 {w} {
     }
 
     $w cmd plcol0 3
+    $w cmd plwid 2
     $w cmd plline 100 x1 y1
+    $w cmd plwid 1
 }
 
 # This is supposed to work just like the plot3() in x01c.c
