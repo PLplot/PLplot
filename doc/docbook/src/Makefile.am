@@ -55,10 +55,15 @@ EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
   jadetex.cfg stylesheet.css \
   $(html_DATA) $(pdf_DATA) $(man3_MANS) $(geninfo_DATA)
+
 CLEANFILES = \
-  *.$(HTML_EXT) $(HTML_MANIFEST) $(INFO_MANIFEST) $(MAN_MANIFEST) \
-  *.jadetex *.aux *.dvi *.ps* *.pdf* inline.ent *.log *.eps TMP.* \
-  *.out *.info* *.texi *.txml *.xml-info *-tmp *.$(MANVOL)
+  $(INFO_MANIFEST) \
+  *.jadetex *.aux inline.ent *.log *.eps TMP.* \
+  *.out *.texi *.txml *.xml-info *-tmp 
+
+MAINTAINERCLEANFILES = \
+  $(HTML_MANIFEST) $(MAN_MANIFEST) \
+  *.$(HTML_EXT) *.pdf* *.info* *.$(MANVOL) *.dvi *.ps*
 
 if enable_docbook
 
@@ -78,7 +83,6 @@ geninfodir = $(infodir)
 geninfo_DATA = $(shell ls *.info*)
 
 all: $(TARGETS)
-
 
 html: $(HTML_MANIFEST)
 
