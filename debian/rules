@@ -29,7 +29,8 @@ config:
                     --enable-tk --enable-gd --enable-dyndrivers        \
                     --disable-static --enable-python --enable-octave   \
                     --enable-gnome --with-double --disable-linuxvga    \
-                    --enable-docbook
+                    --enable-docbook  --infodir=/usr/share/info        \
+                    --with-freetype
 
 build: build-stamp
 build-stamp: config
