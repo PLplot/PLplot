@@ -1,1 +1,3 @@
 *.flc
+Makefile.in
+stamp-h*.in

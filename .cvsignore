@@ -5,3 +5,5 @@ config.cache
 config.log
 config.status
 reconfig
+Makefile.in
+aclocal.m4
