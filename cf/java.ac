@@ -38,18 +38,24 @@ if test "$enable_java" = "yes"; then
 fi
 
 if test "$enable_java" = "yes"; then
+    # Check usual search path
+    AC_CHECK_HEADERS([jni.h],[AC_MSG_RESULT(yes);jni_in_system=yes],[AC_MSG_RESULT(no);jni_in_system=no])
+
+    # Check in JAVA_HOME subdirs
     AC_MSG_CHECKING([for jni.h (Java Native Interface)])
     if test -n "$JAVA_HOME"; then
         if test -r "$JAVA_HOME/include/jni.h"; then
             JAVAINCDIR="$JAVA_HOME/include"
 	    AC_MSG_RESULT(yes)
+	else
+	    AC_MSG_RESULT(no)
         fi
-    else
-        # Should make token effort to find jni.h anyway, presumably
-        # employing AC_TRY_CPP.  Later...
-        AC_MSG_RESULT(no)
     fi
 
+    # Let's assume if jni.h is in standard search path then we
+    # don't need to look for jni_md.h as well
+    # gcj for one does not have a jni_md.h anyway. 
+    # We should probably test for this somehow.
     if test -n "$JAVAINCDIR"; then
         AC_MSG_CHECKING([machine dependent include files for Java (J2RE/IBM)])
         # See if machine dependent files exist in JAVAINCDIR (J2RE 1.3.0 IBM)
@@ -81,21 +87,26 @@ if test "$enable_java" = "yes"; then
         fi
 
         if test -z "$JAVAMDINCDIR"; then
-            AC_MSG_WARN(Missing jni_md.h, disabling Java support.)
-            enable_java=no
+            AC_MSG_WARN(Missing jni_md.h, could be gcj?.)
+#            AC_MSG_WARN(Missing jni_md.h, disabling Java support.)
+#            enable_java=no
         fi
 
-    else
-        AC_MSG_WARN([Java Native Interface include file not found,])
-	AC_MSG_WARN([setting enable_java=no])
-        enable_java=no
+    elif test "$jni_in_system" = no ; then
+         AC_MSG_WARN([Java Native Interface include file not found,])
+         AC_MSG_WARN([setting enable_java=no])
+         enable_java=no
     fi
 fi
 
 if test "$enable_java" = yes; then
 ### Java stanza completely different from others.  sysloc.in must have
 ### found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
-   JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
+   if test -n "$JAVAMDINCDIR"; then
+       JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
+   elif test -n "$JAVAINCDIR" ; then
+       JAVAINCCMD="-I$JAVAINCDIR"
+   fi
 ### bindings/java/config.java.in requires JAVA_INSTDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
    PL_EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
