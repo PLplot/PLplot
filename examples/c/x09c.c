@@ -1,10 +1,13 @@
 /* Demonstration of contour plotting */
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:16:17  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.6  1993/07/02 07:07:33  mjl
+   No more VOID.  Now simply "void" (ahhh, much better).
 
+ * Revision 1.5  1993/02/22  23:16:17  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:30  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
@@ -154,7 +157,7 @@ main(int argc, char *argv[])
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     plend();
-    free((VOID *) w);
-    free((VOID *) z);
+    free((void *) w);
+    free((void *) z);
     exit(0);
 }
