@@ -7,7 +7,7 @@
 	conversion.
 */
 
-#include "plplot/plstubs.h"
+#include "plstubs.h"
 
 void
 PLADV(PLINT *sub)

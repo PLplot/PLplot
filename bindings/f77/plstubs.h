@@ -12,7 +12,7 @@
 #ifndef __PLSTUBS_H__
 #define __PLSTUBS_H__
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * Select name transformation based on system type.
