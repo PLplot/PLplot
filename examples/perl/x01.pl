@@ -57,7 +57,7 @@ sub plot1 {
   # Plot the data points
 
   plcol0 (4);
-  plpoin (6, $xs, $ys, 9);
+  plpoin ($xs, $ys, 9);
 
   # Draw the line through the data
 
@@ -133,6 +133,10 @@ sub plot3 {
 # Divide page into 2x2 plots unless user overrides
 
 plssub (2, 2);
+
+# Parse and process command line arguments
+
+plParseOpts (\@ARGV, $PL_PARSE_SKIP | $PL_PARSE_NOPROGRAM);
 
 # Initialize plplot
 
