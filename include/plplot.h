@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/02/23 04:54:45  mjl
-   Added support data structures and constant definitions for plplot options
-   handling code.  Added function prototypes for new functions and deleted
-   a couple.  Eliminated case of VOID == char since that should never be
-   necessary with ANSI C.
+   Revision 1.12  1993/02/25 18:43:54  mjl
+   Eliminated obsolete typedef.
 
+ * Revision 1.11  1993/02/23  04:54:45  mjl
+ * Added support data structures and constant definitions for plplot options
+ * handling code.  Added function prototypes for new functions and deleted
+ * a couple.  Eliminated case of VOID == char since that should never be
+ * necessary with ANSI C.
+ *
  * Revision 1.10  1993/01/23  05:37:43  mjl
  * Elimination of many function prototypes (and a few added), caused by
  * many routines becoming static in reorganization.
@@ -421,12 +424,6 @@ typedef struct {
 
 /* NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it */
  /* yet so I'll leave it out for now. */
-
-/* PLeRGB holds color values in RGB form, with a range of [0,1]. */
-
-typedef struct {
-    float rf, gf, bf;
-} PLeRGB;
 
 /* PLColor is the usual way to pass an rgb color value. */
 
