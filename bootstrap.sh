@@ -35,7 +35,7 @@ while test $# -gt 0 ; do
     usage
     ;;
   *)
-    aclocal_options="$aclocal_options $1"
+    aclocal_opts="$aclocal_opts $1"
     ;;
   esac
   shift
