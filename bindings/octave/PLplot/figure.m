@@ -76,18 +76,20 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 
       if (nargin >= 3 && !isempty(file)) # use the specified file
 	plsfnam(file)
-	## else
-	## plsfnam(getenv("DISPLAY")); # The tk driver needs this. Not anymore?
       endif
 
       if (nargin >= 2 )
 	if (isstr(device))
 	  plsdev(device);
 	else
-	  error("plsdev: `device' must be a string");
+	  error("figure: `device' must be a string");
 	endif
       else
-	plsdev("xwin");
+	device = plsetopt ("get", "dev"); # possible user defaults
+	if (isempty(device))
+	  device="xwin";
+	endif
+	plsdev(device);
       endif
 
       __pl.type = 1;
@@ -183,7 +185,6 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       plflush;pleop;
       
       if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
-	## a=[];while(isempty(a)); a=tk_receive(0),sleep(1);fflush(stdout);endwhile
 	eval(tk_receive(1));
 	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
 	unlink(init_file);
