@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.43  1993/10/21 19:25:32  mjl
+ * Revision 1.44  1993/11/07 09:03:22  mjl
+ * Added prototype for plsexit, the new exit-handler setting function.
+ *
+ * Revision 1.43  1993/10/21  19:25:32  mjl
  * Added prototype for plFindName().
  *
  * Revision 1.42  1993/10/18  19:43:20  mjl
@@ -829,6 +832,8 @@ void c_plwind	(PLFLT, PLFLT, PLFLT, PLFLT);
 void plgFileDevs(char ***, char ***, int *);
 
 void plsKeyEH	(void (*)(PLKey *, void *, int *), void *);
+
+void plsexit	(void (*handler) (void));
 
 	/* Transformation routines */
 
