@@ -160,7 +160,6 @@ proc normal_text_setup {w {width 60} {height 30}} {
 # Scrolls text widget vertically, updating various things
 #----------------------------------------------------------------------------
 
-# jc: vertical scroll bar don't work without this 
 proc text_scroll {w line {opt {}}} {
     $w yview $line $opt
     $w mark set insert [$w index @0,0]
@@ -563,7 +562,7 @@ proc Form2d_tab {list} {
 
 proc evalCmd {{w .eval}} {
     catch {destroy $w}
-# jc: -geometry unknown in 7.6 toplevels: toplevel $w -geometry 400x300
+# -geometry unknown in 7.6 toplevels: toplevel $w -geometry 400x300
     toplevel $w
     dpos $w
     wm title $w "Interpret command"

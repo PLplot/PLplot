@@ -1713,7 +1713,7 @@ plLoadDriver(void)
 /*     fprintf( stderr, "Device not loaded!\n" ); */
 
 /* Now search through the list of loadable devices, looking for the record
- * taht corresponds to the requested device. */
+ * that corresponds to the requested device. */
     for( i=0; i < npldynamicdevices; i++ )
         if (strcmp( dev->pl_DevName, loadable_device_list[i].devnam ) == 0)
             break;
@@ -1740,7 +1740,7 @@ plLoadDriver(void)
         char drvspec[ 400 ];
         sprintf( drvspec, "./drivers/%s", driver->drvnam );
 
-/*         printf( "Trying to load %s\n", driver->drvnam ); */
+/*         printf( "Trying to load %s on %s\n", driver->drvnam, drvspec ); */
 
         driver->dlhand = dlopen( drvspec, RTLD_NOW );
 
@@ -1749,7 +1749,7 @@ plLoadDriver(void)
             sprintf( drvspec, "%s/%s/%s",
                      LIB_DIR, "drivers", driver->drvnam );
 
-/*             printf( "Trying to load %s\n", drvspec ); */
+/*             printf( "Trying to load at %s\n", drvspec); */
 
             driver->dlhand = dlopen( drvspec, RTLD_NOW );
         }

@@ -353,7 +353,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     register PlFrame *plFramePtr;
     register PLRDev *plr;
     int i, ndev;
-    /* jc: not needed anymore extern int XErrorProc(); *//* jc: storecolor error */
 
     dbug_enter("plFrameCmd");
 
@@ -443,11 +442,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask,
 			  PlFrameExposeEH, (ClientData) plFramePtr);
-
-    /* jc: try to catch XStoreColor bug on True Color Display
-     * by setting up a X error handler
-     */
-     /* jc: not needed anymore XSetErrorHandler(XErrorProc); */
 
 #ifdef HAVE_ITCL
     plFramePtr->widgetCmd =

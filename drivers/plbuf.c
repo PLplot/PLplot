@@ -597,11 +597,6 @@ plbuf_control(PLStream *pls, U_CHAR c)
 
     default:
       pldebug("plbuf_control", "Unrecognized command %d, previous %d\n", c, c_old);
-/* jc: modified for pldebug
-	fprintf(stderr,
-		"plbuf_control: Unrecognized command %d, previous %d\n",
-		c, c_old);
-*/
     }
     c_old = c;
 }

@@ -198,8 +198,11 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * Initialize the Tk application.
      */
 
-    /* jc: this must be setup *before* calling Tk_Init,
-       and `name' has already been setup above */
+    /*
+     * This must be setup *before* calling Tk_Init,
+     * and `name' has already been setup above 
+     */
+
     Tcl_SetVar(interp, "argv0", name, TCL_GLOBAL_ONLY);  
 
     if ( Tcl_Init( interp ) == TCL_ERROR ) {
@@ -253,9 +256,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
     ckfree(args);
     sprintf(buf, "%d", argc-1);
     Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
-    /* jc: this has already been done above */
-    /* Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
-	    TCL_GLOBAL_ONLY);*/
+
     if (geometry != NULL) {
 	Tcl_SetVar(interp, "geometry", geometry, TCL_GLOBAL_ONLY);
     }

@@ -483,7 +483,7 @@ typedef struct {
     char *server_name, *server_host, *server_port, *user;
     char *plserver, *plwindow;
     char *tcl_cmd, *auto_path;
-    char *tk_file;  /* jc: for plserver -file option */
+    char *tk_file;  /* plserver -file option */
     int  bufmax, dp, server_nokill;
 
 /* Plot buffer settings */

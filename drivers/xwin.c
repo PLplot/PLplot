@@ -150,24 +150,6 @@ static void  XorMod		(PLStream *pls, PLINT *mod);
 static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
 
-/* jc: X protocol error caused by trying to store color on True Color. Not needed anymore
-#include <X11/Xproto.h>
-
-int XErrorProc(Display *dpy, XErrorEvent *errEventPtr)
-{
-  if ( errEventPtr->error_code == BadAccess && errEventPtr->request_code == X_StoreColors) {
-    
-      fprintf(stderr,"Can't change colormap on True Color Display. Plplot bug!\n");
-    return 0;
-  }
-    fprintf(stderr, "X protocol error: ");
-    fprintf(stderr, "error=%d request=%d minor=%d\n",
-        errEventPtr->error_code, errEventPtr->request_code,
-        errEventPtr->minor_code);
-    return 1;
-}
-*/
-
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
 {
     pdt->pl_MenuStr  = "X-Window (Xlib)";
@@ -891,11 +873,11 @@ InitMain(PLStream *pls)
 
 /* Window title */
 
-    if (plsc->plwindow){    /* jc: allow -plwindow to specify wm decoration name*/
+    if (plsc->plwindow){    /* allow -plwindow to specify wm decoration name */
       sprintf(header, "%s", plsc->plwindow);
     }
     else
-        sprintf(header, "%s", plsc->program); /* jc: else program name*/
+        sprintf(header, "%s", plsc->program); /* else program name */
 
 /* Window creation */
 
@@ -909,7 +891,6 @@ InitMain(PLStream *pls)
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
 			   None, 0, 0, &hint);
-    /* jc: not needed anymore XSetErrorHandler(XErrorProc); */
 }
 
 /*--------------------------------------------------------------------------*\
@@ -933,7 +914,7 @@ MapMain(PLStream *pls)
 	ButtonPressMask      |
 	KeyPressMask         |
 	ExposureMask         |
-	ButtonMotionMask     | /* jc: drag */
+	ButtonMotionMask     | /* drag */
 	StructureNotifyMask;
 
     XSelectInput(xwd->display, dev->window, dev->event_mask);
@@ -1070,7 +1051,7 @@ MasterEH(PLStream *pls, XEvent *event)
 	break;
 
     case MotionNotify:
-	if (event->xmotion.state) ButtonEH(pls, event); /* jc: drag */
+	if (event->xmotion.state) ButtonEH(pls, event); /* drag */
 	MotionEH(pls, event);
 	break;
 
@@ -2137,7 +2118,7 @@ GetVisual(PLStream *pls)
     case StaticColor:
     case StaticGray:
 	xwd->rw_cmap = 0;
-	break; /* jc: */
+	break;
     default:
 	xwd->rw_cmap = 1;
     }

@@ -707,7 +707,7 @@ tk_start(PLStream *pls)
 
     dev->interp = Tcl_CreateInterp();
 
-    if (Tcl_Init(dev->interp) != TCL_OK) {	/* jc: */
+    if (Tcl_Init(dev->interp) != TCL_OK) {
 	fprintf(stderr, "%s\n", dev->interp->result);
 	abort_session(pls, "Unable to initialize Tcl");
     }
@@ -729,15 +729,15 @@ tk_start(PLStream *pls)
 	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
 
-    /* jc: tk_init need this. Use pls->FileName first, then DISPLAY, then
+    /* tk_init need this. Use pls->FileName first, then DISPLAY, then
        :0.0 */
 
         if (pls->FileName != NULL) 
             Tcl_SetVar2(dev->interp, "env", "DISPLAY", pls->FileName, TCL_GLOBAL_ONLY);
 	else if (getenv("DISPLAY") != NULL)
-            Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); /* jc: tk_init need this */
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); /* tk_init need this */
 	else
-            Tcl_SetVar2(dev->interp, "env", "DISPLAY", "unix:0.0", TCL_GLOBAL_ONLY); /* jc: tk_init need this */
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", "unix:0.0", TCL_GLOBAL_ONLY); /* tk_init need this */
 
 	dev->updatecmd = "update";
 	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
@@ -811,7 +811,7 @@ tk_stop(PLStream *pls)
     if (dev->child_pid) {
     	waitpid(dev->child_pid, NULL, 0);
 /*
-	jc: problems if parent has not caught/ignore SIGCHLD. Returns -1 and errno=EINTR    	
+	problems if parent has not caught/ignore SIGCHLD. Returns -1 and errno=EINTR    	
 	if (waitpid(dev->child_pid, NULL, 0) != dev->child_pid)
 	    fprintf(stderr, "tk_stop: waidpid error");
 */	    
@@ -1105,7 +1105,7 @@ launch_server(PLStream *pls)
     argv[i++] = "-e";			/* Startup script */
     argv[i++] = "plserver_init";
 
-/* jc: Haaaaa. This is it! Without the next statements, control is either
+/* aaahhh. This is it! Without the next statements, control is either
  * in tk or octave, because tcl/tk was in interative mode (I think).
  * This had the inconvenient of having to press the enter key or cliking a
  * mouse button in the plot window after every plot.
@@ -1124,11 +1124,11 @@ launch_server(PLStream *pls)
 
 
 /*
-   jc: give interpreter the base name of the plwindow.
+   Give interpreter the base name of the plwindow.
    Usefull to know the interpreter name
 */
  
-    if (plsc->plwindow != NULL) {	/* jc: */
+    if (plsc->plwindow != NULL) {
         char *t, *tmp;
         argv[i++] = "-name";            /* plserver name */
 	tmp = plstrdup(plsc->plwindow + 1); /* get rid of the initial dot */
@@ -1234,7 +1234,7 @@ launch_server(PLStream *pls)
 		if (sigprocmask (SIG_BLOCK, &set, 0) < 0)
 		    fprintf(stderr, "PLplot: sigprocmask failure\n");
 	    }
-	    /* jc:	    fprintf(stderr, "Starting up %s\n", plserver_exec); */
+
 	    pldebug("launch_server", "Starting up %s\n", plserver_exec);
 	    if (execv(plserver_exec, argv)) {
 		fprintf(stderr, "Unable to exec server process.\n");
@@ -2018,8 +2018,8 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	return 1;
     }
 #else
-    if (Tk_Init( interp )) {	/* jc: if added */
-        fprintf(stderr,"tk_init:%s\n", interp->result); /* jc: */
+    if (Tk_Init( interp )) {
+        fprintf(stderr,"tk_init:%s\n", interp->result);
 	return 1;
     }
 #endif

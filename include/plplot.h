@@ -157,11 +157,11 @@ typedef void* PLPointer;
 #define PLESC_GETC		13	/* get cursor position */
 #define PLESC_SWIN		14	/* set window parameters */
 #define PLESC_DOUBLEBUFFERING	15	/* configure double buffering */
-#define PLESC_XORMOD		16	/* jc: set xor mode */
+#define PLESC_XORMOD		16	/* set xor mode */
 #define PLESC_SET_COMPRESSION	17	/* AFR: set compression */
 #define PLESC_CLEAR		18      /* RL: clear graphics region */
 #define PLESC_DASH		19	/* RL: draw dashed line */
-#define PLESC_HAS_TEXT		20	/* jc: driver draws text */
+#define PLESC_HAS_TEXT		20	/* driver draws text */
 
 /* Window parameter tags */
 

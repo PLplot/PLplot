@@ -81,7 +81,7 @@ main(int argc, char *argv[])
 	plmtex("t", 1.0, 0.5, 0.5, title[k]);
     }
 
-    pllightsource(1.,1.,1.); /* jc: */
+    pllightsource(1.,1.,1.);
     for (i=0;i<n_col;i++)
     	rr[i] = gg[i] = bb[i] = i*256/n_col;
     plscmap1(rr,gg,bb,n_col);

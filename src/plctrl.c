@@ -1014,7 +1014,7 @@ c_plgra(void)
 }
 
 void
-c_plxormod(PLINT mode)	/* jc: xor */
+c_plxormod(PLINT mode)	/* xor mode */
 {
     if (plsc->level > 0)
 	plP_esc(PLESC_XORMOD, &mode);

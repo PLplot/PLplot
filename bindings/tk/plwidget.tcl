@@ -21,7 +21,6 @@
 
 proc plw_create {w {client_id {}}} {
     plxframe $w $client_id
-# jc: puts name into window decoration frame
     wm title . [string trim $w .]
 }
 
@@ -66,7 +65,7 @@ proc plxframe {w {client_id {}}} {
 
 # Make container frame.  It is mapped later.
 
-# jc: if the container already exists, don't exit (catch added)
+# If the container already exists, don't exit
 
     catch "frame $w"
 
@@ -587,7 +586,7 @@ proc plw_start {w} {
 	client_cmd "set widget_is_ready 1"
     }
 
-# jc: call a user supplied routine to do any necessary post initialization
+# Call a user supplied routine to do any necessary post initialization
    catch after_plw_start
 }
 
@@ -738,6 +737,7 @@ proc plw_end {w} {
 	global list_sock
 	close $list_sock
     }
+    #destroy $w
     exit
 }
 
@@ -1612,7 +1612,6 @@ proc status_msg {w msg} {
 proc plw_label_reset {w} {
     global plot_menu_on
     if $plot_menu_on then {
-	# jc:
 	$w.ftop.lstat configure -text " [string range $w 1 end]"
     }
 }
@@ -1626,7 +1625,6 @@ proc plw_label_reset {w} {
 proc plw_label_set {w msg} {
     global plot_menu_on
     if $plot_menu_on then {
-	# jc:
 	$w.ftop.lstat configure -text " $msg"
     }
 }

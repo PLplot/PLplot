@@ -551,7 +551,7 @@ static PLOptionTable ploption_table[] = {
     "-auto_path dir",
     "Additional directory(s) to autoload (tk or dp driver)" },
 {
-    "tk_file",      /* jc: -file option for plserver */
+    "tk_file",      /* -file option for plserver */
     opt_tk_file,
     NULL,
     NULL,
