@@ -7,7 +7,13 @@
 # $Id$
 #
 # $Log$
-# Revision 1.11  1995/09/18 20:12:17  furnish
+# Revision 1.12  1996/10/18 20:00:34  furnish
+# Use "package require" so that these fail in a reasonable way if
+# itcl/itk not configured.  Prior behavior was uninteligible.  This way
+# the package mechanism is used the way it is supposed to be used.  At
+# least if it fails, people will be able to understand why.
+#
+# Revision 1.11  1995/09/18  20:12:17  furnish
 # Conform to new PLXWin semantics.
 #
 # Revision 1.10  1995/06/09  22:48:47  mjl
@@ -49,6 +55,8 @@
 # extensions.  Much more along these lines should be done.
 #
 ###############################################################################
+
+package require Itk
 
 wm title . "x01c -- TK version"
 plstdwin .
