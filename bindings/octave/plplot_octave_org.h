@@ -445,6 +445,7 @@ typedef struct {
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
 #define    plgra	c_plgra
+#define    plgriddata   c_plgriddata
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
 #define    plgver	c_plgver
@@ -570,6 +571,7 @@ typedef struct {
 #define    c_plglevel	plglevel
 #define    c_plgpage	plgpage
 #define    c_plgra	plgra
+#define    c_plgriddata plgriddata
 #define    c_plgspa	plgspa
 #define    c_plgstrm	plgstrm
 #define    c_plgver	plgver
@@ -768,7 +770,7 @@ void xform(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data) {
 	*tx = *((PLFLT *)pltr_data+0) * x + *((PLFLT *)pltr_data+1) * y + *((PLFLT *)pltr_data+2);
 	*ty = *((PLFLT *)pltr_data+3) * x + *((PLFLT *)pltr_data+4) * y + *((PLFLT *)pltr_data+5);} //%nowrap
 
-/* convert from bidimensional array f(nx,ny) to vectorized array ff(nx,ny) */
+/* convert from Fortran like arrays (one vector), to C like 2D arrays */
 
 #define	 f2c(f, ff, nx, ny) \
 	PLFLT   **ff; \
@@ -948,6 +950,29 @@ void c_plgpage(PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng,
 /* Switches to graphics screen. */
 
 void c_plgra(void); //%name plgra
+
+void plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+		   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
+		PLFLT **zg, int type, PLFLT data); //%nowrap
+
+void my_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+		   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
+		   PLFLT *zg, int type, PLFLT data) {
+  f2c(zg, zgg, nptsx, nptsy);
+  plgriddata(x, y, z, npts, xg, nptsx, yg, nptsy, zgg, type, data);
+  for (int i=0; i<nptsx; i++)
+    for (int j=0;j<nptsy;j++)
+      *(zg+nptsx*j+i) = zgg[i][j];
+} //%name plgriddata //%input x(npts), y(npts), z(npts), xg(nptsx), yg(nptsy) //%output zg(nptsx, nptsy)
+
+  /* type of gridding algorithm for plgriddata() */
+
+#define GRID_CSA    1 /* Bivariate Cubic Spline approximation */
+#define GRID_DTLI   2 /* Delaunay Triangulation Linear Interpolation */
+#define GRID_NNI    3 /* Natural Neighbors Interpolation */
+#define GRID_NNIDW  4 /* Nearest Neighbors Inverse Distance Weighted */
+#define GRID_NNLI   5 /* Nearest Neighbors Linear Interpolation */
+#define GRID_NNAIDW 6 /* Nearest Neighbors Around Inverse Distance Weighted  */
 
 /* Get subpage boundaries in absolute coordinates */
 
