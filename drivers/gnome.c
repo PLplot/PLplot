@@ -82,6 +82,7 @@ typedef struct {
   GtkAdjustment* vadj;
   double width;
   double height;
+  double ppu;
 } GnomePLdevPage;
 
 typedef struct {
@@ -325,12 +326,12 @@ setup_item(GnomeCanvasItem *item)
                       NULL);
 }
 
-static double ppu = 1.0;
-
 static void
 add_to_adj (GtkAdjustment* adj, gfloat add)
 {
-  gfloat value = adj->value + add;
+  gfloat value;
+
+  value = adj->value + add;
   gtk_adjustment_set_value (adj, value);
 }
 
@@ -344,7 +345,7 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
   guint curpage;
 
   if (notebook != NULL)
-    curpage = gtk_notebook_get_current_page (notebook) - 1;
+    curpage = gtk_notebook_get_current_page (notebook);
   else
     curpage = 0;
 
@@ -352,10 +353,10 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
   
   switch (event->keyval) {
   case GDK_minus:
-    ppu /= 1.4142;
+    page->ppu /= 1.4142;
     break;
   case GDK_equal:
-    ppu *= 1.4142;
+    page->ppu *= 1.4142;
     break;
   case GDK_Return:
     if (quit_dialog () == TRUE)
@@ -371,27 +372,35 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     change_mode (page, GNOME_PLDEV_ZOOM_MODE);
     //gdk_threads_leave ();
     break;
-  case GDK_a:
-    add_to_adj (page->hadj, 1.0);
+  case GDK_Page_Up:
+    if (curpage != 0)
+      gtk_notebook_set_page (notebook, curpage - 1);
+    break;
+  case GDK_Page_Down:
+    gtk_notebook_set_page (notebook, curpage + 1);
+    break;
+  case GDK_Right:
+    add_to_adj (page->hadj, page->ppu);
     break;
   case GDK_Left:
-    add_to_adj (page->hadj, -1.0);
+    add_to_adj (page->hadj, -page->ppu);
     break;
   case GDK_Up:
-    add_to_adj (page->vadj, 1.0);
+    add_to_adj (page->vadj, page->ppu);
     break;
   case GDK_Down:
-    add_to_adj (page->vadj, -1.0);
+    add_to_adj (page->vadj, -page->ppu);
     break;
   default:
     break;
   }
 
-  //  printf ("Hadj->value = %f\n",
-  //	  gtk_scrolled_window_get_hadjustment (page->sw)->value); 
-  //  fflush (stdout);
+  page->hadj->step_increment = page->ppu;
+  page->hadj->step_increment = page->ppu;
+  gtk_adjustment_changed (page->hadj);
+  gtk_adjustment_changed (page->vadj);
+  gnome_canvas_set_pixels_per_unit (GNOME_CANVAS (widget), page->ppu);
 
-  gnome_canvas_set_pixels_per_unit (GNOME_CANVAS (widget), ppu);
   return TRUE;
 }
 
@@ -456,6 +465,7 @@ new_page (PLStream* pls)
   dev = pls->dev;
   page = g_malloc (sizeof (GnomePLdevPage));
   page->mode = GNOME_PLDEV_LOCATE_MODE;
+  page->ppu = 1.0;
 
   np = dev->npages;
 
@@ -599,17 +609,17 @@ new_page (PLStream* pls)
   gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
 			    gtk_label_new (buffer));
 
-  adj = gtk_scrolled_window_get_vadjustment (page->sw);
-  adj->value = 0.0;
-  adj->step_increment = 1.0;
+  //  adj = gtk_scrolled_window_get_vadjustment (page->hadj);
+  //  page->hadj->value = 0.0;
+  //page->hadj->step_increment = 1.0;
   //  page->vadj = adj;
-  gtk_scrolled_window_set_vadjustment (page->sw, adj);
+  //gtk_scrolled_window_set_vadjustment (page->sw, adj);
 
-  adj = gtk_scrolled_window_get_hadjustment (page->sw);
-  adj->value = 0.0;
-  adj->step_increment = 1.0;
+  //adj = gtk_scrolled_window_get_hadjustment (page->sw);
+  //page->vadj->value = 0.0;
+  //page->vadj->step_increment = 1.0;
   //  page->hadj = adj;
-  gtk_scrolled_window_set_hadjustment (page->sw, adj);
+  //gtk_scrolled_window_set_hadjustment (page->sw, adj);
 
   gtk_widget_show_all (dev->parent);
 
