@@ -8,7 +8,11 @@
 // $Id$
 //
 // $Log$
-// Revision 1.4  1995/03/17 07:53:17  mjl
+// Revision 1.5  1995/05/08 20:52:05  furnish
+// Mostly formatting improvements, but also some overloading resolutions
+// and some C++ style considerations.
+//
+// Revision 1.4  1995/03/17  07:53:17  mjl
 // Added new interface methods to the parsing functions.  Eliminated old
 // ones that were obsolete.
 //
@@ -291,8 +295,8 @@ plstream::adv(PLINT page)
 /* is placed at the user-specified point (x0, y0). */
 
 void
-plstream::axes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
-       const char *yopt, PLFLT ytick, PLINT nysub)
+plstream::axes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
+		const char *yopt, PLFLT ytick, PLINT nysub )
 {
     set_stream();
 
@@ -301,8 +305,7 @@ plstream::axes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 
 /* Plot a histogram using x to store data values and y to store frequencies */
 
-void
-plstream::bin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center)
+void plstream::bin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT center )
 {
     set_stream();
 
@@ -311,8 +314,7 @@ plstream::bin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center)
 
 /* Start new page.  Should only be used with pleop(). */
 
-void
-plstream::bop(void)
+void plstream::bop()
 {
     set_stream();
 
@@ -321,9 +323,8 @@ plstream::bop(void)
 
 /* This draws a box around the current viewport. */
 
-void
-plstream::box(const char *xopt, PLFLT xtick, PLINT nxsub,
-	const char *yopt, PLFLT ytick, PLINT nysub)
+void plstream::box( const char *xopt, PLFLT xtick, PLINT nxsub,
+		    const char *yopt, PLFLT ytick, PLINT nysub )
 {
     set_stream();
 
@@ -333,15 +334,24 @@ plstream::box(const char *xopt, PLFLT xtick, PLINT nxsub,
 /* This is the 3-d analogue of plbox(). */
 
 void
-plstream::box3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
-	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
-	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz)
+plstream::box3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
+		const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
+		const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz )
 {
     set_stream();
 
     plbox3( xopt, xlabel, xtick, nsubx,
 	    yopt, ylabel, ytick, nsuby,
 	    zopt, zlabel, ztick, nsubz );
+}
+
+/* Set color, map 0.  Argument is integer between 0 and 15. */
+
+void plstream::col0( PLINT icol0 )
+{
+    set_stream();
+
+    plcol0( icol0 );
 }
 
 // Set the color using a descriptive name.  Replaces plcol0().
@@ -355,8 +365,7 @@ void plstream::col( PLcolor c )
 
 /* Set color, map 1.  Argument is a float between 0. and 1. */
 
-void
-plstream::col1(PLFLT col1)
+void plstream::col1( PLFLT col1 )
 {
     set_stream();
 
@@ -367,11 +376,10 @@ plstream::col1(PLFLT col1)
  * plfcont, with a particular choice for f2eval and f2eval_data. 
  */
 
-void
-plstream::cont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	 PLPointer pltr_data)
+void plstream::cont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+		     PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+		     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		     PLPointer pltr_data )
 {
     set_stream();
 
@@ -384,13 +392,12 @@ plstream::cont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
  * of 2d array data to be used. 
  */
 
-void
-plstream::fcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
-	PLPointer f2eval_data,
-	PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	PLPointer pltr_data)
+void plstream::fcont( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+		      PLPointer f2eval_data,
+		      PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+		      PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+		      void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		      PLPointer pltr_data )
 {
     set_stream();
 
@@ -401,8 +408,7 @@ plstream::fcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 /* Copies state parameters from the reference stream to the current stream. */
 
-void
-plstream::cpstrm(PLINT iplsr, PLINT flags)
+void plstream::cpstrm( PLINT iplsr, PLINT flags )
 {
     set_stream();
 
@@ -412,8 +418,7 @@ plstream::cpstrm(PLINT iplsr, PLINT flags)
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
 
-void
-plstream::did2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
+void plstream::did2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
 {
     set_stream();
 
@@ -423,8 +428,7 @@ plstream::did2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 /* Converts input values from relative plot coordinates to relative */
 /* device coordinates. */
 
-void
-plstream::dip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
+void plstream::dip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
 {
     set_stream();
 
@@ -433,8 +437,7 @@ plstream::dip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 
 /* End a plotting session for all open streams. */
 
-void
-plstream::end(void)
+void plstream::end()
 {
     set_stream();
 
@@ -443,8 +446,7 @@ plstream::end(void)
 
 /* End a plotting session for the current stream only. */
 
-void
-plstream::end1(void)
+void plstream::end1()
 {
     set_stream();
 
@@ -453,9 +455,8 @@ plstream::end1(void)
 
 /* Simple interface for defining viewport and window. */
 
-void
-plstream::env(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-	PLINT just, PLINT axis)
+void plstream::env( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		    PLINT just, PLINT axis )
 {
     set_stream();
 
@@ -464,8 +465,7 @@ plstream::env(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
 /* End current page.  Should only be used with plbop(). */
 
-void
-plstream::eop(void)
+void plstream::eop()
 {
     set_stream();
 
@@ -474,8 +474,7 @@ plstream::eop(void)
 
 /* Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)) */
 
-void
-plstream::errx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y)
+void plstream::errx( PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y )
 {
     set_stream();
 
@@ -484,8 +483,7 @@ plstream::errx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y)
 
 /* Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i)) */
 
-void
-plstream::erry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax)
+void plstream::erry( PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax )
 {
     set_stream();
 
@@ -494,8 +492,7 @@ plstream::erry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax)
 
 /* Advance to the next family file on the next new page */
 
-void
-plstream::famadv(void)
+void plstream::famadv()
 {
     set_stream();
 
@@ -504,8 +501,7 @@ plstream::famadv(void)
 
 /* Pattern fills the polygon bounded by the input points. */
 
-void
-plstream::fill(PLINT n, PLFLT *x, PLFLT *y)
+void plstream::fill( PLINT n, PLFLT *x, PLFLT *y )
 {
     set_stream();
 
@@ -514,8 +510,7 @@ plstream::fill(PLINT n, PLFLT *x, PLFLT *y)
 
 /* Flushes the output stream.  Use sparingly, if at all. */
 
-void
-plstream::plflush(void)
+void plstream::plflush()
 {
     set_stream();
 
@@ -524,8 +519,7 @@ plstream::plflush(void)
 
 /* Sets the global font flag to 'ifont'. */
 
-void
-plstream::font(PLINT ifont)
+void plstream::font( PLINT ifont )
 {
     set_stream();
 
@@ -534,8 +528,7 @@ plstream::font(PLINT ifont)
 
 /* Load specified font set. */
 
-void
-plstream::fontld(PLINT fnt)
+void plstream::fontld( PLINT fnt )
 {
     set_stream();
 
@@ -544,8 +537,7 @@ plstream::fontld(PLINT fnt)
 
 /* Get character default height and current (scaled) height */
 
-void
-plstream::gchr(PLFLT *p_def, PLFLT *p_ht)
+void plstream::gchr( PLFLT *p_def, PLFLT *p_ht )
 {
     set_stream();
 
@@ -554,8 +546,7 @@ plstream::gchr(PLFLT *p_def, PLFLT *p_ht)
 
 /* Returns 8 bit RGB values for given color from color map 0 */
 
-void
-plstream::gcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
+void plstream::gcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b )
 {
     set_stream();
 
@@ -564,8 +555,7 @@ plstream::gcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
 
 /* Returns the background color by 8 bit RGB value */
 
-void
-plstream::gcolbg(PLINT *r, PLINT *g, PLINT *b)
+void plstream::gcolbg( PLINT *r, PLINT *g, PLINT *b )
 {
     set_stream();
 
@@ -574,9 +564,8 @@ plstream::gcolbg(PLINT *r, PLINT *g, PLINT *b)
 
 /* Retrieve current window into device space */
 
-void
-plstream::gdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT
-		 *p_jy)
+void plstream::gdidev( PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx,
+		       PLFLT *p_jy )
 {
     set_stream();
 
@@ -585,8 +574,7 @@ plstream::gdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT
 
 /* Get plot orientation */
 
-void
-plstream::gdiori(PLFLT *p_rot)
+void plstream::gdiori( PLFLT *p_rot )
 {
     set_stream();
 
@@ -595,9 +583,8 @@ plstream::gdiori(PLFLT *p_rot)
 
 /* Retrieve current window into plot space */
 
-void
-plstream::gdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT
-		 *p_ymax)
+void plstream::gdiplt( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax,
+		       PLFLT *p_ymax )
 {
     set_stream();
 
@@ -606,8 +593,7 @@ plstream::gdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT
 
 /* Get family file parameters */
 
-void
-plstream::gfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax)
+void plstream::gfam( PLINT *p_fam, PLINT *p_num, PLINT *p_bmax )
 {
     set_stream();
 
@@ -616,8 +602,7 @@ plstream::gfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax)
 
 /* Get the (current) output file name.  Must be preallocated to >80 bytes */
 
-void
-plstream::gfnam(char *fnam)
+void plstream::gfnam( char *fnam )
 {
     set_stream();
 
@@ -626,10 +611,8 @@ plstream::gfnam(char *fnam)
 
 /* Get output device parameters. */
 
-void
-plstream::gpage(PLFLT *p_xp, PLFLT *p_yp,
-	  PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT
-	  *p_yoff)
+void plstream::gpage(PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng,
+		     PLINT *p_xoff, PLINT *p_yoff )
 {
     set_stream();
 
@@ -638,8 +621,7 @@ plstream::gpage(PLFLT *p_xp, PLFLT *p_yp,
 
 /* Switches to graphics screen. */
 
-void
-plstream::gra(void)
+void plstream::gra()
 {
     set_stream();
 
@@ -648,8 +630,7 @@ plstream::gra(void)
 
 /* Get subpage boundaries in absolute coordinates */
 
-void
-plstream::gspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
+void plstream::gspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
 {
     set_stream();
 
@@ -658,8 +639,7 @@ plstream::gspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 
 /* Get current stream number. */
 
-void
-plstream::gstrm(PLINT *p_strm)
+void plstream::gstrm( PLINT *p_strm )
 {
     set_stream();
 
@@ -668,8 +648,7 @@ plstream::gstrm(PLINT *p_strm)
 
 /* Get the current library version number */
 
-void
-plstream::gver(char *p_ver)
+void plstream::gver( char *p_ver )
 {
     set_stream();
 
@@ -678,8 +657,7 @@ plstream::gver(char *p_ver)
 
 /* Get x axis labeling parameters */
 
-void
-plstream::gxax(PLINT *p_digmax, PLINT *p_digits)
+void plstream::gxax( PLINT *p_digmax, PLINT *p_digits )
 {
     set_stream();
 
@@ -688,8 +666,7 @@ plstream::gxax(PLINT *p_digmax, PLINT *p_digits)
 
 /* Get y axis labeling parameters */
 
-void
-plstream::gyax(PLINT *p_digmax, PLINT *p_digits)
+void plstream::gyax( PLINT *p_digmax, PLINT *p_digits )
 {
     set_stream();
 
@@ -698,8 +675,7 @@ plstream::gyax(PLINT *p_digmax, PLINT *p_digits)
 
 /* Get z axis labeling parameters */
 
-void
-plstream::gzax(PLINT *p_digmax, PLINT *p_digits)
+void plstream::gzax( PLINT *p_digmax, PLINT *p_digits )
 {
     set_stream();
 
@@ -708,9 +684,8 @@ plstream::gzax(PLINT *p_digmax, PLINT *p_digits)
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */
 
-void
-plstream::hist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-	 PLINT nbin, PLINT oldwin)
+void plstream::hist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
+		     PLINT nbin, PLINT oldwin )
 {
     set_stream();
 
@@ -719,8 +694,7 @@ plstream::hist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
 /* Set current color (map 0) by hue, lightness, and saturation. */
 
-void
-plstream::hls(PLFLT h, PLFLT l, PLFLT s)
+void plstream::hls( PLFLT h, PLFLT l, PLFLT s )
 {
     set_stream();
 
@@ -729,8 +703,7 @@ plstream::hls(PLFLT h, PLFLT l, PLFLT s)
 
 /* Initializes PLplot, using preset or default options */
 
-void
-plstream::init(void)
+void plstream::init()
 {
     set_stream();
 
@@ -739,8 +712,7 @@ plstream::init(void)
 
 /* Draws a line segment from (x1, y1) to (x2, y2). */
 
-void
-plstream::join(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2)
+void plstream::join( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
 {
     set_stream();
 
@@ -749,9 +721,8 @@ plstream::join(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2)
 
 /* Simple routine for labelling graphs. */
 
-void
-plstream::lab(const char *xlabel, const char *ylabel, const char
-	      *tlabel)
+void plstream::lab( const char *xlabel, const char *ylabel,
+		    const char *tlabel )
 {
     set_stream();
 
@@ -760,8 +731,7 @@ plstream::lab(const char *xlabel, const char *ylabel, const char
 
 /* Draws line segments connecting a series of points. */
 
-void
-plstream::line(PLINT n, PLFLT *x, PLFLT *y)
+void plstream::line( PLINT n, PLFLT *x, PLFLT *y )
 {
     set_stream();
 
@@ -770,8 +740,7 @@ plstream::line(PLINT n, PLFLT *x, PLFLT *y)
 
 /* Draws a line in 3 space.  */
 
-void
-plstream::line3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
+void plstream::line3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 {
     set_stream();
 
@@ -780,8 +749,7 @@ plstream::line3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 
 /* Set line style. */
 
-void
-plstream::lsty(PLINT lin)
+void plstream::lsty( PLINT lin )
 {
     set_stream();
 
@@ -790,9 +758,8 @@ plstream::lsty(PLINT lin)
 
 /* plot continental outline in world coordinates */
 
-void
-plstream::map(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
-      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat)
+void plstream::map( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+		    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     set_stream();
 
@@ -801,10 +768,10 @@ plstream::map(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
 /* Plot the latitudes and longitudes on the background. */
 
-void 
-plstream::meridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
-	    PLFLT dlong, PLFLT dlat,
-	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat)
+void  plstream::meridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+			   PLFLT dlong, PLFLT dlat,
+			   PLFLT minlong, PLFLT maxlong,
+			   PLFLT minlat, PLFLT maxlat)
 {
     set_stream();
 
@@ -814,30 +781,27 @@ plstream::meridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
 
 /* Plots a mesh representation of the function z[x][y]. */
 
-void
-plstream::mesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-	       PLINT opt)
+void plstream::mesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+		     PLINT opt)
 {
     set_stream();
 
     plmesh(x, y, z, nx, ny, opt );
 }
 
-/* Creates a new stream and makes it the default.  */
+// /* Creates a new stream and makes it the default.  */
 
-void
-plstream::mkstrm(PLINT *p_strm)
-{
-    set_stream();
+// void plstream::mkstrm( PLINT *p_strm )
+// {
+//     set_stream();
 
-    plmkstrm(p_strm);
-}
+//     plmkstrm(p_strm);
+// }
 
 /* Prints out "text" at specified position relative to viewport */
 
-void
-plstream::mtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
-	 const char *text)
+void plstream::mtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+		     const char *text )
 {
     set_stream();
 
@@ -846,9 +810,8 @@ plstream::mtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 
 /* Plots a 3-d representation of the function z[x][y]. */
 
-void
-plstream::plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	 PLINT nx, PLINT ny, PLINT opt, PLINT side)
+void plstream::plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+		       PLINT nx, PLINT ny, PLINT opt, PLINT side )
 {
     set_stream();
 
@@ -857,8 +820,7 @@ plstream::plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
 /* Set fill pattern directly. */
 
-void
-plstream::pat(PLINT nlin, PLINT *inc, PLINT *del)
+void plstream::pat( PLINT nlin, PLINT *inc, PLINT *del )
 {
     set_stream();
 
@@ -867,8 +829,7 @@ plstream::pat(PLINT nlin, PLINT *inc, PLINT *del)
 
 /* Plots array y against x for n points using ASCII code "code".*/
 
-void
-plstream::poin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
+void plstream::poin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 {
     set_stream();
 
@@ -877,8 +838,7 @@ plstream::poin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 
 /* Draws a series of points in 3 space. */
 
-void
-plstream::poin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
+void plstream::poin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
 {
     set_stream();
 
@@ -887,8 +847,7 @@ plstream::poin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 
 /* Draws a polygon in 3 space.  */
 
-void
-plstream::poly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
+void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw )
 {
     set_stream();
 
@@ -897,8 +856,7 @@ plstream::poly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 
-void
-plstream::prec(PLINT setp, PLINT prec)
+void plstream::prec( PLINT setp, PLINT prec )
 {
     set_stream();
 
@@ -907,8 +865,7 @@ plstream::prec(PLINT setp, PLINT prec)
 
 /* Set fill pattern, using one of the predefined patterns.*/
 
-void
-plstream::psty(PLINT patt)
+void plstream::psty( PLINT patt )
 {
     set_stream();
 
@@ -917,9 +874,8 @@ plstream::psty(PLINT patt)
 
 /* Prints out "text" at world cooordinate (x,y). */
 
-void
-plstream::ptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const
-	       char *text)
+void plstream::ptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just,
+		     const char *text)
 {
     set_stream();
 
@@ -928,8 +884,7 @@ plstream::ptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const
 
 /* Replays contents of plot buffer to current device/file. */
 
-void
-plstream::replot(void)
+void plstream::replot()
 {
     set_stream();
 
@@ -938,8 +893,7 @@ plstream::replot(void)
 
 /* Set line color by red, green, blue from  0. to 1. */
 
-void
-plstream::rgb(PLFLT r, PLFLT g, PLFLT b)
+void plstream::rgb( PLFLT r, PLFLT g, PLFLT b )
 {
     set_stream();
 
@@ -948,8 +902,7 @@ plstream::rgb(PLFLT r, PLFLT g, PLFLT b)
 
 /* Set line color by 8 bit RGB values. */
 
-void
-plstream::rgb1(PLINT r, PLINT g, PLINT b)
+void plstream::rgb( PLINT r, PLINT g, PLINT b )
 {
     set_stream();
 
@@ -958,8 +911,7 @@ plstream::rgb1(PLINT r, PLINT g, PLINT b)
 
 /* Set character height. */
 
-void
-plstream::schr(PLFLT def, PLFLT scale)
+void plstream::schr( PLFLT def, PLFLT scale )
 {
     set_stream();
 
@@ -968,8 +920,7 @@ plstream::schr(PLFLT def, PLFLT scale)
 
 /* Set number of colors in cmap 0 */
 
-void
-plstream::scmap0n(PLINT ncol0)
+void plstream::scmap0n( PLINT ncol0 )
 {
     set_stream();
 
@@ -978,8 +929,7 @@ plstream::scmap0n(PLINT ncol0)
 
 /* Set number of colors in cmap 1 */
 
-void
-plstream::scmap1n(PLINT ncol1)
+void plstream::scmap1n( PLINT ncol1 )
 {
     set_stream();
 
@@ -988,8 +938,7 @@ plstream::scmap1n(PLINT ncol1)
 
 /* Set color map 0 colors by 8 bit RGB values */
 
-void
-plstream::scmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
+void plstream::scmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
 {
     set_stream();
 
@@ -998,8 +947,7 @@ plstream::scmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 
 /* Set color map 1 colors by 8 bit RGB values */
 
-void
-plstream::scmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
+void plstream::scmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
 {
     set_stream();
 
@@ -1009,9 +957,9 @@ plstream::scmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 /* Set color map 1 colors using a piece-wise linear relationship between */
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
-void
-plstream::scmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
+void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
+			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
+			PLINT *rev )
 {
     set_stream();
 
@@ -1020,8 +968,7 @@ plstream::scmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
-void
-plstream::scol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
+void plstream::scol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
 {
     set_stream();
 
@@ -1030,8 +977,7 @@ plstream::scol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 
 /* Set the background color by 8 bit RGB value */
 
-void
-plstream::scolbg(PLINT r, PLINT g, PLINT b)
+void plstream::scolbg( PLINT r, PLINT g, PLINT b )
 {
     set_stream();
 
@@ -1040,8 +986,7 @@ plstream::scolbg(PLINT r, PLINT g, PLINT b)
 
 /* Used to globally turn color output on/off */
 
-void
-plstream::scolor(PLINT color)
+void plstream::scolor( PLINT color )
 {
     set_stream();
 
@@ -1050,8 +995,7 @@ plstream::scolor(PLINT color)
 
 /* Set the device (keyword) name */
 
-void
-plstream::sdev(const char *devname)
+void plstream::sdev( const char *devname )
 {
     set_stream();
 
@@ -1061,8 +1005,7 @@ plstream::sdev(const char *devname)
 /* Set window into device space using margin, aspect ratio, and */
 /* justification */
 
-void
-plstream::sdidev(PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy)
+void plstream::sdidev( PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy )
 {
     set_stream();
 
@@ -1071,9 +1014,9 @@ plstream::sdidev(PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy)
 
 /* Set up transformation from metafile coordinates. */
 
-void
-plstream::sdimap(PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
-	   PLFLT dimxpmm, PLFLT dimypmm)
+void plstream::sdimap( PLINT dimxmin, PLINT dimxmax,
+		       PLINT dimymin, PLINT dimymax,
+		       PLFLT dimxpmm, PLFLT dimypmm)
 {
     set_stream();
 
@@ -1082,8 +1025,7 @@ plstream::sdimap(PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
 
 /* Set plot orientation, specifying rotation in units of pi/2. */
 
-void
-plstream::sdiori(PLFLT rot)
+void plstream::sdiori( PLFLT rot )
 {
     set_stream();
 
@@ -1092,8 +1034,7 @@ plstream::sdiori(PLFLT rot)
 
 /* Set window into plot space */
 
-void
-plstream::sdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
+void plstream::sdiplt( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax )
 {
     set_stream();
 
@@ -1102,8 +1043,7 @@ plstream::sdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 
 /* Set window into plot space incrementally (zoom) */
 
-void
-plstream::sdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
+void plstream::sdiplz( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax )
 {
     set_stream();
 
@@ -1112,8 +1052,7 @@ plstream::sdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 
 /* Set the escape character for text strings. */
 
-void
-plstream::sesc(char esc)
+void plstream::sesc( char esc )
 {
     set_stream();
 
@@ -1122,8 +1061,7 @@ plstream::sesc(char esc)
 
 /* Set family file parameters */
 
-void
-plstream::sfam(PLINT fam, PLINT num, PLINT bmax)
+void plstream::sfam( PLINT fam, PLINT num, PLINT bmax )
 {
     set_stream();
 
@@ -1132,8 +1070,7 @@ plstream::sfam(PLINT fam, PLINT num, PLINT bmax)
 
 /* Set the output file name. */
 
-void
-plstream::sfnam(const char *fnam)
+void plstream::sfnam( const char *fnam )
 {
     set_stream();
 
@@ -1143,15 +1080,15 @@ plstream::sfnam(const char *fnam)
 /* Shade region. */
 
 void 
-plstream::shade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
-	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-	  PLFLT shade_min, PLFLT shade_max,
-	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-	  PLINT min_color, PLINT min_width,
-	  PLINT max_color, PLINT max_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	  PLPointer pltr_data)
+plstream::shade( PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+		 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+		 PLFLT shade_min, PLFLT shade_max,
+		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		 PLINT min_color, PLINT min_width,
+		 PLINT max_color, PLINT max_width,
+		 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		 PLPointer pltr_data )
 {
     set_stream();
 
@@ -1187,15 +1124,15 @@ plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
 }
 
 void 
-plstream::shade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
-	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-	 PLFLT shade_min, PLFLT shade_max,
-	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-	 PLINT min_color, PLINT min_width,
-	 PLINT max_color, PLINT max_width,
-	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	 PLPointer pltr_data)
+plstream::shade1( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+		  PLFLT shade_min, PLFLT shade_max,
+		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		  PLINT min_color, PLINT min_width,
+		  PLINT max_color, PLINT max_width,
+		  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		  PLPointer pltr_data )
 {
     set_stream();
 
@@ -1208,19 +1145,19 @@ plstream::shade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 }
 
 void 
-plstream::fshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
-	 PLPointer f2eval_data,
-	 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
-	 PLPointer c2eval_data,
-	 PLINT nx, PLINT ny, 
-	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-	 PLFLT shade_min, PLFLT shade_max,
-	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-	 PLINT min_color, PLINT min_width,
-	 PLINT max_color, PLINT max_width,
-	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	 PLPointer pltr_data)
+plstream::fshade( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+		  PLPointer f2eval_data,
+		  PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
+		  PLPointer c2eval_data,
+		  PLINT nx, PLINT ny, 
+		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+		  PLFLT shade_min, PLFLT shade_max,
+		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		  PLINT min_color, PLINT min_width,
+		  PLINT max_color, PLINT max_width,
+		  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		  PLPointer pltr_data )
 {
     set_stream();
 
@@ -1235,8 +1172,7 @@ plstream::fshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 /* Set up lengths of major tick marks. */
 
-void
-plstream::smaj(PLFLT def, PLFLT scale)
+void plstream::smaj( PLFLT def, PLFLT scale )
 {
     set_stream();
 
@@ -1245,8 +1181,7 @@ plstream::smaj(PLFLT def, PLFLT scale)
 
 /* Set up lengths of minor tick marks. */
 
-void
-plstream::smin(PLFLT def, PLFLT scale)
+void plstream::smin( PLFLT def, PLFLT scale )
 {
     set_stream();
 
@@ -1255,8 +1190,7 @@ plstream::smin(PLFLT def, PLFLT scale)
 
 /* Set orientation.  Must be done before calling plinit. */
 
-void
-plstream::sori(PLINT ori)
+void plstream::sori( PLINT ori )
 {
     set_stream();
 
@@ -1265,9 +1199,8 @@ plstream::sori(PLINT ori)
 
 /* Set output device parameters.  Usually ignored by the driver. */
 
-void
-plstream::spage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
-	  PLINT xoff, PLINT yoff)
+void plstream::spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
+		      PLINT xoff, PLINT yoff )
 {
     set_stream();
 
@@ -1276,8 +1209,7 @@ plstream::spage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Set the pause (on end-of-page) status */
 
-void
-plstream::spause(PLINT pause)
+void plstream::spause( PLINT pause )
 {
     set_stream();
 
@@ -1286,8 +1218,7 @@ plstream::spause(PLINT pause)
 
 /* Set stream number.  */
 
-void
-plstream::sstrm(PLINT strm)
+void plstream::sstrm( PLINT strm )
 {
     set_stream();
 
@@ -1296,8 +1227,7 @@ plstream::sstrm(PLINT strm)
 
 /* Set the number of subwindows in x and y */
 
-void
-plstream::ssub(PLINT nx, PLINT ny)
+void plstream::ssub( PLINT nx, PLINT ny )
 {
     set_stream();
 
@@ -1306,8 +1236,7 @@ plstream::ssub(PLINT nx, PLINT ny)
 
 /* Set symbol height. */
 
-void
-plstream::ssym(PLFLT def, PLFLT scale)
+void plstream::ssym( PLFLT def, PLFLT scale )
 {
     set_stream();
 
@@ -1316,8 +1245,7 @@ plstream::ssym(PLFLT def, PLFLT scale)
 
 /* Initialize PLplot, passing in the windows/page settings. */
 
-void
-plstream::star(PLINT nx, PLINT ny)
+void plstream::star( PLINT nx, PLINT ny )
 {
     set_stream();
 
@@ -1326,8 +1254,7 @@ plstream::star(PLINT nx, PLINT ny)
 
 /* Initialize PLplot, passing the device name and windows/page settings. */
 
-void
-plstream::start(const char *devname, PLINT nx, PLINT ny)
+void plstream::start( const char *devname, PLINT nx, PLINT ny )
 {
     set_stream();
 
@@ -1336,8 +1263,7 @@ plstream::start(const char *devname, PLINT nx, PLINT ny)
 
 /* Set up a new line style */
 
-void
-plstream::styl(PLINT nms, PLINT *mark, PLINT *space)
+void plstream::styl( PLINT nms, PLINT *mark, PLINT *space )
 {
     set_stream();
 
@@ -1346,8 +1272,7 @@ plstream::styl(PLINT nms, PLINT *mark, PLINT *space)
 
 /* Sets the edges of the viewport to the specified absolute coordinates */
 
-void
-plstream::svpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+void plstream::svpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
 {
     set_stream();
 
@@ -1356,8 +1281,7 @@ plstream::svpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 
 /* Set x axis labeling parameters */
 
-void
-plstream::sxax(PLINT digmax, PLINT digits)
+void plstream::sxax( PLINT digmax, PLINT digits )
 {
     set_stream();
 
@@ -1366,8 +1290,7 @@ plstream::sxax(PLINT digmax, PLINT digits)
 
 /* Set inferior X window */
 
-void
-plstream::sxwin(PLINT window_id)
+void plstream::sxwin( PLINT window_id )
 {
     set_stream();
 
@@ -1376,8 +1299,7 @@ plstream::sxwin(PLINT window_id)
 
 /* Set y axis labeling parameters */
 
-void
-plstream::syax(PLINT digmax, PLINT digits)
+void plstream::syax( PLINT digmax, PLINT digits )
 {
     set_stream();
 
@@ -1386,8 +1308,7 @@ plstream::syax(PLINT digmax, PLINT digits)
 
 /* Plots array y against x for n points using Hershey symbol "code" */
 
-void
-plstream::sym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
+void plstream::sym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 {
     set_stream();
 
@@ -1396,8 +1317,7 @@ plstream::sym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 
 /* Set z axis labeling parameters */
 
-void
-plstream::szax(PLINT digmax, PLINT digits)
+void plstream::szax( PLINT digmax, PLINT digits )
 {
     set_stream();
 
@@ -1406,8 +1326,7 @@ plstream::szax(PLINT digmax, PLINT digits)
 
 /* Switches to text screen. */
 
-void
-plstream::text(void)
+void plstream::text()
 {
     set_stream();
 
@@ -1417,8 +1336,7 @@ plstream::text(void)
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
 /* room for labels. */
 
-void
-plstream::vasp(PLFLT aspect)
+void plstream::vasp( PLFLT aspect )
 {
     set_stream();
 
@@ -1428,9 +1346,8 @@ plstream::vasp(PLFLT aspect)
 /* Creates the largest viewport of the specified aspect ratio that fits */
 /* within the specified normalized subpage coordinates. */
 
-void
-plstream::vpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT
-	       aspect)
+void plstream::vpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		     PLFLT aspect )
 {
     set_stream();
 
@@ -1439,8 +1356,7 @@ plstream::vpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT
 
 /* Creates a viewport with the specified normalized subpage coordinates. */
 
-void
-plstream::vpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+void plstream::vpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
 {
     set_stream();
 
@@ -1450,8 +1366,7 @@ plstream::vpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 /* Defines a "standard" viewport with seven character heights for */
 /* the left margin and four character heights everywhere else. */
 
-void
-plstream::vsta(void)
+void plstream::vsta()
 {
     set_stream();
 
@@ -1460,10 +1375,9 @@ plstream::vsta(void)
 
 /* Set up a window for three-dimensional plotting. */
 
-void
-plstream::w3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
-	PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
-	PLFLT zmax0, PLFLT alt, PLFLT az)
+void plstream::w3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
+		    PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
+		    PLFLT zmax0, PLFLT alt, PLFLT az )
 {
     set_stream();
 
@@ -1473,8 +1387,7 @@ plstream::w3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
 
 /* Set pen width. */
 
-void
-plstream::wid(PLINT width)
+void plstream::wid( PLINT width )
 {
     set_stream();
 
@@ -1483,8 +1396,7 @@ plstream::wid(PLINT width)
 
 /* Set up world coordinates of the viewport boundaries (2d plots). */
 
-void
-plstream::wind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+void plstream::wind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
 {
     set_stream();
 
@@ -1495,8 +1407,7 @@ plstream::wind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 
 /* Returns a list of file-oriented device names and their menu strings */
 
-void
-plstream::gFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
+void plstream::gFileDevs( char ***p_menustr, char ***p_devname, int *p_ndev )
 {
     set_stream();
 
@@ -1505,9 +1416,8 @@ plstream::gFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 
 /* Set the function pointer for the keyboard event handler */
 
-void
-plstream::sKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void
-		 *KeyEH_data)
+void plstream::sKeyEH( void (*KeyEH) (PLGraphicsIn *, void *, int *),
+		       void *KeyEH_data )
 {
     set_stream();
 
@@ -1516,8 +1426,7 @@ plstream::sKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void
 
 /* Sets an optional user exit handler. */
 
-void
-plstream::sexit(int (*handler) (char *))
+void plstream::sexit( int (*handler) (char *) )
 {
     set_stream();
 
@@ -1528,9 +1437,8 @@ plstream::sexit(int (*handler) (char *))
 
 /* Identity transformation. */
 
-void
-plstream::tr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
-	      pltr_data)
+void plstream::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+		    PLPointer pltr_data )
 {
     set_stream();
 
@@ -1539,9 +1447,8 @@ plstream::tr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
 
 /* Does linear interpolation from singly dimensioned coord arrays. */
 
-void
-plstream::tr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
-	      pltr_data)
+void plstream::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+		    PLPointer pltr_data )
 {
     set_stream();
 
@@ -1551,9 +1458,8 @@ plstream::tr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
 /* Does linear interpolation from doubly dimensioned coord arrays */
 /* (column dominant, as per normal C 2d arrays). */
 
-void
-plstream::tr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
-	      pltr_data)
+void plstream::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+		    PLPointer pltr_data )
 {
     set_stream();
 
@@ -1563,9 +1469,8 @@ plstream::tr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
 /* Just like pltr2() but uses pointer arithmetic to get coordinates from */
 /* 2d grid tables.  */
 
-void
-plstream::tr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
-	       pltr_data)
+void plstream::tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+		     PLPointer pltr_data )
 {
     set_stream();
 
@@ -1574,9 +1479,7 @@ plstream::tr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer
 
 /* Identity transformation for plots from Fortran. */
 
-void
-plstream::tr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void
-	       *pltr_data)
+void plstream::tr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
 {
     set_stream();
 
@@ -1586,9 +1489,7 @@ plstream::tr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void
 /* Does linear interpolation from doubly dimensioned coord arrays */
 /* (row dominant, i.e. Fortran ordering). */
 
-void
-plstream::tr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void
-	       *pltr_data)
+void plstream::tr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
 {
     set_stream();
 
@@ -1597,8 +1498,7 @@ plstream::tr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void
 
 /* Example linear transformation function for contour plotter. */
 
-void 
-plstream::xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
+void  plstream::xform( PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty )
 {
     set_stream();
 
@@ -1610,8 +1510,7 @@ plstream::xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
 /* Does a lookup from a 2d function array.  Array is of type (PLFLT **), */
 /* and is column dominant (normal C ordering). */
 
-PLFLT
-plstream::f2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data)
+PLFLT plstream::f2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 {
     set_stream();
 
@@ -1621,8 +1520,7 @@ plstream::f2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 /* Does a lookup from a 2d function array.  Array is of type (PLFLT *), */
 /* and is column dominant (normal C ordering). */
 
-PLFLT
-plstream::f2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data)
+PLFLT plstream::f2eval( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 {
     set_stream();
 
@@ -1632,8 +1530,7 @@ plstream::f2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 /* Does a lookup from a 2d function array.  Array is of type (PLFLT *), */
 /* and is row dominant (Fortran ordering). */
 
-PLFLT
-plstream::f2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
+PLFLT plstream::f2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 {
     set_stream();
 
@@ -1644,8 +1541,7 @@ plstream::f2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 
 /* Clear internal option table info structure. */
 
-void
-plstream::ClearOpts(void)
+void plstream::ClearOpts()
 {
     set_stream();
 
@@ -1654,8 +1550,7 @@ plstream::ClearOpts(void)
 
 /* Reset internal option table info structure. */
 
-void
-plstream::ResetOpts(void)
+void plstream::ResetOpts()
 {
     set_stream();
 
@@ -1664,8 +1559,7 @@ plstream::ResetOpts(void)
 
 /* Merge user option table into internal info structure. */
 
-int
-plstream::MergeOpts(PLOptionTable *options, char *name, char **notes)
+int plstream::MergeOpts( PLOptionTable *options, char *name, char **notes )
 {
     set_stream();
 
@@ -1674,8 +1568,7 @@ plstream::MergeOpts(PLOptionTable *options, char *name, char **notes)
 
 /* Set the strings used in usage and syntax messages. */
 
-void
-plstream::SetUsage(char *program_string, char *usage_string)
+void plstream::SetUsage( char *program_string, char *usage_string )
 {
     set_stream();
 
@@ -1684,8 +1577,7 @@ plstream::SetUsage(char *program_string, char *usage_string)
 
 /* Process input strings, treating them as an option and argument pair. */
 
-int
-plstream::SetOpt(char *opt, char *optarg)
+int plstream::SetOpt( char *opt, char *optarg )
 {
     set_stream();
 
@@ -1694,8 +1586,7 @@ plstream::SetOpt(char *opt, char *optarg)
 
 /* Process options list using current options info. */
 
-int
-plstream::ParseOpts(int *p_argc, char **argv, PLINT mode)
+int plstream::ParseOpts( int *p_argc, char **argv, PLINT mode )
 {
     set_stream();
 
@@ -1704,8 +1595,7 @@ plstream::ParseOpts(int *p_argc, char **argv, PLINT mode)
 
 /* Print usage & syntax message. */
 
-void
-plstream::OptUsage(void)
+void plstream::OptUsage()
 {
     set_stream();
 
@@ -1716,8 +1606,7 @@ plstream::OptUsage(void)
 
 /* Set the output file pointer */
 
-void
-plstream::gfile(FILE **p_file)
+void plstream::gfile(FILE **p_file )
 {
     set_stream();
 
@@ -1726,8 +1615,7 @@ plstream::gfile(FILE **p_file)
 
 /* Get the output file pointer */
 
-void
-plstream::sfile(FILE *file)
+void plstream::sfile( FILE *file )
 {
     set_stream();
     
@@ -1737,8 +1625,7 @@ plstream::sfile(FILE *file)
 
 /* Get the escape character for text strings. */
 
-void
-plstream::gesc(char *p_esc)
+void plstream::gesc( char *p_esc )
 {
     set_stream();
 
@@ -1747,8 +1634,7 @@ plstream::gesc(char *p_esc)
 
 /* Front-end to driver escape function. */
 
-void
-plstream::pl_cmd(PLINT op, void *ptr)
+void plstream::pl_cmd( PLINT op, void *ptr )
 {
     set_stream();
 
@@ -1757,8 +1643,7 @@ plstream::pl_cmd(PLINT op, void *ptr)
 
 /* Return full pathname for given file if executable */
 
-int 
-plstream::FindName(char *p)
+int  plstream::FindName( char *p )
 {
     set_stream();
 
@@ -1767,8 +1652,7 @@ plstream::FindName(char *p)
 
 /* Looks for the specified executable file according to usual search path. */
 
-char *
-plstream::FindCommand(char *fn)
+char *plstream::FindCommand( char *fn )
 {
     set_stream();
 
@@ -1778,9 +1662,8 @@ plstream::FindCommand(char *fn)
 /* Gets search name for file by concatenating the dir, subdir, and file */
 /* name, allocating memory as needed.  */
 
-void
-plstream::GetName(char *dir, char *subdir, char *filename, char
-		  **filespec)
+void plstream::GetName( char *dir, char *subdir, char *filename,
+			char **filespec )
 {
     set_stream();
 
@@ -1789,8 +1672,7 @@ plstream::GetName(char *dir, char *subdir, char *filename, char
 
 /* Prompts human to input an integer in response to given message. */
 
-PLINT
-plstream::GetInt(char *s)
+PLINT plstream::GetInt( char *s )
 {
     set_stream();
 
@@ -1799,8 +1681,7 @@ plstream::GetInt(char *s)
 
 /* Prompts human to input a float in response to given message. */
 
-PLFLT
-plstream::GetFlt(char *s)
+PLFLT plstream::GetFlt( char *s )
 {
     set_stream();
 
@@ -1811,8 +1692,7 @@ plstream::GetFlt(char *s)
 
 /* Allocates a block of memory for use as a 2-d grid of PLFLT's.  */
 
-void
-plstream::Alloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
+void plstream::Alloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 {
     set_stream();
 
@@ -1821,8 +1701,7 @@ plstream::Alloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
 
 /* Frees a block of memory allocated with plAlloc2dGrid(). */
 
-void
-plstream::Free2dGrid(PLFLT **f, PLINT nx, PLINT ny)
+void plstream::Free2dGrid( PLFLT **f, PLINT nx, PLINT ny )
 {
     set_stream();
 
@@ -1831,18 +1710,16 @@ plstream::Free2dGrid(PLFLT **f, PLINT nx, PLINT ny)
 
 /* Functions for converting between HLS and RGB color space */
 
-void
-plstream::HLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g,
-		  PLFLT *p_b)
+void plstream::HLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g,
+			PLFLT *p_b )
 {
     set_stream();
 
     plHLS_RGB(h,l,s,p_r,p_g,p_b);
 }
 
-void
-plstream::RGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
-		  PLFLT *p_s)
+void plstream::RGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
+			PLFLT *p_s )
 {
     set_stream();
 
@@ -1851,8 +1728,7 @@ plstream::RGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
 
 /* Wait for right button mouse event and translate to world coordinates */
 
-int
-plstream::GetCursor(PLGraphicsIn *gin)
+int plstream::GetCursor( PLGraphicsIn *gin )
 {
     set_stream();
 
