@@ -148,7 +148,8 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef WITH_CSA
     grid_csa(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #else
-    plabort("plgriddata(): PLplot was configured to not use GRID_CSA.");
+    plabort("plgriddata(): PLplot was configured to not use GRID_CSA.\n  Reverting to GRID_NNAIDW.");
+    grid_nnaidw(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #endif
     break;
 
@@ -168,7 +169,8 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef HAVE_QHULL
     grid_dtli(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #else
-    plabort("plgriddata(): you must have Qhull to use GRID_DTLI.");
+    plwarn("plgriddata(): you must have the Qhull library installed to use GRID_DTLI.\n  Reverting to GRID_NNAIDW.");
+    grid_nnaidw(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #endif
     break;
 
@@ -176,7 +178,8 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef HAVE_QHULL
     grid_nni(x, y, z, npts, xg, nptsx, yg, nptsy, zg, data);
 #else
-    plabort("plgriddata(): you must have Qhull to use GRID_NNI.");
+    plwarn("plgriddata(): you must have the Qhull library installed to use GRID_NNI.\n  Reverting to GRID_NNAIDW.");
+    grid_nnaidw(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #endif
     break;
 
