@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1995/10/23 07:26:22  mjl
+ * Revision 1.36  1996/02/27 23:06:35  shouman
+ * Fixed plscmap0n() and plscmap1n(); they were ignoring their arguments
+ * when their colormaps were already initialized.
+ *
+ * Revision 1.35  1995/10/23  07:26:22  mjl
  * Changed plabort() to write error code and errormsg into *plsc->errcode and
  * plsc->errmsg, respectively, if they've been set.
  *
@@ -561,10 +565,10 @@ c_plscmap0n(PLINT ncol0)
 
     if (plsc->ncol0 <= 0 && ncol0 <= 0)
 	ncol = 16;
-    else if (plsc->ncol0 <= 0)
-	ncol = ncol0;
     else if (ncol0 <= 0)
 	ncol = plsc->ncol0;
+    else
+        ncol = ncol0;
 
     imax = ncol-1;
     size = ncol * sizeof(PLColor);
@@ -610,10 +614,10 @@ c_plscmap1n(PLINT ncol1)
 
     if (plsc->ncol1 <= 0 && ncol1 <= 0)
 	ncol = 128;
-    else if (plsc->ncol1 <= 0)
-	ncol = ncol1;
     else if (ncol1 <= 0)
 	ncol = plsc->ncol1;
+    else
+        ncol = ncol1;
 
     size = ncol * sizeof(PLColor);
 
