@@ -87,13 +87,13 @@ static PLDispatchInit static_device_initializers[] = {
 #ifdef PLD_os2pm
     plD_dispatch_init_os2,
 #endif
-#ifdef PLD_xwin
+#if defined(PLD_xwin) /* && !defined(ENABLE_DYNAMIC_DRIVERS) */
     plD_dispatch_init_xw,
 #endif
-#ifdef PLD_gnome  
+#if defined(PLD_gnome) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_gnome,
 #endif
-#ifdef PLD_tk
+#if defined(PLD_tk) /* && !defined(ENABLE_DYNAMIC_DRIVERS) */
     plD_dispatch_init_tk,
 #endif
 #ifdef PLD_linuxvga
@@ -117,81 +117,84 @@ static PLDispatchInit static_device_initializers[] = {
 #ifdef PLD_tiff
     plD_dispatch_init_tiff,
 #endif
-#ifdef PLD_jpg
+#if defined(PLD_jpg) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_jpg,
 #endif
-#ifdef PLD_bmp
+#if defined(PLD_bmp)  && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_bmp,
 #endif
 #ifdef PLD_emxvga		       /* graphics for emx+gcc */
     plD_dispatch_init_vga,
 #endif
-#ifdef PLD_xterm
+#if defined(PLD_xterm) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_xterm,
 #endif
-#ifdef PLD_tek4010
+#if defined(PLD_tek4010) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_tekt,
 #endif
-#ifdef PLD_tek4107
+#if defined(PLD_tek4107) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_tek4107t,
 #endif
-#ifdef PLD_mskermit
+#if defined(PLD_mskermit) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_mskermit,
 #endif
-#ifdef PLD_versaterm
+#if defined(PLD_versaterm) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_versaterm,
 #endif
-#ifdef PLD_vlt
+#if defined(PLD_vlt) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_vlt,
 #endif
-#ifdef PLD_conex
+#if defined(PLD_conex) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_conex,
 #endif
-#ifdef PLD_dg300
+#if defined(PLD_dg300) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_dg,
 #endif
 #if defined(PLD_plmeta) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_plm,
 #endif
-#ifdef PLD_tek4010
+#if defined(PLD_tek4010) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_tekf,
 #endif
-#ifdef PLD_tek4107
+#if defined(PLD_tek4107) && !defined(ENABLE_DYNAMIC_DRIVERS) 
     plD_dispatch_init_tek4107f,
 #endif
 #if defined(PLD_ps) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_psm,
     plD_dispatch_init_psc,
 #endif
-#ifdef PLD_xfig
+#if defined(PLD_xfig) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_xfig,
 #endif
-#ifdef PLD_ljiip
+#if defined(PLD_ljiip) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_ljiip,
 #endif
-#ifdef PLD_ljii
+#if defined(PLD_ljii) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_ljii,
 #endif
-#ifdef PLD_hp7470
+#if defined( PLD_hp7470) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_hp7470,
 #endif
-#ifdef PLD_hp7580
+#if defined( PLD_hp7580) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_hp7580,
 #endif
-#ifdef PLD_lj_hpgl
+#if defined( PLD_lj_hpgl) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_hpgl,
 #endif
-#ifdef PLD_imp
+#if defined( PLD_imp) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_imp,
 #endif
-#ifdef PLD_pbm
+#if defined( PLD_pbm) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_pbm,
 #endif
-#ifdef PLD_png
+#if defined(PLD_png) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_png,
 #endif
-#ifdef PLD_jpeg
-    plD_dispatch_init_png,
+#if defined(PLD_jpeg) && !defined(ENABLE_DYNAMIC_DRIVERS)
+    plD_dispatch_init_jpeg,
+#endif
+#if defined(PLD_pstex) && !defined(ENABLE_DYNAMIC_DRIVERS)
+    plD_dispatch_init_pstex,
 #endif
 #if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_null,
@@ -610,7 +613,7 @@ static PLDispatchTable static_devices[] = {
 
     /* File types */
 
-#if defined(PLD_plmeta) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#ifdef PLD_plmeta
     {
 	"PLplot Native Meta-File",
 	"plmeta",
@@ -661,7 +664,7 @@ static PLDispatchTable static_devices[] = {
     },
 #endif
 
-#if defined(PLD_ps) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#ifdef PLD_ps
     {
 	"PostScript File (monochrome)",
 	"ps",
@@ -867,6 +870,7 @@ static PLDispatchTable static_devices[] = {
 	"Postscript/LaTeX device",
 	"pstex",
 	PlDevType_Null,
+	41,
 	plD_init_pstex,
 	plD_line_ps,
 	plD_polyline_ps,
@@ -878,12 +882,12 @@ static PLDispatchTable static_devices[] = {
     },
 #endif
 
-#if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#ifdef PLD_null
     {
 	"Null device",
 	"null",
 	plDevType_Null,
-        41,
+        42,
 	(plD_init_fp) plD_init_null,
 	(plD_line_fp) plD_line_null,
 	(plD_polyline_fp) plD_polyline_null,
