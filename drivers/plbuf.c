@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/09/08 02:27:11  mjl
+ * Revision 1.15  1993/09/27 20:33:51  mjl
+ * Insignificant change to eliminate a gcc -Wall warning.
+ *
+ * Revision 1.14  1993/09/08  02:27:11  mjl
  * Inserted change to ensure that streams that do not own the plot buffer
  * cannot write to it (was causing problems on plot saves).
  *
@@ -432,7 +435,7 @@ void
 rdbuf_esc(PLStream *pls)
 {
     U_CHAR op;
-    void *ptr = NULL;
+/*    void *ptr = NULL;*/
 
     dbug_enter("rdbuf_esc");
 
