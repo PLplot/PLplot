@@ -1037,7 +1037,7 @@ c_plstart(const char *devname, PLINT nx, PLINT ny)
 void
 c_plinit(void)
 {
-    PLFLT lx, ly;
+    PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_loc;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
     if (plsc->level != 0)
@@ -1060,6 +1060,18 @@ c_plinit(void)
     plP_init();
     plP_bop();
     plsc->level = 1;
+
+/* Special handling of xpmm and ypmm for 90 degree rotations and
+ * freeaspect such that character aspect ratio is preserved when
+ * overall aspect ratio is swapped. */
+
+    if (plsc->freeaspect && ABS(cos(plsc->diorot * PI / 2.)) <= 1.e-5) {
+       lx = plsc->phyxlen / plsc->xpmm;
+       ly = plsc->phyylen / plsc->ypmm;
+       aspect_loc = lx / ly;
+       plP_gpixmm(&xpmm_loc, &ypmm_loc);
+       plP_setpxl(xpmm_loc*aspect_loc, ypmm_loc/aspect_loc); 
+    }
 
 /* Load fonts */
 
