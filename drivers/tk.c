@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1993/08/20 19:40:44  mjl
+ * Revision 1.10  1993/08/28 06:34:00  mjl
+ * Put several send commands in background; should help over a slow network.
+ *
+ * Revision 1.9  1993/08/20  19:40:44  mjl
  * Now causes proc to update scrollbars to be evaluated when the driver
  * interface values are changed.  So settings zoom from the command line
  * using -wplt option will bring up scrollbars.
@@ -968,9 +971,9 @@ WaitForPage(PLStream *pls)
     if (pls->bytecnt > 0) 
 	flush_output(pls);
 
-    server_cmd( pls, "$plw_flash $plwindow" );
+    server_cmd( pls, "after 1 $plw_flash $plwindow" );
     tk_wait(pls, "[info exists advance] && ($advance == 1)" );
-    server_cmd( pls, "$plw_flash $plwindow" );
+    server_cmd( pls, "after 1 $plw_flash $plwindow" );
 
     Tcl_SetVar(dev->interp, "advance", "0", 0);
 
