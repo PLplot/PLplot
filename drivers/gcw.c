@@ -35,24 +35,46 @@ DESCRIPTION
 
 DEVELOPMENT NOTES
 
-  Type 1 postscript text is supplied using the GNOME_CANVAS_HACKTEXT item 
-  from the libgnomeprintui package.  This item was chosen because it allows
-  affine transforms (e.g., rotations) on text, unlike the GNOME_CANVAS_TEXT 
-  item.  There is no public api for HACKTEXT, and so I have copied the
-  appropriate header file into this project.  The HACKTEXT item has been
-  stable since 2001; however, this should be replaced as soon as an 
-  alternative becomes available.  We have been waiting a long time for 
-  this...
+  Truetype text is supplied using the PLPLOT_CANVAS_HACKTEXT item,
+  which was clone from gnome-print.  This text item was chosen because 
+  rotates and scales under a zoom correctly and easily.
+
+  It would be better to use GNOME_CANVAS_TEXT with pango, but currently 
+  (4 March 2005) it doesn't scale under a zoom on the Gnome Canvas,
+  and the bounding box doesn't rotate with the text (!), which results in
+  clipping.  The pango authors have been less than helpful in providing
+  either advice or documentation to address these problems, and so we must
+  wait until the issues sort themselves out.
+
+  Another problem is that drawing polylines on the Gnome Canvas sometimes
+  results in an 'attempt to put segment in horiz list twice' error.
+  The workaround here is to plot single line segments only, but this
+  results in a performance hit.  This problem will need to be corrected
+  in Gnome Canvas.
 
 
-BUGS
+KNOWN BUGS
 
-  The dashed line function doesn't yet work properly.
+  Dashed lines don't work properly.  This should be handled by the plplot
+  core, but isn't happening correctly.
+
+  Clipping has not been implemented.
+
+  Example x17c, the strip chart demo, doesn't do a strip chart 
+  (try the xwin driver to see how it should work).
+
+  Example x20c causes the following error and then freezes:
+
+    (<unknown>:32734): GnomeCanvas-CRITICAL **: file gnome-canvas.c: 
+    line 879 (gnome_canvas_item_show): assertion `GNOME_IS_CANVAS_ITEM (item)' 
+    failed
+
+  Example x21c: Second page does not print out correctly (missing plots!).
 
 */
 
 #include "gcw.h"
-#include "gnome-canvas-hacktext.h"
+#include "plplotcanvas-hacktext.h"
 
 #ifdef HAVE_FREETYPE
 
@@ -1091,7 +1113,7 @@ void plD_state_gcw(PLStream *pls, PLINT op)
       if(dev->canvas==NULL) install_canvas(pls);
       break;
     case (5): /* PLSTATE_CMAP0 */
-      if(dev->canvas==NULL) install_canvas(pls);
+/*       if(dev->canvas==NULL) install_canvas(pls); */
       break;
     case (6): /* PLSTATE_CMAP1 */
       if(dev->canvas==NULL) install_canvas(pls);
@@ -1289,7 +1311,7 @@ void proc_str(PLStream *pls, EscText *args)
 
   ArtDRect bbox; /* Bounding box for each segment to get width & height */
 
-  const PLUNICODE *text, *p1, *p2; /* The text and pointers to it */
+  const PLUNICODE *text; /* The text and pointers to it */
   int i=0,Ntext; /* The text index and maximum length */
 
   char esc; /* The escape character */
@@ -1448,7 +1470,7 @@ void proc_str(PLStream *pls, EscText *args)
     gnome_glyphlist_color(glyphlist,dev->color);
     gnome_glyphlist_advance(glyphlist, TRUE);
     gnome_glyphlist_kerning(glyphlist, 0.);
-    gnome_glyphlist_letterspace(glyphlist,0.);
+    gnome_glyphlist_letterspace(glyphlist, 0.);
 
     /* Free the font */
     gnome_font_unref(font);
@@ -1470,16 +1492,19 @@ void proc_str(PLStream *pls, EscText *args)
     }
 
     if(Nglyphs) {
+
       /* Determine the bounding box of the text */
       gnome_glyphlist_bbox(glyphlist,NULL,0,&bbox);
       width[N] = bbox.x1-bbox.x0;
       height[N] = bbox.y1-bbox.y0;
 
+      /* Keep track of the total string width so that we can justify it */
       total_width += width[N];
+      if(N!=0) total_width += 2; /* Add a little extra space */
 
       /* Create the canvas text item */
       item[N] = gnome_canvas_item_new (group,
-				       GNOME_TYPE_CANVAS_HACKTEXT,
+				       PLPLOT_TYPE_CANVAS_HACKTEXT,
 				       "glyphlist",glyphlist,
 				       "fill-color-rgba",dev->color,
 				       "x",0.,
@@ -1516,7 +1541,9 @@ void proc_str(PLStream *pls, EscText *args)
     gnome_canvas_item_affine_relative(item[i],affine_plplot);
     gnome_canvas_item_affine_relative(item[i],affine_baseline);
 
-    sum_width += width[i]; /* Keep track of the position in the string */
+    /* Keep track of the position in the string */
+    sum_width += width[i];
+    if(i!=N-1) sum_width += 2; /* Add a little extra space */
   }
 }
 
@@ -1546,18 +1573,18 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
   debug(msg);
 #endif
 
-  switch (op) {
+  switch(op) {
 
   case PLESC_DEVINIT:
     gcw_set_canvas(pls,GNOME_CANVAS(ptr));
     break;
 
   case PLESC_CLEAR:
-    clear (pls);
+    clear(pls);
     break;
 
   case PLESC_DASH:
-    dashed_line (pls);
+    dashed_line(pls);
     break;
 
   case PLESC_FILL:
