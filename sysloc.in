@@ -972,6 +972,9 @@ fi
 # CFLAGS to use ieee because of NaN issues in libcsironn and libcsirocsa
 # ----------------------------------------------------------------------------
 
+# (Note: Setting the CXXFLAGS variable below seems to be necessary for
+# compiling the C++ examples on the Alpha architecture.)
+
 if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
     case "$host_cpu" in
 	i*86 )
@@ -980,8 +983,10 @@ if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
 	alpha* )
             if test "$GCC" = yes; then
                 CFLAGS="$CFLAGS -mieee"
+                CXXFLAGS="$CXXFLAGS -mieee"
             else
                 CFLAGS="$CFLAGS -ieee"
+                CXXFLAGS="$CXXFLAGS -ieee"
             fi
 	;;
     esac
