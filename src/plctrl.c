@@ -7,6 +7,7 @@
 
 #define DEBUG
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #ifdef macintosh
 #include "plplot/mac.h"
@@ -1650,4 +1651,23 @@ plGetFlt(char *s)
     }
     plexit("Too many tries.");
     return (0.);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plstrdup()
+ *
+ * A replacement for strdup(), which isn't portable.
+ * Caller responsible for freeing the allocated memory.
+\*--------------------------------------------------------------------------*/
+
+char *
+plstrdup(char *src)
+{
+    char *dest = (char *) malloc( (strlen(src) + 1) * sizeof(char) );
+    if (dest != NULL)
+	strcpy(dest, src);
+    else
+	plabort("Out of memory");
+
+    return dest;
 }
