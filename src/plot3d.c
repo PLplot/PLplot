@@ -329,21 +329,12 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   PLINT iFast, iSlow;
   PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
   PLFLT xm, ym, zm;
-  PLINT ixmin, ixmax, iymin, iymax;
+  PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
   PLFLT xx[3],yy[3],zz[3];
   PLFLT px[4], py[4], pz[4];
   CONT_LEVEL *cont, *clev;
   CONT_LINE *cline;
-  int   ct, ix, iy;
-  PLINT iystart, iyn;
-  PLINT *iFastmin, *iFastmax;
-  PLINT *indexxmin = (PLINT *) malloc((size_t) (ny*sizeof(PLINT)));
-  PLINT *indexxmax = (PLINT *) malloc((size_t) (ny*sizeof(PLINT)));
-
-  if ( ! indexxmin || ! indexxmax)
-     plexit("plsurf3dl: Out of memory.");
-  plxyindexlimits(ixstart, ixn, indexymin, indexymax, 
-	       &iystart, &iyn, ny, indexxmin, indexxmax);
+  int ct, ix, iy, iftriangle;
 
   if (plsc->level < 3) {
     myabort("plsurf3dl: Please set up window first");
@@ -384,9 +375,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   /* Check that points in x and in y are strictly increasing  and in range */
 
-  ixmin = ixstart;
-  ixmax = ixn;
-  for (i = ixstart; i < ixn - 1; i++) {
+  for (i = 0; i < nx - 1; i++) {
     if (x[i] >= x[i + 1]) {
       myabort("plsurf3dl: X array must be strictly increasing");
       return;
@@ -396,9 +385,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     if (x[i+1] > xmax && x[i] <= xmax)
       ixmax = i+2;
   }
-  iymin = iystart;
-  iymax = iyn;
-  for (i = iystart; i < iyn - 1; i++) {
+  for (i = 0; i < ny - 1; i++) {
     if (y[i] >= y[i + 1]) {
       myabort("plsurf3dl: Y array must be strictly increasing");
       return;
@@ -444,52 +431,12 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
     ixFast = ixDir; ixSlow = 0;
     iyFast = 0;     iySlow = iyDir;
-
-    iFastmin = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
-    iFastmax = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
-    if ( ! iFastmin || ! iFastmax)
-       plexit("plsurf3dl: Out of memory.");
-    for(iSlow=0; iSlow < nSlow; iSlow++) {
-       /* Use reminder: */
-       /* for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) */
-       /* ix = ixFast * (iFast+i) + ixOrigin; */
-       /* iy = iySlow * (iSlow+j) + iyOrigin; */
-       /* where i,j are either 0 or 1. */
-       if (ixFast > 0) {
-	  iFastmin[iSlow] = indexxmin[iySlow*iSlow+iyOrigin] - ixOrigin;
-	  iFastmax[iSlow] = indexxmax[iySlow*iSlow+iyOrigin] - ixOrigin;
-       }
-       else {
-	  iFastmin[iSlow] = -(indexxmax[iySlow*iSlow+iyOrigin] - ixOrigin) + 1;
-	  iFastmax[iSlow] = -(indexxmin[iySlow*iSlow+iyOrigin] - ixOrigin) + 1;
-       }
-    }
   } else {
     nFast = iymax - iymin;
     nSlow = ixmax - ixmin;
 
     ixFast = 0;     ixSlow = ixDir;
     iyFast = iyDir; iySlow = 0;
-
-    iFastmin = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
-    iFastmax = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
-    if ( ! iFastmin || ! iFastmax)
-       plexit("plsurf3dl: Out of memory.");
-    for(iSlow=0; iSlow < nSlow; iSlow++) {
-       /* Use reminder: */
-       /* for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) */
-       /* ix = ixSlow * (iSlow+j) + ixOrigin; */
-       /* iy = iyFast * (iFast+i) + iyOrigin; */
-       /* where i,j are either 0 or 1. */
-       if (iyFast > 0) {
-	  iFastmin[iSlow] = indexymin[ixSlow*iSlow+ixOrigin] - iyOrigin;
-	  iFastmax[iSlow] = indexymax[ixSlow*iSlow+ixOrigin] - iyOrigin;
-       }
-       else {
-	  iFastmin[iSlow] = -(indexymax[ixSlow*iSlow+ixOrigin] - iyOrigin) + 1;
-	  iFastmax[iSlow] = -(indexymin[ixSlow*iSlow+ixOrigin] - iyOrigin) + 1;
-       }
-    }
   }
 
   /* we've got to draw the background grid first, hidden line code has to draw it last */
@@ -547,7 +494,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plAlloc2dGrid(&zstore, nx, ny);
 
     for (i = ixstart; i < ixn; i++) {
-       for (j = iystart; j < indexymin[i]; j++) {
+       for (j = 0; j < indexymin[i]; j++) {
 	  cgrid2.xg[i][j] = x[i];
 	  cgrid2.yg[i][j] = y[indexymin[i]];
 	  zstore[i][j] = z[i][indexymin[i]];
@@ -557,14 +504,14 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	  cgrid2.yg[i][j] = y[j];
 	  zstore[i][j] = z[i][j];
        }
-       for (j = indexymax[i]; j < iyn; j++) {
+       for (j = indexymax[i]; j < ny; j++) {
 	  cgrid2.xg[i][j] = x[i];
 	  cgrid2.yg[i][j] = y[indexymax[i]-1];
 	  zstore[i][j] = z[i][indexymax[i]-1];
        }
     }
     /* Fill cont structure with contours. */
-    cont_storel(zstore,  nx, ny, ixstart+1, ixn, iystart+1, iyn, 
+    cont_storel(zstore, nx, ny, ixstart+1, ixn, 1, ny, 
 		clevel, nlevel, pltr2, (void *) &cgrid2, &cont);
 
     /* Free the 2D input arrays to cont_store1 since not needed any more. */
@@ -600,7 +547,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   /* Now we can iterate over the grid drawing the quads */
   for(iSlow=0; iSlow < nSlow-1; iSlow++) {
-    for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) {
+    for(iFast=0; iFast < nFast-1; iFast++) {
       /* get the 4 corners of the Quad, which are
        *
        *       0--2
@@ -610,6 +557,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
       xm = ym = zm = 0.;
 
+      iftriangle = 1;
       for(i=0; i<2; i++) {
 	for(j=0; j<2; j++) {
 	  /* we're transforming from Fast/Slow coordinates to x/y coordinates */
@@ -617,12 +565,23 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	  ix = ixFast * (iFast+i) + ixSlow * (iSlow+j) + ixOrigin;
 	  iy = iyFast * (iFast+i) + iySlow * (iSlow+j) + iyOrigin;
 
-	  xm += px[2*i+j] = x[ix];
-	  ym += py[2*i+j] = y[iy];
-	  zm += pz[2*i+j] = z[ix][iy];
+	  if (ixstart <= ix && ix < ixn && 
+	      indexymin[ix] <= iy && iy < indexymax[ix]) {
+	     xm += px[2*i+j] = x[ix];
+	     ym += py[2*i+j] = y[iy];
+	     zm += pz[2*i+j] = z[ix][iy];
+	  }
+	  else {
+	     iftriangle = 0;
+	     break;
+	  }
 	}
+	if (iftriangle == 0)
+	   break;
       }
 
+      if (iftriangle == 0)
+	 continue;
       /* the "mean point" of the quad, common to all four triangles
 	 -- perhaps not a good thing to do for the light shading */
 
@@ -699,39 +658,55 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plP_grange(&zscale, &zmin, &zmax);
 
     iSlow = nSlow-1;
-    for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) {
+    iftriangle = 1;
+    for(iFast=0; iFast < nFast-1; iFast++) {
       for(i=0; i<2; i++) {
 	ix = ixFast * (iFast+i) + ixSlow * iSlow + ixOrigin;
 	iy = iyFast * (iFast+i) + iySlow * iSlow + iyOrigin;
-	px[2*i] = x[ix];
-	py[2*i] = y[iy];
-	pz[2*i] = z[ix][iy];
+	if (ixstart <= ix && ix < ixn && 
+	    indexymin[ix] <= iy && iy < indexymax[ix]) {
+	   px[2*i] = x[ix];
+	   py[2*i] = y[iy];
+	   pz[2*i] = z[ix][iy];
+	}
+	else {
+	   iftriangle = 0;
+	   break;
+	}
       }
+      if (iftriangle == 0)
+	 break;
       /* now draw the quad as two triangles (4 might be better) */
 
       shade_triangle(px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin);
       shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
 
+    iFast = nFast-1;
+    iftriangle = 1;
     for(iSlow=0; iSlow < nSlow-1; iSlow++) {
-      iFast = iFastmax[iSlow]-1;
       for(i=0; i<2; i++) {
 	  ix = ixFast * iFast + ixSlow * (iSlow+i) + ixOrigin;
 	  iy = iyFast * iFast + iySlow * (iSlow+i) + iyOrigin;
-	  px[2*i] = x[ix];
-	  py[2*i] = y[iy];
-	  pz[2*i] = z[ix][iy];
+	  if (ixstart <= ix && ix < ixn && 
+	      indexymin[ix] <= iy && iy < indexymax[ix]) {
+	     px[2*i] = x[ix];
+	     py[2*i] = y[iy];
+	     pz[2*i] = z[ix][iy];
+	  }
+	else {
+	   iftriangle = 0;
+	   break;
 	}
+      }
+      if (iftriangle == 0)
+	 break;
 
       /* now draw the quad as two triangles (4 might be better) */
       shade_triangle(px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin);
       shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
   }
-  free_mem(indexxmin);
-  free_mem(indexxmax);
-  free_mem(iFastmin);
-  free_mem(iFastmax);
 }
 
 /*--------------------------------------------------------------------------*\
