@@ -836,12 +836,92 @@ AC_ARG_ENABLE(docbook,
   AC_HELP_STRING([--enable-docbook], [Enable build of DocBook documentation]),
   [enable_docbook="$enableval"],
   [enable_docbook=no])
+AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
+
+AC_INCLUDE(doc/docbook/docbook.m4)
+
+if test $enable_docbook = yes -o $enable_octave = yes ; then
+CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
+CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
+CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
+fi
 
 if test $enable_docbook = yes ; then
-AC_INCLUDE(doc/docbook/configure.ac)
-fi
+
+dnl Check programs
+
+CHECK_PROG(openjade, [HTML PRINT], http://www.openjade.org)
+CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
+CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
+CHECK_PROG(dvips, PRINT, http://www.ctan.org)
+CHECK_PROG(onsgmls, [], http://www.openjade.org)
+CHECK_PROG(makeinfo, [INFO], [http://www.gnu.org])
+
+dnl Check public identifiers
+
+CHECK_DTD(
+  [DSSSL Style Sheet DTD],
+  [dsssl_dtd],
+  [],
+  [],
+  [],
+  [[[<!ELEMENT book - O (#PCDATA)>]]],
+  [sgml],
+  [\"$DSSSL_DTD_PUBID\"],
+  [style-sheet.dtd],
+  [jade],
+  [PRINT HTML])
+
+CHECK_DTD(
+  [DocBook HTML Stylesheet],
+  [html_ss],
+  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_HTML_PUBID\" CDATA DSSSL>]]],
+  [use="docbook"],
+  [<external-specification id="docbook" document="dbstyle">],
+  [[[<!ELEMENT book - O (#PCDATA)>]]],
+  [sgml],
+  [\"$DB_SS_HTML_PUBID\"],
+  [html/docbook.dsl],
+  [docbook-stylesheets],
+  [HTML])
+
+CHECK_DTD(
+  [DocBook Print Stylesheet],
+  [print_ss],
+  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_PRINT_PUBID\" CDATA DSSSL>]]],
+  [use="docbook"],
+  [<external-specification id="docbook" document="dbstyle">],
+  [[[<!ELEMENT book - O (#PCDATA)>]]],
+  [tex],
+  [\"$DB_SS_PRINT_PUBID\"],
+  [print/docbook.dsl],
+  [docbook-stylesheets],
+  [PRINT])
+
+CHECK_DTD(
+  [DocBook DTD],
+  [db_dtd],
+  [],
+  [],
+  [],
+  [PUBLIC \"$DOCBOOK_DTD_PUBID\"],
+  [sgml],
+  [\"$DOCBOOK_DTD_PUBID\"],
+  [docbookx.dtd],
+  [docbook-xml (DTD version 3.1.3)],
+  [PRINT HTML])
+
+CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
+CHECK_PM(XML::Writer, xml_writer, [INFO])
+
+DOC_OUTPUT_COMMANDS
+
+fi # enable_docbook
+
 AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
-AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
+# This is for conditional compilation of plplot_octave_txt in bindings/octave
+AM_CONDITIONAL(has_xml_pm,
+  [test "$pldb_cv_xml_dom" = yes -a "$pldb_cv_xml_parser" = yes])
 
 BASE=$PACKAGE-$VERSION
 AC_SUBST(BASE)

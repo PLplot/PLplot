@@ -211,70 +211,6 @@ popdef([FILE])
 
 FILE_EXT(html)
 
-
-dnl Check programs
-
-CHECK_PROG(openjade, [HTML PRINT], http://www.openjade.org)
-CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
-CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
-CHECK_PROG(dvips, PRINT, http://www.ctan.org)
-CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
-CHECK_PROG(onsgmls, [], http://www.openjade.org)
-
-dnl Check public identifiers
-
-CHECK_DTD(
-  [DSSSL Style Sheet DTD],
-  [dsssl_dtd],
-  [],
-  [],
-  [],
-  [[[<!ELEMENT book - O (#PCDATA)>]]],
-  [sgml],
-  [\"$DSSSL_DTD_PUBID\"],
-  [style-sheet.dtd],
-  [jade],
-  [PRINT HTML])
-
-CHECK_DTD(
-  [DocBook HTML Stylesheet],
-  [html_ss],
-  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_HTML_PUBID\" CDATA DSSSL>]]],
-  [use="docbook"],
-  [<external-specification id="docbook" document="dbstyle">],
-  [[[<!ELEMENT book - O (#PCDATA)>]]],
-  [sgml],
-  [\"$DB_SS_HTML_PUBID\"],
-  [html/docbook.dsl],
-  [docbook-stylesheets],
-  [HTML])
-
-CHECK_DTD(
-  [DocBook Print Stylesheet],
-  [print_ss],
-  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_PRINT_PUBID\" CDATA DSSSL>]]],
-  [use="docbook"],
-  [<external-specification id="docbook" document="dbstyle">],
-  [[[<!ELEMENT book - O (#PCDATA)>]]],
-  [tex],
-  [\"$DB_SS_PRINT_PUBID\"],
-  [print/docbook.dsl],
-  [docbook-stylesheets],
-  [PRINT])
-
-CHECK_DTD(
-  [DocBook DTD],
-  [db_dtd],
-  [],
-  [],
-  [],
-  [PUBLIC \"$DOCBOOK_DTD_PUBID\"],
-  [sgml],
-  [\"$DOCBOOK_DTD_PUBID\"],
-  [docbookx.dtd],
-  [docbook-xml (DTD version 3.1.3)],
-  [PRINT HTML])
-
 dnl Info building
 
 AC_DEFUN(CHECK_PERL_SCRIPT, [
@@ -317,8 +253,6 @@ AC_SUBST(DOCBOOK2TEXIXML)
 TEXI_XML=`pwd`/doc/docbook/perl/db2x_texixml
 AC_SUBST(TEXI_XML)
 
-CHECK_PROG(makeinfo, [INFO], [http://www.gnu.org])
-
 AC_DEFUN(CHECK_PM, [
 AC_CACHE_CHECK( $1, pldb_cv_$2, [
 cat > conftest.pl << EOF
@@ -348,12 +282,9 @@ pldb_cv_$2=$pldb_cv_$2
 DOCBOOK2X_INC=-I`pwd`/doc/docbook/perl
 AC_SUBST(DOCBOOK2X_INC)
 
-CHECK_PM(XML::DOM, xml_dom, [INFO])
-CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
-CHECK_PM(XML::Writer, xml_writer, [INFO])
-
 dnl Output commands
 
+AC_DEFUN(DOC_OUTPUT_COMMANDS, [
 AC_OUTPUT_COMMANDS( [
 if test "$print" = "" ; then
   echo
@@ -389,7 +320,7 @@ if test "$man" = "" ; then
 fi], [
 print=$PRINT; html=$HTML; info=$INFO; man=$MAN
 ])
-
+])
 
 dnl Control build of man and info pages
 

@@ -96,6 +96,7 @@ doc-stamp: etc/plplot.doc \
 	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
 	   $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
 	   $(top_srcdir)/doc/docbook/src/api.xml
+if has_xml_pm
 	mkdir -p plplot_octave_txt
 	cp etc/plplot.doc plplot_octave_txt/plplot.doc
 	( cd plplot_octave_txt ; \
@@ -103,6 +104,10 @@ doc-stamp: etc/plplot.doc \
 	  ../$(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
 	  ../$(top_srcdir)/doc/docbook/src/api.xml ) \
 	&& touch doc-stamp
+else
+	@echo "Perl modules not available: cannot generate plplot_octave_txt/*.txt"
+	@false
+endif
 
 plplot_stub.m: doc-stamp tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
@@ -138,6 +143,6 @@ endif
 
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
 	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
-	plplot_stub.m missing_help $(doc_DATA) 
+	plplot_stub.m missing_help $(doc_DATA)
 
 MAINTAINERCLEANFILES = doc-stamp plplot_octave_txt/*
