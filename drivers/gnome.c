@@ -9,9 +9,9 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-#include <gtk/gtk.h>                                                       
-#include <glib.h>                                                          
-#include <pthread.h>                                                       
+#include <gtk/gtk.h>
+#include <glib.h>
+#include <pthread.h>
 #include <math.h>
 
 #include <gnome.h>
@@ -23,9 +23,6 @@ char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
 
 /*#undef DEBUG*/
 #define DEBUG
-
-#undef USE_THREADS
-/*#define USE_THREADS*/
 
 #undef ANTIALISED_CANVAS
 
@@ -119,7 +116,7 @@ typedef struct {
 } GnomePLdev;
 
 void
-gnome_pldev_adopt (PLStream* pls, GtkContainer* parent) 
+gnome_pldev_adopt (PLStream* pls, GtkContainer* parent)
 {
   GnomePLdev* dev = pls->dev;
   GtkWidget* root;
@@ -183,7 +180,7 @@ void change_mode (GnomePLdevPage* page, GnomePLdevCanvasMode mode)
 }
 
 static
-void *init(void *args)                                          
+void *init(void *args)
 {
   gdk_threads_enter();
   gtk_main();
@@ -203,16 +200,16 @@ quit_dialog (void)
 			     GNOME_STOCK_BUTTON_OK,
 			     GNOME_STOCK_BUTTON_CANCEL,
 			     NULL);
-  
+
   gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-		      gtk_label_new ("Quit PLplot?"), 
-		      TRUE, 
+		      gtk_label_new ("Quit PLplot?"),
+		      TRUE,
 		      TRUE,
 		      0);
-  
+
   gtk_widget_show_all (GTK_WIDGET (GNOME_DIALOG (dialog)->vbox));
 
-  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);  
+  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
   gnome_dialog_set_default (GNOME_DIALOG (dialog), 0);
 
   answer = gnome_dialog_run_and_close (GNOME_DIALOG (dialog));
@@ -224,7 +221,7 @@ quit_dialog (void)
     return FALSE;
 }
 
-static gint 
+static gint
 canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 		  GnomePLdevPage* page)
 {
@@ -239,28 +236,28 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
   move = FALSE;
 
   switch (event->type) {
-    
+
   case GDK_2BUTTON_PRESS:
-    
+
   case GDK_3BUTTON_PRESS:
-    
+
   case GDK_BUTTON_PRESS:
-    
+
     if (event->button.button == 1) {
 
       gnome_canvas_item_raise_to_top (page->hlocline);
       gnome_canvas_item_raise_to_top (page->vlocline);
-      
+
       move = TRUE;
 
       cursor = gdk_cursor_new (GDK_CROSSHAIR);
       gnome_canvas_item_grab(item,
-			     GDK_POINTER_MOTION_MASK | 
+			     GDK_POINTER_MOTION_MASK |
 			     GDK_BUTTON_RELEASE_MASK,
 			     cursor,
 			     event->button.time);
       gdk_cursor_destroy(cursor);
-      
+
       /*// FIXME : Terrible global variable hack*/
       gtk_statusbar_push (sb, page->context, "");
 
@@ -269,10 +266,10 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
     break;
 
   case GDK_MOTION_NOTIFY:
-    if (dragging && (event->motion.state & GDK_BUTTON1_MASK)) 
+    if (dragging && (event->motion.state & GDK_BUTTON1_MASK))
       move = TRUE;
     break;
-    
+
   case GDK_BUTTON_RELEASE:
     if (dragging && (event->motion.state & GDK_BUTTON1_MASK)) {
       gnome_canvas_item_ungrab(item, event->button.time);
@@ -285,12 +282,12 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
       /*//      fflush (stdout);*/
     }
     break;
-    
+
   default:
     /*//    printf ("Other event\n");*/
     /*//    fflush (stdout);*/
     break;
-    
+
   }
 
   if (move) {
@@ -312,11 +309,11 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
     gnome_canvas_item_show (page->vlocline);
 
     gnome_canvas_item_move (page->hlocline,
-			    0.0, event->button.y - page->vpos);    
+			    0.0, event->button.y - page->vpos);
     page->vpos = event->button.y;
-    
+
     gnome_canvas_item_move (page->vlocline,
-			    event->button.x - page->hpos, 0.0);    
+			    event->button.x - page->hpos, 0.0);
     page->hpos = event->button.x;
 
     gin->dX = page->hpos / page->width;
@@ -324,7 +321,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
     plTranslateCursor (gin);
 
-    if (color == NULL) 
+    if (color == NULL)
       sprintf (buffer, "");
     else
       if (color->cmap == 0)
@@ -345,7 +342,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 }
 
 
-static gint 
+static gint
 delete_event_cb (GtkWidget* widget, GdkEventAny* e, gpointer data)
 {
   if (quit_dialog () == TRUE) {
@@ -399,7 +396,7 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     curpage = 0;
 
   page = dev->page[curpage];
-  
+
   switch (event->keyval) {
   case GDK_minus:
   case GDK_plus:
@@ -492,7 +489,7 @@ plcolor_to_rgba (PLColor color, guchar alpha)
 static guint32
 plcolor_to_rgba_inv (PLColor color, guchar alpha)
 {
-  return 
+  return
     ((int)(255 - color.r) << 24)
     + ((int)(255 - color.g) << 16)
     + ((int)(255 - color.b) << 8)
@@ -507,7 +504,7 @@ set_color (GnomeCanvasItem* item, guint cmap, gdouble color)
   colorp = g_malloc (sizeof (ItemColor));
   colorp->cmap = cmap;
   colorp->color = color;
-  
+
   gtk_object_set_data (GTK_OBJECT (item), "color", colorp);
 }
 
@@ -570,7 +567,7 @@ new_page (PLStream* pls)
 				      "x1", 0.0,
 				      "y1", -page->height,
 				      "x2", page->width,
-				      "y2", 0.0, 
+				      "y2", 0.0,
 				      "fill_color", (pls->cmap0[0]).name,
 				      "width_units", 0.0,
 				      NULL);
@@ -672,15 +669,15 @@ new_page (PLStream* pls)
 
   gtk_container_add (GTK_CONTAINER (page->sw), GTK_WIDGET (canvas));
 
-  if (np == 0) 
+  if (np == 0)
     dev->page = g_malloc (sizeof (GnomePLdevPage*));
   else
     dev->page = g_realloc (dev->page,
 			   (np+1) * sizeof (GnomePLdevPage*));
 
-  
+
   dev->page[np] = page;
-  
+
   gtk_notebook_set_show_tabs (dev->notebook, (np > 0));
 
   sprintf (buffer, "Page %d", np+1);
@@ -710,7 +707,7 @@ new_page (PLStream* pls)
 }
 
 void
-gnome_pldev_create (PLStream* pls) 
+gnome_pldev_create (PLStream* pls)
 {
   GnomePLdev* dev;
   GtkWidget* vbox;
@@ -729,19 +726,19 @@ gnome_pldev_create (PLStream* pls)
 
   gtk_box_pack_end (GTK_BOX (dev->root), GTK_WIDGET (dev->statusbar),
 		    FALSE, FALSE, 0);
-  
+
   dev->notebook = GTK_NOTEBOOK (gtk_notebook_new ());
 
   gtk_signal_connect (GTK_OBJECT (dev->notebook), "switch_page",
     		      GTK_SIGNAL_FUNC (page_switch), dev);
-  
+
   gtk_notebook_set_scrollable (dev->notebook, TRUE);
-  
+
   gtk_box_pack_start (GTK_BOX (dev->root), GTK_WIDGET (dev->notebook),
 		      TRUE, TRUE, 0);
-  
+
   gtk_widget_show_all (GTK_WIDGET (dev->notebook));
-  
+
   dev->parent_is_from_driver = FALSE;
 }
 
@@ -795,14 +792,14 @@ plD_init_gnome (PLStream *pls)
   pls->plbuf_write = 1;	        /* Use plot buffer to replot to another device */
   pls->width = 1;
   pls->dev_clear = 1;           /* Handle plclear() */
-  
+
 
   /* The real meat of the initialization done here */
 
   /*//  atexit (do_quit);*/
 
-  /* init threads */                                                       
-  g_thread_init (NULL);                                                     
+  /* init threads */
+  g_thread_init (NULL);
 
   if (pls->dev == NULL) {
 
@@ -814,9 +811,9 @@ plD_init_gnome (PLStream *pls)
     }
 
     gdk_rgb_init ();
-    
+
     gnome_pldev_create (pls);
-    
+
     dev = pls->dev;
 
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -826,7 +823,7 @@ plD_init_gnome (PLStream *pls)
 			"delete_event",
 			GTK_SIGNAL_FUNC (delete_event_cb),
 			NULL);
-    
+
     gtk_window_set_title (GTK_WINDOW (window), "Gnome PLplot Driver");
 
     gtk_window_set_policy (GTK_WINDOW (window), TRUE, TRUE, TRUE);
@@ -845,9 +842,9 @@ plD_init_gnome (PLStream *pls)
 
   gnome_is_initialized = TRUE;
 
-#ifdef USE_THREADS
+#ifdef HAVE_PTHREADS
 
-  pthread_create (&tid, NULL, init, NULL); 
+  pthread_create (&tid, NULL, init, NULL);
 
 #endif
 
@@ -859,7 +856,7 @@ plD_init_gnome (PLStream *pls)
  *
  * Draw a polyline in the current color from (x1,y1) to (x2,y2).
 \*--------------------------------------------------------------------------*/
-static 
+static
 int count[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void
@@ -878,7 +875,7 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   /*//  gdk_threads_enter ();*/
 
   dev = pls->dev;
-  
+
   page = dev->page[dev->npages-1];
 
   /*//  debug ("Before if\n");*/
@@ -999,7 +996,7 @@ plD_eop_gnome(PLStream *pls)
 
   canvas->need_update = 1;
   gnome_canvas_update_now (canvas);
-  
+
   gdk_threads_leave ();
 
   /*//  for (i=0;i<16;i++)*/
@@ -1028,20 +1025,20 @@ plD_bop_gnome(PLStream *pls)
   gdk_threads_enter ();
 
   new_page (pls);
-  
+
   dev = pls->dev;
 
   /*//  printf("npages = %d\n", dev->npages);*/
   /*//  fflush (stdout);*/
-  
+
   page = dev->page[dev->npages-1];
   canvas = page->canvas;
-  
+
   canvas->need_update = 1;
   gnome_canvas_update_now (canvas);
-  
+
   /*//  gdk_threads_leave ();*/
-  
+
   pls->page++;
 }
 
@@ -1055,7 +1052,7 @@ void
 plD_tidy_gnome(PLStream *pls)
 {
 
-#ifdef USE_THREADS
+#ifdef HAVE_PTHREADS
 
   pthread_join (tid, NULL);
 
@@ -1076,14 +1073,14 @@ plD_tidy_gnome(PLStream *pls)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-void 
+void
 plD_state_gnome(PLStream *pls, PLINT op)
 {
   switch (op) {
-    
+
   case PLSTATE_WIDTH:
     break;
-    
+
   case PLSTATE_COLOR0:
     break;
 
@@ -1106,9 +1103,9 @@ generate_pattern_fill (PLStream* pls)
 
   if (dev->pattern == pls->patt)
     return;
-  
+
   dev->pattern = pls->patt;
-  
+
   for (i = 0; i < pls->nps; i++) {
     int j;
     PLINT incl;
@@ -1126,17 +1123,17 @@ generate_pattern_fill (PLStream* pls)
     GdkColormap* colormap;
 
     dist = (pls->delta[i]/1e3) * PIXELS_PER_MM;
-    
+
     incl = pls->inclin[i] % 3600;
     if (incl > 900)
       incl = incl - 900;
     else if (incl < -900)
       incl = incl + 900;
-    
+
     inclr = PI * incl / 1800.0;
     sini = sin (inclr);
     cosi = cos (inclr);
-    
+
     if (ABS (sini) < cosi) {
       if (sini == 0.0) {
 	width = 1;
@@ -1157,7 +1154,7 @@ generate_pattern_fill (PLStream* pls)
 	height = MIN (dist / cosi, 64);
       }
     }
-    
+
     colormap = gtk_widget_get_colormap (GTK_WIDGET (dev->page[0]->canvas));
 
     gdk_color_parse ("white", &white);
@@ -1171,7 +1168,7 @@ generate_pattern_fill (PLStream* pls)
     dev->pattern_stipple[i] = gdk_pixmap_new (NULL, width, height, 1);
 
     gc = gdk_gc_new (dev->pattern_stipple[i]);
-    
+
     gdk_gc_set_foreground (gc, &black);
 
     gdk_draw_rectangle (dev->pattern_stipple[i], gc, TRUE,
@@ -1180,7 +1177,7 @@ generate_pattern_fill (PLStream* pls)
     gdk_gc_set_foreground (gc, &white);
     gdk_gc_set_line_attributes (gc, 1, GDK_LINE_SOLID, 0, 0);
 
-    if (incl == 0 || ABS (incl) == 900) 
+    if (incl == 0 || ABS (incl) == 900)
       gdk_draw_point (dev->pattern_stipple[i], gc, 0, 0);
     else if (sini < 0.0) {
       gdk_draw_line (dev->pattern_stipple[i], gc, 0, 0, width, height);
@@ -1193,7 +1190,7 @@ generate_pattern_fill (PLStream* pls)
       gdk_draw_line (dev->pattern_stipple[i], gc, width, 0, 0, height);
       gdk_draw_line (dev->pattern_stipple[i], gc, 2*width, 0, 0, 2*height);
       gdk_draw_line (dev->pattern_stipple[i], gc,
-		     width, -height, -width, height); 
+		     width, -height, -width, height);
     }
 
     gdk_gc_unref (gc);
@@ -1202,7 +1199,7 @@ generate_pattern_fill (PLStream* pls)
 }
 
 
-static void 
+static void
 fill_polygon (PLStream* pls)
 {
   GnomePLdev* dev;
@@ -1238,7 +1235,7 @@ fill_polygon (PLStream* pls)
 
     generate_pattern_fill (pls);
 
-    for (i = 0; i < pls->nps; i++) 
+    for (i = 0; i < pls->nps; i++)
       item = gnome_canvas_item_new (group,
 				    gnome_canvas_polygon_get_type (),
 				    "points", points,
@@ -1269,9 +1266,9 @@ fill_polygon (PLStream* pls)
 
   /*//  gdk_threads_leave ();*/
 
-}  
+}
 
-static void 
+static void
 dashed_line (PLStream* pls)
 {
   GnomePLdev* dev;
@@ -1312,7 +1309,7 @@ dashed_line (PLStream* pls)
   gdk_gc_set_dashes (canvas->pixmap_gc, 0, dash_list, 2*pls->nms);
 
   g_free (dash_list);
-  
+
   item = gnome_canvas_item_new (group,
                                 gnome_canvas_line_get_type (),
 				"cap_style", GDK_CAP_BUTT,
@@ -1337,7 +1334,7 @@ dashed_line (PLStream* pls)
 
   /*//  gdk_threads_leave ();*/
 
-}  
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_esc_gnome()
@@ -1386,22 +1383,22 @@ clear (PLStream* pls)
                       (GtkSignalFunc) canvas_pressed_cb,
                       page);
 
-}  
+}
 
 void
 plD_esc_gnome(PLStream *pls, PLINT op, void *ptr)
 {
   dbug_enter("plD_esc_gnome");
-  
+
   switch (op) {
 
   case PLESC_CLEAR:
     clear (pls);
-    break;    
+    break;
 
   case PLESC_DASH:
     dashed_line (pls);
-    break;    
+    break;
 
   case PLESC_FILL:
     fill_polygon(pls);
