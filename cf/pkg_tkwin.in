@@ -1,0 +1,10 @@
+# -*-makefile-*----------------------------------------------------------------
+# $Id$
+#
+# Make assignments for PLplot/tkwin support.
+# -----------------------------------------------------------------------------
+
+TKWIN_C		= Plplotter_Init.c plplotter.c
+TKWIN_OBJ	= Plplotter_Init$O plplotter$O
+TKWIN_OBJ_SA	=
+TKWIN_EXE	=

@@ -644,6 +644,9 @@ fi
 if test "$enable_octave" = "yes"; then
     cat $srcdir/cf/pkg_octave.in >>Makefile.in 
 fi
+if test "$enable_tkwin" = "yes"; then
+    cat $srcdir/cf/pkg_tkwin.in	>>Makefile.in 
+fi
 
 # Library targets
 
@@ -1187,6 +1190,7 @@ enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
 enable_f77:	$enable_f77		enable_java:	$enable_java
 enable_octave:	$enable_octave		enable_gnome:	$enable_gnome
+enable_tkwin:	$enable_tkwin
 "
 
 cat << EOF > config.summary
