@@ -14,9 +14,9 @@
 (element lineannotation
   (make sequence
     font-posture: 'italic
-    (literal "&#12296;")
+    (literal "\U-2329")
     (process-children)
-    (literal "&#12297;")))
+    (literal "\U-232A")))
 
 (define %title-font-family% "cmss")
 

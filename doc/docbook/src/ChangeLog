@@ -1,3 +1,14 @@
+2000-12-10  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* plplotdoc-print.dsl.in: The brackets around lineannotations are
+	produced now with characters from the "Miscellaneous Technical"
+	section of Unicode.  They were before obtained from the "CJK
+	Symbols and Punctuation" section which, although having the
+	correct glyph, come too far from the east side of the planet.
+	Also, instead of using the "&#<decimal>;" notation, use
+	"\U-<hexa>". This seems to be a more portable way to insert
+	Unicode characters in a SGML document.
+
 2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am (all): Added dependency on man.
