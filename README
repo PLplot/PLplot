@@ -18,11 +18,11 @@ We welcome suggestions on how to improve this code, especially in the form of
 user-contributed enhancements or bug fixes.  If PLplot is used in any
 published papers, please include an acknowledgment or citation of our work,
 which will help us to continue improving PLplot.  Also, please remember that
-as PLplot is not a commercial product, we cannot be expected to offer the
-kind of support that a commercial product may.  There is great interest
-in extending PLplot and fixing bugs, but the principal authors can only
-afford to work on it part time.  Improvements will necessarily focus on
-those which help us get our work done.
+as PLplot is not a commercial product, we cannot be expected to offer the kind
+of support that a commercial product may.  There is great interest in
+extending PLplot and fixing bugs, but the principal authors can only afford to
+work on it part time.  Improvements will necessarily focus on those which help
+us get our work done.
 
 PLplot is written in C, enabling it to run on many platforms practically
 without modification.  Fortran programs may use it transparently; stub
