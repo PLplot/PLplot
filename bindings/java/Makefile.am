@@ -39,7 +39,6 @@ swigcfiles = plplotjavac_wrap.c
 swiggenfiles = $(swigjavafiles) $(swigcfiles)
 
 javafiles = \
-	$(top_srcdir)/bindings/java/PLStreamc.java \
 	$(top_srcdir)/bindings/java/PLStream.java \
 	config.java \
 	$(swigjavafiles)
@@ -48,7 +47,6 @@ javafiles = \
 # dependency checking.
 javaclasses = \
 	config.class \
-	PLStreamc.class \
 	plplotjavacJNI.class \
 	SWIGTYPE_p_p_char.class\
 	plplotjavacConstants.class \
@@ -58,10 +56,8 @@ javaclasses = \
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
-	PLStreamc.java \
 	PLStream.java \
 	README.javaAPI \
-	javabind.c \
 	plplotjavac.i \
 	$(swiggenfiles)
 
