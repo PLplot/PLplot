@@ -1175,7 +1175,7 @@ from relative device coordinates,
       <varlistentry>
 	<term>
 	  <parameter>wx</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
@@ -1189,7 +1189,7 @@ from relative device coordinates,
       <varlistentry>
 	<term>
 	  <parameter>wy</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
@@ -1203,7 +1203,7 @@ from relative device coordinates,
       <varlistentry>
 	<term>
 	  <parameter>window</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
