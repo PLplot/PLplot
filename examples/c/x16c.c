@@ -74,6 +74,16 @@ static char *notes[] = {
 "test results from ns around 5 and nx, ny around 25.",
 NULL};
 
+int
+zdefined (PLFLT x, PLFLT y)
+{
+  PLFLT z = sqrt(x * x + y * y);
+
+  return z < 0.4 || z > 0.6;
+}
+
+
+
 /*--------------------------------------------------------------------------*\
  * main
  *
@@ -87,7 +97,6 @@ main(int argc, char *argv[])
     PLFLT x, y, argx, argy, distort;
 
     PLFLT **z, **w, zmin, zmax;
-    char *zdefined;
     PLFLT *clevel, *shedge, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
@@ -99,10 +108,6 @@ main(int argc, char *argv[])
     plMergeOpts(options, "x16c options", notes);
     plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-/* Allocate zdefined */
-  
-    zdefined = (char *) malloc(nx * ny * sizeof(char));
-  
 /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
 
     plscmap0n(3);
@@ -173,12 +178,6 @@ main(int argc, char *argv[])
 
 	    cgrid2.xg[i][j] = x + distort * cos(argx) * cos(argy);
 	    cgrid2.yg[i][j] = y - distort * cos(argx) * cos(argy);
-	   /* out of laziness reuse this scratch variable*/
-	   argx = sqrt(cgrid2.xg[i][j]*cgrid2.xg[i][j] + cgrid2.yg[i][j]*cgrid2.yg[i][j]);
-	   if(argx < 0.4 || argx > 0.6)
-	     zdefined[i*ny + j] = 1;
-	   else
-	     zdefined[i*ny + j] = 0;
 	}
     }
 
@@ -286,7 +285,6 @@ main(int argc, char *argv[])
 
     plend();
 
-   if (zdefined) free(zdefined);
     free((void *) clevel);
     free((void *) shedge);
     free((void *) xg1);

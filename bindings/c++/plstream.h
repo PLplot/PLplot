@@ -471,7 +471,8 @@ class plstream {
 
 /* Shade region. */
 
-    void shade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+    void shade( PLFLT **a, PLINT nx, PLINT ny,
+		PLINT (*defined) (PLFLT, PLFLT),
 		PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		PLFLT shade_min, PLFLT shade_max,
 		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -493,7 +494,8 @@ class plstream {
 		PLINT rectangular,
 		Coord_Xformer *pcxf );
 
-    void  shade1( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+    void  shade1( PLFLT *a, PLINT nx, PLINT ny,
+		  PLINT (*defined) (PLFLT, PLFLT),
 		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		  PLFLT shade_min, PLFLT shade_max,
 		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

@@ -1077,7 +1077,8 @@ void plstream::sfnam( const char *fnam )
 /* Shade region. */
 
 void 
-plstream::shade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+plstream::shade( PLFLT **a, PLINT nx, PLINT ny,
+		 PLINT (*defined) (PLFLT, PLFLT),
 		 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		 PLFLT shade_min, PLFLT shade_max,
 		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1121,7 +1122,8 @@ plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
 }
 
 void 
-plstream::shade1( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+plstream::shade1( PLFLT *a, PLINT nx, PLINT ny,
+		  PLINT (*defined) (PLFLT, PLFLT),
 		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		  PLFLT shade_min, PLFLT shade_max,
 		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

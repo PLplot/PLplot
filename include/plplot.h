@@ -1169,7 +1169,7 @@ c_plsfnam(const char *fnam);
 
 /* Shade region. */
 void 
-c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
 	  PLINT cont_color, PLINT cont_width,
@@ -1179,7 +1179,7 @@ c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 
    
 void 
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1190,7 +1190,7 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 	  PLPointer pltr_data);
 
 void 
-plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
