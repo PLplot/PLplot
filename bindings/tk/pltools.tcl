@@ -1,36 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.12  1994/04/25 18:58:48  mjl
+# Revision 1.13  1994/07/01 20:39:57  mjl
+# Added proc plstdwin to handle "standard" initialization code.
+#
+# Revision 1.12  1994/04/25  18:58:48  mjl
 # Added the simple class system by Sam Shen for support of the palette
 # manipulators.  Will probably rewrite in itcl at some point.
-#
-# Revision 1.11  1993/10/06  19:49:06  mjl
-# Made Form2d proc more general.
-#
-# Revision 1.10  1993/09/08  02:33:18  mjl
-# Folded window positioning for dialogs (dpos $w) into the mkDialog proc,
-# since these are easy to forget (and I missed one last time).
-#
-# Revision 1.9  1993/09/01  14:52:24  mjl
-# Modified the dpos proc to always bring up new toplevel window a specified
-# distance from the upper left corner of ".", which is much nicer (and
-# should work correctly under tvtwm).
-#
-# Revision 1.8  1993/08/18  20:24:06  mjl
-# Added Form2d proc, based on earlier EnterCoords proc, for entering values
-# in a 2d form layout.  Better than EnterCoords but still more work needed
-# before it's useful in a general context.
-#
-# Revision 1.7  1993/08/13  06:41:58  mjl
-# Fixed broken font setting in GetItem proc.
-#
-# Revision 1.6  1993/08/13  04:36:00  mjl
-# Previous scheme for scrolling backwards in a text widget help entry didn't
-# work right under SunOS for some reason; now fixed.
-#
-# Revision 1.5  1993/08/09  22:21:49  mjl
-# Removed all absolute references to fonts.  Now only accessed through
-# global variables set in plconfig.tcl, for easier per-user customization.
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer support procs
@@ -40,6 +15,55 @@
 #
 # Includes code borrowed from the TCL/TK widget demo.
 #----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# plstdwin
+#
+# Does "standard" startup for a plframe-containing main window.
+# Use it or roll your own, but note: this may change in future versions.
+#----------------------------------------------------------------------------
+
+proc plstdwin {w} {
+    global plstdwin_skip_startup
+
+# Only do global initialization once.
+
+    if { ! [info exists plstdwin_skip_startup]} {
+
+# Set up configuration options.
+# The first is to hold default values of everything, the second is for
+# user customization.  See pldefaults.tcl for more info.
+
+	pldefaults
+	plconfig
+
+# I refuse to allow exec's since there's no need for them now.
+# Open's have to remain, however, to read/write palette info.
+
+	rename exec {}
+
+	set plstdwin_skip_startup 1
+    }
+
+# Set min/max window sizes.
+
+    set root_width  [winfo vrootwidth .] 
+    set root_height [winfo vrootheight .]
+
+    wm minsize $w 300 240
+    wm maxsize $w [expr "$root_width/64*63"] [expr "$root_height/64*62"]
+
+# Set window geometry defaults.  Depart from square slightly to account
+# for menu bar.
+
+    global geometry
+    if { ! [ info exists geometry ] } then {
+	set width  [expr "$root_width / 16 * 10"]
+	set height [expr "$root_height / 16 * 11"]
+	set geometry ${width}x${height}
+    }
+    wm geometry $w $geometry
+}
 
 #----------------------------------------------------------------------------
 # null_command
