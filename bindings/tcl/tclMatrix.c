@@ -57,7 +57,7 @@
 
 /* Internal data */
 
-static int matTable_initted;	/* Hash table initialization flag */
+static int matTable_initted = 0;/* Hash table initialization flag */
 static Tcl_HashTable matTable;	/* Hash table for external access to data */
 
 /* Function prototypes */
@@ -351,6 +351,8 @@ Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName)
 
     dbug_enter("Tcl_GetMatrixPtr");
 
+    if (!matTable_initted) { return NULL; }
+    
     hPtr = Tcl_FindHashEntry(&matTable, matName);
     if (hPtr == NULL) {
 	Tcl_AppendResult(interp, "No matrix operator named \"",
@@ -455,7 +457,8 @@ static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
 		newoffs = 0;
 
 	    matrixInitialize(interp, m, dim + 1, newoffs, numnewargs, newargs);
-	    free((char *) newargs);
+	    /* Must use Tcl_Free since allocated by Tcl */
+	    Tcl_Free((char *) newargs);
 	}
 	return TCL_OK;
     }

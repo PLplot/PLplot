@@ -36,6 +36,9 @@ typedef struct {
 int
 plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	   int argc, char **argv);
+int
+plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
+	   int argc, char **argv);
 
 /* plr.c */
 /* Set default state parameters before anyone else has a chance to. */

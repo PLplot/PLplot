@@ -31,6 +31,9 @@
 
 /* Static functions */
 
+/* Used by any external init code to suggest a path */
+char* plplotLibDir = 0;
+
 static void
 color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name );
 
@@ -1209,6 +1212,13 @@ plLibOpen(char *fn)
         goto done;
 #endif /* macintosh */
 
+    if (plplotLibDir != NULL) {
+	plGetName(plplotLibDir, "", fn, &fs);
+	if ((file = fopen(fs, "rb")) != NULL)
+	    goto done;
+
+    }
+    
 /**** 	not found, give up 	****/
 
     return NULL;

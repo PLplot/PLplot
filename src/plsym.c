@@ -164,14 +164,14 @@ static void
 plhrsh(PLINT ch, PLINT x, PLINT y)
 {
     PLINT cx, cy, k, penup, style;
-    signed char *xygrid;
+    signed char *vxygrid = 0;
     PLFLT scale, xscale, yscale;
     PLINT llx[STLEN], lly[STLEN], l = 0;
 
     penup = 1;
     scale = 0.05 * plsc->symht;
 
-    if ( ! plcvec(ch, &xygrid)) {
+    if ( ! plcvec(ch, &vxygrid)) {
 	plP_movphy(x, y);
 	return;
     }
@@ -188,8 +188,8 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 
     k = 4;
     for (;;) {
-	cx = xygrid[k++];
-	cy = xygrid[k++];
+	cx = vxygrid[k++];
+	cy = vxygrid[k++];
 	if (cx == 64 && cy == 64) {
 	  if (l) {
 	    plP_draphy_poly(llx, lly, l);
@@ -542,7 +542,7 @@ void
 plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 {
     short int *symbol;
-    signed char *xygrid;
+    signed char *vxygrid = 0;
     
     PLINT ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
@@ -584,8 +584,8 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 	else if (ch == -5)  /* toogle underline */
 	    uline = !uline;
 	else {
-	    if (plcvec(ch, &xygrid))
-		plchar(xygrid, xform, base, oline, uline, refx, refy, scale,
+	    if (plcvec(ch, &vxygrid))
+		plchar(vxygrid, xform, base, oline, uline, refx, refy, scale,
 		       plsc->xpmm, plsc->ypmm, &xorg, &yorg, &width);
 	}
     }
@@ -599,7 +599,7 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 \*--------------------------------------------------------------------------*/
 
 static void
-plchar(signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
+plchar(signed char *vxygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
        PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
        PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width)
 {
@@ -608,22 +608,22 @@ plchar(signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
     PLFLT x, y;
     PLINT llx[STLEN], lly[STLEN], l = 0;
 
-    xbase = xygrid[2];
-    *p_width = xygrid[3] - xbase;
+    xbase = vxygrid[2];
+    *p_width = vxygrid[3] - xbase;
     if (base == 0) {
 	ybase = 0;
-	ydisp = xygrid[0];
+	ydisp = vxygrid[0];
     }
     else {
-	ybase = xygrid[0];
+	ybase = vxygrid[0];
 	ydisp = 0;
     }
     k = 4;
     penup = 1;
 
     for (;;) {
-	cx = xygrid[k++];
-	cy = xygrid[k++];
+	cx = vxygrid[k++];
+	cy = vxygrid[k++];
 	if (cx == 64 && cy == 64) {
 	  if (l) {
 	    plP_draphy_poly(llx, lly, l);
@@ -695,7 +695,7 @@ PLFLT
 plstrl(const char *string)
 {
     short int *symbol;
-    signed char *xygrid;
+    signed char *vxygrid = 0;
     PLINT ch, i, length, level = 0;
     PLFLT width = 0., xorg = 0., dscale, scale, def, ht;
 
@@ -718,8 +718,8 @@ plstrl(const char *string)
 	    xorg -= width * scale;
 	else if (ch == -4 || ch == -5);
 	else {
-	    if (plcvec(ch, &xygrid)) {
-		width = xygrid[3] - xygrid[2];
+	    if (plcvec(ch, &vxygrid)) {
+		width = vxygrid[3] - vxygrid[2];
 		xorg += width * scale;
 	    }
 	}
@@ -755,6 +755,12 @@ plcvec(PLINT ch, signed char **xygr)
 	xygrid[k++] = y;
     } while ((x != 64 || y != 64) && k <= (STLEN - 2));
 
+    if (k == (STLEN-1)) {
+	/* This is bad if we get here */
+	xygrid[k] = 64;
+	xygrid[k] = 64;
+    }
+    
     *xygr = xygrid;
     return (PLINT) 1;
 }

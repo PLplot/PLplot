@@ -604,6 +604,9 @@ typedef struct {
   PLINT dev_compression;
   PLINT cfont;
 
+/* Stuff used by the Tkwin driver for Plframe */
+  struct PlPlotter *plPlotterPtr;
+
 } PLStream;
 
 /*--------------------------------------------------------------------------*\

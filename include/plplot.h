@@ -124,7 +124,7 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
-#if defined(MSDOS)
+#if defined(MSDOS) && !defined(__WIN32__)
 typedef long PLINT;
 #else
 typedef int PLINT;

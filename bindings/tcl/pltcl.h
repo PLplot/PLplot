@@ -37,6 +37,9 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp,
 int
 Pltcl_Init( Tcl_Interp *interp );
 
+int
+PlbasicInit( Tcl_Interp *interp );
+
 /* tkshell.c */
 /* Sets up auto_path variable */
 

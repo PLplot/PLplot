@@ -28,8 +28,10 @@
 
 #include "plplot/plplotP.h"
 #include "plplot/pltcl.h"
+#ifndef __WIN32__
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #endif
 
 #include "plplot/tclgen.h"
@@ -119,7 +121,7 @@ Append_Cmdlist(Tcl_Interp *interp)
     /* Sort the list, couldn't get qsort to do it for me for some reason, grrr. */
 
 	for( i=0; i < ncmds-1; i++ )
-	    for( j=i+1; j < ncmds; j++ ) {
+	    for( j=i+1; j < ncmds-1; j++ ) {
 		if (strcmp(namelist[i], namelist[j]) > 0) {
 		    char *t = namelist[i];
 		    namelist[i] = namelist[j];
@@ -304,6 +306,79 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
     return result;
 }
 
+#ifndef PL_LIBRARY
+#define PL_LIBRARY ""
+#endif
+
+static char defaultLibraryDir[200] = PL_LIBRARY;
+extern char* plplotLibDir;
+
+/*
+ * PlbasicInit
+ * 
+ * Used by both Pltcl and Pltk.  Ensures we have been correctly loaded
+ * into a Tcl/Tk interpreter, that the plplot.tcl startup file can be
+ * found and sourced, and that the Matrix library can be found and used,
+ * and that it correctly exports a stub table.
+ */
+int 
+PlbasicInit( Tcl_Interp *interp )
+{
+    static char initScript[] = 
+    "tcl_findLibrary plplot 5.1 \"\" plplot.tcl PL_LIBRARY pllibrary";
+    char *libDir;
+#ifdef USE_TCL_STUBS
+    /* 
+     * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
+     * we really don't mind which version of Tcl, Tk we use as long as it
+     * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
+     * be loaded into 8.1
+     */
+    Tcl_InitStubs(interp,"8.1",0);
+#endif
+
+#if 1
+    if (Matrix_Init(interp) != TCL_OK) {
+        return TCL_ERROR;
+    }
+#else
+    
+    /* 
+     * This code is really designed to be used with a stubified Matrix
+     * extension.  It is not well tested under a non-stubs situation
+     * (which is in any case inferior).  The USE_MATRIX_STUBS define
+     * is made in pltcl.h, and should be removed only with extreme caution.
+     */
+#ifdef USE_MATRIX_STUBS
+    if (Matrix_InitStubs(interp,"0.1",0) == NULL) {
+        return TCL_ERROR;
+    }
+#else
+    Tcl_PkgRequire(interp,"Matrix","0.1",0);
+#endif
+#endif
+    
+    Tcl_SetVar(interp, "plversion", "5.1", TCL_GLOBAL_ONLY);
+    if(Tcl_Eval(interp, initScript))
+	return TCL_ERROR;
+	
+    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+    if (libDir == NULL) {
+	Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
+    } else {
+	/* Used by init code in plctrl.c */
+	plplotLibDir = strdup(libDir);
+    }
+
+#ifdef TCL_DIR
+    if (libDir == NULL) {
+    /*	libDir = PL_LIBRARY; */
+	libDir = TCL_DIR;
+    }
+#endif
+    return TCL_OK;
+}
+
 /*--------------------------------------------------------------------------*\
  * Pltcl_Init
  *
@@ -316,31 +391,31 @@ int
 Pltcl_Init( Tcl_Interp *interp )
 {
     register CmdInfo *cmdInfoPtr;
+/* This must be before any other Tcl related calls */
+    if (PlbasicInit(interp) != TCL_OK) {
+	return TCL_ERROR;
+    }
 
 /* Register our error variables with PLplot */
 
     plsError(&errcode, errmsg);
 
-/* matrix -- matrix support command */
-
-    Tcl_CreateCommand(interp, "matrix", Tcl_MatrixCmd,
-                      (ClientData) NULL, (void (*)(ClientData)) NULL);
 
 /* PLplot API commands */
 
     for (cmdInfoPtr = Cmds; cmdInfoPtr->name != NULL; cmdInfoPtr++) {
 
 	Tcl_CreateCommand(interp, cmdInfoPtr->name, cmdInfoPtr->proc,
-			  (ClientData) NULL, (void (*)(ClientData)) NULL);
+			  (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
     }
 
-/* Set up auto_path */
+/* We really need this so the TEA based 'make install' can 
+ * properly determine the package we have installed */
 
-    if (pls_auto_path(interp) == TCL_ERROR)
-	return TCL_ERROR;
-
+    Tcl_PkgProvide(interp, "Pltcl", "5.1");
     return TCL_OK;
 }
+
 
 /*----------------------------------------------------------------------*\
  * pls_auto_path
@@ -425,8 +500,10 @@ pls_auto_path(Tcl_Interp *interp)
 
 /* Add cwd */
 
-    if (getcwd(buf, 256) == NULL) 
+    if (getcwd(buf, 256) == 0) {
+	Tcl_SetResult(interp, "Problems with getcwd in pls_auto_path", TCL_STATIC);
 	return TCL_ERROR;
+    }
 
     Tcl_SetVar(interp, "dir", buf, 0);
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)

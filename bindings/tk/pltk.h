@@ -18,7 +18,12 @@ extern "C" {
 
 /* Generic initialization routine for extended wish'es. */
 
-int
+#ifdef BUILD_Plplot
+#undef TCL_STORAGE_CLASS
+#define TCL_STORAGE_CLASS DLLEXPORT
+#endif /* BUILD_Vfs */
+
+EXTERN int
 Pltk_Init( Tcl_Interp *interp );
 
 /* Main program for wish, with PLplot extensions. */
