@@ -1572,6 +1572,7 @@ pllib_devinit()
     plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
+#ifdef ENABLE_DYNDRIVERS
 
 static char*
 plGetDrvDir ()
@@ -1593,6 +1594,9 @@ plGetDrvDir ()
     
     return drvdir;
 }    
+
+#endif
+
 
 /*--------------------------------------------------------------------------*\
  * void plInitDispatchTable()
