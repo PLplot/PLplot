@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002 Alan W. Irwin
 # Copyright (C) 2002 Joao Cardoso
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -20,11 +20,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_octave
-
-plplot_octave_supportdir = $(PLPLOT_OCTAVE_DIR)/support
-
-plplot_octave_support_DATA = \
+m_files = \
 	__comet.m \
 	__pl_contour.m \
 	__pl_draw_legend.m \
@@ -52,5 +48,12 @@ plplot_octave_support_DATA = \
 	__plt__.m \
 	is_strmatrix.m \
 	is_strvector.m
+
+EXTRA_DIST = $(m_files)
+
+if enable_octave
+
+plplot_octave_supportdir = $(PLPLOT_OCTAVE_DIR)/support
+plplot_octave_support_DATA = $(m_files)
 
 endif

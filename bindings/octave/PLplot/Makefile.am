@@ -22,7 +22,7 @@
 
 SUBDIRS = support
 
-binding_m_files =
+binding_m_files = \
 	arrow.m \
 	arrows.m \
 	autostyle.m \
@@ -106,11 +106,7 @@ binding_m_files =
 	zlabel.m \
 	zoom.m
 
-system_m_files = \
-	use_plplot.m \
-	plplot_octave_path.m
-
-EXTRA_DIST = $(binding_m_files) $(system_m_files)
+EXTRA_DIST = $(binding_m_files) use_plplot.m
 
 if enable_octave
 
@@ -118,6 +114,8 @@ plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
 plplot_octave_DATA = $(binding_m_files)
 
 octave_mdir = $(OCTAVE_M_DIR)/PLplot
-octave_m_DATA = $(system_m_files)
+octave_m_DATA = \
+	use_plplot.m \
+	plplot_octave_path.m
 
 endif
