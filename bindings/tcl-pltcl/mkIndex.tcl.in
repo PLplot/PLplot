@@ -1,0 +1,502 @@
+# mkIndex.tcl -- -*-Tcl-*-
+#
+#	This script generates a pkgIndex.tcl file for an installed extension.
+#
+# Copyright (c) 1999 Scriptics Corporation.
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+#
+# Notes:
+#
+# If you redefine $(libdir) using the configure switch --libdir=, then
+# this script will probably fail for you.
+#
+# UNIX:
+#      exec_prefix
+#           |
+#           |
+#           |
+#          lib
+#          / \
+#         /   \
+#        /     \
+#   PACKAGE   (.so files)
+#       |
+#       |
+#       |
+#  pkgIndex.tcl
+#
+# WIN:
+#      exec_prefix
+#          / \
+#         /   \
+#        /     \
+#      bin     lib
+#       |        \
+#       |         \
+#       |          \
+# (.dll files)   PACKAGE
+#                    |
+#                    |
+#                    |
+#                pkgIndex.tcl
+       
+# The pkg_mkIndex routines from Tcl 8.2 and later support stub-enabled
+# extensions.  Notify the user if this is not a valid tcl shell.
+# Exit with a status of 0 so that the make-install process does not stop.
+
+if {[catch {package require Tcl 8.2} msg]} {
+    puts stderr "**WARNING**"
+    puts stderr $msg
+    puts stderr "Could not build pkgIndex.tcl file.  You must create one by hand"
+    exit 0
+}
+
+# The name of the library(s) should be passed in as arguments.
+
+set libraryList $argv
+
+# Nativepath --
+#
+#	Convert a Cygnus style path to a native path
+#
+# Arguments:
+#	pathName	Path to convert
+#
+# Results:
+#	The result is the native name of the input pathName.
+#	On Windows, this is z:/foo/bar, on Unix the input pathName is
+#	returned.
+
+proc Nativepath {pathName} {
+    global tcl_platform
+
+    if {![string match $tcl_platform(platform) unix]} {
+	if {[regexp {//(.)/(.*)} $pathName null driveLetter pathRemains]} {
+	    set pathName $driveLetter:/$pathRemains
+	}
+    }
+    return $pathName
+}
+
+proc pkg_ensurePreloaded {name} {
+    puts "preloading $name package"
+    set result [package require $name]
+    puts "'package require $name' returned $result"
+
+    # Make sure it was really loaded
+    foreach pkg [info loaded] {
+	if {[lindex $pkg 1] == $name} {
+	    puts "package $name loaded as '$pkg'"
+	    return
+	}
+    }
+    puts "package $name didn't appear to be loaded correctly"
+    puts "perhaps its pkgIndex was built without the '-direct' flag,"
+    puts "in any case any use of 'pkg_mkIndex -load ...' will not"
+    puts "be able to load the '$name' package."
+}
+
+set prefix "@prefix@"
+set exec_prefix "@exec_prefix@"
+
+set exec_prefix [Nativepath $exec_prefix] 
+
+set libdir @libdir@
+set package @PACKAGE@
+set version @VERSION@
+
+cd $libdir
+puts "Making pkgIndex.tcl in [file join [pwd] $package$version]"
+
+puts "Loading pkg_mkIndex code and fixing pkg_compareExtension"
+
+auto_load pkg_mkIndex
+
+proc pkg_compareExtension { fileName {ext {}} } { 
+    global tcl_platform 
+    set ext [info sharedlibextension] 
+    if {[string equal $tcl_platform(platform) "windows"]} { 
+        return [string equal -nocase [file extension $fileName] $ext] 
+    } else { 
+        # Some unices add trailing numbers after the .so, so 
+        # we could have something like '.so.1.2'. 
+        set root $fileName 
+        while {1} { 
+            set currExt [file extension $root] 
+            if {![string length $currExt]} { 
+                return 0 
+            } 
+            if {[string equal $currExt $ext]} { 
+                return 1 
+            } 
+            set root [file rootname $root] 
+        } 
+    } 
+} 
+
+if {[info tclversion] >= 8.3} {
+puts "Providing improved version of pkg_mkIndex"
+
+# Note: this isn't 100% necessary, but will provide much better debugging
+# information if things don't install smoothly
+proc pkg_mkIndex {args} {
+    global errorCode errorInfo
+    set usage {"pkg_mkIndex ?-direct? ?-verbose? ?-load pattern? ?--? dir ?pattern ...?"};
+
+    set argCount [llength $args]
+    if {$argCount < 1} {
+	return -code error "wrong # args: should be\n$usage"
+    }
+
+    set more ""
+    set direct 1
+    set doVerbose 0
+    set loadPat ""
+    for {set idx 0} {$idx < $argCount} {incr idx} {
+	set flag [lindex $args $idx]
+	switch -glob -- $flag {
+	    -- {
+		# done with the flags
+		incr idx
+		break
+	    }
+	    -verbose {
+		set doVerbose 1
+	    }
+	    -lazy {
+		set direct 0
+		append more " -lazy"
+	    }
+	    -direct {
+		append more " -direct"
+	    }
+	    -load {
+		incr idx
+		set loadPat [lindex $args $idx]
+		append more " -load $loadPat"
+	    }
+	    -* {
+		return -code error "unknown flag $flag: should be\n$usage"
+	    }
+	    default {
+		# done with the flags
+		break
+	    }
+	}
+    }
+
+    set dir [lindex $args $idx]
+    set patternList [lrange $args [expr {$idx + 1}] end]
+    if {[llength $patternList] == 0} {
+	set patternList [list "*.tcl" "*[info sharedlibextension]"]
+    }
+
+    set oldDir [pwd]
+    cd $dir
+
+    if {[catch {eval glob $patternList} fileList]} {
+	global errorCode errorInfo
+	cd $oldDir
+	return -code error -errorcode $errorCode -errorinfo $errorInfo $fileList
+    }
+    foreach file $fileList {
+	# For each file, figure out what commands and packages it provides.
+	# To do this, create a child interpreter, load the file into the
+	# interpreter, and get a list of the new commands and packages
+	# that are defined.
+
+	if {[string equal $file "pkgIndex.tcl"]} {
+	    continue
+	}
+
+	# Changed back to the original directory before initializing the
+	# slave in case TCL_LIBRARY is a relative path (e.g. in the test
+	# suite). 
+
+	cd $oldDir
+	set c [interp create]
+
+	# Load into the child any packages currently loaded in the parent
+	# interpreter that match the -load pattern.
+	if {[string length $loadPat]} {
+	    if {$doVerbose} {
+		tclLog "currently loaded package information is '[info loaded]'"
+		tclLog "trying to load all packages matching $loadPat"
+	    }
+	    if {![llength [info loaded]]} {
+		tclLog "warning: since no packages are currently loaded, nothing"
+		tclLog "can possibly match '$loadPat'"
+	    }
+	}
+	foreach pkg [info loaded] {
+	    if {! [string match $loadPat [lindex $pkg 1]]} {
+		continue
+	    }
+	    if {$doVerbose} {
+		tclLog "package [lindex $pkg 1] matches '$loadPat'"
+	    }
+	    if {[catch {
+		load [lindex $pkg 0] [lindex $pkg 1] $c
+	    } err]} {
+		if {$doVerbose} {
+		    tclLog "warning: load [lindex $pkg 0] [lindex $pkg 1]\nfailed with: $err"
+		}
+	    } elseif {$doVerbose} {
+		tclLog "loaded [lindex $pkg 0] [lindex $pkg 1]"
+	    }
+	    if {[string equal [lindex $pkg 1] "Tk"]} {
+		# Withdraw . if Tk was loaded, to avoid showing a window.
+		$c eval [list wm withdraw .]
+	    }
+	}
+	cd $dir
+
+	$c eval {
+	    # Stub out the package command so packages can
+	    # require other packages.
+
+	    rename package __package_orig
+	    proc package {what args} {
+		switch -- $what {
+		    require { return ; # ignore transitive requires }
+		    default { eval __package_orig {$what} $args }
+		}
+	    }
+	    proc tclPkgUnknown args {}
+	    package unknown tclPkgUnknown
+
+	    # Stub out the unknown command so package can call
+	    # into each other during their initialilzation.
+
+	    proc unknown {args} {}
+
+	    # Stub out the auto_import mechanism
+
+	    proc auto_import {args} {}
+
+	    # reserve the ::tcl namespace for support procs
+	    # and temporary variables.  This might make it awkward
+	    # to generate a pkgIndex.tcl file for the ::tcl namespace.
+
+	    namespace eval ::tcl {
+		variable file		;# Current file being processed
+		variable direct		;# -direct flag value
+		variable x		;# Loop variable
+		variable debug		;# For debugging
+		variable type		;# "load" or "source", for -direct
+		variable namespaces	;# Existing namespaces (e.g., ::tcl)
+		variable packages	;# Existing packages (e.g., Tcl)
+		variable origCmds	;# Existing commands
+		variable newCmds	;# Newly created commands
+		variable newPkgs {}	;# Newly created packages
+	    }
+	}
+
+	$c eval [list set ::tcl::file $file]
+	$c eval [list set ::tcl::direct $direct]
+
+	# Download needed procedures into the slave because we've
+	# just deleted the unknown procedure.  This doesn't handle
+	# procedures with default arguments.
+
+	foreach p {pkg_compareExtension} {
+	    $c eval [list proc $p [info args $p] [info body $p]]
+	}
+
+	if {[catch {
+	    $c eval {
+		set ::tcl::debug "loading or sourcing"
+
+		# we need to track command defined by each package even in
+		# the -direct case, because they are needed internally by
+		# the "partial pkgIndex.tcl" step above.
+
+		proc ::tcl::GetAllNamespaces {{root ::}} {
+		    set list $root
+		    foreach ns [namespace children $root] {
+			eval lappend list [::tcl::GetAllNamespaces $ns]
+		    }
+		    return $list
+		}
+
+		# init the list of existing namespaces, packages, commands
+
+		foreach ::tcl::x [::tcl::GetAllNamespaces] {
+		    set ::tcl::namespaces($::tcl::x) 1
+		}
+		foreach ::tcl::x [package names] {
+		    set ::tcl::packages($::tcl::x) 1
+		}
+		set ::tcl::origCmds [info commands]
+
+		# Try to load the file if it has the shared library
+		# extension, otherwise source it.  It's important not to
+		# try to load files that aren't shared libraries, because
+		# on some systems (like SunOS) the loader will abort the
+		# whole application when it gets an error.
+
+		if {[pkg_compareExtension $::tcl::file [info sharedlibextension]]} {
+		    # The "file join ." command below is necessary.
+		    # Without it, if the file name has no \'s and we're
+		    # on UNIX, the load command will invoke the
+		    # LD_LIBRARY_PATH search mechanism, which could cause
+		    # the wrong file to be used.
+
+		    set ::tcl::debug loading
+		    load [file join . $::tcl::file]
+		    set ::tcl::type load
+		} else {
+		    set ::tcl::debug sourcing
+		    source $::tcl::file
+		    set ::tcl::type source
+		}
+
+		# As a performance optimization, if we are creating 
+		# direct load packages, don't bother figuring out the 
+		# set of commands created by the new packages.  We 
+		# only need that list for setting up the autoloading 
+		# used in the non-direct case.
+		if { !$::tcl::direct } {
+		    # See what new namespaces appeared, and import commands
+		    # from them.  Only exported commands go into the index.
+		    
+		    foreach ::tcl::x [::tcl::GetAllNamespaces] {
+			if {! [info exists ::tcl::namespaces($::tcl::x)]} {
+			    namespace import -force ${::tcl::x}::*
+			}
+
+			# Figure out what commands appeared
+			
+			foreach ::tcl::x [info commands] {
+			    set ::tcl::newCmds($::tcl::x) 1
+			}
+			foreach ::tcl::x $::tcl::origCmds {
+			    catch {unset ::tcl::newCmds($::tcl::x)}
+			}
+			foreach ::tcl::x [array names ::tcl::newCmds] {
+			    # determine which namespace a command comes from
+			    
+			    set ::tcl::abs [namespace origin $::tcl::x]
+			    
+			    # special case so that global names have no leading
+			    # ::, this is required by the unknown command
+			    
+			    set ::tcl::abs \
+				    [lindex [auto_qualify $::tcl::abs ::] 0]
+			    
+			    if {[string compare $::tcl::x $::tcl::abs]} {
+				# Name changed during qualification
+				
+				set ::tcl::newCmds($::tcl::abs) 1
+				unset ::tcl::newCmds($::tcl::x)
+			    }
+			}
+		    }
+		}
+
+		# Look through the packages that appeared, and if there is
+		# a version provided, then record it
+
+		foreach ::tcl::x [package names] {
+		    if {[string compare [package provide $::tcl::x] ""] \
+			    && ![info exists ::tcl::packages($::tcl::x)]} {
+			lappend ::tcl::newPkgs \
+			    [list $::tcl::x [package provide $::tcl::x]]
+		    }
+		}
+	    }
+	} msg] == 1} {
+	    set what [$c eval set ::tcl::debug]
+	    if {$doVerbose} {
+		tclLog "warning: error while $what $file: $msg"
+	    }
+	} else {
+	    set what [$c eval set ::tcl::debug]
+	    if {$doVerbose} {
+		tclLog "successful $what of $file"
+	    }
+	    set type [$c eval set ::tcl::type]
+	    set cmds [lsort [$c eval array names ::tcl::newCmds]]
+	    set pkgs [$c eval set ::tcl::newPkgs]
+	    if {$doVerbose} {
+		tclLog "commands provided were $cmds"
+		tclLog "packages provided were $pkgs"
+	    }
+	    if {[llength $pkgs] > 1} {
+		tclLog "warning: \"$file\" provides more than one package ($pkgs)"
+	    }
+	    foreach pkg $pkgs {
+		# cmds is empty/not used in the direct case
+		lappend files($pkg) [list $file $type $cmds]
+	    }
+
+	    if {$doVerbose} {
+		tclLog "processed $file"
+	    }
+	    interp delete $c
+	}
+    }
+
+    append index "# Tcl package index file, version 1.1\n"
+    append index "# This file is generated by the \"pkg_mkIndex$more\" command\n"
+    append index "# and sourced either when an application starts up or\n"
+    append index "# by a \"package unknown\" script.  It invokes the\n"
+    append index "# \"package ifneeded\" command to set up package-related\n"
+    append index "# information so that packages will be loaded automatically\n"
+    append index "# in response to \"package require\" commands.  When this\n"
+    append index "# script is sourced, the variable \$dir must contain the\n"
+    append index "# full path name of this file's directory.\n"
+
+    foreach pkg [lsort [array names files]] {
+	set cmd {}
+	foreach {name version} $pkg {
+	    break
+	}
+	lappend cmd ::pkg::create -name $name -version $version
+	foreach spec $files($pkg) {
+	    foreach {file type procs} $spec {
+		if { $direct } {
+		    set procs {}
+		}
+		lappend cmd "-$type" [list $file $procs]
+	    }
+	}
+	append index "\n[eval $cmd]"
+    }
+
+    set f [open pkgIndex.tcl w]
+    puts $f $index
+    close $f
+    cd $oldDir
+}
+}
+
+if {[llength $libraryList] > 0} {
+    set libraryPathList {}
+    if {$tcl_platform(platform) == "unix"} {
+	foreach lib $libraryList {
+	    # shared lib extension is usually .so or .sl
+	    if {[regexp "^(.*\\[info sharedlibextension])((\\.\[0-9\]+)+)\$" $lib "" baselib]} {
+		exec ln -sf $lib $baselib
+		lappend libraryPathList [file join .. $baselib]
+	    } else {
+		lappend libraryPathList [file join .. $lib]
+	    }
+	}
+    } else {
+	foreach lib $libraryList {
+	    lappend libraryPathList [file join .. .. bin $lib]
+	}
+    }
+    
+    # In case we are installing in a non-standard location
+    lappend auto_path [pwd]
+    pkg_ensurePreloaded Matrix
+    puts "eval pkg_mkIndex -direct -verbose -load Matrix $package$version $libraryPathList *.tcl"
+    eval pkg_mkIndex -direct -verbose -load Matrix $package$version $libraryPathList *.tcl
+}
+
+exit
