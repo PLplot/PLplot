@@ -21,6 +21,7 @@ INDEX
 2. Changes Relative to PLplot 5.5.0
   2.1 API
   2.2 Drivers
+    2.2.1 GCW "Gnome Canvas Widget"
 3. Changes Relative to PLplot 5.3.1
   3.1 API
     3.1.1 Unicode
@@ -64,14 +65,20 @@ The tcl interface was turned off by default for 5.5.0 because of this
 problem.  It is turned on again by default for 5.5.1
 
 
-2.2 API
+2.1 API
 
 No change.
 
 
-2.3 Drivers
+2.2 Drivers
 
-No change.
+
+2.2.1 GCW "Gnome Canvas Widget"
+
+Pixmap support, which existed in an earlier demonstration version of the
+GCW driver, has been reinstituted.  Pixmaps allow much faster rendering
+for shade plots.  Please see the PLplot Programmer's Reference Manual for
+the details.
 
 
 3. Changes Relative to PLplot 5.3.1
