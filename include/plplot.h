@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/09/30 18:25:34  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.5  1992/10/12 17:10:32  mjl
+   Added support for PL_NEED_SIZE_T switch to plplot.h and reworked comments.
+   Moved plamiga.h to sys/amiga/src.
 
+ * Revision 1.4  1992/09/30  18:25:34  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.3  1992/09/29  04:45:32  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -55,23 +59,31 @@
 * allows you to request certain behavior by defining certain symbols
 * before inclusion.  These are:
 *
-* #define PL_DOUBLE          This causes PLPLOT to use doubles instead
-*                            of floats.  Use the type PLFLT everywhere
-*                            in your code, and it will always be the
-*                            right thing.
-* (others...)
+* #define PL_DOUBLE
+*	This causes PLPLOT to use doubles instead of floats.  Use the type
+*	PLFLT everywhere in your code, and it will always be the right thing.
 * 
 * Additionally, there are some internal macros which are used in the
 * plplot sources (which of course also #include "plplot.h") to make
 * the sources substantially system independent.  If you want to use
 * them in your own code, you may.  They are:
 *
-* #define PL_NEED_MALLOC     Some systems have different ways of
-*                            gaining access to the malloc function.
-* #define PL_NO_VOID         In case there's still a compiler out
-*                            there somewhere in the void, with no void.  
-* (others...)
-* 
+* #define PL_NEED_MALLOC
+*	From "C -- The Pocket Reference" by Herbert Schildt (1988):
+*
+*	"The proposed ANSI standard specifies that the header information
+*	necessary to the dynamic allocation system will be in stdlib.h.
+*	However, at the time of this writing, a great many C compilers
+*	require you to include the header malloc.h instead."
+*
+* #define PL_NEED_SIZE_T
+*	On some systems, size_t is not defined in the usual place (stdlib.h),
+*	and you must include <stddef.h> to get it.
+*
+* #define PL_NO_VOID
+*	In case there's still a compiler out there somewhere in the void,
+*	with no void.  
+*
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
@@ -135,6 +147,14 @@
 #endif
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
+#endif
+#endif
+
+/* Check for Amiga's */
+
+#ifdef AMIGA
+#ifdef PL_NEED_SIZE_T
+#include <stddef.h>
 #endif
 #endif
 
@@ -290,24 +310,6 @@ typedef struct {
 /* Max number of concurrent streams. */
 
 #define PL_NSTREAMS 10
-
-/* Take care of malloc.h problem -- define INCLUDE_MALLOC if your system
-   requires it.  From "C -- The Pocket Reference" by Herbert Schildt (1988):
-
-  "The proposed ANSI standard specifies that the header information necessary
-   to the dynamic allocation system will be in stdlib.h.  However, at the time
-   of this writing, a great many C compilers require you to include the header
-   malloc.h instead."
-*/
-
-/* Define INCLUDE_STDDEF to include stddef.h where necessary.  This is needed
-   on some systems to get the size_t definition.  On others (non-POSIX) it
-   causes it to be defined twice.
-*/
-
-#ifdef AMIGA
-#define INCLUDE_STDDEF
-#endif
 
 /*----------------------------------------------------------------------*\
 *		BRAINDEAD-ness
