@@ -4,7 +4,7 @@
 #              manual) into a series of man pages.
 # Author: Rafael Laboissière <rafael@debian.org>
 # Created on: Mon Dec  4 16:35:32 CET 2000
-# Last modified on: Mon Mar 10 17:56:02 CET 2003
+# Last modified on: Thu Mar 20 11:30:25 CET 2003
 # $Id$
 
 # This script relies on the present structure of the API chapter (file
@@ -55,6 +55,10 @@
 
 use XML::Parser;
 use XML::DOM;
+use Text::Wrap;
+$Text::Wrap::columns = 75;
+use Text::Tabs;
+$tabstop = 4;
 
 $api = "";
 open (MASTER, "< $ARGV[0]");
@@ -181,12 +185,21 @@ for ($i = 0; $i < $ns; $i++) {
       }
     }
   }
+  $indent = '    ';
+  $desc = wrap ($indent, $indent, split(/\n\s*\n/, $desc));
+  $varlist = join ("\n", map {
+                           s/\t/    /g;
+                           /(^\s+)/;
+                           $_ = wrap ($indent . $1,
+                                      $indent . $1 . $indent, $_);
+                           s/\t/    /g;
+                           $_;
+                         } split ("\n", $varlist));
   open (MAN, "> $name.txt");
   print MAN "\n$title\n";
-  print MAN "\n$desc\n";
-  print MAN "\n$synopsis\n";
-  if (not $varlist eq "") {
-    print MAN "\n$varlist\n";
-  }
+  print MAN "\nDESCRIPTION:\n\n$desc\n";
+  print MAN "\nSYNOPSIS:\n\n$synopsis\n";
+  print MAN "\nARGUMENTS:\n\n$varlist\n"
+    if not $varlist eq "";
   close MAN;
 }
