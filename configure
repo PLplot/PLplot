@@ -5735,7 +5735,7 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "Makefile Makedemo cf/plplot-config plConfig.h plDevs.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "Makefile Makedemo plplot-config plConfig.h plDevs.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -5840,7 +5840,7 @@ CEOF
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"Makefile Makedemo cf/plplot-config"}
+CONFIG_FILES=\${CONFIG_FILES-"Makefile Makedemo plplot-config"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
