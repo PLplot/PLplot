@@ -23,26 +23,42 @@
 # replacement to work cross-platform as indicated by ?cross-platform?
 # comment below, but it works quite nicely on Linux.
 
+if enable_python
+
 ourpythondir = ${prefix}/@PYTHON_INSTDIR@
 
 if with_double
 libplplot = -L../../src -lplplotd
-swig_double = -DPL_DOUBLE
+
+### Only swig version 1.3.11 through 1.3.13 will work here because of a
+### swig API change for 1.3.14 which we have not adjusted to yet.
+### Ordinarily this detail only matters for CVS users because the tarball
+### version of PLplot always has both plplotcmodule_p_double.c and
+### plplotcmodule_p_single.c pre-generated.
+plplotcmodule_p_double.c: plplotcmodule.i 
+	swig -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE \
+	plplotcmodule.i
+
+plplotcmodule_p.c: plplotcmodule_p_double.c
+	cp plplotcmodule_p_double.c plplotcmodule_p.c
 else
 libplplot = -L../../src -lplplot
-swig_double =
+plplotcmodule_p_single.c: plplotcmodule.i 
+	swig -python -o plplotcmodule_p_single.c -c++ \
+	plplotcmodule.i
+
+plplotcmodule_p.c: plplotcmodule_p_single.c
+	cp plplotcmodule_p_single.c plplotcmodule_p.c
 endif
 
-if enable_python
-# ?cross-platform swig (1.3.11 minimum version)?
-plplotcmodule.c: plplotcmodule.i makedocstrings.py
-	swig -python -o plplotcmodule_p.c -c++ $(swig_double) plplotcmodule.i
+# swig-1.3.11+ does not handle documentation strings properly so run this
+# script to make documentation strings.
+plplotcmodule.c: plplotcmodule_p.c makedocstrings.py
 	@PYTHON@ makedocstrings.py plplotcmodule_p.c plplotcmodule.c
 
 ourpython_DATA = plplot.py
 ourpython_LTLIBRARIES = plplotcmodule.la plplot_widgetmodule.la
 
-endif
 
 # PYTHON_NUM_DIR only required until we quit supporting python 1.5
 AM_CPPFLAGS = @INCLTDL@ -I/@PYTHON_INC_DIR@ -I/@PYTHON_NUM_DIR@
@@ -58,7 +74,19 @@ plplotcmodule_la_LDFLAGS  = \
 plplot_widgetmodule_la_SOURCES  = plplot_widgetmodule.c
 plplot_widgetmodule_la_LDFLAGS = $(plplotcmodule_la_LDFLAGS)
 
-CLEANFILES = plplotcmodule_p.c plplotcmodule.c setup.py 
+CLEANFILES = \
+	plplotcmodule_p_double.c \
+	plplotcmodule_p_single.c \
+	plplotcmodule_p.c \
+	plplotcmodule.c \
+	setup.py 
   
-EXTRA_DIST = setup.py.in plplotcmodule.i makedocstrings.py plplot_widgetmodule.c plplot.py
+EXTRA_DIST = \
+	setup.py.in \
+	plplotcmodule.i \
+	makedocstrings.py \
+	plplot_widgetmodule.c \
+	plplot.py
 
+# enable_python
+endif
