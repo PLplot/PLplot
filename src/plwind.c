@@ -1,18 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/11/02 19:58:16  mjl
+ * Revision 1.10  1995/03/17 00:16:24  mjl
+ * Eliminated unnecessary accessor variables and other cleaning up.
+ * Added call to plP_swin() to set window parameters.
+ *
+ * Revision 1.9  1994/11/02  19:58:16  mjl
  * Changed plAddCWindow() call syntax.
  *
  * Revision 1.8  1994/07/29  20:29:24  mjl
  * Change so that window coordinates are added to the window list each time
  * plwind() is called.  Contributed by Paul Casteels.
- *
- * Revision 1.7  1994/06/30  18:22:24  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
 */
 
 /*	plwind.c
@@ -24,27 +21,22 @@
 
 #define  dtr   0.01745329252
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plwind()
  *
  * Set up world coordinates of the viewport boundaries (2d plots).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    PLINT vppxmi, vppxma, vppymi, vppyma;
-    PLFLT dx, dy;
-    PLFLT vpxmi, vpxma, vpymi, vpyma;
-    PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+    PLFLT dx, dy, mmxmi, mmxma, mmymi, mmyma;
+    PLWindow w;
 
     if (plsc->level < 2) {
 	plabort("plwind: Please set up viewport first");
 	return;
     }
-
-    plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
-    plP_gvpd(&vpxmi, &vpxma, &vpymi, &vpyma);
 
 /* Best to just warn and recover on bounds errors */
 
@@ -73,31 +65,43 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     dx = plsc->vpwxma - plsc->vpwxmi;
     dy = plsc->vpwyma - plsc->vpwymi;
 
-    plsc->wpxscl = (vppxma - vppxmi) / dx;
-    plsc->wpxoff = (xmax * vppxmi - xmin * vppxma) / dx;
-    plsc->wpyscl = (vppyma - vppymi) / dy;
-    plsc->wpyoff = (ymax * vppymi - ymin * vppyma) / dy;
+    plsc->wpxscl = (plsc->vppxma - plsc->vppxmi) / dx;
+    plsc->wpxoff = (xmax * plsc->vppxmi - xmin * plsc->vppxma) / dx;
+    plsc->wpyscl = (plsc->vppyma - plsc->vppymi) / dy;
+    plsc->wpyoff = (ymax * plsc->vppymi - ymin * plsc->vppyma) / dy;
 
-    vpxmi = plP_dcmmx(vpxmi);
-    vpxma = plP_dcmmx(vpxma);
-    vpymi = plP_dcmmy(vpymi);
-    vpyma = plP_dcmmy(vpyma);
+    mmxmi = plP_dcmmx(plsc->vpdxmi);
+    mmxma = plP_dcmmx(plsc->vpdxma);
+    mmymi = plP_dcmmy(plsc->vpdymi);
+    mmyma = plP_dcmmy(plsc->vpdyma);
 
-    wmxscl = (vpxma - vpxmi) / dx;
-    wmxoff = (xmax * vpxmi - xmin * vpxma) / dx;
-    wmyscl = (vpyma - vpymi) / dy;
-    wmyoff = (ymax * vpymi - ymin * vpyma) / dy;
+/* Set transformation variables for world coordinates to mm */
 
-    plP_swm(wmxscl, wmxoff, wmyscl, wmyoff);
+    plsc->wmxscl = (mmxma - mmxmi) / dx;
+    plsc->wmxoff = (xmax * mmxmi - xmin * mmxma) / dx;
+    plsc->wmyscl = (mmyma - mmymi) / dy;
+    plsc->wmyoff = (ymax * mmymi - ymin * mmyma) / dy;
 
-/* Add coordinates of window to windows list */
+/* Register plot window attributes */
 
-    plAddCWindow();
+    w.dxmi = plsc->vpdxmi;
+    w.dxma = plsc->vpdxma;
+    w.dymi = plsc->vpdymi;
+    w.dyma = plsc->vpdyma;
+
+    w.wxmi = plsc->vpwxmi;
+    w.wxma = plsc->vpwxma;
+    w.wymi = plsc->vpwymi;
+    w.wyma = plsc->vpwyma;
+
+    plP_swin(&w);
+
+/* Go to level 3 */
 
     plsc->level = 3;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plw3d()
  *
  * Set up a window for three-dimensional plotting. The data are mapped
@@ -115,7 +119,7 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
  * The world coordinate box is then viewed from position "alt"-"az",
  * measured in degrees. For proper operation, 0 <= alt <= 90 degrees,
  * but az can be any value.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
