@@ -807,6 +807,11 @@ AC_MSG_RESULT
 AC_SUBST(STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
 
+### Documentation directory
+
+DOCDIR=${datadir}/doc/plplot
+AC_SUBST(DOCDIR)
+
 ### DocBook documentation
 
 AC_ARG_ENABLE(docbook, 

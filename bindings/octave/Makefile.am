@@ -106,11 +106,24 @@ plplot_stub.m: plplot_octave_txt/plplot.doc tmp_stub massage
 
 octaveshare_DATA = plplot_stub.m
 
+docdir = $(DOCDIR)
+
+doc_DATA =       \
+  BUGS.octave    \
+  INSTALL.octave \
+  FGA.octave     \
+  ToDo.octave    \
+  USAGE.octave   \
+  README.octave
+
+%.octave: %
+	  cp $< $@
+
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
 	plplot_octave.cc plplot_octave.o \
 	.samename/plplot_octave.cc .samename/plplot_octave.o \
 	tmp_stub plplot_octave.oct .samename/plplot_octave.oct \
-	plplot_stub.m missing_help
+	plplot_stub.m missing_help $(doc_DATA)
 
 #enable_octave
 endif
