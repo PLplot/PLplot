@@ -1158,7 +1158,8 @@ dependent.  Please see the plplot reference document for more detail.<!--
       </para>
 
       <para>
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>plcont</function>
 	  </funcdef>
@@ -1173,6 +1174,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
 	  <paramdef><parameter>nlevel</parameter></paramdef>
 	  <paramdef><parameter>pltr</parameter></paramdef>
 	  <paramdef><parameter>pltr_data</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -1208,7 +1210,8 @@ dependent.  Please see the plplot reference document for more detail.<!--
       </para>
       
       <para>
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>pltr</function>
 	  </funcdef>
@@ -1217,6 +1220,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
 	  <paramdef><parameter>tx</parameter></paramdef>
 	  <paramdef><parameter>ty</parameter></paramdef>
 	  <paramdef><parameter>pltr_data</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -1315,7 +1319,8 @@ PLFLT x, y, *tx, *ty;
       </para>
       
       <para>
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>pltr0</function>
 	  </funcdef>
@@ -1324,9 +1329,11 @@ PLFLT x, y, *tx, *ty;
 	  <paramdef><parameter>tx</parameter></paramdef>
 	  <paramdef><parameter>ty</parameter></paramdef>
 	  <paramdef><parameter>pltr_data</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
 
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>pltr1</function>
 	  </funcdef>
@@ -1335,9 +1342,11 @@ PLFLT x, y, *tx, *ty;
 	  <paramdef><parameter>tx</parameter></paramdef>
 	  <paramdef><parameter>ty</parameter></paramdef>
 	  <paramdef><parameter>pltr_data</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
 	
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>pltr2</function>
 	  </funcdef>
@@ -1346,6 +1355,7 @@ PLFLT x, y, *tx, *ty;
 	  <paramdef><parameter>tx</parameter></paramdef>
 	  <paramdef><parameter>ty</parameter></paramdef>
 	  <paramdef><parameter>pltr_data</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -1371,7 +1381,8 @@ pltr2 does linear interpolation in doubly dimensioned coordinate arrays
       </para>
 
       <para>
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    call <function>plcont</function>
 	  </funcdef>
@@ -1384,6 +1395,7 @@ pltr2 does linear interpolation in doubly dimensioned coordinate arrays
 	  <paramdef><parameter>ly</parameter></paramdef>
 	  <paramdef><parameter>clevel</parameter></paramdef>
 	  <paramdef><parameter>nlevel</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -1409,7 +1421,8 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
       </para>
       
       <para>
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    call <function>plcon0</function>
 	  </funcdef>
@@ -1422,9 +1435,11 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
 	  <paramdef><parameter>ly</parameter></paramdef>
 	  <paramdef><parameter>clevel</parameter></paramdef>
 	  <paramdef><parameter>nlevel</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
 	
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    call <function>plcon1</function>
 	  </funcdef>
@@ -1439,9 +1454,11 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
 	  <paramdef><parameter>nlevel</parameter></paramdef>
 	  <paramdef><parameter>xg1</parameter></paramdef>
 	  <paramdef><parameter>yg1</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
 	
-	<funcsynopsis> 
+	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    call <function>plcon2</function>
 	  </funcdef>
@@ -1456,6 +1473,7 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
 	  <paramdef><parameter>nlevel</parameter></paramdef>
 	  <paramdef><parameter>xg2</parameter></paramdef>
 	  <paramdef><parameter>yg2</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       

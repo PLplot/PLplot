@@ -113,6 +113,7 @@
     <!-- ============================================================= -->
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plenv</function>
 	</funcdef>
@@ -122,6 +123,7 @@
 	<paramdef><parameter>ymax</parameter></paramdef>
 	<paramdef><parameter>just</parameter></paramdef>
 	<paramdef><parameter>axis</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
     
@@ -286,12 +288,14 @@
     <!-- ============================================================= -->
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pllab</function>
 	</funcdef>
 	<paramdef><parameter>xlbl</parameter></paramdef> 
 	<paramdef><parameter>ylbl</parameter></paramdef> 
 	<paramdef><parameter>toplbl</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -375,16 +379,19 @@
       
       <para>
 	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>plpoin</function></funcdef>
 	  <paramdef><parameter>n</parameter></paramdef>
 	  <paramdef><parameter>x</parameter></paramdef> 
 	  <paramdef><parameter>y</parameter></paramdef>
 	  <paramdef><parameter>code</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       <para>
 	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>plsym</function>
 	  </funcdef>
@@ -392,6 +399,7 @@
 	  <paramdef><parameter>x</parameter></paramdef> 
 	  <paramdef><parameter>y</parameter></paramdef> 
 	  <paramdef><parameter>code</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -456,12 +464,14 @@
       
       <para>
 	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>plline</function>
 	  </funcdef>
 	  <paramdef><parameter>n</parameter></paramdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -495,6 +505,7 @@
       <!-- ============================================================= -->
       <para>
 	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>pljoin</function>
 	  </funcdef>
@@ -502,6 +513,7 @@
 	  <paramdef><parameter>y1</parameter></paramdef>
 	  <paramdef><parameter>x2</parameter></paramdef>
 	  <paramdef><parameter>y2</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -553,6 +565,7 @@
       
       <para>
 	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>plptex</function>
 	  </funcdef>
@@ -562,6 +575,7 @@
 	  <paramdef><parameter>dy</parameter></paramdef> 
 	  <paramdef><parameter>just</parameter></paramdef> 
 	  <paramdef><parameter>text</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       
@@ -660,12 +674,14 @@
       <!-- ============================================================= -->
       <para>
 	<funcsynopsis>
+	<funcprototype>
 	  <funcdef>
 	    <function>plfill</function>
 	  </funcdef>
 	  <paramdef><parameter>n</parameter></paramdef> 
 	  <paramdef><parameter>x</parameter></paramdef> 
 	  <paramdef><parameter>y</parameter></paramdef>
+	</funcprototype>
 	</funcsynopsis>
       </para>
       

@@ -17,11 +17,13 @@ parameters as indicated by the string <quote>NEEDS DOCUMENTATION</quote>.
     <title><function>pladv</function>: Advance the (sub-)page</title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pladv</function>
 	</funcdef>
         <paramdef><parameter>sub</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -67,6 +69,7 @@ origin
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plaxes</function>
         </funcdef>
@@ -78,6 +81,7 @@ origin
         <paramdef><parameter>yopt</parameter></paramdef>
         <paramdef><parameter>ytick</parameter></paramdef>
         <paramdef><parameter>nysub</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -297,6 +301,7 @@ origin
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plbin</function>
         </funcdef> 
@@ -304,6 +309,7 @@ origin
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>center</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -395,11 +401,13 @@ origin
     <title><function>plbop</function>: Begin a new page</title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plbop</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
     <para>
@@ -422,7 +430,8 @@ origin
     <title><function>plbox</function>: Draw a box with axes, etc</title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plbox</function>
 	</funcdef>
@@ -432,6 +441,7 @@ origin
         <paramdef><parameter>yopt</parameter></paramdef>
         <paramdef><parameter>ytick</parameter></paramdef>
         <paramdef><parameter>nysub</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -625,7 +635,8 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plbox3</function>
 	</funcdef>
@@ -641,6 +652,7 @@ origin
         <paramdef><parameter>zlabel</parameter></paramdef>
         <paramdef><parameter>ztick</parameter></paramdef>
         <paramdef><parameter>nzsub</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
     <para>
@@ -948,11 +960,13 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plclr</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -968,11 +982,13 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcol</function>
 	</funcdef>
         <paramdef><parameter>color</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -988,11 +1004,13 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcol0</function>
 	</funcdef>
         <paramdef><parameter>color</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1044,10 +1062,12 @@ origin
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plcol1</function>
         </funcdef>
         <paramdef><parameter>col1</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -1078,7 +1098,8 @@ origin
     </title>
     
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcon0</function>
 	</funcdef>
@@ -1091,6 +1112,7 @@ origin
         <paramdef><parameter>ly</parameter></paramdef>
         <paramdef><parameter>clevel</parameter></paramdef>
         <paramdef><parameter>nlevel</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1192,7 +1214,8 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcon1</function>
 	</funcdef>
@@ -1207,6 +1230,7 @@ origin
         <paramdef><parameter>nlevel</parameter></paramdef>
         <paramdef><parameter>xg</parameter></paramdef>
         <paramdef><parameter>yg</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1329,7 +1353,8 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcon2</function>
 	</funcdef>
@@ -1344,6 +1369,7 @@ origin
         <paramdef><parameter>nlevel</parameter></paramdef>
         <paramdef><parameter>xg</parameter></paramdef>
         <paramdef><parameter>yg</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
     <para>
@@ -1464,7 +1490,8 @@ origin
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcont</function>
 	</funcdef>
@@ -1479,6 +1506,7 @@ origin
         <paramdef><parameter>nlevel</parameter></paramdef>
         <paramdef><parameter>pltr</parameter></paramdef>
         <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1587,7 +1615,8 @@ origin
 	  
 	  
 	  <para><anchor id="pltr"/>
-	      <funcsynopsis> 
+	      <funcsynopsis>
+	      <funcprototype>
 		<funcdef>
 		  <function>pltr</function>
 		</funcdef>
@@ -1596,6 +1625,7 @@ origin
 		<paramdef><parameter>tx</parameter></paramdef>
 		<paramdef><parameter>ty</parameter></paramdef>
 		<paramdef><parameter>pltr_data</parameter></paramdef>
+	      </funcprototype>
 	      </funcsynopsis>
 	  </para>
 	</listitem>
@@ -1651,6 +1681,7 @@ origin
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plcont</function>
 	</funcdef>
@@ -1663,6 +1694,7 @@ origin
         <paramdef><parameter>ly</parameter></paramdef>
         <paramdef><parameter>clevel</parameter></paramdef>
         <paramdef><parameter>nlevel</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1687,11 +1719,13 @@ reference stream to the current stream
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plcpstrm</function>
         </funcdef>
         <paramdef><parameter>iplsr</parameter></paramdef>
         <paramdef><parameter>flags</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -1743,11 +1777,13 @@ reference stream to the current stream
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plend</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1765,11 +1801,13 @@ reference stream to the current stream
     </title>
     
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plend1</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1786,7 +1824,8 @@ reference stream to the current stream
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plenv</function>
 	</funcdef>
@@ -1796,6 +1835,7 @@ reference stream to the current stream
         <paramdef><parameter>ymax</parameter></paramdef>
         <paramdef><parameter>just</parameter></paramdef>
         <paramdef><parameter>axis</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1947,11 +1987,13 @@ reference stream to the current stream
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pleop</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -1968,7 +2010,8 @@ reference stream to the current stream
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plerrx</function>
 	</funcdef>
@@ -1976,6 +2019,7 @@ reference stream to the current stream
         <paramdef><parameter>xmin</parameter></paramdef>
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2047,7 +2091,8 @@ error bar.
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plerry</function>
 	</funcdef>
@@ -2055,6 +2100,7 @@ error bar.
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2125,11 +2171,13 @@ error bar.
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plexit</function>
 	</funcdef>
         <paramdef><parameter>message</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2166,10 +2214,12 @@ next new page
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plfamadv</function>
         </funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2185,13 +2235,15 @@ next new page
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plfill</function>
 	</funcdef>
         <paramdef><parameter>n</parameter></paramdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2252,10 +2304,12 @@ next new page
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plflush</function>
         </funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2271,11 +2325,13 @@ next new page
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plfont</function>
 	</funcdef>
         <paramdef><parameter>font</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2329,11 +2385,13 @@ next new page
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plfontld</function>
 	</funcdef>
         <paramdef><parameter>set</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
     
@@ -2378,11 +2436,13 @@ next new page
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgchr</function>
         </funcdef>
         <paramdef><parameter>p_def</parameter></paramdef>
         <paramdef><parameter>p_ht</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2425,6 +2485,7 @@ from color map 0
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgcol0</function>
         </funcdef>
@@ -2432,6 +2493,7 @@ from color map 0
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2497,12 +2559,14 @@ negative if an invalid color id is given.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgcolbg</function>
         </funcdef>
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2555,10 +2619,12 @@ negative if an invalid color id is given.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgdev</function>
         </funcdef>
         <paramdef><parameter>p_dev</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2590,6 +2656,7 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgdidev</function>
         </funcdef>
@@ -2597,6 +2664,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>p_aspect</parameter></paramdef>
         <paramdef><parameter>p_jx</parameter></paramdef>
         <paramdef><parameter>p_jy</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2660,10 +2728,12 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgdiori</function>
         </funcdef>
         <paramdef><parameter>p_rot</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2694,6 +2764,7 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgdiplt</function>
         </funcdef>
@@ -2701,6 +2772,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>p_ymin</parameter></paramdef>
         <paramdef><parameter>p_xmax</parameter></paramdef>
         <paramdef><parameter>p_ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2763,13 +2835,15 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgfam</function>
 	</funcdef>
         <paramdef><parameter>fam</parameter></paramdef>
         <paramdef><parameter>num</parameter></paramdef>
         <paramdef><parameter>bmax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2824,11 +2898,13 @@ space for this (80 characters is safe).
     </title>
     
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgfile</function>
 	</funcdef>
         <paramdef><parameter>file</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
     
@@ -2858,11 +2934,13 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgfnam</function>
 	</funcdef>
         <paramdef><parameter>fnam</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -2893,10 +2971,12 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plglevel</function>
         </funcdef>
         <paramdef><parameter>p_level</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -2949,7 +3029,8 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgpage</function>
 	</funcdef>
@@ -2959,6 +3040,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>yleng</parameter></paramdef>
         <paramdef><parameter>xoff</parameter></paramdef>
         <paramdef><parameter>yoff</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3043,11 +3125,13 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgra</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3069,7 +3153,8 @@ space for this (80 characters is safe).
     </title>
     
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgspa</function>
 	</funcdef>
@@ -3077,6 +3162,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3146,11 +3232,13 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgstrm</function>
 	</funcdef>
         <paramdef><parameter>strm</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3181,10 +3269,12 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plgver</function>
         </funcdef>
         <paramdef><parameter>p_ver</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -3215,12 +3305,14 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgxax</function>
 	</funcdef>
         <paramdef><parameter>digmax</parameter></paramdef>
         <paramdef><parameter>digits</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3271,12 +3363,14 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgyax</function>
 	</funcdef>
         <paramdef><parameter>digmax</parameter></paramdef>
         <paramdef><parameter>digits</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3293,12 +3387,14 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plgzax</function>
 	</funcdef>
         <paramdef><parameter>digmax</parameter></paramdef>
         <paramdef><parameter>digits</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3315,7 +3411,8 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plhist</function>
 	</funcdef>
@@ -3325,6 +3422,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>datmax</parameter></paramdef>
         <paramdef><parameter>nbin</parameter></paramdef>
         <paramdef><parameter>oldwin</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3425,12 +3523,14 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plhls</function>
         </funcdef>
         <paramdef><parameter>h</parameter></paramdef>
         <paramdef><parameter>l</parameter></paramdef>
         <paramdef><parameter>s</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -3484,11 +3584,13 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plinit</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3515,7 +3617,8 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pljoin</function>
 	</funcdef>
@@ -3523,6 +3626,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>y1</parameter></paramdef>
         <paramdef><parameter>x2</parameter></paramdef>
         <paramdef><parameter>y2</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3588,13 +3692,15 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pllab</function>
 	</funcdef>
         <paramdef><parameter>xlabel</parameter></paramdef>
         <paramdef><parameter>ylabel</parameter></paramdef>
         <paramdef><parameter>tlabel</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3647,13 +3753,15 @@ space for this (80 characters is safe).
     </title>
 
     <para>
-      <funcsynopsis> 
+      <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plline</function>
 	</funcdef>
         <paramdef><parameter>n</parameter></paramdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3708,6 +3816,7 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plline3</function>
         </funcdef>
@@ -3715,6 +3824,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>z</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -3780,10 +3890,12 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pllsty</function>
 	</funcdef>
         <paramdef><parameter>n</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3816,6 +3928,7 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plmesh</function>
 	</funcdef>
@@ -3825,6 +3938,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>nx</parameter></paramdef>
         <paramdef><parameter>ny</parameter></paramdef>
         <paramdef><parameter>opt</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3954,6 +4068,7 @@ space for this (80 characters is safe).
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plmesh</function>
 	</funcdef>
@@ -3964,6 +4079,7 @@ space for this (80 characters is safe).
         <paramdef><parameter>ny</parameter></paramdef>
         <paramdef><parameter>opt</parameter></paramdef>
         <paramdef><parameter>mx</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -3997,10 +4113,12 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plmkstrm</function>
         </funcdef>
         <paramdef><parameter>p_strm</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -4037,6 +4155,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plmtex</function>
 	</funcdef>
@@ -4045,6 +4164,7 @@ default
         <paramdef><parameter>pos</parameter></paramdef>
         <paramdef><parameter>just</parameter></paramdef>
         <paramdef><parameter>text</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4178,6 +4298,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plot3d</function>
 	</funcdef>
@@ -4188,6 +4309,7 @@ default
         <paramdef><parameter>ny</parameter></paramdef>
         <paramdef><parameter>opt</parameter></paramdef>
         <paramdef><parameter>side</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4330,6 +4452,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plot3d</function>
 	</funcdef>
@@ -4341,6 +4464,7 @@ default
         <paramdef><parameter>opt</parameter></paramdef>
         <paramdef><parameter>side</parameter></paramdef>
         <paramdef><parameter>mx</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4373,10 +4497,12 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plpage</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4393,12 +4519,14 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plpat</function>
 	</funcdef>
         <paramdef><parameter>nlin</parameter></paramdef>
         <paramdef><parameter>inc</parameter></paramdef>
         <paramdef><parameter>del</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4462,6 +4590,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plpoin</function>
 	</funcdef>
@@ -4469,6 +4598,7 @@ default
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>code</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4540,6 +4670,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plpoin3</function>
         </funcdef>
@@ -4548,6 +4679,7 @@ default
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>z</parameter></paramdef>
         <paramdef><parameter>code</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -4622,6 +4754,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plpoly3</function>
         </funcdef>
@@ -4630,6 +4763,7 @@ default
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>z</parameter></paramdef>
         <paramdef><parameter>draw</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -4733,11 +4867,13 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plprec</function>
 	</funcdef>
         <paramdef><parameter>set</parameter></paramdef>
         <paramdef><parameter>prec</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4786,10 +4922,12 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plpsty</function>
 	</funcdef>
         <paramdef><parameter>n</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4821,6 +4959,7 @@ default
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plptex</function>
 	</funcdef>
@@ -4830,6 +4969,7 @@ default
         <paramdef><parameter>dy</parameter></paramdef>
         <paramdef><parameter>just</parameter></paramdef>
         <paramdef><parameter>text</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -4939,10 +5079,12 @@ current device/file
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
 	  <function>plreplot</function>
         </funcdef>
 	<paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -4959,12 +5101,14 @@ current device/file
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plrgb</function>
         </funcdef>
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5019,12 +5163,14 @@ Only retained for backward compatibility
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plrgb1</function>
         </funcdef>
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5078,11 +5224,13 @@ for backward compatibility.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plschr</function>
 	</funcdef>
         <paramdef><parameter>def</parameter></paramdef>
         <paramdef><parameter>scale</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -5129,6 +5277,7 @@ values
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscmap0</function>
         </funcdef>
@@ -5136,6 +5285,7 @@ values
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
         <paramdef><parameter>ncol0</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5200,10 +5350,12 @@ values
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscmap0n</function>
         </funcdef>
         <paramdef><parameter>ncol0</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5241,6 +5393,7 @@ values
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscmap1</function>
         </funcdef>
@@ -5248,6 +5401,7 @@ values
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
         <paramdef><parameter>ncol1</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5313,6 +5467,7 @@ piece-wise linear relationship
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscmap1l</function>
         </funcdef>
@@ -5323,6 +5478,7 @@ piece-wise linear relationship
         <paramdef><parameter>coord2</parameter></paramdef>
         <paramdef><parameter>coord3</parameter></paramdef>
         <paramdef><parameter>rev</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5465,10 +5621,12 @@ piece-wise linear relationship
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscmap1n</function>
         </funcdef>
         <paramdef><parameter>ncol1</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5506,6 +5664,7 @@ bit RGB value
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscol0</function>
         </funcdef>
@@ -5513,6 +5672,7 @@ bit RGB value
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5578,12 +5738,14 @@ result in any additional cells to be allocated.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscolbg</function>
         </funcdef>
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5636,10 +5798,12 @@ result in any additional cells to be allocated.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plscolor</function>
         </funcdef>
         <paramdef><parameter>color</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5670,10 +5834,12 @@ result in any additional cells to be allocated.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsdev</function>
         </funcdef>
         <paramdef><parameter>devname</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5705,6 +5871,7 @@ margin, aspect ratio, and justification.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsdidev</function>
         </funcdef>
@@ -5712,6 +5879,7 @@ margin, aspect ratio, and justification.
         <paramdef><parameter>aspect</parameter></paramdef>
         <paramdef><parameter>jx</parameter></paramdef>
         <paramdef><parameter>jy</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5780,6 +5948,7 @@ coordinates
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsdimap</function>
         </funcdef>
@@ -5789,6 +5958,7 @@ coordinates
         <paramdef><parameter>dimymax</parameter></paramdef>
         <paramdef><parameter>dimxpmm</parameter></paramdef>
         <paramdef><parameter>dimypmm</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5878,10 +6048,12 @@ rotation in units of pi/2
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsdiori</function>
         </funcdef>
         <paramdef><parameter>rot</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5912,6 +6084,7 @@ rotation in units of pi/2
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsdiplt</function>
         </funcdef>
@@ -5919,6 +6092,7 @@ rotation in units of pi/2
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -5983,6 +6157,7 @@ incrementally (zoom)
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsdiplz</function>
         </funcdef>
@@ -5990,6 +6165,7 @@ incrementally (zoom)
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -6053,10 +6229,12 @@ incrementally (zoom)
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plsesc</function>
         </funcdef>
         <paramdef><parameter>esc</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -6139,12 +6317,14 @@ characters and their corresponding decimal ASCII values:
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsfam</function>
 	</funcdef>
         <paramdef><parameter>fam</parameter></paramdef>
         <paramdef><parameter>num</parameter></paramdef>
         <paramdef><parameter>bmax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -6200,10 +6380,12 @@ characters and their corresponding decimal ASCII values:
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsfile</function>
 	</funcdef>
         <paramdef><parameter>file</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -6237,10 +6419,12 @@ characters and their corresponding decimal ASCII values:
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsfnam</function>
 	</funcdef>
         <paramdef><parameter>fnam</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -6275,6 +6459,7 @@ characters and their corresponding decimal ASCII values:
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plshade</function>
         </funcdef>
@@ -6300,6 +6485,7 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>rectangular</parameter></paramdef>
         <paramdef><parameter>pltr</parameter></paramdef>
         <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -6552,6 +6738,7 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plshade1</function>
         </funcdef>
@@ -6576,6 +6763,7 @@ argument.  NEEDS DOCUMENTATION
         <paramdef><parameter>rectangular</parameter></paramdef>
         <paramdef><parameter>pltr</parameter></paramdef>
         <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -6828,11 +7016,13 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsmaj</function>
 	</funcdef>
         <paramdef><parameter>def</parameter></paramdef>
         <paramdef><parameter>scale</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -6878,11 +7068,13 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsmin</function>
 	</funcdef>
         <paramdef><parameter>def</parameter></paramdef>
         <paramdef><parameter>scale</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -6928,10 +7120,12 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsori</function>
 	</funcdef>
         <paramdef><parameter>ori</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -6968,6 +7162,7 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plspage</function>
 	</funcdef>
@@ -6977,6 +7172,7 @@ argument.  NEEDS DOCUMENTATION
         <paramdef><parameter>yleng</parameter></paramdef>
         <paramdef><parameter>xoff</parameter></paramdef>
         <paramdef><parameter>yoff</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7065,10 +7261,12 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plspause</function>
         </funcdef>
         <paramdef><parameter>pause</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -7099,10 +7297,12 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsstrm</function>
 	</funcdef>
         <paramdef><parameter>strm</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7136,11 +7336,13 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plssub</function>
         </funcdef>
         <paramdef><parameter>nx</parameter></paramdef>
         <paramdef><parameter>ny</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -7182,11 +7384,13 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plssym</function>
 	</funcdef>
         <paramdef><parameter>def</parameter></paramdef>
         <paramdef><parameter>scale</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7232,11 +7436,13 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plstar</function>
 	</funcdef>
         <paramdef><parameter>nx</parameter></paramdef>
         <paramdef><parameter>ny</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7288,12 +7494,14 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plstart</function>
 	</funcdef>
         <paramdef><parameter>device</parameter></paramdef>
         <paramdef><parameter>nx</parameter></paramdef>
         <paramdef><parameter>ny</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7360,6 +7568,7 @@ argument.  NEEDS DOCUMENTATION
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plstripa</function>
         </funcdef>
@@ -7367,6 +7576,7 @@ argument.  NEEDS DOCUMENTATION
         <paramdef><parameter>p</parameter></paramdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -7431,6 +7641,7 @@ necessary.
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plstripc</function>
         </funcdef>
@@ -7454,6 +7665,7 @@ necessary.
         <paramdef><parameter>labx</parameter></paramdef>
         <paramdef><parameter>laby</parameter></paramdef>
         <paramdef><parameter>labtop</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -7694,10 +7906,12 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
         <funcdef>
            <function>plstripd</function>
         </funcdef>
         <paramdef><parameter>id</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis> 
     </para> 
 
@@ -7728,12 +7942,14 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plstyl</function>
 	</funcdef>
         <paramdef><parameter>nels</parameter></paramdef>
         <paramdef><parameter>mark</parameter></paramdef>
         <paramdef><parameter>space</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7802,6 +8018,7 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsvpa</function>
 	</funcdef>
@@ -7809,6 +8026,7 @@ stripchart
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7879,11 +8097,13 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsxax</function>
 	</funcdef>
         <paramdef><parameter>digmax</parameter></paramdef>
         <paramdef><parameter>digits</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7937,11 +8157,13 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsyax</function>
 	</funcdef>
         <paramdef><parameter>digmax</parameter></paramdef>
         <paramdef><parameter>digits</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -7959,6 +8181,7 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plsym</function>
 	</funcdef>
@@ -7966,6 +8189,7 @@ stripchart
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>code</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8035,11 +8259,13 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plszax</function>
 	</funcdef>
         <paramdef><parameter>digmax</parameter></paramdef>
         <paramdef><parameter>digits</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8057,10 +8283,12 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>pltext</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8088,10 +8316,12 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plvasp</function>
 	</funcdef>
         <paramdef><parameter>aspect</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8124,6 +8354,7 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plvpas</function>
 	</funcdef>
@@ -8132,6 +8363,7 @@ stripchart
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
         <paramdef><parameter>aspect</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8215,6 +8447,7 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plvpor</function>
 	</funcdef>
@@ -8222,6 +8455,7 @@ stripchart
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8293,10 +8527,12 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plvsta</function>
 	</funcdef>
         <paramdef></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8315,6 +8551,7 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plw3d</function>
 	</funcdef>
@@ -8329,6 +8566,7 @@ stripchart
         <paramdef><parameter>zmax</parameter></paramdef>
         <paramdef><parameter>alt</parameter></paramdef>
         <paramdef><parameter>az</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8503,10 +8741,12 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plwid</function>
 	</funcdef>
         <paramdef><parameter>width</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
@@ -8538,6 +8778,7 @@ stripchart
 
     <para>
       <funcsynopsis>
+      <funcprototype>
 	<funcdef>
 	  <function>plwind</function>
 	</funcdef>
@@ -8545,6 +8786,7 @@ stripchart
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymin</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
+      </funcprototype>
       </funcsynopsis>
     </para>
 
