@@ -414,7 +414,7 @@ PLSMIN(PLFLT *def, PLFLT *scale)
 void
 PLSETOPT7(char *opt, char *optarg)
 {
-    c_plSetOpt(opt, optarg);
+    c_plsetopt(opt, optarg);
 }
 
 void

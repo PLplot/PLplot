@@ -653,7 +653,13 @@ static int  tables = 1;
 \*--------------------------------------------------------------------------*/
 
 int
-c_plSetOpt(char *opt, char *optarg)
+c_plsetopt(char *opt, char *optarg)
+{
+    plSetOpt(opt, optarg);
+}
+
+int
+plSetOpt(char *opt, char *optarg)
 {
     int mode = 0, argc = 2, status;
     char *argv[3];

@@ -48,7 +48,7 @@ main(void)
 
 /* Set up first stream */
 
-    plSetOpt("geometry", geometry_master);
+    plsetopt("geometry", geometry_master);
 
     plsdev(driver);
     plssub(2, 2);
@@ -60,7 +60,7 @@ main(void)
 
 /* Turn off pause to make this a slave (must follow master) */
 
-    plSetOpt("geometry", geometry_slave);
+    plsetopt("geometry", geometry_slave);
     plspause(0);
     plsdev(driver);
     plinit();

@@ -487,7 +487,7 @@ typedef struct {
 #define    plsdidev	c_plsdidev
 #define    plsdimap	c_plsdimap
 #define    plsdiori	c_plsdiori
-#define    plSetOpt	c_plSetOpt
+#define    plsetopt	c_plsetopt
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
@@ -610,7 +610,7 @@ typedef struct {
 #define    c_plsdidev	plsdidev
 #define    c_plsdimap	plsdimap
 #define    c_plsdiori	plsdiori
-#define    c_plSetOpt	plSetOpt
+#define    c_plsetopt	plsetopt
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
@@ -1488,6 +1488,11 @@ void
 plSetUsage(char *program_string, char *usage_string);
 
 /* Process input strings, treating them as an option and argument pair. */
+/* The first is for the external API, the second the work routine declared
+   here for backward compatibilty. */
+
+int
+c_plsetopt(char *opt, char *optarg);
 
 int
 plSetOpt(char *opt, char *optarg);

@@ -37,8 +37,8 @@ main(int argc, char *argv[])
 /* If db is used the plot is much more smooth. However, because of the
    async X behaviour, one does not have a real-time scripcharter.
 */
-    plSetOpt("db", "");
-    plSetOpt("np", "");
+    plsetopt("db", "");
+    plsetopt("np", "");
 
 /* User sets up plot completely except for window and data 
  * Eventually settings in place when strip chart is created will be
