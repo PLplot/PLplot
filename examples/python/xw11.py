@@ -98,7 +98,7 @@ def main():
 	    plcol0(1)
 	    plvpor(0.0, 1.0, 0.0, 0.9)
 	    plwind(-1.0, 1.0, -1.0, 1.5)
-	    plw3d(1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, -7., 8., alt[k], az[k])
+	    plw3d(1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax, alt[k], az[k])
 	    plbox3("bnstu", "x axis", 0.0, 0,
 		"bnstu", "y axis", 0.0, 0,
 		"bcdmnstuv", "z axis", 0.0, 4)

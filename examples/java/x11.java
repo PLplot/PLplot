@@ -125,7 +125,7 @@ class x11 {
 	       pls.plvpor(0.0, 1.0, 0.0, 0.9);
 	       pls.plwind(-1.0, 1.0, -1.0, 1.5);
 
-	       pls.plw3d( 1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, -7., 8.,
+	       pls.plw3d( 1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax,
 			  alt[k], az[k] );
 	       pls.plbox3( "bnstu", "x axis", 0.0, 0,
 			   "bnstu", "y axis", 0.0, 0,

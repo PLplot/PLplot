@@ -132,7 +132,7 @@ proc x11 {{w loopback}} {
 	$w cmd plvpor 0.0 1.0 0.0 0.9
 	$w cmd plwind -1.0 1.0 -1.0 1.5
 
-	$w cmd plw3d 1.0 1.0 1.2 -3.0 3.0 -3.0 3.0 -7. 8. [alt $k] [az $k]
+	$w cmd plw3d 1.0 1.0 1.2 -3.0 3.0 -3.0 3.0 $zmin $zmax [alt $k] [az $k]
 	$w cmd plbox3 "bnstu" "x axis" 0.0 0 \
 	    "bnstu" "y axis" 0.0 0 \
 	    "bcdmnstuv" "z axis" 0.0 4
