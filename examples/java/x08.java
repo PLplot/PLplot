@@ -60,7 +60,7 @@ class x08 {
         rev[1] = 0;         // interpolate on front side of colour wheel.
 	  
         pls.scmap1n(256);
-        //API pls.scmap1l(0, 2, i, h, l, s, rev);
+        pls.scmap1l(0, 2, i, h, l, s, rev);
     }
    
      
