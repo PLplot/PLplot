@@ -15,19 +15,16 @@ def main():
 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
-    i = 0.1*arrayrange(11)
+    i = 0.1*arrayrange(1,11)
     #outerproduct(i,x0) and outerproduct(i,y0) is what we are 
     #mocking up here since old numpy version does not have outerproduct.
     i.shape = (-1,1)
     x=i*x0
     y=i*y0
-    #flatten result
-    x.shape = (-1,)
-    y.shape = (-1,)
     
     # Draw circles for polar grid
-
-    plline(x, y)
+    for i in range(10):
+	plline(x[i], y[i])
 
     plcol0(2)
     for i in range(12):
@@ -42,7 +39,8 @@ def main():
 	# Write labels for angle
 
 	text = `int(theta)`
-	if dx >= 0:
+#Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
+	if dx >= -0.00001:
 	    plptex(dx, dy, dx, dy, -0.15, text)
 	else:
 	    plptex(dx, dy, -dx, -dy, 1.15, text)
