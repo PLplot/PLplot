@@ -5,6 +5,7 @@
 	the search path used in finding the font files.
 */
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #include <float.h>
 #include <ctype.h>

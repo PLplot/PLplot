@@ -26,6 +26,7 @@
     Data can be written to/read from either a file handle or memory buffer.
 */
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 
 static void print_ieeef	(void *, void *);
