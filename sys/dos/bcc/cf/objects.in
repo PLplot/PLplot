@@ -17,8 +17,8 @@ OBJ =   \
 	plctrl.obj \
 	plcvt.obj \
 	plpage.obj \
-	plstream.obj \
-	plshade.obj
+	plshade.obj \
+	plmap.obj
 
 DRV_OBJ = \
 	pdfutils.obj \
@@ -29,20 +29,5 @@ DRV_OBJ = \
 	tek.obj \
 	dosbgi.obj \
 	win3.obj \
+	null.obj \
 	plmeta.obj
-
-libs:   libc
-libc:   $(PLLIBS)\plplot.lib
-
-$(PLLIBS)\plplot.lib: $(OBJ) $(DRV_OBJ)
-	@echo Ready to build plplot.lib
-	-@del plplot.lib
-	tlib @&&!
-plplot\
-+$(OBJ:.obj=.obj +)\
-$(DRV_OBJ:.obj=.obj +)\
-,plplot.lst
-!
-
-plrender: plrender.exe
-

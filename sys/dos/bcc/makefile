@@ -33,25 +33,22 @@ META =  PLD_plmeta
 #HPGL = PLD_hp7470
 #HPGLL = PLD_hp7580
 #LJHPGL = PLD_lj_hpgl
-#NULL = PLD_null
+NULL = PLD_null
 
 BGI = PLD_bgi
 WIN3 = PLD_win3
 
 default:
-  @echo ``
-  @echo `Usage : make win3 or make bgi`
-  @echo ``
-links:
+  @echo Usage : make win3 , make bgi or make files
+files:
 #
 # Copy the necessary files to the temp dir
 #
-  @echo ``
-  @echo `Copying source files to $(PLTMP)`
-  @echo ``
+  @echo Copying source files to $(PLTMP)
   @copy $(PLDIR)\src\*.c $(PLTMP)
   @copy $(PLDIR)\include\*.h $(PLTMP)
   @copy $(PLDIR)\examples\c\*.c $(PLTMP)
+  @copy $(PLDIR)\examples\c\*.h $(PLTMP)
   @copy $(PLDIR)\drivers\*.* $(PLTMP)
   @copy $(PLDIR)\utils\*.* $(PLTMP)
 #
@@ -64,9 +61,7 @@ links:
 #
 # Convert from Unix -> Dos
 #
-  @echo ``
-  @echo `Converting Unix->Dos (add CRs)`
-  @echo ``
+  @echo Converting Unix to Dos (add CRs)
   @crlf -fs $(PLTMP)\*.c
   @crlf -fs $(PLTMP)\*.h
   @crlf -fs $(PLTMP)\*.rc
@@ -74,9 +69,7 @@ links:
 #
 # Make some include file available everywhere
 #
-  @echo ``
-  @echo `Putting some .h files in default include directory`
-  @echo ``
+  @echo Putting some .h files in default include directory
   @copy $(PLDIR)\include\plplot.h $(BCCINCLUDE)
   @copy $(PLDIR)\include\pdf.h $(BCCINCLUDE)
 
@@ -84,71 +77,68 @@ common:
 #
 # Create plconfig.h file
 #
-  @echo ``
-  @echo `Creating $(PLTMP)\plconfig.h`
-  @wcr ifndef __PLCONFIG_H__ > $(PLTMP)\plconfig.h
-  @wcr define __PLCONFIG_H__ >> $(PLTMP)\plconfig.h
-  @wcr define LIB_DIR "$(PLLIB:\=\\)" >> $(PLTMP)\plconfig.h
-  @wcr define BIN_DIR "$(PLBIN:\=\\)" >> $(PLTMP)\plconfig.h
-  @wcr endif >> $(PLTMP)\plconfig.h
+  @echo off
+  @echo Creating $(PLTMP)\plconfig.h
+  @echoo /c ifndef __PLCONFIG_H__ > $(PLTMP)\plconfig.h
+  @echoo /c define __PLCONFIG_H__ >> $(PLTMP)\plconfig.h
+  @echoo /c define LIB_DIR \"$(PLLIB:\=\\)\" >> $(PLTMP)\plconfig.h
+  @echoo /c define BIN_DIR \"$(PLBIN:\=\\)\" >> $(PLTMP)\plconfig.h
+  @echoo /c endif >> $(PLTMP)\plconfig.h
 #
 # Create pldevs.h file
 #
-  @echo ``
-  @echo `Creating $(PLTMP)\pldevs.h`
+  @echo Creating $(PLTMP)\pldevs.h
 !ifdef META
-  @wcr define PLD_plmeta > $(PLTMP)\pldevs.h
+  @echoo /c define PLD_plmeta > $(PLTMP)\pldevs.h
 !endif
 !ifdef PS
-  @wcr define PLD_ps >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_ps >> $(PLTMP)\pldevs.h
 !endif
 !ifdef XFIG 
-  @wcr define PLD_xfig >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_xfig >> $(PLTMP)\pldevs.h
 !endif
 !ifdef LJII 
-  @wcr define PLD_ljii >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_ljii >> $(PLTMP)\pldevs.h
 !endif
 !ifdef HPGL
-  @wcr define PLD_hp7470 >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_hp7470 >> $(PLTMP)\pldevs.h
 !endif
 !ifdef HPGLL
-  @wcr define PLD_hp7580 >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_hp7580 >> $(PLTMP)\pldevs.h
 !endif
 !ifdef LJHPGL
-  @wcr define PLD_lj_hpgl >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_lj_hpgl >> $(PLTMP)\pldevs.h
 !endif
 !ifdef NULL
-  @wcr define PLD_null >> $(PLTMP)\pldevs.h
+  @echoo /c define PLD_null >> $(PLTMP)\pldevs.h
 !endif
 #
 # Write first part of the makefile
 #
-  @echo ``
-  @echo `Creating $(PLTMP)\makefile`
-  @echo `` > $(PLTMP)\makefile
+  @echo Creating $(PLTMP)\makefile
 #
 # Compiler options
 #
-  @echo `CC = bcc` >> $(PLTMP)\makefile
-  @echo `CFLAGS = -3 -f287 -Od -ml -P -v -w-par -DMSDOS` >> $(PLTMP)\makefile
-  @echo `BRC = brc` >> $(PLTMP)\makefile
-  @echo `BRCFLAGS =` >> $(PLTMP)\makefile
+  @echoo CC = bcc > $(PLTMP)\makefile
+  @echoo CFLAGS = -3 -f287 -Od -ml -P -v -w-par -DMSDOS >> $(PLTMP)\makefile
+  @echoo BRC = brc >> $(PLTMP)\makefile
+  @echoo BRCFLAGS = >> $(PLTMP)\makefile
 
-win3: links common
-  @wcr define $(WIN3) >> $(PLTMP)\pldevs.h
+win3: common
+  @echoo /c define $(WIN3) >> $(PLTMP)\pldevs.h
 #
 # Add Windows definitions to the makefile
 #
-  @type cf\win3.in >> $(PLTMP)\makefile
   @type cf\objects.in >> $(PLTMP)\makefile
+  @type cf\win3.in >> $(PLTMP)\makefile
   @type cf\demos.in >> $(PLTMP)\makefile
 
-bgi: links common
-  @wcr define $(BGI) >> $(PLTMP)\pldevs.h
+bgi: common
+  @echoo /c define $(BGI) >> $(PLTMP)\pldevs.h
 #
 # Add dos/bgi definitions to the makefile
 #
-  @type cf\bgi.in >> $(PLTMP)\makefile
   @type cf\objects.in >> $(PLTMP)\makefile
+  @type cf\bgi.in >> $(PLTMP)\makefile
   @type cf\demos.in >> $(PLTMP)\makefile
 

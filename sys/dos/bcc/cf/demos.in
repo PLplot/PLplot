@@ -3,6 +3,21 @@
 cdemos: x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
 	x12c x13c x15c tutor
 
+x01c.exe:       $(PLLIB)
+x02c.exe:       $(PLLIB)
+x03c.exe:       $(PLLIB)
+x04c.exe:       $(PLLIB)
+x05c.exe:       $(PLLIB)
+x06c.exe:       $(PLLIB)
+x07c.exe:       $(PLLIB)
+x08c.exe:       $(PLLIB)
+x09c.exe:       $(PLLIB)
+x10c.exe:       $(PLLIB)
+x11c.exe:       $(PLLIB)
+x12c.exe:       $(PLLIB)
+x13c.exe:       $(PLLIB)
+x15c.exe:       $(PLLIB)
+
 x01c:   x01c.exe 
 x02c:   x02c.exe
 x03c:   x03c.exe

@@ -1,7 +1,7 @@
 /* $Id$
    $Log$
-   Revision 1.1  1994/09/19 18:53:56  mjl
-   New DOS/BGI (bcc) PLplot driver files, from Paul Casteels.
+   Revision 1.2  1995/06/24 06:58:58  mjl
+   Latest bcc distribution from Paul Casteels.
 
  * Revision 1.3  1994/08/10  01:16:36  mjl
  * Updates to the DOS BGI (BCC) driver, submitted by Paul Casteels.
