@@ -13,8 +13,7 @@
 # include, lib, man (eventually), and tcl. 
 # -----------------------------------------------------------------------
 
-install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) \
-	install_examples
+install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) install_demos
 
 install_lib:
 	-if [ ! -d $(INSTALL_DIR) ] ; then mkdir -p $(INSTALL_DIR); fi
@@ -23,20 +22,29 @@ install_lib:
 	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
 	-if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR); fi
 	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
-	-cp ../mklinks $(INSTALL_DIR)
 	-cp ../lib/libplplot* ../lib/*.fnt $(LIB_DIR)
 	$(RANLIB) $(LIB_DIR)/libplplot*.*
-	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo $(DOC_DIR)
+	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks \
+		$(DOC_DIR)
 	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
 		cp ../README.local $(DOC_DIR); fi
+	-cp ../doc/*.info $(INFO_DIR)
 	-cd ../scripts; cp pl* $(BIN_DIR)
 	-cd ../include; \
 	cp plplotP.h plplot.h plplotX.h plplotTK.h \
 	   plevent.h plstream.h pdf.h tclMatrix.h \
 		$(INCLUDE_DIR)
 
-install_examples:
-	-cp -r ../examples $(DEMOS_DIR)
+install_demos:
+	-if [ ! -d $(DEMOS_DIR) ] ; then mkdir -p $(DEMOS_DIR); fi
+	-if [ ! -d $(DEMOS_DIR)/C ] ; then mkdir -p $(DEMOS_DIR)/C; fi
+	-if [ ! -d $(DEMOS_DIR)/f77 ] ; then mkdir -p $(DEMOS_DIR)/f77; fi
+	-if [ ! -d $(DEMOS_DIR)/tcl ] ; then mkdir -p $(DEMOS_DIR)/tcl; fi
+	-if [ ! -d $(DEMOS_DIR)/tk ] ; then mkdir -p $(DEMOS_DIR)/tk; fi
+	-cp ../examples/C/* $(DEMOS_DIR)/C
+	-cp ../examples/f77/* $(DEMOS_DIR)/f77
+	-cp ../examples/tcl/* $(DEMOS_DIR)/tcl
+	-cp ../examples/tk/* $(DEMOS_DIR)/tk
 
 install_utils:
 	$(LDC) $(LDC_FLAGS) plrender.o $(LIB_INSTALL) \
