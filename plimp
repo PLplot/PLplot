@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cd ..
+if [ -f plplot.tar.gz ]; then
+        echo "Gunzip plplot.tar.gz"
+        gunzip plplot.tar.gz
+
+        echo "untarring plplot.tar"
+        tar xvf plplot.tar
+
+        echo "Updating .import"
+        touch plplot/.import
+
+else
+        echo "No file plplot.tar.gz.  Do you know what you're doing?"
+fi
