@@ -37,7 +37,7 @@ plplot_config_result_msg="
 Configure results:
 
 command:	$plplot_config_invocation
-system:		$host
+host:		$host
 have_x:		$have_x
 prefix:		$prefix
 CC:		$CC $CC_FLAGS"

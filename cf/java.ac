@@ -58,12 +58,12 @@ if test "$enable_java" = "yes"; then
 	    AC_MSG_RESULT(yes)
         else
         # Now we need to find the machine dependent directory.
-            case $system in
-                Linux* )
+            case $host-os in
+                linux* )
                     JAVAMDINCDIR="$JAVAINCDIR/linux"
 		    AC_MSG_RESULT(yes)
                 ;;
-                SunOS-5* )
+                solaris* )
                     JAVAMDINCDIR="$JAVAINCDIR/solaris"
 		    AC_MSG_RESULT(yes)
                 ;;

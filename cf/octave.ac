@@ -155,8 +155,8 @@ dnl ******************************************************************
 dnl Variables are set only if the C++ compiler is g++
 
 MKOCTFILE_VARS=
-case "$system" in
-    NetBSD* )
+case "$host_os" in
+    netbsd* )
         if test "$CXX" = g++ ; then
             MKOCTFILE_VARS='SH_LD="g++" SH_LDFLAGS="-shared"'
 	    AC_MSG_WARN([Setting mkoctfile variables for broken NetBSD system])
