@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.50  1994/09/16 05:35:45  mjl
+ * Revision 1.51  1994/09/16 06:27:51  mjl
+ * Fixed problem with if-test for display name introduced last update.
+ *
+ * Revision 1.50  1994/09/16  05:35:45  mjl
  * Inserted workaround for cases where NULL was being used as argument to
  * strcmp (some systems don't like it).
  *
@@ -570,14 +573,15 @@ Init(PLStream *pls)
     for (i = 0; i < PLXDISPLAYS; i++) {
 	if (pls->FileName == NULL && xwDisplay[i] == NULL) {
 	    dev->xwd = xwDisplay[i];
+	    break;
 	}
 	else if (pls->FileName == NULL || xwDisplay[i] == NULL) {
 	    continue;
 	}
 	else if (strcmp(xwDisplay[i]->displayName, pls->FileName) == 0) {
 	    dev->xwd = xwDisplay[i];
+	    break;
 	}
-	break;
     }
 
 /* If no display matched, create a new one */
