@@ -177,16 +177,28 @@ fi
 
 # ----------------------------------------------------------------------------
 # Set up C++ compiler
-# If gcc has been specified, use that.  Otherwise do NOT use gcc.
-# Mixing/matching compilers is best left to the experts.
-
-if test "$with_gcc" = "yes"; then
-    if test ! "$enable_cxx" = "no"; then
-	enable_cxx=yes
-    fi
-fi
 
 if test "$enable_cxx" = "yes"; then
+
+    # If KAI C++ (Kuck and Associates) is available, use that.
+
+    if test -z "$CXX" -o "$CXX" = "KCC"; then
+	found_cxx=
+	AC_CHECK_PROG(found_cxx, KCC, yes, no)
+	if test "$found_cxx" = "yes" ; then
+	    AC_MSG_RESULT([Found KAI C++, using that!])
+	    CXX=KCC
+	    # Thread-safety is probably best.  It must be supplied when both
+	    # compiling and linking.  Note thread-safe C++ is not
+	    # link-compatible with (the default) non-thread-safe C++.
+	    SYS_FLAGS_CXX=--thread_safe
+	    SYS_FLAGS_LCXX=--thread_safe
+	fi
+    fi
+
+    # If gcc has been specified, use that.  Otherwise do NOT use gcc.
+    # Mixing/matching compilers is best left to the experts.
+
     if test -z "$CXX"; then
 	if test "$with_gcc" = "yes"; then
 	    # Need to use 'g++' with gcc for proper operation
@@ -203,29 +215,16 @@ if test "$enable_cxx" = "yes"; then
 	    esac
 	fi
     fi
-fi
 
-found_cxx=no
+    # Try to find C++ compiler.  If not found, switch enable_cxx to "no".
 
-# If Kuck and Associates, Inc, Photon C++ is available, use that.
-
-if test "$enable_cxx" = "yes" -a -z "$CXX"; then
-    AC_CHECK_PROG(found_photon, KCC, yes, no)
-    if test "$found_photon" = "yes" ; then
-	AC_MSG_RESULT([Found KAI C++, using that!])
-	CXX=KCC
-	found_cxx=yes
-    fi
-fi
-
-# Try to find C++ compiler.  If not found, switch enable_cxx to "no".
-
-if test "$enable_cxx" = "yes" -a "$found_cxx" = "no"; then
-    found_cxx=""
-    AC_CHECK_PROG(found_cxx, $CXX, yes, no)
-    if test "$found_cxx" = "no" ; then
-	AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
-	enable_cxx=no
+    if test ! "$found_cxx" = "yes"; then
+	found_cxx=
+	AC_CHECK_PROG(found_cxx, $CXX, yes, no)
+	if test "$found_cxx" = "no" ; then
+	    AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
+	    enable_cxx=no
+	fi
     fi
 fi
 
