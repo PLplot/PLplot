@@ -479,13 +479,6 @@ for ac_site_file in $CONFIG_SITE; do
   fi
 done
 
-if test -r "$cache_file"; then
-  echo "loading cache $cache_file"
-  . $cache_file
-else
-  echo "creating cache $cache_file"
-  > $cache_file
-fi
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -524,6 +517,7 @@ fi
 # can always use copy.  At least you will only have to do it once.
 # ----------------------------------------------------------------------------
 
+plplot_config_invocation="$0 $*"
 if test `pwd` = `(cd $srcdir; pwd)`; then
     echo "$ac_t""setting up to configure in tmp directory -- hold on..." 1>&6
     if test ! -d tmp; then
@@ -531,7 +525,9 @@ if test `pwd` = `(cd $srcdir; pwd)`; then
     fi
     cd tmp
     exec ../configure "$@"
+    plplot_config_invocation="$0 $*"
 fi
+
 
 
 # ----------------------------------------------------------------------------
@@ -584,15 +580,49 @@ if test "$system" ; then
 fi
 
 # ----------------------------------------------------------------------------
-# Defaults based on system.
-# Mostly just to handle systems where optimization is iffy.
+# Set up defaults and command line args.
 # ----------------------------------------------------------------------------
 
-with_opt_default=yes
+# --*-sh-*--------------------------------------------------------------------
+#
+# defaults.in
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 7-Jun-1994
+#
+# Sets up some default variables based on system type.  Doing it this way
+# ensures that user preferences are respected.
+# ----------------------------------------------------------------------------
+
+default_with_debug=no
+default_with_opt=yes
+default_with_double=no
+default_with_profile=no
+default_with_shlib=yes
+default_with_f2c=no
+default_with_gcc=no
+default_with_warn=no
+default_with_dbmalloc=no
+default_enable_drivers=yes
+default_enable_f77=yes
+default_enable_cxx=yes
+default_enable_python=yes
 
 case "$system" in
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	with_opt_default=no
+	default_with_opt=no
+    ;;
+    linux*|LINUX*|Linux* ) 
+	default_with_gcc=yes
+	default_with_f2c=yes
+    ;;
+    next*|NeXT*|NEXT* ) 
+	default_with_gcc=yes
+	default_with_f2c=yes
+    ;;
+    ultrix*|ULTRIX* ) 
+	default_with_gcc=yes
     ;;
 esac
 
@@ -617,7 +647,7 @@ withval="$with_debug"
 if test -n "$withval"; then
   :
 else
-  with_debug="no"
+  with_debug=$default_with_debug
 fi
 # Check whether --enable-debug or --disable-debug was given.
 enableval="$enable_debug"
@@ -645,7 +675,7 @@ withval="$with_double"
 if test -n "$withval"; then
   :
 else
-  with_double="no"
+  with_double=$default_with_double
 fi
 # Check whether --enable-double or --disable-double was given.
 enableval="$enable_double"
@@ -659,7 +689,7 @@ withval="$with_profile"
 if test -n "$withval"; then
   :
 else
-  with_profile="no"
+  with_profile=$default_with_profile
 fi
 # Check whether --enable-profile or --disable-profile was given.
 enableval="$enable_profile"
@@ -673,7 +703,7 @@ withval="$with_shlib"
 if test -n "$withval"; then
   :
 else
-  with_shlib="yes"
+  with_shlib=$default_with_shlib
 fi
 # Check whether --enable-shlib or --disable-shlib was given.
 enableval="$enable_shlib"
@@ -687,7 +717,7 @@ withval="$with_f2c"
 if test -n "$withval"; then
   :
 else
-  with_f2c="no"
+  with_f2c=$default_with_f2c
 fi
 # Check whether --enable-f2c or --disable-f2c was given.
 enableval="$enable_f2c"
@@ -701,7 +731,7 @@ withval="$with_gcc"
 if test -n "$withval"; then
   :
 else
-  with_gcc="no"
+  with_gcc=$default_with_gcc
 fi
 # Check whether --enable-gcc or --disable-gcc was given.
 enableval="$enable_gcc"
@@ -715,7 +745,7 @@ withval="$with_warn"
 if test -n "$withval"; then
   :
 else
-  with_warn="no"
+  with_warn=$default_with_warn
 fi
 # Check whether --enable-warn or --disable-warn was given.
 enableval="$enable_warn"
@@ -729,7 +759,7 @@ withval="$with_dbmalloc"
 if test -n "$withval"; then
   :
 else
-  with_dbmalloc="no"
+  with_dbmalloc=$default_with_dbmalloc
 fi
 # Check whether --enable-dbmalloc or --disable-dbmalloc was given.
 enableval="$enable_dbmalloc"
@@ -743,7 +773,7 @@ enableval="$enable_drivers"
 if test -n "$enableval"; then
   :
 else
-  enable_drivers="yes"
+  enable_drivers=$default_enable_drivers
 fi
 # Check whether --with-drivers or --without-drivers was given.
 withval="$with_drivers"
@@ -757,7 +787,7 @@ enableval="$enable_f77"
 if test -n "$enableval"; then
   :
 else
-  enable_f77="yes"
+  enable_f77=$default_enable_f77
 fi
 # Check whether --with-f77 or --without-f77 was given.
 withval="$with_f77"
@@ -771,7 +801,7 @@ enableval="$enable_cxx"
 if test -n "$enableval"; then
   :
 else
-  enable_cxx="yes"
+  enable_cxx=$default_enable_cxx
 fi
 # Check whether --with-cxx or --without-cxx was given.
 withval="$with_cxx"
@@ -785,13 +815,15 @@ enableval="$enable_python"
 if test -n "$enableval"; then
   :
 else
-  enable_python="yes"
+  enable_python=$default_enable_python
 fi
 # Check whether --with-python or --without-python was given.
 withval="$with_python"
 if test -n "$withval"; then
   { echo "configure: error: unrecognized variable: with_python" 1>&2; exit 1; }
 fi
+
+
 
 
 # ----------------------------------------------------------------------------
@@ -954,9 +986,7 @@ fi
 #
 # The actual setup for gcc or f2c is done AFTER the case statements.  Done
 # this way because they're pretty predictable across platforms, and this
-# way we can just override what is set below.  Systems that use gcc or f2c
-# by default should set shell variables as follows: with_gcc=yes (to get
-# gcc), or with_f2c=yes (to get f2c).  IMPORTANT: the command line
+# way we can just override what is set below.  IMPORTANT: the command line
 # argument uses a "-" (dash) to separate words, while the shell variable
 # uses a "_" (underscore).
 # ----------------------------------------------------------------------------
@@ -985,21 +1015,12 @@ if test -z "$CC"; then
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc -ansi"
 	;;
-	linux*|LINUX*|Linux* ) 
-	    with_gcc=yes
-	;;
-	next*|NeXT*|NEXT* ) 
-	    with_gcc=yes
-	;;
 	SunOS-4* )
 	    CC=acc
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    CC="cc -hansi"
 	    with_gcc=no
-	;;
-	ultrix*|ULTRIX* ) 
-	    with_gcc=yes
 	;;
 	CRAY* ) 
 	    with_gcc=no
@@ -1117,12 +1138,6 @@ if test -z "$F77"; then
 
 	    F77=fort77
 	;;
-	linux*|LINUX*|Linux* ) 
-	    with_f2c=yes
-	;;
-	next*|NeXT*|NEXT* ) 
-	    with_f2c=yes
-	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    # The f77 front-end uses a cc-like set of command line flags,
 	    # but I've had problems with it, so use f77sx here instead.
@@ -1180,7 +1195,7 @@ fi
 if test "$with_gcc" = "yes"; then
     CC=gcc
     CXX=gcc
-    OCC="gcc -traditional"
+    OCC=gcc
     CPP="gcc -E"
 
     if test "$with_warn" = "yes"; then
@@ -1525,7 +1540,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1529 "configure"
+#line 1544 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1539,7 +1554,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1543 "configure"
+#line 1558 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1682,7 +1697,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1686 "configure"
+#line 1701 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1745,7 +1760,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1749 "configure"
+#line 1764 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1831,7 +1846,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1835 "configure"
+#line 1850 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1888,7 +1903,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1892 "configure"
+#line 1907 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2788,7 +2803,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2792 "configure"
+#line 2807 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2850,7 +2865,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2854 "configure"
+#line 2869 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2883,7 +2898,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2887 "configure"
+#line 2902 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2916,7 +2931,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2920 "configure"
+#line 2935 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2949,7 +2964,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2953 "configure"
+#line 2968 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2982,7 +2997,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2986 "configure"
+#line 3001 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3154,7 +3169,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3158 "configure"
+#line 3173 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3175,7 +3190,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3179 "configure"
+#line 3194 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3197,7 +3212,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3201 "configure"
+#line 3216 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3215,7 +3230,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3219 "configure"
+#line 3234 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3236,7 +3251,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3240 "configure"
+#line 3255 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3273,7 +3288,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3277 "configure"
+#line 3292 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3334,7 +3349,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3338 "configure"
+#line 3353 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3366,7 +3381,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3370 "configure"
+#line 3385 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3400,7 +3415,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3404 "configure"
+#line 3419 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3515,7 +3530,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3519 "configure"
+#line 3534 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3570,7 +3585,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3574 "configure"
+#line 3589 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -4190,8 +4205,8 @@ if test -z "$PYTHON_DIR"; then
 fi
 if test "$enable_python" = "yes"; then
     if test "$PYTHON_DIR" != "$PYTHON_MOD_DIR"; then
-	echo "$ac_t""python module will be installed in $PYTHON_DIR" 1>&6;
-	echo "$ac_t""remember to soft-link it to $PYTHON_MOD_DIR" 1>&6;
+	echo "$ac_t""note: python module will be installed in $PYTHON_DIR" 1>&6;
+	echo "$ac_t""note: it should be soft-linked to $PYTHON_MOD_DIR" 1>&6;
     fi
 fi
 if test -z "$DOC_DIR"; then
@@ -4310,38 +4325,6 @@ $srcdir/sys/unix/version \
 # ----------------------------------------------------------------------------
 
 trap '' 1 2 15
-cat > confcache <<\EOF
-# This file is a shell script that caches the results of configure
-# tests run on this system so they can be shared between configure
-# scripts and configure runs.  It is not useful on other systems.
-# If it contains results you don't want to keep, you may remove or edit it.
-#
-# By default, configure uses ./config.cache as the cache file,
-# creating it if it does not exist already.  You can give configure
-# the --cache-file=FILE option to use a different cache file; that is
-# what configure does when it calls configure scripts in
-# subdirectories, so they share the cache.
-# Giving --cache-file=/dev/null disables caching, for debugging configure.
-# config.status only pays attention to the cache file if you give it the
-# --recheck option to rerun configure.
-#
-EOF
-# Ultrix sh set writes to stderr and can't be redirected directly,
-# and sets the high bit in the cache file unless we assign to the vars.
-(set) 2>&1 |
-  sed -n "s/^\([a-zA-Z0-9_]*_cv_[a-zA-Z0-9_]*\)=\(.*\)/\1=\${\1='\2'}/p" \
-  >> confcache
-if cmp -s $cache_file confcache; then
-  :
-else
-  if test -w $cache_file; then
-    echo "updating cache $cache_file"
-    cat confcache > $cache_file
-  else
-    echo "not updating unwritable cache $cache_file"
-  fi
-fi
-rm -f confcache
 
 trap 'rm -fr conftest* confdefs* core core.* *.core $ac_clean_files; exit 1' 1 2 15
 
@@ -4627,8 +4610,9 @@ test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 # to use an underscore in that case.
 # ----------------------------------------------------------------------------
 
-plplot_config_result_msg="Configuration results:
+plplot_config_result_msg="Configure results:
 
+command:	$plplot_config_invocation
 system:		$system
 prefix:		$prefix
 CC:		$CC $CC_FLAGS
@@ -4651,7 +4635,6 @@ enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 enable-cxx:	$enable_cxx		enable_python:	$enable_python
 "
-
 
 cat << EOF > config.summary
 $plplot_config_result_msg
