@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.8  1993/08/18 20:24:06  mjl
+# Revision 1.9  1993/09/01 14:52:24  mjl
+# Modified the dpos proc to always bring up new toplevel window a specified
+# distance from the upper left corner of ".", which is much nicer (and
+# should work correctly under tvtwm).
+#
+# Revision 1.8  1993/08/18  20:24:06  mjl
 # Added Form2d proc, based on earlier EnterCoords proc, for entering values
 # in a 2d form layout.  Better than EnterCoords but still more work needed
 # before it's useful in a general context.
@@ -65,7 +70,9 @@ proc bogue_out {msg} {
 #----------------------------------------------------------------------------
 
 proc dpos w {
-    wm geometry $w +300+300
+    set offx [expr "[winfo rootx .]+100"]
+    set offy [expr "[winfo rooty .]+100"]
+    wm geometry $w +$offx+$offy
 }
 
 #----------------------------------------------------------------------------
