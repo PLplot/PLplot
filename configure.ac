@@ -180,6 +180,7 @@ imp,
 linuxvga,
 ljii,
 ljiip,
+mem,
 ntk,
 null,
 pbm,
@@ -211,6 +212,7 @@ imp \
 linuxvga \
 ljii \
 ljiip \
+mem \
 ntk \
 null \
 pbm \
@@ -251,6 +253,7 @@ imp:impress \
 linuxvga:linuxvga \
 ljii:ljii \
 ljiip:ljiip \
+mem:mem \
 ntk:ntk \
 null:null \
 pbm:pbm \
