@@ -1,0 +1,6 @@
+-nbad -bap -nbbb -nbc -br -c33 -cd33 -ncdb -nce -ci4 -cli0.5 -d0 -di1
+-nfc1 -i4 -nip -l80 -lp -npcs -psl -nsc -nsob
+-TPLFLT -TPLINT -TPLSHORT -TPLStream -TPLDev -TPLColor -TPLKey -TPLPointer
+-TPLOptionTable -TPLfGrid -TPLfGrid2 -TPLcGrid -TPLcGrid2
+-TFILE -TU_CHAR -TU_SHORT -TU_LONG
+-TXColor -TXEvent -TXtPointer -TDisplay
