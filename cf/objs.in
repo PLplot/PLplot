@@ -1,0 +1,179 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 19-Jul-1994
+#
+# PLplot object file dependencies and targets.
+# 
+# The default is to make all the object libraries and all utils except for
+# font generators (since font files are portable).  
+#
+# The object library build is kept in a separate file so that it's easier
+# to replace (building libraries can be highly system-dependent).
+# -----------------------------------------------------------------------
+
+# Object file macros
+# Main sources.
+
+OBJ =	\
+	pdfutils.o \
+	plargs.o \
+	plbox.o \
+	plcont.o \
+	plcore.o \
+	plctrl.o \
+	plcvt.o \
+	pldtik.o \
+	plfill.o \
+	plfont.o \
+	plhist.o \
+	plline.o \
+	plot3d.o \
+	plpage.o \
+	plsdef.o \
+	plshade.o \
+	plstream.o \
+	plstring.o \
+	plsym.o \
+	pltick.o \
+	plvpor.o \
+	plwind.o 
+
+# Support files for font generators.
+
+FONT_OBJ = \
+	font01.o \
+	font02.o \
+	font03.o \
+	font04.o \
+	font05.o \
+	font06.o \
+	font07.o \
+	font08.o \
+	font09.o \
+	font10.o \
+	font11.o
+
+# Drivers
+
+DRIVERS_OBJ = \
+	dg300.o \
+	hpgl.o \
+	impress.o \
+	ljiip.o \
+	ljii.o \
+	next.o \
+	null.o \
+	plbuf.o \
+	plmeta.o \
+	ps.o \
+	tek.o \
+	xfig.o \
+	xwin.o
+
+# -----------------------------------------------------------------------
+# All the basic targets
+
+everything: plplotP.h libs plrender $(TK_EXE) $(TCL_EXE) pltek
+
+# -----------------------------------------------------------------------
+# Object file dependencies.
+
+# source files
+
+plargs.o:	plplotP.h plplot.h pdf.h plstream.h plargs.c
+plbox.o:	plplotP.h plplot.h plbox.c 
+plcont.o:	plplotP.h plplot.h plcont.c 
+plcore.o:	plplotP.h plplot.h plcore.h drivers.h pdf.h plstream.h plcore.c
+plctrl.o:	plplotP.h plplot.h plctrl.c 
+plcvt.o:	plplotP.h plplot.h plcvt.c 
+pldtik.o:	plplotP.h plplot.h pldtik.c 
+plfill.o:	plplotP.h plplot.h plfill.c 
+plfont.o:	plplotP.h plplot.h pdf.h plfont.c 
+plhist.o:	plplotP.h plplot.h plhist.c 
+plline.o:	plplotP.h plplot.h plline.c 
+plot3d.o:	plplotP.h plplot.h plot3d.c 
+plpage.o:	plplotP.h plplot.h plpage.c 
+plsdef.o:	plplotP.h plplot.h plsdef.c 
+plshade.o:	plplotP.h plplot.h plshade.c 
+plstream.o:	plplotP.h plplot.h pdf.h plstream.h plstream.c
+plstring.o:	plplotP.h plplot.h plstring.c 
+plsym.o:	plplotP.h plplot.h plsym.c 
+pltick.o:	plplotP.h plplot.h pltick.c 
+plvpor.o:	plplotP.h plplot.h plvpor.c 
+plwind.o:	plplotP.h plplot.h plwind.c 
+pdfutils.o:	plplotP.h plplot.h pdf.h pdfutils.c
+
+# C language stubs for linking Plplot to Fortran.
+
+sc3d.o:		plstubs.h plplotP.h plplot.h sc3d.c
+scstubs.o:	plstubs.h plplotP.h plplot.h scstubs.c
+
+# Optimizer on SX-3 makes bogus code here.
+
+sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
+	$(CC) $(CC_FLAGS_SCCONT) sccont.c
+
+# Fortran language stubs for linking Plplot to Fortran.
+
+strutil.o:	strutil.f
+sfstubs.o:	sfstubs.f
+sfstubs.f:	sfstubs.fm4 fmacs.m4
+
+# Drivers
+
+dg300.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h dg300.c
+hpgl.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h hpgl.c
+impress.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h impress.c
+ljii.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h ljii.c
+ljiip.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h ljiip.c
+next.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h next.c
+null.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h null.c
+ps.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h ps.c
+tek.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h tek.c
+plbuf.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h metadefs.h \
+		plbuf.c
+plmeta.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h metadefs.h \
+		plmeta.c
+xfig.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h xfig.c
+
+# Optimizer under AIX 3.2.3 bogues out here.
+
+xwin.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
+	$(CC) $(CC_FLAGS_XWIN) xwin.c
+
+# TK driver.
+
+tk.o:		plserver.h plplotTK.h plplotX.h plplotP.h plplot.h drivers.h \
+		pdf.h plstream.h metadefs.h plevent.h tk.c
+tkshell.o:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
+		plstream.h tkshell.c
+
+tcpip.o:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
+		plstream.h tcpip.c
+	$(OCC) $(CC_FLAGS) tcpip.c
+
+# Support files for extended Wish'es like plserver.
+
+tkMain.o:	tkMain.c
+plframe.o:	plserver.h plplotP.h plplot.h pdf.h plstream.h plplotX.h \
+		tclMatrix.h plframe.c
+plr.o:		plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
+		plstream.h metadefs.h plevent.h plr.c
+
+# Support files for Tcl API.
+
+tclMain.o:	tclMain.c
+tclAPI.o:	pltcl.h plplotP.h plplot.h tclAPI.c
+tclMatrix.o:	plplotP.h plplot.h tclMatrix.h tclMatrix.c
+
+# Utility programs.
+
+plrender.o:	plplotP.h plplot.h metadefs.h pdf.h plrender.c
+plserver.o:	plserver.h plplotP.h plplot.h pdf.h plstream.h tclMatrix.h \
+		plserver.c
+pltcl.o:	plplot.h plplotP.h plstream.h tclMatrix.h \
+		pltcl.c
+
