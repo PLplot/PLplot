@@ -1,13 +1,21 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/07/31 07:56:36  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.14  1994/03/23 06:34:31  mjl
+   All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+   stdlib.h now included automatically by plplotP.h), extraneous clears
+   of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+   driver interface or driver initialization as appropriate).  Special
+   handling for malloc includes eliminated (no longer needed) and malloc
+   prototypes fixed as necessary.
 
+ * Revision 1.13  1993/07/31  07:56:36  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.12  1993/07/16  22:11:20  mjl
  * Eliminated low-level coordinate scaling; now done by driver interface.
  *
@@ -24,7 +32,6 @@
 #ifdef NEXT
 
 #include "plplotP.h"
-#include <stdio.h>
 #include "drivers.h"
 
 /* top level declarations */
@@ -155,10 +162,6 @@ plD_eop_nx(PLStream *pls)
     fprintf(pls->OutFile, " S\neop\n");
 
     pclose(pls->OutFile);
-    pls->fileset = 0;
-    pls->page = 0;
-    pls->linepos = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\

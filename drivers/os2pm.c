@@ -1,13 +1,21 @@
 /* $Id$
-   $Log$
-   Revision 1.8  1993/07/31 07:56:38  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
-
+ * $Log$
+ * Revision 1.9  1994/03/23 06:34:33  mjl
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.8  1993/07/31  07:56:38  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.7  1993/07/01  21:59:41  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -22,23 +30,16 @@
 	
 	This driver sends plplot commands to the OS/2 PM PLPLOT Server.
 
-	The Geoffrey Furnish Standard Disclaimer:
-	"I hate any C compiler that isn't ANSI compliant, and I refuse to waste
-	my time trying to support such garbage.  If you can't compile with an
-	ANSI compiler, then don't expect this to work.  No appologies,
-	now or ever."
-
 	25 March 1992
 	VERSION 1.0
 */
 
 #include "plplotP.h"
+#include "drivers.h"
+#include "pmdefs.h"
 
 #define INCL_BASE
 #include <os2.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "drivers.h"
 
 /* top level declarations */
 
@@ -49,8 +50,6 @@ static short	cnt;
 static PLINT	xold = UNDEFINED;
 static PLINT	yold = UNDEFINED;
 	  
-#include "pmdefs.h"
-
 typedef	PLINT	COMMAND_ID;
 typedef PLINT * CPARAMS;
 
@@ -218,7 +217,6 @@ void	plD_tidy_os2( PLStream *pls )
 	write_command( c, NULL );
 		 
 	DosClose( hf );
-	pls->fileset = 0;
 }
 
 /*----------------------------------------------------------------------*\

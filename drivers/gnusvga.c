@@ -1,8 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/12/08 06:12:22  mjl
-   Miscellaneous bug fixes contributed by Paul Kirschner.
+   Revision 1.13  1994/03/23 06:34:23  mjl
+   All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+   stdlib.h now included automatically by plplotP.h), extraneous clears
+   of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+   driver interface or driver initialization as appropriate).  Special
+   handling for malloc includes eliminated (no longer needed) and malloc
+   prototypes fixed as necessary.
 
+ * Revision 1.12  1993/12/08  06:12:22  mjl
+ * Miscellaneous bug fixes contributed by Paul Kirschner.
+ *
  * Revision 1.11  1993/07/31  07:56:30  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
@@ -49,7 +57,6 @@
 #ifdef GNUSVGA			/* Only compile for DOS 386 with GNU CC
 				   compiler */
 #include "plplotP.h"
-#include <stdio.h>
 #include "drivers.h"
 #include <graphics.h>
 
@@ -213,8 +220,6 @@ void
 plD_tidy_svga(PLStream *pls)
 {
     svga_text(pls);
-    pls->page = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\

@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/08/09 22:12:32  mjl
+ * Revision 1.15  1994/03/23 06:34:28  mjl
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.14  1993/08/09  22:12:32  mjl
  * Changed call syntax to plRotPhy to allow easier usage.
  *
  * Revision 1.13  1993/07/31  07:56:34  mjl
@@ -10,14 +18,6 @@
  * escape function (very few drivers require it).  The device-specific PLDev
  * structure is now malloc'ed for each driver that requires it, and freed when
  * the stream is terminated.
- *
- * Revision 1.12  1993/07/16  22:11:19  mjl
- * Eliminated low-level coordinate scaling; now done by driver interface.
- *
- * Revision 1.11  1993/07/01  21:59:37  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".
 */
 
 /*	ljii.c
@@ -29,13 +29,10 @@
 */
 #ifdef LJII
 
-#define PL_NEED_MALLOC
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "drivers.h"
 #include <math.h>
 #include <string.h>
-#include "drivers.h"
 
 /* Function prototypes */
 
@@ -124,7 +121,7 @@ plD_init_jet(PLStream *pls)
     if ((bitmap = (char _HUGE *) halloc((long) NBYTES, sizeof(char))) == NULL)
 	plexit("Out of memory in call to calloc");
 #else
-    if ((bitmap = (char *) calloc(NBYTES, sizeof(char))) == NULL)
+    if ((bitmap = (void *) calloc(NBYTES, sizeof(char))) == NULL)
 	plexit("Out of memory in call to calloc");
 #endif
 
@@ -155,8 +152,8 @@ plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 /* Rotate by 90 degrees */
 
-    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-	     &x1, &y1, &x2, &y2);
+    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1);
+    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2);
 
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (float) sqrt((double)
@@ -255,10 +252,7 @@ plD_tidy_jet(PLStream *pls)
 
     fprintf(pls->OutFile, "%cE", ESC);
     fclose(pls->OutFile);
-    free((char *) bitmap);
-    pls->fileset = 0;
-    pls->page = 0;
-    pls->OutFile = NULL;
+    free((void *) bitmap);
 }
 
 /*----------------------------------------------------------------------*\

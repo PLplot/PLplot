@@ -1,8 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1993/08/03 03:21:55  mjl
- * Added contributions from Sergio Fanchiotti for use under Linux.
+ * Revision 1.2  1994/03/23 06:34:29  mjl
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
  *
+ * Revision 1.1  1993/08/03  03:21:55  mjl
+ * Added contributions from Sergio Fanchiotti for use under Linux.
 */
 
 /*
@@ -22,11 +29,10 @@
 #ifdef MGR			/* Only compile if MGR support is needed */
 
 #include "plplotP.h"
-#include <stdlib.h>
+#include "drivers.h"
 #include <string.h>
 /* The next one is highly dependant on the MGR installation!!! */
 #include "/usr/mgr/include/term.h"
-#include "drivers.h"
 
 /* Function prototypes */
 /* INDENT OFF */
@@ -192,9 +198,6 @@ plD_tidy_mgr(PLStream *pls)
     m_ttyreset();		/* Reset tty mode */
     m_popall();			/* Restores original state of window (see
 				   plD_init_mgr) */
-    pls->fileset = 0;
-    pls->page = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
@@ -316,9 +319,6 @@ GetKey(PLStream *pls)
     PLDev *dev = (PLDev *) pls->dev;
     static char ch;
     static int again, Xw, Yw;	/* Dummy vars */
-
-    if (pls->nopause)
-	return;			/* Just ignore anything and go on! */
 
     do {
 	again = FALSE;

@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1993/08/03 03:21:54  mjl
+ * Revision 1.2  1994/03/23 06:34:27  mjl
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.1  1993/08/03  03:21:54  mjl
  * Added contributions from Sergio Fanchiotti for use under Linux.
  *
 */
@@ -19,7 +27,6 @@
 #ifdef LINUXVGA			/* Only compile for Linux + Vgalib 1.2 */
 
 #include "plplotP.h"
-#include <stdio.h>
 #include "drivers.h"
 #include <vga.h>
 
@@ -168,8 +175,6 @@ void
 plD_tidy_lxvga(PLStream *pls)
 {
     lxvga_text(pls);
-    pls->page = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
