@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/03/23 06:34:27  mjl
+ * Revision 1.3  1994/04/08 11:35:58  mjl
+ * Put nopause support back into the drivers where it is better off.
+ * I don't know WHAT I was thinking.
+ *
+ * Revision 1.2  1994/03/23  06:34:27  mjl
  * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
  * stdlib.h now included automatically by plplotP.h), extraneous clears
  * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
@@ -35,7 +39,7 @@
 
 static void lxvga_text	(PLStream *pls);
 static void lxvga_graph	(PLStream *pls);
-static void pause	(void);
+static void pause	(PLStream *pls);
 
 /* INDENT ON */
 
@@ -143,7 +147,7 @@ void
 plD_eop_lxvga(PLStream *pls)
 {
     if (page_state == DIRTY)
-	pause();
+	pause(pls);
 
     /* vga_setmode(mode); */
     vga_clear();		/* just clean it */
@@ -240,7 +244,7 @@ lxvga_text(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
-	    pause();
+	    pause(pls);
 	vga_setmode(TEXT);
 	pls->graphx = TEXT_MODE;
     }
@@ -269,8 +273,11 @@ lxvga_graph(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-pause(void)
+pause(PLStream *pls)
 {
+    if (pls->nopause) 
+	return;
+
     vga_getch();
 }
 

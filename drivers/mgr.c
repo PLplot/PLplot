@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/03/23 06:34:29  mjl
+ * Revision 1.3  1994/04/08 11:35:59  mjl
+ * Put nopause support back into the drivers where it is better off.
+ * I don't know WHAT I was thinking.
+ *
+ * Revision 1.2  1994/03/23  06:34:29  mjl
  * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
  * stdlib.h now included automatically by plplotP.h), extraneous clears
  * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
@@ -319,6 +323,9 @@ GetKey(PLStream *pls)
     PLDev *dev = (PLDev *) pls->dev;
     static char ch;
     static int again, Xw, Yw;	/* Dummy vars */
+
+    if (pls->nopause) 
+	return;
 
     do {
 	again = FALSE;

@@ -1,13 +1,17 @@
 /* $Id$
    $Log$
-   Revision 1.12  1994/03/23 06:34:21  mjl
-   All drivers: cleaned up by eliminating extraneous includes (stdio.h and
-   stdlib.h now included automatically by plplotP.h), extraneous clears
-   of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
-   driver interface or driver initialization as appropriate).  Special
-   handling for malloc includes eliminated (no longer needed) and malloc
-   prototypes fixed as necessary.
+   Revision 1.13  1994/04/08 11:35:56  mjl
+   Put nopause support back into the drivers where it is better off.
+   I don't know WHAT I was thinking.
 
+ * Revision 1.12  1994/03/23  06:34:21  mjl
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
  * Revision 1.11  1993/07/31  07:56:28  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
@@ -55,7 +59,7 @@
 	I think we can safely forget about non-ANSI compilers raising their
 	ugly heads here... */
 
-static void	pause		(void);
+static void	pause		(PLStream *);
 static void	vga_text	(PLStream *);
 static void	vga_graph	(PLStream *);
 
@@ -149,7 +153,7 @@ void
 plD_eop_vga(PLStream *pls)
 {
     if (page_state == DIRTY)
-	pause();
+	pause(pls);
     _eopscreen(_GCLEARSCREEN);
     page_state = CLEAN;
 }
@@ -247,7 +251,7 @@ vga_text(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
-	    pause();
+	    pause(pls);
 	_setvideomode(_DEFAULTMODE);
 	pls->graphx = TEXT_MODE;
     }
@@ -279,8 +283,11 @@ vga_graph(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-pause(void)
+pause(PLStream *pls)
 {
+    if (pls->nopause)
+	return;
+
     _settextposition(0, 0);
     _outtext("pause->");
     while (!kbhit());

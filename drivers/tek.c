@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/03/23 06:50:49  mjl
+ * Revision 1.22  1994/04/08 11:36:01  mjl
+ * Put nopause support back into the drivers where it is better off.
+ * I don't know WHAT I was thinking.
+ *
+ * Revision 1.21  1994/03/23  06:50:49  mjl
  * Added new drivers: Versaterm (Mac), and VLT (Amiga).  Tek4107 driver
  * improved to actually work on a real tek 4107 (contributed by Paul
  * Kirschner), and the driver keyword changed to "tek4107t" or "tek4107f"
@@ -352,9 +356,8 @@ void
 plD_eop_tek(PLStream *pls)
 {
     if (pls->termin) {
-	putchar(BEL);
-	fflush(stdout);
-	WaitForPage(pls);
+	if ( ! pls->nopause) 
+	    WaitForPage(pls);
     }
     fprintf(pls->OutFile, "%c%c", ESC, FF);
 }
@@ -740,6 +743,9 @@ static void
 WaitForPage(PLStream *pls)
 {
     int input_char;
+
+    putchar(BEL);
+    fflush(stdout);
 
     while ( ! exit_eventloop) {
 	input_char = getchar();
