@@ -33,7 +33,7 @@ mapform(PLINT n, PLFLT *x, PLFLT *y)
  * Shows two views of the world map.
 \*--------------------------------------------------------------------------*/
 
-void 
+int 
 main(int argc, char **argv) 
 {
     PLFLT minx, maxx, miny, maxy;
@@ -80,4 +80,5 @@ main(int argc, char **argv)
     pllsty(2);
     plmeridians(mapform,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
     plend();
+    exit(0);
 }
