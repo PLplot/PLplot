@@ -132,6 +132,14 @@ AC_ENABLE(f77, , enable_f77="yes")
 # --------------------------------------------------------------------
 # Set up prefix
 #
+# The prefix is set using the following algorithm:
+#
+#	via the command line --prefix flag
+#	via the shell variable "pl_prefix", set in the defaults file
+#	via the directory "plrender" currently is located in
+#
+# If still not set, prefix defaults to /usr/local/plplot.
+#
 # I recommend using a separate directory tree for PLplot files.  You can
 # use the "mklinks" script for soft-linking the bin, lib, and include
 # files to the usual places under /usr/local or /usr.  See the discussion
@@ -139,10 +147,14 @@ AC_ENABLE(f77, , enable_f77="yes")
 # --------------------------------------------------------------------
 
 if test -z "$prefix"; then
-    AC_PREFIX(plrender)
-    if test -z "$prefix"; then
-	prefix="/usr/local/plplot"
-	echo "Unable to determine prefix; using $prefix"
+    if test -z "$pl_prefix"; then
+	AC_PREFIX(plrender)
+	if test -z "$prefix"; then
+	    prefix="/usr/local/plplot"
+	    echo "Unable to determine prefix; using $prefix"
+	fi
+    else
+	prefix="$pl_prefix"
     fi
 fi
 
@@ -373,6 +385,7 @@ if test ! -f tmp/plcore.c; then
     ../drivers/tk/*.* \
     ../drivers/tk/tclIndex \
     ../lib/*.fnt \
+    ../lib/*.map \
     .
 
 # Create links to the Fortran files.  

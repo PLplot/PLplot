@@ -527,6 +527,14 @@ fi
 # --------------------------------------------------------------------
 # Set up prefix
 #
+# The prefix is set using the following algorithm:
+#
+#	via the command line --prefix flag
+#	via the shell variable "pl_prefix", set in the defaults file
+#	via the directory "plrender" currently is located in
+#
+# If still not set, prefix defaults to /usr/local/plplot.
+#
 # I recommend using a separate directory tree for PLplot files.  You can
 # use the "mklinks" script for soft-linking the bin, lib, and include
 # files to the usual places under /usr/local or /usr.  See the discussion
@@ -534,7 +542,8 @@ fi
 # --------------------------------------------------------------------
 
 if test -z "$prefix"; then
-    if test -z "$prefix"
+    if test -z "$pl_prefix"; then
+	if test -z "$prefix"
 then
   test -n "$silent" || echo "checking for plrender to derive installation directory prefix"
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="$IFS:"
@@ -560,9 +569,12 @@ then
   test -n "$verbose" && echo "	chose installation directory prefix ${prefix}"
 fi
 
-    if test -z "$prefix"; then
-	prefix="/usr/local/plplot"
-	echo "Unable to determine prefix; using $prefix"
+	if test -z "$prefix"; then
+	    prefix="/usr/local/plplot"
+	    echo "Unable to determine prefix; using $prefix"
+	fi
+    else
+	prefix="$pl_prefix"
     fi
 fi
 
