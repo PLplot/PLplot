@@ -991,12 +991,14 @@ AC_RUN_IFELSE(
 	#endif
     ]],[[
 	double x = NaN;
-	if (x != x) return 1;
-	else return 0;
-    ]])] ,
-    [AC_MSG_WARN([System is not NaN aware, setting with_csa=no and with_qhull=no]);
-	with_csa="no";
-	with_qhull="no";])
+	if (x != x) return 0;
+	else return 1;
+    ]])],
+    [AC_MSG_RESULT(yes)],
+    [AC_MSG_RESULT(no)
+     AC_MSG_WARN([System is not NaN aware, setting with_csa=no and with_qhull=no]);
+     with_csa="no";
+     with_qhull="no";])
 
 # ----------------------------------------------------------------------------
 # Check for csa
