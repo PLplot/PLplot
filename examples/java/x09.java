@@ -234,29 +234,7 @@ class x09 {
 	pls.lab("", "", "Polar Contour Plot");
     }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
-
-/* Java implementation of the following C code?
-   static void
-   f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
-   {
-   int i, j;
-
-   *fmax = f[0][0];
-   *fmin = *fmax;
-
-   for (i = 0; i < nx; i++) {
-   for (j = 0; j < ny; j++) {
-   *fmax = MAX(*fmax, f[i][j]);
-   *fmin = MIN(*fmin, f[i][j]);
-   }
-   }
-   }
-*/
+// Compute min and max value of a 2-d array.
 
     void f2mnmx( double[][] f, int nx, int ny )
     {
