@@ -72,7 +72,7 @@
 #include "drivers.h"
 #ifdef HAVE_FREETYPE
 #include "plfreetype.h"
-#include "plfci.h"
+#include "plfci-truetype.h"
 
 #define FT_Data _FT_Data_
 
