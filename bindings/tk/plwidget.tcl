@@ -1,6 +1,13 @@
 # $Id$
 # $Log$
-# Revision 1.6  1993/08/13 06:42:36  mjl
+# Revision 1.7  1993/08/18 20:26:34  mjl
+# Added print menu.  Grouped Save operations under a single cascading menu.
+# Added a status message (timed) to appear in status bar when successfully
+# saving a plot or closing the plot file.  Changed Page setup to use
+# new device variables (margin, aspect, jx, jy).  Switched over to new
+# Form2d proc for direct entry of window or page setup variables.
+#
+# Revision 1.6  1993/08/13  06:42:36  mjl
 # Added bulletproofing for when idiot user selects "Cancel" in GetItem.
 #
 # Revision 1.5  1993/08/09  22:22:18  mjl
@@ -137,30 +144,46 @@ proc plw_create_pmenu {w} {
     menu $w.ftop.pmenu.m
 
 #-------
-# Save
+# Print
 #-------
 
     $w.ftop.pmenu.m add command \
-	-label "Save" \
-	-command "plw_save $w"
+	-label "Print" \
+	-command "plw_print $w"
 
-#-------
-# Close
-#-------
-
-    $w.ftop.pmenu.m add command \
-	-label "Close" \
-	-command "plw_close $w"
-
-#----------
-# Save As
-#----------
+#-----------------
+# Save (cascade)
+#-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Save As  =>" \
-	-menu $w.ftop.pmenu.m.saveas
+	-label "Save  =>" \
+	-menu $w.ftop.pmenu.m.save
 
-    menu $w.ftop.pmenu.m.saveas
+    menu $w.ftop.pmenu.m.save
+
+# Save - As.. (another cascade)
+#
+# This cascade menubutton doesn't have its entries filled in until the
+# plframe is initialized, because we need to query the widget to find out
+# the available output devices (which are listed).
+
+    $w.ftop.pmenu.m.save add cascade \
+	-label "As  =>" \
+	-menu $w.ftop.pmenu.m.save.as
+
+    menu $w.ftop.pmenu.m.save.as
+
+# Save - Again
+
+    $w.ftop.pmenu.m.save add command \
+	-label "Again" \
+	-command "plw_save $w"
+
+# Save - Close
+
+    $w.ftop.pmenu.m.save add command \
+	-label "Close" \
+	-command "plw_close $w"
 
 #-----------------
 # Orient (cascade)
@@ -237,7 +260,7 @@ proc plw_create_pmenu {w} {
 # Page - enter bounds
 
     $w.ftop.pmenu.m.page add command \
-	-label "Enter bounds.." \
+	-label "Setup.." \
 	-command "plw_page_enter $w"
 
 # Page - reset
@@ -247,14 +270,14 @@ proc plw_create_pmenu {w} {
 	-command "plw_page_reset $w"
 
 #---------
-# Redraw 
+# Redraw (only for debugging)
 #---------
+#
+#    $w.ftop.pmenu.m add command \
+#	-label "Redraw" \
+#	-command "$w.plwin redraw"
 
-    $w.ftop.pmenu.m add command \
-	-label "Redraw" \
-	-command "$w.plwin redraw"
-
-# The end
+# Los endos
 
     return $w.ftop.pmenu
 }
@@ -263,14 +286,14 @@ proc plw_create_pmenu {w} {
 # plw_configure_TopRow
 #
 # Finish configuration of top row widgets.
-# Right now it just generates the device list in the "Save As" widget menu.
+# Right now it just generates the device list in the "Save/As" widget menu.
 #----------------------------------------------------------------------------
 
 proc plw_configure_TopRow {w} {
     update
     set j 0
     foreach i [$w.plwin info devices] {
-	$w.ftop.pmenu.m.saveas add command \
+	$w.ftop.pmenu.m.save.as add command \
 	    -label $i \
 	    -command "plw_saveas $w $j"
 	set j [expr "$j + 1"]
@@ -368,26 +391,19 @@ proc plw_end {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_save
+# plw_print
 #
-# Saves plot to an already open file.  If none open, issues an error dialog.
+# Prints plot.  Uses the "plpr" script, which must be set up for your site
+# as appropriate.  There are better ways to do this but all are too
+# dangerous IMO until Tcl/TK gets some adequate security safeguards in
+# place.
 #----------------------------------------------------------------------------
 
-proc plw_save {w} {
-    if { [catch "$w.plwin save" foo]} {
-	bogon_alert "$foo"
-    }
-}
-
-#----------------------------------------------------------------------------
-# plw_close
-#
-# Close save file.
-#----------------------------------------------------------------------------
-
-proc plw_close {w} {
-    if { [catch "$w.plwin save close" foo]} {
-	bogon_alert "$foo"
+proc plw_print {w} {
+    if { [catch "$w.plwin print" foo]} {
+	bogue_out "$foo"
+    } else {
+	status_msg $w "Plot printed."
     }
 }
 
@@ -405,7 +421,39 @@ proc plw_saveas {w dev} {
 		return
 	    }
 	}
-	$w.plwin save as $dev $file
+	if { [catch "$w.plwin save as $dev $file" foo]} {
+	    bogue_out "$foo"
+	} else {
+	    status_msg $w "Plot saved."
+	}
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_save
+#
+# Saves plot to an already open file.  If none open, issues an error dialog.
+#----------------------------------------------------------------------------
+
+proc plw_save {w} {
+    if { [catch "$w.plwin save" foo]} {
+	bogue_out "$foo"
+    } else {
+	status_msg $w "Plot saved."
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_close
+#
+# Close save file.
+#----------------------------------------------------------------------------
+
+proc plw_close {w} {
+    if { [catch "$w.plwin save close" foo]} {
+	bogue_out "$foo"
+    } else {
+	status_msg $w "Plot file closed."
     }
 }
 
@@ -428,18 +476,25 @@ proc plw_zoom_select {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_enter {w} {
-    global xmin ymin xmax ymax
+    global fv00 fv01 fv10 fv11
+    global fn00 fn01 fn10 fn11
 
     set coords [$w.plwin view]
-    set xmin [lindex "$coords" 0]
-    set ymin [lindex "$coords" 1]
-    set xmax [lindex "$coords" 2]
-    set ymax [lindex "$coords" 3]
 
-    EnterCoords .e "window coordinates for zoom"
+    set fv00 [lindex "$coords" 0]
+    set fv01 [lindex "$coords" 1]
+    set fv10 [lindex "$coords" 2]
+    set fv11 [lindex "$coords" 3]
+
+    set fn00 xmin
+    set fn01 ymin
+    set fn10 xmax
+    set fn11 ymax
+
+    Form2d .e "window coordinates for zoom"
     tkwait window .e
 
-    pl_view $w select $xmin $ymin $xmax $ymax
+    pl_view $w select $fv00 $fv01 $fv10 $fv11
 }
 
 #----------------------------------------------------------------------------
@@ -475,32 +530,39 @@ proc plw_orient {w rot} {
 #----------------------------------------------------------------------------
 # plw_page_enter
 #
-# Changes window into device space.
+# Changes output page parameters (margins, aspect ratio, justification).
 #----------------------------------------------------------------------------
 
 proc plw_page_enter {w} {
-    global xmin ymin xmax ymax
+    global fv00 fv01 fv10 fv11
+    global fn00 fn01 fn10 fn11
 
     set coords [$w.plwin page]
-    set xmin [lindex "$coords" 0]
-    set ymin [lindex "$coords" 1]
-    set xmax [lindex "$coords" 2]
-    set ymax [lindex "$coords" 3]
 
-    EnterCoords .e "area of page to use for plotting"
+    set fv00 [lindex "$coords" 0]
+    set fv01 [lindex "$coords" 1]
+    set fv10 [lindex "$coords" 2]
+    set fv11 [lindex "$coords" 3]
+
+    set fn00 mar
+    set fn01 aspect
+    set fn10 jx
+    set fn11 jy
+
+    Form2d .e "area of page to use for plotting"
     tkwait window .e
 
-    $w.plwin page $xmin $ymin $xmax $ymax
+    $w.plwin page $fv00 $fv01 $fv10 $fv11
 }
 
 #----------------------------------------------------------------------------
 # plw_page_reset
 #
-# Resets window into device space.
+# Resets page parameters.
 #----------------------------------------------------------------------------
 
 proc plw_page_reset {w} {
-    $w.plwin page 0. 0. 1. 1.
+    $w.plwin page 0. 0. 0. 0.
 }
 
 #----------------------------------------------------------------------------
@@ -624,5 +686,18 @@ proc pl_view {w op x0 y0 x1 y1} {
     } else {
 	$w.plwin redraw
     }
+}
+
+#----------------------------------------------------------------------------
+# status_msg
+#
+# Used for temporarily flashing a status message in the status bar.  Better
+# than a dialog because it can be ignored and will go away on its own.
+#----------------------------------------------------------------------------
+
+proc status_msg {w msg} {
+
+    $w.ftop.lstat configure -text "$msg"
+    after 2500 "$w.ftop.lstat configure -text $w"
 }
 
