@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/03/28 08:44:21  mjl
-   Eliminated name conflict of getdate() function with builtin of same name
-   on some systems.
+   Revision 1.14  1993/04/26 20:01:59  mjl
+   Changed time type from long to time_t.
 
+ * Revision 1.13  1993/03/28  08:44:21  mjl
+ * Eliminated name conflict of getdate() function with builtin of same name
+ * on some systems.
+ *
  * Revision 1.12  1993/03/15  21:39:19  mjl
  * Changed all _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -533,10 +536,10 @@ static char *
 pl_getdate(void)
 {
     int len;
-    long t;
+    time_t t;
     char *p;
 
-    t = time((long *) 0);
+    t = time((time_t *) 0);
     p = ctime(&t);
     len = strlen(p);
     *(p + len - 1) = '\0';	/* zap the newline character */
