@@ -49,10 +49,10 @@
 
 function text = title (text)
 
-  global __pl __pl_inited
+  global __pl
 
-  if (!exist("__pl_inited") || plglevel == 0)
-    figure(0)
+  if (!struct_contains (__pl,"inited") || plglevel == 0)
+    figure(0);
   endif
 
   if (nargin > 1)

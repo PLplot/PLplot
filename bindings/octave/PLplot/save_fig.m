@@ -43,9 +43,9 @@
 
 function save_fig(file, device, rev)
 
-  global __pl __pl_inited __lp_options FIGDIR
+  global __pl __lp_options FIGDIR
 
-  if (!exist("__pl_inited") || plglevel == 0)
+  if (!struct_contains (__pl,"inited") || plglevel == 0)
     warning("Nothing to save");
     return
   endif

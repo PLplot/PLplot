@@ -11,40 +11,40 @@
 ## General Public License for more details.
 ##
 ## This file is part of plplot_octave.
- 	
-### set_view (alt, az)
-### set_view (script)
-### set_view ()
-###
-### Set up the altitude and azimute in degrees for posterior 3d plots.
-###
-### If called without arguments, rotates iteratively a cube using the mouse.
-### If called with one string argument, instead of a cube `script' is evaluated
-### and should do a 3D plot.
-###
-### button 1 press marks new origin
-### button 1,3 drag, rotate cube
-### button 2 press terminate
-### button 3 press default position
-###
-### example of callback `script'. Call as set_view("f")
-###
-### function f ()
-###  static x, y, z;
-###  if (!exist ("x"))
-###    [x, y, z] = rosenbrock;
-###    z = log (z);
-###  else
-###    mesh (x, y, z) # surfl (x, y, z) 
-###  endif;
-### endfunction
+
+## set_view (alt, az)
+## set_view (script)
+## set_view ()
+##
+## Set up the altitude and azimute in degrees for posterior 3d plots.
+##
+## If called without arguments, rotates iteratively a cube using the mouse.
+## If called with one string argument, instead of a cube `script' is evaluated
+## and should do a 3D plot.
+##
+## button 1 press marks new origin
+## button 1,3 drag, rotate cube
+## button 2 press terminate
+## button 3 press default position
+##
+## example of callback `script'. Call as set_view("f")
+##
+## function f ()
+##  static x, y, z;
+##  if (!exist ("x"))
+##    [x, y, z] = rosenbrock;
+##    z = log (z);
+##  else
+##    mesh (x, y, z) # surfl (x, y, z) 
+##  endif;
+## endfunction
 
 function set_view (alt, az)
 
-  global	__pl __pl_inited 
+  global __pl 
 
-  if (!exist("__pl_inited") || plglevel == 0)
-    figure(0)
+  if (!struct_contains (__pl,"inited") || plglevel == 0)
+    figure(0);
   endif
 
   __pl_strm = plgstrm + 1;
@@ -85,7 +85,7 @@ function set_view (alt, az)
     xM = yM = zM = 1;
   else
     title(sprintf("Alt=%d   Az=%d", alt, az));
-    eval(script)
+    eval(script);
   endif
   
   odx = ody = 0;
@@ -137,7 +137,7 @@ function set_view (alt, az)
       __pl.az(__pl_strm) = az + c_az; 
       __pl.alt(__pl_strm) = alt + c_alt;
       title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
-      eval(script)
+      eval(script);
     endif
     
   endwhile

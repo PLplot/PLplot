@@ -44,14 +44,14 @@
 
 function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame)
 
-  global __pl_inited __pl __tk_name
+  global __pl __tk_name
 
-  if (!exist("__pl_inited") || plglevel == 0)
+  if (!struct_contains (__pl,"inited") || plglevel == 0)
     atexit("closeallfig");
     closeallfig;	# this is to remedy a bug with atexit !
     ## closeallfig must be called once before atexit is called!
     plplot_stub;
-    __pl_inited = 1;
+    __pl.inited = 1;
     if (nargin == 0)
       n=0; driver=""; intp="";
       return

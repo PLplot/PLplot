@@ -19,9 +19,9 @@
 
 function closefig(n)
 
-  global  __pl_inited __pl
+  global __pl
 
-  if (!exist("__pl_inited"))
+  if (!struct_contains (__pl,"inited"))
     return
   endif
 

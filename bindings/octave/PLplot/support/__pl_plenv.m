@@ -15,17 +15,13 @@
 function __pl_plenv(xm, xM, ym, yM, scale, axis)
 
   ## this is equivalent to plenv, except that no padv(0) is performed.
-  ## this is important for multiplot, as pladv() advances the subwindow,
+  ## this is important for multiplot, as pladv(i) advances the subwindow,
   ## and pladv(0) advances the page, clearing all plot. However, not
   ## calling pladv(0), keeps all plots in the plot buffer,
   ## so "plreplot" replots all plots since the last call to
-  ## pladv(0)/plbop
-  ## (nice way of doing "movie")
-  ##
-  ## instead, the (sub)window is cleared, and the subplot position
-  ## remains
-  ## the same. Of course, it is not fast. Changed: The above described
-  ## behaviour is only valid in multiplot mode,
+  ## pladv(0)/plbop. Instead, the (sub)window is cleared, and the
+  ## subplot  position remains the same. Of course, it is not fast.
+  ## Changed: The above described behaviour is only valid in multiplot mode,
   ## else, pladv(0) is issued.
 
   global __pl

@@ -4,7 +4,7 @@ function n = free_fig
   ##
   ## return the number of an unused plot figure
   
-  global __pl_inited  __pl
+  global __pl
 
   if(! exist("__pl"))
     n = 0;

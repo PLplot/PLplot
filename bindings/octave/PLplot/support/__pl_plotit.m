@@ -19,12 +19,12 @@ function __pl_plotit
   ## __pl.[x|y|items] stores the triples, as .x_i, .y_i, fmt_i,
   ## were _i varies from 1 to __pl_items
 
-  global __pl __pl_inited
+  global __pl
 
   old_empty_list_elements_ok = empty_list_elements_ok;
   empty_list_elements_ok = 1;
 
-  if (!exist("__pl_inited") || plglevel == 0)
+  if (!struct_contains (__pl,"inited") || plglevel == 0)
     figure(0);
   endif
 

@@ -69,25 +69,20 @@ function pldef
   ## plscol0(0, 255, 255, 255);
   ## plscol0(15, 0, 0, 0);
 
-  ### init driver
-  ### plinit
-  ### pladv(0)
-
-  ## Defaults to be done after plinit()
+  ## Defaults to be done after opening a plot window.
+  ## can't be set here!
 
   ## Change color 15 from white to back
   ## (usefull if you change background to white)
   ## plscol0(15, 0, 0, 0);
 
   ## Change color 0 from back to white. Background also change.
-  ## (usefull f you change background to white)
+  ## (usefull if you change background to white)
   ## plscol0(0, 255, 255, 255);
 
   ## Don't wait for keypress to advance plots
   ## also in the "command line" options, "-np"
   ## plspause(0)
 
-  ## Make changes apply now
-  ## plflush;pleop;
 
 endfunction 
