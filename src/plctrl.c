@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/10/18 19:44:50  mjl
-   Added functions to return fully qualified pathnames and/or executable
-   names.
+   Revision 1.8  1993/10/21 19:28:25  mjl
+   Minor bug fix.
 
+ * Revision 1.7  1993/10/18  19:44:50  mjl
+ * Added functions to return fully qualified pathnames and/or executable
+ * names.
+ *
  * Revision 1.6  1993/09/27  20:40:12  mjl
  * Added #include <string.h> to pick up prototype for strcat.
  *
@@ -21,15 +24,6 @@
  * to plcore.c.  Added pl_cmd() as a front-end to the driver escape function
  * to allow virtually any command & data be sent to the driver by the calling
  * program.
- *
- * Revision 1.2  1993/02/23  05:12:49  mjl
- * Eliminated plbeg: it is now illegal to specify the device by device number.
- *
- * Revision 1.1  1993/01/23  05:51:56  mjl
- * Added for the high level routines that don't result in something being
- * plotted ("control" routines) that don't need direct access to the stream
- * or dispatch table data.
- *
 */
 
 /*	plctrl.c
@@ -50,7 +44,6 @@
 #include <errno.h>
 #endif
 
-static int	findname	(char *);
 static void	strcat_delim	(char *);
 
 /*----------------------------------------------------------------------*\
@@ -327,7 +320,7 @@ plFindName(char *p)
 int 
 plFindName(char *p)
 {
-    return 1
+    return 1;
 }
 #endif
 
