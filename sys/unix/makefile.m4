@@ -1298,13 +1298,16 @@ links:
 	copy /sys/amiga/src/\#?.c ""
 })
 
+#----------------------------------------------------------------------#
+# cleanup targets
+
 if_unix({
 clean:
 	-rm $(CDEMOS) $(FDEMOS) *.plm* *.tek* *.ps 
 
 realclean:
 	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps \
-	*.tcl tclIndex makefile plpr
+	*.tcl tclIndex makefile plpr ../lib/libpl*
 })
 
 #----------------------------------------------------------------------#
