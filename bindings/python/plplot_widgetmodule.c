@@ -1,6 +1,11 @@
 /* C code to create dynamically loaded library to implement pyqt_plplot module*/
 
-#include "plplot/plmodule.h"
+#include <Python.h>
+/* Change this to the recommended
+ * #include <Numeric/arrayobject.h> 
+ *  once we no longer support python1.5 */
+#include <arrayobject.h>
+#include "plplot/plplot.h"
 #include "plplot/plplotP.h"
 
 /* ##############################################################################*/
