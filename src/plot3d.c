@@ -106,6 +106,7 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
  * values are in the 2-d array z[][]. 
 \*--------------------------------------------------------------------------*/
 
+#if 0
 void
 c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		 PLINT nx, PLINT ny, PLINT side)
@@ -190,6 +191,206 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     freework();
 }
+#else
+
+/* helper for plotsh3d below */
+static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
+			   PLFLT x1, PLFLT y1, PLFLT z1,
+			   PLFLT x2, PLFLT y2, PLFLT z2)
+{
+  int i;
+
+  /* arrays fro interface to core functions */
+  PLFLT x[3], y[3], z[3], c;
+  short u[3], v[3];
+
+  x[0] = x0; x[1] = x1; x[2] = x2;
+  y[0] = y0; y[1] = y1; y[2] = y2;
+  z[0] = z0; z[1] = z1; z[2] = z2;
+  c = plGetAngleToLight(x, y, z);
+
+  for(i=0; i<3; i++) {
+    u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
+    v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
+  }
+  plcol1(c);
+  plP_fill(u, v, 3);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plotsh3d(x, y, z, nx, ny, side)
+ *
+ * Plots a 3-d representation of the function z[x][y]. The x values
+ * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
+ * values are in the 2-d array z[][]. 
+\*--------------------------------------------------------------------------*/
+
+void
+c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
+		 PLINT nx, PLINT ny, PLINT side)
+{
+    PLFLT cxx, cxy, cyx, cyy, cyz;
+    PLINT i, j;
+    PLINT ixDir, ixOrigin, iyDir, iyOrigin, nFast, nSlow;
+    PLINT ixFast, ixSlow, iyFast, iySlow;
+    PLINT iFast, iSlow;
+    PLINT iX[2][2], iY[2][2];
+    PLFLT xbox[3], ybox[3], zbox[3];
+
+    if (plsc->level < 3) {
+	myabort("plot3d: Please set up window first");
+	return;
+    }
+    
+    if (nx <= 0 || ny <= 0) {
+	myabort("plot3d: Bad array dimensions.");
+	return;
+    }
+    
+    /* Check that points in x and in y are strictly increasing */
+
+    for (i = 0; i < nx - 1; i++) {
+	if (x[i] >= x[i + 1]) {
+	    myabort("plot3d: X array must be strictly increasing");
+	    return;
+	}
+    }
+    for (i = 0; i < ny - 1; i++) {
+	if (y[i] >= y[i + 1]) {
+	    myabort("plot3d: Y array must be strictly increasing");
+	    return;
+	}
+    }
+
+    /* get the viewing parameters */
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+
+    /* we're going to draw from back to front */
+
+    /* iFast will index the dominant (fastest changing) dimension
+       iSlow will index the slower changing dimension
+
+       iX indexes the X dimension
+       iY indexes the Y dimension */
+
+    /* get direction for X */
+    if(cxy >= 0) {
+      ixDir = 1;	/* direction in X */
+      ixOrigin = 0;	/* starting point */
+    } else {
+      ixDir = -1;
+      ixOrigin = nx - 1;
+    }
+    /* get direction for Y */
+    if(cxx >= 0) {
+      iyDir = -1;
+      iyOrigin = ny - 1;
+    } else {
+      iyDir = 1;
+      iyOrigin = 0;
+    }
+
+    /* figure out which dimension is dominant */
+    if (fabs(cxx) > fabs(cxy)) {
+      /* X is dominant */
+      nFast = nx;	/* samples in the Fast direction */
+      nSlow = ny;	/* samples in the Slow direction */
+      
+      ixFast = ixDir; ixSlow = 0;
+      iyFast = 0;     iySlow = iyDir;
+    } else {
+      nFast = ny;
+      nSlow = nx;
+
+      ixFast = 0;     ixSlow = ixDir;
+      iyFast = iyDir; iySlow = 0;
+    }
+
+    /* we've got to draw the background grid first, hidden line code has to draw it last */
+    if (zbflg) {
+      PLINT color = plsc->icol0;
+      PLFLT bx[3], by[3], bz[3];
+      PLFLT zmin, zmax, zscale, tick=0, tp;
+      PLFLT xmin, xmax, ymin, ymax;
+      PLINT nsub;
+
+      /* get the z range and make sure it is in order, then get the tick spacing */
+      plP_grange(&zscale, &zmin, &zmax);
+      if(zmin > zmax) {
+	PLFLT t = zmin;
+	zmin = zmax;
+	zmax = t;
+      }
+      pldtik(zmin, zmax, &tick, &nsub);
+      plP_gdom(&xmin, &xmax, &ymin, &ymax);
+
+      /* determine the vertices for the background grid line */
+      bx[0] = (ixOrigin && ixFast==0) || ixFast > 0 ? xmax : xmin;
+      by[0] = (iyOrigin && iyFast==0) || iyFast > 0 ? ymax : ymin;
+      bx[1] = ixOrigin ? xmax : xmin;
+      by[1] = iyOrigin ? ymax : ymin;
+      bx[2] = (ixOrigin && ixSlow==0) || ixSlow > 0 ? xmax : xmin;
+      by[2] = (iyOrigin && iySlow==0) || iySlow > 0 ? ymax : ymin;
+
+      plcol(zbcol);
+      for(tp = tick * floor(zmin / tick) + tick; tp <= zmax; tp += tick) {
+	bz[0] = bz[1] = bz[2] = tp;
+	plline3(3, bx, by, bz);	
+      }
+      /* draw the vertical line at the back corner */
+      bx[0] = bx[1];
+      by[0] = by[1];
+      bz[0] = zmin;
+      plline3(2, bx, by, bz);
+      plcol(color);
+    }
+
+    /* Now we can iterate over the grid drawing the quads */
+    for(iSlow=0; iSlow < nSlow-1; iSlow++) {
+      for(iFast=0; iFast < nFast-1; iFast++) {
+	/* get the 4 corners of the Quad */
+	for(i=0; i<2; i++) {
+	  for(j=0; j<2; j++) {
+	    /* we're transforming from Fast/Slow coordinates to x/y coordinates */
+	    /* note, these are the indices, not the values */
+	    iX[i][j] = ixFast * (iFast+i) + ixSlow * (iSlow+j) + ixOrigin;
+	    iY[i][j] = iyFast * (iFast+i) + iySlow * (iSlow+j) + iyOrigin;
+	  }
+	}
+
+	/* now draw the quad as two triangles (4 might be better) */
+	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
+		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
+		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
+	shade_triangle(x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]],
+		       x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]],
+		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]]);
+      }
+    }
+
+    if (side) {
+      /* draw one more row with all the Z's set to zmin */
+      PLFLT zscale, zmin, zmax;
+
+      plP_grange(&zscale, &zmin, &zmax);
+      iSlow = nSlow-1;
+      for(iFast=0; iFast < nFast-1; iFast++) {
+	for(i=0; i<2; i++) {
+	  iX[i][0] = ixFast * (iFast+i) + ixSlow * iSlow + ixOrigin;
+	  iY[i][0] = iyFast * (iFast+i) + iySlow * iSlow + iyOrigin;
+	}
+	/* now draw the quad as two triangles (4 might be better) */
+	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
+		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
+		       x[iX[0][0]], y[iY[0][0]], zmin);
+	shade_triangle(x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
+		       x[iX[1][0]], y[iY[1][0]], zmin,
+		       x[iX[0][0]], y[iY[0][0]], zmin);
+      }
+    }
+
+}
+#endif
 
 /*--------------------------------------------------------------------------*\
  * void plot3d(x, y, z, nx, ny, opt, side)
@@ -250,6 +451,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	myexit("plot3d: Out of memory.");
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    /* fprintf(stderr, "cxx=%g cxy=%g cyx=%g cyy=%g cyz=%g\n", cxx, cxy, cyx, cyy, cyz); */
     init = 1;
     threedshading = 0;
 /* Call 3d line plotter.  Each viewing quadrant 
