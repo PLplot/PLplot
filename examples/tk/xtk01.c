@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/03/16 23:23:14  mjl
+ * Revision 1.9  1995/06/01 21:43:48  mjl
+ * Change to header file inclusion: to get PLplot/Tk global function
+ * prototypes, must now include pltk.h.  Some cleaning up and resource leaks
+ * plugged.
+ *
+ * Revision 1.8  1995/03/16  23:23:14  mjl
  * Changed one of the plots to a plshade demo, in order to make it easier to
  * investigate cmap1-related behavior when the widget is being driven directly.
  *
@@ -8,11 +13,7 @@
  * Modified to use the new syntax for pltkMain().
  */
 
-/* Before including plplot.h you must define TK to get all prototypes */
-
-#define TK
-#include <plplot.h>
-#include <tk.h>
+#include "pltk.h"
 #include <math.h>
 
 static int
@@ -84,16 +85,16 @@ AppInit(Tcl_Interp *interp)
 
     main = Tk_MainWindow(interp);
 
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
+/*
+ * Call the init procedures for included packages.  Each call should
+ * look like this:
+ *
+ * if (Mod_Init(interp) == TCL_ERROR) {
+ *     return TCL_ERROR;
+ * }
+ *
+ * where "Mod" is the name of the module.
+ */
 
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
@@ -105,10 +106,10 @@ AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
 
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
+/*
+ * Call Tcl_CreateCommand for application-specific commands, if
+ * they weren't already created by the init procedures called above.
+ */
 
     Tcl_CreateCommand(interp, "myplot", myplotCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
@@ -446,8 +447,10 @@ shade(void)
 
 /* Clean up */
 
-    free((void *) w);
-    free((void *) z);
+    plFree2dGrid(z, XPTS, YPTS);
+    plFree2dGrid(w, XPTS, YPTS);
+    plFree2dGrid(cgrid2.xg, XPTS, YPTS);
+    plFree2dGrid(cgrid2.yg, XPTS, YPTS);
 }
 
 /*--------------------------------------------------------------------------*\
