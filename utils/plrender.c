@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:46:46  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/10/12 17:12:58  mjl
+   Rearranged order of header file inclusion.
+   #include "plplot.h" must come first!!
 
+ * Revision 1.2  1992/09/29  04:46:46  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:35:59  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -28,20 +32,12 @@
 
     This file contains the code to render a PLPLOT metafile, written by
     the metafile driver, plmeta.c.
-
-    The Geoffrey Furnish Standard Disclaimer:
-    "I hate any C compiler that isn't ANSI compliant, and I refuse to waste
-    my time trying to support such garbage.  If you can't compile with an
-    ANSI compiler, then don't expect this to work.  No appologies,
-    now or ever."
-
-    Garbage support added by Maurice LeBrun :-).
 */
 
+#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include "plplot.h"
+#include <stdlib.h>
 #include "metadefs.h"
 #include "pdf.h"
 
