@@ -52,6 +52,7 @@ drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
+libtclmatrix = $(top_builddir)/bindings/tcl/libtclmatrix$(LIB_TAG).la
 
 # The variable below will force building of the dyndrivers info files
 # (<driver>.rc) and their installation in the drivers directory
@@ -72,12 +73,12 @@ get_drv_info_LDADD += $(top_builddir)/lib/nn/libcsironn.la
 endif
 # add the following directories if either tk or tkwin devices are enabled.
 if enable_tk
-get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libplplottcltkd.la
-get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libtclmatrixd.la
+get_drv_info_LDADD += $(libplplottcltk)
+get_drv_info_LDADD += $(libtclmatrix)
 else
 if enable_tkwin
-get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libplplottcltkd.la
-get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libtclmatrixd.la
+get_drv_info_LDADD += $(libplplottcltk)
+get_drv_info_LDADD += $(libtclmatrix)
 endif
 endif
 
