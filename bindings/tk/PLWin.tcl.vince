@@ -7,7 +7,12 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1996/10/25 20:18:15  furnish
+# Revision 1.1  1998/11/18 06:03:00  furnish
+# Moved this to the side so that it doesn't screw up the ?tcl
+# auto_mkindex procedure, which had failure modes of trash code was
+# accidentally indexed.  Bad, very bad.
+#
+# Revision 1.1  1996/10/25  20:18:15  furnish
 # Temporarily add this file, while investigating how to move forward on
 # integrating Vince's work.
 #
