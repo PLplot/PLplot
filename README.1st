@@ -1,7 +1,10 @@
-This is the 3rd beta release (4.99c) of what will eventually become
+This is the 4th beta release (4.99d) of what will eventually become
 the PLPLOT 5.0 distribution.  At this point I'm mainly trying to root out the
 remaining bugs and system dependencies, but there will undoubtably be a
 few improvements yet before the final version sees the light of day.
+
+*** THIS IS A PRERELEASE VERSION OF THE 4.99d DISTRIBUTION ***
+*** UPGRADE TO THE REAL 4.99d RELEASE AS SOON AS POSSIBLE ***
 
 Please refer to the following files for more information:
 
@@ -14,6 +17,12 @@ Also there is system-specific documentation under sys/<system-name>, and
 a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 
 For more detail of these changes, consult Changes.log.
+
+**************************************************************************
+Version 4.99d: Summary of major changes
+**************************************************************************
+
+Lots.  Will fill this in later.
 
 **************************************************************************
 Version 4.99c: Summary of major changes (minor update only)
