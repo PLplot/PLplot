@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/12/09 20:35:14  mjl
+ * Revision 1.21  1993/12/09 21:19:40  mjl
+ * Changed call syntax for tk_toplevel().
+ *
+ * Revision 1.20  1993/12/09  20:35:14  mjl
  * Fixed some casts.
  *
  * Revision 1.19  1993/12/08  06:18:09  mjl
@@ -18,61 +21,6 @@
  *
  * Revision 1.15  1993/11/07  09:02:52  mjl
  * Added escape function handling for dealing with flushes.
- *
- * Revision 1.14  1993/10/18  19:41:15  mjl
- * Moved functions for finding executable commands prior to an exec into
- * a more accessible place (plctrl.c).
- *
- * Revision 1.13  1993/09/28  21:29:40  mjl
- * Fixed some inconsistencies in the byte count.  Now prints a status message
- * prior to forking plserver, and executes the copy in the current directory
- * if present.
- *
- * Revision 1.12  1993/09/27  20:34:26  mjl
- * Eliminated some cases of freeing unallocated memory.
- *
- * Revision 1.11  1993/09/08  04:52:23  mjl
- * Fixes made for TK3.3b3.  Now searches for plserver before doing fork/exec,
- * checking the following locations: ".", ${PLPLOT_DIR}, INSTALL_DIR (defined
- * in the makefile).  If plserver not found, aborts gracefully.
- *
- * Revision 1.10  1993/08/28  06:34:00  mjl
- * Put several send commands in background; should help over a slow network.
- *
- * Revision 1.9  1993/08/20  19:40:44  mjl
- * Now causes proc to update scrollbars to be evaluated when the driver
- * interface values are changed.  So settings zoom from the command line
- * using -wplt option will bring up scrollbars.
- *
- * Revision 1.8  1993/08/18  19:05:41  mjl
- * Changed way device window parameters are passed -- now via the command
- * line flags -mar, -a, -jx, and -jy.
- *
- * Revision 1.7  1993/08/11  19:26:30  mjl
- * Improved code that determines when command is sent to server to read from
- * the FIFO.  Changed to non-blocking i/o and asynchronous TK sends.
- *
- * Revision 1.6  1993/08/03  20:30:59  mjl
- * Fixed more problems with writing into non-writable strings by gcc.
- *
- * Revision 1.5  1993/08/03  01:49:55  mjl
- * Fixed some code that caused problems with some compilers due to strings
- * that might be allocated in non-writable memory being passed to Tcl_Eval
- * (which may modify the string).
- *
- * Revision 1.4  1993/07/31  08:00:57  mjl
- * Several driver functions consolidated, for all drivers.  The width and
- * color commands are now part of a more general "state" command.  The
- * text and graph commands used for switching between modes is now handled
- * by the escape function (very few drivers require it).  An escape
- * function call was added to handle driver interface commands -- these
- * are much better passed on to the remote plframe widget for handling
- * since then they are modifiable by the user.
- *
- * Revision 1.3  1993/07/28  05:46:30  mjl
- * Now explicitly initializes remote plplot by using the "cmd" widget
- * command.  Added support for -nopixmap option, and all malloc'ed
- * memory is eventually freed.
 */
 
 /*	tk.c
@@ -99,7 +47,7 @@
 #define tk_wr(code) \
 if (code) { abort_session(pls, "Unable to write to pipe"); }
 
-/* Use vfork() if the system supports it */
+/* Use vfork() on some systems */
 
 #ifndef FORK
 #define FORK fork
@@ -567,7 +515,7 @@ tk_start(PLStream *pls)
 	pls->program = "plclient";
 
     if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
-		    pls->program, NOMAP))
+		    pls->program))
 	abort_session(pls, "Unable to create top-level window");
 
 /* Initialize stuff known to interpreter */
