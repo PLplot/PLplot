@@ -129,8 +129,9 @@ if test "$enable_xwin" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# Find libgd, libpng, libjpeg, and zlib libraries and headers required for building 
-# png or jpeg drivers.  Written by Alan W. Irwin following what is done for X.
+# Find libgd libraries and headers and libpng, libjpeg, and zlib libraries
+# required for building png and/or jpeg drivers.  
+# Written by Alan W. Irwin following what is done for X.
 # ----------------------------------------------------------------------------
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
@@ -182,29 +183,6 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    if test -z "$PNGINCDIR"; then
-        AC_TRY_CPP([#include <png.h>], [ PNGINCDIR=default ], [
-	incdirs="\
-	/usr/include \
-	/usr/local/include"
-
-        for dir in $incdirs; do
-	    if test -r "$dir/png.h"; then
-	       PNGINCDIR="$dir"
-	       break
-	    fi
-	done
-	if test -z "$PNGINCDIR"; then
-	    AC_MSG_RESULT(warning: png header files not found)
-	    PNGINCDIR=default
-	    enable_png=no
-	    enable_jpeg=no
-	fi ])
-    fi
-    if test "$PNGINCDIR" = "/usr/include"; then
-        PNGINCDIR=default
-    fi
-
     if test -z "$PNGLIBDIR"; then
         AC_CHECK_LIB(png, main, [ PNGLIBDIR=default ], [
 	libdirs="\
@@ -230,29 +208,6 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    if test -z "$JPEGINCDIR"; then
-        AC_TRY_CPP([#include <jpeglib.h>], [ JPEGINCDIR=default ], [
-	incdirs="\
-	/usr/include \
-	/usr/local/include"
-
-        for dir in $incdirs; do
-	    if test -r "$dir/jpeglib.h"; then
-	       JPEGINCDIR="$dir"
-	       break
-	    fi
-	done
-	if test -z "$JPEGINCDIR"; then
-	    AC_MSG_RESULT(warning: jpeg header files not found)
-	    JPEGINCDIR=default
-	    enable_png=no
-	    enable_jpeg=no
-	fi ])
-    fi
-    if test "$JPEGINCDIR" = "/usr/include"; then
-        JPEGINCDIR=default
-    fi
-
     if test -z "$JPEGLIBDIR"; then
         AC_CHECK_LIB(jpeg, main, [ JPEGLIBDIR=default ], [
 	libdirs="\
@@ -278,29 +233,6 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    if test -z "$ZLIBINCDIR"; then
-        AC_TRY_CPP([#include <zlib.h>], [ ZLIBINCDIR=default ], [
-	incdirs="\
-	/usr/include \
-	/usr/local/include"
-
-        for dir in $incdirs; do
-	    if test -r "$dir/zlib.h"; then
-	       ZLIBINCDIR="$dir"
-	       break
-	    fi
-	done
-	if test -z "$ZLIBINCDIR"; then
-	    AC_MSG_RESULT(warning: zlib header files not found)
-	    ZLIBINCDIR=default
-	    enable_png=no
-	    enable_jpeg=no
-	fi ])
-    fi
-    if test "$ZLIBINCDIR" = "/usr/include"; then
-        ZLIBINCDIR=default
-    fi
-
     if test -z "$ZLIBLIBDIR"; then
         AC_CHECK_LIB(z, main, [ ZLIBLIBDIR=default ], [
 	libdirs="\
@@ -336,7 +268,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     LIBS_SAVE=$LIBS
     LDFLAGS_SAVE=$LDFLAGS
 
-    CFLAGS="-I$GDINCDIR -I$PNGINCDIR -I$JPEGINCDIR -I$ZLIBINCDIR"
+    CFLAGS="-I$GDINCDIR"
     LIBS="-L$GDLIBDIR -L$PNGLIBDIR -L$JPEGLIBDIR -L$ZLIBLIBDIR $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR"
     LDFLAGS=
 
@@ -570,9 +502,6 @@ if test "$enable_xwin" = "yes"; then
 fi
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     ADD_TO_INCS($GDINCDIR, INCS, INCPATH)
-    ADD_TO_INCS($PNGINCDIR, INCS, INCPATH)
-    ADD_TO_INCS($JPEGINCDIR, INCS, INCPATH)
-    ADD_TO_INCS($ZLIBINCDIR, INCS, INCPATH)
 fi
 if test "$enable_tcl" = "yes"; then
     ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)
