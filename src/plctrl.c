@@ -1,11 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1995/01/09 22:13:24  mjl
- * Function plscol0 now sets pls->nobg if a negative number is specified for
- * the background color (first cmap0 entry).  Interpolation of control points
- * in cmap1 space (between n and n+1th control points) now goes around the
- * "back" side in hue (hue = 0) if cmap1cp[n].rev is set.  There are some
- * smooth color maps that are unattainable without this capability.
+ * Revision 1.29  1995/01/10 09:38:04  mjl
+ * Fixed some braindamage incurred last update.
+ *
+ * Revision 1.28  1995/01/09  22:13:24  mjl
+ * Interpolation of control points in cmap1 space (between n and n+1th
+ * control points) now goes around the "back" side in hue (hue = 0) if
+ * cmap1cp[n].rev is set.  There are some smooth color maps that are
+ * unattainable without this capability.
  *
  * Revision 1.27  1994/09/27  22:07:48  mjl
  * Ifdef inserted to handle pathnames under VMS.
@@ -41,8 +43,7 @@
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
  * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
-*/
+ * eliminated as a result.  */
 
 /*	plctrl.c
 
@@ -207,10 +208,6 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
     if (icol0 < 0 || icol0 > 15) {
 	plabort("plscol0: Illegal color table value");
-	return;
-    }
-    if ((icol0 == 0) && (r < 0 || g < 0 || b < 0)) {
-	plsc->nobg = 1;
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {

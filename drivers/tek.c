@@ -1,7 +1,7 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1995/01/09 21:49:11  mjl
- * Disabled background color modification when pls->nobg is set.
+ * Revision 1.35  1995/01/10 09:37:17  mjl
+ * Fixed some braindamage incurred last update.
  *
  * Revision 1.33  1995/01/06  07:44:22  mjl
  * Inserted GIN (Graphics Input) code to handle PLESC_GETC escape command
@@ -874,15 +874,14 @@ scolor(int icol, int r, int g, int b)
 static void
 setcmap(PLStream *pls)
 {
-    int i, i0, ncol1 = MIN(16 - pls->ncol0, pls->ncol1);
+    int i, ncol1 = MIN(16 - pls->ncol0, pls->ncol1);
     PLColor cmap1col;
 
     tek_graph(pls);
 
 /* Initialize cmap 0 colors */
 
-    i0 = (plsc->nobg) ? 1 : 0;
-    for (i = i0; i < pls->ncol0; i++) 
+    for (i = 0; i < pls->ncol0; i++) 
 	scolor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
 
 /* Initialize any remaining slots for cmap1 */

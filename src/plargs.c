@@ -1,7 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1995/01/09 21:53:51  mjl
- * Changed -bg option to set pls->nobg if a negative number was specified.
+ * Revision 1.25  1995/01/10 09:38:02  mjl
+ * Fixed some braindamage incurred last update.
+ *
+ * Revision 1.24  1995/01/09  21:53:51  mjl
  * Handling of the geometry string improved; now handles strings of the form:
  *     1) -geometry WxH+Xoff+Yoff
  *     2) -geometry WxH
@@ -1279,13 +1281,6 @@ opt_bg(char *opt, char *optarg, void *client_data)
 /* Get number in hex */
 
     bgcolor = strtol(rgb, NULL, 16);
-
-/* If (-1), eliminate background color handling */
-
-    if (bgcolor == -1) {
-	plsc->nobg = 1;
-	return 0;
-    }
 
 /* Must be either a 3 or 6 digit hex number */
 /* If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC). */
