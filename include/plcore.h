@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/05/25 09:36:58  mjl
+ * Revision 1.20  1994/05/25 21:56:46  mjl
+ * Dispatch table entries for Win3 driver, contributed by Paul Casteels.
+ *
+ * Revision 1.19  1994/05/25  09:36:58  mjl
  * All VGA driver function names now end with "_vga", a nice simplification.
  * Since all are compiler-dependent and mutually exclusive, this should pose
  * no problem.  Also HP pen plotter driver were consolidated.  Both
@@ -273,6 +276,22 @@ static PLDispatchTable dispatch_table[] = {
 	plD_tidy_mgr,
 	plD_state_mgr,
 	plD_esc_mgr
+    },
+#endif
+
+#ifdef WIN3
+    {
+	"Windows 3.x Driver",
+	"win3",
+	1,
+	plD_init_win3,
+	plD_line_win3,
+	plD_polyline_win3,
+	plD_eop_win3,
+	plD_bop_win3,
+	plD_tidy_win3,
+	plD_state_win3,
+	plD_esc_win3
     },
 #endif
 
