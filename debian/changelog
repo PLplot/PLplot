@@ -1,3 +1,10 @@
+plplot (5.3.0.rc1.5.3.1-5) unstable; urgency=low
+
+  * debian/control:  Make the build-dependencies on atlas/lapack specific
+    to the arm and m68k architectures.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 17 Jun 2004 16:13:55 +0200
+
 plplot (5.3.0.rc1.5.3.1-4) unstable; urgency=low
 
   * debian/control:  Refine the build-dependencies on atlas/lapack to make
