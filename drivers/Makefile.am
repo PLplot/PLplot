@@ -65,8 +65,8 @@ SUFFIXES = .la .rc
 .la.rc: get-drv-info
 	./get-drv-info `echo $< | sed 's/.la//'` > $@
 
-libplplot = ../src/libplplot$(LIB_TAG).la
-libplplottcltk = ../bindings/tcl/libplplottcltk$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
+libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
@@ -78,21 +78,21 @@ cgm_la_CFLAGS = $(CDINCCMD)
 gd_la_CFLAGS = $(GDINCCMD)
 gnome_la_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
 ntk_la_CFLAGS = \
-	-I../bindings/tcl \
-	-I../bindings/tk \
+	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tk_la_CFLAGS = \
-	-I../bindings/tcl \
-	-I../bindings/tk \
+	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tkwin_la_CFLAGS = \
-	-I../bindings/tcl \
-	-I../bindings/tk \
-	-I../bindings//tk-x-plat \
+	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_srcdir)/bindings/tk \
+	-I$(top_srcdir)/bindings/tk-x-plat \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
@@ -182,8 +182,8 @@ tk_la_LDFLAGS = $(ldflags) $(libplplottcltk) $(TCLLIBCMD) $(TKLIBCMD)
 
 tkwin_la_SOURCES = \
 	tkwin.c \
-	../bindings/tk-x-plat/Plplotter_Init.c \
-	../bindings/tk-x-plat/plplotter.c
+	$(top_srcdir)/bindings/tk-x-plat/Plplotter_Init.c \
+	$(top_srcdir)/bindings/tk-x-plat/plplotter.c
 
 tkwin_la_LDFLAGS = $(ldflags) $(libplplottcltk) $(TCLLIBCMD) $(TKLIBCMD)
 
@@ -210,37 +210,26 @@ noinst_LTLIBRARIES = libplplotdrv.la
 if enable_tk
 # All source that is in libplplottcltk.
 tksources = \
-	../bindings/tcl/tclAPI.c \
-	../bindings/tcl/tclMain.c \
-	../bindings/tk/Pltk_Init.c \
-	../bindings/tk/plframe.c \
-	../bindings/tk/plr.c \
-	../bindings/tk/tcpip.c \
-	../bindings/tk/tkMain.c
+	$(top_builddir)/bindings/tcl/tclAPI.c \
+	$(top_srcdir)/bindings/tcl/tclMain.c \
+	$(top_srcdir)/bindings/tk/Pltk_Init.c \
+	$(top_srcdir)/bindings/tk/plframe.c \
+	$(top_srcdir)/bindings/tk/plr.c \
+	$(top_srcdir)/bindings/tk/tcpip.c \
+	$(top_srcdir)/bindings/tk/tkMain.c
 
 endif
 
-# This is an effective duplicate of what occurs in bindings/tcl to generate
-# include files for tclAPI.c.  So this duplicate work required duplicate
-# maintenance, but this is required because of the special nature of static
-# drivers and their linking constraints.
-
-plapi.tpl: ../bindings/tcl/plapi.tpl
-	cp ../bindings/tcl/plapi.tpl plapi.tpl
-
-tclcmd.tpl: ../bindings/tcl/tclcmd.tpl
-	cp ../bindings/tcl/tclcmd.tpl tclcmd.tpl
-
-tclgen.h tclgen_s.h tclgen.c : ../bindings/tcl/pltclgen plapi.tpl tclcmd.tpl
-	$(PERL) ../bindings/tcl/pltclgen
-
-../bindings/tcl/tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+$(top_builddir)/bindings/tcl/tclAPI.c: tclapi
+tclapi:
+	( cd $(top_builddir)/bindings/tcl ; $(MAKE) tclAPI.c )
+.PHONY: tclapi
 
 if enable_tcl
 # All source that is in libtclmatrix.
 matrixsources = \
-	../bindings/tcl/tclMatrix.c \
-	../bindings/tcl/matrixInit.c
+	$(top_srcdir)/bindings/tcl/tclMatrix.c \
+	$(top_srcdir)/bindings/tcl/matrixInit.c
 endif
 
 if enable_tkwin
@@ -251,23 +240,23 @@ if enable_tk
 # the tkwin driver in any case.
 
 tkwinsources = \
-	../bindings/tk-x-plat/Plplotter_Init.c \
-	../bindings/tk-x-plat/plplotter.c
+	$(top_srcdir)/bindings/tk-x-plat/Plplotter_Init.c \
+	$(top_srcdir)/bindings/tk-x-plat/plplotter.c
 else
 # tkwin driver on its own without tk driver (but tcl must be enabled so
 # that in this case the matrix source is already in.  Thus, only need to
 # put in the tksource plus the two extra above.
 
 tkwinsources = \
-	../bindings/tcl/tclAPI.c \
-	../bindings/tcl/tclMain.c \
-	../bindings/tk/Pltk_Init.c \
-	../bindings/tk/plframe.c \
-	../bindings/tk/plr.c \
-	../bindings/tk/tcpip.c \
-	../bindings/tk/tkMain.c \
-	../bindings/tk-x-plat/Plplotter_Init.c \
-	../bindings/tk-x-plat/plplotter.c
+	$(top_builddir)/bindings/tcl/tclAPI.c \
+	$(top_srcdir)/bindings/tcl/tclMain.c \
+	$(top_srcdir)/bindings/tk/Pltk_Init.c \
+	$(top_srcdir)/bindings/tk/plframe.c \
+	$(top_srcdir)/bindings/tk/plr.c \
+	$(top_srcdir)/bindings/tk/tcpip.c \
+	$(top_srcdir)/bindings/tk/tkMain.c \
+	$(top_srcdir)/bindings/tk-x-plat/Plplotter_Init.c \
+	$(top_srcdir)/bindings/tk-x-plat/plplotter.c
 
 endif
 endif
@@ -315,21 +304,21 @@ cgm_lo_CFLAGS = $(CDINCCMD)
 gd_lo_CFLAGS = $(GDINCCMD)
 gnome_lo_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
 ntk_lo_CFLAGS = \
-	-I../bindings/tcl \
-	-I../bindings/tk \
+	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tk_lo_CFLAGS = \
-	-I../bindings/tcl \
-	-I../bindings/tk \
+	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tkwin_lo_CFLAGS = \
-	-I../bindings/tcl \
-	-I../bindings/tk \
-	-I../bindings//tk-x-plat \
+	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_srcdir)/bindings/tk \
+	-I$(top_srcdir)/bindings/tk-x-plat \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
@@ -345,6 +334,7 @@ AM_CPPFLAGS = \
 	$(gnome_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
 	$(xwin_lo_CFLAGS) \
+	$(FREETYPEINCCMD) \
 	$(ITCLINCCMD)
 
 libplplotdrv_la_LIBADD = $(STATIC_DRIVERS) 
@@ -392,6 +382,7 @@ libplplotdrv_la_LDFLAGS = \
 	$(TKLIBCMD) \
 	$(ITCLLIBCMD) \
 	$(ITKLIBCMD) \
+	$(FREETYPELIBCMD) \
 	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.
@@ -410,7 +401,7 @@ doc_DATA = README.drivers
 
 EXTRA_DIST = $(doc_DATA) next.c
 
-CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c *.rc
+CLEANFILES = *.rc
 DISTCLEANFILES = $(drivers_DATA)
 
 
