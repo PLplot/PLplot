@@ -75,21 +75,17 @@ INSTALL_DIR=`echo $CWD | sed 's%/[^/][^/]*$%%'`
 
 case "$PKG" in
 
-    plplot* )
-    
-    # Settings relevant to PLplot
-    # I typically put PLplot in /usr/local/plplot or $HOME/local/plplot.
+    perl* )
+	PKG_NAME="perl"
+	REFERENCE_FILE="$INSTALL_DIR/bin/perl"
+    ;;
 
+    plplot* )
 	PKG_NAME="PLplot"
 	REFERENCE_FILE="$INSTALL_DIR/bin/plrender"
     ;;
 
     tcl*|tk* )
-    
-    # Settings relevant to Tcl/TK
-    # I typically put Tcl/TK and related tools in /usr/local/tk<ver> or
-    # $HOME/local/tk<ver>. 
-
 	PKG_NAME="Tcl/TK/etc"
 	REFERENCE_FILE="$INSTALL_DIR/bin/tclsh"
     ;;
@@ -144,11 +140,18 @@ add_link () {
 	    fi
 	fi
 
-	if test "$DO_NOTHING"; then
-	    echo "ln -s $CWD/$1/$2  $INSTALL_DIR/$1"
-	else
-	    ln -s $CWD/$1/$2  $INSTALL_DIR/$1
-	fi
+	# Do filename globbing here so we can catch cases where no
+	# filenames match.
+
+	for file in $CWD/$1/$2; do
+	    if test -f $file; then
+		if test "$DO_NOTHING"; then
+		    echo "ln -s $file  $INSTALL_DIR/$1"
+		else
+		    ln -s $file $INSTALL_DIR/$1
+		fi
+	    fi
+	done
     fi
 }
 
@@ -197,7 +200,7 @@ Add () {
     echo "Adding links from $CWD to $INSTALL_DIR"
 
     add_link "bin"	"*"
-    add_link "lib"	"*"
+    add_link "lib"	"lib*"
     add_link "include"	"*.h"
 
     if test "$LINK_MAN"; then
