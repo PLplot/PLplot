@@ -47,23 +47,25 @@ system has the pkg-config program (typically *nix).
 
 1.1 Tcl
 
-Due to unresolved problems in the build process, tcl has been temporarily
-disabled for this release.
+The tcl interface was turned off by default for 5.5.0 because of interactions
+between the old installed version and the build process which lead to
+errors (for those users who kept an old installed version around).
 
-If you must have tcl, here are the instrutions.  DO NOT ATTEMPT THIS
-UNLESS YOU ARE SURE YOU KNOW WHAT YOU ARE DOING.
-
-  1) Move all plplot files in /usr/lib and /usr/local/lib into a
-     temporary directory.
-
-  2) Use the --enable-tcl and --enable-itcl options during configure.
-
+The configuration issues that were the source of this problem have now
+been analyzed and fixed so the tcl interface is turned on again by default
+for 5.5.1
 
 2. Changes
 
+The configuration issues that were making the build process incorrectly depend
+on the old installed version have been corrected for the tcl, c++, and f77
+interfaces.
 
 2.1 API
 
+No change.
 
 2.2 Drivers
+
+No change.
 
