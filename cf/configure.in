@@ -298,7 +298,7 @@ AC_PREREQ(2.4)
 
 AC_INIT(src/plcore.c)
 
-PACKAGE_VERSION
+PLPLOT_PACKAGE_VERSION
 
 # ----------------------------------------------------------------------------
 # The configure script must be run in a separate build directory.  If the
