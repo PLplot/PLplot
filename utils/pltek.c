@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/08/26 19:25:40  mjl
+ * Revision 1.8  1994/09/16 03:45:46  mjl
+ * A small patch to remove a "==" assignment introduced last-time and removed
+ * an unused variable picked-up by gcc -Wall.  Contributed by Mark Olesen.
+ *
+ * Revision 1.7  1994/08/26  19:25:40  mjl
  * Now checks for the terminal type and provides some rudimentary decisions
  * based on the TERM setting.  The xterm is unaffected, but with a terminal
  * type of "tekterm", the 'Page >' prompt is printed on the graphics screen
@@ -28,6 +32,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <ctype.h>
 
@@ -48,10 +53,10 @@ int
 main(int argc, char *argv[])
 {
     FILE *fd;
-    int i, j, nb, npage, ipage, nextpage, ifirst, oldpage;
+    int i, j, nb, npage, ipage, ifirst, oldpage;
     int istop;
     long start[MAXPAGES];		/* start (offset) of each page */
-    char buf[BUFSZ], xtra, lastchar;
+    char buf[BUFSZ], xtra, lastchar = '\0';
     char c, ibuf[128], *t;
 
     if (argc < 2) {
@@ -205,7 +210,7 @@ tek_mode (int mode)
 	}
 	printf("\033\f");			/* clear screen = ESC FF */
 	fflush(stdout);      
-	currentmode == mode;
+	currentmode = mode;
     } else if ( mode == ALPHA_MODE ) {
 	switch(termtype) {
 	case tekterm:
@@ -218,7 +223,7 @@ tek_mode (int mode)
 	    printf("\033\003");		/* VT mode (xterm) = ESC ETX */
 	}
 	fflush(stdout);      
-	currentmode == mode;
+	currentmode = mode;
     }
 }
 
