@@ -130,6 +130,3 @@ has been developed as a separate project).  Alan
 some cross-platform issues (especially with fortran) so have it act
 reasonably when, e.g., getarg is not available on some fortran platforms.
 
-* Drop NOBRAINDEAD or completely support it with autotools.  Question on
-list about this as of 2003 September, but no resolution made yet.
-

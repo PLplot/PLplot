@@ -377,9 +377,9 @@ typedef struct {
  * Sorry to have to resort to such an ugly kludge, but it is really the
  * best way to handle the situation at present.  If all available
  * compilers offer a way to correct this stupidity, then perhaps we can
- * eventually reverse it (there is a way now, by defining NOBRAINDEAD, but
- * be careful because this will totally hose the Fortran interface on some
- * systems).  If you feel like screaming at someone (I sure do), please
+ * eventually reverse it.
+ * 
+ * If you feel like screaming at someone (I sure do), please
  * direct it at your nearest system vendor who has a braindead shared
  * C/Fortran namespace.  Some vendors do offer compiler switches that
  * change the object names, but then everybody who wants to use the
@@ -409,10 +409,6 @@ typedef struct {
 
 #ifndef BRAINDEAD
 #define BRAINDEAD
-#endif
-
-#ifdef NOBRAINDEAD
-#undef BRAINDEAD
 #endif
 
 #ifdef BRAINDEAD
@@ -548,135 +544,6 @@ typedef struct {
 #define    plxormod	c_plxormod
 
 #endif /* __PLSTUBS_H__ */
-
-#else
-
-#define    c_pl_setcontlabelformat pl_setcontlabelformat
-#define    c_pl_setcontlabelparam pl_setcontlabelparam
-#define    c_pladv	pladv
-#define    c_plaxes	plaxes
-#define    c_plbin	plbin
-#define    c_plbop	plbop
-#define    c_plbox	plbox
-#define    c_plbox3	plbox3
-#define    c_plcalc_world	plcalc_world
-#define    c_plclear	plclear
-#define    c_plcol0	plcol0
-#define    c_plcol1	plcol1
-#define    c_plcpstrm	plcpstrm
-#define    c_plcont	plcont
-#define    c_plend	plend
-#define    c_plend1	plend1
-#define    c_plenv	plenv
-#define    c_plenv0	plenv0
-#define    c_pleop	pleop
-#define    c_plerrx	plerrx
-#define    c_plerry	plerry
-#define    c_plfamadv	plfamadv
-#define    c_plfill	plfill
-#define    c_plfill3	plfill3
-#define    c_plflush	plflush
-#define    c_plfont	plfont
-#define    c_plfontld	plfontld
-#define    c_plgchr	plgchr
-#define    c_plgcol0	plgcol0
-#define    c_plgcolbg	plgcolbg
-#define    c_plgcompression	plgcompression
-#define    c_plgdev	plgdev
-#define    c_plgdidev	plgdidev
-#define    c_plgdiori	plgdiori
-#define    c_plgdiplt	plgdiplt
-#define    c_plgfam	plgfam
-#define    c_plgfnam	plgfnam
-#define    c_plglevel	plglevel
-#define    c_plgpage	plgpage
-#define    c_plgra	plgra
-#define    c_plgriddata plgriddata   
-#define    c_plgspa	plgspa
-#define    c_plgstrm	plgstrm
-#define    c_plgver	plgver
-#define    c_plgvpd	plgvpd
-#define    c_plgvpw	plgvpw
-#define    c_plgxax	plgxax
-#define    c_plgyax	plgyax
-#define    c_plgzax	plgzax
-#define    c_plhist	plhist
-#define    c_plhls	plhls       
-#define    c_plinit	plinit
-#define    c_pljoin	pljoin
-#define    c_pllab	pllab
-#define    c_pllightsource pllightsource
-#define    c_plline	plline
-#define    c_plline3	plline3
-#define    c_pllsty	pllsty
-#define    c_plmesh	plmesh
-#define    c_plmeshc	plmeshc
-#define    c_plmkstrm	plmkstrm
-#define    c_plmtex	plmtex
-#define    c_plot3d	plot3d
-#define    c_plot3dc	plot3dc
-#define    c_plsurf3d	plsurf3d
-#define    c_plpat	plpat
-#define    c_plpoin	plpoin
-#define    c_plpoin3	plpoin3
-#define    c_plpoly3	plpoly3
-#define    c_plprec	plprec
-#define    c_plpsty	plpsty
-#define    c_plptex	plptex
-#define    c_plreplot	plreplot
-#define    c_plrgb	plrgb
-#define    c_plrgb1	plrgb1
-#define    c_plschr	plschr
-#define    c_plscmap0	plscmap0
-#define    c_plscmap1	plscmap1
-#define    c_plscmap0n	plscmap0n
-#define    c_plscmap1n	plscmap1n
-#define    c_plscmap1l	plscmap1l
-#define    c_plscol0	plscol0
-#define    c_plscolbg	plscolbg
-#define    c_plscolor	plscolor
-#define    c_plscompression	plscompression
-#define    c_plsdev	plsdev
-#define    c_plsdiplt	plsdiplt
-#define    c_plsdiplz	plsdiplz
-#define    c_plsdidev	plsdidev
-#define    c_plsdimap	plsdimap
-#define    c_plsdiori	plsdiori
-#define    c_plsetopt	plsetopt
-#define    c_plsesc	plsesc
-#define    c_plsfam	plsfam
-#define    c_plsfnam	plsfnam
-#define    c_plshades	plshades
-#define    c_plshade	plshade
-#define    c_plshade1	plshade1
-#define    c_plsmaj	plsmaj
-#define    c_plsmin	plsmin
-#define    c_plsori	plsori
-#define    c_plspage	plspage
-#define    c_plspause	plspause
-#define    c_plsstrm	plsstrm
-#define    c_plssub	plssub
-#define    c_plssym	plssym
-#define    c_plstar	plstar
-#define    c_plstart	plstart
-#define    c_plstripa	plstripa
-#define    c_plstripc	plstripc
-#define    c_plstripd	plstripd
-#define    c_plstyl	plstyl
-#define    c_plsvpa	plsvpa
-#define    c_plsxax	plsxax
-#define    c_plsyax	plsyax
-#define    c_plsym	plsym
-#define    c_plszax	plszax
-#define    c_pltext	pltext
-#define    c_plvasp	plvasp
-#define    c_plvpas	plvpas
-#define    c_plvpor	plvpor
-#define    c_plvsta	plvsta
-#define    c_plw3d	plw3d
-#define    c_plwid	plwid
-#define    c_plwind	plwind
-#define    c_plxormod	plxormod
 
 #endif	/* BRAINDEAD */
 

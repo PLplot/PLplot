@@ -139,17 +139,6 @@ the bindings as described in this manual.  Codes written under old versions
 of PLplot (previous to 5.0) will require a recompile, however.
   </para>
   <para>
-It is possible to compile the PLplot library so that the affected functions
-retain their documented names, by specifying <literal>-DNOBRAINDEAD</literal> on the
-compile line.  Some reasons for doing this might be:  (a) you don't want to
-include <filename>plplot.h</filename> into your program for whatever reason, or (b) you are
-debugging PLplot and wish to specify the documented names to the debugger.
-In fact this procedure will work fine under SUNOS, with no Fortran/C
-namespace collision.  But on other systems a special compiler switch may be
-required to get it to work similarly, which is an extra burden on the user
-and best avoided.
-  </para>
-  <para>
 For more information on calling PLplot from C, please see the example C
 programs (<filename>x01c.c</filename> through <filename>x19c.c</filename>) 
 distributed with PLplot.

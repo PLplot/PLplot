@@ -20,9 +20,6 @@
 #  include <config.h>
 #endif
 
-/* If you don't know what this is for, you shouldn't be using it */
-#undef NOBRAINDEAD
-
 /* Define if dynamic drivers are enabled.*/
 #undef ENABLE_DYNDRIVERS
 
