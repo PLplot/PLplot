@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/04/08 11:51:12  mjl
+ * Revision 1.24  1994/05/07 03:10:33  mjl
+ * Changed startup to ensure that initial RGB color map values get saved (a
+ * hack to get around limitations in X11R5 and Tk).
+ *
+ * Revision 1.23  1994/04/08  11:51:12  mjl
  * Changed main init function name (for wish builders) from plTcl_AppInit to
  * pltk_Init, to make it more conventional.
  *
@@ -568,10 +572,9 @@ configure_plserver(void)
 
     dbug_enter("configure_plserver");
 
-/* Tell interpreter about commands. */
+/* Standard PLplot/Tk extensions. */
 
-    Tcl_CreateCommand(interp, "plframe", plFrameCmd,
-                      (ClientData) mainWindow, (void (*)(ClientData)) NULL);
+    Pltk_Init( interp );
 
 /* Default initialization proc */
 
