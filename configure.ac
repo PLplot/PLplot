@@ -64,7 +64,7 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 dnl Automake initialization
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(1.8.2)
 
 dnl Default installation prefix
 
