@@ -4,7 +4,7 @@
 	      Authors: Rafael Laboissière <rafael@icp.inpg.fr>
 	              Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 		 Created on: Thu May 20 11:14:38 CEST 1999
-	      Last modified on: Mon Oct 30 14:13:59 CET 2000
+	      Last modified on: Mon Feb 26 17:02:57 CET 2001
      $Id$
 
 
@@ -211,14 +211,11 @@ setenv PLPLOTDOCBOOK /path/to/plplot/doc/docbook
 cd $PLPLOTDOCBOOK
 cvs update    
 cd $DOCBOOK2X    
-wget http://download.sourceforge.net/docbook2x/docbook2X-0.6.0.tar.gz
-tar xfz docbook2X-0.6.0.tar.gz
-cd docbook2X
-patch < $PLPLOTDOCBOOK/docbook2texixml.patch
-patch < $PLPLOTDOCBOOK/texi_xml.patch
+wget http://download.sourceforge.net/docbook2x/docbook2X-0.6.1.tar.gz
+tar xfz docbook2X-0.6.1.tar.gz
 
-n.b. this downloading and patching only has to be done once per
-docbook2x or patch change.
+Version 0.6.1 or higher of docbook2X is needed for a smooth build.
+
 
 Package Lists
 =============
