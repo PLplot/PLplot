@@ -1,0 +1,18 @@
+Running the Tk Demos.
+
+If the plplot software is not installed, these Tk demos may only be executed
+(with symlinks that have already been set up) from tmp because of
+hard-linked locations within the source code. Once the software is
+installed, these examples work anywhere including execution from their
+original location (tmp/../examples/tk) and the install location.
+
+Demo Status as of 2001 January 10
+
+To run tkdemos.tcl, follow the directions in that file.  It will exercise
+all the x??.tcl demos that are symlinked from tmp, or the original location
+and the install location.  A few of those return the message that they have
+not been implemented, but the rest should work smoothly without problems.
+
+To run the tk?? demos simply type their name (after make tkdemos is executed
+to set up the required executables.) All these demos should work smoothly
+now. 
