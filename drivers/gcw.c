@@ -83,6 +83,13 @@ char* plD_DEVICE_INFO_libgcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 #define CANVAS_WIDTH (9.0)
 #define CANVAS_HEIGHT (7.0)
 
+/* The zoom factor for 100% zoom in */
+#define ZOOM100 1.5
+#define ZOOMSTEP 1.25
+
+/* The scale factor for line widths */
+#define WSCALE 3
+
 /* Globals */
 static int text = 0;
 static int aa = 1;
@@ -134,7 +141,7 @@ void destroy(GtkWidget *widget, gpointer data) {
 }
 
 /* All-purpose zoom callback */
-void zoom(gpointer data, gboolean zoomin) {
+void zoom(gpointer data, gint flag) {
 
   gint n;
 
@@ -144,6 +151,8 @@ void zoom(gpointer data, gboolean zoomin) {
   GList *list;
 
   GcwPLdev* dev;
+
+  double curmag,dum;
 
   /* Get the current canvas */
   notebook = GTK_NOTEBOOK(data);
@@ -157,10 +166,16 @@ void zoom(gpointer data, gboolean zoomin) {
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
   /* Determine the new magnification */
-  if(zoomin)
-    gcw_set_canvas_zoom(canvas,1.5);
-  else
-    gcw_set_canvas_zoom(canvas,1./1.5);
+  if(flag==2) /* Zoom in */
+    gcw_set_canvas_zoom(canvas,ZOOMSTEP);
+  else if(flag==0) /* Zoom out */
+    gcw_set_canvas_zoom(canvas,1./ZOOMSTEP);
+  else { /* Zoom 100 */
+    /* Get the current magnification */
+    if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
+    curmag = 1./curmag;
+    gcw_set_canvas_zoom(canvas,ZOOM100/curmag);
+  }
 
   /* Set the focus on the notebook */
   gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook));
@@ -169,12 +184,17 @@ void zoom(gpointer data, gboolean zoomin) {
 
 /* Callback when zoom in button is pressed */
 void zoom_in(GtkWidget *widget, gpointer data ) {
-  zoom(data,TRUE);
+  zoom(data,2);
+}
+
+/* Callback when zoom 100 button is pressed */
+void zoom_100(GtkWidget *widget, gpointer data ) {
+  zoom(data,1);
 }
 
 /* Callback when zoom out button is pressed */
 void zoom_out(GtkWidget *widget, gpointer data ) {
-  zoom(data,FALSE);
+  zoom(data,0);
 }
 
 /* Zoom callback when +/- keys are pressed */
@@ -250,6 +270,15 @@ void install_canvas(PLStream *pls)
     g_signal_connect(G_OBJECT(button), "key_release_event",
                          G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
 
+    /* Add zoom100 button and create callbacks */
+    image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_100,
+				     GTK_ICON_SIZE_SMALL_TOOLBAR);
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+    g_signal_connect (G_OBJECT(button), "clicked",
+		      G_CALLBACK(zoom_100), G_OBJECT(dev->notebook));
+
     /* Add zoom out button and create callbacks */
     image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_OUT,
 				     GTK_ICON_SIZE_SMALL_TOOLBAR);
@@ -269,7 +298,7 @@ void install_canvas(PLStream *pls)
     canvas = GNOME_CANVAS(gnome_canvas_new());
 
   gcw_set_canvas(pls,canvas);
-  gcw_set_canvas_zoom(canvas,1.5);
+  gcw_set_canvas_zoom(canvas,ZOOM100);
 
   /* Put the canvas in a scrolled window */
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
@@ -288,8 +317,8 @@ void install_canvas(PLStream *pls)
     gtk_window_set_focus(GTK_WINDOW(window),GTK_WIDGET(dev->notebook));
 
     /* Size the window */
-    gtk_window_resize(GTK_WINDOW(window),dev->width*1.5+50,
- 		      dev->height*1.5+50);
+    gtk_window_resize(GTK_WINDOW(window),dev->width*ZOOM100+50,
+ 		      dev->height*ZOOM100+50);
   }
 
   /* Display everything */
@@ -699,7 +728,7 @@ void plD_init_gcw(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * plD_polyline_gcw()
  *
- * Draw a polyline in the current color from (x1,y1) to (x2,y2).
+ * Draw a polyline in the current color.
  *
 \*--------------------------------------------------------------------------*/
 
@@ -707,43 +736,68 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 {
   GcwPLdev* dev = pls->dev;
   GnomeCanvasPoints* points;
+  GnomeCanvasPoints pts;
   GnomeCanvasGroup* group;
   GnomeCanvasItem* item;
   GnomeCanvas* canvas;
   GdkGC* gc;
   GdkPoint* gdkpoints;
-  guint i;
+  guint i,j;
+
 
 #ifdef DEBUG_GCW
   debug("<plD_polyline_gcw>\n");
 #endif
 
-  if(npts >= 2) {
+  if(dev->canvas==NULL) install_canvas(pls);
+  canvas = dev->canvas;
 
-    if(dev->canvas==NULL) install_canvas(pls);
-    canvas = dev->canvas;
+  if(dev->group_hidden==NULL) plD_bop_gcw(pls);
+  group = dev->group_current;
 
-    if(dev->group_hidden==NULL) plD_bop_gcw(pls);
-    group = dev->group_current;
 
-    points = gnome_canvas_points_new(npts);
+  /* Put the data in a points structure */
+  points = gnome_canvas_points_new(npts);
+  for ( i = 0; i < npts; i++ ) {
+    points->coords[2*i] = ((double) x[i]) * PIXELS_PER_DU;
+    points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;
+  }
 
-    for ( i = 0; i < npts; i++ ) {
-      points->coords[2*i] = ((double) x[i]) * PIXELS_PER_DU;
-      points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;
-    }
+  /* Workaround for the 'attempt to put segment in horiz list twice'
+   * from libgnomecanvas:
+   *
+   *   Plot a series of line segments rather than a single polyline.
+   *
+   * This slows rendering down a considerable amount.  However, it is 
+   * unclear what else can be done.  Libgnomecanvas should be able to 
+   * deal with all valid data; bizarre plotting errors happen along with
+   * this error.
+   *
+   * Note that instead of allocating a series of points structures, 
+   * we just refer to the original one from a separate struct 
+   * (GnomeCanvas does not hold a reference to the points structure).
+   */
+
+  pts.num_points = 2;
+  pts.ref_count = 1;
+  pts.coords = points->coords;
+
+  for(i=0;i<npts-1;i++) {
+    pts.coords=&(points->coords[2*i]);
 
     item=gnome_canvas_item_new(group,
 			       gnome_canvas_line_get_type (),
 			       "cap_style", GDK_CAP_ROUND,
 			       "join-style", GDK_JOIN_ROUND,
-			       "points", points,
+			       "points", &pts,
 			       "fill-color-rgba",dev->color,
-			       "width-units",pls->width*PIXELS_PER_DU*3,
+			       "width-units",pls->width*PIXELS_PER_DU*WSCALE,
 			       NULL);
-    
-    gnome_canvas_points_free(points);
+
   }
+
+  /* Free the points structure */
+  gnome_canvas_points_free(points);
 }
 
 
@@ -973,6 +1027,10 @@ static void fill_polygon (PLStream* pls)
   GdkPoint* gdkpoints;
   guint i;
 
+  gboolean flag=TRUE;
+
+  PLINT tmp;
+
 #ifdef DEBUG_GCW
   debug("<fill_polygon>\n");
 #endif
@@ -994,10 +1052,17 @@ static void fill_polygon (PLStream* pls)
 				GNOME_TYPE_CANVAS_POLYGON,
 				"points", points,
 				"fill-color-rgba",dev->color,
-				"outline-color-rgba",dev->color,
+				/* "outline-color-rgba",dev->color, */
 				NULL);
   
   gnome_canvas_points_free (points);
+
+
+  /* Draw a thin outline for each polygon */
+  tmp = pls->width;
+  pls->width=1;
+  plD_polyline_gcw(pls,pls->dev_x,pls->dev_y,pls->dev_npts);
+  pls->width = tmp;
 }
 
 
@@ -1055,7 +1120,7 @@ static void dashed_line(PLStream* pls)
                                 "points", points,
  				"line-style", GDK_LINE_ON_OFF_DASH,
 				"fill-color-rgba",dev->color,
-                                "width-units",pls->width*PIXELS_PER_DU*3,
+                                "width-units",pls->width*PIXELS_PER_DU*WSCALE,
                                 NULL);
 
   gnome_canvas_points_free (points);
@@ -1128,7 +1193,6 @@ static char adobe_symbol_enc (char in)
 void proc_str(PLStream *pls, EscText *args)
 {
   PLFLT *t = args->xform, tt[4]; /* Transform matrices */
-  PLFLT theta, shear;  /* Rotation angle and shear from the matrix */
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
 
   gint size;
@@ -1137,9 +1201,10 @@ void proc_str(PLStream *pls, EscText *args)
   char *symbolfontname = "Numbus Sans L Standard Symbols L";
 
   gdouble affine_baseline[6] = {0.,0.,0.,0.,0.,0.};
-  gdouble affine_shear[6] = {0.,0.,0.,0.,0.,0.};
-  gdouble affine_rotate[6] = {0.,0.,0.,0.,0.,0.};
   gdouble affine_translate[6] = {0.,0.,0.,0.,0.,0.};
+  gdouble affine_plplot[6] = {0.,0.,0.,0.,0.,0.};
+
+  gdouble tmp;
 
   GnomeCanvasGroup* group;
   GcwPLdev* dev = pls->dev;
@@ -1176,17 +1241,15 @@ void proc_str(PLStream *pls, EscText *args)
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
   group = dev->group_current;
 
-  /* The transform matrix has only rotations and shears; extract them */
-
-  /* Note: For some reason, I have to divide the shear by a correction
-   * factor of 1.28.  Why?
+  /* Put the transform matrix values in the order expected by libart.
+   * Note that the plplot transform matrix only has a rotation and shear;
+   * plplot's rotation direction and shear are opposite from that expected 
+   * by libart, hence the negative signs below.
    */
-
-  theta = acos(t[0]) * 180. / PI;  /* Determine the rotation (in degrees)... */
-  if (t[2] < 0.) theta *= -1.;     /* ... and sign ... */
-  if(cos(theta*PI/180.)<0.000001)  /* ... and shear */
-    shear = t[3]/sin(theta*PI/180.) * 180. / PI / 1.28;
-  else shear = (t[1]+sin(theta*PI/180.))/cos(theta*PI/180.) * 180. / PI /1.28;
+  affine_plplot[0] = t[0];  /* cos(theta) */
+  affine_plplot[1] = -t[2]; /* sin(theta) */
+  affine_plplot[2] = -t[1]; /* a cos(theta) - sin(theta) */
+  affine_plplot[3] = t[3];  /* a sin(theta) + cos(theta) */
 
   /* Apply plplot difilt transformations */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
@@ -1316,12 +1379,6 @@ void proc_str(PLStream *pls, EscText *args)
 
     font = gnome_font_face_get_font_default(face,size*scale);
 
-/*     if(symbol) */
-/*       printf("\nFONT: %s (wanted %s)\n",gnome_font_get_name(font),symbolfontname); */
-/*     else */
-    if(symbol)
-      printf("\nFONT: %s (wanted %s)\n",gnome_font_get_name(font),symbolfontname);
-
     /* Get the glyphs */
     glyphlist = gnome_glyphlist_from_text_dumb(font,dev->color,0.,0.,c1);
 
@@ -1358,13 +1415,10 @@ void proc_str(PLStream *pls, EscText *args)
     art_affine_translate(affine_baseline,
 			 -total_width*args->just + sum_width,
 			 height[0]/2.5-up_list[i]);
-    art_affine_shear(affine_shear,-shear);
-    art_affine_rotate(affine_rotate,-theta);
     art_affine_translate(affine_translate,
 			 args->x*PIXELS_PER_DU,-args->y*PIXELS_PER_DU);
     gnome_canvas_item_affine_relative(item[i],affine_translate);
-    gnome_canvas_item_affine_relative(item[i],affine_rotate);
-    gnome_canvas_item_affine_relative(item[i],affine_shear);
+    gnome_canvas_item_affine_relative(item[i],affine_plplot);
     gnome_canvas_item_affine_relative(item[i],affine_baseline);
 
     sum_width += width[i] + advance;
