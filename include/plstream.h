@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/07/28 05:51:12  mjl
-   Added stream variables nopixmap (tell driver not to use pixmaps) and
-   dual_screen (set on devices that have dual text/graphics screens).
+   Revision 1.12  1993/07/31 08:13:39  mjl
+   Variables added: dev_di - the driver can handle driver interface commands;
+   dev_fill - the driver can handle polygon fill commands (both to be
+   implemented using the escape function).  Also other support variables added.
 
+ * Revision 1.11  1993/07/28  05:51:12  mjl
+ * Added stream variables nopixmap (tell driver not to use pixmaps) and
+ * dual_screen (set on devices that have dual text/graphics screens).
+ *
  * Revision 1.10  1993/07/16  22:30:10  mjl
  * Added many new variables used in driver interface to PLStream definition.
  * Eliminated some obsolete variables and function prototypes.
@@ -14,34 +19,6 @@
  * Revision 1.8  1993/04/26  19:57:52  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
- *
- * Revision 1.7  1993/03/17  17:03:09  mjl
- * Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
- * used functions.
- *
- * Revision 1.6  1993/03/16  06:48:11  mjl
- * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
- * more robust.
- *
- * Revision 1.5  1993/03/06  05:06:10  mjl
- * Eliminated plbufFnam since it is now obsolete.
- *
- * Revision 1.4  1993/03/03  17:00:15  mjl
- * Split background color off from color map 0 palette -- previously it
- * was cmap[0], which turned out to be a poor idea.
- *
- * Revision 1.3  1993/02/27  01:43:11  mjl
- * Changed prototype for file offset to work with fgetpos/fsetpos.
- *
- * Revision 1.2  1993/02/23  04:58:33  mjl
- * Added to the stream data structure: a device name, and the value of the
- * escape character.  Added function prototype for plgpls and some minor
- * documentation changes.
- *
- * Revision 1.1  1993/01/23  05:39:16  mjl
- * Added to hold definition of PLStream data structure.  Included by all files
- * dealing with streams (and is included by driver.h).
- *
 */
 
 /*	plstream.h
@@ -54,9 +31,10 @@
 #define __PLSTREAM_H__
 
 /*----------------------------------------------------------------------*\
-*  Define the PLDev data structure.
+* Define the PLDev data structure.
 *
-*  These are all quantities that must be saved on a per-device basis.
+* These are all quantities that must be saved on a per-device basis.
+* Some drivers (xwin, tk) allocate structures defined internally.
 \*----------------------------------------------------------------------*/
 
 typedef struct {
@@ -104,7 +82,6 @@ typedef struct {
 * FileName	Output file name
 * output_type	0 for file, 1 for stream
 *
-* orientset	Set if orientation was specified
 * fileset	Set if file name or file pointer was specified
 * pageset	Set if page dimensions were specified
 * widthset	Set if pen width was specified
@@ -118,10 +95,12 @@ typedef struct {
 * PLPLOT uses two user-alterable palettes:
 *
 * Color map 0 is intended for static objects, such as boxes, lines, points,
-* labels, etc.  These should be allocated before calling plstar (else you
+* labels, etc.  These should be allocated before calling plinit (else you
 * get all 16 by default, which can be undesirable on some platforms).
-* These are then explicitly selected by number (in order of allocation,
-* starting with 1).  
+* These are then explicitly selected by number (in order of allocation).
+* The lowest number is 0, but since this is used on some platforms to
+* store the background color, all color drivers start with 1 as the
+* default color.  The user is encouraged to do the same.
 *
 * Color map 1 is for height-field plots, where color is used to represent
 * function height (intensity).  These are set in a relative way only, 
@@ -132,11 +111,10 @@ typedef struct {
 * RGB values to precisely map height to color.
 *
 * Eventually a palette selection tool for both palettes will be provided
-* for some drivers (e.g. Motif).  Direct writing of RGB values (i.e.
-* banging on the hardware) is supported but highly discouraged (colors so
-* written will be invisible to the palette tools).
+* for some drivers (e.g. tk).  Direct writing of RGB values (i.e.  banging
+* on the hardware) is supported but highly discouraged (colors so written
+* will be affected unpredictably by the palette tools).
 *
-* color		PLINT	Set if color is available
 * icol0		PLINT	Color map 0 entry, current color (0 <= icol0 <= 15)
 * ncol0		PLINT	Number of colors allocated in color map 0.
 * htlvl		PLINT	Color map 1 current height level (0.0 <= htlvl <= 1.0)
@@ -148,7 +126,6 @@ typedef struct {
 *
 * cmap0setcol	int[]	Set for every color allocated in cmap0.
 * cmap1set	PLINT	Set if cmap1 allocated.
-* colorset	PLINT	Set if "color" was set
 * bgcolorset	PLINT	Set if "bgcolor" was set
 *
 ***********************************************************************
@@ -191,13 +168,12 @@ typedef struct {
 *
 * Variables for use by the plot buffer
 *
-* plbuf_write	int	Set if writing to the plot buffer
 * plbufFile	FILE	Plot buffer file pointer
 * plbufOwner	int	Typically set; only zero if current stream is cloned.
 *
 ***********************************************************************
 *
-* Driver interface layer
+* Driver interface (DI)
 *
 * difilt	PLINT	Driver interface filter flag
 *
@@ -239,19 +215,38 @@ typedef struct {
 *
 ***********************************************************************
 *
+* Stuff used by the driver.
+* It would be nice to use the "dev_" prefix uniformly but changing
+* all that old code would be quite a lot of work..
+*
+* device	PLINT	Graphics device id number
+* color		PLINT	Set if color is available
+* colorset	PLINT	Set if "color" was set prior to calling plinit
+* plbuf_write	PLINT	Set if driver needs to use the plot buffer
+* dev_fill	PLINT	Set if driver can do area fills
+* dev_di	PLINT	Set if driver wants to handle DI commands
+* dev_dual	PLINT	Set if device supports dual text/graphics screens
+* termin	PLINT	Set for interactive devices
+* graphx	PLINT	Set if currently in graphics mode
+* nopause	PLINT	Set if we are skipping the pause between frames
+* family	PLINT	Set if familying is enabled
+* member	PLINT	Number of current family member file open
+* bytemax	PLINT	Number of bytes maximum per member file
+* famadv	PLINT	Set to advance to the next family member
+*
+* These are used by the escape function in some circumstances.
+*
+* dev_npts	PLINT	Number of points we are plotting
+* dev_x		short*	Pointer to array of x values 
+* dev_y		short*	Pointer to array of x values 
+*
+***********************************************************************
+*
 * Everything else
 *
 * program	char*	Program name
 *
 * level		Initialization level
-* device	Graphics device id number
-* termin	Zero for noninteractive device, non-zero for terminal
-* graphx	Zero if currently in text mode, non-zero for graphics mode
-* nopause	Zero if we are pausing between frames
-* family	Non-zero if familying is enabled
-* member	Number of current family member file open
-* bytemax	Number of bytes maximum per member file
-* famadv        Non-zero to advance to the next family member
 * nsub...	Number of subpages on physical device
 * cursub	Current subpage
 * width		Current pen width
@@ -315,7 +310,6 @@ typedef struct {
     char *FamilyName, *FileName;
     int  output_type;
 
-    PLINT orientset;
     PLINT fileset;
     PLINT pageset;
     PLINT widthset;
@@ -327,7 +321,7 @@ typedef struct {
 
 /* Colormaps */
 
-    PLINT color, colorset, icol0, ncol0, bgcolorset;
+    PLINT icol0, ncol0, bgcolorset;
     int   cmap0setcol[16], cmap1set;
     PLFLT htlvl;
 
@@ -362,11 +356,10 @@ typedef struct {
 
 /* Plot buffer settings */
 
-    int  plbuf_write;
     FILE *plbufFile;
     int  plbufOwner;
 
-/* Driver interface layer */
+/* Driver interface (DI) */
 
     PLINT difilt, diclpxmi, diclpxma, diclpymi, diclpyma;
     PLFLT dipxmin, dipymin, dipxmax, dipymax;
@@ -377,19 +370,25 @@ typedef struct {
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
     PLFLT dimxax, dimxb, dimyay, dimyb;
 
+/* Driver settings */
+
+    PLINT plbuf_write;
+    PLINT color, colorset;
+    PLINT device, termin, graphx, nopause;
+    PLINT family, member, bytemax, famadv;
+    PLINT dev_fill, dev_dual, dev_di;
+    PLINT dev_npts;
+    short *dev_x, *dev_y;
+
 /* Everything else */
-/* Could use some logical grouping here! */
+/* Could use some better grouping */
 
     char *program;
 
     PLINT level;
-    PLINT device, termin, dual_screen, graphx;
-    PLINT nopause;
-    PLINT family, member, bytemax, famadv;
     PLFLT sclx, scly;
     PLINT nsubx, nsuby, cursub;
     PLINT width, style;
-    PLINT orient;
     char  esc;
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
@@ -440,5 +439,6 @@ void  plGetFam		(PLStream *);
 void  plRotPhy		(PLINT, PLDev *, 
 			 int *, int *, int *, int *);
 void  plP_sfnam		(PLStream *, char *);
+PLDev * plAllocDev	(PLStream *pls);
 
 #endif	/* __PLSTREAM_H__ */
