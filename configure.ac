@@ -70,7 +70,7 @@ dnl Default installation prefix
 
 AC_PREFIX_DEFAULT(/usr/local)
 test "$prefix" = NONE && prefix=$ac_default_prefix
-test "$exec_prefix" = NONE && exec_prefix=$ac_default_prefix
+test "$exec_prefix" = NONE && exec_prefix=$prefix
 
 
 dnl =======================================================================
