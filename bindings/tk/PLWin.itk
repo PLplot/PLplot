@@ -7,7 +7,12 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1999/01/23 05:07:10  furnish
+# Revision 1.5  1999/02/26 19:41:51  furnish
+# Propagate plframe's db (double buffering configuration management)
+# subcommand out to the megawidget's public interface.  Itk based apps
+# can now easily configure double buffering on a plframe.
+#
+# Revision 1.4  1999/01/23  05:07:10  furnish
 # Pull out all the bazillions of itcl::'s that I put in in the prior
 # patch.  That was a total botch.  I had completely misdiagnosed the
 # problem.  The real problem was that I didn't set up the Itcl/Itk
@@ -118,6 +123,12 @@ class PLWin {
 
     method cmd {args} {
 	eval $plwin cmd $args
+    }
+
+# Attempt to allow control of double buffering on widgets.
+
+    method db {args} {
+	eval $plwin db $args
     }
 
 # A useful convenience which is similar to what is done in C.
