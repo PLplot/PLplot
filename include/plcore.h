@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/09/08 02:34:13  mjl
+ * Revision 1.14  1993/10/18 19:42:06  mjl
+ * Driver vectors for Borland C driver under DOS.
+ *
+ * Revision 1.13  1993/09/08  02:34:13  mjl
  * Added static function prototype for calc_dimap.
  *
  * Revision 1.12  1993/08/18  19:07:03  mjl
@@ -283,6 +286,22 @@ static PLDispatchTable dispatch_table[] = {
 	plD_tidy_vga,
 	plD_state_vga,
 	plD_esc_vga
+    },
+#endif
+
+#ifdef BGI
+    {
+	"DOS BGI Screen Driver",
+	"bgi",
+	1,
+	plD_init_bgi,
+	plD_line_bgi,
+	plD_polyline_bgi,
+	plD_eop_bgi,
+	plD_bop_bgi,
+	plD_tidy_bgi,
+	plD_state_bgi,
+	plD_esc_bgi
     },
 #endif
 
