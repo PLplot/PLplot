@@ -1,3 +1,15 @@
+plplot (5.3.0.cvs.20040430-2) unstable; urgency=low
+
+  * debian/patches/warn-empty-list-elements.dpatch,
+    debian/patches/warn-fortran-indexing.dpatch: Added patches for making
+    the Octave binding working with Octave 2.1.57.
+  * debian/struct_contains.m: New file which override Octave's one when
+    toggle_plplot_use is issued.
+  * debian/rules: Install debian/struct_contains.m in
+    /usr/share/plplot_octave.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  8 May 2004 19:22:58 +0200
+
 plplot (5.3.0.cvs.20040430-1) unstable; urgency=low
 
   * debian/control:

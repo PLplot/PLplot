@@ -115,6 +115,9 @@ install-stamp: build-stamp
 	dh_movefiles --package=plplot-bin	
 	dh_movefiles --package=$(libpkg)
 
+	install --mode=644 $(debbase)/struct_contains.m \
+	  $(debshr)/plplot_octave
+
 	touch install-stamp
 
 # Build architecture-independent files here.
