@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/07/18 20:33:30  mjl
+ * Revision 1.15  1994/07/19 22:13:36  furnish
+ * Added new routine pl3poly() for drawing polygons in 3-space, with
+ * hidden surface removal.
+ *
+ * Revision 1.14  1994/07/18  20:33:30  mjl
  * Some more cleaning up.
  *
  * Revision 1.13  1994/07/15  20:37:21  furnish
@@ -75,6 +79,75 @@ static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 /* INDENT ON */
+
+/*----------------------------------------------------------------------*\
+ * void pl3poly( x, y, z, draw, n )
+ *
+ * Draws a polygon in 3 space.  This differes from pl3line() in that
+ * this attempts to determine if the polygon is viewable.  If the back
+ * of polygon is facing the viewer, then it isn't drawn.  If this
+ * isn't what you want, then use pl3line instead.
+ *
+ * n specifies the number of points.  They are assumed to be in a
+ * plane, and the directionality of the plane is determined from the
+ * first three points.  Additional points do not /have/ to lie on the
+ * plane defined by the first three, but if they do not, then the
+ * determiniation of visibility obviously can't be 100% accurate...
+ * So if you're 3 space polygons are too far from planar, consider
+ * breaking them into smaller polygons.  "3 points define a plane" :-).
+ *
+ * The directionality of the polygon is determined by assuming the
+ * points are laid out in clockwise order.  If you are drawing them in
+ * counter clockwise order, make n the negative of the number of
+ * points.
+ *
+ * BUGS:  If one of the first two segments is of zero length, or if
+ * they are colinear, the calculation of visibility has a 50/50 chance
+ * of being correct.  Avoid such situations :-).  See x18c for an
+ * example of this problem.  (Search for "20.1").
+\*----------------------------------------------------------------------*/
+
+void
+c_pl3poly(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT n)
+{
+    int i, nn;
+    PLFLT u, v;
+    PLFLT u1, v1, u2, v2, u3, v3;
+    PLFLT c;
+
+    nn = abs(n);
+
+    if ( nn < 3 ) return;
+
+/* Now figure out which side this is. */
+
+    u1 = plP_wcpcx(plP_w3wcx( x[0], y[0], z[0] ));
+    v1 = plP_wcpcy(plP_w3wcy( x[0], y[0], z[0] ));
+
+    u2 = plP_wcpcx(plP_w3wcx( x[1], y[1], z[1] ));
+    v2 = plP_wcpcy(plP_w3wcy( x[1], y[1], z[1] ));
+
+    u3 = plP_wcpcx(plP_w3wcx( x[2], y[2], z[2] ));
+    v3 = plP_wcpcy(plP_w3wcy( x[2], y[2], z[2] ));
+
+    c = (u1-u2)*(v3-v2)-(v1-v2)*(u3-u2);
+
+    if ( c * n < 0. )
+	return;
+
+    for( i=0; i < nn; i++ ) {
+	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	if (i==0)
+	    plP_movphy(u,v);
+	else if (draw[i])
+	    plP_draphy(u,v);
+	else
+	    plP_movphy(u,v);
+    }
+
+    return;
+}
 
 void
 c_pl3line(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n)
