@@ -1,9 +1,56 @@
+##############################################################################
+#
+# Makefile for PLPLOT on Unix-like systems.
+#
+# $Id$
+#
+##############################################################################
+#
+# Set up the m4 macros.
+
 changequote({,})dnl
 define(ignore)dnl
-#----------------------------------------------------------------------#
+
+# Some utility macros.
+
+define(if_aix,   {ifdef({AIX},   {$1},{$2})})dnl
+define(if_dgux,  {ifdef({DGUX},  {$1},{$2})})dnl
+define(if_hpux,  {ifdef({HPUX},  {$1},{$2})})dnl
+define(if_sysv,  {ifdef({SYSV},  {$1},{$2})})dnl
+define(if_bsd,   {ifdef({BSD},   {$1},{$2})})dnl
+define(if_unicos,{ifdef({UNICOS},{$1},{$2})})dnl
+define(if_sunos, {ifdef({SUNOS}, {$1},{$2})})dnl
+define(if_ultrix,{ifdef({ULTRIX},{$1},{$2})})dnl
+define(if_next,  {ifdef({NEXT},  {$1},{$2})})dnl
+define(if_linux,  {ifdef({LINUX},  {$1},{$2})})dnl
+
+if_aix(   {define({UNIX})})dnl
+if_hpux(  {define({UNIX})})dnl
+if_dgux(  {define({UNIX})})dnl
+if_sysv(  {define({UNIX})})dnl
+if_bsd(   {define({UNIX})})dnl
+if_unicos({define({UNIX})})dnl
+if_sunos( {define({UNIX})})dnl
+if_next(  {define({UNIX})})dnl
+if_linux(  {define({UNIX},)define({NO_FORTRAN},)})dnl
+if_ultrix({define({UNIX})define({SUNOS})})dnl
+
+define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
+if_sunos( {define({RANLIB})})dnl
+if_next(  {define({RANLIB})})dnl
+if_bsd(   {define({RANLIB})})dnl
+if_linux(   {define({RANLIB},)})dnl
+
+define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
+define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
+
+define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
+define(if_dbl,     {ifdef({DOUBLE},    {$1},{$2})})dnl
+define(if_opt,     {ifdef({OPT},       {$1},{$2})})dnl
+
+##############################################################################
 #
-# Makefile for PLPLOT on Unix-type systems.
-# Maurice LeBrun, IFS, University of Texas, Mar 1, 1991.
+# Documentation
 #
 # This makefile uses softlinks between all files and a temporary directory,
 # to keep the make reasonably straightforward while not disturbing the nice
@@ -87,43 +134,15 @@ define(ignore)dnl
 #    you don't have a fortran compiler handy), specify -DNO_FORTRAN
 #    on the m4 command line.
 #
-#----------------------------------------------------------------------#
-# Some utility macros.
+##############################################################################
 
-define(if_dbl,   {ifdef({DOUBLE},    {$1},{$2})})dnl
+##############################################################################
+#
+# Set up compiler & linker macros, to make invocation look as similar as
+# possible from system to system.
+#
+##############################################################################
 
-define(if_aix,   {ifdef({AIX},   {$1},{$2})})dnl
-define(if_dgux,  {ifdef({DGUX},  {$1},{$2})})dnl
-define(if_hpux,  {ifdef({HPUX},  {$1},{$2})})dnl
-define(if_sysv,  {ifdef({SYSV},  {$1},{$2})})dnl
-define(if_bsd,   {ifdef({BSD},   {$1},{$2})})dnl
-define(if_unicos,{ifdef({UNICOS},{$1},{$2})})dnl
-define(if_sunos, {ifdef({SUNOS}, {$1},{$2})})dnl
-define(if_ultrix,{ifdef({ULTRIX},{$1},{$2})})dnl
-define(if_next,  {ifdef({NEXT},  {$1},{$2})})dnl
-define(if_linux,  {ifdef({LINUX},  {$1},{$2})})dnl
-
-if_aix(   {define({UNIX})})dnl
-if_hpux(  {define({UNIX})})dnl
-if_dgux(  {define({UNIX})})dnl
-if_sysv(  {define({UNIX})})dnl
-if_bsd(   {define({UNIX})})dnl
-if_unicos({define({UNIX})})dnl
-if_sunos( {define({UNIX})})dnl
-if_next(  {define({UNIX})})dnl
-if_linux(  {define({UNIX},)define({NO_FORTRAN},)})dnl
-if_ultrix({define({UNIX})define({SUNOS})})dnl
-
-define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
-if_sunos( {define({RANLIB})})dnl
-if_next(  {define({RANLIB})})dnl
-if_bsd(   {define({RANLIB})})dnl
-if_linux(   {define({RANLIB},)})dnl
-
-define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
-define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
-
-#----------------------------------------------------------------------#
 # Generic macros for make.  If any of these do not fit your particular
 # system, add the appropriate defines in a section for your system.
 
@@ -152,6 +171,22 @@ DBL_FLAG_F      =
 PLLIB_MAIN	= $(PLLIB_PATH)libplplotf.a
 })
 
+if_debug({
+DEBUG_FLAG_C	= -g
+DEBUG_FLAG_F	= -g
+},{
+DEBUG_FLAG_C	= 
+DEBUG_FLAG_F	=
+})
+
+if_opt({
+OPT_FLAG_C	= -O
+OPT_FLAG_F	= -O
+},{
+OPT_FLAG_C	= 
+OPT_FLAG_F	= 
+})
+
 PLLIB_C		= $(PLLIB_MAIN)
 PLLIB_F		= $(PLLIB_MAIN)
 PLLIB_LDC	= $(PLLIB_C)
@@ -161,14 +196,17 @@ PLLIB_LDC	= $(PLLIB_C)
 # The device list represents all system-independent output devices.
 # (i.e. not specifically requiring a particular CPU)
 
-CC	= cc
-CFLAGS	= -c -Dunix -DSTUB_LAU $(DBL_FLAG_C)
-F77	= f77
-FFLAGS	= -c $(DBL_FLAG_F)
-LDC	= $(CC)
+SYS_FLAGS_C = -Dunix -DSTUB_LAU
+SYS_FLAGS_F = 
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
 LDCFLAGS= -lm -lX11
-LDF	= $(F77)
 LDFFLAGS= -lm -lX11
+
+CC	= cc
+F77	= f77
+LDC	= $(CC)
+LDF	= $(F77)
 LN	= ln -s
 TO	= -o
 STARTUP =
@@ -176,7 +214,8 @@ STARTUP =
 PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
 	    -DLJII -DHP7470 -DHP7580 -DIMP
 
-#----------------------------------------------------------------------#
+##############################################################################
+#
 # System specific defines.
 #
 # Define appropriate STUB_ flag to enable proper C<->Fortran linkage
@@ -186,90 +225,11 @@ PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
 #	STUB_L		lower-case
 #
 # If no choice is made, stubs remain unaltered (upper case).
+#
+##############################################################################
 
-if_hpux({
 #----------------------------------------------------------------------#
-#		HP-UX definitions
-
-if_dbl({dnl
-DBL_FLAG_F      = -R8
-})dnl
-
-#CFLAGS	= -c -g -Dunix -DSTUB_L $(DBL_FLAG_C) -DHPUX
-CC	= c89
-CFLAGS	= -c -g -Dunix -DSTUB_L $(DBL_FLAG_C) -DHPUX -D_HPUX_SOURCE
-FFLAGS	= -c $(DBL_FLAG_F)
-
-LDCFLAGS= -L/usr/lib/X11R4 -lm -lX11 -g
-LDFFLAGS= /usr/lib/X11R4/libX11.a -lm -g
-
-PLDEVICES = -DXTERM -DXWIN -DPLMETA -DTEK -DPS -DXFIG
-})
-
-if_dgux({
-#----------------------------------------------------------------------#
-#		DG/UX definitions
-
-CFLAGS	= -c -Dunix -ansi -DSTUB_LAU $(DBL_FLAG_C) 
-F77	= ghf77
-FFLAGS	= -c $(DBL_FLAG_F) -novms
-LDCFLAGS= -ansi -lm -lX11
-LDFFLAGS= -ansi -lm -lX11
-PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
-})
-
-if_linux({
-#----------------------------------------------------------------------#
-#		LINUX definitions
-
-CC	= gcc
-CFLAGS	= -c -Dunix -ansi $(DBL_FLAG_C) 
-F77	= 
-FFLAGS	= 
-
-LDCFLAGS= -ansi -lm
-LDFFLAGS= -ansi -lm
-PLDEVICES = -DPLMETA -DPS -DLJII
-
-# Note that the ljii.c driver doesn't work yet, but we need to have it
-# in if it's ever gonna get fixed.
-
-})
-
-if_next({
-#----------------------------------------------------------------------#
-#               NeXT definitions
-
-# Suggested locations:
-#  libplplotf.a in /usr/local/lib/
-#  fonts        in /usr/local/lib/plplot/
-#  plrender     in /usr/local/bin/
-#  plplot.h     in /usr/local/include/
-#  chdr.h       in /usr/local/include/
-# cc will automatically look in these locations for the libraries and
-# include files, so you can compile with a minimum of command line
-# options (just -lplplotf).
-CC      = cc
-# You can use the NOBRAINDEAD option here if you wish
-# If you use it, you may want to define NOBRAINDEAD in plplot.h
-# before moving it to it's permanent location.
-# CFLAGS  = -c -Dunix -DSTUB_LAU -DNOBRAINDEAD $(DBL_FLAG_C)
-CFLAGS  = -c -Dunix -DSTUB_LAU $(DBL_FLAG_C)
-# I've tested Fortran compatibility using f2c only - amr
-F77	= f77
-FFLAGS  = -c $(DBL_FLAG_F)
-
-LDCFLAGS= -lm
-LDFFLAGS= 
-
-# PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-# 	    -DLJII -DHP7470 -DHP7580 -DIMP -DNEXT
-
-PLDEVICES = -DNEXT -DPS -DPLMETA
-})
-
 if_sunos({
-#----------------------------------------------------------------------#
 #	SUNOS definitions (also good for Ultrix 4.3)
 #
 # WARNING!
@@ -281,6 +241,9 @@ if_sunos({
 # if the openwin directory is absent.  If this is the case, you must
 # specify -DNO_OPENWIN when building the makefile with m4.
 
+PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
+SYS_FLAGS_C = -Dunix -DSTUB_LAU -Dsun
+
 if_dbl({dnl
 DBL_FLAG_F      = -r8
 })dnl
@@ -290,18 +253,105 @@ OPENWIN_DIR = -L/usr/openwin/lib
 },{dnl
 OPENWIN_DIR =
 })
-CFLAGS	= -c -Dunix -DSTUB_LAU -Dsun $(DBL_FLAG_C) 
-F77	= f77
-FFLAGS	= -c $(DBL_FLAG_F)
-PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
+
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
 
 LDCFLAGS= $(OPENWIN_DIR) -lm -lX11
 LDFFLAGS= $(OPENWIN_DIR) -lm -lX11
-})
 
-if_aix({
 #----------------------------------------------------------------------#
+})if_hpux({
+#		HP-UX definitions
+
+PLDEVICES = -DXTERM -DXWIN -DPLMETA -DTEK -DPS -DXFIG
+SYS_FLAGS_C = -Dunix -DSTUB_L -DHPUX -D_HPUX_SOURCE
+
+if_dbl({dnl
+DBL_FLAG_F      = -R8
+})dnl
+
+CC	= c89
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+
+LDCFLAGS= -L/usr/lib/X11R4 -lm -lX11 -g
+LDFFLAGS= /usr/lib/X11R4/libX11.a -lm -g
+
+#----------------------------------------------------------------------#
+})if_dgux({
+#		DG/UX definitions
+
+PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
+SYS_FLAGS_C = -Dunix -DSTUB_LAU -ansi
+SYS_FLAGS_F = -novms
+
+F77	= ghf77
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+
+LDCFLAGS= -ansi -lm -lX11
+LDFFLAGS= -ansi -lm -lX11
+
+#----------------------------------------------------------------------#
+})if_linux({
+#		LINUX definitions
+
+PLDEVICES = -DPLMETA -DPS -DLJII
+SYS_FLAGS_C = -Dunix -ansi
+
+CC	= gcc
+F77	= 
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= 
+
+LDCFLAGS= -ansi -lm
+LDFFLAGS= -ansi -lm
+
+# Note that the ljii.c driver doesn't work yet, but we need to have it
+# in if it's ever gonna get fixed.
+
+#----------------------------------------------------------------------#
+})if_next({
+#               NeXT definitions
+
+PLDEVICES = -DNEXT -DPS -DPLMETA
+
+# You can use the NOBRAINDEAD option here if you wish
+# If you use it, you may want to define NOBRAINDEAD in plplot.h
+# before moving it to it's permanent location.
+
+#SYS_FLAGS_C = -Dunix -DSTUB_LAU -DNOBRAINDEAD
+SYS_FLAGS_C = -Dunix -DSTUB_LAU
+
+# Suggested locations:
+#  libplplotf.a in /usr/local/lib/
+#  fonts        in /usr/local/lib/plplot/
+#  plrender     in /usr/local/bin/
+#  plplot.h     in /usr/local/include/
+#  chdr.h       in /usr/local/include/
+# cc will automatically look in these locations for the libraries and
+# include files, so you can compile with a minimum of command line
+# options (just -lplplotf).
+
+CC      = cc
+
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+
+# I've tested Fortran compatibility using f2c only - amr
+
+F77	= f77
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+
+LDCFLAGS= -lm
+LDFFLAGS= 
+
+#----------------------------------------------------------------------#
+})if_aix({
 #		A/IX definitions
+
+PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
+SYS_FLAGS_C = -Dunix -DAIX -DSTUB_L 
 
 # Note that A/IX 3.0 has a bug in that getenv() calls in a C routine
 # linked with a Fortran main cause a core dump.  If this occurs, you 
@@ -315,36 +365,31 @@ DBL_FLAG_F      = -qAUTODBL=DBLPAD
 
 F77	= xlf
 CC	= xlc
-CFLAGS	= -c -Dunix -DAIX -DSTUB_L $(DBL_FLAG_C)
-FFLAGS	= -c $(DBL_FLAG_F)
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
 
 #FONTFLAG= '-DPLFONTDEV1="$(HOME)/lib/"'		# deal with 3.0 bug
-#FONTFLAG= '-DPLFONTDEV1="/usr/hagar/local/lib/"'	# sigh
-PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
-})
 
-if_unicos({
 #----------------------------------------------------------------------#
+})if_unicos({
 #	UNICOS defs.
 
+SYS_FLAGS_C = -Dunix
+
 # These settings are appropriate for UNICOS 6.x.
-# Here we assume that 'scc' is the standard C compiler.
-# If this is not the case for your system, you will find out
-# soon enough :-), and so use -DSCC=cc on the m4 command line (assuming 'cc'
-# isn't so good, because this invokes pcc rather than scc on some systems,
-# which you may not catch right away).
+# Here we assume that 'cc' is the standard C compiler.
 
 F77	= cft77
-CC	= ifdef({SCC},SCC,scc)
-CFLAGS	= -c -Dunix
-FFLAGS	=
 LDF	= segldr
+
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+
 LDCFLAGS= -lX11,net,m
 LDFFLAGS= -lX11,net,m
-})
 
-if_amiga({
 #----------------------------------------------------------------------#
+})if_amiga({
 #	Amiga defs.
 
 # Note this makefile for the PD make utility ported by Steve Walton.
