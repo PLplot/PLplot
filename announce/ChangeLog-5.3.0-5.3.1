@@ -1,3 +1,14 @@
+Commit from airwin (2004-06-24 17:44 CEST)
+------------------
+
+_Really_ get rid of last of direct calls to libplplot.  pltr2 ==>
+plstream::tr2
+
+Also, follow syntax of other examples.  pls->tr[012] ==> plstream::tr[012]
+
+  plplot  examples/c++/x16.cc  1.8
+
+
 Commit from rlaboiss (2004-06-24 14:49 CEST)
 --------------------
 
@@ -4028,22 +4039,6 @@ Take possession of xw14.py and xw17.py, such that the CVSROOT hack works
 
   plplot  examples/python/xw14.py  1.10
   plplot  examples/python/xw17.py  1.12
-
-
-Commit from rlaboiss (2004-02-09 19:34 CET)
---------------------
-
-Dummy commit
-
-  CVSROOT  loginfo  1.66
-
-
-Commit from rlaboiss (2004-02-09 19:34 CET)
---------------------
-
-Hack to change file permissions in examples/python
-
-  CVSROOT  loginfo  1.65
 
 
 Commit from rlaboiss (2004-02-09 19:05 CET)
