@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1995/05/06 21:30:55  mjl
+ * Revision 1.8  1995/06/01 21:40:51  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.  Fixed bogus
+ * options table specification.
+ *
+ * Revision 1.7  1995/05/06  21:30:55  mjl
  * All data structures now allocated at runtime to allow greater flexibility.
  * Command line options added: -ns <n>, sets number of shaded levels, -nx <n>
  * and -ny <n> set number of data points in x and y, respectively.
@@ -39,7 +44,7 @@
 	20 Mar 1994
 */
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 /* Fundamental settings.  See notes[] for more info. */
 
@@ -90,6 +95,14 @@ static PLOptionTable options[] = {
     PL_OPT_INT,
     "-ny ypts",
     "Sets number of data points in y" },
+{
+    NULL,			/* option */
+    NULL,			/* handler */
+    NULL,			/* client data */
+    NULL,			/* address of variable to set */
+    0,				/* mode flag */
+    NULL,			/* short syntax */
+    NULL }			/* long syntax */
 };
 
 static char *notes[] = {

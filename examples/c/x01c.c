@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1995/05/06 21:27:34  mjl
+ * Revision 1.17  1995/06/01 21:40:51  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.  Fixed bogus
+ * options table specification.
+ *
+ * Revision 1.16  1995/05/06  21:27:34  mjl
  * Updated options table syntax -- PL_OPT_ENABLED no longer used.  Fixed
  * error exit.
  *
@@ -40,8 +45,8 @@
 	Simple line plot and multiple windows demo.
 */
 
-#include <plcdemos.h>
-#include <plevent.h>
+#include "plcdemos.h"
+#include "plevent.h"
 
 /* Variables and data arrays used by plot generators */
 
@@ -62,6 +67,14 @@ static PLOptionTable options[] = {
     PL_OPT_BOOL,
     "-locate",
     "Turns on test of API locate function" },
+{
+    NULL,			/* option */
+    NULL,			/* handler */
+    NULL,			/* client data */
+    NULL,			/* address of variable to set */
+    0,				/* mode flag */
+    NULL,			/* short syntax */
+    NULL }			/* long syntax */
 };
 
 char *notes[] = {"Make sure you get it right!", NULL};
