@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.5  1993/08/09 22:21:49  mjl
+# Revision 1.6  1993/08/13 04:36:00  mjl
+# Previous scheme for scrolling backwards in a text widget help entry didn't
+# work right under SunOS for some reason; now fixed.
+#
+# Revision 1.5  1993/08/09  22:21:49  mjl
 # Removed all absolute references to fonts.  Now only accessed through
 # global variables set in plconfig.tcl, for easier per-user customization.
 #
@@ -117,15 +121,15 @@ proc normal_text_setup {w {width 60} {height 30}} {
 
     bind $w.t <Return>	  "destroy $w"
 
-    bind $w.t <Down>	  "text_scroll_by_line $w.t  1"
-    bind $w.t <Up>	  "text_scroll_by_line $w.t -1"
+    bind $w.t <Down>	  "text_scroll_by_line $w.t + 1"
+    bind $w.t <Up>	  "text_scroll_by_line $w.t - 1"
 
-    bind $w.t <Next>	  "text_scroll_by_page $w.t  1"
-    bind $w.t <space>	  "text_scroll_by_page $w.t  1"
+    bind $w.t <Next>	  "text_scroll_by_page $w.t + 1"
+    bind $w.t <space>	  "text_scroll_by_page $w.t + 1"
 
-    bind $w.t <Prior>	  "text_scroll_by_page $w.t -1"
-    bind $w.t <BackSpace> "text_scroll_by_page $w.t -1"
-    bind $w.t <Delete>	  "text_scroll_by_page $w.t -1"
+    bind $w.t <Prior>	  "text_scroll_by_page $w.t - 1"
+    bind $w.t <BackSpace> "text_scroll_by_page $w.t - 1"
+    bind $w.t <Delete>	  "text_scroll_by_page $w.t - 1"
 }
 
 #----------------------------------------------------------------------------
@@ -145,8 +149,8 @@ proc text_scroll {w line} {
 # Scrolls text widget vertically by the given number of lines.
 #----------------------------------------------------------------------------
 
-proc text_scroll_by_line {w delta} {
-    text_scroll $w [$w index "@0,0 + $delta lines"]
+proc text_scroll_by_line {w sign delta} {
+    text_scroll $w [$w index "@0,0 $sign $delta lines"]
 }
 
 #----------------------------------------------------------------------------
@@ -155,10 +159,10 @@ proc text_scroll_by_line {w delta} {
 # Scrolls text widget vertically by the given number of pages (almost).
 #----------------------------------------------------------------------------
 
-proc text_scroll_by_page {w delta} {
+proc text_scroll_by_page {w sign delta} {
     set height [lindex [$w config -height] 4]
     set delta [expr $delta*($height-2)]
-    text_scroll $w [$w index "@0,0 + $delta lines"]
+    text_scroll $w [$w index "@0,0 $sign $delta lines"]
 }
 
 #----------------------------------------------------------------------------
