@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.35  1995/06/13 21:28:24  mjl
+# Revision 1.36  1995/06/23 02:54:19  mjl
+# Added resize binding, just experimental but I may want to mess with it
+# again later.
+#
+# Revision 1.35  1995/06/13  21:28:24  mjl
 # Miscellaneous tk4 fixes.
 #
 # Revision 1.34  1995/06/02  20:31:54  mjl
@@ -178,6 +182,10 @@ proc plxframe {w {client_id {}}} {
 
 	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
 	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
+
+    # Resize binding -- just experimental for now.
+    #	bind $w.plwin <Configure> "client_cmd \"plfinfo %w %h\""
+
 	client_cmd "set plwidget $w.plwin"
     }
 
