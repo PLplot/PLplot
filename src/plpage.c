@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 18:27:17  mjl
+ * Revision 1.10  1994/07/29 20:27:40  mjl
+ * Added plGetCursor() and other support routines for returning the cursor
+ * location in world coordinates given a mouse click, if supported by the
+ * driver.  Supports multiple windows per page, and gets the correct set
+ * of world coordinates for the plot selected.  Contributed by Paul Casteels.
+ *
+ * Revision 1.9  1994/06/30  18:27:17  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -27,6 +33,11 @@
 
 #include "plplotP.h"
 
+/* Page window list. */
+
+int nrCWindows = 0;
+CWindow windows[PL_MAXWINDOWS];
+
 /*----------------------------------------------------------------------*\
  * void pladv()
  *
@@ -48,6 +59,7 @@ c_pladv(PLINT page)
 	if (plsc->cursub >= plsc->nsubx * plsc->nsuby) {
 	    plP_eop();
 	    plP_bop();
+	    plClrCWindows();	/* Paul Casteels */
 	    plsc->cursub = 1;
 	}
 	else
@@ -193,4 +205,68 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
     *xmax = plP_dcmmx(plsc->spdxma);
     *ymin = plP_dcmmy(plsc->spdymi);
     *ymax = plP_dcmmy(plsc->spdyma);
+}
+
+/*----------------------------------------------------------------------*\
+ * int plGetCursor()
+ *
+ * Wait for right button mouse event and translate to world coordinates.
+ * Returns 0 if no translation to world coordinates is possible.  
+ * Written by Paul Casteels.
+\*----------------------------------------------------------------------*/
+
+int
+plGetCursor(PLCursor *cursor) 
+{
+    int i;
+    CWindow *w;
+
+    plP_esc(PLESC_GETC, cursor);
+    cursor->wX = 0;
+    cursor->wY = 0;
+    for (i = 0; i < nrCWindows; i++) {
+	w = &windows[i];
+	if ((cursor->vpX > w->vpx1) &&
+	    (cursor->vpX < w->vpx2) &&
+	    (cursor->vpY > w->vpy1) &&
+	    (cursor->vpY < w->vpy2) ) {
+
+	    cursor->wX = w->wx1 +
+		(cursor->vpX - w->vpx1) * (w->wx2 - w->wx1) / 
+		    (w->vpx2 - w->vpx1);
+
+	    cursor->wY = w->wy1 +
+		(cursor->vpY - w->vpy1) * (w->wy2 - w->wy1) / 
+		    (w->vpy2 - w->vpy1);
+
+	    return 1;
+	}
+    }
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+ * void plAddCWindow()
+ *
+ * Adds a window to the window list (called by plwind).  
+ * Written by Paul Casteels.
+\*----------------------------------------------------------------------*/
+
+void 
+plAddCWindow(CWindow window) 
+{
+    windows[nrCWindows++] = window;
+}
+
+/*----------------------------------------------------------------------*\
+ * void plClrCWindows()
+ *
+ * Resets all known windows (called by pladv).
+ * Written by Paul Casteels.
+\*----------------------------------------------------------------------*/
+
+void 
+plClrCWindows(void) 
+{
+    nrCWindows = 0;
 }
