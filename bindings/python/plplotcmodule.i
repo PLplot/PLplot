@@ -103,48 +103,15 @@ Naming rules:
 **********************************************************************************/
 
 /* With preceding count */
-%typemap(in) (PLINT n, PLINT* Array) (PyArrayObject* tmp) {
+%typemap(in) (PLINT n, PLINT *Array) (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   $1 = Alen = tmp->dimensions[0];
   $2 = (PLINT*)tmp->data;
 }
-%typemap(freearg) (PLINT n, PLINT* Array) {Py_DECREF(tmp$argnum);}
+%typemap(freearg) (PLINT n, PLINT *Array) {Py_DECREF(tmp$argnum);}
 
-/* No count but check consistency with previous */
-%typemap(in) PLINT* ArrayCk (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
-  if(tmp == NULL) return NULL;
-  if(tmp->dimensions[0] != Alen) {
-    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
-    return NULL;
-  }
-  $1 = (PLINT*)tmp->data;
-}
-%typemap(freearg) PLINT* ArrayCk { Py_DECREF(tmp$argnum);}
-
-/* Weird case to allow argument to be one shorter than others */
-%typemap(in) PLINT* ArrayCkMinus1 (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
-  if(tmp == NULL) return NULL;
-  if(tmp->dimensions[0] < Alen-1) {
-    PyErr_SetString(PyExc_ValueError, "Vector must be at least length of others minus 1.");
-    return NULL;
-  }
-  $1 = (PLINT*)tmp->data;
-}
-%typemap(freearg) PLINT* ArrayCkMinus1 { Py_DECREF(tmp$argnum);}
-
-/* No length but remember size to check others */
-%typemap(in) PLINT *Array (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
-  if(tmp == NULL) return NULL;
-  Alen = tmp->dimensions[0];
-  $1 = (PLINT*)tmp->data;
-}
-%typemap(freearg) (PLINT* Array) {Py_DECREF(tmp$argnum);}
-
-/* Trailing count */
+/* Trailing count and check consistency with previous */
 %typemap(in) (PLINT *ArrayCk, PLINT n) (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
@@ -155,7 +122,40 @@ Naming rules:
   $2 = tmp->dimensions[0];
   $1 = (PLINT*)tmp->data;
 }
-%typemap(freearg) (PLINT* ArrayCk, int n) {Py_DECREF(tmp$argnum); }
+%typemap(freearg) (PLINT *ArrayCk, int n) {Py_DECREF(tmp$argnum); }
+
+/* No count but check consistency with previous */
+%typemap(in) PLINT *ArrayCk (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] != Alen) {
+    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
+    return NULL;
+  }
+  $1 = (PLINT*)tmp->data;
+}
+%typemap(freearg) PLINT *ArrayCk { Py_DECREF(tmp$argnum);}
+
+/* Weird case to allow argument to be one shorter than others */
+%typemap(in) PLINT *ArrayCkMinus1 (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] < Alen-1) {
+    PyErr_SetString(PyExc_ValueError, "Vector must be at least length of others minus 1.");
+    return NULL;
+  }
+  $1 = (PLINT*)tmp->data;
+}
+%typemap(freearg) PLINT *ArrayCkMinus1 { Py_DECREF(tmp$argnum);}
+
+/* No length but remember size to check others */
+%typemap(in) PLINT *Array (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  if(tmp == NULL) return NULL;
+  Alen = tmp->dimensions[0];
+  $1 = (PLINT*)tmp->data;
+}
+%typemap(freearg) (PLINT *Array) {Py_DECREF(tmp$argnum);}
 
 /******************************************************************************
 				 PLFLT Arrays 
@@ -185,16 +185,16 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 #endif
 
 /* with preceding count */
-%typemap(in) (PLINT n, PLFLT* Array) (PyArrayObject* tmp) {
+%typemap(in) (PLINT n, PLFLT *Array) (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
   $1 = Alen = tmp->dimensions[0];
   $2 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) (PLINT n, PLFLT* Array) { Py_DECREF(tmp$argnum);}
+%typemap(freearg) (PLINT n, PLFLT *Array) { Py_DECREF(tmp$argnum);}
 
-/* check consistency with previous */
-%typemap(in) (PLFLT* ArrayCk, PLINT n) (PyArrayObject* tmp) {
+/* trailing count and check consistency with previous */
+%typemap(in) (PLFLT *ArrayCk, PLINT n) (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Alen) {
@@ -204,10 +204,10 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   $1 = (PLFLT*)tmp->data;
   $2 = tmp->dimensions[0];
 }
-%typemap(freearg) (PLFLT* ArrayCk, PLINT n) { Py_DECREF(tmp$argnum);}
+%typemap(freearg) (PLFLT *ArrayCk, PLINT n) { Py_DECREF(tmp$argnum);}
 
-/* check consistency with previous */
-%typemap(in) PLFLT* ArrayCk (PyArrayObject* tmp) {
+/* no count, but check consistency with previous */
+%typemap(in) PLFLT *ArrayCk (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Alen) {
@@ -216,10 +216,10 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   }
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) PLFLT* ArrayCk { Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *ArrayCk { Py_DECREF(tmp$argnum);}
 
 /* check consistency with X dimension of previous */
-%typemap(in) PLFLT* ArrayCkX (PyArrayObject* tmp) {
+%typemap(in) PLFLT *ArrayCkX (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Xlen) {
@@ -228,10 +228,10 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   }
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) PLFLT* ArrayCkX { Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *ArrayCkX { Py_DECREF(tmp$argnum);}
 
 /* check consistency with Y dimension of previous */
-%typemap(in) PLFLT* ArrayCkY (PyArrayObject* tmp) {
+%typemap(in) PLFLT *ArrayCkY (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Ylen) {
@@ -240,7 +240,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   }
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) PLFLT* ArrayCkY { Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *ArrayCkY { Py_DECREF(tmp$argnum);}
 
 /* set X length for later consistency checking */
 %typemap(in) PLFLT *ArrayX (PyArrayObject* tmp) {
@@ -249,7 +249,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   Xlen = tmp->dimensions[0];
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) PLFLT* ArrayX {Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *ArrayX {Py_DECREF(tmp$argnum);}
 
 /* set Y length for later consistency checking */
 %typemap(in) PLFLT *ArrayY (PyArrayObject* tmp) {
@@ -258,7 +258,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   Ylen = tmp->dimensions[0];
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) (PLFLT* ArrayY) {Py_DECREF(tmp$argnum);}
+%typemap(freearg) (PLFLT *ArrayY) {Py_DECREF(tmp$argnum);}
 
 /* with trailing count */
 %typemap(in) (PLFLT *Array, PLINT n) (PyArrayObject* tmp) {
@@ -267,16 +267,16 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   $2 = tmp->dimensions[0];
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) (PLFLT* Array, PLINT n) {Py_DECREF(tmp$argnum); }
+%typemap(freearg) (PLFLT *Array, PLINT n) {Py_DECREF(tmp$argnum); }
 
 /* with no count */
-%typemap(in) PLFLT* Array (PyArrayObject* tmp) {
+%typemap(in) PLFLT *Array (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
   Alen = tmp->dimensions[0];
   $1 = (PLFLT*)tmp->data;
 }
-%typemap(freearg) PLFLT* Array { Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *Array { Py_DECREF(tmp$argnum);}
 
 /* 2D array with trailing dimensions, check consistency with previous */
 %typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (PyArrayObject* tmp) {
