@@ -1,3 +1,10 @@
+/* $Id$
+ * $Log$
+ * Revision 1.5  1993/11/19 07:55:44  mjl
+ * Added missing CVS id and log fields.
+ *
+*/
+
 /* 
  * tkshell.c
  * Maurice LeBrun
