@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -16,12 +16,12 @@ function __pl_contour(x, y, z, n)
 
   global __pl
 
-  __pl_strm = plgstrm+1;
+  strm = plgstrm+1;
   old_empty_list_elements_ok = empty_list_elements_ok;
   empty_list_elements_ok = 1;
 
   grid = 0;
-  if (__pl.grid(__pl_strm))
+  if (__pl.grid(strm))
     grid = 2;
   endif
 
@@ -30,43 +30,43 @@ function __pl_contour(x, y, z, n)
     ym = min(min(y)); yM = max(max(y));
     zm = min(min(z)); zM = max(max(z));
 
-    if (__pl.axis_st(__pl_strm))
+    if (__pl.axis_st(strm))
       ## at least x always exist
-      xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);	
+      xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);	
       z = z(find(x >= xm & x <= xM), :);
 
       if (length(__pl.axis) >= 4)	
-	ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
+	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
 	z = z(:, find(y >= ym & y <= yM));
       else
-	__pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
+	__pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
       endif
       if (length(__pl.axis) == 6)
-	zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
+	zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
       else
-	__pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
       endif
     else	# make axis() return current axis
-      __pl.axis(__pl_strm,1) = xm; __pl.axis(__pl_strm,2) = xM;
-      __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-      __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+      __pl.axis(strm,1) = xm; __pl.axis(strm,2) = xM;
+      __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
+      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
     endif
     
-    __pl.type = 0; ## was -3 ??
-    __pl.plcol(__pl_strm) = 1;
-    __pl.pllsty(__pl_strm) = 1;	
-    __pl.lab_pos(__pl_strm) = 1;
+    __pl.type(strm) = 0; ## was -3 ??
+    __pl.plcol(strm) = 1;
+    __pl.pllsty(strm) = 1;	
+    __pl.lab_pos(strm) = 1;
     __pl.lab_str = "";
     plcol(15); pllsty(1);
     __pl_plenv(xm, xM, ym, yM, 0, grid);
   else
-    if (columns(__pl.axis(__pl_strm,:)) != 6)
+    if (columns(__pl.axis(strm,:)) != 6)
       empty_list_elements_ok = old_empty_list_elements_ok;
       error("You must contour/shade plot something before entering hold mode");
     endif
-    xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);
-    ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
-    zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
+    xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
+    ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
+    zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
     z = z(find(x >= xm & x <= xM), find(y >= ym & y <= yM));
   endif
 
@@ -82,28 +82,30 @@ function __pl_contour(x, y, z, n)
   endif	
 
   for i=1:n
-    plcol(__pl.plcol(__pl_strm)); pllsty(__pl.pllsty(__pl_strm));
+    plcol(__pl.plcol(strm)); pllsty(__pl.pllsty(strm));
     plcont(z, 1, xlen, 1, ylen, clevel(i), tr);
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", clevel(i))];
-    __pl.lab_col(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.plcol(__pl_strm);
-    __pl.lab_lsty(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.pllsty(__pl_strm);
-    __pl.lab_pos(__pl_strm) = __pl.lab_pos(__pl_strm) + 1;				
-    __pl.plcol(__pl_strm) = rem(__pl.plcol(__pl_strm), 15)+1;
-    if  (__pl.lstlyle(__pl_strm))
-      __pl.pllsty(__pl_strm) = rem(__pl.pllsty(__pl_strm), 8)+1;
+    __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol(strm);
+    __pl.lab_lsty(strm,__pl.lab_pos(strm)) = __pl.pllsty(strm);
+    __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;				
+    __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
+    if  (__pl.line_style(strm))
+      __pl.pllsty(strm) = rem(__pl.pllsty(strm), 8)+1;
     endif
   endfor
 
   ## to not mess up the legend, print it only after ploting all contour lines	
-  if (__pl.legend(__pl_strm))
+  if (__pl.legend(strm))
     __pl_draw_legend
   endif
 
   plcol(15);
-  pllab(tdeblank(__pl.xlabel(__pl_strm,:)),
-	tdeblank(__pl.ylabel(__pl_strm,:)),
-	tdeblank(__pl.tlabel(__pl_strm,:)));
+  pllab(tdeblank(__pl.xlabel(strm,:)),
+	tdeblank(__pl.ylabel(strm,:)),
+	tdeblank(__pl.tlabel(strm,:)));
   plflush;
+
+  __pl.items(strm) = 0; # for now!
   empty_list_elements_ok = old_empty_list_elements_ok;
 
 endfunction
