@@ -672,8 +672,8 @@ body Pltkwin::save_as {} {
 	if { $saveopts($this,1)	==  0 }	then {
 	    [plwin] save close
 	} else {
-	    $pmenu($this).save	entryconfigure 1 -state	normal
-	    $pmenu($this).save	entryconfigure 2 -state	normal
+	    $pmenu($this).save entryconfigure Again -state normal
+	    $pmenu($this).save entryconfigure Close -state normal
 	    bogue_out "Warning:	archive	files must be closed before using"
 	}
     } else {
@@ -707,8 +707,8 @@ body Pltkwin::save_close    {}	{
 	bogue_out "$foo"
     } else {
 	status_msg "Archive file closed."
-	$pmenu($this).save  entryconfigure 1 -state disabled
-	$pmenu($this).save  entryconfigure 2 -state disabled
+	$pmenu($this).save  entryconfigure Again -state disabled
+	$pmenu($this).save  entryconfigure Close -state disabled
     }
 }
 
@@ -727,17 +727,17 @@ body Pltkwin::update_zoom {} {
 # Back
 
     if { $zidx($this) == 0  } then {
-	$pmenu($this).zoom  entryconfigure 1 -state disabled
+	$pmenu($this).zoom  entryconfigure Back -state disabled
     } else {
-	$pmenu($this).zoom  entryconfigure 1 -state normal
+	$pmenu($this).zoom  entryconfigure Back -state normal
     }
 
 # Forward
 
     if { $zidx_max($this) == 0	|| $zidx($this)	==  $zidx_max($this) }	then {
-	$pmenu($this).zoom  entryconfigure 2 -state disabled
+	$pmenu($this).zoom  entryconfigure Forward -state disabled
     } else {
-	$pmenu($this).zoom  entryconfigure 2 -state normal
+	$pmenu($this).zoom  entryconfigure Forward -state normal
     }
 }
 

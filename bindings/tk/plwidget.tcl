@@ -787,8 +787,8 @@ proc plw_save_as {w} {
 	if { $saveopts($w,1) == 0 } then {
 	    $w.plwin save close
 	} else {
-	    $pmenu($w).save entryconfigure 1 -state normal
-	    $pmenu($w).save entryconfigure 2 -state normal
+	    $pmenu($w).save entryconfigure Again -state normal
+	    $pmenu($w).save entryconfigure Close -state normal
 	    bogue_out "Warning: archive files must be closed before using"
 	}
     } else {
@@ -822,8 +822,8 @@ proc plw_save_close {w} {
 	bogue_out "$foo"
     } else {
 	status_msg $w "Archive file closed."
-	$pmenu($w).save entryconfigure 1 -state disabled
-	$pmenu($w).save entryconfigure 2 -state disabled
+	$pmenu($w).save entryconfigure Again -state disabled
+	$pmenu($w).save entryconfigure Close -state disabled
     }
 }
 
