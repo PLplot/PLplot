@@ -537,6 +537,8 @@ ifelse(COMPILER,LATTICE5.X,{
 CC		= lc
 LDC		= blink 
 LIBC		= lib:lc.lib lib:amiga.lib
+OPT_FLAG_C	= -O
+DEBUG_FLAG_C	= -d2
 
 ifelse(MATH,FFP,{
 MATHFLAGS	= -ff
@@ -559,7 +561,9 @@ DBL_FLAG_C	= -DDOUBLE_PREC
 PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
 })
 
-CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) -v -d2 -j89i
+CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) -v $(OPT_FLAG_C) \
+		  $(DEBUG_FLAG_C) -j89i
+
 PLDEVICES	= -DPLMETA -DNULLDEV -DTEK -DPS -DLJII \
 	    	  -DHP7470 -DHP7580 -DIMP -DIFF
 })
@@ -571,6 +575,8 @@ ifelse(COMPILER,SAS6.X,{
 CC		= sc
 LDC		= slink 
 LIBC		= lib:sc.lib lib:amiga.lib
+OPT_FLAG_C	= optimize
+DEBUG_FLAG_C	= dbg=symbol
 
 define(GST,{plplot.gst})
 
@@ -595,8 +601,8 @@ DBL_FLAG_C	= -DDOUBLE_PREC
 PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
 })
 
-CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) nover dbg=symbol \
-		  ign=84,89,147,161 ifdef({GST},{gst=GST})
+CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) nover $(DEBUG_FLAG_C) \
+		  $(OPT_FLAG_C) ign=84,89,147,161 ifdef({GST},{gst=GST})
 
 # Sigh
 
