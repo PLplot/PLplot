@@ -14,6 +14,9 @@
 static int ns = 20;		/* Default number of shade levels */
 static int nx = 35;		/* Default number of data points in x */
 static int ny = 46;		/* Default number of data points in y */
+/* solaris compiler prefers defines for dimensions of arrays.*/
+#define XPTS  35
+#define YPTS  46
 
 /* Transformation function */
 
@@ -87,7 +90,7 @@ main(int argc, char *argv[])
     PLFLT x, y, argx, argy, distort;
 
     PLFLT **z, **w, zmin, zmax;
-    char zdefined[nx][ny];
+    char zdefined[XPTS][YPTS];
     PLFLT *clevel, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
