@@ -1,6 +1,20 @@
 /* $Id$
  * $Log$
- * Revision 1.45  1994/08/25 04:02:03  mjl
+ * Revision 1.46  1994/09/23 07:47:02  mjl
+ * Significantly improved cleanup upon exit, especially when using the Tcl-DP
+ * driver.  Fixes the problem of spurious core dumps that sometimes occurs
+ * when exiting Tcl-DP streams.  There were two problems: one was that a race
+ * condition between the tk.c and plserver.c cleanup was occuring, leading to
+ * cores in libc (typically) due to stuff being freed twice.  The other is
+ * due to some bogosity in Tcl 7.3 and/or Tcl-DP 3.2. Tcl_DeleteInterp()
+ * doesn't provide all the necessary cleanup when exiting, and a filehandler
+ * event for the old interpreter is generated /after/ the old interpreter has
+ * been deleted.  This results in an attempt to use a hash table that has
+ * already been deleted, and a panic.  I tried to find the offending code
+ * while in the debugger but it looks like a tough one to crack, hence this
+ * workaround.  Mostly seen when using multiple DP output streams from pltcl.
+ *
+ * Revision 1.45  1994/08/25  04:02:03  mjl
  * Fix to allow a TK main window to be associated with each PLStream.
  * Contributed by Radey Shouman.
  *
@@ -215,7 +229,7 @@ init(PLStream *pls)
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 
-/* The header and version fields will be useful when the client & server */
+/* The header and version fields are useful when the client & server */
 /* reside on different machines */
 
     tk_wr_header(pls, PLSERV_HEADER);
@@ -260,7 +274,7 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
     static long count = 0, max_count = 100;
     TkDev *dev = (TkDev *) pls->dev;
 
-    if ( ++count/max_count >= 1 ) {
+    if ( ++count >= max_count ) {
 	count = 0;
 	HandleEvents(pls);	/* Check for events */
     }
@@ -303,7 +317,7 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
     static long count = 0, max_count = 100;
     TkDev *dev = (TkDev *) pls->dev;
 
-    if ( ++count/max_count >= 1 ) {
+    if ( ++count >= max_count ) {
 	count = 0;
 	HandleEvents(pls);	/* Check for events */
     }
@@ -377,8 +391,8 @@ plD_tidy_tk(PLStream *pls)
 
     dbug_enter("plD_tidy_tk");
 
-    tk_stop(pls);
-    free_mem(dev->cmdbuf);
+    if (dev != NULL)
+	tk_stop(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -682,28 +696,48 @@ tk_stop(PLStream *pls)
 
     dev->pass_thru = 1;
 
-/* Terminate data stream */
-
-    pdf_close(pls->pdfs);
-
 /* Kill plserver */
 
-    if (Tcl_GetVar(dev->interp, "server", TCL_GLOBAL_ONLY) != NULL) {
+    if (Tcl_GetVar(dev->interp, "plserver_exited", TCL_GLOBAL_ONLY) == NULL) {
 	server_cmd( pls, "$plw_end_proc $plwindow", 1 );
-	tcl_cmd(pls, "unset server");
     }
 
-/* Blow away main window */
+/* Blow away main window (Tk driver) */
 
-    if ( ! pls->dp)
+    if ( ! pls->dp) {
 	tcl_cmd(pls, "destroy .");
-
-/* Blow away interpreter if it exists */
-
-    if (dev->interp != NULL) {
-	Tcl_DeleteInterp(dev->interp);
-	dev->interp = NULL;
     }
+
+/* This cleanup is necessary because of some bogosity in Tcl 7.3 and/or 
+ * Tcl-DP 3.2. Tcl_DeleteInterp() doesn't provide all the necessary
+ * cleanup when exiting, and a filehandler event for the old interpreter
+ * is generated /after/ the old interpreter has been deleted.  This
+ * results in an attempt to use a hash table that has already been
+ * deleted, and a panic.  I tried to find the offending code while in the
+ * debugger but it looks like a tough one to crack, hence this workaround.
+ * Mostly seen when using multiple DP output streams from pltcl.
+ */
+
+    else {
+	tcl_cmd(pls, "catch dp_CloseRPC $client");
+	tcl_cmd(pls, "dp_update");
+    }
+
+/* Blow away interpreter */
+
+    Tcl_DeleteInterp(dev->interp);
+    dev->interp = NULL;
+
+/* Free up memory and other miscellanea */
+
+    pdf_close(pls->pdfs);
+    if (dev->iodev != NULL) {
+	if (dev->iodev->file != NULL)
+	    fclose(dev->iodev->file);
+
+	free((void *) dev->iodev);
+    }
+    free_mem(dev->cmdbuf);
 }
 
 /*----------------------------------------------------------------------*\
@@ -727,7 +761,6 @@ abort_session(PLStream *pls, char *msg)
 	return;
 
     tk_stop(pls);
-    free_mem(dev->cmdbuf);
     pls->level = 0;
 
     plexit(msg);
@@ -801,7 +834,7 @@ pltkdriver_Init(PLStream *pls)
 
 /* Set some relevant interpreter variables */
 
-    if (! pls->dp) 
+    if ( ! pls->dp) 
 	tcl_cmd(pls, "set client_name [winfo name .]");
 
     if (pls->server_name != NULL)
@@ -831,48 +864,47 @@ pltkdriver_Init(PLStream *pls)
  * or not.  From the point of view of the code, they are:
  *
  *    1. Driver: tk
- *	Flags: <none>
- *	Meaning: need to start up plserver (same host)
- *	Actions: fork plserver, passing it our TK main window name
- *		 for communication.  Once started, plserver will send
- *		 back its main window name.
+ *	 Flags: <none>
+ *	 Meaning: need to start up plserver (same host)
+ *	 Actions: fork plserver, passing it our TK main window name
+ *		  for communication.  Once started, plserver will send
+ *		  back its main window name.
  * 
  *    2. Driver: dp
- *	Flags: <none>
- *	Meaning: need to start up plserver (same host)
- *	Actions: fork plserver, passing it our Tcl-DP communication port
- *		 for communication. Once started, plserver will send
- *		 back its created message port number.
+ *	 Flags: <none>
+ *	 Meaning: need to start up plserver (same host)
+ *	 Actions: fork plserver, passing it our Tcl-DP communication port
+ *		  for communication. Once started, plserver will send
+ *		  back its created message port number.
  * 
  *    3. Driver: tk
- *	Flags: -server_name
- *	Meaning: plserver already running (same host)
- *	Actions: communicate to plserver our TK main window name.
+ *	 Flags: -server_name
+ *	 Meaning: plserver already running (same host)
+ *	 Actions: communicate to plserver our TK main window name.
  * 
  *    4. Driver: dp
- *	Flags: -server_port
- *	Meaning: plserver already running (same host)
- *	Actions: communicate to plserver our Tcl-DP port number.
+ *	 Flags: -server_port
+ *	 Meaning: plserver already running (same host)
+ *	 Actions: communicate to plserver our Tcl-DP port number.
  * 
  *    5. Driver: dp
- *	Flags: -server_host
- *	Meaning: need to start up plserver (remote host)
- *	Actions: remsh (rsh) plserver, passing it our host ID and Tcl-DP
- *		 port for communication. Once started, plserver will send
- *		 back its created message port number.
+ *	 Flags: -server_host
+ *	 Meaning: need to start up plserver (remote host)
+ *	 Actions: remsh (rsh) plserver, passing it our host ID and Tcl-DP
+ *		  port for communication. Once started, plserver will send
+ *		  back its created message port number.
  * 
  *    6. Driver: dp
- *	Flags: -server_host -server_port
- *	Meaning: plserver already running (remote host)
- *	Actions: communicate to remote plserver our host ID and Tcl-DP
- *		 port number.
+ *	 Flags: -server_host -server_port
+ *	 Meaning: plserver already running (remote host)
+ *	 Actions: communicate to remote plserver our host ID and Tcl-DP
+ *		  port number.
  *
  * For a bit more flexibility, you can change the name of the process
  * invoked from "plserver" to something else, using the -plserver flag.
  * 
- * The startup procedure involves some rather involved handshaking 
- * between client and server.  This is made easier by using the Tcl
- * variables:
+ * The startup procedure involves some rather involved handshaking between
+ * client and server.  This is made easier by using the Tcl variables:
  *
  *	client_host client_port server_host server_port 
  *
@@ -884,21 +916,23 @@ pltkdriver_Init(PLStream *pls)
  *
  *	client server
  *
- * are used for the defining identification for the client and server,
+ * are used as the defining identification for the client and server
  * respectively -- they denote the main window name when TK sends are used
  * and the respective process's listening socket when Tcl-DP sends are
  * used.  Note that in the former case, $client is just the same as
  * $client_name.  In addition, since the server may need to communicate
- * with many different processes, every command to the server contains the
- * sender's client id (so it knows how to report back if necessary).  Thus
- * this interpreter must know both $server as well as $client.  It is most
- * convenient to set $client from the server, as a way to signal that
- * communication has been set up and it is safe to proceed.
+ * with many different client processes, every command to the server
+ * contains the sender's client id (so it knows how to report back if
+ * necessary).  Thus the Tk driver's interpreter must know both $server as
+ * well as $client.  It is most convenient to set $client from the server,
+ * as a way to signal that communication has been set up and it is safe to
+ * proceed.
  *
  * Often it is necessary to use constructs such as [list $server] instead
  * of just $server.  This occurs since you could have multiple copies
  * running on the display (resulting in names of the form "plserver #2",
- * etc).
+ * etc).  Embedding such a string in a "[list ...]" construct prevents the
+ * string from being interpreted as two separate strings.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1227,7 +1261,8 @@ link_init(PLStream *pls)
     if ( ! pls->dp) {
 
 	iodev->filename = (char *) tmpnam(NULL);
-	if (mkfifo(iodev->filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) 
+	if (mkfifo(iodev->filename,
+		   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0) 
 	    abort_session(pls, "mkfifo error");
 
 /* Tell plframe widget to open FIFO (for reading). */
@@ -1291,9 +1326,9 @@ WaitForPage(PLStream *pls)
 
     dbug_enter("WaitForPage");
 
-    while ( ! dev->exit_eventloop)
+    while ( ! dev->exit_eventloop) {
 	Tk_DoOneEvent(0);
-
+    }
     dev->exit_eventloop = 0;
 }
 
@@ -1339,7 +1374,7 @@ flush_output(PLStream *pls)
 
     tcl_cmd(pls, "$update_proc");
 
-/* Send packet -- filehandler will be invoked automatically. */
+/* Send packet -- plserver filehandler will be invoked automatically. */
 
     if (pl_PacketSend(dev->interp, dev->iodev, pls->pdfs)) {
 	fprintf(stderr, "Packet send failed:\n\t %s\n",
@@ -1488,7 +1523,7 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
  *
  * Arguments:
  *	command name
- *       button number
+ *	button number
  *	state (decimal string)
  *	x coordinate normalized to [0.0 1.0]
  *	y coordinate normalized to [0.0 1.0]
@@ -1518,8 +1553,8 @@ MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     mouse.y = atof(argv[4]);
 
 #ifdef DEBUG
-    printf("MouseEH: button %d, state %d, x: %f, y: %f\n",
-	   mouse.button, mouse.state, mouse.x, mouse.y);
+    fprintf(stderr, "MouseEH: button %d, state %d, x: %f, y: %f\n",
+	    mouse.button, mouse.state, mouse.x, mouse.y);
 #endif
 
 /* Call user event handler */
@@ -1527,7 +1562,7 @@ MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     if (pls->MouseEH != NULL) {
         (*pls->MouseEH) (&mouse, pls->MouseEH_data, &advance);
 	if (advance)
-	  Tcl_SetVar(dev->interp, "advance", "1", 0);
+	    Tcl_SetVar(dev->interp, "advance", "1", 0);
     }
     return TCL_OK;
 }
