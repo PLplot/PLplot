@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/07/21 08:41:56  mjl
+ * Revision 1.9  1994/07/22 22:20:59  mjl
+ * Eliminated a gcc -Wall warning.
+ *
+ * Revision 1.8  1994/07/21  08:41:56  mjl
  * Introduced some casts to satisfy the IRIX compiler.
  *
  * Revision 1.7  1994/07/19  22:31:46  mjl
@@ -340,7 +343,6 @@ plHost_ID(clientData, interp, argc, argv)
     int argc;
     char **argv;
 {
-    register char		*ptr;
     register struct hostent	*hostptr;
     char			hostname[100];
 

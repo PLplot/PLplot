@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/07/19 22:31:50  mjl
+ * Revision 1.21  1994/07/22 22:21:16  mjl
+ * Eliminated a gcc -Wall warning.
+ *
+ * Revision 1.20  1994/07/19  22:31:50  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
  * inclusion changed to /not/ use a search path so that it will work better
@@ -52,8 +55,6 @@ int
 Pltk_Init( Tcl_Interp *interp )
 {
     Tk_Window main;
-    Display *display;
-    Colormap map;
 
     main = Tk_MainWindow(interp);
 
@@ -86,12 +87,19 @@ Pltk_Init( Tcl_Interp *interp )
 	return TCL_ERROR;
 
 /* Save initial RGB colormap components */
+/* Disabled for now */
+
+#if 0
+    {
+    Display *display;
+    Colormap map;
 
     display = Tk_Display(main);
     map = DefaultColormap(display, DefaultScreen(display));
 
     PLX_save_colormap(display, map);
-
+    }
+#endif
     return TCL_OK;
 }
 

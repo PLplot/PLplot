@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/07/19 22:30:29  mjl
+ * Revision 1.30  1994/07/22 22:21:28  mjl
+ * Eliminated a gcc -Wall warning.
+ *
+ * Revision 1.29  1994/07/19  22:30:29  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -824,9 +827,9 @@ EventHandler(PLStream *pls, int input_char)
 	plexit("");
     }
 
-    if (key.string[0] == 't') {
-	char tmp[4];
+/* Some test code, don't rely on it. */
 
+    if (key.string[0] == 't') {
 	fprintf(stderr, "Entering GIN mode..\n");
 
 	printf("%c%c", ESC, SUB);	/* Enter GIN mode */
