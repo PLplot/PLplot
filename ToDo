@@ -2,41 +2,52 @@
 Areas currently under development
 ---------------------------------
 
-o The manual needs to be updated.
-
-o Amiga drivers still being revamped.
-
-o Fix the bug that causes no labels in y to appear on a log plot when the min
-and max are both within the same decade.
-
-o Give file familying a good workout, since it is most probably busted in
-some respect or another.
-
-
-These may make it into 5.0, but it's too early to tell for sure:
+o The manual needs BADLY to be updated.
 
 o New color model.  Palette to consist of three parts: 1) Color map 0 --
 fixed colors for plotting axes, lines, labels, whatever.  Maximum number
 of colors is 16.  2) Color map 1 -- only referenced indirectly, through
 "intensity" levels.  For mapping function values to color levels, through
 a user-specified mapping (default mapping given in HLS coordinates;
-eventually a nice input mechanism will be available under X-windows, Amiga,
-perhaps other platforms).  3) Window manager colors.  Known only to driver.
-The preliminary work here is done but there's still a ways to go.
+eventually a nice input mechanism will be available for the Tcl/TK driver
+at least).  3) Window manager colors.  Known only to driver.  The
+preliminary work here is done but there's still a ways to go.
 
-o GUI driver under X, complete with menus.  Originally a Motif driver
-developed (now broken!) as an exercise.  Am leaning to using TCL/TK (freely
-distributable) to use in final driver.
+o Exercise Tcl/TK driver using (a) invocation from plserver by spawning a
+background command, and (b) direct plotting to widgets.  Investigate using
+Tcl-DP to send messages between the tk driver and plserver, since using
+TK send over a network sucks (for other than local communication).
 
-o Color fill contour plots.  Have an algorithm worked out but no code written
-yet.
+o Color fill support at the driver level.  Incorporate at a high level in
+two ways: solid fills for use in plshade, and a shading routine that uses
+all the available colors.
+
+o Fix all 2d array plotters to have similar syntax.  This includes the
+contourers, mesh plots, and plshade.  Most general function in each
+category should accept transformer function and transformer data, to work
+with arbitrary data layouts.  So far this is only implemented in the
+contouring routines.
+
+o Give file familying a good workout, since it is most probably busted in
+some respect or another.
+
+o Need developers to adopt the DOS, OS/2 ports, since original developers
+no longer use those systems.
+
+o Still some bugs in the Amiga drivers.  Also looking for an individual
+to adopt this port.
+
+
+
+
+Things planned for sometime in the future.
+----------------------------------------------
 
 o CGM driver.  Shouldn't be too hard, just haven't gotten around to it yet.
-Any volunteers?
-
-
-Things that may make it into future revisions.
-----------------------------------------------
+Any volunteers?  Should I assume the presence of a CGM library?  Or should
+I carry my own routines to do low-level operations to the CGM file?
+(Here I could borrow from a freely distributable package that deals with
+CGM files).
 
 o graphical entities to be "objectized", so they are easier to manipulate
 from plrender.  Likely candidates: plot, string, character, tick, axis, 
@@ -51,15 +62,6 @@ o Vector field plotter.
 
 o The dashed line draws are incredibly slow and should be optimized.
 
-o When first implementing the multiple stream capability, I had intended to
-also develop a "multiple device" capability.  The idea here would be that
-while multiple streams are independent, multiple devices (existing in a given
-stream) simply clone the plot calls over each device.  An application of this
-would be to simultaneously plot something while making a plplot metafile as a
-permanent record.  Or, simultaneously plot to multiple X-windows displays (a
-great way to show a collaborator what's going on).  But I ran out of steam
-before really getting underway, and now the device-dependent and
-stream-dependent stuff are pretty mixed up.  I may get it all unsorted
-and implemented eventually if there is a need for this kind of capability.
+o Cloned streams, for plotting to multiple devices simultaneously.
 
 o Fully document the plplot-driver interface.

@@ -2,6 +2,10 @@ This file contains a list of the major changes in PLPLOT.  It is best to look
 through this file for new features, etc, until the new documentation is
 complete.
 
+I constructed this file by simply stripping off all the CVS (the source
+maintenance program we use) commit messages from each file.  Those that
+are common to all are handled separately to make it a bit less junky.
+
 *****************************************************************************
 PLPLOT 4.99d changes
 *****************************************************************************
@@ -9,4 +13,870 @@ PLPLOT 4.99d changes
 Note the old Changes.log file has been moved to the doc directory for
 possible reference while writing the new manual.  
 
-I will fill this in later.
+-----------------------------------------------------------------------------
+ALL SOURCE FILES:
+-----------------------------------------------------------------------------
+ * Revision x.xx  1993/07/01  22:13:35  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+
+-----------------------------------------------------------------------------
+ALL DRIVERS:
+-----------------------------------------------------------------------------
+ * Revision x.xx  1993/07/31  07:56:46  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
+ * Revision x.xx  1993/07/16  22:11:23  mjl
+ * Eliminated low-level coordinate scaling; now done by driver interface.
+ *
+ * Revision x.xx  1993/07/01  21:59:45  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+
+-----------------------------------------------------------------------------
+OTHER CHANGES TO MAIN SOURCE FILES:
+-----------------------------------------------------------------------------
+plwind.c:
+ * Revision 1.5  1993/09/17  06:44:40  mjl
+ * Eliminated abort on bad window bounds; now issues a warning and attempts
+ * to recover.
+
+plsym.c:
+ * Revision 1.7  1993/10/21  19:30:25  mjl
+ * Updated calls to private plplot utility functions (these now begin
+ * with "plP_").
+ *
+ * Revision 1.6  1993/10/18  19:45:50  mjl
+ * Added user-contributed plarrows function.
+
+plstring.c:
+ * Revision 1.6  1993/10/18  19:45:25  mjl
+ * User-contributed workaround for Borland C compiler bug.
+ *
+ * Revision 1.5  1993/09/24  20:33:29  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.4  1993/08/03  01:47:00  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+
+plstream.c:
+ * Revision 1.10  1993/09/24  20:33:28  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.9  1993/09/08  02:40:51  mjl
+ * Moved some functions to plstream.c.
+ *
+ * Revision 1.8  1993/08/09  22:12:39  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.
+ *
+ * Revision 1.7  1993/07/31  08:19:25  mjl
+ * Utility function added for allocating a PLDev structure.
+ *
+ * Revision 1.6  1993/07/16  22:37:04  mjl
+ * Eliminated obsolete functions, moved function for setting filename here.
+ *
+ * Revision 1.4  1993/04/26  19:57:59  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+
+plshade.c:
+ * Revision 1.5  1993/10/21  19:28:52  mjl
+ * Added prototypes for passed-in function pointers.
+ *
+ * Revision 1.4  1993/09/24  20:33:27  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.3  1993/08/31  17:58:06  mjl
+ * More cleaning up, merged documentation file into source file.
+ *
+ * Revision 1.2  1993/08/09  22:18:57  mjl
+ * Miscellaneous cleaning up.
+ *
+ * Revision 1.1  1993/07/16  22:38:12  mjl
+ * These include functions to shade between contour levels (currently using
+ * a pattern fill).  Contributed by Wesley Ebisuzaki.
+
+plsdef.c:
+ * Revision 1.7  1993/07/16  22:36:33  mjl
+ * Minor change to comments.
+
+plpage.c:
+ * Revision 1.5  1993/09/08  02:40:34  mjl
+ * Trivial documentation correction.
+ *
+ * Revision 1.4  1993/08/09  22:15:05  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
+
+plot3d.c:
+ * Revision 1.7  1993/07/28  05:54:10  mjl
+ * Put in code to ensure all malloc'ed memory is freed upon exit.
+
+plline.c:
+ * Revision 1.9  1993/07/31  08:18:34  mjl
+ * Clipping routine for polygons added (preliminary).
+
+plfont.c:
+ * Revision 1.9  1993/09/08  02:40:16  mjl
+ * Added search of INSTALL_DIR, passed in from makefile.  Directories
+ * now can be specified without the trailing slash, and the path name
+ * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
+ * handling for passing strings with a trailing backslash is gone).
+ *
+ * Revision 1.8  1993/07/28  05:53:47  mjl
+ * Put in code to ensure all malloc'ed memory is freed upon exit.
+ *
+ * Revision 1.7  1993/07/01  22:15:32  mjl
+ * Improved code that locates fonts, and changed the default font
+ * locations on the Amiga.
+
+plfill.c:
+ * Revision 1.11  1993/07/16  22:36:16  mjl
+ * Algorithm improved and simplified, submitted by Wesley Ebisuzaki.
+
+pldtik.c:
+ * Revision 1.6  1993/10/12  21:57:41  mjl
+ * Same thing as last commit, only this time it's right.
+ *
+ * Revision 1.5  1993/10/12  21:32:38  mjl
+ * Fixed bug in automatic setting of precision (it was too large by 1 place)
+ * when exponent is placed separately.
+
+plctrl.c:
+ * Revision 1.8  1993/10/21  19:28:25  mjl
+ * Minor bug fix.
+ *
+ * Revision 1.7  1993/10/18  19:44:50  mjl
+ * Added functions to return fully qualified pathnames and/or executable
+ * names.
+ *
+ * Revision 1.6  1993/09/27  20:40:12  mjl
+ * Added #include <string.h> to pick up prototype for strcat.
+ *
+ * Revision 1.5  1993/09/08  02:37:48  mjl
+ * Added plGetName for building up file name specs out of path components.
+ * Also moved some utility functions from plstream.c here.
+ *
+ * Revision 1.4  1993/07/31  08:18:10  mjl
+ * Changes to text/graph screen switching commands to reflect reorganization.
+
+plctest.c:
+ * Revision 1.3  1993/08/11  19:19:17  mjl
+ * Changed debugging code to print to stderr instead of stdout.
+ *
+ * Revision 1.2  1993/08/09  22:18:56  mjl
+ * Miscellaneous cleaning up.
+ *
+ * Revision 1.1  1993/07/16  22:38:13  mjl
+ * These include functions to shade between contour levels (currently using
+ * a pattern fill).  Contributed by Wesley Ebisuzaki.
+
+plcore.c:
+ * Revision 1.21  1993/09/24  20:33:25  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.20  1993/09/08  02:36:47  mjl
+ * Changed mapping driver interface initialization function to not bomb if
+ * called before plinit().  Changed plcpstrm to work more robustly (some
+ * saves were giving garbage).
+ *
+ * Revision 1.19  1993/08/31  20:14:30  mjl
+ * Fix to plend1() so that prematurely aborted streams do not result in a
+ * core dump.  Put font loading code before plsc->level is set to 1, to
+ * prevent core dumps when fonts are not found.
+ *
+ * Revision 1.18  1993/08/18  20:33:22  mjl
+ * Many changes to driver interface to properly modify the device window
+ * based on orientation and coordinate mapping.  Orientation switches now
+ * automatically set the device window so as to preserve the aspect ratio.
+ * Ditto for coordinate mapping (only used when copying stream parameters
+ * from one to another, such as used when dumping a plot to disk from the TK
+ * driver).  Switched over to new page description variables mar, aspect, jx,
+ * and jy, and deleted the old ones.  Added a variable widthlock that is set
+ * when -width is used to modify the pen width, so that subsequent plwid()
+ * calls are ignored.
+ *
+ * Revision 1.17  1993/08/11  19:19:03  mjl
+ * Changed debugging code to print to stderr instead of stdout, fixed
+ * up some minor type mismatches.
+ *
+ * Revision 1.16  1993/08/09  22:20:34  mjl
+ * Fixed plcpstrm() so that it no longer sucks.
+ *
+ * Revision 1.15  1993/08/03  01:46:58  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.14  1993/07/31  08:17:37  mjl
+ * Action for driver interface setup functions now deferred until after
+ * plinit() called so that these can be set via command line arguments.
+ * Drivers that request it can handle these directly.
+ *
+ * Revision 1.13  1993/07/28  05:53:23  mjl
+ * Put in code to ensure all malloc'ed memory is freed upon exit.
+ *
+ * Revision 1.12  1993/07/16  22:35:05  mjl
+ * Addition of driver interface function for converting between device
+ * coordinate systems, functions for retrieving current driver interface
+ * parameters.  Also added functions for creating a new stream, copying
+ * an existing stream, replaying the current plot, returning a list of
+ * file-oriented devices.
+ *
+ * Revision 1.11  1993/07/01  22:25:16  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather
+ * than plplot.h.  Rationalized namespace -- all externally-visible
+ * internal plplot functions now start with "plP_".  Moved functions
+ * plend() and plend1() to here.  Added driver interface -- sits
+ * between the plplot library calls and the driver to filter the data in
+ * various ways, such as to support zooms, page margins, orientation
+ * changes, etc.  Changed line and polyline draw functions to go through
+ * this layer.  Changed all references to the current plplot stream to be
+ * through "plsc", which is set to the location of the current stream (now
+ * dynamically allocated).  A table of stream pointers (max of 100) is
+ * kept to allow switching between streams as before.
+ *
+ * Revision 1.10  1993/04/26  19:57:58  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+
+plcont.c:
+ * Revision 1.9  1993/07/17  21:31:55  mjl
+ * Improved error message for out of range indices.
+
+plbox.c:
+ * Revision 1.8  1993/09/24  20:33:23  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+
+plargs.c:
+ * Revision 1.13  1993/08/28  06:38:05  mjl
+ * The option table now requires passing of a pointer to user-defined data,
+ * similar in spirit to that used in Xt or TK callbacks.  If unused, simply
+ * initialize as NULL.  All option handlers changed to accept this pointer
+ * as the third argument.  Especially useful from C++ for passing the "this"
+ * pointer.
+ *
+ * Revision 1.12  1993/08/18  19:19:44  mjl
+ * Added new flags -mar, -a, -jx, -jy for setting margin, aspect ratio, and
+ * justification from the command line.  These are similar but not the same
+ * as the same-named variables from old versions of plrender, and are treated
+ * entirely different.  These now are used to set device window coordinates
+ * in the driver interface.  The aspect ratio defaults to 0 for the natural
+ * aspect ratio of the device, and the user normally won't need to change
+ * this (plots requiring a specified aspect ratio should use plvpas or
+ * plvasp).  The margin (0 to 0.5) is the *minimum* fraction of the page to
+ * reserve on each side, while the justification (-0.5 to 0.5) is the
+ * fractional displacement of the center of the plot in x (for -jx) or y (for
+ * -jy).  Since these settings are now handled in the driver interface, ALL
+ * output drivers now support margins, aspect ratio modification, and
+ * justification.  The -wdev flag introduced only a month or so ago was
+ * eliminated.
+ *
+ * Revision 1.11  1993/08/11  19:21:58  mjl
+ * Changed definition of plHelp() and plSyntax() to take a mode flag
+ * as argument.  Currently used to govern handling of invisible options.
+ *
+ * Revision 1.10  1993/08/04  18:27:03  mjl
+ * Modified -bg argument handler to strip leading '#' off hex color value if
+ * present, to allow it to deal with TCL-style color values.
+ *
+ * Revision 1.9  1993/08/03  01:46:56  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.8  1993/07/31  08:16:12  mjl
+ * Flags added to change plot window (-wplt), device window (-wdev).
+ * Orientation flag (-ori) changed to use new driver interface.  Aspect flag
+ * (-a) deleted.
+ *
+ * Revision 1.7  1993/07/28  05:54:29  mjl
+ * Added support for -nopixmap option.
+ *
+ * Revision 1.6  1993/07/16  22:32:35  mjl
+ * Fixed bug encountered when setting option via plSetInternalOpt().
+
+pdfutils.c:
+ * Revision 1.5  1993/08/11  19:20:03  mjl
+ * Changed debugging code to print to stderr instead of stdout, plugged
+ * a hole where possible failure of fwrite went undetected.
+ *
+ * Revision 1.4  1993/08/03  01:46:55  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.3  1993/07/01  22:07:38  mjl
+ * PDF functions start with "pdf_".
+
+scstubs.c:
+ * Revision 1.15  1993/10/21  19:27:07  mjl
+ * Changed all names that ended with an underscore (as part of the C/Fortran
+ * linkage) to end with a '7' instead, to avoid problems with f2c.
+ *
+ * Revision 1.14  1993/08/26  20:00:17  mjl
+ * Inserted stub function PLINIT().
+ *
+ * Revision 1.13  1993/08/09  22:15:08  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
+ *
+ * Revision 1.12  1993/07/02  07:11:39  mjl
+ * Minor change to function name.
+ *
+ * Revision 1.11  1993/04/26  20:03:14  mjl
+ * Added stub for plgchr().
+
+sccont.c:
+ * Revision 1.2  1993/10/21  19:27:06  mjl
+ * Changed all names that ended with an underscore (as part of the C/Fortran
+ * linkage) to end with a '7' instead, to avoid problems with f2c.
+
+-----------------------------------------------------------------------------
+OTHER CHANGES TO DRIVERS:
+-----------------------------------------------------------------------------
+xwin.c:
+ * Revision 1.25  1993/10/01  23:18:33  mjl
+ * Inserted XSync after creation of pixmap in CreatePixmap() to ensure
+ * the test for a bad allocation is really completed.
+ *
+ * Revision 1.24  1993/09/14  22:25:44  mjl
+ * One of the safety checks was mistakenly commented out.
+ *
+ * Revision 1.23  1993/08/28  06:29:42  mjl
+ * Added a safety check that the escape function pointer for resizes is
+ * initialized, and moved some XSync commands (deep magic, don't ask).
+ *
+ * Revision 1.22  1993/08/11  19:22:23  mjl
+ * Fixed warning under Sun's acc.
+ *
+ * Revision 1.21  1993/07/31  07:58:33  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The color initialization
+ * was modified to work better with the TK driver, and the function to detect
+ * grayscale displays made external for use from tk.c.
+ *
+ * Revision 1.20  1993/07/28  05:34:45  mjl
+ * Added error handler to trap pixmap allocation errors, and switch to a
+ * slower method (redraw) of refreshing window on exposes.  Also added
+ * globally visible utility functions for converting between a PLColor and
+ * an XColor, as well as other minor changes.
+ *
+ * Revision 1.19  1993/07/16  22:17:00  mjl
+ * Added escape function to redraw plot (unlike resize, the window size remains
+ * unchanged).  Changed draw functions to only draw to the pixmap during page
+ * redraws.  Pixmap is then copied to the actual window when done, for faster
+ * and more smooth response.
+ *
+ * Revision 1.18  1993/07/01  22:05:48  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".  X driver
+ * enhanced to plot to a specified window id.  A pixmap is now used for
+ * handling expose events.  External entries for doing expose, resize, and
+ * redraw events were created using the escape function (for use from TK
+ * plframe widget).  The X-driver device data is now dynamically allocated,
+ * for use by multiple streams.  The default size of the created X window
+ * has been reduced some.
+
+tek.c:
+ * Revision 1.16  1993/09/14  22:25:15  mjl
+ * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
+ *
+ * Revision 1.15  1993/08/03  01:46:42  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.13  1993/07/28  05:38:59  mjl
+ * Merged with xterm code, and added code to handle Tektronix 4105/4107
+ * (color) devices.  For now just the color index selection is supported.
+ * Added code to change terminal line to noncanonical (cbreak) mode on
+ * POSIX systems so that entered keystrokes (including <Backspace> and "Q"
+ * from plrender) do not require a <CR> to be recognized.
+
+ps.c:
+ * Revision 1.18  1993/08/09  22:13:32  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.  Added struct
+ * specific to PS driver to improve reentrancy.
+ *
+ * Revision 1.16  1993/07/16  22:14:18  mjl
+ * Simplified and fixed dpi settings.
+ *
+ * Revision 1.14  1993/04/26  20:01:59  mjl
+ * Changed time type from long to time_t.
+
+plmeta.c:
+ * Revision 1.20  1993/08/20  19:35:53  mjl
+ * Deleted save of pen width at every page boundary.  Eventually I'll come up
+ * with a better way to save the state.
+ *
+ * Revision 1.19  1993/08/11  19:18:05  mjl
+ * Changed debugging code to print to stderr instead of stdout.
+ *
+ * Revision 1.18  1993/08/03  01:46:41  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.16  1993/07/16  22:13:48  mjl
+ * Switched coordinates to standard meta coords.  Eliminated obsolete low-level
+ * operations.  Added write of some state information (colors and pen width)
+ * at the beginning of each page to aid seeking while in renderer.
+ *
+ * Revision 1.15  1993/07/01  22:00:51  mjl
+ * PDF functions start with "pdf_".
+ *
+ * Revision 1.14  1993/04/26  19:57:48  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+
+plbuf.c:
+ * Revision 1.16  1993/09/28  21:25:08  mjl
+ * Now discards the old temp file and opens a new one on each new page.  This
+ * avoids a lot of problems redisplaying partially filled pages -- we can
+ * just read to EOF without worrying about junk in the file from previous
+ * writes.  The old method never did work perfectly.
+ *
+ * Revision 1.15  1993/09/27  20:33:51  mjl
+ * Insignificant change to eliminate a gcc -Wall warning.
+ *
+ * Revision 1.14  1993/09/08  02:27:11  mjl
+ * Inserted change to ensure that streams that do not own the plot buffer
+ * cannot write to it (was causing problems on plot saves).
+ *
+ * Revision 1.13  1993/08/30  19:11:51  mjl
+ * Fixed the damage incurred by my previous "fix".  Plot buffer now appears
+ * capable of accurately and unobtrusively replaying partially filled pages.
+ *
+ * Revision 1.12  1993/08/28  06:28:07  mjl
+ * Fixed escape function reads & writes to be consistent.  Added plbuf_rewind
+ * function, which writes EOP's to the end of file to make sure that dicking
+ * around with the window settings before the page is complete doesn't end in
+ * a core dump.
+ *
+ * Revision 1.10  1993/07/16  22:12:17  mjl
+ * Simplified and slightly changed behavior to support plot dumps to cloned
+ * plplot streams.
+
+mgr.c:
+ * Revision 1.1  1993/08/03  03:21:55  mjl
+ * Added contributions from Sergio Fanchiotti for use under Linux.
+
+ljii.c:
+ * Revision 1.14  1993/08/09  22:12:32  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.
+
+linuxvga.c:
+ * Revision 1.1  1993/08/03  03:21:54  mjl
+ * Added contributions from Sergio Fanchiotti for use under Linux.
+
+impress.c:
+ * Revision 1.12  1993/07/28  05:35:50  mjl
+ * Fixed a cast in argument to free().
+
+-----------------------------------------------------------------------------
+TK DRIVERS: (all new, so I've just included a description)
+-----------------------------------------------------------------------------
+tkshell.c:
+ * Functions to handle creation & initialization of TCL interpreter and
+ * main window.  Taken from source code for "wish", copyright follows:
+
+tkdemo1.tcl:
+# Revision 1.1  1993/08/03  20:35:40  mjl
+# A demo of alternate plserver startup.  Just sketched out so far.
+
+tk.c:
+ * Revision 1.1  1993/07/02  06:58:37  mjl
+ * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
+
+tclIndex:
+# Tcl autoload index file: each line identifies a Tcl
+# procedure and the file where that procedure is
+# defined.  Generated by the "auto_mkindex" command.
+
+plwidget.tcl:
+# PLPLOT TK/TCL graphics renderer
+# plplot window initialization procs
+
+pltools.tcl:
+# PLPLOT TK/TCL graphics renderer support procs
+
+plserver.tcl:
+# PLPLOT TK/TCL graphics renderer menu procs
+
+plserver.h:
+ * Declarations for plserver and associated files.  
+
+plserver.c:
+ * Plplot graphics server.
+
+plr.c:
+* Support routines to render a PLPLOT byte stream, interpreting the PLPLOT
+* metacode.  
+
+plframe.c:
+ *	This module implements "plframe" widgets for the Tk toolkit.
+ *	These are frames that have extra logic to allow them to be
+ *	interfaced with the plplot X driver.  These are then drawn
+ *	into and respond to keyboard and mouse events.
+
+plconfig.tcl:
+# Sets configuration options for plplot/TK driver.
+
+help_tcltk.tcl:
+# Create a top-level window that displays info for On Tcl/TK.. help item.
+
+help_keys.tcl:
+# Create a top-level window that displays info for On keys.. help item.
+
+help_gui.tcl:
+# Create a top-level window that displays info for On GUI.. help item.
+
+about.tcl:
+# Create a top-level window that displays info for About.. menu item.
+
+-----------------------------------------------------------------------------
+OTHER CHANGES TO INCLUDE FILES:
+-----------------------------------------------------------------------------
+xwin.h:
+ * Revision 1.1  1993/07/28  05:52:30  mjl
+ * Added to provide function prototypes and anything else necessary to
+ * use X utility functions in xwin.c driver (used by plframe.c at present).
+
+plstubs.h:
+ * Revision 1.17  1993/10/21  19:27:03  mjl
+ * Changed all names that ended with an underscore (as part of the C/Fortran
+ * linkage) to end with a '7' instead, to avoid problems with f2c.
+ *
+ * Revision 1.16  1993/08/26  19:59:43  mjl
+ * Inserted stub name definition for PLINIT().
+ *
+ * Revision 1.15  1993/08/26  18:29:08  mjl
+ * Put in fix for name translation under UNICOS.
+ *
+ * Revision 1.14  1993/07/20  06:50:28  mjl
+ * Eliminated obsolete type declarations for string conversions.
+ *
+ * Revision 1.13  1993/07/16  22:31:41  mjl
+ * Changed method for getting stub conversion right.  Now need to define
+ * the macro STUB_LINKAGE with any of the supported conversion types.
+ *
+ * Revision 1.12  1993/07/02  07:26:10  mjl
+ * Changed include of plplot.h to plplotP.h.  Also added IRIX support.
+ *
+ * Revision 1.11  1993/04/26  20:00:55  mjl
+ * Configuration info added for a DEC Alpha-based machine running OSF/1.
+ *
+ * Revision 1.10  1993/03/28  08:45:07  mjl
+ * Added support for NEC SX-3.  Also moved determination of stub name handling
+ * to plstubs.h (more appropriate).
+
+plstream.h:
+ * Revision 1.16  1993/09/24  20:33:17  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.15  1993/09/08  02:35:20  mjl
+ * Added stream variables for driver interface coordinate mapping settings.
+ *
+ * Revision 1.14  1993/08/18  20:30:10  mjl
+ * Switched over to new page description variables mar, aspect, jx, and jy,
+ * and deleted the old ones.  Added a variable widthlock that is set when
+ * -width is used to modify the pen width, so that subsequent plwid() calls
+ * are ignored.
+ *
+ * Revision 1.13  1993/08/09  22:12:36  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.
+ *
+ * Revision 1.12  1993/07/31  08:13:39  mjl
+ * Variables added: dev_di - the driver can handle driver interface commands;
+ * dev_fill - the driver can handle polygon fill commands (both to be
+ * implemented using the escape function).  Also other support variables added.
+ *
+ * Revision 1.11  1993/07/28  05:51:12  mjl
+ * Added stream variables nopixmap (tell driver not to use pixmaps) and
+ * dual_screen (set on devices that have dual text/graphics screens).
+ *
+ * Revision 1.10  1993/07/16  22:30:10  mjl
+ * Added many new variables used in driver interface to PLStream definition.
+ * Eliminated some obsolete variables and function prototypes.
+ *
+ * Revision 1.9  1993/07/02  07:25:30  mjl
+ * Added variables for dealing with X driver, TK driver, driver interface.
+ *
+ * Revision 1.8  1993/04/26  19:57:52  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+
+plplotP.h:
+ * Revision 1.11  1993/10/06  19:52:57  mjl
+ * Disabled the POSIX_TTY stuff (because it requires ANSI atexit()) when
+ * NO_ANSI_LIBC is defined, and no longer define this by default for SunOS.
+ * May require linking with -lansi on some systems (using acc).
+ *
+ * Revision 1.10  1993/09/24  20:33:16  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.9  1993/09/14  22:25:19  mjl
+ * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
+ *
+ * Revision 1.8  1993/08/18  20:29:04  mjl
+ * Added utility macro for updating stream variables from input values.
+ *
+ * Revision 1.7  1993/08/09  22:18:02  mjl
+ * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
+ * and plpage().  Inserted defines to translate from the latter in case
+ * someone actually uses them.  Fixed prototype for plcpstrm().
+ *
+ * Revision 1.6  1993/08/05  22:35:21  mjl
+ * Eliminated prototypes for nonexistant functions.
+ *
+ * Revision 1.5  1993/08/03  01:46:51  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.4  1993/07/31  08:10:42  mjl
+ * Macros for use in escape function changed to have a prefix PLESC_, similarly
+ * those used in the state function start with PLSTATE_.  Some function
+ * prototypes added/deleted.
+ *
+ * Revision 1.3  1993/07/28  05:50:12  mjl
+ * Removed some unnecessary code (under ANSI C) for handling signed chars;
+ * added free_mem() utility macro.
+ *
+ * Revision 1.2  1993/07/16  22:29:17  mjl
+ * Definition of standard meta coordinates now done here.  Prototypes for
+ * several new functions added.
+ *
+ * Revision 1.1  1993/07/02  07:27:16  mjl
+ * Created to hold private PLPLOT macros, declarations, and prototypes.
+ * Included by all PLPLOT source files.
+
+plplot.h:
+ * Revision 1.43  1993/10/21  19:25:32  mjl
+ * Added prototype for plFindName().
+ *
+ * Revision 1.42  1993/10/18  19:43:20  mjl
+ * Added prototype for plFindCommand function.
+ *
+ * Revision 1.41  1993/09/28  21:30:17  mjl
+ * Made the bomb-out for non-ANSI | non-C++ compilers more explicit.
+ *
+ * Revision 1.40  1993/09/24  20:33:14  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.39  1993/09/17  06:43:19  mjl
+ * Now accepts -DDOUBLE as well as -DPL_DOUBLE for setting double precision
+ * floating points.
+ *
+ * Revision 1.38  1993/09/08  02:34:44  mjl
+ * Added function prototype for plGetName, moved some others from plstream.h
+ * into here.
+ *
+ * Revision 1.37  1993/08/28  06:35:37  mjl
+ * Added client_data variable to PLOptionTable definition.
+ *
+ * Revision 1.36  1993/08/26  21:18:16  mjl
+ * Previous safety check a little too safe -- changed to allow C++ compilers.
+ *
+ * Revision 1.35  1993/08/26  05:35:54  mjl
+ * Put in test for __STDC__ defined, for a little added safety.
+ *
+ * Revision 1.34  1993/08/18  19:09:19  mjl
+ * Fixed function prototypes for driver interface functions.  Added macro
+ * PL_NOTSET for use in plsdidev() to leave specific variables unaltered by
+ * the function call.  May be supported by other functions later.
+ *
+ * Revision 1.33  1993/08/11  19:27:12  mjl
+ * Changed prototypes for plHelp() and plSyntax().
+ *
+ * Revision 1.32  1993/08/09  22:18:00  mjl
+ * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
+ * and plpage().  Inserted defines to translate from the latter in case
+ * someone actually uses them.  Fixed prototype for plcpstrm().
+ *
+ * Revision 1.31  1993/08/05  22:35:19  mjl
+ * Eliminated prototypes for nonexistant functions.
+ *
+ * Revision 1.30  1993/08/03  01:46:49  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.29  1993/07/31  08:09:18  mjl
+ * Cleaned up a bit.
+ *
+ * Revision 1.28  1993/07/16  22:28:09  mjl
+ * Added prototypes for driver interface functions, new plshade function,
+ * plgFileDevs (for retrieving file device list) function.  Simplified PLKey
+ * definition by removing attribute info (not really necessary).
+ *
+ * Revision 1.27  1993/07/02  07:23:35  mjl
+ * Now holds only those symbols absolutely needed by applications to use
+ * PLPLOT.  Includes typedefs and function prototypes, maybe an occaisional
+ * macro only.  _POSIX_SOURCE no longer defined here!
+ *
+ * Revision 1.26  1993/05/08  16:08:30  mjl
+ * Bumped version number to 4.99d, but the 4.99d release won't happen for
+ * some time yet.
+ *
+ * Revision 1.25  1993/04/26  20:00:53  mjl
+ * Configuration info added for a DEC Alpha-based machine running OSF/1.
+ *
+ * Revision 1.24  1993/03/28  08:45:05  mjl
+ * Added support for NEC SX-3.  Also moved determination of stub name handling
+ * to plstubs.h (more appropriate).
+
+plcore.h:
+ * Revision 1.14  1993/10/18  19:42:06  mjl
+ * Driver vectors for Borland C driver under DOS.
+ *
+ * Revision 1.13  1993/09/08  02:34:13  mjl
+ * Added static function prototype for calc_dimap.
+ *
+ * Revision 1.12  1993/08/18  19:07:03  mjl
+ * Fixed function prototype.
+ *
+ * Revision 1.11  1993/08/03  03:26:52  mjl
+ * Additions to support new MGR and LinuxVGA drivers.
+ *
+ * Revision 1.9  1993/07/28  05:49:10  mjl
+ * Modified table entries for xterm driver, added new ones for tek4107
+ * terminal & file driver.
+ *
+ * Revision 1.8  1993/07/16  22:26:14  mjl
+ * Added explicit support for color vs monochrome postscript output,
+ * arrays and constant definitions used in driver interface.
+ *
+ * Revision 1.7  1993/07/02  07:22:14  mjl
+ * Namespace changes.
+ *
+ * Revision 1.6  1993/04/26  20:00:10  mjl
+ * The beginnings of a TK driver added.
+
+pdf.h:
+ * Revision 1.5  1993/07/02  07:21:41  mjl
+ * All PDF routines now start with "pdf_".
+
+metadefs.h:
+ * Revision 1.8  1993/08/09  22:16:39  mjl
+ * Miscellaneous cleaning up.
+ *
+ * Revision 1.7  1993/07/31  08:08:40  mjl
+ * Added macro CHANGE_STATE for new state driver function.
+ *
+ * Revision 1.6  1993/07/02  07:21:12  mjl
+ * Added header definitions for use by TK driver.  Also new macros for plplot
+ * bop/eop commands.
+
+drivers.h:
+ * Revision 1.11  1993/10/18  19:41:49  mjl
+ * Prototypes for Borland C driver under DOS.
+ *
+ * Revision 1.10  1993/08/03  03:26:51  mjl
+ * Additions to support new MGR and LinuxVGA drivers.
+ *
+ * Revision 1.8  1993/07/28  05:48:24  mjl
+ * Removed unnecessary function prototypes for old xterm driver, added new
+ * ones for tek4107 terminal & file driver.
+ *
+ * Revision 1.7  1993/07/16  22:25:12  mjl
+ * Added explicit support for color vs monochrome postscript output.
+ *
+ * Revision 1.6  1993/07/02  07:19:58  mjl
+ * Changed over to new namespace.
+ *
+ * Revision 1.5  1993/04/26  20:00:09  mjl
+ * The beginnings of a TK driver added.
+
+-----------------------------------------------------------------------------
+UTILITIES:
+-----------------------------------------------------------------------------
+pltek.c:
+ * Revision 1.4  1993/07/17  00:30:03  mjl
+ * Eliminated extraneous file open.
+
+plrender.c:
+ * Revision 1.33  1993/08/28  06:39:14  mjl
+ * Option table and handlers modified to include & accept new client data
+ * pointer.
+ *
+ * Revision 1.32  1993/08/21  20:52:55  mjl
+ * Deleted old argument handling for -jx, -jy, and -mar, since these are
+ * now handled by plplot itself through the driver interface.
+ *
+ * Revision 1.31  1993/08/18  19:12:58  mjl
+ * Minor fixes.
+ *
+ * Revision 1.30  1993/08/13  04:42:52  mjl
+ * A wild and maddening rework of the page seeking facility.  The "last bugs"
+ * proved amazingly difficult to stomp out.  These turned up during tests
+ * over a medium-speed network link (unobservable when running locally).  I
+ * hope its really right now, because I'd just as soon never look at that
+ * piece of code again.
+ *
+ * Revision 1.29  1993/08/11  19:29:27  mjl
+ * Updated command line parsing utils to work better with the new command
+ * line utils, especially as regards invisible options.  Fixed a rarely
+ * encountered bug in seeking.
+ *
+ * Revision 1.28  1993/08/09  22:15:11  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
+ *
+ * Revision 1.27  1993/08/03  01:47:04  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
+ * Revision 1.26  1993/07/31  08:20:53  mjl
+ * Removed code that is now handled in the driver interface, also changes
+ * to reflect new driver functions.
+ *
+ * Revision 1.25  1993/07/16  22:20:18  mjl
+ * Eliminated obsolete flags and processing of metafile tags (still read for
+ * backward compatibility).  To be replaced by operations in the driver
+ * interface.
+ *
+ * Revision 1.24  1993/07/02  07:19:21  mjl
+ * Changed over to new namespace, new options parser.  Some options handlers
+ * removed (no longer necessary).
+ *
+ * Revision 1.23  1993/04/26  19:58:03  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+
+-----------------------------------------------------------------------------
+OTHER:
+-----------------------------------------------------------------------------
+tarup	Archive scripts.  Renamed to be more generic.  Updated to work
+zipup	with current file organization.
+zooup
+
+configure	/bin/sh script for configuring build
+
+Subdirectories added:
+
+drivers/tk	for Tcl/TK driver
+
+scripts		holds utility scripts (right now only plpr, for
+		Tcl/TK driver)
+
+m4		for m4 configuration files
+
+dos/bgi		files for DOS/Borland environment

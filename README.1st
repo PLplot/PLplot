@@ -3,9 +3,6 @@ the PLPLOT 5.0 distribution.  At this point I'm mainly trying to root out the
 remaining bugs and system dependencies, but there will undoubtably be a
 few improvements yet before the final version sees the light of day.
 
-*** THIS IS A PRERELEASE VERSION OF THE 4.99d DISTRIBUTION ***
-*** UPGRADE TO THE REAL 4.99d RELEASE AS SOON AS POSSIBLE ***
-
 Please refer to the following files for more information:
 
 README		General introduction, where to get more information, etc.
@@ -19,10 +16,115 @@ a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 For more detail of these changes, consult Changes.log.
 
 **************************************************************************
-Version 4.99d: Summary of major changes
+Version 4.99d: Summary of major changes (major update!)
 **************************************************************************
 
-Lots.  Will fill this in later.
+NOTE: I moved the old Changes.log to the doc directory -- I may need to
+reference it when I eventually update the docs, but is otherwise of
+questionable relevance.  Also, for some more notes on the current package
+see "doc/notes4.99d".
+
+o A fully interactive driver based on the X-windows Tcl/TK toolkit
+developed.  Supports zooms, scrolling, page layout, orientation, printing
+current plot, all from a menu.  Help menu entries also available, as well
+as forward/backward page button (only plrender has the backward page
+button) and end of plot indicator.  Colors and fonts are
+user-customizable.  Entire layout designed to be user-customizable
+although this aspect has not been well tested.  You are encouraged
+to read the file doc/Xauthority before using this driver.
+
+o Changed all plplot source files to include plplotP.h (private) rather
+than plplot.h.  Rationalized namespace -- all externally-visible plplot
+functions now start with "pl"; device driver functions start with "plD_".
+
+o Several driver functions consolidated, for all drivers.  The width and
+color commands are now part of a more general "state" command.  The text
+and graph commands used for switching between modes is now handled by the
+escape function (very few drivers require it).  The device-specific PLDev
+structure is now malloc'ed for each driver that requires it, and freed
+when the stream is terminated.  Eliminated low-level coordinate scaling;
+now done by driver interface.
+
+o Went wild with "const correctness".  Can now pass a C++ String type to
+most (all that I know of) PLPLOT functions.  This works b/c String has an
+implicit conversion to const char *.  Now that PLPLOT routines take const
+char * rather than char *, use from C++ is much easier.  (contributed by
+Geoff Furnish)
+
+o Added search of INSTALL_DIR for font files, passed in from makefile.
+Directories now can be specified without the trailing slash, and the path
+name is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
+handling for passing strings with a trailing backslash is gone).
+
+o Created a Driver interface layer.  This sits between the PLPLOT main
+source code and the drivers, and is responsible for any user-specified
+transformations, including: orientation, page layout, plot view (for
+zooming), and transformations (to plot to a different device than
+originally intended, used for page dumps).  Thus, orientation, page
+layout, etc is now supported with ALL drivers, because it is done in the
+driver interface.  Many utility functions added for support of an
+interactive windowing driver, currently used by the Tcl/TK driver.
+
+o The option table now requires passing of a pointer to user-defined data,
+similar in spirit to that used in Xt or TK callbacks.  If unused, simply
+initialize as NULL.  All option handlers changed to accept this pointer as
+the third argument.  Especially useful from C++ for passing the "this"
+pointer.  The flags -mar, -a, -jx, -jy for setting margin, aspect ratio,
+and justification, -wplt for changing the plot window, and -ori to set the
+orientation are now handled by the plplot command line handler.  These
+call functions in the driver interface layer to do the appropriate
+transformation.  Modified -bg argument handler to strip leading '#' off
+hex color value if present, to allow it to deal with TCL-style color
+values.  Added support for -nopixmap option.
+
+o Fill algorithm improved and simplified.  New shading routine plshade,
+arrow draw routine plarrows.  Contributed by Wesley Ebisuzaki.
+
+o Changed all names that ended with an underscore (as part of the
+C/Fortran linkage) to end with a '7' instead, to avoid problems with f2c.
+
+o X driver: Added escape function to redraw plot (unlike resize, the
+window size remains unchanged).  Changed draw functions to only draw to
+the pixmap during page redraws.  Pixmap is then copied to the actual
+window when done, for faster and more smooth response.  Added error
+handler to trap pixmap allocation errors, and switch to a slower method
+(redraw) of refreshing window on exposes.
+
+o Tek driver: Merged with xterm code, and added code to handle Tektronix
+4105/4107 (color) devices.  For now just the color index selection is
+supported.  Added code to change terminal line to noncanonical (cbreak)
+mode on POSIX systems so that entered keystrokes (including <Backspace>
+and "Q" from plrender) do not require a <CR> to be recognized.
+
+o MGR and VGA drivers for use under Linux contributed by Sergio
+Fanchiotti.
+
+o Fixes and driver for DOS/Borland environment contributed by Paul
+Casteels (casteels@uia.ac.be).
+
+o Changed method for getting stub conversion right.  Now need to define
+the macro STUB_LINKAGE with any of the supported conversion types.  Moved
+determination of stub name handling to plstubs.h.
+
+o New systems supported: IRIX, DEC Alpha-based machines running OSF/1,
+NEC SX-3.
+
+o plrender changes: Updated to work with new command option handler.
+Fixed several bugs in page seeking code.  Removed code that is now handled
+in the driver interface, also made changes to reflect new driver functions.
+
+o Archiver scripts renamed as follows:
+
+tarup	Archive scripts.  Renamed to be more generic.  Updated to work
+zipup	with current file organization.
+zooup
+
+o Build mechanism changed substantially.  Master makefile.m4 now split
+into a number of different utility m4 files.  Makes addition of new
+systems a snap.  A /bin/sh configure script is now use for building
+plplot, allowing automatic determination of system type and other
+niceties.  To build package, cd to tmp directory and type "../configure",
+then "make".  See the README file in the m4 directory for more info.
 
 **************************************************************************
 Version 4.99c: Summary of major changes (minor update only)
