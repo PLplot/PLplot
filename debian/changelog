@@ -1,3 +1,12 @@
+plplot (5.2.1.cvs.20031030-2) unstable; urgency=low
+
+  * debian/rules: Call configure with --enable-static, such that the
+    lib*.a files will be present in the *-dev packages (closes: #224550).
+  * debian/control: Changed architecture of packages libplplot-dev and
+    plplot-tcl-dev from "all" to "any", because of the *.a files included.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat, 20 Dec 2003 17:48:52 +0100
+
 plplot (5.2.1.cvs.20031030-1) unstable; urgency=low
 
   * Preparation for the next upstream version, which changed the soversion

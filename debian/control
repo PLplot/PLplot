@@ -27,7 +27,7 @@ Description: Scientific plotting library
  Homepage: http://www.plplot.org
 
 Package: libplplot-dev
-Architecture: all
+Architecture: any
 Section: libdevel
 Conflicts: plplot-dev, plplot-c++, libplplot5 (<< 5.2.0.cvs.20030317)
 Replaces: plplot-dev
@@ -76,7 +76,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
  Homepage: http://www.plplot.org
 
 Package: plplot-tcl-dev
-Architecture: all
+Architecture: any
 Priority: extra
 Depends: plplot-tcl, libplplot9
 Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)

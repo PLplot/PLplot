@@ -54,7 +54,7 @@ config: config-stamp
 config-stamp: autotools-stamp
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers        \
-                    --disable-static --enable-python $(octave_cfg)     \
+                    --enable-static --enable-python $(octave_cfg)     \
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
                     --without-rpath --with-prebuiltdoc --disable-java  \
@@ -103,8 +103,9 @@ install-stamp: build-stamp
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 
-	dh_movefiles -a --no-package=$(libpkg) $(octave_xcl)
-	dh_movefiles -i --no-package=libplplot-dev
+	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
+	                $(octave_xcl)
+	dh_movefiles -i
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=$(libpkg)
 
