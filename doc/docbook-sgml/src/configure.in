@@ -1,0 +1,134 @@
+AC_INIT(configure.in)
+
+dnl DTD definitions.
+dnl
+dnl The following public identifiers should correspond to those in the 
+dnl SGML source files. 
+
+[
+dsssl_dtd_pubid="-//James Clark//DTD DSSSL Style Sheet//EN"
+db_ss_html_pubid="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
+db_ss_print_pubid="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
+docbook_dtd_pubid="-//OASIS//DTD DocBook V3.1//EN"
+]
+
+dnl Utility macros
+
+dnl CHECK_PROG(program, url)
+AC_DEFUN(CHECK_PROG, [
+
+define(PROG, translit($1, [a-z], [A-Z]))
+
+AC_ARG_WITH($1, [
+  --with-$1=PATH/]PROG[		Alternative $1 program],
+  [$1_prog=$withval], 
+  [$1_prog=$1])
+
+AC_CHECK_PROGS(PROG, $$1_prog)
+
+[if test x = x$]PROG[ ; then]
+ AC_MSG_ERROR([Program $1 not found.  
+    Install the $1 program in your path or specify its
+    location with the option --with-$1.  The $1 package can be 
+    found at $2.])
+[fi]
+
+AC_SUBST(PROG)
+
+])
+
+dnl CHECK_DTD(title, dsssl_dtd, docbookb_ss_dtd, docbook_dtd, 
+dnl          jade_output_type, origin_package)
+AC_DEFUN(CHECK_DTD, [
+echo -n "checking for $1... "
+sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
+sed "s|@DB_STYLE_SHEET@|$2|" < conftest.tmp > conftest.dsl
+sed "s|@DOCBOOK_DTD@|$3|" < conf/test.sgml.in > conftest.sgml
+jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t $4 \
+             conftest.sgml 2>&1 | egrep ":(E|W):"`
+if test "$jade_result" = "" ; then 
+  echo "yes"
+else 
+  echo "no"
+  AC_MSG_ERROR([Could not find $1.
+    The following SGML public identifier could not be found in any of 
+    the default SGML catalogs:
+        $5
+    Its system identifier, i.e., a file usually called 
+        \"$6\" 
+    is distributed with the $7 package.  Install it in your 
+    system and put the correct entry in the catalog file.
+    You might also use the configure option --with-sgml-catalog to specify 
+    alternative SGML catalogs.])
+fi
+])
+
+
+dnl SGML catalogs
+
+AC_ARG_WITH(sgml-catalogs, [
+  --with-sgml-catalogs=CATALOGS   SGML catalogs in a colon (:) separated
+                                  list.  Must contain only existent files.],
+  [SGML_CATALOGS=$withval],
+  [SGML_CATALOGS=""])
+
+[
+for i in `echo $SGML_CATALOGS | sed "s/:/ /g"` ; do
+  if test ! -f $i ; then ]
+AC_MSG_ERROR([Catalog file $i is not valid.
+    Specify only existent files with option --with-sgml-catalogs.])[
+  fi
+done
+
+if test ! "$SGML_CATALOGS" = "" ;then
+  SGML_CATALOGS="-c `echo $SGML_CATALOGS | sed 's/:/ -c /g'`"
+fi
+]
+
+AC_SUBST(SGML_CATALOGS)
+
+dnl Check programs
+
+CHECK_PROG(jade, http://www.jclark.com/jade/)
+CHECK_PROG(jadetex, http://www.tug.org/applications/jadetex/)
+CHECK_PROG(perl, http://www.perl.com)
+
+dnl Check public identifiers
+
+CHECK_DTD(
+  [DSSSL Style Sheet DTD],
+  [],
+  [[[<!ELEMENT book o o EMPTY>]]],
+  [sgml],
+  [\"$dsssl_dtd_pubid\"],
+  [style-sheet.dtd],
+  [jade])
+
+CHECK_DTD(
+  [DocBook HTML Stylesheet],
+  [[[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]]],
+  [[[<!ELEMENT book - o EMPTY>]]],
+  [sgml],
+  [\"$db_ss_html_pubid\"],
+  [html/docbook.dsl],
+  [docbook-stylesheets])
+  
+CHECK_DTD(
+  [DocBook Print Stylesheet],
+  [[[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]]],
+  [[[<!ELEMENT book o o EMPTY>]]],
+  [tex],
+  [\"$db_ss_print_pubid\"],
+  [print/docbook.dsl],
+  [docbook-stylesheets])
+
+CHECK_DTD(
+  [DocBook DTD],
+  [],
+  [PUBLIC \"$docbook_dtd_pubid\"],
+  [sgml],
+  [\"$docbook_dtd_pubid\"],
+  [declaration/docbook.dtd],
+  [docbook (v3.1)])
+
+AC_OUTPUT(Makefile)

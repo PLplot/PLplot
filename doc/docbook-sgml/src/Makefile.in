@@ -1,4 +1,3 @@
-# Generated automatically from Makefile.in by configure.
 # File: Makefile.in
 # Description: Makefile template for PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
@@ -13,10 +12,10 @@ sgml_sources = $(shell ls *.sgml *.ent)
 perl_scripts = $(shell ls *.pl)
 sources = $(sgml_sources) $(perl_scripts)
 plplotdoc_html=plplotdoc-html
-jade = jade
-jadetex = jadetex
-perl = perl
-sgml_catalogs=-c /home/rafael/scratch/catalog
+jade = @JADE@
+jadetex = @JADETEX@
+perl = @PERL@
+sgml_catalogs=@SGML_CATALOGS@
 
 base = plplotdoc
 main_html = book1.html
