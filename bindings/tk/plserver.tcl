@@ -1,45 +1,4 @@
 # $Id$
-<<<<<<< plserver.tcl
-# $Log$
-# Revision 1.22.4.2  2001/01/22 09:09:01  rlaboiss
-# Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
-#
-# Revision 1.22.4.1  2001/01/22 09:05:11  rlaboiss
-# Debian stuff corresponding to package version 4.99j-11
-#
-# Revision 1.22  1995/06/13  21:28:23  mjl
-# Miscellaneous tk4 fixes.
-#
-# Revision 1.21  1995/05/06  17:18:37  mjl
-# Shave and a haircut.
-#
-# Revision 1.20  1995/04/12  08:06:16  mjl
-# Offloaded the C code for cleaning up from plserver.c into the proc
-# plserver_link_end in plserver.tcl.  The Tcl code was modified to better
-# handshake with the client (plplot TK driver) program.
-#
-# Revision 1.19  1994/09/23  07:41:41  mjl
-# Some cleanup code at exit moved into plserver.c, and the exit_app proc was
-# eliminated (in favor of just exit).
-#
-# Revision 1.18  1994/07/01  20:39:17  mjl
-# Moved "standard" initialization code to proc plstdwin in pltools.tcl,
-# so it can be used by the demos.
-#
-# Revision 1.17  1994/06/23  22:34:57  mjl
-# Removed an unnecessary "update".
-#
-# Revision 1.16  1994/06/16  19:08:22  mjl
-# exit_app proc simplified -- some of its previous tasks have been absorbed
-# into the redefined exit proc.
-#
-# Revision 1.15  1994/06/09  20:16:28  mjl
-# Moved the key_filter proc to plwidget.tcl, since it is better put there.
-# Some cleaning up also.
-#
-
-=======
->>>>>>> 1.24
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer menu procs
 # Maurice LeBrun
@@ -64,14 +23,9 @@ global file_menu_on
     plstdwin .
 
 # Create the window for the menu bar
-# jc: top menu, with file and help submenus removed to save ploting space
 
-<<<<<<< plserver.tcl
-if { 0 } {
-=======
 # jc: no File/Help menu! save plot area!
 if $file_menu_on then {
->>>>>>> 1.24
     frame .menu -relief raised -borderwidth 1
     pack append . .menu {top fillx}
 
@@ -190,15 +144,8 @@ proc client_cmd {msg} {
     if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
-<<<<<<< plserver.tcl
-# jc:	after 1 catch [list "send [list $client] after 1 $msg"]
-# try to avoid the server hanging; related with zoom/buttonpress problem
-# Side effects ??
-	after 1 catch [list "send -async [list $client] $msg"]
-=======
 #jc:	after 1 catch [list "send [list $client] after 1 $msg"]
 	after 1 catch [list "send -async [list $client] $msg"]
->>>>>>> 1.24
     }
 }
 

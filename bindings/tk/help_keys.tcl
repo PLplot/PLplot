@@ -1,17 +1,4 @@
 # $Id$
-<<<<<<< help_keys.tcl
-# $Log$
-# Revision 1.4.6.2  2001/01/22 09:09:01  rlaboiss
-# Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
-#
-# Revision 1.4.6.1  2001/01/22 09:05:11  rlaboiss
-# Debian stuff corresponding to package version 4.99j-11
-#
-# Revision 1.4  1994/05/26  19:23:20  mjl
-# Inserted missing CVS Id and Log fields.
-#
-=======
->>>>>>> 1.5
 #----------------------------------------------------------------------------
 # help_keys w
 #
