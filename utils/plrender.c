@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/02/27 20:38:04  mjl
-   Fixed yet another bug dealing with packed, partially complete pages
-   and seeking.  Who knows, it might actually be right now.
+   Revision 1.16  1993/03/03 17:05:27  mjl
+   Changed orient-setting code to switch on the basis of orient%2 and orient%4,
+   so that any value of orient gives valid output.
 
+ * Revision 1.15  1993/02/27  20:38:04  mjl
+ * Fixed yet another bug dealing with packed, partially complete pages
+ * and seeking.  Who knows, it might actually be right now.
+ *
  * Revision 1.14  1993/02/27  04:53:17  mjl
  * Fixed a bug in seeking that occurred only at the end of a file when
  * displaying packed pages.  Also added lots more diagnostic output, enabled
@@ -460,7 +464,7 @@ plr_init(U_CHAR c)
 	fprintf(stderr,
 		"Error in aspect ratio setting, aspect = %f\n", aspect);
 
-    if (orient == 1 || orient == 3)
+    if (orient%2 == 1)
 	aspect = 1.0 / aspect;
 
 /* Aspect ratio of output device */
@@ -579,6 +583,7 @@ plr_line(U_CHAR c)
 * get_ncoords()
 *
 * Read n coordinate vectors and properly orient.
+* Each time orient is incremented, the plot is rotated 90 deg clockwise.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -590,14 +595,7 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
     plm_rd(read_2nbytes(MetaFile, (U_SHORT *) xs, n));
     plm_rd(read_2nbytes(MetaFile, (U_SHORT *) ys, n));
 
-    switch (orient) {
-
-      case 3:
-	for (i = 0; i < n; i++) {
-	    x[i] = xmin + (ymax - ys[i]) * xlen / ylen;
-	    y[i] = ymin + (xs[i] - xmin) * ylen / xlen;
-	}
-	return;
+    switch (orient%4) {
 
       case 1:
 	for (i = 0; i < n; i++) {
@@ -610,6 +608,13 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 	for (i = 0; i < n; i++) {
 	    x[i] = xmin + (xmax - xs[i]);
 	    y[i] = ymin + (ymax - ys[i]);
+	}
+	return;
+
+      case 3:
+	for (i = 0; i < n; i++) {
+	    x[i] = xmin + (ymax - ys[i]) * xlen / ylen;
+	    y[i] = ymin + (xs[i] - xmin) * ylen / xlen;
 	}
 	return;
 
