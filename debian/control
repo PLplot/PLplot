@@ -4,11 +4,11 @@ Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.6.1
 Build-Depends: debhelper (>= 4.1.67), tcl8.4-dev, tk8.4-dev, itcl3-dev, xlibs-dev, g77 [!m68k], fort77 [m68k], g++-3.2, itk3-dev, python-numeric | python2.3-numeric, python-dev | python2.3-dev, octave2.1-headers | octave2.0-headers, libgd2-noxpm-dev | libgd2-xpm-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev, libltdl3-dev
-Build-Conflicts: f2c [!m68k], fort77 [!m68k]
+Build-Conflicts: f2c [!m68k], fort77 [!m68k], libplplot5 (>= 5.2.1.cvs.20031027-1)
 
-Package: libplplot5
+Package: libplplot9
 Architecture: any
-Conflicts: plplot, plplot-xwin (<= 5.1.0), plplot-tcl (<= 5.1.0), plplot-bin, plplot-c++, plplot-common
+Conflicts: plplot, plplot-xwin (<= 5.1.0), plplot-tcl (<= 5.1.0), plplot-bin, plplot-c++, plplot-common, libplplot5 (>= 5.2.1.cvs.20031027-1)
 Replaces: plplot, plplot-bin, plplot-c++, plplot-common
 Provides: plplot
 Depends: ${shlibs:Depends}
@@ -32,7 +32,7 @@ Section: libdevel
 Conflicts: plplot-dev, plplot-c++, libplplot5 (<< 5.2.0.cvs.20030317)
 Replaces: plplot-dev
 Suggests: plplot-doc
-Depends: libplplot5, libqhull-dev, libfreetype6-dev
+Depends: libplplot9, libqhull-dev, libfreetype6-dev
 Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
  and Fortran with PLplot, a scientific plotting library.  Examples of
@@ -78,7 +78,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 Package: plplot-tcl-dev
 Architecture: all
 Priority: extra
-Depends: plplot-tcl, libplplot5
+Depends: plplot-tcl, libplplot9
 Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
  This package contains the necessary files to do development in Tcl/Tk
@@ -122,7 +122,7 @@ Description: Octave support for PLplot, a plotting library
 Package: plplot-doc
 Architecture: all
 Section: doc
-Depends: libplplot5
+Depends: libplplot9
 Suggests: libplplot-dev
 Conflicts: libplplot5 (<< 5.2.0.cvs.20030305)
 Description: Documentation for PLplot, a plotting library

@@ -14,6 +14,7 @@
 export DH_COMPAT=4
 
 version		:= $(shell perl debian/get-upstream-version.pl < configure.ac)
+libpkg          := libplplot9
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
 debusr		:= $(debtmp)/usr
@@ -97,19 +98,19 @@ install-stamp: build-stamp
 	( cd $(debdoc)/plplot ; \
 	  rm -f COPYING.LIB *.dvi ; \
 	  mv ChangeLog changelog )
-	mv $(debdoc)/plplot $(debdoc)/libplplot5
-	mv $(debex) $(debdoc)/libplplot5
+	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
+	mv $(debex) $(debdoc)/$(libpkg)
 
 	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
                  $(octave_pkg) python-plplot plplot-gd plplot-doc  \
                  plplot-tcl-dev ; do \
-	  ln -s libplplot5 $(debdoc)/$$i ; \
+	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 
-	dh_movefiles -a --no-package=libplplot5 $(octave_xcl)
+	dh_movefiles -a --no-package=$(libpkg) $(octave_xcl)
 	dh_movefiles -i --no-package=libplplot-dev
 	dh_movefiles --package=libplplot-dev
-	dh_movefiles --package=libplplot5
+	dh_movefiles --package=$(libpkg)
 
 	touch install-stamp
 
@@ -131,18 +132,17 @@ binary-arch: build install
 	dh_testroot -a
 	dh_installdirs -a
 
-	dh_installdocs --package=libplplot5
-	dh_installchangelogs --package=libplplot5
+	dh_installdocs --package=$(libpkg)
+	dh_installchangelogs --package=$(libpkg)
 
 	dh_python
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
 	dh_makeshlibs -V -a
-	dh_shlibdeps -L libplplot5 -L plplot-tcl \
-	  -l $(debbase)/libplplot5/usr/lib:$(debbase)/plplot-tcl/usr/lib
+	dh_shlibdeps -a -L $(libpkg) \
+          -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib
 	dh_installdeb -a
-	dh_shlibdeps -a -l$(debbase)/plplot-tcl/usr/lib
 	dh_gencontrol -a $(octave_xcl)
 	dh_md5sums -a
 	dh_builddeb -a $(octave_xcl)
