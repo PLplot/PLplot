@@ -390,7 +390,7 @@ if test ! -f tmp/plcore.c; then
 
 # Create links to config files.
 
-    ln -s ../cf/*.in .
+    ln -s ../cf/*.in cvtdeps .
     cd ..
 fi
 
