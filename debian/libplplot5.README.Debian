@@ -61,5 +61,8 @@ plplot for Debian
     /usr/share/doc/libplplot5/examples/. Makefiles are available along the
     sources.
 
+    For development of C programs witht the PLplot library, there is a
+    pkg-config support included in the libplplot-dev package.  For detaisl,
+    see /usr/share/doc/libplplot-dev/README.pkg-config.
 
  -- Rafael Laboissiere <rafael@debian.org>, Tue Mar  4 17:05:31 2003

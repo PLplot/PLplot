@@ -68,12 +68,6 @@ config-stamp: autotools-stamp
 build: build-stamp
 build-stamp: config-stamp
 	dh_testdir
-	( cd debian ; uudecode plplot-5.2.1-new-doc.tar.gz.uu )
-	mkdir doc-old
-	( cd doc/docbook/src ; \
-          cp `tar tfz ../../../debian/plplot-5.2.1-new-doc.tar.gz` \
-	      ../../../doc-old ; \
-          tar xfz ../../../debian/plplot-5.2.1-new-doc.tar.gz )
 	$(MAKE)
 	touch build-stamp
 
@@ -82,15 +76,9 @@ clean:
 	dh_testroot
 	rm -f build-stamp install-stamp config-stamp autotools-stamp \
               debian/files
-	-$(MAKE) distclean
+	-$(MAKE) -k distclean
 	rm -f config.sub config.guess
 	find . -name config.log -o -name config.status | xargs rm -f
-	if [ -d doc-old ] ; then \
-	    ( cd doc-old ; \
-	      mv `find . -type f` ../doc/docbook/src ) ; \
-	    rm -rf doc-old ; \
-	fi
-	rm -f debian/plplot-5.2.1-new-doc.tar.gz
 	dh_clean
 
 install: install-stamp
@@ -99,6 +87,8 @@ install-stamp: build-stamp
 	dh_testroot
 
 	make DESTDIR=$(debtmp) install
+
+	rm -f $(debtmp)/usr/bin/plplot-config
 
 	( cd $(debdoc)/plplot ; \
 	  rm -f COPYING.LIB *.dvi ; \

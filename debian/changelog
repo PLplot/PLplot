@@ -1,3 +1,29 @@
+plplot (5.2.1.cvs.20031027-1) unstable; urgency=low
+
+  * New CVS snapshot upstream release.  This release is actually quite
+    close to the latest Debian 5.2.1-21, since I have been tracking CVS
+    developments since the upstream release 5.2.1.  One of biggest
+    advantages of this move is the enourmous reduction in the size of the
+    diff.gz file:
+
+      du -b plplot*diff*
+      2686036 ../plplot_5.2.1-21.diff.gz
+      10198   ../plplot_5.2.1.cvs.20031027-1.diff.gz
+
+    This huge difference is due to the patched documentation file and the
+    necessity of an uuencoded file for the Debian packages.
+
+  * debian/rules: Removed all manipulations (targets "build" and
+    "clean") related to the plplot-5.2.1-new-doc.tar.gz.uu file, which is
+    not included in the source package anymore.  Also, added flag -k to
+    make distclean.
+
+  * debian/control: Removed build-dependency on sharutils.
+
+  * debian/libplplot5.README.Debian: Added note about pkg-config support.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 27 Oct 2003 09:50:09 +0100
+
 plplot (5.2.1-21) unstable; urgency=low
 
   * sysloc.in: Applied patch from upstream CVS that assigns an unversioned
