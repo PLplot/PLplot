@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.83  1995/10/23 07:28:07  mjl
+ * Revision 1.84  1996/02/24 05:04:29  shouman
+ * Added plgDevs() routine like plgFileDevs(), to return a list of all drivers
+ * present.  Made ndev argument to both be interpreted on input as the
+ * dimension of the input arrays so as to stay in bounds.
+ *
+ * Revision 1.83  1995/10/23  07:28:07  mjl
  * Added prototypes and other support for new functions plglevel() and
  * plsError().
  *
@@ -1317,6 +1322,11 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 void
 plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
+
+/* Returns a list of all device names and their menu strings */
+
+void
+plgDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
 
 /* Set the function pointer for the keyboard event handler */
 

@@ -1,11 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.51  1995/10/23 07:24:52  mjl
- * Added glevel() accessor function, for returning the run level.  Also added
- * plsError() function for setting error control variables.
- *
- * Revision 1.50  1995/10/16  18:20:28  mjl
- * Added plgdev API function to return current device name.
+ * Revision 1.52  1996/02/24 05:04:14  shouman
+ * Added plgDevs() routine like plgFileDevs(), to return a list of all drivers
+ * present.  Made ndev argument to both be interpreted on input as the
+ * dimension of the input arrays so as to stay in bounds.
  *
  * Revision 1.49  1995/06/29  18:10:44  mjl
  * Moved invocation of plP_subpInit() to a less bogus place in plP_bop().
@@ -89,7 +87,6 @@
 	This stuff used to be in "dispatch.h", "dispatch.c", and "base.c".
 */
 
-#define DEBUG
 #include "plcore.h"
 
 /*--------------------------------------------------------------------------*\
@@ -1562,23 +1559,46 @@ c_plreplot(void)
  * Returns a list of file-oriented device names and their menu strings,
  * for use in a graphical interface.  The caller must allocate enough
  * space for (*p_menustr) and (*p_devname) to hold a pointer for each
- * device -- 20 or so is plenty.  E.g. char *menustr[20].
+ * device -- 20 or so is plenty.  E.g. char *menustr[20].  The size of
+ * these arrays should be passed in *p_ndev, which, on exit, holds the
+ * number of devices actually present.
 \*--------------------------------------------------------------------------*/
 
 void
 plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 {
+  plgdevlst(*p_menustr, *p_devname, p_ndev, 0);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plgDevs()
+ *
+ * Like plgFileDevs(), but returns names and menu strings for all devices.
+\*--------------------------------------------------------------------------*/
+
+void
+plgDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
+{
+  plgdevlst(*p_menustr, *p_devname, p_ndev, -1);
+}
+
+static void
+plgdevlst(char **p_menustr, char **p_devname, int *p_ndev, int type)
+{
     int i, j;
 
     for (i = j = 0; i < npldrivers; i++) {
-	if (dispatch_table[i].pl_type == 0) {
-	    (*p_menustr)[j] = dispatch_table[i].pl_MenuStr;
-	    (*p_devname)[j] = dispatch_table[i].pl_DevName;
-	    j++;
+	if (type < 0 || dispatch_table[i].pl_type == type) {
+	    p_menustr[j] = dispatch_table[i].pl_MenuStr;
+	    p_devname[j] = dispatch_table[i].pl_DevName;
+	    if (++j + 1 >= *p_ndev) {
+	        plwarn("plgdevlst:  too many devices");
+		break;
+	      }
 	}
     }
-    (*p_menustr)[j] = NULL;
-    (*p_devname)[j] = NULL;
+    p_menustr[j] = NULL;
+    p_devname[j] = NULL;
     *p_ndev = j;
 }
 
@@ -1656,35 +1676,12 @@ c_plsdev(const char *devname)
     }
 }
 
-/* Get the current device (keyword) name */
-/* Note: you MUST have allocated space for this (80 characters is safe) */
-
-void
-c_plgdev(char *p_dev)
-{
-    strcpy(p_dev, plsc->DevName);
-}
-
 /* Get the current stream pointer */
 
 void
 plgpls(PLStream **p_pls)
 {
     *p_pls = plsc;
-}
-
-/* Get the (current) run level. 
- * Valid settings are:
- *   0	uninitialized 
- *   1	initialized
- *   2	viewport defined
- *   3	world coords defined 
- */
-
-void
-c_plglevel(PLINT *p_level)
-{
-    *p_level = plsc->level;
 }
 
 /* Set the function pointer for the keyboard event handler */
@@ -1705,18 +1702,6 @@ plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 {
     plsc->ButtonEH = ButtonEH;
     plsc->ButtonEH_data = ButtonEH_data;
-}
-
-/* Set the variables to be used for storing error info */
-
-void
-plsError(PLINT *errcode, char *errmsg)
-{
-    if (errcode != NULL)
-	plsc->errcode = errcode;
-
-    if (errmsg != NULL)
-	plsc->errmsg = errmsg;
 }
 
 /* Set orientation.  Must be done before calling plinit. */
