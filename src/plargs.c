@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/12/28 09:38:44  mjl
+ * Revision 1.23  1995/01/06 20:54:53  mjl
+ * Added -freeaspect command line flag, also fixed a bogosity introduced
+ * last update.
+ *
+ * Revision 1.22  1994/12/28  09:38:44  mjl
  * Added PL_PARSE_MERGE, set if passed in table is to be merged with internal
  * options.  Function will return on first unrecognized input.  This is the
  * preferred way to combine user and internal options.  User options have
@@ -153,6 +157,7 @@ static int opt_jx		(char *, char *, void *);
 static int opt_jy		(char *, char *, void *);
 static int opt_mar		(char *, char *, void *);
 static int opt_ori		(char *, char *, void *);
+static int opt_freeaspect	(char *, char *, void *);
 static int opt_width		(char *, char *, void *);
 static int opt_bg		(char *, char *, void *);
 static int opt_fam		(char *, char *, void *);
@@ -379,6 +384,14 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-ori orient",
     "Plot orientation (0,2=landscape, 1,3=portrait)" },
+{
+    "freeaspect",		/* floating aspect ratio */
+    opt_freeaspect,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
+    "-freeaspect",
+    "Do not preserve aspect ratio on orientation swaps" },
 {
     "width",			/* Pen width */
     opt_width,
@@ -729,7 +742,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 
 	status = ParseOpt(&myargc, &argv, p_argc, &argsave, option_table);
 
-	if (status) {
+	if (status == 1) {
 
 	/* No match, so check internal table if merge specified */
 
@@ -740,7 +753,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 
     /* If no match, terminate as specified by the mode flag */
 
-	if (status) {
+	if (status == 1) {
 	    if (mode_full) {
 		if ( ! mode_quiet) {
 		    (*UsageH) (*argv);
@@ -750,6 +763,13 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 	    else {
 		break;
 	    }
+	}
+
+    /* Exit if fully parsing and encountered -h or -v */
+
+	if (status == 2) {
+	    if (mode_full) 
+		exit(1);
 	}
     }
 
@@ -1058,7 +1078,7 @@ opt_h(char *opt, char *optarg, void *client_data)
 	Help();
 	plNotes();
     }
-    return 1;
+    return 2;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1074,7 +1094,7 @@ opt_v(char *opt, char *optarg, void *client_data)
     if ( ! mode_quiet) {
 	fprintf(stderr, "\nplplot library version: %s\n", PLPLOT_VERSION);
     }
-    return 1;
+    return 2;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1186,6 +1206,20 @@ static int
 opt_ori(char *opt, char *optarg, void *client_data)
 {
     plsdiori(atof(optarg));
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+ * opt_freeaspect()
+ *
+ * Performs appropriate action for option "freeaspect":
+ * Do not preserve aspect ratio on orientation swaps.
+\*----------------------------------------------------------------------*/
+
+static int
+opt_freeaspect(char *opt, char *optarg, void *client_data)
+{
+    plsc->freeaspect = 1;
     return 0;
 }
 
