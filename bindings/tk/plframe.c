@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.49  1995/05/26 20:13:01  mjl
+ * Revision 1.50  1995/06/01 21:23:10  mjl
+ * Changed header file inclusions.
+ *
+ * Revision 1.49  1995/05/26  20:13:01  mjl
  * Changed "save as" widget command to accept device keyword, not number.
  * Eliminated "info devices" widget command in favor of "info devkeys", which
  * returns device keywords, and "info devnames", which returns device names.
@@ -103,7 +106,8 @@
 #define DEBUG_ENTER
 */
 #include "plserver.h"
-#include "plplotX.h"
+#include "plxwd.h"
+#include "tcpip.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1995/05/06 17:11:55  mjl
+ * Revision 1.21  1995/06/01 21:24:45  mjl
+ * Changed header file inclusions.
+ *
+ * Revision 1.20  1995/05/06  17:11:55  mjl
  * Added include of pltk.h.
  *
  * Revision 1.19  1994/07/19  22:31:45  mjl
@@ -37,10 +40,8 @@
 #define __PLSERVER_H__
 
 #include "plDevs.h"
-#include "plplotP.h"
+#include "pltkd.h"
 #include "pltcl.h"
-#include "pltk.h"
-#include "plplotTK.h"
 
 /* State info for the rendering code */
 
