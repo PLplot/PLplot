@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1995/05/06 17:11:30  mjl
+ * Revision 1.36  1995/06/01 21:24:27  mjl
+ * Is now [incr Tcl] aware, if HAVE_ITCL is defined (done during configure).
+ *
+ * Revision 1.35  1995/05/06  17:11:30  mjl
  * Improved debugging output and fixed a bug in the exit handling.
  *
  * Revision 1.34  1995/04/12  08:06:15  mjl
@@ -226,6 +229,11 @@ AppInit(Tcl_Interp *interp)
     if (main && Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+#ifdef HAVE_ITCL
+    if (Itcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+#endif
 #ifdef PLD_dp
     if (Tdp_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
