@@ -2,20 +2,10 @@
 
  * Plots a simple stripchart.
 
- * Eventually I want a really cool demo here: slowly evolving plots of
- * say density and temperature.  These only need to get updated every so
- * often.  And then at the bottom some strip charts of energy or such
- * that are continually updated.
- */
-
-/* jc: This is a much reworked version of x17c.c, a non-working demo
- * on the distribution.
- *
  * ToDo: better way of clearing plot. search for `plvsta'.
  */
 
 #include "plplot/plplotP.h"
-#include "plplot/plplot.h"
 
 /* Data declarations for stripcharts. */
 
@@ -29,12 +19,13 @@ typedef struct {
     PLFLT xlpos, ylpos;
     PLFLT *x[PEN], *y[PEN];
     PLINT npts[PEN], nptsmax[PEN];
-	PLINT colline[PEN], styline[PEN];
-	char *legline[PEN];
+    PLINT colline[PEN], styline[PEN];
+    char *legline[PEN];
 } PLStrip;
 
-static int sid;					/* strip id number */
-static PLStrip *strip[100];		/* Array of pointers */
+static int sid;				/* strip id number */
+#define MAX_STRIPC 1000			/* Max allowed */
+static PLStrip *strip[MAX_STRIPC];	/* Array of pointers */
 static PLStrip *stripc;			/* current strip chart */
 
 /* Generates a complete stripchart plot.  */
@@ -48,6 +39,7 @@ static void
 plstrip_legend(PLStrip *strip, int flag);
 
 char *strdup(const char *);
+
 /*--------------------------------------------------------------------------*\
  * plstripc
  *
@@ -65,25 +57,30 @@ c_plstripc( PLINT *id, char *xspec, char *yspec,
 {
     int i;
 
+    if (!plsc->termin) {
+	plabort("Stripchart plot requires a terminal output device");
+	return;
+    }
+
 /* Get a free strip id and allocate it */
 
-    for (i = 0; i < 100; i++)
-		if (strip[i] == NULL)
-		    break;
+    for (i = 0; i < MAX_STRIPC; i++)
+	if (strip[i] == NULL)
+	    break;
 
-    if (i == 100) {
-		plabort("plstripc: Cannot create new strip chart");
-		*id = -1;
-		return;
+    if (i == MAX_STRIPC) {
+	plabort("plstripc: Cannot create new strip chart");
+	*id = -1;
+	return;
     }
     else {
-		sid = *id = i;
-		strip[sid] = (PLStrip *) calloc(1, (size_t) sizeof(PLStrip));
-		if (strip[sid] == NULL) {
-	    	plabort("plstripc: Out of memory.");
-	    	*id = -1;
-	    	return;
-	    }
+	sid = *id = i;
+	strip[sid] = (PLStrip *) calloc(1, (size_t) sizeof(PLStrip));
+	if (strip[sid] == NULL) {
+	    plabort("plstripc: Out of memory.");
+	    *id = -1;
+	    return;
+	}
     }
 
 /* Fill up the struct with all relevant info */
@@ -91,63 +88,63 @@ c_plstripc( PLINT *id, char *xspec, char *yspec,
     stripc = strip[sid];
 
     for (i=0; i<PEN; i++) {
-	    stripc->npts[i] =  0;
-	    stripc->nptsmax[i] =  100;
-	    stripc->colline[i] = colline[i];
-	    stripc->styline[i] = styline[i];
-            stripc->legline[i] = strdup(legline[i]); /* strdup() is needed because value must persist after call has finished */
-	    stripc->x[i] = (PLFLT *) malloc((size_t) sizeof(PLFLT) * stripc->nptsmax[i]);;
-	    stripc->y[i] = (PLFLT *) malloc((size_t) sizeof(PLFLT) * stripc->nptsmax[i]);;
-	    if (stripc->x[i] == NULL || stripc->y[i] == NULL) {
-			plabort("plstripc: Out of memory.");
-			plstripd(sid);
-			*id = -1;
-			return;
-		}
+	stripc->npts[i] =  0;
+	stripc->nptsmax[i] =  100;
+	stripc->colline[i] = colline[i];
+	stripc->styline[i] = styline[i];
+	stripc->legline[i] = strdup(legline[i]); /* strdup() is needed because value must persist after call has finished */
+	stripc->x[i] = (PLFLT *) malloc((size_t) sizeof(PLFLT) * stripc->nptsmax[i]);;
+	stripc->y[i] = (PLFLT *) malloc((size_t) sizeof(PLFLT) * stripc->nptsmax[i]);;
+	if (stripc->x[i] == NULL || stripc->y[i] == NULL) {
+	    plabort("plstripc: Out of memory.");
+	    plstripd(sid);
+	    *id = -1;
+	    return;
 	}
+    }
 
-    stripc->xlpos = xlpos;		/* legend position [0..1] */
+    stripc->xlpos = xlpos;	/* legend position [0..1] */
     stripc->ylpos = ylpos;	
-    stripc->xmin = xmin;		/* initial bounding box */
+    stripc->xmin = xmin;	/* initial bounding box */
     stripc->xmax = xmax;
     stripc->ymin = ymin;
     stripc->ymax = ymax;
-    stripc->xjump = xjump;		/* jump x step(%) when x attains xmax (xmax is then set to xmax+xjump) */
-    stripc->xlen = xmax - xmin;	/* lenght of x scale */
+    stripc->xjump = xjump;	/* jump x step(%) when x attains xmax (xmax is then set to xmax+xjump) */
+    stripc->xlen = xmax - xmin;	/* length of x scale */
     stripc->y_ascl = y_ascl;	/* autoscale y between x jump scale */
-    stripc->acc = acc;			/* accumulate plot (not really stripchart) */
-    stripc->xspec = strdup(xspec);	/* x axis specification */
-    stripc->yspec = strdup(yspec);	/* strdup() is needed because value must persist after call has finished */
-    stripc->labx = strdup(labx);		/* x label */
+    stripc->acc = acc;		/* accumulate plot (not really stripchart) */
+    stripc->xspec = strdup(xspec); /* x axis specification */
+    stripc->yspec = strdup(yspec); /* strdup() is needed because value must persist after call has finished */
+    stripc->labx = strdup(labx); /* x label */
     stripc->laby = strdup(laby);
-    stripc->labtop = strdup(labtop);	/* title */
+    stripc->labtop = strdup(labtop); /* title */
     stripc->colbox = colbox;	/* box color */
     stripc->collab = collab;	/* label color */
 
 /* Generate the plot */
 
     plstrip_gen(stripc);
-	plstrip_legend(stripc,1);
+    plstrip_legend(stripc,1);
 }
 
 static void plstrip_legend(PLStrip *stripc, int first)
 {
-	int i;
-	PLFLT sc, dy;
+    int i;
+    PLFLT sc, dy;
+
+/* draw legend */
 	
-    /* draw legend */
-	
-	plgchr(&sc, &dy);
-	sc = dy = dy/100;
-	plwind(-0.01, 1.01, -0.01, 1.01);
-	for (i=0; i<PEN; i++) {
-		if (stripc->npts[i] || first) {
-			plcol(stripc->colline[i]); pllsty(stripc->styline[i]);
-			pljoin(stripc->xlpos, stripc->ylpos - sc, stripc->xlpos + 0.1, stripc->ylpos - sc);
-			plcol(stripc->collab);
-			plptex(stripc->xlpos + 0.11, stripc->ylpos - sc, 0., 0., 0, stripc->legline[i]);sc += dy;
-		}
+    plgchr(&sc, &dy);
+    sc = dy = dy/100;
+    plwind(-0.01, 1.01, -0.01, 1.01);
+    for (i=0; i<PEN; i++) {
+	if (stripc->npts[i] || first) {
+	    plcol(stripc->colline[i]); pllsty(stripc->styline[i]);
+	    pljoin(stripc->xlpos, stripc->ylpos - sc, stripc->xlpos + 0.1, stripc->ylpos - sc);
+	    plcol(stripc->collab);
+	    plptex(stripc->xlpos + 0.11, stripc->ylpos - sc, 0., 0., 0, stripc->legline[i]);sc += dy;
 	}
+    }
     plwind(stripc->xmin, stripc->xmax, stripc->ymin, stripc->ymax);
     plflush();
 }
@@ -167,15 +164,6 @@ static void plstrip_gen( PLStrip *strip )
 
 /* Set up window */
 
-/*	dont know how to clear only one subwindow. Any hints?) */
-
-    /*
-//	plbop();
-//	pleop();
-//	pladv(0);
-
-//	what about this way? 
-    */
     plvpor(0,1,0,1);
     plwind(0,1,0,1);
     plcol(0);plpsty(0);
@@ -221,40 +209,35 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     	return;
     }
 
-    if (strip[id] == NULL) {
+    if ((id < 0) || (id >= MAX_STRIPC) || 
+	((stripc = strip[id]) == NULL)) {
     	plabort("Non existent stripchart");
     	return;
     }
 
-    stripc = strip[id];
-
 /* Add new point, allocating memory if necessary */
 
     if (++stripc->npts[p] > stripc->nptsmax[p]) {
-		stripc->nptsmax[p] += 32;
-		stripc->x[p] = (PLFLT *) realloc((void *) stripc->x[p], sizeof(PLFLT)*stripc->nptsmax[p]);
-		stripc->y[p] = (PLFLT *) realloc((void *) stripc->y[p], sizeof(PLFLT)*stripc->nptsmax[p]);
-		if (stripc->x[p] == NULL || stripc->y[p] == NULL) {
-			plabort("plstripc: Out of memory.");
-			plstripd(id);
-			return;
-		}
+	stripc->nptsmax[p] += 32;
+	stripc->x[p] = (PLFLT *) realloc((void *) stripc->x[p], sizeof(PLFLT)*stripc->nptsmax[p]);
+	stripc->y[p] = (PLFLT *) realloc((void *) stripc->y[p], sizeof(PLFLT)*stripc->nptsmax[p]);
+	if (stripc->x[p] == NULL || stripc->y[p] == NULL) {
+	    plabort("plstripc: Out of memory.");
+	    plstripd(id);
+	    return;
+	}
     }
     
     stripc->x[p][stripc->npts[p]-1] = x;
     stripc->y[p][stripc->npts[p]-1] = y;
 
-/*    if ( x > stripc->xmax) */
-	    stripc->xmax = x;
+    stripc->xmax = x;
 	    
-	if (stripc->y_ascl == 1 && (y > stripc->ymax || y < stripc->ymin))
-		yasc=1;
-/*		
-    stripc->ymax = MAX(y, stripc->ymax);
-    stripc->ymin = MIN(y, stripc->ymin);
-*/
-	if (y > stripc->ymax)
-	  stripc->ymax = stripc->ymin + 1.1*(y - stripc->ymin);
+    if (stripc->y_ascl == 1 && (y > stripc->ymax || y < stripc->ymin))
+	yasc=1;
+
+    if (y > stripc->ymax)
+	stripc->ymax = stripc->ymin + 1.1*(y - stripc->ymin);
 	if (y < stripc->ymin)
 	  stripc->ymin = stripc->ymax - 1.1*(stripc->ymax - y);
 
@@ -263,8 +246,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
         if (stripc->xmax - stripc->xmin < stripc->xlen) {
             if( yasc == 0) {
 
-            /* If user has changed subwindow, make shure we have the
-               correct one */
+            /* If user has changed subwindow, make shure we have the correct one */
                 plvsta();
                 plwind(stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax); /* FIXME - can exist some redundancy here */
 
@@ -281,30 +263,24 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     else {
 /* Regenerating plot */
 	if (stripc->acc == 0) {
-		for (j=0; j<PEN; j++) {
-			if (stripc->npts[j] > 0) {
-				istart = 0;
-				while (stripc->x[j][istart] < stripc->xmin + stripc->xlen*stripc->xjump)
-				    istart++;
+	    for (j=0; j<PEN; j++) {
+		if (stripc->npts[j] > 0) {
+		    istart = 0;
+		    while (stripc->x[j][istart] < stripc->xmin + stripc->xlen*stripc->xjump)
+			istart++;
 			
-				stripc->npts[j] = stripc->npts[j] - istart;
-	/* make it faster
-				for (i = 0; i < stripc->npts[j]; i++) {
-				    stripc->x[j][i] = stripc->x[j][i+istart];
-				    stripc->y[j][i] = stripc->y[j][i+istart];
-				}
-	*/
-				memcpy( &stripc->x[j][0], &stripc->x[j][istart], (stripc->npts[j])*sizeof(PLFLT));
-				memcpy( &stripc->y[j][0], &stripc->y[j][istart], (stripc->npts[j])*sizeof(PLFLT));
-			}
+		    stripc->npts[j] = stripc->npts[j] - istart;
+		    memcpy( &stripc->x[j][0], &stripc->x[j][istart], (stripc->npts[j])*sizeof(PLFLT));
+		    memcpy( &stripc->y[j][0], &stripc->y[j][istart], (stripc->npts[j])*sizeof(PLFLT));
 		}
+	    }
 	} else
-		stripc->xlen = stripc->xlen * (1 + stripc->xjump);
+	    stripc->xlen = stripc->xlen * (1 + stripc->xjump);
 
-		stripc->xmin = stripc->x[p][0];
-		stripc->xmax = stripc->xmax + stripc->xlen*stripc->xjump;
+	stripc->xmin = stripc->x[p][0];
+	stripc->xmax = stripc->xmax + stripc->xlen*stripc->xjump;
 
-		plstrip_gen(stripc);
+	plstrip_gen(stripc);
     }
 }
 
@@ -317,13 +293,13 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 void c_plstripd( PLINT id )
 {
     int i;
-    stripc = strip[id];
 
-    if (stripc == NULL) {
-    	plwarn("No such stripchart");
+    if ((id < 0) || (id >= MAX_STRIPC) || 
+	((stripc = strip[id]) == NULL)) {
+    	plabort("Non existent stripchart");
     	return;
     }
-    
+
     for (i=0; i<PEN; i++) {
     	if (stripc->npts[i]) {
             free((void *) stripc->x[i]);
