@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.48  1995/06/11 20:40:47  mjl
+ * Revision 1.49  1995/06/13 03:58:49  mjl
+ * Eliminated a minor bogosity that was giving a warning.
+ *
+ * Revision 1.48  1995/06/11  20:40:47  mjl
  * Fixed NULL-pointer dereferencing bug that was causing code death under
  * Linux and SunOS.  Why does HPUX let me get away with this?  Sigh.
  *
@@ -332,7 +335,7 @@ static int
 ProcessFile(int argc, char **argv)
 {
     int i;
-    U_CHAR c;
+    U_CHAR c=0;
 
     dbug_enter("ProcessFile");
 
