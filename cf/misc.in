@@ -9,7 +9,8 @@
 # -----------------------------------------------------------------------------
 
 # Cleanup
-# Get rid of directories, then files, then m4-generated files
+# Get rid of tmp directories, then tmp files, then m4-generated files, then
+# configure-time generated symlinks in tk/examples.
 
 clean:
 	-$(RM) -rf shared plplot ti_files python_dynamic
@@ -22,6 +23,11 @@ clean:
 	for filename in $(top_srcdir)/examples/f77/*.fm4; \
 	do  \
 	ffilename=`echo $$filename | sed 's/\.fm4$$/.f/'`; \
+	$(RM) $$ffilename ; \
+	done
+	for filename in $(top_srcdir)/examples/tcl/x??.tcl; \
+	do  \
+	ffilename=`echo $$filename | sed 's?examples/tcl?examples/tk?'`; \
 	$(RM) $$ffilename ; \
 	done
 
