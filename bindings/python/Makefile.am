@@ -37,7 +37,7 @@ if with_double
 ### Note plplotc.py is generated in both cases as well, but that file
 ### contents are independent of the single-double question and the
 ### following logic depends on that.
-plplotcmodule_p_double.c plplotc.py: plplotcmodule.i 
+plplotcmodule_p_double.c plplotc.py: plplotcmodule.i plplotcapi.i
 	$(SWIG) -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE \
 	plplotcmodule.i
 
@@ -49,7 +49,7 @@ plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 nodist__plplotcmodule_la_SOURCES  = plplotcmodule_double.c
 
 else
-plplotcmodule_p_single.c plplotc.py: plplotcmodule.i 
+plplotcmodule_p_single.c plplotc.py: plplotcmodule.i plplotcapi.i
 	$(SWIG) -python -o plplotcmodule_p_single.c -c++ \
 	plplotcmodule.i
 
