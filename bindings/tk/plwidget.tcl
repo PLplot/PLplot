@@ -1,6 +1,12 @@
 # $Id$
 # $Log$
-# Revision 1.7  1993/08/18 20:26:34  mjl
+# Revision 1.8  1993/08/20 19:39:03  mjl
+# Many minor adjustments on how the plot view is set up and scrolled.
+# Should now work intuitively and accurately for any combination of zooming
+# and page settings.  Added proc that adds scrollbars if necessary given
+# the current window settings, to be used from TK driver.
+#
+# Revision 1.7  1993/08/18  20:26:34  mjl
 # Added print menu.  Grouped Save operations under a single cascading menu.
 # Added a status message (timed) to appear in status bar when successfully
 # saving a plot or closing the plot file.  Changed Page setup to use
@@ -494,7 +500,7 @@ proc plw_zoom_enter {w} {
     Form2d .e "window coordinates for zoom"
     tkwait window .e
 
-    pl_view $w select $fv00 $fv01 $fv10 $fv11
+    pl_view_select $w $fv00 $fv01 $fv10 $fv11
 }
 
 #----------------------------------------------------------------------------
@@ -509,10 +515,10 @@ proc plw_zoom_reset {w} {
     $w.ftop.lstat configure -text $w
     bind $w.plwin <ButtonPress> {}
     $w.plwin view reset
-    if {[winfo ismapped $w.hscroll]} then {
+    if {[winfo exists $w.hscroll] && [winfo ismapped $w.hscroll]} then {
 	pack unpack $w.hscroll
     }
-    if {[winfo exists $w.vscroll]} then {
+    if {[winfo exists $w.vscroll] && [winfo exists $w.vscroll]} then {
 	pack unpack $w.vscroll
     }
 }
@@ -607,63 +613,143 @@ proc pl_zoom_select {w wx0 wy0 wx1 wy1} {
 
     set wlx [winfo width $w.plwin]
     set wly [winfo height $w.plwin]
-    set xmin [expr "$wx0/$wlx."     ]
-    set xmax [expr "$wx1/$wlx."     ]
-    set ymin [expr "1 - $wy1/$wly." ]
-    set ymax [expr "1 - $wy0/$wly." ]
+    set xl [expr "$wx0/$wlx."     ]
+    set xr [expr "$wx1/$wlx."     ]
+    set yl [expr "1 - $wy1/$wly." ]
+    set yr [expr "1 - $wy0/$wly." ]
 
     $w.plwin draw end
 
 # Select new plot region
 
-    pl_view $w zoom $xmin $ymin $xmax $ymax
+    pl_view_zoom $w $xl $yl $xr $yr
 }
 
 #----------------------------------------------------------------------------
-# pl_view
+# pl_view_select
 #
 # Handles change of view into plot.
+# Given in relative plot window coordinates.
 #----------------------------------------------------------------------------
 
-proc pl_view {w op x0 y0 x1 y1} {
+proc pl_view_select {w x0 y0 x1 y1} {
     
-# Adjust arguments to be in bounds and properly ordered (xmin < xmax, etc)
+# Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
 
-    set xmin [min $x0 $x1]
-    set ymin [min $y0 $y1]
-    set xmax [max $x0 $x1]
-    set ymax [max $y0 $y1]
+    set xl [min $x0 $x1]
+    set yl [min $y0 $y1]
+    set xr [max $x0 $x1]
+    set yr [max $y0 $y1]
 
-    set xmin [max 0. [min 1. $xmin]]
-    set ymin [max 0. [min 1. $ymin]]
-    set xmax [max 0. [min 1. $xmax]]
-    set ymax [max 0. [min 1. $ymax]]
+    set xmin 0.
+    set ymin 0.
+    set xmax 1.
+    set ymax 1.
 
-# If bounds are (0,0) (1,1), just return.
+    set xl [max $xmin [min $xmax $xl]]
+    set yl [max $ymin [min $ymax $yl]]
+    set xr [max $xmin [min $xmax $xr]]
+    set yr [max $ymin [min $ymax $yr]]
 
-    if {($xmin == 0) && ($xmax == 1)} \
+# Only create scrollbars if really needed.
+
+    if {($xl == $xmin) && ($xr == $xmax)} \
     then {set hscroll 0} else {set hscroll 1}
 
-    if {($ymin == 0) && ($ymax == 1)} \
+    if {($yl == $xmin) && ($yr == $xmax)} \
     then {set vscroll 0} else {set vscroll 1}
 
     if { ! ($hscroll || $vscroll)} {return}
 
 # Select plot region
 
-    $w.plwin view $op $xmin $ymin $xmax $ymax
+    $w.plwin view select $xl $yl $xr $yr
 
+# Fix up view
+
+    pl_fixview $w $hscroll $vscroll
+}
+
+#----------------------------------------------------------------------------
+# pl_view_zoom
+#
+# Handles zoom.
+# Given in relative device coordinates.
+#----------------------------------------------------------------------------
+
+proc pl_view_zoom {w x0 y0 x1 y1} {
+    
+# Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
+
+    set xl [min $x0 $x1]
+    set yl [min $y0 $y1]
+    set xr [max $x0 $x1]
+    set yr [max $y0 $y1]
+
+    set bounds [$w.plwin view bounds]
+    set xmin [lindex "$bounds" 0]
+    set ymin [lindex "$bounds" 1]
+    set xmax [lindex "$bounds" 2]
+    set ymax [lindex "$bounds" 3]
+
+    set xl [max $xmin [min $xmax $xl]]
+    set yl [max $ymin [min $ymax $yl]]
+    set xr [max $xmin [min $xmax $xr]]
+    set yr [max $ymin [min $ymax $yr]]
+
+# Only create scrollbars if really needed.
+
+    if {($xl == $xmin) && ($xr == $xmax)} \
+    then {set hscroll 0} else {set hscroll 1}
+
+    if {($yl == $xmin) && ($yr == $xmax)} \
+    then {set vscroll 0} else {set vscroll 1}
+
+    if { ! ($hscroll || $vscroll)} then {
+	$w.plwin redraw
+	return
+    }
+
+# Select plot region
+
+    $w.plwin view zoom $xl $yl $xr $yr
+
+# Fix up view
+
+    pl_fixview $w $hscroll $vscroll
+}
+
+#----------------------------------------------------------------------------
+# pl_fixview
+#
+# Handles updates of scrollbars & plot after view change.
+#----------------------------------------------------------------------------
+
+proc pl_fixview {w hscroll vscroll} {
+    
 # Create scrollbars if they don't already exist.
 
+    set created_sb 0
     if {$hscroll && ! [winfo exists $w.hscroll]} then {
+	set created_sb 1
 	scrollbar $w.hscroll -relief sunken -orient horiz \
 	    -command "$w.plwin xscroll"
 	$w.plwin config -xscroll "$w.hscroll set"
     }
     if {$vscroll && ! [winfo exists $w.vscroll]} then {
+	set created_sb 1
 	scrollbar $w.vscroll -relief sunken \
 	    -command "$w.plwin yscroll"
 	$w.plwin config -yscroll "$w.vscroll set"
+    }
+
+# When scrollbars are first created, it may be necessary to unmap then map
+# the plframe widget so that it has a chance to initialize the scrollbars
+# before they are mapped.
+
+    if {$created_sb} then {
+	pack unpack $w.plwin
+	pack append $w $w.plwin {left expand fill}
     }
 
 # Map scrollbars if not already mapped.
@@ -686,6 +772,24 @@ proc pl_view {w op x0 y0 x1 y1} {
     } else {
 	$w.plwin redraw
     }
+}
+
+#----------------------------------------------------------------------------
+# plw_update_view
+#
+# Updates view.  Results in scrollbars being added if they are appropriate.
+# Does nothing if the plot window is unchanged from the default.
+#----------------------------------------------------------------------------
+
+proc plw_update_view {w} {
+    set coords [$w.plwin view]
+
+    set xl [lindex "$coords" 0]
+    set yl [lindex "$coords" 1]
+    set xr [lindex "$coords" 2]
+    set yr [lindex "$coords" 3]
+
+    pl_view_select $w $xl $yl $xr $yr
 }
 
 #----------------------------------------------------------------------------
