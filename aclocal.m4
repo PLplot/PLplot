@@ -8,16 +8,16 @@ dnl>
 dnl> Maurice LeBrun
 dnl> IFS, University of Texas at Austin
 dnl> 14-Jul-1994
-dnl> 
+dnl> ------------------------------------------------------------------------
 dnl> It's kind of nice to have an include macro.
 dnl> 
 define([AC_INCLUDE],[builtin([include],$*)])dnl
-dnl>
+dnl> ------------------------------------------------------------------------
 dnl> This quicky is good during development, e.g. AC_IGNORE([ ... ]) to
 dnl> ignore everything inside the brackets.
 dnl>
 define([AC_IGNORE],)dnl
-dnl>
+dnl> ------------------------------------------------------------------------
 dnl> Guess the value for the `prefix' variable by looking for the argument
 dnl> program along PATH and taking its parent.  Example: if the argument
 dnl> is `gcc' and we find /usr/local/gnu/bin/gcc, set `prefix' to
@@ -79,7 +79,7 @@ changequote([,])dnl
   AC_VERBOSE(chose installation directory prefix ${prefix})
 fi
 ])dnl
-dnl>
+dnl> ------------------------------------------------------------------------
 dnl> Fixed version of AC_ISC_POSIX: /etc/conf/kconfig.d doesn't need to
 dnl> exist for it to be POSIX.  Furthermore, unistd.h is in /usr/include
 dnl> on some systems, not /usr/include/sys.  The redefinition of CC is not
@@ -103,3 +103,11 @@ else
  echo "nope, not POSIX"
 fi
 ])dnl
+dnl> ------------------------------------------------------------------------
+dnl> Some X11 headers require "caddr_t" even though on a POSIX.1 system
+dnl> this is illegal.  This macro defines it if not already typedef'ed.
+dnl>
+define(AC_CADDR_T,
+[AC_PROVIDE([$0])AC_CHECKING(for caddr_t in sys/types.h)
+AC_HEADER_EGREP(caddr_t, sys/types.h, , AC_DEFINE(caddr_t, char *))])dnl
+dnl
