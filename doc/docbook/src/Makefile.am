@@ -74,7 +74,7 @@ pdf_DATA = $(BASE).pdf
 man3_MANS = $(shell ls *.$(MANVOL))
 
 geninfodir = $(infodir)
-geninfo_DATA = $(shell ls *.info)
+geninfo_DATA = $(shell ls *.info*)
 
 all: $(TARGETS)
 
