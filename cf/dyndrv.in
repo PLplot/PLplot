@@ -76,7 +76,13 @@ drivers/ntk$(LIB_TAG)_drv.so : shared/ntk$O $(PLLIB_SO)
 drivers/linuxvga$(LIB_TAG)_drv.so : shared/linuxvga$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @LINUXVGALIBS@ $(driverlibs)
 
-# These last three depend on libplplottcltk (and libplplot but libplplottcltk
+#drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O $(TCLLIB_SO)
+#	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK) $(RPATH)
+
+drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O $(PLLIB_SO)
+	$(SHLIB_BUILD) $@ $<  @XLIBS@ $(driverlibs) $(RPATH)
+
+# These last two depend on libplplottcltk (and libplplot but libplplottcltk
 # depends on libplplot and also pulls it into the linking chain so we
 # don't have to mention libplplot explicitly here).
 # Note rpath specified here because it is required to find the library for,
@@ -85,9 +91,6 @@ drivers/linuxvga$(LIB_TAG)_drv.so : shared/linuxvga$O $(PLLIB_SO)
 # because rpath specified here to point to plplot/tmp location, these must
 # be rebuilt for install.
 drivers/tk$(LIB_TAG)_drv.so : shared/tk$O $(TCLLIB_SO)
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK) $(RPATH)
-
-drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O $(TCLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK) $(RPATH)
 
 # The tkwin shared object includes TKWIN_OBJ (because the tkwin object

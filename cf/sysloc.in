@@ -827,10 +827,13 @@ if test "$enable_tcl" = "yes"; then
 #    fi
 fi
 if test "$enable_xwin" = "yes"; then
-#jc: uncomment the if/fi when tk/xwin becomes dyndrv
-#    if test "$enable_dyndrivers" != "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, LIBS, LIBPATH)
-#    fi
+    else
+	XLIBS=""
+	XLIBPATH=""
+	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, XLIBS, XLIBPATH)
+    fi
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
@@ -1528,4 +1531,5 @@ AC_SUBST(GNOMELIBS)
 AC_SUBST(GDLIBS)
 AC_SUBST(CDLIBS)
 AC_SUBST(TKLIBS)
+AC_SUBST(XLIBS)
 
