@@ -20,6 +20,7 @@ function demo_page ($demo, $nfigs, $language) {
 <input TYPE="submit" NAME="lbind" VALUE="Java">
 <input TYPE="submit" NAME="lbind" VALUE="Python">
 <input TYPE="submit" NAME="lbind" VALUE="Octave">
+<input TYPE="submit" NAME="lbind" VALUE="PerlDL">
 
 </form>
 </div>
@@ -47,6 +48,9 @@ END;
     break;
   case ("Octave"):
     $fname = "x" . $demo_str . "c.m-";
+    break;
+  case ("PerlDL"):
+    $fname = "x" . $demo_str . ".pl-";
     break;
   default:
     $fname = "x" . $demo_str . "c.c-";
