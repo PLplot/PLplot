@@ -96,7 +96,9 @@ install-stamp: src_tar html_tar $(BASE).dvi $(BASE).ps.gz
 	mkdir -p $(HTML_DESTDIR)
 	rm -rf $(HTML_DESTDIR)/*
 	cp $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	ln -s $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
 	cp $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	ln -s $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
 	cp $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
 	cp $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
 	touch install-stamp
