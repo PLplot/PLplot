@@ -97,7 +97,7 @@ x02::demo2() {
     PLFLT h, l, s;
     PLFLT r1, g1, b1;
     
-    // Bounds on HLS, from plHLS_RGB() commentary --
+    // Bounds on HLS, from plhlsrgb() commentary --
     //	hue		[0., 360.]	degrees
     //	lightness	[0., 1.]	magnitude
     //	saturation	[0., 1.]	magnitude
@@ -110,7 +110,7 @@ x02::demo2() {
     // Use max saturation
     s = 1.0;
     
-    pls->HLS_RGB(h, l, s, &r1, &g1, &b1);
+    pls->hlsrgb(h, l, s, &r1, &g1, &b1);
     
     r[i+16] = (PLINT)(r1 * 255);
     g[i+16] = (PLINT)(g1 * 255);

@@ -81,7 +81,7 @@ C     Divide screen into 100 regions
 
 
       do i=0,99
-C     Bounds on HLS, from plHLS_RGB() commentary --
+C     Bounds on HLS, from plhlsrgb() commentary --
 C     hue		[0., 360.]	degrees
 C     lightness	        [0., 1.]	magnitude
 C     saturation	[0., 1.]	magnitude
@@ -93,7 +93,7 @@ C     Vary lightness uniformly from top to bottom, between min and max
 C     Use max saturation
          s = 1.d0
 
-         call plHLS_RGB(h, l, s, r1, g1, b1)
+         call plhlsrgb(h, l, s, r1, g1, b1)
          
          r(i+17) = r1*255
          g(i+17) = g1*255

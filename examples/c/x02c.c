@@ -79,7 +79,7 @@ void demo2()
         PLFLT h, l, s;
         PLFLT r1, g1, b1;
 
-    /* Bounds on HLS, from plHLS_RGB() commentary --
+    /* Bounds on HLS, from plhlsrgb() commentary --
      *	hue		[0., 360.]	degrees
      *	lightness	[0., 1.]	magnitude
      *	saturation	[0., 1.]	magnitude
@@ -92,7 +92,7 @@ void demo2()
     /* Use max saturation */
         s = 1.0;
 
-        plHLS_RGB(h, l, s, &r1, &g1, &b1);
+        plhlsrgb(h, l, s, &r1, &g1, &b1);
 
         r[i+16] = r1 * 255;
         g[i+16] = g1 * 255;
