@@ -109,7 +109,7 @@ dnl> Modified versions of two subroutines of AC_OUTPUT from autoconf
 dnl> version 2.3. 
 dnl>
 dnl> The only difference is that this version looks for the input file
-dnl> in the in the target directory first, then in the source directory.
+dnl> in the target directory first, then in the source directory.
 
 dnl This is a subroutine of AC_OUTPUT.  It is called inside an unquoted
 dnl here document whose contents are going into config.status.
