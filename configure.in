@@ -3,21 +3,198 @@ dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl Copyright (C) 2001 Rafael Laboissiere
-### 
-### This file is free software; you can redistribute it and/or modify it
-### under the terms of the GNU General Public License as published by the
-### Free Software Foundation; either version 2, or (at your option) any
-### later version.
-### 
-### This file is distributed in the hope that it will be useful, but WITHOUT
-### ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-### FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-### for more details.
-### 
-### You should have received a copy of the GNU General Public License
-### along with Octave; see the file COPYING.  If not, write to the Free
-### Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-### 02111-1307, USA. 
+dnl 
+dnl This file is free software; you can redistribute it and/or modify it
+dnl under the terms of the GNU General Public License as published by the
+dnl Free Software Foundation; either version 2, or (at your option) any
+dnl later version.
+dnl 
+dnl This file is distributed in the hope that it will be useful, but WITHOUT
+dnl ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+dnl FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+dnl for more details.
+dnl 
+dnl You should have received a copy of the GNU General Public License
+dnl along with Octave; see the file COPYING.  If not, write to the Free
+dnl Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+dnl 02111-1307, USA. 
+dnl
+dnl -----------------------------------------------------------------------
+dnl The first part of this script (between "divert(0)" and
+dnl "divert(-1)" below came from Marice LeBrun's original
+dnl cf/configure.in.  It makes possible to give default values to the
+dnl configure options.  The only thing that has been removed is the
+dnl definition and use of PL_DRIVER_LIST.
+dnl
+dnl After that part, a whole rewrite for Automake/Libtool has been
+dnl done by Rafael Laboissiere. 
+dnl
+divert(0)dnl
+#!/bin/sh
+#
+# configure.in
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# PLplot configure script input
+#
+# This script does a few things that most autoconf-generated scripts do not.
+# I resisted going with autoconf for a long time, in favor of a home-rolled
+# solution because of (a) certain needs that autoconf didn't appear to meet,
+# and (b) PLplot started out as a package with much less demanding needs
+# than today.  Eventually the build situation got out of hand, and I took
+# the plunge -- all those nice features in autoconf were just too hard to
+# resist any longer.  Those areas where I needed to be a bit inventive
+# include:
+#
+# - makefile control flow and file inclusion.  Standard make is braindead in
+# this regard.  The problem is how to conditionally enable/disable packages
+# in the makefile itself.  GNU make appears to handle this quite well, but I
+# have concerns about portability -- I've heard of (and had) problems
+# porting it to old versions of Unix, and it's not available under some
+# non-Unix systems (notably MSDOS).  Anyhow, there are several ways one can
+# simulate active control, and the route I've gone is to include a separate
+# file for each capability.  Makefile.in is created by the configure script
+# by concatenating the right pieces together.  Not only is this very
+# portable, but keeping the target/dependency portion separate allows (a)
+# this to be generated automatically e.g. by makedepend without changing any
+# other file, and (b) non-Unix ports to share it (important because the
+# target/dependency list tends to change a lot).  Since these Makefile
+# fragments are just text files, it should be simple enough to string them
+# together as desired.
+#
+# - System-specific settings for ANSI C compiler, Fortran compiler, and
+# other non-standard switches (profiling, auto promotion in Fortran,
+# optimization levels).  This is handled by a largish case statement over
+# system type that I snarfed from my previous configure utils.  A similar
+# case statement for building shared libraries was snarfed from the BLT (Tk
+# extension package) configure script.
+#
+# - Faster, site-specific configures.  I have set things up so that most of
+# the configure is skipped if the relevant shell variables are set.  Early
+# on I try to source a defaults file (cf_plplot.in, both the build directory
+# and ~/config are checked) which does this.  The point is, for a given site
+# most settings are invariant from one configure to the next, but you might
+# want to change things like what packages are enabled, compilers,
+# precision, profiling, debugging, etc.  Very useful for development.  Note:
+# Autoconf 2.0 and later supports cache files, which are similar in some
+# ways but are not really a replacement for this facility.
+# ----------------------------------------------------------------------------
+
+# Startup code that needs to be run BEFORE anything in the autogenerated
+# configure script is done.  Why isn't there an official way to do this?
+# I'm about ready to barf..
+
+# Get system using uname.
+
+system=unknown
+uname >/dev/null 2>&1 && system=`uname -s`-`uname -r`
+
+# Fix Cray braindamage
+
+case "$system" in
+    sn* )
+	system=`uname -m`-`uname -r`
+    ;;
+esac
+
+# Default settings
+
+with_debug=no
+with_opt=yes
+with_double=no
+with_profile=no
+with_shlib=yes
+with_gcc=no
+with_warn=no
+with_dbmalloc=no
+with_fseek=no
+with_pkgdir=
+with_rpath=yes
+with_nobraindead=no
+
+enable_drivers=yes
+enable_f77=yes
+enable_cxx=yes
+enable_python=yes
+enable_tcl=yes
+enable_itcl=yes
+enable_octave=no
+#explicit default values must be specified here for library and header 
+#searching to work right for the following variables.  Note these variables
+#also have a driver role to play, but unlike these, pure-driver variables
+#(e.g., enable_tek4010) do not require a default to be specified here.
+enable_gnome=no
+enable_png=yes 
+enable_jpeg=yes 
+enable_tk=yes
+enable_xwin=yes
+
+# Special cases
+
+case "$system" in
+    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+	with_opt=no
+    ;;
+    BSD/OS* ) 
+	with_fseek=yes
+	with_gcc=yes
+    ;;
+    linux*|LINUX*|Linux* ) 
+	with_gcc=yes
+    ;;
+    next*|NeXT*|NEXT* ) 
+	with_gcc=yes
+    ;;
+    ultrix*|ULTRIX* ) 
+	with_gcc=yes
+    ;;
+esac
+
+# Source site-specific variables file, if present.  Very nice for setting up
+# site-specific defaults or for reducing the time spent configuring.
+#
+# This MUST MUST MUST be done before command-line flags are handled (i.e.
+# before expanding ac_init) so that the user can override if necessary.
+
+with_defaults=yes
+for option
+    do
+    case "$option" in
+	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
+	    with_defaults=yes
+	;;
+	-without-defaults | --without-defaults | -with-defaults=no | --with-defaults=no )
+	    with_defaults=no
+	;;
+    esac
+done
+
+if test "$with_defaults" = "no"; then
+    echo "Performing full configure."
+else
+    initfile="./cf_plplot.in"
+    if test -f $initfile; then
+	echo "Getting default settings from $initfile."
+	. $initfile
+    else
+	initfile="$HOME/config/cf_plplot.in"
+	if test -f $initfile; then
+	    echo "Getting default settings from $initfile."
+	    . $initfile
+	else
+	    echo "No defaults file found, performing full configure."
+	fi
+    fi
+fi
+
+divert(-1)
+
+# ----------------------------------------------------------------------------
+# Okay, now back to ordinary configure scriptisms.
+# ----------------------------------------------------------------------------
 
 ### Autoconf/automake initializations
 
@@ -157,3 +334,60 @@ AC_SUBST(DRIVERS)
 AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile
            bindings/Makefile bindings/c++/Makefile bindings/f77/Makefile
            drivers/Makefile])
+
+# ----------------------------------------------------------------------------
+# Print out some of the more important settings.
+#
+# In a reversal of previous practice, I print the actual variables in the
+# configure log.  This is to remind the user of the difference between the
+# command line syntax (which you can always get help on by issuing a --help
+# option) and the internal representation.  It's necessary to remember this
+# for when you want to set the variable directly via ~/config/cf_plplot.in.
+# ----------------------------------------------------------------------------
+
+plplot_config_result_msg="Configure results:
+
+command:	$plplot_config_invocation
+system:		$host
+prefix:		$prefix
+CC:		$CC $CC_FLAGS
+LDC:		$LDC $LDC_FLAGS"
+
+if test "$enable_cxx" = "yes"; then
+    plplot_config_result_msg=\
+"$plplot_config_result_msg
+CXX:		$CXX $CXX_FLAGS
+LDCXX:		$LDCXX $LDCXX_FLAGS"
+fi
+
+if test "$enable_f77" = "yes"; then
+    plplot_config_result_msg=\
+"$plplot_config_result_msg
+F77:		$F77 $F77_FLAGS
+LDF:		$LDF $LDF_FLAGS"
+fi
+
+plplot_config_result_msg=\
+"$plplot_config_result_msg
+INCS:		$INCS
+LIBS:		$LIBS
+LIB_TAG:	$LIB_TAG
+devices:	$DEVICES
+
+with_shlib:	$with_shlib		with_double:	$with_double
+with_debug:	$with_debug		with_opt:	$with_opt
+with_warn:	$with_warn		with_profile:	$with_profile
+with_gcc:	$with_gcc		with_rpath:	$with_rpath
+
+enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
+enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
+enable_cxx:	$enable_cxx		enable_python:	$enable_python
+enable_f77:	$enable_f77		enable_gnome:	$enable_gnome
+enable_octave:	$enable_octave
+"
+
+cat << EOF > config.summary
+$plplot_config_result_msg
+EOF
+
+AC_MSG_RESULT($plplot_config_result_msg)
