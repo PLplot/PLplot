@@ -27,7 +27,7 @@ tar cf $tarfile \
 	! -path ${pldir}/PROBLEMS \
         -type f`
 
-tar rf $tarfile ${pldir}/tmp/.dummy ${pldir}/private/.dummy
+tar rf $tarfile ${pldir}/tmp/.dummy
 
 echo "Compressing..."
 gzip ${tarfile}
