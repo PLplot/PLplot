@@ -55,8 +55,6 @@ static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
 static void plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move);
-static void plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-		      PLINT opt, PLFLT *clevel, PLINT nlevel);
 
 /* #define MJL_HACK 1 */
 #if MJL_HACK
@@ -159,7 +157,7 @@ plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset)
   return No;
 }
 
-/* helper for plotsh3d below */
+/* helper for plsurf3d, similar to c_plfill3() */
 static void
 shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 			   PLFLT x1, PLFLT y1, PLFLT z1,
@@ -167,7 +165,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 {
   int i;
   /* arrays for interface to core functions */
-  PLINT u[6], v[6];
+  short u[6], v[6];
   PLFLT x[6], y[6], z[6], c;
   int n;
   PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -182,9 +180,9 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   n = 3;
 
   if (falsecolor)
-    c = ((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz); /* is the median better for long and thin triangles ? */
+    plcol1(((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz));
   else
-    c = plGetAngleToLight(x, y, z);
+    plcol1(plGetAngleToLight(x, y, z));
 
   V[0] = x; V[1] = y; V[2] = z;
 
@@ -201,55 +199,29 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
     }
   u[n] = u[0];
   v[n] = v[0];
-  plcol1(c);
-  plP_plfclp(u, v, n+1, plsc->clpxmi, plsc->clpxma, plsc->clpymi, plsc->clpyma, plP_fill);
+
+  plP_fill(u, v, n+1);
 }
 
 /*--------------------------------------------------------------------------*\
- * void plotsh3d(x, y, z, nx, ny, side)
+ * void plotsurf3d(x, y, z, nx, ny, opt, clevel, nlevel)
  *
- * Plots a 3-d representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
- * values are in the 2-d array z[][]. 
-\*--------------------------------------------------------------------------*/
-
-void
-c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
-		 PLINT nx, PLINT ny, PLINT side)
-{
-   plotsh3di(x, y, z, nx, ny, side, NULL, 0);
-}
-
-/*--------------------------------------------------------------------------*\
- * void plotfc3d(x, y, z, nx, ny, opt, clevel, nlevel)
- *
- * Plots a false-color 3-d representation of the function z[x][y].
+ * Plots the 3-d surface representation of the function z[x][y].
  * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
  *  and the z values are in the 2-d array z[][].
  *
  * opt can be:
  *  SURF_CONT -- draw contour at surface
  *  SURF_BASE -- draw contour at bottom xy plane
- *  DRAW_SIDE -- draw sides
+ *  DRAW_SIDES -- draw sides
+ *  FACETED   -- each square that makes up the surface is faceted
+ *  MAG_COLOR -- the surface is colored according to the value of z;
+ *               if not defined, the surface is colored according to the
+ *               intensity of the reflected light in the surface from a light
+ *               source whose position is set using c_pllightsource()
  *
- * or any bitwise combination, e.g. "SURF_CONT | SURF_BASE | DRAW_SIDE"
-\*--------------------------------------------------------------------------*/
-
-#define LEVELS 10
-    PLFLT clevel[LEVELS];
-    PLINT nlevel=LEVELS;
-
-void
-c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-	   PLINT opt, PLFLT *clevel, PLINT nlevel)
-{
-  falsecolor = 1;
-  plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
-  plotsh3di(x, y ,z, nx, ny, opt, clevel, nlevel);
-  falsecolor = 0;
-}
-
-/*--------------------------------------------------------------------------*\
+ * or any bitwise combination, e.g. "MAG_COLOR | SURF_CONT | SURF_BASE"
+ *
  * This code is a complete departure from the approach taken in the old version
  * of this routine. Formerly to code attempted to use the logic for the hidden
  * line algorithm to draw the hidden surface. This was really hard. This code
@@ -260,8 +232,8 @@ c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
  * problems with the old code, I tried to focus on clarity here. 
 \*--------------------------------------------------------------------------*/
 
-static void
-plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+void
+plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	  PLINT opt, PLFLT *clevel, PLINT nlevel)
 {
   PLFLT cxx, cxy, cyx, cyy, cyz;
@@ -287,6 +259,13 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     myabort("plotsh3d: Bad array dimensions.");
     return;
   }
+
+  plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+
+  if (opt & MAG_COLOR)
+    falsecolor = 1;
+  else
+    falsecolor = 0;
     
   plP_gdom(&xmin, &xmax, &ymin, &ymax);
   plP_grange(&zscale, &zmin, &zmax);
@@ -400,8 +379,10 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
    * can be improved by using the contour data available.
    */
   
-  if (opt & BASE_CONT) {
-    PLFLT zz[1000];
+  if (clevel != NULL && opt & BASE_CONT) {
+#define NPTS 100
+    int np = NPTS;
+    PLFLT *zz = (PLFLT *) malloc(NPTS*sizeof(PLFLT));
 
     /* get the contour lines */
     cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
@@ -410,7 +391,11 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     clev = cont;
     do { /* for each contour level */
       cline = clev->line;
-      do { /* there are several lines that makes up the contour */
+      do { /* there are several lines that make up the contour */
+	if (cline->npts > np) {
+	  np = cline->npts;
+	  zz = (PLFLT *) realloc(zz, np*sizeof(PLFLT));
+	}
 	for (j=0; j<cline->npts; j++)
 	  zz[j] = plsc->ranmi; /* clev->level; */
 	plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
@@ -423,12 +408,19 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     while(clev != NULL);
   
     cont_clean_store(cont); /* now release the memory */
+    free(zz);
   }
 
   /* Now we can iterate over the grid drawing the quads */
   for(iSlow=0; iSlow < nSlow-1; iSlow++) {
     for(iFast=0; iFast < nFast-1; iFast++) {
-      /* get the 4 corners of the Quad */
+      /* get the 4 corners of the Quad, which are
+       *      
+       *       0--2
+       *       |  |
+       *       1--3
+       */
+
       for(i=0; i<2; i++) {
 	for(j=0; j<2; j++) {
 	  /* we're transforming from Fast/Slow coordinates to x/y coordinates */
@@ -442,7 +434,8 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	}
       }
 
-      /* now draw the quad as four triangles */
+      /* the "mean point" of the quad, common to all four triangles
+	 -- perhaps not a good thing to do for the light shading */
 
       xm = ym = zm = 0.;
       for (i=0;i<4;i++) {
@@ -452,16 +445,18 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       }
       xm /= 4.; ym /= 4.; zm /= 4.;
 
+      /* now draw the quad as four triangles */
+
       for (i=1; i<3; i++) {
 	for (j=0; j<4; j+=3) {
 	  shade_triangle(px[j], py[j], pz[j], xm, ym, zm, px[i], py[i], pz[i]);
 
-	  /* after shading, see if the triangle crosses	a contour line */
+	  /* after shading, see if the triangle crosses	one contour plane */
 
 #define min3(a,b,c) (MIN((MIN(a,b)),c))
 #define max3(a,b,c) (MAX((MAX(a,b)),c))
 
-	  if (clevel != NULL && ((opt & SURF_CONT) || (opt & BASE_CONT))) {
+	  if (clevel != NULL && (opt & SURF_CONT)) {
 	    for (k=0; k<nlevel; k++) {
 	      if (clevel[k] >= min3(pz[i],zm,pz[j]) && clevel[k] < max3(pz[i],zm,pz[j])) {
 		ct = 0;
@@ -484,7 +479,11 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		}
 		
 		if (ct == 2) {
-/* yes, xx and yy are the intersection points of the triangle with the contour line--draw a straigh line betweeen the points -- this will make up the contour line */
+
+		  /* yes, xx and yy are the intersection points of the triangle with
+		   * the contour line -- draw a straight line betweeen the points
+		   * -- at the end this will make up the contour line */
+
 		  if (0 && opt & BASE_CONT) { /* previous version of base contour */
 		    /* base contour with surface color*/
 		    zz[0] = zz[1] =  plsc->ranmi;
@@ -501,21 +500,26 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		  /* don't break; one triangle can span various contour levels */
 
 		} else
-		  plexit("plot3d.c:plotsh3di() ***ERROR***\n");
+		  plwarn("plot3d.c:plsurf3d() ***ERROR***\n");
 	      } 
 	    }
 	  }
 	}
-
       }
     }
   }
 
-  if (0 && opt & DRAW_SIDE) { /* disable, the sides look horrible */
+  if (opt & FACETED) {
+    plcol0(0);
+    plmesh(x, y, z, nx, ny, DRAW_LINEXY);
+  }
+
+  if (opt & DRAW_SIDES) { /* the sides look ugly !!! */
     /* draw one more row with all the Z's set to zmin */
     PLFLT zscale, zmin, zmax;
 
     plP_grange(&zscale, &zmin, &zmax);
+    
     iSlow = nSlow-1;
     for(iFast=0; iFast < nFast-1; iFast++) {
       for(i=0; i<2; i++) {
@@ -527,6 +531,21 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       }
       /* now draw the quad as two triangles (4 might be better) */
 	 
+      shade_triangle(px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin);
+      shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
+    }
+    
+    iFast = nFast-1;
+    for(iSlow=0; iSlow < nSlow-1; iSlow++) {
+      for(i=0; i<2; i++) {
+	  ix = ixFast * iFast + ixSlow * (iSlow+i) + ixOrigin;
+	  iy = iyFast * iFast + iySlow * (iSlow+i) + iyOrigin;
+	  px[2*i] = x[ix];
+	  py[2*i] = y[iy];
+	  pz[2*i] = z[ix][iy];
+	}
+
+      /* now draw the quad as two triangles (4 might be better) */
       shade_triangle(px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin);
       shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
@@ -1165,64 +1184,64 @@ plnxtv(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 static void
 plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 {
-/*
- * For the initial set of points, just display them and store them as the
- * peak points.
- */
-    if (init == 1) {
-	int i;
-	oldhiview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
-	if ( ! oldhiview)
-	    myexit("plnxtvhi: Out of memory.");
+  /*
+   * For the initial set of points, just display them and store them as the
+   * peak points.
+   */
+  if (init == 1) {
+    int i;
+    oldhiview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
+    if ( ! oldhiview)
+      myexit("plnxtvhi: Out of memory.");
 
-	oldhiview[0] = u[0];
-	oldhiview[1] = v[0];
-	plP_draw3d(u[0],v[0],c,0,1);
-	for (i = 1; i < n; i++) {
-	    oldhiview[2 * i] = u[i];
-	    oldhiview[2 * i + 1] = v[i];
-	    plP_draw3d(u[i],v[i],c,i,0);
-	}
-	mhi = n;
-	return;
+    oldhiview[0] = u[0];
+    oldhiview[1] = v[0];
+    plP_draw3d(u[0], v[0], c, 0, 1);
+    for (i = 1; i < n; i++) {
+      oldhiview[2 * i] = u[i];
+      oldhiview[2 * i + 1] = v[i];
+      plP_draw3d(u[i], v[i], c, i, 0);
     }
+    mhi = n;
+    return;
+  }
 
-/*
- * Otherwise, we need to consider hidden-line removal problem. We scan
- * over the points in both the old (i.e. oldhiview[]) and new (i.e. u[]
- * and v[]) arrays in order of increasing x coordinate.  At each stage, we
- * find the line segment in the other array (if one exists) that straddles
- * the x coordinate of the point. We have to determine if the point lies
- * above or below the line segment, and to check if the below/above status
- * has changed since the last point.
- *
- * If pl3upv = 0 we do not update the view, this is useful for drawing
- * lines on the graph after we are done plotting points.  Hidden line
- * removal is still done, but the view is not updated.
- */
-    xxhi = 0;
-    if (pl3upv != 0) {
-	newhisize = 2 * (mhi + BINC);
-	if (newhiview != NULL) {
-	    newhiview = 
-		(PLINT *) realloc((void *) newhiview,
-				  (size_t) (newhisize * sizeof(PLINT)));
-	}
-	else {
-	    newhiview = 
-		(PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
-	}
-	if ( ! newhiview)
-	    myexit("plnxtvhi: Out of memory.");
+  /*
+   * Otherwise, we need to consider hidden-line removal problem. We scan
+   * over the points in both the old (i.e. oldhiview[]) and new (i.e. u[]
+   * and v[]) arrays in order of increasing x coordinate.  At each stage, we
+   * find the line segment in the other array (if one exists) that straddles
+   * the x coordinate of the point. We have to determine if the point lies
+   * above or below the line segment, and to check if the below/above status
+   * has changed since the last point.
+   *
+   * If pl3upv = 0 we do not update the view, this is useful for drawing
+   * lines on the graph after we are done plotting points.  Hidden line
+   * removal is still done, but the view is not updated.
+   */
+  xxhi = 0;
+  if (pl3upv != 0) {
+    newhisize = 2 * (mhi + BINC);
+    if (newhiview != NULL) {
+      newhiview = 
+	(PLINT *) realloc((void *) newhiview,
+			  (size_t) (newhisize * sizeof(PLINT)));
     }
+    else {
+      newhiview = 
+	(PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
+    }
+    if ( ! newhiview)
+      myexit("plnxtvhi: Out of memory.");
+  }
 
-/* Do the draw or shading with hidden line removal */
+  /* Do the draw or shading with hidden line removal */
 
-    plnxtvhi_draw(u, v, c, n);
+  plnxtvhi_draw(u, v, c, n);
 
-/* Set oldhiview */
+  /* Set oldhiview */
 
-    swaphiview();
+  swaphiview();
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1423,18 +1442,16 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
  * Does a simple move or line draw.
 \*--------------------------------------------------------------------------*/
 
-#define MAX_POLY 3
-
 static void
 plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move)
 {
-    if (c != NULL)
-      plcol1(c[j]);
-
     if (move)
       plP_movphy(x, y);
-    else
+    else {
+      if (c != NULL && c[j] >= 0. && c[j] <= 1.)
+	plcol1(c[j]);
       plP_draphy(x, y);
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1446,73 +1463,73 @@ plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move)
 static void
 plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
 {
-    PLINT i, j, first;
-    PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
-    PLINT su1, su2, sv1, sv2;
-    PLINT cx, cy, px, py;
-    PLINT seg, ptold, lstold = 0, ptlo, pnewlo, newlo, change, ochange = 0;
+  PLINT i, j, first;
+  PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
+  PLINT su1, su2, sv1, sv2;
+  PLINT cx, cy, px, py;
+  PLINT seg, ptold, lstold = 0, ptlo, pnewlo, newlo, change, ochange = 0;
 
-    first = 1;
-    pnewlo = 0;
+  first = 1;
+  pnewlo = 0;
 
-/*
- * For the initial set of points, just display them and store them as the
- * peak points.
- */
-    if (init == 1) {
+  /*
+   * For the initial set of points, just display them and store them as the
+   * peak points.
+   */
+  if (init == 1) {
 
-	oldloview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
-	if ( ! oldloview)
-	    myexit("plnxtvlo: Out of memory.");
+    oldloview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
+    if ( ! oldloview)
+      myexit("plnxtvlo: Out of memory.");
 
-	plP_movphy(u[0], v[0]);
-	oldloview[0] = u[0];
-	oldloview[1] = v[0];
-	for (i = 1; i < n; i++) {
-	    plP_draphy(u[i], v[i]);
-	    oldloview[2 * i] = u[i];
-	    oldloview[2 * i + 1] = v[i];
-	}
-	mlo = n;
-	return;
+    plP_draw3d(u[0], v[0], c, 0, 1);
+    oldloview[0] = u[0];
+    oldloview[1] = v[0];
+    for (i = 1; i < n; i++) {
+      plP_draw3d(u[i], v[i], c, i, 0);
+      oldloview[2 * i] = u[i];
+      oldloview[2 * i + 1] = v[i];
     }
+    mlo = n;
+    return;
+  }
 
-/*
- * Otherwise, we need to consider hidden-line removal problem. We scan
- * over the points in both the old (i.e. oldloview[]) and new (i.e. u[]
- * and v[]) arrays in order of increasing x coordinate.  At each stage, we
- * find the line segment in the other array (if one exists) that straddles
- * the x coordinate of the point. We have to determine if the point lies
- * above or below the line segment, and to check if the below/above status
- * has changed since the last point.
- *
- * If pl3upv = 0 we do not update the view, this is useful for drawing
- * lines on the graph after we are done plotting points.  Hidden line
- * removal is still done, but the view is not updated.
- */
-    xxlo = 0;
-    i = 0;
-    j = 0;
-    if (pl3upv != 0) {
-	newlosize = 2 * (mlo + BINC);
-	if (newloview != NULL) {
-	    newloview = 
-		(PLINT *) realloc((void *) newloview,
-				  (size_t) (newlosize * sizeof(PLINT)));
-	}
-	else {
-	    newloview = 
-		(PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
-	}
-	if ( ! newloview)
-	    myexit("plnxtvlo: Out of memory.");
+  /*
+   * Otherwise, we need to consider hidden-line removal problem. We scan
+   * over the points in both the old (i.e. oldloview[]) and new (i.e. u[]
+   * and v[]) arrays in order of increasing x coordinate.  At each stage, we
+   * find the line segment in the other array (if one exists) that straddles
+   * the x coordinate of the point. We have to determine if the point lies
+   * above or below the line segment, and to check if the below/above status
+   * has changed since the last point.
+   *
+   * If pl3upv = 0 we do not update the view, this is useful for drawing
+   * lines on the graph after we are done plotting points.  Hidden line
+   * removal is still done, but the view is not updated.
+   */
+  xxlo = 0;
+  i = 0;
+  j = 0;
+  if (pl3upv != 0) {
+    newlosize = 2 * (mlo + BINC);
+    if (newloview != NULL) {
+      newloview = 
+	(PLINT *) realloc((void *) newloview,
+			  (size_t) (newlosize * sizeof(PLINT)));
     }
+    else {
+      newloview = 
+	(PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
+    }
+    if ( ! newloview)
+      myexit("plnxtvlo: Out of memory.");
+  }
 
-/*
- * (oldloview[2*i], oldloview[2*i]) is the i'th point in the old array
- * (u[j], v[j]) is the j'th point in the new array.
- */
-    while (i < mlo || j < n) {
+  /*
+   * (oldloview[2*i], oldloview[2*i]) is the i'th point in the old array
+   * (u[j], v[j]) is the j'th point in the new array.
+   */
+  while (i < mlo || j < n) {
 
     /*
      * The coordinates of the point under consideration are (px,py).  The
@@ -1522,29 +1539,29 @@ plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
      * have fallen past the edges. Having found the point, load up the point
      * and segment coordinates appropriately.
      */
-	ptold = (j >= n || (i < mlo && oldloview[2 * i] < u[j]));
-	if (ptold) {
-	    px = oldloview[2 * i];
-	    py = oldloview[2 * i + 1];
-	    seg = j > 0 && j < n;
-	    if (seg) {
-		sx1 = u[j - 1];
-		sy1 = v[j - 1];
-		sx2 = u[j];
-		sy2 = v[j];
-	    }
-	}
-	else {
-	    px = u[j];
-	    py = v[j];
-	    seg = i > 0 && i < mlo;
-	    if (seg) {
-		sx1 = oldloview[2 * (i - 1)];
-		sy1 = oldloview[2 * (i - 1) + 1];
-		sx2 = oldloview[2 * i];
-		sy2 = oldloview[2 * i + 1];
-	    }
-	}
+    ptold = (j >= n || (i < mlo && oldloview[2 * i] < u[j]));
+    if (ptold) {
+      px = oldloview[2 * i];
+      py = oldloview[2 * i + 1];
+      seg = j > 0 && j < n;
+      if (seg) {
+	sx1 = u[j - 1];
+	sy1 = v[j - 1];
+	sx2 = u[j];
+	sy2 = v[j];
+      }
+    }
+    else {
+      px = u[j];
+      py = v[j];
+      seg = i > 0 && i < mlo;
+      if (seg) {
+	sx1 = oldloview[2 * (i - 1)];
+	sy1 = oldloview[2 * (i - 1) + 1];
+	sx2 = oldloview[2 * i];
+	sy2 = oldloview[2 * i + 1];
+      }
+    }
 
     /*
      * Now determine if the point is lower than the segment, using the
@@ -1552,140 +1569,140 @@ plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
      * or the new view that is lower. "newlo" is set true if the new view is
      * lower than the old.
      */
-	if (seg)
-	    ptlo = !plabv(px, py, sx1, sy1, sx2, sy2);
-	else
-	    ptlo = 1;
+    if (seg)
+      ptlo = !plabv(px, py, sx1, sy1, sx2, sy2);
+    else
+      ptlo = 1;
 
-	newlo = (ptold && !ptlo) || (!ptold && ptlo);
-	change = (newlo && !pnewlo) || (!newlo && pnewlo);
+    newlo = (ptold && !ptlo) || (!ptold && ptlo);
+    change = (newlo && !pnewlo) || (!newlo && pnewlo);
 
     /*
      * There is a new intersection point to put in the peak array if the
      * state of "newlo" changes.
      */
-	if (first) {
-	    plP_movphy(px, py);
-	    first = 0;
-	    lstold = ptold;
-	    savelopoint(px, py);
-	    ptlo = 0;
-	    ochange = 0;
+    if (first) {
+      plP_draw3d(px, py, c, j, 1); plP_movphy(px, py);
+      first = 0;
+      lstold = ptold;
+      savelopoint(px, py);
+      ptlo = 0;
+      ochange = 0;
+    }
+    else if (change) {
+
+      /*
+       * Take care of special cases at end of arrays.  If pl3upv is 0 the
+       * endpoints are not connected to the old view.
+       */
+      if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
+	plP_draw3d(px, py, c, j, 1);
+	lstold = ptold;
+	ptlo = 0;
+	ochange = 0;
+      }
+      else if (pl3upv == 0 &&
+	       (( ! ptold && i >= mlo) || (ptold && j >= n))) {
+	plP_draw3d(px, py, c, j, 1);
+	lstold = ptold;
+	ptlo = 0;
+	ochange = 0;
+      }
+
+      /*
+       * If pl3upv is not 0 then we do want to connect the current line
+       * with the previous view at the endpoints.  Also find intersection
+       * point with old view.
+       */
+      else {
+	if (i == 0) {
+	  sx1 = oldloview[0];
+	  sy1 = 100000;
+	  sx2 = oldloview[0];
+	  sy2 = oldloview[1];
 	}
-	else if (change) {
-
-	/*
-	 * Take care of special cases at end of arrays.  If pl3upv is 0 the
-	 * endpoints are not connected to the old view.
-	 */
-	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		plP_movphy(px, py);
-		lstold = ptold;
-		ptlo = 0;
-		ochange = 0;
-	    }
-	    else if (pl3upv == 0 &&
-		     (( ! ptold && i >= mlo) || (ptold && j >= n))) {
-		plP_movphy(px, py);
-		lstold = ptold;
-		ptlo = 0;
-		ochange = 0;
-	    }
-
-	/*
-	 * If pl3upv is not 0 then we do want to connect the current line
-	 * with the previous view at the endpoints.  Also find intersection
-	 * point with old view.
-	 */
-	    else {
-		if (i == 0) {
-		    sx1 = oldloview[0];
-		    sy1 = 100000;
-		    sx2 = oldloview[0];
-		    sy2 = oldloview[1];
-		}
-		else if (i >= mlo) {
-		    sx1 = oldloview[2 * (mlo - 1)];
-		    sy1 = oldloview[2 * (mlo - 1) + 1];
-		    sx2 = oldloview[2 * (mlo - 1)];
-		    sy2 = 100000;
-		}
-		else {
-		    sx1 = oldloview[2 * (i - 1)];
-		    sy1 = oldloview[2 * (i - 1) + 1];
-		    sx2 = oldloview[2 * i];
-		    sy2 = oldloview[2 * i + 1];
-		}
-
-		if (j == 0) {
-		    su1 = u[0];
-		    sv1 = 100000;
-		    su2 = u[0];
-		    sv2 = v[0];
-		}
-		else if (j >= n) {
-		    su1 = u[n - 1];
-		    sv1 = v[n - 1];
-		    su2 = u[n];
-		    sv2 = 100000;
-		}
-		else {
-		    su1 = u[j - 1];
-		    sv1 = v[j - 1];
-		    su2 = u[j];
-		    sv2 = v[j];
-		}
-
-	    /* Determine the intersection */
-
-		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
-		if (cx == px && cy == py) {
-		    if (lstold && !ochange)
-			plP_movphy(px, py);
-		    else
-			plP_draphy(px, py);
-
-		    savelopoint(px, py);
-		    lstold = 1;
-		    ptlo = 0;
-		}
-		else {
-		    if (lstold && !ochange)
-			plP_movphy(cx, cy);
-		    else
-			plP_draphy(cx, cy);
-
-		    lstold = 1;
-		    savelopoint(cx, cy);
-		}
-		ochange = 1;
-	    }
+	else if (i >= mlo) {
+	  sx1 = oldloview[2 * (mlo - 1)];
+	  sy1 = oldloview[2 * (mlo - 1) + 1];
+	  sx2 = oldloview[2 * (mlo - 1)];
+	  sy2 = 100000;
 	}
+	else {
+	  sx1 = oldloview[2 * (i - 1)];
+	  sy1 = oldloview[2 * (i - 1) + 1];
+	  sx2 = oldloview[2 * i];
+	  sy2 = oldloview[2 * i + 1];
+	}
+
+	if (j == 0) {
+	  su1 = u[0];
+	  sv1 = 100000;
+	  su2 = u[0];
+	  sv2 = v[0];
+	}
+	else if (j >= n) {
+	  su1 = u[n - 1];
+	  sv1 = v[n - 1];
+	  su2 = u[n];
+	  sv2 = 100000;
+	}
+	else {
+	  su1 = u[j - 1];
+	  sv1 = v[j - 1];
+	  su2 = u[j];
+	  sv2 = v[j];
+	}
+
+	/* Determine the intersection */
+
+	pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
+	if (cx == px && cy == py) {
+	  if (lstold && !ochange)
+	    plP_draw3d(px, py, c, j, 1);
+	  else
+	    plP_draw3d(px, py, c, j, 0);
+
+	  savelopoint(px, py);
+	  lstold = 1;
+	  ptlo = 0;
+	}
+	else {
+	  if (lstold && !ochange)
+	    plP_draw3d(cx, cy, c, j, 1);
+	  else
+	    plP_draw3d(cx, cy, c, j, 0);
+
+	  lstold = 1;
+	  savelopoint(cx, cy);
+	}
+	ochange = 1;
+      }
+    }
 
     /* If point is low then draw plot to point and update view. */
 
-	if (ptlo) {
-	    if (lstold && ptold)
-		plP_movphy(px, py);
-	    else
-		plP_draphy(px, py);
+    if (ptlo) {
+      if (lstold && ptold)
+	plP_draw3d(px, py, c, j, 1);
+      else
+	plP_draw3d(px, py, c, j, 0);
 
-	    savelopoint(px, py);
-	    lstold = ptold;
-	    ochange = 0;
-	}
-
-	pnewlo = newlo;
-
-	if (ptold)
-	    i = i + 1;
-	else
-	    j = j + 1;
+      savelopoint(px, py);
+      lstold = ptold;
+      ochange = 0;
     }
 
-/* Set oldloview */
+    pnewlo = newlo;
 
-    swaploview();
+    if (ptold)
+      i = i + 1;
+    else
+      j = j + 1;
+  }
+
+  /* Set oldloview */
+
+  swaploview();
 }
 
 /*--------------------------------------------------------------------------*\
