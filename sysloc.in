@@ -723,7 +723,6 @@ if test "$enable_octave" = "yes"; then
 
 # check for matwrap
     if test "$enable_octave" = "yes"; then
-        MATWRAP=matwrap
         AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
         if test "$has_matwrap" = "yes"; then
 	    MATWRAP=`which matwrap`
