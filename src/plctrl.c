@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/09/27 20:40:12  mjl
-   Added #include <string.h> to pick up prototype for strcat.
+   Revision 1.7  1993/10/18 19:44:50  mjl
+   Added functions to return fully qualified pathnames and/or executable
+   names.
 
+ * Revision 1.6  1993/09/27  20:40:12  mjl
+ * Added #include <string.h> to pick up prototype for strcat.
+ *
  * Revision 1.5  1993/09/08  02:37:48  mjl
  * Added plGetName for building up file name specs out of path components.
  * Also moved some utility functions from plstream.c here.
@@ -40,7 +44,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __unix
+#include <sys/stat.h>
+#include <unistd.h>
+#include <errno.h>
+#endif
 
+static int	findname	(char *);
 static void	strcat_delim	(char *);
 
 /*----------------------------------------------------------------------*\
@@ -195,6 +205,131 @@ void pl_cmd(PLINT op, void *ptr)
 {
     plP_esc(op, ptr);
 }
+
+/*----------------------------------------------------------------------*\
+* char *plFindCommand
+*
+* Looks for the specified executable file.  Search path:
+*	current directory
+*	$(PLPLOT_DIR)
+*	INSTALL_DIR
+*
+* The caller must free the returned pointer (points to malloc'ed memory)
+* when finished with it.
+\*----------------------------------------------------------------------*/
+
+char *
+plFindCommand(char *fn)
+{
+    char *fs = NULL, *dn;
+
+/* Current directory */
+
+    plGetName(".", "", fn, &fs);
+    if ( ! plFindName(fs))
+	return fs;
+
+/* $(PLPLOT_DIR) */
+
+    if ((dn = getenv("PLPLOT_DIR")) != NULL) {
+	plGetName(dn, "", fn, &fs);
+	if ( ! plFindName(fs))
+	    return fs;
+    }
+
+/* INSTALL_DIR */
+
+#ifdef INSTALL_DIR
+    plGetName(INSTALL_DIR, "", fn, &fs);
+    if ( ! plFindName(fs))
+	return fs;
+#endif
+
+/* Crapped out */
+
+    free_mem(fs);
+    fprintf(stderr, "plFindCommand: cannot locate command: %s\n", fn);
+    return NULL;
+}
+
+/*----------------------------------------------------------------------*\
+* int plFindName
+*
+* Authors: Paul Dubois (LLNL), others?
+* This function is in the public domain.
+*
+* Given a pathname, determine if it is a symbolic link.  If so, continue
+* searching to the ultimate terminus - there may be more than one link.
+* Use the error value to determine when the terminus is reached, and to
+* determine if the pathname really exists.  Then stat it to determine
+* whether it's executable.  Return 0 for an executable, errno otherwise.
+* Note that 'p' _must_ have at least one '/' character - it does by
+* construction in this program.  The contents of the array pointed to by
+* 'p' are changed to the actual pathname if findname is successful.
+*
+* This function is only defined under Unix for now.
+\*----------------------------------------------------------------------*/
+
+#ifdef __unix
+int 
+plFindName(char *p)
+{
+    int n;
+    char buf[1024], *cp;
+    extern int errno;
+    struct stat sbuf;
+
+    while ((n = readlink(p, buf, 1024)) > 0) {
+#ifdef DEBUG
+	fprintf(stderr, "Readlink read %d chars at: %s\n", n, p);
+#endif
+	if (buf[0] == '/') {	/* Link is an absolute path */
+	    strncpy(p, buf, n);
+	    p[n] = '\0';
+#ifdef DEBUG
+	    fprintf(stderr, "Link is absolute: %s\n", p);
+#endif
+	}
+	else {			/* Link is relative to its directory; make it
+				   absolute */
+	    cp = 1 + strrchr(p, '/');
+	    strncpy(cp, buf, n);
+	    cp[n] = '\0';
+#ifdef DEBUG
+	    fprintf(stderr, "Link is relative: %s\n\tTotal path: %s\n", cp, p);
+#endif
+	}
+    }
+
+/* SGI machines return ENXIO instead of EINVAL Dubois 11/92 */
+
+    if (errno == EINVAL || errno == ENXIO) {
+#ifdef DEBUG
+	fprintf(stderr, "%s may be the one ...", p);
+#endif
+#ifdef SX
+#define S_ISREG(mode)   (mode & S_IFREG)
+#endif
+	if ((stat(p, &sbuf) == 0) && S_ISREG(sbuf.st_mode)) {
+#ifdef DEBUG
+	    fprintf(stderr, "regular file\n");
+#endif
+	    return (access(p, X_OK));
+	}
+    }
+#ifdef DEBUG
+    fprintf(stderr, "not executable\n");
+#endif
+    return (errno ? errno : -1);
+}
+
+#else
+int 
+plFindName(char *p)
+{
+    return 1
+}
+#endif
 
 /*----------------------------------------------------------------------*\
 * void plGetName()
