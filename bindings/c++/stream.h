@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.3  1995/01/16 19:23:29  mjl
+// Revision 1.4  1995/03/17 07:51:59  mjl
+// Fixed return codes for new interface routines.
+//
+// Revision 1.3  1995/01/16  19:23:29  mjl
 // Fixed prototype for scmap1.
 //
 // Revision 1.2  1994/10/18  16:12:36  furnish
@@ -454,11 +457,6 @@ rgb(PLFLT r, PLFLT g, PLFLT b);
 void
 rgb1(PLINT r, PLINT g, PLINT b);
 
-/* Obsolete.  Use page driver interface instead. */
-
-void
-sasp(PLFLT asp);
-
 /* Set character height. */
 
 void
@@ -604,11 +602,6 @@ fshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
-/* I've canned this for now */
-
-void
-slpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma);
-
 /* Set up lengths of major tick marks. */
 
 void
@@ -750,7 +743,7 @@ gFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
 /* Set the function pointer for the keyboard event handler */
 
 void
-sKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data);
+sKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void *KeyEH_data);
 
 /* Sets an optional user exit handler. */
 
@@ -819,36 +812,40 @@ f2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data);
 
 	/* Command line parsing utilities */
 
-/* Front-end to Syntax() for external use. */
+/* Clear internal option table info structure. */
 
 void
-Syntax(PLINT mode);
+ClearOpts(void);
 
-/* Front-end to Help() for external use. */
-
-void
-Help(PLINT mode);
-
-/* Print usage notes. */
+/* Reset internal option table info structure. */
 
 void
-Notes(void);
+ResetOpts(void);
 
-/* Process PLplot internal options list */
+/* Merge user option table into internal info structure. */
 
 int
-ParseInternalOpts(int *p_argc, char **argv, PLINT mode);
+MergeOpts(PLOptionTable *options, char *name, char **notes);
 
-/* Process options list */
+/* Set the strings used in usage and syntax messages. */
 
-int
-ParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
-	    void (*usage_handler) (char *));
+void
+SetUsage(char *program_string, char *usage_string);
 
 /* Process input strings, treating them as an option and argument pair. */
 
 int
-SetInternalOpt(char *opt, char *optarg);
+SetOpt(char *opt, char *optarg);
+
+/* Process options list using current options info. */
+
+int
+ParseOpts(int *p_argc, char **argv, PLINT mode);
+
+/* Print usage & syntax message. */
+
+void
+OptUsage(void);
 
 	/* Miscellaneous */
 
@@ -918,10 +915,10 @@ HLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 void
 RGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
-/* Wait for right button mouse event and translate to world coordinates */
+/* Wait for graphics input event and translate to world coordinates */
 
 int
-GetCursor(PLCursor *cursor);
+GetCursor(PLGraphicsIn *plg);
 };
 
 #endif                          // __plstream_h__
