@@ -1,38 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.2  1993/10/21 19:27:06  mjl
-   Changed all names that ended with an underscore (as part of the C/Fortran
-   linkage) to end with a '7' instead, to avoid problems with f2c.
-
+ * $Log$
+ * Revision 1.3  1994/03/23 08:38:37  mjl
+ * Name change for contour plotter base routine; lots of new plfshade
+ * front-end functions added.
+ *
+ * Revision 1.2  1993/10/21  19:27:06  mjl
+ * Changed all names that ended with an underscore (as part of the C/Fortran
+ * linkage) to end with a '7' instead, to avoid problems with f2c.
+ *
  * Revision 1.1  1993/01/23  06:04:17  mjl
  * New front-end for contours from fortran.  Does amazingly little work now,
  * just defines an appropriate function evaluator and coordinate transformers
  * and calls the main contour function.
- *
-
- * Old history:
- * Revision 1.7  1992/10/24  05:18:08  mjl
- * Added PL_NEED_SIZE_T defines where necessary.
- *
- * Revision 1.6  1992/10/22  17:05:45  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.5  1992/10/12  17:05:36  mjl
- * Converted to string-integer equivalence method for C-Fortran string passing.
- *
- * Revision 1.4  1992/09/30  18:26:00  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.3  1992/09/29  04:46:35  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.2  1992/07/31  06:03:28  mjl
- * Minor bug fixes.
- *
- * Revision 1.1  1992/05/20  21:35:07  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	sccont.c
@@ -41,7 +20,6 @@
 */
 
 #include "plstubs.h"
-#include <stdio.h>
 
 /*----------------------------------------------------------------------*\
 * pltr0f()
@@ -232,14 +210,14 @@ pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 
 /*----------------------------------------------------------------------*\
 * Contour plotter front-ends.
-* These specify the row-dominant function evaluator in the plcontf
+* These specify the row-dominant function evaluator in the plfcont
 * argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
 *
 * - plcon0	no transformation
 * - plcon1	linear interpolation from singly dimensioned coord arrays
 * - plcon2	linear interpolation from doubly dimensioned coord arrays
 *
-* The latter two work by calling plcontf() with the appropriate grid
+* The latter two work by calling plfcont() with the appropriate grid
 * structure for input to pltr2f().
 \*----------------------------------------------------------------------*/
 
@@ -255,7 +233,7 @@ PLCON07(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
     fgrid.ny = *ny;
     fgrid.f = z;
 
-    plcontf(plf2evalr, (void *) &fgrid,
+    plfcont(plf2evalr, (void *) &fgrid,
 	    *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel,
 	    pltr0f, NULL);
 }
@@ -279,7 +257,7 @@ PLCON17(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
     cgrid.xg = xg;
     cgrid.yg = yg;
 
-    plcontf(plf2evalr, (void *) &fgrid,
+    plfcont(plf2evalr, (void *) &fgrid,
 	    *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel,
 	    pltr1, (void *) &cgrid);
 }
@@ -303,7 +281,7 @@ PLCON27(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
     cgrid.xg = xg;
     cgrid.yg = yg;
 
-    plcontf(plf2evalr, (void *) &fgrid,
+    plfcont(plf2evalr, (void *) &fgrid,
 	    *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel,
 	    pltr2f, (void *) &cgrid);
 }
@@ -331,7 +309,113 @@ PLCONT7(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
     fgrid.ny = *ny;
     fgrid.f = z;
 
-    plcontf(plf2evalr, (void *) &fgrid,
+    plfcont(plf2evalr, (void *) &fgrid,
 	    *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel,
 	    pltr, (void *) ftr);
+}
+
+/*----------------------------------------------------------------------*\
+* plfshade front-ends.
+* These specify the row-dominant function evaluator in the plfshade
+* argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
+*
+* - plshade0	no transformation
+* - plshade1	linear interpolation from singly dimensioned coord arrays
+* - plshade2	linear interpolation from doubly dimensioned coord arrays
+*
+* The latter two work by calling plfshade() with the appropriate grid
+* structure for input to pltr2f().
+\*----------------------------------------------------------------------*/
+
+void
+PLSHADE07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	  PLFLT *shade_min, PLFLT *shade_max,
+	  PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+	  PLINT *min_color, PLINT *min_width,
+	  PLINT *max_color, PLINT *max_width)
+{
+    PLfGrid fgrid;
+    PLINT rect = 1;
+
+    fgrid.nx = *nx;
+    fgrid.ny = *ny;
+    fgrid.f = z;
+
+    plfshade(plf2evalr, (PLPointer) &fgrid,
+	     NULL, NULL,
+	     *nx, *ny,
+	     *xmin, *xmax, *ymin, *ymax,
+	     *shade_min, *shade_max,
+	     *sh_cmap, *sh_color, *sh_width,
+	     *min_color, *min_width, *max_color, *max_width,
+	     c_plfill, rect, NULL, NULL);
+}
+
+/* 1-d transformation */
+
+void
+PLSHADE17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	  PLFLT *shade_min, PLFLT *shade_max,
+	  PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+	  PLINT *min_color, PLINT *min_width,
+	  PLINT *max_color, PLINT *max_width,
+	  PLFLT *xg, PLFLT *yg)
+{
+    PLfGrid fgrid;
+    PLcGrid cgrid;
+    PLINT rect = 1;
+
+    fgrid.nx = *nx;
+    fgrid.ny = *ny;
+    fgrid.f = z;
+
+    cgrid.nx = *nx;
+    cgrid.ny = *ny;
+    cgrid.xg = xg;
+    cgrid.yg = yg;
+
+    plfshade(plf2evalr, (PLPointer) &fgrid,
+	     NULL, NULL,
+	     *nx, *ny,
+	     *xmin, *xmax, *ymin, *ymax,
+	     *shade_min, *shade_max,
+	     *sh_cmap, *sh_color, *sh_width,
+	     *min_color, *min_width, *max_color, *max_width,
+	     c_plfill, rect, pltr1, (PLPointer) &cgrid);
+}
+
+/* 2-d transformation */
+
+void
+PLSHADE27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	  PLFLT *shade_min, PLFLT *shade_max,
+	  PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+	  PLINT *min_color, PLINT *min_width,
+	  PLINT *max_color, PLINT *max_width,
+	  PLFLT *xg, PLFLT *yg)
+{
+    PLfGrid fgrid;
+    PLcGrid cgrid;
+    PLINT rect = 0;
+
+    fgrid.nx = *nx;
+    fgrid.ny = *ny;
+    fgrid.f = z;
+
+    cgrid.nx = *nx;
+    cgrid.ny = *ny;
+    cgrid.xg = xg;
+    cgrid.yg = yg;
+
+    plfshade(plf2evalr, (PLPointer) &fgrid,
+	     NULL, NULL,
+	     *nx, *ny,
+	     *xmin, *xmax, *ymin, *ymax,
+	     *shade_min, *shade_max,
+	     *sh_cmap, *sh_color, *sh_width,
+	     *min_color, *min_width, *max_color, *max_width,
+	     c_plfill, rect, pltr2f, (PLPointer) &cgrid);
 }
