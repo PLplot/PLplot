@@ -989,11 +989,11 @@ plexit(char *errormsg)
 	status = (*exit_handler)(errormsg);
 
     plsc->nopause = 1;
-    plend();
     if (*errormsg != '\0') {
 	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
 	fprintf(stderr, "%s\n", errormsg);
     }
+    plend();
 
     fprintf(stderr, "Program aborted\n");
     exit(status);
