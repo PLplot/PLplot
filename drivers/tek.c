@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.18  1993/12/08 06:14:43  mjl
-   Now send an initial page clear (tek devices only) on a beginning of page.
-   This helps when there is only one graphics/alpha screen, otherwise is
-   harmless.
+   Revision 1.19  1993/12/08 20:25:34  mjl
+   Added changes for MS-Kermit emulator (submitted by Paul Kirschner).
 
+ * Revision 1.18  1993/12/08  06:14:43  mjl
+ * Now send an initial page clear (tek devices only) on a beginning of page.
+ * This helps when there is only one graphics/alpha screen, otherwise is
+ * harmless.
+ *
  * Revision 1.17  1993/12/06  07:41:47  mjl
  * Changed to not turn off echo when changing tty settings.
  *
@@ -105,6 +108,7 @@ static exit_eventloop = 0;
 * plD_init_tekf()	Tek 4010 file
 * plD_init_t4107t()	Tek 4105/4107 terminal
 * plD_init_t4107f()	Tek 4105/4107 file
+* plD_init_mskermit()	MS-Kermit emulator
 *
 * Initialize device.  These just set attributes for the particular tektronix
 * device, then call tek_init().  The following attributes can be set:
@@ -152,6 +156,13 @@ plD_init_t4107t(PLStream *pls)
 
 void
 plD_init_t4107f(PLStream *pls)
+{
+    pls->color = 1;
+    tek_init(pls);
+}
+
+void
+plD_init_mskermit(PLStream *pls)
 {
     pls->color = 1;
     tek_init(pls);
@@ -359,6 +370,43 @@ plD_state_tek(PLStream *pls, PLINT op)
 	if (pls->color) {
 	    if (pls->icol0 != PL_RGB_COLOR)
 		fprintf(pls->OutFile, "%cML%c", ESC, pls->icol0 + 48);
+	}
+	break;
+
+    case PLSTATE_COLOR1:
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* plD_state_mskermit()
+*
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*----------------------------------------------------------------------*/
+
+void 
+plD_state_mskermit(PLStream *pls, PLINT op)
+{
+
+/* color for MS-DOS Kermit v2.31 (and up) tektronix emulator */
+/*	0 = normal, 1 = bright 
+	foreground color (30-37) = 30 + colors
+		where colors are   1=red, 2=green, 4=blue */
+static char *kermit_color[15]= {"\033[0;30m","\033[0;37m",
+		"\033[0;32m","\033[0;36m","\033[0;31m","\033[0;35m",
+		"\033[1;34m","\033[1;33m","\033[1;31m","\033[1;37m",
+		"\033[1;35m","\033[1;32m","\033[1;36m","\033[0;34m",
+		"\033[0;33m"};
+
+    switch (op) {
+
+    case PLSTATE_WIDTH:
+	break;
+
+    case PLSTATE_COLOR0:
+	if (pls->color) {
+	    if (pls->icol0 != PL_RGB_COLOR)
+		fprintf(pls->OutFile, "%s", kermit_color[pls->icol0 % 14] );
 	}
 	break;
 
