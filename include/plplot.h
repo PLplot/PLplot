@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.78  1995/03/16 23:39:23  mjl
+ * Revision 1.79  1995/03/21 19:47:43  mjl
+ * Moved inclusion of <math.h>, <string.h>, and <ctype.h> to plplotP.h, since
+ * they are strictly needed by plplot.h.
+ *
+ * Revision 1.78  1995/03/16  23:39:23  mjl
  * Added include of ctype.h.  Added PLESC_SWIN driver escape function define,
  * used to set plot window parameters.  Added defines for window parameter
  * flags PLSWIN_DEVICE and PLSWIN_WORLD.  Obsoleted the PL_PARSE_OVERRIDE and
@@ -99,12 +103,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-/* I'm sick of being burned by forgetting math or string prototypes */
-
-#include <math.h>
-#include <string.h>
-#include <ctype.h>
 
 /*--------------------------------------------------------------------------*\
  *        SYSTEM IDENTIFICATION

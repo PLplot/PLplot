@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1995/03/16 23:40:54  mjl
+ * Revision 1.35  1995/03/21 19:47:44  mjl
+ * Moved inclusion of <math.h>, <string.h>, and <ctype.h> to plplotP.h, since
+ * they are strictly needed by plplot.h.
+ *
+ * Revision 1.34  1995/03/16  23:40:54  mjl
  * Prototypes for many obsolete accessor functions removed.  Prototype for
  * new function plP_swin added.
  *
@@ -113,6 +117,12 @@
 
 #include "plConfig.h"
 
+/* System headers */
+
+#include <ctype.h>
+#include <math.h>
+#include <string.h>
+
 #ifdef _POSIX_SOURCE
 #define POSIX_TTY
 #endif
@@ -140,9 +150,10 @@
 #include "plplot.h"
 
 /* plstream definition */
-/* If not including this file from inside of plcore.h, declare plsc */
 
 #include "plstream.h"
+
+/* If not including this file from inside of plcore.h, declare plsc */
 
 #ifndef __PLCORE_H__
 extern PLStream	*plsc;
