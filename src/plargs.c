@@ -546,7 +546,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-tcl_cmd command",
-    "TCL command string run at startup (note: disabled)" },
+    "TCL command string run at startup" },
 {
     "auto_path",		/* Additional directory(s) to autoload */
     opt_auto_path,
@@ -2029,7 +2029,7 @@ opt_plwindow(char *opt, char *optarg, void *client_data)
 static int
 opt_tcl_cmd(char *opt, char *optarg, void *client_data)
 {
-    plsc->tcl_cmd = optarg;
+    plsc->tcl_cmd = plstrdup(optarg);
     return 0;
 }
 
