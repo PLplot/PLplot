@@ -3253,6 +3253,153 @@ space for this (80 characters is safe).
 
   </sect1>
 
+  <sect1 id="plgvpd" renderas="sect3">
+    <title>
+      <function>plgvpd</function>: Get viewport limits in normalized
+device coordinates
+    </title> 
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plgvpd</function>
+        </funcdef>
+        <paramdef><parameter>p_xmin</parameter></paramdef>
+        <paramdef><parameter>p_xmax</parameter></paramdef>
+        <paramdef><parameter>p_ymin</parameter></paramdef>
+        <paramdef><parameter>p_ymax</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis> 
+    </para> 
+
+    <para>
+      Get viewport limits in normalized device coordinates.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>p_xmin</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Lower viewport limit of the normalized device coordinate in x.
+	    </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_xmax</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Upper viewport limit of the normalized device coordinate in x.
+	    </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_ymin</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Lower viewport limit of the normalized device coordinate in y.
+	    </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_ymax</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Upper viewport limit of the normalized device coordinate in y.
+	    </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  </sect1>
+
+  <sect1 id="plgvpw" renderas="sect3">
+    <title>
+      <function>plgvpw</function>: Get viewport limits in world coordinates
+    </title> 
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plgvpw</function>
+        </funcdef>
+        <paramdef><parameter>p_xmin</parameter></paramdef>
+        <paramdef><parameter>p_xmax</parameter></paramdef>
+        <paramdef><parameter>p_ymin</parameter></paramdef>
+        <paramdef><parameter>p_ymax</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis> 
+    </para> 
+
+    <para>
+      Get viewport limits in world coordinates.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>p_xmin</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Lower viewport limit of the world coordinate in x.
+	    </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_xmax</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Upper viewport limit of the world coordinate in x.
+	    </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_ymin</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Lower viewport limit of the world coordinate in y.
+	    </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_ymax</parameter> 
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Upper viewport limit of the world coordinate in y.
+	    </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plgxax" renderas="sect3">
     <title>
       <function>plgxax</function>: Get x axis parameters
