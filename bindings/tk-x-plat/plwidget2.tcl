@@ -1,5 +1,8 @@
 # $Id$
 # $Log$
+# Revision 1.2  2002/07/15 18:11:33  vincentdarley
+# plwidget partial merge
+#
 # Revision 1.1  2002/07/10 10:18:40  vincentdarley
 # plwidget conflict resolved
 #
@@ -352,7 +355,7 @@ proc plw::create_TopRow {w} {
 	    -side left -fill x -padx 10
 
 	$w.ftop.fp configure -command \
-	    "client_cmd {keypress 65293 0 0 0 0. 0. Return}"
+	    [list client_cmd [list keypress 65293 0 0 0 0. 0. Return]]
     }
 
 # Label widget for status messages.
@@ -389,8 +392,32 @@ proc plw::create_pmenu {w pmbut} {
     plw::create_pmenu_zoom    $w
     plw::create_pmenu_page    $w
     plw::create_pmenu_options $w
+    plw::create_pmenu_help    $w
+    plw::create_pmenu_exit    $w
 
     return $pmbut
+}
+
+#----------------------------------------------------------------------------
+# plw::create_pmenu_exit
+#----------------------------------------------------------------------------
+
+proc plw::create_pmenu_exit {w} {
+    global pmenu
+
+    $pmenu($w) add command -label "Exit" \
+	-command exit
+}
+
+#----------------------------------------------------------------------------
+# plw::create_pmenu_help
+#----------------------------------------------------------------------------
+
+proc plw::create_pmenu_help {w} {
+    global pmenu
+
+    $pmenu($w) add command -label "Help" \
+	-command "help_keys"
 }
 
 #----------------------------------------------------------------------------
@@ -629,6 +656,80 @@ proc plw::create_pmenu_options {w} {
       plotopts($w,xhairs) -command "$w.plwin configure -xhairs \$plotopts($w,xhairs)"
     $m add checkbutton -label "Doublebuffer" -variable \
       plotopts($w,dbl) -command "$w.plwin configure -doublebuffer \$plotopts($w,dbl)"
+
+    global plopt_static_redraw plopt_dynamic_redraw
+
+# The palette tools require Itcl 3.0 or later.
+
+    if [catch {package require Itcl 3.0}] { return }
+
+# Set up redraw variables.  Basically if you have r/w colorcells (e.g.
+# PseudoColor visual, not sure if any others), you don't need either of
+# these -- they are updated automatically.  Otherwise (e.g. TrueColor), you
+# definitely want static_redraw set and probably dynamic_redraw.  The latter is
+# very cpu intensive as it redraws the plot every time you move one of the
+# sliders, similar to a zoom/pan.
+
+# Note: it would be better to reach down to the X driver to get the info on
+# whether we have r/w colorcells to set the default, but this procedure is a
+# lot easier and almost as good.
+
+# See if we have a visual capable of r/w colorcells.
+
+    set rwcolorcells 0
+    set visual [winfo visual $w]
+    if { $visual == "pseudocolor" } {
+	set rwcolorcells 1
+    }
+
+    if $rwcolorcells {
+	set plopt_static_redraw($w) 0
+	set plopt_dynamic_redraw($w) 0
+    } else {
+	set plopt_static_redraw($w) 1
+	set plopt_dynamic_redraw($w) 1
+    }
+
+# Set up palette tools
+
+    $m add command -label "Palette 0" \
+	-command "plcmap0_edit $w.plwin $w" 
+
+    $m add command -label "Palette 1" \
+	-command "plcmap1_edit $w.plwin $w" 
+
+# Palettes - options (another cascade)
+
+    $m add cascade -label "Options" -menu $m.options
+    menu $m.options
+
+# Setup checkboxes for dynamic/static redraws.  Eventually a resource setting
+# will be used to allow overrides that way too, but for now this will do.
+
+    $m.options add check -label "Enable static plot redraws" \
+	-variable plopt_static_redraw($w)
+
+    $m.options add check -label "Enable dynamic plot redraws" \
+	-variable plopt_dynamic_redraw($w)
+
+# Set up traces to force the following logical relationship:
+#
+#  dynamic_redraw ==> static_redraw
+#
+# and its contrapositive.
+
+    trace variable plopt_static_redraw($w) w plw::pmenu_palettes_checkvars
+    trace variable plopt_dynamic_redraw($w) w plw::pmenu_palettes_checkvars
+}
+
+proc plw::pmenu_palettes_checkvars {var w op} {
+    global plopt_static_redraw plopt_dynamic_redraw
+    if { $var == "plopt_dynamic_redraw" } {
+	if $plopt_dynamic_redraw($w) { set plopt_static_redraw($w) 1 }
+    }
+    if { $var == "plopt_static_redraw" } {
+	if !$plopt_static_redraw($w) { set plopt_dynamic_redraw($w) 0 }
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -655,6 +756,9 @@ proc plw::start {w} {
     if { [info exists client] } {
 	client_cmd "set widget_is_ready 1"
     }
+    
+    # Call a user supplied routine to do any necessary post initialization
+    catch after_plw::start
 }
 
 #----------------------------------------------------------------------------
@@ -923,8 +1027,8 @@ proc plw::save_close {w} {
 	bogue_out "$foo"
     } else {
 	status_msg $w "Archive file closed."
-	$pmenu($w).file entryconfigure 3 -state disabled
-	$pmenu($w).file entryconfigure 4 -state disabled
+	$pmenu($w).file entryconfigure Again -state disabled
+	$pmenu($w).file entryconfigure Close -state disabled
     }
 }
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.10  2002/07/15 18:11:33  vincentdarley
+ * plwidget partial merge
+ *
  * Revision 1.9  2002/07/13 15:34:55  airwin
  * Work around missing compat/limits.h in private includes from tcl/tk.
  *
@@ -549,8 +552,6 @@ int
 plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
            int argc, char **argv)
 {
-    /* Removed: we simply use 'Tk_MainWindow' below */
-    /* Tk_Window main = (Tk_Window) clientData; */
     Tk_Window tkwin;
     register PlPlotter *plPlotterPtr;
     register PLRDev *plr;

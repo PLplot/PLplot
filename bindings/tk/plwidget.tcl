@@ -8,16 +8,18 @@
 # 29-May-1993
 #
 # Note: to keep namespace problems to a minimum, all procs defined here begin
-# with "pl".  These are further subdivided into "plw_" for button- or
+# with "pl".  These are further subdivided into "plw::" for button- or
 # menu-accessible commands, or "pl_" for utility commands.
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
-# plw_create
+# plw::create
 #
 # Front-end routine to create plplot megawidget for use from PLplot tk
 # driver.  Right now does nothing special.
 #----------------------------------------------------------------------------
+
+namespace eval plw {}
 
 proc plw_create {w {client_id {}}} {
     plxframe $w $client_id
@@ -27,7 +29,7 @@ proc plw_create {w {client_id {}}} {
 #----------------------------------------------------------------------------
 # plr_create
 #
-# A front-end to plw_create, used by plrender.
+# A front-end to plw::create, used by plrender.
 #----------------------------------------------------------------------------
 
 proc plr_create {w {client_id {}}} {
@@ -77,14 +79,14 @@ proc plxframe {w {client_id {}}} {
 
 # Set up defaults
 
-    plw_setup_defaults $w
+    plw::setup_defaults $w
 
 # Make frame for top row widgets.
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
 
     if $plot_menu_on then {
-	plw_create_TopRow $w
+	plw::create_TopRow $w
 	pack append $w \
 	    $w.ftop {top fill}
 	update
@@ -104,8 +106,8 @@ proc plxframe {w {client_id {}}} {
 	    set bop_col [option get $w.ftop.leop off Label]
 	    set eop_col [option get $w.ftop.leop on Label]
 
-	    $w.plwin configure -bopcmd "plw_flash $w $bop_col"
-	    $w.plwin configure -eopcmd "plw_flash $w $eop_col"
+	    $w.plwin configure -bopcmd "plw::flash $w $bop_col"
+	    $w.plwin configure -eopcmd "plw::flash $w $eop_col"
 
 	} else {
 	    $w.plwin configure -bopcmd {update}
@@ -122,20 +124,20 @@ proc plxframe {w {client_id {}}} {
 # Set up bop/eop handling when running tcl scripts from a plserver
 
 	global plstate_bopseen; set plstate_bopseen($w) 0
-	$w.plwin configure -bopcmd "plw_bop $w"
-	$w.plwin configure -eopcmd "plw_eop $w"
+	$w.plwin configure -bopcmd "plw::bop $w"
+	$w.plwin configure -eopcmd "plw::eop $w"
     }
 
     return $w
 }
 
 #----------------------------------------------------------------------------
-# plw_setup_defaults
+# plw::setup_defaults
 #
 # Set up default settings.
 #----------------------------------------------------------------------------
 
-proc plw_setup_defaults {w} {
+proc plw::setup_defaults {w} {
 
 # In the two cases below, the options can be specified in advance through
 # the global variables zoomopt_0, etc, and saveopt_0, etc.  Not a great
@@ -177,33 +179,33 @@ proc plw_setup_defaults {w} {
 # Bindings
 
     bind $w.plwin <Any-KeyPress> \
-	"plw_key_filter $w %N %s %x %y %K %A"
+	"plw::key_filter $w %N %s %x %y %K %A"
 
     bind $w.plwin <Any-ButtonPress> \
-	"plw_user_mouse $w %b %s %x %y"
+	"plw::user_mouse $w %b %s %x %y"
 
     bind $w.plwin <B1-Motion> \
-	"plw_user_mouse $w %b %s %x %y"
+	"plw::user_mouse $w %b %s %x %y"
 
     bind $w.plwin <B2-Motion> \
-	"plw_user_mouse $w %b %s %x %y"
+	"plw::user_mouse $w %b %s %x %y"
 
     bind $w.plwin <B3-Motion> \
-	"plw_user_mouse $w %b %s %x %y"
+	"plw::user_mouse $w %b %s %x %y"
 	
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
 }
 
 #----------------------------------------------------------------------------
-# plw_create_TopRow
+# plw::create_TopRow
 #
 # Create top row widgets.  Page-oriented widgets only have a meaning in
 # the context of the PLplot driver, so don't create them if there is no
 # client (as occurs for direct widget instantiation).
 #----------------------------------------------------------------------------
 
-proc plw_create_TopRow {w} {
+proc plw::create_TopRow {w} {
     global is_plrender client
 
     frame $w.ftop
@@ -221,7 +223,7 @@ proc plw_create_TopRow {w} {
 # Plot menu
 
     pack append $w.ftop \
-	[plw_create_pmenu $w $w.ftop.pmenu] \
+	[plw::create_pmenu $w $w.ftop.pmenu] \
 	{left fill padx 12}
 
 # Forward and backward (plrender only) page buttons.
@@ -248,13 +250,13 @@ proc plw_create_TopRow {w} {
 # Label widget for status messages.
 
     label $w.ftop.lstat -anchor w -relief raised
-    plw_label_push $w "[string range $w 1 end]"
+    plw::label_push $w "[string range $w 1 end]"
     pack append $w.ftop $w.ftop.lstat \
 	{right expand fill} 
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu
+# plw::create_pmenu
 #
 # Create plot menu.
 #
@@ -267,29 +269,29 @@ proc plw_create_TopRow {w} {
 # zoom-reset (r), print (P), and save-again (s).
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu {w pmbut} {
+proc plw::create_pmenu {w pmbut} {
     global pmenu; set pmenu($w) $pmbut.m
 
     menubutton $pmbut -text "Plot" -menu $pmenu($w) -relief raised
     menu $pmenu($w)
 
-    plw_create_pmenu_print   $w
-    plw_create_pmenu_save    $w
-    plw_create_pmenu_orient  $w
-    plw_create_pmenu_zoom    $w
-    plw_create_pmenu_page    $w
-    plw_create_pmenu_palettes $w
-    plw_create_pmenu_help    $w
-    plw_create_pmenu_exit    $w
+    plw::create_pmenu_print   $w
+    plw::create_pmenu_save    $w
+    plw::create_pmenu_orient  $w
+    plw::create_pmenu_zoom    $w
+    plw::create_pmenu_page    $w
+    plw::create_pmenu_palettes $w
+    plw::create_pmenu_help    $w
+    plw::create_pmenu_exit    $w
 
     return $pmbut
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_exit
+# plw::create_pmenu_exit
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_exit {w} {
+proc plw::create_pmenu_exit {w} {
     global pmenu
 
     $pmenu($w) add command -label "Exit" \
@@ -297,10 +299,10 @@ proc plw_create_pmenu_exit {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_help
+# plw::create_pmenu_help
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_help {w} {
+proc plw::create_pmenu_help {w} {
     global pmenu
 
     $pmenu($w) add command -label "Help" \
@@ -308,25 +310,25 @@ proc plw_create_pmenu_help {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_print
+# plw::create_pmenu_print
 #
 # Create plot-print menu
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_print {w} {
+proc plw::create_pmenu_print {w} {
     global pmenu
 
     $pmenu($w) add command -label "Print" \
-	-command "plw_print $w"
+	-command "plw::print $w"
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_save
+# plw::create_pmenu_save
 #
 # Create plot-save menu (cascade)
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_save {w} {
+proc plw::create_pmenu_save {w} {
     global pmenu; set m $pmenu($w).save
 
     $pmenu($w) add cascade -label "Save" -menu $m
@@ -335,18 +337,18 @@ proc plw_create_pmenu_save {w} {
 # Save - As
 
     $m add command -label "As" \
-	-command "plw_save_as $w"
+	-command "plw::save_as $w"
 
 # Save - Again
 
     $m add command -label "Again" \
-	-command "plw_save_again $w" \
+	-command "plw::save_again $w" \
 	-state disabled
 
 # Save - Close
 
     $m add command -label "Close" \
-	-command "plw_save_close $w" \
+	-command "plw::save_close $w" \
 	-state disabled
 
     $m add separator
@@ -389,80 +391,80 @@ proc plw_create_pmenu_save {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_orient
+# plw::create_pmenu_orient
 #
 # Create plot-orient menu (cascade)
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_orient {w} {
+proc plw::create_pmenu_orient {w} {
     global pmenu; set m $pmenu($w).orient
 
     $pmenu($w) add cascade -label "Orient" -menu $m 
     menu $m
 
-    $m configure -postcommand "plw_update_orient $w"
+    $m configure -postcommand "plw::update_orient $w"
 
 # Orient - 0 degrees
 
     $m add radio -label "0 degrees" \
-	-command "plw_orient $w 0"
+	-command "plw::orient $w 0"
 
 # Orient - 90 degrees
 
     $m add radio -label "90 degrees" \
-	-command "plw_orient $w 1"
+	-command "plw::orient $w 1"
 
 # Orient - 180 degrees
 
     $m add radio -label "180 degrees" \
-	-command "plw_orient $w 2"
+	-command "plw::orient $w 2"
 
 # Orient - 270 degrees
 
     $m add radio -label "270 degrees" \
-	-command "plw_orient $w 3"
+	-command "plw::orient $w 3"
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_zoom
+# plw::create_pmenu_zoom
 #
 # Create plot-zoom menu (cascade)
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_zoom {w} {
+proc plw::create_pmenu_zoom {w} {
     global pmenu; set m $pmenu($w).zoom
 
     $pmenu($w) add cascade -label "Zoom" -menu $m
     menu $m
 
-    $m configure -postcommand "plw_update_zoom $w"
+    $m configure -postcommand "plw::update_zoom $w"
 
 # Zoom - select (by mouse)
 
     $m add command -label "Select" \
-	-command "plw_zoom_select $w"
+	-command "plw::zoom_select $w"
 
 # Zoom - back (go back 1 zoom level)
 
     $m add command -label "Back" \
-	-command "plw_zoom_back $w" \
+	-command "plw::zoom_back $w" \
 	-state disabled
 
 # Zoom - forward (go forward 1 zoom level)
 
     $m add command -label "Forward" \
-	-command "plw_zoom_forward $w" \
+	-command "plw::zoom_forward $w" \
 	-state disabled
 
 # Zoom - enter bounds
 
     $m add command -label "Enter bounds.." \
-	-command "plw_zoom_enter $w"
+	-command "plw::zoom_enter $w"
 
 # Zoom - reset
 
     $m add command -label "Reset" \
-	-command "plw_zoom_reset $w"
+	-command "plw::zoom_reset $w"
 
 # Zoom - options (another cascade)
 
@@ -481,16 +483,16 @@ proc plw_create_pmenu_zoom {w} {
     $m.options add radio -label "Start from center" \
 	-variable zoomopts($w,1) -value 1
 
-    $m.options invoke [plw_entry 1]
+    $m.options invoke [plw::entry 1]
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_page
+# plw::create_pmenu_page
 #
 # Create plot-page menu (cascade)
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_page {w} {
+proc plw::create_pmenu_page {w} {
     global pmenu; set m $pmenu($w).page
 
     $pmenu($w) add cascade -label "Page" -menu $m
@@ -499,23 +501,23 @@ proc plw_create_pmenu_page {w} {
 # Page - enter bounds
 
     $m add command -label "Setup.." \
-	-command "plw_page_enter $w"
+	-command "plw::page_enter $w"
 
 # Page - reset
 
     $m add command -label "Reset" \
-	-command "plw_page_reset $w"
+	-command "plw::page_reset $w"
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_redraw
+# plw::create_pmenu_redraw
 #
 # Create plot-redraw menu
 # I only use this for debugging in cases where the normal redraw capability
 # isn't working right.
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_redraw {w} {
+proc plw::create_pmenu_redraw {w} {
     global pmenu
 
     $pmenu($w) add command -label "Redraw" \
@@ -523,12 +525,12 @@ proc plw_create_pmenu_redraw {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_palettes
+# plw::create_pmenu_palettes
 #
 # Create plot-palettes menu (cascade)
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_palettes {w} {
+proc plw::create_pmenu_palettes {w} {
     global pmenu; set m $pmenu($w).palettes
     global plopt_static_redraw plopt_dynamic_redraw
 
@@ -594,11 +596,11 @@ proc plw_create_pmenu_palettes {w} {
 #
 # and its contrapositive.
 
-    trace variable plopt_static_redraw($w) w plw_pmenu_palettes_checkvars
-    trace variable plopt_dynamic_redraw($w) w plw_pmenu_palettes_checkvars
+    trace variable plopt_static_redraw($w) w plw::pmenu_palettes_checkvars
+    trace variable plopt_dynamic_redraw($w) w plw::pmenu_palettes_checkvars
 }
 
-proc plw_pmenu_palettes_checkvars {var w op} {
+proc plw::pmenu_palettes_checkvars {var w op} {
     global plopt_static_redraw plopt_dynamic_redraw
     if { $var == "plopt_dynamic_redraw" } {
 	if $plopt_dynamic_redraw($w) { set plopt_static_redraw($w) 1 }
@@ -609,14 +611,14 @@ proc plw_pmenu_palettes_checkvars {var w op} {
 }
 
 #----------------------------------------------------------------------------
-# plw_entry
+# plw::entry
 #
 # Compensates for tk3.6 -> tk4.0 lunacy, where the menu entries are all
 # incremented by 1!  This happens because of the tear-off entry.  You can
 # create the menu without a tear-off, but that's even more intrusive.
 #----------------------------------------------------------------------------
 
-proc plw_entry {entry} {
+proc plw::entry {entry} {
     global tk_version
     if { $tk_version >= 4.0 } then {
 	incr entry
@@ -625,7 +627,7 @@ proc plw_entry {entry} {
 }
 
 #----------------------------------------------------------------------------
-# plw_start
+# plw::start
 #
 # Responsible for plplot graphics package initialization on the widget.
 # People driving the widget directly should just use pack themselves.
@@ -634,7 +636,7 @@ proc plw_entry {entry} {
 # the client program waits until the variable widget_is_ready is set.
 #----------------------------------------------------------------------------
 
-proc plw_start {w} {
+proc plw::start {w} {
     global client
 
 # Manage widget hierarchy
@@ -651,11 +653,11 @@ proc plw_start {w} {
     }
 
 # Call a user supplied routine to do any necessary post initialization
-   catch after_plw_start
+   catch after_plw::start
 }
 
 #----------------------------------------------------------------------------
-# plw_key_filter
+# plw::key_filter
 #
 # Front-end to key handler.
 # For supported operations it's best to modify the global key variables
@@ -664,7 +666,7 @@ proc plw_start {w} {
 # so it can be added to the default behavior.
 #----------------------------------------------------------------------------
 
-proc plw_key_filter {w keycode state x y keyname ascii} {
+proc plw::key_filter {w keycode state x y keyname ascii} {
     global user_key_filter
 
     global key_resume
@@ -699,30 +701,30 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
 
     switch $keyname \
 	$key_resume		"set plstate_resume($w) 1" \
-	$key_zoom_select	"plw_zoom_select $w" \
-	$key_zoom_back		"plw_zoom_back $w" \
-	$key_zoom_forward	"plw_zoom_forward $w" \
-	$key_zoom_reset		"plw_zoom_reset $w" \
-	$key_print		"plw_print $w" \
-	$key_save_again		"plw_save_again $w" \
-	$key_scroll_right	"plw_view_scroll $w  1  0 $state" \
-	$key_scroll_left	"plw_view_scroll $w -1  0 $state" \
-	$key_scroll_up		"plw_view_scroll $w  0 -1 $state" \
-	$key_scroll_down	"plw_view_scroll $w  0  1 $state" 
+	$key_zoom_select	"plw::zoom_select $w" \
+	$key_zoom_back		"plw::zoom_back $w" \
+	$key_zoom_forward	"plw::zoom_forward $w" \
+	$key_zoom_reset		"plw::zoom_reset $w" \
+	$key_print		"plw::print $w" \
+	$key_save_again		"plw::save_again $w" \
+	$key_scroll_right	"plw::view_scroll $w  1  0 $state" \
+	$key_scroll_left	"plw::view_scroll $w -1  0 $state" \
+	$key_scroll_up		"plw::view_scroll $w  0 -1 $state" \
+	$key_scroll_down	"plw::view_scroll $w  0  1 $state" 
 
 # Pass keypress event info back to client.
 
-    plw_user_key $w $keycode $state $x $y $keyname $ascii
+    plw::user_key $w $keycode $state $x $y $keyname $ascii
 }
 
 #----------------------------------------------------------------------------
-# plw_user_key
+# plw::user_key
 #
 # Passes keypress event information back to client.
-# Based on plw_user_mouse.
+# Based on plw::user_mouse.
 #----------------------------------------------------------------------------
 
-proc plw_user_key {w keycode state x y keyname ascii} {
+proc plw::user_key {w keycode state x y keyname ascii} {
     global client
 
     if { [info exists client] } then {
@@ -749,13 +751,13 @@ proc plw_user_key {w keycode state x y keyname ascii} {
 }
 
 #----------------------------------------------------------------------------
-# plw_user_mouse
+# plw::user_mouse
 #
 # Passes buttonpress event information back to client.
 # Written by Radey Shouman
 #----------------------------------------------------------------------------
 
-proc plw_user_mouse {w button state x y} {
+proc plw::user_mouse {w button state x y} {
     global client
 
     if { [info exists client] } then {
@@ -781,7 +783,7 @@ proc plw_user_mouse {w button state x y} {
 }
 
 #----------------------------------------------------------------------------
-# plw_bop
+# plw::bop
 #
 # Beginning of page handling when running tcl scripts from plserver.
 # To handle multipage plots correctly, we need to pause between plots.
@@ -794,7 +796,7 @@ proc plw_user_mouse {w button state x y} {
 # activated if !plot_menu_on.
 #----------------------------------------------------------------------------
 
-proc plw_bop {w} {
+proc plw::bop {w} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plstate_resume plstate_bopseen
@@ -803,17 +805,17 @@ proc plw_bop {w} {
 
     if $plstate_bopseen($w) {
 	update idletasks
-	plw_label_push $w "press <Enter> to continue."
+	plw::label_push $w "press <Enter> to continue."
 	tkwait variable plstate_resume($w)
-	plw_label_set $w "working..."
+	plw::label_set $w "working..."
 	update idletasks
-	set id1 [after idle "plw_label_pop $w; plw_label_refresh $w"]
+	set id1 [after idle "plw::label_pop $w; plw::label_refresh $w"]
 	set plstate_resume($w) 0
 
     } else {
-	plw_label_set $w "working..."
+	plw::label_set $w "working..."
 	update idletasks
-	set id1 [after idle "plw_label_refresh $w"]
+	set id1 [after idle "plw::label_refresh $w"]
     }
 
 # Set up for next possible bop, by setting bopseen to 1 but also setting up an
@@ -826,28 +828,28 @@ proc plw_bop {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_eop
+# plw::eop
 #
 # End of page handling.
 # Was handy during development but right now does nothing.
 #----------------------------------------------------------------------------
 
-proc plw_eop {w} {
+proc plw::eop {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_flash
+# plw::flash
 #
 # Set eop button color to indicate page status.
 #----------------------------------------------------------------------------
 
-proc plw_flash {w col} {
+proc plw::flash {w col} {
     $w.ftop.leop config -bg $col
     update idletasks
 }
 
 #----------------------------------------------------------------------------
-# plw_end
+# plw::end
 #
 # Executed as part of orderly shutdown procedure.  Eventually will just
 # destroy the plframe and surrounding widgets, and server will exit only
@@ -859,7 +861,7 @@ proc plw_flash {w col} {
 # to slow things down quite a bit.  
 #----------------------------------------------------------------------------
 
-proc plw_end {w} {
+proc plw::end {w} {
     global dp
 #    $w.plwin closelink
     if { $dp } then {
@@ -871,15 +873,15 @@ proc plw_end {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_print
+# plw::print
 #
 # Prints plot.  Uses the "plpr" script, which must be set up for your site
 # as appropriate.  There are better ways to do it but this way is safest
 # for now.
 #----------------------------------------------------------------------------
 
-proc plw_print {w} {
-    plw_label_set $w "Printing plot..."
+proc plw::print {w} {
+    plw::label_set $w "Printing plot..."
     update
     if { [catch "$w.plwin print" foo] } {
 	bogue_out "$foo"
@@ -890,12 +892,12 @@ proc plw_print {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_save_as
+# plw::save_as
 #
 # Saves plot to default device, prompting for file name.
 #----------------------------------------------------------------------------
 
-proc plw_save_as {w} {
+proc plw::save_as {w} {
     global pmenu saveopts
     set file [getSaveFile $saveopts($w,0)]
     if { [string length $file] > 0 } {
@@ -905,11 +907,11 @@ proc plw_save_as {w} {
 	    }
 	}
 
-	plw_label_set $w "Saving plot..."
+	plw::label_set $w "Saving plot..."
 	update
 	if { [catch "$w.plwin save as $saveopts($w,0) $file" foo] } {
 	    bogue_out "$foo"
-	    plw_label_refresh $w
+	    plw::label_refresh $w
 	} else {
 	    pl_status_msg $w "Plot saved."
 	}
@@ -927,12 +929,12 @@ proc plw_save_as {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_save_again
+# plw::save_again
 #
 # Saves plot to an already open file.
 #----------------------------------------------------------------------------
 
-proc plw_save_again {w} {
+proc plw::save_again {w} {
     if { [catch "$w.plwin save" foo] } {
 	bogue_out "$foo"
     } else {
@@ -941,12 +943,12 @@ proc plw_save_again {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_save_close
+# plw::save_close
 #
 # Close archive save file.
 #----------------------------------------------------------------------------
 
-proc plw_save_close {w} {
+proc plw::save_close {w} {
     global pmenu
     if { [catch "$w.plwin save close" foo] } {
 	bogue_out "$foo"
@@ -958,7 +960,7 @@ proc plw_save_close {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_update_zoom
+# plw::update_zoom
 #
 # Responsible for making sure zoom menu entries are normal or disabled as
 # appropriate.  In particular, that "Back" or "Forward" are only displayed
@@ -970,7 +972,7 @@ proc plw_save_close {w} {
 # previously it wasn't).
 #----------------------------------------------------------------------------
 
-proc plw_update_zoom {w} {
+proc plw::update_zoom {w} {
     global zidx zidx_max zxl zyl zxr zyr
     global pmenu
 
@@ -992,32 +994,32 @@ proc plw_update_zoom {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_select
+# plw::zoom_select
 #
 # Zooms plot in response to mouse selection.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_select {w} {
+proc plw::zoom_select {w} {
     global def_button_cmd zoomopts
 
     set def_button_cmd [bind $w.plwin <ButtonPress>]
 
     if { $zoomopts($w,1) == 0 } then {
-	plw_label_set $w "Click on one corner of zoom region."
+	plw::label_set $w "Click on one corner of zoom region."
     } else {
-	plw_label_set $w "Click on center of zoom region."
+	plw::label_set $w "Click on center of zoom region."
     }
 
-    bind $w.plwin <ButtonPress> "plw_zoom_start $w %x %y"
+    bind $w.plwin <ButtonPress> "plw::zoom_start $w %x %y"
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_enter
+# plw::zoom_enter
 #
 # Zooms plot in response to text entry.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_enter {w} {
+proc plw::zoom_enter {w} {
     global fv00 fv01 fv10 fv11
     global fn00 fn01 fn10 fn11
 
@@ -1036,21 +1038,21 @@ proc plw_zoom_enter {w} {
     Form2d .e "Enter window coordinates for zoom.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner."
     tkwait window .e
 
-    plw_view_select $w $fv00 $fv01 $fv10 $fv11
+    plw::view_select $w $fv00 $fv01 $fv10 $fv11
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_reset
+# plw::zoom_reset
 #
 # Resets after zoom.
 # Note that an explicit redraw is not necessary since the packer issues a
 # resize after the scrollbars are unmapped.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_reset {w} {
+proc plw::zoom_reset {w} {
     global def_button_cmd
 
-    plw_label_refresh $w
+    plw::label_refresh $w
     bind $w.plwin <ButtonPress> $def_button_cmd
     $w.plwin view reset
     if { [winfo exists $w.hbar] && [winfo ismapped $w.hbar] } then {
@@ -1073,37 +1075,37 @@ proc plw_zoom_reset {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_update_orient
+# plw::update_orient
 #
 # Responsible for making sure orientation radio buttons are up to date.
 #----------------------------------------------------------------------------
 
-proc plw_update_orient {w} {
+proc plw::update_orient {w} {
     global pmenu
     set rot [$w.plwin orient]
     set entry [expr [format "%.0f" $rot] % 4]
-    $pmenu($w).orient invoke [plw_entry $entry]
+    $pmenu($w).orient invoke [plw::entry $entry]
 }
 
 #----------------------------------------------------------------------------
-# plw_orient
+# plw::orient
 #
 # Changes plot orientation.
 #----------------------------------------------------------------------------
 
-proc plw_orient {w rot} {
+proc plw::orient {w rot} {
     if { [$w.plwin orient] != $rot} then {
 	$w.plwin orient $rot
     }
 }
 
 #----------------------------------------------------------------------------
-# plw_page_enter
+# plw::page_enter
 #
 # Changes output page parameters (margins, aspect ratio, justification).
 #----------------------------------------------------------------------------
 
-proc plw_page_enter {w} {
+proc plw::page_enter {w} {
     global fv00 fv01 fv10 fv11
     global fn00 fn01 fn10 fn11
 
@@ -1126,36 +1128,36 @@ proc plw_page_enter {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_page_reset
+# plw::page_reset
 #
 # Resets page parameters.
 #----------------------------------------------------------------------------
 
-proc plw_page_reset {w} {
+proc plw::page_reset {w} {
     $w.plwin page 0. 0. 0. 0.
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_start
+# plw::zoom_start
 #
 # Starts plot zoom.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_start {w wx wy} {
+proc plw::zoom_start {w wx wy} {
     global def_button_cmd
 
     bind $w.plwin <ButtonPress> $def_button_cmd
 
 # Use a set rather than a push to replace previous zoom message.
-    plw_label_set $w "Select zoom region by dragging mouse, then release."
+    plw::label_set $w "Select zoom region by dragging mouse, then release."
 
     $w.plwin draw init
-    bind $w.plwin <B1-Motion>        "plw_zoom_mouse_draw $w $wx $wy %x %y"
-    bind $w.plwin <B1-ButtonRelease> "plw_zoom_mouse_end $w $wx $wy %x %y"
+    bind $w.plwin <B1-Motion>        "plw::zoom_mouse_draw $w $wx $wy %x %y"
+    bind $w.plwin <B1-ButtonRelease> "plw::zoom_mouse_end $w $wx $wy %x %y"
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_coords
+# plw::zoom_coords
 #
 # Transforms the initial and final mouse coordinates to either:
 #
@@ -1176,7 +1178,7 @@ proc plw_zoom_start {w wx wy} {
 #
 #----------------------------------------------------------------------------
 
-proc plw_zoom_coords {w x0 y0 x1 y1 opt} {
+proc plw::zoom_coords {w x0 y0 x1 y1 opt} {
     global zoomopts
 
     set Lx [winfo width  $w.plwin]
@@ -1362,14 +1364,14 @@ proc plw_zoom_coords {w x0 y0 x1 y1 opt} {
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_mouse_draw
+# plw::zoom_mouse_draw
 #
 # Draws zoom box in response to mouse motion (with button held down).
 #----------------------------------------------------------------------------
 
-proc plw_zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
+proc plw::zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
 
-    set coords [plw_zoom_coords $w $wx0 $wy0 $wx1 $wy1 0]
+    set coords [plw::zoom_coords $w $wx0 $wy0 $wx1 $wy1 0]
 
     $w.plwin draw rect \
 	[lindex "$coords" 0] [lindex "$coords" 1] \
@@ -1377,37 +1379,37 @@ proc plw_zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_mouse_end
+# plw::zoom_mouse_end
 #
 # Performs actual zoom, invoked when user releases mouse button.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_mouse_end {w wx0 wy0 wx1 wy1} {
+proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
     
 # Finish rubber band draw
 
     bind $w.plwin <B1-ButtonRelease> {}
     bind $w.plwin <B1-Motion> {}
-    plw_label_refresh $w
+    plw::label_refresh $w
     $w.plwin draw end
 
 # Select new plot region
 
-    set coords [plw_zoom_coords $w $wx0 $wy0 $wx1 $wy1 1]
+    set coords [plw::zoom_coords $w $wx0 $wy0 $wx1 $wy1 1]
 
-    plw_view_zoom $w \
+    plw::view_zoom $w \
 	[lindex "$coords" 0] [lindex "$coords" 1] \
 	[lindex "$coords" 2] [lindex "$coords" 3] 
 }
 
 #----------------------------------------------------------------------------
-# plw_view_select
+# plw::view_select
 #
 # Handles change of view into plot.
 # Given in relative plot window coordinates.
 #----------------------------------------------------------------------------
 
-proc plw_view_select {w x0 y0 x1 y1} {
+proc plw::view_select {w x0 y0 x1 y1} {
     
 # Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
 
@@ -1442,17 +1444,17 @@ proc plw_view_select {w x0 y0 x1 y1} {
 
 # Fix up view
 
-    plw_fixview $w $hscroll $vscroll
+    plw::fixview $w $hscroll $vscroll
 }
 
 #----------------------------------------------------------------------------
-# plw_view_zoom
+# plw::view_zoom
 #
 # Handles zoom.
 # Given in relative device coordinates.
 #----------------------------------------------------------------------------
 
-proc plw_view_zoom {w x0 y0 x1 y1} {
+proc plw::view_zoom {w x0 y0 x1 y1} {
     global xl xr yl yr
 
 # Adjust arguments to be properly ordered (xl < xr, etc)
@@ -1525,7 +1527,7 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 
 # Fix up view
 
-    plw_fixview $w $hscroll $vscroll
+    plw::fixview $w $hscroll $vscroll
 
 # Add window to zoom windows list
 
@@ -1542,12 +1544,12 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_back
+# plw::zoom_back
 #
 # Traverses the zoom windows list backward.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_back {w} {
+proc plw::zoom_back {w} {
     global zidx zxl zyl zxr zyr
 
     if { $zidx($w) == 0 } then return
@@ -1565,12 +1567,12 @@ proc plw_zoom_back {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_zoom_forward
+# plw::zoom_forward
 #
 # Traverses the zoom windows list forward.
 #----------------------------------------------------------------------------
 
-proc plw_zoom_forward {w} {
+proc plw::zoom_forward {w} {
     global zidx zidx_max zxl zyl zxr zyr
 
     if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then return
@@ -1588,14 +1590,14 @@ proc plw_zoom_forward {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_view_scroll
+# plw::view_scroll
 #
 # Scrolls view incrementally.
 # Similar to clicking on arrow at end of scrollbar (but speed is user
 # controllable).
 #----------------------------------------------------------------------------
 
-proc plw_view_scroll {w dx dy s} {
+proc plw::view_scroll {w dx dy s} {
     global key_scroll_mag
     global key_scroll_speed
 
@@ -1639,12 +1641,12 @@ proc plw_view_scroll {w dx dy s} {
 }
 
 #----------------------------------------------------------------------------
-# plw_fixview
+# plw::fixview
 #
 # Handles updates of scrollbars & plot after view change.
 #----------------------------------------------------------------------------
 
-proc plw_fixview {w hscroll vscroll} {
+proc plw::fixview {w hscroll vscroll} {
     
 # Create scrollbars if they don't already exist.
 
@@ -1702,13 +1704,13 @@ proc plw_fixview {w hscroll vscroll} {
 }
 
 #----------------------------------------------------------------------------
-# plw_update_view
+# plw::update_view
 #
 # Updates view.  Results in scrollbars being added if they are appropriate.
 # Does nothing if the plot window is unchanged from the default.
 #----------------------------------------------------------------------------
 
-proc plw_update_view {w} {
+proc plw::update_view {w} {
     set coords [$w.plwin view]
 
     set xl [lindex "$coords" 0]
@@ -1716,7 +1718,7 @@ proc plw_update_view {w} {
     set xr [lindex "$coords" 2]
     set yr [lindex "$coords" 3]
 
-    plw_view_select $w $xl $yl $xr $yr
+    plw::view_select $w $xl $yl $xr $yr
 }
 
 #----------------------------------------------------------------------------
@@ -1727,29 +1729,29 @@ proc plw_update_view {w} {
 #----------------------------------------------------------------------------
 
 proc pl_status_msg {w msg} {
-    plw_label_set $w $msg
-    after 2500 plw_label_refresh $w
+    plw::label_set $w $msg
+    after 2500 plw::label_refresh $w
 }
 
 #----------------------------------------------------------------------------
-# plw_label_set
+# plw::label_set
 #
 # Sets message in status bar.  Does not put on stack, so it is transient.
 #----------------------------------------------------------------------------
 
-proc plw_label_set {w msg} {
+proc plw::label_set {w msg} {
     global plot_menu_on; if !$plot_menu_on return
 
     $w.ftop.lstat configure -text "$msg"
 }
 
 #----------------------------------------------------------------------------
-# plw_label_refresh
+# plw::label_refresh
 #
 # Resets message in status bar to the current default (top one on stack).
 #----------------------------------------------------------------------------
 
-proc plw_label_refresh {w} {
+proc plw::label_refresh {w} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plmenu_lstat plmenu_lstat_depth
@@ -1759,13 +1761,13 @@ proc plw_label_refresh {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_label_push
+# plw::label_push
 #
 # Sets message in status bar, pushing it onto the stack.  So it shouldn't
 # be a transient message.  Limit 10 deep to quickly catch recursion errors.
 #----------------------------------------------------------------------------
 
-proc plw_label_push {w msg} {
+proc plw::label_push {w msg} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plmenu_lstat plmenu_lstat_depth
@@ -1775,43 +1777,43 @@ proc plw_label_push {w msg} {
     if {$plmenu_lstat_depth($w) < 9} {
 	incr plmenu_lstat_depth($w) 
     } {
-	puts stderr "plw_label_push: you just hit the max stack depth"
+	puts stderr "plw::label_push: you just hit the max stack depth"
     }
     set plmenu_lstat($w,$plmenu_lstat_depth($w)) $msg
     $w.ftop.lstat configure -text "$msg"
 }
 
 #----------------------------------------------------------------------------
-# plw_label_pop
+# plw::label_pop
 #
 # Pops the top label off the stack, making the new one on top the default.
-# It doesn't become active until plw_label_refresh is called.
+# It doesn't become active until plw::label_refresh is called.
 #----------------------------------------------------------------------------
 
-proc plw_label_pop {w} {
+proc plw::label_pop {w} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plmenu_lstat plmenu_lstat_depth
     if ![info exists plmenu_lstat_depth] { 
-	puts stderr "plw_label_pop: no stack defined yet, strange.."
+	puts stderr "plw::label_pop: no stack defined yet, strange.."
 	return
     }
     if {$plmenu_lstat_depth($w) > 0} {
 	incr plmenu_lstat_depth($w) -1
     } {
-	puts stderr "plw_label_pop: you just hit the min stack depth"
+	puts stderr "plw::label_pop: you just hit the min stack depth"
     }
 }
 
 #----------------------------------------------------------------------------
-# plw_dplink
+# plw::dplink
 #
 # Initializes socket data link between widget and client code.
 # In addition, as this is the last client/server connection needed, I
 # disable further connections.
 #----------------------------------------------------------------------------
 
-proc plw_dplink {w client} {
+proc plw::dplink {w client} {
     global list_sock data_sock
 
     dp_Host +
