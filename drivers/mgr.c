@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/07/19 22:30:22  mjl
+ * Revision 1.5  1995/01/06 07:40:33  mjl
+ * All drivers: pls->width now more sensibly handled.  If the driver supports
+ * multiple widths, it first checks to see if it has been initialized
+ * already (e.g. from the command line) before initializing it.  For drivers
+ * that don't support multiple widths, pls->width is ignored.
+ *
+ * Revision 1.4  1994/07/19  22:30:22  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -92,7 +98,6 @@ plD_init_mgr(PLStream *pls)
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
     pls->color = 0;		/* No color implemented in Linux MGR (Yet!) */
-    pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
     pls->graphx = TEXT_MODE;

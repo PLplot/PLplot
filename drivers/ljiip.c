@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/01/04 04:43:20  mjl
+ * Revision 1.6  1995/01/06 07:40:32  mjl
+ * All drivers: pls->width now more sensibly handled.  If the driver supports
+ * multiple widths, it first checks to see if it has been initialized
+ * already (e.g. from the command line) before initializing it.  For drivers
+ * that don't support multiple widths, pls->width is ignored.
+ *
+ * Revision 1.5  1995/01/04  04:43:20  mjl
  * Minor tweek.  Modified the pixel width to depend on the slope of the line.
  * Makes diagonal lines thinner.  Contributed by Wesley Ebisuzaki.
  *
@@ -114,9 +120,11 @@ plD_init_ljiip(PLStream *pls)
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->color = 0;
-    pls->width = DPI / 100;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (pls->width == 0)	/* Is 0 if uninitialized */
+	pls->width = DPI / 100;
 
 /* Initialize family file info */
 

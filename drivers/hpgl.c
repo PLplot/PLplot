@@ -1,12 +1,18 @@
 /* ///////////////////////////////////////////////////////////////////
 // $Id$
 // $Log$
-// Revision 1.4  1994/07/25 06:03:13  mjl
-// Added new driver -- HP Laserjet III in HPGL emulation mode (lj_hpgl).
-// Produces fairly small output files (compared to the LJIIP compressed
-// rasters, MUCH smaller than the LJII full rasters).  Contributed by Conrad
-// Steenberg.
+// Revision 1.5  1995/01/06 07:40:28  mjl
+// All drivers: pls->width now more sensibly handled.  If the driver supports
+// multiple widths, it first checks to see if it has been initialized
+// already (e.g. from the command line) before initializing it.  For drivers
+// that don't support multiple widths, pls->width is ignored.
 //
+ * Revision 1.4  1994/07/25  06:03:13  mjl
+ * Added new driver -- HP Laserjet III in HPGL emulation mode (lj_hpgl).
+ * Produces fairly small output files (compared to the LJIIP compressed
+ * rasters, MUCH smaller than the LJII full rasters).  Contributed by Conrad
+ * Steenberg.
+ *
  * Revision 1.3  1994/07/19  22:30:17  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
@@ -92,9 +98,11 @@ initialize_hpgl_pls(PLStream *pls)
 
     pls->termin = 0;            /* not an interactive terminal */
     pls->icol0 = 1;
-    pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (pls->width == 0)	/* Is 0 if uninitialized */
+	pls->width = 1;
 
     plFamInit(pls);             /* Initialize family file info */
     plOpenFile(pls);            /* get file name if not already set */

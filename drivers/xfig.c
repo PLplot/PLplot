@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/07/19 22:30:30  mjl
+ * Revision 1.16  1995/01/06 07:40:36  mjl
+ * All drivers: pls->width now more sensibly handled.  If the driver supports
+ * multiple widths, it first checks to see if it has been initialized
+ * already (e.g. from the command line) before initializing it.  For drivers
+ * that don't support multiple widths, pls->width is ignored.
+ *
+ * Revision 1.15  1994/07/19  22:30:30  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -67,9 +73,11 @@ plD_init_xfig(PLStream *pls)
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->color = 0;
-    pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (pls->width == 0)	/* Is 0 if uninitialized */
+	pls->width = 1;
 
 /* Initialize family file info */
 
@@ -273,6 +281,7 @@ flushbuffer(PLStream *pls)
 
     if (count == 0)
 	return;
+
     fprintf(pls->OutFile, "2 1 0 %d 0 0 0 0 0.000 0 0\n", curwid);
     while (i < count) {
 	fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
