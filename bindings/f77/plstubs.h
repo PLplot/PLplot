@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/07/20 06:07:44  mjl
+ * Revision 1.23  1995/10/16 18:22:23  mjl
+ * Added support for plgdev API function in fortran bindings.
+ *
+ * Revision 1.22  1994/07/20  06:07:44  mjl
  * Added definitions for Fortran interface routines to handle the new 3d
  * functions plline3(), plpoin3(), and plpoly3().
  *
@@ -163,6 +166,7 @@
 #define    PLFONT	FNAME(PLFONT,plfont)
 #define    PLFONTLD	FNAME(PLFONTLD,plfontld)
 #define    PLGCHR	FNAME(PLGCHR,plgchr)
+#define    PLGDEV7	FNAME(PLGDEV7,plgdev7)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
 #define    PLGFNAM7	FNAME(PLGFNAM7,plgfnam7)
 #define    PLGPAGE	FNAME(PLGPAGE,plgpage)

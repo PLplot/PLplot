@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1995/03/17 00:17:10  mjl
+ * Revision 1.22  1995/10/16 18:22:24  mjl
+ * Added support for plgdev API function in fortran bindings.
+ *
+ * Revision 1.21  1995/03/17  00:17:10  mjl
  * Eliminated obsolete functions PLSASP and PLSLPB.
  *
  * Revision 1.20  1995/01/14  06:04:05  mjl
@@ -155,6 +158,12 @@ void
 PLGCHR(PLFLT *chrdef, PLFLT *chrht)
 {
     c_plgchr(chrdef, chrht);
+}
+
+void
+PLGDEV7(char *dev)
+{
+    c_plgdev(dev);
 }
 
 void
