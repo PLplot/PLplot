@@ -3,6 +3,7 @@
 
     Copyright (C) 2004  Arjen Markus
     Copyright (C) 2004  Rafael Laboissiere
+    Copyright (C) 2004  Alan W. Irwin
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -81,17 +82,78 @@
     </itemizedlist>
   </para>
 
+  <para> 
+    Under Linux, the easiest way to install a binary version of PLplot
+    on a user's machine is to use PLplot deb binary packages for the Debian
+    distribution, and PLplot rpm binary packages for rpm-based
+    distributions. (See http://plplot.sourceforge.net/resources/index.html
+    for locations of debs and rpms.) Build the application on the build
+    machine using the results of the "plplot-config --cflags --libs" command,
+    and copy the resulting executable(s) to the users' machines.  Note, you
+    will probably have to edit the plplot-config script to change all
+    instances of the PLplot prefix you use on the build machine (say,
+    /usr/local/plplot) to /usr to be consistent with the deb and rpm install
+    prefix of /usr.
+  </para>
+
   <para>
-    There are depending on the way you build the PLplot library into your
-    program four situations to consider:
+    Under Unix (and also under Linux if you would prefer to use a newer
+    version of PLplot than is available in the debs or rpms), a good way
+    to deploy binary PLplot and applications that depend on that binary PLplot
+    on users machines is as follows:  
+    <itemizedlist>
+      <listitem>
+        <para>
+	  Use the ./configure option --prefix=/usr/local/plplot (or some
+	  other unique but consistent directory that is available on the
+	  build machine and all users' machines).
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Build and install as normal on the build machine.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Copy the installed PLplot tree, /usr/local/plplot, into a tarball.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Unpack that tarball on all users' machines in the same location =
+	  /usr/local/plplot.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Build the application(s) on the build machine using the results
+	  of the "plplot-config --cflags --libs" command, and copy the 
+	  resulting executable(s) to the users' machines.  Since the
+	  PLplot install location is consistent on all machines, the 
+	  application should work the same way on all machines.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </para>
+
+  <para>
+    On Windows, and also those rare Linux/Unix cases where you cannot install
+    the PLplot install tree in a consistent location of users's machines, then
+    there are some additional options to consider.
+  </para>
+
+  <para>
+    There are three situations depending on how you configure and
+    build the PLplot libraries:
     <orderedlist>
       <listitem>
         <para>
-          You use the static or archive versions of the PLplot library
-          and the drivers
+          You use the static versions of the PLplot libraries and drivers
+	  which are not dynamically loaded.
           <footnote>
             <para>
-              UNIX-like systems libraries can be archive or shared, the first
+              UNIX-like systems libraries can be static or shared, the first
               type becoming part of the program, the second existing as a
               separate file. On Windows the terms are respectively static
               and dynamic (the latter type is also known as DLL).
@@ -101,30 +163,18 @@
       </listitem>
       <listitem>
         <para>
-          You use the static or archive version of the PLplot library and
-          dynamic versions of the drivers
+          You use the shared versions of the PLplot libraries and drivers
+	  which are not dynamically loaded.
         </para>
       </listitem>
       <listitem>
         <para>
-          You use the dynamic or shared version of the PLplot library and
-          the dynamic or shared versions of the drivers
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          You use the dynamic version of the PLplot library and the
-          static/archive versions of the drivers
+          You use the shared versions of the PLplot library and drivers
+	  which are dynamically loaded.  This combination is the default
+	  option under Unix/Linux.
         </para>
       </listitem>
     </orderedlist>
-  </para>
-
-  <para>
-    While I am not sure the fourth option is actually possible (this would
-    probably amount to having the drivers inside the PLplot library, one
-    possible situation is the DLL version of PLplot on Windows), the other
-    three certainly are.
   </para>
 
   <para>
@@ -194,35 +244,8 @@
   </para>
 
   <para>
-    For the <emphasis>second case</emphasis> I have some personal notes
-    only: "This case has proven to be quite resilient against deployment in
-    the fashion it is defined here, at least on Red Hat Linux. The problem
-    was that the drivers could not be located unless they are installed in
-    the same place as they were at the time the program was built - the
-    system library functions that deal with dynamic loading of shared
-    libraries were failing to find them. This may be a problem with the
-    <literal>LD_LIBRARY_PATH</literal> environment variable, but it was
-    impossible to control this via the <literal>PLPLOT_DRV_DIR</literal>
-    environment variable as I asssumed it would.
-  </para>
-
-  <para>
-    My advice is to use the third option: this works without a problem
-    (well, except for the fact that you have to worry about two extra
-    environment variables).
-  </para>
-
-  <para>
-    It may be that the failure was due to the
-    <literal>LD_LIBRARY_PATH</literal> variable not being set to the
-    correct directory. But my interest in this case was exactly to avoid
-    having to set this variable and still keep the flexibility of dynamic
-    drivers.
-  </para>
-
-  <para>
-    The <emphasis>third case</emphasis> is this: both the PLplot library
-    and the drivers need to be loaded via the dynamic loader. The details
+    The <emphasis>second  case</emphasis> is this: the PLplot libraries
+    (but not the drivers) need to be loaded via the dynamic loader. The details
     depend on the system you are working on, but here are some common
     platforms:
     <itemizedlist>
@@ -252,38 +275,34 @@
   </para>
 
   <para>
-    As the drivers behave as a dynamic or shared library, it is probably
-    best to include the path to the drivers in the
-    <literal>LD_LIBRARY_PATH</literal> variable or its equivalent, but this
-    is not enough.
+    In the <emphasis>third (default) case</emphasis>, the PLplot
+    shared libraries are found as in the <emphasis>second</emphasis> case,
+    but in addition the separated dynamic drivers have to be found as well.
   </para>
 
   <para>
-    If PLplot uses dynamic drivers, it first builds up a list of them, by
+    When PLplot uses dynamic drivers, it first builds up a list of them, by
     examining a directory which contains files describing these drivers:
     the <filename>*.rc</filename> files. Each of these files indicates what
-    the relevant properties are for the driver or drivers. Then when the
-    driver is actually needed, the corresponding shared/dynamic library is
-    loaded.
+    the relevant properties for the driver or drivers. Then when the
+    driver is actually needed, the corresponding shared object (or plug-in
+    or DLL depending on your terminology) is dynamically loaded.
   </para>
 
   <para>
     The directory that contains all these files (the driver descriptions as
     well as the actual libraries and the description files that libtool
     uses) is either a directory determined at the time you configured
-    PLplot or a directory pointed to by the
+    PLplot is typically something like
+    /usr/local/plplot/lib/plplot5.3.1/driversd.  This directory must be
+    pointed to by the
     <literal>PLPLOT_DRV_DIR</literal> environment variable. Again for
     deployment, only the environment variable is of real interest.
   </para>
 
   <para>
-    In the <emphasis>fourth case</emphasis>, finding the PLplot
-    shared/dynamic library should be enough for the program to work, as the
-    drivers' code is contained in that library.
-  </para>
-
-  <para>
-    To summarise:
+    To summarise the case where you don't have a deb or rpm option, and
+    you must use inconsistent install locations on your users' machines:
     <itemizedlist>
       <listitem>
         <para>
