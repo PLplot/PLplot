@@ -1,8 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1993/11/19 07:55:44  mjl
- * Added missing CVS id and log fields.
+ * Revision 1.6  1993/12/09 21:20:12  mjl
+ * Simplified tk_toplevel() and eliminated obsolete functions.
  *
+ * Revision 1.5  1993/11/19  07:55:44  mjl
+ * Added missing CVS id and log fields.
 */
 
 /* 
@@ -11,49 +13,31 @@
  * 6-May-93
  *
  * Functions to handle creation & initialization of TCL interpreter and
- * main window.  Taken from source code for "wish", copyright follows:
- *
- * Copyright 1990-1992 Regents of the University of California.
- * Permission to use, copy, modify, and distribute this
- * software and its documentation for any purpose and without
- * fee is hereby granted, provided that the above copyright
- * notice appear in all copies.  The University of California
- * makes no representations about the suitability of this
- * software for any purpose.  It is provided "as is" without
- * express or implied warranty.
+ * main window.  
  */
 
 #include "plserver.h"
-
-/* Global variables */
-
-static int synchronize = 0;
-
-/* Static function prototypes */
-
-static void	DelayedMap	(ClientData);
-static void	StructureProc	(ClientData, XEvent *);
 
 /*----------------------------------------------------------------------*\
 *
 * tk_toplevel --
 *
-*	Create top level window.
+*	Create top level window without mapping it.
 *
 * Results:
 *	Returns 1 on error.
 *
 * Side effects:
-*	Returns window ID as *w, and arranges for window to be mapped.
+*	Returns window ID as *w.
 *
 \*----------------------------------------------------------------------*/
 
 int
 tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	    char *display, char *basename, char *classname, int options)
+	    char *display, char *basename, char *classname)
 {
     char *new_name;
-    char wcmd[] = "wm withdraw .";
+    static char wcmd[] = "wm withdraw .";
 
 /*
 * Determine server name.  If it contains any forward slashes ("/"), only
@@ -68,7 +52,7 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
     if (new_name != NULL) 
 	classname = ++new_name;
 
-/* Create the main window */
+/* Create the main window without mapping it */
 
 #if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 3)
     *w = Tk_CreateMainWindow(interp, display, basename);
@@ -80,24 +64,7 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	return(1);
     }
 
-/*
-* Initialize the Tk application and arrange to map the main window
-* after the startup script has been executed, if any.  This way
-* the script can withdraw the window so it isn't ever mapped
-* at all.
-*/
-    if (! (options && NOMAP)) {
-	Tk_SetClass(*w, "Tk");
-	Tk_CreateEventHandler(*w, StructureNotifyMask, StructureProc,
-			      (ClientData) *w);
-
-	Tk_DoWhenIdle(DelayedMap, (ClientData) *w);
-	if (synchronize) {
-	    XSynchronize(Tk_Display(*w), True);
-	}
-    }
-    else
-	Tcl_VarEval(interp, wcmd, (char *) NULL);
+    Tcl_VarEval(interp, wcmd, (char *) NULL);
 
     return(0);
 }
@@ -139,60 +106,3 @@ tk_source(Tk_Window w, Tcl_Interp *interp, char *script)
     return(0);
 }
 
-/*----------------------------------------------------------------------*\
-*
-* StructureProc --
-*
-*	This procedure is invoked whenever a structure-related event
-*	occurs on the main window.  If the window is deleted, the
-*	procedure modifies "w" to record that fact.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Variable "w" may get set to NULL.
-*
-\*----------------------------------------------------------------------*/
-
-static void
-StructureProc(ClientData clientData, XEvent *eventPtr)
-{
-    register Tk_Window w = (Tk_Window) clientData;
-
-    if (eventPtr->type == DestroyNotify) {
-	w = NULL;
-    }
-}
-
-/*----------------------------------------------------------------------*\
-*
-* DelayedMap --
-*
-*	This procedure is invoked by the event dispatcher once the
-*	startup script has been processed.  It waits for all other
-*	pending idle handlers to be processed (so that all the
-*	geometry information will be correct), then maps the
-*	application's main window.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	The main window gets mapped.
-*
-\*----------------------------------------------------------------------*/
-
-static void
-DelayedMap(ClientData clientData)
-{
-    register Tk_Window w = (Tk_Window) clientData;
-
-    while (Tk_DoOneEvent(TK_IDLE_EVENTS) != 0) {
-	/* Empty loop body. */
-    }
-    if (w == NULL) {
-	return;
-    }
-    Tk_MapWindow(w);
-}
