@@ -1,6 +1,12 @@
 # $Id$
 # $Log$
-# Revision 1.13  1994/07/01 20:39:57  mjl
+# Revision 1.14  1995/03/16 23:15:25  mjl
+# Allow exec's since some people need them.  Shouldn't be a problem unless
+# you compile TK without security (don't do this).  If you have a problem
+# running the plplot/TK driver using Xauthority style authentication, use
+# the Tcl-DP driver instead.
+#
+# Revision 1.13  1994/07/01  20:39:57  mjl
 # Added proc plstdwin to handle "standard" initialization code.
 #
 # Revision 1.12  1994/04/25  18:58:48  mjl
@@ -36,11 +42,6 @@ proc plstdwin {w} {
 
 	pldefaults
 	plconfig
-
-# I refuse to allow exec's since there's no need for them now.
-# Open's have to remain, however, to read/write palette info.
-
-	rename exec {}
 
 	set plstdwin_skip_startup 1
     }
