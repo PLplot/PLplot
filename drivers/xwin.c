@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.47  1994/07/27 22:18:01  mjl
+ * Revision 1.48  1994/08/05 09:25:05  mjl
+ * Added the static variable "synchronize", to be set when you want
+ * synchronous X operation.  Only for debugging, otherwise it's too slow.
+ *
+ * Revision 1.47  1994/07/27  22:18:01  mjl
  * Fixed bug in window cleanup and termination that was causing a core dump
  * for apps using multiple plframe widgets.
  *
@@ -54,6 +58,9 @@
 #include "plplotX.h"
 #include "drivers.h"
 #include "plevent.h"
+
+static int synchronize = 0;	/* change to 1 for synchronized operation */
+				/* for debugging only */
 
 /* Set constants for dealing with colormap.  In brief:
  *
@@ -587,6 +594,8 @@ Init(PLStream *pls)
 	}
 	xwd->displayName = pls->FileName;
 	xwd->screen = DefaultScreen(xwd->display);
+	if (synchronize) 
+	    XSynchronize(xwd->display, 1);
 
 	Init_Colors(pls);
     }
