@@ -181,6 +181,15 @@ AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
                                [Define if isnan is available]))
 
 dnl =======================================================================
+dnl Compilation and build options (PLFLT, rpath, install locations)
+dnl =======================================================================
+
+m4_include(cf/double.ac)
+m4_include(cf/rpath.ac)
+m4_include(cf/instdirs.ac)
+
+
+dnl =======================================================================
 dnl PLplot drivers
 dnl =======================================================================
 
@@ -213,15 +222,6 @@ dnl =======================================================================
 m4_include(cf/test.ac)
 m4_include(cf/docbook.ac)
 m4_include(cf/pkg-config.ac)
-
-
-dnl =======================================================================
-dnl Compilation and build options (PLFLT, rpath, install locations)
-dnl =======================================================================
-
-m4_include(cf/double.ac)
-m4_include(cf/rpath.ac)
-m4_include(cf/instdirs.ac)
 
 
 dnl =======================================================================

@@ -146,10 +146,6 @@ DEFINE_PL_DOUBLE=
 test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
 AC_SUBST(DEFINE_PL_DOUBLE)
 
-DEFINE_PL_DOUBLE=
-test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
-AC_SUBST(DEFINE_PL_DOUBLE)
-
 dnl Variables for mkoctfile
 dnl ******************************************************************
 dnl WARNING: The stuff below is just transient and should disappear as
