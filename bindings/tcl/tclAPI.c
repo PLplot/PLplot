@@ -340,6 +340,7 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 int 
 PlbasicInit( Tcl_Interp *interp )
 {
+    int debug = 0;
     char *libDir = NULL;
     static char initScript[] = 
     "tcl_findLibrary plplot " PLPLOT_VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
@@ -359,6 +360,7 @@ PlbasicInit( Tcl_Interp *interp )
 
 #if 1
     if (Matrix_Init(interp) != TCL_OK) {
+	if (debug) fprintf(stderr, "error in matrix init\n");
         return TCL_ERROR;
     }
 #else
@@ -371,6 +373,7 @@ PlbasicInit( Tcl_Interp *interp )
  */
 #ifdef USE_MATRIX_STUBS
     if (Matrix_InitStubs(interp,"0.1",0) == NULL) {
+	if (debug) fprintf(stderr, "error in matrix stubs init\n");
         return TCL_ERROR;
     }
 #else
@@ -382,9 +385,11 @@ PlbasicInit( Tcl_Interp *interp )
 
 /* Begin search for init script */
 /* Each search begins with a test of libDir, so rearrangement is easy. */
+/* If search is successful, both libDir (C) and pllibrary (tcl) are set */
 
 /* Tcl extension dir and/or PL_LIBRARY */
     if (libDir == NULL) {
+	if (debug) fprintf(stderr, "trying init script\n");
 	if (Tcl_Eval(interp, initScript) != TCL_OK) {
 	/* This unset is needed for Tcl < 8.4 support. */
 	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
@@ -398,6 +403,7 @@ PlbasicInit( Tcl_Interp *interp )
 #ifdef TCL_DIR
 /* Install directory */
     if (libDir == NULL) {
+	if (debug) fprintf(stderr, "trying TCL_DIR\n");
 	libDir = TCL_DIR;
 	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
 	if (Tcl_Eval(interp, initScript) != TCL_OK) {
@@ -411,6 +417,7 @@ PlbasicInit( Tcl_Interp *interp )
 #ifdef PLPLOT_EXTENDED_SEARCH
 /* Unix extension directory */
     if (libDir == NULL) {
+	if (debug) fprintf(stderr, "trying extended init script\n");
 	if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
 	/* This unset is needed for Tcl < 8.4 support. */
 	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
@@ -421,34 +428,36 @@ PlbasicInit( Tcl_Interp *interp )
 	    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
     }
 
-/* Current directory */
+/* Last chance, current directory */
     if (libDir == NULL) {
 	Tcl_DString ds;
+	if (debug) fprintf(stderr, "trying curdir\n");
 	if (Tcl_Access("plplot.tcl", 0) != 0) {
+	    if (debug) fprintf(stderr, "couldn't find plplot.tcl in curdir\n");
 	    return TCL_ERROR;
 	}
-	if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
-	    return TCL_ERROR;
-	}
-    /* It's here! */
+
+    /* It seems to be here.  Set pllibrary & eval plplot.tcl "by hand" */
 	libDir = Tcl_GetCwd(interp, &ds);
 	if (libDir == NULL) {
+	    if (debug) fprintf(stderr, "couldn't get curdir\n");
 	    return TCL_ERROR;
 	}
 	libDir = plstrdup(libDir);
 	Tcl_DStringFree(&ds);
+	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
+
+	if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
+	    if (debug) fprintf(stderr, "error evalling plplot.tcl\n");
+	    return TCL_ERROR;
+	}
     }
 #endif
 
-    if (libDir == NULL)
+    if (libDir == NULL) {
+	if (debug) fprintf(stderr, "libdir NULL at end of search\n");
 	return TCL_ERROR;
-	
-    Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
-    
-/* This setting should never be useful now.. kept for reference only.
-    Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
-    libDir = defaultLibraryDir;
-*/
+    }
 
 /* Used by init code in plctrl.c */
     plplotLibDir = plstrdup(libDir);
