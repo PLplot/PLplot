@@ -14,11 +14,6 @@
 
 define({AMIGA},)dnl
 
-PLLIB_DIR = /lib
-PLFNT_DIR = /lib
-PLLIB_PATH = $(PLLIB_DIR)/
-PLFNT_PATH = $(PLFNT_DIR)/
-
 SYS_LIBS=
 
 # Switch on floating point format.  Choices: 
@@ -31,12 +26,14 @@ SYS_LIBS=
 ifdef({MATH},,define(MATH,IEEEF))
 ifdef({COMPILER},,define(COMPILER,SAS6.X))
 
+if_dbl({define({MATH},IEEED)})
+
 #-------- Compiler/linker macros for Lattice C 5.x. -------------------------
 
 ifelse(COMPILER,LATTICE5.X,{
 
-#CC		= sc5
-#LDC		= slink 
+#CC		= sc5		# These can be used with SAS C/6.x to be 
+#LDC		= slink 	# compatible with the 5.x compiler.
 CC		= lc
 LDC		= blink 
 LIBC		= lib:lc.lib lib:amiga.lib
@@ -45,32 +42,23 @@ if_debug({
 DEBUG_FLAG_C	= -d2
 })
 
-if_opt({
-OPT_FLAG_C	= -O
-})
-
 ifelse(MATH,FFP,{
 MATHFLAGS	= -ff
 LIBM		= lib:lcmffp.lib
-DBL_FLAG_C	=
-PLLIB_MAIN	= $(PLLIB_PATH)plplotffp.lib
 })
 
 ifelse(MATH,IEEEF,{
 MATHFLAGS	= -fi
 LIBM		= lib:lcmieee.lib
-DBL_FLAG_C	= 
-PLLIB_MAIN	= $(PLLIB_PATH)plplotf.lib
 })
 
 ifelse(MATH,IEEED,{
 MATHFLAGS	= -fi
 LIBM		= lib:lcmieee.lib
-DBL_FLAG_C	= -DDOUBLE_PREC
-PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
+DBL_FLAG_C	= -DDOUBLE
 })
 
-CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) -v $(OPT_FLAG_C) \
+CC_FLAGS	= $(MATHFLAGS) $(DBL_FLAG_C) -v $(OPT_FLAG_C) \
 		  $(DEBUG_FLAG_C) -j89i
 
 PLDEVICES	= -DPLMETA -DNULLDEV -DTEK4010 -DTEK4107 -DPS -DLJII \
@@ -98,26 +86,21 @@ define(GST,{plplot.gst})
 ifelse(MATH,FFP,{
 MATHFLAGS	= math=ffp
 LIBM		= lib:scmffp.lib
-DBL_FLAG_C	=
-PLLIB_MAIN	= $(PLLIB_PATH)plplotffp.lib
 })
 
 ifelse(MATH,IEEEF,{
 MATHFLAGS	= math=ieee
 LIBM		= lib:scmieee.lib
-DBL_FLAG_C	= 
-PLLIB_MAIN	= $(PLLIB_PATH)plplotf.lib
 })
 
 ifelse(MATH,IEEED,{
 MATHFLAGS	= math=ieee
 LIBM		= lib:scmieee.lib
-DBL_FLAG_C	= -DDOUBLE_PREC
-PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
+DBL_FLAG_C	= -DDOUBLE
 })
 
-CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) nover $(DEBUG_FLAG_C) \
-		  $(OPT_FLAG_C) ign=84,89,147,161 ifdef({GST},{gst=GST})
+CC_FLAGS	= $(MATHFLAGS) $(DBL_FLAG_C) nover $(DEBUG_FLAG_C) \
+		  $(OPT_FLAG_C) ign=84,88,89,147,161 ifdef({GST},{gst=GST})
 
 # Sigh
 
@@ -125,16 +108,69 @@ PLDEVICES 	= def PLMETA def NULLDEV def PS def IFF
 
 })
 
-LDCFLAGS	= 
+LDC_FLAGS	= 
 STARTUP 	= lib:c.o
 TO		= to
-
-F77		= f77
-FFLAGS		= -c
-LDF		= $(F77)
-LDFFLAGS	= 
 LN		= copy
 
-PLLIB_C		= $(PLLIB_MAIN)
-PLLIB_LDC	= lib $(PLLIB_C) $(LIBM) $(LIBC) \
-		  lib:reqtools.lib 
+# Need to fill these in correctly if ever use f2c as a fortran compiler
+
+F77		= f77
+F77_FLAGS	= -c
+LDF		= $(F77)
+LDF_FLAGS	= 
+
+##############################################################################
+#
+# Set up inference rules
+#
+##############################################################################
+
+# Clear the suffix list, to avoid any possible problems with funny suffixes.
+# I can add them back as necessary.
+
+.SUFFIXES:
+
+# The order here is important.  
+# If the C++ compiler doesn't like .cc file suffixes, define CXX_PREFER_CSUF.
+
+.SUFFIXES: .o .cc .c .p .f .q .h .i .ccm4 .cm4 .pm4 .hm4 .im4
+
+.c.o:
+	$(CC) $(CC_FLAGS) $*.c
+
+ifdef({CXX_PREFER_CSUF},{
+.cc.o:
+	-@ln -s $*.cc $*.C
+	$(CXX) $(CXX_FLAGS) $*.C
+},{
+.cc.o:
+	$(CXX) $(CXX_FLAGS) $*.cc
+})
+
+.p.o:
+	$(MPPL) $(MPPL_FLAGS) $*.p >$*.f
+	$(F77) $(F77_FLAGS) $*.f
+
+.f.o:
+	$(F77) $(F77_FLAGS) $*.f
+
+.q.o:
+	$(MPPL) $(MPPL_FLAGS) $*.q >$*.f
+	$(F77) $(F77_FLAGS) $*.f
+
+.hm4.h:
+	$(M4) $(M4_FLAGS) $< >$*.h
+
+.im4.i:
+	$(M4) $(M4_FLAGS) $< >$*.i
+
+.ccm4.cc:
+	$(M4) $(M4_FLAGS) $< >$*.cc
+
+.cm4.c:
+	$(M4) $(M4_FLAGS) $< >$*.c
+
+.pm4.p:
+	$(M4) $(M4_FLAGS) $< >$*.p
+
