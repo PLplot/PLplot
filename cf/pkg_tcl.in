@@ -18,8 +18,7 @@ TCL_OBJ_SA	= tclMain$O
 TCL_EXE		= pltcl$E tclIndex
 TCL_INSTALL	= install_tcl
 
-MAKEINDEX	= @MAKEINDEX@
-TCL_INDEX_FILES = @TCL_INDEX_FILES@
+MAKEINDEX	= $(srcdir)/scripts/mktclIndex
 
 MAT_C		= tclMatrix.c matrixInit.c
 MAT_OBJS	= tclMatrix$O matrixInit$O
@@ -41,11 +40,8 @@ plplot/tclgen.h plplot/tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
 	cd $(top_srcdir)/bindings/tcl; \
 	perl pltclgen
 
-#tclIndex:
-#	mktclidx *.tcl
-
 tclIndex:
-	(echo "auto_mkindex . $(TCL_INDEX_FILES)" | $(MAKEINDEX) )
+	@$(MAKEINDEX)
 
 install_tcl:
 	-if test $(SHARED) = 1; then \

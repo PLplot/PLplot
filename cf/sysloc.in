@@ -305,41 +305,6 @@ if test "$enable_itk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# makeindex - figure out how we're gonna generate tclIndex
-# ----------------------------------------------------------------------------
-
-if test -z "$MAKEINDEX"; then
-    MAKEINDEX='BOGUS'
-fi
-
-if test "$enable_tcl" = "yes"; then
-    if test "$TCLLIBDIR" = "default"; then
-	MAKEINDEX="/usr/bin/tclsh$TCL_VERSION"
-    else
-	tclbindir="`echo $TCLLIBDIR | sed 's,/lib,,'`/bin"
-	if test -r "$tclbindir/tclsh$TCL_VERSION"; then
-	    MAKEINDEX="$tclbindir/tclsh$TCL_VERSION"
-	fi
-    fi
-    TCL_INDEX_FILES="*.tcl"
-fi
-
-if test "$enable_itcl" = "yes"; then
-    itclbindir="`echo $ITCLLIBDIR | sed 's,/lib,,'`/bin"
-    if test -r "$itclbindir/itclsh$ITCL_VERSION"; then
-	MAKEINDEX="$itclbindir/itclsh$ITCL_VERSION"
-    fi
-    TCL_INDEX_FILES="*.tcl *.itk"
-fi
-
-if test "$enable_tcl" = "yes" -a "$MAKEINDEX" = "BOGUS"; then
-    AC_MSG_RESULT([warning: you must edit Makefile to fix MAKEINDEX.])
-fi
-
-AC_SUBST(MAKEINDEX)
-AC_SUBST(TCL_INDEX_FILES)
-
-# ----------------------------------------------------------------------------
 # dp.h
 # ----------------------------------------------------------------------------
 
