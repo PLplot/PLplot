@@ -30,42 +30,85 @@
 //* arrays. 
 //***********************************************************************
 
-// Allocate array of PLFLT
-%typemap(perl5,in) PLFLT_p_input* (PLFLT* temp) {
+// Utility function
+%inline %{
+
+void
+PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
+{
   int i;
   svtype type;
-  SV* sv;
   AV* av;
-  I32 n;
-
-  temp = NULL;
-  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  
   type = SvTYPE (sv);
   if (type == SVt_PVAV) {
     av = (AV*) sv;
-    n = av_len (av);
-    temp = (PLFLT*) malloc ((n+1) * sizeof (PLFLT));
-    for (i = 0; i <= n; i++) {
+    *n = av_len (av);
+    *ptr = (PLFLT*) malloc ((*n+1) * sizeof (PLFLT));
+    for (i = 0; i <= *n; i++) {
       SV* elem = *(av_fetch(av, i, 0));
       type = SvTYPE (elem);
       if (type == SVt_NV || type >= SVt_PVNV )
-	temp[i] = (PLFLT) SvNV (elem);
+	(*ptr)[i] = (PLFLT) SvNV (elem);
       else if (type == SVt_IV)
-	temp[i] = (PLFLT) SvIV (elem);
+	(*ptr)[i] = (PLFLT) SvIV (elem);
       else
 	croak ("Element in PLFLT* input is not numerical");
     }
   }
   else if (type == SVt_NV || type == SVt_IV || type >= SVt_PVIV) {
-    temp = (PLFLT*) malloc (sizeof (PLFLT)); 
+    *ptr = (PLFLT*) malloc (sizeof (PLFLT)); 
     if (type == SVt_NV || type >= SVt_PVNV)
-      *temp = (PLFLT) SvNV (sv);
+      **ptr = (PLFLT) SvNV (sv);
     else
-      *temp = (PLFLT) SvIV (sv);
+      **ptr = (PLFLT) SvIV (sv);
+    *n = 1;
   }
   else
     croak ("Wrong type for PLFLT* input");
+}
+
+%}
+
+// Allocate array of PLFLT
+%typemap(perl5,in) PLFLT_p_input* (PLFLT* temp) {
+  int i;
+  SV* sv;
+  I32 n;
+
+  temp = NULL;
+  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  PLplot_perl_get_array_of_double (sv, &n, &temp);
   $target = (PLFLT*) temp;
+}
+
+// Allocate array of PLFLT*
+// FIXME: the code belo does not free memeory in case of errors
+%typemap(perl5,in) PLFLT_pp_input* (PLFLT** temp) {
+  int i;
+  SV* sv;
+  I32 m, n, size;
+  AV* av;
+  
+  temp = NULL;
+  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  if (type != SVt_PVAV)
+    croak ("PLFLT** input must be an array");
+  av = (AV*) sv;
+  n = av_len (av);
+  temp = (PLFLT**) malloc ((n+1) * sizeof (PLFLT*));
+  for (i = 0; i <= n; i++) {
+    SV* elem =  *(av_fetch(av, i, 0));
+    if (SvROK (elem)) 
+      elem = SvRV (elem);
+    PLplot_perl_get_array_of_double (elem, &m, &temp[i]);
+    if (i == 0)
+      size = m;
+    else 
+      if (size != m)
+	croak ("Elements of PLFLT** input must have the same length");
+  }
+  $target = (PLFLT**) temp;
 }
 
 // Allocate array of PLINT
