@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1994/07/01 22:38:48  mjl
+ * Revision 1.38  1994/07/19 22:31:41  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
+ * inclusion changed to /not/ use a search path so that it will work better
+ * with makedepend.
+ *
+ * Revision 1.37  1994/07/01  22:38:48  mjl
  * Minor modification required by new X resource allocation scheme.
  *
  * Revision 1.36  1994/07/01  20:37:21  mjl
@@ -63,7 +69,7 @@
 \*----------------------------------------------------------------------*/
 
 #include "plserver.h"
-#include "plstream.h"
+#include "plplotX.h"
 
 #include <unistd.h>
 #include <fcntl.h>

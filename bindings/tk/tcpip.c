@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/06/30 18:45:04  mjl
+ * Revision 1.7  1994/07/19 22:31:46  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
+ * inclusion changed to /not/ use a search path so that it will work better
+ * with makedepend.
+ *
+ * Revision 1.6  1994/06/30  18:45:04  mjl
  * Minor changes to pass gcc -Wall without warnings and other cleaning up.
  *
  * Revision 1.5  1994/05/14  05:42:52  mjl
@@ -66,7 +72,9 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#if defined(TCL_DP) || defined (TK)
+#include "plDevs.h"
+
+#if defined(PLD_dp) || defined (PLD_tk)
 
 /* This file is meant to be compiled with non-ANSI compilers ("cc").
  * The reason for doing it this way is to ensure that the full C
@@ -92,6 +100,7 @@
 
 #include <stdio.h>
 #include "pdf.h"
+#include "plDevs.h"
 #include <tcl.h>
 #include <tk.h>
 
@@ -290,7 +299,7 @@ pl_Read (fd, buffer, numReq)
  *  This part for Tcl-DP only
 \*----------------------------------------------------------------------*/
 
-#ifdef TCL_DP
+#ifdef PLD_dp
 
 #include <dp.h>
 
@@ -351,7 +360,7 @@ plHost_ID(clientData, interp, argc, argv)
     return TCL_OK;
 }
 
-#endif	/* TCL_DP */
+#endif	/* PLD_dp */
 
 /*
  *--------------------------------------------------------------
@@ -467,7 +476,7 @@ pl_PacketReceive(interp, iodev, pdfs)
     if (iodev->type == 0) 
 	numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
     else {
-#ifdef TCL_DP
+#ifdef PLD_dp
 	if (Tdp_FDIsReady(iodev->fd) & TCL_FILE_READABLE) {
 	    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
 	} else {
@@ -658,4 +667,4 @@ pldummy_tcpip()
     return 0;
 }
 
-#endif	/* defined(TCL_DP) || defined(TK) */
+#endif	/* defined(PLD_dp) || defined(PLD_tk) */

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/06/30 18:47:06  mjl
+ * Revision 1.19  1994/07/19 22:31:45  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
+ * inclusion changed to /not/ use a search path so that it will work better
+ * with makedepend.
+ *
+ * Revision 1.18  1994/06/30  18:47:06  mjl
  * Restructured, to make Tk driver more independent of plserver (tk.c no
  * longer includes this file).  Eventually it will be possible to link the
  * Tk driver with Tcl-DP only, and not X or Tk, and the function of the
@@ -14,7 +20,6 @@
  * command support.  Prototype for plframe() moved here from plplot.h since
  * it shouldn't be necessary for the user to explicitly refer to it any more
  * (in lieu of using Pltk_Init()).
- *
  */
 
 /* 
@@ -28,9 +33,10 @@
 #ifndef __PLSERVER_H__
 #define __PLSERVER_H__
 
-#include <plplotP.h>
-#include <pltcl.h>
-#include <plplotTK.h>
+#include "plplotP.h"
+#include "pltcl.h"
+#include "plplotTK.h"
+#include "plDevs.h"
 
 /* State info for the rendering code */
 

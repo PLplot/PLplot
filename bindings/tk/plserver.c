@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/06/30 18:45:02  mjl
+ * Revision 1.28  1994/07/19 22:31:43  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
+ * inclusion changed to /not/ use a search path so that it will work better
+ * with makedepend.
+ *
+ * Revision 1.27  1994/06/30  18:45:02  mjl
  * Minor changes to pass gcc -Wall without warnings and other cleaning up.
  *
  * Revision 1.26  1994/06/23  22:33:53  mjl
@@ -10,7 +16,6 @@
  * Revision 1.25  1994/06/16  19:04:32  mjl
  * Massively restructured.  Is now just a front-end to the pltkMain()
  * function.  Structured along the preferred lines for extended wish'es.
- *
 */
 
 /* 
@@ -20,23 +25,20 @@
  *
  * Plplot graphics server.
  *
- * Just a 
- * Is typically run as a child process from the plplot TK driver to render
- * output.  Can use either TK send or Tcl-DP RPC for communication,
- * depending on how it is invoked.
+ * Just a front-end to the pltkMain() function.  Structured along the
+ * preferred lines for extended wish'es.  Is typically run as a child
+ * process from the plplot TK driver to render output.  Can use either TK
+ * send or Tcl-DP RPC for communication, depending on how it is invoked.
  *
- * Also plserver can be used the same way as wish or dpwish, as it
+ * Note that plserver can be used the same way as wish or dpwish, as it
  * contains the functionality of each of these (except the -notk Tcl-DP
- * command-line option is not supported).  In the source code I've changed
- * as few lines as possible from the source for "wish" in order to make it
- * easier to track future changes to Tcl/TK and Tcl-DP.  Tcl_AppInit (in
- * tkshell.c) was copied from the Tcl-DP sources and modified accordingly.
+ * command-line option is not supported).  
  */
-
-#include "plserver.h"
 /*
 #define DEBUG
 */
+
+#include "plserver.h"
 
 /* Application-specific command-line options */
 /* Variable declarations */
@@ -176,7 +178,7 @@ Tcl_AppInit(interp)
     if (main && Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
-#ifdef TCL_DP
+#ifdef PLD_dp
     if (Tdp_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
@@ -201,7 +203,7 @@ Tcl_AppInit(interp)
 	dp = 0; tcl_cmd(interp, "set dp 0");
     }
     else if (client_port != NULL) {
-#ifdef TCL_DP
+#ifdef PLD_dp
 	Tcl_SetVar(interp, "client_port", client_port, 0);
 	if (client_host != NULL)
 	    Tcl_SetVar(interp, "client_host", client_host, 0);

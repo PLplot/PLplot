@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1994/07/18 20:30:39  mjl
+ * Revision 1.40  1994/07/19 22:31:48  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
+ * inclusion changed to /not/ use a search path so that it will work better
+ * with makedepend.
+ *
+ * Revision 1.39  1994/07/18  20:30:39  mjl
  * Fixed the eop driver function to flush output even if pause is turned off.
  *
  * Revision 1.38  1994/06/30  18:43:04  mjl
@@ -21,10 +27,8 @@
  *	Maurice LeBrun
  *	30-Apr-93
  *
- *	PLPLOT TCL/TK device driver.
- *
- *	Passes graphics commands to renderer and certain X
- *	events back to user if requested.
+ *	PLPLOT Tcl/Tk and Tcl-DP device drivers.
+ *	Should be broken up somewhat better to prepare for DP w/o X.
  */
 
 /*
@@ -32,11 +36,14 @@
 #define DEBUG
 */
 
-#ifdef TK
+#include "plDevs.h"
+
+#ifdef PLD_tk
 
 #include "plplotP.h"
 #include "plplotTK.h"
 #include "plplotX.h"
+#include "pltcl.h"
 #include "drivers.h"
 #include "metadefs.h"
 #include "plevent.h"
@@ -46,92 +53,53 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#ifdef PLD_dp
+#include <dp.h>
+#endif
+
 /* A handy command wrapper */
 
 #define tk_wr(code) \
 if (code) { abort_session(pls, "Unable to write to pipe"); }
 
-/* Use vfork() on some systems */
-
-#ifndef FORK
-#define FORK fork
-#endif
-
 /*----------------------------------------------------------------------*/
 /* Function prototypes */
 
-static void
-init(PLStream *pls);
+/* various */
 
-static void
-tk_start(PLStream *pls);
-
-static void
-tk_stop(PLStream *pls);
-
-static void
-tk_di(PLStream *pls);
-
-static void
-tk_fill(PLStream *pls);
-
-static void
-WaitForPage(PLStream *pls);
-
-static void
-HandleEvents(PLStream *pls);
-
-static void
-init_server(PLStream *pls);
-
-static void
-launch_server(PLStream *pls);
-
-static void
-flush_output(PLStream *pls);
-
-static void
-plwindow_init(PLStream *pls);
-
-static void
-link_init(PLStream *pls);
+static void	init		(PLStream *pls);
+static void	tk_start	(PLStream *pls);
+static void	tk_stop		(PLStream *pls);
+static void	tk_di		(PLStream *pls);
+static void	tk_fill		(PLStream *pls);
+static void	WaitForPage	(PLStream *pls);
+static void	HandleEvents	(PLStream *pls);
+static void	init_server	(PLStream *pls);
+static void	launch_server	(PLStream *pls);
+static void	flush_output	(PLStream *pls);
+static void	plwindow_init	(PLStream *pls);
+static void	link_init	(PLStream *pls);
 
 /* performs Tk-driver-specific initialization */
 
-static int
-pltkdriver_Init(PLStream *pls);
+static int	pltkdriver_Init	(PLStream *pls);
 
 /* Tcl/TK utility commands */
 
-static void
-tk_wait(PLStream *pls, char *);
-
-static void
-abort_session(PLStream *pls, char *);
-
-static void
-server_cmd(PLStream *pls, char *, int);
-
-static void
-tcl_cmd(PLStream *pls, char *);
-
-static void
-copybuf(PLStream *pls, char *cmd);
-
-static int
-pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	      char *display, char *basename, char *classname);
+static void	tk_wait		(PLStream *pls, char *);
+static void	abort_session	(PLStream *pls, char *);
+static void	server_cmd	(PLStream *pls, char *, int);
+static void	tcl_cmd		(PLStream *pls, char *);
+static void	copybuf		(PLStream *pls, char *cmd);
+static int	pltk_toplevel	(Tk_Window *w, Tcl_Interp *interp,
+				 char *display, char *basename,
+				 char *classname);
 
 /* These are internal TCL commands */
 
-static int
-Abort(ClientData, Tcl_Interp *, int, char **);
-
-static int
-KeyEH(ClientData, Tcl_Interp *, int, char **);
-
-static int
-MouseEH(ClientData, Tcl_Interp *, int, char **);
+static int	Abort		(ClientData, Tcl_Interp *, int, char **);
+static int	KeyEH		(ClientData, Tcl_Interp *, int, char **);
+static int	MouseEH		(ClientData, Tcl_Interp *, int, char **);
 
 /*----------------------------------------------------------------------*\
  * plD_init_dp()
@@ -153,7 +121,7 @@ plD_init_tk(PLStream *pls)
 void
 plD_init_dp(PLStream *pls)
 {
-#ifdef TCL_DP
+#ifdef PLD_dp
     pls->dp = 1;
 #else
     fprintf(stderr, "The Tcl-DP driver hasn't been installed!\n");
@@ -775,7 +743,7 @@ pltkdriver_Init(PLStream *pls)
 	return TCL_ERROR;
     }
 
-#ifdef TCL_DP
+#ifdef PLD_dp
     if (Tdp_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
@@ -789,7 +757,7 @@ pltkdriver_Init(PLStream *pls)
     Tcl_CreateCommand(interp, "wait_until", plWait_Until,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 
-#ifdef TCL_DP
+#ifdef PLD_dp
     Tcl_CreateCommand(interp, "host_id", plHost_ID,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 #endif
@@ -1051,7 +1019,7 @@ launch_server(PLStream *pls)
 /* It's a fork/remsh if on a remote machine */
 
     if ( pls->dp && pls->server_host != NULL ) {
-	if ((pid = FORK()) < 0) {
+	if ((pid = vfork()) < 0) {
 	    abort_session(pls, "Unable to fork server process");
 	}
 	else if (pid == 0) {
@@ -1069,7 +1037,7 @@ launch_server(PLStream *pls)
 
     else {
 	plserver_exec = plFindCommand(pls->plserver);
-	if ( (plserver_exec == NULL) || (pid = FORK()) < 0) {
+	if ( (plserver_exec == NULL) || (pid = vfork()) < 0) {
 	    abort_session(pls, "Unable to fork server process");
 	}
 	else if (pid == 0) {
@@ -1715,4 +1683,4 @@ pldummy_tk()
     return 0;
 }
 
-#endif				/* TK */
+#endif				/* PLD_tk */

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/06/30 18:44:18  mjl
+ * Revision 1.20  1994/07/19 22:31:50  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
+ * inclusion changed to /not/ use a search path so that it will work better
+ * with makedepend.
+ *
+ * Revision 1.19  1994/06/30  18:44:18  mjl
  * Cleaning up, also moved Tk-driver-specific functions to tk.c
  *
  * Revision 1.18  1994/06/23  22:37:30  mjl
@@ -69,7 +75,7 @@ Pltk_Init( Tcl_Interp *interp )
 
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
-#ifdef TCL_DP
+#ifdef PLD_dp
     Tcl_CreateCommand(interp, "host_id", plHost_ID,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 #endif
