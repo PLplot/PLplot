@@ -5,6 +5,8 @@
 	* .cvsignore files: convenience changes.
 	* Makefile.am: reorder src first, then drivers (since dynamic 
 	drivers depend on src).  Will take care of static drivers later.
+	* acconfig.h: ENABLE_DYNDRIVERS DRIVERS_DB, and switch the old
+	drivers list to a new complete devices list.
 	* acconfig.h: ENABLE_DYNDRIVERS DRIVERS_DB, and switch drivers list
 	to complete devices list.
 	* configure.in: incorporate HEAD static and dynamic driver handling
@@ -20,4 +22,8 @@
 	hacked in -lm -ldl -lfreetype (freetype should be option); and
 	disabled use of convenience library for static drivers (to be
 	revisited later).
+	* */Makefile.am: change to LGPL license as agreed with Rafael
+	* COPYING: copy from COPYING.LIB, the text of the LGPL   Otherwise, 
+	automake generates a GPL License file which is not appropriate for 
+	LGPLed PLplot.
 	
