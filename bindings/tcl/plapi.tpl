@@ -71,12 +71,6 @@ zlabel	const char *
 ztick	PLFLT
 nsubz	PLINT
 
-# Enter xor mode (mod != 0) or leave it (mod = 0)
-
-pltclcmd plxormod void
-mod PLINT
-st  PLINT&
-
 # Set color, map 0.  Argument is integer between 0 and 15.
 
 pltclcmd plcol0 void
@@ -189,6 +183,11 @@ b	PLINT *
 # void
 # c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
 
+# Get the device (keyword) name
+
+pltclcmd plgdev void
+devnam	char *
+
 # Retrieve current window into device space.
 
 pltclcmd plgdidev void
@@ -210,12 +209,27 @@ ymin	PLFLT&
 xmax	PLFLT&
 ymax	PLFLT&
 
+# Get the escape character for text strings.
+
+pltclcmd plgesc void
+esc	char&
+
 # Get family file parameters.
 
 pltclcmd plgfam void
 fam	PLINT&
 num	PLINT&
 bmax	PLINT&
+
+# Get the output file name.
+
+pltclcmd plgfnam void
+fnam	char *
+
+# Get the current run level.
+
+pltclcmd plglevel void
+level	PLINT&
 
 # Get output device parameters.
 
@@ -307,6 +321,13 @@ pltclcmd pllab void
 xlabel	const char *
 ylabel	const char *
 tlabel	const char *
+
+# Set the 3D position of the light source.
+
+pltclcmd pllightsource void
+x	PLFLT
+y	PLFLT
+z	PLFLT
 
 # Draws line segments connecting a series of points.
 # The original tclAPI.c version of this had a defaultable n capability,
@@ -425,22 +446,17 @@ pltclcmd plschr void
 def	PLFLT
 scale	PLFLT
 
-# Set number of colors in cmap 0.
-
-pltclcmd plscmap0n void
-ncol0	PLINT
-
-# Set number of colors in cmap 1.
-
-pltclcmd plscmap1n void
-ncol1	PLINT
-
 # Set color map 0 colors by 8 bit RGB values.
 
 pltclcmd plscmap0 void
 r	PLINT *
 g	PLINT *
 b	PLINT *
+ncol0	PLINT
+
+# Set number of colors in cmap 0.
+
+pltclcmd plscmap0n void
 ncol0	PLINT
 
 # Set color map 1 colors by 8 bit RGB values.
@@ -462,6 +478,11 @@ coord1		PLFLT *
 coord2		PLFLT *
 coord3		PLFLT *
 rev		PLINT *
+
+# Set number of colors in cmap 1.
+
+pltclcmd plscmap1n void
+ncol1	PLINT
 
 # Set a given color from color map 0 by 8 bit RGB value.
 
@@ -487,11 +508,6 @@ color	PLINT
 
 pltclcmd plsdev void
 devnam	const char *
-
-# Get the device (keyword) name
-
-pltclcmd plgdev void
-devnam	char *
 
 # Set window into device space using margin, aspect ratio, and
 # justification.
@@ -538,11 +554,6 @@ ymax	PLFLT
 pltclcmd plsesc void
 esc	char
 
-# Get the escape character for text strings.
-
-pltclcmd plgesc void
-esc	char&
-
 # Set family file parameters
 
 pltclcmd plsfam void
@@ -554,16 +565,6 @@ bmax	PLINT
 
 pltclcmd plsfnam void
 fnam	const char *
-
-# Get the output file name.
-
-pltclcmd plgfnam void
-fnam	char *
-
-# Get the current run level.
-
-pltclcmd plglevel void
-level	PLINT&
 
 # Set up lengths of major tick marks.
 
@@ -717,6 +718,12 @@ xmin	PLFLT
 xmax	PLFLT
 ymin	PLFLT
 ymax	PLFLT
+
+# Enter xor mode (mod != 0) or leave it (mod = 0)
+
+pltclcmd plxormod void
+mod PLINT
+st  PLINT&
 
 ###############################################################################
 # The rest are kept in as reminders to how Tcl API might be improved 
