@@ -55,6 +55,7 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c \
 	 $(MV) $(PYQT_PYTHON_EXE) ..
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
+	@-$(CP) $(PYQT_PYTHON_EXE) $(PYTHON_INSTDIR)
 	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
 	  echo "PLplot Python module installation warning:" ; \
 	  echo "" ; \
@@ -62,7 +63,7 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c \
 	  echo "plmodule.so is not the same as the expected Python location for"  ; \
 	  echo "dynamic libraries $(PYTHON_MACH_DIR)"  ; \
 	  echo "so you must set the environment variable PYTHONDIR to the install"  ; \
-	  echo "location in order to make the Python PLplot module(s) work."
+	  echo "location in order to make the Python PLplot module(s) work." ; \
 	fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	@-cd $(top_srcdir)/examples/python ; \

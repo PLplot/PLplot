@@ -55,7 +55,8 @@ plmodule$(SO): $(PLLIBS) python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	@echo " "
 	@echo "Building Python module."
 	@echo " "
-	@cd python_dynamic ; make -s distclean
+# not on first time where distclean won't work.
+#	@cd python_dynamic ; make -s distclean
 	@echo '*shared*' > python_dynamic/Setup.in
 	echo 'pl plmodule.c plmodule2.c -I. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -L.. $(PLLIB_LDC) $(LDC_LIBS) $(RPATH)' >> python_dynamic/Setup.in
 	cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
