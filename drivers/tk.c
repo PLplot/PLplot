@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.50  1995/04/12 08:07:30  mjl
+ * Revision 1.51  1995/05/06 17:15:14  mjl
+ * Now saves the child process PID and uses it to wait for it to complete at
+ * exit, for a bit nicer of error termination.  Still needs to be tested on
+ * more platforms.  Improved debugging output and switched to new pldebug()
+ * function.  Added widget configure commands to set ncol0 and ncol1.
+ *
+ * Revision 1.50  1995/04/12  08:07:30  mjl
  * Offloaded the C code for cleaning up from tk.c into the proc
  * plclient_link_end in plclient.tcl.  The Tcl code was modified to better
  * handshake with plserver.
@@ -51,15 +57,17 @@
  */
 
 /*
-#define DEBUG_ENTER
-#define DEBUG
 */
+
+#define DEBUG
+#define DEBUG_ENTER
 
 #include "plDevs.h"
 
 #ifdef PLD_tk
 
 #include "plplotP.h"
+#include "pltk.h"
 #include "plplotTK.h"
 #include "plplotX.h"
 #include "pltcl.h"
@@ -682,11 +690,13 @@ tk_start(PLStream *pls)
 
     if (pls->dp) {
 	Tcl_SetVar(dev->interp, "dp", "1", TCL_GLOBAL_ONLY);
+	dev->updatecmd = "dp_update";
     }
     else {
 	char name[80];
 	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
+	dev->updatecmd = "update";
 	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
 	    abort_session(pls, "Unable to create top-level window");
     }
@@ -752,6 +762,13 @@ tk_stop(PLStream *pls)
 /* Kill plserver */
 
     tcl_cmd(pls, "plclient_link_end");
+
+/* Wait for child process to complete */
+
+    if (dev->child_pid) {
+	if (waitpid(dev->child_pid, NULL, 0) != dev->child_pid)
+	    fprintf(stderr, "tk_stop: waidpid error");
+    }
 
 /* Blow away interpreter */
 
@@ -972,10 +989,8 @@ init_server(PLStream *pls)
 
     dbug_enter("init_server");
 
-#ifdef DEBUG
-    fprintf(stderr, "%s -- PID: %d, PGID: %d, PPID: %d\n",
+    pldebug("init_server", "%s -- PID: %d, PGID: %d, PPID: %d\n",
 	    __FILE__, (int) getpid(), (int) getpgrp(), (int) getppid());
-#endif
 
 /* If no means of communication provided, need to launch plserver */
 
@@ -1016,7 +1031,6 @@ launch_server(PLStream *pls)
     TkDev *dev = (TkDev *) pls->dev;
     char *argv[20], *plserver_exec, *ptr;
     int i;
-    pid_t pid;
 
     dbug_enter("launch_server");
 
@@ -1096,8 +1110,9 @@ launch_server(PLStream *pls)
 
 /* Add terminating null */
 
+    argv[i++] = NULL;
 #ifdef DEBUG
-    {
+    if (pls->debug) {
 	int j;
 	fprintf(stderr, "argument list: \n   ");
 	for (j = 0; j < i; j++) 
@@ -1105,16 +1120,15 @@ launch_server(PLStream *pls)
 	fprintf(stderr, "\n");
     }
 #endif
-    argv[i++] = NULL;
 
 /* Start server process */
 /* It's a fork/remsh if on a remote machine */
 
     if ( pls->dp && pls->server_host != NULL ) {
-	if ((pid = vfork()) < 0) {
+	if ((dev->child_pid = vfork()) < 0) {
 	    abort_session(pls, "Unable to fork server process");
 	}
-	else if (pid == 0) {
+	else if (dev->child_pid == 0) {
 	    fprintf(stderr, "Starting up %s on node %s\n", pls->plserver,
 		    pls->server_host);
 
@@ -1129,10 +1143,10 @@ launch_server(PLStream *pls)
 
     else {
 	plserver_exec = plFindCommand(pls->plserver);
-	if ( (plserver_exec == NULL) || (pid = vfork()) < 0) {
+	if ( (plserver_exec == NULL) || (dev->child_pid = vfork()) < 0) {
 	    abort_session(pls, "Unable to fork server process");
 	}
-	else if (pid == 0) {
+	else if (dev->child_pid == 0) {
 
 	/* Don't kill plserver on a ^C if pls->server_nokill is set */
 	/* Contributed by Ian Searle */
@@ -1197,8 +1211,9 @@ static void
 plwindow_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char str[10], *pname;
+    char command[100], *pname;
     int i;
+    unsigned int bg;
 
     dbug_enter("plwindow_init");
 
@@ -1244,24 +1259,31 @@ plwindow_init(PLStream *pls)
 /* Now we should have the actual PLplot widget name in $plwidget */
 /* Configure remote PLplot stream. */
 
-/* Configure background color if set */
+/* Configure background color if anything other than black */
 /* The default color is handled from a resource setting in plconfig.tcl */
 
-    if (pls->cmap0setcol[0]) {
-	long bg;
-
-	bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) |
-	    (pls->cmap0[0].r << 16);
-
-	sprintf(str, "#%06x", (unsigned int) (bg & 0xFFFFFF));
-	Tcl_SetVar(dev->interp, "bg", str, 0);
-	server_cmd( pls, "$plwidget configure -bg $bg", 0 );
+    bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) | (pls->cmap0[0].r << 16);
+    if (bg > 0) {
+	sprintf(command, "$plwidget configure -bg #%06x", bg);
+	server_cmd( pls, command, 0 );
     }
 
 /* nopixmap option */
 
     if (pls->nopixmap) 
 	server_cmd( pls, "$plwidget cmd plsetopt -nopixmap", 0 );
+
+/* color map options */
+
+    if (pls->ncol0) {
+	sprintf(command, "$plwidget cmd plsetopt -ncol0 %d", pls->ncol0);
+	server_cmd( pls, command, 0 );
+    }
+
+    if (pls->ncol1) {
+	sprintf(command, "$plwidget cmd plsetopt -ncol1 %d", pls->ncol1);
+	server_cmd( pls, command, 0 );
+    }
 
 /* Start up remote PLplot */
 
@@ -1394,9 +1416,11 @@ CheckForEvents(PLStream *pls)
 static void
 HandleEvents(PLStream *pls)
 {
+    TkDev *dev = (TkDev *) pls->dev;
+
     dbug_enter("HandleEvents");
 
-    tcl_cmd(pls, "$update_proc");
+    Tcl_VarEval(dev->interp, dev->updatecmd, (char **) NULL);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1420,15 +1444,13 @@ flush_output(PLStream *pls)
 
     dbug_enter("flush_output");
 
-    tcl_cmd(pls, "$update_proc");
+    HandleEvents(pls);
 
 /* Send packet -- plserver filehandler will be invoked automatically. */
 
     if (pdfs->bp > 0) {
-#ifdef DEBUG
-	fprintf(stderr, "%s: Flushing buffer, bytes = %ld\n",
+	pldebug("flush_output", "%s: Flushing buffer, bytes = %ld\n",
 		__FILE__, pdfs->bp);
-#endif
 	if (pl_PacketSend(dev->interp, dev->iodev, pls->pdfs)) {
 	    fprintf(stderr, "Packet send failed:\n\t %s\n",
 		    dev->interp->result);
@@ -1573,10 +1595,9 @@ LookupTkKeyEvent(PLStream *pls, Tcl_Interp *interp, int argc, char **argv)
 	break;
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "KeyEH: stream: %d, Keyname %s, hex %x, ASCII: %s\n",
+    pldebug("LookupTkKeyEvent",
+	    "KeyEH: stream: %d, Keyname %s, hex %x, ASCII: %s\n",
 	    (int) pls->ipls, keyname, (unsigned int) gin->keysym, gin->string);
-#endif
 
     return TCL_OK;
 }
@@ -1618,11 +1639,9 @@ LookupTkButtonEvent(PLStream *pls, Tcl_Interp *interp, int argc, char **argv)
     gin->dY     = atof(argv[6]);
     gin->keysym = 0x20;
 
-#ifdef DEBUG
-    fprintf(stderr,
-	    "ButtonEH: button %d, state %d, pX: %d, pY: %d, dX: %f, dY: %f\n",
+    pldebug("LookupTkButtonEvent",
+	    "button %d, state %d, pX: %d, pY: %d, dX: %f, dY: %f\n",
 	    gin->button, gin->state, gin->pX, gin->pY, gin->dX, gin->dY);
-#endif
 
     return TCL_OK;
 }
@@ -1931,9 +1950,7 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
     int result;
 
     dbug_enter("server_cmd");
-#ifdef DEBUG
-    fprintf(stderr, "Sending command: %s\n", cmd);
-#endif
+    pldebug("server_cmd", "Sending command: %s\n", cmd);
 
     if (pls->dp) {
 	if (nowait) 
@@ -1971,10 +1988,8 @@ tcl_cmd(PLStream *pls, char *cmd)
     TkDev *dev = (TkDev *) pls->dev;
 
     dbug_enter("tcl_cmd");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "Evaluating command: %s\n", cmd);
-#endif
 
+    pldebug("tcl_cmd", "Evaluating command: %s\n", cmd);
     if (Tcl_VarEval(dev->interp, cmd, (char **) NULL) != TCL_OK) {
 	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
 		cmd, dev->interp->result);
