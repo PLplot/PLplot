@@ -21,6 +21,13 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+# This flag only required for top-level Makefile.am.  
+# It insures you only have to run cf/bootstrap.sh once on the first
+# clean install.  After that, aclocal (and automake, autoconf, and 
+# ./configure) called automatically whenever required by a change to 
+# configure.ac or any file in the cf subdirectory.
+ACLOCAL_AMFLAGS = -I cf
+
 src_dirs = lib src include data bindings
 other_dirs = examples utils test scripts doc pkgcfg cf
 
