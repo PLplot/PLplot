@@ -49,7 +49,6 @@
 /* Pixels/mm */
 
 #define PHYSICAL	0		/* Enables physical scaling.. */
-#define DPMM		2.88		/* ..just experimental for now */
 
 /* These need to be distinguished since the handling is slightly different. */
 
@@ -1360,39 +1359,41 @@ plwindow_init(PLStream *pls)
 static void
 set_windowname(PLStream *pls)
 {
-    char *pname;
-    int i;
+  char *pname;
+  int i;
 
-/* Set to "plclient" if not initialized via plargs or otherwise */
+  /* Set to "plclient" if not initialized via plargs or otherwise */
+    
+  if (pls->program == NULL)
+    pls->program = "plclient";
 
-    if (pls->program == NULL)
-	pls->program = "plclient";
+  /* Eliminate any leading path specification */
 
-/* Eliminate any leading path specification */
+  pname = strrchr(pls->program, '/');
+  if (pname) 
+    pname++;
+  else
+    pname = pls->program;
 
-    pname = strrchr(pls->program, '/');
-    if (pname) 
-	pname++;
-    else
-	pname = pls->program;
-
+  if (pls->plwindow == NULL) { /* dont override -plwindow cmd line option */
     pls->plwindow = (char *) malloc(10+(strlen(pname)) * sizeof(char));
 
-/* Allow for multiple widgets created by multiple streams */
+    /* Allow for multiple widgets created by multiple streams */
 
     if (pls->ipls == 0)
-	sprintf(pls->plwindow, ".%s", pname);
+      sprintf(pls->plwindow, ".%s", pname);
     else
-	sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
+      sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
 
-/* Replace any ' 's with '_'s to avoid quoting problems. */
-/* Replace any '.'s (except leading) with '_'s to avoid bad window names. */
+    /* Replace any ' 's with '_'s to avoid quoting problems. */
+    /* Replace any '.'s (except leading) with '_'s to avoid bad window names. */
 
     for (i = 0; i < strlen(pls->plwindow); i++) {
-	if (pls->plwindow[i] == ' ') pls->plwindow[i] = '_';
-	if (i == 0) continue;
-	if (pls->plwindow[i] == '.') pls->plwindow[i] = '_';
+      if (pls->plwindow[i] == ' ') pls->plwindow[i] = '_';
+      if (i == 0) continue;
+      if (pls->plwindow[i] == '.') pls->plwindow[i] = '_';
     }
+  }
 }
 
 /*--------------------------------------------------------------------------*\
