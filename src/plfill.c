@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/07/01 22:13:37  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.11  1993/07/16 22:36:16  mjl
+   Algorithm improved and simplified, submitted by Wesley Ebisuzaki.
 
+ * Revision 1.10  1993/07/01  22:13:37  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.9  1993/01/23  05:54:04  mjl
  * Now holds all routines dealing with fills.
  *
@@ -51,6 +54,7 @@
 #define PL_NEED_SIZE_T
 
 #include "plplotP.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -81,13 +85,13 @@ static void  buildlist	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 void
 c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 {
-    PLINT i, level;
-    PLINT xp, yp, xpmin, ypmin, xp1, yp1, xp2, yp2, xp3, yp3;
+    PLINT i, j, level;
+    PLINT xp1, yp1, xp2, yp2, xp3, yp3;
     PLINT k, dinc;
-    PLFLT ci, si, thetd;
+    PLFLT ci, si;
     PLINT *inclin, *delta, nps;
     PLFLT xpmm, ypmm;
-    short swap;
+    double temp;
 
     plP_glev(&level);
     if (level < 3)
@@ -103,76 +107,43 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
     plP_gpat(&inclin, &delta, &nps);
     plP_gpixmm(&xpmm, &ypmm);
 
+/* Loop over sets of lines in pattern */
+
     for (k = 0; k < nps; k++) {
 	bufferleng = 0;
 
-	if (ABS(inclin[k]) <= 450) {
-	    thetd = atan(tan(DTOR * inclin[k] / 10.) * ypmm / xpmm);
-	    swap = 0;
-	}
-	else {
-	    thetd = atan(tan(DTOR * SIGN(inclin[k]) *
-			     (ABS(inclin[k]) - 900) / 10.) * xpmm / ypmm);
-	    swap = 1;
-	}
-	ci = cos(thetd);
-	si = sin(thetd);
-	if (swap)
-	    dinc = delta[k] * SSQR(xpmm * ABS(ci), ypmm * ABS(si)) / 1000.;
-	else
-	    dinc = delta[k] * SSQR(ypmm * ABS(ci), xpmm * ABS(si)) / 1000.;
+        temp = DTOR * inclin[k] * 0.1;
+        si = sin(temp) * ypmm;
+        ci = cos(temp) * xpmm;
+	/* normalize: 1 = si*si + ci*ci */
+        temp = sqrt((double) (si*si + ci*ci));
+	si /= temp;
+	ci /= temp;
 
-	xpmin = plP_wcpcx(x[0]);
-	ypmin = plP_wcpcy(y[0]);
-	for (i = 1; i < n; i++) {
-	    xp = plP_wcpcx(x[i]);
-	    yp = plP_wcpcy(y[i]);
-	    xpmin = MIN(xpmin, xp);
-	    ypmin = MIN(ypmin, yp);
-	}
+	dinc = delta[k] * SSQR(ypmm * ABS(ci), xpmm * ABS(si)) / 1000.;
+	if (dinc < 0) dinc = -dinc;
+	if (dinc == 0) dinc = 1;
 
-	xp1 = plP_wcpcx(x[0]) - xpmin;
-	yp1 = plP_wcpcy(y[0]) - ypmin;
+	xp1 = plP_wcpcx(x[n-2]);
+	yp1 = plP_wcpcy(y[n-2]);
 	tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) si);
 
-	xp2 = plP_wcpcx(x[1]) - xpmin;
-	yp2 = plP_wcpcy(y[1]) - ypmin;
+	xp2 = plP_wcpcx(x[n-1]);
+	yp2 = plP_wcpcy(y[n-1]);
 	tran(&xp2, &yp2, (PLFLT) ci, (PLFLT) si);
 
-	for (i = 2; i < n; i++) {
-	    xp3 = plP_wcpcx(x[i]) - xpmin;
-	    yp3 = plP_wcpcy(y[i]) - ypmin;
+/* Loop over points in polygon */
+
+	for (i = 0; i < n; i++) {
+	    xp3 = plP_wcpcx(x[i]);
+	    yp3 = plP_wcpcy(y[i]);
 	    tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
-	    if (swap)
-		buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
-	    else
-		buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
+	    buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
 	    xp1 = xp2;
 	    yp1 = yp2;
 	    xp2 = xp3;
 	    yp2 = yp3;
 	}
-	xp3 = plP_wcpcx(x[0]) - xpmin;
-	yp3 = plP_wcpcy(y[0]) - ypmin;
-	tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
-
-	if (swap)
-	    buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
-	else
-	    buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
-
-	xp1 = xp2;
-	yp1 = yp2;
-	xp2 = xp3;
-	yp2 = yp3;
-	xp3 = plP_wcpcx(x[1]) - xpmin;
-	yp3 = plP_wcpcy(y[1]) - ypmin;
-	tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
-
-	if (swap)
-	    buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
-	else
-	    buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
 
 /* Sort list by y then x */
 
@@ -182,33 +153,27 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 /* OK, now do the hatching */
 
 	i = 0;
+
 	while (i < bufferleng) {
-	    if (swap) {
-		xp1 = buffer[i + 1];
-		yp1 = buffer[i];
-	    }
-	    else {
-		xp1 = buffer[i];
-		yp1 = buffer[i + 1];
-	    }
+	    xp1 = buffer[i];
+	    yp1 = buffer[i + 1];
 	    i += 2;
 	    xp2 = xp1;
 	    yp2 = yp1;
 	    tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) (-si));
-	    plP_movphy(xp1 + xpmin, yp1 + ypmin);
-	    if (swap) {
-		xp1 = buffer[i + 1];
-		yp1 = buffer[i];
-	    }
-	    else {
-		xp1 = buffer[i];
-		yp1 = buffer[i + 1];
-	    }
+	    plP_movphy(xp1, yp1);
+	    xp1 = buffer[i];
+	    yp1 = buffer[i + 1];
 	    i += 2;
-	    if ((swap && xp2 != xp1) || (!swap && yp2 != yp1))
+	    if (yp2 != yp1) {
+		fprintf(stderr, "plfill: oh oh we are lost\n");
+		for (j = 0; j < bufferleng; j+=2) {
+		    fprintf(stderr, "plfill: %d %d\n",buffer[j],buffer[j+1]);
+		}
 		continue;	/* Uh oh we're lost */
+	    }
 	    tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) (-si));
-	    plP_draphy(xp1 + xpmin, yp1 + ypmin);
+	    plP_draphy(xp1, yp1);
 	}
     }
     free((void *) buffer);
@@ -226,45 +191,52 @@ tran(PLINT *a, PLINT *b, PLFLT c, PLFLT d)
     ta = *a;
     tb = *b;
 
-    *a = ROUND(ta * c + tb * d);
-    *b = ROUND(tb * c - ta * d);
+    *a = floor((double) (ta * c + tb * d + 0.5));
+    *b = floor((double) (tb * c - ta * d + 0.5));
 }
 
 static void
 buildlist(PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
 	  PLINT dinc)
 {
-    PLINT i;
-    PLINT dx, dy, cstep, nstep, lines, ploty, plotx;
+    PLINT min_y, max_y;
+    PLINT dx, dy, cstep, nstep, ploty, plotx;
 
     dx = xp2 - xp1;
     dy = yp2 - yp1;
 
-    if (dy == 0)
+    if (dy == 0) {
+	if (yp2 > yp3 && ((yp2 % dinc) == 0)) 
+	    addcoord(xp2, yp2);
 	return;
+    }
 
-    cstep = (yp2 > yp1 ? 1 : -1);
+    if (dy > 0) {
+	cstep = 1;
+	min_y = yp1;
+	max_y = yp2;
+    }
+    else {
+	cstep = -1;
+	min_y = yp2;
+	max_y = yp1;
+    }
+
     nstep = (yp3 > yp2 ? 1 : -1);
-    if (yp3 == yp2)
-	nstep = 0;
+    if (yp3 == yp2) nstep = 0;
 
     /* Build coordinate list */
-    lines = ABS(dy) / dinc + 1;
-    if (cstep == 1 && yp1 > 0)
-	ploty = (yp1 / dinc + 1) * dinc;
-    else if (cstep == -1 && yp1 < 0)
-	ploty = (yp1 / dinc - 1) * dinc;
-    else
-	ploty = (yp1 / dinc) * dinc;
+    ploty = (min_y / dinc) * dinc;
+    if (ploty < min_y) ploty += dinc;
 
-    for (i = 0; i < lines; i++) {
-	if (!BETW(ploty, yp1, yp2))
-	    break;
-	plotx = xp1 + ROUND(((float) (ploty - yp1) * dx) / dy + .5);
-	/* Check for extremum at end point, otherwise add to coord list */
-	if (!((ploty == yp1) || (ploty == yp2 && nstep != cstep)))
-	    addcoord(plotx, ploty);
-	ploty += cstep * dinc;
+    for (; ploty <= max_y; ploty += dinc) {
+	if (ploty == yp1) continue;
+	if (ploty == yp2) {
+	    if (cstep == -nstep) continue;
+	    if (yp2 == yp3 && yp1 > yp2) continue;
+	}
+	plotx = xp1 + floor(((double) (ploty - yp1) * dx) / dy + 0.5);
+	addcoord(plotx, ploty);
     }
 }
 
@@ -291,10 +263,10 @@ addcoord(PLINT xp1, PLINT yp1)
 static int
 compar(const void *pnum1, const void *pnum2)
 {
-    struct point *pnt1, *pnt2;
+    const struct point *pnt1, *pnt2;
 
-    pnt1 = (struct point *) pnum1;
-    pnt2 = (struct point *) pnum2;
+    pnt1 = (const struct point *) pnum1;
+    pnt2 = (const struct point *) pnum2;
 
     if (pnt1->y < pnt2->y)
 	return (-1);
