@@ -20,8 +20,21 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 pkgconfigdir = $(libdir)/pkgconfig
+
 if with_double
 pkgconfig_DATA = plplot.pc
 else
 pkgconfig_DATA = plplot-float.pc
 endif
+
+LIBPLPLOT_LAI = $(top_builddir)/src/.libs/libplplot@LIB_TAG@.lai
+
+install-data-hook:
+	deplibs= ; \
+	for i in `grep ^dependency_libs $(LIBPLPLOT_LAI) \
+	         | sed "s/^dependency_libs='//" | sed "s/'//"` ; do \
+	    lib=`echo $$i | sed 's:^.*/lib:-l:' | sed 's/.la$$//'` ; \
+	    deplibs="$$deplibs $$lib" ; \
+	done ; \
+	sed -i "s/#DEPLIBS#/$$deplibs/" \
+	    $(DESTDIR)$(pkgconfigdir)/$(pkgconfig_DATA)

@@ -8,5 +8,5 @@ Name: PLplot
 Description: Scientific plotting library (double precision)
 Requires:
 Version: @VERSION@
-Libs: -L${libdir} -lplplotd
+Libs: -L${libdir} -lplplotd #DEPLIBS#
 Cflags: -I${includedir}
