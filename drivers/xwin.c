@@ -1,4 +1,9 @@
 /* $Id$
+ * $Log$
+ * Revision 1.15  1993/03/06 05:00:39  mjl
+ * Fixed a bug in foreground plotting for grayscale devices when the bg color
+ * was set to black.
+ *
  * Revision 1.6  1992/10/22  17:05:01  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -76,7 +81,7 @@ typedef struct {
     double		xscale_dev;
     double		yscale_dev;
 
-    int			grayscale;
+    int			color;
     XColor		cmap0[16];
     XColor		bgcolor;
     XColor		fgcolor;
@@ -275,8 +280,10 @@ xw_color(PLStream *pls)
     XwDev *xwd = &(xwdev[id]);
     int icol0 = pls->icol0;
 
-    if (!pls->color)
+    if (!xwd->color) {
 	xwd->curcolor.pixel = xwd->fgcolor.pixel;
+	XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+    }
     else {
 	if (icol0 == PL_RGB_COLOR) {
 	    xwd->curcolor.red = (pls->curcolor.r << 8);
@@ -692,17 +699,16 @@ xw_colini(PLStream *pls)
     XwDev *xwd = &(xwdev[id]);
     int i, gslevbg, gslevfg;
 
-    xwd->grayscale = AreWeGrayscale(xwd->display);
-
 /*
 * Default is color IF the user hasn't specified and IF the output device is
 * not grayscale.  
 */
-    if (!pls->colorset) {
-	if (xwd->grayscale)
-	    pls->color = 0;
-	else
-	    pls->color = 1;
+
+    if (pls->colorset)
+	xwd->color = pls->color;
+    else {
+	pls->color = 1;
+	xwd->color = !AreWeGrayscale(xwd->display);
     }
 
 /*
@@ -713,7 +719,7 @@ xw_colini(PLStream *pls)
 * Note that black & white allocations should never fail.
 */
 
-    if (xwd->grayscale && !pls->bgcolorset) {
+    if (!xwd->color && !pls->bgcolorset) {
 	pls->bgcolor.r = 255;
 	pls->bgcolor.g = 255;
 	pls->bgcolor.b = 255;
@@ -723,7 +729,7 @@ xw_colini(PLStream *pls)
 	       (float) pls->bgcolor.g +
 	       (float) pls->bgcolor.b) / 3.;
 
-    if (xwd->grayscale) {
+    if (!xwd->color) {
 	if (gslevbg < 128)
 	    gslevbg = 0;
 	else
@@ -773,7 +779,7 @@ xw_colini(PLStream *pls)
 
 /* Allocate colors in palette 0 */
 
-    if (pls->color) {
+    if (xwd->color) {
 	for (i = 0; i < pls->ncol0; i++) {
 
 	    PLColor_to_XColor(&xwd->cmap0[i], &pls->cmap0[i]);
