@@ -58,6 +58,10 @@ links:
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
   @copy $(PLDIR)\lib\*.map $(PLTMP)\*.map
+  @copy $(PLDIR)\src\setup.py $(PLTMP)\setup.py
+  @copy $(PLDIR)\bindings\python\plmodule.c $(PLTMP)\plmodule.c
+  @copy $(PLDIR)\bindings\python\plmodule.h $(PLTMP)\plplot\plmodule.h
+  @copy $(PLDIR)\bindings\python\pyqt_plmodule.c $(PLTMP)\pyqt_plmodule.c
 #
 # Copy the local source files to temp\
 #
@@ -90,6 +94,7 @@ common:
 #define LIB_DIR "$(PLLIB:\=\\)"
 #define BIN_DIR "$(PLBIN:\=\\)"
 #define PLPLOT_VERSION "5.1.0"
+#define PL_DOUBLE
 #endif
 <<keep
 # Create pldevs.h file
