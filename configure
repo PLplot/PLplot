@@ -431,6 +431,15 @@ test -n "$uname_found" && test -n "$verbose" && echo "	setting uname_found to $u
 
  if test $uname_found -eq 1 ; then
     system=`uname -s`-`uname -r`
+
+    # Fix Cray braindamage
+
+    case "$system" in
+	sn* )
+	    system=`uname -m`-`uname -r`
+	;;
+    esac
+
 fi 
 
 if test "$system" ; then
@@ -772,7 +781,7 @@ case $system in
     ultrix*|ULTRIX* ) 
 	with_gcc="yes"
     ;;
-    unicos*|Unicos*|UNICOS*|Cray*|cray*|sn* ) 
+    CRAY* ) 
 	F77="cf77"
 	with_gcc="no"
 	with_f2c="no"
@@ -1010,8 +1019,7 @@ case $system in
 	    PROF_FLAG_LC="-p -static"
 	fi
     ;;
-    unicos*|Unicos*|UNICOS*|Cray*|cray*|sn* ) 
-
+    CRAY* ) 
 	if test "$with_debug" = "yes" ; then
 	    DEBUG_FLAG_F="-Wf\"-ez\""
 	fi
@@ -1029,11 +1037,11 @@ case $system in
 
 	    machine=`uname -m`
 	    case "$machine" in
-		"CRAY C90"|"CRAY Y-MP"|"cray y-mp"|y*|Y*|CRAY*1|cray*1|1 )
-		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci
-		;;
-		CRAY*2|cray*2|2 )
+		CRAY-2 )
 		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci -lu
+		;;
+		* )
+		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci
 		;;
 	    esac
 	fi
@@ -1896,11 +1904,20 @@ fi
 # Xbsd library is really needed.  libsocket and libnsl are needed on
 # some SysV systems.  libieee.a is supposed to be a Linux deal, dunno if
 # it's important either.
+#
+# On some systems the linker doesn't return an error code to the shell if
+# you try to link with nonexistant libraries, so need to handle these
+# explicitly.
 #--------------------------------------------------------------------
 
 if test -z "$EXTRA_LIBS"; then
     EXTRA_LIBS=
-    ac_save_LIBS="${LIBS}"
+    case $system in 
+	CRAY* ) 
+	    EXTRA_LIBS="$EXTRA_LIBS -lm"
+	;;
+	* ) 	
+	    ac_save_LIBS="${LIBS}"
 LIBS="${LIBS} -lXbsd"
 ac_have_lib=""
 test -n "$silent" || echo "checking for -lXbsd"
@@ -1923,7 +1940,7 @@ else
    :; 
 fi
 
-    ac_save_LIBS="${LIBS}"
+	    ac_save_LIBS="${LIBS}"
 LIBS="${LIBS} -lsocket"
 ac_have_lib=""
 test -n "$silent" || echo "checking for -lsocket"
@@ -1946,7 +1963,7 @@ else
    :; 
 fi
 
-    ac_save_LIBS="${LIBS}"
+	    ac_save_LIBS="${LIBS}"
 LIBS="${LIBS} -lnsl"
 ac_have_lib=""
 test -n "$silent" || echo "checking for -lnsl"
@@ -1969,7 +1986,7 @@ else
    :; 
 fi
 
-    ac_save_LIBS="${LIBS}"
+	    ac_save_LIBS="${LIBS}"
 LIBS="${LIBS} -lieee"
 ac_have_lib=""
 test -n "$silent" || echo "checking for -lieee"
@@ -1992,7 +2009,7 @@ else
    :; 
 fi
 
-    ac_save_LIBS="${LIBS}"
+	    ac_save_LIBS="${LIBS}"
 LIBS="${LIBS} -lm"
 ac_have_lib=""
 test -n "$silent" || echo "checking for -lm"
@@ -2015,6 +2032,8 @@ else
    :; 
 fi
 
+	;;
+    esac
 fi
 LIBS="$LIBS $EXTRA_LIBS"
 

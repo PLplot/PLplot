@@ -99,6 +99,15 @@ AC_CONFIG_HEADER(tmp/plConfig.h tmp/plDevs.h)
 AC_PROGRAM_CHECK(uname_found, uname, 1, 0)
 [ if test $uname_found -eq 1 ; then
     system=`uname -s`-`uname -r`
+
+    # Fix Cray braindamage
+
+    case "$system" in
+	sn* )
+	    system=`uname -m`-`uname -r`
+	;;
+    esac
+
 fi ]
 
 if test "$system" ; then
