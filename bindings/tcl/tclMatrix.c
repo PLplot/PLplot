@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1995/06/30 13:47:35  furnish
+ * Revision 1.12  1995/09/21 10:20:31  furnish
+ * Fix info command to not append trailing space, as this wrecks Tcl
+ * expressions which want to treat the element as a number.
+ *
+ * Revision 1.11  1995/06/30  13:47:35  furnish
  * Took out yesterday's hack, which didn't work, and put in a new one
  * which seems to.
  *
@@ -608,8 +612,12 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
     else if ((c == 'i') && (strncmp(argv[0], "info", length) == 0)) {
 	for (i = 0; i < matPtr->dim; i++) {
-	    sprintf(tmp, "%d ", matPtr->n[i]);
-	    Tcl_AppendResult(interp, tmp, (char *) NULL);
+	    sprintf(tmp, "%d", matPtr->n[i]);
+	/* Must avoid trailing space. */
+	    if (i < matPtr->dim - 1)
+		Tcl_AppendResult(interp, tmp, " ", (char *) NULL);
+	    else
+		Tcl_AppendResult(interp, tmp, (char *) NULL);
 	}
 	return TCL_OK;
     }
