@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1992/10/22 17:05:31  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.7  1992/10/24 05:17:31  mjl
+   Fixed a stupidity I made earlier in plspage().
 
+ * Revision 1.6  1992/10/22  17:05:31  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.5  1992/10/20  20:15:44  mjl
  * Arguments to plspage() now have no effect if zero.
  *
@@ -245,14 +248,14 @@ c_plgpage( PLFLT *pxp, PLFLT *pyp,
 void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 {
-    if (!xp) pls[ipls].xdpi = xp;
-    if (!yp) pls[ipls].ydpi = yp;
+    if (xp) pls[ipls].xdpi = xp;
+    if (yp) pls[ipls].ydpi = yp;
 
-    if (!xleng) pls[ipls].xlength = xleng;
-    if (!yleng) pls[ipls].ylength = yleng;
+    if (xleng) pls[ipls].xlength = xleng;
+    if (yleng) pls[ipls].ylength = yleng;
 
-    if (!xoff) pls[ipls].xoffset = xoff;
-    if (!yoff) pls[ipls].yoffset = yoff;
+    if (xoff) pls[ipls].xoffset = xoff;
+    if (yoff) pls[ipls].yoffset = yoff;
 
     pls[ipls].pageset = 1;
 }
