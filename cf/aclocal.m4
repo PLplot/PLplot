@@ -508,24 +508,6 @@ AC_DEFUN([MY_ARG_ENABLE],
 [AC_ARG_ENABLE($@)dnl
 AC_ARG_WITH([$1],[],[AC_MSG_ERROR([unrecognized variable: with_$1])])])
 dnl> ------------------------------------------------------------------------
-dnl> Hack the AC_INIT_NOTICE macro to get around AC_INIT fascism.
-dnl
-undefine([AC_INIT_NOTICE])
-AC_DEFUN(AC_INIT_NOTICE,
-[# Guess values for system-dependent variables and create Makefiles.
-# Generated automatically using autoconf version] AC_ACVERSION [
-# Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
-#
-# This configure script is free software; the Free Software Foundation
-# gives unlimited permission to copy, distribute and modify it.
-
-# Defaults:
-ac_help=
-ac_default_prefix=/usr/local
-[#] Any additions from configure.in:
-USER_STARTUP
-])
-dnl> ------------------------------------------------------------------------
 dnl> Get rid of caching since it doesn't always work.  I.e. changing the
 dnl> compiler from the vendor's to gcc can change all sorts of settings,
 dnl> but the autoconf logic isn't set up to handle that.  I'll opt for
