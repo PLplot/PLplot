@@ -1,19 +1,77 @@
-1 - Copy files to tmp with
-    nmake
-2 - create the static and/or dynamic library by opening
-    plplib\plplib.mak and plpdll\plpdll.mak in Microsoft Visual C.
-3 - install the libraries with
-    nmake install
-    Do not forget to do this each time you recreate a library.
-4 - If you use the dynamic library :
-    - \plplot\bin should be in your path.
-    - define NOBRAINDEAD in the preprocessor definitions of the project 
-      settings
-    - plfill is defined as void WINAPI plfill(...) which is incompatible
-      with it's use inside the plplot library.
-      If you pass it as a parameter to e.g. plshade it is necessary to 
-      create a stub :
-        void myfill(PLINT n,PLFLT *x,PLFLT *y) {
-          plfill(n,x,y);
-        }
-      and pass this as an argument to plshade.
+Installation instructions for the win32/msdev port of plplot
+============================================================
+
+1. Introduction
+
+This file contains information on how to compile and run the 
+plplot library using MS Visual C++ on PCs running MS Windows 
+98/NT/2000 (the current distribution has not been tested on 
+neither 95 nor XP however it should normally work on these 
+two versions of Windows as well.) 
+
+Please note that the work on the win32/msdev port is under 
+progress. These instructions will tell you how to build
+the plplot.lib library and all the C examples except x14c
+and x17c. However, the work on the plplot.dll is not yet
+finished. For more information about the win32/msdev port 
+of plplot please see plplot/sys/win32/msdev/README.TXT.
+
+
+2. Requirements
+
+You'll need MS Visual C++ version 5, 6 or higher for building 
+plplot. You might be able to use an earlier version of Visual C++ 
+but you will probably not be able to use the provided makfiles.
+You will also need to make sure that you can execute the "nmake"
+command on a MS-DOS promt command line. 
+
+
+3. Source files
+
+You can extract the sources of plplot in any directory you want.
+
+
+4. Compilation
+
+  4.1 Open a MS-DOS prompt window.
+  4.2 Change directory to plplot\sys\win32\msdev
+  4.3 Type "nmake". The files needed for the compilation of
+      plplot will be copied to plplot\tmp.
+  4.4 Change directory to plplot\sys\win32\msdev\plplib.
+  4.5 Type "nmake plplib.mak". The plplot.lib library will
+      be built and placed in the same directory.
+  4.6 Change directory to plplot\sys\win32\msdev\Examples.
+  4.7 Type "nmake Examples.mak". All C examples will be 
+      built except x14c and x17c in the plplot/tmp
+      directory. (For comments about the examples see
+      plplot\sys\win32\msdev\README.TXT.)
+
+
+5. Running plplot
+
+You can run the C examples directly from plplot\tmp. However,
+if you would like to run your programs in a different directory
+you have to make sure that plplot can find the font files
+(located in plplot/lib with the extension .fnt):
+
+  5.1 Set the environment variable PLPLOT_HOME to point to
+      where you have installed plplot, e.g.
+        SET PLPLOT_HOME="C:\PLPLOT"
+      (see plplot\FAQ number 1.12)
+  5.2 or simply make sure that the font files are in the same
+      directory where you execute your plplot program.
+
+
+6. Comments & suggestions
+
+If you have comments or suggestions on how to improve the
+win32/msdev port of plplot please dont't hesitate to contact 
+me via email.
+
+
+January 2002
+
+Olof Svensson
+European Synchrotron Radiation Facility
+email: svensson@esrf.fr
+
