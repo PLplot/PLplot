@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1993/07/16 22:09:12  mjl
+ * Revision 1.3  1993/07/28 05:46:30  mjl
+ * Now explicitly initializes remote plplot by using the "cmd" widget
+ * command.  Added support for -nopixmap option, and all malloc'ed
+ * memory is eventually freed.
+ *
+ * Revision 1.2  1993/07/16  22:09:12  mjl
  * Made keypress handler a bit easier to invoke.  Eliminated low-level
  * aspect and orientation handling.  Some name changes.  Now uses standard
  * meta coordinate system.
@@ -119,6 +124,9 @@ plD_init_tk(PLStream *pls)
 	pls->bufmax = BUFMAX;
 
 /* Allocate and initialize device-specific data */
+
+    if (pls->dev != NULL)
+	free((void *) pls->dev);
 
     pls->dev = calloc(1, (size_t) sizeof(TkDev));
     if (pls->dev == NULL)
@@ -303,7 +311,6 @@ plD_tidy_tk(PLStream *pls)
     tk_stop(pls);
     pls->fileset = 0;
     pls->page = 0;
-    free((void *) pls->dev);
 }
 
 /*----------------------------------------------------------------------*\
@@ -659,6 +666,7 @@ launch_server(PLStream *pls)
     tcl_cmd(pls, "tkwait variable plserver");
 
     dev->launched_server = 1;
+    free ((void *) argv);
 }
 
 /*----------------------------------------------------------------------*\
@@ -732,6 +740,9 @@ plwindow_init(PLStream *pls)
 	server_cmd( pls, "update" );
 	server_cmd( pls, "$plw_create $plwindow" );
     }
+    else {
+	Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
+    }
 
 /* Initialize the widget(s) */
 
@@ -739,15 +750,34 @@ plwindow_init(PLStream *pls)
     server_cmd( pls, "[list $plw_init $plwindow $client]" );
 
 /* Now we should have the actual plplot widget name in $plwidget */
-/* Configure it if necessary. */
+/* Configure remote plplot stream. */
+
+    server_cmd( pls, "update" );
+
+/* nopixmap option */
+
+    if (pls->nopixmap) {
+	server_cmd( pls, "$plwidget cmd setopt -nopixmap" );
+    }
+
+/* background color 
+ * Since background color is a very TK-ish thing, I support it in plframe
+ * widgets in the normal TK-ish way, then pass the relevant info down to
+ * plplot.  Setting the background color directly from plplot does not
+ * give the right results.
+*/
 
     if (pls->bgcolorset) {
 	bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
 	sprintf(str, "#%06x", (bg & 0xFFFFFF));
 	Tcl_SetVar(dev->interp, "bg", str, 0);
-	server_cmd( pls, "update" );
 	server_cmd( pls, "$plwidget configure -bg $bg" );
     }
+
+/* Start up remote plplot */
+
+    server_cmd( pls, "update" );
+    server_cmd( pls, "$plwidget cmd init" );
 }
 
 /*----------------------------------------------------------------------*\
@@ -846,8 +876,11 @@ HandleEvents(PLStream *pls)
 * flush_output()
 *
 * Flushes output and sends command to the server to read from the pipe.
-* The "after 1" is used so that the send command returns before the data
-* read is complete (i.e. each process continues independently).
+*
+* Unfortunately it's necessary to wait until the server command returns
+* before proceeding, since otherwise data overruns can occur (I tried
+* preceding the "send" by "after 1" but ran into problems with plrender
+* sending the commands too quickly).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -868,7 +901,7 @@ flush_output(PLStream *pls)
 	fflush(dev->file);
 	sprintf(tmp, "%d", pls->bytecnt);
 	Tcl_SetVar(dev->interp, "nbytes", tmp, 0);
-	server_cmd( pls, "after 1 $plwidget read $nbytes" );
+	server_cmd( pls, "$plwidget read $nbytes" );
 	pls->bytecnt = 0;
     }
 }
