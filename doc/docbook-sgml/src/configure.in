@@ -30,12 +30,15 @@ dnl
 dnl The following public identifiers should correspond to those in the 
 dnl SGML source files. 
 
-[
-dsssl_dtd_pubid="-//James Clark//DTD DSSSL Style Sheet//EN"
-db_ss_html_pubid="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
-db_ss_print_pubid="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
-docbook_dtd_pubid="-//OASIS//DTD DocBook V3.1//EN"
-]
+DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
+DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
+DB_SS_PRINT_PUBID="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
+DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook V3.1//EN"
+
+AC_SUBST(DSSSL_DTD_PUBID)
+AC_SUBST(DB_SS_HTML_PUBID)
+AC_SUBST(DB_SS_PRINT_PUBID)
+AC_SUBST(DOCBOOK_DTD_PUBID)
 
 dnl Utility macros
 
@@ -46,21 +49,29 @@ define(PROG, translit($1, [a-z], [A-Z]))
 
 AC_ARG_WITH($1, [
   --with-$1=PATH/]PROG[		Alternative $1 program],
-  [$1_prog=$withval], 
-  [$1_prog=$1])
-
-AC_CHECK_PROGS(PROG, $$1_prog)
-
-[if test x = x$]PROG[ ; then]
- AC_MSG_ERROR([Program $1 not found.  
+  [prog_$1=$withval], 
+  [prog_$1=$1])
+AC_CHECK_PROG(has_$1, [$prog_$1], yes, no)
+PROG=$prog_$1
+AC_SUBST(PROG)
+if test $has_$1 = no ; then
+  for i in $2 ; do
+    export $i=""
+  done
+fi
+AC_OUTPUT_COMMANDS( [
+if test $has_$1 = no ; then]
+AC_MSG_WARN( [Program $1 not found.  
     Install the $1 program in your path or specify its
     location with the option --with-$1.  The $1 package can be 
-    found at $2.])
-[fi]
-
-AC_SUBST(PROG)
+    found at $3.])
+[fi], has_$1=$has_$1)
 
 ])
+
+PRINT=print
+HTML=html
+
 
 dnl CHECK_DTD(title, cache-id, dsssl_dtd, docbookb_ss_dtd, style_spec_use,
 dnl           external_specification, docbook_dtd, jade_output_type, 
@@ -68,31 +79,43 @@ dnl           origin_package)
 AC_DEFUN(CHECK_DTD, [
 AC_CACHE_CHECK($1, pldb_cv_$2, [
 echo -e "\nChecking for $1" >> $jadelog
-sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@|$3|" \
+sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@|$3|" \
   -e "s|@STYLE_SPEC_USE@|$4|" -e "s|@EXTERNAL_SPECIFICATION@|$5|" \
   < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|$6|" < conf/test.sgml.in > conftest.sgml
-$jade_prog $SGML_CATALOGS -d conftest.dsl -t $7 conftest.sgml \
-   >> $jadelog 2>&1
-jade_result=`egrep ":(E|W):" $jadelog`
+$prog_jade $SGML_CATALOGS -d conftest.dsl -t $7 conftest.sgml \
+   > $jadelog.x 2>&1
+jade_result=`egrep ":(E|W):" $jadelog.x`
+cat $jadelog.x >> $jadelog
+rm -f $jadelog.x
 if test "$jade_result" = "" ; then 
   pldb_cv_$2=yes
 else 
   pldb_cv_$2=no
 fi
 ])
-if test $pldb_cv_$2 = no ; then 
-  AC_MSG_ERROR([Could not find $1.
+if test $pldb_cv_$2 = no ; then
+  for i in $11 ; do
+    export $i=""
+  done
+fi
+AC_OUTPUT_COMMANDS([
+if test $pldb_cv_$2 = no ; then]
+  AC_MSG_WARN([Could not find $1.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
-        $8
-    Its system identifier, i.e., a file usually called 
+        $dtd_$2
+    Its system identifier[,] i.e. a file usually called 
         \"$9\" 
     is distributed with the $10 package.  Install it in your 
     system and put the correct entry in the catalog file.
     You might also use the configure option --with-sgml-catalog to specify 
     alternative SGML catalogs.])
-fi
+[fi
+], [
+pldb_cv_$2=$pldb_cv_$2
+dtd_$2="$8"
+])
 ])
 
 dnl SGML catalogs
@@ -130,12 +153,12 @@ AC_SUBST(HTML_EXT)
 
 dnl Check programs
 
-CHECK_PROG(jade, http://www.jclark.com/jade/)
-CHECK_PROG(jadetex, http://www.tug.org/applications/jadetex/)
-CHECK_PROG(perl, http://www.perl.com)
-CHECK_PROG(mogrify, ftp://ftp.wizards.dupont.com/pub/ImageMagick/)
-CHECK_PROG(latex, http://www.ctan.org)
-CHECK_PROG(dvips, http://www.ctan.org)
+CHECK_PROG(jade, [HTML PRINT], http://www.jclark.com/jade/)
+CHECK_PROG(jadetex, PRINT, http://www.tug.org/applications/jadetex/)
+CHECK_PROG(perl, [HTML PRINT], http://www.perl.com)
+CHECK_PROG(mogrify, HTML, ftp://ftp.wizards.dupont.com/pub/ImageMagick/)
+CHECK_PROG(latex, PRINT, http://www.ctan.org)
+CHECK_PROG(dvips, PRINT, http://www.ctan.org)
 
 dnl Check public identifiers
 
@@ -147,33 +170,36 @@ CHECK_DTD(
   [],
   [[[<!ELEMENT book - o (#PCDATA)>]]],
   [sgml],
-  [\"$dsssl_dtd_pubid\"],
+  [\"$DSSSL_DTD_PUBID\"],
   [style-sheet.dtd],
-  [jade])
+  [jade],
+  [PRINT HTML])
 
 CHECK_DTD(
   [DocBook HTML Stylesheet],
   [html_ss],
-  [[[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]]],
+  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_HTML_PUBID\" CDATA DSSSL>]]],
   [use="docbook"],
   [<external-specification id="docbook" document="dbstyle">],
   [[[<!ELEMENT book - o (#PCDATA)>]]],
   [sgml],
-  [\"$db_ss_html_pubid\"],
+  [\"$DB_SS_HTML_PUBID\"],
   [html/docbook.dsl],
-  [docbook-stylesheets])
+  [docbook-stylesheets],
+  [HTML])
   
 CHECK_DTD(
   [DocBook Print Stylesheet],
   [print_ss],
-  [[[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]]],
+  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_PRINT_PUBID\" CDATA DSSSL>]]],
   [use="docbook"],
   [<external-specification id="docbook" document="dbstyle">],
   [[[<!ELEMENT book - o (#PCDATA)>]]],
   [tex],
-  [\"$db_ss_print_pubid\"],
+  [\"$DB_SS_PRINT_PUBID\"],
   [print/docbook.dsl],
-  [docbook-stylesheets])
+  [docbook-stylesheets],
+  [PRINT])
 
 CHECK_DTD(
   [DocBook DTD],
@@ -181,11 +207,35 @@ CHECK_DTD(
   [],
   [],
   [],
-  [PUBLIC \"$docbook_dtd_pubid\"],
+  [PUBLIC \"$DOCBOOK_DTD_PUBID\"],
   [sgml],
-  [\"$docbook_dtd_pubid\"],
+  [\"$DOCBOOK_DTD_PUBID\"],
   [declaration/docbook.dtd],
-  [docbook (v3.1)])
+  [docbook (v3.1)],
+  [PRINT HTML])
 
-AC_OUTPUT([Makefile plplotdoc.sgml plplotdoc-html.dsl 
+AC_SUBST(HTML)
+AC_SUBST(PRINT)
+
+AC_OUTPUT_COMMANDS( [
+if test "$print" = "" ; then
+  echo
+  echo '  ******************************************************************'
+  echo '  * Due to some lacking dependencies (see warning messages above), *'
+  echo '  * it will not be possible to build a printed version of the      *'
+  echo '  * documentation.                                                 *'
+  echo '  ******************************************************************'
+fi
+if test "$html" = "" ; then
+  echo
+  echo '  ******************************************************************'
+  echo '  * Due to some lacking dependencies (see warning messages above), *'
+  echo '  * it will not be possible to build a HTML version of the         *'
+  echo '  * documentation.                                                 *'
+  echo '  ******************************************************************'
+fi], [
+print=$PRINT; html=$HTML
+])
+
+AC_OUTPUT([Makefile plplotdoc.sgml plplotdoc-html.dsl plplotdoc-print.dsl 
            inline-greek.pl eps2jpeg.pl tex2eps.pl])

@@ -1,6 +1,6 @@
-<!DOCTYPE style-sheet PUBLIC "-//James Clark//DTD DSSSL Style Sheet//EN" [
+<!DOCTYPE style-sheet PUBLIC "@DSSSL_DTD_PUBID@" [
 <!ENTITY dbstyle 
-  PUBLIC "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
+  PUBLIC "@DB_SS_HTML_PUBID@"
   CDATA DSSSL>
 ]>
 

@@ -2,7 +2,7 @@
 # Description: Makefile template for PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Thu May 20 11:14:38 CEST 1999
-# Last modified on: Thu Nov 16 13:06:23 CET 2000
+# Last modified on: Fri Nov 17 00:13:49 CET 2000
 # $Id$
 
 VERSION = @VERSION@
@@ -30,7 +30,7 @@ SGML_SOURCES = \
 OTHER_SOURCES = \
 	NEWS ChangeLog Makefile.in README configure configure.in \
 	eps2jpeg.pl.in inline-greek.pl.in \
-	jadetex.cfg over-under.tex parse-api.pl parse.pl tex2eps.pl.in \
+	jadetex.cfg over-under.tex tex2eps.pl.in \
 	$(STYLESHEET_HTML).in $(STYLESHEET_PRINT)
 
 CONFDIR_SOURCES = \
@@ -49,7 +49,7 @@ MAIN_HTML = $(HTML_DESTDIR)/$(BASE).$(HTML_EXT)
 
 MAX_TEX_RECURSION=4
 
-all: src_tar html_tar ps
+all: src_tar @HTML@_tar @PRINT@
 
 src_tar: $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
 $(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
@@ -99,7 +99,7 @@ $(MAIN_HTML): $(SGML_SOURCES) $(STYLESHEET_HTML) inline-html.ent \
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml $(BASE).sgml
 
 
-ps: $(BASE).ps.gz
+print: $(BASE).ps.gz
 $(BASE).ps.gz: $(BASE).dvi over-under.eps
 	dvips -f $(BASE).dvi | gzip -c > $(BASE).ps.gz
 
@@ -148,6 +148,7 @@ clean:
 	rm -rf $(PLPLOTDOC_SRC)-$(VERSION)
 
 distclean: clean
-	rm -f Makefile eps2jpeg.pl inline-greek.pl  tex2eps.pl @JADELOG@
+	rm -f Makefile eps2jpeg.pl inline-greek.pl tex2eps.pl @JADELOG@ \
+	      plplotdoc-html.dsl plplotdoc-print.dsl plplotdoc.sgml
 
 .PHONY: all html ps src_tar html_tar install uninstall clean distclean

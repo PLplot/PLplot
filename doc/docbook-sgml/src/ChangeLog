@@ -1,4 +1,24 @@
+2000-11-17  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.in (print): changed target name from ps.
+	(all): Added autoconf substitution variables.
+
+	* configure.in: configure does not stop anymore when a program is
+	not found.  Instead, the user is informed at the end of the run.
+	Also, define HTML and PRINT for future use in the Makefile.in.
+        (CHECK_DTD): Output log from jade command in individual file.
+	Concatenated them into $jadelog. 
+
 2000-11-16  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in, plplotdoc-print.dsl.in, plplotdoc-html.dsl.in,
+	plplotdoc.sgml.in: AC_SUBST'itute all the DTD pubids.  AC_OUTPUT
+	also plplotdoc-print.dsl.
+
+	* Makefile.in (OTHER_SOURCES): Removed parse-api.pl and parse.pl,
+	old scripts that are not needed anymore.
+	(distclean): Remove automatically generated files
+	plplotdoc-html.dsl, plplotdoc-print.dsl, and plplotdoc.sgml.
 
 	* configure.in (VERSION, PLPLOTDOC_HTML, MANIFEST, PLPLOTDOC):
 	Define and AC_SUBST'itute these variables.
