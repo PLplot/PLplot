@@ -1,3 +1,10 @@
+plplot (5.0.1-1) unstable; urgency=low
+
+  * NOT YET READY FOR RELEASE.
+  * New upstream release.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 26 Jan 2001 17:05:45 +0100
+
 plplot (4.99j-11) frozen unstable; urgency=low
 
   * Added --disable-linuxvga to configure options fixing an important bug
