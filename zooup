@@ -19,6 +19,7 @@ zoo a ${zoofile} ${pldir}/README.1st
 zoo a ${zoofile} ${pldir}/COPYRIGHTS
 zoo a ${zoofile} ${pldir}/Changes.log
 zoo a ${zoofile} ${pldir}/ToDo
+zoo a ${zoofile} ${pldir}/configure
 zoo a ${zoofile} ${pldir}/tarup
 zoo a ${zoofile} ${pldir}/zooup
 zoo a ${zoofile} ${pldir}/zipup
