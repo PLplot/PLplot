@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.3  1995/01/27 02:49:48  mjl
+# Revision 1.4  1995/04/24 21:28:15  mjl
+# Made the widget name default to "loopback" for easier use from pltcl.
+#
+# Revision 1.3  1995/01/27  02:49:48  mjl
 # New Tcl example files.  Can now be run from either pltcl -- using the
 # "loopback" command as argument, or from plserver (or other plplot-aware
 # extended wish) -- using the widget name as argument.
@@ -15,7 +18,7 @@
 # Tcl demo programs, which fully reproduce their x??c counterpart.
 #----------------------------------------------------------------------------
 
-proc x04 {w} {
+proc x04 {{w loopback}} {
     matrix freql f 101
     matrix ampl f 101
     matrix phase f 101

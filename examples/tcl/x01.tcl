@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.4  1995/01/27 02:49:45  mjl
+# Revision 1.5  1995/04/24 21:28:13  mjl
+# Made the widget name default to "loopback" for easier use from pltcl.
+#
+# Revision 1.4  1995/01/27  02:49:45  mjl
 # New Tcl example files.  Can now be run from either pltcl -- using the
 # "loopback" command as argument, or from plserver (or other plplot-aware
 # extended wish) -- using the widget name as argument.
@@ -18,7 +21,7 @@
 # Demo program 1.  Now fully reproduces x01c plots.
 #----------------------------------------------------------------------------
 
-proc x01 {w} {
+proc x01 {{w loopback}} {
     global xscale yscale xoff yoff
 
     $w cmd plssub 2 2

@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.3  1995/04/12 21:12:09  mjl
+# Revision 1.4  1995/04/24 21:28:13  mjl
+# Made the widget name default to "loopback" for easier use from pltcl.
+#
+# Revision 1.3  1995/04/12  21:12:09  mjl
 # Minor nit.
 #
 # Revision 1.2  1995/01/27  02:49:47  mjl
@@ -15,7 +18,7 @@
 # Tcl demo programs, which fully reproduce their x??c counterpart.
 #----------------------------------------------------------------------------
 
-proc x02 {w} {
+proc x02 {{w loopback}} {
     $w cmd plbop
 
 # Divide screen into 16 regions

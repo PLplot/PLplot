@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.5  1995/03/21 19:38:56  mjl
+# Revision 1.6  1995/04/24 21:28:14  mjl
+# Made the widget name default to "loopback" for easier use from pltcl.
+#
+# Revision 1.5  1995/03/21  19:38:56  mjl
 # De-bogotification.
 #
 # Revision 1.4  1995/01/27  02:49:47  mjl
@@ -21,50 +24,45 @@
 # Tcl demo programs, which fully reproduce their x??c counterpart.
 #----------------------------------------------------------------------------
 
-proc x03 {w} {
-    set npts 180
-    set npts1 [expr $npts+1]
-
-    matrix x0 f $npts1
-    matrix y0 f $npts1
-    matrix x f $npts1
-    matrix y f $npts1
-
-    set dtr [expr 3.141592654 / 180.]
-    set dtheta [expr $dtr * 360. / $npts]
-
-    for {set i 0} {$i <= $npts} {incr i} {
-	x0 $i = [expr cos($dtheta * $i)]
-	y0 $i = [expr sin($dtheta * $i)]
-    }
+proc x03 {{w loopback}} {
+    set twopi  [expr 2. * 3.141592654]
 
 # Set up viewport and window, but do not draw box 
 
     $w cmd plssub 1 1
     $w cmd plcol 1
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
-    for {set i 1} {$i <= 10} {incr i} {
-	for {set j 0} {$j <= $npts} {incr j} {
-	    x $j = [expr 0.1 * $i * [x0 $j]]
-	    y $j = [expr 0.1 * $i * [y0 $j]]
-	}
 
 # Draw circles for polar grid
 
-	$w cmd plline $npts1 x y
+    set ni 10
+    set nj 45
+    set nj1 [expr $nj + 1]
+
+    set dr     [expr 1. / $ni]
+    set dtheta [expr $twopi / $nj]
+
+    matrix xj f $nj1
+    matrix yj f $nj1
+
+    for {set i 1} {$i <= $ni} {incr i} {
+	for {set j 0} {$j < $nj1} {incr j} {
+	    set r     [expr $i * $dr]
+	    set theta [expr $j * $dtheta]
+	    xj $j = [expr $r * cos($theta)]
+	    yj $j = [expr $r * sin($theta)]
+	}
+	$w cmd plline $nj1 xj yj
     }
 
+# Draw radial spokes for polar grid and write labels for angle
+
     $w cmd plcol 2
-    for {set i 0} {$i <= 11} {incr i} {
-	set theta [expr 30.0 * $i]
-	set xg [expr cos($dtr * $theta)]
-	set yg [expr sin($dtr * $theta)]
-
-# Draw radial spokes for polar grid
-
+    for {set j 0} {$j <= 11} {incr j} {
+	set theta [expr $j * $twopi / 12.]
+	set xg [expr cos($theta)]
+	set yg [expr sin($theta)]
 	$w cmd pljoin 0.0 0.0 $xg $yg
-
-# Write labels for angle
 
 	if {$xg >= 0} {
 	    set dx $xg
@@ -75,15 +73,26 @@ proc x03 {w} {
 	    set dy [expr -$yg]
 	    set just 1.15
 	}
-	$w cmd plptex $xg $yg $dx $dy $just [expr round($theta)]
+	set label [expr round($theta*360./$twopi)]
+
+	$w cmd plptex $xg $yg $dx $dy $just $label
     }
 
 # Draw the graph 
 
-    for {set i 0} {$i <= $npts} {incr i} {
-	set r [expr sin($dtheta * (5 * $i))]
-	x $i = [expr [x0 $i] * $r]
-	y $i = [expr [y0 $i] * $r]
+    set npts 180
+    set npts1 [expr $npts+1]
+
+    set dtheta [expr $twopi / $npts]
+
+    matrix x f $npts1
+    matrix y f $npts1
+
+    for {set j 0} {$j <= $npts} {incr j} {
+	set theta [expr $j * $dtheta]
+	set r     [expr sin(5 * $theta)]
+	x $j = [expr $r * cos($theta)]
+	y $j = [expr $r * sin($theta)]
     }
     $w cmd plcol 3
     $w cmd plline $npts1 x y
