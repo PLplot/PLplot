@@ -461,6 +461,13 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     }
 
     if (plsc->dev_text) {
+
+      /* if plP_sclp() is not called, clipping limits are *not*
+	 set!. I think that this is a bug, as if someone manages to do
+	 a plot whithout ever calling plmtex, directly or indirectly,
+	 then the clipping limits are not set! */
+
+      plP_sclp(clpxmi, clpxma, clpymi, clpyma); 
       plP_text(0, just, xform, x, y, refx, refy, text);
 #ifndef DEBUG
        return; /* just for comparition */
