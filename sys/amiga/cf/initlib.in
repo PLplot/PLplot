@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 24-Jul-1994
+#
+# Initializations for building PLplot library.
+# -----------------------------------------------------------------------
+
+CC_FLAGS	= $(MATHFLAGS) $(DBL_FLAG_C) nover $(DEBUG_FLAG_C) \
+		  idir=$(PLINC_DIR) $(OPT_FLAG_C) gst=plplot.gst \
+		  ign=84,88,89,147,161 
+
+CC_FLAGS_DEMOS	= $(CC_FLAGS)
+
+# Dependent directories
+
+PLINC_DIR = /include
+PLLIB_DIR = /lib
+PLFNT_DIR = /lib
+PLLIB_PATH = $(PLLIB_DIR)/
+PLFNT_PATH = $(PLFNT_DIR)/
+
+# Default is to build library(s) and utils.
+
+everything: libs plrender$E pltek$E $(TCL_EXE) $(TK_EXE)
+
+# Clear the suffix list to prevent problems.
+
+.SUFFIXES:
+.SUFFIXES: $O .cc .c .f .h .fm4
+
+# Inference rules, not specific to archive or shared libraries.
+
+.fm4.f:
+	$(M4) $(M4_FLAGS) $< >$*.f
+

@@ -1,0 +1,103 @@
+#!c:sksh
+
+# --*-sh-*---------------------------------------------------------------
+#
+# configure - PLplot configuration for the Amiga using SKsh.
+#
+# Maurice LeBrun, 8/94.
+#
+# For SAS/C 6.x.
+#
+# -----------------------------------------------------------------------
+
+# Defaults
+
+math="ieeef"
+enable_f77="no"
+enable_tcl="no"
+enable_tk="no"
+
+plcf=../../cf
+
+echo "creating tmp/Makefile"
+
+# Makefile initialization
+
+cat cf/init.in		>tmp/Makefile 
+
+# Math settings
+
+echo "# Math settings"  >>tmp/Makefile
+
+if [ "$math" = "ffp" ]; then
+    echo "
+MATHFLAGS	= math=ffp
+LIBM		= lib:scmffp.lib" >>tmp/Makefile
+fi
+
+if [ "$math" = "ieeef" ]; then
+    echo "
+MATHFLAGS	= math=ieee
+LIBM		= lib:scmieee.lib" >>tmp/Makefile
+fi
+
+if [ "$math" = "ieeed" ]; then
+    echo "
+MATHFLAGS	= math=ieee
+LIBM		= lib:scmieee.lib
+DBL_FLAG_C	= -DDOUBLE" >>tmp/Makefile
+fi
+
+echo "" >> tmp/Makefile
+
+# Default target, core source and object file lists
+
+cat $plcf/dist.in	>>tmp/Makefile 
+
+# Optional packages
+
+if [ "$enable_f77" = "yes" ]; then
+    cat $plcf/pkg_f77.in	>>tmp/Makefile 
+fi
+if [ "$enable_tcl" = "yes" ]; then
+    cat $plcf/pkg_tcl.in	>>tmp/Makefile 
+fi
+if [ "$enable_tk" = "yes" ]; then
+    cat $plcf/pkg_tk.in 	>>tmp/Makefile 
+fi
+
+# Library targets
+
+cat cf/initlib.in	>>tmp/Makefile
+cat cf/lib.in		>>tmp/Makefile
+
+# Program and demo file dependencies, targets
+
+cat $plcf/exes.in	>>tmp/Makefile 
+cat $plcf/demos.in	>>tmp/Makefile 
+
+# Installation and miscellaneous.
+
+cat cf/install.in	>>tmp/Makefile 
+cat cf/misc.in		>>tmp/Makefile 
+
+# Object file dependencies
+
+cat $plcf/objs.in	>>tmp/Makefile 
+
+# -----------------------------------------------------------------------
+# Now build Makedemo.in.
+# Makedemo is a stand-alone makefile for the demo programs.
+# Note: it links against the installed PLplot library.
+# -----------------------------------------------------------------------
+
+echo "creating tmp/Makedemo"
+
+cat cf/init.in		>tmp/Makedemo
+cat cf/initdemo.in	>>tmp/Makedemo
+
+cat $plcf/demos.in	>>tmp/Makedemo
+cat $plcf/miscdemo.in	>>tmp/Makedemo
+
+return
+

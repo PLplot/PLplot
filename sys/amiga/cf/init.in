@@ -1,0 +1,52 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Basic make assignments for PLplot under Unix (driven by "configure").
+# These are used in both the library and demo Makefiles.
+# -----------------------------------------------------------------------
+
+# Utilities
+
+CC		= sc
+LDC		= slink 
+LIBC		= lib:sc.lib lib:amiga.lib
+M4		= m4
+LN		= copy
+
+# Uncomment this for debugging
+# DEBUG_FLAG_C	= dbg=symbol
+
+# Uncomment this for optimization
+# OPT_FLAG_C	= optimize
+
+LDC_FLAGS	= 
+STARTUP 	= lib:c.o
+TO		= to
+LN		= copy
+
+# Need to fill these in correctly if ever use f2c as a fortran compiler
+
+F77		= f77
+F77_FLAGS	= -c
+LDF		= $(F77)
+LDF_FLAGS	= 
+
+# Flags and other miscellanea
+
+TO		= -o
+O		= .o
+E		=
+
+# Install directories
+
+LIB_DIR		=
+DOC_DIR		=
+BIN_DIR		=
+INFO_DIR	=
+INCLUDE_DIR	=
+TCL_DIR		=
+DEMOS_DIR	=
