@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1995/09/18 20:17:08  furnish
+# Revision 1.2  1995/10/26 07:12:03  furnish
+# Hacked in a very hacky hack which seems to bring back the plxframe
+# menus.  Not much testing done yet though.
+#
+# Revision 1.1  1995/09/18  20:17:08  furnish
 # New [incr Tk] reincarnations of the old versions.  Unfortunately,
 # PLXWin doesn't work quite right.  All that crudy Tcl code which
 # expects to be able to much with widgets all over the widget tree, will
@@ -62,22 +66,37 @@ class PLWin {
     protected variable hull
     protected variable oldthis
 
+    protected variable width 20c
+    protected variable height 15c
+
     protected variable plwin
 
     constructor {args} {
 	set hull $itk_component(hull)
 	set oldthis [info namespace tail $this]
 
-	itk_component add plwin {
-	    eval plframe $hull.plwin $args
-	} {
-	    keep -width -height -background
-	    rename -background -plwinbg plwinbg Background
-	}
-	set plwin $itk_component(plwin)
-	pack $plwin -side bottom -expand 1 -fill both
-
 	eval itk_initialize $args
+
+#	itk_component add plwin {
+#	    eval plframe $hull.plwin $args
+#	    pack $hull.plwin
+#	} {
+#	    keep -width -height -background
+#	    rename -background -plwinbg plwinbg Background
+#	}
+#	set plwin $itk_component(plwin)
+
+	uplevel \#0 plframe $hull.plwin $args -width $width -height $height
+	set plwin $hull.plwin
+	pack $plwin -side bottom -expand 1 -fill both
+    }
+
+    itk_option define -width width Width 20c {
+	set width $itk_option(-width)
+    }
+
+    itk_option define -height height Height 15c {
+	set height $itk_option(-height)
     }
 
 # We add this one just so that user code can be oblivious as to

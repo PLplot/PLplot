@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1995/09/18 20:17:09  furnish
+# Revision 1.2  1995/10/26 07:12:04  furnish
+# Hacked in a very hacky hack which seems to bring back the plxframe
+# menus.  Not much testing done yet though.
+#
+# Revision 1.1  1995/09/18  20:17:09  furnish
 # New [incr Tk] reincarnations of the old versions.  Unfortunately,
 # PLXWin doesn't work quite right.  All that crudy Tcl code which
 # expects to be able to much with widgets all over the widget tree, will
@@ -54,13 +58,13 @@ class PLXWin {
     # created (the plframe is queried for a list of the valid output devices
     # for page dumps).
 
-#	plw_create_TopRow $hull
-#	pack append $hull $hull.ftop {top fill}
+	plw_create_TopRow $hull
+	pack append $hull $hull.ftop {top fill}
 
     # Initialize plplot widget.  Enable keyboard traversal when widget has
     # the input focus.  Also grab the initial input focus.
 
-#	tk_bindForTraversal $this.plwin
-#	focus $this.plwin
+	tk_bindForTraversal $hull.plwin
+	focus $hull.plwin
     }
 }
