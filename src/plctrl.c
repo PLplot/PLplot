@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.39  2000/05/11 22:02:08  furnish
+ * Rearrange inclusion order for Mac, per Rob Managan.
+ *
  * Revision 1.38  2000/05/11 21:23:08  furnish
  * Minor rework of Rob Managan's change.
  *
@@ -91,11 +94,11 @@
 
 #define DEBUG
 
+#include "plplotP.h"
 #ifdef macintosh
 #include "mac.h"
 /* for plMacLibOpen prototype; used in plLibOpen */
 #endif
-#include "plplotP.h"
 
 #ifdef __GO32__			/* dos386/djgpp */
 #ifdef __unix
