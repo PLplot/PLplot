@@ -44,7 +44,7 @@ plwind (0.0, 1.0, 0.0, 1.3);
 
 # Draw the grid using plbox
 
-plbox (0.1, 0, 0.1, 0, "bcgt", "bcgt");
+plbox (0.1, 0, 0.1, 0, "bcg", "bcg");
 
 # Write the digits below the frame
 

@@ -18,7 +18,7 @@ proc x06 {{w loopback}} {
 
 # Draw the grid using plbox
 
-    $w cmd plbox "bcgt" 0.1 0 "bcgt" 0.1 0
+    $w cmd plbox "bcg" 0.1 0 "bcg" 0.1 0
 
 # Write the digits below the frame
 

@@ -49,7 +49,7 @@ C        Set up viewport and window
 
 C        Draw the grid using plbox
 
-        call plbox('bcgt', 0.1d0, 0,'bcgt', 0.1d0, 0)
+        call plbox('bcg', 0.1d0, 0,'bcg', 0.1d0, 0)
         call plcol0(15)
 
 C        Write the digits below the frame

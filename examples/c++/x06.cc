@@ -74,7 +74,7 @@ x06::x06( int argc, char ** argv ) {
 
   // Draw the grid using plbox.
 
-  pls->box("bcgt", 0.1, 0, "bcgt", 0.1, 0);
+  pls->box("bcg", 0.1, 0, "bcg", 0.1, 0);
 
   // Write the digits below the frame.
 

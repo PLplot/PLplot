@@ -39,7 +39,7 @@ def main(w):
 
     # Draw the grid using plbox
 
-    w.plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0)
+    w.plbox("bcg", 0.1, 0, "bcg", 0.1, 0)
 
     # Write the digits below the frame
 

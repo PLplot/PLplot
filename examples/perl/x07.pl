@@ -53,7 +53,7 @@ for my $base (@base) {
 
   # Draw the grid
 
-  plbox (0.1, 0, 0.1, 0, "bcgt", "bcgt");
+  plbox (0.1, 0, 0.1, 0, "bcg", "bcg");
 
   # Write digits below the frame
 
