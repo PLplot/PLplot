@@ -26,7 +26,13 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1995/06/28 14:58:33  furnish
+# Revision 1.2  1995/06/29 20:20:15  furnish
+# Support defaultable arguments.  Change the handling for reference
+# arguments.  Previously their value was stuffed into the result string.
+# Now they work like the C API--the actual Tcl variable is changed,
+# result string remains empty.
+#
+# Revision 1.1  1995/06/28  14:58:33  furnish
 # A PERL script to automatically generate Tcl command procedure
 # interface functions for accessing the PLplot API.  Initial version
 # handles all the easy cases, including reference arguments.  Support
@@ -98,15 +104,24 @@ sub process_pltclcmd {
 
     $args = "";
     $nargs = 0;
+    $ndefs = 0;
     while( <SPECFILE> ) {
 	chop;
 
 	last if /^$/;
-	if (/^(\w+) (.*)/) {
+	if (/^(\w+)\s+(.*)$/) {
 	    $vname = $1;
 	    $vtype = $2;
+	    $defval = "";
+	    print "vname=$vname vtype=$vtype\n" if $verbose;
+	    if ($vtype =~ /\s*(.*)\s+Def:\s+(.*)/) {
+		$vtype = $1;
+		$defval= $2;
+		print "default arg: vtype=$vtype defval=$defval\n" if $verbose;
+	    }
 	    $argname[ $nargs ] = $vname;
 	    $argtype[ $nargs ] = $vtype;
+	    $argdef[  $nargs ] = $defval;
 	    $argref[  $nargs ] = 0; # default.
 
 	    # Check to see if this arg is for fetching something from PLplot.
@@ -116,6 +131,8 @@ sub process_pltclcmd {
 	    }
 
 	    $args .= "$vname ";
+
+	    $ndefs++ if $defval ne "";
 	    $nargs++;
 	    next;
 	}
@@ -125,7 +142,7 @@ sub process_pltclcmd {
     }
 
     if ($verbose) {
-	print "There are $nargs arguments.\n";
+	print "There are $nargs arguments, $ndefs are defaultable.\n";
 	for( $i=0; $i < $nargs; $i++ ) {
 	    print "$argtype[$i] $argname[$i]\n";
 	}
@@ -151,7 +168,21 @@ sub process_pltclcmd {
 		      print GENFILE "    PLFLT $argname[$i];\n";
 		      last argdecl;
 		  };
-		  print GENFILE "    $argtype[$i] $argname[$i];\n";
+		  /PLINT \*/ && do {
+		      print GENFILE "    PLINT *$argname[$i];\n";
+		      print GENFILE "    tclMatrix *mat$argname[$i];\n";
+		      last argdecl;
+		  };
+		  /PLFLT \*/ && do {
+		      print GENFILE "    PLFLT *$argname[$i];\n";
+		      print GENFILE "    tclMatrix *mat$argname[$i];\n";
+		      last argdecl;
+		  };
+		  if ($argdef[$i] ne "") {
+		      print GENFILE "    $argtype[$i] $argname[$i] = $argdef[$i];\n";
+		  } else {
+		      print GENFILE "    $argtype[$i] $argname[$i];\n";
+		  }
 	      }
 	    }
 	    print GENFILE "    char buf[200];\n" if $refargs;
@@ -166,9 +197,22 @@ sub process_pltclcmd {
 	if (/^<getargs>$/) {
 	    for( $i=0; $i < $nargs; $i++ ) {
 		$_ = $argtype[$i];
+		if ($ndefs) {
+		    print GENFILE "    if (argc > $i+1) {\n    ";
+		}
 	      getarg: {
 		  $argref[$i] && do {
 		      print GENFILE "/* $argname[$i] is for output. */\n";
+		      last getarg;
+		  };
+		  /PLINT \*/ && do {
+		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
+		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>idata;\n";
+		      last getarg;
+		  };
+		  /PLFLT \*/ && do {
+		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
+		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>fdata;\n";
 		      last getarg;
 		  };
 		  /PLINT/ && do {
@@ -185,6 +229,9 @@ sub process_pltclcmd {
 		  };
 		  die "Unrecognized argtype :$_:\n";
 	      }
+		if ($ndefs) {
+		    print GENFILE "    }\n";
+		}
 	    }
 	    next;
 	}
@@ -211,24 +258,20 @@ sub process_pltclcmd {
 	}
 
 	# If there were reference arguments, fetch their contents and
-	# stuff them into the Tcl result string.
+	# stuff them into their corresponding Tcl variables.
 
-	# NOTE:  This should be improved so that the trailing space is
-	# not present.  People will want to use Tcl regexp matching to
-	# extract the return values, and we should make it easy for
-	# them to use patterns of the form "^([-0-9.]+) ([-0-9.]+)$".
-	# Unfortunately I am too lazy to code this logic in Perl right
-	# now.  Tried once, but it's kind of tricky...
+	# NOTE: This should be improved so take into account the
+	# current value of tcl_precision.
 
 	if (/^<fetch_result>$/) {
 	    if ($refargs) {
-		print GENFILE "    buf[0] = '\\0';\n";
 		for( $i=0; $i < $nargs; $i++ ) {
 		    next if !$argref[$i];
 		    $_ = $argtype[$i];
 		  fetch: {
 		      /PLINT&/ && do {
-			  print GENFILE "    sprintf( buf, \"%s%d \", buf, $argname[$i] );\n";
+			  print GENFILE "    sprintf( buf, \"%d\", $argname[$i] );\n";
+			  print GENFILE "    Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
 			  last fetch;
 		      };
 
@@ -237,13 +280,13 @@ sub process_pltclcmd {
 		      # tcl_precision). 
 
 		      /PLFLT&/ && do {
-			  print GENFILE "    sprintf( buf, \"%s%f \", buf, $argname[$i] );\n";
+			  print GENFILE "    sprintf( buf, \"%f\", $argname[$i] );\n";
+			  print GENFILE "    Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
 			  last fetch;
 		      };
 		      print GENFILE "Unsupported arg type.\n";
 		  }
 		}
-		print GENFILE "    strcpy( interp->result, buf );\n";
 	    }
 	    next;
 	}
@@ -253,6 +296,7 @@ sub process_pltclcmd {
 	$_ =~ s/%cmd%/$cmd/g;
 	$_ =~ s/%nargs%/$nargs/g;
 	$_ =~ s/%args%/$args/g;
+	$_ =~ s/%ndefs%/$ndefs/g;
 
 	print GENFILE $_;
     }
