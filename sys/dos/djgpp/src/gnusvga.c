@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.3  1996/02/24 05:33:17  shouman
  * Updated driver to use PLGraphicsIn struct instead of obsolete PLKey.
  * Added translation of more keys to PLK_ keysyms (eg pageup, pagedown, F keys).
@@ -78,13 +81,13 @@
 		can draw lines of any color you like, which is again
 		superior to the standard DOS version based on MS graphics.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_gnusvga		/* Only compile for DOS 386 with GNU CC
 				   compiler */
-#include "plplotP.h"
-#include "drivers.h"
-#include "plevent.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/plevent.h"
 #include <grx.h>
 #include <mousex.h>
 #include <keys.h>

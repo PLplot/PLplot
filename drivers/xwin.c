@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.75  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.74  2000/07/19 21:12:13  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -144,15 +147,15 @@
 
 	PLplot X-windows device driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #define DEBUG
 
 #ifdef PLD_xwin
-#include "plplotP.h"
-#include "plxwd.h"
-#include "drivers.h"
-#include "plevent.h"
+#include "plplot/plplotP.h"
+#include "plplot/plxwd.h"
+#include "plplot/drivers.h"
+#include "plplot/plevent.h"
 
 static int synchronize = 0;	/* change to 1 for synchronized operation */
 				/* for debugging only */

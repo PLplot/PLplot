@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.11  1996/10/18 20:02:02  furnish
  * Remove work now handled by pltkMain().
  *
@@ -19,7 +22,7 @@
  * Modified to use the new syntax for pltkMain().
  */
 
-#include "pltk.h"
+#include "plplot/pltk.h"
 #include <math.h>
 
 static int

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.39  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.38  1995/06/07 20:37:46  mjl
  * Minor fix to function declarations, contributed by Hiromi Kimura.
  *
@@ -34,7 +37,7 @@
 
 	PLplot tektronix device & emulators driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #if defined(PLD_xterm) ||		/* xterm */ \
     defined(PLD_tek4010) ||		/* TEK 4010 */ \
@@ -44,9 +47,9 @@
     defined(PLD_vlt) ||			/* VLT emulator */ \
     defined(PLD_conex)			/* conex emulator 4010/4014/4105 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "plevent.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/plevent.h"
 
 #include <ctype.h>
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.5  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.4  2000/05/10 20:35:58  furnish
  * Include plConfig.h to get PLDOUBLE definition.  Rob Managan.
  *
@@ -24,8 +27,8 @@
 #ifndef __PLCDEMOS_H__
 #define __PLCDEMOS_H__
 
-#include "plConfig.h"
-#include "plplot.h"
+#include "plplot/plConfig.h"
+#include "plplot/plplot.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.13  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.12  1995/10/22 17:46:24  mjl
  * Removed call to plParseOpts, as this is now done in pltclMain(), and removed
  * automatic call to plinit().  Now users can/need-to call plinit() as required
@@ -69,8 +72,8 @@
  *
 \*----------------------------------------------------------------------*/
 
-#include "plplotP.h"
-#include "pltcl.h"
+#include "plplot/plplotP.h"
+#include "plplot/pltcl.h"
 
 static void
 plErrorHandler(Tcl_Interp *interp, int code, int tty);

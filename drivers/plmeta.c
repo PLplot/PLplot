@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.29  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.28  1995/10/14 17:13:12  mjl
  * Fixed bugs associated with writing the metafile to stdout instad of a file.
  *
@@ -47,13 +50,13 @@
     This is a metafile writer for PLplot.
 
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_plmeta
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "metadefs.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/metadefs.h"
 #include <string.h>
 
 /* Struct to hold device-specific info. */

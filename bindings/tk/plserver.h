@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.22  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.21  1995/06/01 21:24:45  mjl
  * Changed header file inclusions.
  *
@@ -39,9 +42,9 @@
 #ifndef __PLSERVER_H__
 #define __PLSERVER_H__
 
-#include "plDevs.h"
-#include "pltkd.h"
-#include "pltcl.h"
+#include "plplot/plDevs.h"
+#include "plplot/pltkd.h"
+#include "plplot/pltcl.h"
 
 /* State info for the rendering code */
 

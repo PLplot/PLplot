@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.2  1998/11/19 04:32:46  furnish
  * Hack out a dumb little diagnostic which has been being printed for a
  * couple of years, but whose utility has long since expired.
@@ -29,7 +32,7 @@
  * A miscellaneous assortment of Tcl support functions.
  */
 
-#include "plserver.h"
+#include "plplot/plserver.h"
 
 extern int Matrix_Init(Tcl_Interp* interp);
 

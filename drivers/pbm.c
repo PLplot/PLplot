@@ -7,6 +7,9 @@
   Slightly modified by Geoffrey Furnish.
 
  * $Log$
+ * Revision 1.3  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.2  1996/10/11 23:10:41  furnish
  * Improve performance by writing out data in one shot.
  *
@@ -15,12 +18,12 @@
  *
 
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_pbm
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 
 #undef PIXELS_X
 #undef PIXELS_Y

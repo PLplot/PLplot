@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.8  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.7  1994/03/23 08:37:18  mjl
  * Some cruft elimination.
  * All external API source files: replaced call to plexit() on simple
@@ -14,7 +17,7 @@
 	Stub routines for 3d plots.
 */
 
-#include "plstubs.h"
+#include "plplot/plstubs.h"
 
 void
 PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,

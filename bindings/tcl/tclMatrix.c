@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.16  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.15  1996/04/18 19:35:18  mjl
  * Added new matrix commands -- min: return minimum, max: return maximum,
  * scale: multiply by a scale factor [1d only], filter: apply the 3-pt binomial
@@ -127,7 +130,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tclMatrix.h"
+#include "plplot/tclMatrix.h"
 
 /* Cool math macros */
 

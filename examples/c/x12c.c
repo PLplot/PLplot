@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.10  1995/06/01 21:40:11  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
@@ -29,7 +32,7 @@
 	Bar chart demo.
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 void
 plfbox(PLFLT x0, PLFLT y0);

@@ -44,13 +44,13 @@
  *   8 Jun 94	mjo	color map 0,1 color selection, color map 0,1
  *			state change (palette change), polygon fills.
 \*----------------------------------------------------------------------*/
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_emxvga		/* (emx+gcc) */
 
-#include "plplotP.h"		/* _read_kbd() in <stdlib.h> */
-#include "drivers.h"
-#include "plevent.h"
+#include "plplot/plplotP.h"		/* _read_kbd() in <stdlib.h> */
+#include "plplot/drivers.h"
+#include "plplot/plevent.h"
 #include <jmgraph.h>
 
 static void	pause	(void);

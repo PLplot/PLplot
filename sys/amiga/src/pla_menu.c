@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.6  1995/06/13 03:58:10  mjl
  * Fixes for 4.99j on the Amiga.
  *
@@ -19,10 +22,10 @@
 	Functions for handling Amiga menu selections and other IDCMP events.
 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "plamiga.h"
-#include "plevent.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/plamiga.h"
+#include "plplot/plevent.h"
 #include <ctype.h>
 
 int saveiff(char *);

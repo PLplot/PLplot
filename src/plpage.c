@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.17  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.16  1995/06/23 03:00:37  mjl
  * Minor modifications to plP_subpInit().
  *
@@ -47,7 +50,7 @@
 	Page/subpage handling routines
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*--------------------------------------------------------------------------*\
  * void pladv()

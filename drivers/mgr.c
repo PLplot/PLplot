@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.6  1995/03/11 20:27:11  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -25,12 +28,12 @@
 	 codes. In this way no recompilation would be ncessary if other
 	 routines set up messages for the same event.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_mgr			/* Only compile if MGR support is needed */
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 #include <string.h>
 /* The next one is highly dependant on the MGR installation!!! */
 #include "/usr/mgr/include/term.h"

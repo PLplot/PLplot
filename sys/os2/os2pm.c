@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.2  1996/10/22 18:21:57  furnish
  * Update the OS/2 driver with fixes supplied by Thorsten Feiweier.
  *
@@ -46,9 +49,9 @@
 #define INCL_BASE
 #include <os2.h>
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "pmdefs.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/pmdefs.h"
 
 /* top level declarations */
 

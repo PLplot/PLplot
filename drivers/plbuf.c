@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.22  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.21  1998/12/01 20:50:29  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
@@ -38,9 +41,9 @@
     its effect upon hardware or computer systems.
 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "metadefs.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/metadefs.h"
 
 #include <string.h>
 

@@ -22,14 +22,14 @@
  * Set ccmap at your own risk -- still under development.
 */
 
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 #ifdef PLD_win3
 
 #include <stdio.h>
 #include <string.h>
-#include "plplotP.h"
-#include "drivers.h"
-#include "resource.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/resource.h"
 #include <windows.h>
 #include <commdlg.h>
 #include <assert.h>

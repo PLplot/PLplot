@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.26  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.25  2000/05/10 20:39:39  furnish
  * Edit to give two macintosh options.  Rob Managan.
  *
@@ -39,8 +42,8 @@
 #ifndef __DRIVERS_H__
 #define __DRIVERS_H__
 
-#include "pdf.h"
-#include "plstrm.h"
+#include "plplot/pdf.h"
+#include "plplot/plstrm.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.24  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.23  1995/10/23 07:23:12  mjl
  * Added glevel() f77 binding.
  *
@@ -26,7 +29,7 @@
 	conversion.
 */
 
-#include "plstubs.h"
+#include "plplot/plstubs.h"
 
 void
 PLADV(PLINT *sub)

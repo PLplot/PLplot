@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.10  1994/06/30 18:22:14  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
@@ -22,7 +25,7 @@
 	symbol size, tick length, line and fill patterns, etc.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /* Line pattern defaults */
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.2  1995/06/23 02:52:28  mjl
  * Added width, height fields in case we want to keep track of the remote
  * window size.
@@ -48,9 +51,9 @@
 #ifndef __PLTKD_H__
 #define __PLTKD_H__
 
-#include "plplotP.h"
-#include "pltk.h"
-#include "pdf.h"
+#include "plplot/plplotP.h"
+#include "plplot/pltk.h"
+#include "plplot/pdf.h"
 
 #include <tk.h>
 #ifdef PLD_dp

@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.3  2000/12/18 21:01:50  airwin
+   Change to new style plplot/*.h header file locations.
+
    Revision 1.2  2000/05/12 18:05:32  furnish
    Imported latest Mac port work by Rob Managan.
 
@@ -31,11 +34,11 @@
   Compile this with MetroWerks C/C++ 
 
 */
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "drivers.h"
-#include "mac.h"
+#include "plplot/drivers.h"
+#include "plplot/mac.h"
 
 #define MAC_XMAX 400
 #define MAC_YMAX 400

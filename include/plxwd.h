@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.2  1996/10/31 05:05:08  furnish
  * Add new member for tracking whether the chosen visual supports mutable
  * color cells.
@@ -40,8 +43,8 @@
 #ifndef __PLXWD_H__
 #define __PLXWD_H__
 
-#include "plplot.h"
-#include "plstrm.h"
+#include "plplot/plplot.h"
+#include "plplot/plstrm.h"
 
 /* System headers */
 

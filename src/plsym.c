@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.17  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.16  1996/02/24 04:52:38  shouman
  * Added check to make sure ASCII point drawing routines don't try to use
  * a font that has been unloaded.
@@ -57,7 +60,7 @@
 	the search path used in finding the font files.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 #include <float.h>
 #include <ctype.h>
 

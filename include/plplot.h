@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.95  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.94  2000/11/29 00:06:13  airwin
  * c_plshade defined region functionality and working example.
  *
@@ -128,7 +131,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#include "plConfig.h"
+#include "plplot/plConfig.h"
 
 #define PLPLOT_VERSION "5.1.0-"
 
@@ -137,7 +140,7 @@
  * 
  * To use PLplot from C or C++, it is only necessary to 
  * 
- *      #include "plplot.h"
+ *      #include "plplot/plplot.h"
  * 
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file

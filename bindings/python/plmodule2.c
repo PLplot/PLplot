@@ -1,4 +1,4 @@
-#include "plmodule.h"
+#include "plplot/plmodule.h"
 
 #define PyAssert(c,m) if (!(c)) { PyErr_SetString( PyExc_RuntimeError, m ); \
                                   return NULL; }

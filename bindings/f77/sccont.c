@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.3  1994/03/23 08:38:37  mjl
  * Name change for contour plotter base routine; lots of new plfshade
  * front-end functions added.
@@ -19,7 +22,7 @@
 	Contour plotter front-ends for Fortran.
 */
 
-#include "plstubs.h"
+#include "plplot/plstubs.h"
 
 /*----------------------------------------------------------------------*\
 * pltr0f()

@@ -1,6 +1,9 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
+ * Revision 1.18  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.17  2000/05/15 15:46:05  furnish
  * Include plplot.h so we can determine the setting for PLFLT.  This way
  * the Tcl matrix extension and the PLplot library won't become
@@ -102,7 +105,7 @@
 #ifndef __TCLMATRIX_H__
 #define __TCLMATRIX_H__
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 #include <tcl.h>
 
 typedef PLFLT Mat_float;

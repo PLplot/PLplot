@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.3  2000/12/18 21:01:50  airwin
+   Change to new style plplot/*.h header file locations.
+
    Revision 1.2  1995/06/24 06:58:58  mjl
    Latest bcc distribution from Paul Casteels.
 
@@ -54,13 +57,13 @@
   Compile this with Borland C 3.1
 
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 #ifdef PLD_bgi
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "drivers.h"
+#include "plplot/drivers.h"
 #include <graphics.h>
 #include <process.h>
 #include <conio.h>

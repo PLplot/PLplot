@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.18  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.17  1995/03/11 20:27:14  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -15,12 +18,12 @@
 
 	PLplot xfig device driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_xfig
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 
 /* Function prototypes */
 

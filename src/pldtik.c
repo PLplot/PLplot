@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.10  2000/05/10 21:27:11  airwin
  * power of 10 scaling of axes has been reworked to provide good results for
  * both negative and positive powers.
@@ -28,7 +31,7 @@
 	numeric axis labels.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void pldtik()

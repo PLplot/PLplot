@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.14  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.13  1996/11/18 19:02:18  furnish
  * Make buffer larger to prevent use of unallocated memory.
  *
@@ -30,7 +33,7 @@
 #pragma optimize("",off)
 #endif
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 static int base[17] =
 {0, 200, 500, 600, 700, 800, 900,

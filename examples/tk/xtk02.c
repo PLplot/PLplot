@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.13  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.12  1999/01/23 05:13:39  furnish
  * Remove punchy blabber that clutters the screen trying to draw
  * attention to cool "embedded Tcl" programming techniques.  Now we'll
@@ -41,7 +44,7 @@
  * Added missing CVS Id and Log fields.
  */
 
-#include "pltk.h"
+#include "plplot/pltk.h"
 #include <math.h>
 
 static int

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.40  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.39  2000/05/10 20:40:51  furnish
  * ifdef out use of strdup (nonstandard routine not in Mac libraries).
  * There must be a better option here but I don't think it is likely to
@@ -187,7 +190,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     See plrender.c for examples of actual usage.  */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 #include <ctype.h>
 
 /* Support functions */

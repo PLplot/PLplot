@@ -70,10 +70,10 @@
 
 #if defined (_MSC_VER) && defined(MSDOS)  /* Only compile for DOS and Microsoft */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "drivers.h"
+#include "plplot/drivers.h"
 #include <graph.h>
 #include <conio.h>
 

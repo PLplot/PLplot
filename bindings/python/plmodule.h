@@ -1,6 +1,6 @@
 #include <Python.h>
-#include "plplot.h"	
-#include "plplotP.h"
+#include "plplot/plplot.h"	
+#include "plplot/plplotP.h"
 #include "Numeric/arrayobject.h"	
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)

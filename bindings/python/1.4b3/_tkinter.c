@@ -37,7 +37,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 	release.  (4.0/7.4 were never released for these platforms.)
 */
 
-#include "Python.h"
+#include "plplot/Python.h"
 #include <ctype.h>
 
 #ifdef macintosh

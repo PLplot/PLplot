@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.15  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.14  1996/04/30 23:08:57  furnish
  * Fix uninitialized data problem turned up by Purify.
  *
@@ -41,7 +44,7 @@
     Data can be written to/read from either a file handle or memory buffer.
 \*--------------------------------------------------------------------------*/
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);

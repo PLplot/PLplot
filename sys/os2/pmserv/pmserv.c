@@ -49,7 +49,7 @@ Revision History:
 			Version 1.0!
 */
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 
 #define INCL_WIN
 #define INCL_DOS
@@ -62,7 +62,7 @@ Revision History:
 #include <string.h>
 #include <memory.h>
 
-#include "pmdefs.h"
+#include "plplot/pmdefs.h"
 
 VOID CheckMenuItem( HWND hwnd, SHORT sMenuItem, BOOL fCheck );
 

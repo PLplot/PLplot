@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.25  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.24  1995/10/23 07:23:11  mjl
  * Added glevel() f77 binding.
  *
@@ -29,7 +32,7 @@
 #ifndef __PLSTUBS_H__
 #define __PLSTUBS_H__
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * Select name transformation based on system type.

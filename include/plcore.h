@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.32  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.31  2000/05/10 20:39:08  furnish
  * Add mac routines to terminal types.  Rob Managan.
  *
@@ -47,9 +50,9 @@
 #ifndef __PLCORE_H__
 #define __PLCORE_H__
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "plDevs.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/plDevs.h"
 
 /* Static function prototypes */
 
@@ -93,7 +96,7 @@ PLStream *plsc = &pls0;
 
 /* Only now can we include this */
 
-#include "pldebug.h"
+#include "plplot/pldebug.h"
 
 /*--------------------------------------------------------------------------*\
  * Define structure containing pointers to device dependent functions.

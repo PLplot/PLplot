@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.8  2000/12/18 21:01:50  airwin
+   Change to new style plplot/*.h header file locations.
+
    Revision 1.7  1994/05/23 22:12:00  mjl
    Minor incompatibilities with main sources fixed.
 
@@ -26,8 +29,8 @@
  *
 */
 
-#include "plplotP.h"
-#include "plamiga.h"
+#include "plplot/plplotP.h"
+#include "plplot/plamiga.h"
 
 #include <stdlib.h>
 #include <string.h>

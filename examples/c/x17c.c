@@ -4,6 +4,9 @@
 
 /* $Id$
  * $Log$
+ * Revision 1.9  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.8  2000/07/19 21:12:20  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -38,7 +41,7 @@
  * Try using -db on command line
  */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 #ifdef HAS_POLL
 #include <poll.h>
 #else

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.53  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.52  1995/10/22 17:42:34  mjl
  * Removed -f (filter) option -- it's too overloaded, and unnecessary to boot:
  * just use -i - for input from stdin or -o - for output to stdout.
@@ -82,9 +85,9 @@
 
 char ident[] = "@(#) $Id$";
 
-#include "plplotP.h"
-#include "plevent.h"
-#include "metadefs.h"
+#include "plplot/plplotP.h"
+#include "plplot/plevent.h"
+#include "plplot/metadefs.h"
 #include <ctype.h>
 
 /* Static function prototypes. */

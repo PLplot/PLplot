@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.3  1995/06/01 21:24:59  mjl
  * Added include of pltcl.h.
  *
@@ -22,7 +25,7 @@
 #ifndef __PLTK_H__
 #define __PLTK_H__
 
-#include "pltcl.h"
+#include "plplot/pltcl.h"
 #include <tk.h>
 
 #ifdef __cplusplus

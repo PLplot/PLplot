@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.21  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.20  1995/03/11 20:27:09  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -19,12 +22,12 @@
 	should work by just changing the value of DPI and changing the
 	values passed to plP_setphy().  
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_ljii
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 #include <math.h>
 #include <string.h>
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.8  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.7  1996/06/26 21:35:11  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
@@ -125,7 +128,7 @@ void (*tclErrorHandler)
 
 /* Options data structure definition. */
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 
 static char *script = NULL;
 static char *fileName = NULL;

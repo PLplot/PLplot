@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.11  1996/11/18 19:18:38  furnish
  * Lengthen buffer for safety.
  *
@@ -26,7 +29,7 @@
 	Font demo.
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
  * main

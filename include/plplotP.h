@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.42  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.41  1995/10/13 21:19:09  mjl
  * Now reverts back to fseek/ftell if the USE_FSEEK macro is define, for
  * use on systems where libc is busted.
@@ -100,7 +103,7 @@
  * drivers, your terminal may be left in a strange state.
 \*--------------------------------------------------------------------------*/
 
-#include "plConfig.h"
+#include "plplot/plConfig.h"
 #ifdef caddr_t
 #undef caddr_t
 typedef char * caddr_t;
@@ -136,17 +139,17 @@ typedef char * caddr_t;
 /* Include all externally-visible definitions and prototypes */
 /* plplot.h also includes some handy system header files */
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 
 /* plstream definition */
 
-#include "plstrm.h"
+#include "plplot/plstrm.h"
 
 /* If not including this file from inside of plcore.h, declare plsc */
 
 #ifndef __PLCORE_H__
 extern PLStream	*plsc;
-#include "pldebug.h"
+#include "plplot/pldebug.h"
 #endif
 
 /*--------------------------------------------------------------------------*\

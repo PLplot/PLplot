@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.60  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.59  2000/07/19 21:12:13  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -93,17 +96,17 @@
 
 #define DEBUG
 
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_tk
 
-#include "pltkd.h"
-#include "plxwd.h"
-#include "pltcl.h"
-#include "tcpip.h"
-#include "drivers.h"
-#include "metadefs.h"
-#include "plevent.h"
+#include "plplot/pltkd.h"
+#include "plplot/plxwd.h"
+#include "plplot/pltcl.h"
+#include "plplot/tcpip.h"
+#include "plplot/drivers.h"
+#include "plplot/metadefs.h"
+#include "plplot/plevent.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

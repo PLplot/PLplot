@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.5  2000/12/18 21:01:50  airwin
+   Change to new style plplot/*.h header file locations.
+
    Revision 1.4  1994/03/23 08:56:15  mjl
    Header file rearrangement, also removed some redundant variable clears.
 
@@ -24,9 +27,9 @@
 	menu selection printer dump.
 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "plamiga.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/plamiga.h"
 
 /* top level declarations */
 

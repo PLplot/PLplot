@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.6  1994/06/30 18:22:22  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
@@ -19,7 +22,7 @@
 	Routines for drawing error bars and tick marks.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void plxtik()

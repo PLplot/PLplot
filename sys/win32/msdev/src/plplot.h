@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.1  1996/10/23 00:01:44  furnish
  * New driver contributed by Paul Casteels.
  *
@@ -103,7 +106,7 @@
  * 
  * To use PLplot from C or C++, it is only necessary to 
  * 
- *      #include "plplot.h"
+ *      #include "plplot/plplot.h"
  * 
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file

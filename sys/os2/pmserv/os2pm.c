@@ -19,13 +19,13 @@
 /* Some screwy thing with VOID goes wrong if this comes after the
    the os2.h stuff. */
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 
 #define INCL_BASE
 #include <os2.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "dispatch.h"
+#include "plplot/dispatch.h"
 
 /* top level declarations */
 
@@ -36,7 +36,7 @@ static short	cnt;
 static PLINT	xold = -100000;
 static PLINT	yold = -100000;
 	  
-#include "pmdefs.h"
+#include "plplot/pmdefs.h"
 
 typedef	PLINT	COMMAND_ID;
 typedef PLINT * CPARAMS;

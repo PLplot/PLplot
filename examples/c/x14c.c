@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.16  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.15  1995/06/01 21:40:13  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
@@ -46,7 +49,7 @@
 	IFS, University of Texas at Austin
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];

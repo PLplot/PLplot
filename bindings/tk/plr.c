@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.21  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.20  1995/09/22 16:04:12  mjl
  * Fixes to names of member variables of PLiodev structs.
  *
@@ -61,9 +64,9 @@
 #define DEBUG_ENTER
 */
 
-#include "plserver.h"
-#include "plevent.h"
-#include "metadefs.h"
+#include "plplot/plserver.h"
+#include "plplot/plevent.h"
+#include "plplot/metadefs.h"
 
 /* Some wrapper macros to return (-1) on error */
 

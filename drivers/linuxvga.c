@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.9  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.8  1995/06/12 02:55:02  mjl
  * Fixed broken plP_setpxl and plP_setphy function calls.
  *
@@ -25,12 +28,12 @@
 	Things to note: NEEDS vgalib to compile!!!!!
 
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_linuxvga		/* Only compile for Linux + Vgalib 1.2 */
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 #include <vga.h>
 
 /* Function prototypes */

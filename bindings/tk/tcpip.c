@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.17  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.16  1995/09/22 16:04:13  mjl
  * Fixes to names of member variables of PLiodev structs.
  *
@@ -105,7 +108,7 @@
 #define DEBUG
 */
 
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #if defined(PLD_dp) || defined (PLD_tk)
 
@@ -122,7 +125,7 @@
  * I forego the ANSI compiler here and go with good (bad) old "cc".
  */
 
-#include "plConfig.h"
+#include "plplot/plConfig.h"
 #ifdef _POSIX_SOURCE
 #undef _POSIX_SOURCE
 #endif
@@ -142,7 +145,7 @@
 #include <unistd.h>
 #endif
 
-#include "tcpip.h"
+#include "plplot/tcpip.h"
 #include <tcl.h>
 #include <tk.h>
 

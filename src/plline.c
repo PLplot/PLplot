@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.17  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.16  1994/07/22 15:54:37  furnish
  * Fix bug in selective segment draw capability of plpoly3().
  *
@@ -48,7 +51,7 @@
 	Routines dealing with line generation.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 #define INSIDE(ix,iy) (BETW(ix,xmin,xmax) && BETW(iy,ymin,ymax))
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.11  1998/12/01 20:51:13  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
@@ -19,7 +22,7 @@
 	Functions dealing with viewports.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*--------------------------------------------------------------------------*\
  * void plenv()

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.5  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.4  1999/06/19 05:38:31  furnish
  * Integrated patch set from Joao Cardoso.
  *
@@ -105,7 +108,7 @@
 	Also prototypes for stream & device utility functions.
 */
 
-#include "pdf.h"
+#include "plplot/pdf.h"
 
 #ifndef __PLSTRM_H__
 #define __PLSTRM_H__

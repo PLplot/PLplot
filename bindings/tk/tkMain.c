@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.10  1999/01/23 05:08:23  furnish
  * When itcl and itk are enabled, set up the interpretter the same way
  * that itkwish does.  This makes it much easier to use Itk components.
@@ -85,7 +88,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>

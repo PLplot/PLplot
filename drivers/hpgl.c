@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.6  1995/03/11 20:27:07  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -37,14 +40,14 @@
  *
 \*--------------------------------------------------------------------------*/
 
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #if defined(PLD_hp7470) || defined(PLD_hp7580) || defined(PLD_lj_hpgl)
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 #include <stdio.h>
 #include <string.h>
-#include "drivers.h"
+#include "plplot/drivers.h"
 
 /* top level declarations */
 

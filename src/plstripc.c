@@ -6,6 +6,9 @@
 
 /* $Id$
  * $Log$
+ * Revision 1.3  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.2  1999/06/24 20:53:02  furnish
  * Add c_ prefixes to some functions which slipped by unnoticed
  * previously.  The c_ prefixes are needed to keep the C and Fortran
@@ -40,8 +43,8 @@
  * that are continually updated.
  */
 
-#include "plplotP.h"
-#include "plplot.h"
+#include "plplot/plplotP.h"
+#include "plplot/plplot.h"
 
 /* Data declarations for stripcharts. */
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.13  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.12  1995/06/01 21:40:05  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
@@ -23,7 +26,7 @@
 	Polar plot demo.
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
  * main

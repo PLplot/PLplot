@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.25  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.24  1995/10/22 17:31:18  mjl
  * Moved pls_auto_path to tclAPI.c, for use by both Tcl and Tcl/TK interfaces.
  *
@@ -45,7 +48,7 @@
  * A miscellaneous assortment of Tcl support functions.
  */
 
-#include "plserver.h"
+#include "plplot/plserver.h"
 
 /*----------------------------------------------------------------------*\
  * Pltk_Init

@@ -1,5 +1,5 @@
 #define __PLSTUBS_H__
-#include "plplot.h"
+#include "plplot/plplot.h"
 #include <math.h>
 #include <windows.h>
 

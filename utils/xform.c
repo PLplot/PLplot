@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.4  2000/12/18 21:01:50  airwin
+   Change to new style plplot/*.h header file locations.
+
    Revision 1.3  1993/07/02 07:17:39  mjl
    Changed include of plplot.h to plplotP.h.
 
@@ -16,7 +19,7 @@
 	Example linear transformation function for contour plotter.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 extern PLFLT tr[];
 

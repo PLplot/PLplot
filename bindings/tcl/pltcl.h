@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.6  1995/06/02 20:30:03  mjl
  * Made C++ friendly.
  *
@@ -32,9 +35,9 @@
 #ifndef __PLTCL_H__
 #define __PLTCL_H__
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 #include <tcl.h>
-#include "tclMatrix.h"
+#include "plplot/tclMatrix.h"
 
 #ifdef __cplusplus
 extern "C" {

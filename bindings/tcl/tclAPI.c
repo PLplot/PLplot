@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.23  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.22  1995/10/23 07:30:16  mjl
  * Support error code retrieval.  Now, tcl scripts with lots of plplot commands
  * won't keep going on and on after a plplot error.
@@ -104,13 +107,13 @@
     driver, in principle.
 */
 
-#include "plplotP.h"
-#include "pltcl.h"
+#include "plplot/plplotP.h"
+#include "plplot/pltcl.h"
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#include "tclgen.h"
+#include "plplot/tclgen.h"
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
 
@@ -144,7 +147,7 @@ typedef struct {
 
 static CmdInfo Cmds[] = {
     {"loopback",	loopbackCmd},
-#include "tclgen_s.h"
+#include "plplot/tclgen_s.h"
     {"plcol",		plcol0Cmd},
     {"plcont",		plcontCmd},
     {"plmesh",		plmeshCmd},

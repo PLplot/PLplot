@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.63  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.62  1999/02/26 19:40:09  furnish
  * Add widget subcommand "doublebuffering" (or "db" for short) which
  * allows querying and changing the state of double buffering for output
@@ -163,9 +166,9 @@
 #define DEBUG
 */
 
-#include "plserver.h"
-#include "plxwd.h"
-#include "tcpip.h"
+#include "plplot/plserver.h"
+#include "plplot/plxwd.h"
+#include "plplot/tcpip.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

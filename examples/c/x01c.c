@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.20  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.19  2000/07/19 21:12:20  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -54,8 +57,8 @@
 	Simple line plot and multiple windows demo.
 */
 
-#include "plcdemos.h"
-#include "plevent.h"
+#include "plplot/plcdemos.h"
+#include "plplot/plevent.h"
 
 /* Variables and data arrays used by plot generators */
 

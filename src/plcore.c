@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.55  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.54  1996/03/02 11:48:27  shouman
  * Fixed botch in previous botch-fix.  Arggh.
  *
@@ -101,7 +104,7 @@
 */
 
 #define DEBUG
-#include "plcore.h"
+#include "plplot/plcore.h"
 
 /*--------------------------------------------------------------------------*\
  * Driver Interface

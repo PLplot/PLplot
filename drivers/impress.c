@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.18  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.17  1995/03/11 20:27:08  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -15,12 +18,12 @@
 
 	PLplot ImPress device driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_imp
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 
 /* Function prototypes */
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.15  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.14  1995/10/22 17:40:33  mjl
  * Removed message "Sending output to null device.." being sent to stderr -- a
  * null device should act accordingly.
@@ -17,12 +20,12 @@
 
 	PLplot Null device driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_null
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 
 /*--------------------------------------------------------------------------*\
  * plD_init_null()

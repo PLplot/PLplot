@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.11  1994/09/02 08:36:37  mjl
  * Fixed bug encountered when changing screen modes -- FreeRaster call was
  * given the wrong screen dimensions.
@@ -26,10 +29,10 @@
 	PLPLOT Amiga window device driver.
 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "plamiga.h"
-#include "pla_menu.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/plamiga.h"
+#include "plplot/pla_menu.h"
 
 #include <graphics/gfxmacros.h>
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.10  1998/12/01 20:47:12  furnish
  * Minor corrections to float decls.
  *
@@ -41,7 +44,7 @@
 	3-d line and point plot demo.  Adapted from x08c.c.
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 static int opt[] = { 1, 0, 1, 0 };
 static PLFLT alt[] = {20.0, 35.0, 50.0, 65.0};

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.10  1995/03/17 00:16:24  mjl
  * Eliminated unnecessary accessor variables and other cleaning up.
  * Added call to plP_swin() to set window parameters.
@@ -17,7 +20,7 @@
 	Routines for setting up world coordinates of the current viewport.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 #define  dtr   0.01745329252
 

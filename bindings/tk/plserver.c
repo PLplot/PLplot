@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.40  2000/12/18 21:01:48  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.39  1998/11/18 06:12:38  furnish
  * Grotesque hacks to omit old Itcl support code from the compiled side.
  * Not really sure what to do just yet.  The old Itcl support required
@@ -97,7 +100,7 @@
 /*
 */
 
-#include "plserver.h"
+#include "plplot/plserver.h"
 
 /* Application-specific command-line options */
 /* Variable declarations */

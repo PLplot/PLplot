@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.5  2000/12/18 21:01:50  airwin
+   Change to new style plplot/*.h header file locations.
+
    Revision 1.4  1995/06/13 03:58:09  mjl
    Fixes for 4.99j on the Amiga.
 
@@ -23,8 +26,8 @@
 	table. 
 */
 
-#include "plplot.h"
-#include "plamiga.h"
+#include "plplot/plplot.h"
+#include "plplot/plamiga.h"
 #include <string.h>
 #include <math.h>
 #include <ctype.h>

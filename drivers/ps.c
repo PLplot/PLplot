@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.34  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.33  1995/03/11 20:27:13  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -28,12 +31,12 @@
 
 	PLplot PostScript device driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_ps
 
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 
 #include <string.h>
 #include <time.h>

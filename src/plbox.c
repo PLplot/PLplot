@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.21  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.20  2000/05/10 21:24:06  airwin
  * Alan W. Irwin.  Logic for changing power of 10 to scale z axes is now
  * consistent between the left and right z axes.
@@ -37,7 +40,7 @@
 	Routines for drawing axes & box around the current viewport.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 static PLFLT xlog[8] =
 {

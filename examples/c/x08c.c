@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.13  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.12  2000/07/19 21:12:20  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -28,7 +31,7 @@
 	3-d plot demo.
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.11  2000/08/04 04:17:49  vincentdarley
  * Fixing indentation of previous patch, and testing commit process
  *
@@ -27,7 +30,7 @@
 	Histogram plotter.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void plhist()

@@ -58,12 +58,12 @@
       Bug Reports please to et@appl-math.tu-muenchen.de (Thomas Schwaller)
 */
 
-#include "plmodule.h"
+#include "plplot/plmodule.h"
 /*
 #include <Python.h>
-#include "plplot.h"	
-#include "plplotP.h"
-#include "arrayobject.h"	
+#include "plplot/plplot.h"	
+#include "plplot/plplotP.h"
+#include "plplot/arrayobject.h"	
 
 extern void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	                             PLFLT scale, PLFLT dx, PLFLT dy);
@@ -370,7 +370,7 @@ pyt0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
     *ty = y;
 }
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /* static int pl_pymateval_modx, pl_pymateval_mody; */
 

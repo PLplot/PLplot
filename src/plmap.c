@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2000/12/18 21:01:50  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.3  1999/06/25 04:18:47  furnish
  * Add the c_ namespace control thing to plmap and plmeridians, which
  * somehow slipped in without this protection.
@@ -32,7 +35,7 @@
 	costs is prohibited.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,

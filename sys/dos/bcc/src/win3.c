@@ -8,18 +8,18 @@
   A driver for Windows 3.x
 
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 #ifdef PLD_win3
 
 #include <stdio.h>
 #include <string.h>
-#include "plplotP.h"
-#include "drivers.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 #include <windows.h>
 #include <commdlg.h>
 //#define NDEBUG
 #include <assert.h>
-#include "plplot.rc"
+#include "plplot/plplot.rc"
 
 #define TEXT_MODE 0
 #define GRAPHICS_MODE 1

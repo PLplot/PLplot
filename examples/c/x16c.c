@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.10  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.9  2000/11/29 00:06:11  airwin
  * c_plshade defined region functionality and working example.
  *
@@ -47,7 +50,7 @@
 	20 Mar 1994
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 /* Fundamental settings.  See notes[] for more info. */
 

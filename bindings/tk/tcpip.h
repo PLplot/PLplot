@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.1  1995/06/01 21:30:26  mjl
  * Header file for IPC function prototypes.
  *
@@ -17,7 +20,7 @@
 #ifndef __TCPIP_H__
 #define __TCPIP_H__
 
-#include "pdf.h"
+#include "plplot/pdf.h"
 #include <tcl.h>
 
 /* Modified version of the "Tdp_PacketSend" command. */

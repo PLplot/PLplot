@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.10  2000/12/18 21:01:49  airwin
+ * Change to new style plplot/*.h header file locations.
+ *
  * Revision 1.9  1995/04/12 08:20:13  mjl
  * Eliminated SCHAR in favor of simply "signed char".
  *
@@ -12,7 +15,7 @@
 	Utility to generate standard font set.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 extern short int *hersh[];
 extern short int *findex[];
