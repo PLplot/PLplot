@@ -1238,20 +1238,12 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 	switch (t->type) {
 
 	case DRV_STR:
-	  /*  *((char *)(t->var_ptr)) = drvp->value;  this dont work! Any fix? */
+	  *(char **)(t->var_ptr) = (drvp->value);
 
-	  /* for strings, the driver allocated variable must have enough room! */
-	  if (strlen(drvp->value) > strlen((char *) t->var_ptr)) {
-	    sprintf(msg,"Too long argument to '%s' option", drvp->option);
-	    plabort(msg);
-	    exit (1);
-	  }
-
-	  strcpy((char *) t->var_ptr, drvp->value);
 #ifdef DEBUG
-	  fprintf(stderr,"plParseDrvOpts: %s %s\n", t->opt, (char *) t->var_ptr);
+	  fprintf(stderr,"plParseDrvOpts: %s %s\n", t->opt, *(char**)t->var_ptr);
 #endif
-	  free(drvp->value); free(drvp->option);
+	  free(drvp->option); /* don't! free(drvp->value); */
 	  break;
 
 	case DRV_INT:
@@ -1259,8 +1251,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
 	  if ((st = sscanf(drvp->value, "%d", (char *)t->var_ptr)) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
-	    plabort(msg);
-	    exit (1);
+	    plexit(msg);
 	  }
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %d\n", t->opt, *(int *) t->var_ptr);
@@ -1273,8 +1264,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
 	  if ((st = sscanf(drvp->value, "%f", (char *)t->var_ptr)) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
-	    plabort(msg);
-	    exit (1);
+	    plexit(msg);
 	  }
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %f\n", t->opt, *(float *) t->var_ptr);
@@ -1288,10 +1278,9 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
     if (!fl) {
       sprintf(msg, "Option '%s' not recognized.\n\nRecognized options for this driver are:\n", drvp->option);
-      plwarn(msg); 
-      plHelpDrvOpts(acc_opt);
-      plabort("Exiting");
-      exit(1);
+      plwarn(msg);
+      plHelpDrvOpts(acc_opt);      
+      plexit(""); 
     }
   }
   while(drvp = drvp->next);
@@ -1660,9 +1649,17 @@ opt_wplt(char *opt, char *optarg, void *client_data)
 static int
 opt_drvopt(char *opt, char *optarg, void *client_data)
 {
-  char t, *tt, option[80], value[80];
+  char t, *tt, *option, *value;
   int fl = 0;
   DrvOptCmd *drvp;
+
+  option = (char *) malloc(strlen(optarg));
+  if (option == NULL)
+    plexit("opt_drvopt: Out of memory!?");
+
+  value = (char *) malloc(strlen(optarg));
+  if (value == NULL)
+    plexit("opt_drvopt: Out of memory!?");
 
   drvp = &drv_opt;
   *option = *value = '\0';
@@ -1681,10 +1678,9 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
 	drvp->option = plstrdup(option);
 	drvp->value = plstrdup(value);
 	drvp->next = (DrvOptCmd *) malloc(sizeof(DrvOptCmd));
-	if (drvp->next == NULL) {
-	  plabort("Out of memory!?\n");
-	  return 1;
-	}
+	if (drvp->next == NULL)
+	  plexit("opt_drvopt: Out of memory!?\n");
+
 	drvp = drvp->next;
 	break;
 
@@ -1709,11 +1705,15 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
     drvp->next = NULL;
 
 #ifdef DEBUG
+    fprintf(stderr, "\nopt_drvopt: -drvopt parsed options:\n");
     drvp = &drv_opt;
     do 
       fprintf(stderr, "%s %s\n", drvp->option, drvp->value);
     while(drvp = drvp->next);
+    fprintf(stderr, "\n");
 #endif
+
+    free(option); free(value);
 
     return 0;
 }
