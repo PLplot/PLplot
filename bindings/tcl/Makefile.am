@@ -49,7 +49,7 @@ pkginclude_HEADERS = pltcl.h tclMatrix.h
 
 tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 
-$(MAINTAINERCLEANFILES) : pltclgen plapi.tpl tclcmd.tpl
+$(MAINTAINERCLEANFILES): pltclgen plapi.tpl tclcmd.tpl
 	perl pltclgen
 
 CLEANFILES = $(generated_scripts) tclIndex
