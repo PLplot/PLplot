@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1994/06/16 19:03:18  mjl
+ * Revision 1.34  1994/06/23 22:32:47  mjl
+ * Split off bulk of Tcl API in to separate file, where it can be used
+ * more flexibly.
+ *
+ * Revision 1.33  1994/06/16  19:03:18  mjl
  * Changed "cmd plline" and "cmd plpoin" widget commands to use new Matrix
  * notation/capabilities/etc.
  *
@@ -1003,8 +1007,7 @@ DisplayPlFrame(ClientData clientData)
 *
 * Processes "cmd" widget command.
 * Handles commands that go more or less directly to the PLPlot library.
-* This function will probably become much larger, as additional direct
-* PLPlot commands are supported.
+* Most of these come out of the PLplot Tcl API support file.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1013,76 +1016,24 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     PLStream *plsc = plFramePtr->plsc;
     int length;
-    char c, c3;
+    char c3;
     int result = TCL_OK;
     char cmdlist[] = "\
-plcol0 plenv plgcmap0 plgcmap1 pllab plline plpoin plscmap0 plscmap1\
-plscol0 plscol1 plsetopt";
+plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 
 /* no option -- return list of available PLPlot commands */
 
-    if (argc == 0) {
-	Tcl_AppendResult(interp, cmdlist, (char *) NULL);
-	return TCL_OK;
-    }
+    if (argc == 0) 
+	return plTclCmd(cmdlist, interp, argc, argv);
 
-    c = argv[0][0];
     c3 = argv[0][2];
     length = strlen(argv[0]);
     plsstrm(plFramePtr->ipls);
 
-/* plcol0 or plcol -- set color index, map 0 */
-
-    if ((c3 == 'c') &&
-	(strncmp(argv[0], "plcol", length) == 0) ||
-	(strncmp(argv[0], "plcol0", length) == 0)) {
-
-	PLINT col;
-
-	if (argc != 2) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			     " color-index\"",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	col = atoi( argv[1] );
-
-	plcol0( col );
-
-	result = TCL_OK;
-    }
-
-/* plenv -- Simple interface for defining viewport and window. */
-
-    else if ((c3 == 'e') && (strncmp(argv[0], "plenv", length) == 0)) {
-
-	PLFLT xmin, xmax, ymin, ymax;
-	PLINT just, axis;
-
-	if (argc != 7 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			     " xmin xmax ymin ymax just axis\"",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	xmin = atof( argv[1] );
-	xmax = atof( argv[2] );
-	ymin = atof( argv[3] );
-	ymax = atof( argv[4] );
-	just = atoi( argv[5] );
-	axis = atoi( argv[6] );
-
-	plenv( xmin, xmax, ymin, ymax, just, axis );
-
-	result = TCL_OK;
-    }
-
 /* plgcmap0 -- get color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    else if ((c3 == 'g') && (strncmp(argv[0], "plgcmap0", length) == 0)) {
+    if ((c3 == 'g') && (strncmp(argv[0], "plgcmap0", length) == 0)) {
 	int i;
 	unsigned long plcolor;
 	char str[10];
@@ -1132,83 +1083,6 @@ plscol0 plscol1 plsetopt";
 	    sprintf(str, "%02d", (int) (100*plsc->cmap1cp[i].p));
 	    Tcl_AppendElement(interp, str);
 	}
-	result = TCL_OK;
-    }
-
-/* Simple routine for labelling graphs. */
-
-    else if ((c3 == 'l') && (strncmp(argv[0], "pllab", length) == 0)) {
-
-	if (argc != 4 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		     argv[0], "  xlabel ylabel tlabel\"",
-		     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	pllab( argv[1], argv[2], argv[3] );
-
-	result = TCL_OK;
-    }
-
-/* Draws line segments connecting a series of points. */
-
-    else if ((c3 == 'l') && (strncmp(argv[0], "plline", length) == 0)) {
-	PLFLT *x, *y;
-	Matrix *matx, *maty;
-	int npts;
-
-	if (argc != 4 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			     " <npts> <x-array-name> <y-array-name>\"",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	matx = Tcl_GetMatrixPtr(interp, argv[2]);
-	x = matx->fdata;
-	maty = Tcl_GetMatrixPtr(interp, argv[3]);
-	y = maty->fdata;
-
-	if (strncmp(argv[1], "*", 1) == 0)
-	    npts = MIN(matx->len, maty->len);
-	else
-	    npts = atoi(argv[1]);
-
-	plline( npts, x, y );
-
-	result = TCL_OK;
-    }
-
-/* Plots array y against x for n points using ASCII code "code".*/
-
-    else if ((c3 == 'p') && (strncmp(argv[0], "plpoin", length) == 0)) {
-
-	PLFLT *x, *y;
-	Matrix *matx, *maty;
-	int npts, code;
-
-	if (argc != 5 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			     " <npts> <x-array-name> <y-array-name> <code>\"",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	matx = Tcl_GetMatrixPtr(interp, argv[2]);
-	x = matx->fdata;
-	maty = Tcl_GetMatrixPtr(interp, argv[3]);
-	y = maty->fdata;
-
-	if (strncmp(argv[1], "*", 1) == 0)
-	    npts = MIN(matx->len, maty->len);
-	else
-	    npts = atoi(argv[1]);
-
-	code = atoi( argv[4] );
-
-	plpoin( npts, x, y, code );
-
 	result = TCL_OK;
     }
 
@@ -1402,33 +1276,10 @@ plscol0 plscol1 plsetopt";
 	}
     }
 
-/* plsetopt -- set a PLPlot option (command-line syntax) */
-/* Just calls plSetInternalOpt() */
+/* unrecognized, give it to plTclCmd to take care of */
 
-    else if ((c3 == 's') && (strncmp(argv[0], "plsetopt", length) == 0)) {
-	if (argc < 2 || argc > 3) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " option ?argument?\"", (char *) NULL);
-	    result = TCL_ERROR;
-	}
-	else {
-#ifdef DEBUG
-	    fprintf(stderr, "Processing command: %s\n", argv[1]);
-	    if (argv[2] != NULL)
-		fprintf(stderr, "Processing option: %s\n", argv[2]);
-#endif
-	    plSetInternalOpt(argv[1], argv[2]);
-	}
-    }
-
-/* unrecognized */
-
-    else {
-	Tcl_AppendResult(interp, "bad option to \"cmd\": must be one of ",
-			 cmdlist, (char *) NULL);
-
-	result = TCL_ERROR;
-    }
+    else 
+	result = plTclCmd(cmdlist, interp, argc, argv);
 
     plflush();
     return result;
