@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/03/15 21:39:18  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.12  1993/03/16 06:47:35  mjl
+   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+   more robust.
 
+ * Revision 1.11  1993/03/15  21:39:18  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.10  1993/03/03  19:42:05  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -277,13 +281,13 @@ plm_bop(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
     U_LONG foo;
-    fpos_t cp_offset, fwbyte_offset, bwbyte_offset;
+    FPOS_T cp_offset, fwbyte_offset, bwbyte_offset;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
     fflush(pls->OutFile);
-    if (fgetpos(pls->OutFile, &cp_offset))
+    if (pl_fgetpos(pls->OutFile, &cp_offset))
 	plexit("plm_bop: fgetpos call failed");
 
 /* Seek back to previous page header and write forward byte offset. */
@@ -294,11 +298,11 @@ plm_bop(PLStream *pls)
 #endif
 
 	fwbyte_offset = pls->lp_offset + 7;
-	if (fsetpos(pls->OutFile, &fwbyte_offset))
+	if (pl_fsetpos(pls->OutFile, &fwbyte_offset))
 	    plexit("plm_bop: fsetpos call failed");
 
 #ifdef DEBUG
-	if (fgetpos(pls->OutFile, &fwbyte_offset))
+	if (pl_fgetpos(pls->OutFile, &fwbyte_offset))
 	    plexit("plm_bop: fgetpos call failed");
 
 	printf("Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
@@ -308,14 +312,14 @@ plm_bop(PLStream *pls)
 	fflush(pls->OutFile);
 
 #ifdef DEBUG
-	if (fsetpos(pls->OutFile, &fwbyte_offset))
+	if (pl_fsetpos(pls->OutFile, &fwbyte_offset))
 	    plexit("plm_bop: fsetpos call failed");
 
 	plm_rd(read_4bytes(pls->OutFile, &foo));
 	printf("Value read as: %d\n", foo);
 #endif
 
-	if (fsetpos(pls->OutFile, &cp_offset))
+	if (pl_fsetpos(pls->OutFile, &cp_offset))
 	    plexit("plm_bop: fsetpos call failed");
     }
 

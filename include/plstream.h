@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/06 05:06:10  mjl
-   Eliminated plbufFnam since it is now obsolete.
+   Revision 1.6  1993/03/16 06:48:11  mjl
+   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+   more robust.
 
+ * Revision 1.5  1993/03/06  05:06:10  mjl
+ * Eliminated plbufFnam since it is now obsolete.
+ *
  * Revision 1.4  1993/03/03  17:00:15  mjl
  * Split background color off from color map 0 palette -- previously it
  * was cmap[0], which turned out to be a poor idea.
@@ -229,7 +233,7 @@ typedef struct {
     PLINT bytecnt;
     PLINT page;
     PLINT linepos;
-    fpos_t lp_offset;
+    FPOS_T lp_offset;
 
 /* Colormaps */
 

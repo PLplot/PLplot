@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.19  1993/03/15 21:49:21  mjl
-   Change to allow plrender to abort a plot mid-page in order to respond to
-   a user seek request.  Now it processes <backspace> or <page up> or <delete>
-   (to go backward) and <RET> or <page down> as fast as it can get them.
+   Revision 1.20  1993/03/16 06:47:43  mjl
+   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+   more robust.
 
+ * Revision 1.19  1993/03/15  21:49:21  mjl
+ * Change to allow plrender to abort a plot mid-page in order to respond to
+ * a user seek request.  Now it processes <backspace> or <page up> or <delete>
+ * (to go backward) and <RET> or <page down> as fast as it can get them.
+ *
  * Revision 1.17  1993/03/03  19:43:47  mjl
  * Changed PLSHORT -> short.  Also put in some explicit casts to remove warnings
  * using SUN acc compiler.
@@ -175,9 +179,9 @@ static PLINT	target_page;	/* Page we are seeking to */
 static int	no_pagelinks;	/* Set if metafile doesn't have page links */
 static int	end_of_page;	/* Set when we're at the end of a page */
 
-static fpos_t	prevpage_loc;	/* Byte position of previous page header */
-static fpos_t	curpage_loc;	/* Byte position of current page header */
-static fpos_t	nextpage_loc;	/* Byte position of next page header */
+static FPOS_T	prevpage_loc;	/* Byte position of previous page header */
+static FPOS_T	curpage_loc;	/* Byte position of current page header */
+static FPOS_T	nextpage_loc;	/* Byte position of next page header */
 
 /* File info */
 
@@ -1064,7 +1068,7 @@ SeekToPage(long target_page)
 	printf("Seeking to: %d\n", curpage_loc);
 	grgra();
 #endif
-	if (fsetpos(MetaFile, &curpage_loc))
+	if (pl_fsetpos(MetaFile, &curpage_loc))
 	    plexit("plrender: fsetpos call failed");
 
 	cursub--;
@@ -1087,7 +1091,7 @@ SeekToPage(long target_page)
 /* For seeks past eof, just stay on last page */
 
 	    if (nextpage_loc == 0) {
-		if (fsetpos(MetaFile, &curpage_loc))
+		if (pl_fsetpos(MetaFile, &curpage_loc))
 		    plexit("plrender: fsetpos call failed");
 		break;
 	    }
@@ -1097,7 +1101,7 @@ SeekToPage(long target_page)
 	    printf("Seeking to: %d\n", nextpage_loc);
 	    grgra();
 #endif
-	    if (fsetpos(MetaFile, &nextpage_loc))
+	    if (pl_fsetpos(MetaFile, &nextpage_loc))
 		plexit("plrender: fsetpos call failed");
 
 	    cursub++;
@@ -1112,7 +1116,7 @@ SeekToPage(long target_page)
 /* For seeks past bof, just stay on first page */
 
 	    if (prevpage_loc == 0) {
-		if (fsetpos(MetaFile, &curpage_loc))
+		if (pl_fsetpos(MetaFile, &curpage_loc))
 		    plexit("plrender: fsetpos call failed");
 		break;
 	    }
@@ -1122,7 +1126,7 @@ SeekToPage(long target_page)
 	    printf("Seeking to: %d\n", prevpage_loc);
 	    grgra();
 #endif
-	    if (fsetpos(MetaFile, &prevpage_loc))
+	    if (pl_fsetpos(MetaFile, &prevpage_loc))
 		plexit("plrender: fsetpos call failed");
 
 	    cursub--;
@@ -1159,7 +1163,7 @@ ReadPageHeader(void)
 
 /* Read page header */
 
-    if (fgetpos(MetaFile, &curpage_loc))
+    if (pl_fgetpos(MetaFile, &curpage_loc))
 	plexit("plrender: fgetpos call failed");
 
     c = getcommand();

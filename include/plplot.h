@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.20  1993/03/15 21:51:24  mjl
-   Bumped version number to 4.99b.
+   Revision 1.21  1993/03/16 06:47:39  mjl
+   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+   more robust.
 
+ * Revision 1.20  1993/03/15  21:51:24  mjl
+ * Bumped version number to 4.99b.
+ *
  * Revision 1.19  1993/03/10  05:02:26  mjl
  * Changed documentation slightly, and inserted #ifndef _POSIX_SOURCE before
  * the define of _POSIX_SOURCE for an eensy weensy little bit of added safety.
@@ -218,8 +222,12 @@
 #endif
 
 /* Check for Amiga's */
+/* NO_ANSI_LIBC is required by SAS/C 5.X */
 
 #ifdef AMIGA
+#ifndef NO_ANSI_LIBC
+#define NO_ANSI_LIBC
+#endif
 #ifdef PL_NEED_SIZE_T
 #include <stddef.h>
 #endif
@@ -228,9 +236,14 @@
 /* A disgusting hack */
 
 #ifdef NO_ANSI_LIBC
-typedef long fpos_t;
-#define fsetpos(a,b) fseek(a, *b, 0)
-#define fgetpos(a,b) (-1L == (*b = ftell(a)))
+#define FPOS_T long
+#define pl_fsetpos(a,b) fseek(a, *b, 0)
+#define pl_fgetpos(a,b) (-1L == (*b = ftell(a)))
+
+#else
+#define FPOS_T fpos_t
+#define pl_fsetpos(a,b) fsetpos(a, b)
+#define pl_fgetpos(a,b) fgetpos(a, b)
 #endif
 
 /*----------------------------------------------------------------------*\
