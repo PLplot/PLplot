@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.55  1996/06/26 21:35:19  furnish
+ * Revision 1.56  1998/12/01 20:54:37  furnish
+ * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+ *
+ * This file has a problem with one of Cardoso's mods, near line 2023.
+ * For now it is #if 0'd out, till someone can figure out what is going
+ * on.
+ *
+ * Revision 1.55  1996/06/26  21:35:19  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
  * Revision 1.54  1995/09/22  16:04:16  mjl
@@ -224,6 +231,7 @@ init(PLStream *pls)
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->dev_fill1 = 1;		/* Handle pattern fills */
+    pls->server_nokill = 1; /* jc: dont kill if ^C */
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -704,6 +712,12 @@ tk_start(PLStream *pls)
 /* Instantiate a TCL interpreter, and get rid of the exec command */
 
     dev->interp = Tcl_CreateInterp();
+#if (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION > 4 )    
+    if (Tcl_Init(dev->interp) != TCL_OK) {	// jc:
+    fprintf(stderr, "%s\n", dev->interp->result);
+    abort_session(pls, "Unable to initialize Tcl");
+    }
+#endif
     tcl_cmd(pls, "rename exec {}");
 
 /* Initialize top level window */
@@ -720,6 +734,17 @@ tk_start(PLStream *pls)
 	char name[80];
 	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
+
+    /* jc: tk_init need this. Use pls->FileName first, then DISPLAY, then
+       :0.0 */
+
+        if (pls->FileName != NULL) 
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", pls->FileName, TCL_GLOBAL_ONLY);
+	else if (getenv("DISPLAY") != NULL)
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); /* jc: tk_init need this */
+	else
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", "unix:0.0", TCL_GLOBAL_ONLY); /* jc: tk_init need this */
+
 	dev->updatecmd = "update";
 	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
 	    abort_session(pls, "Unable to create top-level window");
@@ -790,8 +815,12 @@ tk_stop(PLStream *pls)
 /* Wait for child process to complete */
 
     if (dev->child_pid) {
+    	waitpid(dev->child_pid, NULL, 0);
+/*
+	jc: problems if parent has not caught/ignore SIGCHLD. Returns -1 and errno=EINTR    	
 	if (waitpid(dev->child_pid, NULL, 0) != dev->child_pid)
 	    fprintf(stderr, "tk_stop: waidpid error");
+*/	    
     }
 
 /* Blow away interpreter */
@@ -1057,6 +1086,8 @@ init_server(PLStream *pls)
 static void
 launch_server(PLStream *pls)
 {
+    extern char *strdup( const char * );
+
     TkDev *dev = (TkDev *) pls->dev;
     char *argv[20], *plserver_exec, *ptr;
     int i;
@@ -1091,6 +1122,35 @@ launch_server(PLStream *pls)
 
     argv[i++] = "-e";			/* Startup script */
     argv[i++] = "plserver_init";
+
+/* jc: Haaaaa. This is it! Without the next statements, control is either
+ * in tk or octave, because tcl/tk was in interative mode (I think).
+ * This had the inconvenient of having to press the enter key or cliking a
+ * mouse button in the plot window after every plot.
+ *
+ * This couldn't be done with
+ *	Tcl_SetVar(dev->interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+ * after plserver has been launched? It doesnt work, hoewever.
+ * Tk_CreateFileHandler (0, TK_READABLE, NULL, 0) doesnt work also
+ */
+
+    argv[i++] = "-file";			/* Startup file */
+    argv[i++] = "/dev/null";
+
+
+/*
+   jc: give interpreter the base name of the plwindow.
+   Usefull to know the interpreter name
+*/
+ 
+    if (plsc->plwindow != NULL) {	/* jc: */
+        char *t, *tmp;
+        argv[i++] = "-name";            /* plserver name */
+	tmp = strdup(plsc->plwindow + 1); /* get rid of the initial dot */ /* warning: memory leak, should free(tmp) */
+        argv[i++] = tmp;	
+        if ((t = strchr(tmp, '.')) != NULL)
+            *t = '\0';		/* and keep only the base name */
+    }
 
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
@@ -1189,7 +1249,8 @@ launch_server(PLStream *pls)
 		if ((retv = sigprocmask (SIG_BLOCK, set, 0)) < 0)
 		    fprintf(stderr, "PLplot: sigprocmask failure\n");
 	    }
-	    fprintf(stderr, "Starting up %s\n", plserver_exec);
+	    /* jc:	    fprintf(stderr, "Starting up %s\n", plserver_exec); */
+	    pldebug("launch_server", "Starting up %s\n", plserver_exec);
 	    if (execv(plserver_exec, argv)) {
 		fprintf(stderr, "Unable to exec server process.\n");
 		_exit(1);
@@ -1967,6 +2028,12 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
     }
 #else
     Tk_Init( interp );
+#if 0
+    if (Tk_Init( interp )) {	/* jc: if added */
+        fprintf(stderr,"tk_init:%s\n", interp->result); /* jc: */
+    return 1;
+    }
+#endif
 #endif
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);
