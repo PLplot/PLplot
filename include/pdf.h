@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1994/01/15 17:33:16  mjl
-   Added typedef of PDFstrm and wrapped function prototypes in a macro so
-   the header can be read without problems by K&R compilers (cc).
+   Revision 1.7  1994/02/07 23:02:38  mjl
+   PLiodev struct defined.
 
+ * Revision 1.6  1994/01/15  17:33:16  mjl
+ * Added typedef of PDFstrm and wrapped function prototypes in a macro so
+ * the header can be read without problems by K&R compilers (cc).
+ *
  * Revision 1.5  1993/07/02  07:21:41  mjl
  * All PDF routines now start with "pdf_".
  *
@@ -50,6 +53,17 @@ typedef struct {
     unsigned char *buffer;		/* Memory buffer */
     long bp, bufmax;			/* Buffer pointer and max size */
 } PDFstrm;
+
+/* Info for the i/o device.  Only used by Tcl/TK/dp drivers for now */
+
+typedef struct {
+    int   fd;				/* I/O device file descriptor */
+    FILE  *file;			/* File handle */
+    char  *filename;			/* Fifo or socket name (if needed) */
+    char  *filehandle;			/* Handle for use from interpreter */
+    int   type;				/* Communication channel type */
+    char  *typename;			/* As above, but in string form */
+} PLiodev;
 
 /* Error numbers */
 
