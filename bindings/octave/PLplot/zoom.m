@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -14,13 +14,13 @@
 
 ## zoom(arg)
 ##
-## Iteratively select an area for setting the axis.
+## Using the mouse iteratively select an area for setting the axis.
 ## If 'arg' == "off" set axis to "autoscale"
 
 function zoom(arg)
   
   global __pl
-  __pl_init;
+  strm = __pl_init;
 
   if (nargin == 1)
     if (strcmp(arg, "off"))
@@ -31,10 +31,10 @@ function zoom(arg)
 
   [x1, y1, x2, y2] = plrb;
 
-  if (__pl.type == 11 || __pl.type == 31)
+  if (__pl.type(strm) == 10 || __pl.type(strm) == 30)
     x1 = 10^x1; x1 = 10^x2;
   endif
-  if (__pl.type == 21 || __pl.type == 31)
+  if (__pl.type(strm) == 20 || __pl.type(strm) == 30)
     y1 = 10^y1; y2 = 10^y2;
   endif
   axis([min(x1, x2), max(x1, x2), min(y1, y2), max(y1, y2)]);
