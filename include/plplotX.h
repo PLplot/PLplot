@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/07/20 04:03:47  mjl
+ * Revision 1.12  1994/07/28 07:42:58  mjl
+ * Eliminated old CADDR_T_HACK code.
+ *
+ * Revision 1.11  1994/07/20  04:03:47  mjl
  * Eliminated include of plplot.h if it's already been included (this file
  * uses a search path since it may be included into user code).
  *
@@ -42,10 +45,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-
-#ifdef CADDR_T_HACK
-typedef char * caddr_t;
-#endif
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
