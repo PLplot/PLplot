@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.20  1994/02/07 22:58:11  mjl
+# Revision 1.21  1994/04/08 11:58:50  mjl
+# Changes to support new mouse handler, keyboard filter, scrolling using
+# cursor keys.  eop label should now flash correctly.
+#
+# Revision 1.20  1994/02/07  22:58:11  mjl
 # Eliminated plw_flash in favor of plw_bop and plw_eop.  Added widget
 # configure commands to set bop/eop behavior.
 #
@@ -26,63 +30,6 @@
 # Revision 1.15  1993/12/15  09:02:13  mjl
 # Changes to support Tcl-DP style communication; eliminated plframe
 # widget attach and detach commands (no longer supported).
-#
-# Revision 1.14  1993/10/26  21:21:27  mjl
-# Fixed TK send bug that appeared when you had multiple applications with
-# the same name using a plplot/TK driver concurrently (e.g. multiple
-# plrenders).
-#
-# Revision 1.13  1993/10/06  19:50:45  mjl
-# Changed Form2d invocations to include a long description on each call.
-# Fixed the description of page setup parameters (mar, jx, jy, aspect).
-#
-# Revision 1.12  1993/10/04  21:48:09  mjl
-# Fixed "Save As" command under TK 3.3, broken because of the change in the
-# way glob works.  The old way was better.
-#
-# Revision 1.11  1993/09/08  18:39:15  mjl
-# Added global cascade_arrow variable to fake cascade menu arrows under
-# Tk 3.2 (Tk 3.3 has default ones that are much nicer).
-#
-# Revision 1.10  1993/08/31  20:12:45  mjl
-# Added file name globbing to save file name retrieval.  Can now save to
-# ~/blob or whatever.  Using a wildcard will result in the first matching
-# name to be used.
-#
-# Revision 1.9  1993/08/28  06:33:08  mjl
-# Changed all send commands to go through the plw_send proc, which (a) puts
-# send commands in background (to speed interpretation) and (b) catches any
-# errors encountered (such as a lack of response by the remote interpreter).
-# This prevents error messages from the plserver interpreter when attached
-# to an unresponsive client interpreter (such as would happen with many
-# number-crunching codes).
-#
-# Revision 1.8  1993/08/20  19:39:03  mjl
-# Many minor adjustments on how the plot view is set up and scrolled.
-# Should now work intuitively and accurately for any combination of zooming
-# and page settings.  Added proc that adds scrollbars if necessary given
-# the current window settings, to be used from TK driver.
-#
-# Revision 1.7  1993/08/18  20:26:34  mjl
-# Added print menu.  Grouped Save operations under a single cascading menu.
-# Added a status message (timed) to appear in status bar when successfully
-# saving a plot or closing the plot file.  Changed Page setup to use
-# new device variables (margin, aspect, jx, jy).  Switched over to new
-# Form2d proc for direct entry of window or page setup variables.
-#
-# Revision 1.6  1993/08/13  06:42:36  mjl
-# Added bulletproofing for when idiot user selects "Cancel" in GetItem.
-#
-# Revision 1.5  1993/08/09  22:22:18  mjl
-# Added "Close" entry in Plot menu, for closing out save file.
-#
-# Revision 1.4  1993/07/31  08:04:31  mjl
-# Documentation changes only.
-#
-# Revision 1.3  1993/07/28  05:43:41  mjl
-# Changed << and >> buttons when running plrender to simulate keyboard
-# input, by sending a <Backspace> and <CR>, respectively (works better
-# this way).
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
@@ -413,8 +360,12 @@ proc plw_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "client_cmd [list $client] {keypress %K %N %A}"
-    bind $w.plwin <Any-Enter> "focus $w.plwin"
+    bind $w.plwin <KeyPress> "key_filter $w [list $client] %K %N %A"
+
+    bind $w.plwin <Any-ButtonPress> \
+	"plw_user_mouse $w [list $client] %b %s %x %y"
+    bind $w.plwin <Any-Enter> \
+	"focus $w.plwin"
 
 # Inform client of plplot widget name for widget commands.
 
@@ -457,9 +408,8 @@ proc plw_start {w client} {
 #----------------------------------------------------------------------------
 
 proc plw_bop {w} {
-    set default [lindex [$w.ftop.lstat config -bg] 4]
-    $w.ftop.leop config -bg $default
-    update
+    $w.ftop.leop config -bg [option get $w.ftop.leop off Label]
+    update idletasks
 }
 
 #----------------------------------------------------------------------------
@@ -469,8 +419,8 @@ proc plw_bop {w} {
 #----------------------------------------------------------------------------
 
 proc plw_eop {w} {
-    $w.ftop.leop config -bg gray
-    update
+    $w.ftop.leop config -bg [option get $w.ftop.leop on Label]
+    update idletasks
 }
 
 #----------------------------------------------------------------------------
@@ -567,8 +517,11 @@ proc plw_close {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_select {w} {
+    global def_button_cmd
+
+    set def_button_cmd [bind $w.plwin <ButtonPress>]
     plw_label_set $w "Zoom: Click on upper left hand corner of zoom region."
-    bind $w.plwin <ButtonPress> "pl_zoom_start $w %x %y"
+    bind $w.plwin <ButtonPress> "plw_zoom_start $w %x %y"
 }
 
 #----------------------------------------------------------------------------
@@ -596,7 +549,7 @@ proc plw_zoom_enter {w} {
     Form2d .e "Enter window coordinates for zoom.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner."
     tkwait window .e
 
-    pl_view_select $w $fv00 $fv01 $fv10 $fv11
+    plw_view_select $w $fv00 $fv01 $fv10 $fv11
 }
 
 #----------------------------------------------------------------------------
@@ -608,8 +561,10 @@ proc plw_zoom_enter {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_reset {w} {
+    global def_button_cmd
+
     plw_label_reset $w
-    bind $w.plwin <ButtonPress> {}
+    bind $w.plwin <ButtonPress> $def_button_cmd
     $w.plwin view reset
     if {[winfo exists $w.hscroll] && [winfo ismapped $w.hscroll]} then {
 	pack unpack $w.hscroll
@@ -668,37 +623,39 @@ proc plw_page_reset {w} {
 }
 
 #----------------------------------------------------------------------------
-# pl_zoom_start
+# plw_zoom_start
 #
 # Starts plot zoom.
 #----------------------------------------------------------------------------
 
-proc pl_zoom_start {w wx wy} {
-    bind $w.plwin <ButtonPress> {}
+proc plw_zoom_start {w wx wy} {
+    global def_button_cmd
+
+    bind $w.plwin <ButtonPress> $def_button_cmd
     plw_label_set $w "Select zoom region by dragging mouse, then release."
 
     $w.plwin draw init
-    bind $w.plwin <B1-ButtonRelease> "pl_zoom_select $w $wx $wy %x %y"
-    bind $w.plwin <B1-Motion> "pl_zoom_draw $w $wx $wy %x %y"
+    bind $w.plwin <B1-Motion>        "plw_zoom_mouse_draw $w $wx $wy %x %y"
+    bind $w.plwin <B1-ButtonRelease> "plw_zoom_mouse_end $w $wx $wy %x %y"
 }
 
 #----------------------------------------------------------------------------
-# pl_zoom_draw
+# plw_zoom_mouse_draw
 #
-# Draws zoom box.
+# Draws zoom box in response to mouse motion (with button held down).
 #----------------------------------------------------------------------------
 
-proc pl_zoom_draw {w wx0 wy0 wx1 wy1} {
+proc plw_zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
     $w.plwin draw rect $wx0 $wy0 $wx1 $wy1
 }
 
 #----------------------------------------------------------------------------
-# pl_zoom_select
+# plw_zoom_mouse_end
 #
-# Selects region for zoom.
+# Performs actual zoom, invoked when user releases mouse button.
 #----------------------------------------------------------------------------
 
-proc pl_zoom_select {w wx0 wy0 wx1 wy1} {
+proc plw_zoom_mouse_end {w wx0 wy0 wx1 wy1} {
     
 # Finish rubber band draw
 
@@ -717,17 +674,17 @@ proc pl_zoom_select {w wx0 wy0 wx1 wy1} {
 
 # Select new plot region
 
-    pl_view_zoom $w $xl $yl $xr $yr
+    plw_view_zoom $w $xl $yl $xr $yr
 }
 
 #----------------------------------------------------------------------------
-# pl_view_select
+# plw_view_select
 #
 # Handles change of view into plot.
 # Given in relative plot window coordinates.
 #----------------------------------------------------------------------------
 
-proc pl_view_select {w x0 y0 x1 y1} {
+proc plw_view_select {w x0 y0 x1 y1} {
     
 # Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
 
@@ -762,17 +719,17 @@ proc pl_view_select {w x0 y0 x1 y1} {
 
 # Fix up view
 
-    pl_fixview $w $hscroll $vscroll
+    plw_fixview $w $hscroll $vscroll
 }
 
 #----------------------------------------------------------------------------
-# pl_view_zoom
+# plw_view_zoom
 #
 # Handles zoom.
 # Given in relative device coordinates.
 #----------------------------------------------------------------------------
 
-proc pl_view_zoom {w x0 y0 x1 y1} {
+proc plw_view_zoom {w x0 y0 x1 y1} {
     
 # Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
 
@@ -811,16 +768,40 @@ proc pl_view_zoom {w x0 y0 x1 y1} {
 
 # Fix up view
 
-    pl_fixview $w $hscroll $vscroll
+    plw_fixview $w $hscroll $vscroll
 }
 
 #----------------------------------------------------------------------------
-# pl_fixview
+# plw_view_scroll
+#
+# Scrolls view incrementally.
+# Similar to clicking on arrow at end of scrollbar (but speed is user
+# controllable).
+#----------------------------------------------------------------------------
+
+proc plw_view_scroll {w dx dy} {
+    
+    if {($dx != 0) && \
+	    [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll]} then {
+
+	set first  [lindex [$w.hscroll get] 2]
+	$w.plwin xscroll [expr $first+$dx]
+    }
+    if {($dy != 0) && \
+	    [winfo exists $w.vscroll] && [winfo ismapped $w.vscroll]} then {
+
+	set first  [lindex [$w.vscroll get] 2]
+	$w.plwin yscroll [expr $first+$dy]
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_fixview
 #
 # Handles updates of scrollbars & plot after view change.
 #----------------------------------------------------------------------------
 
-proc pl_fixview {w hscroll vscroll} {
+proc plw_fixview {w hscroll vscroll} {
     
 # Create scrollbars if they don't already exist.
 
@@ -884,7 +865,7 @@ proc plw_update_view {w} {
     set xr [lindex "$coords" 2]
     set yr [lindex "$coords" 3]
 
-    pl_view_select $w $xl $yl $xr $yr
+    plw_view_select $w $xl $yl $xr $yr
 }
 
 #----------------------------------------------------------------------------
@@ -920,6 +901,33 @@ proc plw_label_reset {w} {
 proc plw_label_set {w msg} {
 
     $w.ftop.lstat configure -text " $msg"
+}
+
+#----------------------------------------------------------------------------
+# plw_user_mouse
+#
+# Passes buttonpress event information back to client.
+# Written by Radey Shouman
+#----------------------------------------------------------------------------
+
+proc plw_user_mouse {w client button state x y} {
+
+# calculate relative window coordinates.
+
+    set xw [expr "$x / [winfo width $w.plwin]."]
+    set yw [expr "1.0 - $y / [winfo height $w.plwin]."]
+
+# calculate normalized device coordinates into original window.
+
+    set view [$w.plwin view]
+    set xrange [expr "[lindex $view 2] - [lindex $view 0]"]
+    set xnd [expr "($xw * $xrange) + [lindex $view 0]"]
+    set yrange [expr "[lindex $view 3] - [lindex $view 1]"]
+    set ynd [expr "($yw * $yrange ) + [lindex $view 1]"]
+	
+# send them back to the client.
+
+    client_cmd [list $client] [list mouse $button $state $xnd $ynd]
 }
 
 #----------------------------------------------------------------------------
