@@ -14,6 +14,10 @@
 static int ns = 20;		/* Default number of shade levels */
 static int nx = 35;		/* Default number of data points in x */
 static int ny = 46;		/* Default number of data points in y */
+static int exclude = 0;         /* By default do not plot a page illustrating
+				 * exclusion.  API is probably going to change
+				 * anyway, and cannot be reproduced by any
+				 * front end other than the C one. */
 
 /* polar plot data */
 #define PERIMETERPTS 100
@@ -37,6 +41,14 @@ f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax);
 /* Options data structure definition. */
 
 static PLOptionTable options[] = {
+{
+    "exclude",			/* Turns on page showing exclusion */
+    NULL,
+    NULL,
+    &exclude,
+    PL_OPT_BOOL,
+    "-exclude",
+    "Plot the \"exclusion\" page." },
 {
     "ns",			/* Number of shade levels */
     NULL,
@@ -271,6 +283,7 @@ main(int argc, char *argv[])
 
 /* Plot using 2d coordinate transform and exclusion*/
 
+    if(exclude) {
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -287,6 +300,7 @@ main(int argc, char *argv[])
 
     pllab("distance", "altitude", "Bogon density with exclusion");
 
+    }
 /* Example with polar coordinates. */
 
     pladv(0);
