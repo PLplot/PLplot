@@ -22,17 +22,18 @@ function path = plplot_octave_path(path)
 
   if (!exist("__pl_plplot_octave_path"))
     __pl_plplot_octave_path = "PLPLOT_OCTAVE_PATH";
+    __pl_plplot_octave_path = strrep (__pl_plplot_octave_path, "//", "/"); # at install time it can become messed
   endif
 
   if (nargin == 0)
     path = __pl_plplot_octave_path;
   elseif (nargin == 1 && isstr(path))
-    __pl_plplot_octave_path = path;
     if (path(length (path)) != '/')
-      path = [path "//"]
+      path = [path "//"];
     elseif (path(length (path)-1) != '/')
-      path = [path "/"]
+      path = [path "/"];
     endif
+    __pl_plplot_octave_path = path;
   else
     help octave_plplot_path
   endif

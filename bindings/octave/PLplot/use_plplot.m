@@ -8,9 +8,6 @@
 ## functions. use_plplot prepends to LOADPATH the path for the PLplot
 ## functions when called with an argument "on", or remove it in the case
 ## the argument is "off" (default = "on").
-##
-## Use `/usr/local/share/plplot_octave' as the default location of plplot_octave.
-## Use plplot_octave_path("path") to change it.
 
 ## File: use_plplot.m
 ## Author: Rafael Laboissiere <rafael@icp.inpg.fr>
@@ -26,32 +23,29 @@
 
 function use_plplot(action)
 
-  global __pl_plplot_octave_path
-
-  if (!exist("__pl_plplot_octave_path"))
-    __pl_plplot_octave_path = "PLPLOT_OCTAVE_PATH";
-  endif
-
   if (nargin == 0)
     action = "on";
   endif
 
-  ix = findstr( LOADPATH,  __pl_plplot_octave_path);
+  path = plplot_octave_path;
+  ix = findstr( LOADPATH, path);
   if (!isempty(ix))
-    LOADPATH(ix, len( __pl_plplot_octave_path))= "";
+    LOADPATH(ix(1):ix(1)+length( path)-1)= "";
+    LOADPATH = strrep (LOADPATH, "::", ":");
   endif
 
+  ## don't work! Octave docs say that clear() can't be used inside a function
   lcd = pwd;
-  cd (plplot_octave_path);
+  cd (path);
   t = glob("*.m");
-  for i=t';clear(deblank(i'));end
+  for i = t'; clear(deblank(i')); end
   cd (lcd);
 
   if (strcmp(action, "on"))
-    LOADPATH = [__pl_plplot_octave_path, ":", LOADPATH];
+    LOADPATH = [path, ":", LOADPATH];
     plplot_stub;
   elseif (strcmp(action, "off"))
-    LOADPATH = [LOADPATH, ":", __pl_plplot_octave_path];
+    LOADPATH = [LOADPATH, ":", path];
   else
     help "use_plplot"
   endif
