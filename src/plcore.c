@@ -1660,8 +1660,10 @@ plInitDispatchTable()
 /* Open the drivers directory */
     drvdir = plGetDrvDir ();
     dp_drvdir = opendir (drvdir);
-    if (dp_drvdir == NULL)
+    if (dp_drvdir == NULL) {
       plabort ("plInitDispatchTable: Could not open drivers directory");
+      return;
+    }
 
 /* Loop over each entry in the drivers directory */
 
@@ -1688,6 +1690,7 @@ plInitDispatchTable()
                   "plInitDispatchTable: Could not open driver info file %s\n",
                   name);
 	        plabort (buf);
+	        return;
 	    }
 
 /* Each line in the <driver>.rc file corresponds to a specific device.
