@@ -637,6 +637,14 @@ if test "$with_shlib" = "yes"; then
 		SHLIB_BUILD="ld -assert pure-text -o"
 	    fi
 	;;
+    SCO* )
+#       SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#       SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+        AC_MSG_RESULT([Assuming sco-3.2v5 with gcc. Otherwise, reconfigure --without-shlib])
+        SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
+        LDSHARED='gcc -fpic -shared'
+        SHLIB_BUILD="gcc -shared -fpic -o"
+    ;;
 	Linux* )
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...

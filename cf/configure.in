@@ -490,6 +490,9 @@ if test "$with_shlib" = "yes"; then
 	Linux* )
 	    cat $srcdir/cf/lib_sh_linux.in	>>Makefile.in
 	;;
+    SCO* )
+        cat $srcdir/cf/lib_sh_sco.in    >>Makefile.in
+	;;
 	* )
 	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
 	;;
