@@ -1872,7 +1872,7 @@ plLoadDriver(void)
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
 		driver->drvnam, drvspec );
 
-        driver->dlhand = lt_dlopen( drvspec);
+        driver->dlhand = lt_dlopenext( drvspec);
     }
 
 /* If it still isn't loaded, then we're doomed. */

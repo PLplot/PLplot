@@ -2,6 +2,16 @@
 
 	* configure.ac: only run AM_PATH_PYTHON(1.5) if python is enabled.
 
+	* bindings/Makefile.am: if enable_tcl is not yes, then no attempt is
+	  made to create pkgIndex.tcl. This should fix the problems Joao was
+	  having in an environment without tcl.  Later this should be
+	  changed to depend on the more general has_tcl instead, but AWI's
+	  opinion is that has_tcl is broken in sysloc.in at the moment so we
+	  will stick with depending on enable_tcl for a while.
+
+	* src/plcore.c: Change from lt_dlopen to lt_dlopenext for more
+	  cross-platform suffix generality.
+
 2002-12-07  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* drivers/Makefile.am: Make tk and tkwin static drivers work. This
