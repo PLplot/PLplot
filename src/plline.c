@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/03/17 17:01:40  mjl
-   Eliminated some dead assignments that turned up when running with SAS/C's
-   global optimizer enabled on the Amiga.
+   Revision 1.7  1993/03/28 08:45:53  mjl
+   Minor change to eliminate a warning on some systems.
 
+ * Revision 1.6  1993/03/17  17:01:40  mjl
+ * Eliminated some dead assignments that turned up when running with SAS/C's
+ * global optimizer enabled on the Amiga.
+ *
  * Revision 1.5  1993/03/03  19:42:22  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -263,10 +266,10 @@ pllclp(short *x, short *y, PLINT npts)
 		xclp[iclp] = x2;
 		yclp[iclp] = y2;
 	    }
-
-/* Not first point.  Check if first point of this segment matches up to
-/* previous point, and if so, add it to the current polyline buffer */
-
+/*
+* Not first point.  Check if first point of this segment matches up to 
+* previous point, and if so, add it to the current polyline buffer.
+*/
 	    else if (x1 == xclp[iclp] && y1 == yclp[iclp]) {
 		iclp++;
 		xclp[iclp] = x2;
