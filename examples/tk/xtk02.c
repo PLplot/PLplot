@@ -1,7 +1,7 @@
 /* $Id$
  */
 
-#include "plplot/pltk.h"
+#include "pltk.h"
 #include <math.h>
 
 static int

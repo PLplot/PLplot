@@ -90,7 +90,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     See plrender.c for examples of actual usage.  */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 #include <ctype.h>
 
 /* Support functions */
@@ -1353,7 +1353,7 @@ static int
 opt_v(char *opt, char *optarg, void *client_data)
 {
     if ( ! mode_quiet) 
-	fprintf(stderr, "PLplot library version: %s\n", PLPLOT_VERSION);
+	fprintf(stderr, "PLplot library version: %s\n", VERSION);
 
     return 2;
 }

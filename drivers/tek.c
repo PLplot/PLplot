@@ -2,7 +2,7 @@
 
 	PLplot tektronix device & emulators driver.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #if defined(PLD_xterm) ||		/* xterm */ \
     defined(PLD_tek4010) ||		/* TEK 4010 */ \
@@ -15,9 +15,9 @@
     defined(PLD_conex)			/* conex emulator 4010/4014/4105 */
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/plevent.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "plevent.h"
 
 #include <ctype.h>
 

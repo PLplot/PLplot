@@ -33,7 +33,7 @@
 */
 
 #define NEED_PLDEBUG
-#include "plplot/plserver.h"
+#include "plserver.h"
 
 /* Application-specific command-line options */
 /* Variable declarations */

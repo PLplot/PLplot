@@ -3,7 +3,7 @@
 	3d plot routines.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /* Internal constants */
 

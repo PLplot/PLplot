@@ -3,7 +3,7 @@
 	Routines for drawing axes & box around the current viewport.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 static PLFLT xlog[8] =
 {

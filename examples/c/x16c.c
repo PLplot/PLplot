@@ -7,7 +7,7 @@
 	20 Mar 1994
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 /* Fundamental settings.  See notes[] for more info. */
 

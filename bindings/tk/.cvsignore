@@ -1,0 +1,9 @@
+*.flc
+tclIndex
+Makefile
+Makefile.in
+plserver
+.deps
+.libs
+*.la
+*.lo

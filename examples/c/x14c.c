@@ -6,7 +6,7 @@
 	IFS, University of Texas at Austin
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];

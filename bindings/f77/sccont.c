@@ -3,7 +3,7 @@
 	Contour plotter front-ends for Fortran.
 */
 
-#include "plplot/plstubs.h"
+#include "plstubs.h"
 
 /*----------------------------------------------------------------------*\
 * pltr0f()

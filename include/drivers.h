@@ -6,8 +6,8 @@
 #ifndef __DRIVERS_H__
 #define __DRIVERS_H__
 
-#include "plplot/pdf.h"
-#include "plplot/plstrm.h"
+#include "pdf.h"
+#include "plstrm.h"
 
 #ifdef __cplusplus
 extern "C" {

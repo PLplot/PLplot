@@ -3,7 +3,7 @@
 	3-d line and point plot demo.  Adapted from x08c.c.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 static int opt[] = { 1, 0, 1, 0 };
 static PLFLT alt[] = {20.0, 35.0, 50.0, 65.0};

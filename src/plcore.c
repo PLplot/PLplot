@@ -10,10 +10,10 @@
 #define DEBUG
 
 #define NEED_PLDEBUG
-#include "plplot/plcore.h"
+#include "plcore.h"
 
 #ifdef ENABLE_DYNDRIVERS
-#include <dlfcn.h>
+#include <ltdl.h>
 #endif
 
 /*--------------------------------------------------------------------------*\
@@ -1098,6 +1098,11 @@ pllib_init()
     if (lib_initialized) return;
     lib_initialized = 1;
 
+#ifdef ENABLE_DYNDRIVERS
+/* Create libltdl resources */
+        lt_dlinit();   
+#endif
+
 /* Initialize the dispatch table with the info from the static drivers table
    and the available dynamic drivers. */
 
@@ -1280,6 +1285,10 @@ c_plend(void)
 	}
     }
     plfontrel();
+#ifdef ENABLE_DYNDRIVERS
+/* Release the libltdl resources */
+    lt_dlexit();   
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1540,7 +1549,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
  * 1) Make sure the dispatch table is initialized to the union of static
  *    drivers and available dynamic drivers (done from pllib_init now).
  * 2) Allow the user to select the desired device.
- * 3) Initiailize the dispatch table entries for the selected device, in the
+ * 3) Initialize the dispatch table entries for the selected device, in the
  *    case that it is a dynloadable driver that has not yet been loaded.
  *
  * Also made non-static, in order to allow some device calls to be made prior
@@ -1592,11 +1601,7 @@ plInitDispatchTable()
     int i, j, driver_found, done=0;
     FILE *fp_drvdb = 0;
 
-    fp_drvdb = plLibOpen( "drivers/" DRIVERS_DB );
-
-    if (!fp_drvdb)
-    /* Try to fool plLibOpen into looking under $prefix/lib/plplot$version. */
-        fp_drvdb = plLibOpen( "../drivers/" DRIVERS_DB );
+    fp_drvdb = plLibOpen( "../drivers/" DRIVERS_DB );
 
     if (fp_drvdb) {
     /* Count the number of dynamic devices. */
@@ -1611,7 +1616,7 @@ plInitDispatchTable()
             npldynamicdevices++;
         }
     } else {
-        fprintf( stderr, "Can't open drivers/" DRIVERS_DB "\n" );
+        plexit("Can't open drivers/" DRIVERS_DB "\n" );
     }
 #endif
 
@@ -1641,8 +1646,7 @@ plInitDispatchTable()
     loadable_device_list = malloc( npldynamicdevices * sizeof(PLLoadableDevice) );
     loadable_driver_list = malloc( npldynamicdevices * sizeof(PLLoadableDriver) );
 
-    if (fp_drvdb)
-        rewind( fp_drvdb );
+    rewind( fp_drvdb );
 
     i = 0;
     done = !(i < npldynamicdevices);
@@ -1832,7 +1836,7 @@ plLoadDriver(void)
     if (dev->pl_init)
         return;
 
-	pldebug("plLoadDriver", "Device not loaded!\n");
+    pldebug("plLoadDriver", "Device not loaded!\n");
 
 /* Now search through the list of loadable devices, looking for the record
  * that corresponds to the requested device. */
@@ -1840,10 +1844,12 @@ plLoadDriver(void)
         if (strcmp( dev->pl_DevName, loadable_device_list[i].devnam ) == 0)
             break;
 
-/* If we couldn't find such a record, then the user is in deep trouble. */
+/* If we couldn't find such a record, then there is some sort of internal
+ * logic flaw since plSelectDev is supposed to only select a valid device.
+ */
     if (i == npldynamicdevices) {
         fprintf( stderr, "No such device: %s.\n", dev->pl_DevName );
-        return;
+        plexit("plLoadDriver detected device logic screwup");
     }
 
 /* Note the device tag, and the driver index. Note that a given driver could
@@ -1860,33 +1866,22 @@ plLoadDriver(void)
     if (!driver->dlhand)
     {
         char drvspec[ 400 ];
-        sprintf( drvspec, "./drivers/%s", driver->drvnam );
+        sprintf( drvspec, "%s/%s/%s",
+		DATA_DIR, "../drivers", driver->drvnam );
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
 		driver->drvnam, drvspec );
 
-        driver->dlhand = dlopen( drvspec, RTLD_NOW);
-
-        if (!driver->dlhand)
-        {
-	    pldebug("plLoadDriver", "Local dlopen failed because of "
-		    "the following reason:\n%s\n", dlerror());
-            sprintf( drvspec, "%s/%s/%s",
-                     DATA_DIR, "../drivers", driver->drvnam );
-
-	    pldebug("plLoadDriver", "Trying to load at %s\n", drvspec); 
-
-	    driver->dlhand = dlopen( drvspec, RTLD_NOW);
-        }
+        driver->dlhand = lt_dlopen( drvspec);
     }
 
 /* If it still isn't loaded, then we're doomed. */
     if (!driver->dlhand)
     {
-        pldebug("plLoadDriver", "Global dlopen failed because of "
-		 "the following reason:\n%s\n", dlerror());
+        pldebug("plLoadDriver", "lt_dlopenext failed because of "
+		 "the following reason:\n%s\n", lt_dlerror ());
         fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
-        return;
+        plexit("Unable to load driver");
     }
 
 /* Now we are ready to ask the driver's device dispatch init function to
@@ -1894,7 +1889,7 @@ plLoadDriver(void)
 
     sprintf( sym, "plD_dispatch_init_%s", tag );
     {
-        PLDispatchInit dispatch_init = dlsym( driver->dlhand, sym );
+        PLDispatchInit dispatch_init = lt_dlsym( driver->dlhand, sym );
         if (!dispatch_init)
         {
             fprintf( stderr,
@@ -2291,7 +2286,7 @@ plgesc(char *p_esc)
 void
 c_plgver(char *p_ver)
 {
-    strcpy(p_ver, PLPLOT_VERSION);
+    strcpy(p_ver, VERSION);
 }
 
 /* Set inferior X window */

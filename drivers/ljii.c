@@ -6,12 +6,12 @@
 	should work by just changing the value of DPI and changing the
 	values passed to plP_setphy().  
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_ljii
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 #include <math.h>
 #include <string.h>
 

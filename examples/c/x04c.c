@@ -3,7 +3,7 @@
 	Log plot demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 void plot1(int type);
 

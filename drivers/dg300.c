@@ -2,12 +2,12 @@
 
 	PLplot dg300 device driver.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_dg300
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 
 void plD_dispatch_init_dg	( PLDispatchTable *pdt );
 

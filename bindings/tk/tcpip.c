@@ -41,7 +41,7 @@
 #define DEBUG
 */
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #if defined (PLD_tk)
 
@@ -58,7 +58,7 @@
  * I forego the ANSI compiler here and go with good (bad) old "cc".
  */
 
-#include "plplot/plConfig.h"
+#include "plConfig.h"
 #ifdef _POSIX_SOURCE
 #undef _POSIX_SOURCE
 #endif
@@ -78,7 +78,7 @@
 #include <unistd.h>
 #endif
 
-#include "plplot/tcpip.h"
+#include "tcpip.h"
 #include <tcl.h>
 #include <tk.h>
 

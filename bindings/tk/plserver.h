@@ -9,9 +9,9 @@
 #ifndef __PLSERVER_H__
 #define __PLSERVER_H__
 
-#include "plplot/plDevs.h"
-#include "plplot/pltkd.h"
-#include "plplot/pltcl.h"
+#include "plDevs.h"
+#include "pltkd.h"
+#include "pltcl.h"
 
 /* State info for the rendering code */
 

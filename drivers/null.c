@@ -2,12 +2,12 @@
 
 	PLplot Null device driver.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_null
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 
 void plD_dispatch_init_null	( PLDispatchTable *pdt );
 

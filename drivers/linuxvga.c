@@ -9,12 +9,12 @@
 	Things to note: NEEDS vgalib to compile!!!!!
 
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_linuxvga		/* Only compile for Linux + Vgalib 1.2 */
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 #include <vga.h>
 
 /* Function prototypes */

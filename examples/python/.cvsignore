@@ -1,1 +1,9 @@
 *.pyc
+plplot_python_start.py
+*.flc
+Makefile
+Makefile.in
+.deps
+.libs
+*.la
+*.lo

@@ -1,0 +1,67 @@
+# examples/f77/Makefile.examples.in for PLplot
+###
+### Process this file with configure to produce Makefile.examples
+###
+# Copyright (C) 2002 Alan W. Irwin
+# 
+#This file is part of PLplot.
+#
+#This file is free software; you can redistribute it and/or modify
+#it under the terms of the GNU Library General Public License as published by
+#the Free Software Foundation; version 2 of the License.
+#
+#This file is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Library General Public License for more details.
+#
+#You should have received a copy of the GNU Library General Public License
+#along with the file; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplf77@LIB_TAG@ 
+
+all: x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f x16f
+
+x01f: x01f.f
+	plplot_libtool --mode=link g77 x01f.f $(INCLUDEANDLIB) -o x01f
+
+x02f: x02f.f
+	plplot_libtool --mode=link g77 x02f.f $(INCLUDEANDLIB) -o x02f
+
+x03f: x03f.f
+	plplot_libtool --mode=link g77 x03f.f $(INCLUDEANDLIB) -o x03f
+
+x04f: x04f.f
+	plplot_libtool --mode=link g77 x04f.f $(INCLUDEANDLIB) -o x04f
+
+x05f: x05f.f
+	plplot_libtool --mode=link g77 x05f.f $(INCLUDEANDLIB) -o x05f
+
+x06f: x06f.f
+	plplot_libtool --mode=link g77 x06f.f $(INCLUDEANDLIB) -o x06f
+
+x07f: x07f.f
+	plplot_libtool --mode=link g77 x07f.f $(INCLUDEANDLIB) -o x07f
+
+x08f: x08f.f
+	plplot_libtool --mode=link g77 x08f.f $(INCLUDEANDLIB) -o x08f
+
+x09f: x09f.f
+	plplot_libtool --mode=link g77 x09f.f $(INCLUDEANDLIB) -o x09f
+
+x10f: x10f.f
+	plplot_libtool --mode=link g77 x10f.f $(INCLUDEANDLIB) -o x10f
+
+x11f: x11f.f
+	plplot_libtool --mode=link g77 x11f.f $(INCLUDEANDLIB) -o x11f
+
+x12f: x12f.f
+	plplot_libtool --mode=link g77 x12f.f $(INCLUDEANDLIB) -o x12f
+
+x13f: x13f.f
+	plplot_libtool --mode=link g77 x13f.f $(INCLUDEANDLIB) -o x13f
+
+x16f: x16f.f
+	plplot_libtool --mode=link g77 x16f.f $(INCLUDEANDLIB) -o x16f
+

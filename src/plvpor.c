@@ -3,7 +3,7 @@
 	Functions dealing with viewports.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 static void
 c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,

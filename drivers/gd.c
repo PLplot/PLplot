@@ -80,12 +80,12 @@
  */
 
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #if defined(PLD_png) || defined(PLD_jpeg)
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 
 #include <gd.h>
 
@@ -108,7 +108,7 @@
  *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
  */
 
-#include "plplot/plfreetype.h"
+#include "plfreetype.h"
 
 #endif
 

@@ -3,7 +3,7 @@
 	Font demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
  * main

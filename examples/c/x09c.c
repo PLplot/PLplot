@@ -3,7 +3,7 @@
 	Contour plot demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */

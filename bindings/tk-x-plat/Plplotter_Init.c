@@ -1,5 +1,16 @@
 /* $Id$
  * $Log$
+ * Revision 1.6  2002/12/03 08:39:22  airwin
+ * Merged AT branch into MAIN, a new configuration era has started
+ *
+ * Revision 1.5.2.1  2002/11/29 22:58:14  airwin
+ * Finish AT tcl binding.  These are only small fairly non-consequential
+ * refinements that I did while trying to debug the extended search problem
+ * (which had a simple solution which I will discuss on list).
+ *
+ * Prepare the start of the tk and tk-x-plat bindings by dropping "plplot/"
+ * from the #include statements in the source files.
+ *
  * Revision 1.5  2002/07/12 09:31:38  vincentdarley
  * tcl interaction cleanup
  *
@@ -47,7 +58,7 @@
  * A miscellaneous assortment of Tcl support functions.
  */
 
-#include "plplot/plserver.h"
+#include "plserver.h"
 
 #ifdef BUILD_Plplot
 #undef TCL_STORAGE_CLASS
@@ -100,7 +111,7 @@ Plplotter_Init( Tcl_Interp *interp )
     Tcl_CreateCommand( interp, "plframe", plPlotterCmd,
 		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 
-    Tcl_PkgProvide(interp,"Plplotter",PLPLOT_VERSION);
+    Tcl_PkgProvide(interp,"Plplotter",VERSION);
     return TCL_OK;
 }
 
