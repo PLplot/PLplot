@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1995/03/16 23:57:50  mjl
+ * Revision 1.28  1995/04/14 21:45:26  mjl
+ * Fixed plParseOpts() to correctly remove recognized arguments from argv[].
+ *
+ * Revision 1.27  1995/03/16  23:57:50  mjl
  * Massively reworked.  Now it is absolutely trivial to merge user command line
  * options to the internal options list for use when parsing the command line.
  * The globally visible functions are now:
@@ -735,12 +738,11 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 
     /* Handle error return as specified by the mode flag */
 
-	switch (status) {
+	if (status == -1) {
 
 	/* No match.  Abort if fully parsing, otherwise return without */
 	/* error. */ 
 
-	case -1:
 	    if ( ! mode_quiet && mode_full) {
 		fprintf(stderr, "\nBad command line option \"%s\"\n", argv[0]);
 		plOptUsage();
@@ -750,9 +752,10 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 	    status = 0;
 	    break;
 
+	} else if (status == 1) {
+
 	/* Illegal or badly formed */
 
-	case 1:
 	    if ( ! mode_quiet) {
 		fprintf(stderr, "\nBad command line option \"%s\"\n", argv[0]);
 		plOptUsage();
@@ -761,9 +764,10 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 
 	    break;
 
+	} else if (status == 2) {
+
 	/* Informational option encountered (-h or -v) */
 
-	case 2:
 	    exit(0);
 	}
     }
@@ -771,7 +775,8 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 /* Compress and NULL-terminate argv */
 
     if ( ! mode_nodelete) {
-	*argsave++ = *argv;
+	for (i = 0; i < *p_argc; i++)
+	    *argsave++ = *argv++;
 
 	if (argsave < argend)
 	    *argsave = NULL;
