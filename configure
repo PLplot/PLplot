@@ -10,25 +10,17 @@
 # Loosely based on old TPC configure script by Geoff Furnish.
 # Type "configure h" for info on usage.
 #
-#****************************************************************************
+# The parameters set by this script are typically things that are changed
+# relatively frequently.  For example, optimization, debug, warnings, etc,
+# are set depending on what stage of development you are at.  no_share,
+# no_tk, and no_x are useful in creating multiple versions of the
+# libraries.  Macros that must be defined for specific systems or sites
+# (and typically only the first time you port to it) should instead be
+# handled in the config file for that system or in a site-specific config
+# file (if you modify cf_plplot.m4 and put it in a directory ~/config,
+# configure will use that the next time you run it).
 #
 # $Id$
-#
-# $Log$
-# Revision 1.4  1993/11/07 09:01:09  mjl
-# Added "warn" and "no_fortran" keywords.  "warn" enables most compiler
-# warning messages.
-#
-# Revision 1.3  1993/10/06  19:48:03  mjl
-# Got rid of SysV-isms in echo command.  Should work on lots more systems
-# now without resorting to disgusting hacks.
-#
-# Revision 1.2  1993/10/04  19:55:57  mjl
-# Now sets debug=off if optimization level of 1 or greater is selected.
-#
-# Revision 1.1  1993/10/04  17:43:23  mjl
-# Adapted TPC configure script for use with plplplplot.
-#
 #
 #****************************************************************************
 
@@ -67,16 +59,16 @@ if [ ! "$no_x" ]; then
 	no_x=off
 fi
 
+if [ ! "$gcc" ]; then
+	gcc=off
+fi
+
 if [ ! "$no_tk" ]; then
 	no_tk=off
 fi
 
 if [ ! "$no_share" ]; then
 	no_share=off
-fi
-
-if [ ! "$no_fortran" ]; then
-	no_fortran=off
 fi
 
 # Define a symbol for echo to save a little bit of space.
@@ -99,10 +91,10 @@ $e "	debug		$debug"
 $e "	opt		$opt"
 $e "	warn		$warn"
 $e "	profile		$profile"
+$e "	gcc		$gcc"
 $e "	no_x		$no_x"
 $e "	no_tk		$no_tk"
 $e "	no_share	$no_share"
-$e "	no_fortran	$no_fortran"
 $e ""
 }
 
@@ -116,7 +108,7 @@ $e ""
 #	configure opt=2 projdir=../src/myproj
 #
 # Specifying debug turns optimization off (opt=0), and specifying
-# opt=1 or opt=2 turns debugging off.  Other wierd combinations have
+# opt=1 or opt=2 turns debugging off.  Other weird combinations have
 # to be detected by the makefile.
 
 Help () {
@@ -133,16 +125,16 @@ $e "	warn	   [=on|off]	turn on all compiler warnings"
 $e "	double	   [=on|off]	double precision"
 $e "	debug	   [=on|off]	debugging"
 $e "	profile	   [=on|off]	profiling"
+$e "	gcc	   [=on|off]	use gcc instead of native compiler"
 $e "	no_x	   [=on|off]	no X linkage"
 $e "	no_tk	   [=on|off]	no Tcl/TK linkage"
 $e "	no_share   [=on|off]	do not build shared libraries"
-$e "	no_fortran [=on|off]	do not build fortran interface"
 $e ""
 $e "Options are set via the command line, environment, and internal defaults,"
 $e "in that order.  The option value must be specified without spaces, e.g."
 $e "debug=off.  The value can often be omitted, in which case booleans are set"
 $e "to \"on\" and multi-state variables are set to some typical \"on\" value."
-$e "Variables can be truncated to their shortest unique length."
+$e "Variables can usually be truncated to their shortest unique length."
 $e ""
 	Settings
 	exit 1
@@ -197,6 +189,12 @@ Parse_args () {
 		prof|profi|profil|profile)
 			profile=on
 			;;
+		gcc=*)
+			gcc=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		gcc)
+			gcc=on
+			;;
 		no_x=*)
 			no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
 			;;
@@ -214,12 +212,6 @@ Parse_args () {
 			;;
 		no_share)
 			no_share=on
-			;;
-		no_f=*|no_fo=*|no_for=*|no_fort=*|no_fortr=*|no_fortra=*|no_fortrn=*)
-			no_fortran=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		no_fortran)
-			no_fortran=on
 			;;
 		*)
 			give_me_help=1
@@ -269,10 +261,6 @@ Setup_options () {
 
 	sysv*|SYSV*|Sysv*)
 		system="SYSV"
-		;;
-
-	alpha*|ALPHA*|Alpha*)
-		system="ALPHAOSF"
 		;;
 
 	bsd*|BSD*)
@@ -338,6 +326,9 @@ Setup_options () {
 	if [ "$double" = "on" ]; then
 		double_flag="-DDOUBLE"
 	fi
+	if [ "$gcc" = "on" ]; then
+		gcc_flag="-DGCC"
+	fi
 	if [ "$no_x" = "on" ]; then
 		no_x_flag="-DNO_X"
 	fi
@@ -347,13 +338,10 @@ Setup_options () {
 	if [ "$no_share" = "on" ]; then
 		no_share_flag="-DNO_SHARE"
 	fi
-	if [ "$no_fortran" = "on" ]; then
-		no_fortran_flag="-DNO_FORTRAN"
-	fi
 
 	all_flags="$system_flag $machine_flag $double_flag $debug_flag \
-$opt_flag $warn_flag $profile_flag $no_x_flag $no_tk_flag $no_share_flag \
-$no_fortran_flag"
+$opt_flag $warn_flag $profile_flag $gcc_flag $no_x_flag $no_tk_flag \
+$no_share_flag"
 }
 
 #****************************************************************************
