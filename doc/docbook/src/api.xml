@@ -51,8 +51,9 @@
 
   <para>
 All common API functions of the current CVS HEAD are listed here with their
-arguments.  All functions (other than the deprecated ones)
-have at a short description, and all parameters are documented.
+arguments except for obsolete/deprecated API which is listed in <xref
+linkend="API-OBSOLETE"/>.
+All functions have a short description, and all parameters are documented.
   </para>
 
   <sect1 id="pl_setcontlabelformat" renderas="sect3">
@@ -1262,65 +1263,6 @@ from relative device coordinates,
       If the current page is divided into subpages, only the current subpage
       is erased.  The nth subpage can be selected with &pladv;(n).
     </para>
-
-  </sect1>
-
-  <sect1 id="plclr" renderas="sect3">
-    <title>
-      <function>plclr</function>: Eject current page
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plclr</function>
-	</funcdef>
-        <paramdef></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Deprecated.  Use the new name, &pleop;, for this function instead.
-    </para>
-
-  </sect1>
-
-  <sect1 id="plcol" renderas="sect3">
-    <title>
-      <function>plcol</function>: Set color
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plcol</function>
-	</funcdef>
-        <paramdef><parameter>color</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Deprecated.  Use the new name, &plcol0;, for this function instead.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>color</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-            See &plcol0;.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
 
   </sect1>
 
@@ -4300,80 +4242,16 @@ device coordinates
 
   </sect1>
 
-  <sect1 id="plhls" renderas="sect3">
+  <sect1 id="plhlsrgb" renderas="sect3">
     <title>
-      <function>plhls</function>: Set current color by HLS
+      <function>plhlsrgb</function>: Convert HLS color to RGB
     </title>
 
     <para>
       <funcsynopsis>
       <funcprototype>
         <funcdef>
-           <function>plhls</function>
-        </funcdef>
-        <paramdef><parameter>h</parameter></paramdef>
-        <paramdef><parameter>l</parameter></paramdef>
-        <paramdef><parameter>s</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Set current color by hue, lightness, and saturation.
-      Convert hls color coordinates to rgb, then call plrgb.
-      Do <emphasis>not</emphasis> use this.  Only retained for backward compatibility.
-      Use plHLS_RGB and plscol0 instead.
-    </para>
-<!-- TODO: find out what to do exactly -->
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>h</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-            NEEDS DOCUMENTATION
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>l</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-            NEEDS DOCUMENTATION
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>s</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-            NEEDS DOCUMENTATION
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
-  <sect1 id="plHLS_RGB" renderas="sect3">
-    <title>
-      <function>plHLS_RGB</function>: Convert HLS color to RGB
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-        <funcdef>
-           <function>plHLS_RGB</function>
+           <function>plhlsrgb</function>
         </funcdef>
         <paramdef><parameter>h</parameter></paramdef>
         <paramdef><parameter>l</parameter></paramdef>
@@ -4386,7 +4264,7 @@ device coordinates
     </para>
 
     <para>
-      Convert hls color coordinates to rgb
+      Convert HLS color coordinates to RGB
     </para>
 
     <variablelist>
@@ -5580,28 +5458,6 @@ default
 
     </sect1>
 
-  <sect1 id="plpage" renderas="sect3">
-    <title>
-      <function>plpage</function>: Begin a new page
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plpage</function>
-	</funcdef>
-        <paramdef></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Deprecated.  Use the new name, &plbop;, for this function instead.
-    </para>
-
-  </sect1>
-
   <sect1 id="plpat" renderas="sect3">
     <title>
       <function>plpat</function>: Set area fill pattern
@@ -6220,124 +6076,97 @@ current device/file
 
   </sect1>
 
-  <sect1 id="plrgb" renderas="sect3">
+  <sect1 id="plrgbhls" renderas="sect3">
     <title>
-      <function>plrgb</function>: Set line color by red, green
+      <function>plrgbhls</function>: Convert RGB color to HLS
     </title>
 
     <para>
       <funcsynopsis>
       <funcprototype>
         <funcdef>
-           <function>plrgb</function>
+           <function>plrgbhls</function>
         </funcdef>
         <paramdef><parameter>r</parameter></paramdef>
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>p_h</parameter></paramdef>
+        <paramdef><parameter>p_l</parameter></paramdef>
+        <paramdef><parameter>p_s</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      Set line color by red, green, blue from  0. to 1.  Do
-<emphasis>not</emphasis> use this.
-Only retained for backward compatibility. Use the function plscol0
-instead.
+      Convert RGB color coordinates to HLS
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>r</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>PLFLT</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Red intensity (0.0-1.0) of the colour
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>g</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>PLFLT</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Green intensity (0.0-1.0) of the colour
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>b</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>PLFLT</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
-  <sect1 id="plrgb1" renderas="sect3">
-    <title>
-      <function>plrgb1</function>: Set line color by 8-bit RGB values
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-        <funcdef>
-           <function>plrgb1</function>
-        </funcdef>
-        <paramdef><parameter>r</parameter></paramdef>
-        <paramdef><parameter>g</parameter></paramdef>
-        <paramdef><parameter>b</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Set line color by 8-bit RGB values.  Do <emphasis>not</emphasis> use this.
-Only retained for backward compatibility. Use the function plscol0
-instead.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>r</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-            NEEDS DOCUMENTATION
+            Blue intensity (0.0-1.0) of the colour
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter>
-	  (<literal>PLINT</literal>, input)
+	  <parameter>p_h</parameter>
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to hue, in degrees on the colour cone (0.0-360.0)
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter>
-	  (<literal>PLINT</literal>, input)
+	  <parameter>p_l</parameter>
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to lightness, expressed as a fraction of the axis of the colour
+            cone (0.0-1.0)
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_s</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to saturation, expressed as a fraction of the radius of the
+            colour cone (0.0-1.0)
 	  </para>
 	</listitem>
       </varlistentry>

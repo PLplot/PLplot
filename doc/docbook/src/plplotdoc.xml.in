@@ -63,6 +63,7 @@
 <!ENTITY chap-api-c SYSTEM "api-c.xml">
 <!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
 <!ENTITY chap-api-compat SYSTEM "api-compat.xml">
+<!ENTITY chap-api-obsolete SYSTEM "api-obsolete.xml">
 <!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
 <!ENTITY plplot-structs SYSTEM "plplot-structs.txt">
 <!ENTITY chap-os-notes SYSTEM "os_notes.xml">
@@ -79,8 +80,6 @@
 <!ENTITY plbox3 '<link linkend="plbox3"><function> plbox3</function></link>'>
 <!ENTITY plcalc_world '<link linkend="plcalc_world"><function> plcalc_world</function></link>'>
 <!ENTITY plclear '<link linkend="plclear"><function>plclear</function></link>'>
-<!ENTITY plclr '<link linkend="plclr"><function>plclr</function></link>'>
-<!ENTITY plcol '<link linkend="plcol"><function>plcol</function></link>'>
 <!ENTITY plcol0 '<link linkend="plcol0"><function>plcol0</function></link>'>
 <!ENTITY plcol1 '<link linkend="plcol1"><function>plcol1</function></link>'>
 <!ENTITY plcon0 '<link linkend="plcon0"><function>plcon0</function></link>'>
@@ -128,7 +127,7 @@
 <!ENTITY plgyax '<link linkend="plgyax"><function>plgyax</function></link>'>
 <!ENTITY plgzax '<link linkend="plgzax"><function>plgzax</function></link>'>
 <!ENTITY plhist '<link linkend="plhist"><function>plhist</function></link>'>
-<!ENTITY plhls '<link linkend="plhls"><function>plhls</function></link>'>
+<!ENTITY plhlsrgb '<link linkend="plhlsrgb"><function>plhlsrgb</function></link>'>
 <!ENTITY plinit '<link linkend="plinit"><function>plinit</function></link>'>
 <!ENTITY pljoin '<link linkend="pljoin"><function>pljoin</function></link>'>
 <!ENTITY pllab '<link linkend="pllab"><function>pllab</function></link>'>
@@ -144,7 +143,6 @@
 <!ENTITY plot3d '<link linkend="plot3d"><function>plot3d</function></link>'>
 <!ENTITY plot3dc '<link linkend="plot3dc"><function>plot3dc</function></link>'>
 <!ENTITY plot3dfortran '<link linkend="plot3dfortran"><function>plot3dfortran</function></link>'>
-<!ENTITY plpage '<link linkend="plpage"><function>plpage</function></link>'>
 <!ENTITY plpat '<link linkend="plpat"><function>plpat</function></link>'>
 <!ENTITY plpoin '<link linkend="plpoin"><function>plpoin</function></link>'>
 <!ENTITY plpoin3 '<link linkend="plpoin3"><function>plpoin3</function></link>'>
@@ -153,8 +151,7 @@
 <!ENTITY plpsty '<link linkend="plpsty"><function>plpsty</function></link>'>
 <!ENTITY plptex '<link linkend="plptex"><function>plptex</function></link>'>
 <!ENTITY plreplot '<link linkend="plreplot"><function>plreplot</function></link>'>
-<!ENTITY plrgb '<link linkend="plrgb"><function>plrgb</function></link>'>
-<!ENTITY plrgb1 '<link linkend="plrgb1"><function>plrgb1</function></link>'>
+<!ENTITY plrgbhls '<link linkend="plrgbhls"><function>plrgbhls</function></link>'>
 <!ENTITY plsabort '<link linkend="plsabort"><function>plsabort</function></link>'>
 <!ENTITY plschr '<link linkend="plschr"><function>plschr</function></link>'>
 <!ENTITY plscmap0 '<link linkend="plscmap0"><function>plscmap0</function></link>'>
@@ -373,6 +370,7 @@
     &chap-api-c;
     &chap-api-fortran;
     &chap-api-compat;
+    &chap-api-obsolete;
     &chap-os-notes;
   </part>
 

@@ -29,6 +29,7 @@ SOURCE_FILES = \
   api-c.xml \
   api-compat.xml \
   api-fortran.xml \
+  api-obsolete.xml \
   bibliography.xml \
   c.xml \
   deploying.xml \
