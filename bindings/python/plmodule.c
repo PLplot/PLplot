@@ -2848,35 +2848,35 @@ void initpl(void)
 
     /* Add some symbolic constants to the module */
     v = PyInt_FromLong(PL_PARSE_PARTIAL);
-    PyDict_SetItemString(d, "PARSE_PARTIAL", v);
+    PyDict_SetItemString(d, "PL_PARSE_PARTIAL", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_FULL);
-    PyDict_SetItemString(d, "PARSE_FULL", v);
+    PyDict_SetItemString(d, "PL_PARSE_FULL", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_QUIET);
-    PyDict_SetItemString(d, "PARSE_QUIET", v);
+    PyDict_SetItemString(d, "PL_PARSE_QUIET", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_NODELETE);
-    PyDict_SetItemString(d, "PARSE_NODELETE", v);
+    PyDict_SetItemString(d, "PL_PARSE_NODELETE", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_SHOWALL);
-    PyDict_SetItemString(d, "PARSE_SHOWALL", v);
+    PyDict_SetItemString(d, "PL_PARSE_SHOWALL", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_OVERRIDE);
-    PyDict_SetItemString(d, "PARSE_OVERRIDE", v);
+    PyDict_SetItemString(d, "PL_PARSE_OVERRIDE", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_NOPROGRAM);
-    PyDict_SetItemString(d, "PARSE_NOPROGRAM", v);
+    PyDict_SetItemString(d, "PL_PARSE_NOPROGRAM", v);
     Py_XDECREF(v);
 
     v = PyInt_FromLong(PL_PARSE_NODASH);
-    PyDict_SetItemString(d, "PARSE_NODASH", v);
+    PyDict_SetItemString(d, "PL_PARSE_NODASH", v);
     Py_XDECREF(v);
 
     /* Check for errors */

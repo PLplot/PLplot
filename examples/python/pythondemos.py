@@ -15,7 +15,7 @@ sys.path.insert (0, module_dir)
 from pl import *
 
 # Parse and process command line arguments
-plParseOpts(sys.argv, PARSE_FULL)
+plParseOpts(sys.argv, PL_PARSE_FULL)
 
 # Initialize plplot
 plinit()
