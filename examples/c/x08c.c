@@ -94,6 +94,7 @@ main(int argc, char *argv[])
     }
 
     pllightsource(1.,1.,1.);
+    plscmap1n(256);
     cmap1_init();
     	
     for (k = 0; k < 4; k++) {
