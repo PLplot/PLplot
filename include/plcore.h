@@ -1,9 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/06/30 18:29:21  mjl
+ * Revision 1.22  1994/07/19 22:36:10  mjl
+ * Included plDevs.h.  Driver enabling macro renamed to PLD_<driver>, where
+ * <driver> is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.21  1994/06/30  18:29:21  mjl
  * Include-guards included, and the PLStream pointer made global.  The latter
  * will make access to PLplot state information much easier.
- *
 */
 
 /*	plcore.h
@@ -17,6 +20,7 @@
 
 #include "plplotP.h"
 #include "drivers.h"
+#include "plDevs.h"
 
 /* Static function prototypes */
 
@@ -133,7 +137,7 @@ static PLDispatchTable dispatch_table[] = {
 
     /* Terminal types */
 
-#ifdef NEXT
+#ifdef PLD_next
     {
         "NeXT Display",
         "next",
@@ -149,7 +153,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef AMIGA
+#ifdef PLD_amiga
    {
 	"Amiga Window",
 	"amiwn",
@@ -165,7 +169,7 @@ static PLDispatchTable dispatch_table[] = {
    },
 #endif
 
-#ifdef OS2PM
+#ifdef PLD_os2pm
     {
 	"OS/2 PM Screen",
 	"os2",
@@ -181,7 +185,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef XWIN
+#ifdef PLD_xwin
     {
 	"X-Window (Xlib)",
 	"xwin",
@@ -197,7 +201,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TCL_DP
+#ifdef PLD_dp
     {
 	"Tcl-DP/TK Window",
 	"dp",
@@ -213,7 +217,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TK
+#ifdef PLD_tk
     {
 	"Tcl/TK Window",
 	"tk",
@@ -229,7 +233,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef LINUXVGA
+#ifdef PLD_linuxvga
     {
 	"Linux console VGA Screen",
 	"vga",
@@ -245,7 +249,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef MGR
+#ifdef PLD_mgr
     {
 	"MGR Window",
 	"mgr",
@@ -261,7 +265,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef WIN3
+#ifdef PLD_win3
     {
 	"Windows 3.x Driver",
 	"win3",
@@ -293,7 +297,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef BGI
+#ifdef PLD_bgi
     {
 	"VGA Screen (BGI)",
 	"vga",
@@ -309,7 +313,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef GNUSVGA
+#ifdef PLD_gnusvga
     {
 	"SVGA Screen (djgpp)",
 	"vga",
@@ -341,7 +345,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef XTERM
+#ifdef PLD_xterm
     {
 	"Xterm Window",
 	"xterm",
@@ -357,7 +361,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TEK4010
+#ifdef PLD_tek4010
     {
 	"Tektronix Terminal (4010)",
 	"tekt",
@@ -373,7 +377,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TEK4107
+#ifdef PLD_tek4107
     {
 	"Tektronix Terminal (4105/4107)",
 	"tek4107t",
@@ -389,7 +393,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef MSKERMIT
+#ifdef PLD_mskermit
     {
 	"MS-Kermit emulator",
 	"mskermit",
@@ -405,7 +409,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef VERSATERM
+#ifdef PLD_versaterm
     {
 	"Versaterm vt100/tek emulator",
 	"versaterm",
@@ -421,7 +425,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef VLT
+#ifdef PLD_vlt
     {
 	"VLT vt100/tek emulator",
 	"vlt",
@@ -437,7 +441,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef DG300
+#ifdef PLD_dg300
     {
 	"DG300 Terminal",
 	"dg300",
@@ -455,7 +459,7 @@ static PLDispatchTable dispatch_table[] = {
 
     /* File types */
 
-#ifdef PLMETA
+#ifdef PLD_plmeta
     {
 	"PLPLOT Native Meta-File",
 	"plmeta",
@@ -471,7 +475,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TEK4010
+#ifdef PLD_tek4010
     {
 	"Tektronix File (4010)",
 	"tekf",
@@ -487,7 +491,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef TEK4107
+#ifdef PLD_tek4107
     {
 	"Tektronix File (4105/4107)",
 	"tek4107f",
@@ -503,7 +507,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PS
+#ifdef PLD_ps
     {
 	"PostScript File (monochrome)",
 	"ps",
@@ -532,7 +536,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef XFIG
+#ifdef PLD_xfig
     {
 	"Xfig file",
 	"xfig",
@@ -548,7 +552,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef LJII
+#ifdef PLD_ljii
     {
 	"LaserJet IIp/deskjet compressed graphics",
 	"ljiip",
@@ -577,7 +581,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef AMIGA
+#ifdef PLD_amiga
     {
 	"Amiga Printer (prefs settings)",
 	"amipr",
@@ -593,7 +597,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef IFF	/* probably only of interest on the Amiga */
+#ifdef PLD_iff	/* probably only of interest on the Amiga */
    {
 	"IFF Graphics File",
 	"iff",
@@ -609,7 +613,7 @@ static PLDispatchTable dispatch_table[] = {
    },
 #endif
 
-#ifdef AEGIS	/* probably only of interest on the Amiga */
+#ifdef PLD_aegis	/* probably only of interest on the Amiga */
    {
 	"Aegis Draw File",
 	"aegis",
@@ -625,7 +629,7 @@ static PLDispatchTable dispatch_table[] = {
    },
 #endif
 
-#ifdef HP7470
+#ifdef PLD_hp7470
     {
 	"HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
 	"hp7470",
@@ -641,7 +645,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef HP7580
+#ifdef PLD_hp7580
     {
 	"HP 7580 Plotter File (Large Plotter)",
 	"hp7580",
@@ -657,7 +661,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef IMP
+#ifdef PLD_imp
     {
 	"Impress File",
 	"imp",
@@ -673,7 +677,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef NULLDEV
+#ifdef PLD_null
     {
 	"Null device",
 	"null",
