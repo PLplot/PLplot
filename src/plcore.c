@@ -12,6 +12,7 @@
   Copyright (C) 2004  Andrew Ross
   Copyright (C) 2004  Andrew Roach
   Copyright (C) 2005  Alan W. Irwin
+  Copyright (C) 2005  Thomas J. Duck
 
   This file is part of PLplot.
 
@@ -2333,6 +2334,20 @@ plLoadDriver(void)
         sprintf( drvspec, "%s/%s", plGetDrvDir (), driver->drvnam );
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
+		driver->drvnam, drvspec );
+
+        driver->dlhand = lt_dlopenext( drvspec);
+    }
+
+/* If it hasn't been loaded yet, try loading the driver again using the
+ * lib* naming convention. TJD
+ */
+    if (!driver->dlhand)
+    {
+        char drvspec[ 400 ];
+        sprintf( drvspec, "%s/lib%s", plGetDrvDir (), driver->drvnam );
+
+	pldebug("plLoadDriver", "Trying to load lib%s on %s\n",
 		driver->drvnam, drvspec );
 
         driver->dlhand = lt_dlopenext( drvspec);
