@@ -14,13 +14,12 @@
 
 printf("\n\n\
 This demo runs script files x01c.m to x19c.m, which are the octave\n\
-versions of files x01c.c to x19c.c, from the PLplot distribution.\n\
-Examining the C sources and the Octave scripts, you will see that the\n\
-Octave version is an almost direct copy of the C sources. Only in a few\n\
-cases I have vectorize the code, and I haven't dare doing it in one case.\n\n\
-To advance from one plot to the next, you should hit the Enter key or\n\
-press the right mouse button. In the case that you endup with an undesired\n\
-graphics window, type at the Octave prompt \"plend\".\n\n\
+versions of the equivalent C files.\n\
+The Octave version is an almost direct copy of the C sources,\n\
+ and only in a few cases the code is vectorized.\n\n\
+To advance from one plot to the next, hit the Enter key or\n\
+press the right mouse button. If you endup with an undesired\n\
+plot window, type at the Octave prompt \"plend1\".\n\n\
 Some demos print instructions, so keep this window visible.\n\n\
 Press any key to continue...\n");
 

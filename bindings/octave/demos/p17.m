@@ -18,7 +18,7 @@ function p17(fg)
   automatic_replot = 0;
 
   title "Click and Drag button 1 to select";
-  xlabel "Button 3 to restart and button 2 to finish";
+  xlabel "Button 2 to restart and button 3 to finish";
   ylabel "";
   [img, map]= loadimage (file_in_loadpath ("lena.img"));
   colormap(map);
