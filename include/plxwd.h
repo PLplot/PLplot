@@ -53,10 +53,12 @@ typedef struct {
     Colormap	map;			/* Colormap */
     unsigned	depth;			/* display depth */
     int		color;			/* Set to 1 if a color output device */
-    int		ncol0;			/* Number of cmap 0 colors allocated */
-    int		ncol1;			/* Number of cmap 1 colors allocated */
-    XColor	cmap0[16];		/* Color entries for cmap 0 */
-    XColor	cmap1[256];		/* Color entries for cmap 1 */
+    int		ncol0;			/* Number of cmap 0 colors */
+    int		ncol0_alloc;		/* Keeps track of storage for *cmap0 */
+    int		ncol1;			/* Number of cmap 1 colors */
+    int		ncol1_alloc;		/* Keeps track of storage for *cmap1 */
+    XColor	*cmap0;			/* Color entries for cmap 0 */
+    XColor	*cmap1;			/* Color entries for cmap 1 */
     XColor	fgcolor;		/* Foreground color (if grayscale) */
     Cursor	xhair_cursor;		/* Crosshair cursor */
     int		rw_cmap;		/* Can we allocate r/w color cells? */
