@@ -120,8 +120,12 @@
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
 typedef double PLFLT;
+#define PLFLT_MAX DBL_MAX
+#define PLFLT_MIN DBL_MIN
 #else
 typedef float PLFLT;
+#define PLFLT_MAX  FLT_MAX
+#define PLFLT_MIN  FLT_MIN
 #endif
 
 #if defined(MSDOS) && !defined(__WIN32__)
@@ -455,6 +459,7 @@ typedef struct {
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
 #define    plgra	c_plgra
+#define    plgriddata   c_plgriddata
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
 #define    plgver	c_plgver
@@ -586,6 +591,7 @@ typedef struct {
 #define    c_plglevel	plglevel
 #define    c_plgpage	plgpage
 #define    c_plgra	plgra
+#define    c_plgriddata plgriddata   
 #define    c_plgspa	plgspa
 #define    c_plgstrm	plgstrm
 #define    c_plgver	plgver
@@ -948,6 +954,22 @@ c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
 
 void
 c_plgra(void);
+
+  /* grid irregularly sampled data */
+
+void
+plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
+	   PLFLT **zg, int type, PLFLT data);
+
+  /* type of gridding algorithm for plgriddata() */
+
+#define GRID_CSA    1 /* Bivariate Cubic Spline approximation */
+#define GRID_DTLI   2 /* Delaunay Triangulation Linear Interpolation */
+#define GRID_NNI    3 /* Natural Neighbors Interpolation */
+#define GRID_NNIDW  4 /* Nearest Neighbors Inverse Distance Weighted */
+#define GRID_NNLI   5 /* Nearest Neighbors Linear Interpolation */
+#define GRID_NNAIDW 6 /* Nearest Neighbors Around Inverse Distance Weighted  */
 
 /* Get subpage boundaries in absolute coordinates */
 
