@@ -16,11 +16,15 @@ setenv JAVA_HOME /home/software/java/IBMJava2-14/
 setenv PATH $PATH":$JAVA_HOME/bin"
 #Your locations will differ depending on your PLPlot configure --prefix.
 setenv CLASSPATH /usr/local/plplot/lib/java
-setenv LD_LIBRARY_PATH /usr/local/plplot/lib
 
-(3) Build java demos
+(3) (This next step is no longer required because it is done
+automatically by make install.)  To build the installed examples:
 cd /usr/local/plplot/lib/java/plplot/examples
 javac -d ../../../java x01.java ...
+
+or alternatively
+
+javac -d $CLASSPATH $CLASSPATH/plplot/examples/x??.java
 
 (4) Run java demos
 
