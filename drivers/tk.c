@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/08/03 20:30:59  mjl
+ * Revision 1.7  1993/08/11 19:26:30  mjl
+ * Improved code that determines when command is sent to server to read from
+ * the FIFO.  Changed to non-blocking i/o and asynchronous TK sends.
+ *
+ * Revision 1.6  1993/08/03  20:30:59  mjl
  * Fixed more problems with writing into non-writable strings by gcc.
  *
  * Revision 1.5  1993/08/03  01:49:55  mjl
@@ -51,7 +55,7 @@
 #include "plevent.h"
 #include "xwin.h"
 
-#define BUFMAX 2048
+#define BUFMAX 3500
 
 #define tk_wr(code) \
 if (code) { abort_session(pls, "Unable to write to pipe"); }
@@ -217,7 +221,7 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
     static long count = 0, max_count = 100;
     TkDev *dev = (TkDev *) pls->dev;
 
-    if ( (++count/max_count)*max_count == count) {
+    if ( ++count/max_count >= 1 ) {
 	count = 0;
 	HandleEvents(pls);	/* Check for events */
     }
@@ -246,6 +250,9 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
     }
     dev->xold = x2;
     dev->yold = y2;
+
+    if (pls->bytecnt > pls->bufmax)
+	flush_output(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -261,9 +268,7 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
     static long count = 0, max_count = 100;
     TkDev *dev = (TkDev *) pls->dev;
 
-    dbug_enter("plD_polyline_tk");
-
-    if ( (++count/max_count)*max_count == count) {
+    if ( ++count/max_count >= 1 ) {
 	count = 0;
 	HandleEvents(pls);	/* Check for events */
     }
@@ -276,6 +281,9 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
+
+    if (pls->bytecnt > pls->bufmax)
+	flush_output(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -380,6 +388,9 @@ plD_state_tk(PLStream *pls, PLINT op)
     case PLSTATE_COLOR1:
 	break;
     }
+
+    if (pls->bytecnt > pls->bufmax)
+	flush_output(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -907,12 +918,12 @@ link_init(PLStream *pls)
 
     Tcl_SetVar(dev->interp, "fifoname", dev->filename, 0);
     server_cmd( pls, "update" );
-    server_cmd( pls, "$plwidget openfifo $fifoname" );
+    server_cmd( pls, "after 1 $plwidget openfifo $fifoname" );
 
 /* Open the fifo for writing */
-/* The server must now have it open for reading or this will fail */
+/* This will block until the server opens it for reading */
 
-    if ((fd = open(dev->filename, O_WRONLY | O_NONBLOCK)) == -1) {
+    if ((fd = open(dev->filename, O_WRONLY)) == -1) {
 	abort_session(pls, "Error opening fifo for write");
     }
     dev->file = fdopen(fd, "wb");
@@ -939,7 +950,8 @@ WaitForPage(PLStream *pls)
 
     dbug_enter("WaitForPage");
 
-    flush_output(pls);
+    if (pls->bytecnt > 0) 
+	flush_output(pls);
 
     server_cmd( pls, "$plw_flash $plwindow" );
     tk_wait(pls, "[info exists advance] && ($advance == 1)" );
@@ -954,8 +966,7 @@ WaitForPage(PLStream *pls)
 * HandleEvents()
 *
 * Just a front-end to the update command, for use when not actually
-* waiting for an event but only checking the event queue.  Also we
-* check to see if it's time to tell the server to read from the pipe.
+* waiting for an event but only checking the event queue.  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -964,19 +975,28 @@ HandleEvents(PLStream *pls)
     dbug_enter("HandleEvents");
 
     tcl_eval(pls, "update");
-    if (pls->bytecnt > pls->bufmax)
-	flush_output(pls);
 }
 
 /*----------------------------------------------------------------------*\
 * flush_output()
 *
 * Flushes output and sends command to the server to read from the pipe.
+* Best to let server process the commands asynchronously by putting in
+* the "after 1" -- the send command then returns immediately and the
+* process can continue.  
 *
-* Unfortunately it's necessary to wait until the server command returns
-* before proceeding, since otherwise data overruns can occur (I tried
-* preceding the "send" by "after 1" but ran into problems with plrender
-* sending the commands too quickly).
+* Note: the flush actually takes place after the send command.  This
+* way bigger buffers can be used since both processes can work on it
+* asnychronously for a while.  If the renderer just hangs at some
+* point, it may indicate the buffer is too large for your system and
+* further writes aren't being permitted without first reading from the
+* pipe.  And since the data writer is responsible for telling the
+* server to do the reads, they both hang forever!  The only way to get
+* around this type of problem is to use i/o events in the server's TK
+* event loop.  (Actually there is another way: use non-blocking i/o
+* with good error recovery, but that's a lot of work!)  Maybe once the
+* stock TK has this capability I will switch over, but sticking the
+* input events in the TK event loop may be bad for performance.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -990,16 +1010,14 @@ flush_output(PLStream *pls)
 #ifdef DEBUG
     fprintf(stderr, "%s: Flushing buffer, bytecnt = %d\n",
 	    dev->program, pls->bytecnt);
-    fflush(stderr);
 #endif
 
-    if (pls->bytecnt > 0) {
-	fflush(dev->file);
-	sprintf(tmp, "%d", pls->bytecnt);
-	Tcl_SetVar(dev->interp, "nbytes", tmp, 0);
-	server_cmd( pls, "$plwidget read $nbytes" );
-	pls->bytecnt = 0;
-    }
+    sprintf(tmp, "%d", pls->bytecnt);
+    Tcl_SetVar(dev->interp, "nbytes", tmp, 0);
+    server_cmd( pls, "after 1 $plwidget read $nbytes" );
+
+    tk_wr(fflush(dev->file));
+    pls->bytecnt = 0;
 }
 
 /*----------------------------------------------------------------------*\
