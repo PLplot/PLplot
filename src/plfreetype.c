@@ -883,7 +883,7 @@ void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org)
 	    if ((r<0)||(g<0)||(b<0))
 		plscol0 (k, 0, 0, 0);
 	    else
-		plscol0 (k, r, g, b);
+		plscol0 (k, (r > 0xff ? 0xff : r), (g > 0xff ? 0xff : g), (b > 0xff ? 0xff : b));
         }
     }
 }
