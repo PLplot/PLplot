@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/11/02 19:59:47  mjl
+ * Revision 1.9  1995/05/07 03:17:20  mjl
+ * Changed to use new name for options-parsing function plParseOpts().
+ *
+ * Revision 1.8  1994/11/02  19:59:47  mjl
  * Changed prompt.
  *
  * Revision 1.7  1994/09/23  07:54:17  mjl
@@ -77,7 +80,7 @@ extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
 int
 main(int argc, char **argv)
 {
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
     exit(pltclMain(argc, argv, NULL, AppInit));
 }
