@@ -12,6 +12,10 @@
 #define NEED_PLDEBUG
 #include "plplot/plcore.h"
 
+#ifdef ENABLE_DYNAMIC_DRIVERS
+#include <dlfcn.h>
+#endif
+
 /*--------------------------------------------------------------------------*\
  * Driver Interface
  *
@@ -1372,6 +1376,8 @@ plGetDev()
         plInitDispatchTable();
 
     plSelectDev();
+
+    plLoadDriver();
 }
 
 static void
@@ -1379,8 +1385,7 @@ plInitDispatchTable()
 {
     char buf[300];
     char *devnam, *devdesc, *driver, *tag;
-    int n, done=0;
-    int ndynamicdevices = 0;
+    int i, j, n, driver_found, done=0;
 
 #ifdef ENABLE_DYNAMIC_DRIVERS
     FILE *fp_drvdb = plLibOpen( "drivers/drivers.db" );
@@ -1399,12 +1404,12 @@ plInitDispatchTable()
             continue;
         }
 
-        ndynamicdevices++;
+        npldynamicdevices++;
     }
 #endif
 
 /* Allocate space for the dispatch table. */
-    dispatch_table = malloc( (nplstaticdevices + ndynamicdevices) * sizeof(PLDispatchTable) );
+    dispatch_table = malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable) );
 
 /* Copy the static devices into the dispatch table */
     for( n=0; n < nplstaticdevices; n++ )
@@ -1424,10 +1429,17 @@ plInitDispatchTable()
     npldrivers = nplstaticdevices;
 
 #ifdef ENABLE_DYNAMIC_DRIVERS
-    printf( "Ready to read drivers/drivers.db\n" );
+/*     printf( "Ready to read drivers/drivers.db\n" ); */
+
+/* Allocate space for the device and driver specs.  We may not use all of
+ * these driver descriptors, but we obviously won't need more drivers than
+ * devices... */
+    loadable_device_list = malloc( npldynamicdevices * sizeof(PLLoadableDevice) );
+    loadable_driver_list = malloc( npldynamicdevices * sizeof(PLLoadableDriver) );
 
     rewind( fp_drvdb );
     done = 0;
+    i = 0;
     while( !done ) {
         char *p = fgets( buf, 300, fp_drvdb );
 
@@ -1441,12 +1453,9 @@ plInitDispatchTable()
         driver  = strtok( 0, ":" );
         tag     = strtok( 0, "\n" );
 
-        printf( "Devspec: %s", buf );
-        printf( "dev=%s desc=%s driver=%s tag=%s\n",
-                devnam, devdesc, driver, tag );
-
         n = npldrivers++;
 
+    /* Fill in the dispatch table entries. */
         dispatch_table[n].pl_MenuStr = plstrdup(devdesc);
         dispatch_table[n].pl_DevName = plstrdup(devnam);
         dispatch_table[n].pl_type = 0;
@@ -1458,6 +1467,34 @@ plInitDispatchTable()
         dispatch_table[n].pl_tidy = 0;
         dispatch_table[n].pl_state = 0;
         dispatch_table[n].pl_esc = 0;
+
+    /* Add a record to the loadable device list */
+        loadable_device_list[i].devnam = plstrdup(devnam);
+        loadable_device_list[i].description = plstrdup(devdesc);
+        loadable_device_list[i].drvnam = plstrdup(driver);
+        loadable_device_list[i].tag = plstrdup(tag);
+
+    /* Now see if this driver has been seen before.  If not, add a driver
+     * entry for it. */
+        driver_found = 0;
+        for( j=0; j < nloadabledrivers; j++ )
+            if (strcmp( driver, loadable_driver_list[j].drvnam) == 0)
+            {
+                driver_found = 1;
+                break;
+            }
+
+        if (!driver_found)
+        {
+            loadable_driver_list[nloadabledrivers].drvnam = plstrdup(driver);
+            loadable_driver_list[nloadabledrivers].dlhand = 0;
+            nloadabledrivers++;
+        }
+
+        loadable_device_list[i].drvidx = j;
+
+    /* Get ready for next loadable device spec */
+        i++;
     }
 #endif
 
@@ -1550,6 +1587,103 @@ plSelectDev()
     }
     plsc->device = dev;
     strcpy(plsc->DevName, dispatch_table[dev - 1].pl_DevName);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plLoadDriver()
+ *
+ * Make sure the selected driver is loaded.  Static drivers are already
+ * loaded, but if the user selected a dynamically loadable driver, we may
+ * have to take care of that now.
+\*--------------------------------------------------------------------------*/
+
+static void
+plLoadDriver(void)
+{
+#ifdef ENABLE_DYNAMIC_DRIVERS
+    int i, drvidx;
+    char sym[60];
+    char *tag;
+
+    int n=plsc->device - 1;
+    PLDispatchTable *dev = dispatch_table + n;
+    PLLoadableDriver *driver = 0;
+
+/* If the dispatch table is already filled in, then either the device was
+ * linked in statically, or else perhaps it was already loaded.  In either
+ * case, we have nothing left to do. */
+    if (dev->pl_init)
+        return;
+
+/*     fprintf( stderr, "Device not loaded!\n" ); */
+
+/* Now search through the list of loadable devices, looking for the record
+ * taht corresponds to the requested device. */
+    for( i=0; i < npldynamicdevices; i++ )
+        if (strcmp( dev->pl_DevName, loadable_device_list[i].devnam ) == 0)
+            break;
+
+/* If we couldn't find such a record, then the user is in deep trouble. */
+    if (i == npldynamicdevices) {
+        fprintf( stderr, "No such device: %s.\n", dev->pl_DevName );
+        return;
+    }
+
+/* Note the device tag, and the driver index. Note that a given driver could
+ * supply multiple devices, each with a unique tag to distinguish the driver
+ * entry points for the differnet supported devices. */
+    tag = loadable_device_list[i].tag;
+    drvidx = loadable_device_list[i].drvidx;
+
+/*     printf( "tag=%s, drvidx=%d\n", tag, drvidx ); */
+
+    driver = &loadable_driver_list[drvidx];
+
+/* Load the driver if it hasn't been loaded yet. */
+    if (!driver->dlhand)
+    {
+        char drvspec[ 100 ];
+        sprintf( drvspec, "./drivers/%s", driver->drvnam );
+
+/*         printf( "Trying to load %s\n", driver->drvnam ); */
+
+        driver->dlhand = dlopen( drvspec, RTLD_NOW );
+    }
+
+/* If it still isn't loaded, then we're doomed. */
+    if (!driver->dlhand)
+    {
+        fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
+        return;
+    }
+
+/* Now we are ready to pull all the symbols for the requested device out of
+ * the dynamically loaded driver module, and hook up the dispatch table.  */
+
+    sprintf( sym, "plD_init_%s", tag );
+    dev->pl_init = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_line_%s", tag );
+    dev->pl_line = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_polyline_%s", tag );
+    dev->pl_polyline = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_eop_%s", tag );
+    dev->pl_eop = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_bop_%s", tag );
+    dev->pl_bop = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_tidy_%s", tag );
+    dev->pl_tidy = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_state_%s", tag );
+    dev->pl_state = dlsym( driver->dlhand, sym );
+
+    sprintf( sym, "plD_esc_%s", tag );
+    dev->pl_esc = dlsym( driver->dlhand, sym );
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
