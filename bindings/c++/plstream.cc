@@ -743,6 +743,15 @@ void plstream::gver( char *p_ver )
     plgver(p_ver);
 }
 
+// Get viewport window in world coordinates
+
+void plstream::gvpw(PLFLT& xmin, PLFLT& xmax, PLFLT& ymin, PLFLT& ymax)
+{
+    set_stream();
+
+    plgvpw(&xmin, &xmax, &ymin, &ymax);
+}
+
 // Get x axis labeling parameters.
 
 void plstream::gxax( PLINT& digmax, PLINT& digits )

@@ -320,6 +320,10 @@ class plstream {
 
     void gver( char *p_ver );
 
+// Get the viewport window in world coordinates
+
+    void gvpw( PLFLT& xmin, PLFLT& xmax, PLFLT& ymin, PLFLT& ymax );
+
 // Get x axis labeling parameters.
 
     void gxax( PLINT& digmax, PLINT& digits );
