@@ -1,4 +1,33 @@
 <?xml version="1.0"?>
+<!--
+    Redistribution and use in source (XML DocBook) and "compiled" forms
+    (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+       1. Redistributions of source code (XML DocBook) must retain the
+          above copyright notice, this list of conditions and the following
+          disclaimer as the first lines of this file unmodified.
+
+       2. Redistributions in compiled form (transformed to other DTDs,
+          converted to HTML, PDF, PostScript, and other formats) must
+          reproduce the above copyright notice, this list of conditions and
+          the following disclaimer in the documentation and/or other
+          materials provided with the distribution.
+
+    Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
 <!DOCTYPE book PUBLIC "@DOCBOOK_DTD_PUBID@" [
 
 <!ENTITY Project-Version "@VERSION@">
@@ -190,8 +219,8 @@
 	<surname>Furnish</surname>
 	<affiliation>
 	  <orgname>
-	      University of Texas at Austin
-	  </orgname> 
+            University of Texas at Austin
+	  </orgname>
 	  <orgdiv>
 	    Institute for Fusion Studies
 	  </orgdiv>
@@ -205,72 +234,62 @@
       <year>1994</year>
       <holder>Geoffrey Furnish, Maurice LeBrun</holder>
     </copyright>
-    <legalnotice>
-      <para>
-	<emphasis>
-	  These are the terms under which the original PLplot documentation
-	  has been released:
-	</emphasis>
-      </para>
-
-      <para>
-	PLplot may be used by anyone.
-      </para>
-      
-      <para>
-	This manual may be copied by anyone.
-      </para>
-      
-      <para>
-	Anyone may modify the program for personal use.
-      </para>
-    </legalnotice>
     <copyright>
       <year>1999, 2000, 2001, 2003</year>
-      <holder>Alan W. Irwin, Rafael Laboissi&egrave;re, Joao Cardoso</holder>
+      <holder>Alan W. Irwin, Rafael Laboissi&egrave;re</holder>
     </copyright>
     <copyright>
       <year>2003</year>
       <holder>Joao Cardoso</holder>
     </copyright>
+
     <legalnotice>
       <para>
-	<emphasis>
-	  The following terms apply to the LaTeXinfo to DocBook translation
-	  and content added by A. W. Irwin, R. Laboissi&egrave;re and 
-	  Joao Cardoso:
-	</emphasis>
-      </para>	
-
-      <para>
-	Permission is granted to make and distribute verbatim copies of
-	this manual provided the copyright notice and this permission
-	notice are preserved on all copies.
+        Redistribution and use in source (XML DocBook) and
+        <quote>compiled</quote> forms (HTML, PDF, PostScript, DVI, TeXinfo
+        and so forth) with or without modification, are permitted provided
+        that the following conditions are met:
+        <orderedlist>
+          <listitem>
+            <para>
+              Redistributions of source code (XML DocBook) must retain the
+              above copyright notice, this list of conditions and the
+              following disclaimer as the first lines of this file
+              unmodified.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Redistributions in compiled form (transformed to other DTDs,
+              converted to HTML, PDF, PostScript, and other formats) must
+              reproduce the above copyright notice, this list of conditions
+              and the following disclaimer in the documentation and/or
+              other materials provided with the distribution.
+            </para>
+          </listitem>
+        </orderedlist>
+        Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT
+        <quote>AS IS</quote> AND ANY EXPRESS OR IMPLIED WARRANTIES,
+        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+        MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+        DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE FOR ANY
+        DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+        DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+        GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+        WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+        NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+        DOCUMENTATION, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para>
-	Permission is granted to copy and distribute modified versions of
-	this manual under the conditions for verbatim copying, provided
-	that the entire resulting derived work is distributed under the
-	terms of a permission notice identical to this one.
-      </para>
-      
-      <para>
-	Permission is granted to copy and distribute translations of this
-	manual into another language, under the above conditions for
-	modified versions, except that this permission notice may be stated
-	in a translation approved by the authors.
-      </para>
-
-      <para>
-	Release version: &Project-Version;
+        Release version: &Project-Version;
       </para>
       <para>
-	Release date: &Project-Date;
+        Release date: &Project-Date;
       </para>
 
     </legalnotice>
-
 
   </bookinfo>
   <toc></toc>
