@@ -31,7 +31,7 @@ dist_pkginclude_HEADERS = \
 	plplot.h \
 	plplotP.h \
 	plstrm.h \
-	plxwd.h
+	plxwd.h \
 	gcw.h \
 	plplotcanvas.h
 
