@@ -759,10 +759,18 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
 {
     PLINT i;
 
-    *f = (PLFLT **) malloc(nx * sizeof(PLFLT *));
+    if ((*f = (PLFLT **) calloc(nx, sizeof(PLFLT *)))==NULL)
+     {   
+        plexit("Memory allocation error in \"plAlloc2dGrid\"");
+     }
+
     for (i = 0; i < nx; i++) {
-	(*f)[i] = (PLFLT *) malloc(ny * sizeof(PLFLT));
+       if (((*f)[i] = (PLFLT *) calloc(ny ,sizeof(PLFLT)))==NULL)
+	 {
+            plexit("Memory allocation error in \"plAlloc2dGrid\"");
+	 }
     }
+
 }
 
 /*--------------------------------------------------------------------------*\
