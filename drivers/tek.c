@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.16  1993/09/14 22:25:15  mjl
-   Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
+   Revision 1.17  1993/12/06 07:41:47  mjl
+   Changed to not turn off echo when changing tty settings.
 
+ * Revision 1.16  1993/09/14  22:25:15  mjl
+ * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
+ *
  * Revision 1.15  1993/08/03  01:46:42  mjl
  * Changes to eliminate warnings when compiling with gcc -Wall.
  *
@@ -526,7 +529,7 @@ tty_cbreak(int fd)			/* put terminal into a cbreak mode */
 
     buf = save_termios;			/* structure copy */
 
-    buf.c_lflag &= ~(ECHO | ICANON);	/* echo & canonical mode off */
+    buf.c_lflag &= ~(ICANON);		/* canonical mode off */
     buf.c_cc[VMIN] = 1;			/* 1 byte at a time */
     buf.c_cc[VTIME] = 0;		/* no timer */
 
