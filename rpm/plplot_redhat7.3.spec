@@ -168,10 +168,13 @@ fi
 # octave support files for Plplot.
 %attr(-, root, root) /usr/share/plplot_octave
 # python modules
-%attr(-, root, root) /usr/lib/python*/site-packages/plmodule.so
-%attr(-, root, root) /usr/lib/python*/site-packages/pyqt_plmodule.so
+%attr(-, root, root) /usr/lib/python*/site-packages/plplotcmodule.so
+%attr(-, root, root) /usr/lib/python*/site-packages/plplot.py
+%attr(-, root, root) /usr/lib/python*/site-packages/plplot_widgetmodule.so
 # fonts, maps, tcl data, dyndrivers, and examples
-%attr(-, root, root) /usr/lib/plplot%{version}
+#temporary until version information made consistent
+#%attr(-, root, root) /usr/lib/plplot%{version}
+%attr(-, root, root) /usr/lib/plplot*
 # info files
 %attr(-, root, root) /usr/share/info/plplotdoc.info*.gz
 # headers
@@ -188,4 +191,5 @@ fi
 # libraries
 %attr(-, root, root) /usr/lib/libplcxxd.*
 %attr(-, root, root) /usr/lib/libplplotd.*
+%attr(-, root, root) /usr/lib/libplplottcltkd.*
 %attr(-, root, root) /usr/lib/libtclmatrixd.*
