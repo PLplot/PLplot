@@ -3,6 +3,14 @@ through this file for new features, etc, until the new documentation is
 complete.
 
 *****************************************************************************
+PLPLOT 4.99c changes
+*****************************************************************************
+
+o Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
+driver and renderer.  These are really not necessary when a metafile is
+being used and can be aggravating when using the xterm driver.  
+
+*****************************************************************************
 PLPLOT 4.99b changes
 *****************************************************************************
 
