@@ -64,7 +64,6 @@ PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
 # (Must relink after installing shared library!)
 
 LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
-LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME) $(MAT_LINK)
 
 # These are what we link against.
 

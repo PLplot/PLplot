@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1998/12/01 20:51:12  furnish
+ * Revision 1.38  1999/06/19 05:38:58  furnish
+ * Integrated patch set from Joao Cardoso.
+ *
+ * Revision 1.37  1998/12/01  20:51:12  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
  * Revision 1.36  1995/10/22  17:41:33  mjl
@@ -232,6 +235,7 @@ static int opt_server_name	(char *, char *, void *);
 static int opt_server_host	(char *, char *, void *);
 static int opt_server_port	(char *, char *, void *);
 static int opt_user		(char *, char *, void *);
+static int opt_tk_file          (char *, char *, void *); /* jc: name of file to plserver -file option */
 
 /* Global variables */
 
@@ -626,6 +630,14 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-auto_path dir",
     "Additional directory(s) to autoload (tk or dp driver)" },
+{
+    "tk_file",      /* jc: -file option for plserver */
+    opt_tk_file,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-tk_file file",
+    "file for plserver (tk or dp driver)" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -1926,3 +1938,13 @@ opt_geo(char *opt, char *optarg, void *client_data)
     return 0;
 }
 
+/*
+ * jc: file name  for plserver -file option
+*/
+   
+static int opt_tk_file(char *opt, char *optarg, void *client_data)
+{
+    plsc->tk_file = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    strcpy (plsc->tk_file, optarg);
+    return 0;
+}

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.72  1999/02/26 19:37:47  furnish
+ * Revision 1.73  1999/06/19 05:37:52  furnish
+ * Integrated patch set from Joao Cardoso.
+ *
+ * Revision 1.72  1999/02/26  19:37:47  furnish
  * Add support for processing the double buffering device escape
  * function.
  *
@@ -966,7 +969,7 @@ InitMain(PLStream *pls)
       sprintf(header, "%s", plsc->plwindow);
     }
     else
-    sprintf(header, "PLplot");
+        sprintf(header, "%s", plsc->program); /* jc: else program name*/
 
 /* Window creation */
 

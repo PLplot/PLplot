@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.22  1998/12/01 20:49:21  furnish
+# Revision 1.23  1999/06/19 05:36:39  furnish
+# Integrated patch set from Joao Cardoso.
+#
+# Revision 1.22  1998/12/01  20:49:21  furnish
 # Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
 #
 # Revision 1.21  1997/06/20  15:20:17  furnish
@@ -630,7 +633,8 @@ proc Form2d_tab {list} {
 
 proc evalCmd {{w .eval}} {
     catch {destroy $w}
-    toplevel $w -geometry 400x300
+# jc: -geometry unknown in 7.6 toplevels: toplevel $w -geometry 400x300
+    toplevel $w
     dpos $w
     wm title $w "Interpret command"
     wm iconname $w "Interpret"

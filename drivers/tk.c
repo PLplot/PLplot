@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.57  1999/01/23 05:11:21  furnish
+ * Revision 1.58  1999/06/19 05:37:51  furnish
+ * Integrated patch set from Joao Cardoso.
+ *
+ * Revision 1.57  1999/01/23  05:11:21  furnish
  * Desuckify the interpretter bootstrapping code.
  *
  * Revision 1.56  1998/12/01  20:54:37  furnish
@@ -716,7 +719,7 @@ tk_start(PLStream *pls)
 
     dev->interp = Tcl_CreateInterp();
 
-    if (Tcl_Init(dev->interp) != TCL_OK) {	// jc:
+    if (Tcl_Init(dev->interp) != TCL_OK) {	/* jc: */
 	fprintf(stderr, "%s\n", dev->interp->result);
 	abort_session(pls, "Unable to initialize Tcl");
     }
@@ -1138,6 +1141,9 @@ launch_server(PLStream *pls)
  */
 
     argv[i++] = "-file";			/* Startup file */
+    if (pls->tk_file) 
+        argv[i++] = pls->tk_file;
+    else
     argv[i++] = "/dev/null";
 
 
@@ -1153,6 +1159,9 @@ launch_server(PLStream *pls)
         argv[i++] = tmp;	
         if ((t = strchr(tmp, '.')) != NULL)
             *t = '\0';		/* and keep only the base name */
+    } else {
+        argv[i++] = "-name";            /* plserver name */
+        argv[i++] = pls->program;	
     }
 
     if (pls->auto_path != NULL) {
@@ -1245,11 +1254,15 @@ launch_server(PLStream *pls)
 
 	    if (pls->server_nokill) {
 		int retv;
+/* jc:	this was reversed: *all* signals were blocked!
 		sigset_t *set;
 		set = (sigset_t *) malloc (sizeof(sigset_t));
 		sigfillset (set);
-		sigaddset (set, SIGINT);
-		if ((retv = sigprocmask (SIG_BLOCK, set, 0)) < 0)
+*/
+		sigset_t set;
+		sigemptyset(&set);
+		sigaddset (&set, SIGINT);
+		if ((retv = sigprocmask (SIG_BLOCK, &set, 0)) < 0)
 		    fprintf(stderr, "PLplot: sigprocmask failure\n");
 	    }
 	    /* jc:	    fprintf(stderr, "Starting up %s\n", plserver_exec); */

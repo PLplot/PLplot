@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1995/10/23 07:26:52  mjl
+ * Revision 1.4  1999/06/19 05:38:31  furnish
+ * Integrated patch set from Joao Cardoso.
+ *
+ * Revision 1.3  1995/10/23  07:26:52  mjl
  * Added entries for errcode and errmsg.
  *
  * Revision 1.2  1995/07/19  15:25:21  furnish
@@ -311,6 +314,7 @@ typedef struct {
  * plserver	char*	Name of server
  * plwindow	char*	Name of reference server window (malloc'ed)
  * tcl_cmd	char*	TCL command(s) to eval on startup
+ * tk_file	char*   File for plserver use with its -file option
  * auto_path	char*	Additional directories to autoload
  * bufmax	int	Number of bytes sent before output buffer is flushed
  * dp		int	Use Tcl-DP for communication, if set
@@ -556,6 +560,7 @@ typedef struct {
     char *server_name, *server_host, *server_port, *user;
     char *plserver, *plwindow;
     char *tcl_cmd, *auto_path;
+    char *tk_file;  /* jc: for plserver -file option */
     int  bufmax, dp, server_nokill;
 
 /* Plot buffer settings */
