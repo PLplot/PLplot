@@ -31,6 +31,9 @@
 /* Static functions */
 
 static void
+color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name );
+
+static void
 strcat_delim(char *dirspec);
 
 static int
@@ -41,6 +44,9 @@ plcmap0_def(int imin, int imax);
 
 static void
 plcmap1_def(void);
+
+static PLFLT
+value(double n1, double n2, double hue);
 
 /* An additional hardwired location for lib files. */
 /* I have no plans to change these again, ever. */
@@ -115,7 +121,7 @@ c_plcol1(PLFLT col1)
     }
     if (col1 < 0 || col1 > 1) {
 	char buffer[256];
-	sprintf(buffer, "plcol1: Invalid color map position: %f", (float) col1);
+	sprintf(buffer, "plcol1: Invalid color map position: %f", (PLFLT) col1);
 	plabort(buffer);
 	return;
     }
@@ -654,9 +660,9 @@ plcmap1_def(void)
 /* Be carefult to pick just short of top or bottom else hue info is lost */
 
     if (plsc->cmap0 != NULL)
-	vertex = ((float) plsc->cmap0[0].r +
-		  (float) plsc->cmap0[0].g +
-		  (float) plsc->cmap0[0].b) / 3. / 255.;
+	vertex = ((PLFLT) plsc->cmap0[0].r +
+		  (PLFLT) plsc->cmap0[0].g +
+		  (PLFLT) plsc->cmap0[0].b) / 3. / 255.;
 
     if (vertex < 0.5)
 	vertex = 0.01;
@@ -775,10 +781,10 @@ c_plhls(PLFLT h, PLFLT l, PLFLT s)
  * Auxiliary function used by plHLS_RGB().
 \*--------------------------------------------------------------------------*/
 
-static float
+static PLFLT
 value(double n1, double n2, double hue)
 {
-    float val;
+    PLFLT val;
 
     while (hue >= 360.)
 	hue -= 360.;
@@ -814,7 +820,7 @@ value(double n1, double n2, double hue)
 void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 {
-    float m1, m2;
+    PLFLT m1, m2;
 
     if (l <= .5)
 	m2 = l * (s + 1.);
@@ -1333,7 +1339,7 @@ strcat_delim(char *dirspec)
 void
 plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
 {
-    float x, delta;
+    PLFLT x, delta;
     int il, ir;
 
     x = (double) (i * (pls->ncol1-1)) / (double) (ncol-1);
