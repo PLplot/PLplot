@@ -1,6 +1,6 @@
 /* $Id$
- * $Log$
- * Revision 1.12  1995/05/07 03:13:44  mjl
+ * $Log: plshade.c,v 
+ * Revision 1.12  1995/05/07  03:13:44  mjl
  * Changed debugging output to use new function pldebug().
  *
  * Revision 1.11  1994/10/18  16:05:20  furnish
@@ -138,6 +138,10 @@
 #include "plplotP.h"
 #include <float.h>
 
+#define MISSING_MIN_DEF (PLFLT) 1.0
+#define MISSING_MAX_DEF (PLFLT) -1.0
+
+
 #define NEG  1
 #define POS  8
 #define OK   0
@@ -152,7 +156,7 @@ static int min_points, max_points, n_point;
 static int min_pts[4], max_pts[4];
 static PLINT pen_col_min, pen_col_max;
 static PLINT pen_wd_min, pen_wd_max;
-
+static PLFLT int_val;
 /* Function prototypes */
 
 static void 
@@ -179,6 +183,22 @@ plctest(PLFLT *x, PLFLT level);
 static PLINT 
 plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
 	  PLINT iy, PLFLT level);
+
+static void
+plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+	PLPointer f2eval_data,
+	PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
+	PLPointer c2eval_data, 
+	const char *defined, PLFLT missing_min, PLFLT missing_max,
+	PLINT nx, PLINT ny, 
+	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLFLT shade_min, PLFLT shade_max,
+	PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	PLINT min_color, PLINT min_width,
+	PLINT max_color, PLINT max_width,
+	void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	PLPointer pltr_data);
 
 /*----------------------------------------------------------------------*\
  * plshade()
@@ -239,10 +259,11 @@ plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
     grid.nx = nx;
     grid.ny = ny;
 
-    plfshade(plf2eval, (PLPointer) &grid,
+    plshade_int(plf2eval, (PLPointer) &grid,
 	     NULL, NULL,
 /*	     plc2eval, (PLPointer) &cgrid,*/
-	     nx, ny, xmin, xmax, ymin, ymax, shade_min, shade_max,
+	     defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin, 
+	     xmax, ymin, ymax, shade_min, shade_max,
 	     sh_cmap, sh_color, sh_width,
 	     min_color, min_width, max_color, max_width,
 	     fill, rectangular, pltr, pltr_data);
@@ -270,11 +291,76 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data)
 {
+    plshade_int(f2eval,  f2eval_data, c2eval, c2eval_data, 
+	 NULL, MISSING_MIN_DEF, MISSING_MAX_DEF,
+	 nx, ny, xmin, xmax, ymin, ymax,
+	 shade_min, shade_max, sh_cmap, sh_color, sh_width,
+	 min_color, min_width, max_color, max_width,
+	 fill, rectangular, pltr, pltr_data);
+}
+
+
+/*----------------------------------------------------------------------*\
+ * plshade_int()
+ *
+ * Shade region -- this routine does all the work
+ *
+ * This routine is internal so the arguments can and will change.
+ * To retain some compatibility between versions, you must go through
+ * some stub routine!
+ *
+ * 4/95
+ *
+ * new: missing_min, missing_max
+ *
+ *     if data <= missing_max and data >= missing_min
+ *       then the data will beconsidered to be missing
+ *     this allows 2nd way to set undefined points (good for ftn)
+ *     if missing feature is not used, set missing_max < missing_min
+ *
+ * parameters:
+ *
+ * f2eval, f2eval_data:  data to plot
+ * c2eval, c2eval_data:  defined mask (not implimented)
+ * defined: defined mask (old API - implimented)
+ * missing_min, missing_max: yet another way to set data to undefined
+ * nx, ny: array dimensions
+ * xmin, xmax, ymin, ymax: grid coordinates
+ * shade_min, shade_max: shade region with values between ...
+ * sh_cmap, sh_color, sh_width: shading parameters, width is only for hatching
+ * min_color, min_width: line parameters for boundary (minimum)
+ * max_color, max_width: line parameters for boundary (maximum)
+ *     set min_width == 0 and max_width == 0 for no contours
+ * fill: fill function, set to NULL for no shading (contour plot)
+ * rectangular: flag set to 1 if pltr() maps rectangles to rectangles
+ *     this helps optimize the plotting
+ * pltr: function to map from grid to plot coordinates
+ *
+ *
+\*----------------------------------------------------------------------*/
+
+static void
+plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+	PLPointer f2eval_data,
+	PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
+	PLPointer c2eval_data, 
+	const char *defined, PLFLT missing_min, PLFLT missing_max,
+	PLINT nx, PLINT ny, 
+	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLFLT shade_min, PLFLT shade_max,
+	PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	PLINT min_color, PLINT min_width,
+	PLINT max_color, PLINT max_width,
+	void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	PLPointer pltr_data)
+{
+
     PLINT init_width, n, slope, ix, iy;
-    int count, i, j;
+    int count, i, j, nxny;
     PLFLT *a, *a0, *a1, dx, dy;
     PLFLT x[8], y[8], xp[2], tx, ty;
-
+    char *new_defined;
     int *c, *c0, *c1;
 
     if (plsc->level < 3) {
@@ -295,6 +381,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     if (pltr == NULL || pltr_data == NULL)
 	rectangular = 1;
 
+    int_val = shade_max - shade_min;
     init_width = plsc->width;
 
     pen_col_min = min_color;
@@ -304,24 +391,24 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     pen_wd_max = max_width;
 
     plstyl((PLINT) 0, NULL, NULL);
-    plwid(sh_width);
-
-    switch (sh_cmap) {
-    case 0:
-	plcol0((PLINT) sh_color);
-	break;
-    case 1:
-	plcol1(sh_color);
-	break;
-    default:
-	plabort("plfshade: invalid color map selection");
-	return;
+    plwid(sh_width); 
+    if (fill != NULL) {
+        switch (sh_cmap) {
+        case 0:
+            plcol0((PLINT) sh_color);
+	    break;
+        case 1:
+	    plcol1(sh_color);
+	    break;
+        default:
+	    plabort("plfshade: invalid color map selection");
+	    return;
+        }
     }
-
-/* alloc space for value array, and initialize */
-/* This is only a temporary kludge */
-
-    if ((a = (PLFLT *) malloc(nx * ny * sizeof(PLFLT))) == NULL) {
+    /* alloc space for value array, and initialize */
+    /* This is only a temporary kludge */
+    nxny = nx * ny;
+    if ((a = (PLFLT *) malloc(nxny * sizeof(PLFLT))) == NULL) {
 	plabort("plfshade: unable to allocate memory for value array");
 	return;
     }
@@ -330,9 +417,9 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	for (iy = 0; iy < ny; iy++) 
 	    a[iy + ix*ny] = f2eval(ix, iy, f2eval_data);
 
-/* alloc space for condition codes */
+    /* alloc space for condition codes */
 
-    if ((c = (int *) malloc(nx * ny * sizeof(int))) == NULL) {
+    if ((c = (int *) malloc(nxny * sizeof(int))) == NULL) {
 	plabort("plfshade: unable to allocate memory for condition codes");
 	free(a);
 	return;
@@ -341,10 +428,32 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     sh_min = shade_min;
     sh_max = shade_max;
 
-/* Ignore defined array for now */
+    /* setup new_defined */
+    if (defined == NULL && missing_max < missing_min) {
+	new_defined = NULL;
+    }
+    else {
+        if ((new_defined = (char *) malloc(nxny * sizeof(char))) == NULL) {
+	    plabort("plfshade: unable to allocate memory for condition codes");
+	    free(c);
+	    free(a);
+            return;
+	}
+	if (defined == NULL) {
+	    for (i = 0; i < nxny; i++) new_defined[i] = 1;
+	}
+	else {
+	    memcpy(new_defined, defined, nxny);
+	}
+	for (i = 0; i < nxny; i++) {
+	    if (new_defined[i] == 1 && a[i] >= missing_min &&
+		a[i] <= missing_max) new_defined[i] = 0;
+	}
+    }
 
-    set_cond(c, a, NULL, nx * ny);
+    /* Ignore defined array for now */
 
+    set_cond(c, a, new_defined, nxny);
     dx = (xmax - xmin) / (nx - 1);
     dy = (ymax - ymin) / (ny - 1);
     a0 = a;
@@ -358,7 +467,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 	    count = c0[iy] + c0[iy + 1] + c1[iy] + c1[iy + 1];
 
-	/* No filling needs to be done for these cases */
+	    /* No filling needs to be done for these cases */
 
 	    if (count >= UNDEF)
 		continue;
@@ -367,10 +476,10 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    if (count == 4 * NEG)
 		continue;
 
-	/* Entire rectangle can be filled */
+	    /* Entire rectangle can be filled */
 
 	    if (count == 4 * OK) {
-	    /* find bigest rectangle that fits */
+		/* find bigest rectangle that fits */
 		if (rectangular) {
 		    big_recl(c0 + iy, ny, nx - ix, ny - iy, &i, &j);
 		}
@@ -401,7 +510,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		continue;
 	    }
 
-	/* Only part of rectangle can be filled */
+	    /* Only part of rectangle can be filled */
 
 	    n_point = min_points = max_points = 0;
 	    n = find_interval(a0[iy], a0[iy + 1], c0[iy], c0[iy + 1], xp);
@@ -452,21 +561,24 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    if (max_points == 4)
 		slope = plctestez(a, nx, ny, ix, iy, shade_max);
 
-	/* special cases: check number of times a contour is in a box */
+	    /* n = number of end of line segments */
+	    /* min_points = number times shade_min meets edge */
+	    /* max_points = number times shade_max meets edge */
+
+	    /* special cases: check number of times a contour is in a box */
 
 	    switch ((min_points << 3) + max_points) {
 	      case 000:
 	      case 020:
 	      case 002:
 	      case 022:
-		if (fill)
+		if (fill && n > 0)
 		    (*fill) (n, x, y);
 		break;
 	      case 040:	/* 2 contour lines in box */
 	      case 004:
 		if (n != 6)
 		    fprintf(stderr, "plfshade err n=%d !6", (int) n);
-
 		if (slope == 1 && c0[iy] == OK) {
 		    if (fill)
 			(*fill) (n, x, y);
@@ -487,8 +599,6 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      case 044:
 		if (n != 8)
 		    fprintf(stderr, "plfshade err n=%d !8", (int) n);
-		if (fill == NULL)
-		    break;
 		if (slope == 1) {
 		    poly(fill, x, y, 0, 1, 2, 3);
 		    poly(fill, x, y, 4, 5, 6, 7);
@@ -500,31 +610,37 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		break;
 	      case 024:
 	      case 042:
-	      /* 3 contours */
-		if (max_points == 4)
-		    i = NEG;
-		else
-		    i = POS;
+		/* 3 contours */
+		if (n != 7)
+		    fprintf(stderr, "plfshade err n=%d !7", (int) n);
 
-		if (c0[iy] == i) {
-		    slope = NEG;
-		    poly(fill, x, y, 0, 1, 5, 6);
-		    poly(fill, x, y, 2, 3, 4, -1);
+		if ((c0[iy] == OK || c1[iy+1] == OK) && slope == 1) {
+		    if (fill)
+		        (*fill) (n, x, y);
 		}
-		else if (c0[iy + 1] == i) {
-		    slope = POS;
-		    poly(fill, x, y, 0, 1, 2, 3);
-		    poly(fill, x, y, 4, 5, 6, -1);
+		else if ((c0[iy+1] == OK || c1[iy] == OK) && slope == 0) {
+		    if (fill)
+		        (*fill) (n, x, y);
 		}
-		else if (c1[iy + 1] == i) {
-		    slope = NEG;
+
+		else if (c0[iy] == OK) {
 		    poly(fill, x, y, 0, 1, 6, -1);
 		    poly(fill, x, y, 2, 3, 4, 5);
 		}
-		else if (c1[iy] == i) {
-		    slope = POS;
+		else if (c0[iy+1] == OK) {
 		    poly(fill, x, y, 0, 1, 2, -1);
 		    poly(fill, x, y, 3, 4, 5, 6);
+		}
+		else if (c1[iy+1] == OK) {
+		    poly(fill, x, y, 0, 1, 5, 6);
+		    poly(fill, x, y, 2, 3, 4, -1);
+		}
+		else if (c1[iy] == OK) {
+		    poly(fill, x, y, 0, 1, 2, 3);
+		    poly(fill, x, y, 4, 5, 6, -1);
+		}
+		else {
+		    fprintf(stderr, "plfshade err logic case 024:042\n");
 		}
 		break;
 	      default:
@@ -533,14 +649,10 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    }
 	    draw_boundary(slope, x, y);
 
-	    plwid(sh_width);
-	    switch (sh_cmap) {
-	    case 0:
-		plcol0((PLINT) sh_color);
-		break;
-	    case 1:
-		plcol1(sh_color);
-		break;
+	    if (fill != NULL) {
+	        plwid(sh_width);
+		if (sh_cmap == 0) plcol0((PLINT) sh_color);
+		else if (sh_cmap == 1) plcol1(sh_color);
 	    }
 	}
 
@@ -552,6 +664,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
     free(c);
     free(a);
+    if (new_defined) free(new_defined);
     plwid(init_width);
 }
 
@@ -708,8 +821,8 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
     register int i, x, y;
     register int *cond;
 
-/* ok_x = ok to expand in x direction */
-/* x = current number of points in x direction */
+    /* ok_x = ok to expand in x direction */
+    /* x = current number of points in x direction */
 
     ok_x = ok_y = 1;
     x = y = 2;
@@ -720,7 +833,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 	    break;
 #endif
 	if (ok_y) {
-	/* expand in vertical */
+	    /* expand in vertical */
 	    ok_y = 0;
 	    if (y == dy)
 		continue;
@@ -731,7 +844,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 		cond += ny;
 	    }
 	    if (i == x) {
-	    /* row is ok */
+		/* row is ok */
 		y++;
 		ok_y = 1;
 	    }
@@ -739,7 +852,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 	if (ok_x) {
 	    if (y == 2)
 		break;
-	/* expand in x direction */
+	    /* expand in x direction */
 	    ok_x = 0;
 	    if (x == dx)
 		continue;
@@ -749,18 +862,18 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 		    break;
 	    }
 	    if (i == y) {
-	    /* column is OK */
+		/* column is OK */
 		x++;
 		ok_x = 1;
 	    }
 	}
     }
 
-/* found the largest rectangle of 'ix' by 'iy' */
+    /* found the largest rectangle of 'ix' by 'iy' */
     *ix = --x;
     *iy = --y;
 
-/* set condition code to UNDEF in interior of rectangle */
+    /* set condition code to UNDEF in interior of rectangle */
 
     for (i = 1; i < x; i++) {
 	cond = &COND(i, 1);
@@ -785,7 +898,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 	plcol0(pen_col_min);
 	plwid(pen_wd_min);
 	if (min_points == 4 && slope == 0) {
-	/* swap points 1 and 3 */
+	    /* swap points 1 and 3 */
 	    i = min_pts[1];
 	    min_pts[1] = min_pts[3];
 	    min_pts[3] = i;
@@ -800,7 +913,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 	plcol0(pen_col_max);
 	plwid(pen_wd_max);
 	if (max_points == 4 && slope == 0) {
-	/* swap points 1 and 3 */
+	    /* swap points 1 and 3 */
 	    i = max_pts[1];
 	    max_pts[1] = max_pts[3];
 	    max_pts[3] = i;
@@ -819,7 +932,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
  * where x was defined as PLFLT x[4][4];
  *
  * determines if the contours associated with level have
- * postive slope or negative slope in the box:
+ * positive slope or negative slope in the box:
  *
  *  (2,3)   (3,3)
  *
@@ -854,44 +967,44 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 static PLINT 
 plctest(PLFLT *x, PLFLT level)
 {
-    double a, b;
-    double positive, negative, left, right, top, bottom;
+    int i, j;
+    double t[4], sorted[4], temp;
 
-/* find positions of lines */
-/* top = x coor of top intersection */
-/* bottom = x coor of bottom intersection */
-/* left = y coor of left intersection */
-/* right = y coor of right intersection */
+    sorted[0] = t[0] = X(1,1);
+    sorted[1] = t[1] = X(2,2);
+    sorted[2] = t[2] = X(1,2);
+    sorted[3] = t[3] = X(2,1);
 
-    left = linear(X(1, 1), X(1, 2), level);
-    right = linear(X(2, 1), X(2, 2), level);
-    top = linear(X(1, 2), X(2, 2), level);
-    bottom = linear(X(1, 1), X(2, 1), level);
+    for (j = 1; j < 4; j++) {
+	temp = sorted[j];
+	i = j - 1;
+	while (i >= 0 && sorted[i] > temp) {
+	    sorted[i+1] = sorted[i];
+	    i--;
+	}
+	sorted[i+1] = temp;
+    }
+    /* sorted[0] == min */
 
-/* positive = sq(length of positive contours) */
-/* negative = sq(length of negative contours) */
-
-    positive = top * top + (1.0 - left) * (1.0 - left) +
-	(1.0 - bottom) * (1.0 - bottom) + right * right;
-
-    negative = left * left + bottom * bottom +
-	(1.0 - top) * (1.0 - top) + (1.0 - right) * (1.0 - right);
-
-    pldebug("plctest", "pos %f neg %f lev %f\n", positive, negative, level);
-
-    if (RATIO_SQ * positive < negative)
-	return POSITIVE_SLOPE;
-    if (RATIO_SQ * negative < positive)
-	return NEGATIVE_SLOPE;
-
-    a = X(1, 2) - X(2, 1);
-    b = X(1, 1) - X(2, 2);
-
-    pldebug("plctest", "a %f  b %f\n", a, b);
-
-    if (fabs(a) > fabs(b))
-	return NEGATIVE_SLOPE;
-    return (PLINT) 0;
+    /* find min contour */
+    temp = int_val * ceil(sorted[0]/int_val);
+    if (temp < sorted[1]) {
+	/* one contour line */
+	for (i = 0; i < 4; i++) {
+	    if (t[i] < temp) return i/2;
+	}
+    }
+	
+    /* find max contour */
+    temp = int_val * floor(sorted[3]/int_val);
+    if (temp > sorted[2]) {
+	/* one contour line */
+	for (i = 0; i < 4; i++) {
+	    if (t[i] > temp) return i/2;
+	}
+    }
+    /* nothing better to do - be consistant */
+    return POSITIVE_SLOPE;
 }
 
 /*----------------------------------------------------------------------*\
