@@ -470,9 +470,9 @@ if test "$enable_dyndrivers" = "yes"; then
   else
     AC_LIBLTDL_INSTALLABLE
   fi
-  AC_SUBST(INCLTDL)
-  AC_SUBST(LIBLTDL)
 fi
+AC_SUBST(INCLTDL)
+AC_SUBST(LIBLTDL)
 
 AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
 
@@ -576,9 +576,9 @@ if test "$enable_python" = "yes"; then
 ### (the only place that PYTHON_INSTDIR is used).
         PYTHON_INSTDIR=`echo $pythondir |sed 's%${prefix}/%%'`
         PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
-        AC_SUBST(PYTHON_INSTDIR)
     fi
 fi
+AC_SUBST(PYTHON_INSTDIR)
 
 ### Modify system-dependent results based on availability
 AC_INCLUDE(sysloc.in)
@@ -614,43 +614,43 @@ AC_SUBST(EXAMPLES_DIRECTORIES)
 if test "$enable_itcl" = yes; then
    if test "$ITCLINCDIR" != default; then
       ITCLINCCMD="-I$ITCLINCDIR"
-      AC_SUBST(ITCLINCCMD)
    fi
    if test "$ITCLLIBDIR" = default; then
       ITCLLIBCMD="$ITCLLIBSTR"
    else
       ITCLLIBCMD="-L$ITCLLIBDIR $ITCLLIBSTR"
    fi
-   AC_SUBST(ITCLLIBCMD)
 fi
+AC_SUBST(ITCLINCCMD)
+AC_SUBST(ITCLLIBCMD)
 
 ###sysloc.in doesn't define all itk related symbols so this stanza changed
 ###accordingly
 if test "$enable_itk" = yes; then
 #   if test "$ITKINCDIR" != default; then
 #      ITKINCCMD="-I"$ITKINCDIR
-#      AC_SUBST(ITKINCCMD)
 #   fi
    if test "$ITKLIBDIR" = default; then
       ITKLIBCMD="$ITKLIBSTR"
    else
       ITKLIBCMD="-L$ITKLIBDIR $ITKLIBSTR"
    fi
-   AC_SUBST(ITKLIBCMD)
 fi
+#AC_SUBST(ITKINCCMD)
+AC_SUBST(ITKLIBCMD)
 
 if test "$enable_tcl" = yes; then
    if test "$TCLINCDIR" != default; then
       TCLINCCMD="-I$TCLINCDIR"
-      AC_SUBST(TCLINCCMD)
    fi
    if test "$TCLLIBDIR" = default; then
       TCLLIBCMD="$TCLLIBSTR"
    else
       TCLLIBCMD="-L$TCLLIBDIR $TCLLIBSTR"
    fi
-   AC_SUBST(TCLLIBCMD)
 fi
+AC_SUBST(TCLINCCMD)
+AC_SUBST(TCLLIBCMD)
 
 if test "$enable_tk" = yes; then
 # Must add in X_CFLAGS for some platforms to work.
@@ -659,14 +659,14 @@ if test "$enable_tk" = yes; then
    else
       TKINCCMD="-I$TKINCDIR $X_CFLAGS"
    fi
-   AC_SUBST(TKINCCMD)
    if test "$TKLIBDIR" = default; then
       TKLIBCMD="$TKLIBSTR"
    else
       TKLIBCMD="-L$TKLIBDIR $TKLIBSTR"
    fi
-   AC_SUBST(TKLIBCMD)
 fi
+AC_SUBST(TKINCCMD)
+AC_SUBST(TKLIBCMD)
 
 ### The following seems to be necessary because the replacement of
 ### the default value for exec_prefix only happens in AC_OUTPUT (it would
@@ -677,7 +677,6 @@ if test "$enable_java" = yes; then
 ### Java stanza completely different from others.  sysloc.in must have
 ### found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
    JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
-   AC_SUBST(JAVAINCCMD)
 ### bindings/java/config.java.in requires JAVA_INSTDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
    JAVA_INSTDIR=`echo $libdir |sed 's%${exec_prefix}/%%'`
@@ -686,8 +685,9 @@ if test "$enable_java" = yes; then
 ### by its actual value.
    JAVA_INSTDIR=`echo $JAVA_INSTDIR |sed 's%${prefix}/%%'`
    JAVA_INSTDIR="$prefix/$JAVA_INSTDIR"
-   AC_SUBST(JAVA_INSTDIR)
 fi
+AC_SUBST(JAVAINCCMD)
+AC_SUBST(JAVA_INSTDIR)
 
 ### Double vs single precison
 

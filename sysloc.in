@@ -303,12 +303,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 
 fi
 
-if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-#   This next dummy line needed to make above if work properly
-    GDINCCMD=$GDINCCMD
-    AC_SUBST(GDINCCMD)
-    AC_SUBST(GDLIBCMD)
-fi
+AC_SUBST(GDINCCMD)
+AC_SUBST(GDLIBCMD)
 
 # ----------------------------------------------------------------------------
 # Find libcd library and header required for building cgm driver.
@@ -373,10 +369,10 @@ CDLIBCMD=""
 CDLIBPATH=""
 if test "$enable_cgm" = "yes"; then
     ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
-    AC_SUBST(CDINCCMD)
     ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
-    AC_SUBST(CDLIBCMD)
 fi
+AC_SUBST(CDINCCMD)
+AC_SUBST(CDLIBCMD)
 
 # ----------------------------------------------------------------------------
 # Find freetype 2 library and header required for enabling
@@ -444,10 +440,10 @@ FREETYPELIBPATH=""
 if test "$with_freetype" = "yes"; then
     AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
     ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCCMD, FREETYPEINCPATH)
-    AC_SUBST(FREETYPEINCCMD)
     ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
-    AC_SUBST(FREETYPELIBCMD)
 fi
+AC_SUBST(FREETYPEINCCMD)
+AC_SUBST(FREETYPELIBCMD)
 
 # ----------------------------------------------------------------------------
 # Make some guesses where the Tcl/Tk include files and libraries are.
@@ -879,14 +875,13 @@ EOF`])
 
     fi
 
-    AC_SUBST(MATWRAP)
-    AC_SUBST(MKOCTFILE)
-    AC_SUBST(OCTAVE_VERSION)
-    AC_SUBST(OCTAVE_OCT_DIR)
-    AC_SUBST(OCTAVE_M_DIR)
-    AC_SUBST(PLPLOT_OCTAVE_DIR)
-
 fi
+AC_SUBST(MATWRAP)
+AC_SUBST(MKOCTFILE)
+AC_SUBST(OCTAVE_VERSION)
+AC_SUBST(OCTAVE_OCT_DIR)
+AC_SUBST(OCTAVE_M_DIR)
+AC_SUBST(PLPLOT_OCTAVE_DIR)
 
 # -----------------------------------------------------------------------
 # Python include and machdep directories
