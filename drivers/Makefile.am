@@ -118,6 +118,8 @@ tkwin_la_CFLAGS = \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
+wingcc_la_CFLAGS = $(GDI32INCCMD)
+
 xwin_la_CFLAGS = $(X_CFLAGS)
 
 # Set overall preprocessor options
@@ -337,6 +339,8 @@ tkwin_lo_CFLAGS = \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
+wingcc_lo_CFLAGS = $(GDI32INCCMD)
+
 xwin_lo_CFLAGS = $(X_CFLAGS)
 
 # tkwin covers ntk, tk, and tkwin
@@ -371,7 +375,7 @@ libplplotdrv_la_LDFLAGS = \
 	$(ITCLLIBCMD) \
 	$(TCLLIBCMD) \
 	$(FREETYPELIBCMD) \
-   $(GDI32LIBCMD) \
+	$(GDI32LIBCMD) \
 	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.

@@ -29,8 +29,42 @@ dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 GDI32LIBSTR=-lgdi32
 
 if test "$enable_wingcc" = "yes"; then
-    AC_MSG_CHECKING(for libgdi32.a)
+    if test -z "$GDI32INCDIR"; then
+        AC_MSG_CHECKING(for libgdi32 header files)
+        AC_PREPROC_IFELSE([#include <windows.h>],
+	[ GDI32INCDIR=default
+	  AC_MSG_RESULT([found in $GDI32INCDIR]) ], [
+        incdirs="\
+        /usr/include \
+        /usr/local/include"
 
+        for dir in $incdirs; do
+            if test -r "$dir/windows.h"; then
+               GDI32INCDIR="$dir"
+               break
+            fi
+        done
+        if test -z "$GDI32INCDIR"; then
+            AC_MSG_RESULT(not found)
+            AC_MSG_WARN([libgdi32 header files not found, setting enable_wingcc=no])
+            GDI32INCDIR=default
+            enable_wingcc=no
+	else
+	    AC_MSG_RESULT([found in $GDI32INCDIR])
+        fi ])
+    else
+    	AC_MSG_NOTICE("libgdi32 header files directory specified by environment")
+	AC_MSG_NOTICE("variable GDI32INCDIR=$GDI32INCDIR")
+    fi
+    if test "$GDI32INCDIR" = "/usr/include"; then
+        GDI32INCDIR=default
+    fi
+    GDI32INCCMD=""
+    GDI32INCPATH=""
+    PL_ADD_TO_INCS($GDI32INCDIR, GDI32INCCMD, GDI32INCPATH)
+fi
+
+if test "$enable_wingcc" = "yes"; then
     if test -z "$GDI32LIBDIR"; then
         AC_CHECK_LIB(gdi32, main, [ GDI32LIBDIR=default ], [
         libdirs="\
@@ -44,20 +78,21 @@ if test "$enable_wingcc" = "yes"; then
             fi
         done
         if test -z "$GDI32LIBDIR"; then
-            AC_MSG_WARN([GDI32 library not found, setting enable_wingcc=no])
+            AC_MSG_WARN([gdi32 library not found, setting enable_wingcc=no])
             GDI32LIBDIR=default
             enable_wingcc=no
         fi ])
+    else
+    	AC_MSG_NOTICE("libgdi32 library directory specified by environment")
+	AC_MSG_NOTICE("variable GDI32LIBDIR=$GDI32LIBDIR")
     fi
     if test "$GDI32LIBDIR" = "/usr/lib"; then
         GDI32LIBDIR=default
     fi
-fi
-
-GDI32LIBCMD=""
-GDI32LIBPATH=""
-if test "$enable_wingcc" = "yes"; then
+    GDI32LIBCMD=""
+    GDI32LIBPATH=""
     PL_ADD_TO_LIBS($GDI32LIBDIR, $GDI32LIBSTR, GDI32LIBCMD, GDI32LIBPATH)
 fi
-AC_SUBST(GDI32LIBCMD)
 
+AC_SUBST(GDI32INCCMD)
+AC_SUBST(GDI32LIBCMD)
