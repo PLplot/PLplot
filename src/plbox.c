@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/06/30 18:22:00  mjl
+ * Revision 1.14  1994/08/29 22:05:19  mjl
+ * Fixed a bug that was preventing the exponential label from showing up
+ * under certain circumstances.
+ *
+ * Revision 1.13  1994/06/30  18:22:00  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -335,7 +339,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     /* Draw the horizontal axis */
 
     if (lax) {
-	it0 = plP_wcpcy((PLFLT) 0.0);
+	it0 = plP_wcpcy(0.0);
 	plP_movphy(vppxmi, it0);
 	if (ltx) {
 	    tp = xtick1 * floor(vpwxmi / xtick1);
@@ -369,7 +373,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     /* Draw the vertical axis */
 
     if (lay) {
-	it0 = plP_wcpcx((PLFLT) 0.0);
+	it0 = plP_wcpcx(0.0);
 	plP_movphy(it0, vppymi);
 	if (lty) {
 	    tp = ytick1 * floor(vpwymi / ytick1);
@@ -434,9 +438,9 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 
 	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
 	    if (lnx)
-		plmtex("b", (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
+		plmtex("b", 1.5, pos, 0.5, string);
 	    if (lmx)
-		plmtex("t", (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
+		plmtex("t", 1.5, pos, 0.5, string);
 	}
 	xdigits = 2;
 	plsxax(xdigmax, xdigits);
@@ -448,9 +452,9 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", (int) xscale);
 	    if (lnx)
-		plmtex("b", height, pos, (PLFLT) 0.5, string);
+		plmtex("b", height, pos, 0.5, string);
 	    if (lmx)
-		plmtex("t", height, pos, (PLFLT) 0.5, string);
+		plmtex("t", height, pos, 0.5, string);
 	}
     }
 
@@ -468,15 +472,15 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
 	    if (lny) {
 		if (lvy)
-		    plmtex("lv", (PLFLT) 0.5, pos, (PLFLT) 1.0, string);
+		    plmtex("lv", 0.5, pos, 1.0, string);
 		else
-		    plmtex("l", (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
+		    plmtex("l", 1.5, pos, 0.5, string);
 	    }
 	    if (lmy) {
 		if (lvy)
-		    plmtex("rv", (PLFLT) 0.5, pos, (PLFLT) 0.0, string);
+		    plmtex("rv", 0.5, pos, 0.0, string);
 		else
-		    plmtex("r", (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
+		    plmtex("r", 1.5, pos, 0.5, string);
 	    }
 	    lstring = strlen(string);
 	    ydigits = MAX(ydigits, lstring);
@@ -494,11 +498,11 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    height = 2.0;
 	    if (lny) {
 		pos = 0.0 - offset;
-		plmtex("t", height, pos, (PLFLT) 1.0, string);
+		plmtex("t", height, pos, 1.0, string);
 	    }
 	    if (lmy) {
 		pos = 1.0 + offset;
-		plmtex("t", height, pos, (PLFLT) 0.0, string);
+		plmtex("t", height, pos, 0.0, string);
 	    }
 	}
     }
@@ -738,9 +742,9 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", (int) xscale);
 	    if (lnx)
-		plmtex("b", height, pos, (PLFLT) 0.5, string);
+		plmtex("b", height, pos, 0.5, string);
 	    if (lmx)
-		plmtex("t", height, pos, (PLFLT) 0.5, string);
+		plmtex("t", height, pos, 0.5, string);
 	}
     }
 
@@ -783,11 +787,11 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    height = 2.0;
 	    if (lny) {
 		pos = 0.0 - offset;
-		plmtex("t", height, pos, (PLFLT) 1.0, string);
+		plmtex("t", height, pos, 1.0, string);
 	    }
 	    if (lmy) {
 		pos = 1.0 + offset;
-		plmtex("t", height, pos, (PLFLT) 0.0, string);
+		plmtex("t", height, pos, 0.0, string);
 	    }
 	}
     }
@@ -1009,7 +1013,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     lu = plP_stsearch(opt, 'u');
 
     if (lu)
-	plxytx(wx1, wy1, wx2, wy2, (PLFLT) 3.2, (PLFLT) 0.5, (PLFLT) 0.5, label);
+	plxytx(wx1, wy1, wx2, wy2, 3.2, 0.5, 0.5, label);
     if (!lb)
 	return;
 
@@ -1036,37 +1040,40 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     plP_movwor(wx1, wy1);
     if (lt) {
 	tp = tick1 * floor(vmin / tick1);
-      lab2:
-	tn = tp + tick1;
-	if (ls) {
-	    if (ll) {
-		for (i = 0; i <= 7; i++) {
-		    temp = tp + xlog[i];
-		    if (BETW(temp, vmin, vmax)) {
-			lambda = (temp - vmin) / (vmax - vmin);
-			plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
-			       plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i1, i2);
+	for (;;) {
+	    tn = tp + tick1;
+	    if (ls) {
+		if (ll) {
+		    for (i = 0; i <= 7; i++) {
+			temp = tp + xlog[i];
+			if (BETW(temp, vmin, vmax)) {
+			    lambda = (temp - vmin) / (vmax - vmin);
+			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
+				   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)),
+				   i1, i2);
+			}
+		    }
+		}
+		else {
+		    for (i = 1; i <= nsub1 - 1; i++) {
+			temp = tp + i * (tn - tp) / nsub1;
+			if (BETW(temp, vmin, vmax)) {
+			    lambda = (temp - vmin) / (vmax - vmin);
+			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
+				   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)),
+				   i1, i2);
+			}
 		    }
 		}
 	    }
-	    else {
-		for (i = 1; i <= nsub1 - 1; i++) {
-		    temp = tp + i * (tn - tp) / nsub1;
-		    if (BETW(temp, vmin, vmax)) {
-			lambda = (temp - vmin) / (vmax - vmin);
-			plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
-			       plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i1, i2);
-		    }
-		}
-	    }
-	}
-	temp = tn;
-	if (BETW(temp, vmin, vmax)) {
+	    temp = tn;
+	    if (!BETW(temp, vmin, vmax))
+		break;
+
 	    lambda = (temp - vmin) / (vmax - vmin);
 	    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
 		   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i3, i4);
 	    tp = tn;
-	    goto lab2;
 	}
     }
 
@@ -1075,27 +1082,25 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     /* Label the line */
 
     if (ln && lt) {
-	tp = tick1 * floor(vmin / tick1);
-      lab82:
-	tn = tp + tick1;
-	if (nolast && !BETW(tn + tick1, vmin, vmax))
-	    return;
-	if (BETW(tn, vmin, vmax)) {
+	pos = 1.0;
+	height = 3.2;
+	tp = tick1 * (1. + floor(vmin / tick1));
+	for (tn = tp; BETW(tn, vmin, vmax); tn += tick1) {
+	    if (nolast && !BETW(tn + tick1, vmin, vmax)) {
+		pos = 0.8;
+		break;
+	    }
 	    if (!ll)
 		plform(tn, scale, prec, string);
 	    else
 		sprintf(string, "10#u%-d", (int) ROUND(tn));
 	    pos = (tn - vmin) / (vmax - vmin);
-	    plxytx(wx1, wy1, wx2, wy2, (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
-	    tp = tn;
-	    goto lab82;
+	    plxytx(wx1, wy1, wx2, wy2, 1.5, pos, 0.5, string);
 	}
 	*digits = 2;
 	if (!ll && mode) {
-	    pos = 1.0;
-	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", (int) scale);
-	    plxytx(wx1, wy1, wx2, wy2, height, pos, (PLFLT) 0.5, string);
+	    plxytx(wx1, wy1, wx2, wy2, height, pos, 0.5, string);
 	}
     }
 }
@@ -1196,12 +1201,10 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     lv = plP_stsearch(opt, 'v');
 
     if (lu && !right)
-	plztx("h", dx, dy, wx, wy1, wy2,
-	      (PLFLT) 5.0, (PLFLT) 0.5, (PLFLT) 0.5, label);
+	plztx("h", dx, dy, wx, wy1, wy2, 5.0, 0.5, 0.5, label);
 
     if (lv && right)
-	plztx("h", dx, dy, wx, wy1, wy2,
-	      (PLFLT) -5.0, (PLFLT) 0.5, (PLFLT) 0.5, label);
+	plztx("h", dx, dy, wx, wy1, wy2, -5.0, 0.5, 0.5, label);
 
     if (right && !lc)
 	return;
@@ -1210,7 +1213,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	return;
 
     if (ll)
-	tick1 = (PLFLT) 1.0;
+	tick1 = 1.0;
 
     if (lt)
 	pldtik(vmin, vmax, &tick1, &nsub1, &mode, &prec, *digits, &scale);
@@ -1285,12 +1288,10 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 		sprintf(string, "10#u%d", (int) ROUND(tn));
 	    pos = (tn - vmin) / (vmax - vmin);
 	    if (ln && !right)
-		plztx("v", dx, dy, wx, wy1, wy2,
-		      (PLFLT) 0.5, pos, (PLFLT) 1.0, string);
+		plztx("v", dx, dy, wx, wy1, wy2, 0.5, pos, 1.0, string);
 
 	    if (lm && right)
-		plztx("v", dx, dy, wx, wy1, wy2,
-		      (PLFLT) -0.5, pos, (PLFLT) 0.0, string);
+		plztx("v", dx, dy, wx, wy1, wy2, -0.5, pos, 0.0, string);
 
 	    lstring = strlen(string);
 	    *digits = MAX(*digits, lstring);
