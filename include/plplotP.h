@@ -714,7 +714,7 @@ plP_fill(short *x, short *y, PLINT npts);
 /* draw image */
 
 void
-plP_image(int *x, int *y, PLFLT *z, PLINT nx, PLINT ny);
+plP_image(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny);
 
 /* End of page */
 
@@ -775,10 +775,10 @@ void
 RestoreWrite2BufferPixmap();
 
 void
-grimage(int *x, int *y, PLFLT *z, PLINT nx, PLINT ny);
+grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny);
 
 void
-plimage( PLFLT *data, PLINT nx, PLINT ny, 
+plimage( PLFLT **data, PLINT nx, PLINT ny, 
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 

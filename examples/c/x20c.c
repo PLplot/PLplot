@@ -11,21 +11,21 @@
 #define YDIM 300
 
 void
-plimage( PLFLT *data, PLINT nx, PLINT ny, 
+plimage( PLFLT **data, PLINT nx, PLINT ny, 
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax ,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
 int
 main(int argc, char *argv[])
 {
-  PLFLT x[XDIM], y[YDIM], z[XDIM*YDIM];
+  PLFLT x[XDIM], y[YDIM], **z;
   int i, j;
   
   FILE *fp;
   int width, height, num_col;
   char ver[80];
   unsigned char *img;
-  PLFLT *img_f;
+  PLFLT **img_f;
 
   PLINT n_col = 255;
   PLINT rr[n_col], gg[n_col], bb[n_col];
@@ -39,19 +39,28 @@ main(int argc, char *argv[])
   plinit();
   plenv(-1., 1., -1., 1., 1, -2); /* no plot box */
 
+  plAlloc2dGrid(&z, XDIM, YDIM);
+
   /* build a square -- diagnostics */
   for (i=0; i<XDIM; i++)
-    z[i*YDIM+(YDIM-1)] = 1.; /* right */
+    z[i][YDIM-1] = 1.; /* right */
   for (i=0; i<XDIM; i++)
-    z[i*YDIM] = 1.; /* left */
+    z[i][0] = 1.; /* left */
   
   for (i=0; i<YDIM; i++)
-    z[i] = 1.; /* top */
+    z[0][i] = 1.; /* top */
   for (i=0; i<YDIM; i++)
-    z[(XDIM-1)*YDIM+i] = 1.; /* botton */
+    z[XDIM-1][i] = 1.; /* botton */
 
+  /*
+    for (i=0; i<XDIM; i++) {
+    for (j=0; j<YDIM; j++)
+      printf("%d ", (int) z[i][j]);
+    printf("\n");}
+  */
+
+  pllab("...around a blue square."," ","Should appear a red border...");
   plimage(z, XDIM, YDIM, -1., 1., -1., 1., -1., 1., -1., 1.);
-  pllab(" "," ","Should appear a red Square");
   pladv(0);
 
   plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
@@ -64,10 +73,12 @@ main(int argc, char *argv[])
 
   for (i=0; i<XDIM; i++)
     for (j=0; j<YDIM; j++)
-      z[i*YDIM+j] = x[i]*y[j];
+      z[i][j] = x[i]*y[j];
 
+  pllab("...around the plot."," ","Should appear a yellow box...");
   plimage(z, XDIM, YDIM, -1., 1., -1., 1., -1., 1., -1., 1.);
   pladv(0);
+  plFree2dGrid(z, XDIM, YDIM);
 
   /* set gray colormap */
   for (i=0; i<=n_col; i++)
@@ -90,17 +101,27 @@ main(int argc, char *argv[])
   printf("width=%d height=%d\n", width, height);
 
   img = (unsigned char *) malloc(width*height*sizeof(char));
-  img_f = (PLFLT *) malloc(width*height*sizeof(PLFLT));
+  plAlloc2dGrid(&img_f, width, height);
 
   fread(img, sizeof(char), width*height, fp);
   fclose(fp);
 
   for (i=0; i<width; i++)
     for (j=0; j<height; j++)
-      img_f[i*height+j] = img[(height-j)*width+i];
+      img_f[i][j] = img[(height-j)*width+i];
 
-  plimage(img_f, width, height, -1., 1., -1., 1., -1., 1., -1., 1.);
+  plenv(1., width, 1., height, 1, -1);
+  pllab(""," ","Lena...");
+  plimage(img_f, width, height, 1., width, 1., height, 1., width, 1., height);
+  pladv(0);
+
+  plimage(img_f, width, height, 1., width, 1., height, width/3., 5.*width/6., height/4., 3.*height/4.);
+  pladv(0);
 
   plend();
+
+  plFree2dGrid(img_f, width, height);
+  free(img);
+
   exit(0);
 }

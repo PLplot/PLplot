@@ -53,29 +53,19 @@ enabledisplay()
 void
 plimageslow(PLFLT *data, PLINT nx, PLINT ny, 
 	    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-	    PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
+	    PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
+	    PLFLT zmin, PLFLT zmax)
 {
 
   PLINT  ix, iy;
   int    i;
   PLFLT  dx, dy;
   PLFLT x[8], y[8];
-  PLFLT zmin, zmax;
   PLFLT xm, ym;
-
-  zmin = zmax = data[0];
-  for (ix = 0; ix < nx - 1; ix++) {
-    for (iy = 0; iy < ny - 1; iy++) {
-      if( data[ix*ny+iy] > zmax ) zmax = data[ix*ny+iy];
-      if( data[ix*ny+iy] < zmin ) zmin = data[ix*ny+iy];
-    }
-  }
   
   dx = (xmax - xmin) / (nx - 1);
   dy = (ymax - ymin) / (ny - 1);
 
-  /* disabledisplay(); */
-  /* plsc->plbuf_write=0; */
   for (ix = 0; ix < nx - 1; ix++) {
     for (iy = 0; iy < ny - 1; iy++) {
 
@@ -98,7 +88,6 @@ plimageslow(PLFLT *data, PLINT nx, PLINT ny,
       }
     }
   }
-  /* enabledisplay(); */
 }
 
 void
@@ -135,16 +124,15 @@ grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny)
 \*-------------------------------------------------------------------------*/
 
 void
-plimage(PLFLT *data, PLINT nx, PLINT ny, 
+plimage(PLFLT **idata, PLINT nx, PLINT ny, 
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
-
   PLINT  ix, iy;
   PLFLT  dx, dy;
   PLFLT zmin, zmax;
   PLINT *Xf, *Yf;
-  PLFLT *Zf;
+  PLFLT *Zf, *data;
   
   if (plsc->level < 3) {
     plabort("plimage: window must be set up first");
@@ -155,11 +143,20 @@ plimage(PLFLT *data, PLINT nx, PLINT ny,
     plabort("plimage: nx and ny must be positive");
     return;
   }
-  
+
+  plMinMax2dGrid(idata, nx, ny, &zmax, &zmin);
+
+  data = (PLFLT *) malloc(ny*nx*sizeof(PLFLT));
+
+  for (ix=0; ix<nx; ix++)
+    for (iy=0; iy<ny; iy++)
+      data[ix*ny+iy] = idata[ix][iy];
+
   if( plsc->is_a_fast_image_device == 0) {
     plimageslow( data, nx,  ny, 
 		 xmin, xmax, ymin, ymax,
-		 Dxmin, Dxmax, Dymin, Dymax);
+		 Dxmin, Dxmax, Dymin, Dymax,
+		 zmin, zmax);
     return ;
   }
 
@@ -168,14 +165,6 @@ plimage(PLFLT *data, PLINT nx, PLINT ny,
   Xf = (PLINT *) malloc(ny*nx*sizeof(PLINT));
   Yf = (PLINT *) malloc(ny*nx*sizeof(PLINT));
   Zf = (PLFLT *) malloc(ny*nx*sizeof(PLFLT));
-  
-  zmin = zmax = data[0];
-  for (ix = 0; ix < nx ; ix++) {
-    for (iy = 0; iy < ny ; iy++) {
-      if( data[ix*ny+iy] > zmax ) zmax = data[ix*ny+iy];
-      if( data[ix*ny+iy] < zmin ) zmin = data[ix*ny+iy];
-    }
-  }
   
   dx = (xmax - xmin) / (nx - 1);
   dy = (ymax - ymin) / (ny - 1);
@@ -188,22 +177,15 @@ plimage(PLFLT *data, PLINT nx, PLINT ny,
     }
   }
 
-  /* plsc->offX=0;*/
-  /* plsc->offY=0;*/
-
   plsc->Dxmin = plP_wcpcx(Dxmin);
   plsc->Dxmax = plP_wcpcx(Dxmax);
   plsc->Dymin = plP_wcpcy(Dymin);
   plsc->Dymax = plP_wcpcy(Dymax);
  
-  /* plsc->offXu  = 20;*/
-  /* plsc->offYu  = -30;*/
-
-  /* disabledisplay(); */
   plP_image(Xf, Yf, Zf, nx, ny);
-  /* enabledisplay(); */
 
   free(Xf);
   free(Yf);
   free(Zf);
+  free(data);
 }

@@ -2550,8 +2550,10 @@ plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
       xscl[i] = x[i];
       yscl[i] = y[i];
     }
-    exit(0);
-    /* difiltShort(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);*/
+    printf("plcore.c: plP_image(), FIXME\n");
+    exit(0); /* *** FIXME *** */
+
+    /* difiltShort(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma); */
     grimage(xscl, yscl, z, nx, ny);
     free(xscl);
     free(yscl);
