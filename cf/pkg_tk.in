@@ -14,7 +14,7 @@ TK_OBJ_SA	= tkMain$O
 TK_EXE		= plserver$E
 
 #DO NOT include the symlinks, i.e., x01.tcl, etc.
-TK_DEMOS	= tk?? tkdemos.tcl *.c README.tkdemos
+TK_DEMOS	= tk?? tkdemos.tcl *.c README.tkdemos runAllDemos.tcl runExtendedDemos.tcl
 
 # Variables for use in "make" and "make install".
 
