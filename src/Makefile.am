@@ -48,12 +48,13 @@ sources = \
   pltick.c \
   plvpor.c \
   plwind.c \
-  plbuf.c
+  plbuf.c \
+  plgridd.c
 
 AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 
 libplplot@LIB_TAG@_la_SOURCES  = $(sources)
-libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) -lm
+libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) $(QHULLLIBS) -lm
 if !enable_dyndrivers
 libdrv = ../drivers/libplplotdrv.la
 endif
