@@ -34,8 +34,14 @@ export DEMOS_DIR = /usr/share/doc/plplot/examples
 with_python = yes
 #endif
 
+config:
+	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
+                    --enable-tk --enable-gd --enable-dyndrivers \
+                    --disable-static --enable-python --enable-octave \
+                    --enable-gnome $(cfflags)
+
 build: build-stamp
-build-stamp:
+build-stamp: config
 	dh_testdir
 #	make configure
 # Build first bare libraries (no Tcl/Tk)
@@ -47,10 +53,6 @@ build-stamp:
 #	mv tmp/lib*.a* tmp/lib*.so* tmp/plrender $(debbase)
 # Build the Tcl/Tk libraries
 ifeq ($(with_python),yes)
-	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
-                    --enable-tk --enable-gd --enable-dyndrivers \
-                    --disable-static --enable-python --enable-octave \
-                    --enable-gnome $(cfflags)
 else
 	./configure --prefix=/usr --enable-tcl --enable-tk \
 	                          --disable-python --enable-octave $(cfflags)
@@ -178,4 +180,4 @@ source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary
+.PHONY: build clean binary-indep binary-arch binary config
