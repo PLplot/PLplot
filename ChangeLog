@@ -1,8 +1,13 @@
 2002-12-06  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
         * Configure test executables in examples for c++, f77, and tk.  make
-	  check builds everything fine, and plplot-test.sh 
-	  works locally with some limitations that are discussed on list.
+	  check builds the uninstalled c, c++, f77, and tk examples fine,
+	  and plplot-test.sh works with these uninstalled examples with some
+	  limitations that are discussed on list.
+
+	* Make all static drivers work (except for tk and tkwin whose
+	  implementation will be more complicated) using the automake
+	  convenience library approach.
 
 2002-12-05  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

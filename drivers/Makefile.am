@@ -20,18 +20,6 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-noinst_LTLIBRARIES = libpldrv.la
-
-libpldrv_la_SOURCES = 
-libpldrv_la_LIBADD = @STATIC_DRIVERS@
-libpldrv_la_DEPENDENCIES = @STATIC_DRIVERS@
-EXTRA_libpldrv_la_SOURCES = \
-  null.c \
-  plmeta.c \
-  ps.c \
-  tek.c \
-  xfig.c
-
 if enable_dyndrivers
 
 if with_double
@@ -265,5 +253,100 @@ xfigd_drv_la_LDFLAGS = $(xfig_drv_la_LDFLAGS)
 xwind_drv_la_SOURCES = $(xwin_drv_la_SOURCES)
 xwind_drv_la_LDFLAGS = $(xwin_drv_la_LDFLAGS)
 
-#enable_dyndrivers
+# end of enable_dyndrivers
+else
+# start of static driver alternative which is implemented using
+# a convenience library to be included in libplplot.
+
+noinst_LTLIBRARIES = libplplotdrv.la
+
+libplplotdrv_la_SOURCES =
+EXTRA_libplplotdrv_la_SOURCES = \
+	cgm.c \
+	dg300.c \
+	gd.c \
+	gnome.c \
+	hpgl.c \
+	impress.c \
+	linuxvga.c \
+	ljii.c \
+	ljiip.c \
+	ntk.c \
+	null.c \
+	pbm.c \
+	plmeta.c \
+	ps.c \
+	pstex.c \
+	tek.c \
+	tk.c \
+	tkwin.c \
+	xfig.c \
+	xwin.c
+
+# All -I preprocessor flags apparently must be lumped together for all source
+# in this directory.  Some day when automake grows up, convert these
+# to xwin_lo_AM_CPPFLAGS, etc.  For now, use individual CFLAGS instead
+# which strictly speaking is a misuse since CFLAGS are supposed to be
+# processor options, not preprocessor.
+# Double precision versions not needed since these flags are currently
+# ignored by automake so the approach must be to concatanate them
+# together to form one giant lump libplplotdrv_la_CFLAGS
+# (which is going to slow the build down with the enormous number of
+# gnome compiler flags, but those who use static drivers get what they
+# deserve....;-))
+
+cgm_lo_CFLAGS = @CDINCCMD@
+#cgmd_lo_CFLAGS = $(cgm_lo_CFLAGS)
+gd_lo_CFLAGS = @GDINCCMD@
+#gdd_lo_CFLAGS = $(gd_lo_CFLAGS)
+gnome_lo_CFLAGS = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
+#gnomed_lo_CFLAGS = $(gnome_lo_CFLAGS)
+ntk_lo_CFLAGS = \
+	-I../bindings/tcl \
+	-I../bindings/tk \
+	@TCLINCCMD@ \
+	@TKINCCMD@
+
+#ntkd_lo_CFLAGS = $(ntk_lo_CFLAGS)
+tk_lo_CFLAGS = \
+	-I../bindings/tcl \
+	-I../bindings/tk \
+	@TCLINCCMD@ \
+	@TKINCCMD@
+
+#tkd_lo_CFLAGS = $(tk_lo_CFLAGS)
+tkwin_lo_CFLAGS = \
+	-I../bindings/tcl \
+	-I../bindings/tk \
+	-I../bindings//tk-x-plat \
+	@TCLINCCMD@ \
+	@TKINCCMD@
+
+#tkwind_lo_CFLAGS = $(tkwin_lo_CFLAGS)
+xwin_lo_CFLAGS = @X_CFLAGS@
+#xwind_lo_CFLAGS = $(xwin_lo_CFLAGS)
+
+# tkwin covers ntk, tk, and tkwin
+# Following line did not work so try lumped alternative with AM_CPPFLAGS
+# libplplotdrv_la_CFLAGS = \
+AM_CPPFLAGS = \
+	$(cgm_lo_CFLAGS) \
+	$(gd_lo_CFLAGS) \
+	$(gnome_lo_CFLAGS) \
+	$(tkwin_lo_CFLAGS) \
+	$(xwin_lo_CFLAGS)
+
+libplplotdrv_la_LIBADD = @STATIC_DRIVERS@
+libplplotdrv_la_LDFLAGS = \
+	@CDLIBCMD@ \
+	@GDLIBCMD@ \
+	@GNOMELIBS@ \
+	@LINUXVGALIBS@ \
+	@TCLLIBCMD@ \
+	@TKLIBCMD@ \
+	@X_LIBS@ -lX11
+
+libplplotdrv_la_DEPENDENCIES = @STATIC_DRIVERS@
+
+# end of static driver case.
 endif

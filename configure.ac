@@ -138,7 +138,7 @@ enable_tkwin=no
 enable_png=yes
 enable_jpeg=yes
 enable_cgm=yes
-enable_tk=yes
+enable_tk=no
 enable_xwin=yes
 
 # separate the concept of desiring a driver (above) with
@@ -299,27 +299,16 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	fi
 
 	DYNAMIC_DEVICES="$DYNAMIC_DEVICES $1"
-    elif test "$driver" = "xwin" -o "$driver" = "tkwin"; then
-	found=0
-	for drv in $TCL_STATIC_DRIVERS; do
-	    if test "$drv" = "$driver"; then
-		found=1
-		break
-	    fi
-	done
-	if test $found = 0; then
-	    TCL_STATIC_DRIVERS="$TCL_STATIC_DRIVERS $driver$LIB_TAG"
-	fi
     else
 	found=0
 	for drv in $STATIC_DRIVERS; do
-	    if test "$drv" = "$driver"; then
+	    if test "$drv" = "$driver$LIB_TAG"".lo"; then
 		found=1
 		break
 	    fi
 	done
 	if test $found = 0; then
-	    STATIC_DRIVERS="$STATIC_DRIVERS $driver$LIB_TAG"
+	    STATIC_DRIVERS="$STATIC_DRIVERS $driver$LIB_TAG"".lo"
 	fi
     fi
 
@@ -684,11 +673,9 @@ AC_SUBST(INCLUDE_DIR)
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 
-### Modules 
+### define X_CFLAGS, X_PRE_LIBS, X_LIBS, and X_EXTRA_LIBS
 
 AC_PATH_XTRA
-MODULES="xwin"$LIB_TAG"_drv.la ps"$LIB_TAG"_drv.la"
-AC_SUBST(MODULES)
 
 ### Drivers
 
@@ -696,7 +683,6 @@ AC_MSG_CHECKING( for dynamic drivers)
 PL_DRIVERS(PL_DRIVER_LIST)
 AC_MSG_RESULT
 AC_SUBST(STATIC_DRIVERS)
-AC_SUBST(TCL_STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
 
 # ----------------------------------------------------------------------------
@@ -904,7 +890,7 @@ LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
 Available device drivers
-static:		$STATIC_DRIVERS $TCL_STATIC_DRIVERS
+static:		$STATIC_DRIVERS
 dynamic:	$DYNAMIC_DRIVERS
 
 with_shlib:	$with_shlib		with_double:	$with_double
