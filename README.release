@@ -1,0 +1,75 @@
+PLplot Development Release 5.5.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is a routine development release of PLplot, and represents the ongoing efforts of the community to improve the PLplot plotting package.  The next full release will be 5.6.0.
+
+
+INDEX
+
+1. Build Instructions
+2. Changes
+  2.1 API
+    2.1.1 Unicode
+  2.2 Drivers
+    2.2.1 Postscript
+    2.2.2 GD (png, jpeg, gif)
+    2.2.3 GCW "Gnome Canvas Widget"
+
+
+1. Build Instructions
+
+For detailed instructions on how to build and install PLplot from this tarball, please read the INSTALL file.  The basic procedure is to execute the following commands:
+
+     ./configure
+     make
+     make install
+
+There are a variety of configuration options, and these are explained in the INSTALL document, and below as required.  In particular, if you want to build and install the PLplot Programmer's Reference Manual (which is required for documentation on any new feature since PLplot 5.3.1), you must use:
+
+     ./configure --enable-builddoc
+
+Detailed instructions on building the documentation, including the packages that you will need for a successful build, are provided in this tarball under doc/docbook/README.developers.
+
+
+2. Changes
+
+
+2.1 API
+
+
+2.1.1 Unicode
+
+PLplot now allows unicode text, and this is detailed in the PLplot Programmers Reference Manual in the section on "Setting Character Attributes".  The escape sequence for unicode characters is
+
+     #[nnn]
+
+where nnn can be decimal or hexdecimal.  Escape sequences are also defined to change fonts mid-string.
+
+The new unicode capabilities are demonstrated in example x23.
+
+
+2.2 Drivers
+
+Some of the drivers have undergone important revisions in order to provide unicode support.  Several now present truetype or postscript fonts by default, which produces higher-quality output than in the past: see the examples from the GD (png) driver on the PLplot Web site at http://plplot.sourceforge.net/examples/index.html.
+
+
+2.2.1 PostScript
+
+The PostScript driver is unicode-enabled, and Type 1 PostScript fonts are used by default.  Because many symbols are missing from the Type 1 PostScript fonts, Hershey fonts are used for calls to "plpoin".  Tranforms to the text (i.e., rotations, shears) have been dramatically improved, and the PostScript driver now produces "publication quality" output.
+
+
+2.2.2 GD (png, jpeg, gif)
+
+The GD driver is unicode-enabled, and uses truetype fonts by default.  The examples on the PLplot Web site at http://plplot.sourceforge.net/examples/index.html were produced using this driver.
+
+
+2.2.3 GCW "Gnome Canvas Widget"
+
+The GCW "Gnome Canvas Widget" is a new driver that provides PLplot output in a tabbed Gnome window.  It can alternatively be used to drive a special widget called the PlplotCanvas that can be embedded in Gnome applications.  The driver, associated widget, and specialized API are fully documented in the PLplot Programmer's Reference Manual in the sections titled "The GCW Driver" and "Embedding Plots in Gnome/GTK Applications", respectively.
+
+The GCW driver is unicode-enabled, and uses truetype fonts by default.
+
+Special examples that demonstrate the use of the PlplotCanvas are provided for both the C and Python programming languages.
+
+To install the GCW driver, use the "--enable-gcw" option during the configure step of the install process.
+
