@@ -74,6 +74,7 @@ format of numerical label for contours</title>
     <para>
      Set format of numerical label for contours.
     </para>
+<!-- TODO: units unclear - have to be documented -->
 
     <variablelist>
       <varlistentry>
@@ -585,7 +586,7 @@ origin
       (in fact some drivers may only support a single page per file, making
       this a necessity).  One way to handle this case automatically is to
       page advance via &pladv;, but enable familying (see &plsfam;) with a
-      small byte per file limit so that a new family member file will be
+      small limit on the file size so that a new family member file will be
       created on each page break.
     </para>
 
@@ -1737,7 +1738,7 @@ reference stream to the current stream
 	</term>
 	<listitem>
 	  <para>
-	    Value of x at left-hand edge of window.
+	    Value of x at left-hand edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1748,7 +1749,7 @@ reference stream to the current stream
 	</term>
 	<listitem>
 	  <para>
-	    Value of x at right-hand edge of window.
+	    Value of x at right-hand edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1759,7 +1760,7 @@ reference stream to the current stream
 	</term>
 	<listitem>
 	  <para>
-	    Value of y at bottom edge of window.
+	    Value of y at bottom edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1770,7 +1771,7 @@ reference stream to the current stream
 	</term>
 	<listitem>
 	  <para>
-	    Value of y at top edge of window.
+	    Value of y at top edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1986,7 +1987,7 @@ positions in both coordinates.
 	</term>
 	<listitem>
 	  <para>
-	    Value of x at left-hand edge of window.
+	    Value of x at left-hand edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1997,7 +1998,7 @@ positions in both coordinates.
 	</term>
 	<listitem>
 	  <para>
-	    Value of x at right-hand edge of window.
+	    Value of x at right-hand edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2008,7 +2009,7 @@ positions in both coordinates.
 	</term>
 	<listitem>
 	  <para>
-	    Value of y at bottom edge of window.
+	    Value of y at bottom edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2019,7 +2020,7 @@ positions in both coordinates.
 	</term>
 	<listitem>
 	  <para>
-	    Value of y at top edge of window.
+	    Value of y at top edge of window (in world coordinates).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2406,7 +2407,7 @@ next new page
 
   <sect1 id="plfill" renderas="sect3">
     <title>
-      <function>plfill</function>: Area fill
+      <function>plfill</function>: Draw filled polygon
     </title>
 
     <para>
@@ -2433,6 +2434,8 @@ next new page
       and <literal><parameter>y</parameter></literal> then &plfill; will
       fill in between them.
     </para>
+
+<!-- TODO: what does "fill in between them mean? -->
 
     <variablelist>
       <varlistentry>
@@ -2474,7 +2477,7 @@ next new page
 
   <sect1 id="plfill3" renderas="sect3">
     <title>
-      <function>plfill3</function>: Area fill in 3D
+      <function>plfill3</function>: Draw filled polygon in 3D
     </title>
 
     <para>
@@ -2505,6 +2508,8 @@ next new page
       and <literal><parameter>z</parameter></literal> then &plfill3; will
       fill in between them.
     </para>
+
+<!-- TODO: what does "fill in between them mean? -->
 
     <variablelist>
       <varlistentry>
@@ -2716,7 +2721,7 @@ next new page
 	</term>
 	<listitem>
 	  <para>
-            Pointer to default character height.
+            Pointer to default character height (mm).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2727,7 +2732,7 @@ next new page
 	</term>
 	<listitem>
 	  <para>
-            Pointer to current (scaled) character height.
+            Pointer to current (scaled) character height (mm).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2756,7 +2761,7 @@ from color map0
     </para>
 
     <para>
-      Returns 8-bit RGB values for given color from color map0 (see
+      Returns 8-bit RGB values (-255) for given color from color map0 (see
       <xref linkend="color-map-0"/>).  Values are
       negative if an invalid color id is given.
     </para>
@@ -3247,7 +3252,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to file name string.
+	    Pointer to file name string (a preallocated string of 80 characters or more).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3336,7 +3341,10 @@ space for this (80 characters is safe).
     </para>
 
     <para>
-      Gets the current page configuration.
+      Gets the current page configuration. The parameters are expressed
+      in units that are specific to the current driver. For instance:
+      screen drivers will usually interpret them as number of pixels,
+      whereas printer drivers will usually use mm.
     </para>
 
     <variablelist>
@@ -3671,7 +3679,7 @@ space for this (80 characters is safe).
             </listitem>
             <listitem>
               <para>
-                <literal>GRID_NNI</literal>, only weights greater then
+                <literal>GRID_NNI</literal>, only weights greater than
                 <literal>data</literal> will be accepted. If 0, all weigths
                 will be accepted.
               </para>
@@ -4276,8 +4284,10 @@ device coordinates
     <para>
       Set current color by hue, lightness, and saturation.
       Convert hls color coordinates to rgb, then call plrgb.
-      Do <emphasis>not</emphasis> use this.  Only retained for backward compatibility
+      Do <emphasis>not</emphasis> use this.  Only retained for backward compatibility.
+      Use plHLS_RGB and plscol0 instead.
     </para>
+<!-- TODO: find out what to do exactly -->
 
     <variablelist>
       <varlistentry>
@@ -4310,6 +4320,104 @@ device coordinates
 	<listitem>
 	  <para>
             NEEDS DOCUMENTATION
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plHLS_RGB" renderas="sect3">
+    <title>
+      <function>plHLS_RGB</function>: Convert HLS color to RGB
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plHLS_RGB</function>
+        </funcdef>
+        <paramdef><parameter>h</parameter></paramdef>
+        <paramdef><parameter>l</parameter></paramdef>
+        <paramdef><parameter>s</parameter></paramdef>
+        <paramdef><parameter>p_r/parameter></paramdef>
+        <paramdef><parameter>p_g</parameter></paramdef>
+        <paramdef><parameter>p_b/parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Convert hls color coordinates to rgb
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>h</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Hue, in degrees on the colour cone (0.0-360.0)
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>l</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Lightness, expressed as a fraction of the axis of the colour
+            cone (0.0-1.0)
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>s</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Saturation, expressed as a fraction of the radius of the
+            colour cone (0.0-1.0)
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_r</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to red intensity (0.0-1.0) of the colour
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_g</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to green intensity (0.0-1.0) of the colour
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_b</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to blue intensity (0.0-1.0) of the colour
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4718,7 +4826,10 @@ source
 	</term>
 	<listitem>
 	  <para>
-	    Integer value between 1 and 8.
+	    Integer value between 1 and 8. Line style 1 is a continuous line,
+	    line style 2 is a line with short dashes and gaps, line style 3 is
+	    a line with long dashes and gaps, line style 4 has long dashes and
+	    short gaps and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5025,7 +5136,6 @@ source
 	<listitem>
 	  <para>
 	    Pointer to the array that defines the contour level spacing.
-	    evaluated.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5278,7 +5388,7 @@ default
       linkend="tri-d-plots"/>.
       The only difference between &plmesh; and &plot3d; is that &plmesh; draws
       the botton side of the surface, while &plot3d; only draws the surface as
-      view from the top.
+      viewed from the top.
     </para>
 
     <variablelist>
@@ -5557,6 +5667,7 @@ default
       the symbol is simply the corresponding printable ASCII character
       in the default font.
     </para>
+<!-- TODO: Hershey symbols outside the range -->
 
     <variablelist>
       <varlistentry>
@@ -5920,7 +6031,9 @@ default
 	</term>
 	<listitem>
 	  <para>
-	    The desired pattern.
+	    The desired pattern. Pattern 1 consists of horizontal lines,
+	    pattern 2 consists of vertical lines, pattern 3 consists of lines
+	    at 45 degrees angle (upward), and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6091,7 +6204,8 @@ current device/file
     <para>
       Set line color by red, green, blue from  0. to 1.  Do
 <emphasis>not</emphasis> use this.
-Only retained for backward compatibility
+Only retained for backward compatibility. Use the function plscol0
+instead.
     </para>
 
     <variablelist>
@@ -6151,8 +6265,9 @@ Only retained for backward compatibility
     </para>
 
     <para>
-      Set line color by 8-bit RGB values.  Do <emphasis>not</emphasis> use this.  Only retained
-for backward compatibility.
+      Set line color by 8-bit RGB values.  Do <emphasis>not</emphasis> use this.
+Only retained for backward compatibility. Use the function plscol0
+instead.
     </para>
 
     <variablelist>
@@ -6553,7 +6668,8 @@ piece-wise linear relationship
 	</term>
 	<listitem>
 	  <para>
-            position for each control point
+            position for each control point (between 0.0 and 1.0, in
+            ascending order)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6667,7 +6783,7 @@ bit RGB value
     </para>
 
     <para> Set a given color by 8-bit RGB value for color map0 (see <xref linkend="color-map-0"/>).  Overwrites
-    the previous (default?) color value for the given index and, thus, does
+    the previous color value for the given index and, thus, does
     not result in any additional allocation of space for colors. </para>
 
     <variablelist>
@@ -6725,8 +6841,8 @@ bit RGB value
 
   <sect1 id="plscolbg" renderas="sect3">
     <title>
-      <function>plscolbg</function>: Set the background color (cmap0[0]) by
-8-bit RGB value
+      <function>plscolbg</function>: Set the background color
+by 8-bit RGB value
     </title>
 
     <para>
@@ -6743,8 +6859,8 @@ bit RGB value
     </para>
 
     <para>
-      Set the background color (cmap0[0]) by 8-bit RGB value (see <xref
-linkend="color-map-0"/>).
+      Set the background color (color 0 in color map 0) by 8-bit RGB value (see
+<xref linkend="color-map-0"/>).
     </para>
 
     <variablelist>
@@ -6859,6 +6975,7 @@ linkend="color-map-0"/>).
 	    The desired compression level. This is a device-dependent
 	    value.
 	  </para>
+<!-- TODO: what is the interpretation? In general: what documentation on devices? -->
 	</listitem>
       </varlistentry>
     </variablelist>
@@ -6929,10 +7046,10 @@ linkend="color-map-0"/>).
       completeness.
       If &plsdidev; is not called the default values
       of <literal><parameter>mar</parameter></literal>,
-      <literal><parameter>aspect</parameter></literal>,
       <literal><parameter>jx</parameter></literal>, and
       <literal><parameter>jy</parameter></literal>
-      are all 0.
+      are all 0. <literal><parameter>aspect</parameter></literal>
+      is set to a device-specific value.
     </para>
 
     <variablelist>
@@ -7149,7 +7266,7 @@ coordinates
     </para>
 
     <para>
-      Set relative minima and maxima that define current
+      Set relative minima and maxima that define the current
       plot-space window.  If &plsdiplt; is not called the default values
       of <literal><parameter>xmin</parameter></literal>,
       <literal><parameter>ymin</parameter></literal>,
@@ -7633,7 +7750,9 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
+(xmax,ymin)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7645,7 +7764,8 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7657,7 +7777,8 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7669,7 +7790,8 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7744,7 +7866,7 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
             Routine used to fill the region.  Use &plfill;.  Future version of
-	    plplot may have other fill routines.
+	    PLplot may have other fill routines.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8177,8 +8299,9 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-             Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+              Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8190,7 +8313,8 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8202,7 +8326,8 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8214,7 +8339,8 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Defines the "grid" coordinates.  The data a[0][0] has a
-	     position of (xmin,ymin).
+	     position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
+	     and so on.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8225,8 +8351,8 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Defines the interval to be shaded. If shade_max &leq; shade_min,
-	    &plshade1; does nothing.
+            Defines the lower end of the interval to be shaded. If
+	shade_max &leq; shade_min, &plshade1; does nothing.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8237,7 +8363,8 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Defines the interval to be shaded. If shade_max &leq; shade_min,
+            Defines the upper end of the interval to be shaded. If
+            shade_max &leq; shade_min,
 	    &plshade1; does nothing.
 	  </para>
 	</listitem>
@@ -8484,7 +8611,7 @@ characters and their corresponding decimal ASCII values:
     </para>
 
     <para>
-      This memory will be freed by the user!
+      This memory will have to be freed by the user!
     </para>
 
     <variablelist>
@@ -8611,7 +8738,8 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-	    Orientation value.
+	    Orientation value (0 for landscape, 1 for portrait; the value is
+	    multiplied by 90 degrees to get the angle)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8641,10 +8769,11 @@ characters and their corresponding decimal ASCII values:
     </para>
 
     <para>
-      Sets the page configuration (optional).  Not all parameters
-      recognized by all drivers.  The X-window driver uses the length and
-      offset parameters to determine the window size and location.  This
-      routine, if used, must be called before initializing PLplot.
+      Sets the page configuration (optional).  Not all parameters are
+      recognized by all drivers and the interpretation is device-dependent.
+      The X-window driver uses the length and offset parameters to determine
+      the window size and location.  This routine, if used, must be called
+      before initializing PLplot.
     </para>
 
     <variablelist>
@@ -8748,7 +8877,7 @@ characters and their corresponding decimal ASCII values:
 	  <para>
             If <literal><parameter>pause</parameter></literal> = 1 there
 	    will be a pause on end-of-page for those drivers which support
-	    this.  Otherwise not.
+	    this.  Otherwise there is no pause.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -10076,7 +10205,7 @@ stripchart
       which supports separate text and graphics windows, this command
       causes control to be switched to the text window.  This can be useful
       for printing diagnostic messages or getting user input, which would
-      otherwise interfere with the plots.  The user
+      otherwise interfere with the plots.  The program
       <emphasis>must</emphasis> switch back to the graphics window before
       issuing plot commands, as the text (or console) device will probably
       become quite confused otherwise.  If already in text mode, this
