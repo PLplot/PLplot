@@ -61,6 +61,9 @@
 /* Define if you want PLplot's float type to be double */
 #undef PL_DOUBLE
 
+/* Define if you will be using dynloadable drivers */
+#undef ENABLE_DYNAMIC_DRIVERS
+
 /* Install directories. */
 
 #undef LIB_DIR
