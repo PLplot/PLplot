@@ -1,111 +1,7 @@
 /* $Id$
- * $Log$
- * Revision 1.5  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.4  1999/06/19 05:38:31  furnish
- * Integrated patch set from Joao Cardoso.
- *
- * Revision 1.3  1995/10/23  07:26:52  mjl
- * Added entries for errcode and errmsg.
- *
- * Revision 1.2  1995/07/19  15:25:21  furnish
- * Coexist peacefully with C++.
- *
- * Revision 1.1  1995/05/26  20:24:52  mjl
- * Name change.  Went by the book this time.
- *
- * Revision 1.39  1995/05/26  20:20:14  mjl
- * Changed plstream.h -> plstrm.h everywhere.
- *
- * Revision 1.38  1995/05/07  02:32:51  mjl
- * Added new stream variables: verbose (be more verbose than usual), debug
- * (print debugging output to stderr), and initialized (set if the stream has
- * been initialized).  Eliminated cmap0setcol and cmap1set.  Changed cmap0 and
- * cmap1 declarations to be just pointers (allocation now done during stream
- * initialization).
- *
- * Revision 1.37  1995/03/16  23:50:23  mjl
- * Added variable plbuf_read for use when reading from the plot buffer.  Added
- * variable dev_swin for drivers that need calls to set plot window parameters
- * directed their way. Changed the name *MouseEH to *ButtonEH.  Changed event
- * handler prototypes to accept a (PLGraphicsIn *).  Added a *LocateEH and
- * *LocateEH_data.  Added the variables phyxlen and phyylen.  Changed name
- * "nCWindows" to nplwin, "windows" to plwin.  Eliminated obsolete variables
- * dpxscl, dpxoff, dpyscl, dpyoff, mpxscl, mpxoff, mpyscl, mpyoff.  Added
- * prototype for plGinInit();
- *
- * Revision 1.36  1995/01/10  09:37:39  mjl
- * Fixed some braindamage incurred last update.
- *
- * Revision 1.34  1995/01/06  20:47:29  mjl
- * Added "freeaspect" stream variable: if set, aspect ratio is not preserved
- * on orientation swaps.
- *
- * Revision 1.33  1995/01/06  07:48:29  mjl
- * Made window coordinate structure a stream variable as it should be.
- *
- * Revision 1.32  1994/08/25  04:03:43  mjl
- * Added include of pdf.h, since the PLStream data structure requires it
- * in any case.
- *
- * Revision 1.31  1994/07/23  04:46:55  mjl
- * Added pls->server_nokill, which can be set to prevent plserver from dying
- * when a ^C is hit.
- *
- * Revision 1.30  1994/07/19  22:34:46  mjl
- * Eliminated some unnecessary defines.
- *
- * Revision 1.29  1994/06/30  18:37:03  mjl
- * Added status flag to keep track of current page status.
- *
- * Revision 1.28  1994/05/07  03:22:08  mjl
- * Eliminated bgcolor, fgcolor, and bgcolorset.  Now fgcolor is a figment of
- * the X driver's imagination :-).  bgcolor is identically the same as the
- * 0th entry of cmap0.  About time I introduced some sanity to these.
- *
- * Revision 1.27  1994/04/25  19:05:33  mjl
- * Additional support for cmap1 palette.
- *
- * Revision 1.26  1994/04/08  12:20:49  mjl
- * Now includes <plplot.h> in case it hasn't been included yet.  File offset
- * for metafile removed from state structure (now local to driver).  Added:
- * * MouseEH	  void*	Mouse event handler
- * * MouseEH_data void*	Pointer to client data to pass
- * * tidy         void*   pointer to cleanup routine
- * * tidy_data    void*   pointer to client data to pass
- * ("tidy" is a user customization tidy routine, to be called before
- * closing a stream to do any program specific cleanup.)
- *
- * Revision 1.25  1994/03/23  07:10:51  mjl
- * Added documentation for all variables not described yet.  Changed some
- * variables used in color map selection.  Added variables:
- *
- *  dev_minor	Minor device id (for variations on one type)
- *  dev_fill0	Set if driver can do solid area fills
- *  dev_fill1	Set if driver can do pattern area fills
- *  finc	Number to increment between member files
- *  fflen	Minimum field length to use in member file number
- *
- * Revision 1.24  1994/02/01  22:46:55  mjl
- * Added pls->user (char *).
- *
- * Revision 1.23  1994/01/25  06:22:17  mjl
- * Added pls->db variable.
- *
- * Revision 1.22  1994/01/15  17:35:09  mjl
- * Added new variables for use in Tcl/TK/DP driver: server_name, server_host,
- * server_port.
- *
- * Revision 1.21  1993/12/21  10:35:46  mjl
- * Added flag to be set by driver to indicate whether TK or DP style
- * communication is being used.
-*/
-
-/*	plstrm.h
-
-	Contains declarations for PLStream and PLDev structs.
-	Also prototypes for stream & device utility functions.
+ *	Contains declarations for PLStream and PLDev structs.
+ *	Also prototypes for stream & device utility functions.
 */
 
 #include "plplot/pdf.h"
@@ -707,7 +603,7 @@ void
 plGinInit(PLGraphicsIn *gin);
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif	/* __PLSTRM_H__ */
