@@ -714,13 +714,14 @@ dnl AC_F77_LIBRARY_LDFLAGS
     AC_MSG_WARN([Disabling F77 bindings building because no compiler was found])
   fi
 fi
-F77PARSE_CL=".true."
 if test "$enable_f77" = yes ; then
+  HAVE_F77PARSE_CL=yes
   AC_LANG_PUSH([Fortran 77])
   AC_MSG_CHECKING([if fortran command-line parsing is possible])
   AC_RUN_IFELSE([
+      implicit none
       character*100 command
-      integer narg
+      integer narg, iargc
 c      get number of command-line arguments
       narg = iargc()
 c      get command name.  Apparently this does not always give back the
@@ -733,10 +734,19 @@ c      arguments.)
       stop
       end],
   AC_MSG_RESULT(yes),
-  AC_MSG_RESULT(no); F77PARSE_CL=".false.")
+  AC_MSG_RESULT(no); HAVE_F77PARSE_CL=no)
   AC_LANG_POP([Fortran 77])
+  if test "$HAVE_F77PARSE_CL" = yes ; then
+    HAVE_F77PARSE_CL_TRUE=""
+    HAVE_F77PARSE_CL_FALSE="C "
+  else
+    HAVE_F77PARSE_CL_TRUE="C "
+    HAVE_F77PARSE_CL_FALSE=""
+  fi
 fi
-AC_SUBST(F77PARSE_CL)
+
+AC_SUBST(HAVE_F77PARSE_CL_TRUE)
+AC_SUBST(HAVE_F77PARSE_CL_FALSE)
 
 ### Python binding
 
