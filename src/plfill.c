@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/05/26 18:27:49  mjl
-   Fixed (hopefully for the last time) the problems introduced with the
-   last "fix".
+   Revision 1.4  1992/05/26 20:41:34  mjl
+   Fixed my fix to my fix to work under non-ANSI C (i.e. SUNOS).
 
+ * Revision 1.3  1992/05/26  18:27:49  mjl
+ * Fixed (hopefully for the last time) the problems introduced with the
+ * last "fix".
+ *
  * Revision 1.2  1992/05/22  16:39:05  mjl
  * Fixed bug in qsort call.  I can't see how it managed to avoid a core dump
  * before.  This may explain some of our many problems with this routine.
@@ -263,9 +266,14 @@ PLINT x1, y1;
     buffer[bufferleng++] = y1;
 }
 
+#ifdef PLSTDC
+int 
+compar((const void *, const void *));
+#else
 int 
 compar(pnum1, pnum2)
-const void *pnum1, *pnum2;
+void *pnum1, *pnum2;
+#endif
 {
     struct point *pnt1, *pnt2;
 
