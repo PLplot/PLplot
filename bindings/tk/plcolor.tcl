@@ -1,7 +1,12 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1994/05/10 22:44:57  mjl
+# Revision 1.4  1994/06/09 20:09:18  mjl
+# Changed plplot direct widget commands to begin with a "pl", e.g. scol<?>
+# to plscol<?>, etc.  To make going between the C and Tcl API's as natural
+# as possible.
+#
+# Revision 1.3  1994/05/10  22:44:57  mjl
 # Changed the way cmap1 position sliders work.  Still a monotonic
 # relationship between control point number and position in cmap1 space is
 # strictly enforced, but now when you try to move one past another, they
@@ -446,7 +451,7 @@ class ColorPalette0 {
 	global ncol0 plcmap0_col
 	setmember w $w
 	frame $w -bd 2 -relief raised
-	set cmap0 [$plot.plwin cmd gcmap0]
+	set cmap0 [$plot.plwin cmd plgcmap0]
 	set ncol0 [lindex $cmap0 0]
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set plcmap0_col($i) [lindex $cmap0 [expr $i+1]]
@@ -523,7 +528,7 @@ class ColorPalette0 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot.plwin cmd scol0 $i $color
+	$plot.plwin cmd plscol0 $i $color
     }
     method colChanged {data color} {
 	set i    [lindex $data 0]
@@ -532,7 +537,7 @@ class ColorPalette0 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot.plwin cmd scol0 $i $color
+	$plot.plwin cmd plscol0 $i $color
     }
     method setcmap {plot} {
 	global ncol0 plcmap0_col 
@@ -540,7 +545,7 @@ class ColorPalette0 {
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set cmap0 "$cmap0 $plcmap0_col($i)"
 	}
-	$plot.plwin cmd scmap0 $ncol0 $cmap0
+	$plot.plwin cmd plscmap0 $ncol0 $cmap0
     }
     method getColor {i} {
 	set w [getmember w]
@@ -628,7 +633,7 @@ class ColorPalette1 {
 	setmember w $w
 
 	frame $w -bd 2 -relief raised
-	set cmap1 [$plot.plwin cmd gcmap1]
+	set cmap1 [$plot.plwin cmd plgcmap1]
 	set ncol1 [lindex $cmap1 0]
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    set plcmap1_col($i) [lindex $cmap1 [expr 2*$i+1]]
@@ -778,7 +783,7 @@ class ColorPalette1 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot.plwin cmd scol1 $i $color $plcmap1_pos($i)
+	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i)
     }
     method colChanged {data color} {
 	global plcmap1_pos
@@ -788,7 +793,7 @@ class ColorPalette1 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot.plwin cmd scol1 $i $color $plcmap1_pos($i)
+	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i)
     }
     method setcmap {plot} {
 	global ncol1 plcmap1_col plcmap1_pos
@@ -796,7 +801,7 @@ class ColorPalette1 {
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    set cmap1 "$cmap1 $plcmap1_col($i) $plcmap1_pos($i)"
 	}
-	$plot.plwin cmd scmap1 $ncol1 $cmap1
+	$plot.plwin cmd plscmap1 $ncol1 $cmap1
     }
     method getColor {i} {
 	set w [getmember w]
