@@ -107,7 +107,7 @@ cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
        && ./configure ${prefix:+--prefix=$prefix} $config_opt  \
        && make check \
        && test -n "$prefix" \
-       && make install ) \
+       && make install ) ; \
   rm -rf $DISTDIR \
   && test "$clean_prefix" = yes \
   && rm -rf "$prefix"
