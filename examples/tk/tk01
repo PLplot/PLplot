@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.11  1995/08/22 16:18:38  mjl
+# Revision 1.12  1996/02/23 21:04:56  furnish
+# Add some support for showing off the new rubber banding support in the
+# plframe.
+#
+# Revision 1.11  1995/08/22  16:18:38  mjl
 # Rearranged and changed the locator handling to be modal.  Hit 'L' to
 # activate.
 #
@@ -96,6 +100,19 @@ if { $use_plxframe == 1 } then {
 bind $plwin L locate_on
 bind $plwin <Escape> locate_off
 
+bind $plwin <Control-Button-1> rband_on
+bind $plwin <Control-ButtonRelease-1> rband_off
+
+proc rband_on {} {
+    global plwin
+    $plwin configure -rubberband 1
+}
+
+proc rband_off {} {
+    global plwin
+    $plwin configure -rubberband 0
+}
+
 ###############################################################################
 # Definitions of procedures used in this script.
 
@@ -130,13 +147,13 @@ proc dpos w {
 proc locate_on {} {
     global plwin
     $plwin configure -xhairs 1
-    bind $plwin <1> { get_coords %x %y }
+    bind $plwin <Shift-1> { get_coords %x %y }
 }
 
 proc locate_off {} {
     global plwin
     $plwin configure -xhairs 0
-    bind $plwin <1> {}
+    bind $plwin <Shift-1> {}
 }
 
 proc get_coords {x y} {
