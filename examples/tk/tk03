@@ -1,12 +1,14 @@
-#!plserver -f
-#                     -*-tcl-*-
+#!/bin/sh
+#--------------------------------*- Tcl -*------------------------------------#
 # $Id$
 #
 # Maurice LeBrun
 # 30 Jun 1994
 #
 # @> A script illustrating multiple toplevel plframes.
-###############################################################################
+#-----------------------------------------------------------------------------#
+#\
+exec plserver -f "$0" ${1+"$@"}
 
 # Note: I defer running "open_main" until later to make sure everything
 # has been sourced.
