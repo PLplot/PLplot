@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/11/12 18:41:18  mjl
+ * Revision 1.7  1994/01/15 17:24:59  mjl
+ * All PDF functions changed to accept a pointer to a PDFstrm instead
+ * of a file handle, to enable PDF operations to/from a memory buffer.
+ * New PDF front-ends to fopen, fclose, getc, putc added.  pdf_bopen()
+ * added for initialization of memory buffer.
+ *
+ * Revision 1.6  1993/11/12  18:41:18  mjl
  * Substituted bit operations for some arithmetic ones, for faster, more
  * concise, and more portable code.
  *
@@ -39,7 +45,7 @@
 
 \*--------------------------------------------------------------------------*/
 
-#define PL_NEED_MALLOC
+/*#define PL_NEED_MALLOC*/
 #include "plplotP.h"
 
 #include <stdio.h>
@@ -49,7 +55,9 @@
 
 #include "pdf.h"
 
-static void print_ieeef(void *, void *);
+static void print_ieeef	(void *, void *);
+static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);
+static int  pdf_rdx	(U_CHAR *x, long nitems, PDFstrm *pdfs);
 
 static int debug = 0;
 
@@ -67,6 +75,273 @@ pdf_set(char *option, int value)
 }
 
 /*----------------------------------------------------------------------*\
+* New syntax routines
+\*----------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------*\
+* pdf_fopen()
+*
+* Initializes a PDFstrm for a file oriented device.
+* Used exactly like fopen().
+\*----------------------------------------------------------------------*/
+
+PDFstrm *
+pdf_fopen(char *filename, char *mode)
+{
+    PDFstrm *pdfs;
+
+    dbug_enter("pdf_fopen");
+
+    pdfs = (PDFstrm *) malloc(sizeof(PDFstrm));
+
+    if (pdfs != NULL) {
+	pdfs->buffer = NULL;
+
+	pdfs->file = fopen(filename, mode);
+	if (pdfs->file == NULL) {
+	    pdf_close(pdfs);
+	    pdfs = NULL;
+	}
+    }
+
+    return pdfs;
+}
+
+/*----------------------------------------------------------------------*\
+* pdf_bopen()
+*
+* Initializes a PDFstrm for reading/writing to a memory buffer.
+* If buffer is NULL, a standard buffer is allocated.
+\*----------------------------------------------------------------------*/
+
+PDFstrm *
+pdf_bopen(U_CHAR *buffer, long bufmax)
+{
+    PDFstrm *pdfs;
+
+    dbug_enter("pdf_bopen");
+
+    pdfs = (PDFstrm *) malloc(sizeof(PDFstrm));
+
+    if (pdfs != NULL) {
+	pdfs->file = NULL;
+	pdfs->bp = 0;
+
+	if (buffer == NULL) {
+	    if (bufmax > 0)
+		pdfs->bufmax = bufmax;
+	    else
+		pdfs->bufmax = 2048;
+
+	    pdfs->buffer = (U_CHAR *) malloc(pdfs->bufmax);
+	    if (pdfs->buffer == NULL) {
+		pdf_close(pdfs);
+		pdfs = NULL;
+	    }
+	}
+	else {
+	    pdfs->bufmax = bufmax;
+	    pdfs->buffer = buffer;
+	}
+    }
+
+    return pdfs;
+}
+
+/*----------------------------------------------------------------------*\
+* pdf_finit()
+*
+* Initializes a PDFstrm for a file oriented device.
+* Like pdf_fopen() but an existing file handle is specified.
+\*----------------------------------------------------------------------*/
+
+PDFstrm *
+pdf_finit(FILE *file)
+{
+    PDFstrm *pdfs;
+
+    dbug_enter("pdf_finit");
+
+    pdfs = (PDFstrm *) malloc(sizeof(PDFstrm));
+
+    if (pdfs != NULL) {
+	pdfs->buffer = NULL;
+	pdfs->file = file;
+    }
+
+    return pdfs;
+}
+
+/*----------------------------------------------------------------------*\
+* pdf_close()
+*
+* Closes a PDFstrm.
+* Used exactly like fclose().
+\*----------------------------------------------------------------------*/
+
+int
+pdf_close(PDFstrm *pdfs)
+{
+    dbug_enter("pdf_close");
+
+    if (pdfs != NULL) {
+	if (pdfs->file != NULL)
+	    fclose(pdfs->file);
+
+	else if (pdfs->buffer != NULL)
+	    free ((void *) pdfs->buffer);
+
+	free((void *) pdfs);
+    }
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* int pdf_putc ()
+*
+* Writes a single character.
+\*----------------------------------------------------------------------*/
+
+int
+pdf_putc(int c, PDFstrm *pdfs)
+{
+    int result = EOF;
+
+    if (pdfs->file != NULL)
+	result = putc(c, pdfs->file);
+
+    else if (pdfs->buffer != NULL) {
+	if (pdfs->bp >= pdfs->bufmax) {
+	    pdfs->bufmax += 512;
+#ifdef DEBUG
+	    fprintf(stderr,
+		    "pdf_putc: Increasing buffer to %d bytes\n",
+		    pdfs->bufmax);
+#endif			
+	    pdfs->buffer = (U_CHAR *)
+		realloc((void *) pdfs->buffer, pdfs->bufmax);
+	}
+	pdfs->buffer[pdfs->bp++] = c;
+	result = c;
+    }
+    else
+	plexit("pdf_putc: Illegal operation");
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+* int pdf_getc ()
+*
+* Reads a single character.
+\*----------------------------------------------------------------------*/
+
+int
+pdf_getc(PDFstrm *pdfs)
+{
+    int result = EOF;
+
+    if (pdfs->file != NULL)
+	result = getc(pdfs->file);
+
+    else if (pdfs->buffer != NULL) {
+	if (pdfs->bp < pdfs->bufmax)
+	    result = pdfs->buffer[pdfs->bp++];
+    }
+    else
+	plexit("pdf_getc: Illegal operation");
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+* int pdf_ungetc()
+*
+* Push back the last command read.
+\*----------------------------------------------------------------------*/
+
+int
+pdf_ungetc(int c, PDFstrm *pdfs)
+{
+    int result = EOF;
+
+    if (pdfs->file != NULL)
+	result = ungetc(c, pdfs->file);
+
+    else if (pdfs->buffer != NULL) {
+	if (pdfs->bp > 0) {
+	    pdfs->buffer[--pdfs->bp] = c;
+	    result = c;
+	}
+    }
+    else
+	plexit("pdf_ungetc: Illegal operation");
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+* int pdf_wrx ()
+*
+* Writes a record.
+\*----------------------------------------------------------------------*/
+
+static int
+pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
+{
+    int i, result = 0;
+    U_CHAR *newbuf, *oldbuf;
+
+    if (pdfs->file != NULL)
+	result = fwrite(x, 1, nitems, pdfs->file);
+
+    else if (pdfs->buffer != NULL) {
+	for (i = 0; i < nitems; i++) {
+	    if (pdfs->bp >= pdfs->bufmax) {
+		pdfs->bufmax += 512;
+#ifdef DEBUG
+		fprintf(stderr,
+			"pdf_wrx: Increasing buffer to %d bytes\n",
+			pdfs->bufmax);
+#endif			
+		pdfs->buffer = (U_CHAR *)
+		    realloc((void *) (pdfs->buffer), pdfs->bufmax);
+	    }
+	    pdfs->buffer[pdfs->bp++] = x[i];
+	}
+	result = i;
+    }
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+* int pdf_rdx ()
+*
+* Reads a record.
+\*----------------------------------------------------------------------*/
+
+static int
+pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
+{
+    int i, result = 0;
+
+    if (pdfs->file != NULL)
+	result = fread(x, 1, nitems, pdfs->file);
+
+    else if (pdfs->buffer != NULL) {
+	for (i = 0; i < nitems; i++) {
+	    if (pdfs->bp > pdfs->bufmax)
+		break;
+	    x[i] = pdfs->buffer[pdfs->bp++];
+	}
+	result = i;
+    }
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
 * pdf_wr_header()
 *
 * Writes a header string to FILE *file.
@@ -77,17 +352,19 @@ pdf_set(char *option, int value)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_wr_header(FILE *file, char *header)
+pdf_wr_header(PDFstrm *pdfs, char *header)
 {
     int i;
+
+    dbug_enter("pdf_wr_header");
 
     for (i = 0; i < 79; i++) {
 	if (header[i] == '\0')
 	    break;
-	if (putc(header[i], file) == EOF)
+	if (pdf_putc(header[i], pdfs) == EOF)
 	    return PDF_WRERR;
     }
-    if (putc('\n', file) == EOF)
+    if (pdf_putc('\n', pdfs) == EOF)
 	return PDF_WRERR;
 
     return 0;
@@ -96,17 +373,19 @@ pdf_wr_header(FILE *file, char *header)
 /*----------------------------------------------------------------------*\
 * int pdf_rd_header (file, header)
 *
-* Reads a newline-terminated header string from FILE *file, and converts
+* Reads a newline-terminated header string from PDFstrm *pdfs, and converts
 * to a usual NULL-terminated string.  80 chars maximum assumed.
 \*----------------------------------------------------------------------*/
 
 int
-pdf_rd_header(FILE *file, char *header)
+pdf_rd_header(PDFstrm *pdfs, char *header)
 {
     int i;
 
+    dbug_enter("pdf_rd_header");
+
     for (i = 0; i < 79; i++) {
-	if ((header[i] = getc(file)) == EOF)
+	if ((header[i] = pdf_getc(pdfs)) == EOF)
 	    return PDF_RDERR;
 
 	if (header[i] == '\n')
@@ -123,12 +402,12 @@ pdf_rd_header(FILE *file, char *header)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_wr_1byte(FILE *file, U_CHAR s)
+pdf_wr_1byte(PDFstrm *pdfs, U_CHAR s)
 {
     U_CHAR x[1];
 
     x[0] = s;
-    if (fwrite(x, 1, 1, file) != 1)
+    if (pdf_wrx(x, 1, pdfs) != 1)
 	return PDF_WRERR;
 
     return 0;
@@ -141,11 +420,11 @@ pdf_wr_1byte(FILE *file, U_CHAR s)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_rd_1byte(FILE *file, U_CHAR *ps)
+pdf_rd_1byte(PDFstrm *pdfs, U_CHAR *ps)
 {
     U_CHAR x[1];
 
-    if ( ! fread(x, 1, 1, file))
+    if ( ! pdf_rdx(x, 1, pdfs))
 	return PDF_RDERR;
 
     *ps = ((U_CHAR) x[0]);
@@ -159,14 +438,14 @@ pdf_rd_1byte(FILE *file, U_CHAR *ps)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_wr_2bytes(FILE *file, U_SHORT s)
+pdf_wr_2bytes(PDFstrm *pdfs, U_SHORT s)
 {
     U_CHAR x[2];
 
     x[0] = (U_CHAR) ((U_LONG) (s & (U_LONG) 0x00FF));
     x[1] = (U_CHAR) ((U_LONG) (s & (U_LONG) 0xFF00) >> 8);
 
-    if (fwrite(x, 1, 2, file) != 2)
+    if (pdf_wrx(x, 2, pdfs) != 2)
 	return PDF_WRERR;
 
     return 0;
@@ -179,11 +458,11 @@ pdf_wr_2bytes(FILE *file, U_SHORT s)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_rd_2bytes(FILE *file, U_SHORT *ps)
+pdf_rd_2bytes(PDFstrm *pdfs, U_SHORT *ps)
 {
     U_CHAR x[2];
 
-    if ( ! fread(x, 1, 2, file))
+    if ( ! pdf_rdx(x, 2, pdfs))
 	return PDF_RDERR;
 
     *ps = 0;
@@ -200,7 +479,7 @@ pdf_rd_2bytes(FILE *file, U_SHORT *ps)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_wr_2nbytes(FILE *file, U_SHORT *s, PLINT n)
+pdf_wr_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
 {
     PLINT i;
     U_CHAR x[2];
@@ -209,7 +488,7 @@ pdf_wr_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 	x[0] = (U_CHAR) ((U_LONG) (s[i] & (U_LONG) 0x00FF));
 	x[1] = (U_CHAR) ((U_LONG) (s[i] & (U_LONG) 0xFF00) >> 8);
 
-	if (fwrite(x, 1, 2, file) != 2)
+	if (pdf_wrx(x, 2, pdfs) != 2)
 	    return PDF_WRERR;
     }
     return 0;
@@ -222,13 +501,13 @@ pdf_wr_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_rd_2nbytes(FILE *file, U_SHORT *s, PLINT n)
+pdf_rd_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
 {
     PLINT i;
     U_CHAR x[2];
 
     for (i = 0; i < n; i++) {
-	if ( ! fread(x, 1, 2, file))
+	if ( ! pdf_rdx(x, 2, pdfs))
 	    return PDF_RDERR;
 
 	s[i] = 0;
@@ -245,7 +524,7 @@ pdf_rd_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_wr_4bytes(FILE *file, U_LONG s)
+pdf_wr_4bytes(PDFstrm *pdfs, U_LONG s)
 {
     U_CHAR x[4];
 
@@ -254,7 +533,7 @@ pdf_wr_4bytes(FILE *file, U_LONG s)
     x[2] = (U_CHAR) ((s & (U_LONG) 0x00FF0000) >> 16);
     x[3] = (U_CHAR) ((s & (U_LONG) 0xFF000000) >> 24);
 
-    if (fwrite(x, 1, 4, file) != 4)
+    if (pdf_wrx(x, 4, pdfs) != 4)
 	return PDF_WRERR;
 
     return 0;
@@ -267,11 +546,11 @@ pdf_wr_4bytes(FILE *file, U_LONG s)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_rd_4bytes(FILE *file, U_LONG *ps)
+pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
 {
     U_CHAR x[4];
 
-    if ( ! fread(x, 1, 4, file))
+    if ( ! pdf_rdx(x, 4, pdfs))
 	return PDF_RDERR;
 
     *ps = 0;
@@ -345,7 +624,7 @@ pdf_rd_4bytes(FILE *file, U_LONG *ps)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_wr_ieeef(FILE *file, float f)
+pdf_wr_ieeef(PDFstrm *pdfs, float f)
 {
     double fdbl, fmant, f_new;
     float fsgl, f_tmp;
@@ -354,7 +633,7 @@ pdf_wr_ieeef(FILE *file, float f)
 
     if (f == 0.0) {
 	value = 0;
-	return (pdf_wr_4bytes(file, value));
+	return (pdf_wr_4bytes(pdfs, value));
     }
     fsgl = fdbl = f;
     fmant = frexp(fdbl, &exp);
@@ -390,7 +669,7 @@ pdf_wr_ieeef(FILE *file, float f)
 
     value = s_ieee | e_ieee | f_ieee;
 
-    if ((istat = pdf_wr_4bytes(file, value)))
+    if ((istat = pdf_wr_4bytes(pdfs, value)))
 	return (istat);
 
     if (debug) {
@@ -408,14 +687,14 @@ pdf_wr_ieeef(FILE *file, float f)
 \*----------------------------------------------------------------------*/
 
 int
-pdf_rd_ieeef(FILE *file, float *pf)
+pdf_rd_ieeef(PDFstrm *pdfs, float *pf)
 {
     double f_new, f_tmp;
     float fsgl;
     int istat, exp, bias = 127;
     U_LONG value, s_ieee, e_ieee, f_ieee;
 
-    if ((istat = pdf_rd_4bytes(file, &value)))
+    if ((istat = pdf_rd_4bytes(pdfs, &value)))
 	return (istat);
 
     s_ieee = (value & (U_LONG) 0x80000000) >> 31;
