@@ -24,7 +24,6 @@ MASTER_XML = plplotdoc.xml
 MASTER_XML_IN = $(MASTER_XML).in
 
 SOURCE_FILES = \
-  $(MASTER_XML_IN) \
   advanced.xml \
   api.xml \
   api-c.xml \
@@ -59,7 +58,7 @@ built_files = \
   plplotdoc.txml plplotdoc.xml-info plplotdoc.texi
 
 EXTRA_DIST = \
-  $(SOURCE_FILES) $(STYLESHEETS_IN) \
+  $(SOURCE_FILES) $(MASTER_XML_IN) $(STYLESHEETS_IN) \
   jadetex.cfg stylesheet.css $(built_files) \
   inline-info.ent pdftex.map
 
@@ -73,31 +72,28 @@ if enable_docbook
 
 htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
+nodist_html_DATA = $(HTML_MANIFEST)
 
 printdir = $(prefix)/share/doc/$(PACKAGE)
 print_DATA = $(BASE).dvi $(BASE).ps.gz $(BASE).pdf
 
 man3_MANS = $(shell ls *.$(MANVOL))
+nodist_man3_MANS = $(MAN_MANIFEST)
 
 geninfodir = $(infodir)
 geninfo_DATA = $(shell ls *.info*)
+nodist_geninfo_DATA = $(INFO_MANIFEST)
 
 MAX_TEX_RECURSION = 10
 
 BINDIR = ../bin
 
-all: $(TARGETS)
-
-html: $(HTML_MANIFEST)
-
 # N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is
 # output to the $(HTML_MANIFEST) file.
-$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML_IN) inline-html.ent
+$(HTML_MANIFEST): $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_HTML) inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
-
-print: $(print_DATA)
 
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@
@@ -121,7 +117,7 @@ $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 	fi
 
 
-$(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT_IN) inline-print.ent
+$(BASE).jadetex: $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_PRINT) inline-print.ent
 	ln -fs inline-print.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)
@@ -129,33 +125,29 @@ $(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT_IN) inline-print.ent
 
 INFO_TMPDIR = info
 
-info: plplotdoc.info
-
-%.info: %.texi
+$(INFO_MANIFEST) plplotdoc.info: plplotdoc.texi
 	rm -rf $(INFO_TMPDIR)
 	mkdir -p $(INFO_TMPDIR)
-	-$(MAKEINFO) --force -o $(INFO_TMPDIR)/$@ $<
+	-$(MAKEINFO) --force -o $(INFO_TMPDIR)/plplotdoc.info $<
 	( cd $(INFO_TMPDIR) ; ls ) | cat > $(INFO_MANIFEST)
 	mv $(INFO_TMPDIR)/* .
 	rmdir $(INFO_TMPDIR)
 
-%.texi: %.txml
+plplotdoc.texi: plplotdoc.txml
 	$(PERL) $(DOCBOOK2X_INC) $(TEXI_XML) $<
 
-%.txml: %.xml-info $(SOURCE_FILES) inline-info.ent
+plplotdoc.txml: plplotdoc.xml-info $(SOURCE_FILES) $(MASTER_XML) inline-info.ent
 	if $(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@-tmp ; then \
 	  mv $@-tmp $@ ; \
 	else \
 	  false ; \
 	fi
 
-plplotdoc.xml-info: $(SOURCE_FILES)
+plplotdoc.xml-info: $(SOURCE_FILES) $(MASTER_XML)
 	ln -fs inline-info.ent inline.ent
 	$(PERL) $(BINDIR)/info-clean.pl plplotdoc.xml > $@
 
-man: $(MAN_MANIFEST)
-
-$(MAN_MANIFEST): $(MASTER_XML_IN) api.xml
+$(MAN_MANIFEST): $(MASTER_XML) api.xml
 	$(PERL) $(BINDIR)/api2man.pl $(MASTER_XML) api.xml $(MANVOL) > $@
 
 validate: plplotdoc.xml
@@ -166,9 +158,6 @@ if has_onsgmls
 else
 	@echo "onsgmls not found: cannot validate $<"
 endif
-
-.PHONY: all html print info man
-.PRECIOUS: %.info %.texi %.txml %.xml-info %.pdf
 
 # enable_docbook
 endif

@@ -23,32 +23,29 @@ INFO_TARBALL = $(BASE_INFO).tar.gz
 MAN_TARBALL = $(BASE_MAN).tar.gz
 INDEX_HTML = www/index.html
 
-# noinst_DATA = $(TARBALL)
+noinst_DATA = $(TARBALL)
 
-$(HTML_TARBALL):
+$(HTML_TARBALL): src/$(HTML_MANIFEST) src/stylesheet.css
 	rm -rf $(BASE_HTML)
 	mkdir $(BASE_HTML)
 	( cd src ; \
-	  $(MAKE) html ; \
           cp `cat $(HTML_MANIFEST)` ../$(BASE_HTML) )
 	cp src/stylesheet.css $(BASE_HTML)
 	tar cfz $(HTML_TARBALL) $(BASE_HTML)
 	rm -rf $(BASE_HTML)
 
-$(INFO_TARBALL):
+$(INFO_TARBALL): src/$(INFO_MANIFEST)
 	rm -rf $(BASE_INFO)
 	mkdir $(BASE_INFO)
 	( cd src ; \
-	  $(MAKE) info ; \
           cp `cat $(INFO_MANIFEST)` ../$(BASE_INFO) )
 	tar cfz $(INFO_TARBALL) $(BASE_INFO)
 	rm -rf $(BASE_INFO)
 
-$(MAN_TARBALL):
+$(MAN_TARBALL): src/$(MAN_MANIFEST)
 	rm -rf $(BASE_MAN)
 	mkdir $(BASE_MAN)
 	( cd src ; \
-	  $(MAKE) man ; \
           cp `cat $(MAN_MANIFEST)` ../$(BASE_MAN) )
 	tar cfz $(MAN_TARBALL) $(BASE_MAN)
 	rm -rf $(BASE_MAN)
@@ -57,13 +54,18 @@ $(BASE).tar.gz: dist-stamp
 dist-stamp:
 	$(MAKE) dist && touch dist-stamp
 
-$(INDEX_HTML): $(INDEX_HTML).in $(HTML_TARBALL) \
-               $(INFO_TARBALL) $(MAN_TARBALL)
-	( cd src ; \
-          $(MAKE) print )
+# size-href.pl requires as input (for size) every file mentioned as
+# an href in $(INDEX_HTML).in with a @SIZE@ attribute.  Make the 
+# prerequisite list consistent with this requirement.
+
+$(INDEX_HTML): bin/size-href.pl $(INDEX_HTML).in \
+	src/$(BASE).ps.gz src/$(BASE).pdf src/$(BASE).dvi \
+	$(INFO_TARBALL) $(MAN_TARBALL) $(HTML_TARBALL)
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
-$(TARBALL): $(HTML_TARBALL) $(INFO_TARBALL) $(MAN_TARBALL) $(INDEX_HTML)
+$(TARBALL): $(INDEX_HTML) \
+	src/$(BASE).ps.gz src/$(BASE).pdf src/$(BASE).dvi \
+	$(INFO_TARBALL) $(MAN_TARBALL) $(HTML_TARBALL)
 	tar cfz $(TARBALL) $(HTML_TARBALL) \
                 $(INFO_TARBALL) $(MAN_TARBALL) -C www index.html \
                 -C ../src $(BASE).ps.gz $(BASE).pdf $(BASE).dvi
@@ -71,7 +73,8 @@ $(TARBALL): $(HTML_TARBALL) $(INFO_TARBALL) $(MAN_TARBALL) $(INDEX_HTML)
 www-uninstall:
 	$(RSH_COMMAND) rm -rf $(WWW_DIR)
 
-www-install: $(TARBALL) www-uninstall
+www-install: $(TARBALL)
+	$(RSH_COMMAND) rm -rf $(WWW_DIR)
 	$(RSH_COMMAND) mkdir -p $(WWW_DIR)
 	$(RCP) $(TARBALL) $(RCP_PREFIX)$(WWW_DIR)
 	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(TARBALL) -C $(WWW_DIR)
