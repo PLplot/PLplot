@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.11  1993/10/06 19:49:06  mjl
+# Revision 1.12  1994/04/25 18:58:48  mjl
+# Added the simple class system by Sam Shen for support of the palette
+# manipulators.  Will probably rewrite in itcl at some point.
+#
+# Revision 1.11  1993/10/06  19:49:06  mjl
 # Made Form2d proc more general.
 #
 # Revision 1.10  1993/09/08  02:33:18  mjl
@@ -500,6 +504,154 @@ or click on "Execute".
 
     pack append $w $w.cmd {top fill} \
 	    $w.ok {bottom fillx} $w.t {expand fill}
+}
+
+#------------------------------------------------------------------------------
+#
+# A simple class system in Tcl.
+#
+# From the pixmap editor by Sam Shen (sls@aero.org)
+#
+#------------------------------------------------------------------------------
+
+set object_counter 0
+proc class {class_name spec} {
+    global class_methods
+    set members ""
+    for {set i 0} {$i < [llength $spec]} {incr i} {
+	case [lindex $spec $i] {
+	    method {
+		set method_body [concat global \$this ";" in \$this]
+		lappend method_body [lindex $spec [expr {$i+3}]]
+		set ag [linsert [lindex $spec [expr {$i+2}]] 0 this]
+		proc $class_name:[lindex $spec [expr {$i+1}]] \
+		    $ag $method_body
+		lappend class_methods($class_name) [lindex $spec [expr {$i+1}]]
+		incr i 3
+	    }
+	    member {
+		lappend members [list [lindex $spec [expr {$i+1}]] \
+				 [lindex $spec [expr {$i+2}]]]
+		incr i 2
+	    }
+	    "#|" {
+		incr i
+		while {[lindex $spec $i] != "#|"} {
+		    incr i
+		}
+	    }
+	    default {
+		error [format {unknown keyword "%s" in class declaration} \
+		       [lindex $spec $i]]
+	    }
+	}
+    }
+    if {$members != ""} {
+	set ctor_body [format {
+	    upvar #0 $_this this
+	    foreach member {%s} {
+		set this([lindex $member 0]) [lindex $member 1]
+	    }
+	} $members]
+	proc $class_name:Construct _this $ctor_body
+    }
+    set body [format {
+	global object_counter
+	set objects ""
+	for {set i 0} {$i < $count} {incr i} {
+	    set var O_[incr object_counter]
+	    upvar #0 $var object
+	    lappend objects $var
+	    set object(class) %s
+	    if %d {
+		uplevel "%s:Construct $var"
+	    }
+	}
+	return $objects
+    } $class_name [expr {$members != ""}] $class_name]
+    proc $class_name {{count 1}} $body
+}
+
+set in_counter 0
+set in_sti 0
+proc push_scope {on} {
+    global in_sti in_st
+    set in_st([incr in_sti]) $on
+}
+proc in_scope? {on} {
+    global in_sti in_st
+    expr {$in_sti > 0 && $in_st($in_sti) == $on}
+}
+proc pop_scope {} {
+    global in_sti in_st
+    unset in_st($in_sti)
+    incr in_sti -1
+}
+
+proc in {_object expr} {
+    upvar #0 $_object object
+    global in_counter errorInfo class_methods
+    set cleanup ""
+    if ![in_scope? $_object] {
+	push_scope $_object
+	set switched_scope 1
+	set ctr [incr in_counter]
+	set cleanup "pop_scope; "
+	set class $object(class)
+	foreach method $class_methods($class) {
+	    if {[info procs $method] != ""} {
+		set oldproc $method[set ctr]
+		rename $method $oldproc
+		append cleanup "rename $method {}; rename $oldproc $method; "
+	    } else {
+		append cleanup "rename $method {}; "
+	    }
+	    set method_body [format {
+		uplevel [format "%s %s %%s" $args]
+	    } $class:$method $_object]
+	    proc $method args $method_body
+	}
+    }
+    if {[set retval [catch {uplevel $expr} result]] == 1} {
+	set savedInfo $errorInfo
+    }
+    eval $cleanup
+    if {$retval == 1} {
+	error $result $savedInfo
+    }
+    return $result
+}
+
+proc getmember var {
+    upvar [uplevel "set this"] o
+    set o($var)
+}
+
+proc setmember {var val} {
+    set cmd [format {set [set this](%s)} $var]
+    lappend cmd $val
+    return [uplevel $cmd]
+}
+
+proc appendmember {var val} {
+    set cmd [format {append [set this](%s)} $var]
+    lappend cmd $val
+    uplevel $cmd
+}
+
+proc membername {var} {
+    set o [uplevel {set this}]
+    return [format %s(%s) $o $var]
+}
+
+proc lappendmember {var val} {
+    set cmd [format {lappend [set this](%s)} $var]
+    lappend cmd $val
+    uplevel $cmd
+}
+
+proc delete object {
+    uplevel "unset $object"
 }
 
 #------------------------------------------------------------------------------
