@@ -148,6 +148,20 @@ static int NCOLOURS=gdMaxColors;
 
 #define use_experimental_hidden_line_hack
 
+/* I think the current version of Freetype supports up to a maximum of
+ * 128 grey levels for text smoothing. You can get quite acceptable
+ * results with as few as 4 grey-levels. Uusually only about 5 get used
+ * anyway, but the question is where, in the "grey spectrum" will they be ?
+ * Who knows ? The following define lets you set a maximum limit on the
+ * number of grey-levels used. It is really only here for the 24bit mode
+ * and could be set to 255, but that would slow things down and use more
+ * memory. 64 seems to be a nice compromise, but if you want to change it,
+ * then change it here.
+ */
+
+#ifndef max_number_of_grey_levels_used_in_text_smoothing 
+#define max_number_of_grey_levels_used_in_text_smoothing 64
+#endif
 
 /* Struct to hold device-specific info. */
 
@@ -298,11 +312,15 @@ plD_init_png_Dev(PLStream *pls)
 
     dev->palette=palette;
     dev->truecolour=truecolour;
-
+    
     if ((dev->truecolour>0) && (dev->palette>0))
        plwarn("Selecting both \"truecolor\" AND \"palette\" driver options is contradictory, so\nI will just use my best judgment.\n");
     else if (dev->truecolour>0)
        NCOLOURS=16777216;
+    else if ((dev->truecolour==0)&&(dev->palette==0)&&((pls->ncol1+pls->ncol0)>NCOLOURS))
+       {
+        NCOLOURS=16777216;
+       }
 
 #endif
 
@@ -312,7 +330,7 @@ if (freetype)
     pls->dev_text = 1; /* want to draw text */
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
-    FT->smooth_text=smooth_text;
+    FT->want_smooth_text=smooth_text;
    }
 
 #endif
@@ -1032,28 +1050,35 @@ FT_Data *FT=(FT_Data *)pls->FT;
 FT->scale=dev->scale;
 FT->ymax=dev->pngy;
 FT->invert_y=1;
+FT->smooth_text=0;
 
-if (FT->smooth_text==1)
+if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? */
    {
     FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
     FT->ncol0_xtra=NCOLOURS-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
     FT->ncol0_width=FT->ncol0_xtra/(pls->ncol0-1);              /* find out how many different shades of anti-aliasing we can do */
-    if (FT->ncol0_width>64) FT->ncol0_width=64;                 /* set a maximum number of shades */
-    plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
+    if (FT->ncol0_width>4)     /* are there enough colour slots free for text smoothing ? */
+       {
+        if (FT->ncol0_width>max_number_of_grey_levels_used_in_text_smoothing) 
+           FT->ncol0_width=max_number_of_grey_levels_used_in_text_smoothing;                 /* set a maximum number of shades */
+        plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
 /* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
  * call in plscmap0 which (a) leads to segfaults since the GD image is
  * not defined at this point and (b) would be inefficient in any case since
  * setcmap is always called later (see plD_bop_png) to update the driver
  * color palette to be consistent with cmap0. */
-    {
-       PLINT level_save;
-       level_save = pls->level;
-       pls->level = 0;
-       pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
-       pls->level = level_save;
-    }
+         {
+          PLINT level_save;
+          level_save = pls->level;
+          pls->level = 0;
+          pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
+          pls->level = level_save;
+         }
+        FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
+      }
+    else
+      plwarn("Insufficient colour slots available in CMAP0 to do text smoothing.");
    }
-
 }
 
 #endif
