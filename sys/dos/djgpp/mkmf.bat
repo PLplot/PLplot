@@ -16,7 +16,7 @@ type cf\init.in		>tmp\Makefile
 
 REM Default target, core source and object file lists
 
-type ..\..\..\cf\dist.in	>>tmp\Makefile
+type cf\dist.in	>>tmp\Makefile
 
 REM Copy the list of DJGPP drivers to makefile
 
@@ -34,14 +34,14 @@ rem if %enable_cxx% == "yes" type ..\..\..\cf\pkg_cxx.in	>>tmp\Makefile
 
 REM Library targets
 
-type ..\..\..\cf\version.in	>>tmp\Makefile
+type cf\version.in	>>tmp\Makefile
 type cf\initlib.in	>>tmp\Makefile
 type cf\lib.in		>>tmp\Makefile
 
 REM Program and demo file dependencies, targets
 
-type ..\..\..\cf\exes.in	>>tmp\Makefile
-type ..\..\..\cf\demos.in	>>tmp\Makefile
+type cf\exes.in	>>tmp\Makefile
+type cf\demos.in	>>tmp\Makefile
 
 REM Installation and miscellaneous.
 
@@ -64,8 +64,8 @@ type cf\init.in		>tmp\Makedemo
 type cf\djgpp.in	>>tmp\Makedemo
 type cf\initdemo.in	>>tmp\Makedemo
 
-type ..\..\..\cf\demos.in	>>tmp\Makedemo
-type ..\..\..\cf\Miscdemo.in	>>tmp\Makedemo
+type cf\demos.in	>>tmp\Makedemo
+type cf\Miscdemo.in	>>tmp\Makedemo
 
 REM  Fix up CR/LF now
 
