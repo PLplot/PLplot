@@ -2,6 +2,20 @@
 PLPLOT Amiga Release Notes
 --------------------------
 
+** NOTE ********************************************************************
+
+The Amiga drivers are currently under intensive development.  The new screen
+driver will use GadTools and ReqTools, giving it a much nicer look, more
+functionality, and better maintaintability.  Also makefile.m4 now uses SAS/C
+6.x for compilation.  I plan eventually to make available precompiled,
+optimized libraries to reduce some of the difficulty in building plplot (and
+perhaps non-optimized versions as well).
+
+The remaining notes are unchanged from the PLPLOT 4.0 betas and may no longer
+be entirely accurate.
+
+****************************************************************************
+
 Most of my PLPLOT hacking has been on various Unix systems, so the Amiga
 version is not as well tested as it could be.  The window and iff drivers
 seem to be in pretty good shape, the others (specific to the Amiga) may

@@ -35,6 +35,17 @@ for the first C demo, or
 
 for the first Fortran demo.
 
+Before running any program that uses plplot, copy the font files plstnd5.fnt
+and plxtnd5.fnt (in the lib directory) to a place where PLPLOT can find them.
+The default search path is:
+
+       current directory
+       $(HOME)/lib/
+       $(PLFONTS)
+       PLFONTDEV1      (/usr/local/lib/)
+       PLFONTDEV2      (/usr/local/lib/plplot/
+       PLFONTDEV3      (/usr/local/plplot/)
+
 You probably should also print & read the TeX documentation on the Unix
 installation.
 
