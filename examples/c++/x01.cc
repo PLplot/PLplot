@@ -30,7 +30,13 @@
 #include "plevent.h"
 
 #include <iostream>
+
+#ifdef HAVE_CMATH
 #include <cmath>
+#else
+#include <math.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif

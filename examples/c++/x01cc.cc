@@ -29,7 +29,12 @@
 // relating to 2-d plotting.
 //---------------------------------------------------------------------------//
 
+#ifdef HAVE_CMATH
 #include <cmath>
+#else
+#include <math.h>
+#endif
+
 #include <iostream>
 
 #include "plstream.h"

@@ -6,6 +6,7 @@ dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
 dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl Copyright (C) 2004 Andrew Ross
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -47,12 +48,21 @@ if test "$enable_cxx" = yes; then
 	fi
     fi
 
+dnl Check for systems where we need extra options for the C++ compiler.
+    case "$host_os" in
+    irix* )
+      if test "$CXX" != "g++" ; then
+        CXXFLAGS="$CXXFLAGS -LANG:std=on"
+      fi
+      ;;
+    esac
+
     AC_LANG_PUSH([C++])
 
+dnl Check if "using namespace std;" works
     AC_MSG_CHECKING([whether $CXX accepts namespace use])
     AC_COMPILE_IFELSE([
 #include <iostream>
-#include <cmath>
 using namespace std;
 ],
         [AC_DEFINE(USE_NAMESPACE, [],
@@ -60,10 +70,19 @@ using namespace std;
 	 AC_MSG_RESULT(yes)],
         [AC_MSG_RESULT(no)])
 
+dnl Check for availability of <cmath>
+    AC_CHECK_HEADERS(cmath,[],[],[/**/])
+
+dnl Check for systems with broken <cmath> undefining isnan()
     if test "$have_isnan" = yes ; then
       AC_MSG_CHECKING([for broken <cmath> missing definition of isnan])
       AC_COMPILE_IFELSE([
+#include <iostream>
+#ifdef HAVE_CMATH
 #include <cmath>
+#else
+#include <math.h>
+#endif
 
 #ifdef USE_NAMESPACE
 using namespace std;

@@ -74,6 +74,9 @@
 /* Define if C++ compiler accepts using namespace */
 #undef USE_NAMESPACE
 
+/* Define if <cmath> header file is available */
+#undef HAVE_CMATH
+
 /* Define if isnan is present in <math.h> but not in <cmath> 
  * - broken Mac OSX systems */
 #undef BROKEN_ISNAN_CXX
