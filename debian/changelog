@@ -1,17 +1,15 @@
-plplot (5.2.0.cvs.20030214-1.testing.0) unstable; urgency=low
+plplot (5.2.0.cvs.20030214-1) unstable; urgency=low
 
-  * New upstream release.
-  * In several files, changed e-mail address of maintainer to his
-    debian.org one.
-  * debian/control:
-      - Bumped Standards-Version to 3.5.8.
-      - Changed name of main package from plplot to libplplot5.
-      - Removed autoconf2.13 from Build-Depends list.
-  *
-  * NOT YET RELEASED!
-  *
+  * New upstream release, built directly from the CVS sources.
+  * These packages are still experimental and are provided to help the
+    preparation to the next upstream release (probably 5.2.1).
+  * There has been a huge reorganization of the packages, thanks to the new
+    dynamical loading of driver modules.  There has been too many changes to
+    report here.
+  * A big thanks go to David Schleef, who has acted as interim maintainer
+    (and made a great job) while I have been unavailable.
 
- -- Rafael Laboissiere <rafael@debian.org>  Tue, 11 Feb 2003 21:16:34 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 16 Feb 2003 21:16:34 +0100
 
 plplot (5.1.0-1.1) unstable; urgency=low
 

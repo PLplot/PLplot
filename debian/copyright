@@ -5,12 +5,6 @@ It was built directly from the CVS sources available at:
 
     http://sourceforge.net/cvs/?group_id=2915
 
-The documentation was obtained in PS format and info directly from the
-home page at locations:
-
-    ftp://dino.ph.utexas.edu/plplot/docs/plplot.ps.gz
-    ftp://dino.ph.utexas.edu/plplot/docs/plplot.info.gz
-
 Below is the copyright notice that comes with the source distribution
 (reference to the location of LGPL text in the Debian system was
 added): 
