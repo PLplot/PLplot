@@ -2795,6 +2795,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plsstrm(plFramePtr->ipls_save);
 	    plend1();
 	    plFramePtr->ipls_save = 0;
+	    plsstrm(plFramePtr->ipls);
 	}
     }
 
