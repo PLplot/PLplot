@@ -84,16 +84,16 @@ esac
 M4=m4
 
 # Double precision
-# Note that although there is no truly standard way to invoke double
-# precision in Fortran from the command line, enough of them use -r8
-# that I've decided to make it the default.  
+# Note that because there is no standard way to invoke double
+# precision in Fortran from the command line we use m4 preprocessing
+# to do it for all systems.
 
 if test "$with_double" = "yes"; then
 #    DBL_FLAG_C=-DDOUBLE
 #    DBL_FLAG_CXX=-DDOUBLE
-#    DBL_FLAG_M4=-DDOUBLE
+    DBL_FLAG_M4=-DDOUBLE
     AC_DEFINE(PL_DOUBLE)
-    DBL_FLAG_F=-r8
+#    DBL_FLAG_F=-r8
 fi
 
 # Profiling
@@ -328,13 +328,6 @@ fi
 
 # ----------------------------------------------------------------------------
 # Now get system-specific compiler flags.
-#
-# If your Fortran compiler supports auto-promotion to double precision, it
-# is best to set DBL_FLAG_F with the appropriate command option.  This is
-# only used for the PLplot demo programs -- the Fortran interface uses m4
-# to generate single and double precision versions.  So if your compiler
-# can't do command-line promotion to double precision, the only loss is
-# that you won't be able to run the Fortran demos in double precision.
 # ----------------------------------------------------------------------------
 
 case "$system" in 
@@ -343,7 +336,8 @@ case "$system" in
 	    SYS_FLAGS_CXX=-+
 	fi
 	if test "$with_double" = "yes"; then
-	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
+#	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
+	    DBL_FLAG_F=
 	fi
     ;;
     alpha*|ALPHA*|Alpha*|OSF* ) 
@@ -420,18 +414,9 @@ case "$system" in
 	    fi
 	fi
 
-	# Double precision -- use auto promotion from Fortran.  This works
-	# only under 9.x -- the 8.x Fortran compiler only has -R8, which
-	# promotes only constants and not variables.  You can use a macro
-	# for real or different sets of sources to get both single and
-	# double, though, and in fact I do this with the stub interface
-	# (for a bit more portability).  So if your Fortran compiler
-	# doesn't support promotion of real constants AND variables, the
-	# library will still build, but you won't be able to build the
-	# Fortran example programs in double precision.
-
 	if test $with_double = "yes"; then
-	    DBL_FLAG_F=+autodblpad
+#	    DBL_FLAG_F=+autodblpad
+	    DBL_FLAG_F=
 	fi
     ;;
     irix*|IRIX*|Irix*|sgi*|SGI* ) 
@@ -467,7 +452,8 @@ case "$system" in
 	fi
 
 	if test "$with_double" = "yes"; then
-	    DBL_FLAG_F="-A dbl4"
+#	    DBL_FLAG_F="-A dbl4"
+	    DBL_FLAG_F=
 	fi
     ;;
     ultrix*|ULTRIX* ) 
@@ -552,7 +538,11 @@ if test "$enable_f77" = "yes"; then
     fi
 fi
 
-M4_FLAGS="-S2000 -B8192"
+# The -S2000 -B8192 flags are apparently useful for System V, but are
+# definitely ignored on GNU/Linux according to that system's info
+# documentation of m4.  If those flags mess up other non-System V systems,
+# then something special will have to be done.
+M4_FLAGS="-S2000 -B8192 $DBL_FLAG_M4" 
 
 AC_SUBST(CC)
 AC_SUBST(CXX)
@@ -568,3 +558,4 @@ AC_SUBST(LDC_FLAGS)
 AC_SUBST(LDCXX_FLAGS)
 AC_SUBST(F77_FLAGS)
 AC_SUBST(LDF_FLAGS)
+AC_SUBST(M4_FLAGS)
