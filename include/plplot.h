@@ -1,8 +1,8 @@
 /* $Id$
    $Log$
-   Revision 1.9  1992/12/02 21:49:53  furnish
-   Better Linux support.  Note that FORTRAN support is now orchestrated
-   through f2c which has funny handling of names with trailing _.
+   Revision 1.10  1993/01/23 05:37:43  mjl
+   Elimination of many function prototypes (and a few added), caused by
+   many routines becoming static in reorganization.
 
  * Revision 1.8  1992/11/07  08:03:26  mjl
  * Added prototypes for a couple new set/get routines (gscale/sscale).
@@ -59,9 +59,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
-#endif
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
@@ -94,7 +92,7 @@
 *
 * #define PL_NEED_SIZE_T
 *	On some systems, size_t is not defined in the usual place (stdlib.h),
-*	and you must include <stddef.h> to get it.
+*	and you must include stddef.h to get it.
 *
 * #define PL_NO_VOID
 *	In case there's still a compiler out there somewhere in the void,
@@ -111,7 +109,7 @@
 * possibilities, and then set the one we will be referencing.  These are:
 *
 * __cplusplus                Any C++ compiler
-* unix                       Any unix system
+* unix                       Any Unix-like system
 * __hpux                     Any HP/UX system
 * __aix                      Any AIX system
 * __linux                    Linux for i386
@@ -149,6 +147,9 @@
 /* Check for SUN systems */
 
 #ifdef sun
+#ifndef unix
+#define unix
+#endif
 #define STUB_LAU
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
@@ -158,6 +159,9 @@
 /* Check for CRAY's */
 
 #ifdef CRAY
+#ifndef unix
+#define unix
+#endif
 #ifdef CRAY1
 #undef _POSIX_SOURCE
 #endif
@@ -174,18 +178,18 @@
 #endif
 #endif
 
-/* Check for Linux */
-
-#ifdef __linux
-#define STUB_LAU
-#define STUB_F2C
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
 /*----------------------------------------------------------------------*\
 *                       Default types for PLPLOT
+*
+* Notes:
+*
+*  - PLINT should stay typedef'd to a long.  Bad things happen to some
+*    routines on some systems if it is set to an int.
+*
+*  - PLSHORT is currently used for device page coordinates.  When typedef'd
+*    to a short, the page coordinates are bounded by (-32767, 32767).  This
+*    gives a max resolution of about 3000 dpi, and improves performance
+*    in some areas over using a PLINT.
 \*----------------------------------------------------------------------*/
 
 #ifdef PL_DOUBLE
@@ -195,12 +199,7 @@ typedef float PLFLT;
 #endif
 
 typedef long PLINT;
-
-/*----------------------------------------------------------------------*\
-*                       Stuff from chdr.h
-\*----------------------------------------------------------------------*/
-
-/* Float and int types */
+typedef short PLSHORT;
 
 /* Signed char type, in case we ever need it. */
 
@@ -236,6 +235,10 @@ typedef long PLINT;
 #define U_LONG unsigned long
 #endif
 
+/*----------------------------------------------------------------------*\
+*                       Utility macros
+\*----------------------------------------------------------------------*/
+
 /* Some systems need the "b" flag when opening binary files.
    Other systems will choke on it, hence the need for this silliness.
 */
@@ -255,8 +258,6 @@ typedef long PLINT;
 #define BINARY_WRITE "w+"
 #define BINARY_READ "r"
 #endif
-
-/* Utility macros */
 
 #ifndef TRUE
 #define TRUE  1
@@ -288,7 +289,7 @@ typedef long PLINT;
 #define UNDEFINED -9999999
 
 /*----------------------------------------------------------------------*\
-*                       End of stuff from chdr.h
+*                       PLPLOT control macros
 \*----------------------------------------------------------------------*/
 
 #ifdef PL_NO_VOID
@@ -301,24 +302,18 @@ typedef long PLINT;
 
 #define TEXT_MODE	0
 #define GRAPHICS_MODE	1
+#define PL_MAXCOLORS	16
+#define PL_RGB_COLOR	1<<7
+#define PL_MAXPOLYLINE	64
+#define PL_NSTREAMS	3	/* Max number of concurrent streams. */
 
 /* Switches for escape function call. */
+/* Some of these are obsolete but are retained in order to process
+   old metafiles */
 
-#define PL_SET_RGB	1
-#define PL_ALLOC_NCOL	2
+#define PL_SET_RGB	1	/* obsolete */
+#define PL_ALLOC_NCOL	2	/* obsolete */
 #define PL_SET_LPB	3
-
-/* And data structures, for escape functions which require more
-   than one argument (a pointer to the structure is passed). */
-
-typedef struct {
-    int icolor;
-    char name[80];
-} pleNcol;
-
-typedef struct {
-    float red, green, blue;
-} pleRGB;
 
 /* Default size for family files, in KB.
 *  If you want it bigger, set it from the makefile or at runtime.
@@ -330,12 +325,91 @@ typedef struct {
 
 /* Font file names. */
 
+#define PLPLOT5_FONTS
+
+#ifdef PLPLOT5_FONTS
+#define PL_XFONT	"plxtnd5.fnt"
+#define PL_SFONT	"plstnd5.fnt"
+#else
 #define PL_XFONT	"plxtnd4.fnt"
 #define PL_SFONT	"plstnd4.fnt"
+#endif
 
-/* Max number of concurrent streams. */
+/*----------------------------------------------------------------------*\
+* Complex data types
+\*----------------------------------------------------------------------*/
 
-#define PL_NSTREAMS 10
+/* Plplot Key structure */
+
+#define PL_NKEYSTRING 20
+
+typedef struct {
+    U_LONG code;
+
+    int isKeypadKey;
+    int isCursorKey;
+    int isPFKey;
+    int isFunctionKey;
+    int isMiscFunctionKey;
+    int isModifierKey;
+
+    char string[PL_NKEYSTRING];
+} PLKey;
+
+/* See plcont.c for examples of all of these */
+
+/* PLfGrid is for passing (as a pointer to the first element) an arbitrarily
+   dimensioned array.  The grid dimensions MUST be stored, with a maximum of
+   3 dimensions assumed for now. */
+
+typedef struct {
+    PLFLT *f;
+    PLINT nx, ny, nz;
+} PLfGrid;
+
+/* PLfGrid2 is for passing (as an array of pointers) a 2d function array */
+/* The grid dimensions are passed for possible bounds checking. */
+
+typedef struct {
+    PLFLT **f;
+    PLINT nx, ny;
+} PLfGrid2;
+
+/* NOTE: a PLfGrid3 is a good idea here but there is no way to exploit it */
+ /* yet so I'll leave it out for now. */
+
+/* PLcGrid is for passing (as a pointer to the first element) arbitrarily
+   dimensioned coordinate transformation arrays.  The grid dimensions MUST be
+   stored, with a maximum of 3 dimensions assumed for now. */
+
+typedef struct {
+    PLFLT *xg, *yg, *zg;
+    PLINT nx, ny, nz;
+} PLcGrid;
+
+/* PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
+   transformation arrays.  The grid dimensions are passed for possible
+   bounds checking.  */
+
+typedef struct {
+    PLFLT **xg, **yg, **zg;
+    PLINT nx, ny;
+} PLcGrid2;
+
+/* NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it */
+ /* yet so I'll leave it out for now. */
+
+/* PLeRGB holds color values in RGB form, with a range of [0,1]. */
+
+typedef struct {
+    float rf, gf, bf;
+} PLeRGB;
+
+/* PLColor is the usual way to pass an rgb color value. */
+
+typedef struct {
+    U_CHAR r, g, b;
+} PLColor;
 
 /*----------------------------------------------------------------------*\
 *		BRAINDEAD-ness
@@ -354,13 +428,15 @@ typedef struct {
 *	redefinition correct.
 *
 *  Sorry to have to resort to such an ugly kludge, but it is really the best
-*  way to handle the situation at present.  If all available compilers on
-*  eventually offer a way to correct this stupidity, then perhaps we can
-*  reverse it (there is a way now, by throwing the -DNOBRAINDEAD switch,
-*  but I really, really discourage you from doing this unless you know
-*  what you are doing).  If you feel like screaming at someone (I sure
-*  do), please direct it at your nearest system vendor who has a braindead
-*  shared C/Fortran namespace scheme.
+*  way to handle the situation at present.  If all available compilers offer
+*  a way to correct this stupidity, then perhaps we can eventually reverse
+*  it (there is a way now, by throwing the -DNOBRAINDEAD switch, but I
+*  discourage you from doing this unless you know what you are doing).  If
+*  you feel like screaming at someone (I sure do), please direct it at your
+*  nearest system vendor who has a braindead shared C/Fortran namespace.
+*  Some vendors do offer compiler switches that change the object names,
+*  but then everybody who wants to use the package must throw these same
+*  switches, leading to no end of trouble.
 *
 *  Note that this definition should not cause any noticable effects, with
 *  the exception of when doing PLPLOT debugging, in which case you will
@@ -384,7 +460,6 @@ typedef struct {
 #ifndef INCLUDED_PLSTUBS	/* i.e. do not expand this in the stubs */
 
 #define    pladv	c_pladv
-#define    plancol	c_plancol
 #define    plaxes	c_plaxes
 #define    plbeg	c_plbeg
 #define    plbin	c_plbin
@@ -392,7 +467,6 @@ typedef struct {
 #define    plbox3	c_plbox3
 #define    plclr	c_plclr
 #define    plcol	c_plcol
-#define    plconf	c_plconf
 #define    plcont	c_plcont
 #define    plend	c_plend
 #define    plend1	c_plend1
@@ -430,11 +504,18 @@ typedef struct {
 #define    plprec	c_plprec
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
-#define    plrgb        c_plrgb
+#define    plrgb	c_plrgb
+#define    plrgb1	c_plrgb1
+#define    plsasp	c_plsasp
 #define    plschr	c_plschr
+#define    plscm0	c_plscm0
+#define    plscm0n	c_plscm0n
+#define    plscm1	c_plscm1
+#define    plscm1f1	c_plscm1f1
+#define    plscol0	c_plscol0
+#define    plscolor	c_plscolor
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
-#define    plsasp	c_plsasp
 #define    plslpb	c_plslpb
 #define    plsmaj	c_plsmaj
 #define    plsmin	c_plsmin
@@ -465,7 +546,6 @@ typedef struct {
 #else
 
 #define    c_pladv	pladv
-#define    c_plancol	plancol
 #define    c_plaxes	plaxes
 #define    c_plbeg	plbeg
 #define    c_plbin	plbin
@@ -473,7 +553,6 @@ typedef struct {
 #define    c_plbox3	plbox3
 #define    c_plclr	plclr
 #define    c_plcol	plcol
-#define    c_plconf	plconf
 #define    c_plcont	plcont
 #define    c_plend	plend
 #define    c_plend1	plend1
@@ -510,11 +589,18 @@ typedef struct {
 #define    c_plprec	plprec
 #define    c_plpsty	plpsty
 #define    c_plptex	plptex
-#define    c_plrgb	plrgb       
+#define    c_plrgb	plrgb
+#define    c_plrgb1	plrgb1
+#define    c_plsasp	plsasp
 #define    c_plschr	plschr
+#define    c_plscm0	plscm0
+#define    c_plscm0n	plscm0n
+#define    c_plscm1	plscm1
+#define    c_plscm1f1	plscm1f1
+#define    c_plscol0	plscol0
+#define    c_plscolor	plscolor
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
-#define    c_plsasp	plsasp
 #define    c_plslpb	plslpb
 #define    c_plsmaj	plsmaj
 #define    c_plsmin	plsmin
@@ -556,10 +642,8 @@ extern "C" {
 
 void c_pladv	(PLINT);
 
-void c_plancol	(PLINT, char *);
-
 void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *,
-			PLFLT, PLINT);
+		 PLFLT, PLINT);
 
 void c_plbeg	(PLINT, PLINT, PLINT);
 
@@ -568,22 +652,24 @@ void c_plbin	(PLINT, PLFLT *, PLFLT *, PLINT);
 void c_plbox	(char *, PLFLT, PLINT, char *, PLFLT, PLINT);
 
 void c_plbox3	(char *, char *, PLFLT, PLINT, 
-			char *, char *, PLFLT, PLINT, 
-			char *, char *, PLFLT, PLINT);
+		 char *, char *, PLFLT, PLINT, 
+		 char *, char *, PLFLT, PLINT);
 
 void c_plclr	(void);
 
 void c_plcol	(PLINT);
 
-void c_plconf	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
-			PLINT, PLINT, PLFLT *, PLINT, 
-			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, 
-				 PLFLT *, PLFLT *, PLINT, PLINT), 
-			PLFLT *, PLFLT *);
-
 void c_plcont	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
-			PLINT, PLINT, PLFLT *, PLINT, 
-			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *));
+		 PLINT, PLINT, PLFLT *, PLINT, 
+		 void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
+		 void *);
+
+void plcontf	(PLFLT (*) (PLINT, PLINT, void *),
+		 void *,
+		 PLINT, PLINT, PLINT, PLINT,
+		 PLINT, PLINT, PLFLT *, PLINT,
+		 void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
+		 void *);
 
 void c_plend	(void);
 
@@ -636,12 +722,12 @@ void c_plline	(PLINT, PLFLT *, PLFLT *);
 void c_pllsty	(PLINT);
 
 void c_plmesh	(PLFLT *, PLFLT *, PLFLT **, 
-			PLINT, PLINT, PLINT);
+		 PLINT, PLINT, PLINT);
 
 void c_plmtex	(char *, PLFLT, PLFLT, PLFLT, char *);
 
 void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, 
-			PLINT, PLINT, PLINT, PLINT);
+		 PLINT, PLINT, PLINT, PLINT);
 
 void c_plpage	(void);
 
@@ -657,13 +743,27 @@ void c_plptex	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, char *);
 
 void c_plrgb	(PLFLT, PLFLT, PLFLT);
 
-void c_plschr	(PLFLT, PLFLT);
-
-void c_plsfam	( PLINT, PLINT, PLINT);
-
-void c_plsfnam	(char *);
+void c_plrgb1	(PLINT r, PLINT g, PLINT b);
 
 void c_plsasp	(PLFLT);
+
+void c_plschr	(PLFLT, PLFLT);
+
+void c_plscm0	(PLINT * r, PLINT * g, PLINT * b, PLINT ncol0);
+
+void c_plscm0n	(PLINT);
+
+void c_plscm1	(PLINT * r, PLINT * g, PLINT * b);
+
+void c_plscm1f1	(PLINT itype, PLFLT * param);
+
+void c_plscol0	(PLINT icol0, PLINT r, PLINT g, PLINT b);
+
+void c_plscolor	(PLINT color);
+
+void c_plsfam	(PLINT, PLINT, PLINT);
+
+void c_plsfnam	(char *);
 
 void c_plslpb	(PLFLT, PLFLT, PLFLT, PLFLT);
 
@@ -708,8 +808,8 @@ void c_plvpor	(PLFLT, PLFLT, PLFLT, PLFLT);
 void c_plvsta	(void);
 
 void c_plw3d	(PLFLT, PLFLT, PLFLT, PLFLT, 
-			PLFLT, PLFLT, PLFLT, PLFLT, 
-			PLFLT, PLFLT, PLFLT);
+		 PLFLT, PLFLT, PLFLT, PLFLT, 
+		 PLFLT, PLFLT, PLFLT);
 
 void c_plwend	(void);
 
@@ -719,96 +819,64 @@ void c_plwind	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 	/* The rest for use from C only */
 
-	/* Contour plotters */
+void plsKeyEH	(void (*)(PLKey *, void *, int *), void *);
 
-void  pltr0	(PLFLT, PLFLT, PLFLT *, PLFLT *);
+	/* Transformation routines */
 
-void  pltr1	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
-			PLFLT *, PLFLT *, PLINT, PLINT);
+void  pltr0	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
 
-void  pltr2	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
-			PLFLT *, PLFLT *, PLINT, PLINT);
+void  pltr1	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
 
-void  pltr0f	(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty);
+void  pltr2	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
 
-void  pltr2f	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
-			PLFLT *, PLFLT *, PLINT, PLINT);
+void  pltr2p	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
 
-void  plcntr	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
-			PLINT, PLINT, PLFLT, PLINT *, 
-			PLINT *, PLINT *, PLINT, 
-			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *));
+void  pltr0f	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
 
-void  plcntf	(PLFLT **, PLINT, PLINT, PLINT, PLINT,
-			PLINT, PLINT, PLFLT, PLINT *,
-			PLINT *, PLINT *, PLINT,
-			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, 
-				 PLFLT *, PLFLT *, PLINT, PLINT), 
-			PLFLT *, PLFLT *);
+void  pltr2f	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
+
+void  xform	(PLFLT, PLFLT, PLFLT *, PLFLT *, void *);
+
+	/* Function evaluators */
+
+PLFLT plf2eval2 (PLINT, PLINT, void *);
+
+PLFLT plf2eval	(PLINT, PLINT, void *);
+
+PLFLT plf2evalr (PLINT, PLINT, void *);
+
+	/* Nice way to allocate space for a vectored 2d grid */
+
+void  Alloc2dGrid (PLFLT ***, PLINT, PLINT);
+
+void  Free2dGrid (PLFLT **, PLINT, PLINT);
 
 	/* These should not be called directly by the user */
 
-void  plccal	(PLFLT **, PLINT, PLINT, PLFLT, 
-			PLINT, PLINT, PLINT, PLINT, PLFLT *);
-
-void  pldeco	(short **, PLINT *, char *);
-
 void  pldtik	(PLFLT, PLFLT, PLFLT *, PLINT *, 
-			PLINT *, PLINT *, PLINT, PLINT *);
-
-void  plerx1	(PLFLT, PLFLT, PLFLT);
-
-void  plery1	(PLFLT, PLFLT, PLFLT);
+		 PLINT *, PLINT *, PLINT, PLINT *);
 
 void  plexit	(char *);
 
-void  pl_exit (void);
+void  pl_exit	(void);
 
-void  plwarn (char *errormsg);
+void  plwarn	(char *errormsg);
 
-void  plfntld (PLINT fnt);
+void  plfntld	(PLINT fnt);
 
 void  plfontrel	(void);
 
-void  plform	(PLFLT, PLINT, PLINT, char *);
+void  plHLS_RGB	(PLFLT, PLFLT, PLFLT, PLFLT *, PLFLT *, PLFLT *);
 
 void  plhrsh	(PLINT, PLINT, PLINT);
-
-void  pllclp	(PLINT, PLINT, PLINT, PLINT);
-
-void  plpoi1	(PLFLT, PLFLT, PLINT);
-
-void  plr135	(PLINT *, PLINT *, PLINT);
-
-void  plr45	(PLINT *, PLINT *, PLINT);
-
-void  plsetup	(PLFLT, PLFLT, PLINT, PLINT);
 
 void  plstik	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void  plstr	(PLINT, PLFLT *, PLINT, PLINT, char *);
 
-void  plsym1	(PLFLT, PLFLT, PLINT);
-
 void  plxtik	(PLINT, PLINT, PLINT, PLINT);
 
-void  plxybx	(char *, char *, PLFLT, PLFLT, PLFLT, PLFLT, 
-			PLFLT, PLFLT, PLFLT, PLINT, PLINT, PLINT *);
-
 void  plytik	(PLINT, PLINT, PLINT, PLINT);
-
-void  plzbx	(char *, char *, PLINT, PLFLT, PLFLT, PLFLT, 
-			PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT *);
-
-void  plgrid3a	(PLFLT);
-
-void  plnxtv	(PLINT *, PLINT *, PLINT, PLINT);
-
-void  plside3a	(PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT);
-
-void  plt3zz	(PLINT, PLINT, PLINT, PLINT, 
-			PLINT, PLINT, PLFLT *, PLFLT *, PLFLT **, 
-			PLINT, PLINT, PLINT *, PLINT *);
 
 void  glev	(PLINT *);
 
@@ -872,10 +940,6 @@ void  gatt	(PLINT *, PLINT *);
 
 void  satt	(PLINT, PLINT);
 
-void  gcol	(PLINT *);
-
-void  scol	(PLINT);
-
 void  gwid	(PLINT *);
 
 void  swid	(PLINT);
@@ -936,18 +1000,6 @@ void  smin	(PLFLT, PLFLT);
 
 void  gzback	(PLINT **, PLINT **, PLFLT **);
 
-void  spl3mode	(PLINT);
-
-void  spl3upv	(PLINT);
-
-void  goldhivw	(PLINT **);
-
-void  goldlovw	(PLINT **);
-
-void  cleanup	(void);
-
-void  genlin	(PLINT, PLINT, PLINT, PLINT);
-
 void  movphy	(PLINT, PLINT);
 
 void  draphy	(PLINT, PLINT);
@@ -956,37 +1008,37 @@ void  movwor	(PLFLT, PLFLT);
 
 void  drawor	(PLFLT, PLFLT);
 
+void  draphy_poly (PLINT *x, PLINT *y, PLINT n);
+
+void  drawor_poly (PLFLT *x, PLFLT *y, PLINT n);
+
 void  setphy	(PLINT, PLINT, PLINT, PLINT);
 
-void  xform	(PLFLT, PLFLT, PLFLT *, PLFLT *);
+void  gmark	(PLINT *pmar[], PLINT *pspa[], PLINT *pnms);
 
-void  gmark (PLINT *pmar[], PLINT *pspa[], PLINT **pnms);
+void  gcure	(PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala);
 
-void  gcure (PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala);
+void  gradv	(void);
 
-void  gradv (void);
+void  grclr	(void);
 
-void  grclr (void);
+void  grbeg	(PLINT dev);
 
-void  grbeg (PLINT dev);
+void  grcol	(void);
 
-void  grcol (void);
+void  gpat	(PLINT *pinc[], PLINT *pdel[], PLINT *pnlin);
 
-void  gpat (PLINT *pinc[], PLINT *pdel[], PLINT *pnlin);
+void  grgra	(void);
 
-void  grgra (void);
+void  spat	(PLINT inc[], PLINT del[], PLINT nlin);
 
-void  spat (PLINT inc[], PLINT del[], PLINT nlin);
+void  smark	(PLINT mar[], PLINT spa[], PLINT nms);
 
-void  smark (PLINT mar[], PLINT spa[], PLINT nms);
+void  scure	(PLINT cur, PLINT pen, PLINT tim, PLINT ala);
 
-void  scure (PLINT cur, PLINT pen, PLINT tim, PLINT ala);
+void  grwid	(void);
 
-void  grwid (void);
-
-void   long2str (long *istring, char *cstring);
-
-void   str2long (char *cstring, long *istring);
+void  gprec	(PLINT *, PLINT *);
 
 	/* Functions that return floats */
 
@@ -1044,13 +1096,11 @@ PLINT wcpcy	(PLFLT);
 
 	/* Driver calls */
 
-void grsetup	(void);
-
-void grorient	(void);
-
 void grinit	(void);
 
-void grline	(PLINT, PLINT, PLINT, PLINT);
+void grline	(PLSHORT, PLSHORT, PLSHORT, PLSHORT);
+
+void grpolyline	(PLSHORT *, PLSHORT *, PLINT);
 
 void grclear	(void);
 
