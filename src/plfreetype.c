@@ -92,6 +92,14 @@
 
 #define FT_TEXT_CACHESZ 65536
 
+/*--------------------------------------------------------------------------*\
+ *  Some debugging macros
+\*--------------------------------------------------------------------------*/
+
+#define Verbose(...) do {if (pls->verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
+#define Debug(...) do {if (pls->debug){fprintf(stderr,__VA_ARGS__);}}while(0)
+
+
 /*              FUNCTION PROTOTYPES    */
 
 /*  Public prototypes, generally available to the API  */
@@ -168,7 +176,7 @@ FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
 		    FT_SetFace( pls ,1);
 		    break;
 		}
-                FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+                /* FT_Set_Transform( FT->face, &FT->matrix, &FT->pos ); by turning this transformation off, we get slightly better results */
                 i+=2;
                 break;
 
@@ -249,6 +257,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 	plwarn("FT_StrX_Y: string too long!");
 
     plgesc(&esc);
+
 
 /*
  *  Adjust for the descender - make sure the font is nice and centred
@@ -655,6 +664,7 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     PLFLT Sin_A,Cos_A;
     FT_Vector adjust;
 
+
 /*
  *  First of all we will see if we are buffering the output. If we are,
  *  then we will take this opportunity to save the text to out local
@@ -671,14 +681,14 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
         FT_SetFace(pls,pls->cfont);
 
 
-/*  this will help work out underlining and overlining
+/*  this will help work out underlining and overlining*/
 
-    printf("%d %d %d %d;",FT->face->underline_position>>6,
+    Debug("%d %d %d %d;",FT->face->underline_position>>6,
 	   FT->face->descender>>6,
 	   FT->face->ascender>>6,
 	   ((FT->face->underline_position*-1)+FT->face->ascender)>>6);
 
-*/
+
 
 /*
  *  Now we work out how long the text is (for justification etc...) and how
@@ -689,15 +699,15 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
  */
 
     FT->matrix.xx =0x10000;
-    FT->matrix.xy =0000;
-    FT->matrix.yx =0;
+    FT->matrix.xy =0x00000;
+    FT->matrix.yx =0x00000;
     FT->matrix.yy =0x10000;
 
     FT_Vector_Transform( &FT->pos, &FT->matrix);
     FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
     FT_StrX_Y(pls,args->string,&w, &h);
-
+    Debug("%s %d,%d;",args->string,w, h);
 
 /*
  *      Set up the transformation Matrix
@@ -822,11 +832,12 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
 #else
     adjust.y=0;
 #endif
+    adjust.x=args->just*w;    /* was *-1; but just minus it in a few line time now */
 
-    adjust.x=args->just*w*-1;
-    FT_Vector_Transform( &adjust, &matrix);
-    x+=adjust.x;
-    y-=adjust.y;
+    FT_Vector_Transform( &adjust, &FT->matrix);    /* was /&matrix); -  was I using the wrong matrix all this time ?*/
+
+    x-=adjust.x;
+    y+=adjust.y;
 
     FT_WriteStr(pls,args->string,x,y); /* write it out */
 }
