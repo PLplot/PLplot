@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/04/30 16:15:06  mjl
+ * Revision 1.31  1994/05/07 03:23:07  mjl
+ * Eliminated some obsolete operations involving fgcolor and bgcolor.
+ *
+ * Revision 1.30  1994/04/30  16:15:06  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -1293,15 +1296,10 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     plsc->ncol0 = plsr->ncol0;
     plsc->icol1 = plsr->icol1;
     plsc->ncol1 = plsr->ncol1;
-    plsc->bgcolorset = plsr->bgcolorset;
 
-    for (i = 0; i < 16; i++)
-	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
-
-    cp_color(&plsc->fgcolor, &plsr->fgcolor);
-    cp_color(&plsc->bgcolor, &plsr->bgcolor);
     cp_color(&plsc->curcolor, &plsr->curcolor);
     for (i = 0; i < 16; i++) {
+	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
 	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
     }
     for (i = 0; i < 256; i++) {
