@@ -15,11 +15,11 @@ hr {  border-width: 0pt; }
 .foot {
   text-align: center;
   font-size: 80%;
-  padding: 3ex;
 }
 
 .signature {
   text-align: right;
+  padding: 3ex;
 }
 
 table {
