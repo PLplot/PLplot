@@ -1,11 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1993/12/06 07:43:09  mjl
+ * Revision 1.18  1993/12/08 06:18:06  mjl
+ * Changed to include new plplotX.h header file.
+ *
+ * Revision 1.17  1993/12/06  07:43:09  mjl
  * Fixed bogus tmpnam call.
  *
  * Revision 1.16  1993/11/19  07:55:42  mjl
  * Added missing CVS id and log fields.
- *
  */
 
 /*----------------------------------------------------------------------*\
@@ -34,7 +36,6 @@
 \*----------------------------------------------------------------------*/
 
 #include "plserver.h"
-#include "xwin.h"
 
 #define NDEV	20		/* Max number of output device types */
 #define plframe_cmd(code) \

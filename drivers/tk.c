@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/12/06 07:43:11  mjl
+ * Revision 1.19  1993/12/08 06:18:09  mjl
+ * Changed to include new plplotX.h header file.
+ *
+ * Revision 1.18  1993/12/06  07:43:11  mjl
  * Fixed bogus tmpnam call.
  *
  * Revision 1.17  1993/11/19  07:31:36  mjl
@@ -95,7 +98,6 @@
 #include "metadefs.h"
 #include "pdf.h"
 #include "plevent.h"
-#include "xwin.h"
 
 #define BUFMAX 3500
 

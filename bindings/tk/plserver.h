@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/11/19 07:31:20  mjl
+ * Revision 1.7  1993/12/08 06:18:08  mjl
+ * Changed to include new plplotX.h header file.
+ *
+ * Revision 1.6  1993/11/19  07:31:20  mjl
  * Fixed the prototype for tk_toplevel().
  *
  * Revision 1.5  1993/09/08  02:32:02  mjl
@@ -31,30 +34,23 @@
 /* This is always included first */
 
 #include "plplotP.h"
+#include "plplotX.h"
 
 /* System headers */
 
-#include <stdio.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <math.h>
 #include <pwd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <errno.h>
 
-#include <X11/Xlib.h>
-#include <X11/cursorfont.h>
-#include <X11/keysym.h>
 #include <X11/Xatom.h>
 #include <X11/Xproto.h>
 #include <X11/Xresource.h>
-#include <X11/Xutil.h>
 
 #include <tk.h>
 
