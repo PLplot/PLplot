@@ -238,6 +238,7 @@ typedef struct {
     unsigned int state;		/* key or button mask */
     unsigned int keysym;	/* key selected */
     unsigned int button;	/* mouse button selected */
+    PLINT subwindow;            /* subwindow (alias subpage, alias subplot) number */
     char string[PL_MAXKEY];	/* translated string */
     int pX, pY;			/* absolute device coordinates of pointer */
     PLFLT dX, dY;		/* relative device coordinates of pointer */

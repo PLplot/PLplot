@@ -88,7 +88,7 @@ void plot3(void);
 int
 main(int argc, char *argv[])
 {
-  PLINT digmax, cur_strm, new_strm;
+    PLINT digmax, cur_strm, new_strm;
     char ver[80];
 
 /* plplot initialization */
@@ -176,11 +176,11 @@ main(int argc, char *argv[])
 
 	    pltext();
 	    if (gin.keysym < 0xFF && isprint(gin.keysym)) 
-		printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
-		       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
+		printf("subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
+		       gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 	    else
-		printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
-		       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
+		printf("subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
+		       gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 
 	    plgra();
 	}

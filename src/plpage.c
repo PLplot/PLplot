@@ -215,11 +215,13 @@ plTranslateCursor(PLGraphicsIn *plg)
 {
     int window;
     c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, 
-                  (PLINT *) &window);
-    if ( window >= 0 )
-     return 1;
+		   (PLINT *) &window);
+    if ( window >= 0 ) { 
+	plg->subwindow = window;
+	return 1;
+    }
     else
-     return 0;
+	return 0;
 }
 
 /*--------------------------------------------------------------------------*\
