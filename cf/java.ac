@@ -38,11 +38,21 @@ if test "$enable_java" = "yes"; then
 
 fi
 
-if test "$enable_java" = "yes"; then
-    # Check usual search path
-    AC_CHECK_HEADERS([jni.h],[AC_MSG_RESULT(yes);jni_in_system=yes],[AC_MSG_RESULT(no);jni_in_system=no])
+# Check for setting of java-home and java-incdir
+PL_ARG_WITH(java-home, [User-specified path to the top directory of the java SDK],[])
+PL_ARG_WITH(java-incdir, [User-specified path to the java header files],[])
 
-    # Check in JAVA_HOME subdirs
+if test "$enable_java" = "yes"; then
+
+    if test -n "$with_java_incdir" ; then
+        JAVAINCDIR=$with_java_incdir
+    fi
+
+    if test -n "$with_java_home" ; then
+        JAVA_HOME=$with_java_home
+    fi
+
+    # Check in with_java_home subdirs
     AC_MSG_CHECKING([for jni.h (Java Native Interface)])
     if test -n "$JAVA_HOME"; then
         if test -r "$JAVA_HOME/include/jni.h"; then
@@ -52,6 +62,10 @@ if test "$enable_java" = "yes"; then
 	    AC_MSG_RESULT(no)
         fi
     fi
+
+    # Check usual search path
+    AC_CHECK_HEADERS([jni.h],[AC_MSG_RESULT(yes);jni_in_system=yes],[AC_MSG_RESULT(no);jni_in_system=no])
+
 
     # Let's assume if jni.h is in standard search path then we
     # don't need to look for jni_md.h as well
