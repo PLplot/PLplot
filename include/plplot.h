@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:43  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/07/31 06:05:16  mjl
+   Added prototype for new function used in contour plots (pltrf0).
 
+ * Revision 1.1  1992/05/20  21:33:43  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -486,6 +489,8 @@ void  pltr1	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *, \
 
 void  pltr2	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *, \
 			PLFLT *, PLFLT *, PLINT, PLINT));
+
+void  pltr0f	PLARGS((PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty));
 
 void  pltr2f	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *, \
 			PLFLT *, PLFLT *, PLINT, PLINT));
