@@ -309,7 +309,7 @@ function __pl_plotit
 
   plcol(15);
   pllab(tdeblank(__pl.xlabel(__pl_strm,:)), tdeblank(__pl.ylabel(__pl_strm,:)), tdeblank(__pl.tlabel(__pl_strm,:)));
-  plflush;pleop;
+  plflush;
 
   ## if (!ishold)
   __pl.items=1;

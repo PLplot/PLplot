@@ -62,6 +62,6 @@ function __pl_mesh(x, y, z, s)
   
   plcol(15);
   pllab(" ", " ", tdeblank(__pl.tlabel(__pl_strm,:)));
-  plflush;pleop;
+  plflush;
 
 endfunction

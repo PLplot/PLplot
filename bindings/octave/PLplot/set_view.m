@@ -79,7 +79,7 @@ function set_view (alt, az)
 	   "Z axis", 0.0, 0)
 
     plot3d(x,y,z,3,1);
-    plflush;pleop;
+    plflush;
 
     xm = ym = zm = 0;
     xM = yM = zM = 1;
@@ -132,7 +132,7 @@ function set_view (alt, az)
       plmtex("t", 3, 0.5, 0.5, sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
 
       plot3d(x,y,z,3,1);
-      plflush;pleop;
+      plflush;
     else
       __pl.az(__pl_strm) = az + c_az; 
       __pl.alt(__pl_strm) = alt + c_alt;

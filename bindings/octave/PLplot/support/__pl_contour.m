@@ -103,7 +103,7 @@ function __pl_contour(x, y, z, n)
   pllab(tdeblank(__pl.xlabel(__pl_strm,:)),
 	tdeblank(__pl.ylabel(__pl_strm,:)),
 	tdeblank(__pl.tlabel(__pl_strm,:)));
-  plflush;pleop;
+  plflush;
   empty_list_elements_ok = old_empty_list_elements_ok;
 
 endfunction

@@ -163,7 +163,7 @@ function shade(x, y, z, levels, cont )
 
   plcol(15);
   pllab(tdeblank(__pl.xlabel(__pl_strm,:)), tdeblank(__pl.ylabel(__pl_strm,:)), tdeblank(__pl.tlabel(__pl_strm,:)));
-  plflush;pleop;	
+  plflush;
   empty_list_elements_ok = old_empty_list_elements_ok;
       
 endfunction
