@@ -64,7 +64,8 @@ invalid command name "Pltkwin"
 and similarly for tk04.
 
 * Permissions problem with generated plplot-config and plplot-test.sh in
-plplot/tmp.  I don't know the proper autoconf method of fixing this.
+plplot/tmp.  How do you get autoconf to generate the files with the correct
+permissions?
 
 * bindings/tk/plcolor.tcl has execute permissions that should be removed.
 examples/tcl/stats.log should be made world-readable.  Both these permission
