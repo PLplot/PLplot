@@ -40,7 +40,7 @@ install_lib:
 	-cd ../scripts; cp pl* $(BIN_DIR)
 	-cd ../include; \
 	 cp plplotP.h plplot.h plplotX.h plplotTK.h \
-	    plevent.h plstream.h pdf.h tclMatrix.h \
+	    plevent.h plstream.h pdf.h tclMatrix.h plcdemos.h \
 	    $(INCLUDE_DIR)
 
 install_demos:
