@@ -12,12 +12,13 @@ PLplot Resources Page
 <td align="left" valign="top" ROWSPAN=1000>
 
 <table border="0">
+<tr>
 <td align=center nowrap>
 <table>
 <tr>
 <td width=1> </td>
 <td nowrap>
-<font face="Helvetica, Arial" size=+1>
+<font face="Helvetica, Arial" size="+1">
 <br>
 <b> PLplot Site Menu </b>
 </font>
@@ -30,22 +31,23 @@ PLplot Resources Page
 
 <tr>
 <td>
-<hr size=1 noshade=noshade color="#000000">
+<hr size=1 noshade=noshade>
 </td>
 </tr>
 
 
+<tr>
 <td>
 <table border=0 cellpadding=0 cellspacing=2>
-<font face="Helvetica, Arial">
+<!-- <font face="Helvetica, Arial"> -->
 <tr><td>
-<A HREF="../index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALIGN=top></A>
+<A HREF="../index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALT="." ALIGN=top></A>
 </td><td>
 <A HREF="../index.html">Introduction</A>
 </td></tr>
 
 <tr><td>
-<A HREF="../resources/index.html"><IMG border=0 SRC="../icons/redball.gif" ALIGN=top></A>
+<A HREF="../resources/index.html"><IMG border=0 SRC="../icons/redball.gif" ALT="* " ALIGN=top></A>
 </td><td>
 <b>
 <A HREF="../resources/index.html">Resources</A>
@@ -53,36 +55,37 @@ PLplot Resources Page
 </td></tr>
 <tr><td>
 </td><td>
+<UL>
 <LI> Documentation
 <LI> Mailing List
+</UL>
 </td></tr>
-</tr>
 
 <tr><td>
-<A HREF="../source/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALIGN=top></A>
+<A HREF="../source/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALT="." ALIGN=top></A>
 </td><td>
 <A HREF="../source/index.html">Source Code</A>
 </td></tr>
 
 <tr><td>
-<A HREF="../examples/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALIGN=top></A>
+<A HREF="../examples/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALT="." ALIGN=top></A>
 </td><td>
 <A HREF="../examples/index.html">Examples</A><br>
 </td></tr>
 
 <tr><td>
-<A HREF="../demo/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALIGN=top></A>
+<A HREF="../demo/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALT="." ALIGN=top></A>
 </td><td>
 <A HREF="../demo/index.html">Try it online</A><br>
 </td></tr>
 
 <tr><td>
-<A HREF="../credits/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALIGN=top></A>
+<A HREF="../credits/index.html"><IMG border=0 SRC="../icons/whiteball.gif" ALT="." ALIGN=top></A>
 </td><td>
 <A HREF="../credits/index.html">Credits</A><br>
 </td></tr>
 </table>
-</font>
+<!-- </font> -->
 </td>
 </tr>
 
@@ -92,7 +95,7 @@ PLplot Resources Page
 </td>
 
 <td rowspan=1000 bgcolor="#000000" width=1>
-<IMG SRC="../icons/pad.gif" width=1>		        <! a little black spacer >
+<IMG SRC="../icons/pad.gif" ALT=" " width=1>		        <! a little black spacer >
 </td>
 
 <td rowspan=1000>		<! a little spacer>
@@ -121,7 +124,7 @@ PLplot Resources Page
 <table border="0">
 <tr>
 <td colspan=2 align="left">
-<font size=+2>
+<font size="+2">
 Documentation
 </font>
 </td>
@@ -148,7 +151,7 @@ with PLplot 5.0
 <tr>
 <td colspan=2 align="left">
 
-<font size=+2>
+<font size="+2">
 Mailing Lists
 </font>
 
@@ -174,10 +177,43 @@ plplot-general-request@plplot.org</a>,
 containing the message: "subscribe".
 
 </td>
+
+
+<tr> <td> <br> </td> </tr>
+<tr>
+<td colspan=2 align="left">
+
+<font size="+2">
+Debian Packages
+</font>
+
+</td>
+
+<tr>
+<td>
+</td>
+<td>
+PLplot packages for the stable distribution of 
+<A HREF="http://www.debian.org">Debian GNU/Linux</A> 
+are available <A HREF="debian/dist">here</A> as a convenience for the
+users.  To upgrade your old packages with APT, include the following lines
+in your /etc/apt/sources.list file: 
+<P><B> 
+deb&nbsp;http://plplot.sourceforge.net/resources/debian&nbsp;./
+<BR>
+deb&nbsp;http://plplot.sourceforge.net/resources/debian&nbsp;./
+</B></P>
+<P>
+Debian users running either the testing or the unstable distributions
+should point APT to the respective locations at any Debian mirror.
+</P>
+
+</td>
+
+</table>
 </table>
 
 
-</table>
 </body>
 </html>
 
