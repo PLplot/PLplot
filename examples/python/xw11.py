@@ -46,7 +46,9 @@ def main():
 
     x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
-    z = transpose(resize(cos((2.*pi)*x),(len(y),len(x))))*(sin((2.0*pi)*y))
+    x.shape = (-1,1)
+    z = cos((2.*pi)*x)*(sin((2.0*pi)*y))
+    x.shape = (-1,)
 
     for k in range(4):
 	pladv(0)

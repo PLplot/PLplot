@@ -102,32 +102,32 @@ def test_poly(k):
 ##      r = 1 :=)
 
 	cosi0 = cos(THETA(arrayrange(20)))
-	cosi0expand = transpose(resize(cosi0,(20,20)))
 	cosi1 = cos(THETA(arrayrange(1,21)))
-	cosi1expand = transpose(resize(cosi1,(20,20)))
 	sini0 = sin(THETA(arrayrange(20)))
-	sini0expand = transpose(resize(sini0,(20,20)))
 	sini1 = sin(THETA(arrayrange(1,21)))
-	sini1expand = transpose(resize(sini1,(20,20)))
+	cosi0.shape = (-1,1)
+	cosi1.shape = (-1,1)
+	sini0.shape = (-1,1)
+	sini1.shape = (-1,1)
 	cosj0 = cos(PHI(arrayrange(20)))
 	cosj1 = cos(PHI(arrayrange(1,21)))
 	sinj0 = sin(PHI(arrayrange(20)))
 	sinj1 = sin(PHI(arrayrange(1,21)))
 
-	x0 = cosi0expand*sinj0
-	y0 = sini0expand*sinj0
+	x0 = cosi0*sinj0
+	y0 = sini0*sinj0
 	z0 = cosj0
 	
-	x1 = cosi1expand*sinj0
-	y1 = sini1expand*sinj0
+	x1 = cosi1*sinj0
+	y1 = sini1*sinj0
 	z1 = cosj0
 	
-	x2 = cosi1expand*sinj1
-	y2 = sini1expand*sinj1
+	x2 = cosi1*sinj1
+	y2 = sini1*sinj1
 	z2 = cosj1
 	
-	x3 = cosi0expand*sinj1
-	y3 = sini0expand*sinj1
+	x3 = cosi0*sinj1
+	y3 = sini0*sinj1
 	z3 = cosj1
 	
 	x4 = x0

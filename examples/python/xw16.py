@@ -26,10 +26,10 @@ def main():
     # Set up data array
 
     x = (arrayrange(nx) - .5*nx) / (nx/2.)
-    xexpand = transpose(resize(x,(ny,nx)))
+    x.shape = (-1,1)
     y = (arrayrange(ny) - .5*ny) / (ny/2.) - 1.
-    zz = -sin(7.*xexpand) * cos(7.*y) + xexpand*xexpand - y*y
-    ww = -cos(7.*xexpand) * sin(7.*y) + 2.*xexpand*y
+    zz = -sin(7.*x) * cos(7.*y) + x*x - y*y
+    ww = -cos(7.*x) * sin(7.*y) + 2.*x*y
     
     zmin = min(zz.flat)
     zmax = max(zz.flat)
@@ -48,11 +48,9 @@ def main():
     yg1 = yy - distort * cos( .5 * pi * yy )
 
     # Build the 2-d coord arrays.
-    argx = .5 * pi * xx
-    argy = .5 * pi * yy
-    xxexpand = transpose(resize(xx,(ny,nx)))
-    xg2 = xxexpand + distort*cos((0.5*pi)*xxexpand)*cos((0.5*pi)*yy)
-    yg2 = yy - distort*cos((0.5*pi)*xxexpand)*cos((0.5*pi)*yy)
+    xx.shape = (-1,1)
+    xg2 = xx + distort*cos((0.5*pi)*xx)*cos((0.5*pi)*yy)
+    yg2 = yy - distort*cos((0.5*pi)*xx)*cos((0.5*pi)*yy)
 
     # Parse and process command line arguments
 
@@ -156,11 +154,11 @@ def main():
     # Now build the new coordinate matrices.
     
     r = arrayrange(nx)/(nx-1.)
-    rexpand = transpose(resize(r,(ny,nx)))
+    r.shape = (-1,1)
     t = (2.*pi/(ny-1.))*arrayrange(ny)
-    xg = rexpand*cos(t)
-    yg = rexpand*sin(t)
-    z = exp(-rexpand*rexpand)*cos(5.*pi*rexpand)*cos(5.*t)
+    xg = r*cos(t)
+    yg = r*sin(t)
+    z = exp(-r*r)*cos(5.*pi*r)*cos(5.*t)
 
     # Need a new clevel to go along with the new data set.
 

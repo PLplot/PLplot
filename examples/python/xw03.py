@@ -38,10 +38,14 @@ def main():
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
     i = 0.1*arrayrange(11)
-    #ravel(outerproduct(i,x0)) and ravel(outerproduct(i,y0)) is what we are 
+    #outerproduct(i,x0) and outerproduct(i,y0) is what we are 
     #mocking up here since old numpy version does not have outerproduct.
-    x=ravel(transpose(resize(i,(len(x0),len(i))))*x0)
-    y=ravel(transpose(resize(i,(len(y0),len(i))))*y0)
+    i.shape = (-1,1)
+    x=i*x0
+    y=i*y0
+    #flatten result
+    x.shape = (-1,)
+    y.shape = (-1,)
     
     # Draw circles for polar grid
 

@@ -46,7 +46,9 @@ def main():
 
     x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
-    r2 = transpose(resize(x*x,(len(y),len(x))))+(y*y)
+    x.shape = (-1,1)
+    r2 = (x*x) + (y*y)
+    x.shape = (-1,)
     z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
     for k in range(4):

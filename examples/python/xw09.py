@@ -35,9 +35,10 @@ def main():
 
     xx = (arrayrange(XPTS) - XPTS/2) / float((XPTS/2))
     yy = (arrayrange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
-    z = transpose(resize(xx*xx,(len(yy),len(xx))))-(yy*yy)
+    xx.shape = (-1,1)
+    z = (xx*xx)-(yy*yy)
     # 2.*outerproduct(xx,yy) for new versions of Numeric which have outerproduct.
-    w = 2.*transpose(resize(xx,(len(yy),len(xx))))*yy
+    w = 2.*xx*yy
 
     plenv( 0., 1.*(XPTS-1), 0., 1.*(YPTS-1), 0, 0 )
     plcol0(2)
