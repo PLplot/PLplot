@@ -26,8 +26,10 @@ m_files = \
 	__pl_draw_legend.m \
 	__pl_fill.m \
 	__pl_init.m \
+	__pl_logplotit.m \
 	__pl_matstr.m \
 	__pl_mesh.m \
+	__pl_meshplotit.m \
 	__pl_opt.m \
 	__pl_plenv.m \
 	__pl_plot3.m \
