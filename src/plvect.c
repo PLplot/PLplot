@@ -69,9 +69,9 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	 PLFLT scale, PLFLT dx, PLFLT dy)
 {
     PLFLT uu, vv;
-    PLINT i, j, npts;
+    PLINT i, j, npts = 4;
     PLINT px0, py0, dpx, dpy;
-    PLINT *a_x, *a_y;
+    PLINT a_x[npts], a_y[npts];
     PLFLT max_u, max_v;
     double t;
 
