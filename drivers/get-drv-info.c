@@ -41,9 +41,8 @@ main (int argc, char* argv[])
   char** info;
   FILE* fd;
 
-  /* Establish a handler for SIGALRM signals. */
+  /* Establish a handler for SIGSEGV signals. */
   signal (SIGSEGV, catch_segv);
-
 
   lt_dlinit ();
   dlhand = lt_dlopenext (drvnam);
