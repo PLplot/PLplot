@@ -31,7 +31,7 @@
  * 
  * To use PLplot from C or C++, it is only necessary to 
  * 
- *      #include "plplot.h"
+ *      #include "plplot/plplot.h"
  * 
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file
