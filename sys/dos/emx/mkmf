@@ -3,7 +3,7 @@
 # mkmf - a Makefile build script for DOS
 # it *must* be run from the emx directory
 #
-# try to avoid mixed case in ./cf (messes up NFS mounted drives)
+# NB: none of the names in ./cf should have mixed case
 # --------------------------------------------------------------------
 
 enable_f77="no"
@@ -11,10 +11,12 @@ plcf="../../../cf"
 
 # --------------------------------------------------------------------
 if [ ! -f mkmf ]
-then 
-   echo " ERROR: mkmk *must* be run from the emx directory"
-   exit
+then
+    echo " ERROR: mkmk *must* be run from the emx directory"
+    exit
 fi
+# make certain that "tmp" directory exists
+if [ ! -d ./tmp ]; then mkdir ./tmp; fi
 
 # Makefile initialization
 echo "creating tmp/makefile"
@@ -23,11 +25,11 @@ cat cf/init.in		>tmp/makefile
 
 # Default target, core source and object file lists
 
-cat $plcf/dist.in	>>tmp/makefile 
+cat $plcf/dist.in	>>tmp/makefile
 
 # Copy source file lists and add compiler specific source to makefile
 
-cat cf/emx.in	>>tmp/makefile
+cat cf/emx.in		>>tmp/makefile
 
 # Optional packages
 
@@ -40,23 +42,23 @@ cat cf/lib.in		>>tmp/makefile
 
 # Program and demo file dependencies, targets
 
-cat $plcf/exes.in	>>tmp/makefile 
-cat $plcf/demos.in	>>tmp/makefile 
+cat $plcf/exes.in	>>tmp/makefile
+cat $plcf/demos.in	>>tmp/makefile
 
 # Installation and miscellaneous.
 
 cat cf/install.in	>>tmp/makefile
 if [ -f cf/Misc.in ]
-then 
-   cat cf/Misc.in		>>tmp/makefile
-elif [ -f cf/misc.in ]			# no mixed case ?
-then 
-   cat cf/misc.in		>>tmp/makefile
+then
+    cat cf/Misc.in		>>tmp/makefile
+elif [ -f cf/misc.in ]		# no mixed case ?
+then
+    cat cf/misc.in		>>tmp/makefile
 fi
 
 #  Object file dependencies
 
-cat $plcf/objs.in	>>tmp/makefile 
+cat $plcf/objs.in	>>tmp/makefile
 
 # make list of objects for the response file
 
@@ -78,24 +80,26 @@ cat cf/initdemo.in	>>tmp/makedemo
 
 cat $plcf/demos.in	>>tmp/makedemo
 if [ -f cf/Miscdemo.in ]
-then 
-   cat cf/Miscdemo.in		>>tmp/makedemo
+then
+    cat cf/Miscdemo.in		>>tmp/makedemo
 elif [ -f cf/miscdemo.in ]		# no mixed case ?
 then
-   cat cf/miscdemo.in		>>tmp/makedemo
+    cat cf/miscdemo.in		>>tmp/makedemo
 fi
-
+ 
 # give some reminders of what is to be done
-
+echo "done"
 echo ""
+echo ""
+echo "unix% ./link main stubs NFS	(an NFS mounted drive  -- only done once)"
+echo "dos$  .\link main stubs		(ordinary installation -- only done once)"
 echo ""
 echo "To Compile:"
 echo ""
-echo "%cd tmp"
-echo "%make links			(only done once)"
-echo "%make"
-echo "%make install"
+echo "dos$ cd tmp"
+echo "dos$ make"
+echo "dos$ make install"
 
-# unset local variables 
+# unset local variables
 unset enable_f77 plcf
 # -------------------------------------------------------- end of file

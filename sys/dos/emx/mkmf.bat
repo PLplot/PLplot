@@ -8,12 +8,15 @@ set enable_f77="no"
 set plcf=..\..\..\cf
 
 :# --------------------------------------------------------------------
-if exist mkmf.bat goto okstart
-echo "ERROR: mkmk *must* be run from the emx directory"
+if exist mkmf.bat goto istmp
+echo "ERROR: mkmf *must* be run from the emx directory"
 goto unset
 
+:# make certain that "tmp" directory exists
+:istmp
+if not exist .\tmp\con mkdir .\tmp
+
 :# Makefile initialization
-:okstart
 echo "creating tmp\Makefile"
 
 type cf\init.in		>tmp\Makefile
@@ -24,7 +27,7 @@ type %plcf%\dist.in	>>tmp\Makefile
 
 :# Copy source file lists and add compiler specific source to makefile
 
-type cf\emx.in	>>tmp\Makefile
+type cf\emx.in		>>tmp\Makefile
 
 :# Optional packages
 
@@ -70,17 +73,19 @@ type cf\initdemo.in	>>tmp\Makedemo
 type %plcf%\demos.in	>>tmp\Makedemo
 type cf\Miscdemo.in	>>tmp\Makedemo
 
-
 :# give some reminders of what is to be done
-
+echo done
+echo.
+echo.
+echo 
+echo dos$  .\link main stubs		(ordinary installation -- only done once)
 echo.
 echo.
 echo To Compile:
 echo.
-echo %cd tmp
-echo %make links			(only done once)
-echo %make
-echo %make install
+echo dos$ cd tmp
+echo dos$ make
+echo dos$ make install
 
 :# unset local variables
 :unset
