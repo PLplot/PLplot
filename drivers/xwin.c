@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.62  1995/05/15 21:54:10  mjl
+ * Revision 1.63  1995/05/19 22:16:58  mjl
+ * Undid some of the damage from the last commit.  It turns out that while
+ * writes to the screen first look better on a resize, writes to the pixmap
+ * first (which is blitted to the screen when the write is finished) look
+ * better on a redraw, e.g. when scrolling.  So now the code is no longer
+ * shared between them to allow the order of operations to be different in
+ * each case.
+ *
+ * Revision 1.62  1995/05/15  21:54:10  mjl
  * Fixed problem with color allocation that was causing code death on
  * monochrome X terminals.  Reordered resize operations so that window is
  * drawn to first, then pixmap copied after that (more natural looking).
@@ -1824,6 +1832,7 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    int write_to_pixmap = dev->write_to_pixmap;
 
     dbug_enter("ResizeCmd");
 
@@ -1852,17 +1861,28 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
     dev->xscale = dev->xscale * dev->xscale_init;
     dev->yscale = dev->yscale * dev->yscale_init;
 
-/* Need to regenerate pixmap copy of window using new dimensions */
+/* Initialize & redraw to window */
+/* The ordering of this block and the next is reversed from a simple redraw; */
+/* it looks better this way */
+
+    dev->write_to_pixmap = 0;
+
+    plD_bop_xw(pls);
+    plRemakePlot(pls);
+    XSync(xwd->display, 0);
+
+    dev->write_to_pixmap = write_to_pixmap;
+
+/* Need to regenerate pixmap copy of window using new dimensions, then */
+/* copy on-screen window to pixmap.  */
 
     if (dev->write_to_pixmap) {
-	XSync(xwd->display, 0);
 	XFreePixmap(xwd->display, dev->pixmap);
 	CreatePixmap(pls);
+	XCopyArea(xwd->display, dev->window, dev->pixmap, dev->gc, 0, 0,
+		  dev->width, dev->height, 0, 0);
+	XSync(xwd->display, 0);
     }
-
-/* Now do a redraw using the new size */
-
-    RedrawCmd(pls);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1877,6 +1897,7 @@ RedrawCmd(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    int write_to_window = dev->write_to_window;
 
     dbug_enter("RedrawCmd");
 
@@ -1887,17 +1908,21 @@ RedrawCmd(PLStream *pls)
 	return;
     }
 
-/* Initialize & redraw to window, then copy to pixmap. */
+/* Initialize & redraw (to pixmap, if available). */
 
-    dev->write_to_pixmap = 0;
-    XSync(xwd->display, 0);
+    if (dev->write_to_pixmap)
+	dev->write_to_window = 0;
+
     plD_bop_xw(pls);
     plRemakePlot(pls);
-    dev->write_to_pixmap = ! pls->nopixmap;
     XSync(xwd->display, 0);
 
+    dev->write_to_window = write_to_window;
+
+/* If pixmap available, fake an expose */
+
     if (dev->write_to_pixmap) {
-	XCopyArea(xwd->display, dev->window, dev->pixmap, dev->gc, 0, 0,
+	XCopyArea(xwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
 		  dev->width, dev->height, 0, 0);
 	XSync(xwd->display, 0);
     }
