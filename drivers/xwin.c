@@ -547,6 +547,8 @@ plD_tidy_xw(PLStream *pls)
 	XFreeGC(xwd->display, dev->gc);
 	XFreeGC(xwd->display, xwd->gcXor);
 	XCloseDisplay(xwd->display);
+        free_mem(xwd->cmap0);
+        free_mem(xwd->cmap1);
 	free_mem(xwDisplay[ixwd]);
     }
     /* ANR: if we set this here the tmp file will not be closed */
@@ -925,18 +927,15 @@ OpenXwin(PLStream *pls)
 	if (synchronize)
 	    XSynchronize(xwd->display, 1);
 
-/* Get colormap and visual */
-
+    /* Get colormap and visual */
 	xwd->map = DefaultColormap(xwd->display, xwd->screen);
-
 	GetVisual(pls);
 
-/*
- * Figure out if we have a color display or not.
- * Default is color IF the user hasn't specified and IF the output device is
- * not grayscale.
- */
-
+    /*
+     * Figure out if we have a color display or not.
+     * Default is color IF the user hasn't specified and IF the output device
+     * is not grayscale.
+     */
 	if (pls->colorset)
 	    xwd->color = pls->color;
 	else {
@@ -944,8 +943,18 @@ OpenXwin(PLStream *pls)
 	    xwd->color = ! AreWeGrayscale(xwd->display);
 	}
 
-/* Allocate & set background and foreground colors */
+    /* Allocate space for colors */
+        xwd->ncol0_alloc = pls->ncol0;
+        xwd->cmap0 = (XColor *) calloc(pls->ncol0, (size_t) sizeof(XColor));
+        if (xwd->cmap0 == 0)
+            plexit("couldn't allocate space for cmap0 colors");
 
+        xwd->ncol1_alloc = CMAP1_COLORS;
+        xwd->cmap1 = (XColor *) calloc(CMAP1_COLORS, (size_t) sizeof(XColor));
+        if (xwd->cmap1 == 0)
+            plexit("couldn't allocate space for cmap1 colors");
+
+    /* Allocate & set background and foreground colors */
 	AllocBGFG(pls);
 	SetBGFG(pls);
     }
@@ -2789,6 +2798,15 @@ AllocCmap0(PLStream *pls)
     for (i = 1; i < xwd->ncol0; i++) {
         unsigned long pixel = xwd->cmap0[i].pixel;
         XFreeColors(xwd->display, xwd->map, &pixel, 1, 0);
+    }
+
+/* If the number of colors increased, need to allocate enough space for them */
+    if ( pls->ncol0 > xwd->ncol0_alloc ) {
+        xwd->ncol0_alloc = pls->ncol0;
+        xwd->cmap0 = (XColor *)
+            realloc( xwd->cmap0, (size_t) pls->ncol0 * sizeof(XColor) );
+        if (xwd->cmap0 == 0)
+            plexit("couldn't allocate space for cmap0 colors");
     }
 
     if (xwd->rw_cmap) {
