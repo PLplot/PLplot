@@ -158,19 +158,23 @@ if test "$enable_java" = "yes"; then
     fi
 
     if test -n "$JAVAINCDIR"; then
+	# See if machine dependent files exist in JAVAINCDIR (J2RE 1.3.0 IBM)
+	if test -r "$JAVA_HOME/include/jni_md.h"; then
+	    JAVAMDINCDIR="$JAVA_HOME/include"
+	else
 	# Now we need to find the machine dependent directory.
-	case $system in 
-	    Linux* )
-		JAVAMDINCDIR="$JAVAINCDIR/linux"
-	    ;;
-	    SunOS-5* )
-		JAVAMDINCDIR="$JAVAINCDIR/solaris"
-	    ;;
-	    * ) 	
-		AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
-	    ;;
-	esac
-
+	    case $system in 
+		Linux* )
+		    JAVAMDINCDIR="$JAVAINCDIR/linux"
+		;;
+		SunOS-5* )
+		    JAVAMDINCDIR="$JAVAINCDIR/solaris"
+		;;
+		* ) 	
+		    AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
+		;;
+	    esac
+	fi
 	if test ! -r "$JAVAMDINCDIR/jni_md.h"; then
 	    JAVAMDINCDIR="$JAVAINCDIR/genunix"
 	    if test ! -r "$JAVAMDINCDIR/jni_md.h"; then
