@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1994/05/16 21:26:29  mjl
+ * Revision 1.39  1994/05/23 22:08:00  mjl
+ * Moved code responsible for getting Visual back to where it belongs
+ * (it was misplaced last update, causing core dumps on some systems).
+ * Assignment of pixel values in cmap1 now staggered, in order to avoid
+ * a strange occurance when drawing rubber-banded boxes using xor'ed GC's
+ * (e.g. while zooming in plframe widget).
+ *
+ * Revision 1.38  1994/05/16  21:26:29  mjl
  * The default has been reset to use the default colormap.  The constant
  * ccmap at the head of xwin.c must be set to 1 to get a custom colormap.
  * This should really be a command line switch, except now I'm having no
@@ -1140,14 +1147,30 @@ Init_Colors(PLStream *pls)
 
     Colormap default_map;
     PLColor fgcolor;
-    int i, j, npixels;
     int gslevbg, gslevfg;
+    XVisualInfo vTemplate, *visualList;
+    int visuals_matched;
 
     dbug_enter("Init_Colors");
 
 /* Grab default color map */
 
     default_map = DefaultColormap(dev->display, dev->screen);
+
+/* Get visual info */
+
+    vTemplate.screen = dev->screen;
+    vTemplate.depth = 8;
+
+    visualList = XGetVisualInfo( dev->display,
+				 VisualScreenMask | VisualDepthMask,
+				 &vTemplate, &visuals_matched );
+
+    if ( ! visuals_matched) 
+	plexit("Unable to allocate adequate visuals.");
+
+    dev->vi = &visualList[0];	/* Chose # 0 for lack of a better idea. */
+    dev->depth = vTemplate.depth;
 
 /*
  * Figure out if we have a color display or not.
@@ -1242,8 +1265,6 @@ Init_CustomCmap(PLStream *pls)
 
     Colormap default_map;
     XColor xwm_colors[MAX_COLORS];
-    XVisualInfo vTemplate, *visualList;
-    int visuals_matched;
     int i, j, npixels;
     unsigned long plane_masks[1];
     unsigned long pixel, pixels[MAX_COLORS];
@@ -1286,22 +1307,7 @@ Init_CustomCmap(PLStream *pls)
     }
     XAllocColor(dev->display, default_map, &dev->fgcolor);
 
-/* Get visual and create custom color map */
-
-    vTemplate.screen = dev->screen;
-    vTemplate.depth = 8;
-
-    visualList = XGetVisualInfo( dev->display,
-				 VisualScreenMask | VisualDepthMask,
-				 &vTemplate, &visuals_matched );
-
-    if ( ! visuals_matched) 
-	plexit("Unable to allocate adequate visuals.");
-
-    dev->vi = &visualList[0];	/* Chose # 0 for lack of a better idea. */
-
-    dev->depth = vTemplate.depth;
-    dev->pixels = 1 << dev->depth;
+/* Create color map */
 
     dev->map = XCreateColormap( dev->display, DefaultRootWindow(dev->display),
 				dev->vi->visual, AllocNone );
@@ -1451,8 +1457,20 @@ Init_DefaultCmap(PLStream *pls)
 
     fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
     dev->ncol1 = npixels;
-    for (i = 0; i < dev->ncol1; i++) {
-	dev->cmap1[i].pixel = pixels[i];
+
+/* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
+/* Skipping by 2 seems to do the job best */
+
+    for (j = i = 0; i < dev->ncol1; i++) {
+	while (pixels[j] == 0) 
+	    j++;
+
+	dev->cmap1[i].pixel = pixels[j];
+	pixels[j] = 0;
+
+	j += 2;
+	if (j >= dev->ncol1)
+	    j = 0;
     }
 
     Cmap1Init(pls);
