@@ -4,7 +4,7 @@
 	numeric axis labels.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void pldtik()

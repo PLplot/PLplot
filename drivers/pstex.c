@@ -3,13 +3,13 @@
    PLplot pstex (Postscript/LaTeX) device driver.
 */
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_pstex
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/ps.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "ps.h"
 
 /*--------------------------------------------------------------------------*\
  * plD_init_pstex()

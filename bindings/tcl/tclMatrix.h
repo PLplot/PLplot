@@ -29,7 +29,7 @@
 #ifndef __TCLMATRIX_H__
 #define __TCLMATRIX_H__
 
-#include "plplot/plplot.h"
+#include "plplot.h"
 #include <tcl.h>
 
 typedef PLFLT Mat_float;

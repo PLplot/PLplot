@@ -6,12 +6,12 @@
   Contributed by John C. Atkinson and Zulfi Cumali.
   Slightly modified by Geoffrey Furnish.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_pbm
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 
 void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
 

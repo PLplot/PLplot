@@ -2,16 +2,16 @@
 
 	PLplot X-windows device driver.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #define DEBUG
 
 #ifdef PLD_xwin
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
-#include "plplot/plxwd.h"
-#include "plplot/drivers.h"
-#include "plplot/plevent.h"
+#include "plplotP.h"
+#include "plxwd.h"
+#include "drivers.h"
+#include "plevent.h"
 
 static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */

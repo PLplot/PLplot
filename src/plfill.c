@@ -3,7 +3,7 @@
 	Polygon pattern fill.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 #define DTOR            0.0174533
 #define BINC            50

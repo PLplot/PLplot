@@ -10,7 +10,7 @@
 #ifndef __TCPIP_H__
 #define __TCPIP_H__
 
-#include "plplot/pdf.h"
+#include "pdf.h"
 #include <tcl.h>
 
 /* Modified version of the "Tdp_PacketSend" command. */

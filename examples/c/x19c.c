@@ -4,7 +4,7 @@
 	Contributed by Wesley Ebisuzaki.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
  * mapform

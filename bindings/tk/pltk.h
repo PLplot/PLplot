@@ -9,7 +9,7 @@
 #ifndef __PLTK_H__
 #define __PLTK_H__
 
-#include "plplot/pltcl.h"
+#include "pltcl.h"
 #include <tk.h>
 
 #ifdef __cplusplus

@@ -4,12 +4,12 @@
  *	Also prototypes for stream & device utility functions.
 */
 
-#include "plplot/pdf.h"
+#include "pdf.h"
 
 #ifndef __PLSTRM_H__
 #define __PLSTRM_H__
 
-#include "plplot/disptab.h"
+#include "disptab.h"
 
 /*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.

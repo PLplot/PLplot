@@ -18,7 +18,7 @@
  * A miscellaneous assortment of Tcl support functions.
  */
 
-#include "plplot/plserver.h"
+#include "plserver.h"
 
 extern int Matrix_Init(Tcl_Interp* interp);
 
@@ -81,7 +81,7 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
 
-    Tcl_PkgProvide(interp,"Pltk",PLPLOT_VERSION);
+    Tcl_PkgProvide(interp,"Pltk",VERSION);
 
     return TCL_OK;
 }

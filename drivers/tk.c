@@ -13,18 +13,18 @@
 
 #define DEBUG
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_tk
 
 #define NEED_PLDEBUG
-#include "plplot/pltkd.h"
-#include "plplot/plxwd.h"
-#include "plplot/pltcl.h"
-#include "plplot/tcpip.h"
-#include "plplot/drivers.h"
-#include "plplot/metadefs.h"
-#include "plplot/plevent.h"
+#include "pltkd.h"
+#include "plxwd.h"
+#include "pltcl.h"
+#include "tcpip.h"
+#include "drivers.h"
+#include "metadefs.h"
+#include "plevent.h"
 
 #if HAVE_UNISTD_H
 # include <unistd.h>

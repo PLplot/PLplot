@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "plplot/tclMatrix.h"
+#include "tclMatrix.h"
 
 /* Cool math macros */
 

@@ -41,9 +41,9 @@
 #define DEBUG_ENTER
 */
 
-#include "plplot/plserver.h"
-#include "plplot/plevent.h"
-#include "plplot/metadefs.h"
+#include "plserver.h"
+#include "plevent.h"
+#include "metadefs.h"
 
 /* Some wrapper macros to return (-1) on error */
 

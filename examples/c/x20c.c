@@ -4,8 +4,8 @@
 
 */
 
-#include "plplot/plcdemos.h"
-#include "plplot/plevent.h"
+#include "plcdemos.h"
+#include "plevent.h"
 #include <math.h>
 
 #define XDIM 260

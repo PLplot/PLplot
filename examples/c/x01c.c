@@ -3,8 +3,8 @@
 	Simple line plot and multiple windows demo.
 */
 
-#include "plplot/plcdemos.h"
-#include "plplot/plevent.h"
+#include "plcdemos.h"
+#include "plevent.h"
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif

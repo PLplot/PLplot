@@ -27,7 +27,7 @@
  * of each of the M lines.) 
  */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 static int
 error(char *str);

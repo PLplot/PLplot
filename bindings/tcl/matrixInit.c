@@ -4,7 +4,7 @@
     Vince Darley
 */
 
-#include "plplot/tclMatrix.h"
+#include "tclMatrix.h"
 
 int Matrix_Init( Tcl_Interp *interp ) {
 

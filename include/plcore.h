@@ -7,10 +7,13 @@
 #ifndef __PLCORE_H__
 #define __PLCORE_H__
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/plDevs.h"
-#include "plplot/disptab.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "plDevs.h"
+#include "disptab.h"
+#ifdef ENABLE_DYNDRIVERS
+#include <ltdl.h>
+#endif
 
 
 /* Static function prototypes */
@@ -58,7 +61,7 @@ PLStream *plsc = &pls0;
 
 /* Only now can we include this */
 
-#include "plplot/pldebug.h"
+#include "pldebug.h"
 
 /*--------------------------------------------------------------------------*\
  * Initialize dispatch table.
@@ -218,6 +221,7 @@ static int npldynamicdevices = 0;
  * Stuff to support the loadable device drivers.
 \*--------------------------------------------------------------------------*/
 
+#ifdef ENABLE_DYNDRIVERS
 typedef struct {
     char *devnam;
     char *description;
@@ -228,9 +232,10 @@ typedef struct {
 
 typedef struct {
     char *drvnam;
-    void *dlhand;
+    lt_dlhandle dlhand;
     
 } PLLoadableDriver;
+#endif
 
 
 static PLLoadableDevice *loadable_device_list;

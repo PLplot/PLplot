@@ -3,7 +3,7 @@
 	Stub routines for 3d plots.
 */
 
-#include "plplot/plstubs.h"
+#include "plstubs.h"
 
 void
 PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,

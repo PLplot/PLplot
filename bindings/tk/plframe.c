@@ -42,9 +42,9 @@
 */
 
 #define NEED_PLDEBUG
-#include "plplot/plserver.h"
-#include "plplot/plxwd.h"
-#include "plplot/tcpip.h"
+#include "plserver.h"
+#include "plxwd.h"
+#include "tcpip.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

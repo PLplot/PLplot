@@ -6,7 +6,7 @@
  * A miscellaneous assortment of Tcl support functions.
  */
 
-#include "plplot/plserver.h"
+#include "plserver.h"
 
 /*----------------------------------------------------------------------*\
  * Pltk_Init

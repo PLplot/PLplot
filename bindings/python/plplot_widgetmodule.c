@@ -5,15 +5,15 @@
  * #include <Numeric/arrayobject.h> 
  *  once we no longer support python1.5 */
 #include <arrayobject.h>
-#include "plplot/plplot.h"
-#include "plplot/plplotP.h"
+#include "plplot.h"
+#include "plplotP.h"
 #define TRY(E) if(! (E)) return NULL
 
 /* ##############################################################################*/
 static char doc_partialInitXw[]="Partially init a new device (X Window) ";
 
 #ifndef WIN32
-#include "plplot/plxwd.h"
+#include "plxwd.h"
 static PyObject * pl_partialInitXw(PyObject *self, PyObject *args)
 {
     PLINT ipls;

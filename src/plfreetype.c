@@ -43,11 +43,11 @@
 
 #include <unistd.h>
 
-#include "plplot/plDevs.h"
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plDevs.h"
+#include "plplotP.h"
+#include "drivers.h"
 #ifdef HAVE_FREETYPE
-#include "plplot/plfreetype.h"
+#include "plfreetype.h"
 
 /*              TOP LEVEL DEFINES       */
 

@@ -5,7 +5,7 @@
  * ToDo: better way of clearing plot. search for `plvsta'.
  */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /* Data declarations for stripcharts. */
 

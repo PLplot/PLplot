@@ -26,15 +26,15 @@
     driver, in principle.
 */
 
-#include "plplot/plplotP.h"
-#include "plplot/pltcl.h"
+#include "plplotP.h"
+#include "pltcl.h"
 #ifndef __WIN32__
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #endif
 
-#include "plplot/tclgen.h"
+#include "tclgen.h"
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
 
@@ -72,7 +72,7 @@ typedef struct {
 
 static CmdInfo Cmds[] = {
     {"loopback",	loopbackCmd},
-#include "plplot/tclgen_s.h"
+#include "tclgen_s.h"
     {"plcol",		plcol0Cmd},
     {"plcont",		plcontCmd},
     {"plmap",		plmapCmd},
@@ -343,10 +343,10 @@ PlbasicInit( Tcl_Interp *interp )
     int debug = 0;
     char *libDir = NULL;
     static char initScript[] = 
-    "tcl_findLibrary plplot " PLPLOT_VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
+    "tcl_findLibrary plplot " VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
     static char initScriptExtended[] = 
-    "tcl_findLibrary plplot " PLPLOT_VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
+    "tcl_findLibrary plplot " VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
 #ifdef USE_TCL_STUBS
 /* 
@@ -381,7 +381,7 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
 #endif
     
-    Tcl_SetVar(interp, "plversion", PLPLOT_VERSION, TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "plversion", VERSION, TCL_GLOBAL_ONLY);
 
 /* Begin search for init script */
 /* Each search begins with a test of libDir, so rearrangement is easy. */
@@ -503,7 +503,7 @@ Pltcl_Init( Tcl_Interp *interp )
 /* We really need this so the TEA based 'make install' can 
  * properly determine the package we have installed */
     
-    Tcl_PkgProvide(interp, "Pltcl", PLPLOT_VERSION);
+    Tcl_PkgProvide(interp, "Pltcl", VERSION);
     return TCL_OK;
 }
 

@@ -81,7 +81,7 @@
  * drivers, your terminal may be left in a strange state.
 \*--------------------------------------------------------------------------*/
 
-#include "plplot/plConfig.h"
+#include "plConfig.h"
 #ifdef caddr_t
 #undef caddr_t
 #ifndef __USE_BSD
@@ -123,11 +123,11 @@ typedef char * caddr_t;
 /* Include all externally-visible definitions and prototypes */
 /* plplot.h also includes some handy system header files */
 
-#include "plplot/plplot.h"
+#include "plplot.h"
 
 /* plstream definition */
 
-#include "plplot/plstrm.h"
+#include "plstrm.h"
 
 /* If not including this file from inside of plcore.h, declare plsc */
 
@@ -139,7 +139,7 @@ extern PLStream	*plsc;
 #ifdef __cplusplus
 }
 #endif
-#include "plplot/pldebug.h"
+#include "pldebug.h"
 #endif
 
 /*--------------------------------------------------------------------------*\

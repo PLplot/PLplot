@@ -4,4 +4,12 @@ confdefs.h
 config.cache
 config.log
 config.status
+config.summary
 reconfig
+Makefile
+Makefile.in
+aclocal.m4
+libtool
+*.tar.gz
+libltdl
+plplot_libtool

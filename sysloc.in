@@ -1,0 +1,1264 @@
+# sysloc.in   --*-Autoconf-*--
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# This script sets up config variables for a Unix-like system.
+# The stuff set here is fairly generic and can be automated.
+# This includes how to find required header files and libraries.
+# Includes code and ideas taken from the BLT (Tk extension) configure.
+# ----------------------------------------------------------------------------
+
+INCPATH=
+LIBPATH=
+
+# Default linker library commands.  These may need version numbers
+# appended to them though.
+
+ITKLIBSTR=-litk
+TKLIBSTR=-ltk
+ITCLLIBSTR=-litcl
+TCLLIBSTR=-ltcl
+XLIBSTR=-lX11
+GDLIBSTR=-lgd
+CDLIBSTR=-lcd
+PNGLIBSTR=-lpng
+JPEGLIBSTR=-ljpeg
+ZLIBLIBSTR=-lz
+FREETYPELIBSTR=-lfreetype
+
+# Add the current directory to the include path.  This must occur
+# first in the list, before we add the directories for any auxilliary
+# packages, in order to ensure that the build dir takes precedence
+# over anything that may be just lying around in the environment.  For
+# example, we don't want the files from a previous version of PLplot
+# which may be left in $prefix/include/plplot/*.h to take precedence
+# over the files from the current build.
+
+ADD_TO_INCS(., INCS, INCPATH)
+
+# ----------------------------------------------------------------------------
+# Run xmkmf to check for location of X libraries and includes.  If not
+# found, I have to assume that X isn't available (it happens).  Can disable
+# explicitly by specifying --disable-xwin or --without-x (the latter switch
+# is built into autoconf so I might as well support it).
+#
+# Note:  ac_path_x gets it wrong sometimes.  If you need to specify
+# the path yourself in cf_plplot.in, you should probably plan to
+# provide both XINCDIR and XLIBDIR.
+# ----------------------------------------------------------------------------
+
+if test "$with_x" = "no"; then
+    has_x11=no;
+fi
+
+if test "$has_x11" = "yes"; then
+    if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
+	AC_PATH_X
+	# These notes and logic changes by AWI.
+	# If AC_PATH_X succeeds it sets $x_includes and $x_libraries to
+	# the correct values, but the behaviour is not specified when it
+	# fails on one or both of these searches.  To account for this
+	# ambiguity while still being efficient simply put x_includes and 
+	# x_libraries first in the appropriate search path if AC_TRY_CPP
+	# or AC_CHECK_LIB fails to find the headers or libraries in
+	# the default location.
+
+	XINCDIR=""
+	AC_TRY_CPP([#include <X11/Intrinsic.h>], [ XINCDIR=default ], [
+	    incdirs="\
+	    $x_includes \
+	    /usr/X11R6/include \
+	    /usr/include \
+	    /usr/include/X11 \
+	    /usr/include/X11R5 \
+	    /usr/include/X11R4 \
+	    /usr/include/X11/X11R5 \
+	    /usr/include/X11/X11R4 \
+	    /usr/X11/include \
+	    /usr/X386/include \
+	    /usr/X11R5/include \
+	    /usr/local/X11R5/include \
+	    /usr/openwin/include \
+	    /usr/local/X11R4/include \
+	    /usr/include/X11R4 \
+	    /usr/local/include \
+	    /usr/unsupported/include"
+	    
+	    for dir in $incdirs; do
+		if test -r "$dir/X11/Intrinsic.h"; then
+		    XINCDIR="$dir"
+		    break
+		fi
+	    done
+	    if test -z "$XINCDIR"; then
+		AC_MSG_RESULT(warning: X11 include files not found)
+		XINCDIR=default
+		enable_xwin=no
+		has_x11=no;
+	    fi ])
+
+	if test "$XINCDIR" = "/usr/include"; then
+	    XINCDIR=default
+	fi
+
+	XLIBDIR=""
+	AC_CHECK_LIB(X11, main, [ XLIBDIR=default ], [
+	    libdirs="\
+	    $x_libraries \
+	    /usr/X11R6/lib \
+	    /lib \
+	    /usr/lib \
+	    /usr/lib/X11R5 \
+	    /usr/X11/lib \
+	    /usr/X386/lib \
+	    /usr/X11R5/lib \
+	    /usr/local/X11R5/lib \
+	    /usr/openwin/lib \
+	    /usr/local/X11R4/lib \
+	    /usr/lib/X11R4 \ 
+	    /usr/local/lib \
+	    /usr/unsupported/lib"
+
+	    for dir in $libdirs; do
+		if test -r "$dir/libX11.so" -o -r "$dir/libX11.a"; then
+		    XLIBDIR="$dir"
+		    AC_MSG_RESULT(but found in $dir)
+		    break
+		fi
+	    done
+	    if test -z "$XLIBDIR"; then
+		AC_MSG_RESULT(warning: X11 library not found)
+		XLIBDIR=default
+		enable_xwin=no
+		has_x11=no
+	    fi ])
+
+	if test "$XLIBDIR" = "/usr/lib"; then
+	    XLIBDIR=default
+	fi
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# Attempt to find jni.h, if java support is enabled.
+# ----------------------------------------------------------------------------
+
+if test "$enable_java" = "yes"; then
+    if test -n "$JAVA_HOME"; then
+	if test -r "$JAVA_HOME/include/jni.h"; then
+	    JAVAINCDIR="$JAVA_HOME/include"
+	fi
+    else
+	# Should make token effort to find jni.h anyway, presumably
+	# employing AC_TRY_CPP.  Later...
+	AC_MSG_RESULT( "Uhhh." )
+    fi
+
+    if test -n "$JAVAINCDIR"; then
+	# See if machine dependent files exist in JAVAINCDIR (J2RE 1.3.0 IBM)
+	if test -r "$JAVA_HOME/include/jni_md.h"; then
+	    JAVAMDINCDIR="$JAVA_HOME/include"
+	else
+	# Now we need to find the machine dependent directory.
+	    case $system in 
+		Linux* )
+		    JAVAMDINCDIR="$JAVAINCDIR/linux"
+		;;
+		SunOS-5* )
+		    JAVAMDINCDIR="$JAVAINCDIR/solaris"
+		;;
+		* ) 	
+		    AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
+		;;
+	    esac
+	fi
+	if test ! -r "$JAVAMDINCDIR/jni_md.h"; then
+	    JAVAMDINCDIR="$JAVAINCDIR/genunix"
+	    if test ! -r "$JAVAMDINCDIR/jni_md.h"; then
+		JAVAMDINCDIR=""
+	    fi
+	fi
+
+	if test -z "$JAVAMDINCDIR"; then
+	    AC_MSG_RESULT(Missing jni_md.h, disabling Java support.)
+	    enable_java=no
+	fi
+
+    else
+	AC_MSG_RESULT(warning: Java Native Interface include file not found)
+	enable_java=no
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# Find libgd libraries and headers and libpng, libjpeg, and zlib libraries
+# required for building png and/or jpeg drivers.  
+# Written by Alan W. Irwin following what is done for X.
+# ----------------------------------------------------------------------------
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    if test -z "$GDINCDIR"; then
+        AC_TRY_CPP([#include <gd.h>], [ GDINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/gd.h"; then
+	       GDINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$GDINCDIR"; then
+	    AC_MSG_RESULT(warning: gd header files not found)
+	    GDINCDIR=default
+	    enable_png=no
+	    enable_jpeg=no
+	fi ])
+    fi
+    if test "$GDINCDIR" = "/usr/include"; then
+        GDINCDIR=default
+    fi
+
+    if test -z "$GDLIBDIR"; then
+        AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libgd.so" -o -r "$dir/libgd.a"; then
+	        GDLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$GDLIBDIR"; then
+	    AC_MSG_RESULT(warning: gd library not found)
+	    GDLIBDIR=default
+	    enable_png=no
+	    enable_jpeg=no
+	fi ])
+    fi
+    if test "$GDLIBDIR" = "/usr/lib"; then
+        GDLIBDIR=default
+    fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    if test -z "$PNGLIBDIR"; then
+        AC_CHECK_LIB(png, main, [ PNGLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libpng.so" -o -r "$dir/libpng.a"; then
+	        PNGLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$PNGLIBDIR"; then
+	    AC_MSG_RESULT(warning: png library not found)
+	    PNGLIBDIR=default
+	    enable_png=no
+	    enable_jpeg=no
+	fi ])
+    fi
+    if test "$PNGLIBDIR" = "/usr/lib"; then
+        PNGLIBDIR=default
+    fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    if test -z "$JPEGLIBDIR"; then
+        AC_CHECK_LIB(jpeg, main, [ JPEGLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libjpeg.so" -o -r "$dir/libjpeg.a"; then
+	        JPEGLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$JPEGLIBDIR"; then
+	    AC_MSG_RESULT(warning: jpeg library not found)
+	    JPEGLIBDIR=default
+	    enable_png=no
+	    enable_jpeg=no
+	fi ])
+    fi
+    if test "$JPEGLIBDIR" = "/usr/lib"; then
+        JPEGLIBDIR=default
+    fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    if test -z "$ZLIBLIBDIR"; then
+        AC_CHECK_LIB(z, main, [ ZLIBLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libz.so" -o -r "$dir/libz.a"; then
+	        ZLIBLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$ZLIBLIBDIR"; then
+	    AC_MSG_RESULT(warning: zlib library not found)
+	    ZLIBLIBDIR=default
+	    enable_png=no
+	    enable_jpeg=no
+	fi ])
+    fi
+    if test "$ZLIBLIBDIR" = "/usr/lib"; then
+        ZLIBLIBDIR=default
+    fi
+fi
+
+GDINCS=""
+GDINCPATH=""
+GDLIBS=""
+GDLIBPATH=""
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    ADD_TO_INCS($GDINCDIR, GDINCS, GDINCPATH)
+    if test "$enable_dyndrivers" = "yes"; then
+	ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBS, GDLIBPATH)
+	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBS, GDLIBPATH)
+	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBS, GDLIBPATH)
+	ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBS, GDLIBPATH)
+    fi
+fi
+
+#next test requires C language
+AC_LANG_SAVE
+AC_LANG_C
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+# All required headers and libraries are present for libgd, libpng, libjpeg,
+# and zlib.  Now check if this version of libgd supports png and/or jpeg.
+
+    CFLAGS_SAVE=$CFLAGS
+    LIBS_SAVE=$LIBS
+    LDFLAGS_SAVE=$LDFLAGS
+
+    CFLAGS="-I$GDINCDIR"
+    LIBS="-L$GDLIBDIR -L$PNGLIBDIR -L$JPEGLIBDIR -L$ZLIBLIBDIR $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR"
+    LDFLAGS=
+
+# This test for png support is made in case this is an ancient libgd that
+# only supported giff (e.g., the Redhat 6.2 version).
+    AC_MSG_CHECKING(for png support in libgd)
+    AC_TRY_LINK_FUNC([
+      gdImagePng
+    ], [AC_MSG_RESULT(yes)], [
+      AC_MSG_RESULT(no: png driver disabled)
+      enable_png=no
+    ])
+
+    AC_MSG_CHECKING(for jpeg support in libgd)
+    AC_TRY_LINK_FUNC([
+      gdImageJpeg
+    ], [AC_MSG_RESULT(yes)], [
+      AC_MSG_RESULT(no: jpeg driver disabled)
+      enable_jpeg=no
+    ])
+
+    CFLAGS=$CFLAGS_SAVE
+    LIBS=$LIBS_SAVE
+    LDFLAGS=$LDFLAGS_SAVE
+
+fi
+#restore the language the way it was before this test
+AC_LANG_RESTORE
+
+# ----------------------------------------------------------------------------
+# Find libcd library and header required for building cgm driver.  
+# Written by Alan W. Irwin following what is done for gd driver.
+# ----------------------------------------------------------------------------
+
+if test "$enable_cgm" = "yes"; then
+    if test -z "$CDINCDIR"; then
+        AC_TRY_CPP([#include <cd.h>], [ CDINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/cd.h"; then
+	       CDINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$CDINCDIR"; then
+	    AC_MSG_RESULT(warning: cd header files not found)
+	    CDINCDIR=default
+	    enable_cgm=no
+	fi ])
+    fi
+    if test "$CDINCDIR" = "/usr/include"; then
+        CDINCDIR=default
+    fi
+
+    if test -z "$CDLIBDIR"; then
+        AC_CHECK_LIB(cd, main, [ CDLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libcd.so" -o -r "$dir/libcd.a"; then
+	        CDLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$CDLIBDIR"; then
+	    AC_MSG_RESULT(warning: cd library not found)
+	    CDLIBDIR=default
+	    enable_cgm=no
+	fi ])
+    fi
+    if test "$CDLIBDIR" = "/usr/lib"; then
+        CDLIBDIR=default
+    fi
+fi
+
+CDINCS=""
+CDINCPATH=""
+CDLIBS=""
+CDLIBPATH=""
+CDLIBS=""
+CDINCS=""
+if test "$enable_cgm" = "yes"; then
+    ADD_TO_INCS($CDINCDIR, CDINCS, CDINCPATH)
+    if test "$enable_dyndrivers" = "yes"; then
+	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBS, CDLIBPATH)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# Find freetype 2 library and header required for enabling 
+# driver options for handling the fonts with the freetype library.
+# Written by Alan W. Irwin.
+# ----------------------------------------------------------------------------
+
+if test "$with_freetype" = "yes"; then
+    if test -z "$FREETYPEINCDIR"; then
+        AC_TRY_CPP([#include <freetype/config/ftheader.h>], [ FREETYPEINCDIR=default ], [
+	incdirs="\
+	/usr/include/freetype2 \
+	/usr/local/include/freetype2"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/freetype/config/ftheader.h"; then
+	       FREETYPEINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$FREETYPEINCDIR"; then
+	    AC_MSG_RESULT(warning: freetype header files not found)
+	    FREETYPEINCDIR=default
+	    with_freetype=no
+	fi ])
+    fi
+    if test "$FREETYPEINCDIR" = "/usr/include"; then
+        FREETYPEINCDIR=default
+    fi
+
+    if test -z "$FREETYPELIBDIR"; then
+        AC_CHECK_LIB(freetype, main, [ FREETYPELIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libfreetype.so" -o -r "$dir/libfreetype.a"; then
+	        FREETYPELIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$FREETYPELIBDIR"; then
+	    AC_MSG_RESULT(warning: freetype library not found)
+	    FREETYPELIBDIR=default
+	    with_freetype=no
+	fi ])
+    fi
+    if test "$FREETYPELIBDIR" = "/usr/lib"; then
+        FREETYPELIBDIR=default
+    fi
+fi
+
+FREETYPEINCS=""
+FREETYPEINCPATH=""
+FREETYPELIBS=""
+FREETYPELIBPATH=""
+if test "$with_freetype" = "yes"; then
+    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCS, FREETYPEINCPATH)
+    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, FREETYPELIBPATH)
+    AC_DEFINE(HAVE_FREETYPE)
+    AC_SUBST(FREETYPELIBS)
+    
+fi
+
+# ----------------------------------------------------------------------------
+# Make some guesses where the Tcl/Tk include files and libraries are.
+# Look first in the Tcl/Tk distributions and then move on to the standard
+# include file/library locations.  If it's still not found I assume it's
+# not here.
+#
+# Note: it is important to check in user directories _before_ checking
+# anywhere else.  That way you can easily compile custom versions (of Tcl, Tk,
+# etc), put them in your file space, and have them be found first.  Some
+# examples: libraries compiled with debugging turned on, or from a different
+# revision of the (Tcl, Tk, etc) package.  Also, when dealing with multiple
+# versions, check for the newer version first.
+# ----------------------------------------------------------------------------
+
+# Default directories to search for include files
+
+# Linux has a peculiar ambiguity where identical tcl.h files are found both in
+# /usr/include and /usr/include/tcl<version>/generic.  The latter is
+# *much* preferred because it has everything else as well having to do with tcl.
+# So the generic include site is first on the list.  Note that prefix can be
+# "/usr" which would give bad result under Linux without this ordering.
+
+incdirs_default="\
+/usr/include/tcl8.3/tcl-private/generic \
+/usr/include/tcl8.3/tk-private/generic \
+/usr/include/tcl8.3/itcl-private/generic \
+/usr/include/tcl8.3 \
+/usr/include/tcl8.2/generic \
+$prefix/include/itcl \
+/usr/include/itcl3.1/generic/ \
+$prefix/include \
+$HOME/local/include \
+$HOME/include \
+/usr/local/include \
+/usr/include/tcl \
+/usr/include"
+
+# Default directories to search for library files
+
+libdirs_default="\
+$prefix/lib/itcl \
+$prefix/lib \
+$HOME/local/lib \
+$HOME/lib \
+/usr/local/lib \
+/usr/lib"
+
+incdirs=$incdirs_default
+libdirs=$libdirs_default
+
+if test -n "$with_pkgdir"; then
+    incdirs="$with_pkgdir/include $incdirs"
+    libdirs="$with_pkgdir/lib $libdirs"
+fi
+
+# ----------------------------------------------------------------------------
+# tcl.h
+# ----------------------------------------------------------------------------
+
+if test "$enable_tcl" = "yes"; then
+    if test -z "$TCLINCDIR"; then
+	FIND_INC(tcl, TCLINCDIR, enable_tcl)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# libtcl
+#
+# Includes checks against old versions of tcl no longer supported.
+# But you can *try* linking against ANY non-versioned tcl.
+# ----------------------------------------------------------------------------
+
+if test "$enable_tcl" = "yes"; then
+    if test -z "$TCLLIBDIR"; then
+	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
+	for version in 8.3 8.2 8.1 8.0 ""; do
+	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
+	    if test -n "$TCLLIBDIR"; then
+		break
+	    fi
+	done
+	if test -n "$version"; then
+	    for oldversion in 8.1 8.0; do
+		if test "$version" = "$oldversion"; then
+		    echo "Tcl version $oldversion not supported.. please upgrade!"
+		    enable_tcl="no"
+		    has_tcl="no"
+		    break
+		fi
+	    done
+	fi
+	FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
+    fi
+    if test "$enable_tcl" = "yes"; then
+	if test -r $TCLLIBDIR/tclConfig.sh; then
+	    . $TCLLIBDIR/tclConfig.sh
+	fi
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# itcl.h
+# ----------------------------------------------------------------------------
+
+if test "$enable_tcl" = "no"; then
+    enable_itcl=no
+fi
+
+if test "$enable_itcl" = "yes"; then
+    if test -z "$ITCLINCDIR"; then
+	FIND_INC(itcl, ITCLINCDIR, enable_itcl)
+    fi
+fi
+
+# There should be an itclDecls.h with the other itcl includes.
+# This is missing on some distributions, so define HAVE_ITCLDECLS_H if found.
+
+if test "$enable_itcl" = "yes"; then
+    old_CPPFLAGS=$CPPFLAGS 
+    CPPFLAGS=-I$ITCLINCDIR 
+    AC_CHECK_HEADER(itclDecls.h) 
+    CPPFLAGS=$old_CPPFLAGS 
+fi
+
+# ----------------------------------------------------------------------------
+# libitcl ([incr Tcl])
+# ----------------------------------------------------------------------------
+
+if test "$enable_itcl" = "yes"; then
+    if test -z "$ITCLLIBDIR"; then
+	FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
+	for version in 3.2 3.1 3.0 2.1 2.0 ""; do
+	    if test -n "$ITCLLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
+	done
+	FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
+    fi
+    if test "$enable_itcl" = "yes"; then
+	if test -r $ITCLLIBDIR/itclConfig.sh; then
+	    . $ITCLLIBDIR/itclConfig.sh
+	fi
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# figure out how to build tclIndex
+# ----------------------------------------------------------------------------
+
+if test "$enable_tcl" = "yes"; then
+    if test "$enable_itcl" = "yes"; then
+	MKINDEX="$srcdir/scripts/mktclIndex -itcl"
+    else
+	MKINDEX="$srcdir/scripts/mktclIndex -tcl"
+    fi
+else
+# shouldn't ever be used
+    MKINDEX=echo
+fi
+
+AC_SUBST(MKINDEX)
+
+# ----------------------------------------------------------------------------
+# tk.h
+# ----------------------------------------------------------------------------
+
+if test "$has_tcl" = "no" -o "$has_x11" = "no"; then
+    has_tk=no
+    enable_tk=no
+fi
+
+if test "$enable_tk" = "yes"; then
+    if test -z "$TKINCDIR"; then
+	FIND_INC(tk, TKINCDIR, enable_tk)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# tkInt.h (and indirectly tclInt.h) required by plplotter.c which is 
+# required by tkwin device
+# ----------------------------------------------------------------------------
+
+if test "$has_tcl" = "no" -o "$has_x11" = "no"; then
+    enable_tkwin=no
+fi
+
+if test "$enable_tkwin" = "yes"; then
+    if test -z "$TKPRIVATEINCDIR"; then
+	FIND_INC(tkInt, TKPRIVATEINCDIR, enable_tkwin)
+    fi
+fi
+
+if test "$enable_tkwin" = "yes"; then
+    if test -z "$TCLPRIVATEINCDIR"; then
+	FIND_INC(tclInt, TCLPRIVATEINCDIR, enable_tkwin)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# libtk
+# ----------------------------------------------------------------------------
+
+if test "$enable_tk" = "yes"; then
+    if test -z "$TKLIBDIR"; then
+	FIND_LIB_BEGIN(tk, TKLIBDIR)
+	for version in 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
+	    if test -n "$TKLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(tk$version, TKLIBDIR, TKLIBSTR)
+	done
+	FIND_LIB_END(tk, TKLIBDIR, enable_tk)
+    fi
+fi
+
+#-----------------------------------------------------------------------------
+# ntk driver
+#-----------------------------------------------------------------------------
+if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
+    enable_ntk="no"
+fi
+
+# ----------------------------------------------------------------------------
+# libitk
+# ----------------------------------------------------------------------------
+
+enable_itk="yes"
+if test "$enable_tk" = "no" -o "$enable_itcl" = "no"; then
+    enable_itk="no"
+fi
+
+if test "$enable_itk" = "yes"; then
+    if test -z "$ITKLIBDIR"; then
+	FIND_LIB_BEGIN(itk, ITKLIBDIR)
+	for version in 3.2 3.1 3.0 2.1 2.0 ""; do
+	    if test -n "$ITKLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(itk$version, ITKLIBDIR, ITKLIBSTR)
+	done
+	FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
+    fi
+fi
+
+if test "$enable_itcl" = "yes"; then
+    AC_DEFINE(HAVE_ITCL)
+fi
+
+if test "$enable_itk" = "yes"; then
+    AC_DEFINE(HAVE_ITK)
+fi
+
+# ----------------------------------------------------------------------------
+# Assemble list of tcl/TK/X/whatever include directives.  These can go in
+# any order, except the first, which supports the 'include "plplot/<header>"'
+# syntax.
+# ----------------------------------------------------------------------------
+
+if test "$enable_xwin" = "yes"; then
+    ADD_TO_INCS($XINCDIR, INCS, INCPATH)
+fi
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    ADD_TO_INCS($GDINCDIR, INCS, INCPATH)
+fi
+if test "$enable_cgm" = "yes"; then
+    ADD_TO_INCS($CDINCDIR, INCS, INCPATH)
+fi
+if test "$with_freetype" = "yes"; then
+    ADD_TO_INCS($FREETYPEINCDIR, INCS, INCPATH)
+fi
+if test "$enable_java" = "yes"; then
+    ADD_TO_INCS($JAVAINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($JAVAMDINCDIR, INCS, INCPATH)
+fi
+if test "$enable_tcl" = "yes"; then
+    ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)
+fi
+if test "$enable_itcl" = "yes"; then
+    ADD_TO_INCS($ITCLINCDIR, INCS, INCPATH)
+fi
+if test "$enable_tk" = "yes"; then
+    ADD_TO_INCS($TKINCDIR, INCS, INCPATH)
+fi
+if test "$enable_tkwin" = "yes"; then
+    ADD_TO_INCS($TKPRIVATEINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($TCLPRIVATEINCDIR, INCS, INCPATH)
+fi
+
+# ----------------------------------------------------------------------------
+# Assemble list of tcl/TK/X/whatever libraries.
+# Note the library order CAN be important, depending on the system:
+# Tk depends on Tcl and X11 so must come before both.
+# Itcl depends on Tcl so must come before it.
+# Tcl and X11 can be put in either order.
+# ----------------------------------------------------------------------------
+
+if test "$enable_itk" = "yes"; then
+    ADD_TO_LIBS($ITKLIBDIR, $ITKLIBSTR, LIBS, LIBPATH)
+fi
+if test "$enable_tk" = "yes"; then
+#jc: uncomment the if/fi when tk/xwin becomes dyndrv
+#    if test "$enable_dyndrivers" != "yes"; then
+	ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, LIBS, LIBPATH)
+#    fi
+fi
+if test "$enable_itcl" = "yes"; then
+    ADD_TO_LIBS($ITCLLIBDIR, $ITCLLIBSTR, LIBS, LIBPATH)
+fi
+if test "$enable_tcl" = "yes"; then
+#jc: uncomment the if/fi when tk/xwin becomes dyndrv
+#    if test "$enable_dyndrivers" != "yes"; then
+	ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, LIBS, LIBPATH)
+#    fi
+fi
+if test "$enable_xwin" = "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
+	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, LIBS, LIBPATH)
+    else
+	XLIBS=""
+	XLIBPATH=""
+	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, XLIBS, XLIBPATH)
+    fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
+	ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, LIBS, LIBPATH)
+	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, LIBS, LIBPATH)
+	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, LIBS, LIBPATH)
+	ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, LIBS, LIBPATH)
+    fi
+fi
+
+if test "$enable_cgm" = "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
+	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, LIBS, LIBPATH)
+    fi
+fi
+if test "$with_freetype" = "yes"; then
+    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, LIBS, LIBPATH)
+fi
+if test ! -z "$TCL_DL_LIBS"; then
+    ADD_TO_LIBS( default, $TCL_DL_LIBS, LIBS, LIBPATH)
+fi
+
+# can't use LIBPATH on ADD_TO_LIBS, as TCL/TK/X libs go only to the driver
+TKPATH="" 
+TKLIBS=""
+if test "$has_x11" = "yes" -a "$has_tcl" = "yes" -a "$has_tk" = "yes"; then
+    if test "$enable_dyndrivers" = "yes"; then
+	ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, TKLIBS, TKPATH)
+	ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, TKLIBS, TKPATH)
+	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, TKLIBS, TKPATH)
+    fi
+fi
+
+# Prepare library options for linking the pltcl library.
+PLTCLPATH=""
+PLTCLLIBS=""
+if test "$has_x11" = "yes" -a "$has_tcl" = "yes"; then
+   ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, PLTCLLIBS, PLTCLPATH)
+   if test "$enable_itcl" = "yes"; then
+      ADD_TO_LIBS($ITCLLIBDIR, $ITCLLIBSTR, PLTCLLIBS, PLTCLPATH)
+   fi
+   if test "$has_tk" = "yes"; then
+      ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, PLTCLLIBS, PLTCLPATH)
+      if test "$enable_itk" = "yes"; then
+      	 ADD_TO_LIBS($ITKLIBDIR, $ITKLIBSTR, PLTCLLIBS, PLTCLPATH)
+      fi
+   fi
+   ADD_TO_LIBS($XLIBDIR, $XLIBSTR, PLTCLLIBS, PLTCLPATH)
+fi
+
+# Prepare library options for linking the plf77 (someday) library.
+PLF77PATH=""
+PLF77LIBS=""
+case $system in 
+     Linux* )
+     	    if test "$enable_f77" = "yes"; then
+	       ADD_TO_LIBS(default, "-lg2c", PLF77LIBS, PLF77PATH)
+   	    fi
+       ;;
+     * ) 	
+       ;;
+    esac
+
+# ----------------------------------------------------------------------------
+# Gnome/GTK configuration tests
+# Added by Rafael Laboissier on Fri Feb 23 21:34:40 CET 2001
+# ----------------------------------------------------------------------------
+
+if test "$enable_gnome" = "yes"; then
+
+  AC_LANG_SAVE
+  AC_LANG_C
+  AM_PATH_GTK(1.2.7,
+    [ GNOME_INIT
+      if test "$GNOME_CONFIG" = "no"; then
+        enable_gnome=no 
+      fi ], 
+    [ enable_gnome=no ], 
+    gthread)
+
+  if test "$enable_gnome" = "yes"; then
+
+    # Include Gtk and Gnome libs
+    if test "$enable_dyndrivers" != "yes"; then
+	for i in $GTK_LIBS $GNOME_LIBDIR $GNOMEUI_LIBS ; do
+	    case $i in 
+	    -L* )
+		d=`echo $i | sed 's/-L//'`
+		ADD_TO_LIBS( $d, "", LIBS, LIBPATH)
+	    ;;
+	    -l* )
+		ADD_TO_LIBS( default, $i, LIBS, LIBPATH)
+	    ;;
+	    *)
+	    ;;
+	    esac
+	done
+    else # the else bellow could be easily incorporate in the if above :)
+    # can't use LIBPATH on ADD_TO_LIBS, as the gnome libs go only to the driver
+	GNOMELIBS=""
+	GNOMEPATH=""
+	for i in $GTK_LIBS $GNOME_LIBDIR $GNOMEUI_LIBS ; do
+	    case $i in 
+	    -L* )
+		d=`echo $i | sed 's/-L//'`
+		ADD_TO_LIBS( $d, "", GNOMELIBS, GNOMEPATH)
+	    ;;
+	    -l* )
+		ADD_TO_LIBS( default, $i, GNOMELIBS, GNOMEPATH)
+	    ;;
+	    *)
+	    ;;
+	    esac
+	done
+    fi
+
+    # Include Gtk and Gnome include dirs
+    GNOME_FLAGS=""
+    for i in $GTK_CFLAGS $GNOME_INCLUDEDIR ; do
+	case $i in 
+	-I* )
+	    ADD_TO_INCS( `echo $i | sed 's/-I//'`, INCS, INCPATH)
+	    ;;
+	-D* )
+	    GNOME_FLAGS="$GNOME_FLAGS $i"
+	    ;;
+	 *)
+	    ;;
+	esac
+    done
+    AC_LANG_RESTORE
+    fi
+fi 
+
+# ----------------------------------------------------------------------------
+# Octave support
+# ----------------------------------------------------------------------------
+
+if test "$enable_octave" = "yes"; then
+
+# Check that plplot was built with shared libs
+    if test "$with_shlib" = "no"; then
+	AC_MSG_RESULT([warning: Octave support requires with_shlib=yes, setting enable_octave=no.]);
+	enable_octave=no;
+    fi
+
+# check for matwrap
+    if test "$enable_octave" = "yes"; then
+	MATWRAP=matwrap
+	AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
+	if test "$has_matwrap" = "no"; then
+	    MATWRAP="./matwrap"
+	fi
+    fi
+
+# check for user supplied mkoctfile
+    if test "$enable_octave" = "yes"; then
+	AC_ARG_WITH(mkoctfile, [  --with-mkoctfile=file   Specify mkoctfile], MKOCTFILE="$withval", MKOCTFILE="mkoctfile")
+	AC_CHECK_PROG(has_mkoctfile, $MKOCTFILE, yes, no)
+	if test "$has_mkoctfile" = "no"; then
+	    AC_MSG_RESULT([warning: $MKOCTFILE not found, disabling Octave support.]);
+	    AC_SUBST(MKOCTFILE)
+	    enable_octave=no;
+	fi
+    fi
+
+# check for user supplied Octave
+    if test "$enable_octave" = "yes"; then
+	AC_ARG_WITH(octavexe, [ --with-octavexe=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
+	AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
+	if test "$has_octave" = "no"; then
+	    AC_MSG_RESULT([warning: $OCTAVE not found, disabling Octave support.]);
+	    enable_octave=no;
+	fi
+    fi
+
+# Get Octave default *.oct file directory
+    if test "$enable_octave" = "yes"; then
+	OCTAVE_DIR='$(PREFIX)'/share/plplot_octave
+	OCTAVE_OCT_DIR=`$OCTAVE -q -f <<EOF
+	t = octave_config_info;
+	printf("%s", t.octfiledir);
+EOF`
+
+# this is dubious. A normal user can have root access.
+# But I don't want to install the oct file in non standard places!
+	if ! test `touch $OCTAVE_OCT_DIR/po 2> /dev/null`; then
+	    OCTAVE_OCT_DIR=$OCTAVE_DIR
+	else
+	    rm $OCTAVE_OCT_DIR/po
+	fi
+	AC_SUBST(MATWRAP)
+	AC_SUBST(OCTAVE_OCT_DIR)
+	AC_SUBST(OCTAVE_DIR)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# Debugging malloc
+# Even with debugging on, is off by default, because it can dramatically
+# slow down program execution (particularly in combination with Tcl/Tk).
+# ----------------------------------------------------------------------------
+
+if test "$with_dbmalloc" = "yes"; then
+    if test -z "$DBMALLOCLIBDIR"; then
+	libdirs="\
+	$prefix/lib \
+	$HOME/local/lib \
+	$HOME/dbmalloc/lib \
+	$HOME/lib \
+	/usr/local/lib \
+	/usr/local/dbmalloc/lib \
+	/usr/lib"
+
+	FIND_LIB(dbmalloc, DBMALLOCLIBDIR, with_dbmalloc)
+    fi
+    if test -n "$DBMALLOCLIBDIR"; then
+	ADD_TO_LIBS($DBMALLOCLIBDIR, -ldbmalloc, LIBS, LIBPATH)
+    fi
+fi
+
+if test "$with_dbmalloc" = "yes"; then
+    if test -z "$DBMALLOCINCDIR"; then
+	incdirs="\
+	$prefix/include \
+	$HOME/local/include \
+	$HOME/local/dbmalloc/include \
+	$HOME/include \
+	$HOME/debug_include \
+	/usr/local/dbmalloc/include \
+	/usr/local/debug_include"
+
+	FIND_INC(malloc, DBMALLOCINCDIR, with_dbmalloc)
+    fi
+    if test -n "$DBMALLOCINCDIR"; then
+	ADD_TO_INCS($DBMALLOCINCDIR, INCS, INCPATH)
+    fi
+fi
+
+if test "with_dbmalloc" = "yes"; then
+    AC_DEFINE(DEBUGGING_MALLOC)
+fi
+
+# -----------------------------------------------------------------------
+# Python include and machdep directories
+# -----------------------------------------------------------------------
+
+if test "$enable_python" = "yes"; then
+    if test "$with_shlib" = "no"; then
+	AC_MSG_RESULT([warning: python support requires with_shlib=yes, setting enable_python=no])
+	enable_python=no
+    fi
+fi
+
+if test "$enable_python" = "yes"; then
+    if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
+	incdirs="\
+	$prefix/include/python2.2 \
+	/usr/include/python2.2 \
+	$prefix/include/python2.2/Numeric \
+	/usr/include/python2.2/Numeric \
+	$prefix/include/python2.1 \
+	/usr/include/python2.1 \
+	$prefix/include/python2.1/Numeric \
+	/usr/include/python2.1/Numeric \
+	$prefix/include/python2.0 \
+	/usr/include/python2.0 \
+	$prefix/include/python2.0/Numeric \
+	/usr/include/python2.0/Numeric \
+	$prefix/include/python1.5 \
+	/usr/include/python1.5 \
+	$prefix/include/python1.5/Numeric \
+	/usr/include/python1.5/Numeric \
+	$prefix/include/python1.4 \
+	/usr/include/python1.4 \
+	$prefix/include/Py \
+	$HOME/local/include/Py \
+	$HOME/local/python/include/Py \
+	$HOME/include/Py \
+	/usr/local/python/include/Py \
+	/usr/local/python-1.2/include/Py \
+	/usr/local/include/Py"
+
+# Should probably just drop everything after /usr/include/python1.4,
+# have to think about it.
+
+	FIND_INC(Python, PYTHON_INC_DIR, enable_python)
+    fi
+
+# This needs to be a separate test in case PYTHON_INC_DIR is specified by the
+# user, to pick up a particular version.  Numeric should be either in the same
+# or a subdir of PYTHON_INC_DIR else version mismatch could occur.
+
+    if test "$enable_python" = "yes"; then
+        incdirs="\ 
+        $PYTHON_INC_DIR \ 
+        $PYTHON_INC_DIR/Numeric"
+	FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
+	if test "$numeric_python" = "no"; then
+	    AC_MSG_RESULT([plplot module needs Python numeric extension.])
+	    AC_MSG_RESULT([Setting enable_python to no])
+	    enable_python=no
+	fi
+    fi
+fi
+
+if test "$enable_python" = "yes"; then
+    if test -z "$PYTHON_MOD_DIR" -o ! -d "$PYTHON_MOD_DIR"; then
+	if test -z "$MACHDEP"; then
+#	    ac_sys_system=`uname -s | tr -d ' ' | tr '[[A-Z]]' '[[a-z]]'`
+#	    ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
+#	    MACHDEP="$ac_sys_system$ac_sys_release"
+#	    case MACHDEP in
+#		'')	MACHDEP=unknown;;
+#	    esac
+	    # Know this is correct for Debian potato and RedHat 6.2
+	    # But this comes directly from python Makefile.pre.in for dynamic
+	    # loading of packages so my guess is this is now good for all Unix.
+	    # This is the sub-directory where dynamically loadable modules reside
+	    # (or where a symlink exists to the true location)
+	    MACHDEP=site-packages
+	fi
+
+	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
+	PYTHON_MOD_DIR=$python_dir/lib/python
+	PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
+	if test ! -d "$PYTHON_MOD_DIR"; then
+	    # account for the usual case where python directories 
+	    # have a version number now.
+	    python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
+	    PYTHON_MOD_DIR=$python_dir/lib/$python_ver
+	    PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
+	    if test ! -d "$PYTHON_MOD_DIR"; then
+		enable_python=no
+
+		AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
+		enable_python=no
+	    fi
+	    # for modern (versioned) systems set the plplotcmodule.so install location
+	    # to be identical to $PYTHON_MACH_DIR except possibly for the prefix
+	    if test -z "$PYTHON_DIR"; then
+	        PYTHON_DIR=$prefix/lib/$python_ver/$MACHDEP
+	    fi
+
+	fi
+	PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
+    fi
+    if test -z "$PYTHON_DIR"; then
+        #default location for installing plplotcmodule.so if versioned logic failed above.
+        PYTHON_DIR=$prefix/python
+    fi
+fi
+
+PYTHON_INSTDIR=`echo $PYTHON_DIR | sed s%$prefix/%%`
+
+AC_SUBST(PYTHON_INC_DIR)
+AC_SUBST(PYTHON_NUM_DIR)
+AC_SUBST(PYTHON_MOD_DIR)
+AC_SUBST(PYTHON_MACH_DIR)
+AC_SUBST(PYTHON_DIR)
+AC_SUBST(PYTHON_INSTDIR)
+AC_SUBST(PYTHON_CFG_DIR)
+
+# ----------------------------------------------------------------------------
+# linuxvga support
+# ----------------------------------------------------------------------------
+
+if test "$enable_linuxvga" = "yes"; then
+    if test -z "$VGALIBDIR"; then
+	libdirs="\
+	$prefix/lib \
+	/usr/lib"
+
+	FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)	
+    fi
+    if test -n "$VGALIBDIR"; then
+	if test "$enable_dyndrivers" = "yes"; then		
+	    ADD_TO_LIBS($VGALIBDIR, -lvga, LINUXVGALIBS, LIBPATH)	
+	else
+	    ADD_TO_LIBS($VGALIBDIR, -lvga, LIBS, LIBPATH)
+	fi
+
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# Now do the variable substitutions.
+# ----------------------------------------------------------------------------
+
+AC_SUBST(ARLIB_BUILD)
+AC_SUBST(ARLIB_BUILD_CXX)
+AC_SUBST(SHLIB_BUILD)
+AC_SUBST(SHLIB_BUILD_CXX)
+AC_SUBST(SONAME_FLAGS)
+AC_SUBST(SA)
+AC_SUBST(SO)
+AC_SUBST(LDSHARED)
+AC_SUBST(RPATH)
+AC_SUBST(INSTALL_RPATH)
+
+AC_SUBST(SOVERSION)
+
+AC_SUBST(SHLIB_CCFLAGS)
+AC_SUBST(SHLIB_CXXFLAGS)
+AC_SUBST(SHLIB_F77FLAGS)
+AC_SUBST(SHLIB_LIBS)
+
+# Substitution for linking options for the pltcl library
+AC_SUBST(PLTCLLIBS)
+
+# Substitution for linking options for the plf77 (someday) library
+AC_SUBST(PLF77LIBS)
+
+# Substitutions for the dynamic drivers.
+# if enable-dynamic-drivers is enabled, those libs don't go to "LIBS"
+#
+# Currently, TKLIBS has all tcl/tk/X11 libs, but those could be split, if needed.
+# Also, GDLIBS has all libs needed from the gd driver,
+# CDLIBS has all libs needed from the gd driver, and
+# GNOMELIBS all libs needed by the gnome driver.
+
+AC_SUBST(LINUXVGALIBS)
+AC_SUBST(GNOMELIBS)
+AC_SUBST(GDLIBS)
+AC_SUBST(CDLIBS)
+AC_SUBST(TKLIBS)
+AC_SUBST(XLIBS)

@@ -27,7 +27,7 @@
 */
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);

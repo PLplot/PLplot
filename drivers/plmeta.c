@@ -24,16 +24,16 @@
     This is a metafile writer for PLplot.
 
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 /*#define DEBUG*/
 
 #ifdef PLD_plmeta
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/metadefs.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "metadefs.h"
 #include <string.h>
 
 void plD_dispatch_init_plm	( PLDispatchTable *pdt );
