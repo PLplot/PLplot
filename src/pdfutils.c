@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/05/07 03:01:43  mjl
+ * Revision 1.14  1996/04/30 23:08:57  furnish
+ * Fix uninitialized data problem turned up by Purify.
+ *
+ * Revision 1.13  1995/05/07  03:01:43  mjl
  * Changed debug output to use new pldebug() function.
  *
  * Revision 1.12  1995/03/16  23:50:56  mjl
@@ -148,6 +151,7 @@ pdf_finit(FILE *file)
     if (pdfs != NULL) {
 	pdfs->buffer = NULL;
 	pdfs->file = file;
+	pdfs->bp = 0;
     }
 
     return pdfs;
