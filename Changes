@@ -9,6 +9,56 @@ new documentation is complete.
 For changes from previous versions, please see Changes.old.
 
 -----------------------------------
+Plrender
+-----------------------------------
+
+ * Inserted a hack for old metafiles with bad linewidth commands (WIDTH
+ * commands in the body of the metafile are now ignored for metafiles version
+ * 1993a and older).  WIDTH commands prior to the INIT on old metafiles are
+ * still honored.
+ *
+ * Changed orient-setting code to switch on the basis of orient%2 and orient%4,
+ * so that any value of orient gives valid output.
+ *
+ * Changed to a fatal error when unrecognized metafile input is encountered.
+ *
+ * Converted to new plplot command-line handling functions, resulting in a
+ * considerable reduction in the amount of actual code.  Miscellaneous bugs
+ * in file seeking fixed.  Extraneous page printed on a -p command
+ * eliminated.  Many other small improvements.
+ *
+ * Support for polylines (even converts connected lines while reading into
+ * polylines for better response), new color model support, event handler
+ * support.  New events recognized allow seeking to arbitrary locations in
+ * the file (absolute or relative), and backward.  Some old capabilities (no
+ * longer useful) eliminated.  
+ * 
+ * Seeking: when using an appropriate output driver (e.g. xwin), user
+ * keyboard input results in the following:
+ *
+ * <Backspace>	|
+ * <Delete>	| Back page
+ * <Page up>	|
+ *
+ * +<num><CR>	Seek forward <num> pages.
+ * -<num><CR>	Seek backward <num> pages.
+ *
+ * <num><CR>	Seek to page <num>.
+ *
+ * Both <BS> and <DEL> are recognized for a back-page since the target
+ * system may use either as its erase key.  <Page Up> is present on some
+ * keyboards (different from keypad key).  Note that <Page Down> and
+ * <Return> are recognized by the driver itself to advance the page.
+ *
+ * Illegal input is ignored.  When using the xterm driver, <backspace>,
+ * <delete>, <page up>, <page down> either are ignored or don't function
+ * properly.
+ *
+ * Fixed orientation code, previously it rotated plot in the wrong direction.
+ *
+ * Gave plrender an ID tag.
+
+-----------------------------------
 Main sources
 -----------------------------------
 
