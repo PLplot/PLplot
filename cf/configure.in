@@ -110,10 +110,10 @@ divert(-1)
 # Support macros for driver inclusion and help entries.
 
 # Including a driver in the below list includes it by default.
-# Note that "ps" stands for both the ps and psc drivers in ps.c and
-# plcore.h.  Most (all?) other drivers are treated separately WHY? (e.g.,
-# tek4010, tek4107) even though they appear in the same source code
-# file (i.e., tek.c in the case of tek4010 and tek4107).
+# Note that each driver should be treated separately even if
+# they are in the same source code file.
+# For example, the ps and psc drivers are defined in the ps.c source
+# code file.
 
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
@@ -800,8 +800,10 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    pstex)
 	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
 	    ;;
-	    gd)
+	    png)
 	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
+	    ;;
+	    jpeg)
 	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
 	    ;;
 	    xterm)
