@@ -574,10 +574,13 @@ proc_str (PLStream *pls, EscText *args)
   PSDev *dev = (PSDev *) pls->dev;
   char *font;
   float font_factor = 1.6;
+  int clxmin, clxmax, clymin, clymax;
 
   /* font height */
   ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
 
+  //fprintf(stderr,"%f %f\n", pls->dipxax, pls->dipyay);
+  
   /* calculate baseline text angle */
   angle = pls->diorot * 90.;
   a1 = acos(t[0]) * 180. / PI;
@@ -605,6 +608,18 @@ proc_str (PLStream *pls, EscText *args)
   else
     ref = -ENLARGE * ft_ht / 2.;
 
+
+  /* apply transformations FIXME -- difilt() is static in plcore.c */
+  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+
+  /* check clip limits. For now, only the reference point of the string is checked;
+     but the the whole string should be checked -- using a postscript construct
+     such as gsave/clip/grestore. This method can also be applied to the xfig and
+     pstex drivers. Zoom side effect: the font size must be adjusted! */
+
+  if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax)
+    return;
+
   /* rotate point in postscript is lower left corner, compensate */
   args->y = args->y + ref*cos(alpha * PI/180.);
   args->x = args->x - ref*sin(alpha * PI/180.);
@@ -630,6 +645,7 @@ proc_str (PLStream *pls, EscText *args)
   /* ps driver is rotated by default, compensate */
   plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
 
+  /* print the string: set current font, character size, strings rotation and justification */
   fprintf(OF, " %d %d moveto\n", args->x, args->y );
   fprintf(OF, "/%s findfont %f scalefont setfont\n", font, font_factor * ENLARGE * ft_ht);
   fprintf(OF, "gsave %f rotate ", alpha - 90.);
@@ -646,9 +662,9 @@ proc_str (PLStream *pls, EscText *args)
    */
 
   dev->llx = MIN(dev->llx, args->x - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
-  dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
   dev->urx = MAX(dev->urx, args->x + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
-  dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
 }
 
 
