@@ -1,3 +1,59 @@
+Commit from airwin (2003-12-28 00:58 CET)
+------------------
+
+Style changes: comments, do loops, indentation, and plcol ==> plcol0.
+
+Change 13th example to obtain exact agreement with file results from
+corresponding C examples.
+
+  plplot  examples/f77/x13f.fm4  1.8
+
+
+Commit from airwin (2003-12-28 00:16 CET)
+------------------
+
+Style changes: comments, do loops, indentation, and plcol ==> plcol0.
+Results still are in exact agreement with file results from corresponding C
+examples.
+
+  plplot  examples/f77/x10f.fm4  1.7
+  plplot  examples/f77/x12f.fm4  1.8
+
+
+Commit from airwin (2003-12-27 23:58 CET)
+------------------
+
+* Change 11th fortran example to produce identical results to corresponding
+C example.  This result shows the recently changed or updated fortran
+interface to plmesh, plmeshc, and plot3d is implemented correctly.
+
+  plplot  examples/f77/x11f.fm4  1.8
+
+
+Commit from airwin (2003-12-27 23:39 CET)
+------------------
+
+Tweak wording.
+
+  plplot  doc/docbook/src/api.xml  1.59
+
+
+Commit from airwin (2003-12-27 23:04 CET)
+------------------
+
+* Implement PLMESHC, PLOT3DC (actually reorganize so PLMESH, PLMESHC, and
+PLOT3D all call PLOT3DC in analogy with code in plot3d.c) for the fortran
+interface.
+
+* implement PLSURF3D for the fortran interface.
+
+* Change eighth fortran example to produce identical file results to the
+corresponding C example.  This tests the implementation of PLSURF3D.
+
+  plplot  bindings/f77/sc3d.c    1.11
+  plplot  examples/f77/x08f.fm4  1.8
+
+
 Commit from airwin (2003-12-27 02:14 CET)
 ------------------
 
