@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:46  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/07/31 06:06:48  mjl
+   Swapped background/foreground colors for monochrome X output.
 
+ * Revision 1.1  1992/05/20  21:32:46  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	xwin.c
@@ -71,6 +74,8 @@ static XwDev *xwd;
 static PLDev *pld;
 static int id, idev = -1;
 static int devtable[PL_NSTREAMS][PL_NDEVICES];
+
+static int swap_background = 0;
 
 /*----------------------------------------------------------------------*\
 * xw_init()
@@ -339,9 +344,18 @@ PLStream *pls;
 
     xwd->myscreen	= DefaultScreen(xwd->mydisplay);
     xwd->mymap		= DefaultColormap(xwd->mydisplay, xwd->myscreen);
-    xwd->mybackground	= BlackPixel(xwd->mydisplay, xwd->myscreen);
-    xwd->myforeground	= WhitePixel(xwd->mydisplay, xwd->myscreen);
     xwd->monochrome	= AreWeMonochrome( xwd->mydisplay );
+    if (xwd->monochrome)
+	swap_background = 1;
+
+    if (!swap_background) {
+	xwd->mybackground	= BlackPixel(xwd->mydisplay, xwd->myscreen);
+	xwd->myforeground	= WhitePixel(xwd->mydisplay, xwd->myscreen);
+    }
+    else {
+	xwd->mybackground	= WhitePixel(xwd->mydisplay, xwd->myscreen);
+	xwd->myforeground	= BlackPixel(xwd->mydisplay, xwd->myscreen);
+    }
 
 /* Default color values */
 
@@ -363,13 +377,16 @@ PLStream *pls;
         color_def(14, "salmon");
     }
 
-/* Default foreground */
+/* Default foreground/background */
 
-    color_def(15, "white");
-
-/* Default background */
-
-    color_def(16, "black");
+    if (!swap_background) {
+	color_def(15, "white");
+	color_def(16, "black");
+    }
+    else {
+	color_def(15, "black");
+	color_def(16, "white");
+    }
 
 /* Default program-specified window position and size */
 
