@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.16  1993/03/03 16:58:19  mjl
-   Added prototype for plscolbg().
+   Revision 1.17  1993/03/03 19:42:18  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.16  1993/03/03  16:58:19  mjl
+ * Added prototype for plscolbg().
+ *
  * Revision 1.15  1993/03/02  19:00:19  mjl
  * Added prototype for plgver() and its stub name def'n.
  *
@@ -207,10 +211,9 @@
 *  - PLINT should stay typedef'd to a long.  Bad things happen to some
 *    routines on some systems if it is set to an int.
 *
-*  - PLSHORT is currently used for device page coordinates.  When typedef'd
-*    to a short, the page coordinates are bounded by (-32767, 32767).  This
-*    gives a max resolution of about 3000 dpi, and improves performance
-*    in some areas over using a PLINT.
+*  - short is currently used for device page coordinates, so they are
+*    bounded by (-32767, 32767).  This gives a max resolution of about
+*    3000 dpi, and improves performance in some areas over using a PLINT.
 \*----------------------------------------------------------------------*/
 
 #ifdef PL_DOUBLE
@@ -220,7 +223,6 @@ typedef float PLFLT;
 #endif
 
 typedef long PLINT;
-typedef short PLSHORT;
 
 /* Signed char type, in case we ever need it. */
 
@@ -1169,9 +1171,9 @@ PLINT wcpcy	(PLFLT);
 
 void grinit	(void);
 
-void grline	(PLSHORT, PLSHORT, PLSHORT, PLSHORT);
+void grline	(short, short, short, short);
 
-void grpolyline	(PLSHORT *, PLSHORT *, PLINT);
+void grpolyline	(short *, short *, PLINT);
 
 void grclear	(void);
 

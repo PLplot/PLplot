@@ -166,7 +166,7 @@ xw_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-xw_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+xw_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int id = devtable[pls->ipls][pls->ipld];
@@ -191,7 +191,7 @@ xw_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void
-xw_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+xw_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
     XPoint pts[PL_MAXPOLYLINE];
@@ -774,7 +774,7 @@ xw_colini(PLStream *pls)
 /* Allocate colors in palette 0 */
 
     if (pls->color) {
-	for (i = 1; i < pls->ncol0; i++) {
+	for (i = 0; i < pls->ncol0; i++) {
 
 	    PLColor_to_XColor(&xwd->cmap0[i], &pls->cmap0[i]);
 

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 04:49:42  mjl
-   Eliminated references to the xxx_adv (gradv) driver functions.
+   Revision 1.3  1993/03/03 19:42:15  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.2  1993/02/23  04:49:42  mjl
+ * Eliminated references to the xxx_adv (gradv) driver functions.
+ *
  * Revision 1.1  1993/01/23  05:28:31  mjl
  * Added this file for inclusion by all drivers, in lieu of what was
  * previously dispatch.h.  This now has only driver prototypes -- NO
@@ -25,8 +29,8 @@ extern "C" {
 #endif
 
 void xte_init		(PLStream *);
-void xte_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void xte_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void xte_line		(PLStream *, short, short, short, short);
+void xte_polyline	(PLStream *, short *, short *, PLINT);
 void xte_clear		(PLStream *);
 void xte_page		(PLStream *);
 void xte_tidy		(PLStream *);
@@ -37,8 +41,8 @@ void xte_width		(PLStream *);
 void xte_esc		(PLStream *, PLINT, char *);
 
 void xm_init		(PLStream *);
-void xm_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void xm_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void xm_line		(PLStream *, short, short, short, short);
+void xm_polyline	(PLStream *, short *, short *, PLINT);
 void xm_clear		(PLStream *);
 void xm_page		(PLStream *);
 void xm_tidy		(PLStream *);
@@ -49,8 +53,8 @@ void xm_width		(PLStream *);
 void xm_esc		(PLStream *, PLINT, char *);
 
 void xw_init		(PLStream *);
-void xw_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void xw_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void xw_line		(PLStream *, short, short, short, short);
+void xw_polyline	(PLStream *, short *, short *, PLINT);
 void xw_clear		(PLStream *);
 void xw_page		(PLStream *);
 void xw_tidy		(PLStream *);
@@ -62,8 +66,8 @@ void xw_esc		(PLStream *, PLINT, char *);
 
 void tekt_init		(PLStream *);
 void tekf_init		(PLStream *);
-void tek_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void tek_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void tek_line		(PLStream *, short, short, short, short);
+void tek_polyline	(PLStream *, short *, short *, PLINT);
 void tek_clear		(PLStream *);
 void tek_page		(PLStream *);
 void tek_tidy		(PLStream *);
@@ -74,8 +78,8 @@ void tek_width		(PLStream *);
 void tek_esc		(PLStream *, PLINT, char *);
 
 void dg_init		(PLStream *);
-void dg_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void dg_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void dg_line		(PLStream *, short, short, short, short);
+void dg_polyline	(PLStream *, short *, short *, PLINT);
 void dg_clear		(PLStream *);
 void dg_page		(PLStream *);
 void dg_tidy		(PLStream *);
@@ -86,8 +90,8 @@ void dg_width		(PLStream *);
 void dg_esc		(PLStream *, PLINT, char *);
 
 void hp7470_init	(PLStream *);
-void hp7470_line	(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void hp7470_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void hp7470_line	(PLStream *, short, short, short, short);
+void hp7470_polyline	(PLStream *, short *, short *, PLINT);
 void hp7470_clear	(PLStream *);
 void hp7470_page	(PLStream *);
 void hp7470_tidy	(PLStream *);
@@ -98,8 +102,8 @@ void hp7470_width	(PLStream *);
 void hp7470_esc		(PLStream *, PLINT, char *);
 
 void hp7580_init	(PLStream *);
-void hp7580_line	(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void hp7580_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void hp7580_line	(PLStream *, short, short, short, short);
+void hp7580_polyline	(PLStream *, short *, short *, PLINT);
 void hp7580_clear	(PLStream *);
 void hp7580_page	(PLStream *);
 void hp7580_tidy	(PLStream *);
@@ -110,8 +114,8 @@ void hp7580_width	(PLStream *);
 void hp7580_esc		(PLStream *, PLINT, char *);
 
 void imp_init		(PLStream *);
-void imp_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void imp_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void imp_line		(PLStream *, short, short, short, short);
+void imp_polyline	(PLStream *, short *, short *, PLINT);
 void imp_clear		(PLStream *);
 void imp_page		(PLStream *);
 void imp_tidy		(PLStream *);
@@ -122,8 +126,8 @@ void imp_width		(PLStream *);
 void imp_esc		(PLStream *, PLINT, char *);
 
 void xfig_init		(PLStream *);
-void xfig_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void xfig_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void xfig_line		(PLStream *, short, short, short, short);
+void xfig_polyline	(PLStream *, short *, short *, PLINT);
 void xfig_clear		(PLStream *);
 void xfig_page		(PLStream *);
 void xfig_tidy		(PLStream *);
@@ -134,8 +138,8 @@ void xfig_width		(PLStream *);
 void xfig_esc		(PLStream *, PLINT, char *);
 
 void jet_init		(PLStream *);
-void jet_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void jet_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void jet_line		(PLStream *, short, short, short, short);
+void jet_polyline	(PLStream *, short *, short *, PLINT);
 void jet_clear		(PLStream *);
 void jet_page		(PLStream *);
 void jet_tidy		(PLStream *);
@@ -146,8 +150,8 @@ void jet_width		(PLStream *);
 void jet_esc		(PLStream *, PLINT, char *);
 
 void ps_init		(PLStream *);
-void ps_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void ps_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void ps_line		(PLStream *, short, short, short, short);
+void ps_polyline	(PLStream *, short *, short *, PLINT);
 void ps_clear		(PLStream *);
 void ps_page		(PLStream *);
 void ps_tidy		(PLStream *);
@@ -158,8 +162,8 @@ void ps_width		(PLStream *);
 void ps_esc		(PLStream *, PLINT, char *);
 
 void nx_init             (PLStream *);
-void nx_line             (PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void nx_polyline         (PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void nx_line             (PLStream *, short, short, short, short);
+void nx_polyline         (PLStream *, short *, short *, PLINT);
 void nx_clear            (PLStream *);
 void nx_page             (PLStream *);
 void nx_tidy             (PLStream *);
@@ -170,8 +174,8 @@ void nx_width            (PLStream *);
 void nx_esc              (PLStream *, PLINT, char *);
 
 void plm_init		(PLStream *);
-void plm_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void plm_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void plm_line		(PLStream *, short, short, short, short);
+void plm_polyline	(PLStream *, short *, short *, PLINT);
 void plm_clear		(PLStream *);
 void plm_page		(PLStream *);
 void plm_tidy		(PLStream *);
@@ -182,8 +186,8 @@ void plm_width		(PLStream *);
 void plm_esc		(PLStream *, PLINT, char *);
 
 void vga_init		(PLStream *);
-void vga_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void vga_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void vga_line		(PLStream *, short, short, short, short);
+void vga_polyline	(PLStream *, short *, short *, PLINT);
 void vga_clear		(PLStream *);
 void vga_page		(PLStream *);
 void vga_tidy		(PLStream *);
@@ -194,8 +198,8 @@ void vga_width		(PLStream *);
 void vga_esc		(PLStream *, PLINT, char *);
 
 void svga_init		(PLStream *);
-void svga_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void svga_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void svga_line		(PLStream *, short, short, short, short);
+void svga_polyline	(PLStream *, short *, short *, PLINT);
 void svga_clear		(PLStream *);
 void svga_page		(PLStream *);
 void svga_tidy		(PLStream *);
@@ -206,8 +210,8 @@ void svga_width		(PLStream *);
 void svga_esc		(PLStream *, PLINT, char *);
 
 void os2_init		(PLStream *);				 
-void os2_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void os2_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void os2_line		(PLStream *, short, short, short, short);
+void os2_polyline	(PLStream *, short *, short *, PLINT);
 void os2_clear		(PLStream *);				 
 void os2_page		(PLStream *);				 
 void os2_tidy		(PLStream *);				 
@@ -218,8 +222,8 @@ void os2_width		(PLStream *);
 void os2_esc		(PLStream *, PLINT, char *);		 
 
 void amiwn_init		(PLStream *);
-void amiwn_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void amiwn_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void amiwn_line		(PLStream *, short, short, short, short);
+void amiwn_polyline	(PLStream *, short *, short *, PLINT);
 void amiwn_clear	(PLStream *);
 void amiwn_page		(PLStream *);
 void amiwn_tidy		(PLStream *);
@@ -230,8 +234,8 @@ void amiwn_width	(PLStream *);
 void amiwn_esc		(PLStream *, PLINT, char *);
 
 void amipr_init		(PLStream *);
-void amipr_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void amipr_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void amipr_line		(PLStream *, short, short, short, short);
+void amipr_polyline	(PLStream *, short *, short *, PLINT);
 void amipr_clear	(PLStream *);
 void amipr_page		(PLStream *);
 void amipr_tidy		(PLStream *);
@@ -242,8 +246,8 @@ void amipr_width	(PLStream *);
 void amipr_esc		(PLStream *, PLINT, char *);
 
 void iff_init		(PLStream *);
-void iff_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void iff_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void iff_line		(PLStream *, short, short, short, short);
+void iff_polyline	(PLStream *, short *, short *, PLINT);
 void iff_clear		(PLStream *);
 void iff_page		(PLStream *);
 void iff_tidy		(PLStream *);
@@ -254,8 +258,8 @@ void iff_width		(PLStream *);
 void iff_esc		(PLStream *, PLINT, char *);
 
 void aegis_init		(PLStream *);
-void aegis_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void aegis_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void aegis_line		(PLStream *, short, short, short, short);
+void aegis_polyline	(PLStream *, short *, short *, PLINT);
 void aegis_clear	(PLStream *);
 void aegis_page		(PLStream *);
 void aegis_tidy		(PLStream *);
@@ -266,8 +270,8 @@ void aegis_width	(PLStream *);
 void aegis_esc		(PLStream *, PLINT, char *);
 
 void null_init		(PLStream *);
-void null_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void null_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void null_line		(PLStream *, short, short, short, short);
+void null_polyline	(PLStream *, short *, short *, PLINT);
 void null_clear		(PLStream *);
 void null_page		(PLStream *);
 void null_tidy		(PLStream *);
@@ -282,8 +286,8 @@ void null_esc		(PLStream *, PLINT, char *);
 \*----------------------------------------------------------------------*/
 
 void plbuf_init		(PLStream *);
-void plbuf_line		(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-void plbuf_polyline	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+void plbuf_line		(PLStream *, short, short, short, short);
+void plbuf_polyline	(PLStream *, short *, short *, PLINT);
 void plbuf_clear	(PLStream *);
 void plbuf_page		(PLStream *);
 void plbuf_tidy		(PLStream *);

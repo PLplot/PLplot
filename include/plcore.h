@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 04:53:14  mjl
-   Eliminated xxx_adv (gradv) driver function prototypes.
+   Revision 1.3  1993/03/03 19:42:16  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.2  1993/02/23  04:53:14  mjl
+ * Eliminated xxx_adv (gradv) driver function prototypes.
+ *
  * Revision 1.1  1993/01/23  05:34:51  mjl
  * Added this file for inclusion only by plcore.c.  It declares the plstream
  * data structure, and defines, declares, and initializes the dispatch
@@ -100,8 +104,8 @@ typedef struct {
    char *pl_MenuStr;
    char *pl_DevName;
    void (*pl_init)	(PLStream *);
-   void (*pl_line)	(PLStream *, PLSHORT, PLSHORT, PLSHORT, PLSHORT);
-   void (*pl_polyline)	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
+   void (*pl_line)	(PLStream *, short, short, short, short);
+   void (*pl_polyline)	(PLStream *, short *, short *, PLINT);
    void (*pl_clear)	(PLStream *);
    void (*pl_page)	(PLStream *);
    void (*pl_tidy)	(PLStream *);

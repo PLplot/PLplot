@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/02/27 21:07:40  mjl
-   Fixed the last bug :-) in text/graph window switching.
+   Revision 1.11  1993/03/03 19:42:10  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.10  1993/02/27  21:07:40  mjl
+ * Fixed the last bug :-) in text/graph window switching.
+ *
  * Revision 1.9  1993/02/27  08:44:38  mjl
  * Fixed some long-standing bugs in switching between text and graphics windows
  * (didn't affect xterms, but did affect certain vt100/tek emulators).
@@ -123,7 +127,7 @@ xte_init (PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void 
-xte_line (PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+xte_line (PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
@@ -169,7 +173,7 @@ xte_line (PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void 
-xte_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+xte_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 

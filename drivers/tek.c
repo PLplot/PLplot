@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/03 16:17:09  mjl
-   Fixed orientation-swapping code.
+   Revision 1.9  1993/03/03 19:42:08  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.8  1993/03/03  16:17:09  mjl
+ * Fixed orientation-swapping code.
+ *
  * Revision 1.7  1993/02/27  04:46:41  mjl
  * Fixed errors in ordering of header file inclusion.  "plplot.h" should
  * always be included first.
@@ -152,7 +156,7 @@ tek_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-tek_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+tek_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
@@ -201,7 +205,7 @@ tek_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void
-tek_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+tek_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/27 04:46:39  mjl
-   Fixed errors in ordering of header file inclusion.  "plplot.h" should
-   always be included first.
+   Revision 1.6  1993/03/03 19:42:04  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.5  1993/02/27  04:46:39  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
  * Revision 1.4  1993/02/25  18:29:08  mjl
  * Changed buffer code to use only one temporary file per plplot invocation &
  * rewinding it as needed, instead of opening/closing a temporary file for each
@@ -71,8 +75,8 @@ void rdbuf_esc		(PLStream *);
 
 /* Static variables */
 
-static PLSHORT xy[4];
-static PLSHORT xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
+static short xy[4];
+static short xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
@@ -102,7 +106,7 @@ plbuf_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-plbuf_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     if (pls->plbuf_read)
 	return;
@@ -114,7 +118,7 @@ plbuf_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 	xy[1] = y1a;
 	xy[2] = x2a;
 	xy[3] = y2a;
-	(void) fwrite(xy, sizeof(PLSHORT), 4, pls->plbufFile);
+	(void) fwrite(xy, sizeof(short), 4, pls->plbufFile);
     }
 }
 
@@ -125,7 +129,7 @@ plbuf_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void
-plbuf_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
@@ -140,8 +144,8 @@ plbuf_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
 	    xpoly[i] = xa[i];
 	    ypoly[i] = ya[i];
 	}
-	(void) fwrite(xpoly, sizeof(PLSHORT), npts, pls->plbufFile);
-	(void) fwrite(ypoly, sizeof(PLSHORT), npts, pls->plbufFile);
+	(void) fwrite(xpoly, sizeof(short), npts, pls->plbufFile);
+	(void) fwrite(ypoly, sizeof(short), npts, pls->plbufFile);
     }
 }
 
@@ -331,7 +335,7 @@ rdbuf_init(PLStream *pls)
 void
 rdbuf_line(PLStream *pls)
 {
-    (void) fread(xy, sizeof(PLSHORT), 4, pls->plbufFile);
+    (void) fread(xy, sizeof(short), 4, pls->plbufFile);
 
     grline(xy[0], xy[1], xy[2], xy[3]);
 }
@@ -348,8 +352,8 @@ rdbuf_polyline(PLStream *pls)
     PLINT npts;
 
     (void) fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
-    (void) fread(xpoly, sizeof(PLSHORT), npts, pls->plbufFile);
-    (void) fread(ypoly, sizeof(PLSHORT), npts, pls->plbufFile);
+    (void) fread(xpoly, sizeof(short), npts, pls->plbufFile);
+    (void) fread(ypoly, sizeof(short), npts, pls->plbufFile);
 
     grpolyline(xpoly, ypoly, npts);
 }

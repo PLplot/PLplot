@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/22 23:10:59  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.5  1993/03/03 19:42:03  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.4  1993/02/22  23:10:59  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.3  1993/01/23  05:41:48  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -127,7 +131,7 @@ void	os2_init( PLStream *pls )
 \*----------------------------------------------------------------------*/
 
 void os2_line( PLStream *pls, 
-			PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2 )
+			short x1, short y1, short x2, short y2 )
 {
 	UCHAR c;
 	PLINT	cp[4];
@@ -175,7 +179,7 @@ void os2_line( PLStream *pls,
 \*----------------------------------------------------------------------*/
 
 void 
-os2_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+os2_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 

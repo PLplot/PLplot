@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/27 04:46:38  mjl
-   Fixed errors in ordering of header file inclusion.  "plplot.h" should
-   always be included first.
+   Revision 1.6  1993/03/03 19:42:02  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.5  1993/02/27  04:46:38  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
  * Revision 1.4  1993/02/22  23:10:58  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -78,7 +82,7 @@ null_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-null_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+null_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
 }
 
@@ -89,7 +93,7 @@ null_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void
-null_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+null_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
 }
 

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/03 17:03:52  mjl
-   Added plscolbg() to modify background color.
+   Revision 1.6  1993/03/03 19:42:21  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.5  1993/03/03  17:03:52  mjl
+ * Added plscolbg() to modify background color.
+ *
  * Revision 1.4  1993/03/02  19:01:01  mjl
  * Added plgver() for retrieving plplot library version.
  *
@@ -101,7 +105,7 @@ grinit(void)
 /* Draw line between two points */
 
 void
-grline(PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2)
+grline(short x1, short y1, short x2, short y2)
 {
     offset = pls[ipls].device - 1;
     (*dispatch_table[offset].pl_line) (&pls[ipls], x1, y1, x2, y2);
@@ -111,7 +115,7 @@ grline(PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2)
 /* Draw polyline */
 
 void
-grpolyline(PLSHORT *x, PLSHORT *y, PLINT npts)
+grpolyline(short *x, short *y, PLINT npts)
 {
     offset = pls[ipls].device - 1;
     (*dispatch_table[offset].pl_polyline) (&pls[ipls], x, y, npts);

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/23 05:31:59  mjl
-   Eliminated xxx_adv driver function.
+   Revision 1.5  1993/03/03 19:42:28  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.4  1993/02/23  05:31:59  mjl
+ * Eliminated xxx_adv driver function.
+ *
  * Revision 1.3  1993/01/23  06:12:45  mjl
  * Preliminary work on new graphical interface (2.04-specific) for the Amiga.
  *
@@ -96,7 +100,7 @@ iff_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void 
-iff_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+iff_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     long xn1, yn1, xn2, yn2;
@@ -140,7 +144,7 @@ iff_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void 
-iff_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+iff_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/27 04:46:33  mjl
-   Fixed errors in ordering of header file inclusion.  "plplot.h" should
-   always be included first.
+   Revision 1.8  1993/03/03 19:41:56  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.7  1993/02/27  04:46:33  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
  * Revision 1.6  1993/02/22  23:10:52  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -118,7 +122,7 @@ hp7470_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-hp7470_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+hp7470_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -147,7 +151,7 @@ hp7470_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 \*----------------------------------------------------------------------*/
 
 void
-hp7470_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+hp7470_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 

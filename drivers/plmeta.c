@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/03 16:17:59  mjl
-   Added #include <stdlib.h> since the code needs to exit(1) on some errors.
+   Revision 1.10  1993/03/03 19:42:05  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.9  1993/03/03  16:17:59  mjl
+ * Added #include <stdlib.h> since the code needs to exit(1) on some errors.
+ *
  * Revision 1.8  1993/02/27  04:50:33  mjl
  * Simplified fgetpos/fsetpos usage, to where it will now actually work on rays,
  * and I hope the Amiga and Linux also.  Lesson to all: seeking in C is fragile!
@@ -156,7 +160,7 @@ plm_init(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-plm_line(PLStream *pls, PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2)
+plm_line(PLStream *pls, short x1, short y1, short x2, short y2)
 {
     U_CHAR c;
     U_SHORT xy[4];
@@ -223,7 +227,7 @@ plm_line(PLStream *pls, PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2)
 \*----------------------------------------------------------------------*/
 
 void
-plm_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+plm_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     U_CHAR c = (U_CHAR) POLYLINE;
 

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/23 05:16:19  mjl
-   Changed references in error messages from plstar to plinit, and fixed
-   some error messages to be more specific.
+   Revision 1.5  1993/03/03 19:42:22  mjl
+   Changed PLSHORT -> short everywhere; now all device coordinates are expected
+   to fit into a 16 bit address space (reasonable, and good for performance).
 
+ * Revision 1.4  1993/02/23  05:16:19  mjl
+ * Changed references in error messages from plstar to plinit, and fixed
+ * some error messages to be more specific.
+ *
  * Revision 1.3  1993/01/23  05:56:03  mjl
  * Now holds all routines dealing with line draws, including clipping and
  * dashed line support.  Polyline capability added.
@@ -27,21 +31,21 @@
 
 #define INSIDE(ix,iy) (BETW(ix,clpxmi,clpxma) && BETW(iy,clpymi,clpyma))
 
-static PLSHORT xline[PL_MAXPOLYLINE], yline[PL_MAXPOLYLINE];
-static PLSHORT xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
+static short xline[PL_MAXPOLYLINE], yline[PL_MAXPOLYLINE];
+static short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
 
 static PLINT lastx = UNDEFINED, lasty = UNDEFINED;
 
 /* Function prototypes */
 /* INDENT OFF */
 
-static void pllclp	(PLSHORT *, PLSHORT *, PLINT);
+static void pllclp	(short *, short *, PLINT);
 static int  clipline	(PLINT *, PLINT *, PLINT *, PLINT *,
 			 PLINT, PLINT, PLINT, PLINT);
-static void genlin	(PLSHORT *, PLSHORT *, PLINT);
+static void genlin	(short *, short *, PLINT);
 static void plupd	(PLINT, PLINT *, PLINT *, PLINT *,
 			 PLINT *, PLINT *, PLINT *);
-static void grdashline	(PLSHORT, PLSHORT, PLSHORT, PLSHORT,
+static void grdashline	(short, short, short, short,
 			 PLINT *, PLINT *, PLINT);
 /* INDENT ON */
 
@@ -224,7 +228,7 @@ drawor_poly(PLFLT *x, PLFLT *y, PLINT n)
 \*----------------------------------------------------------------------*/
 
 static void
-pllclp(PLSHORT *x, PLSHORT *y, PLINT npts)
+pllclp(short *x, short *y, PLINT npts)
 {
     PLINT x1, x2, y1, y2;
     PLINT clpxmi, clpxma, clpymi, clpyma, i, iclp;
@@ -395,7 +399,7 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
 \*----------------------------------------------------------------------*/
 
 static void
-genlin(PLSHORT *x, PLSHORT *y, PLINT npts)
+genlin(short *x, short *y, PLINT npts)
 {
     PLINT i, *mark, *space, nms;
 
@@ -427,7 +431,7 @@ genlin(PLSHORT *x, PLSHORT *y, PLINT npts)
 \*----------------------------------------------------------------------*/
 
 static void
-grdashline(PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2,
+grdashline(short x1, short y1, short x2, short y2,
 	   PLINT *mark, PLINT *space, PLINT nms)
 {
     PLINT nx, ny, nxp, nyp;
