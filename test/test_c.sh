@@ -25,3 +25,5 @@ $cdir/x16c -dev $device -o x16c.$dsuffix $options
 #skip x17c which is only meant for interactive execution
 $cdir/x18c -dev $device -o x18c.$dsuffix $options
 $cdir/x19c -dev $device -o x19c.$dsuffix $options
+#skip x20c which is only meant for interactive execution
+$cdir/x21c -dev $device -o x21c.$dsuffix $options
