@@ -464,7 +464,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
       plP_text(0, just, xform, x, y, refx, refy, text);
 #ifndef DEBUG
        plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore clip limits */
-       return; /* just for comparition */
+       return; /* just for comparison */
 #endif
     }
 
@@ -517,7 +517,7 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     if (plsc->dev_text) {
       plP_text(0, just, xform, plP_wcpcx(x), plP_wcpcy(y), refx, refy, text);      
 #ifndef DEBUG
-	  return; /* just for comparition */
+	  return; /* just for comparison */
 #endif
     }
 
@@ -550,7 +550,7 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 	/* program flow should never arrive here if dev_text == 1, but if it does */
 	if (plsc->dev_text) {
 #ifndef DEBUG
-	   return; /* for comparition only */
+	   return; /* for comparison only */
 #endif
 	}
 

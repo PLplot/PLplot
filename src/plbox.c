@@ -782,7 +782,7 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 			   plP_mmpcy(plP_wcmmy(wy) - disp * ht),
 			   refx, refy, text);
 #ifndef DEBUG
-	  return; /* just for comparition */
+	  return; /* just for comparison */
 #endif
     }
 
@@ -854,13 +854,13 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     if (lv && right)
 	plztx("h", dx, dy, wx, wy1, wy2, -5.0, 0.5, 0.5, label);
-
+    
     if (right && !lc)
 	return;
 
     if (!right && !lb)
 	return;
-
+    
     if (ll)
 	tick1 = 1.0;
 
@@ -1021,7 +1021,7 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     if (plsc->dev_text) {
       plP_text(0, just, xform, x, y, refx, refy, text);
 #ifndef DEBUG
-      return; /* just for comparition */
+      return; /* just for comparison */
 #endif
     }
 
