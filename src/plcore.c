@@ -437,10 +437,67 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 	*clpyma = plsc->diclpyma;
     }
     else {
-	*clpxmi = plsc->phyxmi;
-	*clpxma = plsc->phyxma;
-	*clpymi = plsc->phyymi;
-	*clpyma = plsc->phyyma;
+      *clpxmi = plsc->phyxmi;
+      *clpxma = plsc->phyxma;
+      *clpymi = plsc->phyymi;
+      *clpyma = plsc->phyyma;
+    }
+}
+
+void
+sdifilt(short *xscl, short *yscl, PLINT npts,
+       PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma)
+{
+  int i;
+  short x, y;
+
+/* Map meta coordinates to physical coordinates */
+
+    if (plsc->difilt & PLDI_MAP) {
+    for (i = 0; i < npts; i++) {
+        xscl[i] = plsc->dimxax * xscl[i] + plsc->dimxb;
+        yscl[i] = plsc->dimyay * yscl[i] + plsc->dimyb;
+    }
+    }
+
+/* Change orientation */
+
+    if (plsc->difilt & PLDI_ORI) {
+    for (i = 0; i < npts; i++) {
+        x = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb;
+        y = plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb;
+        xscl[i] = x;
+        yscl[i] = y;
+    }
+    }
+
+/* Change window into plot space */
+
+    if (plsc->difilt & PLDI_PLT) {
+    for (i = 0; i < npts; i++) {
+        xscl[i] = plsc->dipxax * xscl[i] + plsc->dipxb;
+        yscl[i] = plsc->dipyay * yscl[i] + plsc->dipyb;
+    }
+    }
+
+/* Change window into device space and set clip limits */
+/* (this is the only filter that modifies them) */
+
+    if (plsc->difilt & PLDI_DEV) {
+    for (i = 0; i < npts; i++) {
+        xscl[i] = plsc->didxax * xscl[i] + plsc->didxb;
+        yscl[i] = plsc->didyay * yscl[i] + plsc->didyb;
+    }
+    *clpxmi = plsc->diclpxmi;
+    *clpxma = plsc->diclpxma;
+    *clpymi = plsc->diclpymi;
+    *clpyma = plsc->diclpyma;
+    }
+    else {
+    *clpxmi = plsc->phyxmi;
+    *clpxma = plsc->phyxma;
+    *clpymi = plsc->phyymi;
+    *clpyma = plsc->phyyma;
     }
 }
 
@@ -2584,39 +2641,52 @@ return(ret);
 \*--------------------------------------------------------------------------*/
 
 void
-plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
+plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy)
 {
   PLINT i, npts;
-  PLINT *xscl, *yscl;
+  short *xscl, *yscl;
   int   plbuf_write;
 
   plsc->page_status = DRAWING;
 
+  if(plsc->dev_fastimg == 0) {
+    plimageslow(z, nx-1, ny-1, 
+         xmin, ymin, dx, dy);
+    return ;
+  }
+
   if (plsc->plbuf_write) {
+    IMG_DT img_dt;
+
+    img_dt.xmin=xmin;
+    img_dt.ymin=ymin;
+    img_dt.dx=dx;
+    img_dt.dy=dy;
+
     plsc->dev_ix = x;
     plsc->dev_iy = y;
     plsc->dev_z = z;
     plsc->dev_nptsX = nx;
     plsc->dev_nptsY = ny;
 
-    plbuf_esc(plsc, PLESC_IMAGE, NULL);
+    plbuf_esc(plsc, PLESC_IMAGE, &img_dt);
   }
 
-  /* avoid re-saving plot buffer in plP_esc() */
+  /* avoid re-saving plot buffer while in plP_esc() */
   plbuf_write = plsc->plbuf_write;
   plsc->plbuf_write = 0; 
 
   npts = nx*ny;
-  if (plsc->difilt) {
+  if (plsc->difilt) { /* isn't this odd? when replaying the plot buffer, e.g., when resizing the window, difilt() is caled again! the plot buffer should already contain the transformed data--it would save a lot of time! (and allow for differently oriented plots when in multiplot mode) */
     PLINT clpxmi, clpxma, clpymi, clpyma;
     
-    xscl = (PLINT *) malloc(nx*ny*sizeof(PLINT));
-    yscl = (PLINT *) malloc(nx*ny*sizeof(PLINT));
+    xscl = (short *) malloc(nx*ny*sizeof(short));
+    yscl = (short *) malloc(nx*ny*sizeof(short));
     for (i = 0; i < npts; i++) {
       xscl[i] = x[i];
       yscl[i] = y[i];
     }
-    difilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
+    sdifilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
     plsc->imclxmin = clpxmi;
     plsc->imclymin = clpymi;
     plsc->imclxmax = clpxma;
