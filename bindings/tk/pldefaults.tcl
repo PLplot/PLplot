@@ -1,6 +1,13 @@
 # $Id$
 # $Log$
-# Revision 1.5  1995/01/13 23:19:50  mjl
+# Revision 1.6  1995/03/16 22:59:30  mjl
+# Revamped modifier key acceleration scheme.  Now controlled by two global
+# variables: "global key_scroll_mag", which defaults to 5 and is the
+# magnification for each modifier key added, and "key_scroll_speed", which
+# defaults to 1 and is the baseline speed.  I probably should convert to
+# using real resources for these; maybe for the next cut.
+#
+# Revision 1.5  1995/01/13  23:19:50  mjl
 # Made a bunch of settings global.
 #
 # Revision 1.4  1994/09/27  21:56:30  mjl
@@ -160,7 +167,6 @@ proc pldefaults {} {
     global key_scroll_left;	set key_scroll_left	"Left"
     global key_scroll_up;	set key_scroll_up	"Up"
     global key_scroll_down;	set key_scroll_down	"Down"
-    global key_scroll_slow;	set key_scroll_slow	"3"
-    global key_scroll_fast;	set key_scroll_fast	"15"
-    global key_scroll_faster;	set key_scroll_faster	"75"
+    global key_scroll_mag;	set key_scroll_mag	"5"
+    global key_scroll_speed;	set key_scroll_speed	"1"
 }
