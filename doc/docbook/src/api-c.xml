@@ -1,0 +1,154 @@
+<chapter id="API-C">
+  <title>The specialized C API for PLplot</title>
+  
+  <para>
+  The purpose of this chapter is to document the API for every C function 
+  in PLplot (other than language bindings) that
+  is <emphasis>not</emphasis> part of the common API that has already been
+  documented in <xref linkend="API"/>.
+  </para>
+
+  <para>
+  This chapter is a work that is just starting.  There are many C functions
+  in the code base that are not part of the common API, and we haven't even
+  gotten to the point of listing them all.  For now we use this chapter for
+  the already-documented C functions that were mistakenly placed in the
+  common API chapter when <filename>plplot.h</filename> in fact did not
+  assign them a
+  <quote>c_</quote> prefix name designating them as part of the common API.
+  </para>
+
+  <sect1 id="plexit" renderas="sect3">
+    <title>
+      <function>plexit</function>: Error abort
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plexit</function>
+	</funcdef>
+        <paramdef><parameter>message</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      This routine is called in case an error is encountered during
+      execution of a PLplot routine.  It prints the error message, tries to
+      release allocated resources, calls <function>plsexit</function> and
+      then exits.  If cleanup needs to be done in the driver program then
+      the user may want to supply his/her own version of
+      <function>plsexit</function>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>message</parameter>
+	  (<literal>char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Error message.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plgfile" renderas="sect3">
+    <title>
+      <function>plgfile</function>: Get output file handle
+    </title>
+    
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plgfile</function>
+	</funcdef>
+        <paramdef><parameter>file</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+      Gets the current output file handle, if applicable. 
+    </para>
+    
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>file</parameter>
+	  (<literal>FILE **</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    File pointer to current output file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    
+  </sect1>
+
+  <sect1 id="plsfile" renderas="sect3">
+    <title>
+      <function>plsfile</function>: Set output file handle
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plsfile</function>
+	</funcdef>
+        <paramdef><parameter>file</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets the current output file handle, if applicable.  If the file has
+      has not been previously opened and is required by the driver, the
+      user will be prompted for the file name.  This routine, if used, must
+      be called before initializing PLplot.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>file</parameter>
+	  (<literal>FILE *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    File pointer.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: ("plplotdoc.sgml" "book" "chapter" "")
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:("/usr/lib/sgml/catalog")
+sgml-local-ecat-files:nil
+End:
+-->

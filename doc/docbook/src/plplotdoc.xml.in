@@ -10,6 +10,8 @@
 <!ENTITY chap-advanced SYSTEM "advanced.xml">
 <!ENTITY chap-drivers SYSTEM "drivers.xml">
 <!ENTITY chap-api SYSTEM "api.xml">
+<!ENTITY chap-api-c SYSTEM "api-c.xml">
+<!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
 <!ENTITY chap-c SYSTEM "c.xml">
 <!ENTITY chap-fortran SYSTEM "fortran.xml">
 <!ENTITY chap-cplus SYSTEM "cplus.xml">
@@ -45,6 +47,7 @@
 <!ENTITY plexit '<link linkend="plexit"><function>plexit</function></link>'>
 <!ENTITY plfamadv '<link linkend="plfamadv"><function>plfamadv</function></link>'>
 <!ENTITY plfill '<link linkend="plfill"><function>plfill</function></link>'>
+<!ENTITY plfill3 '<link linkend="plfill3"><function>plfill3</function></link>'>
 <!ENTITY plflush '<link linkend="plflush"><function>plflush</function></link>'>
 <!ENTITY plfont '<link linkend="plfont"><function>plfont</function></link>'>
 <!ENTITY plfontld '<link linkend="plfontld"><function>plfontld</function></link>'>
@@ -72,6 +75,7 @@
 <!ENTITY plinit '<link linkend="plinit"><function>plinit</function></link>'>
 <!ENTITY pljoin '<link linkend="pljoin"><function>pljoin</function></link>'>
 <!ENTITY pllab '<link linkend="pllab"><function>pllab</function></link>'>
+<!ENTITY pllightsource '<link linkend="pllightsource"><function>pllightsource</function></link>'>
 <!ENTITY plline '<link linkend="plline"><function>plline</function></link>'>
 <!ENTITY plline3 '<link linkend="plline3"><function>plline3</function></link>'>
 <!ENTITY pllsty '<link linkend="pllsty"><function>pllsty</function></link>'>
@@ -262,6 +266,8 @@
   <part>
     <title> Reference </title>
     &chap-api;
+    &chap-api-c;
+    &chap-api-fortran;
   </part>
 
   <part>

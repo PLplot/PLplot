@@ -1,13 +1,19 @@
 <chapter id="API">
-  <title>The PLplot Applications Programming Interface</title>
+  <title>The Common API for PLplot</title>
   
   <para>
-    Documentation of each PLplot function that is designed to be externally
-    called in the January 1999 snapshot (as documented in plplot.h).  
+  The purpose of this chapter is to document the API for every C function in
+  PLplot that should have a counterpart in other PLplot language bindings such as
+  Fortran.  These common API routines have a special
+  <quote>c_</quote> prefix name assigned to them in <filename>plplot.h</filename>.  
+  This common API between the various languages constitutes the
+  most important part of the PLplot API that programmers need to know.  
+  Additional PLplot API specialized for each language binding is documented
+  in <xref linkend="API-C"/> and subsequent chapters.
   </para>
 
   <para>
-All API functions of the current CVS HEAD are listed here with their
+All common API functions of the current CVS HEAD are listed here with their
 arguments.  All functions have at least a short description, 
 but there are still a fair number of undocumented
 parameters as indicated by the string <quote>NEEDS DOCUMENTATION</quote>.
@@ -1091,402 +1097,9 @@ origin
 
   </sect1>
 
-  <sect1 id="plcon0" renderas="sect3">
-    <title>
-      <function>plcon0</function>: Contour plot, identity mapping (Fortran
-      only) 
-    </title>
-    
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plcon0</function>
-	</funcdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>kx</parameter></paramdef>
-        <paramdef><parameter>lx</parameter></paramdef>
-        <paramdef><parameter>ky</parameter></paramdef>
-        <paramdef><parameter>ly</parameter></paramdef>
-        <paramdef><parameter>clevel</parameter></paramdef>
-        <paramdef><parameter>nlevel</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Draws a contour plot of the data in
-      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
-      using the <literal><parameter>nlevel</parameter></literal> contour
-      levels specified by <literal><parameter>clevel</parameter></literal>.
-      Only the region of the array from
-      <literal><parameter>kx</parameter></literal> to
-      <literal><parameter>lx</parameter></literal> and from
-      <literal><parameter>ky</parameter></literal> to
-      <literal><parameter>ly</parameter></literal> is plotted out.  See
-      <xref linkend="contour-plots"/> for more information.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to a vectored two-dimensional array containing data to
-	    be contoured.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nx, ny</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Physical dimensions of array
-	    <literal><parameter>z</parameter></literal>.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>kx, lx</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Range of <literal>x</literal> indices to consider.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>ky, ly</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Range of <literal>y</literal> indices to consider.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to array specifying levels at which to draw contours.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nlevel</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Number of contour levels to draw.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-    <para>
-      NOTE: this function is intended for use from a Fortran caller only.
-      The C user should instead call &plcont; using the built-in
-      transformation function <function>pltr0</function> for the same
-      capability.
-    </para>
-  </sect1>
-
-  <sect1 id="plcon1" renderas="sect3">
-    <title>
-      <function>plcon1</function>: Contour plot, general 1-d mapping
-      (Fortran only)
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plcon1</function>
-	</funcdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>kx</parameter></paramdef>
-        <paramdef><parameter>lx</parameter></paramdef>
-        <paramdef><parameter>ky</parameter></paramdef>
-        <paramdef><parameter>ly</parameter></paramdef>
-        <paramdef><parameter>clevel</parameter></paramdef>
-        <paramdef><parameter>nlevel</parameter></paramdef>
-        <paramdef><parameter>xg</parameter></paramdef>
-        <paramdef><parameter>yg</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Draws a contour plot of the data in
-      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
-      using the <literal><parameter>nlevel</parameter></literal> contour
-      levels specified by <literal><parameter>clevel</parameter></literal>.
-      Only the region of the array from
-      <literal><parameter>kx</parameter></literal> to
-      <literal><parameter>lx</parameter></literal> and from
-      <literal><parameter>ky</parameter></literal> to
-      <literal><parameter>ly</parameter></literal> is plotted out.  The
-      arrays <literal><parameter>xg</parameter></literal> and
-      <literal><parameter>yg</parameter></literal> are used to specify the
-      transformation between array indices and world coordinates.  See
-      <xref linkend="contour-plots"/> for more information.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to a vectored two-dimensional array containing data to
-	    be contoured.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nx, ny</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Physical dimensions of array
-	    <literal><parameter>z</parameter></literal>.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>kx, lx</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Range of <literal>x</literal> indices to consider.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>ky, ly</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Range of <literal>y</literal> indices to consider.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to array specifying levels at which to draw contours.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nlevel</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Number of contour levels to draw.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>xg, yg</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointers to arrays which specify the transformation from array
-	    indices to world coordinates.  These must be one-dimensional
-	    arrays, used for a transformation of the form:
-	    <literal>tx</literal> = <literal>f(x)</literal>,
-	    <literal>ty</literal> = <literal>f(y)</literal>.  Function
-	    values at locations between grid points are obtained via linear
-	    interpolation.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-    <para>
-      NOTE: this function is intended for use from a Fortran caller only.
-      The C user should instead call &plcont; using the built-in
-      transformation function <function>pltr1</function> for the same
-      capability.
-    </para>
-
-  </sect1>
-
-  <sect1 id="plcon2" renderas="sect3">
-    <title>
-      <function>plcon2</function>: Contour plot, general 2-d mapping
-      (Fortran only)
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plcon2</function>
-	</funcdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>kx</parameter></paramdef>
-        <paramdef><parameter>lx</parameter></paramdef>
-        <paramdef><parameter>ky</parameter></paramdef>
-        <paramdef><parameter>ly</parameter></paramdef>
-        <paramdef><parameter>clevel</parameter></paramdef>
-        <paramdef><parameter>nlevel</parameter></paramdef>
-        <paramdef><parameter>xg</parameter></paramdef>
-        <paramdef><parameter>yg</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-    <para>
-      Draws a contour plot of the data in
-      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
-      using the <literal><parameter>nlevel</parameter></literal> contour
-      levels specified by <literal><parameter>clevel</parameter></literal>.
-      Only the region of the array from
-      <literal><parameter>kx</parameter></literal> to
-      <literal><parameter>lx</parameter></literal> and from
-      <literal><parameter>ky</parameter></literal> to
-      <literal><parameter>ly</parameter></literal> is plotted out.  The
-      arrays <literal><parameter>xg</parameter></literal> and
-      <literal><parameter>yg</parameter></literal> are used to specify the
-      transformation between array indices and world coordinates.  See
-      <xref linkend="contour-plots"/> for more information.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to a vectored two-dimensional array containing data to
-	    be contoured.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nx, ny</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Physical dimensions of array
-	    <literal><parameter>z</parameter></literal>.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>kx, lx</parameter> (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Range of <literal>x</literal> indices to consider.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>ky, ly</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Range of <literal>y</literal> indices to consider.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to array specifying levels at which to draw contours.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nlevel</parameter> (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Number of contour levels to draw.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>xg, yg</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointers to arrays which specify the transformation from array
-	    indices to world coordinates.  These must be two-dimensional
-	    arrays, used for a transformation of the form:
-	    <literal>tx</literal> = <literal>f(x, y)</literal>,
-	    <literal>ty</literal> = <literal>f(x, y)</literal>.  Function
-	    values at locations between grid points are obtained via linear
-	    interpolation.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-    <para>
-      NOTE: this function is intended for use from a Fortran caller only.
-      The C user should instead call &plcont; using the built-in
-      transformation function <function>pltr2</function> for the same
-      capability.
-    </para>
-
-  </sect1>
-
   <sect1 id="plcont" renderas="sect3">
     <title>
-      <function>plcont</function>: Contour plot, fixed linear mapping (C
-      function. For documentation of the equivalent Fortran subroutine see
-      plcontfortran)
+      <function>plcont</function>: Contour plot, fixed linear mapping
     </title>
 
     <para>
@@ -1669,45 +1282,6 @@ origin
 	</listitem>
       </varlistentry>
     </variablelist>
-
-  </sect1>
-
-  <sect1 id="plcontfortran" renderas="sect3">
-    <title>
-      <function>plcont</function>: Contour plot, fixed linear mapping
-      (Fortran subroutine. For documentation of the equivalent C function
-      see plcont)
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plcont</function>
-	</funcdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>kx</parameter></paramdef>
-        <paramdef><parameter>lx</parameter></paramdef>
-        <paramdef><parameter>ky</parameter></paramdef>
-        <paramdef><parameter>ly</parameter></paramdef>
-        <paramdef><parameter>clevel</parameter></paramdef>
-        <paramdef><parameter>nlevel</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      When called from Fortran, this routine has the same effect as when
-      invoked from C.  The interpretation of all parameters (see &plcont;)
-      is also the same except there is no transformation function supplied
-      as the last parameter.  Instead, a 6-element array specifying
-      coefficients to use in the transformation is supplied via the named
-      common block <literal>plplot</literal> (see code). Since this
-      approach is somewhat inflexible, the user is recommended to call
-      either of &plcon0;, &plcon1;, or &plcon2; instead.
-    </para>
 
   </sect1>
 
@@ -2165,47 +1739,6 @@ error bar.
 
   </sect1>
 
-  <sect1 id="plexit" renderas="sect3">
-    <title>
-      <function>plexit</function>: Error abort
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plexit</function>
-	</funcdef>
-        <paramdef><parameter>message</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      This routine is called in case an error is encountered during
-      execution of a PLplot routine.  It prints the error message, tries to
-      release allocated resources, calls <function>plsexit</function> and
-      then exits.  If cleanup needs to be done in the driver program then
-      the user may want to supply his/her own version of
-      <function>plsexit</function>.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>message</parameter>
-	  (<literal>char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Error message.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
   <sect1 id="plfamadv" renderas="sect3">
     <title>
       <function>plfamadv</function>: Advance to the next family file on the
@@ -2290,6 +1823,88 @@ next new page
 	<listitem>
 	  <para>
 	    Pointer to array with y coordinates of vertices.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plfill3" renderas="sect3">
+    <title>
+      <function>plfill3</function>: Area fill in 3D
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plfill3</function>
+	</funcdef>
+        <paramdef><parameter>n</parameter></paramdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Fills the 3D polygon defined by the
+      <literal><parameter>n</parameter></literal> points
+      <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[i]),<parameter>z</parameter>[i])</literal> 
+      using the pattern defined by
+      &plpsty; or &plpat;.  The routine will automatically close the
+      polygon between the last and first vertices.  If multiple closed
+      polygons are passed in <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal>,
+      and <literal><parameter>z</parameter></literal> then &plfill3; will
+      fill in between them.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>n</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of vertices in polygon.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with x coordinates of vertices.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with y coordinates of vertices.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with z coordinates of vertices.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2890,42 +2505,6 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
-  </sect1>
-
-  <sect1 id="plgfile" renderas="sect3">
-    <title>
-      <function>plgfile</function>: Get output file handle
-    </title>
-    
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plgfile</function>
-	</funcdef>
-        <paramdef><parameter>file</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-    
-    <para>
-      Gets the current output file handle, if applicable. 
-    </para>
-    
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>file</parameter>
-	  (<literal>FILE **</literal>, output)
-	</term>
-	<listitem>
-	  <para>
-	    File pointer to current output file.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-    
   </sect1>
 
   <sect1 id="plgfnam" renderas="sect3">
@@ -3747,6 +3326,67 @@ space for this (80 characters is safe).
 
   </sect1>
 
+  <sect1 id="pllightsource" renderas="sect3">
+    <title>
+      <function>pllightsource</function>: Sets the 3D position of the light
+source
+    </title> 
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>pllightsource</function>
+        </funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis> 
+    </para> 
+
+    <para>
+    Sets the 3D position of the light source.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            NEEDS DOCUMENTATION
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            NEEDS DOCUMENTATION
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            NEEDS DOCUMENTATION
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plline" renderas="sect3">
     <title>
       <function>plline</function>: Draw lines between a number of points
@@ -3923,7 +3563,6 @@ space for this (80 characters is safe).
   <sect1 id="plmesh" renderas="sect3">
     <title>
       <function>plmesh</function>: Plot surface mesh 
-(C function. For documentation of the equivalent Fortran subroutine see plmeshfortran)
     </title>
 
     <para>
@@ -4058,51 +3697,6 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
     
-  </sect1>
-
-  <sect1 id="plmeshfortran" renderas="sect3">
-    <title>
-      <function>plmesh</function>: Plot surface mesh
-(Fortran subroutine. For documentation of the equivalent C function see plmesh)
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plmesh</function>
-	</funcdef>
-        <paramdef><parameter>x</parameter></paramdef>
-        <paramdef><parameter>y</parameter></paramdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>opt</parameter></paramdef>
-        <paramdef><parameter>mx</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      When called from Fortran, this routine has the same effect as when
-      invoked from C.  The interpretation of all parameters (see &plmesh;)
-      is also the same except there is an additional parameter given by:
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>mx</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Length of array in x direction, for plotting subarrays.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
   </sect1>
 
   <sect1 id="plmkstrm" renderas="sect3">
@@ -4292,8 +3886,6 @@ default
   <sect1 id="plot3d" renderas="sect3">
     <title>
       <function>plot3d</function>: Plot 3-d surface plot
-(C function. For documentation of the equivalent Fortran subroutine see
-plot3dfortran)
     </title>
 
     <para>
@@ -4437,52 +4029,6 @@ plot3dfortran)
 	    Flag to indicate whether or not ``sides'' should be draw on the
 	    figure.  If <literal><parameter>side</parameter>=0</literal> no
 	    sides are drawn, otherwise the sides are drawn.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
-  <sect1 id="plot3dfortran" renderas="sect3">
-    <title>
-      <function>plot3d</function>: Plot 3-d surface plot
-(Fortran subroutine. For documentation of the equivalent C function see plot3d)
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plot3d</function>
-	</funcdef>
-        <paramdef><parameter>x</parameter></paramdef>
-        <paramdef><parameter>y</parameter></paramdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>opt</parameter></paramdef>
-        <paramdef><parameter>side</parameter></paramdef>
-        <paramdef><parameter>mx</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      When called from Fortran, this routine has the same effect as when
-      invoked from C.  The interpretation of all parameters (see &plot3d;)
-      is also the same except there is an additional parameter given by:
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>mx</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Length of array in x direction, for plotting subarrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6240,7 +5786,7 @@ incrementally (zoom)
 
     <para>
     Set the escape character for text strings.  From C you can pass as a
-    character, from Fortran it needs to be the decimal ASCII value.  Only
+    character. Only
     selected characters are allowed to prevent the user from shooting
     himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
     of backslash as a character escape).  Here are the allowed escape
@@ -6366,45 +5912,6 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
 	    Maximum file size (in bytes) for a family file.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
-  <sect1 id="plsfile" renderas="sect3">
-    <title>
-      <function>plsfile</function>: Set output file handle
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plsfile</function>
-	</funcdef>
-        <paramdef><parameter>file</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Sets the current output file handle, if applicable.  If the file has
-      has not been previously opened and is required by the driver, the
-      user will be prompted for the file name.  This routine, if used, must
-      be called before initializing PLplot.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>file</parameter>
-	  (<literal>FILE *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    File pointer.
 	  </para>
 	</listitem>
       </varlistentry>
