@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/08/31 20:14:30  mjl
+ * Revision 1.20  1993/09/08 02:36:47  mjl
+ * Changed mapping driver interface initialization function to not bomb if
+ * called before plinit().  Changed plcpstrm to work more robustly (some
+ * saves were giving garbage).
+ *
+ * Revision 1.19  1993/08/31  20:14:30  mjl
  * Fix to plend1() so that prematurely aborted streams do not result in a
  * core dump.  Put font loading code before plsc->level is set to 1, to
  * prevent core dumps when fonts are not found.
@@ -404,6 +409,9 @@ static void
 pldi_ini(void)
 {
     if (plsc->level >= 1) {
+	if (plsc->difilt & PLDI_MAP)	/* Coordinate mapping */
+	    calc_dimap();
+
 	if (plsc->difilt & PLDI_ORI)	/* Orientation */
 	    calc_diori();
 	else
@@ -903,24 +911,42 @@ c_plgdiori(PLFLT *p_rot)
 \*----------------------------------------------------------------------*/
 
 void
-c_plsdimap(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax,
-	   PLFLT ixpmm, PLFLT iypmm)
+c_plsdimap(PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
+	   PLFLT dimxpmm, PLFLT dimypmm)
+{
+    plsetvar(plsc->dimxmin, dimxmin);
+    plsetvar(plsc->dimxmax, dimxmax);
+    plsetvar(plsc->dimymin, dimymin);
+    plsetvar(plsc->dimymax, dimymax);
+    plsetvar(plsc->dimxpmm, dimxpmm);
+    plsetvar(plsc->dimypmm, dimypmm);
+
+    plsc->difilt |= PLDI_MAP;
+    pldi_ini();
+}
+
+/*----------------------------------------------------------------------*\
+* void calc_dimap
+*
+* Set up transformation from metafile coordinates.
+* The size of the plot is scaled so as to preserve aspect ratio.
+* This isn't intended to be a general-purpose facility just yet
+* (not sure why the user would need it, for one).
+\*----------------------------------------------------------------------*/
+
+static void
+calc_dimap()
 {
     PLFLT lx, ly;
     PLINT pxmin, pxmax, pymin, pymax;
-    PLFLT ixlen, iylen, pxlen, pylen;
+    PLFLT dimxlen, dimylen, pxlen, pylen;
 
-    if (plsc->level < 1)
-	plexit("plsdimap: Please call plinit first.");
-
-    if ((ixmin == plsc->phyxmi) && (ixmax == plsc->phyxma) &&
-	(iymin == plsc->phyymi) && (iymax == plsc->phyyma) &&
-	(ixpmm == plsc->xpmm) && (iypmm == plsc->ypmm)) {
+    if ((plsc->dimxmin == plsc->phyxmi) && (plsc->dimxmax == plsc->phyxma) &&
+	(plsc->dimymin == plsc->phyymi) && (plsc->dimymax == plsc->phyyma) &&
+	(plsc->dimxpmm == plsc->xpmm) && (plsc->dimypmm == plsc->ypmm)) {
 	plsc->difilt &= ~PLDI_MAP;
 	return;
     }
-
-    plsc->difilt |= PLDI_MAP;
 
 #ifdef DEBUG
     fprintf(stderr, "plsc->phyxmi: %d,  plsc->phyxma: %d\n",
@@ -932,28 +958,27 @@ c_plsdimap(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax,
     fprintf(stderr, "plsc->xpmm: %f,  plsc->ypmm: %f\n",
 	    plsc->xpmm, plsc->ypmm);
 
-    fprintf(stderr, "ixmin: %d,  ixmax: %d\n",
-	    ixmin, ixmax);
+    fprintf(stderr, "plsc->dimxmin: %d,  plsc->dimxmax: %d\n",
+	    plsc->dimxmin, plsc->dimxmax);
 
-    fprintf(stderr, "iymin: %d,  iymax: %d\n",
-	    iymin, iymax);
+    fprintf(stderr, "plsc->dimymin: %d,  plsc->dimymax: %d\n",
+	    plsc->dimymin, plsc->dimymax);
 
-    fprintf(stderr, "ixpmm: %f,  iypmm: %f\n",
-	    ixpmm, iypmm);
+    fprintf(stderr, "plsc->dimxpmm: %f,  plsc->dimypmm: %f\n",
+	    plsc->dimxpmm, plsc->dimypmm);
 #endif
 
 /* Set default aspect ratio */
 
-    lx = (ixmax - ixmin + 1) / ixpmm;
-    ly = (iymax - iymin + 1) / iypmm;
+    lx = (plsc->dimxmax - plsc->dimxmin + 1) / plsc->dimxpmm;
+    ly = (plsc->dimymax - plsc->dimymin + 1) / plsc->dimypmm;
 
     plsc->aspdev = lx / ly;
-    pldi_ini();
 
 /* Build transformation to correct physical coordinates */
 
-    ixlen = ixmax - ixmin;
-    iylen = iymax - iymin;
+    dimxlen = plsc->dimxmax - plsc->dimxmin;
+    dimylen = plsc->dimymax - plsc->dimymin;
 
     pxmin = plsc->phyxmi;
     pxmax = plsc->phyxma;
@@ -962,10 +987,10 @@ c_plsdimap(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax,
     pxlen = pxmax - pxmin;
     pylen = pymax - pymin;
 
-    plsc->dimxax = pxlen / ixlen;
-    plsc->dimyay = pylen / iylen;
-    plsc->dimxb = pxmin - pxlen * ixmin / ixlen;
-    plsc->dimyb = pymin - pylen * iymin / iylen;
+    plsc->dimxax = pxlen / dimxlen;
+    plsc->dimyay = pylen / dimylen;
+    plsc->dimxb = pxmin - pxlen * plsc->dimxmin / dimxlen;
+    plsc->dimyb = pymin - pylen * plsc->dimymin / dimylen;
 
 #ifdef DEBUG
     fprintf(stderr, "pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
@@ -976,10 +1001,10 @@ c_plsdimap(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax,
 
     fprintf(stderr, "pxlen: %f,  pylen: %f\n", pxlen, pylen);
 
-    pxmin = ixmin * plsc->dimxax + plsc->dimxb;
-    pxmax = ixmax * plsc->dimxax + plsc->dimxb;
-    pymin = iymin * plsc->dimyay + plsc->dimyb;
-    pymax = iymax * plsc->dimyay + plsc->dimyb;
+    pxmin = plsc->dimxmin * plsc->dimxax + plsc->dimxb;
+    pxmax = plsc->dimxmax * plsc->dimxax + plsc->dimxb;
+    pymin = plsc->dimymin * plsc->dimyay + plsc->dimyb;
+    pymax = plsc->dimymax * plsc->dimyay + plsc->dimyb;
 
     fprintf(stderr, "Transformation test:\n\
 pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
@@ -1280,8 +1305,33 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	return;
     }
 
-/* Copy state parameters from the reference stream */
-/* Can't just copy entire stream unfortunately */
+/* Plot buffer -- need to copy file pointer so that plreplot() works */
+/* This also prevents inadvertent writes into the plot buffer */
+
+    plsc->plbufFile = plsr->plbufFile;
+
+/* Driver interface */
+/* Transformation must be recalculated in current driver coordinates */
+
+    if (plsr->difilt & PLDI_PLT) 
+	plsdiplt(plsr->dipxmin, plsr->dipymin, plsr->dipxmax, plsr->dipymax);
+
+    if (plsr->difilt & PLDI_DEV)
+	plsdidev(plsr->mar, plsr->aspect, plsr->jx, plsr->jy);
+
+    if (plsr->difilt & PLDI_ORI)
+	plsdiori(plsr->diorot);
+
+/* Map device coordinates */
+
+    if ( ! (flags & 0x01))
+	plsdimap(plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
+		 plsr->xpmm, plsr->ypmm);
+
+/* Initialize if it hasn't been done yet. */
+
+    if (plsc->level == 0)
+	plinit();
 
 /* Palettes */
 
@@ -1306,30 +1356,6 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	CP_COLOR(cmap0[i]);
     for (i = 0; i < 256; i++)
 	CP_COLOR(cmap1[i]);
-
-/* Plot buffer -- need to copy file pointer so that plreplot() works */
-
-    plsc->plbufFile = plsr->plbufFile;
-    plsc->plbufOwner = 0;
-    plsc->plbuf_write = plsr->plbuf_write;
-
-/* Driver interface */
-/* Transformation must be recalculated in current driver coordinates */
-
-    if (plsr->difilt & PLDI_PLT) 
-	plsdiplt(plsr->dipxmin, plsr->dipymin, plsr->dipxmax, plsr->dipymax);
-
-    if (plsr->difilt & PLDI_DEV)
-	plsdidev(plsr->mar, plsr->aspect, plsr->jx, plsr->jy);
-
-    if (plsr->difilt & PLDI_ORI)
-	plsdiori(plsr->diorot);
-
-/* Map device coordinates */
-
-    if ( ! (flags & 0x01))
-	plsdimap(plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
-		 plsr->xpmm, plsr->ypmm);
 }
 
 /*----------------------------------------------------------------------*\
