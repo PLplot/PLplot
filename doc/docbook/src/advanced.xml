@@ -727,18 +727,21 @@ main()
 (TrueType and others) that are rendered by the FreeType library just as long
 as the device supports setting an individual pixel. Note that drivers
 interact with FreeType using the support routines 
-<literal>plD_FreeType_init</literal>, 
-<literal>plD_render_freetype_text</literal>, 
-<literal>plD_FreeType_Destroy</literal>, and
-<literal>pl_set_extended_cmap0</literal> that are coded in
+<literal>plD_FreeType_init</literal>,
+<literal>plD_render_freetype_text</literal>,
+<literal>plD_FreeType_Destroy</literal>,
+<literal>pl_set_extended_cmap0</literal>, and
+<literal>pl_RemakeFreeType_text_from_buffer</literal> that are coded in
 <filename>plfreetype.c</filename>.</para>
 
 <para>The use of these support routines is exemplified by the
-<filename>gd.c</filename> driver.  Here we make some notes to accompany this
-driver which should make it easier to migrate other drivers to use the
-FreeType library.  Every code fragment we mention below should be surrounded
+<filename>gd.c</filename> driver.  Here we make some notes to accompany
+this driver which should make it easier to migrate other drivers to
+use the FreeType library.  Every code fragment we mention below should be surrounded
 with a <literal>#ifdef HAVE_FREETYPE...#endif</literal> to quarantine these
-fragments for systems without the FreeType library.</para>
+fragments for systems without the FreeType library.  For interactive devices that
+need caching of text drawing, reference should also be made to
+<filename>wingcc.c</filename>.</para>
 
 <sect2>
 <title>Write a call back function to plot a single pixel</title>
@@ -891,6 +894,31 @@ work.  Note it essential to protect that call by the
 <literal>pls->level</literal> manipulations for the reasons stated. </para>
 
 </sect2>
+
+<sect2>
+<title>Add A Command to redraw text (interactive drivers only)</title>
+
+<para>Plplot only caches drawing commands, not text plotting commands, so
+for interactive devices which refresh their display by replaying the plot
+buffer, a separate function has to be called to redraw the text.  plfreetype
+knows when buffering is being used by a device driver, and will automatically
+start caching text when necessary.  To redraw this cached text, a call to
+<literal>pl_RemakeFreeType_text_from_buffer</literal> has to be added after the driver has called
+<literal>plRemakePlot</literal>.  The following example is from <filename>wingcc.c</filename>.
+
+<programlisting>
+                if (dev->waiting==1)
+                {
+                    plRemakePlot(pls);
+                    #ifdef HAVE_FREETYPE
+                    pl_RemakeFreeType_text_from_buffer(pls);
+                    #endif
+                 }
+</programlisting>
+</para>
+
+</sect2>
+
 
 <sect2>
 <title>Add Function Prototypes</title>
