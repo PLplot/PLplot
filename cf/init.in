@@ -22,8 +22,14 @@ OCC		= @OCC@
 F77		= @F77@
 LDF		= @LDF@
 M4		= m4
-LN		= ln -s
+
+# Force everything.  If unsure, test for existence first.
+# Redefine these as needed in system-specific setup.
+
+CP		= cp -p
+LN		= ln -sf
 RM		= rm -f
+MV		= mv -f
 
 # Flags and other miscellanea
 

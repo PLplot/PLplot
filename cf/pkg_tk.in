@@ -15,20 +15,20 @@ TK_OBJ		= tk$O Pltk_Init$O tcpip$O plframe$O plr$O
 TK_OBJ_SA	= tkMain$O 
 TK_EXE		= plserver$E
 TK_INSTALL	= install_tk
+TK_DEMOS	= tk?? *.tcl *.c
 
 install_tk:
-	@echo "Installing Tk support."
-	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
-	-if test $(SHARED) = 1; then \
-	 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
+	@-if test $(SHARED) = 1; then \
+	  $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
 		-o plserver$E $(LDC_LIBS) $(INSTALL_RPATH); \
-	 fi
-	-strip plserver$E
-	-cp plserver$E $(BIN_DIR)
-	-cd $(top_srcdir)/bindings/tk; \
-	 cp pltk.h $(INCLUDE_DIR); \
-	 cp *.itk *.tcl *.pal $(TCL_DIR)
-	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
-	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
+	  fi
+	@-strip plserver$E
+	@-$(CP) plserver$E $(BIN_DIR)
+	@-cd $(top_srcdir)/bindings/tk; \
+	  $(CP) pltk.h $(INCLUDE_DIR); \
+	  $(CP) *.itk *.tcl *.pal $(TCL_DIR)
+	@-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
+	@-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
+	@-cd $(top_srcdir)/examples/tk; $(CP) $(TK_DEMOS) $(DEMOS_DIR)/tk
 

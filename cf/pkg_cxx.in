@@ -20,8 +20,8 @@ CXX_INSTALL	= install_cxx
 CXX_LINK	= -l$(CXXLIB_NAME)$(LIB_TAG)
 
 install_cxx:
-	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
-	-if test ! -d $(DEMOS_DIR)/c++; then mkdir -p $(DEMOS_DIR)/c++; fi
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c++
-	-cd $(top_srcdir)/examples/c++; cp * $(DEMOS_DIR)/c++
+	@-cd $(top_srcdir)/bindings/c++; $(CP) plstream.h $(INCLUDE_DIR)
+	@-if test ! -d $(DEMOS_DIR)/c++; then mkdir -p $(DEMOS_DIR)/c++; fi
+	@-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c++
+	@-cd $(top_srcdir)/examples/c++; $(CP) *.cc $(DEMOS_DIR)/c++
 

@@ -17,6 +17,7 @@ TCL_OBJ		= tclAPI$O
 TCL_OBJ_SA	= tclMain$O 
 TCL_EXE		= pltcl$E tclIndex
 TCL_INSTALL	= install_tcl
+TCL_DEMOS	= *.tcl *.log *.dat
 
 MAKEINDEX	= $(srcdir)/scripts/mktclIndex
 
@@ -44,18 +45,18 @@ tclIndex:
 	@$(MAKEINDEX)
 
 install_tcl:
-	-if test $(SHARED) = 1; then \
+	@-if test $(SHARED) = 1; then \
 	   $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
 		-o pltcl$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	 fi
-	-strip pltcl$E
-	-cp pltcl$E $(BIN_DIR)
-	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
-	-cp tclIndex $(TCL_DIR)
-	-cd $(top_srcdir)/bindings/tcl; \
-	 cp pltcl.h $(INCLUDE_DIR)
-	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
-	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
+	@-strip pltcl$E
+	@-$(CP) pltcl$E $(BIN_DIR)
+	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
+	@-$(CP) tclIndex $(TCL_DIR)
+	@-cd $(top_srcdir)/bindings/tcl; \
+	  $(CP) pltcl.h $(INCLUDE_DIR)
+	@-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
+	@-cd $(top_srcdir)/examples/tcl; $(CP) $(TCL_DEMOS) $(DEMOS_DIR)/tcl
 
 install_mat:
-	cp plplot/tclMatrix.h $(INCLUDE_DIR)
+	@$(CP) plplot/tclMatrix.h $(INCLUDE_DIR)

@@ -33,6 +33,8 @@ PYTHON_LIBS=
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
+PYTHON_DEMOS	= README pytkdemo *.py
+
 # note this only builds something that can be used if PYTHONPATH is set 
 # to tmp.  Also RPATH puts current directory first.  Therefore only
 # really useful for temporary tests in tmp until it is decided to
@@ -44,26 +46,25 @@ $(PYTHON_EXE): python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	echo '*shared*' > python_dynamic/Setup.in
 	echo 'pl plmodule.c plmodule2.c -I. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -L.. $(PLLIB_LDC) $(LDC_LIBS) $(RPATH)' >> python_dynamic/Setup.in
 	cd python_dynamic ; make -f Makefile.pre.in boot ; make ; \
-	mv $(PYTHON_EXE) ..
+	$(MV) $(PYTHON_EXE) ..
 
 install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
-	cd python_dynamic ; make distclean
-	echo '*shared*' > python_dynamic/Setup.in
-	echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
-	cd python_dynamic ; make -f Makefile.pre.in boot ; make ; \
-	mv $(PYTHON_EXE) ..
-	
-	-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
-	-cp $(PYTHON_EXE) $(PYTHON_DIR)
-	-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
-	echo "If the following symlink creation fails (perhaps because you are not root)" ; \
-	echo "then you must set PYTHONPATH to $(PYTHON_DIR) in order to run" ; \
-	echo "the python demos, xw??.py" ; \
-	ln -s $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR) ; \
-	fi
-	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
-	-cd $(top_srcdir)/examples/python; cp * $(DEMOS_DIR)/python
+	@cd python_dynamic ; make distclean
+	@echo '*shared*' > python_dynamic/Setup.in
+	@echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
+	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
+	 $(MV) $(PYTHON_EXE) ..
+	@-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
+	@-$(CP) $(PYTHON_EXE) $(PYTHON_DIR)
+	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
+	  echo "If the following symlink creation fails (perhaps because you are not root)" ; \
+	  echo "then you must set PYTHONPATH to $(PYTHON_DIR) in order to run" ; \
+	  echo "the python demos, xw??.py" ; \
+	  $(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR) ; \
+	  fi
+	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
+	@-cd $(top_srcdir)/examples/python; $(CP) $(PYTHON_DEMOS) $(DEMOS_DIR)/python
 #	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
 #		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
-#	-cd $(top_srcdir)/bindings/python; cp *.py $(PYTHON_MOD_DIR)/plplot
+#	-cd $(top_srcdir)/bindings/python; $(CP) *.py $(PYTHON_MOD_DIR)/plplot
 

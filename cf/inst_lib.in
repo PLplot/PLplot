@@ -8,29 +8,30 @@
 # -----------------------------------------------------------------------------
 
 install_lib:
-	-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi
-	-if test ! -d $(LIB_DIR); then mkdir -p $(LIB_DIR); fi
-	-if test ! -d $(DOC_DIR); then mkdir -p $(DOC_DIR); fi
-	-if test ! -d $(BIN_DIR); then mkdir -p $(BIN_DIR); fi
-	-if test ! -d $(INFO_DIR); then mkdir -p $(INFO_DIR); fi
-	-cd $(top_srcdir)/lib; cp *.fnt *.map $(LIB_DIR)
-	-cp $(PLLIB_BASE)* $(LIB_DIR)
-	if test -r $(PLLIB_BASE)$(LIB_TAG)$A; then $(RANLIB) $(LIB_DIR)/$(PLLIB_BASE)$(LIB_TAG)$A; fi
+	@-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi
+	@-if test ! -d $(LIB_DIR); then mkdir -p $(LIB_DIR); fi
+	@-if test ! -d $(DOC_DIR); then mkdir -p $(DOC_DIR); fi
+	@-if test ! -d $(BIN_DIR); then mkdir -p $(BIN_DIR); fi
+	@-if test ! -d $(INFO_DIR); then mkdir -p $(INFO_DIR); fi
+	@-cd $(top_srcdir)/lib; $(CP) *.fnt *.map $(LIB_DIR)
+	@-$(CP) $(PLLIB_BASE)* $(LIB_DIR)
+	@if test -r $(PLLIB_BASE)$(LIB_TAG)$A; then $(RANLIB) $(LIB_DIR)/$(PLLIB_BASE)$(LIB_TAG)$A; fi
 #No LIB_TAG on matrix library!
-	-cp $(MATLIB_BASE)* $(LIB_DIR)
-	if test -r $(MATLIB_BASE)$A; then $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$A; fi
-	-cp $(CXXLIB_BASE)* $(LIB_DIR)
-	if test -r $(CXXLIB_BASE)$(LIB_TAG)$A; then $(RANLIB) $(LIB_DIR)/$(CXXLIB_BASE)$(LIB_TAG)$A; fi
-	-cd $(top_srcdir); \
-	 cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
-	    mklinks $(DOC_DIR)
-	-if test ! -f $(DOC_DIR)/README.local; then \
-	 cp $(top_srcdir)/doc/README.local $(DOC_DIR); fi
+	@-$(CP) $(MATLIB_BASE)* $(LIB_DIR)
+	@if test -r $(MATLIB_BASE)$A; then $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$A; fi
+	@-$(CP) $(CXXLIB_BASE)* $(LIB_DIR)
+	@if test -r $(CXXLIB_BASE)$(LIB_TAG)$A; then $(RANLIB) $(LIB_DIR)/$(CXXLIB_BASE)$(LIB_TAG)$A; fi
+	@-cd $(top_srcdir); \
+	  $(CP) README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
+	     mklinks $(DOC_DIR)
+	@-if test ! -f $(DOC_DIR)/README.local; then \
+	  $(CP) $(top_srcdir)/doc/README.local $(DOC_DIR); fi
 #	 for file in $(wildcard) $(top_srcdir)/doc/*.info; do \
-#		cp $file $(INFO_DIR); \
+#		$(CP) $file $(INFO_DIR); \
 #	 done
-	-cd $(top_srcdir)/scripts; cp pl* $(BIN_DIR)
-	-cd $(top_srcdir)/include; \
-	 cp plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
-		pldebug.h drivers.h $(INCLUDE_DIR)
-	 cp plConfig.h plDevs.h $(INCLUDE_DIR)
+	@-cd $(top_srcdir)/scripts; $(CP) pl* $(BIN_DIR)
+	@-cd $(top_srcdir)/include; \
+	  $(CP) plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
+	     pldebug.h drivers.h $(INCLUDE_DIR)
+	@$(CP) plConfig.h plDevs.h $(INCLUDE_DIR)
+
