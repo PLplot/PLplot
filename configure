@@ -2516,10 +2516,10 @@ if test "$enable_tcl" = "yes"; then
 fi
 
 if test "$enable_itcl" = "yes"; then
-    itclbindir="`echo $ITCLLIBDIR | sed 's,/itcl/lib,,'`'/bin'"
+    itclbindir="`echo $ITCLLIBDIR | sed 's,/lib/itcl,,'`/bin"
 #    echo "itclbindir = $itclbindir"
-    if test -r "$itclbindir/ish"; then
-	MAKEINDEX="$itclbindir/ish"
+    if test -r "$itclbindir/itclsh"; then
+	MAKEINDEX="$itclbindir/itclsh"
     fi
     TCL_INDEX_FILES="*.tcl"
 fi
@@ -3551,6 +3551,7 @@ if test "$with_shlib" = "yes"; then
 	IRIX-5.*|IRIX64-6.* )
 	    echo "$ac_t""okay" 1>&6
 	    SHLIB_BUILD="$CC -shared -o"
+	    LDSHARED="ld -shared"
 	;;
 	* )
 	    with_shlib=no
@@ -4053,7 +4054,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 4057 "configure"
+#line 4058 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -4074,7 +4075,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4078 "configure"
+#line 4079 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -4096,7 +4097,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 4100 "configure"
+#line 4101 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -4114,7 +4115,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 4118 "configure"
+#line 4119 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -4135,7 +4136,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 4139 "configure"
+#line 4140 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -4172,7 +4173,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4176 "configure"
+#line 4177 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -4233,7 +4234,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4237 "configure"
+#line 4238 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -4265,7 +4266,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4269 "configure"
+#line 4270 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -4299,7 +4300,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 4303 "configure"
+#line 4304 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -4414,7 +4415,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4418 "configure"
+#line 4419 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -4469,7 +4470,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4473 "configure"
+#line 4474 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
