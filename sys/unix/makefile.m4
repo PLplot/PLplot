@@ -631,7 +631,7 @@ $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 })
 #----------------------------------------------------------------------#
 # Font files.
-# Note 2 font files are created.
+# Note 6 font files actually created.
 # sfont - standard font
 # xfont - extended fonts
 
@@ -651,11 +651,99 @@ $(PLFNT_DIR)plxtnd.fnt: xtndfont.o $(FONT_OBJ)
 	mv *.fnt $(PLFNT_DIR)
 
 #----------------------------------------------------------------------#
+# Object file dependencies.
+
+# source files
+
+base.o:		plplot.h dispatch.h base.c 
+convert.o:	plplot.h convert.c 
+genlin.o:	plplot.h genlin.c 
+move.o:		plplot.h move.c 
+pladv.o:	plplot.h pladv.c 
+plaxes.o:	plplot.h plaxes.c 
+plbeg.o:	plplot.h plbeg.c 
+plbin.o:	plplot.h plbin.c 
+plbox.o:	plplot.h plbox.c 
+plbox3.o:	plplot.h plbox3.c 
+plccal.o:	plplot.h plccal.c 
+plcntr.o:	plplot.h plcntr.c 
+plcol.o:	plplot.h plcol.c 
+plcont.o:	plplot.h plcont.c 
+plconf.o:	plplot.h plconf.c 
+pldtik.o:	plplot.h pldtik.c 
+plend.o:	plplot.h plend.c 
+plenv.o:	plplot.h plenv.c 
+plerr.o:	plplot.h plerr.c 
+plexit.o:	plplot.h plexit.c 
+plfill.o:	plplot.h plfill.c 
+plfont.o:	plplot.h plfont.c 
+plform.o:	plplot.h plform.c 
+plgra.o:	plplot.h plgra.c 
+plgrid3.o:	plplot.h plgrid3.c 
+plgspa.o:	plplot.h plgspa.c 
+plhist.o:	plplot.h plhist.c 
+pljoin.o:	plplot.h pljoin.c 
+pllab.o:	plplot.h pllab.c 
+pllclp.o:	plplot.h pllclp.c 
+plline.o:	plplot.h plline.c 
+pllsty.o:	plplot.h pllsty.c 
+plmesh.o:	plplot.h plmesh.c 
+plmtex.o:	plplot.h plmtex.c 
+plnxtv.o:	plplot.h plnxtv.c 
+plot3d.o:	plplot.h plot3d.c 
+plpat.o:	plplot.h plpat.c 
+plpsty.o:	plplot.h plpsty.c 
+plptex.o:	plplot.h plptex.c 
+plrot.o:	plplot.h plrot.c 
+plsdef.o:	plplot.h plsdef.c 
+plside3.o:	plplot.h plside3.c 
+plstar.o:	plplot.h dispatch.h plstar.c 
+plstyl.o:	plplot.h plstyl.c 
+plsvpa.o:	plplot.h plsvpa.c 
+plsym.o:	plplot.h plsym.c 
+plt3zz.o:	plplot.h plt3zz.c 
+pltick.o:	plplot.h pltick.c 
+plvasp.o:	plplot.h plvasp.c 
+plvpas.o:	plplot.h plvpas.c 
+plvpor.o:	plplot.h plvpor.c 
+plvsta.o:	plplot.h plvsta.c 
+plw3d.o:	plplot.h plw3d.c 
+plwid.o:	plplot.h plwid.c 
+plwind.o:	plplot.h plwind.c 
+plxybx.o:	plplot.h plxybx.c 
+plzbx.o:	plplot.h plzbx.c 
+string.o:	plplot.h string.c 
+
+# C language stubs for linking Plplot to Fortran.
+
+sc3d.o:		plstubs.h plplot.h sc3d.c
+scconf.o:	plstubs.h plplot.h scconf.c
+scstubs.o:	plstubs.h plplot.h scstubs.c
+
+# Fortran language stubs for linking Plplot to Fortran.
+
+strutil.o:	strutil.f
+sfstubs.o:	sfstubs.f
+
+# System-specific files.
+
+# Amiga
+
+aegis.o:	plplot.h dispatch.h plamiga.h aegis.c
+amiwn.o:	plplot.h dispatch.h plamiga.h amiwn.c
+amipr.o:	plplot.h dispatch.h plamiga.h amipr.c
+iff.o:		plplot.h dispatch.h plamiga.h iff.c
+plmenu.o:	plplot.h plamiga.h plmenu.c
+plprefs.o:	plplot.h plamiga.h plprefs.c
+plsupport.o:	plplot.h plamiga.h plsupport.c
+plwindow.o :	plplot.h plamiga.h plwindow.c
+
+#----------------------------------------------------------------------#
 # Explicit rules
 #
 # plfont.c may have font flags passed in
 
-plfont.o:	plfont.c
+plfont.o:	plplot.h plfont.c
 	$(CC) $(CFLAGS) $(FONTFLAG) plfont.c
 
 # dispatch.c and all the drivers need to know $(PLDEVICES).  The guts
@@ -663,47 +751,49 @@ plfont.o:	plfont.c
 # the device list.  You may want to leave drivers for specific systems
 # (Amiga, MS-DOS, OS/2, etc) out of this list.
 
-dispatch.o:	dispatch.c
+dispatch.o:	plplot.h dispatch.h dispatch.c
 	$(CC) $(CFLAGS) $(PLDEVICES) dispatch.c
 
-dg300.o:	dg300.c
+dg300.o:	plplot.h dispatch.h dg300.c
 	$(CC) $(CFLAGS) $(PLDEVICES) dg300.c
 
-hp7470.o:	hp7470.c
+hp7470.o:	plplot.h dispatch.h hp7470.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7470.c
 
-hp7580.o:	hp7580.c
+hp7580.o:	plplot.h dispatch.h hp7580.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7580.c
 
-impress.o:	impress.c
+impress.o:	plplot.h dispatch.h impress.c
 	$(CC) $(CFLAGS) $(PLDEVICES) impress.c
 
-ljii.o:	ljii.c
+ljii.o:		plplot.h dispatch.h ljii.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ljii.c
 
-next.o:	next.c
+next.o:		plplot.h dispatch.h next.c
 	$(CC) $(CFLAGS) $(PLDEVICES) next.c
 
-ps.o:	ps.c
+ps.o:		plplot.h dispatch.h ps.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ps.c
 
-tek.o:	tek.c
+tek.o:		plplot.h dispatch.h tek.c
 	$(CC) $(CFLAGS) $(PLDEVICES) tek.c
 
-plmeta.o:	plmeta.c
+plmeta.o:	plplot.h dispatch.h metadefs.h plmeta.c
 	$(CC) $(CFLAGS) $(PLDEVICES) plmeta.c
 
-xfig.o:	xfig.c
+xfig.o:		plplot.h dispatch.h xfig.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xfig.c
 
-xwin.o:	xwin.c
+xwin.o:		plplot.h dispatch.h xwin.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xwin.c
 
-xterm.o:	xterm.c
+xterm.o:	plplot.h dispatch.h xterm.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xterm.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
+
+plrender.o:	plplot.h metadefs.h pdf.h plrender.c
 
 pltek:	pltek.o
 	$(LDC) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
@@ -845,7 +935,6 @@ links:
 	copy /fonts/\#?.c ""
 	copy /examples/C/\#?.c ""
 	copy /sys/amiga/src/\#?.c ""
-	copy /sys/amiga/src/\#?.h ""
 })
 
 if_unix({
