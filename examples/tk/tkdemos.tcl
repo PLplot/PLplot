@@ -16,6 +16,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.3  2000/12/17 23:45:20  airwin
+# correct the path for the tcl scripts
+#
 # Revision 1.2  1995/06/30 13:48:29  furnish
 # Update loop limit to reflect the two new demo files.
 #
@@ -31,6 +34,6 @@ pack append . .plw {left expand fill}
 
 for {set i 1} {$i <= 18} {incr i} {
     set demo x[format "%02d" $i]
-    source $demo.tcl
+    source ../tcl/$demo.tcl
     proc $i {} "$demo .plw.plwin"
 }
