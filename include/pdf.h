@@ -35,8 +35,8 @@
 #define U_LONG unsigned long
 #endif
 
-#ifndef TCL_VERSION
-typedef struct Tcl_Channel_ *Tcl_Channel;
+#ifdef PLPLOT_USE_TCL_CHANNELS
+#include <tcl.h>
 #endif
 
 /* PDFstrm definition */
@@ -46,7 +46,9 @@ typedef struct Tcl_Channel_ *Tcl_Channel;
 typedef struct {
     FILE *file;				/* Filesystem */
     unsigned char *buffer;		/* Memory buffer */
+#ifdef PLPLOT_USE_TCL_CHANNELS
     Tcl_Channel tclChan;	        /* Tcl channel */
+#endif
     long bp, bufmax;			/* Buffer pointer and max size */
 } PDFstrm;
 

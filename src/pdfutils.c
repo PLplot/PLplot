@@ -29,10 +29,6 @@
 #define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 
-#ifdef PLPLOT_USE_TCL_CHANNELS
-#include <tcl.h>
-#endif
-
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);
 
@@ -70,8 +66,8 @@ pdf_fopen(char *filename, char *mode)
     if (pdfs != NULL) {
 	pdfs->buffer = NULL;
 	pdfs->file = NULL;
-	pdfs->tclChan = NULL;
 #ifdef PLPLOT_USE_TCL_CHANNELS
+	pdfs->tclChan = NULL;
 	if (1) {
 	    char new_mode[3];
 	    int binary = 0;
@@ -129,7 +125,9 @@ pdf_bopen(U_CHAR *buffer, long bufmax)
 
     if (pdfs != NULL) {
 	pdfs->file = NULL;
+#ifdef PLPLOT_USE_TCL_CHANNELS
 	pdfs->tclChan = NULL;
+#endif
 	pdfs->bp = 0;
 
 	if (buffer == NULL) {
@@ -172,7 +170,9 @@ pdf_finit(FILE *file)
     if (pdfs != NULL) {
 	pdfs->buffer = NULL;
 	pdfs->file = file;
+#ifdef PLPLOT_USE_TCL_CHANNELS
 	pdfs->tclChan = NULL;
+#endif
 	pdfs->bp = 0;
     }
 
