@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/06/23 22:40:29  mjl
+ * Revision 1.6  1994/06/30 05:46:21  furnish
+ * Another plot command in tk02 which invokes a private tclMatrix
+ * extension for demo purposes.  xtk02.c adds a new tclMatrix subcommand
+ * "stuff", and tk02 exercises it.  Dumb, but shows how it all works.
+ *
+ * Revision 1.5  1994/06/23  22:40:29  mjl
  * Fix to get prototype of pltkMain() correct, and some cleaning up.
  *
  * Revision 1.4  1994/06/16  19:30:25  mjl
@@ -21,6 +26,36 @@
 #include <tk.h>
 #include <itcl.h>
 #include <math.h>
+
+#include "tclMatrix.h"
+
+/* A pithy little proc to show off how to install and use a tclMatrix
+   extension subcommand. This example is silly--only intended to show
+   how to do it.  What to do with it is your problem.  Could implement
+   subcommands for filling a matrix with special functions, performing
+   fft's, etc.
+   */
+
+int stuff( tclMatrix *pm, Tcl_Interp *interp,
+	   int argc, char *argv[] )
+{
+    int i;
+    float x, y;
+    printf( "made it into stuff, pm->n[0] = %d.\n", pm->n[0] );
+
+/* Should check that matrix is right type, size, etc. */
+
+    for( i = 0; i < pm->n[0]; i++ ) {
+	x = (float) i / pm->n[0];
+	y = sin( 6.28 * 4. * i / pm->n[0] ) * x * (1. - x) * 2 +
+	    2. * x * (1. - x);
+	pm->fdata[i] = y;
+    }
+
+    interp->result = "Things are cool in gumbyville.";
+    return TCL_OK;
+}
+
 
 /*----------------------------------------------------------------------*\
  * main --
@@ -120,6 +155,9 @@ Tcl_AppInit(interp)
 
     Tcl_CreateCommand(interp, "myplot", myplotCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
+
+    Tcl_MatrixInstallXtnsn( "stuff", stuff );
+
     return TCL_OK;
 }
 

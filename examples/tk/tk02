@@ -7,7 +7,12 @@
 # $Id$
 #
 # $Log$
-# Revision 1.6  1994/06/17 21:23:11  mjl
+# Revision 1.7  1994/06/30 05:46:20  furnish
+# Another plot command in tk02 which invokes a private tclMatrix
+# extension for demo purposes.  xtk02.c adds a new tclMatrix subcommand
+# "stuff", and tk02 exercises it.  Dumb, but shows how it all works.
+#
+# Revision 1.6  1994/06/17  21:23:11  mjl
 # Removed option database settings since they were the same as those set
 # in the pldefaults proc.
 #
@@ -85,6 +90,9 @@ pack append .menu .menu.four {left expand fill}
 
 button .menu.five -text "Five" -command "gumbyplot"
 pack append .menu .menu.five {left expand fill}
+
+button .menu.six -text "Six" -command "snoopy"
+pack .menu.six -side left -expand 1 -fill x
 
 button .menu.exit -text "Exit" -command "quit 0"
 pack append .menu .menu.exit {right expand fill}
@@ -201,6 +209,28 @@ proc gumbyplot {} {
     }
 
     .plw plline 101 $x1 $y1
+}
+
+# This proc shows off the use of a matrix extension subcommand.
+
+proc snoopy {} {
+    puts "Inside snoopy"
+
+    matrix x float 101
+    matrix y float 101
+
+    for {set i 0} {$i < 101} {incr i} {
+	set xx [expr $i * .01]
+	$x $i = $xx
+    }
+
+    $y stuff
+
+    .plw plcol 1
+    .plw plenv 0 1 0 1 0 0
+    .plw plcol 6
+    .plw pllab "(x)" "(y)" "#frDemo of Matrix extension subcommand"
+    .plw plline 101 $x $y
 }
 
 # Punch eject and hold onto your seat !!!
