@@ -615,13 +615,26 @@ FT->face->ascender>>6,
  * you have NO idea how much effort that saves ! Some params are in a
  * different order, and Freetype wants integers whereas plplot likes floats,
  * but such differences are quite trivial.
+ * 
+ * For some odd reason, this needs to be set a different way for DJGPP. Why ?
+ * I wish I knew.
  */
+
+#ifdef DJGPP
+
+FT->matrix.xx =(FT_Fixed)0x10000*t[0];
+FT->matrix.xy =(FT_Fixed)0x10000*t[2];
+FT->matrix.yx =(FT_Fixed)0x10000*t[1];
+FT->matrix.yy =(FT_Fixed)0x10000*t[3];
+
+#else
 
 FT->matrix.xx =(FT_Fixed)0x10000*t[0];
 FT->matrix.xy =(FT_Fixed)0x10000*t[1];
 FT->matrix.yx =(FT_Fixed)0x10000*t[2];
 FT->matrix.yy =(FT_Fixed)0x10000*t[3];
 
+#endif
 
 /*       Calculate a Vector from the matrix
  *
