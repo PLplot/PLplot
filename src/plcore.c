@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/01/17 21:36:51  mjl
+ * Revision 1.26  1994/01/18 06:01:38  mjl
+ * Now set default number of digits in numeric labels for axis to be switched
+ * to scientific notation.  Before this capability had to be enabled by the
+ * user.  The number of digits defaults to x:4, y:4, z:3 (xy or xyz plots).
+ *
+ * Revision 1.25  1994/01/17  21:36:51  mjl
  * Added function c_plgcol0 for retrieving RGB color values from cmap0
  * entries.  User-contributed (I lost track of who sent it).
  *
@@ -1167,6 +1172,13 @@ c_plinit(void)
     plP_ssym((PLFLT) (size_sym * hscale), (PLFLT) (size_sym * hscale));
     plP_smaj((PLFLT) (size_maj * hscale), (PLFLT) (size_maj * hscale));
     plP_smin((PLFLT) (size_min * hscale), (PLFLT) (size_min * hscale));
+
+/* Set up number of allowed digits before switching to scientific notation */
+/* The user can always change this */
+
+    plsxax(4, 0);
+    plsyax(4, 0);
+    plszax(3, 0);
 
 /* Switch to graphics mode and set color */
 
