@@ -46,6 +46,10 @@ should be reclassified to minor, "would be nice"
 
 Minor, essential.
 
+* plplot-config needs flags for linking in libplplottcltk and libtclmatrix
+if a user is developing apps that directly reference symbols in those
+libraries.
+
 * Alan has some documentation backlog to clear.
 
 * If x08.tcl (or any other multi-page example) is executed first, then the
