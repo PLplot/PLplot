@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.48  1995/05/19 22:24:18  mjl
+ * Revision 1.49  1995/05/26 20:13:01  mjl
+ * Changed "save as" widget command to accept device keyword, not number.
+ * Eliminated "info devices" widget command in favor of "info devkeys", which
+ * returns device keywords, and "info devnames", which returns device names.
+ *
+ * Revision 1.48  1995/05/19  22:24:18  mjl
  * Fixes for Tk 4.0.  Updated Tk_Draw3DRectangle syntax when compiling with
  * Tk versions 4.0 and later.  Eliminated -geometry option for much the same
  * reason as it was eliminated in the Tk 4.0 frame, to avoid problems with
@@ -712,7 +717,7 @@ DestroyPlFrame(ClientData clientData)
 	ckfree((char *) plFramePtr->xScrollCmd);
     }
     if (plFramePtr->SaveFnam != NULL) {
-	ckfree((char *) plFramePtr->devDesc);
+	ckfree((char *) plFramePtr->SaveFnam);
     }
     if (plFramePtr->devDesc != NULL) {
 	ckfree((char *) plFramePtr->devDesc);
@@ -1965,16 +1970,26 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* no option -- return list of available info commands */
 
     if (argc == 0) {
-	Tcl_SetResult(interp, "devices", TCL_STATIC);
+	Tcl_SetResult(interp, "devkeys devnames", TCL_STATIC);
 	return TCL_OK;
     }
 
     c = argv[0][0];
     length = strlen(argv[0]);
 
-/* devices -- return list of supported device types */
+/* devkeys -- return list of supported device keywords */
 
-    if ((c == 'd') && (strncmp(argv[0], "devices", length) == 0)) {
+    if ((c == 'd') && (strncmp(argv[0], "devkeys", length) == 0)) {
+	int i = 0;
+	while (plFramePtr->devName[i] != NULL) 
+	    Tcl_AppendElement(interp, plFramePtr->devName[i++]);
+
+	result = TCL_OK;
+    }
+
+/* devkeys -- return list of supported device types */
+
+    else if ((c == 'd') && (strncmp(argv[0], "devnames", length) == 0)) {
 	int i = 0;
 	while (plFramePtr->devDesc[i] != NULL) 
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++]);
@@ -1986,7 +2001,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     else {
 	Tcl_AppendResult(interp, "bad option to \"info\": must be ", 
-	 "devices", (char *) NULL);
+	 "devkeys, devnames", (char *) NULL);
 
 	result = TCL_ERROR;
     }
@@ -2381,7 +2396,7 @@ static int
 Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int length, idev;
+    int length;
     char c;
     FILE *sfile;
 
@@ -2421,7 +2436,6 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 			     " save as device file\"", (char *) NULL);
 	    return TCL_ERROR;
 	} 
-	idev = atoi(argv[1]);
 
     /* If save previously in effect, delete old stream */
 
@@ -2452,7 +2466,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     /* Initialize stream */
 
-	plsdev(plFramePtr->devName[idev]);
+	plsdev(argv[1]);
 	plsfile(sfile);
 	plcpstrm(plFramePtr->ipls, 0);
 	pladv(0);
