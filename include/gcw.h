@@ -63,6 +63,8 @@ typedef struct {
   gboolean use_text;
   gboolean use_fast_rendering;
 
+  gboolean aa;
+
   gboolean use_pixmap;
   gboolean pixmap_has_data;
   GdkPixmap* pixmap;
@@ -80,6 +82,7 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
 			     PLFLT* ymin2,PLFLT* ymax2);
 void gcw_use_text(GnomeCanvas* canvas,gboolean use_text);
 void gcw_use_fast_rendering(GnomeCanvas* canvas,gboolean use_fast_rendering);
+void gcw_use_pixmap(GnomeCanvas* canvas,gboolean use_pixmap);
 void gcw_use_foreground_group(GnomeCanvas* canvas);
 void gcw_use_background_group(GnomeCanvas* canvas);
 void gcw_use_default_group(GnomeCanvas* canvas);
