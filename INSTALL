@@ -169,6 +169,33 @@ Use
 for instructions on testing additional file devices.
 
 ------------------------------------------------------------------------------
+Build Instructions for Mingw
+------------------------------------------------------------------------------
+
+Platform: i686-pc-mingw32
+
+Mingw (2.0) + MSYS (1.1.10)
+gcc (3.2)
+Windows XP SP1
+Athlon XP Processor
+
+
+You must install Msys as well as Mingw in order to build plplot under Mingw. 
+If you want to rebuild from CVS, you will also need MsysDTK as well.
+
+The library must be built with "--disable-shared".
+
+Under Mingw & Msys, simply use "configure --disable-shared" then 
+"make install" to build.
+
+The Mingw display driver is called "wingcc". As a driver, it is still under 
+development and is only in its infancy. The driver has two driver specific 
+options if plplot was compiled with freetype support: "text" and "smooth". 
+"-drvopt text,smooth", as with the GD drivers, makes the driver use freetype 
+to render text, rather than plplot's hershey fonts.
+
+
+------------------------------------------------------------------------------
 Build Instructions for the MacOS X 10.3 (note we do not support older versions
 of Mac OS X)
 ------------------------------------------------------------------------------
