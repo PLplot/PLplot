@@ -141,6 +141,16 @@ AC_CONFIG_FILES([
     bindings/octave/misc/Makefile
 ])
 
+dnl The following is for use in bindings/octave/plplot_octave.h.in (RL)
+
+DEFINE_PL_DOUBLE=
+test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
+AC_SUBST(DEFINE_PL_DOUBLE)
+
+DEFINE_PL_DOUBLE=
+test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
+AC_SUBST(DEFINE_PL_DOUBLE)
+
 dnl Variables for mkoctfile
 dnl ******************************************************************
 dnl WARNING: The stuff below is just transient and should disappear as

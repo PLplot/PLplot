@@ -27,14 +27,15 @@ dnl files, configure using:
 dnl
 dnl $ CONFIG_SITE=~/config/cf_plplot.in ./configure
 
+dnl =======================================================================
 dnl Autoconf/automake initializations
+dnl =======================================================================
 
 dnl Package version number
-dnl [ If changing the line below by hand,
-dnl   please keep the format up to and including the
-dnl   version number, otherwise it will fool up the bootstrap.sh script.  By
-dnl   the way, the line below can be changed using options --version and
-dnl   --date-version of that script. ]
+dnl [ If changing the line below by hand, please keep the format up to and
+dnl   including the version number, otherwise it will fool up the
+dnl   bootstrap.sh script.  By the way, the line below can be changed using
+dnl   options --version and --date-version of that script. ]
 
 AC_INIT(plplot, 5.3.0.cvs.20040211, plplot-devel@lists.sourceforge.net)
 AC_REVISION($Revision$)
@@ -46,6 +47,9 @@ dnl bootstrap.sh
 RELEASE_DATE=2004-02-05
 AC_SUBST(RELEASE_DATE)
 
+dnl Check if we are in the right directory (this used to be done by
+dnl AC_INIT)
+
 AC_CONFIG_SRCDIR(src/plcore.c)
 
 dnl Use cf dir instead of the top dir for all autotools-related files
@@ -53,56 +57,114 @@ dnl Use cf dir instead of the top dir for all autotools-related files
 AC_CONFIG_AUX_DIR(cf)
 AC_CONFIG_MACRO_DIR(cf)
 
-### Configuration headers
+dnl Configuration headers
 
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
-### Automake initialization
+dnl Automake initialization
+
 AM_INIT_AUTOMAKE
 
-### Version number for the shared libraries.  Note we are keeping the shared
-### library version consistent with the package version in direct
-### contradiction to the libtool directive on this.  Thus, these numbers
-### don't mean a lot in terms of binary compatibility.  Someday, we should
-### start over with 0:0:0 and rigourously enforce number changes whenever
-### binary compatibility changes. [N. B. (Rafael): we already departed from
-### this rule for the release 5.2.1 of PLplot, which got a library soversion
-### 5.3.0.]
+dnl Default installation prefix
 
-### N.B. The "secret" libtool code for setting 5.y.x for the numerical
-### suffix of the library version is 5+y:x:y.  Thus 8:0:3 ==> 5.3.0.
-### N.B. [Rafael]: The above statement is not generally true.  In HPUX, for
-### instance, 8:0:3 ==> 8.3.
+AC_PREFIX_DEFAULT(/usr/local)
+
+
+dnl =======================================================================
+dnl PLplot library sonames and soversions
+dnl =======================================================================
+
+dnl Version numbers for the shared C libraries.
 
 SOVERSION=9:0:0
 AC_SUBST(SOVERSION)
 
-### Version number for the shared C++ library.  After version 5.2.1 was
-### released, the C++ bindings were changed and backward incompatibilities
-### were introduced.  Hence the different strings for SOVERSION and
-### CPP_SOVERSION.
+dnl Version number for the shared C++ library.  After version 5.2.1 was
+dnl released, the C++ bindings were changed and backward incompatibilities
+dnl were introduced.  Hence the different strings for SOVERSION and
+dnl CPP_SOVERSION.
 
 CPP_SOVERSION=9:0:0
 AC_SUBST(CPP_SOVERSION)
 
-### According to man package, PLPLOT_TCL_VERSION (used in the various
-### pkgIndex.tcl scripts) should be strictly numbers alternativing with
-### decimal points with the first number (the major number) signifying
-### incompatible changes in the scripts.  To keep our life simple, let us
-### use the major number from the package version for now.
-### N.B. both LIBRARY_VERSION and PLPLOT_TCL_VERSION are used for separate
-### purposes in the various configured pkgIndex.tcl scripts.
+dnl According to man package, PLPLOT_TCL_VERSION (used in the various
+dnl pkgIndex.tcl scripts) should be strictly numbers alternativing with
+dnl decimal points with the first number (the major number) signifying
+dnl incompatible changes in the scripts.  To keep our life simple, let us
+dnl use the major number from the package version for now.
+dnl N.B. both LIBRARY_VERSION and PLPLOT_TCL_VERSION are used for separate
+dnl purposes in the various configured pkgIndex.tcl scripts.
 
 PLPLOT_TCL_VERSION=5
 AC_SUBST(PLPLOT_TCL_VERSION)
 
-AM_PROG_CC_STDC
 
-### If the user don't want (or the system is not capable of) to build
-### shared libraries, then disable dynamic drivers, as they are
-### dynamically loaded objects.
+dnl =======================================================================
+dnl C compiler settings
+dnl =======================================================================
 
-if test -z "$enable_shared" ; then enable_shared=yes ; fi
+dnl Require C compile
+
+AM_PROG_CC
+
+dnl Checks for existence of headers
+
+AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h termios.h)
+AC_HEADER_SYS_WAIT
+AC_HEADER_DIRENT
+
+# ----------------------------------------------------------------------------
+# Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
+# ----------------------------------------------------------------------------
+
+case "$host_os" in
+    darwin*)
+        AC_DEFINE(NEED_SYS_TYPE_H, [], [Include sys/type.h if needed])
+    ;;
+esac
+
+
+dnl Check for typedefs
+
+dnl Some X11 headers require "caddr_t" even on systems that claim POSIX.1
+dnl compliance, which is illegal.  This makes it impossible to compile
+dnl programs that include X11 headers if _POSIX_SOURCE is defined.  I work
+dnl around this potential problem by just defining caddr_t to 'char *' on all
+dnl systems (unless it is set already), whether it will be needed or not.
+
+AC_CHECK_TYPE(caddr_t, char *)
+
+dnl The following is primarily for use in drivers/get-drv-info.c
+
+AC_TYPE_SIGNAL
+
+dnl Check for functions
+
+AC_FUNC_VFORK
+AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [],
+                               [Define if popen is available]))
+AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP, [],
+                               [Define if usleep is available]))
+AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
+                               [Define if isinf is available]))
+AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
+                               [Define if finite is available]))
+AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
+                               [Define if isnan is available]))
+
+
+### Add libm to LIBS, as some non linux unices might require this.
+### This must be done before sysloc.in is included.
+AC_CHECK_LIB(m, sin)
+
+m4_include(cf/rpath.ac)
+
+m4_include(cf/double.ac)
+
+dnl If the user don't want (or the system is not capable of) to build
+dnl shared libraries, then disable dynamic drivers, as they are
+dnl dynamically loaded objects.
 
 if test "$enable_shared" != yes ; then
     AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
@@ -144,20 +206,6 @@ if test "$enable_dyndrivers" = "yes"; then
     AC_DEFINE(ENABLE_DYNDRIVERS, [],
               [Define if there is support for dynamically loaded drivers])
 fi
-
-### Add libm to LIBS, as some non linux unices might require this.
-### This must be done before sysloc.in is included.
-AC_CHECK_LIB(m, sin)
-
-### The following seems to be necessary because the replacement of
-### the default value for prefix only happens in AC_OUTPUT (it would
-### already be too late).
-test "x$prefix" = xNONE && prefix=$ac_default_prefix
-
-### The following seems to be necessary because the replacement of
-### the default value for exec_prefix only happens in AC_OUTPUT (it would
-### already be too late).
-test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 m4_include(cf/python.ac)
 
@@ -203,139 +251,69 @@ m4_include(cf/xwin.ac)
 
 PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
-### Modify system-dependent results based on availability
-m4_include(cf/freetype.ac)
-m4_include(cf/octave.ac)
-m4_include(cf/csiro.ac)
-m4_include(cf/swig.ac)
-m4_include(cf/pthread.ac)
-
-# ----------------------------------------------------------------------------
-# Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
-# ----------------------------------------------------------------------------
-
-case "$host_os" in
-    darwin*)
-        AC_DEFINE(NEED_SYS_TYPE_H, [], [Include sys/type.h if needed])
-    ;;
-esac
-
-# ----------------------------------------------------------------------------
-# Now do the variable substitutions.
-# ----------------------------------------------------------------------------
-
-AC_SUBST(ARLIB_BUILD)
-AC_SUBST(ARLIB_BUILD_CXX)
-AC_SUBST(SHLIB_BUILD)
-AC_SUBST(SHLIB_BUILD_CXX)
-AC_SUBST(SONAME_FLAGS)
-AC_SUBST(SA)
-AC_SUBST(SO)
-AC_SUBST(LDSHARED)
-
-AC_SUBST(SHLIB_CCFLAGS)
-AC_SUBST(SHLIB_CXXFLAGS)
-AC_SUBST(SHLIB_F77FLAGS)
-AC_SUBST(SHLIB_LIBS)
-
-# Disable LIBS so we don't have all libraries mentioned
-LIBS=""
-
-# Optional packages
-
-m4_include(cf/tcl.ac)
-
-m4_include(cf/test.ac)
-
-### Double vs single precison
-
-PL_ARG_WITH(double,
-  [compile the library with double precision floating point],
-  yes)
-
-if test "$with_double" = yes; then
-  AC_DEFINE(PL_DOUBLE, [],
-            [PLplot's PLFLT floating-point is "double" by default, undefine
-	    PL_DOUBLE if single precision is required])
-  DBL_FLAG_M4=-DDOUBLE
-  LIB_TAG="d"
-else
-  LIB_TAG=""
-fi
-AC_SUBST(LIB_TAG)
-
-# The following is for use in bindings/octave/plplot_octave.h.in (RL)
-
-DEFINE_PL_DOUBLE=
-test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
-AC_SUBST(DEFINE_PL_DOUBLE)
-
-m4_include(cf/c++.ac)
-
-m4_include(cf/f77.ac)
-
 # Conditionals to control various Makefile.am files.
 
 if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
   enable_ps=yes
 fi
 
-### Checks for existence of headers
+AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
+AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
+AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
+AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
+AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
+AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
 
-AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h termios.h)
-AC_HEADER_SYS_WAIT
-AC_HEADER_DIRENT
 
-### Check for typedefs
+### Modify system-dependent results based on availability
+m4_include(cf/pthread.ac)
+m4_include(cf/freetype.ac)
+m4_include(cf/csiro.ac)
 
-# ----------------------------------------------------------------------------
-# Some X11 headers require "caddr_t" even on systems that claim POSIX.1
-# compliance, which is illegal.  This makes it impossible to compile
-# programs that include X11 headers if _POSIX_SOURCE is defined.  I work
-# around this potential problem by just defining caddr_t to 'char *' on all
-# systems (unless it is set already), whether it will be needed or not.
+# Disable LIBS so we don't have all libraries mentioned
+LIBS=""
 
-AC_CHECK_TYPE(caddr_t, char *)
+# Bindings
 
-# The following is primarily for use in drivers/get-drv-info.c
-AC_TYPE_SIGNAL
+m4_include(cf/swig.ac)
+m4_include(cf/octave.ac)
+m4_include(cf/tcl.ac)
+m4_include(cf/c++.ac)
+m4_include(cf/f77.ac)
 
-### Check for functions
 
-AC_FUNC_VFORK
-AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [],
-                               [Define if popen is available]))
-AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP, [],
-                               [Define if usleep is available]))
-AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
-                               [Define if isinf is available]))
-AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
-                               [Define if finite is available]))
-AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
-                               [Define if isnan is available]))
+
+m4_include(cf/test.ac)
+
+
 
 ### Define PLplot default install locations:
 ### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
 
-if test -z "$DATA_DIR"; then
-    DATA_DIR='${datadir}/${PACKAGE}${VERSION}'
-fi
-if test -z "$LIB_DIR"; then
-    LIB_DIR='${libdir}'
-fi
-if test -z "$INCLUDE_DIR"; then
-    INCLUDE_DIR='${prefix}/include/plplot'
-fi
-if test -z "$BIN_DIR"; then
-    BIN_DIR='${bindir}'
-fi
-if test -z "$TCL_DIR"; then
-    TCL_DIR='${datadir}/${PACKAGE}${VERSION}/tcl'
-fi
-if test -z "$DRV_DIR"; then
-    DRV_DIR='${libdir}/${PACKAGE}${VERSION}/drivers${LIB_TAG}'
-fi
+test -z "$DATA_DIR" && DATA_DIR='${datadir}/${PACKAGE}${VERSION}'
+AC_SUBST(DATA_DIR)
+
+test -z "$LIB_DIR" && LIB_DIR='${libdir}'
+AC_SUBST(LIB_DIR)
+
+test -z "$INCLUDE_DIR" && INCLUDE_DIR='${prefix}/include/plplot'
+AC_SUBST(INCLUDE_DIR)
+
+test -z "$BIN_DIR" && BIN_DIR='${bindir}'
+
+test -z "$TCL_DIR" && TCL_DIR="$DATA_DIR/tcl"
+AC_SUBST(TCL_DIR)
+
+test -z "$DRV_DIR" && DRV_DIR="$DATA_DIR/drivers${LIB_TAG}"
+AC_SUBST(DRV_DIR)
+
+### Documentation directory
+test -z "$DOC_DIR" && DOC_DIR='${datadir}/doc/plplot'
+AC_SUBST(DOC_DIR)
+
+BUILD_DIR=`pwd`
+AC_SUBST(BUILD_DIR)
 
 # The following *_CMD variables are needed in examples/*/Makefile.examples.in
 
@@ -350,16 +328,6 @@ PL_EXPAND_EXPRESSION(LIB_HARDDIR, $LIB_DIR)
 AC_SUBST(LIB_HARDDIR)
 PL_EXPAND_EXPRESSION(DRV_HARDDIR, $DRV_DIR)
 AC_SUBST(DRV_HARDDIR)
-
-BUILD_DIR=`pwd`
-
-### Documentation directory
-DOC_DIR='${datadir}/doc/plplot'
-AC_SUBST(DOC_DIR)
-
-# Location substitutions for makefiles only
-
-AC_SUBST(INCLUDE_DIR)
 
 # Location substitutions for header files as well
 
@@ -377,41 +345,13 @@ AC_DEFINE_UNQUOTED(TCL_DIR, "$TMPVAR", [Location of Tcl stuff])
 
 AC_DEFINE_UNQUOTED(BUILD_DIR, "$BUILD_DIR", [Location of Build tree])
 
-AC_SUBST(DATA_DIR)
-AC_SUBST(LIB_DIR)
-AC_SUBST(TCL_DIR)
-AC_SUBST(DRV_DIR)
-AC_SUBST(BUILD_DIR)
 
 m4_include(cf/docbook.ac)
 
 m4_include(cf/pkg-config.ac)
 
-### rpath setting
-
-PL_ARG_WITH(rpath, [use -rpath when linking libraries], yes)
-
-if test "$with_rpath" = yes ; then
-  RPATH='-rpath $(libdir)'
-  PL_EXPAND_EXPRESSION(RPATHCMD, [-Wl,-rpath -Wl,$libdir])
-else
-  RPATH=
-  RPATHCMD=
-fi
-AC_SUBST(RPATH)
-AC_SUBST(RPATHCMD)
-
-AM_CONDITIONAL(with_double, [test "$with_double" = yes])
-AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
-AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
-AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
-AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
-AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
-AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
-AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
-AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
-
-### Build configuration files
+### Build configuration files (notice that there are other calls to
+### AC_CONFIG_FILES in the cf/*.ac files.
 
 AC_CONFIG_FILES([
 	Makefile
