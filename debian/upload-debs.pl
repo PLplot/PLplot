@@ -26,7 +26,7 @@ sub env_default {
     eval qq{\$$envvar = "$value"};    
 }
 
-env_default ("SF_USER", "rlaboiss");
+env_default ("WWW_USER", "rlaboiss");
 env_default ("HOST", "shell.sf.net");
 env_default ("WWW_HOST", "plplot.sf.net");
 env_default ("WWW_DIR", "/home/groups/p/pl/plplot/htdocs");
@@ -193,13 +193,13 @@ EOF
 close (INDEX);
 
 $pdir = "$WWW_DIR/$APT_DIR";
-$ssh_cmd = "ssh $SF_USER\@$HOST";
+$ssh_cmd = "ssh $WWW_USER\@$HOST";
 
 system "$ssh_cmd rm -rf $pdir";
 system "$ssh_cmd mkdir -p $pdir";
 
 system ("scp $index $md5sum $md5sum_asc " . join (" ", @files)
-        . " " . join (" ", @desc) . " $SF_USER\@$HOST:$pdir");
+        . " " . join (" ", @desc) . " $WWW_USER\@$HOST:$pdir");
 
 system "$ssh_cmd chgrp -R plplot $pdir";
 system "$ssh_cmd chmod -R g=u $pdir";
