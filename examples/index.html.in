@@ -142,51 +142,74 @@ PLplot Examples
 <table>
   <tbody>
 
-    <tr>
-      <td> <A HREF="demo01.php"><IMG SRC="../examples-data/demo01/prev-x01.01.png"></a> </td>
-      <td> <A HREF="demo02.php"><IMG SRC="../examples-data/demo02/prev-x02.01.png"></a> </td>
-      <td> <A HREF="demo03.php"><IMG SRC="../examples-data/demo03/prev-x03.01.png"></a> </td>
-    </tr>
 
-    <tr> 
-      <td> <A HREF="demo04.php"><IMG SRC="../examples-data/demo04/prev-x04.01.png"></a> </td>
-      <td> <A HREF="demo05.php"><IMG SRC="../examples-data/demo05/prev-x05.01.png"></a> </td>
-      <td> <A HREF="demo06.php"><IMG SRC="../examples-data/demo06/prev-x06.01.png"></a> </td>
-    </tr>
+<:
+# Each element of the structure below contains:
+#
+# [ demo#, number of pages, thumbnail, credits]
+#
+@demos = (
+  [ 1,  1, 1, ""],
+  [ 2,  2, 1, ""],
+  [ 3,  1, 1, ""],
+  [ 4,  2, 1, ""],
+  [ 5,  1, 1, ""],
+  [ 6,  1, 1, ""],
+  [ 7, 17, 1, ""],
+  [ 8,  8, 1, ""],
+  [ 9,  5, 1, ""],
+  [10,  1, 1, ""],
+  [11,  8, 1, ""],
+  [12,  1, 1, ""],
+  [13,  1, 1, ""],
+  [15,  2, 1, ""],
+  [16,  5, 1, ""],
+  [18,  8, 1, ""],
+  [19,  3, 1, ""],
+  [20,  6, 3, ""],
+  [21,  3, 3, ""],
+  [22,  4, 3, ""],
+  [23, 11, 1, ""],
+  [24,  1, 1, "
+<p>Credits:
+<ul>
+<li><a href=\\\"http://www.columbia.edu/~fdc/pace/\\\">Say Peace in all languages!</a>
+<li><a href=\\\"http://www.columbia.edu/~fdc/pace/flag.html\\\">Pace flag</a>
+</ul>
+"]);
+
+$count = 0;
+
+foreach $drec (@demos) {
+
+  $demo = sprintf ("%02d", $drec->[0]);
+  $dir = "demo$demo";
+  $file = "$dir.php";
+  $thumbnail = sprintf ("%02d", $drec->[2]);
+  $npages = $drec->[1];
+  $credits = $drec->[3];
+
+  open (PHP, "> $file")
+    or die "Cannot create $file";
     
-    <tr>
-      <td> <A HREF="demo07.php"><IMG SRC="../examples-data/demo07/prev-x07.01.png"></a> </td>
-      <td> <A HREF="demo08.php"><IMG SRC="../examples-data/demo08/prev-x08.01.png"></a> </td>
-      <td> <A HREF="demo09.php"><IMG SRC="../examples-data/demo09/prev-x09.01.png"></a> </td>
-    </tr>
+  print PHP qq{<?php
+include ("example_page.php");
+demo_page ($drec->[0], $npages, \$lbind, "$credits");
+?>
+};
 
-    <tr>
-      <td> <A HREF="demo10.php"><IMG SRC="../examples-data/demo10/prev-x10.01.png"></a> </td>
-      <td> <A HREF="demo11.php"><IMG SRC="../examples-data/demo11/prev-x11.01.png"></a> </td>
-      <td> <A HREF="demo12.php"><IMG SRC="../examples-data/demo12/prev-x12.01.png"></a> </td>
-    </tr>
+  close PHP;
 
-    <tr>
-      <td> <A HREF="demo13.php"><IMG SRC="../examples-data/demo13/prev-x13.01.png"></a> </td>
-      <td> <A HREF="demo15.php"><IMG SRC="../examples-data/demo15/prev-x15.01.png"></a> </td>
-      <td> <A HREF="demo16.php"><IMG SRC="../examples-data/demo16/prev-x16.01.png"></a> </td>
+  print "
+    <tr>" if ($count % 3 == 0);
+_:>
+      <td> <A HREF="<:=$file:>"><IMG SRC="../examples-data/<:=$dir:>/prev-x<:=$demo:>.<:=$thumbnail:>.png"></a> </td><:
+print "
     </tr>
-  
-    <tr>
-      <td> <A HREF="demo18.php"><IMG SRC="../examples-data/demo18/prev-x18.01.png"></a> </td>
-      <td> <A HREF="demo19.php"><IMG SRC="../examples-data/demo19/prev-x19.01.png"></a> </td>
-      <td> <A HREF="demo20.php"><IMG SRC="../examples-data/demo20/prev-x20.03.png"></a> </td>
-    </tr>
+" if ($count % 3 == 2 or $count == scalar (@demos) - 1);
 
-    <tr>
-      <td> <A HREF="demo21.php"><IMG SRC="../examples-data/demo21/prev-x21.03.png"></a> </td>
-      <td> <A HREF="demo22.php"><IMG SRC="../examples-data/demo22/prev-x22.03.png"></a> </td>
-      <td> <A HREF="demo23.php"><IMG SRC="../examples-data/demo23/prev-x23.01.png"></a> </td>      
-    </tr>
-
-    <tr>
-      <td> <A HREF="demo24.php"><IMG SRC="../examples-data/demo24/prev-x24.01.png"></a> </td>
-    </tr>
+  $count++;
+}:>
 
   </tbody>
 </table>

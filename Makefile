@@ -19,7 +19,10 @@ WWW_FILES = $(patsubst %,$(WWW_DIR)/%,$(FILES))
 
 all: install install-announce
 
-install:
+examples/index.html: examples/index.html.in
+	(cd examples ; eperl index.html.in > index.html )
+
+install: examples/index.html
 	ssh $(USER_AT_HOST) rm -rf $(WWW_FILES)
 	for f in $(FILES) ; do \
 	    if test -d $$f ; then \
@@ -34,3 +37,6 @@ install:
 
 install-announce:
 	-( cd announce ; $(MAKE) install )
+
+clean:
+	rm -f examples/index.html examples/demo*.php
