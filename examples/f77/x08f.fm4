@@ -129,11 +129,13 @@ C            magnitude colored plot
      &        clevel, 0, xdim)
           elseif(ifshade.eq.2) then
 C            magnitude colored plot with faceted squares
+            call cmap1_init(0)
             call plsurf3d(x, y, z, xpts, ypts,
      &        ior(MAG_COLOR, FACETED),
      &        clevel, 0, xdim)
           elseif(ifshade.eq.3) then
 C            magnitude colored plot with contours
+            call cmap1_init(0)
             call plsurf3d(x, y, z, xpts, ypts,
      &        ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)),
      &        clevel, nlevel, xdim)

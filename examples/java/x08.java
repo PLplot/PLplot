@@ -204,8 +204,10 @@ class x08 {
 		 cmap1_init(0);
 		 pls.surf3d( x, y, z, pls.MAG_COLOR, clev_null );
 	      } else if (ifshade == 2) { /*  magnitude colored plot with faceted squares */
+		 cmap1_init(0);
 		 pls.surf3d( x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null );
 	      } else                     /* magnitude colored plot with contours */
+		 cmap1_init(0);
 		 pls.surf3d( x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clevel );
 	   }
         }

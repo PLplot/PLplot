@@ -182,9 +182,11 @@ proc x08 {{w loopback}} {
 	       $w cmd plsurf3d x y z [expr $MAG_COLOR]
 	    # magnitude colored plot with faceted squares
 	    } elseif {$ifshade == 2} {
+	       cmap1_init_8 $w 0
 	       $w cmd plsurf3d x y z [expr $MAG_COLOR | $FACETED]
 	    # magnitude colored plot with contours.
 	    } else {
+	       cmap1_init_8 $w 0
 	       $w cmd plsurf3d x y z $xpts $ypts \
 		 [expr $MAG_COLOR | $SURF_CONT | $BASE_CONT] clev $nlev
 	    }

@@ -147,9 +147,11 @@ def main():
 		plsurf3d(x, y, z, MAG_COLOR, ())
 	    elif ifshade == 2:
 		# magnitude colored plot with faceted squares
+		cmap1_init(0)
 		plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
 	    elif ifshade == 3:
 		# magnitude colored plot with contours
+		cmap1_init(0)
 		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
 
     # Restore defaults
