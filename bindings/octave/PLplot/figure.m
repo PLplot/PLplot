@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -54,28 +54,41 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
     atexit("closeallfig");
 
     __pl.inited = 1;
-    if (nargin == 0)
-      n=0; driver=""; intp="";
-      return
+
+    if (automatic_replot == 0)
+      warning("Setting 'automatic_replot' to 1");
+      automatic_replot = 1;
     endif
+
+    ##if (nargin == 0)
+    ##  n=0; driver=""; intp="";
+    ##  return;
+    ##endif
   endif
 
   if (nargin == 0)
-    n = plgstrm;
-  else  	
+    if (plglevel >= 1)
+      n = plgstrm;
+      return;
+    else
+      n = 0;
+    endif
+  endif
+
+  if (nargin != 0 || plglevel == 0)
     __pl.hold(plgstrm+1) = ishold; # save current hold state
     plsstrm(n);
     n = plgstrm;
-    __pl_strm = n+1;
+    strm = n+1;
 
     if ( plglevel == 0)	# no device open yet
 
       if (nargin >= 4 && win_id != 0 ) # use the specified X window
-	plsxwin(win_id)
+	plsxwin(win_id);
       endif
 
       if (nargin >= 3 && !isempty(file)) # use the specified file
-	plsfnam(file)
+	plsfnam(file);
       endif
 
       if (nargin >= 2 )
@@ -92,58 +105,70 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	plsdev(device);
       endif
 
-      __pl.type = 1;
-      if (!struct_contains(__pl, "items"))
-	__pl.items=1;
-      endif
-      __pl.legend_xpos(__pl_strm) = 1;	# legend x position
-      __pl.legend_ypos(__pl_strm) = 1;	# legend y position
-      __pl.legend(__pl_strm) = 2;	# legend type
-      __pl.lab_pos(__pl_strm) = 0;	# label position
-      __pl.lab_lsty(__pl_strm,1) = 0;	# label (line) style
-      __pl.lab_col(__pl_strm,1) = 0;	# label color
-      __pl.multi_row(__pl_strm) = 1;	# multiplot state
-      __pl.multi_col(__pl_strm) = 1;	# multiplot columns
-      __pl.multi_cur(__pl_strm) = 1;	# current multiplot
-      __pl.multi(__pl_strm) = 0;	# multiplot	rows
-      __pl.axis_st(__pl_strm) = 0;	# axis state
-      __pl.axis(__pl_strm,:) = zeros(1,6);	# current axis
-      __pl.xticks(__pl_strm,:) = [0, 0]; # xtick interval, number of minor xticks
-      __pl.yticks(__pl_strm,:) = [0, 0];
-      __pl.zticks(__pl_strm,:) = [0, 0]; 		
-      __pl.lstlyle(__pl_strm) = 1;       # increase line style after plot
-      __pl.az(__pl_strm) = -60;	         # azimuth
-      __pl.alt(__pl_strm) = 30;		 # altitude
-      __pl.grid(__pl_strm) = 0;		 # grid state
-      __pl.plcol(__pl_strm) = 1;	 # current plot color
-      __pl.pllsty(__pl_strm) = 1;	 # current plot style
-      __pl.line_count(__pl_strm) = 1;    # current label counter
-      __pl.hold(__pl_strm) = 0; hold off;  # hold state
-      __pl.open(__pl_strm) = 1;		   # figure state
-      __pl.margin(__pl_strm) = 0;	   # keep a small margin around box
-      
+      __pl.type(strm) = 0;
+      ##if (!struct_contains(__pl, "items"))
+	__pl.items(strm) = 0;
+      ##endif
+      __pl.legend_xpos(strm) = 1;	# legend x position
+      __pl.legend_ypos(strm) = 1;	# legend y position
+      __pl.legend(strm) = 2;	# legend type
+      __pl.lab_pos(strm) = 0;	# label position
+      __pl.lab_lsty(strm,1) = 0;	# label (line) style
+      __pl.lab_col(strm,1) = 0;	# label color
+      __pl.multi_row(strm) = 1;	# multiplot state
+      __pl.multi_col(strm) = 1;	# multiplot columns
+      __pl.multi_cur(strm) = 1;	# current multiplot
+      __pl.multi(strm) = 0;	# multiplot rows
+      __pl.aspect(strm) = 0;       # plot aspect ratio (auto)
+      __pl.axis_st(strm) = 0;	# axis state
+      __pl.axis(strm,:) = zeros(1,6);	# current axis
+      ## xticks(1) xticks interval, xticks(2) number of sub-ticks
+      ## xticks(3) ticks disabled, xticks(4) tick labels disabled
+      __pl.xticks(strm,:) = [0, 0, 1, 1]; # xtick interval, number of minor xticks
+      __pl.yticks(strm,:) = [0, 0, 1, 1];
+      __pl.zticks(strm,:) = [0, 0, 1 ,1];
+
+      ## x/y axis on/off
+      __pl.axisxy(strm) = 0;
+
+      ## min/max x/y values
+      __pl.lxm(strm) = __pl.lym(strm) = __pl.lzm(strm) = realmax;
+      __pl.lxM(strm) = __pl.lyM(strm) = __pl.lzm(strm) = -realmax;
+
+      __pl.line_style(strm) = 0;  # don't increase line style after plot
+      __pl.az(strm) = -60;	# azimuth
+      __pl.alt(strm) = 30;	# altitude
+      __pl.grid(strm) = 0;	# grid state
+      __pl.plcol(strm) = 1;	# current plot color
+      __pl.pllsty(strm) = 1;	# current plot style
+      __pl.line_count(strm) = 1;      # current label counter
+      __pl.hold(strm) = 0; hold off;  # hold state
+      __pl.open(strm) = 1;            # figure state
+      __pl.margin(strm) = 1;	   # keep a small margin around box
+      __pl.stopdraw(strm) = 0;	   # don't hold draw until drawnow().
+
       if (struct_contains(__pl, "xlabel"))
-	__pl.xlabel = __pl_matstr( __pl.xlabel, "X", __pl_strm); # x,y,z,title labels text
-	__pl.ylabel = __pl_matstr( __pl.ylabel, "Y", __pl_strm);
-	__pl.zlabel = __pl_matstr( __pl.zlabel, "Z", __pl_strm);
-	__pl.tlabel = __pl_matstr( __pl.tlabel, "Title", __pl_strm);
+	__pl.xlabel = __pl_matstr( __pl.xlabel, "X", strm); # x,y,z,title labels text
+	__pl.ylabel = __pl_matstr( __pl.ylabel, "Y", strm);
+	__pl.zlabel = __pl_matstr( __pl.zlabel, "Z", strm);
+	__pl.tlabel = __pl_matstr( __pl.tlabel, "Title", strm);
       else
-	__pl.xlabel(__pl_strm,:) = "X";
-	__pl.ylabel(__pl_strm,:) = "Y";
-	__pl.zlabel(__pl_strm,:) = "Z";
-	__pl.tlabel(__pl_strm,:) = "Title";
+	__pl.xlabel(strm,:) = "X";
+	__pl.ylabel(strm,:) = "Y";
+	__pl.zlabel(strm,:) = "Z";
+	__pl.tlabel(strm,:) = "Title";
       endif
 
       if (struct_contains(__pl, "shading"))
-	__pl.shading = __pl_matstr(__pl.shading, "faceted", __pl_strm); # shading type
+	__pl.shading = __pl_matstr(__pl.shading, "faceted", strm); # shading type
       else
-	__pl.shading(__pl_strm,:) = "faceted";
+	__pl.shading(strm,:) = "faceted";
       endif
 
       if (struct_contains(__pl, "intp"))
-	__pl.intp = __pl_matstr(__pl.intp, " ", __pl_strm); # tk interpreter name		
+	__pl.intp = __pl_matstr(__pl.intp, " ", strm); # tk interpreter name		
       else
-	__pl.intp(__pl_strm,:) = " ";
+	__pl.intp(strm,:) = " ";
       endif
 
       ## the tk stuff
@@ -183,34 +208,34 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	endif
 
 	intp = sprintf("figure_%d",n);
-	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name
+	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name
       else
 	plSetOpt("plwindow", sprintf("Figure %d",n));
       endif
 
-      plSetOpt("geometry", "400x400+800+1");
+      plSetOpt("geometry", "400x400+750+0");
       plSetOpt("np", "");
       pldef	# user can override above defaults or add other options
       plsetopt("apply"); # override/add momentary options.
 
       ## init driver and make changes apply
-      plinit
-      pladv(0)
+      plinit;
+      pladv(0);
       plflush;pleop;
       
       if ( exist("__tk_name") & (strcmp("tk", sprintf("%s",plgdev'))))
 	eval(tk_receive(1));
-	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
+	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name					
 	unlink(init_file);
       else
-	intp = deblank(__pl.intp(__pl_strm,:));
+	intp = deblank(__pl.intp(strm,:));
       endif
 
     else
-      if (__pl.hold(__pl_strm))
-   	hold on
+      if (__pl.hold(strm))
+   	hold on;
       endif
-      intp = deblank(__pl.intp(__pl_strm,:));
+      intp = deblank(__pl.intp(strm,:));
       ## warning("figure already opened");
     endif
   endif
