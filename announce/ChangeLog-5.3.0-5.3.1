@@ -1,3 +1,354 @@
+Commit from airwin (2004-05-14 20:53 CEST)
+------------------
+
+Updated to be consistent with the current outstanding issues for PLplot (as
+I understand them).  Others are welcome to add to or subtract from this file
+as new issues arise or old ones are taken care of.
+
+  plplot  PROBLEMS  1.28
+
+
+Commit from airwin (2004-05-14 20:12 CEST)
+------------------
+
+Sort out two minor bugs.
+
+* plP_gzbackw replaces plP_gzback so that plbox3 can store line width
+information for subsequent plotting of the back planes for plsurf and plot3d.
+Without this change, changes in the width of the contours were also occurring
+in the back plane line width.
+
+* Move the surface plcol1 call inside the z clipping logic (which means
+colours won't be out of range for z values outside the clipped range).
+
+Also changed logic so that surface contours were no longer necessarily the
+background colour.  Instead, they are set by the user using plcol0. Example
+8 from the various languages actually set this contour colour to yellow, and
+I prefer it to the black colour so I will leave it that way.
+
+  plplot  include/plplotP.h  1.78
+  plplot  src/plbox.c        1.36
+  plplot  src/plot3d.c       1.61
+
+
+Commit from rlaboiss (2004-05-14 15:01 CEST)
+--------------------
+
+Added initial implementation of thje x14 example in PErDL, with boilerplates
+for the functions plot1..5.
+
+  plplot  examples/perl/x14.pl  1.2
+
+
+Commit from rlaboiss (2004-05-14 14:05 CEST)
+--------------------
+
+Implemented example x21 in PerlDL
+
+  plplot  examples/perl/x21.pl  1.2
+
+
+Commit from rlaboiss (2004-05-13 17:36 CEST)
+--------------------
+
+Implemented example x17.pl in PerlDL
+
+  plplot  examples/perl/x17.pl  1.2
+
+
+Commit from airwin (2004-05-13 17:19 CEST)
+------------------
+
+More comprehensive copyright credits (based on cvs commits)
+
+  plplot  src/plcont.c  1.28
+
+
+Commit from airwin (2004-05-11 21:18 CEST)
+------------------
+
+The previous version had a number of off-by-one errors in the index limits.
+
+This version has greatly simplified limit logic so that it makes it possible
+to guarantee by immediate code inspection that no undefined z values are
+used beyond the limits.
+
+  plplot  src/plot3d.c  1.60
+
+
+Commit from rlaboiss (2004-05-11 14:44 CEST)
+--------------------
+
+Added final newline.  This was bugging me during the Debian package building
+(related to the patch command).
+
+  plplot  bindings/octave/demos/x13c.m  1.7
+
+
+Commit from airwin (2004-05-10 19:21 CEST)
+------------------
+
+Initial commit to add non-rectangular x-y limits to plsurf (plsurf3dl), and
+to add infrastructure eventually to be used for the same purpose for plot3d
+(plot3dcl).
+
+  plplot  bindings/swig-support/plplotcapi.i  1.4
+  plplot  include/plplot.h                    1.152
+  plplot  include/plplotP.h                   1.77
+  plplot  src/plcont.c                        1.27
+  plplot  src/plot3d.c                        1.59
+
+
+Commit from rlaboiss (2004-05-10 10:30 CEST)
+--------------------
+
+Completely mimic the C example x01c in PerlDL, including locate-mode and
+test_xor.
+
+  plplot  examples/perl/x01.pl  1.10
+
+
+Commit from aroach (2004-05-10 05:09 CEST)
+------------------
+
+Small change to geader file to get plplot working with mingw, and
+probably other WIN32 compilers based on GCC.
+
+  plplot  include/plplotP.h  1.76
+
+
+Commit from airwin (2004-05-08 17:09 CEST)
+------------------
+
+Some additional polishing of the language including replacing "drivers" with
+"devices".  I like to keep a clear distinction between the two.  For
+example, PLplot has png and jpeg devices, which are implemented in software
+with the gd device driver.
+
+  plplot  doc/docbook/src/deploying.xml  1.6
+
+
+Commit from rlaboiss (2004-05-08 11:53 CEST)
+--------------------
+
+Finished the x20 example.  This PerlDL example completely replicates the
+functionalities of the equivalent x20c demo, including mouse interaction,
+thanks to the implementation of plGetCursor in the PerlDL binding.  This
+makes Perl the third better supported binding for PLplot, just behind C and
+C++.
+
+  plplot  examples/perl/x20.pl  1.4
+
+
+Commit from rlaboiss (2004-05-08 11:44 CEST)
+--------------------
+
+Clean up
+
+  plplot  examples/perl/x16.pl  1.3
+  plplot  examples/perl/x18.pl  1.3
+  plplot  examples/perl/x19.pl  1.3
+
+
+Commit from rlaboiss (2004-05-08 11:43 CEST)
+--------------------
+
+Removed a spurious subroutine
+
+  plplot  examples/perl/x15.pl  1.2
+
+
+Commit from rlaboiss (2004-05-08 11:41 CEST)
+--------------------
+
+Added URL for Debian.
+
+  plplot  doc/docbook/src/deploying.xml  1.5
+
+
+Commit from rlaboiss (2004-05-08 11:25 CEST)
+--------------------
+
+Polished last addition by Alan Irwin.  Added Docbook markup in appropriate
+places.  Also, changed several <literal> tags to <envar>, which is the
+appropriate tag for environment variables.
+
+  plplot  doc/docbook/src/deploying.xml  1.4
+
+
+Commit from airwin (2004-05-07 23:40 CEST)
+------------------
+
+Dropped mention of editing plplot-config in the deb and rpm section.
+
+Here is the reason: That idea won't work; compile will look in the wrong
+place for headers, and the link will look in the wrong place for libraries
+on the build machine.  Instead, if plplot-config is left as-is, it will do
+everything right except put in the appropriate --rpath option for the build
+machine (which is unlikely to be /usr/lib which is required on the users'
+machines for debs and rpms).  That was the run-time problem I was concerned
+about originally, but in fact it doesn't matter since /usr/lib will be
+checked in any case for the PLplot libraries on the users' Linux machines,
+and all the remaining required links are hard-coded into the PLplot library
+with the correct /usr prefix values during the deb or rpm build.
+
+  plplot  doc/docbook/src/deploying.xml  1.3
+
+
+Commit from airwin (2004-05-07 21:29 CEST)
+------------------
+
+Substantial rewrite including reference to Linux binary debs and rpm's, the
+preferred consistent install location method, and a number of changes to the
+existing writing about the inconsistent install location option.
+
+  plplot  doc/docbook/src/deploying.xml  1.2
+
+
+Commit from rlaboiss (2004-05-07 18:08 CEST)
+--------------------
+
+
+
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.37
+
+
+Commit from rlaboiss (2004-05-07 18:08 CEST)
+--------------------
+
+Added chapter "Deploying programs that use PLplot" by Arjen Markus.
+
+  plplot  doc/docbook/src/Makefile.am    1.59
++ plplot  doc/docbook/src/deploying.xml  1.1
+
+
+Commit from airwin (2004-05-05 22:00 CEST)
+------------------
+
+Documentation of mathematical transformation between 3D world coordinates
+and 2D projected coordinates.
+
+  plplot  src/plwind.c  1.16
+  plplot  src/plcvt.c   1.11
+
+
+Commit from airwin (2004-05-05 21:08 CEST)
+------------------
+
+Use symlinks for x??.tcl files and other Stylistic improvements.
+
+  plplot  examples/tk/Makefile.am  1.16
+
+
+Commit from rlaboiss (2004-05-05 09:46 CEST)
+--------------------
+
+Added a rule to make the link lena.pgm -> ../c/lena.pgm, needed by the demo
+x20.  Put lena.pgm into a new variable called check_DATA, such that the link
+is created when running "make check", and also in CLEANFILES, such that it
+is deleted by "make clean".
+
+  plplot  examples/c++/Makefile.am  1.18
+
+
+Commit from rlaboiss (2004-05-04 18:13 CEST)
+--------------------
+
+Use the native PDL module PDL::IO::Pnm for reading the image file instead of
+the previous method based on the GD module.  The demo runs now orders of
+magnitude faster and the read_img is reduced to trivial three lines.  The
+lena.png file is removed from the repository, because we read now directly
+the examples/c/lena.pgm file.
+
+- plplot  examples/perl/lena.png  1.2
+  plplot  examples/perl/x20.pl    1.3
+
+
+Commit from rlaboiss (2004-05-04 00:50 CEST)
+--------------------
+
+Implemented part of the equivalent of x20c demo in PerlDL.  The majority of
+the file is now just a boilerplate, but at least one call of plimage is
+working.  This puts the Perl binding pretty close to the C and C++ ones.
+
+Although the plimage is poorly documented and only "half-official" in the
+API, porting x20c proved to be an interesting exercise, exploring all the
+power of PerlDL.  For instance, the cumbersome C routine for reading the
+lena.pgm file in x20c.c was replaced by seven lines of simple code based on
+the GD Perl module.  The file lena.png, which is read by x20.pl is also
+added to the repository.
+
+  plplot  examples/perl/x20.pl    1.2
++ plplot  examples/perl/lena.png  1.1
+
+
+Commit from rlaboiss (2004-05-03 22:54 CEST)
+--------------------
+
+Added this demo in PerlDL for the plmap and plmeridians API functions.  With
+this addition, the Perl binding for PLplot became even more complete than
+the Java, Python and Octave ones!
+
+  plplot  examples/perl/x19.pl  1.2
+
+
+Commit from rlaboiss (2004-05-03 21:13 CEST)
+--------------------
+
+Only check for db2x_texixml and db2x_xsltproc if --enable-builddoc is given
+to configure.
+
+  plplot  cf/docbook.ac  1.4
+
+
+Commit from rlaboiss (2004-05-03 11:05 CEST)
+--------------------
+
+Implemented example x18 in PerlDL
+
+  plplot  examples/perl/x18.pl  1.2
+
+
+Commit from rlaboiss (2004-05-02 23:15 CEST)
+--------------------
+
+Fully implemented the x16 example in PerlDL.
+
+  plplot  examples/perl/x16.pl  1.2
+
+
+Commit from rlaboiss (2004-05-02 18:11 CEST)
+--------------------
+
+Added PerlDL demos and x22 example.  Also, fixed usage of WWW_USER in header.
+
+  plplot  scripts/htdocs-gen_plot-examples.sh  1.7
+
+
+Commit from rlaboiss (2004-05-02 16:26 CEST)
+--------------------
+
+Added boilerplate files for examples x14 and x16 to x22.
+
++ plplot  examples/perl/x14.pl  1.1
++ plplot  examples/perl/x16.pl  1.1
++ plplot  examples/perl/x17.pl  1.1
++ plplot  examples/perl/x18.pl  1.1
++ plplot  examples/perl/x19.pl  1.1
++ plplot  examples/perl/x20.pl  1.1
++ plplot  examples/perl/x21.pl  1.1
++ plplot  examples/perl/x22.pl  1.1
+
+
+Commit from rlaboiss (2004-04-30 11:27 CEST)
+--------------------
+
+Updated version string and RELEASE-DATE according to last CVS snapshot
+release.
+
+  plplot  configure.ac  1.174
+
+
 Commit from rlaboiss (2004-04-30 10:51 CEST)
 --------------------
 
@@ -633,27 +984,6 @@ eventually make this unnecessary.
   plplot  cf/python.ac                 1.3
 
 
-Commit from rlaboiss (2004-02-28 16:35 CET)
---------------------
-
-Debian release 5.3.0-5
-
-  plplot  debian/changelog         1.78
-  plplot  debian/control           1.50
-  plplot  debian/libplplot9.files  1.3
-+ plplot  debian/plplot-bin.files  1.4
-  plplot  debian/rules             1.47
-
-
-Commit from rlaboiss (2004-02-28 08:41 CET)
---------------------
-
-Debian release 5.3.0-4
-
-  plplot  debian/changelog  1.77
-  plplot  debian/control    1.49
-
-
 Commit from andrewross (2004-02-27 13:30 CET)
 ----------------------
 
@@ -1026,14 +1356,6 @@ to cf/README.  The CFDIR branch is now ready for testing.
   plplot  test/plplot-test.sh.in         1.18.2.1
 
 
-Commit from rlaboiss (2004-02-22 21:57 CET)
---------------------
-
-
-
-  plplot  scripts/Makefile.am  1.9.2.1
-
-
 Commit from rlaboiss on branch CFDIR (2004-02-22 21:57 CET)
 ------------------------------------
 
@@ -1068,6 +1390,7 @@ to cf/README.  The CFDIR branch is now ready for testing.
   plplot  examples/tcl/Makefile.am                   1.9.4.1
   plplot  examples/tk/Makefile.am                    1.14.4.1
   plplot  include/plplot.h                           1.149.2.1
+  plplot  scripts/Makefile.am  1.9.2.1
 
 
 Commit from rlaboiss (2004-02-22 21:57 CET)
@@ -1341,34 +1664,6 @@ Merged latest changes in the Swig configuration from HEAD
 + plplot  cf/swig.m4       1.1.2.1
 
 
-Commit from rlaboiss (2004-02-20 09:04 CET)
---------------------
-
-Added patched to exclusion list
-
-  plplot  debian/.cvsignore  1.7
-
-
-Commit from rlaboiss (2004-02-20 09:03 CET)
---------------------
-
-Debian release 5.3.0-3.  From the changelog:
-
-  * Get Octave bindings to work with octave2.1-2.1.53, the version
-    available in unstable.  Using dpatch for that.
-  * debian/rules:
-    - Include dpatch.make.
-    - Targets build and clean depend on patch and unpatch, respectively.
-  * debian/control:
-    - Build-Depends on dpatch.
-    - Drop alternative build-dependency to octave2.0-headers and force
-      versioned dependency on octave2.1-headers (>= 2.1.54-2)
-
-  plplot  debian/changelog  1.76
-  plplot  debian/control    1.48
-  plplot  debian/rules      1.46
-
-
 Commit from rlaboiss (2004-02-20 07:49 CET)
 --------------------
 
@@ -1569,15 +1864,6 @@ Fix PYTHON_DEVEL macro problems when more than one file is found by find
 commands.
 
   plplot  acinclude.m4  1.17
-
-
-Commit from rlaboiss (2004-02-18 19:17 CET)
---------------------
-
-Adding dpatch files for Debian
-
-+ plplot  debian/patches/00list                      1.1
-+ plplot  debian/patches/octave-2.1.53-demos.dpatch  1.1
 
 
 Commit from andrewross (2004-02-18 17:11 CET)
@@ -1897,16 +2183,6 @@ perl bindings (through PDL) will be exemplified in examples/perl.
 - plplot  bindings/perl5/x01.pl            1.10
 - plplot  bindings/perl5/x02.pl            1.2
 - plplot  bindings/perl5/x09.pl            1.4
-
-
-Commit from rlaboiss (2004-02-16 14:17 CET)
---------------------
-
-Preparation for Debian release 5.3.0-3
-
-  plplot  debian/changelog  1.75
-  plplot  debian/control    1.47
-  plplot  debian/rules      1.45
 
 
 Commit from rlaboiss on branch CFDIR (2004-02-16 13:07 CET)
@@ -2619,14 +2895,6 @@ Changed the default location of xml.dcl
   plplot  doc/docbook/docbook.m4  1.16
 
 
-Commit from rlaboiss (2004-02-11 20:20 CET)
---------------------
-
-Changed SF_USER -> WWW_USER. Let's avoid references to SourceForge
-
-  plplot  debian/upload-debs.pl  1.2
-
-
 Commit from andrewross (2004-02-11 12:39 CET)
 ----------------------
 
@@ -2875,14 +3143,6 @@ Commit from rlaboiss (2004-02-09 19:34 CET)
 Hack to change file permissions in examples/python
 
   CVSROOT  loginfo  1.65
-
-
-Commit from rlaboiss (2004-02-09 19:09 CET)
---------------------
-
-Added script for uplaoding debs to PLplot website
-
-+ plplot  debian/upload-debs.pl  1.1
 
 
 Commit from rlaboiss (2004-02-09 19:05 CET)
@@ -3214,15 +3474,6 @@ crash if a bad packet is read in plserver.
   plplot  bindings/tk/plframe.c  1.85
 
 
-Commit from rlaboiss (2004-02-03 14:57 CET)
---------------------
-
-Removed build-dependency on libhdf5-serial-dev, since it will be included in
-the build-dependencies of octave2.1-headers (version 2.1.53-3).
-
-  plplot  debian/control  1.46
-
-
 Commit from rlaboiss (2004-02-02 15:58 CET)
 --------------------
 
@@ -3276,23 +3527,6 @@ Removed obsolete files
 - plplot  new/bogus              1.8
 - plplot  tmp/.cvsignore         1.2
 - plplot  tmp/.dummy             1.2
-
-
-Commit from rlaboiss (2004-02-02 15:55 CET)
---------------------
-
-Synch with v5_3_0 branch
-
-  plplot  debian/changelog  1.73
-  plplot  debian/control    1.45
-
-
-Commit from rlaboiss on branch v5_3_0 (2004-02-02 12:30 CET)
--------------------------------------
-
-Added build-dependency on libhdf5-serial-dev
-
-  plplot  debian/control  1.44.2.1
 
 
 Commit from rlaboiss on branch v5_3_0 (2004-02-02 12:01 CET)
