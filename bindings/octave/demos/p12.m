@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -23,7 +23,7 @@ function p12
   plot(x,exp(x));
   text(1,20,"Click Here -> + ");
   [x y]=ginput(1);
-  if (round(x) != 1 && round(y) != 20)
+  if (round(x) != 2 || round(y) != 20)
     text(x,y,"You missed!")
   else
     text(x,y,"ouch! Gently!")
