@@ -1,4 +1,4 @@
-SOURCES = announce-plplot-5.2.2
+SOURCES = announce-plplot-5.3.0
 DOCBOOK_XSL = /usr/share/sgml/docbook/stylesheet/xsl/nwalsh/xhtml/docbook.xsl
 ENV = XML_CATALOG_FILES=/usr/share/sgml/docbook/dtd/xml/4.2/catalog.xml
 XML_DCL = /usr/lib/sgml/declaration/xml.dcl
