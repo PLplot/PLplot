@@ -624,7 +624,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
     matf = Tcl_GetMatrixPtr( interp, argv[1] );
-
+    if (matf == NULL) return TCL_ERROR;
+    
     if (matf->dim != 2) {
 	interp->result = "Must use 2-d data.";
 	return TCL_ERROR;
@@ -678,6 +679,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
     matclev = Tcl_GetMatrixPtr( interp, argv[0] );
+    if (matclev == NULL) return TCL_ERROR;
     nclev = matclev->n[0];
 
     if (matclev->dim != 1) {
@@ -693,7 +695,9 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     /* There is a pltr spec, parse it. */
 	pltrname = argv[0];
 	mattrx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (mattrx == NULL) return TCL_ERROR;
 	mattry = Tcl_GetMatrixPtr( interp, argv[2] );
+        if (mattry == NULL) return TCL_ERROR;
 
 	argc -= 3, argv += 3;
     }
@@ -920,8 +924,11 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
 	opt  = atoi( argv[6] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
 	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+        if (maty == NULL) return TCL_ERROR;
 	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+        if (matz == NULL) return TCL_ERROR;
 	matPtr = matz;		/* For dumb indexer macro, grrrr. */
 
 	if ( matx->type != TYPE_FLOAT ||
@@ -949,8 +956,11 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
 	opt  = atoi( argv[4] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
 	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
 	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
 	matPtr = matz;		/* For dumb indexer macro, grrrr. */
 
 	if ( matx->type != TYPE_FLOAT ||
@@ -1033,8 +1043,11 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
 	side = atoi( argv[7] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
 	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
 	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
 	matPtr = matz;		/* For dumb indexer macro, grrrr. */
 
 	if ( matx->type != TYPE_FLOAT ||
@@ -1063,8 +1076,11 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
 	side = atoi( argv[5] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
 	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
 	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
 	matPtr = matz;		/* For dumb indexer macro, grrrr. */
 
 	if ( matx->type != TYPE_FLOAT ||
@@ -1146,8 +1162,11 @@ plotsh3dCmd( ClientData clientData, Tcl_Interp *interp,
 	side  = atoi( argv[6] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
 	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
 	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
 	matPtr = matz;		/* For dumb indexer macro, grrrr. */
 
 	if ( matx->type != TYPE_FLOAT ||
@@ -1175,8 +1194,11 @@ plotsh3dCmd( ClientData clientData, Tcl_Interp *interp,
 	side = atoi( argv[4] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
 	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
 	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
 	matPtr = matz;		/* For dumb indexer macro, grrrr. */
 
 	if ( matx->type != TYPE_FLOAT ||
@@ -1299,6 +1321,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
     matz = Tcl_GetMatrixPtr( interp, argv[1] );
+    if (matz == NULL) return TCL_ERROR;
     if (matz->dim != 2) {
 	interp->result = "Must plot a 2-d matrix.";
 	return TCL_ERROR;
@@ -1339,7 +1362,9 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     if (argc >= 3) {
 	pltrname = argv[0];
 	mattrx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (mattrx == NULL) return TCL_ERROR;
 	mattry = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (mattry == NULL) return TCL_ERROR;
 
 	argc -= 3, argv += 3;
     }
@@ -1569,6 +1594,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
     matz = Tcl_GetMatrixPtr( interp, argv[1] );
+    if (matz == NULL) return TCL_ERROR;
     if (matz->dim != 2) {
 	interp->result = "Must plot a 2-d matrix.";
 	return TCL_ERROR;
@@ -1595,6 +1621,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     ymax = atof( argv[5] );
 
     matclevel = Tcl_GetMatrixPtr( interp, argv[6] );
+    if (matclevel == NULL) return TCL_ERROR;
     nlevel = matclevel->n[0];
     if (matclevel->dim != 1) {
        interp->result = "clevel must be 1-d matrix.";
@@ -1611,7 +1638,9 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     if (argc >= 3) {
 	pltrname = argv[0];
 	mattrx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (mattrx == NULL) return TCL_ERROR;
 	mattry = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (mattry == NULL) return TCL_ERROR;
 
 	argc -= 3, argv += 3;
     }
