@@ -44,6 +44,14 @@
 
 (define %html-ext% ".@HTML_EXT@")
 
+(define %root-filename% "@PLPLOTDOC@")
+(define html-manifest #t)
+(define html-manifest-filename "@MANIFEST@")
+(define use-output-dir #t)
+(define %output-dir% "@PLPLOTDOC_HTML@-@VERSION@")
+(define %use-id-as-filename% #t)
+
+
 </style-specification-body>
 </style-specification>
 <external-specification id="docbook" document="dbstyle">

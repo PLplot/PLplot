@@ -1,3 +1,29 @@
+2000-11-16  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in (VERSION, PLPLOTDOC_HTML, MANIFEST, PLPLOTDOC):
+	Define and AC_SUBST'itute these variables.
+
+	* Makefile.in (PLPLOT_HTML, VERSION): AC_SUBST'itution.
+	(HTML_DESTDIR): Use them. 
+	($(MAIN_HTML)): HTML_DESTDIR must be created here, and not in the
+	install rule.
+	(html_tar): Depends on $(HTML_DESTDIR).tar.gz.
+	($(HTML_DESTDIR).tar.gz): New rule for building the html tarball.
+	Removed dependency to included-html-files.pl, as there is a
+	manifest file now.  There is no need to cp the html into
+	HTML_DESTDIR, as they are already there.
+	(install-stamp): No need to copy html files into HTML_DESTDIR.
+	Calls to ln are symbolic and forces (ln -fs).
+	(MAIN_HTML): New definition.
+        (OTHER_SOURCES): Removed included-html-files.pl.
+	(SGML_SOURCES): Changed plplotdoc.sgml to plplotdoc.sgml.in.
+	
+	* plplotdoc.sgml.in: Renamed from plplotdoc.sgml.in.  Use autoconf
+	variable @VERSION@.  Updated Copyright year.
+
+	* plplotdoc-html.dsl.in: Set variables to control ouptut html file
+	names and dir.
+
 2000-11-15  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.in ($(BASE).dvi): Simpler way to implement Adam Di

@@ -549,6 +549,20 @@ fi
 
 
 
+VERSION=0.1.0
+
+
+
+PLPLOTDOC_HTML=plplotdoc-html
+
+
+MANIFEST=MANIFEST
+
+
+PLPLOTDOC=plplotdoc
+
+
+
 jadelog=jadeout.log
 rm -f $jadelog
 JADELOG=$jadelog
@@ -623,7 +637,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:627: checking for $ac_word" >&5
+echo "configure:641: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JADE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -681,7 +695,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:685: checking for $ac_word" >&5
+echo "configure:699: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JADETEX'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -739,7 +753,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:743: checking for $ac_word" >&5
+echo "configure:757: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_PERL'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -797,7 +811,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:801: checking for $ac_word" >&5
+echo "configure:815: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_MOGRIFY'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -855,7 +869,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:859: checking for $ac_word" >&5
+echo "configure:873: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_LATEX'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -913,7 +927,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:917: checking for $ac_word" >&5
+echo "configure:931: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_DVIPS'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -957,7 +971,7 @@ fi
 
 
 echo $ac_n "checking DSSSL Style Sheet DTD""... $ac_c" 1>&6
-echo "configure:961: checking DSSSL Style Sheet DTD" >&5
+echo "configure:975: checking DSSSL Style Sheet DTD" >&5
 if eval "test \"`echo '$''{'pldb_cv_dsssl_dtd'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -995,7 +1009,7 @@ fi
 
 
 echo $ac_n "checking DocBook HTML Stylesheet""... $ac_c" 1>&6
-echo "configure:999: checking DocBook HTML Stylesheet" >&5
+echo "configure:1013: checking DocBook HTML Stylesheet" >&5
 if eval "test \"`echo '$''{'pldb_cv_html_ss'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1033,7 +1047,7 @@ fi
   
 
 echo $ac_n "checking DocBook Print Stylesheet""... $ac_c" 1>&6
-echo "configure:1037: checking DocBook Print Stylesheet" >&5
+echo "configure:1051: checking DocBook Print Stylesheet" >&5
 if eval "test \"`echo '$''{'pldb_cv_print_ss'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1071,7 +1085,7 @@ fi
 
 
 echo $ac_n "checking DocBook DTD""... $ac_c" 1>&6
-echo "configure:1075: checking DocBook DTD" >&5
+echo "configure:1089: checking DocBook DTD" >&5
 if eval "test \"`echo '$''{'pldb_cv_db_dtd'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1219,8 +1233,8 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "Makefile plplotdoc-html.dsl inline-greek.pl eps2jpeg.pl 
-           tex2eps.pl" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "Makefile plplotdoc.sgml plplotdoc-html.dsl 
+           inline-greek.pl eps2jpeg.pl tex2eps.pl" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -1252,6 +1266,10 @@ s%@includedir@%$includedir%g
 s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
+s%@VERSION@%$VERSION%g
+s%@PLPLOTDOC_HTML@%$PLPLOTDOC_HTML%g
+s%@MANIFEST@%$MANIFEST%g
+s%@PLPLOTDOC@%$PLPLOTDOC%g
 s%@JADELOG@%$JADELOG%g
 s%@SGML_CATALOGS@%$SGML_CATALOGS%g
 s%@HTML_EXT@%$HTML_EXT%g
@@ -1302,8 +1320,8 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"Makefile plplotdoc-html.dsl inline-greek.pl eps2jpeg.pl 
-           tex2eps.pl"}
+CONFIG_FILES=\${CONFIG_FILES-"Makefile plplotdoc.sgml plplotdoc-html.dsl 
+           inline-greek.pl eps2jpeg.pl tex2eps.pl"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

@@ -1,8 +1,7 @@
 <!doctype book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
-<!-- $Format: "<!ENTITY Project-Version \"$ProjectVersion$\">"$ -->
-<!ENTITY Project-Version "CVS.4">
-<!-- $Format: "<!ENTITY Project-Date \"$ProjectDate$\">"$ -->
+<!ENTITY Project-Version "@VERSION@">
+<!-- $Format: "<!ENTITY Project-Date \"$Date$\">"$ -->
 <!ENTITY Project-Date "Thu, 09 Nov 2000 22:13:15 +0100">
 
 <!ENTITY chap-intro SYSTEM "intro.sgml">

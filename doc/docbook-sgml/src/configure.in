@@ -1,6 +1,22 @@
 
 AC_INIT(configure.in)
 
+dnl Version number
+
+VERSION=0.1.0
+AC_SUBST(VERSION)
+
+dnl Controlling were the HTML files should go
+
+PLPLOTDOC_HTML=plplotdoc-html
+AC_SUBST(PLPLOTDOC_HTML)
+
+MANIFEST=MANIFEST
+AC_SUBST(MANIFEST)
+
+PLPLOTDOC=plplotdoc
+AC_SUBST(PLPLOTDOC)
+
 dnl Jade output log
 
 jadelog=jadeout.log
@@ -171,5 +187,5 @@ CHECK_DTD(
   [declaration/docbook.dtd],
   [docbook (v3.1)])
 
-AC_OUTPUT([Makefile plplotdoc-html.dsl inline-greek.pl eps2jpeg.pl 
-           tex2eps.pl])
+AC_OUTPUT([Makefile plplotdoc.sgml plplotdoc-html.dsl 
+           inline-greek.pl eps2jpeg.pl tex2eps.pl])

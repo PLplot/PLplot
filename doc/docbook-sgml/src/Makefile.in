@@ -2,16 +2,16 @@
 # Description: Makefile template for PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Thu May 20 11:14:38 CEST 1999
-# Last modified on: Wed Nov 15 23:37:36 CET 2000
+# Last modified on: Thu Nov 16 13:06:23 CET 2000
 # $Id$
 
-#temporary kludge to be replaced by a real version number system
-VERSION=0.0.1
+VERSION = @VERSION@
 
 #This is the directory where the results are installed  Be careful with
 #the choice here.  This directory is completely destroyed by the uninstall
 #target
-HTML_DESTDIR = ../html
+PLPLOTDOC_HTML = @PLPLOTDOC_HTML@
+HTML_DESTDIR = $(PLPLOTDOC_HTML)-$(VERSION)
 
 STYLESHEET_HTML = plplotdoc-html.dsl
 STYLESHEET_PRINT = plplotdoc-print.dsl
@@ -23,13 +23,13 @@ STYLESHEET_PRINT = plplotdoc-print.dsl
 SGML_SOURCES = \
 	advanced.sgml   api.sgml     cplus.sgml \
 	drivers.sgml  gui.sgml  intro.sgml \
-	perl.sgml plplotdoc.sgml  python.sgml \
+	perl.sgml plplotdoc.sgml.in  python.sgml \
 	scheme.sgml  simple.sgml   tcl.sgml  wish.sgml \
 	inline-html.ent  inline-print.ent
 
 OTHER_SOURCES = \
 	NEWS ChangeLog Makefile.in README configure configure.in \
-	eps2jpeg.pl.in included-html-files.pl inline-greek.pl.in \
+	eps2jpeg.pl.in inline-greek.pl.in \
 	jadetex.cfg over-under.tex parse-api.pl parse.pl tex2eps.pl.in \
 	$(STYLESHEET_HTML).in $(STYLESHEET_PRINT)
 
@@ -37,7 +37,6 @@ CONFDIR_SOURCES = \
 	conf/test.dsl.in  conf/test.sgml.in
 
 
-PLPLOTDOC_HTML=plplotdoc-html
 PLPLOTDOC_SRC=plplotdoc-src
 JADE = @JADE@
 JADETEX = @JADETEX@
@@ -45,8 +44,8 @@ PERL = @PERL@
 SGML_CATALOGS=@SGML_CATALOGS@
 HTML_EXT=@HTML_EXT@
 
-BASE = plplotdoc
-MAIN_HTML = book1.$(HTML_EXT)
+BASE = @PLPLOTDOC@
+MAIN_HTML = $(HTML_DESTDIR)/$(BASE).$(HTML_EXT)
 
 MAX_TEX_RECURSION=4
 
@@ -67,15 +66,10 @@ $(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
 #meaningful names rather than numerical ones and keep a maintained file
 #list earlier in this Makefile?)
 
-html_tar: $(PLPLOTDOC_HTML)-$(VERSION).tar.gz
-$(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
-	   inline.manifest over-under.jpeg
-	mkdir -p $(PLPLOTDOC_HTML)-$(VERSION)
-	cp -p `$(PERL) included-html-files.pl < $(MAIN_HTML)` $(MAIN_HTML) \
-	   `cat inline.manifest` \
-           over-under.jpeg $(PLPLOTDOC_HTML)-$(VERSION) 
-	tar cfz $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
-            $(PLPLOTDOC_HTML)-$(VERSION)
+html_tar: $(HTML_DESTDIR).tar.gz
+$(HTML_DESTDIR).tar.gz: $(MAIN_HTML) inline.manifest over-under.jpeg
+	cp -p `cat inline.manifest` over-under.jpeg $(HTML_DESTDIR)
+	tar cfz $(HTML_DESTDIR).tar.gz $(HTML_DESTDIR) 
 
 #inline.manifest is a list of all the in-line jpeg images made by inline-greek.pl
 #These same jpeg images are referred to by inline-html.ent (see below)
@@ -100,6 +94,7 @@ over-under.jpeg: over-under-big.eps eps2jpeg.pl
 html: $(MAIN_HTML)
 $(MAIN_HTML): $(SGML_SOURCES) $(STYLESHEET_HTML) inline-html.ent \
             over-under.jpeg inline.manifest
+	mkdir -p $(HTML_DESTDIR)
 	ln -fs inline-html.ent inline.ent
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml $(BASE).sgml
 
@@ -132,13 +127,10 @@ $(BASE).tex: $(SGML_SOURCES) $(STYLESHEET_PRINT) inline-print.ent
 
 install: install-stamp
 install-stamp: all
-	mkdir -p $(HTML_DESTDIR)
-	rm -rf $(HTML_DESTDIR)/*
 	cp -p $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
-	ln $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
+	ln -fs $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
 	cp -p $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
-	ln $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
-	cp -p $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
+	ln -fs $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
 	cp -p $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
 	touch install-stamp
 
