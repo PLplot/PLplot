@@ -289,7 +289,15 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     return;
   }
 
-  plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+  /*  
+   * Don't use the data z value to scale the color, use the z axis
+   * values set by plw3d()
+   *
+   * plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+   */
+
+  fc_minz = plsc->ranmi;
+  fc_maxz = plsc->ranma;
   if (fc_maxz == fc_minz) {
     plwarn("plsurf3d.c: Maximum and minimum Z values are equal! \"fixing\"...");
     fc_maxz = fc_minz + 1e-6;
@@ -759,7 +767,16 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
    if (opt & BASE_CONT || opt & TOP_CONT || opt && MAG_COLOR ) { 
-     plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+     /*  
+      * Don't use the data z value to scale the color, use the z axis
+      * values set by plw3d()
+      *
+      * plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+      */
+     
+     fc_minz = plsc->ranmi;
+     fc_maxz = plsc->ranma;     
+
      if (fc_maxz == fc_minz) {
        plwarn("plot3dc: Maximum and minimum Z values are equal! \"fixing\"...");
        fc_maxz = fc_minz + 1e-6;
