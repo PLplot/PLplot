@@ -15,7 +15,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1993/10/04 17:43:23  mjl
+# Revision 1.2  1993/10/04 19:55:57  mjl
+# Now sets debug=off if optimization level of 1 or greater is selected.
+#
+# Revision 1.1  1993/10/04  17:43:23  mjl
 # Adapted TPC configure script for use with plplplplot.
 #
 #
@@ -167,7 +170,7 @@ Parse_args () {
 			if [ $opt -gt 0 ]; then debug=off; fi
 			;;
 		o|op|opt)
-			opt=1
+			opt=1; debug=off
 			;;
 		p=*|pr=*|pro=*|prof=*|profi=*|profil=*|profile=*)
 			profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
