@@ -24,6 +24,8 @@ default_enable_f77=yes
 default_enable_cxx=yes
 default_enable_python=yes
 
+# ----------------------------------------------------------------------------
+
 case "$system" in
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 	default_with_opt=no
@@ -101,3 +103,65 @@ MY_ARG_ENABLE(python,
   [  --enable-python         compile python interface code (default: yes)],
   [], enable_python=$default_enable_python)
 
+# ----------------------------------------------------------------------------
+# Set up variables governing device driver inclusion.
+#
+# You can enable/disable drivers either by the command line
+# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
+# (remember to use underscores instead of dashes here).  You can disable
+# all drivers by default by using --disable-drivers.
+# ----------------------------------------------------------------------------
+
+dnl> Including a driver in the below list includes it by default.
+define(PL_DRIVER_LIST,dnl
+[plmeta, null, xterm, tek4010, tek4107, mskermit,
+conex, linuxvga, vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580,
+lj_hpgl, imp, xwin, tk, dp])dnl
+
+dnl> Support macros
+dnl> Macro to set one default value
+dnl
+define(PL_ADD_DRIVER_DEFAULT,[dnl
+default_enable_$1=$enable_drivers
+])dnl
+dnl
+dnl> Recursive macro to set all default values
+dnl
+define(PL_DRIVERS_DEFAULT,[ifelse($1,,,[PL_ADD_DRIVER_DEFAULT($1)dnl
+PL_DRIVERS_DEFAULT(builtin([shift],$*))])])
+dnl
+dnl> Macro to set one driver enable value
+dnl
+define(PL_ADD_DRIVER,[dnl
+MY_ARG_ENABLE($1,
+  builtin(format, [  --enable-%-14s enable %s device driver], $1, $1),
+  [], enable_$1=$default_enable_$1)
+if test "$enable_$1" = "yes"; then
+    AC_DEFINE(PLD_$1)
+    DEVICES="$DEVICES $1"
+fi
+])dnl
+dnl
+dnl> Recursive macro to set all driver enable values
+dnl
+define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
+PL_DRIVERS(builtin([shift],$*))])])dnl
+
+# Set default driver enable values
+
+PL_DRIVERS_DEFAULT(PL_DRIVER_LIST)
+
+# Special cases
+
+case $system in
+    Linux* )
+	default_enable_linuxvga=$enable_drivers
+    ;;
+    * )
+	default_enable_linuxvga="no"
+    ;;
+esac
+
+# Set final driver enable values
+
+PL_DRIVERS(PL_DRIVER_LIST)
