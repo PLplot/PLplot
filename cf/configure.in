@@ -1032,6 +1032,8 @@ if test "$enable_tcl" = "yes"; then
     # not be in existence at configure time so use the -f option.
     ln -sf \
     $srcdir/bindings/tcl/tclgen.c \
+    . 2>/dev/null
+    ln -sf \
     $srcdir/bindings/tcl/tclgen.h \
     $srcdir/bindings/tcl/tclgen_s.h \
     plplot 2>/dev/null
