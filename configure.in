@@ -27,10 +27,12 @@ AM_INIT_AUTOMAKE(plplot, 5.1.0)
 
 ### Test for libtool
 
+AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
 ### Checks for existence of headers
 
+AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h)
 
 ### Directory for PLplot specific data files
