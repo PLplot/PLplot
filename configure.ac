@@ -425,7 +425,7 @@ AM_MAINTAINER_MODE
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
-AM_INIT_AUTOMAKE(plplot, 5.2.0)
+AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030213)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
@@ -807,6 +807,18 @@ AC_MSG_RESULT
 AC_SUBST(STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
 
+### DocBook documentation
+
+AC_ARG_ENABLE(docbook, 
+    [--enable-docbook          Enable build of DocBook documentation],
+    [enable_docbook="$enableval"],
+    [enable_docbook=no])
+
+echo 666 $enable_docbook
+if test $enable_docbook = yes ; then
+AC_INCLUDE(doc/docbook/configure.ac)
+fi
+
 ### Build Makefiles
 
 AC_OUTPUT([
@@ -847,8 +859,21 @@ AC_OUTPUT([
 	scripts/Makefile
 	doc/Makefile	
 	plplot.pc
-	plplot-double.pc
 	])
+	
+if test $enable_docbook = yes ; then
+AC_OUTPUT([	
+	plplot-double.pc
+        doc/docbook/Makefile                                            
+        doc/docbook/src/Makefile
+	doc/docbook/src/plplotdoc.xml
+	doc/docbook/src/plplotdoc-html.dsl
+        doc/docbook/src/plplotdoc-print.dsl                              
+        doc/docbook/bin/Makefile
+	doc/docbook/bin/api2man.pl                          
+        doc/docbook/www/index.html.in
+	])
+fi
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.

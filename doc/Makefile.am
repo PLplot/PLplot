@@ -9,3 +9,5 @@ endif
 man_MANS = $(manpages)
 
 EXTRA_DIST = $(core_manpages) $(tcl_manpages)
+
+SUBDIRS = docbook

@@ -1,6 +1,6 @@
 
-AC_INIT(src/plplotdoc.xml.in)
-AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
+dnl ### AC_INIT(src/plplotdoc.xml.in)
+dnl ### AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
 
 dnl Web site Installation
 
@@ -136,15 +136,19 @@ MAN=man
 dnl CHECK_DTD(title, cache-id, dsssl_dtd, docbookb_ss_dtd, style_spec_use,
 dnl           external_specification, docbook_dtd, jade_output_type, 
 dnl           origin_package)
-CONFTEST=conftest
+dnl ### CONFTEST=conftest
+CONFTEST=doc/docbook/conftest
 AC_SUBST(CONFTEST)
 AC_DEFUN(CHECK_DTD, [
 AC_CACHE_CHECK($1, pldb_cv_$2, [
 echo -e "\nChecking for $1" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@|$3|" \
   -e "s|@STYLE_SPEC_USE@|$4|" -e "s|@EXTERNAL_SPECIFICATION@|$5|" \
-  -e "s|@CONFTEST@|$CONFTEST|" < cnf/test.dsl.in > $CONFTEST.dsl
-sed "s|@DOCBOOK_DTD@|$6|" < cnf/test.xml.in > $CONFTEST.xml
+dnl ###  -e "s|@CONFTEST@|$CONFTEST|" < cnf/test.dsl.in > $CONFTEST.dsl
+  -e "s|@CONFTEST@|$CONFTEST|" < doc/docbook/cnf/test.dsl.in > $CONFTEST.dsl
+dnl ### sed "s|@DOCBOOK_DTD@|$6|" < cnf/test.xml.in > $CONFTEST.xml
+sed "s|@DOCBOOK_DTD@|$6|" < doc/docbook/cnf/test.xml.in > $CONFTEST.xml
+
 $prog_jade $SGML_CATALOGS -d $CONFTEST.dsl -t $7 -o $CONFTEST.out \
    $XML_DECL $CONFTEST.xml > $jadelog.x 2>&1
 jade_result=`egrep ":(E|W):" $jadelog.x`
@@ -455,8 +459,8 @@ TARGETS="$PRINT $HTML $INFO $MAN"
 AC_SUBST(TARGETS)
 
 
-AC_OUTPUT([Makefile
-           src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl 
-           src/plplotdoc-print.dsl 
-           bin/Makefile bin/api2man.pl
-           www/index.html.in])
+dnl ### AC_OUTPUT([Makefile
+dnl ###          src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl 
+dnl ###          src/plplotdoc-print.dsl 
+dnl ###          bin/Makefile bin/api2man.pl
+dnl ###          www/index.html.in])
