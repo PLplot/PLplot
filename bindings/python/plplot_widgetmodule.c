@@ -1,4 +1,4 @@
-/* C code to create dynamically loaded library to implement pyqt_plplot module*/
+/* C code to create dynamically loaded library to implement plplot_widget module*/
 
 #include <Python.h>
 /* Change this to the recommended
@@ -7,6 +7,7 @@
 #include <arrayobject.h>
 #include "plplot/plplot.h"
 #include "plplot/plplotP.h"
+#define TRY(E) if(! (E)) return NULL
 
 /* ##############################################################################*/
 static char doc_partialInitXw[]="Partially init a new device (X Window) ";
@@ -67,7 +68,7 @@ static PyObject * pl_expose(PyObject *self, PyObject *args)
 
 /* ##############################################################################*/
 
-static PyMethodDef pyqt_pl_methods[] = {
+static PyMethodDef plplot_widget_methods[] = {
     /* These are a few functions  that I found I needed
        to call in order to initialise the pyqt widget  */
 
@@ -83,7 +84,7 @@ static PyMethodDef pyqt_pl_methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
-void initpyqt_pl()
+void initplplot_widget()
 {
     PyObject *m;
     PyObject *d;
@@ -91,10 +92,10 @@ void initpyqt_pl()
     import_array();
 
     /* Create the module and add the functions */
-    m = Py_InitModule("pyqt_pl", pyqt_pl_methods);
+    m = Py_InitModule("plplot_widget", plplot_widget_methods);
     d = PyModule_GetDict(m);
 
     /* Check for errors */
     if (PyErr_Occurred())
-	Py_FatalError("pl module initialization failed");
+	Py_FatalError("plplot_widget module initialization failed");
 }
