@@ -13,15 +13,6 @@
 extern "C" {
 #endif
 
-typedef void (*plD_init_fp)(PLStream *);
-typedef void (*plD_line_fp)(PLStream *, short, short, short, short);
-typedef void (*plD_polyline_fp)(PLStream *, short *, short *, PLINT);
-typedef void (*plD_eop_fp)(PLStream *);
-typedef void (*plD_bop_fp)(PLStream *);
-typedef void (*plD_tidy_fp)(PLStream *);
-typedef void (*plD_state_fp)(PLStream *, PLINT);
-typedef void (*plD_esc_fp)(PLStream *, PLINT, void *);
-
 void plD_init_tk		(PLStream *);
 void plD_init_dp		(PLStream *);
 void plD_line_tk		(PLStream *, short, short, short, short);
