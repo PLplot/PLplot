@@ -1,7 +1,7 @@
 *.html *.jpeg 
-*.log *.aux *.dvi *.tex *.fot *.ps.gz *.eps
+*.log *.aux *.dvi *.jadetex *.fot *.ps.gz *.pdf.gz *.eps
 plplotdoc-html.dsl plplotdoc-print.dsl plplotdoc.sgml inline.manifest
 eps2jpeg.pl inline-greek.pl tex2eps.pl
 plplotdoc-html-* plplotdoc-src-*
 configure config.* *-stamp Makefile Makefile.in 
-*-MANIFEST *.txml plplotdoc.xml *.xml-info
+*-MANIFEST *.info* *.texi *.txml plplotdoc.xml *.xml-info
