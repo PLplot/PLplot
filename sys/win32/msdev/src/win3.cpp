@@ -103,7 +103,8 @@ typedef struct {
 	long	PenColor;
 	int		PenWidth;
 	long    backGroundColor;
-	
+
+        bool    isDead;	
 } WinDev;
 
 /*
@@ -190,6 +191,7 @@ void plD_init_win3(PLStream *pls)
 	dev->hbrOld   = (HBRUSH)SelectObject(dev->hdc,dev->hbr);
 	dev->hMenu    = NULL;
 
+        dev->isDead   = FALSE;
 	
 	if (pls->color) {
 		dev->backGroundColor = RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b);
@@ -389,7 +391,7 @@ void plD_eop_win3(PLStream *pls)
 	       hCursor = LoadCursor(NULL,IDC_ARROW);
 		   SetClassLong(GetActiveWindow(),GCL_HCURSOR,(long)hCursor);
 		   SetCursor(hCursor);
-		   while (!dev->nextPlot) {
+		   while (!dev->nextPlot && !dev->isDead) {
 			   GetMessage(&msg,NULL,0,0);
 			   TranslateMessage(&msg);
 			   DispatchMessage(&msg);
@@ -829,6 +831,7 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,	UINT wParam,LONG
 		break;
 	case WM_DESTROY :
 		//              PostQuitMessage(0);
+	        dev->isDead = TRUE;
 		return 0;
 		/*
 		case WM_COMMAND :
