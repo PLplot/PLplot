@@ -363,7 +363,7 @@ const Unicode_to_Standard_table unicode_to_standard_lookup_table[148] = {
 {0x2013,177},
 {0x2014,208},
 {0x2018,96},
-{0x2019,169},
+{0x2019,39},
 {0x201a,184},
 {0x201c,170},
 {0x201d,186},
@@ -380,14 +380,14 @@ const Unicode_to_Standard_table unicode_to_standard_lookup_table[148] = {
 {0xfb02,175}
 };
 
-const int number_of_entries_in_unicode_to_symbol_table=184;
+const int number_of_entries_in_unicode_to_symbol_table=166;
 
 typedef struct {
 	unsigned int Unicode;
 	unsigned char Type1;
 } Unicode_to_Symbol_table;
 
-const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[184] = {
+const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[166] = {
 {0x0020,32},
 {0x0021,33},
 {0x0023,35},
@@ -421,38 +421,18 @@ const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[184] = {
 {0x007b,123},
 {0x007c,124},
 {0x007d,125},
-{0x00a9,227},
+{0x00a9,211},
 {0x00ac,216},
-{0x00ae,226},
+{0x00ae,210},
 {0x00b0,176},
 {0x00b1,177},
-{0x00bd,189},
-{0x00be,190},
 {0x00d7,180},
-{0x00e6,230},
-{0x00e7,231},
-{0x00e8,232},
-{0x00e9,233},
-{0x00ea,234},
-{0x00eb,235},
-{0x00ec,236},
-{0x00ed,237},
-{0x00ee,238},
-{0x00ef,239},
-{0x00f4,244},
-{0x00f6,246},
-{0x00f7,247},
-{0x00f8,248},
-{0x00f9,249},
-{0x00fa,250},
-{0x00fb,251},
-{0x00fc,252},
-{0x00fd,253},
-{0x00fe,254},
+{0x00f7,184},
 {0x0192,166},
 {0x0391,65},
 {0x0392,66},
 {0x0393,71},
+{0x0394,68},
 {0x0395,69},
 {0x0396,90},
 {0x0397,72},
@@ -472,6 +452,7 @@ const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[184] = {
 {0x03a6,70},
 {0x03a7,67},
 {0x03a8,89},
+{0x03a9,87},
 {0x03b1,97},
 {0x03b2,98},
 {0x03b3,103},
@@ -506,10 +487,11 @@ const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[184] = {
 {0x2032,162},
 {0x2033,178},
 {0x203e,96},
+{0x2044,164},
 {0x2111,193},
 {0x2118,195},
 {0x211c,194},
-{0x2122,228},
+{0x2122,212},
 {0x2126,87},
 {0x2135,192},
 {0x2190,172},
