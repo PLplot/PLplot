@@ -38,7 +38,7 @@ trap "cleanup" 0 HUP INT QUIT PIPE TERM
 
 cleanup
 
-cvs -d${SF_USER}@$SF_CVSROOT export -d$CVSTMPDIR -D now plplot \
+cvs -d${SF_USER}@$SF_CVSROOT export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
   && ./bootstrap.sh ${VERSION:---date-version} \
   && ./configure --enable-builddoc \
