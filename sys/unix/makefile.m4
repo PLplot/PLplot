@@ -1316,7 +1316,8 @@ realclean:
 
 install:
 	-cp ../lib/libplplot* ../lib/*.fnt $(INSTALL_DIR)
-	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
+if_ranlib({	ranlib $(INSTALL_DIR)/*.a
+})	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
 	-cd ../scripts; cp pl* $(INSTALL_DIR)
 	-cd ../{include}; \
 		cp plplotP.h plplot.h plplotio.h plevent.h plstream.h pdf.h \
