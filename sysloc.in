@@ -739,9 +739,6 @@ if test "$enable_octave" = "yes"; then
         if test "$has_mkoctfile" = "no"; then
             AC_MSG_WARN([$MKOCTFILE not found, disabling Octave support.]);
             enable_octave=no;
-        else
-            check_mkoctfile_compile=`$MKOCTFILE --help 2>/dev/null \
-                | sed 's/--compile// ; t END ; d ; : END q'`
         fi
     fi
 
@@ -803,8 +800,6 @@ EOF`])
     AC_SUBST(PLPLOT_OCTAVE_DIR)
 
 fi
-
-AM_CONDITIONAL(mkoctfile_accepts_c_flag, [test -n "$check_mkoctfile_compile"])
 
 # -----------------------------------------------------------------------
 # Python include and machdep directories

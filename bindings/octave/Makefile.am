@@ -59,26 +59,9 @@ plplot_octave.cc tmp_stub: plplot_octave.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
-
-# 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
-if mkoctfile_accepts_c_flag
-MKOCTFILE_SOURCE = plplot_octave.o
-
-plplot_octave.o: plplot_octave.cc
-	$(MKOCTFILE) -v -I. --compile plplot_octave.cc
-
-else
-MKOCTFILE_SOURCE = plplot_octave.cc
-endif
-
-plplot_octave.oct: $(MKOCTFILE_SOURCE)
+plplot_octave.oct plplot_octave.o: plplot_octave.cc
 	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE) -v -I. \
-	   $(MKOCTFILE_SOURCE) $(octave_libs)
-
-install-data-hook: plplot_octave-libdir.oct
-	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
-	$(INSTALL) plplot_octave-libdir.oct \
-	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
+	   plplot_octave.cc $(octave_libs)
 
 if with_rpath
 SET_LDRPATH = LD_RUN_PATH=$(libdir)
@@ -86,17 +69,16 @@ else
 SET_LDRPATH =
 endif
 
-plplot_octave-libdir.oct: $(MKOCTFILE_SOURCE)
-	$(SET_LDRPATH) $(MKOCTFILE) -v -I. $(MKOCTFILE_SOURCE) \
+plplot_octave-libdir.oct: plplot_octave.o
+	$(SET_LDRPATH) $(MKOCTFILE) -v -I. plplot_octave.o \
 	  -o plplot_octave-libdir.oct $(octave_libs)
 
-octavesharedir = $(OCTAVE_OCT_DIR)
+install-data-hook: plplot_octave-libdir.oct
+	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
+	$(INSTALL) plplot_octave-libdir.oct \
+	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
 
-# Ultimately, we may want to switch to the normal LT method of building
-# shared objects cross-platform, using
-# octaveshare_LTLIBRARIES = plplot_octave.la
-# but octave may not be able to handle libtool-created .la files
-# SCRIPTS rather than DATA because you want to preserve the permissions.
+octavesharedir = $(OCTAVE_OCT_DIR)
 octaveshare_SCRIPTS = plplot_octave.oct
 
 noinst_PROGRAMS = massage
@@ -142,7 +124,7 @@ doc_DATA =       \
 
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
 	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
-	plplot_stub.m missing_help $(doc_DATA)
+	plplot_stub.m missing_help $(doc_DATA) plplot_octave_txt/*
 
 else
 
