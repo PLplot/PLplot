@@ -1,11 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/06 05:03:49  mjl
-   Bumped the metafile format ID, to allow a hack on old metafiles with bad
-   linewidth commands (WIDTH commands in the body of the metafile are now
-   ignored for metafiles version 1993a and older).  WIDTH commands prior to
-   the INIT on old metafiles are still honored.
+   Revision 1.6  1993/07/02 07:21:12  mjl
+   Added header definitions for use by TK driver.  Also new macros for plplot
+   bop/eop commands.
 
+ * Revision 1.5  1993/03/06  05:03:49  mjl
+ * Bumped the metafile format ID, to allow a hack on old metafiles with bad
+ * linewidth commands (WIDTH commands in the body of the metafile are now
+ * ignored for metafiles version 1993a and older).  WIDTH commands prior to
+ * the INIT on old metafiles are still honored.
+ *
  * Revision 1.4  1993/02/27  04:47:26  mjl
  * Changed def'n of plm_wr macro to avoid a circular call chain.
  *
@@ -27,16 +31,24 @@
 	5 May 1991
 	
 	This file contains definitions of constants and structures which
-	are need by the PLPLOT metafile writer and renderer.
+	are needed by the PLPLOT metafile writer and renderer.
+*/
 
-	PLMETA_HEADER holds the magic string at head of metafile.
-	PLMETA_VERSION holds the version number (year & letter).
-	All strings written into the file header are limited to a maximum
-	of 80 characters.
+/*
+* PLMETA_HEADER holds the magic string at head of metafile.
+* PLMETA_VERSION holds the version number (year & letter).
+* 
+* Note: All strings written into the file header are limited to a maximum
+* of 80 characters.
 */
 
 #define PLMETA_HEADER	"PLPLOT"
 #define PLMETA_VERSION	"1993b"
+
+/* These are used by the TK driver client/server code */
+
+#define PLSERV_HEADER	"PLPLOT"
+#define PLSERV_VERSION	"1993b"
 
 /* Symbolic constants for old metafile versions (prior to 1992a).
    Now these are stored in the metafile header. */
@@ -72,8 +84,10 @@
 #define CLOSE		2
 #define SWITCH_TO_TEXT	3
 #define SWITCH_TO_GRAPH	4
-#define CLEAR		5
-#define PAGE		6
+#define EOP		5
+#define CLEAR		5	/* deprecated */
+#define BOP		6
+#define PAGE		6	/* deprecated */
 #define NEW_COLOR	7
 #define NEW_WIDTH	8
 #define LINE		9
