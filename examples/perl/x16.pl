@@ -153,21 +153,26 @@ my $shedge = $zmin + ($zmax - $zmin) * sequence ($ns + 1) / $ns;
 
 # Set up coordinate grids
 
-my $vx = sequence ($nx);
-my $vy = sequence ($ny);
-my ($x, $y) = mypltr ($vx->dummy (1, $ny), transpose ($vy->dummy (1, $nx)));
-my $argx = $x * pi / 2;
-my $argy = $y * pi / 2;
 my $distort = 0.4;
 
-my $cgrid1 = append ($nx,
-  append ($x->slice (',0') + $distort * cos ($argx->slice (',0')),
-          transpose ($y->slice ('0,') - $distort * cos ($argy->slice ('0,')))));
-$cgrid1 = $cgrid1->squeeze;
+my $vx = sequence ($nx);
+my $vy = sequence ($ny);
+my ($x, $y) = mypltr ($vx->dummy (1, $ny), $vy->dummy (0, $nx));
 
-my $cgrid2 = zeroes ($nx, $ny, 2);
-$cgrid2->slice (',,0') .= $x + $distort * cos ($argx) * cos ($argy);
-$cgrid2->slice (',,1') .= $y - $distort * cos ($argx) * cos ($argy);
+my $xx = $x->slice (',0')->squeeze ();
+my $yy = $y->slice ('0,')->squeeze ();
+my $argx = $xx * pi / 2;
+my $argy = $yy * pi / 2;
+
+my $cgrid1 = plAllocGrid ($xx + $distort * cos ($argx),
+                          $yy - $distort * cos ($argy));
+
+
+my $argx = $x * pi / 2;
+my $argy = $y * pi / 2;
+
+my $cgrid2 = plAlloc2dGrid ($x + $distort * cos ($argx) * cos ($argy),
+                            $y - $distort * cos ($argx) * cos ($argy));
 
 # Plot using identity transform
 
@@ -253,6 +258,9 @@ if ($exclude) {
   pllab ("distance", "altitude", "Bogon density with exclusion");
 }
 
+plFreeGrid ($cgrid1);
+plFree2dGrid ($cgrid2);
+
 # Example with polar coordinates
 
 pladv (0);
@@ -264,9 +272,8 @@ plpsty (0);
 # Build new coordinate matrices
 
 my $r = (sequence ($nx) / ($nx - 1))->dummy (1, $ny);
-my $t = transpose ((2 * pi * sequence ($ny) / ($ny - 1))->dummy (1, $nx));
-$cgrid2->slice (',,0') .= $r * cos ($t);
-$cgrid2->slice (',,1') .= $r * sin ($t);
+my $t = ((2 * pi * sequence ($ny) / ($ny - 1))->dummy (0, $nx));
+$cgrid2 = plAlloc2dGrid ($r * cos ($t), $r * sin ($t));
 $z = exp (- $r ** 2) * cos (5 * pi * $r) * cos (5 * $t);
 
 # Need a new shedge to go along with the new data set
@@ -296,3 +303,4 @@ pllab ("", "", "Tokamak Bogon Instability");
 
 plend ();
 
+plFree2dGrid ($cgrid2);
