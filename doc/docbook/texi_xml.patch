@@ -1,11 +1,11 @@
---- texi_xml-orig	Wed Nov 29 16:35:25 2000
-+++ texi_xml	Thu Nov 30 09:36:18 2000
+--- texi_xml-orig	Thu Nov 30 14:16:27 2000
++++ texi_xml	Thu Nov 30 14:17:34 2000
 @@ -221,7 +221,7 @@
      # of characters allowed for node names, the use of ':'
      # to separate the parts of menu entry implies that it
      # is not an allowed character.
 -    $entry =~ tr/:/;/;
 +    $entry = node_escape($entry);
- 
+     
      my $node = node_escape(texi_escape($elem->attribute('node')));
      if($entry eq $node) {
