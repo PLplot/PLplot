@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1993/12/22 23:09:53  mjl
+ * Revision 1.25  1994/01/15 17:46:48  mjl
+ * Converted to new PDF function call syntax.  Substantially changed server
+ * startup code -- now can handle a variety of cases including starting
+ * plserver on a remote node (via remsh) or plserver already existing and
+ * only needing to be contacted.  Rewrote data channel code to use socket
+ * when DP driver is used.
+ *
+ * Revision 1.24  1993/12/22  23:09:53  mjl
  * Changes so that TK driver no longer times out on slow network connections
  * (it's just rreeaaalllyyyy ssllooowwww).  Where timeouts are a problem,
  * the client must issue the command to the server without waiting for a
@@ -55,19 +62,25 @@
 *	Passes graphics commands to renderer and certain X
 *	events back to user if requested.
 */
+
 /*
 #define DEBUG
 #define DEBUG_ENTER
 */
+
 #ifdef TK
 
 #include "plserver.h"
 #include "drivers.h"
 #include "metadefs.h"
-#include "pdf.h"
 #include "plevent.h"
+#include <errno.h>
 
-#define BUFMAX 3500
+/* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
+
+#define BUFFER_FIFO 0
+
+/* A handy command wrapper */
 
 #define tk_wr(code) \
 if (code) { abort_session(pls, "Unable to write to pipe"); }
@@ -85,20 +98,14 @@ if (code) { abort_session(pls, "Unable to write to pipe"); }
 typedef struct {
     Tk_Window w;		/* Main window */
     Tcl_Interp *interp;		/* Interpreter */
-
-    FILE  *file;		/* fifo or socket file descriptor */
-    char  *filename;		/* Name of fifo or socket */
-    char  *filetype;		/* Set to "fifo" or "socket" */
-
-    char  *program;		/* Name of client main window */
-
     short xold, yold;		/* Coordinates of last point plotted */
     int   exit_eventloop;	/* Flag for breaking out of event loop */
     int   pass_thru;		/* Skips normal error termination when set */
-    int   launched_server;	/* Keep track of who started server */
-
-    char *cmdbuf;		/* Command buffer */
-    int cmdbuf_len;
+    char  *cmdbuf;		/* Command buffer */
+    int   cmdbuf_len;		/* and its length */
+#if BUFFER_FIFO
+    FILE *fifo;
+#endif
 } TkDev;
 
 /* Function prototypes */
@@ -110,6 +117,7 @@ static void  tk_di		(PLStream *);
 static void  WaitForPage	(PLStream *);
 static void  HandleEvents	(PLStream *);
 static void  tk_configure	(PLStream *);
+static void  init_server	(PLStream *);
 static void  launch_server	(PLStream *);
 static void  flush_output	(PLStream *);
 static void  plwindow_init	(PLStream *);
@@ -161,6 +169,13 @@ plD_init_dp(PLStream *pls)
 }
 
 static void
+tk_wr_header(PLStream *pls, char *header)
+{
+    tk_wr( pdf_wr_header(pls->pdfs, header) );
+    pls->bytecnt += strlen(header)+1;
+}
+
+static void
 init(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
@@ -186,8 +201,15 @@ init(PLStream *pls)
     if ( ! pls->bgcolorset) 
 	bgcolor_init(pls);
 
-    if (pls->bufmax == 0)
-	pls->bufmax = BUFMAX;
+/* Specify buffer size if not yet set (can be changed by -bufmax option).  */
+/* A small buffer works best for socket communication */
+
+    if (pls->bufmax == 0) {
+	if (pls->dp)
+	    pls->bufmax = 450;
+	else
+	    pls->bufmax = 3500;
+    }
 
 /* Allocate and initialize device-specific data */
 
@@ -200,9 +222,6 @@ init(PLStream *pls)
 
     dev = (TkDev *) pls->dev;
     dev->exit_eventloop = 0;
-
-    if (dev->program == NULL)
-	dev->program = "client";
 
 /* Start interpreter and spawn server process */
 
@@ -218,30 +237,34 @@ init(PLStream *pls)
 
 /* Send init info */
 
-    tk_wr(pdf_wr_1byte(dev->file, c));
+    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt++;
 
 /* The header and version fields will be useful when the client & server */
 /* reside on different machines */
 
-    tk_wr(pdf_wr_header(dev->file, PLSERV_HEADER));
-    tk_wr(pdf_wr_header(dev->file, PLSERV_VERSION));
+    tk_wr_header(pls, PLSERV_HEADER);
+    tk_wr_header(pls, PLSERV_VERSION);
 
-    tk_wr(pdf_wr_header(dev->file, "xmin"));
-    tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) xmin));
+    tk_wr_header(pls, "xmin");
+    tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) xmin) );
+    pls->bytecnt += 2;
 
-    tk_wr(pdf_wr_header(dev->file, "xmax"));
-    tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) xmax));
+    tk_wr_header(pls, "xmax");
+    tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) xmax) );
+    pls->bytecnt += 2;
 
-    tk_wr(pdf_wr_header(dev->file, "ymin"));
-    tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) ymin));
+    tk_wr_header(pls, "ymin");
+    tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) ymin) );
+    pls->bytecnt += 2;
 
-    tk_wr(pdf_wr_header(dev->file, "ymax"));
-    tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) ymax));
+    tk_wr_header(pls, "ymax");
+    tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) ymax) );
+    pls->bytecnt += 2;
 
-    tk_wr(pdf_wr_header(dev->file, ""));
+    tk_wr_header(pls, "");
 
-/* Flush pipe since number of bytes not accounted for */
+/* Good place to make sure the data transfer is working OK */
 
     flush_output(pls);
 }
@@ -267,24 +290,24 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
 
     if (x1 == dev->xold && y1 == dev->yold) {
 	c = (U_CHAR) LINETO;
-	tk_wr(pdf_wr_1byte(dev->file, c));
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 	pls->bytecnt += 1;
 
 	xy[0] = x2;
 	xy[1] = y2;
-	tk_wr(pdf_wr_2nbytes(dev->file, xy, 2));
+	tk_wr( pdf_wr_2nbytes(pls->pdfs, xy, 2) );
 	pls->bytecnt += 4;
     }
     else {
 	c = (U_CHAR) LINE;
-	tk_wr(pdf_wr_1byte(dev->file, c));
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 	pls->bytecnt += 1;
 
 	xy[0] = x1;
 	xy[1] = y1;
 	xy[2] = x2;
 	xy[3] = y2;
-	tk_wr(pdf_wr_2nbytes(dev->file, xy, 4));
+	tk_wr( pdf_wr_2nbytes(pls->pdfs, xy, 4) );
 	pls->bytecnt += 8;
     }
     dev->xold = x2;
@@ -312,12 +335,12 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 	HandleEvents(pls);	/* Check for events */
     }
 
-    tk_wr(pdf_wr_1byte(dev->file, c));
-    tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) npts));
+    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
+    tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) npts) );
     pls->bytecnt += 3;
 
-    tk_wr(pdf_wr_2nbytes(dev->file, (U_SHORT *) xa, npts));
-    tk_wr(pdf_wr_2nbytes(dev->file, (U_SHORT *) ya, npts));
+    tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) xa, npts) );
+    tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) ya, npts) );
     pls->bytecnt += 4*npts;
 
     dev->xold = xa[npts - 1];
@@ -331,21 +354,20 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 * plD_eop_tk()
 *
 * End of page.  
-* User must hit <RETURN> or click right mouse button to continue.
+* User must hit <RETURN> to continue.
 \*----------------------------------------------------------------------*/
 
 void
 plD_eop_tk(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) EOP;
-    TkDev *dev = (TkDev *) pls->dev;
 
     dbug_enter("plD_eop_tk");
 
     if (pls->nopause)
 	return;
 
-    tk_wr(pdf_wr_1byte(dev->file, c));
+    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt += 1;
     WaitForPage(pls);
 }
@@ -367,7 +389,7 @@ plD_bop_tk(PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     pls->page++;
-    tk_wr(pdf_wr_1byte(dev->file, c));
+    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt += 1;
 }
 
@@ -399,30 +421,29 @@ plD_tidy_tk(PLStream *pls)
 void 
 plD_state_tk(PLStream *pls, PLINT op)
 {
-    TkDev *dev = (TkDev *) pls->dev;
     U_CHAR c = (U_CHAR) CHANGE_STATE;
 
     dbug_enter("plD_state_tk");
 
-    tk_wr(pdf_wr_1byte(dev->file, c));
+    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt += 1;
 
     switch (op) {
 
     case PLSTATE_WIDTH:
-	tk_wr(pdf_wr_1byte(dev->file, op));
-	tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) (pls->width)));
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
+	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) (pls->width)) );
 	pls->bytecnt += 3;
 	break;
 
     case PLSTATE_COLOR0:
-	tk_wr(pdf_wr_1byte(dev->file, op));
-	tk_wr(pdf_wr_1byte(dev->file, (U_CHAR) pls->icol0));
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
+	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
 	pls->bytecnt += 2;
 	if (pls->icol0 == PL_RGB_COLOR) {
-	    tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.r));
-	    tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.g));
-	    tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.b));
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.g) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.b) );
 	    pls->bytecnt += 3;
 	}
 	break;
@@ -445,14 +466,13 @@ void
 plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 {
     U_CHAR c = (U_CHAR) ESCAPE;
-    TkDev *dev = (TkDev *) pls->dev;
 
     dbug_enter("plD_esc_tk");
 
-    tk_wr(pdf_wr_1byte(dev->file, c));
+    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt += 1;
 
-    tk_wr(pdf_wr_1byte(dev->file, op));
+    tk_wr( pdf_wr_1byte(pls->pdfs, op) );
     pls->bytecnt += 1;
 
     switch (op) {
@@ -566,24 +586,19 @@ tk_start(PLStream *pls)
     if (pls->program == NULL)
 	pls->program = "plclient";
 
-    if (! pls->dp) {
+    if (pls->dp) {
+	Tcl_SetVar(dev->interp, "dp", "1", TCL_GLOBAL_ONLY);
+    }
+    else {
+	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
 	if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
 			pls->program))
 	    abort_session(pls, "Unable to create top-level window");
     }
 
 /* Initialize interpreter */
-/* pltk_init_proc is autoloaded, so the user can customize if desired */
-/* (maybe in a future rev.) */
 
     tk_configure(pls);
-/*    tcl_cmd(pls, "pltk_init"); */
-    tcl_cmd(pls, "set plw_create_proc plw_create");
-    tcl_cmd(pls, "set plw_init_proc plw_init");
-    tcl_cmd(pls, "set plw_start_proc plw_start");
-    tcl_cmd(pls, "set plw_flash_proc plw_flash");
-    tcl_cmd(pls, "set plw_end_proc plw_end");
-
     Tcl_SetVar(dev->interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
 
 /* Eval startup procs */
@@ -592,20 +607,14 @@ tk_start(PLStream *pls)
 	abort_session(pls, "");
     }
 
-/* If we are using Tcl-DP, set up communications port and other junk */
+/* Other initializations. */
+/* Autoloaded, so the user can customize it if desired */
 
-    if (pls->dp) {
-	tcl_cmd(pls, "set client_host localhost");
-	tcl_cmd(pls, "set client_port [dp_MakeRPCServer]");
-	tcl_cmd(pls, "set update_proc dp_update");
-    }
-    else {
-	tcl_cmd(pls, "set update_proc update");
-    }
+    tcl_cmd(pls, "plclient_init"); 
 
-/* Launch server process if necessary */
+/* Initialize server process */
 
-    launch_server(pls);
+    init_server(pls);
 
 /* By now we should be done with all autoloaded procs, so blow away */
 /* the open command just in case security has been compromised */
@@ -644,14 +653,9 @@ tk_stop(PLStream *pls)
 
     dev->pass_thru = 1;
 
-/* Close fifo if it exists */
+/* Terminate data stream */
 
-    if (dev->file != NULL) {
-	if (fclose(dev->file)) {
-	    fprintf(stderr, "tk_stop: Error closing fifo\n");
-	}
-	dev->file = NULL;
-    }
+    pdf_close(pls->pdfs);
 
 /* Kill plserver */
 
@@ -683,8 +687,6 @@ tk_stop(PLStream *pls)
 static void
 abort_session(PLStream *pls, char *msg)
 {
-    TkDev *dev = (TkDev *) pls->dev;
-
     dbug_enter("abort_session");
 
     pls->nopause = TRUE;
@@ -704,13 +706,6 @@ tk_configure(PLStream *pls)
 
     dbug_enter("tk_configure");
 
-/* Use main window name as program name, now that we have it */
-
-    if (! pls->dp) {
-	dev->program = Tk_Name(dev->w);
-	Tcl_SetVar(dev->interp, "client", dev->program, 0);
-    }
-
 /* Tell interpreter about commands. */
 
     Tcl_CreateCommand(dev->interp, "abort", Abort,
@@ -718,27 +713,146 @@ tk_configure(PLStream *pls)
 
     Tcl_CreateCommand(dev->interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
+
+/* Set some relevant interpreter variables */
+
+    if (! pls->dp) 
+	tcl_cmd(pls, "set client_name [winfo name .]");
+
+    if (pls->server_name != NULL)
+	Tcl_SetVar(dev->interp, "server_name", pls->server_name, 0);
+
+    if (pls->server_host != NULL)
+	Tcl_SetVar(dev->interp, "server_host", pls->server_host, 0);
+
+    if (pls->server_port != NULL)
+	Tcl_SetVar(dev->interp, "server_port", pls->server_port, 0);
+}
+
+/*----------------------------------------------------------------------*\
+* init_server
+*
+* Starts interaction with server process, launching it if necessary.
+*
+* There are several possibilities we must account for, depending on the
+* message protocol, input flags, and whether plserver is already running
+* or not.  From the point of view of the code, they are:
+*
+*    1. Driver: tk
+*	Flags: <none>
+*	Meaning: need to start up plserver (same host)
+*	Actions: fork plserver, passing it our TK main window name
+*		 for communication.  Once started, plserver will send
+*		 back its main window name.
+* 
+*    2. Driver: dp
+*	Flags: <none>
+*	Meaning: need to start up plserver (same host)
+*	Actions: fork plserver, passing it our Tcl-DP communication port
+*		 for communication. Once started, plserver will send
+*		 back its created message port number.
+* 
+*    3. Driver: tk
+*	Flags: -server_name
+*	Meaning: plserver already running (same host)
+*	Actions: communicate to plserver our TK main window name.
+* 
+*    4. Driver: dp
+*	Flags: -server_port
+*	Meaning: plserver already running (same host)
+*	Actions: communicate to plserver our Tcl-DP port number.
+* 
+*    5. Driver: dp
+*	Flags: -server_host
+*	Meaning: need to start up plserver (remote host)
+*	Actions: remsh (rsh) plserver, passing it our host ID and Tcl-DP
+*		 port for communication. Once started, plserver will send
+*		 back its created message port number.
+* 
+*    6. Driver: dp
+*	Flags: -server_host -server_port
+*	Meaning: plserver already running (remote host)
+*	Actions: communicate to remote plserver our host ID and Tcl-DP
+*		 port number.
+*
+* For a bit more flexibility, you can change the name of the process
+* invoked from "plserver" to something else, using the -plserver flag.
+* 
+* The startup procedure involves some rather involved handshaking 
+* between client and server.  This is made easier by using the Tcl
+* variables:
+*
+*	client_host client_port server_host server_port 
+*
+* when using Tcl-DP sends and
+*
+*	client_name server_name
+*
+* when using TK sends.  The global Tcl variables 
+*
+*	client server
+*
+* are used for the defining identification for the client and server,
+* respectively -- they denote the main window name when TK sends are used
+* and the respective process's listening socket when Tcl-DP sends are
+* used.  Note that in the former case, $client is just the same as
+* $client_name.  In addition, since the server may need to communicate
+* with many different processes, every command to the server contains the
+* sender's client id (so it knows how to report back if necessary).  Thus
+* this interpreter must know both $server as well as $client.  It is most
+* convenient to set $client from the server, as a way to signal that
+* communication has been set up and it is safe to proceed.
+*
+* Often it is necessary to use constructs such as [list $server] instead
+* of just $server.  This occurs since you could have multiple copies
+* running on the display (resulting in names of the form "plserver #2",
+* etc).
+\*----------------------------------------------------------------------*/
+
+static void
+init_server(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    int server_exists = 0;
+
+    dbug_enter("init_server");
+
+#ifdef DEBUG
+    fprintf(stderr, "%s -- PID: %d, PGID: %d, PPID: %d\n",
+	    __FILE__, getpid(), getpgrp(), getppid());
+#endif
+
+/* If no means of communication provided, need to launch plserver */
+
+    if (( ! pls->dp && pls->server_name != NULL ) ||
+	(   pls->dp && pls->server_port != NULL ) )
+	server_exists = 1;
+
+/* So launch it */
+
+    if ( ! server_exists)
+	launch_server(pls);
+
+/* Set up communication channel to server */
+
+    if (pls->dp) {
+	tcl_cmd(pls,
+		"set server [dp_MakeRPCClient $server_host $server_port]");
+    }
+    else {
+	tcl_cmd(pls, "set server $server_name");
+    }
+
+/* If server didn't need launching, contact it here */
+
+    if (server_exists)
+	tcl_cmd(pls, "plclient_link_init"); 
 }
 
 /*----------------------------------------------------------------------*\
 * launch_server
 *
-* Starts server process if necessary.
-* There are three cases:
-*
-* pls->plserver == NULL		plserver is started
-*
-* pls->plserver != NULL
-*   && plserver already exists	No action is taken
-*
-* pls->plserver != NULL
-*   && plserver doesn't exist	The specified server is created
-*
-* In the second case there is no work to be done so we just return.
-*
-* In the third case, the client has specified which server to start.
-* This additional flexibility may come in handy but usually the default
-* server will suffice (since the user may customize its init file).
+* Launches plserver, locally or remotely.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -751,40 +865,22 @@ launch_server(PLStream *pls)
 
     dbug_enter("launch_server");
 
-#ifdef DEBUG
-    fprintf(stderr, "%s -- PID: %d, PGID: %d, PPID: %d\n",
-	    dev->program, getpid(), getpgrp(), getppid());
-#endif
-
-/* Check for already existing server */
-/* This sucks and will have to be fixed for remote servers */
-
-    if (pls->plserver != NULL) {
-	Tcl_SetVar(dev->interp, "server", pls->plserver, 0);
-	if (tcl_eval(pls, "winfo $server exists")) {
-	    return;
-	}
-	Tcl_UnsetVar(dev->interp, "server", 0);
-    }
-    else {
+    if (pls->plserver == NULL) 
 	pls->plserver = "plserver";
-    }
 
-/* Build argument list for exec */
+/* Build argument list */
 
     i = 0;
-    argv[i++] = pls->plserver;		/* Name of server */
+    if ( pls->dp && pls->server_host != NULL ) 
+	argv[i++] = pls->server_host;	/* Host name for remsh */
+
+    argv[i++] = pls->plserver;		/* Invocation name of server */
 
     argv[i++] = "-child";		/* Tell plserver its ancestry */
 
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
 	argv[i++] = pls->auto_path;	/* to autoload */
-    }
-
-    if (pls->FileName != NULL) {
-	argv[i++] = "-display";		/* X display */
-	argv[i++] = pls->FileName;
     }
 
     if (pls->geometry != NULL) {
@@ -804,51 +900,72 @@ launch_server(PLStream *pls)
     }
     else {
 	argv[i++] = "-client_name";
-	argv[i++] = dev->program;
+	argv[i++] = Tcl_GetVar(dev->interp, "client_name", TCL_GLOBAL_ONLY);
     }
 
-/* Start server process */
+/* The display absolutely must be set if invoking a remote server (by remsh) */
+/* In this case it defaults to the same host as you are running the server */
 
-    plserver_cmd = plFindCommand(pls->plserver);
-    if ( (plserver_cmd == NULL) || (pid = FORK()) < 0) {
-	abort_session(pls, "Unable to fork server process");
+    if (pls->FileName != NULL) {
+	argv[i++] = "-display";		/* X display */
+	argv[i++] = pls->FileName;
     }
-    else if (pid == 0) {
-	printf("Starting up %s\n", plserver_cmd);
-	argv[i++] = NULL;
-	if (execv(plserver_cmd, argv)) {
-	    fprintf(stderr, "Unable to exec server process\n");
-	    _exit(1);
-	}
+    else if ( pls->dp && pls->server_host != NULL ) {
+	argv[i++] = "-display";		/* X display */
+	argv[i++] = pls->server_host;
     }
-    free_mem(plserver_cmd);
 
-/*
-* Wait for server to send back notification.
-*
-* In addition to setting $server_is_ready to signal readiness to proceed,
-* plserver sets variables in the tk driver's interpreter necessary for
-* communication.  
-*
-* When TK send's are being used to communicate, the true server main
-* window name is stored in $server.  This is not always the same as the
-* name of the application since you could have multiple copies running on
-* the display (resulting in names of the form "plserver #2", etc).
-*
-* When Tcl-DP dp_RPC's are being used, the host and port id's are stored
-* in $server_host and $server_port, respectively.
-*/
+/* Add terminating null */
 
-    tk_wait(pls, "[info exists server_is_ready]" );
-
-#ifdef TCL_DP
-    if (pls->dp) {
-	tcl_cmd(pls,
-		"set server [dp_MakeRPCClient $server_host $server_port]");
+#ifdef DEBUG
+    {
+	int j;
+	fprintf(stderr, "argument list: \n   ");
+	for (j = 0; j < i; j++) 
+	    fprintf(stderr, "%s ", argv[j]);
+	fprintf(stderr, "\n");
     }
 #endif
+    argv[i++] = NULL;
 
-    dev->launched_server = 1;
+/* Start server process */
+/* It's a fork/remsh if on a remote machine */
+
+    if ( pls->dp && pls->server_host != NULL ) {
+	if ((pid = FORK()) < 0) {
+	    abort_session(pls, "Unable to fork server process");
+	}
+	else if (pid == 0) {
+	    fprintf(stderr, "Starting up %s on node %s\n", pls->plserver,
+		    pls->server_host);
+
+	    if (execvp("remsh", argv)) {
+		perror("Unable to exec server process");
+		_exit(1);
+	    }
+	}
+    }
+
+/* Running locally, so its a fork/exec */
+
+    else {
+	plserver_cmd = plFindCommand(pls->plserver);
+	if ( (plserver_cmd == NULL) || (pid = FORK()) < 0) {
+	    abort_session(pls, "Unable to fork server process");
+	}
+	else if (pid == 0) {
+	    fprintf(stderr, "Starting up %s\n", plserver_cmd);
+	    if (execv(plserver_cmd, argv)) {
+		fprintf(stderr, "Unable to exec server process.\n");
+		_exit(1);
+	    }
+	}
+	free_mem(plserver_cmd);
+    }
+
+/* Wait for server to set up return communication channel */
+
+    tk_wait(pls, "[info exists client]" );
 }
 
 /*----------------------------------------------------------------------*\
@@ -866,6 +983,7 @@ launch_server(PLStream *pls)
 *
 *    $plw_create_proc		Creates the widget environment
 *    $plw_init_proc		Initializes the widget(s)
+*    $plw_start_proc		Does any remaining startup necessary
 *    $plw_end_proc		Prepares for shutdown
 *    $plw_flash_proc		Invoked when waiting for page advance
 *
@@ -884,8 +1002,7 @@ launch_server(PLStream *pls)
 * interpreter variable "plwidget".
 *
 * In addition, the name of the client main window is given as (2nd)
-* argument to "$plw_init_proc".  This establishes the client name used
-* for communication for all child widgets that require it.
+* argument to "$plw_init_proc".  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -907,9 +1024,13 @@ plwindow_init(PLStream *pls)
 /* with underscores to avoid quoting problems) */
 
 	pls->plwindow = (char *)
-	    malloc(1+(strlen(dev->program)) * sizeof(char));
+	    malloc(10+(strlen(pls->program)) * sizeof(char));
 
-	sprintf(pls->plwindow, ".%s", dev->program);
+	if (pls->ipls == 0)
+	    sprintf(pls->plwindow, ".%s", pls->program, pls->ipls);
+	else
+	    sprintf(pls->plwindow, ".%s_%d", pls->program, pls->ipls);
+
 	for (i = 0; i < strlen(pls->plwindow); i++) {
 	    if (pls->plwindow[i] == ' ')
 		pls->plwindow[i] = '_';
@@ -927,7 +1048,7 @@ plwindow_init(PLStream *pls)
 
 /* Initialize the widget(s) */
 
-    server_cmd( pls, "$plw_init_proc $plwindow [list $client]", 1 );
+    server_cmd( pls, "[list $plw_init_proc $plwindow [list $client]]", 1 );
     tk_wait(pls, "[info exists plwidget]" );
 
 /* Now we should have the actual plplot widget name in $plwidget */
@@ -942,13 +1063,12 @@ plwindow_init(PLStream *pls)
 
 /* nopixmap option */
 
-    if (pls->nopixmap) {
+    if (pls->nopixmap) 
 	server_cmd( pls, "$plwidget cmd setopt -nopixmap", 0 );
-    }
 
 /* Start up remote plplot */
 
-    server_cmd( pls, "$plw_start_proc $plwindow [list $client]", 1 );
+    server_cmd( pls, "[list $plw_start_proc $plwindow [list $client]]", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
 }
 
@@ -1000,7 +1120,8 @@ bgcolor_init(PLStream *pls)
 * link_init
 *
 * Initializes the link between the client and the plplot widget for
-* data transfer.  Right now only fifo's are supported.
+* data transfer.  Defaults to a FIFO when the TK driver is selected and
+* a socket when the DP driver is selected.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1008,44 +1129,63 @@ link_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
     int fd;
+    long bufmax = pls->bufmax * 1.2;
+    char *filename;
 
     dbug_enter("link_init");
 
-/* Create the fifo for data transfer to the plframe widget */
+/* Create FIFO for data transfer to the plframe widget */
 
-    dev->filetype = "fifo";
-    dev->filename = (char *) tmpnam(NULL);
+    if ( ! pls->dp) {
 
-    if (mkfifo(dev->filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
-	abort_session(pls, "mkfifo error");
-    }
+	filename = (char *) tmpnam(NULL);
+	if (mkfifo(filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) 
+	    abort_session(pls, "mkfifo error");
 
-/* Tell plframe widget to open fifo (for reading). */
+/* Tell plframe widget to open FIFO (for reading). */
 
-    Tcl_SetVar(dev->interp, "fifoname", dev->filename, 0);
-    server_cmd( pls, "$plwidget openfifo $fifoname", 1 );
+	Tcl_SetVar(dev->interp, "fifoname", filename, 0);
+	server_cmd( pls, "$plwidget openlink fifo $fifoname", 1 );
 
-/* Open the fifo for writing */
+/* Open the FIFO for writing */
 /* This will block until the server opens it for reading */
 
-    if ((fd = open(dev->filename, O_WRONLY)) == -1) {
-	abort_session(pls, "Error opening fifo for write");
-    }
-    dev->file = fdopen(fd, "wb");
+	if ((fd = open(filename, O_WRONLY)) == -1) 
+	    abort_session(pls, "Error opening fifo for write");
 
-/* Unlink fifo now so that it isn't left around if program crashes. */
+/* If we are buffering FIFO output, create data buffer */
+/* Create stream interface (C file handle) to FIFO */
+
+#if BUFFER_FIFO
+	pls->pdfs = pdf_bopen( NULL, bufmax );
+	dev->fifo = fdopen(fd, "wb");
+#else
+	pls->pdfs = pdf_finit( fdopen(fd, "wb") );
+#endif
+
+/* Unlink FIFO so that it isn't left around if program crashes. */
 /* This also ensures no other program can mess with it. */
 
-    if (unlink(dev->filename) == -1) {
-        abort_session(pls, "Error removing fifo");
+	if (unlink(filename) == -1) 
+	    abort_session(pls, "Error removing fifo");
+    }
+
+/* Create socket for data transfer to the plframe widget */
+
+    else {
+
+	tcl_cmd(pls, "plclient_dp_init");
+
+/* Create data buffer */
+
+	pls->pdfs = pdf_bopen( NULL, bufmax );
     }
 }
 
 /*----------------------------------------------------------------------*\
 * WaitForPage()
 *
-* Waits for a page advance.  A call to HandleEvents() is made before
-* returning to ensure all pending events were dispatched.
+* Waits for a page advance.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1060,7 +1200,7 @@ WaitForPage(PLStream *pls)
 
     server_cmd( pls, "$plw_flash_proc $plwindow", 1 );
 
-    while ( ! dev->exit_eventloop) 
+    while ( ! dev->exit_eventloop)
 	Tk_DoOneEvent(0);
 
     dev->exit_eventloop = 0;
@@ -1071,8 +1211,7 @@ WaitForPage(PLStream *pls)
 /*----------------------------------------------------------------------*\
 * HandleEvents()
 *
-* Just a front-end to the update command, for use when not actually
-* waiting for an event but only checking the event queue.  
+* Just a front-end to the update command.  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1086,44 +1225,85 @@ HandleEvents(PLStream *pls)
 /*----------------------------------------------------------------------*\
 * flush_output()
 *
-* Flushes output and sends command to the server to read from the pipe.
-* Best to let the server process the commands asynchronously by issuing
-* them in the background.
+* Flushes output and sends command to the server to read from the 
+* {FIFO|socket}.  The server processes the commands asynchronously since
+* the "readdata" widget command is issued in the background.
 *
-* Note: the flush actually takes place after the send command.  This
-* way bigger buffers can be used since both processes can work on it
-* asnychronously for a while.  If the renderer just hangs at some
-* point, it may indicate the buffer is too large for your system and
-* further writes aren't being permitted without first reading from the
-* pipe.  And since the data writer is responsible for telling the
-* server to do the reads, they both hang forever!  The only way to get
-* around this type of problem is to use i/o events in the server's TK
-* event loop.  (Actually there is another way: use non-blocking i/o
-* with good error recovery, but that's a lot of work!)  Maybe once the
-* stock TK has this capability I will switch over, but sticking the
-* input events in the TK event loop may be bad for performance.
+* Some notes:
+*
+* When sending via a FIFO, we actually flush the FIFO _after_ the read
+* command is issued to the renderer.  This way bigger buffers can be used
+* since both processes can work on it asnychronously for a while.  If the
+* renderer just hangs at some point, it may indicate the buffer is too
+* large for your system and further writes aren't being permitted without
+* first reading from the pipe.  And since the data writer is responsible
+* for telling the server to do the reads, they both hang forever!  The
+* only way to get around this type of problem is to use i/o events in the
+* server's TK event loop.  (Actually there is another way: use
+* non-blocking i/o with good error recovery, but that's a lot of work!)
+* Maybe once the stock TK has this capability I will switch over, but
+* sticking the input events in the TK event loop may be bad for
+* performance.
+*
+* The socket i/o routines are modified versions of the ones from the
+* Tcl-DP package.  They have been altered to take a pointer to a PDFstrm
+* struct, and read-to or write-from pdfs->buffer.  The length of the
+* buffer is stored in pdfs->bp (the original Tcl-DP routine assume the
+* message is character data and use strlen).
 \*----------------------------------------------------------------------*/
 
 static void
 flush_output(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
+    PDFstrm *pdfs = (PDFstrm *) pls->pdfs;
     char tmp[20];
+
+    char *data_sock;
 
     dbug_enter("flush_output");
 
 #ifdef DEBUG
     fprintf(stderr, "%s: Flushing buffer, bytecnt = %d\n",
-	    dev->program, pls->bytecnt);
+	    __FILE__, pls->bytecnt);
 #endif
 
     sprintf(tmp, "%d", pls->bytecnt);
     Tcl_SetVar(dev->interp, "nbytes", tmp, 0);
 
     tcl_cmd(pls, "$update_proc");
-    server_cmd( pls, "$plwidget read $nbytes", 1 );
-    tk_wr(fflush(dev->file));
 
+/* Send data via FIFO */
+
+    if ( ! pls->dp) {
+
+	server_cmd( pls, "$plwidget read $nbytes", 1 );
+
+#if BUFFER_FIFO
+	if (fwrite(pdfs->buffer, 1, pdfs->bp, dev->fifo) != pdfs->bp)
+	    abort_session(pls, "Cannot transfer data to fifo\n");
+	pdfs->bp = 0;
+	tk_wr( fflush(dev->fifo) );
+#else
+	tk_wr( fflush(pdfs->file) );
+#endif
+
+    }
+    
+/* Send data via socket */
+
+    else {
+
+	data_sock = Tcl_GetVar(dev->interp, "data_sock", 0);
+	if (pl_PacketSend(dev->interp, data_sock, pls->pdfs)) {
+	    fprintf(stderr, "Packet send failed:\n\t %s\n",
+		    dev->interp->result);
+	    abort_session(pls, "");
+	}
+
+	pdfs->bp = 0;
+	server_cmd( pls, "$plwidget read $nbytes", 1 );
+    }
     pls->bytecnt = 0;
 }
 
