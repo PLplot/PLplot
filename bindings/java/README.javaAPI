@@ -1,7 +1,7 @@
 Here is some notes from Geoffrey Furnish (with some minor editing from Alan
-W. Irwin) about how to add additional PLplot API to Java under jdk 1.3.1.
-This may well work for other jdk versions, but it has not been tested for
-them.
+W. Irwin & others) about how to add additional PLplot API to Java under jdk 
+1.3.1. This may well work for other jdk versions, but it has not been tested
+for them.
 
 1) Edit PLStream.java, add "native" prototype for a new PLplot API
    function. 
@@ -10,14 +10,14 @@ them.
    and execute ./configure and make from the plplot directory.  This
    should compile PLStream.java with javac.
 
-3) (from the tmp directory) javah plplot/core/PLStream.
+3) (from the tmp directory) "javah plplot.core.PLStream".
 
-4) less the big hairy file that comes out.  The name of this file may
+4) less the big hairy file that comes out.  The name of this file should
    be something like:
+      plplot_core_PLStream.h
+   If you use a "/" instead of a "." in the javah command, it may look like:
       plplot_0002fcore_0002fPLStream.h
-   or maybe it will not have the exasperating 0002f strings in it.
-   I've seen javah do it both ways, and don't know what determines
-   whether or not it embeds this annoying token.
+   where the "0002f" means "/".  So use the "." syntax instead.
 
 5) Find the prototypes for the JNI functions corresponding to the new
    API(s) you prototyped in 1) above.
