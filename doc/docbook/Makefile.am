@@ -4,7 +4,7 @@ EXTRA_DIST = \
   bin cnf perl www
 
 CLEANFILES = $(TARBALL) *.tar.gz *-stamp conftest.*
-DISTCLEANFILES = $(JADELOG) www/index.html
+DISTCLEANFILES = $(JADELOG) $(INDEX_HTML)
 
 SUBDIRS = src
 
@@ -55,25 +55,23 @@ $(MAN_TARBALL):
 
 $(BASE).tar.gz: dist-stamp
 dist-stamp:
-	$(MAKE) dist
-	touch dist-stamp
+	$(MAKE) dist && touch dist-stamp
 
-$(INDEX_HTML): $(INDEX_HTML).in.in $(HTML_TARBALL) \
+$(INDEX_HTML): $(INDEX_HTML).in $(HTML_TARBALL) \
                $(INFO_TARBALL) $(MAN_TARBALL)
 	( cd src ; \
           $(MAKE) print )
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
-$(TARBALL): $(INDEX_HTML)
+$(TARBALL): $(HTML_TARBALL) $(INFO_TARBALL) $(MAN_TARBALL) $(INDEX_HTML)
 	tar cfz $(TARBALL) $(HTML_TARBALL) \
                 $(INFO_TARBALL) $(MAN_TARBALL) -C www index.html \
-                -C ../src $(BASE).ps.gz $(BASE).pdf.gz $(BASE).dvi
+                -C ../src $(BASE).ps.gz $(BASE).pdf $(BASE).dvi
 
 www-uninstall:
 	$(RSH_COMMAND) rm -rf $(WWW_DIR)
 
 www-install: $(TARBALL) www-uninstall
-	$(MAKE)
 	$(RSH_COMMAND) mkdir -p $(WWW_DIR)
 	$(RCP) $(TARBALL) $(RCP_PREFIX)$(WWW_DIR)
 	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(TARBALL) -C $(WWW_DIR)

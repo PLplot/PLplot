@@ -91,7 +91,7 @@ html: $(HTML_MANIFEST)
 
 # N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is
 # output to the $(HTML_MANIFEST) file.
-$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML_IN) inline-html.ent
+$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML) inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
