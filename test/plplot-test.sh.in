@@ -128,7 +128,7 @@ done
 if test ! -d $EXAMPLES_DIR/c ; then
 cat << EOF
 This script is only designed to work when the EXAMPLES_DIR environment
-variable (overriden by option --examples_dir) is a directory with a
+variable (overriden by option --examples-dir) is a directory with a
 subdirectory called "c".  This condition has been violated.
 EOF
 exit 1
