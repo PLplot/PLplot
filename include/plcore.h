@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1995/06/01 21:44:21  mjl
+ * Revision 1.29  1996/02/24 05:09:50  shouman
+ * Added declaration for plgdevlst(), now called by both plgFileDevs() and
+ * plgDevs().
+ *
+ * Revision 1.28  1995/06/01  21:44:21  mjl
  * Repaired some bogus comments.
  *
  * Revision 1.27  1995/05/07  02:22:36  mjl
@@ -54,6 +58,7 @@ static void	calc_diplt	(void);
 static void	calc_didev	(void);
 static void	calc_diori	(void);
 static void	calc_dimap	(void);
+static void	plgdevlst	(char **, char **, int *, int);
 
 /* Static variables */
 
