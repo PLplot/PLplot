@@ -45,13 +45,18 @@ plplot_octave.cc tmp_stub: plplot_octave.h
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
-plplot_octave.oct: plplot_octave.o
-	LD_RUN_PATH=`pwd`/../../src/.libs/:$(libdir) @MKOCTFILE@ -v -I. \
-	-L../../src/.libs plplot_octave.o $(octave_libs)
+# build area version
+plplot_octave.oct plplot_octave.o: plplot_octave.cc
+	LD_RUN_PATH=`pwd`/../../src/.libs/ @MKOCTFILE@ -v -I. \
+	-L../../src/.libs plplot_octave.cc $(octave_libs)
 
-plplot_octave.o: plplot_octave.cc
-	@MKOCTFILE@ -v -c -I. -L../../src/.libs \
-	plplot_octave.cc $(octave_libs)
+# installed version
+.samename/plplot_octave.oct ./samename/plplot_octave.o: plplot_octave.cc
+	mkdir -p .samename
+	cd .samename; ln -sf ../plplot_octave.cc
+	cd .samename ; \
+	LD_RUN_PATH=$(libdir) @MKOCTFILE@ -v -I.. \
+	-L../../../src/.libs plplot_octave.cc $(octave_libs)
 
 octavesharedir = $(datadir)/plplot_octave
 
@@ -59,8 +64,16 @@ octavesharedir = $(datadir)/plplot_octave
 # shared objects cross-platform, using 
 # octaveshare_LTLIBRARIES = plplot_octave.la
 # but octave may not be able to handle libtool-created .la files
+
+# install area version is done with install-exec-local so can do special
+# stuff that the SCRIPTS or DATA targets do not allow.
+
+install-exec-local: .samename/plplot_octave.oct
+	cd .samename; $(INSTALL) plplot_octave.oct $(octavesharedir)
+
+# build area version
 # SCRIPTS rather than DATA because you want to preserve the permissions.
-octaveshare_SCRIPTS = plplot_octave.oct
+noinst_SCRIPTS = plplot_octave.oct
 
 noinst_PROGRAMS = massage
 massage_SOURCES = massage.c
@@ -89,8 +102,10 @@ plplot_stub.m: plplot_octave_txt/plplot.doc tmp_stub massage
 
 octaveshare_DATA = plplot_stub.m
 
-CLEANFILES = plplot_octave.h tmp_plplot_octave.cc plplot_octave.cc \
-	plplot_octave.o tmp_stub plplot_octave.oct \
+CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
+	plplot_octave.cc plplot_octave.o \
+	.samename/plplot_octave.cc .samename/plplot_octave.o \
+	tmp_stub plplot_octave.oct .samename/plplot_octave.oct \
 	plplot_stub.m missing_help
 
 #enable_octave
