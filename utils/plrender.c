@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/29 15:56:16  mjl
-   Gave plrender an ID tag.
+   Revision 1.5  1992/11/07 08:08:55  mjl
+   Fixed orientation code, previously it rotated plot in the wrong direction.
+   It now supports rotations both ways or upside down (-ori 1, -ori -1, -ori 2).
+   Also eliminated some redundant code.
 
+ * Revision 1.4  1992/10/29  15:56:16  mjl
+ * Gave plrender an ID tag.
+ *
  * Revision 1.3  1992/10/12  17:12:58  mjl
  * Rearranged order of header file inclusion.
  * #include "plplot.h" must come first!!
@@ -70,6 +75,7 @@ static void	check_alignment ( FILE * );
 /* top level declarations */
 
 static PLINT	xold, yold;	/* Endpoint of prev line plotted */
+static U_SHORT	x1, y1, x2, y2;	/* Line endpoints */
 static PLINT	page_begin=1;	/* Where to start plotting */
 static PLINT	page_end;	/* Where to stop (0 to disable) */
 static PLINT	page;		/* Current page number */
@@ -89,7 +95,7 @@ static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
 static char	dum_char80[80];
 static float	dum_float;
-static U_CHAR	orient, plr_orient;
+static int	orient, plr_orient;
 static float	aspect = 0.0, plr_aspect = 0.0;
 static int	orientset, aspectset, plr_orientset, plr_aspectset, is_filter;
 static PLINT	packx=1, packy=1;
@@ -218,7 +224,8 @@ NextFamilyFile (U_CHAR *c)
 */
     *c = getcommand();
     if (*c != INITIALIZE)
-	fprintf(stderr, "Warning, first instruction in member file not an INIT\n");
+	fprintf(stderr,
+	  "Warning, first instruction in member file not an INIT\n");
     else
 	*c = ADVANCE;
 }
@@ -247,7 +254,8 @@ ReadHeader (void)
 
     plm_rd(read_header(MetaFile, mf_version));
     if (strcmp(mf_version, PLPLOT_VERSION) > 0) {
-	fprintf(stderr, "Error: incapable of reading metafile version %s.\n", mf_version);
+	fprintf(stderr,
+	  "Error: incapable of reading metafile version %s.\n", mf_version);
 	fprintf(stderr, "Please obtain a newer copy of plrender.\n");
 	return (1);
     }
@@ -301,7 +309,7 @@ ReadHeader (void)
 	}
 
 	if (!strcmp(tag, "orient")) {
-	    plm_rd(read_1byte(MetaFile, &orient));
+	    plm_rd(read_1byte(MetaFile, (U_CHAR *) &orient));
 	    continue;
 	}
 
@@ -322,7 +330,7 @@ static void
 process_next(U_CHAR c)
 {
     U_CHAR op;
-    U_SHORT p1, x1, y1, x2, y2;
+    U_SHORT p1;
     PLFLT x1f, y1f, x2f, y2f;
 
     switch ((int) c) {
@@ -409,28 +417,6 @@ process_next(U_CHAR c)
     case LINE:
 	plm_rd(read_2bytes(MetaFile, &x1));
 	plm_rd(read_2bytes(MetaFile, &y1));
-	plm_rd(read_2bytes(MetaFile, &x2));
-	plm_rd(read_2bytes(MetaFile, &y2));
-	if (searching)
-	    break;
-
-	if (!orient) {
-	    x1f = x1;
-	    y1f = y1;
-	    x2f = x2;
-	    y2f = y2;
-	    pljoin(x1f, y1f, x2f, y2f);
-	}
-	else {
-	    x1f = xmin + (ymax - y1) * xlen / ylen;
-	    y1f = ymin + (x1 - xmin) * ylen / xlen;
-	    x2f = xmin + (ymax - y2) * xlen / ylen;
-	    y2f = ymin + (x2 - xmin) * ylen / xlen;
-	    pljoin(x1f, y1f, x2f, y2f);
-	}
-	xold = x2;
-	yold = y2;
-	break;
 
     case LINETO:
 	plm_rd(read_2bytes(MetaFile, &x2));
@@ -438,22 +424,41 @@ process_next(U_CHAR c)
 	if (searching)
 	    break;
 
-	if (!orient) {
-	    x1f = xold;
-	    y1f = yold;
-	    x2f = x2;
-	    y2f = y2;
-	    pljoin(x1f, y1f, x2f, y2f);
-	}
-	else {
-	    x1f = xmin + (ymax - yold) * xlen / ylen;
-	    y1f = ymin + (xold - xmin) * ylen / xlen;
+	switch (orient) {
+
+	  case -1:
+	    x1f = xmin + (ymax - y1) * xlen / ylen;
+	    y1f = ymin + (x1 - xmin) * ylen / xlen;
 	    x2f = xmin + (ymax - y2) * xlen / ylen;
 	    y2f = ymin + (x2 - xmin) * ylen / xlen;
-	    pljoin(x1f, y1f, x2f, y2f);
+	    break;
+
+	  case 1:
+	    x1f = xmax - (ymax - y1) * xlen / ylen;
+	    y1f = ymax - (x1 - xmin) * ylen / xlen;
+	    x2f = xmax - (ymax - y2) * xlen / ylen;
+	    y2f = ymax - (x2 - xmin) * ylen / xlen;
+	    break;
+
+	  case 2: case -2:
+	    x1f = xmin + (xmax - x1);
+	    y1f = ymin + (ymax - y1);
+	    x2f = xmin + (xmax - x2);
+	    y2f = ymin + (ymax - y2);
+	    break;
+
+	  default:
+	    x1f = x1;
+	    y1f = y1;
+	    x2f = x2;
+	    y2f = y2;
+	    break;
 	}
-	xold = x2;
-	yold = y2;
+
+	pljoin(x1f, y1f, x2f, y2f);
+
+	x1 = x2;
+	y1 = y2;
 	break;
 
     case ESCAPE:
@@ -535,9 +540,10 @@ plr_init (void)
 	aspect = plr_aspect;
 
     if (aspect <= 0.)
-	fprintf(stderr, "Error in aspect ratio setting, aspect = %f\n", aspect);
+	fprintf(stderr, 
+	  "Error in aspect ratio setting, aspect = %f\n", aspect);
 
-    if (orient)
+    if (orient == 1 || orient == -1)
 	aspect = 1.0/aspect;
 
 /* Aspect ratio of output device */
@@ -549,7 +555,8 @@ plr_init (void)
 		 ((dev_xmax - dev_xmin)/dev_xpmm);
 
     if (dev_aspect <= 0.)
-	fprintf(stderr, "Error in aspect ratio setting, dev_aspect = %f\n", dev_aspect);
+	fprintf(stderr, 
+	  "Error in aspect ratio setting, dev_aspect = %f\n", dev_aspect);
 
     ratio = aspect / dev_aspect;
 
@@ -709,7 +716,7 @@ static struct _options {
 { "-p page",		"Plot given page only" },
 { "-a aspect",		"Plot aspect ratio" },
 { "-mar margin",	"Total fraction of page to reserve for margins" },
-{ "-ori orient",	"Plot orientation (0=landscape, 1=portrait)" },
+{ "-ori orient",	"Plot orientation (0=landscape, 1,-1=portrait)" },
 { "-jx number",		"Justification of plot on page in x (0.0 to 1.0)" },
 { "-jy number",		"Justification of plot on page in y (0.0 to 1.0)" },
 { "-px number",		"Plots per page in x" },
