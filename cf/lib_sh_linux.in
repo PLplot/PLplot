@@ -16,19 +16,21 @@
 
 .cc.o:
 	$(CXX) $(CXX_FLAGS) $<
-	cd shared; $(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) ../$<
 
 .c.o:
 	$(CC) $(CC_FLAGS) $<
 
-#	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$<
-
 .f.o:
 	$(F77) $(F77_FLAGS) $<
-	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$<
+
+shared/%.o : %.f
+	$(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) $*.f -o $@
 
 shared/%.o : %.c
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) $*.c -o $@
+
+shared/%.o : %.cc
+	$(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) $*.cc -o $@
 
 # -----------------------------------------------------------------------------
 # Library dependency list and targets
@@ -80,7 +82,7 @@ $(MATLIB_AR): $(MAT_OBJS)
 $(CXXLIB_AR): $(CXX_OBJS)
 	-$(RM) $(CXXLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
-	$(ARLIB_BUILD) $(CXXLIB_AR) $(CXX_OBJS)
+	$(ARLIB_BUILD_CXX) $(CXXLIB_AR) $(CXX_OBJS)
 	$(RANLIB) $(CXXLIB_AR)
 	@echo ""
 
