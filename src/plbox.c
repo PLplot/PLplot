@@ -167,8 +167,8 @@ c_plaxes(PLFLT x0, PLFLT y0,
     vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
     vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
 
-    lax = lax && (vpwymi * vpwyma < 0.0) && !llx;
-    lay = lay && (vpwxmi * vpwxma < 0.0) && !lly;
+    lax = lax && vpwymi < y0 && y0 < vpwyma && !llx;
+    lay = lay && vpwxmi < x0 && x0 < vpwxma && !lly;
 
 /* Calculate tick spacing */
 
