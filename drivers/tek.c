@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:44:50  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/10/22 17:04:58  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.2  1992/09/29  04:44:50  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:43  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -134,7 +137,7 @@ tekline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
     x2a >>= 4;
     y2a >>= 4;
 
-    x1 = x1a; y1 = y1a; x2 = x2a; y2 = y2a;
+    x1 = (int) x1a; y1 = (int) y1a; x2 = (int) x2a; y2 = (int) y2a;
 
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)

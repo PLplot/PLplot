@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:45  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/22 17:05:34  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.3  1992/09/30  18:25:45  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:55  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -29,8 +32,6 @@
 void 
 plexit (char *errormsg)
 {
-    void pl_exit();
-
     plend();
     if (*errormsg != '\0')
 	fprintf(stderr, "\n%s\n", errormsg);

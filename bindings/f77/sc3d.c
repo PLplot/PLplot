@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:59  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/22 17:05:44  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.3  1992/09/30  18:25:59  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:46:34  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -18,6 +21,8 @@
 */
 
 #define PL_NEED_MALLOC
+#define PL_NEED_SIZE_T
+
 #include "plstubs.h"
 
 void
@@ -32,11 +37,11 @@ PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -56,7 +61,7 @@ void
 PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
        PLINT *nx, PLINT *ny, PLINT *opt, PLINT *side, PLINT *lx )
 {
-    int i, j, off1;
+    int i, j;
     PLFLT **temp;
 
     /* Create the vectored C matrix from the Fortran matrix */
@@ -64,11 +69,11 @@ PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)

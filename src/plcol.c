@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:49  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/10/22 17:05:33  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.2  1992/09/29  04:45:49  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:34:18  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -65,7 +68,7 @@ c_plancol( PLINT icolor, char *name )
     if (level < 1)
 	plexit("Please call plstar before calling plancol.");
 
-    col.icolor = icolor;
+    col.icolor = (int) icolor;
     col.name   = name;
 
     gresc((PLINT) PL_ALLOC_NCOL, ptr);

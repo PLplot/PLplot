@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/10/20 20:14:12  mjl
-   Added prototypes, definitions for new routine plfamadv(), for advancing
-   to next family member file.
+   Revision 1.3  1992/10/22 17:05:19  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.2  1992/10/20  20:14:12  mjl
+ * Added prototypes, definitions for new routine plfamadv(), for advancing
+ * to next family member file.
+ *
  * Revision 1.1  1992/05/20  21:33:44  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -67,6 +70,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLCON2_	plcon2__
 #define    PLCONT_	plcont__
 #define    PLEND	plend_
+#define    PLEND1	plend1_
 #define    PLENV	plenv_
 #define    PLERRX	plerrx_
 #define    PLERRY	plerry_
@@ -143,6 +147,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLCON2_	plcon2_
 #define    PLCONT_	plcont_
 #define    PLEND	plend
+#define    PLEND1	plend1
 #define    PLENV	plenv
 #define    PLERRX	plerrx
 #define    PLERRY	plerry
@@ -219,6 +224,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLCON2_	fortran PLCON2_
 #define    PLCONT_	fortran PLCONT_
 #define    PLEND	fortran PLEND
+#define    PLEND1	fortran PLEND1
 #define    PLENV	fortran PLENV
 #define    PLERRX	fortran PLERRX
 #define    PLERRY	fortran PLERRY

@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/22 16:07:10  gray
-   added crude support to have mouse button 2 return cursor postition to
-   stdout
+   Revision 1.6  1992/10/22 17:05:01  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.5  1992/10/22  16:07:10  gray
+ * added crude support to have mouse button 2 return cursor postition to
+ * stdout
+ *
  * Revision 1.4  1992/09/30  18:25:01  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -50,7 +53,7 @@ static void	outplt		(void);
 static void	endplt		(void);
 static void	erase		(void);
 static void	getkey		(int *);
-static int 	getwcur		(float *, float *);
+static int 	getwcur		(void);
 static int	AreWeMonochrome (Display *);
 static void	color_def 	(int, char *);
 static int	alloc_named_color (XColor *, char *);
@@ -99,7 +102,7 @@ static int swap_background = 0;
 void 
 xw_init (PLStream *pls)
 {
-    int hxa, hya;
+    PLINT hxa, hya;
 
     if (++idev == PL_NDEV_XW)
 	plexit("Exceeded maximum number of active X sessions.");
@@ -144,16 +147,16 @@ xw_line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
     id = devtable[pls->ipls][pls->ipld];
     xwd = &(xwdev[id]);
 
-    x1 = x1a / 2;
-    y1 = y1a / 2;
-    x2 = x2a / 2;
-    y2 = y2a / 2;
+    x1 = (int) x1a / 2;
+    y1 = (int) y1a / 2;
+    x2 = (int) x2a / 2;
+    y2 = (int) y2a / 2;
 
     if (pls->pscale)
 	plSclPhy(pls, pld, &x1, &y1, &x2, &y2);
 
-    y1 = (pls->ylength - 1) - y1;
-    y2 = (pls->ylength - 1) - y2;
+    y1 = ((int) pls->ylength - 1) - y1;
+    y2 = ((int) pls->ylength - 1) - y2;
 
     XDrawLine(xwd->mydisplay, xwd->mywindow, xwd->mygc, x1, y1, x2, y2);
 }
@@ -167,15 +170,14 @@ xw_line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 void 
 xw_clear (PLStream *pls)
 {
-    int intrpt, but;
-    float x, y;
+    int but;
 
     id = devtable[pls->ipls][pls->ipld];
     xwd = &(xwdev[id]);
 
     outplt();
     if (!pls->nopause)
-    	but = getwcur(&x, &y);
+    	but = getwcur();
     erase();
 }
 
@@ -213,15 +215,14 @@ xw_adv (PLStream *pls)
 void 
 xw_tidy (PLStream *pls)
 {
-    int intrpt, but;
-    float x, y;
+    int but;
 
     id = devtable[pls->ipls][pls->ipld];
     xwd = &(xwdev[id]);
 
     outplt();
     if (!pls->nopause)
-	but = getwcur(&x, &y);
+	but = getwcur();
     endplt();
     pls->fileset = 0;
     pls->page = 0;
@@ -386,11 +387,11 @@ begplt (PLStream *pls)
 
 /* Default program-specified window position and size */
 
-    myhint.x	= pls->xoffset;
-    myhint.y	= pls->yoffset;
-    myhint.width = pls->xlength;
-    myhint.height = pls->ylength;
-    myhint.flags = PPosition | PSize;
+    myhint.x      = (int) pls->xoffset;
+    myhint.y      = (int) pls->yoffset;
+    myhint.width  = (int) pls->xlength;
+    myhint.height = (int) pls->ylength;
+    myhint.flags  = PPosition | PSize;
 
 /* Window title */
 
@@ -594,9 +595,6 @@ outplt (void)
 static void 
 endplt (void)
 {
-    int intrpt;
-    int ncb;
-    int ic;
     XFlush(xwd->mydisplay);
     XFreeGC(xwd->mydisplay, xwd->mygc);
     XDestroyWindow(xwd->mydisplay, xwd->mywindow);
@@ -625,7 +623,7 @@ getkey (int *intrpt)
 }
 
 static int 
-getwcur (float *x, float *y)
+getwcur()
 {
     int nbut;
     while (1) {

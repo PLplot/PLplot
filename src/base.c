@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/20 20:15:44  mjl
-   Arguments to plspage() now have no effect if zero.
+   Revision 1.6  1992/10/22 17:05:31  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.5  1992/10/20  20:15:44  mjl
+ * Arguments to plspage() now have no effect if zero.
+ *
  * Revision 1.4  1992/10/12  17:07:59  mjl
  * Added PL_NEED_SIZE_T define to those files that need to know the value
  * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
@@ -38,7 +41,7 @@
 #include <string.h>
 #include "dispatch.h"
 
-static int ipls;
+static PLINT ipls;
 static PLINT font, initfont, fontset;
 
 /*
@@ -54,7 +57,7 @@ static PLStream pls[PL_NSTREAMS];
 \*----------------------------------------------------------------------*/
 
 extern DISPATCH_TABLE plDispatchTable[];
-int offset;
+PLINT offset;
 
  /* Initialize device. */
 void 

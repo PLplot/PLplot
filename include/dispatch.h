@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/20 20:14:09  mjl
-   Added prototypes, definitions for new routine plfamadv(), for advancing
-   to next family member file.
+   Revision 1.5  1992/10/22 17:05:18  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.4  1992/10/20  20:14:09  mjl
+ * Added prototypes, definitions for new routine plfamadv(), for advancing
+ * to next family member file.
+ *
  * Revision 1.3  1992/09/30  18:25:31  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -124,7 +127,7 @@ typedef struct {
 \*----------------------------------------------------------------------*/
 
 typedef struct {
-    int   ipls, ipld;
+    PLINT ipls, ipld;
     FILE *OutFile;
     PLINT orientset, fileset, pageset;
     char FamilyName[80], FileName[90];

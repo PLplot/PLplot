@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/12 17:08:00  mjl
-   Added PL_NEED_SIZE_T define to those files that need to know the value
-   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
-   to include <stddef.h> to get it.
+   Revision 1.4  1992/10/22 17:05:32  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.3  1992/10/12  17:08:00  mjl
+ * Added PL_NEED_SIZE_T define to those files that need to know the value
+ * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+ * to include <stddef.h> to get it.
+ *
  * Revision 1.2  1992/09/29  04:45:38  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -23,8 +26,6 @@
 
 static PLINT phyxmi, phyxma, phyymi, phyyma;
 static PLFLT spdxmi, spdxma, spdymi, spdyma;
-static PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
-static PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
 static PLFLT xpmm, ypmm;
 static PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
 static PLFLT dpxscl, dpxoff, dpyscl, dpyoff;

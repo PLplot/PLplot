@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:47  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/22 17:05:35  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.3  1992/09/30  18:25:47  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:57  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -198,7 +201,7 @@ c_plfont( PLINT ifont )
 void 
 plfntld (PLINT fnt)
 {
-    static short charset;
+    static PLINT charset;
     short bffrleng;
     FILE *fontfile;
 
@@ -379,6 +382,7 @@ plfontopen( char *fn )
     fprintf(stderr, "Plplot aborted.\n");
     pl_exit();
     exit(1);
+    return(NULL);		/* don't ask */
 }
 
 /*----------------------------------------------------------------------*\

@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:56  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/22 17:04:55  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.3  1992/09/30  18:24:56  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:46  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -436,7 +439,7 @@ static void
 print_ieeef ( void *vx, void *vy)
 {
     int i;
-    U_LONG f, *x = vx, *y = vy;
+    U_LONG f, *x = (U_LONG *) vx, *y = (U_LONG *) vy;
     char bitrep[33];
 
     bitrep[32] = '\0';

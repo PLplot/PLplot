@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/12 17:05:36  mjl
-   Converted to string-integer equivalence method for C-Fortran string passing.
+   Revision 1.6  1992/10/22 17:05:45  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.5  1992/10/12  17:05:36  mjl
+ * Converted to string-integer equivalence method for C-Fortran string passing.
+ *
  * Revision 1.4  1992/09/30  18:26:00  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -24,6 +27,8 @@
 */
 
 #define PL_NEED_MALLOC
+#define PL_NEED_SIZE_T
+
 #include "plstubs.h"
 #include <stdio.h>
 
@@ -238,11 +243,11 @@ PLCON0_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -272,11 +277,11 @@ PLCON1_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -310,11 +315,11 @@ PLCON2_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
     /* Note we do NOT transpose the (x,y) mapping arrays -- the transformation
        function takes care of getting the row-dominant ordering correct. */
 
-    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -358,11 +363,11 @@ PLCONT_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)

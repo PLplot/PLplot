@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/20 20:12:26  mjl
-   Modified file open routine to open next family member file if requested
-   to do so.
+   Revision 1.5  1992/10/22 17:04:54  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.4  1992/10/20  20:12:26  mjl
+ * Modified file open routine to open next family member file if requested
+ * to do so.
+ *
  * Revision 1.3  1992/09/30  18:24:50  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -436,15 +439,15 @@ plOpenFile (PLStream *pls)
 	    (void) sprintf(pls->FileName, "%s.%i", pls->FamilyName, pls->member);
 	}
 
+	if (i++ > 10)
+	    plexit("Too many tries.");
+
 	if ((pls->OutFile = fopen(pls->FileName, BINARY_WRITE)) == NULL) {
 	    printf("Can't open %s.\n", pls->FileName);
 	    pls->fileset = 0;
 	}
 	else
-	    printf("\n");
-
-	if (i++ > 10)
-	    plexit("Too many tries.");
+	    printf("Created %s\n", pls->FileName);
     }
 }
 
@@ -516,6 +519,7 @@ plGetInt (char *s)
 #endif
     }
     plexit("Too many tries.");
+    return (0);
 }
 
 /*----------------------------------------------------------------------*\
@@ -543,6 +547,7 @@ plGetFlt (char *s)
 #endif
     }
     plexit("Too many tries.");
+    return(0.);
 }
 
 /*----------------------------------------------------------------------*\
@@ -566,10 +571,10 @@ plRotPhy (PLStream *pls, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
 	*py2 = y2o;
     }
     else {
-	*px1 = dev->xmax - (y1o - dev->ymin);
-	*py1 = dev->ymin + (x1o - dev->xmin);
-	*px2 = dev->xmax - (y2o - dev->ymin);
-	*py2 = dev->ymin + (x2o - dev->xmin);
+	*px1 = (int) (dev->xmax - (y1o - dev->ymin));
+	*py1 = (int) (dev->ymin + (x1o - dev->xmin));
+	*px2 = (int) (dev->xmax - (y2o - dev->ymin));
+	*py2 = (int) (dev->ymin + (x2o - dev->xmin));
     }
 }
 
@@ -594,10 +599,10 @@ plSclPhy (PLStream *pls, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
 	plSclSetup(pls, dev);
 	pls->aspectset = 0;
     }
-    *px1 = dev->sclxmin + (x1o - dev->xmin)*dev->rsclx;
-    *px2 = dev->sclxmin + (x2o - dev->xmin)*dev->rsclx;
-    *py1 = dev->sclymin + (y1o - dev->ymin)*dev->rscly;
-    *py2 = dev->sclymin + (y2o - dev->ymin)*dev->rscly;
+    *px1 = (int) (dev->sclxmin + (x1o - dev->xmin)*dev->rsclx);
+    *px2 = (int) (dev->sclxmin + (x2o - dev->xmin)*dev->rsclx);
+    *py1 = (int) (dev->sclymin + (y1o - dev->ymin)*dev->rscly);
+    *py2 = (int) (dev->sclymin + (y2o - dev->ymin)*dev->rscly);
 }
 
 /*----------------------------------------------------------------------*\

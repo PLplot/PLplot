@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/20 20:16:03  mjl
-   Put in stub for plfamadv().
+   Revision 1.5  1992/10/22 17:05:46  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.4  1992/10/20  20:16:03  mjl
+ * Put in stub for plfamadv().
+ *
  * Revision 1.3  1992/10/12  17:05:37  mjl
  * Converted to string-integer equivalence method for C-Fortran string passing.
  *
@@ -298,7 +301,7 @@ PLSASP( PLFLT *aspect )
     c_plsasp(*aspect);
 }
 
-int 
+void
 PLSLPB (PLINT *xmi, PLINT *xma, PLINT *ymi, PLINT *yma)
 {
     c_plslpb(*xmi, *xma, *ymi, *yma);

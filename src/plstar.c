@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/12 17:08:09  mjl
-   Added PL_NEED_SIZE_T define to those files that need to know the value
-   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
-   to include <stddef.h> to get it.
+   Revision 1.5  1992/10/22 17:05:36  mjl
+   Fixed warnings, errors generated when compling with HP C++.
 
+ * Revision 1.4  1992/10/12  17:08:09  mjl
+ * Added PL_NEED_SIZE_T define to those files that need to know the value
+ * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+ * to include <stddef.h> to get it.
+ *
  * Revision 1.3  1992/09/30  18:25:54  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -81,7 +84,8 @@ c_plstar( PLINT nx, PLINT ny )
 	    length--;
 
 	for (i = 0; i < npldrivers; i++) {
-	    if (!strncmp(response, plDispatchTable[i].pl_DevName, length))
+	    if (!strncmp(response, plDispatchTable[i].pl_DevName, 
+			 (unsigned int) length))
 		break;
 	}
 	if (i < npldrivers) {
