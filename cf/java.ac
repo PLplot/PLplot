@@ -99,15 +99,14 @@ if test "$enable_java" = yes; then
 ### bindings/java/config.java.in requires JAVA_INSTDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
    PL_EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
-fi
-AC_SUBST(JAVAINCCMD)
-AC_SUBST(JAVA_INSTDIR)
-
-AC_SUBST(enable_java)
-
 ### bindings/java/config.java.in needs the complete name of the
 ### plplotjavac_wrap DLL.
-PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
+   PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
+fi
+
+AC_SUBST(JAVAINCCMD)
+AC_SUBST(JAVA_INSTDIR)
+AC_SUBST(enable_java)
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
 AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
