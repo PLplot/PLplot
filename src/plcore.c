@@ -2062,3 +2062,104 @@ plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
     plsc->phyxlen = xmax - xmin;
     plsc->phyylen = ymax - ymin;
 }
+
+/*--------------------------------------------------------------------------*\
+ * void c_plscompression()
+ *
+ * Set compression. 
+ * Has to be done before plinit.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plscompression(PLINT compression)
+{
+  if (plsc->level <= 0) 
+     {
+      plsc->dev_compression=compression;
+     }
+}
+
+/*--------------------------------------------------------------------------*\
+ * void c_plgcompression()
+ *
+ * Get compression
+\*--------------------------------------------------------------------------*/
+
+void
+c_plgcompression(PLINT *compression)
+{
+    *compression = plsc->dev_compression;
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * void plP_getinitdriverlist()
+ *
+ * Check to see if a driver/stream has been initialised
+ * Returns a space separated list of matches streams/drivers
+ * If more than one stream uses the same device, then the device name
+ * will be returned for each stream.
+ * Caller must allocate enough memory for "names" to hold the answer.
+\*--------------------------------------------------------------------------*/
+
+void
+plP_getinitdriverlist(char *names)
+{
+int i;
+
+for (i=0;i<PL_NSTREAMS;++i)
+   {
+    if (pls[i]!=NULL)
+       {
+       if (i==0)
+          strcpy(names,pls[i]->DevName);
+       else
+          { 
+          strcat(names," ");
+          strcat(names,pls[i]->DevName);
+          }
+       }
+    else 
+       break;
+   }
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * PLINT plP_checkdriverinit()
+ *
+ * Checks from a list of given drivers which ones have been initialised
+ * and returns the number of devices matching the list, or -1 if in error.
+ * Effectively returns the number of streams matching the given stream.
+\*--------------------------------------------------------------------------*/
+
+PLINT plP_checkdriverinit( char *names)
+{
+char *buff;
+char *tok;
+PLINT ret=0;   /* set up return code to 0, the value if no devices match*/
+
+buff=(char *)malloc((size_t) PL_NSTREAMS*8); /* Allocate enough memory for 8 
+                                                characters for each possible stream */
+
+if (buff!=NULL)
+   {
+    memset(buff,0,PL_NSTREAMS*8);    /* Make sure we clear it               */
+    plP_getinitdriverlist(buff);     /* Get the list of initialised devices */
+
+    for (tok = strtok(names, " ,");  /* Check each "name" supplied to the   */
+         tok; tok=strtok(0, " ,"))   /* subroutine against the device list  */
+        {
+        if (strstr(buff,tok)!=NULL)  /* Check to see if the device has been initialised */
+           {
+            ret++;                   /* Bump the return code if it has      */
+           }                    
+        }
+    free(buff);                      /* Clear up that memory we allocated   */
+    }
+else 
+   ret=-1;                           /* Error flag */
+
+return(ret);
+}
+
