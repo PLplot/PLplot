@@ -1,5 +1,10 @@
 2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* configure.in: Released version 0.3.0.
+
+	* Makefile.am: Better dependencies, such that "make www-install"
+	works out of the box.
+
 	* configure.in, Makefile.am: Added Info translation.
 
 2000-11-26  Rafael Laboissiere  <rafael@icp.inpg.fr>

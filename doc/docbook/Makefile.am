@@ -21,6 +21,7 @@ $(HTML_TARBALL):
 	rm -rf $(BASE_HTML)
 	mkdir $(BASE_HTML)
 	( cd src ; \
+	  $(MAKE) html ; \
           cp `cat $(HTML_MANIFEST)` `cat $(JPEG_MANIFEST)` \
              ../$(BASE_HTML) )
 	tar cfz $(HTML_TARBALL) $(BASE_HTML)
@@ -30,6 +31,7 @@ $(INFO_TARBALL):
 	rm -rf $(BASE_INFO)
 	mkdir $(BASE_INFO)
 	( cd src ; \
+	  $(MAKE) info ; \
           cp `cat $(INFO_MANIFEST)` ../$(BASE_INFO) )
 	tar cfz $(INFO_TARBALL) $(BASE_INFO)
 	rm -rf $(BASE_INFO)
@@ -40,12 +42,12 @@ dist-stamp:
 	touch dist-stamp
 
 $(INDEX_HTML): $(INDEX_HTML).in.in $(BASE).tar.gz $(HTML_TARBALL) \
-               $(INFO_TARBALL) src/$(BASE).ps.gz src/$(BASE).dvi
+               $(INFO_TARBALL)
+	( cd src ; \
+          $(MAKE) print )	
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
 $(TARBALL): $(INDEX_HTML)
-	( cd src ; \
-          $(MAKE) )
 	tar cfz $(TARBALL) $(HTML_TARBALL) $(BASE).tar.gz \
                 $(INFO_TARBALL) -C www index.html \
                 -C ../src $(BASE).ps.gz $(BASE).pdf.gz $(BASE).dvi
@@ -54,6 +56,7 @@ www-uninstall:
 	$(RSH_COMMAND) rm -rf $(WWW_DIR)
 
 www-install: $(TARBALL) www-uninstall
+	$(MAKE)
 	$(RSH_COMMAND) mkdir -p $(WWW_DIR)
 	$(RCP) $(TARBALL) $(RCP_PREFIX)$(WWW_DIR)
 	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(TARBALL) -C $(WWW_DIR)
