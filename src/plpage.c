@@ -207,34 +207,59 @@ plGetCursor(PLGraphicsIn *plg)
  *
  * Translates cursor position from relative device coordinates to world
  * coordinates.  Returns 0 if no translation to world coordinates is
- * possible.  Written by Paul Casteels.
+ * possible.  Written by Paul Casteels and modified by Alan W. Irwin.
 \*--------------------------------------------------------------------------*/
 
 int
 plTranslateCursor(PLGraphicsIn *plg)
+{
+    int subpage;
+    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, &subpage);
+    if ( subpage >= 0 )
+     return 1;
+    else
+     return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * void c_plcalc_world
+ *
+ * Calculate world coordinates wx, and wy from relative device coordinates, rx
+ * and ry.  Also, return the subpage number for which the world coordinates 
+ * are valid. subpage is set to -1 and wx and wy to 0. if rx and ry do not 
+ * correspond to valid world coordinates for any currently existing subpage.
+ * Originally written by Paul Casteels and modified by Alan W. Irwin.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *subpage)
 {
     int i;
     int lastwin = plsc->nplwin - 1;
     int firstwin = MAX(plsc->nplwin - PL_MAXWINDOWS, 0);
     PLWindow *w;
 
-    plg->wX = 0;
-    plg->wY = 0;
     for (i = lastwin; i >= firstwin; i--) {
 	w = &plsc->plwin[i % PL_MAXWINDOWS];
-	if ((plg->dX >= w->dxmi) &&
-	    (plg->dX <= w->dxma) &&
-	    (plg->dY >= w->dymi) &&
-	    (plg->dY <= w->dyma) ) {
+	if ((rx >= w->dxmi) &&
+	    (rx <= w->dxma) &&
+	    (ry >= w->dymi) &&
+	    (ry <= w->dyma) ) {
 
-	    plg->wX = w->wxmi + (plg->dX - w->dxmi) * 
+	    *wx = w->wxmi + (rx - w->dxmi) * 
 		(w->wxma - w->wxmi) / (w->dxma - w->dxmi);
 
-	    plg->wY = w->wymi + (plg->dY - w->dymi) * 
+	    *wy = w->wymi + (ry - w->dymi) * 
 		(w->wyma - w->wymi) / (w->dyma - w->dymi);
+	   
+	    *subpage = i;
 
-	    return 1;
+	    return;
 	}
     }
-    return 0;
+    /* No valid subpage found with these relative coordinates. */
+    *wx = 0.;
+    *wy = 0.;
+    *subpage = -1;
+    return;
 }

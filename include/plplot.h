@@ -410,20 +410,20 @@ typedef struct {
 
 #ifndef __PLSTUBS_H__	/* i.e. do not expand this in the stubs */
 
+#define    pl_setcontlabelformat c_pl_setcontlabelformat
+#define    pl_setcontlabelparam c_pl_setcontlabelparam
 #define    pladv	c_pladv
-#define    plclear	c_plclear
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
 #define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
+#define    plcalc_world	c_plcalc_world
+#define    plclear	c_plclear
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
-#define    plxormod	c_plxormod
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
-#define    pl_setcontlabelparam c_pl_setcontlabelparam
-#define    pl_setcontlabelformat c_pl_setcontlabelformat
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
@@ -529,24 +529,25 @@ typedef struct {
 #define    plw3d	c_plw3d
 #define    plwid	c_plwid
 #define    plwind	c_plwind
+#define    plxormod	c_plxormod
 
 #endif /* __PLSTUBS_H__ */
 
 #else
 
+#define    c_pl_setcontlabelformat pl_setcontlabelformat
+#define    c_pl_setcontlabelparam pl_setcontlabelparam
 #define    c_pladv	pladv
 #define    c_plaxes	plaxes
 #define    c_plbin	plbin
 #define    c_plbop	plbop
 #define    c_plbox	plbox
 #define    c_plbox3	plbox3
+#define    c_plcalc_world	plcalc_world
 #define    c_plcol0	plcol0
 #define    c_plcol1	plcol1
-#define    c_plxormod	plxormod
 #define    c_plcpstrm	plcpstrm
 #define    c_plcont	plcont
-#define    c_pl_setcontlabelparam pl_setcontlabelparam
-#define    c_pl_setcontlabelformat pl_setcontlabelformat
 #define    c_plend	plend
 #define    c_plend1	plend1
 #define    c_plenv	plenv
@@ -652,6 +653,7 @@ typedef struct {
 #define    c_plw3d	plw3d
 #define    c_plwid	plwid
 #define    c_plwind	plwind
+#define    c_plxormod	plxormod
 
 #endif	/* BRAINDEAD */
 
@@ -680,6 +682,16 @@ extern "C" {
 	/* All void types */
 
 	/* C routines callable from stub routines come first */
+
+/* set the format of the contour labels */
+
+void
+c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
+
+/* set offset and spacing of contour labels */
+
+void
+c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
 
 /* Advance to subpage "page", or to the next one if "page" = 0. */
 
@@ -722,10 +734,10 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
 
-/*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
+/* Calculate world coordinates and subpage from relative device coordinates. */
 
 void
-c_plxormod(PLINT mode, PLINT *status);
+c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *subpage);
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
@@ -1159,16 +1171,6 @@ c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 void
 c_plsesc(char esc);
 
-/* set offset and spacing of contour labels */
-
-void
-c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
-
-/* set the format of the contour labels */
-
-void
-c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
-
 /* Set family file parameters */
 
 void
@@ -1385,6 +1387,11 @@ c_plwid(PLINT width);
 
 void
 c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
+
+/*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
+
+void
+c_plxormod(PLINT mode, PLINT *status);
 
 /*--------------------------------------------------------------------------*\
  *		Functions for use from C or C++ only
