@@ -1,3 +1,8 @@
+2002-12-12  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* examples/*/Makefile.examples.in: use CC, CXX, and F77 symbols to
+	  avoid hard-coded compiler names.
+
 2002-12-22  Maurice LeBrun <mlebrun@users.sourceforge.net>
 
 	* configure.ac: AM_CONFIG_HEADER must be called *before* AC_DEFINE's

@@ -21,8 +21,9 @@
 
 INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplotcxx@LIB_TAG@
 
+CXX = @CXX@
 all: x01cc
 
 x01cc: x01cc.cc
-	plplot_libtool g++ x01cc.cc $(INCLUDEANDLIB) -o x01cc
+	plplot_libtool $(CXX) x01cc.cc $(INCLUDEANDLIB) -o x01cc
 
