@@ -51,12 +51,20 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
 	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
-	  echo "If the following symlink creation fails (perhaps because you are not root)" ; \
-	  echo "then you must set PYTHONPATH to $(PYTHON_DIR) in order to run" ; \
-	  echo "the python demos, xw??.py" ; \
+	  echo "PLplot Python module installation warning:" ; \
+	  echo "" ; \
+	  echo "The install location $(PYTHON_DIR) for"  ; \
+	  echo "plmodule.so is not the same as the expected Python location for"  ; \
+	  echo "dynamic libraries $(PYTHON_MACH_DIR)"  ; \
+	  echo "so you must set the environment variable PYTHONDIR to the install"  ; \
+	  echo "location in order to make the Python PLplot module work." ; \
+	  echo "" ; \
+	  echo "As an alternative to setting PYTHONDIR, you may create a symbolic link " ; \
+	  echo "at the expected Python location for dynamic libraries pointing to the " ; \
+	  echo "installed module, like this:" ; \
+	  echo "" ; \
 	  echo "$(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR)" ; \
-	  $(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR) ; \
-	  fi
+	fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	@-cd $(top_srcdir)/examples/python; $(CP) $(PYTHON_DEMOS) $(DEMOS_DIR)/python
 #	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \

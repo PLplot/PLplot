@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #Have not yet converted to arrays.
 
 #	equivalent to x17.c, but not implemented yet.

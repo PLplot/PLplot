@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #Have not yet converted to arrays.
 
 #	Pie chart demo.

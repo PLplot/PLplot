@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #Have not yet converted to arrays.
 
 #	3-d line and point plot demo.  Adapted from x08c.c.

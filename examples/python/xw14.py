@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 
