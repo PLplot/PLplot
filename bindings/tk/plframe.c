@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/12/21 10:19:01  mjl
+ * Revision 1.21  1994/01/15 17:37:51  mjl
+ * Added compile-time mode to route FIFO i/o through a memory buffer.
+ * Changed "openfifo" widget command to "openlink" with the first argument
+ * to be either "fifo" or "socket".  Added ability to create and read
+ * socket for data transfer.
+ *
+ * Revision 1.20  1993/12/21  10:19:01  mjl
  * Added some debugging output.
  *
  * Revision 1.19  1993/12/15  08:57:36  mjl
@@ -48,6 +54,13 @@
 #include "plserver.h"
 
 #define NDEV	20		/* Max number of output device types */
+
+/* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
+
+#define BUFFER_FIFO 0
+
+/* A handy command wrapper */
+
 #define plframe_cmd(code) \
     if ((code) == TCL_ERROR) return (TCL_ERROR);
 
@@ -95,6 +108,7 @@ typedef struct {
 
     int tkwin_initted;		/* Set first time widget is mapped */
     int plplot_initted;		/* Set first time plplot is initialized */
+    int comm_type;		/* Communication channel type */
     PLINT ipls;			/* Plplot stream number */
     PLINT ipls_save;		/* Plplot stream number, save files */
 
@@ -228,7 +242,7 @@ static int   Cmd		(Tcl_Interp *, PlFrame *, int, char **);
 static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
 static int   Draw		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Info		(Tcl_Interp *, PlFrame *, int, char **);
-static int   OpenFifo		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Openlink		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Orient		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Page		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Print		(Tcl_Interp *, PlFrame *, int, char **);
@@ -241,11 +255,13 @@ static int   yScroll		(Tcl_Interp *, PlFrame *, int, char **);
 
 /* Utility routines */
 
-static int   tcl_eval		(PlFrame *, char *);
-static int   client_cmd		(PlFrame *, char *);
 static void  gbox		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, char **);
 static void  UpdateVScrollbar	(register PlFrame *);
 static void  UpdateHScrollbar	(register PlFrame *);
+static int   tcl_cmd		(Tcl_Interp *interp, char *cmd);
+static int   tcl_eval		(Tcl_Interp *interp, char *cmd);
+static void  client_cmd		(Tcl_Interp *interp, char *cmd, int nowait,
+				 int dp);
 
 /*
  *---------------------------------------------------------------------------
@@ -374,10 +390,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     plFramePtr->plr = (PLRDev *) ckalloc(sizeof(PLRDev));
     plr = plFramePtr->plr;
-
-    plr->file = NULL;
-    plr->filename = NULL;
-    plr->filetype = NULL;
+    plr->pdfs = NULL;
     plr_start(plr);
 
 /* Set up stuff for rubber-band drawing */
@@ -497,17 +510,17 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	result = Orient(interp, plFramePtr, argc-2, argv+2);
     }
 
-/* openfifo -- Open the specified fifo */
+/* openlink -- Open the data link */
 
-    else if ((c == 'o') && (strncmp(argv[1], "openfifo", length) == 0)) {
-	if (argc == 2 || argc > 3) {
+    else if ((c == 'o') && (strncmp(argv[1], "openlink", length) == 0)) {
+	if (argc < 3) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " openfifo fifoname\"", (char *) NULL);
+		    argv[0], " option ?arg arg ...?\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
 	}
 	else {
-	    result = OpenFifo(interp, plFramePtr, argc-2, argv+2);
+	    result = Openlink(interp, plFramePtr, argc-2, argv+2);
 	}
     }
 
@@ -596,7 +609,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
 	 "\":  must be cmd, configure, draw, info, ",
-	 "openfifo, orient, page, print, read, redraw, save, view, ",
+	 "openlink, orient, page, print, read, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
 	result = TCL_ERROR;
@@ -670,11 +683,9 @@ DestroyPlFrame(ClientData clientData)
 	ckfree(plFramePtr->devName);
     }
 
-/* Close fifo */
+/* Clean up data connection */
 
-    if (plr->file != NULL) {
-	fclose(plr->file);
-    }
+    pdf_close(plr->pdfs);
 
 /* Delete main data structures */
 
@@ -1212,33 +1223,77 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
-* OpenFifo
+* Openlink
 *
-* Processes "openfifo" widget command.
-* Opens FIFO for data transfer between client and server.
+* Processes "openlink" widget command.
+* Opens channel (FIFO or socket) for data transfer between client and
+* server.
 \*----------------------------------------------------------------------*/
 
 static int
-OpenFifo(Tcl_Interp *interp, register PlFrame *plFramePtr,
+Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	 int argc, char **argv)
 {
-    int fd;
     register PLRDev *plr = plFramePtr->plr;
+    char c = argv[0][0];
+    int fd, length = strlen(argv[0]);
 
-    dbug_enter("OpenFifo");
-
-    plr->filename = argv[0];
+    dbug_enter("Openlink");
 
 /* Open fifo */
 
-    if ((fd = open (plr->filename, O_RDONLY)) == -1) {
-	Tcl_AppendResult(interp, "cannot open fifo ", plr->filename,
-			 " for read", (char *) NULL);
-	return TCL_ERROR;
+    if ((c == 'f') && (strncmp(argv[0], "fifo", length) == 0)) {
+
+	if (argc < 1) {
+	    Tcl_AppendResult(interp, "bad command -- must be: ",
+			     "openlink fifo <pathname>",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	if ((fd = open (argv[1], O_RDONLY)) == -1) {
+	    Tcl_AppendResult(interp, "cannot open fifo ", argv[1],
+			     " for read", (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	plFramePtr->comm_type = 0;
+#if BUFFER_FIFO
+	plr->pdfs = pdf_bopen( NULL, 4200 );
+	plr->fifo = fdopen(fd, "rb");
+	plr->filetype = "buffer";
+#else
+	plr->pdfs = pdf_finit( fdopen(fd, "rb") );
+	plr->filetype = "fifo";
+#endif
+
     }
 
-    plr->file = fdopen(fd, "rb");
-    plr->filetype = "fifo";
+/* Open socket */
+
+    else if ((c == 's') && (strncmp(argv[0], "socket", length) == 0)) {
+
+	if (argc < 1) {
+	    Tcl_AppendResult(interp, "bad command -- must be: ",
+			     "openlink socket <socket>",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	plFramePtr->comm_type = 1;
+	plr->pdfs = pdf_bopen( NULL, 4200 );
+	plr->filetype = "buffer";
+	plr->socket = Tcl_GetVar(interp, "data_sock", 0);
+    }
+
+/* unrecognized */
+
+    else {
+	Tcl_AppendResult(interp, "bad option to \"openlink\": must be ", 
+	 "fifo or socket", (char *) NULL);
+
+	return TCL_ERROR;
+    }
 
     return TCL_OK;
 }
@@ -1401,7 +1456,7 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 * ReadData
 *
 * Processes "read" widget command.
-* Reads data from fifo or socket and processes.
+* Reads & processes data.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1409,22 +1464,50 @@ ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	 int argc, char **argv)
 {
     register PLRDev *plr = plFramePtr->plr;
+    PDFstrm *pdfs = plr->pdfs;
     int result = TCL_OK;
 
     plr->nbytes = atoi(argv[0]);
-
-/* Read & process data */
 
 #ifdef DEBUG
     fprintf(stderr, "%s: Reading %d characters\n", __FILE__, plr->nbytes);
     fflush(stderr);
 #endif
 
+/* Read from FIFO */
+/* If we are not buffering, the PDF routines will do the actual read */
+
+    if (plFramePtr->comm_type == 0) {
+#if BUFFER_FIFO
+	pdfs->bp = 0;
+	if (fread(pdfs->buffer, 1, plr->nbytes, plr->fifo) != plr->nbytes) {
+	    Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+#endif
+    }
+
+/* Read from socket */
+
+    else {
+	if (pl_PacketReceive(interp, plr->socket, 0, plr->pdfs)) {
+	    fprintf(stderr, "Packet receive failed:\n\t %s\n",
+		    interp->result);
+	    client_cmd(interp, "set proceed 1", 1, 1);
+	    return TCL_ERROR;
+	}
+	pdfs->bp = 0;
+    }
+
+/* Read (from data buffer or FIFO) and process data */
+
     if (plr_process(plr) == -1) {
 	Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
 			 (char *) NULL);
 	result = TCL_ERROR;
     }
+
 #ifdef DEBUG
     fprintf(stderr, "%s: Done with read\n", __FILE__);
     fflush(stderr);
@@ -1858,33 +1941,6 @@ gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
     *yr = MAX(y0, y1);
 }
 
-/*----------------------------------------------------------------------*\
-* tcl_eval
-*
-* Evals the specified string, returning the result.
-* Use a static string buffer to hold the command, to ensure it's in
-* writable memory (grrr...).
-\*----------------------------------------------------------------------*/
-
-static char *cmdbuf = NULL;
-static int cmdbuf_len = 100;
-
-static int
-tcl_eval(PlFrame *plFramePtr, char *cmd)
-{
-    if (cmdbuf == NULL) 
-	cmdbuf = (char *) malloc(cmdbuf_len);
-
-    if (strlen(cmd) >= cmdbuf_len) {
-	free((void *) cmdbuf);
-	cmdbuf_len = strlen(cmd) + 20;
-	cmdbuf = (char *) malloc(cmdbuf_len);
-    }
-
-    strcpy(cmdbuf, cmd);
-    return(Tcl_VarEval(plFramePtr->interp, cmdbuf, (char **) NULL));
-}
-
 /*
  *---------------------------------------------------------------------------
  *
@@ -1938,3 +1994,123 @@ MapPlFrame(ClientData clientData)
     Tk_Release((ClientData) plFramePtr);
 }
 
+/*----------------------------------------------------------------------*\
+* copybuf
+*
+* Puts command in a static string buffer, to ensure it's in writable
+* memory (grrr...).
+\*----------------------------------------------------------------------*/
+
+static char *cmdbuf = NULL;
+static int cmdbuf_len = 100;
+
+static void
+copybuf(char *cmd)
+{
+    if (cmdbuf == NULL) {
+	cmdbuf_len = 100;
+	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
+
+    if (strlen(cmd) >= cmdbuf_len) {
+	free((void *) cmdbuf);
+	cmdbuf_len = strlen(cmd) + 20;
+	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
+
+    strcpy(cmdbuf, cmd);
+}
+
+/*----------------------------------------------------------------------*\
+* tcl_cmd
+*
+* Evals the specified command, aborting on an error.
+\*----------------------------------------------------------------------*/
+
+static int
+tcl_cmd(Tcl_Interp *interp, char *cmd)
+{
+    dbug_enter("tcl_cmd");
+#ifdef DEBUG_ENTER
+    fprintf(stderr, "evaluating command %s\n", cmd);
+#endif
+
+    if (tcl_eval(interp, cmd)) {
+	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
+		cmd, interp->result);
+	return TCL_ERROR;
+    }
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+* tcl_eval
+*
+* Evals the specified string, returning the result.
+* Use a static string buffer to hold the command, to ensure it's in
+* writable memory (grrr...).
+\*----------------------------------------------------------------------*/
+
+static int
+tcl_eval(Tcl_Interp *interp, char *cmd)
+{
+    if (cmdbuf == NULL) 
+	cmdbuf = (char *) malloc(cmdbuf_len);
+
+    if (strlen(cmd) >= cmdbuf_len) {
+	free((void *) cmdbuf);
+	cmdbuf_len = strlen(cmd) + 20;
+	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
+
+    strcpy(cmdbuf, cmd);
+    return(Tcl_VarEval(interp, cmdbuf, (char **) NULL));
+}
+
+/*----------------------------------------------------------------------*\
+* client_cmd
+*
+* Sends specified command to client, aborting on an error.
+* If nowait is set, the command is issued in the background.
+*
+* If commands MUST proceed in a certain order (e.g. initialization), it
+* is safest to NOT run them in the background.
+\*----------------------------------------------------------------------*/
+
+static void
+client_cmd(Tcl_Interp *interp, char *cmd, int nowait, int dp)
+{
+    static char dpsend_cmd0[] = "dp_RPC $client ";
+    static char dpsend_cmd1[] = "dp_RDO $client ";
+    static char tksend_cmd0[] = "send $client ";
+    static char tksend_cmd1[] = "send $client after 1 ";
+    int result;
+
+    dbug_enter("client_cmd");
+#ifdef DEBUG_ENTER
+    fprintf(stderr, "Sending command: %s\n", cmd);
+#endif
+
+    copybuf(cmd);
+    if (dp) {
+	if (nowait) 
+	    result = Tcl_VarEval(interp, dpsend_cmd1, cmdbuf,
+				 (char **) NULL);
+	else
+	    result = Tcl_VarEval(interp, dpsend_cmd0, cmdbuf,
+				 (char **) NULL);
+    } 
+    else {
+	if (nowait) 
+	    result = Tcl_VarEval(interp, tksend_cmd1, cmdbuf,
+				 (char **) NULL);
+	else
+	    result = Tcl_VarEval(interp, tksend_cmd0, cmdbuf,
+				 (char **) NULL);
+    }
+
+    if (result) {
+	fprintf(stderr, "Client command \"%s\" failed:\n\t %s\n",
+		cmd, interp->result);
+    }
+}
