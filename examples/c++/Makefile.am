@@ -117,5 +117,5 @@ if enable_cxx
 	  $(LN_S) ../c/lena.pgm lena.pgm )
 endif
 
-EXTRA_DIST = $(sources) Makefile.examples.in
+EXTRA_DIST = $(sources) Makefile.examples.in README.c++demos
 DISTCLEANFILES = Makefile.examples
