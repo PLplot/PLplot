@@ -1,7 +1,10 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
- * Revision 1.6  1995/05/15 07:56:07  mjl
+ * Revision 1.7  1995/06/01 21:35:54  mjl
+ * Added HAVE_POPEN and HAVE_ITCL macros.
+ *
+ * Revision 1.6  1995/05/15  07:56:07  mjl
  * Made the macros DEBUGGING_MALLOC and NOBRAINDEAD configurable.
  *
  * Revision 1.5  1994/08/05  22:23:35  mjl
@@ -65,11 +68,17 @@
 /* Define vfork as fork if vfork does not work.  */
 #undef vfork
 
+/* Define if popen is available.  */
+#undef HAVE_POPEN
+
 /* Define if we're using a debugging malloc */
 #undef DEBUGGING_MALLOC
 
 /* If you don't know what this is for, you shouldn't be using it */
 #undef NOBRAINDEAD
+
+/* Define if [incr Tcl] is available */
+#undef HAVE_ITCL
 
 /* Install directories. */
 
