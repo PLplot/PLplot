@@ -606,8 +606,7 @@ Enter device number or keyword: <!--
     </para>
 
     <para>
-      <programlisting>
-#include "plplot.h"
+      <programlisting>#include "plplot.h"
 
 main()
 {
@@ -629,8 +628,7 @@ main()
 
     plsstrm(0);
 
-    <lineannotation>plots for stream 0</lineannotation><!--
-   --></programlisting>
+    <lineannotation>plots for stream 0</lineannotation></programlisting>
     </para>
 
     <para>
@@ -746,12 +744,10 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
 
     <para>
-      <programlisting>
-    plvpor(xmin, xmax, ymin, ymax);
+      <programlisting>    plvpor(xmin, xmax, ymin, ymax);
     plsvpa(xmin, xmax, ymin, ymax);
     plvasp(aspect);
-    plvpas(xmin, xmax, ymin, ymax, aspect);<!--
-   --></programlisting>
+    plvpas(xmin, xmax, ymin, ymax, aspect);</programlisting>
     </para>
 
     <para>
@@ -762,9 +758,7 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    plvpor(0.0, 0.5, 0.5, 1.0);<!--
-   --></programlisting>
+      <programlisting>    plvpor(0.0, 0.5, 0.5, 1.0);</programlisting>
     </para>
 
     <para>
@@ -807,10 +801,8 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    plgspa(xmin, xmax, ymin, ymax);
-    plsvpa(10.0, xmax-xmin-10.0, 10.0, ymax-ymin-10.0);<!--
-   --></programlisting>
+      <programlisting>    plgspa(xmin, xmax, ymin, ymax);
+    plsvpa(10.0, xmax-xmin-10.0, 10.0, ymax-ymin-10.0);</programlisting>
     </para>
 
     <para>
@@ -853,9 +845,7 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    plwind(0.0, 12.0, 0.0, 10.0);<!--
-   --></programlisting>
+      <programlisting>    plwind(0.0, 12.0, 0.0, 10.0);</programlisting>
     </para>
 
     <para>
@@ -889,9 +879,7 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);<!--
-   --></programlisting>
+      <programlisting>    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);</programlisting>
     </para>
 
     <para>
@@ -904,9 +892,7 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    pllab("V#dCE#u (Volts)", "I#dC#u (mA)", "TRANSISTOR CHARACTERISTICS");<!--
-   --></programlisting>
+      <programlisting>    pllab("V#dCE#u (Volts)", "I#dC#u (mA)", "TRANSISTOR CHARACTERISTICS");</programlisting>
     </para>
 
     <para>
@@ -989,9 +975,7 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
 
     <para>
-      <programlisting>
-    plenv(0.0, 12.0, 0.0, 10.0, 0, 0);<!--
-   --></programlisting>
+      <programlisting>    plenv(0.0, 12.0, 0.0, 10.0, 0, 0);</programlisting>
     </para>
 
     <para>
@@ -999,12 +983,10 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
 
     <para>
-      <programlisting>
-    pladv(0);
+      <programlisting>    pladv(0);
     plvsta();
     plwind(0.0, 12.0, 0.0, 10.0);
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);<!--
-   --></programlisting>
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);</programlisting>
     </para>
 
   </sect1>
@@ -1046,13 +1028,11 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
 
     <para>
-      <programlisting>
-    mark[0] = 4000;
+      <programlisting>    mark[0] = 4000;
     mark[1] = 2000;
     space[0] = 1500;
     space[1] = 1500;
-    plstyl(2, mark, space);<!--
-   --></programlisting>
+    plstyl(2, mark, space);</programlisting>
     </para>
 
     <para>
@@ -1078,11 +1058,9 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    *inc = 0;
+      <programlisting>    *inc = 0;
     *del = 2000;
-    plpat(1, inc, del);<!--
-   --></programlisting>
+    plpat(1, inc, del);</programlisting>
     </para>
 
     <para>
@@ -1092,13 +1070,11 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
 
     <para>
-      <programlisting>
-    *inc = 300;
+      <programlisting>    *inc = 300;
     *(inc+1) = -300;
     *del = 1500;
     *(del+1) = 1500;
-    plpat(2, inc, del);<!--
-   --></programlisting>
+    plpat(2, inc, del);</programlisting>
     </para>
 
     <para>
@@ -1114,54 +1090,215 @@ dependent.  Please see the PLplot reference document for more detail.
   </sect1>
   
   <sect1 id="color">
-    <title>Using Color within PLplot</title>
+    <title>Setting Color</title>
 
     <para> Normally, color is used for all drivers and devices that support
     it within PLplot subject to the condition that the user has the option
     of globally turning off the color (and subsequently turning it on again
     if so desired) using &plscolor;. </para>
 
-    <para> The PLplot color model utilizes two color maps. Color map0
-    (discussed in <xref linkend="color-map-0"/>) is intended for coloring the
-    background, axes, lines, and labels.  That is, it is used for everything
-    except the case covered by color map1.  Color map1 (discussed in <xref
-    linkend="color-map-1"/>) is intended for plots (see <xref
-    linkend="contour-plots"/> in which data values are represented by colors.
-    </para>
+    <para> The PLplot color model utilizes two color maps which can be used
+    interchangeably.  However, color map0 (discussed in <xref
+    linkend="color-map-0"/>) has discrete colors with no particular order
+    and is most suited to coloring the background, axes, lines, and labels,
+    and color map1 (discussed in <xref linkend="color-map-1"/>) has
+    continuously changing colors and is most suited to plots (see <xref
+    linkend="contour-plots"/>) in which data values are represented by
+    colors. </para>
 
   <sect2 id="color-map-0">
     <title>Color Map0</title>
 
-    <para> Color map0 is intended for coloring the background, axes, lines,
-    and labels.  Generally, the default color map0 pallette of 16 colors is
-    used. (<filename>examples/c/x02c.c</filename> illustrates these colors.)
-    The default background color is taken from the index 0 color which is
-    black by default.  The default foreground color is white. </para>
+    <para> Color map0 is most suited to coloring the background, axes,
+    lines, and labels.  Generally, the default color map0 palette of 16
+    colors is used. (<filename>examples/c/x02c.c</filename> illustrates
+    these colors.) The default background color is taken from the index 0
+    color which is black by default.  The default foreground color is red.
+    </para>
 
-    <para> There are a number of options for changing the default white on
-    black colors.  The user may set the background color using the
+    <para> There are a number of options for changing the default red on
+    black colors.  The user may set the index 0 background color using the
     command-line <literal>bg</literal> parameter or by calling &plscolbg;
-    <emphasis>before</emphasis> &plinit;. During the course of the plot, the
-    user can change the foreground color as often as desired using &plcol0;
-    to select the index of the desired color. </para>
+    (or &plscol0; with a 0 index) <emphasis>before</emphasis> &plinit;.
+    During the course of the plot, the user can change the foreground color
+    as often as desired using &plcol0; to select the index of the desired
+    color. </para>
 
     <para> For more advanced use it is possible to define an arbitrary map0
-    pallette of colors. The user may set the number of colors in the map0
-    pallette using the command-line <literal>ncol0</literal> parameter or by
+    palette of colors. The user may set the number of colors in the map0
+    palette using the command-line <literal>ncol0</literal> parameter or by
     calling &plscmap0n;.  &plscol0; sets the RGB value of the given index
     which must be less than the maximum number of colors (which is set by
     default, by command line, by &plscmap0n;, or even by &plscmap0;).
-    Alternatively, &plscmap0; sets up the entire map0 color pallette. For
-    all these ways of defining the map0 pallette any number of colors is
-    allowed, but it is not guaranteed that the individual drivers will
-    actually be able to use more than 16 colors. </para>
+    Alternatively, &plscmap0; sets up the entire map0 color palette. For
+    all these ways of defining the map0 palette any number of colors are
+    allowed in any order, but it is not guaranteed that the individual
+    drivers will actually be able to use more than 16 colors. </para>
 
   </sect2>
   <sect2 id="color-map-1">
     <title>Color Map1</title>
 
-    <para>
+    <para> Color map1 is most suited to plots (see <xref
+    linkend="contour-plots"/>) in which data values are represented by
+    colors. The data are scaled to the input map1 range of floating point
+    numbers between 0. and 1. which in turn are mapped (using &plcol1;) to
+    colors using a default or user-specified map1 color transformation.  Thus,
+    there are calls to &plcol1; from within the code for &plshade; (see
+    <filename>src/plshade.c</filename>) and &plotsh3d; (see
+    <filename>src/plot3d.c</filename>) to give a continuous range of
+    color corresponding to the data being plotted. In addition &plcol1; can
+    be used to specify the foreground color using the map1 continuous color
+    palette (see the commented out section of
+    <filename>examples/c/x12c.c</filename> which gives an example of this
+    for a histogram), but normally &plcol0; is a better tool for this job
+    (see <xref linkend="color-map-0"/>) since discrete colors often give
+    a better-looking result. </para>
+
+    <para> For more advanced use it is possible to define an arbitrary map1
+    palette of colors. The user may set the number of colors in this palette
+    using the command-line <literal>ncol1</literal> parameter or by calling
+    &plscmap1n;.  Furthermore, &plscmap1l; can be used to set the map1 color
+    palette using linear interpolation between control points specified in
+    either RGB or HLS space.</para>
+
+    <para> There is a one-to-one correspondence between RGB and HLS color
+    spaces.  RGB space is characterized by three 8-bit unsigned integers
+    corresponding to the intensity of the red, green, and blue colors. Thus,
+    in hexidecimal notation with the 3 bytes concatanated together the RGB
+    values of FF0000, FFFF00, 00FF00, 00FFFF, 0000FF, FF00FF, 000000, and
+    FFFFFF correspond to red, yellow, green, cyan, blue, magenta, black, and
+    white. </para>
+
+    <para> HLS (hue, lightness, and saturation) space is often conceptually
+    easier to use than RGB space.  One useful way to visualize HLS space is
+    as a volume made up by two cones with their bases joined at the
+    <quote>equator</quote>.  A given RGB point corresponds to HLS point
+    somewhere on or inside the double cones, and vice versa. The hue
+    corresponds to the <quote>longitude</quote> of the point with 0, 60,
+    120, 180, 240, and 300 degrees corresponding to red, yellow, green,
+    cyan, blue, and magenta. The lightness corresponds to the distance along
+    the axis of the figure of a perpendicular dropped from the HLS point to
+    the axis. This values ranges from 0 at the <quote>south pole</quote> to
+    1 at the <quote>north pole</quote>.  The saturation corresponds to the
+    distance of the HLS point from the axis with the on-axis value being 0
+    and the surface value being 1. Full saturation corresponds to full color
+    while reducing the saturation (moving toward the axis of the HLS figure)
+    mixes more gray into the color until at zero saturation on the axis of
+    the figure you have only shades of gray with the variation of lightness
+    along the axis corresponding to a gray scale. </para>
+
+    <para> Here are some C-code fragments which use &plscmap1l; to set the
+    map1 color palette. This first example illustrates how to set up a
+    gray-scale pallette using linear interpolation in RGB space.
+
+<programlisting>    i[0] = 0.;
+    i[1] = 1.;
+    /* RGB are rescaled to the range from 0 to 1. for input to plscmap1l.*/
+    r[0] = 0.;
+    r[1] = 1.;
+    g[0] = 0.;
+    g[1] = 1.;
+    b[0] = 0.;
+    b[1] = 1.;
+    plscmap1l(1, 2, i, r, g, b, NULL);</programlisting>
     </para>
+
+    <para> This second example illustrates doing the same thing in HLS
+    space.
+
+<programlisting>    i[0] = 0.;
+    i[1] = 1.;
+    /* Hue does not matter for zero saturation.*/
+    h[0] = 0.;
+    h[1] = 0.;
+    /* Lightness varies through its full range.*/
+    l[0] = 0.;
+    l[1] = 1.;
+    /* Saturation is zero for a gray scale.*/
+    s[0] = 0.;
+    s[1] = 0.;
+    /* Note the first argument which specifies HLS space.*/
+    plscmap1l(0, 2, i, h, l, s, NULL);</programlisting>
+    </para>
+
+    <para> This final example using &plscmap1l; illustrates how the default
+    map1 color pallette is set with just 4 control points (taken from
+    <filename>src/plctrl.c</filename>).
+
+<programlisting>/*--------------------------------------------------------------------------*\
+ * plcmap1_def()
+ *
+ * Initializes color map 1.
+ *
+ * The default initialization uses 4 control points in HLS space, the two
+ * inner ones being very close to one of the vertices of the HLS double
+ * cone.  The vertex used (black or white) is chosen to be the closer to
+ * the background color.  If you don't like these settings you can always
+ * initialize it yourself.
+\*--------------------------------------------------------------------------*/
+
+static void
+plcmap1_def(void)
+{
+    PLFLT i[4], h[4], l[4], s[4], vertex = 0.;
+
+/* Positions of control points */
+
+    i[0] = 0;		/* left boundary */
+    i[1] = 0.45;	/* just before center */
+    i[2] = 0.55;	/* just after center */
+    i[3] = 1;		/* right boundary */
+
+/* For center control points, pick black or white, whichever is closer to bg */
+/* Be carefult to pick just short of top or bottom else hue info is lost */
+
+    if (plsc->cmap0 != NULL)
+	vertex = ((float) plsc->cmap0[0].r +
+		  (float) plsc->cmap0[0].g +
+		  (float) plsc->cmap0[0].b) / 3. / 255.;
+
+    if (vertex &lt; 0.5)
+	vertex = 0.01;
+    else
+	vertex = 0.99;
+
+/* Set hue */
+
+    h[0] = 260;		/* low: blue-violet */
+    h[1] = 260;		/* only change as we go over vertex */
+    h[2] = 0;		/* high: red */
+    h[3] = 0;		/* keep fixed */
+
+/* Set lightness */
+
+    l[0] = 0.5;		/* low */
+    l[1] = vertex;	/* bg */
+    l[2] = vertex;	/* bg */
+    l[3] = 0.5;		/* high */
+
+/* Set saturation -- keep at maximum */
+
+    s[0] = 1;
+    s[1] = 1;
+    s[2] = 1;
+    s[3] = 1;
+
+    c_plscmap1l(0, 4, i, h, l, s, NULL);
+}</programlisting> 
+</para>
+
+    <para> Finally, &plscmap1; is an additional method of setting the map1
+    color palette directly using RGB space.  No interpolation is used with
+    &plscmap1; so it is the programmer's responsibility to make sure that
+    the colors vary smoothly.  Here is an example of the method taken from
+    <filename>examples/c/x08c.c</filename> which sets (yet again) the
+    gray-scale color pallette.
+
+<programlisting>    for (i=0;i&lt;n_col;i++)
+        rr[i] = gg[i] = bb[i] = i*256/n_col;
+    plscmap1(rr,gg,bb,n_col);</programlisting> 
+</para>
 
   </sect2>
   </sect1>
@@ -1557,11 +1694,9 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
 
     <para>
-      <programlisting>
-    basex = 2.0;
+      <programlisting>    basex = 2.0;
     basey = 4.0;
-    height = 3.0;<!--
-   --></programlisting>
+    height = 3.0;</programlisting>
     </para>
 
     <para>
@@ -1592,8 +1727,7 @@ dependent.  Please see the PLplot reference document for more detail.
     </para>
     
     <para>
-      <programlisting>
-    xmin2d = -2.5;
+      <programlisting>    xmin2d = -2.5;
     xmax2d =  2.5;
     ymin2d = -2.5;
     ymax2d =  4.0;
@@ -1611,9 +1745,7 @@ dependent.  Please see the PLplot reference document for more detail.
     az = 30.0;
     side = 1;
     plw3d(basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az);
-    plot3d(x, y, z, nx, ny, opt, side);<!--
-   --><!--
-   --></programlisting>
+    plot3d(x, y, z, nx, ny, opt, side);</programlisting>
     </para>
 
     <para>
@@ -1878,14 +2010,12 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
       </para>
       
       <para>
-	<programlisting>
-    do i = 1, NX
+	<programlisting>    do i = 1, NX
         do j = 1, NY
             xg(i, j) = r(i) * cos( theta(j) )
             yg(i, j) = r(i) * sin( theta(j) )
         enddo
-    enddo<!--
-   --></programlisting>
+    enddo</programlisting>
       </para>
 
       <para>
@@ -1908,16 +2038,14 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
       </para>
       
       <para>
-	<programlisting>
-    ul = (PLINT)x;
+	<programlisting>    ul = (PLINT)x;
     ur = ul + 1;
     du = x - ul;
 
     xl = *(xg+ul);
     xr = *(xg+ur);
 
-    *tx = xl * (1-du)  +  xr * du;<!--
-   --></programlisting>
+    *tx = xl * (1-du)  +  xr * du;</programlisting>
       </para>
 
       <para>
@@ -1925,16 +2053,14 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
       </para>
 
       <para>
-	<programlisting>
-    lxl = x
+	<programlisting>    lxl = x
     lxr = lxl + 1
     dx = x - lxl
 
     xl = xg(lxl)
     xr = xg(lxr)
 
-    tx = xl * (1-dx)  +  xr * dx<!--
-   --></programlisting>
+    tx = xl * (1-dx)  +  xr * dx</programlisting>
       </para>
 
     </sect2>
