@@ -30,7 +30,7 @@ static void	plgdevlst	(char **, char **, int *, int);
 
 static PLINT xscl[PL_MAXPOLY], yscl[PL_MAXPOLY];
 
-static PLINT initfont;		/* initial font */
+static PLINT initfont = 1;	/* initial font: extended by default */
 static PLINT offset;		/* offset for dispatch calls */
 
 /*--------------------------------------------------------------------------*\
