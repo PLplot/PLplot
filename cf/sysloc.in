@@ -516,6 +516,7 @@ fi
 
 if test "$has_tcl" = "no" -o "$has_x11" = "no"; then
     has_tk=no
+    enable_tk=no
 fi
 
 if test "$has_tk" = "yes"; then
@@ -539,6 +540,13 @@ if test "$has_tk" = "yes"; then
 	done
 	FIND_LIB_END(tk, TKLIBDIR, enable_tk)
     fi
+fi
+
+#-----------------------------------------------------------------------------
+# ntk driver
+#-----------------------------------------------------------------------------
+if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
+    enable_ntk="no"
 fi
 
 # ----------------------------------------------------------------------------
