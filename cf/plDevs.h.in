@@ -19,7 +19,9 @@
 #undef PLD_null
 #undef PLD_xterm
 #undef PLD_tek4010
+#undef PLD_tek4010f
 #undef PLD_tek4107
+#undef PLD_tek4107f
 #undef PLD_mskermit
 #undef PLD_vlt
 #undef PLD_versaterm

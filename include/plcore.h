@@ -154,10 +154,10 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_plmeta) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_plm,
 #endif
-#if defined(PLD_tek4010) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_tek4010f) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_tekf,
 #endif
-#if defined(PLD_tek4107) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_tek4107f) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_tek4107f,
 #endif
 #if defined(PLD_ps) && !defined(ENABLE_DYNDRIVERS)
