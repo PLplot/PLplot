@@ -5,7 +5,7 @@
     <para>
       PLplot is a library of C functions that are useful for making
       scientific plots from a program written in C, C++, or Fortran.  The
-      PLplot library can be used to create standard x-y plots, semilog
+      PLplot library can be used to create standard x-y plots, semi-log
       plots, log-log plots, contour plots, 3D plots, mesh plots, bar charts
       and pie charts.  Multiple graphs (of the same or different sizes) may
       be placed on a single page with multiple lines in each graph.
@@ -26,7 +26,7 @@
     </para>
     <blockquote>
       <para>
-	I'm rather amazed how far PLPLOT has travelled given its origins
+	I'm rather amazed how far PLPLOT has traveled given its origins
 	etc. I first used PGPLOT on the Starlink VAX computers while I was
 	a graduate student at the Mullard Radio Astronomy Observatory in
 	Cambridge from 1983-1987. At the beginning of 1986, I was to give a
@@ -38,7 +38,7 @@
 	able to draw a line or a dot on the screen in order to do arbitrary
 	graphics.  The application programmer's interface was made as
 	similar as possible to PGPLOT so that I could easily port my
-	programs from the VAX to the PC.  The kernel of PLPLOT was modelled
+	programs from the VAX to the PC.  The kernel of PLPLOT was modeled
 	on PGPLOT but the code is not derived from it.
       </para>
     </blockquote>
@@ -77,7 +77,7 @@
       several new routines to enhance usage from Fortran and design of a
       portable C to Fortran interface.  Additional support was added for
       coordinate mappings in contour plots and some bugs fixed.  New
-      labelling options were added.  The font handling code was made more
+      labeling options were added.  The font handling code was made more
       flexible and portable.  A portable PLplot metafile driver and
       renderer was developed, allowing one to create a generic graphics
       file and do the actual rendering later (even on a different
@@ -172,8 +172,8 @@
       The PLplot library has been designed so that it is easy to write
       programs producing graphical output without having to set up large
       numbers of parameters.  However, more precise control of the results
-      may be necessary, and these are accomodated by providing lower-level
-      routines which change the system defaults.  The manual first describs
+      may be necessary, and these are accommodated by providing lower-level
+      routines which change the system defaults.  The manual first describes
       the overall process of producing a graph using the high-level
       routines (see <xref linkend="Simple-graph">).  For a discussion of
       the underlying concepts of the plotting process and an introduction
