@@ -1,7 +1,6 @@
 *.flc
 Makefile
 Makefile.in
-Makefile.examples
 .deps
 .libs
 *.la
