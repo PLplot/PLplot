@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.87  1998/12/01 20:46:15  furnish
+ * Revision 1.88  1999/02/26 19:01:14  furnish
+ * Add some macros and a control structure for supporting a new device
+ * escape command for configuring double buffering support on drivers
+ * that support it.
+ *
+ * Revision 1.87  1998/12/01  20:46:15  furnish
  * Add a strip chart facility.
  *
  * Revision 1.86  1996/10/11  23:32:17  furnish
@@ -231,6 +236,7 @@ typedef void* PLPointer;
 #define PLESC_EH		12      /* handle Window events */
 #define PLESC_GETC		13	/* get cursor position */
 #define PLESC_SWIN		14	/* set window parameters */
+#define PLESC_DOUBLEBUFFERING	15	/* configure double buffering */
 
 /* Window parameter tags */
 
@@ -395,6 +401,19 @@ typedef struct {
     PLFLT p;			/* position */
     int rev;			/* if set, interpolate through h=0 */
 } PLControlPt;
+
+/* A PLBufferingCB is a control block for interacting with devices
+   that support double buffering. */
+
+typedef struct {
+    PLINT cmd;
+    PLINT result;
+} PLBufferingCB;
+
+#define PLESC_DOUBLEBUFFERING_ENABLE     1
+#define PLESC_DOUBLEBUFFERING_DISABLE    2
+#define PLESC_DOUBLEBUFFERING_QUERY      3
+
 
 /*--------------------------------------------------------------------------*\
  *		BRAINDEAD-ness
