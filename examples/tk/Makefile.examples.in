@@ -27,11 +27,19 @@ INCLUDEANDLIB = \
 	-lplplottcltk@LIB_TAG@ 
 
 CC = @CC@
+EXEEXT = @EXEEXT@
 
-all: xtk01 xtk02 xtk04
+EXECUTABLES_list = \
+		 xtk01$(EXEEXT) \
+		 xtk02$(EXEEXT) \
+		 xtk04$(EXEEXT)
+
+all: $(EXECUTABLES_list)
 
 clean:
-	rm -f xtk??
+	rm -f $(EXECUTABLES_list)
 
-.c:
+.c$(EXEEXT):
 	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
+
+.SUFFIXES: .c $(EXEEXT)

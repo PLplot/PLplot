@@ -21,12 +21,37 @@
 
 INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplot@LIB_TAG@
 CC = @CC@
+EXEEXT = @EXEEXT@
 
-all: x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c \
-	x11c x12c x13c x14c x15c x16c x17c x18c x19c x20c x21c
+EXECUTABLES_list = \
+		 x01c$(EXEEXT) \
+		 x02c$(EXEEXT) \
+		 x03c$(EXEEXT) \
+		 x04c$(EXEEXT) \
+		 x05c$(EXEEXT) \
+		 x06c$(EXEEXT) \
+		 x07c$(EXEEXT) \
+		 x08c$(EXEEXT) \
+		 x09c$(EXEEXT) \
+		 x10c$(EXEEXT) \
+		 x11c$(EXEEXT) \
+		 x12c$(EXEEXT) \
+		 x13c$(EXEEXT) \
+		 x14c$(EXEEXT) \
+		 x15c$(EXEEXT) \
+		 x16c$(EXEEXT) \
+		 x17c$(EXEEXT) \
+		 x18c$(EXEEXT) \
+		 x19c$(EXEEXT) \
+		 x20c$(EXEEXT) \
+		 x21c$(EXEEXT)
+
+all: $(EXECUTABLES_list)
 
 clean:
-	rm -f x??c
+	rm -f $(EXECUTABLES_list)
 
-.c:
+.c$(EXEEXT):
 	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
+
+.SUFFIXES: .c $(EXEEXT)

@@ -22,11 +22,30 @@
 INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplotf77@LIB_TAG@ 
 
 F77 = @F77@
+EXEEXT = @EXEEXT@
 
-all: x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f x16f
+EXECUTABLES_list = \
+		 x01f$(EXEEXT) \
+		 x02f$(EXEEXT) \
+		 x03f$(EXEEXT) \
+		 x04f$(EXEEXT) \
+		 x05f$(EXEEXT) \
+		 x06f$(EXEEXT) \
+		 x07f$(EXEEXT) \
+		 x08f$(EXEEXT) \
+		 x09f$(EXEEXT) \
+		 x10f$(EXEEXT) \
+		 x11f$(EXEEXT) \
+		 x12f$(EXEEXT) \
+		 x13f$(EXEEXT) \
+		 x16f$(EXEEXT)
+
+all: $(EXECUTABLES_list)
 
 clean:
-	rm -f x??f
+	rm -f $(EXECUTABLES_list)
 
-.f:
+.f$(EXEEXT):
 	plplot_libtool --mode=link $(F77) $< $(INCLUDEANDLIB) -o $@
+
+.SUFFIXES: .f $(EXEEXT)
