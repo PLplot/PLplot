@@ -48,7 +48,13 @@ $(PLLIB_AR):	$(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
 
 # The following rule based (very) loosely on what I see David Engel
-# did in his Linux Tcl/Tk port.
+# did in his Linux Tcl/Tk port.  
+
+# NOTE: We have to link with iostream in order to satisfy the
+# references to cout and friends in the C++ interface class.  And we
+# do /not/ link with libg++ so as to avoid conflicts between the
+# libg++ String class and the DS++ String class.  Oh, but for C++
+# namespace support...
 
 $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	-$(RM) $(PLLIB_SO)
@@ -56,7 +62,7 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o -lg++
+		$(LIB_OBJS) stupidtk.o -liostream
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
 	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 	echo $(LIBVERSION) > version.built
