@@ -10,9 +10,17 @@
 
 #define XSPA    2./(XPTS-1)
 #define YSPA    2./(YPTS-1)
+
+/* polar plot data */
 #define PERIMETERPTS 100
 #define RPTS 40
 #define THETAPTS 40
+
+/* potential plot data */
+#define PPERIMETERPTS 100
+#define PRPTS 40
+#define PTHETAPTS 64
+#define PNLEVEL 20
 
 static PLFLT clevel[11] =
 {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
@@ -22,14 +30,14 @@ static PLFLT clevel[11] =
 PLFLT tr[6] =
 {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-void
+static void
 mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 {
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-void polar()
+static void polar()
 /*polar contour plot example.*/
 {
    int i,j;
@@ -76,6 +84,166 @@ void polar()
 	              pltr2, (void *) &cgrid2);
    plcol0(1);
    pllab("", "", "Polar Contour Plot");
+   free((void *) z);
+   free((void *) cgrid2.xg);
+   free((void *) cgrid2.yg);
+}
+
+/*--------------------------------------------------------------------------*\
+ * f2mnmx
+ *
+ * Returns min & max of input 2d array.
+\*--------------------------------------------------------------------------*/
+
+static void
+f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
+{
+    int i, j;
+
+    *fmax = f[0][0];
+    *fmin = *fmax;
+
+    for (i = 0; i < nx; i++) {
+	for (j = 0; j < ny; j++) {
+            *fmax = MAX(*fmax, f[i][j]);
+            *fmin = MIN(*fmin, f[i][j]);
+	}
+    }
+}
+
+static void potential()
+/*shielded potential contour plot example.*/
+{
+   int i,j;
+   PLcGrid2 cgrid2;
+   PLFLT rmax, xmin, xmax, x0, ymin, ymax, y0, zmin, zmax;
+   PLFLT peps, xpmin, xpmax, ypmin, ypmax;
+   PLFLT eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
+   PLFLT div1, div1i, div2, div2i;
+   PLFLT **z;
+   PLINT nlevelneg, nlevelpos;
+   PLFLT dz, clevel, clevelneg[PNLEVEL], clevelpos[PNLEVEL];
+   PLINT ncollin, ncolbox, ncollab;
+   PLFLT px[PPERIMETERPTS], py[PPERIMETERPTS];
+   PLFLT t, r, theta;
+   PLFLT lev[10];
+   
+/*create data to be contoured.*/
+   plAlloc2dGrid(&cgrid2.xg, PRPTS, PTHETAPTS);
+   plAlloc2dGrid(&cgrid2.yg, PRPTS, PTHETAPTS);
+   plAlloc2dGrid(&z, PRPTS, PTHETAPTS);
+   cgrid2.nx = PRPTS;
+   cgrid2.ny = PTHETAPTS;
+   
+   for (i = 0; i < PRPTS; i++) {
+      r = 0.5 + (double) i;
+      for (j = 0; j < PTHETAPTS; j++) {
+	 theta = (2.*PI/(double)(PTHETAPTS))*(0.5 + (double) j);
+	 cgrid2.xg[i][j] = r*cos(theta);
+	 cgrid2.yg[i][j] = r*sin(theta);
+      }
+   }
+
+   rmax = r;
+   f2mnmx(cgrid2.xg, PRPTS, PTHETAPTS, &xmin, &xmax);
+   f2mnmx(cgrid2.yg, PRPTS, PTHETAPTS, &ymin, &ymax); 
+   x0 = (xmin + xmax)/2.;
+   y0 = (ymin + ymax)/2.;
+
+   /* Expanded limits */
+   peps = 0.05;
+   xpmin = xmin - abs(xmin)*peps;
+   xpmax = xmax + abs(xmax)*peps;
+   ypmin = ymin - abs(ymin)*peps;
+   ypmax = ymax + abs(ymax)*peps;
+     
+   /* Potential inside a conducting cylinder (or sphere) by method of images.
+      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+      Also put in smoothing term at small distances.
+   */
+
+   eps = 2.;
+
+   q1 = 1.;
+   d1 = rmax/4.;
+
+   q1i = - q1*rmax/d1;
+   d1i = pow(rmax,2)/d1;
+
+   q2 = -1.;
+   d2 = rmax/4.;
+
+   q2i = - q2*rmax/d2;
+   d2i = pow(rmax,2)/d2;
+
+   for (i = 0; i < PRPTS; i++) {
+      for (j = 0; j < PTHETAPTS; j++) {
+	 div1 = sqrt(pow(cgrid2.xg[i][j]-d1,2) + pow(cgrid2.yg[i][j]-d1,2) + pow(eps,2));
+	 div1i = sqrt(pow(cgrid2.xg[i][j]-d1i,2) + pow(cgrid2.yg[i][j]-d1i,2) + pow(eps,2));
+	 div2 = sqrt(pow(cgrid2.xg[i][j]-d2,2) + pow(cgrid2.yg[i][j]+d2,2) + pow(eps,2));
+	 div2i = sqrt(pow(cgrid2.xg[i][j]-d2i,2) + pow(cgrid2.yg[i][j]+d2i,2) + pow(eps,2));
+	 z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
+      }
+   }
+   f2mnmx(z, PRPTS, PTHETAPTS, &zmin, &zmax);
+/*   printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
+	  q1, d1, q1i, d1i, q2, d2, q2i, d2i);
+   printf("%.15g %.15g %.15g %.15g %.15g %.15g \n",
+	  xmin, xmax, ymin, ymax, zmin, zmax); */
+
+   /* Positive and negative contour levels.*/
+   dz = (zmax-zmin)/(double) PNLEVEL;
+   nlevelneg = 0;
+   nlevelpos = 0;
+   for (i = 0; i < PNLEVEL; i++) {
+      clevel = zmin + ((double) i + 0.5)*dz;
+      if (clevel <= 0.)
+	clevelneg[nlevelneg++] = clevel;
+      else
+	clevelpos[nlevelpos++] = clevel;
+   }
+   /* Colours! */
+   ncollin = 11;
+   ncolbox = 1;
+   ncollab = 2;
+
+   /* Finally start plotting this page! */
+   pladv(0);
+   plcol0(ncolbox);
+
+   plvpas(0.1, 0.9, 0.1, 0.9, 1.0);
+   plwind(xpmin, xpmax, ypmin, ypmax);
+   plbox("", 0., 0, "", 0., 0);
+
+   plcol0(ncollin);
+   if(nlevelneg >0) {
+      /* Negative contours */
+      pllsty(2);
+      plcont(z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
+	     clevelneg, nlevelneg, pltr2, (void *) &cgrid2);
+   }
+
+   if(nlevelpos >0) {
+      /* Positive contours  */
+      pllsty(1);
+      plcont(z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
+	     clevelpos, nlevelpos, pltr2, (void *) &cgrid2);
+   }
+		 
+   /* Draw outer boundary  */
+   for (i = 0; i < PPERIMETERPTS; i++) {
+      t = (2.*PI/(PPERIMETERPTS-1))*(double)i;
+      px[i] = x0 + rmax*cos(t);
+      py[i] = y0 + rmax*sin(t);
+   }
+
+   plcol0(ncolbox);
+   plline(PPERIMETERPTS, px, py);
+	       
+   plcol0(ncollab);
+   pllab("", "", "Shielded potential of charges in a conducting sphere");
+
    free((void *) z);
    free((void *) cgrid2.xg);
    free((void *) cgrid2.yg);
@@ -237,6 +405,11 @@ main(int argc, char *argv[])
     polar();
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     polar();
+
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    potential();
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    potential();
 
     plend();
     free((void *) w);
