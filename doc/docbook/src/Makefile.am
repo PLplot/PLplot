@@ -109,6 +109,7 @@ $(HTML_MANIFEST): $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_HTML) inline-html.e
 	ln -fs inline-html.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
+	$(PERL) -pi -e 's/&#13;//g' `cat $(HTML_MANIFEST)`
 
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@
