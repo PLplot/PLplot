@@ -55,6 +55,8 @@ fi
 
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
+echo Using aclocal options: $aclocal_opts
+
 curver=`grep ^AM_INIT_AUTOMAKE configure.ac \
         | perl -ne 'if (/plplot, (\d+\.\d+\.\d+)/) {print $1}'`
 
@@ -63,7 +65,7 @@ if [ $date_version = yes ] ; then
 fi
 
 if [ -n "$version" ] ; then
-  echo -n "Patching configure.ac ... "
+  echo -n "Patching configure.ac (version $version)... "
   perl -pi -e \
     's/^(AM_INIT_AUTOMAKE\(plplot, )([^)]*\))/${1}'$version')/' \
     configure.ac
