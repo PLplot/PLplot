@@ -691,6 +691,8 @@ plMergeOpts(PLOptionTable *options, char *name, char **notes)
 {
     PLOptionTable *tab;
 
+    pllib_init();
+
 /* Check to make sure option table has been terminated correctly */
 
     for (tab = options; tab->opt; tab++)
@@ -761,6 +763,8 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 {
     char **argsave, **argend;
     int	i, myargc, status = 0;
+
+    pllib_init();
 
 /* Initialize */
 
