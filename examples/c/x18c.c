@@ -89,7 +89,7 @@ void test_poly(int k)
     PLFLT *x, *y, *z;
     int i, j;
     PLFLT pi, two_pi;
-    int draw[][4] = { { 1, 1, 1, 1 },
+    PLINT draw[][4] = { { 1, 1, 1, 1 },
 		      { 1, 0, 1, 0 },
 		      { 0, 1, 0, 1 },
 		      { 1, 1, 0, 0 } };
