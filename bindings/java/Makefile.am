@@ -111,6 +111,13 @@ execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 # if enable_java
 endif
 
+# Remove unneeded *.a *.la files that are installed by Libtool
+install-exec-hook:
+if enable_java
+	( cd $(DESTDIR)$(execjavawrapperdir) ; \
+	  rm -f *.a *.la )
+endif
+
 clean-local:
 	rm -rf plplot
 
