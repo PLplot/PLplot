@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/06/01 21:25:40  mjl
+ * Revision 1.2  1995/06/23 02:52:28  mjl
+ * Added width, height fields in case we want to keep track of the remote
+ * window size.
+ *
+ * Revision 1.1  1995/06/01  21:25:40  mjl
  * Added to hold all definitions & prototypes specific to the Tk driver.
  * There shouldn't be much need for the user to access this now, but it's
  * here if you want it.
@@ -59,6 +63,7 @@ typedef struct {
     Tk_Window	w;			/* Main window */
     Tcl_Interp	*interp;		/* Interpreter */
     PLINT	xold, yold;		/* Coordinates of last point plotted */
+    unsigned	width, height;		/* Current window dimensions */
     int		exit_eventloop;		/* Break out of event loop */
     int		pass_thru;		/* Skip normal error termination */
     char	*cmdbuf;		/* Command buffer */
