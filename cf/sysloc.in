@@ -1229,7 +1229,17 @@ if test "$with_shlib" = "yes"; then
 		with_shlib=no
 	    fi
 	;;
-
+	# Reported to work by Dustin Tang <dustintang2000@yahoo.ca>
+	# in June 2002 for Darwin/MacOS X 
+	Darwin* )
+	    with_shlib=yes
+	    SHLIB_BUILD="gcc -bundle -undefined suppress -flat_namespace -o"
+            SHLIB_CCFLAGS="-bundle -undefined suppress -flat_namespace"
+	    SHLIB_CXXFLAGS="-bundle -undefined suppress -flat_namespace"
+	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
+	    LD_SHARED='gcc -bundle -undefined suppress -flat_namespace'
+        ;;
+	
 	# The rest are probably broken.  Someone please fix them.
 	# Remove the 'with_shlib=no' line, comments, and go wild.
 
