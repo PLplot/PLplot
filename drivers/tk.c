@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1994/05/07 03:13:37  mjl
+ * Revision 1.35  1994/05/14 05:43:13  mjl
+ * Additional debug information.
+ *
+ * Revision 1.34  1994/05/07  03:13:37  mjl
  * Replaced bgcolor by cmap0[0].
  *
  * Revision 1.33  1994/04/30  16:15:00  mjl
@@ -97,8 +100,8 @@
 */
 
 /*
-#define DEBUG
 #define DEBUG_ENTER
+#define DEBUG
 */
 
 #ifdef TK
@@ -1432,8 +1435,8 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "KeyEH: Keysym %s, hex %x, ASCII: %s\n",
-	    keysym, key.code, key.string);
+    fprintf(stderr, "KeyEH: stream: %d, Keysym %s, hex %x, ASCII: %s\n",
+	    pls->ipls, keysym, key.code, key.string);
 #endif
 
 /* Call user event handler */
