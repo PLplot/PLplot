@@ -81,11 +81,11 @@ html: $(HTML_MANIFEST)
 # output to the $(HTML_MANIFEST) file.
 $(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML) inline-html.ent
 	ln -fs inline-html.ent inline.ent
-	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
+	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
 
 
-print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf.gz
+print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf
 
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@
@@ -99,9 +99,6 @@ $(BASE).dvi: $(BASE).jadetex jadetex.cfg
 		$(MAKE) $@ ; \
 	fi
 
-%.pdf.gz: %.pdf
-	gzip -9cf < $< > $@
-
 $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 	-$(PDFJADETEX) $<
 	if ! cmp $(BASE).aux prior-pdf.aux 2>/dev/null && \
@@ -114,7 +111,7 @@ $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 
 $(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT) inline-print.ent
 	ln -fs inline-print.ent inline.ent
-	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
+	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)
 
 

@@ -47,7 +47,7 @@ AC_ARG_WITH(plplot-website, [
   [PLPLOT_WEBSITE="$withval"],
   [PLPLOT_WEBSITE="plplot.sf.net"])
 AC_SUBST(PLPLOT_WEBSITE)
-      
+
 
 dnl Controlling were the HTML files should go
 
@@ -65,7 +65,7 @@ dnl System wide XML declaration
 
 XML_DECL=/usr/lib/sgml/declaration/xml.dcl
 AC_ARG_WITH(xml-declaration, [
-  --with-xml-declaration=FILE     System wide file containing the SGML 
+  --with-xml-declaration=FILE     System wide file containing the SGML
                                   declaration for XML.  Must be a absolute
                                   file name.
                                   Default: /usr/lib/sgml/declaration/xml.dcl],
@@ -83,8 +83,8 @@ AC_SUBST(JADELOG)
 
 dnl DTD definitions.
 dnl
-dnl The following public identifiers should correspond to those in the 
-dnl SGML source files. 
+dnl The following public identifiers should correspond to those in the
+dnl SGML source files.
 
 DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
 DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
@@ -105,7 +105,7 @@ pushdef([PROG], translit($1, [a-z], [A-Z]))
 
 AC_ARG_WITH($1, [
   --with-$1=PATH/]PROG[		Alternative $1 program],
-  [prog_$1=$withval], 
+  [prog_$1=$withval],
   [prog_$1=$1])
 AC_CHECK_PROG(has_$1, [$prog_$1], found, no)
 PROG=$prog_$1
@@ -118,10 +118,10 @@ fi
 AC_OUTPUT_COMMANDS( [
 if test $has_$1 = no ; then]
 AC_MSG_WARN( [
-Program $1 not found.  
+Program $1 not found.
     Install the $1 program in your path or specify its
-    location with the option --with-$1.  
-    The $1 package can be found at 
+    location with the option --with-$1.
+    The $1 package can be found at
     $3.])
 [fi], has_$1=$has_$1)
 
@@ -134,7 +134,7 @@ INFO=info
 MAN=man
 
 dnl CHECK_DTD(title, cache-id, dsssl_dtd, docbookb_ss_dtd, style_spec_use,
-dnl           external_specification, docbook_dtd, jade_output_type, 
+dnl           external_specification, docbook_dtd, jade_output_type,
 dnl           origin_package)
 dnl ### CONFTEST=conftest
 CONFTEST=doc/docbook/conftest
@@ -149,14 +149,14 @@ dnl ###  -e "s|@CONFTEST@|$CONFTEST|" < cnf/test.dsl.in > $CONFTEST.dsl
 dnl ### sed "s|@DOCBOOK_DTD@|$6|" < cnf/test.xml.in > $CONFTEST.xml
 sed "s|@DOCBOOK_DTD@|$6|" < doc/docbook/cnf/test.xml.in > $CONFTEST.xml
 
-$prog_jade $SGML_CATALOGS -d $CONFTEST.dsl -t $7 -o $CONFTEST.out \
+$prog_openjade $SGML_CATALOGS -d $CONFTEST.dsl -t $7 -o $CONFTEST.out \
    $XML_DECL $CONFTEST.xml > $jadelog.x 2>&1
 jade_result=`egrep ":E:" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
-if test "$jade_result" = "" ; then 
+if test "$jade_result" = "" ; then
   pldb_cv_$2=found
-else 
+else
   pldb_cv_$2=no
 fi
 ])
@@ -168,14 +168,14 @@ fi
 AC_OUTPUT_COMMANDS([
 if test $pldb_cv_$2 = no ; then]
   AC_MSG_WARN([Could not find $1.
-    The following SGML public identifier could not be found in any of 
+    The following SGML public identifier could not be found in any of
     the default SGML catalogs:
         $dtd_$2
-    Its system identifier[,] i.e. a file usually called 
-        \"$9\" 
-    is distributed with the $10 package.  Install it in your 
+    Its system identifier[,] i.e. a file usually called
+        \"$9\"
+    is distributed with the $10 package.  Install it in your
     system and put the correct entry in the catalog file.
-    You might also use the configure option --with-sgml-catalog to specify 
+    You might also use the configure option --with-sgml-catalog to specify
     alternative SGML catalogs.])
 [fi
 ], [
@@ -225,9 +225,9 @@ FILE_EXT(html)
 
 dnl Check programs
 
-CHECK_PROG(jade, [HTML PRINT], http://www.jclark.com/jade/)
-CHECK_PROG(jadetex, PRINT, http://www.tug.org/applications/jadetex/)
-CHECK_PROG(pdfjadetex, PRINT, http://www.tug.org/applications/jadetex/)
+CHECK_PROG(openjade, [HTML PRINT], http://sf.net/projects/openjade/)
+CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
+CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
 CHECK_PROG(dvips, PRINT, http://www.ctan.org)
 CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
 
@@ -258,7 +258,7 @@ CHECK_DTD(
   [html/docbook.dsl],
   [docbook-stylesheets],
   [HTML])
-  
+
 CHECK_DTD(
   [DocBook Print Stylesheet],
   [print_ss],
@@ -299,7 +299,7 @@ pushdef([PROG], translit($1, [a-z], [A-Z]))
 
 AC_ARG_WITH($1, [
   --with-$1=PATH/]PROG[		Alternative $1 Perl script],
-  [prog_$1=$withval], 
+  [prog_$1=$withval],
   [prog_$1=/usr/bin/$1])
 AC_MSG_CHECKING([for Perl script $1])
 if test -x $prog_$1 ; then
@@ -318,19 +318,19 @@ fi
 AC_OUTPUT_COMMANDS( [
 if test $has_$1 = no ; then]
 AC_MSG_WARN( [
-Program $1 not found.  
+Program $1 not found.
     Install the perl script $1 program in your system or specify its
-    location with the option --with-$1.  
-    The $1 package can be found at 
+    location with the option --with-$1.
+    The $1 package can be found at
     $3.])
 [fi], has_$1=$has_$1)
 
 popdef([PROG])
 ])
 
-CHECK_PERL_SCRIPT(docbook2texixml, [INFO], 
+CHECK_PERL_SCRIPT(docbook2texixml, [INFO],
                   [http://docbook2X.sourceforge.net])
-CHECK_PERL_SCRIPT(texi_xml, [INFO], 
+CHECK_PERL_SCRIPT(texi_xml, [INFO],
                   [http://docbook2X.sourceforge.net])
 CHECK_PROG(makeinfo, [INFO], [http://www.gnu.org])
 
@@ -352,8 +352,8 @@ fi
 AC_OUTPUT_COMMANDS([
 if test $pldb_cv_$2 = no ; then]
   AC_MSG_WARN([
-Could not find Perl module $1.  
-    Install it in your system at a place where Perl can find 
+Could not find Perl module $1.
+    Install it in your system at a place where Perl can find
     it (through @INC).])
 [fi], [
 pldb_cv_$2=$pldb_cv_$2
@@ -362,7 +362,7 @@ pldb_cv_$2=$pldb_cv_$2
 
 AC_ARG_WITH(docbook2x_incdir, [
   --with-docbook2x-incdir=DIR     Directory containing the specific Perl
-                                  module files needed by the docbook2X 
+                                  module files needed by the docbook2X
                                   tools.],
   [DOCBOOK2X_INC=-I$withval],
   [DOCBOOK2X_INC=""])
@@ -382,7 +382,7 @@ else
   AC_OUTPUT_COMMANDS(
   if test $has_db2xpm = no ; then
   AC_MSG_WARN([
-Could not find docbook2X specific module XML::DOM::Map.  
+Could not find docbook2X specific module XML::DOM::Map.
     Specify its path using --with-docbook2x-incdir.])
   fi, [has_db2xpm=$has_db2xpm])
 fi
@@ -442,17 +442,17 @@ dnl Control build of man and info pages
 
 AC_ARG_ENABLE(info, [
   --disable-info                        Disable build of info pages],
-  [if test "$enable_info" = "no" ; then 
+  [if test "$enable_info" = "no" ; then
     INFO=""
     AC_MSG_WARN([
 Info pages will not be build at your request.])
    fi])
 AC_ARG_ENABLE(man, [
   --disable-man                         Disable build of man pages],
-  [if test "$enable_man" = "no" ; then 
+  [if test "$enable_man" = "no" ; then
     MAN=""
     AC_MSG_WARN([
-Man pages will not be build at your request.])    
+Man pages will not be build at your request.])
     fi])
 
 TARGETS="$PRINT $HTML $INFO $MAN"
@@ -460,7 +460,7 @@ AC_SUBST(TARGETS)
 
 
 dnl ### AC_OUTPUT([Makefile
-dnl ###          src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl 
-dnl ###          src/plplotdoc-print.dsl 
+dnl ###          src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl
+dnl ###          src/plplotdoc-print.dsl
 dnl ###          bin/Makefile bin/api2man.pl
 dnl ###          www/index.html.in])
