@@ -156,7 +156,7 @@ plD_line_pbm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int i;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     PLINT x1b, y1b, x2b, y2b;
-    float length, fx, fy, dx, dy;
+    PLFLT length, fx, fy, dx, dy;
 
 /* Take mirror image, since PCL expects (0,0) to be at top left */
 
@@ -169,7 +169,7 @@ plD_line_pbm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
   plRotPhy(1, 0, 0, PIXELS_X, PIXELS_Y, &x2, &y2);
   */
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
-    length = (float) sqrt((double)
+    length = (PLFLT) sqrt((double)
 			  ((x2b - x1b) * (x2b - x1b) + (y2b - y1b) * (y2b - y1b)));
 
     if (length == 0.)

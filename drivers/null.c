@@ -23,8 +23,8 @@ plD_init_null(PLStream *pls)
     int ymin = 0;
     int ymax = PIXELS_Y - 1;
 
-    float pxlx = (double) PIXELS_X / (double) LPAGE_X;
-    float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
+    PLFLT pxlx = (double) PIXELS_X / (double) LPAGE_X;
+    PLFLT pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
 /* Set up device parameters */
 
