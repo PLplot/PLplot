@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/03/02 19:02:46  mjl
-   Added stubs for plgver().
+   Revision 1.11  1993/04/26 20:03:14  mjl
+   Added stub for plgchr().
 
+ * Revision 1.10  1993/03/02  19:02:46  mjl
+ * Added stubs for plgver().
+ *
  * Revision 1.9  1993/02/23  05:29:34  mjl
  * Added stubs for functions PLSDEV, PLSESC, and PLSSUB, and deleted stub for
  * PLBEG.
@@ -154,11 +157,10 @@ PLFONTLD(PLINT *charset)
 }
 
 void
-PLGRA()
+PLGCHR(PLFLT *chrdef, PLFLT *chrht)
 {
-    c_plgra();
+    gchr(chrdef, chrht);
 }
-
 void
 PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 {
@@ -176,6 +178,12 @@ PLGPAGE(PLFLT *xpmm, PLFLT *ypmm, PLINT *xwid, PLINT *ywid,
 	PLINT *xoff, PLINT *yoff)
 {
     c_plgpage(xpmm, ypmm, xwid, ywid, xoff, yoff);
+}
+
+void
+PLGRA()
+{
+    c_plgra();
 }
 
 void
