@@ -285,16 +285,16 @@ plD_init_png_Dev(PLStream *pls)
  *  structure so that everything is thread safe and reenterant.
  */
 
-    int optimise=0;
-    int black15=0;
-    int red15=0;
+    static int optimise=0;
+    static int black15=0;
+    static int red15=0;
 #if GD2_VERS >= 2
-    int truecolour=0;
-    int palette=0;
+    static int truecolour=0;
+    static int palette=0;
 #endif
 #ifdef HAVE_FREETYPE
-    int freetype=0;
-    int smooth_text=0;
+    static int freetype=0;
+    static int smooth_text=0;
     FT_Data *FT;
 #endif
 
