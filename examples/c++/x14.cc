@@ -97,11 +97,9 @@ x14::x14( int argc, char ** argv ) {
   // Using DP results in a crash at the end due to some odd cleanup problems
   // The geometry strings MUST be in writable memory
 
-  char driver[] = "tk";
+  char driver[80];
   char geometry_master[] = "500x410+100+200";
   char geometry_slave[]  = "500x410+650+200";
-
-  char driver_orig[80];
 
   // plplot initialization
 
@@ -110,16 +108,11 @@ x14::x14( int argc, char ** argv ) {
   // Parse and process command line arguments.
   pls1->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
-  pls1->gdev(driver_orig);
-  if (strcmp(driver_orig, "tk")) {
-    cout << "Demo for TK driver only." << endl;
-    delete pls1;
-    exit(1);
-  }
+  pls1->gdev(driver);
 
   cout << "Demo of multiple output streams via the " <<
     driver << " driver." << endl;
-  cout << "Running with the second window as slave.\n" << endl;
+  cout << "Running with the second stream as slave.\n" << endl;
 
   // Set up first stream
 
@@ -358,7 +351,8 @@ void x14::plot4(plstream *pls)
 
 /* Write labels for angle */
 
-	if (dx >= 0)
+//Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
+	if (dx >= -0.00001)
 	    pls->ptex(dx, dy, dx, dy, -0.15, text);
 	else
 	    pls->ptex(dx, dy, -dx, -dy, 1.15, text);
