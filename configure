@@ -13,7 +13,7 @@
 # The parameters set by this script are typically things that are changed
 # relatively frequently.  For example, optimization, debug, warnings, etc,
 # are set depending on what stage of development you are at.  no_share,
-# no_tk, and no_x are useful in creating multiple versions of the
+# no_tk, no_dp, and no_x are useful in creating multiple versions of the
 # libraries.  Macros that must be defined for specific systems or sites
 # (and typically only the first time you port to it) should instead be
 # handled in the config file for that system or in a site-specific config
@@ -23,8 +23,6 @@
 # $Id$
 #
 #****************************************************************************
-
-#unset system	# just for testing
 
 # Set up defaults
 # The value from the environment is used, if present.
@@ -67,6 +65,10 @@ if [ ! "$no_tk" ]; then
 	no_tk=off
 fi
 
+if [ ! "$no_dp" ]; then
+	no_dp=off
+fi
+
 if [ ! "$no_share" ]; then
 	no_share=off
 fi
@@ -94,6 +96,7 @@ $e "	profile		$profile"
 $e "	gcc		$gcc"
 $e "	no_x		$no_x"
 $e "	no_tk		$no_tk"
+$e "	no_dp		$no_dp"
 $e "	no_share	$no_share"
 $e ""
 }
@@ -128,6 +131,7 @@ $e "	profile	   [=on|off]	profiling"
 $e "	gcc	   [=on|off]	use gcc instead of native compiler"
 $e "	no_x	   [=on|off]	no X linkage"
 $e "	no_tk	   [=on|off]	no Tcl/TK linkage"
+$e "	no_dp	   [=on|off]	no Tcl-DP linkage"
 $e "	no_share   [=on|off]	do not build shared libraries"
 $e ""
 $e "Options are set via the command line, environment, and internal defaults,"
@@ -207,6 +211,12 @@ Parse_args () {
 		no_tk)
 			no_tk=on
 			;;
+		no_d=*|no_dp=*)
+			no_dp=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		no_dp)
+			no_dp=on
+			;;
 		no_s=*|no_sh=*|no_sha=*|no_shar=*|no_share=*)
 			no_share=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
 			;;
@@ -235,7 +245,7 @@ Setup_options () {
 		system="AIX"
 		;;
 
-	alpha*|ALPHA*|Alpha*)
+	alpha*|ALPHA*|Alpha*|OSF*)
 		system="ALPHAOSF"
 		;;
 
@@ -295,15 +305,15 @@ Setup_options () {
 
 	system_flag="-DSYSTEM=$system"
 
-# Now set up machine name if necessary.  Use output from `uname -m`.
-
-	if [ ! "$machine" ]; then
-		machine=`uname -m`
-	fi
+# Set up machine name if necessary.  Use output from `uname -m`.
 
 	case "$system" in 
 
 	UNICOS)
+		if [ ! "$machine" ]; then
+			machine=`uname -m`
+		fi
+
 		case "$machine" in
 
 		"CRAY C90"|"CRAY Y-MP"|"cray y-mp"|y*|Y*|CRAY*1|cray*1|1)
@@ -347,13 +357,16 @@ Setup_options () {
 	if [ "$no_tk" = "on" ]; then
 		no_tk_flag="-DNO_TK"
 	fi
+	if [ "$no_dp" = "on" ]; then
+		no_dp_flag="-DNO_DP"
+	fi
 	if [ "$no_share" = "on" ]; then
 		no_share_flag="-DNO_SHARE"
 	fi
 
 	all_flags="$system_flag $machine_flag $double_flag $debug_flag \
 $opt_flag $warn_flag $profile_flag $gcc_flag $no_x_flag $no_tk_flag \
-$no_share_flag"
+$no_dp_flag $no_share_flag"
 }
 
 #****************************************************************************
@@ -364,7 +377,8 @@ Configure () {
 
 	if [ ! -d ../src ] || [ ! -d ../drivers ] || [ ! -d ../include ]
 	then
-		echo "Source directory missing!  Are you in the right place?"
+		echo \
+"Run configure from tmp directory, e.g. cd tmp; ../configure."
 		exit 1
 	fi
 
