@@ -100,7 +100,7 @@ enable_octave=yes
 enable_gnome=no
 enable_png=yes
 enable_jpeg=yes
-enable_cgm=no
+enable_cgm=yes
 enable_tk=yes
 enable_xwin=yes
 
