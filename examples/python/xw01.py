@@ -28,8 +28,6 @@ from pl import *
 
 def main():
 
-	global xscale, yscale, xoff, yoff
-
 	# Parse and process command line arguments
 
 	plParseOpts(sys.argv, PARSE_FULL)
@@ -38,29 +36,15 @@ def main():
 
 	plinit()
 
-	# Set up the data
-	# Original case
+	# Do a plot with one range of data
 
-	xscale = 6.
-	yscale = 1.
-	xoff = 0.
-	yoff = 0.
-
-	# Do a plot
-
-	plot1()
+	plot1(6., 1., 0., 0.)
  
-	# Set up the data
-
-	xscale = 1.
-	yscale = 0.0014
-	yoff = 0.0185
-
-	# Do a plot
+	# Do a plot with another range of data
 
 	digmax = 5
 	plsyax(digmax, 0)
-	plot1()
+	plot1(1., 0.0014, 0., 0.0185)
 
 	plot2()
 
@@ -70,24 +54,18 @@ def main():
 
 # ===============================================================
 
-def plot1():
+def plot1(xscale, yscale, xoff, yoff):
 
-	global x, y, xscale, yscale, xoff, yoff, xs, ys
-
-	x = zeros(60,'d'); y = zeros(60,'d')
-	for i in range(60):
-	    x[i] = xoff + xscale * (i + 1) / 60.0
-	    y[i] = yoff + yscale * pow(x[i], 2.)
+	x = xoff + (xscale/60.)*(1+arrayrange(60))
+	y = yoff + yscale*pow(x,2.)
 
 	xmin = x[0]
 	xmax = x[59]
 	ymin = y[0]
 	ymax = y[59]
 
-	xs = zeros(6,'d'); ys = zeros(6,'d')
-	for i in range(6):
-	    xs[i] = x[i * 10 + 3]
-	    ys[i] = y[i * 10 + 3]
+	xs = x[3::10]
+	ys = y[3::10]
 
 	# Set up the viewport and window using pl.env. The range in X
 	# is 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes
@@ -115,8 +93,6 @@ def plot1():
 
 def plot2():
 
-	global x, y, xscale, yscale, xoff, yoff, xs, ys
-
 	# Set up the viewport and window using pl.env. The range in X
 	# is -2.0 to 10.0, and the range in Y is -0.4 to 2.0. The axes
 	# are scaled separately (just = 0), and we draw a box with
@@ -129,13 +105,13 @@ def plot2():
 
 	# Fill up the arrays
 
-	x = zeros(100,'d'); y = zeros(100,'d')
-	for i in range(100):
-	    x[i] = (i - 19.0) / 6.0
-	    if x[i] == 0.0:
-		y[i] = 1.
-	    else:
-		y[i] = math.sin(x[i]) / x[i]
+	x = (arrayrange(100)-19)/6.0
+	# Numeric doesn't handle floating point exceptions, yet, so this 
+	# creates a Nan for the zero value.
+	y = sin(x)/x
+	# replace Nan by correct value.
+	if 0.0 in x:
+	    y[list(x).index(0.0)] = 1.
 
 	# Draw the line
 
@@ -147,8 +123,6 @@ def plot2():
 # ===============================================================
 
 def plot3():
-
-	global x, y, xscale, yscale, xoff, yoff, xs, ys
 
 	# For the final graph we wish to override the default tick
 	# intervals, so do not use pl.env
@@ -178,10 +152,8 @@ def plot3():
 	pllab("Angle (degrees)", "sine",
 	       "#frPLplot Example 1 - Sine function")
 
-	x = zeros(101,'d'); y = zeros(101,'d')
-	for i in range(101):
-	    x[i] = 3.6 * i
-	    y[i] = math.sin(x[i] * math.pi / 180.0)
+	x = 3.6*arrayrange(101)
+	y = sin((math.pi/180.)*x)
 
 	plcol0(4)
 	plline(x, y)
