@@ -1,0 +1,12 @@
+# -*-makefile-*----------------------------------------------------------------
+# $Id$
+#
+# Pull in the dependencies.
+# -----------------------------------------------------------------------------
+
+ifeq ($(automatic_deps),yes)
+-include .d.* shared/.d.*
+else
+include objs.in
+endif
+
