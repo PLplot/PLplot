@@ -33,9 +33,9 @@ main(int argc, char *argv[])
     for (i = 0; i < NPTS; i++)
 	data[i] = sin(i * delta);
 
-    plcol(1);
+    plcol0(1);
     plhist(NPTS, data, -1.1, 1.1, 44, 0);
-    plcol(2);
+    plcol0(2);
     pllab("#frValue", "#frFrequency",
 	  "#frPLplot Example 5 - Probability function of Oscillator");
 

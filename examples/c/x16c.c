@@ -196,9 +196,9 @@ main(int argc, char *argv[])
 		plfill, 1, NULL, NULL);
     }
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    plcol(2);
+    plcol0(2);
 /*
     plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
     */
@@ -224,9 +224,9 @@ main(int argc, char *argv[])
 		plfill, 1, pltr1, (void *) &cgrid1);
     }
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    plcol(2);
+    plcol0(2);
 /*
     plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
     */
@@ -252,9 +252,9 @@ main(int argc, char *argv[])
 		plfill, 0, pltr2, (void *) &cgrid2);
     }
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
     pllab("distance", "altitude", "Bogon density, with streamlines");
@@ -279,7 +279,7 @@ main(int argc, char *argv[])
 		plfill, 0, pltr2, (void *) &cgrid2);
     }
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 
     pllab("distance", "altitude", "Bogon density with exclusion");

@@ -61,20 +61,20 @@ main(int argc, char *argv[])
 	pladv(0);
 	plvpor(0.0, 1.0, 0.0, 0.9);
 	plwind(-1.0, 1.0, -0.9, 1.1);
-	plcol(1);
+	plcol0(1);
 	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
 	plbox3("bnstu", "x axis", 0.0, 0,
 	       "bnstu", "y axis", 0.0, 0,
 	       "bcdmnstuv", "z axis", 0.0, 0);
 
-	plcol(2);
+	plcol0(2);
 
 	if (opt[k])
 	    plline3( NPTS, x, y, z );
 	else
 	    plpoin3( NPTS, x, y, z, 1 );
 
-	plcol(3);
+	plcol0(3);
 	sprintf(title, "#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
 		alt[k], az[k]);
 	plmtex("t", 1.0, 0.5, 0.5, title);
@@ -103,13 +103,13 @@ void test_poly(int k)
     pladv(0);
     plvpor(0.0, 1.0, 0.0, 0.9);
     plwind(-1.0, 1.0, -0.9, 1.1);
-    plcol(1);
+    plcol0(1);
     plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
     plbox3("bnstu", "x axis", 0.0, 0,
 	   "bnstu", "y axis", 0.0, 0,
 	   "bcdmnstuv", "z axis", 0.0, 0);
 
-    plcol(2);
+    plcol0(2);
 
 #define THETA(a) (two_pi * (a) /20.)
 #define PHI(a)    (pi * (a) / 20.1)
@@ -147,6 +147,6 @@ void test_poly(int k)
 	}
     }
 
-    plcol(3);
+    plcol0(3);
     plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
 }

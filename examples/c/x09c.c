@@ -97,84 +97,84 @@ main(int argc, char *argv[])
 /* Plot using identity transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(1, &mark, &space);
-    plcol(3);
+    plcol0(3);
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(0, &mark, &space);
-    plcol(1);
+    plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(1, &mark, &space);
-    plcol(3);
+    plcol0(3);
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(0, &mark, &space);
-    plcol(1);
+    plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
     
 /* Plot using 1d coordinate transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr1, (void *) &cgrid1);
 
     plstyl(1, &mark, &space);
-    plcol(3);
+    plcol0(3);
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr1, (void *) &cgrid1);
     plstyl(0, &mark, &space);
-    plcol(1);
+    plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr1, (void *) &cgrid1);
 
     plstyl(1, &mark, &space);
-    plcol(3);
+    plcol0(3);
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr1, (void *) &cgrid1);
     plstyl(0, &mark, &space);
-    plcol(1);
+    plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
     
 /* Plot using 2d coordinate transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr2, (void *) &cgrid2);
 
     plstyl(1, &mark, &space);
-    plcol(3);
+    plcol0(3);
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr2, (void *) &cgrid2);
     plstyl(0, &mark, &space);
-    plcol(1);
+    plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
+    plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr2, (void *) &cgrid2);
 
     plstyl(1, &mark, &space);
-    plcol(3);
+    plcol0(3);
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr2, (void *) &cgrid2);
     plstyl(0, &mark, &space);
-    plcol(1);
+    plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     
     plend();

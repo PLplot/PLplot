@@ -186,9 +186,9 @@ plot1(void)
 	     min_color, min_width, max_color, max_width,
 	     plfill, 1, NULL, NULL);
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    plcol(2);
+    plcol0(2);
     pllab("distance", "altitude", "Bogon flux");
 }
 
@@ -227,9 +227,9 @@ plot2(void)
 		 plfill, 1, NULL, NULL);
     }
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    plcol(2);
+    plcol0(2);
     pllab("distance", "altitude", "Bogon flux");
 }
 

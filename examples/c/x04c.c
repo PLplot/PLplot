@@ -64,7 +64,7 @@ plot1(int type)
 
 /* Try different axis and labelling styles. */
 
-    plcol(1);
+    plcol0(1);
     switch (type) {
     case 0:
 	plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0);
@@ -76,28 +76,28 @@ plot1(int type)
 
 /* Plot ampl vs freq */
 
-    plcol(2);
+    plcol0(2);
     plline(101, freql, ampl);
-    plcol(1);
+    plcol0(1);
     plptex(5.0, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
 
 /* Put labels on */
 
-    plcol(1);
+    plcol0(1);
     plmtex("b", 3.2, 0.5, 0.5, "Frequency");
     plmtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter");
-    plcol(2);
+    plcol0(2);
     plmtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)");
 
 /* For the gridless case, put phase vs freq on same plot */
 
     if (type == 0) {
-	plcol(1);
+	plcol0(1);
 	plwind(-2.0, 3.0, -100.0, 0.0);
 	plbox("", 0.0, 0, "cmstv", 30.0, 3);
-	plcol(3);
+	plcol0(3);
 	plline(101, freql, phase);
-	plcol(3);
+	plcol0(3);
 	plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
     }
 }

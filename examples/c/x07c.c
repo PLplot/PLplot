@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 
     /* Set up viewport and window */
 
-	plcol(2);
+	plcol0(2);
 	plvpor(0.15, 0.95, 0.1, 0.9);
 	plwind(0.0, 1.0, 0.0, 1.0);
 
@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 
     /* Write the digits below the frame */
 
-	plcol(15);
+	plcol0(15);
 	for (i = 0; i <= 9; i++) {
 	    sprintf(text, "%d", i);
 	    plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);

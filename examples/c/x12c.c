@@ -34,7 +34,7 @@ main(int argc, char *argv[])
     plvsta();
     plwind(1980.0, 1990.0, 0.0, 35.0);
     plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
-    plcol(2);
+    plcol0(2);
     pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
 
     y0[0] = 5;
@@ -49,7 +49,7 @@ main(int argc, char *argv[])
     y0[9] = 3;
 
     for (i = 0; i < 10; i++) {
-	plcol(i + 1);
+	plcol0(i + 1);
     /*
 	plcol1((PLFLT) ((i + 1)/10.0));
 	*/
@@ -81,7 +81,7 @@ plfbox(PLFLT x0, PLFLT y0)
     x[3] = x0 + 1.;
     y[3] = 0.;
     plfill(4, x, y);
-    plcol(1);
+    plcol0(1);
     pllsty(1);
     plline(4, x, y);
 }

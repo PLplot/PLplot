@@ -56,7 +56,7 @@ main(int argc, char **argv)
     minx = 190;
     maxx = 190+360;
 
-    plcol(1);
+    plcol0(1);
     plenv(minx, maxx, miny, maxy, 1, -1);
     plmap(NULL, "usaglobe", minx, maxx, miny, maxy);
 
@@ -65,7 +65,7 @@ main(int argc, char **argv)
     minx = 190;
     maxx = 340;
 
-    plcol(1);
+    plcol0(1);
     plenv(minx, maxx, miny, maxy, 1, -1);
     plmap(NULL, "usaglobe", minx, maxx, miny, maxy);
 

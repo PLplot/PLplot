@@ -42,7 +42,7 @@ main(int argc, char *argv[])
     plinit();
 
     plenv(0., 10., 0., 10., 1, -2);
-    plcol(2);
+    plcol0(2);
 
     theta0 = 0.;
     dthet = 2 * PI / 500;
@@ -57,10 +57,10 @@ main(int argc, char *argv[])
 	    x[j] = 5 + 3 * cos(theta);
 	    y[j++] = 5 + 3 * sin(theta);
 	}
-	plcol(i + 1);
+	plcol0(i + 1);
 	plpsty((i + 3) % 8 + 1);
 	plfill(j, x, y);
-	plcol(1);
+	plcol0(1);
 	plline(j, x, y);
 	just = (theta0 + theta1) / 2.;
 	dx = .25 * cos(just);

@@ -63,7 +63,7 @@ main(int argc, char *argv[])
 
     for (k = 0; k < 4; k++) {
 	pladv(0);
-	plcol(1);
+	plcol0(1);
 	plvpor(0.0, 1.0, 0.0, 0.8);
 	plwind(-1.0, 1.0, -1.0, 1.5);
 
@@ -72,9 +72,9 @@ main(int argc, char *argv[])
 	       "bnstu", "y axis", 0.0, 0,
 	       "bcdmnstuv", "z axis", 0.0, 4);
 
-	plcol(2);
+	plcol0(2);
 	plmesh(x, y, z, XPTS, YPTS, opt[k]);
-	plcol(3);
+	plcol0(3);
 	plmtex("t", 1.0, 0.5, 0.5, title[k]);
     }
 

@@ -48,7 +48,7 @@ main(int argc, char *argv[])
 	plline(361, x, y);
     }
 
-    plcol(2);
+    plcol0(2);
     for (i = 0; i <= 11; i++) {
 	theta = 30.0 * i;
 	dx = cos(dtr * theta);
@@ -74,10 +74,10 @@ main(int argc, char *argv[])
 	x[i] = x0[i] * r;
 	y[i] = y0[i] * r;
     }
-    plcol(3);
+    plcol0(3);
     plline(361, x, y);
 
-    plcol(4);
+    plcol0(4);
     plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 
 /* Close the plot at end */

@@ -34,7 +34,7 @@ main(int argc, char *argv[])
     plfont(4);
 
     for (i = 0; i <= 15; i++) {
-	plcol(i);
+	plcol0(i);
 	sprintf(text, "%d", i);
 	pladv(0);
 	vmin = 0.1;
