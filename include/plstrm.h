@@ -448,13 +448,15 @@ typedef struct {
     PLINT bytecnt, page, linepos;
     PDFstrm *pdfs;
 
+    PLINT dev_npts;
+    short *dev_x, *dev_y;
+
   /* variables for plimage() */
 
-    PLINT dev_npts, dev_nptsX, dev_nptsY;
-    short *dev_x, *dev_y;
+    PLINT dev_nptsX, dev_nptsY;
     PLINT *dev_ix, *dev_iy;
     PLFLT *dev_z;
-    PLINT Dxmin, Dxmax, Dymin, Dymax;
+    PLINT imclxmin, imclxmax, imclymin, imclymax;
 
   /* end of variables for plimage() */
 
