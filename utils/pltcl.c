@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/09/23 07:54:17  mjl
+ * Revision 1.8  1994/11/02 19:59:47  mjl
+ * Changed prompt.
+ *
+ * Revision 1.7  1994/09/23  07:54:17  mjl
  * Changed to a more powerful prompt mechanism.  Prompt now gives program
  * name (pltcl) followed by an underscore and the current stream number.
  * Very handy when doing multiple stream work.
@@ -120,7 +123,11 @@ prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
     plgpls(&pls);
 
-    sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d%% \"", pls->ipls);
+    if (pls->ipls == 0) 
+	sprintf(prompt, "pltext; puts -nonewline \"pltcl> \"");
+    else
+	sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d> \"", pls->ipls);
+
     Tcl_VarEval(interp, prompt, 0);
 
     return TCL_OK;
