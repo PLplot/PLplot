@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.43  1995/03/16 23:07:26  mjl
+ * Revision 1.44  1995/04/12 08:08:09  mjl
+ * A data link cleanup command added.
+ *
+ * Revision 1.43  1995/03/16  23:07:26  mjl
  * Implemented graphic crosshairs, which are turned on or off using the
  * "-xhairs <boolean>" widget configure command.  This inserts an event handler
  * to draw and update the graphic crosshairs on cursor motion, as well as
@@ -278,6 +281,7 @@ static void  Install_cmap	(PlFrame *plFramePtr);
 
 /* These are invoked by PlFrameWidgetCmd to process widget commands */
 
+static int   Closelink		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Cmd		(Tcl_Interp *, PlFrame *, int, char **);
 static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
 static int   Draw		(Tcl_Interp *, PlFrame *, int, char **);
@@ -491,6 +495,20 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	}
     }
 
+/* closelink -- Close a binary data link previously opened with openlink */
+
+    else if ((c == 'c') && (strncmp(argv[1], "closelink", length) == 0)) {
+	if (argc > 2) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], (char *) NULL);
+	    result = TCL_ERROR;
+	    goto done;
+	}
+	else {
+	    result = Closelink(interp, plFramePtr, argc-2, argv+2);
+	}
+    }
+
 /* draw -- rubber-band draw used in region selection */
 
     else if ((c == 'd') && (strncmp(argv[1], "draw", length) == 0)) {
@@ -601,7 +619,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
-	 "\":  must be cmd, configure, draw, info, ",
+	 "\":  must be closelink, cmd, configure, draw, info, ",
 	 "openlink, orient, page, print, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
@@ -1950,6 +1968,34 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
     plr->pdfs = pdf_bopen( NULL, 4200 );
     Tk_CreateFileHandler(iodev->fd, TK_READABLE, (Tk_FileProc *) ReadData,
 			 (ClientData) plFramePtr);
+
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * Closelink
+ *
+ * Processes "closelink" widget command.
+ * CLoses channel previously opened with the "openlink" widget command.
+\*--------------------------------------------------------------------------*/
+
+static int
+Closelink(Tcl_Interp *interp, register PlFrame *plFramePtr,
+	 int argc, char **argv)
+{
+    register PLRDev *plr = plFramePtr->plr;
+    register PLiodev *iodev = plr->iodev;
+
+    dbug_enter("Closelink");
+
+    if (iodev->fd == 0) {
+	Tcl_AppendResult(interp, "no link currently open", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    Tk_DeleteFileHandler(iodev->fd);
+    pdf_close(plr->pdfs);
+    iodev->fd = 0;
 
     return TCL_OK;
 }
