@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.51  1995/10/14 17:17:03  mjl
+ * Revision 1.52  1995/10/22 17:42:34  mjl
+ * Removed -f (filter) option -- it's too overloaded, and unnecessary to boot:
+ * just use -i - for input from stdin or -o - for output to stdout.
+ *
+ * Revision 1.51  1995/10/14  17:17:03  mjl
  * Fixed problems associated with reading metafiles from stdin or specified
  * via the -i flag.  This should fix the current crop of printing problems.
  *
@@ -229,14 +233,6 @@ static PLOptionTable options[] = {
     PL_OPT_FUNC | PL_OPT_ARG,
     "-i name",
     "Input filename" },
-{
-    "f",			/* Filter option */
-    NULL,
-    NULL,
-    &input_type,
-    PL_OPT_BOOL,
-    "-f",
-    "Filter option -- equivalent to \"-i - -o -\"" },
 {
     "b",			/* Beginning page number */
     Opt_b,
