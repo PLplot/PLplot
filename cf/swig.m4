@@ -26,19 +26,41 @@ AC_DEFUN([SWIG_PROG],[
 		[swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
 		AC_MSG_RESULT([$swig_version])
 		if test -n "$swig_version" ; then
-			# Calculate the required version number
-			[major=0`echo $1 | sed 's/\..*//'`]
-			[minor=0`echo $1 | sed 's/[0-9]*\.//;s/\..*//'`]
-			[patch=0`echo $1 | sed 's/[0-9]*\.[0-9]*\.//' | sed 's/[^0-9].*//'`]
-			[swig_required_version=$(( 1000000 * $major  + 1000 * $minor + $patch ))]
-
-			# Calculate the available version number
-			[major=0`echo $swig_version | sed 's/\..*//'`]
-			[minor=0`echo $swig_version | sed 's/[0-9]*\.//;s/\..*//'`]
-			[patch=0`echo $swig_version | sed 's/[0-9]*\.[0-9]*\.//' | sed 's/[^0-9].*//'`]
-			[swig_available_version=$(( 1000000 * $major  + 1000 * $minor + $patch ))]
-
-			if test $swig_required_version -gt $swig_available_version ; then
+			# Calculate the required version number components
+			[required=$1]
+			[required_major=`echo $required | sed 's/[^0-9].*//'`]
+			if test -z "$required_major" ; then
+				[required_major=0]
+			fi
+			[required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
+			[required_minor=`echo $required | sed 's/[^0-9].*//'`]
+			if test -z "$required_minor" ; then
+				[required_minor=0]
+			fi
+			[required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
+			[required_patch=`echo $required | sed 's/[^0-9].*//'`]
+			if test -z "$required_patch" ; then
+				[required_patch=0]
+			fi
+			# Calculate the available version number components
+			[available=$swig_version]
+			[available_major=`echo $available | sed 's/[^0-9].*//'`]
+			if test -z "$available_major" ; then
+				[available_major=0]
+			fi
+			[available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
+			[available_minor=`echo $available | sed 's/[^0-9].*//'`]
+			if test -z "$available_minor" ; then
+				[available_minor=0]
+			fi
+			[available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
+			[available_patch=`echo $available | sed 's/[^0-9].*//'`]
+			if test -z "$available_patch" ; then
+				[available_patch=0]
+			fi
+			if test $available_major -ne $required_major \
+				-o $available_minor -ne $required_minor \
+				-o $available_patch -lt $required_patch ; then
 				AC_MSG_WARN([SWIG version >= $1 is required.  You have $swig_version.  You should look at http://www.swig.org])
 				SWIG='echo "Error: SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org" ; false'
 			else
