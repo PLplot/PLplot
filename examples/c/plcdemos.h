@@ -1,27 +1,4 @@
 /* $Id$
-<<<<<<< plcdemos.h
- * $Log$
- * Revision 1.3.2.2  2001/01/22 09:09:02  rlaboiss
- * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
- *
- * Revision 1.3.2.1  2001/01/22 09:05:31  rlaboiss
- * Debian stuff corresponding to package version 4.99j-11
- *
- * Revision 1.3  1995/06/01  21:40:04  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.2  1995/05/07  02:22:20  mjl
- * Added include of ctype.h for the demos that need it.
- *
- * Revision 1.1  1995/04/12  08:21:11  mjl
- * Created to keep all the junk common to the C demos.  Helps to keep me
- * from cluttering up plplot.h.
-*/
-
-/*	plcdemos.h
-=======
->>>>>>> 1.6
 
 	Everything needed by the C demo programs.
 	Created to avoid junking up plplot.h with this stuff.
@@ -30,7 +7,7 @@
 #ifndef __PLCDEMOS_H__
 #define __PLCDEMOS_H__
 
-/* Next line added by Rafael Laboissier <rafael@icp.inpg.fr>
+/* Next line added by Rafael Laboissiere <rafael@icp.inpg.fr>
    on Sat Nov  6 17:35:14 CET 1999  */
 #define PL_DOUBLE
 
