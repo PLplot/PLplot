@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.84  1996/02/24 05:04:29  shouman
+ * Revision 1.85  1996/06/26 21:32:21  furnish
+ * Update version to reflect new snapshot.
+ *
+ * Revision 1.84  1996/02/24  05:04:29  shouman
  * Added plgDevs() routine like plgFileDevs(), to return a list of all drivers
  * present.  Made ndev argument to both be interpreted on input as the
  * dimension of the input arrays so as to stay in bounds.
@@ -90,7 +93,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99j"
+#define PLPLOT_VERSION "4.99-ss960626"
 
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
