@@ -100,8 +100,9 @@ change to use the versioned name, but this should be straightforward to do
 both for RedHat and Debian packages.
 
 * 2003-09-20: References are not there in info bibliography section (chapter
-14).  Tentatively classified as minor effort, but it may be a matter of
-a major effort or merely wait for better backend software for docbook xml.
+14).  According to Rafael this problem is caused by docbook2x not currently
+supporting the <bibliomixed> and <bibliomset> tags so we will have to wait
+for that to get sorted out.
 
 * plplot_general list 2003-08-26: Arjen Markus <arjen.markus@wldelft.nl> "I
 have found that with the X Window driver the values returned by plgspa()
