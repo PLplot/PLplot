@@ -216,7 +216,7 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
 
         } else if ((text[i]>> (7*4)) == 0x1) {
 	   /* FCI in text stream; change font accordingly. */
-	   FT_SetFace(pls , text[i++]);
+	   FT_SetFace(pls , text[i]);
         } else {
 
 	/* see if we have kerning for the particular character pair */
