@@ -3,6 +3,8 @@ plplot (5.3.0.cvs.20040324-3) unstable; urgency=low
   * NOT YET RELEASED!
   * debian/control: Removed build-dependency on g++-3.3 | g++-3.2, since
     g++ is a build-essential package (closes: #244007).
+  * Build in unstable, so that the octave-plplot package gets
+    the right dependency on libhdf5 (closes: #246297).
 
  --
 
