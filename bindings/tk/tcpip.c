@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/07/22 22:20:59  mjl
+ * Revision 1.10  1994/07/25 06:04:21  mjl
+ * Desuckified header inclusions, and added test for unistd.h before
+ * including it.
+ *
+ * Revision 1.9  1994/07/22  22:20:59  mjl
  * Eliminated a gcc -Wall warning.
  *
  * Revision 1.8  1994/07/21  08:41:56  mjl
@@ -95,28 +99,27 @@
  * forego the ANSI compiler here and go with good (bad) old "cc".
  */
 
-#ifdef __STDC__				/* Just in case.. */
-#include "plplotP.h"
+#include "plConfig.h"
 #ifdef _POSIX_SOURCE
 #undef _POSIX_SOURCE
 #endif
-#else
 #define PLARGS(a)	()
-#endif
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include "pdf.h"
-#include "plDevs.h"
 #include <tcl.h>
 #include <tk.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <math.h>
 #include <ctype.h>
 #include <sys/uio.h>
 #include <errno.h>
