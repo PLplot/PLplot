@@ -535,6 +535,7 @@ typedef struct cont_level {
   struct cont_level *next; /* contour level */
 } CONT_LEVEL;
 
+/* No longer used and to be replaced in future by cont_storel. */
 void
 cont_store(PLFLT *x, PLFLT *y, PLFLT **f, PLINT nx, PLINT ny,
 	   PLINT kx, PLINT lx, PLINT ky, PLINT ly, 
@@ -609,8 +610,14 @@ plP_setpxl(PLFLT xpmm0, PLFLT ypmm0);
 
 /* Get background parameters for 3d plot. */
 
+/* No longer used and to be replaced in future by plP_gzbackw. */
 void
 plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt);
+
+/* Get background parameters (including line width) for 3d plot. */
+
+void
+plP_gzbackw(PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw);
 
 /* Move to physical coordinates (x,y). */
 

@@ -451,7 +451,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT ln;
-    PLINT *zbflg, *zbcol;
+    PLINT *zbflg, *zbcol, *zbwidth;
     PLFLT *zbtck;
     PLINT xdigmax, xdigits;
     PLINT ydigmax, ydigits;
@@ -477,11 +477,12 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* We have to wait until after the plot is drawn to draw back */
 /* grid so store this stuff. */
 
-    plP_gzback(&zbflg, &zbcol, &zbtck);
+    plP_gzbackw(&zbflg, &zbcol, &zbtck, &zbwidth);
     *zbflg = plP_stsearch(zopt, 'd');
     if (*zbflg) {
 	*zbtck = ztick;		/* save tick spacing */
 	*zbcol = plsc->icol0;	/* and color */
+	*zbwidth = plsc->width;	/* and line width */
     }
 
     if (cxx >= 0.0 && cxy <= 0.0) {

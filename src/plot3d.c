@@ -31,7 +31,7 @@
 static PLINT pl3mode = 0;	/* 0 3d solid; 1 mesh plot */
 static PLINT pl3upv = 1;	/* 1 update view; 0 no update */
 
-static PLINT zbflg = 0, zbcol;
+static PLINT zbflg = 0, zbcol, zbwidth;
 static PLFLT zbtck;
 
 static PLINT *oldhiview = NULL;
@@ -222,11 +222,6 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   z[0] = z0; z[1] = z1; z[2] = z2;
   n = 3;
 
-  if (falsecolor)
-      plcol1(((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz));
-  else
-    plcol1(plGetAngleToLight(x, y, z));
-
   V[0] = x; V[1] = y; V[2] = z;
 
   n = plP_clip_poly(n, V, 0,  1, -xmin);
@@ -237,6 +232,11 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   n = plP_clip_poly(n, V, 2, -1,  zmax);
 
   if(n > 0) {
+     if (falsecolor)
+      plcol1(((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz));
+     else
+       plcol1(plGetAngleToLight(x, y, z));
+
      for(i=0; i<n; i++) {
 	u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
 	v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
@@ -335,6 +335,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   CONT_LEVEL *cont, *clev;
   CONT_LINE *cline;
   int ct, ix, iy, iftriangle;
+  PLINT color = plsc->icol0, width = plsc->width;
 
   if (plsc->level < 3) {
     myabort("plsurf3dl: Please set up window first");
@@ -441,7 +442,6 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   /* we've got to draw the background grid first, hidden line code has to draw it last */
   if (zbflg) {
-    PLINT color = plsc->icol0;
     PLFLT bx[3], by[3], bz[3];
     PLFLT tick=0, tp;
     PLINT nsub=0;
@@ -457,7 +457,8 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     bx[2] = (ixOrigin!=ixmin && ixSlow==0) || ixSlow > 0 ? xmax : xmin;
     by[2] = (iyOrigin!=iymin && iySlow==0) || iySlow > 0 ? ymax : ymin;
 
-    plcol(zbcol);
+    plwid(zbwidth);
+    plcol0(zbcol);
     for(tp = tick * floor(zmin / tick) + tick; tp <= zmax; tp += tick) {
       bz[0] = bz[1] = bz[2] = tp;
       plline3(3, bx, by, bz);
@@ -467,7 +468,8 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     by[0] = by[1];
     bz[0] = zmin;
     plline3(2, bx, by, bz);
-    plcol(color);
+    plwid(width);
+    plcol0(color);
   }
 
   /* If enabled, draw the contour at the base */
@@ -627,8 +629,8 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		   * -- at the end this will make up the contour line */
 
 		  if (opt & SURF_CONT) {
-		    /* surface contour with black color (suggestions?) */
-		    plcol0(0);
+		    /* surface contour with color set by user */
+		    plcol0(color);
 		    zz[0] = zz[1] = clevel[k];
 		    plline3(2, xx, yy, zz);
 		  }
@@ -772,7 +774,7 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax)
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init, i, ix, iy, color;
+    PLINT init, i, ix, iy, color, width;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin=0, ixmax=nx-1, iymin=0, iymax=ny-1;
     PLINT clipped = 0, base_cont = 0, side = 0;
@@ -1121,9 +1123,12 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 
     if (zbflg) {
 	color = plsc->icol0;
-	plcol(zbcol);
+        width = plsc->width;
+	plwid(zbwidth);
+	plcol0(zbcol);
 	plgrid3(zbtck);
-	plcol(color);
+	plwid(width);
+	plcol0(color);
     }
 
     freework();
@@ -1216,17 +1221,18 @@ plxyindexlimits(PLINT instart, PLINT inn,
 }
 
 /*--------------------------------------------------------------------------*\
- * void plP_gzback()
+ * void plP_gzbackw()
  *
  * Get background parameters for 3d plot.
 \*--------------------------------------------------------------------------*/
 
 void
-plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
+plP_gzbackw(PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw)
 {
     *zbf = &zbflg;
     *zbc = &zbcol;
     *zbt = &zbtck;
+    *zbw = &zbwidth;
 }
 
 /*--------------------------------------------------------------------------*\
