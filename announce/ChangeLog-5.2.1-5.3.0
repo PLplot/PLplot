@@ -1,3 +1,131 @@
+Commit from airwin (2004-01-20 21:09 CET)
+------------------
+
+Improve configuration logic surrounding the question of whether fortran
+command-line processing is available or not.
+
+  plplot  configure.ac                    1.153
+  plplot  bindings/f77/configurable.f.in  1.3
+  plplot  test/test_f77.sh.in             1.5
+
+
+Commit from rlaboiss (2004-01-20 19:07 CET)
+--------------------
+
+Cosmetic formatting change in the plplot-config section.
+
+  plplot  INSTALL  1.10
+
+
+Commit from airwin (2004-01-20 18:07 CET)
+------------------
+
+Updated plplot-config documentation.
+
+  plplot  INSTALL  1.9
+
+
+Commit from rlaboiss (2004-01-20 15:48 CET)
+--------------------
+
+Added notice about use of pkg-config support.
+
+  plplot  INSTALL  1.8
+
+
+Commit from rlaboiss on branch v5_3_0 (2004-01-20 15:46 CET)
+-------------------------------------
+
+Added notice about use of pkg-config support.
+
+  plplot  INSTALL  1.7.2.1
+
+
+Commit from rlaboiss on branch v5_3_0 (2004-01-20 15:37 CET)
+-------------------------------------
+
+Added year 2004 for Copyright holder AWI and RL.
+
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.32.2.1
+
+
+Commit from rlaboiss on branch v5_3_0 (2004-01-20 15:30 CET)
+-------------------------------------
+
+Committing the last fix to get_drv_info_LDADD into the v5_3_0 branch, so
+that it will be in the final release.
+
+  plplot  drivers/Makefile.am  1.36.2.3
+
+
+Commit from rlaboiss (2004-01-20 15:28 CET)
+--------------------
+
+Further simplication of the code, since the Automake construct
+
+    a += b
+    a += c
+
+can be written as
+
+    a += b c
+
+  plplot  drivers/Makefile.am  1.41
+
+
+Commit from rlaboiss (2004-01-20 15:09 CET)
+--------------------
+
+Added $(LIB_TAG) to the names of the plplottcltk and tclmatrix .la files.
+Also, to avoid repetition of code, created the variables $(libplplottcltk)
+and $(libtclmatrix).
+
+  plplot  drivers/Makefile.am  1.40
+
+
+Commit from airwin (2004-01-20 06:38 CET)
+------------------
+
+Fix for get-drv-info linking issue with libplplottcltk and libtclmatrix.
+This fix should allow cross-platform dynamic loading of the tk and tkwin
+drivers by get-drv-info.
+
+  plplot  drivers/Makefile.am  1.39
+
+
+Commit from airwin (2004-01-20 03:25 CET)
+------------------
+
+Tighten up memory managment for C examples 18 and 21.
+
+  plplot  examples/c/x18c.c  1.21
+  plplot  examples/c/x21c.c  1.12
+
+
+Commit from airwin (2004-01-20 03:03 CET)
+------------------
+
+Plot a contour only if the number of points in the contour is greater than
+zero.
+
+This fix takes care of some memory management issues (use of uninitialized
+values) turned up by valgrind for example 21.
+
+  plplot  src/plot3d.c  1.54
+
+
+Commit from airwin (2004-01-20 00:10 CET)
+------------------
+
+Tighten memory management for C examples 1-16.
+
+  plplot  examples/c/x08c.c  1.41
+  plplot  examples/c/x09c.c  1.25
+  plplot  examples/c/x11c.c  1.22
+  plplot  examples/c/x14c.c  1.23
+  plplot  examples/c/x16c.c  1.25
+
+
 Commit from rlaboiss on branch v5_3_0 (2004-01-19 21:32 CET)
 -------------------------------------
 
@@ -4876,9 +5004,9 @@ Commit from rlaboiss (2003-08-27 23:56 CET)
 
 * Added year 2002 for copyright entry of Alan and Rafael.
 
-* Fixed the Project-Date entity, which contains now the RCS keyword $Date$,
+* Fixed the Project-Date entity, which contains now the RCS keyword "Date",
   and must be updated with CVS keyword substitution.  This is not a
-  completely satisfactory solution, because the $Date$ keyword reflects only
+  completely satisfactory solution, because the "Date" keyword reflects only
   the date of the last CVS checkin of the present file.  We ought to find a
   way to update automatically the date of release of the documentation.
 
