@@ -931,14 +931,14 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 
 /* Character arrays: */
 
-%typemap(jni) (PLINT *p_argc, char **argv) "jobjectArray"
-%typemap(jtype) (PLINT *p_argc, char **argv) "String[]"
-%typemap(jstype) (PLINT *p_argc, char **argv) "String[]"
-%typemap(javain) (PLINT *p_argc, char **argv) "$javainput"
-%typemap(javaout) (PLINT *p_argc, char **argv) {
+%typemap(jni) (int *p_argc, char **argv) "jobjectArray"
+%typemap(jtype) (int *p_argc, char **argv) "String[]"
+%typemap(jstype) (int *p_argc, char **argv) "String[]"
+%typemap(javain) (int *p_argc, char **argv) "$javainput"
+%typemap(javaout) (int *p_argc, char **argv) {
    return $jnicall;
 }
-%typemap(in) (PLINT *p_argc, char **argv) (jint size) {
+%typemap(in) (int *p_argc, char **argv) (jint size) {
    int i = 0;
    size = (*jenv)->GetArrayLength(jenv, $input);
    $1 = &size;
@@ -959,7 +959,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 }
 
 /* This cleans up the memory we malloc'd before the function call */
-%typemap(freearg) (PLINT *p_argc, char **argv) {
+%typemap(freearg) (int *p_argc, char **argv) {
    int i;
 /* Commented out version straight from swig documentation, but I think
  * it is wrong.

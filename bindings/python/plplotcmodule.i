@@ -824,7 +824,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 /* End of all code associated with special call-back functions.*/
 
 /* Process options list using current options info. */
-%typemap(in) (PLINT *p_argc, char **argv) (PLINT tmp) {
+%typemap(in) (int *p_argc, char **argv) (int tmp) {
   int i;
   if (!PyList_Check($input)) {
     PyErr_SetString(PyExc_ValueError, "Expecting a list");
@@ -845,7 +845,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $2[i] = 0;
 }
 
-%typemap(freearg) (PLINT *p_argc, char **argv) {
+%typemap(freearg) (int *p_argc, char **argv) {
    if ($2) free($2);
 }
 
