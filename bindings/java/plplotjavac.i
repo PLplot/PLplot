@@ -78,14 +78,14 @@ typedef int PLINT;
 #endif
 
 %{
-/*---------------------------------------------------------------------------//
-// Array allocation & copy helper routines.  Note because of swig limitations
-// it is necessary to release the java array memory right after calling these
-// routines.  Thus it is necessary to allocate and copy the arrays  even if 
-// the java and plplot arrays are of the same type.  Note, because of this 
-// change to Geoffrey's original versions, caller must always free memory 
-// afterwards.  Thus, the must_free_buffers logic is gone as well.
-//---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------
+ * Array allocation & copy helper routines.  Note because of swig limitations
+ * it is necessary to release the java array memory right after calling these
+ * routines.  Thus it is necessary to allocate and copy the arrays  even if 
+ * the java and plplot arrays are of the same type.  Note, because of this 
+ * change to Geoffrey's original versions, caller must always free memory 
+ * afterwards.  Thus, the must_free_buffers logic is gone as well.
+ *---------------------------------------------------------------------------*/
 
 /* 1d array of jints */
 
@@ -173,10 +173,6 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
    static PLINT Xlen = 0, Ylen = 0;
    static PLFLT **xg;
    static PLFLT **yg;
-/* This currently just used for plgdev, plgfnam, and plgver which apparently
- * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
- * have a 1000 byte limit here. */
-   static char buff[1000];
   %}
 
 /* The following typemaps take care of marshaling values into and out of PLplot functions. The
@@ -788,14 +784,33 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(javaout) char *OUTPUT {
    return $jnicall;
 }
-%typemap(in) char* OUTPUT {
+
+/* The code below updates the jstring argument rather than returning a 
+ * jstring because the fundamental function we are wrapping here has type
+ * void, and that is wrapped by swig as a void JNI function, etc.  Anyhow, I
+ * think the generated code is fine and should work for say, plgver, but it
+ * doesn't.  (See commented out code in x01.java).
+ * Probably, the best thing to do is to make a helper function for
+ * each of plgdev, plgfnam, and plgver which returns a character string, and
+ * then allow swig to wrap these helper functions, but I will leave that to
+ * someone else.  Thus, for now, comment out all of this as well as
+ * the plgdev, plgfnam, and plgver prototypes. */
+
+// temporary
+#if 0
+/* This currently just used for plgdev, plgfnam, and plgver which apparently
+ * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
+ * have a 1000 byte limit here. */
+%typemap(in) char* OUTPUT (char buff[1000]){
   $1 = buff;
 }
 %typemap(argout) char *OUTPUT {
-   $1 = (*jenv)->NewStringUTF(jenv, buff);
+   $input = (*jenv)->NewStringUTF(jenv, buff$argnum);
 }
 %typemap(freearg) char *OUTPUT {}
 
+// temporary
+#endif
 /* Character arrays: */
 
 %typemap(jni) (PLINT *p_argc, char **argv) "jobjectArray"
@@ -814,7 +829,10 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for (i = 0; i<size; i++) {
       jstring j_string = (jstring)(*jenv)->GetObjectArrayElement(jenv, $input, i);
       const char * c_string = (*jenv)->GetStringUTFChars(jenv, j_string, 0);
-      $2[i] = malloc(strlen((c_string)+1)*sizeof(const char *));
+/* Commented out version straight from swig documentation, but I think
+ * it is wrong.
+ *    $2[i] = malloc(strlen((c_string)+1)*sizeof(const char *)); */
+      $2[i] = malloc((strlen(c_string)+1)*sizeof(const char *));
       strcpy($2[i], c_string);
       (*jenv)->ReleaseStringUTFChars(jenv, j_string, c_string);
       (*jenv)->DeleteLocalRef(jenv, j_string);
@@ -825,7 +843,10 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 /* This cleans up the memory we malloc'd before the function call */
 %typemap(freearg) (PLINT *p_argc, char **argv) {
    int i;
-   for (i=0; i<size$argnum-1; i++)
+/* Commented out version straight from swig documentation, but I think
+ * it is wrong.
+ * for (i=0; i<size$argnum-1; i++) */
+   for (i=0; i<size$argnum; i++)
      free($2[i]);
    free($2);
 }

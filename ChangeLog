@@ -1,3 +1,8 @@
+2002-12-31  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Finished Java swig-based interface to Plplot for now.  Current
+	  limitations are detailed in bindings/java/README.javaAPI.
+
 2002-12-30  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Implement plParseOpts for new Java interface and change all

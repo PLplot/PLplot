@@ -58,11 +58,6 @@ plenv(...)
 and a tclIndex file is generated. "auto_path" is correctly initialized to
 ~/tcl, pwd/tcl, etc, but plconfig is not executed.  Reported by Joao.  Status?
 
-* Finish Java API or else completely reimplement it with swig (which might
-be a much faster way of solving the problem).  Also, Java currently
-unimplemented with new configuration approach, but that is straightforward
-to do once the Java API problem is sorted out.
-
 * Sort out state problems in repository.  These make every merge of two
 different branchs or the -D (date) option on cvs commands problematic since
 deleted files with the wrong state information are brought back like zombies
@@ -145,8 +140,8 @@ the same results.  Those latter interface examples currently need some
 maintenance as well due to the C example changes done recently by Joao.
 
 * fortran API used to be our most complete non-C interface, but now it has
-fallen behind python (and would also fall behind java and perl if/when those
-interfaces become based on swig).  We need a volunteer (or volunteers) to
+fallen behind python and java (and would also fall behind perl if/when that
+interface becomes based on swig).  We need a volunteer (or volunteers) to
 make sure all our additions/changes to the common API over the last few
 years are implemented in fortran. 
 
