@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.52  1994/09/16 19:14:57  mjl
+ * Revision 1.53  1994/09/18 07:14:01  mjl
+ * Fixed yet more stupid bugs that cause alloc/free or strcmp problems on
+ * some systems.
+ *
+ * Revision 1.52  1994/09/16  19:14:57  mjl
  * Color allocation changed: now cmap1 entries aren't allocated until the
  * first time a cmap1 color is requested.  This will help prevent running out
  * of colors when many PLplot X windows from independent processes are active
@@ -364,9 +368,10 @@ plD_tidy_xw(PLStream *pls)
 
     xwd->count--;
     if (xwd->count == 0) {
+	int ixwd = xwd->ixwd;
 	XFreeGC(xwd->display, xwd->gc);
 	XCloseDisplay(xwd->display);
-	free_mem(xwDisplay[xwd->ixwd]);
+	free_mem(xwDisplay[ixwd]);
     }
     pls->plbuf_write = 0;
 }
@@ -584,11 +589,14 @@ Init(PLStream *pls)
 
     dev->xwd = NULL;
     for (i = 0; i < PLXDISPLAYS; i++) {
-	if (pls->FileName == NULL && xwDisplay[i] == NULL) {
+	if (xwDisplay[i] == NULL) {
+	    continue;
+	}
+	else if (pls->FileName == NULL && xwDisplay[i]->displayName == NULL) {
 	    dev->xwd = xwDisplay[i];
 	    break;
 	}
-	else if (pls->FileName == NULL || xwDisplay[i] == NULL) {
+	else if (pls->FileName == NULL || xwDisplay[i]->displayName == NULL) {
 	    continue;
 	}
 	else if (strcmp(xwDisplay[i]->displayName, pls->FileName) == 0) {
