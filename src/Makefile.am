@@ -57,8 +57,13 @@ sources = \
 libplplot_la_SOURCES  = $(sources)
 libplplotd_la_SOURCES = $(sources)
 
-libplplot_la_LDFLAGS  = $(version) -lm -ldl -lfreetype
-libplplotd_la_LDFLAGS = $(version) -lm -ldl -lfreetype
+if with_freetype
+libplplot_la_LDFLAGS  = $(version) -no-undefined -lm -ldl -lfreetype
+else
+libplplot_la_LDFLAGS  = $(version) -no-undefined -lm -ldl
+endif
+
+libplplotd_la_LDFLAGS = $(libplplot_la_LDFLAGS)
 
 ##libdrv = ../drivers/libpldrv.la
 

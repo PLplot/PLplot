@@ -358,6 +358,11 @@ SOVERSION=6:0:1
 AC_SUBST(SOVERSION)
 
 ### Test for programs
+AC_LIBTOOL_DLOPEN
+AC_LIBLTDL_CONVENIENCE
+AC_CONFIG_SUBDIRS(libltdl)
+AC_SUBST(INCLTDL)
+AC_SUBST(LIBLTDL)
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
@@ -491,6 +496,12 @@ AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 AC_PATH_XTRA
 MODULES="xwin"$LIB_TAG"_drv.la ps"$LIB_TAG"_drv.la"
 AC_SUBST(MODULES)
+
+### Modify system-dependent results based on availability
+###AC_INCLUDE(sysloc.in)
+
+### automake conditionals for system-dependent results
+AM_CONDITIONAL(with_freetype, test "$with_freetype" = yes)
 
 ### Drivers
 

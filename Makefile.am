@@ -1,1 +1,1 @@
-SUBDIRS = src drivers include lib bindings
+SUBDIRS = libltdl src drivers include lib bindings

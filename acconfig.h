@@ -49,6 +49,9 @@
 /* Define if [incr Tk] is available */
 #undef HAVE_ITK
 
+/* Define if [freetype] is available */
+#undef HAVE_FREETYPE
+
 /* Define if you want PLplot's float type to be double */
 #undef PL_DOUBLE
 
