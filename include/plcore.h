@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.31  2000/05/10 20:39:08  furnish
+ * Add mac routines to terminal types.  Rob Managan.
+ *
  * Revision 1.30  1996/10/08 18:37:47  furnish
  * First cut on a new driver for portable bitmaps.
  *
@@ -167,6 +170,35 @@ typedef struct {
 static PLDispatchTable dispatch_table[] = {
 
     /* Terminal types */
+
+#ifdef PLD_mac
+    {
+        "Macintosh Display; 8 windows",
+        "mac8",
+        1,
+        plD_init_mac8,
+        plD_line_mac,
+        plD_polyline_mac,
+        plD_eop_mac,
+        plD_bop_mac,
+        plD_tidy_mac,
+        plD_state_mac,
+        plD_esc_mac
+    },
+    {
+        "Macintosh Display; 1 window, no pausing",
+        "mac1",
+        1,
+        plD_init_mac1,
+        plD_line_mac,
+        plD_polyline_mac,
+        plD_eop_mac,
+        plD_bop_mac,
+        plD_tidy_mac,
+        plD_state_mac,
+        plD_esc_mac
+    },
+#endif
 
 #ifdef PLD_next
     {
