@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/09/28 21:25:08  mjl
+ * Revision 1.17  1994/01/15 17:19:13  mjl
+ * Eliminated include of pdf.h (not needed).
+ *
+ * Revision 1.16  1993/09/28  21:25:08  mjl
  * Now discards the old temp file and opens a new one on each new page.  This
  * avoids a lot of problems redisplaying partially filled pages -- we can
  * just read to EOF without worrying about junk in the file from previous
@@ -63,7 +66,6 @@
 #include <string.h>
 
 #include "drivers.h"
-#include "pdf.h"
 #include "metadefs.h"
 
 /* Function prototypes */
