@@ -829,6 +829,11 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
 		dev = (WinDev *)pls->dev;
 	
 	switch (message) {
+	case WM_CHAR :
+		if ( wParam == VK_RETURN ) {
+			dev->nextPlot = 1 ;
+		}
+		return 0;
 	case WM_LBUTTONDOWN :
 		dev->newCursor = 1;
 		dev->cursorX = LOWORD(lParam);
