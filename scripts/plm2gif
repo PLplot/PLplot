@@ -22,7 +22,7 @@
 # plots have the correct aspect ratio.  This is complicated by the need to
 # swap the postscript orientation into landscape mode.  The GIF files
 # created are by default of resolution 640x480 or less.  To change, modify
-# $res accordingly (note: Y-res must be exactly 1/2 of X-res in order for
+# $res accordingly (note: Y-res must be exactly 9/16 of X-res in order for
 # the plots to have the correct aspect ratio).
 #
 ############################################################################
@@ -30,8 +30,8 @@
 # Settings
 
 gs="gs"
-res="75.3x37.65"	# 640 x 414
-#res="94.1x47.05"	# 800 x 518
+res="75.3x42.36"	# 640 x 466
+#res="94.1x52.93"	# 800 x 582
 
 # First find plrender and check version.
 # Have to be a bit clever here since old versions of plrender returned an
