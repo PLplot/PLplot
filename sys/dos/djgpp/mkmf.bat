@@ -5,7 +5,7 @@ REM -----------------------------------------------------------------------
 
 @echo "creating tmp\Makefile"
 
-set enable_f77="no"
+set enable_f77="yes"
 
 set plcf=../../../cf
 

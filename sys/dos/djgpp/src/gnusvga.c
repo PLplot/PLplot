@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/08/10 01:08:29  mjl
+ * Revision 1.2  1994/08/10 20:23:47  mjl
+ * Latest changes for DJGPP port by Paul Kirschner.
+ *
+ * Revision 1.1  1994/08/10  01:08:29  mjl
  * New directory structure, config files, and other modifications for PLplot
  * 4.99h/djgpp DOS port, submitted by Paul Kirschner.  New driver supports
  * color fill.
@@ -343,7 +346,7 @@ fill_polygon(PLStream *pls)
 
     for (i = 0; i < pls->dev_npts; i++) {
 	points[i][0] = pls->dev_x[i];
-        points[i][1] = pls->dev_y[i];
+        points[i][1] = vgay - pls->dev_y[i];
     }
     GrFilledPolygon(pls->dev_npts, points, col);
 

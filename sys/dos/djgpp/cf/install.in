@@ -28,8 +28,9 @@ install_lib:
 	-if not exist $(INFO_DIR) mkdir $(INFO_DIR)
 	-copy ..\..\..\..\lib\libplplt.a $(LIB_DIR)
 	-copy ..\..\..\..\lib\*.fnt $(LIB_DIR)
-	-echo $(LIB_DIR)
-	-echo $(LIB_DIR)\libplplt.a
+	-copy ..\..\..\..\lib\*.map $(LIB_DIR)
+#	-echo $(LIB_DIR)
+#	-echo $(LIB_DIR)\libplplt.a
 	-$(RANLIB) $(LIB_DIR2)/libplplt.a
 #	-cd ..\..\..\..
 #	-for %i in (README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks) do copy %i $(DOC_DIR)

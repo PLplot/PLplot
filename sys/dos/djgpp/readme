@@ -10,9 +10,18 @@ To compile everything simply:
 5) mkdir \plplot
 6) make install
 
+To compile the demos:
+7) cd \plplot\demos\c
+8) make cdemos
+
+To compile the f2c demos:
+9) cd \plplot\demos\f77
+10) make fdemos
+
 The install can provide the stubs for FORTRAN via "f2c", the
 fortran-to-C converter.  Set the "enable_f77" variable to "yes" in
-./mkmf.bat install the f2c stubs.
+./mkmf.bat install the f2c stubs.  Check netlib.att.com for the latest
+source to f2c.
 
 This will install the plplot library in /plplot/lib and the demos in
 /plplot/demos.  This can be changed in the ./cf/init.in file.  (Please
