@@ -719,8 +719,9 @@ if test "$enable_f77" = yes ; then
   AC_LANG_PUSH([Fortran 77])
   AC_MSG_CHECKING([if fortran command-line parsing is possible])
   AC_RUN_IFELSE([
+      implicit none
       character*100 command
-      integer narg
+      integer narg, iargc
 c      get number of command-line arguments
       narg = iargc()
 c      get command name.  Apparently this does not always give back the
