@@ -857,27 +857,26 @@ AC_SUBST(PYTHON_NUM_DIR)
 # swig only used by python and java so far....
 if test "$enable_python" = "yes" -o "$enable_java" = "yes"; then
     AC_CHECK_PROGS(SWIG, swig)
-    SWIG_VERSION=`$SWIG  -version 2>&1 \
-    | sed 's/^SWIG Version // ; t END ; d ; : END q'`
-    SWIG_VERSION_MAJOR=`echo $SWIG_VERSION \
-    | sed 's/\..*//'`
-    [SWIG_VERSION_MINOR=`echo $SWIG_VERSION \
-    | sed 's/[0-9]*\.// ; s/\..*//'`]
-    [SWIG_VERSION_MICRO=`echo $SWIG_VERSION \
-    | sed 's/[0-9]*\.[0-9]*\.//;s/[^0-9].*//'`]
-    #echo Swig major version: $SWIG_VERSION_MAJOR
-    #echo Swig minor version: $SWIG_VERSION_MINOR
-    #echo Swig micro version: $SWIG_VERSION_MICRO
-    # Must have swig version 1.3.17 (or later micro number for 1.3.x)
-    if test -z "$SWIG" \
-    -o "$SWIG_VERSION_MAJOR" != "1" \
-    -o "$SWIG_VERSION_MINOR" != "3" \
-    -o $(($SWIG_VERSION_MICRO < 17)) = 1 ; then
+    if test -n "$SWIG" ; then
+        SWIG_VERSION=`$SWIG  -version 2>&1 \
+                      | sed 's/^SWIG Version // ; t END ; d ; : END q'`
+        SWIG_VERSION_MAJOR=`echo $SWIG_VERSION \
+                      | sed 's/\..*//'`
+        [SWIG_VERSION_MINOR=`echo $SWIG_VERSION \
+                      | sed 's/[0-9]*\.// ; s/\..*//'`]
+        [SWIG_VERSION_MICRO=`echo $SWIG_VERSION \
+                      | sed 's/[0-9]*\.[0-9]*\.//;s/[^0-9].*//'`]
+        # Must have swig version 1.3.17 (or later micro number for 1.3.x)
+        if test -o "$SWIG_VERSION_MAJOR" != "1" \
+                -o "$SWIG_VERSION_MINOR" != "3" \
+                -o $(($SWIG_VERSION_MICRO < 17)) = 1 ; then
+            SWIG=
+            AC_MSG_WARN([Must have swig version 1.3.17 or later 1.3.x])
+            AC_MSG_WARN([for proper development of java and python bindings])
+        fi
         # That sharp character '#' at the end is important
-	SWIG="-@echo swig program not available #"
-        AC_MSG_WARN([Must have swig version 1.3.17 or later 1.3.x])
-        AC_MSG_WARN([for proper development of java and python bindings])
-   fi
+	SWIG=${SWIG:-"-@echo swig program not available #"}
+    fi
 fi
 # ----------------------------------------------------------------------------
 # linuxvga support
