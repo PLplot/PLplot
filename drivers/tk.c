@@ -1,95 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1994/06/09 20:27:02  mjl
+ * Revision 1.37  1994/06/16 19:13:10  mjl
+ * Moved Tk initialization specific to the tk driver into this file.  Changed
+ * plserver startup to include the -e <script> option, for running the
+ * plserver_init proc at startup.
+ *
+ * Revision 1.36  1994/06/09  20:27:02  mjl
  * Changed direct widget and initialization commands to reflect changes to
  * plwidget.tcl and plframe.c.
- *
- * Revision 1.35  1994/05/14  05:43:13  mjl
- * Additional debug information.
- *
- * Revision 1.34  1994/05/07  03:13:37  mjl
- * Replaced bgcolor by cmap0[0].
- *
- * Revision 1.33  1994/04/30  16:15:00  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.32  1994/04/08  12:05:21  mjl
- * Mouse event handler added, also escape function support for the
- * PLESC_EXPOSE, PLESC_RESIZE, PLESC_REDRAW, PLESC_EH commands (contributed
- * by Radey Shouman).  Device-specific data typedef moved into plplotTK.h
- * to allow access by determined users.  nopause handling moved back into
- * here where it belongs.  Byte count no longer kept track of here in favor
- * of doing it in the PDF write routines.
- *
- * Revision 1.31  1994/03/23  06:53:36  mjl
- * Added support for: color map 1 color selection, color map 0 or color map 1
- * state change (palette change), polygon fills.
- *
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
- *
- * Revision 1.30  1994/03/22  23:17:37  furnish
- * Avoid collision with user code when he wants to make a custom wish
- * combined with PLPLOT.
- *
- * Revision 1.29  1994/02/07  23:02:11  mjl
- * Changed to using pl_PacketSend for data transfer, which now requires no
- * communication between interpreters.  Communication parameters stored in
- * the dev->iodev structure.
- *
- * Revision 1.28  1994/02/01  22:46:23  mjl
- * Added support for starting remsh with -l <user> flag.
- *
- * Revision 1.27  1994/01/25  06:21:34  mjl
- * Removed code for default selection of background color based on display
- * type -- now handled entirely in the server.  Fixed default name for
- * container window to work when program name has a leading path
- * specification.
- *
- * Revision 1.26  1994/01/17  21:33:28  mjl
- * Robustified send commands for when interpreter name has embedded blanks
- * (as occurs when the same application is started several times, each
- * creating its own main window).
- *
- * Revision 1.25  1994/01/15  17:46:48  mjl
- * Converted to new PDF function call syntax.  Substantially changed server
- * startup code -- now can handle a variety of cases including starting
- * plserver on a remote node (via remsh) or plserver already existing and
- * only needing to be contacted.  Rewrote data channel code to use socket
- * when DP driver is used.
- *
- * Revision 1.24  1993/12/22  23:09:53  mjl
- * Changes so that TK driver no longer times out on slow network connections
- * (it's just rreeaaalllyyyy ssllooowwww).  Where timeouts are a problem,
- * the client must issue the command to the server without waiting for a
- * reply, and then sit in TK wait loop until some specified condition is
- * met (usually the server sets a client interpreter variable when done).
- *
- * Revision 1.23  1993/12/21  10:30:24  mjl
- * Changed to separate initialization routines for dp vs tk drivers.
- * Reworked server_cmd function to work well with both Tcl-DP and TK send;
- * also method for putting commands in the background is better thought out
- * (and works better).  When using Tcl-DP for communication, the TK main
- * window is NOT created now.  This is a bit tricky since certain commands
- * no longer work if you don't have a main window -- like "tkwait", "update",
- * and "after", and alternate methods must be used to get the same effects.
- *
- * Revision 1.22  1993/12/15  09:04:31  mjl
- * Added support for Tcl-DP style communication.  Many small tweaks to
- * driver-plserver interactions made.  server_cmdbg() added for sending
- * commands to the server in the background (infrequently used because it
- * does not intercept errors).
- *
- * Revision 1.21  1993/12/09  21:19:40  mjl
- * Changed call syntax for tk_toplevel().
- *
- * Revision 1.20  1993/12/09  20:35:14  mjl
- * Fixed some casts.
 */
 
 /*	tk.c
@@ -138,12 +56,16 @@ static void  tk_di		(PLStream *pls);
 static void  tk_fill		(PLStream *pls);
 static void  WaitForPage	(PLStream *pls);
 static void  HandleEvents	(PLStream *pls);
-static void  tk_configure	(PLStream *pls);
 static void  init_server	(PLStream *pls);
 static void  launch_server	(PLStream *pls);
 static void  flush_output	(PLStream *pls);
 static void  plwindow_init	(PLStream *pls);
 static void  link_init		(PLStream *pls);
+
+/* performs Tk-driver-specific initialization */
+
+static int
+pltkdriver_Init(PLStream *pls);
 
 /* Tcl/TK utility commands */
 
@@ -669,14 +591,9 @@ tk_start(PLStream *pls)
 	    abort_session(pls, "Unable to create top-level window");
     }
 
-/* Initialize interpreter */
-
-    tk_configure(pls);
-    Tcl_SetVar(dev->interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
-
 /* Eval startup procs */
 
-    if (pltk_Init(dev->interp) != TCL_OK) {
+    if (pltkdriver_Init(pls) != TCL_OK) {
 	abort_session(pls, "");
     }
 
@@ -773,27 +690,65 @@ abort_session(PLStream *pls, char *msg)
 }
 
 /*----------------------------------------------------------------------*\
-* tk_configure
-*
-* Does global variable & command initialization, mostly for interpreter.
+ * pltkdriver_Init
+ *
+ * Performs PLplot/TK driver-specific Tcl initialization.
 \*----------------------------------------------------------------------*/
 
-static void
-tk_configure(PLStream *pls)
+static int
+pltkdriver_Init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
+    Tcl_Interp *interp = (Tcl_Interp *) dev->interp;
 
-    dbug_enter("tk_configure");
+    Tk_Window main;
 
-/* Tell interpreter about commands. */
+    main = Tk_MainWindow(interp);
 
-    Tcl_CreateCommand(dev->interp, "abort", Abort,
+    /*
+     * Call the init procedures for included packages.  Each call should
+     * look like this:
+     *
+     * if (Mod_Init(interp) == TCL_ERROR) {
+     *     return TCL_ERROR;
+     * }
+     *
+     * where "Mod" is the name of the module.
+     */
+
+    if (Tcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    if (main && Tk_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+
+#ifdef TCL_DP
+    if (Tdp_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+#endif
+
+    /*
+     * Call Tcl_CreateCommand for application-specific commands, if
+     * they weren't already created by the init procedures called above.
+     */
+
+    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
+		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+
+#ifdef TCL_DP
+    Tcl_CreateCommand(interp, "host_id", plHost_ID,
+		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+#endif
+
+    Tcl_CreateCommand(interp, "abort", Abort,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
-    Tcl_CreateCommand(dev->interp, "keypress", KeyEH,
+    Tcl_CreateCommand(interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
-    Tcl_CreateCommand(dev->interp, "mouse", MouseEH,
+    Tcl_CreateCommand(interp, "mouse", MouseEH,
 		      (ClientData) pls, (void (*)()) NULL);
 
 /* Set some relevant interpreter variables */
@@ -802,13 +757,20 @@ tk_configure(PLStream *pls)
 	tcl_cmd(pls, "set client_name [winfo name .]");
 
     if (pls->server_name != NULL)
-	Tcl_SetVar(dev->interp, "server_name", pls->server_name, 0);
+	Tcl_SetVar(interp, "server_name", pls->server_name, 0);
 
     if (pls->server_host != NULL)
-	Tcl_SetVar(dev->interp, "server_host", pls->server_host, 0);
+	Tcl_SetVar(interp, "server_host", pls->server_host, 0);
 
     if (pls->server_port != NULL)
-	Tcl_SetVar(dev->interp, "server_port", pls->server_port, 0);
+	Tcl_SetVar(interp, "server_port", pls->server_port, 0);
+
+/* Set up auto_path */
+
+    if (pls_auto_path(interp) == TCL_ERROR)
+	return TCL_ERROR;
+
+    return TCL_OK;
 }
 
 /*----------------------------------------------------------------------*\
@@ -971,6 +933,9 @@ launch_server(PLStream *pls)
 /* The rest are arguments to plserver */
 
     argv[i++] = "-child";		/* Tell plserver its ancestry */
+
+    argv[i++] = "-e";			/* Startup script */
+    argv[i++] = "plserver_init";
 
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
