@@ -9,7 +9,7 @@ Build-Conflicts: f2c, fort77, libplplot5
 Package: libplplot9
 Architecture: any
 Section: libs
-Conflicts: libplplot5
+Conflicts: libplplot5, plplot (<< 5)
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich

@@ -1,3 +1,12 @@
+plplot (5.3.0-4) unstable; urgency=low
+
+  * debian/control: Made libplplot9 conflict with the old plplot package
+    (<< 5).  This allows a smooth upgrade from stable to testing/unstable
+    by avoiding the overwriting of the file /usr/bin/pltek
+    (closes: #235252).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat, 28 Feb 2004 08:24:33 +0100
+
 plplot (5.3.0-3) unstable; urgency=low
 
   * Get Octave bindings to work with octave2.1-2.1.53, the version
