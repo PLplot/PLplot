@@ -1421,7 +1421,7 @@ origin
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>PLPointer</literal>, output)
+	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6675,7 +6675,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>PLPointer</literal>, output)
+	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7270,7 +7270,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>PLPointer</literal>, output)
+	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
 	  <para>
