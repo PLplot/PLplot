@@ -115,11 +115,10 @@ sub plot3 {
 
     # Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 
-    plstyl (pdl ([1]), pdl ([$mark1]), pdl ([$space1]));
+    plstyl (pdl ([$mark1]), pdl ([$space1]));
     plcol0 (2);
     plbox (30.0, 0, 0.2, 0, "g", "g");
-    my $z = pdl [0];
-    plstyl ($z, $z, $z);
+    plstyl (pdl([]), pdl ([]));
 
     plcol0 (3);
     pllab ("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
