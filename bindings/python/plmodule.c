@@ -61,10 +61,12 @@
 
 #include "plplot/plmodule.h"
 
-/*static*/ int pl_PyArray_AsFloatArray(PyObject **op, PLFLT **pitems, PLINT *pn)
+/*static*/ int pl_PyArray_AsFloatArray(PyObject **op, PLFLT **pitems, 
+				       PLINT *pn)
 {
     PyArrayObject *mp;
-    mp = (PyArrayObject *) PyArray_ContiguousFromObject (*op, PyArray_PLFLT, 0, 1);
+    mp = (PyArrayObject *) 
+     PyArray_ContiguousFromObject (*op, PyArray_PLFLT, 0, 1);
     if (!mp) return 0;
     *pitems =(PLFLT*) (mp->data);
     *pn = mp->dimensions[0];
@@ -322,7 +324,7 @@ static PyObject * pl_cont_ts(PyObject *self, PyObject *args)
     PLFLT **z, *clevel;	
     PyObject *op, *levelop, *f;
     TRY (PyArg_ParseTuple(args, "OiiiiOO!", &op, &kx, &lx, &ky, &ly, &levelop, 
-                                                                                        &PyFunction_Type, &f));
+			  &PyFunction_Type, &f));
     TRY (pl_PyArray_AsFloatMatrix(&op, &nx, &ny, &z));
     TRY (pl_PyArray_AsFloatArray(&levelop, &clevel, &nlevel));
     plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pypltr, f);
@@ -383,14 +385,14 @@ static PyObject * pl_cont2(PyObject *self, PyObject *args)
     PyObject *op, *levelop;
     PLfGrid2 grid;
 
-    printf( "In Geoff's plcont2.\n" );
+/*    printf( "In Geoff's plcont2.\n" );*/
 
     TRY( PyArg_ParseTuple( args, "OiiiiO",
 			   &op, &kx, &lx, &ky, &ly, &levelop ) );
     TRY (pl_PyArray_AsFloatMatrix(&op, &nx, &ny, &z));
     TRY (pl_PyArray_AsFloatArray(&levelop, &clevel, &nlevel));
 
-    printf( "nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
+/*    printf( "nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
 	    nx, ny, kx, lx, ky, ly );
     printf( "nlevel=%d\n", nlevel );
     for( i=0; i < nlevel; i++ )
@@ -401,12 +403,14 @@ static PyObject * pl_cont2(PyObject *self, PyObject *args)
 	for( j=ky-1; j < ly; j++ ) {
 	    printf( " data(%d,%d) = %lf\n", i, j, z[i][j] );
 	}
-    }
+    }*/
 
     grid.f = z;
 
-/*    plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, tr0, NULL );*/
-    plcontf( pyf2eval2, &grid, nx, ny, kx, lx, ky, ly, clevel, nlevel, pyt0, NULL );
+/*    plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pyt0, NULL );*/
+    plcontf( pyf2eval2, (PLPointer) &grid, 
+	    nx, ny, kx, lx, ky, ly, clevel, nlevel,
+	    pyt0, NULL );
     Py_DECREF(op);
     Py_DECREF(levelop);
     PyMem_DEL(z);
