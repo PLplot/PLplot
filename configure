@@ -405,6 +405,7 @@ Configure () {
 		../src/*.c \
 		../src/stubc/*.c \
 		../examples/C/*.c \
+		../examples/tk/* \
 		../utils/*.c \
 		../fonts/*.c \
 		../scripts/pl* \
