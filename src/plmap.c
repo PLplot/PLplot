@@ -214,6 +214,8 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	    }
 	}
     }
+    /* Close map file */
+    pdf_close(in);
 }
 
 /*----------------------------------------------------------------------*\
