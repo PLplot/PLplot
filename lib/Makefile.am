@@ -19,10 +19,16 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if with_qhull
-SUBDIRS = nn csa
+if with_csa
+sub_dir = csa
 else
-SUBDIRS = csa
+sub_dir =
+endif
+
+if with_qhull
+SUBDIRS = $(sub_dir) nn 
+else
+SUBDIRS = $(sub_dir)
 endif
 
 
