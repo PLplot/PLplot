@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1995/11/29 20:54:25  furnish
+ * Revision 1.15  1996/04/18 19:35:18  mjl
+ * Added new matrix commands -- min: return minimum, max: return maximum,
+ * scale: multiply by a scale factor [1d only], filter: apply the 3-pt binomial
+ * filter n times [1d only].
+ *
+ * Revision 1.14  1995/11/29  20:54:25  furnish
  * Convert to %g instead of %f, to allow small values to be visible.
  *
  * Revision 1.13  1995/10/19  00:03:35  mjl
@@ -124,6 +129,15 @@
 #include <string.h>
 #include "tclMatrix.h"
 
+/* Cool math macros */
+
+#ifndef MAX
+#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
+#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
+#endif
+
 /* For the truly desperate debugging task */
 
 #ifdef DEBUG_ENTER
@@ -201,7 +215,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     int i, j, length, new, index, persist = 0, initializer = 0;
     Tcl_HashEntry *hPtr;
     Tcl_CmdInfo infoPtr;
-    char c, *value, *varName;
+    char c;
 
     dbug_enter("Tcl_MatrixCmd");
 
@@ -624,6 +638,51 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_OK;
     }
 
+/* filter */
+/* Only works on 1d matrices */
+
+    else if ((c == 'f') && (strncmp(argv[0], "filter", length) == 0)) {
+	Mat_float *tmp;
+	int ifilt, nfilt;
+
+	if (argc != 2 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     name, " ", argv[0], " num-passes\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	if (matPtr->dim != 1 || matPtr->type != TYPE_FLOAT) {
+	    Tcl_AppendResult(interp, "can only filter a 1d float matrix",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	nfilt = atoi(argv[1]);
+	tmp = (Mat_float *) malloc((matPtr->len+2) * sizeof(Mat_float));
+
+	for (ifilt = 0; ifilt < nfilt; ifilt++) {
+
+	/* Set up temporary filtering array.  Use even boundary conditions. */
+
+	    j = 0; tmp[j] = matPtr->fdata[0];
+	    for (i = 0; i < matPtr->len; i++) {
+		j++; tmp[j] = matPtr->fdata[i];
+	    }
+	    j++; tmp[j] = matPtr->fdata[matPtr->len-1];
+
+	/* Apply 3-point binomial filter */
+
+	    for (i = 0; i < matPtr->len; i++) {
+		j = i+1;
+		matPtr->fdata[i] = 0.25*( tmp[j-1] + 2*tmp[j] + tmp[j+1] );
+	    }
+	}
+
+	free ((void *) tmp);
+	return TCL_OK;
+    }
+
 /* help */
 
     else if ((c == 'h') && (strncmp(argv[0], "help", length) == 0)) {
@@ -644,6 +703,78 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    else
 		Tcl_AppendResult(interp, tmp, (char *) NULL);
 	}
+	return TCL_OK;
+    }
+
+/* max */
+
+    else if ((c == 'm') && (strncmp(argv[0], "max", length) == 0)) {
+	int len;
+	if (argc < 1 || argc > 2 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     name, " ", argv[0], " ?length?\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	if (argc == 2)
+	    len = atoi(argv[1]);
+	else
+	    len = matPtr->len;
+
+	switch (matPtr->type) {
+	case TYPE_FLOAT:{
+	    Mat_float max = matPtr->fdata[0];
+	    for (i = 1; i < len; i++)
+		max = MAX(max, matPtr->fdata[i]);
+	    sprintf(tmp, "%g", max);
+	    Tcl_AppendResult(interp, tmp, (char *) NULL);
+	    break;
+	}
+	case TYPE_INT:{
+	    Mat_int max = matPtr->idata[0];
+	    for (i = 1; i < len; i++)
+		max = MAX(max, matPtr->idata[i]);
+	    sprintf(tmp, "%d", max);
+	    Tcl_AppendResult(interp, tmp, (char *) NULL);
+	    break;
+	}}
+	return TCL_OK;
+    }
+
+/* min */
+
+    else if ((c == 'm') && (strncmp(argv[0], "min", length) == 0)) {
+	int len;
+	if (argc < 1 || argc > 2 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     name, " ", argv[0], " ?length?\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	if (argc == 2)
+	    len = atoi(argv[1]);
+	else
+	    len = matPtr->len;
+
+	switch (matPtr->type) {
+	case TYPE_FLOAT:{
+	    Mat_float min = matPtr->fdata[0];
+	    for (i = 1; i < len; i++)
+		min = MIN(min, matPtr->fdata[i]);
+	    sprintf(tmp, "%g", min);
+	    Tcl_AppendResult(interp, tmp, (char *) NULL);
+	    break;
+	}
+	case TYPE_INT:{
+	    Mat_int min = matPtr->idata[0];
+	    for (i = 1; i < len; i++)
+		min = MIN(min, matPtr->idata[i]);
+	    sprintf(tmp, "%d", min);
+	    Tcl_AppendResult(interp, tmp, (char *) NULL);
+	    break;
+	}}
 	return TCL_OK;
     }
 
@@ -694,6 +825,40 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    break;
 	}
 	matPtr->n[0] = matPtr->len = newlen;
+	return TCL_OK;
+    }
+
+/* scale */
+/* Only works on 1d matrices */
+
+    else if ((c == 's') && (strncmp(argv[0], "scale", length) == 0)) {
+	float scale;
+
+	if (argc != 2 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     name, " ", argv[0], " scale-factor\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	if (matPtr->dim != 1) {
+	    Tcl_AppendResult(interp, "can only scale a 1d matrix",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	scale = atof(argv[1]);
+	switch (matPtr->type) {
+	case TYPE_FLOAT:
+	    for (i = 0; i < matPtr->len; i++)
+		matPtr->fdata[i] *= scale;
+	    break;
+
+	case TYPE_INT:
+	    for (i = 0; i < matPtr->len; i++)
+		matPtr->idata[i] *= scale;
+	    break;
+	}
 	return TCL_OK;
     }
 
