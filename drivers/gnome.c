@@ -63,6 +63,11 @@ typedef enum {
 } GnomePLdevCanvasMode;
 
 typedef struct {
+  guint cmap;
+  gdouble color;
+} ItemColor;
+
+typedef struct {
   GtkScrolledWindow* sw;
   GnomeCanvas* canvas;
   GnomePLdevCanvasMode mode;
@@ -179,7 +184,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
   GdkCursor *cursor;
   char buffer[128];
   PLGraphicsIn* gin = &(page->gin);
-  guint color;
+  ItemColor* color;
   GnomeCanvasItem* item_at_cursor;
 
   move = FALSE;
@@ -249,10 +254,10 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 					       event->button.y);
 
     if (item_at_cursor != NULL)
-      color = * (guint *) gtk_object_get_data (GTK_OBJECT (item_at_cursor),
-					       "color");
+      color = (ItemColor *) gtk_object_get_data (GTK_OBJECT (item_at_cursor),
+						 "color");
     else
-      color = -1;
+      color = NULL;
 
     gnome_canvas_item_show (page->hlocline);
     gnome_canvas_item_show (page->vlocline);
@@ -270,8 +275,12 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
     plTranslateCursor (gin);
 
-    sprintf (buffer, "   x = %f   y = %f   color = %d",
-	     gin->wX, gin->wY, color);
+    if (color->cmap == 0)
+      sprintf (buffer, "   x = %f   y = %f   color = %d (cmap0)",
+	       gin->wX, gin->wY, (int) color->color);
+    else
+      sprintf (buffer, "   x = %f   y = %f   color = %f (cmap1)",
+	       gin->wX, gin->wY, color->color);
 
     // FIXME : Terrible global variable hack
     gtk_statusbar_pop (sb, page->context);
@@ -414,13 +423,14 @@ plcolor_to_rgba_inv (PLColor color, guchar alpha)
 }
 
 static void
-set_color (GnomeCanvasItem* item, gint color)
+set_color (GnomeCanvasItem* item, guint cmap, gdouble color)
 {
-  gint* colorp;
+  ItemColor* colorp;
 
-  colorp = g_malloc (sizeof (gint));
-  *colorp = color;
-
+  colorp = g_malloc (sizeof (ItemColor));
+  colorp->cmap = cmap;
+  colorp->color = color;
+  
   gtk_object_set_data (GTK_OBJECT (item), "color", colorp);
 }
 
@@ -483,7 +493,7 @@ new_page (PLStream* pls)
 				      "width_units", 0.0,
 				      NULL);
 
-  set_color (background, 0);
+  set_color (background, 0, 0.0);
 
   points = gnome_canvas_points_new (2);
 
@@ -758,7 +768,7 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
                                 NULL);
 
-  set_color (item, pls->icol0);
+  set_color (item, 0, pls->icol0);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
@@ -934,7 +944,7 @@ fill_polygon (PLStream* pls)
                                 "width_units", 0.0,
                                 NULL);
 
-  set_color (item, pls->icol1);
+  set_color (item, 1, ((double) pls->icol1)/pls->ncol1);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
