@@ -191,6 +191,10 @@ if_hpux({
 #----------------------------------------------------------------------#
 #		HP-UX definitions
 
+if_dbl({dnl
+DBL_FLAG_F      = -R8
+})dnl
+
 #CFLAGS	= -c -g -Dunix -DSTUB_L $(DBL_FLAG_C) -DHPUX
 CC	= c89
 CFLAGS	= -c -g -Dunix -DSTUB_L $(DBL_FLAG_C) -DHPUX -D_HPUX_SOURCE
@@ -199,7 +203,7 @@ FFLAGS	= -c $(DBL_FLAG_F)
 LDCFLAGS= -L/usr/lib/X11R4 -lm -lX11 -g
 LDFFLAGS= /usr/lib/X11R4/libX11.a -lm -g
 
-PLDEVICES = -DXTERM -DXWIN -DPLMETA -DTEK -DXFIG
+PLDEVICES = -DXTERM -DXWIN -DPLMETA -DTEK -DPS -DXFIG
 })
 
 if_dgux({
@@ -306,7 +310,8 @@ if_aix({
 # ($(HOME)/lib/ is ok) for the fonts.  This problem was fixed in A/IX 3.1.
 
 if_dbl({dnl
-DBL_FLAG_F      = -qAUTODBL=DBLPAD
+#DBL_FLAG_F      = -qAUTODBL=DBLPAD
+DBL_FLAG_F      = -qdpc=e
 })dnl
 
 F77	= xlf
@@ -769,13 +774,18 @@ links:
 	$(LN) \
 		../src/*.c \
 		../src/stubc/*.c \
-		../src/stubf/*.f \
+if_dbl({dnl
+		../src/stubf/dbl/*.f \
+		../examples/f77/dbl/*.f \
+},{dnl
+		../src/stubf/sgl/*.f \
+		../examples/f77/sgl/*.f \
+})dnl
+		../examples/C/*.c \
 		../utils/*.c \
 		../fonts/*.c \
 		../{include}/*.h \
 		../drivers/*.c \
-		../examples/C/*.c \
-		../examples/f77/*.f \
 		.
 })
 if_amiga({
