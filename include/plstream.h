@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/04/08 12:20:49  mjl
+ * Revision 1.27  1994/04/25 19:05:33  mjl
+ * Additional support for cmap1 palette.
+ *
+ * Revision 1.26  1994/04/08  12:20:49  mjl
  * Now includes <plplot.h> in case it hasn't been included yet.  File offset
  * for metafile removed from state structure (now local to driver).  Added:
  * * MouseEH	void*	Mouse event handler
@@ -140,6 +143,8 @@ typedef struct {
 * ncol0		PLINT	Number of colors allocated in color map 0.
 * icol1		PLINT	Color map 1 entry, current color (0 <= icol1 <= 255)
 * ncol1		PLINT	Number of colors allocated in color map 1.
+* ncol1cp	PLINT	Number of control points in cmap1 allocation (max 32)
+* lcol1cp	PLFLT	Locations of control points in cmap1 [0,1]
 * curcmap	PLINT	Current color map
 * bgcolor	RGB	Background color, if specified
 * fgcolor	RGB	Foreground color, if specified
@@ -422,7 +427,7 @@ typedef struct {
 
 /* Colormaps */
 
-    PLINT icol0, ncol0, icol1, ncol1, bgcolorset, curcmap;
+    PLINT icol0, ncol0, icol1, ncol1, ncp1, bgcolorset, curcmap;
     int   cmap0setcol[16], cmap1set;
 
     PLColor fgcolor;
@@ -430,6 +435,8 @@ typedef struct {
     PLColor curcolor;
     PLColor cmap0[16];
     PLColor cmap1[256];
+
+    PLControlPt cmap1cp[32];
 
 /* Variables governing pen width */
 
