@@ -175,9 +175,9 @@ main(int argc, char *argv[])
       plmtex("t", 1.0, 0.5, 0.5, title[k]);
       plcol0(1);
       if (rosen)
-	plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0, alt[k], az[k]);
+	plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax, alt[k], az[k]);
       else
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax, alt[k], az[k]);
 
       plbox3("bnstu", "x axis", 0.0, 0,
 	     "bnstu", "y axis", 0.0, 0,

@@ -37,7 +37,7 @@ function p14(fg)
   [xx,yy] = meshgrid(x,y);
   r = yy .* exp(-(xx.^2 .+ yy.^2));
   
-  axis([-l l -l l -0.5 0.5]);
+  axis([-l l -l l min(min(r)) max(max(r))]);
 
   colormap(bgr);
 
