@@ -314,6 +314,10 @@ DOC(plgfam, "Get family file parameters.")
 void
 plgfam(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT);
 
+DOC(plgfci, "Get FCI (font characterization integer).")
+void
+plgfci(PLUNICODE *OUTPUT);
+
 DOC(plgfnam, "Get the (current) output file name.")
 void
 plgfnam(char *OUTPUT);
@@ -556,6 +560,10 @@ plsetopt(char *opt, char *optarg);
 DOC(plsfam, "Set family file parameters.")
 void
 plsfam(PLINT fam, PLINT num, PLINT bmax);
+
+DOC(plsfci, "Set FCI (font characterization integer).")
+void
+plsfci(PLUNICODE fci);
 
 DOC(plsfnam, "Set the output file name.")
 void
