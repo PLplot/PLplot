@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1995/01/10 09:38:02  mjl
+ * Revision 1.26  1995/01/13 23:25:24  mjl
+ * Fixed exit with an error code of 0 (was 1) when encountering a -v or -h.
+ * Nicer in shell scripts when only verifying the version number.
+ *
+ * Revision 1.25  1995/01/10  09:38:02  mjl
  * Fixed some braindamage incurred last update.
  *
  * Revision 1.24  1995/01/09  21:53:51  mjl
@@ -776,11 +780,11 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 	    }
 	}
 
-    /* Exit if fully parsing and encountered -h or -v */
+    /* Exit without error if fully parsing and encountered -h or -v */
 
 	if (status == 2) {
 	    if (mode_full) 
-		exit(1);
+		exit(0);
 	}
     }
 
