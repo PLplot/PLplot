@@ -6,14 +6,12 @@ YPTS = 46		# Data points in y
 
 opt = [1, 2, 3, 3]
 
-alt = [60.0, 20.0, 60.0, 60.0]
+alt = [60.0, 20.0]
 
-az = [30.0, 60.0, 120.0, 160.0]
+az = [30.0, 60.0]
 
 title = ["#frPLplot Example 8 - Alt=60, Az=30",
-	 "#frPLplot Example 8 - Alt=20, Az=60",
-	 "#frPLplot Example 8 - Alt=60, Az=120",
-	 "#frPLplot Example 8 - Alt=60, Az=160"]
+	 "#frPLplot Example 8 - Alt=20, Az=60"]
 
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.
@@ -77,55 +75,59 @@ def cmap1_init(gray):
 
 def main():
 
+    rosen = 1
     x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
+    if rosen == 1:
+	x = 1.5*x
+	y = 0.5 + y
     x.shape = (-1,1)
     r2 = (x*x) + (y*y)
-    x.shape = (-1,)
-    z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
+    if rosen == 1:
+	z = log((1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y))
+	# the log() of the function may become -inf
+    else:
+	z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
     zmin = min(z.flat)
     zmax = max(z.flat)
     nlevel = 10
-    step = (zmax-zmin)/nlevel
-    clevel = zmin + arange(nlevel)*step
+    step = (zmax-zmin)/(nlevel+1)
+    clevel = zmin + step + arange(nlevel)*step
     pllightsource(1., 1., 1.)
-    for k in range(4):
-	for ifshade in range(6):
+    for k in range(2):
+	for ifshade in range(4):
 	    pladv(0)
 	    plvpor(0.0, 1.0, 0.0, 0.9)
 	    plwind(-1.0, 1.0, -0.9, 1.1)
 	    plcol0(3)
 	    plmtex("t", 1.0, 0.5, 0.5, title[k])
 	    plcol0(1)
-	    plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
-	    alt[k], az[k])
+	    if rosen == 1:
+		plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0,
+		alt[k], az[k])
+	    else:
+		plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+		alt[k], az[k])
 	    plbox3("bnstu", "x axis", 0.0, 0,
 	    "bnstu", "y axis", 0.0, 0,
 	    "bcdmnstuv", "z axis", 0.0, 0)
 	    
 	    plcol0(2)
 	    if ifshade == 0:
-		plot3d(x, y, z, opt[k], 1)
-	    elif ifshade == 1:
-		# set up false colour cmap1.
-		cmap1_init(0)
-		plmesh(x, y, z, opt[k] | MAG_COLOR)
-	    elif ifshade == 2:
 		# diffuse light surface plot.
 		# set up modified gray scale cmap1.
 		cmap1_init(1)
 		plsurf3d(x, y, z, 0, ())
-	    elif ifshade == 3:
-		# magnitude coloured surface plot.
-		# set up false colour cmap1.
+	    elif ifshade == 1:
+		# magnitude colored plot.
 		cmap1_init(0)
 		plsurf3d(x, y, z, MAG_COLOR, ())
-	    elif ifshade == 4:
-		# magnitude coloured surface plot with faceted squares.
+	    elif ifshade == 2:
+		# magnitude colored plot with faceted squares
 		plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
-	    elif ifshade == 5:
-		# magnitude coloured surface plot with contours.
+	    elif ifshade == 3:
+		# magnitude colored plot with contours
 		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
 
     # Restore defaults
