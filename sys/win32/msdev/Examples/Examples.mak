@@ -216,62 +216,62 @@ $(SOURCEDIR)\x20c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x20c.obj $(LINK32_OBJS)
 
 
 
-$(INTDIR)\x01c.obj : $(SOURCEDIR)\x01c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x01c.pch $(SOURCEDIR)\x01c.cpp
+$(INTDIR)\x01c.obj : $(SOURCEDIR)\x01c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x01c.pch $(SOURCEDIR)\x01c.c
 
-$(INTDIR)\x02c.obj : $(SOURCEDIR)\x02c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x02c.pch $(SOURCEDIR)\x02c.cpp
+$(INTDIR)\x02c.obj : $(SOURCEDIR)\x02c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x02c.pch $(SOURCEDIR)\x02c.c
 
-$(INTDIR)\x03c.obj : $(SOURCEDIR)\x03c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x03c.pch $(SOURCEDIR)\x03c.cpp
+$(INTDIR)\x03c.obj : $(SOURCEDIR)\x03c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x03c.pch $(SOURCEDIR)\x03c.c
 
-$(INTDIR)\x04c.obj : $(SOURCEDIR)\x04c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x04c.pch $(SOURCEDIR)\x04c.cpp
+$(INTDIR)\x04c.obj : $(SOURCEDIR)\x04c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x04c.pch $(SOURCEDIR)\x04c.c
 
-$(INTDIR)\x05c.obj : $(SOURCEDIR)\x05c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x05c.pch $(SOURCEDIR)\x05c.cpp
+$(INTDIR)\x05c.obj : $(SOURCEDIR)\x05c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x05c.pch $(SOURCEDIR)\x05c.c
 
-$(INTDIR)\x06c.obj : $(SOURCEDIR)\x06c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x06c.pch $(SOURCEDIR)\x06c.cpp
+$(INTDIR)\x06c.obj : $(SOURCEDIR)\x06c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x06c.pch $(SOURCEDIR)\x06c.c
 
-$(INTDIR)\x07c.obj : $(SOURCEDIR)\x07c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x07c.pch $(SOURCEDIR)\x07c.cpp
+$(INTDIR)\x07c.obj : $(SOURCEDIR)\x07c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x07c.pch $(SOURCEDIR)\x07c.c
 
-$(INTDIR)\x08c.obj : $(SOURCEDIR)\x08c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x08c.pch $(SOURCEDIR)\x08c.cpp
+$(INTDIR)\x08c.obj : $(SOURCEDIR)\x08c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x08c.pch $(SOURCEDIR)\x08c.c
 
-$(INTDIR)\x09c.obj : $(SOURCEDIR)\x09c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x09c.pch $(SOURCEDIR)\x09c.cpp
+$(INTDIR)\x09c.obj : $(SOURCEDIR)\x09c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x09c.pch $(SOURCEDIR)\x09c.c
 
-$(INTDIR)\x10c.obj : $(SOURCEDIR)\x10c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x10c.pch $(SOURCEDIR)\x10c.cpp
+$(INTDIR)\x10c.obj : $(SOURCEDIR)\x10c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x10c.pch $(SOURCEDIR)\x10c.c
 
-$(INTDIR)\x11c.obj : $(SOURCEDIR)\x11c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x11c.pch $(SOURCEDIR)\x11c.cpp
+$(INTDIR)\x11c.obj : $(SOURCEDIR)\x11c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x11c.pch $(SOURCEDIR)\x11c.c
 
-$(INTDIR)\x12c.obj : $(SOURCEDIR)\x12c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x12c.pch $(SOURCEDIR)\x12c.cpp
+$(INTDIR)\x12c.obj : $(SOURCEDIR)\x12c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x12c.pch $(SOURCEDIR)\x12c.c
 
-$(INTDIR)\x13c.obj : $(SOURCEDIR)\x13c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x13c.pch $(SOURCEDIR)\x13c.cpp
+$(INTDIR)\x13c.obj : $(SOURCEDIR)\x13c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x13c.pch $(SOURCEDIR)\x13c.c
 
-$(INTDIR)\x15c.obj : $(SOURCEDIR)\x15c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x15c.pch $(SOURCEDIR)\x15c.cpp
+$(INTDIR)\x15c.obj : $(SOURCEDIR)\x15c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x15c.pch $(SOURCEDIR)\x15c.c
 
-$(INTDIR)\x16c.obj : $(SOURCEDIR)\x16c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x16c.pch $(SOURCEDIR)\x16c.cpp
+$(INTDIR)\x16c.obj : $(SOURCEDIR)\x16c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x16c.pch $(SOURCEDIR)\x16c.c
 
-$(INTDIR)\x17c.obj : $(SOURCEDIR)\x17c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x17c.pch $(SOURCEDIR)\x17c.cpp
+$(INTDIR)\x17c.obj : $(SOURCEDIR)\x17c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x17c.pch $(SOURCEDIR)\x17c.c
 
-$(INTDIR)\x18c.obj : $(SOURCEDIR)\x18c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x18c.pch $(SOURCEDIR)\x18c.cpp
+$(INTDIR)\x18c.obj : $(SOURCEDIR)\x18c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x18c.pch $(SOURCEDIR)\x18c.c
 
-$(INTDIR)\x19c.obj : $(SOURCEDIR)\x19c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x19c.pch $(SOURCEDIR)\x19c.cpp
+$(INTDIR)\x19c.obj : $(SOURCEDIR)\x19c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x19c.pch $(SOURCEDIR)\x19c.c
 
-$(INTDIR)\x20c.obj : $(SOURCEDIR)\x20c.cpp $(INTDIR)
-	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x20c.pch $(SOURCEDIR)\x20c.cpp
+$(INTDIR)\x20c.obj : $(SOURCEDIR)\x20c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x20c.pch $(SOURCEDIR)\x20c.c
 
 
 

@@ -271,169 +271,169 @@ LIB32_OBJS= \
 
 
 !IF "$(CFG)" == "plplib - Win32 Release" || "$(CFG)" == "plplib - Win32 Debug"
-SOURCE=$(TMPDIR)\null.cpp
+SOURCE=$(TMPDIR)\null.c
 
 "$(INTDIR)\null.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\pbm.cpp
+SOURCE=$(TMPDIR)\pbm.c
 
 "$(INTDIR)\pbm.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\pdfutils.cpp
+SOURCE=$(TMPDIR)\pdfutils.c
 
 "$(INTDIR)\pdfutils.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plargs.cpp
+SOURCE=$(TMPDIR)\plargs.c
 
 "$(INTDIR)\plargs.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plbox.cpp
+SOURCE=$(TMPDIR)\plbox.c
 
 "$(INTDIR)\plbox.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plbuf.cpp
+SOURCE=$(TMPDIR)\plbuf.c
 
 "$(INTDIR)\plbuf.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plcont.cpp
+SOURCE=$(TMPDIR)\plcont.c
 
 "$(INTDIR)\plcont.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plcore.cpp
+SOURCE=$(TMPDIR)\plcore.c
 
 "$(INTDIR)\plcore.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plctrl.cpp
+SOURCE=$(TMPDIR)\plctrl.c
 
 "$(INTDIR)\plctrl.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plcvt.cpp
+SOURCE=$(TMPDIR)\plcvt.c
 
 "$(INTDIR)\plcvt.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\pldtik.cpp
+SOURCE=$(TMPDIR)\pldtik.c
 
 "$(INTDIR)\pldtik.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plfill.cpp
+SOURCE=$(TMPDIR)\plfill.c
 
 "$(INTDIR)\plfill.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plhist.cpp
+SOURCE=$(TMPDIR)\plhist.c
 
 "$(INTDIR)\plhist.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plimage.cpp
+SOURCE=$(TMPDIR)\plimage.c
 
 "$(INTDIR)\plimage.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plline.cpp
+SOURCE=$(TMPDIR)\plline.c
 
 "$(INTDIR)\plline.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plmap.cpp
+SOURCE=$(TMPDIR)\plmap.c
 
 "$(INTDIR)\plmap.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plmeta.cpp
+SOURCE=$(TMPDIR)\plmeta.c
 
 "$(INTDIR)\plmeta.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plot3d.cpp
+SOURCE=$(TMPDIR)\plot3d.c
 
 "$(INTDIR)\plot3d.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plpage.cpp
+SOURCE=$(TMPDIR)\plpage.c
 
 "$(INTDIR)\plpage.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plrender.cpp
+SOURCE=$(TMPDIR)\plrender.c
 
 "$(INTDIR)\plrender.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plsdef.cpp
+SOURCE=$(TMPDIR)\plsdef.c
 
 "$(INTDIR)\plsdef.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plshade.cpp
+SOURCE=$(TMPDIR)\plshade.c
 
 "$(INTDIR)\plshade.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plstripc.cpp
+SOURCE=$(TMPDIR)\plstripc.c
 
 "$(INTDIR)\plstripc.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plsym.cpp
+SOURCE=$(TMPDIR)\plsym.c
 
 "$(INTDIR)\plsym.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\pltick.cpp
+SOURCE=$(TMPDIR)\pltick.c
 
 "$(INTDIR)\pltick.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plvpor.cpp
+SOURCE=$(TMPDIR)\plvpor.c
 
 "$(INTDIR)\plvpor.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\plwind.cpp
+SOURCE=$(TMPDIR)\plwind.c
 
 "$(INTDIR)\plwind.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=$(TMPDIR)\ps.cpp
+SOURCE=$(TMPDIR)\ps.c
 
 "$(INTDIR)\ps.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)

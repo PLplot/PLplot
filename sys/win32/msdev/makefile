@@ -49,13 +49,13 @@ links:
   @echo ``
   @echo `Copying source files to $(PLTMP)`
   @echo ``
-  @copy $(PLDIR)\src\*.c $(PLTMP)\*.cpp
+  @copy $(PLDIR)\src\*.c $(PLTMP)\*.c
   @copy $(PLDIR)\include\*.h $(PLTMP)\plplot
-  @copy $(PLDIR)\examples\c\*.c $(PLTMP)\*.cpp
+  @copy $(PLDIR)\examples\c\*.c $(PLTMP)\*.c
   @copy $(PLDIR)\examples\c\*.h $(PLTMP)\plplot
   @copy $(PLDIR)\examples\c\lena.pgm $(PLTMP)\lena.pgm
-  @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.cpp
-  @copy $(PLDIR)\utils\*.c $(PLTMP)\*.cpp
+  @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.c
+  @copy $(PLDIR)\utils\*.c $(PLTMP)\*.c
   @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
   @copy $(PLDIR)\lib\*.map $(PLTMP)\*.map
   @copy $(PLDIR)\bindings\python\plmodule.c $(PLTMP)\plmodule.c
