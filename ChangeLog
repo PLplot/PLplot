@@ -1,3 +1,10 @@
+2002-12-24  Maurice LeBrun <mlebrun@users.sourceforge.net>
+
+	* examples/*/Makefile.examples.in: Explicitly specify --mode=link
+	  to plplot_libtool in order to correctly work with vendor compilers.
+
+	* src/plctrl.c: Fix to 'Bug in library: Segmentation fault if "Q" hit'
+
 2002-12-24  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* examples/*/Makefile.examples.in: clean target
