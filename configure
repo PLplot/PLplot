@@ -29,44 +29,20 @@
 # This way you can customize the default build settings on a per site
 # basis through your normal login.
 
-if [ ! "$system" ] ; then
-    uname 1>/dev/null 2>&1 && system=`uname`
+if [ ! "$debug" ]; then
+    debug=off
 fi
 
 if [ ! "$double" ]; then
     double=off
 fi
 
-if [ ! "$debug" ]; then
-    debug=on
-fi
-
-if [ ! "$opt" ]; then
-    opt=0
-fi
-
-if [ ! "$warn" ]; then
-    warn=off
-fi
-
-if [ ! "$profile" ]; then
-    profile=off
-fi
-
-if [ ! "$no_x" ]; then
-    no_x=off
-fi
-
-if [ ! "$gcc" ]; then
-    gcc=off
-fi
-
 if [ ! "$f2c" ]; then
     f2c=off
 fi
 
-if [ ! "$no_tk" ]; then
-    no_tk=off
+if [ ! "$gcc" ]; then
+    gcc=off
 fi
 
 if [ ! "$no_dp" ]; then
@@ -75,6 +51,30 @@ fi
 
 if [ ! "$no_share" ]; then
     no_share=off
+fi
+
+if [ ! "$no_tk" ]; then
+    no_tk=off
+fi
+
+if [ ! "$no_x" ]; then
+    no_x=off
+fi
+
+if [ ! "$opt" ]; then
+    opt=1
+fi
+
+if [ ! "$profile" ]; then
+    profile=off
+fi
+
+if [ ! "$system" ] ; then
+    uname 1>/dev/null 2>&1 && system=`uname`
+fi
+
+if [ ! "$warn" ]; then
+    warn=off
 fi
 
 # Define a symbol for echo to save a little bit of space.
@@ -91,18 +91,19 @@ Settings () {
 
 $e "The current settings are:"
 $e ""
-$e "	system		$system"
-$e "	double		$double"
 $e "	debug		$debug"
-$e "	opt		$opt"
-$e "	warn		$warn"
-$e "	profile		$profile"
-$e "	gcc		$gcc"
+$e "	double		$double"
 $e "	f2c		$f2c"
-$e "	no_x		$no_x"
-$e "	no_tk		$no_tk"
+$e "	gcc		$gcc"
 $e "	no_dp		$no_dp"
+$e "	no_tk		$no_tk"
 $e "	no_share	$no_share"
+$e "	no_x		$no_x"
+$e "	opt		$opt"
+$e "	prefix		$prefix"
+$e "	profile		$profile"
+$e "	system		$system"
+$e "	warn		$warn"
 $e ""
 }
 
@@ -126,25 +127,27 @@ $e "	configure [flags]"
 $e ""
 $e "where recognized flags include:"
 $e ""
-$e "	h			help"
-$e "	system	   =<name>	system name"
-$e "	opt	   [=0|1|2]	optimization level"
-$e "	warn	   [=on|off]	turn on all compiler warnings"
-$e "	double	   [=on|off]	double precision"
-$e "	debug	   [=on|off]	debugging"
-$e "	profile	   [=on|off]	profiling"
-$e "	gcc	   [=on|off]	use gcc instead of native compiler"
-$e "	f2c	   [=on|off]	use f2c instead of native compiler"
-$e "	no_x	   [=on|off]	no X linkage"
-$e "	no_tk	   [=on|off]	no Tcl/TK linkage"
-$e "	no_dp	   [=on|off]	no Tcl-DP linkage"
-$e "	no_share   [=on|off]	do not build shared libraries"
+$e "	-debug	   [=on|off]	debugging"
+$e "	-double	   [=on|off]	double precision"
+$e "	-f2c	   [=on|off]	use f2c instead of native compiler"
+$e "	-gcc	   [=on|off]	use gcc instead of native compiler"
+$e "	-h			help (this message)"
+$e "	-no_dp	   [=on|off]	no Tcl-DP linkage"
+$e "	-no_tk	   [=on|off]	no Tcl/TK linkage"
+$e "	-no_share  [=on|off]	do not build shared libraries"
+$e "	-no_x	   [=on|off]	no X linkage"
+$e "	-opt	   [=0|1|2]	optimization level"
+$e "	-prefix    =<value>	top level install directory"
+$e "	-profile   [=on|off]	profiling"
+$e "	-system	   =<name>	system name"
+$e "	-warn	   [=on|off]	turn on all compiler warnings"
 $e ""
 $e "Options are set via the command line, environment, and internal defaults,"
 $e "in that order.  The option value must be specified without spaces, e.g."
 $e "debug=off.  The value can often be omitted, in which case booleans are set"
 $e "to \"on\" and multi-state variables are set to some typical \"on\" value."
-$e "Variables can usually be truncated to their shortest unique length."
+$e "Flags can usually be truncated to their shortest unique length.  Leading"
+$e "dashes are optional."
 $e ""
 	Settings
 	exit 1
@@ -153,21 +156,15 @@ $e ""
 #****************************************************************************
 
 # Parses argument list
+# The first trip through sed strips any leading dashes, so you can use
+# a single or double leading dash in arguments if you prefer.
 
 Parse_args () {
 
     while [ $# -gt 0 ]
     do
-	arg=$1
+	arg=`echo $1 | sed 's/-*//'`
 	case "$arg" in
-
-	h|he|hel|help)
-	    give_me_help=1
-	    ;;
-
-	s=*|sy=*|sys=*|syst=*|syste=*|system=*)
-	    system=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    ;;
 
 	de=*|deb=*|debu=*|debug=*)
 	    debug=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
@@ -187,29 +184,12 @@ Parse_args () {
 	    double=on
 	    ;;
 
-	o=*|op=*|opt=*)
-	    opt=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    if [ $opt -gt 0 ]; then debug=off; fi
+	f2c=*)
+	    f2c=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
 	    ;;
 
-	o|op|opt)
-	    opt=1; debug=off
-	    ;;
-
-	wa=*|war=*|warn=*)
-	    warn=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    ;;
-
-	wa|war|warn)
-	    warn=on
-	    ;;
-
-	p=*|pr=*|pro=*|prof=*|profi=*|profil=*|profile=*)
-	    profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    ;;
-
-	prof|profi|profil|profile)
-	    profile=on
+	f2c)
+	    f2c=on
 	    ;;
 
 	gcc=*)
@@ -220,28 +200,8 @@ Parse_args () {
 	    gcc=on
 	    ;;
 
-	f2c=*)
-	    f2c=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    ;;
-
-	f2c)
-	    f2c=on
-	    ;;
-
-	no_x=*)
-	    no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    ;;
-
-	no_x)
-	    no_x=on
-	    ;;
-
-	no_t=*|no_tk=*)
-	    no_tk=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-	    ;;
-
-	no_tk)
-	    no_tk=on
+	h|he|hel|help)
+	    give_me_help=1
 	    ;;
 
 	no_d=*|no_dp=*)
@@ -258,6 +218,55 @@ Parse_args () {
 
 	no_share)
 	    no_share=on
+	    ;;
+
+	no_t=*|no_tk=*)
+	    no_tk=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	no_tk)
+	    no_tk=on
+	    ;;
+
+	no_x=*)
+	    no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	no_x)
+	    no_x=on
+	    ;;
+
+	o=*|op=*|opt=*)
+	    opt=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    if [ $opt -gt 0 ]; then debug=off; fi
+	    ;;
+
+	o|op|opt)
+	    opt=1; debug=off
+	    ;;
+
+	pre=*|pref=*|prefi=*|prefix=*)
+	    prefix=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	pro=*|prof=*|profi=*|profil=*|profile=*)
+	    profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	pro|prof|profi|profil|profile)
+	    profile=on
+	    ;;
+
+	s=*|sy=*|sys=*|syst=*|syste=*|system=*)
+	    system=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	wa=*|war=*|warn=*)
+	    warn=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	wa|war|warn)
+	    warn=on
 	    ;;
 
 	*)
@@ -372,32 +381,16 @@ Setup_options () {
 	debug_flag="-DDEBUG"
     fi
 
-    if [ "$opt" -eq 1 ]; then
-	opt_flag="-DOPT=1"
-    fi
-
-    if [ "$opt" -eq 2 ]; then
-	opt_flag="-DOPT=2"
-    fi
-
-    if [ "$warn" = "on" ]; then
-	warn_flag="-DWARN"
-    fi
-
-    if [ "$profile" = "on" ]; then
-	profile_flag="-DPROF"
-    fi
-
     if [ "$double" = "on" ]; then
 	double_flag="-DDOUBLE"
     fi
 
-    if [ "$gcc" = "on" ]; then
-	gcc_flag="-DGCC"
-    fi
-
     if [ "$f2c" = "on" ]; then
 	f2c_flag="-DF2C"
+    fi
+
+    if [ "$gcc" = "on" ]; then
+	gcc_flag="-DGCC"
     fi
 
     if [ "$no_x" = "on" ]; then
@@ -416,9 +409,30 @@ Setup_options () {
 	no_share_flag="-DNO_SHARE"
     fi
 
+    if [ "$opt" -eq 1 ]; then
+	opt_flag="-DOPT=1"
+    fi
+
+    if [ "$opt" -eq 2 ]; then
+	opt_flag="-DOPT=2"
+    fi
+
+    if [ "$prefix" ]; then
+	prefix_flag="-DPREFIX=$prefix"
+	echo "prefix: $prefix, prefix_flag: $prefix_flag"
+    fi
+
+    if [ "$profile" = "on" ]; then
+	profile_flag="-DPROF"
+    fi
+
+    if [ "$warn" = "on" ]; then
+	warn_flag="-DWARN"
+    fi
+
     all_flags="$system_flag $machine_flag $double_flag $debug_flag \
-$opt_flag $warn_flag $profile_flag $gcc_flag $f2c_flag $no_x_flag $no_tk_flag \
-$no_dp_flag $no_share_flag"
+$opt_flag $warn_flag $profile_flag $gcc_flag $f2c_flag $prefix_flag \
+$no_x_flag $no_tk_flag $no_dp_flag $no_share_flag"
 }
 
 #****************************************************************************
