@@ -534,10 +534,6 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       zmin = zmax;
       zmax = t;
     }
-    if(xmin < x[0]) xmin = x[0];
-    if(xmax > x[nx-1]) xmax = x[nx-1];
-    if(ymin < y[0]) ymin = y[0];
-    if(ymax > y[ny-1]) ymax = y[ny-1];
 
 /* Check that points in x and in y are strictly increasing */
 
@@ -634,7 +630,6 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	myexit("plot3d: Out of memory.");
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    /* fprintf(stderr, "cxx=%g cxy=%g cyx=%g cyy=%g cyz=%g\n", cxx, cxy, cyx, cyy, cyz); */
     init = 1;
 #if WANT_MISSING_TRIANGLES
     threedshading = 0;
@@ -658,7 +653,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     else if (cxx <= 0.0 && cxy <= 0.0) {
-	if (opt == 1) 
+        if (opt == 1)
 	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
 	else {
 	    for (ix = 2; ix <= nx; ix++) 
@@ -668,7 +663,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
 	else {
 	    for (iy = ny; iy >= 2; iy--)
-		plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
+	      plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,0);
 	}
     }
 
@@ -1335,7 +1330,7 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 		} else if (j >= n) {
 		    su1 = u[n - 1];
 		    sv1 = v[n - 1];
-		    su2 = u[n];
+		    su2 = u[n - 1];
 		    sv2 = -1;
 		} else {
 		    su1 = u[j - 1];
