@@ -144,9 +144,9 @@ proc x08 {{w loopback}} {
 	    $w cmd plmtex "t" 1.0 0.5 0.5 $title
 	    $w cmd plcol0 1
 	    if {$rosen == 1} {
-	       $w cmd plw3d 1.0 1.0 1.0 -1.5 1.5 -0.5 1.5 -5.0 7.0 [alt $k] [az $k]
+	       $w cmd plw3d 1.0 1.0 1.0 -1.5 1.5 -0.5 1.5 $zmin $zmax [alt $k] [az $k]
 	    } else {
-	       $w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k] [az $k]
+	       $w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 $zmin $zmax [alt $k] [az $k]
 	    }
 	    $w cmd plbox3 "bnstu" "x axis" 0.0 0 \
 	                  "bnstu" "y axis" 0.0 0 \

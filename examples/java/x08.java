@@ -125,8 +125,8 @@ class x08 {
             {
 	       yy = y[j];
 	       if (rosen) {
-		  z[i][j] = Math.log(Math.pow(1. - xx,2) + 100 * 
-				     Math.pow(yy - Math.pow(xx,2),2));
+		  z[i][j] = Math.log(Math.pow(1. - xx,2.) + 100 * 
+				     Math.pow(yy - Math.pow(xx,2.),2.));
 		  
 		  if (Double.isInfinite(z[i][j])) /* the log() of the function may become -inf */
 		    z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
@@ -158,10 +158,10 @@ class x08 {
 	      pls.plmtex("t", 1.0, 0.5, 0.5, title[k]);
 	      pls.plcol0(1);
 	      if(rosen)
-		pls.plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0,
+		pls.plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
 			   alt[k], az[k] );
 	      else
-		pls.plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+		pls.plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
 			   alt[k], az[k] );
 	      pls.plbox3( "bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
