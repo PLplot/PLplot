@@ -108,7 +108,7 @@ endif
 
 install-data-hook:
 if enable_cxx
-	( cd $(DESTDIR)/$(examples_cxxdir) ; \
+	( cd $(DESTDIR)$(examples_cxxdir) ; \
 	  mv -f Makefile.examples Makefile ; \
 	  rm -f lena.pgm                   ; \
 	  $(LN_S) ../c/lena.pgm lena.pgm )
