@@ -1,5 +1,5 @@
 //--------------------------------*-C++-*------------------------------------//
-// x01cc.cc
+// $Id$
 // Geoffrey Furnish
 // 17 October 1994
 //---------------------------------------------------------------------------//
@@ -7,21 +7,11 @@
 // some aspects of its improvements over the klunky C API, mostly those
 // relating to 2-d plotting.
 //---------------------------------------------------------------------------//
-// $Id$
-// 
-// $Log$
-// Revision 1.2  1995/06/01 21:42:25  mjl
-// Changes to header file inclusion: the C++ API header file is now called
-// plstream.h.  Miscellaneous cleaning up.
-//
-// Revision 1.1  1994/10/18  16:25:48  furnish
-// First cut on an example program for showing off the new C++ interface
-// to PLplot.
-//
-//---------------------------------------------------------------------------//
+
+#include <stdlib.h>
+#include <math.h>
 
 #include "plstream.h"
-#include <math.h>
 
 //---------------------------------------------------------------------------//
 // In the real world, the user has his own Matrix class, so he just includes
