@@ -10,7 +10,7 @@
 # Written by Rafael Laboissiere on 2003-31-01
 
 VERSION=`perl -ne \
-           'if(/AM_INIT_AUTOMAKE\(plplot, ([0-9.cvs]+)/){print "$1\n"; last}'\
+           'if(/AC_INIT\(plplot, ([0-9.cvs]+)/){print "$1\n"; last}'\
            < configure.ac`
 TOPDIR=plplot-$VERSION
 TARBALL=$TOPDIR.tar.gz

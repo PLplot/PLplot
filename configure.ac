@@ -388,11 +388,6 @@ divert(-1)
 ### Autoconf/automake initializations
 
 AC_REVISION($Revision$)
-AC_INIT(src/plcore.c)
-
-### Configuration headers
-
-AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
 ### [ If changing the line below by hand,
@@ -400,13 +395,21 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AM_INIT_AUTOMAKE(plplot, 5.2.1)
+AC_INIT(plplot, 5.2.1, plplot-devel@lists.sourceforge.net)
+AC_CONFIG_SRCDIR(src/plcore.c)
+
+### Configuration headers
+
+AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
+
+### Automake initialization
+AM_INIT_AUTOMAKE
 
 ### Date of release.  This can be set by hand, but the prefered method
 ### is by specifying one of the option --version of --date-version to
 ### bootstrap.sh
 
-RELEASE_DATE=2003-04-22
+RELEASE_DATE=2003-12-26
 AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared

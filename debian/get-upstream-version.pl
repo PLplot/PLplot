@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 while (<>) {
-  if (/^AM_INIT_AUTOMAKE\(plplot, ([^)]+)\)/) {
+  if (/^AC_INIT\(plplot, ([^,)]+)\)/) {
     print $1;
     last;
   }
