@@ -162,14 +162,17 @@ if test "$has_x11" = "yes"; then
 	    Linux* )
 		JAVAMDINCDIR="$JAVAINCDIR/linux"
 	    ;;
+	    SunOS-5* )
+		JAVAMDINCDIR="$JAVAINCDIR/solaris"
+	    ;;
 	    * ) 	
 		AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
 	    ;;
 	esac
 
-	if ! test -r "$JAVAMDINCDIR/jni_md.h"; then
+	if test ! -r "$JAVAMDINCDIR/jni_md.h"; then
 	    JAVAMDINCDIR="$JAVAINCDIR/genunix"
-	    if ! test -r "$JAVAMDINCDIR/jni_md.h"; then
+	    if test ! -r "$JAVAMDINCDIR/jni_md.h"; then
 		JAVAMDINCDIR=""
 	    fi
 	fi
