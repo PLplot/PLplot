@@ -272,7 +272,7 @@ define(include_strings,{
         implicit_none
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
-        integer min_color, min_width, max_color, max_width, rectangular
+        integer min_color, min_width, max_color, max_width
         REAL shade_min, shade_max, sh_color
 	REAL z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
         include_strings
