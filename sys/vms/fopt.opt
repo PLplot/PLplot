@@ -1,7 +1,0 @@
-! Linker option file for FORTRAN.
-! Use this if the plplot.olb was build by GCC.
-plplot_lib:plplotfor.obj
-plplot_lib:plplot.olb/lib
-GNU_CC:[000000]GCCLIB/LIB
-sys$share:decw$xlibshr/share
-sys$share:vaxcrtl/share
