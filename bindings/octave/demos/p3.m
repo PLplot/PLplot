@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,8 +12,10 @@
 ##
 ## This file is part of plplot_octave.
 
-
 function p3
+
+  t = automatic_replot;
+  automatic_replot = 0;
 
   xscale = 6.;
   yscale = 1.;
@@ -21,26 +23,19 @@ function p3
   yoff = 0.;
 
   m=60;
-  
-  for i=1:m
-    x(i) = xoff + xscale * (i + 1) / m;
-    y(i) = yoff + yscale * (x(i).^2.);
-  endfor
+  x = xoff + xscale * ((1:m) + 1) / m;
+  y = yoff + yscale * (x.^2);
 
   n=5;
-  
-  for i=1:n
-    xs(i) = x(i * 10 + 3); xe(i) = i/5;
-    ys(i) = y(i * 10 + 3); yel(i) = ys(i) - i; yer(i) = ys(i) + 2*i;
-  endfor
+  xs = x((1:n) * 10 + 3);
+  ys = y((1:n) * 10 + 3);
+  xe = (1:n)./5;
+  yel = ys - (1:n);
+  yer = ys + 2*(1:n);
 
   ## Plot the data points */
-
-  t = automatic_replot;
-  automatic_replot = 0;
-
   title("#frPLplot Example 3 - y=x#u2 #d(with error bars)");
-  plot(x,y,[xs xe], [ys yel yer], '~g');
+  plot(x, y, [xs' xe'], [ys' yel' yer'], '~g; ;');
 
   automatic_replot = t;
 
