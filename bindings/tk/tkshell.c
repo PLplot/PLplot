@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1993/12/15 09:05:43  mjl
+ * Revision 1.8  1993/12/21 10:32:04  mjl
+ * Moved a part of the set_auto_path function back into plserver.c where
+ * it belonged (adding directories to auto_path based on an input flag).
+ *
+ * Revision 1.7  1993/12/15  09:05:43  mjl
  * Added functions Tcl_AppInit() and set_autoload(), to be shared by both
  * the plserver and tk driver interpreter startup code.  Changes to
  * Tcl_AppInit() to support Tcl-DP style communication (taken from Tcl-DP
@@ -157,8 +161,7 @@ Tcl_AppInit(Tcl_Interp *interp)
 
 #if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
     if (tk_source(w, interp, "$tk_library/wish.tcl")) {
-	abort_session("");
-	Tcl_Eval(interp, "exit");
+	return TCL_ERROR;
     }
 #else
     if (Tcl_Init(interp) == TCL_ERROR) {
@@ -262,10 +265,9 @@ set_auto_path(Tcl_Interp *interp)
 
 /* Add cwd */
 
-    if (getcwd(buf, 256) == NULL) {
-	abort_session("could not determine cwd");
-	Tcl_Eval(interp, "exit");
-    }
+    if (getcwd(buf, 256) == NULL) 
+	return TCL_ERROR;
+
     Tcl_SetVar(interp, "dir", buf, 0);
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	return TCL_ERROR;
@@ -276,19 +278,6 @@ set_auto_path(Tcl_Interp *interp)
     fprintf(stderr, "auto_path is %s\n", path);
 #endif
 
-/* Add user-specified directory(s) */
-/*
-    if (auto_path != NULL) {
-	Tcl_SetVar(interp, "dir", auto_path, 0);
-	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-	    return TCL_ERROR;
-#ifdef DEBUG
-	fprintf(stderr, "adding %s to auto_path\n", auto_path);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "auto_path is %s\n", path);
-#endif
-    }
-*/
     free_mem(buf);
     free_mem(ptr);
 
@@ -306,11 +295,11 @@ tcl_cmd(Tcl_Interp *interp, char *cmd)
 {
     dbug_enter("tcl_cmd");
 #ifdef DEBUG_ENTER
-    fprintf(stderr, "plserver: evaluating command %s\n", cmd);
+    fprintf(stderr, "evaluating command %s\n", cmd);
 #endif
 
     if (tcl_eval(interp, cmd)) {
-	fprintf(stderr, "plserver: TCL command \"%s\" failed:\n\t %s\n",
+	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
 		cmd, interp->result);
 	return TCL_ERROR;
     }
