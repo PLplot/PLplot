@@ -310,99 +310,152 @@ fi; done
 
 ])
 dnl> ------------------------------------------------------------------------
-dnl> The following macro searches a list of directories for the given
+dnl> The following macros search a list of directories for the given
 dnl> include file and takes appropriate actions if found or not.
+dnl> Arguments: 
+dnl> 	$1 - the include file name, the part before the .h
+dnl>	$2 - a variable that holds the matched directory name
+dnl>	$3 - a variable indicating if the search succeeded ("yes"/"no") 
+dnl>	     (if missing, we exit)
+dnl> Use just FIND_INC, or the FIND_INC_<...> set for more control.
 dnl
-define(FIND_INC, [
+define(FIND_INC_BEGIN, [
     AC_MSG_CHECKING(for $1.h)
     $2=""
-
-    for dir in $places; do
+])
+define(FIND_INC_SET, [
+    for dir in $incdirs; do
 	if test -r "$dir/$1.h"; then
 	    $2="$dir"
-	    AC_MSG_RESULT($dir)
+	    AC_MSG_RESULT($dir/$1.h)
 	    break
 	fi
     done
+])
+define(FIND_INC_END, [
     if test -z "$$2"; then
-	AC_MSG_RESULT(no)
-	AC_MSG_RESULT([warning: can't find $1.h, setting $3 to no])
-	$3="no"
+	ifelse($3,,[
+	    AC_MSG_RESULT(not found -- exiting)
+	    exit 1
+	],[
+	    AC_MSG_RESULT(no)
+	    AC_MSG_RESULT([warning: can't find $1.h, setting $3 to no])
+	    $3="no"
+	])
     fi
     if test "$$2" = "/usr/include"; then
 	$2="default"
     fi
 ])
+define(FIND_INC, [
+    FIND_INC_BEGIN($*)
+    FIND_INC_SET($*)
+    FIND_INC_END($*)
+])
 dnl> ------------------------------------------------------------------------
 dnl> The following macro searches a list of directories for the given
 dnl> library file and takes appropriate actions if found or not.
+dnl> Use just FIND_LIB, or the FIND_LIB_<...> set for more control.
+dnl>
 dnl> Arguments: 
 dnl> 	$1 - the library name, the part after the -l and before the "."
 dnl>	$2 - a variable that holds the matched directory name
+dnl>
+dnl> FIND_LIB_SET takes:
+dnl>	$3 - a variable that holds the matched library name in a form
+dnl>	     suitable for input to the linker (without the suffix, so that
+dnl>	     any shared library form is given preference).
+dnl>
+dnl> FIND_LIB_END takes:
 dnl>	$3 - a variable indicating if the search succeeded ("yes"/"no") 
+dnl>	     (if missing, we exit)
+dnl>
+dnl> FIND_LIB takes these as $3 and $4, respectively.
 dnl
-define(FIND_LIB, [
+define(FIND_LIB_BEGIN, [
     AC_MSG_CHECKING(for lib$1)
     $2=""
-
-    for dir in $places; do
-	ls $dir/lib$1.* >/dev/null 2>&1
-	if test $? = 0; then
+])
+define(FIND_LIB_SET, [
+    for dir in $libdirs; do
+	if test -f "$dir/lib$1.a"; then
 	    $2="$dir"
-	    AC_MSG_RESULT($dir)
+	    $3="-l$1"
+	    AC_MSG_RESULT($dir/lib$1.a)
 	    break
 	fi
     done
+])
+define(FIND_LIB_END, [
     if test -z "$$2"; then
-	AC_MSG_RESULT(no)
-	AC_MSG_RESULT([warning: can't find lib$1, setting $3 to no])
-	$3="no"
+	ifelse($3,,[
+	    AC_MSG_RESULT(not found -- exiting)
+	    exit 1
+	],[
+	    AC_MSG_RESULT(no)
+	    AC_MSG_RESULT([warning: can't find lib$1, setting $3 to no])
+	    $3="no"
+	])
     fi
     if test "$$2" = "/usr/lib"; then
 	$2="default"
     fi
 ])
+define(FIND_LIB, [
+    FIND_LIB_BEGIN($1, $2)
+    FIND_LIB_SET($1, $2, $3)
+    FIND_LIB_END($1, $2, $4)
+])
 dnl> ------------------------------------------------------------------------
 dnl> The following macro makes it easier to add includes without adding
 dnl> redundant -I specifications (to keep the build line concise).  
+dnl> Arguments: 
+dnl> 	$1 - the searched directory name
+dnl>	$2 - a variable that holds the include specification
+dnl>	$3 - a variable that holds all the directories searched so far
 dnl
 define([ADD_TO_INCS],[
     INCSW=""
     if test "$1" != "default"; then
 	INCSW="-I$1"
     fi
-    for dir in $inc_path; do
+    for dir in $$3; do
 	if test "$1" = "$dir"; then
 	    INCSW=""
 	    break
 	fi
     done
     if test -n "$INCSW"; then
-	INCS="$INCS $INCSW"
+	$2="$$2 $INCSW"
     fi
-    inc_path="$inc_path $1"
+    $3="$$3 $1"
 ])
 dnl> ------------------------------------------------------------------------
 dnl> The following macro makes it easier to add libs without adding
 dnl> redundant -L specifications (to keep the build line concise).
+dnl> Arguments: 
+dnl> 	$1 - the searched directory name
+dnl>	$2 - the command line option to give to the linker (e.g. -lfoo)
+dnl>	$3 - a variable that holds the library specification
+dnl>	$4 - a variable that holds all the directories searched so far
 dnl
 define([ADD_TO_LIBS],[
     LIBSW=""
     if test "$1" != "default"; then
 	LIBSW="-L$1"
     fi
-    for dir in $lib_path; do
+    for dir in $$4; do
 	if test "$1" = "$dir"; then
 	    LIBSW=""
 	    break
 	fi
     done
     if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW $2"
+	$3="$$3 $LIBSW $2"
     else
-	LIBS="$LIBS $2"
+	$3="$$3 $2"
     fi
-    lib_path="$lib_path $1"
+    $4="$$4 $1"
 ])
 dnl> ------------------------------------------------------------------------
 dnl ### Selecting optional features
