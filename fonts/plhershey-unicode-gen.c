@@ -129,7 +129,7 @@ if ((fr=fopen(argv[1],"r"))!=NULL)
 
     while((fgets(readbuffer,255,fr)!=NULL))
       {
-       sscanf(readbuffer,"%x,%d,%d",(int *)&Unicode[i],(int *)&Hershey[i],(char *)&Font[i]);
+       sscanf(readbuffer,"%x,%d,%c",(int *)&Unicode[i],(int *)&Hershey[i],(char *)&Font[i]);
        i++;
       }
 
@@ -153,7 +153,7 @@ if ((fw=fopen(argv[2],"w"))!=NULL)
   for (i=0;i<number_of_lines;i++)
     {
       if (((i%4)==0)&&(i>0)) fprintf(fw,"\n");
-      fprintf(fw,"{%d,0x%04x,%d}", (int)Hershey[i],(int)Unicode[i],(char)Font[i]);
+      fprintf(fw,"{%d,0x%04x,%c}", (int)Hershey[i],(int)Unicode[i],(char)Font[i]);
       if (i<(number_of_lines-1)) fprintf(fw,", ");
     }
 
