@@ -1,5 +1,12 @@
 /* $Id$
  * $Log$
+ * Revision 1.92  2000/05/15 07:18:49  furnish
+ * Include plConfig.h now, to pick up definition of PL_DOUBLE that was
+ * set at configuration time.
+ *
+ * Fix PLPLOT_VERSION to reflect that we are now on the 5.1 development
+ * branch.
+ *
  * Revision 1.91  2000/05/10 20:38:08  furnish
  * Prototype of plarrows added.  Rob Managan.
  *
@@ -113,7 +120,9 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99-ss961011"
+#include "plConfig.h"
+
+#define PLPLOT_VERSION "5.1.0-"
 
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
