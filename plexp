@@ -27,7 +27,7 @@ fi
 
 cd ..
 
-tar cvf plplot.tar \
+tar cvf $tarfile \
 	`find $pldir \
 	$check_new \
 	! -path \*CVS\* \
