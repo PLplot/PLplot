@@ -168,41 +168,36 @@ MY_ARG_ENABLE($1, builtin(format,
 if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     enable_$1="yes"
 
-#    echo "[PL_DYNAMIC_DRIVER_LIST] = PL_DYNAMIC_DRIVER_LIST"
-#    echo "[PL_device_driver_pair_list] = PL_device_driver_pair_list"
-
     driver_is_dynamic=0
     if test "$enable_dyndrivers" = "yes"; then
-	for drv in PL_DYNAMIC_DRIVER_LIST;
-	    do
+	for drv in PL_DYNAMIC_DRIVER_LIST; do
 	    if test "$drv" = "$1"; then
 		driver_is_dynamic=1
+		break
 	    fi
-	    done
+	done
     fi
 
 #    echo "1 = $1"
 #    echo "driver_is_dynamic: $driver_is_dynamic"
 
     driver=""
-    for devdrv in PL_device_driver_pair_list;
-	do
+    for devdrv in PL_device_driver_pair_list; do
 	dev=`echo $devdrv | cut -d: -f1`
-	drv=`echo $devdrv | cut -d: -f2`
-
 	if test "$dev" = "$1"; then
-	    driver=$drv
+	    driver=`echo $devdrv | cut -d: -f2`
+	    break
 	fi
-
-	done
+    done
 
     if test $driver_is_dynamic != 0; then
 	found=0
 	for drv in $DYNAMIC_DRIVERS; do
 	    if test "$drv" = "$driver"; then
 		found=1
+		break
 	    fi
-	    done
+	done
 
 	if test $found = 0; then
 	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver"
@@ -213,8 +208,9 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	for drv in $STATIC_DRIVERS; do
 	    if test "$drv" = "$driver"; then
 		found=1
+		break
 	    fi
-	    done
+	done
 
 	if test $found = 0; then
 	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"
@@ -805,7 +801,6 @@ if test "$enable_dyndrivers" = "yes"; then
     # Now add a line for each supported lodable device.  Format is:
     #     device name : description : driver name : device number: symbol tag
 
-    #for drv in PL_DYNAMIC_DRIVER_LIST; do
     for drv in $DYNAMIC_DRIVERS; do
 	case $drv in
 	    null)
