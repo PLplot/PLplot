@@ -655,7 +655,7 @@ static int  tables = 1;
 int
 c_plsetopt(char *opt, char *optarg)
 {
-    plSetOpt(opt, optarg);
+    return(plSetOpt(opt, optarg));
 }
 
 int
