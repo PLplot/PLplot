@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/12/09 20:36:35  mjl
+ * Revision 1.16  1994/01/15 17:28:22  mjl
+ * Added new args: -server_name, -server_host, -server_port.  -server_name is
+ * used with the TK driver to specify plserver's TK main window name, if
+ * already running.  -server_host and -server_port are used for the DP
+ * driver, for specifying the host to run it on, and the communications port
+ * (if already running).
+ *
+ * Revision 1.15  1993/12/09  20:36:35  mjl
  * Inserted a cast from (void *) to (char *).
  *
  * Revision 1.14  1993/12/06  07:46:11  mjl
@@ -141,6 +148,7 @@
 #include <ctype.h>
 
 #include "plplotio.h"
+#include "pdf.h"
 #include "plstream.h"
 
 /* Support functions */
@@ -177,11 +185,15 @@ static int opt_np		(char *, char *, void *);
 static int opt_px		(char *, char *, void *);
 static int opt_py		(char *, char *, void *);
 static int opt_wplt		(char *, char *, void *);
+
 static int opt_plserver		(char *, char *, void *);
 static int opt_plwindow		(char *, char *, void *);
 static int opt_tcl_cmd		(char *, char *, void *);
 static int opt_auto_path	(char *, char *, void *);
 static int opt_bufmax		(char *, char *, void *);
+static int opt_server_name	(char *, char *, void *);
+static int opt_server_host	(char *, char *, void *);
+static int opt_server_port	(char *, char *, void *);
 
 /* Global variables */
 
@@ -432,13 +444,37 @@ static PLOptionTable ploption_table[] = {
     "-bufmax",
     "bytes sent before flushing output" },
 {
+    "server_name",			/* Main window name of server */
+    opt_server_name,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-server_name name",
+    "Main window name of plplot server" },
+{
+    "server_host",			/* Host to run server on */
+    opt_server_host,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-server_host name",
+    "Host to run plplot server on" },
+{
+    "server_port",			/* Port to talk to server on */
+    opt_server_port,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-server_port name",
+    "Port to talk to plplot server on" },
+{
     "plserver",			/* plplot server name */
     opt_plserver,
     NULL,
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plserver name",
-    "Name of plplot server" },
+    "Invoked name of plplot server" },
 {
     "plwindow",			/* plplot container window name */
     opt_plwindow,
@@ -1310,6 +1346,63 @@ opt_bufmax(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
+* opt_server_name()
+*
+* Performs appropriate action for option "server_name".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_server_name(char *opt, char *optarg, void *client_data)
+{
+    PLStream *pls;
+
+/* Main window name of server (Tcl/TK/DP driver only) */
+
+    plgpls(&pls);
+    pls->server_name = optarg;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_server_host()
+*
+* Performs appropriate action for option "server_host".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_server_host(char *opt, char *optarg, void *client_data)
+{
+    PLStream *pls;
+
+/* Host to run server on (Tcl/TK/DP driver only) */
+
+    plgpls(&pls);
+    pls->server_host = optarg;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_server_port()
+*
+* Performs appropriate action for option "server_port".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_server_port(char *opt, char *optarg, void *client_data)
+{
+    PLStream *pls;
+
+/* Port to talk to server on (Tcl/TK/DP driver only) */
+
+    plgpls(&pls);
+    pls->server_port = optarg;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
 * opt_plserver()
 *
 * Performs appropriate action for option "plserver".
@@ -1320,7 +1413,7 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 {
     PLStream *pls;
 
-/* plplot server name */
+/* name to use when invoking server (Tcl/TK/DP driver only) */
 
     plgpls(&pls);
     pls->plserver = optarg;
