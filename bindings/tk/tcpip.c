@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/08/05 21:50:22  mjl
+ * Revision 1.14  1994/09/23 07:42:39  mjl
+ * Eliminated a bogus call to Tk_DeleteFileHandler() and other cleaning up.
+ *
+ * Revision 1.13  1994/08/05  21:50:22  mjl
  * Fixed bug responsible for DP driver not working on a Cray.  Works great
  * now, including distributed rendering.  Added much debug code.
  *
@@ -106,11 +109,11 @@
  * this, parts of this code are not covered by any international
  * standard).  ANSI compilers are required to omit these extra symbols,
  * and at the moment there is no way to get them back except for by
- * vendor-specific defines (HP: _HPUX_SOURCE, AIX: _ALL_SOURCE, DGUX:
- * _DGUX_SOURCE).  This is an omission in the POSIX standard more than
- * anything else, and will probably be rectified at some point.  So for
- * now, instead of relying on a hodgepodge of vendor specific symbols I
- * forego the ANSI compiler here and go with good (bad) old "cc".
+ * vendor-specific defines, e.g. _HPUX_SOURCE (HP), _ALL_SOURCE (AIX),
+ * _DGUX_SOURCE (DGUX).  This is an omission in the POSIX standard more
+ * than anything else, and will probably be rectified at some point.  So
+ * for now, instead of relying on a hodgepodge of vendor specific symbols
+ * I forego the ANSI compiler here and go with good (bad) old "cc".
  */
 
 #include "plConfig.h"
@@ -409,13 +412,13 @@ plHost_ID(clientData, interp, argc, argv)
  * pl_PacketReceive --
  *
  *      This procedure is a modified version of Tdp_PacketReceive,
- *	from the Tcl-DP distribution.  It reads the socket, 
+ *	from the Tcl-DP distribution.  It reads the socket,
  *	returning a complete packet.  If the entire packet cannot
  *	be read, the partial packet is buffered until the rest is
  *	available.  Some capabilities have been removed from the
- *	original (i.e. the check for a non-server TCP socket, since
- *	there's no access to the optFlags array from here, and the 
- *	peek capability, since I don't need it).
+ *	original, such as the check for a non-server TCP socket,
+ *	since there's no access to the optFlags array from here,
+ *	and the peek capability, since I don't need it.
  *
  * Results:
  *	Packet contents stored in pdfs->buffer and pdfs->bp set
@@ -467,10 +470,9 @@ pl_PacketReceive(interp, iodev, pdfs)
 
     /*
      * Convert header character stream into ints.  This works when the
-     * connecting machine has a different size int (the old way didn't),
-     * and takes care of the endian problem to boot.  It is also mostly
-     * backward compatible since network byte ordering (big endian) is
-     * used.  
+     * connecting machine has a different size int and takes care of the
+     * endian problem to boot.  It is also mostly backward compatible since
+     * network byte ordering (big endian) is used.
      */
 
     j = 0;
@@ -515,14 +517,14 @@ pl_PacketReceive(interp, iodev, pdfs)
     /*
      * Read in the packet, and if it's not all there, put it back.
      *
-     * We have to be careful here, because we could block when if just
-     * the header came in (making the file readable at the beginning of this
+     * We have to be careful here, because we could block if just the
+     * header came in (making the file readable at the beginning of this
      * function) but the rest of the packet is still out on the network.
      */
 
-    if (iodev->type == 0) 
+    if (iodev->type == 0) {
 	numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
-    else {
+    } else {
 #ifdef PLD_dp
 	if (Tdp_FDIsReady(iodev->fd) & TCL_FILE_READABLE) {
 	    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
@@ -553,8 +555,9 @@ pl_PacketReceive(interp, iodev, pdfs)
     pdfs->bp = numRead;
 #ifdef DEBUG
     fprintf(stderr, "received %d byte packet starting with:", numRead);
-    for (j = 0; j < 4; j++)
+    for (j = 0; j < 4; j++) {
 	fprintf(stderr, " %x", 0x000000FF & (unsigned long) pdfs->buffer[j]);
+    }
     fprintf(stderr, "\n");
 #endif
 
@@ -631,8 +634,7 @@ pl_PacketSend(interp, iodev, pdfs)
     unsigned char hbuf[8];
     unsigned int packetLen, header[2];
     int len;
-    char *buffer;
-    char tmp[256];
+    char *buffer, tmp[256];
 
     /*
      * Format up the packet:
@@ -677,8 +679,9 @@ pl_PacketSend(interp, iodev, pdfs)
 
 #ifdef DEBUG
     fprintf(stderr, "sending  %d byte packet starting with:", len);
-    for (j = 0; j < 12; j++)
+    for (j = 0; j < 12; j++) {
 	fprintf(stderr, " %x", 0x000000FF & (unsigned long) buffer[j]);
+    }
     fprintf(stderr, "\n");
 #endif
     numSent = write(iodev->fd, buffer, len);
@@ -697,12 +700,10 @@ pl_PacketSend(interp, iodev, pdfs)
 	    return TCL_OK;
 	} else if (errno == EPIPE) {
 	    /*
-	     * Got a broken pipe signal, which means the far end closed the
-	     * connection.  Close the file, delete the file handler, and
-	     * return 0 bytes sent.
+	     * Got a broken pipe signal, which means the far end closed
+	     * the connection.  Close the file and return 0 bytes sent.
 	     */
 	    if (iodev->type == 0) {
-		Tk_DeleteFileHandler(iodev->fd);
 		close(iodev->fd);
 	    }
 	    sprintf (tmp, "0");
