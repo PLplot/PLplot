@@ -1074,15 +1074,15 @@ plfontrel(void)
 /*--------------------------------------------------------------------------*\
  *  int plhershey2unicode ( int in )
  *
- *  Function takes an inputted hershey code, looks through the conversation
- *  table, then returns an INDEX to the value in the table.
- *  Using this INDEX you can work out the unicode equivalent as well as
+ *  Function searches for in, the input hershey code, in a lookup table and
+ *  returns the corresponding index in that table.
+ *  Using this index you can work out the unicode equivalent as well as
  *  the closest approximate to the font-face. If the returned index is
  *  -1 then no match was possible.
  *
  *  Two versions of the function exist, a simple linear search version,
- *  and a more complex, but significantly faster, shell-sort like version.
- *  If there seem to be problems with the shell method, the brain-dead
+ *  and a more complex, but significantly faster, binary search version.
+ *  If there seem to be problems with the binary search method, the brain-dead
  *  linear search can be enabled by defining SIMPLE_BUT_SAFE_HERSHEY_LOOKUP
  *  at compile time.
 \*--------------------------------------------------------------------------*/
@@ -1102,31 +1102,32 @@ int plhershey2unicode ( int in )
 
 #else
 
-int jump=number_of_entries_in_hershey_to_unicode_table/2; /* starting point for search - 1/2 though the table */
-int i=jump;      /* actual index into the table, jump is just used for moving around */
-int leave=0;     /* once we start searching through 1 entry at a time, this is used to keep a count, so we know when to give up */
-
-do {
-    if (hershey_to_unicode_lookup_table[i].Hershey==in)
-      {
-        return(i);
-      }
-
-    if (jump>2)
-      jump/=2;
-    else
-      jump=1;
-
-    if (hershey_to_unicode_lookup_table[i].Hershey>in)
-      i-=jump;
-    else
-      i+=jump;
-
-    if (jump==1) leave++;
-
-  } while(leave < 8);   /* 8 works... 7 doesn't... no magic other than that ! */
-
-return(-1);
+{
+   int jlo = -1, jmid, jhi = number_of_entries_in_hershey_to_unicode_table;
+   while (jhi - jlo > 1) 
+     {
+	/* Note that although jlo or jhi can be just outside valid
+	 * range (see initialization above) because of while condition
+	 * jlo < jmid < jhi and jmid must be in valid range.
+	 */
+	jmid = (jlo+jhi)/2;
+	if (in > hershey_to_unicode_lookup_table[jmid].Hershey)
+	  jlo = jmid;
+	else if (in < hershey_to_unicode_lookup_table[jmid].Hershey)
+	  jhi = jmid;
+	else
+	  /* We have found it!
+	   * in == hershey_to_unicode_lookup_table[jmid].Hershey 
+	   */
+	  return (jmid);
+     }
+   /* jlo is invalid or it is valid and in > hershey_to_unicode_lookup_table[jlo].Hershey.
+    * jhi is invalid or it is valid and index < hershey_to_unicode_lookup_table[jhi].Hershey.
+    * All these conditions together imply in cannot be found in
+    * hershey_to_unicode_lookup_table[j].Hershey, for all j.
+    */
+   return(-1);
+}
 
 #endif
 
