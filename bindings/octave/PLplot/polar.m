@@ -24,10 +24,12 @@
 function polar (x1, x2, fmt)
 
   global __pl
-  __pl_init;
+  strm = __pl_init;
 
-  __pl.type = -1;
-  __pl.items = 1;
+  __pl.type(strm) = -1;
+  if (!ishold)
+    __pl.items(strm) = 0;
+  endif
   
   if (nargin == 3)
     if (!isstr (fmt))
