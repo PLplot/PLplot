@@ -19,7 +19,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplcxx@LIB_TAG@
+INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplotcxx@LIB_TAG@
 
 all: x01cc
 

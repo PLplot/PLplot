@@ -30,9 +30,9 @@ endif
 
 if enable_cxx
 if with_double
-lib_LTLIBRARIES = libplcxxd.la
+lib_LTLIBRARIES = libplplotcxxd.la
 else
-lib_LTLIBRARIES = libplcxx.la
+lib_LTLIBRARIES = libplplotcxx.la
 endif
 endif
 
@@ -41,8 +41,8 @@ version = -version-info @SOVERSION@
 
 sources = plstream.cc
 
-libplcxx_la_SOURCES  = $(sources)
-libplcxx_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
+libplplotcxx_la_SOURCES  = $(sources)
+libplplotcxx_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 
-libplcxxd_la_SOURCES = $(libplcxx_la_SOURCES)
-libplcxxd_la_LDFLAGS = $(libplcxx_la_LDFLAGS)
+libplplotcxxd_la_SOURCES = $(libplplotcxx_la_SOURCES)
+libplplotcxxd_la_LDFLAGS = $(libplplotcxx_la_LDFLAGS)

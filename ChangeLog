@@ -2,8 +2,11 @@
 
 	* Configure test executables in examples/c/Makefile.am
 	
-	* Clean up Makefile.am files and also switch from LIBADD to LDFLAG
+	* Clean up Makefile.am files and also switch from LIBADD to LDFLAGS
 	  for interlibrary dependencies as suggested by documentation.
+	  
+	* Change fortran and C++ driver names to libplplotf77 and libplplotcxx
+	  because of name-clash concerns.
 
 2002-12-04  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

@@ -28,9 +28,9 @@ endif
 
 if enable_f77
 if with_double
-lib_LTLIBRARIES = libplf77d.la
+lib_LTLIBRARIES = libplplotf77d.la
 else
-lib_LTLIBRARIES = libplf77.la
+lib_LTLIBRARIES = libplplotf77.la
 endif
 endif
 
@@ -45,11 +45,11 @@ sources = \
 	strutil.f \
 	sfstubs.f
 
-libplf77_la_SOURCES  = $(sources)
-libplf77_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
+libplplotf77_la_SOURCES  = $(sources)
+libplplotf77_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 
-libplf77d_la_SOURCES = $(libplf77_la_SOURCES)
-libplf77d_la_LDFLAGS = $(libplf77_la_LDFLAGS)
+libplplotf77d_la_SOURCES = $(libplplotf77_la_SOURCES)
+libplplotf77d_la_LDFLAGS = $(libplplotf77_la_LDFLAGS)
 
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
