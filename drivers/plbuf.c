@@ -1,10 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/02/22 23:11:00  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.4  1993/02/25 18:29:08  mjl
+   Changed buffer code to use only one temporary file per plplot invocation &
+   rewinding it as needed, instead of opening/closing a temporary file for each
+   page.  Fixed bug in redisplaying backed up page.
 
+ * Revision 1.3  1993/02/22  23:11:00  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.2  1993/01/23  05:41:49  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -44,9 +49,6 @@
 /* Function prototypes */
 /* INDENT OFF */
 
-static void	plbuf_open	(PLStream *pls);
-static void	plbuf_close	(PLStream *pls);
-
 static int	rd_command	( PLStream *pls, U_CHAR * );
 static int	wr_command	( PLStream *pls, U_CHAR );
 static void	process_next	( PLStream *pls, U_CHAR );
@@ -82,6 +84,11 @@ static PLSHORT xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
 void
 plbuf_init(PLStream *pls)
 {
+    (void) tmpnam(pls->plbufFnam);
+    pls->plbufFile = fopen(pls->plbufFnam, "wb+");
+    if (pls->plbufFile == NULL) {
+	plexit("Error opening plot data storage file.");
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -146,11 +153,8 @@ plbuf_clear(PLStream *pls)
     if (pls->plbuf_read)
 	return;
 
-    if (pls->plbuf_write) {
+    if (pls->plbuf_write)
 	(void) wr_command(pls, (U_CHAR) CLEAR);
-
-	plbuf_close(pls);
-    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -166,8 +170,10 @@ plbuf_page(PLStream *pls)
     if (pls->plbuf_read)
 	return;
 
-    plbuf_open(pls);
+    pls->plbuf_write = pls->plbuf_enable;
+
     if (pls->plbuf_write) {
+	rewind(pls->plbufFile);
 	(void) wr_command(pls, (U_CHAR) PAGE);
 	grcol();
 	grwid();
@@ -183,6 +189,8 @@ plbuf_page(PLStream *pls)
 void
 plbuf_tidy(PLStream *pls)
 {
+    fclose(pls->plbufFile);
+    remove(pls->plbufFnam);
 }
 
 /*----------------------------------------------------------------------*\
@@ -357,11 +365,6 @@ rdbuf_clear(PLStream *pls)
 * rdbuf_page()
 *
 * Set up for the next page.
-* Also write:
-*     - The page number for the following page (not strictly necessary
-*	but the redundancy may someday be useful).
-*     - A blank field after the command to eventually hold the byte
-*	distance to the next page.
 \*----------------------------------------------------------------------*/
 
 void
@@ -497,11 +500,13 @@ plRemakePlot(PLStream *pls)
     if (!pls->plbuf_write)
 	return;
 
-    pls->plbufFile = freopen(pls->plbufFnam, "rb+", pls->plbufFile);
+    rewind(pls->plbufFile);
     pls->plbuf_write = FALSE;
     pls->plbuf_read = TRUE;
 
     while (rd_command(pls, &c)) {
+	if (c == CLEAR)
+	    break;
 	process_next(pls, c);
     }
 
@@ -520,7 +525,7 @@ process_next(PLStream *pls, U_CHAR c)
 {
     switch ((int) c) {
 
-	case INITIALIZE:
+      case INITIALIZE:
 	rdbuf_init(pls);
 	break;
 
@@ -559,33 +564,10 @@ process_next(PLStream *pls, U_CHAR c)
       case ESCAPE:
 	rdbuf_esc(pls);
 	break;
+
+      default:
+	plwarn("process_next: Unrecognized plot buffer command\n");
     }
-}
-
-/*----------------------------------------------------------------------*\
-* Miscellaneous support routines
-\*----------------------------------------------------------------------*/
-
-static void
-plbuf_open(PLStream *pls)
-{
-    pls->plbuf_write = FALSE;
-    if (!pls->plbuf_enable)
-	return;
-
-    (void) tmpnam(pls->plbufFnam);
-    pls->plbufFile = fopen(pls->plbufFnam, "wb");
-    if (pls->plbufFile == NULL) {
-	plexit("Error opening plot data storage file.");
-    }
-    pls->plbuf_write = TRUE;
-}
-
-static void
-plbuf_close(PLStream *pls)
-{
-    fclose(pls->plbufFile);
-    remove(pls->plbufFnam);
 }
 
 /*----------------------------------------------------------------------*\
