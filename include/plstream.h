@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/07/02 07:25:30  mjl
-   Added variables for dealing with X driver, TK driver, driver interface.
+   Revision 1.10  1993/07/16 22:30:10  mjl
+   Added many new variables used in driver interface to PLStream definition.
+   Eliminated some obsolete variables and function prototypes.
 
+ * Revision 1.9  1993/07/02  07:25:30  mjl
+ * Added variables for dealing with X driver, TK driver, driver interface.
+ *
  * Revision 1.8  1993/04/26  19:57:52  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
@@ -49,17 +53,19 @@
 *  Define the PLDev data structure.
 *
 *  These are all quantities that must be saved on a per-device basis.
-*  This is obsolete and will be discarded soon.
 \*----------------------------------------------------------------------*/
 
 typedef struct {
     PLFLT pxlx, pxly;
     PLINT xold, yold;
+
     PLINT xmin, xmax, xlen;
     PLINT ymin, ymax, ylen;
-    PLINT sclxmin, sclxmax;
-    PLINT sclymin, sclymax;
-    PLFLT rsclx, rscly;
+
+    PLINT xmin_dev, xmax_dev, xlen_dev;
+    PLINT ymin_dev, ymax_dev, ylen_dev;
+
+    PLFLT xscale_dev, yscale_dev;
 } PLDev;
 
 /*----------------------------------------------------------------------*\
@@ -98,7 +104,6 @@ typedef struct {
 * fileset	Set if file name or file pointer was specified
 * pageset	Set if page dimensions were specified
 * widthset	Set if pen width was specified
-* aspectset	Set if the aspect ratio was specified
 *
 * bytecnt	Byte count for output stream
 * page		Page count for output stream
@@ -183,40 +188,51 @@ typedef struct {
 *
 * Variables for use by the plot buffer
 *
-* plbuf_enable	int	Set if driver needs to use the plot buffer
-* plbuf_read	int	Set if reading from the plot buffer
 * plbuf_write	int	Set if writing to the plot buffer
 * plbufFile	FILE	Plot buffer file pointer
+* plbufOwner	int	Typically set; only zero if current stream is cloned.
 *
 ***********************************************************************
 *
-* Driver interface
+* Driver interface layer
 *
-* diplt		PLINT	Set to change window into plot space
-* didev		PLINT	Set to change window into device space
-* diori		PLINT	Set to change orientation
+* difilt	PLINT	Driver interface filter flag
 *
+* dipxmin	PLFLT	
+* dipymin	PLFLT	Min, max relative plot coordinates
+* dipxmax	PLFLT
+* dipymax	PLFLT	
 * dipxax 	PLFLT	Plot window transformation:
 * dipxb 	PLFLT	  x' = dipxax * x + dipxb
 * dipyay 	PLFLT
 * dipyb 	PLFLT	  y' = dipyay * y + dipyb
-* dipxmin	PLFLT	
-* dipymin	PLFLT	Min, max coordinates
-* dipxmax	PLFLT	  (save to do zooming)
-* dipymax	PLFLT	
 *
+* didxmin	PLFLT	
+* didymin	PLFLT	Min, max relative device coordinates
+* didxmax	PLFLT
+* didymax	PLFLT	
 * didxax 	PLFLT	Device window transformation:
 * didxb 	PLFLT	  x' = didxax * x + didxb
 * didyay 	PLFLT
 * didyb 	PLFLT	  y' = didyay * y + didyb
 *
-* dioxax	PLFLT	Orientation transformation:
-* dioxay	PLFLT
-* dioxb 	PLFLT	  x' = dioxax * x + dioxay * y + dioxb
+* diclpxmi	PLINT
+* diclpxma	PLINT	Device clip limits
+* diclpymi	PLINT
+* diclpyma	PLINT
 *
+* diorot	PLFLT	Rotation angle (in units of pi/2)
+* dioxax	PLFLT	Orientation transformation:
+* dioxay	PLFLT	  x' = dioxax * x + dioxay * y + dioxb
+* dioxb 	PLFLT
 * dioyax	PLFLT	  y' = dioyax * x + dioyay * y + dioyb
 * dioyay	PLFLT
 * dioyb 	PLFLT
+*
+* dimxax 	PLFLT	Map meta to physical coordinates:
+* dimxb 	PLFLT	  x' = dimxax * x + dimxb
+* dimyay 	PLFLT
+* dimyb 	PLFLT	  y' = dimyay * y + dimyb
 *
 ***********************************************************************
 *
@@ -247,9 +263,6 @@ typedef struct {
 * xdigmax..	Allowed #digits in axes labels
 * xdigits..	Actual field widths (returned)
 *
-* pscale 	Physical coordinate scaling flag
-* aspect	Global aspect ratio
-* lpbp..	Local plot boundaries in physical coordinates
 * vpp..		Viewport boundaries in physical coordinates
 * spp..		Subpage  boundaries in physical coordinates
 * clp..		Clip     boundaries in physical coordinates
@@ -303,7 +316,6 @@ typedef struct {
     PLINT fileset;
     PLINT pageset;
     PLINT widthset;
-    PLINT aspectset;
 
     PLINT bytecnt;
     PLINT page;
@@ -346,18 +358,20 @@ typedef struct {
 
 /* Plot buffer settings */
 
-    int  plbuf_enable;
-    int  plbuf_read;
     int  plbuf_write;
     FILE *plbufFile;
+    int  plbufOwner;
 
-/* Driver interface */
+/* Driver interface layer */
 
-    PLINT diplt, didev, diori;
-    PLFLT dipxax, dipxb, dipyay, dipyb;
+    PLINT difilt, diclpxmi, diclpxma, diclpymi, diclpyma;
     PLFLT dipxmin, dipymin, dipxmax, dipymax;
+    PLFLT dipxax, dipxb, dipyay, dipyb;
+    PLFLT didxmin, didymin, didxmax, didymax;
     PLFLT didxax, didxb, didyay, didyb;
+    PLFLT diorot;
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
+    PLFLT dimxax, dimxb, dimyay, dimyb;
 
 /* Everything else */
 /* Could use some logical grouping here! */
@@ -384,13 +398,10 @@ typedef struct {
     PLFLT symdef, symht;
     PLFLT majdef, majht;
     PLFLT mindef, minht;
-    PLINT pscale;
-    PLFLT aspect;
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT phyxmi, phyxma, phyymi, phyyma;
-    PLINT lpbpxmi, lpbpxma, lpbpymi, lpbpyma;
     PLINT umx, umy;
     PLINT currx, curry;
     PLINT mark[10], space[10], nms;
@@ -422,9 +433,8 @@ void  plFamInit		(PLStream *);
 PLINT plGetInt		(char *);
 PLFLT plGetFlt		(char *);
 void  plGetFam		(PLStream *);
-void  plSclPhy		(PLStream *, PLDev *, 
-				int *, int *, int *, int *);
 void  plRotPhy		(PLINT, PLDev *, 
-				int *, int *, int *, int *);
+			 int *, int *, int *, int *);
+void  plP_sfnam		(PLStream *, char *);
 
 #endif	/* __PLSTREAM_H__ */
