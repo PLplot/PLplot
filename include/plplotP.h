@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1995/04/12 08:22:30  mjl
+ * Revision 1.37  1995/05/07 02:28:58  mjl
+ * Added include of pldebug.h so that all PLplot source files now get it.
+ * Eliminated prototypes for obsolete functions plCmap0_init() and
+ * plCmap1_init() and added prototype for new function plstrm_init().
+ *
+ * Revision 1.36  1995/04/12  08:22:30  mjl
  * Eliminated SCHAR in favor of simply "signed char".  Removed prototypes
  * for obsolete functions.
  *
@@ -161,6 +166,7 @@
 
 #ifndef __PLCORE_H__
 extern PLStream	*plsc;
+#include "pldebug.h"
 #endif
 
 /*--------------------------------------------------------------------------*\
@@ -170,16 +176,6 @@ extern PLStream	*plsc;
 #ifndef TRUE
 #define TRUE  1
 #define FALSE 0
-#endif
-
-/* For the truly desperate debugging task */
-
-#ifdef DEBUG_ENTER
-#define dbug_enter(a) \
-    fprintf(stderr, "%s: Entered %s\n", __FILE__, a);
-
-#else
-#define dbug_enter(a)
 #endif
 
 /* Used to help ensure everything malloc'ed gets freed */
@@ -391,16 +387,6 @@ plfntld(PLINT fnt);
 
 void
 plfontrel(void);
-
-/* Initializes color map 0. */
-
-void
-plCmap0_init(void);
-
-/* Initializes color map 1. */
-
-void
-plCmap1_init(void);
 
 /* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
 
@@ -723,6 +709,11 @@ plP_swin(PLWindow *plwin);
 
 FILE *
 plLibOpen(char *fn);
+
+/* Does required startup initialization of a stream.  */
+
+void
+plstrm_init(void);
 
 #ifdef __cplusplus
 }
