@@ -7,7 +7,7 @@
 ifneq ($(DYNAMIC_DRIVERS),)
 XWIN_DRV	= xwin_drv
 #target for rebuilding the xwin driver with correct rpath for install.
-xwin_drv:
+xwin_drv: shared/xwin$O
 	@$(SHLIB_BUILD) $(DATA_DIR)/../drivers/xwin$(LIB_TAG)_drv.so \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)
 endif
