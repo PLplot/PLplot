@@ -56,9 +56,9 @@ INSTALL_RPATH	= @INSTALL_RPATH@
 # unique names that don't clash with other system names, hence
 # pl prefix.
 
-PLLIB_NAME	= plplot
-CXXLIB_NAME	= plcxx
-MATLIB_NAME	= plmatrix
+PLLIB_NAME	= @PLLIB_NAME@
+CXXLIB_NAME	= @CXXLIB_NAME@
+MATLIB_NAME	= @MATLIB_NAME@
 PLLIB_BASE	= lib$(PLLIB_NAME)
 CXXLIB_BASE	= lib$(CXXLIB_NAME)
 MATLIB_BASE	= lib$(MATLIB_NAME)

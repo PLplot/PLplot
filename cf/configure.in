@@ -414,8 +414,16 @@ if test "$with_fseek" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# Set up library suffix.
+# Set up library names and suffix.
 # ----------------------------------------------------------------------------
+
+PLLIB_NAME=plplot
+MATLIB_NAME=plmatrix
+CXXLIB_NAME=plcxx
+
+AC_SUBST(PLLIB_NAME)
+AC_SUBST(MATLIB_NAME)
+AC_SUBST(CXXLIB_NAME)
 
 # Define tags to be used in multiple-precision library names
 #
@@ -741,7 +749,7 @@ plplot 2>/dev/null
 # Create output files.
 # ----------------------------------------------------------------------------
 
-AC_OUTPUT(Makefile Makedemo)
+AC_OUTPUT(Makefile Makedemo cf/plplot-config)
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.

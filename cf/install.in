@@ -48,13 +48,9 @@ install_plrender:
 install_pltek:
 	@-strip pltek$E; $(CP) pltek$E $(BIN_DIR)
 
-install_plplot_linkage:
-	@echo "#!/bin/sh" > plplot_linkage; \
-	 echo 'echo "$(LDC_FLAGS) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)"' \
-		>> plplot_linkage; \
-	 chmod +x plplot_linkage; \
-	 $(CP) plplot_linkage $(BIN_DIR); \
-	 $(RM) plplot_linkage
+install_plplot_config:
+	@chmod +x cf/plplot-config; \
+	 $(CP) cf/plplot-config $(BIN_DIR)
 
-install_utils: install_plrender install_pltek install_plplot_linkage
+install_utils: install_plrender install_pltek install_plplot_config
 
