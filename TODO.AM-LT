@@ -10,21 +10,6 @@ disappear when the AM-LT branch will get merged into MAIN.  [N.B.: the
 merge has already be done since a while.  I am keeping old items here that
 do not seem to be fully implemented already.  RL, on 2003-11-28.]
 
-* Strip libraries:
-
-    Add an option --enable-strip-libraries to the configure to allow stripping
-    of libraries after installation in ${prefix}/lib.  This must be
-    implemented in install-exec-hook targets in the Makefile.am files
-    located in the following directories:
-       src/
-       bindings/c++
-       bindings/f77
-       bindings/tcl
-       lib/csa
-       lib/nn
-    Also, the strip program must be checked in configure.ac (AC_CHECK_PROGS).
-    I think that stripping of libraries must be enabled by default.
-
 * examples:
 
     The examples directory must be ported to Automake.  The ultimate goal
