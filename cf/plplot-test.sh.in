@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: 
+# $Id$
 # test suite for executing all configured demos (either in plplot/tmp 
 # or else in the install area) capable of file output.  Our ultimate aim
 # is to compare the generated files with results generated on a system
