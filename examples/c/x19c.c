@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1995/04/12 08:19:03  mjl
+ * Revision 1.4  1995/06/01 21:40:15  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Revision 1.3  1995/04/12  08:19:03  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -18,7 +22,7 @@
 	Contributed by Wesley Ebisuzaki.
 */
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
  * mapform

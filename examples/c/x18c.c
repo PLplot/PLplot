@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/04/12 08:19:03  mjl
+ * Revision 1.9  1995/06/01 21:40:15  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Revision 1.8  1995/04/12  08:19:03  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -34,7 +38,7 @@
 	3-d line and point plot demo.  Adapted from x08c.c.
 */
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 static int opt[] = { 1, 0, 1, 0 };
 static PLFLT alt[] = {20.0, 35.0, 50.0, 65.0};

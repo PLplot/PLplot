@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1995/04/12 08:18:55  mjl
+ * Revision 1.12  1995/06/01 21:40:08  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Revision 1.11  1995/04/12  08:18:55  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -23,7 +27,7 @@
 #pragma optimize("",off)
 #endif
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 static int base[17] =
 {0, 200, 500, 600, 700, 800, 900,

@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1995/04/12 08:18:58  mjl
+ * Revision 1.12  1995/06/01 21:40:11  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Revision 1.11  1995/04/12  08:18:58  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -25,7 +29,7 @@
 	Mesh plot demo.
 */
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */

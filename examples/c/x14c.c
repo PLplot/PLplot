@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1995/05/06 21:28:44  mjl
+ * Revision 1.15  1995/06/01 21:40:13  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Revision 1.14  1995/05/06  21:28:44  mjl
  * Changed to use Tk driver instead of DP, since DP doesn't handle cleanup
  * from multiple interpreters correctly (problem is in Tcl-DP I think).
  *
@@ -42,7 +46,7 @@
 	IFS, University of Texas at Austin
 */
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];

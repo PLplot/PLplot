@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/04/12 08:18:59  mjl
+ * Revision 1.10  1995/06/01 21:40:11  mjl
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Revision 1.9  1995/04/12  08:18:59  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -25,7 +29,7 @@
 	Bar chart demo.
 */
 
-#include <plcdemos.h>
+#include "plcdemos.h"
 
 void
 plfbox(PLFLT x0, PLFLT y0);
@@ -72,6 +76,9 @@ main(int argc, char *argv[])
 
     for (i = 0; i < 10; i++) {
 	plcol(i + 1);
+    /*
+	plcol1((PLFLT) ((i + 1)/10.0));
+	*/
 	plpsty(0);
 	plfbox((1980. + i), y0[i]);
 	sprintf(string, "%.0f", y0[i]);
