@@ -1,6 +1,13 @@
 # $Id$
 # $Log$
-# Revision 1.16  1995/05/19 22:19:21  mjl
+# Revision 1.17  1995/06/01 21:27:51  mjl
+# Added procs getSaveFile and getPaletteFile for retrieving a save or palette
+# file name, respectively.  Checks to see if [incr Tcl] is available and if
+# so, uses the non-sucky file selector.  Otherwise uses the getItem proc.
+# Added modified destroy proc by Michael J. McLennan, to ensure that [incr
+# Tcl] objects get destroyed properly.
+#
+# Revision 1.16  1995/05/19  22:19:21  mjl
 # Fix for Tk 4.0.  Lines of the form
 #      if {[tk colormodel $w] == "color"}
 # no longer work (the command was eliminated), and have been replaced with
@@ -255,6 +262,79 @@ proc max {args} {
       if {$i>$x} {set x $i}
    }
    return $x
+}
+
+#----------------------------------------------------------------------------
+# getSaveFile
+#
+# Puts up a file selector for save file.  Uses the itcl File selector by
+# Mark L. Ulferts.  If itcl isn't available, just a front-end to getItem.
+#
+# I have to go through a bit of trickery to get "~" expanded, since the
+# Tcl 7.0 glob no longer expands names if the file doesn't already exist.
+#----------------------------------------------------------------------------
+
+proc getSaveFile {devkey} {
+    if { [info commands itcl_class] != "" } then {
+	set filter "*"
+	switch "$devkey" \
+	    "ps"	"set filter *.ps" \
+	    "psc"	"set filter *.ps" \
+	    "plmeta"	"set filter *.plm" \
+	    "xfig"	"set filter *.fig"
+
+	FileSelect .fs -title "Enter file name" -full 0 -filter $filter
+
+	if {[.fs activate]} {
+	    set file [.fs get]
+	} else {
+	    set file ""
+	}
+
+	destroy .fs
+
+    } else {
+	set file [getItem "Enter save file name"]
+    }
+
+    if { [string index $file 0] == "~" } {
+	set file [glob ~][string trimleft $file ~]
+    }
+
+    return $file
+}
+
+#----------------------------------------------------------------------------
+# getPaletteFile
+#
+# Puts up a file selector for a palette file.  Uses the itcl File selector by
+# Mark L. Ulferts.  If itcl isn't available, just a front-end to getItem.
+#
+# I have to go through a bit of trickery to get "~" expanded, since the
+# Tcl 7.0 glob no longer expands names if the file doesn't already exist.
+#----------------------------------------------------------------------------
+
+proc getPaletteFile {} {
+    if { [info commands itcl_class] != "" } then {
+	FileSelect .fs -title "Enter file name" -full 0 -filter *.pal
+
+	if {[.fs activate]} {
+	    set file [.fs get]
+	} else {
+	    set file ""
+	}
+
+	destroy .fs
+
+    } else {
+	set file [getItem "Enter palette file name"]
+    }
+
+    if { [string index $file 0] == "~" } {
+	set file [glob ~][string trimleft $file ~]
+    }
+
+    return $file
 }
 
 #----------------------------------------------------------------------------
@@ -720,4 +800,63 @@ bind $w <Any-ResizeRequest>	{puts stderr "Widget event: ResizeRequest"}
 bind $w <Any-Unmap>		{puts stderr "Widget event: Unmap"}
 bind $w <Any-Visibility>	{puts stderr "Widget event: Visibility"}
 
+}
+
+# destroy
+# ----------------------------------------------------------------------
+# Replacement for the usual Tk "destroy" command.
+# Recognizes mega-widgets as [incr Tcl] objects and deletes them
+# appropriately.  Destroys ordinary Tk windows in the usual manner.
+#
+# mjl: Modified to work even on a vanilla wish.  Kept in this file to make
+# sure this copy is loaded rather than the one that comes with [incr Tcl].
+# ----------------------------------------------------------------------
+#   AUTHOR:  Michael J. McLennan       Phone: (610)712-2842
+#            AT&T Bell Laboratories   E-mail: michael.mclennan@att.com
+#
+#      RCS:  destroy.tcl,v 1.1 1994/04/22 13:36:07 mmc Exp
+# ----------------------------------------------------------------------
+#               Copyright (c) 1994  AT&T Bell Laboratories
+# ======================================================================
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted,
+# provided that the above copyright notice appear in all copies and that
+# both that the copyright notice and warranty disclaimer appear in
+# supporting documentation, and that the names of AT&T Bell Laboratories
+# any of their entities not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+#
+# AT&T disclaims all warranties with regard to this software, including
+# all implied warranties of merchantability and fitness.  In no event
+# shall AT&T be liable for any special, indirect or consequential
+# damages or any damages whatsoever resulting from loss of use, data or
+# profits, whether in an action of contract, negligence or other
+# tortuous action, arising out of or in connection with the use or
+# performance of this software.
+# ======================================================================
+
+if {[info commands tk_destroy] == ""} { rename destroy tk_destroy }
+
+# ----------------------------------------------------------------------
+#  USAGE:  destroy ?window window...?
+#
+#  Replacement for the usual Tk "destroy" command.  Destroys both
+#  Tk windows and [incr Tcl] objects.
+# ----------------------------------------------------------------------
+proc destroy {args} {
+    global itcl_destroy
+
+    foreach win $args {
+	if { "[info commands itcl_class]" != "" &&
+	     "[itcl_info objects $win]" != "" &&
+	     ![info exists itcl_destroy($win)]} {
+
+	    set itcl_destroy($win) "in progress"
+	    $win delete
+	    unset itcl_destroy($win)
+	} else {
+	    tk_destroy $win
+	}
+    }
 }
