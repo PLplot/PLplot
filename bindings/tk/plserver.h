@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1993/09/08 02:32:02  mjl
+ * Revision 1.6  1993/11/19 07:31:20  mjl
+ * Fixed the prototype for tk_toplevel().
+ *
+ * Revision 1.5  1993/09/08  02:32:02  mjl
  * Added include of <errno.h>.
  *
  * Revision 1.4  1993/08/18  19:04:08  mjl
@@ -80,10 +83,25 @@ typedef struct {
 
 /* from tk.c */
 
-int tk_toplevel 	(Tk_Window *, Tcl_Interp *, char *, char *, int);
-int tk_source		(Tk_Window, Tcl_Interp *, char *);
+/* Create top level window */
+
+int
+tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
+	    char *display, char *basename, char *classname, int options);
+
+/* Run a script */
+
+int
+tk_source(Tk_Window w, Tcl_Interp *interp, char *script);
 
 /* from plr.c */
 
-void	plr_start	(PLRDev *);
-int	plr_process	(PLRDev *);
+/* Set default state parameters before anyone else has a chance to. */
+
+void
+plr_start(PLRDev *plr);
+
+/* Read & process commands until "nbyte_max" bytes have been read. */
+
+int
+plr_process(PLRDev *plr);
