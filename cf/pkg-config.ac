@@ -6,6 +6,7 @@ dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
 dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl Copyright (C) 2005  Thomas J. Duck
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -28,8 +29,8 @@ PL_ARG_WITH(pkg-config,
   no)
 
 if test "$with_pkg_config" = yes ; then
-  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
-  test "$PKG_CONFIG" != found  &&  with_pkg_config=no
+  AC_CHECK_PROG(PKG_CONFIG_CHECK, pkg-config, found, not found)
+  test "$PKG_CONFIG_CHECK" != found  &&  with_pkg_config=no
   if test "$has_perl" = no ; then
     AC_MSG_WARN([pkg-config support needs perl to be built.])
     AC_MSG_WARN([Setting with_pkg_config=no.])
