@@ -767,7 +767,7 @@ proc_str (PLStream *pls, EscText *args)
 		    plabort("proc_str: string-supplied FCI inconsistent with Type1Lookup;");
 		    return;
 		 }
-		 pldebug("proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f]);
+		 /*pldebug("proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f]);*/
 		 if (!strcmp(fonts[f++], "Symbol")) {
 		    lookup = unicode_to_symbol_lookup_table;
 		    nlookup = number_of_entries_in_unicode_to_symbol_table;
