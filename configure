@@ -15,7 +15,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1993/10/06 19:48:03  mjl
+# Revision 1.4  1993/11/07 09:01:09  mjl
+# Added "warn" and "no_fortran" keywords.  "warn" enables most compiler
+# warning messages.
+#
+# Revision 1.3  1993/10/06  19:48:03  mjl
 # Got rid of SysV-isms in echo command.  Should work on lots more systems
 # now without resorting to disgusting hacks.
 #
@@ -51,6 +55,10 @@ if [ ! "$opt" ]; then
 	opt=0
 fi
 
+if [ ! "$warn" ]; then
+	warn=off
+fi
+
 if [ ! "$profile" ]; then
 	profile=off
 fi
@@ -65,6 +73,10 @@ fi
 
 if [ ! "$no_share" ]; then
 	no_share=off
+fi
+
+if [ ! "$no_fortran" ]; then
+	no_fortran=off
 fi
 
 # Define a symbol for echo to save a little bit of space.
@@ -85,10 +97,12 @@ $e "	system		$system"
 $e "	double		$double"
 $e "	debug		$debug"
 $e "	opt		$opt"
+$e "	warn		$warn"
 $e "	profile		$profile"
 $e "	no_x		$no_x"
 $e "	no_tk		$no_tk"
 $e "	no_share	$no_share"
+$e "	no_fortran	$no_fortran"
 $e ""
 }
 
@@ -113,14 +127,16 @@ $e ""
 $e "where recognized flags include:"
 $e ""
 $e "	h			help"
-$e "	system	  =<name>	specify system name"
-$e "	opt	  [=0|1|2]	specify optimization level"
-$e "	double	  [=on|off]	specify double precision"
-$e "	debug	  [=on|off]	specify debugging"
-$e "	profile	  [=on|off]	specify profiling"
-$e "	no_x	  [=on|off]	no X linkage"
-$e "	no_tk	  [=on|off]	no Tcl/TK linkage"
-$e "	no_share  [=on|off]	do not build shared libraries"
+$e "	system	   =<name>	system name"
+$e "	opt	   [=0|1|2]	optimization level"
+$e "	warn	   [=on|off]	turn on all compiler warnings"
+$e "	double	   [=on|off]	double precision"
+$e "	debug	   [=on|off]	debugging"
+$e "	profile	   [=on|off]	profiling"
+$e "	no_x	   [=on|off]	no X linkage"
+$e "	no_tk	   [=on|off]	no Tcl/TK linkage"
+$e "	no_share   [=on|off]	do not build shared libraries"
+$e "	no_fortran [=on|off]	do not build fortran interface"
 $e ""
 $e "Options are set via the command line, environment, and internal defaults,"
 $e "in that order.  The option value must be specified without spaces, e.g."
@@ -169,6 +185,12 @@ Parse_args () {
 		o|op|opt)
 			opt=1; debug=off
 			;;
+		wa=*|war=*|warn=*)
+			warn=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		wa|war|warn)
+			warn=on
+			;;
 		p=*|pr=*|pro=*|prof=*|profi=*|profil=*|profile=*)
 			profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
 			;;
@@ -193,6 +215,12 @@ Parse_args () {
 		no_share)
 			no_share=on
 			;;
+		no_f=*|no_fo=*|no_for=*|no_fort=*|no_fortr=*|no_fortra=*|no_fortrn=*)
+			no_fortran=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		no_fortran)
+			no_fortran=on
+			;;
 		*)
 			give_me_help=1
 			;;
@@ -206,13 +234,6 @@ Parse_args () {
 # Sets up all the build options.
 
 Setup_options () {
-
-	system_flag=
-	machine_flag=
-	debug_flag=
-	opt_flag=
-	profile_flag=
-	double_flag=
 
 # Allow various abbreviations for system name, including output of `uname`.  
 
@@ -308,6 +329,9 @@ Setup_options () {
 	if [ "$opt" -eq 2 ]; then
 		opt_flag="-DOPT=2"
 	fi
+	if [ "$warn" = "on" ]; then
+		warn_flag="-DWARN"
+	fi
 	if [ "$profile" = "on" ]; then
 		profile_flag="-DPROF"
 	fi
@@ -323,6 +347,13 @@ Setup_options () {
 	if [ "$no_share" = "on" ]; then
 		no_share_flag="-DNO_SHARE"
 	fi
+	if [ "$no_fortran" = "on" ]; then
+		no_fortran_flag="-DNO_FORTRAN"
+	fi
+
+	all_flags="$system_flag $machine_flag $double_flag $debug_flag \
+$opt_flag $warn_flag $profile_flag $no_x_flag $no_tk_flag $no_share_flag \
+$no_fortran_flag"
 }
 
 #****************************************************************************
@@ -400,17 +431,9 @@ Configure () {
 
 	echo "Building makefile with command:"
 	echo ""
-	echo \
-"m4 $system_flag $machine_flag $double_flag \
-$debug_flag $opt_flag $profile_flag \
-$no_x_flag $no_tk_flag $no_share_flag \
-makefile.m4 >Makefile
-"
+	echo "m4 $all_flags makefile.m4 >Makefile"
 
-	m4 $system_flag $machine_flag $user_flag $double_flag \
-	   $debug_flag $opt_flag $profile_flag \
-	   $no_x_flag $no_tk_flag $no_share_flag \
-	   makefile.m4 >Makefile
+	m4 $all_flags makefile.m4 >Makefile
 }
 
 #****************************************************************************
