@@ -15,10 +15,10 @@ static void cmap1_init(int);
 
 static char *title[4] =
 {
-    "#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
-    "#frPLplot Example 8 - Alt=20, Az=60, Opt=2",
-    "#frPLplot Example 8 - Alt=60, Az=120, Opt=3",
-    "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"
+    "#frPLplot Example 8 - Alt=60, Az=30",
+    "#frPLplot Example 8 - Alt=20, Az=60",
+    "#frPLplot Example 8 - Alt=60, Az=120",
+    "#frPLplot Example 8 - Alt=60, Az=160"
 };
 
 /*--------------------------------------------------------------------------*\
@@ -74,7 +74,7 @@ cmap1_init(int gray)
 static int rosen;
 
 static PLOptionTable options[] = {
-{
+  {
     "rosen",			/* Turns on test of API locate function */
     NULL,
     NULL,
@@ -82,7 +82,7 @@ static PLOptionTable options[] = {
     PL_OPT_BOOL,
     "-rosen",
     "Use the Rosenbrock function." },
-{
+  {
     NULL,			/* option */
     NULL,			/* handler */
     NULL,			/* client data */
@@ -145,43 +145,46 @@ main(int argc, char *argv[])
 
   plMinMax2dGrid(z, XPTS, YPTS, &zmax, &zmin);
   step = (zmax-zmin)/nlevel;
-  for (i=0; i<LEVELS; i++)
-      clevel[i] = zmin + i*step;
+  for (i=0; i<nlevel; i++)
+    clevel[i] = zmin + i*step;
   
   pllightsource(1.,1.,1.);
     	
   for (k = 0; k < 4; k++) {
-      for (ifshade = 0; ifshade < 5; ifshade++) {
-	  pladv(0);
-	  plvpor(0.0, 1.0, 0.0, 0.9);
-	  plwind(-1.0, 1.0, -0.9, 1.1);
-	  plcol0(1);
-	  if (rosen)
-	    plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0, alt[k], az[k]);
-	  else
-	    plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-
-	  plbox3("bnstu", "x axis", 0.0, 0,
-		 "bnstu", "y axis", 0.0, 0,
-		 "bcdmnstuv", "z axis", 0.0, 0);
-	  plcol0(2);
-
-	  if (ifshade == 0)        /* wireframe plot */
-	      plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
-	  else if (ifshade == 1) {       /* magnitude colored wireframe plot */
-	      cmap1_init(0);
-	      plot3d(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, 1);
-	  } else if (ifshade == 2) { /* light difused shaded plot */
-	      cmap1_init(1);
-	      plotsh3d(x, y, z, XPTS, YPTS, 0);
-	  } else if (ifshade == 3) { /* false color plot */
-	      cmap1_init(0);
-	      plotfc3d(x, y, z, XPTS, YPTS, 0, clevel, nlevel);
-	  } else    /* false color plot with contours */
-	      plotfc3d(x, y, z, XPTS, YPTS, SURF_CONT | BASE_CONT, clevel, nlevel);
-      }
+    for (ifshade = 0; ifshade < 6; ifshade++) {
+      pladv(0);
+      plvpor(0.0, 1.0, 0.0, 0.9);
+      plwind(-1.0, 1.0, -0.9, 1.1);
       plcol0(3);
       plmtex("t", 1.0, 0.5, 0.5, title[k]);
+      plcol0(1);
+      if (rosen)
+	plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0, alt[k], az[k]);
+      else
+	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+
+      plbox3("bnstu", "x axis", 0.0, 0,
+	     "bnstu", "y axis", 0.0, 0,
+	     "bcdmnstuv", "z axis", 0.0, 0);
+      plcol0(2);
+
+      if (ifshade == 0) {        /* wireframe plot */
+	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
+      } else if (ifshade == 1) { /* magnitude colored wireframe plot */
+	cmap1_init(0);
+	plmesh(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR);
+      } else if (ifshade == 2) { /* light difused surface plot */
+	cmap1_init(1);
+	plsurf3d(x, y, z, XPTS, YPTS, 0, NULL, 0);
+      } else if (ifshade == 3) { /* magnitude colored plot */
+	cmap1_init(0);
+	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0);
+      } else if (ifshade == 4) { /*  magnitude colored plot with faceted squares */
+	cmap1_init(0);
+	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0);
+      } else                     /* magnitude colored plot with contours */
+	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel);
+    }
   }   
 
   plend();
