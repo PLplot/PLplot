@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -17,8 +17,7 @@ function p19
   t = automatic_replot;
   automatic_replot = 0;
 
-  figure(0);
-
+  f0=figure;
   multiplot(1,2);
 
   title("Stripchard demo 1 (sliding)");
@@ -41,7 +40,7 @@ function p19
 
   subwindow(1,1);
 
-  figure(1);
+  f1=figure(free_fig);
 
   oneplot;
 
@@ -53,7 +52,7 @@ function p19
 
   id3 = stripc(0, 10, 0.3, -1, 1, "sin+noise", "", "", "", 1, 0);
 
-  figure(0);
+  figure(f0);
 
   y1 = 0.0;
 
@@ -81,10 +80,10 @@ function p19
     endif
 
     if rem(t,5)
-      figure(1);
+      figure(f1);
       stripc_add(id3, 0, t, y4);
       plflush;pleop;
-      figure(0);
+      figure(f0);
     endif
     
     plflush;pleop;
@@ -96,7 +95,8 @@ function p19
   stripc_del(id2);
   stripc_del(id3);
   
-  closefig(1);
+  closefig(f1);
+  oneplot;
 
   automatic_replot = t;
 
