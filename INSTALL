@@ -167,11 +167,14 @@ To compile your own programs, there are two ways possible:
 
 1) Use "plplot-config", eg:
 
-   cc  `plplot-config --cflags` myprog.c -o myprog  `plplot-config --libs`
-
-   which expands (on my system) to 
-
-   cc -I/usr/local/include -I. -I/usr/X11R6/include  myprog.c -o myprog -L/usr/local/lib -lplplot -ltclmatrix -ltk8.3 -ltcl8.3 -L/usr/X11R6/lib -lX11 -lgd -lpng -ljpeg -lz -ldl -lm -Wl,-rpath,/usr/local/lib 
+   cc  myprog.c -o myprog  `plplot-config --cflags --libs`
+   c++  myprog.cc -o myprog  `plplot-config --cflags --libs --with-c++`
+   f77  myprog.c -o myprog  `plplot-config --cflags --libs --with-f77`
+   cc  myprog.c -o myprog  `plplot-config --cflags --libs --with-tcl`
+   
+The last variation of the cc command is required if you are building your
+own extended wish as in examples/tk/xtk??.c where you need to mention
+the tcl/tk headers for the compile step and libplplottcltk for the link step.
 
 2) Use the pkg-config support, eg:
 
