@@ -41,7 +41,7 @@ usage () {
 
 DOC_ARG=${DOC_ARG:---enable-builddoc}
 WWW_USER=${WWW_USER:-rlaboiss}
-CVSROOTDIR=${CVSROOTDIR:-cvs.plplot.sourceforge.net:/cvsroot/plplot}
+CVSROOTDIR=${CVSROOTDIR:-cvs.sourceforge.net:/cvsroot/plplot}
 VERSION=${VERSION:+--version=$1}
 BRANCH=${BRANCH:--D now}
 CVSTMPDIR=${CVSTMPDIR:-plplot-cvs-tarball}
