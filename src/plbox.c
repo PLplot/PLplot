@@ -777,6 +777,13 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
     xform[2] = ss;
     xform[3] = 1.0;
 
+    if (plsc->dev_text) {      
+      plP_text(0, just, xform, plP_mmpcx(plP_wcmmx(wx)),
+			   plP_mmpcy(plP_wcmmy(wy) - disp * ht),
+			   refx, refy, text);
+      /* return; /* just for comparition */
+    }
+
     plstr(0, xform, refx, refy, text);
 }
 
@@ -967,7 +974,7 @@ static void
 plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
-    PLINT refx = 0, refy = 0, vert = 0;
+    PLINT refx = 0, refy = 0, x, y, vert = 0;
     PLFLT shift, cc, ss, def, ht, wy;
     PLFLT xmm, ymm, xform[4], diag;
 
@@ -981,30 +988,39 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     wy = wy1 + pos * (wy2 - wy1);
 
     if (plP_stsearch(opt, 'v')) {
-	vert = 0;
-	xmm = plP_wcmmx(wx) - (disp * ht + shift) * cc;
-	ymm = plP_wcmmy(wy) - (disp * ht + shift) * ss;
-	refx = plP_mmpcx(xmm);
-	refy = plP_mmpcy(ymm);
+	  vert = 0;
+	  xmm = plP_wcmmx(wx) - (disp * ht + shift) * cc; 
+	  x = plP_mmpcx(plP_wcmmx(wx) - disp * ht * cc);
+	  ymm = plP_wcmmy(wy) - (disp * ht + shift) * ss;
+	  y = plP_mmpcy(plP_wcmmy(wy) - disp * ht * ss);
+	  refx = plP_mmpcx(xmm);
+	  refy = plP_mmpcy(ymm);
     }
     else if (plP_stsearch(opt, 'h')) {
-	vert = 1;
-	xmm = plP_wcmmx(wx) - disp * ht * cc;
-	refx = plP_mmpcx(xmm);
-	refy = plP_wcpcy(wy) - plsc->ypmm * (disp * ht * ss + shift);
+	  vert = 1;
+	  xmm = plP_wcmmx(wx) - disp * ht * cc;
+	  x = refx = plP_mmpcx(xmm);
+	  refy = plP_wcpcy(wy) - plsc->ypmm * (disp * ht * ss + shift);
+	  y = plP_wcpcy(wy) - plsc->ypmm * (disp * ht * ss);
     }
     if (vert) {
-	xform[0] = 0.0;
-	xform[1] = -cc;
-	xform[2] = 1.0;
-	xform[3] = -ss;
+	  xform[0] = 0.0;
+	  xform[1] = -cc;
+	  xform[2] = 1.0;
+	  xform[3] = -ss;
     }
     else {
-	xform[0] = cc;
-	xform[1] = 0.0;
-	xform[2] = ss;
-	xform[3] = 1.0;
+	  xform[0] = cc;
+	  xform[1] = 0.0;
+	  xform[2] = ss;
+	  xform[3] = 1.0;
     }
+
+    if (plsc->dev_text) {
+      plP_text(0, just, xform, x, y, refx, refy, text);
+      /* return; /* just for comparition */
+    }
+
     plstr(0, xform, refx, refy, text);
 }
 

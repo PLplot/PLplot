@@ -377,7 +377,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	 const char *text)
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
-    PLINT vert, refx, refy;
+    PLINT vert, refx, refy, x, y;
     PLFLT xdv, ydv, xmm, ymm, shift, xform[4];
     PLFLT chrdef, chrht;
 
@@ -398,43 +398,49 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
 	ymm = plP_dcmmy(plsc->vpdymi) - disp * chrht;
-	refx = plP_dcpcx(xdv) - shift * plsc->xpmm;
-	refy = plP_mmpcy(ymm);
+	x = plP_dcpcx(xdv);
+	refx = x - shift * plsc->xpmm;
+	y = refy = plP_mmpcy(ymm);
     }
     else if (plP_stsearch(side, 't')) {
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
 	ymm = plP_dcmmy(plsc->vpdyma) + disp * chrht;
-	refx = plP_dcpcx(xdv) - shift * plsc->xpmm;
-	refy = plP_mmpcy(ymm);
+	x = plP_dcpcx(xdv);
+	refx = x - shift * plsc->xpmm;
+	y = refy = plP_mmpcy(ymm);
     }
     else if (plP_stindex(side, "LV") != -1 || plP_stindex(side, "lv") != -1) {
 	vert = 0;
-	xmm = plP_dcmmx(plsc->vpdxmi) - disp * chrht - shift;
+	xmm = plP_dcmmx(plsc->vpdxmi) - disp * chrht;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	refx = plP_mmpcx(xmm);
-	refy = plP_dcpcy(ydv);
+	x = plP_mmpcx(xmm);
+	refx = x - plP_mmpcx(shift);
+	y = refy = plP_dcpcy(ydv);
     }
     else if (plP_stindex(side, "RV") != -1 || plP_stindex(side, "rv") != -1) {
 	vert = 0;
-	xmm = plP_dcmmx(plsc->vpdxma) + disp * chrht - shift;
+	xmm = plP_dcmmx(plsc->vpdxma) + disp * chrht;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	refx = plP_mmpcx(xmm);
-	refy = plP_dcpcy(ydv);
+	x = plP_mmpcx(xmm);
+	refx = x - plP_mmpcx(shift);
+	y = refy = plP_dcpcy(ydv);
     }
     else if (plP_stsearch(side, 'l')) {
 	vert = 1;
 	xmm = plP_dcmmx(plsc->vpdxmi) - disp * chrht;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	refx = plP_mmpcx(xmm);
-	refy = plP_dcpcy(ydv) - shift * plsc->ypmm;
+	x = refx = plP_mmpcx(xmm);
+	y = plP_dcpcy(ydv);
+	refy = y - shift * plsc->ypmm;
     }
     else if (plP_stsearch(side, 'r')) {
 	vert = 1;
 	xmm = plP_dcmmx(plsc->vpdxma) + disp * chrht;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	refx = plP_mmpcx(xmm);
-	refy = plP_dcpcy(ydv) - shift * plsc->ypmm;
+	x = refx = plP_mmpcx(xmm);
+	y = plP_dcpcy(ydv);
+	refy = y - shift * plsc->ypmm;
     }
     else {
 	plP_sclp(clpxmi, clpxma, clpymi, clpyma);
@@ -453,6 +459,12 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	xform[2] = 0.0;
 	xform[3] = 1.0;
     }
+
+    if (plsc->dev_text) {
+      plP_text(0, just, xform, x, y, refx, refy, text);
+      /* return; /* just for comparition */
+    }
+
     plstr(0, xform, refx, refy, text);
     plP_sclp(clpxmi, clpxma, clpymi, clpyma);
 }
@@ -499,6 +511,11 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     refx = plP_wcpcx(x) - shift * cc * plsc->xpmm;
     refy = plP_wcpcy(y) - shift * ss * plsc->ypmm;
 
+    if (plsc->dev_text) {
+      plP_text(0, just, xform, plP_wcpcx(x), plP_wcpcy(y), refx, refy, text);      
+      /* return; /* just for comparition */
+    }
+
     plstr(0, xform, refx, refy, text);
 }
 
@@ -521,8 +538,14 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 {
     short int *symbol;
     signed char *xygrid;
+    
     PLINT ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
+	PLFLT r,g,b;
+
+	/* program flow should never arrive here if dev_text == 1, but if it does */
+	if (plsc->dev_text)
+	  /* return; /* for comparition only */
 
     plgchr(&def, &ht);
     dscale = 0.05 * ht;
@@ -537,21 +560,21 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 
     for (i = 0; i < length; i++) {
 	ch = symbol[i];
-	if (ch == -1) {
+	if (ch == -1) { /* super-script */
 	    level++;
 	    yorg += 16.0 * scale;
 	    scale = dscale * pow(0.75, (double) ABS(level));
 	}
-	else if (ch == -2) {
-	    level--;
+	else if (ch == -2) { /* sub-script */
+	    level--; 
 	    scale = dscale * pow(0.75, (double) ABS(level));
 	    yorg -= 16.0 * scale;
 	}
-	else if (ch == -3)
+	else if (ch == -3) /* back-char */
 	    xorg -= width * scale;
-	else if (ch == -4)
-	    oline = !oline;
-	else if (ch == -5)
+	else if (ch == -4) /* toogle overline */
+	    oline = !oline; 
+	else if (ch == -5)  /* toogle underline */
 	    uline = !uline;
 	else {
 	    if (plcvec(ch, &xygrid))
