@@ -32,10 +32,13 @@ o changed flush escape function in X driver to handle any pending events.
 
 o dos386/djgpp support brought up to date (submitted by Paul Kirschner)
 
-o miscellaneous modifications for new color model (still not finished).
+o mskermit output device support added (with mods from Paul Kirschner).
+Just add -DMSKERMIT to device list during build.
 
 o Added include file plplotX.h to enable outside access to xwin driver
   state data.
+
+o miscellaneous modifications for new color model (still not finished).
 
 **************************************************************************
 Version 4.99e: Summary of major changes (bug fix update only)

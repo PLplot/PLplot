@@ -49,7 +49,15 @@ xtndfont.c:
  * Fixes so that these correctly build again (neglected to apply some global
  * changes in a previous release).
 
+plcore.h:
+drivers.h:
+ * Revision 1.12  1993/12/08  20:26:21  mjl
+ * Changes to support MS-Kermit output device.
+
 tek.c:
+ * Revision 1.19  1993/12/08  20:25:34  mjl
+ * Added changes for MS-Kermit emulator (submitted by Paul Kirschner).
+ *
  * Revision 1.18  1993/12/08  06:14:43  mjl
  * Now send an initial page clear (tek devices only) on a beginning of page.
  * This helps when there is only one graphics/alpha screen, otherwise is
