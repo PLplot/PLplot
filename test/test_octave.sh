@@ -1,5 +1,5 @@
 #!/bin/sh
-# Test suite for octave demos.  
+# Test suite for octave examples.  
 # This is called from plplot-test.sh with $octavedir, $device, 
 # $dsuffix and $options defined.
 # Assumes that $option starts and are '-' separated.

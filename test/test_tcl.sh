@@ -1,5 +1,5 @@
 #!/bin/sh
-# Test suite for Tcl demos.  
+# Test suite for Tcl examples.  
 # This is called from plplot-test.sh with $tcldir, $installbindir, $device, 
 # $dsuffix, and $options defined.
 results=`pwd`

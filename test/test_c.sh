@@ -1,7 +1,11 @@
 #!/bin/sh
-# Test suite for cdemos.  
+# Test suite for c examples.  
 # This is called from plplot-test.sh with $cdir, $device, $dsuffix, 
 # and $options defined.
+
+# To build the c examples before running this script do the following:
+# pushd $cdir; make; popd 
+
 $cdir/x01c -dev $device -o x01c.$dsuffix $options
 $cdir/x02c -dev $device -o x02c.$dsuffix $options
 $cdir/x03c -dev $device -o x03c.$dsuffix $options

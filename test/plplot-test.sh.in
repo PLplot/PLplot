@@ -21,7 +21,7 @@ Usage: plplot-test.sh [OPTIONS]
 Options:
    [--flat] (Use this option when running this script from plplot/tmp)
    [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm, xfig, or plmeta.
-   [--front-end=FE] (FE = one of c, f77, cxx, python, tcl or octave. If this option is not specified, then all front-ends will be tested.
+   [--front-end=FE] (FE = one of c, cxx, f77, java, octave, python, or tcl. If this option is not specified, then all front-ends will be tested.
    [--version]
    [--help]
 EOF
@@ -47,11 +47,12 @@ export installbindir
 
 fe=""
 test_c="no"
-test_f77="no"
 test_cxx="no"
+test_f77="no"
+test_java="no"
+test_octave="no"
 test_python="no"
 test_tcl="no"
-test_octave="no"
 
 while test $# -gt 0; do
    case "$1" in
@@ -60,23 +61,6 @@ while test $# -gt 0; do
    esac
 
    case $1 in
-      --flat)
-#        We are running this script from the flat plplot/tmp directory.
-         cdir=.
-         export cdir
-	 cxxdir=.
-	 export cxxdir
-	 f77dir=.
-	 export f77dir
-	 pythondir=.
-	 export pythondir
-	 tcldir=.
-	 export tcldir
-	 octavedir=../bindings/octave
-	 export octavedir
-	 installbindir=.
-	 export installbindir
-	 ;;
       --device=*)
          device=$optarg
          export device
@@ -88,11 +72,12 @@ while test $# -gt 0; do
       --front-end=*)
          fe=$optarg
 	 if test "${fe}" != "c" -a \
-		"${fe}" != "f77" -a \
 		"${fe}" != "cxx" -a \
+		"${fe}" != "f77" -a \
+		"${fe}" != "java" -a \
+		"${fe}" != "octave" -a \
 		"${fe}" != "python" -a \
-		"${fe}" != "tcl" -a \
-		"${fe}" != "octave"; then
+		"${fe}" != "tcl"; then
 		usage 0 1>&2
 	 fi
 	 ;;
@@ -156,25 +141,28 @@ esac
 # Find out what front-ends have been configured
 if test "${fe}" = ""; then
    test_c=yes
-   test_f77=@enable_f77@
    test_cxx=@enable_cxx@
+   test_f77=@enable_f77@
+   test_java=@enable_java@
+   test_octave=@enable_octave@
    test_python=@enable_python@
    test_tcl=@enable_tcl@
-   test_octave=@enable_octave@
 else
    case $fe in
      c)
 	test_c="yes";;
-     f77)
-	test_f77="yes";;
      cxx)
 	test_cxx="yes";;
+     f77)
+	test_f77="yes";;
+     java)
+	test_java="yes";;
+     octave)
+	test_octave="yes";;
      python)
 	test_python="yes";;
      tcl)
 	test_tcl="yes";;
-     octave)
-	test_octave="yes";;
     esac
 fi
 
@@ -183,12 +171,20 @@ if test "$test_c" = "yes" ; then
 ./test_c.sh
 fi
 
+if test "$test_cxx" = "yes" ; then
+   ./test_cxx.sh
+fi
+
 if test "$test_f77" = "yes" ; then
    ./test_f77.sh
 fi
 
-if test "$test_cxx" = "yes" ; then
-   ./test_cxx.sh
+if test "$test_java" = "yes" ; then
+   ./test_java.sh
+fi
+
+if test "$test_octave" = "yes" ; then
+   ./test_octave.sh
 fi
 
 if test "$test_python" = "yes" ; then
@@ -198,6 +194,4 @@ fi
 if test "$test_tcl" = "yes" ; then
    ./test_tcl.sh
 fi
-if test "$test_octave" = "yes" ; then
-   ./test_octave.sh
-fi
+

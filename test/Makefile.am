@@ -25,6 +25,7 @@ scripts = \
 	test_c.sh \
 	test_cxx.sh \
 	test_f77.sh \
+	test_java.sh \
 	test_octave.sh \
 	test_python.sh \
 	test_tcl.sh

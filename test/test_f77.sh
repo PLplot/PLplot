@@ -1,7 +1,11 @@
 #!/bin/sh
-# Test suite for f77demos.  
+# Test suite for f77 examples.  
 # This is called from plplot-test.sh with $f77dir, $device, and 
 # $dsuffix defined.
+
+# To build the f77 examples before running this script do the following:
+# pushd $f77dir; make; popd 
+
 # Eventually, argument parsing will be added to the f77 api, and this
 # file will be greatly simplified after that while allowing additional $options
 # (such as familying for the png device) to be enabled.

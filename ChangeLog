@@ -5,6 +5,11 @@
 	  get this to work properly must have a fresh checkout or else run
 	  'make distclean' before trying this change.
 
+	* test/plplot-test.sh.in test/test_java.sh : Added the java examples
+	  to our test procedure which builds all of our non-interactive
+	  example plots.  Also tweaked most of the remaining scripts in
+	  test.
+
 2002-12-31  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Finished Java swig-based interface to Plplot for now.  Current
