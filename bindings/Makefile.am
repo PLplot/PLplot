@@ -21,7 +21,7 @@
 
 SUBDIRS = c++ f77 python tcl tk octave java
 
-abovedatadir = ${prefix}/@DATA_DIR@/..
+abovedatadir = ${prefix}/$(DATA_DIR)/..
 
 if enable_tcl
   index_tcl = tcl/pkgIndex.tcl

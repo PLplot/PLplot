@@ -38,8 +38,8 @@ endif
 
 endif
 
-AM_CPPFLAGS = @INCLTDL@
-version = -version-info @SOVERSION@
+AM_CPPFLAGS = $(INCLTDL)
+version = -version-info $(SOVERSION)
 
 sources = plstream.cc
 

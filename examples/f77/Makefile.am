@@ -21,8 +21,8 @@
 
 if enable_f77
 
-AM_CPPFLAGS = @INCLTDL@
-examples_f77dir = ${prefix}/@DATA_DIR@/../examples/f77
+AM_CPPFLAGS = $(INCLTDL)
+examples_f77dir = ${prefix}/$(DATA_DIR)/../examples/f77
 f77m4_source = \
 	fmacs.m4 \
 	x01f.fm4 \
@@ -95,7 +95,7 @@ x16f.f: x16f.fm4 fmacs.m4
 SUFFIXES = .fm4
 
 .fm4.f:
-	$(M4) @M4_FLAGS@ $< >$*.f
+	$(M4) $(M4_FLAGS) $< >$*.f
 
 if with_double
 libplplotf77 = -L../../bindings/f77 -lplplotf77d

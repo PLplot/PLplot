@@ -21,7 +21,7 @@
 
 if enable_tk
 
-examples_tkdir = ${prefix}/@DATA_DIR@/../examples/tk
+examples_tkdir = ${prefix}/$(DATA_DIR)/../examples/tk
 
 if enable_itcl
 mkindex = ../../scripts/mktclIndex -itcl
@@ -104,7 +104,7 @@ check_PROGRAMS = \
 	xtk02 \
 	xtk04
 
-cflags = -I../../bindings/tk -I../../bindings/tcl @TCLINCCMD@ @TKINCCMD@
+cflags = -I../../bindings/tk -I../../bindings/tcl $(TCLINCCMD) $(TKINCCMD)
 xtk01_CFLAGS = $(cflags)
 xtk02_CFLAGS = $(cflags)
 xtk04_CFLAGS = $(cflags)

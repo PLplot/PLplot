@@ -21,8 +21,8 @@
 
 if enable_cxx
 
-AM_CPPFLAGS = @INCLTDL@
-examples_cxxdir = ${prefix}/@DATA_DIR@/../examples/c++
+AM_CPPFLAGS = $(INCLTDL)
+examples_cxxdir = ${prefix}/$(DATA_DIR)/../examples/c++
 examples_cxx_DATA = \
 	.samename/Makefile \
 	x01cc.cc

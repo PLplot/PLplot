@@ -25,7 +25,7 @@
 
 if enable_python
 
-ourpythondir = @pythondir@
+ourpythondir = $(pythondir)
 
 if with_double
 libplplot = -L../../src -lplplotd
@@ -44,7 +44,7 @@ plplotcmodule_p_double.c plplotc.py: plplotcmodule.i
 # swig-1.3.17+ does not handle documentation strings properly so run this
 # script to make documentation strings.
 plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
-	@PYTHON@ makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
+	$(PYTHON) makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
 
 nodist__plplotcmodule_la_SOURCES  = plplotcmodule_double.c
 
@@ -55,7 +55,7 @@ plplotcmodule_p_single.c plplotc.py: plplotcmodule.i
 	plplotcmodule.i
 
 plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
-	@PYTHON@ makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
+	$(PYTHON) makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
 
 nodist__plplotcmodule_la_SOURCES  = plplotcmodule_single.c
 endif
@@ -67,7 +67,7 @@ ourpython_LTLIBRARIES = _plplotcmodule.la plplot_widgetmodule.la
 
 
 # PYTHON_NUM_DIR only required until we quit supporting python 1.5
-AM_CPPFLAGS = @INCLTDL@ -I/@PYTHON_INC_DIR@ -I/@PYTHON_NUM_DIR@
+AM_CPPFLAGS = $(INCLTDL) -I/$(PYTHON_INC_DIR) -I/$(PYTHON_NUM_DIR)
 
 _plplotcmodule_la_LDFLAGS  = \
 	-rpath $(ourpythondir) \

@@ -34,8 +34,8 @@ lib_LTLIBRARIES = libplplotf77.la
 endif
 endif
 
-AM_CPPFLAGS = @INCLTDL@
-version = -version-info @SOVERSION@
+AM_CPPFLAGS = $(INCLTDL)
+version = -version-info $(SOVERSION)
 
 sources = \
 	plstubs.h \
@@ -57,7 +57,7 @@ EXTRA_DIST = fmacs.m4 sfstubs.fm4
 sfstubs.f: fmacs.m4 sfstubs.fm4
 
 .fm4.f:
-	@M4@ @M4_FLAGS@ $< >$*.f
+	$(M4) $(M4_FLAGS) $< >$*.f
 
 CLEANFILES = sfstubs.f
 SUFFIXES = .fm4

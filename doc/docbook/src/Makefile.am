@@ -72,7 +72,7 @@ html_DATA = $(shell ls *.html)
 pdfdir = $(prefix)/share/doc/$(PACKAGE)
 pdf_DATA = $(BASE).pdf
 
-all: @TARGETS@
+all: $(TARGETS)
 
 
 html: $(HTML_MANIFEST)

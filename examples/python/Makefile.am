@@ -21,7 +21,7 @@
 
 if enable_python
 
-examples_pythondir = ${prefix}/@DATA_DIR@/../examples/python
+examples_pythondir = ${prefix}/$(DATA_DIR)/../examples/python
 
 examples_python_SCRIPTS = \
 	plplot_python_start.py \

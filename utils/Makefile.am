@@ -27,7 +27,7 @@ else
    libplplottcltk = ../bindings/tcl/libplplottcltk.la
 endif
 
-AM_CPPFLAGS = @INCLTDL@ -I../bindings/tcl @TCLINCCMD@ @ITCLINCCMD@
+AM_CPPFLAGS = $(INCLTDL) -I../bindings/tcl $(TCLINCCMD) $(ITCLINCCMD)
 
 if enable_tcl
 bin_PROGRAMS = plrender pltek pltcl
@@ -44,5 +44,5 @@ pltek_LDFLAGS = -rpath $(libdir) -no-undefined
 pltek_LDADD = $(libplplot)
 
 pltcl_SOURCES = pltcl.c
-pltcl_LDFLAGS = -rpath $(libdir) -no-undefined @TCLLIBCMD@ @ITCLLIBCMD@
+pltcl_LDFLAGS = -rpath $(libdir) -no-undefined $(TCLLIBCMD) $(ITCLLIBCMD)
 pltcl_LDADD = $(libplplottcltk)

@@ -19,7 +19,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-tcldir = ${prefix}/@DATA_DIR@/../tcl
+tcldir = ${prefix}/$(DATA_DIR)/../tcl
 
 if with_double
 libplplot = -L../../src -lplplotd
@@ -65,15 +65,15 @@ EXTRA_DIST = pltclgen plapi.tpl tclcmd.tpl ../tk/plplot.tcl
 CLEANFILES = $(generated_scripts) tclIndex
 MAINTAINERCLEANFILES = tclgen.h tclgen_s.h tclgen.c
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
-AM_CPPFLAGS = @INCLTDL@ @TCLINCCMD@ @ITCLINCCMD@ @TKINCCMD@
-version = -version-info @SOVERSION@
+AM_CPPFLAGS = $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
+version = -version-info $(SOVERSION)
 
 libtclmatrix_la_SOURCES  = \
 	tclMatrix.c \
 	matrixInit.c
 
 libtclmatrix_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined \
-	@TCLLIBCMD@
+	$(TCLLIBCMD)
 
 if enable_tcl
 tclsources = \
@@ -100,10 +100,10 @@ libplplottcltk_la_LDFLAGS  = \
 	-rpath \
 	$(libdir) \
 	-no-undefined \
-	@TCLLIBCMD@ \
-        @ITCLLIBCMD@ \
-	@ITKLIBCMD@ \
-	@TKLIBCMD@ \
+	$(TCLLIBCMD) \
+        $(ITCLLIBCMD) \
+	$(ITKLIBCMD) \
+	$(TKLIBCMD) \
 	$(libplplot) \
 	$(libmatrix)
 

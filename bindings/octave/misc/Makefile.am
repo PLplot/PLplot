@@ -22,7 +22,7 @@
 
 if enable_octave
 
-examples_octavedir = ${prefix}/@DATA_DIR@/../examples/octave
+examples_octavedir = ${prefix}/$(DATA_DIR)/../examples/octave
 
 examples_octave_DATA = \
 	diffn.m \

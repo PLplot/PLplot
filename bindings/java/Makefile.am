@@ -30,8 +30,8 @@ lib_LTLIBRARIES = libplplotjava.la
 endif
 
 
-AM_CPPFLAGS = @INCLTDL@ @JAVAINCCMD@
-version = -version-info @SOVERSION@
+AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
+version = -version-info $(SOVERSION)
 
 sources = plplotjavac_wrap.c
 

@@ -19,7 +19,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-tcldir = ${prefix}/@DATA_DIR@/../tcl
+tcldir = ${prefix}/$(DATA_DIR)/../tcl
 
 if with_double
 libplplottcltk = ../tcl/libplplottcltkd.la
@@ -32,9 +32,9 @@ if enable_tk
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
 AM_CPPFLAGS = \
 	-I../tcl/ \
-	@INCLTDL@ \
-	@TCLINCCMD@ \
-	@TKINCCMD@
+	$(INCLTDL) \
+	$(TCLINCCMD) \
+	$(TKINCCMD)
 
 pkginclude_HEADERS = pltk.h
 bin_PROGRAMS = plserver

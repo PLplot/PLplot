@@ -21,7 +21,7 @@
 
 if enable_tcl
 
-examples_tcldir = ${prefix}/@DATA_DIR@/../examples/tcl
+examples_tcldir = ${prefix}/$(DATA_DIR)/../examples/tcl
 
 if enable_itcl
   mkindex = ../../scripts/mktclIndex -itcl

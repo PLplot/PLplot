@@ -26,7 +26,7 @@ else
 lib_LTLIBRARIES = libplplot.la
 endif
 
-version = -version-info @SOVERSION@
+version = -version-info $(SOVERSION)
 
 sources = \
   pdfutils.c \
@@ -55,14 +55,14 @@ sources = \
   plbuf.c
   
 
-AM_CPPFLAGS = @FREETYPEINCCMD@ @INCLTDL@
+AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 
 libplplot_la_SOURCES  = $(sources)
-libplplot_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined @FREETYPELIBCMD@ -lm
+libplplot_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(FREETYPELIBCMD) -lm
 if !enable_dyndrivers
 libdrv = ../drivers/libplplotdrv.la
 endif
-libplplot_la_LIBADD  = @LIBLTDL@ $(libdrv)
+libplplot_la_LIBADD  = $(LIBLTDL) $(libdrv)
 
 libplplotd_la_SOURCES = $(libplplot_la_SOURCES)
 libplplotd_la_LDFLAGS = $(libplplot_la_LDFLAGS)
