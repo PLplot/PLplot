@@ -137,7 +137,7 @@ $(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
 clean:
 	rm -f *.html $(BASE).{tex,dvi,aux,log,ps.gz} \
 	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp \
-	      conftest.* config.* *~ \
+	      conftest.* config.* *~ @JADELOG@ \
 	      $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
 	      $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
 	      
