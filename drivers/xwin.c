@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/07/01 22:05:48  mjl
+ * Revision 1.19  1993/07/16 22:17:00  mjl
+ * Added escape function to redraw plot (unlike resize, the window size remains
+ * unchanged).  Changed draw functions to only draw to the pixmap during page
+ * redraws.  Pixmap is then copied to the actual window when done, for faster
+ * and more smooth response.
+ *
+ * Revision 1.18  1993/07/01  22:05:48  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".  X driver
@@ -113,6 +119,9 @@ typedef struct {
     XColor	fgcolor;
     XColor	curcolor;
 
+    int		write_to_window;
+    int		write_to_pixmap;
+
     int		is_main;
     int		screen;
     Display	*display;
@@ -123,9 +132,6 @@ typedef struct {
 } XwDev;
 
 /* Miscellaneous global definitions */
-
-#define PIXELS_X	8191		/* Number of virtual pixels in x */
-#define PIXELS_Y	8191		/* Number of virtual pixels in y */
 
 static PLFLT lpage_x = 238.0;		/* Page length in x in virtual mm */
 static PLFLT lpage_y = 178.0;		/* Page length in y in virtual mm */
@@ -143,12 +149,12 @@ plD_init_xw(PLStream *pls)
 {
     XwDev *dev;
     int xmin = 0;
-    int xmax = PIXELS_X;
+    int xmax = PIXELS_X - 1;
     int ymin = 0;
-    int ymax = PIXELS_Y;
+    int ymax = PIXELS_Y - 1;
 
-    float pxlx = (xmax - xmin) / lpage_x;
-    float pxly = (ymax - ymin) / lpage_y;
+    float pxlx = (double) PIXELS_X / (double) LPAGE_X;
+    float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
     dbug_enter("plD_init_xw");
 
@@ -157,7 +163,7 @@ plD_init_xw(PLStream *pls)
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
-    pls->plbuf_enable++;
+    pls->plbuf_write = 1;
 
 /* Allocate and initialize device-specific data */
 
@@ -167,6 +173,9 @@ plD_init_xw(PLStream *pls)
 
     memset(pls->dev, 0, sizeof(XwDev));
     dev = (XwDev *) pls->dev;
+
+    dev->write_to_window = 1;
+    dev->write_to_pixmap = 1;
 
 /* X-specific initialization */
 
@@ -216,10 +225,11 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = y1 * dev->yscale;
     y2 = y2 * dev->yscale;
 
-    XDrawLine(dev->display, dev->window, dev->gc, x1, y1, x2, y2);
-#ifdef USE_PIXMAP
-    XDrawLine(dev->display, dev->pixmap, dev->gc, x1, y1, x2, y2);
-#endif
+    if (dev->write_to_window)
+	XDrawLine(dev->display, dev->window, dev->gc, x1, y1, x2, y2);
+
+    if (dev->write_to_pixmap)
+	XDrawLine(dev->display, dev->pixmap, dev->gc, x1, y1, x2, y2);
 }
 
 /*----------------------------------------------------------------------*\
@@ -249,10 +259,13 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 	pts[i].y = dev->yscale * (dev->ylen - ya[i]);
     }
 
-    XDrawLines(dev->display, dev->window, dev->gc, pts, npts, CoordModeOrigin);
-#ifdef USE_PIXMAP
-    XDrawLines(dev->display, dev->pixmap, dev->gc, pts, npts, CoordModeOrigin);
-#endif
+    if (dev->write_to_window)
+	XDrawLines(dev->display, dev->window, dev->gc, pts, npts,
+		   CoordModeOrigin);
+
+    if (dev->write_to_pixmap)
+	XDrawLines(dev->display, dev->pixmap, dev->gc, pts, npts,
+		   CoordModeOrigin);
 }
 
 /*----------------------------------------------------------------------*\
@@ -285,14 +298,16 @@ plD_bop_xw(PLStream *pls)
 
     dbug_enter("plD_bop_xw");
 
+    if (dev->write_to_window) {
+	XClearWindow(dev->display, dev->window);
+    }
+    if (dev->write_to_pixmap) {
+	XSetForeground(dev->display, dev->gc, dev->bgcolor.pixel);
+	XFillRectangle(dev->display, dev->pixmap, dev->gc, 0, 0,
+		       dev->width, dev->height);
+	XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
+    }
     XSync(dev->display, 0);
-    XClearWindow(dev->display, dev->window);
-    XSync(dev->display, 0);
-#ifdef USE_PIXMAP
-    XCopyArea(dev->display, dev->window, dev->pixmap, dev->gc, 0, 0,
-	      dev->width, dev->height, 0, 0);
-    XSync(dev->display, 0);
-#endif
     pls->page++;
 }
 
@@ -312,15 +327,14 @@ plD_tidy_xw(PLStream *pls)
     XFreeGC(dev->display, dev->gc);
     if (dev->is_main) {
 	XDestroyWindow(dev->display, dev->window);
-#ifdef USE_PIXMAP
-	XFreePixmap(dev->display, dev->pixmap);
-#endif
+	if (dev->write_to_pixmap) 
+	    XFreePixmap(dev->display, dev->pixmap);
 	XCloseDisplay(dev->display);
     }
 
     pls->fileset = 0;
     pls->page = 0;
-    pls->plbuf_enable--;
+    pls->plbuf_write = 0;
     pls->OutFile = NULL;
     free((void *) pls->dev);
 }
@@ -472,10 +486,9 @@ xw_Xinit(PLStream *pls)
 
 /* Create pixmap for holding plot image (for expose events). */
 
-#ifdef USE_PIXMAP
-    dev->pixmap = XCreatePixmap(dev->display, dev->window,
-				dev->width, dev->height, dev->depth);
-#endif
+    if (dev->write_to_pixmap) 
+	dev->pixmap = XCreatePixmap(dev->display, dev->window,
+				    dev->width, dev->height, dev->depth);
 
 /* Set drawing color */
 
@@ -719,17 +732,6 @@ KeyEH(PLStream *pls, XEvent *event)
     printf("Keysym %x, translation: %s\n", keysym, key.string);
 #endif
 
-/* Set key attributes */
-/* INDENT OFF */
-
-    key.isKeypadKey       = IsKeypadKey(keysym);
-    key.isCursorKey       = IsCursorKey(keysym);
-    key.isPFKey           = IsPFKey(keysym);
-    key.isFunctionKey     = IsFunctionKey(keysym);
-    key.isMiscFunctionKey = IsMiscFunctionKey(keysym);
-    key.isModifierKey     = IsModifierKey(keysym);
-
-/* INDENT ON */
 /* Call user event handler */
 /* Since this is called first, the user can disable all plplot internal
    event handling by setting key.code to 0 and key.string to '\0' */
@@ -865,14 +867,15 @@ xw_expose(PLStream *pls)
 /* Usual case: refresh window from pixmap */
 
     XSync(dev->display, 0);
-#ifdef USE_PIXMAP
-    XCopyArea(dev->display, dev->pixmap, dev->window, dev->gc, 0, 0,
-	      dev->width, dev->height, 0, 0);
-    XSync(dev->display, 0);
-#else
-    plRemakePlot(pls);
-    XFlush(dev->display);
-#endif
+    if (dev->write_to_pixmap) {
+	XCopyArea(dev->display, dev->pixmap, dev->window, dev->gc, 0, 0,
+		  dev->width, dev->height, 0, 0);
+	XSync(dev->display, 0);
+    }
+    else {
+	plRemakePlot(pls);
+	XFlush(dev->display);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -907,21 +910,17 @@ xw_resize(PLStream *pls, PLWindow *window)
     dev->xscale = dev->xscale * dev->xscale_dev;
     dev->yscale = dev->yscale * dev->yscale_dev;
 
-/* Clear and redraw */
 /* Need to regenerate pixmap copy of window using new dimensions */
 
-    XClearWindow(dev->display, dev->window);
-    XSync(dev->display, 0);
-#ifdef USE_PIXMAP
-    XFreePixmap(dev->display, dev->pixmap);
-    dev->pixmap = XCreatePixmap(dev->display, dev->window,
-				dev->width, dev->height, dev->depth);
-    XCopyArea(dev->display, dev->window, dev->pixmap, dev->gc, 0, 0,
-	      dev->width, dev->height, 0, 0);
-    XSync(dev->display, 0);
-#endif
-    plRemakePlot(pls);
-    XFlush(dev->display);
+    if (dev->write_to_pixmap) {
+	XFreePixmap(dev->display, dev->pixmap);
+	dev->pixmap = XCreatePixmap(dev->display, dev->window,
+				    dev->width, dev->height, dev->depth);
+    }
+
+/* Now do a redraw using the new size */
+
+    xw_redraw(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -945,20 +944,25 @@ xw_redraw(PLStream *pls)
 	return;
     }
 
-/* Initialize, redraw, then fake an expose */
+/* Initialize & redraw to pixmap.  Then fake an expose. */
+
+    if (dev->write_to_pixmap)
+	dev->write_to_window = 0;
 
     plD_bop_xw(pls);
     plRemakePlot(pls);
 
     XSync(dev->display, 0);
-#ifdef USE_PIXMAP
-    XCopyArea(dev->display, dev->pixmap, dev->window, dev->gc, 0, 0,
-	      dev->width, dev->height, 0, 0);
-    XSync(dev->display, 0);
-#else
-    plRemakePlot(pls);
-    XFlush(dev->display);
-#endif
+    if (dev->write_to_pixmap) {
+	XCopyArea(dev->display, dev->pixmap, dev->window, dev->gc, 0, 0,
+		  dev->width, dev->height, 0, 0);
+	XSync(dev->display, 0);
+    }
+    else {
+	plRemakePlot(pls);
+	XFlush(dev->display);
+    }
+    dev->write_to_window = 1;
 }
 
 /*----------------------------------------------------------------------*\
