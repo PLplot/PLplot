@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/05/22 16:39:05  mjl
-   Fixed bug in qsort call.  I can't see how it managed to avoid a core dump
-   before.  This may explain some of our many problems with this routine.
+   Revision 1.3  1992/05/26 18:27:49  mjl
+   Fixed (hopefully for the last time) the problems introduced with the
+   last "fix".
 
+ * Revision 1.2  1992/05/22  16:39:05  mjl
+ * Fixed bug in qsort call.  I can't see how it managed to avoid a core dump
+ * before.  This may explain some of our many problems with this routine.
+ *
  * Revision 1.1  1992/05/20  21:34:25  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -35,6 +39,7 @@ extern void free();
 
 #define DTOR            0.0174533
 #define BINC            50
+int compar	PLARGS((const void *, const void *));
 
 struct point {
     PLINT x, y;
@@ -62,7 +67,6 @@ PLFLT *x, *y;
     void buildlist();
     void qsort();
 #endif
-    int compar();
 
     glev(&level);
     if (level < 3)
@@ -143,8 +147,8 @@ PLFLT *x, *y;
 	    buildlist(x1, y1, x2, y2, x3, y3, dinc);
 
 	/* Sort list by y then x */
-	qsort((char *) buffer, (size_t) bufferleng / 2, 
-				sizeof(struct point), &compar);
+	qsort((void *) buffer, (size_t) bufferleng / 2, 
+			       (size_t) sizeof(struct point), compar);
 
 	/* OK, now do the hatching */
 	i = 0;
@@ -261,7 +265,7 @@ PLINT x1, y1;
 
 int 
 compar(pnum1, pnum2)
-char *pnum1, *pnum2;
+const void *pnum1, *pnum2;
 {
     struct point *pnt1, *pnt2;
 
