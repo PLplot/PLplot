@@ -1505,12 +1505,18 @@ plFamInit(PLStream *pls)
 void
 plGetFam(PLStream *pls)
 {
+    PLFLT xpmm_loc, ypmm_loc;
     if (pls->family) {
 	if (pls->bytecnt > pls->bytemax || pls->famadv) {
 	    plP_tidy();
 	    pls->member += pls->finc;
 	    pls->famadv = 0;
 	    plP_init();
+	   /* Apply compensating factor to original xpmm and ypmm so that 
+	    * character aspect ratio is preserved when overall aspect ratio
+	    * is changed. */
+	    plP_gpixmm(&xpmm_loc, &ypmm_loc);
+	    plP_setpxl(xpmm_loc*plsc->caspfactor, ypmm_loc/plsc->caspfactor); 
 	    return;
 	}
     }

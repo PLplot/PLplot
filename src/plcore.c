@@ -1037,7 +1037,7 @@ c_plstart(const char *devname, PLINT nx, PLINT ny)
 void
 c_plinit(void)
 {
-    PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new, aspect_fact;
+    PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
     if (plsc->level != 0)
@@ -1061,13 +1061,12 @@ c_plinit(void)
     plP_bop();
     plsc->level = 1;
 
-/* Special handling of xpmm and ypmm such that character aspect ratio
- * is preserved when the overall aspect ratio is changed, i.e., 
- * if portrait mode is requested (see just above) or if the aspect ratio
+/* Calculate factor such that the character aspect ratio is preserved 
+ * when the overall aspect ratio is changed, i.e., if portrait mode is
+ * requested (only honored for subset of drivers) or if the aspect ratio
  * is specified in any way, or if a 90 deg rotation occurs with
  * -freeaspect. */
    
-    plP_gpixmm(&xpmm_loc, &ypmm_loc);
 /* Case where plsc->aspect has a value.... (e.g., -a aspect on the
  * command line or 2nd parameter of plsdidev specified) */
     if (plsc->aspect > 0.) {
@@ -1075,19 +1074,20 @@ c_plinit(void)
        ly = plsc->phyylen / plsc->ypmm;
        aspect_old = lx / ly;
        aspect_new = plsc->aspect;
-       aspect_fact = sqrt(aspect_old/aspect_new);
+       plsc->caspfactor = sqrt(aspect_old/aspect_new);
     }
-/* Case of 90 deg rotations with -freeaspect. */
+/* Case of 90 deg rotations with -freeaspect (this is also how portraite
+ * mode is implemented for the drivers that honor -portrait). */
     else if (plsc->freeaspect && ABS(cos(plsc->diorot * PI / 2.)) <= 1.e-5) {
        lx = plsc->phyxlen / plsc->xpmm;
        ly = plsc->phyylen / plsc->ypmm;
        aspect_old = lx / ly;
        aspect_new = ly / lx;
-       aspect_fact = sqrt(aspect_old/aspect_new);
+       plsc->caspfactor = sqrt(aspect_old/aspect_new);
     }
 
     else
-       aspect_fact = 1.;
+       plsc->caspfactor = 1.;
 
 /* Load fonts */
 
@@ -1138,10 +1138,11 @@ c_plinit(void)
 /* Apply compensating factor to original xpmm and ypmm so that 
  * character aspect ratio is preserved when overall aspect ratio
  * is changed.  This must appear here in the code because previous
- * code in this routine and in routines that it calls use the original
+ * code in this routine and in routines that it calls must use the original
  * values of xpmm and ypmm before the compensating factor is applied.  */
 
-    plP_setpxl(xpmm_loc*aspect_fact, ypmm_loc/aspect_fact); 
+    plP_gpixmm(&xpmm_loc, &ypmm_loc);
+    plP_setpxl(xpmm_loc*plsc->caspfactor, ypmm_loc/plsc->caspfactor); 
 }
 
 /*--------------------------------------------------------------------------*\
