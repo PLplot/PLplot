@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1995/03/16 23:50:56  mjl
+ * Revision 1.13  1995/05/07 03:01:43  mjl
+ * Changed debug output to use new pldebug() function.
+ *
+ * Revision 1.12  1995/03/16  23:50:56  mjl
  * Fixed up Copyright message.
  *
  * Revision 1.11  1994/08/25  04:04:06  mjl
@@ -191,12 +194,9 @@ pdf_putc(int c, PDFstrm *pdfs)
     }
     else if (pdfs->buffer != NULL) {
 	if (pdfs->bp >= pdfs->bufmax) {
+	    pldebug("pdf_putc",
+		    "Increasing buffer to %d bytes\n", pdfs->bufmax);
 	    pdfs->bufmax += 512;
-#ifdef DEBUG
-	    fprintf(stderr,
-		    "pdf_putc: Increasing buffer to %d bytes\n",
-		    pdfs->bufmax);
-#endif			
 	    pdfs->buffer = (U_CHAR *)
 		realloc((void *) pdfs->buffer, pdfs->bufmax);
 	}
@@ -280,12 +280,9 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
     else if (pdfs->buffer != NULL) {
 	for (i = 0; i < nitems; i++) {
 	    if (pdfs->bp >= pdfs->bufmax) {
+		pldebug("pdf_wrx",
+			"Increasing buffer to %d bytes\n", pdfs->bufmax);
 		pdfs->bufmax += 512;
-#ifdef DEBUG
-		fprintf(stderr,
-			"pdf_wrx: Increasing buffer to %d bytes\n",
-			pdfs->bufmax);
-#endif			
 		pdfs->buffer = (U_CHAR *)
 		    realloc((void *) (pdfs->buffer), pdfs->bufmax);
 	    }
