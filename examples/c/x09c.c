@@ -10,6 +10,9 @@
 
 #define XSPA    2./(XPTS-1)
 #define YSPA    2./(YPTS-1)
+#define PERIMETERPTS 100
+#define RPTS 40
+#define THETAPTS 40
 
 static PLFLT clevel[11] =
 {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
@@ -25,6 +28,59 @@ mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
+
+void polar()
+/*polar contour plot example.*/
+{
+   int i,j;
+   PLcGrid2 cgrid2;
+   PLFLT **z;
+   PLFLT px[PERIMETERPTS], py[PERIMETERPTS];
+   PLFLT t, r, theta;
+   PLFLT lev[10];
+
+   plenv(-1., 1., -1., 1., 0, -2);
+   plcol0(1);
+       
+/*Perimeter*/
+   for (i = 0; i < PERIMETERPTS; i++) {
+      t = (2.*PI/(PERIMETERPTS-1))*(double)i;
+      px[i] = cos(t);
+      py[i] = sin(t);
+   }
+   plline(PERIMETERPTS, px, py);
+	       
+/*create data to be contoured.*/
+   plAlloc2dGrid(&cgrid2.xg, RPTS, THETAPTS);
+   plAlloc2dGrid(&cgrid2.yg, RPTS, THETAPTS);
+   plAlloc2dGrid(&z, RPTS, THETAPTS);
+   cgrid2.nx = RPTS;
+   cgrid2.ny = THETAPTS;
+   
+   for (i = 0; i < RPTS; i++) {
+      r = i/(double)(RPTS-1);
+      for (j = 0; j < THETAPTS; j++) {
+	 theta = (2.*PI/(double)(THETAPTS-1))*(double)j;
+	 cgrid2.xg[i][j] = r*cos(theta);
+	 cgrid2.yg[i][j] = r*sin(theta);
+	 z[i][j] = r;
+      }
+   }
+
+   for (i = 0; i < 10; i++) {
+      lev[i] = 0.05 + 0.10*(double) i;
+   }
+
+   plcol0(2);
+   plcont(z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
+	              pltr2, (void *) &cgrid2);
+   plcol0(1);
+   pllab("", "", "Polar Contour Plot");
+   free((void *) z);
+   free((void *) cgrid2.xg);
+   free((void *) cgrid2.yg);
+}
+  
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -177,8 +233,15 @@ main(int argc, char *argv[])
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    polar();
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    polar();
+
     plend();
     free((void *) w);
     free((void *) z);
+    free((void *) cgrid2.xg);
+    free((void *) cgrid2.yg);
     exit(0);
 }
