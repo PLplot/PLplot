@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.2  1994/10/18 16:12:36  furnish
+// Revision 1.3  1995/01/16 19:23:29  mjl
+// Fixed prototype for scmap1.
+//
+// Revision 1.2  1994/10/18  16:12:36  furnish
 // Beginnings of 2-d abstraction for contouring and shading.  Better
 // constructors.  Names for colors.  Other minor stuff.  Still need to do
 // major hacking on the 2-d abstraction, and also need to remove large
@@ -486,7 +489,7 @@ scmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 
 void
 scmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3);
+	PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
