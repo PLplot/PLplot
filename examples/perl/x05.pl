@@ -1,6 +1,8 @@
 #! /usr/bin/env perl
 #
 # Demo x05 for PLplot PDL bindings
+#
+# Histogram demo
 # (inspired from t/x05.t of module Graphics::PLplot, by Tim Jenness)
 #
 # Copyright (C) 2004  Rafael Laboissiere
@@ -44,7 +46,7 @@ plcol0 (1);
 plhist ($data, -1.1, 1.1, 44, 0);
 plcol0 (2);
 pllab ("#frValue", "#frFrequency",
-          "#frPLplot Example 5 - Probability function of Oscillator");
+       "#frPLplot Example 5 - Probability function of Oscillator");
 
 plend ();
 

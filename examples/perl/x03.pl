@@ -1,6 +1,8 @@
 #! /usr/bin/env perl
 #
 # Demo x03 for PLplot PDL bindings
+#
+# Polar plot demo
 # (inspired from t/x03.t of module Graphics::PLplot, by Tim Jenness)
 #
 # Copyright (C) 2004  Rafael Laboissiere
