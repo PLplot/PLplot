@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.5  1993/09/01 14:51:05  mjl
+# Revision 1.6  1993/09/08 18:39:14  mjl
+# Added global cascade_arrow variable to fake cascade menu arrows under
+# Tk 3.2 (Tk 3.3 has default ones that are much nicer).
+#
+# Revision 1.5  1993/09/01  14:51:05  mjl
 # Removed window specification for top level TK driver window.  This might
 # have had something to do with the window coming up on the wrong screen
 # under tvtwm, and there appears to be no problem under VUE this way
@@ -37,7 +41,9 @@
 #----------------------------------------------------------------------------
 
 proc plserver_init {} {
-    
+
+    global cascade_arrow tkVersion
+
 # Set up configuration options.
 
     plconfig
@@ -71,6 +77,14 @@ proc plserver_init {} {
     }
     wm geometry . $geometry
 
+# Set a variable to fake menu cascade arrows for TK 3.2 and earlier
+
+    if { $tkVersion < 3.3 } { 
+	set cascade_arrow "=>" 
+    } else {
+	set cascade_arrow "" 
+    }
+    
 # Create the window for the menu bar
 
     frame .menu -relief raised -borderwidth 1

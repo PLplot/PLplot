@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.10  1993/08/31 20:12:45  mjl
+# Revision 1.11  1993/09/08 18:39:15  mjl
+# Added global cascade_arrow variable to fake cascade menu arrows under
+# Tk 3.2 (Tk 3.3 has default ones that are much nicer).
+#
+# Revision 1.10  1993/08/31  20:12:45  mjl
 # Added file name globbing to save file name retrieval.  Can now save to
 # ~/blob or whatever.  Using a wildcard will result in the first matching
 # name to be used.
@@ -156,6 +160,8 @@ proc plw_create_TopRow {w} {
 
 proc plw_create_pmenu {w} {
 
+    global cascade_arrow
+
     menubutton $w.ftop.pmenu -menu $w.ftop.pmenu.m \
 	-text "Plot" \
 	-relief raised
@@ -175,7 +181,7 @@ proc plw_create_pmenu {w} {
 #-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Save  =>" \
+	-label "Save  $cascade_arrow" \
 	-menu $w.ftop.pmenu.m.save
 
     menu $w.ftop.pmenu.m.save
@@ -187,7 +193,7 @@ proc plw_create_pmenu {w} {
 # the available output devices (which are listed).
 
     $w.ftop.pmenu.m.save add cascade \
-	-label "As  =>" \
+	-label "As  $cascade_arrow" \
 	-menu $w.ftop.pmenu.m.save.as
 
     menu $w.ftop.pmenu.m.save.as
@@ -209,7 +215,7 @@ proc plw_create_pmenu {w} {
 #-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Orient  =>" \
+	-label "Orient  $cascade_arrow" \
 	-menu $w.ftop.pmenu.m.orient
 
     menu $w.ftop.pmenu.m.orient
@@ -243,7 +249,7 @@ proc plw_create_pmenu {w} {
 #-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Zoom  =>" \
+	-label "Zoom  $cascade_arrow" \
 	-menu $w.ftop.pmenu.m.zoom
 
     menu $w.ftop.pmenu.m.zoom
@@ -271,7 +277,7 @@ proc plw_create_pmenu {w} {
 #------------------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Page   =>" \
+	-label "Page   $cascade_arrow" \
 	-menu $w.ftop.pmenu.m.page
 
     menu $w.ftop.pmenu.m.page
