@@ -19,6 +19,129 @@ but there are still a fair number of undocumented
 parameters as indicated by the string <quote>NEEDS DOCUMENTATION</quote>.
   </para>
 
+  <sect1 id="pl_setcontlabelparam" renderas="sect3">
+    <title><function>pl_setcontlabelparam</function>: Set parameters of
+contour labelling other than format of numerical label</title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pl_setcontlabelparam</function>
+	</funcdef>
+        <paramdef><parameter>offset</parameter></paramdef>
+        <paramdef><parameter>size</parameter></paramdef>
+        <paramdef><parameter>spacing</parameter></paramdef>
+        <paramdef><parameter>active</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Set parameters of 
+    contour labelling other than those handled by &pl_setcontlabelformat;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>offset</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	   Offset of label from contour line (if set to 0.0, labels are
+	   printed on the lines).  Default value is 0.006.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>size</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Font height for contour labels (normalized).  Default value is 0.3.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>spacing</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Spacing parameter for contour labels.  Default value is 0.1.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>active</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Activate labels.  Set to 1 if you want contour labels on.
+	  Default is off (0).
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="pl_setcontlabelformat" renderas="sect3">
+    <title><function>pl_setcontlabelformat</function>: Set 
+format of numerical label for contours</title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pl_setcontlabelparam</function>
+	</funcdef>
+        <paramdef><parameter>lexp</parameter></paramdef>
+        <paramdef><parameter>sigdig</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+     Set format of numerical label for contours.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>lexp</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  If the contour numerical label is greater than 10^(lexp) or less
+	  than 10^(-lexp), then the
+	  exponential format is used.  Default value of lexp is 4.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sigdig</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Number of significant digits.  Default value is 2.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="pladv" renderas="sect3">
     <title><function>pladv</function>: Advance the (sub-)page</title>
 
@@ -4016,6 +4139,118 @@ default
 		</para>
 	      </listitem>
 	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>side</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Flag to indicate whether or not ``sides'' should be draw on the
+	    figure.  If <literal><parameter>side</parameter>=0</literal> no
+	    sides are drawn, otherwise the sides are drawn.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plotsh3d" renderas="sect3">
+    <title>
+      <function>plotsh3d</function>: Plot shaded 3-d surface plot
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plotsh3d</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>side</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Plots a three dimensional shaded surface plot within the environment set up
+      by &plw3d;.  The surface is defined by the two-dimensional array
+      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
+      the point <literal><parameter>z</parameter>[i][j]</literal> being the
+      value of the function at <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[j])</literal>.  Note that the points in
+      arrays <literal><parameter>x</parameter></literal> and
+      <literal><parameter>y</parameter></literal> do not need to be equally
+      spaced, but must be stored in ascending order.  
+      For further details see <xref linkend="tri-d-plots"/>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a vectored two-dimensional array with set of
+	    function values.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which function is evaluated.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8348,6 +8583,43 @@ stripchart
 	<listitem>
 	  <para>
 	    The world y coordinate of the top edge of the viewport.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+  <sect1 id="plxormod" renderas="sect3">
+    <title>
+      <function>plxormod</function>: Enter or leave xor mode
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plxormod</function>
+	</funcdef>
+        <paramdef><parameter>mode</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Enter (mode !=0) or leave (mode == 0) xor mode for those drivers 
+      (e.g., the xwin driver) that support it.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>mode</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  mode != 0 means enter xor mode and mode == 0 means leave xor
+	  mode.
 	  </para>
 	</listitem>
       </varlistentry>

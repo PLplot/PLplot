@@ -21,6 +21,8 @@
 <!ENTITY chap-perl SYSTEM "perl.xml">
 <!ENTITY chap-python SYSTEM "python.xml">
 <!ENTITY chap-scheme SYSTEM "scheme.xml">
+<!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
+<!ENTITY pl_setcontlabelformat '<link linkend="pl_setcontlabelformat"><function>pl_setcontlabelformat</function></link>'>
 <!ENTITY pladv '<link linkend="pladv"><function>pladv</function></link>'>
 <!ENTITY plaxes '<link linkend="plaxes"><function>plaxes</function></link>'>
 <!ENTITY plbin '<link linkend="plbin"><function>plbin</function></link>'>
@@ -85,6 +87,7 @@
 <!ENTITY plmtex '<link linkend="plmtex"><function>plmtex</function></link>'>
 <!ENTITY plot3d '<link linkend="plot3d"><function>plot3d</function></link>'>
 <!ENTITY plot3dfortran '<link linkend="plot3dfortran"><function>plot3dfortran</function></link>'>
+<!ENTITY plotsh3d '<link linkend="plotsh3d"><function>plotsh3d</function></link>'>
 <!ENTITY plpage '<link linkend="plpage"><function>plpage</function></link>'>
 <!ENTITY plpat '<link linkend="plpat"><function>plpat</function></link>'>
 <!ENTITY plpoin '<link linkend="plpoin"><function>plpoin</function></link>'>
@@ -145,6 +148,7 @@
 <!ENTITY plw3d '<link linkend="plw3d"><function>plw3d</function></link>'>
 <!ENTITY plwid '<link linkend="plwid"><function>plwid</function></link>'>
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
+<!ENTITY plxormod '<link linkend="plxormod"><function>plxormod</function></link>'>
 <!ENTITY % Math-Entities SYSTEM "math.ent">
 %Math-Entities;
 <!ENTITY % Inline-Entities SYSTEM "inline.ent">
