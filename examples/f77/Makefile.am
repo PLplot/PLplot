@@ -149,26 +149,26 @@ check_PROGRAMS = \
 	x18f \
 	x22f
 
-x01f_SOURCES = x01f.f
-x02f_SOURCES = x02f.f
-x03f_SOURCES = x03f.f
-x04f_SOURCES = x04f.f
-x05f_SOURCES = x05f.f
-x06f_SOURCES = x06f.f
-x07f_SOURCES = x07f.f
-x08f_SOURCES = x08f.f
-x09f_SOURCES = x09f.f
-x10f_SOURCES = x10f.f
-x11f_SOURCES = x11f.f
-x12f_SOURCES = x12f.f
-x13f_SOURCES = x13f.f
-x14f_SOURCES = x14f.f
-x15f_SOURCES = x15f.f
-x16f_SOURCES = x16f.f
-x16af_SOURCES = x16af.f
-x17f_SOURCES = x17f.f
-x18f_SOURCES = x18f.f
-x22f_SOURCES = x22f.f
+nodist_x01f_SOURCES = x01f.f
+nodist_x02f_SOURCES = x02f.f
+nodist_x03f_SOURCES = x03f.f
+nodist_x04f_SOURCES = x04f.f
+nodist_x05f_SOURCES = x05f.f
+nodist_x06f_SOURCES = x06f.f
+nodist_x07f_SOURCES = x07f.f
+nodist_x08f_SOURCES = x08f.f
+nodist_x09f_SOURCES = x09f.f
+nodist_x10f_SOURCES = x10f.f
+nodist_x11f_SOURCES = x11f.f
+nodist_x12f_SOURCES = x12f.f
+nodist_x13f_SOURCES = x13f.f
+nodist_x14f_SOURCES = x14f.f
+nodist_x15f_SOURCES = x15f.f
+nodist_x16f_SOURCES = x16f.f
+nodist_x16af_SOURCES = x16af.f
+nodist_x17f_SOURCES = x17f.f
+nodist_x18f_SOURCES = x18f.f
+nodist_x22f_SOURCES = x22f.f
 
 LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
 
