@@ -203,7 +203,7 @@ demo_page ($drec->[0], $npages, \$lbind, "$credits");
   print "
     <tr>" if ($count % 3 == 0);
 _:>
-      <td> <A HREF="<:=$file:>"><IMG SRC="../examples-data/<:=$dir:>/prev-x<:=$demo:>.<:=$thumbnail:>.png"></a> </td><:
+      <td> <A HREF="<:=$file:>"><IMG BORDER="0" SRC="../examples-data/<:=$dir:>/prev-x<:=$demo:>.<:=$thumbnail:>.png"></a> </td><:
 print "
     </tr>
 " if ($count % 3 == 2 or $count == scalar (@demos) - 1);

@@ -82,7 +82,7 @@ END;
     }
     $ndx_str = sprintf ("%02d", $ndx);
     echo "      <td> <A HREF=\"$demo_dir/x$demo_str.$ndx_str.png\">"
-      . "<IMG SRC=\"$demo_dir/prev-x$demo_str.$ndx_str.png\">"
+      . "<IMG BORDER=\"0\" SRC=\"$demo_dir/prev-x$demo_str.$ndx_str.png\">"
       . "</a> </td>\n";
   }
 
