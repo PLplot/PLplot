@@ -420,7 +420,6 @@ AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
 ### Configuration headers
 
-AUTOHEADER="echo autoheader ignored"
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
