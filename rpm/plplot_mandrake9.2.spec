@@ -1,6 +1,6 @@
 %define name    plplot
-%define version 5.2.1.rc2.5.3.0
-%define release 2mdk
+%define version 5.3.0
+%define release 1mdk
 %define lib_name_orig libplplot
 %define lib_major 9
 %define lib_name               libplplot9
