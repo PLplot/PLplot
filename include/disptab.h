@@ -95,6 +95,8 @@ typedef struct {
 
 #ifdef ENABLE_DYNDRIVERS
 typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
+#else
+typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
 #endif
 
 #endif /* __DISPATCH_H__ */

@@ -235,11 +235,10 @@ typedef struct {
     lt_dlhandle dlhand;
     
 } PLLoadableDriver;
-#endif
-
 
 static PLLoadableDevice *loadable_device_list;
 static PLLoadableDriver *loadable_driver_list;
+#endif
 
 static int nloadabledrivers = 0;
 
