@@ -87,6 +87,7 @@ def main():
     else:
 	z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
+    x.shape = (-1,)
     zmin = min(z.flat)
     zmax = max(z.flat)
     nlevel = 10
