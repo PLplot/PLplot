@@ -2526,10 +2526,10 @@ return(ret);
 \*--------------------------------------------------------------------------*/
 
 void
-plP_image(int *x, int  *y, PLFLT *z , PLINT nx, PLINT ny)
+plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
 {
   PLINT i, npts;
-  int *xscl, *yscl;
+  PLINT *xscl, *yscl;
   plsc->page_status = DRAWING;
 
   if (plsc->plbuf_write) {
@@ -2542,13 +2542,10 @@ plP_image(int *x, int  *y, PLFLT *z , PLINT nx, PLINT ny)
     plbuf_esc(plsc, PLESC_IMAGE, NULL);
   }
 
-  plsc->offXpp = plP_wcpcx(plsc->offXu ) - plP_wcpcx(0);
-  plsc->offYpp = plP_wcpcy(plsc->offYu ) - plP_wcpcy(0);
-
   npts = nx*ny;
   if (plsc->difilt) {
-    xscl = (int*) malloc(nx*ny*sizeof(short));
-    yscl =(int*) malloc(nx*ny*sizeof(short));
+    xscl = (PLINT *) malloc(nx*ny*sizeof(PLINT));
+    yscl = (PLINT *) malloc(nx*ny*sizeof(PLINT));
     for (i = 0; i < npts; i++) {
       xscl[i] = x[i];
       yscl[i] = y[i];

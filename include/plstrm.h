@@ -449,17 +449,9 @@ typedef struct {
 
     PLINT dev_npts, dev_nptsX, dev_nptsY;
     short *dev_x, *dev_y;
-    int  *dev_ix, *dev_iy;
+    int   *dev_ix, *dev_iy;
     PLFLT *dev_z;
-    PLINT dev_xMI, dev_xMA, dev_yMI, dev_yMA;
     PLINT Dxmin, Dxmax, Dymin, Dymax;
-    PLFLT offXu;
-    PLFLT offYu;
-    PLINT offXpp;
-    PLINT offYpp;
-    PLINT offXp;
-    PLINT offYp;
-    PLFLT xU, yU;
 
   /* end of variables for plimage() */
 

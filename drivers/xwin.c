@@ -712,30 +712,14 @@ FillPolygonCmd(PLStream *pls)
   }
 
   /* Fill polygons */
-
-  if( 0 /* buggy!, try e.g. x12c. Disable it */ && pls->dev_npts == 4+1 && 
-      (pts[0].x-pts[1].x == pts[3].x-pts[2].x ) &&
-      (pts[0].x-pts[3].x == pts[1].x-pts[2].x ) &&
-      (pts[0].y-pts[1].y == pts[3].y-pts[2].y ) &&
-      (pts[0].y-pts[3].y == pts[1].y-pts[2].y )) {
-      
-    if (dev->write_to_window)
-      XFillRectangle(xwd->display,dev->window, dev->gc,
-		     pts[0].x, pts[1].y, pts[3].x-pts[0].x,pts[1].y-pts[0].y  ); 
-    if (dev->write_to_pixmap)
-      XFillRectangle(xwd->display,dev->pixmap, dev->gc,
-		     pts[0].x, pts[1].y, pts[3].x-pts[0].x,pts[0].y-pts[1].y  ); 
-
-  } else {
-      
+    
     if (dev->write_to_window)
       XFillPolygon(xwd->display, dev->window, dev->gc,
 		   pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
-
+    
     if (dev->write_to_pixmap)
       XFillPolygon(xwd->display, dev->pixmap, dev->gc,
 		   pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
-  }
 
   /* If in debug mode, draw outline of boxes being filled */
 
@@ -2850,7 +2834,6 @@ DrawImage(PLStream *pls)
   XColor curcolor;
   int X0, Y0, WX, WY;
   int kx, ky;
-  int offXpp, offYpp;
 
   int i, npts, nx, ny, ix, iy, corners[5];
   int clpxmi, clpxma, clpymi, clpyma, icol1;
@@ -2865,45 +2848,26 @@ DrawImage(PLStream *pls)
   clpymi = plsc->Dymin;
   clpyma = plsc->Dymax;
 
-  offXpp= plsc->offXpp;
-  offYpp= plsc->offYpp;
-  /* printf(" offXpp offYpp = %d %d \n", offXpp, offYpp); */
- 
-#define inside(j)  ( clpxmi <= plsc->dev_ix[j] + offXpp  && \
-                     clpxma >= plsc->dev_ix[j] + offXpp  && \
-                     clpymi <= plsc->dev_iy[j] + offYpp  && \
-                     clpyma >= plsc->dev_iy[j] + offYpp)
+#define inside(j)  ( clpxmi <= plsc->dev_ix[j] && \
+                     clpxma >= plsc->dev_ix[j] && \
+                     clpymi <= plsc->dev_iy[j] && \
+                     clpyma >= plsc->dev_iy[j] )
   
     npts = plsc->dev_nptsX*plsc->dev_nptsY;
   
-    /* pts= (XPoint *) malloc(npts*sizeof(XPoint)); */
-
     nx = pls->dev_nptsX;
     ny = pls->dev_nptsY;
-  
-    /*  X0= dev->xscale * pls->dev_x[0];
-	Y0= dev->yscale * (dev->ylen - pls->dev_iy[nx*ny-1]);
-	WX= dev->xscale * pls->dev_x[nx*ny-1]-X0;
-	WY= dev->yscale * (dev->ylen - pls->dev_iy[0])-Y0;
-    */
-
-    plsc->offXp = ROUND ( dev->xscale * plsc->wpxscl*  plsc->offXu ) ;
-    plsc->offYp = ROUND ( dev->yscale * plsc->wpyscl*  plsc->offYu ) ;
-
-    plsc->offXu = plsc->offXp / (dev->xscale * plsc->wpxscl);
-    plsc->offYu = plsc->offYp / (dev->yscale * plsc->wpyscl);  
    
-    X0 = dev->xscale * MAX( clpxmi, pls->dev_ix[0]+offXpp);
-    Y0 = dev->yscale * MAX( clpymi, pls->dev_iy[0]+offYpp);
+    X0 = dev->xscale * MAX( clpxmi, pls->dev_ix[0]);
+    Y0 = dev->yscale * MAX( clpymi, pls->dev_iy[0]);
 
-    WX = dev->xscale * MIN(clpxma, pls->dev_ix[nx*ny-1]+offXpp) -X0+1;
-    WY = dev->yscale * MIN(clpyma, pls->dev_iy[nx*ny-1]+offYpp) -Y0+1;
+    WX = dev->xscale * MIN(clpxma, pls->dev_ix[nx*ny-1]) -X0+1;
+    WY = dev->yscale * MIN(clpyma, pls->dev_iy[nx*ny-1]) -Y0+1;
  
     if(WX < 0 || WY < 0){
       printf("  %d %d %d %d\n", clpxmi,clpymi, clpxma, clpyma);
       printf("  %d %d %d %d\n", pls->dev_ix[0], pls->dev_iy[0],
 	     pls->dev_ix[nx*ny-1], pls->dev_iy[nx*ny-1]);
-      printf("  %d %d \n", offXpp, offYpp);
       return;
     }
 
@@ -2914,21 +2878,13 @@ DrawImage(PLStream *pls)
     DefDepth = DefaultDepthOfScreen(ScreenOfDisplay(xwd->display,DefScreen));
     DefPad = BitmapPad(xwd->display);
   
-    /* printf(" def depth est %d %d %d %d %d \n", DefDepth, X0, Y0, WX, WY);*/
     imgdata = malloc(((WX)*(WY)*(xwd->depth))  );
   
     ximg = XCreateImage( xwd->display, xwd->visual, xwd->depth, 
 			ZPixmap, 0, imgdata, WX, WY, DefPad, 0);
   
-    /*
-      ximg = XGetImage(  xwd->display, dev->pixmap, X0, Y0,
-      WX , WY,
-      AllPlanes,  ZPixmap );
-    */
-
     for(ix = 0; ix < nx-1; ix++) {
       for(iy = 0; iy < ny-1; iy++) {
-        /* printf("%d %d\n", ix, iy);	*/
 	corners[0] = ix*ny+iy;
 	corners[1] = (ix+1)*ny+iy; 
 	corners[2] = (ix+1)*ny+iy+1;
@@ -2936,8 +2892,8 @@ DrawImage(PLStream *pls)
 	corners[4] = ix*ny+iy;
 
 	for (i = 0; i < 5; i++) {
-	  Ppts[i].x = dev->xscale * (plsc->dev_ix[ corners[i] ] + offXpp);
-	  Ppts[i].y = dev->yscale * (plsc->dev_iy[ corners[i] ] + offYpp);
+	  Ppts[i].x = dev->xscale * (plsc->dev_ix[ corners[i]]);
+	  Ppts[i].y = dev->yscale * (plsc->dev_iy[ corners[i]]);
 	}
 	
 	if( inside(corners[0]) || inside(corners[1]) || 

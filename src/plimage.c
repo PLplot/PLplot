@@ -63,7 +63,7 @@ plimageslow(PLFLT *data, PLINT nx, PLINT ny,
   PLFLT zmin, zmax;
   PLFLT xm, ym;
 
-  zmin=zmax=data[0];
+  zmin = zmax = data[0];
   for (ix = 0; ix < nx - 1; ix++) {
     for (iy = 0; iy < ny - 1; iy++) {
       if( data[ix*ny+iy] > zmax ) zmax = data[ix*ny+iy];
@@ -79,7 +79,7 @@ plimageslow(PLFLT *data, PLINT nx, PLINT ny,
   for (ix = 0; ix < nx - 1; ix++) {
     for (iy = 0; iy < ny - 1; iy++) {
 
-      plcol1(  (data[ix*ny+iy]-zmin)/(zmax-zmin)  );
+      plcol1((data[ix*ny+iy]-zmin) / (zmax-zmin));
 
       xm = xmin + ix*dx;
       ym = ymin + iy*dy;
@@ -102,7 +102,7 @@ plimageslow(PLFLT *data, PLINT nx, PLINT ny,
 }
 
 void
-grimage(int *x, int *y, PLFLT *z, PLINT nx, PLINT ny)
+grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny)
 {
     plsc->dev_ix = x;
     plsc->dev_iy = y;
@@ -113,6 +113,27 @@ grimage(int *x, int *y, PLFLT *z, PLINT nx, PLINT ny)
     plP_esc(PLESC_IMAGE, NULL);
 }
 
+/*-------------------------------------------------------------------------*\
+ * plimage
+ *           (subject to change in the future)
+ *
+ * arguments are
+ *   data: array containing image data
+ *   nx: dimension on the X axis.        
+ *   ny: dimension of the Y axis 
+ *   The array data is indexed like data[ix*ny+iy]
+ *
+ *   xmin, xmax, ymin, ymax:
+ *       data[0][0] corresponds to (xmin,ymin)
+ *       data[0][ny-1] to (xmin,ymax)
+ *       data[nx-1][ny-1] to (xmax,ymax)
+ *
+ *   Dxmin, Dxmax, Dymin, Dymax:
+ *       plots only the window of points whose(x,y)'s fall
+ *       inside the [Dxmin->Dxmax]X[Dymin->Dymax] window
+ *
+\*-------------------------------------------------------------------------*/
+
 void
 plimage(PLFLT *data, PLINT nx, PLINT ny, 
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -122,7 +143,7 @@ plimage(PLFLT *data, PLINT nx, PLINT ny,
   PLINT  ix, iy;
   PLFLT  dx, dy;
   PLFLT zmin, zmax;
-  int *Xf, *Yf;
+  PLINT *Xf, *Yf;
   PLFLT *Zf;
   
   if (plsc->level < 3) {
@@ -144,9 +165,9 @@ plimage(PLFLT *data, PLINT nx, PLINT ny,
 
   /* compose the array to pass to plP_image */
 
-  Xf = (int*) malloc(ny*nx*sizeof(int));
-  Yf = (int*) malloc(ny*nx*sizeof(int));
-  Zf = (PLFLT*) malloc(ny*nx*sizeof(PLFLT));
+  Xf = (PLINT *) malloc(ny*nx*sizeof(PLINT));
+  Yf = (PLINT *) malloc(ny*nx*sizeof(PLINT));
+  Zf = (PLFLT *) malloc(ny*nx*sizeof(PLFLT));
   
   zmin = zmax = data[0];
   for (ix = 0; ix < nx ; ix++) {
