@@ -128,13 +128,14 @@ if test $enable_tcl = "yes"; then
 
 	places="\
 	/usr/local/include \
+	/usr/include/tcl \
+	/usr/include \
 	/usr/local/tcl7.3/include \
 	$HOME/local/tcl7.3/include \
 	$prefix/include \
 	$PWD/../tcl7.3 \
 	$XINCDIR/tk \
-	$XINCDIR \
-	/usr/include"
+	$XINCDIR"
 
 	for dir in $places; do
 	    if test -r $dir/tcl.h ; then
