@@ -299,15 +299,15 @@ plbuf_fill(PLStream *pls)
 static void
 plbuf_swin(PLStream *pls, PLWindow *plwin)
 {
-    fwrite(&plwin->dxmi, sizeof(double), 1, pls->plbufFile);
-    fwrite(&plwin->dxma, sizeof(double), 1, pls->plbufFile);
-    fwrite(&plwin->dymi, sizeof(double), 1, pls->plbufFile);
-    fwrite(&plwin->dyma, sizeof(double), 1, pls->plbufFile);
+    fwrite(&plwin->dxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->dxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->dymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->dyma, sizeof(PLFLT), 1, pls->plbufFile);
 
-    fwrite(&plwin->wxmi, sizeof(double), 1, pls->plbufFile);
-    fwrite(&plwin->wxma, sizeof(double), 1, pls->plbufFile);
-    fwrite(&plwin->wymi, sizeof(double), 1, pls->plbufFile);
-    fwrite(&plwin->wyma, sizeof(double), 1, pls->plbufFile);
+    fwrite(&plwin->wxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->wxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->wymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->wyma, sizeof(PLFLT), 1, pls->plbufFile);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -587,15 +587,15 @@ rdbuf_swin(PLStream *pls)
 {
     PLWindow plwin;
 
-    fread(&plwin.dxmi, sizeof(double), 1, pls->plbufFile);
-    fread(&plwin.dxma, sizeof(double), 1, pls->plbufFile);
-    fread(&plwin.dymi, sizeof(double), 1, pls->plbufFile);
-    fread(&plwin.dyma, sizeof(double), 1, pls->plbufFile);
+    fread(&plwin.dxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.dxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.dymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.dyma, sizeof(PLFLT), 1, pls->plbufFile);
 
-    fread(&plwin.wxmi, sizeof(double), 1, pls->plbufFile);
-    fread(&plwin.wxma, sizeof(double), 1, pls->plbufFile);
-    fread(&plwin.wymi, sizeof(double), 1, pls->plbufFile);
-    fread(&plwin.wyma, sizeof(double), 1, pls->plbufFile);
+    fread(&plwin.wxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.wxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.wymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.wyma, sizeof(PLFLT), 1, pls->plbufFile);
 
     plP_swin(&plwin);
 }
