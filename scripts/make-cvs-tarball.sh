@@ -24,10 +24,11 @@ perl -pi -e \
 echo done
 
 ./bootstrap.sh
-./configure
+./configure --enable-docbook
+( cd doc/docbook ; make )
 make dist
 TARBALL=`ls plplot-*.tar.gz`
 mv $TARBALL ..
 cd ..
 rm -rf $CVSTMPDIR
-echo "CVS Distribution tarball: $TARBALL"
+echo "CVS distribution tarball: $TARBALL"
