@@ -307,6 +307,7 @@ AC_DEFUN([PL_GET_DLNAME],[
   if test -z "$LIBTOOL" -a -z "$CC" ; then
     AC_MSG_ERROR([Dlname guessings can be done only after libtool is initialized])
   else
+    AC_MSG_CHECKING([for name of shared library $1])  
     TMP_DIR=./tmp-cfg
     rm -rf $TMP_DIR
     mkdir -p $TMP_DIR
@@ -316,6 +317,7 @@ AC_DEFUN([PL_GET_DLNAME],[
     $3=`grep ^dlname= lib$1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
     rm -rf $TMP_DIR
+    AC_MSG_RESULT([$[$3]])    
   fi
 ])
 dnl ------------------------------------------------------------------------
@@ -331,6 +333,7 @@ AC_DEFUN([PL_GET_DLLNAME],[
   if test -z "$LIBTOOL" -a -z "$CC" ; then
     AC_MSG_ERROR([Dlname guessings can be done only after libtool is initialized])
   else
+    AC_MSG_CHECKING([for name of dynloaded module $1])
     TMP_DIR=./tmp-cfg
     rm -rf $TMP_DIR
     mkdir -p $TMP_DIR
@@ -340,6 +343,7 @@ AC_DEFUN([PL_GET_DLLNAME],[
     $2=`grep ^dlname= $1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
     rm -rf $TMP_DIR
+    AC_MSG_RESULT([$[$3]])
   fi
 ])
 dnl ------------------------------------------------------------------------
