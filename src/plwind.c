@@ -186,7 +186,44 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
     plsc->base3y = basey;
     plsc->basecx = 0.5 * (xmin + xmax);
     plsc->basecy = 0.5 * (ymin + ymax);
-
+/* Mathematical explanation of the 3 transformations of coordinates:
+ * (I) Scaling:
+ *     x' = cx*(x-x_mid) = cx*(x-plsc->basecx)
+ *     y' = cy*(y-y_mid) = cy*(y-plsc->basecy)
+ *     z' = zscale*(z-zmin) = zscale*(z-plsc->ranmi)
+ * (II) Rotation about z' axis clockwise by the angle of the azimut when 
+ *      looking from the top in a right-handed coordinate system.
+ *     x''          x'
+ *     y'' =  M_1 * y'
+ *     z''          z'
+ *    where the rotation matrix M_1 (see any mathematical physics book such
+ *    as Mathematical Methods in the Physical Sciences by Boas) is
+ *    caz          -saz       0
+ *    saz           caz       0
+ *     0             0        1 
+ * (III) Rotation about x'' axis by 90 deg - alt to bring z''' axis 
+ *      coincident with line of sight and x''' and y''' corresponding to
+ *      x and y coordinates in the 2D plane of the plot.
+ *     x'''          x''
+ *     y''' =  M_2 * y''
+ *     z'''          z''
+ *    where the rotation matrix M_2 is
+ *     1            0         0
+ *     0           salt      calt
+ *     0          -calt      salt
+ * Note
+ *     x'''          x'
+ *     y''' =  M *   y'
+ *     z'''          z'
+ * where M = M_2*M_1 is given by
+ *          caz      -saz     0
+ *     salt*saz  salt*caz    calt
+ *    -calt*saz -calt*caz    salt
+ * plP_w3wcx and plP_w3wcy take the combination of the plsc->basecx,
+ * plsc->basecy, plsc->ranmi, plsc->cxx, plsc->cxy, plsc->cyx, plsc->cyy, and
+ * plsc->cyz data stored here to implement the combination of the 3 
+ * transformations to determine x''' and y''' from x, y, and z.
+ */   
     plsc->cxx = cx * caz;
     plsc->cxy = -cy * saz;
     plsc->cyx = cx * saz * salt;

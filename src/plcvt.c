@@ -204,6 +204,7 @@ plP_dcscy(PLFLT y)
 \*--------------------------------------------------------------------------*/
 
 /* 3-d coords to 2-d projection (x) */
+/* See c_plw3d for a mathematical explanation of the transformation. */
 
 PLFLT
 plP_w3wcx(PLFLT x, PLFLT y, PLFLT z)
@@ -213,6 +214,7 @@ plP_w3wcx(PLFLT x, PLFLT y, PLFLT z)
 }
 
 /* 3-d coords to 2-d projection (y) */
+/* See c_plw3d for a mathematical explanation of the transformation. */
 
 PLFLT
 plP_w3wcy(PLFLT x, PLFLT y, PLFLT z)
