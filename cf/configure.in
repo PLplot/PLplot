@@ -562,9 +562,9 @@ if test -z "$PYTHON_DIR"; then
     PYTHON_DIR=$prefix/python
 fi
 if test "$enable_python" = "yes"; then
-    if test "$PYTHON_DIR" != "$PYTHON_MOD_DIR"; then
+    if test "$PYTHON_DIR" != "$PYTHON_MACH_DIR"; then
 	AC_MSG_RESULT(note: python module will be installed in $PYTHON_DIR);
-	AC_MSG_RESULT(note: it should be soft-linked to $PYTHON_MOD_DIR);
+	AC_MSG_RESULT(note: it should be soft-linked to $PYTHON_MACH_DIR);
     fi
 fi
 if test -z "$DOC_DIR"; then
@@ -636,7 +636,8 @@ fi
 if test "$enable_python" = "yes"; then
     ln -s \
     $srcdir/bindings/python/*.* \
-    $srcdir/examples/python/*py \
+    $srcdir/examples/python/*.py \
+    $srcdir/examples/python/pytkdemo \
     . 2>/dev/null
 fi
 
@@ -651,11 +652,13 @@ fi
 if test "$enable_tk" = "yes"; then
     ln -s \
     $srcdir/bindings/tk/*.* \
-    $srcdir/bindings/tk/tclIndex \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
     . 2>/dev/null
 fi
+
+#    $srcdir/bindings/tk/tclIndex 
+
 
 # Miscellaneous
 
