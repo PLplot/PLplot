@@ -1,6 +1,12 @@
-/* $Id$
+/* -*-C++-*-
+ * $Id$
  * $Log$
- * Revision 1.4  1994/06/25 20:35:49  mjl
+ * Revision 1.5  1994/06/26 05:16:15  furnish
+ * Implemented C++ wrapper class for tclMatrix, enabling easy use of a
+ * tclMatrix from compiled extension commands.  Needs to have sibling
+ * classes created by someone who cares.
+ *
+ * Revision 1.4  1994/06/25  20:35:49  mjl
  * Changed typedef for Mat_int to long.  Maybe I should have a Mat_long
  * instead?  Added put/get function handlers to matrix struct (determined
  * when created, dependent on type).
@@ -81,7 +87,105 @@ typedef struct {
 /* Function prototypes */
 
 #ifdef __cplusplus
+/*---------------------------------------------------------------------------//
+// Since C++ does not generally have a per-platform ABI the way C
+// does, we stick to a totally inline class declaration and
+// definition.  That way you don't have to keep a separate version of
+// libplplot*.a for each compiler you'd like to use.
+
+// Start by setting up some important macros.
+
+// Okay, HP C++ has exceptions, but most other compilers don't.  Will
+// embellish this as necessary.
+*/
+
+#ifdef throw
+#define TCL_NO_UNDEF
+#endif
+
+#ifndef throw
+#ifdef __hpux
+#if defined(__GCC__) || defined(__lucid) || defined(__Centerline)
+#define NO_XCPT
+#endif
+#else
+#define NO_XCPT
+#endif
+
+#ifdef NO_XCPT
+#define try
+#define throw(a) \
+{ cerr << "THROW: " << #a << " from " << __FILE__ \
+       << " line " << __LINE__ << endl << flush; abort(); }
+#define catch(a) if (0)
+#define Throw
+#else
+#define Throw throw
+#endif
+#endif
+
+#define tMat_Assert(a,b) if (!(a)) \
+{ cerr << "Assertion " << #a << " failed in " << __FILE__ \
+       << " at line " << __LINE__ << endl << flush; \
+  throw(b); }
+
+/*---------------------------------------------------------------------------//
+// class TclMatFloat
+
+// This class provides a convenient way to access the data of a
+// tclMatrix from within compiled code.  Someone should make clones of
+// this class for the other tclMatrix supported data types.
+//---------------------------------------------------------------------------*/
+
+class TclMatFloat {
+    tclMatrix *matPtr;
+  public:
+    TclMatFloat( tclMatrix *ptm )
+	: matPtr(ptm)
+    {
+	tMat_Assert( matPtr->type == TYPE_FLOAT, "Type mismatch" );
+    }
+
+    int Dimensions() { return matPtr->dim; }
+
+    Mat_float& operator()( int i, int j )
+    {
+	tMat_Assert( matPtr->dim == 2, "Wrong number of indicies." );
+	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
+		    j >= 0 && j < matPtr->n[1],
+		    "Out of bounds reference" );
+		
+	return M2D(i,j);
+    }
+
+    Mat_float& operator()( int i, int j, int k )
+    {
+	tMat_Assert( matPtr->dim = 3, "Wrong number of indicies." );
+	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
+		    j >= 0 && j < matPtr->n[1] &&
+		    k >= 0 && k < matPtr->n[2],
+		    "Out of bounds reference" );
+
+	return M3D(i,j,k);
+    }
+};
+
+#ifndef TCL_NO_UNDEF
+
+#ifdef NO_XCPT
+#undef NO_XCPT
+#undef try
+#undef throw
+#undef Throw
+#undef catch
+#endif
+
+#endif
+
+#undef tMat_Assert
+
 extern "C" {
+/*---------------------------------------------------------------------------*/
 #endif
 
 #include <tcl.h>
