@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/02/27 04:53:17  mjl
-   Fixed a bug in seeking that occurred only at the end of a file when
-   displaying packed pages.  Also added lots more diagnostic output, enabled
-   when DEBUG is defined.
+   Revision 1.15  1993/02/27 20:38:04  mjl
+   Fixed yet another bug dealing with packed, partially complete pages
+   and seeking.  Who knows, it might actually be right now.
 
+ * Revision 1.14  1993/02/27  04:53:17  mjl
+ * Fixed a bug in seeking that occurred only at the end of a file when
+ * displaying packed pages.  Also added lots more diagnostic output, enabled
+ * when DEBUG is defined.
+ *
  * Revision 1.13  1993/02/27  01:42:09  mjl
  * Changed from ftell/fseek to fgetpos/fsetpos, also added debugging output.
  *
@@ -151,7 +155,7 @@ static int HandleOption_jy	(char *, char *);
 
 static PLINT	page_begin=1;	/* Where to start plotting */
 static PLINT	page_end=-1;	/* Where to stop (0 to disable) */
-static PLINT	curpage=1;	/* Current page number */
+static PLINT	curpage=0;	/* Current page number */
 static PLINT	cursub=0;	/* Current subpage */
 static PLINT	nsubx;		/* subpages in x */
 static PLINT	nsuby;		/* subpages in y */
@@ -513,6 +517,19 @@ plr_init(U_CHAR c)
     vpymin = MAX(0., jy - vpylen / 2.0);
     vpymax = MIN(1., vpymin + vpylen);
     vpymin = vpymax - vpylen;
+
+/* Seek to first page */
+
+    cursub = nsubx*nsuby;
+    if (page_begin > 1) {
+	if (no_pagelinks) 
+	    plwarn("plrender: Metafile does not support page seeks");
+	else {
+	    target_page = page_begin;
+	    SeekToPage(page_begin);
+	}
+    }
+
 }
 
 /*----------------------------------------------------------------------*\
@@ -617,14 +634,11 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 static void
 plr_clr(U_CHAR c)
 {
-    PLINT cursub, nsubx, nsuby;
-
     c1 = getcommand();
     ungetcommand(c1);
     if (c1 == CLOSE)
 	end_of_page = 1;
 
-    gsub(&nsubx, &nsuby, &cursub);
     if (cursub == nsubx * nsuby)
 	end_of_page = 1;
 
@@ -648,19 +662,6 @@ plr_page(U_CHAR c)
     }
     ungetcommand(c);
     ReadPageHeader();
-
-/* On startup, seek to starting page if other than 1 */
-
-    if (curpage == 1) {
-	if (page_begin > 1) {
-	    if (no_pagelinks) 
-		plwarn("plrender: Metafile does not support page seeks");
-	    else 
-		SeekToPage(page_begin);
-
-	    page_begin = 0;
-	}
-    }
 
 /* Advance and setup the page or subpage */
 
@@ -1013,6 +1014,17 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 * SeekToPage()
 *
 * Seek to 'target_page'.
+*
+* At this point we're actually at the end of a page, and haven't yet read
+* the page header for the next page.  It would be most convenient if we
+* could just decrement the target_page and start seeking with the next page
+* header, but this fails if we're at the end of a file.  Instead, I backup
+* to the beginning of the current page and start seeking from there.  This
+* keeps the logic simple at the cost of a small loss in performance.
+*
+* The wacky business with cursub is to ensure that when seeking with
+* subpages in effect, the last subpage on the page previous to the target
+* page is reached.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1020,37 +1032,28 @@ SeekToPage(long target_page)
 {
     long delta;
 
-    delta = (target_page - 1) - curpage;
-
-/*
-* At this point we're actually at the end of a page, and haven't yet read the
-* page header for the next page.  It would be most convenient if we could
-* just decrement the target_page and start seeking with the next page header,
-* but this fails if we're at the end of a file.  Instead, I backup to the
-* beginning of the current page and start seeking from there.  This keeps the
-* logic simple at the cost of a small loss in performance.
-*/
-
-    if (delta == 0)
+    if (target_page - 1 == curpage)
 	return;
 
-    if (curpage_loc == 0) 
-	plexit("curpage_loc is zero");
-
+    if (curpage_loc != 0) {
 #ifdef DEBUG
-    grtext();
-    printf("Seeking to: %d\n", curpage_loc);
-    grgra();
+	grtext();
+	printf("Seeking to: %d\n", curpage_loc);
+	grgra();
 #endif
-    if (fsetpos(MetaFile, &curpage_loc))
-	plexit("plrender: fsetpos call failed");
+	if (fsetpos(MetaFile, &curpage_loc))
+	    plexit("plrender: fsetpos call failed");
 
-    cursub--;
-    if (cursub < 1) {
-	cursub = nsubx * nsuby;
-	curpage--;
+	cursub--;
+	if (cursub < 1) {
+	    cursub = nsubx * nsuby;
+	    curpage--;
+	}
     }
-    delta = (target_page - 1) - curpage;
+    if (target_page - 1 > curpage)
+	delta = (target_page - 1) - curpage + (1 - cursub/(nsubx*nsuby));
+    else
+	delta = (target_page - 1) - curpage;
 
 /* Now loop until we arrive at the target page */
 
@@ -1068,7 +1071,7 @@ SeekToPage(long target_page)
 
 #ifdef DEBUG
 	    grtext();
-            printf("Seeking to: %d\n", curpage_loc);
+	    printf("Seeking to: %d\n", nextpage_loc);
 	    grgra();
 #endif
 	    if (fsetpos(MetaFile, &nextpage_loc))
@@ -1079,6 +1082,7 @@ SeekToPage(long target_page)
 		cursub = 1;
 		curpage++;
 	    }
+	    delta = (target_page - 1) - curpage + (1 - cursub/(nsubx*nsuby));
 	}
 	else {
 
@@ -1089,6 +1093,7 @@ SeekToPage(long target_page)
 		    plexit("plrender: fsetpos call failed");
 		break;
 	    }
+
 #ifdef DEBUG
 	    grtext();
 	    printf("Seeking to: %d\n", prevpage_loc);
@@ -1102,8 +1107,8 @@ SeekToPage(long target_page)
 		cursub = nsubx * nsuby;
 		curpage--;
 	    }
+	    delta = (target_page - 1) - curpage;
 	}
-	delta = (target_page - 1) - curpage;
     }
 #ifdef DEBUG
     grtext();
