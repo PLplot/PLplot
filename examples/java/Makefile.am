@@ -3,7 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002 Alan W. Irwin
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -19,11 +19,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_java
-
-javadir = $(libdir)/java/plplot/examples
-
-java_DATA = \
+javademos = \
 	README.javademos \
 	x01.java \
 	x02.java \
@@ -46,7 +42,13 @@ java_DATA = \
 	x19.java
 
 
-EXTRA_DIST = $(java_DATA)
+if enable_java
 
-# enable_java
+java_DATA = $(javademos)
+javadir = $(libdir)/java/plplot/examples
+
 endif
+
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = $(javademos)

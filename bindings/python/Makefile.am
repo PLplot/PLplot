@@ -86,13 +86,22 @@ MAINTAINERCLEANFILES = \
 	plplotc.py \
 	plplotcmodule_p_double.c \
 	plplotcmodule_p_single.c
-  
+
+# enable_python
+endif
+
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
+        1.4b3 \
 	setup.py.in \
 	plplotcmodule.i \
 	makedocstrings.py \
 	plplot_widgetmodule.c \
-	plplot.py
-
-# enable_python
-endif
+	plplot.py \
+	Plframe.py \
+	README.pythonbuild \
+	TclSup.py \
+	plmodule.c \
+	plmodule.h \
+	plplotcapi.i

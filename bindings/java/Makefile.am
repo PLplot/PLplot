@@ -78,3 +78,13 @@ MAINTAINERCLEANFILES = \
 
 # if enable_java
 endif
+
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	PLStream.java \
+	PLStreamc.java \
+	README.javaAPI \
+	javabind.c \
+	plplotcapi.i \
+	plplotjavac.i

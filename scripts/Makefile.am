@@ -28,4 +28,14 @@ scripts = \
 
 bin_SCRIPTS = $(scripts)
 
-EXTRA_DIST = $(scripts)
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	$(scripts) \
+	check-tarball-cvs.sh \
+	fixfort \
+	htdocs-gen_plot-examples.sh \
+	htdocs-replace.sh \
+	make-cvs-tarball.sh \
+	make_tarball.sh \
+	mktclIndex

@@ -52,7 +52,6 @@ tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 tclgen.h tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
 	perl pltclgen
 
-EXTRA_DIST = pltclgen plapi.tpl tclcmd.tpl ../tk/plplot.tcl
 CLEANFILES = $(generated_scripts) tclIndex
 MAINTAINERCLEANFILES = tclgen.h tclgen_s.h tclgen.c
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
@@ -96,3 +95,12 @@ libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 	$(TKLIBCMD) \
 	$(libplplot) \
 	$(libmatrix)
+
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	pltclgen \
+	plapi.tpl \
+	tclcmd.tpl \
+	README.tclAPI \
+	plitclgen

@@ -407,7 +407,7 @@ endif
 docdir = $(DOCDIR)
 doc_DATA = README.drivers
 
-EXTRA_DIST = next.c
+EXTRA_DIST = $(doc_DATA) next.c
 
 CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c *.rc
 DISTCLEANFILES = $(drivers_DATA)

@@ -2,9 +2,9 @@
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002, 2003 Rafael Laboissière 
+# Copyright (C) 2002, 2003 Rafael Laboissière
 # Copyright (C) 2002, 2003 Alan W. Irwin
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -59,7 +59,8 @@ built_files = \
 
 EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
-  jadetex.cfg stylesheet.css $(built_files)
+  jadetex.cfg stylesheet.css $(built_files) \
+  inline-info.ent math.ent pdftex.map
 
 CLEANFILES = \
   *.aux inline.ent *.log *.eps TMP.* *-tmp *.out
@@ -88,7 +89,7 @@ all: $(TARGETS)
 
 html: $(HTML_MANIFEST)
 
-# N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is 
+# N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is
 # output to the $(HTML_MANIFEST) file.
 $(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML_IN) inline-html.ent
 	ln -fs inline-html.ent inline.ent

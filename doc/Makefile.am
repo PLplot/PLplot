@@ -8,6 +8,8 @@ endif
 
 man_MANS = $(manpages)
 
-EXTRA_DIST = $(core_manpages) $(tcl_manpages)
+EXTRA_DIST = \
+  $(core_manpages) $(tcl_manpages) \
+  README.local Xauthority abs.txt
 
 SUBDIRS = docbook

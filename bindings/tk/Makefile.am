@@ -79,4 +79,16 @@ tcl_DATA = $(tcldata) $(itkdata) tclIndex $(paldata)
 
 endif
 
-EXTRA_DIST = pltk.h plserver.h tcpip.h
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	pltk.h \
+	pltkd.h \
+	plserver.h \
+	tcpip.h \
+	tkshell.c \
+	stupidtk.c \
+	app-defaults \
+	$(tcldata) \
+	$(itkdata) \
+	$(paldata)

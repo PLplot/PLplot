@@ -41,3 +41,9 @@ pltek_LDADD = $(libplplot)
 pltcl_SOURCES = pltcl.c
 pltcl_LDFLAGS = $(RPATH) -no-undefined $(TCLLIBCMD) $(ITCLLIBCMD)
 pltcl_LDADD = $(libplplottcltk)
+
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	tektest.c \
+	xform.c
