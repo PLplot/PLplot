@@ -95,15 +95,26 @@ CVS snapshot tarballs area
 --------------------------
 
 To generate a cvs snapshot tarball, use the make-cvs-tarball.sh in the
-directory scripts.  This script accepts two arguments:
+directory scripts.  This script accepts many arguments, like the login anme
+in teh remote system, the branch name, and a version string.  Type:
 
-    WWW_USER=joeplplotter make-cvs-tarball.sh 5.3.0.cvs v5_3_0
+    make-cvs-tarbal.sh -h
 
-The second argument is the CVS branch label from which the tarball is
-built. It default to HEAD.  The first argument is the version string that
-will be substituted in the argument of the AC_INIT macro call in
-configure.ac.  If it is absent, then it will be automatically generated
-from the current date, like 5.3.0.cvs.20040207.
+For a usage notice.
+
+A typical usage would be:
+
+    make-cvs-tarball.sh -v 5.3.0.cvs -r v5_3_0 -u joeplplotter
+
+The -r option is the CVS branch label from which the tarball is built. It
+default to HEAD.  The -v argument is the version string that will be
+substituted in the argument of the AC_INIT macro call in configure.ac.  If
+it is absent, then it will be automatically generated from the current
+date, like 5.3.0.cvs.20040207.
+
+You can prevent the building of the Docbook documentation (and, by
+consequence, its inclusion in the tarball), by giving the option -n to
+make-cvs-tarbal.sh.
 
 The resulting tarball can be uploaded to htdocs/cvs-tarball in the web site
 with the upload-cvs-tarball.sh, like this:
@@ -125,12 +136,12 @@ To generate the Debian package, install the devscripts packages, go to the
 top_scrdir directory and type:
 
     debuild -us -uc -i
-    
+
 Go then to the upper directory and launch the uplaod-debs.pl script:
 
     cd ..
     WWW_USER=joeplplotter plplot/debian/upload-debs.pl
-    
+
 The packages, as well as an automatically generated index.html will be
 uploaded to htdocs/debian.
 
