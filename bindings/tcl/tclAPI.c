@@ -382,69 +382,76 @@ PlbasicInit( Tcl_Interp *interp )
     
     Tcl_SetVar(interp, "plversion", PLPLOT_VERSION, TCL_GLOBAL_ONLY);
 
-/* Should always FIRST try the known, install directory */
+/* Begin search for init script */
+/* Each search begins with a test of libDir, so rearrangement is easy. */
+
+/* Tcl extension dir and/or PL_LIBRARY */
+    if (libDir == NULL) {
+	if (Tcl_Eval(interp, initScript) != TCL_OK) {
+	/* This unset is needed for Tcl < 8.4 support. */
+	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	/* Clear the result to get rid of the error message */
+	    Tcl_ResetResult(interp);
+	}
+	else
+	    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+    }
 
 #ifdef TCL_DIR
+/* Install directory */
     if (libDir == NULL) {
 	libDir = TCL_DIR;
 	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
 	if (Tcl_Eval(interp, initScript) != TCL_OK) {
 	    libDir = NULL;
 	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	    Tcl_ResetResult(interp);
 	}
     }
 #endif
 
-    if (libDir == NULL) {
-	fprintf(stderr, "running: %s\n", initScript);
-	if (Tcl_Eval(interp, initScript) != TCL_OK) {
 #ifdef PLPLOT_EXTENDED_SEARCH
-	/* 
-	 * This unset is only needed for Tcl < 8.4 support.
-	 * Bug #577033 in Tcl has since been fixed, so for
-	 * Tcl 8.4 or newer this line is not needed.
-	 */
-	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
-	    fprintf(stderr, "running: %s\n", initScriptExtended);
-	    if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
-	    /* Last chance, look in '.' */
-		Tcl_DString ds;
-		if (Tcl_Access("plplot.tcl", 0) != 0) {
-		    return TCL_ERROR;
-		}
-		if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
-		    return TCL_ERROR;
-		}
-	    /* It is in the current directory */
-		libDir = Tcl_GetCwd(interp, &ds);
-		if (libDir == NULL) {
-		    return TCL_ERROR;
-		}
-		libDir = plstrdup(libDir);
-		Tcl_DStringFree(&ds);
-	    }
-	/* 
-	 * Clear the result so the user isn't confused by an error
-	 * message from the previous failed search
-	 */
-	    Tcl_ResetResult(interp);
-#else
-	    return TCL_ERROR;
-#endif
-	}
-    }
-	
+/* Unix extension directory */
     if (libDir == NULL) {
-	libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
-	if (libDir == NULL) {
-	/* I don't believe this path can ever be reached now */
-	    Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
-	    libDir = defaultLibraryDir;
+	if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
+	/* This unset is needed for Tcl < 8.4 support. */
+	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	/* Clear the result to get rid of the error message */
+	    Tcl_ResetResult(interp);
 	}
-    } else {
-	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
+	else
+	    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
     }
+
+/* Current directory */
+    if (libDir == NULL) {
+	Tcl_DString ds;
+	if (Tcl_Access("plplot.tcl", 0) != 0) {
+	    return TCL_ERROR;
+	}
+	if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
+	    return TCL_ERROR;
+	}
+    /* It's here! */
+	libDir = Tcl_GetCwd(interp, &ds);
+	if (libDir == NULL) {
+	    return TCL_ERROR;
+	}
+	libDir = plstrdup(libDir);
+	Tcl_DStringFree(&ds);
+    }
+#endif
+
+    if (libDir == NULL)
+	return TCL_ERROR;
+	
+    Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
     
+/* This setting should never be useful now.. kept for reference only.
+    Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
+    libDir = defaultLibraryDir;
+*/
+
 /* Used by init code in plctrl.c */
     plplotLibDir = plstrdup(libDir);
 
