@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002, 2003  Alan W. Irwin
 # Copyright (C) 2003, 2004  Rafael Laboissiere
-# 
+#
 # This file is part of PLplot.
 #
 # This file is free software; you can redistribute it and/or modify
@@ -19,11 +19,15 @@
 # You should have received a copy of the GNU Library General Public License
 # along with the file; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
-# Copyright (C) 2003  Rafael Laboissiere
 
 # N.B.  This treatment probably will need changes or else a complete
 # replacement to work cross-platform as indicated by ?cross-platform?
 # comment below, but it works quite nicely on Linux.
+
+SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
+PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
+
+SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -c++ -DSWIG_PYTHON -python
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
@@ -38,7 +42,6 @@ EXTRA_DIST = \
 	TclSup.py \
 	plmodule.c \
 	plmodule.h \
-	plplotcapi.i \
 	$(MAINTAINERCLEANFILES)
 
 ### Only swig version 1.3.17 (and above?) will work here.
@@ -48,9 +51,8 @@ EXTRA_DIST = \
 ### Note plplotc.py is generated in both cases as well, but that file
 ### contents are independent of the single-double question and the
 ### following logic depends on that.
-plplotcmodule_p_double.c plplotc.py: plplotcmodule.i plplotcapi.i
-	$(SWIG) -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE \
-	plplotcmodule.i
+plplotcmodule_p_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
+	$(SWIG_CMD) -DPL_DOUBLE -o plplotcmodule_p_double.c plplotcmodule.i
 
 # swig-1.3.17+ does not handle documentation strings properly so run this
 # script to make documentation strings.
@@ -59,9 +61,8 @@ plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 
 ### Note plplotc.py generated here as well, but it is identical to the
 ### one generated above and we cannot mention it as a duplicate target here.
-plplotcmodule_p_single.c: plplotcmodule.i plplotcapi.i
-	$(SWIG) -python -o plplotcmodule_p_single.c -c++ \
-	plplotcmodule.i
+plplotcmodule_p_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
+	$(SWIG_CMD) -o plplotcmodule_p_single.c plplotcmodule.i
 
 plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
 	$(PYTHON) makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
@@ -120,7 +121,7 @@ endif
 CLEANFILES = \
 	plplotcmodule_double.c \
 	plplotcmodule_single.c
-  
+
 MAINTAINERCLEANFILES = \
 	plplotc.py \
 	plplotcmodule_p_double.c \

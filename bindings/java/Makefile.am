@@ -20,6 +20,11 @@
 # along with the file; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
+PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
+
+SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -DPL_DOUBLE -DSWIG_JAVA -java 
+
 swigjavafiles = \
 	SWIGTYPE_p_p_char.java \
 	plplotjavac.java \
@@ -44,12 +49,11 @@ EXTRA_DIST = \
 	PLStreamc.java \
 	README.javaAPI \
 	javabind.c \
-	plplotcapi.i \
 	plplotjavac.i \
 	$(swiggenfiles)
 
-$(swiggenfiles): plplotjavac.i plplotcapi.i
-	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
+$(swiggenfiles): plplotjavac.i $(PLPLOTCAPI_I)
+	$(SWIG_CMD) -package plplot.core plplotjavac.i
 
 # Must have "exec" in the name.
 ourexecjavadir = $(libdir)/java/plplot/core

@@ -2,9 +2,12 @@
  * language interfaces for the PLplot library) of PLplot in a form that
  * is readily understood by swig.
  */
-/* 
-Copyright 2002 Gary Bishop
-Copyright 2002 Alan W. Irwin
+/*
+
+Copyright (C) 2002  Gary Bishop
+Copyright (C) 2002  Alan W. Irwin
+Copyright (C) 2004  Rafael Laboissiere
+
 This file is part of PLplot.
 
 PLplot is free software; you can redistribute it and/or modify
@@ -130,6 +133,28 @@ typedef void* PLPointer;
 #define PLESPLFLTBUFFERING_DISABLE    2
 #define PLESPLFLTBUFFERING_QUERY      3
 
+#ifdef SWIG_PYTHON
+#define SWIG_OBJECT_DATA PYOBJECT_DATA
+#else
+#define SWIG_OBJECT_DATA OBJECT_DATA
+#endif
+
+#ifdef SWIG_PYTHON
+
+/* Non-common API that are included here because they traditionally
+ * were part of plmodule.c. */
+
+DOC(plarrows, "Plot an arrow.")
+void
+plarrows(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
+         PLFLT scale, PLFLT dx, PLFLT dy) ;
+
+DOC(plsxwin, "Set inferior X window.")
+void
+plsxwin(PLINT window_id);
+
+#endif /* SWIG_PYTHON */
+
 /* Complete list of common API (has "c_" suffix version defined in plplot.h) */
 
 DOC(pl_setcontlabelformat, "Set the format of the contour labels.")
@@ -189,7 +214,8 @@ void
 plcont(PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT *Array, PLINT n,
 	 pltr_func pltr,
-	 PLPointer OBJECT_DATA);
+	 PLPointer SWIG_OBJECT_DATA);
+
 
 DOC(plcpstrm, "Copy state parameters from the reference stream to the current stream.")
 void
@@ -245,7 +271,7 @@ void
 plfontld(PLINT fnt);
 
 DOC(plgchr, "Get character default height and current (scaled) height.")
-void 
+void
 plgchr(PLFLT *OUTPUT, PLFLT *OUTPUT);
 
 DOC(plgcol0, "Get 8 bit RGB values for given color from color map 0.")
@@ -260,12 +286,10 @@ DOC(plgcompression, "Get the current compression setting.")
 void
 plgcompression(PLINT *OUTPUT);
 
-//temporary
-#if 0
+#ifndef SWIG_JAVA
 DOC(plgdev, "Get the current device (keyword) name.")
 void
 plgdev(char *OUTPUT);
-//temporary
 #endif
 
 DOC(plgdidev, "Retrieve current window into device space.")
@@ -284,12 +308,10 @@ DOC(plgfam, "Get family file parameters.")
 void
 plgfam(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT);
 
-//temporary
-#if 0
+#ifndef SWIG_JAVA
 DOC(plgfnam, "Get the (current) output file name.")
 void
 plgfnam(char *OUTPUT);
-//temporary
 #endif
 
 DOC(plglevel, "Get the (current) run level.")
@@ -313,8 +335,7 @@ DOC(plgstrm, "Get current stream number.")
 void
 plgstrm(PLINT *OUTPUT);
 
-//temporary
-#if 0
+#ifndef SWIG_JAVA
 DOC(plgver, "Get current library version number.")
 void
 plgver(char *OUTPUT);
@@ -527,17 +548,17 @@ void
 plsfnam(const char *fnam);
 
 DOC(plshades, "Shade regions with continuous range of colours.")
-void 
+void
 plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	  PLFLT *Array, PLINT n, PLINT fill_width,
 	  PLINT cont_color, PLINT cont_width,
 	  fill_func ff, PLINT rectangular,
 	  pltr_func pltr,
-	  PLPointer OBJECT_DATA);
+	  PLPointer SWIG_OBJECT_DATA);
 
 DOC(plshade, "Shade region with discrete colour, pattern fill.")
-void 
+void
 plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
@@ -546,7 +567,7 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLINT max_color, PLINT max_width,
 	  fill_func ff, PLINT rectangular,
 	  pltr_func pltr,
-	  PLPointer OBJECT_DATA);
+	  PLPointer SWIG_OBJECT_DATA);
 
 DOC(plsmaj, "Set up lengths of major tick marks.")
 void
@@ -682,7 +703,7 @@ DOC(plrgb1, "Set line color by 8 bit RGB values.")
 void
 plrgb1(PLINT r, PLINT g, PLINT b);
 
-void 
+void
 plshade1(PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
@@ -691,30 +712,30 @@ plshade1(PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
 	 PLINT max_color, PLINT max_width,
 	 fill_func ff, PLINT rectangular,
 	 pltr_func pltr,
-	 PLPointer OBJECT_DATA);
+	 PLPointer SWIG_OBJECT_DATA);
 
 #endif
 
 /*--------------------------------------------------------------------------*\
  *		Functions for use from C or C++ only
- *  N.B. If you want these in python, they should be officially put in 
+ *  N.B. If you want these in python, they should be officially put in
  *  the common API for all front-ends to the PLplot library with "c_" suffix,
- *  DocBook xml documentation in the api.xml chapter, etc. 
+ *  DocBook xml documentation in the api.xml chapter, etc.
 \*--------------------------------------------------------------------------*/
 
 #if 0
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
- * of 2d array data to be used. 
+ * of 2d array data to be used.
  */
 void
 plfcont(f2eval_func f2eval,
-	PLPointer OBJECT_DATA,
+	PLPointer SWIG_OBJECT_DATA,
 	PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
 	pltr_func pltr,
-	PLPointer OBJECT_DATA);
+	PLPointer SWIG_OBJECT_DATA);
 /* plot continental outline in world coordinates */
 
 void
@@ -723,17 +744,17 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
 /* Plot the latitudes and longitudes on the background. */
 
-void 
-plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+void
+plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
-void 
+void
 plfshade(f2eval_func,
-	 PLPointer OBJECT_DATA,
+	 PLPointer SWIG_OBJECT_DATA,
 	 c2eval_func,
 	 PLPointer c2eval_data,
-	 PLINT nx, PLINT ny, 
+	 PLINT nx, PLINT ny,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -741,7 +762,7 @@ plfshade(f2eval_func,
 	 PLINT max_color, PLINT max_width,
 	 fill_func, PLINT rectangular,
 	 pltr_func,
-	 PLPointer OBJECT_DATA);
+	 PLPointer SWIG_OBJECT_DATA);
 
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
@@ -758,7 +779,7 @@ pldip2dc(PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT);
 /* plots a 2d image (or a matrix too large for plshade() ). */
 
 void
-plimage( PLFLT **Matrix, PLINT nx, PLINT ny, 
+plimage( PLFLT **Matrix, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
@@ -785,8 +806,11 @@ plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, PLINT *),
 /* Set the variables to be used for storing error info */
 
 #if 0
+/* Cannot get this to work since plsError is not simply an output
+ * of an internal integer and character string. */
+DOC(plsError, "Set the variables to be used for storing error info.")
 void
-plsError(PLINT *errcode, char *errmsg);
+plsError(PLINT *OUTPUT, char *OUTPUT);
 #endif
 
 /* Sets an optional user exit handler. */
@@ -815,7 +839,7 @@ pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
 
 /* Example linear transformation function for contour plotter. */
 
-void 
+void
 xform(PLFLT x, PLFLT y, PLFLT * OUTPUT, PLFLT * OUTPUT);
 	/* Function evaluators */
 /* Does a lookup from a 2d function array.  Array is of type (PLFLT **), */
@@ -897,7 +921,7 @@ pl_cmd(PLINT op, void *ptr);
 
 /* Return full pathname for given file if executable */
 
-PLINT 
+PLINT
 plFindName(char *p);
 
 /* Looks for the specified executable file according to usual search path. */
@@ -942,7 +966,7 @@ plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 /* Functions for converting between HLS and RGB color space */
 
-#if 0
+#ifndef SWIG_PYTHON
 void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
@@ -952,14 +976,16 @@ plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT
 /* Wait for graphics input event and translate to world coordinates */
 #endif
 
-#if 0
+#ifndef SWIG_PYTHON
+DOC(plGetCursor, "Wait for graphics input event and translate to world coordinates")
 PLINT
 plGetCursor(PLGraphicsIn *gin);
 
 /* Translates relative device coordinates to world coordinates.  */
 #endif
-/* Use plcalc_world instead of plTranslateCursor. */
+
 #if 0
+/* Use plcalc_world instead of plTranslateCursor. */
 int
 plTranslateCursor(PLGraphicsIn *gin);
 #endif
