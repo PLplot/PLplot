@@ -98,6 +98,24 @@ static Tcl_HashTable cmdTable;
 static PLINT errcode;
 static char errmsg[160];
 
+/* Library initialization */
+
+#ifndef PL_LIBRARY
+#define PL_LIBRARY ""
+#endif
+
+static char defaultLibraryDir[200] = PL_LIBRARY;
+extern char* plplotLibDir;
+
+#if (!defined(MAC_TCL) && !defined(__WIN32__))
+/* 
+ * Use an extended search for installations on Unix where we
+ * have very likely installed plplot so that plplot.tcl is
+ * in  /usr/local/plplot/lib/plplot5.1.0/tcl
+ */
+#define PLPLOT_EXTENDED_SEARCH
+#endif
+
 /* Static functions */
 
 /* Evals the specified command, aborting on an error. */
@@ -312,47 +330,32 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
     return result;
 }
 
-#ifndef PL_LIBRARY
-#define PL_LIBRARY ""
-#endif
-
-static char defaultLibraryDir[200] = PL_LIBRARY;
-extern char* plplotLibDir;
-
-#if (!defined(MAC_TCL) && !defined(__WIN32__))
-/* 
- * Use an extended search for installations on Unix where we
- * have very likely installed plplot so that plplot.tcl is
- * in  /usr/local/plplot/lib/plplot5.1.0/tcl
- */
-#define PLPLOT_EXTENDED_SEARCH
-#endif
-
-/*
+/*--------------------------------------------------------------------------*\
  * PlbasicInit
  * 
  * Used by both Pltcl and Pltk.  Ensures we have been correctly loaded
  * into a Tcl/Tk interpreter, that the plplot.tcl startup file can be
  * found and sourced, and that the Matrix library can be found and used,
  * and that it correctly exports a stub table.
- */
+\*--------------------------------------------------------------------------*/
+
 int 
 PlbasicInit( Tcl_Interp *interp )
 {
+    char *libDir = NULL;
     static char initScript[] = 
     "tcl_findLibrary plplot " PLPLOT_VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
     static char initScriptExtended[] = 
     "tcl_findLibrary plplot " PLPLOT_VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
-    char *libDir = NULL;
 #ifdef USE_TCL_STUBS
-    /* 
-     * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
-     * we really don't mind which version of Tcl, Tk we use as long as it
-     * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
-     * be loaded into 8.1
-     */
+/* 
+ * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
+ * we really don't mind which version of Tcl, Tk we use as long as it
+ * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
+ * be loaded into 8.1
+ */
     Tcl_InitStubs(interp,"8.1",0);
 #endif
 
@@ -362,12 +365,12 @@ PlbasicInit( Tcl_Interp *interp )
     }
 #else
     
-    /* 
-     * This code is really designed to be used with a stubified Matrix
-     * extension.  It is not well tested under a non-stubs situation
-     * (which is in any case inferior).  The USE_MATRIX_STUBS define
-     * is made in pltcl.h, and should be removed only with extreme caution.
-     */
+/* 
+ * This code is really designed to be used with a stubified Matrix
+ * extension.  It is not well tested under a non-stubs situation
+ * (which is in any case inferior).  The USE_MATRIX_STUBS define
+ * is made in pltcl.h, and should be removed only with extreme caution.
+ */
 #ifdef USE_MATRIX_STUBS
     if (Matrix_InitStubs(interp,"0.1",0) == NULL) {
         return TCL_ERROR;
@@ -378,45 +381,63 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
     
     Tcl_SetVar(interp, "plversion", PLPLOT_VERSION, TCL_GLOBAL_ONLY);
-    if (Tcl_Eval(interp, initScript) != TCL_OK) {
+
+/* Should always FIRST try the known, install directory */
+
+#ifdef TCL_DIR
+    if (libDir == NULL) {
+	libDir = TCL_DIR;
+	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
+	if (Tcl_Eval(interp, initScript) != TCL_OK) {
+	    libDir = NULL;
+	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	}
+    }
+#endif
+
+    if (libDir == NULL) {
+	fprintf(stderr, "running: %s\n", initScript);
+	if (Tcl_Eval(interp, initScript) != TCL_OK) {
 #ifdef PLPLOT_EXTENDED_SEARCH
 	/* 
 	 * This unset is only needed for Tcl < 8.4 support.
 	 * Bug #577033 in Tcl has since been fixed, so for
 	 * Tcl 8.4 or newer this line is not needed.
 	 */
-	Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
-	if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
+	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	    fprintf(stderr, "running: %s\n", initScriptExtended);
+	    if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
 	    /* Last chance, look in '.' */
-	    Tcl_DString ds;
-	    if (Tcl_Access("plplot.tcl", 0) != 0) {
-		return TCL_ERROR;
-	    }
-	    if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
-		return TCL_ERROR;
-	    }
+		Tcl_DString ds;
+		if (Tcl_Access("plplot.tcl", 0) != 0) {
+		    return TCL_ERROR;
+		}
+		if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
+		    return TCL_ERROR;
+		}
 	    /* It is in the current directory */
-	    libDir = Tcl_GetCwd(interp, &ds);
-	    if (libDir == NULL) {
-		return TCL_ERROR;
+		libDir = Tcl_GetCwd(interp, &ds);
+		if (libDir == NULL) {
+		    return TCL_ERROR;
+		}
+		libDir = plstrdup(libDir);
+		Tcl_DStringFree(&ds);
 	    }
-	    libDir = strdup(libDir);
-	    Tcl_DStringFree(&ds);
-	}
 	/* 
 	 * Clear the result so the user isn't confused by an error
 	 * message from the previous failed search
 	 */
-	Tcl_ResetResult(interp);
+	    Tcl_ResetResult(interp);
 #else
-	return TCL_ERROR;
+	    return TCL_ERROR;
 #endif
+	}
     }
 	
     if (libDir == NULL) {
 	libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
 	if (libDir == NULL) {
-	    /* I don't believe this path can ever be reached now */
+	/* I don't believe this path can ever be reached now */
 	    Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
 	    libDir = defaultLibraryDir;
 	}
@@ -424,17 +445,11 @@ PlbasicInit( Tcl_Interp *interp )
 	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
     }
     
-    /* Used by init code in plctrl.c */
-    plplotLibDir = strdup(libDir);
+/* Used by init code in plctrl.c */
+    plplotLibDir = plstrdup(libDir);
 
-#ifdef TCL_DIR
-    if (libDir == NULL) {
-    /*	libDir = PL_LIBRARY; */
-	libDir = TCL_DIR;
-    }
-#endif
-    /* wait_until -- waits for a specific condition to arise */
-    /* Can be used with either Tcl-DP or TK */
+/* wait_until -- waits for a specific condition to arise */
+/* Can be used with either Tcl-DP or TK */
 
     Tcl_CreateCommand(interp, "wait_until", plWait_Until,
 		      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
