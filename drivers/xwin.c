@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1994/04/30 16:14:50  mjl
+ * Revision 1.35  1994/05/07 03:03:32  mjl
+ * Massively restructured initialization to handle custom color maps.
+ * Switched to XCreateWindow instead of XCreateSimpleWindow for more power.
+ * Initialization of custom color map fairly complex in order to lead to
+ * a minimum of flickering -- low color map colors (used by window manager),
+ * cmap0 colors, and preallocated colors (used by Tk) are preserved and
+ * restored at the same pixel values to avoid undue flickering when switching
+ * color maps.  Function PLX_save_colormap added to support the latter.  All
+ * colormap state changes now done with XStoreColors which should be much
+ * speedier than the old method of freeing and allocating new cells.
+ *
+ * Revision 1.34  1994/04/30  16:14:50  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -53,19 +64,27 @@
  */
 
 #define NCOL1_MAX 50
+#define PIXEL_START 70
+
+/* Variables to hold RGB components of given colormap. */
+/* Used in an ugly hack to get past some X11R5 and TK limitations. */
+
+static int  sxwm_colors_set;
+static XColor sxwm_colors[256];
 
 /* Function prototypes */
 /* INDENT OFF */
 
-static void  Init		(PLStream *);
-static void  Init_main		(PLStream *);
-static void  Map_main		(PLStream *);
-static void  WaitForPage	(PLStream *);
-static void  HandleEvents	(PLStream *);
-static void  ColorInit		(PLStream *);
+static void  Init		(PLStream *pls);
+static void  Init_main		(PLStream *pls);
+static void  Init_Colormap	(PLStream *pls);
+static void  Map_main		(PLStream *pls);
+static void  WaitForPage	(PLStream *pls);
+static void  HandleEvents	(PLStream *pls);
+static void  ColorInit		(PLStream *pls);
 static void  Cmap0Init		(PLStream *pls);
 static void  Cmap1Init		(PLStream *pls);
-static void  CreatePixmap	(PLStream *);
+static void  CreatePixmap	(PLStream *pls);
 static void  fill_polygon	(PLStream *pls);
 static void  Colorcpy		(XColor *, XColor *);
 
@@ -263,7 +282,7 @@ plD_bop_xw(PLStream *pls)
 	XClearWindow(dev->display, dev->window);
     }
     if (dev->write_to_pixmap) {
-	XSetForeground(dev->display, dev->gc, dev->bgcolor.pixel);
+	XSetForeground(dev->display, dev->gc, dev->cmap0[0].pixel);
 	XFillRectangle(dev->display, dev->pixmap, dev->gc, 0, 0,
 		       dev->width, dev->height);
 	XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
@@ -480,7 +499,7 @@ fill_polygon(PLStream *pls)
 *
 * display:	pls->OutFile (use plsfnam() or -display option) 
 * size:		pls->xlength, pls->ylength (use plspage() or -geo option)
-* bg color:	pls->bgcolor (use plscolbg() or -bg option)
+* bg color:	pls->cmap0[0] (use plscolbg() or -bg option)
 \*----------------------------------------------------------------------*/
 
 static void
@@ -500,24 +519,9 @@ Init(PLStream *pls)
 
     dev->screen = DefaultScreen(dev->display);
 
-/* Create color map */
-/* This and the next call needs to be moved after the window creation to
- * pass the window id when creating a custom color map.  But the created
- * window then has the wrong background color! (white)  How do I fix this?
- */
+/* Create color map and load default color values */
 
-#ifdef CUSTOM_COLOR_MAP
-/* Right now this just results in a core dump somewhere. */
-
-    dev->map = XCreateColormap(dev->display, dev->window,
-			       DirectColor, AllocNone);
-#else
-    dev->map = DefaultColormap(dev->display, dev->screen);
-#endif
-
-/* Default color values */
-
-    ColorInit(pls);
+    Init_Colormap(pls);
 
 /* If not plotting into a child window, need to create main window now */
 
@@ -529,6 +533,7 @@ Init(PLStream *pls)
 	dev->is_main = FALSE;
 	dev->window = pls->window_id;
     }
+    XSetWindowColormap( dev->display, dev->window, dev->map );
 
 /* GC creation and initialization */
 
@@ -613,11 +618,12 @@ Init_main(PLStream *pls)
 /* Why is the window manager ignoring the x & y values??? */
 
     dev->window =
-	XCreateSimpleWindow(dev->display,
-			    DefaultRootWindow(dev->display),
-			    hint.x, hint.y, hint.width, hint.height,
-			    dev->border,
-			    dev->fgcolor.pixel, dev->bgcolor.pixel);
+	XCreateWindow( dev->display,
+		       DefaultRootWindow(dev->display),
+		       hint.x, hint.y, hint.width, hint.height,
+		       dev->border, dev->depth,
+		       InputOutput, dev->vi->visual,
+		       0, NULL );
 
     XSetStandardProperties(dev->display, dev->window, header, header,
 			   None, 0, 0, &hint);
@@ -650,9 +656,10 @@ Map_main(PLStream *pls)
 
 /* Window mapping */
 
-    XMapRaised(dev->display, dev->window);
+    XSetWindowBackground(dev->display, dev->window, dev->cmap0[0].pixel);
+    XSetBackground(dev->display, dev->gc, dev->cmap0[0].pixel);
 
-    XSetBackground(dev->display, dev->gc, dev->bgcolor.pixel);
+    XMapRaised(dev->display, dev->window);
 
 /* Wait for exposure */
 /* Remove extraneous expose events from the event queue */
@@ -1098,21 +1105,59 @@ Driver will redraw the entire plot to handle expose events.\n");
 }
 
 /*----------------------------------------------------------------------*\
-* ColorInit()
+* Init_Colormap()
 *
 * Does all color initialization.
+*
+* Assuming all color X displays do 256 colors, the breakdown is as follows:
+*
+* XWM_COLORS	Number of low "pixel" values to copy.  These are typically
+*		allocated first, thus are in use by the window manager. I
+*		copy them to reduce flicker.
+*
+* CMAP0_COLORS	Color map 0 entries.  I allocate these both in the default
+*		colormap and the custom colormap to reduce flicker.
+*
+* CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
+*		available for smooth shading.  On the order of 100 is 
+*		pretty reasonable.  You don't really need all 256.  These
+*		are allocated only in the custom colormap.
+*
+* It's important to leave some extra colors unallocated for Tk.  In 
+* particular the palette tools require a fair amount.  I recommend leaving
+* at least 40 or so free.
 \*----------------------------------------------------------------------*/
 
+#define USE_CUSTOM_COLOR_MAP
+
+#define XWM_COLORS 70
+#define CMAP0_COLORS 16
+#define CMAP1_COLORS 100
+
+#define MAX_COLORS 256
+
 static void
-ColorInit(PLStream *pls)
+Init_Colormap(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
+
+    Colormap default_map;
+    XColor xwm_colors[MAX_COLORS];
+    PLColor fgcolor, cmap1color;
+    XVisualInfo vTemplate, *visualList;
+    int visuals_matched;
+    int i, j, npixels;
+    unsigned long plane_masks[1];
+    unsigned long pixel, pixels[MAX_COLORS];
     int gslevbg, gslevfg;
 
+    dbug_enter("Init_Colormap");
+
 /*
-* Default is color IF the user hasn't specified and IF the output device is
-* not grayscale.  
-*/
+ * Figure out if we have a color display or not.
+ * Default is color IF the user hasn't specified and IF the output device is
+ * not grayscale.  
+ */
 
     if (pls->colorset)
 	dev->color = pls->color;
@@ -1122,72 +1167,183 @@ ColorInit(PLStream *pls)
     }
 
 /*
-* Allocate background color.
-*
-* Background defaults to black on color screens, white on grayscale (many
-* grayscale monitors have poor contrast, and black-on-white looks better).
-* Note that black & white allocations should never fail.
-*/
+ * Set background color.
+ *
+ * Background defaults to black on color screens, white on grayscale (many
+ * grayscale monitors have poor contrast, and black-on-white looks better).
+ */
 
-    if ( ! dev->color && ! pls->bgcolorset) {
-	pls->bgcolor.r = 0xFF;
-	pls->bgcolor.g = 0xFF;
-	pls->bgcolor.b = 0xFF;
+    if ( ! dev->color && ! pls->cmap0setcol[0]) {
+	pls->cmap0[0].r = pls->cmap0[0].g = pls->cmap0[0].b = 0xFF;
     }
-    gslevbg = ((long) pls->bgcolor.r + (long) pls->bgcolor.g +
-	       (long) pls->bgcolor.b) / 3;
-
-    PLColor_to_XColor(&pls->bgcolor, &dev->bgcolor);
-
-    if ( ! XAllocColor(dev->display, dev->map, &dev->bgcolor)) {
-	fprintf(stderr, "Can't allocate background color\n");
-	exit(1);
-    }
+    gslevbg = ((long) pls->cmap0[0].r +
+	       (long) pls->cmap0[0].g +
+	       (long) pls->cmap0[0].b) / 3;
 
 /*
-* Foreground color.
-*
-* Normally there is no use for a "foreground color", since a palette with a
-* variety of colors is used.  But for grayscale output it makes sense to use
-* it, otherwise the plots can become nearly unreadable (i.e. if colors get
-* mapped onto grayscale values).  In this case it becomes the grayscale level
-* for all draws, and is taken to be black if the background is light, and
-* white if the background is dark.  We also use the foreground color for (a)
-* input to XCreateSimpleWindow (although the choice is basically irrelevant
-* since a color palette is being used), and (b) as the color to use if the
-* call to XAllocColor fails at runtime.
-*/
+ * Set foreground color.
+ *
+ * Used for grayscale output, since otherwise the plots can become nearly
+ * unreadable (i.e. if colors get mapped onto grayscale values).  In this
+ * case it becomes the grayscale level for all draws, and is taken to be
+ * black if the background is light, and white if the background is dark.
+ * Note that white/black allocations never fail.
+ */
 
-    if (gslevbg <= 0x7F)
-	gslevfg = 0xFF;
-    else
+    if (gslevbg > 0x7F) 
 	gslevfg = 0;
+    else 
+	gslevfg = 0xFF;
 
-    pls->fgcolor.r = gslevfg;
-    pls->fgcolor.g = gslevfg;
-    pls->fgcolor.b = gslevfg;
+    fgcolor.r = fgcolor.g = fgcolor.b = gslevfg;
 
-    PLColor_to_XColor(&pls->fgcolor, &dev->fgcolor);
+    PLColor_to_XColor(&fgcolor, &dev->fgcolor);
 
-    if ( ! XAllocColor(dev->display, dev->map, &dev->fgcolor)) {
-	fprintf(stderr, "Can't allocate foreground color\n");
-	exit(1);
+/* If we're not on a color system, just allocate bg & fg then return */
+
+    if ( ! dev->color) {
+	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
+	XAllocColor(dev->display, default_map, &dev->cmap0[i]);
+	XAllocColor(dev->display, default_map, &dev->fgcolor);
+	return;
     }
 
-/* Allocate colors in cmap 0 & 1 */
+/* Determine current default colors */
 
-    if (dev->color) {
-	Cmap0Init(pls);
-	Cmap1Init(pls);
+    default_map = DefaultColormap(dev->display, dev->screen);
+
+    for (i = 0; i < MAX_COLORS; i++) {
+	xwm_colors[i].pixel = i;
     }
+    XQueryColors(dev->display, default_map, xwm_colors, MAX_COLORS);
+
+/* Allocate cmap0 colors in the default colormap.
+ * The custom cmap0 colors are later stored at the same pixel values.
+ * This is a really cool trick to reduce the flicker when changing colormaps.
+ */
+
+    npixels = MIN(pls->ncol0, MAX_COLORS);
+    while(1) {
+	if (XAllocColorCells(dev->display, default_map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    plexit("couldn't allocate any colors");
+    }
+
+    for (i = 0; i < pls->ncol0; i++) {
+
+	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
+
+	dev->cmap0[i].pixel = pixels[i];
+	XStoreColor(dev->display, default_map, &dev->cmap0[i]);
+    }
+    XAllocColor(dev->display, default_map, &dev->fgcolor);
+
+#ifdef USE_CUSTOM_COLOR_MAP
+
+    vTemplate.screen = dev->screen;
+    vTemplate.depth = 8;
+
+    visualList = XGetVisualInfo( dev->display,
+				 VisualScreenMask | VisualDepthMask,
+				 &vTemplate, &visuals_matched );
+
+    if ( ! visuals_matched) 
+	plexit("Unable to allocate adequate visuals.");
+
+    dev->vi = &visualList[0];	/* Chose # 0 for lack of a better idea. */
+
+    printf("colormap_size is %d.\n", dev->vi->colormap_size);
+
+    dev->depth = vTemplate.depth;
+    dev->pixels = 1 << dev->depth;
+
+    dev->map = XCreateColormap( dev->display, DefaultRootWindow(dev->display),
+				dev->vi->visual, AllocNone );
+
+/* Now allocate all colors so we can fill the ones we want to copy */
+
+    npixels = MAX_COLORS;
+    while(1) {
+	if (XAllocColorCells(dev->display, dev->map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    plexit("couldn't allocate any colors");
+    }
+
+/* Fill the low colors since those are in use by the window manager */
+
+    for (i = 0; i < XWM_COLORS; i++) {
+	XStoreColor(dev->display, dev->map, &xwm_colors[i]);
+	pixels[xwm_colors[i].pixel] = 0;
+    }
+
+/* Fill the ones we will use in cmap0 */
+
+    for (i = 0; i < pls->ncol0; i++) {
+	XStoreColor(dev->display, dev->map, &dev->cmap0[i]);
+	pixels[dev->cmap0[i].pixel] = 0;
+    }
+
+/* Finally, if the colormap was saved by an external agent, see if there are
+ * any differences from the current default map and save those!  A very cool
+ * (or sick, depending on how you look at it) trick to get over some X and
+ * Tk limitations.
+ */
+
+    if (sxwm_colors_set) {
+	for (i = 0; i < MAX_COLORS; i++) {
+	    if ((xwm_colors[i].red != sxwm_colors[i].red) ||
+		(xwm_colors[i].green != sxwm_colors[i].green) ||
+		(xwm_colors[i].blue != sxwm_colors[i].blue) ) {
+
+		if (pixels[i] != 0) {
+		    XStoreColor(dev->display, dev->map, &xwm_colors[i]);
+		    pixels[i] = 0;
+		}
+	    }
+	}
+    }
+
+/* Now free the ones we're not interested in */
+
+    for (i = 0; i < npixels; i++) {
+	if (pixels[i] != 0)
+	    XFreeColors(dev->display, dev->map, &pixels[i], 1, 0);
+    }
+
+#else
+    dev->map = DefaultColormap(dev->display, dev->screen);
+#endif
+
+/* Allocate colors in cmap 1 */
+
+    dev->ncol1 = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
+    npixels = dev->ncol1;
+    while(1) {
+	if (XAllocColorCells(dev->display, dev->map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    plexit("couldn't allocate any colors");
+    }
+
+    for (i = 0; i < dev->ncol1; i++) {
+	dev->cmap1[i].pixel = pixels[i];
+    }
+
+    Cmap1Init(pls);
 }
 
 /*----------------------------------------------------------------------*\
 * Cmap0Init()
 *
 * Initializes cmap 0
-* Don't bother trapping bad allocations, since they could fail due to
-* being already allocated (e.g. black and white).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1197,14 +1353,8 @@ Cmap0Init(PLStream *pls)
     int i;
 
     for (i = 0; i < pls->ncol0; i++) {
-
 	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
-
-	if (dev->cmap0[i].pixel)
-	    XFreeColors(dev->display, dev->map, &dev->cmap0[i].pixel, 1, 0);
-
-	if ( ! XAllocColor(dev->display, dev->map, &dev->cmap0[i]))
-	    Colorcpy(&dev->cmap0[i], &dev->fgcolor);
+	XStoreColor(dev->display, dev->map, &dev->cmap0[i]);
     }
 }
 
@@ -1212,79 +1362,20 @@ Cmap0Init(PLStream *pls)
 * Cmap1Init()
 *
 * Initializes cmap 1
-*
-* There is a basic chicken-and-egg problem here:
-* (a) the palette isn't known until the number of colors is available
-*     since a smooth color variation is used.
-* (b) the number of colors depends on the palette, because colors
-*     already allocated do not consume a new color cell slot.
-*
-* The way to handle this is to start with some initial target for number
-* of colors.  Some considerations: if your display supports 256 colors
-* it's best to stay well below that since otherwise you will run out of
-* unallocated color cells.  Fortunately, beyond 100 or so colors is
-* getting pretty good if you get them all.  Unfortunately there's no
-* guarantee you WILL get them all (i.e. they are distinct) unless you
-* install your own color map, since X will return the closest color
-* without error.  Eventually the X driver will support custom color maps,
-* but the interaction with TK will have to be worked out in detail.
-*
-* If the initial allocation should fail, I just free all the allocated
-* colors and try again using the number of colors I succeeded in
-* allocating the first time as the limit (minus a small number).  This is
-* done in a loop that terminates after 5 tries.  There is no way of
-* telling a priori how many colors you will get (I usually get 50-70, and
-* sometimes more).
-* 
 \*----------------------------------------------------------------------*/
 
 static void
 Cmap1Init(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
-    PLColor newcolor;
-    int i, j, itry;
+    PLColor cmap1color;
+    int i;
 
-/* Use substantially less than max colors so that TK has some */
-
-    if ( ! dev->ncol1) 
-	dev->ncol1 = MAX(2, MIN(NCOL1_MAX, pls->ncol1));
-
-/* Initialize dev->cmap1 by interpolation, then allocate them for real */
-/* It should NOT fail, but put in failsafe procedure just in case */
-
-    for (itry=0;;itry++) {
-	if (itry > 5)
-	    plexit("Cannot allocate color map 1");
-
-	for (i = 0; i < dev->ncol1; i++) {
-
-	    plcol_interp(pls, &newcolor, i, dev->ncol1);
-	    PLColor_to_XColor(&newcolor, &dev->cmap1[i]);
-
-	    if (dev->cmap1[i].pixel)
-		XFreeColors(dev->display, dev->map, &dev->cmap1[i].pixel, 1,0);
-
-	    if ( ! XAllocColor(dev->display, dev->map, &dev->cmap1[i])) 
-		break;
-	}
-
-/* If we got all we asked for, return */
-
-	if (i == dev->ncol1)
-	    break;
-
-/* Failed, so need to free the allocated colors and try again */
-
-	for (j = 0; j < i; j++) {
-	    XFreeColors(dev->display, dev->map, &dev->cmap1[i].pixel, 1, 0);
-	    dev->cmap1[i].pixel = 0;
-	}
-	dev->ncol1 = MAX(i-5, 1);
+    for (i = 0; i < dev->ncol1; i++) {
+	plcol_interp(pls, &cmap1color, i, dev->ncol1);
+	PLColor_to_XColor(&cmap1color, &dev->cmap1[i]);
+	XStoreColor(dev->display, dev->map, &dev->cmap1[i]);
     }
-#ifdef DEBUG
-    fprintf(stderr, "Allocated %d colors in cmap1\n", i);
-#endif
 }
 
 /*----------------------------------------------------------------------*\
@@ -1319,6 +1410,7 @@ PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
     xcolor->red   = ToXColor(plcolor->r);
     xcolor->green = ToXColor(plcolor->g);
     xcolor->blue  = ToXColor(plcolor->b);
+    xcolor->flags = DoRed | DoGreen | DoBlue;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1339,6 +1431,7 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
 /*----------------------------------------------------------------------*\
 * int pl_AreWeGrayscale(Display *display)
 *
+* Determines if we're using a monochrome or grayscale device.
 * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. 
 \*----------------------------------------------------------------------*/
 
@@ -1365,6 +1458,40 @@ pl_AreWeGrayscale(Display *display)
 
     /* if we got this far, only StaticGray and GrayScale classes available */
     return (1);
+}
+
+/*----------------------------------------------------------------------*\
+* void PLX_save_colormap()
+*
+* Saves RGB components of given colormap.
+* Used in an ugly hack to get past some X11R5 and TK limitations.
+* This isn't guaranteed to work under all circumstances, but hopefully
+* in the future there will be a nicer way to accomplish the same thing.
+*
+* Note: I tried using XCopyColormapAndFree to do the same thing, but under
+* HPUX 9.01/VUE/X11R5 at least it doesn't preserve the previous read-only
+* color cell allocations made by Tk.  Is this a bug?  Have to look at the
+* source to find out.
+\*----------------------------------------------------------------------*/
+
+void
+PLX_save_colormap(Display *display, Colormap colormap)
+{
+    int i;
+
+    sxwm_colors_set = 1;
+    for (i = 0; i < 256; i++) {
+	sxwm_colors[i].pixel = i;
+    }
+    XQueryColors(display, colormap, sxwm_colors, 256);
+/*
+    printf("\nAt startup, default colors are: \n\n");
+    for (i = 0; i < 256; i++) {
+	printf(" i: %d,  pixel: %d,  r: %d,  g: %d,  b: %d\n",
+	       i, sxwm_colors[i].pixel,
+	       sxwm_colors[i].red, sxwm_colors[i].green, sxwm_colors[i].blue);
+    }
+*/
 }
 
 #else
