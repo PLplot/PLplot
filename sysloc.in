@@ -29,6 +29,14 @@ FREETYPELIBSTR=-lfreetype
 # ----------------------------------------------------------------------------
 
 if test "$enable_java" = "yes"; then
+    if test "$enable_shared" != "yes"; then
+        AC_MSG_RESULT([warning: java support requires enable_shared=yes, setting enable_java=no])
+        enable_java=no
+    fi
+
+fi
+
+if test "$enable_java" = "yes"; then
     if test -n "$JAVA_HOME"; then
         if test -r "$JAVA_HOME/include/jni.h"; then
             JAVAINCDIR="$JAVA_HOME/include"
@@ -704,8 +712,8 @@ fi
 if test "$enable_octave" = "yes"; then
 
 # Check that plplot was built with shared libs
-    if test "$with_shlib" = "no"; then
-        AC_MSG_RESULT([warning: Octave support requires with_shlib=yes, setting enable_octave=no.]);
+    if test "$enable_shared" != "yes"; then
+        AC_MSG_RESULT([warning: Octave support requires enable_shared=yes, setting enable_octave=no.]);
         enable_octave=no;
     fi
 
@@ -799,8 +807,8 @@ AM_CONDITIONAL(mkoctfile_accepts_c_flag, [test -n "$check_mkoctfile_compile"])
 # -----------------------------------------------------------------------
 
 if test "$enable_python" = "yes"; then
-    if test "$with_shlib" = "no"; then
-        AC_MSG_RESULT([warning: python support requires with_shlib=yes, setting enable_python=no])
+    if test "$enable_shared" != "yes"; then
+        AC_MSG_RESULT([warning: python support requires enable_shared=yes, setting enable_python=no])
         enable_python=no
     fi
 fi

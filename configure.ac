@@ -105,10 +105,8 @@ esac
 
 with_debug=no
 with_opt=yes
-with_double=no
+with_double=yes
 with_profile=no
-with_shlib=yes
-with_gcc=no
 with_warn=no
 with_pkgdir=
 with_rpath=yes
@@ -337,22 +335,6 @@ divert(0)dnl
 case "$system" in
     aix*|AIX*|rs*|RS*|ibm*|IBM* )
 	with_opt=no
-    ;;
-    BSD/OS* )
-	with_gcc=yes
-    ;;
-    linux*|LINUX*|Linux* )
-	with_gcc=yes
-    ;;
-    Darwin* )
-        # Apparently, this is gcc with some add-ons, ugh!
-	with_gcc=yes
-    ;;
-    next*|NeXT*|NEXT* )
-	with_gcc=yes
-    ;;
-    ultrix*|ULTRIX* )
-	with_gcc=yes
     ;;
 esac
 
@@ -936,6 +918,7 @@ plplot_config_result_msg="Configure results:
 
 command:	$plplot_config_invocation
 system:		$host
+have_x:		$have_x
 prefix:		$prefix
 CC:		$CC $CC_FLAGS"
 
@@ -960,10 +943,11 @@ Available device drivers
 static:		$STATIC_DRIVERS
 dynamic:	$DYNAMIC_DRIVERS
 
-with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
-with_gcc:	$with_gcc		with_rpath:	$with_rpath
+
+enable_shared:	$enable_shared		enable_static:	$enable_static
+with_rpath:	$with_rpath		with_double:	$with_double
 with_freetype:	$with_freetype
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
