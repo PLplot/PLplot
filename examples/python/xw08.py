@@ -15,6 +15,32 @@ title = ["#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
 	 "#frPLplot Example 8 - Alt=60, Az=120, Opt=3",
 	 "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"]
 
+# Routine for restoring colour map1 to default.
+# See static void plcmap1_def(void) in plctrl.c for reference.
+def restore_cmap1():
+    # For center control points, pick black or white, whichever is closer to bg 
+    # Be careful to pick just short of top or bottom else hue info is lost
+    vertex = sum(array(plgcolbg()))/(3.*255.)
+    if vertex < 0.5:
+	vertex = 0.01
+    else:
+	vertex = 0.99
+    # Independent variable of control points.
+    i = array((0., 0.45, 0.55, 1.))
+    # Hue for control points.  Blue-violet to red
+    h = array((260., 260., 0., 0.,))
+    # Lightness ranging from medium to vertex to medium
+    l = array((0.5, vertex, vertex, 0.5))
+    # Saturation is complete for default
+    s = array((1., 1., 1., 1.,))
+    # Integer flag array is zero (no interpolation along far-side of colour
+    # figure
+    rev = array((0, 0, 0, 0,))
+    # Default number of cmap1 colours
+    plscmap1n(128)
+    # Interpolate between control points to set up default cmap1.
+    plscmap1l(0, i, h, l, s)
+
 # main
 #
 # Does a series of 3-d plots for a given data set, with different
@@ -58,5 +84,6 @@ def main():
 
     # Restore defaults
     plcol0(1)
+    restore_cmap1()
 	
 main()
