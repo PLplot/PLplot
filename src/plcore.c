@@ -599,7 +599,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			 code = 0;
 		       
 		       if (code > 0){
-			  i+=3;
+			  i+=2;
 			  fci = code;
 			  unicode_buffer[j] = fci;
 			  skip = 1;
