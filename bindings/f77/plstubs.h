@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/02 19:00:21  mjl
-   Added prototype for plgver() and its stub name def'n.
+   Revision 1.10  1993/03/28 08:45:07  mjl
+   Added support for NEC SX-3.  Also moved determination of stub name handling
+   to plstubs.h (more appropriate).
 
+ * Revision 1.9  1993/03/02  19:00:21  mjl
+ * Added prototype for plgver() and its stub name def'n.
+ *
  * Revision 1.8  1993/02/23  04:59:00  mjl
  * Added and deleted some function prototypes.
  *
@@ -65,6 +69,27 @@
 #define INCLUDED_PLSTUBS
 
 #include "plplot.h"
+
+/* Select name transformation based on system type */
+
+#if defined(SX)				/* NEC Super-UX */
+#define STUB_LAU
+#endif
+
+#if defined(_IBMR2) && defined(_AIX)	/* AIX */
+#define STUB_L
+#endif
+
+#ifdef __hpux				/* HP/UX */
+#define STUB_L
+#endif
+
+#ifdef sun				/* SUN systems */
+#define STUB_LAU
+#endif
+
+#ifdef CRAY				/* CRAY's */
+#endif					/* Do nothing -- keep uppercase */
 
 /* These are needed for system-independent Fortran->C string linkage. */
 

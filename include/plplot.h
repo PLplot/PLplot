@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.23  1993/03/18 07:05:47  mjl
-   Bumped version to 4.99c.
+   Revision 1.24  1993/03/28 08:45:05  mjl
+   Added support for NEC SX-3.  Also moved determination of stub name handling
+   to plstubs.h (more appropriate).
 
+ * Revision 1.23  1993/03/18  07:05:47  mjl
+ * Bumped version to 4.99c.
+ *
  * Revision 1.22  1993/03/16  06:54:18  mjl
  * Minor documentation change.
  *
@@ -171,12 +175,19 @@
 *
 \*----------------------------------------------------------------------*/
 
+/* Check for NEC Super-UX */
+
+#if defined(SX)
+#ifndef unix
+#define unix
+#endif
+#endif
+
 /* Check for AIX */
 
 #if defined(_IBMR2) && defined(_AIX)
 #define __aix
 #define unix
-#define STUB_L
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
@@ -188,7 +199,6 @@
 #ifndef unix
 #define unix
 #endif
-#define STUB_L
 #define NO_SIGNED_CHAR
 #ifndef _HPUX_SOURCE
 #define _HPUX_SOURCE
@@ -210,7 +220,6 @@
 #ifndef unix
 #define unix
 #endif
-#define STUB_LAU
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
