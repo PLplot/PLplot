@@ -3,6 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
 #
@@ -19,15 +20,19 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-libplplot = ../src/libplplot$(LIB_TAG).la
-libplplottcltk = ../bindings/tcl/libplplottcltk$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
+libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
-AM_CPPFLAGS = $(INCLTDL) -I../bindings/tcl $(TCLINCCMD) $(ITCLINCCMD)
+AM_CPPFLAGS = $(INCLTDL) -I$(top_srcdir)/bindings/tcl \
+              $(TCLINCCMD) $(ITCLINCCMD)
+
+bin_PROGRAMS = plrender pltek 
 
 if enable_tcl
-bin_PROGRAMS = plrender pltek pltcl
-else
-bin_PROGRAMS = plrender pltek
+bin_PROGRAMS += pltcl
+pltcl_SOURCES = pltcl.c
+pltcl_LDFLAGS = $(RPATH) -no-undefined
+pltcl_LDADD = $(libplplottcltk)
 endif
 
 plrender_SOURCES = plrender.c
@@ -38,12 +43,8 @@ pltek_SOURCES = pltek.c
 pltek_LDFLAGS = $(RPATH) -no-undefined
 pltek_LDADD = $(libplplot)
 
-pltcl_SOURCES = pltcl.c
-pltcl_LDFLAGS = $(RPATH) -no-undefined
-pltcl_LDADD = $(libplplottcltk)
-
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
-EXTRA_DIST = \
+EXTRA_DIST =      \
 	tektest.c \
 	xform.c
