@@ -36,11 +36,11 @@ static char  outbuf[128];
 static int text = 0;
 static int color;
 
-static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1|2)"},
+static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1)"},
 			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
 
-/* text > 1 uses some postscript tricks, namely a transformation matrix
+/* text > 0 uses some postscript tricks, namely a transformation matrix
    that scales, rotates (with slanting) and offsets text strings.
    It has yet some bugs for 3d plots. */
 
@@ -745,9 +745,8 @@ proc_str (PLStream *pls, EscText *args)
 	   &(args->x), &(args->y));
 
   /* Make adjustments for page orientation */
-  if(pls->diorot==0) theta+=90.;
-  if(pls->diorot==2) theta-=90.;
-  if(pls->diorot==3) theta-=180.;
+  theta+=90. - 90.*pls->diorot;
+   
 
   /* Output */
 
