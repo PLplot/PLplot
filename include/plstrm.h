@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/05/26 20:24:52  mjl
+ * Revision 1.2  1995/07/19 15:25:21  furnish
+ * Coexist peacefully with C++.
+ *
+ * Revision 1.1  1995/05/26  20:24:52  mjl
  * Name change.  Went by the book this time.
  *
  * Revision 1.39  1995/05/26  20:20:14  mjl
@@ -623,6 +626,10 @@ typedef struct {
  * Prototypes for stream & device utility functions.
 \*--------------------------------------------------------------------------*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Get the current stream pointer */
 
 void
@@ -673,5 +680,9 @@ plAllocDev(PLStream *pls);
 
 void
 plGinInit(PLGraphicsIn *gin);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif	/* __PLSTRM_H__ */
