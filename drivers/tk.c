@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/01/25 06:21:34  mjl
+ * Revision 1.28  1994/02/01 22:46:23  mjl
+ * Added support for starting remsh with -l <user> flag.
+ *
+ * Revision 1.27  1994/01/25  06:21:34  mjl
  * Removed code for default selection of background color based on display
  * type -- now handled entirely in the server.  Fixed default name for
  * container window to work when program name has a leading path
@@ -878,10 +881,23 @@ launch_server(PLStream *pls)
 /* Build argument list */
 
     i = 0;
-    if ( pls->dp && pls->server_host != NULL ) 
+
+/* If we're doing a remsh, need to set up its arguments first. */
+
+    if ( pls->dp && pls->server_host != NULL ) {
 	argv[i++] = pls->server_host;	/* Host name for remsh */
 
-    argv[i++] = pls->plserver;		/* Invocation name of server */
+	if (pls->user != NULL) {
+	    argv[i++] = "-l";
+	    argv[i++] = pls->user; 	/* User name on remote node */
+	}
+    }
+
+/* The invoked executable name comes next */
+
+    argv[i++] = pls->plserver;
+
+/* The rest are arguments to plserver */
 
     argv[i++] = "-child";		/* Tell plserver its ancestry */
 
@@ -904,6 +920,11 @@ launch_server(PLStream *pls)
 
 	argv[i++] = "-client_port";
 	argv[i++] = Tcl_GetVar(dev->interp, "client_port", TCL_GLOBAL_ONLY);
+
+	if (pls->user != NULL) {
+	    argv[i++] = "-l";
+	    argv[i++] = pls->user;
+	}
     }
     else {
 	argv[i++] = "-client_name";
