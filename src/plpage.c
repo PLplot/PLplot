@@ -1,22 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1993/12/08 06:22:58  mjl
+ * Revision 1.8  1994/03/23 08:23:56  mjl
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
+ *
+ * Revision 1.7  1993/12/08  06:22:58  mjl
  * Fix to plbop() so that the user can just use plbop/pleop if desired and
  * never need to call pladv().
- *
- * Revision 1.6  1993/11/15  08:40:09  mjl
- * Changed some empty argument lists to be explicitly void.
- *
- * Revision 1.5  1993/09/08  02:40:34  mjl
- * Trivial documentation correction.
- *
- * Revision 1.4  1993/08/09  22:15:05  mjl
- * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
- *
- * Revision 1.3  1993/07/01  22:13:41  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
 */
 
 /*	plpage.c
@@ -39,8 +31,10 @@ c_pladv(PLINT page)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("pladv: Please call plinit first.");
+    if (level < 1) {
+	plabort("pladv: Please call plinit first");
+	return;
+    }
 
     plP_gsub(&nsubx, &nsuby, &cursub);
     if (page > 0 && page <= nsubx * nsuby)
@@ -54,8 +48,10 @@ c_pladv(PLINT page)
 	else
 	    cursub = cursub + 1;
     }
-    else
-	plexit("pladv: Invalid subpage number.");
+    else {
+	plabort("pladv: Invalid subpage number");
+	return;
+    }
 
     plP_ssub(nsubx, nsuby, cursub);
     plP_setsub();
@@ -72,8 +68,10 @@ c_pleop(void)
 {
     PLINT level;
     plP_glev(&level);
-    if (level < 1)
-	plexit("pleop: Please call plinit first.");
+    if (level < 1) {
+	plabort("pleop: Please call plinit first");
+	return;
+    }
 
     plP_eop();
 }
@@ -91,8 +89,10 @@ c_plbop(void)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("pladv: Please call plinit first.");
+    if (level < 1) {
+	plabort("pladv: Please call plinit first");
+	return;
+    }
 
     plP_gsub(&nsubx, &nsuby, &cursub);
     plP_bop();
@@ -149,8 +149,10 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plgspa: Please call plinit first.");
+    if (level < 1) {
+	plabort("plgspa: Please call plinit first");
+	return;
+    }
 
     plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     *xmin = plP_dcmmx(spdxmi);
