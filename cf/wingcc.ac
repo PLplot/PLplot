@@ -26,72 +26,71 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-GDI32LIBSTR=-lgdi32
-
+PL_ARG_WITH(gdi32-incdir, [Path to the libgdi32 header files], [])
 if test "$enable_wingcc" = "yes"; then
-    if test -z "$GDI32INCDIR"; then
+    if test -z "$with_gdi32_incdir"; then
         AC_MSG_CHECKING(for libgdi32 header files)
         AC_PREPROC_IFELSE([#include <windows.h>],
-	[ GDI32INCDIR=default
-	  AC_MSG_RESULT([found in $GDI32INCDIR]) ], [
+	[ with_gdi32_incdir=default
+	  AC_MSG_RESULT([found in $with_gdi32_incdir]) ], [
         incdirs="\
         /usr/include \
         /usr/local/include"
 
         for dir in $incdirs; do
             if test -r "$dir/windows.h"; then
-               GDI32INCDIR="$dir"
+               with_gdi32_incdir="$dir"
                break
             fi
         done
-        if test -z "$GDI32INCDIR"; then
+        if test -z "$with_gdi32_incdir"; then
             AC_MSG_RESULT(not found)
             AC_MSG_WARN([libgdi32 header files not found, setting enable_wingcc=no])
-            GDI32INCDIR=default
+            with_gdi32_incdir=default
             enable_wingcc=no
 	else
-	    AC_MSG_RESULT([found in $GDI32INCDIR])
+	    AC_MSG_RESULT([found in $with_gdi32_incdir])
         fi ])
     else
-    	AC_MSG_NOTICE("libgdi32 header files directory specified by environment")
-	AC_MSG_NOTICE("variable GDI32INCDIR=$GDI32INCDIR")
+    	AC_MSG_NOTICE("Path to the libgdi32 header files specified as $with_gdi32_incdir")
     fi
-    if test "$GDI32INCDIR" = "/usr/include"; then
-        GDI32INCDIR=default
+    if test "$with_gdi32_incdir" = "/usr/include"; then
+        with_gdi32_incdir=default
     fi
     GDI32INCCMD=""
     GDI32INCPATH=""
-    PL_ADD_TO_INCS($GDI32INCDIR, GDI32INCCMD, GDI32INCPATH)
+    PL_ADD_TO_INCS($with_gdi32_incdir, GDI32INCCMD, GDI32INCPATH)
 fi
 
+PL_ARG_WITH(gdi32-libdir, [Path to libgdi32], [])
 if test "$enable_wingcc" = "yes"; then
-    if test -z "$GDI32LIBDIR"; then
-        AC_CHECK_LIB(gdi32, main, [ GDI32LIBDIR=default ], [
+    if test -z "$with_gdi32_libdir"; then
+        AC_CHECK_LIB(gdi32, main, [ with_gdi32_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libgdi32.so" -o -r "$dir/libgdi32.a"; then
-                GDI32LIBDIR="$dir"
+                with_gdi32_libdir="$dir"
                 break
             fi
         done
-        if test -z "$GDI32LIBDIR"; then
+        if test -z "$with_gdi32_libdir"; then
             AC_MSG_WARN([gdi32 library not found, setting enable_wingcc=no])
-            GDI32LIBDIR=default
+            with_gdi32_libdir=default
             enable_wingcc=no
         fi ])
     else
-    	AC_MSG_NOTICE("libgdi32 library directory specified by environment")
-	AC_MSG_NOTICE("variable GDI32LIBDIR=$GDI32LIBDIR")
+    	AC_MSG_NOTICE("Path to libgdi32 specified as $with_gdi32_libdir")
     fi
-    if test "$GDI32LIBDIR" = "/usr/lib"; then
-        GDI32LIBDIR=default
+    if test "$with_gdi32_libdir" = "/usr/lib"; then
+        with_gdi32_libdir=default
     fi
+    GDI32LIBSTR=-lgdi32
     GDI32LIBCMD=""
     GDI32LIBPATH=""
-    PL_ADD_TO_LIBS($GDI32LIBDIR, $GDI32LIBSTR, GDI32LIBCMD, GDI32LIBPATH)
+    PL_ADD_TO_LIBS($with_gdi32_libdir, $GDI32LIBSTR, GDI32LIBCMD, GDI32LIBPATH)
 fi
 
 AC_SUBST(GDI32INCCMD)
