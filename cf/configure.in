@@ -1019,15 +1019,15 @@ if test "$enable_tk" = "yes"; then
     ln -s \
     $srcdir/bindings/tk/*.h \
     plplot 2>/dev/null
-    #put in symlinks so that tk examples will work from tmp/../examples/tk
-    #directory (once installation completed) and also from installed 
-    #examples/tk directory
-    cd $srcdir/examples/tk
-    for filename in ../tcl/x??.tcl
-    do 
-      ln -s $filename . 2>/dev/null
-    done
-    cd $srcdir/tmp
+#    #put in symlinks so that tk examples will work from tmp/../examples/tk
+#    #directory (once installation completed) and also from installed 
+#    #examples/tk directory
+#    cd $srcdir/examples/tk
+#    for filename in ../tcl/x??.tcl
+#    do 
+#      ln -s $filename . 2>/dev/null
+#    done
+#    cd $srcdir/tmp
 fi
 
 #    $srcdir/bindings/tk/tclIndex 
