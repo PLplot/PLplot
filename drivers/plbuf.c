@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1995/05/06 16:49:03  mjl
+ * Revision 1.21  1998/12/01 20:50:29  furnish
+ * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+ *
+ * Revision 1.20  1995/05/06  16:49:03  mjl
  * Cruft elimination.
  *
  * Revision 1.19  1995/03/11  20:29:04  mjl
@@ -615,9 +618,12 @@ plbuf_control(PLStream *pls, U_CHAR c)
 	break;
 
     default:
+      pldebug("plbuf_control", "Unrecognized command %d, previous %d\n", c, c_old);
+/* jc: modified for pldebug
 	fprintf(stderr,
 		"plbuf_control: Unrecognized command %d, previous %d\n",
 		c, c_old);
+*/
     }
     c_old = c;
 }

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1998/11/18 06:12:39  furnish
+ * Revision 1.9  1998/12/01 20:49:24  furnish
+ * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+ *
+ * Revision 1.8  1998/11/18  06:12:39  furnish
  * Grotesque hacks to omit old Itcl support code from the compiled side.
  * Not really sure what to do just yet.  The old Itcl support required
  * various and assundry hacks on the compiled side to register things
@@ -241,6 +244,10 @@ pltkMain(int argc, char **argv, char *RcFileName,
     }
     Tk_GeometryRequest(mainWindow, 200, 200);
 #else
+    /* jc: this must be setup *before* calling Tk_Init,
+       and `name' has already been setup above */
+    Tcl_SetVar(interp, "argv0", name, TCL_GLOBAL_ONLY);  
+
     if ( Tcl_Init( interp ) == TCL_ERROR ) {
 	return TCL_ERROR;
     }
@@ -270,8 +277,9 @@ pltkMain(int argc, char **argv, char *RcFileName,
     ckfree(args);
     sprintf(buf, "%d", argc-1);
     Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
-    Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
-	    TCL_GLOBAL_ONLY);
+    /* jc: this has already been done above */
+    /* Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
+	    TCL_GLOBAL_ONLY);*/
     if (geometry != NULL) {
 	Tcl_SetVar(interp, "geometry", geometry, TCL_GLOBAL_ONLY);
     }

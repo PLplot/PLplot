@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.21  1997/06/20 15:20:17  furnish
+# Revision 1.22  1998/12/01 20:49:21  furnish
+# Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+#
+# Revision 1.21  1997/06/20  15:20:17  furnish
 # Minor updates for working with Itcl better.
 #
 # Revision 1.20  1995/12/15  18:49:10  furnish
@@ -206,8 +209,9 @@ proc normal_text_setup {w {width 60} {height 30}} {
 # Scrolls text widget vertically, updating various things
 #----------------------------------------------------------------------------
 
-proc text_scroll {w line} {
-    $w yview $line
+# jc: vertical scroll bar don't work without this 
+proc text_scroll {w line {opt {}}} {
+    $w yview $line $opt
     $w mark set insert [$w index @0,0]
 }
 

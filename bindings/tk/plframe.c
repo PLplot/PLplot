@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.60  1998/11/18 06:12:36  furnish
+ * Revision 1.61  1998/12/01 20:49:20  furnish
+ * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+ *
+ * Revision 1.60  1998/11/18  06:12:36  furnish
  * Grotesque hacks to omit old Itcl support code from the compiled side.
  * Not really sure what to do just yet.  The old Itcl support required
  * various and assundry hacks on the compiled side to register things
@@ -466,6 +469,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     register PlFrame *plFramePtr;
     register PLRDev *plr;
     int i, ndev;
+    extern int XErrorProc(); /* jc: storecolor */
 
     dbug_enter("plFrameCmd");
 
@@ -555,6 +559,11 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask,
 			  PlFrameExposeEH, (ClientData) plFramePtr);
+
+    /* jc: try to catch XStoreColor bug on True Color Display
+     * by setting up a X error handler
+     */
+    XSetErrorHandler(XErrorProc);
 
 #ifdef HAVE_ITCL
     plFramePtr->widgetCmd =

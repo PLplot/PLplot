@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.70  1998/01/06 23:44:33  furnish
+ * Revision 1.71  1998/12/01 20:50:30  furnish
+ * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+ *
+ * Revision 1.70  1998/01/06  23:44:33  furnish
  * Fix some stupid little comment syntax nit to shut up SGI cc.
  *
  * Revision 1.69  1996/10/31  05:08:04  furnish
@@ -252,6 +255,23 @@ static void  FillPolygonCmd	(PLStream *pls);
 
 static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
+
+/* jc: X protocol error caused by trying to stop color on True Color*/
+#include <X11/Xproto.h>
+
+int XErrorProc(Display *dpy, XErrorEvent *errEventPtr)
+{
+  if ( errEventPtr->error_code == BadAccess && errEventPtr->request_code == X_StoreColors) {
+    
+      fprintf(stderr,"Can't change colormap on True Color Display. Plplot bug!\n");
+    return 0;
+  }
+    fprintf(stderr, "X protocol error: ");
+    fprintf(stderr, "error=%d request=%d minor=%d\n",
+        errEventPtr->error_code, errEventPtr->request_code,
+        errEventPtr->minor_code);
+    return 1;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_xw()
@@ -933,6 +953,10 @@ InitMain(PLStream *pls)
 
 /* Window title */
 
+    if (plsc->plwindow){    /* jc: allow -plwindow to specify wm decoration name*/
+      sprintf(header, "%s", plsc->plwindow);
+    }
+    else
     sprintf(header, "PLplot");
 
 /* Window creation */
@@ -947,6 +971,7 @@ InitMain(PLStream *pls)
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
 			   None, 0, 0, &hint);
+    XSetErrorHandler(XErrorProc); /* jc: */ 
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2141,6 +2166,7 @@ GetVisual(PLStream *pls)
     case StaticColor:
     case StaticGray:
 	xwd->rw_cmap = 0;
+	break; /* jc: */
     default:
 	xwd->rw_cmap = 1;
     }

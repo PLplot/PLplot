@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.38  1996/02/23 16:49:29  furnish
+# Revision 1.39  1998/12/01 20:49:22  furnish
+# Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+#
+# Revision 1.38  1996/02/23  16:49:29  furnish
 # Some little hacks to make the scroll bars look better during zooms.
 #
 # Revision 1.37  1995/08/22  16:17:53  mjl
@@ -153,7 +156,9 @@ proc plxframe {w {client_id {}}} {
 
 # Make container frame.  It is mapped later.
 
-    frame $w
+# jc: if the container already exists, don't exit (catch added)
+
+    catch "frame $w"
 
 # Create child plplot widget (plframe), and pack into parent.
 
@@ -644,6 +649,8 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
     global user_key_filter
 
     global key_zoom_select
+    global key_zoom_back
+    global key_zoom_forward    
     global key_zoom_reset
     global key_print
     global key_save_again
@@ -664,8 +671,8 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
 
     switch $keyname \
 	$key_zoom_select	"plw_zoom_select $w" \
-	"b"			"plw_zoom_back $w" \
-	"f"			"plw_zoom_forward $w" \
+	$key_zoom_back		"plw_zoom_back $w" \
+	$key_zoom_forward	"plw_zoom_forward $w" \
 	$key_zoom_reset		"plw_zoom_reset $w" \
 	$key_print		"plw_print $w" \
 	$key_save_again		"plw_save_again $w" \

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1995/10/22 17:41:33  mjl
+ * Revision 1.37  1998/12/01 20:51:12  furnish
+ * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
+ *
+ * Revision 1.36  1995/10/22  17:41:33  mjl
  * Fixed PL_OPT_STRING arg handling -- should actually work now.
  *
  * Revision 1.35  1995/07/19  20:22:13  mjl
@@ -1803,7 +1806,10 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
-    plsc->plwindow = optarg;
+    char *strdup();
+
+/* jc:    plsc->plwindow = optarg; */
+    plsc->plwindow = strdup(optarg);	/* jc: somehow the original string is lost */
     return 0;
 }
 
