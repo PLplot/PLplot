@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.50  1995/10/16 18:20:28  mjl
+ * Revision 1.51  1995/10/23 07:24:52  mjl
+ * Added glevel() accessor function, for returning the run level.  Also added
+ * plsError() function for setting error control variables.
+ *
+ * Revision 1.50  1995/10/16  18:20:28  mjl
  * Added plgdev API function to return current device name.
  *
  * Revision 1.49  1995/06/29  18:10:44  mjl
@@ -1669,6 +1673,20 @@ plgpls(PLStream **p_pls)
     *p_pls = plsc;
 }
 
+/* Get the (current) run level. 
+ * Valid settings are:
+ *   0	uninitialized 
+ *   1	initialized
+ *   2	viewport defined
+ *   3	world coords defined 
+ */
+
+void
+c_plglevel(PLINT *p_level)
+{
+    *p_level = plsc->level;
+}
+
 /* Set the function pointer for the keyboard event handler */
 
 void
@@ -1687,6 +1705,18 @@ plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 {
     plsc->ButtonEH = ButtonEH;
     plsc->ButtonEH_data = ButtonEH_data;
+}
+
+/* Set the variables to be used for storing error info */
+
+void
+plsError(PLINT *errcode, char *errmsg)
+{
+    if (errcode != NULL)
+	plsc->errcode = errcode;
+
+    if (errmsg != NULL)
+	plsc->errmsg = errmsg;
 }
 
 /* Set orientation.  Must be done before calling plinit. */
