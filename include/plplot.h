@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.41  1993/09/28 21:30:17  mjl
+ * Revision 1.42  1993/10/18 19:43:20  mjl
+ * Added prototype for plFindCommand function.
+ *
+ * Revision 1.41  1993/09/28  21:30:17  mjl
  * Made the bomb-out for non-ANSI | non-C++ compilers more explicit.
  *
  * Revision 1.40  1993/09/24  20:33:14  furnish
@@ -868,6 +871,8 @@ int   plSetInternalOpt	(char *, char *);
 void  plgesc	(char *);
 
 void  pl_cmd	(PLINT, void *);
+
+char *plFindCommand	(char *);
 
 void  plGetName	(char *, char *, char *, char **);
 
