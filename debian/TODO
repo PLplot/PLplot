@@ -13,3 +13,5 @@
 * Write a decent libplplot5.README.Debian
 
 * Fix all Lintian errors and warnings.
+
+* Remove all the old files from CVS (*.README.Debian, *.files, etc)
