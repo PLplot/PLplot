@@ -657,6 +657,7 @@ typedef struct {
 #define    plcontf	plfcont
 #define	   Alloc2dGrid	plAlloc2dGrid
 #define	   Free2dGrid	plFree2dGrid
+#define    MinMax2dGrid plMinMax2dGrid 
 
 #endif /* __PLSTUBS_H__ */
 
@@ -1566,6 +1567,11 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
 
 void
 plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
+
+/* Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid(). */
+
+void
+plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 /* Functions for converting between HLS and RGB color space */
 
