@@ -19,7 +19,7 @@ static short int numberfonts, numberchars;
 static short int indxleng;
 
 static short fontloaded = 0;
-/* moved to plstr.h, plsc->cfont */ static PLINT font = 1; /* /* current font */
+/* moved to plstr.h, plsc->cfont static PLINT font = 1; current font */
 
 #define PLMAXSTR	300
 #define STLEN		250
@@ -388,7 +388,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 
 /* Open clip limits to subpage limits */
 
-    plP_gclp(&clpxmi, &clpxma, &clpymi, &clpyma);
+    plP_gclp(&clpxmi, &clpxma, &clpymi, &clpyma); /* get and store current clip limits */
     plP_sclp(plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma);
 
     plgchr(&chrdef, &chrht);
@@ -443,7 +443,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	refy = y - shift * plsc->ypmm;
     }
     else {
-	plP_sclp(clpxmi, clpxma, clpymi, clpyma);
+	  plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore inicial clip limits */
 	return;
     }
 
@@ -460,16 +460,10 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	xform[3] = 1.0;
     }
 
-    if (plsc->dev_text) {
-
-      /* if plP_sclp() is not called, clipping limits are *not*
-	 set!. I think that this is a bug, as if someone manages to do
-	 a plot whithout ever calling plmtex, directly or indirectly,
-	 then the clipping limits are not set! */
-
-      plP_sclp(clpxmi, clpxma, clpymi, clpyma); 
+    if (plsc->dev_text) {      
       plP_text(0, just, xform, x, y, refx, refy, text);
 #ifndef DEBUG
+       plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore clip limits */
        return; /* just for comparition */
 #endif
     }
