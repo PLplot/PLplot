@@ -1,5 +1,10 @@
 #----------------------------------------------------------------------------
 # plconfig.tcl
+# $Id$
+# $Log$
+# Revision 1.7  1994/05/23 22:08:30  mjl
+# Added CVS Id and Log entries.
+#
 #
 # Sets configuration options for plplot/TK driver.
 # This file contains a dummy proc.  You can customize plplot/TK by copying
