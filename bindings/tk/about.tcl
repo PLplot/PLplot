@@ -1,8 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.2  1994/05/26 19:22:48  mjl
-# Updated the ftp site, other fixes, to prepare for next beta drop.
-#
 #----------------------------------------------------------------------------
 # about w
 #

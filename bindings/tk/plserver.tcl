@@ -1,41 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.23  2000/07/19 21:11:49  furnish
-# Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
-# surface plotter, contour labelling, and demo updates to show off these
-# new features.
-#
-# Revision 1.22  1995/06/13 21:28:23  mjl
-# Miscellaneous tk4 fixes.
-#
-# Revision 1.21  1995/05/06  17:18:37  mjl
-# Shave and a haircut.
-#
-# Revision 1.20  1995/04/12  08:06:16  mjl
-# Offloaded the C code for cleaning up from plserver.c into the proc
-# plserver_link_end in plserver.tcl.  The Tcl code was modified to better
-# handshake with the client (plplot TK driver) program.
-#
-# Revision 1.19  1994/09/23  07:41:41  mjl
-# Some cleanup code at exit moved into plserver.c, and the exit_app proc was
-# eliminated (in favor of just exit).
-#
-# Revision 1.18  1994/07/01  20:39:17  mjl
-# Moved "standard" initialization code to proc plstdwin in pltools.tcl,
-# so it can be used by the demos.
-#
-# Revision 1.17  1994/06/23  22:34:57  mjl
-# Removed an unnecessary "update".
-#
-# Revision 1.16  1994/06/16  19:08:22  mjl
-# exit_app proc simplified -- some of its previous tasks have been absorbed
-# into the redefined exit proc.
-#
-# Revision 1.15  1994/06/09  20:16:28  mjl
-# Moved the key_filter proc to plwidget.tcl, since it is better put there.
-# Some cleaning up also.
-#
-
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer menu procs
 # Maurice LeBrun

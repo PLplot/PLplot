@@ -1,26 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.6  1995/05/06 17:16:14  mjl
-# Tweaks to exit handling.
-#
-# Revision 1.5  1995/04/12  08:07:29  mjl
-# Offloaded the C code for cleaning up from tk.c into the proc
-# plclient_link_end in plclient.tcl.  The Tcl code was modified to better
-# handshake with plserver.
-#
-# Revision 1.4  1994/06/09  20:07:54  mjl
-# Eliminated references to a plw_init_proc, now obsolete.
-#
-# Revision 1.3  1994/02/07  22:52:38  mjl
-# Removed references to plw_flash (no longer invoked from client side).
-#
-# Revision 1.2  1994/01/17  21:30:23  mjl
-# Improved security for Tcl-DP communication by disabling any further
-# connections after the initial client/server handshaking is finished.
-#
-# Revision 1.1  1994/01/15  17:36:03  mjl
-# Added to hold client side initialization procs.
-#
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics client procs
 # Maurice LeBrun

@@ -1,71 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.40  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.39  1998/11/18 06:12:38  furnish
- * Grotesque hacks to omit old Itcl support code from the compiled side.
- * Not really sure what to do just yet.  The old Itcl support required
- * various and assundry hacks on the compiled side to register things
- * with the Itk system.  It seems superficially, that these requirements
- * have been lifted, but I don't yet have enough comprehension of the
- * issues to be 100% certain.
- *
- * Revision 1.38  1996/10/18  19:59:11  furnish
- * Remember to initialize Itk if so configured.
- *
- * Revision 1.37  1996/06/26  21:35:15  furnish
- * Various hacks to support Tcl 7.5 and Tk 4.1.
- *
- * Revision 1.36  1995/06/01  21:24:27  mjl
- * Is now [incr Tcl] aware, if HAVE_ITCL is defined (done during configure).
- *
- * Revision 1.35  1995/05/06  17:11:30  mjl
- * Improved debugging output and fixed a bug in the exit handling.
- *
- * Revision 1.34  1995/04/12  08:06:15  mjl
- * Offloaded the C code for cleaning up from plserver.c into the proc
- * plserver_link_end in plserver.tcl.  The Tcl code was modified to better
- * handshake with the client (plplot TK driver) program.
- *
- * Revision 1.33  1995/03/16  23:13:57  mjl
- * Fixed the Copyright message and general cleaning up.
- *
- * Revision 1.32  1994/09/27  21:56:50  mjl
- * Minor exit handling fix for Tk communication.
- *
- * Revision 1.31  1994/09/23  07:40:19  mjl
- * Now does a bit more complete cleanup at exit when communicating with the
- * Tcl-DP driver, to avoid potential problems.
- *
- * Revision 1.30  1994/09/18  07:14:58  mjl
- * Changed the syntax for pltkMain() in order for it to work better with
- * shared libraries.  In particular, Tcl_AppInit is no longer external but
- * passed as a function pointer.
- *
- * Revision 1.29  1994/08/25  04:00:27  mjl
- * Fixed some error output; elminates spurious <RET> at end.
- *
- * Revision 1.28  1994/07/19  22:31:43  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
- * inclusion changed to /not/ use a search path so that it will work better
- * with makedepend.
- *
- * Revision 1.27  1994/06/30  18:45:02  mjl
- * Minor changes to pass gcc -Wall without warnings and other cleaning up.
- *
- * Revision 1.26  1994/06/23  22:33:53  mjl
- * Fixed bug introduced in last update concerning exit handling for DP style
- * communication.
- *
- * Revision 1.25  1994/06/16  19:04:32  mjl
- * Massively restructured.  Is now just a front-end to the pltkMain()
- * function.  Structured along the preferred lines for extended wish'es.
-*/
 
-/* 
-    plserver.c
     Copyright 1993, 1994, 1995
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
@@ -96,8 +30,6 @@
     Note that plserver can be used the same way as wish or dpwish, as it
     contains the functionality of each of these (except the -notk Tcl-DP
     command-line option is not supported).  
-*/
-/*
 */
 
 #include "plplot/plserver.h"

@@ -1,51 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.11  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.10  1999/01/23 05:08:23  furnish
- * When itcl and itk are enabled, set up the interpretter the same way
- * that itkwish does.  This makes it much easier to use Itk components.
- *
- * Revision 1.9  1998/12/01  20:49:24  furnish
- * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
- *
- * Revision 1.8  1998/11/18  06:12:39  furnish
- * Grotesque hacks to omit old Itcl support code from the compiled side.
- * Not really sure what to do just yet.  The old Itcl support required
- * various and assundry hacks on the compiled side to register things
- * with the Itk system.  It seems superficially, that these requirements
- * have been lifted, but I don't yet have enough comprehension of the
- * issues to be 100% certain.
- *
- * Revision 1.7  1996/10/25  19:16:43  furnish
- * Pick up private header so we can see if configured for itcl, etc.
- *
- * Revision 1.6  1996/10/18  19:56:43  furnish
- * Initialize itcl/itk if so configured.
- *
- * Revision 1.5  1996/06/26  21:35:16  furnish
- * Various hacks to support Tcl 7.5 and Tk 4.1.
- *
- * Revision 1.4  1995/10/22  17:30:35  mjl
- * Changed -e option such that -e <script> and -f <file> means to execute
- * <script> then source <file>.  Previously, they were mutually exclusive.
- *
- * Revision 1.3  1994/09/18  07:14:59  mjl
- * Changed the syntax for pltkMain() in order for it to work better with
- * shared libraries.  In particular, Tcl_AppInit is no longer external but
- * passed as a function pointer.
- *
- * Revision 1.2  1994/06/30  18:45:05  mjl
- * Minor changes to pass gcc -Wall without warnings and other cleaning up.
- *
- * Revision 1.1  1994/06/23  22:39:10  mjl
- * Handles nearly all the important setup for extended wish's.  Taken from
- * tkMain.c of Tk 3.6, and modified minimally to support my needs.
- *
-*/
-
-/*
  * Modified version of tkMain.c, from Tk 3.6.
  * Maurice LeBrun
  * 23-Jun-1994

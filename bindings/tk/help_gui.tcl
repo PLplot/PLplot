@@ -1,8 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.9  1994/05/26 19:23:17  mjl
-# Inserted missing CVS Id and Log fields.
-#
 #----------------------------------------------------------------------------
 # help_gui w
 #

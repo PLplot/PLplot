@@ -1,47 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.25  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.24  1995/10/22 17:31:18  mjl
- * Moved pls_auto_path to tclAPI.c, for use by both Tcl and Tcl/TK interfaces.
- *
- * Revision 1.23  1994/07/26  21:14:36  mjl
- * Improvements to the way PLplot looks for various files.  Now more
- * consistent and flexible.  In particular, environmentals can be set for
- * locations of each directory (for Tcl, binary, and library files).
- * Contributed by Mark Olesen.
- *
- * Revision 1.22  1994/07/25  06:44:27  mjl
- * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
- *
- * Revision 1.21  1994/07/22  22:21:16  mjl
- * Eliminated a gcc -Wall warning.
- *
- * Revision 1.20  1994/07/19  22:31:50  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
- * inclusion changed to /not/ use a search path so that it will work better
- * with makedepend.
- *
- * Revision 1.19  1994/06/30  18:44:18  mjl
- * Cleaning up, also moved Tk-driver-specific functions to tk.c
- *
- * Revision 1.18  1994/06/23  22:37:30  mjl
- * Minor cosmetic changes.
- *
- * Revision 1.17  1994/06/16  19:15:17  mjl
- * Moved the Tk initialization function for the tk driver into tk.c.  Changed
- * Pltk_Init to include by default some of the other Tcl commands used by
- * the PLplot/Tk driver.  Turned set_auto_path() into pls_auto_path() and
- * made it global.
- *
- * Revision 1.16  1994/06/09  20:27:35  mjl
- * Hacked out direct widget support; this was moved to plframe.c.
-*/
-
-/* 
- * tkshell.c
  * Maurice LeBrun
  * 6-May-93
  *

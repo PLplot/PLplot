@@ -1,8 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.1  1995/06/01 21:20:56  mjl
-# PLplot/Tk now has a file selector!  Courtesy of Mark L. Ulferts, and you
-# need to have [incr Tcl] installed to use it.
 #
 #
 # FileSelect

@@ -1,19 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.3  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.2  1998/11/19 04:32:46  furnish
- * Hack out a dumb little diagnostic which has been being printed for a
- * couple of years, but whose utility has long since expired.
- *
- * Revision 1.1  1996/10/25  19:21:21  furnish
- * New package bootstrap facility, contributed by Vince Darley, further
- * modified by Geoff Furnish.  Still needs work.
- *
- *
- * Revision 1.25  1996/11/7 vince
-
  * This file is derived from the old tkshell.c, and implements the Pltk init
  * function.  It can be loaded into any Tcl7.5 interpreter, and requires some
  * .tcl library files to be in known places.  Set your environment variables

@@ -1,27 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.21  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.20  1995/09/22 16:04:12  mjl
- * Fixes to names of member variables of PLiodev structs.
- *
- * Revision 1.19  1995/03/16  23:08:06  mjl
- * The Copyright message was changed and general cleaning up done.
- *
- * Revision 1.18  1994/08/25  03:59:43  mjl
- * Fixed to properly update driver when cmap state is changed.  Contributed
- * by Radey Shouman.
- *
- * Revision 1.17  1994/07/18  20:29:58  mjl
- * Fixed the escape function to pass ALL received escape commands.
- *
- * Revision 1.16  1994/06/30  18:43:02  mjl
- * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
-*/
-
-/*
-    plr.c
 
     Copyright 1993, 1994, 1995
     Maurice LeBrun
