@@ -10,6 +10,8 @@
 <!ENTITY chap-advanced SYSTEM "advanced.xml">
 <!ENTITY chap-drivers SYSTEM "drivers.xml">
 <!ENTITY chap-api SYSTEM "api.xml">
+<!ENTITY chap-c SYSTEM "c.xml">
+<!ENTITY chap-fortran SYSTEM "fortran.xml">
 <!ENTITY chap-cplus SYSTEM "cplus.xml">
 <!ENTITY chap-tcl SYSTEM "tcl.xml">
 <!ENTITY chap-wish SYSTEM "wish.xml">
@@ -263,7 +265,9 @@
   </part>
 
   <part>
-    <title> Advanced Techniques </title>
+    <title> Language Bindings </title>
+    &chap-c;
+    &chap-fortran;
     &chap-cplus;
     &chap-tcl;
     &chap-wish;

@@ -12,6 +12,8 @@ SOURCE_FILES = \
   $(MASTER_XML_IN) \
   advanced.xml \
   api.xml \
+  c.xml \
+  fortran.xml \
   cplus.xml \
   drivers.xml \
   gui.xml \
