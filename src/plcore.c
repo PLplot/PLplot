@@ -73,6 +73,12 @@ enum {AT_BOP, DRAWING, AT_EOP};
 /* Initialize device. */
 /* The plot buffer must be called last. */
 
+/* The following array of chars is used both here and in plsym.c for
+ * translating the Greek characters from the #g escape sequences into
+ * the Hershey and Unicode codings
+ */ 
+const char pl_greek[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
+
 void
 plP_init(void)
 {
@@ -415,7 +421,6 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       if (plsc->dev_unicode)        /* Does the device also understand unicode  ? */
         {
 
-          char greek[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
 	  PLINT ig;
           if (string!=NULL)         /* If the string isn't blank, then we will continue */
           {
@@ -455,7 +460,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			  * 527 = upper case alpha displacement in Hershey Table
 			  * 627 = lower case alpha displacement in Hershey Table
 			  */
-			 ig = plP_strpos(greek, string[i+2]);
+			 ig = plP_strpos(pl_greek, string[i+2]);
 			 if (ig >= 0) 
 			   {
 			      if (ig >= 24)
@@ -467,7 +472,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   }
 			 else
 			   {
-			      /* Use space unicode character if string[i+2] is not in
+			      /* Use "unknown" unicode character if string[i+2] is not in
 			       * the Greek array.*/
 			      unicode_buffer[j]=(unsigned int)0x20;
 			      i+=2;
