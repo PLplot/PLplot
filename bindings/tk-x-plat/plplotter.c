@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2  2002/07/05 17:17:46  vincentdarley
+ * removed compiler warnings
+ *
  * Revision 1.1  2002/07/02 09:03:44  vincentdarley
  * x-platform tk code
  *
@@ -195,6 +198,7 @@
 #define NEED_PLDEBUG
 #include "plplot/plserver.h"
 #include "plplot/pltkwd.h"
+#include "plplot/tcpip.h"
 
 #ifdef __WIN32__
 #define XSynchronize(display, bool) {display->request++;}
@@ -820,7 +824,7 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     else if ((c == 'x') && (strncmp(argv[1], "xview", length) == 0)) {
 	int count, type;
-	double width = plPlotterPtr->xr - plPlotterPtr->xl;
+	double width = (double) (plPlotterPtr->xr - plPlotterPtr->xl);
 	
 	double fraction;
 
@@ -830,24 +834,24 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	    result = TCL_ERROR;
 	    goto done;
 	  case TK_SCROLL_MOVETO:
-	    plPlotterPtr->xl = fraction;
-	    plPlotterPtr->xr = fraction + width;
+	    plPlotterPtr->xl = (PLFLT) fraction;
+	    plPlotterPtr->xr = (PLFLT) (fraction + width);
 	    break;
 	  case TK_SCROLL_PAGES:
-	    plPlotterPtr->xl += count * width * .9;
-	    plPlotterPtr->xr += count * width * .9;
+	    plPlotterPtr->xl += (PLFLT) (count * width * .9);
+	    plPlotterPtr->xr += (PLFLT) (count * width * .9);
 	    break;
 	  case TK_SCROLL_UNITS:
-	    plPlotterPtr->xl += count*width/50;
-	    plPlotterPtr->xr += count*width/50;
+	    plPlotterPtr->xl += (PLFLT) (count*width/50);
+	    plPlotterPtr->xr += (PLFLT) (count*width/50);
 	    break;
 	}
 	if(plPlotterPtr->xr > 1.0) {
 	    plPlotterPtr->xr = 1.0;
-	    plPlotterPtr->xl = 1.0 - width;
+	    plPlotterPtr->xl = (PLFLT) (1.0 - width);
 	} else if(plPlotterPtr->xl < 0.0) {
 	    plPlotterPtr->xl = 0.0;
-	    plPlotterPtr->xr = width;
+	    plPlotterPtr->xr = (PLFLT) width;
 	}
 	Scroll(interp,plPlotterPtr);
     }
@@ -866,24 +870,24 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	    result = TCL_ERROR;
 	    goto done;
 	  case TK_SCROLL_MOVETO:
-	    plPlotterPtr->yl = 1.0-fraction -height;
-	    plPlotterPtr->yr = 1.0-fraction;
+	    plPlotterPtr->yl = (PLFLT) (1.0-fraction -height);
+	    plPlotterPtr->yr = (PLFLT) (1.0-fraction);
 	    break;
 	  case TK_SCROLL_PAGES:
-	    plPlotterPtr->yl -= count * height * .9;
-	    plPlotterPtr->yr -= count * height * .9;
+	    plPlotterPtr->yl -= (PLFLT) (count * height * .9);
+	    plPlotterPtr->yr -= (PLFLT) (count * height * .9);
 	    break;
 	  case TK_SCROLL_UNITS:
-	    plPlotterPtr->yl -= count*height/50;
-	    plPlotterPtr->yr -= count*height/50;
+	    plPlotterPtr->yl -= (PLFLT)(count*height/50);
+	    plPlotterPtr->yr -= (PLFLT)(count*height/50);
 	    break;
 	}
 	if(plPlotterPtr->yr > 1.0) {
 	    plPlotterPtr->yr = 1.0;
-	    plPlotterPtr->yl = 1.0 - height;
+	    plPlotterPtr->yl = (PLFLT) (1.0 - height);
 	} else if(plPlotterPtr->yl < 0.0) {
 	    plPlotterPtr->yl = 0.0;
-	    plPlotterPtr->yr = height;
+	    plPlotterPtr->yr = (PLFLT)height;
 	}
 	Scroll(interp,plPlotterPtr);
     }
@@ -1265,7 +1269,6 @@ PlPlotterKeyEH(ClientData clientData, register XEvent *eventPtr)
     Tcl_DString ds;
     KeySym keysym;
     char* string;
-    XComposeStatus cs;
 
     dbug_enter("PlPlotterKeyEH");
     string = TkpGetString((TkWindow*)tkwin,eventPtr,&ds);
@@ -1878,13 +1881,13 @@ scol1(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         return TCL_ERROR;
     }
 
-    r = ((unsigned) (xcol.red   & 0xFF00) >> 8) / 255.0;
-    g = ((unsigned) (xcol.green & 0xFF00) >> 8) / 255.0;
-    b = ((unsigned) (xcol.blue  & 0xFF00) >> 8) / 255.0;
+    r = (PLFLT)(((unsigned) (xcol.red   & 0xFF00) >> 8) / 255.0);
+    g = (PLFLT)(((unsigned) (xcol.green & 0xFF00) >> 8) / 255.0);
+    b = (PLFLT)(((unsigned) (xcol.blue  & 0xFF00) >> 8) / 255.0);
 
     plRGB_HLS(r, g, b, &h, &l, &s);
 
-    p = atof(pos) / 100.0;
+    p = (PLFLT) (atof(pos) / 100.0);
     reverse = atoi(rev);
 
     if ( (pls->cmap1cp[i].h != h) ||
@@ -2720,7 +2723,7 @@ Orient(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* orient <rot> -- Set orientation to <rot> */
 
     else {
-        plsdiori(atof(argv[0]));
+        plsdiori((PLFLT)atof(argv[0]));
         result = Redraw(interp, plPlotterPtr, argc-1, argv+1);
     }
 
@@ -2748,8 +2751,10 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     int result = TCL_OK;
     char *sfnam;
     FILE *sfile;
+#if !defined(MAC_TCL) && !defined(__WIN32__)
     pid_t pid;
-
+#endif
+    
 /* Make sure widget has been initialized before going any further */
 
     if ( ! plPlotterPtr->tkwin_initted) {
@@ -2795,20 +2800,20 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* So far so good.  Time to exec the print script. */
 
     if (plPlotterPtr->plpr_cmd == NULL)
-        plPlotterPtr->plpr_cmd = plFindCommand("plpr");
+	plPlotterPtr->plpr_cmd = plFindCommand("plpr");
+
 #if !defined(MAC_TCL) && !defined(__WIN32__)
     if ((plPlotterPtr->plpr_cmd == NULL) || (pid = fork()) < 0) {
-        Tcl_AppendResult(interp, 
-                         "Error -- cannot fork print process",
-                         (char *) NULL);
-        result = TCL_ERROR;
-    }
-    else if (pid == 0) {
-        if (execl(plPlotterPtr->plpr_cmd, plPlotterPtr->plpr_cmd, sfnam, 
-                  (char *) 0)) {
-            fprintf(stderr, "Unable to exec print command.\n");
-            _exit(1);
-        }
+	Tcl_AppendResult(interp, 
+			 "Error -- cannot fork print process",
+			 (char *) NULL);
+	result = TCL_ERROR;
+    } else if (pid == 0) {
+	if (execl(plPlotterPtr->plpr_cmd, plPlotterPtr->plpr_cmd, sfnam, 
+		  (char *) 0)) {
+	    fprintf(stderr, "Unable to exec print command.\n");
+	    _exit(1);
+	}
     }
 #endif
     return result;
@@ -2825,7 +2830,6 @@ NextPage(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
      int argc, char **argv)
 {
     TkwDev *dev = (TkwDev *) plPlotterPtr->pls->dev;
-    int len = 0;
     if(argc == 0) {
     	dev->flags |= 2;
     } else {
@@ -2871,7 +2875,8 @@ Page(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         return TCL_ERROR;
     } 
 
-    plsdidev(atof(argv[0]), atof(argv[1]), atof(argv[2]), atof(argv[3]));
+    plsdidev((PLFLT)atof(argv[0]), (PLFLT)atof(argv[1]), 
+	     (PLFLT)atof(argv[2]), (PLFLT)atof(argv[3]));
     return (Redraw(interp, plPlotterPtr, argc-1, argv+1));
 }
 
@@ -3168,7 +3173,7 @@ static int
 report( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         int argc, char **argv )
 {
-    float x, y;
+    PLFLT x, y;
 /*    fprintf( stdout, "Made it into report, argc=%d\n", argc ); */
 
     if (argc == 0) {
@@ -3186,11 +3191,11 @@ report( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
             return TCL_ERROR;
         }
 
-        x = atof( argv[1] );
-        y = atof( argv[2] );
+        x = (PLFLT) atof( argv[1] );
+        y = (PLFLT) atof( argv[2] );
 
         gin->dX = (PLFLT) x / (dev->width - 1);
-        gin->dY = 1.0 - (PLFLT) y / (dev->height - 1);
+        gin->dY = (PLFLT) 1.0 - (PLFLT) y / (dev->height - 1);
 
     /* Try to locate cursor */
 
@@ -3271,17 +3276,17 @@ UpdateHScrollbar(register PlPlotter *plPlotterPtr)
 static void
 gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
 {
-    float x0, y0, x1, y1;
+    PLFLT x0, y0, x1, y1;
 
-    x0 = atof(argv[0]);
-    y0 = atof(argv[1]);
-    x1 = atof(argv[2]);
-    y1 = atof(argv[3]);
+    x0 = (PLFLT)atof(argv[0]);
+    y0 = (PLFLT)atof(argv[1]);
+    x1 = (PLFLT)atof(argv[2]);
+    y1 = (PLFLT)atof(argv[3]);
 
-    x0 = MAX(0., MIN(1., x0));
-    y0 = MAX(0., MIN(1., y0));
-    x1 = MAX(0., MIN(1., x1));
-    y1 = MAX(0., MIN(1., y1));
+    x0 = MAX((PLFLT)0., MIN((PLFLT)1., x0));
+    y0 = MAX((PLFLT)0., MIN((PLFLT)1., y0));
+    x1 = MAX((PLFLT)0., MIN((PLFLT)1., x1));
+    y1 = MAX((PLFLT)0., MIN((PLFLT)1., y1));
 
 /* Only need two vertices, pick the lower left and upper right */
 

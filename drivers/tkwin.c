@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2002/07/05 17:17:46  vincentdarley
+ * removed compiler warnings
+ *
  * Revision 1.3  2002/07/02 11:09:05  vincentdarley
  * configuration for tkwin driver
  *
@@ -290,11 +293,11 @@ plD_init_tkwin(PLStream *pls)
     dev->yscale = dev->yscale_init;
     
 #if PHYSICAL
-    pxlx = (double) PIXELS_X / dev->width * DPMM;
-    pxly = (double) PIXELS_Y / dev->height * DPMM;
+    pxlx = (PLFLT) ((double) PIXELS_X / dev->width * DPMM);
+    pxly = (PLFLT) ((double) PIXELS_Y / dev->height * DPMM);
 #else
-    pxlx = (double) PIXELS_X / LPAGE_X;
-    pxly = (double) PIXELS_Y / LPAGE_Y;
+    pxlx = (PLFLT) ((double) PIXELS_X / LPAGE_X);
+    pxly = (PLFLT) ((double) PIXELS_Y / LPAGE_Y);
 #endif
     
     plP_setpxl(pxlx, pxly);
@@ -454,10 +457,10 @@ plD_line_tkwin(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = dev->ylen - y1;
     y2 = dev->ylen - y2;
     
-    x1 = x1 * dev->xscale;
-    x2 = x2 * dev->xscale;
-    y1 = y1 * dev->yscale;
-    y2 = y2 * dev->yscale;
+    x1 = (int) (x1 * dev->xscale);
+    x2 = (int) (x2 * dev->xscale);
+    y1 = (int) (y1 * dev->yscale);
+    y2 = (int) (y2 * dev->yscale);
     
     if (dev->write_to_window)
 	XDrawLine(tkwd->display, dev->window, dev->gc, x1, y1, x2, y2);
@@ -487,8 +490,8 @@ plD_polyline_tkwin(PLStream *pls, short *xa, short *ya, PLINT npts)
 	plexit("plD_polyline_tkw: Too many points in polyline\n");
     
     for (i = 0; i < npts; i++) {
-	pts[i].x = dev->xscale * xa[i];
-	pts[i].y = dev->yscale * (dev->ylen - ya[i]);
+	pts[i].x = (short) (dev->xscale * xa[i]);
+	pts[i].y = (short) (dev->yscale * (dev->ylen - ya[i]));
     }
     
     if (dev->write_to_window)
@@ -642,7 +645,6 @@ plD_state_tkwin(PLStream *pls, PLINT op)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    XColor* xc;
     dbug_enter("plD_state_tkw");
     if (dev->flags & 1) return;
 
@@ -782,12 +784,12 @@ CopyCommand (PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 
-    x0 = dev->xscale * pls->dev_x[0];
-    x1 = dev->xscale * pls->dev_x[2];
-    y0 = dev->yscale * (dev->ylen - pls->dev_y[0]);
-    y1 = dev->yscale * (dev->ylen - pls->dev_y[2]);
-    w = dev->xscale * (pls->dev_x[1]-pls->dev_x[0]);
-    h = -dev->yscale * (pls->dev_y[1]-pls->dev_y[0]);
+    x0 = (int) (dev->xscale * pls->dev_x[0]);
+    x1 = (int) (dev->xscale * pls->dev_x[2]);
+    y0 = (int) (dev->yscale * (dev->ylen - pls->dev_y[0]));
+    y1 = (int) (dev->yscale * (dev->ylen - pls->dev_y[2]));
+    w = (int) (dev->xscale * (pls->dev_x[1]-pls->dev_x[0]));
+    h = (int) (-dev->yscale * (pls->dev_y[1]-pls->dev_y[0]));
  
     if (dev->write_to_window)
 	XCopyArea(tkwd->display, dev->window, dev->window, dev->gc,
@@ -819,8 +821,8 @@ FillPolygonCmd(PLStream *pls)
     
     
     for (i = 0; i < pls->dev_npts; i++) {
-	pts[i].x = dev->xscale * pls->dev_x[i];
-	pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
+	pts[i].x = (short) (dev->xscale * pls->dev_x[i]);
+	pts[i].y = (short) (dev->yscale * (dev->ylen - pls->dev_y[i]));
     }
     
     /* Fill polygons */
@@ -871,9 +873,6 @@ Init(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 
-    Window root;
-    int x, y;
-    
     dbug_enter("Init");
 
     dev->window = pls->window_id;
@@ -1171,9 +1170,9 @@ CreatePixmap(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     Tk_Window tkwin = pls->plPlotterPtr->tkwin;
-    int (*oldErrorHandler)();
     
 #if !defined(MAC_TCL) && !defined(__WIN32__)
+    int (*oldErrorHandler)();
     oldErrorHandler = XSetErrorHandler(CreatePixmapErrorHandler);
     CreatePixmapStatus = Success;
 #endif
@@ -1261,8 +1260,10 @@ AllocBGFG(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     
+#ifndef USE_TK
     int i, j, npixels;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
+#endif
     
     dbug_enter("AllocBGFG");
     
@@ -1322,7 +1323,6 @@ plX_setBGFG(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    XColor* xc;
     PLColor fgcolor;
     int gslevbg, gslevfg;
     
@@ -1437,8 +1437,11 @@ AllocCustomMap(PLStream *pls)
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     
     XColor xwm_colors[MAX_COLORS];
-    int i, npixels;
+    int i;
+#ifndef USE_TK
+    int npixels;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
+#endif
     
     dbug_enter("AllocCustomMap");
     
@@ -1535,8 +1538,11 @@ AllocCmap0(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     
-    int i, npixels;
+#ifndef USE_TK
+    int npixels;
+    int i;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
+#endif
     
     dbug_enter("AllocCmap0");
     
@@ -1577,8 +1583,11 @@ AllocCmap1(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     
-    int i, j, npixels;
+    int npixels;
+#ifndef USE_TK
+    int i, j;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
+#endif
     
     dbug_enter("AllocCmap1");
     
@@ -1638,7 +1647,6 @@ StoreCmap0(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     int i;
-    register XColor* xc;
     
     if ( ! tkwd->color) 
 	return;
@@ -1672,7 +1680,6 @@ StoreCmap1(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    XColor* xc;
     
     PLColor cmap1color;
     int i;
@@ -1732,9 +1739,9 @@ PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
 void
 PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
 {
-    plcolor->r = ToPLColor(xcolor->red);
-    plcolor->g = ToPLColor(xcolor->green);
-    plcolor->b = ToPLColor(xcolor->blue);
+    plcolor->r = (unsigned char) ToPLColor(xcolor->red);
+    plcolor->g = (unsigned char) ToPLColor(xcolor->green);
+    plcolor->b = (unsigned char) ToPLColor(xcolor->blue);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1749,19 +1756,20 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
 int
 PLColor_from_XColor_Changed(PLColor *plcolor, XColor *xcolor)
 {
-	int changed = 0;
-	int color;
-	color = ToPLColor(xcolor->red);
+    int changed = 0;
+    int color;
+    color = ToPLColor(xcolor->red);
+    
     if(plcolor->r != color) {
         changed = 1;
         plcolor->r = color;
     }
-	color = ToPLColor(xcolor->green);
+    color = ToPLColor(xcolor->green);
     if(plcolor->g != color) {
         changed = 1;
         plcolor->g = color;
     }
-	color = ToPLColor(xcolor->blue);
+    color = ToPLColor(xcolor->blue);
     if(plcolor->b != color) {
         changed = 1;
         plcolor->b = color;
