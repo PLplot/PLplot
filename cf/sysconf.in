@@ -517,19 +517,39 @@ esac
 
 # ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
+#
+# There are two ways to modify this list:
+#  - set USER_FLAGS_<whatever> to taste
+#  - override <whatever>_FLAGS ahead of time
 # ----------------------------------------------------------------------------
 
-CC_FLAGS="-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
-LDC_FLAGS="$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
+if test -z "$CC_FLAGS"; then
+    CC_FLAGS="-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C \
+     $OPT_FLAG_C $USER_FLAGS_C"
+fi
+if test -z "$LDC_FLAGS"; then
+    LDC_FLAGS="$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC $USER_FLAGS_LC"
+fi
 
 if test "$enable_cxx" = "yes"; then
-    CXX_FLAGS="-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
-    LDCXX_FLAGS="$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+    if test -z "$CXX_FLAGS"; then
+	CXX_FLAGS="-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX \
+	 $PROF_FLAG_CXX $OPT_FLAG_CXX $USER_FLAGS_CXX"
+    fi
+    if test -z "$LDCXX_FLAGS"; then
+	LDCXX_FLAGS="$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX \
+	 $USER_FLAGS_LDCXX"
+    fi
 fi
 
 if test "$enable_f77" = "yes"; then
-    F77_FLAGS="-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
-    LDF_FLAGS="$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+    if test -z "$F77_FLAGS"; then
+	F77_FLAGS="-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F \
+	 $OPT_FLAG_F $USER_FLAGS_F"
+    fi
+    if test -z "$LDF_FLAGS"; then
+	LDF_FLAGS="$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF $USER_FLAGS_LF"
+    fi
 fi
 
 M4_FLAGS="-S2000 -B8192"
