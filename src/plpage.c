@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1995/04/12 21:15:26  mjl
+ * Revision 1.16  1995/06/23 03:00:37  mjl
+ * Minor modifications to plP_subpInit().
+ *
+ * Revision 1.15  1995/04/12  21:15:26  mjl
  * Made the plsc->plwin array circular so that if we run out of windows we just
  * start over from 0.  Also, plTranslateCursor now starts with the most
  * recently created windows, rather than the oldest, since newer windows are
@@ -125,8 +128,7 @@ c_plbop(void)
 void
 plP_subpInit(void)
 {
-    PLFLT gscale, hscale;
-    PLFLT size_chr, size_sym, size_maj, size_min;
+    PLFLT scale, size_chr, size_sym, size_maj, size_min;
 
 /* Subpage checks */
 
@@ -135,10 +137,6 @@ plP_subpInit(void)
     if (plsc->nsuby <= 0)
 	plsc->nsuby = 1;
 
-/* Force a page advance */
-
-    plP_eop();
-    plP_bop();
     plsc->cursub = 0;
 
 /*
@@ -150,21 +148,22 @@ plP_subpInit(void)
  *	Reduce sizes with plot area (non-proportional, so that character
  *	size doesn't get too small).
  */
-    gscale = 0.5 *
+    scale = 0.5 *
 	((plsc->phyxma - plsc->phyxmi) / plsc->xpmm +
 	 (plsc->phyyma - plsc->phyymi) / plsc->ypmm) / 200.0;
 
-    hscale = gscale / sqrt((double) plsc->nsuby);
+    if (plsc->nsuby > 1)
+	scale /= sqrt((double) plsc->nsuby);
 
     size_chr = 4.0;
     size_sym = 4.0;		/* All these in virtual plot units */
     size_maj = 3.0;
     size_min = 1.5;
 
-    plsc->chrdef = plsc->chrht = size_chr * hscale;
-    plsc->symdef = plsc->symht = size_sym * hscale;
-    plsc->majdef = plsc->majht = size_maj * hscale;
-    plsc->mindef = plsc->minht = size_min * hscale;
+    plsc->chrdef = plsc->chrht = size_chr * scale;
+    plsc->symdef = plsc->symht = size_sym * scale;
+    plsc->majdef = plsc->majht = size_maj * scale;
+    plsc->mindef = plsc->minht = size_min * scale;
 }
 
 /*--------------------------------------------------------------------------*\
