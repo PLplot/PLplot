@@ -21,31 +21,9 @@ class x01 {
 
     public static void main( String[] args ) 
     {
-    // The following is drawn from x01c.c, but I don't currently know exactly
-    // how to implement this stuff in Java, so I'm including it here for
-    // future reference, but won't be implementing it at this time.
-    // Ultimately I would like to see this fully implemented so that x01.java
-    // can be a faithful implementation of the full x01c.c example program.
-
-//     // plplot initialization
-//     // Divide page into 2x2 plots unless user overrides.
-
-//         plssub(2, 2);
-
-//     // Parse and process command line arguments.
-
-//         plMergeOpts(options, "x01c options", notes);
-//         plParseOpts(&argc, argv, PL_PARSE_FULL);
-
-//     // Get version number, just for kicks.
-
-//         plgver(ver);
-//         fprintf(stderr, "Plplot library version: %s\n", ver);
-
-
     // Now get on with the Java OO way of doing things...
         x01 x = new x01();
-        x.run();
+        x.run( args );
     }
 
     x01()
@@ -58,9 +36,31 @@ class x01 {
         ys = new float[6];
     }
 
-    public void run()
+    public void run( String[] args )
     {
         pls = new PLStream();
+
+    // The following is drawn from x01c.c, but I don't currently know exactly
+    // how to implement this stuff in Java, so I'm including it here for
+    // future reference, but won't be implementing it at this time.
+    // Ultimately I would like to see this fully implemented so that x01.java
+    // can be a faithful implementation of the full x01c.c example program.
+
+    // plplot initialization
+    // Divide page into 2x2 plots unless user overrides.
+
+        pls.ssub(2, 2);
+
+//     // Parse and process command line arguments.
+
+//         plMergeOpts(options, "x01c options", notes);
+//         plParseOpts(&argc, argv, PL_PARSE_FULL);
+
+//     // Get version number, just for kicks.
+
+//         plgver(ver);
+//         fprintf(stderr, "Plplot library version: %s\n", ver);
+
 
     // Initialize PLplot.
         pls.init();
@@ -235,4 +235,3 @@ class x01 {
 //---------------------------------------------------------------------------//
 //                              End of x01.java
 //---------------------------------------------------------------------------//
-
