@@ -49,11 +49,9 @@ main(int argc, char *argv[])
     (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
     plgdev(driver);
-    if (strcmp(driver, "tk") != 0 )
-	plexit("Demo for tk driver only.");
 
     printf("Demo of multiple output streams via the %s driver.\n", driver);
-    printf("Running with the second window as slave.\n");
+    printf("Running with the second stream as slave to the first.\n");
     printf("\n");
 
 /* Set up first stream */
