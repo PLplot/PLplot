@@ -23,6 +23,8 @@ public class PLStream {
     public native void adv( int page );
     public native void box( String xopt, float xtick, int nxsub,
                             String yopt, float ytick, int nysub );
+    public native void box( String xopt, double xtick, int nxsub,
+                            String yopt, double ytick, int nysub );
     public native void box3(
         String xopt, String xlabel, float xtick, int nsubx,
         String yopt, String ylabel, float ytick, int nsuby,
@@ -31,6 +33,8 @@ public class PLStream {
     public native void end();
     public native void env( float xmin, float xmax, float ymin, float ymax,
                             int just, int axis );
+    public native void flush();
+    public native void font( int fnt );
     public native void fontld( int fnt );
     public native int gstrm();
     public native void init();
@@ -41,11 +45,23 @@ public class PLStream {
     public native void lab( String xlabel, String ylabel, String tlabel );
     public native void line( int n, float[] x, float[] y );
     public native void poin( int n, float[] x, float[] y, int code );
+    public native void poin( float x, float y, int code ); // API addition
+    public native void poin( double x, double y, int code ); // API addition
+    public native void ptex( float x, float y, float dx, float dy,
+                             float just, String text );
+    public native void ptex( double x, double y, double dx, double dy,
+                             double just, String text );
+    public native void schr( float def, float scale );
+    public native void schr( double def, double scale );
     public native void ssub( int nx, int ny );
     public native void styl( int nms, int mark, int space );
     public native void syax( int digmax, int digits );
+    public native void vpor( float xmin, float xmax, float ymin, float ymax );
+    public native void vpor( double xmin, double xmax, double ymin, double ymax );
     public native void vsta();
+    public native void wid( int width );
     public native void wind( float xmin, float xmax, float ymin, float ymax );
+    public native void wind( double xmin, double xmax, double ymin, double ymax );
 
 // Methods needed for the implementation of PLStream, but not suitable for
 // the public interface.
