@@ -73,12 +73,12 @@ AC_SUBST(PLPLOT_WEBSITE)
 
 dnl System wide XML declaration
 
-XML_DECL=/usr/lib/sgml/declaration/xml.dcl
+XML_DECL=/usr/lib/xml/declaration/xml.dcl
 AC_ARG_WITH(xml-declaration,
   AC_HELP_STRING([--with-xml-declaration=FILE],
     [System wide file containing the SGML declaration for XML.
      Must be a absolute file name.
-     Default: /usr/lib/sgml/declaration/xml.dcl]),
+     Default: /usr/lib/xml/declaration/xml.dcl]),
   [XML_DECL=$withval])
 AC_SUBST(XML_DECL)
 
