@@ -8,13 +8,13 @@
 # Initializations for building PLplot library.
 # -----------------------------------------------------------------------------
 
-# Package major/minor version number, for shared libraries on some systems
-# (e.g. SunOS).  Warning: apps linked to it may fail on major version
-# changes (depending on OS), and right now this doesn't mean much, so
-# by default these are not yet used.
+# Package major/minor/release version number, for shared libraries on some systems
+# (e.g. Linux).  Warning: apps linked to it may fail on major version
+# changes (depending on OS).
 
 MAJOR_VERSION	= 5
-MINOR_VERSION	= 1
+MINOR_VERSION	= 0
+RELEASE_VERSION	= 1
 
 # Utilities
 
