@@ -1572,6 +1572,22 @@ pllib_devinit()
     plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
+
+char*
+plGetDrvDir ()
+{
+    char* drvdir;
+
+/* Get drivers directory in PLPLOT_DRV_DIR or DATA_DIR/DRV_DIR, 
+ *  on this order
+ */
+    drvdir = getenv ("PLPLOT_DRV_DIR");
+    if (drvdir == NULL)
+        drvdir = DATA_DIR "/"DRV_DIR;
+    
+    return drvdir;
+}    
+
 /*--------------------------------------------------------------------------*\
  * void plInitDispatchTable()
  *
@@ -1609,10 +1625,8 @@ plInitDispatchTable()
    will be stored */
     fp_drvdb = tmpfile ();
 
-/* Open the drivers directory in PLPLOT_DRV_DIR or DATA_DIR/DRV_DIR */
-    drvdir = getenv ("PLPLOT_DRV_DIR");
-    if (drvdir == NULL)
-      drvdir = DATA_DIR "/" DRV_DIR;
+/* Open the drivers directory */
+    drvdir = plGetDrvDir ();
     dp_drvdir = opendir (drvdir);
     if (dp_drvdir == NULL)
       plabort ("plInitDispatchTable: Could not open drivers directory");
@@ -1909,8 +1923,7 @@ plLoadDriver(void)
     if (!driver->dlhand)
     {
         char drvspec[ 400 ];
-        sprintf( drvspec, "%s/%s/%s",
-		DATA_DIR, DRV_DIR, driver->drvnam );
+        sprintf( drvspec, "%s/%s", plGetDrvDir (), driver->drvnam );
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
 		driver->drvnam, drvspec );
