@@ -53,7 +53,8 @@ def restore_cmap1():
     s = array((1., 1., 1., 1., 1., 1.))
     # Integer flag array is zero (no interpolation along far-side of colour
     # figure.)
-    rev = array((0, 0, 0, 0, 0, 0))
+    # Drop array, see plplot-devel discussion on 2004-10-27
+    rev = (0, 0, 0, 0, 0, 0)
     # Default number of cmap1 colours
     plscmap1n(128)
     # Interpolate between control points to set up default cmap1.
@@ -81,7 +82,8 @@ def cmap1_init(gray):
 
     # Integer flag array is zero (no interpolation along far-side of colour
     # figure.)
-    rev = array((0, 0))
+    # Drop array, see plplot-devel discussion on 2004-10-27
+    rev = (0, 0)
     # number of cmap1 colours is 256 in this case.
     plscmap1n(256)
     # Interpolate between control points to set up cmap1.
