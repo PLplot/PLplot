@@ -5,6 +5,8 @@
 # Geoffrey Furnish
 # 28 June 1995
 #
+# Copyright (C) 2004  Andrew Ross
+#
 # This file specifies the PLplot API in a form suitable for input to
 # pltclgen, the Perl script which autogenerates a set of Tcl command
 # procedures for gaining access to the PLplot API from Tcl.  This file

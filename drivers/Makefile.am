@@ -5,6 +5,7 @@
 # Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
 # Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 # Copyright (C) 2003  Joao Cardoso
+# Copyright (C) 2004  Andrew Roach
 #
 #
 # This file is part of PLplot.

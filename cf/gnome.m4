@@ -3,6 +3,8 @@ dnl Gnome configuration function.
 dnl Adapted from that distributed by the Gnome Project
 dnl Added by Rafael Laboissiere on Fri Feb 23 21:26:56 CET 2001
 dnl
+dnl Copyright (C) 2004  Rafael Laboissiere
+dnl
 dnl GNOME_INIT_HOOK (script-if-gnome-enabled, [failflag], [additional-inits])
 dnl
 dnl if failflag is "fail" then GNOME_INIT_HOOK will abort if gnomeConf.sh

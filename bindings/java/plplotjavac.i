@@ -1,6 +1,7 @@
-/* 
-Copyright 2002 Gary Bishop
-Copyright 2002 Alan W. Irwin
+/*
+Copyright (C) 2002  Gary Bishop
+Copyright (C) 2002, 2004  Alan W. Irwin
+Copyright (C) 2004  Andrew Ross
 This file is part of PLplot.
 
 PLplot is free software; you can redistribute it and/or modify
@@ -17,7 +18,7 @@ along with the file PLplot; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 */
 
-/* 
+/*
 A SWIG interface to PLplot for Java. This wrapper does the following:
 
    1) it strictly provides the C-API with the usual change of not
@@ -25,7 +26,7 @@ A SWIG interface to PLplot for Java. This wrapper does the following:
 
    2) it attempts to provide the entire API *excluding* callbacks for
       plcont and plshade(s) (for now).
-      
+
    3) it works both with the single and double-precision versions of the
       PLplot library.
 
@@ -36,7 +37,7 @@ This is known to work with swig-1.3.17 on Linux.
 %include typemaps.i
 
 %{
-#include "plplotP.h"      
+#include "plplotP.h"
 %}
 
 #ifdef PL_DOUBLE
@@ -51,7 +52,7 @@ typedef int PLINT;
 	A trick for docstrings
 ****************************/
 
-%define DOC(func, string) 
+%define DOC(func, string)
 %wrapper %{#define _doc_ ## func string %}
 %enddef
 
@@ -81,15 +82,15 @@ typedef int PLINT;
 /*---------------------------------------------------------------------------
  * Array allocation & copy helper routines.  Note because of swig limitations
  * it is necessary to release the java array memory right after calling these
- * routines.  Thus it is necessary to allocate and copy the arrays  even if 
- * the java and plplot arrays are of the same type.  Note, because of this 
- * change to Geoffrey's original versions, caller must always free memory 
+ * routines.  Thus it is necessary to allocate and copy the arrays  even if
+ * the java and plplot arrays are of the same type.  Note, because of this
+ * change to Geoffrey's original versions, caller must always free memory
  * afterwards.  Thus, the must_free_buffers logic is gone as well.
  *---------------------------------------------------------------------------*/
 
 /* 1d array of jints */
 
-static void 
+static void
 setup_array_1d_i( PLINT **pa, jint *adat, int n )
 {
    int i;
@@ -101,7 +102,7 @@ setup_array_1d_i( PLINT **pa, jint *adat, int n )
 
 /* 1d array of jfloats */
 
-static void 
+static void
 setup_array_1d_f( PLFLT **pa, jfloat *adat, int n )
 {
    int i;
@@ -126,7 +127,7 @@ setup_array_1d_d( PLFLT **pa, jdouble *adat, int n )
 /* 2d array of floats */
 /* Here caller must free(a[0]) and free(a) (in that order) afterward */
 
-static void 
+static void
 setup_array_2d_f( PLFLT ***pa, jfloat **adat, int nx, int ny )
 {
    int i, j;
@@ -177,7 +178,7 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
 
 /* The following typemaps take care of marshaling values into and out of PLplot functions. The
 Array rules are trickly because of the need for length checking. These rules manage
-some global variables (above) to handle consistency checking amoung parameters. 
+some global variables (above) to handle consistency checking amoung parameters.
 
 Naming rules:
 	Array 		(sets Alen to dim[0])
@@ -215,7 +216,7 @@ Naming rules:
 %typemap(javaout) (PLINT n, PLINT* Array) {
    return $jnicall;
 }
-  
+
 /* check consistency with previous */
 %typemap(in) PLINT* ArrayCk {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
@@ -236,7 +237,7 @@ Naming rules:
 %typemap(javaout) PLINT* ArrayCk {
    return $jnicall;
 }
-  
+
 /* Weird case to allow argument to be one shorter than others */
 %typemap(in) PLINT* ArrayCkMinus1 {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
@@ -257,7 +258,7 @@ Naming rules:
 %typemap(javaout) PLINT* ArrayCkMinus1 {
    return $jnicall;
 }
-  
+
 /* No length but remember size to check others */
 %typemap(in) PLINT *Array {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
@@ -275,7 +276,7 @@ Naming rules:
 %typemap(javaout) PLINT *Array {
    return $jnicall;
 }
-  
+
 /* Trailing count */
 %typemap(in) (PLINT *ArrayCk, PLINT n) {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
@@ -298,7 +299,7 @@ Naming rules:
 }
 
 /******************************************************************************
-				 PLFLT Arrays 
+				 PLFLT Arrays
 ******************************************************************************/
 
 //temporary
@@ -349,7 +350,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(javaout) (PLINT n, PLFLT* Array) {
    return $jnicall;
 }
-  
+
 /* check consistency with previous */
 %typemap(in) PLFLT* ArrayCk {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
@@ -733,7 +734,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 	   return;
 	}
      }
-   
+
    if( !((nx == Xlen && ny == Ylen) || (nx == Xlen && ny == 1))) {
       printf( "Xlen = %d, nx = %d, Ylen = %d, ny = %d\n", Xlen, nx, Ylen, ny );
       printf( "X vector or matrix must match matrix dimensions.\n" );
@@ -796,7 +797,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
      }
 
    if( !((nx == Xlen && ny == Ylen) || (nx == Ylen && ny == 1 && ny == Alen))) {
-      printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n", 
+      printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n",
 	      Xlen, nx, Ylen, Alen, ny );
       printf( "Y vector or matrix must match matrix dimensions.\n" );
       for( i=0; i < nx; i++ )
@@ -859,11 +860,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
       jclass sbufClass = (*jenv)->GetObjectClass(jenv, $input);
       jmethodID appendStringID = (*jenv)->GetMethodID(jenv, sbufClass, "append", "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
       (*jenv)->CallObjectMethod(jenv, $input, appendStringID, newString);
-      
+
       /* Clean up the string object, no longer needed */
       free($1);
       $1 = NULL;
-   }  
+   }
 }
 /* Prevent the default freearg typemap from being used */
 %typemap(freearg) char *OUTPUT ""

@@ -3,6 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2004  Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -39,7 +40,7 @@ javafiles = \
 	x17.java \
 	x18.java \
 	x19.java \
-	x22.java 
+	x22.java
 
 javademos = README.javademos $(javafiles)
 

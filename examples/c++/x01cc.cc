@@ -6,6 +6,7 @@
 // Copyright (C) 1994 Geoffrey Furnish
 // Copyright (C) 1995, 2000 Maurice LeBrun
 // Copyright (C) 2002, 2002, 2003, 2004 Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //

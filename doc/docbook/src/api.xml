@@ -3,7 +3,7 @@
 
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Rafael Laboissiere
+    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
     Copyright (C) 2004  Andrew Ross
 
@@ -9695,7 +9695,7 @@ stripchart
 	    Pointers to a pair of arrays containing the x and y points
 	    which make up the arrow. The arrow is plotted by joining these
 	    points to form a polygon. The scaling assumes that the x and y
-	    points in the arrow lie in the range 
+	    points in the arrow lie in the range
 	    <literal>-0.5 &lt;= x,y &lt;= 0.5</literal>.
 	  </para>
 	</listitem>
@@ -9707,8 +9707,8 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    Number of points in the arrays 
-	    <literal><parameter>arrowx</parameter></literal> and 
+	    Number of points in the arrays
+	    <literal><parameter>arrowx</parameter></literal> and
 	    <literal><parameter>arrowy</parameter></literal>.
 	  </para>
 	</listitem>
@@ -9720,7 +9720,7 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    If <literal><parameter>fill</parameter> = 0</literal> then the 
+	    If <literal><parameter>fill</parameter> = 0</literal> then the
 	    arrow is open, if <literal><parameter>fill</parameter> = 1</literal>
 	    then the arrow is filled.
 	  </para>
@@ -10129,7 +10129,7 @@ stripchart
     <title>
       <function>plvect</function>: Vector plot
     </title>
-    
+
     <para>
       <funcsynopsis>
       <funcprototype>
@@ -10148,9 +10148,9 @@ stripchart
     </para>
 
     <para>
-      Draws a vector plot of the vector 
-      <literal>(<parameter>u</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>],<parameter>v</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>])</literal>.  
-      The scaling factor for the vectors is given by 
+      Draws a vector plot of the vector
+      <literal>(<parameter>u</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>],<parameter>v</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>])</literal>.
+      The scaling factor for the vectors is given by
       <literal><parameter>scale</parameter></literal>. A
       transformation routine pointed to by <literal><parameter>pltr</parameter></literal>
       with a pointer <literal><parameter>pltr_data</parameter></literal>
@@ -10168,9 +10168,9 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	   Pointers to a pair of vectored two-dimensional arrays 
-	   containing the x and y components of the vector data to be 
-	   plotted. 
+	   Pointers to a pair of vectored two-dimensional arrays
+	   containing the x and y components of the vector data to be
+	   plotted.
 	   </para>
  	</listitem>
       </varlistentry>
@@ -10198,7 +10198,7 @@ stripchart
 	     If <literal><parameter>scale</parameter> = 0</literal> then
 	     the scaling factor is automatically calculated for the data.
 	     If <literal><parameter>scale</parameter> &lt; 0</literal> then
-	     the scaling factor is automatically calculated for the data and 
+	     the scaling factor is automatically calculated for the data and
 	     then multiplied by <literal>-<parameter>scale</parameter></literal>.
 	     If <literal><parameter>scale</parameter> &gt; 0</literal> then
 	     the scaling factor is set to <literal><parameter>scale</parameter></literal>.

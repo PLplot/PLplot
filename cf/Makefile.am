@@ -3,6 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2004  Rafael Laboissiere
+# Copyright (C) 2004  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -29,4 +30,4 @@ EXTRA_DIST =           \
     gtk.m4             \
     ac_pkg_swig.m4     \
     ac_python_devel.m4
-    
+

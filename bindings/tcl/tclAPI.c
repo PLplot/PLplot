@@ -5,6 +5,7 @@
     Institute for Fusion Studies	University of Texas at Austin
 
     Copyright (C) 2004  Joao Cardoso
+    Copyright (C) 2004  Andrew Ross
 
     This file is part of PLplot.
 

@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002  Alan W. Irwin
+// Copyright (C) 2004  Andrew Ross
 //
 
 //

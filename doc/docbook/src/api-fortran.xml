@@ -1,8 +1,9 @@
 <!--
     api-fortran.xml: "The Specialized Fortran API for PLplot" chapter
-        
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
+    Copyright (C) 1999, 2000, 2001, 2002, 2003  Rafael Laboissiere
+    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin
     Copyright (C) 2003  Joao Cardoso
     Copyright (C) 2004  Andrew Ross
 
@@ -36,9 +37,9 @@
 
 <chapter id="API-FORTRAN">
   <title>The Specialized Fortran API for PLplot</title>
-  
+
   <para>
-  The purpose of this Chapter is to document the API for each Fortran function 
+  The purpose of this Chapter is to document the API for each Fortran function
   in PLplot that differs substantially (usually in argument lists)
   from the common API that has already been
   documented in <xref linkend="API"/>.
@@ -57,13 +58,13 @@
   This chapter is incomplete and NEEDS DOCUMENTATION of, e.g., the fortran
   equivalent of the plshade C routines.
   </para>
-  
+
 
   <sect1 id="plcon0" renderas="sect3">
     <title>
       <function>plcon0</function>: Contour plot, identity mapping for fortran
     </title>
-    
+
     <para>
       <funcsynopsis>
       <funcprototype>
@@ -491,7 +492,7 @@ fortran
     <title>
       <function>plvec0</function>: Vector plot, identity mapping for fortran
     </title>
-    
+
     <para>
       <funcsynopsis>
       <funcprototype>
@@ -889,7 +890,7 @@ fortran
     <title>
       <function>plsesc</function>: Set the escape character for text strings
 for fortran
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -899,11 +900,11 @@ for fortran
         </funcdef>
         <paramdef><parameter>esc</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
-    Set the escape character for text strings.  From 
+    Set the escape character for text strings.  From
     Fortran it needs to be the decimal ASCII value.  Only
     selected characters are allowed to prevent the user from shooting
     himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
@@ -961,7 +962,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>esc</parameter> 
+	  <parameter>esc</parameter>
 	  (<literal>char</literal>, input)
 	</term>
 	<listitem>

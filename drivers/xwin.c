@@ -5,6 +5,7 @@
    Copyright (C) 2004  Maurice LeBrun
    Copyright (C) 2004  Joao Cardoso
    Copyright (C) 2004  Rafael Laboissiere
+   Copyright (C) 2004  Andrew Ross
 
    This file is part of PLplot.
 

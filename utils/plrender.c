@@ -7,6 +7,7 @@
 
     Copyright (C) 2004  Alan W. Irwin
     Copyright (C) 2004  Maurice LeBrun
+    Copyright (C) 2004  Andrew Ross
 
     This file is part of PLplot.
 

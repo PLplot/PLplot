@@ -1,10 +1,8 @@
 <!--
     api-compat.xml: "API compatibility definition" chapter
 
-    Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin and Rafael Laboissiere
-    Copyright (C) 2003  Joao Cardoso
-    Copyright (C) 2004  Andrew Ross
+    Copyright (C) 2004  Alan W. Irwin
+    Copyright (C) 2004  Rafael Laboissiere
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -48,7 +46,7 @@
     library soname will be changed (for operating systems such as Linux
     that support versioned shared libraries).
   </para>
-  
+
   <para>
     The information in this chapter regards version &Project-Version; of
     PLplot, released on &Release-Date;.
@@ -75,7 +73,7 @@
     <para>
       Another important aspect of compatibility regard the Application
       Binary Interface (ABI).  Backwards compatibility can be broken by
-      changes in the C structures made public through 
+      changes in the C structures made public through
       <filename>plplot.h</filename>.  Currently, they are:
     </para>
 

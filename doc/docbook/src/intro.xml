@@ -1,8 +1,9 @@
 <!--
     intro.xml: "Introduction" chapter
-        
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
+    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin
+    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
@@ -144,7 +145,7 @@ interactive driver is being developed. </para>
       linking to the new PLplot library.
     </para>
     <para>
-      PLplot is currently known to work on the following systems: 
+      PLplot is currently known to work on the following systems:
       Unix/Linux, OS/2, Mac, MS-DOS, and Win9x.  The Unix/Linux version is
       the best supported of these possibilities.
       The PLplot package is freely
@@ -159,7 +160,7 @@ interactive driver is being developed. </para>
       PLplot.  Please direct all communication to the general PLplot
       mailing list, plplot-general@lists.sourceforge.net.
     </para>
-    
+
   </sect1>
   <sect1 id="acquiring-plplot">
     <title>Getting a Copy of the PLplot Package</title>
@@ -187,13 +188,13 @@ interactive driver is being developed. </para>
       After the library has been created, you can write your main program
       to make the desired PLplot calls.  Example programs in C, C++, and
       Fortran are included as a guide.
-      Plots generated from the example programs are shown 
+      Plots generated from the example programs are shown
       <ulink url="http://&PLplot-website;/examples/index.html">here</ulink>.
     </para>
     <para>
       You will then need to compile your program and link it with the
       PLplot library(s).  See
-      <xref linkend="os-notes"/> for more details). 
+      <xref linkend="os-notes"/> for more details).
     </para>
     <para>
       You can also use Tcl/Tk scripts or Python scripts to generate plots
@@ -290,7 +291,7 @@ interactive driver is being developed. </para>
       for more info.
     </para>
     <sect2 id="additional-copyrights">
-      <title>Additional Copyrights</title> 
+      <title>Additional Copyrights</title>
       <para>
 	The startup code used in argument handling
 	(<filename>utils/plrender.c</filename> and
@@ -306,13 +307,13 @@ Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the names of Digital or MIT not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL

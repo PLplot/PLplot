@@ -4,7 +4,8 @@
 ###
 # Copyright (C) 2002, 2004  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
-# 
+# Copyright (C) 2004  Andrew Ross
+#
 # This file is part of PLplot.
 #
 # PLplot is free software; you can redistribute it and/or modify
@@ -28,8 +29,8 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
 
 # x19f excluded from this list because the plmap and plmeridians fortran
-# API is not implemented as part of the common API (and probably won't be 
-# for a long time because of having to work around the mapform type of 
+# API is not implemented as part of the common API (and probably won't be
+# for a long time because of having to work around the mapform type of
 # argument for these functions).
 
 EXECUTABLES_list = \

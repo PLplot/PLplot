@@ -3,6 +3,7 @@
 	3-d plot demo.
 
    Copyright (C) 2004  Alan W. Irwin
+   Copyright (C) 2004  Rafael Laboissiere
 
    This file is part of PLplot.
 

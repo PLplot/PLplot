@@ -1,7 +1,10 @@
 %module plplotc
 
 /* 
-Copyright 2002 Gary Bishop
+Copyright (C) 2002  Gary Bishop
+Copyright (C) 2004  Alan W. Irwin
+Copyright (C) 2004  Andrew Ross
+
 This file is part of PLplot.
 
 PLplot is free software; you can redistribute it and/or modify

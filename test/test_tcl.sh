@@ -2,6 +2,8 @@
 # Test suite for Tcl examples.
 #
 # Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
+# Copyright (C) 2004  Andrew Ross
 #
 # This file is part of PLplot.
 #

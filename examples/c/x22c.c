@@ -2,6 +2,8 @@
 
     Simple vector plot example
     Copyright (C) 2004 Andrew Ross <andrewross@users.sourceforge.net>
+    Copyright (C) 2004  Rafael Laboissiere
+
 
     This file is part of PLplot.
 

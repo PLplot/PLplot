@@ -4,6 +4,7 @@
 ###
 # Copyright (C) 2002  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
+# Copyright (C) 2004  Andrew Ross
 # 
 # This file is part of PLplot.
 #
