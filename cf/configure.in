@@ -267,6 +267,18 @@ cat $srcdir/cf/init.in		>Makefile.in
 
 cat $srcdir/cf/dist.in		>>Makefile.in 
 
+# Additional drivers per system
+
+case $system in
+    Linux* )
+	enable_linuxvga="yes"
+	cat $srcdir/cf/drivers_linux.in	>>Makefile.in
+    ;;
+    * )
+	enable_linuxvga="no"
+    ;;
+esac
+
 # Optional packages
 
 if test "$enable_cxx" = "yes"; then
@@ -370,7 +382,7 @@ PL_DRIVERS(builtin([shift],$*))])])
 dnl> Including a driver in this list includes it by default.  Maybe not
 dnl> complete, but most of the devices of interest under Unix.  
 
-PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, conex,
+PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, conex, linuxvga,
 vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp,
 xwin, tk, dp)
 
