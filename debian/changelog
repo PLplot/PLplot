@@ -1,3 +1,10 @@
+plplot (5.0.1-0.potato.3) unstable; urgency=low
+
+  * debian/control: Make plplot-common conflict with older version of
+    plplot.  This makes a smooth upgrade.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Tue, 13 Feb 2001 12:53:09 +0100
+
 plplot (5.0.1-0.potato.2) unstable; urgency=low
 
   * debian/control: Better descriptions for plplot-c++ and plplot-common

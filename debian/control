@@ -27,6 +27,7 @@ Description: Scientific plotting library
 
 Package: plplot-common
 Architecture: any
+Conflicts: plplot (<< 5.0.1-0.potato.3)
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
