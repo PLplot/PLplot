@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1995/04/12 08:19:01  mjl
+ * Revision 1.7  1995/05/06 21:30:55  mjl
+ * All data structures now allocated at runtime to allow greater flexibility.
+ * Command line options added: -ns <n>, sets number of shaded levels, -nx <n>
+ * and -ny <n> set number of data points in x and y, respectively.
+ *
+ * Revision 1.6  1995/04/12  08:19:01  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -36,19 +41,15 @@
 
 #include <plcdemos.h>
 
-#define NCONTR	30		/* Number of contours */
-#define XPTS    35		/* Data points in x */
-#define YPTS    46		/* Datat points in y */
+/* Fundamental settings.  See notes[] for more info. */
 
-#define XSPA    2./(XPTS-1)
-#define YSPA    2./(YPTS-1)
-
-static PLFLT clevel[NCONTR];
+static int ns = 20;		/* Default number of shade levels */
+static int nx = 35;		/* Default number of data points in x */
+static int ny = 46;		/* Default number of data points in y */
 
 /* Transformation function */
 
-PLFLT tr[6] =
-{XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
+PLFLT tr[6];
 
 static void
 mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
@@ -61,6 +62,41 @@ mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 
 static void
 f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax);
+
+/* Options data structure definition. */
+
+static PLOptionTable options[] = {
+{
+    "ns",			/* Number of shade levels */
+    NULL,
+    NULL,
+    &ns,
+    PL_OPT_INT,
+    "-ns levels",
+    "Sets number of shade levels" },
+{
+    "nx",			/* Number of data points in x */
+    NULL,
+    NULL,
+    &nx,
+    PL_OPT_INT,
+    "-nx xpts",
+    "Sets number of data points in x" },
+{
+    "ny",			/* Number of data points in y */
+    NULL,
+    NULL,
+    &ny,
+    PL_OPT_INT,
+    "-ny ypts",
+    "Sets number of data points in y" },
+};
+
+static char *notes[] = {
+"To get smoother color variation, increase ns, nx, and ny.  To get faster",
+"response (especially on a serial link), decrease them.  A decent but quick",
+"test results from ns around 5 and nx, ny around 25.",
+NULL};
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -75,7 +111,7 @@ main(int argc, char *argv[])
     PLFLT x, y, argx, argy, distort;
 
     PLFLT **z, **w, zmin, zmax;
-    PLFLT xg1[XPTS], yg1[YPTS];
+    PLFLT *clevel, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
 
@@ -85,7 +121,8 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+    plMergeOpts(options, "x16c options", notes);
+    plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
 
@@ -95,40 +132,53 @@ main(int argc, char *argv[])
 
     plinit();
 
-/* Set up function arrays */
+/* Set up transformation function */
 
-    plAlloc2dGrid(&z, XPTS, YPTS);
-    plAlloc2dGrid(&w, XPTS, YPTS);
+    tr[0] = 2./(nx-1);
+    tr[1] = 0.0;
+    tr[2] = -1.0;
+    tr[3] = 0.0;
+    tr[4] = 2./(ny-1);
+    tr[5] = -1.0;
+
+/* Allocate data structures */
+
+    clevel = (PLFLT *) calloc(ns, sizeof(PLFLT));
+    xg1 = (PLFLT *) calloc(nx, sizeof(PLFLT));
+    yg1 = (PLFLT *) calloc(ny, sizeof(PLFLT));
+
+    plAlloc2dGrid(&z, nx, ny);
+    plAlloc2dGrid(&w, nx, ny);
 
 /* Set up data array */
 
-    for (i = 0; i < XPTS; i++) {
-	x = (double) (i - (XPTS / 2)) / (double) (XPTS / 2);
-	for (j = 0; j < YPTS; j++) {
-	    y = (double) (j - (YPTS / 2)) / (double) (YPTS / 2) - 1.0;
+    for (i = 0; i < nx; i++) {
+	x = (double) (i - (nx / 2)) / (double) (nx / 2);
+	for (j = 0; j < ny; j++) {
+	    y = (double) (j - (ny / 2)) / (double) (ny / 2) - 1.0;
 
 	    z[i][j] = - sin(7.*x) * cos(7.*y) + x*x - y*y;
 	    w[i][j] = - cos(7.*x) * sin(7.*y) + 2 * x * y;
 	}
     }
-    f2mnmx(z, XPTS, YPTS, &zmin, &zmax);
-    for (i = 0; i < NCONTR; i++)
-	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (float) NCONTR;
+    f2mnmx(z, nx, ny, &zmin, &zmax);
+    for (i = 0; i < ns; i++)
+	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (float) ns;
 
 /* Set up coordinate grids */
 
     cgrid1.xg = xg1;
     cgrid1.yg = yg1;
-    cgrid1.nx = XPTS;
-    cgrid1.ny = YPTS;
+    cgrid1.nx = nx;
+    cgrid1.ny = ny;
 
-    plAlloc2dGrid(&cgrid2.xg, XPTS, YPTS);
-    plAlloc2dGrid(&cgrid2.yg, XPTS, YPTS);
-    cgrid2.nx = XPTS;
-    cgrid2.ny = YPTS;
+    plAlloc2dGrid(&cgrid2.xg, nx, ny);
+    plAlloc2dGrid(&cgrid2.yg, nx, ny);
+    cgrid2.nx = nx;
+    cgrid2.ny = ny;
 
-    for (i = 0; i < XPTS; i++) {
-	for (j = 0; j < YPTS; j++) {
+    for (i = 0; i < nx; i++) {
+	for (j = 0; j < ny; j++) {
 	    mypltr((PLFLT) i, (PLFLT) j, &x, &y, NULL);
 
 	    argx = x * PI/2;
@@ -149,14 +199,14 @@ main(int argc, char *argv[])
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+    for (i = 0; i < ns; i++) {
+	shade_min = zmin + (zmax - zmin) * i / (float) ns;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
+	sh_color = i / (float) (ns-1);
 	sh_width = 2;
 	plpsty(0);
 
-	plshade(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
+	plshade(z, nx, ny, NULL, -1., 1., -1., 1., 
 		shade_min, shade_max, 
 		sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width,
@@ -167,7 +217,7 @@ main(int argc, char *argv[])
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
 /*
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR, mypltr, NULL);
+    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
     */
     pllab("distance", "altitude", "Bogon density");
 
@@ -177,14 +227,14 @@ main(int argc, char *argv[])
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+    for (i = 0; i < ns; i++) {
+	shade_min = zmin + (zmax - zmin) * i / (float) ns;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
+	sh_color = i / (float) (ns-1);
 	sh_width = 2;
 	plpsty(0);
 
-	plshade(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
+	plshade(z, nx, ny, NULL, -1., 1., -1., 1., 
 		shade_min, shade_max, 
 		sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width,
@@ -195,9 +245,8 @@ main(int argc, char *argv[])
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
 /*
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR,
-	   pltr1, (void *) &cgrid1);
-	   */
+    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
+    */
     pllab("distance", "altitude", "Bogon density");
 
 /* Plot using 2d coordinate transform */
@@ -206,14 +255,14 @@ main(int argc, char *argv[])
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+    for (i = 0; i < ns; i++) {
+	shade_min = zmin + (zmax - zmin) * i / (float) ns;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
+	sh_color = i / (float) (ns-1);
 	sh_width = 2;
 	plpsty(0);
 
-	plshade(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
+	plshade(z, nx, ny, NULL, -1., 1., -1., 1., 
 		shade_min, shade_max, 
 		sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width,
@@ -223,17 +272,22 @@ main(int argc, char *argv[])
     plcol(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
-
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR,
-	   pltr2, (void *) &cgrid2);
+    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
     pllab("distance", "altitude", "Bogon density, with streamlines");
 
 /* Clean up */
 
     plend();
-    free((void *) w);
-    free((void *) z);
+
+    free((void *) clevel);
+    free((void *) xg1);
+    free((void *) yg1);
+    plFree2dGrid(z, nx, ny);
+    plFree2dGrid(w, nx, ny);
+    plFree2dGrid(cgrid2.xg, nx, ny);
+    plFree2dGrid(cgrid2.yg, nx, ny);
+
     exit(0);
 }
 
