@@ -479,7 +479,6 @@ typedef struct {
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
 #define    plot3dc	c_plot3dc
-#define    plsurf3d	c_plsurf3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -492,27 +491,27 @@ typedef struct {
 #define    plrgb1	c_plrgb1
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
-#define    plscmap1	c_plscmap1
 #define    plscmap0n	c_plscmap0n
-#define    plscmap1n	c_plscmap1n
+#define    plscmap1	c_plscmap1
 #define    plscmap1l	c_plscmap1l
+#define    plscmap1n	c_plscmap1n
 #define    plscol0	c_plscol0
 #define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
 #define    plscompression	c_plscompression
 #define    plsdev	c_plsdev
-#define    plsdiplt	c_plsdiplt
-#define    plsdiplz	c_plsdiplz
 #define    plsdidev	c_plsdidev
 #define    plsdimap	c_plsdimap
 #define    plsdiori	c_plsdiori
-#define    plsetopt	c_plsetopt
+#define    plsdiplt	c_plsdiplt
+#define    plsdiplz	c_plsdiplz
 #define    plsesc	c_plsesc
+#define    plsetopt	c_plsetopt
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
-#define    plshades	c_plshades
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
+#define    plshades	c_plshades
 #define    plsmaj	c_plsmaj
 #define    plsmem	c_plsmem
 #define    plsmin	c_plsmin
@@ -528,6 +527,7 @@ typedef struct {
 #define    plstripc	c_plstripc
 #define    plstripd	c_plstripd
 #define    plstyl	c_plstyl
+#define    plsurf3d	c_plsurf3d
 #define    plsvpa	c_plsvpa
 #define    plsxax	c_plsxax
 #define    plsyax	c_plsyax
@@ -999,12 +999,6 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
    *  MAG_COLOR, BASE_CONT, SURF_CONT, FACETED, DRAW_SIDES.
    */
 
-/* Plots the 3d surface representation of the function z[x][y]. */
-
-void
-c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-	   PLINT opt, PLFLT *clevel, PLINT nlevel);
-
 /* Set fill pattern directly. */
 
 void
@@ -1060,20 +1054,15 @@ c_plrgb1(PLINT r, PLINT g, PLINT b);
 void
 c_plschr(PLFLT def, PLFLT scale);
 
-/* Set number of colors in cmap 0 */
-
-void
-c_plscmap0n(PLINT ncol0);
-
-/* Set number of colors in cmap 1 */
-
-void
-c_plscmap1n(PLINT ncol1);
-
 /* Set color map 0 colors by 8 bit RGB values */
 
 void
 c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0);
+
+/* Set number of colors in cmap 0 */
+
+void
+c_plscmap0n(PLINT ncol0);
 
 /* Set color map 1 colors by 8 bit RGB values */
 
@@ -1086,6 +1075,11 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 void
 c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
 	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
+
+/* Set number of colors in cmap 1 */
+
+void
+c_plscmap1n(PLINT ncol1);
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
@@ -1155,16 +1149,7 @@ void
 c_plsfnam(const char *fnam);
 
 /* Shade region. */
-void 
-c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
-	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-	  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
-	  PLINT cont_color, PLINT cont_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	  PLPointer pltr_data);
 
-   
 void 
 c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
@@ -1177,7 +1162,7 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLPointer pltr_data);
 
 void 
-plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1186,6 +1171,15 @@ plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
+
+void 
+c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	  PLINT cont_color, PLINT cont_width,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  PLPointer pltr_data);
 
 void 
 plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
@@ -1258,6 +1252,11 @@ c_plstar(PLINT nx, PLINT ny);
 void
 c_plstart(const char *devname, PLINT nx, PLINT ny);
 
+/* Add a point to a stripchart.  */
+
+void
+c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
+
 /* Create 1d stripchart */
 
 void
@@ -1268,11 +1267,6 @@ c_plstripc(PLINT *id, char *xspec, char *yspec,
 	PLINT colbox, PLINT collab,
 	PLINT colline[], PLINT styline[], char *legline[],
 	char *labx, char *laby, char *labtop);
-
-/* Add a point to a stripchart.  */
-
-void
-c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 
 /* Deletes and releases memory used by a stripchart.  */
 
@@ -1290,6 +1284,12 @@ plimage( PLFLT **data, PLINT nx, PLINT ny,
 
 void
 c_plstyl(PLINT nms, PLINT *mark, PLINT *space);
+
+/* Plots the 3d surface representation of the function z[x][y]. */
+
+void
+c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	   PLINT opt, PLFLT *clevel, PLINT nlevel);
 
 /* Sets the edges of the viewport to the specified absolute coordinates */
 
