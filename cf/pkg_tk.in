@@ -25,7 +25,7 @@ install_tk:
 	-cp plserver$E $(BIN_DIR)
 	-cd $(top_srcdir)/bindings/tk; \
 	 cp pltk.h $(INCLUDE_DIR); \
-	 cp *.tcl *.pal tclIndex $(TCL_DIR)
+	 cp *.itk *.tcl *.pal tclIndex $(TCL_DIR)
 	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
 	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
