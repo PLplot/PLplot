@@ -1,0 +1,2 @@
+tmp plplot-dev plplot-doc  plplot-tcl python-plplot
+*.debhelper *substvars files
