@@ -28,7 +28,7 @@ EOF
 }
 
 # These variables set by default assuming you are going to run this
-# script from the installed demos directory $prefix/share/doc/plplot/examples.
+# script from the installed demos directory $prefix/lib/plplot$version/examples.
 cdir=c
 export cdir
 cxxdir=c++
