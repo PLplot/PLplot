@@ -22,6 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 src_dirs = lib src include data bindings
+other_dirs = examples utils test scripts doc pkgcfg
 
 if enable_dyndrivers
   SUBDIRS =
@@ -33,7 +34,9 @@ else
   SUBDIRS = drivers $(src_dirs)
 endif
 
-SUBDIRS += examples utils test scripts doc pkgcfg
+SUBDIRS += $(other_dirs)
+
+DIST_SUBDIRS = libltdl $(src_dirs) drivers $(other_dirs)
 
 bin_SCRIPTS = plplot_libtool
 

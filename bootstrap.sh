@@ -115,7 +115,8 @@ run aclocal $aclocal_opts \
   && run autoconf \
   && ( echo -n "Regenerating libltdl/aclocal+configure..."; \
        cd libltdl ; \
-       aclocal && \
+       aclocal ${aclocal_opts} && \
+       automake && \
        if [ ! -e configure.ac ] ; then \
            cp configure.in configure.ac ; \
            autoconf 2>/dev/null ; \
