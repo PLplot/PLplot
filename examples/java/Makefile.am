@@ -1,5 +1,4 @@
-# examples/java/Makefile.am for PLplot
-###
+# examples/java/Makefile.am for PLplot ###
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002, 2004  Alan W. Irwin
@@ -44,6 +43,34 @@ javafiles = \
 
 javademos = README.javademos $(javafiles) Makefile.examples
 
+# These are for make check compilation of examples.
+JAVAC = javac
+PLPLOT_CLASSPATH = `pwd`/$(top_builddir)/bindings/java/plplot.jar
+
+examples_jar = plplot-examples.jar
+
+example_classes = \
+                 plplot/examples/x01.class \
+                 plplot/examples/x02.class \
+                 plplot/examples/x03.class \
+                 plplot/examples/x04.class \
+                 plplot/examples/x05.class \
+                 plplot/examples/x06.class \
+                 plplot/examples/x07.class \
+                 plplot/examples/x08.class \
+                 plplot/examples/x09.class \
+                 plplot/examples/x10.class \
+                 plplot/examples/x11.class \
+                 plplot/examples/x12.class \
+                 plplot/examples/x13.class \
+                 plplot/examples/x14.class \
+                 plplot/examples/x15.class \
+                 plplot/examples/x16.class \
+                 plplot/examples/x17.class \
+                 plplot/examples/x18.class \
+                 plplot/examples/x19.class \
+                 plplot/examples/x22.class
+
 if enable_java
 
 # Duplicate this so the source appears in the examples/java directory for
@@ -51,10 +78,21 @@ if enable_java
 examples_javadir = $(DATA_DIR)/examples/java
 examples_java_DATA = $(javademos)
 
+check-local: $(examples_jar)
+
+$(examples_jar): $(example_classes)
+	jar -cf $(examples_jar) plplot/examples/*.class
+
 endif
 
 install-data-hook:
 	( cd $(DESTDIR)$(examples_javadir) ; mv -f Makefile.examples Makefile )
+
+clean-local:
+	rm -rf plplot $(examples_jar)
+
+plplot/examples/%.class : %.java
+	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH)
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]

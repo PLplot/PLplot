@@ -39,7 +39,7 @@ dirname=@DIRNAME@
 EXAMPLES_DIR=${EXAMPLES_DIR:-.}
 OUTPUT_DIR=${OUTPUT_DIR:-.}
 device=${DEVICE:-psc}
-export EXAMPLES_DIR OUTPUT_DIR device
+export EXAMPLES_DIR OUTPUT_DIR device 
 
 usage()
 {
@@ -132,10 +132,11 @@ cxxdir=$EXAMPLES_DIR/c++
 f77dir=$EXAMPLES_DIR/f77
 pythondir=$EXAMPLES_DIR/python
 tcldir=$EXAMPLES_DIR/tcl
+javadir=$EXAMPLES_DIR/java
 octave=@OCTAVE@
 octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:
 PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
-export cdir cxxdir f77dir pythondir tcldir octave octavedir PATH
+export cdir cxxdir f77dir pythondir tcldir javadir octave octavedir PATH
 
 fe=""
 

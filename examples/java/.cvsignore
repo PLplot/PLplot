@@ -6,3 +6,5 @@ Makefile.examples
 .libs
 *.la
 *.lo
+plplot-examples.jar
+plplot

@@ -20,18 +20,14 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# This is called from plplot-test.sh with $device, $dsuffix,
+# This is called from plplot-test.sh with $javadir, $device, $dsuffix,
 # and $options defined.
-# N.B. $CLASSPATH must be defined properly and the path must point
-# to the java and javac commands for this to work.
+# N.B. $PLPLOT_CLASSPATH must be defined properly so it includes a 
+# reference to plplot.jar. If not we assume in installation location.
+# The path must point to the java command for this to work. 
 
-# The java examples were automatically built in the make install step
-# by cd $prefix/lib
-# javac -d java java/plplot/examples/*.java.
-# This is equivalent to
-# javac -d $CLASSPATH $CLASSPATH/plplot/examples/*.java
-# but means that $CLASSPATH does not have to be set at build
-# or install time like it does to execute these pre-compiled examples.
+# To build the java examples before running this script do the following:
+# pushd $javadir; make; popd
 
 # Do the standard non-interactive examples.
 # skip 14 because it requires two output files.
@@ -39,7 +35,15 @@
 # skip 17, and 20 because they are interactive and not implemented.
 # skip 21 because it delivers variable results depending on computer timing
 # and load and is not implemented.
-PLPLOT_CLASSPATH=@JAVADATA_HARDDIR@/plplot.jar
+#
+# Set up option to point to java bindings jar file and wrapper if needed.
+if test -n "$PLPLOT_JAVA_WRAP_DIR" ; then
+  JAVA_TEST_OPTS="-Dplplot.libdir=$PLPLOT_JAVA_WRAP_DIR"
+fi
+if test -z "$PLPLOT_CLASSPATH" ; then
+  PLPLOT_CLASSPATH=@JAVADATA_HARDDIR@/plplot.jar
+fi
+
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 22; do
-  java -classpath ${PLPLOT_CLASSPATH}:java/plplot-examples.jar plplot.examples.x${index} -dev $device -o x${index}j.$dsuffix $options
+  java -classpath ${PLPLOT_CLASSPATH}:${javadir}/plplot-examples.jar ${JAVA_TEST_OPTS} plplot.examples.x${index} -dev $device -o x${index}j.$dsuffix $options
 done
