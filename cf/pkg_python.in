@@ -66,7 +66,11 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	  echo "$(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR)" ; \
 	fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
-	@-cd $(top_srcdir)/examples/python; $(CP) $(PYTHON_DEMOS) $(DEMOS_DIR)/python
+	@-cd $(top_srcdir)/examples/python ; \
+	for i in $(PYTHON_DEMOS) ; do \
+	  sed 's:@MODULE_DIR@:$(PYTHON_DIR):' < $$i > $(DEMOS_DIR)/$$i ; \
+	  chmod +x $(DEMOS_DIR)/$$i ; \
+	done
 #	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
 #		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
 #	-cd $(top_srcdir)/bindings/python; $(CP) *.py $(PYTHON_MOD_DIR)/plplot

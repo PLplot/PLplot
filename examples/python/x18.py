@@ -7,6 +7,14 @@
 import math
 import pl
 import sys
+import os
+
+module_dir = "@MODULE_DIR@"
+
+if module_dir[0] == '@':
+	module_dir = os.getcwd ()
+
+sys.path.insert (0, module_dir)
 
 opt = [1, 0, 1, 0]
 
