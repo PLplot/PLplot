@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.14  1994/01/15 17:32:14  mjl
-   Added include of pdf.h.
+   Revision 1.15  1994/03/23 06:57:46  mjl
+   Changed function names in prototypes for xterm, mskermit, and added
+   prototypes for versaterm and vlt drivers (minor tek devices).
 
+ * Revision 1.14  1994/01/15  17:32:14  mjl
+ * Added include of pdf.h.
+ *
  * Revision 1.13  1993/12/21  10:34:40  mjl
  * Added prototype for new dp driver initialization function.
  *
@@ -71,13 +75,14 @@ void plD_tidy_xw		(PLStream *);
 void plD_state_xw		(PLStream *, PLINT);
 void plD_esc_xw			(PLStream *, PLINT, void *);
 
-void plD_init_xte		(PLStream *);
+void plD_init_xterm		(PLStream *);
 void plD_init_tekt		(PLStream *);
 void plD_init_tekf		(PLStream *);
-void plD_init_t4107t		(PLStream *);
-void plD_init_t4107f		(PLStream *);
+void plD_init_tek4107t		(PLStream *);
+void plD_init_tek4107f		(PLStream *);
 void plD_init_mskermit		(PLStream *);
-void plD_state_mskermit		(PLStream *, PLINT);
+void plD_init_versaterm		(PLStream *);
+void plD_init_vlt		(PLStream *);
 
 void plD_line_tek		(PLStream *, short, short, short, short);
 void plD_polyline_tek		(PLStream *, short *, short *, PLINT);
