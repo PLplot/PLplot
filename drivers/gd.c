@@ -187,6 +187,9 @@ void plD_init_png(PLStream *pls)
     pls->bytecnt = 0;
     pls->page = 0;
     pls->dev_fill0 = 1;         /* Can do solid fills */
+
+   /*temporary override until the width stuff is debugged */
+#define GD2_VERS 1
 #if GD2_VERS < 2 
     pls->width = 1;
 #endif
