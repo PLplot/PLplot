@@ -1,14 +1,16 @@
 plplot (5.3.0-3) unstable; urgency=low
 
-  * NOT YET RELEASED!
   * Get Octave bindings to work with octave2.1-2.1.53, the version
     available in unstable.  Using dpatch for that.
   * debian/rules:
     - Include dpatch.make.
     - Targets build and clean depend on patch and unpatch, respectively.
-  * debian/control: Build-Dpends on dpatch
+  * debian/control:
+    - Build-Depends on dpatch.
+    - Drop alternative build-dependency to octave2.0-headers and force
+      versioned dependency on octave2.1-headers (>= 2.1.54-2)
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 19 Feb 2004 21:23:50 +0100
 
 plplot (5.3.0-2) unstable; urgency=low
 
