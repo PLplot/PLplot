@@ -1,6 +1,6 @@
 /*
   This header file contains the lookup tables used for converting between
-  unicode and the 3 standard type 1 font sequences, dingbat, standard, and
+  unicode and the 3 standard type 1 font sequences, dingbats, standard, and
   symbol.  These data therefore allow unicode access to at least the 35
   standard type 1 fonts in the gsfonts font package, and probably many other
   type 1 fonts as well.
@@ -24,14 +24,14 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-const int number_of_entries_in_unicode_to_dingbats_table=188;
-
 typedef struct {
 	unsigned int Unicode;
 	unsigned char Type1;
-} Unicode_to_Dingbats_table;
+} Unicode_to_Type1_table;
 
-const Unicode_to_Dingbats_table unicode_to_dingbats_lookup_table[188] = {
+const int number_of_entries_in_unicode_to_dingbats_table=188;
+
+const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[188] = {
 {0x0020,32},
 {0x2192,213},
 {0x2194,214},
@@ -224,12 +224,7 @@ const Unicode_to_Dingbats_table unicode_to_dingbats_lookup_table[188] = {
 
 const int number_of_entries_in_unicode_to_standard_table=148;
 
-typedef struct {
-	unsigned int Unicode;
-	unsigned char Type1;
-} Unicode_to_Standard_table;
-
-const Unicode_to_Standard_table unicode_to_standard_lookup_table[148] = {
+const Unicode_to_Type1_table unicode_to_standard_lookup_table[148] = {
 {0x0020,32},
 {0x0021,33},
 {0x0022,34},
@@ -382,12 +377,7 @@ const Unicode_to_Standard_table unicode_to_standard_lookup_table[148] = {
 
 const int number_of_entries_in_unicode_to_symbol_table=166;
 
-typedef struct {
-	unsigned int Unicode;
-	unsigned char Type1;
-} Unicode_to_Symbol_table;
-
-const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[166] = {
+const Unicode_to_Type1_table unicode_to_symbol_lookup_table[166] = {
 {0x0020,32},
 {0x0021,33},
 {0x0023,35},
