@@ -144,6 +144,8 @@ static int opt_server_host	(char *, char *, void *);
 static int opt_server_port	(char *, char *, void *);
 static int opt_user		(char *, char *, void *);
 static int opt_tk_file          (char *, char *, void *); /* jc: name of file to plserver -file option */
+static int opt_dpi		(char *, char *, void *);
+static int opt_dev_compression	(char *, char *, void *);
 
 /* Global variables */
 
@@ -546,6 +548,22 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-tk_file file",
     "file for plserver (tk or dp driver)" },
+{
+    "dpi",			/* Dots per inch */
+    opt_dpi,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ARG,
+    "-dpi dpi",
+    "Resolution, in dots per inch (e.g. -dpi 360x360)" },
+{
+    "compression",			/* compression */
+    opt_dev_compression,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ARG,
+    "-compression num",
+    "Sets compression level in supporting devices" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -1858,3 +1876,70 @@ static int opt_tk_file(char *opt, char *optarg, void *client_data)
     strcpy (plsc->tk_file, optarg);
     return 0;
 }
+
+/*--------------------------------------------------------------------------*\
+ * opt_dpi()
+ *
+ * Performs appropriate action for option "dpi":
+ * Set dpi resolution for output device
+ *   e.g.,  "-dpi 600x300", will set X dpi to 600 and Y dpi to 300
+ * 		or 
+ *   e.g., "-dpi 1200"
+ * Will set both X and Y dpi to 1200 dpi
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_dpi(char *opt, char *optarg, void *client_data)
+{
+    char *field;
+    PLFLT xdpi = 0., ydpi = 0.;
+    PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
+    
+    if (strchr (optarg, 'x')) 
+       {
+
+	field = strtok (optarg, "x");
+	xdpi = atof (field);
+	if (xdpi == 0)
+	    fprintf (stderr, "?invalid xdpi\n");
+
+	if ((field = strtok (NULL, " ")) == NULL)
+	   return 1;
+	   
+        ydpi = atof (field);
+        if (ydpi == 0)
+	   fprintf (stderr, "?invalid ydpi\n");
+
+      }
+else
+      {
+      xdpi = atof (optarg);
+      ydpi=xdpi;
+      if (xdpi==0) return 1;
+      }
+
+    plspage (xdpi, ydpi, xwid, ywid, xoff, yoff);
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_dev_compression()
+ *
+ * Sets device compression
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_dev_compression(char *opt, char *optarg, void *client_data)
+{
+    PLINT comp = 0;
+   
+    comp = atoi(optarg);
+    if (comp == 0) {
+	fprintf(stderr, "?invalid compression\n");
+	return 1;
+    }
+    plscompression (comp);
+
+    return 0;
+}
+
