@@ -6,13 +6,8 @@
 # 14-Jul-1994
 #
 # Basic make assignments for PLplot under Unix (driven by "configure").
+# These are used in both the library and demo Makefiles.
 # -----------------------------------------------------------------------
-
-# Yes, this means that SunOS apps linked to PLplot shared libraries will
-# break at 5.0.  No way around it though.
-
-MAJOR_VERSION	= 4
-MINOR_VERSION	= 99
 
 # Utilities
 
@@ -22,35 +17,17 @@ OCC		= @OCC@
 F77		= @F77@
 LDF		= @LDF@
 M4		= m4
-RANLIB		= @RANLIB@
-LIB_BUILD	= ar q
+LN		= ln -s
 
-# Flags, names, and other miscellanea
+# Flags and other miscellanea
 
-CC_FLAGS	= @CC_FLAGS@ @INCS@
 F77_FLAGS	= @F77_FLAGS@
-CC_FLAGS_DEMOS	= @CC_FLAGS@ -I. @INCS@
-SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
-SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
 LDC_FLAGS	= @LDC_FLAGS@
 LDF_FLAGS	= @LDF_FLAGS@
 LDC_LIBS	= @LIBS@
 LDF_LIBS	= @LIBS@
-LIBS		= @LIBS@
 LIB_TAG		= @LIB_TAG@
-INSTALL_DIR	= @prefix@
-SHLIB_SUFFIX	= @SHLIB_SUFFIX@
-SHLIB_BUILD	= @SHLIB_BUILD@
 TO		= -o
-
-# Hacks to deal with optimizer failures.
-
-CC_FLAGS_SCCONT = @CC_FLAGS_SCCONT@ @INCS@
-CC_FLAGS_XWIN	= @CC_FLAGS_XWIN@   @INCS@
-
-# Clear the suffix list.  The inference rules are set up later.
-
-.SUFFIXES:
 
 # Install directories
 
@@ -61,27 +38,4 @@ INFO_DIR	= @INFO_DIR@
 INCLUDE_DIR	= @INCLUDE_DIR@
 TCL_DIR		= @TCL_DIR@
 DEMOS_DIR	= @DEMOS_DIR@
-
-# -----------------------------------------------------------------------
-# Dependent directories
-# -----------------------------------------------------------------------
-
-PLLIB_DIR	= ../lib
-PLFNT_DIR	= ../lib
-PLLIB_PATH	= $(PLLIB_DIR)/
-PLFNT_PATH	= $(PLFNT_DIR)/
-
-# This is used for making the install versions of plrender & plserver
-# (Must relink after installing shared library!)
-
-LIB_INSTALL	= -L$(LIB_DIR) -lplplot$(LIB_TAG)
-
-# These are what we link against.
-
-PLLIB_LDC	= -L$(PLLIB_DIR) -lplplot$(LIB_TAG)
-PLLIB_LDF	= -L$(PLLIB_DIR) -lplplot$(LIB_TAG)
-
-# The default target -- a convenient forward reference
-
-default: everything
 
