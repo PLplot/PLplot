@@ -210,42 +210,6 @@ void plD_tidy_os2		(PLStream *);
 void plD_state_os2		(PLStream *, PLINT);
 void plD_esc_os2		(PLStream *, PLINT, void *);		 
 
-void plD_init_amiwn		(PLStream *);
-void plD_line_amiwn		(PLStream *, short, short, short, short);
-void plD_polyline_amiwn		(PLStream *, short *, short *, PLINT);
-void plD_eop_amiwn		(PLStream *);
-void plD_bop_amiwn		(PLStream *);
-void plD_tidy_amiwn		(PLStream *);
-void plD_state_amiwn		(PLStream *, PLINT);
-void plD_esc_amiwn		(PLStream *, PLINT, void *);
-
-void plD_init_amipr		(PLStream *);
-void plD_line_amipr		(PLStream *, short, short, short, short);
-void plD_polyline_amipr		(PLStream *, short *, short *, PLINT);
-void plD_eop_amipr		(PLStream *);
-void plD_bop_amipr		(PLStream *);
-void plD_tidy_amipr		(PLStream *);
-void plD_state_amipr		(PLStream *, PLINT);
-void plD_esc_amipr		(PLStream *, PLINT, void *);
-
-void plD_init_iff		(PLStream *);
-void plD_line_iff		(PLStream *, short, short, short, short);
-void plD_polyline_iff		(PLStream *, short *, short *, PLINT);
-void plD_eop_iff		(PLStream *);
-void plD_bop_iff		(PLStream *);
-void plD_tidy_iff		(PLStream *);
-void plD_state_iff		(PLStream *, PLINT);
-void plD_esc_iff		(PLStream *, PLINT, void *);
-
-void plD_init_aegis		(PLStream *);
-void plD_line_aegis		(PLStream *, short, short, short, short);
-void plD_polyline_aegis		(PLStream *, short *, short *, PLINT);
-void plD_eop_aegis		(PLStream *);
-void plD_bop_aegis		(PLStream *);
-void plD_tidy_aegis		(PLStream *);
-void plD_state_aegis		(PLStream *, PLINT);
-void plD_esc_aegis		(PLStream *, PLINT, void *);
-
 void plD_init_pbm		(PLStream *);
 void plD_line_pbm		(PLStream *, short, short, short, short);
 void plD_polyline_pbm		(PLStream *, short *, short *, PLINT);
