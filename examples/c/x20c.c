@@ -12,7 +12,7 @@
 #define YDIM 220
 
 void save_plot(char *);
-void gray_cmap(int);
+void gray_cmap(PLINT);
 int read_img(char *, PLFLT ***, int *, int *, int *);
 int get_clip(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
