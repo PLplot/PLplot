@@ -422,11 +422,11 @@ plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset);
 
 /* Stores hex value into FCI (font characterization integer). */
 void
-plP_hex2fci(unsigned char hexvalue, char hexdigit, unsigned int *pfci);
+plP_hex2fci(unsigned char hexvalue, unsigned char hexdigit, unsigned int *pfci);
 
 /* Retrieves hex value from FCI (font characterization integer). */
 void
-plP_fci2hex(unsigned int fci, unsigned char *phexvalue, char hexdigit);
+plP_fci2hex(unsigned int fci, unsigned char *phexvalue, unsigned char hexdigit);
 
 /* Pattern fills in software the polygon bounded by the input points. */
 
