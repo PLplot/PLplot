@@ -25,7 +25,7 @@ ZLIBLIBSTR=-lz
 FREETYPELIBSTR=-lfreetype
 QHULLLIBS=""
 NNLIBS=""
-CSALIBS='$(top_builddir)/lib/csa/libcsa.la'
+CSALIBS=""
 
 # ----------------------------------------------------------------------------
 # Attempt to find jni.h, if java support is enabled.
@@ -901,16 +901,45 @@ if test "$enable_linuxvga" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Check for csa
+# ----------------------------------------------------------------------------
+
+if test "$with_csa" = "yes"; then
+#make test on simple NaN operations (nan+1. e.g.)
+	AC_DEFINE(WITH_CSA, [], [Define if csa is desired])
+	CSALIBS='$(top_builddir)/lib/csa/libcsa.la'
+fi
+
+# ----------------------------------------------------------------------------
 # Check for QHull
 # ----------------------------------------------------------------------------
 
 if test "$with_qhull" = "yes"; then
+# if the above csa test fails, don't use Qhull, as nn can't be used!
     AC_CHECK_LIB(qhull, qh_new_qhull, [ 
         AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
         QHULLLIBS="-lqhull"
         NNLIBS='$(top_builddir)/lib/nn/libnn.la' ], [ with_qhull="no" ])
 fi
 
+# ----------------------------------------------------------------------------
+# CFLAGS to use ieee because of NaN issues in libnn and libcsa
+# ----------------------------------------------------------------------------
+
+if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
+    case "$host_cpu" in
+	i*86 )
+            CFLAGS="$(CFLAGS) -mieee-fp"
+	;;
+	alpha* )
+            if test "$GCC" = yes; then
+                CFLAGS="$(CFLAGS) -mieee"
+            else
+                CFLAGS="$(CFLAGS) -ieee"
+	;;
+    esac
+
+fi
 
 # ----------------------------------------------------------------------------
 # Now do the variable substitutions.
