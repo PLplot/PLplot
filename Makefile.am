@@ -33,7 +33,7 @@ else
   SUBDIRS = drivers $(src_dirs)
 endif
 
-SUBDIRS += examples test utils scripts doc pkgcfg
+SUBDIRS += examples utils test scripts doc pkgcfg
 
 bin_SCRIPTS = plplot_libtool
 
