@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1993/12/08 06:17:33  mjl
+ * Revision 1.30  1994/01/25 06:18:34  mjl
+ * Added double buffering capability.
+ *
+ * Revision 1.29  1993/12/08  06:17:33  mjl
  * Split off definition of state structure into header file.  Changed end of
  * page handler to check for and process events even if not pausing before
  * the next page.
@@ -36,7 +39,7 @@ static void  Init_child		(PLStream *);
 static void  WaitForPage	(PLStream *);
 static void  HandleEvents	(PLStream *);
 static void  ColorInit		(PLStream *);
-static void  CreatePixmap	(XwDev *);
+static void  CreatePixmap	(PLStream *);
 static void  Colorcpy		(XColor *, XColor *);
 
 static void  EventHandler	(PLStream *, XEvent *);
@@ -90,13 +93,17 @@ plD_init_xw(PLStream *pls)
 
     dev = (XwDev *) pls->dev;
 
-/* Enable/disable writing to pixmap */
+/* Set up flags that determine what we are writing to */
+/* If nopixmap is set, ignore db */
 
-    dev->write_to_window = 1;
-    if (pls->nopixmap)
+    if (pls->nopixmap) {
 	dev->write_to_pixmap = 0;
+	pls->db = 0;
+    }
     else
 	dev->write_to_pixmap = 1;
+
+    dev->write_to_window = ! pls->db;
 
 /* X-specific initialization */
 
@@ -207,6 +214,9 @@ plD_eop_xw(PLStream *pls)
     dbug_enter("plD_eop_xw");
 
     XFlush(dev->display);
+    if (pls->db)
+	ExposeCmd(pls);
+	
     WaitForPage(pls);
 }
 
@@ -399,7 +409,7 @@ Init(PLStream *pls)
 /* Create pixmap for holding plot image (for expose events). */
 
     if (dev->write_to_pixmap) 
-	CreatePixmap(dev);
+	CreatePixmap(pls);
 
 /* Set drawing color */
 
@@ -717,7 +727,8 @@ ExposeEH(PLStream *pls, XEvent *event)
 
 /* Remove extraneous expose events from the event queue */
 
-    while (XCheckMaskEvent(dev->display, ExposureMask, event));
+    while (XCheckMaskEvent(dev->display, ExposureMask, event))
+	;
 }
 
 /*----------------------------------------------------------------------*\
@@ -748,7 +759,8 @@ ResizeEH(PLStream *pls, XEvent *event)
 /* Remove extraneous expose events from the event queue */
 /* These are not needed since we've redrawn the whole plot */
 
-    while (XCheckMaskEvent(dev->display, ExposureMask, event));
+    while (XCheckMaskEvent(dev->display, ExposureMask, event))
+	;
 }
 
 /*----------------------------------------------------------------------*\
@@ -756,7 +768,6 @@ ResizeEH(PLStream *pls, XEvent *event)
 *
 * Event handler routine for expose events.
 * These are "pure" exposures (no resize), so don't need to clear window.
-* Note: this function is callable from the outside world.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -831,7 +842,7 @@ ResizeCmd(PLStream *pls, PLWindow *window)
     if (dev->write_to_pixmap) {
 	XSync(dev->display, 0);
 	XFreePixmap(dev->display, dev->pixmap);
-	CreatePixmap(dev);
+	CreatePixmap(pls);
     }
 
 /* Now do a redraw using the new size */
@@ -879,7 +890,8 @@ RedrawCmd(PLStream *pls)
 	plRemakePlot(pls);
 	XFlush(dev->display);
     }
-    dev->write_to_window = 1;
+
+    dev->write_to_window = pls->db;
 }
 
 /*----------------------------------------------------------------------*\
@@ -912,8 +924,9 @@ CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
 \*----------------------------------------------------------------------*/
 
 static void
-CreatePixmap(XwDev *dev)
+CreatePixmap(PLStream *pls)
 {
+    XwDev *dev = (XwDev *) pls->dev;
     int (*oldErrorHandler)();
 
     oldErrorHandler = XSetErrorHandler(CreatePixmapErrorHandler);
@@ -928,6 +941,8 @@ CreatePixmap(XwDev *dev)
     XSync(dev->display, 0);
     if (CreatePixmapStatus != Success) {
 	dev->write_to_pixmap = 0;
+	dev->write_to_window = 1;
+	pls->db = 0;
 	fprintf(stderr, "\n\
 Warning: pixmap could not be allocated (insufficient memory on server).\n\
 Driver will redraw the entire plot to handle expose events.\n");
