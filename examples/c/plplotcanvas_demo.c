@@ -70,7 +70,6 @@ int main(int argc,char *argv[] )
    * the gcw driver is loaded into plplot, and plinit() is invoked.
    */
   canvas=plplot_canvas_new(TRUE);
-  plplot_canvas_use_text(canvas,TRUE);
   plplot_canvas_set_size(canvas,WIDTH,HEIGHT);
 
   /* Determine the viewport so that everything is drawn on the canvas */
