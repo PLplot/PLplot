@@ -30,8 +30,10 @@
 # -----------------------------------------------------------------------------
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(PLLIB_SA)
+MATLIBS = $(MATLIB_AR) $(MATLIB_SO) $(MATLIB_SA)
+CPPLIBS = $(CPPLIB_AR) $(CPPLIB_SO) $(CPPLIB_SA)
 
-libs:	$(PLLIBS)
+libs:	$(PLLIBS) $(MATLIBS) $(CPPLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR)
@@ -51,6 +53,46 @@ $(PLLIB_SA):	$(LIB_OBJS_SA)
 	cd shared; \
 	$(ARLIB_BUILD) ../$(PLLIB_SA) $(LIB_OBJS_SA)
 	$(RANLIB) $(PLLIB_SA)
+	@echo ""
+
+$(MATLIB_AR):	$(MAT_OBJS)
+	-$(RM) $(MATLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(MATLIB_AR) $(MAT_OBJS)
+	$(RANLIB) $(MATLIB_AR)
+
+$(MATLIB_SO):	$(MAT_OBJS_SO)
+	-$(RM) $(MATLIB_SO)
+	@echo ""; echo "Building shared object library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(MATLIB_SO) $(MAT_OBJS_SO)
+
+$(MATLIB_SA):	$(MAT_OBJS_SA)
+	-$(RM) $(MATLIB_SA)
+	@echo ""; echo "Building shared archive library"; echo ""
+	cd shared; \
+	$(ARLIB_BUILD) ../$(MATLIB_SA) $(MAT_OBJS_SA)
+	$(RANLIB) $(MATLIB_SA)
+	@echo ""
+
+$(CXXLIB_AR):	$(CXX_OBJS)
+	-$(RM) $(CXXLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(CXXLIB_AR) $(CXX_OBJS)
+	$(RANLIB) $(CXXLIB_AR)
+
+$(CXXLIB_SO):	$(CXX_OBJS_SO)
+	-$(RM) $(CXXLIB_SO)
+	@echo ""; echo "Building shared object library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(CXXLIB_SO) $(CXX_OBJS_SO)
+
+$(CXXLIB_SA):	$(CXX_OBJS_SA)
+	-$(RM) $(CXXLIB_SA)
+	@echo ""; echo "Building shared archive library"; echo ""
+	cd shared; \
+	$(ARLIB_BUILD) ../$(CXXLIB_SA) $(CXX_OBJS_SA)
+	$(RANLIB) $(CXXLIB_SA)
 	@echo ""
 
 # -----------------------------------------------------------------------------

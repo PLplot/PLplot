@@ -39,15 +39,29 @@ SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
 MATLIBS = $(MATLIB_AR) $(MATLIB_SO)
-CPPLIBS = $(CPPLIB_AR) $(CPPLIB_SO)
+CXXLIBS = $(CXXLIB_AR) $(CXXLIB_SO)
 
-libs:	$(PLLIBS)
+libs:	$(PLLIBS) $(MATLIBS) $(CXXLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
+
+$(MATLIB_AR): $(MAT_OBJS)
+	-$(RM) $(MATLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(MATLIB_AR) $(MAT_OBJS)
+	$(RANLIB) $(MATLIB_AR)
+	@echo ""
+
+$(CXXLIB_AR): $(CXX_OBJS)
+	-$(RM) $(CXXLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(CXXLIB_AR) $(CXX_OBJS)
+	$(RANLIB) $(CXXLIB_AR)
+	@echo ""
 
 # The following rule based (very) loosely on what I see David Engel
 # did in his Linux Tcl/Tk port.  
@@ -64,11 +78,25 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o -liostream
+		$(LIB_OBJS) stupidtk.o
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
 	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 	echo $(LIBVERSION) > version.built
 	./version inc
+	@echo ""
+
+$(MATLIB_SO): $(MAT_OBJS)
+	-$(RM) $(MATLIB_SO)
+	@echo ""; echo "Building shared library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(MATLIB_SO) $(MAT_OBJS)
+	@echo ""
+
+$(CXXLIB_SO): $(CXX_OBJS)
+	-$(RM) $(CXXLIB_SO)
+	@echo ""; echo "Building shared library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(CXXLIB_SO) $(CXX_OBJS)
 	@echo ""
 
 # -----------------------------------------------------------------------------

@@ -26,8 +26,10 @@
 # -----------------------------------------------------------------------------
 
 PLLIBS = $(PLLIB_AR)
+MATLIBS = $(MATLIB_AR)
+CPPLIBS = $(CPPLIB_AR)
 
-libs:	$(PLLIBS)
+libs:	$(PLLIBS) $(MATLIBS) $(CPPLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR) $(PLLIB_AR)~
@@ -40,6 +42,32 @@ $(PLLIB_AR):	$(LIB_OBJS)
 	  $(SHLIB_LIBS) -lc -lm 2>ld.out
 	ar q $(PLLIB_AR) shr.o
 	rm -f $(PLLIB_AR)~ $(PLLIB_AR).syms shr.o
+	@echo ""
+
+$(MATLIB_AR):	$(MAT_OBJS)
+	-$(RM) $(MATLIB_AR) $(MATLIB_AR)~
+	@echo ""; echo "Building shared library"; echo ""
+	ar q $(MATLIB_AR)~ $(MAT_OBJS)
+	dump -g $(MATLIB_AR)~ | \
+	  awk '$$1 > 0 && $$1 < 999999 && $$2 > 0 {print $$2}'\
+	    > $(MATLIB_AR).syms
+	ld -o shr.o $(MATLIB_AR)~ -H512 -T512 -bM:SRE -bE:$(MATLIB_AR).syms \
+	  $(SHLIB_LIBS) -lc -lm 2>ld.out
+	ar q $(MATLIB_AR) shr.o
+	rm -f $(MATLIB_AR)~ $(MATLIB_AR).syms shr.o
+	@echo ""
+
+$(CXXLIB_AR):	$(CXX_OBJS)
+	-$(RM) $(CXXLIB_AR) $(CXXLIB_AR)~
+	@echo ""; echo "Building shared library"; echo ""
+	ar q $(CXXLIB_AR)~ $(CXX_OBJS)
+	dump -g $(CXXLIB_AR)~ | \
+	  awk '$$1 > 0 && $$1 < 999999 && $$2 > 0 {print $$2}'\
+	    > $(CXXLIB_AR).syms
+	ld -o shr.o $(CXXLIB_AR)~ -H512 -T512 -bM:SRE -bE:$(CXXLIB_AR).syms \
+	  $(SHLIB_LIBS) -lc -lm 2>ld.out
+	ar q $(CXXLIB_AR) shr.o
+	rm -f $(CXXLIB_AR)~ $(CXXLIB_AR).syms shr.o
 	@echo ""
 
 # -----------------------------------------------------------------------------
