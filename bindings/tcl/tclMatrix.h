@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.7  1994/06/30 18:38:49  mjl
+ * Revision 1.8  1994/08/05 17:45:31  furnish
+ * More on the C++ shadow class.
+ *
+ * Revision 1.7  1994/06/30  18:38:49  mjl
  * Changed typedef for Mat_int back to an int, and eliminated M?D macros in
  * favor of directly addressing the array.
  *
@@ -157,6 +160,15 @@ class TclMatFloat {
     }
 
     int Dimensions() { return matPtr->dim; }
+
+    Mat_float& operator()( int i )
+    {
+	tMat_Assert( matPtr->dim == 1, "Wrong number of indicies." );
+	tMat_Assert( i >= 0 && i < matPtr->n[0],
+		     "Out of bounds reference" );
+
+	return matPtr->fdata[i];
+    }
 
     Mat_float& operator()( int i, int j )
     {
