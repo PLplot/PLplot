@@ -424,7 +424,11 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Partially initialize X driver. */
 
-    plD_open_xw(plFramePtr->pls);
+    pllib_init();
+
+    plsdev("xwin");
+    pllib_devinit();
+    plP_esc(PLESC_DEVINIT, NULL);
 
 /* Create list of valid device names and keywords for page dumps */
 
@@ -1421,7 +1425,6 @@ PlFrameInit(ClientData clientData)
 
     if ( ! plFramePtr->tkwin_initted) {
 	plsstrm(plFramePtr->ipls);
-	plsdev("xwin");
 	plsxwin(Tk_WindowId(tkwin));
 	plspause(0);
 	plinit();
@@ -2073,8 +2076,9 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
  */
 
     plsstrm(plFramePtr->ipls);
-    PLColor_from_XColor(&pls->cmap0[0], plFramePtr->bgColor);
-    plX_setBGFG(pls);
+    plP_esc(PLESC_DEV2PLCOL, (void *) plFramePtr->bgColor);
+    pl_cpcolor(&pls->cmap0[0], &pls->tmpcolor);
+    plP_esc(PLESC_SETBGFG, NULL);
 
     Tk_SetWindowBackground(tkwin, xwd->cmap0[0].pixel);
     Tk_SetWindowBorder(tkwin, xwd->cmap0[0].pixel);
