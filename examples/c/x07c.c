@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1995/06/01 21:40:08  mjl
+ * Revision 1.13  1996/11/18 19:02:18  furnish
+ * Make buffer larger to prevent use of unallocated memory.
+ *
+ * Revision 1.12  1995/06/01  21:40:08  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
  *
@@ -42,7 +45,7 @@ static int base[17] =
 int
 main(int argc, char *argv[])
 {
-    char text[4];
+    char text[10];
     int i, j, k, l;
     PLFLT x, y;
 
