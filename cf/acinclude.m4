@@ -29,13 +29,111 @@ dnl
 dnl ------------------------------------------------------------------------
 dnl Include macro which knows about the cf/ directory
 dnl
-define([PL_INCLUDE],[builtin([include],[cf/$1])])dnl
+define([PL_INCLUDE], [builtin([include], [cf/$1])])
 dnl
 dnl ------------------------------------------------------------------------
 dnl This quicky is good during development, e.g. PL_IGNORE([ ... ]) to
 dnl ignore everything inside the brackets.
 dnl
-define([PL_IGNORE],)dnl
+AC_DEFUN([PL_IGNORE],)
+dnl
+dnl ------------------------------------------------------------------------
+dnl PL_ARG_ENABLE(enable-option, help-string, default-value)
+dnl
+AC_DEFUN([PL_ARG_ENABLE],[
+  AC_ARG_ENABLE($1,
+    AS_HELP_STRING([--enable-$1], [$2 (default=$3)]),
+    [enable_[]translit($1, [-], [_])=$enableval],
+    [enable_[]translit($1, [-], [_])=$3])])
+dnl ------------------------------------------------------------------------
+dnl PL_ARG_WITH(enable-option, help-string, default-value)
+dnl
+AC_DEFUN([PL_ARG_WITH],[
+  AC_ARG_WITH($1,
+    AS_HELP_STRING([--with-$1], [$2 (default=$3)]),
+    [with_[]translit($1, [-], [_])=$withval],
+    [with_[]translit($1, [-], [_])=$3])])
+dnl ------------------------------------------------------------------------
+dnl Add device/driver information to help string and *_DRIVERS list
+dnl
+dnl PL_ADD_DRIVER(device, driver, enable_default)
+dnl
+define([PL_ARG_ENABLE_DRIVER],
+  [PL_ARG_ENABLE($1, [enable $1 device driver], $3)])
+dnl
+dnl ------------------------------------------------------------------------
+dnl Recursive macro to set up all driver help entries
+dnl
+dnl PL_DRIVERS(device:driver:enable_default, ...)
+dnl
+define(PL_ARG_ENABLE_DRIVERS,[ifelse($1,,,dnl
+[PL_ARG_ENABLE_DRIVER(patsubst($1, [:.*], []),dnl
+patsubst(patsubst($1, [^[^:]+:], []), [:.*], []),dnl
+patsubst($1, [^.*:], []))dnl
+PL_ARG_ENABLE_DRIVERS(builtin([shift],$*))])])
+dnl
+dnl ------------------------------------------------------------------------
+define([PL_ADD_DRIVER], [
+PL_ARG_ENABLE($1, [enable $1 device driver], $3)
+if test "$enable_$1" = yes -o "$enable_$1 $enable_drivers" = " yes" ; then
+
+    enable_$1="yes"
+
+    if test "$enable_dyndrivers" = yes ; then
+        pl_suffix=la
+	pl_drivers_list="$DYNAMIC_DRIVERS"
+    else
+        pl_suffix=lo
+	pl_drivers_list="$STATIC_DRIVERS"
+    fi
+
+    found=0
+    for pl_drv in $pl_drivers_list ; do
+        if test "$pl_drv" = "$2.$pl_suffix" ; then
+	    found=1
+	    break
+	fi
+    done
+
+    if test $found = 0; then
+        if test -z "$pl_drivers_list" ; then
+            pl_drivers_list="$2.$pl_suffix"
+	else
+	    pl_drivers_list="$pl_drivers_list $2.$pl_suffix"
+	fi
+        echo -n $pl_driver
+    fi
+
+    if test "$enable_dyndrivers" = yes ; then
+	DYNAMIC_DRIVERS="$pl_drivers_list"
+    else
+	STATIC_DRIVERS="$pl_drivers_list"
+    fi
+
+    AC_DEFINE(PLD_$1, [], [Define if $1 driver is present])
+    if test -z "$pl_drivers_list" ; then
+        DEVICES="$1"
+    else
+        DEVICES="$DEVICES $1"
+    fi
+
+else
+
+    enable_$1="no"
+
+fi
+])
+dnl
+dnl ------------------------------------------------------------------------
+dnl Recursive macro to set up all driver help entries
+dnl
+dnl PL_DRIVERS(device:driver:enable_default, ...)
+dnl
+define(PL_ADD_DRIVERS,[ifelse($1,,,dnl
+[PL_ADD_DRIVER(patsubst($1, [:.*], []),dnl
+patsubst(patsubst($1, [^[^:]+:], []), [:.*], []),dnl
+patsubst($1, [^.*:], []))dnl
+PL_ADD_DRIVERS(builtin([shift],$*))])])
 dnl
 dnl ------------------------------------------------------------------------
 dnl The following macros search a list of directories for the given
@@ -197,20 +295,6 @@ define([PL_ADD_TO_LIBS],[
     $4="$$4 $1"
 ])
 dnl ------------------------------------------------------------------------
-dnl Front-end macros to the above, which when:
-dnl  - a with-<opt> is registered, the corresponding enable-<opt> is
-dnl	registered as bogus
-dnl  - an enable-<opt> is registered, the corresponding with-<opt> is
-dnl	registered as bogus
-dnl
-AC_DEFUN([MY_ARG_WITH],
-[AC_ARG_WITH($@)dnl
-AC_ARG_ENABLE([$1],[],[AC_MSG_ERROR([unrecognized variable: enable_$1])])])
-dnl
-AC_DEFUN([MY_ARG_ENABLE],
-[AC_ARG_ENABLE($@)dnl
-AC_ARG_WITH([$1],[],[AC_MSG_ERROR([unrecognized variable: with_$1])])])
-dnl ------------------------------------------------------------------------
 dnl Get rid of caching since it doesn't always work.  I.e. changing the
 dnl compiler from the vendor's to gcc can change all sorts of settings,
 dnl but the autoconf logic isn't set up to handle that.  I'll opt for
@@ -347,42 +431,6 @@ AC_DEFUN([GNOME_INIT],[
 	GNOME_INIT_HOOK([],fail,$1)
 ])
 dnl ------------------------------------------------------------------------
-dnl AC substitution of stripped paths
-dnl     AC_SUBST_STRIP(PATH,PREFIX)
-dnl Essentially, do an AC_SUBST of PATH variable, but previously suppress
-dnl the leading PREFIX.
-dnl This is needed for relocatability, i.e. installing the package in a
-dnl different prefix from that used at build time.
-dnl Added by Rafael Laboissiere on Wed Mar 21 22:57:57 CET 2001
-AC_DEFUN([AC_SUBST_STRIP],[
-  $1=`echo $]$1[ | sed s%$]$2[/%%`
-  AC_SUBST($1)
-])
-dnl Available from the GNU Autoconf Macro Archive at:
-dnl http://www.gnu.org/software/ac-archive/htmldoc/check_gnu_make.html
-dnl
-AC_DEFUN(
-        [CHECK_GNU_MAKE], [ AC_CACHE_CHECK( for GNU make,_cv_gnu_make_command,
-                _cv_gnu_make_command='' ;
-dnl Search all the common names for GNU make
-                for a in "$MAKE" make gmake gnumake ; do
-                        if test -z "$a" ; then continue ; fi ;
-                        if  ( sh -c "$a --version" 2> /dev/null | grep GNU  2>&1 > /dev/null ) ;  then
-                                _cv_gnu_make_command=$a ;
-                                break;
-                        fi
-                done ;
-        ) ;
-dnl If there was a GNU version, then set @ifGNUmake@ to the empty string, '#' otherwise
-        if test  "x$_cv_gnu_make_command" != "x"  ; then
-                ifGNUmake='' ;
-        else
-                ifGNUmake='#' ;
-                AC_MSG_RESULT("Not found");
-        fi
-        AC_SUBST(ifGNUmake)
-] )
-dnl ------------------------------------------------------------------------
 dnl Determine the dlname of a library to be installed by libtool
 dnl     PL_GET_DLNAME(STEM,VERSION_INFO,VARIABLE)
 dnl For a given library STEM and a given VERSION_INFO (a la
@@ -445,6 +493,6 @@ AC_DEFUN([PL_EXPAND_EXPRESSION],[
 ])
 dnl ------------------------------------------------------------------------
 dnl Include third-party files containing m4 macros
-dnl (This should not be here once aclocal know how to follow files 
+dnl (This should not be here once aclocal know how to follow files
 dnl included from configure.ac)
 PL_INCLUDE(gtk.m4)
