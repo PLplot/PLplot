@@ -263,6 +263,10 @@ Setup_options () {
 		system="LINUX"
 		;;
 
+	next*|NeXT*|NEXT*)
+		system="NEXT"
+		;;
+
 	sun*|SUN*|Sun*)
 		system="SUN"
 		;;
