@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/06/30 17:57:56  mjl
+ * Revision 1.7  1995/01/17 09:09:52  mjl
+ * Fixed arglists for plscmap1l().
+ *
+ * Revision 1.6  1994/06/30  17:57:56  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -140,7 +143,7 @@ cmap1_init1(void)
     s[2] = 1;		/* maximum saturation */
     s[3] = 1;		/* maximum saturation */
 
-    c_plscmap1l(0, 4, i, h, l, s);
+    c_plscmap1l(0, 4, i, h, l, s, NULL);
 }
 
 /*----------------------------------------------------------------------*\
@@ -181,7 +184,7 @@ cmap1_init2(void)
     s[2] = 0.5;		/* saturation -- center */
     s[3] = 1;		/* saturation -- high */
 
-    c_plscmap1l(0, 4, i, h, l, s);
+    c_plscmap1l(0, 4, i, h, l, s, NULL);
 }
 
 /*----------------------------------------------------------------------*\
