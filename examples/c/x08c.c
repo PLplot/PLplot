@@ -173,14 +173,13 @@ main(int argc, char *argv[])
       } else if (ifshade == 1) { /* magnitude colored wireframe plot */
 	cmap1_init(0);
 	plmesh(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR);
-      } else if (ifshade == 2) { /* light difused surface plot */
+      } else if (ifshade == 2) { /* diffuse light surface plot */
 	cmap1_init(1);
 	plsurf3d(x, y, z, XPTS, YPTS, 0, NULL, 0);
       } else if (ifshade == 3) { /* magnitude colored plot */
 	cmap1_init(0);
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0);
       } else if (ifshade == 4) { /*  magnitude colored plot with faceted squares */
-	cmap1_init(0);
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0);
       } else                     /* magnitude colored plot with contours */
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel);

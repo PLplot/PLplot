@@ -123,13 +123,9 @@ def main():
 		plsurf3d(x, y, z, MAG_COLOR, ())
 	    elif ifshade == 4:
 		# magnitude coloured surface plot with faceted squares.
-		# set up modified gray scale cmap1.
-		cmap1_init(0)
 		plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
 	    elif ifshade == 5:
 		# magnitude coloured surface plot with contours.
-		# set up modified gray scale cmap1.
-		cmap1_init(0)
 		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
 
     # Restore defaults
