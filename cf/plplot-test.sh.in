@@ -9,8 +9,8 @@
 # So for now, this is only a test suite in the sense that it checks the
 # files corresponding to our demo plots can all be generated.  It is
 # up to the user to display those files with the appropriate software
-# (gv for postscript files and kview or a browser for png or jpeg files
-# on Linux systems) to make sure they display properly.
+# (e.g., gv for postscript files and kview or a browser for png 
+# or jpeg files on Linux systems) to make sure they display properly.
 
 version=@PLPLOT_VERSION@
 
@@ -19,7 +19,7 @@ usage()
    cat <<EOF
 Usage: plplot-test.sh [OPTIONS]
 Options:
-   [--tmp-test] (Use this option when running this script from plplot/tmp)
+   [--flat] (Use this option when running this script from plplot/tmp)
    [--driver=DRIVER] (DRIVER = one of psc [default], ps, png, jpeg, or plmeta.
    [--version]
    [--help]
@@ -34,6 +34,7 @@ export cxxdir=c++
 export f77dir=f77
 export pythondir=python
 export tcldir=tcl
+export octavedir=octave
 export installbindir=@BIN_DIR@
 
 while test $# -gt 0; do
@@ -43,13 +44,14 @@ while test $# -gt 0; do
    esac
 
    case $1 in
-      --tmp-test)
-#        We are running this script from the plplot/tmp directory.
+      --flat)
+#        We are running this script from the flat plplot/tmp directory.
          export cdir=.
 	 export cxxdir=.
 	 export f77dir=.
 	 export pythondir=.
 	 export tcldir=.
+	 export octavedir=.
 	 export installbindir=.
 	 ;;
       --driver=*)
@@ -100,6 +102,7 @@ test_f77=@enable_f77@
 test_cxx=@enable_cxx@
 test_python=@enable_python@
 test_tcl=@enable_tcl@
+test_octave=@enable_octave@
 
 # The C examples should always be available if PLplot works at all.
 ./test_c.sh
@@ -118,4 +121,7 @@ fi
 
 if test "$test_tcl" = "yes" ; then
    ./test_tcl.sh
+fi
+if test "$test_octave" = "yes" ; then
+   ./test_octave.sh
 fi

@@ -471,6 +471,7 @@ AC_SUBST(enable_cxx)
 AC_SUBST(enable_f77)
 AC_SUBST(enable_python)
 AC_SUBST(enable_tcl)
+AC_SUBST(enable_octave)
 
 if test "$enable_cxx" = "yes"; then
     cat $srcdir/cf/pkg_cxx.in	>>Makefile.in 
