@@ -59,16 +59,6 @@ sub mypltr {
   return ($tx, $ty);
 }
 
-sub mypltr2 {
-  my ($x, $y, $grid) = @_;
-
-  my ($tx, $ty) = pltr2 ($x, $y, $grid);
-
-  print "x = $x, y = $y, tx = $tx, ty = $ty\n";
-
-  return ($tx, $ty);
-}
-
 # Polar contour plot example
 
 sub polar {
@@ -86,13 +76,12 @@ sub polar {
 
   # Create data to be contoured
 
-  my $r = transpose (sequence (RPTS)) / (RPTS - 1);
-  my $theta = (2 * pi / (THETAPTS - 1)) * sequence (THETAPTS);
+  my $r = ((sequence (RPTS)) / (RPTS - 1))->dummy (1, THETAPTS);
+  my $theta = ((2 * pi / (THETAPTS - 1))
+               * sequence (THETAPTS))->dummy (0, RPTS);
 
-  my $cgrid2 = zeroes (RPTS, THETAPTS, 2);
-  $cgrid2->slice (',,0') .= transpose ($r x cos ($theta));
-  $cgrid2->slice (',,1') .= transpose ($r x sin ($theta));
-  my $z = transpose ($r x ones (THETAPTS));
+  my $cgrid2 = plAlloc2dGrid ($r * cos ($theta), $r * sin ($theta));
+  my $z = $r;
 
   my $lev = 0.05 + 0.10 * sequence (10);
 
@@ -100,6 +89,8 @@ sub polar {
   plcont ($z, 1, RPTS, 1, THETAPTS, $lev, \&pltr2, $cgrid2);
   plcol0 (1);
   pllab ("", "", "Polar Contour Plot");
+
+#  plFree2dGrid ($cgrid2);
 }
 
 # f2mnmx
@@ -119,16 +110,14 @@ sub potential {
 
   # create data to be contoured
 
-  my $r = transpose (0.5 + sequence (PRPTS));
-  my $theta = (2 * pi / (PTHETAPTS - 1)) * (0.5 + sequence (PTHETAPTS));
+  my $r = (0.5 + sequence (PRPTS))->dummy (1, PTHETAPTS);
+  my $theta = ((2 * pi / (PTHETAPTS - 1))
+               * (0.5 + sequence (PTHETAPTS)))->dummy (0, PRPTS);
 
-  my $cgrid2 = zeroes (PRPTS, PTHETAPTS, 2);
+  my $xg = $r * cos ($theta);
+  my $yg = $r * sin ($theta);
 
-  my $xg = transpose ($r x cos ($theta));
-  my $yg = transpose ($r x sin ($theta));
-
-  $cgrid2->slice (':,:,0') .= $xg;
-  $cgrid2->slice (':,:,1') .= $yg;
+  my $cgrid2 = plAlloc2dGrid ($xg, $yg);
 
   my $rmax = 0.5 + (PRPTS - 1);
 
@@ -176,20 +165,16 @@ sub potential {
   # Positive and negative contour levels
 
   my $dz = ($zmax - $zmin) / PNLEVEL;
-  my $nlevelneg = 0;
-  my $nlevelpos = 0;
-  my $clevel;
+  my $clevel = $zmin + (sequence (PNLEVEL) + 0.5) * $dz;;
   my $clevelneg = zeroes (PNLEVEL);
   my $clevelpos = zeroes (PNLEVEL);
 
-  for ($i = 0; $i < PNLEVEL; $i++) {
-    my $clevel = $zmin + ($i + 0.5) * $dz;
-    if ($clevel <= 0) {
-      $clevelneg->index ($nlevelneg++) .= $clevel;
-    } else {
-      $clevelpos->index ($nlevelpos++) .= $clevel;
-    }
-  }
+  my $idx = which ($clevel <= 0);
+  $clevelneg->index ($idx) .= $clevel->index ($idx);
+  my $nlevelneg = $idx->dim (0);
+  $idx = which ($clevel > 0);
+  $clevelpos->index ($idx) .= $clevel->index ($idx);
+  my $nlevelpos = $idx->dim (0);
 
   # Colours!
 
@@ -208,7 +193,7 @@ sub potential {
 
   plcol0 ($ncollin);
 
-  if ($nlevelneg >0) {
+  if ($nlevelneg > 0) {
 
     # Negative contours
 
@@ -236,6 +221,7 @@ sub potential {
   plcol0 ($ncollab);
   pllab ("", "", "Shielded potential of charges in a conducting sphere");
 
+#  plFree2dGrid ($cgrid2);
 }
 
 # main
@@ -255,39 +241,40 @@ plinit ();
 
 # Set up function arrays
 
-my $z = zeroes (XPTS, YPTS);
-my $w = zeroes (XPTS, YPTS);
-
-for (my $i = 0; $i < XPTS; $i++) {
-  my $xx = ($i - (XPTS / 2)) / (XPTS / 2);
-  for (my $j = 0; $j < YPTS; $j++) {
-    my $yy = ($j - (YPTS / 2)) / (YPTS / 2) - 1.0;
-    $z->slice ("$i,$j") .= $xx * $xx - $yy * $yy;
-    $w->slice ("$i,$j") .= 2 * $xx * $yy;
-  }
-}
+$xx = ((sequence (XPTS) - (XPTS / 2)) / (XPTS / 2))->dummy (1, YPTS);
+$yy = ((sequence (YPTS) - (YPTS / 2)) / (YPTS / 2) - 1.0)->dummy (0, XPTS);
+my $z = $xx * $xx - $yy * $yy;
+my $w = 2 * $xx * $yy;
 
 # Set up grids
 
-my $cgrid1 = zeroes (XPTS + YPTS + 1);
-$cgrid1->index (0) .= XPTS;
-my $cgrid2 = zeroes (XPTS, YPTS, 2);
+$distort = 0.4;
 
-for ($i = 0; $i < XPTS; $i++) {
-  for ($j = 0; $j < YPTS; $j++) {
-    my ($xx, $yy) = mypltr ($i, $j, 0);
+my $xx = zeroes (XPTS);
+my $yy = zeroes (YPTS);
 
-    $argx = $xx * pi / 2;
-    $argy = $yy * pi / 2;
-    $distort = 0.4;
+for (my $i = 0; $i < XPTS; $i++) {
+  for (my $j = 0; $j < YPTS; $j++) {
+    my ($xij, $yij) = mypltr ($i, $j, 0);
 
-    $cgrid1->index ($i + 1) .= $xx + $distort * cos ($argx);
-    $cgrid1->index ($j + XPTS + 1) .= $yy - $distort * cos ($argy);
-
-    $cgrid2->slice ("$i,$j,0") .= $xx + $distort * cos ($argx) * cos ($argy);
-    $cgrid2->slice ("$i,$j,1") .= $yy - $distort * cos ($argx) * cos ($argy);
+    $xx->index ($i) .= $xij;
+    $yy->index ($j) .= $yij;
   }
 }
+
+my $argx = $xx * pi / 2;
+my $argy = $yy * pi / 2;
+
+my $cgrid1 = plAllocGrid ($xx + $distort * cos ($argx),
+                          $yy - $distort * cos ($argy));
+
+$xx = $xx->dummy (1, YPTS);
+$yy = $yy->dummy (0, XPTS);
+$argx = $argx->dummy (1, YPTS);
+$argy = $argy->dummy (0, XPTS);
+my $cgrid2 = plAlloc2dGrid ($xx + $distort * cos ($argx) * cos ($argy),
+                            $yy - $distort * cos ($argx) * cos ($argy));
+
 
 # Plot using identity transform
 
@@ -328,10 +315,13 @@ plstyl (pdl([]), pdl([]));
 plcol0 (1);
 pllab ("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-pl_setcontlabelparam (0.006, 0.3, 0.1, 0);
+# pl_setcontlabelparam (0.006, 0.3, 0.1, 0);
 polar ();
 
-pl_setcontlabelparam (0.006, 0.3, 0.1, 0);
+# pl_setcontlabelparam (0.006, 0.3, 0.1, 0);
 potential ();
 
 plend();
+
+plFreeGrid ($cgrid1);
+plFree2dGrid ($cgrid2);
