@@ -22,4 +22,73 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-die "Demo $0 not yet implemented in PerlDL.\n";
+use PDL;
+use PDL::Graphics::PLplot;
+use Math::Trig qw [pi];
+
+#--------------------------------------------------------------------------
+# mapform19
+#
+# Defines specific coordinate transformation for example 19.
+# Not to be confused with mapform in src/plmap.c.
+# x[], y[] are the coordinates to be plotted.
+#--------------------------------------------------------------------------
+
+sub mapform19 {
+  my ($x, $y) = @_;  
+
+  my $radius = 90.0 - $y;
+  my $xp = $radius * cos ($x * pi / 180);
+  my $yp = $radius * sin ($x * pi / 180);
+
+  return ($xp, $yp);
+}
+
+#--------------------------------------------------------------------------
+# main
+#
+# Shows two views of the world map.
+#--------------------------------------------------------------------------
+
+# Parse and process command line arguments
+
+plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
+
+# Longitude (x) and latitude (y)
+
+my $miny = -70;
+my $maxy = 80;
+
+plinit ();
+
+# Cartesian plots
+# Most of world
+
+my $minx = 190;
+my $maxx = 190 + 360;
+
+plcol0 (1);
+plenv ($minx, $maxx, $miny, $maxy, 1, -1);
+plmap ($minx, $maxx, $miny, $maxy, 0, "usaglobe");
+
+# The Americas
+
+$minx = 190;
+$maxx = 340;
+
+plcol0 (1);
+plenv ($minx, $maxx, $miny, $maxy, 1, -1);
+plmap ($minx, $maxx, $miny, $maxy, 0, "usaglobe");
+
+# Polar, Northern hemisphere
+
+$minx = 0;
+$maxx = 360;
+
+plenv (-75., 75., -75., 75., 1, -1);
+plmap ($minx, $maxx, $miny, $maxy, \&mapform19, "globe");
+
+pllsty (2);
+plmeridians (10.0, 10.0, 0.0, 360.0, -10.0, 80.0, \&mapform19);
+
+plend ();
