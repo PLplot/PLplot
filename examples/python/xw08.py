@@ -4,8 +4,6 @@ from plplot import *
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y
 
-opt = [1, 2, 3, 3]
-
 alt = [60.0, 20.0]
 
 az = [30.0, 60.0]

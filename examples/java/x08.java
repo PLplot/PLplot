@@ -18,7 +18,6 @@ class x08 {
     PLStreamc plsdummy = new PLStreamc();
     plplotjavac pls = new plplotjavac();
 
-    int opt[] = {pls.DRAW_LINEXY, pls.DRAW_LINEXY};
     static double alt[] = {60.0, 20.0};
     static double az[] = {30.0, 60.0};
    

@@ -21,7 +21,6 @@
 #define XPTS   35		/* Data points in x */
 #define YPTS   46		/* Datat points in y */
 
-static int opt[] = {DRAW_LINEXY, DRAW_LINEXY};
 static PLFLT alt[] = {60.0, 20.0};
 static PLFLT az[] = {30.0, 60.0};
 static void cmap1_init(int);
