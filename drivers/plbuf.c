@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/08/30 19:11:51  mjl
+ * Revision 1.14  1993/09/08 02:27:11  mjl
+ * Inserted change to ensure that streams that do not own the plot buffer
+ * cannot write to it (was causing problems on plot saves).
+ *
+ * Revision 1.13  1993/08/30  19:11:51  mjl
  * Fixed the damage incurred by my previous "fix".  Plot buffer now appears
  * capable of accurately and unobtrusively replaying partially filled pages.
  *
@@ -97,6 +101,8 @@ plbuf_init(PLStream *pls)
 	if (pls->plbufFile == NULL) 
 	    plexit("plbuf_init: Error opening plot data storage file.");
     }
+    if ( ! pls->plbufOwner)
+	pls->plbuf_write = 0;
 }
 
 /*----------------------------------------------------------------------*\
