@@ -1,0 +1,13 @@
+o New color model.  Palette to consist of three parts: 1) Color map 0 --
+fixed colors for plotting axes, lines, labels, whatever.  Maximum number
+of colors is 16.  2) Color map 1 -- only referenced indirectly, through
+"intensity" levels.  For mapping function values to color levels, through
+a user-specified mapping (default mapping given in HLS coordinates;
+eventually a nice input mechanism will be available for the Tcl/TK driver
+at least).  3) Window manager colors.  Known only to driver.  For example,
+if you have a color palette of 256 colors total, you might have 16 colors
+in color map 0, leave the 8 or so colors the window manager is using
+alone, leaving 232 colors for shading (pretty reasonable).  The idea is to
+still get reasonable output even if you have far less colors to choose
+from.  The preliminary work here is done but there's still a ways to go.
+
