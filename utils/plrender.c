@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.21  1993/03/18 07:05:23  mjl
-   Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
-   driver and renderer.  These are really not necessary when a metafile is
-   being used and can be aggravating when using the xterm driver.
+   Revision 1.22  1993/03/28 08:47:36  mjl
+   Changed handling of -mar, -jx, -jy flags to allow zooming.
 
+ * Revision 1.21  1993/03/18  07:05:23  mjl
+ * Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
+ * driver and renderer.  These are really not necessary when a metafile is
+ * being used and can be aggravating when using the xterm driver.
+ *
  * Revision 1.20  1993/03/16  06:47:43  mjl
  * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
  * more robust.
@@ -525,18 +528,16 @@ plr_init(U_CHAR c)
     else
 	vpxlen = 1. / ratio;
 
-    if (mar > 0.0 && mar < 1.0) {
+    if (mar < 1.0) {
 	vpxlen *= (1.0 - mar);
 	vpylen *= (1.0 - mar);
     }
 
-    vpxmin = MAX(0., jx - vpxlen / 2.0);
-    vpxmax = MIN(1., vpxmin + vpxlen);
-    vpxmin = vpxmax - vpxlen;
+    vpxmin = (1. - vpxlen) * jx;
+    vpxmax = vpxmin + vpxlen;
 
-    vpymin = MAX(0., jy - vpylen / 2.0);
-    vpymax = MIN(1., vpymin + vpylen);
-    vpymin = vpymax - vpylen;
+    vpymin = (1. - vpylen) * jy;
+    vpymax = vpymin + vpylen;
 
 /* Seek to first page */
 
