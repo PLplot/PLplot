@@ -30,14 +30,13 @@ else
   mkindex = $(top_builddir)/scripts/mktclIndex -itcl
 endif
 
-examples_tcl_DATA = \
+dist_examples_tcl_DATA = \
 	README.tcldemos \
 	plgrid.tcl \
 	plot.dat \
 	plot.tcl \
 	r.dat \
 	stats.log \
-	tclIndex \
 	tcldemos.tcl \
 	x01.tcl \
 	x02.tcl \
@@ -57,10 +56,11 @@ examples_tcl_DATA = \
 	x16.tcl \
 	x17.tcl \
 	x18.tcl \
-	x19.tcl \
-	tclIndex
+	x19.tcl 
 
-examples_tcl_SCRIPTS = \
+nodist_examples_tcl_DATA = tclIndex
+
+dist_examples_tcl_SCRIPTS = \
 	x01 \
 	x02 \
 	x03 \
@@ -84,7 +84,6 @@ examples_tcl_SCRIPTS = \
 tclIndex:
 	$(mkindex)
 
-EXTRA_DIST = $(examples_tcl_DATA) $(examples_tcl_SCRIPTS)
 CLEANFILES = tclIndex
 
 endif
