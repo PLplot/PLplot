@@ -31,7 +31,7 @@ dnl to set the variable directly via ~/config/cf_plplot.in.
 
 plplot_config_invocation="$0 `./config.status --version \
   | grep 'with options' \
-  | grep \' | cut -d\' -f2`"
+  | sed 's/^  with options "//' | sed 's/"$//' | sed "s/'//g"`"
 
 plplot_config_result_msg="
 Configure results:
