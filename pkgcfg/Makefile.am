@@ -57,10 +57,10 @@ install-data-hook:
 	    deplibs= ; \
 	    for i in `grep ^dependency_libs $$laifile \
 	              | sed "s/^dependency_libs='//" | sed "s/'//"` ; do \
-	        lib=`echo $$i | sed 's:^.*/lib:-l:' | sed 's/.la$$//'` ; \
+	        lib=`echo $$i | sed 's:^/.*/lib:-l:' | sed 's/.la$$//'` ; \
 	        deplibs="$$deplibs $$lib" ; \
 	    done ; \
-	    sed -i "s/#DEPLIBS#/$$deplibs/" \
+	    sed -i "s:#DEPLIBS#:$$deplibs:" \
 	        $(DESTDIR)$(pkgconfigdir)/$$pcfile.pc ; \
 	done
 
