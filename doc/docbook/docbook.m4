@@ -2,16 +2,6 @@
 dnl ### AC_INIT(src/plplotdoc.xml.in)
 dnl ### AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
 
-dnl Enabling rebuilt
-
-AC_ARG_ENABLE(docbook-build,
-  AC_HELP_STRING([--disable-docbook-build],
-                 [Disable building of docbook documentation. Only meaningful
-                  when used with --enable-docbook.  Default value is no.]),
-  [enable_docbook_build="$enableval@"],
-  [enable_docbook_build=yes])
-AM_CONDITIONAL(docbook_build, [test $enable_docbook_build = yes])
-
 dnl Web site Installation
 
 AC_ARG_WITH(www-user,

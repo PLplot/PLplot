@@ -409,7 +409,7 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs)
+AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030319)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
@@ -833,21 +833,40 @@ AC_SUBST(DOCDIR)
 
 ### DocBook documentation
 
-AC_ARG_ENABLE(docbook,
-  AC_HELP_STRING([--enable-docbook], [Enable build of DocBook documentation]),
-  [enable_docbook="$enableval"],
-  [enable_docbook=no])
-AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
+AC_ARG_ENABLE(builddoc,
+  AC_HELP_STRING([--enable-builddoc], 
+                 [Enable configuration checks and build of DocBook
+		  documentation.  Default value is "no".]),
+  [enable_builddoc="$enableval"],
+  [enable_builddoc=no])
+
+AC_ARG_WITH(prebuiltdoc,
+  AC_HELP_STRING([--with-prebuiltdoc],
+                 [Assume that the DocBook documentation is already built 
+		  and present in doc/docbook/src, ready to be installed.
+		  This option is useful for package maintainers.
+                  Default value is "no".]),
+  [with_prebuiltdoc="$withval"],
+  [with_prebuiltdoc=no])
+
+if test $enable_builddoc = yes -a $with_prebuiltdoc = yes ; then
+  AC_MSG_ERROR([Options --enable-builddoc and --with-prebuiltdoc are logically
+exclusive and must not be given simultaneously.  Giving up.])
+fi
+    
+AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
+AM_CONDITIONAL(enable_docbook, 
+               [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
 
 AC_INCLUDE(doc/docbook/docbook.m4)
 
-if test $enable_docbook = yes -o $enable_octave = yes ; then
+if test $enable_builddoc = yes -o $enable_octave = yes ; then
 CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
 CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
 CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
 fi
 
-if test $enable_docbook = yes ; then
+if test $enable_builddoc = yes ; then
 
 dnl Check programs
 
@@ -917,7 +936,7 @@ CHECK_PM(XML::Writer, xml_writer, [INFO])
 
 DOC_OUTPUT_COMMANDS
 
-fi # enable_docbook
+fi # enable_builddoc
 
 AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
 # This is for conditional compilation of plplot_octave_txt in bindings/octave
