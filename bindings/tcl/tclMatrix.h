@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.13  1995/06/05 21:44:44  furnish
+ * Revision 1.14  1995/06/09 19:19:32  furnish
+ * Corrected CPP logic for handling C++ exceptions on HP.
+ *
+ * Revision 1.13  1995/06/05  21:44:44  furnish
  * Correct several points of bogosity in the C++ Tcl Matrix shadow class
  * for float's, and add a new one int's.
  *
@@ -157,7 +160,8 @@ typedef struct {
 
 #ifndef throw
 #ifdef __hpux
-#if defined(__GCC__) || defined(__lucid) || defined(__Centerline)
+#if defined(__GNUC__) || defined(__lucid) || defined(__CENTERLINE__) \
+|| defined(CENTERLINE_CLPP)
 #define NO_XCPT
 #endif
 #else
