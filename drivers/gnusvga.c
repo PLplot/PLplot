@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 05:41:40  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.5  1993/02/22 23:10:51  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.4  1993/01/23  05:41:40  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.3  1992/11/07  07:48:38  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -108,13 +113,13 @@ static RGB colors[] = {
 
 
 /*----------------------------------------------------------------------*\
-* svgainit()
+* svga_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-svgainit(PLStream *pls)
+svga_init(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
@@ -128,7 +133,7 @@ svgainit(PLStream *pls)
 
 /* Set up device parameters */
 
-    svgagraph(pls);		/* Can't get current device info unless in
+    svga_graph(pls);		/* Can't get current device info unless in
 				   graphics mode. */
 
     vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
@@ -147,13 +152,13 @@ svgainit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* svgaline()
+* svga_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-svgaline(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+svga_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -169,28 +174,28 @@ svgaline(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* svgapolyline()
+* svga_polyline()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-svgapolyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+svga_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	svgaline(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	svga_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* svgaclear()
+* svga_clear()
 *
 * Clear page.
 \*----------------------------------------------------------------------*/
 
 void
-svgaclear(PLStream *pls)
+svga_clear(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
@@ -202,66 +207,53 @@ svgaclear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* svgapage()
+* svga_page()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-svgapage(PLStream *pls)
+svga_page(PLStream *pls)
 {
     pls->page++;
-    svgaclear(pls);
+    svga_clear(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* svgaadv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-svgaadv(PLStream *pls)
-{
-    svgaclear(pls);
-    svgapage(pls);
-}
-
-/*----------------------------------------------------------------------*\
-* svgatidy()
+* svga_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-svgatidy(PLStream *pls)
+svga_tidy(PLStream *pls)
 {
-    svgatext(pls);
+    svga_text(pls);
     pls->page = 0;
     pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
-* svgacolor()
+* svga_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-svgacolor(PLStream *pls)
+svga_color(PLStream *pls)
 {
     col = pls->icol0;
 }
 
 /*----------------------------------------------------------------------*\
-* svgatext()
+* svga_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-svgatext(PLStream *pls)
+svga_text(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
@@ -272,7 +264,7 @@ svgatext(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* svgagraph()
+* svga_graph()
 *
 * Switch to graphics mode.
 *
@@ -286,7 +278,7 @@ svgatext(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-svgagraph(PLStream *pls)
+svga_graph(PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	GrSetMode(GR_default_graphics);	/* Destroys the palette */
@@ -299,24 +291,24 @@ svgagraph(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* svgawidth()
+* svga_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-svgawidth(PLStream *pls)
+svga_width(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* svgaesc()
+* svga_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-svgaesc(PLStream *pls, PLINT op, char *ptr)
+svga_esc(PLStream *pls, PLINT op, char *ptr)
 {
     switch (op) {
 	case PL_SET_RGB:{

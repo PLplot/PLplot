@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:41:50  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.6  1993/02/22 23:11:01  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.5  1993/01/23  05:41:50  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.4  1992/11/07  07:48:46  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -54,7 +59,6 @@
 /* Function prototypes */
 /* INDENT OFF */
 
-static void plm_pageadv		(PLStream *pls, U_CHAR c);
 static void WriteHeader		(PLStream *);
 
 /* Constants to determine resolution, number of pixels, etc.  Can be
@@ -253,38 +257,6 @@ plm_page(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
 
-    plm_pageadv(pls, c);
-}
-
-/*----------------------------------------------------------------------*\
-* plm_adv()
-*
-* Advance to the next page.
-* Also write page information as in plm_page().
-\*----------------------------------------------------------------------*/
-
-void
-plm_adv(PLStream *pls)
-{
-    U_CHAR c = (U_CHAR) ADVANCE;
-
-    plm_pageadv(pls, c);
-}
-
-/*----------------------------------------------------------------------*\
-* plm_pageadv()
-*
-* Work routine for plm_page() and plm_adv().
-*
-* Seeks back to previous beginning of page to write the byte offset to
-* current page.  Then writes the page number for the following page and
-* a blank field after the command to hold the byte offset once the page
-* is completed.
-\*----------------------------------------------------------------------*/
-
-static void
-plm_pageadv(PLStream *pls, U_CHAR c)
-{
     long cp_offset;
     U_LONG o_lp_offset;
     U_CHAR o_c;
@@ -470,8 +442,8 @@ plm_esc(PLStream *pls, PLINT op, char *ptr)
 static void
 WriteHeader(PLStream *pls)
 {
-    plm_wr(write_header(pls->OutFile, PLPLOT_HEADER));
-    plm_wr(write_header(pls->OutFile, PLPLOT_VERSION));
+    plm_wr(write_header(pls->OutFile, PLMETA_HEADER));
+    plm_wr(write_header(pls->OutFile, PLMETA_VERSION));
 
 /* Write initialization info.  Tag via strings to make backward
    compatibility with old metafiles as easy as possible. */

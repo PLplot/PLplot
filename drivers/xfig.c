@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/01/23 05:41:54  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.7  1993/02/22 23:11:03  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.6  1993/01/23  05:41:54  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.5  1992/11/07  07:48:49  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -204,19 +209,6 @@ xfig_page(PLStream *pls)
 	plGetFam(pls);
 
     pls->page++;
-}
-
-/*----------------------------------------------------------------------*\
-* xfig_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-xfig_adv(PLStream *pls)
-{
-    xfig_clear(pls);
-    xfig_page(pls);
 }
 
 /*----------------------------------------------------------------------*\

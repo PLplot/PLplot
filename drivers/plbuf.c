@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/01/23 05:41:49  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.3  1993/02/22 23:11:00  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.2  1993/01/23  05:41:49  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.1  1992/11/07  07:57:09  mjl
  * Routines for writing to and reading from a plot buffer, as well as recreating
  * an entire plot.  The driver need merely specify pls->plbuf_enable = 1 for it
@@ -51,7 +56,6 @@ void rdbuf_line		(PLStream *);
 void rdbuf_polyline	(PLStream *);
 void rdbuf_clear	(PLStream *);
 void rdbuf_page		(PLStream *);
-void rdbuf_adv		(PLStream *);
 void rdbuf_tidy		(PLStream *);
 void rdbuf_color	(PLStream *);
 void rdbuf_text		(PLStream *);
@@ -168,27 +172,6 @@ plbuf_page(PLStream *pls)
 	grcol();
 	grwid();
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plbuf_adv()
-*
-* Advance to the next page.
-* Also write page information as in plbuf_page().
-\*----------------------------------------------------------------------*/
-
-void
-plbuf_adv(PLStream *pls)
-{
-    if (pls->plbuf_read)
-	return;
-
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) ADVANCE);
-
-	plbuf_close(pls);
-    }
-    plbuf_open(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -387,18 +370,6 @@ rdbuf_page(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* rdbuf_adv()
-*
-* Advance to the next page.
-* Also write page information as in rdbuf_page().
-\*----------------------------------------------------------------------*/
-
-void
-rdbuf_adv(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
 * rdbuf_tidy()
 *
 * Close graphics file
@@ -427,7 +398,7 @@ rdbuf_color(PLStream *pls)
 	(void) fread(&b, sizeof(U_CHAR), 1, pls->plbufFile);
     }
     else {
-	if (icol0 < 0 || icol0 > 15) {
+	if ((int) icol0 > 15) {
 	    plwarn("rdbuf_color: Color table entry hosed");
 	    icol0 = 1;
 	}
@@ -567,10 +538,6 @@ process_next(PLStream *pls, U_CHAR c)
 
       case PAGE:
 	rdbuf_page(pls);
-	break;
-
-      case ADVANCE:
-	rdbuf_adv(pls);
 	break;
 
       case NEW_COLOR:

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 05:41:48  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.4  1993/02/22 23:10:59  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.3  1993/01/23  05:41:48  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.2  1992/11/07  07:48:45  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -59,32 +64,32 @@ typedef PLINT * CPARAMS;
 static void	write_command( COMMAND_ID cid, CPARAMS p );
 
 /*----------------------------------------------------------------------*\
-*  os2setup()
+*  os2_setup()
 *
 * Set up device.
 \*----------------------------------------------------------------------*/
 
-void os2setup( PLStream *pls )
+void os2_setup( PLStream *pls )
 {
 }
 
 /*----------------------------------------------------------------------*\
-*  os2orient()
+*  os2_orient()
 *
 * Set up orientation.
 \*----------------------------------------------------------------------*/
 
-void os2orient( PLStream *pls )
+void os2_orient( PLStream *pls )
 {
 }
 
 /*----------------------------------------------------------------------*\
-*  os2init()
+*  os2_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void	os2init( PLStream *pls )
+void	os2_init( PLStream *pls )
 {
     USHORT	usAction;
     UCHAR	c = (UCHAR) INITIALIZE;
@@ -116,12 +121,12 @@ void	os2init( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2line()
+*  os2_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void os2line( PLStream *pls, 
+void os2_line( PLStream *pls, 
 			PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2 )
 {
 	UCHAR c;
@@ -179,12 +184,12 @@ os2_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-*  os2clear()
+*  os2_clear()
 *
 *  Clear page.
 \*----------------------------------------------------------------------*/
 
-void	os2clear( PLStream *pls )
+void	os2_clear( PLStream *pls )
 {
 	UCHAR c = (UCHAR) CLEAR;
 
@@ -192,12 +197,12 @@ void	os2clear( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2page()
+*  os2_page()
 *
 *  Advance to next page.
 \*----------------------------------------------------------------------*/
 
-void	os2page( PLStream *pls )
+void	os2_page( PLStream *pls )
 {
 	UCHAR c = (UCHAR) PAGE;
 
@@ -208,25 +213,12 @@ void	os2page( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-* os2adv()
-*
-* Advance to the next page.
-* Also write page information as in plmpage().
-\*----------------------------------------------------------------------*/
-
-void	os2adv( PLStream *pls )
-{
-    os2clear(pls);
-    os2page(pls);
-}
-
-/*----------------------------------------------------------------------*\
-*  os2tidy()
+*  os2_tidy()
 *
 *  Close graphics file
 \*----------------------------------------------------------------------*/
 
-void	os2tidy( PLStream *pls )
+void	os2_tidy( PLStream *pls )
 {
 	UCHAR c = (UCHAR) CLOSE;
 	
@@ -237,12 +229,12 @@ void	os2tidy( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2color()
+*  os2_color()
 *
 *  Set pen color.
 \*----------------------------------------------------------------------*/
 
-void	os2color( PLStream *pls )
+void	os2_color( PLStream *pls )
 {
 	UCHAR c = (UCHAR) NEW_COLOR;
 	
@@ -250,12 +242,12 @@ void	os2color( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2text()
+*  os2_text()
 *
 *  Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void	os2text( PLStream *pls )
+void	os2_text( PLStream *pls )
 {
 	UCHAR c = (UCHAR) SWITCH_TO_TEXT;
 
@@ -263,12 +255,12 @@ void	os2text( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2graph()
+*  os2_graph()
 *
 *  Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void	os2graph( PLStream *pls )
+void	os2_graph( PLStream *pls )
 {
 	UCHAR c = (UCHAR) SWITCH_TO_GRAPH;
 
@@ -276,12 +268,12 @@ void	os2graph( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2width()
+*  os2_width()
 *
 *  Set pen width.
 \*----------------------------------------------------------------------*/
 
-void	os2width( PLStream *pls )
+void	os2_width( PLStream *pls )
 {
 	UCHAR c = (UCHAR) NEW_WIDTH;
 	
@@ -289,13 +281,13 @@ void	os2width( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2esc()
+*  os2_esc()
 *
 *  Escape function.  Note that any data written must be in device
 *  independent form to maintain the transportability of the metafile.
 \*----------------------------------------------------------------------*/
 
-void	os2esc( PLStream *pls, PLINT op, char *ptr )
+void	os2_esc( PLStream *pls, PLINT op, char *ptr )
 {
 	UCHAR c = (UCHAR) ESCAPE;
 	float *color;

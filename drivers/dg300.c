@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:41:38  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.6  1993/02/22 23:10:49  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.5  1993/01/23  05:41:38  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.4  1992/11/07  07:48:35  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -150,19 +155,6 @@ dg_page(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* dg_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-dg_adv(PLStream *pls)
-{
-    dg_clear(pls);
-    dg_page(pls);
-}
-
-/*----------------------------------------------------------------------*\
 * dg_tidy()
 *
 * Close graphics file
@@ -171,7 +163,6 @@ dg_adv(PLStream *pls)
 void
 dg_tidy(PLStream *pls)
 {
-    dg_clear(pls);
     printf("\036\107\042\060\n");
     fflush(stdout);
     pls->fileset = 0;

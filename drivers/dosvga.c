@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 05:41:39  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.5  1993/02/22 23:10:50  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.4  1993/01/23  05:41:39  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.3  1992/11/07  07:48:37  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -80,13 +85,13 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* vgainit()
+* vga_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-vgainit(PLStream *pls)
+vga_init(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
@@ -111,17 +116,17 @@ vgainit(PLStream *pls)
 
     setphy((PLINT) 0, (PLINT) VGAX, (PLINT) 0, (PLINT) VGAY);
 
-    vgagraph(pls);
+    vga_graph(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* vgaline()
+* vga_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-vgaline(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+vga_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -138,28 +143,28 @@ vgaline(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* vgapolyline()
+* vga_polyline()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-vgapolyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+vga_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	vgaline(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	vga_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* vgaclear()
+* vga_clear()
 *
 * Clear page.
 \*----------------------------------------------------------------------*/
 
 void
-vgaclear(PLStream *pls)
+vga_clear(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
@@ -168,54 +173,41 @@ vgaclear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vgapage()
+* vga_page()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-vgapage(PLStream *pls)
+vga_page(PLStream *pls)
 {
     pls->page++;
-    vgaclear(pls);
+    vga_clear(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* vgaadv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-vgaadv(PLStream *pls)
-{
-    vgaclear(pls);
-    vgapage(pls);
-}
-
-/*----------------------------------------------------------------------*\
-* vgatidy()
+* vga_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-vgatidy(PLStream *pls)
+vga_tidy(PLStream *pls)
 {
-    vgatext(pls);
+    vga_text(pls);
     pls->page = 0;
     pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
-* vgacolor()
+* vga_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-vgacolor(PLStream *pls)
+vga_color(PLStream *pls)
 {
     static long cmap[16] = {
 	_WHITE, _RED, _LIGHTYELLOW, _GREEN,
@@ -232,13 +224,13 @@ vgacolor(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vgatext()
+* vga_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-vgatext(PLStream *pls)
+vga_text(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
@@ -249,13 +241,13 @@ vgatext(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vgagraph()
+* vga_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-vgagraph(PLStream *pls)
+vga_graph(PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	if (!_setvideomode(_VRES16COLOR)) {
@@ -268,24 +260,24 @@ vgagraph(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* vgawidth()
+* vga_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-vgawidth(PLStream *pls)
+vga_width(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* vgaesc()
+* vga_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-vgaesc(PLStream *pls, PLINT op, char *ptr)
+vga_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 

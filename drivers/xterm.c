@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:41:55  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.6  1993/02/22 23:11:04  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.5  1993/01/23  05:41:55  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.4  1992/11/07  07:48:50  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -38,13 +43,13 @@
 
 /* Graphics control characters. */
 
+#define ETX  3
 #define BEL  7
 #define FF   12
 #define CAN  24
 #define ESC  27
 #define GS   29
 #define US   31
-#define ETX  3
 
 /* Static function prototypes */
 
@@ -67,15 +72,7 @@ static exit_eventloop = 0;
 void 
 xte_init (PLStream *pls)
 {
-    /* tell plplot that this is an interactive device (so pause after */
-    /* drawing graph).  use if smod(0) if sending grphx to a file. */
-
     pls->termin = 1;
-
-    /* set default pen color (this should be the desired pen number) */
-    /* plplot will actually tell the device to use this pen by */
-    /* making a call to plcolor. */
-
     pls->icol0 = 1;
     pls->color = 0;
     pls->width = 1;
@@ -196,19 +193,6 @@ xte_page (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void 
-xte_adv (PLStream *pls)
-{
-    xte_clear(pls);
-    xte_page(pls);
-}
-
-/*----------------------------------------------------------------------*\
 * xte_tidy()
 *
 * Close graphics file
@@ -217,12 +201,6 @@ xte_adv (PLStream *pls)
 void 
 xte_tidy (PLStream *pls)
 {
-    putchar(BEL);
-    fflush(stdout);
-    if (!pls->nopause)
-	while (getchar() != '\n')
-	    ;
-
     if (pls->graphx == GRAPHICS_MODE) {
 	pls->graphx = TEXT_MODE;
 	printf("%c%c", US, CAN);

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 05:41:47  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.4  1993/02/22 23:10:58  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.3  1993/01/23  05:41:47  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.2  1992/11/07  07:56:46  mjl
  * (correction) Null device driver, for use when you want the graphics to
  * disappear into the bit bucket.  Always appears as the last device.
@@ -105,17 +110,6 @@ null_clear(PLStream *pls)
 
 void
 null_page(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* null_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-null_adv(PLStream *pls)
 {
 }
 

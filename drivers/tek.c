@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:41:53  mjl
-   Changes to support new color model, polylines, and event handler support
-   (interactive devices only).
+   Revision 1.6  1993/02/22 23:11:02  mjl
+   Eliminated the gradv() driver calls, as these were made obsolete by
+   recent changes to plmeta and plrender.  Also eliminated page clear commands
+   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
 
+ * Revision 1.5  1993/01/23  05:41:53  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
  * Revision 1.4  1992/11/07  07:48:48  mjl
  * Fixed orientation operation in several files and standardized certain startup
  * operations. Fixed bugs in various drivers.
@@ -239,19 +244,6 @@ tek_page(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-tek_adv(PLStream *pls)
-{
-    tek_clear(pls);
-    tek_page(pls);
-}
-
-/*----------------------------------------------------------------------*\
 * tek_tidy()
 *
 * Close graphics file or otherwise clean up.
@@ -264,7 +256,6 @@ tek_tidy(PLStream *pls)
 	fclose(pls->OutFile);
     }
     else {
-	tek_clear(pls);
 	fprintf(pls->OutFile, "%c%c", US, CAN);
 	fflush(pls->OutFile);
     }

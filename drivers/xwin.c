@@ -28,17 +28,17 @@
 #ifdef XWIN
 
 #include "plplot.h"
-
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include "drivers.h"
-#include "plevent.h"
+#include <string.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
+
+#include "drivers.h"
+#include "plevent.h"
 
 /* Function prototypes */
 /* INDENT OFF */
@@ -241,19 +241,6 @@ xw_page(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void
-xw_adv(PLStream *pls)
-{
-    xw_clear(pls);
-    xw_page(pls);
-}
-
-/*----------------------------------------------------------------------*\
 * xw_tidy()
 *
 * Close graphics file
@@ -265,7 +252,6 @@ xw_tidy(PLStream *pls)
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
 
-    xw_clear(pls);
     XFreeGC(xwd->display, xwd->gc);
     XDestroyWindow(xwd->display, xwd->window);
     XCloseDisplay(xwd->display);
@@ -456,7 +442,7 @@ xw_Xinit(PLStream *pls)
 
 /* wait for exposure */
 
-    while (1) {
+    for (;;) {
 	XNextEvent(xwd->display, &xwd->theEvent);
 	if (xwd->theEvent.xexpose.count == 0)
 	    break;
@@ -513,7 +499,7 @@ WaitForPage(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-EventHandler(PLStream *pls, XEvent * event)
+EventHandler(PLStream *pls, XEvent *event)
 {
     switch (event->type) {
       case KeyPress:
@@ -541,7 +527,7 @@ EventHandler(PLStream *pls, XEvent * event)
 \*----------------------------------------------------------------------*/
 
 static void
-KeyEH(PLStream *pls, XEvent * event)
+KeyEH(PLStream *pls, XEvent *event)
 {
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
@@ -553,7 +539,8 @@ KeyEH(PLStream *pls, XEvent * event)
 
 /* Translate event into string */
 
-    count = XLookupString(event, key.string, PL_NKEYSTRING, &keysym, &cs);
+    count = XLookupString((XKeyEvent *) event, key.string, PL_NKEYSTRING,
+			  &keysym, &cs);
     key.string[count] = '\0';
     key.code = (U_LONG) keysym;
 
@@ -608,7 +595,7 @@ KeyEH(PLStream *pls, XEvent * event)
 \*----------------------------------------------------------------------*/
 
 static void
-MouseEH(PLStream *pls, XEvent * event)
+MouseEH(PLStream *pls, XEvent *event)
 {
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
@@ -634,7 +621,7 @@ MouseEH(PLStream *pls, XEvent * event)
 \*----------------------------------------------------------------------*/
 
 static void
-ExposeEH(PLStream *pls, XEvent * event)
+ExposeEH(PLStream *pls, XEvent *event)
 {
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
@@ -657,7 +644,7 @@ ExposeEH(PLStream *pls, XEvent * event)
 \*----------------------------------------------------------------------*/
 
 static void
-ResizeEH(PLStream *pls, XEvent * event)
+ResizeEH(PLStream *pls, XEvent *event)
 {
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
@@ -714,7 +701,9 @@ xw_colini(PLStream *pls)
 * Note that black & white allocations should never fail.
 */
 
-    gslevbg = (pls->cmap0[0].r + pls->cmap0[0].g + pls->cmap0[0].b) / 3.;
+    gslevbg = ((float) pls->cmap0[0].r +
+	       (float) pls->cmap0[0].g +
+	       (float) pls->cmap0[0].b ) / 3.;
 
     if (!XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0])) {
 	if (gslevbg < 128)
