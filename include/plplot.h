@@ -432,6 +432,7 @@ typedef struct {
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
+#define    plenv0	c_plenv0
 #define    pleop	c_pleop
 #define    plerrx	c_plerrx
 #define    plerry	c_plerry
@@ -559,6 +560,7 @@ typedef struct {
 #define    c_plend	plend
 #define    c_plend1	plend1
 #define    c_plenv	plenv
+#define    c_plenv0	plenv0
 #define    c_pleop	pleop
 #define    c_plerrx	plerrx
 #define    c_plerry	plerry
@@ -821,6 +823,14 @@ c_plend1(void);
 
 void
 c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLINT just, PLINT axis);
+
+
+/* similar to plenv() above, but in multiplot mode does not advance the subpage,
+ instead the current subpage is cleared */
+
+void
+c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis);
 
 /* End current page.  Should only be used with plbop(). */

@@ -5,6 +5,10 @@
 
 #include "plplot/plplotP.h"
 
+static void
+c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	 PLINT just, PLINT axis, PLINT old);
+
 /*--------------------------------------------------------------------------*\
  * void plenv()
  *
@@ -41,6 +45,28 @@ void
 c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis)
 {
+  c_plenvi(xmin, xmax, ymin, ymax, just, axis, 1); 
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plenv0()
+ *
+ * same as plenv() above, but if in multiplot mode does not advance the subpage,
+ * instead clears it.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLINT just, PLINT axis)
+{
+  c_plenvi(xmin, xmax, ymin, ymax, just, axis, 0); 
+}
+
+
+static void
+c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLINT just, PLINT axis, PLINT old)
+{
     PLFLT lb, rb, tb, bb, dx, dy;
     PLFLT xsize, ysize, xscale, yscale, scale;
     PLFLT spxmin, spxmax, spymin, spymax;
@@ -63,7 +89,13 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	return;
     }
 
-    pladv(0);
+    if (plsc->nsubx * plsc->nsuby == 1) /* not multiplot mode */
+      old = 1;
+
+    if (old == 1)
+      pladv(0);
+    else 
+      plclear();
 
     if (just == 0)
 	plvsta();
