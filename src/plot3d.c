@@ -74,6 +74,11 @@ static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
 static void plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move);
+static void plxyindexlimits(PLINT instart, PLINT inn, 
+	 PLINT *inarray_min, PLINT *inarray_max,
+	 PLINT *outstart, PLINT *outn, PLINT outnmax,
+	 PLINT *outarray_min, PLINT *outarray_max);
+
 
 /* #define MJL_HACK 1 */
 #if MJL_HACK
@@ -103,7 +108,7 @@ c_pllightsource(PLFLT x, PLFLT y, PLFLT z)
  * Plots a mesh representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the
  * z values are in the 2-d array z[][]. The integer "opt" specifies:
- * see plmeshc() bellow.
+ * see plmeshc() below.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -135,7 +140,7 @@ void
 c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
 	 PLFLT *clevel, PLINT nlevel)
 {
-    plot3dc(x, y, z, nx, ny, opt | MESH, clevel, nlevel);
+    c_plot3dc(x, y, z, nx, ny, opt | MESH, clevel, nlevel);
 }
 
 /* clipping helper for 3d polygons */
@@ -254,6 +259,36 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  *
  * Plots the 3-d surface representation of the function z[x][y].
  * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
+ *  and the z values are in the 2-d array z[][].  The integer "opt" specifies:
+ * see plsurf3dl() below.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	  PLINT opt, PLFLT *clevel, PLINT nlevel)
+{
+   PLINT i;
+   PLINT *indexymin = (PLINT *) malloc((size_t) (nx*sizeof(PLINT)));
+   PLINT *indexymax = (PLINT *) malloc((size_t) (nx*sizeof(PLINT)));
+
+   if ( ! indexymin || ! indexymax)
+     plexit("plsurf3d: Out of memory.");
+   for (i = 0; i < nx; i++) {
+      indexymin[i] = 0;
+      indexymax[i] = ny;
+   }
+   c_plsurf3dl(x, y, z, nx, ny, opt, clevel, nlevel,
+	       0, nx, indexymin, indexymax);
+   free_mem(indexymin);
+   free_mem(indexymax);
+}
+  
+/*--------------------------------------------------------------------------*\
+ * void plsurf3dl(x, y, z, nx, ny, opt, clevel, nlevel,
+ * ixstart, ixn, indexymin, indexymax)
+ *
+ * Plots the 3-d surface representation of the function z[x][y].
+ * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
  *  and the z values are in the 2-d array z[][].
  *
  *
@@ -269,6 +304,9 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  *
  * or any bitwise combination, e.g. "MAG_COLOR | SURF_CONT | SURF_BASE"
  *
+ * indexymin and indexymax are arrays which specify the y index range
+ * (following the convention that the upper range limit is one more than
+ * actual index limit) for an x index range of ixstart, ixn.
  * This code is a complete departure from the approach taken in the old version
  * of this routine. Formerly to code attempted to use the logic for the hidden
  * line algorithm to draw the hidden surface. This was really hard. This code
@@ -280,8 +318,9 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 \*--------------------------------------------------------------------------*/
 
 void
-plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-	  PLINT opt, PLFLT *clevel, PLINT nlevel)
+c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	  PLINT opt, PLFLT *clevel, PLINT nlevel,
+	  PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax)
 {
   PLFLT cxx, cxy, cyx, cyy, cyz;
   PLINT i, j, k;
@@ -290,20 +329,29 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   PLINT iFast, iSlow;
   PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
   PLFLT xm, ym, zm;
-  PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
+  PLINT ixmin, ixmax, iymin, iymax;
   PLFLT xx[3],yy[3],zz[3];
   PLFLT px[4], py[4], pz[4];
   CONT_LEVEL *cont, *clev;
   CONT_LINE *cline;
   int   ct, ix, iy;
+  PLINT iystart, iyn;
+  PLINT *iFastmin, *iFastmax;
+  PLINT *indexxmin = (PLINT *) malloc((size_t) (ny*sizeof(PLINT)));
+  PLINT *indexxmax = (PLINT *) malloc((size_t) (ny*sizeof(PLINT)));
+
+  if ( ! indexxmin || ! indexxmax)
+     plexit("plsurf3dl: Out of memory.");
+  plxyindexlimits(ixstart, ixn, indexymin, indexymax, 
+	       &iystart, &iyn, ny, indexxmin, indexxmax);
 
   if (plsc->level < 3) {
-    myabort("plsurf3d: Please set up window first");
+    myabort("plsurf3dl: Please set up window first");
     return;
   }
 
   if (nx <= 0 || ny <= 0) {
-    myabort("plsurf3d: Bad array dimensions.");
+    myabort("plsurf3dl: Bad array dimensions.");
     return;
   }
 
@@ -317,7 +365,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   fc_minz = plsc->ranmi;
   fc_maxz = plsc->ranma;
   if (fc_maxz == fc_minz) {
-    plwarn("plsurf3d.c: Maximum and minimum Z values are equal! \"fixing\"...");
+    plwarn("plsurf3dl: Maximum and minimum Z values are equal! \"fixing\"...");
     fc_maxz = fc_minz + 1e-6;
   }
 
@@ -336,9 +384,11 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   /* Check that points in x and in y are strictly increasing  and in range */
 
-  for (i = 0; i < nx - 1; i++) {
+  ixmin = ixstart;
+  ixmax = ixn;
+  for (i = ixstart; i < ixn - 1; i++) {
     if (x[i] >= x[i + 1]) {
-      myabort("plsurf3d: X array must be strictly increasing");
+      myabort("plsurf3dl: X array must be strictly increasing");
       return;
     }
     if (x[i] < xmin && x[i+1] >= xmin)
@@ -346,9 +396,11 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     if (x[i+1] > xmax && x[i] <= xmax)
       ixmax = i+2;
   }
-  for (i = 0; i < ny - 1; i++) {
+  iymin = iystart;
+  iymax = iyn;
+  for (i = iystart; i < iyn - 1; i++) {
     if (y[i] >= y[i + 1]) {
-      myabort("plsurf3d: Y array must be strictly increasing");
+      myabort("plsurf3dl: Y array must be strictly increasing");
       return;
     }
     if (y[i] < ymin && y[i+1] >= ymin)
@@ -392,12 +444,52 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
     ixFast = ixDir; ixSlow = 0;
     iyFast = 0;     iySlow = iyDir;
+
+    iFastmin = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
+    iFastmax = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
+    if ( ! iFastmin || ! iFastmax)
+       plexit("plsurf3dl: Out of memory.");
+    for(iSlow=0; iSlow < nSlow; iSlow++) {
+       /* Use reminder: */
+       /* for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) */
+       /* ix = ixFast * (iFast+i) + ixOrigin; */
+       /* iy = iySlow * (iSlow+j) + iyOrigin; */
+       /* where i,j are either 0 or 1. */
+       if (ixFast > 0) {
+	  iFastmin[iSlow] = indexxmin[iySlow*iSlow+iyOrigin] - ixOrigin;
+	  iFastmax[iSlow] = indexxmax[iySlow*iSlow+iyOrigin] - ixOrigin;
+       }
+       else {
+	  iFastmin[iSlow] = -(indexxmax[iySlow*iSlow+iyOrigin] - ixOrigin) + 1;
+	  iFastmax[iSlow] = -(indexxmin[iySlow*iSlow+iyOrigin] - ixOrigin) + 1;
+       }
+    }
   } else {
     nFast = iymax - iymin;
     nSlow = ixmax - ixmin;
 
     ixFast = 0;     ixSlow = ixDir;
     iyFast = iyDir; iySlow = 0;
+
+    iFastmin = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
+    iFastmax = (PLINT *) malloc((size_t) (nSlow*sizeof(PLINT)));
+    if ( ! iFastmin || ! iFastmax)
+       plexit("plsurf3dl: Out of memory.");
+    for(iSlow=0; iSlow < nSlow; iSlow++) {
+       /* Use reminder: */
+       /* for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) */
+       /* ix = ixSlow * (iSlow+j) + ixOrigin; */
+       /* iy = iyFast * (iFast+i) + iyOrigin; */
+       /* where i,j are either 0 or 1. */
+       if (iyFast > 0) {
+	  iFastmin[iSlow] = indexymin[ixSlow*iSlow+ixOrigin] - iyOrigin;
+	  iFastmax[iSlow] = indexymax[ixSlow*iSlow+ixOrigin] - iyOrigin;
+       }
+       else {
+	  iFastmin[iSlow] = -(indexymax[ixSlow*iSlow+ixOrigin] - iyOrigin) + 1;
+	  iFastmax[iSlow] = -(indexymin[ixSlow*iSlow+ixOrigin] - iyOrigin) + 1;
+       }
+    }
   }
 
   /* we've got to draw the background grid first, hidden line code has to draw it last */
@@ -433,8 +525,8 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   /* If enabled, draw the contour at the base */
 
-  /* The contour ploted at the base will be identical to the one obtained
-   * with c_plcont(). The contour ploted at the surface is simple minded, but
+  /* The contour plotted at the base will be identical to the one obtained
+   * with c_plcont(). The contour plotted at the surface is simple minded, but
    * can be improved by using the contour data available.
    */
 
@@ -444,8 +536,42 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     PLFLT *zz = (PLFLT *) malloc(NPTS*sizeof(PLFLT));
 
     /* get the contour lines */
-    cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
 
+    /* prepare cont_storel input */
+    PLFLT **zstore;
+    PLcGrid2 cgrid2;
+    cgrid2.nx = nx;
+    cgrid2.ny = ny;
+    plAlloc2dGrid(&cgrid2.xg, nx, ny);
+    plAlloc2dGrid(&cgrid2.yg, nx, ny);
+    plAlloc2dGrid(&zstore, nx, ny);
+
+    for (i = ixstart; i < ixn; i++) {
+       for (j = iystart; j < indexymin[i]; j++) {
+	  cgrid2.xg[i][j] = x[i];
+	  cgrid2.yg[i][j] = y[indexymin[i]];
+	  zstore[i][j] = z[i][indexymin[i]];
+       }
+       for (j = indexymin[i]; j < indexymax[i]; j++) {
+	  cgrid2.xg[i][j] = x[i];
+	  cgrid2.yg[i][j] = y[j];
+	  zstore[i][j] = z[i][j];
+       }
+       for (j = indexymax[i]; j < iyn; j++) {
+	  cgrid2.xg[i][j] = x[i];
+	  cgrid2.yg[i][j] = y[indexymax[i]-1];
+	  zstore[i][j] = z[i][indexymax[i]-1];
+       }
+    }
+    /* Fill cont structure with contours. */
+    cont_storel(zstore,  nx, ny, ixstart+1, ixn, iystart+1, iyn, 
+		clevel, nlevel, pltr2, (void *) &cgrid2, &cont);
+
+    /* Free the 2D input arrays to cont_store1 since not needed any more. */
+    plFree2dGrid(zstore, nx, ny);
+    plFree2dGrid(cgrid2.xg, nx, ny);
+    plFree2dGrid(cgrid2.yg, nx, ny);
+     
     /* follow the contour levels and lines */
     clev = cont;
     do { /* for each contour level */
@@ -474,7 +600,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   /* Now we can iterate over the grid drawing the quads */
   for(iSlow=0; iSlow < nSlow-1; iSlow++) {
-    for(iFast=0; iFast < nFast-1; iFast++) {
+    for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) {
       /* get the 4 corners of the Quad, which are
        *
        *       0--2
@@ -551,7 +677,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		  /* don't break; one triangle can span various contour levels */
 
 		} else
-		  plwarn("plot3d.c:plsurf3d() ***ERROR***\n");
+		  plwarn("plsurf3dl: ***ERROR***\n");
 	      }
 	    }
 	  }
@@ -562,7 +688,8 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   if (opt & FACETED) {
     plcol0(0);
-    plot3dc(x, y, z, nx, ny, MESH | DRAW_LINEXY, NULL, 0);
+    c_plot3dcl(x, y, z, nx, ny, MESH | DRAW_LINEXY, NULL, 0,
+	       ixstart, ixn, indexymin, indexymax);
   }
 
   if (opt & DRAW_SIDES) { /* the sides look ugly !!! */
@@ -572,7 +699,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plP_grange(&zscale, &zmin, &zmax);
 
     iSlow = nSlow-1;
-    for(iFast=0; iFast < nFast-1; iFast++) {
+    for(iFast=iFastmin[iSlow]; iFast < iFastmax[iSlow]-1; iFast++) {
       for(i=0; i<2; i++) {
 	ix = ixFast * (iFast+i) + ixSlow * iSlow + ixOrigin;
 	iy = iyFast * (iFast+i) + iySlow * iSlow + iyOrigin;
@@ -586,8 +713,8 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
 
-    iFast = nFast-1;
     for(iSlow=0; iSlow < nSlow-1; iSlow++) {
+      iFast = iFastmax[iSlow]-1;
       for(i=0; i<2; i++) {
 	  ix = ixFast * iFast + ixSlow * (iSlow+i) + ixOrigin;
 	  iy = iyFast * iFast + iySlow * (iSlow+i) + iyOrigin;
@@ -601,6 +728,10 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
   }
+  free_mem(indexxmin);
+  free_mem(indexxmax);
+  free_mem(iFastmin);
+  free_mem(iFastmax);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -609,7 +740,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
  * Plots a 3-d representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
  * values are in the 2-d array z[][]. The integer "opt" specifies:
- * see plot3dc() bellow
+ * see plot3dcl() below
 \*--------------------------------------------------------------------------*/
 
 void
@@ -625,6 +756,24 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
  * Plots a 3-d representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
  * values are in the 2-d array z[][]. The integer "opt" specifies:
+ * see plot3dcl() below
+\*--------------------------------------------------------------------------*/
+
+void
+c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT opt,
+	 PLFLT *clevel, PLINT nlevel)
+{
+  c_plot3dcl( x, y, z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plot3dcl(x, y, z, nx, ny, opt, clevel, nlevel,
+ *       ixstart, ixn, indexymin, indexymax)
+ *
+ * Plots a 3-d representation of the function z[x][y]. The x values
+ * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
+ * values are in the 2-d array z[][]. The integer "opt" specifies:
  *
  *  DRAW_LINEX :  Draw lines parallel to x-axis
  *  DRAW_LINEY :  Draw lines parallel to y-axis
@@ -636,13 +785,16 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
  *  MESH:       Draw the "under" side of the plot
  *
  * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
- *
+ * indexymin and indexymax are arrays which specify the y index limits
+ * (following the convention that the upper range limit is one more than
+ * actual index limit) for an x index range of ixstart, ixn.
 \*--------------------------------------------------------------------------*/
 
 void
-c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
+c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt,
-	 PLFLT *clevel, PLINT nlevel)
+	 PLFLT *clevel, PLINT nlevel,
+	 PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax)
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color;
@@ -653,17 +805,17 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
     pl3mode = 0;
 
     if (plsc->level < 3) {
-	myabort("plot3dc: Please set up window first");
+	myabort("plot3dcl: Please set up window first");
 	return;
     }
 
     if (opt < 1) {
-	myabort("plot3dc: Bad option");
+	myabort("plot3dcl: Bad option");
 	return;
     }
 
     if (nx <= 0 || ny <= 0) {
-	myabort("plot3dc: Bad array dimensions.");
+	myabort("plot3dcl: Bad array dimensions.");
 	return;
     }
 
@@ -679,13 +831,13 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 
     for (i = 0; i < nx - 1; i++) {
 	if (x[i] >= x[i + 1]) {
-	    myabort("plot3dc: X array must be strictly increasing");
+	    myabort("plot3dcl: X array must be strictly increasing");
 	    return;
 	}
     }
     for (i = 0; i < ny - 1; i++) {
 	if (y[i] >= y[i + 1]) {
-	    myabort("plot3dc: Y array must be strictly increasing");
+	    myabort("plot3dcl: Y array must be strictly increasing");
 	    return;
 	}
     }
@@ -720,7 +872,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
       int i, j;
 
       if(_nx <= 1 || _ny <= 1) {
-	 myabort("plot3dc: selected x or y range has no data");
+	 myabort("plot3dcl: selected x or y range has no data");
 	 return;
       }
 
@@ -798,7 +950,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
      fc_maxz = plsc->ranma;
 
      if (fc_maxz == fc_minz) {
-       plwarn("plot3dc: Maximum and minimum Z values are equal! \"fixing\"...");
+       plwarn("plot3dcl: Maximum and minimum Z values are equal! \"fixing\"...");
        fc_maxz = fc_minz + 1e-6;
      }
    }
@@ -826,7 +978,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
     vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
 
     if ( ! utmp || ! vtmp)
-	myexit("plot3dc: Out of memory.");
+	myexit("plot3dcl: Out of memory.");
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
@@ -1008,6 +1160,84 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 	free(z[i]);
       free(z);
     }
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plxyindexlimits()
+ *
+ * Transform from y array limits to corresponding x array limits (or vice 
+ * versa).
+ * 
+ * N.B. we follow the convention here that all upper range limits are one
+ * more than the actual last index.
+ * instart (>= 0) through inn is the index range where
+ * the input inarray_min and inarray_max arrays are defined.
+ * 
+ * outstart (>= 0), through outn (with outn <= outnmax) is the index range 
+ * where the output outarray_min and outarray_max arrays are defined.
+ * 
+ * In order to assure the transformation from y array limits to x array limits
+ * (or vice versa) is single-valued, this programme plaborts if the 
+ * inarray_min array has a maximum or inarray_max array has a minimum.
+\*--------------------------------------------------------------------------*/
+
+static void
+plxyindexlimits(PLINT instart, PLINT inn, 
+	 PLINT *inarray_min, PLINT *inarray_max,
+	 PLINT *outstart, PLINT *outn, PLINT outnmax,
+	 PLINT *outarray_min, PLINT *outarray_max)
+{
+   PLINT i, j;
+   if (inn < 0) {
+      myabort("plxyindexlimits: Must have instart >= 0");
+      return;
+   }
+   if (inn - instart <= 0) {
+      myabort("plxyindexlimits: Must have at least 1 defined point");
+      return;
+   }
+   *outstart = inarray_min[instart];
+   *outn = inarray_max[instart];
+   for (i=instart; i<inn; i++) {
+      *outstart = MIN(*outstart, inarray_min[i]);
+      *outn = MAX(*outn, inarray_max[i]);
+      if (i + 2 < inn) {
+	 if (inarray_min[i] < inarray_min[i+1] && 
+	     inarray_min[i+1] > inarray_min[i+2]) {
+	    myabort("plxyindexlimits: inarray_min must not have a maximum");
+	    return;
+	 }
+	 if (inarray_max[i] > inarray_max[i+1] && 
+	     inarray_max[i+1] < inarray_max[i+2]) {
+	    myabort("plxyindexlimits: inarray_max must not have a minimum");
+	    return;
+	 }
+      }
+   }
+   if (*outstart < 0) {
+      myabort("plxyindexlimits: Must have all elements of inarray_min >= 0");
+      return;
+   }
+   if (*outn > outnmax) {
+      myabort("plxyindexlimits: Must have all elements of inarray_max <= outnmax");
+      return;
+   }
+   for (j=*outstart; j < *outn; j++) {
+      i = instart;
+      /* Find first valid i for this j. */
+      while (i < inn && !(inarray_min[i] <= j && j < inarray_max[i]))
+	i++;
+      if (i < inn)
+	outarray_min[j] = i;
+      else {
+	 myabort("plxyindexlimits: bad logic; invalid i should never happen");
+	 return;
+      }
+      /* Find next invalid i for this j. */
+      while (i < inn && (inarray_min[i] <= j && j < inarray_max[i]))
+	i++;
+      outarray_max[j] = i;
+   }
 }
 
 /*--------------------------------------------------------------------------*\

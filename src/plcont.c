@@ -450,6 +450,33 @@ cont_store(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT kx, PLINT lx
 }
 
 /*--------------------------------------------------------------------------*\
+ *
+ * cont_storel:
+ *
+ * Draw contour lines in memory.
+ * The difference between this version and cont_store is the input part of
+ * the argument list uses the full API (and full power) of plcont.
+ * cont_clean_store() must be called after use to release allocated memory.
+ *
+\*--------------------------------------------------------------------------*/
+
+void
+cont_storel(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data,
+	 CONT_LEVEL **contour)
+{
+  cont3d = 1;
+
+  plcont(f, nx, ny, kx, lx, ky, ly, clevel, nlevel,
+	 pltr,  pltr_data);
+
+  *contour = startlev;
+  cont3d = 0;
+}
+
+/*--------------------------------------------------------------------------*\
  * void plcont()
  *
  * Draws a contour plot from data in f(nx,ny).  Is just a front-end to

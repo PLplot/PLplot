@@ -536,8 +536,18 @@ typedef struct cont_level {
 } CONT_LEVEL;
 
 void
-cont_store(PLFLT *x, PLFLT *y, PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-	   PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, CONT_LEVEL **contour);
+cont_store(PLFLT *x, PLFLT *y, PLFLT **f, PLINT nx, PLINT ny,
+	   PLINT kx, PLINT lx, PLINT ky, PLINT ly, 
+	   PLFLT *clevel, PLINT nlevel, CONT_LEVEL **contour);
+
+void
+cont_storel(PLFLT **f, PLINT nx, PLINT ny, 
+	    PLINT kx, PLINT lx, PLINT ky, PLINT ly, 
+	    PLFLT *clevel, PLINT nlevel,
+	    void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	    PLPointer pltr_data,
+	    CONT_LEVEL **contour);
+
 void
 cont_clean_store(CONT_LEVEL *ct);
 

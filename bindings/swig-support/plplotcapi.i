@@ -421,10 +421,22 @@ void
 plot3dc(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
 
+DOC(plot3dcl, "Plot a 3-d contoured representation of the function z[x][y] with limits on the y index.")
+void
+plot3dcl(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n,
+	 PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk);
+
 DOC(plsurf3d, "Plot a 3-d contoured surface representation of the function z[x][y].")
 void
 plsurf3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
+
+DOC(plsurf3dl, "Plot a 3-d contoured surface representation of the function z[x][y] with limits on the y index.")
+void
+plsurf3dl(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n, 
+	 PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk);
 
 DOC(plpat, "Set fill pattern directly.")
 void

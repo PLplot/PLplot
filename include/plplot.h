@@ -487,6 +487,7 @@ typedef struct {
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
 #define    plot3dc	c_plot3dc
+#define    plot3dcl	c_plot3dcl
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -536,6 +537,7 @@ typedef struct {
 #define    plstripd	c_plstripd
 #define    plstyl	c_plstyl
 #define    plsurf3d	c_plsurf3d
+#define    plsurf3dl	c_plsurf3dl
 #define    plsvect      c_plsvect
 #define    plsvpa	c_plsvpa
 #define    plsxax	c_plsxax
@@ -988,6 +990,15 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt,
 	 PLFLT *clevel, PLINT nlevel);
 
+/* Plots a 3-d representation of the function z[x][y] with contour and
+ * y index limits. */
+
+void
+c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT opt,
+	 PLFLT *clevel, PLINT nlevel, 
+	 PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
+
 /*
  * definitions for the opt argument in plot3dc() and plsurf3d()
  *
@@ -1307,6 +1318,14 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space);
 void
 c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	   PLINT opt, PLFLT *clevel, PLINT nlevel);
+
+/* Plots the 3d surface representation of the function z[x][y] with y
+ * index limits. */
+
+void
+c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	   PLINT opt, PLFLT *clevel, PLINT nlevel,
+	   PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
 
 /* Sets the edges of the viewport to the specified absolute coordinates */
 
