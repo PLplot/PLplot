@@ -1,5 +1,4 @@
-
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 2002-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -13,11 +12,24 @@
 ##
 ## This file is part of plplot_octave.
 
-function p17
+function p17(fg)
 
-  title "Lena";
-  [img, map]= loadimage (file_in_path (LOADPATH,"lena.img"));
+  t = automatic_replot;
+  automatic_replot = 0;
+
+  title "Click and Drag button 1 to select";
+  xlabel "Button 3 to restart and button 2 to finish";
+  ylabel "";
+  [img, map]= loadimage (file_in_loadpath ("lena.img"));
   colormap(map);
   plimage (img);
+  if (!nargin)
+    [x1, y1, x2, y2] = plrb(1);
+    title "Lena";
+    xlabel "";
+    plimage (img, x1, x2, y1, y2);
+  endif
+
+  automatic_replot = t;
   
 endfunction
