@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,7 +12,7 @@
 ##
 ## This file is part of plplot_octave.
 
-## cmap = plcolormap([map])
+## cmap = plcolormap([map]), an alias to colormap().
 ## 
 ## Set colormap1 to map; map is an n row by 3 columns matrix, representing
 ##   red, green and blue components in the range [0..1]
@@ -21,55 +21,6 @@
 ## if map don't exist, return the current colormap
 
 function ccmap = plcolormap(map)
-
-  global __pl
-  __pl_init;
-
-  if (nargin == 0)
-    if (struct_contains(__pl, "colormap"))
-      cmap = __pl.colormap;
-    else
-      n = 64;
-      r = [zeros(n/2,1); linspace(0,1,n/2)'];
-      g = zeros(n,1);
-      b = [linspace(1,0,n/2)'; zeros(n/2,1)];
-      cmap = __pl.colormap = [r, g, b];
-    endif
-
-    if (nargout)
-      ccmap = cmap;
-    endif
-    return
-  endif
-
-  if (nargin == 1 && isstr(map) && strcmp(map, 'default'))
-    plscmap1n(0);
-    n = 64;
-    r = [zeros(n/2,1); linspace(0,1,n/2)'];
-    g = zeros(n,1);
-    b = [linspace(1,0,n/2)'; zeros(n/2,1)];
-    map = __pl.colormap = [r, g, b];
-    if (nargout)
-      ccmap = map;
-    endif
-  endif
-
-  [r, c] = size(map);
-  if( c != 3)
-    help plcolormap
-    return
-  endif
-
-  __pl.colormap = map;
-  cmap = map;
-  map = map.*255;
-
-  plscmap1n(rows(map)); # number of colors
-  plscmap1(map(:,1), map(:,2), map(:,3));
-  plflush;#pleop;
-
-  if (nargout)
-    ccmap = cmap;
-  endif
-
+  warning("plcolormap: use colormap instead.");
+  ccmap = colormap(map);
 endfunction
