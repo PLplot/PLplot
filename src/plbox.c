@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1995/01/06 07:54:16  mjl
+ * Revision 1.17  1995/01/29 07:04:18  mjl
+ * Fix to increase spacing between inverted tics and numeric labels; in some
+ * cases they were running into each other.  Contributed by John Interrante.
+ *
+ * Revision 1.16  1995/01/06  07:54:16  mjl
  * Added new options:
  *   f: Always use fixed point numeric labels
  *   h: Draws a grid at the minor tick interval
@@ -122,7 +126,6 @@ c_plaxes(PLFLT x0, PLFLT y0,
     PLINT lxmin, lxmax, lymin, lymax;
     PLINT pxmin, pxmax, pymin, pymax;
     PLINT vppxmi, vppxma, vppymi, vppyma;
-    PLINT lstring;
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT xp0, yp0, pos, tn, tp, temp, offset, height;
 
@@ -1103,20 +1106,22 @@ static void
 label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 {
     static char string[40];
-    PLINT lfx, llx, lmx, lnx, ltx;
-    PLINT lfy, lly, lmy, lny, lty, lvy;
+    PLINT lfx, lix, llx, lmx, lnx, ltx;
+    PLINT lfy, liy, lly, lmy, lny, lty, lvy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT pos, tn, tp, temp, offset, height;
 
 /* Set plot options from input */
 
     lfx = plP_stsearch(xopt, 'f');
+    lix = plP_stsearch(xopt, 'i');
     llx = plP_stsearch(xopt, 'l');
     lmx = plP_stsearch(xopt, 'm');
     lnx = plP_stsearch(xopt, 'n');
     ltx = plP_stsearch(xopt, 't');
 
     lfy = plP_stsearch(yopt, 'f');
+    liy = plP_stsearch(yopt, 'i');
     lly = plP_stsearch(yopt, 'l');
     lmy = plP_stsearch(yopt, 'm');
     lny = plP_stsearch(yopt, 'n');
@@ -1136,11 +1141,12 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
 	    plform(tn, xscale, xprec, string, llx, lfx);
+	    height = lix ? 1.75 : 1.5;
 	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
-	    if (lnx)
-		plmtex("b", 1.5, pos, 0.5, string);
+  	    if (lnx)
+		plmtex("b", height, pos, 0.5, string);
 	    if (lmx)
-		plmtex("t", 1.5, pos, 0.5, string);
+		plmtex("t", height, pos, 0.5, string);
 	}
 	xdigits = 2;
 	plsxax(xdigmax, xdigits);
@@ -1172,16 +1178,22 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	    plform(tn, yscale, yprec, string, lly, lfy);
 	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
 	    if (lny) {
-		if (lvy)
-		    plmtex("lv", 0.5, pos, 1.0, string);
-		else
-		    plmtex("l", 1.5, pos, 0.5, string);
+		if (lvy) {
+		    height = liy ? 1.0 : 0.5;
+		    plmtex("lv", height, pos, 1.0, string);
+		} else {
+		    height = liy ? 1.75 : 1.5;
+		    plmtex("l", height, pos, 0.5, string);
+		}
 	    }
 	    if (lmy) {
-		if (lvy)
-		    plmtex("rv", 0.5, pos, 0.0, string);
-		else
-		    plmtex("r", 1.5, pos, 0.5, string);
+		if (lvy) {
+		    height = liy ? 1.0 : 0.5;
+		    plmtex("rv", height, pos, 0.0, string);
+		} else {
+		    height = liy ? 1.75 : 1.5;
+		    plmtex("r", height, pos, 0.5, string);
+		}
 	    }
 	    ydigits = MAX(ydigits, strlen(string));
 	}
