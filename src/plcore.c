@@ -1,15 +1,19 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 05:11:44  mjl
-   Eliminated gradv driver function.  Completely rewrote initialization
-   routines.  Now plstar and plstart are merely front-ends to plinit, which
-   does all the initialization.  Added plsdev for setting the device name, and
-   plssub for setting the subpages.  Added plgpls for getting the current pls
-   pointer, for offloading stream-dependent code into other files.  Added
-   plsesc/plgesc for setting/getting the escape character for text strings (can
-   be any of [!#$%&*@^~], brackets not included).  Put in some checks for
-   routines that set family file parameters.  Eliminated some unused routines.
+   Revision 1.3  1993/02/25 18:31:36  mjl
+   Changed the order of driver calls on a grclr().  The plot buffer clear
+   must come first.
 
+ * Revision 1.2  1993/02/23  05:11:44  mjl
+ * Eliminated gradv driver function.  Completely rewrote initialization
+ * routines.  Now plstar and plstart are merely front-ends to plinit, which
+ * does all the initialization.  Added plsdev for setting the device name, and
+ * plssub for setting the subpages.  Added plgpls for getting the current pls
+ * pointer, for offloading stream-dependent code into other files.  Added
+ * plsesc/plgesc for setting/getting the escape character for text strings (can
+ * be any of [!#$%&*@^~], brackets not included).  Put in some checks for
+ * routines that set family file parameters.  Eliminated some unused routines.
+ *
  * Revision 1.1  1993/01/23  05:49:27  mjl
  * Holds "core" routines -- includes routines from what was base.c, plstar.c,
  * some others.  The stream data and dispatch table are now local to this
@@ -109,13 +113,14 @@ grpolyline(PLSHORT *x, PLSHORT *y, PLINT npts)
 }
 
 /* Clear screen (or eject page). */
+/* Here the plot buffer call must be made first */
 
 void
 grclr(void)
 {
+    plbuf_clear(&pls[ipls]);
     offset = pls[ipls].device - 1;
     (*dispatch_table[offset].pl_clear) (&pls[ipls]);
-    plbuf_clear(&pls[ipls]);
 }
 
 /* Set up new page. */
