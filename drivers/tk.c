@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.48  1995/01/13 23:21:52  mjl
+ * Revision 1.49  1995/03/11 21:42:14  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
+ * Substantially rewrote input loop to handle new locate mode (type 'L' while
+ * at a page break).
+ *
+ * Revision 1.48  1995/01/13  23:21:52  mjl
  * Fixed to work with new locator variables.
  *
  * Revision 1.47  1994/11/02  19:51:48  mjl
@@ -28,32 +34,6 @@
  * Revision 1.45  1994/08/25  04:02:03  mjl
  * Fix to allow a TK main window to be associated with each PLStream.
  * Contributed by Radey Shouman.
- *
- * Revision 1.44  1994/07/25  06:44:25  mjl
- * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
- *
- * Revision 1.43  1994/07/23  04:45:42  mjl
- * Added code to start plserver with sigprocmask set so that a ^C doesn't
- * kill it (enabled if pls->server_nokill is set).  Contributed by Ian
- * Searle.
- *
- * Revision 1.42  1994/07/22  10:17:48  mjl
- * Bug squashed, introduced in last update.  On issuing a "Q", the cleanup
- * was getting hosed, leaving a spurious plserver window hanging around.
- * Works great now.
- *
- * Revision 1.41  1994/07/21  08:43:27  mjl
- * Eliminated some bogus Tcl-DP initializations when the Tk driver is
- * being used.
- *
- * Revision 1.40  1994/07/19  22:31:48  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
- * inclusion changed to /not/ use a search path so that it will work better
- * with makedepend.
- *
- * Revision 1.39  1994/07/18  20:30:39  mjl
- * Fixed the eop driver function to flush output even if pause is turned off.
 */
 
 /*	tk.c
@@ -61,7 +41,7 @@
  *	Maurice LeBrun
  *	30-Apr-93
  *
- *	PLPLOT Tcl/Tk and Tcl-DP device drivers.
+ *	PLplot Tcl/Tk and Tcl-DP device drivers.
  *	Should be broken up somewhat better to prepare for DP w/o X.
  */
 
@@ -94,52 +74,72 @@
 #include <dp.h>
 #endif
 
+/* Number of instructions to skip between updates */
+
+#define MAX_INSTR 100
+
+/* These need to be distinguished since the handling is slightly different. */
+
+#define LOCATE_INVOKED_VIA_API		1
+#define LOCATE_INVOKED_VIA_DRIVER	2
+
 /* A handy command wrapper */
 
 #define tk_wr(code) \
 if (code) { abort_session(pls, "Unable to write to PDFstrm"); }
 
-/*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
 /* Function prototypes */
 
 /* various */
 
-static void	init		(PLStream *pls);
-static void	tk_start	(PLStream *pls);
-static void	tk_stop		(PLStream *pls);
-static void	tk_di		(PLStream *pls);
-static void	tk_fill		(PLStream *pls);
-static void	WaitForPage	(PLStream *pls);
-static void	HandleEvents	(PLStream *pls);
-static void	init_server	(PLStream *pls);
-static void	launch_server	(PLStream *pls);
-static void	flush_output	(PLStream *pls);
-static void	plwindow_init	(PLStream *pls);
-static void	link_init	(PLStream *pls);
-static void	GetCursor	(PLStream *pls, PLCursor *ptr);
+static void  init		(PLStream *pls);
+static void  tk_start		(PLStream *pls);
+static void  tk_stop		(PLStream *pls);
+static void  tk_di		(PLStream *pls);
+static void  tk_fill		(PLStream *pls);
+static void  WaitForPage	(PLStream *pls);
+static void  CheckForEvents	(PLStream *pls);
+static void  HandleEvents	(PLStream *pls);
+static void  init_server	(PLStream *pls);
+static void  launch_server	(PLStream *pls);
+static void  flush_output	(PLStream *pls);
+static void  plwindow_init	(PLStream *pls);
+static void  link_init		(PLStream *pls);
+static void  GetCursor		(PLStream *pls, PLGraphicsIn *ptr);
 
 /* performs Tk-driver-specific initialization */
 
-static int	pltkdriver_Init	(PLStream *pls);
+static int   pltkdriver_Init	(PLStream *pls);
 
 /* Tcl/TK utility commands */
 
-static void	tk_wait		(PLStream *pls, char *);
-static void	abort_session	(PLStream *pls, char *);
-static void	server_cmd	(PLStream *pls, char *, int);
-static void	tcl_cmd		(PLStream *pls, char *);
-static void	copybuf		(PLStream *pls, char *cmd);
-static int	pltk_toplevel	(Tk_Window *w, Tcl_Interp *interp,
+static void  tk_wait		(PLStream *pls, char *);
+static void  abort_session	(PLStream *pls, char *);
+static void  server_cmd		(PLStream *pls, char *, int);
+static void  tcl_cmd		(PLStream *pls, char *);
+static void  copybuf		(PLStream *pls, char *cmd);
+static int   pltk_toplevel	(Tk_Window *w, Tcl_Interp *interp,
 				 char *display, char *basename,
 				 char *classname);
 
+static void  ProcessKey		(PLStream *pls);
+static void  ProcessButton	(PLStream *pls);
+static void  LocateKey		(PLStream *pls);
+static void  LocateButton	(PLStream *pls);
+static void  Locate		(PLStream *pls);
+
 /* These are internal TCL commands */
 
-static int	Abort		(ClientData, Tcl_Interp *, int, char **);
-static int	KeyEH		(ClientData, Tcl_Interp *, int, char **);
-static int	MouseEH		(ClientData, Tcl_Interp *, int, char **);
+static int   Abort		(ClientData, Tcl_Interp *, int, char **);
+static int   KeyEH		(ClientData, Tcl_Interp *, int, char **);
+static int   ButtonEH		(ClientData, Tcl_Interp *, int, char **);
+static int   LookupTkKeyEvent	(PLStream *pls, Tcl_Interp *interp,
+				 int argc, char **argv);
+static int   LookupTkButtonEvent(PLStream *pls, Tcl_Interp *interp,
+				 int argc, char **argv);
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_init_dp()
  * plD_init_tk()
  * init_tk()
@@ -147,7 +147,7 @@ static int	MouseEH		(ClientData, Tcl_Interp *, int, char **);
  * Initialize device.
  * TK-dependent stuff done in tk_start().  You can set the display by
  * calling plsfnam() with the display name as the (string) argument.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_init_tk(PLStream *pls)
@@ -189,16 +189,12 @@ init(PLStream *pls)
 
     dbug_enter("plD_init_tk");
 
-    pls->termin = 1;		/* is an interactive terminal */
-    pls->icol0 = 1;
-    pls->page = 0;
-    pls->dev_di = 1;
-    pls->dev_flush = 1;		/* Want to handle our own flushes */
-    pls->dev_fill0 = 1;
-    pls->dev_fill1 = 1;
-
-    if (pls->width == 0)	/* Is 0 if uninitialized */
-	pls->width = 1;
+    pls->color = 1;		/* Is a color device */
+    pls->termin = 1;		/* Is an interactive terminal */
+    pls->dev_di = 1;		/* Handle driver interface commands */
+    pls->dev_flush = 1;		/* Handle our own flushes */
+    pls->dev_fill0 = 1;		/* Handle solid fills */
+    pls->dev_fill1 = 1;		/* Handle pattern fills */
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -226,6 +222,11 @@ init(PLStream *pls)
 	plexit("plD_init_tk: Out of memory.");
 
     dev->exit_eventloop = 0;
+
+/* Variables used in querying plserver for events */
+
+    dev->instr = 0;
+    dev->max_instr = MAX_INSTR;
 
 /* Start interpreter and spawn server process */
 
@@ -274,24 +275,20 @@ init(PLStream *pls)
     flush_output(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_line_tk()
  *
  * Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
 {
     U_CHAR c;
     U_SHORT xy[4];
-    static long count = 0, max_count = 100;
     TkDev *dev = (TkDev *) pls->dev;
 
-    if ( ++count >= max_count ) {
-	count = 0;
-	HandleEvents(pls);	/* Check for events */
-    }
+    CheckForEvents(pls);
 
     if (x1 == dev->xold && y1 == dev->yold) {
 	c = (U_CHAR) LINETO;
@@ -318,23 +315,19 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
 	flush_output(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_polyline_tk()
  *
  * Draw a polyline in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     U_CHAR c = (U_CHAR) POLYLINE;
-    static long count = 0, max_count = 100;
     TkDev *dev = (TkDev *) pls->dev;
 
-    if ( ++count >= max_count ) {
-	count = 0;
-	HandleEvents(pls);	/* Check for events */
-    }
+    CheckForEvents(pls);
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) npts) );
@@ -349,12 +342,12 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 	flush_output(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_eop_tk()
  *
  * End of page.  
  * User must hit <RETURN> to continue.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_tk(PLStream *pls)
@@ -364,19 +357,16 @@ plD_eop_tk(PLStream *pls)
     dbug_enter("plD_eop_tk");
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-
-    if (pls->pdfs->bp > 0) 
-	flush_output(pls);
-
+    flush_output(pls);
     if ( ! pls->nopause)
 	WaitForPage(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_bop_tk()
  *
  * Set up for the next page.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_tk(PLStream *pls)
@@ -392,11 +382,11 @@ plD_bop_tk(PLStream *pls)
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_tidy_tk()
  *
  * Close graphics file
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_tk(PLStream *pls)
@@ -409,11 +399,11 @@ plD_tidy_tk(PLStream *pls)
 	tk_stop(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_state_tk()
  *
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void 
 plD_state_tk(PLStream *pls, PLINT op)
@@ -472,7 +462,7 @@ plD_state_tk(PLStream *pls, PLINT op)
 	flush_output(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_esc_tk()
  *
  * Escape function.
@@ -485,7 +475,7 @@ plD_state_tk(PLStream *pls, PLINT op)
  *	PLESC_FILL	Fill polygon
  *	PLESC_EH	Handle events only
  *
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
@@ -521,7 +511,7 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_GETC:
-	GetCursor(pls, (PLCursor *) ptr);
+	GetCursor(pls, (PLGraphicsIn *) ptr);
 	break;
 
     default:
@@ -530,33 +520,43 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * GetCursor()
  *
- * Waits for a left button mouse event and returns coordinates.
-\*----------------------------------------------------------------------*/
+ * Waits for a graphics input event and returns coordinates.
+\*--------------------------------------------------------------------------*/
 
 static void
-GetCursor(PLStream *pls, PLCursor *ptr)
+GetCursor(PLStream *pls, PLGraphicsIn *ptr)
 {
     TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
 
-    dev->cursorX = -1;
-    dev->cursorY = -1;
-    while (dev->cursorX < 0) {
-	HandleEvents(pls);
+/* Initialize */
+
+    plGinInit(gin);
+    dev->locate_mode = LOCATE_INVOKED_VIA_API;
+    plD_esc_tk(pls, PLESC_FLUSH, NULL);
+    server_cmd( pls, "$plwidget configure -xhairs on", 1 );
+
+/* Run event loop until a point is selected */
+
+    while (gin->pX < 0 && dev->locate_mode) {
+	Tk_DoOneEvent(0);
     }
 
-    ptr->dX = dev->cursorX;
-    ptr->dY = dev->cursorY;
+/* Clean up */
+
+    server_cmd( pls, "$plwidget configure -xhairs off", 1 );
+    *ptr = *gin;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tk_di
  *
  * Process driver interface command.
- * Just send the command to the remote plplot library.
-\*----------------------------------------------------------------------*/
+ * Just send the command to the remote PLplot library.
+\*--------------------------------------------------------------------------*/
 
 static void
 tk_di(PLStream *pls)
@@ -628,11 +628,11 @@ tk_di(PLStream *pls)
     server_cmd( pls, "plw_update_view $plwindow", 1 );
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tk_fill()
  *
  * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tk_fill(PLStream *pls)
@@ -650,12 +650,12 @@ tk_fill(PLStream *pls)
     dev->yold = UNDEFINED;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tk_start
  *
  * Create TCL interpreter and spawn off server process.
  * Each stream that uses the tk driver gets its own interpreter.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tk_start(PLStream *pls)
@@ -724,11 +724,11 @@ tk_start(PLStream *pls)
     return;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tk_stop
  *
  * Normal termination & cleanup.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tk_stop(PLStream *pls)
@@ -788,13 +788,13 @@ tk_stop(PLStream *pls)
     free_mem(dev->cmdbuf);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * abort_session
  *
  * Terminates with an error.  
  * Cleanup is done here, and once pls->level is cleared the driver will
  * never be called again. 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 abort_session(PLStream *pls, char *msg)
@@ -814,11 +814,11 @@ abort_session(PLStream *pls, char *msg)
     plexit(msg);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pltkdriver_Init
  *
  * Performs PLplot/TK driver-specific Tcl initialization.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pltkdriver_Init(PLStream *pls)
@@ -830,16 +830,16 @@ pltkdriver_Init(PLStream *pls)
 
     main = Tk_MainWindow(interp);
 
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
+/*
+ * Call the init procedures for included packages.  Each call should
+ * look like this:
+ *
+ * if (Mod_Init(interp) == TCL_ERROR) {
+ *     return TCL_ERROR;
+ * }
+ *
+ * where "Mod" is the name of the module.
+ */
 
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
@@ -856,10 +856,10 @@ pltkdriver_Init(PLStream *pls)
     }
 #endif
 
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
+/*
+ * Call Tcl_CreateCommand for application-specific commands, if
+ * they weren't already created by the init procedures called above.
+ */
 
     Tcl_CreateCommand(interp, "wait_until", plWait_Until,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
@@ -877,7 +877,7 @@ pltkdriver_Init(PLStream *pls)
     Tcl_CreateCommand(interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
-    Tcl_CreateCommand(interp, "mouse", MouseEH,
+    Tcl_CreateCommand(interp, "button", ButtonEH,
 		      (ClientData) pls, (void (*)()) NULL);
 
 /* Set some relevant interpreter variables */
@@ -902,7 +902,7 @@ pltkdriver_Init(PLStream *pls)
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * init_server
  *
  * Starts interaction with server process, launching it if necessary.
@@ -981,7 +981,7 @@ pltkdriver_Init(PLStream *pls)
  * running on the display (resulting in names of the form "plserver #2",
  * etc).  Embedding such a string in a "[list ...]" construct prevents the
  * string from being interpreted as two separate strings.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 init_server(PLStream *pls)
@@ -1022,11 +1022,11 @@ init_server(PLStream *pls)
 	tcl_cmd(pls, "plclient_link_init"); 
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * launch_server
  *
  * Launches plserver, locally or remotely.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 launch_server(PLStream *pls)
@@ -1152,8 +1152,8 @@ launch_server(PLStream *pls)
 	}
 	else if (pid == 0) {
 
-/* Don't kill plserver on a ^C if pls->server_nokill is set */
-/* Contributed by Ian Searle */
+	/* Don't kill plserver on a ^C if pls->server_nokill is set */
+	/* Contributed by Ian Searle */
 
 	    if (pls->server_nokill) {
 		int retv;
@@ -1162,7 +1162,7 @@ launch_server(PLStream *pls)
 		sigfillset (set);
 		sigaddset (set, SIGINT);
 		if ((retv = sigprocmask (SIG_BLOCK, set, 0)) < 0)
-		    fprintf(stderr, "plplot: sigprocmask failure\n");
+		    fprintf(stderr, "PLplot: sigprocmask failure\n");
 	    }
 	    fprintf(stderr, "Starting up %s\n", plserver_exec);
 	    if (execv(plserver_exec, argv)) {
@@ -1178,7 +1178,7 @@ launch_server(PLStream *pls)
     tk_wait(pls, "[info exists client]" );
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plwindow_init
  *
  * Configures the widget hierarchy we are sending the data stream to.  
@@ -1186,7 +1186,7 @@ launch_server(PLStream *pls)
  * If a widget name (identifying the actual widget or a container widget)
  * hasn't been supplied already we assume it needs to be created.
  *
- * In order to achieve maximum flexibility, the plplot tk driver requires
+ * In order to achieve maximum flexibility, the PLplot tk driver requires
  * only that certain TCL procs must be defined in the server interpreter.
  * These can be used to set up the desired widget configuration.  The procs
  * invoked from this driver currently include:
@@ -1203,13 +1203,13 @@ launch_server(PLStream *pls)
  * as argument.  "plwindow" is set from the value of pls->plwindow, and
  * if null is generated from the name of the client main window (to
  * ensure uniqueness).  $plwindow usually indicates the container frame
- * for the actual plplot widget, but can be arbitrary -- as long as the
+ * for the actual PLplot widget, but can be arbitrary -- as long as the
  * usage in all the TCL procs is consistent.
  *
- * In order that the TK driver be able to invoke the actual plplot
+ * In order that the TK driver be able to invoke the actual PLplot
  * widget, the proc "$plw_create_proc" deposits the widget name in the local
  * interpreter variable "plwidget".
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plwindow_init(PLStream *pls)
@@ -1222,8 +1222,8 @@ plwindow_init(PLStream *pls)
 
     if (pls->plwindow == NULL) {
 
-/* Give window a name */
-/* Eliminate any leading path specification */
+    /* Give window a name */
+    /* Eliminate any leading path specification */
 
 	pls->plwindow = (char *)
 	    malloc(10+(strlen(pls->program)) * sizeof(char));
@@ -1234,15 +1234,15 @@ plwindow_init(PLStream *pls)
 	else
 	    pname = pls->program;
 
-/* Ensure that multiple widgets created by multiple streams have unique */
-/* names (in case this kind of capability is someday supported) */
+    /* Ensure that multiple widgets created by multiple streams have unique */
+    /* names (in case this kind of capability is someday supported) */
 
 	if (pls->ipls == 0)
 	    sprintf(pls->plwindow, ".%s", pname);
 	else
 	    sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
 
-/* Replace any blanks with underscores to avoid quoting problems. */
+    /* Replace any blanks with underscores to avoid quoting problems. */
 
 	for (i = 0; i < strlen(pls->plwindow); i++) {
 	    if (pls->plwindow[i] == ' ')
@@ -1259,8 +1259,8 @@ plwindow_init(PLStream *pls)
 
     tk_wait(pls, "[info exists plwidget]" );
 
-/* Now we should have the actual plplot widget name in $plwidget */
-/* Configure remote plplot stream. */
+/* Now we should have the actual PLplot widget name in $plwidget */
+/* Configure remote PLplot stream. */
 
 /* Configure background color if set */
 /* The default color is handled from a resource setting in plconfig.tcl */
@@ -1281,19 +1281,19 @@ plwindow_init(PLStream *pls)
     if (pls->nopixmap) 
 	server_cmd( pls, "$plwidget cmd plsetopt -nopixmap", 0 );
 
-/* Start up remote plplot */
+/* Start up remote PLplot */
 
     server_cmd( pls, "$plw_start_proc $plwindow [list $client]", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * link_init
  *
- * Initializes the link between the client and the plplot widget for
+ * Initializes the link between the client and the PLplot widget for
  * data transfer.  Defaults to a FIFO when the TK driver is selected and
  * a socket when the DP driver is selected.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 link_init(PLStream *pls)
@@ -1313,18 +1313,18 @@ link_init(PLStream *pls)
 		   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0) 
 	    abort_session(pls, "mkfifo error");
 
-/* Tell plframe widget to open FIFO (for reading). */
+    /* Tell plframe widget to open FIFO (for reading). */
 
 	Tcl_SetVar(dev->interp, "fifoname", iodev->filename, 0);
 	server_cmd( pls, "$plwidget openlink fifo $fifoname", 1 );
 
-/* Open the FIFO for writing */
-/* This will block until the server opens it for reading */
+    /* Open the FIFO for writing */
+    /* This will block until the server opens it for reading */
 
 	if ((iodev->fd = open(iodev->filename, O_WRONLY)) == -1) 
 	    abort_session(pls, "Error opening fifo for write");
 
-/* Create stream interface (C file handle) to FIFO */
+    /* Create stream interface (C file handle) to FIFO */
 
 	iodev->type = 0;
 	iodev->typename = "fifo";
@@ -1361,11 +1361,11 @@ link_init(PLStream *pls)
     pls->pdfs = pdf_bopen( NULL, bufmax );
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * WaitForPage()
  *
  * Waits for a page advance.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 WaitForPage(PLStream *pls)
@@ -1380,11 +1380,34 @@ WaitForPage(PLStream *pls)
     dev->exit_eventloop = 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * CheckForEvents()
+ *
+ * A front-end to HandleEvents(), which is only called if certain conditions
+ * are satisfied:
+ *
+ * - only check for events and process them every dev->max_instr times this
+ *   function is called (good for performance since performing an update is
+ *   a nontrivial performance hit).
+\*--------------------------------------------------------------------------*/
+
+static void
+CheckForEvents(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+
+    if (++dev->instr % dev->max_instr == 0) {
+	dev->instr = 0;
+	HandleEvents(pls);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * HandleEvents()
  *
- * Just a front-end to the update command.  
-\*----------------------------------------------------------------------*/
+ * Just a front-end to the update command, for use when not actually waiting
+ * for an event but only checking the event queue.
+\*--------------------------------------------------------------------------*/
 
 static void
 HandleEvents(PLStream *pls)
@@ -1394,7 +1417,7 @@ HandleEvents(PLStream *pls)
     tcl_cmd(pls, "$update_proc");
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * flush_output()
  *
  * Sends graphics instructions to the {FIFO|socket} via a packet send.
@@ -1405,7 +1428,7 @@ HandleEvents(PLStream *pls)
  * buffer is stored in pdfs->bp (the original Tcl-DP routine assumes the
  * message is character data and uses strlen).  Also, they can
  * send/receive from either a fifo or a socket.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 flush_output(PLStream *pls)
@@ -1415,28 +1438,29 @@ flush_output(PLStream *pls)
 
     dbug_enter("flush_output");
 
-#ifdef DEBUG
-    fprintf(stderr, "%s: Flushing buffer, bytes = %ld\n",
-	    __FILE__, pdfs->bp);
-#endif
-
     tcl_cmd(pls, "$update_proc");
 
 /* Send packet -- plserver filehandler will be invoked automatically. */
 
-    if (pl_PacketSend(dev->interp, dev->iodev, pls->pdfs)) {
-	fprintf(stderr, "Packet send failed:\n\t %s\n",
-		dev->interp->result);
-	abort_session(pls, "");
+    if (pdfs->bp > 0) {
+#ifdef DEBUG
+	fprintf(stderr, "%s: Flushing buffer, bytes = %ld\n",
+		__FILE__, pdfs->bp);
+#endif
+	if (pl_PacketSend(dev->interp, dev->iodev, pls->pdfs)) {
+	    fprintf(stderr, "Packet send failed:\n\t %s\n",
+		    dev->interp->result);
+	    abort_session(pls, "");
+	}
+	pdfs->bp = 0;
     }
-    pdfs->bp = 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Abort
  *
  * Just a TCL front-end to abort_session().
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Abort(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
@@ -1449,179 +1473,376 @@ Abort(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * KeyEH()
  *
  * This TCL command handles keyboard events.
- *
- * Arguments:
- *	command name
- *	keysym name (textual string)
- *	keysym value
- *	ASCII equivalent (optional)
- *
- * The first argument is keysym name -- this is all that's really required 
- * although it's better to send the numeric keysym value since then we
- * can avoid a long lookup procedure.  Sometimes, when faking input, it
- * is inconvenient to have to worry about what the numeric keysym value
- * is, so in a few cases a missing keysym value is tolerated.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 {
     PLStream *pls = (PLStream *) clientData;
     TkDev *dev = (TkDev *) pls->dev;
-
-    PLKey key;
-    char *keysym, c;
-    int advance = 0;
+    int result;
 
     dbug_enter("KeyEH");
 
-    if (argc < 2) {
-	Tcl_AppendResult(interp, "wrong # args: should be \"",
-		argv[0], " keysym-name ?keysym-value?\"", (char *) NULL);
-	return TCL_ERROR;
-    }
-    key.code = 0;
-    key.string[0] = '\0';
+    if ((result = LookupTkKeyEvent(pls, interp, argc, argv)) != TCL_OK)
+	return result;
 
-/* Keysym name */
+    if (dev->locate_mode)
+	LocateKey(pls);
+    else
+	ProcessKey(pls);
 
-    keysym = argv[1];
-
-/* Keysym value */
-/* If missing, explicitly check for a few common ones */
-
-    if (argc > 2)
-	key.code = atol(argv[2]);
-
-    if (argc == 2 || key.code == 0) {
-	c = *keysym;
-	if ((c == 'B') && (strcmp(keysym, "BackSpace") == 0)) {
-	    key.code = PLK_BackSpace;
-	}
-	else if ((c == 'D') && (strcmp(keysym, "Delete") == 0)) {
-	    key.code = PLK_Delete;
-	}
-	else if ((c == 'L') && (strcmp(keysym, "Linefeed") == 0)) {
-	    key.code = PLK_Linefeed;
-	}
-	else if ((c == 'R') && (strcmp(keysym, "Return") == 0)) {
-	    key.code = PLK_Return;
-	}
-	else if ((c == 'P') && (strcmp(keysym, "Prior") == 0)) {
-	    key.code = PLK_Prior;
-	}
-	else if ((c == 'N') && (strcmp(keysym, "Next") == 0)) {
-	    key.code = PLK_Next;
-	}
-	else {
-	    Tcl_AppendResult(interp, "Unrecognized keysym \"",
-		    argv[1], "\"; must specify keycode", (char *) NULL);
-	    return TCL_ERROR;
-	}
-    }
-
-/* ASCII value */
-
-    if (argc > 3) {
-	key.string[0] = argv[3][0];
-	key.string[1] = '\0';
-    }
-
-#ifdef DEBUG
-    fprintf(stderr, "KeyEH: stream: %d, Keysym %s, hex %x, ASCII: %s\n",
-	    (int) pls->ipls, keysym, (unsigned int) key.code, key.string);
-#endif
-
-/* Call user event handler */
-/* Since this is called first, the user can disable all plplot internal
-   event handling by setting key.code to 0 and key.string to '\0' */
-
-    if (pls->KeyEH != NULL)
-	(*pls->KeyEH) (&key, pls->KeyEH_data, &advance);
-
-/* Handle internal events */
-/* Advance to next page (i.e. terminate event loop) on a <eol> */
-/* Check for both <CR> and <LF> for portability, also a <Page Down> */
-
-    if (key.code == PLK_Return ||
-	key.code == PLK_Linefeed ||
-	key.code == PLK_Next)
-	advance = TRUE;
-
-    if (advance) 
-	dev->exit_eventloop = 1;
-
-/* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
-
-    if (key.string[0] == 'Q') 
-	tcl_cmd(pls, "abort");
-
-    return TCL_OK;
+    return result;
 }
 
-/*----------------------------------------------------------------------*\
- * MouseEH()
+/*--------------------------------------------------------------------------*\
+ * ButtonEH()
  *
- * This TCL command handles mouse buttonpress events.
- * Written by Radey Shouman
- *
- * Arguments:
- *	command name
- *	button number
- *	state (decimal string)
- *	x coordinate normalized to [0.0 1.0]
- *	y coordinate normalized to [0.0 1.0]
- *
-\*----------------------------------------------------------------------*/
+ * This TCL command handles button events.
+\*--------------------------------------------------------------------------*/
 
 static int
-MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+ButtonEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 {
     PLStream *pls = (PLStream *) clientData;
     TkDev *dev = (TkDev *) pls->dev;
+    int result;
 
-    PLMouse mouse;
-    int advance = 0;
+    dbug_enter("ButtonEH");
 
-    dbug_enter("MouseEH");
+    if ((result = LookupTkButtonEvent(pls, interp, argc, argv)) != TCL_OK)
+	return result;
 
-    if (argc != 5) {
-        Tcl_AppendResult(interp, "wrong # args: should be \"",
-		argv[0], " button-number state x y\"", (char *) NULL);
+    if (dev->locate_mode)
+	LocateButton(pls);
+    else
+	ProcessButton(pls);
+
+    return result;
+}
+
+/*--------------------------------------------------------------------------*\
+ * LookupTkKeyEvent()
+ *
+ * Fills in the PLGraphicsIn from a Tk KeyEvent.
+ *
+ * Contents of argv array:
+ *	command name
+ *	keysym value
+ *	keysym state
+ *	absolute x coordinate of cursor
+ *	absolute y coordinate of cursor
+ *	relative x coordinate (normalized to [0.0 1.0])
+ *	relative y coordinate (normalized to [0.0 1.0])
+ *	keysym name
+ *	ASCII equivalent (optional)
+ *
+ * Note that the keysym name is only used for debugging, and the string is
+ * not always passed (i.e. the character may not have an ASCII
+ * representation).
+\*--------------------------------------------------------------------------*/
+
+static int
+LookupTkKeyEvent(PLStream *pls, Tcl_Interp *interp, int argc, char **argv)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+    char *keyname;
+
+    dbug_enter("LookupTkKeyEvent");
+
+    if (argc < 8) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+		argv[0], " key-value state pX pY dX dY key-name ?ascii-value?\"",
+			 (char *) NULL);
 	return TCL_ERROR;
     }
 
-    mouse.button = atol(argv[1]);
-    mouse.state = atol(argv[2]);
-    mouse.x = atof(argv[3]);
-    mouse.y = atof(argv[4]);
+    gin->keysym = atol(argv[1]);
+    gin->state  = atol(argv[2]);
+    gin->pX     = atol(argv[3]);
+    gin->pY     = atol(argv[4]);
+    gin->dX     = atof(argv[5]);
+    gin->dY     = atof(argv[6]);
 
-#ifdef DEBUG
-    fprintf(stderr, "MouseEH: button %d, state %d, x: %f, y: %f\n",
-	    mouse.button, mouse.state, mouse.x, mouse.y);
-#endif
+    keyname     = argv[7];
 
-/* Call user event handler */
-
-    if (pls->MouseEH != NULL) {
-        (*pls->MouseEH) (&mouse, pls->MouseEH_data, &advance);
-	if (advance)
-	    Tcl_SetVar(dev->interp, "advance", "1", 0);
+    gin->string[0] = '\0';
+    if (argc > 8) {
+	gin->string[0] = argv[8][0];
+	gin->string[1] = '\0';
     }
 
-/* These lines terminate the locate input loop */
+/* Fix up keysym value -- see notes in xwin.c about key representation */
 
-    dev->cursorX = mouse.x;
-    dev->cursorY = mouse.y;
+    switch (gin->keysym) {
+
+    case XK_BackSpace:
+    case XK_Tab:
+    case XK_Linefeed:
+    case XK_Return:
+    case XK_Escape:
+    case XK_Delete:
+	gin->keysym &= 0xFF;
+	break;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "KeyEH: stream: %d, Keyname %s, hex %x, ASCII: %s\n",
+	    (int) pls->ipls, keyname, (unsigned int) gin->keysym, gin->string);
+#endif
 
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * LookupTkButtonEvent()
+ *
+ * Fills in the PLGraphicsIn from a Tk ButtonEvent.
+ *
+ * Contents of argv array:
+ *	command name
+ *	button number
+ *	state (decimal string)
+ *	absolute x coordinate
+ *	absolute y coordinate
+ *	relative x coordinate (normalized to [0.0 1.0])
+ *	relative y coordinate (normalized to [0.0 1.0])
+\*--------------------------------------------------------------------------*/
+
+static int
+LookupTkButtonEvent(PLStream *pls, Tcl_Interp *interp, int argc, char **argv)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    dbug_enter("LookupTkButtonEvent");
+
+    if (argc != 7) {
+        Tcl_AppendResult(interp, "wrong # args: should be \"",
+		argv[0], " button-number state pX pY dX dY\"", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    gin->button = atol(argv[1]);
+    gin->state  = atol(argv[2]);
+    gin->pX     = atof(argv[3]);
+    gin->pY     = atof(argv[4]);
+    gin->dX     = atof(argv[5]);
+    gin->dY     = atof(argv[6]);
+    gin->keysym = 0x20;
+
+#ifdef DEBUG
+    fprintf(stderr,
+	    "ButtonEH: button %d, state %d, pX: %d, pY: %d, dX: %f, dY: %f\n",
+	    gin->button, gin->state, gin->pX, gin->pY, gin->dX, gin->dY);
+#endif
+
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * ProcessKey()
+ *
+ * Process keyboard events other than locate input.
+\*--------------------------------------------------------------------------*/
+
+static void
+ProcessKey(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    dbug_enter("ProcessKey");
+
+/* Call user keypress event handler.  Since this is called first, the user
+ * can disable all internal event handling by setting key.keysym to 0.
+*/
+    if (pls->KeyEH != NULL)
+	(*pls->KeyEH) (gin, pls->KeyEH_data, &dev->exit_eventloop);
+
+/* Handle internal events */
+
+    switch (gin->keysym) {
+
+    case PLK_Return:
+    case PLK_Linefeed:
+    case PLK_Next:
+    /* Advance to next page (i.e. terminate event loop) on a <eol> */
+    /* Check for both <CR> and <LF> for portability, also a <Page Down> */
+	dev->exit_eventloop = TRUE;
+	break;
+
+    case 'Q':
+    /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+	tcl_cmd(pls, "abort");
+	break;
+
+    case 'L':
+    /* Begin locate mode */
+	dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;
+	server_cmd( pls, "$plwidget configure -xhairs on", 1 );
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * ProcessButton()
+ *
+ * Process ButtonPress events other than locate input.
+ * On:
+ *   Button1: nothing (except when in locate mode, see ButtonLocate)
+ *   Button2: nothing
+ *   Button3: set page advance flag
+\*--------------------------------------------------------------------------*/
+
+static void
+ProcessButton(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    dbug_enter("ButtonEH");
+
+/* Call user event handler.  Since this is called first, the user can
+ * disable all PLplot internal event handling by setting gin->button to 0.
+*/
+    if (pls->ButtonEH != NULL)
+	(*pls->ButtonEH) (gin, pls->ButtonEH_data, &dev->exit_eventloop);
+
+/* Handle internal events */
+
+    switch (gin->button) {
+    case Button3:
+	dev->exit_eventloop = TRUE;
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * LocateKey()
+ *
+ * Front-end to locate handler for KeyPress events.
+ * Only provides for:
+ *
+ *  <Escape>		Ends locate mode
+\*--------------------------------------------------------------------------*/
+
+static void
+LocateKey(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+/* End locate mode on <Escape> */
+
+    if (gin->keysym == PLK_Escape) {
+	dev->locate_mode = 0;
+	server_cmd( pls, "$plwidget configure -xhairs off", 1 );
+	plGinInit(gin);
+    }
+    else {
+	Locate(pls);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * LocateButton()
+ *
+ * Front-end to locate handler for ButtonPress events.
+ * Only passes control to Locate() for Button1 presses.
+\*--------------------------------------------------------------------------*/
+
+static void
+LocateButton(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    switch (gin->button) {
+
+    case Button1:
+	Locate(pls);
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * Locate()
+ *
+ * Handles locate mode events.
+ *
+ * In locate mode: move cursor to desired location and select by pressing a
+ * key or by clicking on the mouse (if available).  Typically the world
+ * coordinates of the selected point are reported.
+ *
+ * There are two ways to enter Locate mode -- via the API, or via a driver
+ * command.  The API entry point is the call plGetCursor(), which initiates
+ * locate mode and does not return until input has been obtained.  The
+ * driver entry point is by entering a 'L' while the driver is waiting for
+ * events.  
+ *
+ * Locate mode input is reported in one of three ways:
+ * 1. Through a returned PLGraphicsIn structure, when user has specified a
+ *    locate handler via (*pls->LocateEH).
+ * 2. Through a returned PLGraphicsIn structure, when locate mode is invoked
+ *    by a plGetCursor() call.
+ * 3. Through writes to stdout, when locate mode is invoked by a driver
+ *    command and the user has not supplied a locate handler.
+ *
+ * Hitting <Escape> will at all times end locate mode.  Other keys will
+ * typically be interpreted as locator input.  Selecting a point out of
+ * bounds will end locate mode unless the user overrides with a supplied
+ * Locate handler.
+\*--------------------------------------------------------------------------*/
+
+static void
+Locate(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+/* Call user locate mode handler if provided */
+
+    if (pls->LocateEH != NULL)
+	(*pls->LocateEH) (gin, pls->LocateEH_data, &dev->locate_mode);
+
+/* Use default procedure */
+
+    else {
+
+    /* Try to locate cursor */
+
+	if (plTranslateCursor(gin)) {
+
+	/* If invoked by the API, we're done */
+	/* Otherwise send report to stdout */
+
+	    if (dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER) {
+		pltext();
+		if (gin->keysym < 0xFF && isprint(gin->keysym)) 
+		    printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
+		else
+		    printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
+
+		plgra();
+	    }
+	}
+	else {
+
+	/* Selected point is out of bounds, so end locate mode */
+
+	    dev->locate_mode = 0;
+	    server_cmd( pls, "$plwidget configure -xhairs off", 1 );
+	}
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  *
  * pltk_toplevel --
  *
@@ -1633,7 +1854,7 @@ MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
  * Side effects:
  *	Returns window ID as *w.
  *
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
@@ -1661,15 +1882,15 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 
     if (*w == NULL) {
 	fprintf(stderr, "%s\n", (interp)->result);
-	return(1);
+	return 1;
     }
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);
 
-    return(0);
+    return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tk_wait()
  *
  * Waits for the specified expression to evaluate to true before
@@ -1678,7 +1899,7 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
  *
  * Use a static string buffer to hold the command, to ensure it's in
  * writable memory (grrr...).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tk_wait(PLStream *pls, char *cmd)
@@ -1702,7 +1923,7 @@ tk_wait(PLStream *pls, char *cmd)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * server_cmd
  *
  * Sends specified command to server, aborting on an error.
@@ -1715,7 +1936,7 @@ tk_wait(PLStream *pls, char *cmd)
  * the entire command in a [list ...], but for TK sends ONLY.  If done with
  * Tcl-DP RPC, the sent command is no longer recognized.  Evidently an
  * extra scan of the line is done with TK sends for some reason.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 server_cmd(PLStream *pls, char *cmd, int nowait)
@@ -1756,11 +1977,11 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tcl_cmd
  *
  * Evals the specified command, aborting on an error.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tcl_cmd(PLStream *pls, char *cmd)
@@ -1779,12 +2000,12 @@ tcl_cmd(PLStream *pls, char *cmd)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * copybuf
  *
  * Puts command in a static string buffer, to ensure it's in writable
  * memory (grrr...).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 copybuf(PLStream *pls, char *cmd)
@@ -1805,7 +2026,7 @@ copybuf(PLStream *pls, char *cmd)
     strcpy(dev->cmdbuf, cmd);
 }
 
-/*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
 #else
 int
 pldummy_tk()

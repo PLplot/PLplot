@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1995/01/10 09:37:17  mjl
+ * Revision 1.36  1995/03/11 21:40:32  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
+ * Substantially rewrote input loop to handle new locate mode (type 'L' while
+ * at a page break).
+ *
+ * Revision 1.35  1995/01/10  09:37:17  mjl
  * Fixed some braindamage incurred last update.
  *
  * Revision 1.33  1995/01/06  07:44:22  mjl
@@ -16,41 +22,11 @@
  * Revision 1.32  1994/08/26  19:21:55  mjl
  * Added support for the Conex vt320 Tek4010/4014/4105 terminal emulator (DOS).
  * Much cleaning up and optimizations.  Contributed by Mark Olesen.
- *
- * Revision 1.31  1994/07/23  04:44:27  mjl
- * Added conditional compilation of atexit() code based on STDC_HEADERS.
- *
- * Revision 1.30  1994/07/22  22:21:28  mjl
- * Eliminated a gcc -Wall warning.
- *
- * Revision 1.29  1994/07/19  22:30:29  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.28  1994/06/30  17:52:35  mjl
- * Made another pass to eliminate warnings when using gcc -Wall, especially
- * those created by changing a PLINT from a long to an int.
- *
- * Revision 1.27  1994/06/24  04:38:35  mjl
- * Greatly reworked the POSIX_TTY code that puts the terminal into cbreak
- * mode.  Now, initially both the original and modified terminal states are
- * saved.  When the terminal goes into graphics mode, it is also put into
- * cbreak mode.  This ensures that the program gets character-at-a-time
- * input, which is good for quitting <Q> PLplot or for paging in plrender.
- * When the terminal goes into text mode, the original terminal state
- * (canonical input, typically) is restored, which is good for reading user
- * input or command interpreters.  Just make sure you use plgra() and
- * pltext() for switching; if you switch the terminal locally it may get
- * confused until the next plgra() or pltext().
- *
- * Revision 1.26  1994/06/23  22:32:07  mjl
- * Now ensures that device is in graphics mode before issuing any graphics
- * instruction.
 */
 
 /*	tek.c
 
-	PLPLOT tektronix device & emulators driver.
+	PLplot tektronix device & emulators driver.
 */
 #include "plDevs.h"
 
@@ -70,34 +46,39 @@
 
 /* Static function prototypes */
 
-static void	WaitForPage	(PLStream *pls);
-static void	EventHandler	(PLStream *pls, int input_char);
-static void	tek_init	(PLStream *pls);
-static void	tek_text	(PLStream *pls);
-static void	tek_graph	(PLStream *pls);
-static void	fill_polygon	(PLStream *pls);
-static void	GetCursor	(PLStream *pls, PLCursor *ptr);
-static void	encode_int	(char *c, int i);
-static void	encode_vector	(char *c, int x, int y);
-static void	decode_gin	(char *c, PLFLT *px, PLFLT *py);
-static void	tek_vector	(PLStream *pls, int x, int y);
-static void	scolor		(int icol, int r, int g, int b);
-static void	setcmap		(PLStream *pls);
+static void  WaitForPage	(PLStream *pls);
+static void  tek_init		(PLStream *pls);
+static void  tek_text		(PLStream *pls);
+static void  tek_graph		(PLStream *pls);
+static void  fill_polygon	(PLStream *pls);
+static void  GetCursor		(PLStream *pls, PLGraphicsIn *ptr);
+static void  encode_int		(char *c, int i);
+static void  encode_vector	(char *c, int x, int y);
+static void  decode_gin		(char *c, PLGraphicsIn *gin);
+static void  tek_vector		(PLStream *pls, int x, int y);
+static void  scolor		(PLStream *pls, int icol, int r, int g, int b);
+static void  setcmap		(PLStream *pls);
+
+static void  LookupEvent	(PLStream *pls);
+static void  InputEH		(PLStream *pls);
+static void  LocateEH		(PLStream *pls);
 
 /* Stuff for handling tty cbreak mode */
 
 #ifdef POSIX_TTY
-
 #include <termios.h>
 #include <unistd.h>
-
 static struct termios	termios_cbreak, termios_reset;
 static enum { RESET, CBREAK } ttystate = RESET;
-
-static void tty_atexit	(void);
 static void tty_setup	(void);
 static int  tty_cbreak	(void);
 static int  tty_reset	(void);
+static void tty_atexit	(void);
+#else
+static void tty_setup	(void) {};
+static int  tty_cbreak	(void) {return 0};
+static int  tty_reset	(void) {return 0};
+static void tty_atexit	(void) {};
 #endif
 
 /* Pixel settings */
@@ -107,20 +88,29 @@ static int  tty_reset	(void);
 
 /* Graphics control characters. */
 
-#define BEL_CHAR	'\007'		/* BEL char = ^G = 7 */
+#define RING_BELL	"\007"		/* ^G = 7 */
 #define CLEAR_VIEW	"\033\f"	/* clear the view = ESC FF */
 
-#define ALPHA_MODE	"\037"		/* Enter Alpha mode = US */
-#define VECTOR_MODE	"\035"		/* Enter Vector mode = GS */
-#define GIN_MODE	"\033\032"	/* Enter GIN mode = ESC SUB */
-#define XTERM_VTMODE	"\033\003"	/* End Tek mode (xterm) = ESC ETX */
+#define ALPHA_MODE	"\037"		/* Enter Alpha  mode:  US */
+#define VECTOR_MODE	"\035"		/* Enter Vector mode:  GS */
+#define GIN_MODE	"\033\032"	/* Enter GIN    mode:  ESC SUB */
+#define BYPASS_MODE	"\033\030"	/* Enter Bypass mode:  ESC CAN */
+#define XTERM_VTMODE	"\033\003"	/* End xterm-Tek mode: ESC ETX */
+#define CANCEL		"\033KC"	/* Cancel */	
 
 /* Static vars */
 
 enum {tek4010, tek4105, tek4107, xterm, mskermit, vlt, versaterm};
 
-static exit_eventloop = 0;
-static int curcolor;
+/* One of these holds the tek driver state information */
+
+typedef struct {
+    PLINT	xold, yold;	/* Coordinates of last point plotted */
+    int		exit_eventloop;	/* Break out of event loop */
+    int		locate_mode;	/* Set while in locate (pick) mode */
+    int		curcolor;	/* Current color index */
+    PLGraphicsIn gin;		/* Graphics input structure */
+} TekDev;
 
 /* color for MS-DOS Kermit v2.31 (and up) tektronix emulator 
  *	0 = normal, 1 = bright 
@@ -135,7 +125,7 @@ static char *kermit_color[15]= {
    "1;35","1;32","1;36","0;34",
    "0;33"};
 #endif
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_init_xterm()	xterm 
  * plD_init_tekt()	Tek 4010 terminal
  * plD_init_tekf()	Tek 4010 file
@@ -155,7 +145,7 @@ static char *kermit_color[15]= {
  * pls->dev_fill0	if can handle solid area fill
  * pls->dev_fill1	if can handle pattern area fill
  *
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #ifdef PLD_xterm
 void 
@@ -249,46 +239,46 @@ plD_init_conex(PLStream *pls)
 }
 #endif	/* PLD_conex */
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tek_init()
  *
  * Generic tektronix device initialization.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tek_init(PLStream *pls)
 {
-    PLDev *dev;
+    TekDev *dev;
+    int xmin = 0;
+    int xmax = TEKX;
+    int ymin = 0;
+    int ymax = TEKY;
 
-    pls->icol0 = 1;
-    pls->bytecnt = 0;
-    pls->page = 0;
+    float pxlx = 4.771;
+    float pxly = 4.653;
+
     pls->graphx = TEXT_MODE;
-    curcolor = 1;
 
 /* Allocate and initialize device-specific data */
 
-    dev = plAllocDev(pls);
+    pls->dev = calloc(1, (size_t) sizeof(TekDev));
+    if (pls->dev == NULL)
+	plexit("tek_init: Out of memory.");
 
+    dev = (TekDev *) pls->dev;
+
+    dev->curcolor = 1;
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
-    dev->xmin = 0;
-    dev->ymin = 0;
-    dev->xmax = TEKX * 16;
-    dev->ymax = TEKY * 16;
-    dev->pxlx = 4.771 * 16;
-    dev->pxly = 4.653 * 16;
 
-    plP_setpxl(dev->pxlx, dev->pxly);
-    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setpxl(pxlx, pxly);
+    plP_setphy(xmin, xmax, ymin, ymax);
 
 /* Terminal/file initialization */
 
     if (pls->termin) {
 	pls->OutFile = stdout;
-#ifdef POSIX_TTY
 	tty_setup();
-#endif
     }
     else {
 	plFamInit(pls);
@@ -341,71 +331,70 @@ tek_init(PLStream *pls)
     fflush(pls->OutFile);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_line_tek()
  *
  * Draw a line from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
-plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_tek(PLStream *pls, short x1, short y1, short x2, short y2)
 {
-   PLDev *dev = (PLDev *) pls->dev;
-   short x1 = x1a >> 4, 
-   	 y1 = y1a >> 4, 
-         x2 = x2a >> 4,
-         y2 = y2a >> 4;
+    TekDev *dev = (TekDev *) pls->dev;
 
-   tek_graph(pls);
+    tek_graph(pls);
 
-/* If continuation of previous line just send new point */
+/* If not continuation of previous line, begin a new one */
 
-   if (x1 != dev->xold || y1 != dev->yold) {
-       fprintf(pls->OutFile, VECTOR_MODE);
-       pls->bytecnt++;
-       tek_vector(pls, x1, y1);
-   }
-   tek_vector(pls, x2, y2);
+    if (x1 != dev->xold || y1 != dev->yold) {
+	pls->bytecnt += fprintf(pls->OutFile, VECTOR_MODE);
+	tek_vector(pls, x1, y1);
+    }
 
-   dev->xold = x2;
-   dev->yold = y2;
+/* Now send following point to complete line draw */
+
+    tek_vector(pls, x2, y2);
+
+    dev->xold = x2;
+    dev->yold = y2;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_polyline_tek()
  *
  * Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_tek(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
-   PLINT i;
-   PLDev *dev = (PLDev *) pls->dev;
-   short x = xa[0] >> 4, y = ya[0] >> 4;
+    PLINT i;
+    TekDev *dev = (TekDev *) pls->dev;
+    short x = xa[0], y = ya[0];
 
-   tek_graph(pls);
+    tek_graph(pls);
 
-/* If continuation of previous line just send new point */
+/* If not continuation of previous line, begin a new one */
 
-   if ( x != dev->xold || y != dev->yold ) {
-       fprintf(pls->OutFile, VECTOR_MODE);
-       pls->bytecnt++;
-       tek_vector(pls, x, y);
-   }
-   for (i = 1; i < npts; i++) {
-       tek_vector(pls, xa[i] >> 4, ya[i] >> 4 );
-   }
-   
-   dev->xold = xa[npts -1] >> 4;
-   dev->yold = ya[npts -1] >> 4;
+    if ( x != dev->xold || y != dev->yold ) {
+	pls->bytecnt += fprintf(pls->OutFile, VECTOR_MODE);
+	tek_vector(pls, x, y);
+    }
+
+/* Now send following points to complete polyline draw */
+
+    for (i = 1; i < npts; i++) 
+	tek_vector(pls, xa[i], ya[i]);
+
+    dev->xold = xa[npts-1];
+    dev->yold = ya[npts-1];
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_eop_tek()
  *
  * End of page.  User must hit a <CR> to continue (terminal output).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_tek(PLStream *pls)
@@ -416,21 +405,21 @@ plD_eop_tek(PLStream *pls)
 	if ( ! pls->nopause) 
 	    WaitForPage(pls);
     }
-    fprintf(pls->OutFile, CLEAR_VIEW);	/* erase and home */
+    fprintf(pls->OutFile, CLEAR_VIEW);		/* erase and home */
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_bop_tek()
  *
  * Set up for the next page.  Advance to next family file if necessary
  * (file output).  Devices that share graphics/alpha screens need a page
  * clear.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_tek(PLStream *pls)
 {
-   PLDev *dev = (PLDev *) pls->dev;
+   TekDev *dev = (TekDev *) pls->dev;
 
    dev->xold = UNDEFINED;
    dev->yold = UNDEFINED;
@@ -452,11 +441,11 @@ plD_bop_tek(PLStream *pls)
        setcmap(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_tidy_tek()
  *
  * Close graphics file or otherwise clean up.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_tek(PLStream *pls)
@@ -469,16 +458,38 @@ plD_tidy_tek(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * tek_color()
+ *
+ * Change to specified color index.
+\*--------------------------------------------------------------------------*/
+
+static void 
+tek_color(PLStream *pls, int icol)
+{
+    switch (pls->dev_minor) {
+#ifdef PLD_mskermit			/* Is this really necessary? */
+    case mskermit:
+	printf("\033[%sm", kermit_color[icol % 14] );
+	break;
+#endif
+    default:
+	pls->bytecnt += fprintf(pls->OutFile, "\033ML%c", icol + '0');
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * plD_state_tek()
  *
  * Handle change in PLStream state (color, pen width, fill attribute,
  * etc).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void 
 plD_state_tek(PLStream *pls, PLINT op)
 {
+    TekDev *dev = (TekDev *) pls->dev;
+
     switch (op) {
 
     case PLSTATE_WIDTH:
@@ -489,18 +500,8 @@ plD_state_tek(PLStream *pls, PLINT op)
 	    int icol0 = pls->icol0;
 	    tek_graph(pls);
 	    if (icol0 != PL_RGB_COLOR) {
-		curcolor = icol0;
-		switch (pls->dev_minor) {
-#ifdef PLD_mskermit
-		case mskermit:
-		    fprintf(pls->OutFile, "\033[%sm",
-			    kermit_color[icol0 % 14] );
-		    break;
-#endif	/* PLD_mskermit */
-
-		default:
-		    fprintf(pls->OutFile, "\033ML%c", icol0 + '0');
-		}
+		dev->curcolor = icol0;
+		tek_color(pls, icol0);
 	    }
 	}
 	break;
@@ -513,8 +514,8 @@ plD_state_tek(PLStream *pls, PLINT op)
 		break;
 
 	    icol1 = pls->ncol0 + (pls->icol1 * (ncol1-1)) / (pls->ncol1-1);
-	    curcolor = icol1;
-	    fprintf(pls->OutFile, "\033ML%c", icol1 + '0');
+	    dev->curcolor = icol1;
+	    tek_color(pls, icol1);
 	}
 	break;
 
@@ -527,11 +528,11 @@ plD_state_tek(PLStream *pls, PLINT op)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_esc_tek()
  *
  * Escape function.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void 
 plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
@@ -551,57 +552,60 @@ plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_GETC:
-	GetCursor(pls, (PLCursor *) ptr);
+	GetCursor(pls, (PLGraphicsIn *) ptr);
 	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * GetCursor()
  *
  * Waits for a left button mouse event and returns coordinates.
-\*----------------------------------------------------------------------*/
+ * xterm doesn't handle GIN. I think all the rest do.
+\*--------------------------------------------------------------------------*/
 
 static void
-GetCursor(PLStream *pls, PLCursor *ptr)
+GetCursor(PLStream *pls, PLGraphicsIn *ptr)
 {
+#define MAX_GIN 10
+    char input_string[MAX_GIN];
     int i = 0;
-    char input_string[10];
 
-/* xterm doesn't handle GIN. I think all the rest do. */
+    plGinInit(ptr);
 
-    if (pls->dev_minor == xterm) {
-	ptr->dX = ptr->dY = -1;
-	return;
+    if (pls->termin && pls->dev_minor != xterm) {
+	tek_graph(pls);
+
+    /* Enter GIN mode */
+
+	printf(GIN_MODE);
+	fflush(stdout);
+
+    /* Read & decode report */
+
+	while (++i < MAX_GIN && (input_string[i-1] = getchar()) != '\n')
+	    ;
+
+	input_string[i-1] = '\0';
+	ptr->keysym = input_string[0];
+	decode_gin(&input_string[1], ptr);
+
+    /* Switch out of GIN mode */
+
+	printf(VECTOR_MODE);
     }
-
-/* Enter GIN mode */
-
-    printf(GIN_MODE);
-    fflush(stdout);
-
-/* Read report */
-
-    while ((input_string[i++] = getchar()) != '\n')
-	;
-    input_string[i-1] = '\0';
-    ptr->c = input_string[0];
-    decode_gin(&input_string[1], &ptr->dX, &ptr->dY);
-
-/* Return to vector mode */
-
-    printf(VECTOR_MODE);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * fill_polygon()
  *
  * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 fill_polygon(PLStream *pls)
 {
+    TekDev *dev = (TekDev *) pls->dev;
     int i;
     char fillcol[4], firstpoint[5];
 
@@ -610,32 +614,29 @@ fill_polygon(PLStream *pls)
 
     tek_graph(pls);
 
-    encode_int(fillcol, -curcolor);
-    encode_vector(firstpoint, pls->dev_x[0]>>4, pls->dev_y[0]>>4);
+    encode_int(fillcol, -dev->curcolor);
+    encode_vector(firstpoint, pls->dev_x[0], pls->dev_y[0]);
 
 /* Select the fill pattern */
 
-    fprintf(pls->OutFile, "\033MP%s", fillcol);
+    pls->bytecnt += fprintf(pls->OutFile, "\033MP%s", fillcol);
 
 /* Begin panel boundary */
 /* Change %s0 to %s1 to see the boundary of each fill box -- cool! */
 
-    fprintf(pls->OutFile, "\033LP%s0", firstpoint);
+    pls->bytecnt += fprintf(pls->OutFile, "\033LP%s0", firstpoint);
 
-/* Specify boundary (use vector mode) */
+/* Specify boundary (in vector mode) */
 
-    fprintf(pls->OutFile, VECTOR_MODE);
-    pls->bytecnt++;
-    for (i = 1; i < pls->dev_npts; i++) {
-	tek_vector(pls, pls->dev_x[i]>>4, pls->dev_y[i]>>4);
-    }
+    for (i = 1; i < pls->dev_npts; i++) 
+	tek_vector(pls, pls->dev_x[i], pls->dev_y[i]);
 
 /* End panel */
 
-    fprintf(pls->OutFile, "\033LE");
+    pls->bytecnt += fprintf(pls->OutFile, "\033LE");
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tek_text()
  *
  * Switch to text screen (or alpha mode, for vanilla tek's).  Restore
@@ -651,15 +652,13 @@ fill_polygon(PLStream *pls)
  * after the switch to text screen or before the switch to graphics
  * screen, the string is printed correctly.  I've been unable to find a
  * workaround for this problem (and I've tried, you can believe eet man).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void 
 tek_text(PLStream *pls)
 {
     if (pls->termin && (pls->graphx == GRAPHICS_MODE)) {
-#ifdef POSIX_TTY
 	tty_reset();
-#endif
 	pls->graphx = TEXT_MODE;
 	switch (pls->dev_minor) {
 	case xterm:
@@ -686,21 +685,18 @@ tek_text(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tek_graph()
  *
- * Switch to graphics screen (or vector mode, for vanilla tek's).  Also
- * switch terminal to cbreak mode, to allow single keystrokes to govern
- * actions at end of page.
-\*----------------------------------------------------------------------*/
+ * Switch to graphics screen.  Also switch terminal to cbreak mode, to allow
+ * single keystrokes to govern actions at end of page.
+\*--------------------------------------------------------------------------*/
 
 static void 
 tek_graph(PLStream *pls)
 {
     if (pls->termin && (pls->graphx == TEXT_MODE)) {
-#ifdef POSIX_TTY
 	tty_cbreak();
-#endif
 	pls->graphx = GRAPHICS_MODE;
 	switch (pls->dev_minor) {
 	case xterm:
@@ -718,20 +714,17 @@ tek_graph(PLStream *pls)
    	    printf(CLEAR_VIEW);		/* clear screen */
 	    printf("\033LV0");		/* set dialog invisible */
 	    break;
-
-	default:
-	    printf(VECTOR_MODE);	/* enter vector mode */
 	}
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * encode_int()
  *
  * Encodes a single int into standard tek integer format, storing into a
  * NULL-terminated character string (must be length 4 or greater).  This
  * scheme does not work for negative integers less than 15.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 encode_int(char *c, int i)
@@ -760,13 +753,65 @@ encode_int(char *c, int i)
     return;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * decode_gin()
+ *
+ * Decodes a GIN tek vector string into an xy pair of relative device
+ * coordinates.  It's best to not use absolute device coordinates since the
+ * coordinate bounds are different depending on the report encoding used.
+ *
+ * Standard:	<HiX><LoX><HiY><LoY>
+ * Extended:	<HiY><Extra><LoY><HiX><LoX>
+ * 
+ * where <Extra> holds the two low order bits for each coordinate.
+\*--------------------------------------------------------------------------*/
+
+static void
+decode_gin(char *c, PLGraphicsIn *gin)
+{
+    int x, y, lc = strlen(c);
+
+    if (lc == 4) {
+	x = ((c[0] & 0x1f) << 5) +
+	    ((c[1] & 0x1f)     );
+
+	y = ((c[2] & 0x1f) << 5) +
+	    ((c[3] & 0x1f)     );
+
+	gin->pX = x;
+	gin->pY = y;
+	gin->dX = x / (double) TEKX;
+	gin->dY = y / (double) TEKY;
+    }
+    else if (lc == 5) {
+	y = ((c[0] & 0x1f) << 7) +
+	    ((c[2] & 0x1f) << 2) +
+	    ((c[1] & 0x06) >> 2);
+
+	x = ((c[3] & 0x1f) << 7) +
+	    ((c[4] & 0x1f) << 2) +
+	    ((c[1] & 0x03)     );
+
+	gin->pX = x;
+	gin->pY = y;
+	gin->dX = x / (double) (TEKX << 2);
+	gin->dY = y / (double) (TEKY << 2);
+    }
+    else {			/* Illegal encoding */
+	gin->pX = 0;
+	gin->pY = 0;
+	gin->dY = 0;
+	gin->dX = 0;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * encode_vector()
  *
  * Encodes an xy vector (2 ints) into standard tek vector format, storing
  * into a NULL-terminated character string of length 5.  Note that the y
  * coordinate always comes first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 encode_vector(char *c, int x, int y)
@@ -778,82 +823,31 @@ encode_vector(char *c, int x, int y)
     c[4] = '\0';			/* NULL */
 }
 
-/*----------------------------------------------------------------------*\
- * decode_gin()
- *
- * Decodes a GIN tek vector string into an xy pair of relative device
- * coordinates.  I don't use absolute device coordinates since the
- * coordinate bounds are different depending on the report encoding used.
- *
- * Standard:	<HiX><LoX><HiY><LoY>
- * Extended:	<HiY><Extra><LoY><HiX><LoX>
- * 
- * where <Extra> holds the two low order bits for each coordinate.
-\*----------------------------------------------------------------------*/
-
-static void
-decode_gin(char *c, PLFLT *px, PLFLT *py)
-{
-    int x, y, lc = strlen(c);
-
-    if (lc == 4) {
-	x = ((c[0] & 0x1f) << 5) +
-	    ((c[1] & 0x1f)     );
-
-	y = ((c[2] & 0x1f) << 5) +
-	    ((c[3] & 0x1f)     );
-
-	*px = (double) x / (double) TEKX;
-	*py = (double) y / (double) TEKY;
-    }
-    else if (lc == 5) {
-	y = ((c[0] & 0x1f) << 7) +
-	    ((c[2] & 0x1f) << 2) +
-	    ((c[1] & 0x06) >> 2);
-
-	x = ((c[3] & 0x1f) << 7) +
-	    ((c[4] & 0x1f) << 2) +
-	    ((c[1] & 0x03)     );
-
-	*px = (double) x / (double) (TEKX << 2);
-	*py = (double) y / (double) (TEKY << 2);
-    }
-    else {
-	*py = 0;		/* Illegal encoding */
-	*px = 0;
-    }
-}
-
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * tek_vector()
  *
  * Issues a vector draw command, assuming we are in vector plot mode.  XY
  * coordinates are encoded according to the standard xy encoding scheme.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 tek_vector(PLStream *pls, int x, int y)
 {
     char c[5];
-    c[0] = (y >> 5)   + 0x20;		/* hy */
-    c[1] = (y & 0x1f) + 0x60;		/* ly */
-    c[2] = (x >> 5)   + 0x20;		/* hx */
-    c[3] = (x & 0x1f) + 0x40;		/* lx */
-    c[4] = '\0';			/* NULL */
 
-    fprintf( pls->OutFile, "%s", c );
-    pls->bytecnt += 4;
+    encode_vector(c, x, y);
+    pls->bytecnt += fprintf( pls->OutFile, "%s", c );
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * scolor()
  *
- * Sets a color by tek-encoded RGB values.  Need to convert PLPLOT RGB
+ * Sets a color by tek-encoded RGB values.  Need to convert PLplot RGB
  * color range (0 to 255) to Tek RGB color range (0 to 100).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
-scolor(int icol, int r, int g, int b)
+scolor(PLStream *pls, int icol, int r, int g, int b)
 {
     char tek_col[4], tek_r[4], tek_g[4], tek_b[4];
 
@@ -862,14 +856,15 @@ scolor(int icol, int r, int g, int b)
     encode_int(tek_g, (100*g)/255);
     encode_int(tek_b, (100*b)/255);
 
-    printf("\033TG14%s%s%s%s", tek_col, tek_r, tek_g, tek_b);
+    pls->bytecnt += fprintf(pls->OutFile, "\033TG14%s%s%s%s",
+			    tek_col, tek_r, tek_g, tek_b);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * setcmap()
  *
  * Sets up color palette.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 setcmap(PLStream *pls)
@@ -882,136 +877,205 @@ setcmap(PLStream *pls)
 /* Initialize cmap 0 colors */
 
     for (i = 0; i < pls->ncol0; i++) 
-	scolor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
+	scolor(pls, i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
 
 /* Initialize any remaining slots for cmap1 */
 
     for (i = 0; i < ncol1; i++) {
 	plcol_interp(pls, &cmap1col, i, ncol1);
-	scolor(i + pls->ncol0, cmap1col.r, cmap1col.g, cmap1col.b);
+	scolor(pls, i + pls->ncol0, cmap1col.r, cmap1col.g, cmap1col.b);
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * WaitForPage()
  *
  * This routine waits for the user to advance the plot, while handling
  * all other events.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 WaitForPage(PLStream *pls)
 {
-    int input_char;
+    TekDev *dev = (TekDev *) pls->dev;
 
-    putchar(BEL_CHAR);
+    printf(ALPHA_MODE);		/* Switch to alpha mode (necessary) */
+    printf(RING_BELL);		/* and ring bell */
+    printf(VECTOR_MODE);	/* Switch out of alpha mode */
     fflush(stdout);
 
-    while ( ! exit_eventloop) {
-	input_char = getchar();
-	EventHandler(pls, input_char);
+    while ( ! dev->exit_eventloop) {
+	LookupEvent(pls);
+	if (dev->locate_mode)
+	    LocateEH(pls);
+	else
+	    InputEH(pls);
     }
-    exit_eventloop = FALSE;
+    dev->exit_eventloop = FALSE;
 }
 
-/*----------------------------------------------------------------------*\
- * EventHandler()
+/*--------------------------------------------------------------------------*\
+ * LookupEvent()
  *
- * Event handler routine for xterm.  Just reacts to keyboard input.
-\*----------------------------------------------------------------------*/
+ * Fills in the PLGraphicsIn from an input event.  
+\*--------------------------------------------------------------------------*/
 
 static void
-EventHandler(PLStream *pls, int input_char)
+LookupEvent(PLStream *pls)
 {
-    PLKey key;
+    TekDev *dev = (TekDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
 
-    key.code = 0;
-    key.string[0] = '\0';
+    if (dev->locate_mode) {
+	GetCursor(pls, gin);
+    }
+    else {
+	plGinInit(gin);
+	gin->keysym = getchar();
+    }
 
-/* Translate keystroke into a PLKey */
-
-    if ( ! isprint(input_char)) {
-	switch (input_char) {
-	case 0x0A:
-	    key.code = PLK_Linefeed;
-	    break;
-
-	case 0x0D:
-	    key.code = PLK_Return;
-	    break;
-
-	case 0x08:
-	    key.code = PLK_BackSpace;
-	    break;
-
-	case 0x7F:
-	    key.code = PLK_Delete;
-	    break;
-	}
-    } else {
-	key.string[0] = input_char;
-	key.string[1] = '\0';
+    if (isprint(gin->keysym)) {
+	gin->string[0] = gin->keysym;
+	gin->string[1] = '\0';
+    }
+    else {
+	gin->string[0] = '\0';
     }
 
 #ifdef DEBUG
     pltext();
-    fprintf(stderr, "Input char %x, Keycode %x, string: %s\n",
-	    input_char, key.code, key.string);
+    fprintf(stderr, "Keycode %x, string: %s\n", gin->keysym, gin->string);
     plgra();
 #endif
+}
 
-/* Call user event handler.
- * Since this is called first, the user can disable all plplot internal
- * event handling by setting key.code to 0 and key.string to '\0'.
- */
+/*--------------------------------------------------------------------------*\
+ * LocateEH()
+ *
+ * Handles locate mode events.
+ *
+ * In locate mode: move cursor to desired location and select by pressing a
+ * key or by clicking on the mouse (if available).  Typically the world
+ * coordinates of the selected point are reported.
+ *
+ * There are two ways to enter Locate mode -- via the API, or via a driver
+ * command.  The API entry point is the call plGetCursor(), which initiates
+ * locate mode and does not return until input has been obtained.  The
+ * driver entry point is by entering a 'L' while the driver is waiting for
+ * events.  
+ *
+ * Locate mode input is reported in one of three ways:
+ * 1. Through a returned PLGraphicsIn structure, when user has specified a
+ *    locate handler via (*pls->LocateEH).
+ * 2. Through a returned PLGraphicsIn structure, when locate mode is invoked
+ *    by a plGetCursor() call.
+ * 3. Through writes to stdout, when locate mode is invoked by a driver
+ *    command and the user has not supplied a locate handler.
+ *
+ * Hitting <Escape> will at all times end locate mode.  Other keys will
+ * typically be interpreted as locator input.  Selecting a point out of
+ * bounds will end locate mode unless the user overrides with a supplied
+ * Locate handler.
+\*--------------------------------------------------------------------------*/
 
-    if (pls->KeyEH != NULL)
-	(*pls->KeyEH) (&key, pls->KeyEH_data, &exit_eventloop);
+static void
+LocateEH(PLStream *pls)
+{
+    TekDev *dev = (TekDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
 
-/* Handle internal events */
+/* End locate mode on <Escape> */
 
-/* Advance to next page (i.e. terminate event loop) on a <eol> */
-
-    if (key.code == PLK_Linefeed)
-	exit_eventloop = TRUE;
-
-/* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
-
-    if (key.string[0] == 'Q') {
-	pls->nopause = TRUE;
-	plexit("");
+    if (gin->keysym == PLK_Escape) {
+	dev->locate_mode = 0;
+	return;
     }
 
-/* Pick points.  Terminate by picking a point out of bounds. */
-/* If you want to customize this, write an event handler to do it */
-/* The bare numbers are presented, to make it easiest to process */
+/* Call user locate mode handler if provided */
 
-    if (key.string[0] == 'P') {
-	PLCursor plc;
-	int co;
+    if (pls->LocateEH != NULL)
+	(*pls->LocateEH) (gin, pls->LocateEH_data, &dev->locate_mode);
 
-	do {
-	    co = 0;
-	    if (plGetCursor(&plc)) {
-		pltext();
-		if (isprint(plc.c)) 
-		    printf("%f %f %c\n", plc.wX, plc.wY, plc.c);
-		else
-		    printf("%f %f\n", plc.wX, plc.wY);
+/* Use default procedure */
 
-		plgra();
-		co = 1;
-	    }
-	} while (co);
+    else {
+
+    /* Try to locate cursor */
+
+	if (plTranslateCursor(gin)) {
+
+	/* Successful, so send report to stdout */
+
+	    pltext();
+	    if (isprint(gin->keysym)) 
+		printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
+	    else
+		printf("%f %f\n", gin->wX, gin->wY);
+
+	    plgra();
+	}
+	else {
+
+	/* Selected point is out of bounds, so end locate mode */
+
+	    dev->locate_mode = 0;
+	}
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * InputEH()
+ *
+ * Event handler routine for xterm.  Just reacts to keyboard input.
+ *
+ * In locate mode: move cursor to desired location and select by pressing a
+ * key or by clicking on the mouse (if available).  The world coordinates of
+ * the selected point are output on the text screen.  Terminate by picking a
+ * point out of bounds, hitting page advance, or the escape key.  If you
+ * want to customize this, write an event handler to do it.
+\*--------------------------------------------------------------------------*/
+
+static void
+InputEH(PLStream *pls)
+{
+    TekDev *dev = (TekDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+/* Call user event handler.
+ * Since this is called first, the user can disable all PLplot internal
+ * event handling by setting gin->keysym to 0 and gin->string to '\0'.
+*/
+    if (pls->KeyEH != NULL)
+	(*pls->KeyEH) (gin, pls->KeyEH_data, &dev->exit_eventloop);
+
+/* Remaining internal event handling */
+
+    switch (gin->keysym) {
+
+    case PLK_Linefeed:
+    /* Advance to next page (i.e. terminate event loop) on a <eol> */
+	dev->exit_eventloop = TRUE;
+	break;
+
+    case 'Q':
+    /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+	pls->nopause = TRUE;
+	plexit("");
+	break;
+
+    case 'L':
+    /* Begin locate mode */
+	dev->locate_mode = 1;
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * tty cbreak-mode handlers
  *
  * Taken from "Advanced Programming in the UNIX(R) Environment", 
  * by W. Richard Stevens.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #ifdef POSIX_TTY
 
