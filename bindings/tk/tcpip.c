@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/02/01 22:44:35  mjl
+ * Revision 1.3  1994/02/07 23:00:43  mjl
+ * Simplified and genericized pl_PacketReceive and pl_PacketSend functions so
+ * that they work with FIFO's as well as sockets: data stream is now fully
+ * packetized.  Functions require a PLiodev struct to be passed in,
+ * containing lots of useful information about the connection.
+ *
+ * Revision 1.2  1994/02/01  22:44:35  mjl
  * Changes to support distributed operation between machines with different
  * int/long sizes.
  *
@@ -50,7 +56,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifdef TCL_DP
+#if defined(TCL_DP) || defined (TK)
 
 /* This file is meant to be compiled with non-ANSI compilers ("cc").
  * The reason for doing it this way is to ensure that the full C
@@ -70,7 +76,6 @@
 #ifdef _POSIX_SOURCE
 #undef _POSIX_SOURCE
 #endif
-
 #else
 #define PLARGS(a)	()
 #endif
@@ -88,30 +93,24 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-
-#include <dp.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <errno.h>
-#include <sys/socket.h>
 #include <sys/uio.h>
+#include <errno.h>
 
 extern int errno;
 
 /*
  * This is a "magic number" prepended to the beginning of the packet
- * It's used to help resync the packet machanism in the event of errors.
+ * Used to help resync the packet machanism in the event of errors.
  */
 #define PACKET_MAGIC	0x6feeddcc
 
 /*
  * For TCP, it's possible to get a line in pieces.  In case everything we
- * want isn't there (e.g., in dp_packetReceive), we need a place to store
- * partial results when we're in non-blocking mode or peeking at the data.
- * The partial buffers below are created dynamically to store incomplete
- * data in these cases.
- */
+ * want isn't there, we need a place to store partial results when we're
+ * in non-blocking mode.  The partial buffers below are created
+ * dynamically to store incomplete data in these cases. 
+*/
+
 typedef struct PartialRead {
     char *buffer;		/* Buffer of characters */
     int bufSize;		/* Size of buffer */
@@ -126,313 +125,7 @@ static PartialRead *partial[MAX_OPEN_FILES];
 static void pl_FreeReadBuffer	PLARGS((int fd));
 static void pl_Unread		PLARGS((int fd, char *buffer,
 					int numBytes, int copy));
-static int  pl_Read		PLARGS((int fd, char *buffer,
-					int numReq, int flags));
-
-/*
- *--------------------------------------------------------------
- *
- * pl_PacketReceive --
- *
- *      This procedure is the C interface to the "dp_packetReceive"
- *      command. See the user documentation for a description.
- *
- * Results:
- *	Packet contents stored in pdfs->buffer.
- *
- * Side effects:
- *	The file descriptor passed in is read.
- *
- *--------------------------------------------------------------
- */
-int
-pl_PacketReceive(interp, fileHandle, peek, pdfs)
-    Tcl_Interp *interp;		/* Tcl interpreter */
-    char *fileHandle;
-    int peek;
-    PDFstrm *pdfs;
-{
-    FILE *filePtr;
-    int numRead;
-    int packetLen;
-    int fd;
-    int headerSize;
-    unsigned char hbuf[8];
-    int header[2];
-    char *errMsg;
-    int flags;
-
-    if (Tcl_GetOpenFile(interp, fileHandle, 0, 1, &filePtr) != TCL_OK) {
-      return TCL_ERROR;
-    }
-
-    fd = fileno(filePtr);
-
-    /* 
-     * Make sure this is a non-server TCP socket
-     * Deleted since I don't have access to the optFlags array.
-     */
-
-    if (peek) {
-	flags = MSG_PEEK;
-    } else {
-	flags = 0;
-    }
-
-    /*
-     * Read in the header (8 bytes)
-     */
-    headerSize = 8;
-    numRead = pl_Read (fd, hbuf, headerSize, flags);
-
-    if (numRead <= 0) {
-	goto readError;
-    }
-
-    /*
-     * Check for incomplete read.  If so, put it back (only if we consumed it!)
-     * and return.
-     */
-    if (numRead < headerSize) {
-	if (!peek) {
-	    pl_Unread (fd, hbuf, headerSize, 1);
-	}
-	Tcl_ResetResult(interp);
-	return TCL_OK;
-    }
-
-    /*
-     * Convert header character stream into ints.  This works when the
-     * connecting machine has a different size int (the old way didn't),
-     * and takes care of the endian problem to boot.  It is also mostly
-     * backward compatible since network byte ordering (big endian) is
-     * used.  
-     */
-
-    header[0] = 0;
-    header[0] |= hbuf[0] << 24;
-    header[0] |= hbuf[1] << 16;
-    header[0] |= hbuf[2] << 8;
-    header[0] |= hbuf[3];
-
-    header[1] = 0;
-    header[1] |= hbuf[4] << 24;
-    header[1] |= hbuf[5] << 16;
-    header[1] |= hbuf[6] << 8;
-    header[1] |= hbuf[7];
-
-    /*
-     * Format of each packet:
-     *
-     *		First 4 bytes are PACKET_MAGIC.
-     *		Next 4 bytes are packetLen.
-     *		Next packetLen-headerSize is zero terminated string
-     */
-    if (header[0] != PACKET_MAGIC) {
-	fprintf(stderr, "Badly formatted packet\n");
-        Tcl_AppendResult(interp, "Error reading ", fileHandle,
-			 ": badly formatted packet", (char *) NULL);
-	return TCL_ERROR;
-    }
-    packetLen = header[1] - headerSize;
-
-    /*
-     * Expand the size of the buffer, as needed.
-     */
-
-    if (header[1] > pdfs->bufmax) {
-	free((void *) pdfs->buffer);
-	pdfs->bufmax = header[1] + 32;
-	pdfs->buffer = (unsigned char *) malloc(pdfs->bufmax);
-    }
-
-    /*
-     * Read in the packet.  If it's only partially there, unread it and
-     * return.  If we're peeking, we need to be careful since the header
-     * is still in the queue.
-     */
-    if (peek) {
-	numRead = pl_Read (fd, (char *) pdfs->buffer, header[1], flags);
-
-	if (numRead <= 0) {
-	    goto readError;
-	}
-	return TCL_OK;
-    }
-
-    /*
-     * We're not peeking, so we've consumed the header (this is normal mode).
-     * Read in the packet, and if it's not all there, put it back.
-     */
-    numRead = pl_Read (fd, (char *) pdfs->buffer, packetLen, flags);
-
-    if (numRead <= 0) {
-	goto readError;
-    }
-
-    if (numRead != packetLen) {
-	pl_Unread (fd, (char *) pdfs->buffer, numRead, 1);
-	pl_Unread (fd, hbuf, headerSize, 1);
-	return TCL_OK;
-    }
-
-    pdfs->bp = numRead;
-    return TCL_OK;
-
-readError:
-    /*
-     *
-     * If we're in non-blocking mode, and this would block, return.
-     * If the connection is closed (numRead == 0), don't return an
-     * error message.  Otherwise, return one.
-     *
-     * In either case, we close the file, delete the file handler, and
-     * return a null string.
-     */
-
-    if (errno == EWOULDBLOCK || errno == EAGAIN) {
-	return TCL_OK;
-    }
-
-    /* Record the error before closing the file */
-    if (numRead != 0) {
-	errMsg = Tcl_PosixError (interp);
-    } else {
-	errMsg = NULL;	/* Suppresses spurious compiler warning */
-    }
-
-    /* 
-     * Remove the file handler and close the file.  We want to go through
-     * tcl in case the user has overridden the close procedure
-     */
-    Tdp_CleanupFile(interp, fileHandle, fd);
-    pl_FreeReadBuffer(fd);
-
-    Tcl_ResetResult(interp);
-    if (numRead == 0) {
-	return TCL_OK;
-    } else {
-	Tcl_AppendResult (interp, "Tdp_PacketReceive -- error reading ",
-		  fileHandle, ": ", errMsg, (char *) NULL);
-	fprintf(stderr, "Leaving pl_PacketReceive in disgrace\n");
-	return TCL_ERROR;
-    }
-}
-
-/*
- *--------------------------------------------------------------
- *
- * pl_PacketSend --
- *
- *      This procedure is the C interface to the "dp_packetSend" command.
- *
- * Results:
- *	A standard tcl result.
- *
- * Side effects:
- *	The specified buffer is written to the file descriptor passed
- *	in.
- *
- *--------------------------------------------------------------
- */
-
-int
-pl_PacketSend(interp, fileHandle, pdfs)
-    Tcl_Interp *interp;		/* Tcl interpreter */
-    char *fileHandle;
-    PDFstrm *pdfs;
-{
-    FILE *filePtr;
-    int fd;
-    int packetLen;
-    int numSent;
-    unsigned char hbuf[8];
-    int header[2];
-    struct iovec iov[2];
-    char tmp[256];
-
-    if (Tcl_GetOpenFile(interp, fileHandle, 1, 1, &filePtr) != TCL_OK) {
-	return TCL_ERROR;
-    }
-
-    fd = fileno (filePtr);
-
-    /* 
-     * Make sure this is a non-server TCP socket
-     * Deleted since I don't have access to the optFlags array.
-     */
-
-    /*
-     * Format up the packet:
-     *	  First 4 bytes are PACKET_MAGIC.
-     *	  Next 4 bytes are packetLen.
-     *	  Next packetLen-8 bytes are buffer contents.
-     */
-
-    packetLen = pdfs->bp + 8;
-
-    header[0] = PACKET_MAGIC;
-    header[1] = packetLen;
-
-    /*
-     * Convert header ints to character stream.  
-     * Network byte ordering (big endian) is used.
-     */
-
-    hbuf[0] = (header[0] & (unsigned long) 0xFF000000) >> 24;
-    hbuf[1] = (header[0] & (unsigned long) 0x00FF0000) >> 16;
-    hbuf[2] = (header[0] & (unsigned long) 0x0000FF00) >> 8;
-    hbuf[3] = (header[0] & (unsigned long) 0x000000FF);
-
-    hbuf[4] = (header[1] & (unsigned long) 0xFF000000) >> 24;
-    hbuf[5] = (header[1] & (unsigned long) 0x00FF0000) >> 16;
-    hbuf[6] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
-    hbuf[7] = (header[1] & (unsigned long) 0x000000FF);
-
-    /* Set up scatter/gather vector */
-    iov[0].iov_len = 8;
-    iov[0].iov_base = hbuf;
-    iov[1].iov_len = pdfs->bp;
-    iov[1].iov_base = (char *) pdfs->buffer;
-
-    /* Send it off, with error checking */
-    numSent = writev (fd, iov, 2);
-    if (numSent != packetLen) {
-
-	if ((errno == 0) || (errno == EWOULDBLOCK || errno == EAGAIN)) {
-	    /*
-	     * Non-blocking I/O: return number of bytes actually sent.
-	     */
-	    Tcl_ResetResult(interp);
-	    sprintf (tmp, "%d", numSent - 8);
-	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
-	    return TCL_OK;
-	} else if (errno == EPIPE) {
-	    /*
-	     * Got a broken pipe signal, which means the far end closed the
-	     * connection.  Close the file, delete the file handler, and
-	     * return 0 bytes sent.
-	     */
-	    Tdp_CleanupFile(interp, fileHandle, fd);
-	    sprintf (tmp, "0");
-	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
-	    return TCL_OK;
-	} else {
-	    Tcl_AppendResult (interp, "Tdp_PacketSend -- error writing ",
-			      fileHandle, ": ",
-			      Tcl_PosixError (interp), (char *) NULL);
-	}
-
-	return TCL_ERROR;
-    }
-
-    /*
-     * Return the number of bytes sent (minus the header).
-     */
-    sprintf (tmp, "%d", numSent - 8);
-    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
-    return TCL_OK;
-}
+static int  pl_Read		PLARGS((int fd, char *buffer, int numReq));
 
 /*
  *--------------------------------------------------------------
@@ -510,9 +203,9 @@ pl_Unread (fd, buffer, numBytes, copy)
  *
  * pl_Read --
  *
- *	This function impplements a "recv"-like command, but
+ *	This function implements a "read"-like command, but
  *	buffers partial reads.  The semantics are the same as
- *	with recv.
+ *	with read.
  *
  * Results:
  *	Number of bytes read, or -1 on error (with errno set).
@@ -524,13 +217,11 @@ pl_Unread (fd, buffer, numBytes, copy)
  */
 
 static int
-pl_Read (fd, buffer, numReq, flags)
+pl_Read (fd, buffer, numReq)
     int fd;			/* File descriptor to read from */
     char *buffer;		/* Place to put the data */
     int numReq;			/* Number of bytes to get */
-    int flags;			/* Flags for receive */
 {
-    int peek;
     PartialRead *readList;
     PartialRead *tmp;
     int numRead;
@@ -539,20 +230,19 @@ pl_Read (fd, buffer, numReq, flags)
     readList = partial[fd];
 
     /*
-     * If there's no data left over from a previous read, then just do a recv
+     * If there's no data left over from a previous read, then just do a read
      * This is the common case.
      */
     if (readList == NULL) {
-	numRead = recv(fd, buffer, numReq, flags);
+	numRead = read(fd, buffer, numReq);
 	return numRead;
     }
 
     /*
      * There's data left over from a previous read.  Yank it in and
-     * only call recv() if we didn't get enough data (this keeps the fd
+     * only call read() if we didn't get enough data (this keeps the fd
      * readable if they only request as much data as is in the buffers).
      */
-    peek = flags & MSG_PEEK;
     numRead = 0;
     while ((readList != NULL) && (numRead < numReq)) {
 	numToCopy = readList->bufSize - readList->offset;
@@ -562,32 +252,42 @@ pl_Read (fd, buffer, numReq, flags)
 	memcpy (buffer+numRead, readList->buffer+readList->offset, numToCopy);
 
 	/*
-	 * Consume the data if we're not peeking at it
+	 * Consume the data
 	 */
 	tmp = readList;
 	readList = readList->next;
-	if (!peek) {
-	    tmp->offset += numToCopy;
-	    if (tmp->offset == tmp->bufSize) {
-		free (tmp->buffer);
-		free (tmp);
-		partial[fd] = readList;
-	    }
+	tmp->offset += numToCopy;
+	if (tmp->offset == tmp->bufSize) {
+	    free (tmp->buffer);
+	    free (tmp);
+	    partial[fd] = readList;
 	}
 	numRead += numToCopy;
     }
 
     /*
-     * Only call recv if we reached the end of previously read data and they
-     * didn't get enough and the fd has data to be consumed.
+     * Only call read if at the end of a previously incomplete packet. 
      */
-    if ((numRead < numReq) && (Tdp_FDIsReady(fd) & TCL_FILE_READABLE)) {
+    if ((numRead < numReq)) {
 	numToCopy = numReq - numRead;
-	numRead += recv(fd, buffer+numRead, numToCopy, flags);
+	numRead += read(fd, buffer+numRead, numToCopy);
     }
 
     return numRead;
 }
+
+/*----------------------------------------------------------------------*\
+*  This part for Tcl-DP only
+\*----------------------------------------------------------------------*/
+
+#ifdef TCL_DP
+
+#include <dp.h>
+
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
 /*----------------------------------------------------------------------*\
 * Host_ID
@@ -641,11 +341,281 @@ Host_ID(clientData, interp, argc, argv)
     return TCL_OK;
 }
 
+#endif	/* TCL_DP */
+
+/*
+ *--------------------------------------------------------------
+ *
+ * pl_PacketReceive --
+ *
+ *      This procedure is a modified version of Tdp_PacketReceive,
+ *	from the Tcl-DP distribution.  It reads the socket, 
+ *	returning a complete packet.  If the entire packet cannot
+ *	be read, the partial packet is buffered until the rest is
+ *	available.  Some capabilities have been removed from the
+ *	original (i.e. the check for a non-server TCP socket, since
+ *	there's no access to the optFlags array from here, and the 
+ *	peek capability, since I don't need it).
+ *
+ * Results:
+ *	Packet contents stored in pdfs->buffer and pdfs->bp set
+ *	to the number of bytes read (zero if incomplete).
+ *
+ * Side effects:
+ *	The file descriptor passed in is read.
+ *
+ *--------------------------------------------------------------
+ */
+int
+pl_PacketReceive(interp, iodev, pdfs)
+    Tcl_Interp *interp;
+    PLiodev *iodev;
+    PDFstrm *pdfs;
+{
+    int numRead;
+    int packetLen;
+    int headerSize;
+    unsigned char hbuf[8];
+    int header[2];
+    char *errMsg;
+
+    pdfs->bp = 0;
+
+    /*
+     * Read in the header (8 bytes)
+     */
+    headerSize = 8;
+    numRead = pl_Read (iodev->fd, hbuf, headerSize);
+
+    if (numRead <= 0) {
+	goto readError;
+    }
+
+    /*
+     * Check for incomplete read.  If so, put it back and return.
+     */
+    if (numRead < headerSize) {
+	pl_Unread (iodev->fd, hbuf, headerSize, 1);
+	Tcl_ResetResult(interp);
+	return TCL_OK;
+    }
+
+    /*
+     * Convert header character stream into ints.  This works when the
+     * connecting machine has a different size int (the old way didn't),
+     * and takes care of the endian problem to boot.  It is also mostly
+     * backward compatible since network byte ordering (big endian) is
+     * used.  
+     */
+
+    header[0] = 0;
+    header[0] |= hbuf[0] << 24;
+    header[0] |= hbuf[1] << 16;
+    header[0] |= hbuf[2] << 8;
+    header[0] |= hbuf[3];
+
+    header[1] = 0;
+    header[1] |= hbuf[4] << 24;
+    header[1] |= hbuf[5] << 16;
+    header[1] |= hbuf[6] << 8;
+    header[1] |= hbuf[7];
+
+    /*
+     * Format of each packet:
+     *
+     *		First 4 bytes are PACKET_MAGIC.
+     *		Next 4 bytes are packetLen.
+     *		Next packetLen-headerSize is zero terminated string
+     */
+    if (header[0] != PACKET_MAGIC) {
+	fprintf(stderr, "Badly formatted packet\n");
+        Tcl_AppendResult(interp, "Error reading from ", iodev->typename,
+			 ": badly formatted packet", (char *) NULL);
+	return TCL_ERROR;
+    }
+    packetLen = header[1] - headerSize;
+
+    /*
+     * Expand the size of the buffer, as needed.
+     */
+
+    if (header[1] > pdfs->bufmax) {
+	free((void *) pdfs->buffer);
+	pdfs->bufmax = header[1] + 32;
+	pdfs->buffer = (unsigned char *) malloc(pdfs->bufmax);
+    }
+
+    /*
+     * Read in the packet, and if it's not all there, put it back.
+     */
+    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
+    if (numRead <= 0) {
+	goto readError;
+    }
+
+    if (numRead != packetLen) {
+	pl_Unread (iodev->fd, (char *) pdfs->buffer, numRead, 1);
+	pl_Unread (iodev->fd, hbuf, headerSize, 1);
+	return TCL_OK;
+    }
+
+    pdfs->bp = numRead;
+    return TCL_OK;
+
+readError:
+    /*
+     *
+     * If we're in non-blocking mode, and this would block, return.
+     * If the connection is closed (numRead == 0), don't return an
+     * error message.  Otherwise, return one.
+     *
+     * In either case, we close the file, delete the file handler, and
+     * return a null string.
+     */
+
+    if (errno == EWOULDBLOCK || errno == EAGAIN) {
+	return TCL_OK;
+    }
+
+    /* Record the error before closing the file */
+    if (numRead != 0) {
+	errMsg = Tcl_PosixError (interp);
+    } else {
+	errMsg = NULL;	/* Suppresses spurious compiler warning */
+    }
+
+    /* 
+     * Remove the file handler and close the file.  
+     */
+    if (iodev->type == 0) {
+	Tk_DeleteFileHandler(iodev->fd);
+	close(iodev->fd);
+    }
+    pl_FreeReadBuffer(iodev->fd);
+
+    Tcl_ResetResult(interp);
+    if (numRead == 0) {
+	return TCL_OK;
+    } else {
+	Tcl_AppendResult (interp, "pl_PacketReceive -- error reading from ",
+			  iodev->typename, ": ", errMsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+}
+
+/*
+ *--------------------------------------------------------------
+ *
+ * pl_PacketSend --
+ *
+ *      This procedure is a modified version of Tdp_PacketSend,
+ *	from the Tcl-DP distribution.  It writes a complete packet
+ *	to a socket or file-oriented device.  
+ *
+ * Results:
+ *	A standard tcl result.
+ *
+ * Side effects:
+ *	The specified buffer is written to the file descriptor passed
+ *	in.
+ *
+ *--------------------------------------------------------------
+ */
+
+int
+pl_PacketSend(interp, iodev, pdfs)
+    Tcl_Interp *interp;
+    PLiodev *iodev;
+    PDFstrm *pdfs;
+{
+    int packetLen;
+    int numSent;
+    unsigned char hbuf[8];
+    int header[2];
+    struct iovec iov[2];
+    char tmp[256];
+
+    /*
+     * Format up the packet:
+     *	  First 4 bytes are PACKET_MAGIC.
+     *	  Next 4 bytes are packetLen.
+     *	  Next packetLen-8 bytes are buffer contents.
+     */
+
+    packetLen = pdfs->bp + 8;
+
+    header[0] = PACKET_MAGIC;
+    header[1] = packetLen;
+
+    /*
+     * Convert header ints to character stream.  
+     * Network byte ordering (big endian) is used.
+     */
+
+    hbuf[0] = (header[0] & (unsigned long) 0xFF000000) >> 24;
+    hbuf[1] = (header[0] & (unsigned long) 0x00FF0000) >> 16;
+    hbuf[2] = (header[0] & (unsigned long) 0x0000FF00) >> 8;
+    hbuf[3] = (header[0] & (unsigned long) 0x000000FF);
+
+    hbuf[4] = (header[1] & (unsigned long) 0xFF000000) >> 24;
+    hbuf[5] = (header[1] & (unsigned long) 0x00FF0000) >> 16;
+    hbuf[6] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
+    hbuf[7] = (header[1] & (unsigned long) 0x000000FF);
+
+    /* Set up scatter/gather vector */
+
+    iov[0].iov_len = 8;
+    iov[0].iov_base = (char *) hbuf;
+    iov[1].iov_len = pdfs->bp;
+    iov[1].iov_base = (char *) pdfs->buffer;
+
+    /* Send it off, with error checking */
+    numSent = writev (iodev->fd, iov, 2);
+    if (numSent != packetLen) {
+
+	if ((errno == 0) || (errno == EWOULDBLOCK || errno == EAGAIN)) {
+	    /*
+	     * Non-blocking I/O: return number of bytes actually sent.
+	     */
+	    Tcl_ResetResult(interp);
+	    sprintf (tmp, "%d", numSent - 8);
+	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
+	    return TCL_OK;
+	} else if (errno == EPIPE) {
+	    /*
+	     * Got a broken pipe signal, which means the far end closed the
+	     * connection.  Close the file, delete the file handler, and
+	     * return 0 bytes sent.
+	     */
+	    if (iodev->type == 0) {
+		Tk_DeleteFileHandler(iodev->fd);
+		close(iodev->fd);
+	    }
+	    sprintf (tmp, "0");
+	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
+	    return TCL_OK;
+	} else {
+	    Tcl_AppendResult (interp, "pl_PacketSend -- error writing to ",
+			      iodev->typename, ": ",
+			      Tcl_PosixError (interp), (char *) NULL);
+	}
+
+	return TCL_ERROR;
+    }
+
+    /*
+     * Return the number of bytes sent (minus the header).
+     */
+    sprintf (tmp, "%d", numSent - 8);
+    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
+    return TCL_OK;
+}
+
 #else
 int
-pldummy_socket()
+pldummy_tcpip()
 {
     return 0;
 }
 
-#endif	/* TCL_DP */
+#endif	/* defined(TCL_DP) || defined(TK) */
