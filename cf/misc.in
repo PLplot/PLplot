@@ -9,11 +9,15 @@
 # -----------------------------------------------------------------------------
 
 # Cleanup
-# Get rid of directories, then files.
+# Get rid of directories, then files, then m4-generated files
 
 clean:
 	-$(RM) -rf shared plplot ti_files
 	-$(RM) *
+	for filename in $(top_srcdir)/bindings/f77/*.fm4; \
+	do $(RM) $${filename%.fm4}.f; done
+	for filename in $(top_srcdir)/examples/f77/*.fm4; \
+	do $(RM) $${filename%.fm4}.f; done
 
 distclean: clean
 
