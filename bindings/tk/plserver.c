@@ -40,7 +40,7 @@ Tk_ArgvInfo argTable[] = {
      "Client to notify at startup, if any"},
 {"-auto_path", TK_ARGV_STRING, (char *) NULL, (char *) &auto_path,
      "Additional directory(s) to autoload"},
-{"-init", TK_ARGV_STRING, (char *) NULL, (char *) &init,
+{"-f", TK_ARGV_STRING, (char *) NULL, (char *) &init,
      "TCL initialization proc"},
 {"-display", TK_ARGV_STRING, (char *) NULL, (char *) &display,
      "Display to use"},
@@ -56,7 +56,7 @@ Tk_ArgvInfo argTable[] = {
 
 /* Support routine prototypes */
 
-static void  configure		(void);
+static void  configure		(int, char **);
 static void  parse_cmdline	(int *, char **);
 static void  abort_session	(char *);
 static void  set_auto_path	(void);
@@ -95,7 +95,7 @@ main(int argc, char **argv)
 
 /* Initialize stuff known to interpreter */
 
-    configure();
+    configure(argc, argv);
 
 /* Run startup code */
 
@@ -195,8 +195,10 @@ parse_cmdline(int *p_argc, char **argv)
 \*----------------------------------------------------------------------*/
 
 static void
-configure(void)
+configure(int argc, char **argv)
 {
+    char *args, buf[20];
+
     dbug_enter("configure");
 
 /* Use main window name as program name, now that we have it */
@@ -223,6 +225,14 @@ configure(void)
 
     if (child != NULL)
 	Tcl_SetVar(interp, "child", child, 0);
+
+/* Store leftover arguments into the Tcl variables "argc" and "argv". */
+
+    args = Tcl_Merge(argc-1, argv+1);
+    Tcl_SetVar(interp, "argv", args, TCL_GLOBAL_ONLY);
+    ckfree(args);
+    sprintf(buf, "%d", argc-1);
+    Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
 }
 
 /*----------------------------------------------------------------------*\
@@ -330,7 +340,12 @@ NotifyClient(ClientData clientData)
 
     Tcl_SetVar(interp, "plserver", program, 0);
     Tcl_SetVar(interp, "client", client, 0);
-    tcl_cmd("send $client set plserver $plserver");
+#ifdef DEBUG
+    fprintf(stderr, "$plserver: %s, $client: %s\n",
+	    Tcl_GetVar(interp, "plserver", 0),
+	    Tcl_GetVar(interp, "client", 0));
+#endif
+    tcl_cmd("send $client [list set plserver $plserver]");
 }
 
 /*----------------------------------------------------------------------*\
