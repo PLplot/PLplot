@@ -12,8 +12,6 @@ proc x19 {{w loopback}} {
     $w cmd plcol0 2
     $w cmd plmap usaglobe 0 $minx $maxx $miny $maxy
     
-    $w cmd plflush
-    
     set minx 190
     set maxx 340
     $w cmd plcol0 1
@@ -30,5 +28,5 @@ proc x19 {{w loopback}} {
     $w cmd pllsty 2
     $w cmd plmeridians 1 10.0 10.0 0.0 360.0 -10.0 80.0
     $w cmd pllsty 1
-    $w cmd pleop
+# No defaults to restore
 }
