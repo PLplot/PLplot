@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/08/25 04:00:27  mjl
+ * Revision 1.30  1994/09/18 07:14:58  mjl
+ * Changed the syntax for pltkMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+ *
+ * Revision 1.29  1994/08/25  04:00:27  mjl
  * Fixed some error output; elminates spurious <RET> at end.
  *
  * Revision 1.28  1994/07/19  22:31:43  mjl
@@ -78,6 +83,11 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
 static void
 tcl_cmd(Tcl_Interp *interp, char *cmd);
 
+/* Application-specific startup */
+
+static int
+AppInit(Tcl_Interp *interp);
+
 /*----------------------------------------------------------------------*\
  * main --
  *
@@ -133,14 +143,14 @@ Plplot/Tk driver.\n\n(wish) ");
 /* Call pltkMain() with original argc/argv list, to make sure -h is seen */
 /* Does not return until program exit */
 
-    exit(pltkMain(myargc, myargv));
+    exit(pltkMain(myargc, myargv, NULL, AppInit));
 }
 
 
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_AppInit --
+ * AppInit --
  *
  *	This procedure performs application-specific initialization.
  *	Most applications, especially those that incorporate additional
@@ -156,9 +166,8 @@ Plplot/Tk driver.\n\n(wish) ");
  *----------------------------------------------------------------------
  */
 
-int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
+static int
+AppInit(Tcl_Interp *interp)
 {
     Tk_Window main;
 

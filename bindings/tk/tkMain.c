@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/30 18:45:05  mjl
+ * Revision 1.3  1994/09/18 07:14:59  mjl
+ * Changed the syntax for pltkMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+ *
+ * Revision 1.2  1994/06/30  18:45:05  mjl
  * Minor changes to pass gcc -Wall without warnings and other cleaning up.
  *
  * Revision 1.1  1994/06/23  22:39:10  mjl
@@ -16,8 +21,9 @@
  *
  * Modifications include:
  * 1. main() changed to pltkMain().
- * 2. tcl_RcFileName changed to pltk_RcFileName.
- * 3. Support for -e <script> startup option
+ * 2. tcl_RcFileName -> RcFileName, now passed in through the argument list. 
+ * 3. Tcl_AppInit -> AppInit, now passed in through the argument list.
+ * 4. Support for -e <script> startup option
  *
  * The original notes follow.
  */
@@ -75,11 +81,6 @@ static Tk_Window mainWindow;	/* The main window for the application.  If
 				 * NULL then the application no longer
 				 * exists. */
 static Tcl_Interp *interp;	/* Interpreter for this application. */
-char *pltk_RcFileName = NULL;	/* Name of a user-specific startup script
-				 * to source if the application is being run
-				 * interactively (e.g. "~/.wishrc").  Set
-				 * by Tcl_AppInit.  NULL means don't source
-				 * anything ever. */
 static Tcl_DString command;	/* Used to assemble lines of terminal input
 				 * into Tcl commands. */
 static int tty;			/* Non-zero means standard input is a
@@ -151,7 +152,8 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  */
 
 int
-pltkMain(int argc, char **argv)
+pltkMain(int argc, char **argv, char *RcFileName,
+	 int (*AppInit)(Tcl_Interp *interp))
 {
     char *args, *p, *msg;
     char buf[20];
@@ -248,8 +250,8 @@ pltkMain(int argc, char **argv)
      * Invoke application-specific initialization.
      */
 
-    if (Tcl_AppInit(interp) != TCL_OK) {
-	fprintf(stderr, "Tcl_AppInit failed: %s\n", interp->result);
+    if ((*AppInit)(interp) != TCL_OK) {
+	fprintf(stderr, "(*AppInit) failed: %s\n", interp->result);
     }
 
     /*
@@ -289,12 +291,12 @@ pltkMain(int argc, char **argv)
 	 * device is a terminal.
 	 */
 
-	if (pltk_RcFileName != NULL) {
+	if (RcFileName != NULL) {
 	    Tcl_DString buffer;
 	    char *fullName;
 	    FILE *f;
     
-	    fullName = Tcl_TildeSubst(interp, pltk_RcFileName, &buffer);
+	    fullName = Tcl_TildeSubst(interp, RcFileName, &buffer);
 	    if (fullName == NULL) {
 		fprintf(stderr, "%s\n", interp->result);
 	    } else {
