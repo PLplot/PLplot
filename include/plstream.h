@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/09/24 20:33:17  furnish
+ * Revision 1.17  1993/11/07 09:04:17  mjl
+ * Added device variable to specify that driver wants to handle its own
+ * flushes.
+ *
+ * Revision 1.16  1993/09/24  20:33:17  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
@@ -251,6 +255,7 @@ typedef struct {
 * dev_fill	PLINT	Set if driver can do area fills
 * dev_di	PLINT	Set if driver wants to handle DI commands
 * dev_dual	PLINT	Set if device supports dual text/graphics screens
+* dev_flush	PLINT	Set if driver wants to handle flushes itself
 * termin	PLINT	Set for interactive devices
 * graphx	PLINT	Set if currently in graphics mode
 * nopause	PLINT	Set if we are skipping the pause between frames
@@ -403,7 +408,7 @@ typedef struct {
     PLINT color, colorset;
     PLINT device, termin, graphx, nopause;
     PLINT family, member, bytemax, famadv;
-    PLINT dev_fill, dev_dual, dev_di;
+    PLINT dev_fill, dev_dual, dev_di, dev_flush;
     PLINT dev_npts;
     short *dev_x, *dev_y;
 
