@@ -49,7 +49,7 @@ open( GENSTRUCT,">$genstruct")|| die "Can't open second output header file.";
 # stdout. 
 
 while( <SPECFILE> ) {
-    chop;			# skip the \n.
+    chomp;			# skip the \n.
 
     if (/([^\#]*)\#.*/) {	# Discard # to end of line.
         $_ = $1;
@@ -91,7 +91,7 @@ sub process_pltclcmd {
     $ndefs = 0;
     $refargs = 0;
     while( <SPECFILE> ) {
-	chop;
+	chomp;
 
 	last if /^$/;
 	if (/^(\w+)\s+(.*)$/) {
