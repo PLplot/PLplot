@@ -19,7 +19,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-src_dirs = src include lib data bindings
+src_dirs = lib src include data bindings
 
 if enable_dyndrivers
 drivers_src_dirs = $(src_dirs) drivers
