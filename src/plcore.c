@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/05/07 03:23:07  mjl
+ * Revision 1.32  1994/06/09 20:31:30  mjl
+ * Small changes to the way plmkstrm() works.
+ *
+ * Revision 1.31  1994/05/07  03:23:07  mjl
  * Eliminated some obsolete operations involving fgcolor and bgcolor.
  *
  * Revision 1.30  1994/04/30  16:15:06  mjl
@@ -1206,6 +1209,12 @@ c_plgstrm(PLINT *p_strm)
 *
 * Creates a new stream and makes it the default.  Differs from using
 * plsstrm(), in that a free stream number is found, and returned.
+*
+* Unfortunately, I /have/ to start at stream 1 and work upward, since
+* stream 0 is preallocated.  One of the BIG flaws in the PLplot API is
+* that no initial, library-opening call is required.  So stream 0 must be
+* preallocated, and there is no simple way of determining whether it is
+* already in use or not.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1213,12 +1222,12 @@ c_plmkstrm(PLINT *p_strm)
 {
     int i;
 
-    for (i = PL_NSTREAMS - 1; i > 0; i--) {
+    for (i = 1; i < PL_NSTREAMS; i++) {
 	if (pls[i] == NULL)
 	    break;
     }
 
-    if (i == 0) {
+    if (i == PL_NSTREAMS) {
 	fprintf(stderr, "plmkstrm: Cannot create new stream\n");
 	*p_strm = -1;
     }
