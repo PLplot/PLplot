@@ -1,5 +1,8 @@
 2000-11-10  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* tcl.sgml: Fixed typesetting "<float>" inside <programlisting>.
+	Converted "``" and "''" TeXisms to "<quote>" and "</quote>".
+
 	* Makefile.in (OTHER_SOURCES): Added extension .in to
 	STYLESHEET_HTML. 
 
