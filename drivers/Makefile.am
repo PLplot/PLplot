@@ -348,6 +348,7 @@ xwin_lo_CFLAGS = $(X_CFLAGS)
 # libplplotdrv_la_CFLAGS = \
 # Also add itcl compile flags just in case the tk extra objects are compiled.
 AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
 	$(cgm_lo_CFLAGS) \
 	$(gd_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
