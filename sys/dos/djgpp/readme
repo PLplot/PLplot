@@ -115,7 +115,7 @@ Then:
 4) make
 
 TIP: If you are strapped for hard disk space, or just want a smaller
-     footprint for the install, use "make copy" in step 3 instead of
+     footprint for the install, use "make move" in step 3 instead of
      "make links". 
 
 You can finish off by:
@@ -131,8 +131,8 @@ To make examples, assuming you have followed steps 1-4 above:
 2) "make cdemos" or "make x01c", "make x02c" etc.. to make individual demos
 
 TIP: If you are strapped for hard disk space, or just want a smaller
-     footprint for the install, use "make copyexamples" in step 3 
-     instead of "make linkexample". 
+     footprint for the install, use "make moveexamples" in step 3 
+     instead of "make moveexamples". 
 
 Installing the Library
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯

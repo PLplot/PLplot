@@ -90,7 +90,7 @@ GRX_DO_BMP = 1
 # Regardless of which JPEG driver you select (and if you *really* want, you
 # can have both), make sure the next line is uncommented
 
-LDC_LIBS_JPEG =-ljpeg
+#LDC_LIBS_JPEG =-ljpeg
 
 # If you want to use the PNG device driver, or the JPEG driver that runs 
 # from GD (ie PLD_jpeg), you will need to make sure that you have 
@@ -103,7 +103,7 @@ LDC_LIBS_JPEG =-ljpeg
 # To activate the PNG driver, edit "pldev.h" and define "PLD_png". 
 # Then make sure the next line is uncommented
 
-# LDC_LIBS_PNG=-lgd -lpng -lz
+#LDC_LIBS_PNG=-lgd -lpng -lz
 
 links: linkmain
 
@@ -165,7 +165,7 @@ moveexamples:
 
 # Add gnusvga to driver list
 
-DRIVERS_C = $(DRIVERS_C) gnusvga.c
+DRIVERS_C := $(DRIVERS_C) gnusvga.c
 ADD_DRIVERS_OBJ = $(DRIVERS_OBJ) gnusvga$O
 #DRIVERS_OBJ = $(DRIVERS_OBJ) gnusvga$O
 

@@ -46,7 +46,7 @@ type cf\Misc.in		>>tmp\Makefile
 
 REM Object file dependencies
 
-type ..\..\..\cf\objs.in	>>tmp\Makefile 
+type cf\objs.in	>>tmp\Makefile 
 
 REM -----------------------------------------------------------------------
 REM Now build Makedemo.in.
