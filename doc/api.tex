@@ -1,7 +1,7 @@
 \c -*-latexinfo-*-
 \c api.tex
-\c Geoffrey Furnish
-\c 9 May 1994
+\c Maurice LeBrun
+\c 19 May 1994
 
 \node API, Bibliography, Extended WISH, Top
 \chapter{The PLplot Applications Programming Interface}
@@ -40,6 +40,7 @@ Documentation of each PLplot function.
 * plgyax::		Get y axis parameters
 * plgzax::		Get z axis parameters
 * plhist::		Plot a histogram from unbinned data
+* plinit::		Initialize PLplot
 * pljoin::		Draw a line between two points
 * pllab::		Simple routine to write labels
 * plline::		Draw lines between a number of points
@@ -82,11 +83,21 @@ Documentation of each PLplot function.
 \end{menu}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\c
+\c Each function is enclosed in a box with an indended description.  The
+\c arguments are also offset with an indented explanation.  In order to
+\c keep things as clean as possible, no sectioning commands are used,
+\c rather, the sections are added to the table of contents "by hand".
+\c Since latexinfo.sty requires a sectioning command to be used to get
+\c the Latex cross references right, I also put these in by hand.
+\c
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node pladv, plbin, API, API
 
 
 \bname{pladv(sub)}
+\label{pladv}
 \findex{pladv}
 \addcontentsline{toc}{subsection}{pladv}
 
@@ -111,6 +122,7 @@ Set to zero to advance to the next subpage.}
 
 
 \bname{plbin(nbin, x, y, cen)}
+\label{plbin}
 \findex{plbin}
 \addcontentsline{toc}{subsection}{plbin}
 
@@ -145,6 +157,7 @@ the values in \code{x} are equally spaced and \code{cen=1}, the values in
 
 
 \bname{plbox(xopt, xtick, nxsub, yopt, ytick, nysub)}
+\label{plbox}
 \findex{plbox}
 \addcontentsline{toc}{subsection}{plbox}
 
@@ -180,7 +193,7 @@ is vertical line \code{x=0}.
 inwards.
 
 \item
-\code{l}: Labels axis logarithmically. This only affects the labels, 
+\code{l}: Labels axis logarithmically.  This only affects the labels,
 not the data, and so it is necessary to compute the logarithms of data
 points before passing them to any of the drawing routines.
 
@@ -202,11 +215,11 @@ also specified.
 }
 
 \argu{ \code{xtick} (PLFLT, input)}{World coordinate interval between major
-ticks on the x~axis.  If it is set to zero, PLplot automatically generates a
+ticks on the x axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ \code{nxsub} (PLINT, input)}{Number of subintervals between major
-x~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+x axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 \argu{ \code{yopt} (char *, input)}{Pointer to character string specifying
@@ -221,11 +234,11 @@ parallel to the base of the graph, rather than parallel to the axis.
 }
 
 \argu{ \code{ytick} (real, input)}{World coordinate interval between major
-ticks on the y~axis.  If it is set to zero, PLplot automatically generates a
+ticks on the y axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ \code{nysub} (PLINT, input)}{Number of subintervals between major
-y~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+y axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,6 +248,7 @@ generates a suitable minor tick interval.}
 
 \bname{plbox3(xopt, xlabel, xtick, nxsub, yopt, ylabel, ytick, nysub, \\
        zopt, zlabel, ztick, nzsub)} 
+\label{plbox3}
 \findex{plbox3}
 \addcontentsline{toc}{subsection}{plbox3}
 \c
@@ -245,8 +259,8 @@ generates a suitable minor tick interval.}
 \c }
 
 \descr{ Draws axes, numeric and text labels for a three-dimensional surface
-plot. See Section \ref{threed} on page \pageref{threed} for a
-more complete description of three-dimensional plotting.}
+plot.  For a more complete description of three-dimensional plotting
+\pxref{3-d Plots}.}
 
 \argu{ \code{xopt} (char *, input)}{Pointer to character string specifying
 options for the x~axis.  The string can include any combination of the
@@ -255,7 +269,7 @@ following letters (upper or lower case) in any order:
 \begin{itemize}
 \item
 \code{b}: Draws axis at base, at height \code{z=zmin} where \code{zmin}
-is defined by call to \code{plw3d}. This character must be specified in
+is defined by call to \code{plw3d}.  This character must be specified in
 order to use any of the other options.
 
 \item
@@ -263,7 +277,7 @@ order to use any of the other options.
 upwards.
 
 \item
-\code{l}: Labels axis logarithmically. This only affects the labels, 
+\code{l}: Labels axis logarithmically.  This only affects the labels, 
 not the data, and so it is necessary to compute the logarithms of data
 points before passing them to any of the drawing routines.
 
@@ -331,7 +345,7 @@ because of the need for hidden line removal.
 \code{i}: Inverts tick marks, so they are drawn away from the center.
 
 \item
-\code{l}: Labels axis logarithmically. This only affects the labels, 
+\code{l}: Labels axis logarithmically.  This only affects the labels, 
 not the data, and so it is necessary to compute the logarithms of data
 points before passing them to any of the drawing routines.
 
@@ -378,11 +392,12 @@ generates a suitable minor tick interval.}
 
 
 \bname{plclr()}
+\label{bname}
 \findex{plclr}
 \addcontentsline{toc}{subsection}{plclr}
 
 \descr{ Clears the graphics screen of an interactive device, or ejects a
-page on a plotter.  See \code{plpage} for more information.}
+page on a plotter.  \xref{plpage} for more information.}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -390,12 +405,11 @@ page on a plotter.  See \code{plpage} for more information.}
 
 
 \bname{plcol(color)}
+\label{plcol}
 \findex{plcol}
 \addcontentsline{toc}{subsection}{plcol}
 
-\descr{ Sets the color for subsequent lines.  You may specify which colors
-are associated with which number by the \code{plancol} routine if supported
-by the output driver.}
+\descr{ Sets the color for subsequent lines.}
 
 \argu{ \code{color} (PLINT, input)}{Integer representing the color.  The
 defaults at present are (these may change):
@@ -442,13 +456,14 @@ white (default foreground)
 
 
 \bnameF{plcon0(z, nx, ny, kx, lx, ky, ly, clevel, nlevel)}
+\label{plcon0}
 \findex{plcon0}
 \addcontentsline{toc}{subsection}{plcon0}
 
 \descr{ Draws a contour plot of the data in \code{z[nx][ny]}, using the
 \code{nlevel} contour levels specified by \code{clevel}.  Only the region
 of the array from \code{kx} to \code{lx} and from \code{ky} to \code{ly}
-is plotted out.  See Section \ref{contour} for more information.}
+is plotted out.  \xref{Contour plots} for more information.}
 
 \argu{ \code{z} (PLFLT **, input)}{Pointer to a vectored two-dimensional array
 containing data to be contoured.}
@@ -474,6 +489,7 @@ function \code{pltr0} for the same capability.
 
 
 \bnameF{plcon1(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)}
+\label{plcon1}
 \findex{plcon1}
 \addcontentsline{toc}{subsection}{plcon1}
 
@@ -481,8 +497,8 @@ function \code{pltr0} for the same capability.
 \code{nlevel} contour levels specified by \code{clevel}.  Only the region
 of the array from \code{kx} to \code{lx} and from \code{ky} to \code{ly}
 is plotted out.  The arrays \code{xg} and \code{yg} are used to specify
-the transformation between array indices and world coordinates.  See
-Section \ref{contour} for more information.}
+the transformation between array indices and world coordinates.  
+\xref{Contour plots} for more information.}
 
 \argu{ \code{z} (PLFLT **, input)}{Pointer to a vectored two-dimensional array
 containing data to be contoured.}
@@ -494,7 +510,7 @@ containing data to be contoured.}
 \argu{ \code{ky, ly} (PLINT, input)}{Range of \code{y} indicies to consider.}
 
 \argu{ \code{clevel} (PLFLT *, input)}{Pointer to array specifying
-    levels at which to draw contours.}
+levels at which to draw contours.}
 
 \argu{ \code{nlevel} (PLINT, input)}{Number of contour levels to draw.}
 
@@ -514,6 +530,7 @@ function \code{pltr1} for the same capability.
 
 
 \bnameF{plcon2(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)}
+\label{plcon2}
 \findex{plcon2}
 \addcontentsline{toc}{subsection}{plcon2}
 
@@ -521,8 +538,8 @@ function \code{pltr1} for the same capability.
 \code{nlevel} contour levels specified by \code{clevel}.  Only the region
 of the array from \code{kx} to \code{lx} and from \code{ky} to \code{ly}
 is plotted out.  The arrays \code{xg} and \code{yg} are used to specify
-the transformation between array indices and world coordinates.  See
-Section \ref{contour} for more information.}
+the transformation between array indices and world coordinates.  
+\xref{Contour plots} for more information.}
 
 \argu{ \code{z} (PLFLT **, input)}{Pointer to a vectored two-dimensional array
 containing data to be contoured.}
@@ -554,6 +571,7 @@ function \code{pltr2} for the same capability.
 
 
 \bnameC{plconf(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr, xg, yg)}
+\label{plconf}
 \findex{plconf}
 \addcontentsline{toc}{subsection}{plconf}
 
@@ -562,8 +580,8 @@ function \code{pltr2} for the same capability.
 of the array from \code{kx} to \code{lx} and from \code{ky} to \code{ly}
 is plotted out.  A transformation routine \code{pltr} is used to map
 indicies within the array to the world coordinates, using the
-transformation arrays \code{xg} and \code{yg}.  \xref{contour} for more
-information.}
+transformation arrays \code{xg} and \code{yg}.  \xref{Contour plots} for
+more information.}
 
 \argu{ \code{z} (PLFLT **, input)}{Pointer to a vectored two-dimensional array
 containing data to be contoured.}
@@ -587,8 +605,7 @@ The function should have the form \name{pltr(x, y, tx, ty, xg, yg, nx, ny)}
 which the contour runs in terms of the array indicies.}
 
 \argu{ \code{tx, ty} (PLFLT *, output)}{Pointers to the
-world coordinates corresponding to the
-point \code{(x, y)}.}
+world coordinates corresponding to the point \code{(x, y)}.}
 
 \argu{ \code{xg, yg} (PLFLT *, input)}{Pointers to transformation arrays.}
 
@@ -618,6 +635,7 @@ NOTE:  this routine cannot be called directly from Fortran.  Use
 plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)}{(C)}{
 plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, tr)}{\ \ (Fortran)}
 
+\label{plcont}
 \findex{plcont}
 \addcontentsline{toc}{subsection}{plcont}
 
@@ -625,8 +643,8 @@ plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, tr)}{\ \ (Fortran)}
 \code{nlevel} contour levels specified by \code{clevel}.  Only the region
 of the array from \code{kx} to \code{lx} and from \code{ky} to \code{ly}
 is plotted out.  A transformation routine \code{pltr} is used to map
-indicies within the array to the world coordinates.  See Section
-\ref{contour} for more information.}
+indicies within the array to the world coordinates.  \xref{Contour
+plots} for more information.}
 
 \argu{ \code{z} (PLFLT **, input)}{Pointer to a vectored two-dimensional array
 containing data to be contoured.}
@@ -653,8 +671,9 @@ program.  The function should have the form:
 \name{pltr(x, y, tx, ty)}
 
 \argu{ \code{x, y} (PLFLT, input)}{ Specifies the position in the array
-through which the contour runs in terms of the array indicies.} \argu{ 
-\code{tx, ty} (PLFLT *, output)}{Pointers to the world coordinates
+through which the contour runs in terms of the array indicies.} 
+
+\argu{ \code{tx, ty} (PLFLT *, output)}{Pointers to the world coordinates
 corresponding to the point \code{(x, y)}.} }
 
 \argu{ \code{tr} (PLFLT *, input)}{Pointer to 6-element array specifying
@@ -668,6 +687,7 @@ either of \code{plcon0}, \code{plcon1}, or \code{plcon2} instead.}
 
 
 \bname{plend()}
+\label{plend}
 \findex{plend}
 \addcontentsline{toc}{subsection}{plend}
 
@@ -681,6 +701,7 @@ allocated.  Must be called before end of program.}
 
 
 \bname{plend1()}
+\label{plend1}
 \findex{plend1}
 \addcontentsline{toc}{subsection}{plend}
 
@@ -693,6 +714,7 @@ See \code{plsstrm} for more info.}
 
 
 \bname{plenv(xmin, xmax, ymin, ymax, just, axis)}
+\label{plenv}
 \findex{plenv}
 \addcontentsline{toc}{subsection}{plenv}
 
@@ -728,8 +750,8 @@ scaled independently to use as much of the screen as possible, but if
 \code{0}: Draw box, labelled with coordinate values around edge.
 
 \item
-\code{1}: In addition to box and labels, draw the two axes
-\code{x=0} and \code{y=0}.
+\code{1}: In addition to box and labels, draw the two axes \code{x=0}
+and \code{y=0}. 
 
 \item
 \code{2}: As for \code{axis=1}, but also draw a grid at the major tick
@@ -758,6 +780,7 @@ interval.
 
 
 \bname{plerrx(n, xmin, xmax, y)}
+\label{plerrx}
 \findex{plerrx}
 \addcontentsline{toc}{subsection}{plerrx}
 
@@ -783,6 +806,7 @@ error bar.}
 
 
 \bname{plerry(n, x, ymin, ymax)}
+\label{plerry}
 \findex{plerry}
 \addcontentsline{toc}{subsection}{plerry}
 
@@ -808,6 +832,7 @@ upper endpoint of error bar.}
 
 
 \bname{plexit(message)}
+\label{plexit}
 \findex{plexit}
 \addcontentsline{toc}{subsection}{plexit}
 
@@ -825,6 +850,7 @@ supply his/her own version of \code{pl\_exit}.}
 
 
 \bname{plfill(n, x, y)}
+\label{plfill}
 \findex{plfill}
 \addcontentsline{toc}{subsection}{plfill}
 
@@ -848,6 +874,7 @@ vertices.}
 
 
 \bname{plfont(font)}
+\label{plfont}
 \findex{plfont}
 \addcontentsline{toc}{subsection}{plfont}
 
@@ -878,6 +905,7 @@ unless the extended character set is loaded (see \code{plfontld}).
 
 
 \bname{plfontld(set)}
+\label{plfontld}
 \findex{plfontld}
 \addcontentsline{toc}{subsection}{plfontld}
 
@@ -900,6 +928,7 @@ May be called before calling initializing PLplot.}
 
 
 \bname{plgfam(fam, num, bmax)}
+\label{plgfam}
 \findex{plgfam}
 \addcontentsline{toc}{subsection}{plgfam}
 
@@ -921,6 +950,7 @@ file size (in bytes) for a family file.}
 
 
 \bname{plgfile(file)}
+\label{plgfile}
 \findex{plgfile}
 \addcontentsline{toc}{subsection}{plgfile}
 
@@ -936,6 +966,7 @@ NOTE: cannot be called from Fortran.
 
 
 \bname{plgfnam(fnam)}
+\label{plgfnam}
 \findex{plgfnam}
 \addcontentsline{toc}{subsection}{plgfnam}
 
@@ -949,16 +980,22 @@ NOTE: cannot be called from Fortran.
 
 
 \bname{plgpage(xp, yp, xleng, yleng, xoff, yoff)}
+\label{plgpage}
 \findex{plgpage}
 \addcontentsline{toc}{subsection}{plgpage}
 
 \descr{ Gets the current page configuration. }
 
 \argu{ \code{xp} (PLINT *, output)}{Pointer to number of pixels in x.}
+
 \argu{ \code{yp} (PLINT *; output)}{Pointer to number of pixels in y.}
+
 \argu{ \code{xleng} (PLINT *, output)}{Pointer to x page length value.}
+
 \argu{ \code{yleng} (PLINT *, output)}{Pointer to y page length value.}
+
 \argu{ \code{xoff} (PLINT *, output)}{Pointer to x page offset.}
+
 \argu{ \code{yoff} (PLINT *, output)}{Pointer to y page offset.}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -967,6 +1004,7 @@ NOTE: cannot be called from Fortran.
 
 
 \bname{plgra()}
+\label{plgra}
 \findex{plgra}
 \addcontentsline{toc}{subsection}{plgra}
 
@@ -984,6 +1022,7 @@ See also \code{pltext}.}
 
 
 \bname{plgspa(xmin, xmax, ymin, ymax)}
+\label{plgspa}
 \findex{plgspa}
 \addcontentsline{toc}{subsection}{plgspa}
 
@@ -1010,6 +1049,7 @@ top edge of subpage in millimeters.}
 
 
 \bname{plgstrm(strm)}
+\label{plgstrm}
 \findex{plgstrm}
 \addcontentsline{toc}{subsection}{plgstrm}
 
@@ -1024,14 +1064,14 @@ top edge of subpage in millimeters.}
 
 
 \bname{plgxax(digmax, digits)}
+\label{plgxax}
 \findex{plgxax}
 \addcontentsline{toc}{subsection}{plgxax}
 
 \descr{ Returns current values of the \code{digmax} and \code{digits} flags
-for the x axis.  \code{digits} is updated after the plot is drawn, so so this
-routine should only be called {\em after\/} the call to \code{plbox} 
-(or \code{plbox3}) is complete.  See section \ref{annotate} for more
-information.}
+for the x axis.  \code{digits} is updated after the plot is drawn, so so
+this routine should only be called \emph{after} the call to \code{plbox}
+(or \code{plbox3}) is complete.  \xref{Annotation} for more information.}
 
 \argu{ \code{digmax} (PLINT *, output)}{Pointer to variable with the maximum
 number of digits.  If nonzero, the printed label will be switched to a
@@ -1047,6 +1087,7 @@ number of digits for the numeric labels (x axis) from the last plot.}
 
 
 \bname{plgyax(digmax, digits)}
+\label{plgyax}
 \findex{plgyax}
 \addcontentsline{toc}{subsection}{plgyax}
 
@@ -1059,6 +1100,7 @@ y axis.  See the description of \code{plgxax} for more detail.}
 
 
 \bname{plgzax(digmax, digits)}
+\label{plgzax}
 \findex{plgzax}
 \addcontentsline{toc}{subsection}{plgzax}
 
@@ -1071,6 +1113,7 @@ z axis.  See the description of \code{plgxax} for more detail.}
 
 
 \bname{plhist(n, data, datmin, datmax, nbin, oldwin)}
+\label{plhist}
 \findex{plhist}
 \addcontentsline{toc}{subsection}{plhist}
 
@@ -1099,10 +1142,32 @@ before plotting.}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\node plinit, pljoin, plhist, API
+
+\bname{plinit()}
+\label{plinit}
+\findex{plinit}
+\addcontentsline{toc}{subsection}{plinit}
+
+\descr{ Initializing the plotting package.  The program prompts for the
+device keyword or number of the desired output device.  Hitting a RETURN in
+response to the prompt is the same as selecting the first device.  
+\code{plinit} will issue no prompt if either the device was specified
+previously (via command line flag or the \code{plsdev} function), or if
+only one device is enabled when PLplot is installed.  If subpages have
+been specified, the output device is divided into \code{nx} by \code{ny}
+sub-pages, each of which may be used independently.  If \code{plinit} is
+called again during a program, the previously opened file will be
+closed.  The subroutine \code{pladv} is used to advance from one subpage
+to the next.}
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \node pljoin, pllab, plhist, API
 
 
 \bname{pljoin(x1, y1, x2, y2)}
+\label{pljoin}
 \findex{pljoin}
 \addcontentsline{toc}{subsection}{pljoin}
 
@@ -1122,6 +1187,7 @@ before plotting.}
 
 
 \bname{pllab(xlabel, ylabel, tlabel)}
+\label{pllab}
 \findex{pllab}
 \addcontentsline{toc}{subsection}{pllab}
 
@@ -1140,6 +1206,7 @@ labels.}
 
 
 \bname{plline(n, x, y)}
+\label{plline}
 \findex{plline}
 \addcontentsline{toc}{subsection}{plline}
 
@@ -1159,6 +1226,7 @@ points.}
 
 
 \bname{pllsty(n)}
+\label{pllsty}
 \findex{pllsty}
 \addcontentsline{toc}{subsection}{pllsty}
 
@@ -1176,6 +1244,7 @@ points.}
 plmesh(x, y, z, nx, ny, opt)}{\qquad(C)}{
 plmesh(x, y, z, nx, ny, opt, mx)}{(Fortran)}
 
+\label{plmesh}
 \findex{plmesh}
 \addcontentsline{toc}{subsection}{plmesh}
 
@@ -1184,8 +1253,8 @@ The surface is defined by the two-dimensional array \code{z[][]}, the point
 \code{z[i][j]} being the value of the function at \code{(x[i], y[j])}.  Note
 that the points in arrays \code{x} and \code{y} do not need to be equally
 spaced, but must be stored in ascending order.  The parameter \code{opt}
-controls the way in which the surface is displayed.  See Section
-\ref{threed} on page \pageref{threed} for further details.}
+controls the way in which the surface is displayed.  For further details
+\pxref{3-d Plots}.}
 
 \argu{ \code{x} (PLFLT *, input)}{Pointer to set of x~coordinate values at
 which the function is evaluated.}
@@ -1229,6 +1298,7 @@ subarrays (Fortran only).}
 
 
 \bname{plmtex(side, disp, pos, just, text)}
+\label{plmtex}
 \findex{plmtex}
 \addcontentsline{toc}{subsection}{plmtex}
 
@@ -1287,6 +1357,7 @@ values of \code{just} give intermediate justifications.}
 plot3d(x, y, z, nx, ny, opt, side)}{\qquad(C)}{
 plot3d(x, y, z, nx, ny, opt, side, mx)}{(Fortran)}
 
+\label{plot3d}
 \findex{plot3d}
 \addcontentsline{toc}{subsection}{plot3d}
 
@@ -1296,8 +1367,7 @@ by \code{plw3d}.  The surface is defined by the two-dimensional array
 \code{(x[i], y[j])}.  Note that the points in arrays \code{x} and \code{y}
 do not need to be equally spaced, but must be stored in ascending order.
 The parameter \code{opt} controls the way in which the surface is
-displayed.  See Section \ref{threed} on page \pageref{threed} for further
-details.} 
+displayed.  For further details \pxref{3-d Plots}.} 
 
 \argu{ \code{x} (PLFLT *, input)}{Pointer to set of x~coordinate values at
 which the function is evaluated.}
@@ -1345,6 +1415,7 @@ subarrays (Fortran only).}
 
 
 \bname{plpage()}
+\label{plpage}
 \findex{plpage}
 \addcontentsline{toc}{subsection}{plpage}
 
@@ -1369,6 +1440,7 @@ subpage simply by the call \code{pladv(0)}.}
 
 
 \bname{plpat(nlin, inc, del)}
+\label{plpat}
 \findex{plpat}
 \addcontentsline{toc}{subsection}{plpat}
 
@@ -1394,6 +1466,7 @@ Specify the spacing in micrometers between the lines making up the pattern.}
 
 
 \bname{plpoin(n, x, y, code)}
+\label{plpoin}
 \findex{plpoin}
 \addcontentsline{toc}{subsection}{plpoin}
 
@@ -1418,6 +1491,7 @@ values for the points.}
 
 
 \bname{plprec(set, prec)}
+\label{plprec}
 \findex{plprec}
 \addcontentsline{toc}{subsection}{plprec}
 
@@ -1437,6 +1511,7 @@ decimal point in numeric labels.}
 
 
 \bname{plpsty(n)}
+\label{plpsty}
 \findex{plpsty}
 \addcontentsline{toc}{subsection}{plpsty}
 
@@ -1451,6 +1526,7 @@ decimal point in numeric labels.}
 
 
 \bname{plptex(x, y, dx, dy, just, text)}
+\label{plptex}
 \findex{plptex}
 \addcontentsline{toc}{subsection}{plptex}
 
@@ -1487,6 +1563,7 @@ values of \code{just} give intermediate justifications.}
 
 
 \bname{plschr(def, scale)}
+\label{plschr}
 \findex{plschr}
 \addcontentsline{toc}{subsection}{plschr}
 
@@ -1507,6 +1584,7 @@ get actual character height.}
 
 
 \bname{plsfam(fam, num, bmax)}
+\label{plsfam}
 \findex{plsfam}
 \addcontentsline{toc}{subsection}{plsfam}
 
@@ -1529,6 +1607,7 @@ for a family file.}
 
 
 \bname{plsfile(file)}
+\label{plsfile}
 \findex{plsfile}
 \addcontentsline{toc}{subsection}{plsfile}
 
@@ -1547,6 +1626,7 @@ NOTE: cannot be called from Fortran.
 
 
 \bname{plsfnam(fnam)}
+\label{plsfnam}
 \findex{plsfnam}
 \addcontentsline{toc}{subsection}{plsfnam}
 
@@ -1564,6 +1644,7 @@ PLplot.}
 
 
 \bname{plsmaj(def, scale)}
+\label{plsmaj}
 \findex{plsmaj}
 \addcontentsline{toc}{subsection}{plsmaj}
 
@@ -1584,6 +1665,7 @@ get actual tick length.}
 
 
 \bname{plsmin(def, scale)}
+\label{plsmin}
 \findex{plsmin}
 \addcontentsline{toc}{subsection}{plsmin}
 
@@ -1604,6 +1686,7 @@ get actual tick length.}
 
 
 \bname{plsori(ori)}
+\label{plsori}
 \findex{plsori}
 \addcontentsline{toc}{subsection}{plsori}
 
@@ -1622,6 +1705,7 @@ PLplot.}
 
 
 \bname{plspage(xp, yp, xleng, yleng, xoff, yoff)}
+\label{plspage}
 \findex{plspage}
 \addcontentsline{toc}{subsection}{plspage}
 
@@ -1643,6 +1727,7 @@ used, must be called before initializing PLplot.}
 
 
 \bname{plsstrm(strm)}
+\label{plsstrm}
 \findex{plsstrm}
 \addcontentsline{toc}{subsection}{plsstrm}
 
@@ -1658,6 +1743,7 @@ must be followed by a call initializing PLplot (e.g.~\code{plstar}).}
 
 
 \bname{plssym(def, scale)}
+\label{plssym}
 \findex{plssym}
 \addcontentsline{toc}{subsection}{plssym}
 
@@ -1679,6 +1765,7 @@ get actual symbol height.}
 
 
 \bname{plstar(nx, ny)}
+\label{plstar}
 \findex{plstar}
 \addcontentsline{toc}{subsection}{plstar}
 
@@ -1702,6 +1789,7 @@ the vertical direction.}
 
 
 \bname{plstart(device, nx, ny)}
+\label{plstart}
 \findex{plstart}
 \addcontentsline{toc}{subsection}{plstart}
 
@@ -1730,6 +1818,7 @@ the vertical direction.}
 
 
 \bname{plstyl(nels, mark, space)}
+\label{plstyl}
 \findex{plstyl}
 \addcontentsline{toc}{subsection}{plstyl}
 
@@ -1757,6 +1846,7 @@ the segments during which the pen is up, measured in micrometers.}
 
 
 \bname{plsvpa(xmin, xmax, ymin, ymax)}
+\label{plsvpa}
 \findex{plsvpa}
 \addcontentsline{toc}{subsection}{plsvpa}
 
@@ -1783,14 +1873,14 @@ viewport from the top edge of the subpage in millimeters.}
 
 
 \bname{plsxax(digmax, digits)}
+\label{plsxax}
 \findex{plsxax}
 \addcontentsline{toc}{subsection}{plsxax}
 
 \descr{ Returns current values of the \code{digmax} and \code{digits} flags
 for the x axis.  \code{digits} is updated after the plot is drawn, so so this
-routine should only be called {\em after\/} the call to \code{plbox} 
-(or \code{plbox3}) is complete.  See section \ref{annotate} for more
-information.}
+routine should only be called \emph{after} the call to \code{plbox} 
+(or \code{plbox3}) is complete.  \xref{Annotation} for more information.}
 
 \argu{ \code{digmax} (PLINT, output)}{Variable to set the maximum
 number of digits.  If nonzero, the printed label will be switched to a
@@ -1808,6 +1898,7 @@ its value here has no effect since it is set only by \code{plbox} or
 
 
 \bname{plsyax(digmax, digits)}
+\label{plsyax}
 \findex{plsyax}
 \addcontentsline{toc}{subsection}{plsyax}
 
@@ -1820,6 +1911,7 @@ y axis.  See the description of \code{plsxax} for more detail.}
 
 
 \bname{plsym(n, x, y, code)}
+\label{plsym}
 \findex{plsym}
 \addcontentsline{toc}{subsection}{plsym}
 
@@ -1843,6 +1935,7 @@ values for the points.}
 
 
 \bname{plszax(digmax, digits)}
+\label{plszax}
 \findex{plszax}
 \addcontentsline{toc}{subsection}{plszax}
 
@@ -1855,6 +1948,7 @@ z axis.  See the description of \code{plsxax} for more detail.}
 
 
 \bname{pltext()}
+\label{pltext}
 \findex{pltext}
 \addcontentsline{toc}{subsection}{pltext}
 
@@ -1863,11 +1957,11 @@ z axis.  See the description of \code{plsxax} for more detail.}
 which supports separate text and graphics windows, this command causes
 control to be switched to the text window.  This can be useful for printing
 diagnostic messages or getting user input, which would otherwise interfere
-with the plots.  The user {\em must\/} switch back to the graphics window
+with the plots.  The user \emph{must} switch back to the graphics window
 before issuing plot commands, as the text (or console) device will probably
 become quite confused otherwise.  If already in text mode, this command is
 ignored.  It is also ignored on devices which only support a single window
-or use a different method for shifting focus.  See also \code{plgra}.}
+or use a different method for shifting focus (also \pxref{plgra}).}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1875,6 +1969,7 @@ or use a different method for shifting focus.  See also \code{plgra}.}
 
 
 \bname{plvasp(aspect)}
+\label{plvasp}
 \findex{plvasp}
 \addcontentsline{toc}{subsection}{plvasp}
 
@@ -1890,6 +1985,7 @@ axis.}
 
 
 \bname{plvpas(xmin, xmax, ymin, ymax, aspect)}
+\label{plvpas}
 \findex{plvpas}
 \addcontentsline{toc}{subsection}{plvpas}
 
@@ -1921,6 +2017,7 @@ axis.}
 
 
 \bname{plvpor(xmin, xmax, ymin, ymax)}
+\label{plvpor}
 \findex{plvpor}
 \addcontentsline{toc}{subsection}{plvpor}
 
@@ -1948,6 +2045,7 @@ top edge of the viewport.}
 
 
 \bname{plvsta()}
+\label{plvsta}
 \findex{plvsta}
 \addcontentsline{toc}{subsection}{plvsta}
 
@@ -1960,6 +2058,7 @@ character heights, and four character heights around the other three sides.}
 
 
 \bname{plw3d(basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az)}
+\label{plw3d}
 \findex{plw3d}
 \addcontentsline{toc}{subsection}{plw3d}
 
@@ -1973,9 +2072,8 @@ coordinate size \code{basex} by \code{basey} by \code{height} so that
 \code{zmin} maps to \code{0} and \code{zmax} maps to \code{height}.  The
 resulting world-coordinate box is then viewed by an observer at altitude
 \code{alt} and azimuth \code{az}.  This routine must be called before
-\code{plbox3} or \code{plot3d}.  See Section \ref{threed} on page
-\pageref{threed} for a more complete description of three-dimensional
-plotting.}
+\code{plbox3} or \code{plot3d}.  For a more complete description of
+three-dimensional plotting \pxref{3-d Plots}.}
 
 \argu{ \code{basex} (PLFLT, input)}{The x~coordinate size of the
 world-coordinate box.}
@@ -2012,12 +2110,13 @@ viewed from above the xy~plane.}
 
 
 \bname{plwid(width)}
+\label{plwid}
 \findex{plwid}
 \addcontentsline{toc}{subsection}{plwid}
 
 \descr{ Sets the pen width.}
 
-\argu{ \code{width} (PLINT, input)}{The desired pen width. The pen width
+\argu{ \code{width} (PLINT, input)}{The desired pen width.  The pen width
 must be between 1 and a device dependent maximum value.}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2026,6 +2125,7 @@ must be between 1 and a device dependent maximum value.}
 
 
 \bname{plwind(xmin, xmax, ymin, ymax)}
+\label{plwind}
 \findex{plwind}
 \addcontentsline{toc}{subsection}{plwind}
 
