@@ -20,7 +20,9 @@ main(int argc, char *argv[])
 {
   PLFLT x[XDIM], y[YDIM], **z;
   int i, j;
-  
+  static PLGraphicsIn gin;
+  PLFLT xi, yi, xe, ye, start;
+    
   FILE *fp;
   int width, height, num_col;
   char ver[80];
@@ -111,11 +113,59 @@ main(int argc, char *argv[])
       img_f[i][j] = img[(height-j)*width+i];
 
   plenv(1., width, 1., height, 1, -1);
-  pllab(""," ","Lena...");
+  pllab("Set and drag Button 1 to (re)set selection, Button 3 to finish."," ","Lena...");
   plimage(img_f, width, height, 1., width, 1., height, 1., width, 1., height);
+
+  plxormod(1); /* enter xor mode to draw a selection rectangle */
+  start = 0;
+  xi = ye = 0.;
+  xe = width/2.; yi = height/2.;
+
+  while(1) {
+    PLFLT sx[5], sy[5];
+
+    plGetCursor(&gin);
+
+    if (gin.button == 1) {
+      xi = gin.wX; yi = gin.wY;
+      if (start)
+	plline(5, sx, sy); /* clear previous rectangle */
+      start = 0;
+
+      sx[0] = xi; sy[0] = yi;
+      sx[4] = xi; sy[4] = yi;
+    }
+
+    if (gin.state == 0x100) {
+      xe = gin.wX; ye = gin.wY;
+      if (start)
+	plline(5, sx, sy); /* clear previous rectangle */
+      start = 1;
+  
+      sx[2] = xe; sy[2] = ye;
+      sx[1] = xe; sy[1] = yi;
+      sx[3] = xi; sy[3] = ye;
+      plline(5, sx, sy); /* draw new rectangle */
+    }
+
+    if (gin.button == 3) {
+      if (start)
+	plline(5, sx, sy); /* clear previous rectangle */
+      printf("end\n");
+      break;
+    }      
+  }
+  plxormod(0); /* leave xor mod */
+
+  /* I'm unable to continue without hiting the enter key, or pressing the button... help!*/
+  //plclear();plflush();
+  pladv(0);
+  
+  plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
   pladv(0);
 
-  plimage(img_f, width, height, 1., width, 1., height, width/3., 5.*width/6., height/4., 3.*height/4.);
+  plenv(xi, xe, ye, yi, 1, -1);
+  plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
   pladv(0);
 
   plend();
