@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.70  1994/08/25 05:19:18  mjl
+ * Revision 1.71  1994/09/16 04:50:07  mjl
+ * Bumped version to 4.99j.
+ *
+ * Revision 1.70  1994/08/25  05:19:18  mjl
  * Bumped version number.
  *
  * Revision 1.69  1994/07/29  20:17:02  mjl
@@ -64,7 +67,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99i"
+#define PLPLOT_VERSION "4.99j"
 
 /*----------------------------------------------------------------------*\
  *    USING PLplot
