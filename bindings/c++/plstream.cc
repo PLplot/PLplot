@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.3  1995/10/16 18:22:57  mjl
+// Revision 1.4  1995/10/23 07:22:32  mjl
+// Added glevel() accessor.
+//
+// Revision 1.3  1995/10/16  18:22:57  mjl
 // Added support for plgdev API function in C++ bindings.
 //
 // Revision 1.2  1995/06/22  18:52:59  furnish
@@ -622,6 +625,15 @@ void plstream::gfnam( char *fnam )
     set_stream();
 
     plgfnam(fnam);
+}
+
+// Get current run level.
+
+void plstream::glevel(PLINT& level)
+{
+    set_stream();
+
+    plglevel( &level );
 }
 
 // Get output device parameters.

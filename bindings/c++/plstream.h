@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.2  1995/10/16 18:22:58  mjl
+// Revision 1.3  1995/10/23 07:22:33  mjl
+// Added glevel() accessor.
+//
+// Revision 1.2  1995/10/16  18:22:58  mjl
 // Added support for plgdev API function in C++ bindings.
 //
 // Revision 1.1  1995/06/22  19:01:15  furnish
@@ -282,6 +285,10 @@ class plstream {
 // Get the (current) output file name.  Must be preallocated to >80 bytes.
 
     void gfnam( char *fnam );
+
+/* Get the (current) run level.  */
+
+    void glevel( PLINT &p_level );
 
 // Get output device parameters.
 
