@@ -8,6 +8,13 @@
 # Miscellaneous targets.
 # -----------------------------------------------------------------------
 
+# Tcl support machinery
+
+tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+
+tclgen.h tclgen_s.h tclgen.c : plapi.tpl
+	pltclgen
+
 # Cleanup
 
 clean:
