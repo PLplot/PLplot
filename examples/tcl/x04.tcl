@@ -12,7 +12,6 @@ proc x04 {{w loopback}} {
     $w cmd plfont 1
     $w cmd plcol0 1
 
-    $w cmd plend
 }
 
 proc plot1 {w type} {
