@@ -878,7 +878,7 @@ AC_DEFUN([GET_DLNAME],[
   rm -rf $TMP_DIR
   mkdir -p $TMP_DIR
   cd $TMP_DIR
-  ../libtool --mode=link $LD -rpath /usr/lib -version-info $2 \
+  ../libtool --mode=link $CC -rpath /usr/lib -version-info $2 \
       -o lib$1.la > /dev/null
   $3=`grep ^dlname= lib$1.la | sed "s/dlname='\(.*\)'/\1/"`
   cd ..
