@@ -1,3 +1,10 @@
+2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* pdftex.map: Added more aliases for the Computer Modern fonts.
+
+	* jadetex.cfg: Hyperlinks are colored red now, instead of the
+	black default.
+
 2000-11-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am (SOURCE_FILES): Removed over-under.eps and
