@@ -1,3 +1,9 @@
+/* $Id$
+
+    Tcl Matrix initializer.
+    Vince Darley
+*/
+
 #include "plplot/tclMatrix.h"
 
 int Matrix_Init	(Tcl_Interp*);
