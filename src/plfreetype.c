@@ -1,5 +1,6 @@
-
-/*                  Support routines for freetype font engine
+/* $Id$
+ *
+ *                  Support routines for freetype font engine
  *
  *  This file contains a series of support routines for drivers interested
  *  in using freetype rendered fonts instead of plplot plotter fonts.
@@ -40,8 +41,6 @@
  *
  */
 
-
-
 #include <unistd.h>
 
 #include "plplot/plDevs.h"
@@ -50,9 +49,7 @@
 #ifdef HAVE_FREETYPE
 #include "plplot/plfreetype.h"
 
-
 /*              TOP LEVEL DEFINES       */
-
 
 /*  Freetype lets you set the text size absolutely. It also takes into
  *  account the DPI when doing so. So does plplot. Why, then, is it that the
@@ -64,10 +61,12 @@
 
 #define TEXT_SCALING_FACTOR .7
 
+/* default size of temporary text buffer */
+/* If we wanted to be fancy we could add sizing, but this should be big enough */
 
+#define NTEXT_ALLOC 1024
 
 /*              FUNCTION PROTOTYPES    */
-
 
 /*  Public prototypes, generally available to the API  */
 
@@ -75,7 +74,6 @@ void plD_FreeType_init(PLStream *pls);
 void plD_render_freetype_text (PLStream *pls, EscText *args);
 void plD_FreeType_Destroy(PLStream *pls);
 void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
-
 
 /*  Private prototypes for use in this file only */
 
@@ -95,8 +93,8 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels);
  * the CPU hit for this "double processing" will be minimal.
 \*----------------------------------------------------------------------*/
 
-
-void FT_StrX_Y(PLStream *pls,const char *text,int *xx, int *yy)
+void
+FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
     short len=strlen(text);
@@ -203,7 +201,8 @@ void FT_StrX_Y(PLStream *pls,const char *text,int *xx, int *yy)
  * collapse the two into some more efficient code eventually.
 \*----------------------------------------------------------------------*/
 
-void FT_WriteStr(PLStream *pls,const char *text, int x, int y)
+void
+FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
     short len=strlen(text);
@@ -211,19 +210,24 @@ void FT_WriteStr(PLStream *pls,const char *text, int x, int y)
     FT_Vector  akerning;
     char esc;
 
+/* copy string to modifiable memory */
+    strncpy(FT->textbuf, text, NTEXT_ALLOC-1);
+    if (len >= NTEXT_ALLOC)
+	plwarn("FT_StrX_Y: string too long!");
+
     plgesc(&esc);
 
 /* adjust for the descender - make sure the font is nice and centred vertically */
     y-=FT->face->descender >> 6;
 
 /* walk through the text character by character */
-    for (i=0;i<len;i++) {
-	if ((text[i]==esc)&&(text[i-1]!=esc)) {
-	    if (text[i+1]==esc) continue;
+    for (i=0; i<len; i++) {
+	if ((FT->textbuf[i]==esc)&&(FT->textbuf[i-1]!=esc)) {
+	    if (FT->textbuf[i+1]==esc) continue;
 
-	    switch(text[i+1]) {
+	    switch(FT->textbuf[i+1]) {
 	    case 'f':  /* Change Font */
-                switch (text[i+2]) {
+                switch (FT->textbuf[i+2]) {
 		case 'r':
 		    FT_SetFace( pls,2);
 		    break;
@@ -262,7 +266,7 @@ void FT_WriteStr(PLStream *pls,const char *text, int x, int y)
 */
 
                 FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
-		text[i+2]-=29;
+		FT->textbuf[i+2]-=29;
                 i++;
                 break;
 
@@ -281,16 +285,16 @@ void FT_WriteStr(PLStream *pls,const char *text, int x, int y)
 	/* see if we have kerning for the particular character pair */
 	    if ((last_char!=-1)&&(i>0)&&FT_HAS_KERNING(FT->face)) {
 		FT_Get_Kerning( FT->face,
-				text[last_char],
-				text[i],
+				FT->textbuf[last_char],
+				FT->textbuf[i],
 				ft_kerning_default, &akerning );
 		x+= (akerning.x >> 6);        /* add (or subtract) the kerning */
             }
 
 	    if (FT->smooth_text==0)
-		FT_Load_Char( FT->face, text[i],FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
+		FT_Load_Char( FT->face, FT->textbuf[i], FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
 	    else
-		FT_Load_Char( FT->face, text[i],FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
+		FT_Load_Char( FT->face, FT->textbuf[i], FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
 
 	    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, 2 ); /* render the text */
 	    x += (FT->face->glyph->advance.x >> 6);
@@ -312,10 +316,11 @@ void FT_WriteStr(PLStream *pls,const char *text, int x, int y)
  *
  * Plots an individual character. I know some of this stuff, like colour
  * could be parsed from plstream, but it was just quicker this way.
- *
 \*----------------------------------------------------------------------*/
 
-void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, int y, short colour )
+void
+FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
+	    int x, int y, short colour )
 {
     unsigned char bittest;
     short i,k,j;
@@ -331,7 +336,7 @@ void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, int y, sh
 		bittest=128;
 		for (j=0;j<8;j++) {
 		    if ((bittest&(unsigned char)slot->bitmap.buffer[(i*n)+k])==bittest)
-			FT->pixel(pls,x+(k*8)+j,y+i);
+			FT->pixel(pls, x+(k*8)+j, y+i);
 		    bittest>>=1;
 		}
             }
@@ -390,14 +395,18 @@ void plD_FreeType_init(PLStream *pls)
 				       "Arial.ttf"};
 #endif
 
-    if (pls->FT!=0) {
-	plexit("Freetype seems already to have been initialised!");
+    if (pls->FT) {
+	plwarn("Freetype seems already to have been initialised!");
+	return;
     }
 
     if ((pls->FT=calloc(1, (size_t)sizeof(FT_Data)))==NULL)
 	plexit("Could not allocate memory for Freetype");
 
     FT=(FT_Data *)pls->FT;
+
+    if ((FT->textbuf=calloc(NTEXT_ALLOC, 1))==NULL)
+	plexit("Could not allocate memory for Freetype text buffer");
 
     if ( FT_Init_FreeType( &FT->library ) )
 	plexit("Could not initialise Freetype library");
@@ -637,6 +646,7 @@ void plD_FreeType_Destroy(PLStream *pls)
     if (FT) {
 	if (FT->smooth_text==1) plscmap0n(FT->ncol0_org);
 	FT_Done_Library(FT->library);
+	free(FT->textbuf);
 	free(pls->FT);
 	pls->FT=NULL;
     }
