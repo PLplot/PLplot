@@ -23,6 +23,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+# $Id$
+
 usage () {
   local prog=`basename $0`
   echo "Usage: $prog [-n] [-u user] [-t tmpdir] [-w remote dir] \\"
