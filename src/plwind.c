@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/07/01 22:13:48  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.5  1993/09/17 06:44:40  mjl
+   Eliminated abort on bad window bounds; now issues a warning and attempts
+   to recover.
 
+ * Revision 1.4  1993/07/01  22:13:48  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.3  1993/01/23  06:02:52  mjl
  * Now holds all routines dealing with window specification.
  *
@@ -50,11 +54,19 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
     plP_gvpd(&vpxmi, &vpxma, &vpymi, &vpyma);
 
+/* Best to just warn and recover on bounds errors */
+
+    if (xmin == xmax) {
+	plwarn("plwind: Invalid window limits in x.");
+	xmin--; xmax++;
+    }
+    if (ymin == ymax) {
+	plwarn("plwind: Invalid window limits in y.");
+	ymin--; ymax++;
+    }
+
     dx = (xmax - xmin) * 1.0e-5;
     dy = (ymax - ymin) * 1.0e-5;
-
-    if ((xmin == xmax) || (ymin == ymax))
-	plexit("plwind: Invalid window limits.");
 
 /* The true plot window is made slightly larger than requested so that */
 /* the end limits will be on the graph  */
