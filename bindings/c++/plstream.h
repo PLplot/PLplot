@@ -637,6 +637,14 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
     void sKeyEH( void (*KeyEH) (PLGraphicsIn *, void *, int *),
 		 void *KeyEH_data );
 
+/* Sets an optional user bop handler */
+
+    void sbopH(void (*handler) (void *, int *), void *handlier_data);
+
+/* Sets an optional user eop handler */
+
+    void seopH(void (*handler) (void *, int *), void *handlier_data);
+
 /* Sets an optional user exit handler. */
 
     void sexit( int (*handler) (char *) );
