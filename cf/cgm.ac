@@ -55,7 +55,12 @@ if test "$enable_cgm" = "yes"; then
     if test "$CDINCDIR" = "/usr/include"; then
         CDINCDIR=default
     fi
+    CDINCCMD=""
+    CDINCPATH=""
+    PL_ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
+fi
 
+if test "$enable_cgm" = "yes"; then
     if test -z "$CDLIBDIR"; then
         AC_CHECK_LIB(cd, main, [ CDLIBDIR=default ], [
         libdirs="\
@@ -77,16 +82,11 @@ if test "$enable_cgm" = "yes"; then
     if test "$CDLIBDIR" = "/usr/lib"; then
         CDLIBDIR=default
     fi
-fi
-
-CDINCCMD=""
-CDINCPATH=""
-CDLIBCMD=""
-CDLIBPATH=""
-if test "$enable_cgm" = "yes"; then
-    PL_ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
+    CDLIBCMD=""
+    CDLIBPATH=""
     PL_ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
 fi
+
 AC_SUBST(CDINCCMD)
 AC_SUBST(CDLIBCMD)
 
