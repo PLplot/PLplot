@@ -70,6 +70,17 @@ endif
 if with_qhull
 get_drv_info_LDADD += $(top_builddir)/lib/nn/libcsironn.la
 endif
+# add the following directories if either tk or tkwin devices are enabled.
+if enable_tk
+get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libplplottcltkd.la
+get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libtclmatrixd.la
+else
+if enable_tkwin
+get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libplplottcltkd.la
+get_drv_info_LDADD += $(top_builddir)/bindings/tcl/libtclmatrixd.la
+endif
+endif
+
 get_drv_info_CFLAGS = $(INCLTDL)
 
 SUFFIXES = .la .rc
