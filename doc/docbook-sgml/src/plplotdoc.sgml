@@ -1,9 +1,9 @@
 <!doctype book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 
 <!-- $Format: "<!ENTITY Project-Version \"$ProjectVersion$\">"$ -->
-<!ENTITY Project-Version "0.1.2">
+<!ENTITY Project-Version "CVS.4">
 <!-- $Format: "<!ENTITY Project-Date \"$ProjectDate$\">"$ -->
-<!ENTITY Project-Date "Fri, 09 Jul 1999 14:27:19 +0200">
+<!ENTITY Project-Date "Thu, 09 Nov 2000 22:13:15 +0100">
 
 <!ENTITY chap-intro SYSTEM "intro.sgml">
 <!ENTITY chap-simple SYSTEM "simple.sgml">
@@ -198,7 +198,7 @@
       </para>
     </legalnotice>
     <copyright>
-      <year>1999</year>
+      <year>1999, 2000</year>
       <holder>Alan W. Irwin, Rafael Laboissi&egrave;re</holder>
     </copyright>
     <legalnotice>
