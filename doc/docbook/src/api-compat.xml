@@ -88,9 +88,10 @@
             <filename>plplot.h</filename>.  If no prototype is changed,
             then the chances are high that no backwards compatibilities
             have been introduced.  If new functions has been added, then
-            the library soname will be kept, although the libtool version
+            the library soname will be kept, although the libtool soversion
             string in <filename>configure.ac</filename> must be changed
-            from x:y:z to (x+1):0:(z+1).  See the
+            from <literal>x:y:z</literal> to
+            <literal>(x+1):0:(z+1)</literal>.  See the
             <application>libtool</application> manual for details.
         </para>
         </listitem>
@@ -100,10 +101,11 @@
             first, install the previous released version of PLplot in the
             system and compile all the examples
             <filename>examples/c/x??c.</filename>.  After that, install the
-            to-be-released version of PLplot and try to run the examples.
-            If they either link and run incorrectly, then backwards
-            compatibilities have been added and the version string should
-            be upgraded from x:y:z to (x+1):0:0.
+            to-be-released version of PLplot and try to run the previously
+            compiled examples.  If they either link or run incorrectly,
+            then backwards incompatibilities have been introduced and the
+            soversion string must be upgraded from <literal>x:y:z</literal>
+            to <literal>(x+1):0:0</literal>.
           </para>
         </listitem>
       </itemizedlist>
