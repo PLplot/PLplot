@@ -75,7 +75,7 @@ function ix18c
     if (opt(k+1))
       plline3( x, y, z );
     else
-      plpoin3( x, y, z, -1 );
+      plpoin3( x, y, z, 1 );
     endif
 
     plcol(3);
