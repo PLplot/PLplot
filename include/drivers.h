@@ -27,7 +27,7 @@ void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_tiff	( PLDispatchTable *pdt );
-void plD_dispatch_init_jpg	( PLDispatchTable *pdt );
+void plD_dispatch_init_jpeg	( PLDispatchTable *pdt );
 void plD_dispatch_init_bmp	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_xterm	( PLDispatchTable *pdt );
@@ -52,8 +52,8 @@ void plD_dispatch_init_hpgl	( PLDispatchTable *pdt );
 void plD_dispatch_init_imp	( PLDispatchTable *pdt );
 void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
 void plD_dispatch_init_png	( PLDispatchTable *pdt );
-void plD_dispatch_init_png	( PLDispatchTable *pdt );
 void plD_dispatch_init_null	( PLDispatchTable *pdt );
+void plD_dispatch_init_pstex	( PLDispatchTable *pdt );
 
 #if 0
 void plD_init_tk		(PLStream *);
