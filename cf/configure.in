@@ -116,6 +116,8 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes"; then
     enable_$1="yes"
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
+else
+    enable_$1="no"
 fi
 ])dnl
 
