@@ -44,6 +44,11 @@ install_utils:
 	 $(LDC) $(LDC_FLAGS) pltek$O \
 		-o pltek$E; \
 	 fi
+	 echo "#!/bin/sh" > plplot_linkage
+	 echo 'echo "$(LDC_FLAGS) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)"' \
+		>> plplot_linkage
+	 chmod +x plplot_linkage
 	-strip plrender$E pltek$E
-	-cp plrender$E pltek$E $(BIN_DIR)
+	-cp plrender$E pltek$E plplot_linkage $(BIN_DIR)
+	rm plplot_linkage
 
