@@ -3,4 +3,4 @@ Makefile.in
 conftest.dsl
 conftest.html
 conftest.out
-conftest.xm
+conftest.xml

@@ -45,15 +45,7 @@ CLEANFILES = \
   *.out *.info* *.texi *.txml *.xml-info *-tmp *.$(MANVOL)
 
 
-JADE = @JADE@
-JADETEX = @JADETEX@
-PDFJADETEX = @PDFJADETEX@
-PERL = @PERL@
-LATEX = @LATEX@
-DVIPS = @DVIPS@
-MAKEINFO = @MAKEINFO@
-HTML_EXT = @HTML_EXT@
-MANVOL = @MANVOL@
+if enable_docbook
 
 MAX_TEX_RECURSION = 4
 
@@ -104,12 +96,9 @@ $(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT).in inline-print.ent
 	  -o $@ $(XML_DECL) $(MASTER_XML)
 
 
-DOCBOOK2TEXIXML = @DOCBOOK2TEXIXML@
-TEXI_XML = @TEXI_XML@
-
 INFO_TMPDIR = info
 
-info: $(PACKAGE).info
+info: plplotdoc.info
 
 %.info: %.texi
 	rm -rf $(INFO_TMPDIR)
@@ -141,3 +130,6 @@ $(MAN_MANIFEST): $(MASTER_XML_IN) api.xml
 
 .PHONY: all html print info man
 .PRECIOUS: %.info %.texi %.txml %.xml-info %.pdf
+
+# enable_docbook
+endif

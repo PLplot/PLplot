@@ -3,7 +3,7 @@ CLEANFILES = $(TARBALL) *.tar.gz *-stamp
 DISTCLEANFILES = @CONFTEST@.* @JADELOG@ www/index.html
 SUBDIRS = src bin
 
-PERL = @PERL@
+if enable_docbook
 
 RSH_COMMAND = $(RSH) $(WWW_USER)$(WWW_HOST)
 RCP_PREFIX = $(shell if test -z "$(WWW_USER)$(WWW_HOST)" ; then \
@@ -78,3 +78,5 @@ www-install: $(TARBALL) www-uninstall
 	$(RSH_COMMAND) rm -f $(WWW_DIR)/$(TARBALL)
 
 .PHONY: www-uninstall www-install 
+# enable_docbook
+endif

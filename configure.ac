@@ -818,6 +818,7 @@ echo 666 $enable_docbook
 if test $enable_docbook = yes ; then
 AC_INCLUDE(doc/docbook/configure.ac)
 fi
+AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
 
 ### Build Makefiles
 
@@ -861,7 +862,6 @@ AC_OUTPUT([
 	plplot.pc
 	])
 	
-if test $enable_docbook = yes ; then
 AC_OUTPUT([	
 	plplot-double.pc
         doc/docbook/Makefile                                            
@@ -873,7 +873,6 @@ AC_OUTPUT([
 	doc/docbook/bin/api2man.pl                          
         doc/docbook/www/index.html.in
 	])
-fi
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
