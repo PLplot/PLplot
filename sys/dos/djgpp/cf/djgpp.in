@@ -117,6 +117,32 @@ install_includes:
 	mkdir ..\..\..\..\include\plplot
 	copy .\plplot\*.h ..\..\..\..\include\plplot
 
+copy: copymain
+
+copymain:
+	mkdir plplot
+	move ../../../../src/*.c .
+	move ../../../../include/*.h ./plplot
+	move ../../../../drivers/*.c .
+	move ../../../../utils/*.* .
+	move ../../../../lib/*.fnt .
+	move ../src/*.* .
+	move ../cf/*.h ./plplot
+
+	copy ..\cf\plconfig.in .\plplot\plconfig.h
+	echo >>.\plplot\plconfig.h "#define PLPLOT_VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
+	echo >>.\plplot\plconfig.h "#endif"
+	echo >>.\plplot\plconfig.h "#endif	/* __PLCONFIG_H__ */"
+
+	utod *.c
+	utod ./plplot/*.h
+
+copyexamples:
+	move ../../../../examples/c/*.c .
+	utod x*.c
+	move ../../../../examples/c/*.h ./plplot
+	utod ./plplot/*demos.h
+
 # Add gnusvga to driver list
 
 DRIVERS_C = $(DRIVERS_C) gnusvga.c
