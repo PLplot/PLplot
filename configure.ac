@@ -668,41 +668,6 @@ AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
-
-### pkg-config checks and settings.
-
-AC_ARG_WITH(pkg-config,
-  AC_HELP_STRING([--with-pkg-config],
-                 [Use pkg-config in Makefile.examples.  If value is "yes"
-                  then check for availability of the program in the system.
-                  Default value is "no".]),
-  [with_pkg_config="$withval"],
-  [with_pkg_config=no])
-
-if test "$with_pkg_config" = yes ; then
-  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
-  test "$PKG_CONFIG" != found  &&  with_pkg_config=no
-fi
-
-if test "$with_pkg_config" = yes ; then
-  pkg_config_true=""
-  pkg_config_false="# "
-else
-  pkg_config_true="# "
-  pkg_config_false=""
-fi
-
-PKG_CONFIG_DIR='${libdir}/pkgconfig'
-
-if test -z "$PKG_CONFIG_ENV" ; then
-  EXPAND_EXPRESSION(PKG_CONFIG_ENV, PKG_CONFIG_PATH=$PKG_CONFIG_DIR)
-fi
-
-AC_SUBST(pkg_config_true)
-AC_SUBST(pkg_config_false)
-AC_SUBST(PKG_CONFIG_DIR)
-AC_SUBST(PKG_CONFIG_ENV)
-
 ### C++ binding
 
 MY_ARG_ENABLE(cxx,
@@ -1079,6 +1044,47 @@ MANVOL=3plplot
 AC_SUBST(MANVOL)
 
 
+### pkg-config checks and settings.
+
+AC_ARG_WITH(pkg-config,
+  AC_HELP_STRING([--with-pkg-config],
+                 [Use pkg-config in Makefile.examples.  If value is "yes"
+                  then check for availability of the program in the system.
+                  Default value is "no".]),
+  [with_pkg_config="$withval"],
+  [with_pkg_config=no])
+
+if test "$with_pkg_config" = yes ; then
+  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
+  test "$PKG_CONFIG" != found  &&  with_pkg_config=no
+  if test "$has_perl" = no ; then
+    AC_MSG_WARN([pkg-config support needs perl to be built.])
+    AC_MSG_WARN([Setting with_pkg_config=no.])
+    with_pkg_config=no
+  fi
+fi
+
+if test "$with_pkg_config" = yes ; then
+  pkg_config_true=""
+  pkg_config_false="# "
+else
+  pkg_config_true="# "
+  pkg_config_false=""
+fi
+
+PKG_CONFIG_DIR='${libdir}/pkgconfig'
+
+if test -z "$PKG_CONFIG_ENV" ; then
+  EXPAND_EXPRESSION(PKG_CONFIG_ENV, PKG_CONFIG_PATH=$PKG_CONFIG_DIR)
+fi
+
+AC_SUBST(pkg_config_true)
+AC_SUBST(pkg_config_false)
+AC_SUBST(PKG_CONFIG_DIR)
+AC_SUBST(PKG_CONFIG_ENV)
+AM_CONDITIONAL(with_pkg_config, [test "$with_pkg_config" = yes])
+
+
 ### rpath setting
 
 if test "$with_rpath" = yes ; then
@@ -1166,7 +1172,7 @@ AC_CONFIG_FILES([
 	doc/Makefile
 	scripts/plplot-config
 	pkgcfg/Makefile
-	pkgcfg/plplot-master-pc
+	pkgcfg/gen-pc-files.pl
 	doc/docbook/Makefile
 	doc/docbook/src/Makefile
 	doc/docbook/src/plplotdoc.xml
