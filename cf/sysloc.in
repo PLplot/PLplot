@@ -130,12 +130,12 @@ if test "$enable_tcl" = "yes"; then
 	echo "checking for tcl.h"
 	TCLINCDIR=""
 	places="\
+	$prefix/include \
 	/usr/local/include \
 	/usr/include/tcl \
 	/usr/include \
 	/usr/local/tcl7.3/include \
 	$HOME/local/tcl7.3/include \
-	$prefix/include \
 	$PWD/../tcl7.3 \
 	$XINCDIR/tk \
 	$XINCDIR"
@@ -176,12 +176,12 @@ if test "$enable_tcl" = "yes"; then
 	echo "checking for -ltcl"
 	TCLLIBDIR=""
 	places="\
+	$prefix/lib \
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
 	/usr/local/tcl7.3/lib \
 	$HOME/local/tcl7.3/lib \
-	$prefix/lib \
 	$XLIBDIR \
 	$PWD/../tcl7.3 \
 	/usr/lib"
@@ -216,11 +216,11 @@ if test "$enable_dp" = "yes"; then
 	echo "checking for -ldpnetwork"
 	DPLIBDIR=""
 	places="\
+	$prefix/lib \
 	$TCLLIBDIR \
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
-	$prefix/lib \
 	$XLIBDIR \
 	$PWD/../tcl-dp3.1 \
 	/usr/lib"
@@ -254,11 +254,11 @@ if test "$enable_itcl" = "yes"; then
 	echo "checking for -litcl"
 	ITCLLIBDIR=""
 	places="\
+	$prefix/lib \
 	$TCLLIBDIR \
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
-	$prefix/lib \
 	$XLIBDIR \
 	$PWD/../itcl-1.5 \
 	/usr/lib"
@@ -290,11 +290,11 @@ if test "$enable_tk" = "yes"; then
 	echo "checking for tk.h"
 	TKINCDIR=""
 	places="\
+	$prefix/include \
 	$TCLINCDIR \
 	/usr/local/include \
 	/usr/local/tk3.6/include \
 	$HOME/local/tk3.6/include \
-	$prefix/include \
 	$PWD/../tk3.6 \
 	$XINCDIR/tk \
 	$XINCDIR \
@@ -336,11 +336,11 @@ if test "$enable_tk" = "yes"; then
 	echo "checking for -ltk"
 	TKLIBDIR=""
 	places="\
+	$prefix/lib \
 	$TCLLIBDIR \
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
-	$prefix/lib \
 	$XLIBDIR \
 	$PWD/../tk3.6 \
 	/usr/lib"
