@@ -1231,7 +1231,12 @@ switch(dev->gin.keysym)
 
 #ifdef GRX_DO_JPEG
        case PLK_F11:  /* F11 */
+#if GRX_VERSION_API >= 0x0244
+       GrSaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
+#else
        SaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
+#endif
+
        break;
 #endif
 
@@ -2213,12 +2218,20 @@ void plD_eop_jpg(PLStream *pls)
 
 	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
 	   {
+#if GRX_VERSION_API >= 0x0244
+	    GrSaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
+#else
 	    SaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
+#endif
 	   }
        else
 	   {
 	    gnusvga_expand_BaseName(pls);
+#if GRX_VERSION_API >= 0x0244
+	    GrSaveContextToJpeg(NULL,pls->FileName, pls->dev_compression);
+#else
 	    SaveContextToJpeg(NULL,pls->FileName, pls->dev_compression);
+#endif
 	   }
       }
 
