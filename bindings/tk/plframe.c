@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1994/07/01 20:37:21  mjl
+ * Revision 1.37  1994/07/01 22:38:48  mjl
+ * Minor modification required by new X resource allocation scheme.
+ *
+ * Revision 1.36  1994/07/01  20:37:21  mjl
  * Force an "update" when widget is initially mapped, but before startup
  * procedure is invoked.  Ensures that "." has been mapped and that X is
  * in a sane state before continuing (otherwise new toplevels containing
@@ -822,7 +825,7 @@ Install_cmap(PlFrame *plFramePtr)
 #define INSTALL_COLORMAP_IN_TK
 #ifdef  INSTALL_COLORMAP_IN_TK
     dev = (XwDev *) plFramePtr->plsc->dev;
-    Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->map);
+    Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->xwd->map);
 
 /*
  * If the colormap is local to this widget, the WM must be informed that
