@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1994/06/16 19:29:31  mjl
+# Revision 1.5  1994/06/16 21:56:32  mjl
+# Changed to new matrix declaration syntax.  Locally declared matrices go
+# away automatically when the proc exits.  It really works!
+#
+# Revision 1.4  1994/06/16  19:29:31  mjl
 # Changes to use new plframe/matrix API for functions that require array
 # arguments.
 #
@@ -119,8 +123,8 @@ proc myplot1 {} {
 proc plot1 {} {
     global xscale yscale xoff yoff
 
-    set x1 [matrix float 10]
-    set y1 [matrix float 10]
+    matrix x1 float 10
+    matrix y1 float 10
 
     for {set i 2; set n1 0} {$i < 60} {incr i 10; incr n1} {
 	set x [expr $xoff + $xscale * ($i + 1) / 60]
@@ -129,8 +133,8 @@ proc plot1 {} {
     }
 
     set n2 60
-    set x2 [matrix float $n2]
-    set y2 [matrix float $n2]
+    matrix x2 float $n2
+    matrix y2 float $n2
 
     for {set i 0} {$i < $n2} {incr i} {
 	set x [expr $xoff + $xscale * ($i + 1) / $n2]
@@ -167,8 +171,8 @@ proc plot2 {} {
 
     # Fill up the array
 
-    set x1 [matrix float 101]
-    set y1 [matrix float 101]
+    matrix x1 float 101
+    matrix y1 float 101
 
     for {set i 0} {$i < 101} {incr i} {
 	set x [expr ($i - 19.)/6.]
@@ -187,8 +191,8 @@ proc gumbyplot {} {
     .plw plcol 6
     .plw pllab "(x)" "(y)" "#frPLplot Example 1 - y=1-2x+2x#u2"
 
-    set x1 [matrix float 101]
-    set y1 [matrix float 101]
+    matrix x1 float 101
+    matrix y1 float 101
 
     for {set i 0} {$i < 101} {incr i} {
 	set x [expr $i * .01]
