@@ -138,9 +138,11 @@ soon.  If you want to build the info documentation you must load
 the software (NOTE INFO below) and also work around this final
 major bug for pdf by executing:
 
-cd src; make info
+cd src; make info man
 
-(see the Debian instructions above for more details).
+(the man is also needed to build the new man documentation after the pdf crash).
+
+(see the Debian instructions above for other details).
 
 AWI has checked that output versions of the documentation (except for pdf)
 are built on Cygnus systems to the same quality (with a few minor
