@@ -21,8 +21,10 @@ install_java:
 jsrcs := $(wildcard java/plplot/examples/*.java java/plplot/core/*.java)
 jclss := $(jsrcs:.java=.class)
 
-%.class : %.java
-	javac $<
+java/plplot/core/%.class : %.java
+	javac -d java $<
+java/plplot/examples/%.class : %.java
+	javac -d java $<
 
 java_build_target: $(jclss)
 	@echo "Java targets rebuilt -- NOT!!!"
