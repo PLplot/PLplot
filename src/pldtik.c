@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/10/12 21:32:38  mjl
-   Fixed bug in automatic setting of precision (it was too large by 1 place)
-   when exponent is placed separately.
+   Revision 1.6  1993/10/12 21:57:41  mjl
+   Same thing as last commit, only this time it's right.
 
+ * Revision 1.5  1993/10/12  21:32:38  mjl
+ * Fixed bug in automatic setting of precision (it was too large by 1 place)
+ * when exponent is placed separately.
+ *
  * Revision 1.4  1993/07/01  22:13:36  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -157,7 +160,7 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt,
 /* Establish precision.  */
 
     if (*mode != 0)
-	*prec = msd - np - 1;
+	*prec = msd - np;
     else
 	*prec = MAX(-np, 0);
 
@@ -177,8 +180,8 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt,
 		*prec = MAX(MIN(*prec, digmax - msd - 1), 0);
 	}
 	if (*mode != 0) {
-	    *prec = msd - np - 1;
-	    *prec = MAX(MIN(*prec, MAX(digmax, MIN_FLTDIG)), 0);
+	    *prec = msd - np;
+	    *prec = MAX(MIN(*prec, MAX(digmax-1, MIN_FLTDIG)), 0);
 	}
     }
 }
