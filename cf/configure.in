@@ -98,8 +98,9 @@ enable_octave=yes
 #also have a driver role to play, but unlike these, pure-driver variables
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
-enable_png=yes 
-enable_jpeg=yes 
+enable_png=yes
+enable_jpeg=yes
+enable_cgm=no
 enable_tk=yes
 enable_xwin=yes
 
@@ -123,7 +124,7 @@ divert(-1)
 
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
-conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, psc, xfig, ljii,
+conex, linuxvga, vlt, versaterm, dg300, png, jpeg, cgm, ps, psc, xfig, ljii,
 hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex, ntk])
 
 # Note specifically which drivers are known to be loadable.
@@ -132,7 +133,7 @@ hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex, ntk])
 # peculiarities in the build process.
 
 define([PL_DYNAMIC_DRIVER_LIST],
-[null plmeta ps psc xfig png jpeg pstex xterm tekt tek4107t \
+[null plmeta ps psc xfig png jpeg cgm pstex xterm tekt tek4107t \
 tekf tek4107f mskermit versaterm vlt conex pbm hp7470 hp7580 \
 lj_hpgl dg300 ljii ljiip imp gnome ntk])
 
@@ -154,7 +155,7 @@ define([PL_device_driver_pair_list],
 [plmeta:plmeta null:null \
 xterm:tek tekt:tek tek4107t:tek mskermit:tek \
 versaterm:tek vlt:tek conex:tek tekf:tek tek4107f:tek \
-linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd psc:ps ps:ps xfig:xfig \
+linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd cgm:cgm psc:ps ps:ps xfig:xfig \
 ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
 imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk])
 
@@ -791,7 +792,7 @@ if test "$enable_dynamic_drivers" = "yes"; then
     touch drivers/drivers.db
 
     # Now add a line for each supported lodable device.  Format is:
-    #     device name : description : driver name : symbol tag
+    #     device name : description : driver name : device number: symbol tag
 
     #for drv in PL_DYNAMIC_DRIVER_LIST; do
     for drv in $DYNAMIC_DRIVERS; do
@@ -811,6 +812,9 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    gd)
 	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
 	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
+	    ;;
+	    cgm)
+	    echo "cgm:CGM file:cgm.drv:44:cgm" >> drivers/drivers.db
 	    ;;
 	    tek)
 	    echo "xterm:Xterm Window:tek.drv:18:xterm" >> drivers/drivers.db

@@ -24,6 +24,7 @@ ITCLLIBSTR=-litcl
 TCLLIBSTR=-ltcl
 XLIBSTR=-lX11
 GDLIBSTR=-lgd
+CDLIBSTR=-lcd
 PNGLIBSTR=-lpng
 JPEGLIBSTR=-ljpeg
 ZLIBLIBSTR=-lz
@@ -376,6 +377,67 @@ fi
 AC_LANG_RESTORE
 
 # ----------------------------------------------------------------------------
+# Find libcd library and header required for building cgm driver.  
+# Written by Alan W. Irwin following what is done for gd driver.
+# ----------------------------------------------------------------------------
+
+if test "$enable_cgm" = "yes"; then
+    if test -z "$CDINCDIR"; then
+        AC_TRY_CPP([#include <cd.h>], [ CDINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/cd.h"; then
+	       CDINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$CDINCDIR"; then
+	    AC_MSG_RESULT(warning: cd header files not found)
+	    CDINCDIR=default
+	    enable_cgm=no
+	fi ])
+    fi
+    if test "$CDINCDIR" = "/usr/include"; then
+        CDINCDIR=default
+    fi
+
+    if test -z "$CDLIBDIR"; then
+        AC_CHECK_LIB(cd, main, [ CDLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libcd.so" -o -r "$dir/libcd.a"; then
+	        CDLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$CDLIBDIR"; then
+	    AC_MSG_RESULT(warning: cd library not found)
+	    CDLIBDIR=default
+	    enable_cgm=no
+	fi ])
+    fi
+    if test "$CDLIBDIR" = "/usr/lib"; then
+        CDLIBDIR=default
+    fi
+fi
+
+CDLIBS=""
+CDINCS=""
+if test "$enable_cgm" = "yes"; then
+    ADD_TO_INCS($CDINCDIR, CDINCS, INCPATH)
+    if test "$enable_dynamic_drivers" = "yes"; then
+	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBS, LIBPATH)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # Make some guesses where the Tcl/Tk include files and libraries are.
 # Look first in the Tcl/Tk distributions and then move on to the standard
 # include file/library locations.  If it's still not found I assume it's
@@ -591,6 +653,9 @@ fi
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     ADD_TO_INCS($GDINCDIR, INCS, INCPATH)
 fi
+if test "$enable_cgm" = "yes"; then
+    ADD_TO_INCS($CDINCDIR, INCS, INCPATH)
+fi
 if test "$enable_java" = "yes"; then
     ADD_TO_INCS($JAVAINCDIR, INCS, INCPATH)
     ADD_TO_INCS($JAVAMDINCDIR, INCS, INCPATH)
@@ -644,6 +709,12 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, LIBS, LIBPATH)
 	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, LIBS, LIBPATH)
 	ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, LIBS, LIBPATH)
+    fi
+fi
+
+if test "$enable_cgm" = "yes"; then
+    if test "$enable_dynamic_drivers" != "yes"; then
+	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, LIBS, LIBPATH)
     fi
 fi
 if test ! -z "$TCL_DL_LIBS"; then
@@ -1205,10 +1276,12 @@ AC_SUBST(SHLIB_LIBS)
 # if enable-dynamic-drivers is enabled, those libs don't go to "LIBS"
 #
 # Currently, TKLIBS has all tcl/tk/X11 libs, but those could be split, if needed.
-# Also, GDLIBS has all libs needed from the gd driver and
+# Also, GDLIBS has all libs needed from the gd driver,
+# CDLIBS has all libs needed from the gd driver, and
 # GNOMELIBS all libs needed by the gnome driver.
 
 AC_SUBST(GNOMELIBS)
 AC_SUBST(GDLIBS)
+AC_SUBST(CDLIBS)
 AC_SUBST(TKLIBS)
 

@@ -35,6 +35,9 @@ drivers/xfig.drv : shared/xfig$O
 drivers/gd.drv : shared/gd$O
 	$(SHLIB_BUILD) $@ $< @GDLIBS@ $(driverlibs)
 
+drivers/cgm.drv : shared/cgm$O
+	$(SHLIB_BUILD) $@ $< @CDLIBS@ $(driverlibs)
+
 # drivers/ps.drv behaves as a dynamic library, and so this target
 # need rebuilt at install time, pointing, through rpath,
 # to the proper driver install directory.
