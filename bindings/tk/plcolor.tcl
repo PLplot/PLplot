@@ -572,7 +572,7 @@ itcl::class Buttons1 {
 	button $w.loadp -text "Load Palette" \
 	    -command "$this loadPalette $plot $plw"
 	button $w.ok -text "OK" \
-	    -command [code $this ok]
+	    -command "$this ok"
 
 	pack append $w \
 	    $w.savep "left fill expand" \
