@@ -801,14 +801,7 @@ MY_ARG_ENABLE(f77,
     [compile Fortran-77 interface code ($enable_f77)]))
 if test "$enable_f77" = yes ; then
   AC_PROG_F77
-  AC_CHECK_PROGS(M4, m4, "no")
-  if test "$M4" = no ; then
-    AC_MSG_ERROR([m4 preprocessor not found, but required for building
-the Fortran bindings])
-  fi
-  M4_FLAGS="-S2000 -B8192 $DBL_FLAG_M4"
-  AC_SUBST(M4_FLAGS)
-
+  AC_F77_LIBRARY_LDFLAGS
   # If no F77 compiler is found, then disable f77 bindings building
   if test -z "$F77" ; then
     enable_f77=no

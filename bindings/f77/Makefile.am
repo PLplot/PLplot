@@ -40,6 +40,7 @@ sources = \
 
 libplplotf77@LIB_TAG@_la_SOURCES  = $(sources)
 libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
+libplplotf77@LIB_TAG@_la_LIBADD  = $(FLIBS)
 
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
