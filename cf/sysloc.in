@@ -1277,6 +1277,38 @@ if test "$with_shlib" = "yes"; then
     fi
 fi
 
+# ----------------------------------------------------------------------------
+# Configure building archive libs.  This is usually just ar, but we
+# need a way to support library template closure for C++ compilers
+# that know how to do it.
+# ----------------------------------------------------------------------------
+
+AC_MSG_CHECKING(how to make archive libraries)
+
+ARLIB_BUILD="ar q"
+ARLIB_BUILD_CXX="\$(ARLIB_BUILD)"
+
+case $system in
+    SunOS-5* )
+	if test "$CXX" = "KCC"; then
+	    ARLIB_BUILD_CXX="KCC $KCC_THREAD_SAFE_FLAG -o"
+        fi
+    ;;
+    Linux* )
+	if test "$CXX" = "KCC"; then
+	    ARLIB_BUILD_CXX="KCC $KCC_THREAD_SAFE_FLAG -o"
+        fi
+    ;;
+esac
+
+AC_MSG_RESULT("done")
+
+# ----------------------------------------------------------------------------
+# Now do the variable substitutions.
+# ----------------------------------------------------------------------------
+
+AC_SUBST(ARLIB_BUILD)
+AC_SUBST(ARLIB_BUILD_CXX)
 AC_SUBST(SHLIB_BUILD)
 AC_SUBST(SHLIB_BUILD_CXX)
 AC_SUBST(SONAME_FLAGS)
