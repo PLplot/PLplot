@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/03/03 19:42:04  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.7  1993/03/06 04:59:22  mjl
+   Changed the way the temporary plot buffer file is opened.  Should fix
+   X-window refresh problem observed under SunOS.
 
+ * Revision 1.6  1993/03/03  19:42:04  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.5  1993/02/27  04:46:39  mjl
  * Fixed errors in ordering of header file inclusion.  "plplot.h" should
  * always be included first.
@@ -92,8 +96,7 @@ static short xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
 void
 plbuf_init(PLStream *pls)
 {
-    (void) tmpnam(pls->plbufFnam);
-    pls->plbufFile = fopen(pls->plbufFnam, "wb+");
+    pls->plbufFile = tmpfile();
     if (pls->plbufFile == NULL) {
 	plexit("Error opening plot data storage file.");
     }
@@ -198,7 +201,6 @@ void
 plbuf_tidy(PLStream *pls)
 {
     fclose(pls->plbufFile);
-    remove(pls->plbufFnam);
 }
 
 /*----------------------------------------------------------------------*\
@@ -587,7 +589,17 @@ process_next(PLStream *pls, U_CHAR c)
 static int
 rd_command(PLStream *pls, U_CHAR *p_c)
 {
-    return (int) fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
+    int count;
+    
+    count = fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
+#ifdef DEBUG
+    if (count == 0) {
+	grtext();
+	fprintf(stderr, "Cannot read from plot buffer\n");
+	grgra();
+    }
+#endif
+    return (count);
 }
 
 /*----------------------------------------------------------------------*\
@@ -600,5 +612,15 @@ static int
 wr_command(PLStream *pls, U_CHAR c)
 {
     U_CHAR c1 = c;
-    return (int) fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
+    int count;
+
+    count = fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
+#ifdef DEBUG
+    if (count == 0) {
+	grtext();
+	fprintf(stderr, "Cannot read from plot buffer\n");
+	grgra();
+    }
+#endif
+    return (count);
 }
