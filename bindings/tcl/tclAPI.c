@@ -42,7 +42,7 @@ static int loopbackCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plcontCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plmeshCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plot3dCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plotfc3dCmd	(ClientData, Tcl_Interp *, int, char **);
+//static int plotfc3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plotsh3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -80,7 +80,7 @@ static CmdInfo Cmds[] = {
     {"plmeridians",	plmeridiansCmd},
     {"plmesh",		plmeshCmd},
     {"plot3d",		plot3dCmd},
-    {"plotfc3d",	plotfc3dCmd},
+    //    {"plotfc3d",	plotfc3dCmd},
     {"plotsh3d",	plotsh3dCmd},
     {"plsetopt",	plsetoptCmd},
     {"plshade",		plshadeCmd},
@@ -1266,7 +1266,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
  * ny from the input data, and in form 3 we infer nx and ny, and also take
  * the x and y arrays to just be integral spacing.
 \*--------------------------------------------------------------------------*/
-
+#ifdef POPO
 static int
 plotfc3dCmd( ClientData clientData, Tcl_Interp *interp,
 	   int argc, char *argv[] )
@@ -1369,7 +1369,7 @@ plotfc3dCmd( ClientData clientData, Tcl_Interp *interp,
     plflush();
     return TCL_OK;
 }
-
+#endif
 /*--------------------------------------------------------------------------*\
  * plotsh3dCmd
  *
