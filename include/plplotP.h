@@ -640,6 +640,16 @@ plP_mmdcx(PLFLT x);
 PLFLT
 plP_mmdcy(PLFLT y);
 
+/* world coords into device coords (x) */
+
+PLFLT
+plP_wcdcx(PLFLT x);
+
+/* world coords into device coords (y) */
+
+PLFLT
+plP_wcdcy(PLFLT y);
+
 /* subpage coords to device coords (x) */
 
 PLFLT
