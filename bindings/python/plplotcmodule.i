@@ -58,7 +58,7 @@ woody).
 #define  PyArray_PLFLT PyArray_FLOAT
 #endif
 
-#define  PyArray_PLINT PyArray_INT
+#define  PyArray_PLINT PyArray_LONG
 /* python-1.5 compatibility mode? */
 #define PySequence_Fast_GET_ITEM PySequence_GetItem
 #define PySequence_Size PySequence_Length
@@ -70,7 +70,7 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
-typedef int PLINT;
+typedef long PLINT;
 
 /* We have to get import_array called in our extension before we can use Numeric */
 %init %{
