@@ -1,62 +1,93 @@
-This file is rather old, as you might notice. This does not mean that
-recent PLplot releases don't have problems :-(
+This file is designed to keep track of various problem fixes and new
+features being worked on for the current PLplot CVS HEAD version and who is
+taking responsibility for following up on each item.
 
-Things Geoff has noticed:
+The items are divided into 4 lists that are classified as major (essential,
+and "would-be-nice") and minor (essential, and "would-be-nice")
 
-5 June 1995:
+The "major" versus "minor" classification has nothing to do with the impact
+of the item.  Instead, this classification is an attempt to estimate whether
+a major or minor amount of work will be required to fix the problem, add a
+feature, etc.  
 
-1) Build rules suck for PLplot exectuable programs--don't take
-   advantage of the fact that when linked against shared libs, don't
-   generally need to be relinked if the library changes.  Hey, that's
-   what shared libs are all about!
+The "essential" versus "would-be-nice" classification trys to estimate
+whether the problem fix or new feature is release critical or not. 
 
-2) Xwin driver still has a display bug.  In x01c, the second plot does
-   not get the line drawn fully through the points, even though lots
-   more gets plotted on the page.  An expose is required to get the
-   whole thing drawn.  This on Linux under X11R6, ELF system.
+Major, essential
 
-3) Installation should be platform configurable.  Some linux users may
-   want to have ldconfig run at installation time, like in David
-   Engel's Tcl/Tk ports.  But I doubt this would be universally
-   desired, since some (like myself) will install to a specified
-   prefix, and use LD_ELF_LIBRARY_PATH, in which case ldconfig is not
-   useful.  So this should be configurable somehow.  Maybe by using
-   GNU make variable ifdeffing or some such...
+*  Although additional help would be most appreciated, Alan is taking
+ultimatate responsibility for getting the library linking in good shape
+cross-platform.  This includes rationalizing the libraries some more, static
+drivers on Linux, static libraries on Linux, plus generalization of the
+Linux solution to cross-platform.
 
-4) None of the Tk demos work on Linux, using Tk4.0b3.  They all work
-   as an acceptable wish, but when you try to pack a plframe, they
-   segv. 
+Major, "would be nice"
 
-	FIXED:  Bogus Tk installation on my part, PLplot was
-	#including tk.h from Tk 3.6, but linking against Tk4.0b3.
-	Fixing my headers and rebuilding the lib, made all the
-	executables work, w/o relink!  Shared libs are greaaaat!
-	Well, not really my fault per se, JO changed the way the Tcl
-	installs work, now headers go into a subdir, which is nice in
-	general, but just happens to be a switch from prior versions.
+* Maurice plans to finish his changes to implement handling strings as
+strings in the metafile format.
 
-5) Can't seem to run Tk driver on Linux.  Maybe a problem with xauth,
-   but can't understand why I can't get it set up right...
+* Geoffrey plans to at least evaluate remaining fidelity problems.
 
-6) More serious bugs in the X display engine.  In tk01 the cross hairs
-   are leaving partial copies of themselves all over the place,
-   especially the horizontal one,  replicating like mad.  All other
-   tk0? demos, many more examples of partial draws, all cured by
-   occluding/exposing the plframe. 
+* Make plframe widget work for python/Tkinter front end.
 
-7) Serious problems with the rubberbanding.  In tk04, with the surface
-   plot up, the zoom box is black, which is very hard to find.  Worse,
-   it replicates itself, although much less frequently than the cross
-   hairs.  Nevertheless, I have seen ghost boxes.  Worse--if the
-   zoombox is pulled to extend partially outside the viewport, then
-   replication/ghosting problems come back with a vengence.  Get
-   gazillions of structures that look like brackets (]) where it is
-   white for the part outside the viewport, black for the part inside.
-   These ghost images remain until the zoom snap, or until an expose.
-   Then the plot is redrawn correctly...
+* Parallelogram problem for rotation which is not multiple of 90 deg. This
+is on the major list because Maurice doesn't think it will be simple to sort
+this out. Once this problem is sorted out, it should be possible to deal
+with the remaining rotation problems for the font handling, but those issues
+should not be tackled until the parallelogram core problem is straightened
+out.
 
-8) More rubberbanding nonsense.  In tk04, put the zoom point on one of
-   the color balls, and pull out the edge.  Besides the box, a couple
-   of teeny weeny little pixels in the center get changed to black,
-   fixed by expose...
+* There is still one issue holding back Olof et al from moving to our
+supported python interface for their pyqt GUI work. They require two output
+devices (one for the GUI and one to store results more permanently).  This
+is possible with -dev tk.  If a simple solution for the pyqt GUI following
+what is done for the plframe widget for -dev tk is possible, then this item
+should be reclassified to minor, "would be nice"
 
+Minor, essential.
+
+* Alan has some documentation backlog to clear.
+
+* If x08.tcl (or any other multi-page example) is executed first, then the
+first page is skipped.
+
+* tk cmap1 palette maniupulations no longer work.
+
+* ./xtk02 -f tk02
+invalid command name "Pltkwin"
+    while executing
+"Pltkwin .plw"
+    (file "tk02" line 48)
+    invoked from within
+"source tk02"
+
+and similarly for tk04.
+
+* Permissions problem with generated plplot-config and plplot-test.sh in
+plplot/tmp.  I don't know the proper autoconf method of fixing this.
+
+* bindings/tk/plcolor.tcl has execute permissions that should be removed.
+examples/tcl/stats.log should be made world-readable.  Both these permission
+problems need access to the CVS repository to fix.
+
+Minor, "would be nice"
+
+* Alan plans to try to adjust our python interface from swig-1.3.1[1-3] to
+swig-2.0 if that is released before the PLplot release.
+
+* Joao is working on an update to plotfc3d.c to also have contour lines.
+Definitely would be nice!
+
+* Alan has documented on the plplot devel list (but cannot take
+responsibility for) many minor memory leaks found by valgrind throughout the
+dynloader area.  These should be cleaned up.
+
+* Finish Java API or else completely reimplement it with swig (which might
+be a much faster way of solving the problem).
+
+* debian subdirectory made part of HEAD so can build debs directly
+from HEAD.
+
+* fortran, C++, and octave "x" examples made consistent with the C, tcl,
+Java, and python examples as a test that the various front ends produce the
+same results.
