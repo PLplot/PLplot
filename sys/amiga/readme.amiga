@@ -43,9 +43,9 @@ the make to proceed.  If you are running 2.0, you can in fact use soft links
 Unfortunately, most utilities don't deal with them correctly (come on CBM,
 get your butts in gear!).  Also, the syntax for MakeLink is rather cumbersome
 (compared to the Unix ln), and currently there is no easy way to use it
-except with the provided 'ln' script for use under SKsh.  If anyone writes a
-script to do the necessary links under a different shell, please send it to
-me and I will include it here on the next release.
+except with the provided 'lnsoft' script for use under SKsh.  If anyone
+writes a script to do the necessary links under a different shell, please
+send it to me and I will include it here on the next release.
 
 The alternative to links is to just copy all the files to the tmp directory,
 and you may do this by typing:
@@ -53,17 +53,20 @@ and you may do this by typing:
 	make links
 
 If you are running SKsh, you can get softlinks instead by copying the
-provided sksh/ln and sksh/makelinks scripts to the tmp directory, and typing:
+provided sksh/lnsoft and sksh/makelinks scripts to somewhere in your path,
+setting the script bit on each, and typing:
 
-	chmod +s ln makelinks
 	makelinks
 
 Soft links are excellent for this purpose, as you can edit the original file
 and the link is automatically updated, forcing make to do a rebuild.  This
-nice behavior does not occur for hard links -- once the hard link is made
-the contents are always preserved, even if you modify the original file.
-Note that the CBM MakeLink command as distributed with 2.0 cannot do soft
-links.  
+nice behavior does not occur for hard links -- once the hard link is made the
+contents are always preserved, even if you modify the original file.  Note
+that the CBM MakeLink command as distributed with 2.04 cannot do soft links.
+One caveat: if you delete or move a file pointed to by a soft link, most
+filesystem utilities no longer can delete the soft link!  About the only way
+I've been able to delete the soft link in this case is to go into workbench
+and remove the entire directory containing the links.
 
 The build for the Amiga is basically the same as for Unix.  The following
 utilities are also needed:
@@ -78,10 +81,11 @@ work correctly from inside make.  The command syntax used is: skshbin:join
 sys/amiga/sksh) to a permanent place and make the appropriate assign for
 skshbin:.
 
-'m4' is used to convert the master makefile.m4 into a makefile suited
-for your system.  This handles system dependencies, compiler dependencies,
-and choice of math library.  From the plplot/tmp directory, you can create
-the makefile via:
+'m4' is used to convert the master makefile.m4 into a makefile suited for
+your system (warning: the copy I have generates some enforcer hits but I
+think they are harmless).  This handles system dependencies, compiler
+dependencies, and choice of math library.  From the plplot/tmp directory, you
+can create the makefile via:
 
 	% copy /sys/unix/makefile.m4 ""
 	% m4 -DAMIGA <makefile.m4 >makefile
@@ -92,10 +96,10 @@ want to use FFP math, you would build the makefile via:
 
 	% m4 -DAMIGA -DMATH=FFP <makefile.m4 >makefile
 
-I only support SAS/C 6.x, although I've left in the flags I used under SAS/C
-5.x (try building the makefile with -DCOMPILER=LATTICE5.X on the m4 command
-line).  I believe it will work but no guarantees (pre-6.x versions of SAS/C
-were not 100% ANSI compliant).
+I currently only support SAS/C 6.x, although I've left in the flags I used
+under SAS/C 5.x (try building the makefile with -DCOMPILER=LATTICE5.X on the
+m4 command line).  I believe it will work but no guarantees (pre-6.x versions
+of SAS/C were not 100% ANSI compliant).
 
 Then, while in the tmp directory:
 
@@ -126,4 +130,4 @@ To build plrender:
 	% make plrender
 
 Don't forget to copy the font files from the lib directory to a more
-suitable place, preferably fonts:plplot or some such.
+suitable place, preferably fonts:plplot (this is the default).
