@@ -46,6 +46,7 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	    char *display, char *name, int options)
 {
     char *new_name;
+    char wcmd[] = "wm withdraw .";
 
 /*
 * Determine server name.  If it contains any forward slashes ("/"), only
@@ -81,6 +82,8 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	    XSynchronize(Tk_Display(*w), True);
 	}
     }
+    else
+	Tcl_VarEval(interp, wcmd, (char *) NULL);
 
     return(0);
 }
