@@ -25,28 +25,28 @@ pltek.o:	pltek.c
 
 pltek:		pltek.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_PATH) $(LDC_LIBS)
+		$(LDC_LIBS)
 
 plrender.o:	$(PLLIBS) plrender.c
 	$(CC) $(CC_FLAGS) plrender.c
 
 plrender:	$(PLLIBS) plrender.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_PATH) $(LDC_LIBS)
+		$(LDC_LIBS)
 
 plserver.o:	$(PLLIBS) plserver.c
 	$(CC) $(CC_FLAGS) plserver.c
 
 plserver:	$(PLLIBS) plserver.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver.o $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_PATH) $(LDC_LIBS)
+		$(LDC_LIBS)
 
 pltcl.o:	$(PLLIBS) pltcl.c
 	$(CC) $(CC_FLAGS) pltcl.c
 
 pltcl:		$(PLLIBS) pltcl.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl.o $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_PATH) $(LDC_LIBS)
+		$(LDC_LIBS)
 
 # -----------------------------------------------------------------------
 # Font files.
@@ -71,9 +71,9 @@ $(PLFNT_PATH)plxtnd5.fnt: xtndfont pdfutils.o $(FONT_OBJ)
 
 stndfont:	$(PLLIBS) stndfont.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont.o $(FONT_OBJ) \
- 		$(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+ 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 xtndfont:	$(PLLIBS) xtndfont.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont.o $(FONT_OBJ) \
- 		$(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+ 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
