@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1993/07/28 05:52:30  mjl
+ * Revision 1.2  1993/07/31 08:14:34  mjl
+ * Function prototype added for pl_AreWeGrayscale.
+ *
+ * Revision 1.1  1993/07/28  05:52:30  mjl
  * Added to provide function prototypes and anything else necessary to
  * use X utility functions in xwin.c driver (used by plframe.c at present).
  *
@@ -14,4 +17,4 @@
 
 void  PLColor_to_XColor		(PLColor *, XColor *);
 void  PLColor_from_XColor	(PLColor *, XColor *);
-
+int   pl_AreWeGrayscale		(Display *);
