@@ -35,6 +35,7 @@
 char ident[] = "@(#) $Id$";
 
 #define DEBUG
+#define DEBUG_ENTER
 
 #define NEED_PLDEBUG
 #include "plplotP.h"
@@ -156,6 +157,11 @@ static float	pxly = PIXEL_RES_Y_OLD;
 static PLFLT	dev_xpmm, dev_ypmm;
 static PLINT	dev_xmin, dev_xmax, dev_ymin, dev_ymax, dev_xlen, dev_ylen;
 static PLFLT	vpxmin, vpxmax, vpxlen, vpymin, vpymax, vpylen;
+
+/* Geometry info */
+
+static float    xdpi, ydpi;
+static PLINT    xlength, ylength, xoffset, yoffset;
 
 /* Miscellaneous */
 
@@ -641,6 +647,7 @@ process_next(U_CHAR c)
 static void
 plr_init(U_CHAR c)
 {
+    int debug=0;
     PLFLT aspect, dev_aspect, ratio;
 
     dbug_enter("plr_init");
@@ -648,6 +655,10 @@ plr_init(U_CHAR c)
 /* Register event handler */
 
     plsKeyEH(plr_KeyEH, NULL);
+
+/* Note: many drivers ignore these, needed to preserve the aspect ratio */
+
+    plspage( xdpi, ydpi, xlength, ylength, xoffset, yoffset );
 
 /* Start up PLplot */
 
@@ -661,6 +672,10 @@ plr_init(U_CHAR c)
 
     aspect = (ylen / pxly) / (xlen / pxlx);
 
+    if (debug)
+        printf( "xlen %d pxlx %f ylen %d pxly %f\n",
+                xlen, pxlx, ylen, pxly );
+
 /* Aspect ratio of output device */
 
     plP_gphy(&dev_xmin, &dev_xmax, &dev_ymin, &dev_ymax);
@@ -669,12 +684,20 @@ plr_init(U_CHAR c)
     dev_xlen = dev_xmax - dev_xmin;
     dev_ylen = dev_ymax - dev_ymin;
 
+    if (debug)
+        printf( "dev_xlen %d dev_xpmm %f dev_ylen %d dev_ypmm %f\n",
+                dev_xlen, dev_xpmm, dev_ylen, dev_ypmm );
+
     dev_aspect = (dev_ylen / dev_ypmm) / (dev_xlen / dev_xpmm);
 
     if (dev_aspect <= 0.)
 	fprintf(stderr, "Aspect ratio error: dev_aspect = %f\n", dev_aspect);
 
     ratio = aspect / dev_aspect;
+
+    if (debug)
+        printf( "ratio %f aspect %f dev_aspect %f\n",
+                ratio, aspect, dev_aspect );
 
 /* Default relative coordinate space */
 
@@ -704,6 +727,10 @@ plr_init(U_CHAR c)
 
     vpymin = (1. - vpylen) / 2.;
     vpymax = vpymin + vpylen;
+
+    if (debug)
+        printf( "vpxmin %f vpxmax %f vpymin %f vpymax %f\n",
+                vpxmin, vpxmax, vpymin, vpymax );
 
 /* Seek to first page */
 
@@ -1799,6 +1826,42 @@ ReadFileHeader(void)
 	if ( ! strcmp(tag, "width")) {
 	    plm_rd( pdf_rd_1byte(pdfs, &dum_uchar) );
 	    plwid(dum_uchar);
+	    continue;
+	}
+
+    /* Geometry info */
+
+	if ( ! strcmp(tag, "xdpi")) {
+	    plm_rd( pdf_rd_ieeef(pdfs, &xdpi) );
+	    continue;
+	}
+
+	if ( ! strcmp(tag, "ydpi")) {
+	    plm_rd( pdf_rd_ieeef(pdfs, &ydpi) );
+	    continue;
+	}
+
+	if ( ! strcmp(tag, "xlength")) {
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	    xlength = dum_ushort;
+	    continue;
+	}
+
+	if ( ! strcmp(tag, "ylength")) {
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	    ylength = dum_ushort;
+	    continue;
+	}
+
+	if ( ! strcmp(tag, "xoffset")) {
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	    xoffset = dum_ushort;
+	    continue;
+	}
+
+	if ( ! strcmp(tag, "yoffset")) {
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	    yoffset = dum_ushort;
 	    continue;
 	}
 
