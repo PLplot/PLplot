@@ -5019,11 +5019,13 @@ if test "$enable_f77" = "yes"; then
     plplot 2>/dev/null
     for filename in $srcdir/examples/f77/*.fm4
     do 
-      ln -s ${filename%.fm4}.f . 2>/dev/null
+      ffilename=`echo $filename | sed 's/\.fm4$/.f/'`
+      ln -s $ffilename . 2>/dev/null
     done
     for filename in $srcdir/bindings/f77/*.fm4
     do 
-      ln -s ${filename%.fm4}.f . 2>/dev/null
+      ffilename=`echo $filename | sed 's/\.fm4$/.f/'`
+      ln -s $ffilename . 2>/dev/null
     done
 fi
 
