@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:07  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/07/31 06:03:28  mjl
+   Minor bug fixes.
 
+ * Revision 1.1  1992/05/20  21:35:07  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	scconf.c
@@ -12,6 +15,27 @@
 
 #include "plstubs.h"
 #include <stdio.h>
+
+/*----------------------------------------------------------------------*\
+* pltr0f()
+*
+* Identity transformation for plots from Fortran.
+* Only difference from C-language identity function (pltr0) is that the
+* Fortran paradigm for array index is used, i.e. starting at 1.
+\*----------------------------------------------------------------------*/
+
+#ifdef PLSTDC
+void 
+pltr0f (PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
+#else
+void 
+pltr0f (x, y, tx, ty)
+PLFLT x, y, *tx, *ty;
+#endif
+{
+    *tx = x + 1.0;
+    *ty = y + 1.0;
+}
 
 /*----------------------------------------------------------------------*\
 * pltr2f()
@@ -180,10 +204,10 @@ PLINT nx, ny;
 	    yrr = *(yg + ur + vr * nx);
 
 	    *tx = xll * (1 - du) * (1 - dv) + xlr * (1 - du) * (dv) +
-		xrl * (du) * (1 - dv) + xrr * (du) * (dv);
+		  xrl *   (du)   * (1 - dv) + xrr *   (du)   * (dv);
 
 	    *ty = yll * (1 - du) * (1 - dv) + ylr * (1 - du) * (dv) +
-		yrl * (du) * (1 - dv) + yrr * (du) * (dv);
+		  yrl *   (du)   * (1 - dv) + yrr *   (du)   * (dv);
 	}
     }
 }
@@ -229,7 +253,7 @@ PLFLT *z, *clevel;
 	for (j = 0; j < *ny; j++)
 	    temp[i][j] = *(z + j * *nx + i);
 
-    c_plcont(temp, *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel, pltr0);
+    c_plcont(temp, *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel, pltr0f);
 
     for (i = 0; i < *nx; i++)
 	free((char *) temp[i]);

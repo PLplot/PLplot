@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:19  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/07/31 06:03:12  mjl
+   Minor bug fixes.
 
+ * Revision 1.1  1992/05/20  21:34:19  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plconf.c
@@ -295,10 +298,10 @@ PLINT nx, ny;
 	    yrr = *(yg + ur * ny + vr);
 
 	    *tx = xll * (1 - du) * (1 - dv) + xlr * (1 - du) * (dv) +
-		xrl * (du) * (1 - dv) + xrr * (du) * (dv);
+		  xrl *   (du)   * (1 - dv) + xrr *   (du)   * (dv);
 
 	    *ty = yll * (1 - du) * (1 - dv) + ylr * (1 - du) * (dv) +
-		yrl * (du) * (1 - dv) + yrr * (du) * (dv);
+		  yrl *   (du)   * (1 - dv) + yrr *   (du)   * (dv);
 	}
     }
 }

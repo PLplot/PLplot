@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:20  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/07/31 06:03:13  mjl
+   Minor bug fixes.
 
+ * Revision 1.1  1992/05/20  21:34:20  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plcont.c
@@ -68,7 +71,6 @@ void (*pltr) ();
 	       &heapc[nx], &heapc[nx + nstor], nstor, pltr);
     }
     free((VOID *) heapc);
-
 }
 
 /* Function for no transformation case */
