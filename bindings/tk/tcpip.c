@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/01/15 17:50:09  mjl
+ * Revision 1.2  1994/02/01 22:44:35  mjl
+ * Changes to support distributed operation between machines with different
+ * int/long sizes.
+ *
+ * Revision 1.1  1994/01/15  17:50:09  mjl
  * Added to hold primarily socket related code.  The latter were taken from
  * the Tcl-DP distribution and modified to use binary i/o to/from the memory
  * buffer pointed to by pdfs->buffer (pdfs a PDFstrm *).
@@ -62,7 +66,11 @@
  */
 
 #ifdef __STDC__				/* Just in case.. */
-#define PLARGS(a)	a
+#include "plplotP.h"
+#ifdef _POSIX_SOURCE
+#undef _POSIX_SOURCE
+#endif
+
 #else
 #define PLARGS(a)	()
 #endif
@@ -149,6 +157,7 @@ pl_PacketReceive(interp, fileHandle, peek, pdfs)
     int packetLen;
     int fd;
     int headerSize;
+    unsigned char hbuf[8];
     int header[2];
     char *errMsg;
     int flags;
@@ -171,10 +180,10 @@ pl_PacketReceive(interp, fileHandle, peek, pdfs)
     }
 
     /*
-     * Read in the header (2*sizeof(int))
+     * Read in the header (8 bytes)
      */
-    headerSize = 2*sizeof(int);
-    numRead = pl_Read (fd, (char *)header, headerSize, flags);
+    headerSize = 8;
+    numRead = pl_Read (fd, hbuf, headerSize, flags);
 
     if (numRead <= 0) {
 	goto readError;
@@ -186,14 +195,31 @@ pl_PacketReceive(interp, fileHandle, peek, pdfs)
      */
     if (numRead < headerSize) {
 	if (!peek) {
-	    pl_Unread (fd, (char *)header, headerSize, 1);
+	    pl_Unread (fd, hbuf, headerSize, 1);
 	}
 	Tcl_ResetResult(interp);
 	return TCL_OK;
     }
 
-    header[0] = ntohl(header[0]);
-    header[1] = ntohl(header[1]);
+    /*
+     * Convert header character stream into ints.  This works when the
+     * connecting machine has a different size int (the old way didn't),
+     * and takes care of the endian problem to boot.  It is also mostly
+     * backward compatible since network byte ordering (big endian) is
+     * used.  
+     */
+
+    header[0] = 0;
+    header[0] |= hbuf[0] << 24;
+    header[0] |= hbuf[1] << 16;
+    header[0] |= hbuf[2] << 8;
+    header[0] |= hbuf[3];
+
+    header[1] = 0;
+    header[1] |= hbuf[4] << 24;
+    header[1] |= hbuf[5] << 16;
+    header[1] |= hbuf[6] << 8;
+    header[1] |= hbuf[7];
 
     /*
      * Format of each packet:
@@ -203,6 +229,7 @@ pl_PacketReceive(interp, fileHandle, peek, pdfs)
      *		Next packetLen-headerSize is zero terminated string
      */
     if (header[0] != PACKET_MAGIC) {
+	fprintf(stderr, "Badly formatted packet\n");
         Tcl_AppendResult(interp, "Error reading ", fileHandle,
 			 ": badly formatted packet", (char *) NULL);
 	return TCL_ERROR;
@@ -226,6 +253,7 @@ pl_PacketReceive(interp, fileHandle, peek, pdfs)
      */
     if (peek) {
 	numRead = pl_Read (fd, (char *) pdfs->buffer, header[1], flags);
+
 	if (numRead <= 0) {
 	    goto readError;
 	}
@@ -237,13 +265,14 @@ pl_PacketReceive(interp, fileHandle, peek, pdfs)
      * Read in the packet, and if it's not all there, put it back.
      */
     numRead = pl_Read (fd, (char *) pdfs->buffer, packetLen, flags);
+
     if (numRead <= 0) {
 	goto readError;
     }
 
     if (numRead != packetLen) {
 	pl_Unread (fd, (char *) pdfs->buffer, numRead, 1);
-	pl_Unread (fd, (char *) header, headerSize, 1);
+	pl_Unread (fd, hbuf, headerSize, 1);
 	return TCL_OK;
     }
 
@@ -285,6 +314,7 @@ readError:
     } else {
 	Tcl_AppendResult (interp, "Tdp_PacketReceive -- error reading ",
 		  fileHandle, ": ", errMsg, (char *) NULL);
+	fprintf(stderr, "Leaving pl_PacketReceive in disgrace\n");
 	return TCL_ERROR;
     }
 }
@@ -316,6 +346,7 @@ pl_PacketSend(interp, fileHandle, pdfs)
     int fd;
     int packetLen;
     int numSent;
+    unsigned char hbuf[8];
     int header[2];
     struct iovec iov[2];
     char tmp[256];
@@ -335,17 +366,32 @@ pl_PacketSend(interp, fileHandle, pdfs)
      * Format up the packet:
      *	  First 4 bytes are PACKET_MAGIC.
      *	  Next 4 bytes are packetLen.
-     *	  Next packetLen-(sizeof(int)) bytes are buffer contents.
+     *	  Next packetLen-8 bytes are buffer contents.
      */
 
-    packetLen = pdfs->bp + 2 * sizeof (int);
+    packetLen = pdfs->bp + 8;
 
-    header[0] = htonl (PACKET_MAGIC);
-    header[1] = htonl (packetLen);
+    header[0] = PACKET_MAGIC;
+    header[1] = packetLen;
+
+    /*
+     * Convert header ints to character stream.  
+     * Network byte ordering (big endian) is used.
+     */
+
+    hbuf[0] = (header[0] & (unsigned long) 0xFF000000) >> 24;
+    hbuf[1] = (header[0] & (unsigned long) 0x00FF0000) >> 16;
+    hbuf[2] = (header[0] & (unsigned long) 0x0000FF00) >> 8;
+    hbuf[3] = (header[0] & (unsigned long) 0x000000FF);
+
+    hbuf[4] = (header[1] & (unsigned long) 0xFF000000) >> 24;
+    hbuf[5] = (header[1] & (unsigned long) 0x00FF0000) >> 16;
+    hbuf[6] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
+    hbuf[7] = (header[1] & (unsigned long) 0x000000FF);
 
     /* Set up scatter/gather vector */
-    iov[0].iov_len = 2*sizeof(int);
-    iov[0].iov_base = (char *)header;
+    iov[0].iov_len = 8;
+    iov[0].iov_base = hbuf;
     iov[1].iov_len = pdfs->bp;
     iov[1].iov_base = (char *) pdfs->buffer;
 
@@ -358,7 +404,7 @@ pl_PacketSend(interp, fileHandle, pdfs)
 	     * Non-blocking I/O: return number of bytes actually sent.
 	     */
 	    Tcl_ResetResult(interp);
-	    sprintf (tmp, "%d", numSent - 2*sizeof(int));
+	    sprintf (tmp, "%d", numSent - 8);
 	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
 	    return TCL_OK;
 	} else if (errno == EPIPE) {
@@ -383,7 +429,7 @@ pl_PacketSend(interp, fileHandle, pdfs)
     /*
      * Return the number of bytes sent (minus the header).
      */
-    sprintf (tmp, "%d", numSent - 2*sizeof(int));
+    sprintf (tmp, "%d", numSent - 8);
     Tcl_SetResult(interp, tmp, TCL_VOLATILE);
     return TCL_OK;
 }
