@@ -1800,7 +1800,7 @@ plSelectDev()
 	    }
 	}
 	if (count++ > 10)
-	    plexit("plGetDev: Too many tries.");
+	    plexit("plSelectDev: Too many tries.");
     }
     plsc->device = dev;
     strcpy(plsc->DevName, dispatch_table[dev - 1]->pl_DevName);
