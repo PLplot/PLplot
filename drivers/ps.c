@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/07/19 22:30:27  mjl
+ * Revision 1.28  1994/08/27 03:40:32  mjl
+ * Fix to allow cmap1 color selections to appear in grayscale.  Contributed
+ * by Radey Shouman.
+ *
+ * Revision 1.27  1994/07/19  22:30:27  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -293,6 +297,7 @@ ps_init(PLStream *pls)
     fprintf(OF, "/Z {stroke newpath} def\n");
     fprintf(OF, "/F {fill} def\n");
     fprintf(OF, "/C {setrgbcolor} def\n");
+    fprintf(OF, "/G {setgray} def\n");
     fprintf(OF, "/W {setlinewidth} def\n");
 
 /* End of dictionary definition */
@@ -481,6 +486,13 @@ plD_state_ps(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_COLOR0:
+ 	if (! pls->color) {
+	    fprintf(OF, " S\n%.4f G %d %d M \n", 
+		    (pls->icol0 ? 0.0 : 1.0),
+		    (int)dev->xold, (int)dev->yold);		    
+	    break;
+	}
+	/* else fallthrough */
     case PLSTATE_COLOR1:
 	if (pls->color) {
 	    float r = ((float) pls->curcolor.r) / 255.0;
@@ -488,6 +500,11 @@ plD_state_ps(PLStream *pls, PLINT op)
 	    float b = ((float) pls->curcolor.b) / 255.0;
 
 	    fprintf(OF, " S\n%.4f %.4f %.4f C %d %d M \n", r, g, b,
+		    (int)dev->xold, (int)dev->yold);
+	}
+	else {
+	    float r = ((float) pls->curcolor.r) / 255.0;
+	    fprintf(OF, " S\n%.4f G %d %d M \n", 1.0 - r,
 		    (int)dev->xold, (int)dev->yold);
 	}
 	break;
