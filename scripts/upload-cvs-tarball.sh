@@ -6,7 +6,7 @@
 # This script in the public domain
 
 WWW_HOST=${WWW_HOST:-plplot.sf.net}
-WWW_USER=${USER:-rlaboiss}
+WWW_USER=${WWW_USER:-rlaboiss}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot/htdocs/cvs-tarball}
 GPGKEY=${GPGKEY:-0x4A5D72FE}
 
