@@ -415,6 +415,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       if (plsc->dev_unicode)        /* Does the device also understand unicode  ? */
         {
 
+          char greek[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
+	  PLINT ig;
           if (string!=NULL)         /* If the string isn't blank, then we will continute */
           {
             len=strlen(string);     /* this length is only used in the loop counter, we will work out the lenght of the unicode string as we go */
@@ -434,41 +436,60 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                   {
                     switch(string[i+1])
                       {
-                        case '(':  /* hershey code */
-                        i+=2+text2num(&string[i+2],')',&code);
-                        idx=plhershey2unicode(code);
-                        unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
-                        skip=1;
-                        break;
+		       case '(':  /* hershey code */ 
+			 i+=2+text2num(&string[i+2],')',&code);
+			 idx=plhershey2unicode(code);
+			 unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+			 skip=1;
+			 break;
 
-                        case '[':  /* unicode */
-                        i+=2+text2num(&string[i+2],']',&code);
-                        idx=plhershey2unicode(code);
-                        unicode_buffer[j]=code;
-                        skip=1;
-                        break;
+		       case '[':  /* unicode */
+			 i+=2+text2num(&string[i+2],']',&code);
+			 idx=plhershey2unicode(code);
+			 unicode_buffer[j]=code;
+			 skip=1;
+			 break;
 
-                        break;
+		       case 'g':  /* Greek font */
+			 /* Get the index in the lookup table 
+			  * 527 = upper case alpha displacement in Hershey Table
+			  * 627 = lower case alpha displacement in Hershey Table
+			  */
+			 ig = plP_strpos(greek, string[i+2]);
+			 if (ig >= 0) 
+			   {
+			      if (ig >= 24)
+				ig = ig + 100 - 24;
+			      idx=plhershey2unicode(ig+527);
+			      unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+			      i+=2;
+			      skip=1;  /* skip is set if we have copied something into the unicode table */
+			   }
+			 else
+			   i+=2;
+			 
+			 break;
 
-                        case 'g':  /* Greek font */
-                   	   idx=plhershey2unicode(string[i+2]-97+627); /* Get the index in the lookup table */
-                   	                                              /* 97 = ASC-II position of 'a'
-                   	                                              /* 627 = displacement in Hershey Table
-                   	                                               */
-                        unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
-                        i+=2;
-                        skip=1;  /* skip is set if we have copied something into the unicode table */
-                        break;
+		       case 'G':   /* Greek font */
+			 /* Get the index in the lookup table 
+			  * 527 = upper case alpha displacement in Hershey Table
+			  * 627 = lower case alpha displacement in Hershey Table
+			  */
+			 ig = plP_strpos(greek, string[i+2]);
+			 if (ig >= 0) 
+			   {
+			      if (ig >= 24)
+				ig = ig + 100 - 24;
+			      idx=plhershey2unicode(ig+527);
+			      unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+			      i+=2;
+			      skip=1;  /* skip is set if we have copied something into the unicode table */
+			   }
+			 else
+			   i+=2;
+			 
+			 break;
 
-                  	   case 'G':   /* Greek font */
-                        idx=plhershey2unicode(string[i+2]-65+527); /* Get the index in the lookup table */
-                                                                   /* 65 = ASC-II position of 'A'
-                                                                   /* 527 = displacement in Hershey Table
-                                                                    */
-                        unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
-                        i+=2;
-                        skip=1;
-                        break;
                       }
                   }
 
