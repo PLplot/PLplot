@@ -45,6 +45,7 @@ def main():
 	plcol0(3)
 	plmtex("t", 1.0, 0.5, 0.5, title[k])
 
-	pleop()
+	# Restore defaults
+	plcol0(1)
 
 main()

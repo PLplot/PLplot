@@ -44,9 +44,8 @@ def main():
 	    k = k + 1
 
     plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols")
-    pleop()
 
-    #restore defaults
+    # Restore defaults
     plcol0(1)
 
 main()

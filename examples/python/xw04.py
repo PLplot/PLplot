@@ -37,9 +37,7 @@ def main():
     plcol0(3)
     plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)")
 
-    pleop()
-
-    # restore defaults
+    # Restore defaults
     plfont(1)
     plcol0(1)
     

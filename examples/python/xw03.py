@@ -59,9 +59,7 @@ def main():
     plcol0(4)
     plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
 
-    pleop()
-
-    #restore defaults
+    # Restore defaults
     plcol0(1)
 
 main()

@@ -62,8 +62,6 @@ def main():
 
     pllab( "distance", "altitude", "Bogon density" )
 
-    pleop()
-
     # Plot using 1d coordinate transform
 
     pladv(0)
@@ -89,8 +87,6 @@ def main():
 
     pllab( "distance", "altitude", "Bogon density" )
 
-    pleop()
-
     # Plot using 2d coordinate transform
 
     pladv(0)
@@ -115,7 +111,6 @@ def main():
 #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
     pllab( "distance", "altitude", "Bogon density, with streamlines" )
-    pleop()
 
     # Do it again, but show wrapping support.
 
@@ -167,5 +162,8 @@ def main():
 
     plcol0(2)
     pllab( "", "",  "Tokamak Bogon Instability" )
+
+    # Restore defaults
+    plcol0(1)
 
 main()

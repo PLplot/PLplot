@@ -19,9 +19,7 @@ def main():
     pllab("#frValue", "#frFrequency",
 	   "#frPLplot Example 5 - Probability function of Oscillator")
 
-    pleop()
-
-    #restore defaults
+    # Restore defaults
     plcol0(1)
 
 main()

@@ -26,7 +26,8 @@ def main():
 	string = `1980 + i`
 	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
 
-    pleop()
+    # Restore defaults
+    plcol0(1)
 
 def fbox( x0, y0 ):
 

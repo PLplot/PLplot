@@ -31,9 +31,7 @@ def main():
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-    pleop()
-
-    #restore defaults
+# Restore defaults
     plcol0(1)
 
 main()

@@ -16,6 +16,8 @@ def main():
     plwind(0.0, 1.0, 0.0, 1.0)
     plbox("bc", 0.0, 0, "bc", 0.0, 0)
     plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)")
-    pleop()
+
+    # Restore defaults
+    plcol0(1)
     
 main()

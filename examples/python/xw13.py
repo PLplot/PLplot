@@ -54,8 +54,8 @@ def main():
     plschr(0., 1.3)
     plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales")
 
-    pleop()
-    # restore default
+    # Restore defaults
     plfont(1)
+    plcol0(1)
 	
 main()
