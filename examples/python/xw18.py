@@ -97,17 +97,17 @@ def test_poly(k):
 	y0 = sini0*sinj0
 	z0 = cosj0
 	
-	x1 = cosi1*sinj0
-	y1 = sini1*sinj0
-	z1 = cosj0
+	x1 = cosi0*sinj1
+	y1 = sini0*sinj1
+	z1 = cosj1
 	
 	x2 = cosi1*sinj1
 	y2 = sini1*sinj1
 	z2 = cosj1
 	
-	x3 = cosi0*sinj1
-	y3 = sini0*sinj1
-	z3 = cosj1
+	x3 = cosi1*sinj0
+	y3 = sini1*sinj0
+	z3 = cosj0
 	
 	x4 = x0
 	y4 = y0
@@ -116,18 +116,16 @@ def test_poly(k):
 	for i in range(20):
 		for j in range(20):
 		    
-			# N.B.: The Python poly3 no longer takes a
-			# (possibly negative) length argument, so if
-			# you want to pass a counterclockwise polygon
-			# you now have to reverse the list.  The code
-			# above was rearranged to create a clockwise
-			# polygon instead of a counterclockwise
-			# polygon.
 			x = [x0[i,j],x1[i,j],x2[i,j],x3[i,j],x4[i,j]]
 			y = [y0[i,j],y1[i,j],y2[i,j],y3[i,j],y4[i,j]]
 			z = [z0[j],z1[j],z2[j],z3[j],z4[j]]
 
-			plpoly3(x, y, z, draw[k])
+			# Since negative dimensions don't make sense here 
+			# to specify that points are to be drawn in 
+			# counter-clockwise direction (as in x18c.c and
+			# x18.tcl) this must be specified with an optional
+			# extra argument in python API.
+			plpoly3(x, y, z, draw[k], 1)
 
 	plcol0(3)
 	plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" )
