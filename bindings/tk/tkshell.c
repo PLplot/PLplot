@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/05/24 19:46:35  mjl
+ * Revision 1.16  1994/06/09 20:27:35  mjl
+ * Hacked out direct widget support; this was moved to plframe.c.
+ *
+ * Revision 1.15  1994/05/24  19:46:35  mjl
  * Now autoloads the directory TCL_DIR for PLplot Tcl scripts.
  *
  * Revision 1.14  1994/05/09  18:00:05  furnish
@@ -51,11 +54,6 @@
 #ifdef TCL_DP
 extern int Tdp_Init			_ANSI_ARGS_((Tcl_Interp *interp));
 #endif
-
-int   tclplcol( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
-int   tclplenv( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
-int   tclpllab( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
-int   tclplline( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
 
 /* Static functions */
 /* Sets up auto_path variable */
@@ -109,11 +107,8 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 
 /* Create the main window without mapping it */
 
-#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 3)
-    *w = Tk_CreateMainWindow(interp, display, basename);
-#else
     *w = Tk_CreateMainWindow(interp, display, basename, classname);
-#endif
+
     if (*w == NULL) {
 	fprintf(stderr, "%s\n", (interp)->result);
 	return(1);
@@ -198,18 +193,12 @@ pltk_Init(Tcl_Interp *interp)
      * where "Mod" is the name of the module.
      */
 
-#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
-    if (pltk_source(main, interp, "$tk_library/wish.tcl")) {
-	return TCL_ERROR;
-    }
-#else
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
     if (main && Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
-#endif
 
     /*
      * Call Tcl_CreateCommand for application-specific commands, if
@@ -261,18 +250,6 @@ Pltk_Init( Tcl_Interp *interp )
 /* Add plframe command */
 
     Tcl_CreateCommand(interp, "plframe", plFrameCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
-
-    Tcl_CreateCommand(interp, "plcol", tclplcol,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
-
-    Tcl_CreateCommand(interp, "plenv", tclplenv,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
-
-    Tcl_CreateCommand(interp, "pllab", tclpllab,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
-
-    Tcl_CreateCommand(interp, "plline", tclplline,
                       (ClientData) main, (void (*)(ClientData)) NULL);
 
 /* Set up auto_path */
@@ -459,102 +436,5 @@ plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 	Tk_DoOneEvent(0);
     }
-    return TCL_OK;
-}
-
-/* The PLplot TCL extension commands. */
-
-int   tclplcol( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    int col;			/* I HATE Primitive C!!! */
-
-    if (argc != 2) {
-	interp->result = "too many args to plcol";
-	return TCL_ERROR;
-    }
-
-    col = atoi( argv[1] );
-
-    plcol( col );
-
-    return TCL_OK;
-}
-
-int   tclplenv( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    float xmin, xmax, ymin, ymax;
-    int just, axis;
-
-    if (argc != 7 ) {
-	interp->result = "Wrong # args to plenv.";
-	return TCL_ERROR;
-    }
-
-    xmin = atof( argv[1] );
-    xmax = atof( argv[2] );
-    ymin = atof( argv[3] );
-    ymax = atof( argv[4] );
-    just = atoi( argv[5] );
-    axis = atoi( argv[6] );
-
-    plenv( xmin, xmax, ymin, ymax, just, axis );
-    plflush();
-
-    return TCL_OK;
-}
-
-int   tclpllab( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    if (argc != 4) {
-	interp->result = "Wrong # args to pllab.";
-	return TCL_ERROR;
-    }
-
-    pllab( argv[1], argv[2], argv[3] );
-    plflush();
-
-    return TCL_OK;
-}
-
-int   tclplline( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    int elsc, i;
-    char **elsv;
-    float *x, *y;
-
-    if (argc != 2) {
-	interp->result = "Wrong # args to plline.";
-	return TCL_ERROR;
-    }
-
-    Tcl_SplitList( interp, argv[1], &elsc, &elsv );
-
-    if ( elsc < 2 ) {
-	interp->result = "Malformed list.";
-	return TCL_ERROR;
-    }
-
-    x = (float *) malloc( sizeof(float) * elsc );
-    y = (float *) malloc( sizeof(float) * elsc );
-
-    for( i=0; i < elsc; i++ ) {
-	int xyc;
-	char **xyv;
-
-	Tcl_SplitList( interp, elsv[i], &xyc, &xyv );
-	if ( xyc != 2 ) {
-	    interp->result = "Malformed list.";
-	    return TCL_ERROR;
-	}
-
-	x[i] = atof( xyv[0] );
-	y[i] = atof( xyv[1] );
-    }
-
-    plline( elsc, x, y );
-    plflush();
-
-    free(x), free(y);
-
     return TCL_OK;
 }
