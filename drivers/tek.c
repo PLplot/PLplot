@@ -1,179 +1,219 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/07/16 22:11:22  mjl
-   Eliminated low-level coordinate scaling; now done by driver interface.
+   Revision 1.13  1993/07/28 05:38:59  mjl
+   Merged with xterm code, and added code to handle Tektronix 4105/4107
+   (color) devices.  For now just the color index selection is supported.
+   Added code to change terminal line to noncanonical (cbreak) mode on
+   POSIX systems so that entered keystrokes (including <Backspace> and "Q"
+   from plrender) do not require a <CR> to be recognized.
 
+ * Revision 1.12  1993/07/16  22:11:22  mjl
+ * Eliminated low-level coordinate scaling; now done by driver interface.
+ *
  * Revision 1.11  1993/07/01  21:59:44  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.10  1993/03/15  21:39:21  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.9  1993/03/03  19:42:08  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.8  1993/03/03  16:17:09  mjl
- * Fixed orientation-swapping code.
- *
- * Revision 1.7  1993/02/27  04:46:41  mjl
- * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
- * always be included first.
- *
- * Revision 1.6  1993/02/22  23:11:02  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by
- * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
- *
- * Revision 1.5  1993/01/23  05:41:53  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.4  1992/11/07  07:48:48  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.3  1992/10/22  17:04:58  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.2  1992/09/29  04:44:50  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:43  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	tek.c
 
 	PLPLOT tektronix device driver.
+	Includes support for xterm, tektronix 4010 terminal & file,
+	tektronix 4107 terminal & file.
 */
-#ifdef TEK
+#if defined(XTERM) || defined(TEK4010) || defined(TEK4107)
+
+#define POSIX_TTY
 
 #include "plplotP.h"
 #include <stdio.h>
 #include "drivers.h"
+#include "plevent.h"
 
-/* Function prototypes */
+/* Static function prototypes */
 /* INDENT OFF */
 
-void tek_init(PLStream *);
+static void	WaitForPage	(PLStream *);
+static void	EventHandler	(PLStream *, int);
+static void	tek_init	(PLStream *);
 
-/* top level declarations */
+/* Stuff for handling tty cbreak mode */
+
+#ifdef POSIX_TTY
+
+#include <termios.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+static struct termios	save_termios;
+static int		ttysavefd = -1;
+static enum { RESET, RAW, CBREAK } ttystate = RESET;
+
+int  tty_cbreak		(int);
+int  tty_reset		(int);
+void tty_atexit		(void);
+
+#endif
+
+/* Pixel settings */
 
 #define TEKX   1023
 #define TEKY    779
 
 /* Graphics control characters. */
 
+#define ETX  3
+#define BEL  7
 #define FF   12
 #define CAN  24
 #define ESC  27
 #define GS   29
 #define US   31
 
-/* (dev) will get passed in eventually, so this looks weird right now */
+/* Static vars */
 
-static PLDev device;
-static PLDev *dev = &device;
+static exit_eventloop = 0;
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
-* plD_init_tekt()
+* plD_init_xte()	xterm 
+* plD_init_tekt()	Tek 4010 terminal
+* plD_init_tekf()	Tek 4010 file
+* plD_init_t4107t()	Tek 4105/4107 terminal
+* plD_init_t4107f()	Tek 4105/4107 file
 *
-* Initialize device (terminal).
+* Initialize device.  These just set attributes for the particular tektronix
+* device, then call tek_init().  The following attributes can be set:
+*
+* pls->termin		if a terminal device
+* pls->color		if color
+* pls->dual_screen	if device has separate text and graphics screens
+*
+* It is possible to modify these from the user code directly by using
+* plgpls() to get the stream pointer, then setting the appropriate
+* attribute.  For example, I use a tek4107 emulator that has dual text
+* and graphics screens, so I set the dual_screen attribute.  If you have
+* a real tek4107 you may want to unset this.
 \*----------------------------------------------------------------------*/
+
+void 
+plD_init_xte (PLStream *pls)
+{
+    pls->termin = 1;
+    pls->dual_screen = 1;
+    tek_init(pls);
+}
 
 void
 plD_init_tekt(PLStream *pls)
 {
-    pls->termin = 1;		/* an interactive device */
-
-    pls->OutFile = stdout;
-    pls->orient = 0;
+    pls->termin = 1;
     tek_init(pls);
-    fprintf(pls->OutFile, "%c%c", ESC, FF);	/* mgg 07/23/91 via rmr */
 }
-
-/*----------------------------------------------------------------------*\
-* plD_init_tekf()
-*
-* Initialize device (file).
-\*----------------------------------------------------------------------*/
 
 void
 plD_init_tekf(PLStream *pls)
 {
-    pls->termin = 0;		/* not an interactive terminal */
+    tek_init(pls);
+}
 
-/* Initialize family file info */
+void
+plD_init_t4107t(PLStream *pls)
+{
+    pls->termin = 1;
+    pls->dual_screen = 1;
+    pls->color = 1;
+    tek_init(pls);
+}
 
-    plFamInit(pls);
-
-/* Prompt for a file name if not already set */
-
-    plOpenFile(pls);
-
-/* Set up device parameters */
-
+void
+plD_init_t4107f(PLStream *pls)
+{
+    pls->color = 1;
     tek_init(pls);
 }
 
 /*----------------------------------------------------------------------*\
 * tek_init()
 *
-* Generic device initialization.
+* Generic tektronix device initialization.
 \*----------------------------------------------------------------------*/
 
-void
+static void
 tek_init(PLStream *pls)
 {
+    PLDev *dev;
+
     pls->icol0 = 1;
-    pls->color = 0;
     pls->width = 1;
-    pls->bytecnt = 0;
-    pls->page = 0;
+
+/* Allocate and initialize device-specific data */
+
+    if (pls->dev != NULL)
+	free((void *) pls->dev);
+
+    pls->dev = calloc(1, (size_t) sizeof(PLDev));
+    if (pls->dev == NULL)
+	plexit("tek_init: Out of memory.");
+
+    dev = (PLDev *) pls->dev;
+
+/* Set up device */
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
     dev->ymin = 0;
+    dev->xmax = TEKX * 16;
+    dev->ymax = TEKY * 16;
+    dev->pxlx = 4.771 * 16;
+    dev->pxly = 4.653 * 16;
 
-    if (pls->orient%2 == 1) {
-	dev->xmax = TEKY * 16;
-	dev->ymax = TEKX * 16;
-	plP_setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
-    }
-    else {
-	dev->xmax = TEKX * 16;
-	dev->ymax = TEKY * 16;
-	plP_setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
-    }
-
-    dev->xlen = dev->xmax - dev->xmin;
-    dev->ylen = dev->ymax - dev->ymin;
-
+    plP_setpxl(dev->pxlx, dev->pxly);
     plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    fprintf(pls->OutFile, "%c", GS);
+/* Terminal/file initialization */
+
+    if (pls->termin) 
+	pls->OutFile = stdout;
+    else {
+	plFamInit(pls);
+	plOpenFile(pls);
+    }
+
+#ifdef POSIX_TTY
+    if (pls->termin) {
+	if (tty_cbreak(STDIN_FILENO))
+	    fprintf(stderr, "Unable to set up cbreak mode.\n");
+	else {
+	    if (atexit(tty_atexit))
+		fprintf(stderr, "Unable to set up atexit handler.\n");
+	}
+    }
+#endif
+
+    pls->graphx = GRAPHICS_MODE;
+    if (pls->dual_screen)
+	fprintf(pls->OutFile, "%c[?38h", ESC);	/* open graphics window */
+
+    fprintf(pls->OutFile, "%c", GS);		/* set to vector mode */
+    if (pls->termin)
+	fprintf(pls->OutFile, "%c%c", ESC, FF);	/* ???????? */
 }
 
 /*----------------------------------------------------------------------*\
 * plD_line_tek()
 *
-* Draw a line in the current color from (x1,y1) to (x2,y2).
+* Draw a line from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
 plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
-
-    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
 
     x1 >>= 4;
     y1 >>= 4;
@@ -233,9 +273,9 @@ void
 plD_eop_tek(PLStream *pls)
 {
     if (pls->termin) {
-	putchar('\007');
+	putchar(BEL);
 	fflush(stdout);
-	while (getchar() != '\n');
+	WaitForPage(pls);
     }
     fprintf(pls->OutFile, "%c%c", ESC, FF);
 }
@@ -250,10 +290,12 @@ plD_eop_tek(PLStream *pls)
 void
 plD_bop_tek(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
+
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    if (!pls->termin)
+    if ( ! pls->termin)
 	plGetFam(pls);
 
     pls->page++;
@@ -268,11 +310,12 @@ plD_bop_tek(PLStream *pls)
 void
 plD_tidy_tek(PLStream *pls)
 {
-    if (!pls->termin) {
+    if ( ! pls->termin) {
 	fclose(pls->OutFile);
     }
     else {
-	fprintf(pls->OutFile, "%c%c", US, CAN);
+	plD_graph_tek(pls);
+	plD_text_tek(pls);
 	fflush(pls->OutFile);
     }
     pls->fileset = 0;
@@ -286,9 +329,17 @@ plD_tidy_tek(PLStream *pls)
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_tek(PLStream *pls)
+void 
+plD_color_tek (PLStream *pls)
 {
+    int lo, icol0 = pls->icol0;
+
+    if (pls->color) {
+	if (icol0 != PL_RGB_COLOR) {
+	    lo = icol0 + 48;
+	    printf("%cML%c", ESC, lo);
+	}
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -297,10 +348,17 @@ plD_color_tek(PLStream *pls)
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void
-plD_text_tek(PLStream *pls)
+void 
+plD_text_tek (PLStream *pls)
 {
-    fprintf(pls->OutFile, "%c", US);
+    if (pls->dual_screen) {
+	if (pls->graphx == GRAPHICS_MODE) {
+	    pls->graphx = TEXT_MODE;
+	    printf("%c%c", US, CAN);
+	    printf("%c%c", ESC, ETX);
+	    printf("%c%c", US, CAN);
+	}
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -309,9 +367,15 @@ plD_text_tek(PLStream *pls)
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void
-plD_graph_tek(PLStream *pls)
+void 
+plD_graph_tek (PLStream *pls)
 {
+    if (pls->dual_screen) {
+	if (pls->graphx == TEXT_MODE) {
+	    pls->graphx = GRAPHICS_MODE;
+	    printf("%c[?38h", ESC);
+	}
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -320,8 +384,8 @@ plD_graph_tek(PLStream *pls)
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void
-plD_width_tek(PLStream *pls)
+void 
+plD_width_tek (PLStream *pls)
 {
 }
 
@@ -331,16 +395,157 @@ plD_width_tek(PLStream *pls)
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void
-plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
+void 
+plD_esc_tek (PLStream *pls, PLINT op, void *ptr)
 {
 }
 
-#else
-int 
-pldummy_tek()
+/*----------------------------------------------------------------------*\
+* WaitForPage()
+*
+* This routine waits for the user to advance the plot, while handling
+* all other events.
+\*----------------------------------------------------------------------*/
+
+static void
+WaitForPage(PLStream *pls)
 {
+    int input_char;
+
+    if (pls->nopause)
+	return;
+
+    while ( ! exit_eventloop) {
+	input_char = getchar();
+	EventHandler(pls, input_char);
+    }
+    exit_eventloop = FALSE;
+}
+
+/*----------------------------------------------------------------------*\
+* EventHandler()
+*
+* Event handler routine for xterm.  
+* Just reacts to keyboard input.
+\*----------------------------------------------------------------------*/
+
+static void
+EventHandler(PLStream *pls, int input_char)
+{
+    PLKey key;
+
+    key.code = 0;
+    key.string[0] = '\0';
+
+/* Translate keystroke into a PLKey */
+
+    if ( ! isprint(input_char)) {
+	switch (input_char) {
+	case 0x0A:
+	    key.code = PLK_Linefeed;
+	    break;
+
+	case 0x0D:
+	    key.code = PLK_Return;
+	    break;
+
+	case 0x08:
+	    key.code = PLK_BackSpace;
+	    break;
+
+	case 0x7F:
+	    key.code = PLK_Delete;
+	    break;
+	}
+    }
+    else {
+	key.string[0] = input_char;
+	key.string[1] = '\0';
+    }
+
+#ifdef DEBUG
+    pltext();
+    printf("Input char %x, Keycode %x, string: %s\n",
+	   input_char, key.code, key.string);
+    plgra();
+#endif
+
+/* Call user event handler */
+/* Since this is called first, the user can disable all plplot internal
+   event handling by setting key.code to 0 and key.string to '\0' */
+
+    if (pls->KeyEH != NULL)
+	(*pls->KeyEH) (&key, pls->KeyEH_data, &exit_eventloop);
+
+/* Handle internal events */
+
+/* Advance to next page (i.e. terminate event loop) on a <eol> */
+
+    if (key.code == PLK_Linefeed)
+	exit_eventloop = TRUE;
+
+/* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+
+    if (key.string[0] == 'Q') {
+	pls->nopause = TRUE;
+	plexit("");
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* tty cbreak-mode handlers
+*
+* Taken from "Advanced Programming in the UNIX(R) Environment", 
+* by W. Richard Stevens.
+\*----------------------------------------------------------------------*/
+
+#ifdef POSIX_TTY
+
+int
+tty_cbreak(int fd)			/* put terminal into a cbreak mode */
+{
+    struct termios buf;
+
+    if (tcgetattr(fd, &save_termios) < 0)
+	return -1;
+
+    buf = save_termios;			/* structure copy */
+
+    buf.c_lflag &= ~(ECHO | ICANON);	/* echo & canonical mode off */
+    buf.c_cc[VMIN] = 1;			/* 1 byte at a time */
+    buf.c_cc[VTIME] = 0;		/* no timer */
+
+    if (tcsetattr(fd, TCSAFLUSH, &buf) < 0)
+	return -1;
+
+    ttystate = CBREAK;
+    ttysavefd = fd;
     return 0;
 }
 
-#endif				/* TEK */
+int
+tty_reset(int fd)			/* restore terminal's mode */
+{
+    if (ttystate != CBREAK && ttystate != RAW)
+	return 0;
+
+    if (tcsetattr(fd, TCSAFLUSH, &save_termios) < 0)
+	return -1;
+
+    ttystate = RESET;
+    return 0;
+}
+
+void
+tty_atexit(void)			/* exit handler */
+{
+    if (ttysavefd >=0)
+	tty_reset(ttysavefd);
+}
+
+#endif		/* POSIX_TTY */
+
+#else
+int pldummy_tek() {return 0;}
+
+#endif	/*  defined(XTERM) || defined(TEK4010) || defined(TEK4107) */
