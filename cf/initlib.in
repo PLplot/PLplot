@@ -90,5 +90,5 @@ everything: libs plrender$E pltek$E $(PYTHON_EXE) $(TCL_EXE) $(TK_EXE)
 # Inference rules, not specific to archive or shared libraries.
 
 .fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
+	$(M4) @M4_FLAGS@ $< >$*.f
 
