@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1994/06/10 20:43:57  furnish
+# Revision 1.2  1994/10/04 18:18:47  mjl
+# Inserted initialization of zoom windows lists.  Gross, but it should
+# work.
+#
+# Revision 1.1  1994/06/10  20:43:57  furnish
 # New extended plframe itcl widget.
 #
 ###############################################################################
@@ -41,6 +45,17 @@ itcl_class PLXWin {
 
 	tk_bindForTraversal $this.plwin
 	focus $this.plwin
+
+	# Set up zoom windows list
+
+	global zidx zidx_max zxl zyl zxr zyr
+
+	set zidx($this) 0
+	set zidx_max($this) 0
+	set zxl($this,0) 0.0
+	set zyl($this,0) 0.0
+	set zxr($this,0) 1.0
+	set zyr($this,0) 1.0
 
 	# Bindings
 	#
