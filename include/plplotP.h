@@ -1,8 +1,14 @@
 /* $Id$
-   $Log$
-   Revision 1.16  1994/01/15 17:34:27  mjl
-   Minor documentation addition.
-
+ * $Log$
+ * Revision 1.17  1994/03/23 07:05:51  mjl
+ * Cruft elimination, including stuff that was for dealing with non-ANSI
+ * or marginally ANSI compliant compilers (special treatment for malloc
+ * includes, etc).  New function prototypes, and new defines for PLSTATE
+ * settings governing changes to cmap 1 and/or the color palette.
+ *
+ * Revision 1.16  1994/01/15  17:34:27  mjl
+ * Minor documentation addition.
+ *
  * Revision 1.15  1993/12/08  06:20:04  mjl
  * Miscellaneous cleaning up.
  *
@@ -50,57 +56,41 @@
 #endif
 
 /* Include all externally-visible definitions and prototypes */
+/* This also includes stdio.h */
 
 #include "plplot.h"
 
 /*----------------------------------------------------------------------*\
 *        SYSTEM-SPECIFIC SETTINGS
 * 
-* We define some internal macros which are used to make the plplot sources
-* substantially system independent.  They are:
+* Here we enable or disable based on system specific capabilities of
+* PLPLOT.  At present there are only two different "optional"
+* capabilities.  They are:
 *
-* #define PL_NEED_MALLOC
-*	From "C -- The Pocket Reference" by Herbert Schildt (1988):
+* POSIX_TTY	Defined if POSIX.1 tty control functions are available. 
+* NO_ANSI_LIBC	Defined if libc is NOT ANSI-compliant.
 *
-*	"The proposed ANSI standard specifies that the header information
-*	necessary to the dynamic allocation system will be in stdlib.h.
-*	However, at the time of this writing, a great many C compilers
-*	require you to include the header malloc.h instead."
 *
-* #define PL_NEED_SIZE_T
-*	On some systems, size_t is not defined in the usual place (stdlib.h),
-*	and you must include stddef.h to get it.
+* POSIX.1 tty control functions are used by some of the drivers, e.g. to
+* switch to character-oriented (CBREAK) i/o (notably the tek driver and
+* all its variants).  It is usable without this but not as powerful.  The
+* reason for using this is that some supported systems are still not
+* POSIX.1 compliant (and some may never be).
 *
+* ANSI libc calls are used for: (a) setting up handlers to be called
+* before program exit (via the "atexit" call), and (b) for seek
+* operations.  Again, the code is usable without this but less powerful.
+* An ANSI-compliant libc should be available, given the requirement of an
+* ANSI-compliant compiler.  Some reasons why not: (a) the vendor didn't supply
+* a complete ANSI environment, or (b) the ANSI libc calls are buggy, or
+* (c) you ported gcc to your system but not glibc (for whatever reason).
+* 
 \*----------------------------------------------------------------------*/
 
 #define POSIX_TTY
 
-#ifdef __aix			/* AIX */
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
-#ifdef __hpux			/* HPUX */
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
-#ifdef sun			/* Sun */
-#ifndef NULL			/* Now assumes an ANSI libc */
-#define NULL	0		/* If you don't have one, use -DNO_ANSI_LIBC */
-#endif
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
 #ifdef CRAY			/* Cray */
 #undef _POSIX_SOURCE		/* because of moronic broken X headers */
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
 #endif
 
 #ifdef __convexc__		/* Convex */
@@ -110,21 +100,17 @@
 #endif
 
 #ifdef SX			/* NEC SX-3 */
-#undef POSIX_TTY		/* Not POSIX I'm afraid */
+#undef POSIX_TTY		/* Not POSIX.1 compliant */
 #endif
 
 #ifdef MSDOS			/* MSDOS */
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
+#undef POSIX_TTY		/* Not POSIX.1 compliant */
 #endif
 
 #ifdef AMIGA			/* Amiga */
+#undef POSIX_TTY		/* Not POSIX.1 compliant */
 #ifndef NO_ANSI_LIBC		/* NO_ANSI_LIBC is required by SAS/C 5.X */
 #define NO_ANSI_LIBC		/* (still pretty prevalent, so..) */
-#endif
-#ifdef PL_NEED_SIZE_T
-#include <stddef.h>
 #endif
 #endif
 
@@ -148,8 +134,7 @@
 *			Data types
 \*----------------------------------------------------------------------*/
 
-/* Signed char type, in case we ever need it. */
-/* This should always work now since the standard demands it */
+/* Signed char type, for the font tables */
 
 typedef signed char SCHAR;
 
@@ -175,13 +160,12 @@ typedef signed char SCHAR;
 *                       Utility macros
 \*----------------------------------------------------------------------*/
 
-#define BINARY_WRITE "wb+"	/* Probably these should be tossed */
-#define BINARY_READ "rb"
-
 #ifndef TRUE
 #define TRUE  1
 #define FALSE 0
 #endif
+
+/* For the truly desperate debugging task */
 
 #ifdef DEBUG_ENTER
 #define dbug_enter(a) \
@@ -191,11 +175,17 @@ typedef signed char SCHAR;
 #define dbug_enter(a)
 #endif
 
+/* Used to help ensure everything malloc'ed gets freed */
+
 #define free_mem(a) \
     if (a != NULL) { free((void *) a); a = NULL; }
 
+/* Allows multi-argument setup calls to not affect selected arguments */
+
 #define plsetvar(a, b) \
     if (b != PL_NOTSET) a = b;
+
+/* Lots of cool math macros */
 
 #ifndef MAX
 #define MAX(a,b)    (((a) > (b)) ? (a) : (b))
@@ -219,6 +209,8 @@ typedef signed char SCHAR;
 #define SIGN(a)         ((a)<0 ? -1 : 1)
 #endif
 
+/* A coordinate value that should never occur */
+
 #define UNDEFINED -9999999
 
 /*----------------------------------------------------------------------*\
@@ -227,13 +219,13 @@ typedef signed char SCHAR;
 
 /* Some constants */
 
+#define PL_MAXPOLY	256	/* Max segments in polyline or polygon */
+#define PL_NSTREAMS	100	/* Max number of concurrent streams. */
+#define PL_RGB_COLOR	1<<7	/* A hack */
+
 #define TEXT_MODE	0
 #define GRAPHICS_MODE	1
 #define PI		3.1415926535897932384
-#define PL_MAXCOLORS	16
-#define PL_RGB_COLOR	1<<7
-#define PL_MAXPOLYLINE	64
-#define PL_NSTREAMS	100	/* Max number of concurrent streams. */
 
 /* These define the metafile & X driver (virtual) coordinate systems */
 
@@ -261,8 +253,11 @@ typedef signed char SCHAR;
 /* Switches for state function call. */
 
 #define PLSTATE_WIDTH		1	/* pen width */
-#define PLSTATE_COLOR0		2	/* change to color map 0 */
-#define PLSTATE_COLOR1		3	/* change to color map 1 */
+#define PLSTATE_COLOR0		2	/* change to color in cmap 0 */
+#define PLSTATE_COLOR1		3	/* change to color in cmap 1 */
+#define PLSTATE_FILL		4	/* set area fill attribute */
+#define PLSTATE_CMAP0		5	/* change to cmap 0 */
+#define PLSTATE_CMAP1		6	/* change to cmap 1 */
 
 /* Bit switches used in the driver interface */
 
@@ -320,6 +315,11 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
 	   void (*draw) (short *, short *, PLINT));
 
+/* Pattern fills in software the polygon bounded by the input points. */
+
+void
+plfill_soft(short *x, short *y, PLINT npts);
+
 /* In case of an abort this routine is called.  It just prints out an */
 /* error message and tries to clean up as much as possible. */
 
@@ -336,6 +336,11 @@ pl_exit(void);
 void
 plwarn(char *errormsg);
 
+/* Same as plwarn(), but appends ", aborting plot" to the error message */
+
+void
+plabort(char *errormsg);
+
 /* Loads either the standard or extended font. */
 
 void
@@ -346,10 +351,15 @@ plfntld(PLINT fnt);
 void
 plfontrel(void);
 
-/* Convert HLS color to RGB color. */
+/* Initializes color map 0. */
 
 void
-plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+plCmap0_init(void);
+
+/* Initializes color map 1. */
+
+void
+plCmap1_init(void);
 
 /* Writes the Hershey symbol "ch" centred at the physical coordinate */
 /* (x,y). */
@@ -442,7 +452,8 @@ plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax);
 /* Get parameters used in 3d plots */
 
 void
-plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz);
+plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy,
+	  PLFLT *p_dyz);
 
 /* Set parameters used in 3d plots */
 
@@ -725,6 +736,16 @@ plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin);
 void
 plP_spat(PLINT inc[], PLINT del[], PLINT nlin);
 
+/* Get pattern fill number */
+
+void
+plP_gpsty(PLINT *patt);
+
+/* Set pattern fill number */
+
+void
+plP_spsty(PLINT patt);
+
 /* Set defining parameters for broken lines */
 
 void
@@ -742,11 +763,7 @@ plP_gprec(PLINT *p_setp, PLINT *p_prec);
 
 	/* Functions that return floats */
 
-/*----------------------------------------------------------------------*\
-* PLFLT plstrl()
-*
-* Computes the length of a string in mm, including escape sequences.
-\*----------------------------------------------------------------------*/
+/* Computes the length of a string in mm, including escape sequences. */
 
 PLFLT
 plstrl(const char *string);
@@ -842,17 +859,6 @@ plP_wcpcx(PLFLT x);
 
 PLINT
 plP_wcpcy(PLFLT y);
-
-/* Determines slope of contour level in box */
-
-PLINT 
-plctest(PLFLT *x, PLFLT level);
-
-/* Front-end to plctest */
-
-PLINT 
-plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
-	  PLINT iy, PLFLT level);
 
 /* Gets the character digitisation of Hershey table entry "char". */
 
