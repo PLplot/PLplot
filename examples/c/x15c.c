@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1993/08/31 17:57:11  mjl
+ * Revision 1.3  1993/12/06 22:38:16  mjl
+ * Added #include <stdio.h> to pick up definition of NULL under SunOS.
+ *
+ * Revision 1.2  1993/08/31  17:57:11  mjl
  * Actually works now.  Makes three plots, shading a single or multiple
  * regions.
  *
@@ -20,6 +23,7 @@
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 

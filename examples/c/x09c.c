@@ -2,7 +2,10 @@
 
 /* $Id$
  * $Log$
- * Revision 1.7  1993/08/11 19:26:49  mjl
+ * Revision 1.8  1993/12/06 22:38:14  mjl
+ * Added #include <stdio.h> to pick up definition of NULL under SunOS.
+ *
+ * Revision 1.7  1993/08/11  19:26:49  mjl
  * Fixed a minor macro definition problem.
  *
  * Revision 1.6  1993/07/02  07:07:33  mjl
@@ -14,6 +17,7 @@
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
