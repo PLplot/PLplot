@@ -1,29 +1,20 @@
-/* Demonstration program for PLPLOT illustrating absolute positioning */
 /* $Id$
-   $Log$
-   Revision 1.4  1993/02/22 23:16:18  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
-
- * Revision 1.3  1993/01/23  06:10:31  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
+ * $Log$
+ * Revision 1.5  1994/03/30 07:21:54  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
  *
- * Revision 1.2  1992/09/29  04:45:18  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:58  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.4  1993/02/22  23:16:18  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
 */
 
+/* Demonstration program for PLPLOT illustrating absolute positioning */
 /* of graphs on a page */
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
 
-#include "plplot.h"
-#include <stdlib.h>
+#include <plplot.h>
 
 int
 main(int argc, char *argv[])

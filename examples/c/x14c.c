@@ -1,43 +1,26 @@
-/* Demonstration program for PLPLOT: */
 /* $Id$
-   $Log$
-   Revision 1.6  1993/07/02 07:04:41  mjl
-   Eliminated plrgb calls (to be deprecated in 5.0).
-
- * Revision 1.5  1993/02/22  23:16:22  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
+ * $Log$
+ * Revision 1.7  1994/03/30 07:21:58  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
  *
- * Revision 1.4  1993/01/23  06:10:35  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
- *
- * Revision 1.3  1992/09/30  18:25:26  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:22  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:33:03  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.6  1993/07/02  07:04:41  mjl
+ * Eliminated plrgb calls (to be deprecated in 5.0).
 */
 
+/* 
+* Demonstration program for PLPLOT: 
+* Plots several simple functions from other example programs.
+*
+* This version sends the output of the first 4 plots (one page) to two
+* independent streams.  The X driver is chosen since that makes for a
+* rather nice display, although the offset flags do not yet work
+* correctly.
+*/
 
-/* Plots several simple functions */
-/* Based on several example programs */
-/* This version sends the output of the first 4 plots (one page) to two
-   independent streams.
-   The X driver is chosen since that makes for a rather nice display,
-   although the offset flags do not yet work correctly. */
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
-
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <plplot.h>
 #include <math.h>
 
 #ifndef ROUND
@@ -197,7 +180,7 @@ plot2(void)
        (just = 0), and we draw a box with axes (axis = 1). */
 
     plcol(1);
-    plenv((PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1);
+    plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
     plcol(2);
     pllab("(x)", "sin(x)/x", "#frPLPLOT Example 1 - Sinc Function");
 
@@ -233,19 +216,19 @@ plot3(void)
        from -1.2 to 1.2. */
 
     plvsta();
-    plwind((PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2);
+    plwind(0.0, 360.0, -1.2, 1.2);
 
     /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
     plcol(1);
-    plbox("bcnst", (PLFLT) 60.0, 2, "bcnstv", (PLFLT) 0.2, 2);
+    plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
     /* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
        expects a pointer!! */
 
     plstyl(1, &mark1, &space1);
     plcol(2);
-    plbox("g", (PLFLT) 30.0, 0, "g", (PLFLT) 0.2, 0);
+    plbox("g", 30.0, 0, "g", 0.2, 0);
     plstyl(0, &mark0, &space0);
 
     plcol(3);
@@ -279,7 +262,7 @@ plot4(void)
 
 /* Set up viewport and window, but do not draw box */
 
-    plenv((PLFLT) -1.3, (PLFLT) 1.3, (PLFLT) -1.3, (PLFLT) 1.3, 1, -2);
+    plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
     for (i = 1; i <= 10; i++) {
 	for (j = 0; j <= 360; j++) {
 	    x[j] = 0.1 * i * x0[j];
@@ -299,15 +282,15 @@ plot4(void)
 
 /* Draw radial spokes for polar grid */
 
-	pljoin((PLFLT) 0.0, (PLFLT) 0.0, dx, dy);
+	pljoin(0.0, 0.0, dx, dy);
 	sprintf(text, "%d", ROUND(theta));
 
 /* Write labels for angle */
 
 	if (dx >= 0)
-	    plptex(dx, dy, dx, dy, (PLFLT) -0.15, text);
+	    plptex(dx, dy, dx, dy, -0.15, text);
 	else
-	    plptex(dx, dy, -dx, -dy, (PLFLT) 1.15, text);
+	    plptex(dx, dy, -dx, -dy, 1.15, text);
     }
 
 /* Draw the graph */
@@ -321,7 +304,7 @@ plot4(void)
     plline(361, x, y);
 
     plcol(4);
-    plmtex("t", (PLFLT) 2.0, (PLFLT) 0.5, (PLFLT) 0.5,
+    plmtex("t", 2.0, 0.5, 0.5,
 	   "#frPLPLOT Example 3 - r(#gh)=sin 5#gh");
 }
 
@@ -357,8 +340,8 @@ plot5(void)
 
 /* Set up function arrays */
 
-    Alloc2dGrid(&z, XPTS, YPTS);
-    Alloc2dGrid(&w, XPTS, YPTS);
+    plAlloc2dGrid(&z, XPTS, YPTS);
+    plAlloc2dGrid(&w, XPTS, YPTS);
 
     for (i = 0; i < XPTS; i++) {
 	xx = (double) (i - (XPTS / 2)) / (double) (XPTS / 2);
@@ -369,7 +352,7 @@ plot5(void)
 	}
     }
 
-    plenv((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0, 0, 0);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(1, &mark, &space);

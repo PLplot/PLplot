@@ -1,33 +1,24 @@
-/* Demonstration program for PLPLOT: Bar chart example. */
 /* $Id$
-   $Log$
-   Revision 1.5  1993/02/22 23:16:20  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
-
+ * $Log$
+ * Revision 1.6  1994/03/30 07:21:56  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
+ *
+ * Revision 1.5  1993/02/22  23:16:20  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:33  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
  * capabilities.
- *
- * Revision 1.3  1992/09/30  18:25:24  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:20  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:33:01  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
+/* Demonstration program for PLPLOT: Bar chart example. */
 
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <plplot.h>
 
 void
 plfbox(PLFLT x0, PLFLT y0)
@@ -82,9 +73,12 @@ main(int argc, char *argv[])
     y0[9] = 3;
 
     for (i = 0; i < 10; i++) {
-	plcol(i % 4 + 1);
-	plpsty((i + 3) % 8 + 1);
-	pllsty(i % 8 + 1);
+/*	plcol(i % 4 + 1);*/
+	plcol(i + 1);
+/*	plpsty((i + 3) % 8 + 1);*/
+/*	plpsty(-(i + 3));*/
+	plpsty(0);
+/*	pllsty(i % 8 + 1);*/
 	plfbox((1980. + i), y0[i]);
 	sprintf(string, "%.0f", y0[i]);
 	plptex((1980. + i + .5), (y0[i] + 1.), 1., 0.,

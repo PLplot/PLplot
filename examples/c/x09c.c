@@ -1,8 +1,12 @@
-/* Demonstration of contour plotting */
-
 /* $Id$
  * $Log$
- * Revision 1.8  1993/12/06 22:38:14  mjl
+ * Revision 1.9  1994/03/30 07:21:53  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
+ *
+ * Revision 1.8  1993/12/06  22:38:14  mjl
  * Added #include <stdio.h> to pick up definition of NULL under SunOS.
  *
  * Revision 1.7  1993/08/11  19:26:49  mjl
@@ -12,13 +16,9 @@
  * No more VOID.  Now simply "void" (ahhh, much better).
 */
 
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
+/* Demonstration of contour plotting */
 
-#define PL_NEED_MALLOC
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <plplot.h>
 #include <math.h>
 
 #define XPTS    35
@@ -64,8 +64,8 @@ main(int argc, char *argv[])
 
 /* Set up function arrays */
 
-    Alloc2dGrid(&z, XPTS, YPTS);
-    Alloc2dGrid(&w, XPTS, YPTS);
+    plAlloc2dGrid(&z, XPTS, YPTS);
+    plAlloc2dGrid(&w, XPTS, YPTS);
 
     for (i = 0; i < XPTS; i++) {
 	xx = (double) (i - (XPTS / 2)) / (double) (XPTS / 2);
@@ -83,8 +83,8 @@ main(int argc, char *argv[])
     cgrid1.nx = XPTS;
     cgrid1.ny = YPTS;
 
-    Alloc2dGrid(&cgrid2.xg, XPTS, YPTS);
-    Alloc2dGrid(&cgrid2.yg, XPTS, YPTS);
+    plAlloc2dGrid(&cgrid2.xg, XPTS, YPTS);
+    plAlloc2dGrid(&cgrid2.yg, XPTS, YPTS);
     cgrid2.nx = XPTS;
     cgrid2.ny = YPTS;
 
@@ -106,7 +106,7 @@ main(int argc, char *argv[])
 
 /* Plot using identity transform */
 
-    plenv((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0, 0, 0);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(1, &mark, &space);
@@ -118,7 +118,7 @@ main(int argc, char *argv[])
 
 /* Plot using 1d coordinate transform */
 
-    plenv((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0, 0, 0);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr1, (void *) &cgrid1);
@@ -133,7 +133,7 @@ main(int argc, char *argv[])
 
 /* Plot using 2d coordinate transform */
 
-    plenv((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0, 0, 0);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
 	   pltr2, (void *) &cgrid2);

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1993/12/06 22:38:16  mjl
+ * Revision 1.4  1994/03/30 07:22:00  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
+ *
+ * Revision 1.3  1993/12/06  22:38:16  mjl
  * Added #include <stdio.h> to pick up definition of NULL under SunOS.
  *
  * Revision 1.2  1993/08/31  17:57:11  mjl
@@ -21,10 +27,7 @@
 	31 Aug 1993
 */
 
-#define PL_NEED_MALLOC
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <plplot.h>
 #include <math.h>
 
 /* Utility macros */
@@ -45,6 +48,8 @@ void plot1	(void);
 void plot2	(void);
 void plot3	(void);
 void f2mnmx	(PLFLT *, PLINT, PLINT, PLFLT *, PLFLT *);
+static void	cmap1_init1(void);
+static void	cmap1_init2(void);
 
 /* Data to plot */
 
@@ -69,6 +74,14 @@ main(int argc, char *argv[])
 
     (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
 
+/* Set up color map 0 */
+/*
+    plscmap0n(3);
+    */
+/* Set up color map 1 */
+
+    cmap1_init2();
+
 /* Initialize plplot */
 
     plinit();
@@ -85,12 +98,94 @@ main(int argc, char *argv[])
     }
     f2mnmx(&z[0][0], XPTS, YPTS, &zmin, &zmax);
 
-    plot1();
+/*    plot1();*/
     plot2();
-    plot3();
+/*    plot3();*/
 
     plend();
     exit(0);
+}
+
+/*----------------------------------------------------------------------*\
+* cmap1_init1
+*
+* Initializes color map 1 in HLS space.
+\*----------------------------------------------------------------------*/
+
+static void
+cmap1_init1(void)
+{
+    PLFLT i[4], h[4], l[4], s[4];
+
+    i[0] = 0;		/* left boundary */
+    i[1] = 0.45;	/* just before center */
+    i[2] = 0.55;	/* just after center */
+    i[3] = 1;		/* right boundary */
+
+    h[0] = 260;		/* hue -- low: blue-violet */
+    h[1] = 260;		/* only change as we go over vertex */
+    h[2] = 20;		/* hue -- high: red */
+    h[3] = 20;		/* keep fixed */
+
+#if 1
+    l[0] = 0.5;		/* lightness -- low */
+    l[1] = 0.0;		/* lightness -- center */
+    l[2] = 0.0;		/* lightness -- center */
+    l[3] = 0.5;		/* lightness -- high */
+#else
+    plscolbg(255,255,255);
+    l[0] = 0.5;		/* lightness -- low */
+    l[1] = 1.0;		/* lightness -- center */
+    l[2] = 1.0;		/* lightness -- center */
+    l[3] = 0.5;		/* lightness -- high */
+#endif
+    s[0] = 1;		/* maximum saturation */
+    s[1] = 1;		/* maximum saturation */
+    s[2] = 1;		/* maximum saturation */
+    s[3] = 1;		/* maximum saturation */
+
+    c_plscmap1l(0, 4, i, h, l, s);
+}
+
+/*----------------------------------------------------------------------*\
+* cmap1_init2
+*
+* Initializes color map 1 in HLS space.
+\*----------------------------------------------------------------------*/
+
+static void
+cmap1_init2(void)
+{
+    PLFLT i[4], h[4], l[4], s[4];
+
+    i[0] = 0;		/* left boundary */
+    i[1] = 0.45;	/* just before center */
+    i[2] = 0.55;	/* just after center */
+    i[3] = 1;		/* right boundary */
+
+    h[0] = 260;		/* hue -- low: blue-violet */
+    h[1] = 260;		/* only change as we go over vertex */
+    h[2] = 20;		/* hue -- high: red */
+    h[3] = 20;		/* keep fixed */
+
+#if 1
+    l[0] = 0.6;		/* lightness -- low */
+    l[1] = 0.0;		/* lightness -- center */
+    l[2] = 0.0;		/* lightness -- center */
+    l[3] = 0.6;		/* lightness -- high */
+#else
+    plscolbg(255,255,255);
+    l[0] = 0.5;		/* lightness -- low */
+    l[1] = 1.0;		/* lightness -- center */
+    l[2] = 1.0;		/* lightness -- center */
+    l[3] = 0.5;		/* lightness -- high */
+#endif
+    s[0] = 1;		/* saturation -- low */
+    s[1] = 0.5;		/* saturation -- center */
+    s[2] = 0.5;		/* saturation -- center */
+    s[3] = 1;		/* saturation -- high */
+
+    c_plscmap1l(0, 4, i, h, l, s);
 }
 
 /*----------------------------------------------------------------------*\
@@ -102,12 +197,15 @@ main(int argc, char *argv[])
 void 
 plot1(void)
 {
-    PLFLT shade_min, shade_max;
-    PLINT sh_color, sh_width;
+    PLFLT shade_min, shade_max, sh_color;
+    PLINT sh_cmap = 0, sh_width;
     PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
 
-    plcol(1);
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
+
+/* Plot using identity transform */
 
     shade_min = zmin + (zmax-zmin)*0.4;
     shade_max = zmin + (zmax-zmin)*0.6;
@@ -118,14 +216,15 @@ plot1(void)
     min_width = 2;
     max_width = 2;
 
-/* Plot using identity transform */
-
     plpsty(8);
-    plshade(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
-	    NULL, shade_min, shade_max, 
-	    sh_color, sh_width, min_color, min_width,
-	    max_color, max_width, plfill, 1);
+    plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
+	     shade_min, shade_max, 
+	     sh_cmap, sh_color, sh_width,
+	     min_color, min_width, max_color, max_width,
+	     plfill, 1, NULL, NULL);
 
+    plcol(1);
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
     pllab("distance", "altitude", "Bogon flux");
 }
@@ -139,28 +238,34 @@ plot1(void)
 void 
 plot2(void)
 {
-    PLFLT shade_min, shade_max;
-    PLINT sh_color, sh_width;
-    PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
-    int i;
+    PLFLT shade_min, shade_max, sh_color;
+    PLINT sh_cmap = 1, sh_width;
+    PLINT min_color = 1, min_width = 0, max_color = 0, max_width = 0;
+    int i, nmax = 14;
 
-    plcol(1);
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
 
 /* Plot using identity transform */
     
-    for (i = 0; i < 10; i++) {
-	shade_min = zmin + (zmax - zmin) * i / 10.0;
-	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
-	sh_color = i+6;
+    for (i = 0; i < nmax; i++) {
+	shade_min = zmin + (zmax - zmin) * i / (float) nmax;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (float) nmax;
+	sh_color = i / (float) (nmax-1);
 	sh_width = 2;
-	plpsty(8);
+/*	plpsty(8);*/
+	plpsty(0);
 
-	plshade(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
-		NULL, shade_min, shade_max, 
-		sh_color, sh_width, min_color, min_width,
-		max_color, max_width, plfill, 1);
+	plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
+		 shade_min, shade_max, 
+		 sh_cmap, sh_color, sh_width,
+		 min_color, min_width, max_color, max_width,
+		 plfill, 1, NULL, NULL);
     }
+
+    plcol(1);
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
     pllab("distance", "altitude", "Bogon flux");
 }
@@ -174,13 +279,14 @@ plot2(void)
 void 
 plot3(void)
 {
-    PLFLT shade_min, shade_max;
-    PLINT sh_color, sh_width;
+    PLFLT shade_min, shade_max, sh_color;
+    PLINT sh_cmap = 0, sh_width;
     PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
     int i;
 
-    plcol(1);
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
 
 /* Plot using identity transform */
     
@@ -191,11 +297,15 @@ plot3(void)
 	sh_width = 2;
 	plpsty((i + 2) % 8 + 1);
 
-	plshade(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
-		NULL, shade_min, shade_max, 
-		sh_color, sh_width, min_color, min_width,
-		max_color, max_width, plfill, 1);
+	plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
+		 shade_min, shade_max, 
+		 sh_cmap, sh_color, sh_width,
+		 min_color, min_width, max_color, max_width,
+		 plfill, 1, NULL, NULL);
     }
+
+    plcol(1);
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
     pllab("distance", "altitude", "Bogon flux");
 }

@@ -1,9 +1,14 @@
-/* Displays the plotter symbols for PLSYM */
 /* $Id$
-   $Log$
-   Revision 1.7  1993/07/28 05:47:23  mjl
-   Some minor desuckification.
-
+ * $Log$
+ * Revision 1.8  1994/03/30 07:21:51  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
+ *
+ * Revision 1.7  1993/07/28  05:47:23  mjl
+ * Some minor desuckification.
+ *
  * Revision 1.6  1993/07/02  07:06:50  mjl
  * Changed window bounds to fit well within the graphics window (page).
  *
@@ -15,30 +20,16 @@
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
  * capabilities.
- *
- * Revision 1.3  1992/09/30  18:25:19  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:15  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:55  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
+/* Displays the plotter symbols for PLSYM */
 
 #ifdef MSDOS
 #pragma message("Microsoft programmers are sissies.")
 #pragma optimize("",off)
 #endif
 
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <plplot.h>
 
 static int base[17] =
 {0, 200, 500, 600, 700, 800, 900,

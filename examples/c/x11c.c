@@ -1,19 +1,22 @@
-/* Demonstration of mesh plotting (just like x08c but mesh) */
 /* $Id$
-   $Log$
-   Revision 1.7  1993/12/08 20:25:58  mjl
-   Eliminated final pltext() call (unnecessary).
-
+ * $Log$
+ * Revision 1.8  1994/03/30 07:21:55  mjl
+ * Changes to all C example programs: special handling for malloc re: header
+ * files eliminated, include of stdio.h and stdlib.h eliminated (now done
+ * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
+ * simpler builds by the general user, some cleaning up also.
+ *
+ * Revision 1.7  1993/12/08  20:25:58  mjl
+ * Eliminated final pltext() call (unnecessary).
+ *
  * Revision 1.6  1993/02/22  23:16:19  mjl
  * Changed over to new style of initialization using plinit(), and added
  * function to parse plplot command line flags.
 */
 
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
+/* Demonstration of mesh plotting (just like x08c but mesh) */
 
-#include "plplot.h"
-#include <stdlib.h>
+#include <plplot.h>
 #include <math.h>
 
 #define   XPTS   35
