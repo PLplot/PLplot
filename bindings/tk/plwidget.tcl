@@ -1,6 +1,13 @@
 # $Id$
 # $Log$
-# Revision 1.16  1993/12/21 10:22:44  mjl
+# Revision 1.17  1993/12/22 23:09:51  mjl
+# Changes so that TK driver no longer times out on slow network connections
+# (it's just rreeaaalllyyyy ssllooowwww).  Where timeouts are a problem,
+# the client must issue the command to the server without waiting for a
+# reply, and then sit in TK wait loop until some specified condition is
+# met (usually the server sets a client interpreter variable when done).
+#
+# Revision 1.16  1993/12/21  10:22:44  mjl
 # Now route ALL communication to the client through the client_cmd proc.
 # This part reworked to not suck when using Tcl-DP.
 #
@@ -403,6 +410,26 @@ proc plw_init_plplot {w client} {
 # I want the focus
 
     focus $w.plwin
+}
+
+#----------------------------------------------------------------------------
+# plw_start
+#
+# Responsible for plplot graphics package initialization on the widget.
+#
+# Put here to reduce the possibility of a time out over a slow network --
+# the client program waits until the variable widget_is_ready is set.
+#----------------------------------------------------------------------------
+
+proc plw_start {w client} {
+
+# Crank up graphics package
+
+    $w.plwin cmd init
+
+# Inform client that we're done.
+
+    client_cmd $client "set widget_is_ready 1"
 }
 
 #----------------------------------------------------------------------------

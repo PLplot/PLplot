@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1993/12/21 10:30:24  mjl
+ * Revision 1.24  1993/12/22 23:09:53  mjl
+ * Changes so that TK driver no longer times out on slow network connections
+ * (it's just rreeaaalllyyyy ssllooowwww).  Where timeouts are a problem,
+ * the client must issue the command to the server without waiting for a
+ * reply, and then sit in TK wait loop until some specified condition is
+ * met (usually the server sets a client interpreter variable when done).
+ *
+ * Revision 1.23  1993/12/21  10:30:24  mjl
  * Changed to separate initialization routines for dp vs tk drivers.
  * Reworked server_cmd function to work well with both Tcl-DP and TK send;
  * also method for putting commands in the background is better thought out
@@ -573,6 +580,7 @@ tk_start(PLStream *pls)
 /*    tcl_cmd(pls, "pltk_init"); */
     tcl_cmd(pls, "set plw_create_proc plw_create");
     tcl_cmd(pls, "set plw_init_proc plw_init");
+    tcl_cmd(pls, "set plw_start_proc plw_start");
     tcl_cmd(pls, "set plw_flash_proc plw_flash");
     tcl_cmd(pls, "set plw_end_proc plw_end");
 
@@ -612,10 +620,7 @@ tk_start(PLStream *pls)
 /* Initialize data link */
 
     link_init(pls);
-/*
-    server_cmd( pls, "$update_proc", 1 );
-    tcl_cmd(pls, "$update_proc");
-*/
+
     return;
 }
 
@@ -914,7 +919,6 @@ plwindow_init(PLStream *pls)
 
 /* Create the plframe widget & anything else you want with it. */
 
-/*	server_cmd( pls, "update", 0 );*/
 	server_cmd( pls, "$plw_create_proc $plwindow", 0 );
     }
     else {
@@ -923,7 +927,6 @@ plwindow_init(PLStream *pls)
 
 /* Initialize the widget(s) */
 
-/*    server_cmd( pls, "update", 0 );*/
     server_cmd( pls, "$plw_init_proc $plwindow [list $client]", 1 );
     tk_wait(pls, "[info exists plwidget]" );
 
@@ -945,8 +948,8 @@ plwindow_init(PLStream *pls)
 
 /* Start up remote plplot */
 
-/*    server_cmd( pls, "update", 0 );*/
-    server_cmd( pls, "$plwidget cmd init", 0 );
+    server_cmd( pls, "$plw_start_proc $plwindow [list $client]", 1 );
+    tk_wait(pls, "[info exists widget_is_ready]" );
 }
 
 /*----------------------------------------------------------------------*\
