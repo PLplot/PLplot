@@ -14,6 +14,7 @@ static PLGraphicsIn gin;
 
 static int locate_mode;
 static int test_xor;
+static int fontset = 1;
 
 /* Options data structure definition. */
 
@@ -34,6 +35,14 @@ static PLOptionTable options[] = {
     PL_OPT_BOOL,
     "-xor",
     "Turns on test of XOR" },
+{
+    "font",			/* For switching between font set 1 & 2 */
+    NULL,
+    NULL,
+    &fontset,
+    PL_OPT_INT,
+    "-font number",
+    "Selects stroke font set (0 or 1, def:1)" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -88,6 +97,13 @@ main(int argc, char *argv[])
 /* Initialize plplot */
 
     plinit();
+
+/* Select font set as per input flag */
+
+    if (fontset)
+	plfontld(1);
+    else
+	plfontld(0);
 
 /* Set up the data */
 /* Original case */
