@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.9  1995/05/08 20:31:24  mjl
+# Revision 1.10  1995/06/29 18:46:57  mjl
+# Added code to make it easy to switch between using plframe's and plxframes,
+# as a test of each.
+#
+# Revision 1.9  1995/05/08  20:31:24  mjl
 # Eliminated the old enter-leave crosshair bindings since now this is done
 # by the plframe automatically (and done better).
 #
@@ -32,6 +36,10 @@
 
 wm title . "x01c -- TK version"
 plstdwin .
+
+# If you just want a bare plframe, set this to 0.
+
+set use_plxframe 1
 
 ###############################################################################
 # Set up the menubar and message widgets.
@@ -65,18 +73,16 @@ pack append . \
 tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
 
 ###############################################################################
-#
-# This creates the plframe "megawidget".  If you just want a bare plframe,
-# change "plxframe" to "plframe".
 
-plxframe .plw
-pack append . .plw {left expand fill}
+if { $use_plxframe == 1 } then {
+    plxframe .plw
+    pack append . .plw {left expand fill}
 
 ###############################################################################
 # Here we show off some of what you can do with Tk bindings and PLplot.
 # Bring up graphic crosshairs.
 
-.plw.plwin configure -xhairs 1
+    .plw.plwin configure -xhairs 1
 
 # Here is a binding which allows you to obtain the world coordinates of a
 # point at any time you want it.  This is better than the "locate mode" of
@@ -88,7 +94,12 @@ pack append . .plw {left expand fill}
 # the regexp parser to pull out the world x and y coordinates, etc.  Have
 # fun!
 
-bind .plw.plwin <Shift-1> { get_coords %x %y };
+    bind .plw.plwin <Shift-1> { get_coords %x %y };
+
+} else {
+    plframe .plwin
+    pack append . .plwin {left expand fill}
+}
 
 proc get_coords {x y} {
     set w [.plw.plwin report wc $x $y]
