@@ -45,15 +45,18 @@
     (literal ">")))
 
 (element anchor
-  (make sequence
-    (make element gi: "SPAN"
-	  attributes: '(("CLASS"  "overline"))
-      (literal "S"))
-    (literal "(")
-    (make element gi: "SPAN"
-	  attributes: '(("CLASS"  "underline"))
-      (literal "freq"))
-    (literal ")")))
+  (if (equal? "over-under" 
+              (attribute-string (normalize "id") (current-node)))
+    (make sequence
+      (make element gi: "SPAN"
+	    attributes: '(("CLASS"  "overline"))
+        (literal "S"))
+      (literal "(")
+      (make element gi: "SPAN"
+	    attributes: '(("CLASS"  "underline"))
+        (literal "freq"))
+      (literal ")"))
+    (make sequence (literal ""))))
     
 (define %html-ext% ".@HTML_EXT@")
 

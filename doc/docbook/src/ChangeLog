@@ -1,5 +1,8 @@
 2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* plplotdoc-html.dsl.in (element anchor): Only generates the
+	<SPAN> output for <anchor>s having id="over-under".
+
 	* pdftex.map: Added more aliases for the Computer Modern fonts.
 
 	* jadetex.cfg: Hyperlinks are colored red now, instead of the
