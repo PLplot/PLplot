@@ -19,13 +19,24 @@ package plplot.core;
 
 public class PLStream {
 
+// The PLplot core API function calls.
+    public native void col0( int icol );
+    public native void end();
+    public native void env( float xmin, float xmax, float ymin, float ymax,
+                            int just, int axis );
+    public native void fontld( int fnt );
+    public native void init();
+    public native void lab( String xlabel, String ylabel, String tlabel );
+    public native void line( int n, float[] x, float[] y );
+    public native void poin( int n, float[] x, float[] y, int code );
+
+// Static code block to get the PLplot dynamic library loaded in.
     static {
         System.loadLibrary( "plplot" );
     }
 
-    public PLStream() {
-        System.out.println( "PLStream constructed." );
-    }
+// Now comes stuff we need done in Java.
+    public PLStream() {}
 
     public void xyz() { System.out.println( "In xyz()" ); }
 }
