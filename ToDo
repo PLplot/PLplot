@@ -50,7 +50,6 @@ Areas currently under development
    . rewrite palette tools in itcl
    . add a way to pick direction in hue to use when interpolating between
      colors
-   . fix cmap0 tool so that setting the background (color 0) works
 
  - Add an initialization file capability.  This would be very nice from a
    customization standpoint, and inevitably I will want to add it before
@@ -90,7 +89,8 @@ Areas currently under development
      fixing this include: (a) providing a list of colors for the xwin
      driver to copy and allocate and (b) do not install the xwin colormap
      in the main window and instead share the colormap with windows that
-     want it through a plframe extension.
+     want it through a plframe extension.  Right now because of continued
+     uncertainties the custom colormap option in xwin.c is disabled.
 
  - fix 2d function plotter API's: Most general function in each
    category should accept transformer function and transformer data, to work
@@ -100,21 +100,21 @@ Areas currently under development
 	- add condition code array handler to plshade
 	  (upgrade plAlloc.. to handle char variables?)
 	- fix API for surface plotter
-	- add vector field plot?
+	- vector field plotter?
 	- better document the 2d function plotter API in plfcont, etc.
 
  - File familying is hosed.
 
  - Various color drivers should be upgraded to work similar to the tek
    driver, with support for setting the color palette from the user
-   program as well as cmap1.  I (Maurice) will probably only be supporting
-   the tek, X, ps, and Amiga drivers in this regard, so contributions are
-   welcomed.  The tek driver shows how to get the most out of a 16 color
-   display.
+   program (API) as well as cmap1.  I (Maurice) will probably only be
+   supporting the tek, X, ps, and Amiga drivers in this regard, so
+   contributions are welcomed.  The tek driver shows how to get the most
+   out of a 16 color display.
 
  - Write plcfill() or whatever to cheaply fill 2d functions based on cell
    value only.  Should be much faster than plshade for many grid points
-   (e.g. 128 x 128).
+   (e.g. 128 x 128).  The other option is raster, see below.
 
  - The color map selection in the versaterm driver still doesn't work
    quite right.  When running x16c, the following happens:
@@ -129,8 +129,9 @@ Areas currently under development
    it runs on lots of machines (originated with PC's but now supported
    under Unix and Amiga).  Any PD code for writing it from Unix?
 
- - support command line arg reading from Fortran under the big 4 if
-   possible: HP, Sunos, Unicos, AIX.
+ - support command line arg reading from Fortran under whatever important
+   OS's support it.  One trouble here is that it may require an additional
+   oddball library to be linked in, and I'm not thrilled about that.
 
  - metafile produced on the Amiga isn't quite right!  Compiler bug?
 
@@ -142,18 +143,19 @@ Areas currently under development
 
  - figure out why plrender is barfing on my old metafiles under ~/data
 
- - add support for shared libs on AIX
+ - add support for shared libs on AIX, Irix, Alpha/OSF
 
  - check out shared library support under SAS/C -- supposed to be easy
    (6.0 and later)
 
- - Do something about the Tcl/TK shared lib situation.
+ - Do something about the Tcl/TK shared lib situation (not really PLplot,
+   but related).
 
  - Split off Tcl-DP stuff from Tk stuff better, get it working with DP-lite.
 
  - put pen width option in TK driver
 
- - const'ify plplot API
+ - const'ify plplot API where appropriate.
 
  - Option in TK driver to preserve aspect ratio during zooms.
 
@@ -177,12 +179,10 @@ Things planned for sometime in the future.
 
  - graphical entities to be "objectized", so they are easier to manipulate
    from plrender.  Likely candidates: plot, string, character, tick, axis,
-   line, etc.
+   line, etc.  But high performance must not be sacrificed.
 
  - Better use of driver intelligence, esp. for text -- the postscript driver
    should be capable of using postscript fonts instead of the Hershey fonts.
-
- - Explicit support for plotting points, lines in 3d space.
 
  - Cloned streams, for plotting to multiple devices simultaneously.
 
@@ -197,12 +197,14 @@ BUGS
 ----
 
 The following are known bugs or failings of PLplot, that are unlikely to
-be fixed any time soon.
+be fixed any time soon if at all.
 
  - ps output files do not work with up(1).  
 
  - The contour plotter has a bug that causes it to occasionally fail for
    some data sets.  One known example is if there is no x-dependence.
    If you experience problems with other data try to work up a demo and
-   send it to me and then maybe I can track down the problem.
+   send it to me and then maybe I can track down the problem.  There has
+   been some talk about replacing the contourer with a better algorithm.
+   Volunteers needed.
 
