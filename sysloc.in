@@ -908,7 +908,7 @@ if test "$with_qhull" = "yes"; then
     AC_CHECK_LIB(qhull, qh_new_qhull, [ 
         AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
         QHULLLIBS="-lqhull"
-        NNLIBS='$(top_builddir)/lib/nn/libnn.la' ])
+        NNLIBS='$(top_builddir)/lib/nn/libnn.la' ], [ with_qhull="no" ])
 fi
 
 
