@@ -864,6 +864,36 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(jtype) char *OUTPUT "StringBuffer"
 %typemap(jstype) char *OUTPUT "StringBuffer"
 
+/* How to convert Java(JNI) type to requested C type */
+%typemap(in) char *OUTPUT {
+
+  $1 = NULL;
+  if($input != NULL) {
+    /* Get the String from the StringBuffer */
+    jmethodID setLengthID;
+    jclass sbufClass = (*jenv)->GetObjectClass(jenv, $input);
+    jmethodID toStringID = (*jenv)->GetMethodID(jenv, sbufClass, "toString", "()Ljava/lang/String;");
+    jstring js = (jstring) (*jenv)->CallObjectMethod(jenv, $input, toStringID);
+
+    /* Convert the String to a C string */
+    const char *pCharStr = (*jenv)->GetStringUTFChars(jenv, js, 0);
+
+    /* Take a copy of the C string as the typemap is for a non const C string */
+    jmethodID capacityID = (*jenv)->GetMethodID(jenv, sbufClass, "capacity", "()I");
+    jint capacity = (*jenv)->CallIntMethod(jenv, $input, capacityID);
+    $1 = (char *) malloc(capacity+1);
+    strcpy($1, pCharStr);
+
+    /* Release the UTF string we obtained with GetStringUTFChars */
+    (*jenv)->ReleaseStringUTFChars(jenv,  js, pCharStr);
+
+    /* Zero the original StringBuffer, so we can replace it with the result */
+    setLengthID = (*jenv)->GetMethodID(jenv, sbufClass, "setLength", "(I)V");
+    (*jenv)->CallVoidMethod(jenv, $input, setLengthID, (jint) 0);
+  }
+}
+
+
 /* How to convert the C type to the Java(JNI) type */
 %typemap(argout) char *OUTPUT {
 

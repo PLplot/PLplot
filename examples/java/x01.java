@@ -63,7 +63,7 @@ class x01 {
 
 	StringBuffer version = new StringBuffer(80);
 	// plgver no longer works for unexplained reasons.
-//	pls.plgver(version);
+	pls.plgver(version);
 	System.out.println("PLplot library version: " + version);
 
     // Initialize PLplot.
