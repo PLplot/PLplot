@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1994/10/12 17:17:45  mjl
+# Revision 1.5  1995/06/29 18:47:19  mjl
+# Added code to make it easy to switch between using plframe's and plxframes',
+# as a test of each.  Also updated to new matrix syntax.
+#
+# Revision 1.4  1994/10/12  17:17:45  mjl
 # Made it possible to create arbitrarily many toplevels.
 #
 # Revision 1.3  1994/07/27  17:45:09  furnish
@@ -29,19 +33,29 @@ plstdwin .
 
 set child_count 1
 
+# If you just want a bare plframe, set this to 0.
+
+set use_plxframe 1
+
 ###############################################################################
 # Set up the menubar and message widgets for main window.
 
 proc open_main {} {
 
-    global child_count
+    global use_plxframe
+
+    if { $use_plxframe == 1 } then {
+	set plwin .plw.plwin
+    } else {
+	set plwin .plwin
+    }
 
     frame .menu -relief raised -borderwidth 3
 
-    button .menu.one -text "One" -command "1 .plw.plwin"
+    button .menu.one -text "One" -command "1 $plwin"
     pack append .menu .menu.one {left expand fill}
 
-    button .menu.two -text "Two" -command "2 .plw.plwin"
+    button .menu.two -text "Two" -command "2 $plwin"
     pack append .menu .menu.two {left expand fill}
 
     button .menu.open -text "Open new" -command "open_child"
@@ -64,11 +78,13 @@ proc open_main {} {
 
     tk_menuBar .menu .menu.one .menu.two .menu.exit
 
-# This creates the plframe "megawidget".  If you just want a bare plframe,
-# change "plxframe" to "plframe".
-
-    plxframe .plw
-    pack append . .plw {left expand fill}
+    if { $use_plxframe == 1 } then {
+	plxframe .plw
+	pack append . .plw {left expand fill}
+    } else {
+	plframe .plwin
+	pack append . .plwin {left expand fill}
+    }
 }
 
 ###############################################################################
@@ -76,21 +92,27 @@ proc open_main {} {
 
 proc open_child {} {
 
-    global child_count
+    global child_count use_plxframe
 
     set w .$child_count
 
     toplevel $w
     plstdwin $w
 
+    if { $use_plxframe == 1 } then {
+	set plwin $w.plw.plwin
+    } else {
+	set plwin $w.plwin
+    }
+
 # Set up the second menubar and message widgets.
 
     frame $w.menu -relief raised -borderwidth 3
 
-    button $w.menu.three -text "Three" -command "plot2 $w.plw.plwin"
+    button $w.menu.three -text "Three" -command "plot2 $plwin"
     pack append $w.menu $w.menu.three {left expand fill}
 
-    button $w.menu.four -text "Four" -command "plot3 $w.plw.plwin"
+    button $w.menu.four -text "Four" -command "plot3 $plwin"
     pack append $w.menu $w.menu.four {left expand fill}
 
     button $w.menu.exit -text "Dismiss" -command "destroy $w"
@@ -108,10 +130,15 @@ proc open_child {} {
     tk_menuBar $w.menu $w.menu.three $w.menu.four
 
 # This creates the plframe "megawidget".  If you just want a bare plframe,
-# change "plxframe" to "plframe".
+# change use_plxframe to 0.
 
-    plxframe $w.plw
-    pack append $w $w.plw {left expand fill}
+    if { $use_plxframe == 1 } then {
+	plxframe $w.plw
+	pack append $w $w.plw {left expand fill}
+    } else {
+	plframe $w.plwin
+	pack append $w $w.plwin {left expand fill}
+    }
 
     incr child_count
 }
@@ -169,20 +196,20 @@ proc plot1 {w} {
     matrix y f $npts
 
     for {set i 0} {$i < $npts} {incr i} {
-	$x $i = [expr $xoff + $xscale * ($i + 1) / $npts]
-	$y $i = [expr $yoff + $yscale * pow([$x $i],2)]
+	x $i = [expr $xoff + $xscale * ($i + 1) / $npts]
+	y $i = [expr $yoff + $yscale * pow([x $i],2)]
     }
 
-    set xmax [$x [expr $npts-1]]
-    set ymax [$y [expr $npts-1]]
+    set xmax [x [expr $npts-1]]
+    set ymax [y [expr $npts-1]]
 
     matrix x1 f 6
     matrix y1 f 6
 
     for {set i 0} {$i < 6} {incr i} {
 	set j [expr $i*10+3]
-	$x1 $i = [$x $j]
-	$y1 $i = [$y $j]
+	x1 $i = [x $j]
+	y1 $i = [y $j]
     }
 
     $w cmd plcol 1
@@ -193,12 +220,12 @@ proc plot1 {w} {
     # plot the data points
 
     $w cmd plcol 9
-    $w cmd plpoin 6 $x1 $y1 9
+    $w cmd plpoin 6 x1 y1 9
 
     # draw the line through the data
 
     $w cmd plcol 4
-    $w cmd plline $npts $x $y
+    $w cmd plline $npts x y
 }
 
 # This is supposed to work just like the plot2() in x01c.c
@@ -216,13 +243,13 @@ proc plot2 {w} {
 
     for {set i 0} {$i < 101} {incr i} {
 	set x [expr ($i - 19.)/6.]
-	$x1 $i = $x
-	$y1 $i = 1
-	if {$x != 0} { $y1 $i = [expr sin($x)/$x] }
+	x1 $i = $x
+	y1 $i = 1
+	if {$x != 0} { y1 $i = [expr sin($x)/$x] }
     }
 
     $w cmd plcol 3
-    $w cmd plline 101 $x1 $y1
+    $w cmd plline 101 x1 y1
 }
 
 # This is supposed to work just like the plot3() in x01c.c
@@ -244,16 +271,16 @@ proc plot3 {w} {
     matrix mark i 1
     matrix space i 1
 
-    $mark 0 = 1500
-    $space 0 = 1500
-    $w cmd plstyl 1 $mark $space
+    mark 0 = 1500
+    space 0 = 1500
+    $w cmd plstyl 1 mark space
 
     $w cmd plcol 2
     $w cmd plbox "g" 30.0 0 "g" 0.2 0
 
-    $mark 0 = 0
-    $space 0 = 0
-    $w cmd plstyl 0 $mark $space
+    mark 0 = 0
+    space 0 = 0
+    $w cmd plstyl 0 mark space
 
     $w cmd plcol 3
     $w cmd pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
@@ -262,12 +289,12 @@ proc plot3 {w} {
     matrix y f 101
 
     for {set i 0} {$i < 101} {incr i} {
-	$x $i = [expr 3.6 * $i]
-	$y $i = [expr sin([$x $i] * 3.141592654 / 180.0)]
+	x $i = [expr 3.6 * $i]
+	y $i = [expr sin([x $i] * 3.141592654 / 180.0)]
     }
 
     $w cmd plcol 4
-    $w cmd plline 101 $x $y
+    $w cmd plline 101 x y
 }
 
 ###############################################################################
