@@ -2,7 +2,7 @@
 
 use PDL;
 use PDL::Graphics::PLplot;
-use Math::Trig;
+use Math::Trig qw [pi];
 
 $xscale = 6.;
 $yscale = 1.;
@@ -14,14 +14,14 @@ sub plot1 {
   my $x = pdl ($xoff + $xscale * pdl ([1..60]) / 60.0);
   my $y = pdl ($yoff + $yscale * ($x ** 2.));
 
-  $xmin = $x->index(0);
-  $xmax = $x->index(59);
-  $ymin = $y->index(0);
-  $ymax = $y->index(59);
+  $xmin = $x->index (0);
+  $xmax = $x->index (59);
+  $ymin = $y->index (0);
+  $ymax = $y->index (59);
 
   my $idx = pdl ([0..5]) * 10 + 3;
-  $xs = $x->index($idx);
-  $ys = $y->index($idx);
+  $xs = $x->index ($idx);
+  $ys = $y->index ($idx);
 
   # Set up the viewport and window using PLENV. The range in X is
   # 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
@@ -60,7 +60,7 @@ sub plot2 {
 
   my $x = (pdl ([0..99]) - 19.0) / 6.0;
   my $y = sin ($x) / $x;
-  $y->index(which ($x == 0)) .= 1.0;
+  $y->index (which ($x == 0)) .= 1.0;
 
   # Draw the line
 
@@ -115,7 +115,7 @@ plssub (2, 2);
 
 # Initialize plplot
 
-plinit ();
+plinit;
 
 # Set up the data
 # Original case
