@@ -2,7 +2,7 @@
  *
  * Copyright (C) 2002, 2004  Andrew Roach
  * Copyright (C) 2002  Maurice LeBrun
- * Copyright (C) 2002, 2004  Alan W. Irwin
+ * Copyright (C) 2002, 2004, 2005  Alan W. Irwin
  * Copyright (C) 2003, 2004  Joao Cardoso
  * Copyright (C) 2003, 2004  Rafael Laboissiere
  * Copyright (C) 2004  Andrew Ross
@@ -70,12 +70,14 @@
 #include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
-#include "plfci.h"
 #ifdef HAVE_FREETYPE
 #include "plfreetype.h"
+#include "plfci.h"
 
 #define FT_Data _FT_Data_
 
+/* Font lookup table that is constructed in plD_FreeType_init*/
+FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 /*              TOP LEVEL DEFINES       */
 
 /*  Freetype lets you set the text size absolutely. It also takes into
@@ -119,7 +121,7 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args);
 /*  Private prototypes for use in this file only */
 
 static void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, int y, short colour );
-static void FT_SetFace( PLStream *pls, int fnt );
+static void FT_SetFace( PLStream *pls, PLUNICODE fci );
 static PLFLT CalculateIncrement( int bg, int fg, int levels);
 static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
 static FT_ULong hershey_to_unicode (char in);
@@ -203,28 +205,6 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
 	    if (text[i+1]==esc) continue;
 
 	    switch(text[i+1]) {
-	    case 'f':  /* Change Font */
-	    case 'F':
-                switch (text[i+2]) {
-		case 'r':
-		case 'R':
-		    FT_SetFace( pls ,2);
-		    break;
-		case 'i':
-		case 'I':
-		    FT_SetFace( pls ,3);
-		    break;
-		case 's':
-		case 'S':
-		    FT_SetFace( pls ,4);
-		    break;
-		default:
-		    FT_SetFace( pls ,1);
-		    break;
-		}
-                /* FT_Set_Transform( FT->face, &FT->matrix, &FT->pos ); by turning this transformation off, we get slightly better results */
-                i+=2;
-                break;
 
 	    case 'u': /* super script */
 	    case 'd': /* subscript */
@@ -234,6 +214,9 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
                 break;
 	    }
 
+        } else if ((text[i]>> (7*4)) == 0x1) {
+	   /* FCI in text stream; change font accordingly. */
+	   FT_SetFace(pls , text[i++]);
         } else {
 
 	/* see if we have kerning for the particular character pair */
@@ -333,33 +316,6 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
 
 	    switch(text[i+1]) {
 
-	    case 'f':  /* Change Font */
-	    case 'F':
-                switch (text[i+2]) {
-		case 'r':
-		case 'R':
-		    FT_SetFace( pls,2);
-		    break;
-		case 'i':
-		case 'I':
-		    FT_SetFace( pls,3);
-		    break;
-		case 's':
-		case 'S':
-		    FT_SetFace( pls,4);
-		    break;
-		default:
-		    FT_SetFace( pls,1);
-		    break;
-		}
-
-                FT=(FT_Data *)pls->FT;
-                FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
-                i+=2;
-                break;
-
-
-
 /*
  *  We run the OFFSET for the super-script and sub-script through the
  *  transformation matrix so we can calculate nice and easy the required
@@ -390,6 +346,11 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
                 break;
 	    }
 
+        } else if ((text[i]>> (7*4)) == 0x1) {
+	   /* FCI in text stream; change font accordingly. */
+	   FT_SetFace(pls , text[i]);
+	   FT=(FT_Data *)pls->FT;
+	   FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
         } else {
 	/* see if we have kerning for the particular character pair */
 	    if ((last_char!=-1)&&(i>0)&&FT_HAS_KERNING(FT->face)) {
@@ -481,20 +442,47 @@ void plD_FreeType_init(PLStream *pls)
     FT_Data *FT;
     char *a;
 /* font paths and file names can be long so leave generous (1024) room */
-    char font_path[1024];
-    const char *env_var_names[]={"PLPLOT_NORMAL_FONT","PLPLOT_ROMAN_FONT",
-				 "PLPLOT_ITALIC_FONT","PLPLOT_SCRIPT_FONT",
-				 "PLPLOT_SYMBOL_FONT"};
+    char font_dir[1024];
+    /* N.B. must be in exactly same order as TrueTypeLookup */
+    const char *env_font_names[N_TrueTypeLookup] = {
+         "PLPLOT_FREETYPE_SANS_FONT",
+         "PLPLOT_FREETYPE_SERIF_FONT",
+         "PLPLOT_FREETYPE_MONO_FONT",
+         "PLPLOT_FREETYPE_SCRIPT_FONT",
+         "PLPLOT_FREETYPE_SYMBOL_FONT",
+         "PLPLOT_FREETYPE_SANS_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SERIF_ITALIC_FONT",
+         "PLPLOT_FREETYPE_MONO_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SANS_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_MONO_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SANS_BOLD_FONT",
+         "PLPLOT_FREETYPE_SERIF_BOLD_FONT",
+         "PLPLOT_FREETYPE_MONO_BOLD_FONT",
+         "PLPLOT_FREETYPE_SCRIPT_BOLD_FONT",
+         "PLPLOT_FREETYPE_SYMBOL_BOLD_FONT",
+         "PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT",
+         "PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT",
+         "PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT",
+         "PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT"
+    };
     short i;
 
 #if defined(MSDOS) || defined(WIN32)
     static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
 				       "symbol.ttf"};
 #else
-    const char *default_unix_font_path=PL_FREETYPE_FONT_DIR;
-    static char *default_font_names[]={PL_FREETYPE_NORMAL,PL_FREETYPE_ROMAN,
-				       PL_FREETYPE_ITALIC,PL_FREETYPE_SCRIPT,
-				       PL_FREETYPE_SYMBOL};
+    const char *default_unix_font_dir=PL_FREETYPE_FONT_DIR;
 #endif
 
     if (pls->FT) {
@@ -520,7 +508,8 @@ void plD_FreeType_init(PLStream *pls)
     if ( FT_Init_FreeType( &FT->library ) )
 	plexit("Could not initialise Freetype library");
 
-    FT->cfont=PL_UNDEFINED;
+    /* set to an impossible value for an FCI */
+    FT->fci=0x0;
 
 #if defined(MSDOS) || defined(WIN32)
 
@@ -533,10 +522,10 @@ void plD_FreeType_init(PLStream *pls)
  */
 
     if (access("c:/windows/fonts/arial.ttf", F_OK)==0)
-	strcpy(font_path,"c:/windows/fonts/");
+	strcpy(font_dir,"c:/windows/fonts/");
 
     else if (access("c:/windows/system/arial.ttf", F_OK)==0)
-	strcpy(font_path,"c:/windows/system/");
+	strcpy(font_dir,"c:/windows/system/");
 
     else
 	plwarn("Could not find font path; I sure hope you have defined fonts manually !");
@@ -545,45 +534,27 @@ void plD_FreeType_init(PLStream *pls)
 
 /*
  *  For Unix systems, we will set the font path up a little differently in
- *  that "/usr/share/fonts/truetype/" has been set as the default path, but
- *  the user can override this by setting the environmental variable
- *  "PLPLOT_FREETYPE_FONT_PATH" to something else.
+ *  that the configured PL_FREETYPE_FONT_DIR has been set as the default path,
+ *  but the user can override this by setting the environmental variable
+ *  "PLPLOT_FREETYPE_FONT_DIR" to something else.
  *  NOTE WELL - the trailing slash must be added for now !
  */
 
-    if ((a = getenv("PLPLOT_FREETYPE_FONT_PATH")) != NULL)
-        strcpy(font_path,a);
+    if ((a = getenv("PLPLOT_FREETYPE_FONT_DIR")) != NULL)
+        strcpy(font_dir,a);
     else
-        strcpy(font_path,default_unix_font_path);
+        strcpy(font_dir,default_unix_font_dir);
 
 #endif
 
 /*
- * Next we go through and fill out the FT->font_name entries with
- * values for the four possible "cfont" settings. The plplot documentation
- * defines these a little differently from the PS.C driver:
- *   Font       Plplot name     ps.c name       plfreetype ms-dos/unix
- *   ----       -----------     ---------       -----------------
- *     1        normal          "Times-Roman"           arial
- *     2        roman           "Times-Roman"           times
- *     3        italic          "Times-Italic"        times-italic
- *     4        script          "Helvetica"             comic
- *     5        greek                                   symbol
- *
- *  Under plplot, the "normal" font is actually a sans-serifed font, while
- *  ps.c defines it as times-roman, a serifed font. For the freetype
- *  implementation I will define sans-serifed font, arial.
- *
- * The driver looks for 5 environmental variables where the path and name of
- * these fonts can be OPTIONALLY set, overriding the "guessed" values.
- *
- * The naming priority order is:  1) Overridden by command line;
- *                                2) Set via enviro variables
- *                                3) "guessed" by program
+ * The driver looks for N_TrueTypeLookup  environmental variables 
+ * where the path and name of these fonts can be OPTIONALLY set, 
+ * overriding the configured default values.
  */
 
-    for (i=0; i<5; i++) {
-	if ((a = getenv(env_var_names[i])) != NULL) {
+    for (i=0; i<N_TrueTypeLookup; i++) {
+	if ((a = getenv(env_font_names[i])) != NULL) {
 
 /*
  *  Work out if we have been given an absolute path to a font name, or just
@@ -602,22 +573,24 @@ void plD_FreeType_init(PLStream *pls)
 		strcpy(FT->font_name[i],a);
 
 	    else {
-		strcpy(FT->font_name[i],font_path);
+		strcpy(FT->font_name[i],font_dir);
 		strcat(FT->font_name[i],a);
 	    }
 
 	} else {
-	    strcpy(FT->font_name[i],font_path);
-	    strcat(FT->font_name[i],default_font_names[i]);
+	    strcpy(FT->font_name[i],font_dir);
+	    strcat(FT->font_name[i],TrueTypeLookup[i].pfont);
 	}
 
 	if (access(FT->font_name[i], F_OK)!=0) {
 	    char msgbuf[1024];
 	    sprintf(msgbuf,
-		    "Possible error defining one of the freetype compatible fonts:\n %s",
+		    "plD_FreeType_init: Could not find the freetype compatible font:\n %s",
 		    FT->font_name[i]);
 	    plwarn(msgbuf);
 	}
+        FontLookup[i].fci = TrueTypeLookup[i].fci;
+        FontLookup[i].pfont = FT->font_name[i];
     }
 /*
  * Next, we check to see if -drvopt has been used on the command line to
@@ -628,36 +601,47 @@ void plD_FreeType_init(PLStream *pls)
 
 
 /*----------------------------------------------------------------------*\
- * FT_SetFace( PLStream *pls, int fnt )
+ * FT_SetFace( PLStream *pls, PLUNICODE fci )
  *
  * Sets up the font face and size
 \*----------------------------------------------------------------------*/
 
-void FT_SetFace( PLStream *pls, int fnt )
+void FT_SetFace( PLStream *pls, PLUNICODE fci)
 {
-    FT_Data *FT=(FT_Data *)pls->FT;
-    double font_size = pls->chrht * 72/25.4; /* font_size in points, chrht is in mm */
-    FT->chrht=pls->chrht;
-
-    if (FT->face!=NULL) {
-	FT_Done_Face(FT->face);
-	FT->face=NULL;
-    }
-
-    if (FT->face==NULL) {
-	if (FT_New_Face( FT->library,FT->font_name[fnt-1],
-			 0,&FT->face)) plexit("Loading a font in freetype");
-	FT->cfont=fnt;
-    }
-
-    FT_Set_Char_Size(FT->face,0, font_size * 64/TEXT_SCALING_FACTOR,pls->xdpi, pls->ydpi );
+   FT_Data *FT=(FT_Data *)pls->FT;
+   double font_size = pls->chrht * 72/25.4; /* font_size in points, chrht is in mm */
+   FT->chrht=pls->chrht;
+   if (fci != FT->fci) {
+      char *font_name = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
+      if (font_name == NULL) {
+	 if (FT->fci == 0x0)
+	   plexit("FT_SetFace: Bad FCI and no previous valid font to fall back on");
+	 else
+	   plwarn("FT_SetFace: Bad FCI.  Falling back to previous font.");
+      } else {
+	 FT->fci=fci;
+	 
+	 if (FT->face!=NULL) {
+	    FT_Done_Face(FT->face);
+	    FT->face=NULL;
+	 }
+	 
+	 if (FT->face==NULL) {
+	    if (FT_New_Face( FT->library,font_name, 0,&FT->face))
+	      plexit("FT_SetFace: Error loading a font in freetype");
+	 }
+      }
+   }
+   FT_Set_Char_Size(FT->face,0, 
+		    font_size * 64/TEXT_SCALING_FACTOR,pls->xdpi,
+		    pls->ydpi );
 }
 
 /*----------------------------------------------------------------------*\
  * plD_render_freetype_text()
  *
  * Transforms the font
- * calculates real-world bitmap coordis from plplot ones
+ * calculates real-world bitmap coordinates from plplot ones
  * renders text using freetype
 \*----------------------------------------------------------------------*/
 
@@ -672,11 +656,12 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     PLINT clxmin, clxmax, clymin, clymax;
     PLFLT Sin_A,Cos_A;
     FT_Vector adjust;
+    PLUNICODE fci;
 
 
 /*
  *  First of all we will see if we are buffering the output. If we are,
- *  then we will take this opportunity to save the text to out local
+ *  then we will take this opportunity to save the text to our local
  *  cached buffer here.
  */
     if ((pls->plbuf_write==1)&&(FT->redraw==0))
@@ -686,11 +671,12 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
 {
 
 /*
- *   Work out if the either the font size, or the font face has changed.
- *   If it has, then we will reload the font face with the new dimentions
+ *   Work out if either the font size or the font face has changed.
+ *   If either has, then we will reload the font face.
  */
-    if ((FT->cfont!=pls->cfont)||(FT->chrht!=pls->chrht))
-        FT_SetFace(pls,pls->cfont);
+    plgfci(&fci);
+    if ((FT->fci!=fci)||(FT->chrht!=pls->chrht))
+        FT_SetFace(pls,fci);
 
 
 /*  this will help work out underlining and overlining*/
@@ -1147,6 +1133,7 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
     FT_Data *FT=(FT_Data *)pls->FT;
     int x,y;
     FT_Vector  adjust;
+    PLUNICODE fci;
 
     x=args->x/FT->scale;
 
@@ -1184,8 +1171,8 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
     x+=adjust.x;
     y-=adjust.y;
 
-    if ((args->font_face<1)||(args->font_face>4)) args->font_face=1;
-    FT_SetFace( pls,args->font_face);
+    plgfci(&fci);
+    FT_SetFace(pls,fci);
 
     FT=(FT_Data *)pls->FT;
     FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
