@@ -3,24 +3,29 @@
 // Geoffrey Furnish
 // 17 October 1994
 //---------------------------------------------------------------------------//
-// This example program demonstrates the use of the plstream C++
-// class, and some aspects of its improvements over the klunky C API,
-// mostly those relating to 2-d plotting.
+// This example program demonstrates the use of the plstream C++ class, and
+// some aspects of its improvements over the klunky C API, mostly those
+// relating to 2-d plotting.
 //---------------------------------------------------------------------------//
 // $Id$
 // 
 // $Log$
-// Revision 1.1  1994/10/18 16:25:48  furnish
+// Revision 1.2  1995/06/01 21:42:25  mjl
+// Changes to header file inclusion: the C++ API header file is now called
+// plstream.h.  Miscellaneous cleaning up.
+//
+// Revision 1.1  1994/10/18  16:25:48  furnish
 // First cut on an example program for showing off the new C++ interface
 // to PLplot.
 //
 //---------------------------------------------------------------------------//
 
-#include "plplot.h"
-#include "stream.h"
+#include "plstream.h"
+#include <math.h>
 
-// In the real world, the user has his own Matrix class, so he just
-// includes the header for it.  Here we conjur up a dopey stand in.
+//---------------------------------------------------------------------------//
+// In the real world, the user has his own Matrix class, so he just includes
+// the header for it.  Here we conjure up a dopey stand in.
 
 class Matrix {
     int nx, ny;
@@ -49,9 +54,10 @@ class Matrix {
     }
 };
 
-// Now, to perform contouring, we have to concreteize the abstract
-// contouring interface.  Do this by deriving from Contourable_Data,
-// and implementing the indexing operator.
+//---------------------------------------------------------------------------//
+// To perform contouring, we have to concretize the abstract contouring
+// interface.  Do this by deriving from Contourable_Data, and implementing
+// the indexing operator.
 
 class ContourableMatrix : public Contourable_Data {
     int nx, ny;
@@ -82,9 +88,10 @@ class ContourableMatrix : public Contourable_Data {
     }
 };
 	
-// For general mesh plotting, we also need to conreteize the abstract
-// coordinate interface.  Do this by deriving from Coord_2d and
-// filling in the blanks.
+//---------------------------------------------------------------------------//
+// For general mesh plotting, we also need to concretize the abstract
+// coordinate interface.  Do this by deriving from Coord_2d and filling in
+// the blanks.
 
 class CoordinateMatrix : public Coord_2d {
     int nx, ny;
@@ -130,16 +137,21 @@ class CoordinateMatrix : public Coord_2d {
 void plot1( plstream& pls );
 void plot2( plstream& pls );
 
+//---------------------------------------------------------------------------//
+// Finally!
+//---------------------------------------------------------------------------//
+
 main()
 {
     plstream pls;
 
     plot1( pls );
-
     plot2( pls );
 }
 
+//---------------------------------------------------------------------------//
 // Just a simple little routine to show simple use of the plstream object.
+//---------------------------------------------------------------------------//
 
 void plot1( plstream& pls )
 {
@@ -162,32 +174,32 @@ void plot1( plstream& pls )
     pls.line( 6, x, y );
 }
 
-// Demonstration of contouring using the C++ abstract interface which
-// does not impose fascist requirements on storage order/format of
-// user data as the C and Fortran API's do.
+//---------------------------------------------------------------------------//
+// Demonstration of contouring using the C++ abstract interface which does
+// not impose fascist requirements on storage order/format of user data as
+// the C and Fortran API's do.
+//---------------------------------------------------------------------------//
 
 void plot2( plstream& pls )
 {
     pls.adv(0);
 
-// First declare some objects to hold the data and the coordinates.
-// Note, if you don't want to go to the trouble of making these
-// derived classes so easy to use (const and non-const indexing
-// operators, etc), such as if you have existing code using a Matrix
-// class, and all you want to do now is plot it, then you could just
-// make these derived classes have a constructor taking a Matrix
-// (previously calculated somewhere else) by reference through the
-// constructor.  That way the calculation engine can continue to use
-// the normal container class, and only the plotting code needs the
-// auxiliary class to concreteize the C++ abstract contouring
-// interface. 
+// First declare some objects to hold the data and the coordinates.  Note,
+// if you don't want to go to the trouble of making these derived classes so
+// easy to use (const and non-const indexing operators, etc), such as if you
+// have existing code using a Matrix class, and all you want to do now is
+// plot it, then you could just make these derived classes have a
+// constructor taking a Matrix (previously calculated somewhere else) by
+// reference through the constructor.  That way the calculation engine can
+// continue to use the normal container class, and only the plotting code
+// needs the auxiliary class to concretize the C++ abstract contouring
+// interface.
 
-// Since this is a "polar" plot ( :-), see below), we need to enable
-// the "wrapy" option in our special purpose data and coordinate
-// classes.  Note that this allows "reconnection" of lines, etc, with
-// trivial effort, IFF done from C++.  For C-- and Dogtran, one would
-// have to copy the data to a new buffer, and pad one side with an
-// image copy of the other side.
+// Since this is a "polar" plot ( :-), see below), we need to enable the
+// "wrapy" option in our special purpose data and coordinate classes.  Note
+// that this allows "reconnection" of lines, etc, with trivial effort, IFF
+// done from C++.  For C-- and Dogtran, one would have to copy the data to a
+// new buffer, and pad one side with an image copy of the other side.
 
     ContourableMatrix d(64,64,1);
     CoordinateMatrix  xg(64,64,1), yg(64,64,1);
@@ -195,7 +207,7 @@ void plot2( plstream& pls )
     int i, j;
     float twopi = 2.*3.1415927;
 
-// Set up the data and coordinate matricies.
+// Set up the data and coordinate matrices.
 
     for( i=0; i < 64; i++ ) {
 	float r = i/64.;
@@ -260,7 +272,7 @@ void plot2( plstream& pls )
 
     pls.col(Red);
 
-    // Now draw the border around the drawing region.
+// Now draw the border around the drawing region.
 
     float x[65], y[65];
 
@@ -311,7 +323,7 @@ void plot2( plstream& pls )
 
     pls.col(Red);
 
-    // Now draw the border around the drawing region.
+// Now draw the border around the drawing region.
 
     for( i=0; i < 65; i++ ) {
 	x[i] = xg(63,i);
