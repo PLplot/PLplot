@@ -24,8 +24,6 @@ class x04 {
     {
         pls = new PLStream();
 
-        System.out.println( "x04 not implemented yet." );
-
     // Parse and process command line arguments.
 
         pls.ParseOpts( args, pls.PL_PARSE_FULL );

@@ -26,8 +26,6 @@ class x03 {
         pls = new PLStream();
         NumberFormat nf = NumberFormat.getNumberInstance();
 
-        System.out.println( "x03 not implemented yet." );
-
         int i, j;
         float dtr, theta, dx, dy, r;
 
