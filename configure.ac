@@ -611,57 +611,6 @@ AC_SUBST(EXAMPLES_DIRECTORIES)
 
 ### automake symbols for system-dependent results
 
-if test "$enable_cgm" = yes; then
-   if test "$CDINCDIR" != default; then
-      CDINCCMD="-I$CDINCDIR"
-      AC_SUBST(CDINCCMD)
-   fi
-   if test "$CDLIBDIR" = default; then
-      CDLIBCMD="$CDLIBSTR"
-   else
-      CDLIBCMD="-L$CDLIBDIR $CDLIBSTR"
-   fi
-   AC_SUBST(CDLIBCMD)
-fi
-
-if test "$with_freetype" = yes; then
-   if test "$FREETYPEINCDIR" != default; then
-      FREETYPEINCCMD="-I$FREETYPEINCDIR"
-      AC_SUBST(FREETYPEINCCMD)
-   fi
-   if test "$FREETYPELIBDIR" = default; then
-      FREETYPELIBCMD="$FREETYPELIBSTR"
-   else
-      FREETYPELIBCMD="-L$FREETYPELIBDIR $FREETYPELIBSTR"
-   fi
-   AC_SUBST(FREETYPELIBCMD)
-fi
-
-if test "$enable_png" = yes -o "$enable_jpeg" = yes; then
-   if test "$GDINCDIR" != default; then
-      GDINCCMD="-I$GDINCDIR"
-   fi
-   AC_SUBST(GDINCCMD)
-   # Figure out link line for libgd (including necessary libraries it
-   # links to for the case where only the static libgd (or libpng or
-   # libjpeg, or libz) is installed on the system).
-   GDLIBCMD=
-   if test "$GDLIBDIR" != default; then
-      GDLIBCMD="$GDLIBCMD -L$GDLIBDIR"
-   fi
-   if test "$PNGLIBDIR" != default; then
-      GDLIBCMD="$GDLIBCMD -L$PNGLIBDIR"
-   fi
-   if test "$JPEGLIBDIR" != default; then
-      GDLIBCMD="$GDLIBCMD -L$JPEGLIBDIR"
-   fi
-   if test "$ZLIBLIBDIR" != default; then
-      GDLIBCMD="$GDLIBCMD -L$ZLIBLIBDIR"
-   fi
-   GDLIBCMD="$GDLIBCMD $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR "
-   AC_SUBST(GDLIBCMD)
-fi
-
 if test "$enable_itcl" = yes; then
    if test "$ITCLINCDIR" != default; then
       ITCLINCCMD="-I$ITCLINCDIR"

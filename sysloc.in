@@ -138,7 +138,13 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$GDINCDIR" = "/usr/include"; then
         GDINCDIR=default
     fi
+    GDINCCMD=""
+    GDINCPATH=""
+    ADD_TO_INCS($GDINCDIR, GDINCCMD, GDINCPATH)
 
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test -z "$GDLIBDIR"; then    
         AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
         libdirs="\
@@ -162,6 +168,10 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$GDLIBDIR" = "/usr/lib"; then
         GDLIBDIR=default
     fi
+    GDLIBCMD=""
+    GDLIBPATH=""
+    ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBCMD, GDLIBPATH)
+
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
@@ -188,6 +198,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$PNGLIBDIR" = "/usr/lib"; then
         PNGLIBDIR=default
     fi
+    ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
+
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
@@ -214,6 +226,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$JPEGLIBDIR" = "/usr/lib"; then
         JPEGLIBDIR=default
     fi
+    ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
+
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
@@ -240,13 +254,15 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$ZLIBLIBDIR" = "/usr/lib"; then
         ZLIBLIBDIR=default
     fi
+    ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
+
 fi
 
-#next test requires C language
-AC_LANG_SAVE
-AC_LANG_C
-
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+#next test requires C language
+    AC_LANG_SAVE
+    AC_LANG_C
+
 # All required headers and libraries are present for libgd, libpng, libjpeg,
 # and zlib.  Now check if this version of libgd supports png and/or jpeg.
 
@@ -254,8 +270,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     LIBS_SAVE=$LIBS
     LDFLAGS_SAVE=$LDFLAGS
 
-    CFLAGS="-I$GDINCDIR"
-    LIBS="-L$GDLIBDIR -L$PNGLIBDIR -L$JPEGLIBDIR -L$ZLIBLIBDIR $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR"
+    CFLAGS="$GDINCCMD"
+    LIBS="$GDLIBCMD"
     LDFLAGS=
 
 # This test for png support is made in case this is an ancient libgd that
@@ -282,9 +298,17 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     LIBS=$LIBS_SAVE
     LDFLAGS=$LDFLAGS_SAVE
 
-fi
 #restore the language the way it was before this test
-AC_LANG_RESTORE
+    AC_LANG_RESTORE
+
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+#   This next dummy line needed to make above if work properly
+    GDINCCMD=$GDINCCMD
+    AC_SUBST(GDINCCMD)
+    AC_SUBST(GDLIBCMD)
+fi
 
 # ----------------------------------------------------------------------------
 # Find libcd library and header required for building cgm driver.
@@ -343,17 +367,15 @@ if test "$enable_cgm" = "yes"; then
     fi
 fi
 
-CDINCS=""
+CDINCCMD=""
 CDINCPATH=""
-CDLIBS=""
+CDLIBCMD=""
 CDLIBPATH=""
-CDLIBS=""
-CDINCS=""
 if test "$enable_cgm" = "yes"; then
-    ADD_TO_INCS($CDINCDIR, CDINCS, CDINCPATH)
-    if test "$enable_dyndrivers" = "yes"; then
-        ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBS, CDLIBPATH)
-    fi
+    ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
+    AC_SUBST(CDINCCMD)
+    ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
+    AC_SUBST(CDLIBCMD)
 fi
 
 # ----------------------------------------------------------------------------
@@ -415,16 +437,16 @@ if test "$with_freetype" = "yes"; then
     fi
 fi
 
-FREETYPEINCS=""
+FREETYPEINCCMD=""
 FREETYPEINCPATH=""
-FREETYPELIBS=""
+FREETYPELIBCMD=""
 FREETYPELIBPATH=""
 if test "$with_freetype" = "yes"; then
-    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCS, FREETYPEINCPATH)
-    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, FREETYPELIBPATH)
     AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
-    AC_SUBST(FREETYPELIBS)
-
+    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCCMD, FREETYPEINCPATH)
+    AC_SUBST(FREETYPEINCCMD)
+    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
+    AC_SUBST(FREETYPELIBCMD)
 fi
 
 # ----------------------------------------------------------------------------
@@ -1087,12 +1109,10 @@ AC_SUBST(SHLIB_LIBS)
 # Substitutions for the dynamic drivers.
 # if enable-dynamic-drivers is enabled, those libs don't go to "LIBS"
 #
-# CDLIBS has all libs needed from the gd driver, and
 # GNOMELIBS all libs needed by the gnome driver.
 
 AC_SUBST(LINUXVGALIBS)
 AC_SUBST(GNOMELIBS)
-AC_SUBST(CDLIBS)
 AC_SUBST(PTHREADLIBS)
 AC_SUBST(QHULLLIBS)
 AC_SUBST(NNLIBS)
