@@ -105,7 +105,7 @@ class x02 {
 	    double[] b1 = new double[1];
 
     
-	    // Bounds on HLS, from plHLS_RGB() commentary --
+	    // Bounds on HLS, from plhlsrgb() commentary --
 	    //	hue		[0., 360.]	degrees
 	    //	lightness	[0., 1.]	magnitude
 	    //	saturation	[0., 1.]	magnitude
@@ -118,7 +118,7 @@ class x02 {
 	    // Use max saturation
 	    s = 1.0;
 	    
-	    pls.HLS_RGB(h, l, s, r1, g1, b1);
+	    pls.hlsrgb(h, l, s, r1, g1, b1);
     
 	    r[i+16] = (int)(r1[0] * 255);
 	    g[i+16] = (int)(g1[0] * 255);

@@ -19,7 +19,7 @@
 
 function hls = rgb2hls(rgb)
 
-  [h, l, s] = plRGB_HLS(rgb(:,1), rgb(:,2), rgb(:,3));
+  [h, l, s] = plrgbhls(rgb(:,1), rgb(:,2), rgb(:,3));
   hls = [h/360, l, s];
 
 endfunction

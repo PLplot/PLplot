@@ -376,6 +376,10 @@ DOC(plhls, "Set current color (map 0) by hue, lightness, and saturation.")
 void
 plhls(PLFLT h, PLFLT l, PLFLT s);
 
+DOC(plhlsrgb, "Transform from HLS to RGB form of colours")
+void
+plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
+
 DOC(plinit, "Initialize PLplot, using preset or default options.")
 void
 plinit(void);
@@ -482,6 +486,10 @@ plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
 DOC(plreplot, "Replay contents of plot buffer to current device/file.")
 void
 plreplot(void);
+
+DOC(plrgbhls, "Transform from RGB to HLS form of colours")
+void
+plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
 DOC(plschr, "Set character height.")
 void
@@ -995,14 +1003,6 @@ void
 plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 #endif
-
-/* Functions for converting between HLS and RGB color space */
-
-void
-plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
-
-void
-plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
 /* Wait for graphics input event and translate to world coordinates */
 

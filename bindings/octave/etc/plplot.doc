@@ -165,7 +165,6 @@ plGetFlt	--  Prompts human to input a float in response to given message.
 
 plAlloc2dGrid	--  Allocates a block of memory for use as a 2-d grid of PLFLT's.   
 plFree2dGrid	--  Frees a block of memory allocated with plAlloc2dGrid.  
-plHLS_RGBplRGB_HLS	--  Functions for converting between HLS and RGB color space  
 plGetCursor	--  Wait for graphics input event and translate to world coordinates  
 plTranslateCursor	--  Translates relative device coordinates to world coordinates.   
 

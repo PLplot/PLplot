@@ -1594,7 +1594,7 @@ scol1(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     g = (PLFLT)(((unsigned) (xcol.green & 0xFF00) >> 8) / 255.0);
     b = (PLFLT)(((unsigned) (xcol.blue  & 0xFF00) >> 8) / 255.0);
 
-    plRGB_HLS(r, g, b, &h, &l, &s);
+    plrgbhls(r, g, b, &h, &l, &s);
 
     p = (PLFLT) (atof(pos) / 100.0);
     reverse = atoi(rev);
@@ -1701,7 +1701,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
             l = pls->cmap1cp[i].l;
             s = pls->cmap1cp[i].s;
 
-            plHLS_RGB(h, l, s, &r, &g, &b);
+            plhlsrgb(h, l, s, &r, &g, &b);
 
             r1 = MAX(0, MIN(255, (int) (256. * r)));
             g1 = MAX(0, MIN(255, (int) (256. * g)));

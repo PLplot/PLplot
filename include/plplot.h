@@ -508,7 +508,7 @@ typedef struct {
 #define    plgzax	c_plgzax
 #define    plhist	c_plhist
 #define    plhls        c_plhls
-#define    plHLS_RGB    c_plHLS_RGB
+#define    plhlsrgb     c_plhlsrgb
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
@@ -533,7 +533,7 @@ typedef struct {
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
-#define    plRGB_HLS    c_plRGB_HLS
+#define    plrgbhls     c_plrgbhls
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
 #define    plscmap0n	c_plscmap0n
@@ -610,6 +610,8 @@ typedef struct {
 #define    plP_gvpd	plgvpd
 #define    plP_gvpw	plgvpw
 #define    plotsh3d(x,y,z,nx,ny,opt)     plsurf3d(x,y,z,nx,ny,opt, NULL, 0)
+#define    plHLS_RGB    plhlsrgb
+#define    plRGB_HLS    plrgbhls
 
 #endif /* __PLSTUBS_H__ */
 
@@ -954,7 +956,7 @@ c_plhls(PLFLT h, PLFLT l, PLFLT s);
 /* Functions for converting between HLS and RGB color space */
 
 void
-c_plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
 /* Initializes PLplot, using preset or default options */
 
@@ -1128,7 +1130,7 @@ c_plrgb1(PLINT r, PLINT g, PLINT b);
 /* Functions for converting between HLS and RGB color space */
 
 void
-c_plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
+c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
 /* Set character height. */
 

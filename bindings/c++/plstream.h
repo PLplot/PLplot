@@ -954,10 +954,10 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Functions for converting between HLS and RGB color space */
 
-    void HLS_RGB( PLFLT h, PLFLT l, PLFLT s,
+    void hlsrgb ( PLFLT h, PLFLT l, PLFLT s,
 		  PLFLT *p_r, PLFLT *p_g, PLFLT *p_b );
 
-    void RGB_HLS( PLFLT r, PLFLT g, PLFLT b,
+    void rgbhls ( PLFLT r, PLFLT g, PLFLT b,
 		  PLFLT *p_h, PLFLT *p_l, PLFLT *p_s );
 
 /* Wait for graphics input event and translate to world coordinates */

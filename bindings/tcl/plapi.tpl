@@ -302,7 +302,7 @@ digmax	PLINT&
 digits	PLINT&
 
 # Draws a histogram of n values of a variable in array data[0..n-1].
-# pltclgen not able to handle Tcl Matricies yet.
+# pltclgen not able to handle Tcl Matrices yet.
 
 pltclcmd plhist void
 n	PLINT
@@ -318,6 +318,16 @@ pltclcmd plhls void
 h	PLFLT
 l	PLFLT
 s	PLFLT
+
+# Function to transform from HLS to RGB color space.
+
+pltclcmd plhlsrgb void
+h	PLFLT
+l	PLFLT
+s	PLFLT
+r	PLFLT&
+g	PLFLT&
+b	PLFLT&
 
 # Initializes PLplot, using preset or default options.
 
@@ -456,6 +466,16 @@ pltclcmd plrgb1 void
 r	PLINT
 g	PLINT
 b	PLINT
+
+# Function to transform from RGB to HLS color space.
+
+pltclcmd plrgbhls void
+r	PLFLT
+g	PLFLT
+b	PLFLT
+h	PLFLT&
+l	PLFLT&
+s	PLFLT&
 
 # Set character height.
 
@@ -914,14 +934,6 @@ st  PLINT&
 
 # void
 # plGetName(char *dir, char *subdir, char *filename, char **filespec);
-
-# Functions for converting between HLS and RGB color space
-
-# void
-# plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
-
-# void
-# plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
 # Wait for graphics input event and translate to world coordinates
 

@@ -2063,20 +2063,20 @@ void plstream::MinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *f
 
 /* Functions for converting between HLS and RGB color space */
 
-void plstream::HLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g,
+void plstream::hlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g,
 			PLFLT *p_b )
 {
     set_stream();
 
-    ::c_plHLS_RGB(h,l,s,p_r,p_g,p_b);
+    ::c_plhlsrgb(h,l,s,p_r,p_g,p_b);
 }
 
-void plstream::RGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
+void plstream::rgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
 			PLFLT *p_s )
 {
     set_stream();
 
-    ::c_plRGB_HLS(r,g,b,p_h,p_l,p_s);
+    ::c_plrgbhls(r,g,b,p_h,p_l,p_s);
 }
 
 /* Wait for right button mouse event and translate to world coordinates */
