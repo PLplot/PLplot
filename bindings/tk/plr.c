@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/09/28 21:26:38  mjl
+ * Revision 1.9  1994/01/15 17:38:12  mjl
+ * Changed to new PDF function call syntax.
+ *
+ * Revision 1.8  1993/09/28  21:26:38  mjl
  * Fixed an inconsistency in the byte count.
  *
  * Revision 1.7  1993/08/11  19:23:33  mjl
@@ -70,7 +73,6 @@
 #include "plserver.h"
 #include "plevent.h"
 #include "metadefs.h"
-#include "pdf.h"
 
 /* Some wrapper macros to return (-1) on error */
 
@@ -202,6 +204,14 @@ plr_process1(PLRDev *plr, int c)
 \*----------------------------------------------------------------------*/
 
 static int
+plr_rd_header(PLRDev *plr, char *header)
+{
+    plr_rd( pdf_rd_header(plr->pdfs, header) );
+    plr->nbytes -= (strlen(header) + 1);
+    return 0;
+}
+
+static int
 plr_init(PLRDev *plr)
 {
     char tk_magic[80], tk_version[80];
@@ -211,14 +221,14 @@ plr_init(PLRDev *plr)
 
 /* Read header info */
 
-    plr_rd(pdf_rd_header(plr->file, tk_magic));
+    plr_cmd( plr_rd_header(plr, tk_magic) );
     if (strcmp(tk_magic, PLSERV_HEADER))
 	barf("Invalid header");
 
 /* Read version field of header.  We need to check that we can read the */
 /* byte stream, in case this is an old version of plserver. */
 
-    plr_rd(pdf_rd_header(plr->file, tk_version));
+    plr_cmd( plr_rd_header(plr, tk_version) );
     if (strcmp(tk_version, PLSERV_VERSION) > 0) {
 	fprintf(stderr,
 	    "Error: incapable of reading output of version %s.\n", tk_version);
@@ -229,37 +239,42 @@ plr_init(PLRDev *plr)
 /* Overkill, but a no-brainer since plrender already uses this */
 
     for (;;) {
-	plr_rd(pdf_rd_header(plr->file, tag));
+	plr_cmd( plr_rd_header(plr, tag) );
 	if (*tag == '\0')
 	    break;
 
 	if (!strcmp(tag, "xmin")) {
-	    plr_rd(pdf_rd_2bytes(plr->file, &dum_ushort));
+	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->xmin = dum_ushort;
+	    plr->nbytes -= 2;
 	    continue;
 	}
 
 	if (!strcmp(tag, "xmax")) {
-	    plr_rd(pdf_rd_2bytes(plr->file, &dum_ushort));
+	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->xmax = dum_ushort;
+	    plr->nbytes -= 2;
 	    continue;
 	}
 
 	if (!strcmp(tag, "ymin")) {
-	    plr_rd(pdf_rd_2bytes(plr->file, &dum_ushort));
+	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->ymin = dum_ushort;
+	    plr->nbytes -= 2;
 	    continue;
 	}
 
 	if (!strcmp(tag, "ymax")) {
-	    plr_rd(pdf_rd_2bytes(plr->file, &dum_ushort));
+	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->ymax = dum_ushort;
+	    plr->nbytes -= 2;
 	    continue;
 	}
 
 	if (!strcmp(tag, "width")) {
-	    plr_rd(pdf_rd_1byte(plr->file, &dum_uchar));
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &dum_uchar) );
 	    plwid(dum_uchar);
+	    plr->nbytes -= 2;
 	    continue;
 	}
 
@@ -308,7 +323,7 @@ plr_line(PLRDev *plr, int c)
 	break;
 
       case POLYLINE:
-	plr_rd(pdf_rd_2bytes(plr->file, &npts));
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &npts) );
 	plr->nbytes -= 2;
 	plr_cmd( get_ncoords(plr, x, y, npts) );
 	break;
@@ -340,8 +355,8 @@ get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
     int i;
     short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
-    plr_rdn(pdf_rd_2nbytes(plr->file, (U_SHORT *) xs, n));
-    plr_rdn(pdf_rd_2nbytes(plr->file, (U_SHORT *) ys, n));
+    plr_rdn( pdf_rd_2nbytes(plr->pdfs, (U_SHORT *) xs, n) );
+    plr_rdn( pdf_rd_2nbytes(plr->pdfs, (U_SHORT *) ys, n) );
     plr->nbytes -= 4*n;
 
     for (i = 0; i < n; i++) {
@@ -397,7 +412,7 @@ plr_state(PLRDev *plr)
 {
     U_CHAR op;
 
-    plr_rd(pdf_rd_1byte(plr->file, &op));
+    plr_rd( pdf_rd_1byte(plr->pdfs, &op) );
     plr->nbytes -= 1;
 
     switch (op) {
@@ -405,7 +420,7 @@ plr_state(PLRDev *plr)
     case PLSTATE_WIDTH:{
 	U_SHORT width;
 
-	plr_rd(pdf_rd_2bytes(plr->file, &width));
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &width) );
 	plr->nbytes -= 2;
 
 	plwid(width);
@@ -415,13 +430,13 @@ plr_state(PLRDev *plr)
     case PLSTATE_COLOR0:{
 	U_CHAR icol0, r, g, b;
 
-	plr_rd(pdf_rd_1byte(plr->file, &icol0));
+	plr_rd( pdf_rd_1byte(plr->pdfs, &icol0) );
 	plr->nbytes -= 1;
 
 	if (icol0 == PL_RGB_COLOR) {
-	    plr_rd(pdf_rd_1byte(plr->file, &r));
-	    plr_rd(pdf_rd_1byte(plr->file, &g));
-	    plr_rd(pdf_rd_1byte(plr->file, &b));
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &r) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &g) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &b) );
 	    plr->nbytes -= 3;
 	    plrgb1(r, g, b);
 	}
@@ -450,7 +465,7 @@ plr_esc(PLRDev *plr)
 {
     U_CHAR op;
 
-    plr_rd(pdf_rd_1byte(plr->file, &op));
+    plr_rd( pdf_rd_1byte(plr->pdfs, &op) );
     plr->nbytes -= 1;
     return 0;
 }
@@ -466,7 +481,7 @@ plr_get(PLRDev *plr)
 {
     int c;
 
-    c = getc(plr->file);
+    c = pdf_getc(plr->pdfs);
     if (c == EOF) {
 	fprintf(stderr, "plr_get: at byte count: %d\n", plr->nbytes);
 	barf("plr_get: Unable to read character");
@@ -485,7 +500,7 @@ plr_get(PLRDev *plr)
 static int
 plr_unget(PLRDev *plr, U_CHAR c)
 {
-    if (ungetc(c, plr->file) == EOF) {
+    if (pdf_ungetc(c, plr->pdfs) == EOF) {
 	barf("plr_unget: Unable to push back character");
     }
 
