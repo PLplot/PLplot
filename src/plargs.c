@@ -1,9 +1,17 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/04/26 19:57:56  mjl
-   Fixes to allow (once again) output to stdout and plrender to function as
-   a filter.  A type flag was added to handle file vs stream differences.
+   Revision 1.5  1993/07/01 22:27:59  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Many changes to capabilities of argument parser.  New mode
+   flags as well as argument flags.  User-specified variables can now be set
+   directly, depending on flags.  Invisible options and ignored options added.
+   Many internal options added (most invisible) for support of the TK driver.
+   See internal documentation for more details.
 
+ * Revision 1.4  1993/04/26  19:57:56  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+ *
  * Revision 1.3  1993/03/17  17:01:37  mjl
  * Eliminated some dead assignments that turned up when running with SAS/C's
  * global optimizer enabled on the Amiga.
@@ -43,39 +51,59 @@
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    This file contains routines to extract & process command flags.
-    The command flags recognized by PLPLOT are stored in the struct
-    "option_table", along with strings giving the syntax, long help 
-    message, and handler.  The command line parser removes all
-    recognized flags (decreasing argc accordingly), so that invalid
-    input may be readily detected.  These routines can also be used
-    to process user command line flags.
+    This file contains routines to extract & process command flags.  The
+    command flags recognized by PLPLOT are stored in the "ploption_table"
+    structure, along with strings giving the syntax, long help message,
+    and option handler.  The command line parser removes all recognized
+    flags (decreasing argc accordingly), so that invalid input may be
+    readily detected.  These routines can also be used to process user
+    command line flags.
 
     The command line parsers (one for internal plplot flags, one for
-    user-specified flags) accept a variable "mode" which can take
-    on the values:
+    user-specified flags) accept a variable "mode" which can have
+    the following bits set:
 
-    PL_PARSE_FULL -- Full parsing of command line and all error
-    messages enabled.  Should not be used by programs that have
-    other command flags (the caller should then issue help and
-    syntax messages).
-
-    PL_PARSE_PARTIAL -- Parses command line but takes no action for
-    unrecognized flags (since these may be valid user command
-    flags).  Still issues syntax and help messages when appropriate.
-    It is up to the user to exit if an error occurs.
+    PL_PARSE_FULL -- Full parsing of command line and all error messages
+    enabled, including program exit when an error occurs.  This is
+    automatically set when calling plParseInternalOpts().  User programs
+    that have other command flags should not use this, in which case the
+    caller must issue help and syntax messages.  In both cases syntax
+    and help messages may still be printed when appropriate.  
 
     PL_PARSE_QUIET -- Turns off all output except in the case of
     errors.
 
-    The parser for user-defined flags also accepts a pointer to
-    a function to be called when an error is detected, to allow
-    an appropriate usage message to be issued.
+    PL_PARSE_NODELETE -- Turns off deletion of processed arguments.
+
+    PL_PARSE_SHOWALL -- Show invisible options 
+
+    PL_PARSE_OVERRIDE -- Compares user option table to internal one, and
+    disables all internal options that match user options.  Has no effect
+    in plParseInternalOpts() or plSetInternalOpt() calls.
+
+    PL_PARSE_NOPROGRAM -- Specified if argv[0] is NOT a pointer to the
+    program name.
+
+    Note that the parser for user-defined flags accepts a pointer to a
+    function to be called when an error is detected, to allow an
+    appropriate usage message to be issued.
 
     See plrender.c for examples of actual usage.
+
+    A nice enhancement would be support for adding more option tables to
+    be checked, where each would presumably originate from additional
+    libraries supporting command line options.  When added a flag would
+    specify how name clashes are to be handled (possibly supporting all
+    three cases: one table dominates, or handle them on an even footing
+    if the options are compatible).  Also a scheme would have to be
+    worked out to intelligently handle the combined syntax and help
+    entries.  Note this may NOT always help in combining options since
+    sometimes a certain order must be retained (e.g. plrender follows
+    the order: process plrender options, read metafile header, process
+    plplot options).
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,130 +118,255 @@
 
 static void Usage	(char *);
 static int  ParseOpt	(int *, char ***, int *, char ***, PLOptionTable *);
-static int  GetOption	(char **, int *, char ***, int *, PLOptionTable *);
+static int  ProcessOpt	(char *, PLOptionTable *, int *, char ***, int *);
+static int  GetOptarg	(char **, int *, char ***, int *);
 
 static void (*UsageH) (char *) = Usage;
 
 /* Option handlers */
 
-static int HandleOption_h	(char *, char *);
-static int HandleOption_v	(char *, char *);
-static int HandleOption_dev	(char *, char *);
-static int HandleOption_o	(char *, char *);
-static int HandleOption_geo	(char *, char *);
-static int HandleOption_a	(char *, char *);
-static int HandleOption_ori	(char *, char *);
-static int HandleOption_width	(char *, char *);
-static int HandleOption_color	(char *, char *);
-static int HandleOption_bg	(char *, char *);
-static int HandleOption_fam	(char *, char *);
-static int HandleOption_fsiz	(char *, char *);
-static int HandleOption_np	(char *, char *);
-static int HandleOption_px	(char *, char *);
-static int HandleOption_py	(char *, char *);
-static int HandleOption_geo	(char *, char *);
+static int opt_h		(char *, char *);
+static int opt_v		(char *, char *);
+static int opt_dev		(char *, char *);
+static int opt_o		(char *, char *);
+static int opt_geo		(char *, char *);
+static int opt_a		(char *, char *);
+static int opt_ori		(char *, char *);
+static int opt_width		(char *, char *);
+static int opt_color		(char *, char *);
+static int opt_bg		(char *, char *);
+static int opt_fam		(char *, char *);
+static int opt_fsiz		(char *, char *);
+static int opt_bufmax		(char *, char *);
+static int opt_np		(char *, char *);
+static int opt_px		(char *, char *);
+static int opt_py		(char *, char *);
+static int opt_geo		(char *, char *);
+static int opt_plserver		(char *, char *);
+static int opt_plwindow		(char *, char *);
+static int opt_tcl_cmd		(char *, char *);
+static int opt_auto_path		(char *, char *);
+static int opt_bufmax		(char *, char *);
 
 /* Global variables */
 
-static char	*program_name;
-static PLINT	parse_mode;
+static char	*program_name = "<user program>";
+
+static int	mode_full;
+static int	mode_quiet;
+static int	mode_nodelete;
+static int	mode_showall;
+static int	mode_noprogram;
+static int	mode_override;
 
 /*----------------------------------------------------------------------*\
 * PLPLOT options data structure definition.
+*
+* The table is defined as follows
+*
+* typedef struct {
+*     char *opt;
+*     int  (*handler)	(char *, char *);
+*     void *var;
+*     long mode;
+*     char *syntax;
+*     char *desc;
+* } PLOptionTable;
+*
+* where each entry has the following meaning:
+*
+* opt		option string
+* handler	pointer to function for processing the option and
+*		 (optionally) its argument
+* var		address of variable to set based on "mode"
+* mode		governs handling of option (see below)
+* syntax	short syntax description
+* desc		long syntax description
+*
+* The mode bits are:
+*
+* PL_OPT_ENABLED	Processing for option is enabled
+* PL_OPT_ARG		Option has an argment 
+* PL_OPT_NODELETE	Don't delete after processing 
+* PL_OPT_INVISIBLE	Make invisible (usually for debugging)
+*
+* The following mode bits cause the option to be processed as specified:
+*
+* PL_OPT_FUNC		Call function handler (opt, optarg)
+* PL_OPT_BOOL		Set *var=1
+* PL_OPT_INT		Set *var=atoi(optarg)
+* PL_OPT_FLOAT		Set *var=atof(optarg)
+* PL_OPT_STRING		Set var=optarg
+*
+* where opt points to the option string and optarg points to the
+* argument string.
+*
 \*----------------------------------------------------------------------*/
 
-static PLOptionTable option_table[] = {
+static PLOptionTable ploption_table[] = {
 {
     "h",			/* Help */
-    HandleOption_h,
-    0,
+    opt_h,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-h",
     "Print out this message" },
 {
     "v",			/* Version */
-    HandleOption_v,
-    0,
+    opt_v,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-v",
     "Print out the plplot library version number" },
 {
     "dev",			/* Output device */
-    HandleOption_dev,
-    PL_PARSE_ARG,
+    opt_dev,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-dev name",
     "Output device name" },
 {
-    "o",			/* Output filename or X server */
-    HandleOption_o,
-    PL_PARSE_ARG,
+    "showall",			/* Turns on invisible options */
+    NULL,
+    &mode_showall,
+    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
+    "-showall",
+    "Turns on invisible options" },
+{
+    "o",			/* Output filename */
+    opt_o,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-o name",
-    "Output filename, or X server to contact" },
+    "Output filename" },
+{
+    "display",			/* X server */
+    opt_o,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-display name",
+    "X server to contact" },
 {
     "px",			/* Plots per page in x */
-    HandleOption_px,
-    PL_PARSE_ARG,
+    opt_px,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-px number",
     "Plots per page in x" },
 {
     "py",			/* Plots per page in y */
-    HandleOption_py,
-    PL_PARSE_ARG,
+    opt_py,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-py number",
     "Plots per page in y" },
 {
-    "geo",			/* Geometry */
-    HandleOption_geo,
-    PL_PARSE_ARG,
+    "geometry",			/* Geometry */
+    opt_geo,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-geometry geom",
+    "Window size, in pixels (e.g. -geometry 400x300)" },
+{
+    "geo",			/* Geometry (alias) */
+    opt_geo,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-geo geom",
-    "Window size, in pixels (e.g. -geo 400x400)" },
+    "Window size, in pixels (e.g. -geo 400x300)" },
 {
     "a",			/* Aspect ratio */
-    HandleOption_a,
-    PL_PARSE_ARG,
+    opt_a,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-a aspect",
     "Plot aspect ratio" },
 {
     "ori",			/* Orientation */
-    HandleOption_ori,
-    PL_PARSE_ARG,
+    opt_ori,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-ori orient",
     "Plot orientation (0,2=landscape, 1,3=portrait)" },
 {
     "width",			/* Pen width */
-    HandleOption_width,
-    PL_PARSE_ARG,
+    opt_width,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-width width",
-    "Pen width (1 <= width <= 10)" },
+    "Default pen width (1 <= width <= 10)" },
 {
     "color",			/* Color on switch */
-    HandleOption_color,
-    0,
+    opt_color,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-color",
-    "Forces color output (some drivers default to mono)" },
+    "Enables color output (e.g. for PS driver)" },
 {
     "bg",			/* Background color */
-    HandleOption_bg,
-    PL_PARSE_ARG,
+    opt_bg,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-bg color",
-    "Background color (0=black, 255=white [def])" },
+    "Background color (0=black, FFFFFF=white)" },
 {
     "fam",			/* Familying on switch */
-    HandleOption_fam,
-    0,
+    opt_fam,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-fam",
     "Create a family of output files" },
 {
     "fsiz",			/* Family file size */
-    HandleOption_fsiz,
-    PL_PARSE_ARG,
+    opt_fsiz,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-fsiz size",
     "Output family file size in MB (e.g. -fsiz 1.0)" },
 {
     "np",			/* Page pause off switch */
-    HandleOption_np,
-    0,
+    opt_np,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-np",
     "No pause between pages" },
 {
+    "bufmax",			/* # bytes sent before flushing output */
+    opt_bufmax,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-bufmax",
+    "bytes sent before flushing output" },
+{
+    "plserver",			/* plplot server name */
+    opt_plserver,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-plserver name",
+    "Name of plplot server" },
+{
+    "plwindow",			/* plplot container window name */
+    opt_plwindow,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-plwindow name",
+    "Name of plplot container window" },
+{
+    "tcl_cmd",			/* TCL initialization command */
+    opt_tcl_cmd,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-tcl_cmd command",
+    "TCL command string run at startup" },
+{
+    "auto_path",		/* Additional directory(s) to autoload */
+    opt_auto_path,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-auto_path dir",
+    "Additional directory(s) to autoload" },
+{
+    NULL,
     NULL,
     NULL,
     0,
@@ -222,8 +375,8 @@ static PLOptionTable option_table[] = {
 };
 
 static char *notes[] = {
-"All parameters must be white-space delimited.  Not all options valid with",
-"all drivers.  Please see the plplot reference document for more detail.",
+"All parameters must be white-space delimited.  Some options are driver",
+"dependent.  Please see the plplot reference document for more detail.",
 NULL};
 
 /* INDENT ON */
@@ -249,19 +402,25 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 void
 plSyntax()
 {
-    PLOptionTable *opt;
+    PLOptionTable *tab;
     int col, len;
 
     fprintf(stderr, "\nplplot options:");
 
     col = 80;
-    for (opt = option_table; opt->syntax; opt++) {
-	len = 3 + strlen(opt->syntax);		/* space [ string ] */
+    for (tab = ploption_table; tab->syntax; tab++) {
+	if ( ! (tab->mode & PL_OPT_ENABLED))
+	    continue;
+
+	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	len = 3 + strlen(tab->syntax);		/* space [ string ] */
 	if (col + len > 79) {
 	    fprintf(stderr, "\r\n   ");		/* 3 spaces */
 	    col = 3;
 	}
-	fprintf(stderr, " [%s]", opt->syntax);
+	fprintf(stderr, " [%s]", tab->syntax);
 	col += len;
     }
     fprintf(stderr, "\r\n");
@@ -270,17 +429,29 @@ plSyntax()
 /*----------------------------------------------------------------------*\
 * plHelp()
 *
-* Print long help message.
+* Print long help message appropriate for plplot.
 \*----------------------------------------------------------------------*/
 
 void
 plHelp(void)
 {
-    PLOptionTable *opt;
+    PLOptionTable *tab;
 
     fprintf(stderr, "\nplplot options:\n");
-    for (opt = option_table; opt->syntax; opt++) {
-	fprintf(stderr, "    %-20s %s\n", opt->syntax, opt->desc);
+    for (tab = ploption_table; tab->syntax; tab++) {
+	if ( ! (tab->mode & PL_OPT_ENABLED))
+	    continue;
+
+	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	if (tab->desc == NULL)	/* Should never happen but let's */
+	    break;		/* be safe */
+
+	if (tab->mode & PL_OPT_INVISIBLE) 
+	    fprintf(stderr, " *  %-20s %s\n", tab->syntax, tab->desc);
+	else 
+	    fprintf(stderr, "    %-20s %s\n", tab->syntax, tab->desc);
     }
 }
 
@@ -313,39 +484,98 @@ plNotes(void)
 int
 plParseInternalOpts(int *p_argc, char **argv, PLINT mode)
 {
-    return(plParseOpts(p_argc, argv, mode, option_table, NULL));
+    int status;
+
+    mode &= ~PL_PARSE_OVERRIDE;
+    status = plParseOpts(p_argc, argv, mode, ploption_table, NULL);
+
+    return(status);
+}
+
+/*----------------------------------------------------------------------*\
+* plSetInternalOpt()
+*
+* Process input strings, treating them as an option and argument pair.
+* Returns 1 on an error.
+\*----------------------------------------------------------------------*/
+
+int
+plSetInternalOpt(char *opt, char *optarg)
+{
+    int mode = 0, argc, status;
+    char *argv[3];
+
+    argv[0] = opt;
+    argv[1] = optarg;
+    argv[2] = NULL;
+
+    mode = PL_PARSE_QUIET | PL_PARSE_NODELETE | PL_PARSE_NOPROGRAM;
+    argc = 2;
+
+    status = plParseOpts(&argc, argv, mode, ploption_table, NULL);
+    if (status) {
+	fprintf( stderr, "plSetInternalOpt: Unrecognized option %s\n", opt);
+    }
+    return(status);
 }
 
 /*----------------------------------------------------------------------*\
 * plParseOpts()
 *
 * Process options list
-* An error in parsing the argument list causes a program exit if 
-* parse_mode == PL_PARSE_FULL, otherwise the function returns 
-* with an error.
+* An error in parsing the argument list causes a program exit if
+* mode_full is set, otherwise the function returns with an error.
 \*----------------------------------------------------------------------*/
 
 int
 plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 	    void (*usage_handler) (char *))
 {
-    PLINT status=0;
     char **argsave, **argend;
-    int	myargc;
+    int	myargc, status = 0;
+    PLStream *pls;
+    PLOptionTable *tab, *pltab;
 
-/* Save the program name and advance to the first argument. */
+/* Initialize */
 
-    parse_mode = mode;
+    mode_full      = mode & PL_PARSE_FULL;
+    mode_quiet     = mode & PL_PARSE_QUIET;
+    mode_nodelete  = mode & PL_PARSE_NODELETE;
+    mode_showall   = mode & PL_PARSE_SHOWALL;
+    mode_noprogram = mode & PL_PARSE_NOPROGRAM;
+    mode_override  = mode & PL_PARSE_OVERRIDE;
+
     myargc = (*p_argc); 
     argend = argv + myargc;
     if (usage_handler != NULL)
 	UsageH = usage_handler;
 
-    program_name = argv[0];
-    --myargc; ++argv;
-    argsave = argv;
+/* Disable internal options that match user options if mode_override is set */
 
-/* No arguments */
+    if (mode_override) {
+	for (tab = option_table; tab->opt; tab++) {
+	    for (pltab = ploption_table; pltab->opt; pltab++) {
+		if ( ! (pltab->mode & PL_OPT_ENABLED)) 
+		    continue;
+
+		if (*tab->opt == *pltab->opt &&
+		    ! strcmp(tab->opt, pltab->opt)) {
+		    pltab->mode &= ! PL_OPT_ENABLED;
+		}
+	    }
+	}
+    }
+
+/* If program name is first argument, save and advance */
+
+    if ( ! mode_noprogram) {
+	program_name = argv[0];
+	plgpls(&pls);
+	pls->program = argv[0];
+
+	--myargc; ++argv;
+	argsave = argv;
+    }
 
     if (myargc == 0)
 	return(0);
@@ -355,14 +585,17 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     for (; myargc > 0; --myargc, ++argv) {
 	status = ParseOpt(&myargc, &argv, p_argc, &argsave, option_table);
 	if (status) {
-	    if (parse_mode == PL_PARSE_FULL)
+	    if (mode_full)
 		exit(1);
 	    else
 		break;
 	}
     }
-    if (argsave < argend)
-	(*argsave)=NULL; /* put NULL terminator on compressed argv */
+
+/* NULL-terminate compressed argv */
+
+    if ( ! mode_nodelete && (argsave < argend))
+	(*argsave) = NULL;
 
     return(status);
 }
@@ -377,8 +610,8 @@ static int
 ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 	 PLOptionTable *option_table)
 {
-    int i, status;
-    char *opt, *optarg;
+    PLOptionTable *tab;
+    char *opt;
 
 /* Only handle actual flags and their arguments */
 
@@ -386,37 +619,37 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 
 	opt = (*p_argv)[0] + 1;
 
-	for (i = 0; ; i++) {
+	for (tab = option_table; tab->opt; tab++) {
 
-	    if (option_table[i].opt == NULL)
-		break;
+/* Skip if option not enabled */
 
-	    if (!strcmp(opt, option_table[i].opt)) {
-		if (option_table[i].flags & PL_PARSE_NODELETE) 
+	    if ( ! (tab->mode & PL_OPT_ENABLED)) 
+		continue;
+
+	    if (*opt == *tab->opt && ! strcmp(opt, tab->opt)) {
+
+/* Option matched, so remove from argv list if applicable. */
+
+		if (mode_nodelete || (tab->mode & PL_OPT_NODELETE))
 		    (*(*p_argsave)++) = (**p_argv);
 		else
 		    --(*p_argc);
 
-		if (option_table[i].flags & PL_PARSE_ARG) {
-		    status = GetOption(&optarg, p_myargc, p_argv, p_argc,
-				       option_table);
-		    if (!status) 
-			status = (*option_table[i].handler) (opt, optarg);
-		}
-		else
-		    status = (*option_table[i].handler) (opt, NULL);
+/* Process option (and argument if applicable) */
 
-		return(status);
+		return(ProcessOpt(opt, tab, p_myargc, p_argv, p_argc));
 	    }
 	}
     }
 
 /* If control reaches here the argument is unrecognized */
 
-    (*(*p_argsave)++) = (**p_argv);  /*compress arglist*/ 
+    if ( ! mode_nodelete)
+	(*(*p_argsave)++) = (**p_argv);  /* compress arglist */ 
 
-    if (parse_mode == PL_PARSE_FULL) {
-	(*UsageH) (**p_argv);
+    if (mode_full) {
+	if ( ! mode_quiet)
+	    (*UsageH) (**p_argv);
 	return(1);
     }
     else
@@ -424,15 +657,105 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 }
 
 /*----------------------------------------------------------------------*\
-* GetOption()
+* ProcessOpt()
+*
+* Process option (and argument if applicable).
+\*----------------------------------------------------------------------*/
+
+static int
+ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
+	   int *p_argc)
+{
+    int need_arg;
+    char *optarg = NULL;
+
+/* Get option argument if necessary */
+
+    need_arg = PL_OPT_ARG | PL_OPT_INT | PL_OPT_FLOAT | PL_OPT_STRING;
+
+    if (tab->mode & need_arg) {
+	if (GetOptarg(&optarg, p_myargc, p_argv, p_argc))
+	    return(1);
+    }
+
+/* Process argument */
+
+    switch (tab->mode & 0xFF00) {
+
+/* Call function handler to do the job */
+
+      case PL_OPT_FUNC:
+
+	if (tab->handler == NULL) {
+	    fprintf(stderr,
+		    "ProcessOpt: no handler specified for option %s\n",
+		    tab->opt);
+	    return(1);
+	}
+	return( (*tab->handler) (opt, optarg) );
+
+/* Set *var as a boolean */
+
+      case PL_OPT_BOOL:
+	if (tab->var == NULL) {
+	    fprintf(stderr,
+		    "ProcessOpt: no variable specified for option %s\n",
+		    tab->opt);
+	    return(1);
+	}
+	*(int *)tab->var = 1;
+	break;
+
+/* Set *var as an int */
+
+      case PL_OPT_INT:
+	if (tab->var == NULL) {
+	    fprintf(stderr,
+		    "ProcessOpt: no variable specified for option %s\n",
+		    tab->opt);
+	    return(1);
+	}
+	*(int *)tab->var = atoi(optarg);
+	break;
+
+/* Set *var as a float */
+
+      case PL_OPT_FLOAT:
+	if (tab->var == NULL) {
+	    fprintf(stderr,
+		    "ProcessOpt: no variable specified for option %s\n",
+		    tab->opt);
+	    return(1);
+	}
+	*(float *)tab->var = atof(optarg);
+	break;
+
+/* Set var (can be NULL initially) to point to optarg string */
+
+      case PL_OPT_STRING:
+	tab->var = optarg;
+	break;
+
+/* Somebody messed up.. */
+
+      default:
+	fprintf(stderr,
+		"ProcessOpt: invalid processing mode for option %s\n",
+		tab->opt);
+	return(1);
+    }
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* GetOptarg()
 *
 * Retrieves an option argument.
 * If an error occurs here it is a true syntax error.
 \*----------------------------------------------------------------------*/
 
 static int
-GetOption(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc, 
-	  PLOptionTable *option_table)
+GetOptarg(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc)
 {
     int error = 0;
 
@@ -441,7 +764,7 @@ GetOption(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc,
     if ((*p_myargc) <= 0)		/* oops, no more arguments */
 	error = 1;
 
-    if (!error) {
+    if ( ! error) {
 	(*p_argv)++;
 	if ((*p_argv)[0][0] == '-' && isalpha((*p_argv)[0][1])) {
 
@@ -450,13 +773,13 @@ GetOption(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc,
 	}
     }
 
-    if (!error) {			/* yeah, the user got it right */
+    if ( ! error) {			/* yeah, the user got it right */
 	(*p_argc)--;
 	*poptarg = (*p_argv)[0];
 	return(0);
     }
     else {
-	if (parse_mode != PL_PARSE_QUIET) {
+	if ( ! mode_quiet) {
 	    fprintf(stderr, "Argument missing for %s option.\n",
 		    (*p_argv)[0]); 
 	    (*UsageH) ("");
@@ -492,18 +815,18 @@ Usage(char *badOption)
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* HandleOption_h()
+* opt_h()
 *
 * Performs appropriate action for option "h".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_h(char *opt, char *optarg)
+opt_h(char *opt, char *optarg)
 {
 
 /* Help */
 
-    if (parse_mode != PL_PARSE_QUIET) {
+    if ( ! mode_quiet) {
 	fprintf(stderr, "\nUsage:\n        %s [plplot options]\n",
 		program_name);
 
@@ -514,31 +837,31 @@ HandleOption_h(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_v()
+* opt_v()
 *
 * Performs appropriate action for option "v".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_v(char *opt, char *optarg)
+opt_v(char *opt, char *optarg)
 {
 
 /* Version */
 
-    if (parse_mode != PL_PARSE_QUIET) {
+    if ( ! mode_quiet) {
 	fprintf(stderr, "\nplplot library version: %s\n", PLPLOT_VERSION);
     }
     return(1);
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_dev()
+* opt_dev()
 *
 * Performs appropriate action for option "dev".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_dev(char *opt, char *optarg)
+opt_dev(char *opt, char *optarg)
 {
 /* Output device */
 
@@ -548,13 +871,13 @@ HandleOption_dev(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_o()
+* opt_o()
 *
 * Performs appropriate action for option "o".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_o(char *opt, char *optarg)
+opt_o(char *opt, char *optarg)
 {
 /* Output file */
 
@@ -564,13 +887,13 @@ HandleOption_o(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_a()
+* opt_a()
 *
 * Performs appropriate action for option "a".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_a(char *opt, char *optarg)
+opt_a(char *opt, char *optarg)
 {
     PLFLT aspect;
 
@@ -583,13 +906,13 @@ HandleOption_a(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_ori()
+* opt_ori()
 *
 * Performs appropriate action for option "ori".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_ori(char *opt, char *optarg)
+opt_ori(char *opt, char *optarg)
 {
     int orient;
 
@@ -602,13 +925,13 @@ HandleOption_ori(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_width()
+* opt_width()
 *
 * Performs appropriate action for option "width".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_width(char *opt, char *optarg)
+opt_width(char *opt, char *optarg)
 {
     int width;
 
@@ -626,13 +949,13 @@ HandleOption_width(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_bg()
+* opt_bg()
 *
 * Performs appropriate action for option "bg".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_bg(char *opt, char *optarg)
+opt_bg(char *opt, char *optarg)
 {
     long bgcolor, r, g, b;
 
@@ -648,13 +971,13 @@ HandleOption_bg(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_color()
+* opt_color()
 *
 * Performs appropriate action for option "color".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_color(char *opt, char *optarg)
+opt_color(char *opt, char *optarg)
 {
 
 /* Color */
@@ -665,13 +988,13 @@ HandleOption_color(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_fam()
+* opt_fam()
 *
 * Performs appropriate action for option "fam".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_fam(char *opt, char *optarg)
+opt_fam(char *opt, char *optarg)
 {
 
 /* Family output files */
@@ -682,13 +1005,13 @@ HandleOption_fam(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_fsiz()
+* opt_fsiz()
 *
 * Performs appropriate action for option "fsiz".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_fsiz(char *opt, char *optarg)
+opt_fsiz(char *opt, char *optarg)
 {
     PLINT bytemax;
 
@@ -705,13 +1028,13 @@ HandleOption_fsiz(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_np()
+* opt_np()
 *
 * Performs appropriate action for option "np".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_np(char *opt, char *optarg)
+opt_np(char *opt, char *optarg)
 {
 
 /* No pause between pages */
@@ -722,13 +1045,108 @@ HandleOption_np(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_px()
+* opt_bufmax()
+*
+* Performs appropriate action for option "bufmax".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_bufmax(char *opt, char *optarg)
+{
+    PLStream *pls;
+
+/* Bytes sent before output is flushed */
+
+    plgpls(&pls);
+    pls->bufmax = atoi(optarg);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* opt_plserver()
+*
+* Performs appropriate action for option "plserver".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_plserver(char *opt, char *optarg)
+{
+    PLStream *pls;
+
+/* plplot server name */
+
+    plgpls(&pls);
+    pls->plserver = optarg;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* opt_plwindow()
+*
+* Performs appropriate action for option "plwindow".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_plwindow(char *opt, char *optarg)
+{
+    PLStream *pls;
+
+/* plplot window name */
+
+    plgpls(&pls);
+    pls->plwindow = optarg;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* opt_tcl_cmd()
+*
+* Performs appropriate action for option "tcl_cmd".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_tcl_cmd(char *opt, char *optarg)
+{
+    PLStream *pls;
+
+/* TCL command(s) to eval on startup */
+
+    plgpls(&pls);
+    pls->tcl_cmd = optarg;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* opt_auto_path()
+*
+* Performs appropriate action for option "auto_path".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_auto_path(char *opt, char *optarg)
+{
+    PLStream *pls;
+
+/* Additional directories to autoload */
+
+    plgpls(&pls);
+    pls->auto_path = optarg;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* opt_px()
 *
 * Performs appropriate action for option "px".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_px(char *opt, char *optarg)
+opt_px(char *opt, char *optarg)
 {
 
 /* Pack in x */
@@ -739,13 +1157,13 @@ HandleOption_px(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_py()
+* opt_py()
 *
 * Performs appropriate action for option "py".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_py(char *opt, char *optarg)
+opt_py(char *opt, char *optarg)
 {
 
 /* Pack in y */
@@ -756,20 +1174,26 @@ HandleOption_py(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_geo()
+* opt_geo()
 *
 * Performs appropriate action for option "geo".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_geo(char *opt, char *optarg)
+opt_geo(char *opt, char *optarg)
 {
     char *field;
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid, ywid, xoff = 0, yoff = 0;
+    PLStream *pls;
 
-/* Geometry for output window (e.g. 400x400+100+0), note offsets don't work
-   correctly at present. */
+/* The TK driver uses the geometry string directly */
+
+    plgpls(&pls);
+    pls->geometry = malloc((size_t) (1+strlen(optarg)) * sizeof(char));
+    strcpy(pls->geometry, optarg);
+
+/* Geometry for output window (e.g. 400x400+100+0) */
 
     if ((field = strtok(optarg, "x")) == NULL)
 	return(1);
