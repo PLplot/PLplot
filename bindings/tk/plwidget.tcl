@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.15  1993/12/15 09:02:13  mjl
+# Revision 1.16  1993/12/21 10:22:44  mjl
+# Now route ALL communication to the client through the client_cmd proc.
+# This part reworked to not suck when using Tcl-DP.
+#
+# Revision 1.15  1993/12/15  09:02:13  mjl
 # Changes to support Tcl-DP style communication; eliminated plframe
 # widget attach and detach commands (no longer supported).
 #
@@ -361,13 +365,13 @@ proc plw_init {w client} {
 # Configure forward page button
 
     $w.ftop.fp configure \
-	-command "plw_send [list $client] {keypress Return}"
+	-command "client_cmd [list $client] {keypress Return}"
 
 # Configure back page button, plrender only
 
     if {[info exists is_plrender]} {
 	$w.ftop.bp configure \
-	    -command "plw_send [list $client] {keypress BackSpace}"
+	    -command "client_cmd [list $client] {keypress BackSpace}"
     }
 
 # Initialize plplot widget
@@ -389,12 +393,12 @@ proc plw_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "plw_send [list $client] {keypress %K %N %A}"
+    bind $w.plwin <KeyPress> "client_cmd [list $client] {keypress %K %N %A}"
     bind $w.plwin <Any-Enter> "focus $w.plwin"
 
 # Inform client of plplot widget name for widget commands.
 
-    plw_send $client "set plwidget $w.plwin"
+    client_cmd $client "set plwidget $w.plwin"
 
 # I want the focus
 
@@ -421,23 +425,14 @@ proc plw_flash {w} {
 #----------------------------------------------------------------------------
 # plw_end
 #
-# Executed as part of orderly shutdown procedure.
+# Executed as part of orderly shutdown procedure.  Eventually will just
+# destroy the plframe and surrounding widgets, and server will exit only
+# if all plotting widgets have been destroyed and it is a child of the
+# plplot/TK driver.
 #----------------------------------------------------------------------------
 
 proc plw_end {w} {
     destroy .
-}
-
-#----------------------------------------------------------------------------
-# plw_send
-#
-# Send string to client.  Does it in the background and catches errors
-# (if client is busy it won't respond).
-#----------------------------------------------------------------------------
-
-proc plw_send {client msg} {
-    global plsend
-    after 1 catch [list "after 1 $plsend [list $client] $msg"]
 }
 
 #----------------------------------------------------------------------------

@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.8  1993/12/15 09:17:57  mjl
+# Revision 1.9  1993/12/21 10:22:43  mjl
+# Now route ALL communication to the client through the client_cmd proc.
+# This part reworked to not suck when using Tcl-DP.
+#
+# Revision 1.8  1993/12/15  09:17:57  mjl
 # Changes to support Tcl-DP and an atexit tweak.
 #
 # Revision 1.7  1993/12/09  20:34:45  mjl
@@ -225,11 +229,28 @@ proc plserver_init {} {
 #----------------------------------------------------------------------------
 
 proc exit_app {} {
-    global client plsend
+    global client
+
     if { [ info exists client ] } {
-	$plsend $client unset plserver
-	$plsend $client after 1 abort
-	unset client
+	client_cmd $client "unset server"
+	client_cmd $client "abort"
     }
-    destroy .
+    after 1 destroy .
+}
+
+#----------------------------------------------------------------------------
+# client_cmd
+#
+# Send string to client.  Does it in the background and catches errors
+# (if client is busy it won't respond).
+#----------------------------------------------------------------------------
+
+proc client_cmd {client msg} {
+    global dp
+
+    if { $dp } {
+	after 1 catch [list "dp_RDO [list $client] $msg"]
+    } else {
+	after 1 catch [list "after 1 send [list $client] $msg"]
+    }
 }
