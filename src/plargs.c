@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/02/01 22:47:49  mjl
+ * Revision 1.19  1994/03/23 07:50:37  mjl
+ * Added new plplot base options:
+ *
+ *  -hack		Set to enable some driver-specific hack
+ *  -fbeg number	First family member number on output
+ *  -finc number	Increment between family members
+ *  -fflen length	Family member number minimum field width
+ *
+ * Revision 1.18  1994/02/01  22:47:49  mjl
  * Added -user <user> flag, for specifying user when invoking plserver
  * remotely (via remsh).
  *
@@ -68,21 +76,6 @@
  *
  * Revision 1.7  1993/07/28  05:54:29  mjl
  * Added support for -nopixmap option.
- *
- * Revision 1.6  1993/07/16  22:32:35  mjl
- * Fixed bug encountered when setting option via plSetInternalOpt().
- *
- * Revision 1.5  1993/07/01  22:27:59  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Many changes to capabilities of argument parser.  New mode
- * flags as well as argument flags.  User-specified variables can now be set
- * directly, depending on flags.  Invisible options and ignored options added.
- * Many internal options added (most invisible) for support of the TK driver.
- * See internal documentation for more details.
- *
- * Revision 1.4  1993/04/26  19:57:56  mjl
- * Fixes to allow (once again) output to stdout and plrender to function as
- * a filter.  A type flag was added to handle file vs stream differences.
 */
 
 /*
@@ -155,15 +148,10 @@
 */
 
 #include "plplotP.h"
+#include "plstream.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-#include "plplotio.h"
-#include "pdf.h"
-#include "plstream.h"
 
 /* Support functions */
 /* INDENT OFF */
@@ -181,6 +169,7 @@ static void (*UsageH) (char *) = Usage;
 
 static int opt_h		(char *, char *, void *);
 static int opt_v		(char *, char *, void *);
+static int opt_hack		(char *, char *, void *);
 static int opt_dev		(char *, char *, void *);
 static int opt_o		(char *, char *, void *);
 static int opt_geo		(char *, char *, void *);
@@ -193,6 +182,9 @@ static int opt_width		(char *, char *, void *);
 static int opt_bg		(char *, char *, void *);
 static int opt_fam		(char *, char *, void *);
 static int opt_fsiz		(char *, char *, void *);
+static int opt_fbeg		(char *, char *, void *);
+static int opt_finc		(char *, char *, void *);
+static int opt_fflen		(char *, char *, void *);
 static int opt_bufmax		(char *, char *, void *);
 static int opt_nopixmap		(char *, char *, void *);
 static int opt_db		(char *, char *, void *);
@@ -221,7 +213,11 @@ static int	mode_nodelete;
 static int	mode_showall;
 static int	mode_noprogram;
 static int	mode_override;
-static PLStream	*pls;
+
+/* Stream pointer.  */
+/* Fetched before option processing, so can directly set plplot state data */
+
+static PLStream	*plsc;
 
 /*----------------------------------------------------------------------*\
 * PLPLOT options data structure definition.
@@ -299,6 +295,14 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED,
     "-v",
     "Print out the plplot library version number" },
+{
+    "hack",			/* Enable driver-specific hack(s) */
+    opt_hack,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
+    "-hack",
+    "Enable driver-specific hack(s)" },
 {
     "dev",			/* Output device */
     opt_dev,
@@ -435,6 +439,30 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-fsiz size",
     "Output family file size in MB (e.g. -fsiz 1.0)" },
+{
+    "fbeg",			/* Family starting member */
+    opt_fbeg,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-fbeg number",
+    "First family member number on output" },
+{
+    "finc",			/* Family member increment */
+    opt_finc,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-finc number",
+    "Increment between family members" },
+{
+    "fflen",			/* Family member min field width */
+    opt_fflen,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-fflen length",
+    "Family member number minimum field width" },
 {
     "nopixmap",			/* Do not use pixmaps */
     opt_nopixmap,
@@ -682,9 +710,9 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     if (usage_handler != NULL)
 	UsageH = usage_handler;
 
-/* The plplot stream pointer is fetched for direct data access */
+/* The stream pointer is fetched for direct access to plplot state data */
 
-    plgpls(&pls);
+    plgpls(&plsc);
 
 /* Disable internal options that match user options if mode_override is set */
 
@@ -706,7 +734,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 
     if ( ! mode_noprogram) {
 	program_name = argv[0];
-	pls->program = argv[0];
+	plsc->program = argv[0];
 
 	--myargc; ++argv;
 	argsave = argv;
@@ -1018,15 +1046,13 @@ Help(void)
 /*----------------------------------------------------------------------*\
 * opt_h()
 *
-* Performs appropriate action for option "h".
+* Performs appropriate action for option "h":
+* Issues help message
 \*----------------------------------------------------------------------*/
 
 static int
 opt_h(char *opt, char *optarg, void *client_data)
 {
-
-/* Help */
-
     if ( ! mode_quiet) {
 	fprintf(stderr, "\nUsage:\n        %s [plplot options]\n",
 		program_name);
@@ -1040,15 +1066,13 @@ opt_h(char *opt, char *optarg, void *client_data)
 /*----------------------------------------------------------------------*\
 * opt_v()
 *
-* Performs appropriate action for option "v".
+* Performs appropriate action for option "v":
+* Issues version message
 \*----------------------------------------------------------------------*/
 
 static int
 opt_v(char *opt, char *optarg, void *client_data)
 {
-
-/* Version */
-
     if ( ! mode_quiet) {
 	fprintf(stderr, "\nplplot library version: %s\n", PLPLOT_VERSION);
     }
@@ -1056,129 +1080,128 @@ opt_v(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
+* opt_hack()
+*
+* Performs appropriate action for option "hack":
+* Enables driver-specific hack(s)
+\*----------------------------------------------------------------------*/
+
+static int
+opt_hack(char *opt, char *optarg, void *client_data)
+{
+    plsc->hack = 1;
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
 * opt_dev()
 *
-* Performs appropriate action for option "dev".
+* Performs appropriate action for option "dev":
+* Sets output device keyword
 \*----------------------------------------------------------------------*/
 
 static int
 opt_dev(char *opt, char *optarg, void *client_data)
 {
-/* Output device */
-
     plsdev(optarg);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_o()
 *
-* Performs appropriate action for option "o".
+* Performs appropriate action for option "o":
+* Sets output file name
 \*----------------------------------------------------------------------*/
 
 static int
 opt_o(char *opt, char *optarg, void *client_data)
 {
-/* Output file */
-
     plsfnam(optarg);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_mar()
 *
-* Performs appropriate action for option "mar".
+* Performs appropriate action for option "mar":
+* Sets relative margin width
 \*----------------------------------------------------------------------*/
 
 static int
 opt_mar(char *opt, char *optarg, void *client_data)
 {
-/* Margin */
-
     plsdidev(atof(optarg), PL_NOTSET, PL_NOTSET, PL_NOTSET);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_a()
 *
-* Performs appropriate action for option "a".
+* Performs appropriate action for option "a":
+* Sets plot aspect ratio on page
 \*----------------------------------------------------------------------*/
 
 static int
 opt_a(char *opt, char *optarg, void *client_data)
 {
-/* Plot aspect ratio on page */
-
     plsdidev(PL_NOTSET, atof(optarg), PL_NOTSET, PL_NOTSET);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_jx()
 *
-* Performs appropriate action for option "jx".
+* Performs appropriate action for option "jx":
+* Sets relative justification in x
 \*----------------------------------------------------------------------*/
 
 static int
 opt_jx(char *opt, char *optarg, void *client_data)
 {
-/* Justification in x */
-
     plsdidev(PL_NOTSET, PL_NOTSET, atof(optarg), PL_NOTSET);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_jy()
 *
-* Performs appropriate action for option "jy".
+* Performs appropriate action for option "jy":
+* Sets relative justification in y
 \*----------------------------------------------------------------------*/
 
 static int
 opt_jy(char *opt, char *optarg, void *client_data)
 {
-/* Justification in y */
-
     plsdidev(PL_NOTSET, PL_NOTSET, PL_NOTSET, atof(optarg));
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_ori()
 *
-* Performs appropriate action for option "ori".
+* Performs appropriate action for option "ori":
+* Sets orientation
 \*----------------------------------------------------------------------*/
 
 static int
 opt_ori(char *opt, char *optarg, void *client_data)
 {
-/* Orientation */
-
     plsdiori(atof(optarg));
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_width()
 *
-* Performs appropriate action for option "width".
+* Performs appropriate action for option "width":
+* Sets pen width
 \*----------------------------------------------------------------------*/
 
 static int
 opt_width(char *opt, char *optarg, void *client_data)
 {
     int width;
-
-/* Width */
 
     width = atoi(optarg);
     if (width == 0) {
@@ -1187,7 +1210,7 @@ opt_width(char *opt, char *optarg, void *client_data)
     }
     else {
 	plwid(width);
-	pls->widthlock = 1;
+	plsc->widthlock = 1;
     }
     return 0;
 }
@@ -1195,7 +1218,8 @@ opt_width(char *opt, char *optarg, void *client_data)
 /*----------------------------------------------------------------------*\
 * opt_bg()
 *
-* Performs appropriate action for option "bg".
+* Performs appropriate action for option "bg":
+* Sets background color
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1204,7 +1228,6 @@ opt_bg(char *opt, char *optarg, void *client_data)
     char *rgb;
     long bgcolor, r, g, b;
 
-/* Background */
 /* Always in hex!  Strip off leading "#" (TK-ism) if present. */
 
     if (*optarg == '#')
@@ -1247,7 +1270,8 @@ opt_bg(char *opt, char *optarg, void *client_data)
 /*----------------------------------------------------------------------*\
 * opt_wplt()
 *
-* Performs appropriate action for option "wplt".
+* Performs appropriate action for option "wplt":
+* Sets (zoom) window into plot (e.g. "0,0,0.5,0.5")
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1255,8 +1279,6 @@ opt_wplt(char *opt, char *optarg, void *client_data)
 {
     char *field;
     float xl, yl, xr, yr;
-
-/* Window into plot (e.g. "0,0,0.5,0.5") */
 
     if ((field = strtok(optarg, ",")) == NULL)
 	return 1;
@@ -1285,32 +1307,29 @@ opt_wplt(char *opt, char *optarg, void *client_data)
 /*----------------------------------------------------------------------*\
 * opt_fam()
 *
-* Performs appropriate action for option "fam".
+* Performs appropriate action for option "fam":
+* Enables family output files
 \*----------------------------------------------------------------------*/
 
 static int
 opt_fam(char *opt, char *optarg, void *client_data)
 {
-
-/* Family output files */
-
     plsfam(1, -1, -1);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_fsiz()
 *
-* Performs appropriate action for option "fsiz".
+* Performs appropriate action for option "fsiz":
+* Sets size of a family member file (may be somewhat larger since eof must
+* occur at a page break).
 \*----------------------------------------------------------------------*/
 
 static int
 opt_fsiz(char *opt, char *optarg, void *client_data)
 {
     PLINT bytemax;
-
-/* Size of a member file (may be larger since eof must occur at page break) */
 
     bytemax = 1.0e6 * atof(optarg);
     if (bytemax == 0) {
@@ -1323,269 +1342,251 @@ opt_fsiz(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
+* opt_fbeg()
+*
+* Performs appropriate action for option "fbeg":
+* Starts with the specified family member number.
+\*----------------------------------------------------------------------*/
+
+static int
+opt_fbeg(char *opt, char *optarg, void *client_data)
+{
+    plsc->member = atoi(optarg);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_finc()
+*
+* Performs appropriate action for option "finc":
+* Specify increment between family members.
+\*----------------------------------------------------------------------*/
+
+static int
+opt_finc(char *opt, char *optarg, void *client_data)
+{
+    plsc->finc = atoi(optarg);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_fflen()
+*
+* Performs appropriate action for option "fflen":
+* Specify minimum field length for family member number.
+\*----------------------------------------------------------------------*/
+
+static int
+opt_fflen(char *opt, char *optarg, void *client_data)
+{
+    plsc->fflen = atoi(optarg);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
 * opt_np()
 *
-* Performs appropriate action for option "np".
+* Performs appropriate action for option "np":
+* Disables pause between pages
 \*----------------------------------------------------------------------*/
 
 static int
 opt_np(char *opt, char *optarg, void *client_data)
 {
-
-/* No pause between pages */
-
     plspause(0);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_nopixmap()
 *
-* Performs appropriate action for option "nopixmap".
+* Performs appropriate action for option "nopixmap":
+* Disables use of pixmaps in X drivers
 \*----------------------------------------------------------------------*/
 
 static int
 opt_nopixmap(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Don't use pixmaps in X drivers */
-
-    plgpls(&pls);
-    pls->nopixmap = 1;
-
+    plsc->nopixmap = 1;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_db()
 *
-* Performs appropriate action for option "db".
+* Performs appropriate action for option "db":
+* Double buffer X output (update only done on eop or Expose)
 \*----------------------------------------------------------------------*/
 
 static int
 opt_db(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Double buffer X output (update only done on eop or Expose) */
-
-    plgpls(&pls);
-    pls->db = 1;
-
+    plsc->db = 1;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_bufmax()
 *
-* Performs appropriate action for option "bufmax".
+* Performs appropriate action for option "bufmax":
+* Sets size of data buffer for tk driver
 \*----------------------------------------------------------------------*/
 
 static int
 opt_bufmax(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Bytes sent before output is flushed */
-
-    plgpls(&pls);
-    pls->bufmax = atoi(optarg);
-
+    plsc->bufmax = atoi(optarg);
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_server_name()
 *
-* Performs appropriate action for option "server_name".
+* Performs appropriate action for option "server_name":
+* Sets main window name of server (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
 opt_server_name(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Main window name of server (Tcl/TK/DP driver only) */
-
-    plgpls(&pls);
-    pls->server_name = optarg;
-
+    plsc->server_name = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_server_host()
 *
-* Performs appropriate action for option "server_host".
+* Performs appropriate action for option "server_host":
+* Sets host to run server on (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
 opt_server_host(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Host to run server on (Tcl/TK/DP driver only) */
-
-    plgpls(&pls);
-    pls->server_host = optarg;
-
+    plsc->server_host = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_server_port()
 *
-* Performs appropriate action for option "server_port".
+* Performs appropriate action for option "server_port":
+* Sets port to talk to server on (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
 opt_server_port(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Port to talk to server on (Tcl/TK/DP driver only) */
-
-    plgpls(&pls);
-    pls->server_port = optarg;
-
+    plsc->server_port = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_user()
 *
-* Performs appropriate action for option "user".
+* Performs appropriate action for option "user":
+* Sets user name on remote node (for remsh), dp driver only
 \*----------------------------------------------------------------------*/
 
 static int
 opt_user(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* User name on remote node (for remsh), dp driver only */
-
-    plgpls(&pls);
-    pls->user = optarg;
-
+    plsc->user = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_plserver()
 *
-* Performs appropriate action for option "plserver".
+* Performs appropriate action for option "plserver":
+* Sets name to use when invoking server (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
 opt_plserver(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* name to use when invoking server (Tcl/TK/DP driver only) */
-
-    plgpls(&pls);
-    pls->plserver = optarg;
-
+    plsc->plserver = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_plwindow()
 *
-* Performs appropriate action for option "plwindow".
+* Performs appropriate action for option "plwindow":
+* Sets plplot window name
 \*----------------------------------------------------------------------*/
 
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* plplot window name */
-
-    plgpls(&pls);
-    pls->plwindow = optarg;
-
+    plsc->plwindow = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_tcl_cmd()
 *
-* Performs appropriate action for option "tcl_cmd".
+* Performs appropriate action for option "tcl_cmd":
+* Sets TCL command(s) to eval on startup
 \*----------------------------------------------------------------------*/
 
 static int
 opt_tcl_cmd(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* TCL command(s) to eval on startup */
-
-    plgpls(&pls);
-    pls->tcl_cmd = optarg;
-
+    plsc->tcl_cmd = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_auto_path()
 *
-* Performs appropriate action for option "auto_path".
+* Performs appropriate action for option "auto_path":
+* Sets additional directories to autoload
 \*----------------------------------------------------------------------*/
 
 static int
 opt_auto_path(char *opt, char *optarg, void *client_data)
 {
-    PLStream *pls;
-
-/* Additional directories to autoload */
-
-    plgpls(&pls);
-    pls->auto_path = optarg;
-
+    plsc->auto_path = optarg;
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_px()
 *
-* Performs appropriate action for option "px".
+* Performs appropriate action for option "px":
+* Set packing in x
 \*----------------------------------------------------------------------*/
 
 static int
 opt_px(char *opt, char *optarg, void *client_data)
 {
-
-/* Pack in x */
-
     plssub(atoi(optarg), -1);
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_py()
 *
-* Performs appropriate action for option "py".
+* Performs appropriate action for option "py":
+* Set packing in y
 \*----------------------------------------------------------------------*/
 
 static int
 opt_py(char *opt, char *optarg, void *client_data)
 {
-
-/* Pack in y */
-
     plssub(-1, atoi(optarg));
-
     return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_geo()
 *
-* Performs appropriate action for option "geo".
+* Performs appropriate action for option "geo":
+* Set geometry for output window (e.g. "400x400+100+0")
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1594,15 +1595,11 @@ opt_geo(char *opt, char *optarg, void *client_data)
     char *field;
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid, ywid, xoff = 0, yoff = 0;
-    PLStream *pls;
 
 /* The TK driver uses the geometry string directly */
 
-    plgpls(&pls);
-    pls->geometry = (char *) malloc((size_t)(1+strlen(optarg)) * sizeof(char));
-    strcpy(pls->geometry, optarg);
-
-/* Geometry for output window (e.g. "400x400+100+0") */
+    plsc->geometry = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    strcpy(plsc->geometry, optarg);
 
     if ((field = strtok(optarg, "x")) == NULL)
 	return 1;
@@ -1630,6 +1627,5 @@ opt_geo(char *opt, char *optarg, void *client_data)
     }
 
     plspage(xdpi, ydpi, xwid, ywid, xoff, yoff);
-
     return 0;
 }
