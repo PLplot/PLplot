@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/02/26 06:05:41  mjl
-   Surrounded the test for NULL being defined with an "#ifdef sun" since it
-   is bound to cause problems otherwise.
+   Revision 1.15  1993/03/02 19:00:19  mjl
+   Added prototype for plgver() and its stub name def'n.
 
+ * Revision 1.14  1993/02/26  06:05:41  mjl
+ * Surrounded the test for NULL being defined with an "#ifdef sun" since it
+ * is bound to cause problems otherwise.
+ *
  * Revision 1.13  1993/02/26  05:19:39  mjl
  * Fix for SUNOS -- NULL isn't always defined.  Should it be?  Anyhow this
  * was the easiest way to fix it.
@@ -519,6 +522,7 @@ typedef struct {
 #define    plgra	c_plgra
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
+#define    plgver	c_plgver
 #define    plgxax	c_plgxax
 #define    plgyax	c_plgyax
 #define    plgzax	c_plgzax
@@ -607,6 +611,7 @@ typedef struct {
 #define    c_plgra	plgra
 #define    c_plgspa	plgspa
 #define    c_plgstrm	plgstrm
+#define    c_plgver	plgver
 #define    c_plgxax	plgxax
 #define    c_plgyax	plgyax
 #define    c_plgzax	plgzax
@@ -740,6 +745,8 @@ void c_plgra	(void);
 void c_plgspa	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
 void c_plgstrm	(PLINT *);
+
+void c_plgver	(char *);
 
 void c_plgxax	(PLINT *, PLINT *);
 

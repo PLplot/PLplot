@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/02/23 04:59:00  mjl
-   Added and deleted some function prototypes.
+   Revision 1.9  1993/03/02 19:00:21  mjl
+   Added prototype for plgver() and its stub name def'n.
 
+ * Revision 1.8  1993/02/23  04:59:00  mjl
+ * Added and deleted some function prototypes.
+ *
  * Revision 1.7  1993/01/23  05:39:55  mjl
  * Changes in function prototypes to reflect reorganization, new color
  * model support.
@@ -112,6 +115,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLGRA	FNAME(PLGRA,plgra)
 #define    PLGSPA	FNAME(PLGSPA,plgspa)
 #define    PLGSTRM	FNAME(PLGSTRM,plgstrm)
+#define    PLGVER_	FNAME(PLGVER_,plgver_)
 #define    PLGXAX	FNAME(PLGXAX,plgxax)
 #define    PLGYAX	FNAME(PLGYAX,plgyax)
 #define    PLGZAX	FNAME(PLGZAX,plgzax)
