@@ -19,11 +19,25 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_f77
+f77_examples = \
+	x01f.f \
+	x02f.f \
+	x03f.f \
+	x04f.f \
+	x05f.f \
+	x06f.f \
+	x07f.f \
+	x08f.f \
+	x09f.f \
+	x10f.f \
+	x11f.f \
+	x12f.f \
+	x13f.f \
+	x16f.f
 
 AM_CPPFLAGS = $(INCLTDL)
-examples_f77dir = ${prefix}/$(DATA_DIR)/../examples/f77
-f77m4_source = \
+
+f77m4_sources = \
 	fmacs.m4 \
 	x01f.fm4 \
 	x02f.fm4 \
@@ -40,29 +54,6 @@ f77m4_source = \
 	x13f.fm4 \
 	x16f.fm4
 
-examples_f77_DATA = \
-	.samename/Makefile \
-	x01f.f \
-	x02f.f \
-	x03f.f \
-	x04f.f \
-	x05f.f \
-	x06f.f \
-	x07f.f \
-	x08f.f \
-	x09f.f \
-	x10f.f \
-	x11f.f \
-	x12f.f \
-	x13f.f \
-	x16f.f
-
-.samename/Makefile: Makefile.examples
-	mkdir -p .samename
-	cp Makefile.examples .samename/Makefile
-
-# Since these are all generated....
-CLEANFILES = $(examples_f77_DATA)
 # Need explicit dependencies for Solaris make.
 x01f.f: x01f.fm4 fmacs.m4
 
@@ -97,7 +88,10 @@ SUFFIXES = .fm4
 .fm4.f:
 	$(M4) $(M4_FLAGS) $< >$*.f
 
-libplplotf77 = ../../bindings/f77/libplplotf77$(LIB_TAG).la
+if enable_f77
+
+examples_f77dir = ${prefix}/$(DATA_DIR)/../examples/f77
+examples_f77_DATA = $(f77_examples) Makefile.examples
 
 check_PROGRAMS = \
 	x01f \
@@ -130,23 +124,19 @@ x12f_SOURCES = x12f.f
 x13f_SOURCES = x13f.f
 x16f_SOURCES = x16f.f
 
-x01f_LDFLAGS = $(libplplotf77)
-x02f_LDFLAGS = $(libplplotf77)
-x03f_LDFLAGS = $(libplplotf77)
-x04f_LDFLAGS = $(libplplotf77)
-x05f_LDFLAGS = $(libplplotf77)
-x06f_LDFLAGS = $(libplplotf77)
-x07f_LDFLAGS = $(libplplotf77)
-x08f_LDFLAGS = $(libplplotf77)
-x09f_LDFLAGS = $(libplplotf77)
-x10f_LDFLAGS = $(libplplotf77)
-x11f_LDFLAGS = $(libplplotf77)
-x12f_LDFLAGS = $(libplplotf77)
-x13f_LDFLAGS = $(libplplotf77)
-x16f_LDFLAGS = $(libplplotf77)
+LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
 
-EXTRA_DIST = $(f77m4_source) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples .samename/Makefile
+install-data-hook:
+	( cd $(DESTDIR)/$(examples_f77dir) ; mv Makefile.examples Makefile ) 
+
+else
+
+# The following empty rule is needed because we are in the "else" part of
+# an AM_CONDITIONAL
+install-data-hook:
 
 # enable_f77
 endif
+
+MAINTAINERCLEANFILES = $(f77_examples)
+EXTRA_DIST = $(f77m4_sources)
