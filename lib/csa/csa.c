@@ -32,6 +32,7 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
+#include <errno.h>
 #include "version.h"
 #include "csa_internal.h"
 #include "nan.h"
