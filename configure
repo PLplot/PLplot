@@ -94,6 +94,8 @@ ac_help="$ac_help
 ac_help="$ac_help
   --enable-conex          enable conex device driver"
 ac_help="$ac_help
+  --enable-linuxvga       enable linuxvga device driver"
+ac_help="$ac_help
   --enable-vlt            enable vlt device driver"
 ac_help="$ac_help
   --enable-versaterm      enable versaterm device driver"
@@ -1124,38 +1126,39 @@ fi
 # ----------------------------------------------------------------------------
 # Set up Fortran compiler
 
-if test -z "$F77"; then
-    F77=f77
-    case "$system" in 
-	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	    F77=xlf
-	;;
-	dg*|DG* ) 
-	    F77=ghf77
-	;;
-	hp*|HP* ) 
-	    # The fort77 front-end uses a cc-like set of command line flags.
+if test "$enable_f77" = "yes"; then
+    if test -z "$F77"; then
+	F77=f77
+	case "$system" in 
+	    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+		F77=xlf
+	    ;;
+	    dg*|DG* ) 
+		F77=ghf77
+	    ;;
+	    hp*|HP* ) 
+		# The fort77 front-end uses cc-like command line flags.
 
-	    F77=fort77
-	;;
-	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
-	    # The f77 front-end uses a cc-like set of command line flags,
-	    # but I've had problems with it, so use f77sx here instead.
+		F77=fort77
+	    ;;
+	    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+		# The f77 front-end uses cc-like command line flags,
+		# but I've had problems with it, so use f77sx here instead.
 
-	    F77=f77sx
-	    with_f2c=no
-	;;
-	CRAY* ) 
-	    F77=cf77
-	    with_f2c=no
-	;;
-    esac
-fi
+		F77=f77sx
+		with_f2c=no
+	    ;;
+	    CRAY* ) 
+		F77=cf77
+		with_f2c=no
+	    ;;
+	esac
+    fi
 
-# If not using f2c, try locating the executable now.
+    # If not using f2c, try locating the executable now.
 
-if test "$with_f2c" = "no"; then
-    # Extract the first word of "$F77", so it can be a program name with args.
+    if test "$with_f2c" = "no"; then
+	# Extract the first word of "$F77", so it can be a program name with args.
 set dummy $F77; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_prog_found_F77'+set}'`\" = set"; then
@@ -1183,8 +1186,9 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-    if test "$found_F77" = "no" ; then
-	with_f2c=yes
+	if test "$found_F77" = "no" ; then
+	    with_f2c=yes
+	fi
     fi
 fi
 
@@ -1213,8 +1217,9 @@ fi
 # The only option supported for f2c is --with-double.
 # ----------------------------------------------------------------------------
 
-if test "$with_f2c" = "yes"; then
-    # Extract the first word of "fc", so it can be a program name with args.
+if test "$enable_f77" = "yes"; then
+    if test "$with_f2c" = "yes"; then
+	# Extract the first word of "fc", so it can be a program name with args.
 set dummy fc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_prog_found_fc'+set}'`\" = set"; then
@@ -1242,10 +1247,10 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-    if test "$found_fc" = "yes" ; then
-	F77=fc
-    else
-	# Extract the first word of "f77", so it can be a program name with args.
+	if test "$found_fc" = "yes" ; then
+	    F77=fc
+	else
+	    # Extract the first word of "f77", so it can be a program name with args.
 set dummy f77; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_prog_found_f77'+set}'`\" = set"; then
@@ -1273,19 +1278,20 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-	if test "$found_f77" = "yes" ; then
-	    F77=f77
-	else
-	    echo "$ac_t""warning: cannot find a Fortran compiler, setting enable_f77=no" 1>&6
-	    with_f2c=no
-	    enable_f77=no
+	    if test "$found_f77" = "yes" ; then
+		F77=f77
+	    else
+		echo "$ac_t""warning: cannot find a Fortran compiler, setting enable_f77=no" 1>&6
+		with_f2c=no
+		enable_f77=no
+	    fi
 	fi
-    fi
 
-    DEBUG_FLAG_F=
-    OPT_FLAG_F=
-    PROF_FLAG_F=
-    SYS_FLAGS_F=
+	DEBUG_FLAG_F=
+	OPT_FLAG_F=
+	PROF_FLAG_F=
+	SYS_FLAGS_F=
+    fi
 fi
 
 # ----------------------------------------------------------------------------
@@ -1492,20 +1498,24 @@ esac
 CC_FLAGS=\
 "-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
 
-CXX_FLAGS=\
-"-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
-
-F77_FLAGS=\
-"-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
-
 LDC_FLAGS=\
 "$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
 
-LDCXX_FLAGS=\
-"$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+if test "$enable_cxx" = "yes"; then
+    CXX_FLAGS=\
+    "-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
 
-LDF_FLAGS=\
-"$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+    LDCXX_FLAGS=\
+    "$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+fi
+
+if test "$enable_f77" = "yes"; then
+    F77_FLAGS=\
+    "-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
+
+    LDF_FLAGS=\
+    "$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+fi
 
 M4_FLAGS="-S2000 -B8192"
 
@@ -1540,7 +1550,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1544 "configure"
+#line 1554 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1554,7 +1564,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1558 "configure"
+#line 1568 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1697,7 +1707,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1701 "configure"
+#line 1711 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1760,7 +1770,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1764 "configure"
+#line 1774 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1846,7 +1856,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1850 "configure"
+#line 1860 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1903,7 +1913,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1907 "configure"
+#line 1917 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2803,7 +2813,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2807 "configure"
+#line 2817 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2865,7 +2875,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2869 "configure"
+#line 2879 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2898,7 +2908,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2902 "configure"
+#line 2912 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2931,7 +2941,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2935 "configure"
+#line 2945 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2964,7 +2974,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2968 "configure"
+#line 2978 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2997,7 +3007,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3001 "configure"
+#line 3011 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3169,7 +3179,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3173 "configure"
+#line 3183 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3190,7 +3200,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3194 "configure"
+#line 3204 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3212,7 +3222,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3216 "configure"
+#line 3226 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3230,7 +3240,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3234 "configure"
+#line 3244 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3251,7 +3261,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3255 "configure"
+#line 3265 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3288,7 +3298,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3292 "configure"
+#line 3302 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3349,7 +3359,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3353 "configure"
+#line 3363 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3381,7 +3391,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3385 "configure"
+#line 3395 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3415,7 +3425,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3419 "configure"
+#line 3429 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3530,7 +3540,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3534 "configure"
+#line 3544 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3585,7 +3595,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3589 "configure"
+#line 3599 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3687,6 +3697,18 @@ cat $srcdir/cf/init.in		>Makefile.in
 # Default target, core source and object file lists
 
 cat $srcdir/cf/dist.in		>>Makefile.in 
+
+# Additional drivers per system
+
+case $system in
+    Linux* )
+	enable_linuxvga="yes"
+	cat $srcdir/cf/drivers_linux.in	>>Makefile.in
+    ;;
+    * )
+	enable_linuxvga="no"
+    ;;
+esac
 
 # Optional packages
 
@@ -3915,6 +3937,26 @@ if test "$enable_conex" = "yes"; then
 EOF
 
     DEVICES="$DEVICES conex"
+fi
+# Check whether --enable-linuxvga or --disable-linuxvga was given.
+enableval="$enable_linuxvga"
+if test -n "$enableval"; then
+  :
+else
+  enable_linuxvga=$enable_drivers
+fi
+# Check whether --with-linuxvga or --without-linuxvga was given.
+withval="$with_linuxvga"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_linuxvga" 1>&2; exit 1; }
+fi
+
+if test "$enable_linuxvga" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_linuxvga 1
+EOF
+
+    DEVICES="$DEVICES linuxvga"
 fi
 # Check whether --enable-vlt or --disable-vlt was given.
 enableval="$enable_vlt"
@@ -4616,10 +4658,24 @@ command:	$plplot_config_invocation
 system:		$system
 prefix:		$prefix
 CC:		$CC $CC_FLAGS
+LDC:		$LDC $LDC_FLAGS"
+
+if test "$enable_cxx" = "yes"; then
+    plplot_config_result_msg=\
+"$plplot_config_result_msg
 CXX:		$CXX $CXX_FLAGS
+LDCXX:		$LDCXX $LDCXX_FLAGS"
+fi
+
+if test "$enable_f77" = "yes"; then
+    plplot_config_result_msg=\
+"$plplot_config_result_msg
 F77:		$F77 $F77_FLAGS
-LDC:		$LDC $LDC_FLAGS
-LDF:		$LDF $LDF_FLAGS
+LDF:		$LDF $LDF_FLAGS"
+fi
+
+plplot_config_result_msg=\
+"$plplot_config_result_msg
 INCS:		$INCS
 LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
