@@ -1698,14 +1698,22 @@ plsfile(FILE *file)
     plsc->OutFile = file;
 }
 
-/* Get the (current) output file name.  Must be preallocated to >80 bytes */
+/* Get the (current) output file name.  Must be preallocated to >=80 bytes */
 /* Beyond that, I truncate it.  You have been warned. */
 
 void
 c_plgfnam(char *fnam)
 {
-    strncpy(fnam, plsc->FileName, 79);
-    fnam[79] = '\0';
+    if (fnam == NULL) {
+	plabort("filename string must be preallocated to >=80 bytes");
+	return;
+    }
+
+    *fnam = '\0';
+    if (plsc->FileName != NULL) {
+	strncpy(fnam, plsc->FileName, 79);
+	fnam[79] = '\0';
+    }
 }
 
 /* Set the output file name. */
