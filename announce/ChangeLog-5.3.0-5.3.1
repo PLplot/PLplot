@@ -1,3 +1,1080 @@
+Commit from rlaboiss (2004-02-14 13:38 CET)
+--------------------
+
+Changed order of build and install tree binary directories, such that make
+check picks the pltcl in the build tree even when the package is installed
+in the system.  Also, changed @prefix@ to @exec_prefix@, because this is the
+true prefix for /bin (as defined by configure).
+
+  plplot  test/plplot-test.sh.in  1.18
+
+
+Commit from rlaboiss (2004-02-14 13:12 CET)
+--------------------
+
+Better Automake constructs
+
+  plplot  utils/Makefile.am  1.10
+
+
+Commit from rlaboiss (2004-02-14 13:11 CET)
+--------------------
+
+Set the appropriate LD_LIBRARY_PATH, such that "make check" will work, even
+when PLplot is not installed in the system.  This should have no impact when
+launching plplot-test.sh from the install tree.
+
+  plplot  test/test_octave.sh  1.17
+
+
+Commit from andrewross (2004-02-14 13:02 CET)
+----------------------
+
+Implement new plarrow2 function to plot arrows using the function
+evaluator approach. Alter x22c.c and x22.cc to reflect this. Add
+polar vector plot example.
+
+  plplot  bindings/c++/plstream.cc  1.22
+  plplot  bindings/c++/plstream.h   1.16
+  plplot  examples/c/x22c.c         1.3
+  plplot  examples/c++/x22.cc       1.2
+  plplot  include/plplot.h          1.149
+  plplot  src/Makefile.am           1.13
+  plplot  src/plcore.c              1.130
+  plplot  src/plsym.c               1.36
++ plplot  src/plvect.c              1.1
+
+
+Commit from rlaboiss (2004-02-14 12:58 CET)
+--------------------
+
+Allow the AC_SUBSTITuted variable OCTAVE (defined in sysloc.in) to be used
+in test_octave.sh, instead of the hard coded command name "octave".  It is
+passed from plplot-test.sh to test_octave.sh as the environment variable
+$octave.
+
+Also, removed a comment indicating that this is work in progress.
+
+  plplot  sysloc.in               1.74
+  plplot  test/plplot-test.sh.in  1.17
+  plplot  test/test_octave.sh     1.16
+
+
+Commit from rlaboiss (2004-02-14 12:43 CET)
+--------------------
+
+Inverted order of utils and test in SUBDIRS, because test/test_tcl.sh needs
+utils/pltcl.
+
+  plplot  Makefile.am  1.35
+
+
+Commit from rlaboiss (2004-02-14 11:12 CET)
+--------------------
+
+Remove deleted scripts from EXTRA_DIST
+
+  plplot  Makefile.am  1.34
+
+
+Commit from rlaboiss (2004-02-14 11:00 CET)
+--------------------
+
+As announced in plplot-devel, I am moving these very old scripts into the
+scripts/ directory.  They have nothing to do at the top dir.
+
+Consider them to be now in a kind of limbo state, before being sent into the
+dark depths of Attic (what, BTW, happened to the obsolete reconfig, which
+can be emulated with ./config.status --recheck)
+
+- plplot  mkrel            1.3
+- plplot  plexp            1.8
+- plplot  plimp            1.2
+- plplot  tarup            1.10
+- plplot  zipup            1.6
+- plplot  mklinks          1.7
+- plplot  reconfig         1.2
++ plplot  scripts/mklinks  1.1
++ plplot  scripts/mkrel    1.1
++ plplot  scripts/plexp    1.1
++ plplot  scripts/plimp    1.1
++ plplot  scripts/tarup    1.1
++ plplot  scripts/zipup    1.1
+
+
+Commit from airwin (2004-02-13 22:35 CET)
+------------------
+
+As discussed on list disable ntk, ljii, ljiip, dg300, imp, conex, mskermit,
+tek4010, tek4010f, tek4107, tek4107f, versaterm, vlt, and xterm devices by
+default because unmaintained (ntk) or "old".  xterm made the list because
+from conex to vlt fails to disappear unless xterm is gone as well.
+Furthermore, xterm is pretty lame (monochrome, software fill) so you would
+probably only want to enable it if nothing else worked.
+
+  plplot  configure.ac  1.162
+
+
+Commit from rlaboiss (2004-02-13 21:09 CET)
+--------------------
+
+Get the right bindings/python relative paths
+
+  plplot  examples/python/plplot_python_start.py.in  1.6
+
+
+Commit from airwin (2004-02-13 19:52 CET)
+------------------
+
+Adaptation (works for all python's from 1.5 onward, correct example ranges,
+and proper globals and locals argument for __import__) of Rafael's privately
+communicated idea for delivering proper return code when one of the examples
+fails.  Works like a charm if a bad example is inserted.
+
+  plplot  examples/python/pythondemos.py  1.9
+
+
+Commit from rlaboiss (2004-02-13 19:43 CET)
+--------------------
+
+Added a leading slash to the paths of the binding/python directories.
+
+Also, added a note to avoid "some deb and rpm users scratch their heads and
+wonder where this useless junk came from." (Thanks for the suggestion, Alan
+:-)
+
+  plplot  examples/python/plplot_python_start.py.in  1.5
+
+
+Commit from airwin (2004-02-13 18:53 CET)
+------------------
+
+Fixed bugs introduced by recent swig reorganization.
+
+  plplot  bindings/swig-support/plplotcapi.i  1.2
+
+
+Commit from rlaboiss (2004-02-13 17:22 CET)
+--------------------
+
+Call exit(1) only if some of the tests failed
+
+  plplot  test/test_octave.sh  1.15
+
+
+Commit from rlaboiss (2004-02-13 17:19 CET)
+--------------------
+
+Set all variables dependent on EXAMPLES_DIR after the options have been
+processed, so that --examples-dir really work.
+
+  plplot  test/plplot-test.sh.in  1.16
+
+
+Commit from rlaboiss (2004-02-13 17:16 CET)
+--------------------
+
+Moved check of c subdirectory after the options are processed, so that
+--examples-dir really override EXAMPLES_DIR.
+
+  plplot  test/plplot-test.sh.in  1.15
+
+
+Commit from rlaboiss (2004-02-13 16:17 CET)
+--------------------
+
+Instead of setting PYTHONPATH in test/test_python.sh.in, prior to the call
+to pythondemos.py, use sys.path.insert three times in
+examples/python/plplot_python_start.py.in, taking care of putting the build
+tree directories before the install tree one.
+
+This guarantees no interferences between the build and install trees, as
+regards the Pyhton tests done by plplot-test.sh.
+
+  plplot  examples/python/plplot_python_start.py.in  1.4
+  plplot  test/test_python.sh.in                     1.5
+
+
+Commit from rlaboiss (2004-02-13 14:17 CET)
+--------------------
+
+Added a catch argument to the eval call, such that the loop iterating over
+the demo scripts is not interrupted if one of them fails.  Also, the names
+of the failing scripts are shown at end of execution of the test program,
+e.g.:
+
+    Failed tests: x01o.m, x03o.m
+
+Furthermore, when there are failures, the test script must return an error
+status (hence the "exit(1)" at the end), such that "make check" can
+correctly report failures.
+
+I similar approach should be implemented in pythondemos.py, but I have to
+learn more Python before doing it (or perhaps Alan should do it?)
+
+  plplot  test/test_octave.sh  1.14
+
+
+Commit from rlaboiss (2004-02-13 13:46 CET)
+--------------------
+
+Changed order of directory in Octave loadpath (variable octavedir), such
+that the build tree takes precedence over the install tree when running
+"make check".
+
+  plplot  test/plplot-test.sh.in  1.14
+
+
+Commit from rlaboiss (2004-02-13 13:40 CET)
+--------------------
+
+Get rid of *.pyc files through CLEANFILES
+
+  plplot  examples/python/Makefile.am  1.11
+
+
+Commit from rlaboiss (2004-02-13 10:10 CET)
+--------------------
+
+Updated AC_INIT for CVS snapshot release 5.3.0.cvs.20040211
+
+  plplot  configure.ac  1.161
+
+
+Commit from rlaboiss (2004-02-12 17:40 CET)
+--------------------
+
+Make the python test in test_python.sh really work from anywhere, such that
+"make check" works, even if PLplot is not installed in the system.  This
+completes my work in this area.  From the tarball tree, one just have to do
+now:
+
+    ./configure ; make check
+
+to build the whole thing and test it.
+
+From a fresh CVS checked out tree:
+
+    ./bootstrap.sh ; ./configure ; make check
+
+I simply added components to PYTHONPATH in test_python.sh, such that Python
+can find the plplot modules.  However, I do not understand why "import
+_plplotc" does not work when _plplotcmodule.so is not installed in the
+Python site-packages directory in the system.  For that reason, a check_DATA
+variable was introduced in bindings/python/Makefile.am, such that copies of
+the modules with the correct names are created in bindings/python/.libs
+(similarly to what is done in install-exec-hook, but also strip "module"
+from the file names.)
+
+Index: bindings/python/Makefile.am
+RCS file: /cvsroot/plplot/plplot/bindings/python/Makefile.am,v
+retrieving revision 1.26
+diff -u -r1.26 Makefile.am
+--- bindings/python/Makefile.am	10 Feb 2004 17:36:14 -0000	1.26
++++ bindings/python/Makefile.am	12 Feb 2004 16:26:57 -0000
+@@ -101,6 +101,14 @@
+ ourexecpython_DATA = plplot.py plplotc.py
+ ourexecpython_LTLIBRARIES = UNDERSCORE_plplotcmodule.la plplot_widgetmodule.la
+
++check_DATA = .libs/check-stamp
++.libs/check-stamp:
++	( cd .libs ; \
++	  for f in UNDERSCORE_plplot* ; do \
++             cp $$f `echo $$f | sed s/UNDERSCORE// | sed s/module//` ; \
++          done ; \
++	  touch check-stamp )
++
+ # enable_python
+ endif
+
+Index: test/test_python.sh.in
+RCS file: /cvsroot/plplot/plplot/test/test_python.sh.in,v
+retrieving revision 1.3
+diff -u -r1.3 test_python.sh.in
+--- test/test_python.sh.in	12 Feb 2004 08:47:28 -0000	1.3
++++ test/test_python.sh.in	12 Feb 2004 16:26:57 -0000
+@@ -21,5 +21,5 @@
+
+ # This is called from plplot-test.sh with $pythondir, $device, $dsuffix,
+ # and $options defined.
+-export PYTHONPATH=$EXAMPLES_DIR/../bindings/python
++export PYTHONPATH=$EXAMPLES_DIR/../bindings/python:$EXAMPLES_DIR/../bindings/python/.libs
+ @PYTHON@ $pythondir/pythondemos.py -dev $device -o pythondemos.$dsuffix $options
+
+  plplot  bindings/python/Makefile.am  1.27
+  plplot  test/test_python.sh.in       1.4
+
+
+Commit from rlaboiss (2004-02-12 09:47 CET)
+--------------------
+
+Further efforts to have "make check" working from the build tree, without
+needing to install PLplot in the sytem.
+
+The test_tcl.sh problem was easy to fix.  I just remove all instances the
+variable installbindir, which was set in plplot-test.sh and used in
+test_tcl.sh.  The PATH variable is used instead.
+
+The Python demos still do not work, although the setting of PYTHONPATH in
+test_python.sh.  I will investigate this later.
+
+The environment variable EXAMPLES_DIR passed to plplot-test.sh throught eht
+varaible TESTS_ENVIRONMENTS in Makefile.am is now absolute.
+
+  plplot  test/Makefile.am        1.14
+  plplot  test/plplot-test.sh.in  1.13
+  plplot  test/test_python.sh.in  1.3
+  plplot  test/test_tcl.sh        1.8
+
+
+Commit from airwin (2004-02-12 03:16 CET)
+------------------
+
+Get rid of name clash between procs for this example and example 1.  These
+name clashes makes a difference when all these examples are sourced at the
+same time (as occurs in tcldemos.tcl).
+
+  plplot  examples/tcl/x14.tcl  1.7
+
+
+Commit from rlaboiss (2004-02-11 21:32 CET)
+--------------------
+
+Really use the environment variable WWW_USER
+
+  plplot  scripts/upload-cvs-tarball.sh  1.3
+
+
+Commit from rlaboiss (2004-02-11 21:10 CET)
+--------------------
+
+Oops, typo, lib -> sgml
+
+  plplot  doc/docbook/docbook.m4  1.17
+
+
+Commit from rlaboiss (2004-02-11 20:49 CET)
+--------------------
+
+Changed the default location of xml.dcl
+
+  plplot  doc/docbook/docbook.m4  1.16
+
+
+Commit from rlaboiss (2004-02-11 20:20 CET)
+--------------------
+
+Changed SF_USER -> WWW_USER. Let's avoid references to SourceForge
+
+  plplot  debian/upload-debs.pl  1.2
+
+
+Commit from andrewross (2004-02-11 12:39 CET)
+----------------------
+
+Add option to plsarrow to allow filled arrows. Arrow now defined as a
+series of points making a polygon. Change x22c.c example to reflect this.
+Add C++ example x22c.cc.
+
+  plplot  bindings/c++/plstream.cc           1.21
+  plplot  bindings/c++/plstream.h            1.15
+  plplot  examples/c/x22c.c                  1.2
+  plplot  examples/c++/Makefile.am           1.16
+  plplot  examples/c++/Makefile.examples.in  1.19
++ plplot  examples/c++/x22.cc                1.1
+  plplot  include/plplot.h                   1.148
+  plplot  include/plstrm.h                   1.31
+  plplot  src/plsym.c                        1.35
+
+
+Commit from rlaboiss (2004-02-11 12:14 CET)
+--------------------
+
+Added C++ examples to the web site
+
+  plplot  scripts/htdocs-gen_plot-examples.sh  1.6
+
+
+Commit from rlaboiss (2004-02-11 11:31 CET)
+--------------------
+
+"make check" will now run the plplot-test.sh script in the build tree.  This
+is extremely useful, since developers have just to type "./configure ; make
+check" to have everything built and tested after a fresh cvs checkout.  This
+is what we have now (some uninteresting lines were removed):
+
+    $ cd test
+    $ make check
+    make  check-TESTS
+    Testing front-end c
+    Testing front-end cxx
+    Testing front-end f77
+    Testing front-end octave
+    Testing front-end python
+    Testing front-end tcl
+    PASS: plplot-test.sh
+    ==================
+    All 1 tests passed
+    ==================
+
+Of course, the final message "All 1 tests passed" means only that there was
+no execution errors in the examples programs.  This can be improved in the
+future by comparing the results with some pre-built information, like the
+md5sum of the resulting files included somewhere in the distribution
+tarball.  This is a long-term goal.
+
+The changes in test/Makefile.am are trivial, just including the definitions
+of the variables TESTS and TESTS_ENVIRONMENT.  This later variable allows
+environment variables to be passed to the plplot-test.sh script.
+
+For having all this working, but keeping all the previous functionalities of
+plplot-test.sh, I had to make a lot of changes in the script.  Two good
+news: (1) no changes were needed to the test_*.sh scripts and (2) although
+plplot-test.sh is highly improved, its size reduced by 40 lines! (I love so
+much to remove cruft and avoid useless repetition of code... have I told you
+that already? :-)
+
+Here is the detail of the changes to plplot-test.sh:
+
+  * The script can be launched from any place now.  This was impossible
+    before, because the test_*.sh files where launched like "./test_c.sh".
+    The path for the test_*.sh scripts is deduced from the path of $0.
+
+  * The script takes into account now four environment variables, namely
+    DEVICE, FRONT_END, OUTPUT_DIR, and EXAMPLES_DIR, which mimic the options
+    --device, --front-end, --output-dir, and --examples-dir, respectively,
+    but are overridden by them.
+
+  * OUTPUT_DIR specifies the directory in which the resulting files are
+    stored (defaults to ".") and EXAMPLES_DIR where the examples are
+    (defaults also to ".").  If a subdirectory "c/" is not found under
+    EXAMPLES_DIR, the script aborts with an error message.
+
+  * The script works from the build tree now.  The only change to make that
+    work was the addition of "$EXAMPLES_DIR/../bindings/octave//" to the
+    octavedir variable.
+
+  * The FRONT_END environment variable, as well as the --front-end option
+    accept now a list of front-ends to test, like this --front-end="c f77".
+
+  * In order to have "make check" working properly, the plplot-test.sh
+    script must return a useful status value.  It loops then over the set of
+    specified fornt ends and, if any one them failed, then 1 returned.
+    Otherwise, a status value of 0 is returned.
+
+  * I have used my own Bourne shell programming style, i.e. instead of
+    writing:
+
+        foo=1
+	export foo
+	bar=2
+	export bar
+
+    I use the more compact:
+
+        export foo=1 bar=2
+
+    Also, instead of:
+
+        if test this = that ; then
+	    do-it
+	fi
+
+    we have now:
+
+        test this = that && do-it
+
+    Join the campaign: "Better style for concise (albeit unobfuscated) code".
+    ;-)
+
+  plplot  test/Makefile.am        1.13
+  plplot  test/plplot-test.sh.in  1.12
+
+
+Commit from rlaboiss (2004-02-10 18:36 CET)
+--------------------
+
+The two plplotcapi.i files which used to be in bindings/java and
+bindings/python and shared a extensive amount of code are now centralized in
+bindings/swig-support/plplotcapi.i.  The java- and python-specific sections
+of this former file are conditionally included by CPP macros:
+
+    #ifdef SWIG_JAVA
+    #ifdef SWIG_PYTHON
+
+When calling swig in bindings/{java,python}/Makefile.am, the right -DSWIG_*
+option is used now.  New variables have been created in these Makefile.am's,
+namely SWIG_SUPPORT_DIR, PLPLOTCAPI_I, and SWIG_CMD.  This later one is
+particularly useful in the Python case, since it avoids "useless repetition
+of code" (a.k.a "things that hurt eyes" :-)
+
+The directory bindings/swig-support/ is included in the tarball through the
+variable EXTRA_DIST in bindings/Makefile.am.
+
+These changes are fully tested for Python, but no tests were done for Java.
+I may also have messed with some comments in the plplotcapi.i file.  Please,
+review it.
+
+Now that we have a centralized *.i file, the door is open for the other
+scripting languages supported by Swig: PHP, Ruby, Guile, Mzscheme, Chicken,
+Ocaml, Pike, and C# (!).
+
+  plplot  bindings/Makefile.am                1.14
+  plplot  bindings/java/Makefile.am           1.25
+- plplot  bindings/java/plplotcapi.i          1.11
+  plplot  bindings/python/Makefile.am         1.26
+- plplot  bindings/python/plplotcapi.i        1.5
++ plplot  bindings/swig-support/plplotcapi.i  1.1
+
+
+Commit from andrewross (2004-02-10 15:45 CET)
+----------------------
+
+Change plarrows to use an user supplied arrow style via the new API
+call plsarrow. The default is the old style if none is supplied. Add
+C++ bindings. Add example x22c to demonstrate the routines.
+
+  plplot  bindings/c++/plstream.cc         1.20
+  plplot  bindings/c++/plstream.h          1.14
+  plplot  examples/c/Makefile.am           1.18
+  plplot  examples/c/Makefile.examples.in  1.20
++ plplot  examples/c/x22c.c                1.1
+  plplot  include/plstrm.h                 1.30
+  plplot  src/plcore.c                     1.129
+  plplot  src/plsym.c                      1.34
+
+
+Commit from rlaboiss (2004-02-10 12:34 CET)
+--------------------
+
+Changed all instances of SF_USER to WWW_USER, since one day we may be out of
+SourceForge.
+
+  plplot  scripts/htdocs-gen_plot-examples.sh  1.5
+  plplot  scripts/make-cvs-tarball.sh          1.14
+  www     Makefile-vars                        1.3
+  www     README                               1.5
+
+
+Commit from airwin (2004-02-10 02:01 CET)
+------------------
+
+Adjust commentary to new x14.java.  Drop 19th example because it is
+just currently implemented by a placeholder saying not implemented
+at run time.
+
+  plplot  test/test_java.sh  1.6
+
+
+Commit from airwin (2004-02-10 01:56 CET)
+------------------
+
+Initial commit of real (i.e. non-placeholder) 14th java example.
+
+Results are not quite the same as the 14th example for other language
+interfaces.
+
+* There is one minor rendering issue; some of the postscript position values
+  are off by one unit (presumably due to 16-bit character rendering), but
+  this makes no visible difference.
+
+* There is an API issue; pls.plgdev does not work because haven't yet
+  figured out how to export C strings into a java environment using swig
+  typemaps.  Thus, plgdev and plsdev are commented out and must set second
+  device by hand using plinit menu.
+
+  plplot  examples/java/x14.java  1.4
+
+
+Commit from rlaboiss (2004-02-09 20:08 CET)
+--------------------
+
+Added title to HTML file
+
+  plplot  scripts/upload-cvs-tarball.sh  1.2
+
+
+Commit from rlaboiss (2004-02-09 19:39 CET)
+--------------------
+
+Take possession of xw14.py and xw17.py, such that the CVSROOT hack works
+
+  plplot  examples/python/xw14.py  1.10
+  plplot  examples/python/xw17.py  1.12
+
+
+Commit from rlaboiss (2004-02-09 19:34 CET)
+--------------------
+
+Dummy commit
+
+  CVSROOT  loginfo  1.66
+
+
+Commit from rlaboiss (2004-02-09 19:34 CET)
+--------------------
+
+Hack to change file permissions in examples/python
+
+  CVSROOT  loginfo  1.65
+
+
+Commit from rlaboiss (2004-02-09 19:09 CET)
+--------------------
+
+Added script for uplaoding debs to PLplot website
+
++ plplot  debian/upload-debs.pl  1.1
+
+
+Commit from rlaboiss (2004-02-09 19:05 CET)
+--------------------
+
+Use env var SF_USER instead of USER
+
+  plplot  scripts/make-cvs-tarball.sh          1.13
+  plplot  scripts/htdocs-gen_plot-examples.sh  1.4
+
+
+Commit from airwin (2004-02-09 17:27 CET)
+------------------
+
+Remove some negative historical commentary that is not relevant any more.
+
+  plplot  examples/java/x01.java  1.14
+
+
+Commit from airwin (2004-02-08 07:43 CET)
+------------------
+
+Deal with changes in example 14 for various language interfaces.
+
+  plplot  test/test_c.sh    1.10
+  plplot  test/test_cxx.sh  1.9
+  plplot  test/test_tcl.sh  1.7
+
+
+Commit from airwin (2004-02-08 07:28 CET)
+------------------
+
+First commit of real Tcl implementation of 14th example.  Results are
+identical with results from C, C++, and python examples.
+
+  plplot  examples/tcl/x14      1.2
+  plplot  examples/tcl/x14.tcl  1.6
+
+
+Commit from airwin (2004-02-08 04:10 CET)
+------------------
+
+Allow this two-stream example to run with any combination of devices (like
+its C and python counterparts).
+
+Also, change polar plot labelling logic to be identical with example 3. With
+this change this 14th C++ example produces identical results with the 14th C
+and python examples.
+
+  plplot  examples/c++/x14.cc  1.7
+
+
+Commit from airwin (2004-02-08 03:37 CET)
+------------------
+
+Make polar plot logic agree with example 3.  In particular, avoid floating
+point logic flips at 90 and 270 deg.  With this change, this 14th C
+example gives identical file results with the 14th python example.
+
+  plplot  examples/c/x14c.c  1.25
+
+
+Commit from airwin (2004-02-08 03:34 CET)
+------------------
+
+Tweak output format so resulting messages agree exactly with C version.
+
+  plplot  examples/python/xw14.py  1.9
+
+
+Commit from airwin (2004-02-08 02:01 CET)
+------------------
+
+Removed permissions problems section.  The fact is that plplot-config,
+plplot-test.sh, (and test_python.sh) permissions in the build tree are
+probably irrelevant.  The former requires plplot-libtool which must be in
+the PATH, but that automatically puts the installed version of plplot-config
+in the PATH as well.  Some developer debugging plplot-config is free to
+change the build tree version permission to execute, but that is a pretty
+special case.  plplot-test.sh is really only designed to work from
+the installed examples tree (or copy thereof).  So it is probably good that
+its build tree permissions are not executable.
+
+  plplot  PROBLEMS  1.27
+
+
+Commit from airwin (2004-02-08 01:13 CET)
+------------------
+
+Move xw14.py and xw17.py from examples_python_DATA to examples_python_SCRIPTS
+since they are now standalone and therefore should have execute permission
+when installed.
+
+  plplot  examples/python/Makefile.am  1.10
+
+
+Commit from rlaboiss (2004-02-07 19:36 CET)
+--------------------
+
+Script for uploading the CVS snapshot tarball to the PLplot web site
+
++ plplot  scripts/upload-cvs-tarball.sh  1.1
+
+
+Commit from airwin (2004-02-07 03:44 CET)
+------------------
+
+Commit of first try at example that mimics C example 14.
+
+  plplot  examples/python/xw14.py  1.8
+
+
+Commit from airwin (2004-02-07 03:28 CET)
+------------------
+
+Drop extraneous semi-colons that don't belong in the code
+
+  plplot  examples/python/xw09.py  1.25
+
+
+Commit from airwin (2004-02-07 02:10 CET)
+------------------
+
+Make this example standalone since it only works for interactive devices.
+Note there is a fairly hard landing with many error messages if you use
+non-interactive devices because plsError (to register your own local error
+return code and error message locations) is not part of the Python API (and
+not likely to be any time soon since as far as I know it is a hard problem
+to do something like this in python.)
+
+  plplot  examples/python/xw17.py  1.11
+
+
+Commit from airwin (2004-02-07 02:03 CET)
+------------------
+
+Softer landing (like C example) if non-interactive device is used in error.
+
+  plplot  examples/c++/x17.cc  1.6
+
+
+Commit from airwin (2004-02-07 01:47 CET)
+------------------
+
+Better explanation of why xw14.py and xw17.py are not included.
+
+  plplot  examples/python/pythondemos.py  1.8
+
+
+Commit from airwin (2004-02-07 01:43 CET)
+------------------
+
+Bring plsError closer to working, but not there yet, and giving up for now.
+
+  plplot  bindings/python/plplotcapi.i  1.4
+
+
+Commit from airwin (2004-02-07 01:36 CET)
+------------------
+
+Generalize char* OUTPUT typemap so that it can be one of a number of
+arguments, but it turned out the plsError implementation still does not
+work for other reasons.
+
+  plplot  bindings/python/plplotcmodule.i  1.18
+
+
+Commit from airwin (2004-02-06 21:51 CET)
+------------------
+
+Allow this two-stream example to work with any device(s).
+
+  plplot  examples/c/x14c.c  1.24
+
+
+Commit from andrewross (2004-02-06 15:45 CET)
+----------------------
+
+Fix bug causing invalid free - show up by x14c.
+
+  plplot  drivers/tk.c  1.86
+
+
+Commit from rlaboiss (2004-02-06 13:32 CET)
+--------------------
+
+Improved this script, such that the upload to the web site is done
+automatically.  Notice that the demo files should now go into
+htdocs/examples-data.
+
+The fresh build at the beginning can be controlled by the environment
+variable "build".
+
+Also, fixes a shell syntax in if conditional.
+
+  plplot  scripts/htdocs-gen_plot-examples.sh  1.3
+
+
+Commit from rlaboiss (2004-02-06 11:50 CET)
+--------------------
+
+Install the docbook files in the htdocs root dir at SourceForge.
+
+  plplot  doc/docbook/docbook.m4  1.15
+
+
+Commit from rlaboiss (2004-02-06 11:45 CET)
+--------------------
+
+Removed the following m4 macros, which seem to be obsolete:
+
+    AC_PREFIX_PROGRAM
+    AC_ISC_POSIX
+    AC_OUTPUT_FILES
+    AC_OUTPUT_HEADER
+
+  plplot  acinclude.m4  1.15
+
+
+Commit from airwin (2004-02-06 06:59 CET)
+------------------
+
+Tighten configure check and run-time check for case when iargc
+inappropriately returns a negative number of arguments. (iargc() returned -1
+once for a badly linked libplplotf77 due to FLIBS problems on Cygwin.
+Hopefully, bad linking of libplplotf77 won't happen again, but it is better
+to be safe than sorry.)
+
+  plplot  configure.ac                    1.160
+  plplot  bindings/f77/configurable.f.in  1.5
+
+
+Commit from airwin (2004-02-06 02:21 CET)
+------------------
+
+Remove all reference to commented out AC_F77_LIBRARY_LDFLAGS.  This macro
+should never ever be required again since we no longer have mixed fortran
+and C source libraries to contend with.
+
+Also change version and release date corresponding to post-5.3.0.
+
+  plplot  configure.ac  1.159
+
+
+Commit from airwin (2004-02-06 02:17 CET)
+------------------
+
+As discussed on list (some time ago), split libplplotf77.  Now there is a
+pure fortran source library (still called libplplotf77) which wraps a pure C
+source library (libplplotf77c) which in turn wraps libplplot.  Thus, we now
+have two pure-source libraries defining the fortran interface to PLplot that
+are linked by respectively the F77 command and the CC command.  These
+linking tasks for pure source libraries are straightforward for libtool on
+all platforms it supports.
+
+This change means an end to worrying about using FLIBS to specify how to
+link a library with combined fortran and C source code.  FLIBS is poorly
+known for many combinations of fortran compilers, C compilers, and linkers
+so this change should remove a major cross-platform headache.
+
+  plplot  bindings/f77/Makefile.am  1.18
+
+
+Commit from airwin (2004-02-06 00:08 CET)
+------------------
+
+Minimum swig version 1.3.21
+
+  plplot  sysloc.in  1.73
+
+
+Commit from airwin (2004-02-05 23:17 CET)
+------------------
+
+Deal with extra Java file generated by swig-1.3.21.
+
+  plplot  bindings/java/Makefile.am  1.24
+
+
+Commit from airwin (2004-02-05 23:15 CET)
+------------------
+
+Minimum version of swig is now 1.3.19
+
+  plplot  sysloc.in  1.72
+
+
+Commit from rlaboiss (2004-02-05 16:42 CET)
+--------------------
+
+Deprecating the htdocs-replace.sh script
+
+  plplot  scripts/htdocs-replace.sh  1.4
+
+
+Commit from andrewross (2004-02-05 12:20 CET)
+----------------------
+
+Fix C++ example x01.cc so -save option works.
+
+  plplot  examples/c++/x01.cc  1.9
+
+
+Commit from rlaboiss (2004-02-05 10:12 CET)
+--------------------
+
+Removed debian directory from the tarball
+
+  plplot  Makefile.am  1.33
+
+
+Commit from andrewross (2004-02-04 12:41 CET)
+----------------------
+
+Make local copies of char * command line options so they work with the
+fortran bindings. tk driver now works with fortran options.
+
+  plplot  drivers/tk.c  1.85
+  plplot  src/plcore.c  1.128
+  plplot  src/plargs.c  1.67
+
+
+Commit from andrewross (2004-02-03 16:43 CET)
+----------------------
+
+Fix some uninitialised variables found by valgrind. Fix bug causing
+crash if a bad packet is read in plserver.
+
+  plplot  bindings/tk/plframe.c  1.85
+
+
+Commit from rlaboiss (2004-02-03 14:57 CET)
+--------------------
+
+Removed build-dependency on libhdf5-serial-dev, since it will be included in
+the build-dependencies of octave2.1-headers (version 2.1.53-3).
+
+  plplot  debian/control  1.46
+
+
+Commit from rlaboiss (2004-02-02 15:58 CET)
+--------------------
+
+Removed obsolete files
+
+- plplot  cf/.cvsignore          1.4
+- plplot  cf/README              1.10
+- plplot  cf/aclocal.m4          1.22
+- plplot  cf/autodeps.in         1.2
+- plplot  cf/config.el           1.2
+- plplot  cf/configure.in        1.146
+- plplot  cf/demos.in            1.25
+- plplot  cf/dist.in             1.18
+- plplot  cf/dyndrv.in           1.34
+- plplot  cf/exes.in             1.27
+- plplot  cf/init.in             1.27
+- plplot  cf/initdemo.in         1.12
+- plplot  cf/initlib.in          1.46
+- plplot  cf/inst_lib.in         1.22
+- plplot  cf/install.in          1.53
+- plplot  cf/lib_ar.in           1.17
+- plplot  cf/lib_sh.in           1.17
+- plplot  cf/lib_sh_aix.in       1.11
+- plplot  cf/lib_sh_hpux.in      1.2
+- plplot  cf/lib_sh_hpux_cxx.in  1.2
+- plplot  cf/lib_sh_linux.in     1.32
+- plplot  cf/lib_sh_sco.in       1.6
+- plplot  cf/lib_sh_sun.in       1.11
+- plplot  cf/load-config.el      1.2
+- plplot  cf/misc.in             1.22
+- plplot  cf/miscdemo.in         1.6
+- plplot  cf/objs.in             1.24
+- plplot  cf/pkg_cxx.in          1.14
+- plplot  cf/pkg_f77.in          1.14
+- plplot  cf/pkg_gnome.in        1.3
+- plplot  cf/pkg_java.in         1.11
+- plplot  cf/pkg_octave.in       1.10
+- plplot  cf/pkg_python.in       1.36
+- plplot  cf/pkg_tcl.in          1.31
+- plplot  cf/pkg_tk.in           1.33
+- plplot  cf/pkg_tkwin.in        1.14
+- plplot  cf/pkg_xwin.in         1.8
+- plplot  cf/plConfig.h.in       1.21
+- plplot  cf/plDevs.h.in         1.19
+- plplot  cf/plplot-test.sh.in   1.14
+- plplot  cf/setup.py.in         1.12
+- plplot  cf/sysconf.in          1.55
+- plplot  cf/sysloc.in           1.114
+- plplot  cf/version.in          1.5
+- plplot  new/.cvsignore         1.2
+- plplot  new/bogus              1.8
+- plplot  tmp/.cvsignore         1.2
+- plplot  tmp/.dummy             1.2
+
+
+Commit from rlaboiss (2004-02-02 15:55 CET)
+--------------------
+
+Synch with v5_3_0 branch
+
+  plplot  debian/changelog  1.73
+  plplot  debian/control    1.45
+
+
+Commit from rlaboiss on branch v5_3_0 (2004-02-02 12:30 CET)
+-------------------------------------
+
+Added build-dependency on libhdf5-serial-dev
+
+  plplot  debian/control  1.44.2.1
+
+
+Commit from rlaboiss on branch v5_3_0 (2004-02-02 12:01 CET)
+-------------------------------------
+
+Set release date as today
+
+  plplot  configure.ac  1.156.2.3
+
+
+Commit from rlaboiss on branch v5_3_0 (2004-02-02 11:50 CET)
+-------------------------------------
+
+Synch with HEAD
+
+  plplot  rpm/plplot_mandrake9.2.spec  1.1.2.1
+
+
+Commit from rlaboiss (2004-02-02 11:49 CET)
+--------------------
+
+[RL for Brian D. Wright:]
+
+Changed version to 5.3.0 and release to 1mdk.
+
+  plplot  rpm/plplot_mandrake9.2.spec  1.3
+
+
+Commit from rlaboiss (2004-02-01 11:49 CET)
+--------------------
+
+[RL for Brian D. Wright:]
+
+Bug fixed spec file for Mandrake 9.2. Fixes some missing file attribute
+settings and adds some directories to file lists for proper clean up on
+uninstall.
+
+  plplot  rpm/plplot_mandrake9.2.spec  1.2
+
+
 Commit from andrewross (2004-01-31 20:23 CET)
 ----------------------
 
