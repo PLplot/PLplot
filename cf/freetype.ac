@@ -30,70 +30,76 @@ PL_ARG_WITH(freetype,
   [enable driver options for using freetype library for fonts],
   yes)
 
-FREETYPELIBSTR=-lfreetype
-
+PL_ARG_WITH(freetype2-incdir, [User-specified path to the libfreetype2 header files], [])
 if test "$with_freetype" = "yes"; then
-    AC_MSG_CHECKING(for freetype library header files)
-    if test -z "$FREETYPEINCDIR"; then
+    if test -z "$with_freetype2_incdir"; then
+        AC_MSG_CHECKING(for freetype library header files)
         AC_PREPROC_IFELSE([#include <freetype/config/ftheader.h>],
-	                  [ FREETYPEINCDIR=default
-			    AC_MSG_RESULT([found in $FREETYPEINCDIR]) ], [
+	                  [ with_freetype2_incdir=default
+			    AC_MSG_RESULT([found in $with_freetype2_incdir]) ], [
         incdirs="\
         /usr/include/freetype2 \
         /usr/local/include/freetype2"
 
         for dir in $incdirs; do
             if test -r "$dir/freetype/config/ftheader.h"; then
-               FREETYPEINCDIR="$dir"
+               with_freetype2_incdir="$dir"
                break
             fi
         done
-        if test -z "$FREETYPEINCDIR"; then
+        if test -z "$with_freetype2_incdir"; then
             AC_MSG_RESULT(not found)
 	    AC_MSG_WARN([freetype header files not found,])
 	    AC_MSG_WARN([setting with_freetype=no])
-            FREETYPEINCDIR=default
+            with_freetype2_incdir=default
             with_freetype=no
 	else
-            AC_MSG_RESULT([found in $FREETYPEINCDIR])
+            AC_MSG_RESULT([found in $with_freetype2_incdir])
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to the libfreetype2 header files is $with_freetype2_incdir")
     fi
-    if test "$FREETYPEINCDIR" = "/usr/include"; then
-        FREETYPEINCDIR=default
+    if test "$with_freetype2_incdir" = "/usr/include"; then
+        with_freetype2_incdir=default
     fi
+    FREETYPEINCCMD=""
+    FREETYPEINCPATH=""
+    PL_ADD_TO_INCS($with_freetype2_incdir, FREETYPEINCCMD, FREETYPEINCPATH)
+fi
 
-    if test -z "$FREETYPELIBDIR"; then
-        AC_CHECK_LIB(freetype, main, [ FREETYPELIBDIR=default ], [
+PL_ARG_WITH(freetype2-libdir, [User-specified path to libfreetype2], [])
+if test "$with_freetype" = "yes"; then
+    if test -z "$with_freetype2_libdir"; then
+        AC_CHECK_LIB(freetype, main, [ with_freetype2_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libfreetype.so" -o -r "$dir/libfreetype.a"; then
-                FREETYPELIBDIR="$dir"
+                with_freetype2_libdir="$dir"
                 break
             fi
         done
-        if test -z "$FREETYPELIBDIR"; then
+        if test -z "$with_freetype2_libdir"; then
 	    AC_MSG_WARN([freetype library not found, setting with_freetype=no])
-            FREETYPELIBDIR=default
+            with_freetype2_libdir=default
             with_freetype=no
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to libfreetype2 is $with_freetype2_libdir")
     fi
-    if test "$FREETYPELIBDIR" = "/usr/lib"; then
-        FREETYPELIBDIR=default
+    if test "$with_freetype2_libdir" = "/usr/lib"; then
+        with_freetype2_libdir=default
     fi
+    FREETYPELIBSTR=-lfreetype
+    FREETYPELIBCMD=""
+    FREETYPELIBPATH=""
+    PL_ADD_TO_LIBS($with_freetype2_libdir, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
 fi
 
-FREETYPEINCCMD=""
-FREETYPEINCPATH=""
-FREETYPELIBCMD=""
-FREETYPELIBPATH=""
 if test "$with_freetype" = "yes"; then
     AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
-    PL_ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCCMD, FREETYPEINCPATH)
-    PL_ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
 fi
 AC_SUBST(FREETYPEINCCMD)
 AC_SUBST(FREETYPELIBCMD)
-

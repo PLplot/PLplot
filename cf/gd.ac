@@ -26,170 +26,180 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-GDLIBSTR=-lgd
-PNGLIBSTR=-lpng
-JPEGLIBSTR=-ljpeg
-ZLIBLIBSTR=-lz
-
+PL_ARG_WITH(gd-incdir, [User-specified path to the libgd header files], [])
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    AC_MSG_CHECKING(for GD header files)
-    if test -z "$GDINCDIR"; then
+    if test -z "$with_gd_incdir"; then
+        AC_MSG_CHECKING(for GD header files)
         AC_PREPROC_IFELSE([#include <gd.h>],
-	[ GDINCDIR=default
-	  AC_MSG_RESULT([found in $GDINCDIR]) ], [
+	[ with_gd_incdir=default
+	  AC_MSG_RESULT([found in $with_gd_incdir]) ], [
         incdirs="\
         /usr/include \
         /usr/local/include"
 
         for dir in $incdirs; do
             if test -r "$dir/gd.h"; then
-               GDINCDIR="$dir"
+               with_gd_incdir="$dir"
                break
             fi
         done
-        if test -z "$GDINCDIR"; then
+        if test -z "$with_gd_incdir"; then
 	    AC_MSG_RESULT(not found)
             AC_MSG_WARN([gd header files not found, setting enable_png=no])
             AC_MSG_WARN([and enable_jpeg=no])
-            GDINCDIR=default
+            with_gd_incdir=default
             enable_png=no
             enable_jpeg=no
 	else
-	    AC_MSG_RESULT([found in $GDINCDIR])
+	    AC_MSG_RESULT([found in $with_gd_incdir])
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to the libgd header files is $with_gd_incdir")
     fi
-    if test "$GDINCDIR" = "/usr/include"; then
-        GDINCDIR=default
+    if test "$with_gd_incdir" = "/usr/include"; then
+        with_gd_incdir=default
     fi
     GDINCCMD=""
     GDINCPATH=""
-    PL_ADD_TO_INCS($GDINCDIR, GDINCCMD, GDINCPATH)
-
+    PL_ADD_TO_INCS($with_gd_incdir, GDINCCMD, GDINCPATH)
 fi
 
+PL_ARG_WITH(gd-libdir, [User-specified path to libgd], [])
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    if test -z "$GDLIBDIR"; then
-        AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
+    if test -z "$with_gd_libdir"; then
+        AC_CHECK_LIB(gd, main, [ with_gd_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libgd.so" -o -r "$dir/libgd.a"; then
-                GDLIBDIR="$dir"
+                with_gd_libdir="$dir"
                 break
             fi
         done
-        if test -z "$GDLIBDIR"; then
+        if test -z "$with_gd_libdir"; then
             AC_MSG_WARN([gd library not found, setting enable_png=no])
             AC_MSG_WARN([and enable_jpeg=no])
-            GDLIBDIR=default
+            with_gd_libdir=default
             enable_png=no
             enable_jpeg=no
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to libgd is $with_gd_libdir")
     fi
-    if test "$GDLIBDIR" = "default"; then
-        GDLIBDIR=/usr/lib
+    if test "$with_gd_libdir" = "default"; then
+        with_gd_libdir=/usr/lib
     fi
     libgdla=no
-    if test -r "$GDLIBDIR/libgd.la"; then
+    if test -r "$with_gd_libdir/libgd.la"; then
       libgdla=yes
     fi
-    if test "$GDLIBDIR" = "/usr/lib"; then
-        GDLIBDIR=default
+    if test "$with_gd_libdir" = "/usr/lib"; then
+        with_gd_libdir=default
     fi
+    GDLIBSTR=-lgd
     GDLIBCMD=""
     GDLIBPATH=""
-    PL_ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBCMD, GDLIBPATH)
-
+    PL_ADD_TO_LIBS($with_gd_libdir, $GDLIBSTR, GDLIBCMD, GDLIBPATH)
 fi
 
+PL_ARG_WITH(png-libdir, [User-specified path to libpng], [])
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
   if test "$libgdla" = "no"; then
-    if test -z "$PNGLIBDIR"; then
-        AC_CHECK_LIB(png, main, [ PNGLIBDIR=default ], [
+    if test -z "$with_png_libdir"; then
+        AC_CHECK_LIB(png, main, [ with_png_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libpng.so" -o -r "$dir/libpng.a"; then
-                PNGLIBDIR="$dir"
+                with_png_libdir="$dir"
                 break
             fi
         done
-        if test -z "$PNGLIBDIR"; then
+        if test -z "$with_png_libdir"; then
             AC_MSG_WARN([png library not found, setting enable_png=no])
             AC_MSG_WARN([and enable_jpeg=no])
-            PNGLIBDIR=default
+            with_png_libdir=default
             enable_png=no
             enable_jpeg=no
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to libpng is $with_png_libdir")
     fi
-    if test "$PNGLIBDIR" = "/usr/lib"; then
-        PNGLIBDIR=default
+    if test "$with_png_libdir" = "/usr/lib"; then
+        with_png_libdir=default
     fi
-    PL_ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
-
+    PNGLIBSTR=-lpng
+    PL_ADD_TO_LIBS($with_png_libdir, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
   fi
 fi
 
+PL_ARG_WITH(jpeg-libdir, [User-specified path to libjpeg], [])
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
   if test "$libgdla" = "no"; then
-    if test -z "$JPEGLIBDIR"; then
-        AC_CHECK_LIB(jpeg, main, [ JPEGLIBDIR=default ], [
+    if test -z "$with_jpeg_libdir"; then
+        AC_CHECK_LIB(jpeg, main, [ with_jpeg_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libjpeg.so" -o -r "$dir/libjpeg.a"; then
-                JPEGLIBDIR="$dir"
+                with_jpeg_libdir="$dir"
                 break
             fi
         done
-        if test -z "$JPEGLIBDIR"; then
+        if test -z "$with_jpeg_libdir"; then
             AC_MSG_WARN([jpeg library not found, setting enable_png=no])
             AC_MSG_WARN([and enable_jpeg=no])
-            JPEGLIBDIR=default
+            with_jpeg_libdir=default
             enable_png=no
             enable_jpeg=no
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to libjpeg is $with_jpeg_libdir")
     fi
-    if test "$JPEGLIBDIR" = "/usr/lib"; then
-        JPEGLIBDIR=default
+    if test "$with_jpeg_libdir" = "/usr/lib"; then
+        with_jpeg_libdir=default
     fi
-    PL_ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
-
+    JPEGLIBSTR=-ljpeg
+    PL_ADD_TO_LIBS($with_jpeg_libdir, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
   fi
 fi
 
+PL_ARG_WITH(zlib-libdir, [User-specified path to libz], [])
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
   if test "$libgdla" = "no"; then
-    if test -z "$ZLIBLIBDIR"; then
-        AC_CHECK_LIB(z, main, [ ZLIBLIBDIR=default ], [
+    if test -z "$with_zlib_libdir"; then
+        AC_CHECK_LIB(z, main, [ with_zlib_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libz.so" -o -r "$dir/libz.a"; then
-                ZLIBLIBDIR="$dir"
+                with_zlib_libdir="$dir"
                 break
             fi
         done
-        if test -z "$ZLIBLIBDIR"; then
+        if test -z "$with_zlib_libdir"; then
             AC_MSG_WARN([zlib library not found, setting enable_png=no])
             AC_MSG_WARN([and enable_jpeg=no])
-            ZLIBLIBDIR=default
+            with_zlib_libdir=default
             enable_png=no
             enable_jpeg=no
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to libz is $with_zlib_libdir")
     fi
-    if test "$ZLIBLIBDIR" = "/usr/lib"; then
-        ZLIBLIBDIR=default
+    if test "$with_zlib_libdir" = "/usr/lib"; then
+        with_zlib_libdir=default
     fi
-    PL_ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
+    ZLIBLIBSTR=-lz
+    PL_ADD_TO_LIBS($with_zlib_libdir, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
   fi
 fi
 

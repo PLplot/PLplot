@@ -25,66 +25,71 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-CDLIBSTR=-lcd
-
+PL_ARG_WITH(cd-incdir, [User-specified path to the libcd header files], [])
 if test "$enable_cgm" = "yes"; then
-    AC_MSG_CHECKING(for libcd header files)
-    if test -z "$CDINCDIR"; then
+    if test -z "$with_cd_incdir"; then
+        AC_MSG_CHECKING(for libcd header files)
         AC_PREPROC_IFELSE([#include <cd.h>],
-	[ CDINCDIR=default
-	  AC_MSG_RESULT([found in $CDINCDIR]) ], [
+	[ with_cd_incdir=default
+	  AC_MSG_RESULT([found in $with_cd_incdir]) ], [
         incdirs="\
         /usr/include \
         /usr/local/include"
 
         for dir in $incdirs; do
             if test -r "$dir/cd.h"; then
-               CDINCDIR="$dir"
+               with_cd_incdir="$dir"
                break
             fi
         done
-        if test -z "$CDINCDIR"; then
+        if test -z "$with_cd_incdir"; then
             AC_MSG_RESULT(not found)
             AC_MSG_WARN([libcd header files not found, setting enable_cgm=no])
-            CDINCDIR=default
+            with_cd_incdir=default
             enable_cgm=no
 	else
-	    AC_MSG_RESULT([found in $CDINCDIR])
+	    AC_MSG_RESULT([found in $with_cd_incdir])
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to the libcd header files is $with_cd_incdir")
     fi
-    if test "$CDINCDIR" = "/usr/include"; then
-        CDINCDIR=default
+    if test "$with_cd_incdir" = "/usr/include"; then
+        with_cd_incdir=default
     fi
     CDINCCMD=""
     CDINCPATH=""
-    PL_ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
+    PL_ADD_TO_INCS($with_cd_incdir, CDINCCMD, CDINCPATH)
 fi
 
+PL_ARG_WITH(cd-libdir, [User-specified path to libcd], [])
 if test "$enable_cgm" = "yes"; then
-    if test -z "$CDLIBDIR"; then
-        AC_CHECK_LIB(cd, main, [ CDLIBDIR=default ], [
+    if test -z "$with_cd_libdir"; then
+        AC_CHECK_LIB(cd, main, [ with_cd_libdir=default ], [
         libdirs="\
         /usr/lib \
         /usr/local/lib"
 
         for dir in $libdirs; do
             if test -r "$dir/libcd.so" -o -r "$dir/libcd.a"; then
-                CDLIBDIR="$dir"
+                with_cd_libdir="$dir"
                 break
             fi
         done
-        if test -z "$CDLIBDIR"; then
+        if test -z "$with_cd_libdir"; then
             AC_MSG_WARN([cd library not found, setting enable_cgm=no])
-            CDLIBDIR=default
+            with_cd_libdir=default
             enable_cgm=no
         fi ])
+    else
+    	AC_MSG_NOTICE("User-specified path to libcd is $with_cd_libdir")
     fi
-    if test "$CDLIBDIR" = "/usr/lib"; then
-        CDLIBDIR=default
+    if test "$with_cd_libdir" = "/usr/lib"; then
+        with_cd_libdir=default
     fi
+    CDLIBSTR=-lcd
     CDLIBCMD=""
     CDLIBPATH=""
-    PL_ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
+    PL_ADD_TO_LIBS($with_cd_libdir, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
 fi
 
 AC_SUBST(CDINCCMD)
