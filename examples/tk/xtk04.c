@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/10/10 19:45:04  furnish
+ * Revision 1.3  1995/06/01 21:43:25  mjl
+ * Change to header file inclusion: to get PLplot/Tk global function
+ * prototypes, must now include pltk.h.  Some cleaning up.
+ *
+ * Revision 1.2  1994/10/10  19:45:04  furnish
  * Imlemented plshade from Tcl.
  *
  * Revision 1.1  1994/10/10  17:22:51  furnish
@@ -8,15 +12,9 @@
  *
  */
 
-/* Before including plplot.h you must define TK to get all prototypes */
-
-#define TK
-#include <plplot.h>
-#include <tk.h>
+#include "pltk.h"
 #include <itcl.h>
 #include <math.h>
-
-#include "tclMatrix.h"
 
 static int
 AppInit(Tcl_Interp *interp);
@@ -47,7 +45,7 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main --
  *
  * Just a stub routine to call pltkMain.  The latter is nice to have
@@ -56,7 +54,7 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
  * systems/compilers/linkers/etc).  Hopefully in the future Tk will
  * supply a sufficiently capable tkMain() type function that can be used
  * instead. 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char **argv)
@@ -65,7 +63,7 @@ main(int argc, char **argv)
 }
 
 /*
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  *
  * AppInit --
  *
@@ -101,7 +99,7 @@ main(int argc, char **argv)
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  */
 
 int   get_dataCmd        (ClientData, Tcl_Interp *, int, char **);
@@ -113,16 +111,16 @@ AppInit(Tcl_Interp *interp)
 
     main = Tk_MainWindow(interp);
 
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
+/*
+ * Call the init procedures for included packages.  Each call should
+ * look like this:
+ *
+ * if (Mod_Init(interp) == TCL_ERROR) {
+ *     return TCL_ERROR;
+ * }
+ *
+ * where "Mod" is the name of the module.
+ */
 
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
@@ -137,10 +135,10 @@ AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
 
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
+/*
+ * Call Tcl_CreateCommand for application-specific commands, if
+ * they weren't already created by the init procedures called above.
+ */
 
     Tcl_CreateCommand(interp, "get_data", get_dataCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);

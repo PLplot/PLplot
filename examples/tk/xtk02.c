@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/09/23 07:47:30  mjl
+ * Revision 1.9  1995/06/01 21:43:24  mjl
+ * Change to header file inclusion: to get PLplot/Tk global function
+ * prototypes, must now include pltk.h.  Some cleaning up.
+ *
+ * Revision 1.8  1994/09/23  07:47:30  mjl
  * Modified to use the new syntax for pltkMain().
  *
  * Revision 1.7  1994/07/01  20:44:35  mjl
@@ -25,25 +29,20 @@
  * Added missing CVS Id and Log fields.
  */
 
-/* Before including plplot.h you must define TK to get all prototypes */
-
-#define TK
-#include <plplot.h>
-#include <tk.h>
+#include "pltk.h"
 #include <itcl.h>
 #include <math.h>
-
-#include "tclMatrix.h"
 
 static int
 AppInit(Tcl_Interp *interp);
 
-/* A pithy little proc to show off how to install and use a tclMatrix
-   extension subcommand. This example is silly--only intended to show
-   how to do it.  What to do with it is your problem.  Could implement
-   subcommands for filling a matrix with special functions, performing
-   fft's, etc.
-   */
+/*--------------------------------------------------------------------------*\
+ * A pithy little proc to show off how to install and use a tclMatrix
+ * extension subcommand. This example is silly--only intended to show
+ * how to do it.  What to do with it is your problem.  Could implement
+ * subcommands for filling a matrix with special functions, performing
+ * fft's, etc.
+\*--------------------------------------------------------------------------*/
 
 int stuff( tclMatrix *pm, Tcl_Interp *interp,
 	   int argc, char *argv[] )
@@ -66,7 +65,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
 }
 
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main --
  *
  * Just a stub routine to call pltkMain.  The latter is nice to have
@@ -75,7 +74,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
  * systems/compilers/linkers/etc).  Hopefully in the future Tk will
  * supply a sufficiently capable tkMain() type function that can be used
  * instead. 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char **argv)
@@ -84,7 +83,7 @@ main(int argc, char **argv)
 }
 
 /*
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  *
  * AppInit --
  *
@@ -120,7 +119,7 @@ main(int argc, char **argv)
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  */
 
 int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
@@ -132,16 +131,16 @@ AppInit(Tcl_Interp *interp)
 
     main = Tk_MainWindow(interp);
 
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
+/*
+ * Call the init procedures for included packages.  Each call should
+ * look like this:
+ *
+ * if (Mod_Init(interp) == TCL_ERROR) {
+ *     return TCL_ERROR;
+ * }
+ *
+ * where "Mod" is the name of the module.
+ */
 
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
@@ -156,10 +155,10 @@ AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
 
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
+/*
+ * Call Tcl_CreateCommand for application-specific commands, if
+ * they weren't already created by the init procedures called above.
+ */
 
     Tcl_CreateCommand(interp, "myplot", myplotCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
