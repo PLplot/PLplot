@@ -874,10 +874,13 @@ InitMain(PLStream *pls)
 /* Window title */
 
     if (plsc->plwindow){    /* allow -plwindow to specify wm decoration name */
-      sprintf(header, "%s", plsc->plwindow);
+       sprintf(header, "%s", plsc->plwindow);
+    }
+    else if(plsc->program) {
+       sprintf(header, "%s", plsc->program); /* else program name */
     }
     else
-        sprintf(header, "%s", plsc->program); /* else program name */
+       sprintf(header,"%s","Plplot");
 
 /* Window creation */
 
