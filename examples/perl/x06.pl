@@ -25,7 +25,6 @@
 
 use PDL;
 use PDL::Graphics::PLplot;
-use Math::Trig qw [pi];
 
 # Parse and process command line arguments
 
