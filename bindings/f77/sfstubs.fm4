@@ -1,45 +1,29 @@
-divert(-1)dnl
-!***********************************************************************
-!
-! $Id$
-!
-! This file contains all the fortran stub routines.
-! It must be passed through m4 before it becomes legal Fortran.
-!
-!***********************************************************************
-
-divert(1)dnl
-include(fmacs.m4)dnl
-define(include_strings,{
-	integer maxlen
-	parameter (maxlen = 320)
-	character*(maxlen) string1, string2, string3
-	character*(maxlen) string4, string5, string6
-	integer s1(80), s2(80), s3(80), s4(80), s5(80), s6(80)
-	equivalence ( s1, string1 ), ( s2, string2 )
-	equivalence ( s3, string3 ), ( s4, string4 )
-	equivalence ( s5, string5 ), ( s6, string6 )
-	common /zzplstr1/ string1
-	common /zzplstr2/ string2
-	common /zzplstr3/ string3
-	common /zzplstr4/ string4
-	common /zzplstr5/ string5
-	common /zzplstr6/ string6
-})dnl
 !***********************************************************************
 !
 !  sfstubs.f
 !
-!  This file contains all the fortran stub routines.
-!  {REAL} variables correspond to: REAL
+!  This file contains the more complicated fortran stub routines 
+!  that the more generic scstubs.c cannot handle.
+!  Typical stubs here must convert a fortran character string
+!  to C or vice versa.
+!  N.B. the called routines (that are defined in scstubs.c) have
+!  a suffix of '7' to avoid name clashes and also presumably as a
+!  signal in scstubs.c that they were called from these routines.
+!  Where arguments are floating-point we explicitly type them as real*8.
+!  This typing is never used since these arguments are
+!  actually passed by reference.  That implies these routines should
+!  work if the calling routine and libplplot itself are both
+!  double precision or both single precision.
 !
 !***********************************************************************
 
 	subroutine plsetopt(opt, optarg)
 
-        implicit_none
+        implicit none
 	character*(*) opt, optarg
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(opt, string1, maxlen)
 	call plstrf2c(optarg, string2, maxlen)
@@ -51,9 +35,11 @@ define(include_strings,{
 
 	subroutine plsdev(dnam)
 
-        implicit_none
+        implicit none
 	character*(*) dnam
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(dnam, string1, maxlen)
 	call plsdev7(s1)
@@ -64,9 +50,11 @@ define(include_strings,{
 
 	subroutine plgdev(dnam)
 
-        implicit_none
+        implicit none
 	character*(*) dnam
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plgdev7(string1)
         call plstrc2f(string1, dnam)
@@ -77,9 +65,11 @@ define(include_strings,{
 
 	subroutine plsfnam(fnam)
 
-        implicit_none
+        implicit none
 	character*(*) fnam
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(fnam, string1, maxlen)
 	call plsfnam7(s1)
@@ -90,9 +80,11 @@ define(include_strings,{
 
 	subroutine plgfnam(fnam)
 
-        implicit_none
+        implicit none
 	character*(*) fnam
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plgfnam7(string1)
         call plstrc2f(string1, fnam)
@@ -103,9 +95,11 @@ define(include_strings,{
 
 	subroutine plgver(ver)
 
-        implicit_none
+        implicit none
 	character*(*) ver
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plgver7(s1)
         call plstrc2f(string1, ver)
@@ -116,11 +110,13 @@ define(include_strings,{
 
 	subroutine plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub)
 
-        implicit_none
-	REAL x0, y0, xtick, ytick
+        implicit none
+	real*8 x0, y0, xtick, ytick
 	integer nxsub, nysub
 	character*(*) xopt,yopt
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(xopt, string1, maxlen)
 	call plstrf2c(yopt, string2, maxlen)
@@ -133,11 +129,13 @@ define(include_strings,{
 
 	subroutine plbox(xopt,xtick,nxsub,yopt,ytick,nysub)
 
-        implicit_none
-	REAL xtick, ytick
+        implicit none
+	real*8 xtick, ytick
 	integer nxsub, nysub
 	character*(*) xopt,yopt
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(xopt, string1, maxlen)
 	call plstrf2c(yopt, string2, maxlen)
@@ -151,11 +149,13 @@ define(include_strings,{
 	subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub,
      &		    zopt,zlabel,ztick,nzsub)
 
-        implicit_none
-	REAL xtick, ytick, ztick
+        implicit none
+	real*8 xtick, ytick, ztick
 	character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
 	integer nxsub, nysub, nzsub
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(xopt, string1, maxlen)
 	call plstrf2c(xlabel, string2, maxlen)
@@ -174,9 +174,9 @@ define(include_strings,{
 
 	subroutine plcon0(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
-        implicit_none
+        implicit none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL z(nx, ny), clevel(nlevel)
+	real*8 z(nx, ny), clevel(nlevel)
 
 	call plcon07(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
@@ -186,9 +186,9 @@ define(include_strings,{
 
 	subroutine plcon1(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
-        implicit_none
+        implicit none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
+	real*8 z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
 
 	call plcon17(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -198,9 +198,9 @@ define(include_strings,{
 
 	subroutine plcon2(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
-        implicit_none
+        implicit none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
+	real*8 z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
 
 	call plcon27(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -210,10 +210,10 @@ define(include_strings,{
 
 	subroutine plcont(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
-        implicit_none
+        implicit none
 	integer nx, ny, kx, lx, ky, ly, nlevel
-	REAL z(nx, ny), clevel(nlevel)
-	REAL tr(6)
+	real*8 z(nx, ny), clevel(nlevel)
+	real*8 tr(6)
 	common /plplot/ tr
 
 	call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
@@ -228,13 +228,15 @@ define(include_strings,{
      &       sh_cmap, sh_color, sh_width, 
      &       min_color, min_width, max_color, max_width)
 
-        implicit_none
+        implicit none
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
-        REAL shade_min, shade_max, sh_color
-	REAL z(nx, ny), xmin, xmax, ymin, ymax
-        include_strings
+        real*8 shade_min, shade_max, sh_color
+	real*8 z(nx, ny), xmin, xmax, ymin, ymax
+        
+	include 'sfstubs.h'
+
 
 !	call plstrf2c(dnam, string1, maxlen)
 
@@ -255,13 +257,15 @@ define(include_strings,{
      &       min_color, min_width, max_color, max_width, 
      &       xg, yg)
 
-        implicit_none
+        implicit none
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
-        REAL shade_min, shade_max, sh_color
-	REAL z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
-        include_strings
+        real*8 shade_min, shade_max, sh_color
+	real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
+        
+	include 'sfstubs.h'
+
 
 !	call plstrf2c(dnam, string1, maxlen)
 
@@ -283,13 +287,15 @@ define(include_strings,{
      &       min_color, min_width, max_color, max_width, 
      &       xg, yg)
 
-        implicit_none
+        implicit none
         character defined*(*)
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
-        REAL shade_min, shade_max, sh_color
-	REAL z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
-        include_strings
+        real*8 shade_min, shade_max, sh_color
+	real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
+        
+	include 'sfstubs.h'
+
 
 !	call plstrf2c(dnam, string1, maxlen)
 
@@ -306,9 +312,11 @@ define(include_strings,{
 
 	subroutine pllab(xlab,ylab,title)
 
-        implicit_none
+        implicit none
 	character*(*) xlab,ylab,title
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(xlab, string1, maxlen)
 	call plstrf2c(ylab, string2, maxlen)
@@ -322,10 +330,12 @@ define(include_strings,{
 
 	subroutine plmtex(side,disp,pos,xjust,text)
 
-        implicit_none
-	REAL disp, pos, xjust
+        implicit none
+	real*8 disp, pos, xjust
 	character*(*) side, text
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(side, string1, maxlen)
 	call plstrf2c(text, string2, maxlen)
@@ -338,10 +348,12 @@ define(include_strings,{
 
 	subroutine plptex(x,y,dx,dy,xjust,text)
 
-        implicit_none
-	REAL x, y, dx, dy, xjust
+        implicit none
+	real*8 x, y, dx, dy, xjust
 	character*(*) text
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(text, string1, maxlen)
 
@@ -353,10 +365,12 @@ define(include_strings,{
 
 	subroutine plstart(devname, nx, ny)
 
-        implicit_none
+        implicit none
 	character*(*) devname
 	integer nx, ny
-        include_strings
+        
+	include 'sfstubs.h'
+
 
 	call plstrf2c(devname, string1, maxlen)
 
