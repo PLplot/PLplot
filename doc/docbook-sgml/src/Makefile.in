@@ -2,7 +2,7 @@
 # Description: Makefile template for PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Thu May 20 11:14:38 CEST 1999
-# Last modified on: Fri Nov 17 11:02:46 CET 2000
+# Last modified on: Fri Nov 17 11:24:52 CET 2000
 # $Id$
 
 VERSION = @VERSION@
@@ -113,7 +113,6 @@ $(BASE).dvi: $(BASE).tex over-under.eps
 		rm -f $@ ; \
 		$(MAKE) $@ ; \
 	fi
-	rm -f prior.aux
 
 $(BASE).tex: $(SGML_SOURCES) $(STYLESHEET_PRINT) inline-print.ent
 	ln -fs inline-print.ent inline.ent
@@ -139,7 +138,7 @@ uninstall:
 	rm -rf $(HTML_DESTDIR) install-stamp
 
 clean:
-	rm -f *.$(HTML_EXT) $(BASE).{tex,dvi,aux,log,ps.gz} \
+	rm -f *.$(HTML_EXT) $(BASE).{tex,dvi,aux,log,ps.gz} prior.aux \
 	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp \
 	      conftest.* config.* *~ \
 	      $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \

@@ -2,7 +2,11 @@
 
 	* Makefile.in (print): changed target name from ps.
 	(all): Added autoconf substitution variables.
-
+	(install-stamp): Create symbolic link index.html.
+	($(BASE).dvi): Do not remove prior.aux after jadetex run.  This
+	avoids running jadetex more than necessary.
+	(clean): Remove prior.aux here. 
+	
 	* configure.in: configure does not stop anymore when a program is
 	not found.  Instead, the user is informed at the end of the run.
 	Also, define HTML and PRINT for future use in the Makefile.in.
