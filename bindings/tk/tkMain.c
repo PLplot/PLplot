@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/09/18 07:14:59  mjl
+ * Revision 1.4  1995/10/22 17:30:35  mjl
+ * Changed -e option such that -e <script> and -f <file> means to execute
+ * <script> then source <file>.  Previously, they were mutually exclusive.
+ *
+ * Revision 1.3  1994/09/18  07:14:59  mjl
  * Changed the syntax for pltkMain() in order for it to work better with
  * shared libraries.  In particular, Tcl_AppInit is no longer external but
  * passed as a function pointer.
@@ -266,7 +270,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
     }
 
     /*
-     * Invoke the script specified on the command line, if any.
+     * Process the startup script, if any.
      */
 
     if (script != NULL) {
@@ -276,7 +280,12 @@ pltkMain(int argc, char **argv, char *RcFileName,
 	}
 	tty = 0;
     }
-    else if (fileName != NULL) {
+
+    /*
+     * Invoke the script specified on the command line, if any.
+     */
+
+    if (fileName != NULL) {
 	code = Tcl_VarEval(interp, "source ", fileName, (char *) NULL);
 	if (code != TCL_OK) {
 	    goto error;
