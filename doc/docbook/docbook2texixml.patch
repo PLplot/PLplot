@@ -1,6 +1,60 @@
---- docbook2texixml-orig	Thu Nov 30 13:30:20 2000
-+++ docbook2texixml	Mon Nov 27 14:22:22 2000
-@@ -940,7 +940,8 @@
+--- docbook2texixml-orig	Fri Aug 11 20:15:08 2000
++++ docbook2texixml	Fri Feb 16 10:04:27 2001
+@@ -689,27 +689,33 @@
+ 	# type=Vert (default)
+ 
+ 	my $columns = $node->getAttribute('columns') || 1;
+-	if($columns != 1) {
+-	    unsupported_node($node, "type=vert columns>1\n");
+-	}
+-
+-	$xw->startTag('itemize', mark=>'asis');
+-
+-        node_map_ordered_children($node,
+-	    {
+-		'elem:member' => sub {
+-		    $xw->emptyTag('item');
+-		    $xw->startTag('para');
+-		    &tr_inline_container;
+-		    $xw->endTag('para');
+-		},
+-		'whitespace' => sub {},
+-		'elem' => \&unexpected_node,
+-		'text' => \&unexpected_node,
+-		'' => sub {},
+-	    });
++	my $colfract = ((1.00/$columns) . " ") x $columns;
+ 
+-	$xw->endTag('itemize');
++	my @members = $node->getElementsByTagName('member', 0);
++	my $incr = int (scalar (@members) / $columns);
++ 
++	$xw->startTag('multitable', columnfractions=>$colfract);
++ 	
++	my @members = $node->getElementsByTagName('member', 0);
++ 
++	my $offset = 0;
++	for(my $i=0; $offset < $incr; ) {
++	    if(($i+$offset)>$#members){
++	        $i = 0;
++		$offset++;
++	    }
++	    else {
++  	        if($i==0) {
++	            $xw->emptyTag('item');
++                } else {
++	            $xw->emptyTag('tab');
++	        }
++	        tr_inline_container($members[$i+$offset]);
++	        $i=$i+$incr;
++            }
++	}
++ 
++	$xw->endTag('multitable');
+     }
+ }
+ 
+@@ -940,7 +946,8 @@
  sub dbtr_funcsynopsis {
  
      my $node = shift;
@@ -10,7 +64,7 @@
      node_map_ordered_children($node,
          {
              'elem:funcsynopsisinfo' => \&tr_example,
-@@ -980,6 +981,12 @@
+@@ -980,6 +987,12 @@
  			    $xw->characters('...');
  			},
                          'elem:paramdef' => sub {
