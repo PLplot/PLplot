@@ -79,3 +79,6 @@ drivers/gnome.drv : shared/gnome$O libs
 drivers/ntk.drv : shared/ntk$O libs
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
+drivers/linuxvga.drv : shared/linuxvga$O libs
+	$(SHLIB_BUILD) $@ $< @LINUXVGALIBS@ $(driverlibs)
+

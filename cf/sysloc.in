@@ -1045,7 +1045,12 @@ if test "$enable_linuxvga" = "yes"; then
 	FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)	
     fi
     if test -n "$VGALIBDIR"; then
-	ADD_TO_LIBS($VGALIBDIR, -lvga, LIBS, LIBPATH)
+	if test "$enable_dyndrivers" = "yes"; then		
+	    ADD_TO_LIBS($VGALIBDIR, -lvga, LINUXVGALIBS, LIBPATH)	
+	else
+	    ADD_TO_LIBS($VGALIBDIR, -lvga, LIBS, LIBPATH)
+	fi
+
     fi
 fi
 
@@ -1324,6 +1329,7 @@ AC_SUBST(SHLIB_LIBS)
 # CDLIBS has all libs needed from the gd driver, and
 # GNOMELIBS all libs needed by the gnome driver.
 
+AC_SUBST(LINUXVGALIBS)
 AC_SUBST(GNOMELIBS)
 AC_SUBST(GDLIBS)
 AC_SUBST(CDLIBS)

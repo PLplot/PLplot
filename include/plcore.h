@@ -97,7 +97,7 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_tk) /* && !defined(ENABLE_DYNDRIVERS)*/
     plD_dispatch_init_tk,
 #endif
-#ifdef PLD_linuxvga
+#if defined(PLD_linuxvga) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_vga,
 #endif
 #ifdef PLD_mgr

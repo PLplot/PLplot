@@ -897,6 +897,9 @@ if test "$enable_dyndrivers" = "yes"; then
 	    ntk )
 	    echo "ntk:New tk driver:1:ntk.drv:43:ntk" >> drivers/drivers.db
 	    ;;
+	    linuxvga )
+	    echo "linuxvga:Linux VGA driver:0:linuxvga.drv:8:vga" >> drivers/drivers.db
+	    ;;
 	esac
     done
 fi
