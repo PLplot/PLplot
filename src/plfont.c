@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/06/30 18:22:09  mjl
+ * Revision 1.14  1994/07/02 21:32:47  mjl
+ * Some changes to the default font directories under MSDOS, submitted
+ * by Neal Holtz.
+ *
+ * Revision 1.13  1994/06/30  18:22:09  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -101,7 +105,6 @@
 
 #ifdef AMIGA
 #define PLFONTENV  "PLPLOT_DIR"
-
 #ifndef PLFONTDEV1
 #define PLFONTDEV1  "fonts:plplot"
 #endif
@@ -112,7 +115,12 @@
 
 #ifdef GNU386
 #include <stddef.h>
+#ifndef PLFONTDEV1
 #define PLFONTDEV1 "c:/lib"
+#endif
+#ifndef PLFONTDEV2
+#define PLFONTDEV2 "d:/util/plplot/lib"
+#endif
 #endif
 
 /* A/IX system 3 doesn't like you to call getenv() from a C program
