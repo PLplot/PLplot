@@ -17,6 +17,7 @@
 
 #ifdef PLD_tk
 
+#define NEED_PLDEBUG
 #include "plplot/pltkd.h"
 #include "plplot/plxwd.h"
 #include "plplot/pltcl.h"
@@ -25,16 +26,20 @@
 #include "plplot/metadefs.h"
 #include "plplot/plevent.h"
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#if HAVE_UNISTD_H
+# include <unistd.h>
 #endif
+#include <sys/types.h> 
+#if HAVE_SYS_WAIT_H 
+# include <sys/wait.h> 
+#endif 
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
 
 #ifdef PLD_dp
-#include <dp.h>
+# include <dp.h>
 #endif
 
 /* Number of instructions to skip between updates */
@@ -939,7 +944,7 @@ pltkdriver_Init(PLStream *pls)
  *    5. Driver: dp
  *	 Flags: -server_host
  *	 Meaning: need to start up plserver (remote host)
- *	 Actions: remsh (rsh) plserver, passing it our host ID and Tcl-DP
+ *	 Actions: rsh (remsh) plserver, passing it our host ID and Tcl-DP
  *		  port for communication. Once started, plserver will send
  *		  back its created message port number.
  * 
@@ -1030,10 +1035,8 @@ init_server(PLStream *pls)
 static void
 launch_server(PLStream *pls)
 {
-    extern char *strdup( const char * );
-
     TkDev *dev = (TkDev *) pls->dev;
-    char *argv[20], *plserver_exec, *ptr;
+    char *argv[20], *plserver_exec=NULL, *ptr, *tmp=NULL;
     int i;
 
     dbug_enter("launch_server");
@@ -1045,10 +1048,10 @@ launch_server(PLStream *pls)
 
     i = 0;
 
-/* If we're doing a remsh, need to set up its arguments first. */
+/* If we're doing a rsh, need to set up its arguments first. */
 
     if ( pls->dp && pls->server_host != NULL ) {
-	argv[i++] = pls->server_host;	/* Host name for remsh */
+	argv[i++] = pls->server_host;	/* Host name for rsh */
 
 	if (pls->user != NULL) {
 	    argv[i++] = "-l";
@@ -1093,10 +1096,10 @@ launch_server(PLStream *pls)
     if (plsc->plwindow != NULL) {	/* jc: */
         char *t, *tmp;
         argv[i++] = "-name";            /* plserver name */
-	tmp = strdup(plsc->plwindow + 1); /* get rid of the initial dot */ /* warning: memory leak, should free(tmp) */
+	tmp = plstrdup(plsc->plwindow + 1); /* get rid of the initial dot */
         argv[i++] = tmp;	
         if ((t = strchr(tmp, '.')) != NULL)
-            *t = '\0';		/* and keep only the base name */
+            *t = '\0';			/* and keep only the base name */
     } else {
         argv[i++] = "-name";            /* plserver name */
         argv[i++] = pls->program;	
@@ -1132,7 +1135,7 @@ launch_server(PLStream *pls)
 	argv[i++] = Tcl_GetVar(dev->interp, "client_name", TCL_GLOBAL_ONLY);
     }
 
-/* The display absolutely must be set if invoking a remote server (by remsh) */
+/* The display absolutely must be set if invoking a remote server (by rsh) */
 /* Use the DISPLAY environmental, if set.  Otherwise use the remote host. */
 
     if (pls->FileName != NULL) {
@@ -1161,7 +1164,7 @@ launch_server(PLStream *pls)
 #endif
 
 /* Start server process */
-/* It's a fork/remsh if on a remote machine */
+/* It's a fork/rsh if on a remote machine */
 
     if ( pls->dp && pls->server_host != NULL ) {
 	if ((dev->child_pid = vfork()) < 0) {
@@ -1171,7 +1174,7 @@ launch_server(PLStream *pls)
 	    fprintf(stderr, "Starting up %s on node %s\n", pls->plserver,
 		    pls->server_host);
 
-	    if (execvp("remsh", argv)) {
+	    if (execvp("rsh", argv)) {
 		perror("Unable to exec server process");
 		_exit(1);
 	    }
@@ -1188,15 +1191,9 @@ launch_server(PLStream *pls)
 	else if (dev->child_pid == 0) {
 
 	/* Don't kill plserver on a ^C if pls->server_nokill is set */
-	/* Contributed by Ian Searle */
 
 	    if (pls->server_nokill) {
 		int retv;
-/* jc:	this was reversed: *all* signals were blocked!
-		sigset_t *set;
-		set = (sigset_t *) malloc (sizeof(sigset_t));
-		sigfillset (set);
-*/
 		sigset_t set;
 		sigemptyset(&set);
 		sigaddset (&set, SIGINT);
@@ -1212,6 +1209,7 @@ launch_server(PLStream *pls)
 	}
 	free_mem(plserver_exec);
     }
+    free_mem(tmp);
 
 /* Wait for server to set up return communication channel */
 

@@ -7,6 +7,7 @@
 #define DEBUG
 
 #ifdef PLD_xwin
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #include "plplot/plxwd.h"
 #include "plplot/drivers.h"

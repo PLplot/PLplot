@@ -30,6 +30,7 @@
 
 #ifdef PLD_plmeta
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 #include "plplot/metadefs.h"

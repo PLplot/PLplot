@@ -12,6 +12,7 @@
     defined(PLD_vlt) ||			/* VLT emulator */ \
     defined(PLD_conex)			/* conex emulator 4010/4014/4105 */
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 #include "plplot/plevent.h"
@@ -39,7 +40,7 @@ static void  LocateEH		(PLStream *pls);
 
 /* Stuff for handling tty cbreak mode */
 
-#ifdef POSIX_TTY
+#ifdef HAVE_TERMIOS_H
 #include <termios.h>
 #include <unistd.h>
 static struct termios	termios_cbreak, termios_reset;
@@ -1053,7 +1054,7 @@ InputEH(PLStream *pls)
  * by W. Richard Stevens.
 \*--------------------------------------------------------------------------*/
 
-#ifdef POSIX_TTY
+#ifdef HAVE_TERMIOS_H
 
 static void
 tty_setup(void)				/* setup for terminal operations */
@@ -1106,7 +1107,7 @@ tty_atexit(void)			/* exit handler */
     tty_reset();
 }
 
-#endif			/* POSIX_TTY */
+#endif			/* HAVE_TERMIOS_H */
 
 #else
 int pldummy_tek() {return 0;}

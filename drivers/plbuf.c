@@ -15,6 +15,7 @@
     its effect upon hardware or computer systems.
 */
 
+#define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 #include "plplot/metadefs.h"
