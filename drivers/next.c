@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/03 19:42:00  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.9  1993/03/06 04:57:23  mjl
+   Fix to ensure that a new segment is begun after a line width change.
 
+ * Revision 1.8  1993/03/03  19:42:00  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.7  1993/02/27  04:46:37  mjl
  * Fixed errors in ordering of header file inclusion.  "plplot.h" should
  * always be included first.
@@ -318,6 +321,8 @@ nx_width(PLStream *pls)
     else {
 	fprintf(pls->OutFile, " S\n/lw %d def\n@lwidth\n", pls->width);
     }
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
 }
 
 /*----------------------------------------------------------------------*\

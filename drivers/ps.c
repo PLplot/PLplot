@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/03/03 19:42:06  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.11  1993/03/06 04:57:25  mjl
+   Fix to ensure that a new segment is begun after a line width change.
 
+ * Revision 1.10  1993/03/03  19:42:06  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.9  1993/03/03  16:18:35  mjl
  * Cleaned up prolog block, fixed (?) default line width setting.
  *
@@ -497,6 +500,8 @@ ps_width(PLStream *pls)
     else {
 	fprintf(OF, " S\n/lw %d def\n@lwidth\n", pls->width);
     }
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
 }
 
 /*----------------------------------------------------------------------*\
