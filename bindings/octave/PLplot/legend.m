@@ -53,11 +53,11 @@ function st = legend (x, xpos, ...)
 
     elseif (strcmp ("set", x))
       if (nargin >= 2 && isstr(xpos))
-	__pl.fmt0 = xpos;
+	__pl.fmt0_1 = xpos;
 	va_start;
 	i=1;
 	while (--nargin > 1)
-	  eval(sprintf("__pl.fmt%d=va_arg;",i++));
+	  eval(sprintf("__pl.fmt%d_%d=va_arg;",i++, strm));
 	endwhile
       endif
     else
