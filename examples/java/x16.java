@@ -68,7 +68,7 @@ class x16 {
 	final int fill_width = 2, cont_color = 0, cont_width = 0;
 
 	// Parse and process command line arguments.
-//	pls.plParseOpts( args, pls.PL_PARSE_FULL );
+	pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display

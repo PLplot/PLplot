@@ -173,6 +173,10 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
    static PLINT Xlen = 0, Ylen = 0;
    static PLFLT **xg;
    static PLFLT **yg;
+/* This currently just used for plgdev, plgfnam, and plgver which apparently
+ * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
+ * have a 1000 byte limit here. */
+   static char buff[1000];
   %}
 
 /* The following typemaps take care of marshaling values into and out of PLplot functions. The
@@ -777,16 +781,54 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 	String returning functions
 ****************************/
 
-#if 0
-/* This currently just used for plgdev, plgfnam, and plgver which apparently
- * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
- * have a 1000 byte limit here. */
-%typemap(in, numinputs=0) char* OUTPUT ( char buff[1000] ) {
+%typemap(jni) char *OUTPUT "jstring"
+%typemap(jtype) char *OUTPUT "String"
+%typemap(jstype) char *OUTPUT "String"
+%typemap(javain) char *OUTPUT "$javainput"
+%typemap(javaout) char *OUTPUT {
+   return $jnicall;
+}
+%typemap(in) char* OUTPUT {
   $1 = buff;
 }
-%typemap(argout) char* OUTPUT {
-  $result = $1;
+%typemap(argout) char *OUTPUT {
+   $1 = (*jenv)->NewStringUTF(jenv, buff);
 }
-#endif
+%typemap(freearg) char *OUTPUT {}
+
+/* Character arrays: */
+
+%typemap(jni) (PLINT *p_argc, char **argv) "jobjectArray"
+%typemap(jtype) (PLINT *p_argc, char **argv) "String[]"
+%typemap(jstype) (PLINT *p_argc, char **argv) "String[]"
+%typemap(javain) (PLINT *p_argc, char **argv) "$javainput"
+%typemap(javaout) (PLINT *p_argc, char **argv) {
+   return $jnicall;
+}
+%typemap(in) (PLINT *p_argc, char **argv) (jint size) {
+   int i = 0;
+   size = (*jenv)->GetArrayLength(jenv, $input);
+   $1 = &size;
+   $2 = (char **) malloc((size+1)*sizeof(char *));
+   /* make a copy of each string */
+   for (i = 0; i<size; i++) {
+      jstring j_string = (jstring)(*jenv)->GetObjectArrayElement(jenv, $input, i);
+      const char * c_string = (*jenv)->GetStringUTFChars(jenv, j_string, 0);
+      $2[i] = malloc(strlen((c_string)+1)*sizeof(const char *));
+      strcpy($2[i], c_string);
+      (*jenv)->ReleaseStringUTFChars(jenv, j_string, c_string);
+      (*jenv)->DeleteLocalRef(jenv, j_string);
+   }
+   $2[i] = 0;
+}
+
+/* This cleans up the memory we malloc'd before the function call */
+%typemap(freearg) (PLINT *p_argc, char **argv) {
+   int i;
+   for (i=0; i<size$argnum-1; i++)
+     free($2[i]);
+   free($2);
+}
+  
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i

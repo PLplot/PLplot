@@ -1,3 +1,8 @@
+2002-12-30  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Implement plParseOpts for new Java interface and change all
+	  examples to use it again.
+
 2002-12-29   Maurice LeBrun <mlebrun@users.sourceforge.net>
 
 	* bindings/tk: added sample app-defaults files, howto on their

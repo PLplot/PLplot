@@ -31,7 +31,7 @@ class x12 {
 	DecimalFormat nf4 = new DecimalFormat("####");
 	int i;
 
-//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
+        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
         pls.plinit();
 

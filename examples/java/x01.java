@@ -38,12 +38,11 @@ class x01 {
     // Parse and process command line arguments.
 
 //         plMergeOpts(options, "x01c options", notes);
-//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
+        pls.plParseOpts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
 
-//     // Get version number, just for kicks.
+// Print out version number, just for kicks.
 
-//         plgver(ver);
-//         fprintf(stderr, "Plplot library version: %s\n", ver);
+//	System.out.println("Plplot library version: " + pls.plgver());
 
 
     // Initialize PLplot.

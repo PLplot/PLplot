@@ -103,7 +103,7 @@ class x08 {
 
     // Parse and process command line arguments.
 
-//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
+        pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
