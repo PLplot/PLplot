@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1994/07/03 05:50:22  mjl
+ * Revision 1.36  1994/07/08 22:50:31  mjl
+ * Fixed bug that was hosing the background color in plots saved from the
+ * Tk/DP driver menu.
+ *
+ * Revision 1.35  1994/07/03  05:50:22  mjl
  * Added fix to prevent an infinite loop while exiting under certain error
  * conditions, submitted by Radey Shouman.
  *
@@ -1299,11 +1303,6 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plsdimap(plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
 		 plsr->xpmm, plsr->ypmm);
 
-/* Initialize if it hasn't been done yet. */
-
-    if (plsc->level == 0)
-	plinit();
-
 /* Palettes */
 
     plsc->icol0 = plsr->icol0;
@@ -1319,6 +1318,11 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     for (i = 0; i < 256; i++) {
 	cp_color(&plsc->cmap1[i], &plsr->cmap1[i]);
     }
+
+/* Initialize if it hasn't been done yet. */
+
+    if (plsc->level == 0)
+	plinit();
 }
 
 /*----------------------------------------------------------------------*\
