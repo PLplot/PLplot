@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.14  1995/06/09 19:19:32  furnish
+ * Revision 1.15  1995/12/15 18:48:16  furnish
+ * Improvements to the C++ Tcl matrix wrapper objects.
+ *
+ * Revision 1.14  1995/06/09  19:19:32  furnish
  * Corrected CPP logic for handling C++ exceptions on HP.
  *
  * Revision 1.13  1995/06/05  21:44:44  furnish
@@ -202,7 +205,12 @@ class TclMatFloat {
 	tMat_Assert( matPtr->type == TYPE_FLOAT, "Type mismatch" );
     }
 
-    int Dimensions() { return matPtr->dim; }
+    int Dimensions() const { return matPtr->dim; }
+
+    int dim_size( int d ) const {
+	tMat_Assert( d < matPtr->dim, "Range error." );
+	return matPtr->n[d];
+    }
 
     void redim( int nx )
     {
@@ -285,7 +293,12 @@ class TclMatInt {
 	tMat_Assert( matPtr->type == TYPE_INT, "Type mismatch" );
     }
 
-    int Dimensions() { return matPtr->dim; }
+    int Dimensions() const { return matPtr->dim; }
+
+    int dim_size( int d ) const {
+	tMat_Assert( d < matPtr->dim, "Range error." );
+	return matPtr->n[d];
+    }
 
     void redim( int nx )
     {
