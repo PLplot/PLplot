@@ -30,4 +30,60 @@
 <xsl:template name="header.table">
 </xsl:template>
 
+<xsl:template match="itemizedlist/listitem">
+  <xsl:variable name="id"><xsl:call-template name="object.id"/></xsl:variable>
+
+  <xsl:variable name="itemsymbol">
+    <xsl:call-template name="list.itemsymbol">
+      <xsl:with-param name="node" select="parent::itemizedlist"/>
+    </xsl:call-template>
+  </xsl:variable>
+
+  <xsl:variable name="item.contents">
+    <fo:list-item-label end-indent="label-end()">
+      <fo:block>
+        <xsl:choose>
+          <xsl:when test="$itemsymbol='disc'">&#x2022;</xsl:when>
+          <xsl:when test="$itemsymbol='bullet'">&#x2022;</xsl:when>
+          <!-- why do these symbols not work? -->
+          <!--
+          <xsl:when test="$itemsymbol='circle'">&#x2218;</xsl:when>
+          <xsl:when test="$itemsymbol='round'">&#x2218;</xsl:when>
+          <xsl:when test="$itemsymbol='square'">&#x2610;</xsl:when>
+          <xsl:when test="$itemsymbol='box'">&#x2610;</xsl:when>
+          -->
+          <xsl:otherwise>&#x2022;</xsl:otherwise>
+        </xsl:choose>
+      </fo:block>
+    </fo:list-item-label>
+    <fo:list-item-body start-indent="body-start()">
+      <xsl:choose>
+	<xsl:when test="child::*[1][local-name()='para' or
+		                    local-name()='simpara' or
+				    local-name()='formalpara']">
+	  <xsl:apply-templates/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <fo:block>
+	    <xsl:apply-templates/>
+	  </fo:block>
+	</xsl:otherwise>
+      </xsl:choose>
+    </fo:list-item-body>
+  </xsl:variable>
+
+  <xsl:choose>
+    <xsl:when test="parent::*/@spacing = 'compact'">
+      <fo:list-item id="{$id}" xsl:use-attribute-sets="compact.list.item.spacing">
+        <xsl:copy-of select="$item.contents"/>
+      </fo:list-item>
+    </xsl:when>
+    <xsl:otherwise>
+      <fo:list-item id="{$id}" xsl:use-attribute-sets="list.item.spacing">
+        <xsl:copy-of select="$item.contents"/>
+      </fo:list-item>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 </xsl:stylesheet>
