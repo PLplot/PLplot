@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/04/08 12:08:54  mjl
+ * Revision 1.2  1994/08/05 09:28:42  mjl
+ * Put in an early bail-out since it's not working yet.
+ *
+ * Revision 1.1  1994/04/08  12:08:54  mjl
  * Preliminary stab at a strip chart demo (doesn't work yet).
  *
 */
@@ -65,7 +68,7 @@ plstripd(PLINT id);
 #endif
 
 /*----------------------------------------------------------------------*\
-* main program
+ * main program
 \*----------------------------------------------------------------------*/
 
 int
@@ -75,6 +78,9 @@ main(int argc, char *argv[])
     PLFLT y, ymin, ymax;
     PLFLT t, tmin, tmax, tjump, dt;
     PLINT colbox, collab, colline;
+
+    fprintf(stderr, "Sorry, this demo not yet in working order\n");
+    exit(1);
 
 /* plplot initialization */
 /* Parse and process command line arguments */
@@ -150,9 +156,9 @@ main(int argc, char *argv[])
 }
 
 /*----------------------------------------------------------------------*\
-* plstripc
-*
-* Create 1d stripchart.
+ * plstripc
+ *
+ * Create 1d stripchart.
 \*----------------------------------------------------------------------*/
 
 void
@@ -216,10 +222,10 @@ plstripc(PLINT *id, char *xspec, char *yspec,
 }
 
 /*----------------------------------------------------------------------*\
-* plstrip_gen
-*
-* Generates a complete stripchart plot.  Used either initially or
-* during rescaling.
+ * plstrip_gen
+ *
+ * Generates a complete stripchart plot.  Used either initially or
+ * during rescaling.
 \*----------------------------------------------------------------------*/
 
 void
@@ -245,10 +251,10 @@ plstrip_gen(PLStrip *strip)
 }
 
 /*----------------------------------------------------------------------*\
-* plstripa
-*
-* Add a point to a stripchart.  
-* Allocates memory and rescales as necessary.
+ * plstripa
+ *
+ * Add a point to a stripchart.  
+ * Allocates memory and rescales as necessary.
 \*----------------------------------------------------------------------*/
 
 void
@@ -305,9 +311,9 @@ plstripa(PLINT id, PLFLT x, PLFLT y)
 }
 
 /*----------------------------------------------------------------------*\
-* plstripd
-*
-* Deletes and releases memory used by a stripchart.  
+ * plstripd
+ *
+ * Deletes and releases memory used by a stripchart.  
 \*----------------------------------------------------------------------*/
 
 void
