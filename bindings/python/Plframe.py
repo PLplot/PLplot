@@ -9,6 +9,22 @@ from math import *
 
 CMD='cmd'
 
+# Physically imported this function from Tkinter.py, b/c it evidently
+# isn't made available via the above import statement.
+
+def _flatten(tuple):
+    res = ()
+    for item in tuple:
+        if type(item) in (TupleType, ListType):
+            res = res + _flatten(item)
+        elif item is not None:
+            res = res + (item,)
+    return res
+
+#=============================================================================#
+# class PlXframe
+#=============================================================================#
+
 class Plframe(Widget):
 
     def __init__( self, master=None, cnf={}, **kw ):
@@ -22,6 +38,11 @@ class Plframe(Widget):
 
 	self.strm = plgstrm()
 
+    def cmd( s, *args ):
+	"Invoke a subcommand on the plframe widget."
+        print "in Plframe::cmd"
+	apply( s.tk.call, (s._w, 'cmd',) + _flatten(args) )
+
     def info(s, what):
 	return s.tk.call( s._w, 'info', what )
 
@@ -33,16 +54,16 @@ class Plframe(Widget):
 ## call straight to the Python compiled interface to the PLplot API.
 
     def plcol(s,c):
-	s.tk.call( s._w, 'cmd', 'plcol', c )
+	s.cmd( 'plcol', c )
 
     def plenv( s, xmin, xmax, ymin, ymax, i, j ):
-	s.tk.call( s._w, 'cmd', 'plenv', xmin, xmax, ymin, ymax, i, j )
+	s.cmd( 'plenv', xmin, xmax, ymin, ymax, i, j )
 
     def pleop(s):
-	s.tk.call( s._w, 'cmd', 'pleop' )
+	s.cmd( 'pleop' )
 
     def pllab( s, xlab, ylab, tlab ):
-	s.tk.call( s._w, 'cmd', 'pllab', xlab, ylab, tlab )
+	s.cmd( 'pllab', xlab, ylab, tlab )
 
     def plline( s, x, y ):
 	plsstrm( s.strm )
@@ -52,7 +73,12 @@ class Plframe(Widget):
 	plsstrm( s.strm )
 	plpoin( xs, ys, mark )
 
-class PlXframe(Widget):
+#=============================================================================#
+# class PlXframe
+#=============================================================================#
+
+class PlXframe(Frame):
+
     """This class provides the same facilities as the Plframe, plus
     several additional facilities for advanced plot interaction, which
     are provided through menus and bindings."""
@@ -63,28 +89,17 @@ class PlXframe(Widget):
 	Configure the widget database, and then set up the internal
 	members.  Namely, a menubar and a contained Plframe."""
 
-	# Okay, I admit, I don't really know what I'm doing, passing
-	# these cnf and kw arguments all over tarnation, but the
-	# visual effect seems to be what I was after, so I guess maybe
-	# I'm blundering along into more or less what I want.  Duh...
-
-	Widget.__init__( s, master, 'frame', cnf, kw )
+	Frame.__init__( s, master )
 
 	s.setup_defaults()
 
-##	s.plf = Plframe( s, kw )
-	s.f = Frame( s, kw )
-	s.f.rowconfigure( 0, weight=1, minsize=0 )
-	s.f.columnconfigure( 0, weight=1, minsize=0 )
-	s.f.plf = Plframe( s, kw )
-	s.f.plf.grid( row=0, column=0, sticky='nsew' )
-	s.plf = s.f.plf
+	s.rowconfigure( 1, weight=1, minsize=0 )
+	s.rowconfigure( 2, weight=1, minsize=0 )
+
+        s.plf = Plframe( s, kw )
+        s.plf.grid( row=1, column=0 )
 
 	s.build_menu_bar()
-
-	#s.plf.pack() 
-##	s.plf.grid( row=1, column=0, sticky='nsew' )
-	s.f.pack( expand=1, fill=BOTH )
 
 	s.strm = plgstrm()
 
@@ -92,9 +107,6 @@ class PlXframe(Widget):
 
 	s.hscroll_exists = 0
 	s.vscroll_exists = 0
-
-##	print "saveopt_dev=", s.saveopt_dev
-##	print "saveopt_file=", s.saveopt_file
 
 ## All this stuff is being based heavily on the Pltkwin.tcl thing by
 ## Vince, for itcl/itk (which in turn was based heavily on the
@@ -125,9 +137,10 @@ class PlXframe(Widget):
 	s.plf.focus()
 
     def build_menu_bar(s):
+        "Create the menubar at the top of the PlXframe"
+
 	s.ftop = Frame( s )
-	s.ftop.pack( expand=1, fill=X )
-	#s.ftop.grid( row=0, columnspan=2, sticky='ew' )
+	s.ftop.grid( row=0, columnspan=2, sticky='ew' )
 
 	s.ftop.plot = Menubutton( s.ftop, text="Plot", underline=0,
 				  relief=RAISED )
@@ -440,12 +453,10 @@ class PlXframe(Widget):
 
 	if s.hscroll_exists and atoi( s.tk.call( 'winfo', 'ismapped',
 						 s.hscroll._w ) ):
-	    #s.hscroll.forget()
 	    s.hscroll.grid_forget()
 
 	if s.vscroll_exists and atoi( s.tk.call( 'winfo', 'ismapped',
 						 s.vscroll._w ) ):
-	    #s.vscroll.forget()
 	    s.vscroll.grid_forget()
 
 ## Reset zoom windows list
@@ -455,7 +466,7 @@ class PlXframe(Widget):
 	s.zxr = [ 1. ]; s.zyr = [ 1. ]
 
     def update_orient(s,m):
-	#print "In update_orient method"
+
 	r = s.tk.call( s.plf._w, 'orient' )
 
 	# Grr, this is a floating point string.  Must stand on our
@@ -467,8 +478,6 @@ class PlXframe(Widget):
 
 	n = i / 90
 	n = i % 4
-
-	#print "orientation was set at ", r, " invoking", n+1
 
 	m.invoke( n+1 )
 
@@ -483,7 +492,6 @@ class PlXframe(Widget):
 
 	if n != oldn:
 	    rots = "%d" % n
-	    #print "setting orientation to ", rots
 	    s.tk.call( s.plf._w, 'orient', rots )
 
     def page_enter(s):
@@ -535,13 +543,20 @@ class PlXframe(Widget):
 ## zoomopts($this,1):
 ##	0	first and last points specified	determine opposite corners
 ##		of zoom	box.
-##	1	box	is centered	about the first	point clicked on, 
+##	1	box is centered about the first point clicked on, 
 ##		perimeter follows mouse	(default)
 ##
 ##----------------------------------------------------------------------------
 
     def zoom_coords( s, x0, y0, x1, y1, opt ):
-##	print "in zoom_coords, asp=", s.zoomopts_asp
+
+        # Convert the integer input to float, prevents problems with
+        # division. 
+
+        x0 = float(x0)
+        y0 = float(y0)
+        x1 = float(x1)
+        y1 = float(y1)
 
 	Lx = s.plf.winfo_width()
 	Ly = s.plf.winfo_height()
@@ -638,6 +653,7 @@ class PlXframe(Widget):
 
 ### zoom from	center out,	preserving aspect ratio
 	else:
+
 	    # Get box lengths, adjusting downward if necessary to keep
 	    # in bounds
 
@@ -743,9 +759,6 @@ class PlXframe(Widget):
 	# Select new plot region
 
 	coords = s.zoom_coords( s.wx, s.wy, e.x, e.y, 1 )
-
-##	view_zoom [lindex	"$coords" 0] [lindex "$coords" 1] \
-##		[lindex	"$coords" 2] [lindex "$coords" 3] 
 
 	s.view_zoom( coords[0], coords[1], coords[2], coords[3] )
 
@@ -974,8 +987,6 @@ class PlXframe(Widget):
 ## the scrollbars before they are mapped.
 
 	if created_sb:
-	    #s.plf.forget()
-	    #s.plf.pack( side=LEFT, expand=1, fill=BOTH )
 	    s.plf.grid_forget()
 	    s.plf.grid( row=1, column=0, sticky='nsew' )
 
@@ -988,15 +999,11 @@ class PlXframe(Widget):
 	or vscroll and not atoi( s.tk.call( 'winfo', 'ismapped',
 					    s.vscroll._w ) ) :
 	    s.update()
-	    #s.plf.forget()
 	    s.plf.grid_forget()
 	    if hscroll:
-		#s.hscroll.pack( side=BOTTOM, fill=X )
 		s.hscroll.grid( row=2, column=0, sticky='ew' )
 	    if vscroll:
-		#s.vscroll.pack( side=RIGHT, fill=Y )
 		s.vscroll.grid( row=1, column=1, sticky='ns' )
-	    #s.plf.pack( expand=1, fill=BOTH )
 	    s.plf.grid( row=1, column=0, sticky='nsew' )
 	else:
 	    s.tk.call( s.plf._w, 'redraw' )
@@ -1019,7 +1026,7 @@ class PlXframe(Widget):
 
     def status_msg(s,msg):
 	s.label_set(msg)
-	#schedule removal of the message with Tk "after"
+	# schedule removal of the message with Tk "after"
 	s.after( 2500, s.label_reset )
 
     def label_reset(s):
@@ -1037,43 +1044,39 @@ class PlXframe(Widget):
 ## Now do the PLplot API.  Just vector these off to the contained
 ## Plframe widget.
 
-    def cmd(s,*args):
-	"This function cores the Python."
-##	tup = s.plf._w, 'cmd',  args
-##	apply( s.tk.call, tup )
-	pass
+    def cmd( s, *args ):
+	"Invoke a subcommand on the plframe widget."
+	apply( s.tk.call, (s.plf._w, 'cmd',) + _flatten(args) )
 
     def pladv( s, page ):
-	s.tk.call( s.plf._w, CMD, 'pladv', page )
+        s.cmd( 'pladv', page )
 
     def plaxes( s, x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub ):
-	s.tk.call( s.plf._w, CMD, 'plaxes',
-		   x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub )
+	s.cmd( 'plaxes', x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub )
 
     def plbin(s): pass
     def plbop(s):
-	s.tk.call( s.plf._w, CMD, 'plbop' )
+	s.cmd( 'plbop' )
 
     def plbox( s, xopt, xtick, nxsub, yopt, ytick, nysub ):
-	s.tk.call( s.plf._w, CMD, 'plbox',
-		   xopt, xtick, nxsub, yopt, ytick, nysub )
+	s.cmd( 'plbox', xopt, xtick, nxsub, yopt, ytick, nysub )
 
     def plbox3( s, xopt, xlabel, xtick, nsubx,
 		yopt, ylabel, ytick, nsuby,
 		zopt, zlabel, ztick, nsubz ):
-	s.tk.call( s.plf._w, CMD, 'plbox3',
-		   xopt, xlabel, xtick, nsubx,
-		   yopt, ylabel, ytick, nsuby,
-		   zopt, zlabel, ztick, nsubz )
+	s.cmd( 'plbox3',
+               xopt, xlabel, xtick, nsubx,
+               yopt, ylabel, ytick, nsuby,
+               zopt, zlabel, ztick, nsubz )
 
     def plcol(s,c):
-	s.tk.call( s.f.plf._w, CMD, 'plcol', c )
+        s.cmd( 'plcol', c )
 
     def plcol0( s, col0 ):
 	s.plcol( col0 )
 
     def plcol1( s, col1 ):
-	s.tk.call( s.f.plf._w, CMD, 'plcol1', col1 )
+        s.cmd( 'plcol1', col1 )
 
 #    def plcont( s ): pass
 
@@ -1089,46 +1092,44 @@ class PlXframe(Widget):
     def plcpstream( s ): pass
     
     def plenv( s, xmin, xmax, ymin, ymax, i, j ):
-	s.tk.call( s.f.plf._w, 'cmd', 'plenv', xmin, xmax, ymin, ymax, i, j )
+	s.cmd( 'plenv', xmin, xmax, ymin, ymax, i, j )
 
     def pleop(s):
-	s.tk.call( s.f.plf._w, 'cmd', 'pleop' )
+	s.cmd( 'pleop' )
 	#print "should've waited here, but it didn't."
-	s.f.plf.setvar( 'wv', '0' )
+	s.plf.setvar( 'wv', '0' )
 	s.label_set( "Plotting paused ... (Hit Clear to continue)" )
 	#print "preparing to wait for wv to change"
-	s.f.plf.waitvar( 'wv' )
+	s.plf.waitvar( 'wv' )
 	#print "it changed."
 	s.label_reset()
 	s.update()
 
     def clearpage(s):
-	s.f.plf.setvar( 'wv', 1 )
+	s.plf.setvar( 'wv', 1 )
 
     def plfill( s, x, y ):
 	plsstrm( s.strm )
 	plfill( x, y )
 
     def plfont( s, ifnt ):
-	s.tk.call( s.f.plf._w, CMD, 'plfont', ifnt )
+        s.cmd( 'plfont', ifnt )
 
     def plfontld( s, fnt ):
-	s.tk.call( s.f.plf._w, CMD, 'plfontld', fnt )
+        s.cmd( 'plfontld', fnt )
 
     def plhist( s, data, datmin, datmax, nbin, oldwin ):
 	plsstrm( s.strm )
 	plhist( data, datmin, datmax, nbin, oldwin )
-##PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-##	 PLINT nbin, PLINT oldwin);
 
     def plhls( s, h, l, s ):
-	s.tk.call( s.f.plf._w, CMD, 'plhls', h, l, s )
+	s.cmd( 'plhls', h, l, s )
 
     def pljoin( s, x1, y1, x2, y2 ):
-	s.tk.call( s.f.plf._w, CMD, 'pljoin', x1, y1, x2, y2 )
+	s.cmd( 'pljoin', x1, y1, x2, y2 )
 
     def pllab( s, xlab, ylab, tlab ):
-	s.tk.call( s.f.plf._w, 'cmd', 'pllab', xlab, ylab, tlab )
+        s.cmd( 'pllab', xlab, ylab, tlab )
 
     def plline( s, x, y ):
 	plsstrm( s.strm )
@@ -1139,7 +1140,7 @@ class PlXframe(Widget):
 	plline3( x, y, z )
 
     def pllsty( s, lin ):
-	s.tk.call( s.f.plf._w, CMD, 'pllsty', lin )
+	s.cmd( 'pllsty', lin )
 
     # map and merridians ommitted.
 
@@ -1148,8 +1149,7 @@ class PlXframe(Widget):
 	plmesh( x, y, z, opt )
 
     def plmtex( s, side, disp, pos, just, text ):
-	s.tk.call( s.f.plf._w, CMD, 'plmtex',
-		   side, disp, pos, just, text )
+	s.cmd( 'plmtex', side, disp, pos, just, text )
 
     def plot3d( s, x, y, z, opt, side ):
 	plsstrm( s.strm )
@@ -1172,26 +1172,25 @@ class PlXframe(Widget):
 	plpoly3( x, y, z, draw )
 
     def plprec( s, setp, prec ):
-	s.tk.call( s.f.plf._w, CMD, 'plprec', setp, prec )
+	s.cmd( 'plprec', setp, prec )
 
     def plpsty( s, patt ):
-	s.tk.call( s.f.plf._w, CMD, 'plpsty', patt )
+	s.cmd( 'plpsty', patt )
 
     def plptex( s, x, y, dx, dy, just, text ):
-	s.tk.call( s.f.plf._w, CMD, 'plptex',
-		   x, y, dx, dy, just, text )
+	s.cmd( 'plptex', x, y, dx, dy, just, text )
 
     def plreplot( s ):
-	s.tk.call( s.f.plf._w, CMD, 'plreplot' )
+	s.cmd( 'plreplot' )
 
     def plrgb( s, r, g, b ):
-	s.tk.call( s.f.plf._w, CMD, 'plrgb', r, g, b )
+	s.cmd( 'plrgb', r, g, b )
 
     def plrgb1( s, r, g, b ):
-	s.tk.call( s.f.plf._w, CMD, 'plrgb1', r, g, b )
+	s.cmd( 'plrgb1', r, g, b )
 
     def plschr( s, dflt, scale ):
-	s.tk.call( s.f.plf._w, CMD, 'plschr', dflt, scale )
+	s.cmd( 'plschr', dflt, scale )
 
     def plshade( s, z, xmin, xmax, ymin, ymax,
 		 sh_min, sh_max, sh_cmap, sh_color, sh_width,
@@ -1219,56 +1218,54 @@ class PlXframe(Widget):
 ##		 pltr, xg, yg, wrap )
 
     def plssub( s, nx, ny ):
-	s.tk.call( s.f.plf._w, CMD, 'plssub', nx, ny )
+	s.cmd( 'plssub', nx, ny )
 
     def plssym( s, dflt, scale ):
-	s.tk.call( s.f.plf._w, CMD, 'plssym', dflt, scale )
+	s.cmd( 'plssym', dflt, scale )
 
     # plstar and plstart not relevant
 
     #def plstyl( s, ...
     
     def plsvpa( s, xmin, xmax, ymin, ymax ):
-	s.tk.call( s.f.plf._w, CMD, 'plsvpa', xmin, xmax, ymin, ymax )
+	s.cmd( 'plsvpa', xmin, xmax, ymin, ymax )
 
     def plsxax( s, digmax, digits ):
-	s.tk.call( s.f.plf._w, CMD, 'plsxax', digmax, digits )
+	s.cmd( 'plsxax', digmax, digits )
 
     def plsyax( s, digmax, digits ):
-	s.tk.call( s.f.plf._w, CMD, 'plsyax', digmax, digits )
+	s.cmd( 'plsyax', digmax, digits )
 
     def plsym( s, x, y, code ):
 	plsstrm( s.strm )
 	plsym( x, y, code )
 
     def plszax( s, digmax, digits ):
-	s.tk.call( s.f.plf._w, CMD, 'plszax', digmax, digits )
+	s.cmd( 'plszax', digmax, digits )
 
     def plvasp( s, aspect ):
-	s.tk.call( s.f.plf._w, CMD, 'plvasp', aspect )
+	s.cmd( 'plvasp', aspect )
 
     def plvpas( s, xmin, xmax, ymin, ymax, aspect ):
-	s.tk.call( s.f.plf._w, CMD, 'plvpas',
-		   xmin, xmax, ymin, ymax, aspect )
+	s.cmd( 'plvpas', xmin, xmax, ymin, ymax, aspect )
 
     def plvpor( s, xmin, xmax, ymin, ymax ):
-	s.tk.call( s.f.plf._w, CMD, 'plvpor', xmin, xmax, ymin, ymax )
+	s.cmd( 'plvpor', xmin, xmax, ymin, ymax )
 
     def plvsta(s):
-	s.tk.call( s.f.plf._w, CMD, 'plvsta' )
+	s.cmd( 'plvsta' )
 
     def plw3d( s, basex, basey, height, xmin0,
 	       xmax0, ymin0, ymax0, zmin0, zmax0, alt, az):
-	s.tk.call( s.f.plf._w, CMD, 'plw3d',
-		   basex, basey, height, xmin0,
-		   xmax0, ymin0, ymax0, zmin0, zmax0, alt, az)
+	s.cmd( 'plw3d',
+               basex, basey, height, xmin0,
+               xmax0, ymin0, ymax0, zmin0, zmax0, alt, az)
 
     def plwid( s, width ):
-	s.tk.call( s.f.plf._w, CMD, 'plwid', width )
+	s.cmd( 'plwid', width )
 
     def plwind( s, xmin, xmax, ymin, ymax ):
-	s.tk.call( s.f.plf._w, CMD, 'plwind',
-		   xmin, xmax, ymin, ymax )
+	s.cmd( 'plwind', xmin, xmax, ymin, ymax )
 
     def debug(s):
 	print "Debugging dump for PlXframe:"
