@@ -1,6 +1,22 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1993/08/11 19:21:58  mjl
+ * Revision 1.12  1993/08/18 19:19:44  mjl
+ * Added new flags -mar, -a, -jx, -jy for setting margin, aspect ratio, and
+ * justification from the command line.  These are similar but not the same
+ * as the same-named variables from old versions of plrender, and are treated
+ * entirely different.  These now are used to set device window coordinates
+ * in the driver interface.  The aspect ratio defaults to 0 for the natural
+ * aspect ratio of the device, and the user normally won't need to change
+ * this (plots requiring a specified aspect ratio should use plvpas or
+ * plvasp).  The margin (0 to 0.5) is the *minimum* fraction of the page to
+ * reserve on each side, while the justification (-0.5 to 0.5) is the
+ * fractional displacement of the center of the plot in x (for -jx) or y (for
+ * -jy).  Since these settings are now handled in the driver interface, ALL
+ * output drivers now support margins, aspect ratio modification, and
+ * justification.  The -wdev flag introduced only a month or so ago was
+ * eliminated.
+ *
+ * Revision 1.11  1993/08/11  19:21:58  mjl
  * Changed definition of plHelp() and plSyntax() to take a mode flag
  * as argument.  Currently used to govern handling of invisible options.
  *
@@ -134,6 +150,9 @@ static int opt_dev		(char *, char *);
 static int opt_o		(char *, char *);
 static int opt_geo		(char *, char *);
 static int opt_a		(char *, char *);
+static int opt_jx		(char *, char *);
+static int opt_jy		(char *, char *);
+static int opt_mar		(char *, char *);
 static int opt_ori		(char *, char *);
 static int opt_width		(char *, char *);
 static int opt_color		(char *, char *);
@@ -145,7 +164,6 @@ static int opt_nopixmap		(char *, char *);
 static int opt_np		(char *, char *);
 static int opt_px		(char *, char *);
 static int opt_py		(char *, char *);
-static int opt_wdev		(char *, char *);
 static int opt_wplt		(char *, char *);
 static int opt_plserver		(char *, char *);
 static int opt_plwindow		(char *, char *);
@@ -163,6 +181,7 @@ static int	mode_nodelete;
 static int	mode_showall;
 static int	mode_noprogram;
 static int	mode_override;
+static PLStream	*pls;
 
 /*----------------------------------------------------------------------*\
 * PLPLOT options data structure definition.
@@ -292,19 +311,33 @@ static PLOptionTable ploption_table[] = {
     "-wplt xl,yl,xr,yr",
     "Relative coordinates [0-1] of window into plot" },
 {
-    "wdev",			/* Device window */
-    opt_wdev,
+    "mar",			/* Margin */
+    opt_mar,
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-wdev xl,yl,xr,yr",
-    "Relative coordinates [0-1] of window into device" },
+    "-mar margin",
+    "Margin space in relative coordinates (0 to 0.5, def 0)" },
 {
     "a",			/* Aspect ratio */
     opt_a,
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-a aspect",
+    "Page aspect ratio (def: same as output device)"},
+{
+    "jx",			/* Justification in x */
+    opt_jx,
     NULL,
-    NULL },
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-jx justx",
+    "Page justification in x (-0.5 to 0.5, def 0)"},
+{
+    "jy",			/* Justification in y */
+    opt_jy,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-jy justy",
+    "Page justification in y (-0.5 to 0.5, def 0)"},
 {
     "ori",			/* Orientation */
     opt_ori,
@@ -318,7 +351,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-width width",
-    "Default pen width (1 <= width <= 10)" },
+    "Sets pen width (1 <= width <= 10)" },
 {
     "color",			/* Color on switch */
     opt_color,
@@ -530,7 +563,6 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 {
     char **argsave, **argend;
     int	myargc, status = 0;
-    PLStream *pls;
     PLOptionTable *tab, *pltab;
 
 /* Initialize */
@@ -546,6 +578,10 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     argend = argv + myargc;
     if (usage_handler != NULL)
 	UsageH = usage_handler;
+
+/* The plplot stream pointer is fetched for direct data access */
+
+    plgpls(&pls);
 
 /* Disable internal options that match user options if mode_override is set */
 
@@ -567,7 +603,6 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 
     if ( ! mode_noprogram) {
 	program_name = argv[0];
-	plgpls(&pls);
 	pls->program = argv[0];
 
 	--myargc; ++argv;
@@ -950,17 +985,67 @@ opt_o(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
+* opt_mar()
+*
+* Performs appropriate action for option "mar".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_mar(char *opt, char *optarg)
+{
+/* Margin */
+
+    plsdidev(atof(optarg), PL_NOTSET, PL_NOTSET, PL_NOTSET);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
 * opt_a()
 *
-* Performs appropriate action for option "a".  ** OBSOLETE **
+* Performs appropriate action for option "a".
 \*----------------------------------------------------------------------*/
 
 static int
 opt_a(char *opt, char *optarg)
 {
-    fprintf(stderr, "-a option obsolete -- use -wdev instead\n");
+/* Plot aspect ratio on page */
 
-    return 1;
+    plsdidev(PL_NOTSET, atof(optarg), PL_NOTSET, PL_NOTSET);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_jx()
+*
+* Performs appropriate action for option "jx".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_jx(char *opt, char *optarg)
+{
+/* Justification in x */
+
+    plsdidev(PL_NOTSET, PL_NOTSET, atof(optarg), PL_NOTSET);
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_jy()
+*
+* Performs appropriate action for option "jy".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_jy(char *opt, char *optarg)
+{
+/* Justification in y */
+
+    plsdidev(PL_NOTSET, PL_NOTSET, PL_NOTSET, atof(optarg));
+
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -997,9 +1082,10 @@ opt_width(char *opt, char *optarg)
 	fprintf(stderr, "?invalid width\n");
 	return 1;
     }
-    else
+    else {
 	plwid(width);
-
+	pls->widthlock = 1;
+    }
     return 0;
 }
 
@@ -1090,44 +1176,6 @@ opt_wplt(char *opt, char *optarg)
     yr = atof(field);
 
     plsdiplt(xl, yl, xr, yr);
-    return 0;
-}
-
-/*----------------------------------------------------------------------*\
-* opt_wdev()
-*
-* Performs appropriate action for option "wdev".
-\*----------------------------------------------------------------------*/
-
-static int
-opt_wdev(char *opt, char *optarg)
-{
-    char *field;
-    float xl, yl, xr, yr;
-
-/* Window into device (e.g. "0,0,0.5,0.5") */
-
-    if ((field = strtok(optarg, ",")) == NULL)
-	return 1;
-
-    xl = atof(field);
-
-    if ((field = strtok(NULL, ",")) == NULL)
-	return 1;
-
-    yl = atof(field);
-
-    if ((field = strtok(NULL, ",")) == NULL)
-	return 1;
-
-    xr = atof(field);
-
-    if ((field = strtok(NULL, ",")) == NULL)
-	return 1;
-
-    yr = atof(field);
-
-    plsdidev(xl, yl, xr, yr);
     return 0;
 }
 
