@@ -27,4 +27,5 @@ $cxxdir/x16 -dev $device -o x16cxx.$dsuffix $options
 $cxxdir/x18 -dev $device -o x18cxx.$dsuffix $options
 $cxxdir/x19 -dev $device -o x19cxx.$dsuffix $options
 #skip x20 which is only meant for interactive execution
-$cxxdir/x21 -dev $device -o x21cxx.$dsuffix $options
+#skip x21 which has variable time results printed on axis 
+#depending on computer load
