@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/12/21 10:32:04  mjl
+ * Revision 1.9  1994/01/15 17:48:31  mjl
+ * Added built-in Tcl commands: wait_until (for general use -- waits until
+ * the specified condition evaluates to true) and host_id (Tcl-DP only).
+ *
+ * Revision 1.8  1993/12/21  10:32:04  mjl
  * Moved a part of the set_auto_path function back into plserver.c where
  * it belonged (adding directories to auto_path based on an input flag).
  *
@@ -160,7 +164,7 @@ Tcl_AppInit(Tcl_Interp *interp)
      */
 
 #if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
-    if (tk_source(w, interp, "$tk_library/wish.tcl")) {
+    if (tk_source(main, interp, "$tk_library/wish.tcl")) {
 	return TCL_ERROR;
     }
 #else
@@ -177,10 +181,15 @@ Tcl_AppInit(Tcl_Interp *interp)
      * they weren't already created by the init procedures called above.
      */
 
+    Tcl_CreateCommand(interp, "wait_until", Wait_Until,
+		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+
 #ifdef TCL_DP
     if (Tdp_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+    Tcl_CreateCommand(interp, "host_id", Host_ID,
+		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 #endif
 
     /*
@@ -227,7 +236,7 @@ set_auto_path(Tcl_Interp *interp)
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	return TCL_ERROR;
 #ifdef DEBUG
-    fprintf(stderr, "adding %s to auto_path\n", "/usr/local/plplot");
+    fprintf(stderr, "adding %s to auto_path\n", ptr);
     path = Tcl_GetVar(interp, "auto_path", 0);
     fprintf(stderr, "auto_path is %s\n", path);
 #endif
@@ -332,3 +341,40 @@ tcl_eval(Tcl_Interp *interp, char *cmd)
     strcpy(cmdbuf, cmd);
     return(Tcl_VarEval(interp, cmdbuf, (char **) NULL));
 }
+
+/*----------------------------------------------------------------------*\
+* Wait_Until
+*
+* Tcl command -- wait until the specified condition is satisfied.
+* Processes all events while waiting.
+*
+* This command is more capable than tkwait, and has the added benefit
+* of working with Tcl-DP as well.  Example usage:
+*
+*	wait_until {[info exists foobar]}
+*
+* Note the [info ...] command must be protected by braces so that it
+* isn't actually evaluated until passed into this routine.
+\*----------------------------------------------------------------------*/
+
+int
+Wait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+{
+    int result = 0;
+
+    dbug_enter("Wait_Until");
+
+    for (;;) {
+	if (Tcl_ExprBoolean(interp, argv[1], &result)) {
+	    fprintf(stderr, "wait_until command \"%s\" failed:\n\t %s\n",
+		    argv[1], interp->result);
+	    break;
+	}
+	if (result)
+	    break;
+
+	Tk_DoOneEvent(0);
+    }
+    return TCL_OK;
+}
+
