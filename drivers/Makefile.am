@@ -94,37 +94,45 @@ else
    libplplottcltk = ../bindings/tcl/libplplottcltk.la
 endif
 
-# All -I compile flags apparently must be lumped together for all source
+# All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
-# to xwin_drv_la_INCLUDES, etc.
+# to xwin_drv_la_AM_CPPFLAGS, etc.  For now, use individual CFLAGS instead
+# which strictly speaking is a misuse since CFLAGS are supposed to be
+# processor options, not preprocessor.
 
-cgm_includes = @CDINCCMD@
-gd_includes = @GDINCCMD@
-gnome_includes = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
-# ntk_includes more than covered by tk_includes
-tk_includes = \
+cgm_drv_la_CFLAGS = @CDINCCMD@
+cgmd_drv_la_CFLAGS = $(cgm_drv_la_CFLAGS)
+gd_drv_la_CFLAGS = @GDINCCMD@
+gdd_drv_la_CFLAGS = $(gd_drv_la_CFLAGS)
+gnome_drv_la_CFLAGS = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
+gnomed_drv_la_CFLAGS = $(gnome_drv_la_CFLAGS)
+ntk_drv_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-tkwin_includes = \
+ntkd_drv_la_CFLAGS = $(ntk_drv_la_CFLAGS)
+tk_drv_la_CFLAGS = \
+	-I../bindings/tcl \
+	-I../bindings/tk \
+	@TCLINCCMD@ \
+	@TKINCCMD@
+
+tkd_drv_la_CFLAGS = $(tk_drv_la_CFLAGS)
+tkwin_drv_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	-I../bindings//tk-x-plat \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-xwin_includes = @X_CFLAGS@
+tkwind_drv_la_CFLAGS = $(tkwin_drv_la_CFLAGS)
+xwin_drv_la_CFLAGS = @X_CFLAGS@
+xwind_drv_la_CFLAGS = $(xwin_drv_la_CFLAGS)
 
-AM_CPPFLAGS = \
-	$(cgm_includes) \
-	$(gd_includes) \
-	$(gnome_includes) \
-	$(tk_includes) \
-	$(tkwin_includes) \
-	$(xwin_includes) \
-	@INCLTDL@
+# Set overall preprocessor options
+AM_CPPFLAGS = @INCLTDL@
 
 ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version 
 

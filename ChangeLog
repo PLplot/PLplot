@@ -1,3 +1,13 @@
+2002-12-02  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* drivers/Makefile.am: instead of using the concatanation of all
+	  compiler flags for all dynamic drivers, apply only those compiler
+	  flags that are appropriate to each dynamic driver.  This makes a huge
+	  reduction in the command line when gnome driver flags are
+	  involved, and probably saves significant computer time as well
+	  when you avoid searching all those gnome header directories for
+	  each dynamic driver.
+
 2002-12-01  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Finish (nearly) all the dynamic driver builds for AT. Checked that
