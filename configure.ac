@@ -835,6 +835,7 @@ AC_OUTPUT([
 	bindings/tk/Makefile
 	bindings/octave/Makefile
 	bindings/octave/PLplot/Makefile
+	bindings/octave/PLplot/plplot_octave_path.m
 	bindings/octave/PLplot/support/Makefile
 	bindings/octave/demos/Makefile
 	bindings/octave/misc/Makefile
