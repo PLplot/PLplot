@@ -44,7 +44,7 @@ EXTRA_DIST = \
 	plmodule.h \
 	$(MAINTAINERCLEANFILES)
 
-### Only swig version 1.3.17 (and above?) will work here.
+### Only swig version 1.3.21 (and above?) will work here.
 ### Ordinarily this detail only matters for CVS users because the tarball
 ### version of PLplot always has both plplotcmodule_p_double.c and
 ### plplotcmodule_p_single.c pre-generated.
@@ -54,7 +54,7 @@ EXTRA_DIST = \
 plplotcmodule_p_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -DPL_DOUBLE -o plplotcmodule_p_double.c plplotcmodule.i
 
-# swig-1.3.17+ does not handle documentation strings properly so run this
+# swig-1.3.21+ does not handle documentation strings properly so run this
 # script to make documentation strings.
 plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 	$(PYTHON) makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
@@ -76,13 +76,15 @@ libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
 AM_CPPFLAGS = $(INCLTDL) -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(X_CFLAGS)
 
-# Do not use -no-undefined here since symbols should be resolved by
-# python when it dynamically loads this shared object.
+# -no-undefined should work on all platforms here since symbols should 
+# all be resolved by $(PYTHON_LDFLAGS) and libplplot
 
 UNDERSCORE_plplotcmodule_la_LDFLAGS  = \
 	-rpath $(ourexecpythondir) \
 	-module \
 	-avoid-version \
+	-no-undefined \
+	$(PYTHON_LDFLAGS) \
 	$(libplplot)
 
 plplot_widgetmodule_la_SOURCES  = plplot_widgetmodule.c

@@ -64,12 +64,13 @@ AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
 
 nodist_plplotjavac_wrap_la_SOURCES  = plplotjavac_wrap.c
 
-# Do not use -no-undefined here since symbols should be resolved by
-# java when it dynamically loads this shared object.
+# no-undefined should work on all platforms here since libplplot should
+# resolve all symbols.
 plplotjavac_wrap_la_LDFLAGS = \
 	-rpath $(ourexecjavadir) \
 	-module \
 	-avoid-version \
+	-no-undefined \
 	$(libplplot)
 
 if enable_java
