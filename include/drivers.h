@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/12/21 10:34:40  mjl
-   Added prototype for new dp driver initialization function.
+   Revision 1.14  1994/01/15 17:32:14  mjl
+   Added include of pdf.h.
 
+ * Revision 1.13  1993/12/21  10:34:40  mjl
+ * Added prototype for new dp driver initialization function.
+ *
  * Revision 1.12  1993/12/08  20:26:21  mjl
  * Changes to support MS-Kermit output device.
  *
@@ -42,6 +45,7 @@
 #ifndef __DRIVERS_H__
 #define __DRIVERS_H__
 
+#include "pdf.h"
 #include "plstream.h"
 
 #ifdef __cplusplus

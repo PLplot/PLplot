@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1993/12/06 07:46:54  mjl
+ * Revision 1.12  1994/01/15 17:28:59  mjl
+ * Added include of pdf.h.
+ *
+ * Revision 1.11  1993/12/06  07:46:54  mjl
  * More modifications to support new color model.
  *
  * Revision 1.10  1993/09/24  20:33:28  furnish
@@ -41,6 +44,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "pdf.h"
 #include "plstream.h"
 
 /*----------------------------------------------------------------------*\
