@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.5.8
-Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, g77, itk3.1-dev, python2.2-numeric, python2.2-dev, octave2.1-headers, libgd2-dev, openjade1.3, docbook-dsssl, docbook-xml, jadetex
+Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, g77, itk3.1-dev, python2.2-numeric, python2.2-dev, octave2.1-headers, libgd2-dev, openjade1.3, docbook-dsssl, docbook-xml, jadetex, libgnome-dev
 Build-Conflicts: f2c, fort77, python2.1-dev
 
 Package: libplplot5
@@ -53,6 +53,20 @@ Description: Scientific plotting library
  See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-xwin
+Architecture: any
+Depends: plplot-common, ${shlibs:Depends}
+Conflicts: plplot-lib, plplot (<< 5)
+Replaces: plplot-lib, plplot (<< 5)
+Provides: plplot-lib
+Description: Scientific plotting library
+ This package provides the basic shared library for PLplot, a scientific
+ plotting library.  It contains all drivers, except the Tcl/Tk one (install
+ package plplot-tcl if you need them).  Also included is the utility
+ program plrender to render PLplot metafiles.
+ .
+ See http://www.plplot.org for more information on PLplot.
+
+Package: plplot-gnome
 Architecture: any
 Depends: plplot-common, ${shlibs:Depends}
 Conflicts: plplot-lib, plplot (<< 5)

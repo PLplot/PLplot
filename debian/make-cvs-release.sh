@@ -14,14 +14,6 @@ perl -pi -e \
   configure.ac
 echo done
 
-version=`perl -ne \
-           'if(/^AM_INIT_AUTOMAKE\(plplot, ([^)]+)\)/){print $1;last}' \
-           < configure.ac`
-
-echo -n "Patching debian/rules ... "
-perl -pi -e 's/(^version\s*:=\s*)([^\s]+)/${1}'$version'/' debian/rules
-echo done
-
 ./bootstrap.sh
 debian/rules config
 make dist

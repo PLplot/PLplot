@@ -13,8 +13,7 @@
 
 export DH_COMPAT=4
 
-version		:= 5.2.0
-
+version		:= $(shell perl debian/get-upstream-version.pl < configure.ac)
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
 debusr		:= $(debtmp)/usr
