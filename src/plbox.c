@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/17 17:01:39  mjl
-   Eliminated some dead assignments that turned up when running with SAS/C's
-   global optimizer enabled on the Amiga.
+   Revision 1.6  1993/04/26 20:04:03  mjl
+   Tweaks for placement of exponential label to ensure it doesn't interfere
+   with axes labels.
 
+ * Revision 1.5  1993/03/17  17:01:39  mjl
+ * Eliminated some dead assignments that turned up when running with SAS/C's
+ * global optimizer enabled on the Amiga.
+ *
  * Revision 1.4  1993/01/23  05:44:58  mjl
  * Now holds all box-related routines.
  *
@@ -439,11 +443,12 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 
 	if (!llx && xmode) {
 	    pos = 1.0;
+	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", xscale);
 	    if (lnx)
-		plmtex("b", (PLFLT) 2.5, pos, (PLFLT) 0.5, string);
+		plmtex("b", height, pos, (PLFLT) 0.5, string);
 	    if (lmx)
-		plmtex("t", (PLFLT) 2.5, pos, (PLFLT) 0.5, string);
+		plmtex("t", height, pos, (PLFLT) 0.5, string);
 	}
     }
 
@@ -484,14 +489,14 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 	if (!lly && ymode) {
 	    sprintf(string, "(x10#u%d#d)", yscale);
 	    offset = 0.02;
-	    height = 1.6;
+	    height = 2.0;
 	    if (lny) {
 		pos = 0.0 - offset;
-		plmtex("t", (PLFLT) height, pos, (PLFLT) 1.0, string);
+		plmtex("t", height, pos, (PLFLT) 1.0, string);
 	    }
 	    if (lmy) {
 		pos = 1.0 + offset;
-		plmtex("t", (PLFLT) height, pos, (PLFLT) 0.0, string);
+		plmtex("t", height, pos, (PLFLT) 0.0, string);
 	    }
 	}
     }
@@ -732,11 +737,12 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 
 	if (!llx && xmode) {
 	    pos = 1.0;
+	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", xscale);
 	    if (lnx)
-		plmtex("b", (PLFLT) 2.5, pos, (PLFLT) 0.5, string);
+		plmtex("b", height, pos, (PLFLT) 0.5, string);
 	    if (lmx)
-		plmtex("t", (PLFLT) 2.5, pos, (PLFLT) 0.5, string);
+		plmtex("t", height, pos, (PLFLT) 0.5, string);
 	}
     }
 
@@ -776,14 +782,14 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 	if (!lly && ymode) {
 	    sprintf(string, "(x10#u%d#d)", yscale);
 	    offset = 0.02;
-	    height = 1.6;
+	    height = 2.0;
 	    if (lny) {
 		pos = 0.0 - offset;
-		plmtex("t", (PLFLT) height, pos, (PLFLT) 1.0, string);
+		plmtex("t", height, pos, (PLFLT) 1.0, string);
 	    }
 	    if (lmy) {
 		pos = 1.0 + offset;
-		plmtex("t", (PLFLT) height, pos, (PLFLT) 0.0, string);
+		plmtex("t", height, pos, (PLFLT) 0.0, string);
 	    }
 	}
     }
@@ -982,7 +988,7 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
     PLINT i, i1, i2, i3, i4;
     PLINT nsub1;
     PLFLT xpmm, ypmm, defmaj, defmin, htmaj, htmin, tick1;
-    PLFLT pos, tn, tp, temp;
+    PLFLT pos, tn, tp, temp, height;
     PLFLT dwx, dwy, lambda;
 
     dwx = wx2 - wx1;
@@ -1093,8 +1099,9 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 	*digits = 2;
 	if (!ll && mode) {
 	    pos = 1.0;
+	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", scale);
-	    plxytx(wx1, wy1, wx2, wy2, (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
+	    plxytx(wx1, wy1, wx2, wy2, height, pos, (PLFLT) 0.5, string);
 	}
     }
 }
@@ -1170,7 +1177,7 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
     PLINT i, mode, prec, scale;
     PLINT nsub1, lstring;
     PLFLT xpmm, ypmm, defmaj, defmin, tick1;
-    PLFLT pos, tn, tp, temp;
+    PLFLT pos, tn, tp, temp, height;
     PLFLT dwy, lambda, diag, major, minor, xmajor, xminor;
     PLFLT ymajor, yminor, dxm, dym, xscl, xoff, yscl, yoff;
 
@@ -1276,7 +1283,7 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     /* Label the line */
 
-    if (ln && lt) {
+    if ((ln || lm) && lt) {
 	*digits = 0;
 	tp = tick1 * floor(vmin / tick1);
 	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
@@ -1298,12 +1305,13 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 	}
 	if (!ll && mode) {
 	    sprintf(string, "(x10#u%d#d)", scale);
-	    pos = 1.0;
+	    pos = 1.15;
+	    height = 0.5;
 	    if (ln && !right) {
-		plztx("v", dx, dy, wx, wy1, wy2, 0.5, pos, 1.0, string);
+		plztx("v", dx, dy, wx, wy1, wy2, height, pos, 1.0, string);
 	    }
 	    if (lm && right) {
-		plztx("v", dx, dy, wx, wy1, wy2, -0.5, pos, 0.0, string);
+		plztx("v", dx, dy, wx, wy1, wy2, -height, pos, 0.0, string);
 	    }
 	}
     }
