@@ -2,9 +2,9 @@
 
 from distutils.core import setup, Extension
 
-# Unusual special plplot logic at start of setup.py to sort out different
+# Hacked special plplot logic at start of setup.py to sort out different
 # behaviour for tmp location (special *last* option of --flat) and install 
-# location.
+# location (special *last* option of relocatable PREFIX).
 import sys
 if sys.argv[-1] == "--flat":
     del sys.argv[-1]
@@ -12,8 +12,13 @@ if sys.argv[-1] == "--flat":
     include_directory = os.getcwd()
     library_directory = include_directory
 else:
-    include_directory = "@prefix@/@INCLUDE_DIR@/.."
-    library_directory = "@prefix@/@LIB_DIR@"
+    # We use last argument (which is set to $(PREFIX) in Makefile when
+    # building for install) because it is relocatable (which allows
+    # ordinary users to build the rpm's and deb's) while the
+    # configurable "prefix" refers just to the final install location.
+    include_directory = sys.argv[-1] + "/@INCLUDE_DIR@/.."
+    library_directory = sys.argv[-1] + "/@LIB_DIR@"
+    del sys.argv[-1]
 
 # Some systems do not accept -rpath option to ld in which case the next
 # two variables will be empty strings

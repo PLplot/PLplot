@@ -55,7 +55,7 @@ install_python: $(PLLIBS) plplotcmodule.c plplot_widgetmodule.c plplot.py
 	@echo " "
 	# Start fresh (--force) each time since previous build may
 	# be for plplot/tmp location
-	python setup.py build --force --build-temp="./" --build-lib="./"
+	python setup.py build --force --build-temp="./" --build-lib="./" $(PREFIX)
 
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
