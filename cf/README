@@ -1,14 +1,172 @@
 The Autotools configuration scheme for PLplot
 =============================================
 
+
 Introduction
 ------------
+
+PLplot is a complex piece of software.  It includes a core library, which
+may use external libraries like FreeType and Qhull), as well as several
+language bindings and drivers for a large number of devices and file
+formats.  This complexity reflects on its configuration system, which can be
+considered a separate project in itself. 
+
 
 History
 -------
 
-Internals
----------
+Version prior to 5.0.0 of PLplot already used Autoconf for its configuration
+system.  At that time a home-brew technique for generating the Makefile from
+small fragments were used.  The main drawbacks of this technique were the
+lack of portability in the generated Makefiles and the cross-platform
+problems for generating shared libraries, let alone the later dynamically
+loadable drivers.
+
+At the end of 2001, a new effort started to port the configuration scheme to
+Automake and Libtool.  This appeared in release 5.2.1, in April 2003.  This
+was a huge overhaul of the PLplot configuration and we had to abandon the
+"flat" built paradigm where all the source files were copied to a temporary
+directory and compiled there.  Automake needed to have the source code
+organized hierarchically with separate Makefile.am's for each directory.
+
+Although the port to Automake/Libtool was a huge step forward, many legacy
+code were kept in the configure.in file (renamed to configure.ac later).
+Some of this legacy code related to old necessities, like diverting the
+initial portion of configure.in to set default values correctly.  Also, a
+sysloc.in file at the top-level directory was included by configure.in, but
+there was no logic behind
+
+In sum, the situation until the release of version 5.3.0 has been quite
+unsatisfactory, even if the configuration scheme have been continuously
+improved since version 5.2.1.  The code in configure.ac and sysloc.in was
+way too convoluted, not very robust as regards to changes in it, and
+daunting for the beginners. We then decided to reorganize the configuration
+code to addresses those issues.
+
+
+The new configuration scheme
+----------------------------
+
+Modernization, starts with AC_INIT (no diversion, default in PL_ARG_*)
+
+Port to Automake 1.8.2 and Libtool 1.5.2
+
+Modularization, cf dir, m4_include, aclocal scans cf for m4 files, no
+AT generated files at the topdir
+
+Although the amount of changes in this commit is huge, configuration and
+build runs smoothly from a freshly checked out CVS tree, by doing:
+
+    cf/bootstrap.sh
+    ./configure
+    make check
+
+The code in configure.ac and cf/sysloc.in is still quite messy (BTW, this
+later file will soon disappear), because I have to move code around to get
+everything working.  This state of affairs showed me how fragile and
+unmaintainable the previous scheme was.  The files configure.ac,
+cf/sysloc.in and cf/docbook.m4 will be soon broken down in smaller pieces
+(cf/*.ac).
+
+The diverted stuff at the beginning of configure.ac have served many
+purposes in the past:
+
+    (1) Allow default settings of the enable_* and with_* configuration
+        variables.
+
+    (2) Allow sourceing of user configuration files.
+
+    (3) Define all the driver/device options and variables through a
+        non-recursive m4 macro.
+
+    (4) Set the $system variable and fix it for braindead Cray.
+
+I am sure that my changes regarding (1) will generate a lot of debate.
+People get used to have all the default values for the enable_* and with_*
+variables to be concentrated at the beginning of the configure.ac.  That
+could be handy for the experienced developer, but is pretty
+non-maintainable and confusing for the new developers.
+
+I think it is better to have the definition of default values close to
+where the definition is actually defined.  For that, two new macros were
+created:
+
+    PL_ARG_WITH(option, [help string], default)
+    PL_ARG_ENABLE(option, [help string], default)
+
+These macros are now used uniformly throughout the project (well,
+cf/docbook.m4 has not yet been ported).  Notice that the help string should
+not contain --with-* or --enable-* at the beginning.  PL_ARG_* take care of
+this, by using the nice AS_HELP_STRING macro.
+
+The very nice side effect of these changes is that ./configure --help shows
+now (at last!) the default values for all options.  The problem before was
+that we tried to use the shell variables in the help string, but they were
+not being interpolated.  Only for this reason, my changes are already
+worth.
+
+As regards (2), Maurice cleaned up the diversion section of configure.ac
+recently, by noticing that there is now an official way to do it, namely
+through the environment variable CONFIG_SITE.  However, this solution is
+broken in HEAD, since the values set in the CONFIG_SITE file override the
+values set by the options --with-* and --enable-* (it should be the
+contrary).  In CFDIR, the situation is the same.  Hence, in her private
+configuration startup file $CONFIG_SITE, the user has to do something like
+this:
+
+    if test -z "$enable_octave" ; then enable_octave=yes ; fi
+
+It can also set a shell function for that:
+
+    my_default() { eval "if test -z \"\$$1\"; then $1=$2 ; fi" ; }
+    my_default enable_octave no
+    my_default enable_f77 yes
+    # etc.
+
+[This is plain Bourne shell, no bashisms here.]
+
+The previous system for setting driver/device options and variables was
+quite convoluted.  It contained three redundant lists: PL_DRIVER_LIST,
+PL_DYNAMIC_DRIVER_LIST, and PL_device_driver_pair_list.  This has been
+overly simplified now.  There is a single comma-separated list now
+(PL_DEVICE_DRIVER_LIST) whose components are like:
+
+    device:driver:default
+
+Notice that the default value is now set here, as either "yes" or "no".
+This list is called in two places:
+
+    PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+    [...]
+    PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+
+Between the two should come parts of the code that used to be in sysloc.in.
+
+The setting of the $system variable in (4) is completely obsoleted by the
+AC_CANONICAL_HOST variable.  Besides that, it was just used to set the
+with_opt variable for the Cray system.  BTW, this variable is not used
+anywhere else in PLplot.  I got rid of it, together with other legacy stuff
+like with_profile and with_warn.
+
+Besides the diversion cleanup, several other minor changes have been done.
+One of them was to get rid of the has_tcl and has_tk variables, which were
+redundant to enable_tcl and enable_tk.  Also, a cf/README is added to the
+project.  It contains just a boilerplate now, but will be filled
+progressively.
+
+
+
+Bootstraping the package
+------------------------
+
+cf/bootstrap.sh
+
+aclocal -> creation of aclocal.m4
+
+./configure and so forth should be transparent
+
+
+
 
 
  -- Rafael Laboissiere <rafael@users.sf.net> Mon Feb 15 19:22:07 CET 2004

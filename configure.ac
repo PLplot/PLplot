@@ -27,6 +27,7 @@ dnl files, configure using:
 dnl
 dnl $ CONFIG_SITE=~/config/cf_plplot.in ./configure
 
+
 dnl =======================================================================
 dnl Autoconf/automake initializations
 dnl =======================================================================
@@ -98,25 +99,47 @@ dnl purposes in the various configured pkgIndex.tcl scripts.
 PLPLOT_TCL_VERSION=5
 AC_SUBST(PLPLOT_TCL_VERSION)
 
-
 dnl =======================================================================
-dnl C compiler settings
+dnl Check for programs
 dnl =======================================================================
 
 dnl Require C compile
 
-AM_PROG_CC
+AC_PROG_CC
 
-dnl Checks for existence of headers
+dnl Libtool configuration
+
+m4_include(cf/libtool.ac)
+
+
+dnl =======================================================================
+dnl Libraires
+dnl =======================================================================
+
+dnl Disable LIBS so we don't have all libraries mentioned
+
+LIBS=""
+
+dnl Add libm to LIBS, as some non linux unices might require this.
+
+AC_CHECK_LIB(m, sin)
+
+m4_include(cf/pthread.ac)
+m4_include(cf/freetype.ac)
+m4_include(cf/csiro.ac)
+
+
+dnl =======================================================================
+dnl Headers
+dnl =======================================================================
 
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h termios.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_DIRENT
 
-# ----------------------------------------------------------------------------
-# Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
-# ----------------------------------------------------------------------------
+dnl Check for inclusion of sys/types.h before dirent.h in broken MacOSX
+dnl systems 
 
 case "$host_os" in
     darwin*)
@@ -125,7 +148,9 @@ case "$host_os" in
 esac
 
 
-dnl Check for typedefs
+dnl =======================================================================
+dnl Typedefs
+dnl =======================================================================
 
 dnl Some X11 headers require "caddr_t" even on systems that claim POSIX.1
 dnl compliance, which is illegal.  This makes it impossible to compile
@@ -139,7 +164,10 @@ dnl The following is primarily for use in drivers/get-drv-info.c
 
 AC_TYPE_SIGNAL
 
-dnl Check for functions
+
+dnl =======================================================================
+dnl Functions
+dnl =======================================================================
 
 AC_FUNC_VFORK
 AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [],
@@ -154,27 +182,51 @@ AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
                                [Define if isnan is available]))
 
 
-### Add libm to LIBS, as some non linux unices might require this.
-### This must be done before sysloc.in is included.
-AC_CHECK_LIB(m, sin)
-
 m4_include(cf/rpath.ac)
 
 m4_include(cf/double.ac)
 
-dnl If the user don't want (or the system is not capable of) to build
-dnl shared libraries, then disable dynamic drivers, as they are
-dnl dynamically loaded objects.
+dnl =======================================================================
+dnl PLplot drivers
+dnl =======================================================================
 
-if test "$enable_shared" != yes ; then
-    AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
-    AC_MSG_WARN([setting enable_dyndrivers=no])
-    enable_dyndrivers=no
-fi
+dnl m4_include(cf/drivers.ac)
+
+dnl Including a driver in the below list includes it by default.
+dnl Note that each driver should be treated separately even if
+dnl they are in the same source code file.
+dnl For example, the ps and psc drivers are defined in the ps.c source
+dnl code file.
+
+dnl N.B. This is ordered the same as the *driver pair* list below to help
+dnl humans keep the associations straight, but this is not necessary.
+
+dnl Note specifically which drivers are known to be loadable.  Eventually,
+dnl hopefully, every driver will show up on this list.  However, we add them one
+dnl at a time since each will have its own peculiarities in the build process
+dnl (none missing at present).
+
+dnl N.B. This is ordered the same as the *driver pair* list below to help
+dnl humans keep the associations straight, but this is not necessary.
+
+dnl We think of a "device" as the output medium.  Could be a machine
+dnl style (Tektronix, X11), or a file format (Postscript).
+dnl
+dnl A "driver" is the PLplot code that produces the output on the
+dnl medium.
+dnl
+dnl Some drivers support multiple devices.  But we we need to make sure
+dnl we compile only the selected drivers.  That is, if a driver supports
+dnl devices not selected, we don't want to compile it at all.  Or if it
+dnl supports multiple selected devices, we only want to compile it
+dnl once.  To support this, we build an association list between devices
+dnl and drivers.  This will be inspected to build up the set of drivers
+dnl to be compiled based on which devices are selected.
+
+dnl Ordered alphabetically by second in each pair (the driver) for human
+dnl consumption, but this is not necessary.
 
 PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
-
-m4_include(cf/libtool.ac)
 
 PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
 
@@ -187,17 +239,6 @@ PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
 
 # Special cases
 
-case $system in
-    Linux* )
-	if test -z "$enable_linuxvga"; then
- 	   enable_linuxvga=$enable_drivers
-	fi
-    ;;
-    * )
-	enable_linuxvga="no"
-    ;;
-esac
-
 # ----------------------------------------------------------------------------
 # Set flag to enable searching for dynloadable drivers, if appropriate.
 # ----------------------------------------------------------------------------
@@ -207,34 +248,31 @@ if test "$enable_dyndrivers" = "yes"; then
               [Define if there is support for dynamically loaded drivers])
 fi
 
-m4_include(cf/python.ac)
-
-m4_include(cf/java.ac)
-
 builtin([define], [PL_DRIVERS_DEVICE_LIST], [
-  cgm:cgm:yes,
-  dg300:dg300:no,
-  png:gd:yes, jpeg:gd:yes,
-  gnome:gnome:no,
-  hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
-  imp:impress:no,
-  linuxvga:linuxvga:yes,
-  ljii:ljii:no,
-  ljiip:ljiip:no,
-  mem:mem:yes,
-  ntk:ntk:no,
-  null:null:yes,
-  pbm:pbm:yes,
-  plmeta:plmeta:yes,
-  ps:ps:yes, psc:ps:yes,
-  pstex:pstex:yes,
-  xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
-  versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
-  tek4107f:tek:no,
-  tk:tk:yes,
-  tkwin:tkwin:yes,
-  xfig:xfig:yes,
-  xwin:xwin:yes])
+    cgm:cgm:yes,
+    dg300:dg300:no,
+    png:gd:yes, jpeg:gd:yes,
+    gnome:gnome:no,
+    hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
+    imp:impress:no,
+    linuxvga:linuxvga:yes,
+    ljii:ljii:no,
+    ljiip:ljiip:no,
+    mem:mem:yes,
+    ntk:ntk:no,
+    null:null:yes,
+    pbm:pbm:yes,
+    plmeta:plmeta:yes,
+    ps:ps:yes, psc:ps:yes,
+    pstex:pstex:yes,
+    xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
+    versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
+    tek4107f:tek:no,
+    tk:tk:yes,
+    tkwin:tkwin:yes,
+    xfig:xfig:yes,
+    xwin:xwin:yes
+])
 
 AC_MSG_CHECKING(for dynamic drivers)
 PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
@@ -251,10 +289,8 @@ m4_include(cf/xwin.ac)
 
 PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
-# Conditionals to control various Makefile.am files.
-
 if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
-  enable_ps=yes
+    enable_ps=yes
 fi
 
 AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
@@ -266,110 +302,59 @@ AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
 AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
 
 
-### Modify system-dependent results based on availability
-m4_include(cf/pthread.ac)
-m4_include(cf/freetype.ac)
-m4_include(cf/csiro.ac)
-
-# Disable LIBS so we don't have all libraries mentioned
-LIBS=""
-
-# Bindings
+dnl =======================================================================
+dnl Language bindings
+dnl =======================================================================
 
 m4_include(cf/swig.ac)
+m4_include(cf/python.ac)
+m4_include(cf/java.ac)
 m4_include(cf/octave.ac)
 m4_include(cf/tcl.ac)
 m4_include(cf/c++.ac)
 m4_include(cf/f77.ac)
 
 
+dnl =======================================================================
+dnl Other parts of PLplot (test suite, DocBook manual, pkg-config support)
+dnl =======================================================================
 
 m4_include(cf/test.ac)
-
-
-
-### Define PLplot default install locations:
-### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
-
-test -z "$DATA_DIR" && DATA_DIR='${datadir}/${PACKAGE}${VERSION}'
-AC_SUBST(DATA_DIR)
-
-test -z "$LIB_DIR" && LIB_DIR='${libdir}'
-AC_SUBST(LIB_DIR)
-
-test -z "$INCLUDE_DIR" && INCLUDE_DIR='${prefix}/include/plplot'
-AC_SUBST(INCLUDE_DIR)
-
-test -z "$BIN_DIR" && BIN_DIR='${bindir}'
-
-test -z "$TCL_DIR" && TCL_DIR="$DATA_DIR/tcl"
-AC_SUBST(TCL_DIR)
-
-test -z "$DRV_DIR" && DRV_DIR="$DATA_DIR/drivers${LIB_TAG}"
-AC_SUBST(DRV_DIR)
-
-### Documentation directory
-test -z "$DOC_DIR" && DOC_DIR='${datadir}/doc/plplot'
-AC_SUBST(DOC_DIR)
-
-BUILD_DIR=`pwd`
-AC_SUBST(BUILD_DIR)
-
-# The following *_CMD variables are needed in examples/*/Makefile.examples.in
-
-PL_EXPAND_EXPRESSION(LIB_DIR_CMD, -L$LIB_DIR)
-AC_SUBST(LIB_DIR_CMD)
-PL_EXPAND_EXPRESSION(INCLUDE_DIR_CMD, -I$INCLUDE_DIR)
-AC_SUBST(INCLUDE_DIR_CMD)
-
-# The following *_HARDDIR variables are needed in bindings/*/pkgIndex.tcl.in
-
-PL_EXPAND_EXPRESSION(LIB_HARDDIR, $LIB_DIR)
-AC_SUBST(LIB_HARDDIR)
-PL_EXPAND_EXPRESSION(DRV_HARDDIR, $DRV_DIR)
-AC_SUBST(DRV_HARDDIR)
-
-# Location substitutions for header files as well
-
-PL_EXPAND_EXPRESSION(TMPVAR, $DATA_DIR)
-AC_DEFINE_UNQUOTED(DATA_DIR, "$TMPVAR", [Location of package data files])
-
-PL_EXPAND_EXPRESSION(TMPVAR, $DRV_DIR)
-AC_DEFINE_UNQUOTED(DRV_DIR, "$TMPVAR", [Location of dynamically loaded drivers])
-
-PL_EXPAND_EXPRESSION(TMPVAR, $BIN_DIR)
-AC_DEFINE_UNQUOTED(BIN_DIR, "$TMPVAR", [Location of executables])
-
-PL_EXPAND_EXPRESSION(TMPVAR, $TCL_DIR)
-AC_DEFINE_UNQUOTED(TCL_DIR, "$TMPVAR", [Location of Tcl stuff])
-
-AC_DEFINE_UNQUOTED(BUILD_DIR, "$BUILD_DIR", [Location of Build tree])
-
-
 m4_include(cf/docbook.ac)
-
 m4_include(cf/pkg-config.ac)
 
-### Build configuration files (notice that there are other calls to
-### AC_CONFIG_FILES in the cf/*.ac files.
+
+dnl =======================================================================
+dnl PLplot default install locations
+dnl =======================================================================
+
+m4_include(cf/instdirs.ac)
+
+
+dnl =======================================================================
+dnl Build configuration files and show summary
+dnl =======================================================================
+
+dnl Notice that there are other calls to AC_CONFIG_FILES in the cf/*.ac
+dnl files.
 
 AC_CONFIG_FILES([
-	Makefile
-	src/Makefile
-	include/Makefile
-	data/Makefile
-	bindings/Makefile
-	drivers/Makefile
-	examples/Makefile
-	examples/Makefile.examples
-	examples/c/Makefile
-	examples/c/Makefile.examples
-	examples/perl/Makefile
-	utils/Makefile
-	scripts/Makefile
-	doc/Makefile
-	scripts/plplot-config
-	])
+    Makefile
+    src/Makefile
+    include/Makefile
+    data/Makefile
+    bindings/Makefile
+    drivers/Makefile
+    examples/Makefile
+    examples/Makefile.examples
+    examples/c/Makefile
+    examples/c/Makefile.examples
+    examples/perl/Makefile
+    utils/Makefile
+    scripts/Makefile
+    doc/Makefile
+    scripts/plplot-config
+])
 
 AC_OUTPUT
 

@@ -30,6 +30,7 @@ if test "$enable_python" = "yes"; then
     ### not stop.
     pushdef([AC_MSG_ERROR],defn([AC_MSG_WARN]))
     AM_PATH_PYTHON(1.5)
+    PYTHON_DEVEL
     popdef([AC_MSG_ERROR])
     if test -n "$PYTHON_VERSION" ; then
 ### PYTHON_INSTDIR is the same as $pythondir except that the
