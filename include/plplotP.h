@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/07/28 05:50:12  mjl
-   Removed some unnecessary code (under ANSI C) for handling signed chars;
-   added free_mem() utility macro.
+   Revision 1.4  1993/07/31 08:10:42  mjl
+   Macros for use in escape function changed to have a prefix PLESC_, similarly
+   those used in the state function start with PLSTATE_.  Some function
+   prototypes added/deleted.
 
+ * Revision 1.3  1993/07/28  05:50:12  mjl
+ * Removed some unnecessary code (under ANSI C) for handling signed chars;
+ * added free_mem() utility macro.
+ *
  * Revision 1.2  1993/07/16  22:29:17  mjl
  * Definition of standard meta coordinates now done here.  Prototypes for
  * several new functions added.
@@ -11,7 +16,6 @@
  * Revision 1.1  1993/07/02  07:27:16  mjl
  * Created to hold private PLPLOT macros, declarations, and prototypes.
  * Included by all PLPLOT source files.
- *
 */
 
 /*
@@ -185,7 +189,7 @@ typedef signed char SCHAR;
 
 #ifdef DEBUG_ENTER
 #define dbug_enter(a) \
-    fprintf(stderr, "%s: Entered %s\n", __FILE__, a); fflush(stderr);
+    fprintf(stderr, "%s: Entered %s\n", __FILE__, a);
 
 #else
 #define dbug_enter(a)
@@ -243,12 +247,29 @@ typedef signed char SCHAR;
 /* Some of these are obsolete but are retained in order to process
    old metafiles */
 
-#define PL_SET_RGB	1	/* obsolete */
-#define PL_ALLOC_NCOL	2	/* obsolete */
-#define PL_SET_LPB	3	/* not used yet */
-#define PL_EXPOSE	4	/* handle window expose */
-#define PL_RESIZE	5	/* handle window resize */
-#define PL_REDRAW	6	/* handle window redraw (opt. scaled) */
+#define PLESC_SET_RGB		1	/* obsolete */
+#define PLESC_ALLOC_NCOL	2	/* obsolete */
+#define PLESC_SET_LPB		3	/* obsolete */
+#define PLESC_EXPOSE		4	/* handle window expose */
+#define PLESC_RESIZE		5	/* handle window resize */
+#define PLESC_REDRAW		6	/* handle window redraw */
+#define PLESC_TEXT		7	/* switch to text screen */
+#define PLESC_GRAPH		8	/* switch to graphics screen */
+#define PLESC_FILL		9	/* fill polygon */
+#define PLESC_DI		10	/* handle DI command */
+
+/* Switches for state function call. */
+
+#define PLSTATE_WIDTH		1	/* pen width */
+#define PLSTATE_COLOR0		2	/* change to color map 0 */
+#define PLSTATE_COLOR1		3	/* change to color map 1 */
+
+/* Bit switches used in the driver interface */
+
+#define PLDI_MAP	0x01
+#define PLDI_ORI	0x02
+#define PLDI_PLT	0x04
+#define PLDI_DEV	0x08
 
 /* Default size for family files, in KB.
 *  If you want it bigger, set it from the makefile or at runtime.
@@ -283,6 +304,9 @@ void  pldtik		(PLFLT, PLFLT, PLFLT *, PLINT *,
 			 PLINT *, PLINT *, PLINT, PLINT *);
 
 void  plP_pllclp	(PLINT *, PLINT *, PLINT, PLINT, PLINT, PLINT, PLINT, 
+			 void (*draw) (short *, short *, PLINT));
+
+void  plP_plfclp	(PLINT *, PLINT *, PLINT, PLINT, PLINT, PLINT, PLINT, 
 			 void (*draw) (short *, short *, PLINT));
 
 void  plexit		(char *);
@@ -533,6 +557,8 @@ void plP_line		(short *, short *);
 
 void plP_polyline	(short *, short *, PLINT);
 
+void plP_fill		(short *, short *, PLINT);
+
 void plP_clear		(void);
 
 void plP_page		(void);
@@ -540,10 +566,6 @@ void plP_page		(void);
 void plP_tidy		(void);
 
 void plP_color		(void);
-
-void plP_text		(void);
-
-void plP_graph		(void);
 
 void plP_width		(void);
 
