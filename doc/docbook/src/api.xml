@@ -14,9 +14,8 @@
 
   <para>
 All common API functions of the current CVS HEAD are listed here with their
-arguments.  All functions have at least a short description, 
-but there are still a fair number of undocumented
-parameters as indicated by the string <quote>NEEDS DOCUMENTATION</quote>.
+arguments.  All functions (other than the deprecated ones)
+have at a short description, and all parameters are documented.
   </para>
 
   <sect1 id="pl_setcontlabelparam" renderas="sect3">
@@ -1076,6 +1075,119 @@ origin
 	    Number of subintervals between major z axis ticks for minor
 	    ticks.  If it is set to zero, PLplot automatically generates a
 	    suitable minor tick interval.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+  
+  <sect1 id="plcalc_world" renderas="sect3">
+    <title>
+      <function>plcalc_world</function>: Calculate world coordinates and
+subpage from relative device coordinates
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plcalc_world</function>
+	</funcdef>
+        <paramdef><parameter>rx</parameter></paramdef>
+        <paramdef><parameter>ry</parameter></paramdef>
+        <paramdef><parameter>wx</parameter></paramdef>
+        <paramdef><parameter>wy</parameter></paramdef>
+        <paramdef><parameter>subpage</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+    <para>
+Calculate world coordinates,
+<literal><parameter>wx</parameter></literal> and
+<literal><parameter>wy</parameter></literal>, 
+from relative device coordinates, 
+<literal><parameter>rx</parameter></literal> and
+<literal><parameter>ry</parameter></literal>.
+Also, return the 
+<literal><parameter>subpage</parameter></literal>
+number for which the world coordinates are valid.
+<literal><parameter>subpage</parameter></literal>
+is set to -1 and 
+<literal><parameter>wx</parameter></literal> and
+<literal><parameter>wy</parameter></literal> to 0.
+if 
+<literal><parameter>rx</parameter></literal> and
+<literal><parameter>ry</parameter></literal>
+do not 
+correspond to valid world coordinates for any currently existing
+subpage.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>rx</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Relative device coordinate (ranging from 0. to 1.) for the
+	    x coordinate.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ry</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Relative device coordinate (ranging from 0. to 1.) for the
+	    y coordinate.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>wx</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to world x coordinate corresponding to the relative device
+	    coordinates
+	    <literal><parameter>rx</parameter></literal> and
+	    <literal><parameter>ry</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>wy</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to world y coordinate corresponding to the relative device
+	    coordinates
+	    <literal><parameter>rx</parameter></literal> and
+	    <literal><parameter>ry</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>subpage</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to subpage number corresponding to the relative device
+	    coordinates
+	    <literal><parameter>rx</parameter></literal> and
+	    <literal><parameter>ry</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>

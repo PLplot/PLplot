@@ -24,14 +24,15 @@
 <!ENTITY chap-os-notes SYSTEM "os_notes.xml">
 <!ENTITY plP_checkdriverinit '<link linkend="plP_checkdriverinit"><function>plP_checkdriverinit</function></link>'>
 <!ENTITY plP_getinitdriverlist '<link linkend="plP_getinitdriverlist"><function>plP_getinitdriverlist</function></link>'>
-<!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
 <!ENTITY pl_setcontlabelformat '<link linkend="pl_setcontlabelformat"><function>pl_setcontlabelformat</function></link>'>
+<!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
 <!ENTITY pladv '<link linkend="pladv"><function>pladv</function></link>'>
 <!ENTITY plaxes '<link linkend="plaxes"><function>plaxes</function></link>'>
 <!ENTITY plbin '<link linkend="plbin"><function>plbin</function></link>'>
 <!ENTITY plbop '<link linkend="plbop"><function>plbop</function></link>'>
 <!ENTITY plbox '<link linkend="plbox"><function>plbox</function></link>'>
 <!ENTITY plbox3 '<link linkend="plbox3"><function> plbox3</function></link>'>
+<!ENTITY plcalc_world '<link linkend="plcalc_world"><function> plcalc_world</function></link>'>
 <!ENTITY plclear '<link linkend="plclear"><function>plclear</function></link>'>
 <!ENTITY plclr '<link linkend="plclr"><function>plclr</function></link>'>
 <!ENTITY plcol '<link linkend="plcol"><function>plcol</function></link>'>
