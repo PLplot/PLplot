@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.48  1994/08/05 09:25:05  mjl
+ * Revision 1.49  1994/08/25 03:58:15  mjl
+ * Change to use default visual for now, since otherwise the current
+ * procedure results in a BadMatch when calling XCreateWindow on some systems
+ * (Suns).  To really get it right, XGetRGBColormaps or something similar
+ * must be used to pair the visual with a compatible colormap.
+ *
+ * Revision 1.48  1994/08/05  09:25:05  mjl
  * Added the static variable "synchronize", to be set when you want
  * synchronous X operation.  Only for debugging, otherwise it's too slow.
  *
@@ -61,6 +67,13 @@
 
 static int synchronize = 0;	/* change to 1 for synchronized operation */
 				/* for debugging only */
+
+/* When DEFAULT_VISUAL is 1, DefaultVisual() is used to get the visual.
+ * Otherwise, the visual is obtained using XGetVisualInfo() to make a
+ * match.
+ */
+
+#define DEFAULT_VISUAL 1
 
 /* Set constants for dealing with colormap.  In brief:
  *
@@ -123,7 +136,7 @@ static void  RedrawCmd		(PLStream *);
  * plD_init_xw()
  *
  * Initialize device.
- * X-dependent stuff done in one of the Init_* routines.
+ * X-dependent stuff done in Init().
 \*----------------------------------------------------------------------*/
 
 void
@@ -411,7 +424,6 @@ plD_state_xw(PLStream *pls, PLINT op)
     case PLSTATE_CMAP1:
 	Cmap1Init(pls);
 	break;
-
     }
 }
 
@@ -1234,8 +1246,7 @@ Init_Colors(PLStream *pls)
     Colormap default_map;
     PLColor fgcolor;
     int gslevbg, gslevfg;
-    XVisualInfo vTemplate, *visualList;
-    int visuals_matched;
+    int visuals_matched = 0;
 
     dbug_enter("Init_Colors");
 
@@ -1243,21 +1254,37 @@ Init_Colors(PLStream *pls)
 
     default_map = DefaultColormap(xwd->display, xwd->screen);
 
-/* Get visual info */
+/* Get visual info.
+ * 
+ * In order to safely use a visual other than that of the parent (which
+ * hopefully is that returned by DefaultVisual), you must first find
+ * (using XGetRGBColormaps) or create a colormap matching this visual and
+ * then set the colormap window attribute in the XCreateWindow attributes
+ * and valuemask arguments.  I don't do this right now, so this is turned
+ * off by default.
+ */
+
+#if DEFAULT_VISUAL == 0
+    {
+	XVisualInfo vTemplate, *visualList;
+
 /* Try for an 8 plane display, if unavailable go for the default */
 
-    vTemplate.screen = xwd->screen;
-    vTemplate.depth = 8;
+	vTemplate.screen = xwd->screen;
+	vTemplate.depth = 8;
 
-    visualList = XGetVisualInfo( xwd->display,
-				 VisualScreenMask | VisualDepthMask,
-				 &vTemplate, &visuals_matched );
+	visualList = XGetVisualInfo( xwd->display,
+				     VisualScreenMask | VisualDepthMask,
+				     &vTemplate, &visuals_matched );
 
-    if (visuals_matched) {
-	xwd->visual = visualList->visual;	/* Choose first match. */
-	xwd->depth = vTemplate.depth;
+	if (visuals_matched) {
+	    xwd->visual = visualList->visual;	/* Choose first match. */
+	    xwd->depth = vTemplate.depth;
+	}
     }
-    else {
+#endif
+
+    if ( ! visuals_matched) {
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
 	xwd->depth = DefaultDepth( xwd->display, xwd->screen );
     }
