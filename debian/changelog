@@ -1,14 +1,14 @@
-plplot (5.2.1.cvs.20031228-2) unstable; urgency=low
+plplot (5.2.1.cvs.20031231-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
+  * New cvs snapshot upstream release
   * debian/control: Changed section of packages libplplot9,
     plplot9-driver-gd, plplot9-driver-gnome, and plplot9-driver-xwin to
     libs (was math before) in order to comply with overrides of
     debian-installer.
   * debian/plplot-tcl.files: Include directories and files
-    usr/share/plplot*/*tcl 
+    usr/share/plplot*/*tcl
 
- -- Rafael Laboissiere <rafael@debian.org>  Tue, 30 Dec 2003 01:54:36 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 31 Dec 2003 14:12:22 +0100
 
 plplot (5.2.1.cvs.20031228-1) unstable; urgency=low
 
