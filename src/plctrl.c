@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/09/02 05:09:42  mjl
+ * Revision 1.27  1994/09/27 22:07:48  mjl
+ * Ifdef inserted to handle pathnames under VMS.
+ *
+ * Revision 1.26  1994/09/02  05:09:42  mjl
  * Flush stdout before issuing error message, to be sure we are really on the
  * text screen.
  *
@@ -1245,6 +1248,8 @@ strcat_delim(char *dirspec)
 #elif defined (AMIGA)
     if (dirspec[ldirspec-1] != '/' && dirspec[ldirspec-1] != ':')
 	strcat(dirspec, "/");
+#elif defined (VMS)
+
 #else           /* unix is the default */
     if (dirspec[ldirspec-1] != '/')
 	strcat(dirspec, "/");
