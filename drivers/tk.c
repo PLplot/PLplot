@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.44  1994/07/25 06:44:25  mjl
+ * Revision 1.45  1994/08/25 04:02:03  mjl
+ * Fix to allow a TK main window to be associated with each PLStream.
+ * Contributed by Radey Shouman.
+ *
+ * Revision 1.44  1994/07/25  06:44:25  mjl
  * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
  *
  * Revision 1.43  1994/07/23  04:45:42  mjl
@@ -25,18 +29,6 @@
  *
  * Revision 1.39  1994/07/18  20:30:39  mjl
  * Fixed the eop driver function to flush output even if pause is turned off.
- *
- * Revision 1.38  1994/06/30  18:43:04  mjl
- * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
- *
- * Revision 1.37  1994/06/16  19:13:10  mjl
- * Moved Tk initialization specific to the tk driver into this file.  Changed
- * plserver startup to include the -e <script> option, for running the
- * plserver_init proc at startup.
- *
- * Revision 1.36  1994/06/09  20:27:02  mjl
- * Changed direct widget and initialization commands to reflect changes to
- * plwidget.tcl and plframe.c.
 */
 
 /*	tk.c
@@ -80,7 +72,7 @@
 /* A handy command wrapper */
 
 #define tk_wr(code) \
-if (code) { abort_session(pls, "Unable to write to pipe"); }
+if (code) { abort_session(pls, "Unable to write to PDFstrm"); }
 
 /*----------------------------------------------------------------------*/
 /* Function prototypes */
@@ -616,7 +608,7 @@ tk_start(PLStream *pls)
     tcl_cmd(pls, "rename exec {}");
 
 /* Initialize top level window */
-/* Request pls->program (if set) for the main window name */
+/* Request a variant on pls->program (if set) for the main window name */
 
     if (pls->program == NULL)
 	pls->program = "plclient";
@@ -625,9 +617,10 @@ tk_start(PLStream *pls)
 	Tcl_SetVar(dev->interp, "dp", "1", TCL_GLOBAL_ONLY);
     }
     else {
+	char name[80];
+	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
-	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
-			  pls->program))
+	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
 	    abort_session(pls, "Unable to create top-level window");
     }
 
