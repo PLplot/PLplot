@@ -78,9 +78,9 @@ the Appendix for more details.
 <table frame="none" id="tab_dev1">
 <title>PLplot terminal output devices</title>
 <tgroup cols="3" align="center">
-<colspec colwidth="1.2*"/>
-<colspec colwidth="1.2*"/>
-<colspec colwidth="1.2*"/>
+<colspec colwidth="1*"/>
+<colspec colwidth="1*"/>
+<colspec colwidth="1*"/>
 <thead>
 <row><entry>Device</entry><entry>keyword</entry><entry>driver file</entry></row>
 </thead>
@@ -104,9 +104,9 @@ the Appendix for more details.
 <table frame="none" id="tab_dev2">
 <title>PLplot file output devices</title>
 <tgroup cols="3" align="center" colsep="0" rowsep="0">
-<colspec colwidth="1.2*"/>
-<colspec colwidth="1.2*"/>
-<colspec colwidth="1.2*"/>
+<colspec colwidth="1*"/>
+<colspec colwidth="1*"/>
+<colspec colwidth="1*"/>
 <thead>
 <row><entry>Device</entry><entry>keyword</entry><entry>driver file</entry></row>
 </thead>
@@ -1666,171 +1666,23 @@ dependent.  Please see the plplot reference document for more detail.<!--
 	index.  Before these can be drawn in the current window (see <xref
 	linkend="windows"/>), it is necessary to convert from these array
 	indices into world coordinates.  This is done by passing a pointer
-	to a user-defined function to &plcont; This function pointer is
-	the last argument &pltr;.  
-	(N.B. This documentation needs updating because there is now an
-	extra argument to &plcont; and &pltr; which is not currently
-	documented.)  This function must be declared as type
-	<literal>void</literal> in the module which calls &plcont;.  This
-	transformation function must have the parameter list:
-      </para>
-      
-      <para>
-	<funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>pltr</function>
-	  </funcdef>
-	  <paramdef><parameter>x</parameter></paramdef>
-	  <paramdef><parameter>y</parameter></paramdef>
-	  <paramdef><parameter>tx</parameter></paramdef>
-	  <paramdef><parameter>ty</parameter></paramdef>
-	  <paramdef><parameter>pltr_data</parameter></paramdef>
-	</funcprototype>
-	</funcsynopsis>
-      </para>
-      
-      <para>
-	where <literal>(x, y)</literal> is the point through which the
-	contour runs expressed in terms of array indices, and
-	<literal>(tx, ty)</literal> are pointers to float variables which
-	are the world coordinates of the point which corresponds to these
-	indices.
-      </para>
-
-      <para>
-	Often, the transformation between array indices and world
-	coordinates can be expressed as a linear transformation.  A routine
-	is provided within the library which can be passed to &plcont; as
-	&pltr;.  This transformation routine is:
-      </para>
-
-      <para>
-	<programlisting>
-#include "plplot.h"
-
-#ifdef PLSTDC
-void 
-xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
-#else
-void 
-xform(x, y, tx, ty)
-PLFLT x, y, *tx, *ty;
-#endif
-{
-    *tx = tr[0] * x + tr[1] * y + tr[2];
-    *ty = tr[3] * x + tr[4] * y + tr[5];
-}<!--
-   --></programlisting>
-      </para>
-
-      <para>
-	and should be compiled as part of the user's code (it is
-	<emphasis>not</emphasis> normally linked in with the PLplot library
-	since the <literal>tr</literal> data array is unspecified).
-      </para>
-
-      <para>
-	Thus by setting up the values in the array <literal>tr[]</literal>,
-	we can apply an arbitrary translation, rotation and/or shear to the
-	array before drawing out the contours.  By defining other
+	<literal>pltr</literal> to a user-defined transformation function 
+	to &plcont;.  For C use of &plcont; (and &plshade;, see next subsection) 
+	we have included directly in
+	the PLplot library the following transformation routines:
+	&pltr0; (identity transformation or you can
+	enter a NULL argument to get the same effect); &pltr1;
+	(linear interpolation in singly dimensioned coordinate arrays);
+	and  &pltr2; (linear interpolation in doubly dimensioned coordinate
+	arrays).  Examples of the use of these transformation 
+	routines are given in <filename>examples/c/x09c.c</filename>,
+	<filename>examples/c/x14c.c</filename>, and
+	<filename>examples/c/x16c.c</filename>.  These same three examples
+	also demonstrate a user-defined transformation function 
+	<literal>mypltr</literal> which is capable of 
+	arbitrary translation, rotation, and/or shear. By defining other
 	transformation subroutines, it is possible to draw contours wrapped
-	around polar grids etc.  If no transformation is required, you can
-	simply set <literal>tr[0] = tr[4] = 1.</literal>, with other
-	entries set to 0..  Alternately you can pass the built-in function
-	<literal>pltr0</literal> to &plcont;; this function merely sets
-	<literal>*tx</literal> to <literal>x</literal> and
-	<literal>*ty</literal> to <literal>y</literal>, resulting in no net
-	transformation.
-      </para>
-
-      <para>
-	As an example in setting up <literal>tr[]</literal>, suppose that
-	the array <literal>z</literal> is of size 21 by 41 and contains the
-	values of the function <literal>z[x][y]</literal>, where
-	<literal>x</literal> ranges from 0.0 to 4.0 and
-	<literal>y</literal> ranges from -8.0 to 8.0.  Furthermore, let us
-	also suppose that the window (as defined using &plenv; or &plwind;)
-	covers this range of world coordinates.  Since we wish the index
-	(0, 0) in array <literal>z</literal> to map to (0.0, -8.0) and the
-	index (20, 40) to map to (4.0, 8.0), and for there to be no skew in
-	the axes, we should choose elements of <literal>tr[]</literal> so
-	that 
-
-	<informaltable frame="none" pgwide="0">
-	  <tgroup align="center" cols="3">
-	  <colspec colnum="1" align="right" colwidth="1*"/>
-	  <colspec colnum="2" align="center" colwidth="1*"/>
-	  <colspec colnum="3" align="left" colwidth="1*"/>
-	    <tbody>
-	      <row>
-		<entry>tx</entry><entry>=</entry><entry>0.2x</entry>
-	      </row>
-	      <row>
-	        <entry>ty</entry><entry>=</entry><entry>0.4y - 8</entry>
-              </row>
-	    </tbody>
-	  </tgroup>
-        </informaltable>
- 
-	and so <literal>tr[0] = 0.2</literal>,
-	<literal>tr[1] = 0.0</literal>, <literal>tr[2] = 0.0</literal>,
-	<literal>tr[3] = 0.0</literal>, <literal>tr[4] = 0.4</literal>,
-	<literal>tr[5] = -8.</literal>
-      </para>
-
-      <para>
-	There are three built-in transformation functions to assist
-	the user; these are:
-      </para>
-      
-      <para>
-	<funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>pltr0</function>
-	  </funcdef>
-	  <paramdef><parameter>x</parameter></paramdef>
-	  <paramdef><parameter>y</parameter></paramdef>
-	  <paramdef><parameter>tx</parameter></paramdef>
-	  <paramdef><parameter>ty</parameter></paramdef>
-	  <paramdef><parameter>pltr_data</parameter></paramdef>
-	</funcprototype>
-	</funcsynopsis>
-
-	<funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>pltr1</function>
-	  </funcdef>
-	  <paramdef><parameter>x</parameter></paramdef>
-	  <paramdef><parameter>y</parameter></paramdef>
-	  <paramdef><parameter>tx</parameter></paramdef>
-	  <paramdef><parameter>ty</parameter></paramdef>
-	  <paramdef><parameter>pltr_data</parameter></paramdef>
-	</funcprototype>
-	</funcsynopsis>
-	
-	<funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>pltr2</function>
-	  </funcdef>
-	  <paramdef><parameter>x</parameter></paramdef>
-	  <paramdef><parameter>y</parameter></paramdef>
-	  <paramdef><parameter>tx</parameter></paramdef>
-	  <paramdef><parameter>ty</parameter></paramdef>
-	  <paramdef><parameter>pltr_data</parameter></paramdef>
-	</funcprototype>
-	</funcsynopsis>
-      </para>
-      
-      <para>
-        pltr0 does the identity transformation, 
-pltr1 does linear interpolation in singly dimensioned coordinate arrays, and 
-pltr2 does linear interpolation in doubly dimensioned coordinate arrays
-(see code for details). This
-	is further discussed in the following section
+	around polar grids etc.
       </para>
 
     </sect2>

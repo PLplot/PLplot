@@ -11,11 +11,8 @@
   <para>
   This chapter is a work that is just starting.  There are many C functions
   in the code base that are not part of the common API, and we haven't even
-  gotten to the point of listing them all.  For now we use this chapter for
-  the already-documented C functions that were mistakenly placed in the
-  common API chapter when <filename>plplot.h</filename> in fact did not
-  assign them a
-  <quote>c_</quote> prefix name designating them as part of the common API.
+  gotten to the point of listing them all.  What gets documented here now
+  is whatever C-explicit code we are trying to understand at the time.
   </para>
 
   <sect1 id="plexit" renderas="sect3">
@@ -127,6 +124,279 @@
 	<listitem>
 	  <para>
 	    File pointer.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="pltr0" renderas="sect3">
+    <title>
+      <function>pltr0</function>: Identity transformation for grid to world
+mapping
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pltr0</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>tx</parameter></paramdef>
+        <paramdef><parameter>ty</parameter></paramdef>
+        <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Identity transformation for grid to world mapping.
+    This routine can be used both for &plcont; and &plshade;.
+    See also <xref linkend="contour-plots-c"/> and 
+    <xref linkend="shade-plots-c"/>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    X-position in grid coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Y-position in grid coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>tx</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    X-position in world coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ty</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Y-position in world coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pltr_data</parameter>
+	  (<literal>PLPointer</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to additional input data that is passed as an argument
+	    to &plcont; or &plshade; and then on to the grid to world
+	    transformation routine.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="pltr1" renderas="sect3">
+    <title>
+      <function>pltr1</function>: Linear interpolation for grid to world
+mapping using singly dimensioned coord arrays
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pltr1</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>tx</parameter></paramdef>
+        <paramdef><parameter>ty</parameter></paramdef>
+        <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> 
+    Linear interpolation for grid to world mapping using singly
+    dimensioned coord arrays.
+    This routine can be used both for &plcont; and &plshade;.
+    See also <xref linkend="contour-plots-c"/> and 
+    <xref linkend="shade-plots-c"/>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    X-position in grid coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Y-position in grid coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>tx</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    X-position in world coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ty</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Y-position in world coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pltr_data</parameter>
+	  (<literal>PLPointer</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to additional input data that is passed as an argument
+	    to &plcont; or &plshade; and then on to the grid to world
+	    transformation routine.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="pltr2" renderas="sect3">
+    <title>
+      <function>pltr2</function>: Linear interpolation for grid to world
+      mapping using doubly dimensioned coord arrays (column
+      dominant, as per normal C 2d arrays)
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pltr2</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>tx</parameter></paramdef>
+        <paramdef><parameter>ty</parameter></paramdef>
+        <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Linear interpolation for grid to world mapping using doubly
+    dimensioned coord arrays (column dominant, as per normal C 2d arrays).
+    This routine can be used both for &plcont; and &plshade;.
+    See also <xref linkend="contour-plots-c"/> and 
+    <xref linkend="shade-plots-c"/>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    X-position in grid coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Y-position in grid coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>tx</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    X-position in world coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ty</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Y-position in world coordinates.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pltr_data</parameter>
+	  (<literal>PLPointer</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to additional input data that is passed as an argument
+	    to &plcont; or &plshade; and then on to the grid to world
+	    transformation routine.
 	  </para>
 	</listitem>
       </varlistentry>

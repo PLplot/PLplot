@@ -1222,7 +1222,7 @@ origin
 
   <sect1 id="plcont" renderas="sect3">
     <title>
-      <function>plcont</function>: Contour plot, fixed linear mapping
+      <function>plcont</function>: Contour plot
     </title>
 
     <para>
@@ -1256,8 +1256,12 @@ origin
       <literal><parameter>lx</parameter></literal> and from
       <literal><parameter>ky</parameter></literal> to
       <literal><parameter>ly</parameter></literal> is plotted out.  A
-      transformation routine &pltr; is used to map indices within the array
-      to the world coordinates.  See <xref linkend="contour-plots"/> for
+      transformation routine pointed to by <literal><parameter>pltr</parameter></literal>
+      with a pointer <literal><parameter>pltr_data</parameter></literal>
+      for additional data required by the transformation routine
+      is used to map indices within the array
+      to the world coordinates.  See the following discussion of the
+      arguments and <xref linkend="contour-plots"/> for
       more information.
     </para>
 
@@ -1332,63 +1336,24 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr</parameter>
-	  (<literal>void *</literal>, input)
+	  <parameter>pltr</parameter> 
+	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
+           </literal>, input) 
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to function that defines transformation between indices
 	    in array <literal><parameter>z</parameter></literal> and the
 	    world coordinates (C only).  Transformation functions are
-	    provided: <literal>xform</literal>, for simple linear mappings;
-	    <function>pltr0</function> for no mapping, and 
-	    <function>pltr1</function> and <function>pltr2</function> for NEEDS DOCUMENTATION
-	    <literal>xform</literal> is not actually compiled into the
-	    PLplot library due to the need for external data; instead you
-	    must include it as part of your program.  The function should
-	    have the form:
-	  </para>
-	  
-	  
-	  <para>
-	  <anchor id="pltr"/>
-	      <funcsynopsis>
-	      <funcprototype>
-		<funcdef>
-		  <function>pltr</function>
-		</funcdef>
-		<paramdef><parameter>x</parameter></paramdef>
-		<paramdef><parameter>y</parameter></paramdef>
-		<paramdef><parameter>tx</parameter></paramdef>
-		<paramdef><parameter>ty</parameter></paramdef>
-		<paramdef><parameter>pltr_data</parameter></paramdef>
-	      </funcprototype>
-	      </funcsynopsis>
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>x, y</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Specifies the position in the array through which the contour
-	    runs in terms of the array indices.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>tx, ty</parameter>
-	  (<literal>PLFLT *</literal>, output)
-	</term>
-	<listitem>
-	  <para>
-	    Pointers to the world coordinates corresponding to the point
-	    <literal>(<parameter>x</parameter>,
-	      <parameter>y</parameter>)</literal>.
+	    provided in the PLplot library: 
+	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
+	    arbitrary mappings respectively defined by one- and 
+	    two-dimensional arrays.  In addition, user-supplied routines
+	    for the transformation can be used as well.  Examples of
+	    all of these approaches are given in 
+	    <xref linkend="contour-plots-c"/>.
+	    The transformation function should
+	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1399,8 +1364,8 @@ origin
 	</term>
 	<listitem>
 	  <para>
-	    Extra parameter (also in argument list to &plcont;) to help
-	    pass information to pltr0, pltr1, pltr2, or whatever routine
+	    Extra parameter to help
+	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
 	    that is externally supplied.
 	  </para>
 	</listitem>
@@ -6223,7 +6188,6 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>min_width</parameter></paramdef>
         <paramdef><parameter>max_color</parameter></paramdef>
         <paramdef><parameter>max_width</parameter></paramdef>
-        <paramdef><parameter>(PLINT</parameter></paramdef>
         <paramdef><parameter>fill</parameter></paramdef>
         <paramdef><parameter>rectangular</parameter></paramdef>
         <paramdef><parameter>pltr</parameter></paramdef>
@@ -6494,7 +6458,13 @@ characters and their corresponding decimal ASCII values:
     <para>
       Shade regions on the basis of value.  Can be used to shade contour
       plots or alone.  Only differs from &plshade; by the type of the first
-      and fourth arguments.
+      and fourth arguments.  Look at the argument list below, &plcont; and
+      <xref linkend="contour-plots"/> for
+      more information about the transformation from grid to world
+      coordinates.  The color information NEEDS DOCUMENTATION, but
+      as a stopgap look at how this function is used in
+      <filename>examples/c/x15c.c</filename> and
+      <filename>examples/c/x16c.c</filename>.
     </para>
 
     <variablelist>
@@ -6726,30 +6696,52 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION (working example x16c.c sets to 1).
+	  Set <literal><parameter>rectangular</parameter></literal> to 1
+	  if rectangles map to rectangles after coordinate transformation
+	  with <literal><parameter>pltrl</parameter></literal>.  Otherwise,
+	  set <literal><parameter>rectangular</parameter></literal> to 0.
+	  If <literal><parameter>rectangular</parameter></literal>
+	  is set to 1, plshade tries to save time by
+	  filling large rectangles.  This optimization fails if 
+	  the coordinate transformation distorts the shape of rectangles.
+	  For example a plot in polor coordinates has to have rectangular 
+	  set to 0.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>pltr</parameter> 
-	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *,
-          PLPointer)</literal>, input) 
+	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
+           </literal>, input) 
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION (working example x16c.c sets to NULL)
+	    Pointer to function that defines transformation between indices
+	    in array <literal><parameter>z</parameter></literal> and the
+	    world coordinates (C only).  Transformation functions are
+	    provided in the PLplot library: 
+	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
+	    arbitrary mappings respectively defined by one- and 
+	    two-dimensional arrays.  In addition, user-supplied routines
+	    for the transformation can be used as well.  Examples of
+	    all of these approaches are given in 
+	    <xref linkend="contour-plots-c"/>.
+	    The transformation function should
+	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr_data</parameter> 
-	  (<literal>PLPointer</literal>, input)
+	  <parameter>pltr_data</parameter>
+	  (<literal>PLPointer</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION (working example x16c.c sets to NULL)
+	    Extra parameter to help
+	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
+	    that is externally supplied.
 	  </para>
 	</listitem>
       </varlistentry>
