@@ -1,19 +1,8 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/03/23 06:56:24  mjl
- * Eliminated special handling for malloc includes, and finally tossed the
- * old BINARY_WRITE etc macros.  This IS ANSI C, you know.
+ * Revision 1.8  1994/08/25 04:02:58  mjl
+ * Cleaned up header file inclusion.
  *
- * Revision 1.6  1994/01/15  17:22:18  mjl
- * Changed to new PDF function syntax.
- *
- * Revision 1.5  1993/12/08  06:19:05  mjl
- * Fixes so that these correctly build again (neglected to apply some global
- * changes in a previous release).
- *
- * Revision 1.4  1993/01/23  06:11:31  mjl
- * Added code to make generated font files device-independent.  No longer
- * any endian problem.
 */
 
 /*	xtndfont.c
@@ -22,8 +11,6 @@
 */
 
 #include "plplotP.h"
-#include "pdf.h"
-#include <string.h>
 
 extern short int *hersh[];
 extern short int *findex[];
