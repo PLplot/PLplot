@@ -1,6 +1,6 @@
 This file is designed to keep track of various problem fixes and new
-features being worked on for the current PLplot CVS HEAD version and who is
-taking responsibility for following up on each item.
+features being worked on for the current PLplot CVS MAIN HEAD version and
+who is taking responsibility for following up on each item.
 
 The items are divided into Essential and "Would be nice" (i.e., release
 critical versus not) with each of those categories further classified into
@@ -12,9 +12,17 @@ Essential, major effort required.
 variety of Unix/Linux platforms as possible.  This is the responsibility of
 everybody on the development team with access to different platforms.
 
-* -dev tk problem finding the tcl scripts.  One of Joao, Maurice, or Geoffrey?
+* -dev tk problem finding the tcl scripts (specifically plclient.tcl).  One
+of Joao, Maurice, or Geoffrey?
 
 Essential, minor effort required.
+
+* Check that make DESTDIR=/tmp/staging install works so that our package is
+build-relocatable.  This facility is essential so that our rpm and deb
+packages build correctly.
+
+* Version reviewed.  There should be a clear distinction between PLplot
+package version 5.2.0 ? and the version of the PLplot libraries 1.0.0 ?
 
 * http://sourceforge.net/mailarchive/message.php?msg_id=1785861 documents
 the many minor memory leaks found by valgrind throughout the dynloader area.
@@ -41,6 +49,15 @@ first page is skipped.
 
 "Would be nice", major effort required.
 
+* Maurice's idea of plsopt and plsdopt so that our API doesn't keep
+proliferating.  Example, instead of plenv0 do:
+plsopt("plenv_advance", "0");
+plenv(...)
+
+* -the tk drivers ignore plconfig.tcl if it is in the user directory ~/tcl
+and a tclIndex file is generated. "auto_path" is correctly initialized to
+~/tcl, pwd/tcl, etc, but plconfig is not executed.  Reported by Joao.  Status?
+
 * Finish Java API or else completely reimplement it with swig (which might
 be a much faster way of solving the problem).  Also, Java currently
 unimplemented with new configuration approach, but that is straightforward
@@ -51,6 +68,13 @@ different branchs or the -D (date) option on cvs commands problematic since
 deleted files with the wrong state information are brought back like zombies
 rising from the grave.....;-) Note that the cvs permissions problems
 detailed below should also be fixed at the same time.  Maurice.
+
+* Completely remove configure.in and COPYING from the top directory of the
+cvs repository.  (The cf/configure.in file is fine.) It's a long story, but
+topdir configure.in is no longer used by PLplot (configure.ac is used
+instead), and configure.in has a real log mess so AWI want to just get rid
+of it entirely.  COPYING is another long story, but AWI needs to reuse that
+name so he can provide a proper reference to our LGPL licensing.
 
 * Make our documentation buildable on RH 7.3?  Alan
 
@@ -75,7 +99,24 @@ is possible with -dev tk.  If a simple solution for the pyqt GUI following
 what is done for the plframe widget for -dev tk is possible, then this item
 should be reclassified to "Would be nice", minor effort.
 
+* Uniform 3D API for handling z, x, y, and exclusion.  The shaded and
+contour plots do this fairly well (although not uniformly), but the plot3d,
+plmesh, and plsurf3d API's are much too simplistic for general work.  For
+example, they don't handle non-rectangular x,y regions at all.
+
 "Would be nice", minor effort required.
+
+* Error messages for when the extended search fails in tclAPI.c.  This is
+required when running in tcl-only mode with no plframe or stack trace.
+
+* As part of extended search try the install location.  We know exactly
+where that is relative to our font data, and we know exactly where the font
+data are installed so we know the absolute path to our tcl install location.
+Then, the only way such an extended search would fail is if the packagers
+messed with our tcl install location.
+
+* Better support for "make check" so that uninstalled versions can check for
+drivers, fonts, and tcl support scripts in their uninstalled positions.
 
 * Permissions problem with generated plplot-config and plplot-test.sh in
 plplot/test.  Using new autoconf API allows you to set permissions of results
@@ -108,5 +149,9 @@ fallen behind python (and would also fall behind java and perl if/when those
 interfaces become based on swig).  We need a volunteer (or volunteers) to
 make sure all our additions/changes to the common API over the last few
 years are implemented in fortran. 
+
+* Implement plgetopt for both fortran and c++ interfaces.  Probably some
+cross-platform issues (especially with fortran) so have it act reasonably
+when, e.g., getarg is not available on some fortran platforms.
 
 * PLplot documentation of python, java, etc., interfaces.
