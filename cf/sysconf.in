@@ -33,27 +33,17 @@ case "$system" in
 #	CC="cc -std"
 #	with_gcc=no
 #    ;;
-#    dg*|DG* ) 
-#	CC="cc -ansi"
-#    ;;
     hp*|HP* ) 
 	LIBEXTNS="sl a"
     ;;
-#    irix*|IRIX*|Irix*|sgi*|SGI* ) 
-#	CC="cc -ansi"
-#    ;;
+    irix*|IRIX*|Irix*|sgi*|SGI* ) 
+	LIBEXTNS="so a"
+    ;;
     Linux* )
 	LIBEXTNS="so a"
     ;;
 #    SunOS-4* )
 #	CC=acc
-#    ;;
-#    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
-#	CC="cc -hansi"
-#	with_gcc=no
-#    ;;
-#    CRAY* ) 
-#	with_gcc=no
 #    ;;
 esac
 
