@@ -546,14 +546,21 @@ AC_CHECK_LIB(m, sin)
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 if test "$enable_python" = "yes"; then
-   AM_PATH_PYTHON(1.5)
+    ### Redefine AC_MSG_ERROR as AC_MSG_WARN around the call to 
+    ### AM_PATH_PYTHON, such that if python is not found, configure will
+    ### not stop.
+    pushdef([AC_MSG_ERROR],defn([AC_MSG_WARN]))
+    AM_PATH_PYTHON(1.5)
+    popdef([AC_MSG_ERROR])
+    if test -n "$PYTHON_VERSION" ; then
 ### PYTHON_INSTDIR is the same as $pythondir except that the
 ### symbolic prefix is replaced by the actual prefix.
 ### The actual prefix is required in examples/python/plplot_python_start.py
 ### (the only place that PYTHON_INSTDIR is used).
-   PYTHON_INSTDIR=`echo $pythondir |sed 's%${prefix}/%%'`
-   PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
-   AC_SUBST(PYTHON_INSTDIR)
+        PYTHON_INSTDIR=`echo $pythondir |sed 's%${prefix}/%%'`
+        PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
+        AC_SUBST(PYTHON_INSTDIR)
+    fi
 fi
 
 ### Modify system-dependent results based on availability
