@@ -658,6 +658,23 @@ if test "$enable_itcl" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# figure out how to build tclIndex
+# ----------------------------------------------------------------------------
+
+if test "$enable_tcl" = "yes"; then
+    if test "$enable_itcl" = "yes"; then
+	MKINDEX="$srcdir/scripts/mktclIndex -itcl"
+    else
+	MKINDEX="$srcdir/scripts/mktclIndex -tcl"
+    fi
+else
+# shouldn't ever be used
+    MKINDEX=echo
+fi
+
+AC_SUBST(MKINDEX)
+
+# ----------------------------------------------------------------------------
 # tk.h
 # ----------------------------------------------------------------------------
 
