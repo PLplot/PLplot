@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1994/06/30 18:26:16  mjl
+ * Revision 1.34  1994/07/02 21:32:11  mjl
+ * Ensure that fflush() is never called with a null pointer, since some
+ * systems don't like it (submitted by Neal Holtz).
+ *
+ * Revision 1.33  1994/06/30  18:26:16  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -974,8 +978,10 @@ c_plflush(void)
 	offset = plsc->device - 1;
 	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FLUSH, NULL);
     }
-    else
-	fflush(plsc->OutFile);
+    else {
+	if (plsc->OutFile != NULL)
+	    fflush(plsc->OutFile);
+    }
 }
 
 /*----------------------------------------------------------------------*\
