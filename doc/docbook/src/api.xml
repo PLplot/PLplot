@@ -1157,8 +1157,6 @@ origin
 	  <para>
 	    Integer representing the color.  The defaults at present are
 	    (these may change):
-	  </para>
-          <para>
 	    <simplelist type="vert" columns="2">
 	      <member> 0 </member>
 	      <member> 1 </member>
@@ -1177,7 +1175,7 @@ origin
 	      <member>14 </member>
 	      <member>15 </member>
 	      <member>black (default background)</member>
-	      <member>red</member>
+	      <member>red (default foreground)</member>
 	      <member>yellow</member>
 	      <member>green</member>
 	      <member>aquamarine</member>
@@ -1191,8 +1189,11 @@ origin
 	      <member>turquoise</member>
 	      <member>magenta</member>
 	      <member>salmon</member>
-	      <member>white (default foreground)</member>
+	      <member>white</member>
 	    </simplelist>
+	    Use &plscmap0; to change the entire map0 color palette and
+	    &plscol0; to change an individual color in the map0 color 
+	    palette.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1216,9 +1217,8 @@ origin
       </funcsynopsis> 
     </para> 
 
-    <para>
-      Set color, map1.  Argument is a float between 0. and 1.
-    </para>
+    <para> Sets the color for color map1 (see <xref
+      linkend="color-map-1"/>).  </para>
 
     <variablelist>
       <varlistentry>
@@ -1228,7 +1228,11 @@ origin
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            This value must be in the range from 0. to 1. and is mapped to
+	    color using the continuous map1 color palette which by default 
+	    ranges from blue to the background color to red.  The map1 
+	    palette can also be straightforwardly changed by the user with
+	    &plscmap1; or &plscmap1l;.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2199,7 +2203,7 @@ next new page
 
   <sect1 id="plgcol0" renderas="sect3">
     <title>
-      <function>plgcol0</function>: Returns 8 bit RGB values for given color
+      <function>plgcol0</function>: Returns 8-bit RGB values for given color
 from color map0
     </title> 
 
@@ -2218,7 +2222,7 @@ from color map0
     </para> 
 
     <para>
-      Returns 8 bit RGB values for given color from color map0 (see 
+      Returns 8-bit RGB values for given color from color map0 (see 
       <xref linkend="color-map-0"/>).  Values are
       negative if an invalid color id is given.
     </para>
@@ -2275,7 +2279,7 @@ from color map0
   <sect1 id="plgcolbg" renderas="sect3">
     <title>
       <function>plgcolbg</function>:  Returns the background color
-(cmap0[0]) by 8 bit RGB value
+(cmap0[0]) by 8-bit RGB value
     </title> 
 
     <para>
@@ -2292,7 +2296,7 @@ from color map0
     </para> 
 
     <para>
-       Returns the background color (cmap0[0]) by 8 bit RGB value.
+       Returns the background color (cmap0[0]) by 8-bit RGB value.
     </para>
 
     <variablelist>
@@ -4925,7 +4929,7 @@ Only retained for backward compatibility
 
   <sect1 id="plrgb1" renderas="sect3">
     <title>
-      <function>plrgb1</function>: Set line color by 8 bit RGB values
+      <function>plrgb1</function>: Set line color by 8-bit RGB values
     </title> 
 
     <para>
@@ -4942,7 +4946,7 @@ Only retained for backward compatibility
     </para> 
 
     <para>
-      Set line color by 8 bit RGB values.  Do <emphasis>not</emphasis> use this.  Only retained
+      Set line color by 8-bit RGB values.  Do <emphasis>not</emphasis> use this.  Only retained
 for backward compatibility.
     </para>
 
@@ -5038,7 +5042,7 @@ for backward compatibility.
 
   <sect1 id="plscmap0" renderas="sect3">
     <title>
-      <function>plscmap0</function>: Set color map0 colors by 8 bit RGB
+      <function>plscmap0</function>: Set color map0 colors by 8-bit RGB
 values
     </title> 
 
@@ -5057,7 +5061,7 @@ values
     </para> 
 
     <para>
-      Set color map0 colors using 8 bit RGB values (see <xref linkend="color-map-0"/>).  This sets the entire color
+      Set color map0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>).  This sets the entire color
        map &ndash; only as many colors as specified will be allocated.
     </para>
 
@@ -5149,7 +5153,10 @@ values
 	</term>
 	<listitem>
 	  <para>
-            Number of colors that will be allocated in the map0 pallette.
+            Number of colors that will be allocated in the map0 palette.
+	    If this number is zero or less, then the value from the 
+	    previous call to &plscmap0n; is used and if there is no 
+	    previous call, then a default value is used.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5159,7 +5166,7 @@ values
 
   <sect1 id="plscmap1" renderas="sect3">
     <title>
-      <function>plscmap1</function>: Set color map1 colors by 8 bit RGB
+      <function>plscmap1</function>: Set color map1 colors using 8-bit RGB
 values
     </title> 
 
@@ -5177,10 +5184,9 @@ values
       </funcsynopsis> 
     </para> 
 
-    <para>
-      Set color map1 colors by 8 bit RGB values.  This also sets the number
-of colors.
-    </para>
+    <para> Set color map1 colors using 8-bit RGB values (see <xref
+      linkend="color-map-1"/>).  This also sets the number of colors.
+      </para>
 
     <variablelist>
       <varlistentry>
@@ -5190,7 +5196,8 @@ of colors.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to array with set of unsigned 8-bit integers (0-255) 
+	    representing the degree of red in the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5201,7 +5208,8 @@ of colors.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to array with set of unsigned 8-bit integers (0-255) 
+	    representing the degree of green in the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5212,7 +5220,8 @@ of colors.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to array with set of unsigned 8-bit integers (0-255) 
+	    representing the degree of blue in the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5223,7 +5232,10 @@ of colors.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Number of items in the
+	    <literal><parameter>r</parameter></literal>,
+	    <literal><parameter>g</parameter></literal>, and
+	    <literal><parameter>b</parameter></literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5254,26 +5266,26 @@ piece-wise linear relationship
       </funcsynopsis> 
     </para> 
 
+    <para> Set color map1 colors using a piece-wise linear relationship
+      between position in the color map (from 0 to 1) and position in HLS or
+      RGB color space (see <xref linkend="color-map-1"/>).  May be called at
+      any time. </para>
+
     <para>
-      Set color map1 colors using a piece-wise linear relationship between
-      position in the color map (from 0 to 1) and position in HLS or RGB
-      color space.  May be called at any time.
-    </para>
-    <para>
-      The idea here is to specify a number of control points that specify
-      the mapping between HLS (or RGB or CMY) and palette 1 value.  Between
-      these points, linear interpolation is used.  By mapping position in
-      the color map to function value, this gives a smooth variation of
-      color with intensity.  Any number of control points may be specified,
-      located at arbitrary positions (intensities), although typically 2 - 4
+      The idea here is to specify a number of control points that define
+      the mapping between palette 1 input positions (intensities) and HLS (or RGB).  Between
+      these points, linear interpolation is used which
+      gives a smooth variation of
+      color with input position.  Any number of control points may be specified,
+      located at arbitrary positions, although typically 2 - 4
       are enough. Another way of stating this is that we are traversing a
       given number of lines through HLS (or RGB) space as we move through
       color map1 entries.  The control points at the minimum and maximum
-      intensity (0 and 1) must always be specified.  By adding more control
+      position (0 and 1) must always be specified.  By adding more control
       points you can get more variation.  One good technique for plotting
       functions that vary about some expected average is to use an
-      additional 2 control points in the center (intensity ~= 0.5) that are
-      the same color as the background (typically white for paper output,
+      additional 2 control points in the center (position ~= 0.5) that are
+      the same lightness as the background (typically white for paper output,
       black for crt), and same hue as the boundary control points.  This
       allows the highs and lows to be very easily distinguished.
     </para>
@@ -5283,13 +5295,15 @@ piece-wise linear relationship
       <emphasis>must</emphasis> correspond to position = 0, and the last to 
       position = 1.
     </para>
-    <para>
-      The hue is interpolated around the "front" of the color wheel
-      (red&lt;->green&lt;->blue&lt;->red) unless the "rev" flag is set, in which case
-      interpolation proceeds around the back (reverse) side.  Specifying
-      rev=NULL is equivalent to setting rev[]=0 for every control point.
-    </para>
-    <para>
+
+<para> The hue is interpolated around the "front" of the color wheel
+      (red&lt;->green&lt;->blue&lt;->red) unless the "rev" flag is set, in
+      which case interpolation (between the <literal>i</literal> and
+      <literal>i + 1</literal> control point for <literal>rev[i]</literal>)
+      proceeds around the back (reverse) side.  Specifying rev=NULL is
+      equivalent to setting rev[]=0 for every control point. </para>
+
+<para>
 <table frame="none"><title> Bounds on coordinates</title>
 <tgroup cols="4" align="center" colsep="0" rowsep="0">
 <tbody>
@@ -5345,7 +5359,7 @@ piece-wise linear relationship
 	</term>
 	<listitem>
 	  <para>
-            first coordinate for each control point
+            first coordinate (H or R) for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5356,7 +5370,7 @@ piece-wise linear relationship
 	</term>
 	<listitem>
 	  <para>
-            second coordinate for each control point
+            second coordinate (L or G) for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5367,7 +5381,7 @@ piece-wise linear relationship
 	</term>
 	<listitem>
 	  <para>
-            third coordinate for each control point
+            third coordinate (S or B) for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5378,7 +5392,9 @@ piece-wise linear relationship
 	</term>
 	<listitem>
 	  <para>
-            reverse flag for each control point
+            reverse flag for each control point (<literal>rev[i]</literal> refers
+	    to the interpolation interval between the <literal>i</literal> and
+	    <literal>i + 1</literal> control points).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5402,15 +5418,9 @@ piece-wise linear relationship
       </funcsynopsis> 
     </para> 
 
-    <para>
-      Set number of colors in color map1, (re-)allocate color map1, and set default
-      values if this is the first allocation.
-    </para>
-
-    <para>
-      Note that the driver is allowed to disregard this number. In
-      particular, most use fewer than we use internally.
-    </para>
+    <para> Set number of colors in color map1, (re-)allocate color map1, and
+    set default values if this is the first allocation (see <xref
+    linkend="color-map-1"/>). </para>
 
     <variablelist>
       <varlistentry>
@@ -5420,7 +5430,10 @@ piece-wise linear relationship
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Number of colors that will be allocated in the map1 palette.
+	    If this number is zero or less, then the value from the 
+	    previous call to &plscmap1n; is used and if there is no 
+	    previous call, then a default value is used.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5448,7 +5461,7 @@ bit RGB value
       </funcsynopsis> 
     </para> 
 
-    <para> Set a given color by 8 bit RGB value for color map0 (see <xref linkend="color-map-0"/>).  Overwrites
+    <para> Set a given color by 8-bit RGB value for color map0 (see <xref linkend="color-map-0"/>).  Overwrites
     the previous (default?) color value for the given index and, thus, does
     not result in any additional allocation of space for colors. </para>
 
@@ -5508,7 +5521,7 @@ bit RGB value
   <sect1 id="plscolbg" renderas="sect3">
     <title>
       <function>plscolbg</function>: Set the background color (cmap0[0]) by
-8 bit RGB value
+8-bit RGB value
     </title> 
 
     <para>
@@ -5525,7 +5538,7 @@ bit RGB value
     </para> 
 
     <para>
-      Set the background color (cmap0[0]) by 8 bit RGB value (see <xref
+      Set the background color (cmap0[0]) by 8-bit RGB value (see <xref
 linkend="color-map-0"/>).
     </para>
 
