@@ -1,2 +1,35 @@
 SPAN.underline { text-decoration: underline }
 SPAN.overline  { text-decoration: overline  }
+
+TABLE.funcprototype {
+  width: 90%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5%;
+  margin-right: 5%;
+  border: solid 1px;
+  background: #D6E8FF;
+  padding: 5px;
+}
+
+TABLE.variablelist {
+  width: 90%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5%;
+  margin-right: 5%;
+  border: solid 1px;
+  background: #FFF0D0;
+  padding: 5px;
+}
+
+.verbatim {
+  width: 90%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5%;
+  margin-right: 5%;
+  border: solid 1px;
+  background: #E0FFE0;
+  padding: 5px;
+}
