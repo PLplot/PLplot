@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.37  2000/05/10 20:41:49  furnish
+ * Modify plLibOpen and strcat_delim for Mac.  Rob Managan.
+ *
  * Revision 1.36  1996/02/27 23:06:35  shouman
  * Fixed plscmap0n() and plscmap1n(); they were ignoring their arguments
  * when their colormaps were already initialized.
@@ -85,6 +88,10 @@
 
 #define DEBUG
 
+#ifdef macintosh
+#include "mac.h"
+/* for plMacLibOpen prototype; used in plLibOpen */
+#endif
 #include "plplotP.h"
 
 #ifdef __GO32__			/* dos386/djgpp */
@@ -1225,6 +1232,12 @@ plLibOpen(char *fn)
 #ifdef PLLIBDEV
     plGetName(PLLIBDEV, "", fn, &fs);
 
+#ifdef macintosh
+    file = plMacLibOpen(fn);
+    if (file != NULL)
+        goto done;
+#endif /* macintosh */
+
     if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
 #endif	/* PLLIBDEV */
@@ -1370,6 +1383,9 @@ strcat_delim(char *dirspec)
 #elif defined (AMIGA)
     if (dirspec[ldirspec-1] != '/' && dirspec[ldirspec-1] != ':')
 	strcat(dirspec, "/");
+#elif defined (macintosh)
+    if (dirspec[ldirspec-1] != ':')
+        strcat(dirspec, ":");
 #elif defined (VMS)
 
 #else           /* unix is the default */
