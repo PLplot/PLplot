@@ -1,8 +1,0 @@
-  plszax(digmax, digits)
-  **********************
-
-  plszax
-
-  Identical to plsxax, except that arguments are flags for z axis. See the
-  description of plsxax for more detail.
-
