@@ -16,6 +16,7 @@ CXXLIB_AR	= libPLcxx.a
 CXXLIB_SO	= libPLcxx$(SO)
 
 CXX_INSTALL	= install_cxx
+CXX_LINK	= -lPLcxx
 
 install_cxx:
 	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
