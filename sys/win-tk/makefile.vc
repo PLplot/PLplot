@@ -21,13 +21,13 @@ DLL_VERSION = 521
 
 TOOLS32		 = C:\Progra~1\devstudio\vc
 TOOLS32_rc	 = C:\Progra~1\devstudio\sharedide
-TCLSRCDIR        = C:\Programming\Tcl-source\tcl8.4
-TKSRCDIR         = C:\Programming\Tcl-source\tk8.4
+TCLSRCDIR        = C:\Programming\Tcl-source\cvs-tcl
+TKSRCDIR         = C:\Programming\Tcl-source\cvs-tk
 TCL              = c:\progra~1\tcl
-TCLVERSION       = 84
+TCLVERSION       = 85
 
 # set nodebug=0 for symbols, nodebug=1 for optimized build.
-NODEBUG=1
+NODEBUG=0
 
 # DON'T EDIT BELOW THIS LINE, UNLESS YOU REALLY KNOW WHAT
 # YOU ARE DOING!
@@ -87,7 +87,7 @@ cdebug = -Z7 -Od
 !ENDIF
 
 # declarations common to all compiler options
-cflags = -c -W3 -nologo -Fp$(TMPDIR)\ -YX -DBUILD_Plplot
+cflags = -c -W3 -nologo -Fp$(TMPDIR)\ -YX -DBUILD_Plplot -DBUILD_DIR=\"`pwd\"
 
 ######################################################################
 # Link flags
