@@ -1,11 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/30 18:36:37  mjl
+ * Revision 1.3  1994/07/19 22:34:22  mjl
+ * Internal header file inclusion changed to /not/ use a search path so that
+ * it will work better with makedepend.
+ *
+ * Revision 1.2  1994/06/30  18:36:37  mjl
  * Minor change to what header files are included.
  *
  * Revision 1.1  1994/04/08  12:21:18  mjl
  * Added to allow access to TK driver internals by determined users.
- *
 */
 
 /*	plplotTK.h
@@ -17,17 +20,17 @@
 #ifndef __PLPLOTTK_H__
 #define __PLPLOTTK_H__
 
+/* Several of the PLplot header files must be included first */
+/* I only do this conditionally because of the search path */
+
+#ifndef __PLPLOT_H__
 #include <plplot.h>
-#include <plplotX.h>
+#endif
+#ifndef __PDF_H__
 #include <pdf.h>
-#include <plstream.h>
-#include <pltcl.h>
+#endif
 
 #include <tk.h>
-
-#ifdef TCL_DP
-#include <dp.h>
-#endif
 
 /* One of these holds the TK driver state information */
 

@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/06/30 18:52:09  mjl
+ * Revision 1.5  1994/07/19 22:33:05  mjl
+ * Internal header file inclusion changed to /not/ use a search path so that
+ * it will work better with makedepend.
+ *
+ * Revision 1.4  1994/06/30  18:52:09  mjl
  * Added API calls for: plfont, plfontld, plhist, pljoin, plmtex, plptex,
  * plschr, plssub, plsym, plvpor, plwid.
  *
@@ -33,8 +37,8 @@
  *
 \*----------------------------------------------------------------------*/
 
-#include <plplotP.h>
-#include <pltcl.h>
+#include "plplotP.h"
+#include "pltcl.h"
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
 

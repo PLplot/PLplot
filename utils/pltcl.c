@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/06/30 18:55:50  mjl
+ * Revision 1.4  1994/07/19 22:33:16  mjl
+ * Internal header file inclusion changed to /not/ use a search path so that
+ * it will work better with makedepend.
+ *
+ * Revision 1.3  1994/06/30  18:55:50  mjl
  * Minor changes to eliminate gcc -Wall warnings.
  *
  * Revision 1.2  1994/06/24  20:41:35  mjl
@@ -17,7 +21,6 @@
  * PLplot.  The two style of commands are similar enough, however (differing
  * only by an introducer) that a text filter could be used to go between
  * them.
- *
  */
 
 /*----------------------------------------------------------------------*\
@@ -33,8 +36,8 @@
  *
 \*----------------------------------------------------------------------*/
 
-#include <plplotP.h>
-#include <pltcl.h>
+#include "plplotP.h"
+#include "pltcl.h"
 
 static void
 plErrorHandler(Tcl_Interp *interp, int code, int tty);
