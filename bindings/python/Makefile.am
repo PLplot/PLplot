@@ -99,7 +99,7 @@ install-exec-hook:
 if enable_python
 	( cd $(DESTDIR)$(ourexecpythondir) ; \
 	  rm -f *plplot*.a *plplot*.la; \
-	  for file in UNDERSCORE* ; do \
+	  for file in UNDERSCORE_plplot* ; do \
 	      mv $$file `echo $$file | sed s/UNDERSCORE//`;  \
           done )
 endif
