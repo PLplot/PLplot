@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/02 07:19:58  mjl
-   Changed over to new namespace.
+   Revision 1.7  1993/07/16 22:25:12  mjl
+   Added explicit support for color vs monochrome postscript output.
 
+ * Revision 1.6  1993/07/02  07:19:58  mjl
+ * Changed over to new namespace.
+ *
  * Revision 1.5  1993/04/26  20:00:09  mjl
  * The beginnings of a TK driver added.
  *
@@ -159,7 +162,8 @@ void plD_graph_jet		(PLStream *);
 void plD_width_jet		(PLStream *);
 void plD_esc_jet		(PLStream *, PLINT, void *);
 
-void plD_init_ps		(PLStream *);
+void plD_init_psm		(PLStream *);
+void plD_init_psc		(PLStream *);
 void plD_line_ps		(PLStream *, short, short, short, short);
 void plD_polyline_ps		(PLStream *, short *, short *, PLINT);
 void plD_eop_ps			(PLStream *);
