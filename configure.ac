@@ -770,6 +770,9 @@ AC_HEADER_DIRENT
 
 AC_CHECK_TYPE(caddr_t, char *)
 
+# The following is primarily for use in drivers/get-drv-info.c
+AC_TYPE_SIGNAL
+
 ### Check for functions
 
 AC_FUNC_VFORK

@@ -21,6 +21,16 @@
 
 #include <ltdl.h>
 #include <stdio.h>
+#include <signal.h>
+#include "plConfig.h"
+
+/* SEGV signal handler */
+RETSIGTYPE
+catch_segv (int sig)
+{
+  printf ("libltdl error: %s\n", lt_dlerror ());
+  exit (1);
+}
 
 int
 main (int argc, char* argv[])
@@ -30,6 +40,10 @@ main (int argc, char* argv[])
   char* drvnam = argv[1];
   char** info;
   FILE* fd;
+
+  /* Establish a handler for SIGALRM signals. */
+  signal (SIGSEGV, catch_segv);
+
 
   lt_dlinit ();
   dlhand = lt_dlopenext (drvnam);
