@@ -62,7 +62,8 @@ function ret = plsetopt(option, value)
 	     "jx"; "Page justification in x (-0.5 to 0.5, def 0)";
 	     "jy"; "Page justification in y (-0.5 to 0.5, def 0)";
 	     "ori"; "Plot orientation (0,2=landscape, 1,3=portrait)";
-	     "freeaspect"; "Do not preserve aspect ratio on orientation swaps";
+	     "freeaspect"; "Allow aspect ratio to adjust to orientation swaps";
+	     "portrait"; "Sets portrait mode (both orientation and aspect ratio)";
 	     "width";  "Sets pen width (1 <= width <= 10)";
 	     "ncol0"; "Number of colors to allocate in cmap 0 (upper bound)";
 	     "ncol1"; "Number of colors to allocate in cmap 1 (upper bound)";
