@@ -1,6 +1,7 @@
 #!/bin/sh
 # -----------------------------------------------------------------------
-# $Id$
+#
+# configure.in
 #
 # Maurice LeBrun
 # IFS, University of Texas at Austin
@@ -648,7 +649,7 @@ fi
 
 # --*-sh-*---------------------------------------------------------------
 #
-# $Id$
+# sysconf.in
 #
 # Maurice LeBrun
 # IFS, University of Texas at Austin
@@ -1255,7 +1256,7 @@ esac
 
 # --*-sh-*---------------------------------------------------------------
 #
-# $Id$
+# sysloc.in
 #
 # Maurice LeBrun
 # IFS, University of Texas at Austin
