@@ -1,55 +1,53 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/03/30 07:21:43  mjl
+ * Revision 1.7  1994/07/12 19:17:31  mjl
+ * Minor cleaning up.
+ *
+ * Revision 1.6  1994/03/30  07:21:43  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.5  1993/02/22  23:16:07  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
- *
- * Revision 1.4  1993/01/23  06:10:20  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
 */
 
-/* This program was used to create the figure in the accompanying memo.
-   You can find a copy of this program in ~amr/plplot/examples/tutor.c */
-
-/* This program is intended to be used as a template for creating simple
-   two-dimensional plotting programs which use the Plplot plotting library.
-   The program was written with an emphasis on trying to clearly illustrate
-   how to use the Plplot library functions.  It is probably not an example
-   of good C programming style. */
-
-/* This program reads data for M lines with N points each from an
-   input data file and plots them on the same graph using different
-   symbols.  It draws axes with labels and places a title at the top
-   of the figure.  A legend is drawn to the right of the figure.
-   The input data file must have the following format:
-
-   M          N
-   x[1]     y[1][1]     y[1][2]     .     .     .     y[1][M]
-   x[2]     y[2][1]     y[2][2]     .     .     .     y[2][M]
-   x[3]     y[3][1]     y[3][2]     .     .     .     y[3][M]
-    .          .           .        .     .     .        .
-    .          .           .        .     .     .        .
-    .          .           .        .     .     .        .
-   x[N]     y[N][1]     y[N][2]     .     .     .     y[N][M]
-
-   (The first line contains the integer values M and N.  The succeeding
-   N lines contain the x-coordinate and the corresponding y-coordinates
-   of each of the M lines.) */
+/*
+ * tutor.c
+ * Tony Richardson
+ *
+ * This program is intended to be used as a template for creating simple
+ * two-dimensional plotting programs which use the Plplot plotting
+ * library.  The program was written with an emphasis on trying to clearly
+ * illustrate how to use the Plplot library functions.  
+ *
+ * This program reads data for M lines with N points each from an input
+ * data file and plots them on the same graph using different symbols.  It
+ * draws axes with labels and places a title at the top of the figure.  A
+ * legend is drawn to the right of the figure.  The input data file must
+ * have the following format:
+ *
+ *    M        N
+ *    x[1]     y[1][1]     y[1][2]     .     .     .     y[1][M]
+ *    x[2]     y[2][1]     y[2][2]     .     .     .     y[2][M]
+ *    x[3]     y[3][1]     y[3][2]     .     .     .     y[3][M]
+ *     .          .           .        .     .     .        .
+ *     .          .           .        .     .     .        .
+ *     .          .           .        .     .     .        .
+ *    x[N]     y[N][1]     y[N][2]     .     .     .     y[N][M]
+ *
+ * (The first line contains the integer values M and N.  The succeeding
+ * N lines contain the x-coordinate and the corresponding y-coordinates
+ * of each of the M lines.) 
+ */
 
 #include "plplot.h"
-#include <string.h>
-#include <math.h>
 
-/* You can select a different set of symbols to use when plotting the
-   lines by changing the value of OFFSET. */
+static int
+error(char *str);
+
+/*
+ * You can select a different set of symbols to use when plotting the
+ * lines by changing the value of OFFSET. 
+ */
 
 #define OFFSET  2
 
@@ -58,15 +56,19 @@ main(int argc, char *argv[])
 {
     /* ==============  Begin variable definition section. ============= */
 
-    /* i, j, and k  are counting variables used in loops and such. M is
-       the number of lines to be plotted and N is the number of
-       sample points for each line. */
+    /*
+     * i, j, and k are counting variables used in loops and such. M is the
+     * number of lines to be plotted and N is the number of sample points
+     * for each line.
+     */
 
     int i, j, k, M, N, leglen;
 
-    /* x is a pointer to an array containing the N x-coordinate values.
-       y points to an array of M pointers each of which points to an
-       array containing the N y-coordinate values for that line. */
+    /*
+     * x is a pointer to an array containing the N x-coordinate values.  y
+     * points to an array of M pointers each of which points to an array
+     * containing the N y-coordinate values for that line.
+     */
 
     PLFLT *x, **y;
 
@@ -126,6 +128,7 @@ main(int argc, char *argv[])
     }
 
     /* Now read in all the data. */
+
     for (i = 0; i < N; i++) {	/* N points */
 	k = fscanf(datafile, "%f", &x[i]);
 	if (k != 1)
@@ -148,26 +151,32 @@ main(int argc, char *argv[])
 
     plinit();
 
-    /* We must call pladv() to advance to the first (and only)
-       subpage.  You might want to use plenv() instead of the
-       pladv(), plvpor(), plwind() sequence. */
+    /* 
+     * We must call pladv() to advance to the first (and only) subpage.
+     * You might want to use plenv() instead of the pladv(), plvpor(),
+     * plwind() sequence.
+     */
 
     pladv(0);
 
-    /* Set up the viewport.  This is the window into which the data
-       is plotted.  The size of the window can be set with a call
-       to plvpor(), which sets the size in terms of normalized
-       subpage coordinates.  I want to plot the lines on the upper
-       half of the page and I want to leave room to the right of
-       the figure for labelling the lines. We must also leave room
-       for the title and labels with plvpor().  Normally a call to
-       plvsta() can be used instead. */
+    /*
+     * Set up the viewport.  This is the window into which the data is
+     * plotted.  The size of the window can be set with a call to
+     * plvpor(), which sets the size in terms of normalized subpage
+     * coordinates.  I want to plot the lines on the upper half of the
+     * page and I want to leave room to the right of the figure for
+     * labelling the lines. We must also leave room for the title and
+     * labels with plvpor().  Normally a call to plvsta() can be used
+     * instead.
+     */
 
     plvpor(0.15, 0.70, 0.5, 0.9);
 
-    /* We now need to define the size of the window in user
-       coordinates.  To do this, we first need to determine the
-       range of the data values. */
+    /*
+     * We now need to define the size of the window in user coordinates.
+     * To do this, we first need to determine the range of the data
+     * values.
+     */
 
     xmin = xmax = x[0];
     ymin = ymax = y[0][0];
@@ -184,37 +193,45 @@ main(int argc, char *argv[])
 	}
     }
 
-    /* Now set the size of the window. Leave a small border
-       around the data. */
+    /* 
+     * Now set the size of the window. Leave a small border around the
+     * data.
+     */
 
     xdiff = (xmax - xmin) / 20.;
     ydiff = (ymax - ymin) / 20.;
     plwind(xmin - xdiff, xmax + xdiff, ymin - ydiff, ymax + ydiff);
 
-    /* Call plbox() to draw the axes (see the PLPLOT manual for
-       information about the option strings.) */
+    /* 
+     * Call plbox() to draw the axes (see the PLPLOT manual for
+     * information about the option strings.)
+     */
 
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 
-    /* Label the axes and title the graph. */
-    /* The string "#gm" plots the Greek letter mu, all the Greek
-       letters are available, see the Plplot manual. */
+    /* 
+     * Label the axes and title the graph.  The string "#gm" plots the
+     * Greek letter mu, all the Greek letters are available, see the
+     * Plplot manual.
+     */
 
     pllab("Time (weeks)", "Height (#gmparsecs)", "Specimen Growth Rate");
 
-    /* Plot the data. */
-    /* plpoin() draws a symbol at each point. */
-    /* plline() connects all the points. */
+    /*
+     * Plot the data.  plpoin() draws a symbol at each point.  plline()
+     * connects all the points.
+     */
 
     for (i = 0; i < M; i++) {
 	plpoin(N, x, y[i], i + OFFSET);
 	plline(N, x, y[i]);
     }
 
-    /* Draw legend to the right of the chart. */
-    /* Things get a little messy here.  You may want to remove this
-       section if you don't want a legend drawn. */
-    /* First find length of longest string. */
+    /*
+     * Draw legend to the right of the chart.  Things get a little messy
+     * here.  You may want to remove this section if you don't want a
+     * legend drawn.  First find length of longest string.
+     */
 
     leglen = 0;
     for (i = 0; i < M; i++) {
@@ -225,9 +242,11 @@ main(int argc, char *argv[])
 	    leglen = j;
     }
 
-    /* Now build the string.  The string consists of an element from
-       the legend string array, padded with spaces, followed by one
-       of the symbols used in plpoin above. */
+    /* 
+     * Now build the string.  The string consists of an element from the
+     * legend string array, padded with spaces, followed by one of the
+     * symbols used in plpoin above.
+     */
 
     for (i = 0; i < M; i++) {
 	if (legend[i] == NULL)
@@ -265,7 +284,7 @@ main(int argc, char *argv[])
     exit(0);
 }
 
-int
+static int
 error(char *str)
 {
     fprintf(stderr, "%s\n", str);
