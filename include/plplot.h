@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.24  1993/03/28 08:45:05  mjl
-   Added support for NEC SX-3.  Also moved determination of stub name handling
-   to plstubs.h (more appropriate).
+   Revision 1.25  1993/04/26 20:00:53  mjl
+   Configuration info added for a DEC Alpha-based machine running OSF/1.
 
+ * Revision 1.24  1993/03/28  08:45:05  mjl
+ * Added support for NEC SX-3.  Also moved determination of stub name handling
+ * to plstubs.h (more appropriate).
+ *
  * Revision 1.23  1993/03/18  07:05:47  mjl
  * Bumped version to 4.99c.
  *
@@ -251,6 +254,14 @@
 #endif
 #endif
 
+/* Check for DEC Alpha AXP systems */
+
+#if defined(__alpha) && defined(__osf__)	/* DEC Alpha AXP/OSF */
+#ifndef unix
+#define unix
+#endif
+#endif
+
 /* A disgusting hack */
 
 #ifdef NO_ANSI_LIBC
@@ -283,7 +294,19 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
+/*
+* NOTE:  since the Alpha AXP is a 64-bit chip the type long is a 64-bit
+*        entity.  However, the default integer in fortran is still a
+*        32-bit entity.  Hence, we have to use type int for all integers
+*        here.
+*
+*/
+
+#if defined(__alpha) && defined(__osf__)
+typedef int PLINT;
+#else
 typedef long PLINT;
+#endif
 
 /* Signed char type, in case we ever need it. */
 

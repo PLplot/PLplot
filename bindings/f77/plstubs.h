@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/03/28 08:45:07  mjl
-   Added support for NEC SX-3.  Also moved determination of stub name handling
-   to plstubs.h (more appropriate).
+   Revision 1.11  1993/04/26 20:00:55  mjl
+   Configuration info added for a DEC Alpha-based machine running OSF/1.
 
+ * Revision 1.10  1993/03/28  08:45:07  mjl
+ * Added support for NEC SX-3.  Also moved determination of stub name handling
+ * to plstubs.h (more appropriate).
+ *
  * Revision 1.9  1993/03/02  19:00:21  mjl
  * Added prototype for plgver() and its stub name def'n.
  *
@@ -91,6 +94,12 @@
 #ifdef CRAY				/* CRAY's */
 #endif					/* Do nothing -- keep uppercase */
 
+#if defined(__alpha) && defined(__osf__)	/* DEC Alpha AXP/OSF */
+#ifndef STUB_LAU
+#define STUB_LAU
+#endif
+#endif
+
 /* These are needed for system-independent Fortran->C string linkage. */
 
 extern char cstring1[300], cstring2[300], cstring3[300];
@@ -134,6 +143,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLFLUSH	FNAME(PLFLUSH,plflush)
 #define    PLFONT	FNAME(PLFONT,plfont)
 #define    PLFONTLD	FNAME(PLFONTLD,plfontld)
+#define    PLGCHR	FNAME(PLGCHR,plgchr)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
 #define    PLGFNAM_	FNAME(PLGFNAM_,plgfnam_)
 #define    PLGPAGE	FNAME(PLGPAGE,plgpage)
