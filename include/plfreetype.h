@@ -1,11 +1,12 @@
-#ifndef __PLFREETY_H__
-#define __PLFREETY_H__
-
-/*       Header file for Support routines for freetype font engine
+/* $Id$
+ *
+ *    Header file for Support routines for freetype font engine
  *
  *    See plfreetype.c for more details
  */
 
+#ifndef __PLFREETY_H__
+#define __PLFREETY_H__
 
 #ifdef HAVE_FREETYPE
 
@@ -14,8 +15,7 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 
-
-typedef void (*plD_pixel_fp)     (struct PLStream_struct *, PLINT, PLINT);
+typedef void (*plD_pixel_fp)     (PLStream *, PLINT, PLINT);
 
 /*--------------------------------------------------------------------------*\
  * Define the FT_Data data structure.
@@ -24,11 +24,11 @@ typedef void (*plD_pixel_fp)     (struct PLStream_struct *, PLINT, PLINT);
  * They are kept here so they are moderately thread safe, and stream specific
 \*--------------------------------------------------------------------------*/
 
-
-typedef struct FT_Data
-  {
+typedef struct FT_Data {
     short               x;
     short               y;
+
+    char *textbuf;		/* temporary string buffer */
 
     PLFLT		scale;
 /*
@@ -49,7 +49,6 @@ typedef struct FT_Data
  *  Set "invert_y" to 1 if the y coordinates need to be inverted for
  *  plotting. Most bitmaps will need this.
  */
-
 
     short               ymax;
 /*
@@ -113,14 +112,11 @@ typedef struct FT_Data
     FT_GlyphSlot        slot;           /* pointer to a glyph slot          */
     FT_Glyph            image;          /* bitmap or outline image of font  */
 
-
     short               colour;         /* depreciated ?? must check code */
 
-    PLINT shade;       /* Used for antialiasing; will probably be replaced with a local var since it doesn't have to be thread safe*/
-    PLINT col_idx;     /* Used for antialiasing; will probably be replaced with a local var */
+    PLINT shade, col_idx;		/* Used for antialiasing */
 
-
-  } FT_Data;
+} FT_Data;
 
 #endif
 
