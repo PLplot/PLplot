@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 06:16:10  mjl
-   Formatting changes only to pltek.  plrender changes include: support for
-   polylines (even converts connected lines while reading into polylines for
-   better response), new color model support, event handler support.  New
-   events recognized allow seeking to arbitrary locations in the file (absolute
-   or relative), and backward.  Some old capabilities (no longer useful)
-   eliminated.
+   Revision 1.4  1993/07/17 00:30:03  mjl
+   Eliminated extraneous file open.
 
+ * Revision 1.3  1993/01/23  06:16:10  mjl
+ * Formatting changes only to pltek.  plrender changes include: support for
+ * polylines (even converts connected lines while reading into polylines for
+ * better response), new color model support, event handler support.  New
+ * events recognized allow seeking to arbitrary locations in the file (absolute
+ * or relative), and backward.  Some old capabilities (no longer useful)
+ * eliminated.
+ *
  * Revision 1.2  1992/09/29  04:46:48  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -47,7 +50,7 @@ void describe();
 int
 main(int argc, char *argv[])
 {
-    FILE *fd, *fd1;
+    FILE *fd;
     char infile[128];
     int i, j, k, nb, nframe, iframe, ifirst, oldframe;
     int istop;
@@ -69,7 +72,6 @@ main(int argc, char *argv[])
 	printf("Cannot open %s\n", argv[1]);
 	exit(1);
     }
-    fd1 = fopen("temp.out", "w");
 
 /* Find out how many frames there are in file. */
 
