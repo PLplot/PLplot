@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/27 04:47:26  mjl
-   Changed def'n of plm_wr macro to avoid a circular call chain.
+   Revision 1.5  1993/03/06 05:03:49  mjl
+   Bumped the metafile format ID, to allow a hack on old metafiles with bad
+   linewidth commands (WIDTH commands in the body of the metafile are now
+   ignored for metafiles version 1993a and older).  WIDTH commands prior to
+   the INIT on old metafiles are still honored.
 
+ * Revision 1.4  1993/02/27  04:47:26  mjl
+ * Changed def'n of plm_wr macro to avoid a circular call chain.
+ *
  * Revision 1.3  1993/02/23  04:51:08  mjl
  * Changed PLPLOT_HEADER and PLPLOT_VERSION to PLMETA_HEADER and PLMETA_VERSION
  * so that plplot could have its own distinct version number.
@@ -30,7 +36,7 @@
 */
 
 #define PLMETA_HEADER	"PLPLOT"
-#define PLMETA_VERSION	"1993a"
+#define PLMETA_VERSION	"1993b"
 
 /* Symbolic constants for old metafile versions (prior to 1992a).
    Now these are stored in the metafile header. */
