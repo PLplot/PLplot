@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/09/24 20:33:29  furnish
-   Went wild with "const correctness".  Can now pass a C++ String type to
-   most (all that I know of) PLPLOT functions.  This works b/c String has
-   an implicit conversion to const char *.  Now that PLPLOT routines take
-   const char * rather than char *, use from C++ is much easier.
+   Revision 1.6  1993/10/18 19:45:25  mjl
+   User-contributed workaround for Borland C compiler bug.
 
+ * Revision 1.5  1993/09/24  20:33:29  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
  * Revision 1.4  1993/08/03  01:47:00  mjl
  * Changes to eliminate warnings when compiling with gcc -Wall.
  *
@@ -564,11 +567,14 @@ pldeco(short int **sym, PLINT *length, const char *text)
 		;
 	    }
 	}
-	else
+	else {
 
 /* Decode character. */
+/* >>PC<< removed increment from following expression to fix compiler bug */
 
-	    symbol[(*length)++] = *(fntlkup + (ifont - 1) * numberchars + ch);
+	    symbol[(*length)] = *(fntlkup + (ifont - 1) * numberchars + ch);
+	    (*length)++;
+	}
     }
 }
 
