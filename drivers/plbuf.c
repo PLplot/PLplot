@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1995/03/11 20:29:04  mjl
+ * Revision 1.20  1995/05/06 16:49:03  mjl
+ * Cruft elimination.
+ *
+ * Revision 1.19  1995/03/11  20:29:04  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.  Added code to write & restore plot window parameters.
  *
@@ -49,7 +52,6 @@ static void	rdbuf_line	(PLStream *pls);
 static void	rdbuf_polyline	(PLStream *pls);
 static void	rdbuf_eop	(PLStream *pls);
 static void	rdbuf_bop	(PLStream *pls);
-static void	rdbuf_tidy	(PLStream *pls);
 static void	rdbuf_state	(PLStream *pls);
 static void	rdbuf_esc	(PLStream *pls);
 
@@ -238,7 +240,7 @@ plbuf_state(PLStream *pls, PLINT op)
  * Functions:
  *
  *	PLESC_FILL	Fill polygon
- *
+ *	PLESC_SWIN	Set plot window parameters
 \*--------------------------------------------------------------------------*/
 
 void
@@ -379,18 +381,6 @@ rdbuf_bop(PLStream *pls)
 }
 
 /*--------------------------------------------------------------------------*\
- * rdbuf_tidy()
- *
- * Close graphics file
-\*--------------------------------------------------------------------------*/
-
-static void
-rdbuf_tidy(PLStream *pls)
-{
-    dbug_enter("rdbuf_tidy");
-}
-
-/*--------------------------------------------------------------------------*\
  * rdbuf_state()
  *
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
@@ -483,7 +473,7 @@ rdbuf_state(PLStream *pls)
  * Functions:
  *
  *	PLESC_FILL	Fill polygon
- *
+ *	PLESC_SWIN	Set plot window parameters
 \*--------------------------------------------------------------------------*/
 
 static void
