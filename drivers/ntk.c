@@ -8,6 +8,7 @@
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
+#include "plplot/plevent.h"
 
 #include <tk.h>
 
@@ -38,28 +39,38 @@ void plD_dispatch_init_ntk( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_ntk;
 }
 
-#define XPIXELS 800
-#define YPIXELS 600
+/* hardwired window size */
+#define XPIXELS 600
+#define YPIXELS 400
 
-static PLFLT scale = 10.0; /* Tk canvas units are pixels, giving corse curves */
-static PLFLT ppm; /* pixels per mm */
+static PLFLT scale = 10.0; /* Tk canvas units are in pixels, giving corse curves, fool plplot, and scale down when sending to tk  */
+static PLFLT ppm; /* device pixels per mm */
 
-static Tcl_Interp *interp = NULL;
-static Tk_Window mainw;
+static Tcl_Interp *interp = NULL; /* tcl interpreter */
+static Tk_Window mainw; /* tk main window */
 
-static char curcolor[80];
-static char cmd[10000];
-static int ccanv = 0;
-static char base[80];
-static char dash[80];
+static char curcolor[80]; /* current color in #rrggbb notation */
+static char cmd[10000]; /* buffer to build command to interp */
+static int ccanv = 0; /* current canvas number */
+static char base[80]; /* name of frame that contains the canvas */
+static char dash[80]; /* dash string, as <mark space>* */
 
-static int local = 1;
-static char rem_interp[80];
+/* line buffering */
+#define NPTS 1000
+static short xold=-1, yold=-1; /* last point of last 2 points line */
+static short xb[NPTS], yb[NPTS]; /* buffer */
+static int curpts = 0; /* current number of points buffered */
 
+static int local = 1; /* "local" or "remote" interpreter */
+static char rem_interp[80]; /* name of remote interp */
+
+/* physical devices coordinates */
 static PLINT xmin = 0;
 static PLINT xmax = XPIXELS;
 static PLINT ymin = 0;
 static PLINT ymax = YPIXELS;
+
+/* locator */
 static PLGraphicsIn gin;
 
 static void
@@ -74,7 +85,7 @@ tk_cmd(char *cmd)
      * and was working OK till now :(
      * sprintf(scmd, "send -async %s {%s}", rem_interp, cmd);
      */
-    sprintf(scmd, "send %s {%s}", rem_interp, cmd);
+    sprintf(scmd, "send %s {%s}", rem_interp, cmd); /* mess! make it more efficient */
     if (Tcl_Eval(interp, scmd) != TCL_OK)
       fprintf(stderr,"%s\n", interp->result);
   }
@@ -189,8 +200,7 @@ plD_init_ntk(PLStream *pls)
     pls->dev_dash = 1;	    /* Handle dashed lines */
     pls->plbuf_write = 1;   /* Use plot buffer */
 
-    strcpy(curcolor, "black");
-
+    strcpy(curcolor, "black"); /* default color by name, not #rrggbb */
 
     if (pls->server_name != NULL) {
       local = 0;
@@ -203,7 +213,7 @@ plD_init_ntk(PLStream *pls)
     if (pls->plwindow != NULL)
       strcpy(base, pls->plwindow);
     else
-      strcpy(base,".plf");
+      strcpy(base,".plf"); /* default frame containing the canvas */
     
     interp = Tcl_CreateInterp();
   
@@ -216,7 +226,7 @@ plD_init_ntk(PLStream *pls)
     mainw = Tk_MainWindow(interp);
     Tcl_Eval(interp, "rename exec {}");
 
-    Tcl_Eval(interp, "tk appname PLplot_ntk");
+    Tcl_Eval(interp, "tk appname PLplot_ntk"); /* give interpreter a name */
 
     if (!local) {
       Tcl_Eval(interp, "wm withdraw .");
@@ -239,7 +249,6 @@ pack $plf.f1 -fill x;
 pack $plf.f2 -fill both -expand 1", xmax, ymax);
     tk_cmd(cmd);
 
-
     tk_cmd("scrollbar $plf.f2.hscroll -orient horiz;
 scrollbar $plf.f2.vscroll");
 
@@ -256,7 +265,6 @@ destroy $plf;
 wm withdraw .};
 pack $plf.f1.quit -side right");
 
-
     /* FIXME: I just discovered that Tcl_Eval is slower than Tcl_EvalObj. Fix it global-wide, `man Tcl_Eval' */
 
     /* Set up device parameters */
@@ -267,12 +275,31 @@ pack $plf.f1.quit -side right");
     plP_setphy(xmin, xmax*scale, ymin, ymax*scale);
 }
 
+static void
+flushbuffer(PLStream *pls)
+{
+  if (curpts) {
+    plD_polyline_ntk(pls, xb, yb, curpts);
+    // if (curpts != 2) fprintf(stderr,"%d ", curpts);
+    xold = yold = -1; curpts = 0;
+  }
+}
+
 void
 plD_line_ntk(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-  sprintf(cmd, "$plf.f2.c%d create line %.1f %.1f %.1f %.1f -fill %s",
-	  ccanv, x1a/scale, ymax-y1a/scale, x2a/scale, ymax-y2a/scale, curcolor);
-  tk_cmd(cmd);
+  if (xold == x1a && yold == y1a) {
+    xold = xb[curpts] = x2a; yold = yb[curpts] = y2a; curpts++;
+  } else {
+    flushbuffer(pls);
+    xb[curpts] = x1a; yb[curpts] = y1a; curpts++;
+    xold = xb[curpts] = x2a; yold = yb[curpts] = y2a; curpts++;
+  }
+
+  if (curpts == NPTS) {
+    fprintf(stderr,"\nflush: %d ", curpts);
+    flushbuffer(pls);
+  }
 }
 
 void
@@ -280,19 +307,49 @@ plD_polyline_ntk(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   PLINT i, j;
 
+  /* there must exist a way to code this using the tk C API */
   j = sprintf(cmd,"$plf.f2.c%d create line ", ccanv);
   for (i = 0; i < npts; i++)
     j += sprintf(&cmd[j], "%.1f %.1f ", xa[i]/scale, ymax-ya[i]/scale);
+
   j += sprintf(&cmd[j]," -fill %s", curcolor);
   if (dash[0] == '-')
     j += sprintf(&cmd[j]," %s", dash);
-  
+
   tk_cmd(cmd);
+}
+
+/* an event loop has to be designed, getcursor() and waitforpage() are just experimental */
+
+static void
+waitforpage(PLStream *pls)
+{
+  int key = 0, st = 0;
+  /* why can't I bind to the canvas? or even any frame? */
+  //tk_cmd("bind . <KeyPress> {set keypress %N; puts \"\n%k-%A-%K-%N\"}");
+  tk_cmd("bind . <KeyPress> {set keypress %N}");
+
+  while ((key & 0xff) != PLK_Return && (key & 0xff) != PLK_Linefeed && key != PLK_Next && key != 'Q') {
+    while (st != 1) {
+      tk_cmd("update");
+      tk_cmd("info exists keypress");
+      sscanf(interp->result,"%d", &st);
+    }
+  
+    tk_cmd("set keypress");
+    sscanf(interp->result,"%d", &key);
+    //fprintf(stderr,"\n%d\n", key);fflush(stderr);
+    tk_cmd("unset keypress");
+    st = 0;
+  }
+
+  tk_cmd("bind . <Key> {};");
 }
 
 void
 plD_eop_ntk(PLStream *pls)
 {
+  flushbuffer(pls);
   tk_cmd("update");
 }
 
@@ -305,8 +362,10 @@ plD_bop_ntk(PLStream *pls)
 void
 plD_tidy_ntk(PLStream *pls)
 {
-  while(Tcl_DoOneEvent(TCL_ALL_EVENTS));
-  //tk_cmd("update");
+  if (! pls->nopause)
+    waitforpage(pls);
+
+  tk_cmd("destroy $plf; wm withdraw .");
 }
 
 void 
@@ -315,6 +374,7 @@ plD_state_ntk(PLStream *pls, PLINT op)
     switch (op) {
     case PLSTATE_COLOR0:
     case PLSTATE_COLOR1:
+      flushbuffer(pls);
       sprintf(curcolor, "#%02x%02x%02x",
 	      pls->curcolor.r, pls->curcolor.g , pls->curcolor.b);
       break;
@@ -330,7 +390,7 @@ getcursor(PLStream *pls, PLGraphicsIn *ptr)
 
   if (0) {
     while (st != 1) {
-      tk_cmd("update; update idletasks");
+      tk_cmd("update");
       tk_cmd("winfo exists $plf.f2.c$ccanv");
       sscanf(interp->result,"%d", &st);
     }
@@ -381,9 +441,9 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
   short *xa, *ya;
   Pixmap bitmap;
   static unsigned char bit_pat[] = {
-   0x24, 0x01, 0x92, 0x00, 0x49, 0x00, 0x24, 0x00, 0x12, 0x00, 0x09, 0x00,
-   0x04, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff};
+    0x24, 0x01, 0x92, 0x00, 0x49, 0x00, 0x24, 0x00, 0x12, 0x00, 0x09, 0x00,
+    0x04, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff};
   
   switch (op) {
 
@@ -404,7 +464,7 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
     plD_polyline_ntk(pls, xa, ya, pls->dev_npts);
     free(xa); free(ya);
     dash[0] = 0;
-  break;
+    break;
 
   case PLESC_FLUSH:
     tk_cmd("update");
