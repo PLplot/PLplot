@@ -74,7 +74,7 @@ libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 # NUMERICINCCMD only required until we quit supporting python 1.5
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
-AM_CPPFLAGS = $(INCLTDL) $(PYTHONINCCMD) -I$(NUMERICINCCMD) $(X_CFLAGS)
+AM_CPPFLAGS = $(INCLTDL) $(PYTHONINCCMD) $(NUMERICINCCMD) $(X_CFLAGS)
 
 # For Mac OS X/fink we have found that dropping -no-undefined $(PYTHON_LDFLAGS)
 # solves an unknown linking problem that causes python to be unable to import
