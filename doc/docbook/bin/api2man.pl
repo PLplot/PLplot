@@ -4,7 +4,7 @@
 #              manual) into a series of man pages.
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Mon Dec  4 16:35:32 CET 2000
-# Last modified on: Mon Dec  4 17:00:00 CET 2000
+# Last modified on: Tue Dec  5 08:56:41 CET 2000
 # $Id$
 
 # This script relies on the present structure of the API chapter (file
@@ -82,7 +82,7 @@ $closing = "
 .SH AUTHORS
 Geoffrey Furnish and Maurice LeBrun wrote and maintain PLplot.  This man page 
 was automatically generated from the DocBook source of the PLplot 
-documentation, maintained by Alan I. Irwin and Rafael Laboissiere.
+documentation, maintained by Alan W. Irwin and Rafael Laboissiere.
 .SH SEE ALSO
 PLplot documentation at http://www.plplot.org/resources.
 ";

@@ -1,3 +1,7 @@
+2000-12-05  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* api2man.pl: Corrected spell of Alan's name.
+
 2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* size-href.pl (get_size): Chop spaces at beginning of size string
