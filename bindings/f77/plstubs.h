@@ -1,37 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.19  1993/12/06 07:45:25  mjl
-   Modifications for new color model.
+   Revision 1.20  1993/12/08 06:21:19  mjl
+   Fix for dos386/djgpp; added definition for plspause (should now work from
+   fortran).
 
+ * Revision 1.19  1993/12/06  07:45:25  mjl
+ * Modifications for new color model.
+ *
  * Revision 1.18  1993/11/15  08:35:22  mjl
  * Name definitions added for new stubs -- PLEOP, PLBOP, PLSCOLBG.
- *
- * Revision 1.17  1993/10/21  19:27:03  mjl
- * Changed all names that ended with an underscore (as part of the C/Fortran
- * linkage) to end with a '7' instead, to avoid problems with f2c.
- *
- * Revision 1.16  1993/08/26  19:59:43  mjl
- * Inserted stub name definition for PLINIT().
- *
- * Revision 1.15  1993/08/26  18:29:08  mjl
- * Put in fix for name translation under UNICOS.
- *
- * Revision 1.14  1993/07/20  06:50:28  mjl
- * Eliminated obsolete type declarations for string conversions.
- *
- * Revision 1.13  1993/07/16  22:31:41  mjl
- * Changed method for getting stub conversion right.  Now need to define
- * the macro STUB_LINKAGE with any of the supported conversion types.
- *
- * Revision 1.12  1993/07/02  07:26:10  mjl
- * Changed include of plplot.h to plplotP.h.  Also added IRIX support.
- *
- * Revision 1.11  1993/04/26  20:00:55  mjl
- * Configuration info added for a DEC Alpha-based machine running OSF/1.
- *
- * Revision 1.10  1993/03/28  08:45:07  mjl
- * Added support for NEC SX-3.  Also moved determination of stub name handling
- * to plstubs.h (more appropriate).
 */
 
 /*
@@ -118,6 +95,12 @@
 
 #if defined(__alpha) && defined(__osf__) /* DEC Alpha AXP/OSF */
 #define STUB_LINKAGE STUB_LAU
+#endif
+
+#ifdef __GO32__				/* dos386/djgpp */
+#ifdef MSDOS
+#undef MSDOS
+#endif
 #endif
 
 #ifdef MSDOS				/* MS-DOS based */
@@ -226,6 +209,7 @@
 #define    PLSMIN	FNAME(PLSMIN,plsmin)
 #define    PLSORI	FNAME(PLSORI,plsori)
 #define    PLSPAGE	FNAME(PLSPAGE,plspage)
+#define    PLSPAUSE	FNAME(PLSPAUSE,plspause)
 #define    PLSSTRM	FNAME(PLSSTRM,plsstrm)
 #define    PLSSUB	FNAME(PLSSUB,plssub)
 #define    PLSSYM	FNAME(PLSSYM,plssym)
