@@ -3,7 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002 Alan W. Irwin
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -79,4 +79,3 @@ check_PROGRAMS = \
 LDADD = $(libplplot)
 
 EXTRA_DIST = $(examples_c_DATA)
-DISTCLEANFILES = Makefile.examples
