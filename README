@@ -30,9 +30,11 @@ routines are provided to handle the C<->Fortran interface without any
 modification of the user program.  C programs are required to include the
 header file "plplot.h"; see the documentation for more details.
 
-The main documentation for PLplot is in the doc/ directory in the form of
-several TeX files; please consult this for additional information ("latex
-plotdoc").  Unfortunately documentation tends to lag actual improvements to
+Besides C, Fortran and C++ libraries, PLplot also has bindings for
+many interpreted languages such as Tcl, Python, Perl, Octave and Java.
+
+The main documentation for PLplot is in the doc/ directory in DocBook format;
+Unfortunately documentation tends to lag actual improvements to
 the code, so don't be surprised if some known features are not explained
 there.  Consult "NEWS" to see a list of recent changes.
 
@@ -62,7 +64,7 @@ tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
 portable metafile format, among others.  The Tk driver under Unix/X
 provides a full user interface based on the plframe plotting widget (see
 below).  The Tcl-DP based driver is a variant of the Tk driver that
-supports distributed rendering.  The metafile renderer (plrender) supports
+supports distributed rendering. The metafile renderer (plrender) supports
 all of the standard operations as well as seeking operations (backward,
 forward, or to any specified page) when interactively viewing metafile
 output.
@@ -84,13 +86,11 @@ For more information on how to get or use PLplot on your system, see:
  - appendices to the PLplot manual
  - system-specific documentation in the appropriate sys/<system> directory.
 
-To become a subscriber to the PLplot mailing list, send a message to
-plplot-request@dino.ph.utexas.edu containing the single line "subscribe" in
-the message body (the subject is ignored).  You can send messages to the
-list by mailing to plplot@dino.ph.utexas.edu.
-
-PLplot is available by anonymous ftp from dino.ph.utexas.edu in the
-plplot/ directory.
+PLplot is available from http://sourceforge.net/projects/plplot, where
+you can find source tarballs, rpm for several Linux distributions,
+browse the current cvs tree, subscribe to several mailing lists,
+etc. All this capabilities are supplied by sourceforge. PLplot
+homepage can be found at http://plplot.sf.net
 
 
 CREDITS

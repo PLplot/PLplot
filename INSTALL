@@ -43,6 +43,8 @@ Targets supported by the Makefile include:
 	cdemos		All the C demos
 	fdemos		All the Fortran demos
 	tkdemos		All the extended wish (TK) demos
+	jdemos		All the Java demos
+	cxxdemos	The C++ demo
 	x??[cf]		Demo number ??, C or fortran versions
 	xtk??		Demo number ??, extended wish versions
 
@@ -67,27 +69,35 @@ enable/disable packages (or device drivers) with a --enable-<pkg> or
 near the end of the configuration process.  Here is an example:
 
 -----------------------------------------------------------------------------
-Configuration results (edit and run ./config.status to modify):
+Example configuration results (edit and run ./config.status to modify):
 
-system:         HP-UX-A.09.01
-prefix:         /usr/local/plplot
-CC:             c89 -c     
-F77:            fort77 -c     
-LDC:            c89   
-LDF:            fort77   
-INCS:             -I/usr/local/include   
-LIBS:            -L/usr/local/lib -ldpnetwork  -ltk  -litcl  -ltcl  -lX11  -lm
-LIB_TAG:        ftk
-devices:         plmeta null xterm tek4010 mskermit conex vlt versaterm ps xfig ljii lj_hpgl xwin tk dp
+system:         Linux-2.2.18
+prefix:         /usr/local/bin
+CC:             gcc -c          -O  
+LDC:            gcc    
+CXX:            g++ -c            -O 
+LDCXX:          g++      
+F77:            g77 -c           -O 
+LDF:            g77    
+INCS:            -I. -I/usr/lib/java//include -I/usr/lib/java//include/linux -I/opt/gnome/include/gtk-1.2 -I/usr/include/glib-1.2 -I/usr/lib/glib/include -I/usr/X11R6/include -I/opt/gnome/include -I/opt/gnome/lib/gnome-libs/include
+LIBS:            -litk3.1 -ltk8.3 -litcl3.1 -ltcl8.3 -L/usr/X11R6/lib -lX11 -ldl -lm -lg2c
+LIB_TAG:        d
+devices:         plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit conex vlt versaterm dg300 png jpeg ps psc xfig ljii hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk
 
-with-shlib:     yes             with-double:    no
-with-debug:     no              with-opt:       no
-with-warn:      no              with-profile:   no
-with-f2c:       no              with-gcc:       no
+Available device drivers
+static:          xwin tk
+dynamic:         plmeta null tek dg300 gd ps xfig ljii hpgl ljiip impress pbm gnome pstex ntk
 
-enable-xwin:    yes             enable-tcl:     yes
-enable-tk:      yes             enable-dp:      yes
-enable-itcl:    yes             enable-f77:     yes
+with_shlib:     yes             with_double:    yes
+with_debug:     no              with_opt:       yes
+with_warn:      no              with_profile:   no
+with_gcc:       yes             with_rpath:     yes
+
+enable_xwin:    yes             enable_tcl:     yes
+enable_tk:      yes             enable_itcl:    yes
+enable_cxx:     yes             enable_python:  yes
+enable_f77:     yes             enable_java:    yes
+enable_octave:  yes             enable_gnome:   yes
 -----------------------------------------------------------------------------
 
 If you want to change to using e.g. double precision with optimization
@@ -124,3 +134,20 @@ If you want configure to remember certain settings each time it is run
 for your site, you can create a file ~/config/cf_plplot.in.  If found,
 this file is sourced by configure.  An example cf_plplot.in file is
 given in the cf/README file.
+
+A new configure option from Plplot-5.1.0 is "--enable-dyndrivers",
+which is mostly useful in systems that supports shared libraries,
+"--enable-shlib".
+Dynamic drivers are dynamically loaded at run-time, easing software
+updates and reducing the number of libraries that your program and
+plplot libraries needs to link against.
+
+------------------------------------------------------------------------------
+
+To compile your own programs, use "plplot-config", eg:
+
+cc  `plplot-config --cflags` myprog.c -o myprog  `plplot-config --libs`
+
+which expands (on my system) to 
+
+cc -I/usr/local/include -I. -I/usr/X11R6/include  myprog.c -o myprog -L/usr/local/lib -lplplot -ltclmatrix -ltk8.3 -ltcl8.3 -L/usr/X11R6/lib -lX11 -lgd -lpng -ljpeg -lz -ldl -lm -Wl,-rpath,/usr/local/lib 
