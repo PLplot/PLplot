@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2  2002/07/10 09:52:38  vincentdarley
+ * resolve name clashes, and sync pltools.tcl
+ *
  * Revision 1.1  2002/07/02 09:03:44  vincentdarley
  * x-platform tk code
  *
@@ -143,31 +146,21 @@ plD_open_tkwin(PLStream *pls);
 /* Copies the supplied PLColor to an XColor */
 
 void
-PLColor_to_XColor(PLColor *plcolor, XColor *xcolor);
+PLColor_to_TkColor(PLColor *plcolor, XColor *xcolor);
 
 /* Copies the supplied XColor to a PLColor */
 
 void
-PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
+PLColor_from_TkColor(PLColor *plcolor, XColor *xcolor);
 
 /* Same but also tells me if the color changed */
 int
-PLColor_from_XColor_Changed(PLColor *plcolor, XColor *xcolor);
-
-/* Determines if we're using a monochrome or grayscale device */
-
-int
-pl_AreWeGrayscale(struct PlFrame *plf);
+PLColor_from_TkColor_Changed(PLColor *plcolor, XColor *xcolor);
 
 /* Set background & foreground colors.  */
 
 void
-plX_setBGFG(PLStream *pls);
-
-/* Saves RGB components of given colormap */
-
-void
-PLX_save_colormap(Display *display, Colormap map);
+pltkwin_setBGFG(PLStream *pls);
 
 #ifdef __cplusplus
 }

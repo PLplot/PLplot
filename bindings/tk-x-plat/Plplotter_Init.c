@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2002/07/10 09:52:38  vincentdarley
+ * resolve name clashes, and sync pltools.tcl
+ *
  * Revision 1.2  2002/07/04 15:14:54  vincentdarley
  * handle plplot version info directly
  *
@@ -102,21 +105,6 @@ Plplotter_Init( Tcl_Interp *interp )
 #ifdef PLD_dp
     Tcl_CreateCommand(interp, "host_id", plHost_ID,
 	      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
-#endif
-
-/* Save initial RGB colormap components */
-/* Disabled for now */
-
-#if 0
-    {
-    Display *display;
-    Colormap map;
-
-    display = Tk_Display(main);
-    map = DefaultColormap(display, DefaultScreen(display));
-
-    PLX_save_colormap(display, map);
-    }
 #endif
 
     Tcl_PkgProvide(interp,"Plplotter",PLPLOT_VERSION);

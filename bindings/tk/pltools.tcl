@@ -160,8 +160,8 @@ proc normal_text_setup {w {width 60} {height 30}} {
 # Scrolls text widget vertically, updating various things
 #----------------------------------------------------------------------------
 
-proc text_scroll {w line {opt {}}} {
-    $w yview $line $opt
+proc text_scroll {w line args} {
+    eval [list $w yview $line] $args
     $w mark set insert [$w index @0,0]
 }
 
@@ -564,6 +564,7 @@ proc evalCmd {{w .eval}} {
     catch {destroy $w}
 # -geometry unknown in 7.6 toplevels: toplevel $w -geometry 400x300
     toplevel $w
+    wm geometry $w 400x300
     dpos $w
     wm title $w "Interpret command"
     wm iconname $w "Interpret"

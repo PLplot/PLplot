@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.6  2002/07/10 09:52:38  vincentdarley
+ * resolve name clashes, and sync pltools.tcl
+ *
  * Revision 1.5  2002/07/09 19:57:59  airwin
  * Change tkwin driver sequence number to 45 (to avoid clash with cgm driver).
  *
@@ -145,7 +148,7 @@ typedef struct PlPlotter {
 
 void CopyColour(XColor* from, XColor* to);
 void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col);
-int  pltk_AreWeGrayscale(PlPlotter *plf);
+static int  pltk_AreWeGrayscale(PlPlotter *plf);
 void PlplotterAtEop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 void PlplotterAtBop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 
@@ -429,7 +432,7 @@ plD_open_tkwin(PLStream *pls)
 	/* Allocate & set background and foreground colors */
 	
 	AllocBGFG(pls);
-	plX_setBGFG(pls);
+	pltkwin_setBGFG(pls);
     }
     
     /* Display matched, so use existing display data */
@@ -660,7 +663,7 @@ plD_state_tkwin(PLStream *pls, PLINT op)
 	    int icol0 = pls->icol0;
 	    if (tkwd->color) {
 		if (icol0 == PL_RGB_COLOR) {
-		    PLColor_to_XColor(&pls->curcolor, &dev->curcolor);
+		    PLColor_to_TkColor(&pls->curcolor, &dev->curcolor);
 		    Tkw_StoreColor(pls, tkwd, &dev->curcolor);
 		} else {
 		    dev->curcolor = tkwd->cmap0[icol0];
@@ -693,7 +696,7 @@ plD_state_tkwin(PLStream *pls, PLINT op)
 	}
 
 	case PLSTATE_CMAP0:
-	    plX_setBGFG(pls);
+	    pltkwin_setBGFG(pls);
 	    StoreCmap0(pls);
 	    break;
 	    
@@ -1315,21 +1318,21 @@ AllocBGFG(PLStream *pls)
 }
 
 /*--------------------------------------------------------------------------*\
- * plX_setBGFG()
+ * pltkwin_setBGFG()
  *
  * Set background & foreground colors. Foreground over background should
  * have high contrast.
 \*--------------------------------------------------------------------------*/
 
 void
-plX_setBGFG(PLStream *pls)
+pltkwin_setBGFG(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     PLColor fgcolor;
     int gslevbg, gslevfg;
     
-    dbug_enter("plX_setBGFG");
+    dbug_enter("pltkwin_setBGFG");
 
     /*
      * Set background color.
@@ -1345,7 +1348,7 @@ plX_setBGFG(PLStream *pls)
 	       (long) pls->cmap0[0].g +
 	       (long) pls->cmap0[0].b) / 3;
 
-    PLColor_to_XColor(&pls->cmap0[0], &tkwd->cmap0[0]);
+    PLColor_to_TkColor(&pls->cmap0[0], &tkwd->cmap0[0]);
     
     /*
      * Set foreground color.
@@ -1364,7 +1367,7 @@ plX_setBGFG(PLStream *pls)
 
     fgcolor.r = fgcolor.g = fgcolor.b = gslevfg;
     
-    PLColor_to_XColor(&fgcolor, &tkwd->fgcolor);
+    PLColor_to_TkColor(&fgcolor, &tkwd->fgcolor);
 
     /* Now store */
 #ifndef USE_TK
@@ -1655,7 +1658,7 @@ StoreCmap0(PLStream *pls)
 	return;
     
     for (i = 1; i < tkwd->ncol0; i++) {
-	PLColor_to_XColor(&pls->cmap0[i], &tkwd->cmap0[i]);
+	PLColor_to_TkColor(&pls->cmap0[i], &tkwd->cmap0[i]);
 #ifndef USE_TK
 	XStoreColor(tkwd->display, tkwd->map, &tkwd->cmap0[i]);
 #else
@@ -1692,7 +1695,7 @@ StoreCmap1(PLStream *pls)
 
     for (i = 0; i < tkwd->ncol1; i++) {
 	plcol_interp(pls, &cmap1color, i, tkwd->ncol1);
-	PLColor_to_XColor(&cmap1color, &tkwd->cmap1[i]);
+	PLColor_to_TkColor(&cmap1color, &tkwd->cmap1[i]);
 #ifndef USE_TK
 	XStoreColor(tkwd->display, tkwd->map, &tkwd->cmap1[i]);
 #else
@@ -1713,7 +1716,7 @@ void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col) {
 }
 
 /*--------------------------------------------------------------------------*\
- * void PLColor_to_XColor()
+ * void PLColor_to_TkColor()
  *
  * Copies the supplied PLColor to an XColor, padding with bits as necessary
  * (a PLColor uses 8 bits for color storage, while an XColor uses 16 bits).
@@ -1724,7 +1727,7 @@ void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col) {
 #define ToPLColor(a) (((U_LONG) a) >> 8)
 
 void
-PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
+PLColor_to_TkColor(PLColor *plcolor, XColor *xcolor)
 {
     xcolor->red = ToXColor(plcolor->r);
     xcolor->green = ToXColor(plcolor->g);
@@ -1733,14 +1736,14 @@ PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
 }
 
 /*--------------------------------------------------------------------------*\
- * void PLColor_from_XColor()
+ * void PLColor_from_TkColor()
  *
  * Copies the supplied XColor to a PLColor, stripping off bits as
  * necessary. See the previous routine for more info.
 \*--------------------------------------------------------------------------*/
 
 void
-PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
+PLColor_from_TkColor(PLColor *plcolor, XColor *xcolor)
 {
     plcolor->r = (unsigned char) ToPLColor(xcolor->red);
     plcolor->g = (unsigned char) ToPLColor(xcolor->green);
@@ -1748,7 +1751,7 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
 }
 
 /*--------------------------------------------------------------------------*\
- * void PLColor_from_XColor()
+ * void PLColor_from_TkColor()
  *
  * Copies the supplied XColor to a PLColor, stripping off bits as
  * necessary. See the previous routine for more info.
@@ -1757,7 +1760,7 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
 \*--------------------------------------------------------------------------*/
 
 int
-PLColor_from_XColor_Changed(PLColor *plcolor, XColor *xcolor)
+PLColor_from_TkColor_Changed(PLColor *plcolor, XColor *xcolor)
 {
     int changed = 0;
     int color;
@@ -1788,7 +1791,7 @@ PLColor_from_XColor_Changed(PLColor *plcolor, XColor *xcolor)
  * Changed July 1996 by Vince: now uses Tk to check the enclosing PlPlotter
 \*--------------------------------------------------------------------------*/
 
-int
+static int
 pltk_AreWeGrayscale(PlPlotter *plf)
 {
 #if defined(__cplusplus) || defined(c_plusplus)
@@ -1804,45 +1807,6 @@ pltk_AreWeGrayscale(PlPlotter *plf)
 	return (0);
     /* if we got this far, only StaticGray and GrayScale classes available */
     return (1);
-}
-
-/*--------------------------------------------------------------------------*\
- * void PLX_save_colormap()
- *
- * Saves RGB components of given colormap.
- * Used in an ugly hack to get past some X11R5 and TK limitations.
- * This isn't guaranteed to work under all circumstances, but hopefully
- * in the future there will be a nicer way to accomplish the same thing.
- *
- * Note: I tried using XCopyColormapAndFree to do the same thing, but under
- * HPUX 9.01/VUE/X11R5 at least it doesn't preserve the previous read-only
- * color cell allocations made by Tk. Is this a bug? Have to look at the
- * source to find out.
-\*--------------------------------------------------------------------------*/
-
-void
-PLX_save_colormap(Display *display, Colormap colormap)
-{
-    int i;
-
-    if ( ! plplot_ccmap)
-	return;
-
-#ifndef MAC_TCL
-    sxwm_colors_set = 1;
-    for (i = 0; i < MAX_COLORS; i++) {
-	sxwm_colors[i].pixel = i;
-    }
-    XQueryColors(display, colormap, sxwm_colors, MAX_COLORS);
-#endif
-    /*
-    printf("\nAt startup, default colors are: \n\n");
-    for (i = 0; i < MAX_COLORS; i++) {
-        printf(" i: %d, pixel: %d, r: %d, g: %d, b: %d\n",
-               i, sxwm_colors[i].pixel,
-               sxwm_colors[i].red, sxwm_colors[i].green, sxwm_colors[i].blue);
-    }
-    */
 }
 
 #if !defined(MAC_TCL) && !defined(__WIN32__)

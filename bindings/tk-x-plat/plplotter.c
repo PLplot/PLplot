@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2002/07/10 09:52:38  vincentdarley
+ * resolve name clashes, and sync pltools.tcl
+ *
  * Revision 1.2  2002/07/05 17:17:46  vincentdarley
  * removed compiler warnings
  *
@@ -2247,13 +2250,13 @@ ConfigurePlPlotter(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
  */
 
     plsstrm(plPlotterPtr->ipls);
-    if(PLColor_from_XColor_Changed(&pls->cmap0[0], 
+    if(PLColor_from_TkColor_Changed(&pls->cmap0[0], 
       Tk_3DBorderColor(plPlotterPtr->border))) {
     	need_redisplay = 1;
     	/* need to redraw as well as simply refresh the window */
         plPlotterPtr->flags |= REDRAW_PENDING;
     }
-    plX_setBGFG(pls);
+    pltkwin_setBGFG(pls);
 
     Tk_SetWindowBackground(tkwin, tkwd->cmap0[0].pixel);
     Tk_SetWindowBorder(tkwin, tkwd->cmap0[0].pixel);

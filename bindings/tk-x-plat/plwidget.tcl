@@ -1,5 +1,8 @@
 # $Id$
 # $Log$
+# Revision 1.2  2002/07/10 09:52:38  vincentdarley
+# resolve name clashes, and sync pltools.tcl
+#
 # Revision 1.1  2002/07/02 09:03:44  vincentdarley
 # x-platform tk code
 #
@@ -138,6 +141,7 @@ namespace eval plw {}
 
 proc plw::create {w {client_id {}}} {
     plxframe $w $client_id
+    wm title . [string trim $w .]
 }
 
 #----------------------------------------------------------------------------
@@ -170,7 +174,8 @@ proc plr_create {w {client_id {}}} {
 
 proc plxframe {w {client_id {}}} {
 
-    global client
+# Note the window name w must never be a global.
+    global client plot_menu_on
 
 # Save client name
 
@@ -180,7 +185,7 @@ proc plxframe {w {client_id {}}} {
 
 # Make container frame.  It is mapped later.
 
-    frame $w
+    catch {frame $w}
 
 # Create child plplot widget (plframe), and pack into parent.
 
@@ -195,23 +200,40 @@ proc plxframe {w {client_id {}}} {
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
 
-    plw::create_TopRow $w
-    pack $w.ftop -side top -fill x
-
+    if $plot_menu_on {
+	plw::create_TopRow $w
+	pack $w.ftop -side top -fill x
+    }
+    
 # Also grab the initial input focus.
 
+    if {[info tclversion] < 8.0} {
+	tk_bindForTraversal $w.plwin
+    }
     focus $w.plwin
 
 # Set up bop/eop signal and inform client of plplot widget name for widget
 # commands.
 
     if { [info exists client] } {
-	set bop_col [option get $w.ftop.leop off Label]
-	set eop_col [option get $w.ftop.leop on Label]
+	if $plot_menu_on {
+	    set bop_col [option get $w.ftop.leop off Label]
+	    set eop_col [option get $w.ftop.leop on Label]
 
-	$w.plwin configure -bopcmd "plw::flash $w $bop_col"
-	$w.plwin configure -eopcmd "plw::flash $w $eop_col"
+	    $w.plwin configure -bopcmd "plw_flash $w $bop_col"
+	    $w.plwin configure -eopcmd "plw_flash $w $eop_col"
+
+	} else {
+	    $w.plwin configure -bopcmd {update}
+	    $w.plwin configure -eopcmd {update}
+	}
+	# Resize binding -- just experimental for now.
+	#	bind $w.plwin <Configure> "client_cmd \"plfinfo %w %h\""
 	client_cmd "set plwidget $w.plwin"
+    } else {
+	global plstate_bopseen; set plstate_bopseen($w) 0
+	$w.plwin configure -bopcmd "plw_bop $w"
+	$w.plwin configure -eopcmd "plw_eop $w"
     }
     
     return $w
@@ -266,13 +288,22 @@ proc plw::setup_defaults {w} {
 # Bindings
 
     bind $w.plwin <Any-KeyPress> \
-	"plw::key_filter $w %N %s %x %y %K %A"
+      "plw::key_filter $w %N %s %x %y %K %A"
 
     bind $w.plwin <Any-ButtonPress> \
-	"plw::user_mouse $w %b %s %x %y"
+      "plw::user_mouse $w %b %s %x %y"
 
+    bind $w.plwin <B1-Motion> \
+      "plw_user_mouse $w %b %s %x %y"
+    
+    bind $w.plwin <B2-Motion> \
+      "plw_user_mouse $w %b %s %x %y"
+    
+    bind $w.plwin <B3-Motion> \
+      "plw_user_mouse $w %b %s %x %y"
+    
     bind $w.plwin <Any-Enter> \
-	"focus $w.plwin"
+      "focus $w.plwin"
 }
 
 #----------------------------------------------------------------------------
@@ -322,7 +353,7 @@ proc plw::create_TopRow {w} {
 # Label widget for status messages.
 
     label $w.ftop.lstat -anchor w -relief raised
-    plw::label_reset $w
+    plw::label_push $w [string range $w 1 end]
     pack $w.ftop.lstat -side right -expand yes -fill x
 }
 
@@ -440,7 +471,6 @@ proc plw::create_pmenu_file {w} {
 #----------------------------------------------------------------------------
 
 proc plw::create_pmenu_orient {w} {
-
     global pmenu; set m $pmenu($w).orient
 
     $pmenu($w) add cascade -label "Orient" -menu $m 
@@ -476,7 +506,6 @@ proc plw::create_pmenu_orient {w} {
 #----------------------------------------------------------------------------
 
 proc plw::create_pmenu_zoom {w} {
-
     global pmenu; set m $pmenu($w).zoom
 
     $pmenu($w) add cascade -label "Zoom" -menu $m
@@ -517,7 +546,6 @@ proc plw::create_pmenu_zoom {w} {
     menu $m.options
 
     global zoomopts
-
     $m.options add check -label "Preserve aspect ratio" \
 	-variable zoomopts($w,0)
 
@@ -539,7 +567,6 @@ proc plw::create_pmenu_zoom {w} {
 #----------------------------------------------------------------------------
 
 proc plw::create_pmenu_page {w} {
-
     global pmenu; set m $pmenu($w).page
 
     $pmenu($w) add cascade -label "Page" -menu $m
@@ -565,7 +592,6 @@ proc plw::create_pmenu_page {w} {
 #----------------------------------------------------------------------------
 
 proc plw::create_pmenu_redraw {w} {
-
     global pmenu
 
     $pmenu($w) add command -label "Redraw" \
