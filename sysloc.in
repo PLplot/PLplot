@@ -40,38 +40,46 @@ CSALIBS=""
 
 if test "$enable_java" = "yes"; then
     if test "$enable_shared" != "yes"; then
-        AC_MSG_RESULT([warning: java support requires enable_shared=yes, setting enable_java=no])
+        AC_MSG_WARN([Java support requires enable_shared=yes,])
+	AC_MSG_WARN([setting enable_java=no])
         enable_java=no
     fi
 
 fi
 
 if test "$enable_java" = "yes"; then
+    AC_MSG_CHECKING([for jni.h (Java Native Interface)])
     if test -n "$JAVA_HOME"; then
         if test -r "$JAVA_HOME/include/jni.h"; then
             JAVAINCDIR="$JAVA_HOME/include"
+	    AC_MSG_RESULT(yes)
         fi
     else
         # Should make token effort to find jni.h anyway, presumably
         # employing AC_TRY_CPP.  Later...
-        AC_MSG_RESULT( "Uhhh." )
+        AC_MSG_RESULT(no)
     fi
 
     if test -n "$JAVAINCDIR"; then
+        AC_MSG_CHECKING([machine dependent include files for Java (J2RE/IBM)])
         # See if machine dependent files exist in JAVAINCDIR (J2RE 1.3.0 IBM)
         if test -r "$JAVA_HOME/include/jni_md.h"; then
             JAVAMDINCDIR="$JAVA_HOME/include"
+	    AC_MSG_RESULT(yes)
         else
         # Now we need to find the machine dependent directory.
             case $system in
                 Linux* )
                     JAVAMDINCDIR="$JAVAINCDIR/linux"
+		    AC_MSG_RESULT(yes)
                 ;;
                 SunOS-5* )
                     JAVAMDINCDIR="$JAVAINCDIR/solaris"
+		    AC_MSG_RESULT(yes)
                 ;;
                 * )
-                    AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
+                    AC_MSG_RESULT(no)
+		    AC_MSG_WARN([Cannot find Java machine dependent includes])
                 ;;
             esac
         fi
@@ -83,12 +91,13 @@ if test "$enable_java" = "yes"; then
         fi
 
         if test -z "$JAVAMDINCDIR"; then
-            AC_MSG_RESULT(Missing jni_md.h, disabling Java support.)
+            AC_MSG_WARN(Missing jni_md.h, disabling Java support.)
             enable_java=no
         fi
 
     else
-        AC_MSG_RESULT(warning: Java Native Interface include file not found)
+        AC_MSG_WARN([Java Native Interface include file not found,])
+	AC_MSG_WARN([setting enable_java=no])
         enable_java=no
     fi
 fi
@@ -100,8 +109,11 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    AC_MSG_CHECKING(for GD header files)
     if test -z "$GDINCDIR"; then
-        AC_TRY_CPP([#include <gd.h>], [ GDINCDIR=default ], [
+        AC_PREPROC_IFELSE([#include <gd.h>], 
+	[ GDINCDIR=default
+	  AC_MSG_RESULT([found in $GDINCDIR]) ], [
         incdirs="\
         /usr/include \
         /usr/local/include"
@@ -113,17 +125,21 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
             fi
         done
         if test -z "$GDINCDIR"; then
-            AC_MSG_RESULT(warning: gd header files not found)
+	    AC_MSG_RESULT(not found)	    
+            AC_MSG_WARN([gd header files not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])	    
             GDINCDIR=default
             enable_png=no
             enable_jpeg=no
+	else
+	    AC_MSG_RESULT([found in $GDINCDIR])
         fi ])
     fi
     if test "$GDINCDIR" = "/usr/include"; then
         GDINCDIR=default
     fi
 
-    if test -z "$GDLIBDIR"; then
+    if test -z "$GDLIBDIR"; then    
         AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
         libdirs="\
         /usr/lib \
@@ -132,12 +148,12 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
             if test -r "$dir/libgd.so" -o -r "$dir/libgd.a"; then
                 GDLIBDIR="$dir"
-                AC_MSG_RESULT(but found in $dir)
                 break
             fi
         done
         if test -z "$GDLIBDIR"; then
-            AC_MSG_RESULT(warning: gd library not found)
+            AC_MSG_WARN([gd library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])	    
             GDLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -158,12 +174,12 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
             if test -r "$dir/libpng.so" -o -r "$dir/libpng.a"; then
                 PNGLIBDIR="$dir"
-                AC_MSG_RESULT(but found in $dir)
                 break
             fi
         done
         if test -z "$PNGLIBDIR"; then
-            AC_MSG_RESULT(warning: png library not found)
+            AC_MSG_WARN([png library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])	    
             PNGLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -184,12 +200,12 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
             if test -r "$dir/libjpeg.so" -o -r "$dir/libjpeg.a"; then
                 JPEGLIBDIR="$dir"
-                AC_MSG_RESULT(but found in $dir)
                 break
             fi
         done
         if test -z "$JPEGLIBDIR"; then
-            AC_MSG_RESULT(warning: jpeg library not found)
+            AC_MSG_WARN([jpeg library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])	    
             JPEGLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -210,12 +226,12 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
             if test -r "$dir/libz.so" -o -r "$dir/libz.a"; then
                 ZLIBLIBDIR="$dir"
-                AC_MSG_RESULT(but found in $dir)
                 break
             fi
         done
         if test -z "$ZLIBLIBDIR"; then
-            AC_MSG_RESULT(warning: zlib library not found)
+            AC_MSG_WARN([zlib library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])	    
             ZLIBLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -248,7 +264,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     AC_TRY_LINK_FUNC([
       gdImagePng
     ], [AC_MSG_RESULT(yes)], [
-      AC_MSG_RESULT(no: png driver disabled)
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN(png driver disabled)
       enable_png=no
     ])
 
@@ -256,7 +273,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     AC_TRY_LINK_FUNC([
       gdImageJpeg
     ], [AC_MSG_RESULT(yes)], [
-      AC_MSG_RESULT(no: jpeg driver disabled)
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN(jpeg driver disabled)
       enable_jpeg=no
     ])
 
@@ -274,8 +292,11 @@ AC_LANG_RESTORE
 # ----------------------------------------------------------------------------
 
 if test "$enable_cgm" = "yes"; then
+    AC_MSG_CHECKING(for libcd header files)
     if test -z "$CDINCDIR"; then
-        AC_TRY_CPP([#include <cd.h>], [ CDINCDIR=default ], [
+        AC_PREPROC_IFELSE([#include <cd.h>], 
+	[ CDINCDIR=default
+	  AC_MSG_RESULT([found in $CDINCDIR]) ], [
         incdirs="\
         /usr/include \
         /usr/local/include"
@@ -287,9 +308,12 @@ if test "$enable_cgm" = "yes"; then
             fi
         done
         if test -z "$CDINCDIR"; then
-            AC_MSG_RESULT(warning: cd header files not found)
+            AC_MSG_RESULT(not found)
+            AC_MSG_WARN([libcd header files not found, setting enable_cgm=no])
             CDINCDIR=default
             enable_cgm=no
+	else
+	    AC_MSG_RESULT([found in $CDINCDIR])
         fi ])
     fi
     if test "$CDINCDIR" = "/usr/include"; then
@@ -305,12 +329,11 @@ if test "$enable_cgm" = "yes"; then
         for dir in $libdirs; do
             if test -r "$dir/libcd.so" -o -r "$dir/libcd.a"; then
                 CDLIBDIR="$dir"
-                AC_MSG_RESULT(but found in $dir)
                 break
             fi
         done
         if test -z "$CDLIBDIR"; then
-            AC_MSG_RESULT(warning: cd library not found)
+            AC_MSG_WARN([cd library not found, setting enable_cgm=no])
             CDLIBDIR=default
             enable_cgm=no
         fi ])
@@ -340,8 +363,11 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$with_freetype" = "yes"; then
+    AC_MSG_CHECKING(for freetype library header files)
     if test -z "$FREETYPEINCDIR"; then
-        AC_TRY_CPP([#include <freetype/config/ftheader.h>], [ FREETYPEINCDIR=default ], [
+        AC_PREPROC_IFELSE([#include <freetype/config/ftheader.h>],
+	                  [ FREETYPEINCDIR=default
+			    AC_MSG_RESULT([found in $FREETYPEINCDIR]) ], [
         incdirs="\
         /usr/include/freetype2 \
         /usr/local/include/freetype2"
@@ -353,9 +379,13 @@ if test "$with_freetype" = "yes"; then
             fi
         done
         if test -z "$FREETYPEINCDIR"; then
-            AC_MSG_RESULT(warning: freetype header files not found)
+            AC_MSG_RESULT(not found)
+	    AC_MSG_WARN([freetype header files not found,])
+	    AC_MSG_WARN([setting with_freetype=no])
             FREETYPEINCDIR=default
             with_freetype=no
+	else
+            AC_MSG_RESULT([found in $FREETYPEINCDIR])	
         fi ])
     fi
     if test "$FREETYPEINCDIR" = "/usr/include"; then
@@ -371,12 +401,11 @@ if test "$with_freetype" = "yes"; then
         for dir in $libdirs; do
             if test -r "$dir/libfreetype.so" -o -r "$dir/libfreetype.a"; then
                 FREETYPELIBDIR="$dir"
-                AC_MSG_RESULT(but found in $dir)
                 break
             fi
         done
         if test -z "$FREETYPELIBDIR"; then
-            AC_MSG_RESULT(warning: freetype library not found)
+	    AC_MSG_WARN([freetype library not found, setting with_freetype=no])
             FREETYPELIBDIR=default
             with_freetype=no
         fi ])
@@ -486,7 +515,8 @@ if test "$enable_tcl" = "yes"; then
         if test -n "$version"; then
             for oldversion in 8.1 8.0; do
                 if test "$version" = "$oldversion"; then
-                    echo "Tcl version $oldversion not supported.. please upgrade!"
+                    AC_MSG_WARN([Tcl version $oldversion not supported.])
+		    AC_MSG_WARN([Please upgrade!])
                     enable_tcl="no"
 # See comment below
 #                    has_tcl="no"
@@ -727,7 +757,7 @@ if test "$enable_octave" = "yes"; then
 
 # Check that plplot was built with shared libs
     if test "$enable_shared" != "yes"; then
-        AC_MSG_WARN([Octave support requires enable_shared=yes, setting enable_octave=no.]);
+        AC_MSG_WARN([Octave support requires enable_shared=yes, setting enable_octave=no]);
         enable_octave=no;
     fi
 

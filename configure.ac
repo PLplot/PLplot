@@ -779,7 +779,7 @@ if test "$enable_cxx" = yes; then
 	AC_CHECK_PROG(found_kcc, KCC, yes, no)
 	if test "$found_kcc" = "yes" ; then
 	    found_cxx=yes
-	    AC_MSG_RESULT([Found KAI C++, using that!])
+	    AC_MSG_WARN([Found KAI C++, using that!])
 	    CXX=KCC
 	    if test -z "$CXXFLAGS"; then
 		if test -z "$with_debug"; then
@@ -955,7 +955,7 @@ AC_SUBST(BUILD_DIR)
 
 ### Drivers
 
-AC_MSG_CHECKING( for dynamic drivers)
+AC_MSG_CHECKING(for dynamic drivers)
 PL_DRIVERS(PL_DRIVER_LIST)
 AC_MSG_RESULT
 AC_SUBST(STATIC_DRIVERS)
@@ -1265,4 +1265,4 @@ cat << EOF > config.summary
 $plplot_config_result_msg
 EOF
 
-AC_MSG_RESULT($plplot_config_result_msg)
+AC_MSG_NOTICE($plplot_config_result_msg)

@@ -393,11 +393,10 @@ define(FIND_LIB_SET, [
 define(FIND_LIB_END, [
     if test -z "$$2"; then
 	ifelse($3,,[
-	    AC_MSG_RESULT(not found -- exiting)
-	    exit 1
+	    AC_MSG_ERROR(not found -- exiting)
 	],[
 	    AC_MSG_RESULT(no)
-	    AC_MSG_RESULT([warning: can't find lib$1, setting $3 to no])
+	    AC_MSG_WARN([can't find lib$1, setting $3 to no])
 	    $3="no"
 	])
     fi
