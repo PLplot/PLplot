@@ -313,58 +313,6 @@ plbox3Cmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
- * plxormodCmd
- *
- * Processes plxormod Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plxormodCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    PLINT mod;
-    PLINT st;
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plxormod ?mod st?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!1 && 0 && (argc < (1 + 2 - 0))) ||
-         (!1 && !0 && (argc != (2 + 1))) ||
-         ( 1 && (argc != 1) && (argc != (2 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plxormod ?mod st?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    mod = atoi(argv[1+0]);
-/* st is for output. */
-
-    plxormod ( mod, &st );
-
-    if (argc == 1)
-        Tcl_AppendResult( interp, " ", (char *) NULL );
-    sprintf( buf, "%d", st );
-    if (argc > 1)
-        Tcl_SetVar( interp, argv[1+1], buf, 0 );
-    else
-        Tcl_AppendResult( interp, buf, (char *) NULL );
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
  * plcol0Cmd
  *
  * Processes plcol0 Tcl command.
@@ -1218,6 +1166,53 @@ plgcol0Cmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
+ * plgdevCmd
+ *
+ * Processes plgdev Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plgdevCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    char devnam[200];
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plgdev ?devnam?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
+         (!1 && !0 && (argc != (1 + 1))) ||
+         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plgdev ?devnam?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+/* devnam is for output. */
+
+    plgdev ( devnam );
+
+    if (argc > 1)
+       Tcl_SetVar( interp, argv[1+0], devnam, 0 );
+    else
+        Tcl_AppendResult( interp, devnam, (char *) NULL );
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
  * plgdidevCmd
  *
  * Processes plgdidev Tcl command.
@@ -1416,6 +1411,54 @@ plgdipltCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
+ * plgescCmd
+ *
+ * Processes plgesc Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plgescCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    char esc;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plgesc ?esc?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
+         (!1 && !0 && (argc != (1 + 1))) ||
+         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plgesc ?esc?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+/* esc is for output. */
+
+    plgesc ( &esc );
+
+    sprintf( buf, "%c", esc );
+    if (argc > 1)
+        Tcl_SetVar( interp, argv[1+0], buf, 0 );
+    else
+        Tcl_AppendResult( interp, buf, (char *) NULL );
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
  * plgfamCmd
  *
  * Processes plgfam Tcl command.
@@ -1469,6 +1512,101 @@ plgfamCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
     sprintf( buf, "%d", bmax );
     if (argc > 1)
         Tcl_SetVar( interp, argv[1+2], buf, 0 );
+    else
+        Tcl_AppendResult( interp, buf, (char *) NULL );
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plgfnamCmd
+ *
+ * Processes plgfnam Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plgfnamCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    char fnam[200];
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plgfnam ?fnam?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
+         (!1 && !0 && (argc != (1 + 1))) ||
+         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plgfnam ?fnam?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+/* fnam is for output. */
+
+    plgfnam ( fnam );
+
+    if (argc > 1)
+       Tcl_SetVar( interp, argv[1+0], fnam, 0 );
+    else
+        Tcl_AppendResult( interp, fnam, (char *) NULL );
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plglevelCmd
+ *
+ * Processes plglevel Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plglevelCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    PLINT level;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plglevel ?level?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
+         (!1 && !0 && (argc != (1 + 1))) ||
+         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plglevel ?level?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+/* level is for output. */
+
+    plglevel ( &level );
+
+    sprintf( buf, "%d", level );
+    if (argc > 1)
+        Tcl_SetVar( interp, argv[1+0], buf, 0 );
     else
         Tcl_AppendResult( interp, buf, (char *) NULL );
 
@@ -2184,6 +2322,53 @@ pllabCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
     tlabel = argv[1+2];
 
     pllab ( xlabel, ylabel, tlabel );
+
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * pllightsourceCmd
+ *
+ * Processes pllightsource Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+pllightsourceCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    PLFLT x;
+    PLFLT y;
+    PLFLT z;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "pllightsource x y z", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!0 && 0 && (argc < (1 + 3 - 0))) ||
+         (!0 && !0 && (argc != (3 + 1))) ||
+         ( 0 && (argc != 1) && (argc != (3 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "pllightsource x y z", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    x = atof(argv[1+0]);
+    y = atof(argv[1+1]);
+    z = atof(argv[1+2]);
+
+    pllightsource ( x, y, z );
 
 
     if (errcode != 0) {
@@ -2985,92 +3170,6 @@ plschrCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
- * plscmap0nCmd
- *
- * Processes plscmap0n Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plscmap0nCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    PLINT ncol0;
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plscmap0n ncol0", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!0 && 0 && (argc < (1 + 1 - 0))) ||
-         (!0 && !0 && (argc != (1 + 1))) ||
-         ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plscmap0n ncol0", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    ncol0 = atoi(argv[1+0]);
-
-    plscmap0n ( ncol0 );
-
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
- * plscmap1nCmd
- *
- * Processes plscmap1n Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plscmap1nCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    PLINT ncol1;
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plscmap1n ncol1", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!0 && 0 && (argc < (1 + 1 - 0))) ||
-         (!0 && !0 && (argc != (1 + 1))) ||
-         ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plscmap1n ncol1", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    ncol1 = atoi(argv[1+0]);
-
-    plscmap1n ( ncol1 );
-
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
  * plscmap0Cmd
  *
  * Processes plscmap0 Tcl command.
@@ -3114,6 +3213,49 @@ plscmap0Cmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
     ncol0 = atoi(argv[1+3]);
 
     plscmap0 ( r, g, b, ncol0 );
+
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plscmap0nCmd
+ *
+ * Processes plscmap0n Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plscmap0nCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    PLINT ncol0;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plscmap0n ncol0", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!0 && 0 && (argc < (1 + 1 - 0))) ||
+         (!0 && !0 && (argc != (1 + 1))) ||
+         ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plscmap0n ncol0", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    ncol0 = atoi(argv[1+0]);
+
+    plscmap0n ( ncol0 );
 
 
     if (errcode != 0) {
@@ -3234,6 +3376,49 @@ plscmap1lCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] 
     rev = matrev->idata;
 
     plscmap1l ( itype, npts, intensity, coord1, coord2, coord3, rev );
+
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plscmap1nCmd
+ *
+ * Processes plscmap1n Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plscmap1nCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    PLINT ncol1;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plscmap1n ncol1", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!0 && 0 && (argc < (1 + 1 - 0))) ||
+         (!0 && !0 && (argc != (1 + 1))) ||
+         ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plscmap1n ncol1", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    ncol1 = atoi(argv[1+0]);
+
+    plscmap1n ( ncol1 );
 
 
     if (errcode != 0) {
@@ -3417,53 +3602,6 @@ plsdevCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 
     plsdev ( devnam );
 
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
- * plgdevCmd
- *
- * Processes plgdev Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plgdevCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    char devnam[200];
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plgdev ?devnam?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
-         (!1 && !0 && (argc != (1 + 1))) ||
-         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plgdev ?devnam?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-/* devnam is for output. */
-
-    plgdev ( devnam );
-
-    if (argc > 1)
-       Tcl_SetVar( interp, argv[1+0], devnam, 0 );
-    else
-        Tcl_AppendResult( interp, devnam, (char *) NULL );
 
     if (errcode != 0) {
 	Tcl_AppendResult(interp, errmsg, (char *) NULL);
@@ -3761,54 +3899,6 @@ plsescCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
- * plgescCmd
- *
- * Processes plgesc Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plgescCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    char esc;
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plgesc ?esc?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
-         (!1 && !0 && (argc != (1 + 1))) ||
-         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plgesc ?esc?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-/* esc is for output. */
-
-    plgesc ( &esc );
-
-    sprintf( buf, "%c", esc );
-    if (argc > 1)
-        Tcl_SetVar( interp, argv[1+0], buf, 0 );
-    else
-        Tcl_AppendResult( interp, buf, (char *) NULL );
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
  * plsfamCmd
  *
  * Processes plsfam Tcl command.
@@ -3888,101 +3978,6 @@ plsfnamCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 
     plsfnam ( fnam );
 
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
- * plgfnamCmd
- *
- * Processes plgfnam Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plgfnamCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    char fnam[200];
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plgfnam ?fnam?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
-         (!1 && !0 && (argc != (1 + 1))) ||
-         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plgfnam ?fnam?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-/* fnam is for output. */
-
-    plgfnam ( fnam );
-
-    if (argc > 1)
-       Tcl_SetVar( interp, argv[1+0], fnam, 0 );
-    else
-        Tcl_AppendResult( interp, fnam, (char *) NULL );
-
-    if (errcode != 0) {
-	Tcl_AppendResult(interp, errmsg, (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
- * plglevelCmd
- *
- * Processes plglevel Tcl command.
-\*--------------------------------------------------------------------------*/
-
-static int
-plglevelCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
-{
-    PLINT level;
-
-    errcode = 0; errmsg[0] = '\0';
-
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
-	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plglevel ?level?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    if ( (!1 && 0 && (argc < (1 + 1 - 0))) ||
-         (!1 && !0 && (argc != (1 + 1))) ||
-         ( 1 && (argc != 1) && (argc != (1 + 1))) ) {
-	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plglevel ?level?", "\"",
-			  (char *) NULL);
-	return TCL_ERROR;
-    }
-
-/* level is for output. */
-
-    plglevel ( &level );
-
-    sprintf( buf, "%d", level );
-    if (argc > 1)
-        Tcl_SetVar( interp, argv[1+0], buf, 0 );
-    else
-        Tcl_AppendResult( interp, buf, (char *) NULL );
 
     if (errcode != 0) {
 	Tcl_AppendResult(interp, errmsg, (char *) NULL);
@@ -5017,6 +5012,58 @@ plwindCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 
     plwind ( xmin, xmax, ymin, ymax );
 
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plxormodCmd
+ *
+ * Processes plxormod Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plxormodCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    PLINT mod;
+    PLINT st;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plxormod ?mod st?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!1 && 0 && (argc < (1 + 2 - 0))) ||
+         (!1 && !0 && (argc != (2 + 1))) ||
+         ( 1 && (argc != 1) && (argc != (2 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plxormod ?mod st?", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    mod = atoi(argv[1+0]);
+/* st is for output. */
+
+    plxormod ( mod, &st );
+
+    if (argc == 1)
+        Tcl_AppendResult( interp, " ", (char *) NULL );
+    sprintf( buf, "%d", st );
+    if (argc > 1)
+        Tcl_SetVar( interp, argv[1+1], buf, 0 );
+    else
+        Tcl_AppendResult( interp, buf, (char *) NULL );
 
     if (errcode != 0) {
 	Tcl_AppendResult(interp, errmsg, (char *) NULL);
