@@ -127,7 +127,7 @@ $(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
 html_tar: $(PLPLOTDOC_HTML)-$(VERSION).tar.gz
 $(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
 	   inline.manifest over-under.jpeg
-	mkdir $(PLPLOTDOC_HTML)-$(VERSION)
+	mkdir -p $(PLPLOTDOC_HTML)-$(VERSION)
 	cp -p `$(PERL) included-html-files.pl < $(MAIN_HTML)` $(MAIN_HTML) \
 	   `cat inline.manifest` \
            over-under.jpeg $(PLPLOTDOC_HTML)-$(VERSION) 
