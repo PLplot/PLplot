@@ -134,7 +134,7 @@ c_plbop(void)
 void
 plP_subpInit(void)
 {
-    PLFLT scale, size_chr, size_sym, size_maj, size_min;
+    PLFLT scale, size_chr, size_sym, size_maj, size_min, theta, rat;
 
 /* Subpage checks */
 
@@ -157,6 +157,16 @@ plP_subpInit(void)
     scale = 0.5 *
 	((plsc->phyxma - plsc->phyxmi) / plsc->xpmm +
 	 (plsc->phyyma - plsc->phyymi) / plsc->ypmm) / 200.0;
+
+    /* Take account of scaling caused by change of orientation */
+    if (plsc->difilt && PLDI_ORI) {
+      theta = 0.5*M_PI*plsc->diorot;
+      rat = ( (plsc->phyxma - plsc->phyxmi) / plsc->xpmm ) / 
+	( (plsc->phyyma - plsc->phyymi) / plsc->ypmm );
+      rat = MAX(rat,1.0/rat);
+      rat = fabs(cos(theta)) + rat*fabs(sin(theta));
+      scale /= rat;
+    }
 
     if (plsc->nsuby > 1)
 	scale /= sqrt((double) plsc->nsuby);
