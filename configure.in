@@ -464,6 +464,21 @@ if test "$enable_itcl" = yes; then
    AC_SUBST(ITCLLIBCMD)
 fi
 
+###sysloc.in doesn't define all itk related symbols so this stanza changed
+###accordingly
+if test "$enable_itk" = yes; then
+#   if test "$ITKINCDIR" != default; then
+#      ITKINCCMD="-I"$ITKINCDIR
+#      AC_SUBST(ITKINCCMD)
+#   fi
+   if test "$ITKLIBDIR" = default; then
+      ITKLIBCMD=$ITKLIBSTR
+   else
+      ITKLIBCMD="-L "$ITKLIBDIR" "$ITKLIBSTR
+   fi
+   AC_SUBST(ITKLIBCMD)
+fi
+
 ### Double vs single precison
 
 if test "$with_double" = yes; then

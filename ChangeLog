@@ -1,3 +1,18 @@
+2002-11-30  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* Finish AT libplplottcltk.so* build when itcl and tk are enabled.
+
+2002-11-29  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* Finish AT tcl binding.  These are only small fairly
+	  non-consequential refinements that I did while trying to debug the
+	  extended search problem (which had a simple solution which I will
+	  discuss on list).
+
+	* Prepare for the AT change in bindings/tk and bindings/tk-x-plat 
+	  by dropping "plplot/" from the #include statements in the 
+	  source files.
+	
 2002-11-28  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* AT build of libplplottcl (including a substantial reorganization
