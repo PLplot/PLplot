@@ -23,6 +23,10 @@ void plD_tidy_tk		(PLStream *);
 void plD_state_tk		(PLStream *, PLINT);
 void plD_esc_tk			(PLStream *, PLINT, void *);
 
+void plD_init_pstex		(PLStream *);
+void plD_esc_pstex			(PLStream *, PLINT, void *);
+void plD_tidy_pstex		(PLStream *);
+
 void plD_init_xw		(PLStream *);
 void plD_line_xw		(PLStream *, short, short, short, short);
 void plD_polyline_xw		(PLStream *, short *, short *, PLINT);
