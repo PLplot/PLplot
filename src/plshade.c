@@ -219,11 +219,14 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
       init_width = plsc->width;
       plcol0(cont_color);
       plwid(cont_width);
-      if(pltr == NULL) {
+      if(pltr && pltr_data) {
+	 plcont(a, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data);
+      }
+      else {
 	 /* For this case use the same interpretation that occurs internally
 	  * for plshade.  That is set up x and y grids that map from the
 	  * index ranges to xmin, xmax, ymin, ymax, and use those grids
-	  * for the plfcont call.
+	  * for the plcont call.
 	  */
 	 PLcGrid  cgrid1;
 	 PLFLT *x, *y;
@@ -246,8 +249,6 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 free(x);
 	 free(y);
       }
-      else
-	plcont(a, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data);
       plcol0(init_color);
       plwid(init_width);
    }
