@@ -1,7 +1,7 @@
 import qt
 from qt import QWidget 
-import pl
-import pyqt_pl
+import plplot
+import plplot_widget
 from Numeric import array
 
 class qplplot(QWidget):
@@ -13,7 +13,7 @@ class qplplot(QWidget):
       self.is_created=0
       self.count=1
       print " ??????"
-      self.ipls=pyqt_pl.plpartialInitXw()
+      self.ipls=plplot_widget.plpartialInitXw()
       print " ??????"
       print  self.ipls     
       self.isactive=0
@@ -22,7 +22,7 @@ class qplplot(QWidget):
       print attr
       attr="pl"+attr
       print "pl+++",attr
-      self.__attr = getattr(pl,attr)
+      self.__attr = getattr(plplot,attr)
       if(self.isactive==0):
         return self.message
       print "AAA",self.__attr ,"AAA"
@@ -31,14 +31,14 @@ class qplplot(QWidget):
    def __wrap(self, *args):
       print " wrap "
       
-      if(hasattr(pl,"semaphore")):
-       if(pl.owner is not self): 
-           pl.semaphore.acquire()
-           pl.owner=self
+      if(hasattr(plplot,"semaphore")):
+       if(plplot.owner is not self): 
+           plplot.semaphore.acquire()
+           plplot.owner=self
       self.set_stream()
 #      self.__attr(*args)
-      if(hasattr(pl,"semaphore")):
-       pl.semaphore.release()
+      if(hasattr(plplot,"semaphore")):
+       plplot.semaphore.release()
 
    def resize(self, w,h):
       qt.QWidget.resize(self,w,h)
@@ -58,70 +58,70 @@ class qplplot(QWidget):
       
    def mouseMoveEvent (self,  qmev ) :
          print "MOVE IN PYTHON"
-         if(hasattr(pl,"semaphore")):
-      	  if(pl.owner is not self): 
-            pl.semaphore.acquire()
-            pl.owner=self
+         if(hasattr(plplot,"semaphore")):
+      	  if(plplot.owner is not self): 
+            plplot.semaphore.acquire()
+            plplot.owner=self
          self.set_stream()
 
 
          if(qmev.state()==1):
            x=qmev.x()
            y=qmev.y()
-           (xa,ya)=pl.plPixel2U(self.xstart,self.ystart )
-           (xb,yb)=pl.plPixel2U(x, y)
-           pl.plmoveimage(xb-xa,yb-ya)
-           pl.plNoBufferNoPixmap()
-           pl.plRestoreWrite2BufferPixmap()
+           (xa,ya)=plplot.plPixel2U(self.xstart,self.ystart )
+           (xb,yb)=plplot.plPixel2U(x, y)
+           plplot.plmoveimage(xb-xa,yb-ya)
+           plplot.plNoBufferNoPixmap()
+           plplot.plRestoreWrite2BufferPixmap()
 
             
          else:
-           pl.plNoBufferNoPixmap()
+           plplot.plNoBufferNoPixmap()
 
-           (xu,yu)=pl.plPixel2U(qmev.x(), qmev.y())
-           (xmin,xmax,ymin,ymax)=pl.plPgvpw()
-           pl.plline( [xmin,xmax],[yu,yu])
-           pl.plline( [xu,xu],[ymin, ymax])
-
-         
-           pl.plRestoreWrite2BufferPixmap()
-
+           (xu,yu)=plplot.plPixel2U(qmev.x(), qmev.y())
+           (xmin,xmax,ymin,ymax)=plplot.plPgvpw()
+           plplot.plline( [xmin,xmax],[yu,yu])
+           plplot.plline( [xu,xu],[ymin, ymax])
 
          
-         if(hasattr(pl,"semaphore")):
-           pl.semaphore.release()
+           plplot.plRestoreWrite2BufferPixmap()
+
+
+         
+         if(hasattr(plplot,"semaphore")):
+           plplot.semaphore.release()
 
         
    def set_stream(self):
-      pl.plsstrm(self.ipls)
+      plplot.plsstrm(self.ipls)
 
    def resizeQUIET(self):
-      if(hasattr(pl,"semaphore")):
-        if(pl.owner is not self): 
-           pl.semaphore.acquire()
-           pl.owner=self
-      pl.plsstrm(self.ipls)
-      pyqt_pl.plresize(self.width(), self.height())
-      if(hasattr(pl,"semaphore")):
-        pl.semaphore.release()
+      if(hasattr(plplot,"semaphore")):
+        if(plplot.owner is not self): 
+           plplot.semaphore.acquire()
+           plplot.owner=self
+      plplot.plsstrm(self.ipls)
+      plplot_widget.plresize(self.width(), self.height())
+      if(hasattr(plplot,"semaphore")):
+        plplot.semaphore.release()
 
    def exposeQUIET(self):
-      if(hasattr(pl,"semaphore")):
-        if(pl.owner is not self): 
-           pl.semaphore.acquire()
-           pl.owner=self
-      pl.plsstrm(self.ipls)
-      pyqt_pl.plexpose()
-      if(hasattr(pl,"semaphore")):
-        pl.semaphore.release()
+      if(hasattr(plplot,"semaphore")):
+        if(plplot.owner is not self): 
+           plplot.semaphore.acquire()
+           plplot.owner=self
+      plplot.plsstrm(self.ipls)
+      plplot_widget.plexpose()
+      if(hasattr(plplot,"semaphore")):
+        plplot.semaphore.release()
 
    def eventFilter(self,ob,ev):
 
-      if(hasattr(pl,"semaphore")):
-        if(pl.owner is not self): 
-           pl.semaphore.acquire()
-           pl.owner=self
-      pl.plsstrm(self.ipls)
+      if(hasattr(plplot,"semaphore")):
+        if(plplot.owner is not self): 
+           plplot.semaphore.acquire()
+           plplot.owner=self
+      plplot.plsstrm(self.ipls)
 
       print " intercettato event ",  ev.type() 
       
@@ -133,7 +133,7 @@ class qplplot(QWidget):
       if(self.is_created):
         print " EVENTO = ",ev.type() , " ", qt.QEvent.Resize
         if(ev.type()==qt.QEvent.Paint):
-	  pyqt_pl.plexpose()
+	  plplot_widget.plexpose()
           timer =  qt.QTimer( self )
 	  self.connect( timer, qt.SIGNAL("timeout()"), self.exposeQUIET)
 	  timer.start( 0, 1)
@@ -144,23 +144,23 @@ class qplplot(QWidget):
           return 1
         else:
           if(ev.type()==12) :
-	   pyqt_pl.plexpose();
-      if(hasattr(pl,"semaphore")):
-        pl.semaphore.release()
+	   plplot_widget.plexpose();
+      if(hasattr(plplot,"semaphore")):
+        plplot.semaphore.release()
   
       return 0
 
    def Init(self):
     print " init  \n"
 
-    if(hasattr(pl,"semaphore")):
-      if(pl.owner is not self): 
-           pl.semaphore.acquire()
-           pl.owner=self
-    pl.plsdev("xwin")
-    pl.plsxwin(self.winId())
-    pl.plspause(0)
-    pl.plinit()
-    pl.plbop()
-    if(hasattr(pl,"semaphore")):
-     pl.semaphore.release()
+    if(hasattr(plplot,"semaphore")):
+      if(plplot.owner is not self): 
+           plplot.semaphore.acquire()
+           plplot.owner=self
+    plplot.plsdev("xwin")
+    plplot.plsxwin(self.winId())
+    plplot.plspause(0)
+    plplot.plinit()
+    plplot.plbop()
+    if(hasattr(plplot,"semaphore")):
+     plplot.semaphore.release()

@@ -14,8 +14,6 @@ sys.path.insert (0, module_dir)
 
 from qt import *
 from Numeric import *
-from pl import *
-import pl
 import math
 import qplplot
 from  qt import *
@@ -86,8 +84,8 @@ class  MenuExample(QWidget):
          self.mle.setText(self.command)
 
 
-#pl.semaphore=threading.Semaphore()
-#pl.owner=None
+#plplot.semaphore=threading.Semaphore()
+#plplot.owner=None
 
 a = QApplication(sys.argv)
 
