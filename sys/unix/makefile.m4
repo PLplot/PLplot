@@ -208,7 +208,7 @@ PLLIB_LDC	= $(PLLIB_C)
 
 # Enable X driver by default if a Unix system.
 
-if_unix({define({XWIN})})
+if_unix({define({XWIN},)})
 
 CFLAGS_MOTIF = -I/usr/{include}/Motif1.1
 
@@ -332,8 +332,8 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-CFLAGS_MOTIF = -I/usr/{include}/Motif1.1 -D_HPUX_SOURCE
-LIB_XWIN = -L/usr/lib/X11 -lX11
+CFLAGS_MOTIF = -I/usr/{include}/Motif1.1 #-D_HPUX_SOURCE
+LIB_XWIN = -L/usr/lib/X11R4 -lX11
 LIB_MOTIF = -L/usr/lib/Motif1.1 -lXm -L/usr/lib/X11R4 -lXt -lPW
 
 LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
