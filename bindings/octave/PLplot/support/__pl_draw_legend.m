@@ -65,7 +65,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
 
     if(n>2) ## FIXME : sometimes n=1, which cause a division by zero
     for i = 1:n
-      plshade(z, '0', minx, maxx, miny, maxy, 
+      plshade(z, 0, minx, maxx, miny, maxy, 
 	      clevel(i), clevel(i+1),
 	      1, (i-1) / (n-1), 1,
 	      min_color, min_width, max_color, max_width, 1, tr);

@@ -130,7 +130,7 @@ function shade(x, y, z, levels, cont )
   plpsty(0);
   if (1) ## plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
     for i = 1:n
-      plshade(z', '0', minx, maxx, miny, maxy, 
+      plshade(z', 0, minx, maxx, miny, maxy, 
 	      clevel(i), clevel(i+1),
 	      1, (i-1) / (n-1), 1,
 	      cont_color, cont_width, max_color, max_width, 1, tr);
