@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.46  1993/11/15 08:34:07  mjl
+ * Revision 1.47  1993/11/19 07:32:40  mjl
+ * Added Convex support.
+ *
+ * Revision 1.46  1993/11/15  08:34:07  mjl
  * Prototype section completely reworked.  Now each prototype taken directly
  * from the definition (so includes variable names) and is accompanied by a
  * brief description of what the function does.  This makes the header file
@@ -183,6 +186,7 @@ plplot (not ANSI-compliant).  Time to get a new one.
     defined(__hpux) ||				/* HP/UX */             \
     defined(sun) ||				/* SUN */               \
     defined(CRAY) ||				/* Cray */              \
+    defined(__convexc__) ||			/* CONVEX */             
     (defined(__alpha) && defined(__osf__))	/* DEC Alpha AXP/OSF */
 
 #ifndef __unix
@@ -909,6 +913,11 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
 
 void
 c_plreplot(void);
+
+/* Set line color by red, green, blue from  0. to 1. */
+
+void
+c_plrgb(PLFLT r, PLFLT g, PLFLT b);
 
 /* Set line color by 8 bit RGB values. */
 
