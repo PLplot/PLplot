@@ -41,7 +41,10 @@ javafiles = \
 	$(top_srcdir)/examples/java/x19.java \
 	$(top_srcdir)/examples/java/x22.java
 
-javademos = $(top_srcdir)/examples/java/README.javademos $(javafiles) Makefile.examples
+javademos = \
+	$(top_srcdir)/examples/java/README.javademos \
+	$(javafiles) \
+	Makefile.examples
 
 # These are for make check compilation of examples.
 PLPLOT_CLASSPATH= `pwd`/$(top_builddir)/bindings/java
@@ -110,6 +113,6 @@ CLEANFILES = $(example_classes) plplot.jar
 clean-local:
 	rm -rf plplot
 
-### FIXME: Brute force inclusion in dist tarball.  The files below may
-### be treated in a different way for installation [RL, 2003-03-06]
-EXTRA_DIST = $(javademos)
+EXTRA_DIST = \
+	$(top_srcdir)/examples/java/README.javademos \
+	$(javafiles)
