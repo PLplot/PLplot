@@ -1,0 +1,140 @@
+C      $Id$
+C      Vector plot demo.
+C
+C      Copyright (C) 2004  Alan W. Irwin
+C
+C      This file is part of PLplot.
+C
+C      PLplot is free software; you can redistribute it and/or modify
+C      it under the terms of the GNU General Library Public License as
+C      published by the Free Software Foundation; either version 2 of the
+C      License, or (at your option) any later version.
+C
+C      PLplot is distributed in the hope that it will be useful,
+C      but WITHOUT ANY WARRANTY; without even the implied warranty of
+C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C      GNU Library General Public License for more details.
+C
+C      You should have received a copy of the GNU Library General Public
+C      License along with PLplot; if not, write to the Free Software
+C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+C      Does several contour plots using different coordinate mappings.
+      implicit none
+      real*8 PI
+      parameter (PI = 3.1415926535897932384d0)
+      integer i, j, nx, ny, npts
+      parameter (nx=10, ny=10)
+
+      real*8 u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+
+      real*8 dx, dy, dr, xmin, xmax, ymin, ymax
+      real*8 xx, yy, r, theta, scaling
+
+      integer narr, fill
+      parameter (narr=6)
+      real*8 arrow_x(narr),arrow_y(narr),
+     &	arrow2_x(narr),arrow2_y(narr)
+
+      data arrow_x/-0.5d0, 0.5d0, 0.3d0, 0.5d0, 0.3d0, 0.5d0/
+      data arrow_y/0.d0, 0.d0, 0.2d0, 0.d0, -0.2d0, 0.d0/
+      data arrow2_x/-0.5d0, 0.3d0, 0.3d0, 0.5d0, 0.3d0, 0.3d0/
+      data arrow2_y/0.d0, 0.d0, 0.2d0, 0.d0, -0.2d0, 0.d0/
+
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
+      dx = 1.0d0
+      dy = 1.0d0
+
+      npts = nx*ny
+      xmin = -nx/2.0d0*dx
+      xmax = nx/2.0d0*dx
+      ymin = -ny/2.0d0*dy
+      ymax = ny/2.0d0*dy
+
+C      Calculate the data matrices.
+      do i=1,nx
+        xx = dble(i-1-0.5*nx+0.5)*dx
+        do j=1,ny
+          yy = dble(j-1-0.5*ny+0.5)*dy
+	  xg(i,j) = xx
+	  yg(i,j) = yy
+          u(i,j) = yy
+          v(i,j) = -xx
+        enddo
+      enddo
+      print*,xg(nx/2,ny/2),yg(nx/2,ny/2)
+
+      call plinit
+
+C      Plot vectors using default arrow style
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
+      call pllab('(x)', '(y)', 
+     &	'#frPLplot Example 22 - vector plot')
+      call plcol0(2)
+C      Plot using auto scaling
+      scaling = 0.0d0
+      call plvec2(u,v,nx,ny,scaling,xg,yg)
+      call plcol0(1)
+
+      fill = 0
+
+C      Create user defined arrow style and plot vectors using new style
+      call plsvect(arrow_x, arrow_y, narr, fill)
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
+      call pllab('(x)', '(y)', 
+     &	'#frPLplot Example 22 - user defined arrow')
+      call plcol0(2)
+C      Plot using 0.5 * auto scaling
+      scaling = -0.5
+      call plvec2(u,v,nx,ny,scaling,xg,yg)
+      call plcol0(1)
+
+      fill = 1
+
+C      Create user defined arrow style and plot vectors using new style
+      call plsvect(arrow2_x, arrow2_y, narr, fill)
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
+      call pllab('(x)', '(y)', 
+     &	'#frPLplot Example 22 - filled arrow')
+      call plcol0(2)
+C      Plot using user supplied scaling
+      scaling = 0.3
+      call plvec2(u,v,nx,ny,scaling,xg,yg)
+      call plcol0(1)
+
+C      Example of a polar plot
+
+C      Calculate the data matrices.
+      dr = 0.5
+
+      do i=1,nx
+        r = dble((i-1)*dr)
+        do j=1,ny
+          theta = dble(2.0d0*PI/dble(ny-1)*dble(j-1))
+	  xg(i,j) = r*cos(theta)
+	  yg(i,j) = r*sin(theta)
+          u(i,j) = yg(i,j)
+          v(i,j) = -xg(i,j)
+        enddo
+      enddo
+
+      xmin = -nx*dr
+      xmax = nx*dr
+      ymin = -ny*dr
+      ymax = ny*dr
+
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
+      call pllab('(x)', '(y)', 
+     &	'#frPLplot Example 22 - polar vector plot')
+      call plcol0(2)
+      scaling = 0.5
+      call plvec2(u,v,nx,ny,scaling,xg,yg)
+      call plcol0(1)
+
+      call plend
+      
+      end
