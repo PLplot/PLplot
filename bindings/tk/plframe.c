@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.50  1995/06/01 21:23:10  mjl
+ * Revision 1.51  1995/06/02 20:32:58  mjl
+ * Fixed obscure bug that was causing the plframe to not be properly
+ * redisplayed after a zoom in some cases.
+ *
+ * Revision 1.50  1995/06/01  21:23:10  mjl
  * Changed header file inclusions.
  *
  * Revision 1.49  1995/05/26  20:13:01  mjl
@@ -1220,7 +1224,7 @@ PlFrameInit(ClientData clientData)
 
 /* Set up window parameters and arrange for window to be refreshed */
 
-    plFramePtr->flags &= REFRESH_PENDING;
+    plFramePtr->flags |= REFRESH_PENDING;
     plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
 
 /* First-time initialization */
@@ -1239,9 +1243,6 @@ PlFrameInit(ClientData clientData)
 	plFramePtr->tkwin_initted = 1;
 	plFramePtr->prevWidth = Tk_Width(tkwin);
 	plFramePtr->prevHeight = Tk_Height(tkwin);
-    }
-    else {
-	plFramePtr->flags |= RESIZE_PENDING;
     }
 
 /* Draw plframe */
@@ -1337,7 +1338,7 @@ DisplayPlFrame(ClientData clientData)
     }
     plFramePtr->flags &= ~(UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR);
 
-/* If not mapped yet, return and cancel pending refresh */
+/* If not mapped yet, just return and cancel pending refresh */
 
     if ((plFramePtr->tkwin == NULL) || ! Tk_IsMapped(tkwin)) {
 	plFramePtr->flags &= ~REFRESH_PENDING;
