@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.42  1995/01/13 23:20:44  mjl
+ * Revision 1.43  1995/03/16 23:07:26  mjl
+ * Implemented graphic crosshairs, which are turned on or off using the
+ * "-xhairs <boolean>" widget configure command.  This inserts an event handler
+ * to draw and update the graphic crosshairs on cursor motion, as well as
+ * intercepting cursor key movements and moving the drawn cursor appropriately.
+ * The expose event handling was broken off into a separate handler and changed
+ * to redraw the graphic crosshairs if necessary.
+ *
+ * Revision 1.42  1995/01/13  23:20:44  mjl
  * Changed widget commands to set/get the cmap1 palette to handle the new
  * "rev" cmap1 control point attribute.
  *
@@ -16,77 +24,47 @@
  * Revision 1.40  1994/09/23  07:39:14  mjl
  * Incorrect order of calls to freeing malloc'ed memory at exit fixed, found
  * by Brent Townshend.
- *
- * Revision 1.39  1994/07/25  06:44:22  mjl
- * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
- *
- * Revision 1.38  1994/07/19  22:31:41  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
- * inclusion changed to /not/ use a search path so that it will work better
- * with makedepend.
- *
- * Revision 1.37  1994/07/01  22:38:48  mjl
- * Minor modification required by new X resource allocation scheme.
- *
- * Revision 1.36  1994/07/01  20:37:21  mjl
- * Force an "update" when widget is initially mapped, but before startup
- * procedure is invoked.  Ensures that "." has been mapped and that X is
- * in a sane state before continuing (otherwise new toplevels containing
- * plframes can cause a core dump).  Also some cruft elimination.
- *
- * Revision 1.35  1994/06/30  18:40:15  mjl
- * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
- *
- * Revision 1.34  1994/06/23  22:32:47  mjl
- * Split off bulk of Tcl API in to separate file, where it can be used
- * more flexibly.
- *
- * Revision 1.33  1994/06/16  19:03:18  mjl
- * Changed "cmd plline" and "cmd plpoin" widget commands to use new Matrix
- * notation/capabilities/etc.
- *
- * Revision 1.32  1994/06/15  17:21:32  furnish
- * Fix cleanup so that killing a plframe doesn't core the app.
- *
- * Revision 1.31  1994/06/10  20:46:10  furnish
- * Mirror plpoin.  More of the API still needs doing.
- *
- * Revision 1.30  1994/06/09  20:15:30  mjl
- * Changed plplot direct widget commands ("<widget> cmd <command> <args>") to
- * begin with a "pl", e.g. scol<?> to plscol<?>, etc.  To make going between
- * the C and Tcl API's as natural as possible.  Added new direct widget
- * commands plenv, plcol, pllab, and plline.  These were formerly in
- * tkshell.c; having them here makes it trivial to associate independent
- * streams with different widgets without user intervention.  The call to
- * plinit() now done automatically when the widget is first mapped, and
- * the "<widget> cmd init" command no longer supported.  Some reorganization.
  */
 
-/*----------------------------------------------------------------------*\
- * 
- * plframe.c --
- *
- *	This module implements "plframe" widgets for the Tk toolkit.
- *	These are frames that have extra logic to allow them to be
- *	interfaced with the PLplot X driver.  These are then drawn
- *	into and respond to keyboard and mouse events.
- *
- * Maurice LeBrun
- * IFS, University of Texas at Austin
- * 30-Apr-1993
- *
- * Based upon tkFrame.c from the TK 3.2 distribution:
- *
- * Copyright 1990 Regents of the University of California.
- * Permission to use, copy, modify, and distribute this
- * software and its documentation for any purpose and without
- * fee is hereby granted, provided that the above copyright
- * notice appear in all copies.  The University of California
- * makes no representations about the suitability of this
- * software for any purpose.  It is provided "as is" without
- * express or implied warranty.
-\*----------------------------------------------------------------------*/
+/*
+    plframe.c
+
+    Copyright 1993, 1994, 1995
+    Maurice LeBrun			mjl@dino.ph.utexas.edu
+    Institute for Fusion Studies	University of Texas at Austin
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    Based upon tkFrame.c from the TK 3.2 distribution:
+   
+    Copyright 1990 Regents of the University of California.
+    Permission to use, copy, modify, and distribute this
+    software and its documentation for any purpose and without
+    fee is hereby granted, provided that the above copyright
+    notice appear in all copies.  The University of California
+    makes no representations about the suitability of this
+    software for any purpose.  It is provided "as is" without
+    express or implied warranty.
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	
+    This module implements "plframe" widgets for the Tk toolkit.  These are
+    frames that have extra logic to allow them to be interfaced with the
+    PLplot X driver.  These are then drawn into and respond to keyboard and
+    mouse events.
+*/
 
 #include "plserver.h"
 #include "plplotX.h"
@@ -120,7 +98,7 @@ extern int plplot_ccmap;
 
 typedef struct {
 
-    /* This is stuff taken from tkFrame.c */
+/* This is stuff taken from tkFrame.c */
 
     Tk_Window tkwin;		/* Window that embodies the frame.  NULL
 				 * means that the window has been destroyed
@@ -147,9 +125,9 @@ typedef struct {
     int flags;			/* Various flags;  see below for
 				 * definitions. */
 
-    /* These are new to plframe widgets */
+/* These are new to plframe widgets */
 
-    /* control stuff */
+/* control stuff */
 
     int tkwin_initted;		/* Set first time widget is mapped */
     PLStream *pls;		/* PLplot stream pointer */
@@ -160,12 +138,13 @@ typedef struct {
     XColor *bgColor;		/* Background color */
     char *plpr_cmd;		/* Holds print command name.  Malloc'ed */
 
-    /* Used to distinguish resize from expose events */
+/* Used to handle resize and expose events */
 
+    PLDisplay pldis;		/* Info about the display window */
     int prevWidth;		/* Previous window width */
     int prevHeight;		/* Previous window height */
 
-    /* Support for save operations */
+/* Support for save operations */
 
     char *SaveFnam;		/* File name we are currently saving to.
 				   Malloc'ed. */
@@ -174,24 +153,31 @@ typedef struct {
     char **devName;		/* Keyword names of file-oriented devices.
 				 * Malloc'ed. */
 
-    /* Used in selecting & modifying plot or device area */
+/* Used in selecting & modifying plot or device area */
 
     GC xorGC;			/* GC used for rubber-band drawing */
     XPoint pts[5];		/* Points for rubber-band drawing */
     int continue_draw;		/* Set when doing rubber-band draws */
-    Cursor draw_cursor;		/* cursor used for drawing */
+    Cursor xhair_cursor;	/* cursor used for drawing */
     PLFLT xl, xr, yl, yr;	/* Bounds on plot viewing area */
-    char *yScrollCmd;		/* Command prefix for communicating with
-				 * vertical scrollbar.  NULL means no
-				 * command to issue.  Malloc'ed. */
     char *xScrollCmd;		/* Command prefix for communicating with
 				 * horizontal scrollbar.  NULL means no
 				 * command to issue.  Malloc'ed. */
+    char *yScrollCmd;		/* Command prefix for communicating with
+				 * vertical scrollbar.  NULL means no
+				 * command to issue.  Malloc'ed. */
 
-    /* Used for flashing bop or eop condition */
+/* Used for flashing bop or eop condition */
 
     char *bopCmd;		/* Proc to call at bop */
     char *eopCmd;		/* Proc to call at eop */
+
+/* Used for drawing graphic crosshairs */
+
+    int xhairs;			/* Configuration option to turn on xhairs */
+    int drawing_xhairs;		/* Set if we are currently drawing xhairs */
+    XPoint xhair_x[2];		/* Points for horizontal xhair line */
+    XPoint xhair_y[2];		/* Points for vertical xhair line */
 
 } PlFrame;
 
@@ -201,7 +187,6 @@ typedef struct {
  * REFRESH_PENDING:		Non-zero means a DoWhenIdle handler
  *				has already been queued to refresh
  *				this window.
- * CLEAR_NEEDED;		Need to clear the window when redrawing.
  * RESIZE_PENDING;		Used to reschedule resize events
  * REDRAW_PENDING;		Used to redraw contents of plot buffer
  * UPDATE_V_SCROLLBAR:		Non-zero means vertical scrollbar needs
@@ -211,15 +196,12 @@ typedef struct {
  */
 
 #define REFRESH_PENDING		1
-#define CLEAR_NEEDED		2
-#define RESIZE_PENDING		4
-#define REDRAW_PENDING		8
-#define UPDATE_V_SCROLLBAR	16
-#define UPDATE_H_SCROLLBAR	32
+#define RESIZE_PENDING		2
+#define REDRAW_PENDING		4
+#define UPDATE_V_SCROLLBAR	8
+#define UPDATE_H_SCROLLBAR	16
 
-/*
- * Defaults for plframes:
- */
+/* Defaults for plframes: */
 
 #define DEF_PLFRAME_BG_COLOR		"Black"
 #define DEF_PLFRAME_BG_MONO		"White"
@@ -265,6 +247,8 @@ static Tk_ConfigSpec configSpecs[] = {
 	DEF_PLFRAME_RELIEF, Tk_Offset(PlFrame, relief), 0},
     {TK_CONFIG_PIXELS, "-width", "width", "Width",
 	DEF_PLFRAME_WIDTH, Tk_Offset(PlFrame, width), 0},
+    {TK_CONFIG_BOOLEAN, "-xhairs", (char *) NULL, (char *) NULL,
+	"0", Tk_Offset(PlFrame, xhairs), TK_CONFIG_DONT_SET_DEFAULT},
     {TK_CONFIG_STRING, "-xscrollcommand", "xScrollCommand", "ScrollCommand",
 	(char *) NULL, Tk_Offset(PlFrame, xScrollCmd), TK_CONFIG_NULL_OK},
     {TK_CONFIG_STRING, "-yscrollcommand", "yScrollCommand", "ScrollCommand",
@@ -273,9 +257,7 @@ static Tk_ConfigSpec configSpecs[] = {
 	(char *) NULL, 0, 0}
 };
 
-/*
- * Forward declarations for procedures defined later in this file:
- */
+/* Forward declarations for procedures defined later in this file: */
 
 /* Externals */
 
@@ -286,7 +268,10 @@ int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
 static void  DestroyPlFrame	(ClientData);
 static void  DisplayPlFrame	(ClientData);
 static void  PlFrameInit	(ClientData);
-static void  PlFrameEventProc	(ClientData, XEvent *);
+static void  PlFrameConfigureEH	(ClientData, XEvent *);
+static void  PlFrameExposeEH	(ClientData, XEvent *);
+static void  PlFrameMotionEH	(ClientData, register XEvent *);
+static void  PlFrameKeyEH	(ClientData, register XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
 static int   ReadData		(ClientData, int);
 static void  Install_cmap	(PlFrame *plFramePtr);
@@ -306,6 +291,13 @@ static int   Save		(Tcl_Interp *, PlFrame *, int, char **);
 static int   View		(Tcl_Interp *, PlFrame *, int, char **);
 static int   xScroll		(Tcl_Interp *, PlFrame *, int, char **);
 static int   yScroll		(Tcl_Interp *, PlFrame *, int, char **);
+
+/* Routines for manipulating graphic crosshairs */
+
+static void  CreateXhairs	(PlFrame *);
+static void  DestroyXhairs	(PlFrame *);
+static void  DrawXhairs		(PlFrame *, int, int);
+static void  UpdateXhairs	(PlFrame *);
 
 /* Utility routines */
 
@@ -349,9 +341,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
 
-    /*
-     * Create the window.
-     */
+/* Create the window. */
 
     new = Tk_CreateWindowFromPath(interp, tkwin, argv[1], (char *) NULL);
     if (new == NULL) {
@@ -366,7 +356,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->border = NULL;
     plFramePtr->geometry = NULL;
     plFramePtr->cursor = None;
-    plFramePtr->draw_cursor = None;
+    plFramePtr->xhair_cursor = None;
     plFramePtr->flags = 0;
     plFramePtr->prevWidth = Tk_Width(plFramePtr->tkwin);
     plFramePtr->prevHeight = Tk_Height(plFramePtr->tkwin);
@@ -378,8 +368,10 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->plpr_cmd = NULL;
     plFramePtr->bopCmd = NULL;
     plFramePtr->eopCmd = NULL;
-    plFramePtr->yScrollCmd = NULL;
+    plFramePtr->xhairs = 0;
+    plFramePtr->drawing_xhairs = 0;
     plFramePtr->xScrollCmd = NULL;
+    plFramePtr->yScrollCmd = NULL;
     plFramePtr->xl = 0.;
     plFramePtr->yl = 0.;
     plFramePtr->xr = 1.;
@@ -399,7 +391,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Set up stuff for rubber-band drawing */
 
-    plFramePtr->draw_cursor =
+    plFramePtr->xhair_cursor =
 	Tk_GetCursor(plFramePtr->interp, plFramePtr->tkwin, "crosshair");
 
 /* Partially initialize X driver. */
@@ -419,8 +411,12 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 /* Start up event handlers and other good stuff */
 
     Tk_SetClass(new, "plframe");
-    Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask|StructureNotifyMask,
-			  PlFrameEventProc, (ClientData) plFramePtr);
+
+    Tk_CreateEventHandler(plFramePtr->tkwin, StructureNotifyMask,
+			  PlFrameConfigureEH, (ClientData) plFramePtr);
+
+    Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask,
+			  PlFrameExposeEH, (ClientData) plFramePtr);
 
     Tcl_CreateCommand(interp, Tk_PathName(plFramePtr->tkwin),
 	    PlFrameWidgetCmd, (ClientData) plFramePtr, (void (*)()) NULL);
@@ -658,8 +654,8 @@ DestroyPlFrame(ClientData clientData)
     if (plFramePtr->cursor != None) {
 	Tk_FreeCursor(plFramePtr->display, plFramePtr->cursor);
     }
-    if (plFramePtr->draw_cursor != None) {
-	Tk_FreeCursor(plFramePtr->display, plFramePtr->draw_cursor);
+    if (plFramePtr->xhair_cursor != None) {
+	Tk_FreeCursor(plFramePtr->display, plFramePtr->xhair_cursor);
     }
     if (plFramePtr->xorGC != NULL) {
 	Tk_FreeGC(plFramePtr->display, plFramePtr->xorGC);
@@ -699,39 +695,28 @@ DestroyPlFrame(ClientData clientData)
 /*
  *---------------------------------------------------------------------------
  *
- * PlFrameEventProc --
+ * PlFrameConfigureEH --
  *
- *	Invoked by the Tk dispatcher on exposes and structure
- *	changes to a plframe. 
+ *	Invoked by the Tk dispatcher on structure changes to a plframe. 
  *
  * Results:
  *	None.
  *
  * Side effects:
  *	When the window gets deleted, internal structures get cleaned up.
- *	When it gets exposed, it is redisplayed.
+ *	When it gets resized, it is redrawn.
  *
  *---------------------------------------------------------------------------
  */
 
 static void
-PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
+PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 
-    dbug_enter("PlFrameEventProc");
+    dbug_enter("PlFrameConfigureEH");
 
     switch (eventPtr->type) {
-    case Expose:
-	if (eventPtr->xexpose.count == 0) {
-	    if ((plFramePtr->tkwin != NULL) &&
-		!(plFramePtr->flags & REFRESH_PENDING)) {
-
-		Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
-		plFramePtr->flags |= REFRESH_PENDING;
-	    }
-	}
-	break;
 
     case ConfigureNotify:
 	plFramePtr->flags |= RESIZE_PENDING;
@@ -758,9 +743,10 @@ PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
 	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
 	}
 
-/* For some strange reason, "." must be mapped or PlFrameInit will die */
-/* (Note: mapped & withdrawn or mapped in the withdrawn state is OK */
-/* Issuing an update fixes this.  I'd love to know why this occurs. */
+    /* For some reason, "." must be mapped or PlFrameInit will die (Note:
+     * mapped & withdrawn or mapped in the withdrawn state is OK). Issuing
+     * an update fixes this.  I'd love to know why this occurs.  
+     */
 
 	if ( ! plFramePtr->tkwin_initted) {
 	    Tcl_VarEval(plFramePtr->interp, "update", (char *) NULL);
@@ -768,6 +754,321 @@ PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
 	Tk_DoWhenIdle(PlFrameInit, (ClientData) plFramePtr);
 	break;
     }
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameExposeEH --
+ *
+ *	Invoked by the Tk dispatcher on exposes of a plframe. 
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Widget is redisplayed.
+ *
+ * Note: it's customary in Tk to collapse multiple exposes, so for best
+ * performance without losing the window contents, I keep track of the
+ * smallest single rectangle that can satisfy all expose events.  If there
+ * is any overlaid graphics (like crosshairs), however, we need to refresh
+ * the entire plot in order to have a predictable outcome.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+PlFrameExposeEH(ClientData clientData, register XEvent *eventPtr)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    XExposeEvent *event = (XExposeEvent *) eventPtr;
+
+    dbug_enter("PlFrameExposeEH");
+
+/* Set up the area to refresh */
+
+    if ( ! plFramePtr->drawing_xhairs) {
+	int x0_old, x1_old, y0_old, y1_old, x0_new, x1_new, y0_new, y1_new;
+
+	x0_old = plFramePtr->pldis.x;
+	y0_old = plFramePtr->pldis.y;
+	x1_old = x0_old + plFramePtr->pldis.width;
+	y1_old = y0_old + plFramePtr->pldis.height;
+
+	x0_new = event->x;
+	y0_new = event->y;
+	x1_new = x0_new + event->width;
+	y1_new = y0_new + event->height;
+
+	plFramePtr->pldis.x      = MIN(x0_old, x0_new);
+	plFramePtr->pldis.y      = MIN(y0_old, y0_new);
+	plFramePtr->pldis.width  = MAX(x1_old, x1_new) - plFramePtr->pldis.x;
+	plFramePtr->pldis.height = MAX(y1_old, y1_new) - plFramePtr->pldis.y;
+    }
+
+/* Invoke DoWhenIdle handler to redisplay widget. */
+
+    if (event->count == 0) {
+	if ((plFramePtr->tkwin != NULL) &&
+	    !(plFramePtr->flags & REFRESH_PENDING)) {
+
+	    Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
+	    plFramePtr->flags |= REFRESH_PENDING;
+	}
+    }
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameMotionEH --
+ *
+ *	Invoked by the Tk dispatcher on MotionNotify events in a plframe. 
+ *	Not invoked unless we are drawing graphic crosshairs.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Graphic crosshairs are drawn.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+PlFrameMotionEH(ClientData clientData, register XEvent *eventPtr)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    XMotionEvent *event = (XMotionEvent *) eventPtr;
+
+    dbug_enter("PlFrameMotionEH");
+
+    if (plFramePtr->drawing_xhairs)
+	DrawXhairs(plFramePtr, event->x, event->y);
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameKeyEH --
+ *
+ *	Invoked by the Tk dispatcher on Keypress events in a plframe. 
+ *	Not invoked unless we are drawing graphic crosshairs.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Keypress events get filtered.  If a cursor key is pushed, the
+ *	graphic crosshairs are moved in the appropriate direction.  Using a
+ *	modifier key multiplies the movement a factor of 5 for each key
+ *	added.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+PlFrameKeyEH(ClientData clientData, register XEvent *eventPtr)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    XKeyEvent *event = (XKeyEvent *) eventPtr;
+    register Tk_Window tkwin = plFramePtr->tkwin;
+
+    KeySym keysym;
+    int nchars;
+    char string[11];
+    XComposeStatus cs;
+
+    dbug_enter("PlFrameKeyEH");
+
+    nchars = XLookupString(event, string, 10, &keysym, &cs);
+    string[nchars] = '\0';
+
+#ifdef DEBUG
+    fprintf(stderr, "Keysym %x, translation: %s\n", keysym, string);
+#endif
+
+    if (IsModifierKey(keysym)) {
+	eventPtr->type = 0;
+    }
+    else if (IsCursorKey(keysym)) {
+	int x1, y1, dx = 0, dy = 0;
+	int x0 = event->x, y0 = event->y;
+	int xmin = 0, xmax = Tk_Width(tkwin) - 1;
+	int ymin = 0, ymax = Tk_Height(tkwin) - 1;
+
+	switch (keysym) {
+	case XK_Left:
+	    dx = -1;
+	    break;
+	case XK_Right:
+	    dx = 1;
+	    break;
+	case XK_Up:
+	    dy = -1;
+	    break;
+	case XK_Down:
+	    dy = 1;
+	    break;
+	}
+
+    /* Each modifier key added increases the multiplication factor by 5 */
+
+    /* Shift */
+
+	if (event->state & 0x01) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Caps Lock */
+
+	if (event->state & 0x02) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Control */
+
+	if (event->state & 0x04) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Alt */
+
+	if (event->state & 0x08) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Bounds checking so that we don't send cursor out of window */
+
+	x1 = x0 + dx;
+	y1 = y0 + dy;
+
+	if (x1 < xmin) dx = xmin - x0;
+	if (y1 < ymin) dy = ymin - y0;
+	if (x1 > xmax) dx = xmax - x0;
+	if (y1 > ymax) dy = ymax - y0;
+
+    /* Engage... */
+
+	XWarpPointer(plFramePtr->display, Tk_WindowId(tkwin),
+		     None, 0, 0, 0, 0, dx, dy);
+	eventPtr->type = 0;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * CreateXhairs()
+ *
+ * Creates graphic crosshairs at current pointer location.
+\*--------------------------------------------------------------------------*/
+
+static void
+CreateXhairs(PlFrame *plFramePtr)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    Window root, child;
+    int root_x, root_y, win_x, win_y;
+    unsigned int mask;
+
+/* Switch to crosshair cursor. */
+
+    Tk_DefineCursor(tkwin, plFramePtr->xhair_cursor);
+
+/* Find current pointer location and draw some graphic crosshairs */
+
+    if (XQueryPointer(plFramePtr->display, Tk_WindowId(tkwin),
+		      &root, &child, &root_x, &root_y, &win_x, &win_y, &mask))
+	DrawXhairs(plFramePtr, win_x, win_y);
+
+/* Catch PointerMotion events so we can update them */
+
+    plFramePtr->drawing_xhairs = 1;
+    Tk_CreateEventHandler(tkwin, PointerMotionMask,
+			  PlFrameMotionEH, (ClientData) plFramePtr);
+
+/* Catch KeyPress events so we can filter them */
+
+    Tk_CreateEventHandler(tkwin, KeyPressMask,
+			  PlFrameKeyEH, (ClientData) plFramePtr);
+}
+
+/*--------------------------------------------------------------------------*\
+ * DestroyXhairs()
+ *
+ * Destroys graphic crosshairs.
+\*--------------------------------------------------------------------------*/
+
+static void
+DestroyXhairs(PlFrame *plFramePtr)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+
+/* Switch back to boring old pointer */
+
+    Tk_DefineCursor(tkwin, plFramePtr->cursor);
+
+/* Don't catch PointerMotion events any more */
+
+    Tk_DeleteEventHandler(tkwin, PointerMotionMask,
+			  PlFrameMotionEH, (ClientData) plFramePtr);
+
+    Tk_DeleteEventHandler(tkwin, KeyPressMask,
+			  PlFrameKeyEH, (ClientData) plFramePtr);
+
+/* This draw removes the last set of graphic crosshairs */
+
+    UpdateXhairs(plFramePtr);
+    plFramePtr->drawing_xhairs = 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * DrawXhairs()
+ *
+ * Draws graphic crosshairs at (x0, y0).  The first draw erases the old set.
+\*--------------------------------------------------------------------------*/
+
+static void
+DrawXhairs(PlFrame *plFramePtr, int x0, int y0)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
+    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
+
+    if (plFramePtr->drawing_xhairs)
+	UpdateXhairs(plFramePtr);
+
+    plFramePtr->xhair_x[0].x = xmin; plFramePtr->xhair_x[0].y = y0;
+    plFramePtr->xhair_x[1].x = xmax; plFramePtr->xhair_x[1].y = y0;
+
+    plFramePtr->xhair_y[0].x = x0; plFramePtr->xhair_y[0].y = ymin;
+    plFramePtr->xhair_y[1].x = x0; plFramePtr->xhair_y[1].y = ymax;
+
+    UpdateXhairs(plFramePtr);
+}
+
+/*--------------------------------------------------------------------------*\
+ * UpdateXhairs()
+ *
+ * Updates graphic crosshairs.  If already there, they are erased.
+\*--------------------------------------------------------------------------*/
+
+static void
+UpdateXhairs(PlFrame *plFramePtr)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+
+    XDrawLines(Tk_Display(tkwin), Tk_WindowId(tkwin),
+	       plFramePtr->xorGC, plFramePtr->xhair_x, 2,
+	       CoordModeOrigin);
+
+    XDrawLines(Tk_Display(tkwin), Tk_WindowId(tkwin),
+	       plFramePtr->xorGC, plFramePtr->xhair_y, 2,
+	       CoordModeOrigin);
 }
 
 /*
@@ -784,8 +1085,7 @@ PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
  * Side effects:
  *	PLplot internal parameters and device driver are initialized.
  *
- *---------------------------------------------------------------------------
- */
+ *--------------------------------------------------------------------------- */
 
 static void
 PlFrameInit(ClientData clientData)
@@ -822,6 +1122,9 @@ PlFrameInit(ClientData clientData)
 /* Draw plframe */
 
     DisplayPlFrame(clientData);
+
+    if (plFramePtr->xhairs)
+	CreateXhairs(plFramePtr);
 }
 
 /*
@@ -896,7 +1199,6 @@ DisplayPlFrame(ClientData clientData)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     register Tk_Window tkwin = plFramePtr->tkwin;
-    PLWindow window;
 
     dbug_enter("DisplayPlFrame");
 
@@ -917,13 +1219,6 @@ DisplayPlFrame(ClientData clientData)
 	return;
     }
 
-/* Clear window if needed */
-
-    if (plFramePtr->flags & CLEAR_NEEDED) {
-	XClearWindow(plFramePtr->display, Tk_WindowId(tkwin));
-	plFramePtr->flags &= ~CLEAR_NEEDED;
-    }
-
 /* Redraw border if necessary */
 
     if ((plFramePtr->border != NULL) &&
@@ -938,8 +1233,8 @@ DisplayPlFrame(ClientData clientData)
     if (plFramePtr->flags & REFRESH_PENDING) {
 	plFramePtr->flags &= ~REFRESH_PENDING;
 
-/* Reschedule resizes to avoid occasional ordering conflicts with */
-/* the packer's resize of the window (this call must come last). */
+    /* Reschedule resizes to avoid occasional ordering conflicts with */
+    /* the packer's resize of the window (this call must come last). */
 
 	if (plFramePtr->flags & RESIZE_PENDING) {
 	    plFramePtr->flags |= REFRESH_PENDING;
@@ -948,47 +1243,61 @@ DisplayPlFrame(ClientData clientData)
 	    return;
 	}
 
-/* Redraw -- replay contents of plot buffer */
+    /* Redraw -- replay contents of plot buffer */
 
 	if (plFramePtr->flags & REDRAW_PENDING) {
 	    plFramePtr->flags &= ~REDRAW_PENDING;
 	    plsstrm(plFramePtr->ipls);
 	    pl_cmd(PLESC_REDRAW, (void *) NULL);
-	    return;
 	}
 
-/* Resize -- if window bounds have changed */
+    /* Resize -- if window bounds have changed */
 
-	if ((plFramePtr->prevWidth != Tk_Width(tkwin)) ||
+	else if ((plFramePtr->prevWidth != Tk_Width(tkwin)) ||
 	    (plFramePtr->prevHeight != Tk_Height(tkwin))) {
 
-	    window.width = Tk_Width(tkwin);
-	    window.height = Tk_Height(tkwin);
+	    plFramePtr->pldis.width = Tk_Width(tkwin);
+	    plFramePtr->pldis.height = Tk_Height(tkwin);
 
 	    plsstrm(plFramePtr->ipls);
-	    pl_cmd(PLESC_RESIZE, (void *) &window);
+	    pl_cmd(PLESC_RESIZE, (void *) &(plFramePtr->pldis));
 	    plFramePtr->prevWidth = Tk_Width(tkwin);
 	    plFramePtr->prevHeight = Tk_Height(tkwin);
 	}
 
-/* Expose -- if window bounds are unchanged */
+    /* Expose -- if window bounds are unchanged */
+    /* Reset window bounds so that next time they are set fresh */
 
 	else {
 	    plsstrm(plFramePtr->ipls);
-	    pl_cmd(PLESC_EXPOSE, NULL);
+	    if (plFramePtr->drawing_xhairs) 
+		pl_cmd(PLESC_EXPOSE, NULL);
+	    else
+		pl_cmd(PLESC_EXPOSE, (void *) &(plFramePtr->pldis));
+
+	    plFramePtr->pldis.x      = Tk_X(tkwin) + Tk_Width(tkwin);
+	    plFramePtr->pldis.y      = Tk_Y(tkwin) + Tk_Height(tkwin);
+	    plFramePtr->pldis.width  = -Tk_Width(tkwin);
+	    plFramePtr->pldis.height = -Tk_Height(tkwin);
+	}
+
+    /* Update graphic crosshairs if necessary */
+
+	if (plFramePtr->drawing_xhairs) {
+	    UpdateXhairs(plFramePtr);
 	}
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Routines to process widget commands.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * scol0
  *
  * Sets a color in cmap0.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 scol0(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1028,11 +1337,11 @@ scol0(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * scol1
  *
  * Sets a color in cmap1.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1093,13 +1402,13 @@ scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Cmd
  *
  * Processes "cmd" widget command.
  * Handles commands that go more or less directly to the PLplot library.
  * Most of these come out of the PLplot Tcl API support file.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1125,9 +1434,18 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     if (argc == 0) 
 	return plTclCmd(cmdlist, interp, argc, argv);
 
+/* Make sure widget has been initialized before going any further */
+
+    if ( ! plFramePtr->tkwin_initted) {
+	Tcl_VarEval(plFramePtr->interp, "update", (char *) NULL);
+    }
+
+/* Set stream number and get ready to process the command */
+
+    plsstrm(plFramePtr->ipls);
+
     c3 = argv[0][2];
     length = strlen(argv[0]);
-    plsstrm(plFramePtr->ipls);
 
 /* plgcmap0 -- get color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
@@ -1393,21 +1711,37 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		plFramePtr->height);
     }
 
+/* Create or destroy graphic crosshairs as specified */
+
+    if (Tk_IsMapped(tkwin)) {
+	if (plFramePtr->xhairs) {
+	    if (! plFramePtr->drawing_xhairs)
+		CreateXhairs(plFramePtr);
+	}
+	else {
+	    if (plFramePtr->drawing_xhairs)
+		DestroyXhairs(plFramePtr);
+	}
+    }
+
+/* Arrange for window to be refreshed if necessary */
+
     if (Tk_IsMapped(tkwin)
 	    && !(plFramePtr->flags & REFRESH_PENDING)) {
 	Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
-	plFramePtr->flags |= REFRESH_PENDING|CLEAR_NEEDED;
+	plFramePtr->flags |= REFRESH_PENDING;
 	plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
     }
+
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Draw
  *
  * Processes "draw" widget command.
  * Handles rubber-band drawing.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1418,10 +1752,16 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
     char c = argv[0][0];
     int length = strlen(argv[0]);
 
+/* Make sure widget has been initialized before going any further */
+
+    if ( ! plFramePtr->tkwin_initted) {
+	Tcl_VarEval(plFramePtr->interp, "update", (char *) NULL);
+    }
+
 /* init -- sets up for rubber-band drawing */
 
     if ((c == 'i') && (strncmp(argv[0], "init", length) == 0)) {
-	Tk_DefineCursor(tkwin, plFramePtr->draw_cursor);
+	Tk_DefineCursor(tkwin, plFramePtr->xhair_cursor);
     }
 
 /* end -- ends rubber-band drawing */
@@ -1451,7 +1791,6 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	else {
 	    PLStream *pls = plFramePtr->pls;
 	    XwDev *dev = (XwDev *) pls->dev;
-	    XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
 	    int x0, y0, x1, y1;
 	    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
@@ -1492,12 +1831,12 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Info
  *
  * Processes "info" widget command.
  * Returns requested info.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1539,13 +1878,13 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Openlink
  *
  * Processes "openlink" widget command.
  * Opens channel (FIFO or socket) for binary data transfer between client
  * and server.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1615,11 +1954,11 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * process_data
  *
  * Utility function for processing data and other housekeeping.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 process_data(Tcl_Interp *interp, register PlFrame *plFramePtr)
@@ -1657,12 +1996,12 @@ process_data(Tcl_Interp *interp, register PlFrame *plFramePtr)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * ReadData
  *
  * Reads & processes data.
  * Intended to be installed as a filehandler command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 ReadData(ClientData clientData, int mask)
@@ -1677,7 +2016,7 @@ ReadData(ClientData clientData, int mask)
 
     if (mask & TK_READABLE) {
 
-/* Read from FIFO or socket */
+    /* Read from FIFO or socket */
 
 	plsstrm(plFramePtr->ipls);
 	if (pl_PacketReceive(interp, iodev, pdfs)) {
@@ -1686,10 +2025,10 @@ ReadData(ClientData clientData, int mask)
 	    return TCL_ERROR;
 	}
 
-/* If the packet isn't complete it will be put back and we just return.
- * Otherwise, the buffer pointer is saved and then cleared so that reads
- * from the buffer start at the beginning.
- */
+    /* If the packet isn't complete it will be put back and we just return.
+     * Otherwise, the buffer pointer is saved and then cleared so that reads
+     * from the buffer start at the beginning.
+     */
 	if (pdfs->bp == 0)
 	    return TCL_OK;
 
@@ -1701,12 +2040,12 @@ ReadData(ClientData clientData, int mask)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Orient
  *
  * Processes "orient" widget command.
  * Handles orientation of plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1736,7 +2075,7 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Print
  *
  * Processes "print" widget command.
@@ -1747,7 +2086,7 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
  * output it in metafile form here, plpr must invoke plrender to drive the
  * output to the appropriate file type.  The script is responsible for the
  * deletion of the plot metafile.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1758,6 +2097,14 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
     char *sfnam;
     FILE *sfile;
     pid_t pid;
+
+/* Make sure widget has been initialized before going any further */
+
+    if ( ! plFramePtr->tkwin_initted) {
+	Tcl_AppendResult(interp, "Error -- widget not plotted to yet", 
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
 
 /* Create stream for save */
 
@@ -1815,13 +2162,13 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Page
  *
  * Processes "page" widget command.
  * Handles parameters such as margin, aspect ratio, and justification
  * of final plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1851,16 +2198,16 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
     } 
 
     plsdidev(atof(argv[0]), atof(argv[1]), atof(argv[2]), atof(argv[3]));
-    return(Redraw(interp, plFramePtr, argc-1, argv+1));
+    return (Redraw(interp, plFramePtr, argc-1, argv+1));
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Redraw
  *
  * Processes "redraw" widget command.
  * Turns loose a DoWhenIdle command to redraw plot by replaying contents
  * of plot buffer.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Redraw(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1879,12 +2226,12 @@ Redraw(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Save
  *
  * Processes "save" widget command.
  * Saves plot to a file.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -1893,6 +2240,14 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int length, idev;
     char c;
     FILE *sfile;
+
+/* Make sure widget has been initialized before going any further */
+
+    if ( ! plFramePtr->tkwin_initted) {
+	Tcl_AppendResult(interp, "Error -- widget not plotted to yet", 
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
 
 /* save -- save to already open file */
 
@@ -1924,14 +2279,14 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	} 
 	idev = atoi(argv[1]);
 
-/* If save previously in effect, delete old stream */
+    /* If save previously in effect, delete old stream */
 
 	if (plFramePtr->ipls_save) {
 	    plsstrm(plFramePtr->ipls_save);
 	    plend1();
 	}
 
-/* Create stream for saves to selected device & file */
+    /* Create stream for saves to selected device & file */
 
 	plmkstrm(&plFramePtr->ipls_save);
 	if (plFramePtr->ipls_save < 0) {
@@ -1941,7 +2296,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-/* Open file for writes */
+    /* Open file for writes */
 
 	if ((sfile = fopen(argv[2], "wb+")) == NULL) {
 	    Tcl_AppendResult(interp, "Error -- cannot open file ", argv[2],
@@ -1951,14 +2306,14 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-/* Initialize stream */
+    /* Initialize stream */
 
 	plsdev(plFramePtr->devName[idev]);
 	plsfile(sfile);
 	plcpstrm(plFramePtr->ipls, 0);
 	pladv(0);
 
-/* Remake current plot and then switch back to original stream */
+    /* Remake current plot and then switch back to original stream */
 
 	plreplot();
 	plflush();
@@ -1993,12 +2348,12 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * View
  *
  * Processes "view" widget command.
  * Handles translation & scaling of view into plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 View(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -2096,15 +2451,15 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
     plFramePtr->yr = yr;
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
 
-    return(Redraw(interp, plFramePtr, argc, argv));
+    return (Redraw(interp, plFramePtr, argc, argv));
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * xScroll
  *
  * Processes "xscroll" widget command.
  * Handles horizontal scroll-bar invoked translation of view into plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -2130,15 +2485,15 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
     plsdiplt(xl, yl, xr, yr);
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
-    return(Redraw(interp, plFramePtr, argc, argv));
+    return (Redraw(interp, plFramePtr, argc, argv));
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * yScroll
  *
  * Processes "yscroll" widget command.
  * Handles vertical scroll-bar invoked translation of view into plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
@@ -2164,18 +2519,18 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
     plsdiplt(xl, yl, xr, yr);
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
-    return(Redraw(interp, plFramePtr, argc, argv));
+    return (Redraw(interp, plFramePtr, argc, argv));
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Utility routines
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * UpdateVScrollbar
  *
  * Updates vertical scrollbar if needed.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 UpdateVScrollbar(register PlFrame *plFramePtr)
@@ -2202,11 +2557,11 @@ UpdateVScrollbar(register PlFrame *plFramePtr)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * UpdateHScrollbar
  *
  * Updates horizontal scrollbar if needed.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 UpdateHScrollbar(register PlFrame *plFramePtr)
@@ -2233,12 +2588,12 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * gbox
  *
  * Returns selection box coordinates.  It's best if the TCL script does
  * bounds checking on the input but I do it here as well just to be safe.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
