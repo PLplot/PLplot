@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/01/15 17:28:59  mjl
+ * Revision 1.13  1994/03/23 08:32:34  mjl
+ * Moved color and color map handling functions into plctrl.c.
+ * Changed file open routine to support new options for sequencing family
+ * member files.
+ *
+ * Revision 1.12  1994/01/15  17:28:59  mjl
  * Added include of pdf.h.
  *
  * Revision 1.11  1993/12/06  07:46:54  mjl
@@ -11,27 +16,6 @@
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
  * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.9  1993/09/08  02:40:51  mjl
- * Moved some functions to plstream.c.
- *
- * Revision 1.8  1993/08/09  22:12:39  mjl
- * Changed call syntax to plRotPhy to allow easier usage.
- *
- * Revision 1.7  1993/07/31  08:19:25  mjl
- * Utility function added for allocating a PLDev structure.
- *
- * Revision 1.6  1993/07/16  22:37:04  mjl
- * Eliminated obsolete functions, moved function for setting filename here.
- *
- * Revision 1.5  1993/07/01  22:13:43  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
- *
- * Revision 1.4  1993/04/26  19:57:59  mjl
- * Fixes to allow (once again) output to stdout and plrender to function as
- * a filter.  A type flag was added to handle file vs stream differences.
 */
 
 /*	plstream.c
@@ -40,121 +24,40 @@
 */
 
 #include "plplotP.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "pdf.h"
 #include "plstream.h"
+#include <string.h>
 
 /*----------------------------------------------------------------------*\
-* color_def()
+* plcol_interp()
 *
-* Initializes color table entries by RGB values.
-* Does nothing if color already set.
+* Initializes device cmap 1 entry by interpolation from pls->cmap1
+* entries.  Returned PLColor is supposed to represent the i_th color
+* out of a total of ncol colors in the current color scheme.
 \*----------------------------------------------------------------------*/
 
-static void
-color_def(PLStream *pls, PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
+void
+plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
 {
-    if ( ! pls->cmap0setcol[i]) {
-	pls->cmap0[i].r = r;
-	pls->cmap0[i].g = g;
-	pls->cmap0[i].b = b;
-	pls->cmap0setcol[i] = 1;
+    float x, delta;
+    int il, ir;
+
+    x = (double) (i * (pls->ncol1-1)) / (double) (ncol-1);
+    il = x;
+    ir = il + 1;
+    delta = x - il;
+
+    if (ir > pls->ncol1 || il < 0)
+	fprintf(stderr, "Invalid color\n");
+
+    else if (ir == pls->ncol1) {
+	newcolor->r = pls->cmap1[il].r;
+	newcolor->g = pls->cmap1[il].g;
+	newcolor->b = pls->cmap1[il].b;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plCmap0_init()
-*
-* Initializes color map 0.
-* Do not initialize if already done.
-*
-* Initial RGB values for color map 0 taken from HPUX 8.07 X-windows 
-* rgb.txt file, and may not accurately represent the described colors on 
-* all systems.
-*
-* Note the background color is not set, since the device driver may be
-* able to detect if a monochrome output device is being used, in which
-* case I want to choose the default background color there.
-\*----------------------------------------------------------------------*/
-
-void
-plCmap0_init(PLStream *pls)
-{
-/* Return if the user has already filled color map */
-
-    if (pls->ncol0 > 0)
-	return;
-
-    pls->ncol0 = 16;
-
-/* Color map 0 */
-/* Any entries already filled by user are not touched */
-
-    color_def(pls, 0, 255, 114, 86);	/* coral */
-    color_def(pls, 1, 255, 0, 0);	/* red */
-    color_def(pls, 2, 255, 255, 0);	/* yellow */
-    color_def(pls, 3, 0, 255, 0);	/* green */
-    color_def(pls, 4, 50, 191, 193);	/* aquamarine */
-    color_def(pls, 5, 255, 181, 197);	/* pink */
-    color_def(pls, 6, 245, 222, 179);	/* wheat */
-    color_def(pls, 7, 126, 126, 126);	/* grey */
-    color_def(pls, 8, 165, 42, 42);	/* brown */
-    color_def(pls, 9, 0, 0, 255);	/* blue */
-    color_def(pls, 10, 138, 43, 226);	/* Blue Violet */
-    color_def(pls, 11, 0, 255, 255);	/* cyan */
-    color_def(pls, 12, 25, 204, 223);	/* turquoise */
-    color_def(pls, 13, 255, 0, 255);	/* magenta */
-    color_def(pls, 14, 233, 150, 122);	/* salmon */
-    color_def(pls, 15, 255, 255, 255);	/* white */
-}
-
-/*----------------------------------------------------------------------*\
-* plCmap1_init()
-*
-* Initializes color map 1.
-* Do not initialize if already done.
-\*----------------------------------------------------------------------*/
-
-void
-plCmap1_init(PLStream *pls)
-{
-    int itype, ihfinit = 0;
-    PLFLT param[6];
-
-/* Return if the user has already filled color map */
-
-    if (pls->ncol0 > 0)
-	return;
-
-    pls->ncol0 = 16;
-
-/* Color map 1 */
-
-    if (!pls->cmap1set) {
-
-	switch (ihfinit) {
-
-	case 0:
-	default:
-
-/*
-* The default map plots height levels at full color intensity, going from
-* blue-violet (low), to green (medium), to red (high).
-*/
-	    itype = 0;		/* HLS model */
-	    param[0] = 280.;	/* h -- low: blue-violet */
-	    param[1] = -20.;	/* h -- high: red */
-	    param[2] = 1.;	/* l -- low */
-	    param[3] = 1.;	/* l -- high */
-	    param[4] = 1.;	/* s -- low */
-	    param[5] = 1.;	/* s -- high */
-	    break;
-	}
-
-	plscmap1f1(itype, param);
+    else {
+	newcolor->r = (1.-delta) * pls->cmap1[il].r + delta * pls->cmap1[ir].r;
+	newcolor->g = (1.-delta) * pls->cmap1[il].g + delta * pls->cmap1[ir].g;
+	newcolor->b = (1.-delta) * pls->cmap1[il].b + delta * pls->cmap1[ir].b;
     }
 }
 
@@ -172,34 +75,63 @@ plOpenFile(PLStream *pls)
     int i = 0;
     char line[256];
 
-    while (!pls->OutFile) {
-	if (!pls->fileset) {
+    while (pls->OutFile == NULL) {
+
+/* Setting pls->FileName = NULL forces creation of a new family member */
+/* You should also free the memory associated with it if you do this */
+
+	if (pls->family && pls->BaseName != NULL) 
+	    plP_getmember(pls);
+
+/* Prompt if filename still not known */
+
+	if (pls->FileName == NULL) {
 	    printf("Enter desired name for graphics output file: ");
 	    fgets(line, sizeof(line), stdin);
 	    line[strlen(line) - 1] = '\0';
 
 	    plP_sfnam(pls, line);
 	}
-	if (!strcmp(pls->FileName, "-")) {
+
+/* If name is "-", send to stdout */
+
+	if ( ! strcmp(pls->FileName, "-")) {
 	    pls->OutFile = stdout;
 	    pls->output_type = 1;
 	    break;
 	}
-	if (pls->family) {
-	    (void) sprintf(pls->FileName, "%s.%i",
-			   pls->FamilyName, pls->member);
-	}
+
+/* Need this here again, for prompted family initialization */
+
+	if (pls->family && pls->BaseName != NULL) 
+	    plP_getmember(pls);
 
 	if (i++ > 10)
 	    plexit("Too many tries.");
 
-	if ((pls->OutFile = fopen(pls->FileName, BINARY_WRITE)) == NULL) {
+	if ((pls->OutFile = fopen(pls->FileName, "wb+")) == NULL) 
 	    printf("Can't open %s.\n", pls->FileName);
-	    pls->fileset = 0;
-	}
 	else
 	    fprintf(stderr, "Created %s\n", pls->FileName);
     }
+}
+
+/*----------------------------------------------------------------------*\
+* plP_getmember()
+*
+* Sets up next file member name (in pls->FileName), but does not open it.
+\*----------------------------------------------------------------------*/
+
+void
+plP_getmember(PLStream *pls)
+{
+    char tmp[256];
+
+    if (pls->FileName == NULL)
+	pls->FileName = (char *) malloc(10 + strlen(pls->BaseName));
+
+    sprintf(tmp, "%s.%%0%1ii", pls->BaseName, pls->fflen);
+    sprintf(pls->FileName, tmp, pls->member);
 }
 
 /*----------------------------------------------------------------------*\
@@ -213,23 +145,20 @@ void
 plP_sfnam(PLStream *pls, const char *fnam)
 {
     pls->OutFile = NULL;
-    pls->fileset = 1;
 
     if (pls->FileName != NULL)
 	free((void *) pls->FileName);
 
-    pls->FileName = (char *)
-	malloc(6 + strlen(fnam));
+    pls->FileName = (char *) malloc(10 + strlen(fnam));
 
     strcpy(pls->FileName, fnam);
 
-    if (pls->FamilyName != NULL)
-	free((void *) pls->FamilyName);
+    if (pls->BaseName != NULL)
+	free((void *) pls->BaseName);
 
-    pls->FamilyName = (char *)
-	malloc(6 + strlen(fnam));
+    pls->BaseName = (char *) malloc(10 + strlen(fnam));
 
-    strcpy(pls->FamilyName, fnam);
+    strcpy(pls->BaseName, fnam);
 }
 
 /*----------------------------------------------------------------------*\
@@ -243,9 +172,13 @@ plFamInit(PLStream *pls)
 {
     if (pls->family) {
 	pls->bytecnt = 0;
-	if (!pls->member)
+	if ( ! pls->member)
 	    pls->member = 1;
-	if (!pls->bytemax)
+	if ( ! pls->finc)
+	    pls->finc = 1;
+	if ( ! pls->fflen)
+	    pls->fflen = 1;
+	if ( ! pls->bytemax)
 	    pls->bytemax = PL_FILESIZE_KB * 1000;
     }
 }
@@ -266,8 +199,7 @@ plGetFam(PLStream *pls)
     if (pls->family) {
 	if (pls->bytecnt > pls->bytemax || pls->famadv) {
 	    plP_tidy();
-	    pls->fileset = 1;
-	    pls->member++;
+	    pls->member += pls->finc;
 	    pls->famadv = 0;
 	    plP_init();
 	    return;
@@ -286,36 +218,28 @@ plGetFam(PLStream *pls)
 
 void
 plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
-	 int *px1, int *py1, int *px2, int *py2)
+	 int *px, int *py)
 {
-    int x1, y1, x2, y2;
+    int x, y;
 
-    x1 = *px1;
-    y1 = *py1;
-    x2 = *px2;
-    y2 = *py2;
+    x = *px;
+    y = *py;
 
     switch (orient%4) {
 
     case 1:
-	*px1 = xmin + (y1 - ymin);
-	*py1 = ymin + (xmax - x1);
-	*px2 = xmin + (y2 - ymin);
-	*py2 = ymin + (xmax - x2);
+	*px = xmin + (y - ymin);
+	*py = ymin + (xmax - x);
 	break;
 
     case 2:
-	*px1 = xmin + (xmax - x1);
-	*py1 = ymin + (ymax - y1);
-	*px2 = xmin + (xmax - x2);
-	*py2 = ymin + (ymax - y2);
+	*px = xmin + (xmax - x);
+	*py = ymin + (ymax - y);
 	break;
 
     case 3:
-	*px1 = xmin + (ymax - y1);
-	*py1 = ymin + (x1 - xmin);
-	*px2 = xmin + (ymax - y2);
-	*py2 = ymin + (x2 - xmin);
+	*px = xmin + (ymax - y);
+	*py = ymin + (x - xmin);
 	break;
 
     default:
