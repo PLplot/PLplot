@@ -1,6 +1,6 @@
 /* $Id$
 
-         PNG and JPEG device driver based on libgd
+         PNG, GIF, and JPEG device driver based on libgd
 
    Copyright (C) 2004  Joao Cardoso
 
@@ -21,8 +21,18 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+/*             GIF SUPPORT
+ *
+ *  Following the expiration of Unisys's worldwide patents on lzw compression
+ *  GD 2.0.28+ have reinstated support for GIFs, and so support for this
+ *  format has been added to the GD family of drivers. GIF's only support
+ *  1, 4 and 8 bit, so no truecolour. Why would you want GIFs though ? PNG is 
+ *  a far superior format, not only giving you 1,4,8 and 24 bit, but also 
+ *  better compression and just about all browsers now support them.
+ */
+
 /*
- *  The GD drivers, PNG and JPEG, support a number of different options
+ *  The GD drivers, PNG, GIF, and JPEG, support a number of different options
  *  depending on the version of GD installed.
  *
  *  If you have installed GD Ver 2.+ you gain support for truecolour (24
@@ -53,6 +63,8 @@
  *  RGBA and not an RGB might cause some problems with some viewers.
  *  Sadly, I can't do anything about it... sorry.
  *
+ *  GIF files can only have 256 colours, so naturally truecolour mode is not
+ *  supported for this sub-driver.
  *
  *  Stuff for GD V1.? as well as V2.+
  *
@@ -100,16 +112,50 @@
 
 #include "plDevs.h"
 
-#if defined(PLD_png) || defined(PLD_jpeg)
+#if defined(PLD_png) || defined(PLD_jpeg) || defined(PLD_gif)
 
 #include "plplotP.h"
 #include "drivers.h"
 
 #include <gd.h>
 
-/* Device info */
-char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
-                       "png:PNG file:0:gd:39:png";
+/*  Device info
+ *
+ *  Don't knoq if all this logic is necessary, but basically we are going to
+ *  start with all three sub-drivers present, then work out way down to two
+ *  and finally one of each.
+ */
+
+#if defined(PLD_png) && defined(PLD_jpeg) && defined(PLD_gif)
+  char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
+                         "png:PNG file:0:gd:39:png\n"
+                         "gif:GIF file:0:gd:47:gif";
+#else
+  #if defined(PLD_png) && defined(PLD_jpeg)
+    char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
+                           "png:PNG file:0:gd:39:png\n";
+  #else
+    #if defined(PLD_png) && defined(PLD_gif)
+      char* plD_DEVICE_INFO_gd = "png:PNG file:0:gd:39:png\n";
+                             "gif:GIF file:0:gd:47:gif";
+    #else
+
+      #if defined(PLD_png)
+      char* plD_DEVICE_INFO_gd = "png:PNG file:0:gd:39:png";
+      #endif
+
+      #if defined(PLD_jpeg)
+      char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg";
+      #endif
+  
+      #if defined(PLD_png)
+      char* plD_DEVICE_INFO_gd = "gif:GIF file:0:gd:47:gif";
+      #endif
+  
+    #endif
+  #endif
+#endif
+
 
 
 #ifdef HAVE_FREETYPE
@@ -143,6 +189,9 @@ static void     plD_init_png_Dev(PLStream *pls);
 static void     plD_gd_optimise (PLStream *pls);
 static void     plD_black15_gd  (PLStream *pls);
 static void     plD_red15_gd    (PLStream *pls);
+#ifdef PLD_gif
+static void     plD_init_gif_Dev(PLStream *pls);
+#endif
 
 #ifdef HAVE_FREETYPE
 
@@ -196,7 +245,7 @@ static int NCOLOURS=gdMaxColors;
 
 typedef struct {
 
-	gdImagePtr im_out;                      /* Graphics pointer */
+        gdImagePtr im_out;                      /* Graphics pointer */
         PLINT pngx;
         PLINT pngy;
 
@@ -204,10 +253,10 @@ typedef struct {
         int totcol;                             /* Total number of colours      */
         int ncol1;                              /* Actual size of ncol1 we got  */
 
-	int scale;                              /* scaling factor to "blow up" to */
+        int scale;                              /* scaling factor to "blow up" to */
                                                 /* the "virtual" page in removing hidden lines*/
 
-	int optimise;                           /* Flag used for 4bit pngs */
+        int optimise;                           /* Flag used for 4bit pngs */
         int black15;                            /* Flag used for forcing a black colour */
         int red15;                              /* Flag for swapping red and 15 */
 
@@ -227,6 +276,10 @@ void plD_bop_png		(PLStream *);
 void plD_tidy_png		(PLStream *);
 void plD_state_png		(PLStream *, PLINT);
 void plD_esc_png		(PLStream *, PLINT, void *);
+#ifdef PLD_gif
+void plD_init_gif		(PLStream *);
+void plD_eop_gif		(PLStream *);
+#endif
 
 #ifdef PLD_png
 
@@ -270,6 +323,29 @@ void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_png;
 }
 #endif
+
+
+#ifdef PLD_gif
+
+void plD_dispatch_init_gif( PLDispatchTable *pdt )
+{
+#ifndef ENABLE_DYNDRIVERS
+    pdt->pl_MenuStr  = "GIF File";
+    pdt->pl_DevName  = "gif";
+#endif
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 47;
+    pdt->pl_init     = (plD_init_fp)     plD_init_png;
+    pdt->pl_line     = (plD_line_fp)     plD_line_png;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_png;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_gif;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_png;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_png;
+    pdt->pl_state    = (plD_state_fp)    plD_state_png;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_png;
+}
+#endif
+
 
 /*--------------------------------------------------------------------------*\
  * plD_init_png_Dev()
@@ -448,6 +524,162 @@ if (pls->dev_text)
 #endif
 
 }
+
+
+#ifdef PLD_gif
+
+/*--------------------------------------------------------------------------*\
+ * plD_init_gif_Dev()
+ *
+ * We need a new initialiser for the GIF version of the GD driver because
+ * the GIF one does not support TRUECOLOUR
+\*--------------------------------------------------------------------------*/
+
+static void
+plD_init_gif_Dev(PLStream *pls)
+{
+    png_Dev *dev;
+
+/*  Stuff for the driver options, these vars are copied into the driver
+ *  structure so that everything is thread safe and reenterant.
+ */
+
+    static int black15=0;
+    static int red15=0;
+#ifdef HAVE_FREETYPE
+    static int freetype=0;
+    static int smooth_text=0;
+    FT_Data *FT;
+#endif
+
+    DrvOpt gd_options[] = {{"def_black15", DRV_INT, &black15, "Define idx 15 as black. If the background is \"whiteish\" (from \"-bg\" option), force index 15 (traditionally white) to be \"black\""},
+                              {"swp_red15", DRV_INT, &red15, "Swap index 1 (usually red) and 1 (usually white); always done after \"black15\"; quite useful for quick changes to web pages"},
+#ifdef HAVE_FREETYPE
+                              {"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
+                              {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+#endif
+			      {NULL, DRV_INT, NULL, NULL}};
+
+
+/* Allocate and initialize device-specific data */
+
+    if (pls->dev != NULL)
+	free((void *) pls->dev);
+
+    pls->dev = calloc(1, (size_t) sizeof(png_Dev));
+    if (pls->dev == NULL)
+	plexit("plD_init_gif_Dev: Out of memory.");
+
+    dev = (png_Dev *) pls->dev;
+
+    dev->colour=1;  /* Set a fall back pen colour in case user doesn't */
+
+/* Check for and set up driver options */
+
+    plParseDrvOpts(gd_options);
+
+    dev->black15=black15;
+    dev->red15=red15;
+
+    dev->optimise=0;    /* Optimise does not work for GIFs... should, but it doesn't */
+    dev->palette=1;     /* Always use palette mode for GIF files */
+    dev->truecolour=0;  /* Never have truecolour in GIFS */
+
+#ifdef HAVE_FREETYPE
+if (freetype)
+   {
+    pls->dev_text = 1; /* want to draw text */
+    init_freetype_lv1(pls);
+    FT=(FT_Data *)pls->FT;
+    FT->want_smooth_text=smooth_text;
+   }
+
+#endif
+}
+
+/*----------------------------------------------------------------------*\
+ * plD_init_gif()
+ *
+ * Initialize device.
+\*----------------------------------------------------------------------*/
+
+void plD_init_gif(PLStream *pls)
+{
+    png_Dev *dev=NULL;
+
+    pls->termin = 0;            /* Not an interactive device */
+    pls->icol0 = 1;
+    pls->bytecnt = 0;
+    pls->page = 0;
+    pls->dev_fill0 = 1;         /* Can do solid fills */
+
+    if (!pls->colorset)
+	pls->color = 1;         /* Is a color device */
+
+/* Initialize family file info */
+    plFamInit(pls);
+
+/* Prompt for a file name if not already set */
+    plOpenFile(pls);
+
+/* Allocate and initialize device-specific data */
+    plD_init_gif_Dev(pls);
+    dev=(png_Dev *)pls->dev;
+
+      if (pls->xlength <= 0 || pls->ylength <=0)
+      {
+/* use default width, height of 800x600 if not specifed by -geometry option
+ * or plspage */
+	 plspage(0., 0., 800, 600, 0, 0);
+      }
+
+     pls->graphx = GRAPHICS_MODE;
+
+     dev->pngx = pls->xlength - 1;	/* should I use -1 or not??? */
+     dev->pngy = pls->ylength - 1;
+
+#ifdef use_experimental_hidden_line_hack
+
+     if (dev->pngx>dev->pngy)    /* Work out the scaling factor for the  */
+        {                        /* "virtual" (oversized) page           */
+        dev->scale=PIXELS_X/dev->pngx;
+        }
+     else
+        {
+        dev->scale=PIXELS_Y/dev->pngy;
+        }
+#else
+
+     dev->scale=1;
+
+#endif
+
+
+     if (pls->xdpi<=0)
+     {
+/* This corresponds to a typical monitor resolution of 4 pixels/mm. */
+        plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
+     }
+     else
+     {
+        pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
+     }
+/* Convert DPI to pixels/mm */
+     plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
+
+     plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
+
+#ifdef HAVE_FREETYPE
+if (pls->dev_text)
+   {
+    init_freetype_lv2(pls);
+   }
+#endif
+
+}
+
+#endif
+
 
 /*----------------------------------------------------------------------*\
  * plD_line_png()
@@ -1148,6 +1380,28 @@ png_Dev *dev=(png_Dev *)pls->dev;
 }
 
 #endif
+
+#ifdef PLD_gif
+
+/*----------------------------------------------------------------------*\
+ * plD_eop_gif()
+ *
+ * End of page.
+\*----------------------------------------------------------------------*/
+
+void plD_eop_gif(PLStream *pls)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+
+    if (pls->family || pls->page == 1) {
+       gdImageGif(dev->im_out, pls->OutFile);
+
+       gdImageDestroy(dev->im_out);
+    }
+}
+
+#endif
+
 
 /*#endif*/
 

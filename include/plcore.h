@@ -220,6 +220,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_jpeg) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_jpeg,
 #endif
+#if defined(PLD_gif) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_gif,
+#endif
 #if defined(PLD_pstex) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_pstex,
 #endif

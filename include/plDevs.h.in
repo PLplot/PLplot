@@ -49,6 +49,7 @@
 #undef PLD_dg300
 #undef PLD_png
 #undef PLD_jpeg
+#undef PLD_gif
 #undef PLD_cgm
 #undef PLD_ps
 #undef PLD_xfig
