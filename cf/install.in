@@ -16,7 +16,6 @@
 install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) install_demos
 
 install_lib:
-	-if [ ! -d $(INSTALL_DIR) ] ; then mkdir -p $(INSTALL_DIR); fi
 	-if [ ! -d $(INCLUDE_DIR) ] ; then mkdir -p $(INCLUDE_DIR); fi
 	-if [ ! -d $(LIB_DIR) ] ; then mkdir -p $(LIB_DIR); fi
 	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
@@ -41,6 +40,10 @@ install_demos:
 	-if [ ! -d $(DEMOS_DIR)/f77 ] ; then mkdir -p $(DEMOS_DIR)/f77; fi
 	-if [ ! -d $(DEMOS_DIR)/tcl ] ; then mkdir -p $(DEMOS_DIR)/tcl; fi
 	-if [ ! -d $(DEMOS_DIR)/tk ] ; then mkdir -p $(DEMOS_DIR)/tk; fi
+	-cp Makedemo $(DEMOS_DIR)/Makefile
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/C
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
 	-cp ../examples/C/* $(DEMOS_DIR)/C
 	-cp ../examples/f77/* $(DEMOS_DIR)/f77
 	-cp ../examples/tcl/* $(DEMOS_DIR)/tcl
@@ -48,9 +51,9 @@ install_demos:
 
 install_utils:
 	$(LDC) $(LDC_FLAGS) plrender.o $(LIB_INSTALL) \
-		-o plrender $(LDC_PATH) $(LDC_LIBS)
+		-o plrender $(LDC_LIBS)
 	$(LDC) $(LDC_FLAGS) pltek.o $(LIB_INSTALL) \
-		-o pltek $(LDC_PATH) $(LDC_LIBS)
+		-o pltek $(LDC_LIBS)
 	-strip plrender pltek
 	-cp plrender pltek $(BIN_DIR)
 
