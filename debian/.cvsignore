@@ -1,3 +1,3 @@
-tmp plplot-dev plplot-doc plplot-tcl python-plplot plplot-c++ 
-plplot-xwin plplot-common plplot-bin
+plplot-doc plplot-tcl python-plplot plplot-xwin plplot-gnome
+plplot-gd octave-plplot libplplot5 libplplot-dev
 *.debhelper *substvars files
