@@ -1,0 +1,261 @@
+#!/usr/local/bin/perl
+# pltclgen
+# Geoffrey Furnish
+# Institute for Fusion Studies
+# University of Texas at Austin
+# 27 June 1995
+#
+# This script is used to automatically generate most of the functions
+# needed to implement the PLplot Tcl API.  It reads a file which
+# specifies the PLplot API command arguments and return value
+# (basically like a C prototype, but easier to parse) and generates a
+# Tcl command procedure to call that function.
+#
+# Currently it can support arguments of type PLINT, PLFLT, char *,
+# PLINT& and PLFLT& where the last two are used for the 'g' series
+# functions which provide data to the caller.
+#
+# What is not supported at this time, but needs to be, is support for
+# (those few) PLplot API functions with non-void return types, and
+# (the many) PLplot API functions which accept arrays (PLFLT *, etc).
+# The latter can in many cases be correctly treated as 1-d Tcl
+# Matricies.  The code for using these should be sufficiently
+# perfunctory to be ammenable to an appraoch like that used here.
+# Automatic support for the 2-d API is probably unrealistic.
+#
+# $Id$
+#
+# $Log$
+# Revision 1.1  1995/06/28 14:58:33  furnish
+# A PERL script to automatically generate Tcl command procedure
+# interface functions for accessing the PLplot API.  Initial version
+# handles all the easy cases, including reference arguments.  Support
+# for pointer arguments should be added, as that would allow automating
+# all the 1-d multivalue input functions.
+#
+###############################################################################
+
+require "getopts.pl";
+
+&Getopts('v');
+
+$verbose = $opt_v;
+
+$specfile = "plapi.tpl";	# PLplot API template specification file.
+$genfile  = "tclgen.c";		# Generated functions go here.
+$genhead  = "tclgen.h";		# Prototypes for generated functions.
+$genstruct= "tclgen_s.h";	# Initializers for CmdInfo struct.
+$cmdfile  = "tclcmd.tpl";	# Template file for generated functions.
+
+open( SPECFILE, "<$specfile") || die "Can't open PLplot API spec file.";
+open( GENFILE,  ">$genfile" ) || die "Can't open output file.";
+open( GENHEAD,  ">$genhead" ) || die "Can't open output header file.";
+open( GENSTRUCT,">$genstruct")|| die "Can't open second output header file.";
+
+# Scan the PLplot API template specification file looking for function
+# "prototypes".  These are introduced with the token "pltclcmd".  When
+# we find one, go process it.  Anything other than a comment or a
+# valid function "prototype" is considered an error, and is printed to
+# stdout. 
+
+while( <SPECFILE> ) {
+    chop;			# skip the \n.
+
+    if (/([^\#]*)\#.*/) {	# Discard # to end of line.
+        $_ = $1;
+    }
+    next if /^\s*$/;            # Discard empty lines.
+
+    if (/^pltclcmd (\w+) (.*)/) {
+	$cmd = $1;
+	$rtype = $2;
+
+	&process_pltclcmd( $cmd, $rtype );
+	next;
+    }
+
+# Just print the unrecognized output to stdout.
+
+    print "$_\n";
+}
+
+# Process a function "prototype".  Suck up the args, then perform the
+# needed substitutions to the Tcl command procedure template.
+# Generate the three outputs needed for use in tclAPI.c:  the C
+# function prototype, the CmdInfo structure initializer, and the
+# actual function definition.
+
+sub process_pltclcmd {
+    local( $cmd, $rtype ) = @_;
+    local( $i, $refargs );
+    local( $vname, $vtype );
+    local( $args );
+
+    print "autogenerating Tcl command proc for $rtype $cmd ()\n" if $verbose;
+
+    print GENHEAD "static int ${cmd}Cmd( ClientData, Tcl_Interp *, int, char **);\n";
+    print GENSTRUCT "    {\"$cmd\",          ${cmd}Cmd},\n";
+
+    $args = "";
+    $nargs = 0;
+    while( <SPECFILE> ) {
+	chop;
+
+	last if /^$/;
+	if (/^(\w+) (.*)/) {
+	    $vname = $1;
+	    $vtype = $2;
+	    $argname[ $nargs ] = $vname;
+	    $argtype[ $nargs ] = $vtype;
+	    $argref[  $nargs ] = 0; # default.
+
+	    # Check to see if this arg is for fetching something from PLplot.
+	    if ($vtype =~ /&/) {
+		$refargs = 1;
+		$argref[ $nargs ] = 1;
+	    }
+
+	    $args .= "$vname ";
+	    $nargs++;
+	    next;
+	}
+
+	# Unrecognized output.
+	print "bogus: $_\n";
+    }
+
+    if ($verbose) {
+	print "There are $nargs arguments.\n";
+	for( $i=0; $i < $nargs; $i++ ) {
+	    print "$argtype[$i] $argname[$i]\n";
+	}
+	print "return string required.\n" if $refargs;
+    }
+
+    open( TEMPLATE, "<$cmdfile" ) || die "Can't open tcl cmd template file.";
+
+    while( <TEMPLATE> ) {
+
+	# Emit the argument declarations.  Reference args require
+	# special handling, the others should be perfunctory.
+
+	if (/^<argdecls>$/) {
+	    for( $i=0; $i < $nargs; $i++ ) {
+		$_ = $argtype[$i];
+	      argdecl: {
+		  /PLINT&/ && do {
+		      print GENFILE "    PLINT $argname[$i];\n";
+		      last argdecl;
+		  };
+		  /PLFLT&/ && do {
+		      print GENFILE "    PLFLT $argname[$i];\n";
+		      last argdecl;
+		  };
+		  print GENFILE "    $argtype[$i] $argname[$i];\n";
+	      }
+	    }
+	    print GENFILE "    char buf[200];\n" if $refargs;
+	    next;
+	}
+
+	# Obtain the arguments which we need to pass to the PLplot API
+	# call, from the argc/argv list passed to the Tcl command
+	# proc.  Each supported argument type will need special
+	# handling here.
+
+	if (/^<getargs>$/) {
+	    for( $i=0; $i < $nargs; $i++ ) {
+		$_ = $argtype[$i];
+	      getarg: {
+		  $argref[$i] && do {
+		      print GENFILE "/* $argname[$i] is for output. */\n";
+		      last getarg;
+		  };
+		  /PLINT/ && do {
+		      print GENFILE "    $argname[$i] = atoi(argv[1+$i]);\n";
+		      last getarg;
+		  };
+		  /PLFLT/ && do {
+		      print GENFILE "    $argname[$i] = atof(argv[1+$i]);\n";
+		      last getarg;
+		  };
+		  /char \*/ && do {
+		      print GENFILE "    $argname[$i] = argv[1+$i];\n";
+		      last getarg;
+		  };
+		  die "Unrecognized argtype :$_:\n";
+	      }
+	    }
+	    next;
+	}
+
+	# Call the PLplot API function.
+
+	if (/^<plcmd>$/) {
+	    print GENFILE "    $cmd ( ";
+	    for( $i=0; $i < $nargs; $i++ ) {
+		$_ = $argtype[$i];
+	      passarg: {
+		  /&/ && do {
+		      print GENFILE "&$argname[$i]";
+		      last passarg;
+		  };
+		  print GENFILE "$argname[$i]";
+	      }
+		if ($i < $nargs-1) {
+		    print GENFILE ", ";
+		}
+	    }
+	    print GENFILE " );\n";
+	    next;
+	}
+
+	# If there were reference arguments, fetch their contents and
+	# stuff them into the Tcl result string.
+
+	# NOTE:  This should be improved so that the trailing space is
+	# not present.  People will want to use Tcl regexp matching to
+	# extract the return values, and we should make it easy for
+	# them to use patterns of the form "^([-0-9.]+) ([-0-9.]+)$".
+	# Unfortunately I am too lazy to code this logic in Perl right
+	# now.  Tried once, but it's kind of tricky...
+
+	if (/^<fetch_result>$/) {
+	    if ($refargs) {
+		print GENFILE "    buf[0] = '\\0';\n";
+		for( $i=0; $i < $nargs; $i++ ) {
+		    next if !$argref[$i];
+		    $_ = $argtype[$i];
+		  fetch: {
+		      /PLINT&/ && do {
+			  print GENFILE "    sprintf( buf, \"%s%d \", buf, $argname[$i] );\n";
+			  last fetch;
+		      };
+
+		      # The following needs to be corrected to work
+		      # with the Tcl precision standard (global var
+		      # tcl_precision). 
+
+		      /PLFLT&/ && do {
+			  print GENFILE "    sprintf( buf, \"%s%f \", buf, $argname[$i] );\n";
+			  last fetch;
+		      };
+		      print GENFILE "Unsupported arg type.\n";
+		  }
+		}
+		print GENFILE "    strcpy( interp->result, buf );\n";
+	    }
+	    next;
+	}
+
+	# substitutions here...
+
+	$_ =~ s/%cmd%/$cmd/g;
+	$_ =~ s/%nargs%/$nargs/g;
+	$_ =~ s/%args%/$args/g;
+
+	print GENFILE $_;
+    }
+
+    close( TEMPLATE );
+}
