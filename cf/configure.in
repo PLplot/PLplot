@@ -76,7 +76,6 @@ with_opt=yes
 with_double=no
 with_profile=no
 with_shlib=yes
-with_f2c=no
 with_gcc=no
 with_warn=no
 with_dbmalloc=no
@@ -144,11 +143,9 @@ case "$system" in
     ;;
     linux*|LINUX*|Linux* ) 
 	with_gcc=yes
-	with_f2c=yes
     ;;
     next*|NeXT*|NEXT* ) 
 	with_gcc=yes
-	with_f2c=yes
     ;;
     ultrix*|ULTRIX* ) 
 	with_gcc=yes
@@ -261,9 +258,6 @@ MY_ARG_WITH(profile,
 
 MY_ARG_WITH(shlib,
   [  --with-shlib            build shared libraries ($with_shlib)])
-
-MY_ARG_WITH(f2c,
-  [  --with-f2c              use f2c to compile Fortran code ($with_f2c)])
 
 MY_ARG_WITH(gcc,
   [  --with-gcc              use gcc to compile C and C++ code ($with_gcc)])
@@ -724,7 +718,7 @@ devices:	$DEVICES
 with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
-with_f2c:	$with_f2c		with_gcc:	$with_gcc
+                                        with_gcc:	$with_gcc
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_dp:	$enable_dp
