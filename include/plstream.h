@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1995/01/06 07:48:29  mjl
+ * Revision 1.34  1995/01/06 20:47:29  mjl
+ * Added "freeaspect" stream variable: if set, aspect ratio is not preserved
+ * on orientation swaps.
+ *
+ * Revision 1.33  1995/01/06  07:48:29  mjl
  * Made window coordinate structure a stream variable as it should be.
  *
  * Revision 1.32  1994/08/25  04:03:43  mjl
@@ -294,6 +298,7 @@ typedef struct {
  * aspdev	PLFLT	Original device aspect ratio
  * aspect	PLFLT	Page aspect ratio
  * aspori	PLFLT	Rotation-induced aspect ratio
+ * freeaspect	PLINT	Do not preserve aspect ratio on orientation swaps
  * mar		PLFLT	Page margin (minimum)
  * jx		PLFLT	Page justification in x
  * jy		PLFLT	Page justification in y
@@ -327,7 +332,7 @@ typedef struct {
  * dimyay 	PLFLT
  * dimyb 	PLFLT	  y' = dimyay * y + dimyb
  *
- * status	PLINT	Flag to indicate current action
+ * page_status	PLINT	Flag to indicate current action
  *
  ***********************************************************************
  *
@@ -520,7 +525,7 @@ typedef struct {
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
     PLFLT dimxax, dimxb, dimyay, dimyb;
     PLFLT dimxmin, dimymin, dimxmax, dimymax, dimxpmm, dimypmm;
-    PLINT status;
+    PLINT page_status, freeaspect;
 
 /* Fill pattern info */
 
