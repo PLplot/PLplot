@@ -542,9 +542,9 @@ rdbuf_image(PLStream *pls)
     dbug_enter("rdbuf_image");
     fread(&nptsX, sizeof(PLINT), 1, pls->plbufFile);
     fread(&nptsY, sizeof(PLINT), 1, pls->plbufFile);
-    dev_ix=malloc(nptsX*nptsY*sizeof(int));
-    dev_iy=malloc(nptsX*nptsY*sizeof(int));
-    dev_z=malloc(nptsX*nptsY*sizeof(PLFLT));
+    dev_ix=(int *)malloc(nptsX*nptsY*sizeof(int));
+    dev_iy=(int *)malloc(nptsX*nptsY*sizeof(int));
+    dev_z=(PLFLT *)malloc(nptsX*nptsY*sizeof(PLFLT));
 
     fread(dev_ix, sizeof(int), nptsX*nptsY, pls->plbufFile);
     fread(dev_iy, sizeof(int), nptsX*nptsY, pls->plbufFile);

@@ -1790,7 +1790,7 @@ opt_fsiz(char *opt, char *optarg, void *client_data)
     int len = strlen(optarg);
     char lastchar = optarg[len-1];
     PLFLT multiplier = 1.0e6;
-    char *spec = malloc(len+1);
+    char *spec = (char*)malloc(len+1);
 
 /* Interpret optional suffix */
 

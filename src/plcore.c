@@ -1494,7 +1494,7 @@ plInitDispatchTable()
 #endif
 
 /* Allocate space for the dispatch table. */
-    dispatch_table = malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
+    dispatch_table = (PLDispatchTable **)malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
 
 /* Initialize the dispatch table entries for the static devices by calling
    the dispatch table initialization function for each static device.  This
@@ -1503,7 +1503,7 @@ plInitDispatchTable()
 
     for( n=0; n < nplstaticdevices; n++ )
     {
-        dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
+        dispatch_table[n] = (PLDispatchTable *)malloc( sizeof(PLDispatchTable) );
 
         (*static_device_initializers[n])( dispatch_table[n] );
     }
