@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/03/16 06:48:11  mjl
-   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
-   more robust.
+   Revision 1.7  1993/03/17 17:03:09  mjl
+   Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
+   used functions.
 
+ * Revision 1.6  1993/03/16  06:48:11  mjl
+ * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+ * more robust.
+ *
  * Revision 1.5  1993/03/06  05:06:10  mjl
  * Eliminated plbufFnam since it is now obsolete.
  *
@@ -305,7 +309,7 @@ typedef struct {
 * Prototypes for stream & device utility functions.
 \*----------------------------------------------------------------------*/
 
-void  plgpls		(PLStream *);
+void  plgpls		(PLStream **);
 void  plCmaps_init	(PLStream *);
 void  plOpenFile	(PLStream *);
 void  plFamInit		(PLStream *);

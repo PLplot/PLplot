@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/03/15 21:46:50  mjl
-   Changed _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.  Users still use
-   plpage/plclr.
+   Revision 1.8  1993/03/17 17:03:12  mjl
+   Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
+   used functions.
 
+ * Revision 1.7  1993/03/15  21:46:50  mjl
+ * Changed _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.  Users still use
+ * plpage/plclr.
+ *
  * Revision 1.6  1993/03/03  19:42:21  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -358,7 +362,7 @@ c_plinit()
 static void
 GetDev()
 {
-    PLINT dev = 0, i, count, length;
+    PLINT dev, i, count, length;
     char response[80];
 
 /* Device name already specified.  See if it is valid. */
@@ -532,9 +536,9 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 }
 
 void
-plgpls(PLStream *pls)
+plgpls(PLStream **p_pls)
 {
-    pls = &pls[ipls];
+    *p_pls = &pls[ipls];
 }
 
 void
@@ -615,9 +619,9 @@ c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
 /* Note these two are only useable from C.. */
 
 void
-plgfile(FILE *file)
+plgfile(FILE **p_file)
 {
-    file = pls[ipls].OutFile;
+    *p_file = pls[ipls].OutFile;
 }
 
 void
@@ -636,14 +640,15 @@ plflush(void)
 }
 
 /*
-*  Note here we only pass back a pointer to the file name since we can't be
-*  sure the user has allocated enough space for it.
+*  The user MUST allocate at least 80 characters to hold the filename.
+*  Beyond that, I truncate it.  You have been warned.
 */
 
 void
 c_plgfnam(char *fnam)
 {
-    fnam = pls[ipls].FileName;
+    strncpy(fnam, pls[ipls].FileName, 79);
+    fnam[79] = '\0';
 }
 
 void
