@@ -38,24 +38,26 @@ links:
 #
 # Copy the necessary files to the temp dir
 #
+  @mkdir $(PLTMP)\plplot
   @echo ``
   @echo `Copying source files to $(PLTMP)`
   @echo ``
   @copy $(PLDIR)\src\*.c $(PLTMP)\*.cpp
-  @copy $(PLDIR)\include\*.h $(PLTMP)
+  @copy $(PLDIR)\include\*.h $(PLTMP)\plplot
   @copy $(PLDIR)\examples\c\*.c $(PLTMP)\*.cpp
-  @copy $(PLDIR)\examples\c\*.h $(PLTMP)
+  @copy $(PLDIR)\examples\c\*.h $(PLTMP)\plplot
   @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.cpp
 #
 # Copy the local source files to temp\
 #
 #  @copy src\*.c $(PLTMP)\*.cpp
-  @copy src\*.cpp $(PLTMP)
-  @copy src\*.h $(PLTMP)
-  @copy src\*.rc $(PLTMP)
-  @copy src\*.ico $(PLTMP)
-  @copy src\*.def $(PLTMP)
+  @copy src\win3.cpp $(PLTMP)
+  @copy src\plstub.cpp $(PLTMP)
+  @copy src\resource.h $(PLTMP)\plplot
+#  @copy src\*.rc $(PLTMP)
+#  @copy src\*.ico $(PLTMP)
+#  @copy src\*.def $(PLTMP)
 #
 # Convert from Unix -> Dos
 #
@@ -71,19 +73,20 @@ common:
 # Create plconfig.h file
 #
   @echo ``
-  @echo `Creating $(PLTMP)\plconfig.h`
-  @echo <<$(PLTMP)\plconfig.h
+  @echo `Creating $(PLTMP)\plplot\plconfig.h`
+  @echo <<$(PLTMP)\plplot\plconfig.h
 #ifndef __PLCONFIG_H__
 #define __PLCONFIG_H__
 #define LIB_DIR "$(PLLIB:\=\\)"
 #define BIN_DIR "$(PLBIN:\=\\)"
+#define PLPLOT_VERSION "5.0.4"
 #endif
 <<keep
 # Create pldevs.h file
 #
   @echo ``
-  @echo `Creating $(PLTMP)\pldevs.h`
-  @echo <<$(PLTMP)\pldevs.h
+  @echo `Creating $(PLTMP)\plplot\pldevs.h`
+  @echo <<$(PLTMP)\plplot\pldevs.h
 !ifdef META
 #define PLD_plmeta
 !endif

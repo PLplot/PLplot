@@ -53,7 +53,7 @@ void *h_pldll;
 //new...
 static int plplot_ccmap =0;
 
-#define WIN_COLORS 50
+#define WIN_COLORS 255
 #define MAX_COLORS 256
 
 /* Function prototypes */
@@ -153,6 +153,8 @@ static HDC GetPrinterDC(void)
 /*--------------------------------------------------------------------------*\
 * Initialize device.
 \*--------------------------------------------------------------------------*/
+
+
 void plD_init_win3(PLStream *pls)
 {
 	 HWND   hwndMain;
@@ -213,7 +215,7 @@ void plD_init_win3(PLStream *pls)
 	 wndclass.hInstance = hInstance;
 	 wndclass.hIcon = LoadIcon(hInstance,"PLICON");
 	 wndclass.hCursor = LoadCursor(NULL,IDC_ARROW);
-	 wndclass.hbrBackground = GetStockObject(WHITE_BRUSH);
+	 wndclass.hbrBackground = (struct HBRUSH__ *)GetStockObject(WHITE_BRUSH);
 	 wndclass.lpszMenuName = NULL;
 	 wndclass.lpszClassName = szPlPlotClass;
 	 RegisterClass (&wndclass);
@@ -508,7 +510,31 @@ plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 	  break;
   }
 }
+static void win3_dispatch_init_helper( PLDispatchTable *pdt,
+                                     char *menustr, char *devnam,
+                                     int type, int seq, plD_init_fp init )
+{
+    pdt->pl_MenuStr = menustr;
+    pdt->pl_DevName = devnam;
+    pdt->pl_type = type;
+    pdt->pl_seq = seq;
+    pdt->pl_init     = init;
+    pdt->pl_line     = (plD_line_fp)     plD_line_win3;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_win3;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_win3;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_win3;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_win3;
+    pdt->pl_state    = (plD_state_fp)    plD_state_win3;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_win3;
+}
 
+void plD_dispatch_init_win3	( PLDispatchTable *pdt )
+{
+    win3_dispatch_init_helper( pdt,
+                             "PlPlot Win32 Window", "win3",
+                             plDevType_FileOriented, 29,
+                             (plD_init_fp) plD_init_win3 );
+}
 /*-------------------------------------------------------------*\
 * FillPolygonCmd()
 \*-------------------------------------------------------------*/
@@ -602,7 +628,7 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,
 				di.lpszOutput = NULL;
 				di.lpszDatatype = NULL;
 				di.fwType = NULL;
-                if( SetAbortProc( dev->hdc, (int(__stdcall *)(void))AbortProc ) == SP_ERROR ) {
+                if( SetAbortProc( dev->hdc, (int(__stdcall *)(struct HDC__ *,int))AbortProc ) == SP_ERROR ) {
                   MessageBox( NULL, "Error setting up AbortProc",
                                     "Error", MB_APPLMODAL | MB_OK);
                   break;
