@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,7 +12,6 @@
 ##
 ## This file is part of plplot_octave.
 
-
 function p2 
 
   t = automatic_replot;
@@ -25,7 +24,9 @@ function p2
   y1=sinc(x);
   y2=sin(x).*cos(2*x);
   y3=x.*sin(x);
-  plot(x, y1,';sinc(x);',x,y2,'b;sin(x)*cos(2*x);',x,y3,'g;x*sin(x);');
+  plot(x, y1, ';sinc(x);',
+       x, y2, 'b;sin(x)*cos(2*x);',
+       x, y3, 'g;x*sin(x);');
   
   automatic_replot = t;
   
