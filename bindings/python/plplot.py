@@ -158,6 +158,102 @@ plcont.__doc__ = _plcont.__doc__
 # Redefine plshades to have the user-friendly interface
 # Allowable syntaxes:
 
+# Redefine plvect to have the user-friendly interface
+# Allowable syntaxes:
+
+# plvect( u, v, scaling, [pltr, [pltr_data] or [xg, yg, [wrap]]])
+_plvect = plvect
+def plvect(u, v, *args):
+    u = Numeric.asarray(u)
+    v = Numeric.asarray(v)
+
+    if len(u.shape) != 2:
+        raise ValueError, 'Expected 2D u array'
+    if len(v.shape) != 2:
+        raise ValueError, 'Expected 2D v array'
+    if (u.shape[0] != v.shape[0]) or (u.shape[1] != v.shape[1]) :
+        raise ValueError, 'Expected u and v arrays to be the same dimensions'
+
+    if len(args) > 0 and type(args[0]) == types.FloatType :
+        scaling = args[0]
+        args = args[1:]
+    else:
+        raise ValueError, 'Missing scaling argument'
+
+    if len(args) > 0 and ( \
+    type(args[0]) == types.StringType or \
+    type(args[0]) == types.FunctionType or \
+    type(args[0]) == types.BuiltinFunctionType):
+        pltr = args[0]
+        # Handle the string names for the callbacks though specifying the
+        # built-in function name directly (without the surrounding quotes) 
+        # or specifying any user-defined transformation function 
+        # (following above rules) works fine too.
+        if type(pltr) == types.StringType:
+            if pltr == 'pltr0':
+                pltr = pltr0
+            elif pltr == 'pltr1':
+                pltr = pltr1
+            elif pltr == 'pltr2':
+                pltr = pltr2
+            else:
+                raise ValueError, 'pltr string is unrecognized'
+
+        args = args[1:]
+        # Handle pltr_data or separate xg, yg, [wrap]
+        if len(args) == 0:
+            # Default pltr_data
+            pltr_data = None
+        elif len(args) == 1:
+            #Must be pltr_data
+            pltr_data = args[0]
+            args = args[1:]
+        elif len(args) >= 2:
+            xg = Numeric.asarray(args[0])
+            if len(xg.shape) < 1 or len(xg.shape) > 2:
+                raise ValueError, 'xg must be 1D or 2D array'
+            yg = Numeric.asarray(args[1])
+            if len(yg.shape) != len(xg.shape):
+                raise ValueError, 'yg must have same number of dimensions as xg'
+            args = args[2:]
+            # wrap only relevant if xg and yg specified.
+            if len(args) > 0:
+             if type(args[0]) == types.IntType:
+              wrap = args[0]
+              args = args[1:]
+              if len(xg.shape) == 2 and len(yg.shape) == 2 and  \
+              u.shape == xg.shape and u.shape == yg.shape:
+                # handle wrap
+                if wrap == 1:
+                    u = Numeric.resize(u, (u.shape[0]+1, u.shape[1]))
+                    v = Numeric.resize(v, (v.shape[0]+1, v.shape[1]))
+                    xg = Numeric.resize(xg, (xg.shape[0]+1, xg.shape[1]))
+                    yg = Numeric.resize(yg, (yg.shape[0]+1, yg.shape[1]))
+                elif wrap == 2:
+                    u = Numeric.transpose(Numeric.resize( \
+                    Numeric.transpose(u), (u.shape[1]+1, u.shape[0])))
+                    v = Numeric.transpose(Numeric.resize( \
+                    Numeric.transpose(v), (v.shape[1]+1, v.shape[0])))
+                    xg = Numeric.transpose(Numeric.resize( \
+                    Numeric.transpose(xg), (xg.shape[1]+1, xg.shape[0])))
+                    yg = Numeric.transpose(Numeric.resize( \
+                    Numeric.transpose(yg), (yg.shape[1]+1, yg.shape[0])))
+                elif wrap != 0:
+                    raise ValueError, "Invalid wrap specifier, must be 0, 1 or 2."
+              elif wrap != 0:
+                  raise ValueError, 'Non-zero wrap specified and xg and yg are not 2D arrays'
+             else:
+                 raise ValueError, 'Specified wrap is not an integer'
+            pltr_data = (xg, yg)
+    else:
+        # default is identity transformation
+        pltr = pltr0
+        pltr_data = None
+    if len(args) > 0:
+        raise ValueError, 'Too many arguments for plvect'
+    _plvect(u, v, scaling, pltr, pltr_data)
+plvect.__doc__ = _plvect.__doc__
+
 # plshades(z,  [xmin, xmax, ymin, ymax,] clev, \
 # fill_width, [cont_color, cont_width,], rect, \
 # [pltr, [pltr_data] or [xg, yg, [wrap]]])

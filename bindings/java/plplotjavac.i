@@ -425,6 +425,24 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    return $jnicall;
 }
 
+/* with no trailing count */
+%typemap(in) PLFLT *Array {
+   jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   Alen = (*jenv)->GetArrayLength( jenv, $input );
+   setup_array_1d_PLFLT( &$1, jxdata, Alen);
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
+}
+%typemap(freearg) PLFLT *Array {
+   free($1);
+}
+%typemap(jni) PLFLT *Array jPLFLTArray
+%typemap(jtype) PLFLT *Array jPLFLTbracket
+%typemap(jstype) PLFLT *Array jPLFLTbracket
+%typemap(javain) PLFLT *Array "$javainput"
+%typemap(javaout) PLFLT *Array {
+   return $jnicall;
+}
+
 /* check consistency with X dimension of previous */
 %typemap(in) PLFLT* ArrayCkX {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
@@ -572,6 +590,55 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(jstype) (PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
 %typemap(javain) (PLFLT **Matrix, PLINT nx, PLINT ny) "$javainput"
 %typemap(javaout) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+   return $jnicall;
+}
+
+/* 2D array with no trailing dimensions, set the X, Y size for later checking */
+%typemap(in) PLFLT **Matrix {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+
+   Xlen = nx;
+   Ylen = ny;
+   setup_array_2d_PLFLT( &$1, adat, nx, ny );
+   for( i=0; i < nx; i++ )
+     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+
+   free(adat);
+   free(ai);
+
+}
+%typemap(freearg) PLFLT **Matrix {
+   free($1[0]);
+   free($1);
+}
+%typemap(jni) PLFLT **Matrix "jobjectArray"
+%typemap(jtype) PLFLT **Matrix jPLFLTbracket2
+%typemap(jstype) PLFLT **Matrix jPLFLTbracket2
+%typemap(javain) PLFLT **Matrix "$javainput"
+%typemap(javaout) PLFLT **Matrix {
    return $jnicall;
 }
 

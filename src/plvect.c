@@ -287,7 +287,7 @@ void plvecf_int(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 }
 
 void
-plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, 
+c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, 
 	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	PLPointer pltr_data)
 {

@@ -38,7 +38,8 @@ javafiles = \
 	x16.java \
 	x17.java \
 	x18.java \
-	x19.java
+	x19.java \
+	x22.java 
 
 javademos = README.javademos $(javafiles)
 

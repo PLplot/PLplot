@@ -638,6 +638,10 @@ DOC(plstyl, "Set up a new line style.")
 void
 plstyl(PLINT n, PLINT *Array, PLINT *ArrayCk);
 
+DOC(plsvect, "Set vector arrow style.")
+void
+plsvect(PLFLT *Array, PLFLT *ArrayCk, PLINT n, PLINT fill);
+
 DOC(plsvpa, "Set the edges of the viewport to the specified absolute coordinates.")
 void
 plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
@@ -665,6 +669,12 @@ pltext(void);
 DOC(plvasp, "Sets the edges of the viewport with the given aspect ratio, leaving room for labels.")
 void
 plvasp(PLFLT aspect);
+
+DOC(plvect, "Plot vectors.")
+void
+plvect(PLFLT **Matrix, PLFLT **MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+	pltr_func pltr,
+	PLPointer SWIG_OBJECT_DATA);
 
 DOC(plvpas, "Create the largest viewport of the specified aspect ratio that fits within the specified normalized subpage coordinates.")
 void

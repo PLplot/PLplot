@@ -18,7 +18,7 @@ plinit()
 # xw17.py must be standalone and interactive so cannot be run from pythondemos.py
 
 failed = []
-for i in range(1, 14) + [15, 16, 18, 19]:
+for i in range(1, 14) + [15, 16, 18, 19, 22]:
     script = 'xw' + '%02d' % i
     try:
 	__import__(script, globals(), locals(), [])

@@ -191,6 +191,19 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(freearg) (PLINT n, PLFLT* Array) { Py_DECREF(tmp$argnum);}
 
 /* check consistency with previous */
+%typemap(in) (PLFLT* ArrayCk, PLINT n) (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] != Alen) {
+    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
+    return NULL;
+  }
+  $1 = (PLFLT*)tmp->data;
+  $2 = tmp->dimensions[0];
+}
+%typemap(freearg) (PLFLT* ArrayCk, PLINT n) { Py_DECREF(tmp$argnum);}
+
+/* check consistency with previous */
 %typemap(in) PLFLT* ArrayCk (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
   if(tmp == NULL) return NULL;
@@ -253,6 +266,15 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 }
 %typemap(freearg) (PLFLT* Array, PLINT n) {Py_DECREF(tmp$argnum); }
 
+/* with no count */
+%typemap(in) PLFLT* Array (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
+  if(tmp == NULL) return NULL;
+  Alen = tmp->dimensions[0];
+  $1 = (PLFLT*)tmp->data;
+}
+%typemap(freearg) PLFLT* Array { Py_DECREF(tmp$argnum);}
+
 /* 2D array with trailing dimensions, check consistency with previous */
 %typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (PyArrayObject* tmp) {
   int i, size;
@@ -287,6 +309,23 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
     $1[i] = (PLFLT*)(tmp->data + i*size);
 }
 %typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+  Py_DECREF(tmp$argnum);
+  free($1);
+}
+
+/* 2D array with no dimensions, set the X, Y size for later checking */
+%typemap(in) PLFLT **Matrix (PyArrayObject* tmp) {
+  int i, size;
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
+  if(tmp == NULL) return NULL;
+  Xlen = tmp->dimensions[0];
+  Ylen = tmp->dimensions[1];
+  size = sizeof(PLFLT)*Ylen;
+  $1 = (PLFLT**)malloc(sizeof(PLFLT*)*Xlen);
+  for(i=0; i<Xlen; i++)
+    $1[i] = (PLFLT*)(tmp->data + i*size);
+}
+%typemap(freearg) PLFLT **Matrix {
   Py_DECREF(tmp$argnum);
   free($1);
 }

@@ -49,7 +49,8 @@ dist_examples_python_DATA = \
 	xw15.py \
 	xw16.py \
 	xw18.py \
-	xw19.py
+	xw19.py \
+	xw22.py
 
 nodist_examples_python_DATA = plplot_python_start.py
 

@@ -56,7 +56,8 @@ dist_examples_tcl_DATA = \
 	x16.tcl \
 	x17.tcl \
 	x18.tcl \
-	x19.tcl 
+	x19.tcl \
+	x22.tcl 
 
 nodist_examples_tcl_DATA = tclIndex
 
@@ -79,7 +80,8 @@ dist_examples_tcl_SCRIPTS = \
 	x16 \
 	x17 \
 	x18 \
-	x19
+	x19 \
+	x22
 
 tclIndex:
 	$(mkindex)

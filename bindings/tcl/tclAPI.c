@@ -54,6 +54,7 @@ static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadesCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plmapCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plmeridiansCmd (ClientData, Tcl_Interp *, int, char **);
+static int plvectCmd   (ClientData, Tcl_Interp *, int, char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -91,6 +92,7 @@ static CmdInfo Cmds[] = {
     {"plsetopt",	plsetoptCmd},
     {"plshade",		plshadeCmd},
     {"plshades",	plshadesCmd},
+    {"plvect",         plvectCmd},
     {NULL,		NULL}
 };
 
@@ -1048,8 +1050,301 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plmeshCmd
+/*---------------------------------------------------------------------------*\
+ * plvect implementation (based on plcont above)
+\*---------------------------------------------------------------------------*/
+static int
+plvectCmd( ClientData clientData, Tcl_Interp *interp,
+	   int argc, char *argv[] )
+{
+    tclMatrix *matPtr, *matu, *matv;
+    PLINT nx, ny;
+    char *pltrname = "pltr0";
+    tclMatrix *mattrx = NULL, *mattry = NULL;
+    PLFLT **u, **v, **uused, **vused, **uwrapped, **vwrapped;
+    PLFLT scaling;
+
+    int i, j;
+    void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
+    PLPointer pltr_data = NULL;
+    PLcGrid  cgrid1;
+    PLcGrid2 cgrid2;
+
+    int wrap = 0;
+
+    if (argc  < 3 ) {
+       Tcl_AppendResult( interp, "wrong # args: see documentation for ",
+                        argv[0], (char *) NULL);
+       return TCL_ERROR;
+    }
+
+    matu = Tcl_GetMatrixPtr( interp, argv[1] );
+    if (matu == NULL) return TCL_ERROR;
+
+    if (matu->dim != 2) {
+       interp->result = "Must use 2-d data.";
+       return TCL_ERROR;
+    } else {
+       nx = matu->n[0];
+       ny = matu->n[1];
+       tclmateval_modx = nx;
+       tclmateval_mody = ny;
+
+        /* convert matu to 2d-array so can use standard wrap approach
+	 * from now on in this code. */
+         plAlloc2dGrid(&u, nx, ny );
+        for (i=0; i < nx; i++) {
+          for (j=0; j < ny; j++) {
+             u[i][j] = tclMatrix_feval(i, j, matu);
+          }
+       }
+    }
+
+    matv = Tcl_GetMatrixPtr( interp, argv[2] );
+    if (matv == NULL) return TCL_ERROR;
+
+    if (matv->dim != 2) {
+       interp->result = "Must use 2-d data.";
+       return TCL_ERROR;
+    } else {
+       nx = matv->n[0];
+       ny = matv->n[1];
+       tclmateval_modx = nx;
+       tclmateval_mody = ny;
+
+        /* convert matv to 2d-array so can use standard wrap approach
+        * from now on in this code. */
+        plAlloc2dGrid(&v, nx, ny );
+       for (i=0; i < nx; i++) {
+          for (j=0; j < ny; j++) {
+             v[i][j] = tclMatrix_feval(i, j, matv);
+          }
+       }
+    }
+
+    argc -= 3, argv += 3;
+
+/* The next argument has to be scaling */
+
+    if (argc < 1) {
+       interp->result = "plvect, bogus syntax";
+       return TCL_ERROR;
+    }
+
+    scaling = atof(argv[0]);
+    argc--, argv++;
+
+/* Now handle trailing optional parameters, if any */
+
+    if (argc >= 3) {
+    /* There is a pltr spec, parse it. */
+       pltrname = argv[0];
+       mattrx = Tcl_GetMatrixPtr( interp, argv[1] );
+       if (mattrx == NULL) return TCL_ERROR;
+       mattry = Tcl_GetMatrixPtr( interp, argv[2] );
+       if (mattry == NULL) return TCL_ERROR;
+
+       argc -= 3, argv += 3;
+    }
+
+    if (argc) {
+    /* There is a wrap spec, get it. */
+       wrap = atoi( argv[0] );
+
+    /* Hmm, I said the the doc they could also say x or y, have to come back
+       to this... */
+
+       argc--, argv++;
+    }
+
+/* There had better not be anything else on the command line by this point. */
+
+    if (argc) {
+       interp->result = "plvect, bogus syntax, too many args.";
+       return TCL_ERROR;
+    }
+
+/* Now we need to set up the data for contouring. */
+
+    if ( !strcmp( pltrname, "pltr0" ) ) {
+       pltr = pltr0;
+       uused = u;
+       vused = v;
+
+    /* wrapping is only supported for pltr2. */
+       if (wrap) {
+           interp->result = "Must use pltr2 if want wrapping.";
+           return TCL_ERROR;
+       }
+    }
+    else if ( !strcmp( pltrname, "pltr1" ) ) {
+       pltr = pltr1;
+       cgrid1.xg = mattrx->fdata;
+       cgrid1.nx = nx;
+       cgrid1.yg = mattry->fdata;
+       cgrid1.ny = ny;
+       uused = u;
+        vused = v;
+
+    /* wrapping is only supported for pltr2. */
+       if (wrap) {
+           interp->result = "Must use pltr2 if want wrapping.";
+           return TCL_ERROR;
+       }
+
+       if (mattrx->dim != 1 || mattry->dim != 1) {
+           interp->result = "Must use 1-d coord arrays with pltr1.";
+           return TCL_ERROR;
+       }
+
+       pltr_data = &cgrid1;
+    }
+    else if ( !strcmp( pltrname, "pltr2" ) ) {
+    /* printf( "plvect, setting up for pltr2\n" ); */
+       if (!wrap) {
+       /* printf( "plvect, no wrapping is needed.\n" ); */
+           plAlloc2dGrid( &cgrid2.xg, nx, ny );
+           plAlloc2dGrid( &cgrid2.yg, nx, ny );
+           cgrid2.nx = nx;
+           cgrid2.ny = ny;
+           uused = u;
+           vused = v;
+
+           matPtr = mattrx;
+           for( i=0; i < nx; i++ )
+               for( j=0; j < ny; j++ )
+                   cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+           matPtr = mattry;
+           for( i=0; i < nx; i++ ) {
+               for( j=0; j < ny; j++ ) {
+                   cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+	       }
+	   }
+       }
+       else if (wrap == 1) {
+	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    plAlloc2dGrid( &uwrapped, nx+1, ny );
+	    plAlloc2dGrid( &vwrapped, nx+1, ny );
+	    cgrid2.nx = nx+1;
+	    cgrid2.ny = ny;
+	    uused = uwrapped;
+	    vused = vwrapped;
+
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ ) {
+		for( j=0; j < ny; j++ ) {
+		   cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+                   uwrapped[i][j] = u[i][j];
+                   vwrapped[i][j] = v[i][j];
+               }
+           }
+
+           for( j=0; j < ny; j++ ) {
+               cgrid2.xg[nx][j] = cgrid2.xg[0][j];
+               cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+               uwrapped[nx][j] = uwrapped[0][j];
+               vwrapped[nx][j] = vwrapped[0][j];
+           }
+
+            /* u and v not used in executable path after this so free it
+            * before nx value is changed. */
+           plFree2dGrid( u, nx, ny );
+           plFree2dGrid( v, nx, ny );
+           nx++;
+       }
+       else if (wrap == 2) {
+           plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
+           plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+           plAlloc2dGrid( &uwrapped, nx, ny+1 );
+           plAlloc2dGrid( &vwrapped, nx, ny+1 );
+           cgrid2.nx = nx;
+           cgrid2.ny = ny+1;
+           uused = uwrapped;
+           vused = vwrapped;
+
+           matPtr = mattrx;
+           for( i=0; i < nx; i++ )
+               for( j=0; j < ny; j++ )
+                   cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+           matPtr = mattry;
+           for( i=0; i < nx; i++ ) {
+               for( j=0; j < ny; j++ ) {
+                   cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+                   uwrapped[i][j] = u[i][j];
+                   vwrapped[i][j] = v[i][j];
+               }
+           }
+
+           for( i=0; i < nx; i++ ) {
+               cgrid2.xg[i][ny] = cgrid2.xg[i][0];
+               cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+               uwrapped[i][ny] = uwrapped[i][0];
+               vwrapped[i][ny] = vwrapped[i][0];
+           }
+
+            /* u and v not used in executable path after this so free it
+            * before ny value is changed. */
+           plFree2dGrid( u, nx, ny );
+           plFree2dGrid( v, nx, ny );
+
+           ny++;
+       }
+       else {
+           interp->result =
+               "Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
+           return TCL_ERROR;
+       }
+
+       pltr = pltr2;
+       pltr_data = &cgrid2;
+    }
+    else {
+       Tcl_AppendResult( interp,
+                         "Unrecognized coordinate transformation spec:",
+                         pltrname, ", must be pltr0 pltr1 or pltr2.",
+                         (char *) NULL );
+       return TCL_ERROR;
+    }
+
+
+/* plot the vector data.*/
+
+    plvect( uused, vused, nx, ny,
+           scaling, pltr, pltr_data );
+/* Now free up any space which got allocated for our coordinate trickery. */
+
+/* uused points to either u or uwrapped.  In both cases the allocated size
+ * was nx by ny.  Now free the allocated space, and note in the case
+ * where uused points to uwrapped, the separate u space has been freed by
+ * previous wrap logic. */
+    plFree2dGrid( uused, nx, ny );
+    plFree2dGrid( vused, nx, ny );
+
+    if (pltr == pltr1) {
+    /* Hmm, actually, nothing to do here currently, since we just used the
+       Tcl Matrix data directly, rather than allocating private space. */
+    }
+    else if (pltr == pltr2) {
+    /* printf( "plvect, freeing space for grids used in pltr2\n" ); */
+       plFree2dGrid( cgrid2.xg, nx, ny );
+       plFree2dGrid( cgrid2.yg, nx, ny );
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/* ------------------------------------------------------------------------*\
+ *
+* plmeshCmd
  *
  * Processes plmesh Tcl command.
  *

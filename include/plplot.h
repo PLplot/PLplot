@@ -546,6 +546,7 @@ typedef struct {
 #define    plszax	c_plszax
 #define    pltext	c_pltext
 #define    plvasp	c_plvasp
+#define    plvect	c_plvect
 #define    plvpas	c_plvpas
 #define    plvpor	c_plvpor
 #define    plvsta	c_plvsta
@@ -609,7 +610,7 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
          PLFLT scale, PLFLT dx, PLFLT dy) ;
 
 void
-plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
               PLPointer pltr_data);
 
