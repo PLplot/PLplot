@@ -12,20 +12,24 @@
 ##
 ## This file is part of plplot_octave.
 
-# arrows( X, Y, dx, dy)
-# plot an array of arrows (partly emulates matlab quiver)
-#
-# NOTE: preliminary
+## arrows( X, Y, dx, dy)
+## plot an array of arrows (partly emulates matlab quiver)
 
 function arrows( X, Y, dx, dy)
 
-	of = do_fortran_indexing;do_fortran_indexing=1;
-	for i=1:rows(X)*columns(X)
-		xx = [X(i); X(i) + dx(i)];
-		yy = [Y(i); Y(i) + dy(i)];
-		plline(xx,yy);plpoin(X(i) + dx(i),  Y(i) + dy(i), 20);
-	endfor
-	plflush;pleop;
-	do_fortran_indexing = of;
-	
+  if(0)
+    of = do_fortran_indexing; do_fortran_indexing = 1;
+    for i = 1:rows(X)*columns(X)
+      xx = [X(i); X(i) + dx(i)];
+      yy = [Y(i); Y(i) + dy(i)];
+      plline(xx,yy); plpoin(X(i) + dx(i),  Y(i) + dy(i), 20);
+    endfor
+    plflush; pleop;
+    do_fortran_indexing = of;
+  else
+    for i = 1:columns(X)
+      plarrows(dx(:,i), dy(:,i), X(:,i), Y(:,i), 1, 1, 1);
+    endfor
+  endif
+
 endfunction
