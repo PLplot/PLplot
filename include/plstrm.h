@@ -377,6 +377,12 @@ typedef struct {
  * wp....	Transformation variables for world  to physical conversion
  * wm....	Transformation variables for world coordinates to mm
  *
+ ****************************************************************************
+ * 
+ * Other variables
+ *
+ * dev_compression Compression level for supporting devices
+ *
 \*--------------------------------------------------------------------------*/
 
 typedef struct {
@@ -540,6 +546,10 @@ typedef struct {
 
     PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+
+/* Other variables */
+   
+    PLINT dev_compression;
 
 } PLStream;
 

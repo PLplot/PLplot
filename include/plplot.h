@@ -158,6 +158,7 @@ typedef void* PLPointer;
 #define PLESC_SWIN		14	/* set window parameters */
 #define PLESC_DOUBLEBUFFERING	15	/* configure double buffering */
 #define PLESC_XORMOD		16	/* jc: set xor mode */
+#define PLESC_SET_COMPRESSION	17	/* AFR: set compression */
 
 /* Window parameter tags */
 
@@ -426,6 +427,7 @@ typedef struct {
 #define    plgchr	c_plgchr
 #define    plgcol0	c_plgcol0
 #define    plgcolbg	c_plgcolbg
+#define    plgcompression	c_plgcompression
 #define    plgdev	c_plgdev
 #define    plgdidev	c_plgdidev
 #define    plgdiori	c_plgdiori
@@ -474,6 +476,7 @@ typedef struct {
 #define    plscol0	c_plscol0
 #define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
+#define    plscompression	c_plscompression
 #define    plsdev	c_plsdev
 #define    plsdiplt	c_plsdiplt
 #define    plsdiplz	c_plsdiplz
@@ -545,6 +548,7 @@ typedef struct {
 #define    c_plgchr	plgchr
 #define    c_plgcol0	plgcol0
 #define    c_plgcolbg	plgcolbg
+#define    c_plgcompression	plgcompression
 #define    c_plgdev	plgdev
 #define    c_plgdidev	plgdidev
 #define    c_plgdiori	plgdiori
@@ -593,6 +597,7 @@ typedef struct {
 #define    c_plscol0	plscol0
 #define    c_plscolbg	plscolbg
 #define    c_plscolor	plscolor
+#define    c_plscompression	plscompression
 #define    c_plsdev	plsdev
 #define    c_plsdiplt	plsdiplt
 #define    c_plsdiplz	plsdiplz
@@ -830,6 +835,11 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
 void
 c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
+
+/* Returns the current compression setting */
+
+void
+c_plgcompression(PLINT *compression);
 
 /* Get the current device (keyword) name */
 
@@ -1089,6 +1099,11 @@ c_plscolbg(PLINT r, PLINT g, PLINT b);
 
 void
 c_plscolor(PLINT color);
+
+/* Set the compression level */
+
+void
+c_plscompression(PLINT compression);
 
 /* Set the device (keyword) name */
 
