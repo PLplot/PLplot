@@ -200,6 +200,7 @@ DLLOBJS = \
 	$(WINDIR)\next.obj \
 	$(WINDIR)\ntk.obj \
 	$(WINDIR)\tkwin.obj \
+	$(WINDIR)\tkwin_common.obj \
 	$(WINDIR)\null.obj \
 	$(WINDIR)\pbm.obj \
 	$(WINDIR)\plbuf.obj \
@@ -321,6 +322,10 @@ $(WINDIR)\next.obj: $(GENERICDRIVERDIR)\next.c
 		$(DEFINES) -Fo$(WINDIR)\ $?
 
 $(WINDIR)\tkwin.obj: $(GENERICDRIVERDIR)\tkwin.c
+	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
+		$(DEFINES) -Fo$(WINDIR)\ $?
+
+$(WINDIR)\tkwin_common.obj: $(GENERICDRIVERDIR)\tkwin_common.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
 

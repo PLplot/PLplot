@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2002/08/05 14:10:16  vincentdarley
+ * removed dependence on tkInt, fixed win-tk compile
+ *
  * Revision 1.3  2002/07/28 22:41:15  airwin
  * Split tkwin.c into tkwin_common.c and tkwin.c to remove cross-linking issue
  * and allow tkwin.c to act like a normal driver.  So the last "special" version
@@ -174,6 +177,8 @@ PLColor_from_TkColor(PLColor *plcolor, XColor *xcolor);
 /* Same but also tells me if the color changed */
 int
 PLColor_from_TkColor_Changed(PLColor *plcolor, XColor *xcolor);
+
+void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col);
 
 /* Set background & foreground colors.  */
 

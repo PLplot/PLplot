@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2002/08/05 14:10:16  vincentdarley
+ * removed dependence on tkInt, fixed win-tk compile
+ *
  * Revision 1.11  2002/07/28 22:41:15  airwin
  * Split tkwin.c into tkwin_common.c and tkwin.c to remove cross-linking issue
  * and allow tkwin.c to act like a normal driver.  So the last "special" version
@@ -258,24 +261,6 @@ extern void XWarpPointer(
 );
 #endif
 
-#ifdef USE_TCL_STUBS
-/* Unfortunately, tkInt.h ends up loading Malloc.h under Windows */
-/* So we have to deal with this mess */
-    #undef malloc 
-    #undef free
-    #undef realloc
-    #undef calloc
-#include <tkInt.h>
-    #define malloc ckalloc
-    #define free(m) ckfree((char*)m)
-    #define realloc ckrealloc
-    #define calloc ckcalloc
-#else
-/* work around missing compat/limits.h in private includes from tcl/tk */
-#define HAVE_LIMITS_H 1
-#include <tkInt.h>
-#endif
-
 #ifdef DEBUG_ENTER
 /* This version of dbug_enter works cross-platform */
 #undef dbug_enter
@@ -289,16 +274,6 @@ extern void XWarpPointer(
 #include <fcntl.h>
 #endif
 #endif
-
-#ifdef ckalloc
-#undef ckalloc
-#define ckalloc malloc
-#endif
-#ifdef ckfree
-#undef ckfree
-#define ckfree free
-#endif
-
 
 /* plplot_tkwin_ccmap is statically defined in pltkwd.h.  Note that
  * tkwin.c also includes that header and uses that variable. */
@@ -479,13 +454,13 @@ static Tk_ConfigSpec configSpecs[] = {
 
 /* Externals */
 
-int   plPlotterCmd        (ClientData, Tcl_Interp *, int, char **);
+int   plPlotterCmd        (ClientData, Tcl_Interp *, int, CONST char **);
 void PlplotterAtEop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 void PlplotterAtBop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 
 /* These are invoked by the TK dispatcher */
 
-static void  DestroyPlPlotter     (char *);
+static void  DestroyPlPlotter     (ClientData);
 static void  DisplayPlPlotter     (ClientData);
 static void  PlPlotterInit        (ClientData);
 static void  PlPlotterFirstInit   (ClientData clientData);
@@ -494,29 +469,28 @@ static void  PlPlotterExposeEH    (ClientData, XEvent *);
 static void  PlPlotterMotionEH    (ClientData, register XEvent *);
 static void  PlPlotterEnterEH     (ClientData, register XEvent *);
 static void  PlPlotterLeaveEH     (ClientData, register XEvent *);
-static void  PlPlotterKeyEH       (ClientData, register XEvent *);
-static void  PlPlotterButtonPressEH    (ClientData    clientData, register XEvent *);
-static int   PlPlotterWidgetCmd   (ClientData, Tcl_Interp *, int, char **);
+static void  PlPlotterButtonPressEH (ClientData    clientData, register XEvent *);
+static int   PlPlotterWidgetCmd   (ClientData, Tcl_Interp *, int, CONST char **);
 static int   ReadData           (ClientData, int);
 static void  Install_cmap       (PlPlotter *plPlotterPtr);
 
 /* These are invoked by PlPlotterWidgetCmd to process widget commands */
 
-static int   Closelink          (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Cmd                (Tcl_Interp *, PlPlotter *, int, char **);
-static int   ConfigurePlPlotter (Tcl_Interp *, PlPlotter *, int, char **, int);
-static int   Draw               (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Info               (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Openlink           (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Orient             (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Page               (Tcl_Interp *, PlPlotter *, int, char **);
-static int   NextPage           (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Print              (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Redraw             (Tcl_Interp *, PlPlotter *, int, char **);
-static int   Save               (Tcl_Interp *, PlPlotter *, int, char **);
-static int   View               (Tcl_Interp *, PlPlotter *, int, char **);
+static int   Closelink          (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Cmd                (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   ConfigurePlPlotter (Tcl_Interp *, PlPlotter *, int, CONST char **, int);
+static int   Draw               (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Info               (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Openlink           (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Orient             (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Page               (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   NextPage           (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Print              (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Redraw             (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   Save               (Tcl_Interp *, PlPlotter *, int, CONST char **);
+static int   View               (Tcl_Interp *, PlPlotter *, int, CONST char **);
 static int   Scroll             (Tcl_Interp *, PlPlotter *);
-static int   report             (Tcl_Interp *, PlPlotter *, int, char **);
+static int   report             (Tcl_Interp *, PlPlotter *, int, CONST char **);
 
 /* Routines for manipulating graphic crosshairs */
 
@@ -535,7 +509,7 @@ static void  UpdateRband        (PlPlotter *);
 
 /* Utility routines */
 
-static void  gbox               (PLFLT *, PLFLT *, PLFLT *, PLFLT *, char **);
+static void  gbox               (PLFLT *, PLFLT *, PLFLT *, PLFLT *, CONST char **);
 static void  UpdateVScrollbar   (register PlPlotter *);
 static void  UpdateHScrollbar   (register PlPlotter *);
 
@@ -559,7 +533,7 @@ static void  UpdateHScrollbar   (register PlPlotter *);
 
 int
 plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
-           int argc, char **argv)
+           int argc, CONST char **argv)
 {
     Tk_Window tkwin;
     register PlPlotter *plPlotterPtr;
@@ -697,7 +671,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
 
 static int
 PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
-                 int argc, char **argv)
+                 int argc, CONST char **argv)
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
     int result = TCL_OK;
@@ -959,7 +933,7 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
  *---------------------------------------------------------------------------
  */
 
-static void DestroyPlPlotter(char* clientData)
+static void DestroyPlPlotter(ClientData clientData)
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
     register PLRDev *plr = plPlotterPtr->plr;
@@ -1271,112 +1245,6 @@ PlPlotterButtonPressEH(ClientData clientData, register XEvent *eventPtr)
         if(plPlotterPtr->rband)
             CreateRband(plPlotterPtr);
         break;
-    }
-}
-/*
- *---------------------------------------------------------------------------
- *
- * PlPlotterKeyEH --
- *
- *      Invoked by the Tk dispatcher on Keypress events in a plframe. 
- *      Not invoked unless we are drawing graphic crosshairs.
- *
- * Results:
- *      None.
- *
- * Side effects:
- *      Keypress events get filtered.  If a cursor key is pushed, the
- *      graphic crosshairs are moved in the appropriate direction.  Using a
- *      modifier key multiplies the movement a factor of 5 for each key
- *      added.
- *
- *---------------------------------------------------------------------------
- */
-
-static void
-PlPlotterKeyEH(ClientData clientData, register XEvent *eventPtr)
-{
-    register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
-    XKeyEvent *event = (XKeyEvent *) eventPtr;
-    Tk_Window tkwin = plPlotterPtr->tkwin;
-    Tcl_DString ds;
-    KeySym keysym;
-    char* string;
-
-    dbug_enter("PlPlotterKeyEH");
-    string = TkpGetString((TkWindow*)tkwin,eventPtr,&ds);
-    pldebug("PlPlotterKeyEH", "Translation: %s\n", string);
-    keysym = TkStringToKeysym(string);
-    Tcl_DStringFree(&ds);
-	
-    if (IsModifierKey(keysym)) {
-        eventPtr->type = 0;
-    } else if (IsCursorKey(keysym)) {
-        int x1, y1, dx = 0, dy = 0;
-        int x0 = event->x, y0 = event->y;
-        int xmin = 0, xmax = Tk_Width(tkwin) - 1;
-        int ymin = 0, ymax = Tk_Height(tkwin) - 1;
-
-        switch (keysym) {
-        case XK_Left:
-            dx = -1;
-            break;
-        case XK_Right:
-            dx = 1;
-            break;
-        case XK_Up:
-            dy = -1;
-            break;
-        case XK_Down:
-            dy = 1;
-            break;
-        }
-
-    /* Each modifier key added increases the multiplication factor by 5 */
-
-    /* Shift */
-
-        if (event->state & 0x01) {
-            dx *= 5;
-            dy *= 5;
-        }
-
-    /* Caps Lock */
-
-        if (event->state & 0x02) {
-            dx *= 5;
-            dy *= 5;
-        }
-
-    /* Control */
-
-        if (event->state & 0x04) {
-            dx *= 5;
-            dy *= 5;
-        }
-
-    /* Alt */
-
-        if (event->state & 0x08) {
-            dx *= 5;
-            dy *= 5;
-        }
-
-    /* Bounds checking so that we don't send cursor out of window */
-
-        x1 = x0 + dx;
-        y1 = y0 + dy;
-
-        if (x1 < xmin) dx = xmin - x0;
-        if (y1 < ymin) dy = ymin - y0;
-        if (x1 > xmax) dx = xmax - x0;
-        if (y1 > ymax) dy = ymax - y0;
-
-    /* Engage... */
-
-        XWarpPointer(plPlotterPtr->display, Tk_WindowId(tkwin),
-                     None, 0, 0, 0, 0, dx, dy);
-        eventPtr->type = 0;
     }
 }
 
@@ -1838,7 +1706,7 @@ DisplayPlPlotter(ClientData clientData)
 
 static int
 scol0(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-      int i, char *col, int *p_changed)
+      int i, CONST char *col, int *p_changed)
 {
     PLStream *pls = plPlotterPtr->pls;
     XColor xcol;
@@ -1882,7 +1750,7 @@ scol0(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 scol1(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-      int i, char *col, char *pos, char *rev, int *p_changed)
+      int i, CONST char *col, CONST char *pos, CONST char *rev, int *p_changed)
 {
     PLStream *pls = plPlotterPtr->pls;
     XColor xcol;
@@ -1949,7 +1817,7 @@ scol1(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-    int argc, char **argv)
+    int argc, CONST char **argv)
 {
     PLStream *pls = plPlotterPtr->pls;
     int length;
@@ -2193,9 +2061,6 @@ static void ActiveState(register PlPlotter *plPlotterPtr, int on) {
         
             Tk_CreateEventHandler(plPlotterPtr->tkwin, LeaveWindowMask,
                                   PlPlotterLeaveEH, (ClientData) plPlotterPtr);
-        
-            Tk_CreateEventHandler(plPlotterPtr->tkwin, KeyPressMask,
-                                  PlPlotterKeyEH, (ClientData) plPlotterPtr);
         /* Switch to crosshair cursor. */
         
             Tk_DefineCursor(plPlotterPtr->tkwin, plPlotterPtr->xhair_cursor);
@@ -2212,8 +2077,6 @@ static void ActiveState(register PlPlotter *plPlotterPtr, int on) {
     
             Tk_DeleteEventHandler(plPlotterPtr->tkwin, LeaveWindowMask,
                                   PlPlotterLeaveEH, (ClientData) plPlotterPtr);
-            Tk_DeleteEventHandler(plPlotterPtr->tkwin, KeyPressMask,
-                                  PlPlotterKeyEH, (ClientData) plPlotterPtr);
         /* Switch back to boring old pointer */
         
             Tk_DefineCursor(plPlotterPtr->tkwin, plPlotterPtr->cursor);
@@ -2245,7 +2108,7 @@ static void ActiveState(register PlPlotter *plPlotterPtr, int on) {
 
 static int
 ConfigurePlPlotter(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-                 int argc, char **argv, int flags)
+                 int argc, CONST char **argv, int flags)
 {
     register Tk_Window tkwin = plPlotterPtr->tkwin;
     PLStream *pls = plPlotterPtr->pls;
@@ -2372,7 +2235,7 @@ ConfigurePlPlotter(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Draw(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-     int argc, char **argv)
+     int argc, CONST char **argv)
 {
     register Tk_Window tkwin = plPlotterPtr->tkwin;
     int result = TCL_OK;
@@ -2464,7 +2327,7 @@ Draw(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Info(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-     int argc, char **argv)
+     int argc, CONST char **argv)
 {
     int length;
     char c;
@@ -2522,7 +2385,7 @@ Info(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Openlink(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-         int argc, char **argv)
+         int argc, CONST char **argv)
 {
 #if !defined(MAC_TCL) && !defined(__WIN32__)
     register PLRDev *plr = plPlotterPtr->plr;
@@ -2602,7 +2465,7 @@ Openlink(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Closelink(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-         int argc, char **argv)
+         int argc, CONST char **argv)
 {
 #if !defined(MAC_TCL) && !defined(__WIN32__)
     register PLRDev *plr = plPlotterPtr->plr;
@@ -2737,7 +2600,7 @@ ReadData(ClientData clientData, int mask)
 
 static int
 Orient(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-       int argc, char **argv)
+       int argc, CONST char **argv)
 {
     int result = TCL_OK;
 
@@ -2778,7 +2641,7 @@ Orient(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-       int argc, char **argv)
+       int argc, CONST char **argv)
 {
     PLINT ipls;
     int result = TCL_OK;
@@ -2860,7 +2723,7 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int 
 NextPage(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-     int argc, char **argv)
+     int argc, CONST char **argv)
 {
     TkwDev *dev = (TkwDev *) plPlotterPtr->pls->dev;
     if(argc == 0) {
@@ -2883,7 +2746,7 @@ NextPage(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Page(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-     int argc, char **argv)
+     int argc, CONST char **argv)
 {
 
 /* page -- return current device window parameters */
@@ -2923,7 +2786,7 @@ Page(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Redraw(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-       int argc, char **argv)
+       int argc, CONST char **argv)
 {
     dbug_enter("Redraw");
 
@@ -2947,7 +2810,7 @@ Redraw(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-     int argc, char **argv)
+     int argc, CONST char **argv)
 {
     int length;
     char c;
@@ -3068,7 +2931,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 View(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-     int argc, char **argv)
+     int argc, CONST char **argv)
 {
     int length;
     int dontRedraw = 0;
@@ -3204,7 +3067,7 @@ Scroll(Tcl_Interp *interp, register PlPlotter *plPlotterPtr)
 
 static int
 report( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-        int argc, char **argv )
+        int argc, CONST char **argv )
 {
     PLFLT x, y;
 /*    fprintf( stdout, "Made it into report, argc=%d\n", argc ); */
@@ -3307,7 +3170,7 @@ UpdateHScrollbar(register PlPlotter *plPlotterPtr)
 \*--------------------------------------------------------------------------*/
 
 static void
-gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
+gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, CONST char **argv)
 {
     PLFLT x0, y0, x1, y1;
 

@@ -188,3 +188,36 @@ proc pldefaults {} {
     global file_menu_on;	set file_menu_on "1"
     global plot_menu_on;	set plot_menu_on "1"
 }
+
+proc plw_moveCursor {w x y xd yd} {
+    # If not an activeplot, then return.
+    if {![$w cget -activeplot]} {return}
+    incr x $xd
+    incr y $yd
+    # Move the cursor as directed.
+    event generate $w <Motion> -warp 1 -x $x -y $y
+}
+
+# Set up cursor-keybindings so that they can be used to
+# manipulate the pointer on top of active Plframes.
+foreach combo {
+    {} 
+    Shift Option Control 
+    {Shift Option} {Shift Control} {Option Control}
+    {Shift Option Control}
+} {
+    set multiply 1
+    for {set i 0} {$i < [llength $combo]} {incr i} {
+	set multiply [expr {$multiply * 5}]
+    }
+    if {[llength $combo]} {
+	set prefix "[join $combo -]-"
+    } else {
+	set prefix ""
+    }
+    foreach dir {Left Right Up Down} x {-1 1 0 0} y {0 0 -1 1} {
+	bind Plframe <${prefix}$dir> "plw_moveCursor %W %x %y\
+	  [expr {$x * $multiply}] [expr {$y * $multiply}]"
+    }
+}
+

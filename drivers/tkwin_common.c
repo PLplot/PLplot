@@ -83,7 +83,6 @@ typedef struct PlPlotter {
 } PlPlotter;
 
 void CopyColour(XColor* from, XColor* to);
-void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col);
 static int  pltk_AreWeGrayscale(PlPlotter *plf);
 
 static int synchronize = 0; /* change to 1 for synchronized operation */
