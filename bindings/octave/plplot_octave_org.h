@@ -674,7 +674,7 @@ typedef struct {
 extern "C" {
 #endif
 
-#include "plplot_octave_rej.h"
+#include "plplot/plplot_octave_rej.h"
 
 	/* All void types */
 

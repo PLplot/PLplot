@@ -25,14 +25,14 @@ INSTALL_OCTAVE	= install_octave
 plplot_octave.oct$E: plplot_octave.cc
 	LD_RUN_PATH=`pwd` $(MKOCTFILE) -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS)
 
-plplot_octave.cc tmp_stub: plplot_octave.h
-	$(MATWRAP) -language octave plplot_octave.h -o plplot_octave.cc \
+plplot_octave.cc tmp_stub: plplot/plplot_octave.h
+	$(MATWRAP) -language octave plplot/plplot_octave.h -o plplot_octave.cc \
                 -stub tmp_stub
 
-plplot_octave.h: plplot_octave_org.h plplot_octave_rej.h
-	if test -z "$(LIB_TAG)"; then\
+plplot/plplot_octave.h: plplot/plplot_octave_org.h plplot/plplot_octave_rej.h
+	(cd plplot; if test -z "$(LIB_TAG)"; then\
 	sed plplot_octave_org.h -e 's/REPLACE_ME/typedef float PLFLT;/' > plplot_octave.h; else\
-	sed plplot_octave_org.h -e 's/REPLACE_ME/typedef double PLFLT;/' > plplot_octave.h; fi
+	sed plplot_octave_org.h -e 's/REPLACE_ME/typedef double PLFLT;/' > plplot_octave.h; fi)
 
 plplot_stub.m$E: etc/plplot.doc tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
