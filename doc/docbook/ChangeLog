@@ -1,3 +1,8 @@
+2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in (AM_INIT_AUTOMAKE): Upgraded release version to
+	0.3.2.
+
 2000-11-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* configure.in: Released version 0.3.1.
