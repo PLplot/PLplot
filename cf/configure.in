@@ -438,6 +438,14 @@ esac
 dnl> PL_DRIVERS(PL_DRIVER_LIST)
 
 # ----------------------------------------------------------------------------
+# Set flag to enable searching for dynloadable drivers, if appropriate.
+# ----------------------------------------------------------------------------
+
+if test "$enable_dynamic_drivers" = "yes"; then
+    AC_DEFINE(ENABLE_DYNAMIC_DRIVERS)
+fi
+
+# ----------------------------------------------------------------------------
 # Set up prefix
 #
 # The prefix is set using the following algorithm:
@@ -737,6 +745,44 @@ AC_SUBST(DEMOS_DIR)
 AC_SUBST(SHARED)
 
 # ----------------------------------------------------------------------------
+# Now build the dynamic driver database.
+# ----------------------------------------------------------------------------
+
+if test "$enable_dynamic_drivers" = "yes"; then
+
+    AC_MSG_RESULT(creating drivers/drivers.db)
+
+    # Dynamic (loadable) drivers go in a subdir all their own.
+    if test ! -d drivers; then
+	mkdir drivers
+    fi
+
+    # Clear out any prior drivers.
+    if test -e drivers/drivers.db; then
+	rm drivers.db
+    fi
+    touch drivers/drivers.db
+
+    # Now add a line for each supported lodable device.  Format is:
+    #     device name : description : driver name : symbol tag
+    
+    for drv in PL_DYNAMIC_DRIVER_LIST; do
+	case $drv in
+	    null)
+	    echo "null:Null device:null.drv:null" >> drivers/drivers.db
+	    ;;
+	    plmeta)
+	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:plm" >> drivers/drivers.db
+	    ;;
+	    ps)
+	    echo "ps:PostScript File (monochrome):ps.drv:ps" >> drivers/drivers.db
+	    echo "psc:PostScript File (color):ps.drv:psc" >> drivers/drivers.db
+	    ;;
+	esac
+    done
+fi
+
+# ----------------------------------------------------------------------------
 # Create links to source code.
 # I do this every time and just send the output to /dev/null to make sure
 # we never miss any.  This should keep Geoff happy (for a while at least).
@@ -761,12 +807,6 @@ $srcdir/drivers/*.c \
 ln -s \
 $srcdir/include/*.h \
 plplot 2>/dev/null
-
-# Dynamic (loadable) drivers go in a subdir all their own.
-
-if test ! -d drivers; then
-    mkdir drivers
-fi
 
 # Packages (interfaces) and demos associated with them
 
