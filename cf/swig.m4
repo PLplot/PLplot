@@ -23,14 +23,18 @@ AC_DEFUN([SWIG_PROG],[
 		AC_MSG_RESULT([$swig_version])
 		if test -n "$swig_version" ; then
 			# Calculate the required version number
-			[swig_tmp=( `echo $1 | sed 's/[^0-9][^0-9]*/ /g'` )]
-			[swig_required_version=$(( 1000000 * ${swig_tmp[0]:-0} + 1000 * ${swig_tmp[1]:-0} + ${swig_tmp[2]:-0} ))]
+			[major=0`echo $1 | sed 's/\..*//'`]
+			[minor=0`echo $1 | sed 's/[0-9]*\.//;s/\..*//'`]
+			[patch=0`echo $1 | sed 's/[0-9]*\.[0-9]*\.//' | sed 's/[^0-9].*//'`]
+			[swig_required_version=$(( 1000000 * $major  + 1000 * $minor + $patch ))]
 
 			# Calculate the available version number
-			[swig_tmp=( `echo $swig_version | sed 's/[^0-9][^0-9]*/ /g'` )]
-			[swig_tmp=$(( 1000000 * ${swig_tmp[0]:-0} + 1000 * ${swig_tmp[1]:-0} + ${swig_tmp[2]:-0} ))]
+			[major=0`echo $swig_version | sed 's/\..*//'`]
+			[minor=0`echo $swig_version | sed 's/[0-9]*\.//;s/\..*//'`]
+			[patch=0`echo $swig_version | sed 's/[0-9]*\.[0-9]*\.//' | sed 's/[^0-9].*//'`]
+			[swig_available_version=$(( 1000000 * $major  + 1000 * $minor + $patch ))]
 
-			if test $swig_required_version -gt $swig_tmp ; then
+			if test $swig_required_version -gt $swig_available_version ; then
 				AC_MSG_WARN([SWIG version >= $1 is required.  You have $swig_version.  You should look at http://www.swig.org])
 				SWIG='echo "Error: SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org" ; false'
 			else
