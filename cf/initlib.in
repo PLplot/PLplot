@@ -77,7 +77,7 @@ CDEMO_HEADERS	= plcdemos.h plplot.h
 
 # Default is to build library(s) and utils.
 
-everything: libs plrender$E pltek$E $(TCL_EXE) $(TK_EXE)
+everything: libs plrender$E pltek$E $(PYTHON_EXE) $(TCL_EXE) $(TK_EXE)
 
 # Clear the suffix list to prevent problems.
 
