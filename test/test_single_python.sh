@@ -17,7 +17,7 @@ if module_dir[0] == '@':
 
 sys.path.insert (0, module_dir)
 
-from pl import *
+from plplot import *
 
 plsfnam("x$1p.ps")
 plsdev("psc")
