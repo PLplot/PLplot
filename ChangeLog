@@ -6,6 +6,8 @@
 	* Makefile.examples using plplot_libtool, c works
 	* c++ works (required a fix to linking of libplcxx consistent
 	  with hierarchical linking model.)
+	* f77 works (required a fix to linking of libplf77 consistent
+	  with hierarchical linking model.)
 
 2002-11-25  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

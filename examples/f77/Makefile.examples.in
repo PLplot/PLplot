@@ -19,49 +19,49 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplot@LIB_TAG@ 
+INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplf77@LIB_TAG@ 
 
-all: x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x012f x13f x16f
+all: x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f x16f
 
 x01f: x01f.f
-	plplot_libtool gcc x01f.f $(INCLUDEANDLIB) -o x01f
+	plplot_libtool --mode=link g77 x01f.f $(INCLUDEANDLIB) -o x01f
 
 x02f: x02f.f
-	plplot_libtool gcc x02f.f $(INCLUDEANDLIB) -o x02f
+	plplot_libtool --mode=link g77 x02f.f $(INCLUDEANDLIB) -o x02f
 
 x03f: x03f.f
-	plplot_libtool gcc x03f.f $(INCLUDEANDLIB) -o x03f
+	plplot_libtool --mode=link g77 x03f.f $(INCLUDEANDLIB) -o x03f
 
 x04f: x04f.f
-	plplot_libtool gcc x04f.f $(INCLUDEANDLIB) -o x04f
+	plplot_libtool --mode=link g77 x04f.f $(INCLUDEANDLIB) -o x04f
 
 x05f: x05f.f
-	plplot_libtool gcc x05f.f $(INCLUDEANDLIB) -o x05f
+	plplot_libtool --mode=link g77 x05f.f $(INCLUDEANDLIB) -o x05f
 
 x06f: x06f.f
-	plplot_libtool gcc x06f.f $(INCLUDEANDLIB) -o x06f
+	plplot_libtool --mode=link g77 x06f.f $(INCLUDEANDLIB) -o x06f
 
 x07f: x07f.f
-	plplot_libtool gcc x07f.f $(INCLUDEANDLIB) -o x07f
+	plplot_libtool --mode=link g77 x07f.f $(INCLUDEANDLIB) -o x07f
 
 x08f: x08f.f
-	plplot_libtool gcc x08f.f $(INCLUDEANDLIB) -o x08f
+	plplot_libtool --mode=link g77 x08f.f $(INCLUDEANDLIB) -o x08f
 
 x09f: x09f.f
-	plplot_libtool gcc x09f.f $(INCLUDEANDLIB) -o x09f
+	plplot_libtool --mode=link g77 x09f.f $(INCLUDEANDLIB) -o x09f
 
 x10f: x10f.f
-	plplot_libtool gcc x10f.f $(INCLUDEANDLIB) -o x10f
+	plplot_libtool --mode=link g77 x10f.f $(INCLUDEANDLIB) -o x10f
 
 x11f: x11f.f
-	plplot_libtool gcc x11f.f $(INCLUDEANDLIB) -o x11f
+	plplot_libtool --mode=link g77 x11f.f $(INCLUDEANDLIB) -o x11f
 
 x12f: x12f.f
-	plplot_libtool gcc x12f.f $(INCLUDEANDLIB) -o x12f
+	plplot_libtool --mode=link g77 x12f.f $(INCLUDEANDLIB) -o x12f
 
 x13f: x13f.f
-	plplot_libtool gcc x13f.f $(INCLUDEANDLIB) -o x13f
+	plplot_libtool --mode=link g77 x13f.f $(INCLUDEANDLIB) -o x13f
 
 x16f: x16f.f
-	plplot_libtool gcc x16f.f $(INCLUDEANDLIB) -o x16f
+	plplot_libtool --mode=link g77 x16f.f $(INCLUDEANDLIB) -o x16f
 

@@ -20,11 +20,17 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+if with_double
+  libplplot = ../../src/libplplotd.la
+else
+  libplplot = ../../src/libplplotd.la
+endif
+
 if enable_f77
 if with_double
-lib_LTLIBRARIES = libplf77d.la
+  lib_LTLIBRARIES = libplf77d.la
 else
-lib_LTLIBRARIES = libplf77.la
+  lib_LTLIBRARIES = libplf77.la
 endif
 endif
 
@@ -36,16 +42,16 @@ sources = \
   sc3d.c \
   sccont.c \
   scstubs.c \
-  strutil.f
+  strutil.f \
+  sfstubs.f
 
 libplf77_la_SOURCES  = $(sources)
-libplf77d_la_SOURCES = $(sources)
+libplf77_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined
+libplf77_la_LIBADD = $(libplplot)
 
-libplf77_la_DEPENDENCIES  = sfstubs.lo
-libplf77d_la_DEPENDENCIES = sfstubs.lo
-
-libplf77_la_LDFLAGS  = $(version)
-libplf77d_la_LDFLAGS = $(version)
+libplf77d_la_SOURCES = $(libplf77_la_SOURCES)
+libplf77d_la_LDFLAGS = $(libplf77_la_LDFLAGS)
+libplf77d_la_LIBADD = $(libplf77_la_LIBADD)
 
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
