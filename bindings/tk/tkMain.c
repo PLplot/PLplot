@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1996/10/18 19:56:43  furnish
+ * Revision 1.7  1996/10/25 19:16:43  furnish
+ * Pick up private header so we can see if configured for itcl, etc.
+ *
+ * Revision 1.6  1996/10/18  19:56:43  furnish
  * Initialize itcl/itk if so configured.
  *
  * Revision 1.5  1996/06/26  21:35:16  furnish
@@ -66,6 +69,8 @@
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
+
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
