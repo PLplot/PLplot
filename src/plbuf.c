@@ -189,12 +189,12 @@ plbuf_state(PLStream *pls, PLINT op)
     }
 
     case PLSTATE_COLOR0: {
-	U_CHAR icol0 = pls->icol0;
+	short icol0 = pls->icol0;
 	U_CHAR r = pls->curcolor.r;
 	U_CHAR g = pls->curcolor.g;
 	U_CHAR b = pls->curcolor.b;
 
-	fwrite(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
+	fwrite(&icol0, sizeof(short), 1, pls->plbufFile);
 	if (icol0 == PL_RGB_COLOR) {
 	    fwrite(&r, sizeof(U_CHAR), 1, pls->plbufFile);
 	    fwrite(&g, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -204,9 +204,9 @@ plbuf_state(PLStream *pls, PLINT op)
     }
 
     case PLSTATE_COLOR1: {
-	U_CHAR icol1 = pls->icol1;
+	short icol1 = pls->icol1;
 
-	fwrite(&icol1, sizeof(U_CHAR), 1, pls->plbufFile);
+	fwrite(&icol1, sizeof(short), 1, pls->plbufFile);
 	break;
     }
 
@@ -431,21 +431,21 @@ rdbuf_state(PLStream *pls)
     }
 
     case PLSTATE_COLOR0:{
-	U_CHAR icol0, r, g, b;
+	short icol0;
+	U_CHAR r, g, b;
 
-	fread(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
+	fread(&icol0, sizeof(short), 1, pls->plbufFile);
 	if (icol0 == PL_RGB_COLOR) {
 	    fread(&r, sizeof(U_CHAR), 1, pls->plbufFile);
 	    fread(&g, sizeof(U_CHAR), 1, pls->plbufFile);
 	    fread(&b, sizeof(U_CHAR), 1, pls->plbufFile);
 	}
 	else {
-	    /* Note icol0 is a U_CHAR which ranges from 0-255. */
 	    if ((int) icol0 >= pls->ncol0) {
-	      char buffer[256];
-	      sprintf(buffer, "rdbuf_state: Invalid color map entry: %d", (int) icol0);
-	      plabort(buffer);
-	      return;
+                char buffer[256];
+                sprintf(buffer, "rdbuf_state: Invalid color map entry: %d", (int) icol0);
+                plabort(buffer);
+                return;
 	    }
 	    r = pls->cmap0[icol0].r;
 	    g = pls->cmap0[icol0].g;
@@ -461,9 +461,9 @@ rdbuf_state(PLStream *pls)
     }
 
     case PLSTATE_COLOR1: {
-	U_CHAR icol1;
+	short icol1;
 
-	fread(&icol1, sizeof(U_CHAR), 1, pls->plbufFile);
+	fread(&icol1, sizeof(short), 1, pls->plbufFile);
 
 	pls->icol1 = icol1;
 	pls->curcolor.r = pls->cmap1[icol1].r;
@@ -558,10 +558,10 @@ rdbuf_fill(PLStream *pls)
 static void
 rdbuf_image(PLStream *pls)
 {
-  short *dev_ix, *dev_iy;
-  unsigned short *dev_z, dev_zmin, dev_zmax;
-  PLINT nptsX,nptsY, npts;
-  PLFLT xmin, ymin, dx, dy;
+    short *dev_ix, *dev_iy;
+    unsigned short *dev_z, dev_zmin, dev_zmax;
+    PLINT nptsX,nptsY, npts;
+    PLFLT xmin, ymin, dx, dy;
 
     dbug_enter("rdbuf_image");
 
