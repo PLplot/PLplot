@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.49  1995/06/13 03:58:49  mjl
+ * Revision 1.50  1995/06/21 15:38:10  mjl
+ * Fixed problem with sending output to stdout that was causing prints from
+ * a plxframe to fail.
+ *
+ * Revision 1.49  1995/06/13  03:58:49  mjl
  * Eliminated a minor bogosity that was giving a warning.
  *
  * Revision 1.48  1995/06/11  20:40:47  mjl
@@ -112,7 +116,7 @@ static void	PageDecr	(void);
 
 static void	Init		(int, char **);
 static int	ProcessFile	(int, char **);
-static int	OpenMetaFile	(char *);
+static int	OpenMetaFile	(char **);
 static int	ReadFileHeader	(void);
 
 /* Option handlers */
@@ -350,22 +354,17 @@ ProcessFile(int argc, char **argv)
     if (plParseOpts(&argc, argv, 0))
 	exit(1);
 
-/* If argv[1] is NULL, we've reached the end of the arglist and can quit */
-
-    if (argv[1] == NULL)
-	return 1;
-
 /* Any remaining flags are illegal. */
 
-    if ((argv)[1][0] == '-') {
+    if (argv[1] != NULL && (argv)[1][0] == '-') {
 	fprintf(stderr, "\nBad command line option \"%s\"\n", argv[1]);
 	plOptUsage();
 	exit(1);
     }
 
-/* argv[1] should be a file name.  Try to open it. */
+/* Try to open metafile. */
 
-    if (OpenMetaFile(argv[1]))
+    if (OpenMetaFile(argv))
 	return 1;
 
 /* Initialize file and read header */
@@ -455,13 +454,13 @@ ProcessFile(int argc, char **argv)
 /*--------------------------------------------------------------------------*\
  * OpenMetaFile()
  *
- * Attempts to open the named file.  If the output file isn't already
- * determined via the -i or -f flags, we assume it's the second argument in
- * argv[] (the first should still hold the program name).
+ * Attempts to open a metafile.  If the output file isn't already determined
+ * via the -i or -f flags, we assume it's the second argument in argv[] (the
+ * first should still hold the program name).
 \*--------------------------------------------------------------------------*/
 
 static int
-OpenMetaFile(char *filename)
+OpenMetaFile(char **argv)
 {
     char name[70];
 
@@ -474,9 +473,10 @@ OpenMetaFile(char *filename)
 	MetaFile = stdin;
 
     else {
+
 	if (*FileName == '\0') {
-	    if (filename != NULL && *filename != '\0') {
-		strncpy(FileName, filename, sizeof(FileName) - 1);
+	    if (argv[1] != NULL && *argv[1] != '\0') {
+		strncpy(FileName, argv[1], sizeof(FileName) - 1);
 		FileName[sizeof(FileName) - 1] = '\0';
 	    }
 	    else {
@@ -484,13 +484,12 @@ OpenMetaFile(char *filename)
 	    }
 	}
 
-/*
- * Try to read named Metafile.  The following cases are checked in order:
- *	<FileName>
- *	<FileName>.1
- *	<FileName>.plm
- *	<FileName>.plm.1
- */
+    /* Try to read named Metafile.  The following cases are checked in order:
+     *	<FileName>
+     *	<FileName>.1
+     *	<FileName>.plm
+     *	<FileName>.plm.1
+     */
 	pldebug("OpenMetaFile", "Trying to open metafile %s.\n", FileName);
 	strncpy(name, FileName, sizeof(name) - 1);
 	name[sizeof(name) - 1] = '\0';
@@ -522,6 +521,7 @@ OpenMetaFile(char *filename)
 	plOptUsage();
 	exit(EX_BADFILE);
     }
+
     return 0;
 }
 
