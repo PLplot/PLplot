@@ -17,7 +17,7 @@ three-dimensional surface plots and contour plots.
 * Viewports::		Defining the Viewport
 * Windows::		Defining the Window
 * Annotation::		Annotating the Viewport
-* Standard Window::	Setting up a Standard Window with \code{plenv}
+* Standard Window::	Setting up a Standard Window
 * Line Attributes::	Setting Line Attributes
 * Fill Pattern::	Setting the Area Fill Pattern
 * Characters::		Setting Character and Symbol Attributes
@@ -219,10 +219,10 @@ The window must be defined after the viewport in order to map the world
 coordinate rectangle into the viewport rectangle.  The routine
 \rou{plwind} is used to specify the rectangle in world-coordinate space.
 For example, if we wish to plot a graph showing the collector current
-$I_C$ as a function of the collector to emitter voltage $V_{CE}$ for a
-transistor where $0\le I_C\le 10.0\mbox{\, mA}$ and $0\le V_{CE}\le
-12.0\mbox{\, V}$, we would call the function \code{plwind} as
-follows:\refill
+\c $I_C$ as a function of the collector to emitter voltage $V_{CE}$ for a
+\c transistor where $0\le I_C\le 10.0\mbox{\, mA}$ and $0\le V_{CE}\le
+\c 12.0\mbox{\, V}$, we would call the function \code{plwind} as
+\c follows:\refill
 
 \begin{verbatim}
     plwind(0.0, 12.0, 0.0, 10.0);
@@ -291,12 +291,12 @@ switches to floating point representation.  In this case the exponent will
 be placed at the top left for a vertical axis on the left, top right for
 a vertical axis on the right, and bottom right for a horizontal axis.\refill
 
-For example, let's suppose that we have set \code{digmax} $ = 5$ via
-\code{plsyax}, and for our plot a label is generated at \code{y} $ =
-0.0000478$.  In this case the actual field width is longer than
-\code{digmax}, so PLplot switches to floating point.  In this
-representation, the label is printed as simply $4.78$ with the $10^{-5}$
-exponent placed separately.\refill
+\c For example, let's suppose that we have set \code{digmax} $ = 5$ via
+\c \code{plsyax}, and for our plot a label is generated at \code{y} $ =
+\c 0.0000478$.  In this case the actual field width is longer than
+\c \code{digmax}, so PLplot switches to floating point.  In this
+\c representation, the label is printed as simply $4.78$ with the $10^{-5}$
+\c exponent placed separately.\refill
 
 The determination of maximum length (i.e.~\code{digmax}) for fixed point
 quantities is complicated by the fact that long fixed point
@@ -306,9 +306,9 @@ than one will actually gain in precision when written as floating point.
 There is some compensation for this effect built into PLplot, thus the
 internal representation for number of digits kept (\code{digfix}) may
 not always match the user's specfication (via \code{digmax}).  However,
-it will always be true that \code{digfix} $\le$ \code{digmax}.  The
-PLplot defaults are set up such that good results are usually obtained
-without user intervention.\refill
+\c it will always be true that \code{digfix} $\le$ \code{digmax}.  The
+\c PLplot defaults are set up such that good results are usually obtained
+\c without user intervention.\refill
 
 Finally, after the call to \code{plbox}, the user may call routines
 \rou{plgxax}, \rou{plgyax}, or \rou{plgzax} to obtain information about the
@@ -323,7 +323,7 @@ complete.\refill
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Standard Window, Line Attributes, Annotation, Advanced Use
-\section{Setting up a Standard Window with \code{plenv}}
+\section{Setting up a Standard Window}
 \cindex{Standard window}
 \cindex{plenv}
 
@@ -543,13 +543,13 @@ function to be plotted is \code{Z[X][Y]}, where \code{Z} represents the
 dependent variable and \code{X} and \code{Y} represent the independent
 variables.\refill
 
-As usual, we would like to refer to a three dimensional point \code{(X,
-Y, Z)} in terms of some meaningful user-specified coordinate system.
-These are called \emph{three-dimensional world coordinates}.  We need to
-specify the ranges of these coordinates, so that the entire surface is
-contained within the cuboid defined by
-$\code{xmin}<\code{x}<\code{xmax}$, $\code{ymin}<\code{y}<\code{ymax}$
-and $\code{zmin}<\code{z}<\code{zmax}$.  Typically, we shall want to
+\c As usual, we would like to refer to a three dimensional point \code{(X,
+\c Y, Z)} in terms of some meaningful user-specified coordinate system.
+\c These are called \emph{three-dimensional world coordinates}.  We need to
+\c specify the ranges of these coordinates, so that the entire surface is
+\c contained within the cuboid defined by
+\c $\code{xmin}<\code{x}<\code{xmax}$, $\code{ymin}<\code{y}<\code{ymax}$
+\c and $\code{zmin}<\code{z}<\code{zmax}$.  Typically, we shall want to
 view the surface from a variety of angles, and to facilitate this, a
 two-stage mapping of the enclosing cuboid is performed.  Firstly, it is
 mapped into another cuboid called the \emph{normalized box} whose size
@@ -557,15 +557,15 @@ must also be specified by the user, and secondly this normalized box is
 viewed from a particular azimuth and elevation so that it can be
 projected onto the two-dimensional window.\refill
 
-This two-stage transformation process allows considerable flexibility in
-specifying how the surface is depicted.  The lengths of the sides of the
-normalized box are independent of the world coordinate ranges of each of
-the variables, making it possible to use ``reasonable'' viewing angles
-even if the ranges of the world coordinates on the axes are very
-different.  The size of the normalized box is determined essentially by
-the size of the two-dimensional window into which it is to be mapped.
-The normalized box is centered about the origin in the $x$ and $y$
-directions, but rests on the plane $\code{z = 0}$.  It is viewed by an
+\c This two-stage transformation process allows considerable flexibility in
+\c specifying how the surface is depicted.  The lengths of the sides of the
+\c normalized box are independent of the world coordinate ranges of each of
+\c the variables, making it possible to use ``reasonable'' viewing angles
+\c even if the ranges of the world coordinates on the axes are very
+\c different.  The size of the normalized box is determined essentially by
+\c the size of the two-dimensional window into which it is to be mapped.
+\c The normalized box is centered about the origin in the $x$ and $y$
+\c directions, but rests on the plane $\code{z = 0}$.  It is viewed by an
 observer located at altitude \code{alt} and azimuth \code{az}, where
 both angles are measured in degrees.  The altitude should be restricted
 to the range zero to ninety degrees for proper operation, and represents
@@ -585,10 +585,10 @@ choose the normalized box to have sides of length
     height = 3.0;
 \end{verbatim}
 
-A reasonable range for the $x$ coordinate of the two-dimensional window
-is -2.5 to +2.5, since the length of the diagonal across the base of the
-normalized box is $\sqrt{2^2+4^2} = 2\sqrt{5}$, which fits into this
-coordinate range.  A reasonable range for the $y$ coordinate of the two
+\c A reasonable range for the $x$ coordinate of the two-dimensional window
+\c is -2.5 to +2.5, since the length of the diagonal across the base of the
+\c normalized box is $\sqrt{2^2+4^2} = 2\sqrt{5}$, which fits into this
+\c coordinate range.  A reasonable range for the $y$ coordinate of the two
 dimensional window in this case is -2.5 to +4, as the the projection of
 the normalized box lies in this range for the allowed range of viewing
 angles.\refill
@@ -601,8 +601,8 @@ viewing angles.  After calling \code{plw3d}, the actual surface is drawn
 by a call to \rou{plot3d}.\refill
 
 For example, if the three-dimensional world-coordinate ranges are
-$-10.0\le\code{x}\le 10.0$, $-3.0\le\code{y}\le +7.0$ and
-$0.0\le\code{z}\le 8.0$, we could use the following statements:\refill
+\c $-10.0\le\code{x}\le 10.0$, $-3.0\le\code{y}\le +7.0$ and
+\c $0.0\le\code{z}\le 8.0$, we could use the following statements:\refill
 
 \begin{verbatim}
     xmin2d = -2.5;
@@ -626,12 +626,12 @@ $0.0\le\code{z}\le 8.0$, we could use the following statements:\refill
     plot3d(x, y, z, nx, ny, opt, side);
 \end{verbatim}
 
-The values of the function are stored in a two-dimensional array
-\code{z[][]} where the array element \code{z[i][j]} contains the value
-of the function at the point $x_i$, $y_j$.  (The two-dimensional array
-\code{z} is a vectored array instead of a fixed size array.  \code{z}
-points to an array of pointers which each point to a rwo of the matrix.)
-Note that the values of the independent variables $x_i$ and $y_j$ do not
+\c The values of the function are stored in a two-dimensional array
+\c \code{z[][]} where the array element \code{z[i][j]} contains the value
+\c of the function at the point $x_i$, $y_j$.  (The two-dimensional array
+\c \code{z} is a vectored array instead of a fixed size array.  \code{z}
+\c points to an array of pointers which each point to a rwo of the matrix.)
+\c Note that the values of the independent variables $x_i$ and $y_j$ do not
 need to be equally spaced, but they must lie on a rectangular grid.
 Thus two further arrays \code{x[nx]} and \code{y[ny]} are required as
 arguments to \code{plot3d} to specify the values of the independent
@@ -691,8 +691,8 @@ form:\refill
 
 \name{plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)}
 
-where \code{z} is the two-dimensional array of size
-$\code{nx}\times\code{ny}$ containing samples of the function to be
+\c where \code{z} is the two-dimensional array of size
+\c $\code{nx}\times\code{ny}$ containing samples of the function to be
 contoured.  (\code{z} is a vectored two-dimensional array as described
 in the previous section.  It is \emph{not} a fixed-size two-dimensional
 array.) The parameters \code{kx}, \code{lx}, \code{ky} and \code{ly}
@@ -755,15 +755,15 @@ Thus by setting up the values in the array \code{tr[]}, we can apply an
 arbitrary translation, rotation and/or shear to the array before drawing
 out the contours.  By defining other transformation subroutines, it is
 possible to draw contours wrapped around polar grids etc.  If no
-transformation is required, you can simply set \code{tr[0]$ = $tr[4]$ =
-$1.}, with other entries set to $0.$.  Alternately you can pass the
-built-in function \code{pltr0} to \code{plcont}; this function merely
-sets \code{*tx} to \code{x} and \code{*ty} to {y}, resulting in no net
-transformation.\refill
+\c transformation is required, you can simply set \code{tr[0]$ = $tr[4]$ =
+\c $1.}, with other entries set to $0.$.  Alternately you can pass the
+\c built-in function \code{pltr0} to \code{plcont}; this function merely
+\c sets \code{*tx} to \code{x} and \code{*ty} to {y}, resulting in no net
+\c transformation.\refill
 
-As an example in setting up \code{tr[]}, suppose that the array \code{z}
-is of size $21 \times 41$ and contains the values of the function
-$z[x][y]$, where $x$ ranges from 0.0 to 4.0 and $y$ ranges from -8.0 to
+\c As an example in setting up \code{tr[]}, suppose that the array \code{z}
+\c is of size $21 \times 41$ and contains the values of the function
+\c $z[x][y]$, where $x$ ranges from 0.0 to 4.0 and $y$ ranges from -8.0 to
 8.0.  Furthermore, let us also suppose that the window (as defined using
 \code{plenv} or \code{plwind}) covers this range of world coordinates.
 Since we wish the index (0, 0) in array \code{z} to map to (0.0, -8.0)
@@ -849,11 +849,11 @@ like:\refill
     enddo
 \end{verbatim}
 
-assuming the user had already set up arrays \code{r} and \code{theta} to
-specify the $(r, \theta)$ values at the gridpoints in his system.  For this
-example, it is recommended that the user add an additional cell in theta
-such that \code{xg(i, NY+1) = xg(i, 1)} and \code{yg(i, NY+1) = yg(i, 1)} so
-that the contours show the proper periodic behavior in $\theta$ (see also
+\c assuming the user had already set up arrays \code{r} and \code{theta} to
+\c specify the $(r, \theta)$ values at the gridpoints in his system.  For this
+\c example, it is recommended that the user add an additional cell in theta
+\c such that \code{xg(i, NY+1) = xg(i, 1)} and \code{yg(i, NY+1) = yg(i, 1)} so
+\c that the contours show the proper periodic behavior in $\theta$ (see also
 example program 9).\refill
 
 The transformation function not only specifies the transformation at grid
