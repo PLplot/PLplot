@@ -63,7 +63,7 @@ while test $# -gt 0; do
 	 export pythondir
 	 tcldir=.
 	 export tcldir
-	 octavedir=.
+	 octavedir=../bindings/octave
 	 export octavedir
 	 installbindir=.
 	 export installbindir
