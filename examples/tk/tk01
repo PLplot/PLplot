@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.10  1995/06/29 18:46:57  mjl
+# Revision 1.11  1995/08/22 16:18:38  mjl
+# Rearranged and changed the locator handling to be modal.  Hit 'L' to
+# activate.
+#
+# Revision 1.10  1995/06/29  18:46:57  mjl
 # Added code to make it easy to switch between using plframe's and plxframes,
 # as a test of each.
 #
@@ -40,6 +44,12 @@ plstdwin .
 # If you just want a bare plframe, set this to 0.
 
 set use_plxframe 1
+
+if { $use_plxframe == 1 } then {
+    set plwin .plw.plwin
+} else {
+    set plwin .plwin
+}
 
 ###############################################################################
 # Set up the menubar and message widgets.
@@ -78,34 +88,13 @@ if { $use_plxframe == 1 } then {
     plxframe .plw
     pack append . .plw {left expand fill}
 
-###############################################################################
-# Here we show off some of what you can do with Tk bindings and PLplot.
-# Bring up graphic crosshairs.
-
-    .plw.plwin configure -xhairs 1
-
-# Here is a binding which allows you to obtain the world coordinates of a
-# point at any time you want it.  This is better than the "locate mode" of
-# the X driver per se, since it is appears modeless to the user.  Note
-# especially that in the body of this example "get_coords" proc, you can do
-# anything you can do from Tcl.  In particular, you need not put the data
-# out to stdout (which is pretty boring).  Instead, you can use this to feed
-# the world coords to some more complicated Tcl proc of your choosing.  Use
-# the regexp parser to pull out the world x and y coordinates, etc.  Have
-# fun!
-
-    bind .plw.plwin <Shift-1> { get_coords %x %y };
-
 } else {
     plframe .plwin
     pack append . .plwin {left expand fill}
 }
 
-proc get_coords {x y} {
-    set w [.plw.plwin report wc $x $y]
-
-    puts "PLplot says, :$w:"
-}
+bind $plwin L locate_on
+bind $plwin <Escape> locate_off
 
 ###############################################################################
 # Definitions of procedures used in this script.
@@ -120,6 +109,39 @@ proc quit a {
 
 proc dpos w {
     wm geometry $w +300+300
+}
+
+###############################################################################
+# Here is a binding which allows you to obtain the world coordinates of a
+# point or points through invoking a "Locate" mode.  You could instead just
+# turn it on somewhere in the script and leave it on if you prefer modeless
+# behavior, although you can sometimes get into trouble if you move the
+# crosshairs while a graphic draw is being performed (X is not forced to
+# handle these events serially -- the crosshairs may be updated before the
+# graphic draw is complete, and if the graphic draw then obscures the
+# crosshairs it will leave traces of the crosshairs on the plot when you
+# next move them).  Note especially that in the body of this example
+# "get_coords" proc, you can do anything you can do from Tcl.  In
+# particular, you need not put the data out to stdout (which is pretty
+# boring).  Instead, you can use this to feed the world coords to some more
+# complicated Tcl proc of your choosing.  Use the regexp parser to pull out
+# the world x and y coordinates, etc.  Have fun!
+
+proc locate_on {} {
+    global plwin
+    $plwin configure -xhairs 1
+    bind $plwin <1> { get_coords %x %y }
+}
+
+proc locate_off {} {
+    global plwin
+    $plwin configure -xhairs 0
+    bind $plwin <1> {}
+}
+
+proc get_coords {x y} {
+    global plwin
+    puts "world coordinates: [$plwin report wc $x $y]"
 }
 
 ###############################################################################
