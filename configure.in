@@ -146,6 +146,7 @@ AC_ISC_POSIX
 AC_INCLUDE(cf/sysconf.in)
 AC_INCLUDE(cf/sysloc.in)
 AC_STDC_HEADERS
+AC_HAVE_HEADERS(unistd.h)
 AC_PROG_RANLIB
 AC_VFORK
 
@@ -272,13 +273,13 @@ cat cf/miscdemo.in	>>tmp/Makedemo.in
 define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
 PL_DRIVERS(builtin([shift],$*))])])
 
-define(PL_ADD_DRIVER,[
+define(PL_ADD_DRIVER,[dnl
 AC_ENABLE($1, , enable_$1="yes")
 if test "$enable_$1" = "yes"; then
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
 fi
-])
+])dnl
 
 # Including a driver in this list includes it by default.  Maybe not
 # complete, but most of the devices of interest under Unix.  You can
@@ -286,8 +287,8 @@ fi
 # --disable-<driver>) or via the cf_plplot.in file (remember to use
 # underscores instead of dashes here).
 
-PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, vlt, dnl
-versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, imp, xwin, tk, dp)
+PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, vlt, versaterm, 
+dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp, xwin, tk, dp)
 
 # --------------------------------------------------------------------
 # Set up variables that specify install directories

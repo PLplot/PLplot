@@ -2120,6 +2120,36 @@ rm -f conftest*
 fi
 rm -f conftest*
 
+for ac_hdr in unistd.h
+do
+ac_tr_hdr=HAVE_`echo $ac_hdr | tr '[a-z]./' '[A-Z]__'`
+test -n "$silent" || echo "checking for ${ac_hdr}"
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <${ac_hdr}>
+EOF
+# Some shells (Coherent) do redirections in the wrong order, so need
+# the parens.
+ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+if test -z "$ac_err"; then
+  rm -rf conftest*
+  
+{
+test -n "$verbose" && \
+echo "	defining ${ac_tr_hdr}"
+echo "#define" ${ac_tr_hdr} "1" >> confdefs.h
+DEFS="$DEFS -D${ac_tr_hdr}=1"
+ac_sed_defs="${ac_sed_defs}\${ac_dA}${ac_tr_hdr}\${ac_dB}${ac_tr_hdr}\${ac_dC}1\${ac_dD}
+\${ac_uA}${ac_tr_hdr}\${ac_uB}${ac_tr_hdr}\${ac_uC}1\${ac_uD}
+\${ac_eA}${ac_tr_hdr}\${ac_eB}${ac_tr_hdr}\${ac_eC}1\${ac_eD}
+"
+}
+
+
+fi
+rm -f conftest*
+done
+
 if test -z "$RANLIB"; then
   # Extract the first word of `ranlib', so it can be a program name with args.
   set ac_dummy ranlib; ac_word=$2
@@ -2460,13 +2490,11 @@ cat cf/miscdemo.in	>>tmp/Makedemo.in
 
 
 
-
 # Including a driver in this list includes it by default.  Maybe not
 # complete, but most of the devices of interest under Unix.  You can
 # enable/disable drivers either by the command line (--enable-<driver> or
 # --disable-<driver>) or via the cf_plplot.in file (remember to use
 # underscores instead of dashes here).
-
 
 # check whether --enable-plmeta was given
 enableval="$enable_plmeta"
@@ -2491,7 +2519,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_plmeta\${ac_dB}PLD_plmeta\${ac_dC}1\${ac
 
     DEVICES="$DEVICES plmeta"
 fi
-
 # check whether --enable-null was given
 enableval="$enable_null"
 if test -n "$enableval"; then
@@ -2515,7 +2542,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_null\${ac_dB}PLD_null\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES null"
 fi
-
 # check whether --enable-xterm was given
 enableval="$enable_xterm"
 if test -n "$enableval"; then
@@ -2539,7 +2565,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_xterm\${ac_dB}PLD_xterm\${ac_dC}1\${ac_d
 
     DEVICES="$DEVICES xterm"
 fi
-
 # check whether --enable-tek4010 was given
 enableval="$enable_tek4010"
 if test -n "$enableval"; then
@@ -2563,7 +2588,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_tek4010\${ac_dB}PLD_tek4010\${ac_dC}1\${
 
     DEVICES="$DEVICES tek4010"
 fi
-
 # check whether --enable-tek4107 was given
 enableval="$enable_tek4107"
 if test -n "$enableval"; then
@@ -2587,7 +2611,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_tek4107\${ac_dB}PLD_tek4107\${ac_dC}1\${
 
     DEVICES="$DEVICES tek4107"
 fi
-
 # check whether --enable-mskermit was given
 enableval="$enable_mskermit"
 if test -n "$enableval"; then
@@ -2611,7 +2634,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_mskermit\${ac_dB}PLD_mskermit\${ac_dC}1\
 
     DEVICES="$DEVICES mskermit"
 fi
-
 # check whether --enable-vlt was given
 enableval="$enable_vlt"
 if test -n "$enableval"; then
@@ -2635,7 +2657,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_vlt\${ac_dB}PLD_vlt\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES vlt"
 fi
-
 # check whether --enable-versaterm was given
 enableval="$enable_versaterm"
 if test -n "$enableval"; then
@@ -2659,7 +2680,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_versaterm\${ac_dB}PLD_versaterm\${ac_dC}
 
     DEVICES="$DEVICES versaterm"
 fi
-
 # check whether --enable-dg300 was given
 enableval="$enable_dg300"
 if test -n "$enableval"; then
@@ -2683,7 +2703,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_dg300\${ac_dB}PLD_dg300\${ac_dC}1\${ac_d
 
     DEVICES="$DEVICES dg300"
 fi
-
 # check whether --enable-ps was given
 enableval="$enable_ps"
 if test -n "$enableval"; then
@@ -2707,7 +2726,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_ps\${ac_dB}PLD_ps\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES ps"
 fi
-
 # check whether --enable-xfig was given
 enableval="$enable_xfig"
 if test -n "$enableval"; then
@@ -2731,7 +2749,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_xfig\${ac_dB}PLD_xfig\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES xfig"
 fi
-
 # check whether --enable-ljii was given
 enableval="$enable_ljii"
 if test -n "$enableval"; then
@@ -2755,7 +2772,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_ljii\${ac_dB}PLD_ljii\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES ljii"
 fi
-
 # check whether --enable-hp7470 was given
 enableval="$enable_hp7470"
 if test -n "$enableval"; then
@@ -2779,7 +2795,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_hp7470\${ac_dB}PLD_hp7470\${ac_dC}1\${ac
 
     DEVICES="$DEVICES hp7470"
 fi
-
 # check whether --enable-hp7580 was given
 enableval="$enable_hp7580"
 if test -n "$enableval"; then
@@ -2803,7 +2818,29 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_hp7580\${ac_dB}PLD_hp7580\${ac_dC}1\${ac
 
     DEVICES="$DEVICES hp7580"
 fi
+# check whether --enable-lj_hpgl was given
+enableval="$enable_lj_hpgl"
+if test -n "$enableval"; then
+  :
+else
+  enable_lj_hpgl="yes"
+fi
 
+if test "$enable_lj_hpgl" = "yes"; then
+    
+{
+test -n "$verbose" && \
+echo "	defining PLD_lj_hpgl"
+echo "#define" PLD_lj_hpgl "1" >> confdefs.h
+DEFS="$DEFS -DPLD_lj_hpgl=1"
+ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_lj_hpgl\${ac_dB}PLD_lj_hpgl\${ac_dC}1\${ac_dD}
+\${ac_uA}PLD_lj_hpgl\${ac_uB}PLD_lj_hpgl\${ac_uC}1\${ac_uD}
+\${ac_eA}PLD_lj_hpgl\${ac_eB}PLD_lj_hpgl\${ac_eC}1\${ac_eD}
+"
+}
+
+    DEVICES="$DEVICES lj_hpgl"
+fi
 # check whether --enable-imp was given
 enableval="$enable_imp"
 if test -n "$enableval"; then
@@ -2827,7 +2864,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_imp\${ac_dB}PLD_imp\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES imp"
 fi
-
 # check whether --enable-xwin was given
 enableval="$enable_xwin"
 if test -n "$enableval"; then
@@ -2851,7 +2887,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_xwin\${ac_dB}PLD_xwin\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES xwin"
 fi
-
 # check whether --enable-tk was given
 enableval="$enable_tk"
 if test -n "$enableval"; then
@@ -2875,7 +2910,6 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_tk\${ac_dB}PLD_tk\${ac_dC}1\${ac_dD}
 
     DEVICES="$DEVICES tk"
 fi
-
 # check whether --enable-dp was given
 enableval="$enable_dp"
 if test -n "$enableval"; then
