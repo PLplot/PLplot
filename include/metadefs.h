@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/02/23 04:51:08  mjl
-   Changed PLPLOT_HEADER and PLPLOT_VERSION to PLMETA_HEADER and PLMETA_VERSION
-   so that plplot could have its own distinct version number.
+   Revision 1.4  1993/02/27 04:47:26  mjl
+   Changed def'n of plm_wr macro to avoid a circular call chain.
 
+ * Revision 1.3  1993/02/23  04:51:08  mjl
+ * Changed PLPLOT_HEADER and PLPLOT_VERSION to PLMETA_HEADER and PLMETA_VERSION
+ * so that plplot could have its own distinct version number.
+ *
  * Revision 1.2  1993/01/23  05:29:18  mjl
  * Added support for polylines and new color model.
  *
@@ -42,12 +45,13 @@
 #define PIXEL_RES_Y_OLD		56
 
 /* Macros to make it easier to abort on nonzero return code */
+/* Can't call plexit on a write failure since that would be circular */
 
 #define plm_wr(code) \
-	if (code) plexit( "Unable to write to MetaFile" )
+    if (code) { fprintf(stderr, "Unable to write to MetaFile\n"); exit(1); }
 
 #define plm_rd(code) \
-	if (code) plexit( "Unable to read from MetaFile" )
+    if (code) plexit( "Unable to read from MetaFile" )
 
 /*
    The available commands are as follows.
