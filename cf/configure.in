@@ -333,6 +333,16 @@ cat $srcdir/cf/demos.in		>>Makefile.in
 # Installation and miscellaneous.
 
 cat $srcdir/cf/install.in	>>Makefile.in 
+
+case $system in
+    Linux* )
+	cat $srcdir/cf/inst_lib_linux.in	>>Makefile.in
+    ;;
+    * )
+	cat $srcdir/cf/inst_lib.in		>>Makefile.in
+    ;;
+esac
+
 cat $srcdir/cf/misc.in		>>Makefile.in 
 
 # Object file dependencies
