@@ -14,7 +14,7 @@ PLPLOT_VERSION = 5.1
 DLL_VERSION = 51
 
 # set nodebug=0 for symbols, nodebug=1 for optimized build.
-NODEBUG=0
+NODEBUG=1
 
 !IF "$(NODEBUG)" == "1"
 DEBUGDEFINES =

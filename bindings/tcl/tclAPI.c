@@ -46,6 +46,7 @@ static int plotsh3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadesCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plmapCmd	(ClientData, Tcl_Interp *, int, char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -73,6 +74,7 @@ static CmdInfo Cmds[] = {
 #include "plplot/tclgen_s.h"
     {"plcol",		plcol0Cmd},
     {"plcont",		plcontCmd},
+    {"plmap",		plmapCmd},
     {"plmesh",		plmeshCmd},
     {"plot3d",		plot3dCmd},
     {"plotsh3d",	plotsh3dCmd},
@@ -337,7 +339,7 @@ PlbasicInit( Tcl_Interp *interp )
     "tcl_findLibrary plplot 5.1 \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
     static char initScriptExtended[] = 
-    "tcl_findLibrary plplot 5.1.0 \"\" tcl/plplot.tcl PL_LIBRARY pllibrary";
+    "tcl_findLibrary plplot 5.1.0/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
     char *libDir = NULL;
 #ifdef USE_TCL_STUBS
@@ -1862,6 +1864,39 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 	plFree2dGrid( cgrid2.yg, nx, ny );
     }
 
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plmapCmd
+ *
+ * Processes plmap Tcl command.
+ * C version takes:
+ *    string, minlong, maxlong, minlat, maxlat
+ *    
+ *  e.g. .p cmd plmap globe 0 360 -90 90
+\*--------------------------------------------------------------------------*/
+
+static int
+plmapCmd( ClientData clientData, Tcl_Interp *interp,
+	    int argc, char *argv[] )
+{
+    PLFLT minlong, maxlong, minlat, maxlat;
+
+    if (argc < 6 ) {
+	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
+			 (char *) NULL );
+	return TCL_ERROR;
+    }
+
+    minlong = atof( argv[2] );
+    maxlong = atof( argv[3] );
+    minlat = atof( argv[4] );
+    maxlat = atof( argv[5] );
+
+    plmap(NULL, argv[1], minlong, maxlong, minlat, maxlat);
+    
     plflush();
     return TCL_OK;
 }
