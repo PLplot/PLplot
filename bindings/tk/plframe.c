@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/01/15 17:37:51  mjl
+ * Revision 1.22  1994/02/01 22:49:37  mjl
+ * Changes to handle only partially received socket packets due to a slow
+ * network connection.  Right now it just polls; this will be improved soon.
+ *
+ * Revision 1.21  1994/01/15  17:37:51  mjl
  * Added compile-time mode to route FIFO i/o through a memory buffer.
  * Changed "openfifo" widget command to "openlink" with the first argument
  * to be either "fifo" or "socket".  Added ability to create and read
@@ -1490,12 +1494,22 @@ ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* Read from socket */
 
+/* Note: the buffer pointer needs to be cleared before the read so we can
+ * test it to check for an incomplete packet, and after the read so that
+ * reads from the buffer start at the beginning.
+ */
+
     else {
-	if (pl_PacketReceive(interp, plr->socket, 0, plr->pdfs)) {
-	    fprintf(stderr, "Packet receive failed:\n\t %s\n",
-		    interp->result);
-	    client_cmd(interp, "set proceed 1", 1, 1);
-	    return TCL_ERROR;
+	pdfs->bp = 0;
+	for (;;) {
+	    if (pl_PacketReceive(interp, plr->socket, 0, plr->pdfs)) {
+		fprintf(stderr, "Packet receive failed:\n\t %s\n",
+			interp->result);
+		client_cmd(interp, "set proceed 1", 1, 1);
+		return TCL_ERROR;
+	    }
+	    if (pdfs->bp == plr->nbytes)
+		break;
 	}
 	pdfs->bp = 0;
     }
