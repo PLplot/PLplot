@@ -1,7 +1,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1994/06/09 20:09:18  mjl
+# Revision 1.5  1994/08/25 03:59:13  mjl
+# Fixed limiting saturation value that was messing up grayscale cmap1's.
+#
+# Revision 1.4  1994/06/09  20:09:18  mjl
 # Changed plplot direct widget commands to begin with a "pl", e.g. scol<?>
 # to plscol<?>, etc.  To make going between the C and Tcl API's as natural
 # as possible.
@@ -330,7 +333,7 @@ class ColorEditor {
 	set l [expr ($MIN+$MAX)/2.0]
 
 	if {$MIN == $MAX} {
-	    set s 1
+	    set s 0
 	    set h 0
 	} else {
 	    if {$l < 0.5} {
