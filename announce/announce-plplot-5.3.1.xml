@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='us-ascii'?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY examples '<ulink
+   url="http://plplot.sourceforge.net/examples/index.html">example
+   web page</ulink>'>
+]>
+
+<sect1>
+  <title>Announcement of PLplot-5.3.1</title>
+
+  <sect2>
+    <title>Release Notes</title>
+
+    <para>
+    </para>
+
+  </sect2>
+
+  <sect2>
+    <title>Changes</title>
+
+    <sect3>
+      <title>API</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+	  </para>
+        </listitem>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Language Bindings</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Drivers</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Config/Build/Install</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Library core</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Documentation</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Tests</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+  </sect2>
+
+  <sect2>
+    <title>Acknowledgments</title>
+
+    <para>
+    </para>
+
+  </sect2>
+
+  <sect2>
+    <title></title>
+    <para role="signature">
+      Rafael Laboissiere, 2004-xx-xx
+    </para>
+
+    <para role="foot">
+      <ulink url="../index.html">PLplot home page</ulink> | <ulink
+      url="announce-plplot-5.3.1.txt">Text version</ulink>
+      | <ulink url="announce-plplot-5.3.1.pdf">PDF version</ulink> |
+      <ulink url="announce-plplot-5.3.1.xml">XML source</ulink> |
+      <ulink url="Makefile">Makefile</ulink>
+    </para>
+
+    <para role="foot">
+      $$
+    </para>
+
+  </sect2>
+
+</sect1>

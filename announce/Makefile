@@ -1,16 +1,20 @@
 # Makefile for remotely installing the release announcements in the PLplot
-# web site (only works with GNU make)
+# web site.  This file only works with GNU make.  The packages xmlto,
+# passivetex, and opensp must be installed.
 #
-# Rafael Labosisiere, 2004-02-04
+# Rafael Labosisiere, 
+# Created on 2004-02-04
+# Last changed on 2004-06-20
 
 include ../Makefile-vars
 
-SOURCES = announce-plplot-5.3.0
-DOCBOOK_XSL = /usr/share/sgml/docbook/stylesheet/xsl/nwalsh/xhtml/docbook.xsl
-ENV = XML_CATALOG_FILES=/usr/share/sgml/docbook/dtd/xml/4.2/catalog.xml
 XML_DCL = /usr/lib/sgml/declaration/xml.dcl
 URL = http://plplot.sf.net
 PWD = $(shell cd .. ; pwd)
+
+SOURCES =                 \
+    announce-plplot-5.3.0 \
+    announce-plplot-5.3.1 
 
 TARGETS = $(SOURCES:%=%.xhtml) $(SOURCES:%=%.txt) $(SOURCES:%=%.pdf)
 
@@ -19,6 +23,7 @@ WWW_FILES =                    \
     announce-plplot-5.2.1.html \
     announce.css               \
     ChangeLog-5.2.1-5.3.0      \
+    ChangeLog-5.3.0-5.3.1      \
     $(SOURCES:%=%.xml)         \
     $(TARGETS)                 \
     Makefile
@@ -28,7 +33,7 @@ WWW_ANNOUNCE_DIR = $(WWW_DIR)/announce
 all: $(TARGETS)
 
 %.html: %.xml html.xsl
-	$(ENV) xmlto -m html.xsl xhtml-nochunks $<
+	xmlto -m html.xsl xhtml-nochunks $<
 
 %.xhtml: %.html
 	mv $< $@
@@ -38,7 +43,7 @@ all: $(TARGETS)
 	| sed "s,file://localhost$(PWD),$(URL)," > $@
 
 %.pdf: %.xml print.xsl
-	$(ENV) xmlto pdf -m print.xsl $<
+	xmlto pdf -m print.xsl $<
 
 validate:
 	for f in $(SOURCES:%=%.xml) ; do \
@@ -55,5 +60,4 @@ install: $(TARGETS)
 	ssh $(USER_AT_HOST) chgrp -R plplot $(WWW_ANNOUNCE_DIR)
 	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_ANNOUNCE_DIR)
 
-.PHONY: all clean validate 
-
+.PHONY: all clean validate install
