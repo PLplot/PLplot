@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1993/08/11 19:26:30  mjl
+ * Revision 1.8  1993/08/18 19:05:41  mjl
+ * Changed way device window parameters are passed -- now via the command
+ * line flags -mar, -a, -jx, and -jy.
+ *
+ * Revision 1.7  1993/08/11  19:26:30  mjl
  * Improved code that determines when command is sent to server to read from
  * the FIFO.  Changed to non-blocking i/o and asynchronous TK sends.
  *
@@ -461,16 +465,19 @@ tk_di(PLStream *pls)
 /* Change window into device space */
 
     if (pls->difilt & PLDI_DEV) {
-	sprintf(str, "%f", pls->didxmin);
-	Tcl_SetVar(dev->interp, "xl", str, 0);
-	sprintf(str, "%f", pls->didymin);
-	Tcl_SetVar(dev->interp, "yl", str, 0);
-	sprintf(str, "%f", pls->didxmax);
-	Tcl_SetVar(dev->interp, "xr", str, 0);
-	sprintf(str, "%f", pls->didymax);
-	Tcl_SetVar(dev->interp, "yr", str, 0);
+	sprintf(str, "%f", pls->mar);
+	Tcl_SetVar(dev->interp, "mar", str, 0);
+	sprintf(str, "%f", pls->aspect);
+	Tcl_SetVar(dev->interp, "aspect", str, 0);
+	sprintf(str, "%f", pls->jx);
+	Tcl_SetVar(dev->interp, "jx", str, 0);
+	sprintf(str, "%f", pls->jy);
+	Tcl_SetVar(dev->interp, "jy", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -wdev $xl,$yl,$xr,$yr" );
+	server_cmd( pls, "$plwidget cmd setopt -mar $mar" );
+	server_cmd( pls, "$plwidget cmd setopt -a $aspect" );
+	server_cmd( pls, "$plwidget cmd setopt -jx $jx" );
+	server_cmd( pls, "$plwidget cmd setopt -jy $jy" );
 	pls->difilt &= ~PLDI_DEV;
     }
 }
@@ -664,7 +671,7 @@ static void
 launch_server(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char **argv;
+    char *argv[20];
     int i;
     pid_t pid;
 
@@ -691,14 +698,12 @@ launch_server(PLStream *pls)
 /* Build argument list for exec */
 
     i = 0;
-    argv = (char **) malloc(20 * sizeof(char *));
-
     argv[i++] = pls->plserver;		/* Name of server */
 
     argv[i++] = "-client";		/* Send back notification */
     argv[i++] = dev->program;
 
-    argv[i++] = "-child";		/* Tell plserver it's ancestry */
+    argv[i++] = "-child";		/* Tell plserver its ancestry */
 
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
@@ -723,7 +728,8 @@ launch_server(PLStream *pls)
     else if (pid == 0) {
 	argv[i++] = NULL;
 	if (execvp("plserver", argv)) {
-	    abort_session(pls, "execvp error");
+	    fprintf(stderr, "execvp error\n");
+	    _exit(1);
 	}
     }
 
@@ -739,7 +745,6 @@ launch_server(PLStream *pls)
     tcl_cmd(pls, "tkwait variable plserver");
 
     dev->launched_server = 1;
-    free ((void *) argv);
 }
 
 /*----------------------------------------------------------------------*\
