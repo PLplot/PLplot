@@ -26,7 +26,11 @@
 # clean install.  After that, aclocal (and automake, autoconf, and 
 # ./configure) called automatically whenever required by a change to 
 # configure.ac or any file in the cf subdirectory.
-ACLOCAL_AMFLAGS = -I cf
+ACLOCAL_AMFLAGS = -I cf 2>&1 | grep -v underquoted
+# The above is an inspired hack which may not work indefinitely.  
+# Return to simpler more reliable form below as soon as 
+# automake-1.8 underquoted warning messages quit being such an annoyance.
+#ACLOCAL_AMFLAGS = -I cf
 
 src_dirs = lib src include data bindings
 other_dirs = examples utils test scripts doc pkgcfg cf
