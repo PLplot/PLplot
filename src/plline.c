@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/07/31 08:18:34  mjl
-   Clipping routine for polygons added (preliminary).
+   Revision 1.10  1994/01/17 19:27:15  mjl
+   Bug fix: changed declarations of xclp[] and yclp[] from static to local
+   variables in plP_pllclp() and plP_plfclp(). plP_pllclp can call itself
+   consequently it needs local variables. Fixed problem with dash line and
+   orientation=1.  (Submitted by Wesley Ebisuzaki)
 
+ * Revision 1.9  1993/07/31  08:18:34  mjl
+ * Clipping routine for polygons added (preliminary).
+ *
  * Revision 1.8  1993/07/01  22:18:13  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -23,7 +29,6 @@
 #define INSIDE(ix,iy) (BETW(ix,xmin,xmax) && BETW(iy,ymin,ymax))
 
 static PLINT xline[PL_MAXPOLYLINE], yline[PL_MAXPOLYLINE];
-static short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
 
 static PLINT lastx = UNDEFINED, lasty = UNDEFINED;
 
@@ -243,6 +248,7 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 {
     PLINT x1, x2, y1, y2;
     PLINT i, iclp = 0;
+    short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
     int drawable;
 
     for (i = 0; i < npts - 1; i++) {
@@ -312,6 +318,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 {
     PLINT x1, x2, y1, y2;
     PLINT i, iclp = 0;
+    short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
     int drawable;
 
     iclp = 0;
