@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/08/09 22:16:39  mjl
+ * Revision 1.9  1993/11/15 08:31:37  mjl
+ * Bumped metafile version number since now write pages info to header.
+ *
+ * Revision 1.8  1993/08/09  22:16:39  mjl
  * Miscellaneous cleaning up.
  *
  * Revision 1.7  1993/07/31  08:08:40  mjl
@@ -29,7 +32,7 @@
 */
 
 #define PLMETA_HEADER	"PLPLOT"
-#define PLMETA_VERSION	"1993b"
+#define PLMETA_VERSION	"1993c"
 
 /* These are used by the TK driver client/server code */
 
