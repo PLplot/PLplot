@@ -16,11 +16,11 @@ dynamic_drivers_target: $(dynamic_drivers)
 	@echo "dynamic_drivers built: $(dynamic_drivers)"
 
 drivers/null.drv : shared/null$O
-	$(SHLIB_BUILD) $@ $< -L. -lplplot
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
 
 drivers/plmeta.drv : shared/plmeta$O
-	$(SHLIB_BUILD) $@ $< -L. -lplplot
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
 
 drivers/ps.drv : shared/ps$O
-	$(SHLIB_BUILD) $@ $< -L. -lplplot
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
 
