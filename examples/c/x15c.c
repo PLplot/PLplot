@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/03/30 07:22:00  mjl
+ * Revision 1.5  1994/04/08 12:07:55  mjl
+ * Changed to only pattern shade.
+ *
+ * Revision 1.4  1994/03/30  07:22:00  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
@@ -44,12 +47,11 @@
 
 /* Function prototypes */
 
-void plot1	(void);
-void plot2	(void);
-void plot3	(void);
-void f2mnmx	(PLFLT *, PLINT, PLINT, PLFLT *, PLFLT *);
-static void	cmap1_init1(void);
-static void	cmap1_init2(void);
+static void	plot1		(void);
+static void	plot2		(void);
+static void	f2mnmx		(PLFLT *, PLINT, PLINT, PLFLT *, PLFLT *);
+static void	cmap1_init1	(void);
+static void	cmap1_init2	(void);
 
 /* Data to plot */
 
@@ -98,9 +100,8 @@ main(int argc, char *argv[])
     }
     f2mnmx(&z[0][0], XPTS, YPTS, &zmin, &zmax);
 
-/*    plot1();*/
+    plot1();
     plot2();
-/*    plot3();*/
 
     plend();
     exit(0);
@@ -232,52 +233,12 @@ plot1(void)
 /*----------------------------------------------------------------------*\
 * plot2
 *
-* Illustrates multiple adjacent shaded regions.
+* Illustrates multiple adjacent shaded regions, using different fill
+* patterns for each region. 
 \*----------------------------------------------------------------------*/
 
 void 
 plot2(void)
-{
-    PLFLT shade_min, shade_max, sh_color;
-    PLINT sh_cmap = 1, sh_width;
-    PLINT min_color = 1, min_width = 0, max_color = 0, max_width = 0;
-    int i, nmax = 14;
-
-    pladv(0);
-    plvpor(0.1, 0.9, 0.1, 0.9);
-    plwind(-1.0, 1.0, -1.0, 1.0);
-
-/* Plot using identity transform */
-    
-    for (i = 0; i < nmax; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) nmax;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) nmax;
-	sh_color = i / (float) (nmax-1);
-	sh_width = 2;
-/*	plpsty(8);*/
-	plpsty(0);
-
-	plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
-		 shade_min, shade_max, 
-		 sh_cmap, sh_color, sh_width,
-		 min_color, min_width, max_color, max_width,
-		 plfill, 1, NULL, NULL);
-    }
-
-    plcol(1);
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    plcol(2);
-    pllab("distance", "altitude", "Bogon flux");
-}
-
-/*----------------------------------------------------------------------*\
-* plot3
-*
-* Same as plot2, but uses different fill patterns for each region.
-\*----------------------------------------------------------------------*/
-
-void 
-plot3(void)
 {
     PLFLT shade_min, shade_max, sh_color;
     PLINT sh_cmap = 0, sh_width;
