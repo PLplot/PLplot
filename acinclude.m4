@@ -1,55 +1,53 @@
-dnl> $Id$
-dnl> 
-dnl> Local autoconf extensions.  These are based on the autoconf builtin
-dnl> macros, and you can do what you want with them.  Side note: if you
-dnl> introduce all comments as done here, the m4 file is more readable and
-dnl> you can do emacs adaptive fills.
-dnl> 
-dnl> Maurice LeBrun
-dnl> IFS, University of Texas at Austin
-dnl> 14-Jul-1994
-dnl> ------------------------------------------------------------------------
-dnl> It's kind of nice to have an include macro.
-dnl> 
+dnl $Id$ --*-Autoconf-*--
+dnl 
+dnl Local autoconf extensions.  These are based on the autoconf builtin
+dnl macros, and you can do what you want with them.
+dnl 
+dnl Maurice LeBrun
+dnl IFS, University of Texas at Austin
+dnl 14-Jul-1994
+dnl ------------------------------------------------------------------------
+dnl It's kind of nice to have an include macro.
+dnl 
 define([AC_INCLUDE],[builtin([include],$*)])dnl
-dnl> ------------------------------------------------------------------------
-dnl> This quicky is good during development, e.g. AC_IGNORE([ ... ]) to
-dnl> ignore everything inside the brackets.
-dnl>
+dnl ------------------------------------------------------------------------
+dnl This quicky is good during development, e.g. AC_IGNORE([ ... ]) to
+dnl ignore everything inside the brackets.
+dnl
 define([AC_IGNORE],)dnl
-dnl> ------------------------------------------------------------------------
-dnl> Guess the value for the `prefix' variable by looking for the argument
-dnl> program along PATH and taking its parent.  Example: if the argument
-dnl> is `gcc' and we find /usr/local/gnu/bin/gcc, set `prefix' to
-dnl> /usr/local/gnu.  Unlike the builtin AC_PREFIX, this one tries to
-dnl> follow any symbolic links back to their terminus, and also determines
-dnl> if a non-standard installation is being used.  It works as follows:
-dnl>
-dnl>  	prefix=`ls -l $ac_dir/$1 | awk '{print $NF}'`
-dnl>
-dnl> This stores the last space-delimited field of a long directory
-dnl> list of the file in quesion into "prefix".  If the file is really
-dnl> a softlink, this will be the actual file location, unless that
-dnl> points to yet another link (and if so, tough luck).
-dnl>
-dnl>	prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
-dnl>
-dnl> This strips off the last part of the file name.  "prefix" should
-dnl> now hold the absolute pathname of the containing directory.
-dnl>
-dnl>	dirname=`echo $prefix | sed 's%/.*/%%'`
-dnl>
-dnl> This strips off the last "/"-delimited field and stores into
-dnl> "dirname".  
-dnl>
-dnl>	if test $dirname = "bin"; then
-dnl>	    prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
-dnl>	fi
-dnl>
-dnl> This tests to see if the immediate parent of the file is named "bin"
-dnl> as is customary.  If so, the "bin" is stripped off to get the actual
-dnl> prefix.  If not, the prefix is left alone, and a warning is issued.
-dnl>
+dnl ------------------------------------------------------------------------
+dnl Guess the value for the `prefix' variable by looking for the argument
+dnl program along PATH and taking its parent.  Example: if the argument
+dnl is `gcc' and we find /usr/local/gnu/bin/gcc, set `prefix' to
+dnl /usr/local/gnu.  Unlike the builtin AC_PREFIX, this one tries to
+dnl follow any symbolic links back to their terminus, and also determines
+dnl if a non-standard installation is being used.  It works as follows:
+dnl
+dnl  	prefix=`ls -l $ac_dir/$1 | awk '{print $NF}'`
+dnl
+dnl This stores the last space-delimited field of a long directory
+dnl list of the file in quesion into "prefix".  If the file is really
+dnl a softlink, this will be the actual file location, unless that
+dnl points to yet another link (and if so, tough luck).
+dnl
+dnl	prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+dnl
+dnl This strips off the last part of the file name.  "prefix" should
+dnl now hold the absolute pathname of the containing directory.
+dnl
+dnl	dirname=`echo $prefix | sed 's%/.*/%%'`
+dnl
+dnl This strips off the last "/"-delimited field and stores into
+dnl "dirname".  
+dnl
+dnl	if test $dirname = "bin"; then
+dnl	    prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+dnl	fi
+dnl
+dnl This tests to see if the immediate parent of the file is named "bin"
+dnl as is customary.  If so, the "bin" is stripped off to get the actual
+dnl prefix.  If not, the prefix is left alone, and a warning is issued.
+dnl
 define([AC_PREFIX_PROGRAM],
 [if test "$prefix" = NONE; then
   AC_MSG_CHECKING(for prefix by location of $1)
@@ -62,15 +60,15 @@ changequote(,)dnl
       prefix=`ls -l $ac_dir/$1 | awk '{print $NF}'`
       prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
       dirname=`echo $prefix | sed 's%/.*/%%'`
+      binprefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+changequote([,])dnl
       if test $dirname = "bin"; then
-        prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
-	AC_MSG_RESULT($prefix)
+	AC_MSG_RESULT($binprefix)
       else
 	AC_MSG_RESULT($prefix)
 	AC_MSG_RESULT(warning: non-standard installed distribution ($1 not stored under bin))
 	AC_MSG_RESULT(warning: please completely delete old files before installation)
       fi
-changequote([,])dnl
       break
     fi
   done
@@ -80,14 +78,14 @@ changequote([,])dnl
   IFS="$ac_save_ifs"
 fi
 ])dnl
-dnl> ------------------------------------------------------------------------
-dnl> Fixed version of AC_ISC_POSIX: /etc/conf/kconfig.d doesn't need to
-dnl> exist for it to be POSIX.  Furthermore, unistd.h is in /usr/include
-dnl> on some systems, not /usr/include/sys.  Also, the distributed version
-dnl> of AC_ISC_POSIX sets the value of CC (to be $CC -posix or $CC -Xp,
-dnl> which is a bad idea: these choices are not particularly portable and
-dnl> it overrides whatever the user may have set for CC.
-dnl>
+dnl ------------------------------------------------------------------------
+dnl Fixed version of AC_ISC_POSIX: /etc/conf/kconfig.d doesn't need to
+dnl exist for it to be POSIX.  Furthermore, unistd.h is in /usr/include
+dnl on some systems, not /usr/include/sys.  Also, the distributed version
+dnl of AC_ISC_POSIX sets the value of CC (to be $CC -posix or $CC -Xp,
+dnl which is a bad idea: these choices are not particularly portable and
+dnl it overrides whatever the user may have set for CC.
+dnl
 define([AC_ISC_POSIX],
 [AC_PROVIDE([$0])AC_BEFORE([$0], dnl
 [AC_COMPILE_CHECK])AC_BEFORE([$0], [AC_TEST_PROGRAM])AC_BEFORE([$0], dnl
@@ -104,12 +102,12 @@ else
   AC_MSG_RESULT([no])
 fi
 ])dnl
-dnl> ------------------------------------------------------------------------
-dnl> Modified versions of two subroutines of AC_OUTPUT from autoconf
-dnl> version 2.3. 
-dnl>
-dnl> The only difference is that this version looks for the input file
-dnl> in the in the target directory first, then in the source directory.
+dnl ------------------------------------------------------------------------
+dnl Modified versions of two subroutines of AC_OUTPUT from autoconf
+dnl version 2.3. 
+dnl
+dnl The only difference is that this version looks for the input file
+dnl in the target directory first, then in the source directory.
 
 dnl This is a subroutine of AC_OUTPUT.  It is called inside an unquoted
 dnl here document whose contents are going into config.status.
@@ -309,15 +307,15 @@ cat >> $CONFIG_STATUS <<\EOF
 fi; done
 
 ])
-dnl> ------------------------------------------------------------------------
-dnl> The following macros search a list of directories for the given
-dnl> include file and takes appropriate actions if found or not.
-dnl> Arguments: 
-dnl> 	$1 - the include file name, the part before the .h
-dnl>	$2 - a variable that holds the matched directory name
-dnl>	$3 - a variable indicating if the search succeeded ("yes"/"no") 
-dnl>	     (if missing, we exit)
-dnl> Use just FIND_INC, or the FIND_INC_<...> set for more control.
+dnl ------------------------------------------------------------------------
+dnl The following macros search a list of directories for the given
+dnl include file and takes appropriate actions if found or not.
+dnl Arguments: 
+dnl 	$1 - the include file name, the part before the .h
+dnl	$2 - a variable that holds the matched directory name
+dnl	$3 - a variable indicating if the search succeeded ("yes"/"no") 
+dnl	     (if missing, we exit)
+dnl Use just FIND_INC, or the FIND_INC_<...> set for more control.
 dnl
 define(FIND_INC_BEGIN, [
     AC_MSG_CHECKING(for $1.h)
@@ -352,25 +350,25 @@ define(FIND_INC, [
     FIND_INC_SET($*)
     FIND_INC_END($*)
 ])
-dnl> ------------------------------------------------------------------------
-dnl> The following macro searches a list of directories for the given
-dnl> library file and takes appropriate actions if found or not.
-dnl> Use just FIND_LIB, or the FIND_LIB_<...> set for more control.
-dnl>
-dnl> Arguments: 
-dnl> 	$1 - the library name, the part after the -l and before the "."
-dnl>	$2 - a variable that holds the matched directory name
-dnl>
-dnl> FIND_LIB_SET takes:
-dnl>	$3 - a variable that holds the matched library name in a form
-dnl>	     suitable for input to the linker (without the suffix, so that
-dnl>	     any shared library form is given preference).
-dnl>
-dnl> FIND_LIB_END takes:
-dnl>	$3 - a variable indicating if the search succeeded ("yes"/"no") 
-dnl>	     (if missing, we exit)
-dnl>
-dnl> FIND_LIB takes these as $3 and $4, respectively.
+dnl ------------------------------------------------------------------------
+dnl The following macro searches a list of directories for the given
+dnl library file and takes appropriate actions if found or not.
+dnl Use just FIND_LIB, or the FIND_LIB_<...> set for more control.
+dnl
+dnl Arguments: 
+dnl 	$1 - the library name, the part after the -l and before the "."
+dnl	$2 - a variable that holds the matched directory name
+dnl
+dnl FIND_LIB_SET takes:
+dnl	$3 - a variable that holds the matched library name in a form
+dnl	     suitable for input to the linker (without the suffix, so that
+dnl	     any shared library form is given preference).
+dnl
+dnl FIND_LIB_END takes:
+dnl	$3 - a variable indicating if the search succeeded ("yes"/"no") 
+dnl	     (if missing, we exit)
+dnl
+dnl FIND_LIB takes these as $3 and $4, respectively.
 dnl
 define(FIND_LIB_BEGIN, [
     AC_MSG_CHECKING(for lib$1)
@@ -411,13 +409,13 @@ define(FIND_LIB, [
     FIND_LIB_SET($1, $2, $3)
     FIND_LIB_END($1, $2, $4)
 ])
-dnl> ------------------------------------------------------------------------
-dnl> The following macro makes it easier to add includes without adding
-dnl> redundant -I specifications (to keep the build line concise).  
-dnl> Arguments: 
-dnl> 	$1 - the searched directory name
-dnl>	$2 - a variable that holds the include specification
-dnl>	$3 - a variable that holds all the directories searched so far
+dnl ------------------------------------------------------------------------
+dnl The following macro makes it easier to add includes without adding
+dnl redundant -I specifications (to keep the build line concise).  
+dnl Arguments: 
+dnl 	$1 - the searched directory name
+dnl	$2 - a variable that holds the include specification
+dnl	$3 - a variable that holds all the directories searched so far
 dnl
 define([ADD_TO_INCS],[
     INCSW=""
@@ -435,14 +433,14 @@ define([ADD_TO_INCS],[
     fi
     $3="$$3 $1"
 ])
-dnl> ------------------------------------------------------------------------
-dnl> The following macro makes it easier to add libs without adding
-dnl> redundant -L and -l specifications (to keep the build line concise).
-dnl> Arguments: 
-dnl> 	$1 - the searched directory name
-dnl>	$2 - the command line option to give to the linker (e.g. -lfoo)
-dnl>	$3 - a variable that holds the library specification
-dnl>	$4 - a variable that holds all the directories searched so far
+dnl ------------------------------------------------------------------------
+dnl The following macro makes it easier to add libs without adding
+dnl redundant -L and -l specifications (to keep the build line concise).
+dnl Arguments: 
+dnl 	$1 - the searched directory name
+dnl	$2 - the command line option to give to the linker (e.g. -lfoo)
+dnl	$3 - a variable that holds the library specification
+dnl	$4 - a variable that holds all the directories searched so far
 dnl
 define([ADD_TO_LIBS],[
     LIBSW=""
@@ -469,48 +467,12 @@ define([ADD_TO_LIBS],[
     fi
     $4="$$4 $1"
 ])
-dnl> ------------------------------------------------------------------------
-dnl ### Selecting optional features
-dnl AC_ARG_ENABLE(FEATURE, HELP-STRING, ACTION-IF-TRUE [, ACTION-IF-FALSE])
-undefine([AC_ARG_ENABLE])
-AC_DEFUN(AC_ARG_ENABLE,
-[ifelse([$2],,,[AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
-ac_help="$ac_help
-[$2]"
-AC_DIVERT_POP()])dnl
-[#] Check whether --enable-[$1] or --disable-[$1] was given.
-enableval="[$enable_]patsubst([$1], -, _)"
-if test -n "$enableval"; then
-  ifelse([$3], , :, [$3])
-ifelse([$4], , , [else
-  $4
-])dnl
-fi
-])
-dnl
-dnl ### Working with optional software
-dnl AC_ARG_WITH(PACKAGE, HELP-STRING, ACTION-IF-TRUE [, ACTION-IF-FALSE])
-undefine([AC_ARG_WITH])
-AC_DEFUN(AC_ARG_WITH,
-[ifelse([$2],,,[AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
-ac_help="$ac_help
-[$2]"
-AC_DIVERT_POP()])dnl
-[#] Check whether --with-[$1] or --without-[$1] was given.
-withval="[$with_]patsubst([$1], -, _)"
-if test -n "$withval"; then
-  ifelse([$3], , :, [$3])
-ifelse([$4], , , [else
-  $4
-])dnl
-fi
-])
-dnl> ------------------------------------------------------------------------
-dnl> Front-end macros to the above, which when:
-dnl>  - a with-<opt> is registered, the corresponding enable-<opt> is
-dnl>	registered as bogus
-dnl>  - an enable-<opt> is registered, the corresponding with-<opt> is
-dnl>	registered as bogus
+dnl ------------------------------------------------------------------------
+dnl Front-end macros to the above, which when:
+dnl  - a with-<opt> is registered, the corresponding enable-<opt> is
+dnl	registered as bogus
+dnl  - an enable-<opt> is registered, the corresponding with-<opt> is
+dnl	registered as bogus
 dnl
 AC_DEFUN([MY_ARG_WITH],
 [AC_ARG_WITH($@)dnl
@@ -519,17 +481,17 @@ dnl
 AC_DEFUN([MY_ARG_ENABLE],
 [AC_ARG_ENABLE($@)dnl
 AC_ARG_WITH([$1],[],[AC_MSG_ERROR([unrecognized variable: with_$1])])])
-dnl> ------------------------------------------------------------------------
-dnl> Get rid of caching since it doesn't always work.  I.e. changing the
-dnl> compiler from the vendor's to gcc can change all sorts of settings,
-dnl> but the autoconf logic isn't set up to handle that.  I'll opt for
-dnl> stability over speed any day.
+dnl ------------------------------------------------------------------------
+dnl Get rid of caching since it doesn't always work.  I.e. changing the
+dnl compiler from the vendor's to gcc can change all sorts of settings,
+dnl but the autoconf logic isn't set up to handle that.  I'll opt for
+dnl stability over speed any day.
 dnl
 define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
-dnl> ------------------------------------------------------------------------
-dnl> Define the package version
-AC_DEFUN([PACKAGE_VERSION],
+dnl ------------------------------------------------------------------------
+dnl Define the package version
+AC_DEFUN([PLPLOT_PACKAGE_VERSION],
 [builtin(include, version.in)
 PLPLOT_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
 AC_SUBST(MAJOR_VERSION)
@@ -537,10 +499,10 @@ AC_SUBST(MINOR_VERSION)
 AC_SUBST(RELEASE_VERSION)
 AC_SUBST(PLPLOT_VERSION)
 AC_DEFINE_UNQUOTED(PLPLOT_VERSION, "$PLPLOT_VERSION")])
-dnl> ------------------------------------------------------------------------
-dnl> GTK configuration function.
-dnl> Adapted from that distributed by the GTK Project
-dnl> Added by Rafael Laboissiere on Fri Feb 23 21:26:56 CET 2001
+dnl ------------------------------------------------------------------------
+dnl GTK configuration function.
+dnl Adapted from that distributed by the GTK Project
+dnl Added by Rafael Laboissiere on Fri Feb 23 21:26:56 CET 2001
 dnl
 # Configure paths for GTK+
 # Owen Taylor     97-11-3
@@ -738,10 +700,10 @@ main ()
   
 ])
 
-dnl> ------------------------------------------------------------------------
-dnl> Gnome configuration function.
-dnl> Adapted from that distributed by the Gnome Project
-dnl> Added by Rafael Laboissiere on Fri Feb 23 21:26:56 CET 2001
+dnl ------------------------------------------------------------------------
+dnl Gnome configuration function.
+dnl Adapted from that distributed by the Gnome Project
+dnl Added by Rafael Laboissiere on Fri Feb 23 21:26:56 CET 2001
 dnl
 dnl GNOME_INIT_HOOK (script-if-gnome-enabled, [failflag], [additional-inits])
 dnl
@@ -866,14 +828,14 @@ dnl
 AC_DEFUN([GNOME_INIT],[
 	GNOME_INIT_HOOK([],fail,$1)
 ])
-dnl> ------------------------------------------------------------------------
-dnl> AC substitution of stripped paths
-dnl>     AC_SUBST_STRIP(PATH,PREFIX)
-dnl> Essentially, do an AC_SUBST of PATH variable, but previously suppress
-dnl> the leading PREFIX.
-dnl> This is needed for relocatability, i.e. installing the package in a
-dnl> different prefix from that used at build time.
-dnl> Added by Rafael Laboissiere on Wed Mar 21 22:57:57 CET 2001
+dnl ------------------------------------------------------------------------
+dnl AC substitution of stripped paths
+dnl     AC_SUBST_STRIP(PATH,PREFIX)
+dnl Essentially, do an AC_SUBST of PATH variable, but previously suppress
+dnl the leading PREFIX.
+dnl This is needed for relocatability, i.e. installing the package in a
+dnl different prefix from that used at build time.
+dnl Added by Rafael Laboissiere on Wed Mar 21 22:57:57 CET 2001
 AC_DEFUN([AC_SUBST_STRIP],[
   $1=`echo $]$1[ | sed s%$]$2[/%%`
   AC_SUBST($1)
