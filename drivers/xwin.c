@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1993/11/07 09:02:33  mjl
+ * Revision 1.27  1993/11/15 08:29:56  mjl
+ * Added a cast to eliminate a warning.
+ *
+ * Revision 1.26  1993/11/07  09:02:33  mjl
  * Some minor optimizations.  Also added escape function handling for dealing
  * with flushes.
  *
@@ -1128,7 +1131,7 @@ Colorcpy(XColor *xcolor1, XColor *xcolor2)
 \*----------------------------------------------------------------------*/
 
 #define ToXColor(a) (((0xFF & (a)) << 8) | (a))
-#define ToPLColor(a) ((a) >> 8)
+#define ToPLColor(a) (((U_LONG) a) >> 8)
 
 void
 PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
