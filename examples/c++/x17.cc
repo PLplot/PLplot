@@ -132,6 +132,12 @@ x17::x17( int argc, char ** argv ) {
              colline, styline, legline,
              "t", "", "Strip chart demo");
 
+  if (errcode) {
+    cout << errmsg << endl;
+    delete pls;
+    exit(1);
+    }
+   
   // Let plplot handle errors from here on
 
   pls->sError(NULL, NULL);
