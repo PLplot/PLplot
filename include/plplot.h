@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.73  1994/10/06 07:24:05  furnish
+ * Revision 1.74  1994/11/02 19:53:34  mjl
+ * Changed stream variables vpX, vpY to vdX, vdY, since they now hold the
+ * relative device coordinates (0 to 1) rather than the physical coordinates.
+ *
+ * Revision 1.73  1994/10/06  07:24:05  furnish
  * Correction to work with the one true language, C++.
  *
  * Revision 1.72  1994/09/23  07:48:24  mjl
@@ -360,7 +364,7 @@ typedef struct {
 /* For returning the coordinates of the cursor */
 
 typedef struct {
-    PLFLT vpX, vpY, wX, wY;
+    PLFLT vdX, vdY, wX, wY;
 } PLCursor;
 
 /*----------------------------------------------------------------------*\
