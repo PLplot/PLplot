@@ -52,6 +52,7 @@ autotools-stamp:
 
 config: config-stamp
 config-stamp: autotools-stamp
+	PKG_CONFIG_ENV=" "                                              \
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl  \
                     --enable-tk --enable-gd --enable-dyndrivers         \
                     --enable-static --enable-python $(octave_cfg)       \

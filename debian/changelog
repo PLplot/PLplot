@@ -3,7 +3,12 @@ plplot (5.2.1.cvs.20031231-2) unstable; urgency=low
   * NOT YET RELEASED!
   * debian/control: Added pkg-config to build-dependencies and to
     libplplot-dev Recommends:.
-  * debian/rules: Added option --with-pkg-config to configure command.
+  * debian/rules: 
+    - Added option --with-pkg-config to configure command.
+    - Set environment variable PKG_CONFIG_ENV to " " when calling
+      condfigure.  This allows a cleaner line when launching make fro
+      the installed examples/* directories, since setting PKG_CONFIG_PATH is
+      not necessary in Debian.
 
  -- 
 

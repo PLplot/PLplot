@@ -25,7 +25,8 @@ CXXFLAGS = @CXXFLAGS@
 EXEEXT = @EXEEXT@
 LIB_TAG = @LIB_TAG@
 INCLUDEANDLIB = @INCLUDE_DIR_CMD@ @LIB_DIR_CMD@ -lplplotcxx$(LIB_TAG)
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
+PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+RPATH = @RPATH@
 
 EXECUTABLES_list = \
 		 x01cc$(EXEEXT) \
@@ -57,7 +58,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .cc$(EXEEXT):
-@pkg_config_true@	$(CXX) $< -o $@ `PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags --libs plplot$(LIB_TAG)-c++`
+@pkg_config_true@	$(CXX) $< -o $@ $(RPATH) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-c++`
 @pkg_config_false@	plplot_libtool --mode=link $(CXX) $(CXXFLAGS) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .c $(EXEEXT)

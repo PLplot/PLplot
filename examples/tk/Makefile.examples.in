@@ -21,16 +21,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 LIB_TAG = @LIB_TAG@
+TCLTKINCCMD =  @TCLINCCMD@ @TKINCCMD@
 INCLUDEANDLIB = \
 	@INCLUDE_DIR_CMD@ \
-	@TCLINCCMD@ \
-	@TKINCCMD@ \
+	$(TCLTKINCCMD)
 	@LIB_DIR_CMD@ \
 	-lplplottcltk$(LIB_TAG)
 
 CC = @CC@
 EXEEXT = @EXEEXT@
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
+PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+RPATH = @RPATH@
 
 EXECUTABLES_list = \
 		 xtk01$(EXEEXT) \
@@ -43,7 +44,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .c$(EXEEXT):
-@pkg_config_true@	$(CC) $< -o $@ `PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
+@pkg_config_true@	$(CC) $< -o $@ $(RPATH) $(TCLTKINCCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
 @pkg_config_false@	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .c $(EXEEXT)
