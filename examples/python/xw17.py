@@ -18,18 +18,12 @@
 
 from Numeric import *
 from pl import *
-import sys
 from random import random
 from time import sleep
 
 def main():
     nsteps = 1000
     
-## plplot initialization 
-## Parse and process command line arguments 
-
-    plParseOpts(sys.argv, PL_PARSE_FULL)
-
 # If db is used the plot is much more smooth. However, because of the
 #   async X behaviour, one does not have a real-time scripcharter.
 
@@ -71,10 +65,6 @@ def main():
 
     autoy = 1	# autoscale y 
     acc = 1	# don t scrip, accumulate 
-
-# Initialize plplot 
-
-    plinit()
 
     pladv(0)    
     plvsta()    
@@ -129,7 +119,7 @@ def main():
     # Destroy strip chart and it's memory 
 
     plstripd(id1)
-    plend()
+    
+    # No defaults changed so nothing to restore
 
-if __name__ == '__main__':
-    main()
+main()
