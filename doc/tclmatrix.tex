@@ -7,29 +7,269 @@
 \c $Id$
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\node Tcl Matrix, Tcl plcont, Tcl, Tcl
-\section{The Tcl Matrix Extension}
+\node Tcl Matrix, Tcl 2-d API, Tcl Basic Usage, Tcl Interface
+\section{The PLplot Tcl Matrix Extension}
 
-blah blah
+Tcl does many things well, but handling collections of numbers is not
+one of them.   You could make lists, but for data sets of sizes
+relevant to scientific graphics which is the primary domain of
+applicability for PLplot, the extraction time is excessive and
+burdensome.  You could use Tcl array's, but the storage overhead is
+astronomical and the lookup time, while better than list manipulation,
+is still prohibitive.  
+
+To cope with this, a Tcl Matrix extension was created for the
+purpose of making it feasible to work with large collections of
+numbers in Tcl, in a way which is storage efficient, reasonably 
+efficient for accesses from Tcl, and reasonably compatible with
+practices used in compiled code.
 
 \begin{menu}
-* Tcl Usage::		Using Tcl matricies from Tcl.
-* C Usage::		Using Tcl matricies from C.
-* C++ Usage::		Using Tcl matricies from C++.
+* Tcl Usage::			Using Tcl matricies from Tcl.
+* C Usage::			Using Tcl matricies from C.
+* C++ Usage::			Using Tcl matricies from C++.
+* Tcl matrix extensions::	Extending the Tcl matrix facility.
 \end{menu}
 
 \node Tcl Usage, C Usage, Tcl Matrix, Tcl Matrix
 \subsection{Using Tcl matricies from Tcl}
 
-blah blah
+Much like the Tk widget creation commands, the Tcl \code{matrix}
+command considers its first argument to be the name of a new command
+to be created, and the rest of the arguments to be modifiers.  After
+the name, the next argument can be \code{float} or \code{int} or
+contractions thereof.  Next follow a variable number of size arguments
+which determine the size of the matrix in each of its dimenions.  For
+example: 
+\begin{example}
+matrix x f 100
+matrix y i 64 64
+\end{example}
+constructs two matricies.  \code{x} is a float matrix, with one
+dimension and 100 elements.  \code{y} is an integer matrix, and has 2
+dimensions each of size 64.
+
+Additionally, an initializer mayb be specified, with a syntax familiar
+from C.  For example:
+\begin{example}
+matrix x f 4 = { 1.5, 2.5, 3.5, 4.5 }
+\end{example}
+
+A Tcl matrix is a command, and as longtime Tcl users know, Tcl
+commands are globally accessible.  The PLplot Tcl Matrix extension
+attempts to lessen the impact of this by registering a variable in the
+local scope, and tracing it for unsets, and deleteing the actual
+matrix command when the variable goes out of scope.  In this way, a
+Tcl matrix appears to work sort of like a variable.  It is, however,
+just an illusion, so you have to keep this in mind.  In particular,
+you may want the matrix to outlive the scope in which it was created.
+For example, you may want to create a matrix, load it with data, and
+then pass it off to a Tk megawidget for display in a spreadsheet like
+form.  The proc which launches the Tk megawidget will complete, but
+the megawidget, and the associated Tcl matrix are supposed to hang
+around until they are explicitly destroyed.  To achieve this effect,
+create the Tcl matrix with the \code{-persist} flag.  If present
+(can be anywhere on the line), the matrix is not automatically deleted
+when the scope of the current proc (method) ends.  Instead, you must
+explicitly clean up by using either the 'delete' matrix command or renaming
+the matrix command name to {}.  Now works correctly from within [incr Tcl].
+
+As mentioned above, the result of creating a matrix is that a new
+command of the given name is added to the interpretter.  You can then
+evaluate the command, providing indicies as arguments, to extract the
+data.  For example:
+\begin{example}
+pltcl> matrix x f = {1.5, 2.5, 3.5, 4.5}
+insufficient dimensions given for Matrix operator "x"
+pltcl> matrix x f 4 = {1.5, 2.5, 3.5, 4.5}
+pltcl> x 0
+1.500000
+pltcl> x 1
+2.500000
+pltcl> x 3
+4.500000
+pltcl> x *
+1.500000 2.500000 3.500000 4.500000
+pltcl> puts "x\[1\]=[x 1]"
+x[1]=2.500000
+pltcl> puts "x\[*\] = :[x *]:"
+x[*] = :1.500000 2.500000 3.500000 4.500000:
+pltcl> foreach v [x *] { puts $v }
+1.500000
+2.500000
+3.500000
+4.500000
+pltcl> for {set i 0} {$i < 4} {incr i} {
+           if {[x $i] < 3} {puts [x $i]} }
+1.500000
+2.500000
+\end{example}
+Note from the above tha the output of evaluating a matrix indexing
+operation is suitable for use in condition processing, list
+processing, etc.
+
+You can assign to matrix locations in a similar way:
+\begin{example}
+pltcl> x 2 = 7
+pltcl> puts ":[x *]:"
+:1.500000 2.500000 7.000000 4.500000:
+pltcl> x * = 3
+pltcl> puts ":[x *]:"
+\end{example}
+Note that the * provides a means of obtaining an index range, and that
+it must be separated from the = by a space.  Future versions of the
+Tcl Matrix extension may allow alternative ways of specifying index
+ranges and may assign the obvious meaning to an expression of the
+form:
+\begin{example}
+x *= 3
+\end{example}
+However this has not been implemented yet...
+
+In any event, the \code{matrix} command also supports an \code{info}
+subcommand which reports the number of elements in each dimension:
+\begin{example}
+pltcl> x info
+4 
+pltcl> matrix y i 8 10
+pltcl> y info
+8 10 
+\end{example}
 
 \node C Usage, C++ Usage, Tcl Usage, Tcl Matrix
 \subsection{Using Tcl matricies from C}
 
-blah blah blah
+Normally you will create a matrix in Tcl, and then want to pass it to
+C in order to have the data filled in, or existing data to be used in
+a computation, etc.  To do this, pass the name of the matrix command
+as an argument to your C Tcl command procedure.  The C code should
+include \file{tclMatrix.h}, which has a definition for the
+\code{tclMatrix} structure.  You fetch a pointer to the
+\code{tclMatrix} structure using the \code{Tcl_GetMatrixPtr} function.
 
-\node C++ Usage, , C Usage, Tcl Matrix
+For example, in Tcl:
+\begin{example}
+matrix x f 100
+wacky x
+\end{example}
+and in C:
+\begin{example}
+int wackyCmd( ClientData clientData, Tcl_Interp *interp,
+              int argc, char *argv[] )
+{
+    tclMatrix *w;
+
+    w = Tcl_GetMatrixPtr( interp, argv[1] );
+    ...
+\end{example}
+
+To learn about what else you can do with the matrix once inside
+compiled code, read \file{tclMatrix.h} to learn the definition of the
+\code{tclMatrix} structure, and see the examples in files like
+\file{tclAPI.c} which show many various uses of the Tcl matrix.
+
+\node C++ Usage, Tcl matrix extensions, C Usage, Tcl Matrix
 \subsection{Using Tcl matricies from C++}
 
-is much easier than using them from C.  blah blah
+Using a Tcl matrix from C++ is very much like using it from C, except
+that \file{tclMatrix.h} contains some C++ wrapper classes which are
+somewhat more convenient than using the indexing macros which one has
+to use in C.  For example, here is a tiny snipet from one of the
+authors codes in which Tcl matricies are passed in from Tcl to a C++
+routine which is supposed to fill them in with values from some
+matricies used in the compiled side of the code:
+\begin{example}
+...
+if (item == "vertex_coords") {
+    tclMatrix *matxg = Tcl_GetMatrixPtr( interp, argv[1] );
+    tclMatrix *matyg = Tcl_GetMatrixPtr( interp, argv[2] );
 
+    Mat2<float> xg(ncu, ncv), yg(ncu, ncv);
+    cg->Get_Vertex_Coords( xg, yg );
+
+    TclMatFloat txg( matxg ), tyg( matyg );
+
+    for( i=0; i < ncu; i++ )
+        for( j=0; j < ncv; j++ ) {
+            txg(i,j) = xg(i,j);
+            tyg(i,j) = yg(i,j);
+        }
+\end{example}
+There are other things you can do too, see the definitions of the
+\code{TclMatFloat} and \code{TclMatInt} classes in \file{tclMatrix.h}. 
+
+\node Tcl matrix extensions, , C++ Usage, Tcl Matrix
+\subsection{Extending the Tcl matrix facility}
+
+The Tcl matrix facility provides creation, indexing, and information
+gathering facilities.  However, considering the scientifically
+inclined PLplot user base, it is clear that some users will demand
+more.  Consequently there is a mechanism for augmenting the Tcl matrix
+facility with your own, user defined, extension subcommands.  Consider
+\file{xtk04.c}.  In this extended wish, we want to be able to
+determine the minimum and maximum values stored in a matrix.  Doing
+this in Tcl would involve nested loops, which in Tcl would be
+prohibitively slow.  We could register a Tcl extension command to do
+it, but since the only sensible data for such a command would be a
+Tcl matrix, it seems nice to provide this facility as an actual
+subcommand of the matrix.  However, the PLplot maintainers cannot
+forsee every need, so a mechanism is provided to register subcommands
+for use with matrix objects.
+
+The way to register matrix extension subcommands is to call
+\code{Tcl_MatrixInstallXtnsn}: 
+\begin{example}
+typedef int (*tclMatrixXtnsnProc) ( tclMatrix *pm, Tcl_Interp *interp,
+                                    int argc, char *argv[] );
+
+int Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc );
+\end{example}
+In other words, make a function for handling the matrix extension
+subcommand, with the same function signature (prototype) as
+\code{tclMatrixXtnsnProc}, and register the subcommand name along with
+the function pointer.  For example, xtk04.c has:
+\begin{example}
+int mat_max( tclMatrix *pm, Tcl_Interp *interp,
+             int argc, char *argv[] )
+{
+    float max = pm->fdata[0];
+    int i;
+    for( i=1; i < pm->len; i++ )
+        if (pm->fdata[i] > max)
+            max = pm->fdata[i];
+
+    sprintf( interp->result, "%f", max );
+    return TCL_OK;
+}
+
+int mat_min( tclMatrix *pm, Tcl_Interp *interp,
+             int argc, char *argv[] )
+{
+    float min = pm->fdata[0];
+    int i;
+    for( i=1; i < pm->len; i++ )
+        if (pm->fdata[i] < min)
+            min = pm->fdata[i];
+
+    sprintf( interp->result, "%f", min );
+    return TCL_OK;
+}
+\end{example}
+Then, inside the application initialization function
+(\code{Tcl_AppInit()} to long time Tcl users):
+\begin{example}
+Tcl_MatrixInstallXtnsn( "max", mat_max );
+Tcl_MatrixInstallXtnsn( "min", mat_min );
+\end{example}
+Then we can do things like:
+\begin{example}
+dino 65: xtk04
+% matrix x f 4 = {1, 2, 3, 1.5}
+% x min
+1.000000
+% x max
+3.000000
+\end{example}
+
+Your imagination is your only limit for what you can do with this.
+You could add an FFT subcommand, matrix math, BLAS, whatever.  
