@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/04/08 12:13:14  mjl
+ * Revision 1.19  1994/05/10 21:51:04  mjl
+ * Added prototype for new function plcmap1_calc().
+ *
+ * Revision 1.18  1994/04/08  12:13:14  mjl
  * Removed PLESC tag defs (now in plplot.h) and unsigned var defs (now in
  * pdf.h).
  *
@@ -330,6 +333,11 @@ plCmap0_init(void);
 
 void
 plCmap1_init(void);
+
+/* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
+
+void
+plcmap1_calc(void);
 
 /* Writes the Hershey symbol "ch" centred at the physical coordinate */
 /* (x,y). */
