@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/01/15 17:38:44  mjl
+ * Revision 1.21  1994/01/17 21:32:14  mjl
+ * Eliminated -mkidx flag as it is unnecessary.  Replace with the alias:
+ * alias mktclidx	"echo 'auto_mkindex . *.tcl; destroy .' | wish"
+ *
+ * Revision 1.20  1994/01/15  17:38:44  mjl
  * Split off communications link initialization into a Tcl proc, for
  * flexibility.
  *
@@ -104,7 +108,6 @@ static char *geometry = NULL;
 static char *client_name;	/* Name of client main window */
 static char *auto_path;		/* addition to auto_path */
 static int child;		/* set if child of TK driver */
-static int mkidx;		/* Create a new tclIndex file */
 static int pass_thru;		/* Skip normal error termination when set */
 static char *cmdbuf = NULL;	/* Buffer to hold evalled commands */
 static int cmdbuf_len = 100;
@@ -137,8 +140,6 @@ static Tk_ArgvInfo argTable[] = {
 	 "Client port (Tcl-DP) to connect to"},
     {"-auto_path", TK_ARGV_STRING, (char *) NULL, (char *) &auto_path,
 	 "Additional directory(s) to autoload"},
-    {"-mkidx", TK_ARGV_CONSTANT, (char *) 1, (char *) &mkidx,
-	 "Create new tclIndex file"},
     {"-child", TK_ARGV_CONSTANT, (char *) 1, (char *) &child,
 	 "Set ONLY when child of plplot TK driver"},
     {(char *) NULL, TK_ARGV_END, (char *) NULL, (char *) NULL,
@@ -287,13 +288,6 @@ main(argc, argv)
 	Tcl_Eval(interp, "exit");
     }
     configure_plserver();
-
-/* Create new tclIndex file -- a convenience */
-
-    if (mkidx != 0) {
-	tcl_cmd("auto_mkindex . *.tcl");
-	exit(1);
-    }
 
     /*
      * Set the geometry of the main window, if requested.
