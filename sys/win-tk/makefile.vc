@@ -237,6 +237,8 @@ install:	$(PROJECT).dll
 	$(CP) $(OLDTKDIR)\plcolor.tcl $(INSTALLDIR)
 	$(CP) $(OLDTKDIR)\plplot.tcl $(INSTALLDIR)
 	$(CP) $(OLDTKDIR)\pldefaults.tcl $(INSTALLDIR)
+	$(CP) $(OLDTKDIR)\pltools.tcl $(INSTALLDIR)
+	$(CP) $(OLDTKDIR)\plwidget.tcl $(INSTALLDIR)
 	$(CP) $(GENERICTKDIR)\*.tcl $(INSTALLDIR)
 	$(CP) $(GENERICTKDIR)\tclIndex $(INSTALLDIR)
 	$(CP) $(PROJECT).dll $(INSTALLDIR)\$(PROJECT).dll
