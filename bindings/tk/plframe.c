@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.45  1995/04/17 19:21:52  furnish
+ * Revision 1.46  1995/05/06 17:10:51  mjl
+ * Added EnterNotify and LeaveNotify event handling, to draw or undraw
+ * crosshairs as needed.  Improved debugging output.
+ *
+ * Revision 1.45  1995/04/17  19:21:52  furnish
  * Implemented a new "report" widget command for performing on-demand
  * translations of window coordinates to world coordinates.  This is
  * especiallly useful when invoked from within a Tk binding.
@@ -73,7 +77,10 @@
     PLplot X driver.  These are then drawn into and respond to keyboard and
     mouse events.
 */
-
+/*
+#define DEBUG
+#define DEBUG_ENTER
+*/
 #include "plserver.h"
 #include "plplotX.h"
 
@@ -279,6 +286,7 @@ static void  PlFrameInit	(ClientData);
 static void  PlFrameConfigureEH	(ClientData, XEvent *);
 static void  PlFrameExposeEH	(ClientData, XEvent *);
 static void  PlFrameMotionEH	(ClientData, register XEvent *);
+static void  PlFrameCrossingEH	(ClientData, register XEvent *);
 static void  PlFrameKeyEH	(ClientData, register XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
 static int   ReadData		(ClientData, int);
@@ -874,8 +882,38 @@ PlFrameMotionEH(ClientData clientData, register XEvent *eventPtr)
 
     dbug_enter("PlFrameMotionEH");
 
-    if (plFramePtr->drawing_xhairs)
+    if (plFramePtr->drawing_xhairs) {
 	DrawXhairs(plFramePtr, event->x, event->y);
+    }
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameCrossingEH --
+ *
+ *	Invoked by the Tk dispatcher on EnterNotify or LeaveNotify events in
+ *	a plframe.  Not invoked unless we are drawing graphic crosshairs.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Graphic crosshairs are updated.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+PlFrameCrossingEH(ClientData clientData, register XEvent *eventPtr)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+
+    dbug_enter("PlFrameCrossingEH");
+
+    if (plFramePtr->drawing_xhairs) {
+	UpdateXhairs(plFramePtr);
+    }
 }
 
 /*
@@ -914,10 +952,7 @@ PlFrameKeyEH(ClientData clientData, register XEvent *eventPtr)
 
     nchars = XLookupString(event, string, 10, &keysym, &cs);
     string[nchars] = '\0';
-
-#ifdef DEBUG
-    fprintf(stderr, "Keysym %x, translation: %s\n", keysym, string);
-#endif
+    pldebug("PlFrameKeyEH", "Keysym %x, translation: %s\n", keysym, string);
 
     if (IsModifierKey(keysym)) {
 	eventPtr->type = 0;
@@ -1012,14 +1047,23 @@ CreateXhairs(PlFrame *plFramePtr)
 /* Find current pointer location and draw some graphic crosshairs */
 
     if (XQueryPointer(plFramePtr->display, Tk_WindowId(tkwin),
-		      &root, &child, &root_x, &root_y, &win_x, &win_y, &mask))
-	DrawXhairs(plFramePtr, win_x, win_y);
+		      &root, &child, &root_x, &root_y, &win_x, &win_y,
+		      &mask)) {
 
-/* Catch PointerMotion events so we can update them */
+	if (win_x >= 0 && win_x < Tk_Width(tkwin) &&
+	    win_y >= 0 && win_y < Tk_Height(tkwin))
+	    DrawXhairs(plFramePtr, win_x, win_y);
+    }
+
+/* Catch PointerMotion and crossing events so we can update them properly */
 
     plFramePtr->drawing_xhairs = 1;
+
     Tk_CreateEventHandler(tkwin, PointerMotionMask,
 			  PlFrameMotionEH, (ClientData) plFramePtr);
+
+    Tk_CreateEventHandler(tkwin, EnterWindowMask | LeaveWindowMask,
+			  PlFrameCrossingEH, (ClientData) plFramePtr);
 
 /* Catch KeyPress events so we can filter them */
 
@@ -1451,12 +1495,14 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     char cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 
 #ifdef DEBUG
-    int i;
-    fprintf(stderr, "There are %d arguments to Cmd:", argc);
-    for (i = 0; i < argc; i++) {
-	fprintf(stderr, " %s", argv[i]);
+    if (pls->debug) {
+	int i;
+	fprintf(stderr, "There are %d arguments to Cmd:", argc);
+	for (i = 0; i < argc; i++) {
+	    fprintf(stderr, " %s", argv[i]);
+	}
+	fprintf(stderr, "\n");
     }
-    fprintf(stderr, "\n");
 #endif
 
 /* no option -- return list of available PLplot commands */
@@ -1682,12 +1728,14 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
     unsigned long mask;
 
 #ifdef DEBUG
-    int i;
-    fprintf(stderr, "Arguments to configure are:");
-    for (i = 0; i < argc; i++) {
-	fprintf(stderr, " %s", argv[i]);
+    if (pls->debug) {
+	int i;
+	fprintf(stderr, "Arguments to configure are:");
+	for (i = 0; i < argc; i++) {
+	    fprintf(stderr, " %s", argv[i]);
+	}
+	fprintf(stderr, "\n");
     }
-    fprintf(stderr, "\n");
 #endif
 
     dbug_enter("ConfigurePlFrame");
@@ -1705,7 +1753,6 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsstrm(plFramePtr->ipls);
     PLColor_from_XColor(&pls->cmap0[0], plFramePtr->bgColor);
-    pls->cmap0setcol[0] = 1;
     plX_setBGFG(pls);
 
     Tk_SetWindowBackground(tkwin, xwd->cmap0[0].pixel);
@@ -1819,9 +1866,6 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    result = TCL_ERROR;
 	}
 	else {
-	    PLStream *pls = plFramePtr->pls;
-	    XwDev *dev = (XwDev *) pls->dev;
-
 	    int x0, y0, x1, y1;
 	    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
 	    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
