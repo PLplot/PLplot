@@ -9,9 +9,7 @@ Build-Conflicts: f2c, fort77, libplplot5
 Package: libplplot9
 Architecture: any
 Section: libs
-Conflicts: plplot, plplot-xwin (<= 5.1.0), plplot-tcl (<= 5.1.0), plplot-bin, plplot-c++, plplot-common, libplplot5 (>= 5.2.1.cvs.20031027-1)
-Replaces: plplot, plplot-bin, plplot-c++, plplot-common
-Provides: plplot
+Conflicts: libplplot5
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -30,9 +28,6 @@ Description: Scientific plotting library
 Package: libplplot-dev
 Architecture: any
 Section: libdevel
-Conflicts: plplot-dev, plplot-c++, libplplot5 (<< 5.2.0.cvs.20030317)
-Replaces: plplot-dev
-Suggests: plplot-doc
 Recommends: pkg-config
 Depends: libplplot9, libqhull-dev, libfreetype6-dev
 Description: Scientific plotting library (development files)
@@ -69,7 +64,6 @@ Package: plplot-tcl
 Architecture: any
 Priority: extra
 Depends: plplot9-driver-xwin, iwidgets4, ${shlibs:Depends}
-Conflicts: plplot-lib, libplplot5 (<< 5.2.0.cvs.20030317)
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific
  plotting library: shared libraries, Tcl modules, the Tk driver, and
@@ -129,7 +123,6 @@ Architecture: all
 Section: doc
 Depends: libplplot9
 Suggests: libplplot-dev
-Conflicts: libplplot5 (<< 5.2.0.cvs.20030305)
 Description: Documentation for PLplot, a plotting library
  This package contains the HTML, PDF, PostScript and info forms of the
  PLplot documentation.  It also contains the man pages for the API
