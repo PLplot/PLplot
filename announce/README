@@ -14,7 +14,9 @@ command:
 
 will build the files announce.xhtml, announce.pdf, and announce.txt.
 Notice that the value of the SOURCES variable is the name of the input file
-with the extension ".xml" stripped off.
+with the extension ".xml" stripped off.  This also works:
+
+    make announce.txt
 
 There are also "clean" and "validate" make targets.  The "validate" target
 runs an XML validation program.
