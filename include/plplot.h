@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.79  1995/03/21 19:47:43  mjl
+ * Revision 1.80  1995/05/07 02:27:21  mjl
+ * Added PL_OPT_DISABLED, and not that PL_OPT_ENABLED is obsolete.  Removed
+ * TK related function declarations -- prototypes for these now must be
+ * obtained by including pltk.h.
+ *
+ * Revision 1.79  1995/03/21  19:47:43  mjl
  * Moved inclusion of <math.h>, <string.h>, and <ctype.h> to plplotP.h, since
  * they are strictly needed by plplot.h.
  *
@@ -212,10 +217,11 @@ typedef void* PLPointer;
 
 /* Option-specific settings */
 
-#define PL_OPT_ENABLED		0x0001	/* Processing is enabled */
+#define PL_OPT_ENABLED		0x0001	/* Obsolete */
 #define PL_OPT_ARG		0x0002	/* Option has an argment */
 #define PL_OPT_NODELETE		0x0004	/* Don't delete after processing */
 #define PL_OPT_INVISIBLE	0x0008	/* Make invisible */
+#define PL_OPT_DISABLED		0x0010	/* Processing is disabled */
 
 /* Option-processing settings -- mutually exclusive */
 
@@ -1278,7 +1284,9 @@ c_plwid(PLINT width);
 void
 c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
-	/* The rest for use from C only */
+/*--------------------------------------------------------------------------*\
+ *		Functions for use from C or C++ only
+\*--------------------------------------------------------------------------*/
 
 /* Returns a list of file-oriented device names and their menu strings */
 
@@ -1475,23 +1483,6 @@ plGetCursor(PLGraphicsIn *gin);
 
 int
 plTranslateCursor(PLGraphicsIn *gin);
-
-/* Utility functions for use with Tk */
-
-#if defined(TK) || defined(_TK)
-#include <tk.h>
-
-/* Generic initialization routine for extended wish'es. */
-
-int
-Pltk_Init( Tcl_Interp *interp );
-
-/* Main program for wish, with PLplot extensions. */
-
-int
-pltkMain(int argc, char **argv, char *RcFileName,
-	 int (*AppInit)(Tcl_Interp *interp));
-#endif
 
 #ifdef __cplusplus
 }
