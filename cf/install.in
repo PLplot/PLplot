@@ -37,7 +37,7 @@ install_utils:
 		-o plrender$E $(LDC_LIBS); \
 	 fi
 	-if test $(SHARED) = 1; then \
-	 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
+	 $(LDC) $(LDC_FLAGS) pltek$O \
 		-o pltek$E; \
 	 fi
 	-strip plrender$E pltek$E
