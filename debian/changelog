@@ -1,13 +1,15 @@
 plplot (5.3.1-3) unstable; urgency=low
 
   * NOT YET RELEASED!!!
-  * debian/control: Fixed typo in description of libcsiro0 package
-    (closes: #284381).
+  * debian/control:
+    - Fixed typo in description of libcsiro0 package (closes: #284381).
+    - Made the libplplot9 package suggest all the driver packages,
+      including plplot-tcl, which contains the Tk driver (closes: #285193).
   * debian/rules: Added --with-freefont option to configure.
   * debian/control: plplot9-driver-gd recommends now the ttf-freefont
-    package. 
+    package.
 
- -- 
+ --
 
 plplot (5.3.1-2) unstable; urgency=low
 
