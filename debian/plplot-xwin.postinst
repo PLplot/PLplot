@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# postinst script for the Debian GNU/Linux plplot package
+#
+# Written by Rafael Laboissiere <rafael@icp.inpg.fr>
+# on Fri Nov 13 02:54:30 CET 1998
+
+set -e
+
+case "$1" in
+    configure)
+        ldconfig
+       ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+       ;;
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+       ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+

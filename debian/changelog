@@ -1,8 +1,18 @@
-plplot (5.0.1-1) unstable; urgency=low
+plplot (5.0.1-0.potato.1) unstable; urgency=low
 
-  * NOT YET READY FOR RELEASE.
-  * New upstream release.  Prompt flush for pltcl is working now.
-    (closes: #58273). 
+  * New upstream release.  Starting with version 5.0.0, PLplot entered a
+    new development phase.  The project is now hosted at SourceForge
+    (http://plplot.sourceforge.net) and the current Debian maintainer is
+    also involved with upstream development.  
+  * This release works with potato (hence the release number).
+  * There has been an overall reorganisation of the packages.  There is
+    now a package called plplot-common, containing the data files.
+    plplot-xwin and plplot-tcl are both exclusive and contain the shared
+    libs.  plplot-c++ has the C++ bindings shared lib.  python-plplot is
+    working with Python 1.5 and has been reintroduced.  plplot-doc is for
+    now just a boilerplate package, waiting for the DocBook docs to be
+    introduced in PLplot 5.0.2.
+  * Prompt flush for pltcl is working now (closes: #58273). 
   * debian/control: 
     - Upgraded Standards-Version to 3.1.0.  
     - Added Build-Depends. 
@@ -20,7 +30,7 @@ plplot (5.0.1-1) unstable; urgency=low
     plplot-doc. 
   * debian/rules: Major rewrite to reflect the new features of upstream
     build and install.  The main novelty here is the capability of
-    doing make install with another prefix than that usde for building.
+    doing make install with another $prefix than that used for building.
   * debian/*.{docs,files}: Heavily modified to reflect the new upstream
     version.
   * debian/control-python, debian/fix-tk-path.pl, debian/postrm,
@@ -29,7 +39,7 @@ plplot (5.0.1-1) unstable; urgency=low
   * debian/plplot-980407-plplot-980407-new.patch: Removed this obsolete
     file. 
 
- -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri,  2 Feb 2001 23:49:49 +0100
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 12 Feb 2001 16:51:09 +0100
 
 plplot (4.99j-11) frozen unstable; urgency=low
 

@@ -30,7 +30,7 @@ build-stamp:
 # This PLLIB_PATH setting is necessary to avoid the lintian error
 # ldconfig-symlink-referencing-wrong-file 
 	make PLLIB_PATH=
-	mv tmp/lib*.{a,so}* $(debbase)
+	mv tmp/lib*.{a,so}* tmp/plrender $(debbase)
 # Build the Tcl/Tk libraries
 	./configure --prefix=/usr --enable-tcl --enable-tk \
 	                          --enable-python $(cfflags)
@@ -42,7 +42,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 	-$(MAKE) clean
-	rm -f configure confdefs.h config.log $(debbase)/libplplot* 
+	rm -f configure confdefs.h config.log $(debbase)/lib* 
 	dh_clean
 
 install: install-stamp
@@ -62,6 +62,7 @@ install-stamp: build-stamp
 	  rm -f Copyright COPYING.LIB mklinks README.local )
 
 	dh_installmanpages --package=plplot
+	dh_movefiles --package=python-plplot
 
 	touch install-stamp	
 
@@ -87,14 +88,18 @@ binary-arch: build install
 	dh_testroot -a
 	dh_installdocs -a
 	dh_installchangelogs -a 
+
+	dh_installdirs -a
+	rm -f $(deblib)/libplcxxd.{so.5.*,so.5}
+	mv $(debbase)/libplcxxd.{so.5.*,so.5} $(deblib)
 	dh_movefiles -a
 # Why do not dh_movefiles remove empty dirs? Grumpf...
 	( cd $(debusr) ; \
-          rm -rf include lib/python1.5 share/info lib/plplot5.0.1/tcl \
-                 share/doc/plplot/examples )
-	mv $(debbase)/libplplotd.{so.5.*,so.5} $(deblib)
-	rm -f $(deblib)/libplcxxd.{so.5.*,so.5}
-	mv $(debbase)/libplcxxd.{so.5.*,so.5} $(deblib)
+          rm -rf include lib share/info share/man share/doc/plplot/examples )
+	mv $(debbase)/libplplotd.{so.5.*,so.5} \
+           $(debbase)/plplot-xwin/usr/lib
+	mv $(debbase)/plrender $(debbase)/plplot-xwin/usr/bin
+	cp $(debbase)/plrender.1 $(debbase)/plplot-xwin/usr/share/man/man1
 
 	dh_strip -a
 	dh_compress -a
