@@ -3,16 +3,23 @@ How to build yourself a python with PLplot support
 
 General:
 
-plmodule.c and pyqt_plmodule.c are the two key files used for adding PLplot
-API to python.  The first of these adds the core functions while the second
-of these implements special routines that help with the pyqt GUI
-functionality.  If you need to add more PLplot API to python, edit the
-appropriate one of these files following what is done for other PLplot API
-that has already been implemented.  It is possible that we might want to
-implement other modules as well in the future.  For this case grep through
-all the ../../cf/*.in files for anything to do with plmodule in order to see
-how to configure this for the ordinary case (see next paragraph) of
-dynamically loadable python modules.
+plplotcmodule.i, plplot.py, and plplot_widgetmodule.c are the key files used
+for adding PLplot API to python.  The first of these is a swig (version
+1.3.11 or later) source file for generating the plplot wrapper file,
+plplotcmodule.c which implements *all* the plplot raw C *common* API.  
+
+  Note: If there is some additional plplot public C API that you feel should
+  be part of the python plplot API, then it should be brought up for
+  discussion on the plplot_devel list since that should probably be common
+  API that is implemented for all front ends, not just the python one.
+
+plplot.py is a python wrapper for the plplotc module which adds some
+additional user-friendly functionality such as useful variations on argument
+lists.  
+
+plplot_widgetmodule.c adds additional python plplot functionality that is
+generally useful when plplot is used as part of the pyqt or Tkinter python
+widgets.
 
 There are two possibilities for a python front-end to PLplot.  You can try
 to build a dynamically loadable python PLplot modules, or you can modify the
@@ -27,13 +34,16 @@ hook up our plframe widget with the python tkinter environment without
 modifying python.) However, there is a beginnings of a pyqt widget (try
 prova.py from examples/python) that does work with the dynamically loadable
 approach so that may eventually get generalized to a clone of our plframe
-widge (or even something more powerful).
+widget (or even something more powerful).
 
 The remainder of this document describes an alternative build approach that
 does make the plframe widget available under python by rebuilding python
 itself.  Geoffrey Furnish tells us this method is still working, but the
 instructions have not been updated since 1996 so there may be some changes
-which you should ask him about.
+which you should ask him about.  This approach is based on the old
+hand-crafted (as opposed to swig-generated) plmodule.c wrapper which is
+no longer maintained.  Note also that the module name is pl rather than
+plplot used for the swig-generated wrapper.
 
 Configure plplot with --disable-python, and follow these steps.  This
 will be a little bit of work, and you may have to think on your
