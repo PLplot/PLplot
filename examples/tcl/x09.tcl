@@ -188,14 +188,14 @@ proc x09_polar {{w loopback}} {
 
     $w cmd plline 100 px py
 
-    set xpts 40; set ypts 40
-    matrix xg f $xpts $ypts
-    matrix yg f $xpts $ypts
-    matrix z f $xpts $ypts
+    set xpts 40; set ypts 40; set ylim [expr $ypts - 1]; set wrap 2
+    matrix xg f $xpts $ylim
+    matrix yg f $xpts $ylim
+    matrix z f $xpts $ylim
 
     for {set i 0} {$i < $xpts} {incr i} {
 	set r [expr $i / ($xpts - 1.)]
-	for {set j 0} {$j < $ypts} {incr j} {
+	for {set j 0} {$j < $ylim} {incr j} {
 	    set t [expr 2. * $pi * $j / ($ypts - 1.)]
 
 	    xg $i $j = [expr $r * cos($t)]
@@ -208,8 +208,7 @@ proc x09_polar {{w loopback}} {
     matrix lev f 10 = { .05, .15, .25, .35, .45, .55, .65, .75, .85, .95 }
 
     $w cmd plcol0 2
-    $w cmd plcont z lev pltr2 xg yg 2
-#                                   ^-- :-).  Means: "2nd coord is wrapped."
+    $w cmd plcont z lev pltr2 xg yg $wrap
 
     $w cmd plcol0 1
     $w cmd pllab "" "" "Polar Contour Plot"
@@ -219,16 +218,18 @@ proc x09_potential {{w loopback}} {
 # Shielded potential contour plot example
 
     set pi 3.14159265358979323846
-    set xpts 40; set ypts 64; set perimeterpts 100; set nlevel 20
+    set xpts 40; set ypts 64; set ylim [expr $ypts - 1]; set wrap 2;
+    set perimeterpts 100; set nlevel 20
 
     # Create data to be contoured.
-    matrix xg f $xpts $ypts
-    matrix yg f $xpts $ypts
+    matrix xg f $xpts $ylim
+    matrix yg f $xpts $ylim
+    matrix z f $xpts $ylim
 
     for {set i 0} {$i < $xpts} {incr i} {
 	set r [expr 0.5 + $i]
-	for {set j 0} {$j < $ypts} {incr j} {
-	    set theta [expr (2. * $pi  / $ypts)*(0.5 + $j)]
+	for {set j 0} {$j < $ylim} {incr j} {
+	    set theta [expr (2. * $pi  / ($ypts - 1.))*(0.5 + $j)]
 
 	    xg $i $j = [expr $r * cos($theta)]
 	    yg $i $j = [expr $r * sin($theta)]
@@ -241,7 +242,7 @@ proc x09_potential {{w loopback}} {
     set ymin [yg 0 0]
     set ymax $ymin
     for {set i 0} {$i < $xpts} {incr i} {
-       for {set j 0} {$j < $ypts} {incr j} {
+       for {set j 0} {$j < $ylim} {incr j} {
 	  if {[xg $i $j] < $xmin} { set xmin [xg $i $j] }
 	  if {[xg $i $j] > $xmax} { set xmax [xg $i $j] }
 	  if {[yg $i $j] < $ymin} { set ymin [yg $i $j] }
@@ -278,9 +279,8 @@ proc x09_potential {{w loopback}} {
     set q2i [expr - $q2*$rmax/$d2]
     set d2i [expr pow($rmax,2)/$d2]
 
-    matrix z f $xpts $ypts
     for {set i 0} {$i < $xpts} {incr i} {
-	for {set j 0} {$j < $ypts} {incr j} {
+	for {set j 0} {$j < $ylim} {incr j} {
   	   set div1 [expr sqrt(pow([xg $i $j]-$d1,2) + pow([yg $i $j]-$d1,2) + pow($eps,2))]
   	   set div1i [expr sqrt(pow([xg $i $j]-$d1i,2) + pow([yg $i $j]-$d1i,2) + pow($eps,2))]
   	   set div2 [expr sqrt(pow([xg $i $j]-$d2,2) + pow([yg $i $j]+$d2,2) + pow($eps,2))]
@@ -292,7 +292,7 @@ proc x09_potential {{w loopback}} {
     set zmin [z 0 0]
     set zmax $zmin
     for {set i 0} {$i < $xpts} {incr i} {
-	for {set j 0} {$j < $ypts} {incr j} {
+	for {set j 0} {$j < $ylim} {incr j} {
 	    if {[z $i $j] < $zmin} { set zmin [z $i $j] }
 	    if {[z $i $j] > $zmax} { set zmax [z $i $j] }
 	}
@@ -335,7 +335,7 @@ proc x09_potential {{w loopback}} {
 	   levneg $i = [clevelneg $i]
 	}
 	$w cmd pllsty 2
-    	$w cmd plcont z levneg pltr2 xg yg 2
+    	$w cmd plcont z levneg pltr2 xg yg $wrap
      }
      
      if {$nlevelpos >0} {
@@ -346,7 +346,7 @@ proc x09_potential {{w loopback}} {
 	   levpos $i = [clevelpos $i]
 	}
 	$w cmd pllsty 1
-    	$w cmd plcont z levpos pltr2 xg yg 2
+    	$w cmd plcont z levpos pltr2 xg yg $wrap
      }
      
     #Draw outer boundary
