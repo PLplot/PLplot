@@ -1700,11 +1700,11 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
   int fl = 0;
   DrvOptCmd *drvp;
 
-  option = (char *) malloc(strlen(optarg)); 
+  option = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
   if (option == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
-  value = (char *) malloc(strlen(optarg));
+  value = (char *) malloc((size_t)(1+1)*sizeof(char));
   if (value == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
