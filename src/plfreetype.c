@@ -459,7 +459,7 @@ void plD_FreeType_init(PLStream *pls)
 				 "PLPLOT_SYMBOL_FONT"};
     short i;
 
-#ifdef MSDOS
+#if defined(MSDOS) || defined(WIN32)
     static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
 				       "symbol.ttf"};
 #else
@@ -487,7 +487,7 @@ void plD_FreeType_init(PLStream *pls)
 
     FT->cfont=PL_UNDEFINED;
 
-#ifdef MSDOS
+#if defined(MSDOS) || defined(WIN32)
 
 /*
  * Work out if we have Win95+ or Win3.?... sort of.
