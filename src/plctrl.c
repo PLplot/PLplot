@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/05/07 03:23:46  mjl
+ * Revision 1.18  1994/05/10 21:52:10  mjl
+ * Split off cmap1 calculation into plcmap1_calc() to make it easier to just
+ * change a single control point from the plframe widget.
+ *
+ * Revision 1.17  1994/05/07  03:23:46  mjl
  * Eliminated all references to fgcolor and bgcolor.  Operations involving
  * the latter changed to deal with cmap0[0].
  *
@@ -375,9 +379,9 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 * points, linear interpolation is used.  By mapping position in the color
 * map to function value, this gives a smooth variation of color with
 * intensity.  Any number of control points may be specified, located at
-* arbitrary intensities, although typically 2 - 4 are enough.  Another way
-* of stating this is that we are traversing a given number of lines
-* through HLS (or RGB) space as we move through cmap 1 entries.  The
+* arbitrary positions (intensities), although typically 2 - 4 are enough.
+* Another way of stating this is that we are traversing a given number of
+* lines through HLS (or RGB) space as we move through cmap 1 entries.  The
 * control points at the minimum and maximum intensity (0 and 1) must
 * always be specified.  By adding more control points you can get more
 * variation.  One good technique for plotting functions that vary about
@@ -457,20 +461,43 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	plsc->cmap1cp[n].h = h;
 	plsc->cmap1cp[n].l = l;
 	plsc->cmap1cp[n].s = s;
-	plsc->cmap1cp[n].i = pos[n];
+	plsc->cmap1cp[n].p = pos[n];
     }
 
-/* Now bin up cmap 1 space and assign colors to make inverse mapping easy */
-/* Always do interpolation in HLS space */
+/* Calculate and set color map */
 
-    for (n = 0; n < npts-1; n++) {
+    plcmap1_calc();
+}
+
+/*----------------------------------------------------------------------*\
+* plcmap1_calc()
+*
+* Bin up cmap 1 space and assign colors to make inverse mapping easy.
+* Always do interpolation in HLS space.
+\*----------------------------------------------------------------------*/
+
+void
+plcmap1_calc(void)
+{
+    int i, n;
+    PLFLT icmap1, delta;
+    PLFLT h, l, s, r, g, b;
+
+    plgpls(&plsc);
+
+    for (n = 0; n < plsc->ncp1-1; n++) {
+
+	if ( plsc->cmap1cp[n].p == plsc->cmap1cp[n+1].p )
+	    continue;
 
 	for (i = 0; i < plsc->ncol1; i++) {
 	    icmap1 = (double) i / (plsc->ncol1 - 1.0);
-	    if ( ! (pos[n] <= icmap1 && icmap1 <= pos[n+1]) )
+	    if ( (icmap1 < plsc->cmap1cp[n].p) ||
+		 (icmap1 > plsc->cmap1cp[n+1].p) )
 		continue;
 
-	    delta = (icmap1 - pos[n]) / (pos[n+1] - pos[n]);
+	    delta = (icmap1 - plsc->cmap1cp[n].p) /
+		(plsc->cmap1cp[n+1].p - plsc->cmap1cp[n].p);
 
 	    h = plsc->cmap1cp[n].h +
 		(plsc->cmap1cp[n+1].h - plsc->cmap1cp[n].h) * delta;
