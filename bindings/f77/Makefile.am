@@ -75,7 +75,7 @@ if with_double
 	cp $< $*.f
 else
 .fm4.f:
-	sed -f double2single.sed $< > $*.f
+	sed -f $(srcdir)/double2single.sed $< > $*.f
 endif
 
 EXTRA_DIST = sfstubs.fm4 double2single.sed README.f77API

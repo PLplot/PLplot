@@ -118,7 +118,7 @@ SUFFIXES = .fm4
 if with_double
 	cp $< $*.f
 else
-	sed -f double2single.sed $< > $*.f
+	sed -f $(srcdir)/double2single.sed $< > $*.f
 endif
 
 if enable_f77
