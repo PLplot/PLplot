@@ -544,6 +544,7 @@ plD_tidy_xw(PLStream *pls)
     if (xwd->nstreams == 0) {
 	int ixwd = xwd->ixwd;
 	XFreeGC(xwd->display, dev->gc);
+	XFreeGC(xwd->display, xwd->gcXor);
 	XCloseDisplay(xwd->display);
 	free_mem(xwDisplay[ixwd]);
     }
@@ -3046,6 +3047,7 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
  *
  * Determines if we're using a monochrome or grayscale device.
  * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland.
+ * Altered Andrew Ross 26-01-2004 to fix memory leak.
 \*--------------------------------------------------------------------------*/
 
 static int
@@ -3058,19 +3060,23 @@ AreWeGrayscale(Display *display)
 #endif
 
     XVisualInfo *visuals;
-    int nitems, i;
+    int nitems, i, igray;
 
     /* get a list of info on the visuals available */
     visuals = XGetVisualInfo(display, 0, NULL, &nitems);
 
+    igray = 1;
     /* check the list looking for non-monochrome visual classes */
     for (i = 0; i < nitems; i++)
 	if ((visuals[i].THING != GrayScale) &&
-	    (visuals[i].THING != StaticGray))
-	    return (0);
+	    (visuals[i].THING != StaticGray)) {
+		igray = 0;
+		break;
+	}
 
-    /* if we got this far, only StaticGray and GrayScale classes available */
-    return (1);
+    XFree(visuals);
+    /* if igray = 1 only StaticGray and GrayScale classes available */
+    return igray;
 }
 
 #ifdef DUMMY
