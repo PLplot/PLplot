@@ -26,7 +26,10 @@ tar rf ${tarfile} ${pldir}/plzip*
 # Make sure tar creates these subdirectories to make installation easier.
 
 tar rf ${tarfile} ${pldir}/tmp/.dummy
-tar rf ${tarfile} ${pldir}/lib/.dummy
+
+# Font files
+
+tar rf ${tarfile} ${pldir}/lib/*.fnt
 
 # Subdirectories
 

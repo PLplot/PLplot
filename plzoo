@@ -26,7 +26,10 @@ zoo a ${zoofile} ${pldir}/plzip*
 # Make sure zoo creates these subdirectories to make installation easier.
 
 zoo a ${zoofile} ${pldir}/tmp/.dummy
-zoo a ${zoofile} ${pldir}/lib/.dummy
+
+# Font files
+
+zoo a ${zoofile} ${pldir}/lib/*.fnt
 
 # Subdirectories
 

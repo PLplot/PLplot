@@ -26,7 +26,10 @@ zoo a plplot plplot/plzip*
 @rem # Make sure zoo creates these subdirectories to make installation easier.
 @
 zoo a plplot plplot/tmp/.dummy
-zoo a plplot plplot/lib/.dummy
+@
+@rem # Font files
+@
+zoo a plplot plplot/lib/*.fnt
 @
 @rem # Source code & docs.
 @

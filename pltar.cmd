@@ -23,7 +23,10 @@ tar rf plplot.tar plplot/plzoo*
 @rem # Make sure tar creates these subdirectories to make installation easier.
 @
 tar rf plplot.tar plplot/tmp/.dummy
-tar rf plplot.tar plplot/lib/.dummy
+@
+@rem # Font files
+@
+tar rf plplot.tar plplot/lib/*.fnt
 @
 @rem # Source code & docs.
 @
