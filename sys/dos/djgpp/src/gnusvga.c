@@ -39,6 +39,11 @@
 
 /* Prototypes:  Since GNU CC, we can rest in the safety of ANSI prototyping. */
 
+
+void plD_line_vga		(PLStream *, short, short, short, short);
+void plD_polyline_vga		(PLStream *, short *, short *, PLINT);
+void plD_state_vga		(PLStream *, PLINT);
+
 #ifdef PLD_gnusvga
 
 static void     plpause         (PLStream *);
@@ -47,6 +52,29 @@ static void     svga_graph      (PLStream *);
 static void     WaitForPage     (PLStream *pls);
 static void     EventHandler    (PLStream *pls, GrMouseEvent *event);
 static void     TranslateEvent  (PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin);
+
+void plD_init_vga		(PLStream *);
+void plD_eop_vga		(PLStream *);
+void plD_eop_jpeg		(PLStream *);
+void plD_bop_vga		(PLStream *);
+void plD_tidy_vga		(PLStream *);
+void plD_esc_vga		(PLStream *, PLINT, void *);
+
+void plD_dispatch_init_vga( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "DJGPP (GRX20) Vga driver";
+    pdt->pl_DevName  = "vga";
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 1;
+    pdt->pl_init     = (plD_init_fp)     plD_init_vga;
+    pdt->pl_line     = (plD_line_fp)     plD_line_vga;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_vga;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_vga;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_vga;
+    pdt->pl_state    = (plD_state_fp)    plD_state_vga;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_vga;
+}
 
 #endif
 
@@ -683,6 +711,7 @@ do {
  } while (ret==0);
 }
 
+
 /*--------------------------------------------------------------------------*\
  * gnusvga_GetCursorCmd()
  *
@@ -1092,6 +1121,7 @@ switch(dev->gin.keysym)
 }
 
 
+
 /*--------------------------------------------------------------------------*\
  * TranslateEvent()
  *
@@ -1387,6 +1417,7 @@ static void RestoreTopOfScreen ( gnu_grx_Dev *dev )
 
 #endif
 
+
 #if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined(PLD_tiff) || defined(PLD_jpg) || defined(PLD_bmp)
 
 const char gnu_alphabet[]="0123456789abcdefghijklmnopqrstuvwxyz";
@@ -1574,6 +1605,21 @@ void plD_bop_tiff(PLStream *pls);
 void plD_esc_tiff(PLStream *pls, PLINT op, void *ptr);
 void plD_eop_tiff(PLStream *pls);
 
+void plD_dispatch_init_tiff( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "GRX20 Tiff driver";
+    pdt->pl_DevName  = "tiff";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 21;
+    pdt->pl_init     = (plD_init_fp)     plD_init_tiff;
+    pdt->pl_line     = (plD_line_fp)     plD_line_vga;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_tiff;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_tiff;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_tiff;
+    pdt->pl_state    = (plD_state_fp)    plD_state_vga;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_tiff;
+}
 
 /*----------------------------------------------------------------------*\
  * plD_init_tiff()
@@ -1759,6 +1805,21 @@ void plD_bop_jpg(PLStream *pls);
 void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr);
 void plD_eop_jpg(PLStream *pls);
 
+void plD_dispatch_init_vga( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "GRX20 JPEG driver";
+    pdt->pl_DevName  = "jpg";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 23;
+    pdt->pl_init     = (plD_init_fp)     plD_init_jpg;
+    pdt->pl_line     = (plD_line_fp)     plD_line_vga;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_jpg;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_jpg;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_jpg;
+    pdt->pl_state    = (plD_state_fp)    plD_state_tiff;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_jpg;
+}
 
 
 /*----------------------------------------------------------------------*\
@@ -1941,6 +2002,24 @@ void plD_tidy_bmp(PLStream *pls);
 void plD_bop_bmp(PLStream *pls);
 void plD_esc_bmp(PLStream *pls, PLINT op, void *ptr);
 void plD_eop_bmp(PLStream *pls);
+
+void plD_dispatch_init_vga( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "GRX20 windows bitmap driver";
+    pdt->pl_DevName  = "bmp";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 25;
+    pdt->pl_init     = (plD_init_fp)     plD_init_bmp;
+    pdt->pl_line     = (plD_line_fp)     plD_line_vga;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_bmp;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_bmp;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_bmp;
+    pdt->pl_state    = (plD_state_fp)    plD_state_vga;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_bmp;
+}
+
+
 
 /*----------------------------------------------------------------------*\
  * plD_init_bmp()

@@ -18,6 +18,10 @@ REM Default target, core source and object file lists
 
 type ..\..\..\cf\dist.in	>>tmp\Makefile 
 
+REM Copy the list of DJGPP drivers to makefile
+
+type cf\drivers.in	>>tmp\Makefile 
+
 REM Copy source file lists and add djgpp specific source to makefile
 
 type cf\djgpp.in	>>tmp\Makefile 

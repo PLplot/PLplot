@@ -163,12 +163,6 @@ moveexamples:
 	move ../../../../examples/c/*.h ./plplot
 	utod ./plplot/*demos.h
 
-# Add gnusvga to driver list
-
-DRIVERS_C := $(DRIVERS_C) gnusvga.c
-ADD_DRIVERS_OBJ = $(DRIVERS_OBJ) gnusvga$O
-#DRIVERS_OBJ = $(DRIVERS_OBJ) gnusvga$O
-
 ifdef GRX_DO_BMP
 CC_FLAGS_GNUSVGA_BMP =-DGRX_DO_BMP
 endif
@@ -182,5 +176,4 @@ ifdef GRX_DO_JPEG
 LDC_LIBS_JPEG ?=-ljpeg
 CC_FLAGS_GNUSVGA_JPEG =-DGRX_DO_JPEG
 endif
-
 
