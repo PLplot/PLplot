@@ -169,6 +169,8 @@ quit_dialog (void)
   gtk_widget_show_all (GTK_WIDGET (GNOME_DIALOG (dialog)->vbox));
 
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);  
+  gnome_dialog_set_default (GNOME_DIALOG (dialog), 0);
+
   answer = gnome_dialog_run_and_close (GNOME_DIALOG (dialog));
 
   if (answer == 0) {
@@ -278,12 +280,15 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
     plTranslateCursor (gin);
 
-    if (color->cmap == 0)
-      sprintf (buffer, "   x = %f   y = %f   color = %d (cmap0)",
-	       gin->wX, gin->wY, (int) color->color);
+    if (color == NULL) 
+      sprintf (buffer, "");
     else
-      sprintf (buffer, "   x = %f   y = %f   color = %f (cmap1)",
-	       gin->wX, gin->wY, color->color);
+      if (color->cmap == 0)
+	sprintf (buffer, "   x = %f   y = %f   color = %d (cmap0)",
+		 gin->wX, gin->wY, (int) color->color);
+      else
+	sprintf (buffer, "   x = %f   y = %f   color = %f (cmap1)",
+		 gin->wX, gin->wY, color->color);
 
     // FIXME : Terrible global variable hack
     gtk_statusbar_pop (sb, page->context);
