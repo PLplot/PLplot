@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/07/22 15:54:09  furnish
+ * Revision 1.24  1994/07/23 04:46:26  mjl
+ * Decreased the amount of custom system handling due to use of plConfig.h.
+ * Need to do some more yet...
+ *
+ * Revision 1.23  1994/07/22  15:54:09  furnish
  * Fix overaggressive behavior.
  *
  * Revision 1.22  1994/07/19  22:35:04  mjl
@@ -54,49 +58,40 @@
 #ifndef __PLPLOTP_H__
 #define __PLPLOTP_H__
 
-/* Wishful thinking.. */
-
-#ifndef _POSIX_SOURCE
-#define _POSIX_SOURCE
-#endif
-
 /*----------------------------------------------------------------------*\
-*        SYSTEM-SPECIFIC SETTINGS
-* 
-* Here we enable or disable based on system specific capabilities of
-* PLPLOT.  At present there are only two different "optional"
-* capabilities.  They are:
-*
-* POSIX_TTY	Defined if POSIX.1 tty control functions are available. 
-* NO_ANSI_LIBC	Defined if libc is NOT ANSI-compliant.
-*
-*
-* POSIX.1 tty control functions are used by some of the drivers, e.g. to
-* switch to character-oriented (CBREAK) i/o (notably the tek driver and
-* all its variants).  It is usable without this but not as powerful.  The
-* reason for using this is that some supported systems are still not
-* POSIX.1 compliant (and some may never be).
-*
-* ANSI libc calls are used for: (a) setting up handlers to be called
-* before program exit (via the "atexit" call), and (b) for seek
-* operations.  Again, the code is usable without this but less powerful.
-* An ANSI-compliant libc should be available, given the requirement of an
-* ANSI-compliant compiler.  Some reasons why not: (a) the vendor didn't supply
-* a complete ANSI environment, or (b) the ANSI libc calls are buggy, or
-* (c) you ported gcc to your system but not glibc (for whatever reason).
-* 
+ *        SYSTEM-SPECIFIC SETTINGS
+ * 
+ * Here we enable or disable based on system specific capabilities of
+ * PLPLOT.  At present there are only two different "optional"
+ * capabilities.  They are:
+ *
+ * POSIX_TTY	Defined if POSIX.1 tty control functions are available. 
+ * STDC_HEADERS	Defined if libc is ANSI-compliant.
+ *
+ * POSIX.1 tty control functions are used by some of the drivers, e.g. to
+ * switch to character-oriented (CBREAK) i/o (notably the tek driver and
+ * all its variants).  It is usable without this but not as powerful.  The
+ * reason for using this is that some supported systems are still not
+ * POSIX.1 compliant (and some may never be).
+ *
+ * ANSI libc calls are used for: (a) setting up handlers to be called
+ * before program exit (via the "atexit" call), and (b) for seek
+ * operations.  Again, the code is usable without these.  An ANSI libc
+ * should be available, given the requirement of an ANSI compiler.  Some
+ * reasons why not: (a) the vendor didn't supply a complete ANSI
+ * environment, or (b) the ANSI libc calls are buggy, or (c) you ported
+ * gcc to your system but not glibc (for whatever reason).  Note: without
+ * an ANSI C lib, if you ^C out of a program using one of the PLplot tek
+ * drivers, your terminal may be left in a strange state.
+ * 
 \*----------------------------------------------------------------------*/
+
+#include "plConfig.h"
 
 #define POSIX_TTY
 
 #ifdef CRAY			/* Cray */
 #undef _POSIX_SOURCE		/* because of moronic broken X headers */
-#endif
-
-#ifdef __convexc__		/* Convex */
-#ifndef NO_ANSI_LIBC		/* Is this really necessary? */
-#define NO_ANSI_LIBC
-#endif
 #endif
 
 #ifdef SX			/* NEC SX-3 */
@@ -109,25 +104,22 @@
 
 #ifdef AMIGA			/* Amiga */
 #undef POSIX_TTY		/* Not POSIX.1 compliant */
-#ifndef NO_ANSI_LIBC		/* NO_ANSI_LIBC is required by SAS/C 5.X */
-#define NO_ANSI_LIBC		/* (still pretty prevalent, so..) */
+#ifdef STDC_HEADERS		/* Required by SAS/C 5.X */
+#define STDC_HEADERS 1		/* (still pretty prevalent, so..) */
 #endif
 #endif
 
-/* NO_ANSI_LIBC hack */
+/* Hacks to deal with non-ANSI libc */
 
-#ifdef NO_ANSI_LIBC
-#define FPOS_T long
-#define pl_fsetpos(a,b) fseek(a, *b, 0)
-#define pl_fgetpos(a,b) (-1L == (*b = ftell(a)))
-#ifdef POSIX_TTY
-#undef POSIX_TTY		/* Requires ANSI atexit() */
-#endif
-
-#else
+#ifdef STDC_HEADERS
 #define FPOS_T fpos_t
 #define pl_fsetpos(a,b) fsetpos(a, b)
 #define pl_fgetpos(a,b) fgetpos(a, b)
+
+#else
+#define FPOS_T long
+#define pl_fsetpos(a,b) fseek(a, *b, 0)
+#define pl_fgetpos(a,b) (-1L == (*b = ftell(a)))
 #endif
 
 /* Include all externally-visible definitions and prototypes */
@@ -136,7 +128,6 @@
 #include "plplot.h"
 #include "pdf.h"
 #include "plstream.h"
-#include "plConfig.h"
 
 /* If not including this file from inside of plcore.h, declare plsc */
 
@@ -145,7 +136,7 @@ extern PLStream	*plsc;
 #endif
 
 /*----------------------------------------------------------------------*\
-*			Data types
+ *			Data types
 \*----------------------------------------------------------------------*/
 
 /* Signed char type, for the font tables */
@@ -153,7 +144,7 @@ extern PLStream	*plsc;
 typedef signed char SCHAR;
 
 /*----------------------------------------------------------------------*\
-*                       Utility macros
+ *                       Utility macros
 \*----------------------------------------------------------------------*/
 
 #ifndef TRUE
@@ -210,7 +201,7 @@ typedef signed char SCHAR;
 #define UNDEFINED -9999999
 
 /*----------------------------------------------------------------------*\
-*                       PLPLOT control macros
+ *                       PLPLOT control macros
 \*----------------------------------------------------------------------*/
 
 /* Some constants */
@@ -249,8 +240,8 @@ typedef signed char SCHAR;
 #define PLDI_DEV	0x08
 
 /* Default size for family files, in KB.
-*  If you want it bigger, set it from the makefile or at runtime.
-*/
+ *  If you want it bigger, set it from the makefile or at runtime.
+ */
 
 #ifndef PL_FILESIZE_KB
 #define PL_FILESIZE_KB 1000
@@ -269,7 +260,7 @@ typedef signed char SCHAR;
 #endif
 
 /*----------------------------------------------------------------------*\
-*		Function Prototypes
+ *		Function Prototypes
 \*----------------------------------------------------------------------*/
 
 #ifdef __cplusplus
