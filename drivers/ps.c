@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/08/09 22:13:32  mjl
+ * Revision 1.19  1993/11/19 07:29:50  mjl
+ * Fixed the bounding box maxima (bug reported by Jan Thorbecke).
+ *
+ * Revision 1.18  1993/08/09  22:13:32  mjl
  * Changed call syntax to plRotPhy to allow easier usage.  Added struct
  * specific to PS driver to improve reentrancy.
  *
@@ -421,6 +424,13 @@ plD_tidy_ps(PLStream *pls)
     dev->lly += YOFFSET;
     dev->urx += XOFFSET;
     dev->ury += YOFFSET;
+
+/* changed for correct Bounding boundaries Jan Thorbecke  okt 1993*/
+/* occurs from the integer truncation -- postscript uses fp arithmetic */
+
+    dev->urx += 1;
+    dev->ury += 1;
+
     fprintf(OF, "%%%%Pages: %d\n", pls->page);
 
 /* Backtrack to write the BoundingBox at the beginning */
