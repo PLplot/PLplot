@@ -1,5 +1,9 @@
 /* $Id$
  * $Log$
+ * Revision 1.20  2000/05/10 21:24:06  airwin
+ * Alan W. Irwin.  Logic for changing power of 10 to scale z axes is now
+ * consistent between the left and right z axes.
+ *
  * Revision 1.19  1999/06/25 04:20:21  furnish
  * Install patches from Alan W. Irwin, correcting problems with
  * labelling.
@@ -519,6 +523,8 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 	dx = ux - tx;
 	dy = uy - ty;
+/* restore zdigits to initial value for second call */
+        zdigits = zdigmax;     
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -545,6 +551,8 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 	dx = ux - tx;
 	dy = uy - ty;
+/* restore zdigits to initial value for second call */
+        zdigits = zdigmax;     
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -571,6 +579,8 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 	dx = ux - tx;
 	dy = uy - ty;
+/* restore zdigits to initial value for second call */
+        zdigits = zdigmax;     
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -597,6 +607,8 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 	dx = ux - tx;
 	dy = uy - ty;
+/* restore zdigits to initial value for second call */
+        zdigits = zdigmax;     
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
