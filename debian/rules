@@ -52,13 +52,13 @@ autotools-stamp:
 
 config: config-stamp
 config-stamp: autotools-stamp
-	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
-                    --enable-tk --enable-gd --enable-dyndrivers        \
-                    --enable-static --enable-python $(octave_cfg)     \
-                    --enable-gnome --with-double --disable-linuxvga    \
-                    --infodir=/usr/share/info --with-freetype          \
-                    --without-rpath --with-prebuiltdoc --disable-java  \
-                    --with-pthreads --with-ltdlsystem
+	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl  \
+                    --enable-tk --enable-gd --enable-dyndrivers         \
+                    --enable-static --enable-python $(octave_cfg)       \
+                    --enable-gnome --with-double --disable-linuxvga     \
+                    --infodir=/usr/share/info --with-freetype           \
+                    --without-rpath --with-prebuiltdoc --disable-java   \
+                    --with-pthreads --with-ltdlsystem --with-pkg-config
 	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
               | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
           octpkgver=`echo $$octver | sed 's/\.[0-9]*$$//'`           ; \
