@@ -195,9 +195,9 @@ class x09 {
 	int i,j;
         double[] px = new double[PERIMETERPTS];
         double[] py = new double[PERIMETERPTS];
-        double[][] xg = new double[RPTS][THETAPTS];
-        double[][] yg = new double[RPTS][THETAPTS];
-        double[][] z = new double[RPTS][THETAPTS];
+        double[][] xg = new double[RPTS][THETAPTS-1];
+        double[][] yg = new double[RPTS][THETAPTS-1];
+        double[][] z = new double[RPTS][THETAPTS-1];
 	double t, r, theta;
 	double [] lev = new double[10];
 
@@ -216,7 +216,7 @@ class x09 {
    
 	for (i = 0; i < RPTS; i++) {
             r = i/(double)(RPTS-1);
-            for (j = 0; j < THETAPTS; j++) {
+            for (j = 0; j < THETAPTS-1; j++) {
                 theta = (2.*Math.PI/(double)(THETAPTS-1))*(double)j;
                 xg[i][j] = r*Math.cos(theta);
                 yg[i][j] = r*Math.sin(theta);
@@ -229,7 +229,7 @@ class x09 {
 	}
 
 	pls.col0(2);
-        pls.cont( z, lev, xg, yg, 0 );
+        pls.cont( z, lev, xg, yg, 2 );
 	pls.col0(1);
 	pls.lab("", "", "Polar Contour Plot");
     }
@@ -257,9 +257,9 @@ class x09 {
 	double peps, xpmin, xpmax, ypmin, ypmax;
 	double eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
 	double div1, div1i, div2, div2i;
-	double [][] xg = new double[PRPTS][PPERIMETERPTS] ;
-	double [][] yg = new double[PRPTS][PPERIMETERPTS] ;
-	double [][] z = new double[PRPTS][PPERIMETERPTS] ;
+	double [][] xg = new double[PRPTS][PTHETAPTS-1] ;
+	double [][] yg = new double[PRPTS][PTHETAPTS-1] ;
+	double [][] z = new double[PRPTS][PTHETAPTS-1] ;
 	int nlevelneg, nlevelpos;
 	double dz, clevel;
 	double [] clevelneg_store = new double[PNLEVEL];
@@ -277,7 +277,7 @@ class x09 {
 	r = 0.; 
 	for (i = 0; i < PRPTS; i++) {
             r = 0.5 + (double) i;
-            for (j = 0; j < PTHETAPTS; j++) {
+            for (j = 0; j < PTHETAPTS-1; j++) {
                 theta = (2.*Math.PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
                 xg[i][j] = r*Math.cos(theta);
                 yg[i][j] = r*Math.sin(theta);
@@ -286,11 +286,11 @@ class x09 {
 
 	rmax = r;
 
-        f2mnmx( xg, PRPTS, PTHETAPTS );
+        f2mnmx( xg, PRPTS, PTHETAPTS-1 );
         xmin = fmin;
         xmax = fmax;
 
-        f2mnmx( yg, PRPTS, PTHETAPTS );
+        f2mnmx( yg, PRPTS, PTHETAPTS-1 );
         ymin = fmin;
         ymax = fmax;
 
@@ -324,7 +324,7 @@ class x09 {
 	d2i = Math.pow(rmax,2)/d2;
 
 	for (i = 0; i < PRPTS; i++) {
-            for (j = 0; j < PTHETAPTS; j++) {
+            for (j = 0; j < PTHETAPTS-1; j++) {
                 div1 = Math.sqrt(Math.pow(xg[i][j]-d1,2) + Math.pow(yg[i][j]-d1,2) + Math.pow(eps,2));
                 div1i = Math.sqrt(Math.pow(xg[i][j]-d1i,2) + Math.pow(yg[i][j]-d1i,2) + Math.pow(eps,2));
                 div2 = Math.sqrt(Math.pow(xg[i][j]-d2,2) + Math.pow(yg[i][j]+d2,2) + Math.pow(eps,2));
@@ -333,7 +333,7 @@ class x09 {
             }
 	}
 
-        f2mnmx( z, PRPTS, PTHETAPTS );
+        f2mnmx( z, PRPTS, PTHETAPTS-1 );
         zmin = fmin;
         zmax = fmax;
 
@@ -384,13 +384,13 @@ class x09 {
 	if(nlevelneg >0) {
         // Negative contours
             pls.lsty(2);
-            pls.cont( z, clevelneg, xg, yg, 0 );
+            pls.cont( z, clevelneg, xg, yg, 2 );
 	}
 
 	if(nlevelpos >0) {
         // Positive contours
             pls.lsty(1);
-            pls.cont( z, clevelpos, xg, yg, 0 );
+            pls.cont( z, clevelpos, xg, yg, 2 );
 	}
 		 
     // Draw outer boundary
