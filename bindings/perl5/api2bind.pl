@@ -114,7 +114,7 @@ sub funcptr_stub {
 
 \%inline \%{
 static SV* $name" . "_SV;
-static void
+static ${ret}_ret
 $name" . "_call (" . join (", ", @arglist) . ")
 {
 " . join ("  ", @decls) . "
@@ -184,9 +184,10 @@ $p = new XML::DOM::Parser;
 		      $literal = $term[0]->getElementsByTagName
                                    ("literal")->item (0);
                       $_ = get_cdata ($literal);
-		      if (/([^(]+)\(\*\)(.*)/) {
+		      if (/([^(\s]+)\s*\(\*\)(.*)/) {
                          $_ = "funcptr". (scalar @funcptr);
  		         push @funcptr, funcptr_stub ($_, $1, $2);
+                         $typedefs{"$1" . "_ret"} = $1;
                        }
                        else {
                          /(const\s+)*([^\s]+)\s*((\*)*)/;
