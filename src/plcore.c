@@ -1710,7 +1710,7 @@ plLoadDriver(void)
     if (dev->pl_init)
         return;
 
-/*     fprintf( stderr, "Device not loaded!\n" ); */
+    fprintf( stderr, "Device not loaded!\n" );
 
 /* Now search through the list of loadable devices, looking for the record
  * that corresponds to the requested device. */
@@ -1730,7 +1730,7 @@ plLoadDriver(void)
     tag = loadable_device_list[i].tag;
     drvidx = loadable_device_list[i].drvidx;
 
-/*     printf( "tag=%s, drvidx=%d\n", tag, drvidx ); */
+    fprintf( stderr, "tag=%s, drvidx=%d\n", tag, drvidx ); 
 
     driver = &loadable_driver_list[drvidx];
 
@@ -1740,18 +1740,18 @@ plLoadDriver(void)
         char drvspec[ 400 ];
         sprintf( drvspec, "./drivers/%s", driver->drvnam );
 
-/*         printf( "Trying to load %s on %s\n", driver->drvnam, drvspec ); */
+	fprintf( stderr, "Trying to load %s on %s\n", driver->drvnam, drvspec ); 
 
-        driver->dlhand = dlopen( drvspec, RTLD_NOW );
+        driver->dlhand = dlopen( drvspec, RTLD_NOW);
 
         if (!driver->dlhand)
         {
             sprintf( drvspec, "%s/%s/%s",
                      LIB_DIR, "drivers", driver->drvnam );
 
-/*             printf( "Trying to load at %s\n", drvspec); */
+             fprintf( stderr, "Trying to load at %s\n", drvspec); 
 
-            driver->dlhand = dlopen( drvspec, RTLD_NOW );
+	     driver->dlhand = dlopen( drvspec, RTLD_NOW);
         }
     }
 
@@ -2515,3 +2515,50 @@ else
 return(ret);
 }
 
+
+/*--------------------------------------------------------------------------*\
+ * plP_image
+ *
+ * Author: Alessandro Mirone, Nov 2001
+ * 
+ * 
+ * 
+\*--------------------------------------------------------------------------*/
+
+void
+plP_image(int *x, int  *y, PLFLT *z , PLINT nx, PLINT ny)
+{
+  PLINT i, npts;
+  int *xscl, *yscl;
+  plsc->page_status = DRAWING;
+
+  if (plsc->plbuf_write) {
+    plsc->dev_ix = x;
+    plsc->dev_iy = y;
+    plsc->dev_z = z;
+    plsc->dev_nptsX = nx;
+    plsc->dev_nptsY = ny;
+
+    plbuf_esc(plsc, PLESC_IMAGE, NULL);
+  }
+
+  plsc->offXpp = plP_wcpcx(plsc->offXu ) - plP_wcpcx(0);
+  plsc->offYpp = plP_wcpcy(plsc->offYu ) - plP_wcpcy(0);
+
+  npts = nx*ny;
+  if (plsc->difilt) {
+    xscl = (int*) malloc(nx*ny*sizeof(short));
+    yscl =(int*) malloc(nx*ny*sizeof(short));
+    for (i = 0; i < npts; i++) {
+      xscl[i] = x[i];
+      yscl[i] = y[i];
+    }
+    exit(0);
+    /* difiltShort(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);*/
+    grimage(xscl, yscl, z, nx, ny);
+    free(xscl);
+    free(yscl);
+  } else { 
+    grimage(x, y, z, nx, ny );
+  }
+}

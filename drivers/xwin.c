@@ -144,11 +144,13 @@ static void  ConfigBufferingCmd (PLStream *pls, PLBufferingCB *ptr );
 static void  GetCursorCmd	(PLStream *pls, PLGraphicsIn *ptr);
 static void  FillPolygonCmd	(PLStream *pls);
 static void  XorMod		(PLStream *pls, PLINT *mod);
+static void  DrawImage          (PLStream *pls);
 
 /* Miscellaneous */
 
 static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
+static void  imageops           (PLStream *pls, int *ptr);
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
 {
@@ -189,6 +191,7 @@ plD_init_xw(PLStream *pls)
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->plbuf_write = 1;	/* Activate plot buffer */
+    pls->is_a_fast_image_device = 1; /* is a fast image device */
 
 /* The real meat of the initialization done here */
 
@@ -589,54 +592,69 @@ plD_state_xw(PLStream *pls, PLINT op)
  *	PLESC_REDRAW	Force a redraw
  *	PLESC_RESIZE	Force a resize
  * 	PLESC_XORMOD 	set/reset xor mode
+ * 	PLESC_IMAGE     draw the image in a fast way
+ *      PLESC_IMAGEOPS: image related operations:
+ * 	   ZEROW2D  	disable writing to display
+ * 	   ZEROW2B  	disable writing to buffer
+ * 	   ONEW2D 	enable  writing to display
+ * 	   ONEW2B 	enable  writing to buffer
+ * 	   PIXEL2U      get user coordinates corresponding to a device pixel
 \*--------------------------------------------------------------------------*/
 
 void
 plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 {
-    XwDev *dev = (XwDev *) pls->dev;
-    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+  XwDev *dev = (XwDev *) pls->dev;
+  XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    dbug_enter("plD_esc_xw");
+  dbug_enter("plD_esc_xw");
 
-    switch (op) {
-    case PLESC_EH:
-	HandleEvents(pls);
-	break;
+  switch (op) {
+  case PLESC_EH:
+    HandleEvents(pls);
+    break;
+      
+  case PLESC_EXPOSE:
+    ExposeCmd(pls, (PLDisplay *) ptr);
+    break;
 
-    case PLESC_EXPOSE:
-	ExposeCmd(pls, (PLDisplay *) ptr);
-	break;
+  case PLESC_FILL:
+    FillPolygonCmd(pls);
+    break;
 
-    case PLESC_FILL:
-	FillPolygonCmd(pls);
-	break;
+  case PLESC_FLUSH:
+    HandleEvents(pls);
+    XFlush(xwd->display);
+    break;
 
-    case PLESC_FLUSH:
-	HandleEvents(pls);
-	XFlush(xwd->display);
-	break;
+  case PLESC_GETC:
+    GetCursorCmd(pls, (PLGraphicsIn *) ptr);
+    break;
 
-    case PLESC_GETC:
-	GetCursorCmd(pls, (PLGraphicsIn *) ptr);
-	break;
+  case PLESC_REDRAW:
+    RedrawCmd(pls);
+    break;
 
-    case PLESC_REDRAW:
-	RedrawCmd(pls);
-	break;
+  case PLESC_RESIZE:
+    ResizeCmd(pls, (PLDisplay *) ptr);
+    break;
 
-    case PLESC_RESIZE:
-	ResizeCmd(pls, (PLDisplay *) ptr);
-	break;
+  case PLESC_XORMOD:
+    XorMod(pls, (PLINT *) ptr);
+    break;
 
-    case PLESC_XORMOD:
-	XorMod(pls, (PLINT *) ptr);
-	break;
+  case PLESC_DOUBLEBUFFERING:
+    ConfigBufferingCmd(pls, (PLBufferingCB *) ptr );
+    break;
 
-    case PLESC_DOUBLEBUFFERING:
-	ConfigBufferingCmd(pls, (PLBufferingCB *) ptr );
-	break;
-    }
+  case PLESC_IMAGE:
+    DrawImage(pls);
+    break;
+
+  case PLESC_IMAGEOPS:
+    imageops(pls, (PLINT *) ptr);
+    break;
+  }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -678,46 +696,62 @@ GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
 static void
 FillPolygonCmd(PLStream *pls)
 {
-    XwDev *dev = (XwDev *) pls->dev;
-    XwDisplay *xwd = (XwDisplay *) dev->xwd;
-    XPoint pts[PL_MAXPOLY];
-    int i;
+  XwDev *dev = (XwDev *) pls->dev;
+  XwDisplay *xwd = (XwDisplay *) dev->xwd;
+  XPoint pts[PL_MAXPOLY];
+  int i;
 
-    if (pls->dev_npts > PL_MAXPOLY)
-	plexit("FillPolygonCmd: Too many points in polygon\n");
+  if (pls->dev_npts > PL_MAXPOLY)
+    plexit("FillPolygonCmd: Too many points in polygon\n");
 
-    CheckForEvents(pls);
+  CheckForEvents(pls);
 
-    for (i = 0; i < pls->dev_npts; i++) {
-	pts[i].x = dev->xscale * pls->dev_x[i];
-	pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
-    }
+  for (i = 0; i < pls->dev_npts; i++) {
+    pts[i].x = dev->xscale * pls->dev_x[i];
+    pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
+  }
 
-/* Fill polygons */
+  /* Fill polygons */
 
+  if( 0 /* buggy!, try e.g. x12c. Disable it */ && pls->dev_npts == 4+1 && 
+      (pts[0].x-pts[1].x == pts[3].x-pts[2].x ) &&
+      (pts[0].x-pts[3].x == pts[1].x-pts[2].x ) &&
+      (pts[0].y-pts[1].y == pts[3].y-pts[2].y ) &&
+      (pts[0].y-pts[3].y == pts[1].y-pts[2].y )) {
+      
     if (dev->write_to_window)
-	XFillPolygon(xwd->display, dev->window, dev->gc,
-		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+      XFillRectangle(xwd->display,dev->window, dev->gc,
+		     pts[0].x, pts[1].y, pts[3].x-pts[0].x,pts[1].y-pts[0].y  ); 
+    if (dev->write_to_pixmap)
+      XFillRectangle(xwd->display,dev->pixmap, dev->gc,
+		     pts[0].x, pts[1].y, pts[3].x-pts[0].x,pts[0].y-pts[1].y  ); 
+
+  } else {
+      
+    if (dev->write_to_window)
+      XFillPolygon(xwd->display, dev->window, dev->gc,
+		   pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
 
     if (dev->write_to_pixmap)
-	XFillPolygon(xwd->display, dev->pixmap, dev->gc,
-		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+      XFillPolygon(xwd->display, dev->pixmap, dev->gc,
+		   pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+  }
 
-/* If in debug mode, draw outline of boxes being filled */
+  /* If in debug mode, draw outline of boxes being filled */
 
 #ifdef DEBUG
-    if (plsc->debug) {
-	XSetForeground(xwd->display, dev->gc, xwd->fgcolor.pixel);
-	if (dev->write_to_window)
-	    XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
-		       CoordModeOrigin);
+  if (plsc->debug) {
+    XSetForeground(xwd->display, dev->gc, xwd->fgcolor.pixel);
+    if (dev->write_to_window)
+      XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
+		 CoordModeOrigin);
 
-	if (dev->write_to_pixmap)
-	    XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
-		       CoordModeOrigin);
+    if (dev->write_to_pixmap)
+      XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
+		 CoordModeOrigin);
 
-	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
-    }
+    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
+  }
 #endif
 }
 
@@ -1030,14 +1064,14 @@ HandleEvents(PLStream *pls)
 static void
 MasterEH(PLStream *pls, XEvent *event)
 {
-    XwDev *dev = (XwDev *) pls->dev;
-
-    if (dev->MasterEH != NULL)
-	(*dev->MasterEH) (pls, event);
-
-    switch (event->type) {
-
-    case KeyPress:
+  XwDev *dev = (XwDev *) pls->dev;
+  
+  if (dev->MasterEH != NULL)
+    (*dev->MasterEH) (pls, event);
+  
+  switch (event->type) {
+    
+  case KeyPress:
 	KeyEH(pls, event);
 	break;
 
@@ -1564,8 +1598,7 @@ CreateXhairs(PLStream *pls)
 
     XSync(xwd->display, 0);
     while (XCheckWindowEvent(xwd->display, dev->window,
-			     PointerMotionMask, &event))
-	;
+			     PointerMotionMask, &event));
 
 /* Catch PointerMotion and crossing events so we can update them properly */
 
@@ -1615,9 +1648,9 @@ DrawXhairs(PLStream *pls, int x0, int y0)
     int xmin = 0, xmax = dev->width - 1;
     int ymin = 0, ymax = dev->height - 1;
 
-    if (dev->drawing_xhairs) {
+    if (dev->drawing_xhairs)
 	UpdateXhairs(pls);
-    }
+
     dev->xhair_x[0].x = xmin; dev->xhair_x[0].y = y0;
     dev->xhair_x[1].x = xmax; dev->xhair_x[1].y = y0;
 
@@ -1681,23 +1714,21 @@ ExposeEH(PLStream *pls, XEvent *event)
 	ExposeCmd(pls, NULL);
 	UpdateXhairs(pls);
 	redrawn = 1;
-    }
-    else {
-	pldis.x      = exposeEvent->x;
-	pldis.y      = exposeEvent->y;
-	pldis.width  = exposeEvent->width;
-	pldis.height = exposeEvent->height;
+    } else {
+      pldis.x      = exposeEvent->x;
+      pldis.y      = exposeEvent->y;
+      pldis.width  = exposeEvent->width;
+      pldis.height = exposeEvent->height;
 
-	ExposeCmd(pls, &pldis);
-	redrawn = ! dev->write_to_pixmap;
+      ExposeCmd(pls, &pldis);
+      redrawn = ! dev->write_to_pixmap;
     }
 
 /* If entire plot was redrawn, remove extraneous events from the queue */
 
     if (redrawn)
 	while (XCheckWindowEvent(xwd->display, dev->window,
-				 ExposureMask | StructureNotifyMask, event))
-	    ;
+				 ExposureMask | StructureNotifyMask, event));
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1713,6 +1744,7 @@ ResizeEH(PLStream *pls, XEvent *event)
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XConfigureEvent *configEvent = (XConfigureEvent *) event;
+    XEvent lastevent;
     PLDisplay pldis;
 
     dbug_enter("ResizeEH");
@@ -1740,9 +1772,18 @@ ResizeEH(PLStream *pls, XEvent *event)
 /* Exposes do not need to be handled since we've redrawn the whole plot */
 
     XFlush(xwd->display);
+    /*
     while (XCheckWindowEvent(xwd->display, dev->window,
-			     ExposureMask | StructureNotifyMask, event))
-	;
+			     ExposureMask | StructureNotifyMask, event));
+    */
+    while (XCheckWindowEvent(xwd->display, dev->window,
+			     StructureNotifyMask, &lastevent));
+
+    while (XCheckWindowEvent(xwd->display, dev->window,
+			     StructureNotifyMask, event));
+
+    /* replay the last event */
+   XPutBackEvent(xwd->display,&lastevent );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2781,6 +2822,185 @@ PLX_save_colormap(Display *display, Colormap colormap)
 	       sxwm_colors[i].red, sxwm_colors[i].green, sxwm_colors[i].blue);
     }
  */
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * DrawImage()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * Only solid color fill supported.
+\*--------------------------------------------------------------------------*/
+
+static void
+DrawImage(PLStream *pls)
+{
+  XwDev *dev = (XwDev *) pls->dev;
+  XwDisplay *xwd = (XwDisplay *) dev->xwd;
+  XPoint Ppts[5];
+  XImage *ximg;
+  char *imgdata;
+  XColor curcolor;
+  int X0, Y0, WX, WY;
+  int kx, ky;
+  int offXpp, offYpp;
+
+  int i, npts, nx, ny, ix, iy, corners[5];
+  int clpxmi, clpxma, clpymi, clpyma, icol1;
+ 
+  int DefScreen, DefDepth, DefPad;
+  Visual *DefVisual;
+ 
+  CheckForEvents(pls);
+  
+  clpxmi = plsc->Dxmin;
+  clpxma = plsc->Dxmax;
+  clpymi = plsc->Dymin;
+  clpyma = plsc->Dymax;
+
+  offXpp= plsc->offXpp;
+  offYpp= plsc->offYpp;
+  /* printf(" offXpp offYpp = %d %d \n", offXpp, offYpp); */
+ 
+#define inside(j)  ( clpxmi <= plsc->dev_ix[j] + offXpp  && \
+                     clpxma >= plsc->dev_ix[j] + offXpp  && \
+                     clpymi <= plsc->dev_iy[j] + offYpp  && \
+                     clpyma >= plsc->dev_iy[j] + offYpp)
+  
+    npts = plsc->dev_nptsX*plsc->dev_nptsY;
+  
+    /* pts= (XPoint *) malloc(npts*sizeof(XPoint)); */
+
+    nx = pls->dev_nptsX;
+    ny = pls->dev_nptsY;
+  
+    /*  X0= dev->xscale * pls->dev_x[0];
+	Y0= dev->yscale * (dev->ylen - pls->dev_iy[nx*ny-1]);
+	WX= dev->xscale * pls->dev_x[nx*ny-1]-X0;
+	WY= dev->yscale * (dev->ylen - pls->dev_iy[0])-Y0;
+    */
+
+    plsc->offXp = ROUND ( dev->xscale * plsc->wpxscl*  plsc->offXu ) ;
+    plsc->offYp = ROUND ( dev->yscale * plsc->wpyscl*  plsc->offYu ) ;
+
+    plsc->offXu = plsc->offXp / (dev->xscale * plsc->wpxscl);
+    plsc->offYu = plsc->offYp / (dev->yscale * plsc->wpyscl);  
+   
+    X0 = dev->xscale * MAX( clpxmi, pls->dev_ix[0]+offXpp);
+    Y0 = dev->yscale * MAX( clpymi, pls->dev_iy[0]+offYpp);
+
+    WX = dev->xscale * MIN(clpxma, pls->dev_ix[nx*ny-1]+offXpp) -X0+1;
+    WY = dev->yscale * MIN(clpyma, pls->dev_iy[nx*ny-1]+offYpp) -Y0+1;
+ 
+    if(WX < 0 || WY < 0){
+      printf("  %d %d %d %d\n", clpxmi,clpymi, clpxma, clpyma);
+      printf("  %d %d %d %d\n", pls->dev_ix[0], pls->dev_iy[0],
+	     pls->dev_ix[nx*ny-1], pls->dev_iy[nx*ny-1]);
+      printf("  %d %d \n", offXpp, offYpp);
+      return;
+    }
+
+    printf("%d %d %d %d \n", X0,Y0,WX,WY);
+
+    DefScreen = DefaultScreen(xwd->display);
+    DefVisual = DefaultVisual(xwd->display, DefScreen);
+    DefDepth = DefaultDepthOfScreen(ScreenOfDisplay(xwd->display,DefScreen));
+    DefPad = BitmapPad(xwd->display);
+  
+    /* printf(" def depth est %d %d %d %d %d \n", DefDepth, X0, Y0, WX, WY);*/
+    imgdata = malloc(((WX)*(WY)*(xwd->depth))  );
+  
+    ximg = XCreateImage( xwd->display, xwd->visual, xwd->depth, 
+			ZPixmap, 0, imgdata, WX, WY, DefPad, 0);
+  
+    /*
+      ximg = XGetImage(  xwd->display, dev->pixmap, X0, Y0,
+      WX , WY,
+      AllPlanes,  ZPixmap );
+    */
+
+    for(ix = 0; ix < nx-1; ix++) {
+      for(iy = 0; iy < ny-1; iy++) {
+        /* printf("%d %d\n", ix, iy);	*/
+	corners[0] = ix*ny+iy;
+	corners[1] = (ix+1)*ny+iy; 
+	corners[2] = (ix+1)*ny+iy+1;
+	corners[3] = ix*ny+iy+1;
+	corners[4] = ix*ny+iy;
+
+	for (i = 0; i < 5; i++) {
+	  Ppts[i].x = dev->xscale * (plsc->dev_ix[ corners[i] ] + offXpp);
+	  Ppts[i].y = dev->yscale * (plsc->dev_iy[ corners[i] ] + offYpp);
+	}
+	
+	if( inside(corners[0]) || inside(corners[1]) || 
+	    inside(corners[2]) || inside(corners[3]) ||
+	    ( MAX(Ppts[0].x-X0,0) <= MIN(Ppts[1].x-X0,WX-1)  && 
+	      MAX(Ppts[0].y-Y0,0) <= MIN(Ppts[2].y-Y0,WY-1))
+	    ) {
+	  
+	  if (xwd->ncol1 == 0)
+	    AllocCmap1(pls);
+
+	  icol1 = floor( 0.5+plsc->dev_z[corners[0]] * (xwd->ncol1-1)) ;	  
+	  if (xwd->ncol1 < 2)
+	    break;
+	  
+	  if (xwd->color) {
+	    curcolor = xwd->cmap1[icol1];
+	  }  else { 
+	    curcolor = xwd->fgcolor;
+	  }  
+
+          for( kx = MAX(Ppts[0].x-X0,0); kx <= MIN(Ppts[1].x-X0,WX-1); kx++)
+	    for( ky = MAX(Ppts[0].y-Y0,0); ky <= MIN(Ppts[2].y-Y0,WY-1); ky++)
+	      /*  ximg->data[kx*WY+ky]=curcolor.pixel;*/
+	      XPutPixel(ximg, kx, WY-1-ky, curcolor.pixel);
+	}
+      }
+    }
+
+    if (dev->write_to_pixmap)
+      XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0,
+	       X0, dev->yscale*dev->ylen - Y0-WY, WX, WY );  
+    if (dev->write_to_window)
+      XPutImage( xwd->display, dev->window, dev->gc, ximg, 0, 0,
+	       X0, dev->yscale*dev->ylen - Y0-WY, WX, WY );  
+
+    /* XPutImage(  xwd->display, dev->pixmap, dev->gc, ximg, 0, 0,X0, dev->yscale*dev->ylen-  Y0-WY,WX, WY );  */
+    XFlush(xwd->display); 
+    /* XDestroyImage(ximg); */
+    free(ximg);
+    free(imgdata);
+}
+
+static void
+imageops(PLStream *pls, int *ptr)
+{
+
+  XwDev *dev = (XwDev *) pls->dev;
+  XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+  /* TODO: store/revert to/from previous state */
+
+  switch (*ptr) {
+  case ZEROW2D:
+    dev->write_to_window = 0;
+    break;
+
+  case ONEW2D:
+    dev->write_to_window = 1;
+    break;
+
+  case ZEROW2B:
+    dev->write_to_pixmap = 0;
+    break;
+
+  case ONEW2B:
+    XFlush(xwd->display);
+    dev->write_to_pixmap = 1;
+    break;
+  }
 }
 
 #else
