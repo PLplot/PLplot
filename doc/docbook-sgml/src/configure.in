@@ -92,7 +92,7 @@ dnl Check programs
 CHECK_PROG(jade, http://www.jclark.com/jade/)
 CHECK_PROG(jadetex, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(perl, http://www.perl.com)
-CHECK_PROG(mogrify, Imagemagick)
+CHECK_PROG(mogrify, ftp://ftp.wizards.dupont.com/pub/ImageMagick/)
 CHECK_PROG(latex, http://www.ctan.org)
 CHECK_PROG(dvips, http://www.ctan.org)
 
