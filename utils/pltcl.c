@@ -12,13 +12,8 @@
 #include "plplot/plplotP.h"
 #include "plplot/pltcl.h"
 
-static void
-plErrorHandler(Tcl_Interp *interp, int code, int tty);
-
 static int
 AppInit(Tcl_Interp *interp);
-
-extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
 
 /*--------------------------------------------------------------------------*\
  * main --
@@ -149,38 +144,5 @@ AppInit(Tcl_Interp *interp)
 
     Tcl_SetVar(interp, "tcl_prompt1", "pr_prompt", 0);
 
-/* Also before an error is printed.  Can't use normal call mechanism here */
-/* because it trashes the interp->result string. */
-
-    tclErrorHandler = plErrorHandler;
-
     return TCL_OK;
-}
-
-/*
- *--------------------------------------------------------------------------
- *
- * plErrorHandler --
- *
- *	Handles error conditions while parsing.  Modified from the version
- *	in tclMain.c to ensure we are on the text screen before issuing
- *	the error message, otherwise it may disappear.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	Error info is printed to stdout, if interactive, otherwise stderr.
- *
- *--------------------------------------------------------------------------
- */
-
-static void
-plErrorHandler(Tcl_Interp *interp, int code, int tty)
-{
-    pltext();
-    if (tty)
-	printf("%s\n", interp->result);
-    else
-	fprintf(stderr, "%s\n", interp->result);
 }
