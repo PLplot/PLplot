@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:57:59  mjl
-   Now holds all page-related functions.
+   Revision 1.2  1993/02/23 05:17:53  mjl
+   Changed references in error messages from plstar to plinit.  Also changed
+   pladv to call grclr and grpage (instead of gradv, now gone).
 
+ * Revision 1.1  1993/01/23  05:57:59  mjl
+ * Now holds all page-related functions.
+ *
  * Revision 1.2  1992/09/29  04:45:41  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -18,8 +22,6 @@
 
 #include "plplot.h"
 
-static void setsub(void);
-
 /*----------------------------------------------------------------------*\
 * void pladv()
 *
@@ -30,20 +32,19 @@ void
 c_pladv(PLINT page)
 {
     PLINT cursub, nsubx, nsuby;
-    PLINT device, termin, graphx;
     PLINT level;
 
     glev(&level);
     if (level < 1)
-	plexit("pladv: Please call plstar first.");
+	plexit("pladv: Please call plinit first.");
 
-    gdev(&device, &termin, &graphx);
     gsub(&nsubx, &nsuby, &cursub);
     if (page > 0 && page <= nsubx * nsuby)
 	cursub = page;
     else if (page == 0) {
 	if (cursub == nsubx * nsuby) {
-	    gradv();
+	    grclr();
+	    grpage();
 	    cursub = 1;
 	}
 	else
@@ -68,7 +69,7 @@ c_plclr()
     PLINT level;
     glev(&level);
     if (level < 1)
-	plexit("plclr: Please call plstar first.");
+	plexit("plclr: Please call plinit first.");
 
     grclr();
 }
@@ -91,7 +92,7 @@ c_plpage()
 * Set up the subpage boundaries according to the current subpage selected.
 \*----------------------------------------------------------------------*/
 
-static void
+void
 setsub(void)
 {
     PLINT ix, iy;
@@ -133,7 +134,7 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 
     glev(&level);
     if (level < 1)
-	plexit("plgspa: Please call plstar first.");
+	plexit("plgspa: Please call plinit first.");
 
     gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     *xmin = dcmmx(spdxmi);
