@@ -54,6 +54,9 @@ far).
 #endif
 
 #define  PyArray_PLINT PyArray_INT
+/* python-1.5 compatibility mode? */
+#define PySequence_Fast_GET_ITEM PySequence_GetItem
+#define PySequence_Size PySequence_Length
 %}
 
 #ifdef PL_DOUBLE
