@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/07/19 22:31:43  mjl
+ * Revision 1.29  1994/08/25 04:00:27  mjl
+ * Fixed some error output; elminates spurious <RET> at end.
+ *
+ * Revision 1.28  1994/07/19  22:31:43  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
  * inclusion changed to /not/ use a search path so that it will work better
@@ -246,6 +249,11 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 {
     int value = 0;
 
+/* Print error message if one given */
+
+    if (interp->result != NULL && interp->result[0] != '\0')
+	fprintf(stderr, "%s\n", interp->result);
+
 /* Best to check the syntax before proceeding */
 
     if ((argc != 1) && (argc != 2)) {
@@ -258,11 +266,6 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 			 "\"", (char *) NULL);
 	return TCL_ERROR;
     }
-
-/* Print error message if one given */
-
-    if (interp->result != '\0')
-	fprintf(stderr, "%s\n", interp->result);
 
 /* If client exists, tell it to self destruct */
 
