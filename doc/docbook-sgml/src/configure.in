@@ -92,6 +92,9 @@ dnl Check programs
 CHECK_PROG(jade, http://www.jclark.com/jade/)
 CHECK_PROG(jadetex, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(perl, http://www.perl.com)
+CHECK_PROG(mogrify, Imagemagick)
+CHECK_PROG(latex, http://www.ctan.org)
+CHECK_PROG(dvips, http://www.ctan.org)
 
 dnl Check public identifiers
 
@@ -131,4 +134,4 @@ CHECK_DTD(
   [declaration/docbook.dtd],
   [docbook (v3.1)])
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT([Makefile eps2jpeg.pl  tex2eps.pl])

@@ -16,7 +16,7 @@ plplotdoc_html=plplotdoc-html
 jade = jade
 jadetex = jadetex
 perl = perl
-sgml_catalogs=-c /home/rafael/scratch/catalog
+sgml_catalogs=
 
 base = plplotdoc
 main_html = book1.html
