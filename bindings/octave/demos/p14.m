@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -23,9 +23,11 @@ function p14(fg)
   if (!nargin)
     plsetopt "db";
     fig( free_fig); #  unused plot window
+    title("Octave, the movie");
+  else
+    title("");
   endif
 
-  title("Octave, the movie");
   ylabel "";
   xlabel "";
   
@@ -38,14 +40,22 @@ function p14(fg)
   axis([-l l -l l -0.5 0.5]);
 
   colormap(bgr);
-  for k = linspace(0.01, 4*pi, 30)
+
+  for k = linspace(0.01, 3.5*pi, 30)
     meshc(x, y, sin(k).*r);
   endfor
 
-  for k = linspace(0.01, 4*pi, 30)
-    surfc(x, y, sin(k).*r);
+  if(!nargin)
+    for k = linspace(0.01, 2*pi, 15)
+      surf(x, y, sin(k).*r);
   endfor
 
+    shading "flat";
+    colormap (gray);
+    for k = linspace(0.01, 3*pi, 30)
+      surfl(x, y, sin(k).*r);
+    endfor
+  endif
   axis; # reset axis to automatic mode
 
   if (!nargin)
