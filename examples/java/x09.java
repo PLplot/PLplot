@@ -110,8 +110,6 @@ class x09 {
 	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-    // API should probably follow what is done for python
-    //API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg0, yg0, 0);
         pls.cont( z, clevel, xg0, yg0, 0 );
     // May want to reconsider the pls.styl API, i.e., input arrays?
 	pls.styl(1, mark, space);
@@ -231,9 +229,6 @@ class x09 {
 	}
 
 	pls.col0(2);
-    //API, also implement this more complete pls.cont argument list with
-    //second (as indicated by "2" at end) coordinate wrapped.
-    //API	pls.cont(z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10, xg, yg, 2);
         pls.cont( z, lev, xg, yg, 2 );
 	pls.col0(1);
 	pls.lab("", "", "Polar Contour Plot");
@@ -396,17 +391,13 @@ class x09 {
 	if(nlevelneg >0) {
         // Negative contours
             pls.lsty(2);
-        //API	   pls.cont(z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
-        //API	     clevelneg, nlevelneg, "pltr2", xg, yg);
-            pls.cont( z, clevelneg, xg, yg, 0 );
+            pls.cont( z, clevelneg, xg, yg, 2 );
 	}
 
 	if(nlevelpos >0) {
         // Positive contours
             pls.lsty(1);
-        //API	   pls.cont(z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
-        //API		  clevelpos, nlevelpos, "pltr2", xg, yg);
-            pls.cont( z, clevelpos, xg, yg, 0 );
+            pls.cont( z, clevelpos, xg, yg, 2 );
 	}
 		 
     // Draw outer boundary
