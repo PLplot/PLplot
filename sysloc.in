@@ -180,6 +180,13 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
             enable_jpeg=no
         fi ])
     fi
+    if test "$GDLIBDIR" = "default"; then
+        GDLIBDIR=/usr/lib
+    fi
+    libgdla=no
+    if test -r "$GDLIBDIR/libgd.la"; then
+      libgdla=yes
+    fi
     if test "$GDLIBDIR" = "/usr/lib"; then
         GDLIBDIR=default
     fi
@@ -190,6 +197,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+  if test "$libgdla" = "no"; then
     if test -z "$PNGLIBDIR"; then
         AC_CHECK_LIB(png, main, [ PNGLIBDIR=default ], [
         libdirs="\
@@ -215,9 +223,11 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     fi
     ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
 
+  fi
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+  if test "$libgdla" = "no"; then
     if test -z "$JPEGLIBDIR"; then
         AC_CHECK_LIB(jpeg, main, [ JPEGLIBDIR=default ], [
         libdirs="\
@@ -243,9 +253,11 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     fi
     ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
 
+  fi
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+  if test "$libgdla" = "no"; then
     if test -z "$ZLIBLIBDIR"; then
         AC_CHECK_LIB(z, main, [ ZLIBLIBDIR=default ], [
         libdirs="\
@@ -270,7 +282,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         ZLIBLIBDIR=default
     fi
     ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
-
+  fi
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
