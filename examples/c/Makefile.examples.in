@@ -25,6 +25,9 @@ CC = @CC@
 all: x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c \
 	x11c x12c x13c x14c x15c x16c x17c x18c x19c x20c 
 
+clean:
+	rm x??c
+
 x01c: x01c.c
 	plplot_libtool $(CC) x01c.c $(INCLUDEANDLIB) -o x01c
 

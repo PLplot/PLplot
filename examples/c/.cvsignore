@@ -7,3 +7,4 @@ Makefile.examples
 *.la
 *.lo
 x??c
+.samename

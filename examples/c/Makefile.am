@@ -22,7 +22,7 @@
 AM_CPPFLAGS = @INCLTDL@
 examples_cdir = ${prefix}/@DATA_DIR@/../examples/c
 examples_c_DATA = \
-	Makefile.examples \
+	.samename/Makefile \
 	plcdemos.h \
 	lena.pgm \
 	tutor.c \
@@ -46,6 +46,10 @@ examples_c_DATA = \
 	x18c.c \
 	x19c.c \
 	x20c.c
+
+.samename/Makefile: Makefile.examples
+	mkdir -p .samename
+	cp Makefile.examples .samename/Makefile
 
 if with_double
 libplplot = -L../../src -lplplotd
@@ -97,4 +101,4 @@ x19c_LDFLAGS = $(libplplot)
 x20c_LDFLAGS = $(libplplot)
 
 EXTRA_DIST = $(examples_c_DATA) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples
+DISTCLEANFILES = Makefile.examples .samename/Makefile

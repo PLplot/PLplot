@@ -24,38 +24,42 @@ if enable_f77
 AM_CPPFLAGS = @INCLTDL@
 examples_f77dir = ${prefix}/@DATA_DIR@/../examples/f77
 f77m4_source = \
-  fmacs.m4 \
-  x01f.fm4 \
-  x02f.fm4 \
-  x03f.fm4 \
-  x04f.fm4 \
-  x05f.fm4 \
-  x06f.fm4 \
-  x07f.fm4 \
-  x08f.fm4 \
-  x09f.fm4 \
-  x10f.fm4 \
-  x11f.fm4 \
-  x12f.fm4 \
-  x13f.fm4 \
-  x16f.fm4
+	fmacs.m4 \
+	x01f.fm4 \
+	x02f.fm4 \
+	x03f.fm4 \
+	x04f.fm4 \
+	x05f.fm4 \
+	x06f.fm4 \
+	x07f.fm4 \
+	x08f.fm4 \
+	x09f.fm4 \
+	x10f.fm4 \
+	x11f.fm4 \
+	x12f.fm4 \
+	x13f.fm4 \
+	x16f.fm4
 
 examples_f77_DATA = \
-  Makefile.examples \
-  x01f.f \
-  x02f.f \
-  x03f.f \
-  x04f.f \
-  x05f.f \
-  x06f.f \
-  x07f.f \
-  x08f.f \
-  x09f.f \
-  x10f.f \
-  x11f.f \
-  x12f.f \
-  x13f.f \
-  x16f.f
+	.samename/Makefile \
+	x01f.f \
+	x02f.f \
+	x03f.f \
+	x04f.f \
+	x05f.f \
+	x06f.f \
+	x07f.f \
+	x08f.f \
+	x09f.f \
+	x10f.f \
+	x11f.f \
+	x12f.f \
+	x13f.f \
+	x16f.f
+
+.samename/Makefile: Makefile.examples
+	mkdir -p .samename
+	cp Makefile.examples .samename/Makefile
 
 # Since these are all generated....
 CLEANFILES = $(examples_f77_DATA)
@@ -146,7 +150,7 @@ x13f_LDFLAGS = $(libplplotf77)
 x16f_LDFLAGS = $(libplplotf77)
 
 EXTRA_DIST = $(f77m4_source) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples
+DISTCLEANFILES = Makefile.examples .samename/Makefile
 
 # enable_f77
 endif

@@ -25,6 +25,9 @@ F77 = @F77@
 
 all: x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f x16f
 
+clean:
+	rm x??f
+
 x01f: x01f.f
 	plplot_libtool --mode=link $(F77) x01f.f $(INCLUDEANDLIB) -o x01f
 

@@ -59,12 +59,16 @@ data_files = \
 	xtk02.c \
 	xtk04.c
 
-examples_tk_DATA = $(data_files) Makefile.examples $(generated_files)
+examples_tk_DATA = $(data_files) .samename/Makefile $(generated_files)
 examples_tk_SCRIPTS = \
 	tk01 \
 	tk02 \
 	tk03 \
 	tk04
+
+.samename/Makefile: Makefile.examples
+	mkdir -p .samename
+	cp Makefile.examples .samename/Makefile
 
 $(generated_files): 
 	cp ../tcl/x??.tcl .
@@ -92,7 +96,7 @@ xtk04_LDFLAGS = $(libplplottcltk)
 
 EXTRA_DIST = $(data_files) $(examples_tk_SCRIPTS) $(mkindex)
 CLEANFILES = $(generated_files)
-DISTCLEANFILES = Makefile.examples
+DISTCLEANFILES = Makefile.examples .samename/Makefile
 
 # enable_tk
 endif

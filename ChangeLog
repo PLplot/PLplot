@@ -1,4 +1,14 @@
-2002-12-12  Alan W. Irwin <airwin@users.sourceforge.net>
+2002-12-24  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* examples/*/Makefile.examples.in: clean target
+
+	* examples/*/Makefile.am: implement install of Makefile.examples
+	  renamed to Makefile for user convenience.
+
+	* bindings/octave/Makefile.am: implement separate creation of
+	  plplot_octave.oct for build area and install area.
+
+2002-12-23  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* examples/*/Makefile.examples.in: use CC, CXX, and F77 symbols to
 	  avoid hard-coded compiler names.

@@ -30,6 +30,9 @@ CC = @CC@
 
 all: xtk01 xtk02 xtk04
 
+clean:
+	rm xtk??
+
 xtk01: xtk01.c
 	plplot_libtool $(CC) xtk01.c $(INCLUDEANDLIB) -o xtk01
 

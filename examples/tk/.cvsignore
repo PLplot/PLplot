@@ -9,3 +9,4 @@ Makefile.examples
 x??.tcl
 tclIndex
 xtk??
+.samename

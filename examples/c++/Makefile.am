@@ -24,8 +24,12 @@ if enable_cxx
 AM_CPPFLAGS = @INCLTDL@
 examples_cxxdir = ${prefix}/@DATA_DIR@/../examples/c++
 examples_cxx_DATA = \
-Makefile.examples \
-x01cc.cc
+	.samename/Makefile \
+	x01cc.cc
+
+.samename/Makefile: Makefile.examples
+	mkdir -p .samename
+	cp Makefile.examples .samename/Makefile
 
 if with_double
 libplplotcxx = -L../../bindings/c++ -lplplotcxxd
@@ -41,7 +45,7 @@ x01cc_SOURCES = x01cc.cc
 x01cc_LDFLAGS = $(libplplotcxx)
 
 EXTRA_DIST = $(examples_cxx_DATA) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples
+DISTCLEANFILES = Makefile.examples .samename/Makefile
 
 # enable_cxx
 endif
