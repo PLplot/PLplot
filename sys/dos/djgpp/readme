@@ -1,20 +1,37 @@
-Hello,
+This directory contains the source needed to compile plplot under djgpp,
+the gcc for DOS and '386+ machines.  Please retreive djgpp from the
+simtel20 archives and use their references for more info.
 
-Here's my Makefile for dos386/djgpp.  It combines the original
-dos386/makefile with your new makefiles.  I've set it up to use f2c to
-compile the fortran stubs.  By default it outputs two separate
-libraries as before - one for plplot and the other for the fortran
-stubs.
+To compile everything simply:
+1) mkmf
+2) cd tmp
+3) make links
+4) make
+5) mkdir \plplot
+6) make install
 
-The f2c stuff is easy to implement or replace. "f2c -A file.f; gcc
-file.c; del file.c" is equivalent to "f77 file.f".  Of course the
-libf2c.a library is needed for linking.  F2c for djgpp is best
-retrieved from the same site as djgpp - the file to look for is
-tpf2c100.zip (or such like).
+The install can provide the stubs for FORTRAN via "f2c", the
+fortran-to-C converter.  Set the "enable_f77" variable to "yes" in
+./mkmf.bat install the f2c stubs.
 
-------------------------------------------------------------------------------
-Paul Kirschner                                       #include <disclaimer.std>
-pek@logos.res.utc.com
-United Technologies Research Center
+This will install the plplot library in /plplot/lib and the demos in
+/plplot/demos.  This can be changed in the ./cf/init.in file.  (Please
+note the UNIX and MS-DOS name types and change BOTH.)
 
---------------------------
+Other customizations:
+
+ o Define (string) values for LIB_DIR, BIN_DIR, and TCL_DIR in plconfig.h
+   if you want plplot to look somewhere other than the hardwired or
+   environmentally-set locations for the files it needs.
+
+ o Define the appropriate macro in pldevs.h in order to enable the
+   corresponding output driver.
+
+This procedure was done with djgpp 1.11m5.  The new djgpp 1.12 was just 
+released and I haven't downloaded it yet.
+
+Paul Kirschner
+United Technologies Reaserch Center
+pek@utrc.utc.com
+
+
