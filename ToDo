@@ -21,8 +21,8 @@ Areas currently under development
 	Paul Kirschner			DOS/DJGPP
 	pek@logos.res.utc.com
 
-	Mark Olesen			DOS/EMX
-	olesen@weber.me.queensu.ca
+	Hiromi Kimura			VMS port
+	hiromi@tac.tsukuba.ac.jp
 
    This is not to say that other platforms are unsupported, as often we do
    work on other platforms, and will fix whatever problems we encounter.
@@ -34,13 +34,11 @@ Areas currently under development
 	Ultrix
 	SunOS 5.x
 	(any other *ix not mentioned)
+	Macintosh
 	Amiga
 	Unicos
 	AIX
 	SunOS 4.x
-
-    (also VMS, if anyone ever gets the package working there again)
-    (also Macintosh -- there is a very old port for it around somewhere)
 
  - Continue updating the manual.
 
@@ -90,14 +88,7 @@ Areas currently under development
 	- vector field plotter?
 	- better document the 2d function plotter API in plfcont, etc.
 
- - File familying is hosed.
-
- - Various color drivers should be upgraded to work similar to the tek
-   driver, with support for setting the color palette from the user
-   program (API) as well as cmap1.  I (Maurice) will probably only be
-   supporting the tek, X, ps, and Amiga drivers in this regard, so
-   contributions are welcomed.  The tek driver shows how to get the most
-   out of a 16 color display.
+ - File familying is iffy and needs a full check out.
 
  - Write plcfill() or whatever to cheaply fill 2d functions based on cell
    value only.  Should be much faster than plshade for many grid points
@@ -146,15 +137,8 @@ Areas currently under development
 
  - Write Fortran counterparts to x14c and x15c?
 
- - start using m4 to preprocess the Fortran demos?
-
- - add support for shared libs on AIX, Irix, Alpha/OSF
-
- - check out shared library support under SAS/C -- supposed to be easy
-   (6.0 and later)
-
- - Do something about the Tcl/TK shared lib situation (not really PLplot,
-   but related).
+ - check out shared library support under SAS/C on the Amiga -- supposed to
+   be easy (6.0 and later)
 
  - Split off Tcl-DP stuff from Tk stuff better, get it working with DP-lite.
 
@@ -162,15 +146,19 @@ Areas currently under development
 
  - const'ify plplot API where appropriate.
 
- - Option in TK driver to preserve aspect ratio during zooms.
-
  - fix bugs in Amiga print driver.
 
  - mouse dragging in TK driver text window should cause a scroll.
 
  - get plplot up under gcc on the Amiga?
 
-
+ - fix problems with hidden line removal on "spiky" 3D plots on high
+   resolution (300 dpi or greater) devices.  There are little gaps that
+   sometimes appear after a line reappears from behind a surface.  In
+   Mathematica, hidden line removal is done by the device driver (which 
+   receives PostScript) instead of beforehand.  (There is a section in the
+   Mathematica manual where they mention hidden-line removal as an inherently
+   device dependent problem.)
 
 
 Things planned for sometime in the future.

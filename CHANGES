@@ -1,6 +1,8 @@
-This file contains a list of the major changes in PLplot.  It is best to
-look through this file for new features, etc, until the new documentation
-is complete.
+This file contains a list of the changes in the latest release of PLplot.
+It is best to look through this file for new features, etc, until the new
+documentation is complete.  To quickly understand the major changes, it
+is best to look at the file NEWS, which is created by paring down the
+contents of this file by omitting all but the most important info.
 
 I typically construct entries by stripping off all the CVS (the source
 maintenance program we use) commit messages from each file.  Those that
@@ -9,196 +11,1307 @@ Changes that do not reflect any new capability (changes to comments,
 header file shuffling, elimination of warnings, etc) I will often omit.
 
 *****************************************************************************
-PLplot 4.99i changes
-Sep ?, 1994
+PLplot 4.99j changes
+Jun 6, 1995
 *****************************************************************************
-
-This release contains several important bug fixes.  Changes grouped by
-files affected.  The old Changes.log file has been moved to the doc
-directory as Rel4p99h.doc for future reference.  
-
-Maurice LeBrun	mjl@dino.ph.utexas.edu
-
------------------------------------------------------------------------------
-Miscellaneous
------------------------------------------------------------------------------
-
-Changed distribution status to GPL/LGPL.  Added GNU files: COPYING (GPL),
-COPYING.LIB (LGPL).
-
-Name changes: Changes.log -> CHANGES, README.1ST -> NEWS, COPYRIGHTS ->
-Copyright.
-
-Added file: INSTALL, to explain install procedure under Unix.  Chopped
-from the FAQ.
-
-Moved: README.local to doc/.
-
-FAQ updated.
 
 -----------------------------------------------------------------------------
 Install scripts, makefile, etc.
 -----------------------------------------------------------------------------
 
-- Moved remaining stuff for building configure script to cf/ to reduce
-  top level clutter.
-- Eliminated use of -fast for Fortran compiler under SunOS.
-- Switched enable_x11 to enable_xwin to be compatible with driver name.
-  Really works now.
-- Eliminated bogus lines dealing with shared libraries on systems where
-  I don't support them yet.
-- Minor fix to allow for a missing tmp directory.
+Changes to scripts to improve portability, by Mark Olesen:
+
+  The Configuration files changed to use make variables PLLIB_NAME,
+  PLLIB_BASE, A, ADD_DRIVER_C, ADD_DRIVER_OBJ.
+
+  A = .a
+  PLLIB_NAME is the name used for ld/linking
+  PLLIB_BASE is the base part of the library name as it appears on the disc.
+
+  These variables should assist with truncated filesystems such as DOS.
+
+  eg.,
+	UNIX
+  PLLIB_NAME	= plplot
+  PLLIB_BASE	= libplplot
+
+	emx/gcc
+  PLLIB_NAME	= plplot
+  PLLIB_BASE	= plplot
+
+	djgpp/gcc
+  PLLIB_NAME	= plplt
+  PLLIB_BASE	= libplplt
+
+  The new Unix distribution is such that the emx and djgpp cf/ will not have
+  to diverge too much from it.  This should help future portability.
+
+--
+
+Many changes to upgrade to Autoconf 2.3 and other improvements.  Thanks to
+John Eaton for his efforts in the conversion -- it would have been a while
+before I got around to it.  Even so, it still took several days of testing,
+bug fixing, and additional enhancement before I was happy with it (of course
+this includes time spent implementing new or improved features).  The
+biggest new feature is that the build directory can be anywhere, allowing
+one to easily build with multiple configurations off of one source tree.
+A detailed list of changes and enhancements follows.
+
+	* cf/configure.in:
+	Comment out test and code for running configure	as ../configure.
+	Use AC_CHECK_PROG, not AC_PROGRAM_CHECK.
+	Use AC_ARG_WITH, not AC_WITH.  Add help strings.
+	Use AC_ARG_ENABLE, not AC_ENABLE.  Add help strings.
+	Simplify setting of prefix.
+	Use AC_HEADER_STDC, not AC_STDC_HEADERS.
+	Use AC_CHECK_HEADERS, not AC_HAVE_HEADERS.
+	Use AC_FUNC_VFORK, not AC_VFORK.
+	When creating Makefile.in and Makedemo.in, look for configuration
+	files in $srcdir/cf, not just cf.
+	Use AC_DEFINE(XX, ["$XX]), not AC_DEFINE_UNQUOTED for LIB_DIR,
+	BIN_DIR, and TCL_DIR.
+	When creating links, look for sources relative to $srcdir.
+	Create output files before printing status message.
+	Make link to $srcdir/Makefile.
+
+	* cf/aclocal.m4:
+	Use AC_MSG_RESULT, not AC_VERBOSE.
+	Use AC_TRY_RUN, not AC_TEST_PROGRAM.
+
+	* cf/init.in (srcdir, top_srcdir): New substitutions.
+
+	* cf/initlib.in (CXX_FLAGS): Add -I. to list.
+	(PLLIB_DIR, PLFNT_DIR): Set to `.', not `../lib'.
+
+	* cf/install.in (install_lib): Look for files not created during
+	the build process relative to $(top_srcdir).
+	(install_demos): Likewise.
+
+	* cf/lib_sh_sun.in (.cc.o): New rule.
+
+	* cf/misc.in (clean): Delete $(PLLIB_BASE)* from build directory.
+	(distclean): Delete config.status, config.cache, and config.log
+	too.
+
+	* cf/sysconf.in: Only print message about experimental support for
+	shared libs with gcc if system really is HP.
+	Use AC_CHEC_PROG, not AC_PROGRAM_CHECK.
+	On SunOS-4 systems, set with_shlib=no.
+
+	* cf/sysloc.in:
+	Use AC_ARG_ENABLE, not AC_ENABLE.  Add help strings.
+	Use AC_PATH_X, not AC_FIND_X.
+	Use AC_TRY_CPP, not AC_TEST_CPP.
+	Use AC_CHECK_LIB, not AC_HAVE_LIBRARY.
+
+	* Makefile (all): New target, same as default.
+
+	* cf/configure.in, cf/sysloc.in, cf/sysconf.in:
+	Use AC_MSG_CHECKING, AC_MSG_RESULT, and AC_MSG_WARN instead of echo.
+
+	* cf/configure.in: Include sysconf.in before AC_REQUIRE_CPP so
+	that CC will be set before attempting to set CPP.
+
+	* cf/sysconf.in: Only turn off shared libraries on SunOS-4 systems
+	if using gcc (actually, it should be possible to make this work,
+	but the flags need to be set differently).
+
+	* cf/configure.in (AC_REQUIRE): Ask for at least version 2.3.
+
+	* cf/aclocal.m4 (AC_PREFIX_PROGRAM): Rename from AC_PREFIX.
+	Use AC_MSG_RESULT and AC_MSG_WARN instead of using echo directly.
+
+	* cf/aclocal.m4 (AC_OUTPUT_FILES, AC_OUTPUT_HEADER):
+	New macros, copied and modified from autoconf version 2.3.
+
+	* configure.in: Create Makefile.in and Makedemo.in in the current
+	directory, not in tmp.
+	Call AC_PREREQ and AC_INIT before doing anything else.
+	If configure has been invoked from the top-level source directory,
+	cd to tmp (possibly creating it first) and then exec ../configure.
+	Create links in current directory (no need to modify $srcdir now).
+	Create output files in current directory, not in tmp.
+
+Other changes:
+
+- configuration file loading was busted by Autoconf 2.x, I had to hack
+the AC_INIT_NOTICE macro to allow it to work.
+
+- the option to skip loading the defaults file is now invoked by using any of: 
+-without-defaults, --without-defaults, -with-defaults=no, --with-defaults=no
+to be more like typical configure parameters.  It is handled differently
+than the rest but this is transparent to the user.  A help entry is
+provided. 
+
+- the PLplot version of the AC_PREFIX_PROGRAM macro fixed to work under
+Autoconf 2.x
+
+- a fixed version of the AC_PROG_CPP macro was added
+
+- new macros added to dramatically simplify sysloc.in: FIND_INC, FIND_LIB,
+ADD_TO_INCS, and ADD_TO_LIBS. 
+
+- a patched version of AC_ARG_ENABLE added that ignores missing help
+entries.  Good for forbidding certain command line input or making invisible
+options.
+
+- new macros: MY_ARG_WITH, a front-end to AC_ARG_WITH, and MY_ARG_ENABLE, a
+front-end to AC_ARG_ENABLE.  MY_ARG_WITH registers a with_<opt> flag while
+forbidding the use of enable_<opt>.  MY_ARG_ENABLE registers an enable_<opt>
+flag while forbidding the use of with_<opt>.  Aimed at reducing the user's
+frustration with incorrect command input caused by confusing the two (which
+normally doesn't result in any kind of warning or error).
+
+- added --with-nobraindead (not for general use).
+
+- added a SHARED variable to the configure/Makefile that is only set when
+building shared libraries and is used to decide whether executables need to
+be rebuilt before installing (better than old way).
+
+- Now try to create links to source files each time configure is run,
+sending output to /dev/null.  A help to developers when new files have
+been added to the source tree since the first time configure was run.
+
+- The run results now sent to the file config.summary, so you can type
+"ls config.*" to see all the informational files created by configure.
+
+- Now searches for vendor Fortran compiler if enable_f77=yes.  If that
+isn't found, switches to f2c.  If that isn't found, enable_f77 is set
+to "no" (Fortran interface layer is omitted).
+
+- added --with-dbmalloc, for linking with a debugging malloc library.
+
+- updated install target to reflect recent changes and improved shared
+library behavior
+
+
+Other miscellanea:
+
+install.in: 
+Added soft link in examples/tk to all the examples/tcl/x??.tcl files, since
+they are used by both tcldemos.tcl and tkdemos.tcl now.
+
+sysloc.in: 
+Eliminated some dangerous whitespace (only in the Bourne shell!).  Thanks to
+John Interrante for this fix.
+
+Makefile:
+Changed the 'realclean' target to 'distclean'.  Thanks to John Interrante
+for the suggestion.
+
+misc.in:
+Changed all occurances of 'rm' to $(RM).  Inserted the 'distclean' target:
+thanks to John Interrante for the suggestion.
+
+init.in:
+Inserted RM = rm -f definition.  The -f option represses the warning by rm
+if the file doesn't actually exist (change suggested by John Interrante).
+
+configure.in:
+Now only creates tmp/shared if shared libraries are being built.
+Removed check for install script -- I don't use one yet.  Added check for
+a library popen() call to make the -h output piping portable.
+
+install.in:
+Now only rebuilds executables during installation if the shared/ subdir is
+present (i.e. if shared libraries are being built).
+
+lib_ar.in lib_sh.in lib_sh_aix.in lib_sh_sun.in:
+Eliminated special treatment for all files except tcpip.c.  If the optimizer
+won't work, either: get the vendor to fix it, configure --without-opt, or
+hand-roll the makefile.  It's too much work to keep special cases around.
+
+sysconf.in:
+Fixed CPP value when gcc is in use.  Cleaned up shared library support.
+
+Added Files: lib_sh_linux.in 
+configure.in sysloc.in:
+Support generation of shared lib on Linux, using ELF tools.
+
+
+plConfig.h.in:
+ * Revision 1.7  1995/06/01  21:35:54  mjl
+ * Added HAVE_POPEN and HAVE_ITCL macros.
+ *
+ * Revision 1.6  1995/05/15  07:56:07  mjl
+ * Made the macros DEBUGGING_MALLOC and NOBRAINDEAD configurable.
 
 -----------------------------------------------------------------------------
 Main source files
 -----------------------------------------------------------------------------
 
-plpage.c:
- * Revision 1.11  1994/08/25  04:10:03  mjl
- * Moved plClrCWindows() out of pladv() into plP_eop(), to ensure it always
- * gets called at the end of a page.  Put in handling for insufficient
- * remaining space in windows struct.
-
-plctrl.c:
- * Revision 1.26  1994/09/02  05:09:42  mjl
- * Flush stdout before issuing error message, to be sure we are really on the
- * text screen.
+pdfutils.c:
+ * Changed debug output to use new pldebug() function.
  *
- * Revision 1.25  1994/08/25  04:08:09  mjl
- * Fixed limiting saturation value in a case that was affecting grayscale
- * output.  Contributed by Radey Shouman.  Also modified pltext/plgra to
- * return silently if plinit not yet called.
+ * Fixed up Copyright message.
 
-plcore.c:
- * Revision 1.39  1994/08/25  04:06:26  mjl
- * Moved call of plClrCWindows() to plP_eop where it belongs.
+plargs.c:
+ * Now only pipes help output through a pager if HAVE_POPEN is defined (done
+ * during configure).  Added check in plMergeOpts() to ensure the user isn't
+ * passing an improperly-terminated options table.
+ *
+ * Fixed problem with file header.
+ *
+ * Protect against NULL pointer dereference.
+ *
+ * Added handling for new flags: -verbose, -debug, -ncol0, -ncol1.  Eliminated
+ * all uses of PL_OPT_ENABLED in favor of PL_OPT_DISABLED (applied in reverse).
+ * Changed help (-h) output to pipe output to $PAGER if available, otherwise
+ * "more" (if found).  Still needs to be made portable using configure -- right
+ * now only works under Unix.  Other minor tweaks.
+ *
+ * Changed ProcessOpt to mallocate a temporary copy of an option before giving
+ * it to a handler function if PL_PARSE_NODELETE is specified.  Some of the
+ * handlers call strtok(), altering the option they are handed.
+ *
+ * Fixed plParseOpts() to correctly remove recognized arguments from argv[].
+ *
+ * Massively reworked.  Now it is absolutely trivial to merge user command line
+ * options to the internal options list for use when parsing the command line.
+ * The globally visible functions are now:
+ *
+ *   plClearOpts()   Clear internal option table info structure.
+ *   plResetOpts()   Reset internal option table info structure.
+ *   plMergeOpts()   Merge user option table into internal info structure.
+ *   plSetUsage()    Set the strings used in usage and syntax messages.
+ *   plSetOpt()      Process input strings, treating them as an option and
+ *                   argument pair.
+ *   plParseOpts()   Process options list using current options info.
+ *   plOptUsage()    Print usage & syntax message.
+ *
+ * See internal documentation and either x01c.c or plrender.c for example
+ * usage.
+ *
+ * Fixed exit with an error code of 0 (was 1) when encountering a -v or -h.
+ * Nicer in shell scripts when only verifying the version number.
+ *
+ * Fixed some braindamage incurred last update.
+ *
+ * Handling of the geometry string improved; now handles strings of the form:
+ *     1) -geometry WxH+Xoff+Yoff
+ *     2) -geometry WxH
+ *     3) -geometry +Xoff+Yoff or -geometry Xoff+Yoff
+ *     4) -geometry 0x0+Xoff+Yoff
+ * (previously only types 1&2 were handled).  Contributed by Mark Olesen.
+ *
+ * Added -freeaspect command line flag, also fixed a bogosity introduced
+ * last update.
+ *
+ * Added PL_PARSE_MERGE, set if passed in table is to be merged with internal
+ * options.  Function will return on first unrecognized input.  This is the
+ * preferred way to combine user and internal options.  User options have
+ * precedence over internal options.  Also changed parsing to allow for
+ * "holes" in argv list (i.e. all argc entries are checked even if some are
+ * 0-length strings or null).
 
 plbox.c:
- * Revision 1.14  1994/08/29  22:05:19  mjl
- * Fixed a bug that was preventing the exponential label from showing up
- * under certain circumstances.
+ * Eliminated some temporary variables and variables not in use.
+ *
+ * Fix to increase spacing between inverted tics and numeric labels; in some
+ * cases they were running into each other.  Contributed by John Interrante.
+ *
+ * Added new options:
+ *   f: Always use fixed point numeric labels
+ *   h: Draws a grid at the minor tick interval
+ * See x04c for an example of both of these (second plot).
+ * Upgraded plaxes() to be a perfect superset of plbox() (now plbox is
+ * just a front-end to plaxes).  Substantially improved code structure and
+ * eliminated some inconsistencies.
+ *
+ * Fix for obscure 3d plotting bug, contributed by Bryan Peterson.
 
-plcore.h:
- * Revision 1.24  1994/08/26  19:17:44  mjl
- * Entries for conex device added; contributed by Mark Olesen.
+plbuf.c:
+ * Cruft elimination.
+ *
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Added code to write & restore plot window parameters.
 
-plDevs.h.in:
- * Revision 1.4  1994/08/26  19:17:21  mjl
- * Define for conex device added; contributed by Mark Olesen.
+plcont.c:
+ * Eliminated a #pragma message() that some people found objectionable :-).
+
+plcore.c:
+ * Added some casts to eliminate warnings under SunOS 4.x.
+ *
+ * Changed debugging output to use new function pldebug().  Added plstrm_init()
+ * for stream initialization, including color map allocation, and added calls
+ * to it in appropriate places.  Added free(colormaps) in plend1().  Changed
+ * plcpstrm() to deal correctly with new variable-sized colormaps.
+ *
+ * Made the plsc->plwin array circular so that if we run out of windows we just
+ * start over from 0.  Also, plTranslateCursor now starts with the most
+ * recently created windows, rather than the oldest, since newer windows are
+ * more likely to be relevant.  Contributed by Radey Shouman.
+ *
+ * Moved font-related code into plsym.c.
+ *
+ * Added plP_swin to set up plot window parameters.  Changed driver
+ * transformation code to make calls to plP_dcpcx, plP_dcpcy, plP_pcdcx,
+ * plP_pcdcy where appropriate.  Changed to use new variables plsc->phyxlen,
+ * plsc->phyylen where appropriate.  Changed printf's in device prompt code to
+ * fprintf to stdout or stderr to be more flexible on non-Unix systems.  The
+ * function plsMouseEH was changed to plsButtonEH (more accurate), and both
+ * this and the plsKeyEH function changed to take a PLGraphicsIn *.  Obsolete
+ * functions plsasp and plslpb removed.  Many accessor functions removed.
+ *
+ * Changed orientation swapping code to not preserve aspect ratio if
+ * plsc->freeaspect is set.
+ *
+ * Moved a misplaced line of code affecting stream cleanup.
+ *
+ * Changed a PLINT to an int to make a DOS compiler happy about its use as a
+ * for loop index.  Now plsc->ipls is set as soon as a new stream is created
+ * (by plsstrm).  Last: when stream 0 is ended by plend1() or plend(), the
+ * stream data is zeroed out to prevent garbage values from hanging around.
+
+plctrl.c:
+ * Moved code that was previously in plstream.c into here.
+ *
+ * A nit.
+ *
+ * Fix overrun of allocated memory.  Can now call plinit() again without
+ * getting an immediate core dump.
+ *
+ * Changed debugging output to use new function pldebug().  Added static
+ * functions plcmap0_def() and plcmap1_def() for setting up default color maps;
+ * eliminated old global functions plCmap0_init() and plCmap1_init().  Changed
+ * plscmap0n() and plscmap1n() actually allocate the color maps based on the
+ * requested number of colors.  These can be called at any time to change the
+ * number of colors in use by PLplot, although the best time is before driver
+ * initialization (since the drivers are typically not as dynamic).
+ *
+ * Fixed plscmap1l documentation and changed call syntax to pass "rev" array.
+ *
+ * Fixed some braindamage incurred last update.
+ *
+ * Interpolation of control points in cmap1 space (between n and n+1th
+ * control points) now goes around the "back" side in hue (hue = 0) if
+ * cmap1cp[n].rev is set.  There are some smooth color maps that are
+ * unattainable without this capability.
+ *
+ * Ifdef inserted to handle pathnames under VMS.
+
+plcvt.c:
+ * Miscellaneous cleaning up, comments added.  Functions added for converting
+ * from device coordinates to other coordinates.
+
+pldtik.c:
+ * Broke pldtik() into two functions -- pldtik(), which handles only tick
+ * spacing, and pldprec(), which handles only precision and significant
+ * digits settings.  Each substantially clarified in the process.
+
+plot3d.c:
+ * Changed names of some variables defined at file scope to remove a conflict
+ * in the Mac port.
+ *
+ * Eliminated many unnecessary accessor variables.
+ *
+ * Switch to the new syntax for pldtik().
+
+plpage.c:
+ * Made the plsc->plwin array circular so that if we run out of windows we just
+ * start over from 0.  Also, plTranslateCursor now starts with the most
+ * recently created windows, rather than the oldest, since newer windows are
+ * more likely to be relevant.  Contributed by Radey Shouman.
+ *
+ * plGetCursor() changed to take a (PLGraphicsIn *).  Now this function is
+ * just a front-end.  plTranslateCursor() added to do the work of looking up
+ * the world coordinates.  Eliminated plClrCWindows().
+ *
+ * Switch to the new syntax for the window structure -- now part of the
+ * plstream.
+ *
+ * Name changes to cursor variables, changed plAddCWindow() call syntax.
+
+plshade.c:
+ * Changed debugging output to use new function pldebug().
+ *
+ * Correct to notice if either pltr or pltr_data is NULL.  Required to
+ * make C++ abstraction work correctly.
+
+plsym.c:
+ * Changed debugging output to use new function pldebug().
+ *
+ * Changed plhrsh() to plot continuous symbols even if the current line style
+ * is dashed (symbols plotted in dashed line styles look pretty odd).
+ * Contributed by Radey Shouman.
+ *
+ * Absorbed all string and font related code from plstring.c and plfont.c.  Now
+ * most of this is all internal to this file, so some global variables and
+ * functions were made static.  Changed names of a variable defined at file
+ * scope to remove a conflict in the Mac port.
+ *
+ *
+ * Old log entries from plsym.c:
+ *
+ * Added a fast point draw capability: if code=-1 is given to plpoin or
+ * plpoin3, instead of drawing a Hershey font character it draws a point
+ * using simply a move and draw.  This is at least 4X faster.
+ *
+ * Changed syntax of the new 3d function plpoin3() to be more like plpoin(),
+ * and moved to this file.
+ *
+ * Old log entries from plstring.c:
+ *
+ * Eliminated unnecessary accessor variables and other cleaning up.
+
+plvpor.c:
+ * Eliminated unnecessary accessor variables and other cleaning up.
+
+plwind.c:
+ * Eliminated unnecessary accessor variables and other cleaning up.
+ * Added call to plP_swin() to set window parameters.
+ *
+ * Changed plAddCWindow() call syntax.
+
+-----------------------------------------------------------------------------
+Main header files
+-----------------------------------------------------------------------------
 
 drivers.h:
- * Revision 1.21  1994/08/26  19:17:42  mjl
- * Entries for conex device added; contributed by Mark Olesen.
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Prototypes for Mac driver.
+
+metadefs.h:
+ * Obsoleted old metafile types and other cleaning up.
+
+plcdemos.h:
+ * All C demo files: changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+ *
+ * Added include of ctype.h for the demos that need it.
+ *
+ * Created to keep all the junk common to the C demos.  Helps to keep me
+ * from cluttering up plplot.h.
+
+plcore.h:
+ * Repaired some bogus comments.
+ *
+ * Added include of pldebug.h for debugging support.
+ *
+ * Two font control variables moved elsewhere.
+ *
+ * Changed a PLINT to an int to make a DOS compiler happy about its use as a
+ * for loop index.
+
+pldebug.h:
+ * Include malloc.h (for debugging malloc) if DEBUGGING_MALLOC is defined.
+ *
+ * Added to help with debugging support.  Includes macros as well as a
+ * static function pldebug, which has a stdarg (vargarg) based argument list.
+ * Debugging output is only enabled if DEBUG is defined prior to inclusion of
+ * this file and the debug stream variable is set (can be set by -debug command
+ * line option).
+
+plevent.h:
+ * Changed definitions of control keys with ASCII equivalents to their ASCII
+ * value rather than the Xlib value.  These include: PLK_BackSpace, PLK_Tab,
+ * PLK_Linefeed, PLK_Return, PLK_Escape, and PLK_Delete.  Using ASCII for
+ * these just makes more sense.
+
+plplot.h:
+ * Added PL_OPT_DISABLED, and not that PL_OPT_ENABLED is obsolete.  Removed
+ * TK related function declarations -- prototypes for these now must be
+ * obtained by including pltk.h.
+ *
+ * Moved inclusion of <math.h>, <string.h>, and <ctype.h> to plplotP.h, since
+ * they are strictly needed by plplot.h.
+ *
+ * Added include of ctype.h.  Added PLESC_SWIN driver escape function define,
+ * used to set plot window parameters.  Added defines for window parameter
+ * flags PLSWIN_DEVICE and PLSWIN_WORLD.  Obsoleted the PL_PARSE_OVERRIDE and
+ * PL_PARSE_MERGE flags as well as plParseInternalOpts() and plSetInternalOpt()
+ * function calls.  Eliminated the PLCursor, PLKey and PLMouse input structures
+ * in favor of a PLGraphicsIn structure, which is used for all graphics input.
+ * Changed the PLWindow struct to the name PLDisplay (holds display-oriented
+ * data) and added the width and height members.  Changed the plCWindow struct
+ * to the name PLWindow and tweaked the types of the structure members to be
+ * more relevant.  Eliminated defines and prototypes for the obsolete plsasp()
+ * and plslpb() API functions.  Changed/added prototypes for plsKeyEH and
+ * plsButtonEH to expect first handler argument to receive a (PLGraphicsIn *).
+ * Changed/added prototypes for parse routines (see plargs.c).  plGetCursor()
+ * also now expects a (PLGraphicsIn *), and prototype for plTranslateCursor()
+ * added.
+ *
+ * Changed prototype for plscmap1l().
+ *
+ * Moved definition of window coordinate structure into here.  Also changed
+ * window relative device coordinate names to something more appropriate
+ * (this is the last time I will change this, I promise).
+ *
+ * Added PL_PARSE_MERGE flag for merging user option tables with internal one.
+ *
+ * Changed stream variables vpX, vpY to vdX, vdY, since they now hold the
+ * relative device coordinates (0 to 1) rather than the physical coordinates.
+ *
+ * Correction to work with the one true language, C++.
+ *
+ * Fixed prototype for pltkMain().
+
+plplotP.h:
+ * Repaired some bogus comments.
+ *
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Added include of pldebug.h so that all PLplot source files now get it.
+ * Eliminated prototypes for obsolete functions plCmap0_init() and
+ * plCmap1_init() and added prototype for new function plstrm_init().
+ *
+ * Eliminated SCHAR in favor of simply "signed char".  Removed prototypes
+ * for obsolete functions.
+ *
+ * Moved inclusion of <math.h>, <string.h>, and <ctype.h> to plplotP.h, since
+ * they are strictly needed by plplot.h.
+ *
+ * Prototypes for many obsolete accessor functions removed.  Prototype for
+ * new function plP_swin added.
+ *
+ * Now drops down to pre-ANSI-C behavior as regards fpos_t under VMS since
+ * the code in plmeta.c doesn't work under the VMS implementation.
+ *
+ * Moved definition of window coordinate structure into plplot.h since it's
+ * now used in the plstream definition.  Also updated prototype for pldtik
+ * and added prototype for pldprec.
+ *
+ * Changed stream variables vpx.. to vdx.. since they now hold the relative
+ * device coordinates (0 to 1) rather than the physical coordinates.
+ *
+ * Virtual coordinate space for X-based drivers and metafile increased to
+ * 32K by 32K, in order to improve appearance of plots at high levels of
+ * magnification.
+
+plserver.h:
+ * Changed header file inclusions.
+ *
+ * Added include of pltk.h.
+
+plstream.h:
+// Fixed include file semantics.
+//
+// Changed to a more natural naming scheme.
+//
+//
+// Old Log entries (as stream.h):
+//
+// Mostly formatting improvements, but also some overloading resolutions
+// and some C++ style considerations.
+//
+// Fixed return codes for new interface routines.
+//
+// Fixed prototype for scmap1.
+//
+// Beginnings of 2-d abstraction for contouring and shading.  Better
+// constructors.  Names for colors.  Other minor stuff.  Still need to do
+// major hacking on the 2-d abstraction, and also need to remove large
+// numbers of unnecessary methods.
+//
+// New C++ wrapper around the PLplot API.  Needs much work.
+
+plstrm.h:
+ * Name change.  Went by the book this time.
+ *
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Added new stream variables: verbose (be more verbose than usual), debug
+ * (print debugging output to stderr), and initialized (set if the stream has
+ * been initialized).  Eliminated cmap0setcol and cmap1set.  Changed cmap0 and
+ * cmap1 declarations to be just pointers (allocation now done during stream
+ * initialization).
+ *
+ * Added variable plbuf_read for use when reading from the plot buffer.  Added
+ * variable dev_swin for drivers that need calls to set plot window parameters
+ * directed their way. Changed the name *MouseEH to *ButtonEH.  Changed event
+ * handler prototypes to accept a (PLGraphicsIn *).  Added a *LocateEH and
+ * *LocateEH_data.  Added the variables phyxlen and phyylen.  Changed name
+ * "nCWindows" to nplwin, "windows" to plwin.  Eliminated obsolete variables
+ * dpxscl, dpxoff, dpyscl, dpyoff, mpxscl, mpxoff, mpyscl, mpyoff.  Added
+ * prototype for plGinInit();
+ *
+ * Fixed some braindamage incurred last update.
+ *
+ * Added "freeaspect" stream variable: if set, aspect ratio is not preserved
+ * on orientation swaps.
+ *
+ * Made window coordinate structure a stream variable as it should be.
+
+pltcl.h:
+ * Made C++ friendly.
+ *
+ * Split off IPC routine prototypes (not needed by user) into tcpip.h.
+ *
+ * Added prototype for pltclMain().
+
+pltk.h:
+ * Added include of pltcl.h.
+ *
+ * Fix bogus C++ unfriendly header.
+ *
+ * Added to hold all TK-related PLplot global function prototypes.
+
+pltkd.h:
+ * Added to hold all definitions & prototypes specific to the Tk driver.
+ * There shouldn't be much need for the user to access this now, but it's
+ * here if you want it.
+ *
+ *
+ * Old log entries from plplotTK.h:
+ *
+ * Added include of pltk.h, dp.h (if DP extensions requested), and added new
+ * variables updatecmd and child_pid to state structure.
+ *
+ * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
+ * Also variables instr, max_instr, and locate_mode added.
+ *
+ * Added cursorX, cursorY for holding coordinates at mouse click.
+
+plxwd.h:
+ * Created to hold definitions and prototypes specific to the X-driver.  The
+ * user shouldn't need to access this file but it's here just in case.
+ *
+ *
+ * Old entries from plplotX.h:
+ *
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Made the ordinary graphics context and the current color a device-dependent
+ * quantity rather than a display-dependent one, to fix problems with color
+ * selection when plotting to separate streams/xwindows.  Thanks to Radey
+ * Shouman for pointing it out.
+ *
+ * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
+ * Also variables added for dealing with graphic crosshairs.
+ *
+ * Added cursorX, cursorY for holding coordinates at mouse click.
+ *
+ * Added prototypes for plD_open_xw() and plX_setBGFG().
+
+tclMatrix.h:
+ * Added missing include of iostream.h for C++ codes including this.
+ *
+ * Eliminated extraneous include of tcl.h.
+ *
+ * Added interpreter to tclMatrix struct for more robust resource recovery.
+
+tcpip.h:
+ * Header file for IPC function prototypes.
 
 -----------------------------------------------------------------------------
-Fortran interface
+C Example programs
 -----------------------------------------------------------------------------
+
+All C demo files: 
+ * changed file inclusion to use quotes instead of angle
+ * brackets so that dependencies are retained during development.
+
+ * now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+
+ * changed plParseInternalOpts() call to plParseOpts().
+
+x01c.c:
+ * Updated options table syntax -- PL_OPT_ENABLED no longer used.  Fixed
+ * error exit.
+ *
+ * Changed locate code to new syntax (using a PLGraphicsIn).  Added a command
+ * line option "-locate" to turn on the locate code (off by default).  This
+ * also illustrates how easy it is for PLplot to parse user command line flags.
+ *
+ * Switched to the new syntax for the window structure variables and
+ * shortened the info printed out by the get cursor loop.
+ *
+ * Name changes to locator coordinate variables.
+
+x14c.c:
+ * Changed to use Tk driver instead of DP, since DP doesn't handle cleanup
+ * from multiple interpreters correctly (problem is in Tcl-DP I think).
+
+x15c.c:
+ * Fixed arglists for plscmap1l().
+
+x16c.c:
+ * All data structures now allocated at runtime to allow greater flexibility.
+ * Command line options added: -ns <n>, sets number of shaded levels, -nx <n>
+ * and -ny <n> set number of data points in x and y, respectively.
+
+-----------------------------------------------------------------------------
+F77 API
+-----------------------------------------------------------------------------
+
+scstubs.c:
+ * Eliminated obsolete functions PLSASP and PLSLPB.
+ *
+ * Fixed plscmap1l documentation and changed call syntax to pass "rev" array.
+
+All f77 demos:
+
+! All use of double quotes for Fortran strings (not strictly legal)
+! eliminated in favor of single quotes.
 
 -----------------------------------------------------------------------------
 Tcl API
 -----------------------------------------------------------------------------
 
 pltcl.c:
- * Revision 1.5  1994/08/25  04:05:16  mjl
- * Fixed error output; removes spurious <RET> at end.
+ * Now is [incr Tcl] aware, if HAVE_ITCL has been defined (done during
+ * configure).
+ *
+ * Changed to use new name for options-parsing function plParseOpts().
+ *
+ * Changed prompt.
+ *
+ * Changed to a more powerful prompt mechanism.  Prompt now gives program
+ * name (pltcl) followed by an underscore and the current stream number.
+ * Very handy when doing multiple stream work.
+ *
+ * Changed the syntax for pltclMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+
+tclAPI.c:
+ * Added new Tcl API functions plscol0 and plscolbg for color setting.
+ *
+ * Fixed Copyright message and other cleaning up.
+ *
+ * Added "loopback" command: gobbles the following word, which must be "cmd",
+ * and processes the remaining arguments as any other plplot/Tcl command.
+ * This allows scripts involving widget commands -- of the form <widget> cmd
+ * <plplot command> -- to be processed by pltcl, with <widget> replaced
+ * by "loopback".
+ *
+ * Imlemented plshade from Tcl.
+ *
+ * Add knowledge of contouring.
+ *
+ * New Tcl API functions added: plend, plend1, plsstrm, and plinit.
+
+tclMain.c:
+ * Changed the syntax for pltclMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+
+tclMatrix.c:
+ * Support for N-d initializer lists.  Contributed by Martin L. Smith.
+ *
+ * Added the optional -persist flag to the matrix command line.  If present
+ * (can be anywhere on the line), the matrix is not automatically deleted
+ * when the scope of the current proc (method) ends.  Instead, you must
+ * explicitly clean up by using either the 'delete' matrix command or renaming
+ * the matrix command name to {}.  Should now work correctly from within itcl.
+ * Copyright message fixed.
+
+All Tcl demos:
+
+# Changed comment syntax to "the one true way".
+
+New files:
+	x01.tcl x02.tcl x03.tcl x04.tcl x05.tcl x06.tcl x07.tcl 
+	x08.tcl x09.tcl x10.tcl x11.tcl x12.tcl x13.tcl x14.tcl 
+	x15.tcl x16.tcl 
+Log Message:
+New Tcl example files.  Can now be run from either pltcl -- using the
+"loopback" command as argument, or from plserver (or other plplot-aware
+extended wish) -- using the widget name as argument.
+
+plgrid.tcl: (new)
+# Demo proc for plotting a polar grid.
+
+plot.tcl: (new)
+# A minimal implementation of the GNUPLOT "plot" command.
+
+tcldemos.tcl:
+# Removed the "loopback" parameter since it's no longer necessary.
+#
+# New front-end demo file for use from pltcl.  Uses new "loopback" command
+# to run scripts also used with a plframe widget.
 
 -----------------------------------------------------------------------------
-Example programs
+Python API
 -----------------------------------------------------------------------------
 
-x14c.c:
- * Revision 1.11  1994/08/25  04:02:32  mjl
- * Now can work with either TK or Tcl-DP.  Changed to use TK by default.
+Added plmodule.c: glue code for python interface.
+Written by: interran@uluru.Stanford.EDU (John Interrante)
 
 -----------------------------------------------------------------------------
 Drivers
 -----------------------------------------------------------------------------
 
-xwin.c:
- * Revision 1.49  1994/08/25  03:58:15  mjl
- * Change to use default visual for now, since otherwise the current
- * procedure results in a BadMatch when calling XCreateWindow on some systems
- * (Suns).  To really get it right, XGetRGBColormaps or something similar
- * must be used to pair the visual with a compatible colormap.
- *
- * Revision 1.48  1994/08/05  09:25:05  mjl
- * Added the static variable "synchronize", to be set when you want
- * synchronous X operation.  Only for debugging, otherwise it's too slow.
+All drivers: 
+ * eliminated unnecessary variable initializations, other cleaning up.
 
-tek.c:
- * Revision 1.32  1994/08/26  19:21:55  mjl
- * Added support for the Conex vt320 Tek4010/4014/4105 terminal emulator (DOS).
- * Much cleaning up and optimizations.  Contributed by Mark Olesen.
+ * pls->width now more sensibly handled.  If the driver supports
+ * multiple widths, it first checks to see if it has been initialized
+ * already (e.g. from the command line) before initializing it.  For drivers
+ * that don't support multiple widths, pls->width is ignored.
+
+ljiip.c:
+ * Minor tweek.  Modified the pixel width to depend on the slope of the line.
+ * Makes diagonal lines thinner.  Contributed by Wesley Ebisuzaki.
+
+plmeta.c:
+ * Changed debugging output to use new pldebug() function.
+ *
+ * Added preliminary code to write & restore plot window parameters.
 
 ps.c:
- * Revision 1.29  1994/09/01  22:28:09  mjl
- * Fixed bug in current point update after state change.
+ * Fixed braindamage incurred last update.  Now switches to transparent
+ * background mode (no page fill) automatically if background color is white.
+ * Useful for including color EPSF files into TeX or whatever.
  *
- * Revision 1.28  1994/08/27  03:40:32  mjl
- * Fix to allow cmap1 color selections to appear in grayscale.  Contributed
- * by Radey Shouman.
+ * Fixed background color fill to cover the entire page, including margin
+ * area.  
+ *
+ * Now generates ps files with the correct PLplot version number written.
+
+tek.c:
+ * Changed debugging output to use new pldebug() function.
+ *
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
+ * Substantially rewrote input loop to handle new locate mode (type 'L' while
+ * at a page break).
+ *
+ * Fixed some braindamage incurred last update.
+ *
+ * Inserted GIN (Graphics Input) code to handle PLESC_GETC escape command
+ * (retrieves cursor position).  Also added "pick" (P) end of page command,
+ * which allows you to fetch the world coordinates of arbitrary points based
+ * on graphics input (type "P" while at end of page, note: not supported by
+ * xterm).  All drivers: pls->width now more sensibly handled.  If the driver
+ * supports multiple widths, it first checks to see if it has been
+ * initialized already (e.g. from the command line) before initializing it.
+ * For drivers that don't support multiple widths, pls->width is ignored.
+
+xwin.c:
+ * Changes to header file inclusion.
+ *
+ * Undid some of the damage from the last commit.  It turns out that while
+ * writes to the screen first look better on a resize, writes to the pixmap
+ * first (which is blitted to the screen when the write is finished) look
+ * better on a redraw, e.g. when scrolling.  So now the code is no longer
+ * shared between them to allow the order of operations to be different in
+ * each case.
+ *
+ * Fixed problem with color allocation that was causing code death on
+ * monochrome X terminals.  Reordered resize operations so that window is
+ * drawn to first, then pixmap copied after that (more natural looking).
+ *
+ * Split the crossing event handler into separate enter and leave event
+ * handlers to better keep track of whether we should be drawing graphic
+ * crosshairs or not.  Now works properly under all combinations of expose,
+ * pointer in or out of window, and with or without a pixmap, as far as I can
+ * tell.  Added more cool stuff to be done when -debug is specified.
+ *
+ * Changed debugging output to use new pldebug() function and improved.
+ * Reduced max number of cmap1 colors to try to allocate to reduce conflicts
+ * with other programs (like Mosaic).  Added event handling for EnterNotify
+ * and LeaveNotify events, to draw or eliminate crosshairs (if being drawn),
+ * respectively.
+ *
+ * Made the ordinary graphics context and the current color a device-dependent
+ * quantity rather than a display-dependent one, to fix problems with color
+ * selection when plotting to separate streams/xwindows.  Thanks to Radey
+ * Shouman for pointing it out.
+ *
+ * Moved initialization of the write_to_pixmap and write_to_window vars to the
+ * regular driver initialization part, to give plframe users a way to specify
+ * the nopixmap option and have it actually work.
+ *
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
+ * Substantially rewrote input loop to handle new locate mode (type 'L' while
+ * at a page break).  Implemented true graphic crosshairs for use while locate
+ * mode is active.
+ *
+ * Replaced calls to XCheckMaskEvent with calls to XCheckWindowEvent, since
+ * there may be more than one event handler active per display (suggested by
+ * Radey Shouman).  All drivers: pls->width now more sensibly handled.  If
+ * the driver supports multiple widths, it first checks to see if it has been
+ * initialized already (e.g. from the command line) before initializing it.
+ * For drivers that don't support multiple widths, pls->width is ignored.
+ *
+ * Added locator handling.  When escape function is called with a PLESC_GETC
+ * operation, the cursor switches to crosshair and it sits in the X event
+ * loop, waiting for a left mouse click.  The coordinates are stored in the
+ * data structure passed to the escape function, and the cursor reverts to
+ * the default (now unchanged from the system default).
+ *
+ * Restructured X initialization, and added the function plD_open_xw() to
+ * allow early access (before calling plinit) to the X driver data
+ * structures.  Currently used by the plframe widget to ensure that fg/bg
+ * colors are consistent in both the widget and the driver.  The fg color is
+ * now set dynamically so that rubber-band drawing will always give a good
+ * contrast to the background color.
+ *
+ * Fixed yet more stupid bugs that cause alloc/free or strcmp problems on
+ * some systems.
+ *
+ * Color allocation changed: now cmap1 entries aren't allocated until the
+ * first time a cmap1 color is requested.  This will help prevent running out
+ * of colors when many PLplot X windows from independent processes are active
+ * (as long as cmap1 isn't being used).
+ *
+ * Fixed problem with if-test for display name introduced last update.
+ *
+ * Inserted workaround for cases where NULL was being used as argument to
+ * strcmp (some systems don't like it).
 
 -----------------------------------------------------------------------------
 TK driver, plframe widget, and support tools
 -----------------------------------------------------------------------------
 
-plserver.c:
- * Revision 1.29  1994/08/25  04:00:27  mjl
- * Fixed some error output; elminates spurious <RET> at end.
-
-tk.c:
- * Revision 1.45  1994/08/25  04:02:03  mjl
- * Fix to allow a TK main window to be associated with each PLStream.
- * Contributed by Radey Shouman.
+plframe.c:
+ * Fixed obscure bug that was causing the plframe to not be properly
+ * redisplayed after a zoom in some cases.
+ *
+ * Changed header file inclusions.
+ *
+ * Changed "save as" widget command to accept device keyword, not number.
+ * Eliminated "info devices" widget command in favor of "info devkeys", which
+ * returns device keywords, and "info devnames", which returns device names.
+ *
+ * Fixes for Tk 4.0.  Updated Tk_Draw3DRectangle syntax when compiling with
+ * Tk versions 4.0 and later.  Eliminated -geometry option for much the same
+ * reason as it was eliminated in the Tk 4.0 frame, to avoid problems with
+ * some valid X *geometry specifications.  Use -width and/or -height instead.
+ * Code is still compatible with Tk 3.6 and should remain so for a while.
+ * Newer Tk 4.0 frame options like -class, -colormap, and -visual will be
+ * added at a later date.
+ *
+ * Split the crossing event handler into separate enter and leave event
+ * handlers to better keep track of whether we should be drawing graphic
+ * crosshairs or not.  Now works properly under all combinations of expose,
+ * pointer in or out of window, and with or without a pixmap, as far as I can
+ * tell.
+ *
+ * Added EnterNotify and LeaveNotify event handling, to draw or undraw
+ * crosshairs as needed.  Improved debugging output.
+ *
+ * Implemented a new "report" widget command for performing on-demand
+ * translations of window coordinates to world coordinates.  This is
+ * especiallly useful when invoked from within a Tk binding.
+ *
+ * A data link cleanup command added.
+ *
+ * Implemented graphic crosshairs, which are turned on or off using the
+ * "-xhairs <boolean>" widget configure command.  This inserts an event handler
+ * to draw and update the graphic crosshairs on cursor motion, as well as
+ * intercepting cursor key movements and moving the drawn cursor appropriately.
+ * The expose event handling was broken off into a separate handler and changed
+ * to redraw the graphic crosshairs if necessary.
+ *
+ * Changed widget commands to set/get the cmap1 palette to handle the new
+ * "rev" cmap1 control point attribute.
+ *
+ * Now uses "early initialization" of PLplot X driver so that the fg/bg
+ * colors can be set from the plframe widget.  This ensures that fg/bg colors
+ * are consistent in both the widget and the driver, even if the bg color is
+ * changed dynamically (through program or user interface control).  A bug
+ * fixed in the xor GC also.  This fixes problems with the rubber-band
+ * drawing (used in zooms), where the line color would sometimes change or be
+ * hard to see against the background.
+ *
+ * Incorrect order of calls to freeing malloc'ed memory at exit fixed, found
+ * by Brent Townshend.
 
 plr.c:
- * Revision 1.18  1994/08/25  03:59:43  mjl
- * Fixed to properly update driver when cmap state is changed.  Contributed
- * by Radey Shouman.
+ * The Copyright message was changed and general cleaning up done.
 
-plwidget.tcl:
-# Revision 1.26  1994/08/25  04:01:23  mjl
-# Simplified and sped up eop handling.
+plserver.c:
+ * Is now [incr Tcl] aware, if HAVE_ITCL is defined (done during configure).
+ *
+ * Improved debugging output and fixed a bug in the exit handling.
+ *
+ * Offloaded the C code for cleaning up from plserver.c into the proc
+ * plserver_link_end in plserver.tcl.  The Tcl code was modified to better
+ * handshake with the client (plplot TK driver) program.
+ *
+ * Fixed the Copyright message and general cleaning up.
+ *
+ * Minor exit handling fix for Tk communication.
+ *
+ * Now does a bit more complete cleanup at exit when communicating with the
+ * Tcl-DP driver, to avoid potential problems.
+ *
+ * Changed the syntax for pltkMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+
+tcpip.c:
+ * Change to header file inclusion.
+ *
+ * Eliminated a bogus call to Tk_DeleteFileHandler() and other cleaning up.
+
+tk.c:
+ * Changes to header file inclusion.
+ *
+ * Now saves the child process PID and uses it to wait for it to complete at
+ * exit, for a bit nicer of error termination.  Still needs to be tested on
+ * more platforms.  Improved debugging output and switched to new pldebug()
+ * function.  Added widget configure commands to set ncol0 and ncol1.
+ *
+ * Offloaded the C code for cleaning up from tk.c into the proc
+ * plclient_link_end in plclient.tcl.  The Tcl code was modified to better
+ * handshake with plserver.
+ *
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
+ * Substantially rewrote input loop to handle new locate mode (type 'L' while
+ * at a page break).
+ *
+ * Fixed to work with new locator variables.
+ *
+ * Added locator handling.  When escape function is called with a PLESC_GETC
+ * operation, the driver simply goes into an event loop, waiting for a mouse
+ * event to be reported back from plserver.  The coordinates are stored in
+ * the data structure passed to the escape function.  Still to be added is
+ * some way to tell plserver to change the cursor to crosshair in order to
+ * better prompt user input.
+ *
+ * Significantly improved cleanup upon exit, especially when using the Tcl-DP
+ * driver.  Fixes the problem of spurious core dumps that sometimes occurs
+ * when exiting Tcl-DP streams.  There were two problems: one was that a race
+ * condition between the tk.c and plserver.c cleanup was occuring, leading to
+ * cores in libc (typically) due to stuff being freed twice.  The other is
+ * due to some bogosity in Tcl 7.3 and/or Tcl-DP 3.2. Tcl_DeleteInterp()
+ * doesn't provide all the necessary cleanup when exiting, and a filehandler
+ * event for the old interpreter is generated /after/ the old interpreter has
+ * been deleted.  This results in an attempt to use a hash table that has
+ * already been deleted, and a panic.  I tried to find the offending code
+ * while in the debugger but it looks like a tough one to crack, hence this
+ * workaround.  Mostly seen when using multiple DP output streams from pltcl.
+
+tkMain.c:
+ * Changed the syntax for pltkMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+
+FileSelector.tcl:
+# PLplot/Tk now has a file selector!  Courtesy of Mark L. Ulferts, and you
+# need to have [incr Tcl] installed to use it.
+
+PLWin.tcl:
+# Stub method for plshade.
+#
+# New method, but need many more.
+
+PLXWin.tcl:
+# Removed a lot of the miscellaneous init garbage, now handled by
+# plw_setup_defaults.
+#
+# Eliminated use of client variable and fixed plw_create_TopRow syntax.
+#
+# Fix to fix of key bindings.
+#
+# Fixed key bindings.
+#
+# Inserted initialization of zoom windows lists.  Gross, but it should
+# work.
+
+plclient.tcl:
+# Tweaks to exit handling.
+#
+# Offloaded the C code for cleaning up from tk.c into the proc
+# plclient_link_end in plclient.tcl.  The Tcl code was modified to better
+# handshake with plserver.
 
 plcolor.tcl:
-# Revision 1.5  1994/08/25  03:59:13  mjl
-# Fixed limiting saturation value that was messing up grayscale cmap1's.
+# Changed to use new Palette file selector.
+#
+# Implemented new cmap1 selector to handle additional control point
+# attribute.  Improved widget layout some.
+
+pldefaults.tcl:
+# Set zoom starting point to default to center.  Better for zooming in on
+# small plot features, although worse for large objects (e.g. entire plots).
+#
+# Added global variables for setting defaults for zoom and save options.
+#
+# Fixes for Tk 4.0.  The default options in the options database changed in
+# some cases so that apps look the same as before.  Users can change these
+# to taste.  The test for mono system using the line
+#      if {[tk colormodel $w] == "color"}
+# (this command was eliminated) has been replaced by
+#      if {[winfo depth $w] == 1}
+# which has the same effect.
+#
+# Revamped modifier key acceleration scheme.  Now controlled by two global
+# variables: "global key_scroll_mag", which defaults to 5 and is the
+# magnification for each modifier key added, and "key_scroll_speed", which
+# defaults to 1 and is the baseline speed.  I probably should convert to
+# using real resources for these; maybe for the next cut.
+#
+# Made a bunch of settings global.
+#
+# Changed print key to "P" because it's too easy to hit by mistake.
+
+plserver.tcl:
+# Offloaded the C code for cleaning up from plserver.c into the proc
+# plserver_link_end in plserver.tcl.  The Tcl code was modified to better
+# handshake with the client (plplot TK driver) program.
+#
+# Some cleanup code at exit moved into plserver.c, and the exit_app proc was
+# eliminated (in favor of just exit).
+
+pltools.tcl:
+# Added procs getSaveFile and getPaletteFile for retrieving a save or palette
+# file name, respectively.  Checks to see if [incr Tcl] is available and if
+# so, uses the non-sucky file selector.  Otherwise uses the getItem proc.
+# Added modified destroy proc by Michael J. McLennan, to ensure that [incr
+# Tcl] objects get destroyed properly.
+#
+# Fix for Tk 4.0.  Lines of the form
+#      if {[tk colormodel $w] == "color"}
+# no longer work (the command was eliminated), and have been replaced with
+#      if {[winfo depth $w] == 1}
+# which has the same effect -- to determine if we are on a color or mono
+# system.
+#
+# Allow exec's since some people need them.  Shouldn't be a problem unless
+# you compile TK without security (don't do this).  If you have a problem
+# running the plplot/TK driver using Xauthority style authentication, use
+# the Tcl-DP driver instead.
+
+plwidget.tcl:
+# Set zoom starting point to default to center.  Better for zooming in on
+# small plot features, although worse for large objects (e.g. entire plots).
+#
+# Changed to call getSaveFile to retrieve save file name.
+#
+# Split up the plot-menu building code into different procs and rewrote
+# substantially.  Save menu changed: the device is now specified as an option,
+# with all Save-As.. selections going to this device.  A file type option
+# was added, to select between 1 plot/file (the default) and many plots/file
+# (archive files).  Intended to reduce errors caused by forgetting to close
+# the save file.  The Again and Close commands are now disabled unless an
+# archive type save file is open.  Zoom menu changed: forward/back entries
+# added, to go forward or back one zoom level.  Disabled if it's not possible
+# to do so.  Zoom options added: preserve aspect ratio (check button), zoom
+# starting from corner or center (radio button).  Default is to zoom from
+# one corner, preserving aspect ratio.
+#
+# Changed the way the client variable is treated.  If specified, enables
+# settings relevant to working with the plplot/TK driver.  To simplify the
+# code, the client variable is now kept globally and not passed as an argument
+# so some proc syntaxes were changed.  Also, this forces only 1 plplot stream
+# per plserver process (I doubt anyone has tried to do otherwise anyway).
+#
+# Key filtering changed to new modifier magnification scheme.  Changed style
+# of reports (of keypress or mouse events) back to client code in order to be
+# more complete.
+#
+# Default zooming behavior changed -- now it zooms outward from the center
+# (first point clicked on), preserving aspect ratio.  This works correctly
+# even if the orientation or the aspect ratio is changed.  The old behavior
+# can be recovered by setting the global variable "zoomopt" to 1.
+#
+# Several important additions to the zooming capability:
+#  - A double click now zooms by 2X, centered at the mouse cursor.  If the
+#    cursor is too close to the boundary to allow this, an appropriately
+#    higher magnification is used.
+#  - The zoomed window positions are retained and can be recalled.  The keys
+#    "b" (backward) and "f" (forward) are used to traverse the window list.
+#
+# Added a status message while waiting for plot to print.
+
+tkdemos.tcl:
+# New front-end demo file for use from plserver.  It uses the same example
+# program files as pltcl but passes the name of the widget.
+
+xtk01.c:
+ * Change to header file inclusion: to get PLplot/Tk global function
+ * prototypes, must now include pltk.h.  Some cleaning up and resource leaks
+ * plugged.
+ *
+ * Changed one of the plots to a plshade demo, in order to make it easier to
+ * investigate cmap1-related behavior when the widget is being driven directly.
+ *
+ * Modified to use the new syntax for pltkMain().
+
+xtk02.c:
+ * Change to header file inclusion: to get PLplot/Tk global function
+ * prototypes, must now include pltk.h.  Some cleaning up.
+ *
+ * Modified to use the new syntax for pltkMain().
+
+xtk04.c:
+ * Change to header file inclusion: to get PLplot/Tk global function
+ * prototypes, must now include pltk.h.  Some cleaning up.
+ *
+ * Imlemented plshade from Tcl.
+ *
+ * New Tk demo to show off the 2-d api.
 
 -----------------------------------------------------------------------------
 utilities
 -----------------------------------------------------------------------------
 
+plrender.c:
+ * Changed debugging output to use pldebug().  Updated option tables to
+ * eliminate references to PL_OPTION_ENABLE.  Changed some color setting
+ * commands to go through API functions plscol0n() and plscol1n() since now
+ * these do real work.
+ *
+ * Added termination in case of bad arguments.
+ *
+ * Fixed up Copyright and other cleaning up.  Converted to new style argument
+ * list merging, resulting in a substantial reduction in lines of code -- the
+ * old -h and -showall plrender options and many routines associated with the
+ * old way are no longer necessary.  The keyboard event handler was upgraded
+ * to use the new PLGraphicsIn structure.
+ *
+ * Changed exit code to 0 when a -h or -v is encountered -- better for shell
+ * scripts when you just want to check the version number.
+ *
+ * Changed to new "merged" style of option table parsing.  Rewired command
+ * line handling so that now any number of metafiles may be specified (note:
+ * driver is reinitialized with each file, however).  Options now only apply
+ * to files they precede on the command line.  Help and usage messages
+ * changed accordingly.  Bug fix: the background color specified from the
+ * command line now properly overrides the setting in the metafile header
+ * (color changes in the body of the metafile not affected).
+ *
+ * Fixes to allow plrender to work better with old and/or mangled metafiles.
+
 pltek.c:
- * Revision 1.7  1994/08/26  19:25:40  mjl
- * Now checks for the terminal type and provides some rudimentary decisions
- * based on the TERM setting.  The xterm is unaffected, but with a terminal
- * type of "tekterm", the 'Page >' prompt is printed on the graphics screen
- * so that the plot can be seen without having pltek flash back to the text
- * screen immediately.  Other minor cleaning up as well.  Contributed by Mark
- * Olesen.
+ * A small patch to remove a "==" assignment introduced last-time and removed
+ * an unused variable picked-up by gcc -Wall.  Contributed by Mark Olesen.
+
+tektest.c: (new)
+ * Just a quick little Tek test program that I whipped up; it may come in
+ * handy again.
 
 -----------------------------------------------------------------------------
 DOS drivers
 -----------------------------------------------------------------------------
 
-Updated DOS/EMX driver provided by Mark Olesen; see sys/dos/emx for
-more detail.
+DOS/EMX changes, by Mark Olesen:
+
+  The configuration package for emx/gcc on a dos system.  Not many
+  changes, from the last submission, but it appears that a vast majority
+  of the files were /not/ unpacked properly for inclusion in version 4.99i.
+  [it turns out I forgot to check everything into CVS -mjl]
+
+  The emx distribution has both batch and shell script files `mkmf' and
+  `link'. It is intended that the shell scripts be executed on a Unix
+  machine to create the Makefiles and copy all of the requisted files to
+  the ./tmp directory.  After this stage, the Unix drive may be NFS
+  mounted by the DOS machine and the rest of the make may be finished
+  there in a DOS environment. I find the NFS option to be quite
+  convenient. 
 
 -----------------------------------------------------------------------------
 Amiga driver
 -----------------------------------------------------------------------------
 
-Now has configure script for SKsh users -- makes it trivial to configure
-and build.  Needs some embellishment though (command line flags to mimic
-Unix configure script).  The Makefile fragments under cf/ updated
-accordingly.  Also cf/Makefile and cf/Makedemo provided for those without
-SKsh.
+** STILL NEED TO DO THIS ** -mjl
 
-Several files:
- * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
+-----------------------------------------------------------------------------
+Miscellaneous
+-----------------------------------------------------------------------------
 
-pla_wn.c:
- * Revision 1.11  1994/09/02  08:36:37  mjl
- * Fixed bug encountered when changing screen modes -- FreeRaster call was
- * given the wrong screen dimensions.
+stndfont.c:
+ * Eliminated SCHAR in favor of simply "signed char".
+
+xtndfont.c:
+ * Eliminated SCHAR in favor of simply "signed char".
 

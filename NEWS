@@ -1,4 +1,13 @@
-This is the 9th beta release (4.99i) of what will eventually become
+*****************************************************************************
+NOTE:
+This is an ALPHA version, it may not be entirely stable on your system,
+depending on system type and configuration options.  I appreciate bug
+reports, especially if you can diagnose the problem and tell me how to fix
+it.  Otherwise bug reports may not be of much help.  The release notes are
+still under construction.
+*****************************************************************************
+
+This is the 10th beta release (4.99j) of what will eventually become
 the PLplot 5.0 distribution.  At this point I'm mainly trying to root out the
 remaining bugs and system dependencies, but there will undoubtably be a
 few improvements yet before the final version sees the light of day.
@@ -19,67 +28,41 @@ You can get the PLplot distribution by anonymous ftp from:
 
 	/anonymous@dino.ph.utexas.edu:/plplot
 
-in either .zip or .tar.gz form.  The most up-to-date (not very, at this
-point) manual (in .ps and .dvi form) and info document files are available
-there as well.
+in .zip or .tar.gz form.  The most up-to-date (not very, at this point)
+manual (in .ps and .dvi form) and info document files are available there as
+well.
 
 
 For more detail of these changes, consult CHANGES.
 
 **************************************************************************
-Version 4.99i: Summary of major changes
+Version 4.99j: Summary of major changes
 **************************************************************************
 
-Primarily a bug-fix release.  Major changes:
+A massive update.  Major changes follow:
 
-- Changed distribution status to GPL/LGPL.  See "Copyright".  Other
-  administrative file name changes.
+- A major upgrade of the configure scripts.  Now uses Autoconf 2.3 to
+generate.  You can now build PLplot in an arbitrary temporary directory,
+typing <path>/configure and then make.  This allows building from a
+read-only file system, or setting up multiple build directories using
+different build options simultaneously.  Help entries now available for all
+recognized configure command line options.  Confusing a --with-<opt> with a
+--enable-<opt> is now detected and flagged as an error.  The option to skip
+loading the defaults file is now invoked by using --without-defaults or
+--with-defaults=no to be more like typical configure parameters.  Added
+--with-nobraindead (not for general use).  Better support of shared
+libraries (in principle), and better handling of the install procedure.  Run
+results are sent to the file config.summary, so you can type "ls config.*"
+to see all the informational files created by configure.  Searches for
+Fortran compiler if enable_f77=yes.  If that isn't found, switches to f2c.
+If that isn't found, enable_f77 is set to "no" (Fortran interface layer is
+omitted).  Added --with-dbmalloc, for linking with a debugging malloc
+library.  Support generation of shared lib on Linux, using ELF tools.
 
-- Various small bugs in configure & build fixed.
+- Better internal debug handling and reporting.  Files where DEBUG is
+defined only generate debug output if the debug stream variable is
+set (e.g. via -debug).  Uses stdarg capability, first time I've used
+this in PLplot, so be on the lookout for portability problems with this.
+If all goes well I have other uses of stdargs in mind.
 
-- Bug in code to keep track of window world coordinates fixed (symptoms:
-  core dump would occur after the 65th page if pleop() was used to end the
-  page rather than pladv()).  Thanks to Ian Searle for providing a
-  demonstration of the bug.
-
-- Bugs fixed in core routines + TK driver handling of colormap when
-  saturation = 0; i.e. grayscale plots.  Thanks to Radey Shouman for his
-  help.
-
-- Fixed a bug that was preventing the exponential label from showing up
-  under certain circumstances (3-D plots).
-
-- Conex device (tek emulator under DOS) driver support added in tek.c;
-  contributed by Mark Olesen. 
-
-- Bug fixed in X driver that was causing a "Bad Match" error upon startup
-  on some systems.
-
-- Postscript driver:
-    Fixed bug in current point update after state change.
-    Fix to allow cmap1 color selections to appear in grayscale;
-    contributed by Radey Shouman. 
-
-- Tk driver: Fix to allow a TK main window to be associated with each
-  PLStream (so x14c now can use either the TK or DP driver), also fix to
-  properly update plserver's X-driver when cmap state is
-  changed.  Contributed by Radey Shouman.
-
-- pltek: Now checks for the terminal type and provides some rudimentary
-  decisions based on the TERM setting.  The xterm is unaffected, but with
-  a terminal type of "tekterm", the 'Page >' prompt is printed on the
-  graphics screen so that the plot can be seen without having pltek flash
-  back to the text screen immediately.  Contributed by Mark Olesen.
-
-- Updated DOS/EMX driver provided by Mark Olesen; see sys/dos/emx for
-  more detail.
-
-- Amiga driver: Updated to work with new version.  Now has configure
-  script for SKsh users -- is now trivial to configure and build.  A
-  fall-back Makefile is also provided.  Several bugs fixed, notably one in
-  changing the screen mode.  A compiled version of the PLplot library
-  (SAS/C 6.2, IEEE single precision floats, optimized) and plrender are
-  now available in the ~ftp/plplot/amiga directory on dino.ph.utexas.edu.
-
-- The "plpr" script (used when choosing "Print" from Tk driver) now
-  defaults to using color postscript as output.
+*** To be finished later.. please consult CHANGES for more info. -mjl ***
