@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:50  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/20 20:12:26  mjl
+   Modified file open routine to open next family member file if requested
+   to do so.
 
+ * Revision 1.3  1992/09/30  18:24:50  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:38  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -476,10 +480,11 @@ void
 plGetFam (PLStream *pls)
 {
     if (pls->family) {
-	if (pls->bytecnt > pls->bytemax) {
+	if (pls->bytecnt > pls->bytemax || pls->famadv) {
 	    grtidy();
 	    pls->fileset = 1;
 	    pls->member++;
+	    pls->famadv = 0;
 	    grinit();
 	    return;
 	}
