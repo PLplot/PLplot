@@ -1104,6 +1104,10 @@ InitMain(PLStream *pls)
 	hint.x = (int) pls->xoffset;
 	hint.y = (int) pls->yoffset;
     }
+    else {
+	hint.x = 0;
+	hint.y = 0;
+    }
 
 /* Window title */
 

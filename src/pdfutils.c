@@ -106,6 +106,7 @@ pdf_fopen(char *filename, char *mode)
 	    pdfs = NULL;
 	}
 #endif
+	pdfs->bp = 0;
     }
 
     return pdfs;
