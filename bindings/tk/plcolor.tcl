@@ -1,7 +1,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.5  1994/08/25 03:59:13  mjl
+# Revision 1.6  1995/01/13 23:19:30  mjl
+# Implemented new cmap1 selector to handle additional control point
+# attribute.  Improved widget layout some.
+#
+# Revision 1.5  1994/08/25  03:59:13  mjl
 # Fixed limiting saturation value that was messing up grayscale cmap1's.
 #
 # Revision 1.4  1994/06/09  20:09:18  mjl
@@ -152,8 +156,9 @@ class ColorEditor {
 	}
 	frame $w.right
 	frame $w.swatch -width 2c -height 5c -background $color
-	label $w.value -text $color -width 13 \
-	    -font -Adobe-Courier-Medium-R-Normal-*-120-*
+
+	global gen_fixed_font
+	label $w.value -text $color -width 13 -font $gen_fixed_font
 	pack append $w.right \
 	    $w.swatch {top expand fill} \
 	    $w.value {bottom pady .5c}
@@ -632,21 +637,44 @@ class ColorPalette1 {
     member w {}
     member editor {}
     method create {w plot} {
-	global ncol1 plcmap1_col plcmap1_pos
+	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
 	setmember w $w
 
-	frame $w -bd 2 -relief raised
+	frame $w -bd 2 -relief flat
+	frame $w.l -bd 2 -relief flat
+	frame $w.r -bd 2 -relief flat
+
+	frame $w.lab
+
+	global gen_font
+	label $w.lab.color -font $gen_font -relief flat -text "Color"
+	label $w.lab.pos -relief flat -text "Position in cmap1 space"
+	label $w.lab.rev -relief flat -text "Reverse"
+
+	pack append $w.lab \
+	    $w.lab.color \
+	    {left padx 50}
+
+	pack append $w.lab \
+	    $w.lab.rev \
+	    {right fillx}
+
+	pack append $w.lab \
+	    $w.lab.pos \
+	    {right padx 200}
+
 	set cmap1 [$plot.plwin cmd plgcmap1]
 	set ncol1 [lindex $cmap1 0]
 	for {set i 0} {$i < $ncol1} {incr i} {
-	    set plcmap1_col($i) [lindex $cmap1 [expr 2*$i+1]]
-	    set plcmap1_pos($i) [lindex $cmap1 [expr 2*$i+2]]
-	    frame $w.$i
-	    label $w.$i.color -width 14 -anchor w
-	    button $w.$i.patch -text Edit \
+	    set plcmap1_col($i) [lindex $cmap1 [expr 3*$i+1]]
+	    set plcmap1_pos($i) [lindex $cmap1 [expr 3*$i+2]]
+	    set plcmap1_rev($i) [lindex $cmap1 [expr 3*$i+3]]
+	    frame $w.l.$i
+	    label $w.l.$i.color -width 14 -anchor w
+	    button $w.l.$i.patch -text Edit \
 		-command "ColorPalette1:edit $this $i $plot"
 
-	    scale $w.$i.scale -from 0 -to 100 -length 8c \
+	    scale $w.l.$i.scale -from 0 -to 100 -length 8c \
 		-orient horizontal \
 		-command "ColorPalette1:posChanged $this $i $plot"
 
@@ -655,39 +683,60 @@ class ColorPalette1 {
 # so they get to stay.
 
 	    if {$i == 0 || $i == $ncol1-1} {
-		pack append $w.$i \
-		    $w.$i.scale "right expand padx 8 pady 4" \
-		    $w.$i.color "right frame e" \
-		    $w.$i.patch "left padx 4 pady 4 frame w" 
+		pack append $w.l.$i \
+		    $w.l.$i.scale "right expand padx 8 pady 4" 
 	    } else {
-		button $w.$i.up -width 2 -text + \
+		button $w.l.$i.up -width 2 -text + \
 		    -command "ColorPalette1:inc $this $i 1"
-		button $w.$i.down -width 2 -text - \
+		button $w.l.$i.down -width 2 -text - \
 		    -command "ColorPalette1:inc $this $i -1"
 
-		pack append $w.$i \
-		    $w.$i.up "right padx .5c" \
-		    $w.$i.scale "right expand padx 8 pady 4" \
-		    $w.$i.down "right padx .5c" \
-		    $w.$i.color "right frame e" \
-		    $w.$i.patch "left padx 4 pady 4 frame w" 
+		pack append $w.l.$i \
+		    $w.l.$i.up "right padx .5c" \
+		    $w.l.$i.scale "right expand padx 8 pady 4" \
+		    $w.l.$i.down "right padx .5c" 
 	    }
-	    pack append $w $w.$i "top fillx"
+	    pack append $w.l.$i \
+		$w.l.$i.color "right frame e" \
+		$w.l.$i.patch "left padx 4 pady 4 frame w" 
+	    pack append $w.l $w.l.$i "top fillx"
 	}
+
+# Reverse button -- indicates hue interpolation to be done around back side.
+
+	for {set i 0} {$i < $ncol1} {incr i} {
+
+	    frame $w.r.$i
+	    if {$i < $ncol1-1} {
+		checkbutton $w.r.$i.rev \
+		    -variable plcmap1_rev($i) -relief flat \
+		    -command "ColorPalette1:setcmap $this $plot"
+		pack append $w.r.$i \
+		    $w.r.$i.rev "right padx .5c" 
+	    }
+	    pack append $w.r $w.r.$i "top filly expand"
+	}
+
 	ColorPalette1:loadcmap $this
 	setmember editor [ColorEditor]
+
+	pack append $w \
+	    $w.lab "top fillx" \
+	    $w.l "left" \
+	    $w.r "right filly expand"
+
 	return $w
     }
     method savePalette {} {
 	set file [plfile_open w]
 	if {$file != {}} {
 	    set f [open $file "w"]
-	    global ncol1 plcmap1_pos
+	    global ncol1 plcmap1_pos plcmap1_rev
 
 	    puts $f "$ncol1"
 	    for {set i 0} {$i < $ncol1} {incr i} {
 		set color [ColorPalette1:getColor $this $i]
-		puts $f "$color $plcmap1_pos($i)"
+		puts $f "$color $plcmap1_pos($i) $plcmap1_rev($i)"
 	    }
 	    close $f
 	}
@@ -696,7 +745,7 @@ class ColorPalette1 {
 	set file [plfile_open r]
 	if {$file != {}} {
 	    set f [open $file "r"]
-	    global ncol1 plcmap1_col plcmap1_pos
+	    global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
 
 	    set ncol1 [gets $f]
 	    if {$ncol1 < 0 || $ncol1 > 255} {
@@ -708,6 +757,10 @@ class ColorPalette1 {
 		set line [gets $f]
 		set plcmap1_col($i) [lindex $line 0]
 		set plcmap1_pos($i) [lindex $line 1]
+		set plcmap1_rev($i) [lindex $line 2]
+		if {$plcmap1_rev($i) == {}} {
+		    set plcmap1_rev($i) 0
+		}
 	    }
 	    close $f
 	    setcmap $plot
@@ -718,14 +771,14 @@ class ColorPalette1 {
     }
     method inc {i inc} {
 	set w [getmember w]
-	$w.$i.scale set [expr [$w.$i.scale get]+$inc]
+	$w.l.$i.scale set [expr [$w.l.$i.scale get]+$inc]
     }
     method posChanged {i plot args} {
 	global plcmap1_pos
 	set w [getmember w]
 	set curr [getpos $i]
 
-	$w.$i.scale set $curr
+	$w.l.$i.scale set $curr
 	set plcmap1_pos($i) $curr
 	setcmap $plot
     }
@@ -741,23 +794,23 @@ class ColorPalette1 {
 	set l [expr $i-1]
 	set r [expr $i+1]
 	
-	set prev [$w.$l.scale get]
-	set curr [$w.$i.scale get]
-	set next [$w.$r.scale get]
+	set prev [$w.l.$l.scale get]
+	set curr [$w.l.$i.scale get]
+	set next [$w.l.$r.scale get]
 	
 	while { $curr < $prev } {
 	    if { $l == 0 } break
-	    $w.$l.scale set $curr
+	    $w.l.$l.scale set $curr
 	    set plcmap1_pos($l) $curr
 	    incr l -1
-	    set prev [$w.$l.scale get]
+	    set prev [$w.l.$l.scale get]
 	}
 	while { $curr > $next } {
 	    if { $r == $ncol1-1 } break
-	    $w.$r.scale set $curr
+	    $w.l.$r.scale set $curr
 	    set plcmap1_pos($r) $curr
 	    incr r
-	    set next [$w.$r.scale get]
+	    set next [$w.l.$r.scale get]
 	}
 	return $curr
     }
@@ -765,17 +818,17 @@ class ColorPalette1 {
 	set w [getmember w]
 	global ncol1 plcmap1_col plcmap1_pos
 	for {set i 0} {$i < $ncol1} {incr i} {
-	    $w.$i.color config -text $plcmap1_col($i) 
-	    $w.$i.patch config -background $plcmap1_col($i)
-	    $w.$i.scale set $plcmap1_pos($i)
+	    $w.l.$i.color config -text $plcmap1_col($i) 
+	    $w.l.$i.patch config -background $plcmap1_col($i)
+	    $w.l.$i.scale set $plcmap1_pos($i)
 	}
     }
     method edit {i plot} {
 	set w [getmember w]
-	global ncol1 plcmap1_col plcmap1_pos
+	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
 	set orig [ColorPalette1:getColor $this $i]
 	set color [ColorEditor:run [getmember editor] \
-		       [lindex [$w.$i.patch config -background] 4] \
+		       [lindex [$w.l.$i.patch config -background] 4] \
 		       ColorPalette1:colChanged $this $i $plot]
 
 	if {$color != {}} {
@@ -784,31 +837,35 @@ class ColorPalette1 {
 	    set color $orig
 	}
 
-	$w.$i.color config -text $color
-	$w.$i.patch config -background $color
-	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i)
+	$w.l.$i.color config -text $color
+	$w.l.$i.patch config -background $color
+#	puts stdout "$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)"
+	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
     }
     method colChanged {data color} {
-	global plcmap1_pos
+	global plcmap1_pos plcmap1_rev
 	set i    [lindex $data 0]
 	set plot [lindex $data 1]
 	set w    [getmember w]
 
-	$w.$i.color config -text $color
-	$w.$i.patch config -background $color
-	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i)
+	$w.l.$i.color config -text $color
+	$w.l.$i.patch config -background $color
+#	puts stdout "$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)"
+	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
     }
     method setcmap {plot} {
-	global ncol1 plcmap1_col plcmap1_pos
+	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
 	set cmap1 ""
 	for {set i 0} {$i < $ncol1} {incr i} {
-	    set cmap1 "$cmap1 $plcmap1_col($i) $plcmap1_pos($i)"
+	    set cmap1 \
+		"$cmap1 $plcmap1_col($i) $plcmap1_pos($i) $plcmap1_rev($i)"
 	}
+#	puts stdout "$plot.plwin cmd plscmap1 $ncol1 $cmap1"
 	$plot.plwin cmd plscmap1 $ncol1 $cmap1
     }
     method getColor {i} {
 	set w [getmember w]
-	return [lindex [$w.$i.patch config -background] 4]
+	return [lindex [$w.l.$i.patch config -background] 4]
     }
 }
 
