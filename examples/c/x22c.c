@@ -26,10 +26,13 @@
 
 /* Variables and data arrays used by plot generators */
 
-static PLFLT x[100], y[100], u[100], v[100], r[100];
+static PLFLT x[100], y[100], u[100], v[100];
 
-static PLFLT arrow_x[6] = {0.5, -0.5, 0.5, 0.3, 0.5, 0.3};
-static PLFLT arrow_y[6] = {0.0, 0.0,  0.0, 0.2, 0.0, -0.2};
+/* Pairs of points making the line segments used to plot the user defined arrow */
+static PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
+static PLFLT arrow_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
+static PLFLT arrow2_x[6] = {-0.5, 0.3, 0.3, 0.5, 0.3, 0.3};
+static PLFLT arrow2_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -43,6 +46,7 @@ main(int argc, char *argv[])
     int i,j,k, nx, ny, npts;
     PLFLT dx, dy;
     PLFLT xmin, xmax, ymin, ymax;
+    PLINT narr, fill;
 
 /* Parse and process command line arguments */
 
@@ -64,6 +68,7 @@ main(int argc, char *argv[])
     ymin = -ny/2*dy;
     ymax = ny/2*dy;
 
+/* Create the data to plot */
     k = 0;
     for (i = 0; i<nx; i++) {
 	for (j = 0; j<ny; j++) {
@@ -75,13 +80,26 @@ main(int argc, char *argv[])
 	}
     }
 
+/* Plot vectors using default arrow style */
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
     plarrows(u,v,x,y,npts,-0.5,dx,dy);
 
-    plsarrow(arrow_x, arrow_y, 6);
+    narr = 6;
+    fill = 0;
+
+/* Create user defined arrow style and plot vectors using new style */
+    plsarrow(arrow_x, arrow_y, narr, fill);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
-    pllab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
+    pllab("(x)", "(y)", "#frPLplot Example 22 - user defined arrow");
+    plarrows(u,v,x,y,npts,-0.5,dx,dy);
+
+    fill = 1;
+	    
+/* Create user defined arrow style and plot vectors using new style */
+    plsarrow(arrow2_x, arrow2_y, narr, fill);
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    pllab("(x)", "(y)", "#frPLplot Example 22 - filled arrow");
     plarrows(u,v,x,y,npts,-0.5,dx,dy);
 
     plend();

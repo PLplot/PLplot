@@ -49,7 +49,8 @@ EXECUTABLES_list = \
 		 x18$(EXEEXT) \
 		 x19$(EXEEXT) \
 		 x20$(EXEEXT) \
-		 x21$(EXEEXT)
+		 x21$(EXEEXT) \
+		 x22$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 

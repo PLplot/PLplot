@@ -292,6 +292,11 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 
     if (n <= 0) return;
 
+    if (plsc->level < 3) {
+        plabort("plarrows: Please set up window first");
+        return;
+    }
+
     if ((plsc->arrow_x == NULL) || (plsc->arrow_y == NULL)) {
 	arrow_x = def_arrow_x;
 	arrow_y = def_arrow_y;
@@ -361,10 +366,10 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	}
 
     /* draw the arrow */
-
-	for (j = 0; j < npts-1; j+=2) {
-	    plP_movphy(a_x[j], a_y[j]);
-	    plP_draphy(a_x[j+1], a_y[j+1]);
+        plP_draphy_poly(a_x,a_y,npts);
+	if (plsc->arrow_fill) {
+	    plP_plfclp(a_x, a_y, npts, plsc->clpxmi, plsc->clpxma,
+	               plsc->clpymi, plsc->clpyma, plP_fill);
 	}
     }
 
@@ -379,7 +384,7 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 \*--------------------------------------------------------------------------*/
 
 void
-plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts) {
+plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill) {
     int i;
 
     if (plsc->arrow_x) free_mem(plsc->arrow_x);
@@ -389,6 +394,7 @@ plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts) {
     plsc->arrow_y = (PLFLT *)malloc(npts*sizeof(PLFLT));
 
     plsc->arrow_npts = npts;
+    plsc->arrow_fill = fill;
     for (i=0; i<npts; i++) {
       plsc->arrow_x[i] = arrowx[i];
       plsc->arrow_y[i] = arrowy[i];

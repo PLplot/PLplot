@@ -320,11 +320,11 @@ plstream::arrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 }
 
 void
-plstream::sarrow(PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts)
+plstream::sarrow(PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, PLINT fill)
 {
     set_stream();
 
-    plsarrow(arrow_x, arrow_y, npts);
+    plsarrow(arrow_x, arrow_y, npts, fill);
 }
 
 // This functions similarly to plbox() except that the origin of the axes is

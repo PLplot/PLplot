@@ -42,7 +42,8 @@ sources = \
 	x18.cc \
 	x19.cc \
 	x20.cc \
-	x21.cc
+	x21.cc \
+	x22.cc
 
 if enable_cxx
 
@@ -76,7 +77,8 @@ check_PROGRAMS = \
 	x18 \
 	x19 \
 	x20 \
-	x21
+	x21 \
+	x22
 
 x01cc_SOURCES = x01cc.cc
 x01_SOURCES = x01.cc
@@ -100,6 +102,7 @@ x18_SOURCES = x18.cc
 x19_SOURCES = x19.cc
 x20_SOURCES = x20.cc
 x21_SOURCES = x21.cc
+x22_SOURCES = x22.cc
 
 LDADD = $(libplplotcxx)
 

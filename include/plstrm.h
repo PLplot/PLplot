@@ -117,6 +117,7 @@ typedef struct {
  * arrow_x      x coordinates of points in arrow
  * arrow_y      y coordinates of points in arrow
  * arrow_npts   number of points in arrow_x, arrow_y
+ * arrow_fill   whether the arrow should be filled or not
  *
  ***************************************************************************
  *
@@ -452,6 +453,7 @@ typedef struct {
     PLFLT *arrow_x;
     PLFLT *arrow_y;
     PLINT arrow_npts;
+    PLINT arrow_fill;
 
 /* Driver dispatch table, obsoletes "device" member below. */
 
