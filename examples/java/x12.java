@@ -13,17 +13,17 @@ import java.text.*;
 
 class x12 {
 
-   static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
+    static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
    
-   PLStream pls;
+    PLStream pls;
    
-   public static void main( String[] args ) 
-     {
+    public static void main( String[] args ) 
+    {
         x12 x = new x12( args );
-     }
+    }
 
-   public x12( String[] args )
-     {
+    public x12( String[] args )
+    {
         pls = new PLStream();
         NumberFormat nf = NumberFormat.getNumberInstance();
 //        Change to this custom format to get stupid locale commas
@@ -42,21 +42,22 @@ class x12 {
         pls.col0(2);
         pls.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
         for (i = 0; i < 10; i++) {
-	   pls.col0(i + 1);
-//	   pls.col1((double) ((i + 1)/10.0));
-//API	   pls.psty(0);
-	   plfbox((1980. + i), y0[i]);
+            pls.col0(i + 1);
+//             pls.col1((double) ((i + 1)/10.0));
+            pls.psty(0);
+            plfbox((1980. + i), y0[i]);
 //	   sprintf(string, "%.0f", y0[i]);
-	   String text = nf.format( (int) (y0[i]+0.5));
-	   pls.ptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, text);
+            String text = nf.format( (int) (y0[i]+0.5));
+            pls.ptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, text);
 //	   sprintf(string, "%d", 1980 + i);
-	   String text1 = nf4.format( 1980 + i );
-	   pls.mtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
+            String text1 = nf4.format( 1980 + i );
+            pls.mtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
 	}
         pls.end();
-     }
-   void plfbox(double x0, double y0)
-     {
+    }
+
+    void plfbox(double x0, double y0)
+    {
 	double[] x = new double[4];
 	double[] y = new double[4];
 	
@@ -68,11 +69,11 @@ class x12 {
 	y[2] = y0;
 	x[3] = x0 + 1.;
 	y[3] = 0.;
-//API	pls.fill(4, x, y);
+        pls.fill(4, x, y);
 	pls.col0(1);
-//API	pls.lsty(1);
+        pls.lsty(1);
 	pls.line(4, x, y);
-     }
+    }
 }
 
 //---------------------------------------------------------------------------//
