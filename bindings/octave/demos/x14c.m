@@ -131,7 +131,11 @@ function ix14c
   pleop();
 
   ## Call plend1 to finish off. */
-
+  ## close slave first
+  plsstrm(1);
+  plend1();
+  ## close master
+  plsstrm(0);
   plend1();
   
 endfunction
