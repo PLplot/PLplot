@@ -1,11 +1,18 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/09/24 20:33:23  furnish
-   Went wild with "const correctness".  Can now pass a C++ String type to
-   most (all that I know of) PLPLOT functions.  This works b/c String has
-   an implicit conversion to const char *.  Now that PLPLOT routines take
-   const char * rather than char *, use from C++ is much easier.
+   Revision 1.9  1993/11/19 07:29:18  mjl
+   Changed the minimum distance a grid line must be from the boundary in
+   order for it to be drawn.  It was set before at 0.5 ticks (undocumented
+   and hardwired) and I changed this to 0.1 ticks while documenting it in the
+   code and making it easier to alter (but only through changing the source).
+   Maybe in the long term this should become a settable parameter.
 
+ * Revision 1.8  1993/09/24  20:33:23  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
  * Revision 1.7  1993/07/01  22:13:32  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -113,7 +120,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     PLINT level, lstring;
     PLFLT xpmm, ypmm, defmaj, defmin, htmaj, htmin;
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT pos, tn, tp, temp, offset, height;
+    PLFLT pos, tn, tp, temp, offset, height, xcrit, ycrit;
 
     plP_glev(&level);
     if (level < 3)
@@ -418,18 +425,24 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     }
 
     /* Draw grid in x direction */
+    /* xcrit is the minimim distance away (in fractional number of ticks) */
+    /* from the boundary a grid line can be drawn.  If you are too close, */
+    /* it looks bad.  The previous setting was 0.5 which was too far. */
 
     if (lgx) {
-	tp = xtick1 * (1. + floor(vpwxmi / xtick1 + .5));
-	for (tn = tp; BETW(tn + xtick1 / 2., vpwxmi, vpwxma); tn += xtick1)
+	xcrit = 0.1;
+	tp = xtick1 * (1. + floor(vpwxmi / xtick1 + xcrit));
+	for (tn = tp; BETW(tn + xtick1*xcrit, vpwxmi, vpwxma); tn += xtick1)
 	    pljoin(tn, vpwymi, tn, vpwyma);
     }
 
     /* Draw grid in y direction */
+    /* ycrit behaves analogously to xcrit */
 
     if (lgy) {
-	tp = ytick1 * (1. + floor(vpwymi / ytick1 + .5));
-	for (tn = tp; BETW(tn + ytick1 / 2., vpwymi, vpwyma); tn += ytick1)
+	ycrit = 0.1;
+	tp = ytick1 * (1. + floor(vpwymi / ytick1 + 0.05));
+	for (tn = tp; BETW(tn + ytick1*ycrit, vpwymi, vpwyma); tn += ytick1)
 	    pljoin(vpwxmi, tn, vpwxma, tn);
     }
 
