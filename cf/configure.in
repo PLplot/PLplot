@@ -997,6 +997,11 @@ if test "$enable_java" = "yes"; then
     ln -s \
     $srcdir/examples/java/*.java \
     . 2>/dev/null
+
+    test -r config.java.in || \
+        ln -s $srcdir/bindings/java/config.java.in . 2>/dev/null
+
+    test -L java/plplot/core/config.java || (cd java/plplot/core; ln -s ../../../config.java .)
 fi
 
 if test "$enable_tcl" = "yes"; then
@@ -1063,7 +1068,7 @@ plplot 2>/dev/null
 # Create output files.
 # ----------------------------------------------------------------------------
 
-AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh)
+AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh config.java)
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
