@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/01/15 17:19:13  mjl
+ * Revision 1.18  1994/03/23 06:39:20  mjl
+ * Added support for: color map 1 color selection, color map 0 or color map 1
+ * state change (palette change), polygon fills.
+ *
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.17  1994/01/15  17:19:13  mjl
  * Eliminated include of pdf.h (not needed).
  *
  * Revision 1.16  1993/09/28  21:25:08  mjl
@@ -62,11 +73,10 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <string.h>
-
 #include "drivers.h"
 #include "metadefs.h"
+
+#include <string.h>
 
 /* Function prototypes */
 /* INDENT OFF */
@@ -84,9 +94,8 @@ void rdbuf_tidy		(PLStream *);
 void rdbuf_state	(PLStream *);
 void rdbuf_esc		(PLStream *);
 
-/* Static variables */
-
-static short xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
+static void plbuf_fill	(PLStream *pls);
+static void rdbuf_fill	(PLStream *pls);
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
@@ -119,17 +128,19 @@ plbuf_init(PLStream *pls)
 void
 plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    short xpl[2], ypl[2];
+
     dbug_enter("plbuf_line");
 
     wr_command(pls, (U_CHAR) LINE);
 
-    xpoly[0] = x1a;
-    xpoly[1] = x2a;
-    ypoly[0] = y1a;
-    ypoly[1] = y2a;
+    xpl[0] = x1a;
+    xpl[1] = x2a;
+    ypl[0] = y1a;
+    ypl[1] = y2a;
 
-    fwrite(xpoly, sizeof(short), 2, pls->plbufFile);
-    fwrite(ypoly, sizeof(short), 2, pls->plbufFile);
+    fwrite(xpl, sizeof(short), 2, pls->plbufFile);
+    fwrite(ypl, sizeof(short), 2, pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -141,19 +152,13 @@ plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 void
 plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
-    PLINT i;
-
     dbug_enter("plbuf_polyline");
 
     wr_command(pls, (U_CHAR) POLYLINE);
     fwrite(&npts, sizeof(PLINT), 1, pls->plbufFile);
 
-    for (i = 0; i < npts; i++) {
-	xpoly[i] = xa[i];
-	ypoly[i] = ya[i];
-    }
-    fwrite(xpoly, sizeof(short), npts, pls->plbufFile);
-    fwrite(ypoly, sizeof(short), npts, pls->plbufFile);
+    fwrite(xa, sizeof(short), npts, pls->plbufFile);
+    fwrite(ya, sizeof(short), npts, pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -228,14 +233,14 @@ plbuf_state(PLStream *pls, PLINT op)
 
     switch (op) {
 
-    case PLSTATE_WIDTH:{
+      case PLSTATE_WIDTH: {
 	U_CHAR width = pls->width;
 
 	fwrite(&width, sizeof(U_CHAR), 1, pls->plbufFile);
 	break;
-    }
+      }
 
-    case PLSTATE_COLOR0:{
+      case PLSTATE_COLOR0: {
 	U_CHAR icol0 = pls->icol0;
 	U_CHAR r = pls->curcolor.r;
 	U_CHAR g = pls->curcolor.g;
@@ -248,10 +253,21 @@ plbuf_state(PLStream *pls, PLINT op)
 	    fwrite(&b, sizeof(U_CHAR), 1, pls->plbufFile);
 	}
 	break;
-    }
+      }
 
-    case PLSTATE_COLOR1:
+      case PLSTATE_COLOR1: {
+	U_CHAR icol1 = pls->icol1;
+
+	fwrite(&icol1, sizeof(U_CHAR), 1, pls->plbufFile);
 	break;
+      }
+
+      case PLSTATE_FILL:{
+	signed char patt = pls->patt;
+
+	fwrite(&patt, sizeof(signed char), 1, pls->plbufFile);
+	break;
+      }
     }
 }
 
@@ -263,6 +279,8 @@ plbuf_state(PLStream *pls, PLINT op)
 *
 * Functions:
 *
+*	PLESC_FILL	Fill polygon
+*
 \*----------------------------------------------------------------------*/
 
 void
@@ -272,12 +290,28 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 
     wr_command(pls, (U_CHAR) ESCAPE);
     wr_command(pls, (U_CHAR) op);
-/*
+
     switch (op) {
-    case ?:
+      case PLESC_FILL:
+	plbuf_fill(pls);
 	break;
     }
-*/
+}
+
+/*----------------------------------------------------------------------*\
+* plbuf_fill()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*----------------------------------------------------------------------*/
+
+static void
+plbuf_fill(PLStream *pls)
+{
+    dbug_enter("plbuf_fill");
+
+    fwrite(&pls->dev_npts, sizeof(PLINT), 1, pls->plbufFile);
+    fwrite(pls->dev_x, sizeof(short), pls->dev_npts, pls->plbufFile);
+    fwrite(pls->dev_y, sizeof(short), pls->dev_npts, pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -305,14 +339,15 @@ rdbuf_init(PLStream *pls)
 void
 rdbuf_line(PLStream *pls)
 {
+    short xpl[2], ypl[2];
     PLINT npts = 2;
 
     dbug_enter("rdbuf_line");
 
-    fread(xpoly, sizeof(short), npts, pls->plbufFile);
-    fread(ypoly, sizeof(short), npts, pls->plbufFile);
+    fread(xpl, sizeof(short), npts, pls->plbufFile);
+    fread(ypl, sizeof(short), npts, pls->plbufFile);
 
-    plP_line(xpoly, ypoly);
+    plP_line(xpl, ypl);
 }
 
 /*----------------------------------------------------------------------*\
@@ -324,15 +359,16 @@ rdbuf_line(PLStream *pls)
 void
 rdbuf_polyline(PLStream *pls)
 {
+    short xpl[PL_MAXPOLY], ypl[PL_MAXPOLY];
     PLINT npts;
 
     dbug_enter("rdbuf_polyline");
 
     fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
-    fread(xpoly, sizeof(short), npts, pls->plbufFile);
-    fread(ypoly, sizeof(short), npts, pls->plbufFile);
+    fread(xpl, sizeof(short), npts, pls->plbufFile);
+    fread(ypl, sizeof(short), npts, pls->plbufFile);
 
-    plP_polyline(xpoly, ypoly, npts);
+    plP_polyline(xpl, ypl, npts);
 }
 
 /*----------------------------------------------------------------------*\
@@ -388,7 +424,7 @@ rdbuf_state(PLStream *pls)
 
     switch (op) {
 
-    case PLSTATE_WIDTH:{
+      case PLSTATE_WIDTH:{
 	U_CHAR width;
 
 	fread(&width, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -396,9 +432,9 @@ rdbuf_state(PLStream *pls)
 	plP_state(PLSTATE_WIDTH);
 
 	break;
-    }
+      }
 
-    case PLSTATE_COLOR0:{
+      case PLSTATE_COLOR0:{
 	U_CHAR icol0, r, g, b;
 
 	fread(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -423,10 +459,31 @@ rdbuf_state(PLStream *pls)
 
 	plP_state(PLSTATE_COLOR0);
 	break;
-    }
+      }
 
-    case PLSTATE_COLOR1:
+      case PLSTATE_COLOR1: {
+	U_CHAR icol1;
+
+	fread(&icol1, sizeof(U_CHAR), 1, pls->plbufFile);
+
+	pls->icol1 = icol1;
+	pls->curcolor.r = pls->cmap1[icol1].r;
+	pls->curcolor.g = pls->cmap1[icol1].g;
+	pls->curcolor.b = pls->cmap1[icol1].b;
+
+	plP_state(PLSTATE_COLOR1);
 	break;
+      }
+
+      case PLSTATE_FILL: {
+	signed char patt;
+
+	fread(&patt, sizeof(signed char), 1, pls->plbufFile);
+
+	pls->patt = patt;
+	plP_state(PLSTATE_FILL);
+	break;
+      }
     }
 }
 
@@ -442,6 +499,8 @@ rdbuf_state(PLStream *pls)
 *
 * Functions:
 *
+*	PLESC_FILL	Fill polygon
+*
 \*----------------------------------------------------------------------*/
 
 void
@@ -453,14 +512,32 @@ rdbuf_esc(PLStream *pls)
 
     fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
 
-/* None are currently supported!
     switch (op) {
-    void *ptr = NULL;
-    case ?:
-	plP_esc(op, ptr);
+      case PLESC_FILL:
+	rdbuf_fill(pls);
 	break;
     }
-*/
+}
+
+/*----------------------------------------------------------------------*\
+* rdbuf_fill()
+*
+* Fill polygon described by input points.
+\*----------------------------------------------------------------------*/
+
+static void
+rdbuf_fill(PLStream *pls)
+{
+    short xpl[PL_MAXPOLY], ypl[PL_MAXPOLY];
+    PLINT npts;
+
+    dbug_enter("rdbuf_fill");
+
+    fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
+    fread(xpl, sizeof(short), npts, pls->plbufFile);
+    fread(ypl, sizeof(short), npts, pls->plbufFile);
+
+    plP_fill(xpl, ypl, npts);
 }
 
 /*----------------------------------------------------------------------*\

@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/01/15 17:21:58  mjl
+ * Revision 1.23  1994/03/23 06:39:22  mjl
+ * Added support for: color map 1 color selection, color map 0 or color map 1
+ * state change (palette change), polygon fills.
+ *
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.22  1994/01/15  17:21:58  mjl
  * Changed to new PDF function syntax.
  *
  * Revision 1.21  1993/11/15  08:29:19  mjl
@@ -10,35 +21,6 @@
  * Revision 1.20  1993/08/20  19:35:53  mjl
  * Deleted save of pen width at every page boundary.  Eventually I'll come up
  * with a better way to save the state.
- *
- * Revision 1.19  1993/08/11  19:18:05  mjl
- * Changed debugging code to print to stderr instead of stdout.
- *
- * Revision 1.18  1993/08/03  01:46:41  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.17  1993/07/31  07:56:41  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
- *
- * Revision 1.16  1993/07/16  22:13:48  mjl
- * Switched coordinates to standard meta coords.  Eliminated obsolete low-level
- * operations.  Added write of some state information (colors and pen width)
- * at the beginning of each page to aid seeking while in renderer.
- *
- * Revision 1.15  1993/07/01  22:00:51  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".  PDF
- * functions start with "pdf_".
- *
- * Revision 1.14  1993/04/26  19:57:48  mjl
- * Fixes to allow (once again) output to stdout and plrender to function as
- * a filter.  A type flag was added to handle file vs stream differences.
 */
 
 /*
@@ -65,17 +47,15 @@
 #ifdef PLMETA
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "drivers.h"
 #include "metadefs.h"
+#include <string.h>
 
 /* Function prototypes */
 /* INDENT OFF */
 
-static void WriteHeader		(PLStream *);
+static void WriteHeader		(PLStream *pls);
+static void plm_fill		(PLStream *pls);
 
 /* Global variables */
 
@@ -99,9 +79,10 @@ plD_init_plm(PLStream *pls)
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->color = 1;
-    pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+    pls->dev_fill0 = 1;
+    pls->dev_fill1 = 1;
 
 /* Initialize family file info */
 
@@ -134,9 +115,14 @@ plD_init_plm(PLStream *pls)
 
     WriteHeader(pls);
 
+/* Write color map state info */
+
+    plD_state_plm(pls, PLSTATE_CMAP0);
+    plD_state_plm(pls, PLSTATE_CMAP1);
+
 /* Write initialization command. */
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
 
 /*----------------------------------------------------------------------*\
@@ -181,24 +167,24 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
     if (x1 == dev->xold && y1 == dev->yold) {
 
 	c = (U_CHAR) LINETO;
-	plm_wr(pdf_wr_1byte(pls->pdfs, c));
+	plm_wr( pdf_wr_1byte(pls->pdfs, c) );
 	pls->bytecnt++;
 
 	xy[0] = x2;
 	xy[1] = y2;
-	plm_wr(pdf_wr_2nbytes(pls->pdfs, xy, 2));
+	plm_wr( pdf_wr_2nbytes(pls->pdfs, xy, 2) );
 	pls->bytecnt += 4;
     }
     else {
 	c = (U_CHAR) LINE;
-	plm_wr(pdf_wr_1byte(pls->pdfs, c));
+	plm_wr( pdf_wr_1byte(pls->pdfs, c) );
 	pls->bytecnt++;
 
 	xy[0] = x1;
 	xy[1] = y1;
 	xy[2] = x2;
 	xy[3] = y2;
-	plm_wr(pdf_wr_2nbytes(pls->pdfs, xy, 4));
+	plm_wr( pdf_wr_2nbytes(pls->pdfs, xy, 4) );
 	pls->bytecnt += 8;
     }
     dev->xold = x2;
@@ -219,14 +205,14 @@ plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
 
     dbug_enter("plD_polyline_plm");
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt++;
 
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) npts));
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) npts) );
     pls->bytecnt += 2;
 
-    plm_wr(pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) xa, npts));
-    plm_wr(pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) ya, npts));
+    plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) xa, npts) );
+    plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) ya, npts) );
     pls->bytecnt += 4 * npts;
 
     dev->xold = xa[npts - 1];
@@ -244,7 +230,7 @@ plD_eop_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLEAR;
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt++;
 }
 
@@ -293,7 +279,7 @@ plD_bop_plm(PLStream *pls)
 		fwbyte_offset, cp_offset);
 #endif
 
-	plm_wr(pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset));
+	plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset) );
 	fflush(file);
 
 #ifdef DEBUG
@@ -323,8 +309,8 @@ plD_bop_plm(PLStream *pls)
 	if (pl_fsetpos(file, &toc_offset))
 	    plexit("plD_bop_plm: fsetpos call failed");
 
-	plm_wr(pdf_wr_header(pls->pdfs, "pages"));
-	plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page));
+	plm_wr( pdf_wr_header(pls->pdfs, "pages") );
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
 
 	if (pl_fsetpos(file, &cp_offset))
 	    plexit("plD_bop_plm: fsetpos call failed");
@@ -334,10 +320,10 @@ plD_bop_plm(PLStream *pls)
 
     bwbyte_offset = pls->lp_offset;
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page));
-    plm_wr(pdf_wr_4bytes(pls->pdfs, (U_LONG) bwbyte_offset));
-    plm_wr(pdf_wr_4bytes(pls->pdfs, (U_LONG) 0));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
+    plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) bwbyte_offset) );
+    plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) 0) );
 
     pls->bytecnt += 11;
     pls->lp_offset = cp_offset;
@@ -361,13 +347,10 @@ plD_tidy_plm(PLStream *pls)
 
     dbug_enter("plD_tidy_plm");
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt++;
 
     pdf_close(pls->pdfs);
-    pls->fileset = 0;
-    pls->page = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
@@ -380,37 +363,65 @@ void
 plD_state_plm(PLStream *pls, PLINT op)
 {
     U_CHAR c = (U_CHAR) CHANGE_STATE;
+    int i;
 
     dbug_enter("plD_state_plm");
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
+    pls->bytecnt++;
+
+    plm_wr( pdf_wr_1byte(pls->pdfs, op) );
     pls->bytecnt++;
 
     switch (op) {
 
     case PLSTATE_WIDTH:
-	plm_wr(pdf_wr_1byte(pls->pdfs, op));
-	pls->bytecnt++;
-
-	plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) (pls->width)));
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) (pls->width)) );
 	pls->bytecnt += 2;
 	break;
 
     case PLSTATE_COLOR0:
-	plm_wr(pdf_wr_1byte(pls->pdfs, op));
-	pls->bytecnt++;
-
-	plm_wr(pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0));
-	pls->bytecnt++;
+	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
+	pls->bytecnt ++;
 
 	if (pls->icol0 == PL_RGB_COLOR) {
-	    plm_wr(pdf_wr_1byte(pls->pdfs, pls->curcolor.r));
-	    plm_wr(pdf_wr_1byte(pls->pdfs, pls->curcolor.g));
-	    plm_wr(pdf_wr_1byte(pls->pdfs, pls->curcolor.b));
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.g) );
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.b) );
+	    pls->bytecnt += 3;
 	}
 	break;
 
     case PLSTATE_COLOR1:
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->icol1) );
+	pls->bytecnt += 2;
+	break;
+
+    case PLSTATE_FILL:
+	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->patt) );
+	pls->bytecnt += 1;
+	break;
+
+    case PLSTATE_CMAP0:
+	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->ncol0) );
+	pls->bytecnt += 1;
+	for (i = 0; i < pls->ncol0; i++) {
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].r) );
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].g) );
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].b) );
+	    pls->bytecnt += 3;
+	}
+	break;
+
+    case PLSTATE_CMAP1:
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncol1) );
+	pls->bytecnt += 2;
+	for (i = 0; i < pls->ncol1; i++) {
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].r) );
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].g) );
+	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].b) );
+	    pls->bytecnt += 3;
+	}
 	break;
     }
 }
@@ -423,28 +434,52 @@ plD_state_plm(PLStream *pls, PLINT op)
 *
 * Functions:
 *
+*	PLESC_FILL	Fill polygon
+*
 \*----------------------------------------------------------------------*/
 
 void
 plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 {
     U_CHAR c = (U_CHAR) ESCAPE;
-    U_CHAR opc;
 
     dbug_enter("plD_esc_plm");
 
-    plm_wr(pdf_wr_1byte(pls->pdfs, c));
+    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt++;
 
-    opc = (U_CHAR) op;
-    plm_wr(pdf_wr_1byte(pls->pdfs, opc));
+    plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) op) );
     pls->bytecnt++;
 
     switch (op) {
-
-      case 0:
+    case PLESC_FILL:
+	plm_fill(pls);
 	break;
     }
+}
+
+/*----------------------------------------------------------------------*\
+* plm_fill()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*----------------------------------------------------------------------*/
+
+static void
+plm_fill(PLStream *pls)
+{
+    PLDev *dev = (PLDev *) pls->dev;
+
+    dbug_enter("plm_fill");
+
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->dev_npts) );
+    pls->bytecnt += 2;
+
+    plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
+    plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
+    pls->bytecnt += 4 * pls->dev_npts;
+
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
 }
 
 /*----------------------------------------------------------------------*\
@@ -461,8 +496,8 @@ WriteHeader(PLStream *pls)
 
     dbug_enter("WriteHeader(PLStream *pls");
 
-    plm_wr(pdf_wr_header(pls->pdfs, PLMETA_HEADER));
-    plm_wr(pdf_wr_header(pls->pdfs, PLMETA_VERSION));
+    plm_wr( pdf_wr_header(pls->pdfs, PLMETA_HEADER) );
+    plm_wr( pdf_wr_header(pls->pdfs, PLMETA_VERSION) );
 
 /* Write table of contents info.  Right now only number of pages. */
 /* The order here is critical */
@@ -470,31 +505,31 @@ WriteHeader(PLStream *pls)
     if (pl_fgetpos(file, &toc_offset))
 	plexit("WriteHeader: fgetpos call failed");
 
-    plm_wr(pdf_wr_header(pls->pdfs, "pages"));
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) 0));
+    plm_wr( pdf_wr_header(pls->pdfs, "pages") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) 0) );
 
 /* Write initialization info.  Tag via strings to make backward
    compatibility with old metafiles as easy as possible. */
 
-    plm_wr(pdf_wr_header(pls->pdfs, "xmin"));
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->xmin));
+    plm_wr( pdf_wr_header(pls->pdfs, "xmin") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->xmin) );
 
-    plm_wr(pdf_wr_header(pls->pdfs, "xmax"));
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->xmax));
+    plm_wr( pdf_wr_header(pls->pdfs, "xmax") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->xmax) );
 
-    plm_wr(pdf_wr_header(pls->pdfs, "ymin"));
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->ymin));
+    plm_wr( pdf_wr_header(pls->pdfs, "ymin") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->ymin) );
 
-    plm_wr(pdf_wr_header(pls->pdfs, "ymax"));
-    plm_wr(pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->ymax));
+    plm_wr( pdf_wr_header(pls->pdfs, "ymax") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) dev->ymax) );
 
-    plm_wr(pdf_wr_header(pls->pdfs, "pxlx"));
-    plm_wr(pdf_wr_ieeef(pls->pdfs, (float) dev->pxlx));
+    plm_wr( pdf_wr_header(pls->pdfs, "pxlx") );
+    plm_wr( pdf_wr_ieeef(pls->pdfs, (float) dev->pxlx) );
 
-    plm_wr(pdf_wr_header(pls->pdfs, "pxly"));
-    plm_wr(pdf_wr_ieeef(pls->pdfs, (float) dev->pxly));
+    plm_wr( pdf_wr_header(pls->pdfs, "pxly") );
+    plm_wr( pdf_wr_ieeef(pls->pdfs, (float) dev->pxly) );
 
-    plm_wr(pdf_wr_header(pls->pdfs, ""));
+    plm_wr( pdf_wr_header(pls->pdfs, "") );
 }
 
 #else
