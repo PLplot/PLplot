@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/07/23 04:44:27  mjl
+ * Revision 1.32  1994/08/26 19:21:55  mjl
+ * Added support for the Conex vt320 Tek4010/4014/4105 terminal emulator (DOS).
+ * Much cleaning up and optimizations.  Contributed by Mark Olesen.
+ *
+ * Revision 1.31  1994/07/23  04:44:27  mjl
  * Added conditional compilation of atexit() code based on STDC_HEADERS.
  *
  * Revision 1.30  1994/07/22  22:21:28  mjl
@@ -42,7 +46,8 @@
     defined(PLD_tek4107) ||		/* TEK 4107 */ \
     defined(PLD_mskermit) ||		/* MS-kermit emulator */ \
     defined(PLD_versaterm) ||		/* Versaterm emulator */ \
-    defined(PLD_vlt)			/* VLT emulator */
+    defined(PLD_vlt) ||			/* VLT emulator */ \
+    defined(PLD_conex)			/* conex emulator 4010/4014/4105 */
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -87,15 +92,13 @@ static int  tty_reset	(void);
 
 /* Graphics control characters. */
 
-#define ETX  3
-#define ENQ  5
-#define BEL  7
-#define FF   12
-#define CAN  24
-#define SUB  26
-#define ESC  27
-#define GS   29
-#define US   31
+#define BEL_CHAR	'\007'		/* BEL char = ^G = 7 */
+#define CLEAR_VIEW	"\033\f"	/* clear the view = ESC FF */
+
+#define ALPHA_MODE	"\037"		/* Enter Alpha mode = US */
+#define VECTOR_MODE	"\035"		/* Enter Vector mode = GS */
+#define GIN_MODE	"\033\032"	/* Enter GIN mode = ESC SUB */
+#define XTERM_VTMODE	"\033\003"	/* End Tek mode (xterm) = ESC ETX */
 
 /* Static vars */
 
@@ -109,13 +112,14 @@ static int curcolor;
  *	foreground color (30-37) = 30 + colors
  *		where colors are   1=red, 2=green, 4=blue 
  */
+#ifdef PLD_mskermit
 static char *kermit_color[15]= {
-    "\033[0;30m","\033[0;37m",
-    "\033[0;32m","\033[0;36m","\033[0;31m","\033[0;35m",
-    "\033[1;34m","\033[1;33m","\033[1;31m","\033[1;37m",
-    "\033[1;35m","\033[1;32m","\033[1;36m","\033[0;34m",
-    "\033[0;33m"};
-
+   "0;30","0;37",
+   "0;32","0;36","0;31","0;35",
+   "1;34","1;33","1;31","1;37",
+   "1;35","1;32","1;36","0;34",
+   "0;33"};
+#endif
 /*----------------------------------------------------------------------*\
  * plD_init_xterm()	xterm 
  * plD_init_tekt()	Tek 4010 terminal
@@ -125,18 +129,20 @@ static char *kermit_color[15]= {
  * plD_init_mskermit()	MS-Kermit emulator (DOS)
  * plD_init_vlt()	VLT emulator (Amiga)
  * plD_init_versaterm()	VersaTerm emulator (Mac)
+ * plD_init_conex()	Conex vt320/Tek 4105 emulator (DOS)
  *
  * Initialize device.  These just set attributes for the particular
  * tektronix device, then call tek_init().  The following attributes can
  * be set:
  *
  * pls->termin		if a terminal device
- * pls->color		if color
+ * pls->color		if color (1), if only fixed colors (2)
  * pls->dev_fill0	if can handle solid area fill
  * pls->dev_fill1	if can handle pattern area fill
  *
 \*----------------------------------------------------------------------*/
 
+#ifdef PLD_xterm
 void 
 plD_init_xterm(PLStream *pls)
 {
@@ -144,7 +150,9 @@ plD_init_xterm(PLStream *pls)
     pls->termin = 1;
     tek_init(pls);
 }
+#endif	/* xterm */
 
+#if defined (PLD_tek4010)
 void
 plD_init_tekt(PLStream *pls)
 {
@@ -158,7 +166,10 @@ plD_init_tekf(PLStream *pls)
     pls->dev_minor = tek4010;
     tek_init(pls);
 }
+#endif	/* PLD_tek4010 (term & file) */
 
+
+#if defined (PLD_tek4107)
 void
 plD_init_tek4107t(PLStream *pls)
 {
@@ -174,7 +185,9 @@ plD_init_tek4107f(PLStream *pls)
     pls->dev_fill0 = 1;
     tek_init(pls);
 }
+#endif	/* PLD_tek4107 (term & file) */
 
+#ifdef PLD_mskermit
 void
 plD_init_mskermit(PLStream *pls)
 {
@@ -184,7 +197,9 @@ plD_init_mskermit(PLStream *pls)
     pls->dev_fill0 = 1;
     tek_init(pls);
 }
+#endif	/* PLD_mskermit */
 
+#ifdef PLD_vlt
 void
 plD_init_vlt(PLStream *pls)
 {
@@ -194,7 +209,9 @@ plD_init_vlt(PLStream *pls)
     pls->dev_fill0 = 1;
     tek_init(pls);
 }
+#endif	/* PLD_vlt */
 
+#ifdef PLD_versaterm
 void
 plD_init_versaterm(PLStream *pls)
 {
@@ -204,6 +221,18 @@ plD_init_versaterm(PLStream *pls)
     pls->dev_fill0 = 1;
     tek_init(pls);
 }
+#endif	/* PLD_versaterm */
+
+#ifdef PLD_conex
+void
+plD_init_conex(PLStream *pls)
+{
+    pls->dev_minor = xterm;		/* responds to xterm escape codes */
+    pls->termin = 1;
+    pls->color = 2;			/* only fixed colours */
+    tek_init(pls);
+}
+#endif	/* PLD_conex */
 
 /*----------------------------------------------------------------------*\
  * tek_init()
@@ -253,28 +282,30 @@ tek_init(PLStream *pls)
     }
 
     switch (pls->dev_minor) {
+#ifdef PLD_tek4107
     case tek4107:
 	pls->graphx = GRAPHICS_MODE;
-	fprintf(pls->OutFile, "%c%%!0", ESC);	/* set tek mode */
-	fprintf(pls->OutFile, "%cKN1", ESC);	/* clear the view */
-	fprintf(pls->OutFile, "%cLZ", ESC);	/* clear dialog buffer */
-	fprintf(pls->OutFile, "%cML1", ESC);	/* set default color */
+	fprintf(pls->OutFile, "\033%%!0");	/* set tek mode */
+	fprintf(pls->OutFile, "\033KN1");	/* clear the view */
+	fprintf(pls->OutFile, "\033LZ");	/* clear dialog buffer */
+	fprintf(pls->OutFile, "\033ML1");	/* set default color */
 	break;
+#endif	/* PLD_tek4107 */
 
 /* A sneaky hack: VLT sometimes has leftover panel information, causing 
  * garbage at the beginning of a sequence of color fills.  Since 
  * there is no clear panel command, instead I set the fill color to the
  * same as background and issue an end panel command.
  */
-
+#ifdef PLD_vlt
     case vlt:{
 	char fillcol[4];
 	tek_graph(pls);
 	encode_int(fillcol, 0);
-	fprintf(pls->OutFile, "%cMP%s", ESC, fillcol);
-	fprintf(pls->OutFile, "%cLE", ESC);
+	fprintf(pls->OutFile, "\033MP%s\033LE", fillcol);
 	break;
     }
+#endif	/* PLD_vlt */
 
     default:
 	tek_graph(pls);
@@ -282,16 +313,16 @@ tek_init(PLStream *pls)
 
 /* Initialize palette */
 
-    if (pls->color) {
-	printf("%cTM111", ESC);		/* Switch to RGB colors */
-	setcmap(pls);
-    }
+   if ( pls->color & 0x01 ) {
+       printf("\033TM111");	/* Switch to RGB colors */
+       setcmap(pls);
+   }
 
 /* Finish initialization */
 
-    fprintf(pls->OutFile, "%c", GS);		/* Enter vector mode */
+    fprintf(pls->OutFile, VECTOR_MODE);	/* Enter vector mode */
     if (pls->termin)
-	fprintf(pls->OutFile, "%c%c", ESC, FF);	/* erase and home */
+	fprintf(pls->OutFile, CLEAR_VIEW);/* erase and home */
 
     fflush(pls->OutFile);
 }
@@ -305,22 +336,25 @@ tek_init(PLStream *pls)
 void
 plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-    PLDev *dev = (PLDev *) pls->dev;
-    int x1 = x1a >> 4, y1 = y1a >> 4, x2 = x2a >> 4, y2 = y2a >> 4;
+   PLDev *dev = (PLDev *) pls->dev;
+   short x1 = x1a >> 4, 
+   	 y1 = y1a >> 4, 
+         x2 = x2a >> 4,
+         y2 = y2a >> 4;
 
-    tek_graph(pls);
+   tek_graph(pls);
 
 /* If continuation of previous line just send new point */
 
-    if (x1 != dev->xold || y1 != dev->yold) {
-	fprintf(pls->OutFile, "%c", GS);
-	pls->bytecnt++;
-	tek_vector(pls, x1, y1);
-    }
-    tek_vector(pls, x2, y2);
+   if (x1 != dev->xold || y1 != dev->yold) {
+       fprintf(pls->OutFile, VECTOR_MODE);
+       pls->bytecnt++;
+       tek_vector(pls, x1, y1);
+   }
+   tek_vector(pls, x2, y2);
 
-    dev->xold = x2;
-    dev->yold = y2;
+   dev->xold = x2;
+   dev->yold = y2;
 }
 
 /*----------------------------------------------------------------------*\
@@ -332,10 +366,25 @@ plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 void
 plD_polyline_tek(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
-    PLINT i;
+   PLINT i;
+   PLDev *dev = (PLDev *) pls->dev;
+   short x = xa[0] >> 4, y = ya[0] >> 4;
 
-    for (i = 0; i < npts - 1; i++)
-	plD_line_tek(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+   tek_graph(pls);
+
+/* If continuation of previous line just send new point */
+
+   if ( x != dev->xold || y != dev->yold ) {
+       fprintf(pls->OutFile, VECTOR_MODE);
+       pls->bytecnt++;
+       tek_vector(pls, x, y);
+   }
+   for (i = 1; i < npts; i++) {
+       tek_vector(pls, xa[i] >> 4, ya[i] >> 4 );
+   }
+   
+   dev->xold = xa[npts -1] >> 4;
+   dev->yold = ya[npts -1] >> 4;
 }
 
 /*----------------------------------------------------------------------*\
@@ -353,7 +402,7 @@ plD_eop_tek(PLStream *pls)
 	if ( ! pls->nopause) 
 	    WaitForPage(pls);
     }
-    fprintf(pls->OutFile, "%c%c", ESC, FF);
+    fprintf(pls->OutFile, CLEAR_VIEW);	/* erase and home */
 }
 
 /*----------------------------------------------------------------------*\
@@ -367,27 +416,26 @@ plD_eop_tek(PLStream *pls)
 void
 plD_bop_tek(PLStream *pls)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+   PLDev *dev = (PLDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+   dev->xold = UNDEFINED;
+   dev->yold = UNDEFINED;
 
-    if (pls->termin) {
-	switch (pls->dev_minor) {
-	case mskermit:
-	    fprintf(pls->OutFile, "%c%c", ESC, FF);
-	    break;
-	}
-    }
-    else
-	plGetFam(pls);
-
-    pls->page++;
+   if (pls->termin) {
+       switch (pls->dev_minor) {
+       case mskermit:
+	   fprintf(pls->OutFile, CLEAR_VIEW);	/* erase and home */
+	   break;
+       }
+   } else {
+       plGetFam(pls);
+   }
+   pls->page++;
 
 /* Initialize palette */
 
-    if (pls->color) 
-	setcmap(pls);
+   if ( pls->color & 0x01 )
+       setcmap(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -401,8 +449,7 @@ plD_tidy_tek(PLStream *pls)
 {
     if ( ! pls->termin) {
 	fclose(pls->OutFile);
-    }
-    else {
+    } else {
 	tek_text(pls);
 	fflush(pls->OutFile);
     }
@@ -430,12 +477,15 @@ plD_state_tek(PLStream *pls, PLINT op)
 	    if (icol0 != PL_RGB_COLOR) {
 		curcolor = icol0;
 		switch (pls->dev_minor) {
+#ifdef PLD_mskermit
 		case mskermit:
-		    fprintf(pls->OutFile, "%s", kermit_color[icol0 % 14] );
+		    fprintf(pls->OutFile, "\033[%sm",
+			    kermit_color[icol0 % 14] );
 		    break;
+#endif	/* PLD_mskermit */
 
 		default:
-		    fprintf(pls->OutFile, "%cML%c", ESC, icol0 + 48);
+		    fprintf(pls->OutFile, "\033ML%c", icol0 + '0');
 		}
 	    }
 	}
@@ -450,14 +500,15 @@ plD_state_tek(PLStream *pls, PLINT op)
 
 	    icol1 = pls->ncol0 + (pls->icol1 * (ncol1-1)) / (pls->ncol1-1);
 	    curcolor = icol1;
-	    fprintf(pls->OutFile, "%cML%c", ESC, icol1 + 48);
+	    fprintf(pls->OutFile, "\033ML%c", icol1 + '0');
 	}
 	break;
 
     case PLSTATE_CMAP0:
     case PLSTATE_CMAP1:
-	if (pls->color)
-	    setcmap(pls);
+	if ( pls->color & 0x01 )
+	    setcmap(pls);    
+
 	break;
     }
 }
@@ -509,16 +560,16 @@ fill_polygon(PLStream *pls)
 
 /* Select the fill pattern */
 
-    fprintf(pls->OutFile, "%cMP%s", ESC, fillcol);
+    fprintf(pls->OutFile, "\033MP%s", fillcol);
 
 /* Begin panel boundary */
 /* Change %s0 to %s1 to see the boundary of each fill box -- cool! */
 
-    fprintf(pls->OutFile, "%cLP%s0", ESC, firstpoint);
+    fprintf(pls->OutFile, "\033LP%s0", firstpoint);
 
 /* Specify boundary (use vector mode) */
 
-    fprintf(pls->OutFile, "%c", GS);
+    fprintf(pls->OutFile, VECTOR_MODE);
     pls->bytecnt++;
     for (i = 1; i < pls->dev_npts; i++) {
 	tek_vector(pls, pls->dev_x[i]>>4, pls->dev_y[i]>>4);
@@ -526,7 +577,7 @@ fill_polygon(PLStream *pls)
 
 /* End panel */
 
-    fprintf(pls->OutFile, "%cLE", ESC);
+    fprintf(pls->OutFile, "\033LE");
 }
 
 /*----------------------------------------------------------------------*\
@@ -557,25 +608,25 @@ tek_text(PLStream *pls)
 	pls->graphx = TEXT_MODE;
 	switch (pls->dev_minor) {
 	case xterm:
-	    printf("%c%c", ESC, ETX);		/* switch to vt100 screen */
+	    printf("\033\003");		/* vt100 mode (xterm) = ESC ETX */
 	    break;
 
 	case mskermit:
 	case vlt:
-	    printf("%c[?38l", ESC);		/* switch to vt100 screen */
+	    printf("\033[?38l");	/* vt100 screen */
 	    break;
 
 	case versaterm:
-	    printf("%c%%!2", ESC);		/* switch to vt100 screen */
+	    printf("\033%%!2");		/* vt100 screen */
 	    break;
 
 	case tek4107:
-	    printf("%cLV1", ESC);		/* set dialog visible */
-	    printf("%c%%!1", ESC);		/* set ansi mode */
+	    printf("\033LV1");		/* set dialog visible */
+	    printf("\033%%!1");		/* set ansi mode */
 	    break;
 
 	default:
-	    printf("%c", US);			/* enter alpha mode */
+	    printf(ALPHA_MODE);		/* enter alpha mode */
 	}
     }
 }
@@ -600,21 +651,21 @@ tek_graph(PLStream *pls)
 	case xterm:
 	case mskermit:
 	case vlt:
-	    printf("%c[?38h", ESC);		/* switch to tek screen */
+	    printf("\033[?38h");	/* switch to tek screen */
 	    break;
 
 	case versaterm:
-	    printf("%c%%!0", ESC);		/* switch to tek4107 screen */
+	    printf("\033%%!0");		/* switch to tek4107 screen */
 	    break;
 
 	case tek4107:
-	    printf("%c%%!0", ESC);		/* set tek mode */
-	    printf("%c%c", ESC, FF);		/* clear screen */
-	    printf("%cLV0", ESC);		/* set dialog invisible */
+	    printf("\033%%!0");		/* set tek mode */
+   	    printf(CLEAR_VIEW);		/* clear screen */
+	    printf("\033LV0");		/* set dialog invisible */
 	    break;
 
 	default:
-	    printf("%c", GS);			/* enter vector mode */
+	    printf(VECTOR_MODE);	/* enter vector mode */
 	}
     }
 }
@@ -637,8 +688,7 @@ encode_int(char *c, int i)
 	    *c++ = ((i >> 10) & 0x1F) | 0x40;
 	if (i & 0x03F0)				/* are any of bits 4-9 set? */
 	    *c++ = ((i >> 4) & 0x3F) | 0x40;
-    }
-    else {
+    } else {
 	i = -i;
 	negative = 1;
     }
@@ -666,11 +716,11 @@ encode_int(char *c, int i)
 static void
 encode_vector(char *c, int x, int y)
 {
-    c[0] = y / 32 + 32;
-    c[1] = y - (y / 32) * 32 + 96;
-    c[2] = x / 32 + 32;
-    c[3] = x - (x / 32) * 32 + 64;
-    c[4] = '\0';
+    c[0] = (y >> 5)   + 0x20;		/* hy */
+    c[1] = (y & 0x1f) + 0x60;		/* ly */
+    c[2] = (x >> 5)   + 0x20;		/* hx */
+    c[3] = (x & 0x1f) + 0x40;		/* lx */
+    c[4] = '\0';			/* NULL */
 }
 
 /*----------------------------------------------------------------------*\
@@ -683,14 +733,15 @@ encode_vector(char *c, int x, int y)
 static void
 tek_vector(PLStream *pls, int x, int y)
 {
-    int hy, ly, hx, lx;
+   char c[5];
+   c[0] = (y >> 5)   + 0x20;		/* hy */
+   c[1] = (y & 0x1f) + 0x60;		/* ly */
+   c[2] = (x >> 5)   + 0x20;		/* hx */
+   c[3] = (x & 0x1f) + 0x40;		/* lx */
+   c[4] = '\0';				/* NULL */
 
-    hy = y / 32 + 32;
-    ly = y - (y / 32) * 32 + 96;
-    hx = x / 32 + 32;
-    lx = x - (x / 32) * 32 + 64;
-    fprintf(pls->OutFile, "%c%c%c%c", hy, ly, hx, lx);
-    pls->bytecnt += 4;
+   fprintf( pls->OutFile, "%s", c );
+   pls->bytecnt += 4;
 }
 
 /*----------------------------------------------------------------------*\
@@ -706,11 +757,11 @@ scolor(int icol, int r, int g, int b)
     char tek_col[4], tek_r[4], tek_g[4], tek_b[4];
 
     encode_int(tek_col, icol);
-    encode_int(tek_r, 100*r/255);
-    encode_int(tek_g, 100*g/255);
-    encode_int(tek_b, 100*b/255);
+    encode_int(tek_r, (100*r)/255);
+    encode_int(tek_g, (100*g)/255);
+    encode_int(tek_b, (100*b)/255);
 
-    printf("%cTG14%s%s%s%s", ESC, tek_col, tek_r, tek_g, tek_b);
+    printf("\033TG14%s%s%s%s", tek_col, tek_r, tek_g, tek_b);
 }
 
 /*----------------------------------------------------------------------*\
@@ -752,7 +803,7 @@ WaitForPage(PLStream *pls)
 {
     int input_char;
 
-    putchar(BEL);
+    putchar(BEL_CHAR);
     fflush(stdout);
 
     while ( ! exit_eventloop) {
@@ -796,8 +847,7 @@ EventHandler(PLStream *pls, int input_char)
 	    key.code = PLK_Delete;
 	    break;
 	}
-    }
-    else {
+    } else {
 	key.string[0] = input_char;
 	key.string[1] = '\0';
     }
@@ -809,9 +859,10 @@ EventHandler(PLStream *pls, int input_char)
     plgra();
 #endif
 
-/* Call user event handler */
-/* Since this is called first, the user can disable all plplot internal
-   event handling by setting key.code to 0 and key.string to '\0' */
+/* Call user event handler.
+ * Since this is called first, the user can disable all plplot internal
+ * event handling by setting key.code to 0 and key.string to '\0'.
+ */
 
     if (pls->KeyEH != NULL)
 	(*pls->KeyEH) (&key, pls->KeyEH_data, &exit_eventloop);
@@ -835,7 +886,7 @@ EventHandler(PLStream *pls, int input_char)
     if (key.string[0] == 't') {
 	fprintf(stderr, "Entering GIN mode..\n");
 
-	printf("%c%c", ESC, SUB);	/* Enter GIN mode */
+	printf(GIN_MODE);			/* Enter GIN mode */
 	fflush(stdout);
     }
 }
