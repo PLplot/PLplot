@@ -47,6 +47,7 @@
 <!ENTITY plcpstrm '<link linkend="plcpstrm"><function>plcpstrm</function></link>'>
 <!ENTITY plend '<link linkend="plend"><function>plend</function></link>'>
 <!ENTITY plend1 '<link linkend="plend1"><function>plend1</function></link>'>
+<!ENTITY plenv0 '<link linkend="plenv0"><function>plenv0</function></link>'>
 <!ENTITY plenv '<link linkend="plenv"><function>plenv</function></link>'>
 <!ENTITY pleop '<link linkend="pleop"><function>pleop</function></link>'>
 <!ENTITY plerrx '<link linkend="plerrx"><function>plerrx</function></link>'>

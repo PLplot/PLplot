@@ -1667,6 +1667,248 @@ reference stream to the current stream
       <function>plenv0</function>: Same as plenv() but if in multiplot
       mode does not advance the subpage, instead clears it.
     </title>
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plenv0</function>
+	</funcdef>
+        <paramdef><parameter>xmin</parameter></paramdef>
+        <paramdef><parameter>xmax</parameter></paramdef>
+        <paramdef><parameter>ymin</parameter></paramdef>
+        <paramdef><parameter>ymax</parameter></paramdef>
+        <paramdef><parameter>just</parameter></paramdef>
+        <paramdef><parameter>axis</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets up plotter environment for simple graphs by calling &pladv; and
+      setting up viewport and window to sensible default values.  &plenv0;
+      leaves enough room around most graphs for axis labels and a title.
+      When these defaults are not suitable, use the individual routines
+      &plvpas;, &plvpor;, or &plvasp; for setting up the viewport, &plwind;
+      for defining the window, and &plbox; for drawing the box.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>xmin</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Value of x at left-hand edge of window.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xmax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Value of x at right-hand edge of window.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ymin</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Value of y at bottom edge of window.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ymax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Value of y at top edge of window.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>just</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+        <para>
+           Controls how the axes will be scaled:
+        <itemizedlist>
+	<listitem>
+	  <para>
+	    <literal>-1</literal>: the scales
+            will not be set, the user must set up the scale before calling
+            plenv0() using plsvpa(), plvasp() or other.
+         </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>0</literal>: the x and
+	    y axes are scaled independently to use as much of the screen as
+	    possible.
+         </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>1</literal>: the scales of
+	    the x and y axes are made equal.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>2</literal>: the axis of
+	    the x and y axes are made equal, and the plot box will be square.
+	  </para>
+	</listitem>
+    </itemizedlist>
+        </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>axis</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Controls drawing of the box around the plot:
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal>-2</literal>: draw no box, no tick marks, no
+numeric tick labels, no axes.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>-1</literal>: draw box only.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>0</literal>: draw box, ticks, and numeric tick labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>1</literal>: also draw coordinate axes at
+		  <literal>x=0</literal> and <literal>y=0</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>2</literal>: also draw a grid at major tick
+positions in both coordinates.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>3</literal>: also draw a grid at minor tick
+positions in both coordinates.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>10</literal>: same as 0 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+		  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>11</literal>: same as 1 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>12</literal>: same as 2 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>13</literal>: same as 3 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>20</literal>: same as 0 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+		  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>21</literal>: same as 1 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>22</literal>: same as 2 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>23</literal>: same as 3 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>30</literal>: same as 0 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+		  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>31</literal>: same as 1 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>32</literal>: same as 2 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>33</literal>: same as 3 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
   </sect1>
 
   <sect1 id="plenv" renderas="sect3">
@@ -1749,9 +1991,9 @@ reference stream to the current stream
 	  <parameter>just</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
+	<listitem>
         <para>
            Controls how the axes will be scaled:
-
         <itemizedlist>
 	<listitem>
 	  <para>
@@ -1781,6 +2023,7 @@ reference stream to the current stream
 	</listitem>
     </itemizedlist>
         </para>
+	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
@@ -5153,9 +5396,9 @@ default
 
     </sect1>
 
-  <sect1 id="plsurf3d" renderas="sect3">
+  <sect1 id="plotsh3d" renderas="sect3">
     <title>
-      <function>plsurf3d</function>: Plot shaded 3-d surface plot
+      <function>plotsh3d</function>: Plot shaded 3-d surface plot
     </title>
 
     <para>
