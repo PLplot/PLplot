@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/12/08 06:20:04  mjl
-   Miscellaneous cleaning up.
+   Revision 1.16  1994/01/15 17:34:27  mjl
+   Minor documentation addition.
 
+ * Revision 1.15  1993/12/08  06:20:04  mjl
+ * Miscellaneous cleaning up.
+ *
  * Revision 1.14  1993/11/19  07:41:52  mjl
  * define NO_ANSI_LIBC if on Convex (may be overkill but it works..)
  *
@@ -45,6 +48,8 @@
 #ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
 #endif
+
+/* Include all externally-visible definitions and prototypes */
 
 #include "plplot.h"
 
