@@ -493,6 +493,16 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
+### If the user don't want (or the system is not capable of) to build
+### shared libraries, then disable dynamic drivers, as they are
+### dynamically loaded objects.
+
+if test "$enable_shared" != "yes"; then
+    AC_MSG_WARN([Dynamic drivers require enable-shared=yes, setting enable_dyndr
+ivers=no])
+    enable_dyndrivers="no"
+fi
+
 MY_ARG_WITH(freetype,
   AC_HELP_STRING([--with-freetype],
     [enable driver options for using freetype library for fonts ($with_freetype)]))
