@@ -10,6 +10,7 @@
  * 2. Changes to work with ANSI C
  * 3. Changes to support user-installable error or output handlers.
  * 4. PLplot argument parsing routine called to handle arguments.
+ * 5. Added define of _POSIX_SOURCE and eliminated include of tclInt.h.
  *
  * Original comments follow.
  */
@@ -28,8 +29,12 @@
  * RCS: @(#) $Id$
  */
 
+/* Note the define of _POSIX_SOURCE must come before tcl.h is included.  One
+ * way to do this is to include plplot.h first.
+ */
+#include "plplot/plplot.h"
+
 #include "tcl.h"
-#include "tclInt.h"
 
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS DLLEXPORT
@@ -59,10 +64,6 @@ extern char *		strcpy _ANSI_ARGS_((char *dst, CONST char *src));
 static char *tclStartupScriptFileName = NULL;
 
 /* pltcl enhancements */
-
-#include "plplot/plplot.h"
-
-/* This makes a good default */
 
 static void
 plPrepOutputHandler(Tcl_Interp *interp, int code, int tty);
