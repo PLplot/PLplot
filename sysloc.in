@@ -978,27 +978,25 @@ fi
 
 AC_MSG_CHECKING([for NaN awareness in C compiler])
 AC_RUN_IFELSE(
-	[AC_LANG_PROGRAM([[#include <stdio.h>
-#if defined(__GNUC__)
-static const double NaN = 0.0 / 0.0;
-#elif defined(BIG_ENDIAN)
-static const long long lNaN = 0x7fffffffffffffff;
-#define NaN (*(double*)&lNaN)
-#else
-static const long long lNaN = 0xfff8000000000000;
-#define NaN (*(double*)&lNaN)
-#endif]],
-[[double x = NaN;
-if (x != x) return 0;
-else return 1;]])] ,
-[with_nan="yes"],[with_nan="no"])
-AC_MSG_RESULT([$with_nan])
-
-if test "$with_nan" = "no"; then
-	AC_MSG_WARN([System is not NaN aware, setting with_csa=no and with_qhull=no])
+    [AC_LANG_PROGRAM([[
+	#include <stdio.h>
+	#if defined(__GNUC__)
+	static const double NaN = 0.0 / 0.0;
+	#elif defined(BIG_ENDIAN)
+	static const long long lNaN = 0x7fffffffffffffff;
+	#define NaN (*(double*)&lNaN)
+	#else
+	static const long long lNaN = 0xfff8000000000000;
+	#define NaN (*(double*)&lNaN)
+	#endif
+    ]],[[
+	double x = NaN;
+	if (x != x) return 1;
+	else return 0;
+    ]])] ,
+    [AC_MSG_WARN([System is not NaN aware, setting with_csa=no and with_qhull=no]);
 	with_csa="no";
-	with_qhull="no";
-fi
+	with_qhull="no";])
 
 # ----------------------------------------------------------------------------
 # Check for csa
