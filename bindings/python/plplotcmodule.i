@@ -883,6 +883,10 @@ void
 plarrows(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
          PLFLT scale, PLFLT dx, PLFLT dy) ;
 
+DOC(plsxwin, "Set inferior X window.")
+void
+plsxwin(PLINT window_id);
+
 /* Complete list of common API (has "c_" suffix version defined in plplot.h) */
 
 DOC(pl_setcontlabelformat, "Set the format of the contour labels.")
@@ -1493,11 +1497,6 @@ void
 plimage( PLFLT **Matrix, PLINT nx, PLINT ny, 
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
-
-/* Set inferior X window. */
-
-void
-plsxwin(PLINT window_id);
 
 /* Returns a list of file-oriented device names and their menu strings */
 void
