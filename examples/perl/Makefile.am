@@ -33,7 +33,8 @@ examples_perl_SCRIPTS = \
 	x09.pl \
 	x10.pl \
 	x11.pl \
-	x12.pl
+	x12.pl \
+	x13.pl
 
 examples_perl_DATA = \
 	README.perldemos
