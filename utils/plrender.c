@@ -27,6 +27,8 @@
 
 char ident[] = "@(#) $Id$";
 
+/*#define DEBUG*/
+
 #include "plplot/plplotP.h"
 #include "plplot/plevent.h"
 #include "plplot/metadefs.h"
@@ -39,6 +41,7 @@ static void	process_next	(U_CHAR c);
 static void	plr_init	(U_CHAR c);
 static void	plr_line	(U_CHAR c);
 static void	plr_eop 	(U_CHAR c);
+static void	plr_eop1 	(U_CHAR c);
 static void	plr_bop 	(U_CHAR c);
 static void	plr_state	(U_CHAR c);
 static void	plr_esc		(U_CHAR c);
@@ -53,6 +56,7 @@ static void	ungetcommand	(U_CHAR);
 static void	get_ncoords	(PLFLT *x, PLFLT *y, PLINT n);
 static void	plr_exit	(char *errormsg);
 static void	NextFamilyFile	(U_CHAR *);
+static void	PrevFamilyFile	(void);
 static void	ReadPageHeader	(void);
 static void	plr_KeyEH	(PLGraphicsIn *, void *, int *);
 static void	SeekToDisp	(long);
@@ -106,6 +110,7 @@ static int	end_of_page;	/* Set when we're at the end of a page */
 static int	seek_mode;	/* Set after a seek, before a BOP */
 static int	addeof_beg;	/* Set when we are counting back from eof */
 static int	addeof_end;	/* Set when we are counting back from eof */
+static int	first_page;	/* Set when we're on the first page in the file */
 
 static FPOS_T	prevpage_loc;	/* Byte position of previous page header */
 static FPOS_T	curpage_loc;	/* Byte position of current page header */
@@ -114,6 +119,7 @@ static FPOS_T	nextpage_loc;	/* Byte position of next page header */
 /* File info */
 
 static int	input_type;	/* 0 for file, 1 for stream */
+static int	isfile;		/* shorthand -- set if file */
 static int	do_file_loop=1;	/* loop over multiple files if set */
 static PDFstrm	*pdfs;		/* PDF stream handle */
 static FILE	*MetaFile;	/* Actual metafile handle, for seeks etc */
@@ -150,12 +156,35 @@ static U_SHORT	npts;
 static int	direction_flag, isanum, at_eop;
 static char	num_buffer[20];
 static PLFLT	x[PL_MAXPOLY], y[PL_MAXPOLY];
+static char	buffer[256];
+static char *	cmdstring[256];
 
 /* Exit codes */
 
 #define	EX_SUCCESS	0		/* success! */
 #define	EX_ARGSBAD	1		/* invalid args */
 #define	EX_BADFILE	2		/* invalid filename or contents */
+
+/* A little function to help with debugging */
+
+#ifdef DEBUG
+#define DEBUG_PRINT_LOCATION(a) PrintLocation(a)
+
+static void PrintLocation(char *tag)
+{
+    if (isfile) {
+	FPOS_T current_offset;
+
+	if (pl_fgetpos(MetaFile, &current_offset))
+	    plexit("PrintLocation (plrender.c): fgetpos call failed");
+
+	pldebug(tag, "at offset %d in file %s\n",
+		(int) current_offset, FileName);
+    }
+}
+#else
+#define DEBUG_PRINT_LOCATION(a)
+#endif
 
 /*--------------------------------------------------------------------------*\
  * Options data structure definition.
@@ -274,6 +303,30 @@ Init(int argc, char **argv)
     for (i = 0; i < argc; i++) {
 	myargv[i] = argv[i];
     }
+
+/* Set up names for commands for debugging */
+
+    for (i = 0; i < 256; i++)
+	cmdstring[i]	= "UNDEFINED";
+
+    cmdstring[INITIALIZE]	= "INITIALIZE";
+    cmdstring[CLOSE]		= "CLOSE";
+    cmdstring[SWITCH_TO_TEXT]	= "SWITCH_TO_TEXT";
+    cmdstring[SWITCH_TO_GRAPH]	= "SWITCH_TO_GRAPH";
+    cmdstring[EOP]		= "EOP";
+    cmdstring[BOP]		= "BOP";
+    cmdstring[NEW_COLOR]	= "NEW_COLOR";
+    cmdstring[NEW_WIDTH]	= "NEW_WIDTH";
+    cmdstring[LINE]		= "LINE";
+    cmdstring[LINETO]		= "LINETO";
+    cmdstring[ESCAPE]		= "ESCAPE";
+    cmdstring[ADVANCE]		= "ADVANCE";
+    cmdstring[POLYLINE]		= "POLYLINE";
+    cmdstring[NEW_COLOR0]	= "NEW_COLOR0";
+    cmdstring[NEW_COLOR1]	= "NEW_COLOR1";
+    cmdstring[CHANGE_STATE]	= "CHANGE_STATE";
+    cmdstring[BOP0]		= "BOP0";
+    cmdstring[END_OF_FIELD]	= "END_OF_FIELD";
 }
 
 /*--------------------------------------------------------------------------*\
@@ -369,7 +422,7 @@ ProcessFile(int argc, char **argv)
 		break;
 	}
 
-	if ((c == BOP || c == ADVANCE) && curdisp == disp_end)
+	if ((c == BOP || c == BOP0 || c == ADVANCE) && curdisp == disp_end)
 	    break;
 
 	process_next(c);
@@ -414,15 +467,16 @@ OpenMetaFile(char **argv)
 
     dbug_enter("OpenMetaFile");
 
-    if ( ! strcmp(FileName, "-"))
+    if (!strcmp(FileName, "-"))
 	input_type = 1;
 
-    if (input_type == 1) {
+    isfile = (input_type == 0);
+
+    if (!isfile) {
 	MetaFile = stdin;
 	do_file_loop = 0;
-    }
-    else {
 
+    } else {
 	if (*FileName == '\0') {
 	    if (argv[1] != NULL && *argv[1] != '\0') {
 		strncpy(FileName, argv[1], sizeof(FileName) - 1);
@@ -493,60 +547,74 @@ OpenMetaFile(char **argv)
 static void
 process_next(U_CHAR c)
 {
-    switch ((int) c) {
+/* Specially handle line draws to contain output when debugging */
 
-    case INITIALIZE:
-	plr_init(c);
-	break;
+    switch ((int) c) {
 
     case LINE:
     case LINETO:
     case POLYLINE:
 	plr_line(c);
-	break;
+	if (c != c_old)
+	    pldebug("process_next", "processing command %s\n", cmdstring[c]);
+	return;
+    }
+
+/* Everything else */
+
+    pldebug("process_next", "processing command %s\n", cmdstring[c]);
+
+    switch ((int) c) {
+
+    case INITIALIZE:
+	plr_init(c);
+	return;
 
     case EOP:
 	plr_eop(c);
-	break;
+	return;
 
     case BOP:
+    case BOP0:
 	plr_bop(c);
-	break;
+	return;
 
     case CHANGE_STATE:
 	plr_state(getcommand());
-	break;
+	return;
 
     case ESCAPE:
 	plr_esc(c);
-	break;
+	return;
 
 /* These are all commands that should be absent from current metafiles but */
 /* are recognized here for backward compatibility with old metafiles */
 
     case ADVANCE:
-	plr_eop(c);
+    /* Note here we use plr_eop1() to avoid multiple ungetc's */
+	plr_eop1(c);
 	plr_bop(c);
-	break;
+	return;
 
     case NEW_WIDTH:
 	plr_state(PLSTATE_WIDTH);
-	break;
+	return;
 
     case NEW_COLOR0:
 	plr_state(PLSTATE_COLOR0);
-	break;
+	return;
 
     case NEW_COLOR1:
 	plr_state(PLSTATE_COLOR1);
-	break;
+	return;
 
     case SWITCH_TO_TEXT:
     case SWITCH_TO_GRAPH:
-	break;
+	return;
 
     default:
-	plr_exit("process_next: Unrecognized command");
+	sprintf(buffer, "process_next: Unrecognized command code %d", (int) c);
+	plr_exit(buffer);
     }
 }
 
@@ -705,6 +773,7 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
  * plr_eop()
  *
  * Handle end of page.
+ *
  * Here we run into a bit of difficulty with packed pages -- at the end
  * there is no EOP operation done if the page is only partially full.
  * So I peek ahead to see if the next operation is a CLOSE, and if so,
@@ -720,6 +789,24 @@ plr_eop(U_CHAR c)
     ungetcommand(c1);
     if (c1 == CLOSE)
 	end_of_page = 1;
+
+    plr_eop1(c);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plr_eop1()
+ *
+ * Handle end of page.
+ *
+ * This is for use with page advances where plr_eop's packed-page logic isn't
+ * needed and in fact results in back-to-back ungetc's which are not
+ * guaranteed to work.
+\*--------------------------------------------------------------------------*/
+
+static void
+plr_eop1(U_CHAR c)
+{
+    dbug_enter("plr_eop1");
 
     if (cursub == nsubx * nsuby)
 	end_of_page = 1;
@@ -858,6 +945,8 @@ plr_state(U_CHAR op)
 	break;
     }
     }
+
+    DEBUG_PRINT_LOCATION("end of plr_state");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -995,7 +1084,7 @@ NextFamilyFile(U_CHAR *c)
 /*
  * If the family file was created correctly, the first instruction in the
  * file (after state information) MUST be an INITIALIZE.  We throw this
- * away and put a page advance in its place. 
+ * away; a BOP0 will follow immediately thereafter.
  */
 
     *c = getcommand();
@@ -1006,9 +1095,54 @@ NextFamilyFile(U_CHAR *c)
 
     if (*c != INITIALIZE)
 	fprintf(stderr,
-		"Warning, first instruction in member file not an INIT\n");
-    else
-	*c = ADVANCE;
+		"First instruction in member file not an INITIALIZE!\n");
+    else {
+
+    /* Update position offset */
+
+	if (pl_fgetpos(MetaFile, &curpage_loc))
+	    plr_exit("plrender: fgetpos call failed");
+
+	*c = getcommand();
+	if (!(*c == BOP0 || *c == BOP))
+	    fprintf(stderr,
+		    "First instruction after INITIALIZE not a BOP!\n");
+    }
+
+    pldebug("NextFamilyFile", "successfully opened %s\n", FileName);
+    DEBUG_PRINT_LOCATION("end of NextFamilyFile");
+}
+
+/*--------------------------------------------------------------------------*\
+ * PrevFamilyFile()
+ *
+ * Go back to the previous family file.
+\*--------------------------------------------------------------------------*/
+
+static void
+PrevFamilyFile(void)
+{
+    dbug_enter("PrevFamilyFile");
+
+    if (member <= 0)
+	return;
+
+    (void) fclose(MetaFile);
+    member--;
+    (void) sprintf(FileName, "%s.%i", BaseName, (int) member);
+
+    if ((MetaFile = fopen(FileName, "rb")) == NULL) {
+	is_family = 0;
+	return;
+    }
+    if (ReadFileHeader()) {
+	is_family = 0;
+	return;
+    }
+    pdfs->file = MetaFile;
+
+    pldebug("PrevFamilyFile", "successfully opened %s\n", FileName);
+    DEBUG_PRINT_LOCATION("end of PrevFamilyFile");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1062,6 +1196,25 @@ plr_exit(char *errormsg)
     }
 
     fprintf(stderr, "Program aborted\n");
+
+/* For really bad debugging cases, you may want to see what the next bit of
+ * metafile looked like.
+ */
+
+#ifdef DEBUG
+    {
+	int i, imax=256, c_end;
+	fprintf(stderr, "next %d chars in metafile are:\n", imax);
+	for (i=1; i<imax; i++) {
+	    c_end = getc(MetaFile);
+	    if (c_end == EOF)
+		break;
+	    fprintf(stderr, " %d", c_end);
+	}
+	fprintf(stderr, "\n");
+    }
+#endif
+
     exit(status);
 }
 
@@ -1110,7 +1263,7 @@ plr_KeyEH(PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop)
 
 /* The rest deals with seeking only; so we return if it is disabled */
 
-    if (no_pagelinks || (input_type > 0)) 
+    if (no_pagelinks || !isfile) 
 	return;
 
 /* Forward (+) or backward (-) */
@@ -1370,11 +1523,16 @@ SeekToPrevPage(void)
 {
     FPOS_T loc;
 
+    dbug_enter("SeekToPrevPage");
+
     if (pl_fgetpos(MetaFile, &loc))
 	plr_exit("plrender: fgetpos call failed");
 
     if (loc != curpage_loc) 
 	PageDecr();
+
+    if (is_family && first_page)
+	PrevFamilyFile();
 
     SeekTo(prevpage_loc);
     PageDecr();
@@ -1455,16 +1613,26 @@ ReadPageHeader(void)
 
     dbug_enter("ReadPageHeader");
 
+    DEBUG_PRINT_LOCATION("beginning of ReadPageHeader");
+
 /* Read page header */
 
-    if (input_type == 0) {
+    if (isfile) {
 	if (pl_fgetpos(MetaFile, &curpage_loc))
 	    plr_exit("plrender: fgetpos call failed");
     }
 
     c = getcommand();
-    if (c != BOP && c != ADVANCE) 
-	plr_exit("plrender: page advance expected; none found");
+    if (c == CLOSE && is_family)
+	NextFamilyFile(&c);
+
+    if (!(c == BOP0 || c == BOP || c == ADVANCE)) {
+	sprintf(buffer, "plrender: page advance expected; found command code %d\n \
+file: %s, position: %d", c, FileName, (int) curpage_loc);
+	plr_exit(buffer);
+    }
+
+    first_page = (c == BOP0);
 
 /* Update page/subpage counters and update page links */
 
@@ -1477,6 +1645,9 @@ ReadPageHeader(void)
 	    plm_rd( pdf_rd_4bytes(pdfs, &nextpage) );
 	    prevpage_loc = prevpage;
 	    nextpage_loc = nextpage;
+	    pldebug("ReadPageHeader",
+		    "page: %d, prev page offset: %d, next page offset: %d\n",
+		    (int) page, (int) prevpage, (int) nextpage);
 	}
 	else {
 	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
@@ -1484,6 +1655,7 @@ ReadPageHeader(void)
 	}
     }
     pldebug("ReadPageHeader", "Now at page %d, disp %d\n", curpage, curdisp);
+    DEBUG_PRINT_LOCATION("end of ReadPageHeader");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1537,6 +1709,9 @@ ReadFileHeader(void)
 	if (*tag == '\0')
 	    break;
 
+	pldebug("ReadFileHeader",
+		"Read tag: %s\n", tag);
+
 	if ( ! strcmp(tag, "pages")) {
 	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	    pages = dum_ushort;
@@ -1583,7 +1758,7 @@ ReadFileHeader(void)
 	    continue;
 	}
 
-/* Obsolete tags */
+    /* Obsolete tags */
 
 	if ( ! strcmp(tag, "orient")) {
 	    plm_rd( pdf_rd_1byte(pdfs, &dum_uchar) );
@@ -1599,6 +1774,7 @@ ReadFileHeader(void)
 	exit(EX_BADFILE);
     }
 
+    DEBUG_PRINT_LOCATION("end of ReadFileHeader");
     return 0;
 }
 
