@@ -36,7 +36,7 @@ class qplplot(QWidget):
            pl.semaphore.acquire()
            pl.owner=self
       self.set_stream()
-      self.__attr(*args)
+#      self.__attr(*args)
       if(hasattr(pl,"semaphore")):
        pl.semaphore.release()
 
