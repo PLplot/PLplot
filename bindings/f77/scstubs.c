@@ -17,7 +17,19 @@ PL_SETCONTLABELFORMAT(PLINT *lexp, PLINT *sigdig)
 }
 
 void
+PL_SETCONTLABELFORMATa(PLINT *lexp, PLINT *sigdig)
+{
+    c_pl_setcontlabelformat(*lexp, *sigdig);
+}
+
+void
 PL_SETCONTLABELPARAM(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
+{
+    c_pl_setcontlabelparam(*offset, *size, *spacing, *active);
+}
+
+void
+PL_SETCONTLABELPARAMa(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
 {
     c_pl_setcontlabelparam(*offset, *size, *spacing, *active);
 }
@@ -66,6 +78,12 @@ PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
 
 void
 PLCALC_WORLD(PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window)
+{
+    c_plcalc_world(*rx, *ry, wx, wy, window);
+}
+
+void
+PLCALC_WORLDa(PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window)
 {
     c_plcalc_world(*rx, *ry, wx, wy, window);
 }
