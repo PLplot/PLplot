@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1993/10/01 23:18:33  mjl
+ * Revision 1.26  1993/11/07 09:02:33  mjl
+ * Some minor optimizations.  Also added escape function handling for dealing
+ * with flushes.
+ *
+ * Revision 1.25  1993/10/01  23:18:33  mjl
  * Inserted XSync after creation of pixmap in CreatePixmap() to ensure
  * the test for a bad allocation is really completed.
  *
@@ -56,6 +60,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -152,6 +157,7 @@ plD_init_xw(PLStream *pls)
     pls->bytecnt = 0;
     pls->page = 0;
     pls->plbuf_write = 1;
+    pls->dev_flush = 1;		/* Want to handle our own flushes */
 
 /* Allocate and initialize device-specific data */
 
@@ -207,9 +213,11 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     static long count = 0, max_count = 20;
 
-    if ( (++count/max_count)*max_count == count) {
-	count = 0;
-	HandleEvents(pls);	/* Check for events */
+    if (dev->is_main) {
+	if ( (++count/max_count)*max_count == count) {
+	    count = 0;
+	    HandleEvents(pls);	/* Check for events */
+	}
     }
 
     y1 = dev->ylen - y1;
@@ -241,9 +249,11 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
     XPoint pts[PL_MAXPOLYLINE];
     static long count = 0, max_count = 10;
 
-    if ( (++count/max_count)*max_count == count) {
-	count = 0;
-	HandleEvents(pls);	/* Check for events */
+    if (dev->is_main) {
+	if ( (++count/max_count)*max_count == count) {
+	    count = 0;
+	    HandleEvents(pls);	/* Check for events */
+	}
     }
 
     if (npts > PL_MAXPOLYLINE)
@@ -346,7 +356,9 @@ plD_state_xw(PLStream *pls, PLINT op)
 
     dbug_enter("plD_state_xw");
 
-    HandleEvents(pls);	/* Check for events */
+    if (dev->is_main) {
+	HandleEvents(pls);	/* Check for events */
+    }
 
     switch (op) {
 
@@ -390,6 +402,8 @@ plD_state_xw(PLStream *pls, PLINT op)
 void
 plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 {
+    XwDev *dev = (XwDev *) pls->dev;
+
     dbug_enter("plD_esc_xw");
 
     switch (op) {
@@ -403,6 +417,10 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 
       case PLESC_REDRAW:
 	RedrawCmd(pls);
+	break;
+
+      case PLESC_FLUSH:
+	XFlush(dev->display);
 	break;
     }
 }
@@ -634,9 +652,6 @@ HandleEvents(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XEvent event;
-
-    if ( ! dev->is_main)
-	return;
 
     if (XCheckMaskEvent(dev->display, ButtonPressMask | KeyPressMask, &event))
 	EventHandler(pls, &event);
