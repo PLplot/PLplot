@@ -340,7 +340,7 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 int 
 PlbasicInit( Tcl_Interp *interp )
 {
-    int debug = 0;
+    int debug = plsc->debug;
     char *libDir = NULL;
     static char initScript[] = 
     "tcl_findLibrary plplot " VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
@@ -348,6 +348,7 @@ PlbasicInit( Tcl_Interp *interp )
     static char initScriptExtended[] = 
     "tcl_findLibrary plplot " VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
+
 #ifdef USE_TCL_STUBS
 /* 
  * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
