@@ -172,4 +172,6 @@ install-data-hook:
 endif
 
 MAINTAINERCLEANFILES = $(f77_examples)
-EXTRA_DIST = $(f77m4_sources) double2single.sed
+# Note, all of these (including README.f77demos) should not be installed, but
+# should all be in the build tree.
+EXTRA_DIST = $(f77m4_sources) double2single.sed README.f77demos
