@@ -550,6 +550,23 @@ if test "$enable_itcl" = "yes"; then
     fi
 fi
 
+# There should be an itclDecls.h with the other itcl includes.
+# This is missing on some distributions, so define HAVE_ITCLDECLS_H if found.
+
+if test "$enable_itcl" = "yes"; then
+    dir=$ITCLINCDIR; file=itclDecls.h; defvar=HAVE_ITCLDECLS_H
+
+    if test -d "$dir"; then
+	AC_MSG_CHECKING(for $file)
+	if test -f $dir/$file; then
+	    AC_MSG_RESULT($dir/$file)
+	    AC_DEFINE($defvar)
+	else
+	    AC_MSG_RESULT(no)
+	fi
+    fi
+fi
+
 # ----------------------------------------------------------------------------
 # libitcl ([incr Tcl])
 # ----------------------------------------------------------------------------
