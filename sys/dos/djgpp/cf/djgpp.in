@@ -142,12 +142,12 @@ move: movemain
 movemain:
 	mkdir plplot
 	move ../../../../src/*.c .
-	move ../../../../include/*.h ./plplot
+	copy ../../../../include/*.h ./plplot
 	move ../../../../drivers/*.c .
 	move ../../../../utils/*.* .
-	move ../../../../lib/*.fnt .
+	copy ../../../../lib/*.fnt .
 	move ../src/*.* .
-	move ../cf/*.h ./plplot
+	copy ../cf/*.h ./plplot
 
 	copy ..\cf\plconfig.in .\plplot\plconfig.h
 	echo >>.\plplot\plconfig.h "#define PLPLOT_VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
