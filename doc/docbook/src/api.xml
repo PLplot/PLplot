@@ -3576,7 +3576,7 @@ space for this (80 characters is safe).
       <varlistentry>
 	<term>
 	  <parameter>sg</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>PLFLT **</literal>, output)
 	</term>
 	<listitem>
 	  <para>
@@ -8475,7 +8475,7 @@ characters and their corresponding decimal ASCII values:
     <para>
       Set the memory area to be plotted (with the <quote>mem</quote> driver)
       as the <literal>dev</literal> member of the stream structure.  Also
-      set the number of pixels in the memory passed in in
+      set the number of pixels in the memory passed in
       <parameter>plotmem</parameter>, which is a block of memory
       <parameter>maxy</parameter> by <parameter>maxx</parameter> by 3 bytes
       long, say: 480 x 640 x 3 (Y, X, RGB)
