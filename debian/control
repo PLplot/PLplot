@@ -25,9 +25,6 @@ Description: Scientific plotting library
  well as the necessary data files and some utility programs for PLplot.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: libplplot-dev
 Architecture: all
@@ -44,9 +41,6 @@ Description: Scientific plotting library (development files)
  respectively.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: plplot-xwin
 Architecture: any
@@ -57,9 +51,6 @@ Description: Scientific plotting library (X11 driver)
  plotting library.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: plplot-gnome
 Architecture: any
@@ -86,9 +77,6 @@ Description: Tcl/Tk support for PLplot, a plotting library
  metafiles.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: plplot-tcl-dev
 Architecture: all
@@ -101,9 +89,6 @@ Description: Tcl/Tk development support for PLplot, a plotting library
  libraries links, and examples.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: plplot-gd
 Architecture: any
@@ -128,9 +113,6 @@ Description: Python support for PLplot, a plotting library
  provided.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: octave-plplot
 Architecture: any
@@ -157,6 +139,3 @@ Description: Documentation for PLplot, a plotting library
  documentation.  It also contains the man pages for the API functions.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
