@@ -10,8 +10,9 @@
 OCTAVE_EXE	= plplot_octave.oct plplot_stub.m
 OCTAVE_DEMOS	= demos/*.m misc/*.m
 OCTAVE_LIBS	= $(LDC_LIBS) $(MAT_LINK) -l$(PLLIB_NAME)$(LIB_TAG)
-OCTAVE_DIR	= $(PREFIX)/share/plplot_octave
-MKOCTFILE	= mkoctfile
+OCTAVE_DIR	= @OCTAVE_DIR@
+OCTAVE_OCT_DIR	= @OCTAVE_OCT_DIR@
+MKOCTFILE	= @MKOCTFILE@
 MATWRAP		= matwrap
 
 # Variables for use in "make" and "make install".
@@ -22,11 +23,8 @@ INSTALL_OCTAVE	= install_octave
 
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
 
-plplot_octave.oct: plplot_octave.o
-	LD_RUN_PATH=`pwd` $(MKOCTFILE) -v -I. -L. plplot_octave.o $(OCTAVE_LIBS)
-
-plplot_octave.o: plplot_octave.cc
-	$(MKOCTFILE) -c -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS)
+plplot_octave.oct plplot_octave.o: plplot_octave.cc
+	LD_RUN_PATH=`pwd` $(MKOCTFILE) -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS)
 
 plplot_octave.cc tmp_stub: plplot/plplot_octave.h
 	$(MATWRAP) -language octave plplot/plplot_octave.h -o plplot_octave.cc \
