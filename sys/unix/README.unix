@@ -48,7 +48,9 @@ not difficult to get the system administrator to give you ownership of
 such a directory on systems that you use.  At the sysadm's option,
 softlinks can be made to /usr/local/lib, /usr/local/bin,
 /usr/local/include, or whatever, leaving you free to install new plplot
-versions as they become available.
+versions as they become available.  It is a good idea to copy the file
+README.local to the install directory and edit it accordingly for your
+site (this is not done automatically).
 
 The font files (located in the lib directory) will be put into
 /usr/local/plplot by "make install", but there are actually several places
