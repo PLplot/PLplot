@@ -89,14 +89,14 @@ int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
     if (Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+    if (Pltk_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
 
     /*
      * Call Tcl_CreateCommand for application-specific commands, if
      * they weren't already created by the init procedures called above.
      */
-
-    Tcl_CreateCommand(interp, "plframe", plFrameCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
 
     Tcl_CreateCommand(interp, "myplot", myplotCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
