@@ -104,7 +104,8 @@ plplot_stub.m: plplot_octave_txt/plplot.doc tmp_stub massage
 	@echo >> plplot_stub.m
 	./massage >> plplot_stub.m 2> missing_help
 
-octaveshare_DATA = plplot_stub.m
+plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
+plplot_octave_DATA = plplot_stub.m
 
 docdir = $(DOCDIR)
 
