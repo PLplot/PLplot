@@ -1,15 +1,19 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/22 23:15:12  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by recent
-   changes to plmeta and plrender.  Also eliminated page clear commands from
-   grtidy() -- plend now calls grclr() and grtidy() explicitly.  Eliminated
-   the (atend) specification for BoundingBox, since this isn't recognized by
-   some programs; instead enough space is left for it and a rewind and
-   subsequent write is done from ps_tidy().  Familying is no longer directly
-   supported by the PS driver as a result.  The output done by the @end
-   function was eliminated to reduce aggravation when viewing with ghostview.
+   Revision 1.8  1993/02/27 04:46:40  mjl
+   Fixed errors in ordering of header file inclusion.  "plplot.h" should
+   always be included first.
 
+ * Revision 1.7  1993/02/22  23:15:12  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by recent
+ * changes to plmeta and plrender.  Also eliminated page clear commands from
+ * grtidy() -- plend now calls grclr() and grtidy() explicitly.  Eliminated
+ * the (atend) specification for BoundingBox, since this isn't recognized by
+ * some programs; instead enough space is left for it and a rewind and
+ * subsequent write is done from ps_tidy().  Familying is no longer directly
+ * supported by the PS driver as a result.  The output done by the @end
+ * function was eliminated to reduce aggravation when viewing with ghostview.
+ *
  * Revision 1.6  1993/01/23  05:41:51  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -39,11 +43,11 @@
 */
 #ifdef PS
 
+#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
-#include "plplot.h"
 #include "drivers.h"
 
 /* Prototypes for functions in this file. */

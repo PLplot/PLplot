@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/25 18:29:08  mjl
-   Changed buffer code to use only one temporary file per plplot invocation &
-   rewinding it as needed, instead of opening/closing a temporary file for each
-   page.  Fixed bug in redisplaying backed up page.
+   Revision 1.5  1993/02/27 04:46:39  mjl
+   Fixed errors in ordering of header file inclusion.  "plplot.h" should
+   always be included first.
 
+ * Revision 1.4  1993/02/25  18:29:08  mjl
+ * Changed buffer code to use only one temporary file per plplot invocation &
+ * rewinding it as needed, instead of opening/closing a temporary file for each
+ * page.  Fixed bug in redisplaying backed up page.
+ *
  * Revision 1.3  1993/02/22  23:11:00  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -38,10 +42,10 @@
 
 */
 
+#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
 
-#include "plplot.h"
 #include "drivers.h"
 #include "pdf.h"
 #include "metadefs.h"

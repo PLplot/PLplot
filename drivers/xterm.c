@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/26 06:23:21  mjl
-   Changed char->int in input parameter to EventHandler.
+   Revision 1.8  1993/02/27 04:46:42  mjl
+   Fixed errors in ordering of header file inclusion.  "plplot.h" should
+   always be included first.
 
+ * Revision 1.7  1993/02/26  06:23:21  mjl
+ * Changed char->int in input parameter to EventHandler.
+ *
  * Revision 1.6  1993/02/22  23:11:04  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -33,8 +37,8 @@
 */
 #ifdef XTERM
 
-#include <stdio.h>
 #include "plplot.h"
+#include <stdio.h>
 #include "drivers.h"
 #include "plevent.h"
 

@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/22 23:10:58  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.5  1993/02/27 04:46:38  mjl
+   Fixed errors in ordering of header file inclusion.  "plplot.h" should
+   always be included first.
 
+ * Revision 1.4  1993/02/22  23:10:58  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.3  1993/01/23  05:41:47  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -23,9 +27,8 @@
 */
 #ifdef NULLDEV
 
-#include <stdio.h>
-
 #include "plplot.h"
+#include <stdio.h>
 #include "drivers.h"
 
 static PLFLT lpage_x = 238.0;	/* Page length in x in virtual mm */

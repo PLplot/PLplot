@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:10:51  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.6  1993/02/27 04:46:32  mjl
+   Fixed errors in ordering of header file inclusion.  "plplot.h" should
+   always be included first.
 
+ * Revision 1.5  1993/02/22  23:10:51  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.4  1993/01/23  05:41:40  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -49,11 +53,9 @@
 */
 #ifdef GNUSVGA			/* Only compile for DOS 386 with GNU CC
 				   compiler */
-
-#include <stdio.h>
 #include "plplot.h"
+#include <stdio.h>
 #include "drivers.h"
-
 #include <graphics.h>
 
 /* Prototypes:	Since GNU CC, we can rest in the safety of ANSI prototyping. */
