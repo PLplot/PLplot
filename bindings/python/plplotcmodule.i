@@ -424,65 +424,7 @@ typedef void* PLPointer;
 #define PLESPLFLTBUFFERING_DISABLE    2
 #define PLESPLFLTBUFFERING_QUERY      3
 
-DOC(pladv, "Advance to subpage \"page\", or to the next one if \"page\" = 0.")
-void
-pladv(PLINT page);
-
-/* simple arrow plotter. */
-DOC(plarrows, "simple arrow plotter.")
-void
-plarrows(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
-         PLFLT scale, PLFLT dx, PLFLT dy) ;
-
-/* This functions similarly to plbox() except that the origin of the axes */
-/* is placed at the user-specified point (x0, y0). */
-
-void
-plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
-	 const char *yopt, PLFLT ytick, PLINT nysub);
-
-/* Plot a histogram using x to store data values and y to store frequencies */
-void
-plbin(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT center);
-
-/* Start new page.  Should only be used with pleop(). */
-
-void
-plbop(void);
-
-/* This draws a box around the current viewport. */
-
-void
-plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
-	const char *yopt, PLFLT ytick, PLINT nysub);
-
-/* This is the 3-d analogue of plbox(). */
-
-void
-plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
-	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
-	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
-
-/*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
-
-void
-plxormod(PLINT mode, PLINT *OUTPUT);
-
-/* Calculate world coordinates and subpage from relative device coordinates. */
-
-void
-plcalc_world(PLFLT rx, PLFLT ry, PLFLT *OUTPUT, PLFLT *OUTPUT, PLINT *OUTPUT);
-
-/* Set color, map 0.  Argument is integer between 0 and 15. */
-
-void
-plcol0(PLINT icol0);
-
-/* Set color, map 1.  Argument is a float between 0. and 1. */
-
-void
-plcol1(PLFLT col1);
-
+/* All code associated with special call-back functions pltr[0-2] */
 /* Identity transformation. */
 
 %typemap(ignore) PLPointer IGNORE {
@@ -826,6 +768,71 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %typemap(default) PLPointer PYOBJECT_DATA {
   $1 = NULL;
 }
+
+/* End of all code associated with special call-back functions pltr[0-2] */
+
+
+/* Non-common API that are included here because they traditionally
+ * were part of plmodule.c. */
+
+DOC(plarrows, "simple arrow plotter.")
+void
+plarrows(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
+         PLFLT scale, PLFLT dx, PLFLT dy) ;
+
+/* Complete list of common API (has "c_" suffix version defined in plplot.h) */
+
+DOC(pl_setcontlabelformat, "set the format of the contour labels")
+void
+pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
+
+DOC(pl_setcontlabelparam, "set offset and spacing of contour labels")
+void
+pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
+
+DOC(pladv, "Advance to subpage \"page\", or to the next one if \"page\" = 0.")
+void
+pladv(PLINT page);
+
+DOC(plaxes,"This functions similarly to plbox() except that the origin of the axes is placed at the user-specified point (x0, y0).")
+void
+plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
+	 const char *yopt, PLFLT ytick, PLINT nysub);
+
+DOC(plbin,"Plot a histogram using x to store data values and y to store frequencies.")
+void
+plbin(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT center);
+
+DOC(plbop, "Start new page.  Should only be used with pleop().")
+void
+plbop(void);
+
+DOC(plbox, "This draws a box around the current viewport.")
+void
+plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
+	const char *yopt, PLFLT ytick, PLINT nysub);
+
+DOC(plbox3, "This is the 3-d analogue of plbox().")
+void
+plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
+	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
+	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
+
+DOC(plcalc_world, "Calculate world coordinates and subpage from relative device coordinates.")
+void
+plcalc_world(PLFLT rx, PLFLT ry, PLFLT *OUTPUT, PLFLT *OUTPUT, PLINT *OUTPUT);
+
+DOC(plclear, "Clear current subpage.")
+void
+plclear(void);
+
+DOC(plcol0, "Set color, map 0.  Argument is integer between 0 and 15.")
+void
+plcol0(PLINT icol0);
+
+DOC(plcol1, "Set color, map 1.  Argument is a float between 0. and 1.")
+void
+plcol1(PLFLT col1);
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
  * plfcont, with a particular choice for f2eval and f2eval_data. 
@@ -1270,16 +1277,6 @@ plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 void
 plsesc(char esc);
 
-/* set offset and spacing of contour labels */
-
-void
-pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
-
-/* set the format of the contour labels */
-
-void
-pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
-
 /* Set family file parameters */
 
 void
@@ -1530,6 +1527,10 @@ plwid(PLINT width);
 
 void
 plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
+
+DOC(plxormod, "set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device")
+void
+plxormod(PLINT mode, PLINT *OUTPUT);
 
 /*--------------------------------------------------------------------------*\
  *		Functions for use from C or C++ only
