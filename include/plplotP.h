@@ -714,7 +714,7 @@ plP_fill(short *x, short *y, PLINT npts);
 /* draw image */
 
 void
-plP_image(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny);
+plP_image(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy);
 
 /* End of page */
 
@@ -780,7 +780,14 @@ void
 RestoreWrite2BufferPixmap(void);
 
 void
-grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny);
+grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny);
+
+void
+plimageslow(unsigned short *data, PLINT nx, PLINT ny, 
+	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy);
+
+typedef struct {
+  PLFLT xmin, ymin, dx, dy;} IMG_DT;
 
 #ifdef __cplusplus
 }
