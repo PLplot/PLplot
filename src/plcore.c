@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/02/25 18:31:36  mjl
-   Changed the order of driver calls on a grclr().  The plot buffer clear
-   must come first.
+   Revision 1.4  1993/03/02 19:01:01  mjl
+   Added plgver() for retrieving plplot library version.
 
+ * Revision 1.3  1993/02/25  18:31:36  mjl
+ * Changed the order of driver calls on a grclr().  The plot buffer clear
+ * must come first.
+ *
  * Revision 1.2  1993/02/23  05:11:44  mjl
  * Eliminated gradv driver function.  Completely rewrote initialization
  * routines.  Now plstar and plstart are merely front-ends to plinit, which
@@ -664,7 +667,7 @@ gprec(PLINT *p_setp, PLINT *p_prec)
 }
 
 /*
-* Set/get the escape character for text strings 
+* Set/get the escape character for text strings.
 * From C you can pass as a character, from Fortran it needs to be the decimal
 * ASCII value.  Only selected characters are allowed to prevent the user from
 * shooting himself in the foot (a '\' isn't allowed since it conflicts with
@@ -699,6 +702,14 @@ plgesc(char *p_esc)
 	pls[ipls].esc = '#';
 
     *p_esc = pls[ipls].esc;
+}
+
+/* Note: you MUST have allocated space for this (80 characters is safe) */
+
+void
+c_plgver(char *p_ver)
+{
+    strcpy(p_ver, PLPLOT_VERSION);
 }
 
 /*----------------------------------------------------------------------*\
