@@ -27,6 +27,7 @@ install: install_lib \
 	$(INSTALL_CXX) \
 	$(INSTALL_OCTAVE) \
 	install_demos \
+	install_drivers \
 	install_utils
 
 install_demos:
@@ -52,6 +53,14 @@ install_pltek:
 install_plplot_config:
 	@chmod +x plplot-config; \
 	 $(CP) plplot-config $(BIN_DIR)
+
+# Install the dynamically loadable drivers and the drivers database,
+# if any.
+install_drivers:
+	@-if test -d drivers; then \
+	      if test ! -d $(LIB_DIR)/drivers; then mkdir -p $(LIB_DIR)/drivers; fi; \
+	      $(CP) drivers/* $(LIB_DIR)/drivers; \
+	  fi
 
 install_utils: install_plrender install_pltek install_plplot_config
 
