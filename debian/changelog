@@ -1,3 +1,9 @@
+plplot (5.3.0.rc1.5.3.1-2) unstable; urgency=low
+
+  * debian/control: Added dependency on libplplot3-dev to libplplot-dev.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 16 Jun 2004 17:46:23 +0200
+
 plplot (5.3.0.rc1.5.3.1-1) unstable; urgency=low
 
   * New upstream release.

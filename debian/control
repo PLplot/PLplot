@@ -29,7 +29,7 @@ Package: libplplot-dev
 Architecture: any
 Section: libdevel
 Recommends: pkg-config
-Depends: libplplot9 (= ${Source-Version}), libqhull-dev, libfreetype6-dev
+Depends: libplplot9 (= ${Source-Version}), libqhull-dev, libfreetype6-dev, libltdl3-dev
 Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
  and Fortran with PLplot, a scientific plotting library.  Examples of
