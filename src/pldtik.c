@@ -1,5 +1,9 @@
 /* $Id$
  * $Log$
+ * Revision 1.10  2000/05/10 21:27:11  airwin
+ * power of 10 scaling of axes has been reworked to provide good results for
+ * both negative and positive powers.
+ *
  * Revision 1.9  1999/06/25 04:20:23  furnish
  * Install patches from Alan W. Irwin, correcting problems with
  * labelling.
@@ -101,10 +105,14 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
  * 	bottom right	for horizontal axis
  *
  * The digmax flag can be set by the user, and represents the maximum
- * number of digits a label may occupy.  If digmax<0, it is disregarded,
+ * number of digits a label may occupy including sign and decimal point.
+ * digmin, calculated internally, is the maximum number of digits
+ * labels at vmin and vmax would occupy if floating point.
+ * If digmax<0, it is disregarded,
  * and if digmax=0 the default value is used.  For digmax>0, mode=1 is
  * chosen if there is insufficient room for the label within the specified
- * # of digits.
+ * # of digits (digmin > digfix, where digfix is determined from digmax with
+ * fuzz factors).
  *
  * In the case of mode=0, the actual # of digits will become too large
  * when the magnitude of the labels become too large.  The mode=1 case
@@ -119,7 +127,8 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
  * that digfix<=digmax.
  *
  * Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
- * that the labels fit the requested field length.
+ * that the labels fit the requested field length, where prec is the number of 
+ * places after the decimal place.
 \*----------------------------------------------------------------------*/
 
 #define MIN_FLTDIG	3	/* disregarded if fractional part is 0 */
@@ -131,8 +140,8 @@ void
 pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf, 
 	PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale)
 {
-    PLFLT vmod, t0;
-    PLINT msd, np, digmin, digfix;
+    PLFLT chosen, notchosen, vmod, t0;
+    PLINT msd, notmsd, np, digmin, digfix;
 
     *mode = 0;
     *scale = 0;
@@ -140,27 +149,53 @@ pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     if (digmax == 0)
 	digmax = DIGMAX_DEF;
 
-/* Magnitute of min/max to get number of significant digits */
+/* Choose vmin or vmax depending on magnitudes of vmin and vmax. */
+    chosen = (ABS(vmax) >= ABS(vmin))? vmax: vmin;
+    notchosen = (ABS(vmax) >= ABS(vmin))? vmin: vmax;
+/* Magnitute of chosen to get number of significant digits */
 
-    vmod = MAX(ABS(vmin), ABS(vmax));
-    t0 = (PLFLT) log10(vmod);
-    msd = (PLINT) floor(t0);
-
+    if(ABS(chosen) > 0.) {
+        vmod = ABS(chosen);
+        t0 = (PLFLT) log10(vmod);
+        msd = (PLINT) floor(t0);
+    }
+    else {
+/* this branch occurs only when 0. --- 0. range put in */
+        vmod = 1.;
+        t0 = (PLFLT) log10(vmod);
+        msd = (PLINT) floor(t0);
+    }
+        
+    if(ABS(notchosen) > 0.)
+	notmsd = (PLINT) floor( (PLFLT) log10(ABS(notchosen)));
+    else
+	notmsd = msd;
 /* Autoselect the mode flag */
 /* 'digmin' is the minimum number of places taken up by the label */
 
     if (msd >= 0) {
+/* n.b. no decimal point in the minimal case  */
 	digmin = msd + 1;
 	digfix = MAX_FIXDIG_POS;
 	if (digmax > 0)
 	    digfix = MIN(digmax, MAX_FIXDIG_POS);
     }
     else {
+/* adjust digmin to account for leading 0 and decimal point */
 	digmin = -msd + 2;
 	digfix = MAX_FIXDIG_NEG;
 	if (digmax > 0)
 	    digfix = MIN(digmax, MAX_FIXDIG_NEG);
     }
+/* adjust digmin to account for sign on the chosen end of axis or sign on the 
+ * nonchosen end of axis if notmsd = msd or (msd <= 0 and notmsd < 0)
+ * For the latter case the notchosen label starts with "-0."
+ * For checking for the latter case, the notmsd < 0 condition is redundant
+ * since notmsd <= msd always and the equal part is selected by the first
+ * condition.
+ */
+    if(chosen < 0.||(notchosen < 0. && (notmsd == msd || msd <= 0)))
+        digmin = digmin + 1;
 
     if (digmin > digfix && !lf) {
 	*mode = 1;
@@ -181,7 +216,7 @@ pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
  * it's better to change to floating point form if the number of digits
  * is insufficient to represent the tick spacing.
 */
-    if (*mode == 0 && digmax > 0) {
+    if (*mode == 0 && digmax > 0 && !lf) {
 	if (t0 < 0.0) {
 	    if (digmax - 2 - *prec < 0) {
 		*mode = 1;
