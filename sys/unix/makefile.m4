@@ -310,8 +310,7 @@ if_aix({
 # ($(HOME)/lib/ is ok) for the fonts.  This problem was fixed in A/IX 3.1.
 
 if_dbl({dnl
-#DBL_FLAG_F      = -qAUTODBL=DBLPAD
-DBL_FLAG_F      = -qdpc=e
+DBL_FLAG_F      = -qAUTODBL=DBLPAD
 })dnl
 
 F77	= xlf
@@ -774,9 +773,14 @@ links:
 	$(LN) \
 		../src/*.c \
 		../src/stubc/*.c \
+if_hpux({dnl
 if_dbl({dnl
 		../src/stubf/dbl/*.f \
 		../examples/f77/dbl/*.f \
+},{dnl
+		../src/stubf/sgl/*.f \
+		../examples/f77/sgl/*.f \
+})dnl
 },{dnl
 		../src/stubf/sgl/*.f \
 		../examples/f77/sgl/*.f \
