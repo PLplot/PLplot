@@ -101,7 +101,7 @@ format of numerical label for contours</title>
       <funcsynopsis>
       <funcprototype>
 	<funcdef>
-	  <function>pl_setcontlabelparam</function>
+	  <function>pl_setcontlabelformat</function>
 	</funcdef>
         <paramdef><parameter>lexp</parameter></paramdef>
         <paramdef><parameter>sigdig</parameter></paramdef>
@@ -1960,9 +1960,10 @@ next new page
 
     <para>
       Fills the 3D polygon defined by the
-      <literal><parameter>n</parameter></literal> points
-      <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[i]),<parameter>z</parameter>[i])</literal> 
+      <literal><parameter>n</parameter></literal> points in the
+      <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal>, and
+      <literal><parameter>z</parameter></literal> arrays
       using the pattern defined by
       &plpsty; or &plpat;.  The routine will automatically close the
       polygon between the last and first vertices.  If multiple closed
@@ -3498,7 +3499,7 @@ source
     </para> 
 
     <para>
-    Sets the 3D position of the light source.
+    Sets the 3D position of the light source for use with &plotsh3d;.
     </para>
 
     <variablelist>
@@ -3509,7 +3510,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            X-coordinate of the light source.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3520,7 +3521,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Y-coordinate of the light source.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3531,7 +3532,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Z-coordinate of the light source.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7727,8 +7728,11 @@ characters and their corresponding decimal ASCII values:
     </para> 
 
     <para>
-      Add a point to a stripchart.  Allocates memory and rescales as
-necessary.
+      Add a point to a given pen of a given stripchart.  
+      There is no need for all pens to have the same number of
+      points or to be equally sampled in the x coordinate.
+      Allocates memory and rescales as
+      necessary.
     </para>
 
     <variablelist>
@@ -7739,7 +7743,7 @@ necessary.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Identification number (set up in &plstripc;) of the stripchart.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7750,7 +7754,7 @@ necessary.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pen number (ranges from 0 to 3).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7761,7 +7765,7 @@ necessary.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            X coordinate of point to plot.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7772,7 +7776,7 @@ necessary.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Y coordinate of point to plot.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7782,7 +7786,7 @@ necessary.
 
   <sect1 id="plstripc" renderas="sect3">
     <title>
-      <function>plstripc</function>: Create 1d stripchart
+      <function>plstripc</function>: Create a 4-pen stripchart
     </title> 
 
     <para>
@@ -7816,227 +7820,233 @@ necessary.
     </para> 
 
     <para>
-      Create 1d stripchart.
+      Create a 4-pen stripchart, to be used afterwards by &plstripa;
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>id</parameter> 
-	  (<literal>PLINT *</literal>, output)
+	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Identification number of stripchart to use on &plstripa; and &plstripd;.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>xspec</parameter> 
-	  (<literal>char *</literal>, output)
+	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            X-axis specification as in &plbox;.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>yspec</parameter> 
-	  (<literal>char *</literal>, output)
+	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Y-axis specification as in &plbox;.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>xmin</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Initial coordinates of plot box; they will change as data are
+	    added.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>xmax</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Initial coordinates of plot box; they will change as data are
+	    added.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>xjump</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	  When x attains <literal><parameter>xmax</parameter></literal>, 
+	  the length of the plot is multiplied by the
+	  factor <literal>(1 + <parameter>xjump</parameter>)</literal>.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>ymin</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Initial coordinates of plot box; they will change as data are
+	    added.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>ymax</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Initial coordinates of plot box; they will change as data are
+	    added.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>xlpos</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            X legend box position (range from 0 to 1).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>ylpos</parameter> 
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Y legend box position (range from 0 to 1).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>y_ascl</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	  Autoscale y between x jumps (1) or not (0).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>acc</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Accumulate strip plot (1) or slide (0).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>colbox</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Plot box color index (cmap0).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>collab</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Legend color index (cmap0).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>colline</parameter> 
-	  (<literal>PLINT *</literal>, output)
+	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to array of color indices (cmap0) for the 4 pens.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>styline</parameter> 
-	  (<literal>PLINT *</literal>, output)
+	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to array of line styles for the 4 pens.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>legline[]</parameter> 
-	  (<literal>char *</literal>, output)
+	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to character array containing legends for the 4 pens.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>labx</parameter> 
-	  (<literal>char *</literal>, output)
+	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            X-axis label.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>laby</parameter> 
-	  (<literal>char *</literal>, output)
+	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Y-axis label.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>labtop</parameter> 
-	  (<literal>char *</literal>, output)
+	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Plot title.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8073,7 +8083,7 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Identitification number of stripchart to delete.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -9006,7 +9016,9 @@ stripchart
 
     <para>
       Enter (mode !=0) or leave (mode == 0) xor mode for those drivers 
-      (e.g., the xwin driver) that support it.
+      (e.g., the xwin driver) that support it.  Enables erasing plots by
+      drawing twice the same line,
+      symbol, etc.
     </para>
 
     <variablelist>
