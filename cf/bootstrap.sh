@@ -39,13 +39,11 @@ function run {
 
 function usage {
   cat <<EOF
-Usage: $0 [OPTIONS] [ACLOCAL OPTIONS]
+Usage: $0 [OPTIONS]
 Options:
   --version=VER
   --date-version
   --help
-aclocal options usually look like:
-  -I /usr/share/libtool/libltdl
 EOF
   exit 0
 }
@@ -58,7 +56,6 @@ automake --version | sed 1q \
       exit 0' || exit 1
 
 version=""
-aclocal_opts=""
 date_version=no
 set_date=no
 
@@ -76,27 +73,10 @@ while test $# -gt 0 ; do
     usage
     ;;
   *)
-    aclocal_opts="$aclocal_opts $1"
     ;;
   esac
   shift
 done
-
-if test "$aclocal_opts" = "" ; then
-  prefix=`which libtool | sed 's:/bin/libtool::'`
-  if test -n "$prefix" ; then
-    acdir=${prefix}/share/libtool/libltdl
-    if test -d $acdir ; then
-      if test -f ${acdir}/aclocal.m4 ; then
-        aclocal_opts="-I $acdir"
-      fi
-    fi
-  fi
-fi
-
-aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
-
-echo Using aclocal options: $aclocal_opts
 
 curver=`grep ^AC_INIT configure.ac \
         | perl -ne 'if (/plplot, (\d+\.\d+\.\d+)/) {print $1}'`
@@ -120,27 +100,9 @@ if [ $set_date = yes ] ; then
   echo done
 fi
 
-aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
+echo "Autotools versions are the following:"
+autoconf --version |sed 1q
+automake --version |sed 1q
+libtool  --version |sed 1q
 
-# aclocal -I option below must be given the absolute path of the cf/ dir,
-# otherwise it is not considered as "external" to the project (this is
-# the case for aclocal-1.8, at least)
-
-run aclocal -I `pwd`/cf $aclocal_opts \
-  && run autoheader \
-  && rm -rf libltdl \
-  && run libtoolize --force --copy --ltdl --automake \
-  && run automake --add-missing --copy \
-  && run autoconf \
-  && ( echo -n "Regenerating libltdl/aclocal+configure..."; \
-       cd libltdl ; \
-       aclocal $aclocal_opts 2>&1 | filter && \
-       automake ; \
-       if [ ! -e configure.ac ] ; then \
-           cp configure.in configure.ac ; \
-           autoconf 2>/dev/null ; \
-           rm -f configure.ac ; \
-       else \
-           autoconf 2>/dev/null ; \
-       fi && \
-       echo " done" )
+run autoreconf -vfi -I cf
