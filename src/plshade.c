@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1993/09/24 20:33:27  furnish
+ * Revision 1.5  1993/10/21 19:28:52  mjl
+ * Added prototypes for passed-in function pointers.
+ *
+ * Revision 1.4  1993/09/24  20:33:27  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
@@ -157,10 +160,12 @@ static void draw_boundary (PLINT, PLFLT *, PLFLT *);
 
 void 
 plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
-	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform) (),
+	PLFLT right, PLFLT bottom, PLFLT top,
+	void (*mapform) (PLINT, PLFLT *, PLFLT *),
 	PLFLT shade_min, PLFLT shade_max,
 	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-	PLINT max_color, PLINT max_width, void (*fill) (), PLINT rectangular)
+	PLINT max_color, PLINT max_width,
+	void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular)
 {
 
     PLINT n, slope, ix, iy;
