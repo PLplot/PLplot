@@ -5,6 +5,7 @@ function p16
   
   subwindow(1, 2);
   [x, y, z] = rosenbrock;
+  plcolormap('default');
   shade(x, y, log(z));
 
 endfunction
