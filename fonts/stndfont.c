@@ -1,8 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/08/25 04:02:57  mjl
- * Cleaned up header file inclusion.
+ * Revision 1.9  1995/04/12 08:20:13  mjl
+ * Eliminated SCHAR in favor of simply "signed char".
  *
+ * Revision 1.8  1994/08/25  04:02:57  mjl
+ * Cleaned up header file inclusion.
 */
 
 /*	stndfont.c
@@ -30,7 +32,7 @@ main (int argc, char **argv)
 {
     short i, j, k, ib, nstd, nchars, nleng, htab, nindx, zero;
     short *hrshlst, *hrshidx;
-    SCHAR ix, iy;
+    signed char ix, iy;
     long fpos;
     PDFstrm *pdfs;
 
@@ -41,10 +43,12 @@ main (int argc, char **argv)
     for (k = 0; k < 176; k++)
 	hrshlst[ib++] = *(hersh[0] + k);
 
-    /* Sort list */
+/* Sort list */
+
     qsort((char *) hrshlst, ib, sizeof(short), compare);
 
-    /* Remove duplicates */
+/* Remove duplicates */
+
     k = 0;
     j = 0;
     do {
@@ -55,7 +59,9 @@ main (int argc, char **argv)
     } while (j < ib);
 
     nstd = k + 1;
-    /* Now reindex the fonts */
+
+/* Now reindex the fonts */
+
     for (k = 0; k < 176; k++)
 	for (i = 0; i < nstd; i++)
 	    if (*(hersh[0] + k) == hrshlst[i]) {

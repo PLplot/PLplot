@@ -1,8 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/08/25 04:02:58  mjl
- * Cleaned up header file inclusion.
+ * Revision 1.9  1995/04/12 08:20:13  mjl
+ * Eliminated SCHAR in favor of simply "signed char".
  *
+ * Revision 1.8  1994/08/25  04:02:58  mjl
+ * Cleaned up header file inclusion.
 */
 
 /*	xtndfont.c
@@ -22,7 +24,7 @@ main (void)
 
     short j, k, ib, nindx, nchars, nleng, htab, zero;
     short *hrshlst;
-    SCHAR ix, iy;
+    signed char ix, iy;
     long fpos;
     PDFstrm *pdfs;
 
