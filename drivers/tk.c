@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1993/07/02 06:58:37  mjl
+ * Revision 1.2  1993/07/16 22:09:12  mjl
+ * Made keypress handler a bit easier to invoke.  Eliminated low-level
+ * aspect and orientation handling.  Some name changes.  Now uses standard
+ * meta coordinate system.
+ *
+ * Revision 1.1  1993/07/02  06:58:37  mjl
  * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
  *
 */
@@ -29,16 +34,14 @@
 #define tk_wr(code) \
 if (code) { abort_session(pls, "Unable to write to pipe"); }
 
+/* Use vfork() if the system supports it */
+
+#ifndef FORK
+#define FORK fork
+#endif
+
 /* INDENT OFF */
 /*----------------------------------------------------------------------*/
-/* Global variables and defines */
-
-#define PIXELS_X	8191	/* Number of virtual pixels in x */
-#define PIXELS_Y	8191	/* Number of virtual pixels in y */
-
-static float lpage_x = 238.0;	/* Page length in x in virtual mm */
-static float lpage_y = 178.0;	/* Page length in y in virtual mm */
-
 /* Struct to hold device-specific info. */
 
 typedef struct {
@@ -52,7 +55,6 @@ typedef struct {
     char  *program;		/* Name of client main window */
 
     short xold, yold;		/* Coordinates of last point plotted */
-    short xlen, ylen;		/* Lengths of device coordinate space */
     int   exit_eventloop;	/* Flag for breaking out of event loop */
     int   pass_thru;		/* Skips normal error termination when set */
     int   launched_server;	/* Keep track of who started server */
@@ -98,12 +100,12 @@ plD_init_tk(PLStream *pls)
     U_CHAR c = (U_CHAR) INITIALIZE;
     TkDev *dev;
     int xmin = 0;
-    int xmax = PIXELS_X;
+    int xmax = PIXELS_X - 1;
     int ymin = 0;
-    int ymax = PIXELS_Y;
+    int ymax = PIXELS_Y - 1;
 
-    float pxlx = (xmax - xmin) / lpage_x;
-    float pxly = (ymax - ymin) / lpage_y;
+    float pxlx = (double) PIXELS_X / (double) LPAGE_X;
+    float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
     dbug_enter("plD_init_tk");
 
@@ -133,9 +135,6 @@ plD_init_tk(PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    dev->xlen = xmax - xmin;
-    dev->ylen = ymax - ymin;
-
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
 
@@ -161,12 +160,6 @@ plD_init_tk(PLStream *pls)
 
     tk_wr(pdf_wr_header(dev->file, "ymax"));
     tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) ymax));
-
-    tk_wr(pdf_wr_header(dev->file, "aspect"));
-    tk_wr(pdf_wr_ieeef(dev->file, (float) pls->aspect));
-
-    tk_wr(pdf_wr_header(dev->file, "orient"));
-    tk_wr(pdf_wr_1byte(dev->file, (U_CHAR) (pls->orient)));
 
     tk_wr(pdf_wr_header(dev->file, ""));
 
@@ -479,7 +472,7 @@ tk_stop(PLStream *pls)
 /* First unset its client variable so it won't try communicating */
 
     if (tcl_eval(pls, "winfo $plserver exists")) {
-	server_cmd( pls, "$plwindow_end $plwindow" );
+	server_cmd( pls, "$plw_end $plwindow" );
 	if (dev->launched_server) {
 	    server_cmd( pls, "after 1 destroy ." );
 	}
@@ -551,10 +544,10 @@ tk_configure(PLStream *pls)
 /* Set default names for server widget procs */
 
     Tcl_SetVar(dev->interp, "plserver_init",   "plserver_init", 0);
-    Tcl_SetVar(dev->interp, "plwindow_create", "plwindow_create", 0);
-    Tcl_SetVar(dev->interp, "plwindow_init",   "plwindow_init", 0);
-    Tcl_SetVar(dev->interp, "plwindow_flash",  "plwindow_flash", 0);
-    Tcl_SetVar(dev->interp, "plwindow_end",    "plwindow_end", 0);
+    Tcl_SetVar(dev->interp, "plw_create", "plw_create", 0);
+    Tcl_SetVar(dev->interp, "plw_init",   "plw_init", 0);
+    Tcl_SetVar(dev->interp, "plw_flash",  "plw_flash", 0);
+    Tcl_SetVar(dev->interp, "plw_end",    "plw_end", 0);
 
 /* Eval user-specified TCL command -- can be used to modify defaults */
 
@@ -623,7 +616,7 @@ launch_server(PLStream *pls)
 
     argv[i++] = "-child";		/* Tell plserver it's ancestry */
 
-    argv[i++] = "-init";		/* TCL init proc for server */
+    argv[i++] = "-f";			/* TCL init proc for server */
     argv[i++] = Tcl_GetVar(dev->interp,
 			   "plserver_init", 0);
 
@@ -644,7 +637,7 @@ launch_server(PLStream *pls)
 
 /* Start server process */
 
-    if ( (pid = fork()) < 0) {
+    if ( (pid = FORK()) < 0) {
 	abort_session(pls, "fork error");
     }
     else if (pid == 0) {
@@ -681,10 +674,10 @@ launch_server(PLStream *pls)
 * These can be used to set up the desired widget configuration.  The procs
 * invoked from this driver currently include:
 *
-*    $plwindow_create	Creates the widget environment
-*    $plwindow_init	Initializes the widget(s)
-*    $plwindow_end	Prepares for shutdown
-*    $plwindow_flash	Invoked when waiting for page advance
+*    $plw_create	Creates the widget environment
+*    $plw_init		Initializes the widget(s)
+*    $plw_end		Prepares for shutdown
+*    $plw_flash		Invoked when waiting for page advance
 *
 * Since all of these are interpreter variables, they can be trivially
 * changed by the user (use the -tcl_cmd option).
@@ -697,11 +690,11 @@ launch_server(PLStream *pls)
 * usage in all the TCL procs is consistent.
 *
 * In order that the TK driver be able to invoke the actual plplot
-* widget, the proc "$plwindow_init" deposits the widget name in the local
+* widget, the proc "$plw_init" deposits the widget name in the local
 * interpreter variable "plwidget".
 *
 * In addition, the name of the client main window is given as (2nd)
-* argument to "$plwindow_init".  This establishes the client name used
+* argument to "$plw_init".  This establishes the client name used
 * for communication for all child widgets that require it.
 \*----------------------------------------------------------------------*/
 
@@ -737,13 +730,13 @@ plwindow_init(PLStream *pls)
 /* Create the plframe widget & anything else you want with it. */
 
 	server_cmd( pls, "update" );
-	server_cmd( pls, "$plwindow_create $plwindow" );
+	server_cmd( pls, "$plw_create $plwindow" );
     }
 
 /* Initialize the widget(s) */
 
     server_cmd( pls, "update" );
-    server_cmd( pls, "$plwindow_init $plwindow $client" );
+    server_cmd( pls, "[list $plw_init $plwindow $client]" );
 
 /* Now we should have the actual plplot widget name in $plwidget */
 /* Configure it if necessary. */
@@ -819,9 +812,9 @@ WaitForPage(PLStream *pls)
 
     flush_output(pls);
 
-    server_cmd( pls, "$plwindow_flash $plwindow" );
+    server_cmd( pls, "$plw_flash $plwindow" );
     tk_wait(pls, "[info exists advance] && ($advance == 1)" );
-    server_cmd( pls, "$plwindow_flash $plwindow" );
+    server_cmd( pls, "$plw_flash $plwindow" );
 
     Tcl_SetVar(dev->interp, "advance", "0", 0);
 
@@ -901,6 +894,18 @@ Abort(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 * KeyEH()
 *
 * This TCL command handles keyboard events.
+*
+* Arguments:
+*	command name
+*	keysym name (textual string)
+*	keysym value
+*	ASCII equivalent (optional)
+*
+* The first argument is keysym name -- this is all that's really required 
+* although it's better to send the numeric keysym value since then we
+* can avoid a long lookup procedure.  Sometimes, when faking input, it
+* is inconvenient to have to worry about what the numeric keysym value
+* is, so in a few cases a missing keysym value is tolerated.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -910,33 +915,66 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     TkDev *dev = (TkDev *) pls->dev;
 
     PLKey key;
-    char *keysym;
+    char *keysym, c;
     int advance = 0;
 
     dbug_enter("KeyEH");
 
-/* Pick off arguments to set up key structure */
+    if (argc < 2) {
+	plwarn("KeyEH: Insufficient arguments given");
+	return;
+    }
+    key.code = 0;
+    key.string[0] = '\0';
 
-    key.code = atol(argv[1]);
-    keysym = argv[2];
-    key.string[0] = argv[3][0];
-    key.string[1] = '\0';
+/* Keysym name */
+
+    keysym = argv[1];
+
+/* Keysym value */
+/* If missing, explicitly check for a few common ones */
+
+    if (argc > 2)
+	key.code = atol(argv[2]);
+
+    if (argc == 2 || key.code == 0) {
+	c = *keysym;
+	if ((c == 'B') && (strcmp(keysym, "BackSpace") == 0)) {
+	    key.code = PLK_BackSpace;
+	}
+	else if ((c == 'D') && (strcmp(keysym, "Delete") == 0)) {
+	    key.code = PLK_Delete;
+	}
+	else if ((c == 'L') && (strcmp(keysym, "Linefeed") == 0)) {
+	    key.code = PLK_Linefeed;
+	}
+	else if ((c == 'R') && (strcmp(keysym, "Return") == 0)) {
+	    key.code = PLK_Return;
+	}
+	else if ((c == 'P') && (strcmp(keysym, "Prior") == 0)) {
+	    key.code = PLK_Prior;
+	}
+	else if ((c == 'N') && (strcmp(keysym, "Next") == 0)) {
+	    key.code = PLK_Next;
+	}
+	else {
+	    fprintf(stderr, "Unrecognized keysym %s\n", keysym);
+	    return;
+	}
+    }
+
+/* ASCII value */
+
+    if (argc > 3) {
+	key.string[0] = argv[3][0];
+	key.string[1] = '\0';
+    }
 
 #ifdef DEBUG
-    printf("Keysym %s, hex %x, ASCII: %s\n", keysym, key.code, key.string);
+    fprintf(stderr, "KeyEH: Keysym %s, hex %x, ASCII: %s\n",
+	    keysym, key.code, key.string);
 #endif
 
-/* Set key attributes */
-/* INDENT OFF */
-/*
-    key.isKeypadKey       = IsKeypadKey(keysym);
-    key.isCursorKey       = IsCursorKey(keysym);
-    key.isPFKey           = IsPFKey(keysym);
-    key.isFunctionKey     = IsFunctionKey(keysym);
-    key.isMiscFunctionKey = IsMiscFunctionKey(keysym);
-    key.isModifierKey     = IsModifierKey(keysym);
-*/
-/* INDENT ON */
 /* Call user event handler */
 /* Since this is called first, the user can disable all plplot internal
    event handling by setting key.code to 0 and key.string to '\0' */
