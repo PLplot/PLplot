@@ -28,7 +28,6 @@ install_java:
 	 $(CP) java/plplot/core/*.class $(LIB_DIR)/java/plplot/core; \
 	 $(CP) java/plplot/examples/*.class $(LIB_DIR)/java/plplot/examples
 
-#	@echo "Don't know how to install Java yet."
 
 jsrcs := $(wildcard java/plplot/core/*.java)
 jclss := $(jsrcs:.java=.class)
