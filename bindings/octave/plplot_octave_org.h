@@ -119,20 +119,14 @@
  * dpi, and improves performance in some areas over using a PLINT.
 \*--------------------------------------------------------------------------*/
 
-/* I haven't figure out how matwarp -cpp option works, so:
- * WARNING: matwrap don't process conditionals, so they must be hard coded!
- */
+#include "../../config.h"
 
-/*
- * #if defined(PL_DOUBLE) || defined(DOUBLE)
- * typedef double PLFLT;
- * #else
- * typedef float PLFLT;
- * #endif
- */
+#if defined(PL_DOUBLE) || defined(DOUBLE)
+  typedef double PLFLT;
+#else
+  typedef float PLFLT;
+#endif
 
-REPLACE_ME
- 
 #if defined(MSDOS)
 typedef long PLINT;
 #else

@@ -50,14 +50,15 @@ endif
 octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
 
 # If the Makefile changes, because of "configure" beeing rerun, recompile
-plplot_octave.h: plplot_octave_org.h Makefile
-	sed -e $(sed_command) plplot_octave_org.h > plplot_octave.h
+#plplot_octave.h: plplot_octave_org.h Makefile
+#	sed -e $(sed_command) plplot_octave_org.h > plplot_octave.h
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
-plplot_octave.cc tmp_stub: plplot_octave.h
-	$(MATWRAP) -language octave plplot_octave.h -o plplot_octave.cc \
-	-stub tmp_stub
+plplot_octave.cc tmp_stub: plplot_octave_org.h
+	$(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
+	-cpp_ignore plplot_octave_rej.h ../../config.h \
+	-cpp c++ -E -C plplot_octave_org.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
