@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/02/27 01:43:11  mjl
-   Changed prototype for file offset to work with fgetpos/fsetpos.
+   Revision 1.4  1993/03/03 17:00:15  mjl
+   Split background color off from color map 0 palette -- previously it
+   was cmap[0], which turned out to be a poor idea.
 
+ * Revision 1.3  1993/02/27  01:43:11  mjl
+ * Changed prototype for file offset to work with fgetpos/fsetpos.
+ *
  * Revision 1.2  1993/02/23  04:58:33  mjl
  * Added to the stream data structure: a device name, and the value of the
  * escape character.  Added function prototype for plgpls and some minor
@@ -94,7 +98,7 @@ typedef struct {
 * labels, etc.  These should be allocated before calling plstar (else you
 * get all 16 by default, which can be undesirable on some platforms).
 * These are then explicitly selected by number (in order of allocation,
-* starting with 1).  Color 0 is reserved for the background color.
+* starting with 1).  
 *
 * Color map 1 is for height-field plots, where color is used to represent
 * function height (intensity).  These are set in a relative way only, 
@@ -113,12 +117,16 @@ typedef struct {
 * icol0		PLINT	Color map 0 entry, current color (0 <= icol0 <= 15)
 * ncol0		PLINT	Number of colors allocated in color map 0.
 * htlvl		PLINT	Color map 1 current height level (0.0 <= htlvl <= 1.0)
+* bgcolor	RGB	Background color, if specified
 * fgcolor	RGB	Foreground color, if specified
 * curcolor	RGB[]	Current color, for convenience
 * cmap0 	RGB[]	Color map 0: maximum of 16 RGB 8-bit values
 * cmap1 	RGB[]	Color map 1: maximum of 256 RGB 8-bit values
+*
 * cmap0setcol	int[]	Set for every color allocated in cmap0.
 * cmap1set	PLINT	Set if cmap1 allocated.
+* colorset	PLINT	Set if "color" was set
+* bgcolorset	PLINT	Set if "bgcolor" was set
 *
 ***********************************************************************
 *
@@ -224,11 +232,12 @@ typedef struct {
 
 /* Colormaps */
 
-    PLINT color, colorset, icol0, ncol0, bgcolset;
-    PLFLT htlvl;
+    PLINT color, colorset, icol0, ncol0, bgcolorset;
     int   cmap0setcol[16], cmap1set;
+    PLFLT htlvl;
 
     PLColor fgcolor;
+    PLColor bgcolor;
     PLColor curcolor;
     PLColor cmap0[16];
     PLColor cmap1[256];
