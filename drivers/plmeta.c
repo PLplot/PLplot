@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/02/22 23:11:01  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.7  1993/02/27 01:41:39  mjl
+   Changed from ftell/fseek to fgetpos/fsetpos.
 
+ * Revision 1.6  1993/02/22  23:11:01  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.5  1993/01/23  05:41:50  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -257,7 +260,7 @@ plm_page(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
 
-    long cp_offset;
+    fpos_t cp_offset;
     U_LONG o_lp_offset;
     U_CHAR o_c;
     U_SHORT o_page;
@@ -265,22 +268,25 @@ plm_page(PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    cp_offset = ftell(pls->OutFile);
+    if (fgetpos(pls->OutFile, &cp_offset))
+	plexit("plm_page: fgetpos call failed");
 
 /* Seek back to beginning of last page and write byte offset. */
 
     if (pls->lp_offset > 0) {
-	fseek(pls->OutFile, pls->lp_offset, 0);
+	if (fsetpos(pls->OutFile, &pls->lp_offset))
+	    plexit("plm_page: fsetpos call failed");
 
 	plm_rd(read_1byte(pls->OutFile, &o_c));
 	plm_rd(read_2bytes(pls->OutFile, &o_page));
 	plm_rd(read_4bytes(pls->OutFile, &o_lp_offset));
 	fflush(pls->OutFile);
 
-	plm_wr(write_4bytes(pls->OutFile, cp_offset));
+	plm_wr(write_4bytes(pls->OutFile, (U_LONG) cp_offset));
 	fflush(pls->OutFile);
 
-	fseek(pls->OutFile, cp_offset, 0);
+	if (fsetpos(pls->OutFile, &cp_offset))
+	    plexit("plm_page: fsetpos call failed");
 #ifdef DEBUG
 	printf("Page cmd: %d, old page: %d, lpoff: %d, cpoff: %d\n",
 	       o_c, o_page, pls->lp_offset, cp_offset);
@@ -294,7 +300,8 @@ plm_page(PLStream *pls)
 /* Write new page header */
 
     pls->page++;
-    cp_offset = ftell(pls->OutFile);
+    if (fgetpos(pls->OutFile, &cp_offset))
+	plexit("plm_page: fgetpos call failed");
 
     plm_wr(write_1byte(pls->OutFile, c));
     plm_wr(write_2bytes(pls->OutFile, (U_SHORT) pls->page));
