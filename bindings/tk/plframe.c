@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.47  1995/05/08 20:26:26  mjl
+ * Revision 1.48  1995/05/19 22:24:18  mjl
+ * Fixes for Tk 4.0.  Updated Tk_Draw3DRectangle syntax when compiling with
+ * Tk versions 4.0 and later.  Eliminated -geometry option for much the same
+ * reason as it was eliminated in the Tk 4.0 frame, to avoid problems with
+ * some valid X *geometry specifications.  Use -width and/or -height instead.
+ * Code is still compatible with Tk 3.6 and should remain so for a while.
+ * Newer Tk 4.0 frame options like -class, -colormap, and -visual will be
+ * added at a later date.
+ *
+ * Revision 1.47  1995/05/08  20:26:26  mjl
  * Split the crossing event handler into separate enter and leave event
  * handlers to better keep track of whether we should be drawing graphic
  * crosshairs or not.  Now works properly under all combinations of expose,
@@ -140,9 +149,6 @@ typedef struct {
 				 * don't request any size. */
     int height;			/* Height to request for window.  <= 0 means
 				 * don't request any size. */
-    char *geometry;		/* Geometry that user requested.  NULL
-				 * means use width and height instead. 
-				 * Malloc'ed. */
     Cursor cursor;		/* Current cursor for window, or None. */
     int flags;			/* Various flags;  see below for
 				 * definitions. */
@@ -229,7 +235,6 @@ typedef struct {
 #define DEF_PLFRAME_BG_MONO		"White"
 #define DEF_PLFRAME_BORDER_WIDTH	"0"
 #define DEF_PLFRAME_CURSOR		((char *) NULL)
-#define DEF_PLFRAME_GEOMETRY		((char *) NULL)
 #define DEF_PLFRAME_HEIGHT		"0"
 #define DEF_PLFRAME_RELIEF		"flat"
 #define DEF_PLFRAME_WIDTH		"0"
@@ -257,8 +262,6 @@ static Tk_ConfigSpec configSpecs[] = {
 	DEF_PLFRAME_BORDER_WIDTH, Tk_Offset(PlFrame, borderWidth), 0},
     {TK_CONFIG_ACTIVE_CURSOR, "-cursor", "cursor", "Cursor",
 	DEF_PLFRAME_CURSOR, Tk_Offset(PlFrame, cursor), TK_CONFIG_NULL_OK},
-    {TK_CONFIG_STRING, "-geometry", "geometry", "Geometry",
-	DEF_PLFRAME_GEOMETRY, Tk_Offset(PlFrame, geometry), TK_CONFIG_NULL_OK},
     {TK_CONFIG_STRING, "-bopcmd", "bopcmd", "PgCommand",
 	(char *) NULL, Tk_Offset(PlFrame, bopCmd), TK_CONFIG_NULL_OK},
     {TK_CONFIG_STRING, "-eopcmd", "eopcmd", "PgCommand",
@@ -380,7 +383,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->interp = interp;
     plFramePtr->xorGC = NULL;
     plFramePtr->border = NULL;
-    plFramePtr->geometry = NULL;
     plFramePtr->cursor = None;
     plFramePtr->xhair_cursor = None;
     plFramePtr->flags = 0;
@@ -693,9 +695,6 @@ DestroyPlFrame(ClientData clientData)
     }
     if (plFramePtr->plpr_cmd != NULL) {
 	ckfree((char *) plFramePtr->plpr_cmd);
-    }
-    if (plFramePtr->geometry != NULL) {
-	ckfree((char *) plFramePtr->geometry);
     }
     if (plFramePtr->cursor != None) {
 	Tk_FreeCursor(plFramePtr->display, plFramePtr->cursor);
@@ -1340,9 +1339,15 @@ DisplayPlFrame(ClientData clientData)
 
     if ((plFramePtr->border != NULL) &&
 	(plFramePtr->relief != TK_RELIEF_FLAT)) {
+#if TK_MAJOR_VERSION >= 4 && TK_MINOR_VERSION >= 0
+	Tk_Draw3DRectangle(plFramePtr->tkwin, Tk_WindowId(tkwin),
+		plFramePtr->border, 0, 0, Tk_Width(tkwin), Tk_Height(tkwin),
+		plFramePtr->borderWidth, plFramePtr->relief);
+#else
 	Tk_Draw3DRectangle(plFramePtr->display, Tk_WindowId(tkwin),
 		plFramePtr->border, 0, 0, Tk_Width(tkwin), Tk_Height(tkwin),
 		plFramePtr->borderWidth, plFramePtr->relief);
+#endif
     }
 
 /* All refresh events */
@@ -1821,19 +1826,8 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* Geometry settings */
 
     Tk_SetInternalBorder(tkwin, plFramePtr->borderWidth);
-    if (plFramePtr->geometry != NULL) {
-	int height, width;
-
-	if (sscanf(plFramePtr->geometry, "%dx%d", &width, &height) != 2) {
-	    Tcl_AppendResult(interp, "bad geometry \"", plFramePtr->geometry,
-		    "\": expected widthxheight", (char *) NULL);
-	    return TCL_ERROR;
-	}
-	Tk_GeometryRequest(tkwin, width, height);
-    }
-    else if ((plFramePtr->width > 0) && (plFramePtr->height > 0)) {
-	Tk_GeometryRequest(tkwin, plFramePtr->width,
-		plFramePtr->height);
+    if ((plFramePtr->width > 0) || (plFramePtr->height > 0)) {
+	Tk_GeometryRequest(tkwin, plFramePtr->width, plFramePtr->height);
     }
 
 /* Create or destroy graphic crosshairs as specified */
