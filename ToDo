@@ -9,6 +9,9 @@ o Amiga drivers still being revamped.
 o Fix the bug that causes no labels in y to appear on a log plot when the min
 and max are both within the same decade.
 
+o Give file familying a good workout, since it is most probably busted in
+some respect or another.
+
 
 These may make it into 5.0, but it's too early to tell for sure:
 
@@ -58,3 +61,5 @@ great way to show a collaborator what's going on).  But I ran out of steam
 before really getting underway, and now the device-dependent and
 stream-dependent stuff are pretty mixed up.  I may get it all unsorted
 and implemented eventually if there is a need for this kind of capability.
+
+o Fully document the plplot-driver interface.
