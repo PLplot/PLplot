@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/01/25 06:22:17  mjl
+ * Revision 1.24  1994/02/01 22:46:55  mjl
+ * Added pls->user (char *).
+ *
+ * Revision 1.23  1994/01/25  06:22:17  mjl
  * Added pls->db variable.
  *
  * Revision 1.22  1994/01/15  17:35:09  mjl
@@ -203,6 +206,7 @@ typedef struct {
 * server_name	char*	Main window name of server
 * server_host	char*	Name of host to run server on
 * server_port	char*	Port to talk to server on
+* user		char*	Your user name on remote host (for remsh command)
 * plserver	char*	Name of server
 * plwindow	char*	Name of reference server window (malloc'ed)
 * tcl_cmd	char*	TCL command(s) to eval on startup
@@ -399,9 +403,9 @@ typedef struct {
     long window_id;
     int  nopixmap, db;
 
-/* Stuff used by TK driver */
+/* Stuff used by TK, DP drivers */
 
-    char *server_name, *server_host, *server_port;
+    char *server_name, *server_host, *server_port, *user;
     char *plserver, *plwindow;
     char *tcl_cmd, *auto_path;
     int  bufmax, dp;
