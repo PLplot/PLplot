@@ -60,19 +60,20 @@ void demo1()
 
 void demo2()
 {
-    int i;
-    plbop();
-
-/* Divide screen into 100 regions */
-
-    plssub(10, 10);
-
 /* Set up cmap0 */
 /* Use 100 custom colors in addition to base 16 */
     PLINT r[116], g[116], b[116];
 
 /* Min & max lightness values */
     PLFLT lmin = 0.15, lmax = 0.85;
+
+    int i;
+
+    plbop();
+
+/* Divide screen into 100 regions */
+
+    plssub(10, 10);
 
     for (i = 0; i <= 99; i++) {
         PLFLT h, l, s;
