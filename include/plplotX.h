@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/04/08 12:15:16  mjl
+ * Revision 1.4  1994/04/30 16:16:32  mjl
+ * Eliminated unused variables xold, yold, from XwDev definition.
+ *
+ * Revision 1.3  1994/04/08  12:15:16  mjl
  * Added CADDR_T_HACK -- define this and the typedef of caddr_t will be
  * made here for braindead systems.  Added prototype for user specified
  * X event handler (MasterEH).  Include of plstream.h now uses the
@@ -70,8 +73,7 @@ typedef struct {
     double	xscale;			/* as above, but current value */
     double	yscale;			/*  (after possible resizing)  */
 
-    short xold, yold;			/* Coords of last point plotted */
-    short xlen, ylen;			/* Lengths of device coord space */
+    short	xlen, ylen;		/* Lengths of device coord space */
 
     int		color;			/* Set to 1 if a color output device */
     int		ncol1;			/* Number of cmap 1 colors allocated */
