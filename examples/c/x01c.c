@@ -13,6 +13,7 @@ static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
 static PLGraphicsIn gin;
 
 static int locate_mode;
+static int test_xor;
 
 /* Options data structure definition. */
 
@@ -25,6 +26,14 @@ static PLOptionTable options[] = {
     PL_OPT_BOOL,
     "-locate",
     "Turns on test of API locate function" },
+{
+    "xor",			/* Turns on test of xor function */
+    NULL,
+    NULL,
+    &test_xor,
+    PL_OPT_BOOL,
+    "-xor",
+    "Turns on test of XOR" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -39,8 +48,7 @@ char *notes[] = {"Make sure you get it right!", NULL};
 
 /* Function prototypes */
 
-void plot1(void);
-void plot11(void);
+void plot1(int);
 void plot2(void);
 void plot3(void);
 
@@ -91,7 +99,7 @@ main(int argc, char *argv[])
 
 /* Do a plot */
 
-    plot1();
+    plot1(0);
 
 /* Set up the data */
 
@@ -104,7 +112,7 @@ main(int argc, char *argv[])
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot11();
+    plot1(1);
 
     plot2();
 
@@ -138,7 +146,7 @@ main(int argc, char *argv[])
  /* =============================================================== */
  
 void
-plot1(void)
+plot1(int do_test)
 {
     int i;
     PLFLT xmin, xmax, ymin, ymax;
@@ -177,61 +185,22 @@ plot1(void)
 
     plcol0(3);
     plline(60, x, y);
+
+/* xor mode enable erasing a line/point/text by replotting it again */
+/* it does not work in double buffering mode, however */
+
+    if (do_test && test_xor) {
+	plxormod(1);			/* enter xor mode */
+	for (i=0; i<60; i++) {
+	    plpoin(1, x+i, y+i,9);	/* draw a point */
+	    usleep(50000);		/* wait a little */
+	    plflush();			/* force an update of the tk driver */
+	    plpoin(1, x+i, y+i,9);	/* erase point */
+	}
+	plxormod(0);			/* leave xor mode */
+    }
 }
  
-void
-plot11(void)
-{
-    int i;
-    PLFLT xmin, xmax, ymin, ymax;
-
-    for (i = 0; i < 60; i++) {
-	x[i] = xoff + xscale * (i + 1) / 60.0;
-	y[i] = yoff + yscale * pow(x[i], 2.);
-    }
-
-    xmin = x[0];
-    xmax = x[59];
-    ymin = y[0];
-    ymax = y[59];
-
-    for (i = 0; i < 6; i++) {
-	xs[i] = x[i * 10 + 3];
-	ys[i] = y[i * 10 + 3];
-    }
-
-/* Set up the viewport and window using PLENV. The range in X is 
- * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
- * scaled separately (just = 0), and we just draw a labelled 
- * box (axis = 0). 
- */
-    plcol0(1);
-    plenv(xmin, xmax, ymin, ymax, 0, 0);
-    plcol0(2);
-    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
-
-/* Plot the data points */
-
-    plcol0(4);
-    plpoin(6, xs, ys, 9);
-
-/* Draw the line through the data */
-
-    plcol0(3);
-    plline(60, x, y);
-
-    /* xor mode enable erasing a line/point/text by reploting it again */
-    /* it does not work in double buffering mode, however */
-    plxormod(1);  /* enter xor mode */
-    for (i=0; i<60; i++) {
-      plpoin(1, x+i, y+i,9);/* draw a point */
-      usleep(50000); /* wait a little */
-      plflush();/* this is here to force an update of the tk driver */
-      plpoin(1, x+i, y+i,9);/* erase point */
-    }
-    plxormod(0); /* leave xor mode */
-}
-
  /* =============================================================== */
 
 void
