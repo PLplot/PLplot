@@ -2,10 +2,11 @@ C      3-d plot demo
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
-      integer i, j, k, ifshade, xpts, ypts
-      parameter (xpts=35, ypts=46)
-
-      real*8 x(xpts), y(ypts), z(xpts,ypts), xx, yy, r
+      integer i, j, k, ifshade, xpts, ypts, xdim
+C      xdim is the leading dimension of z, xpts <= xdim is the leading
+C      dimension of z that is defined.
+      parameter (xdim=100, xpts=35, ypts=46)
+      real*8 x(xpts), y(ypts), z(xdim,ypts), xx, yy, r
 
       character*80 title(2)
       real*8 alt(2),az(2)
@@ -62,7 +63,7 @@ C            sombrero function
           endif
         enddo
       enddo
-      call a2mnmx(z, xpts, ypts, zmin, zmax)
+      call a2mnmx(z, xpts, ypts, zmin, zmax, xdim)
       step = (zmax-zmin)/(nlevel+1)
       do i = 1, nlevel
         clevel(i) = zmin + step*i
@@ -94,23 +95,23 @@ C            diffuse light surface plot
             call cmap1_init(1)
             call plsurf3d(x, y, z, xpts, ypts,
      &        0,
-     &        clevel, 0, xpts)
+     &        clevel, 0, xdim)
           elseif(ifshade.eq.1) then
 C            magnitude colored plot
             call cmap1_init(0)
             call plsurf3d(x, y, z, xpts, ypts,
      &        MAG_COLOR,
-     &        clevel, 0, xpts)
+     &        clevel, 0, xdim)
           elseif(ifshade.eq.2) then
 C            magnitude colored plot with faceted squares
             call plsurf3d(x, y, z, xpts, ypts,
      &        ior(MAG_COLOR, FACETED),
-     &        clevel, 0, xpts)
+     &        clevel, 0, xdim)
           elseif(ifshade.eq.3) then
 C            magnitude colored plot with contours
             call plsurf3d(x, y, z, xpts, ypts,
      &        ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)),
-     &        clevel, nlevel, xpts)
+     &        clevel, nlevel, xdim)
           else
             stop 'x08f: bad logic'
           endif
@@ -175,11 +176,11 @@ C----------------------------------------------------------------------------
 C      Subroutine a2mnmx
 C      Minimum and the maximum elements of a 2-d array.
 
-      subroutine a2mnmx(f, nx, ny, fmin, fmax)
+      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none
 
-      integer   i, j, nx, ny
-      real*8    f(nx, ny), fmin, fmax
+      integer   i, j, nx, ny, xdim
+      real*8    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)
       fmin = fmax
