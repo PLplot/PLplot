@@ -65,10 +65,10 @@ class x08 {
         pls.init();
 
         for( i=0; i < XPTS; i++ )
-            x[i] = (i - (XPTS/2.)) / (XPTS/2.);
+            x[i] = (double) (i - (XPTS/2)) / (double) (XPTS/2);
 
         for( j=0; j < YPTS; j++ )
-            y[j] = (j - (YPTS/2.)) / (YPTS/2.);
+            y[j] = (double) (j - (YPTS/2)) / (double) (YPTS/2);
 
         for( i = 0; i < XPTS; i++ )
         {
