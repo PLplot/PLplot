@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1993/08/09 22:15:11  mjl
+ * Revision 1.29  1993/08/11 19:29:27  mjl
+ * Updated command line parsing utils to work better with the new command
+ * line utils, especially as regards invisible options.  Fixed a rarely
+ * encountered bug in seeking.
+ *
+ * Revision 1.28  1993/08/09  22:15:11  mjl
  * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
  *
  * Revision 1.27  1993/08/03  01:47:04  mjl
@@ -92,6 +97,9 @@ static void	OpenMetaFile	(int *, char **);
 static int	ReadFileHeader	(void);
 static void	Help		(void);
 static void 	Usage		(char *);
+static void	myHelp		(void);
+static void	mySyntax	(void);
+static void	myNotes		(void);
 
 /* Option handlers */
 
@@ -102,6 +110,11 @@ static int Opt_p	(char *, char *);
 static int Opt_mar	(char *, char *);
 
 /* Global variables */
+/* Mode flags for argument parsing */
+
+static int mode_plrender = PL_PARSE_OVERRIDE;
+static int mode_plplot = 0;
+static int mode_showall = 0;
 
 /* Page info */
 
@@ -167,6 +180,13 @@ static PLFLT	x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
 \*----------------------------------------------------------------------*/
 
 static PLOptionTable option_table[] = {
+{
+    "showall",			/* Turns on invisible options */
+    NULL,
+    &mode_showall,
+    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
+    "-showall",
+    "Turns on invisible options" },
 {
     "h",			/* Help */
     Opt_h,
@@ -415,8 +435,7 @@ plr_init(U_CHAR c)
     dev_aspect = (dev_ylen / dev_ypmm) / (dev_xlen / dev_xpmm);
 
     if (dev_aspect <= 0.)
-	fprintf(stderr,
-	      "Error in aspect ratio setting, dev_aspect = %f\n", dev_aspect);
+	fprintf(stderr, "Aspect ratio error: dev_aspect = %f\n", dev_aspect);
 
     ratio = aspect / dev_aspect;
 
@@ -436,7 +455,7 @@ plr_init(U_CHAR c)
 * mapping driver interface function.
 */
     if (ratio <= 0)
-	fprintf(stderr, "Error in aspect ratio setting, ratio = %f\n", ratio);
+	fprintf(stderr, "Aspect ratio error: ratio = %f\n", ratio);
     else if (ratio < 1)
 	vpylen = ratio;
     else
@@ -585,7 +604,7 @@ plr_bop(U_CHAR c)
     plP_setsub();
 
     plvpor(vpxmin, vpxmax, vpymin, vpymax);
-    plwind(xmin, xmax, ymin, ymax);
+    plwind((PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax);
 }
 
 /*----------------------------------------------------------------------*\
@@ -826,7 +845,7 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 
     if (tst != NULL) {
 	pltext();
-	printf("tst string: %s\n", tst);
+	fprintf(stderr, "tst string: %s\n", tst);
 	plgra();
     }
 
@@ -874,7 +893,7 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 		    target_page = curpage - input_num;
 #ifdef DEBUG
 		pltext();
-		printf("seeking to page %d\n", target_page);
+		fprintf(stderr, "seeking to page %d\n", target_page);
 		plgra();
 #endif
 		SeekToPage(target_page);
@@ -892,8 +911,10 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 	key->code == PLK_Delete ||
 	key->code == PLK_Prior) 
     {
-	target_page = curpage - 1;
-	SeekToPage(target_page);
+	if (curpage > 0) {
+	    target_page = curpage - 1;
+	    SeekToPage(target_page);
+	}
 	dun_seek = 1;
     }
 
@@ -901,8 +922,8 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 
 #ifdef DEBUG
     pltext();
-    printf("key->code = %x, target_page = %d, page = %d\n",
-           key->code, target_page, curpage);
+    fprintf(stderr, "key->code = %x, target_page = %d, page = %d\n",
+	    key->code, target_page, curpage);
     plgra();
 #endif
 
@@ -952,7 +973,7 @@ SeekToPage(long target_page)
     if (curpage_loc != 0) {
 #ifdef DEBUG
 	pltext();
-	printf("Seeking to: %d\n", curpage_loc);
+	fprintf(stderr, "Seeking to: %d\n", curpage_loc);
 	plgra();
 #endif
 	if (pl_fsetpos(MetaFile, &curpage_loc))
@@ -985,7 +1006,7 @@ SeekToPage(long target_page)
 
 #ifdef DEBUG
 	    pltext();
-	    printf("Seeking to: %d\n", nextpage_loc);
+	    fprintf(stderr, "Seeking to: %d\n", nextpage_loc);
 	    plgra();
 #endif
 	    if (pl_fsetpos(MetaFile, &nextpage_loc))
@@ -1010,7 +1031,7 @@ SeekToPage(long target_page)
 
 #ifdef DEBUG
 	    pltext();
-	    printf("Seeking to: %d\n", prevpage_loc);
+	    fprintf(stderr, "Seeking to: %d\n", prevpage_loc);
 	    plgra();
 #endif
 	    if (pl_fsetpos(MetaFile, &prevpage_loc))
@@ -1026,8 +1047,8 @@ SeekToPage(long target_page)
     }
 #ifdef DEBUG
     pltext();
-    printf("page, subpage after seek: %d, %d\n", curpage, cursub);
-    printf("nsubx, nsuby: %d, %d\n", nsubx, nsuby);
+    fprintf(stderr, "page, subpage after seek: %d, %d\n", curpage, cursub);
+    fprintf(stderr, "nsubx, nsuby: %d, %d\n", nsubx, nsuby);
     plgra();
 #endif
 
@@ -1085,14 +1106,13 @@ ReadPageHeader(void)
 static void
 Init(int argc, char **argv)
 {
-    int i, mode, status;
+    int i, status;
 
     dbug_enter("Init");
 
 /* Process plrender command line options */
 
-    mode = PL_PARSE_OVERRIDE;
-    status = plParseOpts(&argc, argv, mode, option_table, Usage);
+    status = plParseOpts(&argc, argv, mode_plrender, option_table, Usage);
 
 /*
 * We want the plplot command line options to supercede their possible
@@ -1110,7 +1130,7 @@ Init(int argc, char **argv)
 
 /* Finally, give the rest of the command line to plplot to process. */
 
-    status = plParseInternalOpts(&argc, argv, mode);
+    status = plParseInternalOpts(&argc, argv, mode_plplot);
 
 /* 
 * At this point the only remaining argument in argv should be the program
@@ -1323,21 +1343,61 @@ ReadFileHeader(void)
 static void
 Help(void)
 {
-    PLOptionTable *opt;
-    char **cpp;
-
     dbug_enter("Help");
 
     fprintf(stderr,
 	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
 	    program_name, program_name);
 
-    fprintf(stderr, "\n%s options:\n", program_name);
-    for (opt = option_table; opt->syntax; opt++) {
-	fprintf(stderr, "    %-20s %s\n", opt->syntax, opt->desc);
-    }
+    if (mode_showall)
+	mode_plplot |= PL_PARSE_SHOWALL;
 
-    plHelp();
+    myHelp();
+    plHelp(mode_plplot);
+    myNotes();
+
+    exit(1);
+}
+
+/*----------------------------------------------------------------------*\
+* myHelp()
+*
+* Print long help message associated with plrender options only.
+\*----------------------------------------------------------------------*/
+
+static void
+myHelp(void)
+{
+    PLOptionTable *tab;
+
+    fprintf(stderr, "\n%s options:\n", program_name);
+    for (tab = option_table; tab->opt; tab++) {
+	if ( ! (tab->mode & PL_OPT_ENABLED))
+	    continue;
+
+	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	if (tab->desc == NULL)
+	    continue;
+
+	if (tab->mode & PL_OPT_INVISIBLE) 
+	    fprintf(stderr, " *  %-20s %s\n", tab->syntax, tab->desc);
+	else 
+	    fprintf(stderr, "    %-20s %s\n", tab->syntax, tab->desc);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* myNotes()
+*
+* Print notes associated with long help message for plrender.
+\*----------------------------------------------------------------------*/
+
+static void
+myNotes(void)
+{
+    char **cpp;
 
     putc('\n', stderr);
     for (cpp = notes; *cpp; cpp++) {
@@ -1345,8 +1405,6 @@ Help(void)
 	putc('\n', stderr);
     }
     putc('\n', stderr);
-
-    exit(1);
 }
 
 /*----------------------------------------------------------------------*\
@@ -1358,9 +1416,6 @@ Help(void)
 static void
 Usage(char *badOption)
 {
-    PLOptionTable *opt;
-    int col, len;
-
     dbug_enter("Usage");
 
     if (*badOption != '\0')
@@ -1371,26 +1426,52 @@ Usage(char *badOption)
 	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
 	    program_name, program_name);
 
-    fprintf(stderr, "\n%s options:", program_name);
+    if (mode_showall)
+	mode_plplot |= PL_PARSE_SHOWALL;
 
-    col = 80;
-    for (opt = option_table; opt->syntax; opt++) {
-	len = 3 + strlen(opt->syntax);		/* space [ string ] */
-	if (col + len > 79) {
-	    fprintf(stderr, "\r\n   ");		/* 3 spaces */
-	    col = 3;
-	}
-	fprintf(stderr, " [%s]", opt->syntax);
-	col += len;
-    }
-    fprintf(stderr, "\r\n");
-
-    plSyntax();
+    mySyntax();
+    plSyntax(mode_plplot);
 
     fprintf(stderr, "\nType %s -h for a full description.\r\n\n",
 	    program_name);
 
     exit(1);
+}
+
+/*----------------------------------------------------------------------*\
+* mySyntax()
+*
+* Print syntax message appropriate for plrender options only.
+\*----------------------------------------------------------------------*/
+
+static void
+mySyntax(void)
+{
+    PLOptionTable *tab;
+    int col, len;
+
+    fprintf(stderr, "\n%s options:", program_name);
+
+    col = 80;
+    for (tab = option_table; tab->opt; tab++) {
+	if ( ! (tab->mode & PL_OPT_ENABLED))
+	    continue;
+
+	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	if (tab->syntax == NULL)
+	    continue;
+
+	len = 3 + strlen(tab->syntax);		/* space [ string ] */
+	if (col + len > 79) {
+	    fprintf(stderr, "\r\n   ");		/* 3 spaces */
+	    col = 3;
+	}
+	fprintf(stderr, " [%s]", tab->syntax);
+	col += len;
+    }
+    fprintf(stderr, "\r\n");
 }
 
 /*----------------------------------------------------------------------*\
