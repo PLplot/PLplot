@@ -948,6 +948,7 @@ AC_OUTPUT([
 	test/Makefile
 	test/plplot-test.sh
 	utils/Makefile
+	scripts/Makefile
 	plplot.pc
 	plplot-double.pc
 	])

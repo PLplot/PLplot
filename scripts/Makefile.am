@@ -1,4 +1,4 @@
-# Makefile.am for PLplot
+# scripts/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -19,34 +19,13 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_dyndrivers
-SUBDIRS = libltdl src include lib bindings drivers examples test utils scripts
-else
-SUBDIRS = libltdl drivers src include lib bindings examples test utils scripts
-endif
+examplesdir = ${prefix}/@DATA_DIR@/../examples
 
-bin_SCRIPTS = plplot_libtool
+scripts = \
+	plm2gif \
+	plpr \
+	pstex2eps
 
-plplot_libtool: libtool
-	cp libtool plplot_libtool
+bin_SCRIPTS = $(scripts)
 
-pkgconfigdir = $(libdir)/pkgconfig
-if with_double
-pkgconfig_DATA = plplot-double.pc
-else
-pkgconfig_DATA = plplot.pc
-endif
-
-docdir = $(datadir)/doc/plplot
-
-doc_DATA = \
-	AUTHORS \
-	COPYING.LIB \
-	ChangeLog \
-	Copyright \
-	FAQ \
-	NEWS \
-	PROBLEMS \
-	README
-
-CLEANFILES = plplot_libtool reconfig
+EXTRA_DIST = $(scripts)
