@@ -9,6 +9,12 @@ DOCBOOKDIR=htdocs/resources/docbook-manual
 DEBIANDIR=htdocs/resources/debian
 PLOTEXAMPLES=htdocs_plot_examples.tgz
 
+echo "This script is obsolete.  In order to update the PLplot web site,"
+echo "Please, use the Makefile in the www CVS module."
+echo "(Read the README file for instructions)."
+
+exit 0
+
 cd /home/groups/p/pl/plplot
 
 if [ ! -d $DOCBOOKDIR ] ; then
