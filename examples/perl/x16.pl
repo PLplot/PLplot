@@ -64,17 +64,17 @@ sub mypltr {
 # --------------------------------------------------------------------------
 
 sub f2mnmx {
-  my $f = shift;  
+  my $f = shift;
 
-  my $fmin = min ($f);    
+  my $fmin = min ($f);
   my $fmax = max ($f);
-    
+
   return ($fmin, $fmax);
 }
 
 sub zdefined {
   my ($x, $y) = @_;
-    
+
   my $z = sqrt ($x * $x + $y * $y);
 
   return ($z < 0.4 or $z > 0.6);
@@ -89,21 +89,9 @@ my @notes = (
 
 # --------------------------------------------------------------------------
 #  main
-# 
+#
 #  Does several shade plots using different coordinate mappings.
 # --------------------------------------------------------------------------
-
-# int
-# main(int argc, char *argv[])
-# {
-#     int i, j;
-#     PLFLT x, y, argx, argy, distort, r, t;
-#     PLFLT px[PERIMETERPTS], py[PERIMETERPTS];
-
-#     PLFLT **z, **w, zmin, zmax;
-#     PLFLT *clevel, *shedge, *xg1, *yg1;
-#     PLcGrid  cgrid1;
-#     PLcGrid2 cgrid2;
 
 my $fill_width = 2;
 my $cont_color = 0;
@@ -125,7 +113,7 @@ GetOptions ("exclude" => \$exclude,
 
 if ($help) {
   print (<<EOT);
-x16c options:
+$0 options:
     --exclude             Plot the "exclusion" page.
     --ns levels           Sets number of shade levels
     --nx xpts             Sets number of data points in x
@@ -172,7 +160,7 @@ my $argx = $x * pi / 2;
 my $argy = $y * pi / 2;
 my $distort = 0.4;
 
-my $cgrid1 = append ($nx, 
+my $cgrid1 = append ($nx,
   append ($x->slice (',0') + $distort * cos ($argx->slice (',0')),
           transpose ($y->slice ('0,') - $distort * cos ($argy->slice ('0,')))));
 $cgrid1 = $cgrid1->squeeze;

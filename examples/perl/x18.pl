@@ -32,7 +32,7 @@ my @az = (30.0, 40.0, 50.0, 60.0);
 
 sub test_poly {
   my $k = shift;
-    
+
   my $draw = pdl ([ 1, 1, 1, 1 ],
                   [ 1, 0, 1, 0 ],
                   [ 0, 1, 0, 1 ],
@@ -45,7 +45,7 @@ sub test_poly {
   plwind (-1.0, 1.0, -0.9, 1.1);
   plcol0 (1);
   plw3d (1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, $alt[$k], $az[$k]);
-  plbox3 (0.0, 0, 0.0, 0, 0.0, 0, 
+  plbox3 (0.0, 0, 0.0, 0, 0.0, 0,
           "bnstu", "x axis", "bnstu", "y axis", "bcdmnstuv", "z axis");
 
   plcol0 (2);
@@ -56,7 +56,7 @@ sub test_poly {
 #  r = 1 :=)
 
 print $draw[0];
-    
+
   for (my $i = 0; $i < 20; $i++ ) {
     my $theta = $two_pi * ($i + pdl [0, 0, 1, 1, 0]) / 20.;
     for (my $j = 0; $j < 20; $j++ ) {
@@ -93,7 +93,7 @@ plinit ();
 
 for (my $k = 0; $k < 4; $k++) {
   test_poly ($k);
-}    
+}
 
 # From the mind of a sick and twisted physicist...
 
@@ -125,7 +125,7 @@ for ($k = 0; $k < 4; $k++) {
   }
 
   plcol0 (3);
-  $title = sprintf ("#frPLplot Example 18 - Alt=%.0f, Az=%.0f", 
+  $title = sprintf ("#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
                     $alt[$k], $az[$k]);
   plmtex (1.0, 0.5, 0.5, "t", title);
 }
