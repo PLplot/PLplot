@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1995/04/14 21:45:26  mjl
+ * Revision 1.29  1995/05/05 19:34:30  shouman
+ * Changed ProcessOpt to mallocate a temporary copy of an option before giving
+ * it to a handler function if PL_PARSE_NODELETE is specified.  Some of the
+ * handlers call strtok(), altering the option they are handed.
+ *
+ * Revision 1.28  1995/04/14  21:45:26  mjl
  * Fixed plParseOpts() to correctly remove recognized arguments from argv[].
  *
  * Revision 1.27  1995/03/16  23:57:50  mjl
@@ -844,7 +849,7 @@ static int
 ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	   int *p_argc)
 {
-    int need_arg;
+    int need_arg, res;
     char *optarg = NULL;
 
 /* Get option argument if necessary */
@@ -870,7 +875,21 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 		    tab->opt);
 	    return 1;
 	}
-	return ((*tab->handler) (opt, optarg, tab->client_data));
+				/* handler may mung optarg with strtok() */
+        if (mode_nodelete) {
+	    char *copy = 
+	      (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+	    if (copy == NULL) {
+	        plabort("ProcessOpt: out of memory");
+		return 1;
+	    }
+	    strcpy(copy, optarg);
+	    res = ((*tab->handler) (opt, copy, tab->client_data));
+	    free(copy);
+	    return res;
+	}
+	else
+	  return ((*tab->handler) (opt, optarg, tab->client_data));
 
     case PL_OPT_BOOL:
 
