@@ -23,6 +23,7 @@ WWW_FILES =                    \
     $(TARGETS)                 \
     Makefile
     
+WWW_ANNOUNCE_DIR = $(WWW_DIR)/announce
 
 all: $(TARGETS)
 
@@ -48,9 +49,11 @@ clean:
 	rm -f *.xhtml *.html *.txt *.pdf
 
 install: $(TARGETS)
-	ssh $(USER_AT_HOST) rm -rf $(WWW_DIR)/announce
-	ssh $(USER_AT_HOST) mkdir $(WWW_DIR)/announce
-	scp -r $(WWW_FILES) $(USER_AT_HOST):$(WWW_DIR)/announce
+	ssh $(USER_AT_HOST) rm -rf $(WWW_ANNOUNCE_DIR)
+	ssh $(USER_AT_HOST) mkdir $(WWW_ANNOUNCE_DIR)
+	scp -r $(WWW_FILES) $(USER_AT_HOST):$(WWW_ANNOUNCE_DIR)
+	ssh $(USER_AT_HOST) chgrp -R plplot $(WWW_ANNOUNCE_DIR)
+	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_ANNOUNCE_DIR)
 
 .PHONY: all clean validate 
 
