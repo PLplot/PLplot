@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/06/30 05:46:21  furnish
+ * Revision 1.7  1994/07/01 20:44:35  mjl
+ * Cruft elimination.
+ *
+ * Revision 1.6  1994/06/30  05:46:21  furnish
  * Another plot command in tk02 which invokes a private tclMatrix
  * extension for demo purposes.  xtk02.c adds a new tclMatrix subcommand
  * "stuff", and tk02 exercises it.  Dumb, but shows how it all works.
@@ -170,12 +173,8 @@ void myplot4();
 /* Note the compiler should automatically convert all non-pointer arguments
    to satisfy the prototype, but some have problems with constants. */
 
-static PLFLT xs[6] =
-{1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static PLFLT ys[6] =
-{1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
 static PLFLT x[101], y[101];
-static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
+static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
 
 void plot1(void);
@@ -245,8 +244,8 @@ plot1(void)
     ymax = y[59];
 
     for (i = 0; i < 6; i++) {
-	xs1[i] = x[i * 10 + 3];
-	ys1[i] = y[i * 10 + 3];
+	xs[i] = x[i * 10 + 3];
+	ys[i] = y[i * 10 + 3];
     }
 
 /* Set up the viewport and window using PLENV. The range in X is */
@@ -257,12 +256,12 @@ plot1(void)
     plcol(1);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     plcol(6);
-    pllab("(x)", "(y)", "#frPLPLOT Example 1 - y=x#u2");
+    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
 /* Plot the data points */
 
     plcol(9);
-    plpoin(6, xs1, ys1, 9);
+    plpoin(6, xs, ys, 9);
 
 /* Draw the line through the data */
 
@@ -282,9 +281,9 @@ plot2(void)
    (just = 0), and we draw a box with axes (axis = 1). */
 
     plcol(1);
-    plenv((PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1);
+    plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
     plcol(2);
-    pllab("(x)", "sin(x)/x", "#frPLPLOT Example 1 - Sinc Function");
+    pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
 /* Fill up the arrays */
 
@@ -318,23 +317,23 @@ plot3(void)
        from -1.2 to 1.2. */
 
     plvsta();
-    plwind((PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2);
+    plwind(0.0, 360.0, -1.2, 1.2);
 
 /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
     plcol(1);
-    plbox("bcnst", (PLFLT) 60.0, 2, "bcnstv", (PLFLT) 0.2, 2);
+    plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
 /* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
    expects a pointer!! */
 
     plstyl(1, &mark1, &space1);
     plcol(2);
-    plbox("g", (PLFLT) 30.0, 0, "g", (PLFLT) 0.2, 0);
+    plbox("g", 30.0, 0, "g", 0.2, 0);
     plstyl(0, &mark0, &space0);
 
     plcol(3);
-    pllab("Angle (degrees)", "sine", "#frPLPLOT Example 1 - Sine function");
+    pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
     for (i = 0; i < 101; i++) {
 	x[i] = 3.6 * i;
