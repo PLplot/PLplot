@@ -71,4 +71,7 @@
 /* Define if you want PLplot's float type to be double */
 #undef PL_DOUBLE
 
+/* Define if C++ compiler accepts using namespace */
+#undef USE_NAMESPACE
+
 #endif	/* __PLCONFIG_H__ */

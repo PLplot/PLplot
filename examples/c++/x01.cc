@@ -28,8 +28,8 @@
 
 #include "plstream.h"
 #include "plevent.h"
+#include "plConfig.h"
 
-#include <cstdlib>
 #include <cctype>
 #include <iostream>
 #include <cmath>
@@ -37,7 +37,9 @@
 #include <unistd.h>
 #endif
 
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 static PLGraphicsIn gin;
 

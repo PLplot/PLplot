@@ -27,6 +27,7 @@ PL_ARG_ENABLE(cxx, [compile C++ interface code], yes)
 PL_ARG_WITH(debug, [Adjust debug compilation flags for KAI C++], no)
 
 if test "$enable_cxx" = yes; then
+
     # If KAI C++ (Kuck and Associates) is available, use that.
     found_cxx=no
     if test -z "$CXX" -o "$CXX" = "KCC"; then
@@ -45,6 +46,22 @@ if test "$enable_cxx" = yes; then
 	    fi
 	fi
     fi
+
+    AC_LANG_PUSH([C++])
+
+    AC_MSG_CHECKING([whether $CXX accepts namespace use])
+    AC_COMPILE_IFELSE([
+#include <iostream>
+#include <cmath>
+using namespace std;
+],
+        [AC_DEFINE(USE_NAMESPACE, [],
+                   [Define if C++ compiler accepts using namespace])
+	 AC_MSG_RESULT(yes)],
+        [AC_MSG_RESULT(no)])
+
+    AC_LANG_POP([C++])
+
 fi
 
 AC_PROG_CXX
