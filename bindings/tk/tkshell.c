@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/05/09 18:00:05  furnish
+ * Revision 1.15  1994/05/24 19:46:35  mjl
+ * Now autoloads the directory TCL_DIR for PLplot Tcl scripts.
+ *
+ * Revision 1.14  1994/05/09  18:00:05  furnish
  * Tcl extension code for mirroring the PLplot C API in Tcl.
  *
  * Revision 1.13  1994/05/07  03:14:57  mjl
@@ -310,15 +313,14 @@ set_auto_path(Tcl_Interp *interp)
     dbug_enter("set_auto_path");
     buf = (char *) malloc(256 * sizeof(char));
 
-/* Add INSTALL_DIR/tcl */
+/* Add TCL_DIR */
 
-#ifdef INSTALL_DIR
-    plGetName(INSTALL_DIR, "tcl", "", &ptr);
-    Tcl_SetVar(interp, "dir", ptr, TCL_GLOBAL_ONLY);
+#ifdef TCL_DIR
+    Tcl_SetVar(interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY);
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	return TCL_ERROR;
 #ifdef DEBUG
-    fprintf(stderr, "adding %s to auto_path\n", ptr);
+    fprintf(stderr, "adding %s to auto_path\n", TCL_DIR);
     path = Tcl_GetVar(interp, "auto_path", 0);
     fprintf(stderr, "auto_path is %s\n", path);
 #endif
