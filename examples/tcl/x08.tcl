@@ -41,15 +41,24 @@ proc restore_cmap1 {w} {
 # Routine for initializing color map 1 in HLS space.
 # Basic grayscale variation from half-dark (which makes more interesting
 # looking plot compared to dark) to light.
-proc cmap1_init {w} {
+proc cmap1_init {w gray} {
    # Independent variable of control points.
    matrix i f 2 = {0., 1.}
-   # Hue for control points.  Doesn't matter since saturation is zero.
-   matrix h f 2 = {0., 0.}
-   # Lightness ranging from half-dark (for interest) to light.
-   matrix l f 2 = {0.5, 1.}
-   # Gray scale has zero saturation.
-   matrix s f 2 = {0., 0.}
+   if {$gray == 1} {
+      # Hue for control points.  Doesn't matter since saturation is zero.
+      matrix h f 2 = {0., 0.}
+      # Lightness ranging from half-dark (for interest) to light.
+      matrix l f 2 = {0.5, 1.}
+      # Gray scale has zero saturation.
+      matrix s f 2 = {0., 0.}
+   } else {
+      # Hue ranges from blue (240 deg) to red (0 or 360 deg)
+      matrix h f 2 = {240., 0.}
+      # Lightness and saturation are constant (values taken from C example).
+      matrix l f 2 = {0.6, 0.6}
+      matrix s f 2 = {0.8, 0.8}
+   }
+
    # Integer flag array is zero (no interpolation along far-side of colour
    # figure
    matrix rev i 2 = {0, 0}
@@ -92,9 +101,8 @@ proc x08 {{w loopback}} {
 	}
     }
     $w cmd pllightsource 1. 1. 1.
-    cmap1_init $w
     for {set k 0} {$k < 4} {incr k} {
-       for {set ifshade 0} {$ifshade < 2} {incr ifshade} {
+       for {set ifshade 0} {$ifshade < 4} {incr ifshade} {
   	  $w cmd pladv 0
   	  $w cmd plvpor 0.0 1.0 0.0 0.9
   	  $w cmd plwind -1.0 1.0 -0.9 1.1
@@ -104,10 +112,21 @@ proc x08 {{w loopback}} {
 	    "bnstu" "y axis" 0.0 0 \
 	    "bcdmnstuv" "z axis" 0.0 0
   	  $w cmd plcol0 2
-	  if {$ifshade == 1} {
+	  if {$ifshade == 0} {
+	     $w cmd plot3d x y z [opt $k] 1
+	  } elseif {$ifshade == 1} {
+	     #set up modified gray scale cmap1.
+	     cmap1_init $w 1
 	     $w cmd plotsh3d x y z 0
 	  } else {
-	     $w cmd plot3d x y z [opt $k] 1
+	     #set up false colour cmap1.
+	     cmap1_init $w 0
+	     $w cmd plotfc3d x y z 0
+	     if {$ifshade == 3} {
+		# add black wireframe to false color plot
+		$w cmd plcol0 0
+		$w cmd plot3d x y z [opt $k] 0
+	     }
 	  }
   	  $w cmd plcol0 3
   	  set title [format "#frPLplot Example 8 - Alt=%.0f, Az=%.0f, Opt=%d" \
