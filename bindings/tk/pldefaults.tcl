@@ -82,7 +82,9 @@ proc pl_loadAppDefaults {classNameList {priority startupFile}} {
 # Called by plplot based Tcl apps at startup to set resources.
 
 proc pldefaults {} {
+    #puts "loading library defaults"
     pl_libdefaults
+    #puts "loading user defaults"
     pl_loadAppDefaults {plplot PLplot} userDefault
 }
 
@@ -190,6 +192,19 @@ proc pl_libdefaults {} {
 	option add *Entry.relief		sunken		startupFile
 	option add *Scrollbar.relief		sunken		startupFile
 
+    # Preserve aspect ratio on zooming.  Valid values: true|false.
+	option add *zoom_fixaspect		true		startupFile
+
+    # Location of initial point when zooming.  Valid values: corner|center.
+	option add *zoom_startfrom		center		startupFile
+
+    # Name of default save device.  Valid values are installation-dependent,
+    # but you might try one of: ps, psc, plm, png, jpeg.
+	option add *save_dev			psc		startupFile
+
+    # Multi plots per file.  If true, must explicitly close it before exiting!
+	option add *save_multi			false		startupFile
+
     # I have this in here so that applications written before Tk 4.0 still
     # look the same.  More selectivity might be better.
 
@@ -202,21 +217,6 @@ proc pl_libdefaults {} {
     }
     
 # Various options -- use global variables for simplicity.
-# Not a great solution but will have to do for now.
-
-# zoom options:
-#  0:	0=don't preserve aspect ratio, 1=do
-#  1:	0=stretch from corner, 1=stretch from center
-
-    global zoomopt_0;		set zoomopt_0 1
-    global zoomopt_1;		set zoomopt_1 1
-
-# save options:
-#  0:   name of default save device
-#  1:   0=save 1 plot/file, 1=save multi plots/file (must close!)
-
-    global saveopt_0;		set saveopt_0 psc
-    global saveopt_1;		set saveopt_1 0
 
 # Scale widget bindings
 
