@@ -26,8 +26,8 @@ drivers/null.drv : shared/null$O
 drivers/plmeta.drv : shared/plmeta$O
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ps.drv : shared/ps$O
-	$(SHLIB_BUILD) $@ $< $(driverlibs)
+drivers/ps.drv : shared/ps$O shared/pstex$O
+	$(SHLIB_BUILD) $@ $< shared/pstex$O $(driverlibs)
 
 drivers/xfig.drv : shared/xfig$O
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
@@ -38,13 +38,8 @@ drivers/gd.drv : shared/gd$O
 drivers/cgm.drv : shared/cgm$O
 	$(SHLIB_BUILD) $@ $< @CDLIBS@ $(driverlibs)
 
-# drivers/ps.drv behaves as a dynamic library, and so this target
-# need rebuilt at install time, pointing, through rpath,
-# to the proper driver install directory.
-# Not done yet!
-
 drivers/pstex.drv : shared/pstex$O drivers/ps.drv
-	$(SHLIB_BUILD) $@ $< $(driverlibs)
+	(cd drivers; ln -sf ps.drv pstex.drv)
 
 drivers/tek.drv : shared/tek$O
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
