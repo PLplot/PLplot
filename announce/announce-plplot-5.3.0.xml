@@ -71,7 +71,7 @@
         <listitem>
           <para>
             <function>plgriddata</function>: Arguments have type PLINT now,
-            consitent with the rest of the API.
+            consistent with the rest of the API.
           </para>
         </listitem>
         <listitem>
@@ -99,7 +99,7 @@
             portable.  It includes the functions for parsing command line
             options, as well as plstripc-, plshade- plmesh-, and
             plsurf-related API functions.  The examples were rewritten and
-            mimick the C examples closely.
+            mimic the C examples closely.
           </para>
         </listitem>
         <listitem>
@@ -225,7 +225,7 @@
         </listitem>
         <listitem>
           <para>
-            When developping the PLplot library itself, developers do not
+            When developing the PLplot library itself, developers do not
             need to install the whole package in order to text/evaluate the
             changes.  This is implemented through the new core function
             <function>plInBuildTree</function>, and the new configuration
@@ -260,7 +260,7 @@
         <listitem>
           <para>
             The libraries libcsironn and libcsirocsa were updated to
-            versions 1.38 and 0.22, repectively.
+            versions 1.38 and 0.22, respectively.
           </para>
         </listitem>
         <listitem>
@@ -272,7 +272,7 @@
         <listitem>
           <para>
             <function>plOpenFile</function>: sane use of stderr and stdout.
-            This function respects the otpion -debug now.
+            This function respects the option -debug now.
           </para>
         </listitem>
         <listitem>
@@ -290,7 +290,7 @@
       <itemizedlist>
         <listitem>
           <para>
-            The PLplot Documentation in DocBook format is relased now under
+            The PLplot Documentation in DocBook format is released now under
             Free Software terms, with a license similar similar to the
             FreeBSD Documentation License.
           </para>
@@ -311,7 +311,7 @@
         <listitem>
           <para>
             The test suite <filename>test/plplot-test.sh</filename> fully
-            works for all frontends.
+            works for all front-ends.
           </para>
         </listitem>
       </itemizedlist>
@@ -334,7 +334,7 @@
       Devappa Kini, Rob Managan, Per Persson, Michel Peyrard, Valerij
       Pipin, Olof Svensson, and Brian D. Wright.  Many others have
       participated to discussions in the plplot-devel and plplot-general
-      mailings lists.  We acknowlege their helpful suggestions and
+      mailings lists.  We acknowledge their helpful suggestions and
       commentaries.
     </para>
 
@@ -348,9 +348,10 @@
 
     <para role="foot">
       <ulink url="../index.html">PLplot home page</ulink> | <ulink
-      url="announce-plplot-5.3.0.txt">Text version of this document</ulink>
-      | <ulink url="announce-plplot-5.3.0.pdf">PDF version of this
-      document</ulink>
+      url="announce-plplot-5.3.0.txt">Text version</ulink>
+      | <ulink url="announce-plplot-5.3.0.pdf">PDF version</ulink> |
+      <ulink url="announce-plplot-5.3.0.xml">XML source</ulink> |
+      <ulink url="Makefile">Makefile</ulink>
     </para>
 
   </sect2>
