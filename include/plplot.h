@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.89  1999/06/24 20:50:18  furnish
+ * Revision 1.90  1999/06/25 04:17:34  furnish
+ * plmap and plmeridians got neglected before too.
+ *
+ * Revision 1.89  1999/06/24  20:50:18  furnish
  * Remove reference to plgphy.
  *
  * Revision 1.88  1999/02/26  19:01:14  furnish
@@ -526,6 +529,8 @@ typedef struct {
 #define    plline	c_plline
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
+#define    plmap	c_plmap
+#define    plmeridians	c_plmeridians
 #define    plmesh	c_plmesh
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
@@ -639,6 +644,8 @@ typedef struct {
 #define    c_plline	plline
 #define    c_plline3	plline3
 #define    c_pllsty	pllsty
+#define    c_plmap	plmap
+#define    c_plmeridians	plmeridians
 #define    c_plmesh	plmesh
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
@@ -1004,15 +1011,15 @@ c_pllsty(PLINT lin);
 /* plot continental outline in world coordinates */
 
 void
-plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
-      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
 
 void 
-plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
-	    PLFLT dlong, PLFLT dlat,
-	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+               PLFLT dlong, PLFLT dlat,
+               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plots a mesh representation of the function z[x][y]. */
 
