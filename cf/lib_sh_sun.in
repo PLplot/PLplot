@@ -30,19 +30,19 @@ PLLIBS = $(PLLIB_AR) $(PLLIB_SH) $(PLLIB_SA)
 libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
-	-rm $(PLLIB_AR)
+	-$(RM) $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
 
 $(PLLIB_SH):	$(LIB_OBJS_SO)
-	-rm $(PLLIB_SH)
+	-$(RM) $(PLLIB_SH)
 	@echo ""; echo "Building shared object library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SH) $(LIB_OBJS_SO)
 
 $(PLLIB_SA):	$(LIB_OBJS_SA)
-	-rm $(PLLIB_SA)
+	-$(RM) $(PLLIB_SA)
 	@echo ""; echo "Building shared archive library"; echo ""
 	cd shared; \
 	$(ARLIB_BUILD) ../$(PLLIB_SA) $(LIB_OBJS_SA)

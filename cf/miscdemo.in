@@ -12,5 +12,5 @@
 # Cleanup
 
 clean:
-	-rm $(CDEMOS) $(FDEMOS) $(TKDEMOS) *$O *.ps *.plm
+	-$(RM) $(CDEMOS) $(FDEMOS) $(TKDEMOS) *$O *.ps *.plm
 

@@ -34,13 +34,13 @@ PLLIBS = $(PLLIB_AR) $(PLLIB_SH)
 libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
-	-rm $(PLLIB_AR)
+	-$(RM) $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
 
 $(PLLIB_SH):	$(LIB_OBJS)
-	-rm $(PLLIB_SH)
+	-$(RM) $(PLLIB_SH)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SH) $(LIB_OBJS)

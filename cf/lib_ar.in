@@ -30,7 +30,7 @@ PLLIBS = $(PLLIB_AR)
 libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
-	-rm $(PLLIB_AR)
+	-$(RM) $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
