@@ -15,6 +15,9 @@
 
 function p9
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   legend "off"
   x = -2:.2:2;
   y = -2:.2:2;
@@ -24,6 +27,8 @@ function p9
   title("Vector field example");
   contour(x,y,z)
   hold on, arrows(yy,xx,gx./2,gy./2), hold off
+  plflush;
   legend "on"
+  automatic_replot = t;
 
 endfunction

@@ -14,6 +14,9 @@
 
 function p19
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   figure(0);
 
   multiplot(1,2);
@@ -94,4 +97,7 @@ function p19
   stripc_del(id3);
   
   closefig(1);
+
+  automatic_replot = t;
+
 endfunction

@@ -14,6 +14,9 @@
 
 function p12
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   title("War Game");
   legend("off");
   x=0:0.1:4;
@@ -26,5 +29,7 @@ function p12
     text(x,y,"ouch! Gently!")
   endif
   legend("on");
+
+  automatic_replot = t;
 
 endfunction

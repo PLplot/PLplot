@@ -14,6 +14,9 @@
 
 function p11
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   title("Stripchart demo 1 (sliding)");
   xlabel("Time");
   ylabel("Sliding");
@@ -45,5 +48,6 @@ function p11
   ## Destroy strip chart and it's memory */
 
   stripc_del(id1);
-  
+  automatic_replot = t; 
+
 endfunction

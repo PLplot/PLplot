@@ -15,6 +15,9 @@
 
 function p2 
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   legend("opaque",0)
   title("PLplot Example 2");
 
@@ -23,6 +26,8 @@ function p2
   y2=sin(x).*cos(2*x);
   y3=x.*sin(x);
   plot(x, y1,';sinc(x);',x,y2,'b;sin(x)*cos(2*x);',x,y3,'g;x*sin(x);');
-
+  
+  automatic_replot = t;
+  
 endfunction
 

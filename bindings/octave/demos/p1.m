@@ -36,11 +36,16 @@ function p1
 
   ## Plot the data points */
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   xlabel("(x)");
   ylabel("(y)");
   title("#frPLplot Example 1 - y=x#u2");
 
   plot(x, y, xs, ys, 'og');
+
+  automatic_replot = t;
   
 endfunction
 

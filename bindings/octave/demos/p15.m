@@ -15,6 +15,9 @@
     
 function p15
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   title "Lighted and shaded surface";
   xlabel "";
   ylabel "";
@@ -26,6 +29,7 @@ function p15
   set_view(50, 40);
   plcolormap(gray);
   surfl(x, y, z);
-  
+  automatic_replot = t;
+
 endfunction
 

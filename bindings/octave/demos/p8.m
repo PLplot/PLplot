@@ -14,10 +14,15 @@
 
 function p8
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   xlabel("X"); ylabel("Y");
   title("Mesh example");
   [x y z]=rosenbrock;z=log(z);
   mesh(x,y,z)
+
+  automatic_replot = t;
 
 endfunction
 

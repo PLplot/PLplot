@@ -14,6 +14,8 @@
 
 function p20
 
+  plclearplot;
+
   multiplot(4,4)
 
   subwindow(1, 1)
@@ -46,5 +48,6 @@ function p20
   p14(1)
   subwindow(1 ,2)
   p12
+  oneplot;
 
 endfunction

@@ -16,10 +16,17 @@ function p4
 
   x=0.01:0.1:10;
   y=exp(x);
+
+  t = automatic_replot;
+  automatic_replot = 0;
+ 
   grid "minor"
   title("Log-log example");
   loglog(x,y)
-
   grid "off"
+ 
+  automatic_replot = t;
+
+  
 
 endfunction

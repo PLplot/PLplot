@@ -35,12 +35,13 @@ function p3
   endfor
 
   ## Plot the data points */
+
+  t = automatic_replot;
+  automatic_replot = 0;
+
   title("#frPLplot Example 3 - y=x#u2 #d(with error bars)");
-  
-  plot(x, y);
-  hold
-  plot(xs,ys,'ob');
-  plot([xs xe], [ys yel yer], '~g');
-  hold
+  plot(x,y,[xs xe], [ys yel yer], '~g');
+
+  automatic_replot = t;
 
 endfunction

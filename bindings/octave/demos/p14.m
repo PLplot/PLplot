@@ -17,10 +17,13 @@ function p14(fg)
 
   ## And now, in the Theatre near you, "Octave, the movie"
 
-	if (!nargin)
-  plsetopt "db";
-  fig( free_fig); #  unused plot window
-	endif
+  t = automatic_replot;
+  automatic_replot = 0;
+
+  if (!nargin)
+    plsetopt "db";
+    fig( free_fig); #  unused plot window
+  endif
 
   title("Octave, the movie");
   ylabel "";
@@ -42,12 +45,14 @@ function p14(fg)
   for k = linspace(0, 4*pi, 30)
     surfl(x, y, sin(k).*r);
   endfor
+  axis; # reset axis to automatic mode
 
-	if (!nargin)
-  closefig; # the "db" option has negatice side effects on other plots.
-  plsetopt "reset"; # reset options
-	endif
-
+  if (!nargin)
+    closefig; # the "db" option has negative side effects on other plots.
+    plsetopt "reset"; # reset options
+  endif
+  automatic_replot = t;
+  
 endfunction
 
 

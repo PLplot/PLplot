@@ -18,6 +18,9 @@ function p7
 
   [x y z]=rosenbrock;z=log(z);
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   title("Shade example");
   plcolormap('default')
   shade(x,y,z,15)
@@ -33,4 +36,5 @@ function p7
   shade(x,y,z,15,3);
   axis;
 
+  automatic_replot = t;
 endfunction

@@ -14,6 +14,9 @@
 
 function p13
 
+  t = automatic_replot;
+  automatic_replot = 0;
+
   legend("opaque");
   title("Matrix with individual line attributes");
   fmt=["bo-;elf dist;"; "-15;norm porc;"; "@-g;cat peroi;"];
@@ -31,5 +34,6 @@ function p13
 
   ##  plot(randn(10,3),fmt)
   plot(g,fmt)
+  automatic_replot = t;
 
 endfunction
