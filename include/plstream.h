@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/07/16 22:30:10  mjl
-   Added many new variables used in driver interface to PLStream definition.
-   Eliminated some obsolete variables and function prototypes.
+   Revision 1.11  1993/07/28 05:51:12  mjl
+   Added stream variables nopixmap (tell driver not to use pixmaps) and
+   dual_screen (set on devices that have dual text/graphics screens).
 
+ * Revision 1.10  1993/07/16  22:30:10  mjl
+ * Added many new variables used in driver interface to PLStream definition.
+ * Eliminated some obsolete variables and function prototypes.
+ *
  * Revision 1.9  1993/07/02  07:25:30  mjl
  * Added variables for dealing with X driver, TK driver, driver interface.
  *
@@ -154,7 +158,7 @@ typedef struct {
 * space and set pls->dev to point to this area.  This way there can
 * be multiple streams using the same driver without conflict.
 *
-* dev		void*	pointer to device-specific data
+* dev		void*	pointer to device-specific data (malloc'ed)
 *
 ***********************************************************************
 *
@@ -169,17 +173,16 @@ typedef struct {
 *
 * Stuff used by Xlib driver
 *
-* geometry	char*	window geometry
-* display	char*	display for graphics window
-*
+* geometry	char*	window geometry (malloc'ed)
 * window_id	long	X-window window ID
+* nopixmap	int	Set if you want to forbid allocation of pixmaps
 *
 ***********************************************************************
 *
 * These are for support of the TK driver.
 *
 * plserver	char*	name of server
-* plwindow	char*	name of reference server window
+* plwindow	char*	name of reference server window (malloc'ed)
 * tcl_cmd	char*	TCL command(s) to eval on startup
 * auto_path	char*	Additional directories to autoload
 * bufmax	int	number of bytes sent before output buffer is flushed
@@ -343,6 +346,7 @@ typedef struct {
 
     char *geometry;
     long window_id;
+    int  nopixmap;
 
 /* Stuff used by TK driver */
 
@@ -379,7 +383,7 @@ typedef struct {
     char *program;
 
     PLINT level;
-    PLINT device, termin, graphx;
+    PLINT device, termin, dual_screen, graphx;
     PLINT nopause;
     PLINT family, member, bytemax, famadv;
     PLFLT sclx, scly;
