@@ -28,7 +28,6 @@ static void	calc_dimap	(void);
 static void	plgdevlst	(char **, char **, int *, int);
 
 static void	plInitDispatchTable	(void);
-static PLINT dispatch_table_inited = 0;
 
 static void	plLoadDriver	(void);
 
@@ -37,6 +36,8 @@ static void	plLoadDriver	(void);
 static PLINT xscl[PL_MAXPOLY], yscl[PL_MAXPOLY];
 
 static PLINT initfont = 1;	/* initial font: extended by default */
+
+static PLINT lib_initialized = 0;
 
 /*--------------------------------------------------------------------------*\
  * Allocate a PLStream data structure (defined in plstrm.h).
