@@ -425,6 +425,53 @@ pdf_rd_header(PDFstrm *pdfs, char *header)
 }
 
 /*--------------------------------------------------------------------------*\
+ * pdf_wr_string()
+ *
+ * Writes a null-terminated string.
+\*--------------------------------------------------------------------------*/
+
+int
+pdf_wr_string(PDFstrm *pdfs, const char *string)
+{
+    int i;
+
+    dbug_enter("pdf_wr_string");
+
+    for (i = 0; i <= strlen(string); i++) {
+	if (pdf_putc(string[i], pdfs) == EOF)
+	    return PDF_WRERR;
+    }
+
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * int pdf_rd_string
+ *
+ * Reads a null-terminated string from PDFstrm *pdfs.
+ * A max of nmax chars are read.
+\*--------------------------------------------------------------------------*/
+
+int
+pdf_rd_string(PDFstrm *pdfs, char *string, int nmax)
+{
+    int i, c;
+
+    dbug_enter("pdf_rd_string");
+
+    for (i = 0; i < nmax; i++) {
+	if ((c = pdf_getc(pdfs)) == EOF)
+	    return PDF_RDERR;
+
+	string[i] = c;
+	if (c == '\0')
+	    break;
+    }
+    string[i] = '\0';		/* handle boundary case */
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
  * int pdf_wr_1byte()
  *
  * Writes a U_CHAR as a single byte.
@@ -811,7 +858,6 @@ print_ieeef(void *vx, void *vy)
  *   PLFLT **z;
  *
  *   Alloc2dGrid(&z, XPTS, YPTS);
- *
 \*--------------------------------------------------------------------------*/
 
 void
@@ -820,15 +866,11 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
     PLINT i;
 
     if ((*f = (PLFLT **) calloc(nx, sizeof(PLFLT *)))==NULL)
-     {   
         plexit("Memory allocation error in \"plAlloc2dGrid\"");
-     }
 
     for (i = 0; i < nx; i++) {
-       if (((*f)[i] = (PLFLT *) calloc(ny ,sizeof(PLFLT)))==NULL)
-	 {
-            plexit("Memory allocation error in \"plAlloc2dGrid\"");
-	 }
+	if (((*f)[i] = (PLFLT *) calloc(ny ,sizeof(PLFLT)))==NULL)
+	   plexit("Memory allocation error in \"plAlloc2dGrid\"");
     }
 
 }
@@ -837,7 +879,6 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
  * Free2dGrid()
  *
  * Frees a block of memory allocated with Alloc2dGrid().
- *
 \*--------------------------------------------------------------------------*/
 
 void
@@ -855,23 +896,22 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny)
  * MinMax2dGrid()
  *
  * Finds the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
- * 
 \*--------------------------------------------------------------------------*/
 
 void
 plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin)
 {
-  int i, j;
-  PLFLT m, M;
+    int i, j;
+    PLFLT m, M;
 
-  M = m = f[0][0];
+    M = m = f[0][0];
 
-  for (i = 0; i < nx; i++) {
-    for (j = 0; j < ny; j++) {
-      if (f[i][j] > M) M = f[i][j];
-      if (f[i][j] < m) m = f[i][j];
+    for (i = 0; i < nx; i++) {
+	for (j = 0; j < ny; j++) {
+	    if (f[i][j] > M) M = f[i][j];
+	    if (f[i][j] < m) m = f[i][j];
+	}
     }
-  }
-  *fmax = M;
-  *fmin = m;
+    *fmax = M;
+    *fmin = m;
 }
