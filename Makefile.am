@@ -32,7 +32,7 @@ endif
 SUBDIRS = libltdl $(drivers_src_dirs) examples test utils scripts doc \
           pkgcfg
 
-bin_SCRIPTS = plplot_libtool cf/plplot-config
+bin_SCRIPTS = plplot_libtool
 
 plplot_libtool: libtool
 	cp libtool plplot_libtool

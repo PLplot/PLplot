@@ -24,7 +24,8 @@ examplesdir = ${prefix}/$(DATA_DIR)/../examples
 scripts = \
 	plm2gif \
 	plpr \
-	pstex2eps
+	pstex2eps \
+	plplot-config
 
 bin_SCRIPTS = $(scripts)
 
