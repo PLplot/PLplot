@@ -631,12 +631,9 @@ if test "$enable_cxx" = "yes"; then
     plplot 2>/dev/null
 fi
 
-# Note that double precision Fortran files in the stub interface are
-# obtained entirely by m4 macro expansion.  This should work anywhere.
-# Double precision example programs are obtained through automatic compiler
-# promotion, however.  Your compiler needs to be able to automatically
-# promote all real variables and constants for this to work (the HPUX 8.x
-# compiler did not support this, but it's supported under 9.0).
+# Note that double precision Fortran files in the stub interface 
+# and examples are obtained entirely by m4 macro expansion.  This should 
+# work anywhere.
 
 if test "$enable_f77" = "yes"; then
     ln -s \
@@ -646,6 +643,14 @@ if test "$enable_f77" = "yes"; then
     ln -s \
     $srcdir/bindings/f77/*.h \
     plplot 2>/dev/null
+    for filename in $srcdir/examples/f77/*.fm4
+    do 
+      ln -s ${filename%.fm4}.f . 2>/dev/null
+    done
+    for filename in $srcdir/bindings/f77/*.fm4
+    do 
+      ln -s ${filename%.fm4}.f . 2>/dev/null
+    done
 fi
 
 if test "$enable_python" = "yes"; then
