@@ -91,6 +91,8 @@ int  pdf_rdx	        PLARGS((U_CHAR *x, long nitems, PDFstrm *pdfs));
 
 int  pdf_rd_header	PLARGS((PDFstrm *pdfs, char *header));
 int  pdf_wr_header	PLARGS((PDFstrm *pdfs, char *header));
+int  pdf_wr_string	PLARGS((PDFstrm *pdfs, const char *string));
+int  pdf_rd_string	PLARGS((PDFstrm *pdfs, char *string, int nmax));
 int  pdf_wr_1byte	PLARGS((PDFstrm *pdfs, U_CHAR s));
 int  pdf_rd_1byte	PLARGS((PDFstrm *pdfs, U_CHAR *ps));
 int  pdf_wr_2bytes	PLARGS((PDFstrm *pdfs, U_SHORT s));
