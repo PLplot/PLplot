@@ -70,7 +70,7 @@ Description: Scientific plotting library
 
 Package: plplot-tcl
 Architecture: any
-Depends: plplot-common, itk3.1, ${shlibs:Depends}
+Depends: plplot-common, itk3.1, iwidgets3.1, ${shlibs:Depends}
 Conflicts: plplot-xwin
 Replaces: plplot-xwin
 Provides: plplot-lib
@@ -103,6 +103,7 @@ Description: Python support for PLplot, a plotting library
  See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-dev
+Section: devel
 Architecture: any
 Depends: plplot-lib, plplot-c++
 Conflicts: plplot (<< 5), plplot-doc (<< 5.0.1-0.potato.2)
