@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/12/08 20:26:22  mjl
+ * Revision 1.16  1993/12/21 10:35:07  mjl
+ * Added entry for new Tcl-DP driver.
+ *
+ * Revision 1.15  1993/12/08  20:26:22  mjl
  * Changes to support MS-Kermit output device.
  *
  * Revision 1.14  1993/10/18  19:42:06  mjl
@@ -228,9 +231,25 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
+#ifdef TCL_DP
+    {
+	"Tcl-DP/TK Window",
+	"dp",
+	1,
+	plD_init_dp,
+	plD_line_tk,
+	plD_polyline_tk,
+	plD_eop_tk,
+	plD_bop_tk,
+	plD_tidy_tk,
+	plD_state_tk,
+	plD_esc_tk
+    },
+#endif
+
 #ifdef TK
     {
-	"TCL/TK Window",
+	"Tcl/TK Window",
 	"tk",
 	1,
 	plD_init_tk,
