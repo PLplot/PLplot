@@ -490,7 +490,7 @@ fi
 AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
 
 # This required for dll support under cygwin.  Must occur before
-# AC_PROG_LIBTOOL (AM_PROG_LIBTOOL? FIXME).
+# AM_PROG_LIBTOOL
 AC_LIBTOOL_WIN32_DLL
 
 AM_PROG_CC_STDC
@@ -503,7 +503,8 @@ MY_ARG_WITH(freetype,
 # use pthreads with the xwin driver
 
 MY_ARG_WITH(pthreads,
-  [  --with-pthreads         Use pthreads with the xwin driver])
+  AC_HELP_STRING([--with-pthreads],
+    [Use pthreads with the xwin driver]))
 
 MY_ARG_WITH(qhull,
   AC_HELP_STRING([--with-qhull],
