@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/09/01 22:28:09  mjl
+ * Revision 1.30  1994/09/23 07:36:27  mjl
+ * Now generates ps files with the correct PLplot version number written.
+ *
+ * Revision 1.29  1994/09/01  22:28:09  mjl
  * Fixed bug in current point update after state change.
  *
  * Revision 1.28  1994/08/27  03:40:32  mjl
@@ -185,7 +188,7 @@ ps_init(PLStream *pls)
     fprintf(OF, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 
     fprintf(OF, "%%%%Title: PLPLOT Graph\n");
-    fprintf(OF, "%%%%Creator: PLPLOT Version 4.0\n");
+    fprintf(OF, "%%%%Creator: PLPLOT Version %s\n", PLPLOT_VERSION);
     fprintf(OF, "%%%%CreationDate: %s\n", ps_getdate());
     fprintf(OF, "%%%%Pages: (atend)\n");
     fprintf(OF, "%%%%EndComments\n\n");
