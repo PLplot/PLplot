@@ -1266,28 +1266,33 @@ static char doc_plscmap1l[]="Set color map 1 colors using a piece-wise linear re
 
 static PyObject * pl_scmap1l(PyObject *self, PyObject *args)
 {
-    PLINT itype, npts, coord1len, coord2len, coord3len;
+    PLINT itype, npts, coord1len, coord2len, coord3len, revlen;
     PLFLT *intensity, *coord1, *coord2, *coord3;
-    PyObject *intensityop, *coord1op, *coord2op, *coord3op;
-    TRY (PyArg_ParseTuple(args, "iOOOO", &itype, &intensityop, 
-                                             &coord1op, &coord2op, &coord3op));
+    PLINT *rev;
+    PyObject *intensityop, *coord1op, *coord2op, *coord3op, *revop;
+    TRY (PyArg_ParseTuple(args, "iOOOOO", &itype, &intensityop, 
+                  &coord1op, &coord2op, &coord3op, &revop));
     TRY (pl_PyArray_AsFloatArray(&intensityop, &intensity, &npts));
     TRY (pl_PyArray_AsFloatArray(&coord1op, &coord1, &coord1len));
     TRY (pl_PyArray_AsFloatArray(&coord2op, &coord2, &coord2len));
     TRY (pl_PyArray_AsFloatArray(&coord3op, &coord3, &coord3len));
-    if (npts != coord1len || npts != coord2len || npts != coord3len) {
-	  PyErr_SetString(PyExc_ValueError, "args 2, 3, 4, and 5 should have the same length");
+    TRY (pl_PyArray_AsIntArray(&revop, &rev, &revlen));
+    
+    if (npts != coord1len || npts != coord2len || npts != coord3len || npts != revlen) {
+	  PyErr_SetString(PyExc_ValueError, "args 2, 3, 4, 5, and 6 should have the same length");
         Py_DECREF(intensityop);
         Py_DECREF(coord1op);
         Py_DECREF(coord2op);
         Py_DECREF(coord3op);
+        Py_DECREF(revop);
 	  return NULL;
     }
-    plscmap1l(itype, npts, intensity, coord1, coord2, coord3, NULL);
+    plscmap1l(itype, npts, intensity, coord1, coord2, coord3, rev);
     Py_DECREF(intensityop);
     Py_DECREF(coord1op);
     Py_DECREF(coord2op);
     Py_DECREF(coord3op);
+    Py_DECREF(revop);
     Py_INCREF(Py_None);
     return Py_None;
 }
