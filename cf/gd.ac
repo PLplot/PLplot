@@ -110,7 +110,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes" -o "$enable_gif" = "yes"
 fi
 
 PL_ARG_WITH(png-libdir, [User-specified path to libpng], [])
-if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+if test "$enable_png" = "yes"; then
   if test "$libgdla" = "no"; then
     if test -z "$with_png_libdir"; then
         AC_CHECK_LIB(png, main, [ with_png_libdir=default ], [
@@ -129,7 +129,6 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
             AC_MSG_WARN([and enable_jpeg=no])
             with_png_libdir=default
             enable_png=no
-            enable_jpeg=no
         fi ])
     else
     	AC_MSG_NOTICE("User-specified path to libpng is $with_png_libdir")
@@ -143,7 +142,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 PL_ARG_WITH(jpeg-libdir, [User-specified path to libjpeg], [])
-if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+if test "$enable_jpeg" = "yes"; then
   if test "$libgdla" = "no"; then
     if test -z "$with_jpeg_libdir"; then
         AC_CHECK_LIB(jpeg, main, [ with_jpeg_libdir=default ], [
@@ -158,10 +157,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
             fi
         done
         if test -z "$with_jpeg_libdir"; then
-            AC_MSG_WARN([jpeg library not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])
+            AC_MSG_WARN([jpeg library not found, setting enable_jpeg=no])
             with_jpeg_libdir=default
-            enable_png=no
             enable_jpeg=no
         fi ])
     else
@@ -176,7 +173,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 PL_ARG_WITH(zlib-libdir, [User-specified path to libz], [])
-if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+if test "$enable_png" = "yes"; then
   if test "$libgdla" = "no"; then
     if test -z "$with_zlib_libdir"; then
         AC_CHECK_LIB(z, main, [ with_zlib_libdir=default ], [
@@ -192,10 +189,8 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         done
         if test -z "$with_zlib_libdir"; then
             AC_MSG_WARN([zlib library not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])
             with_zlib_libdir=default
             enable_png=no
-            enable_jpeg=no
         fi ])
     else
     	AC_MSG_NOTICE("User-specified path to libz is $with_zlib_libdir")
