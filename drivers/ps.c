@@ -1,6 +1,19 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/02/07 22:52:11  mjl
+ * Revision 1.22  1994/03/23 06:44:26  mjl
+ * Added support for: color map 1 color selection, color map 0 or color map 1
+ * state change (palette change), polygon fills.  Changes to generated
+ * postscript code: now leaner and more robust, with less redundant
+ * instructions.  Is suitable for backward paging using ghostview!
+ *
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.21  1994/02/07  22:52:11  mjl
  * Changed the default pen width to 3 so that the default output actually
  * looks good.
  *
@@ -24,14 +37,6 @@
  *
  * Revision 1.16  1993/07/16  22:14:18  mjl
  * Simplified and fixed dpi settings.
- *
- * Revision 1.15  1993/07/01  21:59:43  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.14  1993/04/26  20:01:59  mjl
- * Changed time type from long to time_t.
 */
 
 /*	ps.c
@@ -41,21 +46,20 @@
 #ifdef PS
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "drivers.h"
+
 #include <string.h>
 #include <time.h>
 
-#include "drivers.h"
-
 /* Prototypes for functions in this file. */
 
-static char *ps_getdate	(void);
-static void ps_init	(PLStream *);
+static char  *ps_getdate	(void);
+static void  ps_init		(PLStream *);
+static void  fill_polygon	(PLStream *pls);
 
 /* top level declarations */
 
-#define LINELENGTH      70
+#define LINELENGTH      78
 #define COPIES          1
 #define XSIZE           540	/* 7.5 x 10 [inches] (72 points = 1 inch) */
 #define YSIZE           720
@@ -123,15 +127,9 @@ ps_init(PLStream *pls)
     pls->bytecnt = 0;
     pls->page = 0;
     pls->family = 0;		/* I don't want to support familying here */
+    pls->dev_fill0 = 1;		/* Can do solid fills */
 
-    if (pls->widthset) {
-	if (pls->width < 1 || pls->width > 10) {
-	    fprintf(stderr, "\nInvalid pen width selection.");
-	    pls->width = 1;
-	}
-	pls->widthset = 0;
-    }
-    else
+    if (pls->width == 0)	/* Is 0 if uninitialized */
 	pls->width = 3;
 
 /* Prompt for a file name if not already set */
@@ -230,13 +228,12 @@ ps_init(PLStream *pls)
     fprintf(OF, "   {\n");
     fprintf(OF, "    /SaveImage save def\n");
     if (pls->color) {
-	fprintf(OF, "    Z %d %d M %d %d D %d %d D %d %d D %d %d",
+	fprintf(OF, "    Z %d %d M %d %d D %d %d D %d %d D %d %d closepath\n",
 		0, 0, 0, PSY, PSX, PSY, PSX, 0, 0, 0);
 	r = ((float) pls->bgcolor.r) / 255.;
 	g = ((float) pls->bgcolor.g) / 255.;
 	b = ((float) pls->bgcolor.b) / 255.;
-	fprintf(OF, "    closepath %f %f %f setrgbcolor fill\n",
-		r, g, b);
+	fprintf(OF, "    %.4f %.4f %.4f setrgbcolor fill\n", r, g, b);
     }
     fprintf(OF, "   } def\n");
 
@@ -269,7 +266,6 @@ ps_init(PLStream *pls)
 /* Default line width */
 
     fprintf(OF, "/lw %d def\n", pls->width);
-    fprintf(OF, "/@lwidth  {lw setlinewidth} def\n");
 
 /* Setup user specified offsets, scales, sizes for clipping */
 
@@ -287,12 +283,15 @@ ps_init(PLStream *pls)
     fprintf(OF, "/YScale\n");
     fprintf(OF, "   {vs %d div} def\n", XPSSIZE);
 
-/* Stroke definitions, to keep output file as small as possible */
+/* Macro definitions of common instructions, to keep output small */
 
     fprintf(OF, "/M {moveto} def\n");
     fprintf(OF, "/D {lineto} def\n");
     fprintf(OF, "/S {stroke} def\n");
     fprintf(OF, "/Z {stroke newpath} def\n");
+    fprintf(OF, "/F {fill} def\n");
+    fprintf(OF, "/C {setrgbcolor} def\n");
+    fprintf(OF, "/W {setlinewidth} def\n");
 
 /* End of dictionary definition */
 
@@ -324,31 +323,34 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     PSDev *dev = (PSDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-    if (pls->linepos + 21 > LINELENGTH) {
-	putc('\n', OF);
-	pls->linepos = 0;
-    }
-    else
-	putc(' ', OF);
-
-    pls->bytecnt++;
-
 /* Rotate by 90 degrees */
 
-    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-	     &x1, &y1, &x2, &y2);
+    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1);
+    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2);
 
     if (x1 == dev->xold && y1 == dev->yold && dev->ptcnt < 40) {
+	if (pls->linepos + 12 > LINELENGTH) {
+	    putc('\n', OF);
+	    pls->linepos = 0;
+	}
+	else
+	    putc(' ', OF);
+
 	sprintf(outbuf, "%d %d D", x2, y2);
 	dev->ptcnt++;
+	pls->linepos += 12;
     }
     else {
-	sprintf(outbuf, "Z %d %d M %d %d D", x1, y1, x2, y2);
+	fprintf(OF, " Z\n");
+	pls->linepos = 0;
+
+	sprintf(outbuf, "%d %d M %d %d D", x1, y1, x2, y2);
 	dev->llx = MIN(dev->llx, x1);
 	dev->lly = MIN(dev->lly, y1);
 	dev->urx = MAX(dev->urx, x1);
 	dev->ury = MAX(dev->ury, y1);
 	dev->ptcnt = 1;
+	pls->linepos += 24;
     }
     dev->llx = MIN(dev->llx, x2);
     dev->lly = MIN(dev->lly, y2);
@@ -356,10 +358,9 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     dev->ury = MAX(dev->ury, y2);
 
     fprintf(OF, "%s", outbuf);
-    pls->bytecnt += strlen(outbuf);
+    pls->bytecnt += 1 + strlen(outbuf);
     dev->xold = x2;
     dev->yold = y2;
-    pls->linepos += 21;
 }
 
 /*----------------------------------------------------------------------*\
@@ -404,9 +405,13 @@ plD_bop_ps(PLStream *pls)
     dev->yold = UNDEFINED;
 
     pls->page++;
-    fprintf(OF, " bop\n");
     fprintf(OF, "%%%%Page: %d %d\n", pls->page, pls->page);
+    fprintf(OF, "bop\n");
     pls->linepos = 0;
+
+/* This ensures the color is set correctly at the beginning of each page */
+
+    plD_state_ps(pls, PLSTATE_COLOR0);
 }
 
 /*----------------------------------------------------------------------*\
@@ -420,8 +425,7 @@ plD_tidy_ps(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
 
-    fprintf(OF, "@end\n\n");
-    fprintf(OF, "%%%%Trailer\n");
+    fprintf(OF, "\n%%%%Trailer\n");
 
     dev->llx /= ENLARGE;
     dev->lly /= ENLARGE;
@@ -439,6 +443,7 @@ plD_tidy_ps(PLStream *pls)
     dev->ury += 1;
 
     fprintf(OF, "%%%%Pages: %d\n", pls->page);
+    fprintf(OF, "@end\n");
 
 /* Backtrack to write the BoundingBox at the beginning */
 /* Some applications don't like it atend */
@@ -448,10 +453,6 @@ plD_tidy_ps(PLStream *pls)
     fprintf(OF, "%%%%BoundingBox: %d %d %d %d\n",
 	    dev->llx, dev->lly, dev->urx, dev->ury);
     fclose(OF);
-    pls->fileset = 0;
-    pls->page = 0;
-    pls->linepos = 0;
-    OF = NULL;
 }
 
 /*----------------------------------------------------------------------*\
@@ -471,23 +472,21 @@ plD_state_ps(PLStream *pls, PLINT op)
 	if (pls->width < 1 || pls->width > 10)
 	    fprintf(stderr, "\nInvalid pen width selection.");
 	else 
-	    fprintf(OF, " S\n/lw %d def\n@lwidth\n", pls->width);
+	    fprintf(OF, " S\n%d W", pls->width);
 
 	dev->xold = UNDEFINED;
 	dev->yold = UNDEFINED;
 	break;
 
     case PLSTATE_COLOR0:
+    case PLSTATE_COLOR1:
 	if (pls->color) {
 	    float r = ((float) pls->curcolor.r) / 255.0;
 	    float g = ((float) pls->curcolor.g) / 255.0;
 	    float b = ((float) pls->curcolor.b) / 255.0;
 
-	    fprintf(OF, " S %f %f %f setrgbcolor\n", r, g, b);
+	    fprintf(OF, " S\n%.4f %.4f %.4f C", r, g, b);
 	}
-	break;
-
-    case PLSTATE_COLOR1:
 	break;
     }
 }
@@ -501,6 +500,72 @@ plD_state_ps(PLStream *pls, PLINT op)
 void
 plD_esc_ps(PLStream *pls, PLINT op, void *ptr)
 {
+    switch (op) {
+      case PLESC_FILL:
+	fill_polygon(pls);
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* fill_polygon()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+* Only solid color fill supported.
+\*----------------------------------------------------------------------*/
+
+static void
+fill_polygon(PLStream *pls)
+{
+    PSDev *dev = (PSDev *) pls->dev;
+    PLINT n, ix = 0, iy = 0;
+    int x, y;
+
+    fprintf(OF, " Z\n");
+
+    for (n = 0; n < pls->dev_npts; n++) {
+	x = pls->dev_x[ix++];
+	y = pls->dev_y[iy++];
+
+/* Rotate by 90 degrees */
+
+	plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x, &y);
+
+/* First time through start with a x y moveto */
+
+	if (n == 0) {
+	    sprintf(outbuf, "%d %d M", x, y);
+	    dev->llx = MIN(dev->llx, x);
+	    dev->lly = MIN(dev->lly, y);
+	    dev->urx = MAX(dev->urx, x);
+	    dev->ury = MAX(dev->ury, y);
+	    fprintf(OF, "%s", outbuf);
+	    pls->bytecnt += strlen(outbuf);
+	    continue;
+	}
+
+	if (pls->linepos + 21 > LINELENGTH) {
+	    putc('\n', OF);
+	    pls->linepos = 0;
+	}
+	else
+	    putc(' ', OF);
+
+	pls->bytecnt++;
+
+	sprintf(outbuf, "%d %d D", x, y);
+	dev->llx = MIN(dev->llx, x);
+	dev->lly = MIN(dev->lly, y);
+	dev->urx = MAX(dev->urx, x);
+	dev->ury = MAX(dev->ury, y);
+
+	fprintf(OF, "%s", outbuf);
+	pls->bytecnt += strlen(outbuf);
+	pls->linepos += 21;
+    }
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
+    fprintf(OF, " F ");
 }
 
 /*----------------------------------------------------------------------*\
