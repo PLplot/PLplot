@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/04/08 12:06:09  mjl
+ * Revision 1.13  1994/05/07 03:14:57  mjl
+ * Consolidated Tk code by moving Pltk_Init() to this file.  Startup routine
+ * now sets auto_path and saves initial color map as well.
+ *
+ * Revision 1.12  1994/04/08  12:06:09  mjl
  * Function name changes to reduce namespace pollution.
  *
  * Revision 1.11  1994/03/23  06:54:40  mjl
@@ -163,6 +167,8 @@ pltk_source(Tk_Window w, Tcl_Interp *interp, char *script)
  *----------------------------------------------------------------------
  */
 
+static int auto_path_set;
+
 int
 pltk_Init(Tcl_Interp *interp)
 {
@@ -217,11 +223,49 @@ pltk_Init(Tcl_Interp *interp)
      * then no user-specific startup file will be run under any conditions.
      */
 
+/* Set up auto_path */
+
+    auto_path_set = 1;
+    if (set_auto_path(interp) == TCL_ERROR)
+	return TCL_ERROR;
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+* Pltk_Init
+*
+* Generic initialization routine for extended wish'es.
+\*----------------------------------------------------------------------*/
+
+int
+Pltk_Init( Tcl_Interp *interp )
+{
+    Tk_Window main;
+    Display *display;
+    Colormap map;
+
+    main = Tk_MainWindow(interp);
+
+/* Add plframe command */
+
+    Tcl_CreateCommand(interp, "plframe", plFrameCmd,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
 
 /* Set up auto_path */
 
-    if (set_auto_path(interp) == TCL_ERROR)
-	return TCL_ERROR;
+    if ( ! auto_path_set ) {
+	auto_path_set = 1;
+	if (set_auto_path(interp) == TCL_ERROR)
+	    return TCL_ERROR;
+    }
+
+/* Save initial RGB colormap components */
+
+    display = Tk_Display(main);
+    map = DefaultColormap(display, DefaultScreen(display));
+
+    PLX_save_colormap(display, map);
 
     return TCL_OK;
 }
