@@ -93,7 +93,7 @@ enable_python=yes
 enable_tcl=yes
 enable_itcl=yes
 enable_java=yes
-enable_octave=yes
+enable_octave=no
 #explicit default values must be specified here for library and header
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
