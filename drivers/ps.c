@@ -36,11 +36,11 @@ static char  outbuf[128];
 static int text = 0;
 static int color;
 
-static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1|2)"},
+static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1)"},
 			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
 
-/* text > 1 uses some postscript tricks, namely a transformation matrix
+/* text > 0 uses some postscript tricks, namely a transformation matrix
    that scales, rotates (with slanting) and offsets text strings.
    It has yet some bugs for 3d plots. */
 
@@ -664,6 +664,10 @@ proc_str (PLStream *pls, EscText *args)
   int symbol;
   PLINT clxmin, clxmax, clymin, clymax;
 
+  PLFLT scale; /* TJD: Font size scaling parameter */
+
+  int i=0; /* TJD: String index */
+
   /* finish previous polyline */
 
   dev->xold = PL_UNDEFINED;
@@ -678,7 +682,10 @@ proc_str (PLStream *pls, EscText *args)
   
   /* calculate baseline text angle */
 
-  angle = ((PLFLT)(ORIENTATION-1) - pls->diorot) * 90.;
+  /* TJD: In the next line I changed the sign from - to + so that text
+   * prints out correctly when in portrait mode.
+   */
+  angle = ((PLFLT)(ORIENTATION-1) + pls->diorot) * 90.; 
   a1 = acos(t[0]) * 180. / PI;
   if (t[2] > 0.)
     alpha = a1 - angle;
@@ -750,7 +757,7 @@ proc_str (PLStream *pls, EscText *args)
 
   /* set string rotation */
 
-  if (text == 1) 
+  if (text) 
     fprintf(OF, "gsave %.3f R\n", alpha - 90.);  
   else {
     /* I really don't understand this! The angle should be increased by
@@ -802,7 +809,7 @@ proc_str (PLStream *pls, EscText *args)
 
   esc_purge(str, args->string);
 
-  if (text == 1)
+  if (text)
     fprintf(OF, "/%s %.1f SF\n", ofont, font_factor * ENLARGE * ft_ht);
   else {
     fprintf(OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n", ofont,
@@ -814,9 +821,24 @@ proc_str (PLStream *pls, EscText *args)
 
   /* move to start point, taking justification into account */
 
-  fprintf(OF, "%.3f (%s) SW\n", - args->just, str);
+  /* TJD: Changed so that brackets are written as \( and \) */
+  /* fprintf(OF, "%.3f (%s) SW\n", - args->just, str); */
+  fprintf(OF, "%.3f (", - args->just);
+  while (str[i]!='\0') {
+    if (str[i]=='(') fprintf(OF,"\\(");
+    else {
+      if (str[i]==')') fprintf(OF,"\\)");
+      else fprintf(OF,"%c",str[i]);
+    }
+    i++;
+  }
+  fprintf(OF,") SW\n");
+   
+
 
   /* parse string for escape sequences */
+
+  scale = 1.;  /* TJD: Default scaling parameter */
 
   do {
     strp = str;
@@ -846,11 +868,13 @@ proc_str (PLStream *pls, EscText *args)
 
       case 'd':
 	up = - font_factor * ENLARGE * ft_ht / 2.;
+	scale = 0.8;  /* TJD: Subscript scaling parameter */
 	cur_str++;
 	break;
 
       case 'u':
 	up = font_factor * ENLARGE * ft_ht / 2.;
+	scale = 0.8;  /* TJD: Superscript scaling parameter */
 	cur_str++;
 	break;
 
@@ -887,10 +911,10 @@ proc_str (PLStream *pls, EscText *args)
     }
     *strp = '\0';
 
-    /* set the font */
+    if (text)
 
-    if (text == 1)
-      fprintf(OF, "/%s %.1f SF\n", font, font_factor * ENLARGE * ft_ht);    
+      /* TJD: Include font scaling for superscripts and subscripts */
+      fprintf(OF, "/%s %.1f SF\n", font, font_factor * ENLARGE * ft_ht * scale);    
     else {
       fprintf(OF, "/%s [%.3f %.3f %.3f %.3f %.3f %.3f] SF\n", font,
 	      font_factor * ENLARGE * ft_ht * t[0],
@@ -902,7 +926,7 @@ proc_str (PLStream *pls, EscText *args)
 
     /* if up/down escape sequences, save current point and adjust baseline */
 
-    if (text == 1 && up)
+    if (text && up)
       fprintf(OF, "0 %.3f rmoveto gsave\n", up);
 
     /* print the string */
@@ -912,7 +936,7 @@ proc_str (PLStream *pls, EscText *args)
 
     /* back to baseline */
 
-    if (text == 1 && up)
+    if (text && up)
       fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
 
   }while(*cur_str);
