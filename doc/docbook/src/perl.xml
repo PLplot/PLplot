@@ -36,8 +36,16 @@
 <chapter id="perl">
   <title>Using PLplot from Perl</title>
   <para>
-Documentation for the PLplot Perl binding goes here.  This is not implemented
-in the slightest yet, but this neat
-idea may eventually (some time in 2001?) be implemented using swig.
+    There are no proper bindings for the Perl language delivered with the
+    PLplot sources.  However, a PLplot interface has been added to the Perl
+    Data Language (PDL) since version 2.4.0.  If the PLplot library is
+    installed in the system, it is automatically detected by the PDL
+    configuration script, such that PLplot support for PDL should work out of
+    the box.
+  </para>
+  
+  <para>
+     For further informations see the <ulink url="http://pdl.perl.org">PDL
+     homepage</ulink>. 
   </para>
 </chapter>
