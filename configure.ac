@@ -869,9 +869,9 @@ fi
 AC_SUBST(RPATH)
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
 
-### Build Makefiles
+### Build configuration files
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	include/Makefile
@@ -914,15 +914,17 @@ AC_OUTPUT([
 	doc/Makefile
 	plplot.pc
 	plplot-double.pc
-        doc/docbook/Makefile
-        doc/docbook/src/Makefile
+	doc/docbook/Makefile
+	doc/docbook/src/Makefile
 	doc/docbook/src/plplotdoc.xml
 	doc/docbook/src/plplotdoc-html.dsl
-        doc/docbook/src/plplotdoc-print.dsl
-        doc/docbook/bin/Makefile
+	doc/docbook/src/plplotdoc-print.dsl
+	doc/docbook/bin/Makefile
 	doc/docbook/bin/api2man.pl
-        doc/docbook/www/index.html.in
+	doc/docbook/www/index.html.in
 	])
+
+AC_OUTPUT
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
