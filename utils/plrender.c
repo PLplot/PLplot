@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1994/06/30 18:55:48  mjl
+ * Revision 1.40  1994/07/12 19:22:49  mjl
+ * Small change to ensure that cmap0 palette "sticks" when plot is saved from
+ * Tk driver.
+ *
+ * Revision 1.39  1994/06/30  18:55:48  mjl
  * Minor changes to eliminate gcc -Wall warnings.
  *
  * Revision 1.38  1994/04/30  16:15:17  mjl
@@ -43,12 +47,9 @@
 char ident[] = "@(#) $Id$";
 
 #include "plplotP.h"
-#include "plstream.h"
 #include "plevent.h"
 #include "metadefs.h"
 #include "pdf.h"
-
-#include <string.h>
 #include <ctype.h>
 
 static char *program_name = "plrender";
@@ -671,6 +672,7 @@ plr_state(U_CHAR op)
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].r));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].g));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].b));
+	    plsc->cmap0setcol[i] = 1;
 	}
 	break;
     }
@@ -685,6 +687,7 @@ plr_state(U_CHAR op)
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].g));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].b));
 	}
+	plsc->cmap1set = 1;
 	break;
     }
     }
