@@ -416,7 +416,7 @@ AM_INIT_AUTOMAKE(plplot, 5.2.1)
 ### is by specifying one of the option --version of --date-version to
 ### bootstrap.sh
 
-RELEASE_DATE=2003-08-28
+RELEASE_DATE=2003-04-22
 AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
@@ -424,13 +424,25 @@ AC_SUBST(RELEASE_DATE)
 ### contradiction to the libtool directive on this.  Thus, these numbers
 ### don't mean a lot in terms of binary compatibility.  Someday, we should
 ### start over with 0:0:0 and rigourously enforce number changes whenever
-### binary compatibility changes.
+### binary compatibility changes. [N. B. (Rafael): we already departed from
+### this rule for the release 5.2.1 of PLplot, which got a library soversion
+### 5.3.0.]
 
 ### N.B. The "secret" libtool code for setting 5.y.x for the numerical
 ### suffix of the library version is 5+y:x:y.  Thus 8:0:3 ==> 5.3.0.
+### N.B. [Rafael]: The above statement is not generally true.  In HPUX, for
+### instance, 8:0:3 ==> 8.3.
 
 SOVERSION=8:0:3
 AC_SUBST(SOVERSION)
+
+### Version number for the shared C++ library.  After version 5.2.1 was 
+### released, the C++ bindings were changed and backward incompatibilities
+### were introduced.  Hence the different strings for SOVERSION and
+### CPP_SOVERSION.
+
+CPP_SOVERSION=9:0:0
+AC_SUBST(CPP_SOVERSION)
 
 ### LIBRARY_VERSION must be kept consistent with the libtool SOVERSION so
 ### that the various configured pkgIndex.tcl scripts know the numerical

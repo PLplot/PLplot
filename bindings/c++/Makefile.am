@@ -31,7 +31,7 @@ lib_LTLIBRARIES = libplplotcxx@LIB_TAG@.la
 endif
 
 AM_CPPFLAGS = $(INCLTDL)
-version = -version-info $(SOVERSION)
+version = -version-info $(CPP_SOVERSION)
 
 sources = plstream.cc
 
