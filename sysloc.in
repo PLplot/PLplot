@@ -848,6 +848,13 @@ if test "$enable_python" = "yes"; then
         incdirs="$prefix/include/python$PYTHON_VERSION \
 	         /usr/include/python$PYTHON_VERSION"
         FIND_INC(Python, PYTHON_INC_DIR, enable_python)
+
+	if test "$enable_python" = no ; then
+	    AC_MSG_WARN([Header file for Python version $PYTHON_VERSION has not been found.])
+            AC_MSG_WARN([This probably means that an appropriate Python])
+            AC_MSG_WARN([development package needs to be installed.])
+	fi
+	
     fi
 
 # This needs to be a separate test in case PYTHON_INC_DIR is specified by the
