@@ -11,11 +11,6 @@
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with Octave; see the file COPYING.  If not, write to the Free
-## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-## 02111-1307, USA.
 
 ## Author: jwe
 ## Modified: jc
@@ -23,32 +18,35 @@
 function __plt__ (caller, ...)
 
   global __pl
+  strm = __pl_init;
 
   switch(caller)
     case ("plot")
-      __pl.type = 1;
+      __pl.type(strm) = 0;
     case ("logx")
-      __pl.type = 11;
+      __pl.type(strm) = 10;
     case ("logy")
-      __pl.type = 21;
+      __pl.type(strm) = 20;
     case ("lgxy")
-      __pl.type = 31;
+      __pl.type(strm) = 30;
     otherwise
-      __pl.type = 1;
+      __pl.type(strm) = 0;
       error("__plt__: FIXME")
   endswitch
 
   ## change:
-    if (!ishold)
-      __pl.items = 1;
-    endif
+  if (!ishold)
+    __pl.items(strm) = 0;
+    __pl.lxm(strm) = __pl.lym(strm) = realmax;
+    __pl.lxM(strm) = __pl.lyM(strm) = -realmax;
+  endif
 
   if (nargin == 2)
 
     __plt1__ (va_arg (), "");
 
   elseif (nargin > 2)
-      
+    
     hold_state = ishold ();
 
     unwind_protect
