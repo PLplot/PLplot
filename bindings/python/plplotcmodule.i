@@ -461,7 +461,7 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
     return &tmpGrid1;
   }
 
-  void cleanup_PLcGrid1() {
+  void cleanup_PLcGrid1(void) {
     /* fprintf(stderr, "cleanup PLcGrid1\n"); */
     Py_DECREF(pltr_xg);
     Py_DECREF(pltr_yg);
@@ -499,7 +499,7 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
     return &tmpGrid2;
   }
 
-  void cleanup_PLcGrid2() {
+  void cleanup_PLcGrid2(void) {
     /* fprintf(stderr, "cleanup PLcGrid2\n"); */
     free(tmpGrid2.xg);
     free(tmpGrid2.yg);
@@ -683,7 +683,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     return result;
   }
 
-  void cleanup_pltr() {
+  void cleanup_pltr(void) {
     Py_XDECREF(python_pltr);
     python_pltr = 0;
   }
@@ -711,7 +711,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     return result;
   }
 
-  void cleanup_PLPointer() {
+  void cleanup_PLPointer(void) {
     switch(pltr_type) {
     case CB_0:
       break;

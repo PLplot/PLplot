@@ -84,7 +84,7 @@ static PyMethodDef plplot_widget_methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
-void initplplot_widget()
+void initplplot_widget(void)
 {
     PyObject *m;
     PyObject *d;
