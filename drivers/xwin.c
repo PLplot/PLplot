@@ -25,6 +25,7 @@
 
 	PLPLOT X-windows device driver.
 */
+static int dummy;
 #ifdef XWIN
 
 #include "plplot.h"
@@ -45,18 +46,14 @@
 
 /* Function prototypes */
 
-static void	begplt		(PLStream *);
-static void 	xwesc_rgb	(char *);
-static void 	xwesc_ancol	(char *);
-static void	setcol		(long);
-static void	outplt		(void);
-static void	endplt		(void);
-static void	erase		(void);
-static void	getkey		(int *);
-static int 	getwcur		(void);
+static void	xw_Xinit	(PLStream *);
+static void	WaitForPage	(PLStream *);
+static void	EventHandler	(PLStream *pls, XEvent *event);
+static void	xwesc_ancol	(PLStream *pls, pleNcol *col);
+static void	xwesc_rgb	(PLStream *pls, pleRGB *cols);
 static int	AreWeMonochrome (Display *);
-static void	color_def 	(int, char *);
-static int	alloc_named_color (XColor *, char *);
+static void	color_def 	(PLStream *, int, char *);
+static int	alloc_named_color( PLStream *pls, XColor *color, char *name);
 
 /* top level declarations */
 
@@ -67,42 +64,61 @@ static int	alloc_named_color (XColor *, char *);
 #define PL_NDEV_XW 10	/* Max number of X sessions active */
 #define PL_NDEVICES 10	/* Max number of devices/stream active */
 
-XSizeHints myhint;
-static XEvent myevent;
-
 typedef struct {
-    int monochrome;
-    int myscreen;
-    U_LONG myforeground, mybackground;
-    Display *mydisplay;
-    Window mywindow;
-    GC mygc;
-    Colormap mymap;
-    XColor colors[17];
+    int			advance_page;
+    int			monochrome;
+    long		init_width;
+    long		init_height;
+    long		cur_width;
+    long		cur_height;
+    double		xscale;
+    double		yscale;
+    double		xscale_dev;
+    double		yscale_dev;
+    int			ignore_next_expose;
+    int			in_main_loop;
+    U_LONG		foreground;
+    U_LONG		background;
+
+    int			screen;
+    Display		*display;
+    Window		window;
+    XEvent		theEvent;
+    GC			gc;
+    Colormap		map;
+    XColor		colors[17];
 } XwDev;
 
 static XwDev xwdev[PL_NDEV_XW];
 static PLDev pldev[PL_NDEV_XW];
 
-static XwDev *xwd;
-static PLDev *pld;
-static int id, idev = -1;
+static int idev = -1;
 static int devtable[PL_NSTREAMS][PL_NDEVICES];
 
+/* Miscellaneous global definitions */
+
 static int swap_background = 0;
+
+#define PIXELS_X	32767		/* Number of virtual pixels in x */
+#define PIXELS_Y	32767		/* Number of virtual pixels in y */
+
+static PLFLT lpage_x = 238.0;		/* Page length in x in virtual mm */
+static PLFLT lpage_y = 178.0;		/* Page length in y in virtual mm */
 
 /*----------------------------------------------------------------------*\
 * xw_init()
 *
 * Initialize device.
-* X-dependent stuff done in begplt().  You can set the display by
+* X-dependent stuff done in xw_Xinit().  You can set the display by
 * calling plsfile() with the display name as the (string) argument.
 \*----------------------------------------------------------------------*/
 
 void 
 xw_init (PLStream *pls)
 {
-    PLINT hxa, hya;
+    XwDev *xwd;
+    PLDev *pld;
+    int id;
 
     if (++idev == PL_NDEV_XW)
 	plexit("Exceeded maximum number of active X sessions.");
@@ -117,20 +133,30 @@ xw_init (PLStream *pls)
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+    pls->plbuf_enable = 1;
 
-    begplt(pls);
-    hxa = 2 * (pls->xlength - 1);
-    hya = 2 * (pls->ylength - 1);
+    xw_Xinit(pls);
 
     pld->xold = UNDEFINED;
     pld->yold = UNDEFINED;
     pld->xmin = 0;
-    pld->xmax = hxa - 1;
+    pld->xmax = PIXELS_X;
     pld->ymin = 0;
-    pld->ymax = hya - 1;
+    pld->ymax = PIXELS_Y;
+    pld->xlen = pld->xmax - pld->xmin;
+    pld->ylen = pld->ymax - pld->ymin;
 
-    setpxl(4.771 * 2, 4.653 * 2);
-    setphy(0, hxa - 1, 0, hya - 1);
+    pld->pxlx = pld->xlen / lpage_x;
+    pld->pxly = pld->ylen / lpage_y;
+
+    xwd->xscale_dev = (double) xwd->init_width  / (double) pld->xlen;
+    xwd->yscale_dev = (double) xwd->init_height / (double) pld->ylen;
+
+    xwd->xscale = xwd->xscale * xwd->xscale_dev;
+    xwd->yscale = xwd->yscale * xwd->yscale_dev;
+
+    setpxl(pld->pxlx, pld->pxly);
+    setphy(pld->xmin, pld->xmax, pld->ymin, pld->ymax);
 }
 
 /*----------------------------------------------------------------------*\
@@ -142,23 +168,20 @@ xw_init (PLStream *pls)
 void 
 xw_line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1, y1, x2, y2;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
+    PLDev * pld = &(pldev[id]);
 
-    id = devtable[pls->ipls][pls->ipld];
-    xwd = &(xwdev[id]);
+    y1 = pld->ylen - y1;
+    y2 = pld->ylen - y2;
 
-    x1 = (int) x1a / 2;
-    y1 = (int) y1a / 2;
-    x2 = (int) x2a / 2;
-    y2 = (int) y2a / 2;
+    x1 = x1 * xwd->xscale;
+    x2 = x2 * xwd->xscale;
+    y1 = y1 * xwd->yscale;
+    y2 = y2 * xwd->yscale;
 
-    if (pls->pscale)
-	plSclPhy(pls, pld, &x1, &y1, &x2, &y2);
-
-    y1 = ((int) pls->ylength - 1) - y1;
-    y2 = ((int) pls->ylength - 1) - y2;
-
-    XDrawLine(xwd->mydisplay, xwd->mywindow, xwd->mygc, x1, y1, x2, y2);
+    XDrawLine(xwd->display, xwd->window, xwd->gc, x1, y1, x2, y2);
 }
 
 /*----------------------------------------------------------------------*\
@@ -170,15 +193,12 @@ xw_line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 void 
 xw_clear (PLStream *pls)
 {
-    int but;
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
 
-    id = devtable[pls->ipls][pls->ipld];
-    xwd = &(xwdev[id]);
-
-    outplt();
-    if (!pls->nopause)
-    	but = getwcur();
-    erase();
+    XFlush(xwd->display);
+    WaitForPage(pls);
+    XClearWindow(xwd->display, xwd->window);
 }
 
 /*----------------------------------------------------------------------*\
@@ -215,15 +235,14 @@ xw_adv (PLStream *pls)
 void 
 xw_tidy (PLStream *pls)
 {
-    int but;
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
 
-    id = devtable[pls->ipls][pls->ipld];
-    xwd = &(xwdev[id]);
+    xw_clear(pls);
+    XFreeGC(xwd->display, xwd->gc);
+    XDestroyWindow(xwd->display, xwd->window);
+    XCloseDisplay(xwd->display);
 
-    outplt();
-    if (!pls->nopause)
-	but = getwcur();
-    endplt();
     pls->fileset = 0;
     pls->page = 0;
     pls->OutFile = NULL;
@@ -239,10 +258,19 @@ xw_tidy (PLStream *pls)
 void 
 xw_color (PLStream *pls)
 {
-    id = devtable[pls->ipls][pls->ipld];
-    xwd = &(xwdev[id]);
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
+    XColor curcolor;
 
-    setcol(pls->color);
+    if (xwd->monochrome) 
+	curcolor.pixel = (xwd->colors)[15].pixel;
+    else {
+	if (pls->color >= 0 && pls->color <= 16)
+	    curcolor.pixel = (xwd->colors)[pls->color].pixel;
+	else
+	    curcolor.pixel = (xwd->colors)[15].pixel;
+    }
+    XSetForeground(xwd->display, xwd->gc, curcolor.pixel);
 }
 
 /*----------------------------------------------------------------------*\
@@ -287,16 +315,16 @@ xw_width (PLStream *pls)
 void 
 xw_esc (PLStream *pls, PLINT op, char *ptr)
 {
-    id = devtable[pls->ipls][pls->ipld];
-    xwd = &(xwdev[id]);
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
 
     switch (op) {
     case PL_SET_RGB:
-	xwesc_rgb(ptr);
+	xwesc_rgb(pls, (pleRGB *) ptr);
 	break;
 
     case PL_ALLOC_NCOL:
-	xwesc_ancol(ptr);
+	xwesc_ancol(pls, (pleNcol *) ptr);
 	break;
     }
 }
@@ -306,93 +334,97 @@ xw_esc (PLStream *pls, PLINT op, char *ptr)
 \*----------------------------------------------------------------------*/
 
 static void 
-begplt (PLStream *pls)
+xw_Xinit (PLStream *pls)
 {
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
+
     Window root;
+    XSizeHints hint;
     int x, y;
-    U_INT zwidth, zheight;
-    U_INT border_width, myborder;
+    U_INT width, height;
+    U_INT border_width, border;
     U_INT depth;
-    Status status;
     char header[80];
     Cursor cross_cursor;
 
-    xwd->mydisplay = XOpenDisplay(pls->FileName);
-    if (xwd->mydisplay == NULL) {
+    xwd->display = XOpenDisplay(pls->FileName);
+    if (xwd->display == NULL) {
 	fprintf(stderr, "Can't open display\n");
 	exit(1);
     }
-    myborder = 5;
-    status = XGetGeometry(xwd->mydisplay, DefaultRootWindow(xwd->mydisplay),
-		     &root, &x, &y, &zwidth, &zheight, &border_width, &depth);
+    border = 5;
+    (void) XGetGeometry(xwd->display, DefaultRootWindow(xwd->display),
+			&root, &x, &y, &width, &height,
+			&border_width, &depth);
 
     if (pls->xlength == 0)
-	pls->xlength = 7 * zwidth / 8;
+	pls->xlength = 7 * width / 8;
     if (pls->ylength == 0)
-	pls->ylength = 7 * zheight / 8;
-    if (pls->xlength > zwidth)
-	pls->xlength = zwidth-myborder*2;
-    if (pls->ylength > zheight)
-	pls->ylength = zheight-myborder*2;
+	pls->ylength = 7 * height / 8;
+    if (pls->xlength > width)
+	pls->xlength = width-border*2;
+    if (pls->ylength > height)
+	pls->ylength = height-border*2;
 
     if (pls->xoffset == 0)
-	pls->xoffset = zwidth / 20;
+	pls->xoffset = width / 20;
     if (pls->yoffset == 0)
-	pls->yoffset = zheight / 20;
+	pls->yoffset = height / 20;
 
-    xwd->myscreen	= DefaultScreen(xwd->mydisplay);
-    xwd->mymap		= DefaultColormap(xwd->mydisplay, xwd->myscreen);
-    xwd->monochrome	= AreWeMonochrome( xwd->mydisplay );
+    xwd->screen 	= DefaultScreen(xwd->display);
+    xwd->map		= DefaultColormap(xwd->display, xwd->screen);
+    xwd->monochrome	= AreWeMonochrome( xwd->display );
     if (xwd->monochrome)
 	swap_background = 1;
 
     if (!swap_background) {
-	xwd->mybackground	= BlackPixel(xwd->mydisplay, xwd->myscreen);
-	xwd->myforeground	= WhitePixel(xwd->mydisplay, xwd->myscreen);
+	xwd->background = BlackPixel(xwd->display, xwd->screen);
+	xwd->foreground = WhitePixel(xwd->display, xwd->screen);
     }
     else {
-	xwd->mybackground	= WhitePixel(xwd->mydisplay, xwd->myscreen);
-	xwd->myforeground	= BlackPixel(xwd->mydisplay, xwd->myscreen);
+	xwd->background = WhitePixel(xwd->display, xwd->screen);
+	xwd->foreground = BlackPixel(xwd->display, xwd->screen);
     }
 
 /* Default color values */
 
     if (!xwd->monochrome) {
-        color_def(0, "coral");
-        color_def(1, "red");
-        color_def(2, "yellow");
-        color_def(3, "green");
-        color_def(4, "aquamarine");
-        color_def(5, "pink");
-        color_def(6, "wheat");
-        color_def(7, "grey");
-        color_def(8, "brown");
-        color_def(9, "blue");
-        color_def(10, "BlueViolet");
-        color_def(11, "cyan");
-        color_def(12, "turquoise");
-        color_def(13, "magenta");
-        color_def(14, "salmon");
+        color_def( pls, 0, "coral" );
+        color_def( pls, 1, "red" );
+        color_def( pls, 2, "yellow" );
+        color_def( pls, 3, "green" );
+        color_def( pls, 4, "aquamarine" );
+        color_def( pls, 5, "pink" );
+        color_def( pls, 6, "wheat" );
+        color_def( pls, 7, "grey" );
+        color_def( pls, 8, "brown" );
+        color_def( pls, 9, "blue" );
+        color_def( pls, 10, "BlueViolet" );
+        color_def( pls, 11, "cyan" );
+        color_def( pls, 12, "turquoise" );
+        color_def( pls, 13, "magenta" );
+        color_def( pls, 14, "salmon" );
     }
 
 /* Default foreground/background */
 
     if (!swap_background) {
-	color_def(15, "white");
-	color_def(16, "black");
+	color_def( pls, 15, "white" );
+	color_def( pls, 16, "black" );
     }
     else {
-	color_def(15, "black");
-	color_def(16, "white");
+	color_def( pls, 15, "black" );
+	color_def( pls, 16, "white" );
     }
 
 /* Default program-specified window position and size */
 
-    myhint.x      = (int) pls->xoffset;
-    myhint.y      = (int) pls->yoffset;
-    myhint.width  = (int) pls->xlength;
-    myhint.height = (int) pls->ylength;
-    myhint.flags  = PPosition | PSize;
+    hint.x      = (int) pls->xoffset;
+    hint.y      = (int) pls->yoffset;
+    hint.width  = (int) pls->xlength;
+    hint.height = (int) pls->ylength;
+    hint.flags  = PPosition | PSize;
 
 /* Window title */
 
@@ -404,43 +436,155 @@ begplt (PLStream *pls)
 /* Window creation */
 /* Why is X ignoring the x & y values??? */
 
-    xwd->mywindow = 
-	XCreateSimpleWindow(xwd->mydisplay,
-			    DefaultRootWindow(xwd->mydisplay),
-			    myhint.x, myhint.y, myhint.width, myhint.height,
-			    myborder, xwd->myforeground, xwd->mybackground);
+    xwd->window = 
+	XCreateSimpleWindow(xwd->display,
+			    DefaultRootWindow(xwd->display),
+			    hint.x, hint.y, hint.width, hint.height,
+			    border, xwd->foreground, xwd->background);
 
-    XSetStandardProperties(xwd->mydisplay, xwd->mywindow, header, header,
-			   None, 0, 0, &myhint);
+    XSetStandardProperties(xwd->display, xwd->window, header, header,
+			   None, 0, 0, &hint);
 
 /* GC creation and initialization */
 
-    xwd->mygc = XCreateGC(xwd->mydisplay, xwd->mywindow, 0, 0);
+    xwd->gc = XCreateGC(xwd->display, xwd->window, 0, 0);
     
 /* set cursor to crosshair */
  
-   cross_cursor = XCreateFontCursor(xwd->mydisplay, XC_crosshair);
-   XDefineCursor(xwd->mydisplay, xwd->mywindow, cross_cursor);    
+   cross_cursor = XCreateFontCursor(xwd->display, XC_crosshair);
+   XDefineCursor(xwd->display, xwd->window, cross_cursor);    
 
 /* input event selection */
 
-    XSelectInput(xwd->mydisplay, xwd->mywindow,
-		 ButtonPressMask | KeyPressMask | ExposureMask);
+    XSelectInput(xwd->display, xwd->window,
+		 ButtonPressMask | KeyPressMask |
+		 ExposureMask | StructureNotifyMask);
 
 /* window mapping */
 
-    XMapRaised(xwd->mydisplay, xwd->mywindow);
+    XMapRaised(xwd->display, xwd->window);
 
-    XSetBackground(xwd->mydisplay, xwd->mygc, xwd->mybackground);
-    setcol(15);
+    XSetBackground(xwd->display, xwd->gc, xwd->background);
+    xw_color(pls);
 
 /* wait for exposure */
 
     while (1) {
-	XNextEvent(xwd->mydisplay, &myevent);
-	if (myevent.xexpose.count == 0)
+	XNextEvent(xwd->display, &xwd->theEvent);
+	if (xwd->theEvent.xexpose.count == 0)
 	    break;
     }
+
+/* Get initial drawing area dimensions */
+
+    (void) XGetGeometry(xwd->display, xwd->window,
+			&root, &x, &y, &width, &height,
+			&border_width, &depth);
+
+    xwd->init_width = width;
+    xwd->init_height = height;
+
+    xwd->cur_width = xwd->init_width;
+    xwd->cur_height = xwd->init_height;
+
+    xwd->xscale = (double) xwd->cur_width / (double) xwd->init_width;
+    xwd->yscale = (double) xwd->cur_height / (double) xwd->init_height;
+}
+
+/*----------------------------------------------------------------------*\
+* WaitForPage()
+*
+* This routine waits for the user to advance the plot, while handling 
+* all other events.
+\*----------------------------------------------------------------------*/
+
+static void 
+WaitForPage(PLStream *pls)
+{
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
+
+    if (pls->nopause) return;
+
+    while (!xwd->advance_page) {
+	XNextEvent(xwd->display, &xwd->theEvent);
+	EventHandler(pls, &xwd->theEvent);
+    }
+    xwd->advance_page=FALSE;
+}
+
+/*----------------------------------------------------------------------*\
+* EventHandler()
+*
+* Event handler routine to various X events.
+* On:
+*   Button1: nothing for now
+*   Button2: spit out device space coordinates
+*   Button3: set page advance flag for later processing
+*   Expose:  refresh if necessary
+*   Resize:  recompute window bounds and refresh
+\*----------------------------------------------------------------------*/
+
+static void
+EventHandler ( PLStream *pls, XEvent *event )
+{
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
+    int old_width, old_height;
+
+    switch (event->type)
+      {
+	case ButtonPress:
+	  switch (event->xbutton.button)
+	    {
+	      case Button1:
+		break;
+
+	      case Button2:
+		printf("%d\t%d\n", event->xbutton.x, event->xbutton.y);
+		break;
+
+	      case Button3:
+		xwd->advance_page=TRUE;
+		return;
+	    }
+	  break;
+
+	case Expose:
+	  if (event->xexpose.count == 0) {
+	      if (!xwd->ignore_next_expose) {
+		  XFlush(xwd->display);
+		  plRemakePlot(pls);
+	      }
+	      else {
+		  xwd->ignore_next_expose = FALSE;
+	      }
+	  }
+	  break;
+
+	case ConfigureNotify:
+	  old_width  = xwd->cur_width;
+	  old_height = xwd->cur_height;
+
+	  xwd->cur_width  = event->xconfigure.width;
+	  xwd->cur_height = event->xconfigure.height;
+
+	  xwd->xscale = (double) xwd->cur_width  / (double) xwd->init_width;
+	  xwd->yscale = (double) xwd->cur_height / (double) xwd->init_height;
+
+	  xwd->xscale = xwd->xscale * xwd->xscale_dev;
+	  xwd->yscale = xwd->yscale * xwd->yscale_dev;
+
+	  if (old_width != xwd->cur_width || old_height != xwd->cur_height) {
+	      XFlush(xwd->display);
+	      plRemakePlot(pls);
+	  }
+
+	  if (xwd->cur_width > old_width || xwd->cur_height > old_height)
+	    xwd->ignore_next_expose = TRUE;
+
+	  break;
+      }
 }
 
 /*----------------------------------------------------------------------*\
@@ -448,9 +592,12 @@ begplt (PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void 
-color_def (int icolor, char *name)
+color_def (PLStream *pls, int icolor, char *name)
 {
-    if (alloc_named_color(xwd->colors+icolor, name)) {
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
+
+    if (alloc_named_color(pls, xwd->colors+icolor, name)) {
 	if (icolor == 15 || icolor == 16) {
 	    fprintf(stderr, "Can't allocate foreground/background colors\n");
 	    exit(1);
@@ -459,11 +606,15 @@ color_def (int icolor, char *name)
 }
 
 static int
-alloc_named_color( XColor *color, char *name)
+alloc_named_color( PLStream *pls, XColor *color, char *name)
 {
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
     XColor xcolor;
 
-    if (XAllocNamedColor(xwd->mydisplay, xwd->mymap, name, &xcolor, color) == 0) {
+    if (XAllocNamedColor(xwd->display, xwd->map,
+			 name, &xcolor, color) == 0)
+    {
 	fprintf(stderr, "Can't allocate color %s\n", name);
 	fprintf(stderr, "Using current foreground color instead\n");
 	color = xwd->colors+15;
@@ -477,24 +628,20 @@ alloc_named_color( XColor *color, char *name)
 \*----------------------------------------------------------------------*/
 
 static void 
-xwesc_ancol (char *ptr)
+xwesc_ancol (PLStream *pls, pleNcol *col)
 {
-    int icolor;
-    char *name;
-    pleNcol *col = (pleNcol *) ptr;
-
-    icolor = col->icolor;
-    name   = col->name;
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
 
     if (xwd->monochrome) {
-	if (!strcmp(name, "white"))
+	if (!strcmp(col->name, "white"))
 	    ;
-	else if (!strcmp(name, "black"))
+	else if (!strcmp(col->name, "black"))
 	    ;
 	else
 	    return;
     }
-    alloc_named_color(xwd->colors+icolor, name);
+    alloc_named_color(pls, xwd->colors+col->icolor, col->name);
 }
 
 /*----------------------------------------------------------------------*\
@@ -502,149 +649,24 @@ xwesc_ancol (char *ptr)
 \*----------------------------------------------------------------------*/
 
 static void 
-xwesc_rgb (char *ptr)
+xwesc_rgb (PLStream *pls, pleRGB *cols)
 {
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev * xwd = &(xwdev[id]);
     XColor color;
-    pleRGB *cols = (pleRGB *) ptr;
 
     if (xwd->monochrome) return;
 
     color.red   = MIN(65535, MAX(0, (int) (65535. * cols->red)));
     color.green = MIN(65535, MAX(0, (int) (65535. * cols->green)));
     color.blue  = MIN(65535, MAX(0, (int) (65535. * cols->blue)));
-    XAllocColor(xwd->mydisplay, xwd->mymap, &color);
-    XSetForeground(xwd->mydisplay, xwd->mygc, color.pixel);
-}
-
-/*----------------------------------------------------------------------*\
-* Set color.
-\*----------------------------------------------------------------------*/
-
-static void 
-setcol (long icol)
-{
-    XColor curcolor;
-
-    if (xwd->monochrome) 
-	curcolor.pixel = (xwd->colors)[15].pixel;
-    else {
-	switch (icol) {
-	case 0:
-	    curcolor.pixel = (xwd->colors)[0].pixel;
-	    break;
-	case 1:
-	    curcolor.pixel = (xwd->colors)[1].pixel;
-	    break;
-	case 2:
-	    curcolor.pixel = (xwd->colors)[2].pixel;
-	    break;
-	case 3:
-	    curcolor.pixel = (xwd->colors)[3].pixel;
-	    break;
-	case 4:
-	    curcolor.pixel = (xwd->colors)[4].pixel;
-	    break;
-	case 5:
-	    curcolor.pixel = (xwd->colors)[5].pixel;
-	    break;
-	case 6:
-	    curcolor.pixel = (xwd->colors)[6].pixel;
-	    break;
-	case 7:
-	    curcolor.pixel = (xwd->colors)[7].pixel;
-	    break;
-	case 8:
-	    curcolor.pixel = (xwd->colors)[8].pixel;
-	    break;
-	case 9:
-	    curcolor.pixel = (xwd->colors)[9].pixel;
-	    break;
-	case 10:
-	    curcolor.pixel = (xwd->colors)[10].pixel;
-	    break;
-	case 11:
-	    curcolor.pixel = (xwd->colors)[11].pixel;
-	    break;
-	case 12:
-	    curcolor.pixel = (xwd->colors)[12].pixel;
-	    break;
-	case 13:
-	    curcolor.pixel = (xwd->colors)[13].pixel;
-	    break;
-	case 14:
-	    curcolor.pixel = (xwd->colors)[14].pixel;
-	    break;
-	case 15:
-	    curcolor.pixel = (xwd->colors)[15].pixel;
-	    break;
-	case 16:
-	    curcolor.pixel = (xwd->colors)[16].pixel;
-	    break;
-	default:
-	    curcolor.pixel = (xwd->colors)[15].pixel;
-	    break;
-	}
-    }
-    XSetForeground(xwd->mydisplay, xwd->mygc, curcolor.pixel);
+    XAllocColor(xwd->display, xwd->map, &color);
+    XSetForeground(xwd->display, xwd->gc, color.pixel);
 }
 
 /*----------------------------------------------------------------------*\
 * Misc. support routines.
 \*----------------------------------------------------------------------*/
-
-static void 
-outplt (void)
-{
-    XFlush(xwd->mydisplay);
-}
-
-static void 
-endplt (void)
-{
-    XFlush(xwd->mydisplay);
-    XFreeGC(xwd->mydisplay, xwd->mygc);
-    XDestroyWindow(xwd->mydisplay, xwd->mywindow);
-    XCloseDisplay(xwd->mydisplay);
-}
-
-static void 
-erase (void)
-{
-    int intrpt;
-    intrpt = 0;
-    XFlush(xwd->mydisplay);
-    XClearWindow(xwd->mydisplay, xwd->mywindow);
-    return;
-}
-
-static void 
-getkey (int *intrpt)
-{
-    int ic;
-    ic = getchar();
-    if (ic > 31 || ic < 1)
-	*intrpt = 1;
-    else
-	*intrpt = 0;
-}
-
-static int 
-getwcur()
-{
-    int nbut;
-    while (1) {
-	XNextEvent(xwd->mydisplay, &myevent);
-	if (myevent.type != ButtonPress)
-	    continue;
-	nbut = myevent.xbutton.button;
-	if (nbut == 2) {
-	    printf("%d\t%d\n", myevent.xbutton.x, 
-	                       myevent.xbutton.y);
-	    continue;
-	} 
-	return (nbut);
-    }
-}
 
 /* gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. */
 
