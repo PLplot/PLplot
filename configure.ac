@@ -523,7 +523,7 @@ if test "$enable_python" = "yes"; then
 ### symbolic prefix is replaced by the actual prefix.
 ### The actual prefix is required in examples/python/plplot_python_start.py
 ### (the only place that PYTHON_INSTDIR is used).
-        EXPAND_EXPRESSION(PYTHON_INSTDIR, $pythondir)
+        PL_EXPAND_EXPRESSION(PYTHON_INSTDIR, $pythondir)
     fi
 fi
 AC_SUBST(PYTHON_INSTDIR)
@@ -627,7 +627,7 @@ if test "$enable_java" = yes; then
    JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
 ### bindings/java/config.java.in requires JAVA_INSTDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
-   EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
+   PL_EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
 fi
 AC_SUBST(JAVAINCCMD)
 AC_SUBST(JAVA_INSTDIR)
@@ -874,16 +874,16 @@ fi
 
 # The following *_CMD variables are needed in examples/*/Makefile.examples.in
 
-EXPAND_EXPRESSION(LIB_DIR_CMD, -L$LIB_DIR)
+PL_EXPAND_EXPRESSION(LIB_DIR_CMD, -L$LIB_DIR)
 AC_SUBST(LIB_DIR_CMD)
-EXPAND_EXPRESSION(INCLUDE_DIR_CMD, -I$INCLUDE_DIR)
+PL_EXPAND_EXPRESSION(INCLUDE_DIR_CMD, -I$INCLUDE_DIR)
 AC_SUBST(INCLUDE_DIR_CMD)
 
 # The following *_HARDDIR variables are needed in bindings/*/pkgIndex.tcl.in
 
-EXPAND_EXPRESSION(LIB_HARDDIR, $LIB_DIR)
+PL_EXPAND_EXPRESSION(LIB_HARDDIR, $LIB_DIR)
 AC_SUBST(LIB_HARDDIR)
-EXPAND_EXPRESSION(DRV_HARDDIR, $DRV_DIR)
+PL_EXPAND_EXPRESSION(DRV_HARDDIR, $DRV_DIR)
 AC_SUBST(DRV_HARDDIR)
 
 BUILD_DIR=`pwd`
@@ -898,16 +898,16 @@ AC_SUBST(INCLUDE_DIR)
 
 # Location substitutions for header files as well
 
-EXPAND_EXPRESSION(TMPVAR, $DATA_DIR)
+PL_EXPAND_EXPRESSION(TMPVAR, $DATA_DIR)
 AC_DEFINE_UNQUOTED(DATA_DIR, "$TMPVAR", [Location of package data files])
 
-EXPAND_EXPRESSION(TMPVAR, $DRV_DIR)
+PL_EXPAND_EXPRESSION(TMPVAR, $DRV_DIR)
 AC_DEFINE_UNQUOTED(DRV_DIR, "$TMPVAR", [Location of dynamically loaded drivers])
 
-EXPAND_EXPRESSION(TMPVAR, $BIN_DIR)
+PL_EXPAND_EXPRESSION(TMPVAR, $BIN_DIR)
 AC_DEFINE_UNQUOTED(BIN_DIR, "$TMPVAR", [Location of executables])
 
-EXPAND_EXPRESSION(TMPVAR, $TCL_DIR)
+PL_EXPAND_EXPRESSION(TMPVAR, $TCL_DIR)
 AC_DEFINE_UNQUOTED(TCL_DIR, "$TMPVAR", [Location of Tcl stuff])
 
 AC_DEFINE_UNQUOTED(BUILD_DIR, "$BUILD_DIR", [Location of Build tree])
@@ -1101,7 +1101,7 @@ fi
 PKG_CONFIG_DIR='${libdir}/pkgconfig'
 
 if test -z "$PKG_CONFIG_ENV" ; then
-  EXPAND_EXPRESSION(PKG_CONFIG_ENV, PKG_CONFIG_PATH=$PKG_CONFIG_DIR)
+  PL_EXPAND_EXPRESSION(PKG_CONFIG_ENV, PKG_CONFIG_PATH=$PKG_CONFIG_DIR)
 fi
 
 AC_SUBST(pkg_config_true)
@@ -1115,7 +1115,7 @@ AM_CONDITIONAL(with_pkg_config, [test "$with_pkg_config" = yes])
 
 if test "$with_rpath" = yes ; then
   RPATH='-rpath $(libdir)'
-  EXPAND_EXPRESSION(RPATHCMD, [-Wl,-rpath -Wl,$libdir])
+  PL_EXPAND_EXPRESSION(RPATHCMD, [-Wl,-rpath -Wl,$libdir])
 else
   RPATH=
   RPATHCMD=
