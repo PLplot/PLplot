@@ -1,8 +1,0 @@
-// -*-java-*-
-
-package plplot.core;
-
-public class config {
-// Must be installed absolute path name of generated DLL
-    public static String libname = "@JAVA_INSTDIR@/@PLPLOTJAVAC_WRAP_DLL@";
-};
