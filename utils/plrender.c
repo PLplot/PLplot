@@ -1,9 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.17  1993/03/03 19:43:47  mjl
-   Changed PLSHORT -> short.  Also put in some explicit casts to remove warnings
-   using SUN acc compiler.
+   Revision 1.18  1993/03/06 05:04:51  mjl
+   Inserted a hack for old metafiles with bad linewidth commands (WIDTH
+   commands in the body of the metafile are now ignored for metafiles version
+   1993a and older).  WIDTH commands prior to the INIT on old metafiles are
+   still honored.
 
+ * Revision 1.17  1993/03/03  19:43:47  mjl
+ * Changed PLSHORT -> short.  Also put in some explicit casts to remove warnings
+ * using SUN acc compiler.
+ *
  * Revision 1.16  1993/03/03  17:05:27  mjl
  * Changed orient-setting code to switch on the basis of orient%2 and orient%4,
  * so that any value of orient gives valid output.
@@ -742,6 +748,9 @@ plr_switch(U_CHAR c)
 * plr_width()
 *
 * Change pen width.
+*
+* This command is ignored on old metafiles, due to problems with the
+* past implementation of this.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -751,7 +760,8 @@ plr_width(U_CHAR c)
 
     plm_rd(read_2bytes(MetaFile, &width));
 
-    plwid(width);
+    if (strcmp(mf_version, "1993b") >= 0) 
+	plwid(width);
 }
 
 /*----------------------------------------------------------------------*\
