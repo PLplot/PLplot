@@ -37,6 +37,8 @@ drivers/null.drv : shared/null$O libs
 drivers/plmeta.drv : shared/plmeta$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
+drivers/pstex.drv : drivers/ps.drv
+
 drivers/ps.drv : shared/ps$O shared/pstex$O libs
 	$(SHLIB_BUILD) $@ $< shared/pstex$O $(driverlibs)
 

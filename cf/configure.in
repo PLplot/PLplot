@@ -159,7 +159,7 @@ xterm:tek tek4010:tek tek4107:tek mskermit:tek \
 versaterm:tek vlt:tek conex:tek tek4010f:tek tek4107f:tek \
 linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd cgm:cgm psc:ps ps:ps xfig:xfig \
 ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
-imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:ps ntk:ntk])
+imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk])
 
 # Macro to set one driver enable value
 
