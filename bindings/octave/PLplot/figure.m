@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000, 2001 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -93,7 +93,9 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       __pl.type = 1;
-      __pl.items = 1;
+      if (!struct_contains(__pl, "items"))
+	__pl.items=1;
+      endif
       __pl.legend_xpos(__pl_strm) = 1;	# legend x position
       __pl.legend_ypos(__pl_strm) = 1;	# legend y position
       __pl.legend(__pl_strm) = 2;	# legend type
@@ -130,6 +132,12 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	__pl.ylabel(__pl_strm,:) = "Y";
 	__pl.zlabel(__pl_strm,:) = "Z";
 	__pl.tlabel(__pl_strm,:) = "Title";
+      endif
+
+      if (struct_contains(__pl, "shading"))
+	__pl.shading = __pl_matstr(__pl.shading, "faceted", __pl_strm); # shading type
+      else
+	__pl.shading(__pl_strm,:) = "faceted";
       endif
 
       if (struct_contains(__pl, "intp"))

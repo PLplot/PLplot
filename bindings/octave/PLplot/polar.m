@@ -11,29 +11,17 @@
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with Octave; see the file COPYING.  If not, write to the Free
-## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-## 02111-1307, USA.
 
 ## usage: polar (theta, rho, fmt)
 ##
 ## Make a 2D plot given polar the coordinates theta and rho.
 ##
 ## The optional third argument specifies the line type.
-##
-## See also: plot, semilogx, semilogy, loglog, mesh, contour, bar,
-##           stairs, gplot, gsplot, replot, xlabel, ylabel, title
 
 ## Author: jwe
 ## Modified: jc
 
 function polar (x1, x2, fmt)
-
-  ## XXX FIXME XXX -- these plot states should really just be set
-  ## temporarily, probably inside an unwind_protect block, but there is
-  ## no way to determine their current values.
 
   global __pl
   __pl_init;

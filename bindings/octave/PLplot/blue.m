@@ -5,9 +5,12 @@
 ## for the consequences of using this software.
 
 ## Colormap.
+##
+## map = blue (number)
 
 ## Author: Paul Kienzle <pkienzle@cs.indiana.edu>
 ## Created: Sept 99
+## Modified: jc
 
 function map = blue (number)
 

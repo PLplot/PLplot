@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -15,6 +15,8 @@
 ## stripc_del(id)
 ##
 ## deletes the stripchart identified by id
+##
+## see also: stripc_add, stripc
 
 function stripc_del(id)
 

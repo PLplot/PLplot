@@ -11,7 +11,7 @@
 
 ## File: use_plplot.m
 ## Author: Rafael Laboissiere <rafael@icp.inpg.fr>
-## Modified: Joao Cardoso <jcardoso@inescn.pt>
+## Modified: Joao Cardoso
 ## Created on: Sun Oct 18 22:03:10 CEST 1998
 ## Last modified on: March 2001
 ## 

@@ -1,21 +1,16 @@
-## Copyright (C) 1996 John W. Eaton, 1998, 1999, 2000, 2001, 2002 Joao Cardoso.
-##
-## This file is part of Octave.
-##
-## Octave is free software; you can redistribute it and/or modify it
+## Copyright (C) 2001-2002 Joao Cardoso.
+## 
+## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
 ## any later version.
 ##
-## Octave is distributed in the hope that it will be useful, but
+## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ## General Public License for more details.
 ##
-## You should have received a copy of the GNU General Public License
-## along with Octave; see the file COPYING.  If not, write to the Free
-## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-## 02111-1307, USA.
+## This file is part of plplot_octave.
 
 ## usage: surfl ([x, y,] z [, s])
 ##
@@ -32,12 +27,6 @@
 ##    or [Saz Sel] in spherical coordinates; in this case, the light source will
 ##    be at a distance 10 from the origin.
 ##    Ilumination can also be set by pllightsource(Sx, Sy, Sz)
-##
-## See also: plot, semilogx, semilogy, loglog, polar, meshgrid, meshdom,
-##           contour, bar, stairs, gplot, gsplot, replot, xlabel, ylabel, title
-
-## Author: jwe
-## Modified: jc
 
 function surfl (x, y, z, s)
 

@@ -1,21 +1,16 @@
-## Copyright (C) 1996 John W. Eaton
-##
-## This file is part of Octave.
-##
-## Octave is free software; you can redistribute it and/or modify it
+## Copyright (C) 1998-2002 Joao Cardoso.
+## 
+## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
 ## any later version.
 ##
-## Octave is distributed in the hope that it will be useful, but
+## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ## General Public License for more details.
 ##
-## You should have received a copy of the GNU General Public License
-## along with Octave; see the file COPYING.  If not, write to the Free
-## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-## 02111-1307, USA.
+## This file is part of plplot_octave.
 
 ## usage: title (text)
 ##
@@ -40,11 +35,7 @@
 ##		For special fonts, the extended charset must be loaded first,
 ##	 	use `plfontld(1)' to set, and `plfontld(0)' to return to normal.
 ##
-## See also: pllab, bottom_title, xlabel, ylabel, zlabel
-
-## Author: jwe
-## Adapted-By: jwe
-## Modified: jc
+## See also: xlabel, ylabel, zlabel
 
 function text = title (text)
 

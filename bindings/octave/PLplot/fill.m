@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -99,8 +99,5 @@ function fill(x, y, c)
       error("fill: x and y must have same number of rows\n");
     endif
   endif
-
-  ## FILL(X1,Y1,C1,X2,Y2,C2,...) is another way of specifying
-  ## multiple filled areas.
 
 endfunction

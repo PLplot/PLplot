@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -15,8 +15,8 @@
 ## rgbplot(map)
 ##
 ## Plot color map.
-## rgbplot(MAP) plots a color map, i.e. an m-by-3 matrix which
-## is appropriate input for COLORMAP. The three columns of the
+## rgbplot(map) plots a color map, i.e. an m-by-3 matrix which
+## is appropriate input for colormap. The three columns of the
 ## colormap matrix are plotted in red, green, and blue lines.
 
 function rgbplot(map)

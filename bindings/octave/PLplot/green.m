@@ -5,9 +5,12 @@
 ## for the consequences of using this software.
 
 ## Colormap.
+##
+## map = green (number)
 
 ## Author: Paul Kienzle <pkienzle@cs.indiana.edu>
 ## Created: Sept 99
+## Modified: jc
 
 function map = green (number)
 

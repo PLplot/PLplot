@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,7 +12,7 @@
 ##
 ## This file is part of plplot_octave.
 
-## st = autostyle "on" | "off"
+## st = autostyle "on" | "off" | 1 | 0
 ##
 ## if set increases line style after each plot.
 ## return current status;
@@ -23,10 +23,6 @@ function st = autostyle(x)
   global __pl
   __pl_strm = __pl_init;
 
-  if (nargout == 1)
-    st = __pl.lstlyle(__pl_strm);
-  endif
-  
   if (nargin == 1)
     if (isstr (x))
       if (strcmp ("off", x))
@@ -36,10 +32,22 @@ function st = autostyle(x)
       else
 	help autostyle
       endif
+    elseif (is_scalar(x))
+      if (x == 0)
+	__pl.lstlyle(__pl_strm) = 0;
+      elseif (x == 1)
+	__pl.lstlyle(__pl_strm) = 1;
+      endif
     else
-      error ("autostyle: argument must be a string");
+      help autostyle
+      return;
     endif
+  elseif (nargin > 1)
+    help autostyle
+    return;
   endif
+
+  st = __pl.lstlyle(__pl_strm);
 
 endfunction
 

@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -15,6 +15,8 @@
 ## stripc_add(id, pen, x, y)
 ##
 ## add a point (x,y) to pen [0..3] of the stripchart 'id'
+##
+## see also: stripc, stripc_del
 
 function stripc_add(id, pen, x, y)
 

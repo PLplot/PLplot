@@ -4,10 +4,13 @@
 ## copyright notice must be maintained.  Paul Kienzle is not responsible
 ## for the consequences of using this software.
 
-## Colormap.
+## Colormap:
+##
+## map = red (number)
 
 ## Author: Paul Kienzle <pkienzle@cs.indiana.edu>
 ## Created: Sept 99
+## modified: jc
 
 function map = red (number)
 

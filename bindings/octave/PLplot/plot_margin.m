@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,14 +12,14 @@
 ##
 ## This file is part of plplot_octave.
 
-function ost = plot_margin(st)
+## st = plot_margin([st])
+##
+## set/return the status of the plot margin. The plot margin is small
+## region near the box that surrouunds the plot; it is usefull not to
+## plot in this region for scatter plot, or the plotted points can be
+## ploted over the box.
 
-  ## st = plot_margin([st])
-  ##
-  ## set/return the status of the plot margin. The plot margin is small
-  ## region near the box that surrouunds the plot; it is usefull not to
-  ## plot in this region for scatter plot, or the plotted points can be
-  ## ploted over the box.
+function ost = plot_margin(st)
 
   global __pl
   n = __pl_init;
