@@ -1,56 +1,62 @@
-This is the PLPLOT distribution.  PLPLOT is a scientific plotting package
-for many systems, small (micro) and large (super) alike.  Despite its small
-size and quickness, it has enough power to satisfy most users, including:
-standard x-y plots, semilog plots, log-log plots, contour plots, 3D plots,
-mesh plots, bar charts and pie charts.  Multiple graphs (of the same or
-different sizes) may be placed on a single page with multiple lines in each
-graph.  Different line styles, widths and colors are supported.  A virtually
-infinite number of distinct area fill patterns may be used.  There are
-almost 1000 characters in the extended character set.  This includes four
-different fonts, the Greek alphabet and a host of mathematical, musical, and
-other symbols.  The fonts can be scaled to any size for various effects.
-Many different output device drivers are available (system dependent),
-including a portable metafile format and renderer.
+This is the PLPLOT distribution.  PLPLOT is a scientific plotting package for
+many systems, small (micro) and large (super) alike.  Despite its small size
+and quickness, it has enough power to satisfy most users, including: standard
+x-y plots, semilog plots, log-log plots, contour plots, 3D plots, mesh plots,
+bar charts and pie charts.  Multiple graphs (of the same or different sizes)
+may be placed on a single page with multiple lines in each graph.  Different
+line styles, widths and colors are supported.  A virtually infinite number of
+distinct area fill patterns may be used.  There are almost 1000 characters in
+the extended character set.  This includes four different fonts, the Greek
+alphabet and a host of mathematical, musical, and other symbols.  The fonts
+can be scaled to any size for various effects.  Many different output device
+drivers are available (system dependent), including a portable metafile
+format and renderer.
 
 The PLPLOT package is freely distributable, but NOT in the public domain.
 The PLPLOT source code, except header files and those files explicitly
-granting permission, may not be used in a commercial software package
-without consent of the authors.  You are allowed and encouraged to include
-the PLPLOT object library and header files in a commercial package provided
-that: (1) it is explicitly and prominently stated that the PLPLOT library
-is freely available, and (2) the full copyrights on the PLPLOT package be
-displayed somewhere in the documentation for the package. 
+granting permission, may not be used in a commercial software package without
+consent of the authors.  You are allowed and encouraged to include the PLPLOT
+object library and header files in a commercial package provided that: (1) it
+is explicitly and prominently stated that the PLPLOT library is freely
+available, and (2) the full copyrights on the PLPLOT package be displayed
+somewhere in the documentation for the package.
 
-We welcome suggestions on how to improve this code, especially in the form
-of user-contributed enhancements or bug fixes.  If PLPLOT is used in any
+We welcome suggestions on how to improve this code, especially in the form of
+user-contributed enhancements or bug fixes.  If PLPLOT is used in any
 published papers, please include an acknowledgment or citation of our work,
-which will help us to continue improving PLPLOT.  
+which will help us to continue improving PLPLOT.
 
 PLPLOT is written in C, enabling it to run on many platforms practically
 without modification.  Fortran programs may use it transparently; stub
 routines are provided to handle the C<->Fortran interface without any
-modification of the user program.  C programs are required to include
-the header file "plplot.h"; see the documentation for more details.
+modification of the user program.  C programs are required to include the
+header file "plplot.h"; see the documentation for more details.
 
 The main documentation for PLPLOT is in the doc/ directory in the form of
 several TeX files; please consult this for additional information ('latex
 plotdoc').  Unfortunately documentation tends to lag actual improvements to
 the code, so don't be surprised if some known features are not explained
-there.  Consult 'Changes' to see a list of recent changes.  Also there is
-installation information for various systems in the sys/<sys-name>/
-directories. 
+there.  Consult 'Changes' to see a list of recent changes.  
 
 At present, PLPLOT is known to work on the following systems:
 
-	Unix:	SunOS, A/IX, HP-UX, Unicos, DG/UX, Ultrix
-	VMS
+	Unix:	SunOS
+		A/IX 
+		HP-UX
+		Unicos
+		DG/UX
+		Ultrix
+		SysV
+		Linux
+
 	Amiga/Exec
 	MS-DOS
 	OS/2
 	NeXT
 
-For more information on how to get a copy of PLPLOT, see the file
-'Installation' and the notes for your system in the documentation.
+For more information on how to get or use PLPLOT on your system, see:
+ - appendices to the PLPLOT manual
+ - system-specific documentation in the appropriate sys/<system> directory.
 
 
 CREDITS
@@ -61,9 +67,9 @@ list all the contributors.   Those currently supporting and otherwise
 responsible for the package in its present form include:
 
 Maurice LeBrun
-Please send all comments, flames, patches, etc, to me.  I will be
-supporting mainly the PLPLOT kernel and the metafile, xterm, xwindow,
-tektronix, and Amiga drivers. 
+Please send all comments, flames, patches, etc, to me.  I am responsible for
+all the PLPLOT kernel development as well as most of the work on the
+metafile, xwindow, xterm, postscript, tektronix, and Amiga drivers.
 
 EMAIL	mjl@fusion.ph.utexas.edu 
 USMAIL	Dr. Maurice LeBrun

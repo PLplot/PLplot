@@ -1,26 +1,52 @@
-This is the beta (!) PLPLOT 4.0 distribution.  There are undoubtably some
-bugs remaining due to the number of changes, although I've given it a
-fairly good workout.  Please send all bug fixes, etc, so I can incorporate
-them in the final version.
+This is the first beta release (4.99a) of what will eventually become
+the PLPLOT 5.0 distribution.  At this point I'm mainly trying to root out the
+remaining bugs and system dependencies, but there will undoubtably be a
+few improvements yet before the final version sees the light of day.
 
-The drivers that are the best tested include:
+Please refer to the following files for more information:
 
-metafile
-X-window
-X-term
-tektronix
-postscript
-MS-DOS		(G. Furnish handling this)
-OS/2		(contact G. Furnish for this)
-Amiga		(some features implemented differently and/or missing)
+README		General introduction, where to get more information, etc.
+README.1st	This file
+Changes		Describes the most recent changes to plplot.
+Changes.old	Archive of previous Changes files.
+ToDo		Describes what's on the agenda (no promises, however :-).
 
-Those known to have bugs are
+Also there is system-specific documentation under sys/<system-name>, and
+a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 
-laserjet	(I'm working on it)
+**************************************************************************
+Version 4.99a: Summary of major changes
+**************************************************************************
 
-and all the rest are iffy right now.
+o Plplot now requires an ANSI compliant compiler.
 
-Support for VMS has been suspended (perhaps permanently), since we don't use
-it anymore and it's too much of a pain to support.  If anyone fixes the
-makefile and verifies the package does work, however, we will include your
-fixes with the release version.
+o Internally massively restructured, many variables/functions localized to a
+single file and made static, number of source files greatly reduced.
+
+o Command-line parsing utilities added, so that many PLPLOT internal
+variables can be set from the command line (from C or C++ only).  See
+plrender.c or the C example programs for example usage.
+
+o User-installable keyboard event handler support added, so user codes can
+get and react to user input.  See plrender.c for example usage.
+
+o Plrender now supports page seeks from the xwindow, xterm, and Amiga drivers
+(all except xterm honor backspace as a page-backward key).
+
+o Font files now system-independent.
+
+o X-window driver now refreshes and resizes.
+
+o New contour functions (from C) now accept function pointers instead of
+array pointers, allowing the user to determine the memory organization
+of 2-d arrays.
+
+o Bug fixes to various drivers.
+
+o New driver: null device.
+
+o Now possible to change the string escape character to any of [!#$%&*@^~].
+
+o Polylines (solid only) now supported by all drivers and line plot commands.
+
+o Support for color postscript added.

@@ -1,0 +1,41 @@
+
+Areas currently under development
+---------------------------------
+
+o The manual needs to be updated.
+
+o The LJII driver may still have bugs and needs testing.
+
+o Amiga drivers still being revamped.
+
+These may make it into 5.0, but it's too early to tell for sure:
+
+o New color model.  Palette to consist of three parts: 1) Color map 0 --
+fixed colors for plotting axes, lines, labels, whatever.  Maximum number
+of colors is 16.  2) Color map 1 -- only referenced indirectly, through
+"intensity" levels.  For mapping function values to color levels, through
+a user-specified mapping (default mapping given in HLS coordinates;
+eventually a nice input mechanism will be available under X-windows, Amiga,
+perhaps other platforms).  3) Window manager colors.  Known only to driver.
+The preliminary work here is done but there's still a ways to go.
+
+o GUI driver under X, complete with menus.  Originally a Motif driver
+developed (now broken!) as an exercise.  Am leaning to using TCL/TK (freely
+distributable) to use in final driver.
+
+o Color fill contour plots.  Have an algorithm worked out but no code written
+yet.
+
+o CGM driver.  Shouldn't be too hard, just haven't gotten around to it yet.
+Any volunteers?
+
+
+Things that may make it into future revisions.
+----------------------------------------------
+
+o graphical entities to be "objectized", so they are easier to manipulate
+from plrender.  Likely candidates: plot, string, character, tick, axis, 
+line, etc.
+
+o Better use of driver intelligence, esp. for text -- the postscript driver
+should be capable of using postscript fonts instead of the Hershey fonts.
