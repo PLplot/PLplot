@@ -497,7 +497,7 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	PLPointer pltr_data)
 {
-    PLINT i, j, **ipts;
+    PLINT i, **ipts;
 
     if (kx < 1 || kx >= lx) {
 	plabort("plfcont: indices must satisfy  1 <= kx <= lx <= nx");

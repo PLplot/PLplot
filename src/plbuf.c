@@ -440,7 +440,8 @@ rdbuf_state(PLStream *pls)
 	    fread(&b, sizeof(U_CHAR), 1, pls->plbufFile);
 	}
 	else {
-	    if ((int) icol0 < 0 || (int) icol0 >= pls->ncol0) {
+	    /* Note icol0 is a U_CHAR which ranges from 0-255. */
+	    if ((int) icol0 >= pls->ncol0) {
 	      char buffer[256];
 	      sprintf(buffer, "rdbuf_state: Invalid color map entry: %d", (int) icol0);
 	      plabort(buffer);

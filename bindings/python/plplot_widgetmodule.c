@@ -23,7 +23,7 @@ static PyObject * pl_partialInitXw(PyObject *self, PyObject *args)
 
     plmkstrm(&ipls);
     printf(" ipls=%d\n",ipls); 
-    plgpls(&pls);   // pls points directly to a structure PLStream 
+    plgpls(&pls);   /* pls points directly to a structure PLStream */
     printf(" pls OK \n"); 
 
     /* Partially initialize X driver. */
