@@ -112,14 +112,9 @@ proc x08 {{w loopback}} {
 
     set nlev 10
     matrix clev f $nlev
-    set step [expr ($zmax-$zmin)/$nlev]
+    set step [expr {($zmax-$zmin)/$nlev}]
     for {set i 0} {$i < $nlev} {incr i} {
-	# odd, there seems to be some floating point problems here, I have to
-	# add a small number, else I get the runtime error:
-	# "plcol1: Invalid color map position: -0.000000, aborting operation"
-	# humm, I remember to see something about tcl precision -- numbers are stored
-	# as strings with a small default precision?
-	clev $i = [expr $zmin + $i * $step + 0.000001]
+	clev $i = [expr {$zmin + $i * $step}]
     }
 
     $w cmd pllightsource 1. 1. 1.
