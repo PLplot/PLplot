@@ -102,8 +102,8 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       __pl.axis_st(__pl_strm) = 0;	# axis state
       __pl.axis(__pl_strm,:) = zeros(1,6);	# current axis
       __pl.xticks(__pl_strm,:) = [0, 0]; # xtick interval, number of minor xticks
-      __pl.yticks(__pl_strm,:) = [0, 0]; #
-      __pl.zticks(__pl_strm,:) = [0, 0]; # 		
+      __pl.yticks(__pl_strm,:) = [0, 0];
+      __pl.zticks(__pl_strm,:) = [0, 0]; 		
       __pl.lstlyle(__pl_strm) = 1;       # increase line style after plot
       __pl.az(__pl_strm) = -60;	         # azimuth
       __pl.alt(__pl_strm) = 30;		 # altitude
@@ -130,7 +130,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       if (struct_contains(__pl, "intp"))
 	__pl.intp = __pl_matstr(__pl.intp, " ", __pl_strm); # tk interpreter name		
       else
-	__pl.intp = " ";
+	__pl.intp(__pl_strm,:) = " ";
       endif
 
       ## the tk stuff
@@ -145,7 +145,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	endif
 	
 	init_file = tmpnam();
-	fp = fopen(init_file,"w");
+	fp = fopen (init_file,"w");
 
 	fprintf(fp, "set octave_interp {%s}\n", __tk_name);
 	fprintf(fp, "set octave_interp_pid %d\n", getpid);
@@ -178,7 +178,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
 	unlink(init_file);
       else
-	intp = __pl.intp(__pl_strm,:); # FIXME -- if no plot window exists, error!
+	intp = __pl.intp(__pl_strm,:);
       endif
 
     else
