@@ -1,9 +1,12 @@
+/* -*-C-*-
 /* $Id$
  * $Log$
- * Revision 1.1  1994/07/19 22:27:37  mjl
+ * Revision 1.2  1994/07/25 05:57:32  mjl
+ * Added line for new lj_hpgl driver.
+ *
+ * Revision 1.1  1994/07/19  22:27:37  mjl
  * Header file for holding defines that enable PLplot device drivers.
  * Included by all device drivers and plcore.h.
- *
 */
 
 /*
@@ -35,6 +38,7 @@
 #undef PLD_ps
 #undef PLD_xfig
 #undef PLD_ljii
+#undef PLD_lj_hpgl
 #undef PLD_hp7470
 #undef PLD_hp7580
 #undef PLD_imp
