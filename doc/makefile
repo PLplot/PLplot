@@ -41,7 +41,18 @@ FIGS = figpg.tex figs.tex
 #
 #############################################################################
 
-default:plotdoc.dvi
+default: info dvi
+
+info:
+	emacs -batch -l buildinfo.el
+	cp plplot.info $(HOME)/info
+	@echo "PLPLOT info file created and moved to info directory."
+
+dvi:
+	latex plplot.tex
+	latex plplot.tex
+
+#default:plotdoc.dvi
 
 all:	plotdoc.ps
 
