@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1995/01/13 23:24:19  mjl
+ * Revision 1.34  1995/03/16 23:40:54  mjl
+ * Prototypes for many obsolete accessor functions removed.  Prototype for
+ * new function plP_swin added.
+ *
+ * Revision 1.33  1995/01/13  23:24:19  mjl
  * Now drops down to pre-ANSI-C behavior as regards fpos_t under VMS since
  * the code in plmeta.c doesn't work under the VMS implementation.
  *
@@ -60,10 +64,10 @@
 /*
     plplotP.h
 
-    Copyright (C) 1993 by 
+    Copyright (C) 1993, 1994, 1995  by 
     Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
 
-    Internal (private) macros and prototypes for the PLPLOT package.  This
+    Internal (private) macros and prototypes for the PLplot package.  This
     header file must be included before all others, including system header
     files.
 
@@ -80,7 +84,7 @@
 #ifndef __PLPLOTP_H__
 #define __PLPLOTP_H__
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *        SYSTEM-SPECIFIC SETTINGS
  * 
  * Here we enable or disable based on system specific capabilities of
@@ -105,8 +109,7 @@
  * gcc to your system but not glibc (for whatever reason).  Note: without
  * an ANSI C lib, if you ^C out of a program using one of the PLplot tek
  * drivers, your terminal may be left in a strange state.
- * 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #include "plConfig.h"
 
@@ -149,9 +152,9 @@ extern PLStream	*plsc;
 
 typedef signed char SCHAR;
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *                       Utility macros
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #ifndef TRUE
 #define TRUE  1
@@ -206,9 +209,9 @@ typedef signed char SCHAR;
 
 #define UNDEFINED -9999999
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *                       PLPLOT control macros
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 /* Some constants */
 
@@ -245,9 +248,7 @@ typedef signed char SCHAR;
 #define PLDI_PLT	0x04
 #define PLDI_DEV	0x08
 
-/* Default size for family files, in KB.
- *  If you want it bigger, set it from the makefile or at runtime.
- */
+/* Default size for family files, in KB. */
 
 #ifndef PL_FILESIZE_KB
 #define PL_FILESIZE_KB 1000
@@ -265,58 +266,59 @@ typedef signed char SCHAR;
 #define PL_SFONT	"plstnd4.fnt"
 #endif
 
-/* ////////////////////////////////////////////////////////////////
-// The following PLPLOT_xxx environment variables are defined:
-//	PLPLOT_BIN      # where to find executables
-//	PLPLOT_LIB      # where to find library files (fonts, maps, etc)
-//	PLPLOT_TCL      # where to find tcl scripts
-//
-//	PLPLOT_HOME     # basename of plplot hierarchy
-//
-// search order:
-//	1)	the most specific possible locators, one of
-//			$(PLPLOT_BIN)
-//			$(PLPLOT_LIB)
-//			$(PLPLOT_TCL)
-//		as appropriate
-//
-//	2)	the current directory
-//
-//	3)	one of  $(PLPLOT_HOME)/bin
-//			$(PLPLOT_HOME)/lib
-//			$(PLPLOT_HOME)/tcl
-//		as appropriate
-//
-//	4)	as appropriate, the compile-time (Makefile)
-//		BIN_DIR, LIB_DIR, TCL_DIR
-//
-//  8 Jun 1994  mj olesen (olesen@weber.me.queensu.ca)
-//
-// Other notes:
-//
-// In addition to the directories above, the following are also used:
-//
-// Lib file search path: PLLIBDEV (see plctrl.c).  This is checked last,
-// and is a system-dependent hardwired location.
-//
-// Tcl search path: $HOME/tcl is searched before the install location,
-// TCL_DIR.
-//
-/////////////////////////////////////////////////////////////////// */
+/*--------------------------------------------------------------------------*\
+ * The following environment variables are defined:
+ * 
+ *	PLPLOT_BIN      # where to find executables
+ *	PLPLOT_LIB      # where to find library files (fonts, maps, etc)
+ *	PLPLOT_TCL      # where to find tcl scripts
+ *
+ *	PLPLOT_HOME     # basename of plplot hierarchy
+ *
+ * search order:
+ *	1)	the most specific possible locators, one of
+ *			$(PLPLOT_BIN)
+ *			$(PLPLOT_LIB)
+ *			$(PLPLOT_TCL)
+ *		as appropriate
+ *
+ *	2)	the current directory
+ *
+ *	3)	one of  $(PLPLOT_HOME)/bin
+ *			$(PLPLOT_HOME)/lib
+ *			$(PLPLOT_HOME)/tcl
+ *		as appropriate
+ *
+ *	4)	as appropriate, the compile-time (Makefile)
+ *		BIN_DIR, LIB_DIR, TCL_DIR
+ *
+ *  8 Jun 1994  mj olesen (olesen@weber.me.queensu.ca)
+ *
+ * Other notes:
+ *
+ * In addition to the directories above, the following are also used:
+ *
+ * Lib file search path: PLLIBDEV (see plctrl.c).  This is checked last,
+ * and is a system-dependent hardwired location.
+ *
+ * Tcl search path: $HOME/tcl is searched before the install location,
+ * TCL_DIR.
+\*--------------------------------------------------------------------------*/
 
 #define PLPLOT_BIN_ENV          "PLPLOT_BIN"
 #define PLPLOT_LIB_ENV          "PLPLOT_LIB"
 #define PLPLOT_TCL_ENV          "PLPLOT_TCL"
 #define PLPLOT_HOME_ENV         "PLPLOT_HOME"
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *		Function Prototypes
-\*----------------------------------------------------------------------*/
+ *
+ * These typically should not be called directly by the user.
+\*--------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-	/* These should not be called directly by the user */
 
 /* Determines interval between numeric labels */
 
@@ -438,21 +440,6 @@ void
 plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy,
 	  PLFLT *p_dyz);
 
-/* Get viewport boundaries in physical coordinates */
-
-void
-plP_gvpp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
-
-/* Set viewport boundaries in physical coordinates */
-
-void
-plP_svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
-
-/* Get subpage boundaries in physical coordinates */
-
-void
-plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
-
 /* Get clip boundaries in physical coordinates */
 
 void
@@ -467,11 +454,6 @@ plP_sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
 void
 plP_gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
-
-/* Set physical device limits in physical coordinates */
-
-void
-plP_sphy(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
 /* Get number of subpages on physical device and current subpage */
 
@@ -493,70 +475,25 @@ plP_subpInit(void);
 void
 plP_gatt(PLINT *p_ifnt, PLINT *p_icol0);
 
-/* Set font and color attributes */
-
-void
-plP_satt(PLINT ifnt, PLINT icol0);
-
-/* Get subpage boundaries in normalized device coordinates */
-
-void
-plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
-
 /* Get viewport boundaries in normalized device coordinates */
 
 void
 plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
-
-/* Get viewport boundaries in normalized device coordinates */
-
-void
-plP_svpd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 /* Get viewport boundaries in world coordinates */
 
 void
 plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
 
-/* Set viewport boundaries in world coordinates */
-
-void
-plP_svpw(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
-
 /* Get number of pixels to a millimeter */
 
 void
 plP_gpixmm(PLFLT *p_x, PLFLT *p_y);
 
-/* Set number of pixels to a millimeter */
-
-void
-plP_spixmm(PLFLT x, PLFLT y);
-
 /* All the drivers call this to set physical pixels/mm. */
 
 void
 plP_setpxl(PLFLT xpmm0, PLFLT ypmm0);
-
-/* Get transformation variables for world coordinates to mm */
-
-void
-plP_gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
-
-/* Set transformation variables for world coordinates to mm */
-
-void
-plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
-
-/* Get transformation variables for millimeters from bottom left */
-
-void
-plP_gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
-
-/* Set transformation variables for millimeters from bottom left */
-
-void
-plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
 
 /* Get background parameters for 3d plot. */
 
@@ -593,8 +530,7 @@ plP_draphy_poly(PLINT *x, PLINT *y, PLINT n);
 void
 plP_drawor_poly(PLFLT *x, PLFLT *y, PLINT n);
 
-/* Sets up physical limits of plotting device and the mapping between
-   normalized device coordinates and physical coordinates. */
+/* Sets up physical limits of plotting device. */
 
 void
 plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax);
@@ -609,84 +545,32 @@ plP_setsub(void);
 void
 plP_gprec(PLINT *p_setp, PLINT *p_prec);
 
-/* Adds the current window to the window list (called by plwind).  */
-
-void 
-plAddCWindow(void);
-
-/* Resets all known windows (called by pladv). */
-
-void 
-plClrCWindows(void);
-
-	/* Functions that return floats */
-
 /* Computes the length of a string in mm, including escape sequences. */
 
 PLFLT
 plstrl(const char *string);
 
+/* Gets the character digitisation of Hershey table entry "char". */
+
+PLINT
+plcvec(PLINT ch, SCHAR ** xygr);
+
+/* Similar to strpos, but searches for occurence of string str2. */
+
+PLINT
+plP_stindex(const char *str1, const char *str2);
+
+/* Searches string str for first occurence of character chr.  */
+
+PLINT
+plP_strpos(char *str, int chr);
+
+/* Searches string str for character chr (case insensitive). */
+
+PLINT
+plP_stsearch(const char *str, int chr);
+
 	/* Conversion functions */
-
-/* device coords to millimeters from bottom left-hand corner (x) */
-
-PLFLT
-plP_dcmmx(PLFLT x);
-
-/* device coords to millimeters from bottom left-hand corner (y) */
-
-PLFLT
-plP_dcmmy(PLFLT y);
-
-/* define transformations between device coords and subpage coords (x) */
-
-PLFLT
-plP_dcscx(PLFLT x);
-
-/* define transformations between device coords and subpage coords (y) */
-
-PLFLT
-plP_dcscy(PLFLT y);
-
-/* millimeters from bottom left corner into device coords (x) */
-
-PLFLT
-plP_mmdcx(PLFLT x);
-
-/* millimeters from bottom left corner into device coords (y) */
-
-PLFLT
-plP_mmdcy(PLFLT y);
-
-/* subpage coords to device coords (x) */
-
-PLFLT
-plP_scdcx(PLFLT x);
-
-/* subpage coords to device coords (y) */
-
-PLFLT
-plP_scdcy(PLFLT y);
-
-/* world coords into millimeters (x) */
-
-PLFLT
-plP_wcmmx(PLFLT x);
-
-/* world coords into millimeters (y) */
-
-PLFLT
-plP_wcmmy(PLFLT y);
-
-/* undocumented transformation for 3d plot routines (x) */
-
-PLFLT
-plP_w3wcx(PLFLT x, PLFLT y, PLFLT z);
-
-/* undocumented transformation for 3d plot routines (y) */
-
-PLFLT
-plP_w3wcy(PLFLT x, PLFLT y, PLFLT z);
 
 /* device coords to physical coords (x) */
 
@@ -718,25 +602,75 @@ plP_wcpcx(PLFLT x);
 PLINT
 plP_wcpcy(PLFLT y);
 
-/* Gets the character digitisation of Hershey table entry "char". */
+/* physical coords to device coords (x) */
 
-PLINT
-plcvec(PLINT ch, SCHAR ** xygr);
+PLFLT
+plP_pcdcx(PLINT x);
 
-/* Similar to strpos, but searches for occurence of string str2. */
+/* physical coords to device coords (y) */
 
-PLINT
-plP_stindex(const char *str1, const char *str2);
+PLFLT
+plP_pcdcy(PLINT y);
 
-/* Searches string str for first occurence of character chr.  */
+/* millimeters from bottom left corner to device coords (x) */
 
-PLINT
-plP_strpos(char *str, int chr);
+PLFLT
+plP_mmdcx(PLFLT x);
 
-/* Searches string str for character chr (case insensitive). */
+/* millimeters from bottom left corner to device coords (y) */
 
-PLINT
-plP_stsearch(const char *str, int chr);
+PLFLT
+plP_mmdcy(PLFLT y);
+
+/* subpage coords to device coords (x) */
+
+PLFLT
+plP_scdcx(PLFLT x);
+
+/* subpage coords to device coords (y) */
+
+PLFLT
+plP_scdcy(PLFLT y);
+
+/* device coords to millimeters from bottom left-hand corner (x) */
+
+PLFLT
+plP_dcmmx(PLFLT x);
+
+/* device coords to millimeters from bottom left-hand corner (y) */
+
+PLFLT
+plP_dcmmy(PLFLT y);
+
+/* world coords into millimeters (x) */
+
+PLFLT
+plP_wcmmx(PLFLT x);
+
+/* world coords into millimeters (y) */
+
+PLFLT
+plP_wcmmy(PLFLT y);
+
+/* device coords to subpage coords (x) */
+
+PLFLT
+plP_dcscx(PLFLT x);
+
+/* device coords to subpage coords (y) */
+
+PLFLT
+plP_dcscy(PLFLT y);
+
+/* 3-d coords to 2-d projection (x) */
+
+PLFLT
+plP_w3wcx(PLFLT x, PLFLT y, PLFLT z);
+
+/* 3-d coords to 2-d projection (y) */
+
+PLFLT
+plP_w3wcy(PLFLT x, PLFLT y, PLFLT z);
 
 	/* Driver calls */
 
@@ -784,6 +718,11 @@ plP_state(PLINT op);
 
 void
 plP_esc(PLINT op, void *ptr);
+
+/* Set up plot window parameters. */
+
+void
+plP_swin(PLWindow *plwin);
 
 /* Return file pointer to lib file. */
 
