@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/02/25 18:43:54  mjl
-   Eliminated obsolete typedef.
+   Revision 1.13  1993/02/26 05:19:39  mjl
+   Fix for SUNOS -- NULL isn't always defined.  Should it be?  Anyhow this
+   was the easiest way to fix it.
 
+ * Revision 1.12  1993/02/25  18:43:54  mjl
+ * Eliminated obsolete typedef.
+ *
  * Revision 1.11  1993/02/23  04:54:45  mjl
  * Added support data structures and constant definitions for plplot options
  * handling code.  Added function prototypes for new functions and deleted
@@ -273,6 +277,10 @@ typedef void* PLPointer;
 #ifndef TRUE
 #define TRUE  1
 #define FALSE 0
+#endif
+
+#ifndef NULL
+#define NULL	0
 #endif
 
 #ifndef MAX
