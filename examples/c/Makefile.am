@@ -23,6 +23,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
 examples_cdir = $(DATA_DIR)/examples/c
 sources = \
+	README.plplotcanvas \
 	plcdemos.h \
 	lena.pgm \
 	tutor.c \
