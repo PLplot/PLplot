@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/03/23 08:11:11  mjl
+ * Revision 1.13  1994/03/30 07:27:16  mjl
+ * Put in better handling for roundoff-generated errors in color map
+ * selection.
+ *
+ * Revision 1.12  1994/03/23  08:11:11  mjl
  * Many functions moved into this file (from plcore.c):
  *
  * 	plwarn plexit plcol0 plcol1 plrgb plrgb1 plscolbg plscol0 plgcol0
@@ -470,15 +474,9 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
 		plHLS_RGB(h, l, s, &r, &g, &b);
 	    }
 
-	    if ((r < 0 || r > 1) || (g < 0 || g > 1) || (b < 0 || b > 1)) {
-		fprintf(stderr, "plscmap1l: Invalid RGB color: %f, %f, %f\n",
-			r, g, b);
-		plabort("plscmap1l: Invalid color");
-		return;
-	    }
-	    plsc->cmap1[i].r = 255.99999 * r;
-	    plsc->cmap1[i].g = 255.99999 * g;
-	    plsc->cmap1[i].b = 255.99999 * b;
+	    plsc->cmap1[i].r = MAX(0, MIN(255, (int) (256. * r)));
+	    plsc->cmap1[i].g = MAX(0, MIN(255, (int) (256. * g)));
+	    plsc->cmap1[i].b = MAX(0, MIN(255, (int) (256. * b)));
 	}
     }
 
@@ -641,15 +639,11 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 	plabort("plrgb: Please call plinit first");
 	return;
     }
-    if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
-	plabort("plrgb: Invalid RGB color value");
-	return;
-    }
 
     plsc->icol0 = PL_RGB_COLOR;
-    plsc->curcolor.r = MIN(255, (int) (256. * r));
-    plsc->curcolor.g = MIN(255, (int) (256. * g));
-    plsc->curcolor.b = MIN(255, (int) (256. * b));
+    plsc->curcolor.r = MAX(0, MIN(255, (int) (256. * r)));
+    plsc->curcolor.g = MAX(0, MIN(255, (int) (256. * g)));
+    plsc->curcolor.b = MAX(0, MIN(255, (int) (256. * b)));
 
     plsc->curcmap = 0;
     plP_state(PLSTATE_COLOR0);
@@ -739,12 +733,13 @@ value(double n1, double n2, double hue)
 *	lightness	[0., 1.]	magnitude
 *	saturation	[0., 1.]	magnitude
 *
-*  Hue is always mapped onto the interval [0., 360.] regardless of input.
+* Hue is always mapped onto the interval [0., 360.] regardless of input.
 \*----------------------------------------------------------------------*/
 
 static void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 {
+    PLFLT r, g, b;
     float m1, m2;
 
     if (l <= .5)
