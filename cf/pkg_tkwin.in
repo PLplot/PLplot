@@ -4,8 +4,8 @@
 # Make assignments for PLplot/tkwin support.
 # -----------------------------------------------------------------------------
 
-TKWIN_C		= Plplotter_Init.c plplotter.c tkwin_common.c
-TKWIN_OBJ	= Plplotter_Init$O plplotter$O tkwin_common$O
+TKWIN_C		= Plplotter_Init.c plplotter.c
+TKWIN_OBJ	= Plplotter_Init$O plplotter$O
 TKWIN_OBJ_SA	=
 TKWIN_EXE	=
 ifneq ($(DYNAMIC_DRIVERS),)
