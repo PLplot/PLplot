@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1993/10/21 19:28:52  mjl
+ * Revision 1.6  1993/12/09 20:36:52  mjl
+ * Fixed some function prototypes.
+ *
+ * Revision 1.5  1993/10/21  19:28:52  mjl
  * Added prototypes for passed-in function pointers.
  *
  * Revision 1.4  1993/09/24  20:33:27  furnish
@@ -147,8 +150,8 @@ static PLINT pen_wd_sh, pen_wd_min, pen_wd_max;
 static void set_cond	  (register int *, register PLFLT *,
 			   register const char *, register PLINT);
 static int  find_interval (PLFLT, PLFLT, PLINT, PLINT, PLFLT *);
-static void poly	  (void (*) (), PLFLT *, PLFLT *, PLINT , PLINT ,
-			   PLINT, PLINT);
+static void poly	  (void (*) (PLINT, PLFLT *, PLFLT *),
+			   PLFLT *, PLFLT *, PLINT, PLINT, PLINT, PLINT);
 static void big_recl	  (int *, register int, int, int, int *, int *);
 static void draw_boundary (PLINT, PLFLT *, PLFLT *);
 
@@ -453,8 +456,8 @@ find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x)
 \*----------------------------------------------------------------------*/
 
 static void 
-poly(void (*fill) (), PLFLT *x, PLFLT *y, PLINT v1, PLINT v2,
-     PLINT v3, PLINT v4)
+poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
+     PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4)
 {
     register PLINT n = 0;
     PLFLT xx[4], yy[4];
