@@ -1,0 +1,96 @@
+#!xtk01 -f
+# Geoffrey Furnish
+# 11 April 1994
+#
+# @> A script for using Tk to control xtk01
+#
+# $Id$
+#
+# $Log$
+# Revision 1.1  1994/04/11 19:01:02  furnish
+# The first Tk w/ embedded PLPLOT widget example program.  Very simple,
+# but shows the basics of what you can do.
+#
+###############################################################################
+
+wm title . "x01c -- TK version"
+
+# Create the main window
+# Use the default window title.
+
+    set root_width  [winfo vrootwidth .]
+    set root_height [winfo vrootheight .]
+
+    wm minsize . 300 240
+    wm maxsize . [expr "$root_width/64*63"] [expr "$root_height/64*62"]
+
+# Set window geometry if not already set.
+# Depart from square slightly to account for menu bar.
+
+    if { ! [ info exists geometry ] } {
+        set width  [expr "$root_width / 16 * 10"]
+        set height [expr "$root_height / 16 * 11"]
+        set geometry ${width}x${height}
+    }
+    wm geometry . $geometry
+
+
+###############################################################################
+# Set up the menubar and message widgets.
+
+frame .menu -relief raised -borderwidth 3
+
+button .menu.one -text "One" -command "myplot 1"
+pack append .menu .menu.one {left expand fill}
+
+button .menu.two -text "Two" -command "myplot 2"
+pack append .menu .menu.two {left expand fill}
+
+button .menu.three -text "Three" -command "myplot 3"
+pack append .menu .menu.three {left expand fill}
+
+button .menu.four -text "Four" -command "myplot 4"
+pack append .menu .menu.four {left expand fill}
+
+button .menu.exit -text "Exit" -command "quit 0"
+pack append .menu .menu.exit {right expand}
+
+message .msg \
+	-font -Adobe-helvetica-medium-r-normal--*-240* -aspect 200 \
+	 -width 500 -borderwidth 1 \
+	-text "TK01: Control x01c from TK"
+
+option add *plwin.background black
+
+plframe .plwin
+
+pack append . .menu {top fillx} \
+	.plwin {bottom padx 25 pady 25 expand fill} \
+	.msg {bottom padx 5 pady 5 fill}
+
+#.plf configure height 5
+
+update
+
+.plwin cmd init
+
+option add "*font" "-Adobe-helvetica-medium-r-normal--*-180*"
+
+tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
+
+###############################################################################
+# Definitions of procedures used in this script.
+
+# Punch eject and hold onto your seat !!!
+
+proc quit a {
+    destroy .
+}
+
+# Utility routine.
+
+proc dpos w {
+    wm geometry $w +300+300
+}
+
+###############################################################################
