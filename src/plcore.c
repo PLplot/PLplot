@@ -1062,12 +1062,14 @@ c_plinit(void)
     plsc->level = 1;
 
 /* Special handling of xpmm and ypmm such that character aspect ratio
- * is preserved when overall aspect ratio is changed. */
+ * is preserved when the overall aspect ratio is changed, i.e., 
+ * if portrait mode is requested (see just above) or if the aspect ratio
+ * is specified in any way, or if a 90 deg rotation occurs with
+ * -freeaspect. */
    
-/* Save local value of xpmm and ypmm to be used later in this routine. */
     plP_gpixmm(&xpmm_loc, &ypmm_loc);
 /* Case where plsc->aspect has a value.... (e.g., -a aspect on the
- * command line.) */
+ * command line or 2nd parameter of plsdidev specified) */
     if (plsc->aspect > 0.) {
        lx = plsc->phyxlen / plsc->xpmm;
        ly = plsc->phyylen / plsc->ypmm;
