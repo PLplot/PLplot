@@ -1,31 +1,84 @@
 /* $Id$
- 
+
          PNG and JPEG device driver based on libgd
 */
 
 /*
- * Driver supports a hack that manipulates the colour palette when 
- * a light background is selected. This is basically to make sure 
- * there are not two "whites" when -bg ffffff is issued at the
- * command line.
+ *  The GD drivers, PNG and JPEG, support a number of different options
+ *  depending on the version of GD installed.
  *
- * Related to this change, there is an ability to swap the "new"
- * black colour (index 15) with the red colour (index 2) by issuing
- * the command line "-hack" option. I like this for web pages, because
- * I think that black looks nicer than red (on white) for default
- * plotting. That is why it can be enabled with -hack, in case you
- * don't like it working this way. 
+ *  If you have installed GD Ver 2.+ you gain support for truecolour (24
+ *  bit, 16 millionish) modes as well as different line widths. These
+ *  capibilities are part of GD more so than the GD driver, so they aren't
+ *  available in any 1.? versions of the driver.
  *
- * For me, these two changes make it easy to switch from a "screen friendly"
- * black background with red first plotting colour, to a "web friendly"
- * white background with a black first plotting colour. 
+ *  24 bit support is, by default, set to "auto" if you have V2.+ of GD.
+ *  What this means is the *driver* decides when to use 24 bit or 8 bit
+ *  modes for PNG files. The logic is rather simple - if you have less than
+ *  257 colours, it is set to 8 bit mode, if more then it's in 24 bit mode.
+ *  This should work fine for most people, most of the time, in most
+ *  situations; however, it can be overridden in case it has to via the
+ *  "-drvopt" command line switch. The png driver has two related settings:
+ *              8bit    and
+ *              24bit
  *
- * These features are enabled on a driver level by defining 
- * "SWAP_BALCK_WHEN_WHITE". If you wan't the driver to behave 100% like other
- * drivers, comment out the define
+ *  If either of these command line toggles are set, that mode becomes the
+ *  standard used regardless of the number of colours used. It can be envoked
+ *  as follows:
+ *                 x08c -dev png -drvopt 8bit -fam -o 8bitpng
+ *                                      or
+ *                 x08c -dev png -drvopt 24bit -fam -o 24bitpng
+ *
+ *  NOTE:
+ *  The 24 bit PNG file is an RGBA file, not RGB - it includes alpha channel
+ *  (transparency). Transparency is set to opaque, but the fact it is an
+ *  RGBA and not an RGB might cause some problems with some viewers.
+ *  Sadly, I can't do anything about it... sorry.
+ *
+ *
+ *  Stuff for GD V1.? as well as V2.+
+ *
+ *  optimise
+ *
+ *  From version 1.17 of the GD driver, a command line option has been
+ *  added to try and optimise the PNG files. If successful, the optimise
+ *  command will create 4 bit (16 colour) PNGs instead of 8 bit (256 colour)
+ *  ones. This results in slightly smaller files with no loss in any colour
+ *  information. The function has no real memory overhead, but does have a
+ *  slight speed hit in exchange for the optimisation. For example:
+ *         x08c -dev png -drvopt 8bit,optimise -fam -o 8bitpng
+ *  forces the png driver to make 8bit pngs, and will then optimise any PNG
+ *  images with 16 or less colours into a 4 bit PNG. Note, this DOESN'T WORK
+ *  WITH 24bit PNGs yet, and will never work with JPEGs.
+ *
+ *
+ *  Also as of version 1.17 of the GD driver, the options for palette
+ *  modification previously set with the command line option "-hack" have
+ *  now been moved to two options settable from the -drvopt switch.
+ *
+ *  def_black15
+ *
+ *  -drvopt def_black15 sets index 15, usually white, to black if index 0,
+ *  the background colour and usually black, has been set to white from the
+ *  command line option -bg
+ *
+ *  swp_red15
+ *
+ *  -drvopt swp_red15 swaps index 15, usually white, with index 1, which is
+ *  usually red. This might be desirable occasionally, but it is principally
+ *  included for cases when the background has been set on the command line
+ *  to white, and the "def_black15" option has been issued to redefine index
+ *  15 as black. By issuing a command like:
+ *                 x08c -dev png -bg ffffff -drvopt def_black15,swp_red15
+ *  the driver will set the background to white, then redefine index 15 of
+ *  cmap0, which is usually white to black, then swap index 2 (red) to 15
+ *  (white originally, now black), so at the end of the day, the "default"
+ *  plotting colour is now black. Why do all of this ? It is a very quick
+ *  way of making a nice web-friendly png without having to redefine the
+ *  cmaps within your program.
+ *
  */
- 
-#define SWAP_BALCK_WHEN_WHITE 
+
 
 #include "plplot/plDevs.h"
 
@@ -41,10 +94,14 @@
 static void	fill_polygon	(PLStream *pls);
 static void	setcmap		(PLStream *pls);
 static void     plD_init_png_Dev(PLStream *pls);
+static void     plD_gd_optimise (PLStream *pls);
+static void     plD_black15_gd  (PLStream *pls);
+static void     plD_red15_gd    (PLStream *pls);
+
 
 /* top level declarations */
 
-#define NCOLOURS 256    /* Hardwire this for now */
+static int NCOLOURS=gdMaxColors;
 
 /* In an attempt to fix a problem with the hidden line removal functions
  * that results in hidden lines *not* being removed from "small" plot
@@ -62,23 +119,24 @@ static void     plD_init_png_Dev(PLStream *pls);
 typedef struct {
 
 	gdImagePtr im_out;                      /* Graphics pointer */
-        PLINT pngx;               
+        PLINT pngx;
         PLINT pngy;
-
-/* GD does "funny" things with the colour map.
- * It can't guarantee that the colours will be where you think they are.
- * So we need this "colour_index" table to store where the colour we
- * requested happens to be. Messy, but it works.
- */
-
-        int colour_index[256];                  /* Colour "index" table         */
 
         int colour;                             /* Current Colour               */
         int totcol;                             /* Total number of colours      */
         int ncol1;                              /* Actual size of ncol1 we got  */
 
 	int scale;                              /* scaling factor to "blow up" to */
-	                                        /* the "virtual" page in removing hidden lines*/
+                                                /* the "virtual" page in removing hidden lines*/
+
+	int optimise;                           /* Flag used for 4bit pngs */
+        int black15;                            /* Flag used for forcing a black colour */
+        int red15;                              /* Flag for swapping red and 15 */
+
+#if GD2_VERS >= 2
+        int truecolour;                         /* Flag to ALWAYS force 24 bit mode */
+        int palette;                            /* Flag to ALWAYS force  8 bit mode */
+#endif
 
 } png_Dev;
 
@@ -130,7 +188,7 @@ void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_png;
 }
 #endif
-        
+
 /*--------------------------------------------------------------------------*\
  * plD_init_png_Dev()
  *
@@ -141,7 +199,29 @@ plD_init_png_Dev(PLStream *pls)
 {
     png_Dev *dev;
     int i;
-    
+
+/*  Stuff for the driver options, these vars are copied into the driver
+ *  structure so that everything is thread safe and reenterant.
+ */
+
+    int optimise=0;
+    int black15=0;
+    int red15=0;
+#if GD2_VERS >= 2
+    int truecolour=0;
+    int palette=0;
+#endif
+
+    DrvOpt gd_options[] = {{"optimise", DRV_INT, &optimise, "Optimise PNG palette when possible"},
+                              {"def_black15", DRV_INT, &black15, "Define idx 15 as black. If the background is \"whiteish\" (from \"-bg\" option), force index 15 (traditionally white) to be \"black\""},
+                              {"swp_red15", DRV_INT, &red15, "Swap index 1 (usually red) and 1 (usually white); always done after \"black15\"; quite useful for quick changes to web pages"},
+#if GD2_VERS >= 2
+                              {"8bit", DRV_INT, &palette, "Palette (8 bit) mode"},
+                              {"24bit", DRV_INT, &truecolour, "Truecolor (24 bit) mode"},
+#endif
+			      {NULL, DRV_INT, NULL, NULL}};
+
+
 /* Allocate and initialize device-specific data */
 
     if (pls->dev != NULL)
@@ -154,14 +234,6 @@ plD_init_png_Dev(PLStream *pls)
     dev = (png_Dev *) pls->dev;
 
     dev->colour=1;  /* Set a fall back pen colour in case user doesn't */
- 
-/*
- * To try and fix the problem colourmap problems, I will try something new.
- * The colourmap index will be set to "-8888" and that way I will know when
- * a colour has been allocated, so I can manually deallocate it.
- */
- 
-    for (i=0;i<256;++i) dev->colour_index[i]=-8888;
 
 /*
  *  Set the compression/quality level for JPEG files
@@ -169,6 +241,26 @@ plD_init_png_Dev(PLStream *pls)
  */
     if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
        pls->dev_compression=90;
+
+/* Check for and set up driver options */
+
+    plParseDrvOpts(gd_options);
+
+    dev->black15=black15;
+    dev->red15=red15;
+    dev->optimise=optimise;
+
+#if GD2_VERS >= 2
+
+    dev->palette=palette;
+    dev->truecolour=truecolour;
+
+    if ((dev->truecolour>0) && (dev->palette>0))
+       plwarn("Selecting both \"truecolor\" AND \"palette\" driver options is contradictory, so\nI will just use my best judgment.\n");
+    else if (dev->truecolour>0)
+       NCOLOURS=16777216;
+
+#endif
 
 }
 
@@ -227,9 +319,9 @@ void plD_init_png(PLStream *pls)
 
      dev->scale=1;
 
-#endif   
+#endif
 
-     if (pls->xdpi<=0) 
+     if (pls->xdpi<=0)
      {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
         plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
@@ -237,7 +329,7 @@ void plD_init_png(PLStream *pls)
      else
      {
         pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-     } 
+     }
 /* Convert DPI to pixels/mm */
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
 
@@ -259,7 +351,7 @@ plD_line_png(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = dev->pngy - y1;
     y2 = dev->pngy - y2;
 
-    gdImageLine(dev->im_out, x1, y1, x2, y2, dev->colour_index[dev->colour]);	
+    gdImageLine(dev->im_out, x1, y1, x2, y2, dev->colour);
 
 }
 
@@ -292,19 +384,19 @@ png_Dev *dev=(png_Dev *)pls->dev;
 
     int i;
     gdPoint *points=NULL;
-    
+
     if (pls->dev_npts < 1)
 	return;
 
      points = malloc((size_t)pls->dev_npts * sizeof(gdPoint));
 
-     for (i = 0; i < pls->dev_npts; i++) 
+     for (i = 0; i < pls->dev_npts; i++)
          {
 	   points[i].x = pls->dev_x[i]/dev->scale;
 	   points[i].y = dev->pngy - (pls->dev_y[i]/dev->scale);
          }
 
-   gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour_index[dev->colour]);
+   gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour);
    free(points);
 
 }
@@ -324,31 +416,15 @@ setcmap(PLStream *pls)
     png_Dev *dev=(png_Dev *)pls->dev;
     PLFLT tmp_colour_pos;
 
-/*
- * In theory when you call "gdImageDestroy()" the colourmap for that image
- * should be reset. Just to make absolutely sure it dies, and is completely
- * cleared out, the next bit of code will go through and try to flush out
- * all the colours, even if they should already have been flushed.
- */
- 
-    for (i=0;i<NCOLOURS;++i)
-        {
-         if (dev->colour_index[i]!=-8888)
-            {
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[i]);
-             dev->colour_index[i]=-8888;
-            }
-        }
-
     if (ncol0>NCOLOURS/2)     /* Check for ridiculous number of colours */
-       {                      /* in ncol0, and appropriately adjust the */ 
-        plwarn("Too many colours in cmap0.");     /* number, issuing a  */ 
+       {                      /* in ncol0, and appropriately adjust the */
+        plwarn("Too many colours in cmap0.");     /* number, issuing a  */
         ncol0=NCOLOURS/2;                         /* warning if it does */
         pls->ncol0=ncol0;
        }
 
     dev->totcol=0;       /* Reset the number of colours counter to zero */
-    
+
     total_colours=ncol0+ncol1;  /* Work out how many colours are wanted */
 
     if (total_colours>NCOLOURS)     /* Do some rather modest error      */
@@ -361,67 +437,23 @@ setcmap(PLStream *pls)
             plexit("Problem setting colourmap in PNG or JPEG driver.");
            }
        }
- 
- dev->ncol1=ncol1;  /* The actual size of ncol1, regardless of what was asked. 
+
+ dev->ncol1=ncol1;  /* The actual size of ncol1, regardless of what was asked.
                      * This is dependent on colour slots available.
                      * It might well be the same as ncol1.
                      */
- 
+
 /* Initialize cmap 0 colors */
 
 if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
    {
     for (i = 0; i < ncol0; i++)
         {
-        dev->colour_index[i]=gdImageColorAllocate(dev->im_out,
-                                   pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
+        gdImageColorAllocate(dev->im_out,
+                             pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
         ++dev->totcol; /* count the number of colours we use as we use them */
         }
 
-#ifdef SWAP_BALCK_WHEN_WHITE
-
-/* 
- * Do a kludge to add a "black" colour back to the palette if the
- * background is "almost white" (ie changed through -bg).
- * 
- * Also includes an "optional" change to swap the red colour (1) with the 
- * black colour (15), which is off by default. (I don't like the red being
- * the 'default' colour "1" on a "white" background, or for that matter
- * yellow being "2", but I can live more with yellow at number two.)
- * Just use "-hack" from the command line to make it take effect.
- *
- */
-
-if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
-   {
-    if (pls->hack!=1)
-       {
-       if (dev->colour_index[15]!=-8888)
-            {
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
-             dev->colour_index[15]=gdImageColorAllocate(dev->im_out,0, 0, 0);
-            } 
-       }
-    else
-       {
-       if (dev->colour_index[15]!=-8888)
-            {
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
-             dev->colour_index[15]=gdImageColorAllocate(dev->im_out, 
-                              pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
-            } 
-
-       if (dev->colour_index[1]!=-8888)
-            {
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[1]);
-             dev->colour_index[1]=gdImageColorAllocate(dev->im_out,0,0,0); 
-            } 
-        
-                              
-      }
-   }
-
-#endif
 
   }
 
@@ -430,7 +462,7 @@ if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
 
 if (ncol1>0)    /* make sure that we want to define cmap1 first */
    {
-    for (i = 0; i < ncol1; i++) 
+    for (i = 0; i < ncol1; i++)
         {
 
          if (ncol1<pls->ncol1)       /* Check the dynamic range of colours */
@@ -446,7 +478,7 @@ if (ncol1>0)    /* make sure that we want to define cmap1 first */
 
              tmp_colour_pos= i>0 ? pls->ncol1*((PLFLT)i/ncol1) : 0;
              plcol_interp(pls, &cmap1col, (int) tmp_colour_pos, pls->ncol1);
-             
+
             }
          else
             {
@@ -454,9 +486,9 @@ if (ncol1>0)    /* make sure that we want to define cmap1 first */
             }
 
 
-         dev->colour_index[i + pls->ncol0]=gdImageColorAllocate(dev->im_out,
+         gdImageColorAllocate(dev->im_out,
                                    cmap1col.r, cmap1col.g, cmap1col.b);
-                                   
+
          ++dev->totcol; /* count the number of colours we use as we go */
         }
    }
@@ -469,63 +501,114 @@ if (ncol1>0)    /* make sure that we want to define cmap1 first */
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void 
+void
 plD_state_png(PLStream *pls, PLINT op)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
 PLFLT tmp_colour_pos;
+#if GD2_VERS >= 2
+long temp_col;
+#endif
+
 
     switch (op) {
 
+#if GD2_VERS >= 2
     case PLSTATE_WIDTH:
-#if GD2_VERS >= 2 
         gdImageSetThickness(dev->im_out, pls->width);
 	break;
 #endif
 
     case PLSTATE_COLOR0:
-	dev->colour = pls->icol0;
-	if (dev->colour == PL_RGB_COLOR) {
-	    int r = pls->curcolor.r;
-	    int g = pls->curcolor.g;
-	    int b = pls->curcolor.b;
-	    if (dev->totcol < NCOLOURS) 
+
+#if GD2_VERS >= 2
+
+	if ( (pls->icol0 == PL_RGB_COLOR)||     /*  Should never happen since PL_RGB_COLOR is depreciated, but here for backwards compatibility */
+             (gdImageTrueColor(dev->im_out)) )  /*  We will do this if we are in "TrueColour" mode */
+           {
+	    if ( (dev->totcol < NCOLOURS)||         /* See if there are slots left, if so we will allocate a new colour */
+                 (gdImageTrueColor(dev->im_out)) )  /* In TrueColour mode we allocate each colour as we come to it */
 	       {
-                if (dev->colour_index[dev->totcol+1]!=-8888) /* Should not ever be necessary  */
-                   {                                         /* But won't hurt to be sure */
-                    gdImageColorDeallocate(dev->im_out,dev->colour_index[dev->totcol+1]);
-                   } 
-	        
-                dev->colour_index[++dev->totcol]=gdImageColorAllocate(dev->im_out,r, g, b);
+	        /* Next allocate a new colour to a temporary slot since what we do with it will varay depending on if its a pallter index or truecolour */
+                temp_col=gdImageColorAllocate(dev->im_out,pls->curcolor.r,
+                                             pls->curcolor.g, pls->curcolor.b);
+
+                if (gdImageTrueColor(dev->im_out))
+                    dev->colour = temp_col;     /* If it's truecolour, then we will directly set dev->colour to our "new" colour */
+                else
+                    {
+                     dev->colour = dev->totcol;  /* or else, we will just set it to the last colour */
+                     dev->totcol++;              /* Bump the total colours for next time round */
+                    }
+	       }
+
+           }
+         else  /* just a normal colour allocate, so don't worry about the above stuff, just grab the index */
+           {
+            dev->colour = pls->icol0;
+           }
+
+#else
+	dev->colour = pls->icol0;
+	if (dev->colour == PL_RGB_COLOR)
+           {
+	    if (dev->totcol < NCOLOURS)
+	       {
+                gdImageColorAllocate(dev->im_out,pls->curcolor.r, pls->curcolor.g,  pls->curcolor.b);
 		dev->colour = dev->totcol;
 	       }
 
-	}
+           }
+#endif
 	break;
 
     case PLSTATE_COLOR1:
-        /*
-         * Start by checking to see if we have to compensate for cases where
-         * we don't have the full dynamic range of cmap1 at our disposal
-         */
-        if (dev->ncol1<pls->ncol1)   
-           {
-           tmp_colour_pos=dev->ncol1*((PLFLT)pls->icol1/(pls->ncol1>0 ? pls->ncol1 : 1));
-           dev->colour = pls->ncol0 + (int)tmp_colour_pos;
+
+#if GD2_VERS >= 2
+       if (!gdImageTrueColor(dev->im_out))
+          {
+#endif
+           /*
+            * Start by checking to see if we have to compensate for cases where
+            * we don't have the full dynamic range of cmap1 at our disposal
+            */
+           if (dev->ncol1<pls->ncol1)
+              {
+               tmp_colour_pos=dev->ncol1*((PLFLT)pls->icol1/(pls->ncol1>0 ? pls->ncol1 : 1));
+               dev->colour = pls->ncol0 + (int)tmp_colour_pos;
+              }
+           else
+              dev->colour = pls->ncol0 + pls->icol1;
+#if GD2_VERS >= 2
            }
-        else
-           dev->colour = pls->ncol0 + pls->icol1;
-        
+        else    /* it is a truecolour image */
+           {
+             dev->colour = gdTrueColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+           }
+#endif
 	break;
-	
-	
+
+
     case PLSTATE_CMAP0:
     case PLSTATE_CMAP1:
+
+#if GD2_VERS >= 2
+       if (!gdImageTrueColor(dev->im_out))
+          {
+#endif
+
     /*
      *  Code to redefine the entire palette
      */
+
+
 	if (pls->color)
 	    setcmap(pls);
+
+#if GD2_VERS >= 2
+}
+#endif
+
 	break;
     }
 }
@@ -559,12 +642,12 @@ void plD_bop_png(PLStream *pls)
     png_Dev *dev;
 
     plGetFam(pls);
-/* force new file if pls->family set for all subsequent calls to plGetFam 
+/* force new file if pls->family set for all subsequent calls to plGetFam
  * n.b. putting this after plGetFam call is important since plinit calls
  * bop, and you don't want the familying sequence started until after
  * that first call to bop.*/
 
-/* n.b. pls->dev can change because of an indirect call to plD_init_png 
+/* n.b. pls->dev can change because of an indirect call to plD_init_png
  * from plGetFam if familying is enabled.  Thus, wait to define dev until
  * now. */
 
@@ -574,14 +657,57 @@ void plD_bop_png(PLStream *pls)
 
     pls->page++;
 
-    dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
-    setcmap(pls);
+if (dev->black15) plD_black15_gd(pls);
+if (dev->red15) plD_red15_gd(pls);
+
+#if GD2_VERS >= 2
+  if ( ( ((dev->truecolour>0) && (dev->palette>0))||     /* In an EXTREMELY convaluted */
+         ((dev->truecolour==0) && (dev->palette==0))&&   /* manner, all this is just   */
+          ((pls->ncol1+pls->ncol0)<=256) )||             /* asking the question, do we */
+       ( ((dev->palette>0)&&(dev->truecolour==0)) )  )   /* want truecolour or not ?   */
+        {
+#endif
+
+           dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
+           setcmap(pls);
+
+#if GD2_VERS >= 2
+         }
+       else
+         {
+         dev->im_out = gdImageCreateTrueColor(pls->xlength, pls->ylength);
+
+/*
+ * In truecolour mode, the background colour GD makes is ALWAYS black, so to
+ * "simulate" (stimulate?) a background colour other than black, we will just
+ * draw a dirty big rectange covering the whole image and colour it in
+ * whatever colour cmap0[0] happens to be.
+ *
+ * Question to C gurus: while it is slightly illogical and ugly, would:
+ *   if ((pls->cmap0[0].r+pls->cmap0[0].g+pls->cmap0[0].b)!=0)
+ * be more computationally efficient than:
+ *   if ((pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||(pls->cmap0[0].b!=0))
+ *  ???
+ */
+
+         if ( (pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||
+              (pls->cmap0[0].b!=0) )
+            {
+             gdImageFilledRectangle(dev->im_out,0,0, pls->xlength-1, pls->ylength-1,
+                                    gdTrueColor(pls->cmap0[0].r,pls->cmap0[0].g,
+                                                pls->cmap0[0].b));
+            }
+
+         }
+
 
 /* This ensures the line width is set correctly at the beginning of
  *    each page */
-   
+
    plD_state_png(pls, PLSTATE_WIDTH);
-   
+
+#endif
+
 
 }
 
@@ -597,6 +723,129 @@ void plD_tidy_png(PLStream *pls)
    free_mem(pls->dev);
 }
 
+/*----------------------------------------------------------------------*\
+ * plD_black15_gd()
+ *
+ *  This small function simply redefines index 15 of cmap0, which is
+ *  usually set to white, to black, but only if index 0, which is usually
+ *  black, has been redefined to white (for example, through -bg).
+ *
+\*----------------------------------------------------------------------*/
+
+void plD_black15_gd(PLStream *pls)
+{
+
+if (pls->ncol0>15)
+   {
+    if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
+       {
+        pls->cmap0[15].r=0;
+        pls->cmap0[15].g=0;
+        pls->cmap0[15].b=0;
+      }
+   }
+}
+
+
+/*----------------------------------------------------------------------*\
+ * plD_red15_gd()
+ *
+ *
+ *  This function swaps index 1, often the default plotting colour, with
+ *  index 15, the last defined colour.
+ *
+ *  Colour 15 is usually white, and 1 is usually red, so swapping the two
+ *  might be desirable occasionally, but it is principally here for cases
+ *  when the background has been set on the command line to white, and the
+ *  "def_black15" option has been issued to redefine index 15 as black. By
+ *  issuing a command like
+ *
+ *      ... -bg ffffff -drvopt def_black15,swp_red15
+ *
+ *  the driver will set the background to white, then redefine index 15 of
+ *  cmap0, which is usually white to black, then swap index 2 (red) to 15
+ *  (white originally, now black), so at the end of the day, the "default"
+ *  plotting colour is now black. Why do all of this ? It is a very quick
+ *  way of making a nice web-friendly png without having to redefine the
+ *  cmaps within your program.
+ *
+ *  If you don't like it, don't use it !
+ *
+\*----------------------------------------------------------------------*/
+
+void plD_red15_gd(PLStream *pls)
+{
+char r=pls->cmap0[1].r;
+char g=pls->cmap0[1].g;
+char b=pls->cmap0[1].b;
+
+if (pls->ncol0>15)
+   {
+    pls->cmap0[1].r=pls->cmap0[15].r;
+    pls->cmap0[1].g=pls->cmap0[15].r;
+    pls->cmap0[1].b=pls->cmap0[15].r;
+
+    pls->cmap0[15].r=r;
+    pls->cmap0[15].g=g;
+    pls->cmap0[15].b=b;
+   }
+}
+
+
+/*----------------------------------------------------------------------*\
+ * plD_gd_optimise()
+ *
+ *
+ *  This function pretty much does exactly what it says - it optimises the
+ *  PNG file. It does this by checking to see if all the allocated colours
+ *  were actually used. If they were not, then it deallocates them. This
+ *  function often results in the PNG file being saved as a 4 bit (16
+ *  colour) PNG rather than an 8 bit (256 colour) PNG. The file size
+ *  difference is not huge, not as great as for GIFs for example (I think
+ *  most of the saving comes from removing redundant entries from the
+ *  palette entry in the header); however some modest size savings occur.
+ *
+ *  The function isn't always successful - the optimiser will always
+ *  deallocate unused colours as it finds them, but GD will only deallocate
+ *  them "for real" until 16 colours are used up, and then stop since it
+ *  doesn't make a difference if you have 17 colours or 255 colours. The
+ *  result of this is you may end up with an image using say, 130 colours,
+ *  but you will have 240 colour entries, some of which aren't used, and
+ *  aren't blanked out.
+ *
+ *  Another side-effect of this function is the relative position of the
+ *  colour indices MAY shift as colours are deallocated. I really don't
+ *  think this should worry anyone, but if it does, don't optimise the
+ *  image !
+ *
+\*----------------------------------------------------------------------*/
+
+void plD_gd_optimise(PLStream *pls)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+int i,j;
+char *bbuf;
+
+bbuf=calloc(256,(size_t) 1);    /* Allocate a buffer to "check off" colours as they are used */
+if (bbuf==NULL) plexit("plD_gd_optimise: Out of memory.");
+
+    for(i=0;i<(pls->xlength-1);i++)        /* Walk through the image pixel by pixel */
+       {                                   /* checking to see what colour it is */
+        for(j=0;j<(pls->ylength-1);j++)    /* and adding it to the list of used colours */
+           {
+            bbuf[gdImagePalettePixel(dev->im_out, i, j)]=1;
+           }
+       }
+
+for (i=0;i<256;i++)     /* next walk over the colours and deallocate */
+    {                   /* unused ones */
+    if (bbuf[i]==0) gdImageColorDeallocate(dev->im_out,i);
+    }
+
+free(bbuf);
+}
+
+
 #ifdef PLD_png
 
 /*----------------------------------------------------------------------*\
@@ -611,23 +860,24 @@ png_Dev *dev=(png_Dev *)pls->dev;
 int i;
 
     if (pls->family || pls->page == 1) {
-       gdImagePng(dev->im_out, pls->OutFile);
 
-/*
- * In theory when you call "gdImageDestroy()" the colourmap for that image
- * should be reset. Just to make absolutely sure it dies, and is completely
- * cleared out, the next bit of code will go through and try to flush out
- * all the colours, even if they should already have been flushed.
- */
- 
-    for (i=0;i<NCOLOURS;++i)
-        {
-         if (dev->colour_index[i]!=-8888)
+   if (dev->optimise)
+     {
+#if GD2_VERS >= 2
+      if ( ( ((dev->truecolour>0) && (dev->palette>0))||     /* In an EXTREMELY convaluted */
+             ((dev->truecolour==0) && (dev->palette==0))&&   /* manner, all this is just   */
+              ((pls->ncol1+pls->ncol0)<=256) )||             /* asking the question, do we */
+           ( ((dev->palette>0)&&(dev->truecolour==0)) )  )   /* want truecolour or not ?   */
             {
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[i]);
-             dev->colour_index[i]=-8888;
+#endif
+             plD_gd_optimise(pls);
+
+#if GD2_VERS >= 2
             }
+#endif
         }
+
+       gdImagePng(dev->im_out, pls->OutFile);
 
        gdImageDestroy(dev->im_out);
     }
@@ -650,15 +900,6 @@ int i;
 
     if (pls->family || pls->page == 1) {
        gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression);
- 
-    for (i=0;i<NCOLOURS;++i)
-        {
-         if (dev->colour_index[i]!=-8888)
-            {
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[i]);
-             dev->colour_index[i]=-8888;
-            }
-        }
 
        gdImageDestroy(dev->im_out);
     }
@@ -670,7 +911,7 @@ int i;
 
 
 #else
-int 
+int
 pldummy_png()
 {
     return 0;
