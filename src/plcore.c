@@ -1472,21 +1472,20 @@ plInitDispatchTable()
 #ifdef ENABLE_DYNAMIC_DRIVERS
     fp_drvdb = plLibOpen( "drivers/drivers.db" );
 
-    if (!fp_drvdb) {
-        fprintf( stderr, "Can't open drivers/drivers.db\n" );
-        return;
-    }
+    if (fp_drvdb) {
+    /* Count the number of dynamic devices. */
+        while( !done ) {
+            char *p = fgets( buf, 300, fp_drvdb );
 
-/* Count the number of dynamic devices. */
-    while( !done ) {
-        char *p = fgets( buf, 300, fp_drvdb );
+            if (p == 0) {
+                done = 1;
+                continue;
+            }
 
-        if (p == 0) {
-            done = 1;
-            continue;
+            npldynamicdevices++;
         }
-
-        npldynamicdevices++;
+    } else {
+        fprintf( stderr, "Can't open drivers/drivers.db\n" );
     }
 #endif
 
@@ -1515,9 +1514,11 @@ plInitDispatchTable()
     loadable_device_list = malloc( npldynamicdevices * sizeof(PLLoadableDevice) );
     loadable_driver_list = malloc( npldynamicdevices * sizeof(PLLoadableDriver) );
 
-    rewind( fp_drvdb );
-    done = 0;
+    if (fp_drvdb)
+        rewind( fp_drvdb );
+
     i = 0;
+    done = !(i < npldynamicdevices);
     while( !done ) {
         char *p = fgets( buf, 300, fp_drvdb );
 
