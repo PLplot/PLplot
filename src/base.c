@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:38  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/12 17:07:59  mjl
+   Added PL_NEED_SIZE_T define to those files that need to know the value
+   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+   to include <stddef.h> to get it.
 
+ * Revision 1.3  1992/09/30  18:25:38  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:36  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -25,10 +30,9 @@
 * font..	Current default font and control parameters
 \*----------------------------------------------------------------------*/
 
+#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
-
-#include "plplot.h"
 #include "dispatch.h"
 
 static int ipls;

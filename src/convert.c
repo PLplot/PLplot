@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:38  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/10/12 17:08:00  mjl
+   Added PL_NEED_SIZE_T define to those files that need to know the value
+   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+   to include <stddef.h> to get it.
 
+ * Revision 1.2  1992/09/29  04:45:38  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:34:07  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -13,8 +18,8 @@
 	Coordinate transformation routines.
 */
 
-#include <math.h>
 #include "plplot.h"
+#include <math.h>
 
 static PLINT phyxmi, phyxma, phyymi, phyyma;
 static PLFLT spdxmi, spdxma, spdymi, spdyma;

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.7  1992/09/30 18:25:46  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.8  1992/10/12 17:08:03  mjl
+   Added PL_NEED_SIZE_T define to those files that need to know the value
+   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+   to include <stddef.h> to get it.
 
+ * Revision 1.7  1992/09/30  18:25:46  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.6  1992/09/29  04:45:56  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -34,11 +39,12 @@
 	Polygon pattern fill.
 */
 
+#define PL_NEED_MALLOC
+#define PL_NEED_SIZE_T
+
+#include "plplot.h"
 #include <stdlib.h>
 #include <math.h>
-
-#define PL_NEED_MALLOC
-#include "plplot.h"
 
 #define DTOR            0.0174533
 #define BINC            50

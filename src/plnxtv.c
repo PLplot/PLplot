@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:52  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/12 17:08:07  mjl
+   Added PL_NEED_SIZE_T define to those files that need to know the value
+   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+   to include <stddef.h> to get it.
 
+ * Revision 1.3  1992/09/30  18:25:52  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:46:10  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -17,11 +22,10 @@
 	Draw next view of 3d plot.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-
 #define PL_NEED_MALLOC
 #include "plplot.h"
+#include <stdio.h>
+#include <stddef.h>
 
 /* Prototypes for static functions */
 
