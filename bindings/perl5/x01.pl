@@ -10,6 +10,14 @@ use PLplot qw(:all);
 
 plssub (2,2);
 
+if (! defined $fontset) {
+  $fontset = 1;
+}
+
+if (! defined $text_xor) {
+  $text_xor = 0;
+}
+
 plParseOpts_p (\@ARGV, ("PL_PARSE_FULL"));
 
 # Get version number, just for kicks
@@ -21,6 +29,10 @@ print "Plplot library version: $ver\n";
 
 plinit ();
 
+# Select font set as per input flag
+
+plfontld ($fontset ? 1 : 0);
+
 # Set up the data
 # Original case 
 
@@ -31,7 +43,7 @@ $yoff = 0.;
 
 # Do a plot
 
-plot1 ();
+plot1 (0);
 
 $xscale = 1.;
 $yscale = 0.0014;
@@ -42,7 +54,7 @@ $yoff = 0.0185;
 $digmax = 5;
 plsyax ($digmax, 0);
 
-plot1 ();
+plot1 (1);
 
 plot2 ();
 
@@ -54,6 +66,8 @@ plend ();
 
 sub plot1
 {
+  my $do_test = shift;
+
   @x = map { $xoff + $xscale * ($_ + 1) / 60.0 } (0..59);
   @y = map { $yoff + $yscale * $x[$_] * $x[$_] } (0..59);
   
@@ -85,6 +99,11 @@ sub plot1
   
   plcol0 (3);
   plline_p (\@x, \@y);
+
+  if ($do_test and $test_xor) {
+    print "Xor test not yet implemented\n";
+  }
+
 }
 
 # =============================================================== 
