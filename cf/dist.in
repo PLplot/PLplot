@@ -27,6 +27,7 @@ CORE_C = \
 	plfont.c \
 	plhist.c \
 	plline.c \
+	plmap.c \
 	plot3d.c \
 	plpage.c \
 	plsdef.c \
@@ -51,6 +52,7 @@ CORE_OBJ = \
 	plfont$O \
 	plhist$O \
 	plline$O \
+	plmap$O \
 	plot3d$O \
 	plpage$O \
 	plsdef$O \
