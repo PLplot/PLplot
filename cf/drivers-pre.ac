@@ -1,4 +1,4 @@
-dnl cf/drivers.ac for PLplot  -*- autoconf -*-
+dnl cf/drivers-pre.ac for PLplot  -*- autoconf -*-
 dnl
 dnl Support macros for driver inclusion and help entries.
 dnl
@@ -56,8 +56,6 @@ dnl to be compiled based on which devices are selected.
 dnl Ordered alphabetically by second in each pair (the driver) for human
 dnl consumption, but this is not necessary.
 
-PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
-
 PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
 
 # Set driver enable values
@@ -72,16 +70,6 @@ PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
 # ----------------------------------------------------------------------------
 # Set flag to enable searching for dynloadable drivers, if appropriate.
 # ----------------------------------------------------------------------------
-
-dnl If the user don't want (or the system is not capable of) to build
-dnl shared libraries, then disable dynamic drivers, as they are
-dnl dynamically loaded objects.
-
-if test "$enable_shared" != yes ; then
-    AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
-    AC_MSG_WARN([setting enable_dyndrivers=no])
-    enable_dyndrivers=no
-fi
 
 if test "$enable_dyndrivers" = "yes"; then
     AC_DEFINE(ENABLE_DYNDRIVERS, [],
@@ -119,25 +107,3 @@ AC_MSG_RESULT
 
 AC_SUBST(STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
-
-m4_include(gd.ac)
-m4_include(cgm.ac)
-m4_include(gnome.ac)
-m4_include(linuxvga.ac)
-m4_include(xwin.ac)
-
-PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
-
-if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
-    enable_ps=yes
-fi
-
-AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
-AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
-AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
-AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
-AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
-AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
-AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
-
-

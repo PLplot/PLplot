@@ -22,6 +22,23 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+dnl The following line should belong to cf/drivers-pre.ac, but the
+dnl enable_dyndrivers variable is needed here.
+
+PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
+
+dnl If the user don't want (or the system is not capable of) to build
+dnl shared libraries, then disable dynamic drivers, as they are
+dnl dynamically loaded objects.
+
+test -z "$enable_shared" && enable_shared=yes
+
+if test "$enable_shared" != yes ; then
+    AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
+    AC_MSG_WARN([setting enable_dyndrivers=no])
+    enable_dyndrivers=no
+fi
+
 PL_ARG_WITH(ltdlsystem,
   [Use installed version of libltdl library (if it exists), instead of
    building the convenience version shipped with the sources],

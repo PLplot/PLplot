@@ -182,16 +182,22 @@ dnl =======================================================================
 dnl PLplot drivers
 dnl =======================================================================
 
-m4_include(cf/drivers.ac)
+m4_include(cf/drivers-pre.ac)
+m4_include(cf/gd.ac)
+m4_include(cf/cgm.ac)
+m4_include(cf/gnome.ac)
+m4_include(cf/linuxvga.ac)
+m4_include(cf/xwin.ac)
+m4_include(cf/drivers-post.ac)
 
 
 dnl =======================================================================
 dnl Language bindings
 dnl =======================================================================
 
-m4_include(cf/swig.ac)
 m4_include(cf/python.ac)
 m4_include(cf/java.ac)
+m4_include(cf/swig.ac)
 m4_include(cf/octave.ac)
 m4_include(cf/tcl.ac)
 m4_include(cf/c++.ac)
