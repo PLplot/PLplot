@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/06/02 15:04:22  mjl
+ * Revision 1.9  1995/06/09 22:47:45  mjl
+ * Eliminated practice of setting local variable (used for tracing) to matrix
+ * name.  Was originally used for backward compatibility with old tclMatrix
+ * declaration syntax.  The old way will no longer work -- time to upgrade.
+ *
+ * Revision 1.8  1995/06/02  15:04:22  mjl
  * Support for N-d initializer lists.  Contributed by Martin L. Smith.
  *
  * Revision 1.7  1995/03/21  19:43:53  mjl
@@ -343,7 +348,8 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 /* Use local variable of same name as matrix and trace it for unsets */
 
     if ( ! persist) {
-	if (Tcl_SetVar(interp, matPtr->name, matPtr->name, 0) == NULL) {
+	if (Tcl_SetVar(interp, matPtr->name,
+		       "old_bogus_syntax_please_upgrade", 0) == NULL) {
 	    Tcl_AppendResult(interp, "unable to schedule Matrix operator \"", 
 		matPtr->name, "\" for automatic deletion", (char *) NULL);
 	    DeleteMatrixCmd((ClientData) matPtr);
