@@ -37,11 +37,26 @@ scaled to any desired size.  A variety of output devices are supported and
 new devices can be easily added by writing a small number of device
 dependent routines.
 
-Many of the underlying concepts used in the PLplot subroutine package are
-based on ideas used in Tim Pearson's PGPLOT package originally written in
-VAX-specific Fortran-77.  Sze Tan of the University of Auckland originally
-developed PLplot on an IBM PC, and subsequently transferred it to a number
-of other machines.  
+PLplot was originally developed by Sze Tan of the University of Auckland
+in Fortran-77.  Many of the underlying concepts used in the PLplot
+package are based on ideas used in Tim Pearson's PGPLOT package.  Sze
+Tan writes:
+
+\begin{quotation}
+I'm rather amazed how far PLPLOT has travelled given its origins etc. I
+first used PGPLOT on the Starlink VAX computers while I was a graduate
+student at the Mullard Radio Astronomy Observatory in Cambridge from
+1983-1987. At the beginning of 1986, I was to give a seminar within the
+department at which I wanted to have a computer graphics demonstration
+on an IBM PC which was connected to a completely non-standard graphics
+card. Having about a week to do this and not having any drivers for the
+card, I started from the back end and designed PLPLOT to be such that
+one only needed to be able to draw a line or a dot on the screen in
+order to do arbitrary graphics.  The application programmer's interface
+was made as similar as possible to PGPLOT so that I could easily port my
+programs from the VAX to the PC.  The kernel of PLPLOT was modelled on
+PGPLOT but the code is not derived from it.
+\end{quotation}
 
 The C version of PLplot was developed by Tony Richardson on a
 Commodore Amiga.  In the process, several of the routines were
@@ -50,7 +65,26 @@ program structure was changed somewhat to make it easier to
 incorporate new devices.  Additional features were added to allow
 three-dimensional plotting and better access to low-level routines.
 
-PLplot 4.0 is primarily the result of efforts by Maurice LeBrun and
+PLplot 5.0 is a continuation of our work on PLplot 4.0, which never got
+widely distributed.  It became clear during the work on 4.0 that in
+order to support an interactive driver under Unix (using Tcl/Tk), many
+additions to the basic capabilities of the package were needed.  So
+without stopping to fully document and bug-fix the 4.0 additions, work
+on 5.0 was begun.  The result is that a very capable PLplot-based widget
+for the Tk toolkit has been written.  This widget can manipulate the
+plot (zoom/pan, scale, orient, change colors), as well dump it to any
+supported device.  There are help menus and user customization options.
+These are still in the process of being documented.
+
+Other changes include the introduction of a new color palette (cmap1)
+for smooth color shaded images (typically for 2d or 3d plots -- in which
+color represents function intensity), support for color fill plots, and
+lots more cool stuff.  The manual has been rewritten in LaTeXinfo, so
+that there is now a printed version and an online (info) version of the
+document.  The manual is still in a state of flux and will be fleshed
+out in more detail in later updates. 
+
+PLplot 4.0 was primarily the result of efforts by Maurice LeBrun and
 Geoff Furnish of University of Texas at Austin to extend and improve
 the previous work (PLplot 2.6b and 3.0, by Tony Richardson).  PLplot
 4.0 is currently used as the main graphics engine for TPC (Toroidal
@@ -99,25 +133,24 @@ in any published papers, please include an acknowledgment or citation
 of our work, which will help us to continue improving PLplot.  Please
 direct all communication to:
 
-\c \begin{tabbing}
-\c 01234567\=
-\c 	89012345678901234567890123456789\= \kill
-\c %
-\c 	\>Dr. Maurice LeBrun		\>Internet:\\
-\c 	\>Institute for Fusion Studies	\>mjl@fusion.ph.utexas.edu\\
-\c 	\>University of Texas\\
-\c 	\>Austin, TX  78712\\
-\c \\
-\c 	\>Geoff Furnish			\>Internet:\\
-\c 	\>Institute for Fusion Studies	\>furnish@fusion.ph.utexas.edu\\
-\c 	\>University of Texas\\
-\c 	\>Austin, TX  78712\\
-\c \\
-\c 	\>Tony Richardson		\>Internet:\\
-\c 	\>184 Electrical Engineering	\>amr@egr.duke.edu\\
-\c 	\>Duke University\\
-\c 	\>Durham, NC 27706\\
-\c \end{tabbing}
+\begin{tex}
+\begin{tabbing}
+01234567\=
+	89012345678901234567890123456789\= \kill
+	\>Dr. Maurice LeBrun		\>mjl@fusion.ph.utexas.edu\\
+	\>Institute for Fusion Studies	\>University of Texas\\
+\\
+	\>Geoff Furnish			\>furnish@fusion.ph.utexas.edu\\
+	\>Institute for Fusion Studies	\>University of Texas\\
+\end{tabbing}
+\end{tex}
+\begin{ifinfo}
+	Dr. Maurice LeBrun		mjl@dino.ph.utexas.edu 
+	Institute for Fusion Studies	University of Texas
+
+	Geoffrey Furnish		furnish@dino.ph.utexas.edu
+	Institute for Fusion Studies	University of Texas
+\end{ifinfo}
 
 The original version of this manual was written by Sze Tan.
 
@@ -129,16 +162,18 @@ The original version of this manual was written by Sze Tan.
 At present, the only mechanism we are providing for distribution of the
 PLplot is by electronic transmission over the Internet.  We encourage
 others to make it available to users without Internet access.  PLplot
-may be obtained by \code{ftp} from \code{hagar.ph.utexas.edu}
-(128.83.179.27).  Login as user \code{anonymous}, set file transfer type
-to binary, and get the newest PLplot archive in the \code{pub/}
-subdirectory.  We will provide PLplot in both \code{zoo} and \code{tar}
+may be obtained by \code{ftp} from \code{dino.ph.utexas.edu}
+(128.83.179.86).  Login as user \code{anonymous}, set file transfer type
+to binary, and get the newest PLplot archive in the \code{plplot/}
+subdirectory.  We will provide PLplot in both \code{zip} and \code{tar.gz}
 archives; get whichever one you prefer.\refill
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Installing, Organization, Acquiring PLplot, Introduction
 \section{Installing and Using the PLplot Library}
+
+OLD DOCS, NEEDS UPDATING!
 
 The installation procedure is by necessity system specific;
 installation notes for each system are provided in Appendix
@@ -163,6 +198,8 @@ Make sure you link to the correct one for your program.
 
 \node Organization, Credits, Installing, Introduction
 \section{Organization of this Manual}
+
+OLD DOCS, NEEDS UPDATING!
 
 The PLplot library has been designed so that it is easy to write programs
 producing graphical output without having to set up large numbers of
@@ -205,6 +242,8 @@ up-to-date; check the release notes to be sure).
 \node Credits, , Organization, Introduction
 \section{Credits}
 \label{sec:credits}
+
+OLD DOCS, NEEDS UPDATING!
 
 PLplot 4.0 was created through the effort of many individuals and
 funding agencies.  We would like to acknowledge the support (financial
