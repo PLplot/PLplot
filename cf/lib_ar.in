@@ -25,7 +25,7 @@
 # Library dependency list and targets
 # -----------------------------------------------------------------------------
 
-PLLIBS = $(PLLIB_AR)
+PLLIBS = $(PLLIB_AR) $(MATLIB_AR) $(CXXLIB_AR)
 MATLIBS	= $(MATLIB_AR)
 CXXLIBS = $(CXXLIB_AR)
 
