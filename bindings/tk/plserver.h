@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1993/12/15 08:59:28  mjl
+ * Revision 1.11  1994/01/15 17:40:04  mjl
+ * Changed PLRDev definition to use pointer to PDFstrm instead of file
+ * handle.  Added prototypes for new socket i/o functions.
+ *
+ * Revision 1.10  1993/12/15  08:59:28  mjl
  * Added prototypes for Tcl_AppInit() and set_autopath().
  *
  * Revision 1.9  1993/12/09  21:19:26  mjl
@@ -26,13 +30,15 @@
 
 #include "plplotP.h"
 #include "plplotX.h"
-#include "plstream.h"
 #include "plplotio.h"
+#include "pdf.h"
+#include "plstream.h"
 
 #include <tcl.h>
 #include <tk.h>
 
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -44,10 +50,10 @@
 
 typedef struct {
     char  *client;			/* Name of client main window */
-    FILE  *file;			/* fifo or socket file descriptor */
-    char  *filename;			/* Name of fifo or socket */
-    char  *filetype;			/* Set to "fifo" or "socket" */
-
+    PDFstrm *pdfs;			/* PDF stream descriptor */
+    FILE  *fifo;			/* FIFO handle (if needed) */
+    char  *filetype;			/* Set to "fifo" or "buffer" */
+    char  *socket;			/* Socket name (if needed) */
     int   nbytes;			/* data bytes waiting to be read */
 
     short xmin, xmax, ymin, ymax;	/* Data minima and maxima */
@@ -79,6 +85,11 @@ Tcl_AppInit(Tcl_Interp *interp);
 int
 set_auto_path(Tcl_Interp *interp);
 
+/* Tcl command -- wait until the specified condition is satisfied. */
+
+int
+Wait_Until(ClientData, Tcl_Interp *, int, char **);
+
 /* from plr.c */
 
 /* Set default state parameters before anyone else has a chance to. */
@@ -90,3 +101,21 @@ plr_start(PLRDev *plr);
 
 int
 plr_process(PLRDev *plr);
+
+/* From tcpip.c */
+
+/* C interface to the "dp_packetReceive" command. */
+
+int
+pl_PacketReceive(Tcl_Interp *interp, char *fileHandle, int peek,
+		 PDFstrm *pdfs);
+
+/* C interface to the "dp_packetSend" command. */
+
+int
+pl_PacketSend(Tcl_Interp *interp, char *fileHandle, PDFstrm *pdfs);
+
+/* Tcl command -- return the IP address for the current host.  */
+
+int
+Host_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
