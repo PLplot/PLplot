@@ -26,6 +26,11 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+GDLIBSTR=-lgd
+PNGLIBSTR=-lpng
+JPEGLIBSTR=-ljpeg
+ZLIBLIBSTR=-lz
+
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     AC_MSG_CHECKING(for GD header files)
     if test -z "$GDINCDIR"; then
