@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 06:00:28  mjl
-   Added to hold functions that primarily deal with manipulation of stream
-   quantities, through a pointer to a stream passed as an argument.  You may
-   also think of it as a driver utility library.
+   Revision 1.2  1993/02/23 05:21:09  mjl
+   Eliminated negative orientations.  Recognized settings are now 0, 1, 2, 3
+   (multiply by 90 degrees to get orientation).
 
+ * Revision 1.1  1993/01/23  06:00:28  mjl
+ * Added to hold functions that primarily deal with manipulation of stream
+ * quantities, through a pointer to a stream passed as an argument.  You may
+ * also think of it as a driver utility library.
+ *
 
  * dispatch.c history:
  *
@@ -36,10 +40,10 @@
 	Stream & device support functions.
 */
 
+#include "plplot.h"
+
 #include <stdio.h>
 #include <string.h>
-
-#include "plplot.h"
 #include "plstream.h"
 
 /* Functions only in this file */
@@ -81,7 +85,7 @@ color_def(PLStream *pls, PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
 void
 plCmaps_init(PLStream *pls)
 {
-    int i, itype, ihfinit = 0;
+    int itype, ihfinit = 0;
     PLFLT param[6];
 
 /* If the user hasn't specified, the number of colors default to 16 */
@@ -291,13 +295,6 @@ plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
 
     switch (orient) {
 
-    case -1:
-	*px1 = dev->xmin + (dev->ymax - y1);
-	*py1 = dev->ymin + (x1 - dev->xmin);
-	*px2 = dev->xmin + (dev->ymax - y2);
-	*py2 = dev->ymin + (x2 - dev->xmin);
-	break;
-
     case 1:
 	*px1 = dev->xmin + (y1 - dev->ymin);
 	*py1 = dev->ymin + (dev->xmax - x1);
@@ -306,11 +303,17 @@ plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
 	break;
 
     case 2:
-    case -2:
 	*px1 = dev->xmin + (dev->xmax - x1);
 	*py1 = dev->ymin + (dev->ymax - y1);
 	*px2 = dev->xmin + (dev->xmax - x2);
 	*py2 = dev->ymin + (dev->ymax - y2);
+	break;
+
+    case 3:
+	*px1 = dev->xmin + (dev->ymax - y1);
+	*py1 = dev->ymin + (x1 - dev->xmin);
+	*px2 = dev->xmin + (dev->ymax - y2);
+	*py2 = dev->ymin + (x2 - dev->xmin);
 	break;
 
     default:
