@@ -48,8 +48,8 @@ plD_init_xfig(PLStream *pls)
 
     dev = plAllocDev(pls);
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     dev->xmin = 0;
     dev->xmax = FIGX;
     dev->ymin = 0;
@@ -160,8 +160,8 @@ plD_bop_xfig(PLStream *pls)
 {
     PLDev *dev = (PLDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     firstline = 1;
 
     if (!pls->termin)

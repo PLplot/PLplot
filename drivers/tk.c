@@ -203,8 +203,8 @@ init(PLStream *pls)
 
 /* Get ready for plotting */
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
 #if PHYSICAL
     pxlx = (double) PIXELS_X / dev->width  * DPMM;
@@ -353,8 +353,8 @@ plD_bop_tk(PLStream *pls)
 
     dbug_enter("plD_bop_tk");
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     pls->page++;
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
@@ -645,8 +645,8 @@ tk_fill(PLStream *pls)
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------*\

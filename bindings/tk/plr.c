@@ -99,8 +99,8 @@ plr_start(PLRDev *plr)
     plr->ymin = 0;
     plr->ymax = PIXELS_Y - 1;
 
-    plr->xold = UNDEFINED;
-    plr->yold = UNDEFINED;
+    plr->xold = PL_UNDEFINED;
+    plr->yold = PL_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------*\

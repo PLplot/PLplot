@@ -67,8 +67,8 @@ plD_init_imp(PLStream *pls)
 
     dev = plAllocDev(pls);
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     dev->xmin = 0;
     dev->ymin = 0;
     dev->xmax = IMPX;
@@ -189,8 +189,8 @@ plD_bop_imp(PLStream *pls)
     PLDev *dev = (PLDev *) pls->dev;
 
     FirstLine = 1;
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     if (!pls->termin)
 	plGetFam(pls);

@@ -9,7 +9,7 @@
 
 static PLINT xline[PL_MAXPOLY], yline[PL_MAXPOLY];
 
-static PLINT lastx = UNDEFINED, lasty = UNDEFINED;
+static PLINT lastx = PL_UNDEFINED, lasty = PL_UNDEFINED;
 
 /* Function prototypes */
 

@@ -102,8 +102,8 @@ plD_init_ljiip(PLStream *pls)
 
     dev = plAllocDev(pls);
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     dev->xmin = 0;
     dev->ymin = 0;
 

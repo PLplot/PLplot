@@ -90,8 +90,8 @@ plD_init_mgr(PLStream *pls)
     mgrx -= 1;
     mgry -= 1;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     dev->xmin = 0;
     dev->xmax = mgrx;
     dev->ymin = 0;

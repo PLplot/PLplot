@@ -77,8 +77,8 @@ initialize_hpgl_pls(PLStream *pls)
     plFamInit(pls);		/* Initialize family file info */
     plOpenFile(pls);		/* get file name if not already set */
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
@@ -240,8 +240,8 @@ plD_bop_hpgl(PLStream *pls)
 {
     PLDev *dev = (PLDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     fputs( "PG;\n", OF );
     if (!pls->termin)

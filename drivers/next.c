@@ -55,8 +55,8 @@ plD_init_nx(PLStream *pls)
 
     dev = plAllocDev(pls);
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     dev->xmin = 0;
     dev->xmax = PSX;
     dev->ymin = 0;
@@ -153,8 +153,8 @@ plD_bop_nx(PLStream *pls)
 {
     PLDev *dev = (PLDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
 /* Pipe output to Preview */
 
@@ -276,8 +276,8 @@ plD_state_nx(PLStream *pls, PLINT op)
 
 	fprintf(OF, " S\n%d W", width);
 
-	dev->xold = UNDEFINED;
-	dev->yold = UNDEFINED;
+	dev->xold = PL_UNDEFINED;
+	dev->yold = PL_UNDEFINED;
 	break;
     }
     case PLSTATE_COLOR0:

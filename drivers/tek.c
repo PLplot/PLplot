@@ -242,8 +242,8 @@ tek_init(PLStream *pls)
     dev = (TekDev *) pls->dev;
 
     dev->curcolor = 1;
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
@@ -395,8 +395,8 @@ plD_bop_tek(PLStream *pls)
 {
    TekDev *dev = (TekDev *) pls->dev;
 
-   dev->xold = UNDEFINED;
-   dev->yold = UNDEFINED;
+   dev->xold = PL_UNDEFINED;
+   dev->yold = PL_UNDEFINED;
 
    if (pls->termin) {
        switch (pls->dev_minor) {

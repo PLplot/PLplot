@@ -107,8 +107,8 @@ ps_init(PLStream *pls)
 
     dev = (PSDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     plP_setpxl(pxlx, pxly);
 
@@ -362,8 +362,8 @@ plD_bop_ps(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     pls->page++;
     fprintf(OF, "%%%%Page: %d %d\n", (int) pls->page, (int) pls->page);
@@ -449,8 +449,8 @@ plD_state_ps(PLStream *pls, PLINT op)
 
 	fprintf(OF, " S\n%d W", width);
 
-	dev->xold = UNDEFINED;
-	dev->yold = UNDEFINED;
+	dev->xold = PL_UNDEFINED;
+	dev->yold = PL_UNDEFINED;
 	break;
     }
     case PLSTATE_COLOR0:
@@ -476,7 +476,7 @@ plD_state_ps(PLStream *pls, PLINT op)
 
 /* Reinitialize current point location. */
 
-    if (dev->xold != UNDEFINED && dev->yold != UNDEFINED) {
+    if (dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED) {
 	fprintf(OF, " %d %d M \n", (int)dev->xold, (int)dev->yold);
     }
 }
@@ -553,8 +553,8 @@ fill_polygon(PLStream *pls)
 	pls->bytecnt += strlen(outbuf);
 	pls->linepos += 21;
     }
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     fprintf(OF, " F ");
 }
 

@@ -86,8 +86,8 @@ plD_init_plm(PLStream *pls)
 
     dev = (PLmDev *) pls->dev;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     dev->xmin = 0;
     dev->xmax = PIXELS_X - 1;
@@ -231,8 +231,8 @@ plD_bop_plm(PLStream *pls)
 
     dbug_enter("plD_bop_plm");
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
     fflush(file);
 
@@ -451,8 +451,8 @@ plm_fill(PLStream *pls)
     plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
     plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------*\
