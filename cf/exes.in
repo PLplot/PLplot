@@ -22,19 +22,31 @@
 
 # Utility programs.
 
+pltek.o:	pltek.c
+	$(CC) $(CC_FLAGS) $?
+
 pltek:		pltek.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_PATH) $(LDC_LIBS)
 
-plrender:	$(PLLIB) plrender.o
+plrender.o:	$(PLLIBS) plrender.c
+	$(CC) $(CC_FLAGS) $?
+
+plrender:	$(PLLIBS) plrender.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_PATH) $(LDC_LIBS)
 
-plserver:	$(PLLIB) plserver.o
+plserver.o:	$(PLLIBS) plserver.c
+	$(CC) $(CC_FLAGS) $?
+
+plserver:	$(PLLIBS) plserver.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver.o $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_PATH) $(LDC_LIBS)
 
-pltcl:		$(PLLIB) pltcl.o
+pltcl.o:	$(PLLIBS) pltcl.c
+	$(CC) $(CC_FLAGS) $?
+
+pltcl:		$(PLLIBS) pltcl.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl.o $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_PATH) $(LDC_LIBS)
 
@@ -42,83 +54,140 @@ pltcl:		$(PLLIB) pltcl.o
 # Example programs, in C.
 
 CDEMOS= x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
-	x12c x13c x14c x15c x16c x17c tutor
+	x12c x13c x14c x15c x16c x17c x18c tutor
 
 cdemos:	$(CDEMOS)
 
-x01c:	$(PLLIB) x01c.o
+x01c.o:	x01c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x01c:	$(PLLIBS) x01c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x02c:	$(PLLIB) x02c.o
+x02c.o:	x02c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x02c:	$(PLLIBS) x02c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x03c:	$(PLLIB) x03c.o
+x03c.o:	x03c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x03c:	$(PLLIBS) x03c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x04c:	$(PLLIB) x04c.o
+x04c.o:	x04c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x04c:	$(PLLIBS) x04c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x05c:	$(PLLIB) x05c.o
+x05c.o:	x05c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x05c:	$(PLLIBS) x05c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x06c:	$(PLLIB) x06c.o
+x06c.o:	x06c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x06c:	$(PLLIBS) x06c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x07c:	$(PLLIB) x07c.o
+x07c.o:	x07c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x07c:	$(PLLIBS) x07c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x08c:	$(PLLIB) x08c.o
+x08c.o:	x08c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x08c:	$(PLLIBS) x08c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x09c:	$(PLLIB) x09c.o
+x09c.o:	x09c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x09c:	$(PLLIBS) x09c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x10c:	$(PLLIB) x10c.o
+x10c.o:	x10c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x10c:	$(PLLIBS) x10c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x11c:	$(PLLIB) x11c.o
+x11c.o:	x11c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x11c:	$(PLLIBS) x11c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x12c:	$(PLLIB) x12c.o
+x12c.o:	x12c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x12c:	$(PLLIBS) x12c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x13c:	$(PLLIB) x13c.o
+x13c.o:	x13c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x13c:	$(PLLIBS) x13c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x14c:	$(PLLIB) x14c.o
+x14c.o:	x14c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x14c:	$(PLLIBS) x14c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x15c:	$(PLLIB) x15c.o
+x15c.o:	x15c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x15c:	$(PLLIBS) x15c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x16c:	$(PLLIB) x16c.o
+x16c.o:	x16c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x16c:	$(PLLIBS) x16c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x17c:	$(PLLIB) x17c.o
+x17c.o:	x17c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x17c:	$(PLLIBS) x17c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-x18c:	$(PLLIB) x18c.o
+x18c.o:	x18c.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+x18c:	$(PLLIBS) x18c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-tutor:	$(PLLIB) tutor.o
+tutor.o:	tutor.c
+	$(CC) $(CC_FLAGS_DEMOS) $?
+
+tutor:	$(PLLIBS) tutor.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
@@ -130,59 +199,59 @@ FDEMOS= x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f \
 
 fdemos:	$(FDEMOS)
 
-x01f:	$(PLLIB) x01f.o
+x01f:	$(PLLIBS) x01f.o
 	$(LDF) $(LDF_FLAGS) x01f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x02f:	$(PLLIB) x02f.o
+x02f:	$(PLLIBS) x02f.o
 	$(LDF) $(LDF_FLAGS) x02f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x03f:	$(PLLIB) x03f.o
+x03f:	$(PLLIBS) x03f.o
 	$(LDF) $(LDF_FLAGS) x03f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x04f:	$(PLLIB) x04f.o
+x04f:	$(PLLIBS) x04f.o
 	$(LDF) $(LDF_FLAGS) x04f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x05f:	$(PLLIB) x05f.o
+x05f:	$(PLLIBS) x05f.o
 	$(LDF) $(LDF_FLAGS) x05f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x06f:	$(PLLIB) x06f.o
+x06f:	$(PLLIBS) x06f.o
 	$(LDF) $(LDF_FLAGS) x06f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x07f:	$(PLLIB) x07f.o
+x07f:	$(PLLIBS) x07f.o
 	$(LDF) $(LDF_FLAGS) x07f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x08f:	$(PLLIB) x08f.o
+x08f:	$(PLLIBS) x08f.o
 	$(LDF) $(LDF_FLAGS) x08f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x09f:	$(PLLIB) x09f.o
+x09f:	$(PLLIBS) x09f.o
 	$(LDF) $(LDF_FLAGS) x09f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x10f:	$(PLLIB) x10f.o
+x10f:	$(PLLIBS) x10f.o
 	$(LDF) $(LDF_FLAGS) x10f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x11f:	$(PLLIB) x11f.o
+x11f:	$(PLLIBS) x11f.o
 	$(LDF) $(LDF_FLAGS) x11f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x12f:	$(PLLIB) x12f.o
+x12f:	$(PLLIBS) x12f.o
 	$(LDF) $(LDF_FLAGS) x12f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x13f:	$(PLLIB) x13f.o
+x13f:	$(PLLIBS) x13f.o
 	$(LDF) $(LDF_FLAGS) x13f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x16f:	$(PLLIB) x16f.o
+x16f:	$(PLLIBS) x16f.o
 	$(LDF) $(LDF_FLAGS) x16f.o \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
@@ -194,11 +263,11 @@ TKDEMOS = xtk01 xtk02
 
 tkdemos: $(TKDEMOS)
 
-xtk01:  $(PLLIB) xtk01.o
+xtk01:  $(PLLIBS) xtk01.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-xtk02:  $(PLLIB) xtk02.o
+xtk02:  $(PLLIBS) xtk02.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
@@ -223,11 +292,11 @@ $(PLFNT_PATH)plxtnd5.fnt: xtndfont pdfutils.o $(FONT_OBJ)
 	-./xtndfont
 	-mv *.fnt $(PLFNT_DIR)
 
-stndfont:	$(PLLIB) stndfont.o
+stndfont:	$(PLLIBS) stndfont.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont.o $(FONT_OBJ) \
  		$(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
-xtndfont:	$(PLLIB) xtndfont.o
+xtndfont:	$(PLLIBS) xtndfont.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont.o $(FONT_OBJ) \
  		$(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
