@@ -25,15 +25,18 @@ dnl
 dnl You should have received a copy of the GNU Library General Public License
 dnl along with PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+dnl
 dnl ------------------------------------------------------------------------
 dnl It's kind of nice to have an include macro.
 dnl
-define([AC_INCLUDE],[builtin([include],$*)])dnl
+define([PL_INCLUDE],[builtin([include],$*)])dnl
+dnl
 dnl ------------------------------------------------------------------------
-dnl This quicky is good during development, e.g. AC_IGNORE([ ... ]) to
+dnl This quicky is good during development, e.g. PL_IGNORE([ ... ]) to
 dnl ignore everything inside the brackets.
 dnl
-define([AC_IGNORE],)dnl
+define([PL_IGNORE],)dnl
+dnl
 dnl ------------------------------------------------------------------------
 dnl The following macros search a list of directories for the given
 dnl include file and takes appropriate actions if found or not.
