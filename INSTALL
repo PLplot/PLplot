@@ -163,10 +163,30 @@ given in the cf/README file.
 
 ------------------------------------------------------------------------------
 
-To compile your own programs, use "plplot-config", eg:
+To compile your own programs, there are two ways possible:
 
-cc  `plplot-config --cflags` myprog.c -o myprog  `plplot-config --libs`
+1) Use "plplot-config", eg:
 
-which expands (on my system) to 
+   cc  `plplot-config --cflags` myprog.c -o myprog  `plplot-config --libs`
 
-cc -I/usr/local/include -I. -I/usr/X11R6/include  myprog.c -o myprog -L/usr/local/lib -lplplot -ltclmatrix -ltk8.3 -ltcl8.3 -L/usr/X11R6/lib -lX11 -lgd -lpng -ljpeg -lz -ldl -lm -Wl,-rpath,/usr/local/lib 
+   which expands (on my system) to 
+
+   cc -I/usr/local/include -I. -I/usr/X11R6/include  myprog.c -o myprog -L/usr/local/lib -lplplot -ltclmatrix -ltk8.3 -ltcl8.3 -L/usr/X11R6/lib -lX11 -lgd -lpng -ljpeg -lz -ldl -lm -Wl,-rpath,/usr/local/lib 
+
+2) Use the pkg-config support, eg:
+
+       cc myprog.c -o myprog `pkg-config --cflags --libs <package>`
+   
+   where <package> is either "plplot" (for single precision) or "plplotd"
+   (for double precision).  For C++, Fortran 77, and Tcl/Tk programs,
+   <package> should be respectively plplot-c++, plplot-f77, and plplot-tcl
+   (for single precision), or plplotd-c++, plplotd-f77, amd plplotd-tcl (for
+   double precision).
+   
+   For getting the PLplot configuration flags in autoconf scripts, use the
+   PKG_CHECK_MODULES macro distributed with pkg-config (usually in
+   /usr/share/aclocal/pkg.m4) like this:
+   
+       PKG_CHECK_MODULES(PLPLOT, plplotd >= 5.3)
+   
+   and the variables PLPLOT_CFLAGS and PLPLOT_LIBS will be set.
