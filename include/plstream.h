@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/12/06 07:45:23  mjl
+ * Revision 1.20  1993/12/09 20:35:58  mjl
+ * Inserted some missing function prototypes.
+ *
+ * Revision 1.19  1993/12/06  07:45:23  mjl
  * Modifications for new color model.
  *
  * Revision 1.18  1993/11/15  08:34:43  mjl
@@ -469,6 +472,8 @@ typedef struct {
 \*----------------------------------------------------------------------*/
 
 void  plgpls		(PLStream **);
+void  plCmap0_init	(PLStream *);
+void  plCmap1_init	(PLStream *);
 void  plCmaps_init	(PLStream *);
 void  plOpenFile	(PLStream *);
 void  plFamInit		(PLStream *);
