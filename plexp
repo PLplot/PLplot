@@ -45,5 +45,5 @@ tar cvf $tarfile \
 gzip ${tarfile}
 
 echo "The resulting file is:"
-ls -l plplot.tar.gz
-echo "You may now download plplot.tar.gz to the remote site."
+ls -l $tarfile.gz
+echo "You may now download $tarfile.gz to the remote site."
