@@ -1,0 +1,51 @@
+[note: I modified the driver file to reflect changes to plplot4.99d.
+I have no way of testing it, however. -mjl]
+
+Modifications for use with the Borland C compiler and BGI graphics :
+
+- a makefile for Borland's make
+
+[needs to be updated -mjl]
+
+- included the bgi-driver routines in drivers.h and plcore.h
+
+[I have modified the main sources accordingly -mjl]
+
+- include <alloc.h> in xtndfont.c
+  (if omitted xtndfont hangs my pc)
+
+[not moved to main sources since there's no alloc.h on my HP.  I'm surprised
+it isn't included by malloc.h, which is presumably being included by plplotP.h
+if MSDOS is defined by the compiler.  In any case, this file isn't really
+needed because the font files are now portable and don't need to be
+regenerated. -mjl]
+
+- moved an increment outside an expression in function pldeco (plstring.c)
+  (if this is not done the length of the string remains 0 and no
+  strings are visible.Because of a bug in Borland C ??).
+
+[I put this fix in the main sources -mjl]
+
+
+Other bgi drivers for SVGA cards can be found on SIMTEL and mirrors.
+
+To install it I started from plplot4p99.zip
+Put all files in \plplot\sys\dosbgi
+
+copy makefile \plplot\tmp
+cd \pgplot\tmp
+make links  (copies all files to \pgplot\tmp)
+make        (makes the library)
+make fonts  (make the .fnt files)
+make x01c   (make an example)
+...
+
+I would appreciate your comments.
+
+Paul Casteels   casteels@uia.ac.be
+University of Antwerp   Dpt Physics
+Belgium
+
+
+
+
