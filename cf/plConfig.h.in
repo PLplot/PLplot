@@ -1,9 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/07/19 22:26:57  mjl
- * Header file for holding miscellaneous config info, including install
- * directories, system dependencies, etc.  Included by plplotP.h.
+ * Revision 1.2  1994/07/23 04:41:08  mjl
+ * I'm going to try defining _POSIX_SOURCE here now.
  *
+# Revision 1.1  1994/07/19  22:26:57  mjl
+# Header file for holding miscellaneous config info, including install
+# directories, system dependencies, etc.  Included by plplotP.h.
+#
 */
 
 /*
@@ -29,6 +32,9 @@
 #undef LIB_DIR
 #undef BIN_DIR
 #undef TCL_DIR
+
+/* Define if on a POSIX.1 compliant system.  */
+#undef _POSIX_SOURCE
 
 /* Define if you have vfork.h.  */
 #undef HAVE_VFORK_H
