@@ -279,8 +279,8 @@ if_sunos({
 
 define({TK},)
 
-CC = gcc
-#CC = acc
+#CC = gcc
+CC = acc
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
 	    DEF_XWIN() DEF_TK()
@@ -976,7 +976,7 @@ $(PLLIB_MAIN):	GST $(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 	skshbin:join $(OBJ)         t:plobj.lib
 	skshbin:join $(DRIVERS_OBJ) t:pldrivers.lib
 	skshbin:join $(AMIGA_OBJ)   t:plamiga.lib
-	skshbin:join t:plobj.lib t:pldrivers.lib t:plamiga.lib $(PLLIB_MAIN)
+	skshbin:join t:pldrivers.lib t:plobj.lib t:plamiga.lib $(PLLIB_MAIN)
 	-delete t:plobj.lib t:pldrivers.lib t:plamiga.lib
 })
 #----------------------------------------------------------------------#
@@ -1117,10 +1117,10 @@ xwin.o:		plplotP.h plplot.h plstream.h drivers.h xwin.h xwin.c
 
 tk.o:		plserver.h plplotP.h plplot.h plstream.h \
 		drivers.h metadefs.h pdf.h plevent.h tk.c
-	$(CC) -I $(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tk.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tk.c
 
 tkshell.o:	plserver.h plplotP.h plplot.h plstream.h tkshell.c
-	$(CC) -I $(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tkshell.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tkshell.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
@@ -1134,14 +1134,14 @@ plrender:	$(PLLIB_MAIN) plrender.o
 	$(LDC) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 plserver.o:	plserver.h plplotP.h plplot.h plstream.h plserver.c
-	$(CC) -I $(TK_INCDIR) $(CFLAGS) plserver.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) plserver.c
 
 plframe.o:	plserver.h plplotP.h plplot.h plstream.h xwin.h plframe.c
-	$(CC) -I $(TK_INCDIR) $(CFLAGS) plframe.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) plframe.c
 
 plr.o:		plserver.h plplotP.h plplot.h plstream.h \
 		metadefs.h pdf.h plevent.h plr.c
-	$(CC) -I $(TK_INCDIR) $(CFLAGS) plr.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) plr.c
 
 plserver:	$(PLLIB_MAIN) $(SERVER_OBJ)
 	$(LDC) $(STARTUP) $(SERVER_OBJ) $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
@@ -1195,6 +1195,9 @@ x13c:	$(PLLIB_C) x13c.o
 
 x14c:	$(PLLIB_C) x14c.o
 	$(LDC) $(STARTUP) x14c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
+
+x15c:	$(PLLIB_C) x15c.o
+	$(LDC) $(STARTUP) x15c.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 tutor:	$(PLLIB_C) tutor.o
 	$(LDC) $(STARTUP) tutor.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
