@@ -1,6 +1,9 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
+ * Revision 1.10  2000/05/15 07:16:38  furnish
+ * Add perfunctory stub for PL_DOUBLE.
+ *
  * Revision 1.9  1996/04/30 23:10:32  furnish
  * Introduce HAVE_ITK macro.
  *
@@ -91,6 +94,9 @@
 
 /* Define if [incr Tk] is available */
 #undef HAVE_ITK
+
+/* Define if you want PLplot's float type to be double */
+#undef PL_DOUBLE
 
 /* Install directories. */
 
