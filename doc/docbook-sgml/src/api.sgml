@@ -7,9 +7,10 @@
   </para>
 
   <para>
-All API functions of the January 1999 snapshot are listed here with their
-arguments, but there are still a large number of undocumented functions as
-indicated by ???.
+All API functions of the current CVS HEAD are listed here with their
+arguments.  All functions have at least a short description, 
+but there are still a fair number of undocumented
+parameters as indicated by the string <quote>NEEDS DOCUMENTATION</quote>.
   </para>
 
   <sect1 id="pladv" renderas="sect3">
@@ -983,7 +984,7 @@ origin
 
   <sect1 id="plcol0" renderas="sect3">
     <title>
-      <function>plcol0</function>: Set color
+      <function>plcol0</function>: Set color, map 0
     </title>
 
     <para>
@@ -996,7 +997,7 @@ origin
     </para>
 
     <para>
-      Sets the color for subsequent lines.
+      Sets the color for subsequent lines. 
     </para>
 
     <variablelist>
@@ -1038,7 +1039,7 @@ origin
 
   <sect1 id="plcol1" renderas="sect3">
     <title>
-      <function>plcol1</function>: ???
+      <function>plcol1</function>: Set color, map 1
     </title> 
 
     <para>
@@ -1051,7 +1052,7 @@ origin
     </para> 
 
     <para>
-      ???
+      Set color, map 1.  Argument is a float between 0. and 1.
     </para>
 
     <variablelist>
@@ -1062,7 +1063,7 @@ origin
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1577,7 +1578,7 @@ origin
 	    world coordinates (C only).  Transformation functions are
 	    provided: <literal>xform</literal>, for simple linear mappings;
 	    <function>pltr0</function> for no mapping, and 
-	    <function>pltr1</function> and <function>pltr2</function> for ???
+	    <function>pltr1</function> and <function>pltr2</function> for NEEDS DOCUMENTATION
 	    <literal>xform</literal> is not actually compiled into the
 	    PLplot library due to the need for external data; instead you
 	    must include it as part of your program.  The function should
@@ -1680,7 +1681,8 @@ origin
 
   <sect1 id="plcpstrm" renderas="sect3">
     <title>
-      <function>plcpstrm</function>: ???
+      <function>plcpstrm</function>: Copy state parameters from the
+reference stream to the current stream
     </title> 
 
     <para>
@@ -1694,7 +1696,18 @@ origin
     </para> 
 
     <para>
-      ???
+      Copies state parameters from the reference stream to the current stream.
+      Tell driver interface to map device coordinates unless
+<literal><parameter>flags</parameter> == 1</literal>.
+    </para> 
+
+    <para>
+      This function is used for making save files of selected plots (e.g.
+      from the TK driver).  After initializing, you can get a copy of the
+      current plot to the specified device by switching to this stream and
+      issuing a &plcpstrm; and a &plreplot;, with calls to &plbop; and
+      &pleop; as appropriate.  The plot buffer must have previously been
+      enabled (done automatically by some display drivers, such as X).
     </para>
 
     <variablelist>
@@ -1705,7 +1718,7 @@ origin
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1716,7 +1729,7 @@ origin
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2147,7 +2160,8 @@ error bar.
 
   <sect1 id="plfamadv" renderas="sect3">
     <title>
-      <function>plfamadv</function>: ???
+      <function>plfamadv</function>: Advance to the next family file on the
+next new page
     </title> 
 
     <para>
@@ -2160,7 +2174,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Advance to the next family file on the next new page.
     </para>
 
   </sect1>
@@ -2233,7 +2247,7 @@ error bar.
 
   <sect1 id="plflush" renderas="sect3">
     <title>
-      <function>plflush</function>: ???
+      <function>plflush</function>: Flushes the output stream
     </title> 
 
     <para>
@@ -2246,7 +2260,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Flushes the output stream. Use sparingly, if at all.
     </para>
 
   </sect1>
@@ -2358,7 +2372,8 @@ error bar.
 
   <sect1 id="plgchr" renderas="sect3">
     <title>
-      <function>plgchr</function>: ???
+      <function>plgchr</function>: Get character default height and current
+(scaled) height
     </title> 
 
     <para>
@@ -2372,7 +2387,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Get character default height and current (scaled) height.
     </para>
 
     <variablelist>
@@ -2383,7 +2398,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2394,7 +2409,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2404,7 +2419,8 @@ error bar.
 
   <sect1 id="plgcol0" renderas="sect3">
     <title>
-      <function>plgcol0</function>: ???
+      <function>plgcol0</function>: Returns 8 bit RGB values for given color
+from color map 0
     </title> 
 
     <para>
@@ -2420,7 +2436,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Returns 8 bit RGB values for given color from color map 0.  Values are
+negative if an invalid color id is given.
     </para>
 
     <variablelist>
@@ -2431,7 +2448,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2442,7 +2459,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2453,7 +2470,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2464,7 +2481,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2474,7 +2491,8 @@ error bar.
 
   <sect1 id="plgcolbg" renderas="sect3">
     <title>
-      <function>plgcolbg</function>: ???
+      <function>plgcolbg</function>:  Returns the background color
+(cmap0[0]) by 8 bit RGB value
     </title> 
 
     <para>
@@ -2489,7 +2507,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+       Returns the background color (cmap0[0]) by 8 bit RGB value.
     </para>
 
     <variablelist>
@@ -2500,7 +2518,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2511,7 +2529,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2522,7 +2540,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2532,7 +2550,7 @@ error bar.
 
   <sect1 id="plgdev" renderas="sect3">
     <title>
-      <function>plgdev</function>: ???
+      <function>plgdev</function>: Get the current device (keyword) name
     </title> 
 
     <para>
@@ -2545,7 +2563,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Get the current device (keyword) name.  Note: you MUST have allocated
+space for this (80 characters is safe).
     </para>
 
     <variablelist>
@@ -2556,7 +2575,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2566,7 +2585,7 @@ error bar.
 
   <sect1 id="plgdidev" renderas="sect3">
     <title>
-      <function>plgdidev</function>: ???
+      <function>plgdidev</function>: Retrieve current window into device space
     </title> 
 
     <para>
@@ -2582,7 +2601,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Retrieve current window into device space.
     </para>
 
     <variablelist>
@@ -2593,7 +2612,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2604,7 +2623,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2615,7 +2634,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2626,7 +2645,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2636,7 +2655,7 @@ error bar.
 
   <sect1 id="plgdiori" renderas="sect3">
     <title>
-      <function>plgdiori</function>: ???
+      <function>plgdiori</function>: Get plot orientation
     </title> 
 
     <para>
@@ -2649,7 +2668,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Get plot orientation.
     </para>
 
     <variablelist>
@@ -2660,7 +2679,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2670,7 +2689,7 @@ error bar.
 
   <sect1 id="plgdiplt" renderas="sect3">
     <title>
-      <function>plgdiplt</function>: ???
+      <function>plgdiplt</function>: Retrieve current window into plot space
     </title> 
 
     <para>
@@ -2686,7 +2705,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Retrieve current window into plot space.
     </para>
 
     <variablelist>
@@ -2697,7 +2716,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2708,7 +2727,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2719,7 +2738,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2730,7 +2749,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2869,7 +2888,7 @@ error bar.
 
   <sect1 id="plglevel" renderas="sect3">
     <title>
-      <function>plglevel</function>: ???
+      <function>plglevel</function>: Get the (current) run level
     </title> 
 
     <para>
@@ -2882,8 +2901,31 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Get the (current) run level. Valid settings are:
+    <itemizedlist>
+    <listitem>
+    <para>
+    0,  uninitialized
     </para>
+    </listitem>
+    <listitem>
+    <para>
+    1,  initialized
+    </para>
+    </listitem>
+    <listitem>
+    <para>
+    2,  viewport defined
+    </para>
+    </listitem> 
+    <listitem>
+    <para>
+    3,  world coords defined
+    </para>
+    </listitem> 
+    </itemizedlist>
+	     
+</para>
 
     <variablelist>
       <varlistentry>
@@ -2893,7 +2935,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3134,7 +3176,7 @@ error bar.
 
   <sect1 id="plgver" renderas="sect3">
     <title>
-      <function>plgver</function>: ???
+      <function>plgver</function>: Get the current library version number
     </title> 
 
     <para>
@@ -3147,7 +3189,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Get the current library version number.  Note: you <emphasis>must</emphasis>
+      have allocated space for this (80 characters is safe).
     </para>
 
     <variablelist>
@@ -3158,7 +3201,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3377,7 +3420,7 @@ error bar.
 
   <sect1 id="plhls" renderas="sect3">
     <title>
-      <function>plhls</function>: ???
+      <function>plhls</function>: Set current color by HLS
     </title> 
 
     <para>
@@ -3392,7 +3435,9 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set current color by hue, lightness, and saturation.
+      Convert hls color coordinates to rgb, then call plrgb.
+      Do <emphasis>not</emphasis> use this.  Only retained for backward compatibility
     </para>
 
     <variablelist>
@@ -3403,7 +3448,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3414,7 +3459,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3425,7 +3470,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3658,7 +3703,7 @@ error bar.
 
   <sect1 id="plline3" renderas="sect3">
     <title>
-      <function>plline3</function>: ???
+      <function>plline3</function>: Draw a line in 3 space
     </title> 
 
     <para>
@@ -3674,7 +3719,9 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Draws a line in 3 space.  You must first set up the viewport, the
+      2d viewing window (in world coordinates), and the 3d normalized
+      coordinate box.  See <filename>x18c.c</filename> for more info.
     </para>
 
     <variablelist>
@@ -3685,7 +3732,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3696,7 +3743,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3707,7 +3754,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3718,7 +3765,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3944,7 +3991,8 @@ error bar.
 
   <sect1 id="plmkstrm" renderas="sect3">
     <title>
-      <function>plmkstrm</function>: ???
+      <function>plmkstrm</function>: Creates a new stream and makes it the
+default
     </title> 
 
     <para>
@@ -3957,7 +4005,13 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Creates a new stream and makes it the default.  Differs from using
+      &plsstrm;, in that a free stream number is found, and returned.
+      Unfortunately, I <emphasis>have</emphasis> to start at stream 1 and work upward, since
+      stream 0 is preallocated.  One of the <emphasis>big</emphasis> flaws in the PLplot API is
+      that no initial, library-opening call is required.  So stream 0 must
+      be preallocated, and there is no simple way of determining whether it
+      is already in use or not.
     </para>
 
     <variablelist>
@@ -3968,7 +4022,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4481,7 +4535,7 @@ error bar.
 
   <sect1 id="plpoin3" renderas="sect3">
     <title>
-      <function>plpoin3</function>: ???
+      <function>plpoin3</function>:  Draw a series of points in 3 space
     </title> 
 
     <para>
@@ -4498,7 +4552,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+       Draws a series of points in 3 space.  Setup similar to &plline3;.
     </para>
 
     <variablelist>
@@ -4509,7 +4563,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4520,7 +4574,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4531,7 +4585,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4542,7 +4596,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4553,7 +4607,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4563,7 +4617,7 @@ error bar.
 
   <sect1 id="plpoly3" renderas="sect3">
     <title>
-      <function>plpoly3</function>: ???
+      <function>plpoly3</function>: Draw a polygon in 3 space
     </title> 
 
     <para>
@@ -4580,7 +4634,36 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Draws a polygon in 3 space.  This differs from &plline3; in that this
+      attempts to determine if the polygon is viewable.  If the back of
+      polygon is facing the viewer, then it isn't drawn.  If this isn't what
+      you want, then use &plline3; instead.
+    </para>
+
+    <para>
+      <literal><parameter>n</parameter></literal> specifies the number of
+      points.  They are assumed to be in a plane, and the directionality of
+      the plane is determined from the first three points.  Additional
+      points do not <emphasis>have</emphasis> to lie on the plane defined
+      by the first three, but if they do not, then the determination of
+      visibility obviously can't be 100% accurate... So if you're 3 space
+      polygons are too far from planar, consider breaking them into smaller
+      polygons.  <quote>3 points define a plane</quote> :-).
+    </para>
+
+    <para>
+      The directionality of the polygon is determined by assuming the points
+      are laid out in clockwise order.  If you are drawing them in
+      counter clockwise order, make <literal><parameter>n</parameter></literal>
+      the negative of the number of points.
+    </para>
+
+    <para>
+      <emphasis>Bugs</emphasis>:  If one of the first two segments is of
+      zero length, or if they are colinear, the calculation of visibility
+      has a 50/50 chance of being correct.  Avoid such situations :-).  See
+      <filename>x18c.c</filename> for an example of this problem.  
+      (Search for <quote>20.1</quote>).
     </para>
 
     <variablelist>
@@ -4591,7 +4674,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4602,7 +4685,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4613,7 +4696,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4624,7 +4707,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4635,7 +4718,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4850,7 +4933,8 @@ error bar.
 
   <sect1 id="plreplot" renderas="sect3">
     <title>
-      <function>plreplot</function>: ???
+      <function>plreplot</function>: Replays contents of plot buffer to
+current device/file
     </title> 
 
     <para>
@@ -4863,14 +4947,14 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Replays contents of plot buffer to current device/file.
     </para>
 
   </sect1>
 
   <sect1 id="plrgb" renderas="sect3">
     <title>
-      <function>plrgb</function>: ???
+      <function>plrgb</function>: Set line color by red, green
     </title> 
 
     <para>
@@ -4885,7 +4969,9 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set line color by red, green, blue from  0. to 1.  Do
+<emphasis>not</emphasis> use this.
+Only retained for backward compatibility
     </para>
 
     <variablelist>
@@ -4896,7 +4982,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4907,7 +4993,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4918,7 +5004,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4928,7 +5014,7 @@ error bar.
 
   <sect1 id="plrgb1" renderas="sect3">
     <title>
-      <function>plrgb1</function>: ???
+      <function>plrgb1</function>: Set line color by 8 bit RGB values
     </title> 
 
     <para>
@@ -4943,7 +5029,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set line color by 8 bit RGB values.  Do <emphasis>not</emphasis> use this.  Only retained
+for backward compatibility.
     </para>
 
     <variablelist>
@@ -4954,7 +5041,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4965,7 +5052,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4976,7 +5063,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5036,7 +5123,8 @@ error bar.
 
   <sect1 id="plscmap0" renderas="sect3">
     <title>
-      <function>plscmap0</function>: ???
+      <function>plscmap0</function>: Set color map 0 colors by 8 bit RGB
+values
     </title> 
 
     <para>
@@ -5052,7 +5140,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set color map 0 colors by 8 bit RGB values.  This sets the entire color
+       * map -- only as many colors as specified will be allocated.
     </para>
 
     <variablelist>
@@ -5063,7 +5152,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5074,7 +5163,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5085,7 +5174,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5096,7 +5185,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5106,7 +5195,7 @@ error bar.
 
   <sect1 id="plscmap0n" renderas="sect3">
     <title>
-      <function>plscmap0n</function>: ???
+      <function>plscmap0n</function>: Set number of colors in cmap 0
     </title> 
 
     <para>
@@ -5119,7 +5208,13 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set number of colors in cmap 0, (re-)allocate cmap 0, and fill with
+      default values for those colors not previously allocated (and less
+      than index 15, after that you just get grey).
+    </para> 
+
+    <para>
+      The driver is not guaranteed to support all of these.
     </para>
 
     <variablelist>
@@ -5130,7 +5225,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5140,7 +5235,8 @@ error bar.
 
   <sect1 id="plscmap1" renderas="sect3">
     <title>
-      <function>plscmap1</function>: ???
+      <function>plscmap1</function>: Set color map 1 colors by 8 bit RGB
+values
     </title> 
 
     <para>
@@ -5156,7 +5252,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set color map 1 colors by 8 bit RGB values.  This also sets the number
+of colors.
     </para>
 
     <variablelist>
@@ -5167,7 +5264,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5178,7 +5275,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5189,7 +5286,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5200,7 +5297,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5210,7 +5307,8 @@ error bar.
 
   <sect1 id="plscmap1l" renderas="sect3">
     <title>
-      <function>plscmap1l</function>: ???
+      <function>plscmap1l</function>: Set color map 1 colors using a
+piece-wise linear relationship
     </title> 
 
     <para>
@@ -5229,7 +5327,53 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set color map 1 colors using a piece-wise linear relationship between
+      position in the color map (from 0 to 1) and position in HLS or RGB
+      color space.  May be called at any time.
+    </para>
+    <para>
+      The idea here is to specify a number of control points that specify
+      the mapping between HLS (or RGB or CMY) and palette 1 value.  Between
+      these points, linear interpolation is used.  By mapping position in
+      the color map to function value, this gives a smooth variation of
+      color with intensity.  Any number of control points may be specified,
+      located at arbitrary positions (intensities), although typically 2 - 4
+      are enough. Another way of stating this is that we are traversing a
+      given number of lines through HLS (or RGB) space as we move through
+      cmap 1 entries.  The control points at the minimum and maximum
+      intensity (0 and 1) must always be specified.  By adding more control
+      points you can get more variation.  One good technique for plotting
+      functions that vary about some expected average is to use an
+      additional 2 control points in the center (intensity ~= 0.5) that are
+      the same color as the background (typically white for paper output,
+      black for crt), and same hue as the boundary control points.  This
+      allows the highs and lows to be very easily distinguished.
+    </para>
+    <para>
+      Each control point must specify the position in cmap 1 as well as
+      three coordinates in HLS or RGB space.  The first point
+      <emphasis>must</emphasis> correspond to position = 0, and the last to 
+      position = 1.
+    </para>
+    <para>
+      The hue is interpolated around the "front" of the color wheel
+      (red&lt;->green&lt;->blue&lt;->red) unless the "rev" flag is set, in which case
+      interpolation proceeds around the back (reverse) side.  Specifying
+      rev=NULL is equivalent to setting rev[]=0 for every control point.
+    </para>
+    <para>
+<table frame=none><title> Bounds on coordinates</title>
+<tgroup cols=4 align=center colsep=0 rowsep=0>
+<tbody>
+<row><entry>RGB</entry><entry>R</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
+<row><entry>RGB</entry><entry>G</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
+<row><entry>RGB</entry><entry>B</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
+<row><entry>HLS</entry><entry>hue</entry><entry>[0, 360]</entry><entry>degrees</entry> </row>
+<row><entry>HLS</entry><entry>lightness</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
+<row><entry>HLS</entry><entry>saturation</entry><entry>[0, 1]</entry><entry>magnitude</entry> </row>
+</tbody>
+</tgroup>
+</table>
     </para>
 
     <variablelist>
@@ -5240,7 +5384,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            0: HLS, 1: RGB
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5251,7 +5395,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            number of control points
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5262,7 +5406,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            position for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5273,7 +5417,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            first coordinate for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5284,7 +5428,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            second coordinate for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5295,7 +5439,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            third coordinate for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5306,7 +5450,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            reverse flag for each control point
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5316,7 +5460,7 @@ error bar.
 
   <sect1 id="plscmap1n" renderas="sect3">
     <title>
-      <function>plscmap1n</function>: ???
+      <function>plscmap1n</function>: Set number of colors in cmap 1
     </title> 
 
     <para>
@@ -5329,7 +5473,13 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set number of colors in cmap 1, (re-)allocate cmap 1, and set default
+      values if this is the first allocation.
+    </para>
+
+    <para>
+      Note that the driver is allowed to disregard this number. In
+      particular, most use fewer than we use internally.
     </para>
 
     <variablelist>
@@ -5340,7 +5490,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5350,7 +5500,8 @@ error bar.
 
   <sect1 id="plscol0" renderas="sect3">
     <title>
-      <function>plscol0</function>: ???
+      <function>plscol0</function>:  Set a given color from color map 0 by 8
+bit RGB value
     </title> 
 
     <para>
@@ -5366,7 +5517,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+       Set a given color from color map 0 by 8 bit RGB value.  Does not
+result in any additional cells to be allocated.
     </para>
 
     <variablelist>
@@ -5377,7 +5529,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5388,7 +5540,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5399,7 +5551,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5410,7 +5562,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5420,7 +5572,8 @@ error bar.
 
   <sect1 id="plscolbg" renderas="sect3">
     <title>
-      <function>plscolbg</function>: ???
+      <function>plscolbg</function>: Set the background color (cmap0[0]) by
+8 bit RGB value
     </title> 
 
     <para>
@@ -5435,7 +5588,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set the background color (cmap0[0]) by 8 bit RGB value
     </para>
 
     <variablelist>
@@ -5446,7 +5599,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5457,7 +5610,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5468,7 +5621,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5478,7 +5631,7 @@ error bar.
 
   <sect1 id="plscolor" renderas="sect3">
     <title>
-      <function>plscolor</function>: ???
+      <function>plscolor</function>: Used to globally turn color output on/off
     </title> 
 
     <para>
@@ -5491,7 +5644,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Used to globally turn color output on/off.
     </para>
 
     <variablelist>
@@ -5502,7 +5655,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5512,7 +5665,7 @@ error bar.
 
   <sect1 id="plsdev" renderas="sect3">
     <title>
-      <function>plsdev</function>: ???
+      <function>plsdev</function>: Set the device (keyword) name
     </title> 
 
     <para>
@@ -5525,7 +5678,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set the device (keyword) name.
     </para>
 
     <variablelist>
@@ -5536,7 +5689,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5546,7 +5699,8 @@ error bar.
 
   <sect1 id="plsdidev" renderas="sect3">
     <title>
-      <function>plsdidev</function>: ???
+      <function>plsdidev</function>: Set window into device space using
+margin, aspect ratio, and justification.
     </title> 
 
     <para>
@@ -5562,7 +5716,11 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set window into device space using margin, aspect ratio, and
+      justification.  If you want to just use the previous value for any of
+      these, just pass in the magic value PL_NOTSET. It is unlikely that one
+      should ever need to change the aspect ratio but it's in there for
+      completeness.
     </para>
 
     <variablelist>
@@ -5573,7 +5731,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5584,7 +5742,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5595,7 +5753,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5606,7 +5764,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5616,7 +5774,8 @@ error bar.
 
   <sect1 id="plsdimap" renderas="sect3">
     <title>
-      <function>plsdimap</function>: ???
+      <function>plsdimap</function>: Set up transformation from metafile
+coordinates
     </title> 
 
     <para>
@@ -5634,7 +5793,10 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set up transformation from metafile coordinates.  The size of the plot
+      is scaled so as to preserve aspect ratio.  This isn't intended to be a
+      general-purpose facility just yet (not sure why the user would need
+      it, for one).
     </para>
 
     <variablelist>
@@ -5645,7 +5807,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5656,7 +5818,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5667,7 +5829,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5678,7 +5840,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5689,7 +5851,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5700,7 +5862,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5710,7 +5872,8 @@ error bar.
 
   <sect1 id="plsdiori" renderas="sect3">
     <title>
-      <function>plsdiori</function>: ???
+      <function>plsdiori</function>: Set plot orientation, specifying
+rotation in units of pi/2
     </title> 
 
     <para>
@@ -5723,7 +5886,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set plot orientation, specifying rotation in units of pi/2.
     </para>
 
     <variablelist>
@@ -5734,7 +5897,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5744,7 +5907,7 @@ error bar.
 
   <sect1 id="plsdiplt" renderas="sect3">
     <title>
-      <function>plsdiplt</function>: ???
+      <function>plsdiplt</function>: Set window into plot space
     </title> 
 
     <para>
@@ -5760,7 +5923,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+    Set window into plot space.
     </para>
 
     <variablelist>
@@ -5771,7 +5934,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5782,7 +5945,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5793,7 +5956,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5804,7 +5967,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5814,7 +5977,8 @@ error bar.
 
   <sect1 id="plsdiplz" renderas="sect3">
     <title>
-      <function>plsdiplz</function>: ???
+      <function>plsdiplz</function>: Set window into plot space
+incrementally (zoom)
     </title> 
 
     <para>
@@ -5830,7 +5994,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set window into plot space incrementally (zoom).
     </para>
 
     <variablelist>
@@ -5841,7 +6005,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5852,7 +6016,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5863,7 +6027,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5874,7 +6038,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5884,7 +6048,7 @@ error bar.
 
   <sect1 id="plsesc" renderas="sect3">
     <title>
-      <function>plsesc</function>: ???
+      <function>plsesc</function>: Set the escape character for text strings.
     </title> 
 
     <para>
@@ -5897,7 +6061,59 @@ error bar.
     </para> 
 
     <para>
-      ???
+    Set the escape character for text strings.  From C you can pass as a
+    character, from Fortran it needs to be the decimal ASCII value.  Only
+    selected characters are allowed to prevent the user from shooting
+    himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
+    of backslash as a character escape).  Here are the allowed escape
+characters and their corresponding decimal ASCII values:
+<itemizedlist>
+<listitem>
+<para>
+  <quote>!</quote>, ASCII 33
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>#</quote>, ASCII 35
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>$</quote>, ASCII 36
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>%</quote>, ASCII 37
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>&</quote>, ASCII 38
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>*</quote>, ASCII 42
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>@</quote>, ASCII 64
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>^</quote>, ASCII 94
+</para>
+</listitem>
+<listitem>
+<para>
+  <quote>~</quote>, ASCII 126
+</para>
+</listitem>
+</itemizedlist>
     </para>
 
     <variablelist>
@@ -5908,7 +6124,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6054,7 +6270,7 @@ error bar.
 
   <sect1 id="plshade" renderas="sect3">
     <title>
-      <function>plshade</function>: ???
+      <function>plshade</function>: Shade region
     </title> 
 
     <para>
@@ -6088,7 +6304,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Shade region.  Only differs from &plshade1; by the type of the first
+argument.  NEEDS DOCUMENTATION
     </para>
 
     <variablelist>
@@ -6099,7 +6316,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6110,7 +6327,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6121,7 +6338,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6132,7 +6349,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6143,7 +6360,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6154,7 +6371,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6165,7 +6382,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6176,7 +6393,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6187,7 +6404,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6198,7 +6415,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6209,7 +6426,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6220,7 +6437,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6231,7 +6448,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6242,7 +6459,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6253,7 +6470,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6264,7 +6481,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6275,7 +6492,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6286,7 +6503,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6297,7 +6514,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6309,7 +6526,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6320,7 +6537,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6330,7 +6547,7 @@ error bar.
 
   <sect1 id="plshade1" renderas="sect3">
     <title>
-      <function>plshade1</function>: ???
+      <function>plshade1</function>: Shade region
     </title> 
 
     <para>
@@ -6363,7 +6580,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Shade region.  Only differs from &plshade; by the type of the first
+      argument.  NEEDS DOCUMENTATION
     </para>
 
     <variablelist>
@@ -6374,7 +6592,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6385,7 +6603,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6396,7 +6614,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6407,7 +6625,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6418,7 +6636,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6429,7 +6647,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6440,7 +6658,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6451,7 +6669,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6462,7 +6680,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6473,7 +6691,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6484,7 +6702,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6495,7 +6713,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6506,7 +6724,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6517,7 +6735,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6528,7 +6746,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6539,7 +6757,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6550,7 +6768,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6561,7 +6779,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6572,7 +6790,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6584,7 +6802,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6595,7 +6813,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6842,7 +7060,7 @@ error bar.
 
   <sect1 id="plspause" renderas="sect3">
     <title>
-      <function>plspause</function>: ???
+      <function>plspause</function>: Set the pause (on end-of-page) status
     </title> 
 
     <para>
@@ -6855,7 +7073,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set the pause (on end-of-page) status.
     </para>
 
     <variablelist>
@@ -6866,7 +7084,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6913,7 +7131,7 @@ error bar.
 
   <sect1 id="plssub" renderas="sect3">
     <title>
-      <function>plssub</function>: ???
+      <function>plssub</function>: Set the number of subwindows in x and y
     </title> 
 
     <para>
@@ -6927,7 +7145,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Set the number of subwindows in x and y.
     </para>
 
     <variablelist>
@@ -6938,7 +7156,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6949,7 +7167,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7137,7 +7355,7 @@ error bar.
 
   <sect1 id="plstripa" renderas="sect3">
     <title>
-      <function>plstripa</function>: ???
+      <function>plstripa</function>: Add a point to a stripchart
     </title> 
 
     <para>
@@ -7153,7 +7371,8 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Add a point to a stripchart.  Allocates memory and rescales as
+necessary.
     </para>
 
     <variablelist>
@@ -7164,7 +7383,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7175,7 +7394,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7186,7 +7405,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7197,7 +7416,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7207,7 +7426,7 @@ error bar.
 
   <sect1 id="plstripc" renderas="sect3">
     <title>
-      <function>plstripc</function>: ???
+      <function>plstripc</function>: Create 1d stripchart
     </title> 
 
     <para>
@@ -7239,7 +7458,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Create 1d stripchart.
     </para>
 
     <variablelist>
@@ -7250,7 +7469,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7261,7 +7480,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7272,7 +7491,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7283,7 +7502,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7294,7 +7513,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7305,7 +7524,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7316,7 +7535,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7327,7 +7546,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7338,7 +7557,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7349,7 +7568,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7360,7 +7579,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7371,7 +7590,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7382,7 +7601,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7393,7 +7612,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7404,7 +7623,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7415,7 +7634,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7426,7 +7645,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7437,7 +7656,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7448,7 +7667,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7459,7 +7678,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7469,7 +7688,8 @@ error bar.
 
   <sect1 id="plstripd" renderas="sect3">
     <title>
-      <function>plstripd</function>: ???
+      <function>plstripd</function>: Deletes and releases memory used by a
+stripchart
     </title> 
 
     <para>
@@ -7482,7 +7702,7 @@ error bar.
     </para> 
 
     <para>
-      ???
+      Deletes and releases memory used by a stripchart.
     </para>
 
     <variablelist>
@@ -7493,7 +7713,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-            ???
+            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
