@@ -5,7 +5,7 @@
 # IFS, University of Texas at Austin
 # 19-Jul-1994
 #
-# PLplot generic program file dependencies and targets.
+# PLplot program file dependencies and targets.
 # 
 # Targets supported here include: 
 #
@@ -45,6 +45,20 @@ pltcl$E:	$(PLLIBS) pltcl$O
 plserver$E:	$(PLLIBS) plserver$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS) $(RPATH)
+
+# -----------------------------------------------------------------------------
+# note this only builds something that can be used if PYTHONPATH is set 
+# to tmp.  Also RPATH puts current directory first.  Therefore only
+# really useful for temporary tests in tmp until it is decided to
+# do the install.
+plmodule$(SO): $(PLLIBS) python_dynamic/plmodule.c python_dynamic/plmodule2.c
+	@echo " "
+	@echo "Building Python module."
+	@echo " "
+	@echo '*shared*' > python_dynamic/Setup.in
+	echo 'pl plmodule.c plmodule2.c -I. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -L.. $(PLLIB_LDC) $(LDC_LIBS) $(RPATH)' >> python_dynamic/Setup.in
+	cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
+	$(MV) $(PYTHON_EXE) ..
 
 # -----------------------------------------------------------------------------
 # Font files.

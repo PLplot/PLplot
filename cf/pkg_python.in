@@ -38,21 +38,8 @@ PYTHON_DEMOS	= README pytkdemo *.py
 
 INSTALL_PYTHON	= install_python
 
-# note this only builds something that can be used if PYTHONPATH is set 
-# to tmp.  Also RPATH puts current directory first.  Therefore only
-# really useful for temporary tests in tmp until it is decided to
-# do the install.
-$(PYTHON_EXE): python_dynamic/plmodule.c python_dynamic/plmodule2.c
-	@echo " "
-	@echo "Building Python module."
-	@echo " "
-	echo '*shared*' > python_dynamic/Setup.in
-	echo 'pl plmodule.c plmodule2.c -I. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -L.. $(PLLIB_LDC) $(LDC_LIBS) $(RPATH)' >> python_dynamic/Setup.in
-	cd python_dynamic ; make -f Makefile.pre.in boot ; make ; \
-	$(MV) $(PYTHON_EXE) ..
-
 install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
-	@cd python_dynamic ; make distclean
+	@cd python_dynamic ; make -s distclean
 	@echo '*shared*' > python_dynamic/Setup.in
 	@echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
 	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
