@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1994/10/10 19:45:02  furnish
+# Revision 1.3  1995/06/09 22:49:52  mjl
+# Switched from plenv to plvpor/plwind/plbox in order to avoid overwriting
+# tick marks by judicious placement of the plbox call.
+#
+# Revision 1.2  1994/10/10  19:45:02  furnish
 # Imlemented plshade from Tcl.
 #
 # Revision 1.1  1994/10/10  17:23:50  furnish
@@ -65,9 +69,10 @@ proc contour {} {
 
     global x
 
-    .plw plcol 1
-#    .plw plenv 0 1 0 1 0 0
-    .plw plenv 1 64 1 64 0 0
+    .plw pladv
+    .plw plvpor 0.1 0.9 0.1 0.9
+    .plw plwind 1. 64. 1. 64.
+
     .plw plcol 6
     .plw pllab "(x)" "(y)" "#frPLplot Example Tk04"
 
@@ -80,20 +85,24 @@ proc contour {} {
     set max [x max]
     set min [x min]
 
-    #puts "max = $max, min = $min"
-
     for {set i 0} {$i < 10} {incr i} {
 	clev $i = [expr $min + ($max-$min)*($i+.5)/10 ]
     }
 
     .plw plcont x clev
+
+    .plw plcol 1
+    .plw plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
 }
 
 proc shade {} {
     
     global x
-    .plw plcol 1
-    .plw plenv 0 1 0 1 0 0
+
+    .plw pladv
+    .plw plvpor 0.1 0.9 0.1 0.9
+    .plw plwind 0. 1. 0. 1.
+
     .plw plcol 6
     .plw pllab "(x)" "(y)" "Cool shade plot example from Tcl"
 
@@ -112,6 +121,9 @@ proc shade {} {
 
 	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max $sh_col
     }
+
+    .plw plcol 1
+    .plw plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
 }
 
 ###############################################################################
