@@ -440,9 +440,11 @@ rdbuf_state(PLStream *pls)
 	    fread(&b, sizeof(U_CHAR), 1, pls->plbufFile);
 	}
 	else {
-	    if ((int) icol0 > 15) {
-		plwarn("rdbuf_state: Color map 0 entry hosed");
-		icol0 = 1;
+	    if ((int) icol0 < 0 || (int) icol0 >= pls->ncol0) {
+	      char buffer[256];
+	      sprintf(buffer, "rdbuf_state: Invalid color map entry: %d", (int) icol0);
+	      plabort(buffer);
+	      return;
 	    }
 	    r = pls->cmap0[icol0].r;
 	    g = pls->cmap0[icol0].g;
