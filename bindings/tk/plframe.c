@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/11/19 07:55:42  mjl
+ * Revision 1.17  1993/12/06 07:43:09  mjl
+ * Fixed bogus tmpnam call.
+ *
+ * Revision 1.16  1993/11/19  07:55:42  mjl
  * Added missing CVS id and log fields.
  *
  */
@@ -1346,11 +1349,11 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* Open file for writes */
 
-    sfnam = (char *) tmpnam("pltk");
+    sfnam = (char *) tmpnam(NULL);
 
     if ((sfile = fopen(sfnam, "wb+")) == NULL) {
 	Tcl_AppendResult(interp, 
-			 "Error -- cannot plot file for writing",
+			 "Error -- cannot open plot file for writing",
 			 (char *) NULL);
 	plend1();
 	return TCL_ERROR;

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1993/11/19 07:31:36  mjl
+ * Revision 1.18  1993/12/06 07:43:11  mjl
+ * Fixed bogus tmpnam call.
+ *
+ * Revision 1.17  1993/11/19  07:31:36  mjl
  * Updated to new call syntax for tk_toplevel().
  *
  * Revision 1.16  1993/11/15  08:31:16  mjl
@@ -983,7 +986,7 @@ link_init(PLStream *pls)
 /* Create the fifo for data transfer to the plframe widget */
 
     dev->filetype = "fifo";
-    dev->filename = (char *) tmpnam("pltk");
+    dev->filename = (char *) tmpnam(NULL);
 
     if (mkfifo(dev->filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
 	abort_session(pls, "mkfifo error");
