@@ -1,15 +1,19 @@
+/* $Id$
+ * $Log$
+ * Revision 1.3  1994/07/20 06:06:12  mjl
+ * Minor changes to make it easier to play with the altitude/azimuth
+ * settings.  Changed to the new API calls for the 3d functions.
+ *
+ * Revision 1.2  1994/07/19  22:14:05  furnish
+ * Added new plots for showing hidden surface removal using pl3poly().
+ *
+ * Revision 1.1  1994/07/15  20:38:09  furnish
+ * Example program to show off 3-d line and point plotting.
+*/
+
 /*	x18c.c
 
 	3-d line and point plot demo.  Adapted from x08c.c.
-
-  $Id$
-  $Log$
-  Revision 1.2  1994/07/19 22:14:05  furnish
-  Added new plots for showing hidden surface removal using pl3poly().
-
- * Revision 1.1  1994/07/15  20:38:09  furnish
- * Example program to show off 3-d line and point plotting.
- *
 */
 
 #include <plplot.h>
@@ -18,18 +22,10 @@ static int opt[] =
 { 1, 0, 1, 0 };
 
 static PLFLT alt[] =
-{60.0, 20.0, 60.0, 60.0};
+{20.0, 35.0, 50.0, 65.0};
 
 static PLFLT az[] =
-{30.0, 60.0, 120.0, 160.0};
-
-static char *title[4] =
-{
-    "#frPLplot Example 18 - Alt=60, Az=30, Opt=1",
-    "#frPLplot Example 18 - Alt=20, Az=60, Opt=2",
-    "#frPLplot Example 18 - Alt=60, Az=120, Opt=3",
-    "#frPLplot Example 18 - Alt=60, Az=160, Opt=3"
-};
+{30.0, 40.0, 50.0, 60.0};
 
 void test_poly();
 
@@ -40,7 +36,7 @@ void test_poly();
  * viewing options in each plot.
 \*----------------------------------------------------------------------*/
 
-#define PTS 200
+#define NPTS 500
 #define PI 3.1415927
 
 int
@@ -49,6 +45,7 @@ main(int argc, char *argv[])
     int i, j, k;
     PLFLT *x, *y, *z;
     PLFLT r;
+    char title[80];
 
 /* Parse and process command line arguments */
 
@@ -61,22 +58,22 @@ main(int argc, char *argv[])
     for( k=0; k < 4; k++ )
 	test_poly(k);
 
-    x = (PLFLT *) malloc(PTS * sizeof(PLFLT));
-    y = (PLFLT *) malloc(PTS * sizeof(PLFLT));
-    z = (PLFLT *) malloc(PTS * sizeof(PLFLT));
+    x = (PLFLT *) malloc(NPTS * sizeof(PLFLT));
+    y = (PLFLT *) malloc(NPTS * sizeof(PLFLT));
+    z = (PLFLT *) malloc(NPTS * sizeof(PLFLT));
 
 /* From the mind of a sick and twisted physicist... */
 
-    for (i = 0; i < PTS; i++) {
-	z[i] = -1. + 2. * i / PTS;
+    for (i = 0; i < NPTS; i++) {
+	z[i] = -1. + 2. * i / NPTS;
 
 /* Pick one ... */
 
-/*	r    = 1. - ( (float) i / (float) PTS ); */
+/*	r    = 1. - ( (float) i / (float) NPTS ); */
 	r    = z[i];
 
-	x[i] = r * cos( 2. * PI * 6. * i / PTS );
-	y[i] = r * sin( 2. * PI * 6. * i / PTS );
+	x[i] = r * cos( 2. * PI * 6. * i / NPTS );
+	y[i] = r * sin( 2. * PI * 6. * i / NPTS );
     }
 
     for (k = 0; k < 4; k++) {
@@ -92,12 +89,14 @@ main(int argc, char *argv[])
 	plcol(2);
 
 	if (opt[k])
-	    pl3line( x, y, z, PTS );
+	    plline3( NPTS, x, y, z );
 	else
-	    pl3poin( x, y, z, PTS );
+	    plpoin3( NPTS, x, y, z, 1 );
 
 	plcol(3);
-	plmtex("t", 1.0, 0.5, 0.5, title[k]);
+	sprintf(title, "#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
+		alt[k], az[k]);
+	plmtex("t", 1.0, 0.5, 0.5, title);
     }
 
     plend();
@@ -161,7 +160,7 @@ void test_poly(int k)
 	    y[4] = sin( PHI(j) ) * sin( THETA(i) );
 	    z[4] = cos( PHI(j) );
 
-	    pl3poly( x, y, z, draw, -5 );
+	    plpoly3( -5, x, y, z, draw );
 	}
     }
 
