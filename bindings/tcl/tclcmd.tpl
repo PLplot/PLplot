@@ -14,7 +14,7 @@ static int
          ((argc == 2) && (strcmp(argv[1],"-help") == 0)) ) {
 
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "%cmd% %args%", " \"",
+			  "%cmd%%args%", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
@@ -28,3 +28,4 @@ static int
     plflush();
     return TCL_OK;
 }
+
