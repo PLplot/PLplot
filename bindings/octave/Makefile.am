@@ -67,12 +67,15 @@ if enable_octave
 
 octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
 
+plplot_octave.h: plplot_octave_org.h ${top_builddir}/config.h
+	rep=`grep -o "#define PL_DOUBLE" $(top_builddir)/config.h` && \
+	sed "s/REPLACEME/$$rep/" plplot_octave_org.h > plplot_octave.h
+
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
-plplot_octave.cc tmp_stub: plplot_octave_org.h ${top_builddir}/config.h
+plplot_octave.cc tmp_stub: plplot_octave.h
 	$(PERL) $(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
-	-cpp_ignore plplot_octave_rej.h ${top_builddir}/config.h \
-	-cpp c++ -E -C plplot_octave_org.h
+	-cpp_ignore plplot_octave_rej.h -cpp $(CC) -E -C plplot_octave.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 

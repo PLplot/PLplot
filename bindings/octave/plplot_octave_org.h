@@ -119,7 +119,7 @@
  * dpi, and improves performance in some areas over using a PLINT.
 \*--------------------------------------------------------------------------*/
 
-#include "../../config.h"
+REPLACEME
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
   typedef double PLFLT;
