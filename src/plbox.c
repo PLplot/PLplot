@@ -755,33 +755,36 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 {
     PLINT x, y, refx, refy;
     PLFLT shift, cc, ss, def, ht, wx, wy;
-    PLFLT xmm, ymm, refxmm, refymm, xform[4], diag;
+    PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, xform[4], diag;
 
-    plgchr(&def, &ht);
     cc = plsc->wmxscl * (wx2 - wx1);
     ss = plsc->wmyscl * (wy2 - wy1);
     diag = sqrt(cc * cc + ss * ss);
     cc /= diag;
     ss /= diag;
-    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
     wx = wx1 + pos * (wx2 - wx1);
     wy = wy1 + pos * (wy2 - wy1);
-
-    xmm = plP_wcmmx(wx);
-    ymm = plP_wcmmy(wy) - disp * ht;
-
-    refxmm = xmm - shift * cc;
-    refymm = ymm - shift * ss;
-
-    x = plP_mmpcx(xmm);
-    y = plP_mmpcy(ymm);
-    refx = plP_mmpcx(refxmm);
-    refy = plP_mmpcy(refymm);
 
     xform[0] = cc;
     xform[1] = 0.0;
     xform[2] = ss;
     xform[3] = 1.0;
+
+    xdv = plP_wcdcx(wx);
+    ydv = plP_wcdcy(wy);
+
+    plgchr(&def, &ht);
+    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+
+    xmm = plP_dcmmx(xdv);
+    ymm = plP_dcmmy(ydv) - disp * ht;
+    refxmm = xmm - shift * xform[0];
+    refymm = ymm - shift * xform[2];
+
+    x = plP_mmpcx(xmm);
+    y = plP_mmpcy(ymm);
+    refx = plP_mmpcx(refxmm);
+    refy = plP_mmpcy(refymm);
 
     plP_text(0, just, xform, x, y, refx, refy, text);
 }
@@ -975,48 +978,48 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
 {
     PLINT refx = 0, refy = 0, x = 0, y = 0, vert = 0;
     PLFLT shift, cc, ss, def, ht, wy;
-    PLFLT xmm, ymm, refxmm, refymm, xform[4], diag;
+    PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, xform[4], diag;
 
-    plgchr(&def, &ht);
     cc = plsc->wmxscl * dx;
     ss = plsc->wmyscl * dy;
     diag = sqrt(cc * cc + ss * ss);
     cc /= diag;
     ss /= diag;
-    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
     wy = wy1 + pos * (wy2 - wy1);
 
-    xmm = plP_wcmmx(wx) - disp * ht * cc;
-    ymm = plP_wcmmy(wy) - disp * ht * ss;
-
-    if (plP_stsearch(opt, 'v')) {
+    if (plP_stsearch(opt, 'v'))
 	vert = 0;
-	refxmm = xmm - shift * cc; 
-	refymm = ymm - shift * ss;
-
-    } else if (plP_stsearch(opt, 'h')) {
+    else if (plP_stsearch(opt, 'h'))
 	vert = 1;
-	refxmm = xmm;
-	refymm = ymm - shift;
-    }
-
-    x = plP_mmpcx(xmm);
-    y = plP_mmpcy(ymm);
-    refx = plP_mmpcx(refxmm);
-    refy = plP_mmpcy(refymm);
 
     if (vert) {
 	xform[0] = 0.0;
 	xform[1] = -cc;
 	xform[2] = 1.0;
 	xform[3] = -ss;
-
     } else {
 	xform[0] = cc;
 	xform[1] = 0.0;
 	xform[2] = ss;
 	xform[3] = 1.0;
     }
+
+    xdv = plP_wcdcx(wx);
+    ydv = plP_wcdcy(wy);
+
+    plgchr(&def, &ht);
+    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+
+    xmm = plP_dcmmx(xdv) - disp * ht * cc;
+    ymm = plP_dcmmy(ydv) - disp * ht * ss;
+
+    refxmm = xmm - shift * xform[0];
+    refymm = ymm - shift * xform[2];
+
+    x = plP_mmpcx(xmm);
+    y = plP_mmpcy(ymm);
+    refx = plP_mmpcx(refxmm);
+    refy = plP_mmpcy(refymm);
 
     plP_text(0, just, xform, x, y, refx, refy, text);
 }
