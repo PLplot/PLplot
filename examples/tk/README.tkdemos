@@ -6,7 +6,20 @@ hard-linked locations within the source code. Once the software is
 installed, these examples work anywhere including execution from their
 original location (tmp/../examples/tk) and the install location.
 
-Demo Status as of 2001 January 10
+Demo Status as of 2002 July 17:
+runAllDemos.tcl now works under plserver and also wish.
+
+./plserver
+source runAllDemos.tcl
+
+wish
+source pldefaults.tcl
+load libplplotd.so Plplotter
+package provide Plplotter 5.1.0
+source runAllDemos.tcl
+
+
+Demo Status as of 2001 January 10:
 
 To run tkdemos.tcl, follow the directions in that file.  It will exercise
 all the x??.tcl demos that are symlinked from tmp, or the original location
