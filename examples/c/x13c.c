@@ -8,10 +8,10 @@
 static char *text[] =
 {
     "Maurice",
-    "Randy",
-    "Mark",
-    "Steve",
-    "Warner"
+    "Geoffrey",
+    "Alan",
+    "Rafael",
+    "Vince"
 };
 
 /*--------------------------------------------------------------------------*\
@@ -23,8 +23,8 @@ static char *text[] =
 int
 main(int argc, char *argv[])
 {
-    int i, j;
-    PLFLT dthet, theta0, theta1, theta, just, dx, dy;
+    int i, j, dthet, theta0, theta1, theta;
+    PLFLT just, dx, dy;
     static PLFLT x[500], y[500], per[5];
 
     per[0] = 10.;
@@ -43,29 +43,32 @@ main(int argc, char *argv[])
 
     plenv(0., 10., 0., 10., 1, -2);
     plcol0(2);
-
-    theta0 = 0.;
-    dthet = 2 * PI / 500;
+    /* n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid
+     * floating point logic problems. */
+    theta0 = 0;
+    dthet = 1;
     for (i = 0; i <= 4; i++) {
 	j = 0;
 	x[j] = 5.;
 	y[j++] = 5.;
-	theta1 = theta0 + 2 * PI * per[i] / 100.;
+        /* n.b. the theta quantities multiplied by 2*pi/500 afterward so
+	 * in fact per is interpreted as a percentage. */
+	theta1 = theta0 + 5 * per[i];
 	if (i == 4)
-	    theta1 = 2 * PI;
+	    theta1 = 500;
 	for (theta = theta0; theta <= theta1; theta += dthet) {
-	    x[j] = 5 + 3 * cos(theta);
-	    y[j++] = 5 + 3 * sin(theta);
+	    x[j] = 5 + 3 * cos((2.*PI/500.)*theta);
+	    y[j++] = 5 + 3 * sin((2.*PI/500.)*theta);
 	}
 	plcol0(i + 1);
 	plpsty((i + 3) % 8 + 1);
 	plfill(j, x, y);
 	plcol0(1);
 	plline(j, x, y);
-	just = (theta0 + theta1) / 2.;
+	just = (2.*PI/500.)*(theta0 + theta1)/2.;
 	dx = .25 * cos(just);
 	dy = .25 * sin(just);
-	if (just < PI / 2 || just > 3 * PI / 2) 
+	if ((theta0 + theta1)  < 250 || (theta0 + theta1) > 750) 
 	    just = 0.;
 	else 
 	    just = 1.;
