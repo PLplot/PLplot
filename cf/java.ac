@@ -61,10 +61,12 @@ if test "$enable_java" = "yes"; then
 	else
 	    AC_MSG_RESULT(no)
         fi
+    else
+        AC_MSG_RESULT(no)    
     fi
 
     # Check usual search path
-    AC_CHECK_HEADERS([jni.h],[AC_MSG_RESULT(yes);jni_in_system=yes],[AC_MSG_RESULT(no);jni_in_system=no])
+    AC_CHECK_HEADERS([jni.h],[jni_in_system=yes],[jni_in_system=no])
 
 
     # Let's assume if jni.h is in standard search path then we
