@@ -15,6 +15,7 @@ package.
 * Acquiring PLplot::	How to get it.
 * Installing::		Installing and Using PLplot
 * Organization::	Of this Manual
+* Copyrights::		Copyrights and distribution status
 * Credits::		To whom it's due.
 \end{menu}
 
@@ -123,9 +124,8 @@ library.
 PLplot is currently known to work on the following systems: SUNOS,
 HP-UX, A/IX, DG/UX, UNICOS, Ultrix, VMS, Amiga/Exec, MS-DOS, OS/2, and
 NeXT, with more expected.  The PLplot package is freely distributable,
-but {\em not\/} in the public domain.  There have been various
-copyrights placed on the software; see section \ref{sec:credits} for
-the full list and criteria for distribution.
+but {\em not\/} in the public domain.  See section \ref{sec:copyrights} for
+distribution criteria.
 
 We welcome suggestions on how to improve this code, especially in the
 form of user-contributed enhancements or bug fixes.  If PLplot is used
@@ -239,73 +239,23 @@ up-to-date; check the release notes to be sure).
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\node Credits, , Organization, Introduction
-\section{Credits}
-\label{sec:credits}
+\node Copyrights, Credits, Organization, Introduction
+\section{Copyrights}
+\label{sec:copyrights}
 
-OLD DOCS, NEEDS UPDATING!
+The PLplot package may be distributed under the terms of the GNU General
+Public License (GPL), except as noted below.  The text of this license is
+given in the file COPYING in the distribution directory.
 
-PLplot 4.0 was created through the effort of many individuals and
-funding agencies.  We would like to acknowledge the support (financial
-and otherwise) of the following institutions:
+The PLplot library may be distributed under the terms of the GNU Library
+General Public License (LGPL), except as noted below.  The text of this
+license is given in the file COPYING.LIB in the distribution directory.
 
-\c \begin{description}
-\c \item	The Institute for Fusion Studies, University of Texas at Austin
-\c \item	The Scientific and Technology Agency of Japan
-\c \item	Japan Atomic Energy Research Institute
-\c \item	Duke University
-\c \item	Universite de Nice
-\c \item	National Energy Research Supercomputer Center
-\c \item	Los Alamos National Labs
-\c \end{description}
+The startup code used in argument handling (utils/plrender.c and
+src/plargs.c) is partially derived from "xterm.c" of the X11R5
+distribution, and its copyright is reproduced here:
 
-The authors disclaim all warranties with regard to this software,
-including all implied warranties of merchantability and fitness, In no
-event shall the authors be liable for any special, indirect or
-consequential damages or any damages whatsoever resulting from loss of
-use, data or profits, whether in an action of contract, negligence or
-other tortious action, arising out of or in connection with the use or
-performance of this software.
-
-The PLplot source code, except header files and those files explicitly
-granting permission, may not be used in a commercial software package
-without consent of the authors.  You are allowed and encouraged to
-include the PLplot object library and header files in a commercial
-package provided that: (1) it is explicitly and prominently stated
-that the PLplot library is freely available, and (2) the full
-copyrights on the PLplot package be displayed somewhere in the
-documentation for the package.
-
-PLplot was first derived from the excellent PGPLOT graphics package by
-T.  J. Pearson.  All parts of PLplot not explicitly marked by a
-copyright are assumed to derive sufficiently from the original to be
-covered by the PGPLOT copyright:
-\begin{verbatim}
-***********************************************************************
-*                                                                     *
-*  Copyright (c) 1983-1991 by                                         *
-*  California Institute of Technology.                                *
-*  All rights reserved.                                               *
-*                                                                     *
-*  For further information, contact:                                  *
-*     Dr. T. J. Pearson                                               *
-*     105-24 California Institute of Technology,                      *
-*     Pasadena, California 91125, USA                                 *
-*                                                                     *
-***********************************************************************
-\end{verbatim}
-
-The code in PLplot not derived from PGPLOT is Copyright 1992 by
-Maurice J.  LeBrun and Geoff Furnish of the University of Texas at
-Austin and Tony Richardson of Duke University.  Unless otherwise
-specified, code written by us as a part of this package may be freely
-copied, modified and redistributed without fee provided that all
-copyright notices are preserved intact on all copies and modified
-copies.
-
-The startup code for plrender.c is from \code{xterm.c} of the X-windows
-Release 5.0 distribution, and we reproduce its copyright here:
-\begin{verbatim}
+******************************************************************************
 Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
 and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
@@ -326,7 +276,43 @@ ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
-\end{verbatim}
+******************************************************************************
+
+Any file that is explicitly marked as "public domain" is free from any
+restriction on distribution.  
+
+Any file that has a explicit copyright notice may be distributed under
+the terms of both the GPL and whatever stated conditions accompany the
+copyright.
+
+Notes: the intent behind these licenses is to ensure that PLplot continues
+to evolve in a positive way, while remaining freely distributable.
+Placing the library under the LGPL enables software developers to use the
+PLplot library as an integral part of their product, even a commercial
+product.  Under the conditions of the LGPL, however, the source code to
+the library must remain freely available.  This means that if you modify
+the library to better suit your purposes, you are required to distribute
+those changes freely to the general PLplot user community.
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Credits, , Copyrights, Introduction
+\section{Credits}
+\label{sec:credits}
+
+PLplot 5.0 was created through the effort of many individuals and
+funding agencies.  We would like to acknowledge the support (financial
+and otherwise) of the following institutions:
+
+\c \begin{description}
+\c \item	The Institute for Fusion Studies, University of Texas at Austin
+\c \item	The Scientific and Technology Agency of Japan
+\c \item	Japan Atomic Energy Research Institute
+\c \item	Duke University
+\c \item	Universite de Nice
+\c \item	National Energy Research Supercomputer Center
+\c \item	Los Alamos National Labs
+\c \end{description}
 
 Thanks are also due to the many contributors to PLplot, including:
 
@@ -339,3 +325,4 @@ Thanks are also due to the many contributors to PLplot, including:
 
 Finally, thanks to all those who submitted bug reports and other
 suggestions.
+
