@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/07/26 09:00:46  mjl
+ * Revision 1.18  1994/07/26 18:17:24  mjl
+ * Added missing variable declaration and initializer.
+ *
+ * Revision 1.17  1994/07/26  09:00:46  mjl
  * Added a quick fix so that hitting a carriage return when prompted for
  * a filename no longer aborts the program.  Contributed by Mark Olesen.
  *
@@ -80,7 +83,7 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
 void
 plOpenFile(PLStream *pls)
 {
-    int count = 0;
+    int i = 0, count = 0;
     size_t len;
     char line[256];
 
