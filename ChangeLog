@@ -18,6 +18,12 @@
 
 	* utils/Makefile.am: pltcl now only built if tcl enabled.
 
+	* src/plcore.c: Comment out premature removal of libltdl resources
+	  in plend since plinit may be called again after a call to plend.  In
+	  fact there is no way to guarantee any particular call to plend is
+	  the last so these libltdl resources must always remain allocated
+	  until the overall programme exits.
+
 2002-12-07  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* drivers/Makefile.am: Make tk and tkwin static drivers work. This
