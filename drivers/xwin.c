@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1994/05/09 19:54:53  mjl
+ * Revision 1.37  1994/05/10 21:44:22  mjl
+ * Some cleaning up after previous development.
+ *
+ * Revision 1.36  1994/05/09  19:54:53  mjl
  * Some bug fixes for non-color displays.
  *
  * Revision 1.35  1994/05/07  03:03:32  mjl
@@ -58,16 +61,6 @@
 #include "plplotX.h"
 #include "drivers.h"
 #include "plevent.h"
-
-/* If this is kept small enough the initial allocation will always succeed
- * Subsequent copies of plplot will allocate the same colors, hopefully,
- * and the color cells will be shared.  If there is a problem, reduce 
- * NCOL1_MAX or pls->ncol1.  Will be fixed once I figure out how to
- * use custom color maps.
- */
-
-#define NCOL1_MAX 50
-#define PIXEL_START 70
 
 /* Variables to hold RGB components of given colormap. */
 /* Used in an ugly hack to get past some X11R5 and TK limitations. */
