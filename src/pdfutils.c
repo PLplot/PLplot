@@ -29,9 +29,12 @@
 #define NEED_PLDEBUG
 #include "plplot/plplotP.h"
 
+#ifdef PLPLOT_USE_TCL_CHANNELS
+#include <tcl.h>
+#endif
+
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);
-static int  pdf_rdx	(U_CHAR *x, long nitems, PDFstrm *pdfs);
 
 static int debug = 0;
 
@@ -66,12 +69,43 @@ pdf_fopen(char *filename, char *mode)
 
     if (pdfs != NULL) {
 	pdfs->buffer = NULL;
-
+	pdfs->file = NULL;
+	pdfs->tclChan = NULL;
+#ifdef PLPLOT_USE_TCL_CHANNELS
+	if (1) {
+	    char new_mode[3];
+	    int binary = 0;
+	    char *m, *p;
+	    
+	    /* Copy over the mode, removing 'b' if needed */
+	    for (m = mode, p = new_mode; *m != 0; m++) {
+	        if (*m == 'b') {
+	            binary = 1;
+	        } else {
+		    *p = *m;
+		    p++;
+	        }
+	    }
+	    *p = 0;
+	    
+	    pdfs->tclChan = Tcl_OpenFileChannel(NULL, filename, new_mode, 0);
+	    if (pdfs->tclChan == NULL) {
+		pdf_close(pdfs);
+		pdfs = NULL;
+	    } else {
+		if (binary) {
+		    Tcl_SetChannelOption(NULL, pdfs->tclChan, "-translation", 
+					 "binary");
+		}
+	    }
+	}
+#else
 	pdfs->file = fopen(filename, mode);
 	if (pdfs->file == NULL) {
 	    pdf_close(pdfs);
 	    pdfs = NULL;
 	}
+#endif
     }
 
     return pdfs;
@@ -95,6 +129,7 @@ pdf_bopen(U_CHAR *buffer, long bufmax)
 
     if (pdfs != NULL) {
 	pdfs->file = NULL;
+	pdfs->tclChan = NULL;
 	pdfs->bp = 0;
 
 	if (buffer == NULL) {
@@ -137,6 +172,7 @@ pdf_finit(FILE *file)
     if (pdfs != NULL) {
 	pdfs->buffer = NULL;
 	pdfs->file = file;
+	pdfs->tclChan = NULL;
 	pdfs->bp = 0;
     }
 
@@ -156,12 +192,15 @@ pdf_close(PDFstrm *pdfs)
     dbug_enter("pdf_close");
 
     if (pdfs != NULL) {
-	if (pdfs->file != NULL)
+	if (pdfs->file != NULL) {
 	    fclose(pdfs->file);
-
-	else if (pdfs->buffer != NULL)
+#ifdef PLPLOT_USE_TCL_CHANNELS
+	} else if (pdfs->tclChan != NULL) {
+	    Tcl_Close(NULL, pdfs->tclChan);
+#endif
+	} else if (pdfs->buffer != NULL) {
 	    free ((void *) pdfs->buffer);
-
+	}
 	free((void *) pdfs);
     }
     return 0;
@@ -181,8 +220,12 @@ pdf_putc(int c, PDFstrm *pdfs)
     if (pdfs->file != NULL) {
 	result = putc(c, pdfs->file);
 	pdfs->bp++;
-    }
-    else if (pdfs->buffer != NULL) {
+#ifdef PLPLOT_USE_TCL_CHANNELS
+    } else if (pdfs->tclChan != NULL) {
+	result = Tcl_WriteChars(pdfs->tclChan, &c, 1);
+	pdfs->bp++;
+#endif
+    } else if (pdfs->buffer != NULL) {
 	if (pdfs->bp >= pdfs->bufmax) {
 	    pldebug("pdf_putc",
 		    "Increasing buffer to %d bytes\n", pdfs->bufmax);
@@ -213,8 +256,12 @@ pdf_getc(PDFstrm *pdfs)
     if (pdfs->file != NULL) {
 	result = getc(pdfs->file);
 	pdfs->bp++;
-    }
-    else if (pdfs->buffer != NULL) {
+#ifdef PLPLOT_USE_TCL_CHANNELS
+    } else if (pdfs->tclChan != NULL) {
+	result = Tcl_Read(pdfs->tclChan, &result, 1);
+	pdfs->bp++;
+#endif
+    } else if (pdfs->buffer != NULL) {
 	if (pdfs->bp < pdfs->bufmax)
 	    result = pdfs->buffer[pdfs->bp++];
     }
@@ -239,8 +286,13 @@ pdf_ungetc(int c, PDFstrm *pdfs)
 	result = ungetc(c, pdfs->file);
 	if (pdfs->bp > 0) 
 	    pdfs->bp--;
-    }
-    else if (pdfs->buffer != NULL) {
+#ifdef PLPLOT_USE_TCL_CHANNELS
+    } else if (pdfs->tclChan != NULL) {
+	result = Tcl_Ungets(pdfs->tclChan, &c, 1, 0);
+	if (pdfs->bp > 0) 
+	    pdfs->bp--;
+#endif
+    } else if (pdfs->buffer != NULL) {
 	if (pdfs->bp > 0) {
 	    pdfs->buffer[--pdfs->bp] = c;
 	    result = c;
@@ -266,8 +318,12 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
     if (pdfs->file != NULL) {
 	result = fwrite(x, 1, nitems, pdfs->file);
 	pdfs->bp += nitems;
-    }
-    else if (pdfs->buffer != NULL) {
+#ifdef PLPLOT_USE_TCL_CHANNELS
+    } else if (pdfs->tclChan != NULL) {
+	result = Tcl_Write(pdfs->tclChan, x, nitems);
+	pdfs->bp += nitems;
+#endif
+    } else if (pdfs->buffer != NULL) {
 	for (i = 0; i < nitems; i++) {
 	    if (pdfs->bp >= pdfs->bufmax) {
 		pldebug("pdf_wrx",
@@ -290,7 +346,7 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
  * Reads a record.
 \*--------------------------------------------------------------------------*/
 
-static int
+int
 pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
 {
     int i, result = 0;
@@ -298,8 +354,12 @@ pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
     if (pdfs->file != NULL) {
 	result = fread(x, 1, nitems, pdfs->file);
 	pdfs->bp += nitems;
-    }
-    else if (pdfs->buffer != NULL) {
+#ifdef PLPLOT_USE_TCL_CHANNELS
+    } else if (pdfs->tclChan != NULL) {
+	result = Tcl_ReadRaw(pdfs->tclChan, x, nitems);
+	pdfs->bp += nitems;
+#endif
+    } else if (pdfs->buffer != NULL) {
 	for (i = 0; i < nitems; i++) {
 	    if (pdfs->bp > pdfs->bufmax)
 		break;

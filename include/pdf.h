@@ -35,6 +35,10 @@
 #define U_LONG unsigned long
 #endif
 
+#ifndef TCL_VERSION
+typedef struct Tcl_Channel_ *Tcl_Channel;
+#endif
+
 /* PDFstrm definition */
 /* The low level PDF i/o routines use the transfer method appropriate for */
 /* the first non-null type below */
@@ -42,6 +46,7 @@
 typedef struct {
     FILE *file;				/* Filesystem */
     unsigned char *buffer;		/* Memory buffer */
+    Tcl_Channel tclChan;	        /* Tcl channel */
     long bp, bufmax;			/* Buffer pointer and max size */
 } PDFstrm;
 
@@ -74,11 +79,13 @@ void pdf_set		PLARGS((char *option, int value));
 PDFstrm *pdf_fopen	PLARGS((char *fileName, char *mode));
 PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
 PDFstrm *pdf_finit	PLARGS((FILE *file));
+PDFstrm *plLibOpenPdfstrm PLARGS((char *fn));
 int  pdf_close		PLARGS((PDFstrm *pdfs));
 
 int  pdf_putc		PLARGS((int c, PDFstrm *pdfs));
 int  pdf_getc		PLARGS((PDFstrm *pdfs));
 int  pdf_ungetc		PLARGS((int c, PDFstrm *pdfs));
+int  pdf_rdx	        PLARGS((U_CHAR *x, long nitems, PDFstrm *pdfs));
 
 int  pdf_rd_header	PLARGS((PDFstrm *pdfs, char *header));
 int  pdf_wr_header	PLARGS((PDFstrm *pdfs, char *header));

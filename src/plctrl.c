@@ -1155,7 +1155,24 @@ plFindCommand(char *fn)
 FILE *
 plLibOpen(char *fn)
 {
-    FILE *file;
+    FILE *ret = NULL;
+    
+    PDFstrm *pdfs = plLibOpenPdfstrm(fn);
+    if (pdfs == NULL) {
+        return NULL;
+    }
+    if (pdfs->file != NULL) {
+        ret = pdfs->file;
+	pdfs->file = NULL;
+    }
+    pdf_close(pdfs);
+    return ret;
+}
+
+PDFstrm *
+plLibOpenPdfstrm(char *fn)
+{
+    PDFstrm *file;
     char *fs = NULL, *dn = NULL;
 
 /****	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	****/
@@ -1164,7 +1181,7 @@ plLibOpen(char *fn)
     if ((dn = getenv(PLPLOT_LIB_ENV)) != NULL) {
         plGetName(dn, "", fn, &fs);
 
-        if ((file = fopen(fs, "rb")) != NULL)
+        if ((file = pdf_fopen(fs, "rb")) != NULL)
             goto done;
 
         fprintf(stderr, PLPLOT_LIB_ENV"=\"%s\"\n", dn); /* what IS set? */
@@ -1173,7 +1190,7 @@ plLibOpen(char *fn)
 
 /****	search current directory	****/
 
-    if ((file = fopen(fn, "rb")) != NULL)
+    if ((file = pdf_fopen(fn, "rb")) != NULL)
         goto done;
 
 /****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
@@ -1182,7 +1199,7 @@ plLibOpen(char *fn)
     if ((dn = getenv(PLPLOT_HOME_ENV)) != NULL) {
         plGetName(dn, "lib", fn, &fs);
 
-        if ((file = fopen(fs, "rb")) != NULL)
+        if ((file = pdf_fopen(fs, "rb")) != NULL)
             goto done;
         fprintf(stderr, PLPLOT_HOME_ENV"=\"%s\"\n",dn); /* what IS set? */
     }
@@ -1193,7 +1210,7 @@ plLibOpen(char *fn)
 #if defined (DATA_DIR)
     plGetName(DATA_DIR, "", fn, &fs);
 
-    if ((file = fopen(fs, "rb")) != NULL)
+    if ((file = pdf_fopen(fs, "rb")) != NULL)
         goto done;
 #endif  /* DATA_DIR */
 
@@ -1202,7 +1219,7 @@ plLibOpen(char *fn)
 #ifdef PLLIBDEV
     plGetName(PLLIBDEV, "", fn, &fs);
 
-    if ((file = fopen(fs, "rb")) != NULL)
+    if ((file = pdf_fopen(fs, "rb")) != NULL)
 	goto done;
 #endif	/* PLLIBDEV */
 
@@ -1214,7 +1231,7 @@ plLibOpen(char *fn)
 
     if (plplotLibDir != NULL) {
 	plGetName(plplotLibDir, "", fn, &fs);
-	if ((file = fopen(fs, "rb")) != NULL)
+	if ((file = pdf_fopen(fs, "rb")) != NULL)
 	    goto done;
 
     }

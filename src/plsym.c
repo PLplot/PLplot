@@ -967,7 +967,6 @@ plfntld(PLINT fnt)
 {
     static PLINT charset;
     short bffrleng;
-    FILE *file;
     PDFstrm *pdfs;
 
     if (fontloaded && (charset == fnt))
@@ -978,16 +977,12 @@ plfntld(PLINT fnt)
     charset = fnt;
 
     if (fnt)
-	file = plLibOpen(PL_XFONT);
+	pdfs = plLibOpenPdfstrm(PL_XFONT);
     else
-	file = plLibOpen(PL_SFONT);
+	pdfs = plLibOpenPdfstrm(PL_SFONT);
 
-    if (file == NULL)
-	plexit("Unable to open font file");
-
-    pdfs = pdf_finit(file);
-    if ( ! pdfs)
-	plexit("plfntld: Out of memory while allocating PDF stream data.");
+    if (pdfs == NULL)
+	plexit("Unable to open or allocate memory for font file");
 
 /* Read fntlkup[] */
 
@@ -1018,8 +1013,12 @@ plfntld(PLINT fnt)
     if ( ! fntbffr)
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
+#if PLPLOT_USE_TCL_CHANNELS
+    pdf_rdx(fntbffr, sizeof(signed char)*(2 * bffrleng), pdfs);
+#else
     fread((void *) fntbffr, (size_t) sizeof(signed char),
 	  (size_t) (2 * bffrleng), pdfs->file);
+#endif
 
 /* Done */
 

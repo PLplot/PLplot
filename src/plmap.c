@@ -71,7 +71,7 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
     int i, j;
     PLFLT bufx[200], bufy[200], x[2], y[2];
     short int test[400];
-    register FILE *in;
+    register PDFstrm *in;
     char filename[100];
 
     unsigned char n_buff[2], buff[800];
@@ -84,16 +84,16 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
     strcpy(filename,type);
     strcat(filename,MAP_FILE);
 
-    if ((in = plLibOpen(filename)) == NULL)
+    if ((in = plLibOpenPdfstrm(filename)) == NULL)
 	return;
 
     for (;;) {
 	/* read in # points in segment */
-	if (fread(n_buff, sizeof (unsigned char), 2, in) == 0) break;
+	if (pdf_rdx(n_buff, sizeof (unsigned char)* 2, in) == 0) break;
 	n = (n_buff[0] << 8) + n_buff[1];
 	if (n == 0) break;
 
-	fread(buff, sizeof (unsigned char), 4*n, in);
+	pdf_rdx(buff, sizeof (unsigned char)*4*n, in);
 	if (n == 1) continue;
 
 	for (j = i = 0; i < n; i++, j += 2) {
