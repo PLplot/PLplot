@@ -32,10 +32,6 @@ XLIBSTR=-lX11
 # is built into autoconf so I might as well support it).
 # ----------------------------------------------------------------------------
 
-MY_ARG_ENABLE(xwin,
-  [  --enable-xwin           enable X Window System driver],
-  [], enable_xwin=$enable_drivers)
-
 if test "$with_x" = "no"; then
     enable_xwin=no
 fi
@@ -160,10 +156,6 @@ fi
 # tcl.h
 # ----------------------------------------------------------------------------
 
-MY_ARG_ENABLE(tcl,
-  [  --enable-tcl            compile Tcl interface code (default: yes)],
-  [], enable_tcl=yes)
-
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
 	FIND_INC(tcl, TCLINCDIR, enable_tcl)
@@ -191,9 +183,9 @@ fi
 # itcl.h
 # ----------------------------------------------------------------------------
 
-MY_ARG_ENABLE(itcl,
-  [  --enable-itcl           enable incr Tcl interface code],
-  [], enable_itcl=$enable_tcl)
+if test "$enable_tcl" = "no"; then
+    enable_itcl=no
+fi
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLINCDIR"; then
@@ -221,10 +213,6 @@ fi
 # ----------------------------------------------------------------------------
 # tk.h
 # ----------------------------------------------------------------------------
-
-MY_ARG_ENABLE(tk,
-  [  --enable-tk             enable Tk driver],
-  [], enable_tk=$enable_drivers)
 
 if test "$enable_tcl" = "no" -o "$enable_xwin" = "no"; then
     enable_tk=no
@@ -282,10 +270,6 @@ fi
 # ----------------------------------------------------------------------------
 # dp.h
 # ----------------------------------------------------------------------------
-
-MY_ARG_ENABLE(dp,
-  [  --enable-dp             enable Tcl-DP driver],
-  [], enable_dp=$enable_drivers)
 
 if test "$enable_tcl" = "no" -o "$enable_tk" = "no"; then
     enable_dp=no
