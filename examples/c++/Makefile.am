@@ -45,7 +45,7 @@ sources = \
 
 if enable_cxx
 
-AM_CPPFLAGS = $(INCLTDL) -I../../bindings/c++
+AM_CPPFLAGS = $(INCLTDL) -I$(top_builddir)/bindings/c++
 examples_cxxdir = ${prefix}/$(DATA_DIR)/../examples/c++
 examples_cxx_DATA = \
 	$(sources) \
@@ -57,7 +57,7 @@ install-data-hook:
 	rm -f lena.pgm; \
 	$(LN_S) ../c/lena.pgm lena.pgm)
 	
-libplplotcxx = ../../bindings/c++/libplplotcxx$(LIB_TAG).la
+libplplotcxx = $(top_builddir)/bindings/c++/libplplotcxx$(LIB_TAG).la
 
 check_PROGRAMS = \
 	x01cc \
@@ -107,11 +107,6 @@ x20_SOURCES = x20.cc
 x21_SOURCES = x21.cc
 
 LDADD = $(libplplotcxx)
-
-else
-# work around automake brokeness (as of version 1.7.6) which demands
-# a install-data-hook target whether enable_cxx is true or not.
-install-data-hook:
 
 # enable_cxx
 endif
