@@ -883,7 +883,7 @@ MatrixGet_f(ClientData clientData, Tcl_Interp* interp, int index, char *string)
     tclMatrix *matPtr = (tclMatrix *) clientData;
     double value = matPtr->fdata[index];
 
-    Tcl_PrintDouble(interp, value, string);
+    sprintf(string, "%.12g", value);
 }
 
 static void
