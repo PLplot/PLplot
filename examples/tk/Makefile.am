@@ -25,9 +25,9 @@ if enable_tk
 examples_tkdir = $(DATA_DIR)/examples/tk
 
 if enable_itcl
-mkindex = $(top_builddir)/scripts/mktclIndex -itcl
+mkindex = $(top_srcdir)/scripts/mktclIndex -itcl
 else
-mkindex = $(top_builddir)/scripts/mktclIndex -tcl
+mkindex = $(top_srcdir)/scripts/mktclIndex -tcl
 endif
 
 check_DATA = \

@@ -23,7 +23,7 @@
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
-AM_CPPFLAGS = $(INCLTDL) -I$(top_srcdir)/bindings/tcl \
+AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) -I$(top_srcdir)/bindings/tcl \
               $(TCLINCCMD) $(ITCLINCCMD)
 
 bin_PROGRAMS = plrender pltek 

@@ -26,8 +26,10 @@
 
 SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
 PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
+SWIG_PYTHON_DIR = $(top_srcdir)/bindings/python
+MAKEDOCSTRINGS_PY = $(SWIG_PYTHON_DIR)/makedocstrings.py
 
-SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -c++ -DSWIG_PYTHON -python
+SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_PYTHON_DIR) -c++ -DSWIG_PYTHON -python
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
@@ -56,16 +58,16 @@ plplotcmodule_p_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
 
 # swig-1.3.21+ does not handle documentation strings properly so run this
 # script to make documentation strings.
-plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
-	$(PYTHON) makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
+plplotcmodule_double.c: plplotcmodule_p_double.c $(MAKEDOCSTRINGS_PY)
+	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_double.c plplotcmodule_double.c
 
 ### Note plplotc.py generated here as well, but it is identical to the
 ### one generated above and we cannot mention it as a duplicate target here.
 plplotcmodule_p_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -o plplotcmodule_p_single.c plplotcmodule.i
 
-plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
-	$(PYTHON) makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
+plplotcmodule_single.c: plplotcmodule_p_single.c $(MAKEDOCSTRINGS_PY)
+	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_single.c plplotcmodule_single.c
 
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
@@ -74,7 +76,7 @@ libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 # NUMERICINCCMD only required until we quit supporting python 1.5
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
-AM_CPPFLAGS = $(INCLTDL) $(PYTHONINCCMD) $(NUMERICINCCMD) $(X_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(PYTHONINCCMD) $(NUMERICINCCMD) $(X_CFLAGS)
 
 # For Mac OS X/fink we have found that dropping -no-undefined $(PYTHON_LDFLAGS)
 # solves an unknown linking problem that causes python to be unable to import
@@ -114,7 +116,7 @@ ourexecpython_DATA = plplot.py plplotc.py
 ourexecpython_LTLIBRARIES = UNDERSCORE_plplotcmodule.la plplot_widgetmodule.la
 
 ### Do a similar job as install-exec-hook in the .libs directory, but
-### also removing "module" from teh file names.  This regards make
+### also removing "module" from the file names.  This regards make
 ### check.
 
 check_DATA = .libs/check-stamp

@@ -123,7 +123,7 @@ wingcc_la_CFLAGS = $(GDI32INCCMD)
 xwin_la_CFLAGS = $(X_CFLAGS)
 
 # Set overall preprocessor options
-AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL)
 
 ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version \
           $(FREETYPELIBCMD)

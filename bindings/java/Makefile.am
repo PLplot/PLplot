@@ -22,8 +22,9 @@
 
 SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
 PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
+SWIG_JAVA_DIR = $(top_srcdir)/bindings/java
 
-SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -DPL_DOUBLE -DSWIG_JAVA -java 
+SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_JAVA_DIR) -DPL_DOUBLE -DSWIG_JAVA -java 
 
 swigjavafiles = \
 	plplotjavacJNI.java \
@@ -38,9 +39,9 @@ swigcfiles = plplotjavac_wrap.c
 swiggenfiles = $(swigjavafiles) $(swigcfiles)
 
 javafiles = \
+	$(top_srcdir)/bindings/java/PLStreamc.java \
+	$(top_srcdir)/bindings/java/PLplot.java \
 	config.java \
-	PLStreamc.java \
-	PLplot.java \
 	$(swigjavafiles)
 
 # Note : the order of these is important since there is no formal 
@@ -64,7 +65,7 @@ EXTRA_DIST = \
 	plplotjavac.i \
 	$(swiggenfiles)
 
-$(swiggenfiles): plplotjavac.i $(PLPLOTCAPI_I)
+$(swiggenfiles): $(PLPLOTJAVAC_I) plplotjavac.i
 	$(SWIG_CMD) -package plplot.core plplotjavac.i
 
 # Must have "exec" in the name.
@@ -72,7 +73,7 @@ execjavawrapperdir = $(JAVAWRAPPER_DIR)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
-AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(JAVAINCCMD)
 
 nodist_plplotjavac_wrap_la_SOURCES  = plplotjavac_wrap.c
 
@@ -100,9 +101,9 @@ if enable_java
 
 noinst_DATA = jar-stamp
 
-jar-stamp: $(javaclasses) $(javafiles) README.javaAPI
+jar-stamp: $(javaclasses) $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI
 	$(mkdir_p) plplot/core
-	cp $(javafiles) README.javaAPI plplot/core
+	cp $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI plplot/core
 	touch jar-stamp
 
 execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la

@@ -20,28 +20,28 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 javafiles = \
-	x01.java \
-	x02.java \
-	x03.java \
-	x04.java \
-	x05.java \
-	x06.java \
-	x07.java \
-	x08.java \
-	x09.java \
-	x10.java \
-	x11.java \
-	x12.java \
-	x13.java \
-	x14.java \
-	x15.java \
-	x16.java \
-	x17.java \
-	x18.java \
-	x19.java \
-	x22.java
+	$(top_srcdir)/examples/java/x01.java \
+	$(top_srcdir)/examples/java/x02.java \
+	$(top_srcdir)/examples/java/x03.java \
+	$(top_srcdir)/examples/java/x04.java \
+	$(top_srcdir)/examples/java/x05.java \
+	$(top_srcdir)/examples/java/x06.java \
+	$(top_srcdir)/examples/java/x07.java \
+	$(top_srcdir)/examples/java/x08.java \
+	$(top_srcdir)/examples/java/x09.java \
+	$(top_srcdir)/examples/java/x10.java \
+	$(top_srcdir)/examples/java/x11.java \
+	$(top_srcdir)/examples/java/x12.java \
+	$(top_srcdir)/examples/java/x13.java \
+	$(top_srcdir)/examples/java/x14.java \
+	$(top_srcdir)/examples/java/x15.java \
+	$(top_srcdir)/examples/java/x16.java \
+	$(top_srcdir)/examples/java/x17.java \
+	$(top_srcdir)/examples/java/x18.java \
+	$(top_srcdir)/examples/java/x19.java \
+	$(top_srcdir)/examples/java/x22.java
 
-javademos = README.javademos $(javafiles) Makefile.examples
+javademos = $(top_srcdir)/examples/java/README.javademos $(javafiles) Makefile.examples
 
 # These are for make check compilation of examples.
 PLPLOT_CLASSPATH= `pwd`/$(top_builddir)/bindings/java
@@ -87,12 +87,12 @@ $(top_builddir)/bindings/java/jar-stamp:
 	( cd $(top_builddir)/bindings/java ; make jar-stamp )
 
 plplot.jar: $(example_classes) $(top_builddir)/bindings/java/jar-stamp \
-            README.javademos $(javafiles)
+            $(top_srcdir)/examples/java/README.javademos $(javafiles)
 	$(mkdir_p) plplot/examples
-	cp README.javademos $(javafiles) $(example_classes) plplot/examples
+	cp $(top_srcdir)/examples/java/README.javademos $(javafiles) $(example_classes) plplot/examples
 	$(JAR) -cf plplot.jar \
-	       -C $(top_builddir)/bindings/java/ plplot \
-	       -C . plplot
+	       -C $(top_builddir)/bindings/java/ plplot/core \
+	       -C . plplot/examples
 
 endif
 

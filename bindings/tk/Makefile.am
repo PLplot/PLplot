@@ -28,7 +28,8 @@ if enable_tk
 
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
 AM_CPPFLAGS = \
-	-I../tcl/ \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/bindings/tcl/ \
 	$(INCLTDL) \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
@@ -60,9 +61,9 @@ itkdata = \
 	PLXWin.itk
 
 if enable_itcl
-mkindex = $(top_builddir)/scripts/mktclIndex -itcl
+mkindex = $(top_srcdir)/scripts/mktclIndex -itcl
 else
-mkindex = $(top_builddir)/scripts/mktclIndex -tcl
+mkindex = $(top_srcdir)/scripts/mktclIndex -tcl
 endif
 
 tclIndex: $(tcldata) $(itkdata)

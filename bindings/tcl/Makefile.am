@@ -31,18 +31,18 @@ generated_scripts = plplot.tcl
 tcl_DATA = $(generated_scripts) tclIndex
 
 if enable_itcl
-mkindex = $(top_builddir)/scripts/mktclIndex -itcl
+mkindex = $(top_srcdir)/scripts/mktclIndex -itcl
 else
-mkindex = $(top_builddir)/scripts/mktclIndex -tcl
+mkindex = $(top_srcdir)/scripts/mktclIndex -tcl
 endif
 
 lib_LTLIBRARIES = libtclmatrix@LIB_TAG@.la libplplottcltk@LIB_TAG@.la
 
 endif
 
-plplot.tcl: ../tk/plplot.tcl
+plplot.tcl: $(top_srcdir)/bindings/tk/plplot.tcl
 	rm -f plplot.tcl
-	cp ../tk/plplot.tcl plplot.tcl
+	cp $(top_srcdir)/bindings/tk/plplot.tcl plplot.tcl
 
 tclIndex: $(generated_scripts)
 	$(mkindex)
@@ -52,7 +52,7 @@ pkginclude_HEADERS = pltcl.h tclMatrix.h
 tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
-AM_CPPFLAGS = $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
 version = -version-info $(SOVERSION)
 
 libtclmatrix@LIB_TAG@_la_SOURCES  = \
@@ -70,11 +70,11 @@ endif
 
 if enable_tk
 tksources = \
-	../tk/Pltk_Init.c \
-	../tk/plframe.c \
-	../tk/plr.c \
-	../tk/tcpip.c \
-	../tk/tkMain.c
+	$(top_srcdir)/bindings/tk/Pltk_Init.c \
+	$(top_srcdir)/bindings/tk/plframe.c \
+	$(top_srcdir)/bindings/tk/plr.c \
+	$(top_srcdir)/bindings/tk/tcpip.c \
+	$(top_srcdir)/bindings/tk/tkMain.c
 endif
 
 ## This library should probably be broken up further into at least a tcl
@@ -97,8 +97,9 @@ libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 
 tclgenfiles = tclgen.h tclgen_s.h tclgen.c
 
-$(tclgenfiles): pltclgen plapi.tpl tclcmd.tpl
-	$(PERL) pltclgen
+PLTCLGEN = $(top_srcdir)/bindings/tcl/pltclgen
+$(tclgenfiles): $(PLTCLGEN) plapi.tpl tclcmd.tpl
+	$(PERL) $(PLTCLGEN)
 
 CLEANFILES = $(generated_scripts) tclIndex
 MAINTAINERCLEANFILES = $(tclgenfiles)
