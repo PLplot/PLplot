@@ -1,9 +1,9 @@
 
 #include "plplotP.h"
-#ifdef PL_DOUBLE
+
 #include "../lib/csa/csa.h"
 #include "../lib/csa/nan.h"
-#endif
+
 #ifdef HAVE_QHULL
 #include "../lib/nn/nn.h"
 #include <qhull/qhull_a.h>
@@ -24,11 +24,9 @@ grid_nnidw (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	    PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg,
 	    int knn_order);
 
-#ifdef PL_DOUBLE
 static void
 grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
-#endif
 
 #ifdef HAVE_QHULL
 static void
@@ -81,7 +79,7 @@ static PT items[KNN_MAX_ORDER];
 \*----------------------------------------------------------------------*/
 
 void
-plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
 	   PLFLT **zg, int type, PLFLT data)
 {
@@ -120,11 +118,7 @@ plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   switch (type) {
     
   case (GRID_CSA):     /*  Bivariate Cubic Spline Approximation */
-#ifdef PL_DOUBLE
     grid_csa(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
-#else
-    plabort("plgriddata(): you must configure plplot with doubles to use GRID_CSA.");
-#endif
     break;
 
   case (GRID_NNIDW): /* Nearest Neighbors Inverse Distance Weighted */
@@ -160,7 +154,6 @@ plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 }
 
-#ifdef PL_DOUBLE
 /* 
  * Bivariate Cubic Spline Approximation using Pavel Sakov's csa package
  *
@@ -180,9 +173,9 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
   xt = x; yt = y; zt = z; pt = pin;
   for(i=0; i<npts; i++) {
-    pt->x = *xt++;
-    pt->y = *yt++;
-    pt->z = *zt++;
+    pt->x = (double) *xt++;
+    pt->y = (double) *yt++;
+    pt->z = (double) *zt++;
     pt++;
   }
 
@@ -193,8 +186,8 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   for(j=0; j<nptsy; j++) {
     xt = xg;
     for(i=0; i<nptsx; i++) {
-      pt->x = *xt++;
-      pt->y = *yt;
+      pt->x = (double) *xt++;
+      pt->y = (double) *yt;
       pt++;
     }
     yt++;
@@ -208,7 +201,7 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   for(i=0; i<nptsx; i++) {
     for(j=0; j<nptsy; j++) {
       pt = &pgrid[j*nptsx + i];
-      zg[i][j] = pt->z;
+      zg[i][j] = (PLFLT) pt->z;
     }
   }
 
@@ -216,7 +209,6 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   free(pin);
   free(pgrid); 
 }
-#endif /* PL_DOUBLE */
 
 /* Nearest Neighbors Inverse Distance Weighted, brute force approach.
  *
@@ -488,13 +480,18 @@ grid_dtli(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   PLFLT *xt, *yt, *zt;
   int i, j, nptsg;
 
+  if (sizeof(realT) != sizeof(double)) {
+    plabort("plgridata: QHull was compiled for floats instead of doubles");
+    return;
+  }
+
   pin = (point *) malloc(npts * sizeof(point));
 
   xt = x; yt = y; zt = z; pt = pin;
   for(i=0; i<npts; i++) {
-    pt->x = *xt++;
-    pt->y = *yt++;
-    pt->z = *zt++;
+    pt->x = (double) *xt++;
+    pt->y = (double) *yt++;
+    pt->z = (double) *zt++;
     pt++;
   }
 
@@ -505,8 +502,8 @@ grid_dtli(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   for(j=0; j<nptsy; j++) {
     xt = xg;
     for(i=0; i<nptsx; i++) {
-      pt->x = *xt++;
-      pt->y = *yt;
+      pt->x = (double) *xt++;
+      pt->y = (double) *yt;
       pt++;
     }
     yt++;
@@ -516,7 +513,7 @@ grid_dtli(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   for(i=0; i<nptsx; i++) {
     for(j=0; j<nptsy; j++) {
       pt = &pgrid[j*nptsx + i];
-      zg[i][j] = pt->z;
+      zg[i][j] = (PLFLT) pt->z;
     }
   }
 
@@ -541,6 +538,11 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   int i, j, nptsg;
   nn_algorithm = NON_SIBSONIAN;
 
+  if (sizeof(realT) != sizeof(double)) {
+    plabort("plgridata: QHull was compiled for floats instead of doubles");
+    return;
+  }
+
   if (wmin == 0.) /* only accept weights greater than wmin */
     wmin =  -PLFLT_MAX;
 
@@ -548,9 +550,9 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
   xt = x; yt = y; zt = z; pt = pin;
   for(i=0; i<npts; i++) {
-    pt->x = *xt++;
-    pt->y = *yt++;
-    pt->z = *zt++;
+    pt->x = (double) *xt++;
+    pt->y = (double) *yt++;
+    pt->z = (double) *zt++;
     pt++;
   }
 
@@ -561,8 +563,8 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   for(j=0; j<nptsy; j++) {
     xt = xg;
     for(i=0; i<nptsx; i++) {
-      pt->x = *xt++;
-      pt->y = *yt;
+      pt->x = (double) *xt++;
+      pt->y = (double) *yt;
       pt++;
     }
     yt++;
@@ -572,7 +574,7 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   for(i=0; i<nptsx; i++) {
     for(j=0; j<nptsy; j++) {
       pt = &pgrid[j*nptsx + i];
-      zg[i][j] = pt->z;
+      zg[i][j] = (PLFLT) pt->z;
     }
   }
 
