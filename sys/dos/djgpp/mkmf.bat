@@ -12,25 +12,25 @@ REM set plcf=..\..\..\cf
 
 REM Makefile initialization
 
-type cf\init.in		>tmp\Makefile 
+type cf\init.in		>tmp\Makefile
 
 REM Default target, core source and object file lists
 
-type ..\..\..\cf\dist.in	>>tmp\Makefile 
+type ..\..\..\cf\dist.in	>>tmp\Makefile
 
 REM Copy the list of DJGPP drivers to makefile
 
-type cf\drivers.in	>>tmp\Makefile 
+type cf\drivers.in	>>tmp\Makefile
 
 REM Copy source file lists and add djgpp specific source to makefile
 
-type cf\djgpp.in	>>tmp\Makefile 
+type cf\djgpp.in	>>tmp\Makefile
 
 REM Optional packages
 
-rem if %enable_f77% == "yes" type ..\..\..\cf\pkg_f77.in	>>tmp\Makefile 
+rem if %enable_f77% == "yes" type ..\..\..\cf\pkg_f77.in	>>tmp\Makefile
 
-rem if %enable_cxx% == "yes" type ..\..\..\cf\pkg_cxx.in	>>tmp\Makefile 
+rem if %enable_cxx% == "yes" type ..\..\..\cf\pkg_cxx.in	>>tmp\Makefile
 
 REM Library targets
 
@@ -40,17 +40,17 @@ type cf\lib.in		>>tmp\Makefile
 
 REM Program and demo file dependencies, targets
 
-type ..\..\..\cf\exes.in	>>tmp\Makefile 
-type ..\..\..\cf\demos.in	>>tmp\Makefile 
+type ..\..\..\cf\exes.in	>>tmp\Makefile
+type ..\..\..\cf\demos.in	>>tmp\Makefile
 
 REM Installation and miscellaneous.
 
-type cf\install.in	>>tmp\Makefile 
-type cf\Misc.in		>>tmp\Makefile 
+type cf\install.in	>>tmp\Makefile
+type cf\Misc.in		>>tmp\Makefile
 
 REM Object file dependencies
 
-type ..\..\..\cf\objs.in	>>tmp\Makefile 
+type cf\objs.in	>>tmp\Makefile
 
 REM -----------------------------------------------------------------------
 REM Now build Makedemo.in.
@@ -61,7 +61,7 @@ REM -----------------------------------------------------------------------
 echo "creating tmp\Makedemo"
 
 type cf\init.in		>tmp\Makedemo
-type cf\djgpp.in	>>tmp\Makedemo 
+type cf\djgpp.in	>>tmp\Makedemo
 type cf\initdemo.in	>>tmp\Makedemo
 
 type ..\..\..\cf\demos.in	>>tmp\Makedemo
