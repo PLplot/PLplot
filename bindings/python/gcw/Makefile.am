@@ -32,9 +32,11 @@ EXTRA_DIST = \
 	plplotcanvas.py \
         cplplotcanvasmodule.c \
 	cplplotcanvasmodule.override \
-	cplplotcanvas.c \
-	plplotcanvas.defs
 	$(MAINTAINERCLEANFILES)
+
+
+if enable_python
+if enable_pygcw
 
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
@@ -68,9 +70,6 @@ UNDERSCORE_plplotcmodule_la_LDFLAGS  = \
 	-avoid-version \
 	$(extra_ldflags) \
 	$(libplplot)
-
-if enable_python
-if enable_pygcw
 
 PYGTK_DEFS=`pkg-config --variable=defsdir pygtk-2.0`
 
@@ -114,12 +113,16 @@ endif # enable_python
 
 CLEANFILES = \
 	*.pyc \
-	tmp.defs \
-	gcwmodule.loT \
-	plplotcanvas.defs
-
-MAINTAINERCLEANFILES = \
 	cplplotcanvas.c \
 	tmp.defs \
 	gcwmodule.loT \
+	cplplotcanvasmodule_la-cplplotcanvas.loT \
+	plplotcanvas.defs
+
+MAINTAINERCLEANFILES = \
+	*.pyc \
+	cplplotcanvas.c \
+	tmp.defs \
+	gcwmodule.loT \
+	cplplotcanvasmodule_la-cplplotcanvas.loT \
 	plplotcanvas.defs
