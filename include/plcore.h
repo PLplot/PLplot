@@ -88,13 +88,13 @@ static PLDispatchInit static_device_initializers[] = {
 #ifdef PLD_os2pm
     plD_dispatch_init_os2,
 #endif
-#if defined(PLD_xwin) /* && !defined(ENABLE_DYNDRIVERS)*/
+#if defined(PLD_xwin) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_xw,
 #endif
 #if defined(PLD_gnome) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_gnome,
 #endif
-#if defined(PLD_tk) /* && !defined(ENABLE_DYNDRIVERS)*/
+#if defined(PLD_tk) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tk,
 #endif
 #if defined(PLD_linuxvga) && !defined(ENABLE_DYNDRIVERS)
@@ -206,7 +206,7 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_null) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_null,
 #endif
-#if defined(PLD_tkwin) /* && !defined(ENABLE_DYNDRIVERS) */
+#if defined(PLD_tkwin) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tkwin,
 #endif
 };
