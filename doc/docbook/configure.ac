@@ -101,7 +101,7 @@ dnl Utility macros
 dnl CHECK_PROG(program, url)
 AC_DEFUN(CHECK_PROG, [
 
-pushdef(PROG, translit($1, [a-z], [A-Z]))
+pushdef([PROG], translit($1, [a-z], [A-Z]))
 
 AC_ARG_WITH($1, [
   --with-$1=PATH/]PROG[		Alternative $1 program],
@@ -125,7 +125,7 @@ Program $1 not found.
     $3.])
 [fi], has_$1=$has_$1)
 
-popdef(PROG)
+popdef([PROG])
 ])
 
 PRINT=print
@@ -205,15 +205,15 @@ AC_SUBST(SGML_CATALOGS)
 
 dnl File extensions
 
-AC_DEFUN(FILE_EXT, [
-pushdef(FILE, translit($1, [a-z], [A-Z]))
+AC_DEFUN([FILE_EXT], [
+pushdef([FILE], translit($1, [a-z], [A-Z]))
 FILE[_EXT=$1]
 AC_ARG_WITH($1-extension, [
   --with-$1-extension=EXT         File extension for the generated FILE
                                   files. (Default value: $1)],
   [FILE[_EXT=$withval]])
 AC_SUBST(FILE[_EXT])
-popdef(FILE)
+popdef([FILE])
 ])
 
 FILE_EXT(html)
@@ -291,7 +291,7 @@ AC_SUBST(BASE_INFO)
 
 AC_DEFUN(CHECK_PERL_SCRIPT, [
 
-pushdef(PROG, translit($1, [a-z], [A-Z]))
+pushdef([PROG], translit($1, [a-z], [A-Z]))
 
 AC_ARG_WITH($1, [
   --with-$1=PATH/]PROG[		Alternative $1 Perl script],
@@ -321,7 +321,7 @@ Program $1 not found.
     $3.])
 [fi], has_$1=$has_$1)
 
-popdef(PROG)
+popdef([PROG])
 ])
 
 CHECK_PERL_SCRIPT(docbook2texixml, [INFO], 
