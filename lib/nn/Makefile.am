@@ -21,6 +21,12 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+# If using the gcc compiler, this library needs to be built with 
+# the -fno-force-mem -ffloat-store for most reliable performance.
+if cc_is_gcc
+  AM_CFLAGS = -fno-force-mem -ffloat-store
+endif
+		
 lib_LTLIBRARIES = libcsironn.la
 libcsironn_la_SOURCES = delaunay.c hash.c istack.c lpi.c \
                         nnai.c nnpi.c nncommon.c

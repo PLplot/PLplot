@@ -127,6 +127,7 @@ dnl =======================================================================
 dnl Require C compile
 
 AC_PROG_CC
+AM_CONDITIONAL(cc_is_gcc, [test "$GCC" = yes])
 
 dnl Libtool configuration
 
