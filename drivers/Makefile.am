@@ -50,6 +50,9 @@ EXTRA_LTLIBRARIES = \
 driversdir = $(DRV_DIR)
 drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
+libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
+
 # The variable below will force building of the dyndrivers info files
 # (<driver>.rc) and their installation in the drivers directory
 
@@ -60,8 +63,7 @@ drivers_DATA = $(drivers_LTLIBRARIES:.la=.rc)
 
 noinst_PROGRAMS = get-drv-info
 get_drv_info_SOURCES = get-drv-info.c
-get_drv_info_LDADD = $(LIBLTDL) \
-    $(top_builddir)/src/libplplot${LIB_TAG}.la
+get_drv_info_LDADD = $(LIBLTDL) $(libplplot)
 if with_csa
 get_drv_info_LDADD += $(top_builddir)/lib/csa/libcsirocsa.la
 endif
@@ -73,9 +75,6 @@ get_drv_info_CFLAGS = $(INCLTDL)
 SUFFIXES = .la .rc
 .la.rc: get-drv-info
 	./get-drv-info `echo $< | sed 's/.la//'` > $@
-
-libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
-libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
