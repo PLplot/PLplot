@@ -34,4 +34,4 @@ install-data-hook:
 	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.csa ; \
 	done
 
-EXTRA_DIST = csa.h csa_internal.h nan.h version.h $(docfiles)
+EXTRA_DIST = csa.h nan.h version.h $(docfiles)
