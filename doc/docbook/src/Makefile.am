@@ -72,7 +72,7 @@ print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf.gz
 	$(DVIPS) -f $< | gzip -c > $@
 
 $(BASE).dvi: $(BASE).jadetex jadetex.cfg
-	$(JADETEX) $< 
+	-$(JADETEX) $< 
 	if ! cmp $(BASE).aux prior-dvi.aux 2>/dev/null && \
 	   expr $(MAKELEVEL) '<' $(MAX_TEX_RECURSION); then \
 	        cp -pf $(BASE).aux prior-dvi.aux ; \
