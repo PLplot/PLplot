@@ -224,9 +224,12 @@ EscText args;
 int idx;
 PLUNICODE unicode_char;
 
-  if ((plsc->dev_text)&&(plsc->dev_unicode))       /* Check to see if the device understands unicode */
+  /* Check to see if the device understands unicode and wants to draw
+   * symbols.
+   */
+  if ((plsc->dev_text)&&(plsc->dev_unicode)&&(!plsc->dev_hrshsym))       
     {
-      idx=plhershey2unicode(ch);                     /* Get the index in the lookup table */
+      idx=plhershey2unicode(ch); /* Get the index in the lookup table */
       unicode_char=hershey_to_unicode_lookup_table[idx].Unicode;
 
     /*
