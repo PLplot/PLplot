@@ -6,8 +6,6 @@
 // @> Source file plstream.
 //---------------------------------------------------------------------------//
 
-using namespace std;
-
 #include "plplot.h"
 #include "plstream.h"
 
@@ -76,7 +74,7 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
     ymax = ny - 1;
 
     if (x < xmin || x > xmax || y < ymin || y > ymax) {
-	cerr << "cxx_pltr2::xform, Invalid coordinates\n";
+	std::cerr << "cxx_pltr2::xform, Invalid coordinates\n";
 	
 	if (x < xmin) {
 
