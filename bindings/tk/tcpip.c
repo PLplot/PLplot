@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/04/08 12:00:05  mjl
+ * Revision 1.5  1994/05/14 05:42:52  mjl
+ * Fixed the call to pl_UnRead the header -- a bogus argument was causing
+ * spurious packet transmission failures.
+ *
+ * Revision 1.4  1994/04/08  12:00:05  mjl
  * Function name changes to reduce namespace pollution.  Robustness improved
  * in packet reader (changes stolen from Tcl-DP3.1 update).
  *
@@ -18,7 +22,6 @@
  * Added to hold primarily socket related code.  The latter were taken from
  * the Tcl-DP distribution and modified to use binary i/o to/from the memory
  * buffer pointed to by pdfs->buffer (pdfs a PDFstrm *).
- *
 */
 
 /* 
@@ -376,11 +379,10 @@ pl_PacketReceive(interp, iodev, pdfs)
     PLiodev *iodev;
     PDFstrm *pdfs;
 {
-    int numRead;
-    int packetLen;
+    int j, numRead;
+    unsigned int packetLen, header[2];
     int headerSize;
     unsigned char hbuf[8];
-    int header[2];
     char *errMsg;
 
     pdfs->bp = 0;
@@ -399,7 +401,7 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Check for incomplete read.  If so, put it back and return.
      */
     if (numRead < headerSize) {
-	pl_Unread (iodev->fd, hbuf, headerSize, 1);
+	pl_Unread (iodev->fd, hbuf, numRead, 1);
 	Tcl_ResetResult(interp);
 	return TCL_OK;
     }
@@ -412,17 +414,19 @@ pl_PacketReceive(interp, iodev, pdfs)
      * used.  
      */
 
+    j = 0;
+
     header[0] = 0;
-    header[0] |= hbuf[0] << 24;
-    header[0] |= hbuf[1] << 16;
-    header[0] |= hbuf[2] << 8;
-    header[0] |= hbuf[3];
+    header[0] |= hbuf[j++] << 24;
+    header[0] |= hbuf[j++] << 16;
+    header[0] |= hbuf[j++] << 8;
+    header[0] |= hbuf[j++];
 
     header[1] = 0;
-    header[1] |= hbuf[4] << 24;
-    header[1] |= hbuf[5] << 16;
-    header[1] |= hbuf[6] << 8;
-    header[1] |= hbuf[7];
+    header[1] |= hbuf[j++] << 24;
+    header[1] |= hbuf[j++] << 16;
+    header[1] |= hbuf[j++] << 8;
+    header[1] |= hbuf[j++];
 
     /*
      * Format of each packet:
@@ -482,6 +486,7 @@ pl_PacketReceive(interp, iodev, pdfs)
     }
 
     pdfs->bp = numRead;
+
     return TCL_OK;
 
 readError:
@@ -551,10 +556,9 @@ pl_PacketSend(interp, iodev, pdfs)
     PLiodev *iodev;
     PDFstrm *pdfs;
 {
-    int packetLen;
-    int numSent;
+    int j, numSent;
     unsigned char hbuf[8];
-    int header[2];
+    unsigned int packetLen, header[2];
     int len;
     char *buffer;
     char tmp[256];
@@ -576,15 +580,17 @@ pl_PacketSend(interp, iodev, pdfs)
      * Network byte ordering (big endian) is used.
      */
 
-    hbuf[0] = (header[0] & (unsigned long) 0xFF000000) >> 24;
-    hbuf[1] = (header[0] & (unsigned long) 0x00FF0000) >> 16;
-    hbuf[2] = (header[0] & (unsigned long) 0x0000FF00) >> 8;
-    hbuf[3] = (header[0] & (unsigned long) 0x000000FF);
+    j = 0;
 
-    hbuf[4] = (header[1] & (unsigned long) 0xFF000000) >> 24;
-    hbuf[5] = (header[1] & (unsigned long) 0x00FF0000) >> 16;
-    hbuf[6] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
-    hbuf[7] = (header[1] & (unsigned long) 0x000000FF);
+    hbuf[j++] = (header[0] & (unsigned long) 0xFF000000) >> 24;
+    hbuf[j++] = (header[0] & (unsigned long) 0x00FF0000) >> 16;
+    hbuf[j++] = (header[0] & (unsigned long) 0x0000FF00) >> 8;
+    hbuf[j++] = (header[0] & (unsigned long) 0x000000FF);
+
+    hbuf[j++] = (header[1] & (unsigned long) 0xFF000000) >> 24;
+    hbuf[j++] = (header[1] & (unsigned long) 0x00FF0000) >> 16;
+    hbuf[j++] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
+    hbuf[j++] = (header[1] & (unsigned long) 0x000000FF);
 
     /*
      * Send it off, with error checking.
