@@ -1727,7 +1727,7 @@ plLoadDriver(void)
     if (dev->pl_init)
         return;
 
-    fprintf( stderr, "Device not loaded!\n" );
+	pldebug("plLoadDriver", "Device not loaded!\n");
 
 /* Now search through the list of loadable devices, looking for the record
  * that corresponds to the requested device. */
@@ -1747,7 +1747,7 @@ plLoadDriver(void)
     tag = loadable_device_list[i].tag;
     drvidx = loadable_device_list[i].drvidx;
 
-    fprintf( stderr, "tag=%s, drvidx=%d\n", tag, drvidx ); 
+    pldebug("plLoadDriver", "tag=%s, drvidx=%d\n", tag, drvidx ); 
 
     driver = &loadable_driver_list[drvidx];
 
@@ -1757,7 +1757,8 @@ plLoadDriver(void)
         char drvspec[ 400 ];
         sprintf( drvspec, "./drivers/%s", driver->drvnam );
 
-	fprintf( stderr, "Trying to load %s on %s\n", driver->drvnam, drvspec ); 
+	pldebug("plLoadDriver", "Trying to load %s on %s\n",
+		driver->drvnam, drvspec );
 
         driver->dlhand = dlopen( drvspec, RTLD_NOW);
 
@@ -1766,9 +1767,9 @@ plLoadDriver(void)
             sprintf( drvspec, "%s/%s/%s",
                      LIB_DIR, "drivers", driver->drvnam );
 
-             fprintf( stderr, "Trying to load at %s\n", drvspec); 
+	    pldebug("plLoadDriver", "Trying to load at %s\n", drvspec); 
 
-	     driver->dlhand = dlopen( drvspec, RTLD_NOW);
+	    driver->dlhand = dlopen( drvspec, RTLD_NOW);
         }
     }
 
@@ -1784,13 +1785,13 @@ plLoadDriver(void)
    initialize the entries in the dispatch table. */
 
     sprintf( sym, "plD_dispatch_init_%s", tag );
-
     {
         PLDispatchInit dispatch_init = dlsym( driver->dlhand, sym );
         if (!dispatch_init)
         {
             fprintf( stderr,
-                     "Unable to locate dispatch table initialization function for driver: %s.\n", driver->drvnam );
+                     "Unable to locate dispatch table initialization function for driver: %s.\n", 
+		     driver->drvnam );
             return;
         }
 
