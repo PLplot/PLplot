@@ -178,8 +178,9 @@ PERL=${PERL:-"-@echo perl program not available #"}
 
 if test "$enable_builddoc" = yes -o \
         \( "$enable_octave" = yes -a "$with_prebuiltdoc" = no \) ; then
-CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
-CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
+CHECK_PM(XML::SAX::Expat, xml_sax, [INFO])
+CHECK_PM(XML::Parser, xml_parser, [MAN])
+CHECK_PM(XML::DOM, xml_dom, [MAN])
 fi
 
 if test "$enable_builddoc" = yes ; then

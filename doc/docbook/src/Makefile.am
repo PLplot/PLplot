@@ -178,7 +178,6 @@ $(INFO_MANIFEST) plplotdoc.info: plplotdoc.texi
 
 plplotdoc.texi: plplotdoc.txml
 	$(DB2X_TEXIXML) plplotdoc.txml
-	mv "The PLplot Plotting Library.texi" plplotdoc.texi
 
 plplotdoc.txml: plplotdoc.xml-info
 	$(DB2X_XSLTPROC) -s texi -o plplotdoc.txml plplotdoc.xml-info
