@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1992/10/20 20:14:11  mjl
-   Added prototypes, definitions for new routine plfamadv(), for advancing
-   to next family member file.
+   Revision 1.7  1992/10/27 22:14:00  mjl
+   Support for plflush() function.
 
+ * Revision 1.6  1992/10/20  20:14:11  mjl
+ * Added prototypes, definitions for new routine plfamadv(), for advancing
+ * to next family member file.
+ *
  * Revision 1.5  1992/10/12  17:10:32  mjl
  * Added support for PL_NEED_SIZE_T switch to plplot.h and reworked comments.
  * Moved plamiga.h to sys/amiga/src.
@@ -379,6 +382,7 @@ typedef struct {
 #define    plerry	c_plerry
 #define    plfamadv	c_plfamadv
 #define    plfill	c_plfill
+#define    plflush	c_plflush
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
 #define    plgfam	c_plgfam
@@ -459,6 +463,7 @@ typedef struct {
 #define    c_plerry	plerry
 #define    c_plfamadv	plfamadv
 #define    c_plfill	plfill
+#define    c_plflush	plflush
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
 #define    c_plgfam	plgfam
@@ -574,6 +579,8 @@ void c_plerry	(PLINT, PLFLT *, PLFLT *, PLFLT *);
 void c_plfamadv (void);
 
 void c_plfill	(PLINT, PLFLT *, PLFLT *);
+
+void c_plflush	(void);
 
 void c_plfont	(PLINT);
 

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.7  1992/10/24 05:17:31  mjl
-   Fixed a stupidity I made earlier in plspage().
+   Revision 1.8  1992/10/27 22:14:11  mjl
+   Support for plflush() function.
 
+ * Revision 1.7  1992/10/24  05:17:31  mjl
+ * Fixed a stupidity I made earlier in plspage().
+ *
  * Revision 1.6  1992/10/22  17:05:31  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -323,6 +326,14 @@ plsfile( FILE *file )
 {
     pls[ipls].OutFile = file;
     pls[ipls].fileset = 1;
+}
+
+/* Flush current output file.  Use sparingly, if at all. */
+
+void
+plflush( void )
+{
+    fflush(pls[ipls].OutFile);
 }
 
 /*

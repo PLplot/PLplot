@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/22 17:05:19  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.4  1992/10/27 22:14:02  mjl
+   Support for plflush() function.
 
+ * Revision 1.3  1992/10/22  17:05:19  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.2  1992/10/20  20:14:12  mjl
  * Added prototypes, definitions for new routine plfamadv(), for advancing
  * to next family member file.
@@ -76,6 +79,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLERRY	plerry_
 #define    PLFAMADV	plfamadv_
 #define    PLFILL	plfill_
+#define    PLFLUSH	plflush_
 #define    PLFONT	plfont_
 #define    PLFONTLD	plfontld_
 #define    PLGFAM	plgfam_
@@ -153,6 +157,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLERRY	plerry
 #define    PLFAMADV	plfamadv
 #define    PLFILL	plfill
+#define    PLFLUSH	plflush
 #define    PLFONT	plfont
 #define    PLFONTLD	plfontld
 #define    PLGFAM	plgfam
@@ -230,6 +235,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLERRY	fortran PLERRY
 #define    PLFAMADV	fortran PLFAMADV
 #define    PLFILL	fortran PLFILL
+#define    PLFLUSH	fortran PLFLUSH
 #define    PLFONT	fortran PLFONT
 #define    PLFONTLD	fortran PLFONTLD
 #define    PLGFAM	fortran PLGFAM

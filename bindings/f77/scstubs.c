@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/22 17:05:46  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.6  1992/10/27 22:14:20  mjl
+   Support for plflush() function.
 
+ * Revision 1.5  1992/10/22  17:05:46  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.4  1992/10/20  20:16:03  mjl
  * Put in stub for plfamadv().
  *
@@ -129,6 +132,12 @@ void
 PLFILL( PLINT *n, PLFLT *x, PLFLT *y )
 {
     c_plfill(*n, x, y);
+}
+
+void 
+PLFLUSH_( void )
+{
+    c_plflush();
 }
 
 void 
