@@ -11,37 +11,3 @@ writing a small number of device dependent routines.  PLplot is in the
 public domain, so you can distribute it freely.  It is currently known to
 work on the following systems: SUNOS, A/IX, DG/UX, UNICOS, CTSS, VMS,
 Amiga/Exec, MS-DOS, OS/2, and NeXT, with more expected. 
-
-This is the bibliography (lifted from 1995 latexinfo version of documentation)
-
-\c \begin{thebibliography}{1}
-\c 
-\c \bibitem{birdsall}
-\c C.~K. Birdsall and A.~B. Langdon.  {\it Plasma Physics via Computer
-\c Simulation}.  McGraw Hill, New York. 1985.
-\c 
-\c \bibitem{hockney}
-\c R.~W. Hockney and J.~W. Eastwood.  {\it Computer Simulation Using Particles}.
-\c Adam Hilgar, Bristol and New York. 1988.
-\c 
-\c \bibitem{lebrun}
-\c M.~J. LeBrun, M. G. Gray, G. Furnish, T. Tajima, and W. D. Nystrom  {\it
-\c The Numerical ``Laboratory'' for Plasma Simulation: A Modern Approach
-\c for the Condtruction and Maintenance of a Large Simulation Code}
-\c Proceedings of the 14th International Conference on the Numerical
-\c Simulation of Plasmas
-\c 
-\c \end{thebibliography}
-
-This was lifted from another bibligraphic source (plotdoc.bbl) which
-I believe was from an older source the preceded the latexinfo (1995) version
-of the documenation.
-\begin{thebibliography}{1}
-
-\bibitem{lebrun89a}
-M.~J. LeBrun and T.~Tajima.
-\newblock Particle simulation in curvilinear coordinate systems.
-\newblock Technical Report 374, Institute for Fusion Studies, University of
-  Texas at Austin, 1989.
-
-\end{thebibliography}
