@@ -748,6 +748,29 @@ dnl AC_F77_LIBRARY_LDFLAGS
     AC_MSG_WARN([Disabling F77 bindings building because no compiler was found])
   fi
 fi
+F77PARSE_CL=".true."
+if test "$enable_f77" = yes ; then
+  AC_LANG_PUSH([Fortran 77])
+  AC_MSG_CHECKING([if fortran command-line parsing is possible])
+  AC_RUN_IFELSE([
+      character*100 command
+      integer narg
+c      get number of command-line arguments
+      narg = iargc()
+c      get command name.  Apparently this does not always give back the
+c      command name on all systems, but all that is required for the
+c      getarg(0 call by the interface logic is that a valid string is
+c      returned.  (All we are really interested in is the subsequent 
+c      arguments.)
+      call getarg(0, command)
+      if(narg.gt.0) call getarg(1, command)
+      stop
+      end],
+  AC_MSG_RESULT(yes),
+  AC_MSG_RESULT(no); F77PARSE_CL=".false.")
+  AC_LANG_POP([Fortran 77])
+fi
+AC_SUBST(F77PARSE_CL)
 
 ### Python binding
 
@@ -1102,6 +1125,7 @@ AC_CONFIG_FILES([
 	bindings/Makefile
 	bindings/c++/Makefile
 	bindings/f77/Makefile
+	bindings/f77/configurable.f
 	bindings/python/Makefile
 	bindings/tcl/Makefile
 	bindings/tcl/pkgIndex.tcl
