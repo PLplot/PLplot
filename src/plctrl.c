@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/04/30 16:15:09  mjl
+ * Revision 1.17  1994/05/07 03:23:46  mjl
+ * Eliminated all references to fgcolor and bgcolor.  Operations involving
+ * the latter changed to deal with cmap0[0].
+ *
+ * Revision 1.16  1994/04/30  16:15:09  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -152,41 +156,25 @@ c_plcol1(PLFLT col1)
 /*----------------------------------------------------------------------*\
 * plscolbg()
 *
-* Set the background color by 8 bit RGB value
-* Note: for some drivers this corresponds to a cmap 0 color
+* Set the background color (cmap0[0]) by 8 bit RGB value
 \*----------------------------------------------------------------------*/
 
 void
 c_plscolbg(PLINT r, PLINT g, PLINT b)
 {
-    plgpls(&plsc);
-
-    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plabort("plscolbg: Invalid color");
-	return;
-    }
-
-    plsc->bgcolor.r = r;
-    plsc->bgcolor.g = g;
-    plsc->bgcolor.b = b;
-    plsc->bgcolorset = 1;
+    plscol0(0, r, g, b);
 }
 
 /*----------------------------------------------------------------------*\
 * plgcolbg()
 *
-* Returns the background color by 8 bit RGB value
-* Note: for some drivers this corresponds to a cmap 0 color
+* Returns the background color (cmap0[0]) by 8 bit RGB value
 \*----------------------------------------------------------------------*/
 
 void
 c_plgcolbg(PLINT *r, PLINT *g, PLINT *b)
 {
-    plgpls(&plsc);
-
-    *r = plsc->bgcolor.r;
-    *g = plsc->bgcolor.g;
-    *b = plsc->bgcolor.b;
+    plgcol0(0, r, g, b);
 }
 
 /*----------------------------------------------------------------------*\
@@ -600,8 +588,8 @@ plCmap1_init(void)
 /* For center control points, pick black or white, whichever is closer to bg */
 /* Be carefult to pick just short of top or bottom else hue info is lost */
 
-    vertex = ((float) plsc->bgcolor.r + (float) plsc->bgcolor.g +
-	      (float) plsc->bgcolor.b) / 3. / 255.;
+    vertex = ((float) plsc->cmap0[0].r + (float) plsc->cmap0[0].g +
+	      (float) plsc->cmap0[0].b) / 3. / 255.;
 
     if (vertex < 0.5)
 	vertex = 0.01;
