@@ -50,6 +50,7 @@ binding_m_files = \
 	ginput.m \
 	green.m \
 	grid.m \
+	griddata.m \
 	gtext.m \
 	hls2rgb.m \
 	hot.m \
