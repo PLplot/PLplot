@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/03/02 19:00:19  mjl
-   Added prototype for plgver() and its stub name def'n.
+   Revision 1.16  1993/03/03 16:58:19  mjl
+   Added prototype for plscolbg().
 
+ * Revision 1.15  1993/03/02  19:00:19  mjl
+ * Added prototype for plgver() and its stub name def'n.
+ *
  * Revision 1.14  1993/02/26  06:05:41  mjl
  * Surrounded the test for NULL being defined with an "#ifdef sun" since it
  * is bound to cause problems otherwise.
@@ -551,6 +554,7 @@ typedef struct {
 #define    plscm1	c_plscm1
 #define    plscm1f1	c_plscm1f1
 #define    plscol0	c_plscol0
+#define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
 #define    plsdev	c_plsdev
 #define    plsesc	c_plsesc
@@ -640,6 +644,7 @@ typedef struct {
 #define    c_plscm1	plscm1
 #define    c_plscm1f1	plscm1f1
 #define    c_plscol0	plscol0
+#define    c_plscolbg	plscolbg
 #define    c_plscolor	plscolor
 #define    c_plsdev	plsdev
 #define    c_plsesc	plsesc
@@ -805,6 +810,8 @@ void c_plscm1	(PLINT * r, PLINT * g, PLINT * b);
 void c_plscm1f1	(PLINT itype, PLFLT * param);
 
 void c_plscol0	(PLINT icol0, PLINT r, PLINT g, PLINT b);
+
+void c_plscolbg	(PLINT r, PLINT g, PLINT b);
 
 void c_plscolor	(PLINT color);
 
