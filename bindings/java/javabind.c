@@ -257,11 +257,31 @@ Java_plplot_core_PLStream_end( JNIEnv *env, jobject jthis )
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_env( JNIEnv *env, jobject jthis,
-                               jfloat xmin, jfloat xmax,
-                               jfloat ymin, jfloat ymax,
-                               jint just, jint axis )
+Java_plplot_core_PLStream_env__FFFFII( JNIEnv *env, jobject jthis,
+                                       jfloat jxmin, jfloat jxmax,
+                                       jfloat jymin, jfloat jymax,
+                                       jint just, jint axis )
 {
+    PLFLT xmin = jxmin, xmax = jxmax;
+    PLFLT ymin = jymin, ymax = jymax;
+    set_PLStream(env,jthis);
+    plenv( xmin, xmax, ymin, ymax, just, axis );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    env
+ * Signature: (DDDDII)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_env__DDDDII( JNIEnv *env, jobject jthis,
+                                       jdouble jxmin, jdouble jxmax,
+                                       jdouble jymin, jdouble jymax,
+                                       jint just, jint axis )
+{
+    PLFLT xmin = jxmin, xmax = jxmax;
+    PLFLT ymin = jymin, ymax = jymax;
     set_PLStream(env,jthis);
     plenv( xmin, xmax, ymin, ymax, just, axis );
 }
@@ -387,15 +407,131 @@ Java_plplot_core_PLStream_lab( JNIEnv *env, jobject jthis,
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_line( JNIEnv *env, jobject jthis,
-                                jint n, jfloatArray jx, jfloatArray jy )
+Java_plplot_core_PLStream_line__I_3F_3F( JNIEnv *env, jobject jthis,
+                                         jint n,
+                                         jfloatArray jx, jfloatArray jy )
 {
     jsize len = (*env)->GetArrayLength( env, jx );
     jfloat *x = (*env)->GetFloatArrayElements( env, jx, 0 );
     jfloat *y = (*env)->GetFloatArrayElements( env, jy, 0 );
+    PLFLT *bx, *by;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        bx = (PLFLT *) x;
+        by = (PLFLT *) y;
+    } else {
+        bx = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        by = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            bx[i] = x[i];
+            by[i] = y[i];
+        }
+        must_free_buffers = 1;
+    }
 
     set_PLStream(env,jthis);
-    plline( n, x, y );
+    plline( n, bx, by );
+
+    if (must_free_buffers) {
+        free( bx );
+        free( by );
+    }
+
+    (*env)->ReleaseFloatArrayElements( env, jx, x, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jy, y, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    line
+ * Signature: (I[D[D)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_line__I_3D_3D( JNIEnv *env, jobject jthis,
+                                         jint n,
+                                         jdoubleArray jx, jdoubleArray jy )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jdouble *x = (*env)->GetDoubleArrayElements( env, jx, 0 );
+    jdouble *y = (*env)->GetDoubleArrayElements( env, jy, 0 );
+    PLFLT *bx, *by;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != double, in which case the /other/ branch is the one that is
+     * actually executed. */
+        bx = (PLFLT *) x;
+        by = (PLFLT *) y;
+    } else {
+        bx = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        by = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            bx[i] = x[i];
+            by[i] = y[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plline( n, bx, by );
+
+    if (must_free_buffers) {
+        free( bx );
+        free( by );
+    }
+
+    (*env)->ReleaseDoubleArrayElements( env, jx, x, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jy, y, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    mtex
+ * Signature: (Ljava/lang/String;FFFLjava/lang/String;)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_mtex__Ljava_lang_String_2FFFLjava_lang_String_2(
+    JNIEnv *env, jobject jthis,
+    jstring jside, jfloat jdisp, jfloat jpos,
+    jfloat jjust, jstring jtext )
+{
+    const char *side = (*env)->GetStringUTFChars( env, jside, 0 );
+    PLFLT disp = jdisp, pos = jpos, just = jjust;
+    const char *text = (*env)->GetStringUTFChars( env, jtext, 0 );
+
+    set_PLStream(env,jthis);
+    plmtex( side, disp, pos, just, text );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    mtex
+ * Signature: (Ljava/lang/String;DDDLjava/lang/String;)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_mtex__Ljava_lang_String_2DDDLjava_lang_String_2(
+    JNIEnv *env, jobject jthis,
+    jstring jside, jdouble jdisp, jdouble jpos,
+    jdouble jjust, jstring jtext )
+{
+    const char *side = (*env)->GetStringUTFChars( env, jside, 0 );
+    PLFLT disp = jdisp, pos = jpos, just = jjust;
+    const char *text = (*env)->GetStringUTFChars( env, jtext, 0 );
+
+    set_PLStream(env,jthis);
+    plmtex( side, disp, pos, just, text );
 }
 
 /*
@@ -539,6 +675,40 @@ Java_plplot_core_PLStream_styl( JNIEnv *env, jobject jthis,
 {
     set_PLStream(env,jthis);
     plstyl( nms, (PLINT *) &mark, (PLINT *) &space );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    svpa
+ * Signature: (FFFF)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_svpa__FFFF( JNIEnv *env, jobject jthis,
+                                      jfloat jxmin, jfloat jxmax,
+                                      jfloat jymin, jfloat jymax )
+{
+    PLFLT xmin = jxmin, xmax = jxmax;
+    PLFLT ymin = jymin, ymax = jymax;
+    set_PLStream(env,jthis);
+    plsvpa( xmin, xmax, ymin, ymax );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    svpa
+ * Signature: (DDDD)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_svpa__DDDD( JNIEnv *env, jobject jthis,
+                                      jdouble jxmin, jdouble jxmax,
+                                      jdouble jymin, jdouble jymax )
+{
+    PLFLT xmin = jxmin, xmax = jxmax;
+    PLFLT ymin = jymin, ymax = jymax;
+    set_PLStream(env,jthis);
+    plsvpa( xmin, xmax, ymin, ymax );
 }
 
 /*
