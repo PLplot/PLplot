@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/07/02 06:58:30  mjl
-   The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
+   Revision 1.2  1993/07/16 21:58:37  mjl
+   Removed handling for orientation, aspect setting at a low level, since this
+   is now done by the driver interface layer.
 
+ * Revision 1.1  1993/07/02  06:58:30  mjl
+ * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
+ *
 */
 
 /*
@@ -97,20 +101,10 @@ plr_start(PLRDev *plr)
 {
     dbug_enter("plr_start");
 
-    plr->orient = 0;
-    plr->aspect = 0.;
-    plr->orientset = 0;
-    plr->aspectset = 0;
-
     plr->xmin = 0;
-    plr->xmax = PLMETA_X_OLD;
+    plr->xmax = PIXELS_X - 1;
     plr->ymin = 0;
-    plr->ymax = PLMETA_Y_OLD;
-
-    plr->vpxmin = 0.;
-    plr->vpxmax = 1.;
-    plr->vpymin = 0.;
-    plr->vpymax = 1.;
+    plr->ymax = PIXELS_Y - 1;
 
     plr->xold = UNDEFINED;
     plr->yold = UNDEFINED;
@@ -256,31 +250,14 @@ plr_init(PLRDev *plr, U_CHAR c)
 	    continue;
 	}
 
-	if (!strcmp(tag, "aspect")) {
-	    plr_rd(pdf_rd_ieeef(plr->file, &dum_float));
-	    if ( ! plr->aspectset)
-		plr->aspect = dum_float;
-	    continue;
-	}
-
 	if (!strcmp(tag, "width")) {
 	    plr_rd(pdf_rd_1byte(plr->file, &dum_uchar));
 	    plwid(dum_uchar);
 	    continue;
 	}
 
-	if (!strcmp(tag, "orient")) {
-	    plr_rd(pdf_rd_1byte(plr->file, &dum_uchar));
-	    if ( ! plr->orientset)
-		plr->orient = dum_uchar;
-	    continue;
-	}
-
 	barf("plr_init: Unrecognized initialization tag.");
     }
-
-    plr->xlen = plr->xmax - plr->xmin;
-    plr->ylen = plr->ymax - plr->ymin;
 
     return 0;
 }
@@ -341,8 +318,7 @@ plr_line(PLRDev *plr, U_CHAR c)
 /*----------------------------------------------------------------------*\
 * get_ncoords()
 *
-* Read n coordinate vectors and properly orient.
-* Each time orient is incremented, the plot is rotated 90 deg clockwise.
+* Read n coordinate vectors.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -355,35 +331,9 @@ get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
     plr_rd(pdf_rd_2nbytes(plr->file, (U_SHORT *) ys, n));
     plr->nbytes -= 4*n;
 
-    switch (plr->orient % 4) {
-
-      case 1:
-	for (i = 0; i < n; i++) {
-	    x[i] = plr->xmax - (plr->ymax - ys[i]) * (plr->xlen / plr->ylen);
-	    y[i] = plr->ymax - (xs[i] - plr->xmin) * (plr->ylen / plr->xlen);
-	}
-	break;
-
-      case 2:
-	for (i = 0; i < n; i++) {
-	    x[i] = plr->xmin + (plr->xmax - xs[i]);
-	    y[i] = plr->ymin + (plr->ymax - ys[i]);
-	}
-	break;
-
-      case 3:
-	for (i = 0; i < n; i++) {
-	    x[i] = plr->xmin + (plr->ymax - ys[i]) * (plr->xlen / plr->ylen);
-	    y[i] = plr->ymin + (xs[i] - plr->xmin) * (plr->ylen / plr->xlen);
-	}
-	break;
-
-      default:
-	for (i = 0; i < n; i++) {
-	    x[i] = xs[i];
-	    y[i] = ys[i];
-	}
-	break;
+    for (i = 0; i < n; i++) {
+	x[i] = xs[i];
+	y[i] = ys[i];
     }
     return 0;
 }
@@ -417,7 +367,7 @@ plr_bop(PLRDev *plr, U_CHAR c)
 /* Advance and setup the page */
 
     plpage();
-    plvpor(plr->vpxmin, plr->vpxmax, plr->vpymin, plr->vpymax);
+    plvpor(0., 1., 0., 1.);
     plwind(plr->xmin, plr->xmax, plr->ymin, plr->ymax);
 
     return 0;
