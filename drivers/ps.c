@@ -25,9 +25,13 @@ static char  outbuf[128];
 static int text = 0;
 static int color;
 
-static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
-			      {"color", DRV_INT, &color, "Use color (color=1|0)"},
+static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1|2)"},
+			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
+
+/* text > 1 uses some postscript tricks, namely a transformation matrix
+   that scales, rotates (with slanting) and offsets text strings.
+   It has yet some bugs for 3d plots. */
 
 /*--------------------------------------------------------------------------*\
  * plD_init_ps()
@@ -235,6 +239,9 @@ ps_init(PLStream *pls)
     fprintf(OF, "/C {setrgbcolor} def\n");
     fprintf(OF, "/G {setgray} def\n");
     fprintf(OF, "/W {setlinewidth} def\n");
+    fprintf(OF, "/SF {selectfont} def\n");
+    fprintf(OF, "/R {rotate} def\n");
+    fprintf(OF, "/SW {stringwidth 2 index mul exch 2 index mul exch rmoveto pop} bind def\n");
     fprintf(OF, "/B {Z %d %d M %d %d D %d %d D %d %d D %d %d closepath} def\n",
 	    XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN);
 
@@ -578,11 +585,11 @@ ps_getdate(void)
     return p;
 }
 
-/* this needs to be split and beaultified! */
+/* this needs to be splited and beaultified! */
 void
 proc_str (PLStream *pls, EscText *args)
 {
-  PLFLT *t = args->xform;
+  PLFLT *t = args->xform, tt[4];
   PLFLT a1, alpha, ft_ht, angle, ref;
   PSDev *dev = (PSDev *) pls->dev;
   char *font, *ofont, str[128], esc, *strp;
@@ -591,13 +598,20 @@ proc_str (PLStream *pls, EscText *args)
   int symbol;
   PLINT clxmin, clxmax, clymin, clymax;
 
+  /* finish previous polyline */
+
+  dev->xold = PL_UNDEFINED;
+  dev->yold = PL_UNDEFINED;
+
   /* font height */
-  ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
+
+  ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points, ht is in mm */
 
   /* correct font size when zooming */
   /* fprintf(stderr,"%f %f\n", pls->dipxax, pls->dipyay); */
   
   /* calculate baseline text angle */
+
   angle = pls->diorot * 90.;
   a1 = acos(t[0]) * 180. / PI;
   if (t[2] > 0.)
@@ -621,7 +635,8 @@ proc_str (PLStream *pls, EscText *args)
   else
     ref = -ENLARGE * ft_ht / 2.;
 
-  /* apply transformations FIXME */
+  /* apply transformations */
+
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
 
   /* check clip limits. For now, only the reference point of the string is checked;
@@ -633,10 +648,12 @@ proc_str (PLStream *pls, EscText *args)
     return;
 
   /* rotate point in postscript is lower left corner, compensate */
+
   args->y = args->y + ref * cos(alpha * PI/180.);
   args->x = args->x - ref * sin(alpha * PI/180.);
 
   /* ps driver is rotated by default, compensate */
+
   plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
 
   /*
@@ -660,24 +677,73 @@ proc_str (PLStream *pls, EscText *args)
   plgesc(&esc);
 
   cur_str = args->string;
-  
+
   /* move to string reference point */
-  fprintf(OF, "\n%d %d moveto\n", args->x, args->y );
+
+  fprintf(OF, " %d %d M\n", args->x, args->y );
 
   /* set string rotation */
-  fprintf(OF, "gsave %f rotate\n", alpha - 90.);
 
-  /* Purge escape sequences from string, so that postscript can find it's length
-     The string length is computed with the current font, and can thus be wrong! */
+  if (text == 1) 
+    fprintf(OF, "gsave %.3f R\n", alpha - 90.);  
+  else {
+    /* I really don't understand this! The angle should be increased by 90 degrees, only,
+       as the ps driver has a default orientation of landscape, see plRotPhy(1,...) above */
+
+    if (fmod(angle, 180.) == 0.)
+      angle -= 90.;
+    else
+      angle += 90.;
+    
+    angle = angle*PI/180.;
+    tt[0] = t[0]; tt[1] = t[1]; tt[2] = t[2]; tt[3] = t[3];
+    // fprintf(OF,"%% %.1f %.1f %.1f %.1f:\n", t[0], t[1], t[2], t[3]);
+
+    /* add graph orientation angle to rotation matrix */
+
+    t[0] =  tt[0]*cos(angle) + tt[1]*sin(angle);
+    t[1] = -tt[0]*sin(angle) + tt[1]*cos(angle);
+    t[2] =  tt[2]*cos(angle) + tt[3]*sin(angle);
+    t[3] = -tt[2]*sin(angle) + tt[3]*cos(angle);
+
+    /* correct for vertically slanted, but baseline inclined, text
+       (as seen in 3d axis labels/ticks) */
+
+    if (tt[0] == 0. && tt[2] == 1.) {
+      tt[1] = t[1];
+      t[1] = -t[2];
+      t[2] = -tt[1];
+    }
+    else if (tt[1] == 0. && tt[3] == 1.) {
+      tt[0] = t[0];
+      t[0] = t[3];
+      t[3] = tt[0];
+    }
+    fprintf(OF, "gsave\n");
+  }
+
+  /* Purge escape sequences from string, so that postscript can find it's length.
+     The string length is computed with the current font, and can thus be wrong
+     if there are font change escape sequences in the string */
+
   esc_purge(str, args->string);
 
-  fprintf(OF, "/%s findfont %f scalefont setfont\n", ofont, font_factor * ENLARGE * ft_ht);
+  if (text == 1)
+    fprintf(OF, "/%s %.1f SF\n", ofont, font_factor * ENLARGE * ft_ht);
+  else {
+    fprintf(OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n", ofont,
+	    font_factor * ENLARGE * ft_ht * t[0],
+	    font_factor * ENLARGE * ft_ht * t[2],
+	    font_factor * ENLARGE * ft_ht * t[1],
+	    font_factor * ENLARGE * ft_ht * t[3]);
+  }
 
   /* move to start point, taking justification into account */
-  fprintf(OF, "(%s) stringwidth %f mul exch %f mul exch rmoveto\n",
-	  str, - args->just, - args->just );
+
+  fprintf(OF, "%.3f (%s) SW\n", - args->just, str);
 
   /* parse string for escape sequences */
+
   do {
     strp = str;
     font = ofont;
@@ -687,9 +753,10 @@ proc_str (PLStream *pls, EscText *args)
     if (*cur_str == esc) {
       cur_str++;
 
-      /* if (*cur_str == esc) FIXME <esc><esc> */
-	
-      switch (*cur_str) {
+      if (*cur_str == esc) { /* <esc><esc> */
+	*strp++ = *cur_str++;
+      }
+      else switch (*cur_str) {
 
       case 'f':
 	cur_str++;
@@ -722,6 +789,7 @@ proc_str (PLStream *pls, EscText *args)
 	break;
 
 	/* ignore the next sequences */
+
       case '+':
       case '-':
       case 'b':
@@ -737,7 +805,7 @@ proc_str (PLStream *pls, EscText *args)
     }
 
     /* copy from current to next token, adding a postscript escape char \ if necessary */
-    /* FIXME -- <esc><esc> don't work */
+
     while(!symbol && *cur_str && *cur_str != esc) {
       if (*cur_str == '(' || *cur_str == ')')
 	*strp++ = '\\';
@@ -746,17 +814,31 @@ proc_str (PLStream *pls, EscText *args)
     *strp = '\0';
 
     /* set the font */
-    fprintf(OF, "/%s findfont %f scalefont setfont\n", font, font_factor * ENLARGE * ft_ht);    
+
+    if (text == 1)
+      fprintf(OF, "/%s %.1f SF\n", font, font_factor * ENLARGE * ft_ht);    
+    else {
+      fprintf(OF, "/%s [%.3f %.3f %.3f %.3f %.3f %.3f] SF\n", font,
+	      font_factor * ENLARGE * ft_ht * t[0],
+	      font_factor * ENLARGE * ft_ht * t[2],
+	      font_factor * ENLARGE * ft_ht * t[1],
+	      font_factor * ENLARGE * ft_ht * t[3],
+	      -fabs(up)*sin(angle), fabs(up)*cos(angle));
+    }
 
     /* if up/down escape sequences, save current point and adjust baseline */
-    if (up)
-      fprintf(OF, "0 %f rmoveto gsave\n", up);
-        
+
+    if (text == 1 && up)
+      fprintf(OF, "0 %.3f rmoveto gsave\n", up);
+
     /* print the string */
+
     fprintf(OF, "(%s) show\n", str);  
 
+
     /* back to baseline */
-    if (up)
+
+    if (text == 1 && up)
       fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
 
   }while(*cur_str);
