@@ -1,12 +1,15 @@
-plplot (5.3.0.cvs.20040324-3) unstable; urgency=low
+plplot (5.3.0.cvs.20040430-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
-  * debian/control: Removed build-dependency on g++-3.3 | g++-3.2, since
-    g++ is a build-essential package (closes: #244007).
+  * debian/control:
+    - Removed build-dependency on g++-3.3 | g++-3.2, since g++ is a
+      build-essential package (closes: #244007).
+    - Use build-dependencies on libx11-dev, libxext-dev, and libxi-dev
+      instead of on xlibs-dev, since this later is now a transition
+      package (after the XFree86 4.3.0 package reorganization in Debian).
   * Build in unstable, so that the octave-plplot package gets
     the right dependency on libhdf5 (closes: #246297).
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  8 May 2004 12:15:29 +0200
 
 plplot (5.3.0.cvs.20040324-2) unstable; urgency=low
 
