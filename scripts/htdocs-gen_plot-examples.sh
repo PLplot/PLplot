@@ -44,13 +44,32 @@ cp examples/c/lena.pgm .
 
 EXDIR=htdocs/examples-data
 
-for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22; do
+for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24; do
 
     echo Working in example ${exe}
 
     # generate standard and preview size images
-    examples/c/x${exe}c -dev png -o x${exe} -fam -fflen 2;
-    examples/c/x${exe}c -dev png -o prev-x${exe} -fam -fflen 2 -geometry 200x150;
+    if test $exe != 24 ; then
+        if test $exe = 02 ; then
+            SMOOTH=0
+	else
+	    SMOOTH=1
+	fi
+        examples/c/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
+	    -o x${exe} -fam -fflen 2;
+        examples/c/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
+	    -o prev-x${exe} -fam -fflen 2 -geometry 200x150;
+    else
+        ( export \
+	      PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
+              PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
+              PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-indic-fonts/lohit_hi.ttf \
+              PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
+              PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf ; \
+          examples/c/x24c -dev png -drvopt text,smooth=0 -o x24 -fam -fflen 2 ; \
+          examples/c/x24c -dev png -drvopt text,smooth=0 -o prev-x24 \
+              -geometry 200x150 -fam -fflen 2 )
+    fi
 
     # give png extension
     for i in `ls x${exe}.?? prev-x${exe}.??`; do
@@ -58,7 +77,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22; do
     done;
 
     # move to www directory.
-    echo populatting www directory demo${exe}
+    echo populating www directory demo${exe}
     mkdir -p $EXDIR/demo${exe}
     mv *${exe}.??.png $EXDIR/demo${exe}/
     cp examples/c/x${exe}c.c examples/tcl/x${exe}.tcl               \
