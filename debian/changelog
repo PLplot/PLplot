@@ -1,3 +1,10 @@
+plplot (5.2.1-15) unstable; urgency=low
+
+  * Added build-dependency on fort77 for the m68k to match the
+    build-dependencies of the octave2.1_2.1.50-2 package.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  8 Jul 2003 02:00:34 +0200
+
 plplot (5.2.1-14) unstable; urgency=low
 
   * Rebuilt with new octave2.1 package (2.1.50-1), such that the
