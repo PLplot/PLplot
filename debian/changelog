@@ -1,3 +1,10 @@
+plplot (5.2.0.cvs.20030325-1) unstable; urgency=low
+
+  * Built with new CVS sources: The problem with the non-numerical version
+    number in pkgIndex.tcl has been fixed (closes: #185677).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 25 Mar 2003 15:34:25 +0100
+
 plplot (5.2.0.cvs.20030320-1) unstable; urgency=low
 
   * Built with new CVS sources: configure has now new options for

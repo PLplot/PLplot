@@ -14,6 +14,7 @@ fi
 ./bootstrap.sh $optver
 rm -f config.status
 fakeroot debian/rules clean
+make maintainer-clean
 ./configure --enable-builddoc --enable-python --enable-octave --enable-f77
 make dist
 version=`debian/get-upstream-version.pl < configure.ac`
