@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1995/03/16 23:43:46  mjl
+ * Revision 1.16  1995/04/12 21:10:26  mjl
+ * Made the ordinary graphics context and the current color a device-dependent
+ * quantity rather than a display-dependent one, to fix problems with color
+ * selection when plotting to separate streams/xwindows.  Thanks to Radey
+ * Shouman for pointing it out.
+ *
+ * Revision 1.15  1995/03/16  23:43:46  mjl
  * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
  * Also variables added for dealing with graphic crosshairs.
  *
@@ -75,8 +81,7 @@ typedef struct {
     int		screen;			/* X screen */
     Display	*display;		/* X display */
     Visual	*visual;		/* X Visual */
-    GC		gc;			/* Graphics context */
-    GC		gcXor;			/* Graphics context */
+    GC		gcXor;			/* Graphics context for XOR draws */
     Colormap	map;			/* Colormap */
     unsigned	depth;			/* display depth */
     int		color;			/* Set to 1 if a color output device */
@@ -85,7 +90,6 @@ typedef struct {
     XColor	cmap0[16];		/* Color entries for cmap 0 */
     XColor	cmap1[256];		/* Color entries for cmap 1 */
     XColor	fgcolor;		/* Foreground color (if grayscale) */
-    XColor	curcolor;		/* Current pen color */
     Cursor	xhair_cursor;		/* Crosshair cursor */
 } XwDisplay;
 
@@ -97,6 +101,8 @@ typedef struct {
     int		is_main;		/* Set if the toplevel X window */
     Window	window;			/* X window id */
     Pixmap	pixmap;			/* Off-screen pixmap */
+    GC		gc;			/* Graphics context */
+    XColor	curcolor;		/* Current pen color */
 
     long	event_mask;		/* Event mask */
     int		exit_eventloop;		/* Breaks the event loop when set */

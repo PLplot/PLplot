@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.58  1995/03/22 17:46:38  mjl
+ * Revision 1.59  1995/04/12 21:10:17  mjl
+ * Made the ordinary graphics context and the current color a device-dependent
+ * quantity rather than a display-dependent one, to fix problems with color
+ * selection when plotting to separate streams/xwindows.  Thanks to Radey
+ * Shouman for pointing it out.
+ *
+ * Revision 1.58  1995/03/22  17:46:38  mjl
  * Moved initialization of the write_to_pixmap and write_to_window vars to the
  * regular driver initialization part, to give plframe users a way to specify
  * the nopixmap option and have it actually work.
@@ -370,10 +376,10 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y2 = y2 * dev->yscale;
 
     if (dev->write_to_window)
-	XDrawLine(xwd->display, dev->window, xwd->gc, x1, y1, x2, y2);
+	XDrawLine(xwd->display, dev->window, dev->gc, x1, y1, x2, y2);
 
     if (dev->write_to_pixmap)
-	XDrawLine(xwd->display, dev->pixmap, xwd->gc, x1, y1, x2, y2);
+	XDrawLine(xwd->display, dev->pixmap, dev->gc, x1, y1, x2, y2);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -402,11 +408,11 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
     }
 
     if (dev->write_to_window)
-	XDrawLines(xwd->display, dev->window, xwd->gc, pts, npts,
+	XDrawLines(xwd->display, dev->window, dev->gc, pts, npts,
 		   CoordModeOrigin);
 
     if (dev->write_to_pixmap)
-	XDrawLines(xwd->display, dev->pixmap, xwd->gc, pts, npts,
+	XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, npts,
 		   CoordModeOrigin);
 }
 
@@ -450,10 +456,10 @@ plD_bop_xw(PLStream *pls)
 	XClearWindow(xwd->display, dev->window);
     }
     if (dev->write_to_pixmap) {
-	XSetForeground(xwd->display, xwd->gc, xwd->cmap0[0].pixel);
-	XFillRectangle(xwd->display, dev->pixmap, xwd->gc, 0, 0,
+	XSetForeground(xwd->display, dev->gc, xwd->cmap0[0].pixel);
+	XFillRectangle(xwd->display, dev->pixmap, dev->gc, 0, 0,
 		       dev->width, dev->height);
-	XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
     }
     XSync(xwd->display, 0);
     pls->page++;
@@ -482,7 +488,7 @@ plD_tidy_xw(PLStream *pls)
     xwd->nstreams--;
     if (xwd->nstreams == 0) {
 	int ixwd = xwd->ixwd;
-	XFreeGC(xwd->display, xwd->gc);
+	XFreeGC(xwd->display, dev->gc);
 	XCloseDisplay(xwd->display);
 	free_mem(xwDisplay[ixwd]);
     }
@@ -513,20 +519,20 @@ plD_state_xw(PLStream *pls, PLINT op)
     case PLSTATE_COLOR0:{
 	int icol0 = pls->icol0;
 	if ( ! xwd->color) {
-	    xwd->curcolor = xwd->fgcolor;
-	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	    dev->curcolor = xwd->fgcolor;
+	    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
 	}
 	else {
 	    if (icol0 == PL_RGB_COLOR) {
-		PLColor_to_XColor(&pls->curcolor, &xwd->curcolor);
-		if ( ! XAllocColor(xwd->display, xwd->map, &xwd->curcolor)) {
+		PLColor_to_XColor(&pls->curcolor, &dev->curcolor);
+		if ( ! XAllocColor(xwd->display, xwd->map, &dev->curcolor)) {
 		    fprintf(stderr, "Warning: could not allocate color\n");
-		    xwd->curcolor.pixel = xwd->fgcolor.pixel;
+		    dev->curcolor.pixel = xwd->fgcolor.pixel;
 		}
 	    } else {
-		xwd->curcolor = xwd->cmap0[icol0];
+		dev->curcolor = xwd->cmap0[icol0];
 	    }
-	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
 	}
 	break;
     }
@@ -542,11 +548,11 @@ plD_state_xw(PLStream *pls, PLINT op)
 
 	icol1 = (pls->icol1 * (xwd->ncol1-1)) / (pls->ncol1-1);
 	if ( ! xwd->color) 
-	    xwd->curcolor = xwd->fgcolor;
+	    dev->curcolor = xwd->fgcolor;
 	else 
-	    xwd->curcolor = xwd->cmap1[icol1];
+	    dev->curcolor = xwd->cmap1[icol1];
 
-	XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
 	break;
     }
 
@@ -678,20 +684,20 @@ FillPolygonCmd(PLStream *pls)
 
     if (outline_only) {
 	if (dev->write_to_window)
-	    XDrawLines(xwd->display, dev->window, xwd->gc, pts, pls->dev_npts,
+	    XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
 		       CoordModeOrigin);
 
 	if (dev->write_to_pixmap)
-	    XDrawLines(xwd->display, dev->pixmap, xwd->gc, pts, pls->dev_npts,
+	    XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
 		       CoordModeOrigin);
     }
     else {
 	if (dev->write_to_window)
-	    XFillPolygon(xwd->display, dev->window, xwd->gc,
+	    XFillPolygon(xwd->display, dev->window, dev->gc,
 			 pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
 
 	if (dev->write_to_pixmap)
-	    XFillPolygon(xwd->display, dev->pixmap, xwd->gc,
+	    XFillPolygon(xwd->display, dev->pixmap, dev->gc,
 			 pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
     }
 }
@@ -738,8 +744,8 @@ Init(PLStream *pls)
 
 /* Set up GC for ordinary draws */
 
-    if ( ! xwd->gc) 
-	xwd->gc = XCreateGC(xwd->display, dev->window, 0, 0);
+    if ( ! dev->gc) 
+	dev->gc = XCreateGC(xwd->display, dev->window, 0, 0);
 
 /* Set up GC for rubber-band draws */
 
@@ -785,7 +791,7 @@ Init(PLStream *pls)
     plD_state_xw(pls, PLSTATE_COLOR0);
 
     XSetWindowBackground(xwd->display, dev->window, xwd->cmap0[0].pixel);
-    XSetBackground(xwd->display, xwd->gc, xwd->cmap0[0].pixel);
+    XSetBackground(xwd->display, dev->gc, xwd->cmap0[0].pixel);
 
 /* If main window, need to map it and wait for exposure */
 
@@ -1699,7 +1705,7 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
 
     XSync(xwd->display, 0);
     if (dev->write_to_pixmap) {
-	XCopyArea(xwd->display, dev->pixmap, dev->window, xwd->gc,
+	XCopyArea(xwd->display, dev->pixmap, dev->window, dev->gc,
 		  x, y, width, height, x, y);
 	XSync(xwd->display, 0);
 #ifdef DEBUG
@@ -1712,7 +1718,7 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
 	    pts[3].x = x0; pts[3].y = y1;
 	    pts[4].x = x0; pts[4].y = y0;
 
-	    XDrawLines(xwd->display, dev->window, xwd->gc, pts, 5,
+	    XDrawLines(xwd->display, dev->window, dev->gc, pts, 5,
 		       CoordModeOrigin);
 	}
 #endif
@@ -1809,7 +1815,7 @@ RedrawCmd(PLStream *pls)
 
     XSync(xwd->display, 0);
     if (dev->write_to_pixmap) {
-	XCopyArea(xwd->display, dev->pixmap, dev->window, xwd->gc, 0, 0,
+	XCopyArea(xwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
 		  dev->width, dev->height, 0, 0);
 	XSync(xwd->display, 0);
     }
