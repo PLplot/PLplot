@@ -77,8 +77,9 @@ install_utils:
 
 install_plmodule:
 	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(LIB_INSTALL) \
-		-o plmodule$(SO) $(LDC_LIBS)
-	-cp plmodule$(SO) $(PYTHON_MOD_DIR)
+		-o $(PYTHON_EXE) $(LDC_LIBS)
+	-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
+	-cp $(PYTHON_EXE) $(PYTHON_DIR)
 
 install_tcl:
 	-if test $(SHARED) = 1; then \
