@@ -21,9 +21,9 @@ def main():
     geometry_master = "500x410+100+200"
     geometry_slave  = "500x410+650+200"
     driver = plgdev()
-    print "Demo of multiple output streams via the %s driver.\n" % driver
-    print "Running with the second stream as slave to the first.\n"
-    print "\n"
+    print "Demo of multiple output streams via the %s driver." % driver
+    print "Running with the second stream as slave to the first."
+    print ""
     
     # Set up the first stream.
     plsetopt("geometry", geometry_master)
