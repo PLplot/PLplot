@@ -478,9 +478,13 @@ be made <emphasis>before</emphasis> calling &plstar; or &plstart;. </para>
 
 <para> If familying is enabled, the name given for the output file (on the
 command line, in response to the &plstar; prompt, as a &plstart; argument,
-or as the result of a call to &plsfnam;) becomes the stem name for the
+or as the result of a call to &plsfnam;) becomes the name template for the
 family.  Thus, if you request a plmeta output file with name
-<filename>test.plm</filename>, the files actually created will be
+<filename>test-%n.plm</filename>, the files actually created will be
+<filename>test-1.plm</filename>, <filename>test-2.plm</filename>, and so on,
+where <filename>%n</filename> indicates where the member number is replaced.
+If there is no <filename>%n</filename>, then the output file becomes the
+stem name and the created files will be like
 <filename>test.plm.1</filename>, <filename>test.plm.2</filename>, and so on.
 A new file is automatically started once the byte limit for the current file
 is passed, but not until the next page break. One may insure a new file at
