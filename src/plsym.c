@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/06/30 18:22:21  mjl
+ * Revision 1.11  1994/07/20 06:09:50  mjl
+ * Changed syntax of the new 3d function plpoin3() to be more like plpoin(),
+ * and moved to this file.
+ *
+ * Revision 1.10  1994/06/30  18:22:21  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -74,6 +78,39 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 
     for (i = 0; i < n; i++)
 	plhrsh(sym, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
+}
+
+/*----------------------------------------------------------------------*\
+ * void plpoin3(n, x, y, z, code)
+ *
+ * Draws a series of points in 3 space.  Setup similar to plline3().
+\*----------------------------------------------------------------------*/
+
+void
+c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
+{
+    PLINT i, sym, font, col;
+    PLFLT u, v;
+
+    if (plsc->level < 3) {
+	plabort("plpoin3: Please set up window first");
+	return;
+    }
+    if (code < 0 || code > 127) {
+	plabort("plpoin3: Invalid code");
+	return;
+    }
+
+    plP_gatt(&font, &col);
+    sym = *(fntlkup + (font - 1) * numberchars + code);
+
+    for( i=0; i < n; i++ ) {
+	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	plhrsh(sym, u, v);
+    }
+
+    return;
 }
 
 /*----------------------------------------------------------------------*\
