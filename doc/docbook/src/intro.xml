@@ -66,7 +66,6 @@ interactive driver is being developed. </para>
       PLplot package are based on ideas used in Tim Pearson's PGPLOT
       package.  Sze Tan writes:
     <blockquote>
-    <title></title>
       <para>
 	I'm rather amazed how far PLPLOT has traveled given its origins
 	etc. I first used PGPLOT on the Starlink VAX computers while I was
@@ -86,7 +85,7 @@ interactive driver is being developed. </para>
     </blockquote>
     </para>
 
-<para>
+    <para>
       The C version of PLplot was developed by Tony Richardson on a
       Commodore Amiga.  In the process, several of the routines were
       rewritten to improve efficiency and some new features added.  The

@@ -4,7 +4,7 @@ $inpart = 0;
 $intoc = 0;
 while (<>) {
   if (/(<!DOCTYPE.*)\[(.*)/) {
-    print "$1 \"\" [$2\n" ; next}
+    print "$1 \"foobar\" [$2\n" ; next}
   if (/(.*)<part>(.*)/) {
     $inpart = 1;
     print "$1<!--<part>";

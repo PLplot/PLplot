@@ -22,7 +22,7 @@
 
 EXTRA_DIST = \
   COPYING README.developers \
-  bin cnf perl www
+  bin cnf www
 
 dist-hook:
 	rm -f $(distdir)/bin/api2man.pl $(distdir)/www/index.html.in

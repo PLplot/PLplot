@@ -153,14 +153,11 @@ $(INFO_MANIFEST) plplotdoc.info: plplotdoc.texi
 	rmdir $(INFO_TMPDIR)
 
 plplotdoc.texi: plplotdoc.txml
-	$(PERL) $(DOCBOOK2X_INC) $(TEXI_XML) $<
+	$(DB2X_TEXIXML) plplotdoc.txml
+	mv "The PLplot Plotting Library.texi" plplotdoc.texi
 
 plplotdoc.txml: plplotdoc.xml-info
-	if $(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@-tmp ; then \
-	  mv $@-tmp $@ ; \
-	else \
-	  false ; \
-	fi
+	$(DB2X_XSLTPROC) -s texi -o plplotdoc.txml plplotdoc.xml-info
 
 plplotdoc.xml-info: $(BINDIR)/info-clean.pl $(SOURCE_FILES) $(MASTER_XML) \
 		inline-info.ent

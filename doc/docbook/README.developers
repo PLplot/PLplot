@@ -70,27 +70,26 @@ it is nice to have them.
 (5) tidy
 
 (6) Additional packages (mostly perl modules) required by docbook2x:
+libxml2
 libxml-parser-perl  (XML::Parser)
 libxml-writer-perl  (XML::Writer)
 libxml-catalog-perl  (XML::Catalog)
 libxml-dom-perl  (XML::Dom)
-libxml-perl
+libxml-perl (XML::Parser::PerlSAX)
+libtext-wrapi18n-perl (Text::Wrap)
 sgmlspl (which brought in libsgmls-perl)
 libxslt1-dev (which brought in libxslt1)
 
 B. docbook2X.
 
-Use at least version 0.7.0 available at http://docbook2x.sourceforge.net. As
-far as I know there are no rpm's or deb's of this package, yet.  Currently,
-we are using only the deprecated perl scripts in the package so you only
-have to unpack it; AFAIK there is no need to build or install it (which
-currently does have some problems).
+Use at least version 0.8.2 available at http://docbook2x.sourceforge.net.
+This upstream version has bugs that are fixed in the Debian package
+available at http://packages.debian.org/docbook2x.
 
 C. Configuration
 
 Within this current directory execute
 
-setenv DOCBOOK2X /home/software/docbook2x/0.7.0/docbook2X-0.7.0/perl
 setenv YOUR_SHELL1_USERNAME airwin
 
 but you will want to adjust to the location of the docbook2X perl
@@ -105,10 +104,7 @@ rm -f config.cache #if you are rebuilding with new configuration from old copy
 
 Now execute:
 
-./configure --with-www-user=$YOUR_SHELL1_USERNAME \
---with-docbook2texixml=$DOCBOOK2X/docbook2texixml \
---with-texi_xml=$DOCBOOK2X/db2x_texixml \
---with-docbook2x-incdir=$DOCBOOK2X/
+./configure --with-www-user=$YOUR_SHELL1_USERNAME
 
 The configure script checks for the following programs: jade, jadetex,
 pdfjadetex, perl, and dvips. You should have them installed (see package list
@@ -146,10 +142,10 @@ D. Tex resources
 
 If you run out of tex resources (which happened to me with default resources
 with Debian woody) then you must add to them.  Here is the way to do it with
-Debian woody. 
+Debian woody.
 
-cd /etc/texmf 
-edit texmf.cnf 
+cd /etc/texmf
+edit texmf.cnf
 
 typically the resource that is exhausted is save_size, and in fact
 the default 5000 is a ridiculously small value.  So change all variations
@@ -165,7 +161,7 @@ dpkg-reconfigure jadetex
 
 E. Build documentation
 
-If you don't run out of tex resources, then 
+If you don't run out of tex resources, then
 
 make
 
@@ -181,7 +177,7 @@ F. Test documentation
 
 cd src
 
-1.  man pages.  
+1.  man pages.
 
 These are the tcsh commands to check the man pages. Do the bash command
 equivalent if that is your shell of choice
@@ -193,9 +189,6 @@ end
 2. info pages.
 
 info --file plplotdoc.info
-
-(Note, there are currently some problems with the cross-references.
-Presumably, a bug-fixed docbook2X package will fix this.)
 
 3. web pages.
 
