@@ -77,10 +77,14 @@ endfunction
 
     if (rosen)
       z = (1 - xx) .^ 2 + 100 .* (yy - xx .^ 2) .^ 2;
+      if exist ("do_fortran_indexing")
       of = do_fortran_indexing;
       do_fortran_indexing = 1;
+      endif
       z(z <= 0) = exp(-5); # make sure the minimum after applying log() is -5
+      if exist ("do_fortran_indexing")      
       do_fortran_indexing = of;
+      endif
       z = log(z);
     else
       r = sqrt(xx .* xx + yy .* yy);

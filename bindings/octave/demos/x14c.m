@@ -166,12 +166,12 @@ function plot1(xoff,xscale,yoff,yscale)
   ## Plot the data points */
 
   plcol(9);
-  plpoin(xs, ys, 9);
+  plpoin(xs', ys', 9);
 
   ## Draw the line through the data */
 
   plcol(4);
-  plline(x, y);
+  plline(x', y');
   plflush;#pleop();
   
 endfunction
@@ -200,7 +200,7 @@ function plot2()
   ## Draw the line */
 
   plcol(3);
-  plline(x, y);
+  plline(x', y');
   plflush;#pleop();
 endfunction
 
@@ -240,7 +240,7 @@ function plot3()
   endfor
 
   plcol(4);
-  plline(x, y);
+  plline(x', y');
   plflush;#pleop();
 
 endfunction

@@ -1,3 +1,29 @@
+plplot (5.3.0.cvs.20040520-0.sarge.2) unstable; urgency=low
+
+  * debian/control: Add dpendencies to libplplot9 (= ${Source-Version}),
+    to all packages besides libplplot9 itself.  The package is now Lintian
+    clean.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 31 May 2004 23:36:20 +0200
+
+plplot (5.3.0.cvs.20040520-0.sarge.1) unstable; urgency=low
+
+  * Built for Debian testing (a.k.a. sarge).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 20 May 2004 11:13:47 +0200
+
+plplot (5.3.0.cvs.20040520-1) unstable; urgency=low
+
+  * New CVS tarball upstream release
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 20 May 2004 11:09:21 +0200
+
+plplot (5.3.0.cvs.20040517-0.sarge.1) unstable; urgency=low
+
+  * Built for Debian testing (a.k.a. sarge).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 17 May 2004 11:32:45 +0200
+
 plplot (5.3.0.cvs.20040517-1) unstable; urgency=low
 
   * New CVS tarball upstream release.

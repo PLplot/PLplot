@@ -51,6 +51,8 @@ function x13c
   theta0 = 0.;
   dthet = 2 * pi / 500;
   for i=0:4
+    x = [];
+    y = [];
     j = 0;
     x(j+1) = 5.;
     y(j+1) = 5.;
@@ -68,9 +70,9 @@ function x13c
     plpsty(rem((i + 3), 8) + 1);
     x(j+1:rows(x))=[];
     y(j+1:rows(y))=[];
-    plfill(x, y);
+    plfill(x', y');
     plcol(1);
-    plline(x, y);
+    plline(x', y');
     just = (theta0 + theta1) / 2.;
     dx = .25 * cos(just); dy = .25 * sin(just);
     if ((just < pi / 2) || (just > 3 * pi / 2) )

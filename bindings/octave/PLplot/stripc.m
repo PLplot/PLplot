@@ -51,7 +51,7 @@ function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc
 		xmin, xmax, xjump, ymin, ymax,
 		__pl.legend_xpos(strm), __pl.legend_ypos(strm), 
 		autoy, acc, 15, 15,
-		colline, styline, leg1, leg2, leg3, leg4,
+		colline', styline', leg1, leg2, leg3, leg4,
 		tdeblank(__pl.xlabel(strm,:)),
 		tdeblank(__pl.ylabel(strm,:)),
 		tdeblank(__pl.tlabel(strm,:)));

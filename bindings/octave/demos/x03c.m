@@ -46,7 +46,7 @@ function x03c
     y(:) = 0.1 * i * y0(:);
     
     ## Draw circles for polar grid */
-    plline(x, y);
+    plline(x', y');
   endfor
 
   plcol0(2);

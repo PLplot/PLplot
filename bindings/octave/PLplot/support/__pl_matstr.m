@@ -34,10 +34,10 @@ function out = __pl_matstr(mat, str, n)
 	out(nn,:) = "";
       endif
     endif
-    old_dofi = do_fortran_indexing;
-    do_fortran_indexing = 1;
+    old_dofi = warn_fortran_indexing;
+    warn_fortran_indexing = 0;
     out(toascii (out) == 0) = " ";
-    do_fortran_indexing = old_dofi;
+    warn_fortran_indexing = old_dofi;
   else
     help __pl_matstr
   endif

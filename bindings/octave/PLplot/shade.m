@@ -25,8 +25,11 @@ function shade(x, y, z, levels, cont )
   global __pl
   strm = __pl_init;
 
-  old_empty_list_elements_ok = empty_list_elements_ok;
-  empty_list_elements_ok = 1;
+  old_empty_list_elements_ok = warn_empty_list_elements;
+
+  unwind_protect
+    
+  warn_empty_list_elements = 0;
 
   if (nargin == 1 && is_matrix(x))
     levels = 20;
@@ -98,7 +101,6 @@ function shade(x, y, z, levels, cont )
     __pl_plenv(xm, xM, ym, yM, 0, -2);
   else
     if (columns(__pl.axis(strm,:)) != 6)
-      empty_list_elements_ok = old_empty_list_elements_ok;
       error("You must contour/shade plot something before entering hold mode");
     endif
     xmm = xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
@@ -167,6 +169,12 @@ function shade(x, y, z, levels, cont )
 
   plflush;
   __pl.items(strm) = 1; # for now!
-  empty_list_elements_ok = old_empty_list_elements_ok;
+
+  unwind_protect_cleanup  
+  
+  warn_empty_list_elements = old_empty_list_elements_ok;
+
+  end_unwind_protect  
+
   
 endfunction

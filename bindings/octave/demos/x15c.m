@@ -97,7 +97,7 @@ function cmap1_init1
   s(3) = 1;		### maximum saturation */
   s(4) = 1;		### maximum saturation */
 
-  plscmap1l(0, i, h, l, s, zeros(4,1));
+  plscmap1l(0, i', h', l', s', zeros(4,1));
 endfunction
 
 ### Initializes color map 1 in HLS space.
@@ -132,7 +132,7 @@ function cmap1_init2()
   s(3) = 0.5;		### saturation -- center */
   s(4) = 1;		### saturation -- high */
 
-  plscmap1l(0, i, h, l, s, [ 0 0 0 0]');
+  plscmap1l(0, i', h', l', s', [ 0 0 0 0]');
 endfunction
 
 ### Illustrates a single shaded region.
@@ -158,7 +158,7 @@ function plot1(z,zmin,zmax)
   max_width = 2;
 
   plpsty(8);
-  plshade(z, "0", -1., 1., -1., 1., 
+  plshade(z, 0, -1., 1., -1., 1., 
 	  shade_min, shade_max, 
 	  sh_cmap, sh_color, sh_width,
 	  min_color, min_width, max_color, max_width, 1, tr);
@@ -189,7 +189,7 @@ function plot2(z,zmin,zmax)
     sh_width = 2;
     plpsty( rem((i + 2), 8) + 1);
 
-    plshade(z, "0", -1., 1., -1., 1., 
+    plshade(z, 0, -1., 1., -1., 1., 
 	    shade_min, shade_max, 
 	    sh_cmap, sh_color, sh_width,
 	    min_color, min_width, max_color, max_width,1,tr);

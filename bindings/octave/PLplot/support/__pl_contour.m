@@ -17,8 +17,12 @@ function __pl_contour(x, y, z, n)
   global __pl
 
   strm = plgstrm+1;
-  old_empty_list_elements_ok = empty_list_elements_ok;
-  empty_list_elements_ok = 1;
+
+  old_empty_list_elements_ok = warn_empty_list_elements;
+
+  unwind_protect
+    
+  warn_empty_list_elements = 0;
 
   grid = 0;
   if (__pl.grid(strm))
@@ -61,7 +65,6 @@ function __pl_contour(x, y, z, n)
     __pl_plenv(xm, xM, ym, yM, 0, grid);
   else
     if (columns(__pl.axis(strm,:)) != 6)
-      empty_list_elements_ok = old_empty_list_elements_ok;
       error("You must contour/shade plot something before entering hold mode");
     endif
     xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
@@ -106,6 +109,11 @@ function __pl_contour(x, y, z, n)
   plflush;
 
   __pl.items(strm) = 1; # for now!
-  empty_list_elements_ok = old_empty_list_elements_ok;
+
+  unwind_protect_cleanup  
+  
+  warn_empty_list_elements = old_empty_list_elements_ok;
+
+  end_unwind_protect  
 
 endfunction

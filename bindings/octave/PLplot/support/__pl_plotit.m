@@ -25,8 +25,11 @@ function __pl_plotit
     return
   endif
 
-  old_empty_list_elements_ok = empty_list_elements_ok;
-  empty_list_elements_ok = 1;
+  old_empty_list_elements_ok = warn_empty_list_elements;
+
+  unwind_protect
+    
+  warn_empty_list_elements = 0;
 
   if (__pl.type(strm) >= 100 && __pl.type(strm) < 200)
     __pl_meshplotit;
@@ -132,7 +135,6 @@ function __pl_plotit
     
     if (is_matrix(x) && !is_vector(x) && is_matrix(y) && !is_vector(y)) 
       if (style != 9 && (xc != yc || rows(x) != rows(y)))
-	empty_list_elements_ok = old_empty_list_elements_ok;
 	error ("__pl_plotit: matrix dimensions must match.");
       endif
       range = "i;";	
@@ -230,7 +232,6 @@ function __pl_plotit
 
 	  case (9) ## errorbars	    
 	    if ( (xc == 1 && yc == 1) || xc > 3 || yc > 3)
-	      empty_list_elements_ok = old_empty_list_elements_ok;
 	      error("plot with errorbars: either x or y or both must be 2 or 3 columns.\n\
 		  If x (or y) has two columns, then it is interpreted as (x, dx),\n\
 		  and a bar is plotted from x-dx to x+dx;\n\
@@ -278,6 +279,10 @@ function __pl_plotit
   pllab(tdeblank(__pl.xlabel(strm,:)), tdeblank(__pl.ylabel(strm,:)), tdeblank(__pl.tlabel(strm,:)));
   plflush;
 
-  empty_list_elements_ok = old_empty_list_elements_ok;
+  unwind_protect_cleanup  
+  
+  warn_empty_list_elements = old_empty_list_elements_ok;
+
+  end_unwind_protect  
 
 endfunction

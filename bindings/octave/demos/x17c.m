@@ -71,7 +71,7 @@ function x17c
 		xlab, ylab,
 		autoy, acc,
 		colbox, collab,
-		colline, styline, "sum", "sin", "sin*noi", "sin+noi",
+		colline', styline', "sum", "sin", "sin*noi", "sin+noi",
 		"t", "pois", "Strip chart demo");
 
   ## This is to represent a loop over time */

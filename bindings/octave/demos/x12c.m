@@ -69,10 +69,10 @@ function plfbox(x0, y0)
   y(3) = y0;
   x(4) = x0 + 1.;
   y(4) = 0.;
-  plfill(x, y);
+  plfill(x', y');
   plcol(1);
   pllsty(1);
-  plline(x, y);
+  plline(x', y');
   
 endfunction
 

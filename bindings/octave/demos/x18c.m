@@ -73,9 +73,9 @@ function ix18c
     plcol(2);
 
     if (opt(k+1))
-      plline3( x, y, z );
+      plline3( x', y', z' );
     else
-      plpoin3( x, y, z, 1 );
+      plpoin3( x', y', z', 1 );
     endif
 
     plcol(3);
@@ -145,7 +145,7 @@ function test_poly(k)
       y(5) = sin( pj ) * sin( ti );
       z(5) = cos( pj );
 
-      plpoly3(x, y, z, draw(k+1,:)', -1); ## added an extra argument, with the sign 
+      plpoly3(x', y', z', draw(k+1,:)', -1); ## added an extra argument, with the sign 
     endfor
   endfor
 
