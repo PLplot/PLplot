@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1995/03/23 20:46:09  mjl
+# Revision 1.4  1995/03/23 21:07:21  mjl
+# Fix to fix of key bindings.
+#
+# Revision 1.3  1995/03/23  20:46:09  mjl
 # Fixed key bindings.
 #
 # Revision 1.2  1994/10/04  18:18:47  mjl
@@ -72,11 +75,11 @@ itcl_class PLXWin {
 	# parsed by the interpreter twice -- once during the bind and
 	# once during its execution.
 
-	bind $w.plwin <Any-KeyPress> \
-	    "plw_key_filter $w [list $client] %N %s %x %y %K %A"
+	bind $this.plwin <Any-KeyPress> \
+	    "plw_key_filter $this [list $client] %N %s %x %y %K %A"
 
-	bind $w.plwin <Any-ButtonPress> \
-	    "plw_user_mouse $w [list $client] %b %s %x %y"
+	bind $this.plwin <Any-ButtonPress> \
+	    "plw_user_mouse $this [list $client] %b %s %x %y"
 
 	bind $this.plwin <Any-Enter> \
 	    "focus $this.plwin"
