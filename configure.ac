@@ -383,8 +383,14 @@ fi
 
 plplot_config_invocation="$0 $*"
 if test -n "$*"; then
-    echo "$plplot_config_invocation" >reconfig
-    chmod +x reconfig
+    # The following test is a quick hack to avoid garbage being stored in 
+    # the reconfig script when the configure script is called recursively 
+    # with the --fallback-echo option (for instance, this happens for
+    # the checks of maximum command length by the libtool configuration).
+    if test "$1" != --fallback-echo ; then
+        echo "$plplot_config_invocation" >reconfig
+        chmod +x reconfig
+    fi
 else
     rm -f reconfig >/dev/null 2>&1
 fi
