@@ -148,7 +148,7 @@
       char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg";
       #endif
   
-      #if defined(PLD_png)
+      #if defined(PLD_gif)
       char* plD_DEVICE_INFO_gd = "gif:GIF file:0:gd:47:gif";
       #endif
   
