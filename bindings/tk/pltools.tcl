@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.20  1995/12/15 18:49:10  furnish
+# Revision 1.21  1997/06/20 15:20:17  furnish
+# Minor updates for working with Itcl better.
+#
+# Revision 1.20  1995/12/15  18:49:10  furnish
 # Hack out more of the evil class system which was missed before, and
 # also hack out the remaining support for [itcl 1.5] which was messing
 # things up pretty bad under 2.0.  Seems to all work a lot better now.
@@ -300,7 +303,7 @@ proc getSaveFile {devkey} {
     # Modify for [incr Tcl] 2.x (which uses the iwidgets package...
 
 	if {![winfo exist .fs]} {
-	    FileSelectionDialog .fs -title "Enter file name" \
+	    Fileselectiondialog .fs -title "Enter file name" \
 		-mask $filter \
 		-modality application
 	}
@@ -339,7 +342,7 @@ proc getPaletteFile {} {
     if { [info commands itcl_class] != "" } then {
 
 	if {![winfo exist .fs]} {
-	    FileSelectionDialog .fs -title "Enter file name" \
+	    Fileselectiondialog .fs -title "Enter file name" \
 		-mask *.pal \
 		-modality application
 	}

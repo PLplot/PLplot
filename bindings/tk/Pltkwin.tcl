@@ -37,6 +37,7 @@
 package	require	Pltk
 package	require	Itcl
 package	require	Itk
+package require Iwidgets
 
 itcl::class Pltkwin {
     inherit PLWin
