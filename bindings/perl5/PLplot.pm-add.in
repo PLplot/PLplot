@@ -14,17 +14,24 @@ sub _assert_length ($$) {
   my $x = shift;
   my $y = shift;
 
-  my ($m , $n) = map { my $r = ref;
-		       if ((! $r) or ($r eq "SCALAR")) {
-			 1
-		       }
-		       elsif ($r eq "ARRAY") {
-			 scalar @$_;
-		       }
-		       else {
-			 croak "Non-conformant argument";
-		       }
-		     } ($x, $y);
+  my ($m , $n) = map {
+    my $r = ref;
+    
+    if ($r and UNIVERSAL::isa ($_, 'PDL')) {
+      croak "PDL argument must be a 1D array"
+	if ($_->getndims () > 1);
+      ($_->dims ())[0];
+    }
+    elsif ((! $r) or ($r eq "SCALAR")) {
+      1
+    }
+    elsif ($r eq "ARRAY") {
+      scalar @$_;
+    }
+    else {
+      croak "Non-conformant argument";
+    }
+  } ($x, $y);
 
   croak "Arguments must have same size"
     if ($m != $n);

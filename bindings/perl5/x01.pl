@@ -13,10 +13,11 @@ use Getopt::Long;
 plssub (2,2);
 
 Getopt::Long::Configure ("pass_through");
-GetOptions qw(-locate! -fontset=i -xor! -h!);
+GetOptions qw(-pdl! -locate! -fontset=i -xor! -h!);
 
 if (defined $opt_h) {
   print "\n$0 options:\n" .
+    "    -pdl\t\t Use PDL for passing array arguments to PLplot functions\n" .
     "    -locate\t\t Turns on test of API locate function\n" .
     "    -fontset\t\t Selects stroke font set (0 or 1, def:1)\n" .
     "    -xor\t\t Turns on test of XOR\n";
@@ -26,6 +27,11 @@ if (defined $opt_h) {
 $locate_mode = (defined $opt_locate) ? 1 : 0;
 $fontset = (defined $opt_fontset) ? $opt_fontset : 1;
 $test_xor = (defined $opt_xor) ? $opt_xor : 0;
+$use_pdl = (defined $opt_pdl) ? $opt_pdl : 0;
+
+if ($use_pdl) {
+  use PDL;
+}
 
 # Also possible: 
 #    plParseOpts_p (\@ARGV, "PL_PARSE_FULL", "PL_PARSE_NOPROGRAM");
@@ -80,16 +86,36 @@ sub plot1
 {
   my $do_test = shift;
 
-  @x = map { $xoff + $xscale * ($_ + 1) / 60.0 } (0..59);
-  @y = map { $yoff + $yscale * $x[$_] * $x[$_] } (0..59);
+  if ($use_pdl) {
+    $xr = $xoff + $xscale * (pdl ([1..60])) / 60.0;
+    $yr = $yoff + $yscale * ($xr * $xr);
+  }
+  else {
+    @x = map { $xoff + $xscale * ($_ + 1) / 60.0 } (0..59);
+    @y = map { $yoff + $yscale * $x[$_] * $x[$_] } (0..59);
+    $xr = \@x;
+    $yr = \@y;
+  }
+
+  my $xmin = $use_pdl ? $xr->index (0)  : $x[0];
+  my $xmax = $use_pdl ? $xr->index (59) : $x[59];
+  my $ymin = $use_pdl ? $yr->index (0)  : $y[0];
+  my $ymax = $use_pdl ? $yr->index (59) : $y[59];
   
-  my $xmin = $x[0];
-  my $xmax = $x[59];
-  my $ymin = $y[0];
-  my $ymax = $y[59];
-  
-  my @xs = map { $x[$_ * 10 + 3] } (0..5);
-  my @ys = map { $y[$_ * 10 + 3] } (0..5);
+  my @xs;
+  my @ys;
+
+  if ($use_pdl) {
+    $idx = 3 + 10 * pdl ([0..5]);
+    $xsr = $xr->index ($idx);
+    $ysr = $yr->index ($idx);
+  }
+  else {
+    @xs = map { $x[$_ * 10 + 3] } (0..5);
+    @ys = map { $y[$_ * 10 + 3] } (0..5);
+    $xsr = \@xs;
+    $ysr = \@ys;
+  }
   
   # Set up the viewport and window using PLENV. The range in X is 
   # 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
@@ -105,12 +131,13 @@ sub plot1
   
   plcol0 (4);
 
-  plpoin (6, \@xs, \@ys, 9);
+  plpoin (6, $xsr, $ysr, 9);
 
   # Draw the line through the data
   
   plcol0 (3);
-  plline_p (\@x, \@y);
+
+  plline_p ($xr, $yr);
 
   if ($do_test and $test_xor) {
     print "Xor test not yet implemented\n";
