@@ -4,7 +4,7 @@ README file for the win32/msdev port of plplot
 I will here give some background information, information 
 on current status and future developments of the win32/msdev 
 port of plplot. For installation instructions please see the
-plplot\win32\msdev\INSTALL.TXT.
+plplot\sys\win32\msdev\INSTALL.TXT.
 
 The win32\msdev port of plplot were originally written by
 Paul Casteels (casteels@uia.ua.ac.be) and Carla Carmelo Rosa  

@@ -1,9 +1,14 @@
 #
-# This makefile copies all source files to PLTMP and
-# creates a makefile in this directory.
-# Additional drivers should be uncommented from pldevs.h
+# This makefile copies all source files to PLTMP.
+# Additional drivers should be uncommented from this
+# file before running nmake.
 #
-# Questions/problems,send email to :
+# Questions/problems, send email to :
+#       Olof Svensson   svensson@esrf.fr
+#       European Synchrotron Radiation Facility
+#       France
+#
+# Originally written by
 #       Paul Casteels   casteels@uia.ua.ac.be
 #       University of Antwerp   Dpt. Physics
 #       Belgium
@@ -48,6 +53,7 @@ links:
   @copy $(PLDIR)\include\*.h $(PLTMP)\plplot
   @copy $(PLDIR)\examples\c\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\examples\c\*.h $(PLTMP)\plplot
+  @copy $(PLDIR)\examples\c\lena.pgm $(PLTMP)\lena.pgm
   @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
