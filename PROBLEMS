@@ -27,25 +27,11 @@ Essential, minor effort required.
 cannot build dynamic drivers in this case, and this also kills python and
 octave so sysloc.in should be adjusted accordingly.
 
-* http://sourceforge.net/mailarchive/message.php?msg_id=1785861 documents
-the many minor memory leaks found by valgrind throughout the dynloader area.
-Anybody with good understanding of that code section?  Joao is planning to
-make an internal pllib_end function called from plend where overall memory
-that is allocated at pllib_init is released again.
-
 * If x08.tcl (or any other multi-page example) is executed first, then the
 first page is skipped.
 
 "Would be nice", major effort required.
 ***************************************
-
-* Get PLplot to work on Mac OS X and Cygwin platforms.  Have to wait for
-libtool-1.5 tarball to be officially reinstated on ftp.gnu.org.  Current
-rate of progress is 7 per day with 450 to go ==> time scale of November 2003
-or so before we can make further progress.  At that point, if libtool-1.5
-solves the major problems, there will probably still need to be some
-additional work to smooth out minor configuration and cross-platform issues
-for Mac OS X and Cygwin.
 
 * Move from DSSL based docbook stylesheets to XSL.  Rafael, as soon as
 the XSL results look as good (pdf currently a problem) as the DSSL results.
@@ -55,16 +41,42 @@ proliferating.  Example, instead of plenv0 do:
 plsopt("plenv_advance", "0");
 plenv(...)
 
+* Maurice's idea (plplot_devel 8 Jan 2004) of using C-style format specifier
+for familying as in
+
+./x08f -dev png -fam -fflen 2 -o x08f.%02d.png
+
 * -the tk drivers ignore plconfig.tcl if it is in the user directory ~/tcl
 and a tclIndex file is generated. "auto_path" is correctly initialized to
 ~/tcl, pwd/tcl, etc, but plconfig is not executed.  Reported by Joao.  Status?
 
-* Completely remove configure.in and COPYING from the top directory of the
-cvs repository.  (The cf/configure.in file is fine.) It's a long story, but
-topdir configure.in is no longer used by PLplot (configure.ac is used
-instead), and configure.in has a real log mess so AWI want to just get rid
-of it entirely.  COPYING is another long story, but AWI needs to reuse that
-name so he can provide a proper reference to our LGPL licensing.
+* memory leak problems for -dev xwin, -dev tk, and -dev ntk. The
+valgrind results for these interactive devices typically show lots of
+alloced blocks of memory that have not been freed at exit. This might be
+caused by my rather old versions of the X and Tk libraries not being
+valgrind clean or it may be that our drivers do not properly close those
+libraries.
+
+* invalid file descriptor 6 error for ./x14c -dev tk.  Here are the
+valgrind results:
+Badly formatted packet, numRead = 8
+==14506== Warning: invalid file descriptor 6 in syscall write()
+Packet send failed:
+         pl_PacketSend -- error writing to fifo: bad file number
+	 TCL command "plclient_link_end" failed:
+	 no application named "plclient_1"
+
+* ./x??f -dev tk memory management problems:
+==21151== Invalid read of size 1
+==21151==    at 0x4001FD90: strrchr (mac_replace_strmem.c:104)
+==21151==    by 0x407FD8CE: set_windowname (tk.c:1397)
+==21151==    by 0x407FCD4A: tk_start (tk.c:751)
+==21151==    by 0x407FBBBD: init (tk.c:266)
+==21151==    Address 0xBFFFDEEC is not stack'd, malloc'd or free'd
+
+This only happens for combination of fortran example and -dev tk.
+Another symptom of this problem is all fortran examples have strange
+-dev tk GUI window names, e.g., 0H\x01\b for ./x01f -dev tk.
 
 * Maurice plans to finish his changes to implement handling strings as
 strings in the metafile format.
@@ -81,10 +93,9 @@ with the remaining rotation problems for the font handling, but those issues
 should not be tackled until the parallelogram core problem is straightened
 out.
 
-* Uniform 3D API for handling z, x, y, and exclusion.  The shaded and
-contour plots do this fairly well (although not uniformly), but the plot3d,
-plmesh, and plsurf3d API's are much too simplistic for general work.  For
-example, they don't handle non-rectangular x,y regions at all.
+* Put in index limits for the plot3d, plmesh, and plsurf3d API's so they can
+handle non-rectangular x,y regions.  This is a useful facility to have (and
+has been in gnuplot, for example, for a long time.
 
 * Much more extended plarrows API.  Question on list about this as of 2003
 September, but no decision made.
@@ -120,6 +131,9 @@ messed with our tcl install location.
 
 * Better support for "make check" so that uninstalled versions can check for
 drivers, fonts, and tcl support scripts in their uninstalled positions.
+There has been improvement in this area, but can we now run make check
+everywhere when nothing installed?  And when something installed, does
+make check completely ignore it?
 
 * Permissions problem with generated plplot-config and plplot-test.sh in
 plplot/test.  Using new autoconf API allows you to set permissions of results
@@ -128,17 +142,24 @@ API.  Also, this issue only affects "make check" environment since the
 installed versions should have the correct permissions using the autotools
 approach.
 
-* fortran examples made consistent with the C, C++, tcl, Java, python, and
-octave examples as a test that the API is implemented correctly for each
-front end and as a teaching device of how to produce *exactly* the same plot
-for each front end.  C++, Java, python, and Tcl are consistent, but octave
-is not (Joao?) and fortran needs a lot of work.
+* standard octave examples should be made consistent with the C, C++, tcl,
+Java, python, fortran, and even yorick (yplot) examples as a test that the
+API is implemented correctly for octave and as a teaching device of how to
+produce *exactly* the same plot for the octave interface as you can for each
+of the other interfaces. Currently octave examples 2, 6, 7, 10, 12, and 18
+agree with their counterparts from the other interfaces, but octave examples
+1, 3, 4, 5, 8, 9, 11, 13, 15, and 16 are not consistent.
 
-* fortran API used to be our most complete non-C interface, but now it has
-fallen behind C++, python and java (and the swig-based perl interface that
-has been developed as a separate project).  Alan
+* Use some well-recognized pdf verification tool (similar in spirit to the
+w3c verification tests for web sites) to be sure our results conform to the
+published pdf standards.  Currently there is no idea whether such a pdf
+verification tool exists, but acroread is buggy on Linux so that is not good
+enough as a verification tool.
 
-* Implement plgetopt for fortran so can do command-line processing. Probably
-some cross-platform issues (especially with fortran) so have it act
-reasonably when, e.g., getarg is not available on some fortran platforms.
+* split fortran library into fortran part (with same name) and a C part
+which the fortran part links to.  This change should solve all our FLIBS
+troubles on various platforms.
 
+* use -no-undefined for java interface build (should not require extra
+library linking) and for python interface build (which will require linking
+to libpython$PYVERSION and finding that library at the ./configure stage).
