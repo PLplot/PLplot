@@ -149,7 +149,7 @@ init(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
     TkDev *dev;
-    float pxlx, pxly;
+    PLFLT pxlx, pxly;
     int xmin = 0;
     int xmax = PIXELS_X - 1;
     int ymin = 0;
@@ -1565,8 +1565,8 @@ Plfinfo(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 	dev->height = atoi(argv[2]);
 #if PHYSICAL
 	{
-	    float pxlx = (double) PIXELS_X / dev->width  * DPMM;
-	    float pxly = (double) PIXELS_Y / dev->height * DPMM;
+	    PLFLT pxlx = (double) PIXELS_X / dev->width  * DPMM;
+	    PLFLT pxly = (double) PIXELS_Y / dev->height * DPMM;
 	    plP_setpxl(pxlx, pxly);
 	}
 #endif

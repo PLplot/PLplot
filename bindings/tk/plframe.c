@@ -2927,7 +2927,7 @@ static int
 report( Tcl_Interp *interp, register PlFrame *plFramePtr,
 	int argc, char **argv )
 {
-    float x, y;
+    PLFLT x, y;
 /*    fprintf( stdout, "Made it into report, argc=%d\n", argc ); */
 
     if (argc == 0) {
@@ -2987,8 +2987,8 @@ UpdateVScrollbar(register PlFrame *plFramePtr)
 	return;
 
     totalUnits  = height;
-    firstUnit   = 0.5 + (float) height * (1. - plFramePtr->yr);
-    lastUnit    = 0.5 + (float) height * (1. - plFramePtr->yl);
+    firstUnit   = 0.5 + (PLFLT) height * (1. - plFramePtr->yr);
+    lastUnit    = 0.5 + (PLFLT) height * (1. - plFramePtr->yl);
     windowUnits = lastUnit - firstUnit;
     sprintf(string, " %d %d %d %d",
 	    totalUnits, windowUnits, firstUnit, lastUnit);
@@ -3018,8 +3018,8 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
 	return;
 
     totalUnits  = width;
-    firstUnit   = 0.5 + (float) width * plFramePtr->xl;
-    lastUnit    = 0.5 + (float) width * plFramePtr->xr;
+    firstUnit   = 0.5 + (PLFLT) width * plFramePtr->xl;
+    lastUnit    = 0.5 + (PLFLT) width * plFramePtr->xr;
     windowUnits = lastUnit - firstUnit;
     sprintf(string, " %d %d %d %d",
 	    totalUnits, windowUnits, firstUnit, lastUnit);
@@ -3042,7 +3042,7 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
 static void
 gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
 {
-    float x0, y0, x1, y1;
+    PLFLT x0, y0, x1, y1;
 
     x0 = atof(argv[0]);
     y0 = atof(argv[1]);

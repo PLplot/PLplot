@@ -228,8 +228,8 @@ tek_init(PLStream *pls)
     int ymin = 0;
     int ymax = TEKY;
 
-    float pxlx = 4.771;
-    float pxly = 4.653;
+    PLFLT pxlx = 4.771;
+    PLFLT pxly = 4.653;
 
     pls->graphx = TEXT_MODE;
 

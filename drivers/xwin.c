@@ -156,7 +156,7 @@ void
 plD_init_xw(PLStream *pls)
 {
     XwDev *dev;
-    float pxlx, pxly;
+    PLFLT pxlx, pxly;
     int xmin = 0;
     int xmax = PIXELS_X - 1;
     int ymin = 0;
@@ -1831,8 +1831,8 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 
 #if PHYSICAL
     {
-	float pxlx = (double) PIXELS_X / dev->width  * DPMM;
-	float pxly = (double) PIXELS_Y / dev->height * DPMM;
+	PLFLT pxlx = (double) PIXELS_X / dev->width  * DPMM;
+	PLFLT pxly = (double) PIXELS_Y / dev->height * DPMM;
 	plP_setpxl(pxlx, pxly);
     }
 #endif
