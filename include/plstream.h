@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/07/23 04:46:55  mjl
+ * Revision 1.32  1994/08/25 04:03:43  mjl
+ * Added include of pdf.h, since the PLStream data structure requires it
+ * in any case.
+ *
+ * Revision 1.31  1994/07/23  04:46:55  mjl
  * Added pls->server_nokill, which can be set to prevent plserver from dying
  * when a ^C is hit.
  *
@@ -58,6 +62,8 @@
 	Contains declarations for PLStream and PLDev structs.
 	Also prototypes for stream & device utility functions.
 */
+
+#include "pdf.h"
 
 #ifndef __PLSTREAM_H__
 #define __PLSTREAM_H__
