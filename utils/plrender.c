@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1993/08/13 04:42:52  mjl
+ * Revision 1.31  1993/08/18 19:12:58  mjl
+ * Minor fixes.
+ *
+ * Revision 1.30  1993/08/13  04:42:52  mjl
  * A wild and maddening rework of the page seeking facility.  The "last bugs"
  * proved amazingly difficult to stomp out.  These turned up during tests
  * over a medium-speed network link (unobservable when running locally).  I
@@ -145,7 +148,7 @@ static PLINT	target_page;	/* Plot we are seeking to */
 static PLINT	delta;		/* Number of pages to go forward/back */
 
 static int	no_pagelinks;	/* Set if metafile doesn't have page links */
-static int	end_of_page=1;	/* Set when we're at the end of a page */
+static int	end_of_page;	/* Set when we're at the end of a page */
 static int	seek_mode;	/* Set after a seek, before a BOP */
 
 static FPOS_T	prevpage_loc;	/* Byte position of previous page header */
@@ -1349,6 +1352,9 @@ OpenMetaFile(int *p_argc, char **argv)
 *	<FileName>.plm
 *	<FileName>.plm.1
 */
+#ifdef DEBUG
+	fprintf(stderr, "Trying to open metafile %s.\n", FileName);
+#endif
 	strncpy(BaseName, FileName, sizeof(BaseName) - 1);
 	BaseName[sizeof(BaseName) - 1] = '\0';
 
