@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/03/06 05:00:39  mjl
+ * Revision 1.16  1993/03/15 21:42:14  mjl
+ * Changed _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.  Also moved clear window
+ * call to the _bop function to support plot interrupts by plrender (seeks
+ * before the plot is completed).
+ *
+ * Revision 1.15  1993/03/06  05:00:39  mjl
  * Fixed a bug in foreground plotting for grayscale devices when the bg color
  * was set to black.
  *
@@ -50,6 +56,7 @@
 
 static void  xw_Xinit		(PLStream *);
 static void  WaitForPage	(PLStream *);
+static void  HandleEvents	(PLStream *);
 static void  EventHandler	(PLStream *, XEvent *);
 static void  xw_colini		(PLStream *);
 static int   AreWeGrayscale	(Display *);
@@ -204,6 +211,8 @@ xw_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
     XwDev *xwd = &(xwdev[id]);
     PLDev *pld = &(pldev[id]);
 
+    HandleEvents(pls);	/* Check for events */
+
     if (npts > PL_MAXPOLYLINE)
 	plexit("Error -- too many points in polyline\n");
 
@@ -216,31 +225,34 @@ xw_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_clear()
+* xw_eop()
 *
-* Clear page.  User must click left mouse button to continue.
+* End of page.  User must click left mouse button to continue.
 \*----------------------------------------------------------------------*/
 
 void
-xw_clear(PLStream *pls)
+xw_eop(PLStream *pls)
 {
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
 
     XFlush(xwd->display);
     WaitForPage(pls);
-    XClearWindow(xwd->display, xwd->window);
 }
 
 /*----------------------------------------------------------------------*\
-* xw_page()
+* xw_bop()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
-xw_page(PLStream *pls)
+xw_bop(PLStream *pls)
 {
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev *xwd = &(xwdev[id]);
+
+    XClearWindow(xwd->display, xwd->window);
     pls->page++;
 }
 
@@ -280,6 +292,8 @@ xw_color(PLStream *pls)
     XwDev *xwd = &(xwdev[id]);
     int icol0 = pls->icol0;
 
+    HandleEvents(pls);	/* Check for events */
+
     if (!xwd->color) {
 	xwd->curcolor.pixel = xwd->fgcolor.pixel;
 	XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
@@ -309,6 +323,7 @@ xw_color(PLStream *pls)
 void
 xw_text(PLStream *pls)
 {
+    HandleEvents(pls);	/* Check for events */
 }
 
 /*----------------------------------------------------------------------*\
@@ -320,6 +335,7 @@ xw_text(PLStream *pls)
 void
 xw_graph(PLStream *pls)
 {
+    HandleEvents(pls);	/* Check for events */
 }
 
 /*----------------------------------------------------------------------*\
@@ -497,6 +513,26 @@ WaitForPage(PLStream *pls)
 	EventHandler(pls, &xwd->theEvent);
     }
     xwd->exit_eventloop = FALSE;
+}
+
+/*----------------------------------------------------------------------*\
+* HandleEvents()
+*
+* Just a front-end to EventHandler(), for use when not actually waiting for
+* an event but only checking the event queue.  Right now the ONLY event we
+* check for is a KeyPress or ButtonPress, since the plot buffer logic does
+* not support multiple writes of the plot buffer in a single page.
+\*----------------------------------------------------------------------*/
+
+static void
+HandleEvents(PLStream *pls)
+{
+    int id = devtable[pls->ipls][pls->ipld];
+    XwDev *xwd = &(xwdev[id]);
+
+    if (XCheckMaskEvent(xwd->display, ButtonPressMask | KeyPressMask,
+			&xwd->theEvent))
+	EventHandler(pls, &xwd->theEvent);
 }
 
 /*----------------------------------------------------------------------*\
