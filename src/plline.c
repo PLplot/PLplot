@@ -533,6 +533,44 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 }
 
 /*----------------------------------------------------------------------*\
+ * int circulation()
+ *
+ * Returns the circulation direction for a given polyline: positive is
+ * counterclockwise, negative is clockwise (right hand rule).
+ *
+ * Used to get the circulation of the fill polygon around the bounding box,
+ * when the fill polygon is larger than the bounding box.  Counts left
+ * (positive) vs right (negative) hand turns using a cross product, instead of
+ * performing all the expensive trig calculations needed to get this 100%
+ * correct.  For the fill cases encountered in plplot, this treatment should
+ * give the correct answer most of the time, by far.  When used with plshades,
+ * the typical return value is 3 or -3, since 3 turns are necessary in order
+ * to complete the fill region.  Only for really oddly shaped fill regions
+ * will it give the wrong answer.
+\*----------------------------------------------------------------------*/
+
+static int
+circulation(PLINT *x, PLINT *y, PLINT npts)
+{
+    int xproduct, direction = 0;
+    PLINT i, x1, y1, x2, y2, x3, y3;
+    for (i = 0; i < npts - 1; i++) {
+	x1 = x[i]; x2 = x[i+1];
+	y1 = y[i]; y2 = y[i+1];
+	if (i < npts-2) {
+	    x3 = x[i+2]; y3 = y[i+2];
+	} else {
+	    x3 = x[0]; y3 = y[0];
+	}
+	xproduct = (x2-x1)*(y3-y2) - (y2-y1)*(x3-x2);
+
+	if (xproduct > 0) direction++;
+	if (xproduct < 0) direction--;
+    }
+    return direction;
+}
+
+/*----------------------------------------------------------------------*\
  * void plP_plfclp()
  *
  * Fills a polygon within the clip limits.
@@ -543,8 +581,8 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
 	   void (*draw) (short *, short *, PLINT))
 {
-    PLINT x1, x2, y1, y2;
-    int i, iclp = 0;
+    PLINT i, x1, x2, y1, y2;
+    int iclp = 0;
     short xclp[2*PL_MAXPOLY], yclp[2*PL_MAXPOLY];
     int drawable;
     int crossed_xmin1 = 0, crossed_xmax1 = 0;
@@ -674,28 +712,174 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	}
     }
 
-/* A sleazy way to get "lopped-off" corners filled */
+/* Now handle cases where fill polygon intersects two sides of the box */
 
     if (iclp >= 2) {
-	if ((xclp[0] == xmin && yclp[iclp-1] == ymin) ||
-	    (xclp[iclp-1] == xmin && yclp[0] == ymin))
+	int debug=0;
+	int dir = circulation(x, y, npts);
+	if (debug) {
+	    if ( (xclp[0] == xmin && xclp[iclp-1] == xmax) ||
+		 (xclp[0] == xmax && xclp[iclp-1] == xmin) ||
+		 (yclp[0] == ymin && yclp[iclp-1] == ymax) ||
+		 (yclp[0] == ymax && yclp[iclp-1] == ymin) ||
+		 (xclp[0] == xmin && yclp[iclp-1] == ymin) ||
+		 (yclp[0] == ymin && xclp[iclp-1] == xmin) ||
+		 (xclp[0] == xmax && yclp[iclp-1] == ymin) ||
+		 (yclp[0] == ymin && xclp[iclp-1] == xmax) ||
+		 (xclp[0] == xmax && yclp[iclp-1] == ymax) ||
+		 (yclp[0] == ymax && xclp[iclp-1] == xmax) ||
+		 (xclp[0] == xmin && yclp[iclp-1] == ymax) ||
+		 (yclp[0] == ymax && xclp[iclp-1] == xmin) ) {
+		printf("dir=%d, clipped points:\n", dir);
+		for (i=0; i < iclp; i++)
+		    printf(" x[%d]=%d y[%d]=%d", i, xclp[i], i, yclp[i]);
+		printf("\n");
+		printf("pre-clipped points:\n");
+		for (i=0; i < npts; i++)
+		    printf(" x[%d]=%d y[%d]=%d", i, x[i], i, y[i]);
+		printf("\n");
+	    }
+	}
+
+    /* The cases where the fill region is divided 2/2 */
+    /* Divided horizontally */
+	if (xclp[0] == xmin && xclp[iclp-1] == xmax)
+	{
+	    if (dir > 0) {
+		xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+		xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    }
+	    else {
+		xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+		xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	    }
+	}
+	else if (xclp[0] == xmax && xclp[iclp-1] == xmin)
+	{
+	    if (dir > 0) {
+		xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+		xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	    }
+	    else {
+		xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+		xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	    }
+	}
+
+    /* Divided vertically */
+	else if (yclp[0] == ymin && yclp[iclp-1] == ymax)
+	{
+	    if (dir > 0) {
+		xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+		xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	    }
+	    else {
+		xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+		xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	    }
+	}
+	else if (yclp[0] == ymax && yclp[iclp-1] == ymin)
+	{
+	    if (dir > 0) {
+		xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+		xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	    }
+	    else {
+		xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+		xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    }
+	}
+
+    /* The cases where the fill region is divided 3/1 --
+          LL           LR           UR           UL
+       +-----+      +-----+      +-----+      +-----+
+       |     |      |     |      |    \|      |/    |
+       |     |      |     |      |     |      |     |
+       |\    |      |    /|      |     |      |     |
+       +-----+      +-----+      +-----+      +-----+
+
+       Note when we go the long way around, if the direction is reversed the
+       three vertices must be visited in the opposite order.
+    */
+    /* LL, short way around */
+	else if ((xclp[0] == xmin && yclp[iclp-1] == ymin && dir < 0) ||
+		 (yclp[0] == ymin && xclp[iclp-1] == xmin && dir > 0) )
 	{
 	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
 	}
-	else if ((xclp[0] == xmax && yclp[iclp-1] == ymin) ||
-		 (xclp[iclp-1] == xmax && yclp[0] == ymin))
+    /* LL, long way around, counterclockwise */
+	else if ((xclp[0] == xmin && yclp[iclp-1] == ymin && dir > 0))
+	{
+	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	}
+    /* LL, long way around, clockwise */
+	else if ((yclp[0] == ymin && xclp[iclp-1] == xmin && dir < 0))
+	{
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	}
+    /* LR, short way around */
+	else if ((xclp[0] == xmax && yclp[iclp-1] == ymin && dir > 0) ||
+		 (yclp[0] == ymin && xclp[iclp-1] == xmax && dir < 0) )
 	{
 	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
 	}
-	else if ((xclp[0] == xmax && yclp[iclp-1] == ymax) ||
-		 (xclp[iclp-1] == xmax && yclp[0] == ymax))
+    /* LR, long way around, counterclockwise */
+	else if (yclp[0] == ymin && xclp[iclp-1] == xmax && dir > 0)
+	{
+	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	}
+    /* LR, long way around, clockwise */
+	else if (xclp[0] == xmax && yclp[iclp-1] == ymin && dir < 0)
+	{
+	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	}
+    /* UR, short way around */
+	else if ((xclp[0] == xmax && yclp[iclp-1] == ymax && dir < 0) ||
+		 (yclp[0] == ymax && xclp[iclp-1] == xmax && dir > 0) )
 	{
 	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
 	}
-	else if ((xclp[0] == xmin && yclp[iclp-1] == ymax) ||
-		 (xclp[iclp-1] == xmin && yclp[0] == ymax))
+    /* UR, long way around, counterclockwise */
+	else if (xclp[0] == xmax && yclp[iclp-1] == ymax && dir > 0)
 	{
 	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	}
+    /* UR, long way around, clockwise */
+	else if (yclp[0] == ymax && xclp[iclp-1] == xmax && dir < 0)
+	{
+	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	}
+    /* UL, short way around */
+	else if ((xclp[0] == xmin && yclp[iclp-1] == ymax && dir > 0) ||
+		 (yclp[0] == ymax && xclp[iclp-1] == xmin && dir < 0) )
+	{
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	}
+    /* UL, long way around, counterclockwise */
+	else if (yclp[0] == ymax && xclp[iclp-1] == xmin && dir > 0)
+	{
+	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	}
+    /* UL, long way around, clockwise */
+	else if (xclp[0] == xmin && yclp[iclp-1] == ymax && dir < 0)
+	{
+	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
 	}
     }
 
