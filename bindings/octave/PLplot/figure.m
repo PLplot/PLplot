@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998, 1999, 2000, 2001 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -138,12 +138,11 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       ## the tk stuff
-
-      if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
-	if (! exist("tk_start"))
-	  error("Can't use this Tk feature of PLplot until tk_octave is installed!\n")
-	endif
-	if  (! exist("__tk_name"))
+      if (strcmp("tk", sprintf("%s",plgdev')))
+	if (! exist("tk_start") && nargin == 6)
+	  error("Can't use this Tk feature of PLplot until tk_octave \
+	      is installed!\n")
+	elseif  (! exist("__tk_name"))
 	  tk_init;
 	endif
 
@@ -153,24 +152,25 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	fprintf(fp, "set octave_interp {%s}\n", __tk_name);
 	fprintf(fp, "set octave_interp_pid %d\n", getpid);
 	fprintf(fp, "send -async $octave_interp to_octave intp=\"[tk appname]\"\n");
-	fprintf(fp, "source {%s}\n", tk_file);
-	fprintf(fp, "proc to_octave {a args} {\n"),
-   fprintf(fp, "global octave_interp octave_interp_pid; \n");   
-   fprintf(fp, "send -async $octave_interp to_octave \"$a $args\"; \n");   
-   fprintf(fp, "#exec kill -16 $octave_interp_pid \n}");   
+
+	fprintf(fp, "proc to_octave {a args} {\n");
+	fprintf(fp, "global octave_interp octave_interp_pid;\n");
+	fprintf(fp, "send -async $octave_interp to_octave \"$a $args\";\n");
+	fprintf(fp, "#exec kill -16 $octave_interp_pid}\n");
 	
+	if (nargin == 6)
+	  fprintf(fp, "source {%s}\n", tk_file);
+	  plSetOpt ("plwindow", plot_frame);
+	else
+  	  plSetOpt("plwindow", sprintf(".figure_%d",n));
+	endif
+	plSetOpt ("tk_file", init_file);
 	fclose(fp);
 
-	plSetOpt ("plwindow", plot_frame);
-	plSetOpt ("tk_file", init_file);
-      else 	# The window manager window name
-	if (strcmp("tk", sprintf("%s",plgdev')))
-	  plSetOpt("plwindow", sprintf(".figure_%d",n));
-	  intp = sprintf("figure_%d",n);
-	  __pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name
-	else
-	  plSetOpt("plwindow", sprintf("Figure %d",n));
-	endif
+	intp = sprintf("figure_%d",n);
+	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name
+      else
+	plSetOpt("plwindow", sprintf("Figure %d",n));
       endif
 
       plSetOpt("geometry", "400x400+800+1");
@@ -183,7 +183,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       pladv(0)
       plflush;pleop;
       
-      if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
+      if (strcmp("tk", sprintf("%s",plgdev')))
 	eval(tk_receive(1));
 	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
 	unlink(init_file);
