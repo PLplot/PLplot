@@ -163,6 +163,12 @@ static int NCOLOURS=gdMaxColors;
 #define max_number_of_grey_levels_used_in_text_smoothing 64
 #endif
 
+/* Not present in versions before 2.0 */
+
+#ifndef gdImagePalettePixel
+#define gdImagePalettePixel(  im, x, y )   (im)->pixels[(y)][(x)]
+#endif
+
 /* Struct to hold device-specific info. */
 
 typedef struct {
