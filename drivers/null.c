@@ -1,10 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/11/07 07:54:13  mjl
-   Routines for writing to and reading from a plot buffer, as well as recreating
-   an entire plot.  The driver need merely specify pls->plbuf_enable = 1 for it
-   to be used (it must of course handle the expose/resize events itself).
+   Revision 1.2  1992/11/07 07:56:46  mjl
+   (correction) Null device driver, for use when you want the graphics to
+   disappear into the bit bucket.  Always appears as the last device.
 
+ * Revision 1.1  1992/11/07  07:54:13  mjl
+ *
 */
 
 /*	null.c
