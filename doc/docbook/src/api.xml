@@ -3326,8 +3326,6 @@ device coordinates
 
   </sect1>
 
-  </sect1>
-
   <sect1 id="plgvpw" renderas="sect3">
     <title>
       <function>plgvpw</function>: Get viewport limits in world coordinates
