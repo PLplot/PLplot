@@ -106,5 +106,8 @@ dnl> this is illegal.  This macro defines it if not already typedef'ed.
 dnl>
 define(AC_CADDR_T,
 [AC_PROVIDE([$0])AC_CHECKING(for caddr_t in sys/types.h)
-AC_HEADER_EGREP(caddr_t, sys/types.h, , AC_DEFINE(caddr_t, char *))])dnl
+AC_TEST_PROGRAM([
+#define caddr_t char *
+#include <sys/types.h>
+],AC_DEFINE(caddr_t, char *))])dnl
 dnl
