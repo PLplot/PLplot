@@ -14,7 +14,7 @@ for i=1:rows(t)
     tt = deblank (t(i,:)); len = length(tt);
     ix = index(tt," ");
     if (ix == 0); ix = len; len = 0; endif
-    plSetOpt(tt(1:ix), tt(ix:len));
+    plsetopt(tt(1:ix), tt(ix:len));
 endfor
 
 # p7 works OK with plmeta, e.g., but not ps or psc. pleop/plbop issue?
@@ -30,19 +30,21 @@ endfor
 #in the API that is supposed to be common to all front ends.)
 for i=[1:13 15 16 18];
     cmd = sprintf("x%.2dc",i);
-#o trailer on filename e.g., x01o.ps) to distinguish from other 
-#common examples.
     t = split("$options", "-"); t(1,:)="";
     for j=1:rows(t)
         tt = deblank (t(j,:)); len = length(tt);
 	ix = index(tt," ");
 	if (ix == 0); ix = len; len = 0; endif
+	arg = tt(1:ix)
+	value = tt(ix:len)
 	plSetOpt(tt(1:ix), tt(ix:len));
     endfor
-    device="$driver"
-    plSetOpt("dev", device)
-    file = sprintf("x%.2do.$dsuffix",i)
-    plSetOpt("o", file)
+    device="$driver";
+    plSetOpt("dev", device);
+#o trailer on filename e.g., x01o.ps) to distinguish from other 
+#common examples.
+    file = sprintf("x%.2do.$dsuffix",i);
+    plSetOpt("o", file);
     eval(cmd);
 endfor
 EOF
