@@ -34,7 +34,7 @@
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 
-#include "gd.h"
+#include <gd.h>
 
 /* Prototypes for functions in this file. */
 

@@ -34,7 +34,7 @@
  */
 #include "plplot/plplot.h"
 
-#include "tcl.h"
+#include <tcl.h>
 
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS DLLEXPORT
