@@ -35,6 +35,7 @@ SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_PYTHON_DIR) -DSWIG_PYTHON -pyt
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
         1.4b3 \
+	fragments.i \
 	plplotcmodule.i \
 	makedocstrings.py \
 	plplot_widgetmodule.c \
