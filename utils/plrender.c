@@ -1,16 +1,22 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/01/23 06:16:08  mjl
-   Formatting changes only to pltek.  plrender changes include: support for
-   polylines (even converts connected lines while reading into polylines for
-   better response), new color model support, event handler support.  New
-   events recognized allow seeking to arbitrary locations in the file (absolute
-   or relative), and backward.  Some old capabilities (no longer useful)
-   eliminated.
+   Revision 1.7  1993/02/23 05:35:47  mjl
+   Converted to new plplot command-line handling functions, resulting in
+   a considerable reduction in the amount of actual code.  Miscellaneous bugs in
+   file seeking fixed.  Extraneous page printed on a -p command eliminated.
+   Many other small improvements.
 
+ * Revision 1.6  1993/01/23  06:16:08  mjl
+ * Formatting changes only to pltek.  plrender changes include: support for
+ * polylines (even converts connected lines while reading into polylines for
+ * better response), new color model support, event handler support.  New
+ * events recognized allow seeking to arbitrary locations in the file (absolute
+ * or relative), and backward.  Some old capabilities (no longer useful)
+ * eliminated.
+ *
  * Revision 1.5  1992/11/07  08:08:55  mjl
  * Fixed orientation code, previously it rotated plot in the wrong direction.
- * It now supports rotations both ways or upside down (-ori 1, -ori -1, -ori 2).
+ * It now supports 3 different rotations (-ori 1, -ori 2, -ori 3).
  * Also eliminated some redundant code.
  *
  * Revision 1.4  1992/10/29  15:56:16  mjl
@@ -31,7 +37,7 @@
 /*
     plrender.c
 
-    Copyright 1991, 1992
+    Copyright 1991, 1992, 1993
     Geoffrey Furnish
     Maurice LeBrun
 
@@ -53,16 +59,18 @@
 char ident[] = "@(#) $Id$";
 
 #include "plplot.h"
+
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
 #include "plevent.h"
 #include "metadefs.h"
 #include "pdf.h"
 
-#define PROGRAM_NAME 	"plrender"
-#define PROGRAM_VERSION PLPLOT_VERSION
-#define DO_ASP_SCALING
+static char *program_name = "plrender";
+static char *program_version = PLMETA_VERSION;
 
 /* Static function prototypes. */
 /* INDENT OFF */
@@ -82,43 +90,60 @@ static void	plresc_ancol	(void);
 
 /* Support functions */
 
-static void	Init		(void);
-static void	GetOpts		(int, char **);
 static U_CHAR	getcommand	(void);
 static void	ungetcommand	(U_CHAR);
 static void	get_ncoords	(PLFLT *x, PLFLT *y, PLINT n);
 static void	NextFamilyFile	(U_CHAR *);
-static int	ReadHeader	(void);
-static void	plr_KeyEH	(PLKey *, void *, int *);
 static void	ReadPageHeader	(void);
+static void	plr_KeyEH	(PLKey *, void *, int *);
 static void	SeekToPage	(long);
 static void	check_alignment (FILE *);
 
-static void	Syntax		(char *);
+/* Initialization functions */
+
+static void	Init		(int, char **);
+static void	OpenMetaFile	(int *, char **);
+static int	ReadFileHeader	(void);
 static void	Help		(void);
-static void	Version		(void);
-static void	ParseOpts	(int *, char ***);
-static void	GetOption	(char **, int *, char ***);
+static void 	Usage		(char *);
+
+/* Option handlers */
+
+static int HandleOption_h	(char *, char *);
+static int HandleOption_v	(char *, char *);
+static int HandleOption_i	(char *, char *);
+static int HandleOption_f	(char *, char *);
+static int HandleOption_b	(char *, char *);
+static int HandleOption_e	(char *, char *);
+static int HandleOption_p	(char *, char *);
+static int HandleOption_a	(char *, char *);
+static int HandleOption_mar	(char *, char *);
+static int HandleOption_ori	(char *, char *);
+static int HandleOption_jx	(char *, char *);
+static int HandleOption_jy	(char *, char *);
 
 /* Global variables */
 
 /* Page info */
 
 static PLINT	page_begin=1;	/* Where to start plotting */
-static PLINT	page_end;	/* Where to stop (0 to disable) */
-static PLINT	page;		/* Current page number */
+static PLINT	page_end=-1;	/* Where to stop (0 to disable) */
+static PLINT	curpage=1;	/* Current page number */
+static PLINT	cursub=0;	/* Current subpage */
+static PLINT	nsubx;		/* subpages in x */
+static PLINT	nsuby;		/* subpages in y */
 static PLINT	target_page;	/* Page we are seeking to */
-static int	no_page;	/* Flag to skip next new page */
-static U_LONG	prevpage_loc;	/* Byte position of previous page */
-static U_LONG	nextpage_loc;	/* Byte position of next page */
+static U_LONG	prevpage_loc;	/* Byte position of previous page header */
+static U_LONG	curpage_loc;	/* Byte position of current page header */
+static U_LONG	nextpage_loc;	/* Byte position of next page header */
+static int	no_pagelinks;	/* Set if metafile doesn't have page links */
+static int	end_of_page;	/* Set when we're at the end of a page */
 
 /* File info */
 
 static FILE	*MetaFile;
-static char	*FileName, *FileNameOut;
-static char	FamilyNameIn[80] = "", FileNameIn[90] = "";
-static PLINT	familyout, numberout=1, bytemax=PL_FILESIZE_KB*1000;
-static PLINT	familyin, numberin=1;
+static char	BaseName[70] = "", FamilyName[80] = "", FileName[90] = "";
+static PLINT	is_family, member=1, is_filter;
 static char	mf_magic[40], mf_version[40];
 
 /* Dummy vars for reading stuff that is to be thrown away */
@@ -130,17 +155,10 @@ static float	dum_float;
 
 /* Plot parameters */
 
-static PLFLT	xdpi, ydpi;
-static PLINT	xwid, ywid, xoff, yoff;
-static PLINT	nopause;
-static char	*devname;
-static int	orient, set_orient;
-static int	color;
-static int	bgcolorset, bgcolor = 255;
-static float	aspect = 0.0, set_aspect = 0.0;
-static int	orientset, aspectset, set_orientset, set_aspectset, is_filter;
-static int	width, set_width, widthset, set_widthset;
-static PLINT	packx=1, packy=1;
+static int	orient;
+static float	aspect;
+static int	orientset, aspectset;
+static PLFLT	mar=0.0, jx=0.5, jy=0.5;
 static U_SHORT	lpbpxmi, lpbpxma, lpbpymi, lpbpyma;
 
 /* Plot dimensions */
@@ -157,7 +175,6 @@ static float	pxly = PIXEL_RES_Y_OLD;
 static PLFLT	dev_xpmm, dev_ypmm;
 static PLINT	dev_xmin, dev_xmax, dev_ymin, dev_ymax;
 static PLFLT	vpxmin, vpxmax, vpxlen, vpymin, vpymax, vpylen;
-static PLFLT	mar=0.0, jx=0.5, jy=0.5;
 
 /* Miscellaneous */
 
@@ -171,7 +188,100 @@ static PLFLT	x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
 
 #define	EX_SUCCESS	0		/* success! */
 #define	EX_ARGSBAD	1		/* invalid args */
-#define	EX_BADFILE	2		/* invalid filename */
+#define	EX_BADFILE	2		/* invalid filename or contents */
+
+/*----------------------------------------------------------------------*\
+* Options data structure definition.
+\*----------------------------------------------------------------------*/
+
+static PLOptionTable option_table[] = {
+{
+    "h",			/* Help */
+    HandleOption_h,
+    0,
+    "-h",
+    "Print out this message" },
+{
+    "v",			/* Version */
+    HandleOption_v,
+    0,
+    "-v",
+    "Print out the plrender version number" },
+{
+    "i",			/* Input file */
+    HandleOption_i,
+    PL_PARSE_ARG,
+    "-i name",
+    "Input filename" },
+{
+    "f",			/* Filter option */
+    HandleOption_f,
+    PL_PARSE_ARG,
+    "-f",
+    "Filter option -- equivalent to \"-i - -o -\"" },
+{
+    "b",			/* Beginning page number */
+    HandleOption_b,
+    PL_PARSE_ARG,
+    "-b number",
+    "Beginning page number" },
+{
+    "e",			/* End page number */
+    HandleOption_e,
+    PL_PARSE_ARG,
+    "-e number",
+    "End page number" },
+{
+    "p",			/* Specified page only */
+    HandleOption_p,
+    PL_PARSE_ARG,
+    "-p page",
+    "Plot given page only" },
+{
+    "a",			/* Aspect ratio */
+    HandleOption_a,
+    PL_PARSE_ARG,
+    "-a aspect",
+    "Plot aspect ratio" },
+{
+    "mar",			/* Margin */
+    HandleOption_mar,
+    PL_PARSE_ARG,
+    "-mar margin",
+    "Total fraction of page to reserve for margins" },
+{
+    "ori",			/* Orientation */
+    HandleOption_ori,
+    PL_PARSE_ARG,
+    "-ori orient",
+    "Plot orientation (0,2=landscape, 1,3=portrait)" },
+{
+    "jx",			/* Justification in x */
+    HandleOption_jx,
+    PL_PARSE_ARG,
+    "-jx number",
+    "Justification of plot on page in x (0.0 to 1.0)" },
+{
+    "jy",			/* Justification in y */
+    HandleOption_jy,
+    PL_PARSE_ARG,
+    "-jy number",
+    "Justification of plot on page in y (0.0 to 1.0)" },
+{
+    NULL,
+    NULL,
+    0,
+    NULL,
+    NULL }
+};
+
+static char *notes[] = {
+"All parameters must be white-space delimited, and plrender options override",
+"any plplot options of the same name.  If the \"-i\" flag is omitted the",
+"filename parameter must come last.  Specifying \"-\" for the input or output",
+"filename means use stdin or stdout, respectively.  Not all options valid",
+"with all drivers.  Please see the man pages for more detail.",
+NULL};
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
@@ -186,27 +296,25 @@ main(int argc, char *argv[])
 
 /* Initialize */
 
-    GetOpts(argc, argv);
-    Init();
+    Init(argc, argv);
 
 /*
 * Read & process metafile commands.
 * If familying is turned on, the end of one member file is just treated as
 * a page break assuming the next member file exists.
 */
-
     for (;;) {
 	c_old = c;
 	c = getcommand();
 
 	if (c == CLOSE) {
-	    if (familyin)
+	    if (is_family)
 		NextFamilyFile(&c);
-	    if (!familyin)
+	    if (!is_family)
 		break;
 	}
 
-	if ((page > page_end) && (page_end > 0))
+	if ((c == PAGE || c == ADVANCE) && curpage == page_end)
 	    break;
 
 	process_next(c);
@@ -215,7 +323,10 @@ main(int argc, char *argv[])
 /* Done */
 
     (void) fclose(MetaFile);
-    plend();
+    if (strcmp(mf_version, "1993a") < 0) 
+	grclr();
+
+    grtidy();
     exit(EX_SUCCESS);
 }
 
@@ -226,7 +337,13 @@ main(int argc, char *argv[])
 /*----------------------------------------------------------------------*\
 * process_next()
 *
-* Process a command
+* Process a command.
+* Typically plrender issues commands to plplot much like an application
+* program would.  This results in a more robust and flexible API.  On
+* the other hand, it is sometimes necessary to directly call low-level
+* plplot routines to achieve certain special effects.  This is probably
+* tolerable if used sparingly (and points to areas where the plplot API
+* needs improvement!).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -234,7 +351,7 @@ process_next(U_CHAR c)
 {
     switch ((int) c) {
 
-	case INITIALIZE:
+      case INITIALIZE:
 	plr_init(c);
 	break;
 
@@ -249,7 +366,11 @@ process_next(U_CHAR c)
 	break;
 
       case PAGE:
+	plr_page(c);
+	break;
+
       case ADVANCE:
+	plr_clr(c);
 	plr_page(c);
 	break;
 
@@ -287,77 +408,31 @@ plr_init(U_CHAR c)
 {
     float dev_aspect, ratio;
 
-/* Set up misc. parameters */
-
-    plspage(xdpi, ydpi, xwid, ywid, xoff, yoff);
-    plspause(!nopause);
-
 /* Register event handler */
 
     plsKeyEH(plr_KeyEH, NULL);
 
-/* The orientation set from the command line overrides any the user may have
-   set before initializing plplot. */
-
-    if (set_orientset)
-	orient = set_orient;
-
-/* Same for width */
-
-    if (set_widthset) {
-	width = set_width;
-	plwid(width);
-    }
-
-/* Force color display for those devices that default to mono (e.g. ps) */
-
-    if (color)
-	plscolor(color);
-
-/* Set background color */
-
-    if (bgcolorset)
-	plscol0(0, bgcolor, bgcolor, bgcolor);
-
-/* Set up for write.  Filter option always honored. */
-
-    if (is_filter) {
-	plsfile(stdout);
-	familyout = 0;
-    }
-    else if (FileNameOut != NULL) {
-	if (!strcmp(FileNameOut, "-")) {
-	    plsfile(stdout);
-	    familyout = 0;
-	}
-	else
-	    plsfnam(FileNameOut);
-    }
-    if (familyout)
-	plsfam(familyout, numberout, bytemax);
-
 /* Start up plplot */
 
-    plstart(devname, packx, packy);
-    pladv(0);
+    plinit();
+    gsub(&nsubx, &nsuby, &cursub);
 
-/* Aspect ratio scaling */
-
-/* If the user has not set the aspect ratio in the code via plsasp() it
-   will be zero, and is set to the natural ratio of the metafile coordinate
-   system.  The aspect ratio set from the command line overrides this. */
-
+/*
+* Aspect ratio scaling
+*
+* If the user has not set the aspect ratio in the code via plsasp() it will
+* be zero, and is set to the natural ratio of the metafile coordinate system.
+* The aspect ratio set from the command line overrides this.
+*/
     if (aspect == 0.0)
-	aspect = ((ymax - ymin) / pxly) / ((xmax - xmin) / pxlx);
-
-    if (set_aspectset)
-	aspect = set_aspect;
+	aspect = ((float) (ymax - ymin) / pxly) /
+	    ((float) (xmax - xmin) / pxlx);
 
     if (aspect <= 0.)
 	fprintf(stderr,
 		"Error in aspect ratio setting, aspect = %f\n", aspect);
 
-    if (orient == 1 || orient == -1)
+    if (orient == 1 || orient == 3)
 	aspect = 1.0 / aspect;
 
 /* Aspect ratio of output device */
@@ -386,16 +461,15 @@ plr_init(U_CHAR c)
     xlen = xmax - xmin;
     ylen = ymax - ymin;
 
-/* If ratio < 1, you are requesting an aspect ratio (y/x) less than the natural
-   aspect ratio of the output device, and you will need to reduce the length
-    in y correspondingly.  Similarly, for ratio > 1, x must be reduced. */
-
-/* Note that unless the user overrides, the default is to *preserve* the
-   aspect ratio of the original device (plmeta output file).  Thus you
-   automatically get all physical coordinate plots to come out correctly.
+/*
+* If ratio < 1, you are requesting an aspect ratio (y/x) less than the
+* natural aspect ratio of the output device, and you will need to reduce the
+* length in y correspondingly.  Similarly, for ratio > 1, x must be reduced.
+* 
+* Note that unless the user overrides, the default is to *preserve* the
+* aspect ratio of the original device (plmeta output file).  Thus you
+* automatically get all physical coordinate plots to come out correctly.
 */
-
-#ifdef DO_ASP_SCALING
     if (ratio <= 0)
 	fprintf(stderr, "Error in aspect ratio setting, ratio = %f\n", ratio);
     else if (ratio < 1)
@@ -415,12 +489,6 @@ plr_init(U_CHAR c)
     vpymin = MAX(0., jy - vpylen / 2.0);
     vpymax = MIN(1., vpymin + vpylen);
     vpymin = vpymax - vpylen;
-#endif
-
-    plvpor(vpxmin, vpxmax, vpymin, vpymax);
-    plwind((PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax);
-
-    no_page++;			/* skip next new page */
 }
 
 /*----------------------------------------------------------------------*\
@@ -483,7 +551,7 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 
     switch (orient) {
 
-      case -1:
+      case 3:
 	for (i = 0; i < n; i++) {
 	    x[i] = xmin + (ymax - ys[i]) * xlen / ylen;
 	    y[i] = ymin + (xs[i] - xmin) * ylen / xlen;
@@ -498,7 +566,6 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 	return;
 
       case 2:
-      case -2:
 	for (i = 0; i < n; i++) {
 	    x[i] = xmin + (xmax - xs[i]);
 	    y[i] = ymin + (ymax - ys[i]);
@@ -522,39 +589,52 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 static void
 plr_clr(U_CHAR c)
 {
-    plclr();
+    PLINT cursub, nsubx, nsuby;
+
+    gsub(&nsubx, &nsuby, &cursub);
+    if (cursub == nsubx * nsuby) {
+	grclr();
+	end_of_page = 1;
+    }
 }
 
 /*----------------------------------------------------------------------*\
 * plr_page()
 *
-* Page advancement.
+* Page/subpage advancement.
 \*----------------------------------------------------------------------*/
 
 static void
 plr_page(U_CHAR c)
 {
-    page++;
+    cursub++;
+    if (cursub > nsubx * nsuby) {
+	cursub = 1;
+	curpage++;
+    }
+    ungetcommand(c);
     ReadPageHeader();
 
-/* Since a PAGE is always first, we can seek to the starting page here */
+/* On startup, seek to starting page if other than 1 */
 
-    if (page == 1 && page_begin > 0)
-	SeekToPage(page_begin);
-
-/* May want to skip the new page in some circumstances */
-
-    if (no_page) {
-	no_page = 0;
-	return;
+    if (curpage == 1) {
+	if (page_begin > 1) {
+	    if (no_pagelinks) 
+		plwarn("plrender: Metafile does not support page seeks\n");
+	    else 
+		SeekToPage(page_begin);
+	}
     }
 
-/* Actually advance the page */
+/* Advance and setup the page or subpage */
 
-    if (c == ADVANCE || ((packx > 1 || packy > 1) && page == 1))
-	pladv(0);
-    else
-	plpage();
+    if (end_of_page) {
+	grpage();
+	end_of_page = 0;
+    }
+
+    ssub(nsubx, nsuby, cursub);
+    setsub();
 
     plvpor(vpxmin, vpxmax, vpymin, vpymax);
     plwind((PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax);
@@ -705,50 +785,6 @@ plresc_ancol(void)
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* Init()
-*
-* Do initialization for main().
-\*----------------------------------------------------------------------*/
-
-static void
-Init(void)
-{
-/* Set up for read.  Filter option always honored. */
-
-    if (is_filter)
-	MetaFile = stdin;
-
-    else if (FileName == NULL) {
-	Syntax("");
-	exit(EX_ARGSBAD);
-    }
-    else if (!strcmp(FileName, "-"))
-	MetaFile = stdin;
-
-/* Next try to read named Metafile.  If it fails, then try again for
-   a family member file. */
-
-    else if ((MetaFile = fopen(FileName, BINARY_READ)) == NULL) {
-
-	strncpy(FamilyNameIn, FileName, sizeof(FamilyNameIn) - 1);
-	FamilyNameIn[sizeof(FamilyNameIn) - 1] = '\0';
-	familyin++;
-
-	(void) sprintf(FileNameIn, "%s.%i", FamilyNameIn, numberin);
-
-	if ((MetaFile = fopen(FileNameIn, BINARY_READ)) == NULL) {
-	    fprintf(stderr, "Unable to open the requested metafile.\n");
-	    exit(EX_BADFILE);
-	}
-    }
-
-/* Check validity of header */
-
-    if (ReadHeader())
-	exit(EX_BADFILE);
-}
-
-/*----------------------------------------------------------------------*\
 * NextFamilyFile()
 *
 * Start the next family if it exists.
@@ -758,15 +794,15 @@ static void
 NextFamilyFile(U_CHAR *c)
 {
     (void) fclose(MetaFile);
-    numberin++;
-    (void) sprintf(FileNameIn, "%s.%i", FamilyNameIn, numberin);
+    member++;
+    (void) sprintf(FileName, "%s.%i", FamilyName, member);
 
-    if ((MetaFile = fopen(FileNameIn, BINARY_READ)) == NULL) {
-	familyin = 0;
+    if ((MetaFile = fopen(FileName, BINARY_READ)) == NULL) {
+	is_family = 0;
 	return;
     }
-    if (ReadHeader()) {
-	familyin = 0;
+    if (ReadFileHeader()) {
+	is_family = 0;
 	return;
     }
 
@@ -815,20 +851,357 @@ ungetcommand(U_CHAR c)
 }
 
 /*----------------------------------------------------------------------*\
-* ReadHeader()
+* plr_KeyEH()
+*
+* Keyboard event handler.  For mapping keyboard sequences to commands
+* not usually supported by plplot, such as seeking around in the
+* metafile.  Recognized commands:
+*
+* <Backspace>	|
+* <Delete>	| Back page
+* <Page up>	|
+*
+* +<num><CR>	Seek forward <num> pages.
+* -<num><CR>	Seek backward <num> pages.
+*
+* <num><CR>	Seek to page <num>.
+*
+* Both <BS> and <DEL> are recognized for a back-page since the target
+* system may use either as its erase key.  <Page Up> is present on some
+* keyboards (different from keypad key).
+*
+* No client data is passed in this case, although a test case is
+* illustrated. 
+*
+* Illegal input is ignored.
+\*----------------------------------------------------------------------*/
+
+static void
+plr_KeyEH(PLKey *key, void *client_data, int *p_exit_eventloop)
+{
+    char *tst = (char *) client_data;
+    int input_num;
+
+/* TEST */
+
+    if (tst != NULL) {
+	pltext();
+	printf("tst string: %s\n", tst);
+	plgra();
+    }
+
+/* The rest deals with seeking only; so we return if it is disabled */
+
+    if (no_pagelinks) 
+	return;
+
+/* Forward (+) or backward (-) */
+
+    if (key->string[0] == '+')
+	direction_flag = 1;
+
+    else if (key->string[0] == '-')
+	direction_flag = -1;
+
+/* If a number, store into num_buffer */
+
+    if (isdigit(key->string[0])) {
+	isanum = TRUE;
+	(void) strncat(num_buffer, key->string, (20-strlen(num_buffer)));
+    }
+
+/* 
+* Seek to specified page, or page advance.
+* Not done until user hits <return>.
+* When this routine is called, the metafile pointer is situated just past
+* the page header for the next page, so we need to adjust the relative
+* targets downward by one.
+* 
+* Need to check for both <LF> and <CR> for portability.
+*/
+    if (key->code == PLK_Return ||
+	key->code == PLK_Linefeed ||
+	key->code == PLK_Next)
+    {
+	if (isanum) {
+	    input_num = atoi(num_buffer);
+	    if (input_num == 0) {
+		if (strcmp(num_buffer, "0"))
+		    input_num = -1;
+	    }
+	    if (input_num >= 0) {
+		if (direction_flag == 0)
+		    target_page = input_num;
+		else if (direction_flag > 0)
+		    target_page = curpage + input_num;
+		else if (direction_flag < 0)
+		    target_page = curpage - input_num;
+
+		SeekToPage(target_page);
+	    }
+	}
+	*p_exit_eventloop = TRUE;
+    }
+
+/* Page backward */
+
+    if (key->code == PLK_BackSpace ||
+	key->code == PLK_Delete ||
+	key->code == PLK_Prior) 
+    {
+	*p_exit_eventloop = TRUE;
+	target_page = curpage - 1;
+	SeekToPage(target_page);
+    }
+
+/* DEBUG */
+
+#ifdef DEBUG
+    pltext();
+    printf("key->code = %x, target_page = %d, page = %d,\
+           exit_eventloop = %d\n", key->code, target_page, curpage,
+	   *p_exit_eventloop);
+    plgra();
+#endif
+
+/* Cleanup */
+
+    if (*p_exit_eventloop == TRUE) {
+	num_buffer[0] = '\0';
+	direction_flag = 0;
+	isanum = 0;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* SeekToPage()
+*
+* Seek to 'target_page'.
+\*----------------------------------------------------------------------*/
+
+static void
+SeekToPage(long target_page)
+{
+    long delta;
+
+/*
+* The first seek we have to handle specially, since we're actually at the end
+* of a page, and haven't yet read the page header for the next page.  So the
+* first thing to do is find the next page header in the direction we want to
+* go, and make sure the subpage and page counters are updated appropriately.
+*/
+    if (target_page > curpage) {
+	if (nextpage_loc == 0) 
+	    return;
+	fseek(MetaFile, nextpage_loc, 0);
+	cursub++;
+	if (cursub > nsubx * nsuby) {
+	    cursub = 1;
+	    curpage++;
+	}
+    }
+    else {
+	if (curpage_loc == 0) 
+	    return;
+	fseek(MetaFile, curpage_loc, 0);
+    }
+    ReadPageHeader();
+    delta = target_page - curpage;
+
+/* Now loop until we arrive at the target page */
+
+    while (delta != 0) {
+	if (delta > 0) {
+	    if (nextpage_loc == 0) 
+		break;
+	    fseek(MetaFile, nextpage_loc, 0);
+	    cursub++;
+	    if (cursub > nsubx * nsuby) {
+		cursub = 1;
+		curpage++;
+	    }
+	}
+	else {
+	    if (prevpage_loc == 0) 
+		break;
+	    fseek(MetaFile, prevpage_loc, 0);
+	    cursub--;
+	    if (cursub < 1) {
+		cursub = nsubx * nsuby;
+		curpage--;
+	    }
+	}
+	ReadPageHeader();
+	delta = target_page - curpage;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* ReadPageHeader()
+*
+* Reads the metafile, processing page header info.
+* Assumes the file pointer is positioned immediately before a PAGE.
+\*----------------------------------------------------------------------*/
+
+static void
+ReadPageHeader(void)
+{
+    U_CHAR c;
+    U_SHORT page;
+
+/* Read page header */
+
+    curpage_loc = ftell(MetaFile);
+    c = getcommand();
+    if (c != PAGE && c != ADVANCE) 
+	plexit("plrender: page advance expected; none found\n");
+
+    if (strcmp(mf_version, "1992a") >= 0) {
+	if (strcmp(mf_version, "1993a") >= 0) {
+	    plm_rd(read_2bytes(MetaFile, &page));
+	    plm_rd(read_4bytes(MetaFile, &prevpage_loc));
+	    plm_rd(read_4bytes(MetaFile, &nextpage_loc));
+	}
+	else {
+	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	}
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* Init()
+*
+* Do initialization for main().
+\*----------------------------------------------------------------------*/
+
+static void
+Init(int argc, char **argv)
+{
+    int i, mode, status;
+
+/* First process plrender command line options */
+
+    mode = PL_PARSE_PARTIAL;
+    status = plParseOpts(&argc, argv, mode, option_table, Usage);
+
+/*
+* We want the plplot command line options to override their possible
+* counterparts in the metafile header.  So we defer parsing the
+* rest of the command line until after we process the metafile header.
+*/
+    OpenMetaFile(&argc, argv);
+    if (ReadFileHeader())
+	exit(EX_BADFILE);
+
+/* Finally, give the rest of the command line to plplot to process. */
+
+    status = plParseInternalOpts(&argc, argv, mode);
+
+/* 
+* At this point the only remaining argument in argv should be the program
+* name (which should be first).  Anything else is an error.  Handle illegal
+* flags first.
+*/
+    for (i = 1; i < argc; i++) {
+	if ((argv)[i][0] == '-')
+	    Usage(argv[i]);
+    }
+
+/* These must be extraneous file names */
+
+    if (i > 1) {
+	fprintf(stderr, "Only one filename argument accepted.\n");
+	Usage("");
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* OpenMetaFile()
+*
+* Attempts to open the named file.
+* If the output file isn't already determined via the -i or -f flags, 
+* we assume it's the last argument in argv[]. 
+\*----------------------------------------------------------------------*/
+
+static void
+OpenMetaFile(int *p_argc, char **argv)
+{
+    if (is_filter)
+	MetaFile = stdin;
+
+    else if (!strcmp(FileName, "-"))
+	MetaFile = stdin;
+
+    else {
+	if (*FileName == '\0') {
+	    if (*p_argc > 1) {
+		strncpy(FileName, argv[*p_argc-1], sizeof(FileName) - 1);
+		FileName[sizeof(FileName) - 1] = '\0';
+		argv[*p_argc] = NULL;
+		(*p_argc)--;
+	    }
+	}
+	if (*FileName == '\0') {
+	    fprintf(stderr, "%s: No filename specified.\n", program_name);
+	    Usage("");
+	    exit(EX_ARGSBAD);
+	}
+
+/*
+* Try to read named Metafile.  The following cases are checked in order:
+*	<FileName>
+*	<FileName>.1
+*	<FileName>.plm
+*	<FileName>.plm.1
+*/
+	strncpy(BaseName, FileName, sizeof(BaseName) - 1);
+	BaseName[sizeof(BaseName) - 1] = '\0';
+
+	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
+	    return;
+	}
+
+	(void) sprintf(FileName, "%s.%i", BaseName, member);
+	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
+	    (void) sprintf(FamilyName, "%s", BaseName);
+	    is_family = 1;
+	    return;
+	}
+
+	(void) sprintf(FileName, "%s.plm", BaseName);
+	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
+	    return;
+	}
+
+	(void) sprintf(FileName, "%s.plm.%i", BaseName, member);
+	if ((MetaFile = fopen(FileName, BINARY_READ)) != NULL) {
+	    (void) sprintf(FamilyName, "%s.plm", BaseName);
+	    is_family = 1;
+	    return;
+	}
+
+	fprintf(stderr, "Unable to open the requested metafile.\n");
+	Usage("");
+	exit(EX_BADFILE);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* ReadFileHeader()
 *
 * Checks file header.  Returns 1 if an error occured.
 \*----------------------------------------------------------------------*/
 
 static int
-ReadHeader(void)
+ReadFileHeader(void)
 {
     char tag[80];
 
 /* Read label field of header to make sure file is a PLPLOT metafile */
 
     plm_rd(read_header(MetaFile, mf_magic));
-    if (strcmp(mf_magic, PLPLOT_HEADER)) {
+    if (strcmp(mf_magic, PLMETA_HEADER)) {
 	fprintf(stderr, "Not a PLPLOT metafile!\n");
 	return (1);
     }
@@ -837,12 +1210,17 @@ ReadHeader(void)
    metafile, in case this is an old version of plrender. */
 
     plm_rd(read_header(MetaFile, mf_version));
-    if (strcmp(mf_version, PLPLOT_VERSION) > 0) {
+    if (strcmp(mf_version, PLMETA_VERSION) > 0) {
 	fprintf(stderr,
 	    "Error: incapable of reading metafile version %s.\n", mf_version);
 	fprintf(stderr, "Please obtain a newer copy of plrender.\n");
 	return (1);
     }
+
+/* Disable page seeking on versions without page links */
+
+    if (strcmp(mf_version, "1993a") < 0) 
+	no_pagelinks=1;
 
 /* Return if metafile older than version 1992a (no tagged info). */
 
@@ -889,217 +1267,324 @@ ReadHeader(void)
 	}
 
 	if (!strcmp(tag, "aspect")) {
-	    plm_rd(read_ieeef(MetaFile, &aspect));
+	    plm_rd(read_ieeef(MetaFile, &dum_float));
+	    if (!aspectset)
+		aspect = dum_float;
 	    continue;
 	}
 
 	if (!strcmp(tag, "width")) {
-	    plm_rd(read_1byte(MetaFile, (U_CHAR *) &width));
+	    plm_rd(read_1byte(MetaFile, &dum_uchar));
+	    plwid(dum_uchar);
 	    continue;
 	}
 
 	if (!strcmp(tag, "orient")) {
-	    plm_rd(read_1byte(MetaFile, (U_CHAR *) &orient));
+	    plm_rd(read_1byte(MetaFile, &dum_uchar));
+	    if (!orientset)
+		orient = dum_uchar;
 	    continue;
 	}
 
 	fprintf(stderr, "Unrecognized PLPLOT metafile header tag.\n");
-	exit(1);
+	exit(EX_BADFILE);
     }
 
     return (0);
 }
 
 /*----------------------------------------------------------------------*\
-* plr_KeyEH()
+* Help()
 *
-* Keyboard event handler.  For mapping keyboard sequences to commands
-* not usually supported by plplot, such as seeking around in the
-* metafile.  Recognized commands:
-*
-* <Backspace>	|
-* <Delete>	| Back page
-* <Page up>	|
-*
-* +<num><CR>	Seek forward <num> pages.
-* -<num><CR>	Seek backward <num> pages.
-*
-* <num><CR>	Seek to page <num>.
-*
-* Both <BS> and <DEL> are recognized for a back-page since the target
-* system may use either as its erase key.  <Page Up> is present on some
-* keyboards (different from keypad key).
-*
-* No client data is passed in this case, although a test case is
-* illustrated. 
-*
-* Illegal input is ignored.
+* Print long help message.
 \*----------------------------------------------------------------------*/
 
 static void
-plr_KeyEH(PLKey *key, void *client_data, int *p_exit_eventloop)
+Help(void)
 {
-    char *tst = (char *) client_data;
-    int input_num;
+    PLOptionTable *opt;
+    char **cpp;
 
-/* TEST */
+    fprintf(stderr,
+	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
+	    program_name, program_name);
 
-    if (tst != NULL) {
-	pltext();
-	printf("tst string: %s\n", tst);
-	plgra();
+    fprintf(stderr, "\n%s options:\n", program_name);
+    for (opt = option_table; opt->syntax; opt++) {
+	fprintf(stderr, "    %-20s %s\n", opt->syntax, opt->desc);
     }
 
-/* Forward (+) or backward (-) */
+    plHelp();
 
-    if (key->string[0] == '+')
-	direction_flag = 1;
-
-    else if (key->string[0] == '-')
-	direction_flag = -1;
-
-/* If a number, store into num_buffer */
-
-    if (isdigit(key->string[0])) {
-	isanum = TRUE;
-	(void) strncat(num_buffer, key->string, (20-strlen(num_buffer)));
+    putc('\n', stderr);
+    for (cpp = notes; *cpp; cpp++) {
+	fputs(*cpp, stderr);
+	putc('\n', stderr);
     }
+    putc('\n', stderr);
 
-/* Seek to specified page, or page advance.
-   Not done until user hits <return>.
-   When this routine is called, the metafile pointer is situated just past
-   the page header for the next page, so we need to adjust the relative
-   targets downward by one.
-
-   Need to check for both <LF> and <CR> for portability.
-*/
-
-    if (key->code == PLK_Return ||
-	key->code == PLK_Linefeed ||
-	key->code == PLK_Next)
-    {
-	if (isanum) {
-	    input_num = atoi(num_buffer);
-	    if (input_num > 0) {
-		if (direction_flag == 0)
-		    target_page = input_num;
-		else if (direction_flag > 0)
-		    target_page = page + input_num - 1;
-		else if (direction_flag < 0)
-		    target_page = page - input_num - 1;
-
-		SeekToPage(target_page);
-	    }
-	}
-	*p_exit_eventloop = TRUE;
-    }
-
-/* Page backward */
-
-    if (key->code == PLK_BackSpace ||
-	key->code == PLK_Delete ||
-	key->code == PLK_Prior) 
-    {
-	*p_exit_eventloop = TRUE;
-	target_page = page - 2;
-	SeekToPage(target_page);
-    }
-
-/* DEBUG */
-
-#ifdef DEBUG
-    pltext();
-    printf("key->code = %x, target_page = %d, page = %d,\
-           exit_eventloop = %d\n", key->code, target_page, page,
-	   *p_exit_eventloop);
-    plgra();
-#endif
-
-/* Cleanup */
-
-    if (*p_exit_eventloop == TRUE) {
-	num_buffer[0] = '\0';
-	direction_flag = 0;
-	isanum = 0;
-    }
+    exit(1);
 }
 
 /*----------------------------------------------------------------------*\
-* SeekToPage()
+* Usage()
 *
-* Seek to 'target_page'.
+* Print usage & syntax message.
 \*----------------------------------------------------------------------*/
 
 static void
-SeekToPage(long target_page)
+Usage(char *badOption)
 {
-    U_CHAR c;
-    long delta;
+    PLOptionTable *opt;
+    int col, len;
 
-    if (strcmp(mf_version, "1993a") < 0) {
-	plwarn("plrender: Metafile does not support page seeks\n");
-	return;
+    if (*badOption != '\0')
+	fprintf(stderr, "\n%s:  bad command line option \"%s\"\r\n",
+		program_name, badOption);
+
+    fprintf(stderr,
+	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
+	    program_name, program_name);
+
+    fprintf(stderr, "\n%s options:", program_name);
+
+    col = 80;
+    for (opt = option_table; opt->syntax; opt++) {
+	len = 3 + strlen(opt->syntax);		/* space [ string ] */
+	if (col + len > 79) {
+	    fprintf(stderr, "\r\n   ");		/* 3 spaces */
+	    col = 3;
+	}
+	fprintf(stderr, " [%s]", opt->syntax);
+	col += len;
     }
+    fprintf(stderr, "\r\n");
 
-    delta = target_page - page;
+    plSyntax();
 
-    while (delta != 0) {
-	if (delta > 0) {
-	    if (nextpage_loc == 0) 
-		break;
-	    fseek(MetaFile, nextpage_loc, 0);
-	    page++;
-	}
-	else {
-	    if (prevpage_loc == 0) 
-		break;
-	    fseek(MetaFile, prevpage_loc, 0);
-	    page--;
-	}
-	c = getcommand();
-	if (c != PAGE && c != ADVANCE) {
-	    plwarn("plrender: page advance expected; none found\n");
-	    return;
-	}
-	ReadPageHeader();
-	delta = target_page - page;
-    }
+    fprintf(stderr, "\nType %s -h for a full description.\r\n\n",
+	    program_name);
+
+    exit(1);
 }
 
 /*----------------------------------------------------------------------*\
-* ReadPageHeader()
-*
-* Reads the metafile, processing page header info.
-* Assumes a 'page' or 'advance' command encountered immediately before.
+* Input handlers
 \*----------------------------------------------------------------------*/
 
-static void
-ReadPageHeader(void)
+/*----------------------------------------------------------------------*\
+* HandleOption_h()
+*
+* Performs appropriate action for option "h".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_h(char *opt, char *optarg)
 {
-    U_SHORT curpage;
 
-/* Read page header */
+/* Help */
 
-    if (strcmp(mf_version, "1992a") >= 0) {
-	if (strcmp(mf_version, "1993a") >= 0) {
-	    plm_rd(read_2bytes(MetaFile, &curpage));
-	    plm_rd(read_4bytes(MetaFile, &prevpage_loc));
-	    plm_rd(read_4bytes(MetaFile, &nextpage_loc));
-	    if (curpage != page && !familyin) {
-		plwarn("plrender: page counter hosed\n");
-	    }
-	}
-	else {
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
-	}
-    }
+    Help();
+
+    return(1);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_v()
+*
+* Performs appropriate action for option "v".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_v(char *opt, char *optarg)
+{
+
+/* Version */
+
+    fprintf(stderr, "%s version: %s\n", program_name, program_version);
+    return(1);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_i()
+*
+* Performs appropriate action for option "i".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_i(char *opt, char *optarg)
+{
+
+/* Input file */
+
+    strncpy(FileName, optarg, sizeof(FileName) - 1);
+    FileName[sizeof(FileName) - 1] = '\0';
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_f()
+*
+* Performs appropriate action for option "f".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_f(char *opt, char *optarg)
+{
+
+/* Filter option */
+
+    is_filter = 1;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_b()
+*
+* Performs appropriate action for option "b".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_b(char *opt, char *optarg)
+{
+
+/* Beginning page number */
+
+    page_begin = atoi(optarg);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_e()
+*
+* Performs appropriate action for option "e".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_e(char *opt, char *optarg)
+{
+
+/* End page number */
+
+    page_end = atoi(optarg);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_p()
+*
+* Performs appropriate action for option "p".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_p(char *opt, char *optarg)
+{
+
+/* Specified page only */
+
+    page_begin = atoi(optarg);
+    page_end = page_begin;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_a()
+*
+* Performs appropriate action for option "a".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_a(char *opt, char *optarg)
+{
+
+/* Aspect ratio */
+
+    aspect = atof(optarg);
+    aspectset = 1;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_mar()
+*
+* Performs appropriate action for option "mar".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_mar(char *opt, char *optarg)
+{
+
+/* Set margin factor -- total fraction of page to reserve at edge (includes
+   contributions at both sides). */
+
+    mar = atof(optarg);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_ori()
+*
+* Performs appropriate action for option "ori".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_ori(char *opt, char *optarg)
+{
+
+/* Orientation */
+
+    orient = atoi(optarg);
+    orientset = 1;
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_jx()
+*
+* Performs appropriate action for option "jx".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_jx(char *opt, char *optarg)
+{
+
+/* Set justification in x (0.0 < jx < 1.0). jx = 0.5 (centered) is default */
+
+    jx = atof(optarg);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* HandleOption_jy()
+*
+* Performs appropriate action for option "jy".
+\*----------------------------------------------------------------------*/
+
+static int
+HandleOption_jy(char *opt, char *optarg)
+{
+
+/* Set justification in y (0.0 < jy < 1.0). jy = 0.5 (centered) is default */
+
+    jy = atof(optarg);
+
+    return(0);
 }
 
 /*----------------------------------------------------------------------*\
 * check_alignment()
 *
 * Reads the next byte and aborts if it is not an END_OF_HEADER.
+* Currently unused.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1112,406 +1597,5 @@ check_alignment(FILE *file)
 	plexit("check_alignment: Metafile alignment problem");
 }
 
-/*----------------------------------------------------------------------*\
-* Startup code.  The following routines are modelled after the startup
-* code for 'xterm.c', part of the X-windows Version 11 distribution.
-* The copyright notice for 'xterm.c' is as follows:
 
-Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
-and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
-                        All Rights Reserved
-
-* The full permission notice is given in the plplot documentation.
-\*----------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------*\
-* Options data structure definition.
-\*----------------------------------------------------------------------*/
-/* INDENT OFF */
-
-static struct _options {
-    char *opt;
-    char *desc;
-} options[] = {
-{ "-h",			"Print out this message" },
-{ "-v",			"Print out version info" },
-{ "-dev name",		"Output device name"},
-{ "-i name",		"Input filename" },
-{ "-o name",		"Output filename, or X server to contact" },
-{ "-f",			"Filter option -- equivalent to \"-i - -o -\"" },
-{ "-geo geom",		"X window size, in pixels (e.g. -geo 400x400)" },
-{ "-b number",		"Beginning page number" },
-{ "-e number",		"End page number" },
-{ "-p page",		"Plot given page only" },
-{ "-a aspect",		"Plot aspect ratio" },
-{ "-mar margin",	"Total fraction of page to reserve for margins" },
-{ "-ori orient",	"Plot orientation (0=landscape, 1,-1=portrait)" },
-{ "-width width",	"Pen width (1 <= width <= 10)" },
-{ "-color",		"Forces color output (some drivers default to mono)"},
-{ "-bg color",		"Background color (0=black, 255=white [def])"},
-{ "-jx number",		"Justification of plot on page in x (0.0 to 1.0)" },
-{ "-jy number",		"Justification of plot on page in y (0.0 to 1.0)" },
-{ "-px number",		"Plots per page in x" },
-{ "-py number",		"Plots per page in y" },
-{ "-fam",		"Create a family of output files" },
-{ "-fsiz size",		"Output family file size in MB (e.g. -fsiz 1.0)" },
-{ "-fmem member",	"Starting family member number on input [1]" },
-{ "-np",		"No pause between pages" },
-{NULL, NULL }};
-
-static char *notes[] = {
-"All parameters must be white-space delimited.  If you omit the \"-i\" flag,",
-"the filename parameter must come last.  Specifying \"-\" for the input or",
-"output filename means use stdin or stdout, respectively.  Only one filename",
-"parameter is recognized.  Not all options valid with all drivers.",
-"Please see the man pages for more detail.",
-NULL};
-
-/* INDENT ON */
-/*----------------------------------------------------------------------*\
-* Syntax()
-*
-* Print short help message.
-\*----------------------------------------------------------------------*/
-
-static void
-Syntax(char *badOption)
-{
-    struct _options *opt;
-    int col, len;
-
-    if (*badOption != '\0')
-	fprintf(stderr, "%s:  bad command line option \"%s\"\r\n\n",
-		PROGRAM_NAME, badOption);
-
-    fprintf(stderr, "\nusage:  %s", PROGRAM_NAME);
-    col = 8 + strlen(PROGRAM_NAME);
-    for (opt = options; opt->opt; opt++) {
-	len = 3 + strlen(opt->opt);	/* space [ string ] */
-	if (col + len > 79) {
-	    fprintf(stderr, "\r\n   ");	/* 3 spaces */
-	    col = 3;
-	}
-	fprintf(stderr, " [%s]", opt->opt);
-	col += len;
-    }
-
-    len = 3 + strlen("[filename]");
-    if (col + len > 79) {
-	fprintf(stderr, "\r\n   ");
-	col = 3;
-    }
-    fprintf(stderr, " %s", "[filename]");
-    col += len;
-
-    fprintf(stderr, "\r\n\nType %s -h for a full description.\r\n\n",
-	    PROGRAM_NAME);
-    exit(EX_ARGSBAD);
-}
-
-/*----------------------------------------------------------------------*\
-* Help()
-*
-* Print long help message.
-\*----------------------------------------------------------------------*/
-
-static void
-Help(void)
-{
-    struct _options *opt;
-    char **cpp;
-
-    fprintf(stderr, "\nusage:\n        %s [-options ...] [filename]\n\n",
-	    PROGRAM_NAME);
-    fprintf(stderr, "where options include:\n");
-    for (opt = options; opt->opt; opt++) {
-	fprintf(stderr, "    %-20s %s\n", opt->opt, opt->desc);
-    }
-
-    putc('\n', stderr);
-    for (cpp = notes; *cpp; cpp++) {
-	fputs(*cpp, stderr);
-	putc('\n', stderr);
-    }
-    putc('\n', stderr);
-}
-
-/*----------------------------------------------------------------------*\
-* Version()
-*
-* Spit out version number.
-\*----------------------------------------------------------------------*/
-
-static void
-Version(void)
-{
-    fprintf(stderr, "%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-}
-
-/*----------------------------------------------------------------------*\
-* GetOpts()
-*
-* Process options list
-\*----------------------------------------------------------------------*/
-
-static void
-GetOpts(int argc, char **argv)
-{
-    /* Parse the command line */
-
-    for (argc--, argv++; argc > 0; argc--, argv++) {
-
-	if (argv[0][0] == '-') {
-	    ParseOpts(&argc, &argv);
-	}
-	else
-	    FileName = argv[0];
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* ParseOpts()
-*
-* Parses & determines appropriate action for input flag.
-\*----------------------------------------------------------------------*/
-
-static void
-ParseOpts(int *pargc, char ***pargv)
-{
-    char *opt, *optarg, *field;
-
-    opt = (*pargv)[0] + 1;
-
-/* Help */
-
-    if (!strcmp(opt, "h")) {
-	Help();
-	exit(0);
-    }
-
-/* Version */
-
-    if (!strcmp(opt, "v")) {
-	Version();
-	exit(0);
-    }
-
-/* Output device */
-
-    if (!strcmp(opt, "dev")) {
-	GetOption(&optarg, pargc, pargv);
-	devname = optarg;
-	return;
-    }
-
-/* Input file */
-
-    if (!strcmp(opt, "i")) {
-	GetOption(&optarg, pargc, pargv);
-	FileName = optarg;
-	return;
-    }
-
-/* Output file */
-
-    if (!strcmp(opt, "o")) {
-	GetOption(&optarg, pargc, pargv);
-	FileNameOut = optarg;
-	return;
-    }
-
-/* Use as a filter */
-
-    if (!strcmp(opt, "f")) {
-	is_filter++;
-	return;
-    }
-
-/* Beginning page */
-
-    if (!strcmp(opt, "b")) {
-	GetOption(&optarg, pargc, pargv);
-	page_begin = atoi(optarg);
-	return;
-    }
-
-/* End page */
-
-    if (!strcmp(opt, "e")) {
-	GetOption(&optarg, pargc, pargv);
-	page_end = atoi(optarg);
-	return;
-    }
-
-/* Given page only */
-
-    if (!strcmp(opt, "p")) {
-	GetOption(&optarg, pargc, pargv);
-	page_begin = atoi(optarg);
-	page_end = page_begin;
-	return;
-    }
-
-/* Override aspect ratio */
-
-    if (!strcmp(opt, "a")) {
-	GetOption(&optarg, pargc, pargv);
-	set_aspect = atof(optarg);
-	set_aspectset = 1;
-	return;
-    }
-
-/* Set margin factor -- total fraction of page to reserve at edge (includes
-   contributions at both sides). */
-
-    if (!strcmp(opt, "mar")) {
-	GetOption(&optarg, pargc, pargv);
-	mar = atof(optarg);
-	return;
-    }
-
-/* Set justification in x (0.0 < jx < 1.0). jx = 0.5 (centered) is default */
-
-    if (!strcmp(opt, "jx")) {
-	GetOption(&optarg, pargc, pargv);
-	jx = atof(optarg);
-	return;
-    }
-
-/* Set justification in y (0.0 < jy < 1.0). jy = 0.5 (centered) is default */
-
-    if (!strcmp(opt, "jy")) {
-	GetOption(&optarg, pargc, pargv);
-	jy = atof(optarg);
-	return;
-    }
-
-/* Orientation */
-
-    if (!strcmp(opt, "ori")) {
-	GetOption(&optarg, pargc, pargv);
-	set_orient = atoi(optarg);
-	set_orientset = 1;
-	return;
-    }
-
-/* Width */
-
-    if (!strcmp(opt, "width")) {
-	GetOption(&optarg, pargc, pargv);
-	set_width = atoi(optarg);
-	set_widthset = 1;
-	return;
-    }
-
-/* Background */
-
-    if (!strcmp(opt, "bg")) {
-	GetOption(&optarg, pargc, pargv);
-	bgcolor = atoi(optarg);
-	bgcolorset = 1;
-	return;
-    }
-
-/* Color */
-
-    if (!strcmp(opt, "color")) {
-	color = 1;
-	return;
-    }
-
-/* Pack in x */
-
-    if (!strcmp(opt, "px")) {
-	GetOption(&optarg, pargc, pargv);
-	packx = atoi(optarg);
-	return;
-    }
-
-/* Pack in y */
-
-    if (!strcmp(opt, "py")) {
-	GetOption(&optarg, pargc, pargv);
-	packy = atoi(optarg);
-	return;
-    }
-
-/* Family output files */
-
-    if (!strcmp(opt, "fam")) {
-	familyout++;
-	return;
-    }
-
-/* Size of a member file (may be larger since eof must occur at page break) */
-
-    if (!strcmp(opt, "fsiz")) {
-	GetOption(&optarg, pargc, pargv);
-	bytemax = 1.0e6 * atof(optarg);
-	return;
-    }
-
-/* Starting member number when reading family files */
-
-    if (!strcmp(opt, "fmem")) {
-	GetOption(&optarg, pargc, pargv);
-	numberin = atoi(optarg);
-	return;
-    }
-
-/* No pause between pages */
-
-    if (!strcmp(opt, "np")) {
-	nopause++;
-	return;
-    }
-
-/* Geometry for output window (e.g. 400x400+100+0), note offsets don't work
-   correctly at present. */
-
-    if (!strcmp(opt, "geo")) {
-	GetOption(&optarg, pargc, pargv);
-
-	field = strtok(optarg, "x");
-	if (field == NULL)
-	    return;
-	xwid = atoi(field);
-
-	field = strtok(NULL, "+");
-	if (field == NULL)
-	    return;
-	ywid = atoi(field);
-
-	field = strtok(NULL, "+");
-	if (field == NULL)
-	    return;
-	xoff = atoi(field);
-
-	field = strtok(NULL, "+");
-	if (field == NULL)
-	    return;
-	yoff = atoi(field);
-
-	return;
-    }
-    Syntax(**pargv);
-}
-
-/*----------------------------------------------------------------------*\
-* GetOption()
-*
-* Retrieves an option argument.
-\*----------------------------------------------------------------------*/
-
-static void
-GetOption(char **poptarg, int *pargc, char ***pargv)
-{
-    if (*pargc > 0) {
-	(*pargc)--;
-	(*pargv)++;
-	*poptarg = (*pargv)[0];
-    }
-    else
-	Syntax("");
-}
