@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/08/10 04:51:32  mjl
+ * Revision 1.7  1993/08/11 19:24:03  mjl
+ * Fixed some type errors.
+ *
+ * Revision 1.6  1993/08/10  04:51:32  mjl
  * Fixed -mkidx option (broken in last update).
  *
 */
@@ -39,8 +42,9 @@ static char *file;			/* TCL initialization file name */
 static char *display;			/* X-windows display */
 static char *geometry;			/* x window dimension */
 static char *auto_path;			/* addition to auto_path */
-static char *child;			/* set if child of TK driver */
-static char *mkidx;			/* Create a new tclIndex file */
+
+static int child;			/* set if child of TK driver */
+static int mkidx;			/* Create a new tclIndex file */
 
 Tk_ArgvInfo argTable[] = {
 {"-client", TK_ARGV_STRING, (char *) NULL, (char *) &client,
@@ -245,8 +249,8 @@ configure(int argc, char **argv)
 
 /* Tell interpreter about plserver's ancestry */
 
-    if (child != NULL)
-	Tcl_SetVar(interp, "child", child, 0);
+    if (child != 0)
+	Tcl_SetVar(interp, "child", "1", 0);
 
 /* Store leftover arguments into the Tcl variables "argc" and "argv". */
 
