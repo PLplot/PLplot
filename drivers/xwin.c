@@ -2433,7 +2433,7 @@ AllocCmap0(PLStream *pls)
 
     if (xwd->rw_cmap) {
     /* Allocate and assign colors in cmap 0 */
-
+        
 	npixels = pls->ncol0-1;
 	for (;;) {
 	    if (XAllocColorCells(xwd->display, xwd->map, False,
@@ -2464,8 +2464,36 @@ AllocCmap0(PLStream *pls)
 		fprintf( stderr, "i=%d, r=%d, pixel=%d\n", i, r, c.pixel );
 	    if ( r )
 		xwd->cmap0[i] = c;
-	    else
-		break;
+            else
+            {
+                XColor screen_def, exact_def;
+
+                if (pls->verbose)
+                    printf( stderr,
+                            "color alloc failed, trying by name: %s.\n",
+                            pls->cmap0[i].name );
+
+            /* Hmm, didn't work, try another approach. */
+                r = XAllocNamedColor( xwd->display, xwd->map,
+                                      pls->cmap0[i].name,
+                                      &screen_def, &exact_def );
+
+/*                 xwd->cmap0[i] = screen_def; */
+
+                if (r) {
+                    if (pls->verbose)
+                        fprintf( stderr, "yes, got a color by name.\n" );
+                    xwd->cmap0[i] = screen_def;
+                } else {
+                    r = XAllocNamedColor( xwd->display, xwd->map,
+                                          "white",
+                                          &screen_def, &exact_def );
+                    if (r)
+                        xwd->cmap0[i] = screen_def;
+                    else
+                        printf( "Can't find white?! Giving up...\n" );
+                }
+            }
 	}
 	xwd->ncol0 = i;
 
