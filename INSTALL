@@ -11,7 +11,12 @@ From the distribution directory, type:
 % make install
 
 Make sure you check the "prefix" variable before typing "make install",
-as this determines where the files are installed.  
+as this determines where the files are installed.  E.g.
+
+% configure --prefix=$HOME/local/plplot
+
+sets up $HOME/local/plplot as the home directory for the installed
+package. 
 
 The package is actually built in the tmp directory.  You can build any of
 a number of demo programs and run them from there.  Example:
