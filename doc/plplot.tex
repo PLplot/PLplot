@@ -9,7 +9,10 @@
 %
 % $Id$
 % $Log$
-% Revision 1.6  1994/05/26 22:37:43  mjl
+% Revision 1.7  1994/10/11 19:00:19  furnish
+% Primarily structuring corrections, some typos.  Nothing really major.
+%
+% Revision 1.6  1994/05/26  22:37:43  mjl
 % Added disclaimers about the messy state of the document.
 %
 % Revision 1.5  1994/05/23  22:04:52  mjl
@@ -99,10 +102,13 @@ This document is still under construction, so please pardon the mess.
 * Introduction::	What PLplot is all about.
 * Simple Use::		How to get started.
 * Advanced Use::	How to go wild.
-* X-windows Drivers::	Xwin, Tk, Tcl-DP, and all the rest.
-* Extended WISH::	Integration with Tcl/Tk.
+* X Windows Drivers::	Xwin, Tk, Tcl-DP, and all the rest.
 * Other Drivers::	All non-X drivers.
-* API::			All the functions
+* API::			C/Fortran API reference.
+* Tcl::			How to use PLplot from Tcl.
+* Extended WISH::	Building customized WISHes.
+* C++::			Using PLplot from C++.
+* GUI Development::	Constructing GUI's with PLplot, Tcl and Tk.
 * Bibliography::	What you don't want to know about refs.
 * Concept Index::	All the stuff you need to know.
 \end{menu}
@@ -121,11 +127,19 @@ This document is still under construction, so please pardon the mess.
 
 \input{drivers}
 
-\input{wish}
-
 \part{Reference}
 
 \input{api}
+
+\input{tcl}
+
+\part{Advanced Techniques}
+
+\input{wish}
+
+\input{cplus}
+
+\input{gui}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -133,7 +147,7 @@ This document is still under construction, so please pardon the mess.
 
 \bibliographystyle{plain}
 
-\node Bibliography, Concept Index, API, Top
+\node Bibliography, Concept Index, GUI Development, Top
 
 This is the bibliography.
 

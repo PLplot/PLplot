@@ -2,7 +2,7 @@
 \c Geoffrey Furnish
 \c 9 May 1994
 
-\node Extended WISH, API, Drivers, Top
+\node Extended WISH, C++, Tcl, Top
 \chapter{Building an Extended WISH}
 \cindex{wish}
 \cindex{Tcl Extensions}
@@ -165,7 +165,7 @@ that Tcl is one example of a family of languages known generally as
 the level of programming to a very high level, allowing very short
 token streams to accomplish as much as would be required by many
 scores of the more primitive actions available in a basic HLL.
-consider, for example, the basic ``Hello World!'' application written
+Consider, for example, the basic ``Hello World!'' application written
 in Tcl/Tk.
 \begin{verbatim}
 #!/usr/local/bin/wish -f
@@ -208,7 +208,7 @@ news, etc.  The list is endless and growing fast...
 
 Another extremely powerful and popular extension to Tcl is [incr Tcl].
 [incr Tcl] is to Tcl what C++ is to C.  The analogy is very extensive.
-Itcl provides an object orientated extension to Tcl supporting
+Itcl provides an object oriented extension to Tcl supporting
 clustering of procedures and data into what is called an
 \code{itcl_class}.  An \code{itcl_class} can have methods as well as
 instance data.  And they support inheritance.  Essentially if you know
@@ -436,3 +436,4 @@ you may have your extension commands (which are coded in C) call the
 PLplot C programmers API to draw into the widget.  In this way you can
 have the best of both worlds.  Use compiled C code when the
 computational demands require the speed of compiled code, or use Tcl
+when your programming convenience is more important than raw speed.
