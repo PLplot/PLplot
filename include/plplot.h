@@ -160,6 +160,7 @@ typedef void* PLPointer;
 #define PLESC_XORMOD		16	/* jc: set xor mode */
 #define PLESC_SET_COMPRESSION	17	/* AFR: set compression */
 #define PLESC_CLEAR		18      /* RL: clear graphics region */
+#define PLESC_DASH		19	/* RL: draw dashed line */
 
 /* Window parameter tags */
 

@@ -121,6 +121,7 @@ typedef struct {
  * plbuf_write	PLINT	Set if driver needs to use the plot buffer
  * dev_fill0	PLINT	Set if driver can do solid area fills
  * dev_fill1	PLINT	Set if driver can do pattern area fills
+ * dev_dash     PLINT   Set if driver can do dashed lines
  * dev_di	PLINT	Set if driver wants to handle DI commands
  * dev_flush	PLINT	Set if driver wants to handle flushes itself
  * dev_swin	PLINT	Set if driver wants to handle 'set window' commands
@@ -413,7 +414,7 @@ typedef struct {
     PLINT device, dev_minor, termin, graphx, nopause;
     PLINT color, colorset;
     PLINT family, member, finc, fflen, bytemax, famadv;
-    PLINT dev_fill0, dev_fill1, dev_di, dev_flush, dev_swin;
+    PLINT dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin;
 
     char DevName[80];
     FILE *OutFile;

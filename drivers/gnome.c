@@ -8,6 +8,7 @@
 #include <gtk/gtk.h>                                                       
 #include <glib.h>                                                          
 #include <pthread.h>                                                       
+#include <math.h>
 
 #include <gnome.h>
 
@@ -28,6 +29,9 @@
 
 /* mm per inch */
 #define MM_PER_IN (25.4)
+
+/* pixels per mm */
+#define PIXELS_PER_MM (PIXELS_PER_DU / DRAWING_UNIT / MM_PER_IN)
 
 /* Default dimensions of the canvas (in inches) */
 #define WIDTH (9)
@@ -684,11 +688,12 @@ plD_init_gnome (PLStream *pls)
   char* argv[] = { "" };
   GnomePLdev* dev;
   GtkWidget* window;
-  double phys2canvas = MAG_FACTOR * PIXELS_PER_DU / DRAWING_UNIT / MM_PER_IN;
+  double phys2canvas = MAG_FACTOR * PIXELS_PER_MM;
 
   pls->termin = 1;		/* Is an interactive terminal */
   pls->dev_flush = 1;		/* Handle our own flushes */
   pls->dev_fill0 = 1;		/* Handle solid fills */
+  pls->dev_dash = 1;		/* Handle dashed lines */
   pls->plbuf_write = 0;	        /* No plot buffer */
   pls->width = 1;
   
@@ -978,6 +983,72 @@ fill_polygon (PLStream* pls)
 
 }  
 
+static void 
+dashed_line (PLStream* pls)
+{
+  GnomePLdev* dev;
+  GnomePLdevPage* page;
+  GnomeCanvasPoints* points;
+  GnomeCanvasGroup* group;
+  GnomeCanvasItem* item;
+  GnomeCanvas* canvas;
+  guint i;
+  gchar* dash_list;
+
+  dev = pls->dev;
+
+  gdk_threads_enter ();
+
+  page = dev->page[dev->npages-1];
+
+  canvas = page->canvas;
+
+  group = gnome_canvas_root (canvas);
+
+  points = gnome_canvas_points_new (pls->dev_npts);
+
+  for (i = 0; i < pls->dev_npts; i++) {
+    points->coords[2*i] =
+      ((double) pls->dev_x[i]/MAG_FACTOR) * PIXELS_PER_DU;
+    points->coords[2*i + 1] =
+      ((double) -pls->dev_y[i]/MAG_FACTOR) * PIXELS_PER_DU;
+  }
+
+  dash_list = g_malloc (sizeof (gchar) * 2 * pls->nms);
+  for (i = 0; i < pls->nms; i++) {
+    dash_list[2*i] = (gchar) ceil ((pls->mark[i]/1e3) * PIXELS_PER_MM);
+    dash_list[2*i+1] = (gchar) floor ((pls->space[i]/1e3) * PIXELS_PER_MM);
+    fflush(stdout);
+  }
+
+  gdk_gc_set_dashes (canvas->pixmap_gc, 0, dash_list, 2*pls->nms);
+
+  g_free (dash_list);
+  
+  item = gnome_canvas_item_new (group,
+                                gnome_canvas_line_get_type (),
+				"cap_style", GDK_CAP_BUTT,
+				"join_style", GDK_JOIN_ROUND,
+				"line_style", GDK_LINE_ON_OFF_DASH,
+                                "points", points,
+				"fill_color_rgba",
+				plcolor_to_rgba (pls->curcolor, 0xFF),
+                                "width_units",
+				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
+                                NULL);
+
+  set_color (item, 0, (double) pls->icol0);
+
+  gtk_signal_connect (GTK_OBJECT (item), "event",
+                      (GtkSignalFunc) canvas_pressed_cb,
+                      page);
+
+  gnome_canvas_points_unref (points);
+
+  gdk_threads_leave ();
+
+}  
+
 /*--------------------------------------------------------------------------*\
  * plD_esc_gnome()
  *
@@ -1033,37 +1104,19 @@ plD_esc_gnome(PLStream *pls, PLINT op, void *ptr)
   dbug_enter("plD_esc_gnome");
   
   switch (op) {
-  case PLESC_EH:
-    break;
-    
-  case PLESC_EXPOSE:
-    break;
-    
-  case PLESC_FILL:
-    fill_polygon(pls);
-    break;
-    
-  case PLESC_FLUSH:
-    break;
-    
-  case PLESC_GETC:
-    break;
-    
-  case PLESC_REDRAW:
-    break;
-
-  case PLESC_RESIZE:
-    break;
-
-  case PLESC_XORMOD:
-    break;
-
-  case PLESC_DOUBLEBUFFERING:
-    break;    
 
   case PLESC_CLEAR:
     clear (pls);
     break;    
+
+  case PLESC_DASH:
+    dashed_line (pls);
+    break;    
+
+  case PLESC_FILL:
+    fill_polygon(pls);
+    break;
+
   }
 }
 

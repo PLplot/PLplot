@@ -662,7 +662,19 @@ genlin(short *x, short *y, PLINT npts)
    should be improved */
 
     else {
+
 	PLINT i;
+
+        /* Call escape sequence to draw dashed lines, only for drivers
+	   that have this capability */
+        if (plsc->dev_dash) {
+	    plsc->dev_npts = npts;
+	    plsc->dev_x = x;
+	    plsc->dev_y = y;
+	    plP_esc(PLESC_DASH, NULL);
+            return;
+        }
+
 	for (i = 0; i < npts - 1; i++) {
 	    grdashline(x+i, y+i);
 	}
