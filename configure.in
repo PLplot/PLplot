@@ -30,6 +30,15 @@ AM_INIT_AUTOMAKE(plplot, 5.1.0)
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
+### C++ bindings
+
+MY_ARG_ENABLE(cxx,
+  [  --enable-cxx            compile C++ interface code ($enable_cxx)])
+AM_CONDITIONAL(enable_cxx, [test x$enable_cxx = xyes])
+if test "$enable_cxx" = "yes" ; then
+  AC_PROG_CXX
+fi
+
 ### Checks for existence of headers
 
 AC_HEADER_STDC
@@ -64,5 +73,6 @@ AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 
 ### Build Makefiles
 
-AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile])
+AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile
+           bindings/Makefile bindings/c++/Makefile])
 

@@ -6,8 +6,8 @@
 // @> Source file plstream.
 //---------------------------------------------------------------------------//
 
-#include "plplot/plplot.h"
-#include "plplot/plstream.h"
+#include "plplot.h"
+#include "plstream.h"
 
 #include <iostream.h>
 

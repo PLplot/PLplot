@@ -1,2 +1,2 @@
-SUBDIRS = src include lib
+SUBDIRS = src include lib bindings
 
