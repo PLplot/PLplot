@@ -688,6 +688,13 @@ if test "$with_shlib" = "yes"; then
 	    LDSHARED='gcc -fpic -shared'
 	    RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
 	    INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
+	    SONAME_FLAGS="-Wl,-soname -Wl,"
+
+	    if test "$CXX" = "KCC"; then
+		SHLIB_BUILD_CXX="KCC --thread_safe -o"
+		SHLIB_CXXFLAGS=-fpic
+		SONAME_FLAGS="--soname "
+	    fi
 	;;
 	HP-UX-* )
 	    SO=".sl"
@@ -751,9 +758,17 @@ if test "$with_shlib" = "yes"; then
 	    AC_MSG_RESULT(unknown)
 	;;
     esac
+
+    # Finally, if SHLIB_BUILD_CXX isn't set already, it defaults to
+    # SHLIB_BUILD. 
+    if test -z "$SHLIB_BUILD_CXX"; then
+	SHLIB_BUILD_CXX=$SHLIB_BUILD
+    fi
 fi
 
 AC_SUBST(SHLIB_BUILD)
+AC_SUBST(SHLIB_BUILD_CXX)
+AC_SUBST(SONAME_FLAGS)
 AC_SUBST(SA)
 AC_SUBST(SO)
 AC_SUBST(LDSHARED)

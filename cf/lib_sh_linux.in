@@ -109,8 +109,8 @@ $(CXXLIB_SO): $(CXX_OBJS)
 	-$(RM) $(CXXLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(CXXLIB_SO) \
-		-Wl,-soname -Wl,$(CXX_SONAME) \
+	$(SHLIB_BUILD_CXX) ../$(CXXLIB_SO) \
+		$(SONAME_FLAGS)$(CXX_SONAME) \
 		$(CXX_OBJS)
 	ln -sf $(CXXLIB_SO) $(CXX_SONAME)
 	ln -sf $(CXX_SONAME) $(CXX_LINKNAME)

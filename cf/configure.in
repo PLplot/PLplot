@@ -599,7 +599,9 @@ AC_MSG_RESULT(creating links...)
 # Source, driver, and include files
     
 # All header files have to be in plplot as symlinks
-mkdir plplot
+if test ! -d plplot; then
+    mkdir plplot
+fi
 ln -s \
 ../plConfig.h ../plDevs.h \
 plplot 2>/dev/null
