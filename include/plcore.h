@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.11  1993/08/03 03:26:52  mjl
-   Additions to support new MGR and LinuxVGA drivers.
-
+ * $Log$
+ * Revision 1.12  1993/08/18 19:07:03  mjl
+ * Fixed function prototype.
+ *
+ * Revision 1.11  1993/08/03  03:26:52  mjl
+ * Additions to support new MGR and LinuxVGA drivers.
+ *
  * Revision 1.10  1993/07/31  07:56:51  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
@@ -47,6 +50,7 @@ static void	grfill		(short *, short *, PLINT);
 static void	difilt		(PLINT *, PLINT *, PLINT,
 				 PLINT *, PLINT *, PLINT *, PLINT *);
 static void	plGetDev	(void);
+static void	pldi_ini	(void);
 static void	calc_diplt	(void);
 static void	calc_didev	(void);
 static void	calc_diori	(void);
