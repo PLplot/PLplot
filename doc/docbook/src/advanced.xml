@@ -97,6 +97,7 @@ the Appendix for more details.
 <row><entry>Conex vt320/tek emulator</entry><entry>conex</entry><entry>tek.c</entry></row>
 <row><entry>DG300 Terminal</entry><entry>dg300</entry><entry>dg300.c</entry></row>
 <row><entry>NeXT display (unsupported)</entry><entry>nx</entry><entry>next.c</entry></row>
+<row><entry>GNOME display</entry><entry>gnome</entry><entry>gnome.c</entry></row>
 </tbody>
 </tgroup>
 </table>
