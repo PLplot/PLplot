@@ -22,7 +22,7 @@
 
 examplesdir = $(DATA_DIR)/examples
 
-bin_SCRIPTS = \
+dist_bin_SCRIPTS = \
 	plm2gif \
 	plpr \
 	pstex2eps
