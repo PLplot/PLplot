@@ -98,7 +98,7 @@ libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 
 PLTCLGEN = $(top_srcdir)/bindings/tcl/pltclgen
 $(tclgenfiles): $(PLTCLGEN) plapi.tpl tclcmd.tpl
-	$(PERL) $(PLTCLGEN)
+	$(PERL) $(PLTCLGEN) $(top_srcdir)/bindings/tcl
 
 CLEANFILES = $(generated_scripts) tclIndex
 MAINTAINERCLEANFILES = $(tclgenfiles)

@@ -31,11 +31,13 @@ require "getopts.pl";
 
 $verbose = $opt_v;
 
-$specfile = "plapi.tpl";	# PLplot API template specification file.
-$genfile  = "tclgen.c";		# Generated functions go here.
-$genhead  = "tclgen.h";		# Prototypes for generated functions.
-$genstruct= "tclgen_s.h";	# Initializers for CmdInfo struct.
-$cmdfile  = "tclcmd.tpl";	# Template file for generated functions.
+# Find the source tree directory that must be specified on the command line.
+$sourcedir = $ARGV[0];
+$specfile = "$sourcedir/plapi.tpl";	# PLplot API template specification file.
+$genfile  = "tclgen.c";			# Generated functions go here.
+$genhead  = "tclgen.h";			# Prototypes for generated functions.
+$genstruct= "tclgen_s.h";		# Initializers for CmdInfo struct.
+$cmdfile  = "$sourcedir/tclcmd.tpl";	# Template file for generated functions.
 
 open( SPECFILE, "<$specfile") || die "Can't open PLplot API spec file.";
 open( GENFILE,  ">$genfile" ) || die "Can't open output file.";
