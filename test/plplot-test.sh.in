@@ -67,17 +67,6 @@ EOF
    exit $1
 }
 
-# This script is only designed to work when EXAMPLES_DIR is a directory
-# with a subdirectory called "c".  Check whether this conditions is true.
-
-if test ! -d $EXAMPLES_DIR/c ; then
-cat << EOF
-This script is only designed to work when the EXAMPLES_DIR environment
-variable (overriden by option --examples_dir) is a directory with a
-subdirectory called "c".  This condition has been violated.
-EOF
-exit 1
-fi
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
 export cdir=$EXAMPLES_DIR/c           \
@@ -132,6 +121,18 @@ while test $# -gt 0; do
    esac
    shift
 done
+
+# This script is only designed to work when EXAMPLES_DIR is a directory
+# with a subdirectory called "c".  Check whether this conditions is true.
+
+if test ! -d $EXAMPLES_DIR/c ; then
+cat << EOF
+This script is only designed to work when the EXAMPLES_DIR environment
+variable (overriden by option --examples_dir) is a directory with a
+subdirectory called "c".  This condition has been violated.
+EOF
+exit 1
+fi
 
 case "$device" in
    ps|psc)
