@@ -46,9 +46,6 @@ plserver$E:	$(PLLIBS) plserver$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
 
-plmodule$(SO):	$(PLLIBS) plmodule$O
-	$(LDSHARED) plmodule$O $(PLLIB_LDC) $(TO) $@
-
 # -----------------------------------------------------------------------------
 # Font files.
 # Note it is no longer necessary to actually make these since as of
