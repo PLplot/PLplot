@@ -21,13 +21,13 @@ DLL_VERSION = 521
 
 TOOLS32		 = C:\Progra~1\devstudio\vc
 TOOLS32_rc	 = C:\Progra~1\devstudio\sharedide
-TCLSRCDIR        = C:\Tcl-source\tcl8.4
-TKSRCDIR         = C:\Tcl-source\tk8.4
+TCLSRCDIR        = C:\Programming\Tcl-source\tcl8.4
+TKSRCDIR         = C:\Programming\Tcl-source\tk8.4
 TCL              = c:\progra~1\tcl
 TCLVERSION       = 84
 
 # set nodebug=0 for symbols, nodebug=1 for optimized build.
-NODEBUG=0
+NODEBUG=1
 
 # DON'T EDIT BELOW THIS LINE, UNLESS YOU REALLY KNOW WHAT
 # YOU ARE DOING!
