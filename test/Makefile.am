@@ -21,16 +21,33 @@
 
 examplesdir = ${prefix}/@DATA_DIR@/../examples
 
-scripts = \
-	test_c.sh \
-	test_cxx.sh \
-	test_f77.sh \
-	test_java.sh \
-	test_octave.sh \
-	test_python.sh \
-	test_tcl.sh
+scripts = test_c.sh
+
+if enable_cxx
+scripts += test_cxx.sh
+endif
+
+if enable_f77
+scripts += test_f77.sh
+endif
+
+if enable_java
+scripts += test_java.sh
+endif
+
+if enable_octave
+scripts += test_octave.sh
+endif
+
+if enable_python
+scripts += test_python.sh
+endif
+
+if enable_tcl
+scripts += test_tcl.sh
+endif
 
 examples_SCRIPTS = $(scripts) plplot-test.sh
 
-EXTRA_DIST = $(scripts) plplot-test.sh.in
+EXTRA_DIST = test_*.sh plplot-test.sh.in
 DISTCLEANFILES = plplot-test.sh
