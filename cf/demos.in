@@ -165,6 +165,13 @@ tutor$E:	$(PLLIBS) tutor$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
+bug$O:	bug.c
+	$(CC) $(CC_FLAGS_DEMOS) bug.c
+
+bug$E:	$(PLLIBS) bug$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) bug$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
 # -----------------------------------------------------------------------
 # Example programs, in Fortran.
 
