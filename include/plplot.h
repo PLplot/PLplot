@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.61  1994/05/14 05:45:17  mjl
+ * Revision 1.62  1994/06/16 19:48:36  mjl
+ * Inserted prototype for pltkMain(), removed prototype for plframeCmd().
+ *
+ * Revision 1.61  1994/05/14  05:45:17  mjl
  * Added a new parse flage -- PL_PARSE_NODASH -- for allowing options
  * that don't begin with a dash.  Used for plSetInternalOpt, where
  * now the user can either include the dash or not.
@@ -1418,12 +1421,20 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 void
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
-/* plframe widget command */
+/* Utility functions for use with Tk */
 
 #if defined(TK) || defined(_TK)
 #include <tk.h>
-int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
-int   Pltk_Init( Tcl_Interp *interp );
+
+/* Generic initialization routine for extended wish'es. */
+
+int
+Pltk_Init( Tcl_Interp *interp );
+
+/* Main program for wish, with PLplot extensions. */
+
+int
+pltkMain(int argc, char **argv);
 #endif
 
 #ifdef __cplusplus
