@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/07/20 06:08:36  mjl
+ * Revision 1.17  1995/01/06 07:56:51  mjl
+ * Switch to the new syntax for pldtik().
+ *
+ * Revision 1.16  1994/07/20  06:08:36  mjl
  * The new 3d functions moved elsewhere.
  *
  * Revision 1.15  1994/07/19  22:13:36  furnish
@@ -456,17 +459,14 @@ plgrid3(PLFLT tick)
     PLFLT xmin, ymin, zmin, xmax, ymax, zmax, zscale;
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT u[3], v[3];
-    PLINT nsub, prec, mode, digmax, digits, scale;
+    PLINT nsub = 0;
     PLFLT tp;
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     plP_gdom(&xmin, &xmax, &ymin, &ymax);
     plP_grange(&zscale, &zmin, &zmax);
 
-    plgzax(&digmax, &digits);
-    nsub = 0;
-
-    pldtik(zmin, zmax, &tick, &nsub, &mode, &prec, digmax, &scale);
+    pldtik(zmin, zmax, &tick, &nsub);
     tp = tick * floor(zmin / tick) + tick;
     pl3upv = 0;
 
