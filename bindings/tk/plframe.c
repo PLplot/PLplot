@@ -55,7 +55,7 @@
 
 extern int plplot_ccmap;
 
-#define NDEV	20		/* Max number of output device types */
+#define NDEV	100		/* Max number of output device types in menu */
 
 /* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
 
