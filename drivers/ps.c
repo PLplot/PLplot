@@ -342,7 +342,7 @@ ps_init(PLStream *pls)
     fprintf(OF, "/SW {stringwidth 2 index mul exch 2 index mul exch rmoveto pop} bind def\n");
     fprintf(OF, "/B {Z %d %d M %d %d D %d %d D %d %d D %d %d closepath} def\n",
 	    XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN);
-    fprintf(OF, "/CL {M D D D closepath clip} def\n");
+    fprintf(OF, "/CL {newpath M D D D closepath clip} def\n");
 
 /* End of dictionary definition */
 
