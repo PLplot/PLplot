@@ -332,6 +332,8 @@ if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
 # All required headers and libraries are present for libgd, libpng, libjpeg,
 # and zlib.  Now check if this version of libgd supports jpeg.
 
+    AC_MSG_CHECKING(for jpeg support in libgd)
+
     CFLAGS_SAVE=$CFLAGS
     LIBS_SAVE=$LIBS
     LDFLAGS_SAVE=$LDFLAGS
@@ -342,7 +344,8 @@ if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
 
     AC_TRY_LINK_FUNC([
       gdImageJpeg
-    ], [], [
+    ], [AC_MSG_RESULT(yes)], [
+      AC_MSG_RESULT(no: jpg driver disabled)
       enable_jpg=no
     ])
 
