@@ -82,7 +82,12 @@ install_tcl_demos:
 	  cd $(top_srcdir)/examples/tcl; $(CP) $(TCL_DEMOS) $(DEMOS_DIR)/tcl; \
 	  cd $(DEMOS_DIR)/tcl; $(MAKEINDEX)
 
-install_tcl: install_pltcl install_tcl_index install_tcl_includes install_tcl_demos
+install_tcl_pkgIndex:
+	@-cd $(top_srcdir)/bindings/tcl; \
+	  cat pkgIndex.tcl.in >$(DATA_DIR)/../pkgIndex.tcl
+
+install_tcl: install_pltcl install_tcl_index install_tcl_includes \
+	install_tcl_demos install_tcl_pkgIndex
 
 install_mat_includes:
 	@-cd $(top_srcdir)/bindings/tcl; \

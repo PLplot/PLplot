@@ -52,7 +52,12 @@ install_tk_demos:
 	  done; \
 	  cd $(DEMOS_DIR)/tk; $(MAKEINDEX)
 
-install_tk: install_plserver install_tk_scripts install_tk_demos
+# this target depends on install_tcl_pkgIndex correctly overwriting the old file
+install_tk_pkgIndex:
+	@-cd $(top_srcdir)/bindings/tk; \
+	  cat pkgIndex.tcl.in >>$(DATA_DIR)/../pkgIndex.tcl
+
+install_tk: install_plserver install_tk_scripts install_tk_demos install_tk_pkgIndex
 
 ifneq ($(DYNAMIC_DRIVERS),)
 TK_DRV		= tk_drv
@@ -61,3 +66,4 @@ tk_drv: shared/tk$O
 	@$(SHLIB_BUILD) $(DATA_DIR)/../drivers/tk$(LIB_TAG)_drv.so \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)
 endif
+
