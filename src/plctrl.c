@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/07/01 22:20:19  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".  Moved functions plend() and plend1()
-   to plcore.c.  Added pl_cmd() as a front-end to the driver escape function
-   to allow virtually any command & data be sent to the driver by the calling
-   program.
+   Revision 1.4  1993/07/31 08:18:10  mjl
+   Changes to text/graph screen switching commands to reflect reorganization.
 
+ * Revision 1.3  1993/07/01  22:20:19  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".  Moved functions plend() and plend1()
+ * to plcore.c.  Added pl_cmd() as a front-end to the driver escape function
+ * to allow virtually any command & data be sent to the driver by the calling
+ * program.
+ *
  * Revision 1.2  1993/02/23  05:12:49  mjl
  * Eliminated plbeg: it is now illegal to specify the device by device number.
  *
@@ -64,7 +67,7 @@ pl_exit(void)
 /*----------------------------------------------------------------------*\
 * void plgra()
 *
-* Switches to graphics mode.
+* Switches to graphics screen.
 \*----------------------------------------------------------------------*/
 
 void
@@ -74,13 +77,14 @@ c_plgra()
     plP_glev(&level);
     if (level < 1)
 	plexit("plgra: Please call plinit first.");
-    plP_gra();
+
+    plP_esc(PLESC_GRAPH, NULL);
 }
 
 /*----------------------------------------------------------------------*\
 * void pltext()
 *
-* Switches back to text mode.
+* Switches to text screen.
 \*----------------------------------------------------------------------*/
 
 void
@@ -92,13 +96,13 @@ c_pltext()
     if (level < 1)
 	plexit("pltext: Please call plinit first.");
 
-    plP_text();
+    plP_esc(PLESC_TEXT, NULL);
 }
 
 /*----------------------------------------------------------------------*\
 * void plhls()
 *
-* Set line color by hue, lightness, and saturation.
+* Set current color by hue, lightness, and saturation.
 * Convert hls color coordinates to rgb, then call plrgb.
 \*----------------------------------------------------------------------*/
 
