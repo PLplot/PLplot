@@ -5,6 +5,7 @@ from pl import *
 
 def main():
 
+    pladv(0)
     # Divide screen into 16 regions
     plssub(4, 4)
 
@@ -26,9 +27,10 @@ def main():
 	plwid(1)
 	plptex(0.5, 0.5, 1.0, 0.0, 0.5, `i`)
 
-    #restore defaults
+    # Restore defaults
     plssub(1, 1)
     plfont(1)
     plcol0(1)
+    pleop()
 
 main()
