@@ -1,3 +1,195 @@
+Commit from airwin (2004-05-20 00:51 CEST)
+------------------
+
+As discussed on list, destroy the current cont_store and plP_gzback and
+rename the current cont_storel and plP_gzbackw to cont_store and plP_gzback.
+
+According to our new narrow definition of API, these changes do not
+constitute a change in the API.
+
+I have done my usual build, install, and test of installed examples, and all
+seems well (except for a peculiar problem with pls.plgver(version) in
+x01.java which should be completely unrelated).
+
+  plplot  include/plplotP.h  1.79
+  plplot  src/plbox.c        1.37
+  plplot  src/plcont.c       1.29
+  plplot  src/plot3d.c       1.62
+
+
+Commit from airwin (2004-05-20 00:43 CEST)
+------------------
+
+Comment out pls.plgver call which has suddenly quit working with the message
+
+Unexpected exception has occurred:
+ReportedExceptionCode = b, at ExceptionAddress = 400bc80d
+        ACCESS_VIOLATION occured outside Interpreter and JITed code
+	ExecMode = EXECMODE_BYTECODE
+Abort
+
+I know of no relevant changes that would cause this problem, but the return
+of array data to java is something of black magic anyhow with swig so
+comment it out for now until we can recruit a java expert to fix it.
+
+  plplot  examples/java/x01.java  1.17
+
+
+Commit from rlaboiss (2004-05-19 20:42 CEST)
+--------------------
+
+Reworded first paragraph following Alan's suggestion.
+
+  plplot  doc/docbook/src/api-compat.xml  1.3
+
+
+Commit from rlaboiss (2004-05-19 15:56 CEST)
+--------------------
+
+* configure.ac: Created a separate soversion variable for the Fortran
+  library (F77_SOVERSION).  Updated SOVERSION and CPP_SOVERSION for the
+  upcoming 5.3.1 release.
+
+* bindings/f77/Makefile.am: Use F77_SOVERSION instead of SOVERSION.
+
+  plplot  configure.ac              1.176
+  plplot  bindings/f77/Makefile.am  1.20
+
+
+Commit from rlaboiss (2004-05-19 14:30 CEST)
+--------------------
+
+Better wording and better markup
+
+  plplot  doc/docbook/src/api-compat.xml  1.2
+
+
+Commit from rlaboiss (2004-05-19 14:05 CEST)
+--------------------
+
+Document the API definition based on plplot.h.
+
+  plplot  doc/docbook/src/Makefile.am       1.60
++ plplot  doc/docbook/src/api-compat.xml    1.1
++ plplot  doc/docbook/src/plplot.sym        1.1
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.38
+
+
+Commit from rlaboiss (2004-05-19 11:22 CEST)
+--------------------
+
+Added variable drvdir.  It is now possible to get its value by running
+
+    pkg-config --variable=drvdir plplotd
+
+This may be useful for people building third-party drivers for PLplot (as in
+the case of the recent plplotcanvas release).
+
+  plplot  pkgcfg/gen-pc-files.pl.in  1.4
+
+
+Commit from aroach (2004-05-19 05:43 CEST)
+------------------
+
+Added a quick fix which should stop out of bounds setting of the
+colour map by the freetype driver while it is smoothing.
+----------------------------------------------------------------------
+
+  plplot  src/plfreetype.c  1.18
+
+
+Commit from rlaboiss (2004-05-18 16:07 CEST)
+--------------------
+
+Added newline at end of file
+
+  plplot  debian/libcsiro0.files       1.2
+  plplot  debian/libplplot-c++9.files  1.2
+
+
+Commit from aroach (2004-05-18 13:47 CEST)
+------------------
+
+Fixed up the problem with freetype not printing out all the
+characters above 156. Came down to a prob with unsigned/signed ints,
+and a small shifting of ASCII values to hide it.
+----------------------------------------------------------------------
+
+  plplot  src/plfreetype.c  1.17
+
+
+Commit from rlaboiss (2004-05-18 11:36 CEST)
+--------------------
+
+Removed all the xwin glitches in the x20.pl example.  It behaves now exactly
+like its C counterpart (x20c.c).
+
+  plplot  examples/perl/x20.pl  1.6
+
+
+Commit from rlaboiss (2004-05-18 09:47 CEST)
+--------------------
+
+Updated to new style of pltr callback functions and cgrid objects.
+
+  plplot  examples/perl/x22.pl  1.3
+
+
+Commit from rlaboiss (2004-05-18 09:42 CEST)
+--------------------
+
+Croak if lena image file is not found
+
+  plplot  examples/perl/x20.pl  1.5
+
+
+Commit from rlaboiss (2004-05-18 09:41 CEST)
+--------------------
+
+Updated to new style of pltr callback functions and cgrid objects.
+
+  plplot  examples/perl/x16.pl  1.4
+
+
+Commit from rlaboiss (2004-05-18 01:07 CEST)
+--------------------
+
+Updated to new style of pltr callback functions and cgrid objects.
+
+  plplot  examples/perl/x09.pl  1.3
+
+
+Commit from aroach (2004-05-17 14:53 CEST)
+------------------
+
+Small change to plfreetype to get it working with WIN32 platforms
+properly.
+----------------------------------------------------------------------
+
+  plplot  src/plfreetype.c  1.16
+
+
+Commit from rlaboiss (2004-05-17 14:38 CEST)
+--------------------
+
+Removed obsolete scripts that even do not go into the distribution tarball.
+
+- plplot  scripts/mkrel  1.2
+- plplot  scripts/plexp  1.2
+- plplot  scripts/plimp  1.2
+- plplot  scripts/tarup  1.2
+- plplot  scripts/zipup  1.2
+
+
+Commit from rlaboiss (2004-05-17 11:58 CEST)
+--------------------
+
+Updated version string and RELEASE-DATE according to last CVS snapshot
+release.
+
+  plplot  configure.ac  1.175
+
+
 Commit from rlaboiss (2004-05-17 08:39 CEST)
 --------------------
 
