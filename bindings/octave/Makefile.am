@@ -69,7 +69,9 @@ octavesharedir = $(datadir)/plplot_octave
 # stuff that the SCRIPTS or DATA targets do not allow.
 
 install-exec-local: .samename/plplot_octave.oct
-	cd .samename; $(INSTALL) plplot_octave.oct $(octavesharedir)
+# NEEDS $(DESTDIR) prepended to keep install relocatibility since this
+# is a local rule.
+	cd .samename; $(INSTALL) plplot_octave.oct $(DESTDIR)$(octavesharedir)
 
 # build area version
 # SCRIPTS rather than DATA because you want to preserve the permissions.
