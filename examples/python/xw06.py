@@ -2,7 +2,6 @@
 
 #	Font demo.
 
-import math
 import sys
 import os
 

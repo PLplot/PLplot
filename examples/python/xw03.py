@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #	Polar plot demo.
 
-import math
 import sys
 import os
 
@@ -21,7 +20,7 @@ from pl import *
 
 def main():
 
-    dtr = math.pi / 180.0
+    dtr = pi / 180.0
     x0 = cos(dtr*arrayrange(361))
     y0 = sin(dtr*arrayrange(361))
 
@@ -51,8 +50,8 @@ def main():
     plcol0(2)
     for i in range(12):
 	theta = 30.0 * i
-	dx = math.cos(dtr * theta)
-	dy = math.sin(dtr * theta)
+	dx = cos(dtr * theta)
+	dy = sin(dtr * theta)
 
 	# Draw radial spokes for polar grid
 

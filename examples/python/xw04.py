@@ -2,7 +2,6 @@
 
 #	Log plot demo.
 
-import math
 import sys
 import os
 
@@ -34,12 +33,10 @@ def main():
     plfont(2)
 
     f0 = 1000.0
-    freql = zeros(101,'d'); ampl = zeros(101,'d'); phase=zeros(101,'d')
-    for i in range(101):
-	freql[i] = 1.0 + i / 20.0
-	freq = pow( 10.0, freql[i] )
-	ampl[i] = 20.0 * math.log10(1.0 / math.sqrt(1.0 + pow((freq / f0), 2.)))
-	phase[i] = -(180.0 / math.pi) * math.atan(freq / f0)
+    freql = 1.0 + arrayrange(101)/20.0
+    freq = pow(10.0, freql)
+    ampl = 20.0 * log10(1.0 / sqrt(1.0 + pow((freq / f0), 2.)))
+    phase = -(180.0 / pi) * arctan(freq / f0)
 
     plvpor(0.15, 0.85, 0.1, 0.9)
     plwind(1.0, 6.0, -80.0, 0.0)

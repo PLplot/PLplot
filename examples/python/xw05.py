@@ -2,7 +2,6 @@
 
 #	Histogram demo.
 
-import math
 import sys
 import os
 
@@ -34,10 +33,8 @@ def main():
 
     # Fill up data points
 
-    delta = 2.0 * math.pi / NPTS
-    data = zeros(NPTS,'d')
-    for i in range(NPTS):
-	data[i] = math.sin(i * delta)
+    delta = 2.0 * pi / NPTS
+    data = sin(delta*arrayrange(NPTS))
 
     plcol0(1)
     plhist(data, -1.1, 1.1, 44, 0)

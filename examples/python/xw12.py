@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-#Have not yet converted to arrays.
 
 #	Bar chart demo.
 
-import math
 import sys
 import os
 

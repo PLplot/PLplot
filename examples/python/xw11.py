@@ -2,7 +2,6 @@
 
 #	Mesh plot demo.
 
-import math
 import sys
 import os
 
@@ -45,22 +44,9 @@ def main():
 
     plinit()
 
-    x = zeros(XPTS,'d'); y = zeros(YPTS,'d')
-    z = reshape( zeros( XPTS*YPTS, 'd' ), (XPTS, YPTS) )
-
-    for i in range(XPTS):
-	x[i] = float(i - (XPTS / 2)) / float(XPTS / 2)
-
-    for i in range(YPTS):
-	y[i] = float(i - (YPTS / 2)) / float(YPTS / 2)
-
-    for i in range(XPTS):
-	xx = x[i]
-	zz = []
-	for j in range(YPTS):
-	    yy = y[j]
-	    z[i,j] = math.cos(2.0 * math.pi * xx) * \
-		     math.sin(2.0 * math.pi * yy)
+    x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
+    y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
+    z = transpose(resize(cos((2.*pi)*x),(len(y),len(x))))*(sin((2.0*pi)*y))
 
     for k in range(4):
 	pladv(0)

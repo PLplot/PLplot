@@ -2,7 +2,6 @@
 
 #	3-d plot demo.
 
-import math
 import sys
 import os
 
@@ -45,21 +44,10 @@ def main():
 
     plinit()
 
-    x = zeros( XPTS, 'd' ); y = zeros( YPTS, 'd' )
-    z = reshape( zeros( XPTS*YPTS, 'd' ), (XPTS, YPTS) )
-
-    for i in range(XPTS):
-	x[i] = float(i - (XPTS / 2)) / float(XPTS / 2)
-
-    for i in range(YPTS):
-	y[i] = float(i - (YPTS / 2)) / float(YPTS / 2)
-
-    for i in range(XPTS):
-	xx = x[i]
-	for j in range(YPTS):
-	    yy = y[j]
-	    r = math.sqrt(xx * xx + yy * yy)
-	    z[i,j] = math.exp(-r * r) * math.cos(2.0 * math.pi * r)
+    x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
+    y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
+    r2 = transpose(resize(x*x,(len(y),len(x))))+(y*y)
+    z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
     for k in range(4):
 	pladv(0)

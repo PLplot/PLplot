@@ -2,7 +2,6 @@
 
 #	Simple line plot and multiple windows demo.
 
-import math
 import sys
 import os
 
@@ -153,7 +152,7 @@ def plot3():
 	       "#frPLplot Example 1 - Sine function")
 
 	x = 3.6*arrayrange(101)
-	y = sin((math.pi/180.)*x)
+	y = sin((pi/180.)*x)
 
 	plcol0(4)
 	plline(x, y)

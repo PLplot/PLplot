@@ -2,7 +2,6 @@
 
 #	Multiple window and color map 0 demo.
 
-import math
 import sys
 import os
 

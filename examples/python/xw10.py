@@ -2,7 +2,6 @@
 
 #	Window positioning demo.
 
-import math
 import sys
 import os
 
