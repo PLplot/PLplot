@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/07/31 07:56:55  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.4  1994/03/23 08:56:15  mjl
+   Header file rearrangement, also removed some redundant variable clears.
 
+ * Revision 1.3  1993/07/31  07:56:55  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.2  1993/07/01  21:59:53  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -22,7 +25,6 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
 #include "drivers.h"
 #include "plamiga.h"
 
@@ -176,8 +178,6 @@ plD_tidy_amipr(PLStream *pls)
 {
     mapfree();
     closeprinter();
-    pls->page = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
