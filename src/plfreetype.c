@@ -961,7 +961,7 @@ static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
 
   while ((FT->mem_pointer+total_mem)>FT->mem_allocated)
     {
-     if ((FT->text_cache=(realloc(FT->text_cache,(size_t) (FT_TEXT_CACHESZ+FT->mem_allocated)))==NULL))
+     if ((FT->text_cache=(realloc(FT->text_cache,(size_t) (FT_TEXT_CACHESZ+FT->mem_allocated))))==NULL)
         {
         	plexit("Could not allocate extra memory to Freetype text cache");
         }
