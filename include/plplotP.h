@@ -242,7 +242,7 @@ extern PLStream	*plsc;
 
 #define PL_MAXPOLY	256	/* Max segments in polyline or polygon */
 #define PL_NSTREAMS	100	/* Max number of concurrent streams. */
-#define PL_RGB_COLOR	1<<7	/* A hack */
+#define PL_RGB_COLOR	-1	/* A hack */
 
 #define TEXT_MODE	0
 #define GRAPHICS_MODE	1
