@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.63  1994/06/30 18:33:36  mjl
+ * Revision 1.64  1994/07/12 19:18:00  mjl
+ * Fixed prototype for plshade().
+ *
+ * Revision 1.63  1994/06/30  18:33:36  mjl
  * Now includes math.h and string.h, since I was tired of getting burned by
  * leaving these out (and having strange run-time errors as a result).  The
  * PLINT type now is an "int" by default, except on MSDOS where it's a long
@@ -1082,7 +1085,7 @@ c_plsfnam(const char *fnam);
 /* Shade region. */
 
 void 
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
