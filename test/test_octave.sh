@@ -24,6 +24,11 @@
 # $dsuffix and $options defined.
 # Assumes that $option starts and are '-' separated.
 
+# The following is only need for the build tree!  It should has no effect
+# when this script is launched from the install tree.
+TOPDIR=`pwd`/..
+export LD_LIBRARY_PATH=$TOPDIR/src/.libs:$TOPDIR/lib/csa/.libs:$TOPDIR/lib/nn/.libs
+
 # Launch an Octave script that exercises all the demos
 $octave -f -q -p $octavedir <<EOF
 plplot_stub;
