@@ -22,12 +22,10 @@
 
 examplesdir = $(DATA_DIR)/examples
 
-scripts = \
+bin_SCRIPTS = \
 	plm2gif \
 	plpr \
 	pstex2eps
-
-bin_SCRIPTS = $(scripts)
 nodist_bin_SCRIPTS = plplot-config
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
