@@ -1,25 +1,5 @@
-dnl @synopsis AC_PROG_SWIG([major.minor.micro])
-dnl
-dnl This macro searches for a SWIG installation on your system. If found you
-dnl should) SWIG via $(SWIG).  You can use the optional first argument to check
-dnl if the version of the available SWIG is greater than or equal to the
-dnl value of the argument.  It should have the format: N[.N[.N]] (N is a
-dnl number between 0 and 999.  Only the first N is mandatory.)
-dnl
-dnl If the version argument is given (e.g. 1.3.17), AC_PROG_SWIG checks that the
-dnl swig package is this version number or higher.
-dnl
-dnl In configure.in, use as:
-dnl
-dnl		AC_PROG_SWIG(1.3.17)
-dnl		SWIG_ENABLE_CXX
-dnl		SWIG_MULTI_MODULE_SUPPORT
-dnl		SWIG_PYTHON
-dnl
-dnl @authors Sebastian Huber <sebastian-huber@web.de>, Alan W. Irwin
-dnl <irwin@beluga.phys.uvic.ca>, Rafael Laboissiere <laboissiere@psy.mpg.de> and
-dnl Andrew Collier <colliera@nu.ac.za>.
-dnl
+dnl Available from the GNU Autoconf Macro Archive at:
+dnl http://www.gnu.org/software/ac-archive/htmldoc/ac_pkg_swig.html
 dnl
 AC_DEFUN([AC_PROG_SWIG],[
 	AC_PATH_PROG([SWIG],[swig])

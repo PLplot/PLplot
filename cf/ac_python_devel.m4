@@ -1,14 +1,10 @@
-dnl @synopsis AC_PYTHON_DEVEL()
-dnl
-dnl Checks for Python and tries to get the include path to 'Python.h'.
-dnl It provides the $(PYTHON_CPPFLAGS) and $(PYTHON_LDFLAGS) output variable.
-dnl
-dnl @authors Sebastian Huber <sebastian-huber@web.de>, Alan W. Irwin
-dnl <irwin@beluga.phys.uvic.ca>, Rafael Laboissiere <laboissiere@psy.mpg.de> and
-dnl Andrew Collier <colliera@nu.ac.za>.
-dnl
+dnl Available from the GNU Autoconf Macro Archive at:
+dnl http://www.gnu.org/software/ac-archive/htmldoc/ac_python_devel.html
 dnl
 AC_DEFUN([AC_PYTHON_DEVEL],[
+	#
+	# should allow for checking of python version here...
+	#
 	AC_REQUIRE([AM_PATH_PYTHON])
 
 	# Check for Python include path
@@ -42,8 +38,16 @@ AC_DEFUN([AC_PYTHON_DEVEL],[
 		AC_MSG_ERROR([cannot find Python library path])
 	fi
 	AC_SUBST([PYTHON_LDFLAGS],["-L$python_path -lpython$PYTHON_VERSION"])
+	#
+	python_site=`echo $python_path | sed "s/config/site-packages/"`
+	AC_SUBST([PYTHON_SITE_PKG],[$python_site])
+	#
+	# libraries which must be linked in when embedding
+	#
+	AC_MSG_CHECKING(python extra libraries)
 	PYTHON_EXTRA_LIBS=`$PYTHON -c "import distutils.sysconfig; \
                 conf = distutils.sysconfig.get_config_var; \
-                print conf('LOCALMODLIBS')+' '+conf('LIBS')"`
+                print conf('LOCALMODLIBS')+' '+conf('LIBS')"
+	AC_MSG_RESULT($PYTHON_EXTRA_LIBS)`
 	AC_SUBST(PYTHON_EXTRA_LIBS)
 ])
