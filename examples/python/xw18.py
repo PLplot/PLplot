@@ -58,7 +58,7 @@ def main():
 		if opt[k]:
 			plline3(x, y, z)
 		else:
-			plpoin3(x, y, z, -1)
+			plpoin3(x, y, z, 1)
 
 		plcol(3)
 		title = "#frPLplot Example 18 - Alt=%.0f, Az=%.0f" % (alt[k],
