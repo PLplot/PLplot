@@ -174,10 +174,10 @@ Java_plplot_core_PLStream_adv( JNIEnv *env, jobject jthis, jint page )
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_box__Ljava_lang_String_2FILjava_lang_String_2FI
-( JNIEnv *env, jobject jthis,
-  jstring jxopt, jfloat jxtick, jint nxsub,
-  jstring jyopt, jfloat jytick, jint nysub )
+Java_plplot_core_PLStream_box__Ljava_lang_String_2FILjava_lang_String_2FI(
+    JNIEnv *env, jobject jthis,
+    jstring jxopt, jfloat jxtick, jint nxsub,
+    jstring jyopt, jfloat jytick, jint nysub )
 {
     PLFLT xtick = jxtick, ytick = jytick;
     const char *xopt = (*env)->GetStringUTFChars( env, jxopt, 0 );
@@ -194,10 +194,10 @@ Java_plplot_core_PLStream_box__Ljava_lang_String_2FILjava_lang_String_2FI
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_box__Ljava_lang_String_2DILjava_lang_String_2DI
-( JNIEnv *env, jobject jthis,
-  jstring jxopt, jdouble jxtick, jint nxsub,
-  jstring jyopt, jdouble jytick, jint nysub )
+Java_plplot_core_PLStream_box__Ljava_lang_String_2DILjava_lang_String_2DI(
+    JNIEnv *env, jobject jthis,
+    jstring jxopt, jdouble jxtick, jint nxsub,
+    jstring jyopt, jdouble jytick, jint nysub )
 {
     PLFLT xtick = jxtick, ytick = jytick;
     const char *xopt = (*env)->GetStringUTFChars( env, jxopt, 0 );
@@ -208,20 +208,57 @@ Java_plplot_core_PLStream_box__Ljava_lang_String_2DILjava_lang_String_2DI
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    box3
- * Signature: (Ljava/lang/String;Ljava/lang/String;FILjava/lang/String;Ljava/lan
-g/String;FILjava/lang/String;Ljava/lang/String;FI)V
+ * Signature: (Ljava/lang/String;Ljava/lang/String;FILjava/lang/String;Ljava/lang/String;FILjava/lang/String;Ljava/lang/String;FI)V
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_box3( JNIEnv *env, jobject jthis,
-                                jstring xopt, jstring xlabel, jfloat xtick, jint nsubx,
-                                jstring yopt, jstring ylabel, jfloat ytick, jint nsuby,
-                                jstring zopt, jstring zlabel, jfloat ztick, jint nsubz )
+Java_plplot_core_PLStream_box3__Ljava_lang_String_2Ljava_lang_String_2FILjava_lang_String_2Ljava_lang_String_2FILjava_lang_String_2Ljava_lang_String_2FI(
+    JNIEnv *env, jobject jthis,
+    jstring jxopt, jstring jxlabel, jfloat jxtick, jint nsubx,
+    jstring jyopt, jstring jylabel, jfloat jytick, jint nsuby,
+    jstring jzopt, jstring jzlabel, jfloat jztick, jint nsubz )
 {
+    PLFLT xtick = jxtick, ytick = jytick, ztick = jztick;
+    const char *xopt = (*env)->GetStringUTFChars( env, jxopt, 0 );
+    const char *yopt = (*env)->GetStringUTFChars( env, jyopt, 0 );
+    const char *zopt = (*env)->GetStringUTFChars( env, jzopt, 0 );
+    const char *xlabel = (*env)->GetStringUTFChars( env, jxlabel, 0 );
+    const char *ylabel = (*env)->GetStringUTFChars( env, jylabel, 0 );
+    const char *zlabel = (*env)->GetStringUTFChars( env, jzlabel, 0 );
+
     set_PLStream(env,jthis);
-    printf( "box3 unimplemented.\n" );
+    plbox3( xopt, xlabel, xtick, nsubx,
+            yopt, ylabel, ytick, nsuby,
+            zopt, zlabel, ztick, nsubz );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    box3
+ * Signature: (Ljava/lang/String;Ljava/lang/String;DILjava/lang/String;Ljava/lang/String;DILjava/lang/String;Ljava/lang/String;DI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_box3__Ljava_lang_String_2Ljava_lang_String_2DILjava_lang_String_2Ljava_lang_String_2DILjava_lang_String_2Ljava_lang_String_2DI(
+    JNIEnv *env, jobject jthis,
+    jstring jxopt, jstring jxlabel, jdouble jxtick, jint nsubx,
+    jstring jyopt, jstring jylabel, jdouble jytick, jint nsuby,
+    jstring jzopt, jstring jzlabel, jdouble jztick, jint nsubz )
+{
+    PLFLT xtick = jxtick, ytick = jytick, ztick = jztick;
+    const char *xopt = (*env)->GetStringUTFChars( env, jxopt, 0 );
+    const char *yopt = (*env)->GetStringUTFChars( env, jyopt, 0 );
+    const char *zopt = (*env)->GetStringUTFChars( env, jzopt, 0 );
+    const char *xlabel = (*env)->GetStringUTFChars( env, jxlabel, 0 );
+    const char *ylabel = (*env)->GetStringUTFChars( env, jylabel, 0 );
+    const char *zlabel = (*env)->GetStringUTFChars( env, jzlabel, 0 );
+
+    set_PLStream(env,jthis);
+    plbox3( xopt, xlabel, xtick, nsubx,
+            yopt, ylabel, ytick, nsuby,
+            zopt, zlabel, ztick, nsubz );
 }
 
 /*
@@ -481,6 +518,36 @@ Java_plplot_core_PLStream_lab( JNIEnv *env, jobject jthis,
 }
 
 /*
+ * Class:     plplot_core_PLStream
+ * Method:    lightsource
+ * Signature: (FFF)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_lightsource__FFF( JNIEnv *env, jobject jthis,
+                                            jfloat jx, jfloat jy, jfloat jz )
+{
+    PLFLT x = jx, y = jy, z = jz;
+    set_PLStream(env,jthis);
+    pllightsource( x, y, z );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    lightsource
+ * Signature: (DDD)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_lightsource__DDD( JNIEnv *env, jobject jthis,
+                                            jdouble jx, jdouble jy, jdouble jz )
+{
+    PLFLT x = jx, y = jy, z = jz;
+    set_PLStream(env,jthis);
+    pllightsource( x, y, z );
+}
+
+/*
  * Class:     plplot_0002fcore_0002fPLStream
  * Method:    line
  * Signature: (I[F[F)V
@@ -615,6 +682,328 @@ Java_plplot_core_PLStream_mtex__Ljava_lang_String_2DDDLjava_lang_String_2(
 }
 
 /*
+ * Class:     plplot_core_PLStream
+ * Method:    plot3d
+ * Signature: ([F[F[[FII)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_plot3d___3F_3F_3_3FII(
+    JNIEnv *env, jobject jthis,
+    jfloatArray xarr, jfloatArray yarr, jobjectArray zarr,
+    jint opt, jint side )
+{
+    int nx = (*env)->GetArrayLength( env, xarr );
+    int ny = (*env)->GetArrayLength( env, yarr );
+
+    jfloat *xdat = (*env)->GetFloatArrayElements( env, xarr, 0 );
+    jfloat *ydat = (*env)->GetFloatArrayElements( env, yarr, 0 );
+    jfloat **zdat = (jfloat **) malloc( nx * sizeof(jfloat*) );
+
+    PLFLT *x, *y, **z, *zbuf;
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Should really check that z.length == nx */
+
+/* Now fetch the arrays of z[] and pull their data pointers. */
+    for( i=0; i < nx; i++ )
+    {
+        jobject zi = (*env)->GetObjectArrayElement( env, zarr, i );
+        int ziels = (*env)->GetArrayLength( env, zi );
+    /* ziels should be ny! */
+        zdat[i] = (*env)->GetFloatArrayElements( env, zi, 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+        x = (PLFLT *) xdat;
+        y = (PLFLT *) ydat;
+        z = (PLFLT **) zdat;
+    } else {
+        x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+        zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+
+        for( i=0; i < nx; i++ ) x[i] = xdat[i];
+        for( j=0; j < ny; j++ ) y[j] = ydat[j];
+
+        for( i=0; i < nx; i++ ) {
+            z[i] = zbuf + i*ny;
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plot3d( x, y, z, nx, ny, opt, side );
+
+    if (must_free_buffers) {
+        free(x);
+        free(y);
+        free(z);
+        free(zbuf);
+    }
+    free(zdat);
+
+    (*env)->ReleaseFloatArrayElements( env, xarr, xdat, 0 );
+    (*env)->ReleaseFloatArrayElements( env, yarr, ydat, 0 );
+
+/* Seems to me we need to release these elements of zarr[i] too, but for some
+ * reason the JVM gets sick to its stomach when I do this...  I must be doing
+ * something wrong, but I can't see what it is. */
+
+/*     for( i=0; i < nx; i++ ) */
+/*     { */
+/*         jobject zi = (*env)->GetObjectArrayElement( env, zarr, i ); */
+/*         (*env)->ReleaseFloatArrayElements( env, zi, zdat[i], 0 ); */
+/*     } */
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    plot3d
+ * Signature: ([D[D[[DII)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_plot3d___3D_3D_3_3DII(
+    JNIEnv *env, jobject jthis,
+    jdoubleArray xarr, jdoubleArray yarr, jobjectArray zarr,
+    jint opt, jint side )
+{
+    int nx = (*env)->GetArrayLength( env, xarr );
+    int ny = (*env)->GetArrayLength( env, yarr );
+
+    jdouble *xdat = (*env)->GetDoubleArrayElements( env, xarr, 0 );
+    jdouble *ydat = (*env)->GetDoubleArrayElements( env, yarr, 0 );
+    jdouble **zdat = (jdouble **) malloc( nx * sizeof(jdouble*) );
+
+    PLFLT *x, *y, **z, *zbuf;
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Should really check that z.length == nx */
+
+/* Now fetch the arrays of z[] and pull their data pointers. */
+    for( i=0; i < nx; i++ )
+    {
+        jobject zi = (*env)->GetObjectArrayElement( env, zarr, i );
+        int ziels = (*env)->GetArrayLength( env, zi );
+    /* ziels should be ny! */
+        zdat[i] = (*env)->GetDoubleArrayElements( env, zi, 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+        x = (PLFLT *) xdat;
+        y = (PLFLT *) ydat;
+        z = (PLFLT **) zdat;
+    } else {
+        x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+        zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+
+        for( i=0; i < nx; i++ ) x[i] = xdat[i];
+        for( j=0; j < ny; j++ ) y[j] = ydat[j];
+
+        for( i=0; i < nx; i++ ) {
+            z[i] = zbuf + i*ny;
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plot3d( x, y, z, nx, ny, opt, side );
+
+    if (must_free_buffers) {
+        free(x);
+        free(y);
+        free(z);
+        free(zbuf);
+    }
+    free(zdat);
+
+    (*env)->ReleaseDoubleArrayElements( env, xarr, xdat, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, yarr, ydat, 0 );
+
+/* Seems to me we need to release these elements of zarr[i] too, but for some
+ * reason the JVM gets sick to its stomach when I do this...  I must be doing
+ * something wrong, but I can't see what it is. */
+
+/*     for( i=0; i < nx; i++ ) */
+/*     { */
+/*         jobject zi = (*env)->GetObjectArrayElement( env, zarr, i ); */
+/*         (*env)->ReleaseDoubleArrayElements( env, zi, zdat[i], 0 ); */
+/*     } */
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    plotsh3d
+ * Signature: ([F[F[[FI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_plotsh3d___3F_3F_3_3FI(
+    JNIEnv *env, jobject jthis,
+    jfloatArray xarr, jfloatArray yarr, jobjectArray zarr, jint side )
+{
+    int nx = (*env)->GetArrayLength( env, xarr );
+    int ny = (*env)->GetArrayLength( env, yarr );
+
+    jfloat *xdat = (*env)->GetFloatArrayElements( env, xarr, 0 );
+    jfloat *ydat = (*env)->GetFloatArrayElements( env, yarr, 0 );
+    jfloat **zdat = (jfloat **) malloc( nx * sizeof(jfloat*) );
+
+    PLFLT *x, *y, **z, *zbuf;
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Should really check that z.length == nx */
+
+/* Now fetch the arrays of z[] and pull their data pointers. */
+    for( i=0; i < nx; i++ )
+    {
+        jobject zi = (*env)->GetObjectArrayElement( env, zarr, i );
+        int ziels = (*env)->GetArrayLength( env, zi );
+    /* ziels should be ny! */
+        zdat[i] = (*env)->GetFloatArrayElements( env, zi, 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+        x = (PLFLT *) xdat;
+        y = (PLFLT *) ydat;
+        z = (PLFLT **) zdat;
+    } else {
+        x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+        zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+
+        for( i=0; i < nx; i++ ) x[i] = xdat[i];
+        for( j=0; j < ny; j++ ) y[j] = ydat[j];
+
+        for( i=0; i < nx; i++ ) {
+            z[i] = zbuf + i*ny;
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plotsh3d( x, y, z, nx, ny, side );
+
+    if (must_free_buffers) {
+        free(x);
+        free(y);
+        free(z);
+        free(zbuf);
+    }
+    free(zdat);
+
+    (*env)->ReleaseFloatArrayElements( env, xarr, xdat, 0 );
+    (*env)->ReleaseFloatArrayElements( env, yarr, ydat, 0 );
+
+/* Seems to me we need to release these elements of zarr[i] too, but for some
+ * reason the JVM gets sick to its stomach when I do this...  I must be doing
+ * something wrong, but I can't see what it is. */
+
+/*     for( i=0; i < nx; i++ ) */
+/*     { */
+/*         jobject zi = (*env)->GetObjectArrayElement( env, zarr, i ); */
+/*         (*env)->ReleaseFloatArrayElements( env, zi, zdat[i], 0 ); */
+/*     } */
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    plotsh3d
+ * Signature: ([D[D[[DI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_plotsh3d___3D_3D_3_3DI(
+    JNIEnv *env, jobject jthis,
+    jdoubleArray xarr, jdoubleArray yarr, jobjectArray zarr, jint side )
+{
+    int nx = (*env)->GetArrayLength( env, xarr );
+    int ny = (*env)->GetArrayLength( env, yarr );
+
+    jdouble *xdat = (*env)->GetDoubleArrayElements( env, xarr, 0 );
+    jdouble *ydat = (*env)->GetDoubleArrayElements( env, yarr, 0 );
+    jdouble **zdat = (jdouble **) malloc( nx * sizeof(jdouble*) );
+
+    PLFLT *x, *y, **z, *zbuf;
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Should really check that z.length == nx */
+
+/* Now fetch the arrays of z[] and pull their data pointers. */
+    for( i=0; i < nx; i++ )
+    {
+        jobject zi = (*env)->GetObjectArrayElement( env, zarr, i );
+        int ziels = (*env)->GetArrayLength( env, zi );
+    /* ziels should be ny! */
+        zdat[i] = (*env)->GetDoubleArrayElements( env, zi, 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+        x = (PLFLT *) xdat;
+        y = (PLFLT *) ydat;
+        z = (PLFLT **) zdat;
+    } else {
+        x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+        zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+
+        for( i=0; i < nx; i++ ) x[i] = xdat[i];
+        for( j=0; j < ny; j++ ) y[j] = ydat[j];
+
+        for( i=0; i < nx; i++ ) {
+            z[i] = zbuf + i*ny;
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plotsh3d( x, y, z, nx, ny, side );
+
+    if (must_free_buffers) {
+        free(x);
+        free(y);
+        free(z);
+        free(zbuf);
+    }
+    free(zdat);
+
+    (*env)->ReleaseDoubleArrayElements( env, xarr, xdat, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, yarr, ydat, 0 );
+
+/* Seems to me we need to release these elements of zarr[i] too, but for some
+ * reason the JVM gets sick to its stomach when I do this...  I must be doing
+ * something wrong, but I can't see what it is. */
+
+/*     for( i=0; i < nx; i++ ) */
+/*     { */
+/*         jobject zi = (*env)->GetObjectArrayElement( env, zarr, i ); */
+/*         (*env)->ReleaseDoubleArrayElements( env, zi, zdat[i], 0 ); */
+/*     } */
+}
+
+/*
  * Class:     plplot_0002fcore_0002fPLStream
  * Method:    poin
  * Signature: (I[F[FI)V
@@ -727,6 +1116,145 @@ Java_plplot_core_PLStream_schr__DD( JNIEnv *env, jobject jthis,
 {
     PLFLT def = jdef, scale = jscale;
     plschr( def, scale );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scmap0n
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scmap0n( JNIEnv *env, jobject jthis, jint ncol0 )
+{
+    set_PLStream(env,jthis);
+    plscmap0n( ncol0 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scmap1n
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scmap1n( JNIEnv *env, jobject jthis, jint ncol1 )
+{
+    set_PLStream(env,jthis);
+    plscmap1n( ncol1 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scmap0
+ * Signature: ([I[I[II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scmap0( JNIEnv *env, jobject jthis,
+                                  jintArray rarr, jintArray garr,
+                                  jintArray barr, jint ncol0 )
+{
+    jint *r = (*env)->GetIntArrayElements( env, rarr, 0 );
+    jint *g = (*env)->GetIntArrayElements( env, garr, 0 );
+    jint *b = (*env)->GetIntArrayElements( env, barr, 0 );
+
+    set_PLStream(env,jthis);
+    plscmap0( (PLINT *) r, (PLINT *) g, (PLINT *) b, ncol0 );
+
+    (*env)->ReleaseIntArrayElements( env, rarr, r, 0 );
+    (*env)->ReleaseIntArrayElements( env, garr, g, 0 );
+    (*env)->ReleaseIntArrayElements( env, barr, b, 0 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scmap1
+ * Signature: ([I[I[II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scmap1( JNIEnv *env, jobject jthis,
+                                  jintArray rarr, jintArray garr,
+                                  jintArray barr, jint ncol1 )
+{
+    jint *r = (*env)->GetIntArrayElements( env, rarr, 0 );
+    jint *g = (*env)->GetIntArrayElements( env, garr, 0 );
+    jint *b = (*env)->GetIntArrayElements( env, barr, 0 );
+
+    set_PLStream(env,jthis);
+    plscmap1( (PLINT *) r, (PLINT *) g, (PLINT *) b, ncol1 );
+
+    (*env)->ReleaseIntArrayElements( env, rarr, r, 0 );
+    (*env)->ReleaseIntArrayElements( env, garr, g, 0 );
+    (*env)->ReleaseIntArrayElements( env, barr, b, 0 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scol0
+ * Signature: (IIII)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scol0( JNIEnv *env, jobject jthis,
+                                 jint icol0, jint r, jint g, jint b )
+{
+    set_PLStream(env,jthis);
+    plscol0( icol0, r, g, b );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scolbg
+ * Signature: (III)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scolbg( JNIEnv *env, jobject jthis,
+                                  jint r, jint g, jint b )
+{
+    set_PLStream(env,jthis);
+    plscolbg( r, g, b );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scolor
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scolor( JNIEnv *env, jobject jthis, jint color )
+{
+    set_PLStream(env,jthis);
+    plscolor( color );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scompression
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scompression( JNIEnv *env, jobject jthis, jint c )
+{
+    set_PLStream(env,jthis);
+    plscompression( c );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    spause
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_spause( JNIEnv *env, jobject jthis, jint pause )
+{
+    set_PLStream(env,jthis);
+    plspause( pause );
 }
 
 /*
@@ -976,6 +1504,56 @@ Java_plplot_core_PLStream_vsta( JNIEnv *env, jobject jthis )
 {
     set_PLStream(env,jthis);
     plvsta();
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    w3d
+ * Signature: (FFFFFFFFFFF)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_w3d__FFFFFFFFFFF(
+    JNIEnv *env, jobject jthis,
+    jfloat jbasex, jfloat jbasey, jfloat jheight,
+    jfloat jxmin0, jfloat jxmax0, jfloat jymin0, jfloat jymax0,
+    jfloat jzmin0, jfloat jzmax0, jfloat jalt, jfloat jaz )
+{
+    PLFLT basex = jbasex, basey = jbasey, height = jheight;
+    PLFLT xmin0 = jxmin0, xmax0 = jxmax0;
+    PLFLT ymin0 = jymin0, ymax0 = jymax0;
+    PLFLT zmin0 = jzmin0, zmax0 = jzmax0;
+    PLFLT alt = jalt, az = jaz;
+
+    set_PLStream(env,jthis);
+    plw3d( basex, basey, height,
+           xmin0, xmax0, ymin0, ymax0, zmin0, zmax0,
+           alt, az );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    w3d
+ * Signature: (DDDDDDDDDDD)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_w3d__DDDDDDDDDDD(
+    JNIEnv *env, jobject jthis,
+    jdouble jbasex, jdouble jbasey, jdouble jheight,
+    jdouble jxmin0, jdouble jxmax0, jdouble jymin0, jdouble jymax0,
+    jdouble jzmin0, jdouble jzmax0, jdouble jalt, jdouble jaz )
+{
+    PLFLT basex = jbasex, basey = jbasey, height = jheight;
+    PLFLT xmin0 = jxmin0, xmax0 = jxmax0;
+    PLFLT ymin0 = jymin0, ymax0 = jymax0;
+    PLFLT zmin0 = jzmin0, zmax0 = jzmax0;
+    PLFLT alt = jalt, az = jaz;
+
+    set_PLStream(env,jthis);
+    plw3d( basex, basey, height,
+           xmin0, xmax0, ymin0, ymax0, zmin0, zmax0,
+           alt, az );
 }
 
 /*

@@ -41,14 +41,21 @@ public class PLStream {
 
 // The PLplot core API function calls.
     public native void adv( int page );
+
     public native void box( String xopt, float xtick, int nxsub,
                             String yopt, float ytick, int nysub );
     public native void box( String xopt, double xtick, int nxsub,
                             String yopt, double ytick, int nysub );
+
     public native void box3(
         String xopt, String xlabel, float xtick, int nsubx,
         String yopt, String ylabel, float ytick, int nsuby,
         String zopt, String zlabel, float ztick, int nsubz );
+    public native void box3(
+        String xopt, String xlabel, double xtick, int nsubx,
+        String yopt, String ylabel, double ytick, int nsuby,
+        String zopt, String zlabel, double ztick, int nsubz );
+
     public native void col0( int icol );
     public native void end();
 
@@ -74,6 +81,9 @@ public class PLStream {
 
     public native void lab( String xlabel, String ylabel, String tlabel );
 
+    public native void lightsource( float x, float y, float z );
+    public native void lightsource( double x, double y, double z );
+
     public native void line( int n, float[] x, float[] y );
     public native void line( int n, double[] x, double[] y );
 
@@ -83,6 +93,14 @@ public class PLStream {
     public native void mtex( String side,
                              double disp, double pos, double just,
                              String text);
+
+    public native void plot3d( float[] x, float[] y, float[][] z,
+                               int opt, int side );
+    public native void plot3d( double[] x, double[] y, double[][] z,
+                               int opt, int side );
+
+    public native void plotsh3d( float[] x, float[] y, float[][] z, int side );
+    public native void plotsh3d( double[] x, double[] y, double[][] z, int side );
 
     public native void poin( int n, float[] x, float[] y, int code );
     public native void poin( float x, float y, int code ); // API addition
@@ -95,6 +113,88 @@ public class PLStream {
 
     public native void schr( float def, float scale );
     public native void schr( double def, double scale );
+
+    public native void scmap0n( int ncol0 );
+    public native void scmap1n( int ncol1 );
+    public native void scmap0( int[] r, int[] g, int[] b, int ncol0 );
+    public native void scmap1( int[] r, int[] g, int[] b, int ncol1 );
+
+// /* Set color map 1 colors using a piece-wise linear relationship between */
+// /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
+
+// void
+// c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
+// 	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
+
+    public native void scol0( int icol0, int r, int g, int b );
+    public native void scolbg( int r, int g, int b );
+    public native void scolor( int color );
+    public native void scompression( int compression );
+
+// /* Set the device (keyword) name */
+
+// void
+// c_plsdev(const char *devname);
+
+// /* Set window into device space using margin, aspect ratio, and */
+// /* justification */
+
+// void
+// c_plsdidev(PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy);
+
+// /* Set up transformation from metafile coordinates. */
+
+// void
+// c_plsdimap(PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
+// 	   PLFLT dimxpmm, PLFLT dimypmm);
+
+// /* Set plot orientation, specifying rotation in units of pi/2. */
+
+// void
+// c_plsdiori(PLFLT rot);
+
+// /* Set window into plot space */
+
+// void
+// c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
+
+// /* Set window into plot space incrementally (zoom) */
+
+// void
+// c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
+
+// /* Set the escape character for text strings. */
+
+// void
+// c_plsesc(char esc);
+
+// /* set offset and spacing of contour labels */
+
+// void
+// c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
+
+// /* set the format of the contour labels */
+
+// void
+// c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
+
+// /* Set family file parameters */
+
+// void
+// c_plsfam(PLINT fam, PLINT num, PLINT bmax);
+
+// /* Set the output file name. */
+
+// void
+// c_plsfnam(const char *fnam);
+
+// shade API
+
+// void
+// c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
+// 	  PLINT xoff, PLINT yoff);
+
+    public native void spause( int pause );
 
     public native void ssub( int nx, int ny );
     public native void styl( int nms, int mark, int space );
@@ -113,6 +213,14 @@ public class PLStream {
     public native void vpor( double xmin, double xmax, double ymin, double ymax );
 
     public native void vsta();
+
+    public native void w3d( float basex, float basey, float height, float xmin0,
+                            float xmax0, float ymin0, float ymax0, float zmin0,
+                            float zmax0, float alt, float az);
+    public native void w3d( double basex, double basey, double height, double xmin0,
+                            double xmax0, double ymin0, double ymax0, double zmin0,
+                            double zmax0, double alt, double az);
+
     public native void wid( int width );
 
     public native void wind( float xmin, float xmax, float ymin, float ymax );
