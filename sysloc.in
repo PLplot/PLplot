@@ -736,8 +736,6 @@ if test "$enable_octave" = "yes"; then
         else
             check_mkoctfile_compile=`$MKOCTFILE --help 2>/dev/null \
                 | sed 's/--compile// ; t END ; d ; : END q'`
-            AM_CONDITIONAL(mkoctfile_accepts_c_flag,
-                [test -n "$check_mkoctfile_compile"])
         fi
     fi
 
@@ -788,6 +786,7 @@ EOF`])
 
 fi
 
+AM_CONDITIONAL(mkoctfile_accepts_c_flag, [test -n "$check_mkoctfile_compile"])
 
 # ----------------------------------------------------------------------------
 # Debugging malloc
