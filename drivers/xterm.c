@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/02/22 23:11:04  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.7  1993/02/26 06:23:21  mjl
+   Changed char->int in input parameter to EventHandler.
 
+ * Revision 1.6  1993/02/22  23:11:04  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.5  1993/01/23  05:41:55  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -54,7 +57,7 @@
 /* Static function prototypes */
 
 static void	WaitForPage	(PLStream *);
-static void	EventHandler	(PLStream *, char);
+static void	EventHandler	(PLStream *, int);
 
 /* (dev) will get passed in eventually, so this looks weird right now */
 
@@ -292,7 +295,7 @@ WaitForPage(PLStream *pls)
 
     while (!exit_eventloop) {
 	input_char = getchar();
-	EventHandler(pls, (char) input_char);
+	EventHandler(pls, input_char);
     }
     exit_eventloop = FALSE;
 }
@@ -305,7 +308,7 @@ WaitForPage(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-EventHandler(PLStream *pls, char input_char)
+EventHandler(PLStream *pls, int input_char)
 {
     PLKey key;
 
