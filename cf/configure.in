@@ -118,7 +118,7 @@ divert(-1)
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, psc, xfig, ljii,
-hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
+hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex, ntk])
 
 # Note specifically which drivers are known to be loadable.
 # Eventually, hopefully, every driver will show up on this list.
@@ -128,7 +128,7 @@ hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
 define([PL_DYNAMIC_DRIVER_LIST],
 [null plmeta ps psc xfig png jpeg pstex xterm tekt tek4107t \
 tekf tek4107f mskermit versaterm vlt conex pbm hp7470 hp7580 \
-lj_hpgl dg300 ljii ljiip imp gnome])
+lj_hpgl dg300 ljii ljiip imp gnome ntk])
 
 # We think of a "device" as the output medium.  Could be a machine
 # style (Tektronix, X11), or a file format (Postscript).
@@ -150,7 +150,7 @@ xterm:tek tekt:tek tek4107t:tek mskermit:tek \
 versaterm:tek vlt:tek conex:tek tekf:tek tek4107f:tek \
 linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd psc:ps ps:ps xfig:xfig \
 ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
-imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex])
+imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk])
 
 # Macro to set one driver enable value
 
@@ -491,9 +491,9 @@ AC_REQUIRE_CPP
 AC_INCLUDE(sysloc.in)
 
 # Now, try this here.
-
+AC_MSG_CHECKING( for dynamic drivers)
 PL_DRIVERS(PL_DRIVER_LIST)
-
+AC_MSG_RESULT
 # ----------------------------------------------------------------------------
 # Okay, we're about to start emiting the configuration information.
 # But first start with a bogus file, so we can have a time stamp
@@ -803,12 +803,8 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
 	    ;;
 	    gd)
-	    if test "$enable_png" = "yes"; then
-		echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
-	    fi
-	    if test "$enable_jpeg" = "yes"; then
-		echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
-	    fi
+	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
+	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
 	    ;;
 	    tek)
 	    echo "xterm:Xterm Window:tek.drv:18:xterm" >> drivers/drivers.db
@@ -853,6 +849,9 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    ;;
 	    tk)
 	    echo "tk:Tcl/TK Window:tk.drv:7:tk" >> drivers/drivers.db
+	    ;;
+	    ntk)
+	    echo "ntk:New tk driver:ntk.drv:43:ntk" >> drivers/drivers.db
 	    ;;
 	esac
     done

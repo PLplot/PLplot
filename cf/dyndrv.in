@@ -56,3 +56,6 @@ drivers/impress.drv : shared/impress$O
 
 drivers/gnome.drv : shared/gnome$O
 	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+
+drivers/ntk.drv : shared/ntk$O
+	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
