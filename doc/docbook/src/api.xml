@@ -3103,7 +3103,8 @@ space for this (80 characters is safe).
   
   <sect1 id="plgriddata" renderas="sect3">
     <title>
-      <function>plgriddata</function>: grids data from irregularly sampled data
+      <function>plgriddata</function>: Grid data from irregularly sampled
+      data  
     </title>
 
     <para>
@@ -3128,14 +3129,17 @@ space for this (80 characters is safe).
     </para>
 
     <para>
-     Real world data is frequently irregularly sampled, but all PLplot
-     3D plots require data placed in a uniform grid. This function
-     takes irregularly sampled data from three input arrays x[npts],
-     y[npts] and z[npts], reads the desired grid location from input
-     arrays xg[nptsx] and yg[nptsy], and returns the gridded data into
-     output array zg[nptsx][nptsy]. The algorithm used to grid the
-     data is specified with the argument 'type' which can have one
-     parameter specified in argument 'data'.
+      Real world data is frequently irregularly sampled, but all PLplot 3D
+      plots require data placed in a uniform grid. This function takes
+      irregularly sampled data from three input arrays
+      <literal>x[npts]</literal>, <literal>y[npts]</literal>, and
+      <literal>z[npts]</literal>, reads the desired grid location from
+      input arrays <literal>xg[nptsx]</literal> and
+      <literal>yg[nptsy]</literal>, and returns the gridded data into
+      output array <literal>zg[nptsx][nptsy]</literal>.  The algorithm used
+      to grid the data is specified with the argument
+      <literal>type</literal> which can have one parameter specified in
+      argument <literal>data</literal>.
     </para>
 
     <variablelist>
@@ -3146,7 +3150,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    The input x array.
+	    The input <literal>x</literal> array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3157,7 +3161,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    The input y array.
+	    The input <literal>y</literal> array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3168,8 +3172,9 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    The input z array. Each triple x[i], y[i], z[i] represents
-	    one data sample coordinates.
+	    The input <literal>z</literal> array. Each triple
+            <literal>x[i]</literal>, <literal>y[i]</literal>,
+            <literal>z[i]</literal> represents one data sample coordinates.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3180,7 +3185,8 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    The number of data samples in the x, y and z arrays.
+	    The number of data samples in the <literal>x</literal>,
+            <literal>y</literal> and <literal>z</literal> arrays. 
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3192,8 +3198,9 @@ space for this (80 characters is safe).
 	<listitem>
 	  <para>
 	    The input array that specifies the grid spacing in the x
-	    direction. Usually xg has nptsx equaly spaced values from
-	    the mininum to the maximum values of the x input array
+	    direction. Usually <literal>xg</literal> has
+            <literal>nptsx</literal> equaly spaced values from the mininum
+            to the maximum values of the <literal>x</literal> input array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3204,7 +3211,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    The number of points in the xg array.
+	    The number of points in the <literal>xg</literal> array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3216,7 +3223,7 @@ space for this (80 characters is safe).
 	<listitem>
 	  <para>
 	    The input array that specifies the grid spacing in the y
-	    direction. Similar to the xg parameter
+	    direction. Similar to the <literal>xg</literal> parameter.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3227,7 +3234,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    The number of points in the yg array.
+	    The number of points in the <literal>yg</literal> array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3239,10 +3246,11 @@ space for this (80 characters is safe).
 	<listitem>
 	  <para>
 	    The output array, where data lies in the regular grid
-	    specified by xg and yg. the zg array must exists or be
-	    allocated by the user prior to the calling, and must have
-	    dimension zg[nptsx][xptsy].
-	  </para>
+	    specified by <literal>xg</literal> and <literal>yg.</literal>
+            the <literal>zg</literal> array must exists or be allocated by
+            the user prior to the calling, and must have dimension
+            <literal>zg[nptsx][xptsy]</literal>.
+          </para> 
 	</listitem>
       </varlistentry>
       <varlistentry>
@@ -3253,16 +3261,48 @@ space for this (80 characters is safe).
 	<listitem>
 	  <para>
 	    The type of gridding algorithm to use, which can be:
-
-             GRID_CSA     Bivariate Cubic Spline approximation
-             GRID_DTLI    Delaunay Triangulation Linear Interpolation
-             GRID_NNI     Natural Neighbors Interpolation
-             GRID_NNIDW   Nearest Neighbors Inverse Distance Weighted
-             GRID_NNLI    Nearest Neighbors Linear Interpolation
-             GRID_NNAIDW  Nearest Neighbors Around Inverse Distance Weighted
-
-             for details on the algorithm read the source file plgridd.c
-	  </para>
+          </para>
+          <itemizedlist>
+            <listitem>
+              <para>
+                <literal>GRID_CSA</literal>: Bivariate Cubic Spline
+                approximation 
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_DTLI</literal>: Delaunay Triangulation Linear
+                Interpolation
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_NNI</literal>: Natural Neighbors Interpolation
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_NNIDW</literal>: Nearest Neighbors Inverse
+                Distance Weighted 
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_NNLI</literal>: Nearest Neighbors Linear
+                Interpolation 
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_NNAIDW</literal>:  Nearest Neighbors Around
+                Inverse Distance Weighted 
+              </para>
+            </listitem>
+          </itemizedlist>
+          <para>
+            For details on the algorithm read the source file
+            <filename>plgridd.c</filename>. 
+          </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
@@ -3274,17 +3314,25 @@ space for this (80 characters is safe).
 	  <para>
 	    Some gridding algorithms require extra data, which can be
 	    specified through this argument. Currently, for algoritm:
-
-            GRID_NNIDW, 'data' specifies the number of neighbors to
-            use, the lower the value, the noisier (more local) the
-            approximation is.
-
-            GRID_NNLI, 'data' specifies what a thin triangle is, in
-            the range [1. .. 2.]. High values enable the usage of very
-            thin triangles for interpolation, possibly resulting in
-            error in the approximation.
-
-	  </para>
+          </para>
+          <itemizedlist>
+            <listitem>
+              <para>
+                <literal>GRID_NNIDW</literal>, <literal>data</literal>
+                specifies the number of neighbors to use, the lower the
+                value, the noisier (more local) the approximation is.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_NNLI</literal>, <literal>data</literal>
+                specifies what a thin triangle is, in the range
+                [1. .. 2.]. High values enable the usage of very thin
+                triangles for interpolation, possibly resulting in error in
+                the approximation.
+              </para>
+            </listitem>
+          </itemizedlist>
 	</listitem>
       </varlistentry>
     </variablelist>
