@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/06/10 20:46:10  furnish
+ * Revision 1.32  1994/06/15 17:21:32  furnish
+ * Fix cleanup so that killing a plframe doesn't core the app.
+ *
+ * Revision 1.31  1994/06/10  20:46:10  furnish
  * Mirror plpoin.  More of the API still needs doing.
  *
  * Revision 1.30  1994/06/09  20:15:30  mjl
@@ -766,7 +769,8 @@ DestroyPlFrame(ClientData clientData)
 
 /* Tell PLPlot to clean up */
 
-    plend();
+    plsstrm( plFramePtr->ipls );
+    plend1();
 }
 
 /*
