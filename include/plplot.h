@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.68  1994/07/28 08:04:49  mjl
+ * Revision 1.69  1994/07/29 20:17:02  mjl
+ * Added typedef for new PLCursor struct and driver escape code for the get
+ * cursor operation (contributed by Paul Casteels).  Added prototypes for
+ * plmap() and plmeridians() (contributed by Wesley Ebisuzaki).
+ *
+ * Revision 1.68  1994/07/28  08:04:49  mjl
  * Bumped version number, revision to various comments.
  *
  * Revision 1.67  1994/07/20  06:07:09  mjl
@@ -241,6 +246,7 @@ typedef void* PLPointer;
 #define PLESC_DI		10	/* handle DI command */
 #define PLESC_FLUSH		11	/* flush output */
 #define PLESC_EH		12      /* handle Window events */
+#define PLESC_GETC		13	/* get cursor position */
 
 /* PLplot Option table & support constants */
 
@@ -379,6 +385,12 @@ typedef struct {
 typedef struct {
     PLFLT h, l, s, p;
 } PLControlPt;
+
+/* For returning the coordinates of the cursor */
+
+typedef struct {
+    PLFLT vpX, vpY, wX, wY;
+} PLCursor;
 
 /*----------------------------------------------------------------------*\
  *		BRAINDEAD-ness
@@ -948,6 +960,19 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 void
 c_pllsty(PLINT lin);
 
+/* plot continental outline in world coordinates */
+
+void
+plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+
+/* Plot the latitudes and longitudes on the background. */
+
+void 
+plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+	    PLFLT dlong, PLFLT dlat,
+	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+
 /* Plots a mesh representation of the function z[x][y]. */
 
 void
@@ -1471,6 +1496,11 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
 void
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
+
+/* Wait for right button mouse event and translate to world coordinates */
+
+int
+plGetCursor(PLCursor *cursor);
 
 /* Utility functions for use with Tk */
 
