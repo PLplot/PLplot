@@ -11,6 +11,9 @@
 #include "drivers.h"
 #include "plDevs.h"
 #include "disptab.h"
+#ifdef ENABLE_DYNDRIVERS
+#include <ltdl.h>
+#endif
 
 
 /* Static function prototypes */
@@ -218,6 +221,7 @@ static int npldynamicdevices = 0;
  * Stuff to support the loadable device drivers.
 \*--------------------------------------------------------------------------*/
 
+#ifdef ENABLE_DYNDRIVERS
 typedef struct {
     char *devnam;
     char *description;
@@ -228,9 +232,10 @@ typedef struct {
 
 typedef struct {
     char *drvnam;
-    void *dlhand;
+    lt_dlhandle dlhand;
     
 } PLLoadableDriver;
+#endif
 
 
 static PLLoadableDevice *loadable_device_list;

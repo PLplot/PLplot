@@ -6,6 +6,12 @@
 #ifndef __DISPATCH_H__
 #define __DISPATCH_H__
 
+#include "plConfig.h"
+#ifdef ENABLE_DYNDRIVERS
+#include <ltdl.h>
+#endif
+
+
 struct PLStream_struct;
 
 enum {
@@ -87,6 +93,8 @@ typedef struct {
     plD_esc_fp     pl_esc;
 } PLDispatchTable;
 
-typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
+#ifdef ENABLE_DYNDRIVERS
+typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
+#endif
 
 #endif /* __DISPATCH_H__ */

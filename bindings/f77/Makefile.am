@@ -28,6 +28,7 @@ lib_LTLIBRARIES = libplf77.la
 endif
 endif
 
+AM_CPPFLAGS = @INCLTDL@
 version = -version-info @SOVERSION@
 
 sources = \

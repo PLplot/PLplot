@@ -30,6 +30,7 @@ lib_LTLIBRARIES = libplcxx.la
 endif
 endif
 
+AM_CPPFLAGS = @INCLTDL@
 version = -version-info @SOVERSION@
 
 sources = plstream.cc

@@ -54,7 +54,8 @@ xwind_drv_la_SOURCES = xwin.c
 ps_drv_la_SOURCES = ps.c
 psd_drv_la_SOURCES = ps.c
 # how
-xwin_drv_la_INCLUDES = @X_CFLAGS@
+AM_CPPFLAGS = @X_CFLAGS@ @INCLTDL@
+#xwin_drv_la_INCLUDES = @X_CFLAGS@
 xwin_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
 xwin_drv_la_LIBADD = @X_LIBS@ -lX11
 xwind_drv_la_INCLUDES = @X_CFLAGS@

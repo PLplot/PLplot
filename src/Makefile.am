@@ -54,7 +54,7 @@ sources = \
   plwind.c \
   ../drivers/plbuf.c
 
-AM_CPPFLAGS = @FREETYPEINCCMD@
+AM_CPPFLAGS = @FREETYPEINCCMD@ @INCLTDL@
 libplplot_la_SOURCES  = $(sources)
 libplplotd_la_SOURCES = $(sources)
 
@@ -62,6 +62,7 @@ libplplot_la_LDFLAGS  = $(version) -no-undefined -lm -ldl @FREETYPELIBCMD@
 libplplotd_la_LDFLAGS = $(libplplot_la_LDFLAGS)
 
 ##libdrv = ../drivers/libpldrv.la
-
 ##libplplot_la_LIBADD  = $(libdrv)
-##libplplotd_la_LIBADD = $(libdrv)
+
+libplplot_la_LIBADD  = @LIBLTDL@
+libplplotd_la_LIBADD = $(libplplot_la_LIBADD)

@@ -1,6 +1,16 @@
 2002-11-24  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
-	* Add plConfig.h to installed headers
+	* Add plConfig.h to installed headers.
+	* Remove aclocal.m4 from cvs control (was stale cvs deleted file which
+	  is automatically generated in any case with an up-to-date version
+	  using ./bootstrap.sh).
+	* Makefile.am files: add support for libltdl.
+	* include/disptab.h: New PLDispatchInit typedef consistent with lt_ptr.
+	* include/plcore.h: Change dlhand type.
+	* src/plcore.c: Switch from dlopen API to libltdl API (a fair number
+	  of changes because of new types for dlopen and dlsym equivalents,
+	  and need for lt_dlinit() and lt_dlexit() calls which I chose to
+	  make for each stream created and destroyed.)
 
 2002-11-23  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
