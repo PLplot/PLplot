@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/02/25 19:53:14  mjl
-   Fixed -v (version) option.
+   Revision 1.11  1993/02/26 04:20:14  mjl
+   Made minor change to fix prototype warning.
 
+ * Revision 1.10  1993/02/25  19:53:14  mjl
+ * Fixed -v (version) option.
+ *
  * Revision 1.9  1993/02/25  18:33:09  mjl
  * Fixed an inconsistency in reading the metafile page headers.
  *
@@ -1407,6 +1410,7 @@ HandleOption_v(char *opt, char *optarg)
     fprintf(stderr, "plplot metafile version: %s\n", PLMETA_VERSION);
     fprintf(stderr, "plplot library version: %s\n", PLPLOT_VERSION);
     exit(1);
+    return(1);		/* This serves a purpose */
 }
 
 /*----------------------------------------------------------------------*\
