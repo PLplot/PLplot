@@ -19,11 +19,20 @@
 #
 #	plot [data file [columns]]
 #
-# Example:
+# Examples:
 #
 #	plot stats.log {1 4}
 #
 # would plot columns 1 & 4 (y) vs column 0 (x).
+#
+#       plot stats.log
+#
+# would plot columns 1,2,3,4 (y) vs column 0 (x)
+#
+#       plot r.dat
+#       plot plot.dat
+#
+# give illustrative plots with other example data sets.
 
 # The layout of the data file is as follows:
 #
@@ -117,17 +126,16 @@ proc plot {{file {}} {columns {}}} {
     set nfilt	0
     set dx	1
 
-# Turn off pause on xwin devices since it's really not necessary for a
-# single plot application.
-# AWI, comment out since dp no longer exists, and xwin and tk work better
-# without this.
+# AWI, comment dp and xwin out since dp doesn't exist and xwin works better
+# without this.  However, Maurice believes tk driver will act better
+# with this configuration change so leave that in as in his original design.
 
-#    plgdev device
-#    switch $device {
+    plgdev device
+    switch $device {
 #	xwin	-
-#	tk	-
+	tk	-
 #	dp	{plspause 0}
-#    }
+    }
 
 # Initialize data arrays
 
