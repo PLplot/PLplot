@@ -41,6 +41,10 @@ static void plt3zz	(PLINT, PLINT, PLINT, PLINT,
 static void plnxtvhi (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plnxtvlo (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n);
+static void plP_fill3(PLINT x0, PLINT y0, PLINT x1, PLINT y1,
+		      PLINT x2, PLINT y2, PLINT j);
+static void plP_fill4(PLINT x0, PLINT y0, PLINT x1, PLINT y1,
+		      PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j);
 
 static void savehipoint	(PLINT, PLINT);
 static void savelopoint	(PLINT, PLINT);
@@ -958,6 +962,43 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 		    savehipoint(cx, cy);
 		}
 		ochange = 1;
+	    /*
+	     * I tried experimenting with some of the different boundary cases
+	     * here.   x08c shows some improvement, but there are errors.  SIGH.
+	     * I'm beginning to thing it will take a thorough rewrite to fix
+	     * this. 
+	     */
+#if 0
+		if (threedshading && (j > 1)) {
+		    PLINT cx0, cy0, cx1 = cx, cy1 = cy, cx2, cy2;
+		    PLINT su0 = u[j-2], sv0 = v[j-2];
+		    int hi0 = plabv(su0, sv0, sx1, sy1, sx2, sy2);
+		    int hi1 = plabv(su1, sv1, sx1, sy1, sx2, sy2);
+		    int hi2 = plabv(su2, sv2, sx1, sy1, sx2, sy2);
+		    pl3cut(sx1, sy1, sx2, sy2, su0, sv0, su1, sv1, &cx0, &cy0);
+		    pl3cut(sx1, sy1, sx2, sy2, su2, sv2, su0, sv0, &cx2, &cy2);
+
+		    if ( !(cx0 == sx2 && cy0 == sy2) && 
+			 !(cx0 == su1 && cy0 == sv1) &&
+			 !(cx1 == sx2 && cy1 == sy2) && 
+			 !(cx1 == su2 && cy1 == sv2) &&
+			 !(cx2 == sx2 && cy2 == sy2) && 
+			 !(cx2 == su0 && cy2 == sv0) && 1) {
+
+			if (0 && !hi0 && !hi1 && hi2)
+			    plP_fill3(cx2, cy2, cx1, cy1, su2, sv2, j);
+
+			if (0 && hi0 && !hi1 && hi2)
+			    plP_fill4(cx0, cy0, cx1, cy1, su2, sv2, su0, sv0, j);
+
+			if (0 && hi0 && hi1 && !hi2)
+			    plP_fill4(cx2, cy2, cx1, cy1, su1, sv1, su0, sv0, j);
+
+			if (0 && !hi0 && hi1 && !hi2)
+			    plP_fill3(cx0, cy0, su1, sv1, cx1, cy1, j);
+		    }
+		}
+#endif
 	    }
 	}
 
@@ -1032,6 +1073,53 @@ plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
 	else
 	    plP_draphy(x, y);
     }
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plP_fill3()
+ *
+ * Fills the polygon specified.  Just for experimentation.
+\*--------------------------------------------------------------------------*/
+
+static void
+plP_fill3(PLINT x0, PLINT y0, PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT j)
+{
+    short px[3], py[3];
+    int m, n;
+
+    px[0] = x0; py[0] = y0;
+    px[1] = x1; py[1] = y1;
+    px[2] = x2; py[2] = y2;
+    for (m = 1; m < 3; m++)
+	for (n = 0; n < m; n++)
+	    if ((px[m] == px[n]) && (py[m] == py[n])) return;
+
+    plcol1(ctmp[j]);
+    plP_fill(px, py, 3);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plP_fill4()
+ *
+ * Fills the polygon specified.  Just for experimentation.
+\*--------------------------------------------------------------------------*/
+
+static void
+plP_fill4(PLINT x0, PLINT y0, PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j)
+{
+    short px[4], py[4];
+    int m, n;
+
+    px[0] = x0; py[0] = y0;
+    px[1] = x1; py[1] = y1;
+    px[2] = x2; py[2] = y2;
+    px[3] = x3; py[3] = y3;
+    for (m = 1; m < 4; m++)
+	for (n = 0; n < m; n++)
+	    if ((px[m] == px[n]) && (py[m] == py[n])) return;
+
+    plcol1(ctmp[j]);
+    plP_fill(px, py, 4);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1431,19 +1519,19 @@ myabort(char *msg)
 static int
 plabv(PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2)
 {
-    PLINT above;
+    int above;
 
     if (py >= sy1 && py >= sy2)
 	above = 1;
     else if (py < sy1 && py < sy2)
 	above = 0;
-    else if ((PLFLT) (sx2 - sx1) * (py - sy1) >=
-	     (PLFLT) (px - sx1) * (sy2 - sy1))
+    else if ((double) (sx2 - sx1) * (py - sy1) >=
+	     (double) (px - sx1) * (sy2 - sy1))
 	above = 1;
     else
 	above = 0;
 
-    return ((PLINT) above);
+    return above;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1458,7 +1546,7 @@ pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
        PLINT su1, PLINT sv1, PLINT su2, PLINT sv2, PLINT *cx, PLINT *cy)
 {
     PLINT x21, y21, u21, v21, yv1, xu1, a, b;
-    PLFLT fa, fb;
+    double fa, fb;
 
     x21 = sx2 - sx1;
     y21 = sy2 - sy1;
@@ -1468,7 +1556,7 @@ pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
     xu1 = sx1 - su1;
 
     a = x21 * v21 - y21 * u21;
-    fa = (PLFLT) a;
+    fa = (double) a;
     if (a == 0) {
 	if (sx2 < su2) {
 	    *cx = sx2;
@@ -1482,7 +1570,7 @@ pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
     }
     else {
 	b = yv1 * u21 - xu1 * v21;
-	fb = (PLFLT) b;
+	fb = (double) b;
 	*cx = (PLINT) (sx1 + (fb * x21) / fa + .5);
 	*cy = (PLINT) (sy1 + (fb * y21) / fa + .5);
     }
