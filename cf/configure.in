@@ -246,8 +246,8 @@ AC_INCLUDE(sysloc.in)
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h)
 AC_PROG_RANLIB
-AC_PROG_INSTALL
 AC_FUNC_VFORK
+AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
 
 # ----------------------------------------------------------------------------
 # Some X11 headers require "caddr_t" even on systems that claim POSIX.1
