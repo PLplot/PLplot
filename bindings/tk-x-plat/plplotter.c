@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2002/07/11 08:52:03  vincentdarley
+ * resolve name conflict between tk, tk-x-plat
+ *
  * Revision 1.6  2002/07/10 16:12:11  airwin
  * Need these #include's for Linux/Unix.
  *
@@ -245,21 +248,13 @@ extern void XWarpPointer(
     #undef free
     #undef realloc
     #undef calloc
-#if defined(__WIN32__) || defined (MAC_TCL)
 #include <tkInt.h>
-#else
-#include <tk.h>
-#endif
     #define malloc ckalloc
     #define free(m) ckfree((char*)m)
     #define realloc ckrealloc
     #define calloc ckcalloc
 #else
-#if defined(__WIN32__) || defined (MAC_TCL)
 #include <tkInt.h>
-#else
-#include <tkInt.h>
-#endif
 #endif
 
 #ifdef DEBUG_ENTER

@@ -57,15 +57,6 @@ Pltk_Init( Tcl_Interp *interp )
     Tcl_CreateCommand( interp, "plframe", plFrameCmd,
 		       (ClientData) mainWindow, (void (*)(ClientData)) NULL);
 
-/* matrix -- matrix support command */
-/* matrix support added in the pltk startup script */
-
-/* wait_until -- waits for a specific condition to arise */
-/* Can be used with either Tcl-DP or TK */
-
-    Tcl_CreateCommand( interp, "wait_until", plWait_Until,
-		       (ClientData) NULL, (void (*) (ClientData)) NULL);
-
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
 #ifdef PLD_dp
@@ -110,46 +101,9 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
 
-/*     Tcl_SetVar(interp, "pllibrary", libDir, ITCL_GLOBAL_VAR); */
     Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
 
 /*     Tcl_DStringFree(&path); */
 
     return Tcl_Eval(interp, initCmd);
-}
-
-/*----------------------------------------------------------------------*\
- * plWait_Until
- *
- * Tcl command -- wait until the specified condition is satisfied.
- * Processes all events while waiting.
- *
- * This command is more capable than tkwait, and has the added benefit
- * of working with Tcl-DP as well.  Example usage:
- *
- *  wait_until {[info exists foobar]}
- *
- * Note the [info ...] command must be protected by braces so that it
- * isn't actually evaluated until passed into this routine.
-\*----------------------------------------------------------------------*/
-
-int
-plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
-{
-    int result = 0;
-
-    dbug_enter("plWait_Until");
-
-    for (;;) {
-	if (Tcl_ExprBoolean(interp, argv[1], &result)) {
-	    fprintf(stderr, "wait_until command \"%s\" failed:\n\t %s\n",
-		    argv[1], interp->result);
-	    break;
-	}
-	if (result)
-	    break;
-
-	Tcl_DoOneEvent(0);
-    }
-    return TCL_OK;
 }

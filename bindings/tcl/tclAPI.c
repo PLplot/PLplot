@@ -431,6 +431,12 @@ PlbasicInit( Tcl_Interp *interp )
 	libDir = TCL_DIR;
     }
 #endif
+    /* wait_until -- waits for a specific condition to arise */
+    /* Can be used with either Tcl-DP or TK */
+
+    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
+		      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
+
     return TCL_OK;
 }
 
@@ -470,6 +476,41 @@ Pltcl_Init( Tcl_Interp *interp )
     return TCL_OK;
 }
 
+/*----------------------------------------------------------------------*\
+ * plWait_Until
+ *
+ * Tcl command -- wait until the specified condition is satisfied.
+ * Processes all events while waiting.
+ *
+ * This command is more capable than tkwait, and has the added benefit
+ * of working with Tcl-DP as well.  Example usage:
+ *
+ *  wait_until {[info exists foobar]}
+ *
+ * Note the [info ...] command must be protected by braces so that it
+ * isn't actually evaluated until passed into this routine.
+\*----------------------------------------------------------------------*/
+
+int
+plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+{
+    int result = 0;
+
+    dbug_enter("plWait_Until");
+
+    for (;;) {
+	if (Tcl_ExprBoolean(interp, argv[1], &result)) {
+	    fprintf(stderr, "wait_until command \"%s\" failed:\n\t %s\n",
+		    argv[1], interp->result);
+	    break;
+	}
+	if (result)
+	    break;
+
+	Tcl_DoOneEvent(0);
+    }
+    return TCL_OK;
+}
 
 /*----------------------------------------------------------------------*\
  * pls_auto_path
