@@ -12,20 +12,34 @@
 ##
 ## This file is part of plplot_octave.
 
+## out = __pl_matstr(mat, str, n)
+##
+## set mat(n,:) = str, no matter the size of mat or str.
+
 function out = __pl_matstr(mat, str, n)
 
   ## Octave damned string arrays are defective!
 
-  if (isempty(mat))
-    out(n,:) = str;
-    return
-  endif
-
-  out = [mat; str];
-  nn = rows(out);
-  out(n,:) = out(nn,:);
-  if (n < nn)
-    out(nn,:) = "";
+  if (isstr(str) & isstr(mat) & rows(str) == 1)
+    if (isempty(mat))
+      out(n,:) = str;
+    else
+      out = [mat; str];
+      [nn sz] = size(out); ## add str at the end
+      if (n < nn)
+	out(n,:) = out(nn,:);
+	out(nn,:) = "";
+      elseif (n > nn)
+	out(n+1,:) = out(nn,:);
+	out(nn,:) = "";
+      endif
+    endif
+    old_dofi = do_fortran_indexing;
+    do_fortran_indexing = 1;
+    out(toascii (out) == 0) = " ";
+    do_fortran_indexing = old_dofi;
+  else
+    help __pl_matstr
   endif
 
 endfunction
