@@ -1,8 +1,9 @@
-PLPLOT FAQ (Frequently Asked Questions)
+
+PLplot FAQ (Frequently Asked Questions)
 ---------------------------------------
 
 This note contains answers to some Frequently Asked Questions (FAQ)
-regarding plplot.  There is no particular order of topics at present.
+regarding PLplot.  There is no particular order of topics at present.
 
 Disclaimer:
 
@@ -32,18 +33,18 @@ Note: this is the first release of this FAQ, so I omit all change markers.
 Contents
 --------
 
- 1. Installing plplot
+ 1. Installing PLplot
  2. General features
  3. X-based drivers (includes Tcl/TK, Tcl-DP)
  4. All other drivers & supported platforms
 
 ==============================================================================
-Section 1: Installing plplot
+Section 1: Installing PLplot
 
- 1.1  How do I build & install plplot?
- 1.2  Why should I use plplot?
- 1.3  I don't have an ANSI compiliant C compiler.  How do I compile plplot?
- 1.4  I don't have a fortran compiler; how do I compile plplot?
+ 1.1  How do I build & install PLplot?
+ 1.2  Why should I use PLplot?
+ 1.3  I don't have an ANSI compiliant C compiler.  How do I compile PLplot?
+ 1.4  I don't have a fortran compiler; how do I compile PLplot?
  1.5  The linker complains of unresolved functions atexit(), fsetpos(),
       fgetpos(), and so on.
  1.6  The compiler complains about the use of "malloc" or "size_t".
@@ -65,53 +66,54 @@ Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
  3.1  Where do I get Tcl/TK?   
  3.2  How do I use "xauth"?
  3.3  How do I use the Tcl/TK driver?
- 3.4  I've been having trouble getting the TK/TCL and plplot working on...
+ 3.4  I've been having trouble getting the TK/TCL and PLplot working on...
  3.5  I would like to issue a plot command, have the window appear,...
- 3.6  The X driver seems to run slower than on older versions of plplot.
+ 3.6  The X driver seems to run slower than on older versions of PLplot.
  3.7  How do I change the title on the TK window menu bar, i.e.,...
 
 ==============================================================================
 Section 4: All other drivers & supported platforms
 
  4.1  What about support for platform X?
- 4.2  What about plplot support for VMS?
+ 4.2  What about PLplot support for VMS?
 
 ==============================================================================
-Section 1: Installing plplot
+Section 1: Installing PLplot
 ==============================================================================
 
- 1.1  How do I build & install plplot?
+ 1.1  How do I build & install PLplot?
 
 Read the system dependent notes, in sys/<system>.  On a Unix-like system,
-"configure" is NOT the GNU auto-configure script.  Instead, you must cd
-to tmp and configure from there, e.g.:
+"configure" is NOT the GNU auto-configure script.  The preferred way to
+configure and build PLplot is the following:
 
 % cd tmp
 % ../configure
 % make
 % make install
 
-will often give the desired results.  You should check the readme file
-first, though (especially before typing "make install").  I strongly
-recommend that you configure & build plplot along these lines.  I
-regularly build and install plplot on 8 different systems, which includes
-5 different OS's.  My scheme has evolved to the point that I typically
-unpack the archive, then from the tmp directory type "../configure opt"
-and then "make" then "make install".  Site-specific stuff goes in
-cf_plplot.m4, which I have placed in ~/config.  The configure script uses
-this when building the Makefile, allowing site-specific customizations.
-This will typically not need modification after the first time you set it
-up.
+Alternately, you can run configure and make from the top-level PLplot
+directory, but not all targets are supported from there.  You should check
+the readme file first, though (especially before typing "make install").
+I strongly recommend that you configure & build PLplot along these lines.
+I regularly build and install PLplot on 8 different systems, which
+includes 5 different OS's.  My scheme has evolved to the point that I
+typically unpack the archive, then from the tmp directory type
+"../configure opt" and then "make" then "make install".  Site-specific
+stuff goes in cf_plplot.m4, which I have placed in ~/config.  The
+configure script uses this when building the Makefile, allowing
+site-specific customizations.  This will typically not need modification
+after the first time you set it up.
 
 For more info on the Unix build scripts, see m4/README.
 
 
- 1.2  Why should I use plplot?
+ 1.2  Why should I use PLplot?
 
 This is probably the first question I was ever asked, and it continues
 to come up often enough to dwell on it a bit.
 
-First off, my involvement with plplot came from a very simple need: a
+First off, my involvement with PLplot came from a very simple need: a
 portable, free, reasonable quality scientific graphics package.  At the
 time I had a 1 year fellowship in Japan, to continue my work on numerical
 simulation of plasmas.  Previous to this, I and my colleagues had
@@ -133,11 +135,11 @@ Software environments on high-performance Unix systems, especially as
 regards commercial software, are VERY variable from machine to machine.
 Regardless of why this situation exists, I decided I could no longer
 depend on commercial software to provide a basic graphics capability.  I
-was somewhat familiar with plplot for the Amiga, and seeing that it was
+was somewhat familiar with PLplot for the Amiga, and seeing that it was
 fairly capable and portable I decided this would be the "last" graphics
 package I would use and support (for a long while at least).
 
-It turned out that plplot required some substantial investment of my time
+It turned out that PLplot required some substantial investment of my time
 before it satisfied all of my (then) needs, but has nonetheless performed
 quite well.  In the interim I took over development for it from Tony
 Richardson.  The package has become almost trivially portable -- we can
@@ -158,8 +160,8 @@ will benefit too.  User-contributed code is always welcomed (I have had
 quite a few).  And backward incompatibilities will be introduced into
 the package sparingly if at all.
 
-The features supported by plplot are necessarily fewer in number than a
-big commercial package.  Plplot has a fairly complete set of basic
+The features supported by PLplot are necessarily fewer in number than a
+big commercial package.  PLplot has a fairly complete set of basic
 graphical capabilities, and a few very strong capabilities (e.g.  the
 Tcl/TK X-based GUI driver or its sibling the DP driver, the latter of
 which supports distributed rendering).  This has its good and bad points.
@@ -171,46 +173,46 @@ of which may be only rarely used; e.g. look at the GKS standard) can be
 focused instead on portability, user interface, and certain select
 capabilities.
 
-On the other hand, there are many nice capabilities missing from plplot at
+On the other hand, there are many nice capabilities missing from PLplot at
 present, such as support for solid 3d modeling, maps, postscript fonts,
 and so on.  New features are continually being added, but the fact remains
 that other more special purpose (and/or high priced) products will always
-have things that plplot lacks (or do them better).  One way I see to fit
-plplot in the overall software environment is to add more output drivers,
+have things that PLplot lacks (or do them better).  One way I see to fit
+PLplot in the overall software environment is to add more output drivers,
 both for generic file formats (e.g. TIFF, CGM) as well as for specific
 graphics packages (e.g. AVS).  That way you could produce your graphics
-and view them using plplot, dumping to disk those pages or plots you want
+and view them using PLplot, dumping to disk those pages or plots you want
 to process using a separate package.  This can already be done using the
-XFig driver, for example.  For this to be most effective, plplot should
+XFig driver, for example.  For this to be most effective, PLplot should
 have internal knowlege of more varied objects than "line" (currently the
 fundamental unit), and I have some plans in this area.  
 
 I'm always interested in gaining new collaborators and contributors for
-plplot, so feel free to send me email (mjl@dino.ph.utexas.edu) so we can
-discuss additions you'd like to make.  Want to help support plplot but
+PLplot, so feel free to send me email (mjl@dino.ph.utexas.edu) so we can
+discuss additions you'd like to make.  Want to help support PLplot but
 need suggestions?  I hesitate to recommend anything that will require
 broad changes to the package, but any of the following would be great:
 
 	volunteers for target platform support (I have HPUX covered)
 	output drivers: TIFF, CGM, others?
-	plplot demos?  (especially using Tcl/TK)
+	PLplot demos?  (especially using Tcl/TK)
 	an improved contour plotter
-	any interesting ideas/code for TK widgets for use with plplot
+	any interesting ideas/code for TK widgets for use with PLplot
 	anything from the ToDo list you'd like to tackle?
 	help rewriting the manual?  (OK, so I'm really reaching here)
 
 
- 1.3  I don't have an ANSI compiliant C compiler.  How do I compile plplot?
+ 1.3  I don't have an ANSI compiliant C compiler.  How do I compile PLplot?
 
 Get an ANSI C compiler.  The cheap solution is to get gcc up if it has
 been ported to your machine.  This is not unreasonable IMHO -- the C
 standard was approved in 1989.  Isn't it about time you upgraded?
 
 
- 1.4  I don't have a fortran compiler; how do I compile plplot?
+ 1.4  I don't have a fortran compiler; how do I compile PLplot?
 
 The Fortran files are only part of the interface layer for Fortran codes
-that use plplot.  If you don't need this capability the layer can be
+that use PLplot.  If you don't need this capability the layer can be
 omitted by defining NO_FORTRAN when building the makefile.  I.e. put
 the line:
 
@@ -227,11 +229,11 @@ compile the layer, assuming it (f2c) has been ported to your system.
  1.5  The linker complains of unresolved functions atexit(), fsetpos(),
       fgetpos(), and so on.
 
-This is caused by a non-ANSI libc.  It /is/ possible to run plplot on such
+This is caused by a non-ANSI libc.  It /is/ possible to run PLplot on such
 a system, but at somewhat reduced functionality -- I rely on ANSI libc
 functions both for seeking (fsetpos, fgetpos) and for cleanup (atexit).
 If you don't have an ANSI libc handy or if it is inconvenient to use, you
-can specify -DNO_ANSI_LIBC when building PLPLOT.  This will switch to the
+can specify -DNO_ANSI_LIBC when building PLplot.  This will switch to the
 older ftell/fseek form of seeking and disable some capabilities of the
 tek/xterm drivers.  Some older versions of Sunos & acc require you to link
 in the ANSI lib explicitly when using from a Fortran program, but this
@@ -265,7 +267,7 @@ long as you "wrap" it, e.g.:
 #  endif /* _SIZE_T */
 
 Then add an identical declaration where it is *supposed* to be.  The
-second way is to hack plplot.h to explicitly prototype/typedef it.
+second way is to hack PLplot.h to explicitly prototype/typedef it.
 
 
  1.7  The compiler complains about "caddr_t" in one of the X support files.
@@ -365,9 +367,9 @@ Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
  3.1  Where do I get Tcl/TK?   
  3.2  How do I use "xauth"?
  3.3  How do I use the Tcl/TK driver?
- 3.4  I've been having trouble getting the TK/TCL and plplot working on...
+ 3.4  I've been having trouble getting the TK/TCL and PLplot working on...
  3.5  I would like to issue a plot command, have the window appear,...
- 3.6  The X driver seems to run slower than on older versions of plplot.
+ 3.6  The X driver seems to run slower than on older versions of PLplot.
  3.7  The linker complains that it can't resolve Tcl_AppInit. 
  3.8  How do I change the title on the TK window menu bar, i.e.,...
 
@@ -414,7 +416,7 @@ mix xhost and xauth, you are hosed.  And compiling TK without xauth
 security is a gargantuan, tremendous security hazard.  A sickeningly vile,
 disgusting mess.
 
-Therefore I recommend that in ALL cases when you run plplot/TK on a
+Therefore I recommend that in ALL cases when you run PLplot/TK on a
 machine connected to the network, you just forget about the TK driver
 altogether and use the DP driver instead.  The DP driver is superior in
 every way except that it has a slightly longer startup time.  Only when
@@ -431,10 +433,10 @@ Get it going with the example programs, and play with it.  Read the online
 docs.
 
 
- 3.4  I've been having trouble getting the TK/TCL and plplot working on
+ 3.4  I've been having trouble getting the TK/TCL and PLplot working on
 my Indigo running IRIX 4.0.5. I got TCL7.0 and TK3.3 as advised and built the
 libraries and moved them to "/usr/lib" directory and then went about 
-(re)building plplot. I then compiled the c-demos and ran them. The tk driver
+(re)building PLplot. I then compiled the c-demos and ran them. The tk driver
 would pop up a window and disappear with the following complaints...
 ...
 >>Starting up ./plserver
@@ -504,7 +506,7 @@ and there has been some interest in doing that (but I don't plan to
 work on it).
 
 
- 3.6  The X driver seems to run slower than on older versions of plplot.
+ 3.6  The X driver seems to run slower than on older versions of PLplot.
 
 This may be caused by writing into the pixmap.  Each instruction is
 essentially done twice -- once to the screen and once to the offscreen
@@ -516,7 +518,7 @@ by a scroll in the TK driver -- without writing into a pixmap the
 scrolling really sucks).  One way would be to write only to the pixmap and
 occasionally blit it to the screen, but that would be jerky and you'd have
 to worry about incomplete pages.  Try plotting with the -nopixmap option
-to see if that's any better.  I do almost all my plplot X development on
+to see if that's any better.  I do almost all my PLplot X development on
 an HP 720 color console and graphics speed is usually not a problem :-).
 
 
@@ -542,7 +544,7 @@ PLStream *pls;
     pls->program = "myprogram";
 
 Yes, by this method you have access to the complete internal state of
-the current plplot stream.  So be careful what you change :-).
+the current PLplot stream.  So be careful what you change :-).
 
 There is one catch, though.  The way it is set up now it must be a unique
 name since it corresponds to your main window name (to which X property
@@ -556,7 +558,7 @@ interpreters).
 Section 4: All other drivers & supported platforms
 
  4.1  What about support for platform X?
- 4.2  What about plplot support for VMS?
+ 4.2  What about PLplot support for VMS?
 
 ==============================================================================
 
@@ -573,15 +575,15 @@ platform developers are needed.  Tony Richardson no longer has access to a
 NeXT, so also the NeXT is no longer supported by anyone.
 
 
- 4.2  What about plplot support for VMS?
+ 4.2  What about PLplot support for VMS?
 
-It's true, I did support plplot under VMS at one time, although I never
+It's true, I did support PLplot under VMS at one time, although I never
 DID see the X driver running on it (supposedly it did).  However after
 exclusively using a fast Unix workstation for a while I vowed never to go
-back to VMS :-).  The VMS plplot port caused me lots of pain to get up,
+back to VMS :-).  The VMS PLplot port caused me lots of pain to get up,
 but at least I learned a few things about portability.  Anyway, there may
 still be people out there who would find it useful under VMS, so if anyone
-succeeds in making plplot work and want to continue supporting it there,
+succeeds in making PLplot work and want to continue supporting it there,
 the job is yours for the asking.  I don't have the time or patience for
 it.
 
