@@ -2,7 +2,7 @@ File: README  -*-indented-text-*-
 Description: Perl bindings for PLplot
 Author: Rafael Laboissière <rafael@icp.inpg.fr>
 Created on: Wed Mar  7 17:49:50 CET 2001
-Last modified on: Thu Mar  8 10:01:06 CET 2001
+Last modified on: Wed Mar 28 10:39:40 CEST 2001
 $Id$
 
 This is still highly experimental.  To compile the Perl5 bindings for
@@ -16,12 +16,10 @@ configuration scheme.  For now, this is the cookbook:
     $ cd bindings/perl5
     $ make -f pkg_perl5.in ln-tmp
     $ cd ../../tmp
-
-You will have to change the $libs variable at the top of api2bind.pl,
-reflecting the configuration results in your system.  This variable will be
-AC_SUBST'ituted in the future.
-
     $ make -f pkg_perl5.in 
+
+[ Just ignore the warning messages about not found libraries and arguments
+  in LIBS, when "perl Makefile.PL" is run.  They are harmless. ]
 
 Then run the x01 demo:
 

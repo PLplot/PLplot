@@ -8,8 +8,8 @@
 use XML::Parser;
 use XML::DOM;
 
-$libs = "-L. -lplplot -L/usr/X11R6/lib -lX11 -L/usr/lib   -lgtk -lgdk -lgmodule -lgthread -lglib -lpthread -ldl -lXi -lXext  -lm   -lgnomeui -lart_lgpl -lgdk_imlib -lSM -lICE -lgnome -lgnomesupport -lesd -laudiofile  -ldb";
-
+$libs = "-L. " . `sh plplot-config --libs`;
+chomp $libs;
 
 sub substitute {
   my $file = shift;
