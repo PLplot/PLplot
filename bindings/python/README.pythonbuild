@@ -1,25 +1,39 @@
-How to build yourself a python with PLplot support
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to build yourself python with PLplot support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two possibilities.  You can try to build a dynamically loadable
-python module, or you can modify the python build to include the plplot
-module.  The former is what configure will try to do if you use
---enable-python (which is the default).  This is the procedure that is
-recommended by the Python 2.1 documentation.  It has been been thoroughly
-tested under Linux and works well except for the limitation that we have not
-yet implemented a clone of the plframe widget.  (And under this approach a
-clone is required and not the real thing because apparently there is no way
-to hook up our plframe widget with the python tkinter environment without
+General:
+
+plmodule.c and pyqt_plmodule.c are the two key files used for adding PLplot
+API to python.  The first of these adds the core functions while the second
+of these implements special routines that help with the pyqt GUI
+functionality.  If you need to add more PLplot API to python, edit the
+appropriate one of these files following what is done for other PLplot API
+that has already been implemented.  It is possible that we might want to
+implement other modules as well in the future.  For this case grep through
+all the ../../cf/*.in files for anything to do with plmodule in order to see
+how to configure this for the ordinary case (see next paragraph) of
+dynamically loadable python modules.
+
+There are two possibilities for a python front-end to PLplot.  You can try
+to build a dynamically loadable python PLplot modules, or you can modify the
+python build to include the PLplot modules.  The former is what configure
+will try to do if you use --enable-python (which is the default).  This is
+the procedure that is recommended by the Python 2.1 documentation.  It has
+been thoroughly tested under Linux (although we have received no reports for
+Unix) and works well except for the limitation that we have not yet
+implemented a clone of the plframe widget. (And under this approach a clone
+is required and not the real thing because apparently there is no way to
+hook up our plframe widget with the python tkinter environment without
 modifying python.) However, there is a beginnings of a pyqt widget (try
-prova.py from examples) that does work with the dynamically loadable
+prova.py from examples/python) that does work with the dynamically loadable
 approach so that may eventually get generalized to a clone of our plframe
-widget.
+widge (or even something more powerful).
 
 The remainder of this document describes an alternative build approach that
-does make the plframe widget available under python.  Geoffrey tells us
-this method is still working, but the instructions have not been updated
-since 1996 so there may be some changes which you should ask him about.
-The approach requires that you modify python and rebuild it.
+does make the plframe widget available under python by rebuilding python
+itself.  Geoffrey Furnish tells us this method is still working, but the
+instructions have not been updated since 1996 so there may be some changes
+which you should ask him about.
 
 Configure plplot with
 --disable-python, and follow these steps.  This will be a little bit
