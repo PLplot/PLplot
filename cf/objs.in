@@ -140,7 +140,6 @@ scstubs$O: scstubs.c plplot/plstubs.h plplot/plplotP.h \
  plplot/pldebug.h
 stndfont$O: stndfont.c plplot/plplotP.h plplot/plConfig.h \
  plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
-stupidtk$O: stupidtk.c
 tclAPI$O: tclAPI.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
  plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/pltcl.h \
  plplot/tclMatrix.h plplot/tclgen.h plplot/tclgen_s.h tclgen.c
