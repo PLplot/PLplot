@@ -40,6 +40,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   svtype type;
   AV* av;
   
+  sv = SvROK (sv) ?  SvRV (sv) : sv;
   type = SvTYPE (sv);
   if (type == SVt_PVAV) {
     av = (AV*) sv;
@@ -77,8 +78,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   I32 n;
 
   temp = NULL;
-  sv = SvROK ($source) ?  SvRV ($source) : $source;
-  PLplot_perl_get_array_of_double (sv, &n, &temp);
+  PLplot_perl_get_array_of_double ($source, &n, &temp);
   $target = (PLFLT*) temp;
 }
 
@@ -99,8 +99,6 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   temp = (PLFLT**) malloc ((n+1) * sizeof (PLFLT*));
   for (i = 0; i <= n; i++) {
     SV* elem =  *(av_fetch(av, i, 0));
-    if (SvROK (elem)) 
-      elem = SvRV (elem);
     PLplot_perl_get_array_of_double (elem, &m, &(temp[i]));
     if (i == 0)
       size = m;
@@ -205,8 +203,9 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   $target = (PLFLT*) &temp;
 }
 
-%typemap(perl5,in) PLPointer_input* {
-  $target = (PLPointer*) $source;
+%typemap(perl5,in) PLPointer_input* (SV* temp) {
+  temp = sv_mortalcopy ($source);
+  $target = (PLPointer*) &temp;
 }
 
 
@@ -232,4 +231,17 @@ extern void pltr1 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*,
 extern void pltr2 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
                    PLPointer_input);
 
+%inline %{
+void
+test_fp (funcptr0 f, PLPointer_input p)
+{
+  PLFLT a = 0.2;
+  PLFLT b = 0.3;
+
+  f(0.0, 0.1, &a, &b, p);
+
+  printf("a = %f\nb = %f\n", a, b);
+  fflush (stdout);
+}
+%}
 
