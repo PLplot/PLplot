@@ -32,7 +32,8 @@ sed_command = 's/REPLACE_ME/typedef float PLFLT;/'
 octave_libs = -lplplot
 endif
 
-plplot_octave.h: plplot_octave_org.h
+# If the Makefile changes, because of "configure" beeing rerun, recompile
+plplot_octave.h: plplot_octave_org.h Makefile
 	sed -e $(sed_command) plplot_octave_org.h > plplot_octave.h
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
@@ -44,8 +45,12 @@ plplot_octave.cc tmp_stub: plplot_octave.h
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
-plplot_octave.oct plplot_octave.o: plplot_octave.cc
-	LD_RUN_PATH=$(libdir) @MKOCTFILE@ -v -I. -L../../src/.libs \
+plplot_octave.oct: plplot_octave.o
+	LD_RUN_PATH=`pwd`/../../src/.libs/:$(libdir) @MKOCTFILE@ -v -I. \
+	-L../../src/.libs plplot_octave.o $(octave_libs)
+
+plplot_octave.o: plplot_octave.cc
+	@MKOCTFILE@ -v -c -I. -L../../src/.libs \
 	plplot_octave.cc $(octave_libs)
 
 octavesharedir = $(datadir)/plplot_octave
@@ -53,9 +58,7 @@ octavesharedir = $(datadir)/plplot_octave
 # Ultimately, we may want to switch to the normal LT method of building
 # shared objects cross-platform, using 
 # octaveshare_LTLIBRARIES = plplot_octave.la
-# but octave may not be able to handle libtool-created .la files for now
-# and the old-fashioned way with octave's attempt to be cross-platform
-# (using the mkoctfile command) is good enough for now.
+# but octave may not be able to handle libtool-created .la files
 # SCRIPTS rather than DATA because you want to preserve the permissions.
 octaveshare_SCRIPTS = plplot_octave.oct
 
@@ -75,7 +78,7 @@ plplot_octave_txt/plplot.doc: etc/plplot.doc
 	../../../doc/docbook/src/plplotdoc.xml.in \
 	../../../doc/docbook/src/api.xml
 
-plplot_stub.m missing_help: plplot_octave_txt/plplot.doc tmp_stub massage
+plplot_stub.m: plplot_octave_txt/plplot.doc tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
 	@echo "# It was also massaged to add online documentation" >> plplot_stub.m
 	@echo "# extracted from some PLplot distribution files" >> plplot_stub.m
