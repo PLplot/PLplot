@@ -42,9 +42,8 @@ env_default ("DEBIAN_VERSION", $debver);
 $md5sum = "md5sum.txt";
 $md5sum_asc = "$md5sum.asc";
 
-system "touch override";
-system "dpkg-scanpackages . override | gzip -c > Packages.gz";
-system "dpkg-scansources . override | gzip -c > Sources.gz";
+system "dpkg-scanpackages . /dev/null | gzip -c >| Packages.gz";
+system "dpkg-scansources . /dev/null | gzip -c >| Sources.gz";
 
 @files = ("Release")
     if -f "Release";
