@@ -6,3 +6,7 @@ plplotdoc-html-* plplotdoc-src-*
 configure config.* *-stamp Makefile Makefile.in 
 *-MANIFEST *.info* *.texi *.txml plplotdoc.xml *.xml-info *.out
 *.3plplot
+tarball.tgz
+plplot-man-*.tar.gz
+plplot-info-*.tar.gz
+plplot-html-*.tar.gz
