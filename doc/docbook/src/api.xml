@@ -7692,7 +7692,7 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
             Number of shades plus 1 (i.e., the number of shade edge values
-	    in <literal><parameter>nlevel</parameter></literal>).
+	    in <literal><parameter>clevel</parameter></literal>).
 	  </para>
 	</listitem>
       </varlistentry>
