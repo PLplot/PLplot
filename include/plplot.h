@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.21  1993/03/16 06:47:39  mjl
-   Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
-   more robust.
+   Revision 1.22  1993/03/16 06:54:18  mjl
+   Minor documentation change.
 
+ * Revision 1.21  1993/03/16  06:47:39  mjl
+ * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
+ * more robust.
+ *
  * Revision 1.20  1993/03/15  21:51:24  mjl
  * Bumped version number to 4.99b.
  *
@@ -193,6 +196,9 @@
 #endif
 
 /* Check for SUN systems */
+/* Even if the machine has an ANSI libc, more than likely the Fortran */
+/* compiler won't know to use it by default.  So you may want to set */
+/* NO_ANSI_LIBC in any case on Suns, sigh. */
 
 #ifdef sun
 #ifndef NO_ANSI_LIBC
