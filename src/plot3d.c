@@ -87,8 +87,11 @@ c_pllightsource(PLFLT x, PLFLT y, PLFLT z)
  *
  *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
  *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
- *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
+ *  opt = 3 (DRAW_LINEXY = DRAW_LINEX | DRAW_LINEY):  Draw lines parallel to both axes
  *  opt = 4 (MAG_COLOR):    Magnitude coloring of wire frame
+ *  opt = 32 (BASE_CONT):   Draw contour at bottom xy plane 
+ *
+ *  or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
  *
 \*--------------------------------------------------------------------------*/
 
@@ -180,7 +183,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   n = 3;
 
   if (falsecolor)
-    plcol1(((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz));
+      plcol1(((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz));
   else
     plcol1(plGetAngleToLight(x, y, z));
 
@@ -267,6 +270,10 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   }
 
   plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+  if (fc_maxz == fc_minz) {
+    plwarn("plsurf3d.c: Maximum and minimum Z values are equal! \"fixing\"...");
+    fc_maxz = fc_minz + 1e-6;
+  }
 
   if (opt & MAG_COLOR)
     falsecolor = 1;
@@ -403,7 +410,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	  zz = (PLFLT *) realloc(zz, np*sizeof(PLFLT));
 	}
 	for (j=0; j<cline->npts; j++)
-	  zz[j] = plsc->ranmi; /* clev->level; */
+	  zz[j] = plsc->ranmi;
 	plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
 	plline3(cline->npts, cline->x, cline->y, zz);
 	cline = cline->next;
@@ -559,6 +566,10 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
  *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
  *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
  *  opt = 4 (MAG_COLOR):    Magnitude coloring of wire frame
+ *  opt = 32 (BASE_CONT):   Draw contour at bottom xy plane 
+ *
+ * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
+ *
 \*--------------------------------------------------------------------------*/
 
 void
@@ -569,14 +580,14 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     PLINT init, i, ix, iy, color;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin=0, ixmax=nx-1, iymin=0, iymax=ny-1;
-    PLINT clipped = 0;
+    PLINT clipped = 0, base_cont = 0;
 
     if (plsc->level < 3) {
 	myabort("plot3d: Please set up window first");
 	return;
     }
 
-    if (opt < 1 || opt > 7) {
+    if (opt < 1 || opt > 3+4+32) {
 	myabort("plot3d: Bad option");
 	return;
     }
@@ -698,17 +709,29 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       ny = _ny;	  
     }
 
-/* Allocate work arrays */
+   if (opt & BASE_CONT || opt && MAG_COLOR) { 
+     plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+     if (fc_maxz == fc_minz) {
+       plwarn("plot3d.c: Maximum and minimum Z values are equal! \"fixing\"...");
+       fc_maxz = fc_minz + 1e-6;
+     }
+   }
+ 
+   if (opt & BASE_CONT) {     /* If enabled, draw the contour at the base.  */
+          opt &= ~BASE_CONT; /* next logic checks for absolute values of opt */
+	  base_cont = 1;
+   }
+
+   if (opt & MAG_COLOR) {     /* If enabled, use magnitude colored wireframe  */
+     ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
+     opt &= ~MAG_COLOR; /* next logic checks for absolute values of opt */
+   } else
+     ctmp = NULL;
+
+    /* Allocate work arrays */
 
     utmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
     vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-
-    if (opt & MAG_COLOR) {
-      plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
-      ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
-      opt &= ~MAG_COLOR; /* next logic checks for absolute values of opt */
-    } else
-      ctmp = NULL;
 
     if ( ! utmp || ! vtmp)
 	myexit("plot3d: Out of memory.");
@@ -776,6 +799,62 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	    for (iy = 1; iy <= ny - 1; iy++)
 		plt3zz(1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
+    }
+
+    /* draw contour at the base. Not 100%! Why? */
+ 
+    if (base_cont){
+#define NPTS 100
+#define LEVELS 10 /* as the API has no clevel arg, set a default */
+
+      int nlevel = LEVELS, np = NPTS, j;
+      PLFLT clevel[LEVELS]; 
+      PLFLT step;
+      CONT_LEVEL *cont, *clev;
+      CONT_LINE *cline;
+
+      PLINT *uu = (PLINT *) malloc(NPTS*sizeof(PLINT));
+      PLINT *vv = (PLINT *) malloc(NPTS*sizeof(PLINT));
+
+      pl3upv = 0;
+
+      step = (fc_maxz - fc_minz)/nlevel;
+      for (i=0; i<nlevel; i++)
+	clevel[i] = fc_minz + step*i;
+
+      /* get the contour lines */
+      cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
+
+      /* follow the contour levels and lines */
+      clev = cont;
+      do { /* for each contour level */
+	cline = clev->line;
+	do { /* there are several lines that make up each contour */
+	  if (cline->npts > np) {
+	    np = cline->npts;
+	    uu = (PLINT *) realloc(uu, np*sizeof(PLINT));
+	    vv = (PLINT *) realloc(vv, np*sizeof(PLINT));
+	  }
+
+	  plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
+	  for (j=0; j<cline->npts; j++) {
+	    uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi)); 
+	    vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi)); 
+	  }
+	  plnxtv(uu, vv, NULL, cline->npts, 0); /* Not working 100% OK! */
+	  /* can it be because some contour lines are closed or "turn-back",
+	     i.e., the x coordinate is not always increasing ? */
+	  cline = cline->next;
+	}
+	while(cline != NULL);
+	clev = clev->next;
+      }
+      while(clev != NULL);
+
+      cont_clean_store(cont); /* now release the contour memory */
+      pl3upv = 1;
+      free(uu);
+      free(vv);
     }
 
 /* Finish up by drawing sides, background grid (both are optional) */
