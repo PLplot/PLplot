@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/07/29 20:13:02  mjl
+ * Revision 1.11  1994/08/05 22:24:05  mjl
+ * Made new test code a bit more robust and unobtrusive.
+ *
+ * Revision 1.10  1994/07/29  20:13:02  mjl
  * Added cursor-reporting test code at the end of the page.
  * Contributed by Paul Casteels.
  *
@@ -106,12 +109,14 @@ main(int argc, char *argv[])
     do {
 	co = 0;
 	if (plGetCursor(&plc)) {
+	    pltext();
 	    printf(" wx = %f\n",plc.wX);
 	    printf(" wy = %f\n",plc.wY);
+	    printf(" vx = %f\n",plc.vpX);
+	    printf(" vy = %f\n",plc.vpY);
+	    plgra();
 	    co = 1;
 	}
-	printf(" vx = %f\n",plc.vpX);
-	printf(" vy = %f\n",plc.vpY);
     } while (co);
 
 /* Don't forget to call PLEND to finish off! */
