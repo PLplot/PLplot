@@ -389,7 +389,7 @@ plD_init_wingcc(PLStream *pls)
 
 /*
  *  Read registry to see if the user has set up default values
- *  for text and smoothing. These will be overriden by anything that
+ *  for text and smoothing. These will be overridden by anything that
  *  might be given on the command line, so we will load the
  *  values right into the same memory slots we pass to plParseDrvOpts
  */

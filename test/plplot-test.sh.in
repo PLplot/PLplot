@@ -69,7 +69,7 @@ Environment variables:
    used to specify the devices, front-ends, the examples directory, the
    source examples directory (used for the special case of build-tree checks 
    when that tree is separated from the source tree), and output directory.
-   These environment variables are overriden by the options --device,
+   These environment variables are overridden by the options --device,
    --front-end, --examples-dir, --src-examples-dir, and --output-dir.
 EOF
    exit $1
@@ -128,7 +128,7 @@ done
 if test ! -d $EXAMPLES_DIR/c ; then
 cat << EOF
 This script is only designed to work when the EXAMPLES_DIR environment
-variable (overriden by option --examples-dir) is a directory with a
+variable (overridden by option --examples-dir) is a directory with a
 subdirectory called "c".  This condition has been violated.
 EOF
 exit 1
