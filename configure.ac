@@ -39,7 +39,7 @@ dnl   including the version number, otherwise it will fool up the
 dnl   bootstrap.sh script.  By the way, the line below can be changed using
 dnl   options --version and --date-version of that script. ]
 
-AC_INIT(plplot, 5.3.1, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.3.1.cvs, plplot-devel@lists.sourceforge.net)
 AC_REVISION($Revision$)
 
 dnl Date of release.  This can be set by hand, but the prefered method
