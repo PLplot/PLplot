@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1995/05/11 04:22:00  furnish
+ * Revision 1.33  1995/05/15 07:57:00  mjl
+ * A nit.
+ *
+ * Revision 1.32  1995/05/11  04:22:00  furnish
  * Fix overrun of allocated memory.  Can now call plinit() again without
  * getting an immediate core dump.
  *
@@ -567,7 +570,7 @@ c_plscmap0n(PLINT ncol0)
     }
     else {
 	plsc->cmap0 = (PLColor *) realloc(plsc->cmap0, size);
-	imin = plsc->ncol0 - 1;
+	imin = plsc->ncol0;
     }
 
 /* Fill in default entries */
