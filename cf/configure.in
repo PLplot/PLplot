@@ -1,4 +1,4 @@
-divert(0)dnl --*-sh-*--
+divert(0)dnl --*-Autoconf-*--
 #!/bin/sh
 #
 # configure.in

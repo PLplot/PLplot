@@ -1,4 +1,4 @@
-dnl> $Id$
+dnl> $Id$ --*-Autoconf-*--
 dnl> 
 dnl> Local autoconf extensions.  These are based on the autoconf builtin
 dnl> macros, and you can do what you want with them.  Side note: if you
