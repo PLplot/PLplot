@@ -379,7 +379,7 @@ define(FIND_LIB_BEGIN, [
 define(FIND_LIB_SET, [
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
-	    LIBEXTNS=a
+	    LIBEXTNS="so a"
 	fi
 	for suffix in $LIBEXTNS; do
 	    if test -f "$dir/lib$1.$suffix"; then

@@ -20,28 +20,25 @@
 # Configure library recognition for various systems.
 # ----------------------------------------------------------------------------
 
-LIBEXTNS="a"
+LIBEXTNS="so a"
 
 case "$system" in 
 #    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 #	CC=xlc
 #    ;;
-    alpha*|ALPHA*|Alpha*|OSF* ) 
-	LIBEXTNS="so a"
-    ;;
-#    convex*|ConvexOS* ) 
-#	CC="cc -std"
-#	with_gcc=no
+#    alpha*|ALPHA*|Alpha*|OSF* ) 
+#	LIBEXTNS="so a"
+#    ;;
 #    ;;
     hp*|HP* ) 
 	LIBEXTNS="sl a"
     ;;
-    irix*|IRIX*|Irix*|sgi*|SGI* ) 
-	LIBEXTNS="so a"
-    ;;
-    Linux* )
-	LIBEXTNS="so a"
-    ;;
+#    irix*|IRIX*|Irix*|sgi*|SGI* ) 
+#	LIBEXTNS="so a"
+#    ;;
+#    Linux* )
+#	LIBEXTNS="so a"
+#    ;;
 #    SunOS-4* )
 #	CC=acc
 #    ;;
