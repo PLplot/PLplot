@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.56  1994/04/08 12:12:27  mjl
+ * Revision 1.57  1994/04/18 19:23:25  furnish
+ * Added new function Pltk_Init to allow users to easily construct PLPLOT
+ * enhanced application specific extended wishen.  Works great, needs advert.
+ *
+ * Revision 1.56  1994/04/08  12:12:27  mjl
  * Moved PLESC tags to this file to make them more accessible to users.
  * Added PLESC_EH tag for flushing the event queue only.  Added PLMouse
  * event struct typedef.  Changed prototype for plsexit().
@@ -1388,6 +1392,7 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 #ifdef TK
 #include <tk.h>
 int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
+int   Pltk_Init( Tcl_Interp *interp );
 #endif
 
 #ifdef __cplusplus
