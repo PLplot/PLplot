@@ -73,7 +73,7 @@ libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 # PYTHON_NUM_DIR only required until we quit supporting python 1.5
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
-AM_CPPFLAGS = $(INCLTDL) -I/$(PYTHON_INC_DIR) -I/$(PYTHON_NUM_DIR) $(X_CFLAGS)
+AM_CPPFLAGS = $(INCLTDL) -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(X_CFLAGS)
 
 # Do not use -no-undefined here since symbols should be resolved by
 # python when it dynamically loads this shared object.
