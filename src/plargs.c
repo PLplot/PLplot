@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/06/30 18:21:58  mjl
+ * Revision 1.22  1994/12/28 09:38:44  mjl
+ * Added PL_PARSE_MERGE, set if passed in table is to be merged with internal
+ * options.  Function will return on first unrecognized input.  This is the
+ * preferred way to combine user and internal options.  User options have
+ * precedence over internal options.  Also changed parsing to allow for
+ * "holes" in argv list (i.e. all argc entries are checked even if some are
+ * 0-length strings or null).
+ *
+ * Revision 1.21  1994/06/30  18:21:58  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -93,6 +101,11 @@
 
     PL_PARSE_NODASH -- Set if leading dash is NOT required.
 
+    PL_PARSE_MERGE  -- Set if passed in table is to be merged with
+    internal options.  Function will return on first unrecognized input.
+    This is the preferred way to combine user and internal options.
+    User options have precedence over internal options.
+
     Note that the parser for user-defined flags accepts a pointer to a
     function to be called when an error is detected, to allow an
     appropriate usage message to be issued.
@@ -176,6 +189,7 @@ static int	mode_showall;
 static int	mode_noprogram;
 static int	mode_override;
 static int	mode_nodash;
+static int	mode_merge;
 
 /*----------------------------------------------------------------------*\
  * PLPLOT options data structure definition.
@@ -606,6 +620,7 @@ plParseInternalOpts(int *p_argc, char **argv, PLINT mode)
     int status;
 
     mode &= ~PL_PARSE_OVERRIDE;
+    mode &= ~PL_PARSE_MERGE;
     status = plParseOpts(p_argc, argv, mode, ploption_table, NULL);
 
     return(status);
@@ -665,6 +680,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     mode_noprogram = mode & PL_PARSE_NOPROGRAM;
     mode_override  = mode & PL_PARSE_OVERRIDE;
     mode_nodash    = mode & PL_PARSE_NODASH;
+    mode_merge     = mode & PL_PARSE_MERGE;
 
     myargc = (*p_argc); 
     argend = argv + myargc;
@@ -703,19 +719,48 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 /* Process the command line */
 
     for (; myargc > 0; --myargc, ++argv) {
+
+    /* Allow for "holes" in argv list */
+
+	if (*argv == NULL || *argv[0] == '\0')
+	    continue;
+
+    /* Check user option table */
+
 	status = ParseOpt(&myargc, &argv, p_argc, &argsave, option_table);
+
 	if (status) {
-	    if (mode_full)
+
+	/* No match, so check internal table if merge specified */
+
+	    if (mode_merge)
+		status = ParseOpt(&myargc, &argv, p_argc, &argsave,
+				  ploption_table);
+	}
+
+    /* If no match, terminate as specified by the mode flag */
+
+	if (status) {
+	    if (mode_full) {
+		if ( ! mode_quiet) {
+		    (*UsageH) (*argv);
+		}
 		exit(1);
-	    else
+	    }
+	    else {
 		break;
+	    }
 	}
     }
 
-/* NULL-terminate compressed argv */
+/* Compress and NULL-terminate argv */
 
-    if ( ! mode_nodelete && (argsave < argend))
-	(*argsave) = NULL;
+    if ( ! mode_nodelete) {
+	*argsave++ = *argv;
+
+	if (argsave < argend)
+	    *argsave = NULL;
+    }
 
     return(status);
 }
@@ -743,14 +788,14 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 
 	for (tab = option_table; tab->opt; tab++) {
 
-/* Skip if option not enabled */
+	/* Skip if option not enabled */
 
 	    if ( ! (tab->mode & PL_OPT_ENABLED)) 
 		continue;
 
 	    if (*opt == *tab->opt && ! strcmp(opt, tab->opt)) {
 
-/* Option matched, so remove from argv list if applicable. */
+	    /* Option matched, so remove from argv list if applicable. */
 
 		if ( ! mode_nodelete) {
 		    if (tab->mode & PL_OPT_NODELETE)
@@ -759,25 +804,14 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 			--(*p_argc);
 		}
 
-/* Process option (and argument if applicable) */
+	    /* Process option (and argument if applicable) */
 
 		return(ProcessOpt(opt, tab, p_myargc, p_argv, p_argc));
 	    }
 	}
     }
 
-/* If control reaches here the argument is unrecognized */
-
-    if ( ! mode_nodelete)
-	(*(*p_argsave)++) = (**p_argv);  /* compress arglist */ 
-
-    if (mode_full) {
-	if ( ! mode_quiet)
-	    (*UsageH) (**p_argv);
-	return 1;
-    }
-    else
-	return 0;
+    return 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -806,9 +840,9 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 
     switch (tab->mode & 0xFF00) {
 
-/* Call function handler to do the job */
+    case PL_OPT_FUNC:
 
-      case PL_OPT_FUNC:
+    /* Call function handler to do the job */
 
 	if (tab->handler == NULL) {
 	    fprintf(stderr,
@@ -818,9 +852,10 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	}
 	return( (*tab->handler) (opt, optarg, tab->client_data) );
 
-/* Set *var as a boolean */
+    case PL_OPT_BOOL:
 
-      case PL_OPT_BOOL:
+    /* Set *var as a boolean */
+
 	if (tab->var == NULL) {
 	    fprintf(stderr,
 		    "ProcessOpt: no variable specified for option %s\n",
@@ -830,9 +865,10 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	*(int *)tab->var = 1;
 	break;
 
-/* Set *var as an int */
+    case PL_OPT_INT:
 
-      case PL_OPT_INT:
+    /* Set *var as an int */
+
 	if (tab->var == NULL) {
 	    fprintf(stderr,
 		    "ProcessOpt: no variable specified for option %s\n",
@@ -842,9 +878,10 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	*(int *)tab->var = atoi(optarg);
 	break;
 
-/* Set *var as a float */
+    case PL_OPT_FLOAT:
 
-      case PL_OPT_FLOAT:
+    /* Set *var as a float */
+
 	if (tab->var == NULL) {
 	    fprintf(stderr,
 		    "ProcessOpt: no variable specified for option %s\n",
@@ -854,15 +891,17 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	*(float *)tab->var = atof(optarg);
 	break;
 
-/* Set var (can be NULL initially) to point to optarg string */
+    case PL_OPT_STRING:
 
-      case PL_OPT_STRING:
+    /* Set var (can be NULL initially) to point to optarg string */
+
 	tab->var = optarg;
 	break;
 
-/* Somebody messed up.. */
+    default:
 
-      default:
+    /* Somebody messed up.. */
+
 	fprintf(stderr,
 		"ProcessOpt: invalid processing mode for option %s\n",
 		tab->opt);
