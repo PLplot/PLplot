@@ -461,6 +461,8 @@ if test "$enable_python" = "yes"; then
 	incdirs="\
 	$prefix/include/python1.5 \
 	/usr/include/python1.5 \
+	$prefix/include/python1.5/Numeric \
+	/usr/include/python1.5/Numeric \
 	$prefix/include/python1.4 \
 	/usr/include/python1.4 \
 	$prefix/include/Py \
@@ -477,7 +479,7 @@ if test "$enable_python" = "yes"; then
 	FIND_INC(Python, PYTHON_INC_DIR, enable_python)
 
 	if test "$enable_python" = "yes"; then
-	    FIND_INC(arrayobject, PYTHON_INC_DIR, numeric_python)
+	    FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
 	    if test "$numeric_python" = "no"; then
 		AC_MSG_RESULT([plmodule needs Python numeric extension.])
 		AC_MSG_RESULT([Setting enable_python to no])
@@ -519,6 +521,7 @@ if test "$enable_python" = "yes"; then
 fi
 
 AC_SUBST(PYTHON_INC_DIR)
+AC_SUBST(PYTHON_NUM_DIR)
 AC_SUBST(PYTHON_MOD_DIR)
 AC_SUBST(PYTHON_MACH_DIR)
 AC_SUBST(PYTHON_CFG_DIR)
