@@ -1,8 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/16 19:49:05  mjl
- * Header file for new Tcl matrix command.
+ * Revision 1.2  1994/06/16 21:57:11  mjl
+ * Added matrix operator name to command data struct.
  *
+ * Revision 1.1  1994/06/16  19:49:05  mjl
+ * Header file for new Tcl matrix command.
  */
 
 /*----------------------------------------------------------------------*\
@@ -56,6 +58,7 @@ typedef struct {
     int len;			/* Total length of array */
     int dim;			/* Number of dimensions */
     int n[MAX_ARRAY_DIM];	/* Holds array length in each dimension */
+    char name[20];		/* Matrix operator name */
 
     Mat_float *fdata;		/* Floating point data */
     Mat_int   *idata;		/* Integer data */
@@ -63,7 +66,7 @@ typedef struct {
 
 /* Function prototypes */
 
-/* This procedure is invoked to process the "mat" Tcl command. */
+/* This procedure is invoked to process the "matrix" Tcl command. */
 
 int
 Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
