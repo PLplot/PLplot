@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/05/25 09:27:01  mjl
+ * Revision 1.2  1996/10/22 18:21:57  furnish
+ * Update the OS/2 driver with fixes supplied by Thorsten Feiweier.
+ *
+ * Revision 1.1  1994/05/25  09:27:01  mjl
  * Decided the os2/ subdir of sys/ was a better place for this.
  *
  * Revision 1.9  1994/03/23  06:34:33  mjl
@@ -37,18 +40,25 @@
 	VERSION 1.0
 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "pmdefs.h"
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a) : (b))
 
 #define INCL_BASE
 #include <os2.h>
+
+#include "plplotP.h"
+#include "drivers.h"
+#include "pmdefs.h"
 
 /* top level declarations */
 
 static USHORT	rv;
 static HFILE	hf;
-static short	cnt;
+
+static int i=0;
+static PLINT buffer[ PIPE_BUFFER_SIZE ];
+static PLINT cnt = 0;
+static PLINT escape[2] = {0, 0};
 
 static PLINT	xold = UNDEFINED;
 static PLINT	yold = UNDEFINED;
@@ -86,7 +96,7 @@ void os2_orient( PLStream *pls )
 
 void	plD_init_os2( PLStream *pls )
 {
-    USHORT	usAction;
+    ULONG	usAction;
     UCHAR	c = (UCHAR) INITIALIZE;
 
     pls->termin =- 0;		/* not an interactive terminal */
@@ -231,20 +241,31 @@ void	plD_tidy_os2( PLStream *pls )
 void 
 plD_state_os2(PLStream *pls, PLINT op)
 {
-    write_command( CHANGE_STATE, NULL );
+  UCHAR c;
+  /* write_command( CHANGE_STATE, NULL ); */
+
+
 
     switch (op) {
 
     case PLSTATE_WIDTH:
-	write_command( op, &pls->width );
-	break;
+      c = (UCHAR) NEW_WIDTH;
+      escape[0] = (PLINT) pls->width;
+      // write_command( c, NULL);
+      // write_command( (UCHAR) op, (CPARAMS) a );
+      write_command ( c, NULL);
+      break;
 
     case PLSTATE_COLOR0:
-	write_command( op, &pls->icol0 );
-	break;
+      c = (UCHAR) NEW_COLOR;
+      escape[0] = (PLINT) pls->icol0;
+      // write_command( c, NULL);
+      // write_command( (UCHAR) op, (CPARAMS) a );
+      write_command ( c, NULL);
+      break;
 
     case PLSTATE_COLOR1:
-	break;
+      break;
     }
 }
 
@@ -262,25 +283,29 @@ void	plD_esc_os2( PLStream *pls, PLINT op, void *ptr )
 	unsigned long ired, igreen, iblue;
 	unsigned long	pmrgb;
 
-	write_command( c, NULL );
+	// write_command( c, NULL );
 
 	switch (op) {
 	    case PLESC_SET_RGB: 
-		c = (UCHAR) ESC_RGB;
-		color = (float *) &ptr[0];
+		// c = (UCHAR) ESC_RGB;
+		color = (float *) ptr; //&ptr[0];
 		ired =	min(256,max(0,(int)255.*color[0]));
 		igreen= min(256,max(0,(int)255.*color[1]));
 		iblue = min(256,max(0,(int)255.*color[2]));
 		pmrgb	= (ired   & 0xff) << 16 |
 			  (igreen & 0xff) <<  8 |
 			  (iblue  & 0xff);
-		write_command( c, &pmrgb );
+		escape[0] = (PLINT) ESC_RGB;
+		escape[1] = (PLINT) pmrgb;
+		write_command( c, NULL );
 		//printf( "Changing to RGB value %lx \n", pmrgb );
 		break;
 	
 	    default:
-		c = (UCHAR) ESC_NOOP;
+		// c = (UCHAR) ESC_NOOP;
+		escape[0] = (PLINT) ESC_NOOP;
 		write_command( c, NULL );
+		break;
 	}
 }
 
@@ -297,10 +322,6 @@ void	plD_esc_os2( PLStream *pls, PLINT op, void *ptr )
 
 void	write_command( COMMAND_ID cid,	CPARAMS p )
 {
-    static int i=0;
-    static PLINT buffer[ PIPE_BUFFER_SIZE ];
-    static PLINT cnt = 0;
-    
     i++;
 
     buffer[cnt++] = cid;
@@ -319,9 +340,8 @@ void	write_command( COMMAND_ID cid,	CPARAMS p )
 
 	case NEW_COLOR:
 	case NEW_WIDTH:
-	case ESC_RGB:
-	    buffer[cnt++] = *p++;
-	    break;
+	     buffer[cnt++] = escape[0];
+	     break;
 
 	case INITIALIZE:
 	case CLOSE:
@@ -329,29 +349,39 @@ void	write_command( COMMAND_ID cid,	CPARAMS p )
 	case SWITCH_TO_GRAPH:
 	case CLEAR:
 	case PAGE:
-	case ESC_NOOP:
-	    break;
+	  break;
 	
 	case ESCAPE:
+	  buffer[cnt++] = escape[0];
+	  switch( escape[0]) {
+	  case (PLINT) ESC_NOOP:
 	    break;
+	  case (PLINT) ESC_RGB:
+	    buffer[cnt++] = escape[1];
+	  default:
+	    printf ("Unknown escape sequence\n");
+	    break;
+	  }
+	  break;
 
 	default:
 	    printf( "Unknown command type--no params passed\n" );
 	    break;
     }
     if (cnt >= (.9 * PIPE_BUFFER_SIZE) || cid == CLOSE) {
-	short rv1, rv2, bytes1, bytes2;
+	short rv1, rv2;
+	ULONG bytes1 = 0, bytes2 = 0;
 	
 	rv1 = DosWrite( hf, &cnt, sizeof( PLINT ), &bytes1 );
 	rv2 = DosWrite( hf, buffer, (USHORT) (cnt * sizeof(PLINT)), &bytes2 );
 	if (!rv1 && !rv2) 
 	    /* printf( "%d, %d bytes were written.\n", bytes1, bytes2 ) */ ;
 	else 
-	    printf( "----> write to pipe failed <----\n" );
+	    printf( "----> write to pipe failed <---- %i %i\n", rv1, rv2 );
 
-	if (bytes1 != 4 || bytes2 != cnt*sizeof(PLINT) )
+	if (bytes1 != sizeof(PLINT) || bytes2 != cnt*sizeof(PLINT) )
 	    printf( "*** Bogus # of bytes written ***\n" );
 
 	cnt=0;
-    }
+  }
 }

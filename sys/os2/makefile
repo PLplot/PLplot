@@ -1,350 +1,963 @@
+# -----------------------------------------------------------------------
+# $Id$
 #
-# Makefile for PLPLOT
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
 #
-# This makefile is intended to be used with Microsft NMAKE, as supplied with
-# MS C 6.0 Professional Development System (it's not actually very expensive).
-# It is currently set up to be run in an OS/2 session, and will build the
-# PLPLOT system of libraries, utilities and examples for execution under either
-# OS/2 native mode or under DOS (and the OS/2 DOS box).  
+# Basic make assignments for PLplot under Unix (driven by "configure").
+# These are used in both the library and demo Makefiles.
+# -----------------------------------------------------------------------
+
+# Utilities
+
+CC		= gcc
+LDC		= gcc
+OCC		= gcc -traditional
+LDF		= gcc
+M4		= @M4@
+LN		=
+BIND		= emxbind -aq
+BIND_OPTS	= -acim
+STRIP		= emxbind -sq
+
+
+# Flags and other miscellanea
+
+F77_FLAGS	=
+LDC_FLAGS	=
+LDF_FLAGS	=
+LDC_LIBS	=
+LDF_LIBS	=
+LIB_TAG		= 
+TO		= -o
+O		= .o
+A		= .a
+E		= .exe
+
+# Library names
+# (PLLIB_NAME) is for ld/linking
+# (PLLIB_BASE) is the base library name for installation
 #
-# To build the DOS version, you will need to modify the makefile in a couple
-# of places, in order to include the DOSVGA driver.  These changes are marked
-# in the makefile with comments starting with "# DOS".
+# good for filesystems that truncate names (eg, DOS)
+
+PLLIB_NAME	= plplot
+PLLIB_BASE	= plplot
+
+# Install directories (use forward-slashes with `F')
+
+LIB_BASE        = d:\usr\bin\plplot
+LIB_DIR		= d:\usr\bin\plplot\lib
+LIB_DIRF	= d:/usr/bin/plplot/lib
+DOC_DIR	= d:\usr\bin\plplot\doc
+BIN_DIR		= d:\usr\bin\plplot\bin
+INFO_DIR	= d:\usr\bin\plplot\info
+INCLUDE_DIR	= d:\usr\bin\plplot\include
+INCLUDE_DIRF	= d:/usr/bin/plplot/include
+TCL_DIR	= d:\usr\bin\plplot\tcl
+DEMOS_DIR	= d:\usr\bin\plplot\demos
+# -----------------------------------------------------------------------
+# $Id$
 #
-# Questions or problems, send (e)mail to:
-#	Geoffrey Furnish
-#	furnish@fusion.ph.utexas.edu
-#	Institute for Fusion Studies
-#	Department of Physics
-#	The University of Texas at Austin
-#	Austin, Texas	78712
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 22-Jul-1994
+#
+# PLplot source and object file lists.
+# -----------------------------------------------------------------------
 
-PLDIR	= d:\plplot\ 
-PLLIBS	= .
-PLFONTS	= $(PLDIR)plfonts\ 
-PLFNT_DIR=\lib
-PLTMP	= $(PLDIR)tmp\ 
-PLLIBDIR = .
-FONTFLAG= "-DPLFONTDEV1=\"c:\\lib\\ \""
+# The default target -- a convenient forward reference
 
-CC	= cl
-CFLAGS	= /FPi87  /nologo /Od /Zi /AL
-#CFLAGS	= /FPi87  /nologo /Ox /G2 /AL
-F77	= fl
-FFLAGS	= /FPi87  /nologo /Od /Zi /AL
-#FFLAGS	= /FPi87  /nologo /Ox /G2 /AL
+default: help
 
-# OS/2	Enable -DOS2PM if you have purchassed this add-on driver.
-#	Also, you'll need to enable it in the driver list below...
-DRIVERS	= -DPS -DLJII -DPLMETA -DHP7470 -DIMP #-DOS2PM
 
-# DOS
-# DRIVERS	= -DPS -DLJII -DPLMETA -DHP7470 -DIMP -DVGA
+# Core library files.
 
-# Rules
-.SUFFIXES:
-.SUFFIXES: .o .c .for
+CORE_C = \
+	pdfutils.c \
+	plargs.c \
+	plbox.c \
+	plcont.c \
+	plcore.c \
+	plctrl.c \
+	plcvt.c \
+	pldtik.c \
+	plfill.c \
+	plhist.c \
+	plline.c \
+	plmap.c \
+	plot3d.c \
+	plpage.c \
+	plsdef.c \
+	plshade.c \
+	plsym.c \
+	pltick.c \
+	plvpor.c \
+	plwind.c 
 
-.c.o:
-	$(CC) -c $(CFLAGS) /Fo$*.o $*.c 
-.for.o:
-	$(F77) -c $(FFLAGS) /Fo$*.o $*.for
-
-# Object file macros
-
-OBJ =	\
-	base.o \
-	convert.o \
-	genlin.o \
-	move.o \
-	pladv.o \
-	plaxes.o \
-	plbeg.o \
-	plbin.o \
-	plbox.o \
-	plbox3.o \
-	plccal.o \
-	plcntr.o \
-	plcol.o \
-	plcont.o \
-	plconf.o \
-	pldtik.o \
-	plend.o \
-	plenv.o \
-	plerr.o \
-	plexit.o \
-	plfill.o \
-	plfont.o \
-	plform.o \
-	plgra.o \
-	plgrid3.o \
-	plgspa.o \
-	plhist.o \
-	pljoin.o \
-	pllab.o \
-	pllclp.o \
-	plline.o \
-	pllsty.o \
-	plmesh.o \
-	plmtex.o \
-	plnxtv.o \
-	plot3d.o \
-	plpat.o \
-	plpsty.o \
-	plptex.o \
-	plrot.o \
-	plsdef.o \
-	plside3.o \
-	plstar.o \
-	plstyl.o \
-	plsvpa.o \
-	plsym.o \
-	plt3zz.o \
-	pltick.o \
-	plvasp.o \
-	plvpas.o \
-	plvpor.o \
-	plvsta.o \
-	plw3d.o \
-	plwid.o \
-	plwind.o \
-	plxybx.o \
-	plzbx.o \
-	string.o 
-
-OS2_OBJ = \
-	dispatch.o \
-	pdfutils.o \
-	hp7470.o \
-	hp7580.o \
-	impress.o \
-	ljii.o \
-	ps.o \
-	tek.o \
-	plmeta.o
-
-# DOS
-# Add dosvga.o to the above list.
-# (Just copy the next line to right above plmeta.o, and strip the leading #.
-#	dosvga.o \
-
-# OS/2
-# Take dosvga.o out of the list and add os2pm.o if you've purchassed it.
-# (Just copy the next line to right above plmeta.o, and strip the leading #.
-#	os2pm.o \
-
+CORE_OBJ = \
+	pdfutils$O \
+	plargs$O \
+	plbox$O \
+	plcont$O \
+	plcore$O \
+	plctrl$O \
+	plcvt$O \
+	pldtik$O \
+	plfill$O \
+	plhist$O \
+	plline$O \
+	plmap$O \
+	plot3d$O \
+	plpage$O \
+	plsdef$O \
+	plshade$O \
+	plsym$O \
+	pltick$O \
+	plvpor$O \
+	plwind$O 
 
 # Support files for font generators.
 
 FONT_OBJ = \
-	font01.o \
-	font02.o \
-	font03.o \
-	font04.o \
-	font05.o \
-	font06.o \
-	font07.o \
-	font08.o \
-	font09.o \
-	font10.o \
-	font11.o
+	font01$O \
+	font02$O \
+	font03$O \
+	font04$O \
+	font05$O \
+	font06$O \
+	font07$O \
+	font08$O \
+	font09$O \
+	font10$O \
+	font11$O
 
-# C language stubs for linking Plplot to Fortran.
+# Drivers
 
-CSTUB_OBJ = \
-	long2str.o \
-	sc3d.o \
-	scconf.o \
-	scstubs.o
+DRIVERS_C = \
+	dg300.c \
+	hpgl.c \
+	impress.c \
+	ljiip.c \
+	ljii.c \
+	next.c \
+	null.c \
+	plbuf.c \
+	plmeta.c \
+	ps.c \
+	tek.c \
+	xfig.c \
+	xwin.c
 
-# Fortran language stubs for linking Plplot to Fortran.
+DRIVERS_OBJ = \
+	dg300$O \
+	hpgl$O \
+	impress$O \
+	ljiip$O \
+	ljii$O \
+	next$O \
+	null$O \
+	plbuf$O \
+	plmeta$O \
+	ps$O \
+	tek$O \
+	xfig$O \
+	xwin$O
 
-FSTUB_OBJ = \
-	sfstubs.o
+# Utilities
 
-# Library dependencies
+UTIL_C = \
+	plrender.c \
+	plserver.c \
+	pltcl.c 
 
-libs:	libc libf
-libc:	$(PLLIBS)\plplot.lib
-libf:	$(PLLIBS)\plstub.lib
+# howto
 
-$(PLLIBS)\plplot.lib:	$(OBJ) $(OS2_OBJ)
-	@echo Ready to build plplot.lib
-	-@del plplot.lib
-	lib @<<
-plplot
-y
-+ $(OBJ:.o =.o &
-+) &
-+ $(OS2_OBJ:.o =.o &
-+) ;
-<<
+help:
+	@echo * first, set up the right paths in the beginning of this makefile
+	@echo * make a subdir (i.e. 'tmp') in within the current one ('sys\os2')
+	@echo * copy this makefile in this subdir
+	@echo * type 'make links' to copy necessary files
+	@echo * type 'make libs'   to make plplot libraries
+	@echo * type 'make install' to copy them to their destination (ignore errors)
+	@echo * type 'make cdemos' to make the demo files
+	@echo * see pmserv for the PM-Server for PLplot (needed by the demos)
+	@echo *
+	@echo * If you want to include/exclude device drivers, you have to:
+	@echo * 1. edit 'libfile.tmp' and add/delete the apropiate line(s)
+	@echo * 2. edit 'pmdevs.h'  to define/undefine the apropiate vars
+	@echo * 3. make the WHOLE stuff mentioned above new
 
-$(PLLIBS)\plstub.lib:	$(CSTUB_OBJ) $(FSTUB_OBJ)
-	@echo Ready to build plstub.lib
-	-@del plstub.lib
-	lib @<<
-plstub
-y
-+ $(CSTUB_OBJ:.o =.o &
-+) &
-+ $(FSTUB_OBJ:.o =.o &
-+) ;
-<<
+links:
+	copy $(LIB_DIR)\\*.fnt .
+	copy $(LIB_BASE)\\src\\*.c .
+	copy $(LIB_BASE)\\include\\*.h .
+	copy $(LIB_BASE)\\drivers\\*.c .
+	copy $(LIB_BASE)\\utils\\*.* .
+	copy ..\\*.c .
+	copy ..\\*.h
+	copy ..\\pmserv\\*.h .
+	copy ..\\libfiles.tmp .
+	copy $(LIB_BASE)\\examples\c\\*.c .
+	copy $(LIB_BASE)\\examples\c\\*.h .
 
-# In case you REALLY mean it!
 
-force: links libs
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Mark Olesen
+# olesen@Weber.QueensU.CA
+# 8-Sept-1994
+#
+# -----------------------------------------------------------------------
 
-# First time only, should be executed from $(PLTMP)
+# Add compiler specific driver to driver list
 
-links: linkmain linkstubs
+ADD_DRIVERS_C = os2pm.c
+ADD_DRIVERS_OBJ = os2pm$O
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 24-Jul-1994
+#
+# Initializations for building PLplot library.
+# -----------------------------------------------------------------------
 
-linkmain:
-	copy ..\src\*.c .
-	copy ..\include\*.h .
-	copy ..\examples\c\*.c .
-	copy ..\examples\f77\*.f .
-	copy ..\drivers\*.* .
-	copy ..\fonts\*.* .
-	copy ..\utils\*.* .
-	ren *.f *.for
+# Package major/minor version number, for shared libraries on some systems
+# (e.g. SunOS).  Warning: apps linked to it may fail on major version
+# changes (depending on OS).
 
-linkstubs:	
-	copy ..\sys\os2\stubf\*.* .
-	copy ..\src\stubc\*.* .
-	ren *.f *.for
+MAJOR_VERSION	= 4
+MINOR_VERSION	= 99
 
-# The metafile renderer.
+# Utilities
 
-plrender:
-	cl $(CFLAGS) plrender.c getopt.c plplot.lib
+RANLIB		= ar s
+ARLIB_BUILD	= ar q
+SHLIB_BUILD	= @SHLIB_BUILD@
 
-#----------------------------------------------------------------------#
+# Flags and other miscellanea
+
+CC_FLAGS	= -c -O -Wall -I.
+CC_FLAGS_DEMOS	= $(CC_FLAGS)
+SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
+SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
+SHLIB_SUFFIX	= @SHLIB_SUFFIX@
+SALIB_SUFFIX	= @SALIB_SUFFIX@
+
+# Hacks to deal with optimizer failures.
+
+CC_FLAGS_SCCONT = $(CC_FLAGS)
+CC_FLAGS_XWIN	= $(CC_FLAGS)
+
+# Dependent directories (use forward-slashes with `F')
+
+PLLIB_DIR	= .
+PLLIB_DIRF	= .
+PLFNT_DIR	= .
+PLFNT_DIRF	= .
+PLLIB_PATH	= $(PLLIB_DIRF)/
+PLFNT_PATH	= $(PLFNT_DIRF)/
+
+# The library components
+
+LIB_OBJS_SO	= $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(DRIVERS_OBJ) $(ADD_DRIVERS_OBJ) $(FSTUB_OBJ)
+LIB_OBJS_SA	= $(TCL_OBJ_SA) $(TK_OBJ_SA) $(FSTUB_OBJ_SA)
+LIB_OBJS	= $(LIB_OBJS_SO) $(LIB_OBJS_SA)
+
+# Library names
+
+PLLIB_AR	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$A
+PLLIB_SH	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SHLIB_SUFFIX)
+PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SALIB_SUFFIX)
+
+# This is used for making the install versions of plrender & plserver
+# (Must relink after installing shared library!)
+
+LIB_INSTALL	= -L$(LIB_DIRF) -l$(PLLIB_NAME)$(LIB_TAG)
+
+# These are what we link against.
+
+PLLIB_LDC	= -L$(PLLIB_DIRF) -l$(PLLIB_NAME)$(LIB_TAG)
+PLLIB_LDF	= -L$(PLLIB_DIRF) -l$(PLLIB_NAME)$(LIB_TAG)
+
+# Default is to build library(s) and utils.
+
+everything: libs plrender$E pltek$E $(TCL_EXE) $(TK_EXE)
+
+# Clear the suffix list to prevent problems.
+
+.SUFFIXES:
+.SUFFIXES: $O .cc .c .f .h .fm4
+
+# Inference rules, not specific to archive or shared libraries.
+
+.fm4.f:
+	$(M4) $(M4_FLAGS) $< >$*.f
+
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# PLplot build rule for library under Unix.
+# -----------------------------------------------------------------------
+
+# -----------------------------------------------------------------------
+# Set up inference rules appropriate for building archive libraries.
+# -----------------------------------------------------------------------
+
+.c$O:
+	$(CC) $(CC_FLAGS) $*.c
+
+.f$O:
+#	$(F77) $(F77_FLAGS) $*.f
+	f2c -A $*.f
+	$(CC) $(CC_FLAGS) $*.c
+	del $*.c
+
+# -----------------------------------------------------------------------
+# Library dependency list and targets
+# -----------------------------------------------------------------------
+
+PLLIBS = $(PLLIB_AR)
+
+libs:	$(PLLIBS)
+
+$(PLLIB_AR):	$(LIB_OBJS)
+#	-rm $(PLLIB_AR)
+	@echo "Building archive library"
+	$(ARLIB_BUILD) $(PLLIB_AR) $(ADD_DRIVERS_OBJ) @libfiles.tmp
+	$(RANLIB) $(PLLIB_AR)
+
+# -----------------------------------------------------------------------
+# Sick hacks.
+# -----------------------------------------------------------------------
+
+# Needs to be compiled using K&R C.
+
+#tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
+#		plstream.h tcpip.c
+#	$(OCC) $(CC_FLAGS) tcpip.c
+
+# Optimizer under AIX 3.2.3 bogues out here.
+
+#xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
+#	$(CC) $(CC_FLAGS_XWIN) xwin.c
+
+# Optimizer on SX-3 makes bogus code here.
+
+sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
+	$(CC) $(CC_FLAGS_SCCONT) sccont.c
+
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 19-Jul-1994
+#
+# PLplot program file dependencies and targets.
+# 
+# Targets supported here include: 
+#
+#	plrender	Metafile viewer
+#	plserver	Renderer for Tk/DP driver 
+#	pltcl		PLplot tcl interpreter
+#	plmodule$(SO)	Dynamically loaded module for PLplot python scripts
+#	pltek		Renderer for tek files
+#	fonts		font generators and font files
+#
+# All but "fonts" are in the default build rule.
+# -----------------------------------------------------------------------
+
+# Utility programs.
+
+pltek$O:	pltek.c
+	$(CC) $(CC_FLAGS) pltek.c
+
+pltek$E:	pltek$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@
+
+# This is what the pltek build rule used to be, but it's wrong, b/c
+# pltek doesn't need to link with tk, tcl, X11, etc.  Should make a
+# new macro for libs this thing depends on...
+#	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
+#		$(LDC_LIBS)
+
+plrender$O:	$(PLLIBS) plrender.c
+	$(CC) $(CC_FLAGS) plrender.c
+
+plrender$E:	$(PLLIBS) plrender$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
+
+plserver$O:	$(PLLIBS) plserver.c
+	$(CC) $(CC_FLAGS) plserver.c
+
+plserver$E:	$(PLLIBS) plserver$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
+
+pltcl$O:	$(PLLIBS) pltcl.c
+	$(CC) $(CC_FLAGS) pltcl.c
+
+pltcl$E:	$(PLLIBS) pltcl$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
+
+plmodule$O:	$(PLLIBS) plmodule.c
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) -I$(PYTHON_INC_DIR) plmodule.c
+
+plmodule$(SO):	$(PLLIBS) plmodule$O
+	$(LDSHARED) plmodule$O $(PLLIB_LDC) @LIBS@ $(TO) $@
+
+# -----------------------------------------------------------------------
 # Font files.
-# Note 6 font files actually created.
+# Note it is no longer necessary to actually make these since as of
+# PLPLOT 4.99a the font files are portable.
+#
 # sfont - standard font
 # xfont - extended fonts
 
 fonts:	sfont xfont
-	copy *.fnt $(PLFNT_DIR)
 
-sfont:	$(PLFNT_DIR)plstnd.fnt
-xfont:	$(PLFNT_DIR)plxtnd.fnt
+sfont:	$(PLFNT_PATH)plstnd5.fnt
+xfont:	$(PLFNT_PATH)plxtnd5.fnt
 
-$(PLFNT_DIR)plstnd.fnt:
-	$(CC) $(CFLAGS:AL=AH) /Gt16 stndfont.c font*.c
-	-stndfont
+$(PLFNT_PATH)plstnd5.fnt: stndfont$E pdfutils$O $(FONT_OBJ)
+	-./stndfont$E
+	-mv *.fnt $(PLFNT_DIR)
 
-$(PLFNT_DIR)plxtnd.fnt:
-	$(CC) $(CFLAGS:AL=AH) /Gt16 xtndfont.c font*.obj
-	-xtndfont
+$(PLFNT_PATH)plxtnd5.fnt: xtndfont$E pdfutils$O $(FONT_OBJ)
+	-./xtndfont$E
+	-mv *.fnt $(PLFNT_DIR)
 
-#----------------------------------------------------------------------#
-# Explicit rules
+stndfont$E:	$(PLLIBS) stndfont$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont$O $(FONT_OBJ) \
+		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+xtndfont$E:	$(PLLIBS) xtndfont$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont$O $(FONT_OBJ) \
+		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+# -----------------------------------------------------------------------
+# $Id$
 #
-# plfont.c may have font flags passed in
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 22-Jul-1994
+#
+# PLplot demo file dependencies and targets.
+# 
+# Targets supported here include: 
+#
+#	cdemos		All the C demos
+#	fdemos		All the Fortran demos
+#	tkdemos		All the extended wish (TK) demos
+#	x??[cf]		Demo number ??, C or fortran versions
+#	xtk??		Demo number ??, extended wish versions
+# -----------------------------------------------------------------------
 
-plfont.o: plfont.c
-	$(CC) -c $(CFLAGS) $(FONTFLAG)	/Fo$*.o $*.c
+# -----------------------------------------------------------------------
+# Example programs, in C.
 
-# dispatch.c and all the drivers need to know $(PLDEVICES).  The guts
-# of the driver routine are not compiled if its name is not present in
-# the device list.  You may want to leave drivers for specific systems
-# (Amiga, MS-DOS, OS/2, etc) out of this list.
+CDEMOS= x01c$E x02c$E x03c$E x04c$E x05c$E x06c$E x07c$E x08c$E x09c$E \
+	x10c$E x11c$E x12c$E x13c$E x14c$E x15c$E x16c$E x17c$E x18c$E \
+	x19c$E tutor$E
 
-dispatch.o: dispatch.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+cdemos:	$(CDEMOS)
 
-hp7470.o:	hp7470.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x01c$O:	$(CDEMO_HEADERS) x01c.c
+	$(CC) $(CC_FLAGS_DEMOS) x01c.c
 
-hp7580.o:	hp7580.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x01c$E:	$(PLLIBS) x01c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-impress.o:	impress.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x02c$O:	$(CDEMO_HEADERS) x02c.c
+	$(CC) $(CC_FLAGS_DEMOS) x02c.c
 
-ljii.o:	ljii.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x02c$E:	$(PLLIBS) x02c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-ps.o:	ps.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x03c$O:	$(CDEMO_HEADERS) x03c.c
+	$(CC) $(CC_FLAGS_DEMOS) x03c.c
 
-tek.o:	tek.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x03c$E:	$(PLLIBS) x03c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-plmeta.o:	plmeta.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
+x04c$O:	$(CDEMO_HEADERS) x04c.c
+	$(CC) $(CC_FLAGS_DEMOS) x04c.c
 
-#----------------------------------------------------------------------#
-# Build all the demos
+x04c$E:	$(PLLIBS) x04c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-demos : cdemos fdemos
+x05c$O:	$(CDEMO_HEADERS) x05c.c
+	$(CC) $(CC_FLAGS_DEMOS) x05c.c
 
-# Example programs, in c.
+x05c$E:	$(PLLIBS) x05c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-cdemos:	x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
-	x12c x13c x14c tutor
+x06c$O:	$(CDEMO_HEADERS) x06c.c
+	$(CC) $(CC_FLAGS_DEMOS) x06c.c
 
-x01c:	x01c.c
-	$(CC) $(CFLAGS) x01c.c plplot.lib
-x02c:	x02c.c
-	$(CC) $(CFLAGS) x02c.c plplot.lib
-x03c:	x03c.c
-	$(CC) $(CFLAGS) x03c.c plplot.lib
-x04c:	x04c.c
-	$(CC) $(CFLAGS) x04c.c plplot.lib
-x05c:	x05c.c
-	$(CC) $(CFLAGS) x05c.c plplot.lib
-x06c:	x06c.c
-	$(CC) $(CFLAGS) x06c.c plplot.lib
-x07c:	x07c.c
-	$(CC) $(CFLAGS) x07c.c plplot.lib
-x08c:	x08c.c
-	$(CC) $(CFLAGS) x08c.c plplot.lib
-x09c:	x09c.c
-	$(CC) $(CFLAGS) x09c.c plplot.lib
-x10c:	x10c.c
-	$(CC) $(CFLAGS) x10c.c plplot.lib
-x11c:	x11c.c
-	$(CC) $(CFLAGS) x11c.c plplot.lib
-x12c:	x12c.c
-	$(CC) $(CFLAGS) x12c.c plplot.lib
-x13c:	x13c.c
-	$(CC) $(CFLAGS) x13c.c plplot.lib
-x14c:	x14c.c
-	$(CC) $(CFLAGS) x14c.c plplot.lib
-tutor:	tutor.c
-	$(CC) $(CFLAGS) tutor.c plplot.lib
+x06c$E:	$(PLLIBS) x06c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
+x07c$O:	$(CDEMO_HEADERS) x07c.c
+	$(CC) $(CC_FLAGS_DEMOS) x07c.c
+
+x07c$E:	$(PLLIBS) x07c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x08c$O:	$(CDEMO_HEADERS) x08c.c
+	$(CC) $(CC_FLAGS_DEMOS) x08c.c
+
+x08c$E:	$(PLLIBS) x08c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x09c$O:	$(CDEMO_HEADERS) x09c.c
+	$(CC) $(CC_FLAGS_DEMOS) x09c.c
+
+x09c$E:	$(PLLIBS) x09c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x10c$O:	$(CDEMO_HEADERS) x10c.c
+	$(CC) $(CC_FLAGS_DEMOS) x10c.c
+
+x10c$E:	$(PLLIBS) x10c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x11c$O:	$(CDEMO_HEADERS) x11c.c
+	$(CC) $(CC_FLAGS_DEMOS) x11c.c
+
+x11c$E:	$(PLLIBS) x11c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x12c$O:	$(CDEMO_HEADERS) x12c.c
+	$(CC) $(CC_FLAGS_DEMOS) x12c.c
+
+x12c$E:	$(PLLIBS) x12c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x13c$O:	$(CDEMO_HEADERS) x13c.c
+	$(CC) $(CC_FLAGS_DEMOS) x13c.c
+
+x13c$E:	$(PLLIBS) x13c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x14c$O:	$(CDEMO_HEADERS) x14c.c
+	$(CC) $(CC_FLAGS_DEMOS) x14c.c
+
+x14c$E:	$(PLLIBS) x14c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x15c$O:	$(CDEMO_HEADERS) x15c.c
+	$(CC) $(CC_FLAGS_DEMOS) x15c.c
+
+x15c$E:	$(PLLIBS) x15c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x16c$O:	$(CDEMO_HEADERS) x16c.c
+	$(CC) $(CC_FLAGS_DEMOS) x16c.c
+
+x16c$E:	$(PLLIBS) x16c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x17c$O:	$(CDEMO_HEADERS) x17c.c
+	$(CC) $(CC_FLAGS_DEMOS) x17c.c
+
+x17c$E:	$(PLLIBS) x17c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x18c$O:	$(CDEMO_HEADERS) x18c.c
+	$(CC) $(CC_FLAGS_DEMOS) x18c.c
+
+x18c$E:	$(PLLIBS) x18c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x19c$O:	$(CDEMO_HEADERS) x19c.c
+	$(CC) $(CC_FLAGS_DEMOS) x19c.c
+
+x19c$E:	$(PLLIBS) x19c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x19c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+tutor$O:	$(CDEMO_HEADERS) tutor.c
+	$(CC) $(CC_FLAGS_DEMOS) tutor.c
+
+tutor$E:	$(PLLIBS) tutor$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+bugc$O:	$(CDEMO_HEADERS) bugc.c
+	$(CC) $(CC_FLAGS_DEMOS) bugc.c
+
+bugc$E:	$(PLLIBS) bugc$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) bugc$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+# -----------------------------------------------------------------------
 # Example programs, in Fortran.
 
-fdemos:	x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f
+FDEMOS= x01f$E x02f$E x03f$E x04f$E x05f$E x06f$E x07f$E x08f$E x09f$E \
+	x10f$E x11f$E x12f$E x13f$E x16f$E
 
-x01f:
-	$(F77) $(FFLAGS) x01f.for plplot.lib plstub.lib
-x02f:
-	$(F77) $(FFLAGS) x02f.for plplot.lib plstub.lib
-x03f:
-	$(F77) $(FFLAGS) x03f.for plplot.lib plstub.lib
-x04f:
-	$(F77) $(FFLAGS) x04f.for plplot.lib plstub.lib
-x05f:
-	$(F77) $(FFLAGS) x05f.for plplot.lib plstub.lib
-x06f:
-	$(F77) $(FFLAGS) x06f.for plplot.lib plstub.lib
-x07f:
-	$(F77) $(FFLAGS) x07f.for plplot.lib plstub.lib
-x08f:
-	$(F77) $(FFLAGS) x08f.for plplot.lib plstub.lib
-x09f:
-	$(F77) $(FFLAGS) /Gt512 x09f.for plplot.lib plstub.lib
-x10f:
-	$(F77) $(FFLAGS) x10f.for plplot.lib plstub.lib
-x11f:
-	$(F77) $(FFLAGS) x11f.for plplot.lib plstub.lib
-x12f:
-	$(F77) $(FFLAGS) x12f.for plplot.lib plstub.lib
-x13f:
-	$(F77) $(FFLAGS) x13f.for plplot.lib plstub.lib
+fdemos:	$(FDEMOS)
+
+x01f$O:	x01f.f
+	$(F77) $(F77_FLAGS) x01f.f
+
+x01f$E:	$(PLLIBS) x01f$O
+	$(LDF) $(LDF_FLAGS) x01f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x02f$O:	x02f.f
+	$(F77) $(F77_FLAGS) x02f.f
+
+x02f$E:	$(PLLIBS) x02f$O
+	$(LDF) $(LDF_FLAGS) x02f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x03f$O:	x03f.f
+	$(F77) $(F77_FLAGS) x03f.f
+
+x03f$E:	$(PLLIBS) x03f$O
+	$(LDF) $(LDF_FLAGS) x03f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x04f$O:	x04f.f
+	$(F77) $(F77_FLAGS) x04f.f
+
+x04f$E:	$(PLLIBS) x04f$O
+	$(LDF) $(LDF_FLAGS) x04f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x05f$O:	x05f.f
+	$(F77) $(F77_FLAGS) x05f.f
+
+x05f$E:	$(PLLIBS) x05f$O
+	$(LDF) $(LDF_FLAGS) x05f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x06f$O:	x06f.f
+	$(F77) $(F77_FLAGS) x06f.f
+
+x06f$E:	$(PLLIBS) x06f$O
+	$(LDF) $(LDF_FLAGS) x06f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x07f$O:	x07f.f
+	$(F77) $(F77_FLAGS) x07f.f
+
+x07f$E:	$(PLLIBS) x07f$O
+	$(LDF) $(LDF_FLAGS) x07f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x08f$O:	x08f.f
+	$(F77) $(F77_FLAGS) x08f.f
+
+x08f$E:	$(PLLIBS) x08f$O
+	$(LDF) $(LDF_FLAGS) x08f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x09f$O:	x09f.f
+	$(F77) $(F77_FLAGS) x09f.f
+
+x09f$E:	$(PLLIBS) x09f$O
+	$(LDF) $(LDF_FLAGS) x09f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x10f$O:	x10f.f
+	$(F77) $(F77_FLAGS) x10f.f
+
+x10f$E:	$(PLLIBS) x10f$O
+	$(LDF) $(LDF_FLAGS) x10f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x11f$O:	x11f.f
+	$(F77) $(F77_FLAGS) x11f.f
+
+x11f$E:	$(PLLIBS) x11f$O
+	$(LDF) $(LDF_FLAGS) x11f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x12f$O:	x12f.f
+	$(F77) $(F77_FLAGS) x12f.f
+
+x12f$E:	$(PLLIBS) x12f$O
+	$(LDF) $(LDF_FLAGS) x12f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x13f$O:	x13f.f
+	$(F77) $(F77_FLAGS) x13f.f
+
+x13f$E:	$(PLLIBS) x13f$O
+	$(LDF) $(LDF_FLAGS) x13f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x16f$O:	x16f.f
+	$(F77) $(F77_FLAGS) x16f.f
+
+x16f$E:	$(PLLIBS) x16f$O
+	$(LDF) $(LDF_FLAGS) x16f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+bugf$O:	bugf.f
+	$(F77) $(F77_FLAGS) bugf.f
+
+bugf$E:	$(PLLIBS) bugf$O
+	$(LDF) $(LDF_FLAGS) bugf$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+# -----------------------------------------------------------------------
+# TK example programs.
+
+TKDEMOS = xtk01$E xtk02$E xtk04$E
+
+tkdemos: $(TKDEMOS)
+
+xtk01$O:	$(CDEMO_HEADERS) xtk01.c
+	$(CC) $(CC_FLAGS_DEMOS) xtk01.c
+
+xtk01$E:  $(PLLIBS) xtk01$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+xtk02$O:	$(CDEMO_HEADERS) xtk02.c
+	$(CC) $(CC_FLAGS_DEMOS) xtk02.c
+
+xtk02$E:  $(PLLIBS) xtk02$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+xtk04$O:	$(CDEMO_HEADERS) xtk04.c
+	$(CC) $(CC_FLAGS_DEMOS) xtk04.c
+
+xtk04$E:  $(PLLIBS) xtk04$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk04$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+# -----------------------------------------------------------------------
+# C++ example programs.
+
+CXXDEMOS = x01cc$E
+
+cxxdemos: $(CXXDEMOS)
+
+x01cc$O: x01cc.cc
+	$(CXX) $(CXX_FLAGS_DEMOS) x01cc.cc	
+
+x01cc$E:  $(PLLIBS) x01cc$O
+	$(LDCXX) $(LDCXX_FLAGS) $(STARTUP) x01cc$O \
+	       	$(PLLIB_LDC) $(TO) $@ $(LDCXX_LIBS)
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Make assignments and targets for installation under Unix.
+#
+# It is recommended that you use a dedicated directory such as
+# /usr/local/plplot (read the FAQ on this topic).  The install directory
+# will be created if necessary, as will subdirectories bin, doc, examples,
+# include, lib, man (eventually), and tcl.
+#
+# Notes: 
+#	if Tk support is not included, TK_INSTALL will be null.
+#	if Tcl support is not included, TCL_INSTALL will be null.
+#
+# -----------------------------------------------------------------------
+
+install: install_lib install_utils install_demos
+
+install_lib:
+	-if not exist $(INCLUDE_DIR) mkdir $(INCLUDE_DIR)
+	-if not exist $(LIB_DIR) mkdir $(LIB_DIR)
+	-if not exist $(DOC_DIR) mkdir $(DOC_DIR)
+	-if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+	-if not exist $(INFO_DIR) mkdir $(INFO_DIR)
+	-copy $(PLLIB_DIR)\$(PLLIB_BASE)*$A $(LIB_DIR)
+	-copy $(PLFNT_DIR)\*.fnt $(LIB_DIR)
+	-echo $(LIB_DIR)
+	-echo $(LIB_DIR)\*$A
+	-$(RANLIB) $(LIB_DIRF)/$(PLLIB_BASE)*$A
+#	-cd ..\..\..\..
+#	-for %i in (README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks) do copy %i $(DOC_DIR)
+	-copy ..\..\..\..\README	$(DOC_DIR)
+	-copy ..\..\..\..\README.1st	$(DOC_DIR)
+	-copy ..\..\..\..\Changes.log	$(DOC_DIR)
+	-copy ..\..\..\..\COPYRIGHTS	$(DOC_DIR)
+	-copy ..\..\..\..\FAQ		$(DOC_DIR)
+	-copy ..\..\..\..\ToDo		$(DOC_DIR)
+	-copy ..\..\..\..\mklinks	$(DOC_DIR)
+	-if not exist $(DOC_DIR)\README.local do copy README.local $(DOC_DIR)
+	-copy ..\..\..\..\doc\*.info $(INFO_DIR)
+	-copy ..\..\..\..\scripts\pl*.* $(BIN_DIR)
+#	-cd include
+#	-for %i in (plplotP.h plplot.h plplotX.h plplotTK.h plevent.h plstream.h pdf.h tclMatrix.h) do copy %i $(INCLUDE_DIR)
+	copy plplotP.h		$(INCLUDE_DIR)
+	copy plplot.h		$(INCLUDE_DIR)
+	copy plplotX.h		$(INCLUDE_DIR)
+	copy plplotTK.h		$(INCLUDE_DIR)
+	copy plevent.h		$(INCLUDE_DIR)
+	copy plstream.h		$(INCLUDE_DIR)
+	copy pdf.h		$(INCLUDE_DIR)
+	copy tclMatrix.h	$(INCLUDE_DIR)
+
+install_demos:
+	-if not exist $(DEMOS_DIR) mkdir $(DEMOS_DIR)
+	-copy Makedemo $(DEMOS_DIR)\Makefile
+# C examples	
+	-if not exist $(DEMOS_DIR)\C mkdir $(DEMOS_DIR)\C
+	-copy $(DEMOS_DIR)\Makefile $(DEMOS_DIR)\C
+	-copy ..\..\..\..\examples\C\*.* $(DEMOS_DIR)\C
+# f77 examples
+#	-if not exist $(DEMOS_DIR)\f77 mkdir $(DEMOS_DIR)\f77
+#	-copy $(DEMOS_DIR)\Makefile $(DEMOS_DIR)\f77
+#	-copy ..\..\..\..\examples\f77\*.* $(DEMOS_DIR)\f77
+
+install_utils:
+	$(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
+		-o plrender$E $(LDC_LIBS)
+	$(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
+		-o pltek$E $(LDC_LIBS)
+	-$(BIND) plrender$E $(BIND_OPTS)
+	-$(STRIP) plrender$E
+	-$(BIND) pltek$E $(BIND_OPTS)
+	-$(STRIP) pltek$E
+	-copy plrender$E $(BIN_DIR)
+	-copy pltek$E $(BIN_DIR)
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 22-Jul-1994
+#
+# Miscellaneous targets.
+# -----------------------------------------------------------------------
+
+# Cleanup
+
+clean:
+#	-rm * $(PLLIB_PATH)$(PLLIB_BASE)*
+
+# re-bind executables with emx options (ie, Dangerous DOS options)
+
+bind:	bind_utils
+
+bind_utils:
+	-$(BIND) plrender$E $(BIND_OPTS)
+	-$(BIND) pltek$E $(BIND_OPTS)
+
+# Autogeneration of dependencies.  Use gcc -MM because X11's "makedepend"
+# includes system headers, and that really sucks.
+
+depend:
+	gcc -MM $(CORE_C) $(DRIVERS_C) $(ADD_DRIVERS_C) \
+	$(UTIL_C) $(FSTUB_C) $(TCL_C) $(TK_C) \
+	| ./cvtdeps 
+	@echo "Rerun configure for the new dependencies to take effect"
+
+# -----------------------------------------------------------------------
+# Auto-generated dependency list follows (warning: it's ugly).
+
+pdfutils$O: pdfutils.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plargs$O: plargs.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plbox$O: plbox.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plcont$O: plcont.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plcore$O: plcore.c plcore.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  drivers.h plDevs.h pldebug.h
+plctrl$O: plctrl.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plcvt$O: plcvt.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+pldtik$O: pldtik.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plfill$O: plfill.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plhist$O: plhist.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plline$O: plline.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plmap$O: plmap.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plot3d$O: plot3d.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plpage$O: plpage.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plsdef$O: plsdef.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plshade$O: plshade.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plsym$O: plsym.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+pltick$O: pltick.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plvpor$O: plvpor.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plwind$O: plwind.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+dg300$O: dg300.c plDevs.h
+hpgl$O: hpgl.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+impress$O: impress.c plDevs.h
+ljiip$O: ljiip.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+ljii$O: ljii.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+ps$(): ps.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+xfig$(): xfig.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+next$O: next.c plDevs.h
+null$O: null.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+plbuf$O: plbuf.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h drivers.h \
+  metadefs.h
+plmeta$O: plmeta.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  pldebug.h drivers.h metadefs.h
+ps$O: ps.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+tek$O: tek.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h plevent.h
+xfig$O: xfig.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+xwin$O: xwin.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  plxwd.h drivers.h plevent.h
+plrender$O: plrender.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  plevent.h metadefs.h
+plserver$O: plserver.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h \
+  plstrm.h pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h
+pltcl$O: pltcl.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h pltcl.h \
+  tclMatrix.h
+sc3d$O: sc3d.c plstubs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+sccont$O: sccont.c plstubs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  pldebug.h
+scstubs$O: scstubs.c plstubs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  pldebug.h
+tclAPI$O: tclAPI.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h pltcl.h \
+  tclMatrix.h
+tclMain$O: tclMain.c
+tclMatrix$O: tclMatrix.c tclMatrix.h
+tk$O: tk.c plDevs.h pltkd.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  pltk.h pltcl.h tclMatrix.h plxwd.h tcpip.h drivers.h metadefs.h plevent.h
+tkshell$O: tkshell.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h \
+  plstrm.h pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h
+tcpip$O: tcpip.c plDevs.h plConfig.h tcpip.h pdf.h
+plframe$O: plframe.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h \
+  plstrm.h pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h plxwd.h tcpip.h
+tkMain$O: tkMain.c
+plr$O: plr.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h plstrm.h \
+  pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h plevent.h metadefs.h
+

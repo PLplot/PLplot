@@ -66,7 +66,7 @@ Revision History:
 
 VOID CheckMenuItem( HWND hwnd, SHORT sMenuItem, BOOL fCheck );
 
-VOID FAR PipeManagerThread( PMSTUFF *pmstuff );
+void PipeManagerThread( void *stuff );
 MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 );
 void InitiatePipeManagement( void );
 long	pmcolor( long color );
@@ -79,10 +79,10 @@ static ULONG flFrameFlags =	FCF_TITLEBAR | FCF_SYSMENU |
 
 HAB hab;
 HMQ hmq;
-HWND hwndFrame, hwndClient;
+HWND hwndFrame = NULLHANDLE, hwndClient = NULLHANDLE;
 QMSG qmsg;
 
-PLINT inbuflen, inbuffer[ PIPE_BUFFER_SIZE ];
+PLINT inbuflen = 0, inbuffer[ PIPE_BUFFER_SIZE ] = {};
 int inbuffree = 1;
 
 // I'm not really too clear on just how big this number should be.  When I
@@ -92,8 +92,8 @@ int inbuffree = 1;
 // this number big enough for most graphs to work without a hitch.
 
 #define MAX_LIST_LEN	60000
-PLINT permbuflen, permbufferfull=0;
-PLINT _huge permbuffer[ MAX_LIST_LEN ];
+PLINT permbuflen = 0, permbufferfull=0;
+PLINT permbuffer[ MAX_LIST_LEN ] = {};
 
 #define WM_DRAW_MORE	(WM_USER + 0)
 #define WM_NEW_SESSION	(WM_USER + 1)
@@ -113,7 +113,7 @@ void main ( void )
     hab = WinInitialize(0);
     hmq = WinCreateMsgQueue( hab, 0 );
     
-    WinRegisterClass( hab, szClientClass, ClientWndProc, CS_SIZEREDRAW, 
+    WinRegisterClass( hab, szClientClass, (PFNWP) ClientWndProc, CS_SIZEREDRAW, 
 	0 );
     
     hwndFrame = WinCreateStdWindow( HWND_DESKTOP, WS_VISIBLE,
@@ -122,11 +122,11 @@ void main ( void )
 		0L, (HMODULE) 0, ID_RESOURCE, &hwndClient );
 
     WinSendMsg( hwndFrame, WM_SETICON,
-	WinQuerySysPointer( HWND_DESKTOP, SPTR_APPICON, FALSE ), NULL );
+	(MPARAM) WinQuerySysPointer( HWND_DESKTOP, SPTR_APPICON, FALSE ), NULL );
 
     InitiatePipeManagement();	// spawns a new thread for this purpose.
     
-    while( WinGetMsg( hab, &qmsg, NULL, 0, 0 ) )
+    while( WinGetMsg( hab, &qmsg, NULLHANDLE, 0, 0 ) )
 	WinDispatchMsg( hab, &qmsg );
 
     WinDestroyWindow( hwndFrame );
@@ -142,24 +142,24 @@ void main ( void )
 
 MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 {
-    long i=0, j;
-    long startofset, atendofimage, commandlen, range, 
-			pmrgb, pmcolorindex;
+    long i=0, j = 0;
+    long startofset = 0, atendofimage = 0, commandlen = 0, range = 0, 
+			pmrgb = 0, pmcolorindex = 0;
     HPS hps;
     POINTL ptl;
-    static SHORT cx, cy;
-    static float scalex, scaley;
+    static SHORT cx = 0, cy = 0;
+    static float scalex = 0.0, scaley = 0.0;
     static int rgbused = 0;
     static int WaitingToAdvance = 0;
     static int justadvanced = 0;
     static int autoadvance = 0;
-    SHORT  sMenuItem;
+    SHORT  sMenuItem = 0;
     static long resumewith = 0;
-    static PLINT oldx, oldy, oldcolor = CLR_WHITE, firstcolor = CLR_WHITE;
+    static PLINT oldx = 0, oldy = 0, oldcolor = CLR_WHITE, firstcolor = CLR_WHITE;
 
     switch (msg) {
 	case WM_COMMAND:
-	    switch ( COMMANDMSG(&msg)->cmd ) {
+	    switch ( SHORT1FROMMP (mp1) ) {                    // COMMANDMSG(&msg)->cmd ) {
 		case IDM_ADVANCE:
 		    WinAlarm( HWND_DESKTOP, WA_ERROR );
 		    if (WaitingToAdvance) {
@@ -171,7 +171,7 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 
 		case IDM_AUTO_ADVANCE:
 		    autoadvance = !autoadvance;
-		    sMenuItem = COMMANDMSG(&msg)->cmd;
+		    sMenuItem = IDM_AUTO_ADVANCE;                               // COMMANDMSG(&msg)->cmd;
 		    CheckMenuItem( hwnd, sMenuItem, autoadvance );
 		    return 0;
 	    }
@@ -185,7 +185,7 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 	    return 0;
 	
 	case WM_PAINT:
-	    hps = WinBeginPaint( hwnd, NULL, NULL );
+	    hps = WinBeginPaint( hwnd, NULLHANDLE, NULL );
 
 	    ptl.x = oldx = 0; ptl.y = oldy = 0;
 	    GpiMove( hps, &ptl );
@@ -270,8 +270,8 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 				break;
 			
 			    default:
-				WinAlarm( HWND_DESKTOP, WA_ERROR );
 				printf( "*** UNRECOGNIZED COMMAND ***\n" );
+				WinAlarm( HWND_DESKTOP, WA_ERROR );
 				exit(0);
 				break;
 			
@@ -289,6 +289,7 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 	    return 0;
 
 	case WM_DRAW_MORE:
+	    DosEnterCritSec();
 	    inbuffree = 0;	// Mark the buffer "off-limits".
 
 // Get a PS, and restore prior state.
@@ -399,19 +400,19 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 				break;
 			
 			    default:
+				printf( "*** UNRECOGNIZED ESC COMMAND ***%i\n", (int) inbuffer[i-1] );
 				WinAlarm( HWND_DESKTOP, WA_ERROR );
-				printf( "*** UNRECOGNIZED COMMAND ***\n" );
 				exit(0);
 				break;
 			
 			}
 			break;
 		
-		    default:
-			WinAlarm( HWND_DESKTOP, WA_ERROR );
-			printf( "*** UNRECOGNIZED COMMAND ***\n" );
-			exit(0);
-			break;
+		default:
+		  printf( "*** UNRECOGNIZED COMMAND ***%i\n", (int) inbuffer[i-1] );
+		  WinAlarm( HWND_DESKTOP, WA_ERROR );
+		  exit(0);
+		  break;
 		}
 		if (!permbufferfull && permbuflen + range + commandlen 
 				< MAX_LIST_LEN)
@@ -438,6 +439,8 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 		WinPostMsg( hwndFrame, WM_DRAW_MORE, NULL, NULL );
 	    }
 
+            DosExitCritSec();
+
 	    return 0;
 
 	case WM_NEW_SESSION:
@@ -460,9 +463,9 @@ MRESULT EXPENTRY ClientWndProc( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 long	pmcolor( long color )
 {
     static long pmcolors[] = {
-	CLR_WHITE, CLR_RED, CLR_YELLOW, CLR_GREEN,
-	CLR_CYAN, CLR_WHITE, CLR_WHITE, CLR_PALEGRAY,
-	CLR_WHITE, CLR_BLUE, CLR_GREEN, CLR_CYAN,
+	CLR_BLACK, CLR_RED, CLR_YELLOW, CLR_GREEN,
+	CLR_DARKCYAN, CLR_PINK, CLR_DARKGRAY, CLR_PALEGRAY,
+	CLR_BROWN, CLR_BLUE, CLR_DARKBLUE, CLR_CYAN,
 	CLR_RED, CLR_PINK, CLR_YELLOW, CLR_WHITE
     };
 
@@ -481,7 +484,7 @@ long	pmcolor( long color )
 
 void InitiatePipeManagement( void )
 {
-    static VOID *pThreadStack;
+    static VOID *pThreadStack = NULL;
     static TID	tidPipeManager;
     static PMSTUFF pmstuff;
     
@@ -505,24 +508,27 @@ void InitiatePipeManagement( void )
 * the window procedure.
 \*----------------------------------------------------------------------------*/
 
-VOID FAR PipeManagerThread( PMSTUFF *pmstuff )
+void PipeManagerThread( void *stuff )
 {
     HPIPE hp;
-    USHORT bytes1, bytes2, bytes3, rv1, rv2, retries;
-    PLINT buflen, buffer[ PIPE_BUFFER_SIZE ];
+    USHORT bytes2 = 0, rv1, rv2, retries;
+    ULONG  bytes1 = 0L, bytes3 = 0L;
+    PLINT buflen = 0, buffer[ PIPE_BUFFER_SIZE ] = {};
     char  *pbuffer = (char *) buffer;
+    PMSTUFF *pmstuff = (PMSTUFF *) stuff;
+    int isfree;
     
 // Now open up the pipe and start handling it.
     
-    DosMakeNmPipe( /*"\\pipe\\bubba"*/ PIPE_NAME,	// pipe name.
-		&hp,			// pipe handle.
-		NP_ACCESS_INBOUND | NP_NOINHERIT | NP_NOWRITEBEHIND,
-		1 | NP_WAIT | NP_READMODE_BYTE | NP_TYPE_BYTE,
-		512,			// output-buffer size.
-		//512,			// input-buffer size.
-		2*PIPE_BUFFER_SIZE,	// input-buffer size.
-		500L );			// default timeout for DosWaitNmPipe.
-
+     DosCreateNPipe( /*"\\pipe\\bubba"*/ PIPE_NAME,	// pipe name.
+		     &hp,			// pipe handle.
+		     NP_ACCESS_INBOUND | NP_NOINHERIT | NP_NOWRITEBEHIND,
+		     1 | NP_WAIT | NP_READMODE_BYTE | NP_TYPE_BYTE,
+		     512,			// output-buffer size.
+		     //512,			// input-buffer size.
+		     2*PIPE_BUFFER_SIZE,	// input-buffer size.
+		     500L );			// default timeout for DosWaitNmPipe
+		       
 // 2-1-92
 // Comments:  In vol 1 of the OS/2 Programmer's Reference, the output
 // and input buffer sizes are listed in the opposite order of what is
@@ -537,18 +543,18 @@ VOID FAR PipeManagerThread( PMSTUFF *pmstuff )
 // crazy diagnostics with some useful, effective actions.
 
     do {
-	if (DosConnectNmPipe( hp )) {
+	if (DosConnectNPipe( hp )) {
 	    DosClose( hp );
 	    exit(0);
 	}
 
 	WinPostMsg( hwndFrame, WM_NEW_SESSION, NULL, NULL );
 
-	do {
-	    rv1 = DosRead( hp, &buflen, sizeof( PLINT ), &bytes1 );
-	    if (bytes1 == 0) break;
-//	    if (bytes1 != 4)
-//		printf( "Major screw up.  buflen not read correctly.\n" );
+        do {
+            rv1 = DosRead( hp, &buflen, sizeof( PLINT ), &bytes1 );
+            if (bytes1 == 0) break;
+            // if (bytes1 != sizeof (PLINT) )
+		// printf( "Major screw up.  buflen not read correctly.\n" );
 
 	    bytes2 = 0;
 	    retries = -1;
@@ -557,9 +563,9 @@ VOID FAR PipeManagerThread( PMSTUFF *pmstuff )
 		rv2 = DosRead( hp, &pbuffer[bytes2], 
 				(USHORT) (buflen*sizeof(PLINT) - (PLINT) bytes2),
 				&bytes3 );
-		bytes2 += bytes3;
-//		if (!bytes3) printf( "No bytes returned!\n" );
-//		if (rv2) printf( "Bogus pipe read.\n" );
+		bytes2 += (PLINT) bytes3;
+		//if (!bytes3) printf( "No bytes returned!\n" );
+		//if (rv2) printf( "Bogus pipe read.\n" );
 		    
 	    } while ( (PLINT) bytes2 < buflen*sizeof(PLINT) );
 	
@@ -567,18 +573,32 @@ VOID FAR PipeManagerThread( PMSTUFF *pmstuff )
 //		(int) buflen, (int) bytes2, (int) buflen*sizeof(PLINT) );
 //	    if (retries) printf( "%d retries to get whole packet.\n", retries );
 	    
-//	    if (rv1 || rv2)
-//		printf( "rv1=%d, rv2=%d \n", rv1, rv2 );
+	    if (rv1 || rv2)
+		printf( "rv1=%d, rv2=%d \n", rv1, rv2 );
 
-	    while (!inbuffree );
+            DosEnterCritSec();
+            isfree = inbuffree;
+            DosExitCritSec();
+
+            while (!isfree)
+             {
+              _sleep2(100);
+
+              DosEnterCritSec();
+              isfree = inbuffree;
+              DosExitCritSec();
+             }  
+    
+            DosEnterCritSec();
 	    inbuflen = buflen;
 	    memcpy( inbuffer, buffer, (int) buflen*sizeof(PLINT) );
 	    inbuffree = 0;
+            DosExitCritSec();
 	    WinPostMsg( hwndFrame, WM_DRAW_MORE, NULL, NULL );
 
 	} while( bytes2 );
 
-	DosDisConnectNmPipe( hp );
+	DosDisConnectNPipe( hp );
 //	printf( "Connection closed.\n\n" );
     
     } while(1);
@@ -595,7 +615,7 @@ VOID FAR PipeManagerThread( PMSTUFF *pmstuff )
 
 VOID CheckMenuItem( HWND hwnd, SHORT sMenuItem, BOOL fCheck )
 {
-    HWND hwndParent	= WinQueryWindow( hwnd, QW_PARENT, FALSE );
+    HWND hwndParent	= WinQueryWindow( hwnd, QW_PARENT );
     HWND hwndMenu	= WinWindowFromID( hwndParent, FID_MENU );
 
     WinSendMsg( hwndMenu, MM_SETITEMATTR,

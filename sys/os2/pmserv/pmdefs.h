@@ -1,10 +1,3 @@
-/* $Id$
-   $Log$
-   Revision 1.1  1992/05/20 21:33:45  furnish
-   Initial checkin of the whole PLPLOT project.
-
-*/
-
 /*
 	pmdefs.h
 	Geoffrey Furnish

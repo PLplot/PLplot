@@ -11,5 +11,6 @@ description	'PLPLOT OS/2 PM Graphics Server.'
 
 protmode
 heapsize	1024
-stacksize	8192
+stacksize	32768
 exports		ClientWndProc
+
