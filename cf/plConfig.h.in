@@ -58,11 +58,17 @@
 /* Define if [incr Tk] is available */
 #undef HAVE_ITK
 
+/* Define HAVE_ITCLDECLS_H if itcldecls.h is available. */
+#undef HAVE_ITCLDECLS_H
+
 /* Define if you want PLplot's float type to be double */
 #undef PL_DOUBLE
 
 /* Define if you will be using dynloadable drivers */
 #undef ENABLE_DYNAMIC_DRIVERS
+
+/* Define if you want to force the X11 visual to the default */
+#undef USE_DEFAULT_VISUAL
 
 /* Install directories. */
 
