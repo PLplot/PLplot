@@ -418,11 +418,20 @@ divert(-1)
 
 AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
-AM_INIT_AUTOMAKE(plplot, 5.1.0)
+### Package version number
+AM_INIT_AUTOMAKE(plplot, 5.2.0)
 
-### Version number for the shared libraries, conforming to libtool standard 
+### Version number for the shared libraries.  Note we are keeping the shared
+### library version consistent with the package version in direct
+### contradiction to the libtool directive on this.  Thus, these numbers
+### don't mean a lot in terms of binary compatibility.  Someday, we should
+### start over with 0:0:0 and rigourously enforce number changes whenever
+### binary compatibility changes.  
 
-SOVERSION=6:0:1
+### N.B. The "secret" libtool code for getting 5.y.x for the library 
+### version is 5+y:x:y.  Thus 7:0:2 ==> 5.2.0.
+
+SOVERSION=7:0:2
 AC_SUBST(SOVERSION)
 
 ### Test for programs

@@ -25,9 +25,6 @@ octave so sysloc.in should be adjusted accordingly.
 build-relocatable.  This facility is essential so that our rpm and deb
 packages build correctly.
 
-* Version reviewed.  There should be a clear distinction between PLplot
-package version 5.2.0 ? and the version of the PLplot libraries 1.0.0 ?
-
 * http://sourceforge.net/mailarchive/message.php?msg_id=1785861 documents
 the many minor memory leaks found by valgrind throughout the dynloader area.
 Anybody with good understanding of that code section?  Joao is planning to

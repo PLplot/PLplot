@@ -1,5 +1,12 @@
 2002-12-31  Alan W. Irwin <airwin@users.sourceforge.net>
 
+	* Changed version number of PLplot package *and* associated
+	  libraries to 5.2.0 in anticipation of the forthcoming release.  To
+	  get this to work properly must have a fresh checkout or else run
+	  'make distclean' before trying this change.
+
+2002-12-31  Alan W. Irwin <airwin@users.sourceforge.net>
+
 	* Finished Java swig-based interface to Plplot for now.  Current
 	  limitations are detailed in bindings/java/README.javaAPI.
 
