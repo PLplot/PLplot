@@ -1,6 +1,14 @@
 # $Id$
 # $Log$
-# Revision 1.15  1995/05/06 17:08:15  mjl
+# Revision 1.16  1995/05/19 22:19:21  mjl
+# Fix for Tk 4.0.  Lines of the form
+#      if {[tk colormodel $w] == "color"}
+# no longer work (the command was eliminated), and have been replaced with
+#      if {[winfo depth $w] == 1}
+# which has the same effect -- to determine if we are on a color or mono
+# system.
+#
+# Revision 1.15  1995/05/06  17:08:15  mjl
 # Shave and a haircut.
 #
 # Revision 1.14  1995/03/16  23:15:25  mjl
@@ -133,19 +141,19 @@ proc normal_text_setup {w {width 60} {height 30}} {
     $w.t tag configure normal -font $dialog_font
     $w.t tag configure bold -font $dialog_bold_font
 
-    if {[tk colormodel $w] == "color"} {
-	$w.t tag configure color1 -background "#eed5b7"
-	$w.t tag configure color2 -foreground red
-	$w.t tag configure raised -background "#eed5b7" -relief raised \
-		-borderwidth 1
-	$w.t tag configure sunken -background "#eed5b7" -relief sunken \
-		-borderwidth 1
-    } else {
+    if {[winfo depth $w] == 1} {
 	$w.t tag configure color1 -background black -foreground white
 	$w.t tag configure color2 -background black -foreground white
 	$w.t tag configure raised -background white -relief raised \
 		-borderwidth 1
 	$w.t tag configure sunken -background white -relief sunken \
+		-borderwidth 1
+    } else {
+	$w.t tag configure color1 -background "#eed5b7"
+	$w.t tag configure color2 -foreground red
+	$w.t tag configure raised -background "#eed5b7" -relief raised \
+		-borderwidth 1
+	$w.t tag configure sunken -background "#eed5b7" -relief sunken \
 		-borderwidth 1
     }
     $w.t tag configure bgstipple -background black -borderwidth 0 \
