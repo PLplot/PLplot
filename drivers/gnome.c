@@ -17,8 +17,8 @@
 /*#undef DEBUG*/
 #define DEBUG
 
-/*#undef USE_THREADS*/
-#define USE_THREADS
+#undef USE_THREADS
+/*#define USE_THREADS*/
 
 #undef ANTIALISED_CANVAS
 
@@ -522,7 +522,7 @@ new_page (PLStream* pls)
 
   np = dev->npages;
 
-  gdk_threads_enter ();
+  //  gdk_threads_enter ();
 
 #ifdef ANTIALISED_CANVAS
 
@@ -691,7 +691,7 @@ new_page (PLStream* pls)
 
   gtk_notebook_set_page (dev->notebook, -1);
 
-  gdk_threads_leave ();
+  //  gdk_threads_leave ();
 
   dev->npages++;
 
@@ -833,7 +833,7 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   GnomeCanvas* canvas;
   guint i;
 
-  gdk_threads_enter ();
+  //  gdk_threads_enter ();
 
   dev = pls->dev;
   
@@ -871,7 +871,7 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 
   gnome_canvas_points_unref (points);
 
-  gdk_threads_leave ();
+  //  gdk_threads_leave ();
 
 }
 
@@ -913,7 +913,7 @@ plD_eop_gnome(PLStream *pls)
 
   dev = pls->dev;
 
-  gdk_threads_enter ();
+  //  gdk_threads_enter ();
 
   page = dev->page[dev->npages-1];
   canvas = page->canvas;
@@ -957,7 +957,7 @@ plD_bop_gnome(PLStream *pls)
   canvas->need_update = 1;
   gnome_canvas_update_now (canvas);
   
-  gdk_threads_leave ();
+  //  gdk_threads_leave ();
   
   pls->page++;
 }
@@ -1129,7 +1129,7 @@ fill_polygon (PLStream* pls)
 
   dev = pls->dev;
 
-  gdk_threads_enter ();
+  //  gdk_threads_enter ();
 
   page = dev->page[dev->npages-1];
 
@@ -1181,7 +1181,7 @@ fill_polygon (PLStream* pls)
 
   gnome_canvas_points_unref (points);
 
-  gdk_threads_leave ();
+  //  gdk_threads_leave ();
 
 }  
 
@@ -1199,7 +1199,7 @@ dashed_line (PLStream* pls)
 
   dev = pls->dev;
 
-  gdk_threads_enter ();
+  //  gdk_threads_enter ();
 
   page = dev->page[dev->npages-1];
 
@@ -1249,7 +1249,7 @@ dashed_line (PLStream* pls)
 
   gnome_canvas_points_unref (points);
 
-  gdk_threads_leave ();
+  //  gdk_threads_leave ();
 
 }  
 
