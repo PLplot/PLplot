@@ -42,7 +42,7 @@ class x20 {
 public:
   x20(int, char **);
   void save_plot(char *);
-  void gray_cmap(int);
+  void gray_cmap(PLINT);
   int read_img(char *, PLFLT ***, int *, int *, int *);
   int get_clip(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
@@ -338,7 +338,7 @@ void x20::save_plot(char *fname) {
 int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
   PLGraphicsIn gin;
   PLFLT xxi=*xi, yyi=*yi, xxe=*xe, yye=*ye, t;
-  int st, start = 0;
+  PLINT st, start = 0;
 
   pls->xormod(1, &st); /* enter xor mode to draw a selection rectangle */
 

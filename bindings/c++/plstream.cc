@@ -223,8 +223,8 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
     }
 }
 
-int plstream::next_stream = 0;
-int plstream::active_streams = 0;
+PLINT plstream::next_stream = 0;
+PLINT plstream::active_streams = 0;
 
 plstream::plstream()
 {
@@ -234,7 +234,7 @@ plstream::plstream()
     active_streams++;
 }
 
-plstream::plstream( PLS::stream_id sid, int strm /*=0*/ )
+plstream::plstream( PLS::stream_id sid, PLINT strm /*=0*/ )
 {
     switch(sid) {
     case PLS::Next:
@@ -255,7 +255,7 @@ plstream::plstream( PLS::stream_id sid, int strm /*=0*/ )
     }
 }
 
-plstream::plstream( int nx, int ny, const char *driver, const char *file )
+plstream::plstream( PLINT nx, PLINT ny, const char *driver, const char *file )
 {
     ::c_plsstrm(next_stream++);
 
@@ -271,7 +271,7 @@ plstream::plstream( int nx, int ny, const char *driver, const char *file )
     active_streams++;
 }
 
-plstream::plstream( int nx, int ny, int r, int g, int b, const char *driver, const char *file)
+plstream::plstream( PLINT nx, PLINT ny, PLINT r, PLINT g, PLINT b, const char *driver, const char *file)
 {
     ::c_plsstrm(next_stream++);
 

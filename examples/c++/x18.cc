@@ -141,7 +141,7 @@ PLFLT x18::PHI (int a) {
 
 void x18::test_poly(int k) {
   int i, j;
-  int draw[4][4]  = {
+  PLINT draw[4][4]  = {
     { 1, 1, 1, 1 },
     { 1, 0, 1, 0 },
     { 0, 1, 0, 1 },

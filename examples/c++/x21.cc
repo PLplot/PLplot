@@ -51,9 +51,9 @@ public:
   x21(int, char **);
 
 private:
-  void create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts);
+  void create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts);
   void free_data(PLFLT *x, PLFLT *y, PLFLT *z);
-  void create_grid(PLFLT **xi, int px, PLFLT **yi, int py);
+  void create_grid(PLFLT **xi, PLINT px, PLFLT **yi, PLINT py);
   void free_grid(PLFLT *x, PLFLT *y);
   void cmap1_init();
 
@@ -71,24 +71,24 @@ private:
   static PLINT xp;
   static PLINT yp;
   static PLINT nl;
-  static int knn_order;
+  static PLINT knn_order;
   static PLFLT threshold;
   static PLFLT wmin;
-  static int randn;
-  static int rosen;
+  static PLINT randn;
+  static PLINT rosen;
   static PLOptionTable options[];
 };
 
 
-int x21::pts = 500;
-int x21::xp = 25;
-int x21::yp = 20;
-int x21::nl = 15;
-int x21::knn_order = 20;
+PLINT x21::pts = 500;
+PLINT x21::xp = 25;
+PLINT x21::yp = 20;
+PLINT x21::nl = 15;
+PLINT x21::knn_order = 20;
 PLFLT x21::threshold = 1.001;
 PLFLT x21::wmin = -1e3;
-int x21::randn = 0;
-int x21::rosen = 0;
+PLINT x21::randn = 0;
+PLINT x21::rosen = 0;
 
 PLOptionTable x21::options[] = {
   {
@@ -350,7 +350,7 @@ void x21::cmap1_init() {
   pls->scmap1l(0, 2, i, h, l, s, NULL);
 }
 
-void x21::create_grid(PLFLT **xi, int px, PLFLT **yi, int py) {
+void x21::create_grid(PLFLT **xi, PLINT px, PLFLT **yi, PLINT py) {
 
   PLFLT *x, *y;
   int i;
@@ -370,7 +370,7 @@ void x21::free_grid(PLFLT *xi, PLFLT *yi) {
   delete[] yi;
 }
 
-void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts) {
+void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts) {
   int i;
   PLFLT *x, *y, *z, r;
   PLFLT xt, yt;

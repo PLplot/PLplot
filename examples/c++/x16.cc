@@ -130,7 +130,7 @@ static void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data) {
   *ty = x16::tr[3] * x + x16::tr[4] * y + x16::tr[5];
 }
 
-int zdefined (PLFLT x, PLFLT y) {
+PLINT zdefined (PLFLT x, PLFLT y) {
   PLFLT z = sqrt(x * x + y * y);
 
   return z < 0.4 || z > 0.6;

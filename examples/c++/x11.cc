@@ -76,7 +76,7 @@ void x11::cmap1_init()
   PLFLT *h = new PLFLT[2];
   PLFLT *l = new PLFLT[2];
   PLFLT *s = new PLFLT[2];
-  int *rev = new int[2];
+  PLINT *rev = new PLINT[2];
 
   i[0] = 0.0;         // left boundary
   i[1] = 1.0;         // right boundary

@@ -338,10 +338,10 @@ void x01::plot2()
 void x01::plot3()
 {
   int i;
-  int space0 = 0;
-  int mark0 = 0;
-  int space1 = 1500;
-  int mark1 = 1500;
+  PLINT space0 = 0;
+  PLINT mark0 = 0;
+  PLINT space1 = 1500;
+  PLINT mark1 = 1500;
   PLFLT *x = new PLFLT[101];
   PLFLT *y = new PLFLT[101];
 

@@ -84,10 +84,10 @@ class cxx_pltr2 : public Coord_Xformer {
 
 class plstream {
 
-    int stream;
+    PLINT stream;
 
-    static int next_stream;
-    static int active_streams;
+    static PLINT next_stream;
+    static PLINT active_streams;
 
   private:
     // These have to be disabled till we implement reference counting.
@@ -100,11 +100,11 @@ class plstream {
   public:
     plstream();
     plstream( plstream * pls );
-    plstream( PLS::stream_id sid, int strm =0 );
-    plstream( int _stream ) : stream(_stream) {}
-    plstream( int nx /*=1*/, int ny /*=1*/,
+    plstream( PLS::stream_id sid, PLINT strm =0 );
+    plstream( PLINT _stream ) : stream(_stream) {}
+    plstream( PLINT nx /*=1*/, PLINT ny /*=1*/,
 	      const char *driver =NULL, const char *file =NULL );
-    plstream( int nx /*=1*/, int ny /*=1*/, int r, int g, int b,
+    plstream( PLINT nx /*=1*/, PLINT ny /*=1*/, PLINT r, PLINT g, PLINT b,
 	      const char *driver =NULL, const char *file =NULL );
 
     ~plstream();
@@ -318,9 +318,9 @@ class plstream {
 
 // grid irregularly sampled data
 
-    void griddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-                  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
-                  PLFLT **zg, int type, PLFLT data);
+    void griddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
+                  PLFLT *xg, PLINT nptsx, PLFLT *yg,  PLINT nptsy,
+                  PLFLT **zg, PLINT type, PLFLT data);
 
 // Get subpage boundaries in absolute coordinates.
 
