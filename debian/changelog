@@ -1,3 +1,13 @@
+plplot (5.2.1.rc1.5.3.0-2) unstable; urgency=low
+
+  * debian/control: Removed most of the Conflicts/Replaces/Provides
+    fields, since they where legacies from the libplplot5 packages.  The
+    libplplot9 and libplplot5 still cannot co-exist (although this is
+    only of theoretical interest, since there are no other packages in
+    Debian that depend on libplplot5).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 22 Jan 2004 23:13:45 +0100
+
 plplot (5.2.1.rc1.5.3.0-1) unstable; urgency=low
 
   * New cvs snapshot upstream release (first release candidate for 5.3.0
