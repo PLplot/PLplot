@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/07/28 07:42:58  mjl
+ * Revision 1.13  1994/10/11 18:59:57  mjl
+ * Added prototypes for plD_open_xw() and plX_setBGFG().
+ *
+ * Revision 1.12  1994/07/28  07:42:58  mjl
  * Eliminated old CADDR_T_HACK code.
  *
  * Revision 1.11  1994/07/20  04:03:47  mjl
@@ -113,6 +116,11 @@ typedef struct {
 extern "C" {
 #endif
 
+/* Performs basic driver initialization. */
+
+void
+plD_open_xw(PLStream *pls);
+
 /* Copies the supplied PLColor to an XColor */
 
 void
@@ -127,6 +135,11 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
 
 int
 pl_AreWeGrayscale(Display *display);
+
+/* Set background & foreground colors.  */
+
+void
+plX_setBGFG(PLStream *pls);
 
 /* Saves RGB components of given colormap */
 
