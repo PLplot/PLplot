@@ -228,8 +228,9 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 
       ## init driver and make changes apply
       plinit;
-      pladv(0);
-      plflush;pleop;
+      #next two commented. After last bop/eop CVS changes, first plot is empty.
+      #pladv(0);
+      #plflush;pleop;
       
       if ( exist("__tk_name") & (strcmp("tk", sprintf("%s",plgdev'))))
 	eval(tk_receive(1));
