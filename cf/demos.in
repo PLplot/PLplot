@@ -274,7 +274,7 @@ x16f$E:	$(PLLIBS) x16f$O
 # -----------------------------------------------------------------------
 # TK example programs.
 
-TKDEMOS = xtk01$E xtk02$E
+TKDEMOS = xtk01$E xtk02$E xtk04$E
 
 tkdemos: $(TKDEMOS)
 
@@ -284,5 +284,9 @@ xtk01$E:  $(PLLIBS) xtk01$O
 
 xtk02$E:  $(PLLIBS) xtk02$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+xtk04$E:  $(PLLIBS) xtk04$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk04$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
