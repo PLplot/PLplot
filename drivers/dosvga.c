@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/07/01 21:59:32  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.10  1993/07/16 22:11:14  mjl
+   Eliminated low-level coordinate scaling; now done by driver interface.
 
+ * Revision 1.9  1993/07/01  21:59:32  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.8  1993/03/15  21:39:04  mjl
  * Changed all _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -145,9 +148,6 @@ void
 plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
-
-    if (pls->pscale)
-	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
     y1 = VGAY - y1;
     y2 = VGAY - y2;

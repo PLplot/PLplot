@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/07/01 21:59:46  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.15  1993/07/16 22:11:25  mjl
+   Eliminated low-level coordinate scaling; now done by driver interface.
 
+ * Revision 1.14  1993/07/01  21:59:46  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.13  1993/03/15  21:39:23  mjl
  * Changed all _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -150,8 +153,6 @@ plD_line_xte (PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int hy, ly, hx, lx;
 
     plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
-    if (pls->pscale)
-	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
     x1 >>= 4;
     y1 >>= 4;

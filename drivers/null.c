@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/07/01 21:59:40  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.9  1993/07/16 22:11:22  mjl
+   Eliminated low-level coordinate scaling; now done by driver interface.
 
+ * Revision 1.8  1993/07/01  21:59:40  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.7  1993/03/15  21:39:13  mjl
  * Changed all _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -59,6 +62,14 @@ static PLDev *dev = &device;
 void
 plD_init_null(PLStream *pls)
 {
+    int xmin = 0;
+    int xmax = PIXELS_X - 1;
+    int ymin = 0;
+    int ymax = PIXELS_Y - 1;
+
+    float pxlx = (double) PIXELS_X / (double) LPAGE_X;
+    float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
+
     printf("Sending output to Null device..\n");
 
     pls->termin = 0;		/* not an interactive terminal */
@@ -70,18 +81,8 @@ plD_init_null(PLStream *pls)
 
 /* Set up device parameters */
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
-    dev->xmin = 0;
-    dev->xmax = 32767;
-    dev->ymin = 0;
-    dev->ymax = 32767;
-
-    dev->pxlx = (dev->xmax - dev->xmin) / lpage_x;
-    dev->pxly = (dev->ymax - dev->ymin) / lpage_y;
-
-    plP_setpxl(dev->pxlx, dev->pxly);
-    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setpxl(pxlx, pxly);
+    plP_setphy(xmin, xmax, ymin, ymax);
 }
 
 /*----------------------------------------------------------------------*\
