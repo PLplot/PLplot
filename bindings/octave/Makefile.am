@@ -76,8 +76,8 @@ plplot_octave.cc tmp_stub: plplot_octave_org.h ${top_builddir}/config.h
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
 plplot_octave.oct plplot_octave.o: plplot_octave.cc
-	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE) -v -I. \
-	   plplot_octave.cc $(octave_libs)
+	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE_VARS) \
+	    $(MKOCTFILE) -v -I. plplot_octave.cc $(octave_libs)
 
 if with_rpath
 SET_LDRPATH = LD_RUN_PATH=$(libdir)
@@ -86,8 +86,9 @@ SET_LDRPATH =
 endif
 
 plplot_octave-libdir.oct: plplot_octave.o
-	$(SET_LDRPATH) $(MKOCTFILE) -v -I. plplot_octave.o \
-	  -o plplot_octave-libdir.oct $(octave_libs)
+	$(SET_LDRPATH) $(MKOCTFILE_VARS) \
+	    $(MKOCTFILE) -v -I. plplot_octave.o \
+	    -o plplot_octave-libdir.oct $(octave_libs)
 
 install-data-hook: plplot_octave-libdir.oct
 	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)

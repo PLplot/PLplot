@@ -1001,6 +1001,26 @@ fi
 AC_SUBST(RPATH)
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
 
+
+### Variables for mkoctfile
+### ******************************************************************
+### WARNING: The stuff below is just transient and should disappear as
+### soon as the brokenness of NetBSD is fixed.
+### ******************************************************************
+### Variables are set only if the C++ compiler is g++
+
+MKOCTFILE_VARS=
+case "$system" in
+    NetBSD* )
+        if test "$CXX" = g++ ; then
+            MKOCTFILE_VARS='SH_LD="g++" SH_LDFLAGS="-shared"'
+	    AC_MSG_WARN([Setting mkoctfile variables for broken NetBSD system])
+        fi
+    ;;
+esac
+AC_SUBST(MKOCTFILE_VARS)
+
+
 ### Build configuration files
 
 AC_CONFIG_FILES([
