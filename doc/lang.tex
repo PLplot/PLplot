@@ -8,10 +8,10 @@ The argument types given in this manual (PLFLT and PLINT) are typedefs for
 the actual argument type.  A PLINT is actually a type {\tt long} and should
 not be changed.  A PLFLT can be either a {\tt float} or {\tt double}; this
 choice is made when the package is installed and on a Unix system (for
-example) may result in a PLPLOT library named {\tt libplplotf.a} in single
+example) may result in a PLplot library named {\tt libplplotf.a} in single
 precision and {\tt libplplotd.a} in double precision.
 
-These and other constants used by PLPLOT are defined in the main header file
+These and other constants used by PLplot are defined in the main header file
 {\tt plplot.h}, which must be included by the user program.  This file also
 contains all of the function prototypes, machine dependent defines, and
 redefinition of the C-language bindings that conflict with the Fortran names
@@ -36,13 +36,13 @@ typedef INT   PLINT;
 #define PLARGS(a) PROTO(a)
 \end{verbatim}
 
-PLPLOT is capable of being compiled with Standard C (ANSI) mode on or off.
+PLplot is capable of being compiled with Standard C (ANSI) mode on or off.
 This is toggled via the macro PLSTDC, and set automatically if \_\_STDC\_\_
 is defined.  If PLSTDC is defined, all functions are prototyped as allowed
 under Standard C, and arguments passed exactly as specified in the
 prototype.  If PLSTDC is not defined, however, function prototypes are
 turned off and K\&R automatic argument promotion will occur, e.g.  {\tt
-float $\rar$ double, int $\rar$ long}.  There is no middle ground!  A PLPLOT
+float $\rar$ double, int $\rar$ long}.  There is no middle ground!  A PLplot
 library built with PLSTDC defined will not work (in general) with a program
 built with PLSTDC undefined, and vice versa.  It is possible in principle to
 build a library that will work under both Standard C and K\&R compilers
@@ -51,13 +51,13 @@ prototype), but this seems to violate the spirit of the C standard and can
 be confusing.  Eventually we will drop support for non-standard C compilers 
 but for now have adopted this compromise.
 
-In summary, PLPLOT will work using either a Standard or non-standard C
+In summary, PLplot will work using either a Standard or non-standard C
 compiler, provided that you :
 \begin{enumerate}
-\item Include the PLPLOT main header file {\tt plplot.h}.
+\item Include the PLplot main header file {\tt plplot.h}.
 \item Make sure all pointer arguments are of the correct type
 (the compiler should warn you if you forget, so don't worry, be happy).
-\item Do not link a code compiled with PLSTDC defined to a PLPLOT library
+\item Do not link a code compiled with PLSTDC defined to a PLplot library
 compiled with PLSTDC undefined, or vice versa.
 \item Use prototypes whenever possible to reduce type errors.
 \end{enumerate}
@@ -78,40 +78,40 @@ be handled (which includes constant values passed on the stack, strings, and
 two-dimensional arrays).
 
 There are several ways to deal with this situation, but the least messy from
-a user's perspective is to redefine those PLPLOT C function names which
+a user's perspective is to redefine those PLplot C function names which
 conflict with the Fortran-interface stub routines.  The actual function
 names are the same as those described in this document, but with a ``c\_''
 prepended.  These macro definitions appear in the {\tt plplot.h} header file
 and are otherwise harmless.  Therefore you can (and should) forget that most
 of the names are being redefined to avoid the conflict and simply adhere to
 the bindings as described in this manual.  Codes written under old versions
-of PLPLOT (previous to 4.0) will require a recompile, however.
+of PLplot (previous to 4.0) will require a recompile, however.
 
-It is possible to compile the PLPLOT library so that the affected functions
+It is possible to compile the PLplot library so that the affected functions
 retain their documented names, by specifying {\tt -DNOBRAINDEAD} on the
 compile line.  Some reasons for doing this might be:  (a) you don't want to
 include {\tt plplot.h} into your program for whatever reason, or (b) you are
-debugging PLPLOT and wish to specify the documented names to the debugger.
+debugging PLplot and wish to specify the documented names to the debugger.
 In fact this procedure will work fine under SUNOS, with no Fortran/C
 namespace collision.  But on other systems a special compiler switch may be
 required to get it to work similarly, which is an extra burden on the user
 and best avoided.
 
-For more information on calling PLPLOT from C, please see the 14 example C
-programs ({\tt x01c.c} through {\tt x14c.c}) distributed with PLPLOT.
+For more information on calling PLplot from C, please see the 14 example C
+programs ({\tt x01c.c} through {\tt x14c.c}) distributed with PLplot.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section {Fortran language}
 
-As discussed in the preceding section, PLPLOT's integer representation is a
+As discussed in the preceding section, PLplot's integer representation is a
 PLINT and its floating point representation is a PLFLT.  To the
 Fortran user, this most commonly translates to a type {\tt integer} and
 type {\tt real}, respectively.  This is somewhat system dependent (and up to
 the installer of the package) so you should check the release notes to be
 sure, or just try it and see what happens.
 
-Because the PLPLOT kernel is written in C, standard C syntax is used in the
-description of each PLPLOT function.  Thus to understand this manual it is
+Because the PLplot kernel is written in C, standard C syntax is used in the
+description of each PLplot function.  Thus to understand this manual it is
 helpful to know a little about C, but fortunately the translation is very
 easy and can be summarized here.  As an example, the routine {\tt plline}
 call from C would look like:
@@ -147,7 +147,7 @@ Therefore when you see references in the text to {\em either} an ordinary
 argument or a pointer argument (e.g.  {\tt *data}), you simply use an
 ordinary Fortran variable or array name.
 
-The PLPLOT library comes with a set of Fortran interface routines that
+The PLplot library comes with a set of Fortran interface routines that
 allow the exact same call syntax (usually) regardless of whether calling
 from C or Fortran.  In some cases, this means the subroutine name {\em
 exceeds 8 characters in length}.  Nearly every Fortran compiler on sale
@@ -198,7 +198,7 @@ in your program often appear differently to the linker.  For example, the
 Fortran routine names may be converted to uppercase or lowercase, and/or
 have an underscore appended or prepended.  This translation is handled
 entirely via redefinition of the stub routine names, which are macros.
-There are several options for compiling PLPLOT that simplify getting the
+There are several options for compiling PLplot that simplify getting the
 name translation right (see Appendix \ref{ap:sys} for more info).  In any
 case, once the name translation is established during installation, name
 translation is completely transparent to the user.
@@ -215,7 +215,7 @@ null terminated integer array and then calls the C stub routine.  The C
 stub routine converts the integer array (type {\tt long}) to the usual C
 string representation (which may be different, depending on whether your
 machine uses a big endian or little endian byte ordering; in any case the
-way it is done in PLPLOT is portable).  See the {\tt plmtex} stubs for an
+way it is done in PLplot is portable).  See the {\tt plmtex} stubs for an
 example of this. 
 
 Note that the portion of a Fortran character string that exceeds 299
@@ -230,11 +230,11 @@ rapidly as one steps through memory.  This is called ``row-dominant''
 storage.  In C, on the other hand, the first index increases {\em least\/}
 rapidly, i.e. ``column-dominant'' ordering.  Thus, two dimensional arrays
 (e.g.  as passed to the contour or surface plotting routines) passed into
-PLPLOT must be transposed in order to get the proper two-dimensional
+PLplot must be transposed in order to get the proper two-dimensional
 relationship to the world coordinates.  This is handled in the C stub
 routines by dynamic memory allocation of a temporary array.  This is then set
 equal to the transpose of the passed in array and passed to the appropriate
-PLPLOT routine.  The overhead associated with this is normally not important
+PLplot routine.  The overhead associated with this is normally not important
 but could be a factor if you are using very large 2d arrays.
 \end{enumerate}
 
@@ -243,6 +243,6 @@ programmers can use the same basic interface to the library, which is a
 powerful plus for this method.  The fact that stub routines are being used
 is completely transparent to the Fortran programmer.
 
-For more information on calling PLPLOT from Fortran, please see the 13
+For more information on calling PLplot from Fortran, please see the 13
 example Fortran programs ({\tt x01f.f} through {\tt x13f.f}) distributed
-with PLPLOT.
+with PLplot.

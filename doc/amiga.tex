@@ -2,26 +2,26 @@
 
 \subsection{Linking}
 
-With the Lattice C compiler, linking to PLPLOT is accomplished by something
+With the Lattice C compiler, linking to PLplot is accomplished by something
 like (this depends on the compiler options you have used when creating the
 library):
 \begin{verbatim}
 lc -o main -Lm+plplot.lib main.c
 \end{verbatim}
 
-The PLPLOT font files must be where the library can find them.  The current
+The PLplot font files must be where the library can find them.  The current
 directory is always searched for the fonts first, followed by {\tt
 fonts:plplot/}, and {\tt plfonts:}, in that order, with one additional place
 that can be specified from the makefile.  If you put them in {\tt
 fonts:plplot/} you should never get a requester asking you to mount {\tt
 plfonts:}.
 
-For a color requester PLPLOT tries in a couple of places.  The palette
+For a color requester PLplot tries in a couple of places.  The palette
 program used should open in the top-most screen (note that {\tt
 sys:prefs/palette} shipped with the 2.0 operating system does not do this).
 Under 2.0, {\tt sys:tools/colors} is used (standard).  Under 1.3, it is
 recommended that you make avalable the {\tt palette} program that comes with
-the WorkBench 1.3 enhancer package.  PLPLOT looks for this program in {\tt
+the WorkBench 1.3 enhancer package.  PLplot looks for this program in {\tt
 tools:} and if it's not there it looks in {\tt sys:tools}, so you'll want to
 assign {\tt tools:} to the directory in which the palette program resides.
 
@@ -98,7 +98,7 @@ preferences printer driver but with full preferences support.  Also, it
 usually requires less memory (for full page plots) than the preferences
 driver, but is slower.  Highly recommended if you have a color printer or
 are memory strapped.  The {\tt PLT:} device accepts virtually all of the
-standard HP-GL commands (probably the HP7470 is the best PLPLOT device
+standard HP-GL commands (probably the HP7470 is the best PLplot device
 driver to use).
 
 \subsection{Amiga window driver}
@@ -109,7 +109,7 @@ plotting in the window (see the ``Redraw Enabled'' section below).  If you
 are making several graphs on separate pages, use the close gadget to
 advance from one ``page'' to the next. 
 
-The PLPLOT menu selections are:
+The PLplot menu selections are:
 
 \begin{itemize}
       \item Save Configuration\\

@@ -1,9 +1,9 @@
-This file contains a list of the major changes in PLPLOT.  It is best to look
+This file contains a list of the major changes in PLplot.  It is best to look
 through this file for new features, etc, until the new documentation is
 complete.
 
 *****************************************************************************
-PLPLOT 4.99c changes
+PLplot 4.99c changes
 *****************************************************************************
 
 o Added capability to have viewports greater than the display area.  In
@@ -28,7 +28,7 @@ o Added support for NEC SX-3 supercomputer, other minor fixes.
 o Fixed name conflict for getdate() in ps.c on some systems.
 
 *****************************************************************************
-PLPLOT 4.99b changes
+PLplot 4.99b changes
 *****************************************************************************
 
 A rather minor update, and the last one for a few weeks probably (I have
@@ -51,7 +51,7 @@ as of yet unimplemented.  Other drivers (printer, IFF) still need some work.
 
 
 *****************************************************************************
-PLPLOT 4.99a changes
+PLplot 4.99a changes
 *****************************************************************************
 
 -----------------------------------
@@ -143,11 +143,11 @@ Additional changes, listed by file:
 
 
  * plsym.c:
- * Now holds all routines dealing with PLPLOT symbols.
+ * Now holds all routines dealing with PLplot symbols.
 
 
  * plstring.c:
- * Added to hold all functions that deal with PLPLOT strings.
+ * Added to hold all functions that deal with PLplot strings.
  * Split off code to write a stroke font character into its own function for
  * clarity.  Changed character-decoding routine to use stream-dependent escape
  * character in text strings.
@@ -393,7 +393,7 @@ Example programs
 
  * Added #include <stdlib.h> since the code needs to exit(1) on some errors.
  * Changed all C examples to initialize with new plinit() function, also
- * calls to PLPLOT command-line args parser added.  
+ * calls to PLplot command-line args parser added.  
 
 
 -----------------------------------
@@ -407,14 +407,14 @@ fixes with the release version.
 
 
 *****************************************************************************
-PLPLOT 4.0 changes
+PLplot 4.0 changes
 *****************************************************************************
 
-Here are the biggest changes that have been made to PLPLOT, especially
-those likely to affect the user.  Please see the PLPLOT docs for more
+Here are the biggest changes that have been made to PLplot, especially
+those likely to affect the user.  Please see the PLplot docs for more
 information. 
 
-Some of the changes stem from the direction we want to take PLPLOT.  For
+Some of the changes stem from the direction we want to take PLplot.  For
 example, away from device dependence and use the metafile driver as our
 main target.  This probably means offloading more intelligence into the
 drivers in the future. 
@@ -426,7 +426,7 @@ compilation and keep related routines together.
 Changes from the 3.x strain by M. LeBrun
 ----------------------------------------
 
-This version came originally from PLPLOT 2.6b.  In accomodating
+This version came originally from PLplot 2.6b.  In accomodating
 the changes made in 3.0 (Tony's version), I had to break a few calls.
 Namely, the following routines now have a different call syntax:
 
@@ -437,18 +437,18 @@ Namely, the following routines now have a different call syntax:
 
 Please see the documentation for the proper calls.  
 
-You can now specify the argument types to PLPLOT calls in the more
+You can now specify the argument types to PLplot calls in the more
 generic fashion INT and FLOAT.
 
 There have also been some new functions added and improvements made to
 plrender. 
 
 
-Major changes from PLPLOT 3.0.
+Major changes from PLplot 3.0.
 ------------------------------
 
-The PLPLOT <-> driver interface completely rewritten.  Now a pointer
-to a data structure containing all the PLPLOT "state" information for
+The PLplot <-> driver interface completely rewritten.  Now a pointer
+to a data structure containing all the PLplot "state" information for
 a given data stream is passed into the driver.
 
 Several new capabilities were added to the drivers.  This includes:
@@ -539,13 +539,13 @@ as plplot is concerned, it's still just a single logical file.  The only
 drivers I've put the familying into are the ps, tekf, and plmeta drivers.
 
 ------------------------------------------------------------------------
-The ANSI/non-ANSI behavior of PLPLOT has changed again.  Now you need
+The ANSI/non-ANSI behavior of PLplot has changed again.  Now you need
 to include plplot.h into your program to make sure you get the argument
 types right (i.e. for ANSI compiler, a FLOAT really passes as a FLOAT
 not a double).  Face it, we've had an ANSI standard for C for about 4
 years now and ISO for 2, and vendors who don't comply should be boycotted.
 
-All PLPLOT routines that accept a FLOAT as an argument now use an ANSI
+All PLplot routines that accept a FLOAT as an argument now use an ANSI
 style function declaration if PLSTDC is defined, to bypass the K&R style
 promotion.  Eventually support for non-Standard C compilers will be
 dropped. 
@@ -578,7 +578,7 @@ C-entry bindings (the installer can disable this but I don't recommend it).
 The point is that the C and Fortran namespaces on some systems clobber
 each other, and there is no good solution except to change the C entry
 names.  Each external call is prepended with a 'c_'.  So you must include
-plplot.h and recompile any old programs that are to work with PLPLOT 4.0.
+plplot.h and recompile any old programs that are to work with PLplot 4.0.
 
 ------------------------------------------------------------------------
 Put in an alternate startup routine plstart(), that lets you specify device

@@ -1,10 +1,12 @@
+\node Devices, , , 
 \chapter{Output devices}
-\label{ap:dev}
+\cindex{Devices}
+\cindex{Drivers}
 
-PLPLOT supports a variety of output devices, via a set of device drivers.
+PLplot supports a variety of output devices, via a set of device drivers.
 Each driver is required to emulate a small set of low-level graphics
 primitives such as initialization, line draw and page advance, as well
-as be completely independent of the PLPLOT package as a whole.  Thus a
+as be completely independent of the PLplot package as a whole.  Thus a
 driver may be very simple, as in the case of the many black \& white file
 drivers (tektronix, etc.).  More complicated and/or color systems require a
 bit more effort by the driver, with the most effort required by an output
@@ -17,17 +19,17 @@ will assist anyone wanting to volunteer for the job.
 
 A Computer Graphics Metafile driver is under development and may be finished
 by the time you read this (see the release notes to be sure).  Note that if
-you always render to a PLPLOT metafile, you can always {\tt plrender} them
+you always render to a PLplot metafile, you can always {\tt plrender} them
 to new devices as they become available.
 
-The list of available devices presented when starting PLPLOT (via {\tt
-plstar}) is determined at compile-time.  When installing PLPLOT you may wish
+The list of available devices presented when starting PLplot (via {\tt
+plstar}) is determined at compile-time.  When installing PLplot you may wish
 to exclude devices not available on your system in order to reduce screen
 clutter.  To include a specified device, simply define the appropriate macro
-constant when building PLPLOT (see the installation instructions for your
+constant when building PLplot (see the installation instructions for your
 system).
 
-The device drivers for PLPLOT terminal output at present are given in table
+The device drivers for PLplot terminal output at present are given in table
 \ref{tab:dev1}, with drivers for file output given in table \ref{tab:dev2}. 
 The driver for OS/2 PM is available separately.  See the section on OS/2 in
 Appendix C for more details.
@@ -66,7 +68,7 @@ Appendix C for more details.
 	    & dg300.c
 \\ \hline
     \end{tabular}
-  \caption{PLPLOT terminal output devices}
+  \caption{PLplot terminal output devices}
   \label{tab:dev1}
 \end{table}
 
@@ -77,7 +79,7 @@ Appendix C for more details.
       & \multicolumn{1}{|c|}{keyword}
         & \multicolumn{1}{|c|}{driver file}
 \\ \hline
-	PLPLOT Native Meta-File
+	PLplot Native Meta-File
 	  & plmeta
 	    & plmeta.c
 \\ \hline
@@ -122,7 +124,7 @@ Appendix C for more details.
 	    & impress.c
 \\ \hline
     \end{tabular}
-  \caption{PLPLOT file output devices}
+  \caption{PLplot file output devices}
   \label{tab:dev2}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
@@ -164,22 +166,22 @@ routine to all the other drivers to handle the new function.
 For more information, see {\tt dispatch.h} or {\tt dispatch.c}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{PLPLOT metafiles and plrender}
+\section{PLplot metafiles and plrender}
 
-The PLPLOT metafile is a way to store and transport your graphical data for
-rendering at a later time or on a different system.  A PLPLOT metafile is
+The PLplot metafile is a way to store and transport your graphical data for
+rendering at a later time or on a different system.  A PLplot metafile is
 in binary format in order to speed access and keep storage costs
 reasonable.  All data is stored in device-independent format (written as a
 stream of bytes); the resulting file is about as portable as a tektronix
 vector graphics file and only slightly larger. 
 
-Each PLPLOT metafile begins with a header string that identifies it as
+Each PLplot metafile begins with a header string that identifies it as
 such, as well as the version number (year \& letter) of the format since
 this may change in time.  The utility for rendering the metafile, {\tt
-plrender}, verifies that the input file is indeed a valid PLPLOT metafile,
+plrender}, verifies that the input file is indeed a valid PLplot metafile,
 and that it ``understands'' the format the metafile is written in.  {\tt
-plrender} is part of the PLPLOT package and should be built at the time of
-building PLPLOT, and then put into your search path.  It is capable of 
+plrender} is part of the PLplot package and should be built at the time of
+building PLplot, and then put into your search path.  It is capable of 
 high speed rendering of the graphics file, especially if the output device
 can accept commands at a high rate (e.g. X windows). 
 
@@ -206,7 +208,7 @@ bytes, the LINETO command writes 4 data bytes, and the LINE command writes
 the LINETO command, which draws a continuation of the previous line to the
 given point.  This data encoding is not quite as efficient as the tektronix
 format, which uses 4 bytes instead of 5 here (1 command $+$ 4 data),
-however the PLPLOT encoding is far simpler to implement and more robust.
+however the PLplot encoding is far simpler to implement and more robust.
 The ESCAPE function writes a second command character (opcode) followed by
 an arbitrary number of data bytes depending on the value of the opcode.
 Note that any data written must be in device independent form to maintain
@@ -270,7 +272,7 @@ Additional options may be added in future releases.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Family file output}\label{sec:family}
 
-When sending PLPLOT to a file, the user has the option of generating a
+When sending PLplot to a file, the user has the option of generating a
 ``family'' of output files for certain output drivers (at present this
 is available for the plmeta, tektronix, and postscript drivers only).
 This can be valuable when generating a large amount of output, so as to not
@@ -306,7 +308,7 @@ family if given only the stem name ({\tt plrender test.plm}).  It can also
 create family files on output, rendering to any device that supports
 familying, including another metafile if desired.  The size of member files
 in this case is input through the argument list, and defaults to 1MB if
-unspecified (this may be changed during the PLPLOT installation, however). 
+unspecified (this may be changed during the PLplot installation, however). 
 {\tt plrender} can also create a single output file from a familied input
 metafile.
 
@@ -321,7 +323,7 @@ switching between text and graphics ``screens''.  This includes the xterm
 emulator under X-windows, vt100's with Retrographics, and numerous
 emulators for microcomputers which have a dual vt100/tek4010 emulation
 capability.  On these devices, it is possible to switch between the text
-and graphics screens by surrounding your PLPLOT calls by calls to {\tt
+and graphics screens by surrounding your PLplot calls by calls to {\tt
 plgra()} and {\tt pltext()}.  This will allow your diagnostic and
 informational code output to not interfere with your graphical output. 
 

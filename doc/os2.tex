@@ -1,12 +1,12 @@
 \section{OS/2}
 
 At the time of this writing (Fall '91), the current release of OS/2 is version
-1.3.  Consequently the current implementation of PLPLOT is 16-bit in nature,
+1.3.  Consequently the current implementation of PLplot is 16-bit in nature,
 and was developed using Microsoft 16 bit compilers.  Like all the rest of 
 the industry, this author is anxiously awaiting the arrival of OS/2 2.0 with
 its accompanying 32-bit programming model.  So, rest assured that there will
-be a port of PLPLOT to OS/2 2.0 with all possible speed.  For the time being
-PLPLOT does work with OS/2 1.3, and has been used with OS/2 1.2 as well.  
+be a port of PLplot to OS/2 2.0 with all possible speed.  For the time being
+PLplot does work with OS/2 1.3, and has been used with OS/2 1.2 as well.  
 This author
 has no experience with OS/2 versions prior to version 1.2, so no guarantees 
 can be
@@ -17,7 +17,7 @@ information not covered herein.
 
 \subsection{Compiler Support}
 
-The OS/2 implementation of PLPLOT was developed using Microsoft C 6.0
+The OS/2 implementation of PLplot was developed using Microsoft C 6.0
 and Microsoft Fortran 5.0 (these compilers were used for the DOS port
 as well).  The majority of the code is of course independent of any
 vendor specific compiler peculiarities, as evidenced by the wide range
@@ -105,13 +105,13 @@ set   plfonts=d:\lib\
 whwere {\tt syspath} is an environment variable containing all the directories
 needed for the system to operate normally.
 For descriptions of each of the various command options, see the compiler
-reference materials.  Note that PLPLOT is compiled using the large memory 
-model.  Note also that to use Microsoft Fortran with PLPLOT you 
+reference materials.  Note that PLplot is compiled using the large memory 
+model.  Note also that to use Microsoft Fortran with PLplot you 
 will need to have the C compatible Fortran libraries built.
 
 \subsection{Presentation Manager Support}
 
-Providing PLPLOT graphics under OS/2 PM proved to be a demanding project.
+Providing PLplot graphics under OS/2 PM proved to be a demanding project.
 The basic problem is that in order for an OS/2 program to interact with
 PM, it must be event driven and must do all its work in response to messages
 which are sent to it by the PM.  In other words, it is simply not possible
@@ -133,22 +133,22 @@ instability of that environment, no effort has been made to solve the
 problem in that context--so far).
 
 In spite of the substantial difficulties involved, an output capability for
-OS/2 PM has been developed which allows the user of PLPLOT to be totally
+OS/2 PM has been developed which allows the user of PLplot to be totally
 unconcerned with the inner workings of a native PM code.  That is, the 
 user/programmer may write programs which call plplot functions, just as
 s/he would on any other platform, and it is possible to view the output
 in a window.  {\tt stdout} is also made available, as one would expect,
 so that in fact no special programming whatsoever is required to make
-a ``normal'' PLPLOT program work on OS/2.  
+a ``normal'' PLplot program work on OS/2.  
 
 Due to the substantial effort which was required to provide a transparent
 and high quality graphics output capability on OS/2, this PM specific
 code (and documentation) is not being provided under the same distribution
-terms as the rest of the PLPLOT package.  Rather a small fee of \$15 for
-individual users is required.  Note, the free distribution of PLPLOT will 
+terms as the rest of the PLplot package.  Rather a small fee of \$15 for
+individual users is required.  Note, the free distribution of PLplot will 
 run on OS/2---it just won't come with the PM driver.
 
-To obtain the add-on package which will allow PLPLOT programs to generate
+To obtain the add-on package which will allow PLplot programs to generate
 output for OS/2 Presentation Manager, individual users should mail \$15. to:
 \begin{quote}
 Physical Dynamics \\
@@ -190,12 +190,12 @@ In brief, the capabilities of the OS/2 PM driver are:
 \end{itemize}
 
 If you choose not to obtain the OS/2 PM option  from Physical Dynamics, you
-can certainly still use the free version of PLPLOT on OS/2.  The included 
-metafile output option in PLPLOT allows you to generate a PLPLOT native
-metafile from any OS/2 PLPLOT application.  You can then switch to a DOS box
+can certainly still use the free version of PLplot on OS/2.  The included 
+metafile output option in PLplot allows you to generate a PLplot native
+metafile from any OS/2 PLplot application.  You can then switch to a DOS box
 and view the metafile using the {\tt plrender} utility.  You will need to
 build a DOS version of {\tt plrender} once, and store it in a place accessible 
-to your DOS path.  In fact, the PLPLOT metafile driver was originally invented 
+to your DOS path.  In fact, the PLplot metafile driver was originally invented 
 specifically to allow viewing output in the DOS box from programs run in
 OS/2 native mode, prior to the development of the OS/2 PM driver.
 

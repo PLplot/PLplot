@@ -1,6 +1,6 @@
 \section{LINUX}
 
-PLPLOT can be built on LINUX.  For basic info, see the section on Unix-type
+PLplot can be built on LINUX.  For basic info, see the section on Unix-type
 systems earlier.  There are however some additional considerations which
 bear mentioning.
 
@@ -15,9 +15,9 @@ the link step to link against the X11 libraries as well.
 Secondly, at the time of this writing (Spring '92), there are some problems
 with some forms of binary file i/o on LINUX.  Specifically, using the
 kernel 0.95c+ and the GCC 2.1 compiler, it is not possible to correctly
-generate the fonts for PLPLOT.  This would appear to be totally crippling
-since every PLPLOT program must be able to load the fonts.  The best
-solution to this problem right now is to build PLPLOT on DOS, and copy the
+generate the fonts for PLplot.  This would appear to be totally crippling
+since every PLplot program must be able to load the fonts.  The best
+solution to this problem right now is to build PLplot on DOS, and copy the
 {\tt *.fnt} files over to LINUX.  Hopefully this problem with the
 interaction of GCC 2.1 and LINUX will be resolved soon, so this may not be
 a problem when you read this.  You are welcome to attempt to build the

@@ -5,7 +5,7 @@
 
 \subsection{Linking}
 
-Linking your program with the PLPLOT library on a Unix type
+Linking your program with the PLplot library on a Unix type
 system can be done using something similar to (this is system specific):
 \begin{verbatim}
 cc  -o main main.c libplplotf.a -lm -lX11     or
@@ -28,7 +28,7 @@ The utilities {\tt plrender} and {\tt pltek} should be in your search path.
 Some good places to put these include {\tt /usr/local/bin/} or {\tt
 /usr/local/plplot/}.
 
-The PLPLOT font files must be where the library can find them.
+The PLplot font files must be where the library can find them.
 The current directory is always searched for the fonts first, followed
 by a system-dependent (and perhaps site-dependent) search path.
 This can be modified from the makefile, but is structured so that it won't
@@ -51,7 +51,7 @@ during installation.
 
 \subsection{Installation}
 
-To achieve a degree of flexibility and system independence for the PLPLOT
+To achieve a degree of flexibility and system independence for the PLplot
 makefile, it is written in the macro language m4.  System dependencies are
 resolved conditionally via m4 macros.  Using this method, only one file
 ({\tt makefile.m4}) is required for all systems with a SystemV-compatible
@@ -88,7 +88,7 @@ sets up soft links to all the files you will ever need.
 % make [libs]
 \end{verbatim}
 %
-will make the PLPLOT library(s) ({\tt libs} is the first target and
+will make the PLplot library(s) ({\tt libs} is the first target and
 therefore optional), whereas
 %
 \begin{verbatim}
@@ -114,7 +114,7 @@ for the first Fortran demo (other example programs are similar).  To make
 all the C program or Fortran program demos, specify {\tt cdemos} or
 {\tt fdemos} as the target.
 
-Finally, you must move the PLPLOT library, fonts, and utilities to 
+Finally, you must move the PLplot library, fonts, and utilities to 
 a more permanent location, for example:
 \begin{verbatim}
 % mv ../lib/*.lib /usr/local/plplot
@@ -133,7 +133,7 @@ library again using one of the example programs to ensure that everything
 works perfectly.  After you are finished, you may delete everything in the
 tmp directory.
 
-Note that starting with PLPLOT version 4.0, the {\tt *.idx} and the {\tt
+Note that starting with PLplot version 4.0, the {\tt *.idx} and the {\tt
 *.lkp} files are no longer generated.  The info they contained has been
 stuffed into the {\tt *.fnt} files.  This means when you move the font
 files to their permanent locale, you only need to do
@@ -141,5 +141,5 @@ files to their permanent locale, you only need to do
 mv *.fnt wherever
 \end{verbatim}
 
-If you have any difficutly with installing the PLPLOT files into their
+If you have any difficutly with installing the PLplot files into their
 permanent places, your local unix system wizard may be able to help you.
