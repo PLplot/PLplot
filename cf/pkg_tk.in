@@ -31,5 +31,4 @@ install_tk:
 	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
 	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
-	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 
