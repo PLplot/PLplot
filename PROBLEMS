@@ -156,10 +156,38 @@ published pdf standards.  Currently there is no idea whether such a pdf
 verification tool exists, but acroread is buggy on Linux so that is not good
 enough as a verification tool.
 
-* split fortran library into fortran part (with same name) and a C part
+* Split fortran library into fortran part (with same name) and a C part
 which the fortran part links to.  This change should solve all our FLIBS
 troubles on various platforms.
 
-* use -no-undefined for java interface build (should not require extra
+* Use -no-undefined for java interface build (should not require extra
 library linking) and for python interface build (which will require linking
 to libpython$PYVERSION and finding that library at the ./configure stage).
+
+
+* Replace all configure-related environment variables, e.g.,
+
+JAVAMDINCDIR
+GDINCDIR
+CDINCDIR
+FREETYPEINCDIR
+TCLINCDIR
+ITCLINCDIR
+TKINCDIR
+TKPRIVATEINCDIR
+TCLPRIVATEINCDIR
+PYTHON_INC_DIR
+
+GDLIBDIR
+PNGLIBDIR
+JPEGLIBDIR
+ZLIBLIBDIR
+CDLIBDIR
+FREETYPELIBDIR
+TCLLIBDIR
+ITCLLIBDIR
+TKLIBDIR
+ITKLIBDIR
+VGALIBDIR
+
+by documented ./configure options.
