@@ -29,7 +29,7 @@ void plD_esc_pbm		(PLStream *, PLINT, void *);
 #define PIXELS_X 640
 #define PIXELS_Y 480
 
-static char cmap[PIXELS_Y][PIXELS_X][3];
+static char *cmap;
 
 #undef MAX
 #undef ABS
@@ -89,7 +89,11 @@ plD_init_pbm(PLStream *pls)
 
 /* Set up device parameters */
 
-    plP_setphy(0, PIXELS_X, 0, PIXELS_Y);
+    if (pls->xlength <= 0 || pls->ylength <= 0) {
+      plspage(0., 0., PIXELS_X, PIXELS_Y, 0, 0);
+    }
+
+    plP_setphy(0, pls->xlength, 0, pls->ylength);
 }
 
 #if 0
@@ -173,9 +177,10 @@ plD_line_pbm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     }
 }
 #else
-#define plot(x,y,c) {cmap[y][x][0] = (c)->curcolor.r; \
-					 cmap[y][x][1] = (c)->curcolor.g; \
-					 cmap[y][x][2] = (c)->curcolor.b; }
+#define plot(x,y,c) {int i = 3*((y)*(c)->xlength+(x)); \
+                     cmap[i+0] = (c)->curcolor.r; \
+		     cmap[i+1] = (c)->curcolor.g; \
+		     cmap[i+2] = (c)->curcolor.b; }
 
 /* Modified version of the ljii routine (see ljii.c) */
 void
@@ -188,8 +193,8 @@ plD_line_pbm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 /* Take mirror image, since PCL expects (0,0) to be at top left */
 
-    y1 = PIXELS_Y - (y1 - 0);
-    y2 = PIXELS_Y - (y2 - 0);
+    y1 = pls->ylength - (y1 - 0);
+    y2 = pls->ylength - (y2 - 0);
 
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (PLFLT) sqrt((double)
@@ -227,7 +232,7 @@ plD_eop_pbm(PLStream *pls)
 
     if (fp != NULL) {
 	fprintf(fp, "%s\n", "P6");
-	fprintf(fp, "%d %d\n", PIXELS_X, PIXELS_Y);
+	fprintf(fp, "%d %d\n", pls->xlength, pls->ylength);
 	fprintf(fp, "%d\n", MAX_INTENSITY);
     /*
 	{
@@ -238,16 +243,26 @@ plD_eop_pbm(PLStream *pls)
 			fprintf(fp, "%c", cmap[i][j][k]);
 	}
     */
-	fwrite( cmap, 1, PIXELS_X * PIXELS_Y * 3, fp );
+	fwrite( cmap, 1, pls->xlength * pls->ylength * 3, fp );
 
 	fclose(fp);
     } 
+    free(cmap);
+    cmap = 0;
 }
 
 void
 plD_bop_pbm(PLStream *pls)
 {
-/* Nothing to do here */
+  int i,j,k;
+  cmap = (char*)malloc(pls->xlength*pls->ylength*3);
+  for (i=0; i<pls->ylength; i++)
+    for (j=0; j<pls->xlength; j++) {
+      k = (i*pls->xlength + j)*3;
+      cmap[k+0] = pls->cmap0[0].r;
+      cmap[k+1] = pls->cmap0[0].g;
+      cmap[k+2] = pls->cmap0[0].b;
+    }
 }
 
 void
