@@ -1159,6 +1159,7 @@ AC_CONFIG_FILES([
 	examples/perl/Makefile
 	test/Makefile
 	test/plplot-test.sh
+	test/test_f77.sh
 	test/test_python.sh
 	utils/Makefile
 	scripts/Makefile
