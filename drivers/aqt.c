@@ -1,3 +1,28 @@
+/* March 12, 2005
+
+	PLplot driver for AquaTerm and Mac OS X.
+
+	Copyright (C) Per Persson
+	Copyright (C) 2005 Hazen Babcock
+
+	This file is part of PLplot.
+
+	PLplot is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Library Public License as published
+	by the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	PLplot is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Library General Public License for more details.
+
+	You should have received a copy of the GNU Library General Public License
+	along with PLplot; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+   	
+*/
+
 #import <Foundation/Foundation.h>
 #import <aquaterm/AQTAdapter.h>
 
@@ -129,8 +154,6 @@ void plD_init_aqt(PLStream *pls)
       windowYSize = AQT_Max_Y;
       plP_setphy((PLINT) 0, (PLINT) (AQT_Max_X/SCALE), (PLINT) 0, (PLINT) (AQT_Max_Y/SCALE));
    } else {
-      // FIXME : Would the user typically specify a window size in pixels?
-      //   All I know is that the Perl Data Language Plplot package seems to
       windowXSize = pls->xlength;
       windowYSize = pls->ylength;
       plP_setphy((PLINT) 0, (PLINT) (pls->xlength/SCALE), (PLINT) 0, (PLINT) (pls->ylength/SCALE));
@@ -368,10 +391,6 @@ void proc_str (PLStream *pls, EscText *args)
 	ft_ht = 1.2 * pls->chrht * DPI/25.4; 	/* ft_ht in points. ht is in mm */
 
    	/* given transform, calculate rotation angle & shear angle */
-   	
-/*   	printf("transform : %.2f %.2f %.2f %.2f\n", t[0], t[1], t[2], t[3]);
-	angle = pls->diorot * 90.;
-	printf("angle : %.2f\n", angle); */
 	
 	a1 = acos(t[0]) * 180. / PI;
 	if (t[2] > 0.)
@@ -379,7 +398,7 @@ void proc_str (PLStream *pls, EscText *args)
 	else
 		angle = 360. - a1;
 
-	shear = atan(t[1]+t[2]) * 180.0 / PI;
+	shear = 90.0 - acos(t[0]*t[1] + t[2]*t[3]) * 180.0 / PI;
 
 	/* apply plplot difilt transformations */
 
@@ -412,9 +431,13 @@ void proc_str (PLStream *pls, EscText *args)
 	[adapter setColorRed:(float)(pls->curcolor.r/255.)
                    green:(float)(pls->curcolor.g/255.)
                     blue:(float)(pls->curcolor.b/255.)];
-//    [adapter addLabel:str atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE) angle:angle shearAngle:shear align:(jst | ref)];
+    [adapter addLabel:str 
+              atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
+                angle:angle 
+           shearAngle:shear 
+                align:(jst | ref)];
 
-	[adapter addLabel:str atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE) angle:angle align:(jst | ref)];
+//	[adapter addLabel:str atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE) angle:angle align:(jst | ref)];
 
     [str release];
 }
@@ -467,7 +490,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	cur_loc = 0;
 	i = 0;
 	while (i < ucs4_len){
-		if (ucs4[i] < 0x10000000){	/* not a font change */
+		if (ucs4[i] < FCI){	/* not a font change */
 			if (ucs4[i] != (PLUNICODE)plplot_esc) {		/* a character to display */
 				utf8 = UCS4_to_UTF8(ucs4[i]);
 				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
