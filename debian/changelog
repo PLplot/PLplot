@@ -1,13 +1,12 @@
 plplot (5.3.0.cvs.20040303-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
   * New cvs snapshot upstream release.
   * Reorganization of the packages to avoid potential problems with future
-    upgradings of the main package soversion.  Since libplplotcxxd,
+    upgradings of the PLplot libary soversion.  Since libplplotcxxd,
     libcsirocsa, and libcsironn have different soversion numbers
     upstream, they are separated from the main libplplot9.
   * debian/control:
-    - Updated contents of package libplplot9.
+    - In the description of libplplot9, updated contents of package.
     - libplplot-c++9: New package.
     - libcsiro0: New package.
   * debian/libplplot-c++9.files: New file.
@@ -15,7 +14,7 @@ plplot (5.3.0.cvs.20040303-1) unstable; urgency=low
   * debian/rules: create symlinks for /usr/share/doc/lib{plplot-c++9,csiro}
     to /usr/share/doc/libplplot9.
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 10 Mar 2004 23:39:13 +0100
 
 plplot (5.3.0-5) unstable; urgency=low
 
