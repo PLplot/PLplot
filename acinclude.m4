@@ -874,13 +874,17 @@ dnl library in the form lib$STEM.<so_ext>.<so_number>.  Set the
 dnl variable VARIABLE with the resulting value.  This macro should be used 
 dnl only after the call to AM_PROG_LIBTOOL.
 AC_DEFUN([GET_DLNAME],[
-  TMP_DIR=./tmp-cfg
-  rm -rf $TMP_DIR
-  mkdir -p $TMP_DIR
-  cd $TMP_DIR
-  ../libtool --mode=link $CC -rpath /usr/lib -version-info $2 \
-      -o lib$1.la > /dev/null
-  $3=`grep ^dlname= lib$1.la | sed "s/dlname='\(.*\)'/\1/"`
-  cd ..
-  rm -rf $TMP_DIR
+  if test -z "$LIBTOOL" -a -z "$CC" ; then
+    AC_MSG_ERROR([Dlname guessings can be done only after libtool is initialized])
+  else
+    TMP_DIR=./tmp-cfg
+    rm -rf $TMP_DIR
+    mkdir -p $TMP_DIR
+    cd $TMP_DIR
+    ../libtool --mode=link $CC -rpath /usr/lib -version-info $2 \
+        -o lib$1.la > /dev/null
+    $3=`grep ^dlname= lib$1.la | sed "s/dlname='\(.*\)'/\1/"`
+    cd ..
+    rm -rf $TMP_DIR
+  fi
 ])
