@@ -97,8 +97,6 @@ AC_SUBST(PYTHON_INC_DIR)
 AC_SUBST(PYTHON_NUM_DIR)
 
 AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
-# Needed to set up python linking hack for Mac OS X.
-AM_CONDITIONAL(darwin_os, [case "$host_os" in darwin*) true;; *) false; esac])
 
 AC_CONFIG_FILES([
     bindings/python/Makefile

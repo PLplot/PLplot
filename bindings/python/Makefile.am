@@ -76,25 +76,11 @@ libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
 AM_CPPFLAGS = $(INCLTDL) -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(X_CFLAGS)
 
-# For Mac OS X/fink we have found that dropping -no-undefined $(PYTHON_LDFLAGS)
-# solves an unknown linking problem that causes python to be unable to import
-# the extension module, but this hack is not necessary on other platforms.
-# and it causes errors for Cygwin.  We also hope this hack
-# won't be necessary in the future when we have better versions of
-# libtool/Mac OS X/fink.
-if darwin_os
-extra_ldflags = 
-else
-# -no-undefined should work on all (other) platforms here since symbols should 
-# all be resolved by $(PYTHON_LDFLAGS) and libplplot
-extra_ldflags = -no-undefined $(PYTHON_LDFLAGS)
-endif
-
 UNDERSCORE_plplotcmodule_la_LDFLAGS  = \
 	-rpath $(ourexecpythondir) \
 	-module \
 	-avoid-version \
-	$(extra_ldflags) \
+	-no-undefined $(PYTHON_LDFLAGS) \
 	$(libplplot)
 
 plplot_widgetmodule_la_SOURCES  = plplot_widgetmodule.c
