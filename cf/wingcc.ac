@@ -26,7 +26,7 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-PL_ARG_WITH(gdi32-incdir, [Path to the libgdi32 header files], [])
+PL_ARG_WITH(gdi32-incdir, [User-specified path to the libgdi32 header files], [])
 if test "$enable_wingcc" = "yes"; then
     if test -z "$with_gdi32_incdir"; then
         AC_MSG_CHECKING(for libgdi32 header files)
@@ -52,7 +52,7 @@ if test "$enable_wingcc" = "yes"; then
 	    AC_MSG_RESULT([found in $with_gdi32_incdir])
         fi ])
     else
-    	AC_MSG_NOTICE("Path to the libgdi32 header files specified as $with_gdi32_incdir")
+    	AC_MSG_NOTICE("User-specified path to the libgdi32 header files is $with_gdi32_incdir")
     fi
     if test "$with_gdi32_incdir" = "/usr/include"; then
         with_gdi32_incdir=default
@@ -62,7 +62,7 @@ if test "$enable_wingcc" = "yes"; then
     PL_ADD_TO_INCS($with_gdi32_incdir, GDI32INCCMD, GDI32INCPATH)
 fi
 
-PL_ARG_WITH(gdi32-libdir, [Path to libgdi32], [])
+PL_ARG_WITH(gdi32-libdir, [User-specified path to libgdi32], [])
 if test "$enable_wingcc" = "yes"; then
     if test -z "$with_gdi32_libdir"; then
         AC_CHECK_LIB(gdi32, main, [ with_gdi32_libdir=default ], [
@@ -82,7 +82,7 @@ if test "$enable_wingcc" = "yes"; then
             enable_wingcc=no
         fi ])
     else
-    	AC_MSG_NOTICE("Path to libgdi32 specified as $with_gdi32_libdir")
+    	AC_MSG_NOTICE("User-specified path to libgdi32 is $with_gdi32_libdir")
     fi
     if test "$with_gdi32_libdir" = "/usr/lib"; then
         with_gdi32_libdir=default
