@@ -52,40 +52,31 @@ enabledisplay()
 
 void
 plimageslow(PLFLT *data, PLINT nx, PLINT ny, 
-	    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-	    PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
+	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
 	    PLFLT zmin, PLFLT zmax)
 {
 
-  PLINT  ix, iy;
-  int    i;
-  PLFLT  dx, dy;
-  PLFLT x[8], y[8];
+  PLINT ix, iy, i;
+  PLFLT x[4], y[4];
   PLFLT xm, ym;
-  
-  dx = (xmax - xmin) / (nx - 1);
-  dy = (ymax - ymin) / (ny - 1);
 
-  for (ix = 0; ix < nx - 1; ix++) {
-    for (iy = 0; iy < ny - 1; iy++) {
+  for (ix = 0; ix < nx ; ix++) {
+    for (iy = 0; iy < ny ; iy++) {
 
       plcol1((data[ix*ny+iy]-zmin) / (zmax-zmin));
 
       xm = xmin + ix*dx;
       ym = ymin + iy*dy;
 
-      if( Dxmin <= xm && Dxmax >= xm && Dymin <= ym && Dymax >= ym) {
-
-	x[0] = x[1] = ix;
-	x[2] = x[3] = ix+1;
-	y[0] = y[3] = iy;
-	y[1] = y[2] = iy+1;
-	for (i = 0; i < 4; i++) {
-	  x[i] = xmin + x[i]*dx - dx*0.5;
-	  y[i] = ymin + y[i]*dy - dy*0.5;
-	}
-	plfill(4, x, y);
+      x[0] = x[1] = ix;
+      x[2] = x[3] = ix+1;
+      y[0] = y[3] = iy;
+      y[1] = y[2] = iy+1;
+      for (i = 0; i < 4; i++) {
+	x[i] = xmin + x[i]*dx;
+	y[i] = ymin + y[i]*dy;
       }
+      plfill(4, x, y);
     }
   }
 }
@@ -108,13 +99,12 @@ grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny)
  *
  * arguments are
  *   data: array containing image data
- *   nx: dimension on the X axis.        
- *   ny: dimension of the Y axis 
- *   The array data is indexed like data[ix*ny+iy]
+ *   nx: dimension of the array in the X axis.        
+ *   ny: dimension of the  array in the Y axis 
+ *   The array data is indexed like data[ix][iy]
  *
  *   xmin, xmax, ymin, ymax:
  *       data[0][0] corresponds to (xmin,ymin)
- *       data[0][ny-1] to (xmin,ymax)
  *       data[nx-1][ny-1] to (xmax,ymax)
  *
  *   Dxmin, Dxmax, Dymin, Dymax:
@@ -128,11 +118,10 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
-  PLINT  ix, iy;
-  PLFLT  dx, dy;
-  PLFLT zmin, zmax;
+  PLINT nnx, nny, ix, iy, j;
+  PLFLT dx, dy, xm, ym;
   PLINT *Xf, *Yf;
-  PLFLT *Zf, *data;
+  PLFLT *Zf, *data, zmin, zmax;
   
   if (plsc->level < 3) {
     plabort("plimage: window must be set up first");
@@ -145,44 +134,58 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   }
 
   plMinMax2dGrid(idata, nx, ny, &zmax, &zmin);
+  dx = (xmax - xmin) / (nx - 1);
+  dy = (ymax - ymin) / (ny - 1);
+  nnx = (Dxmax-Dxmin)/dx + 1;
+  nny = (Dymax-Dymin)/dy + 1;
 
-  data = (PLFLT *) malloc(ny*nx*sizeof(PLFLT));
+  data = (PLFLT *) malloc(nny*nnx*sizeof(PLFLT));
 
+  j=0;
   for (ix=0; ix<nx; ix++)
-    for (iy=0; iy<ny; iy++)
-      data[ix*ny+iy] = idata[ix][iy];
+    for (iy=0; iy<ny; iy++) {
+      xm = xmin + ix*dx;
+      ym = ymin + iy*dy;
+      if( Dxmin <= xm && Dxmax >= xm && Dymin <= ym && Dymax >= ym)
+	data[j++] = idata[ix][iy];
+    }
+
+  xmin = Dxmin;  xmax = Dxmax;
+  ymin = Dymin;  ymax = Dymax;
+
+  /* adjust the step for the X/Y arrays */
+  dx = dx*(nx-1)/nx;
+  dy = dy*(ny-1)/ny;
 
   if( plsc->dev_fastimg == 0) {
-    plimageslow( data, nx,  ny, 
-		 xmin, xmax, ymin, ymax,
-		 Dxmin, Dxmax, Dymin, Dymax,
+    plimageslow( data, nnx,  nny, 
+		 xmin, ymin, dx, dy,
 		 zmin, zmax);
+    free(data);
     return ;
   }
 
-  /* compose the array to pass to plP_image */
+  /* compose the arrays to pass to plP_image */
 
-  Xf = (PLINT *) malloc(ny*nx*sizeof(PLINT));
-  Yf = (PLINT *) malloc(ny*nx*sizeof(PLINT));
-  Zf = (PLFLT *) malloc(ny*nx*sizeof(PLFLT));
-  
-  dx = (xmax - xmin) / (nx - 1);
-  dy = (ymax - ymin) / (ny - 1);
-  
-  for (ix = 0; ix < nx; ix++) {
-    for (iy = 0; iy < ny; iy++) {      
-      Zf[ix*ny+iy] =  (data[ix*ny+iy]-zmin) / (zmax-zmin) ; 
-      Xf[ix*ny+iy] =  plP_wcpcx(xmin + ix*dx);
-      Yf[ix*ny+iy] =  plP_wcpcy(ymin + iy*dy);
+  /* the Z array has size (nnx-1)*(nny-1) */
+
+  Zf = (PLFLT *) malloc(nny*nnx*sizeof(PLFLT));  
+  for (ix = 0; ix < nnx; ix++)
+    for (iy = 0; iy < nny; iy++)
+      Zf[ix*nny+iy] =  (data[ix*nny+iy]-zmin) / (zmax-zmin) ; 
+
+  /* while the X and Y arrays has size nnx*nny */
+  nnx++; nny++;
+  Xf = (PLINT *) malloc(nny*nnx*sizeof(PLINT));
+  Yf = (PLINT *) malloc(nny*nnx*sizeof(PLINT));
+
+  for (ix = 0; ix < nnx; ix++)
+    for (iy = 0; iy < nny; iy++) {      
+      Xf[ix*nny+iy] =  plP_wcpcx(xmin + ix*dx);
+      Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
     }
-  }
 
-  plsc->Dxmin = plP_wcpcx(Dxmin);
-  plsc->Dxmax = plP_wcpcx(Dxmax);
-  plsc->Dymin = plP_wcpcy(Dymin);
-  plsc->Dymax = plP_wcpcy(Dymax);
- 
-  plP_image(Xf, Yf, Zf, nx, ny);
+  plP_image(Xf, Yf, Zf, nnx, nny);
 
   free(Xf);
   free(Yf);
