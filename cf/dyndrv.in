@@ -61,10 +61,16 @@ drivers/impress$(LIB_TAG).drv : shared/impress$O $(PLLIBS)
 drivers/gnome$(LIB_TAG).drv : shared/gnome$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @GNOMELIBS@ $(driverlibs)
 
-#drivers/tkwin$(LIB_TAG).drv : shared/tkwin$O $(PLLIBS)
-#	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
-
 drivers/ntk$(LIB_TAG).drv : shared/ntk$O $(PLLIBS)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+
+drivers/tkwin$(LIB_TAG).drv : shared/tkwin$O $(PLLIBS)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+
+drivers/tk$(LIB_TAG).drv : shared/tk$O $(PLLIBS)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+
+drivers/xwin$(LIB_TAG).drv : shared/xwin$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
 drivers/linuxvga$(LIB_TAG).drv : shared/linuxvga$O $(PLLIBS)

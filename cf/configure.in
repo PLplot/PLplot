@@ -133,12 +133,12 @@ hp7470, hp7580, lj_hpgl, ljiip, imp, xwin, tk, pbm, gnome, pstex, ntk, tkwin])
 # Note specifically which drivers are known to be loadable.  Eventually,
 # hopefully, every driver will show up on this list.  However, we add them one
 # at a time since each will have its own peculiarities in the build process
-# (only ones missing at present: xwin and tk and tkwin).
+# (none missing at present).
 
 define([PL_DYNAMIC_DRIVER_LIST],
 [plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit \
 conex linuxvga vlt versaterm dg300 png jpeg cgm ps psc xfig ljii \
-hp7470 hp7580 lj_hpgl ljiip imp pbm gnome pstex ntk])
+hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk tkwin])
 
 # We think of a "device" as the output medium.  Could be a machine
 # style (Tektronix, X11), or a file format (Postscript).
