@@ -652,7 +652,7 @@ plD_init_gnome (PLStream *pls)
   char* argv[] = { "" };
   GnomePLdev* dev;
   GtkWidget* window;
-  double phys2canvas = PIXELS_PER_DU / DRAWING_UNIT / MM_PER_IN;
+  double phys2canvas = MAG_FACTOR * PIXELS_PER_DU / DRAWING_UNIT / MM_PER_IN;
 
   pls->termin = 1;		/* Is an interactive terminal */
   pls->dev_flush = 1;		/* Handle our own flushes */
