@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.80  1995/05/07 02:27:21  mjl
+ * Revision 1.81  1995/07/19 18:51:31  mjl
+ * Added define for new parse option, PL_PARSE_SKIP.
+ *
+ * Revision 1.80  1995/05/07  02:27:21  mjl
  * Added PL_OPT_DISABLED, and not that PL_OPT_ENABLED is obsolete.  Removed
  * TK related function declarations -- prototypes for these now must be
  * obtained by including pltk.h.
@@ -243,6 +246,7 @@ typedef void* PLPointer;
 #define PL_PARSE_OVERRIDE	0x0010	/* Obsolete */
 #define PL_PARSE_NOPROGRAM	0x0020	/* Program name NOT in *argv[0].. */
 #define PL_PARSE_NODASH		0x0040	/* Set if leading dash NOT required */
+#define PL_PARSE_SKIP		0x0080	/* Skip over unrecognized args */
 
 /* Obsolete names */
 
