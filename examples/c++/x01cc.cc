@@ -178,7 +178,7 @@ void x01cc::plot1()
     pls->env( 0., 1., 0., 1., 0, 0 );
 
     pls->col( Yellow );
-    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
+    pls->lab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
     PLFLT x[6], y[6];
     for( int i=0; i < 6; i++ ) {
@@ -255,7 +255,7 @@ void x01cc::plot2()
 	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
 	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
-	plpsty(0);
+	pls->psty(0);
 
 	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
@@ -281,7 +281,7 @@ void x01cc::plot2()
 	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
 	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
-	plpsty(0);
+	pls->psty(0);
 
 	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
@@ -332,7 +332,7 @@ void x01cc::plot2()
 	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
 	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
-	plpsty(0);
+	pls->psty(0);
 
 	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
