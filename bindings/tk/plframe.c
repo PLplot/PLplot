@@ -292,6 +292,7 @@ static void  Install_cmap	(PlFrame *plFramePtr);
 
 static int   Closelink		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Cmd		(Tcl_Interp *, PlFrame *, int, char **);
+static int   ColorManip		(Tcl_Interp *, PlFrame *, int, char **);
 static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
 static int   Draw		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Info		(Tcl_Interp *, PlFrame *, int, char **);
@@ -580,6 +581,14 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	}
     }
 
+    else if (((c == 'g') && ((strncmp(argv[1], "gcmap0", length) == 0) ||
+			     (strncmp(argv[1], "gcmap1", length) == 0))) ||
+	     ((c == 's') && ((strncmp(argv[1], "scmap0", length) == 0) ||
+			     (strncmp(argv[1], "scmap1", length) == 0) ||
+			     (strncmp(argv[1], "scol0", length) == 0)  ||
+			     (strncmp(argv[1], "scol1", length) == 0))))
+	result = ColorManip(interp, plFramePtr, argc-1, argv+1);
+
 /* info -- returns requested info */
 
     else if ((c == 'i') && (strncmp(argv[1], "info", length) == 0)) {
@@ -682,9 +691,11 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
-	 "\":  must be closelink, cmd, configure, draw, info, ",
-	 "openlink, orient, page, print, redraw, save, view, ",
-	 "xscroll, or yscroll", (char *) NULL);
+	 "\":  must be closelink, cmd, configure, draw, ",
+	 "gcmap0, gcmap1, ",
+	 "info, openlink, orient, page, print, redraw, save, ",
+	 "scmap0, scmap1, scol0, scol1, ",
+	 "view, xscroll, or yscroll", (char *) NULL);
 
 	result = TCL_ERROR;
     }
@@ -1724,38 +1735,42 @@ scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*--------------------------------------------------------------------------*\
- * Cmd
+ * ColorManip
  *
- * Processes "cmd" widget command.
- * Handles commands that go more or less directly to the PLplot library.
- * Most of these come out of the PLplot Tcl API support file.
+ * Processes color manipulation widget commands.
+ *
+ * This provides an alternate API for the plplot color handling functions
+ * (prepend a "pl" to get the corresponding plplot function).  They differ
+ * from the versions in the Tcl API in the following ways:
+ *
+ *  - X11 conventions are used rather than plplot ones.  XParseColor is used
+ *    to convert a string into its 3 rgb components.  This lets you use
+ *    symbolic names or hex notation for color values.  
+ *
+ *  - these expect/emit Tcl array values in lists rather than in tclmatrix
+ *    form, like most "normal" Tcl tools.  For usage, see the examples in the
+ *    palette tools (plcolor.tcl). 
 \*--------------------------------------------------------------------------*/
 
 static int
-Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
-    int argc, char **argv)
+ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
+	   int argc, char **argv)
 {
     PLStream *pls = plFramePtr->pls;
     int length;
-    char c3;
+    char c;
     int result = TCL_OK;
-    char cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 
 #ifdef DEBUG
     if (pls->debug) {
 	int i;
-	fprintf(stderr, "There are %d arguments to Cmd:", argc);
+	fprintf(stderr, "There are %d arguments to ColorManip:", argc);
 	for (i = 0; i < argc; i++) {
 	    fprintf(stderr, " %s", argv[i]);
 	}
 	fprintf(stderr, "\n");
     }
 #endif
-
-/* no option -- return list of available PLplot commands */
-
-    if (argc == 0) 
-	return plTclCmd(cmdlist, interp, argc, argv);
 
 /* Make sure widget has been initialized before going any further */
 
@@ -1767,13 +1782,13 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsstrm(plFramePtr->ipls);
 
-    c3 = argv[0][2];
+    c = argv[0][0];
     length = strlen(argv[0]);
 
-/* plgcmap0 -- get color map 0 */
+/* gcmap0 -- get color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    if ((c3 == 'g') && (strncmp(argv[0], "plgcmap0", length) == 0)) {
+    if ((c == 'g') && (strncmp(argv[0], "gcmap0", length) == 0)) {
 	int i;
 	unsigned long plcolor;
 	char str[10];
@@ -1791,11 +1806,11 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	result = TCL_OK;
     }
 
-/* plgcmap1 -- get color map 1 */
+/* gcmap1 -- get color map 1 */
 /* first arg is number of control points */
 /* the rest are hex number specifications followed by positions (0-100) */
 
-    else if ((c3 == 'g') && (strncmp(argv[0], "plgcmap1", length) == 0)) {
+    else if ((c == 'g') && (strncmp(argv[0], "gcmap1", length) == 0)) {
 	int i;
 	unsigned long plcolor;
 	char str[10];
@@ -1829,10 +1844,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	result = TCL_OK;
     }
 
-/* plscmap0 -- set color map 0 */
+/* scmap0 -- set color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    else if ((c3 == 's') && (strncmp(argv[0], "plscmap0", length) == 0)) {
+    else if ((c == 's') && (strncmp(argv[0], "scmap0", length) == 0)) {
 	int i, changed = 1, ncol0 = atoi(argv[1]);
 	char *col;
 
@@ -1858,11 +1873,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plP_state(PLSTATE_CMAP0);
     }
 
-/* plscmap1 -- set color map 1 */
+/* scmap1 -- set color map 1 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    else if ((c3 == 's') && (strncmp(argv[0], "plscmap1", length) == 0)) {
-#if 0
+    else if ((c == 's') && (strncmp(argv[0], "scmap1", length) == 0)) {
 	int i, changed = 1, ncp1 = atoi(argv[1]);
 	char *col, *pos, *rev;
 
@@ -1893,31 +1907,12 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plsc->ncp1 = ncp1;
 	    plcmap1_calc();
 	}
-#else
-        PLINT *r;
-        tclMatrix *matr;
-        PLINT *g;
-        tclMatrix *matg;
-        PLINT *b;
-        tclMatrix *matb;
-        PLINT ncol1;
-
-        matr = Tcl_GetMatrixPtr( interp, argv[1+0] );
-        r = matr->idata;
-        matg = Tcl_GetMatrixPtr( interp, argv[1+1] );
-        g = matg->idata;
-        matb = Tcl_GetMatrixPtr( interp, argv[1+2] );
-        b = matb->idata;
-        ncol1 = atoi(argv[1+3]);
-
-        plscmap1 ( r, g, b, ncol1 );
-#endif
     }
 
-/* plscol0 -- set single color in cmap0 */
+/* scol0 -- set single color in cmap0 */
 /* first arg is the color number, the next is the color in hex */
 
-    else if ((c3 == 's') && (strncmp(argv[0], "plscol0", length) == 0)) {
+    else if ((c == 's') && (strncmp(argv[0], "scol0", length) == 0)) {
 	int i = atoi(argv[1]), changed = 1;
 
 	if (i > pls->ncol0 || i < 0) {
@@ -1933,10 +1928,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plP_state(PLSTATE_CMAP0);
     }
 
-/* plscol1 -- set color of control point in cmap1 */
+/* scol1 -- set color of control point in cmap1 */
 /* first arg is the control point, the next two are the color in hex and pos */
 
-    else if ((c3 == 's') && (strncmp(argv[0], "plscol1", length) == 0)) {
+    else if ((c == 's') && (strncmp(argv[0], "scol1", length) == 0)) {
 	int i = atoi(argv[1]), changed = 1;
 
 	if (i > pls->ncp1 || i < 0) {
@@ -1953,10 +1948,55 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plcmap1_calc();
     }
 
-/* unrecognized, so give it to plTclCmd to take care of */
+    plflush();
+    return result;
+}
 
-    else 
-	result = plTclCmd(cmdlist, interp, argc, argv);
+/*--------------------------------------------------------------------------*\
+ * Cmd
+ *
+ * Processes "cmd" widget command.
+ * Handles commands that go more or less directly to the PLplot library.
+ * Most of these come out of the PLplot Tcl API support file.
+\*--------------------------------------------------------------------------*/
+
+static int
+Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
+    int argc, char **argv)
+{
+    PLStream *pls = plFramePtr->pls;
+    int length;
+    char c;
+    int result = TCL_OK;
+    char cmdlist[] = "";
+
+#ifdef DEBUG
+    if (pls->debug) {
+	int i;
+	fprintf(stderr, "There are %d arguments to Cmd:", argc);
+	for (i = 0; i < argc; i++) {
+	    fprintf(stderr, " %s", argv[i]);
+	}
+	fprintf(stderr, "\n");
+    }
+#endif
+
+/* no option -- return list of available PLplot commands */
+
+    if (argc == 0) 
+	return plTclCmd(cmdlist, interp, argc, argv);
+
+/* Make sure widget has been initialized before going any further */
+
+    if ( ! plFramePtr->tkwin_initted) {
+	Tcl_VarEval(plFramePtr->interp, "update", (char *) NULL);
+    }
+
+/* Set stream number and process the command */
+
+    plsstrm(plFramePtr->ipls);
+
+    result = plTclCmd(cmdlist, interp, argc, argv);
 
     plflush();
     return result;
