@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1995/06/01 21:40:51  mjl
+ * Revision 1.18  1995/10/14 17:15:13  mjl
+ * Changed the "Plplot library version" message to go to stderr so that program
+ * can be used as the beginning of a pipeline.
+ *
+ * Revision 1.17  1995/06/01  21:40:51  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.  Fixed bogus
  * options table specification.
@@ -116,7 +120,7 @@ main(int argc, char *argv[])
 /* Get version number, just for kicks */
 
     plgver(ver);
-    printf("Plplot library version: %s\n", ver);
+    fprintf(stderr, "Plplot library version: %s\n", ver);
 
 /* Initialize plplot */
 
