@@ -1,0 +1,16 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 24-Jul-1994
+#
+# Miscellaneous targets for demos.  Right now only cleanup.
+# Only used in standalone demo Makefile.
+# -----------------------------------------------------------------------
+
+# Cleanup
+
+clean:
+	-rm $(CDEMOS) $(FDEMOS) $(TKDEMOS) *.o *.ps *.plm
+
