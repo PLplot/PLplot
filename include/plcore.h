@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:34:51  mjl
-   Added this file for inclusion only by plcore.c.  It declares the plstream
-   data structure, and defines, declares, and initializes the dispatch
-   table data structure.
+   Revision 1.2  1993/02/23 04:53:14  mjl
+   Eliminated xxx_adv (gradv) driver function prototypes.
 
+ * Revision 1.1  1993/01/23  05:34:51  mjl
+ * Added this file for inclusion only by plcore.c.  It declares the plstream
+ * data structure, and defines, declares, and initializes the dispatch
+ * table data structure.
+ *
 */
 
 /*	plcore.h
@@ -17,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "drivers.h"
 
 /*----------------------------------------------------------------------*\
@@ -100,7 +104,6 @@ typedef struct {
    void (*pl_polyline)	(PLStream *, PLSHORT *, PLSHORT *, PLINT);
    void (*pl_clear)	(PLStream *);
    void (*pl_page)	(PLStream *);
-   void (*pl_adv)	(PLStream *);
    void (*pl_tidy)	(PLStream *);
    void (*pl_color)	(PLStream *);
    void (*pl_text)	(PLStream *);
@@ -135,7 +138,6 @@ static PLDispatchTable dispatch_table[] = {
         nx_polyline,
         nx_clear,
         nx_page,
-        nx_adv,
         nx_tidy,
         nx_color,
         nx_text,
@@ -154,7 +156,6 @@ static PLDispatchTable dispatch_table[] = {
 	amiwn_polyline,
 	amiwn_clear,
 	amiwn_page,
-	amiwn_adv,
 	amiwn_tidy,
 	amiwn_color,
 	amiwn_text,
@@ -173,7 +174,6 @@ static PLDispatchTable dispatch_table[] = {
 	os2_polyline,
 	os2_clear,
 	os2_page,
-	os2_adv,
 	os2_tidy,
 	os2_color,
 	os2_text,
@@ -192,7 +192,6 @@ static PLDispatchTable dispatch_table[] = {
 	xm_polyline,
 	xm_clear,
 	xm_page,
-	xm_adv,
 	xm_tidy,
 	xm_color,
 	xm_text,
@@ -211,7 +210,6 @@ static PLDispatchTable dispatch_table[] = {
 	xw_polyline,
 	xw_clear,
 	xw_page,
-	xw_adv,
 	xw_tidy,
 	xw_color,
 	xw_text,
@@ -230,7 +228,6 @@ static PLDispatchTable dispatch_table[] = {
 	vga_polyline,
 	vga_clear,
 	vga_page,
-	vga_adv,
 	vga_tidy,
 	vga_color,
 	vga_text,
@@ -249,7 +246,6 @@ static PLDispatchTable dispatch_table[] = {
 	svga_polyline,
 	svga_clear,
 	svga_page,
-	svga_adv,
 	svga_tidy,
 	svga_color,
 	svga_text,
@@ -268,7 +264,6 @@ static PLDispatchTable dispatch_table[] = {
 	xte_polyline,
 	xte_clear,
 	xte_page,
-	xte_adv,
 	xte_tidy,
 	xte_color,
 	xte_text,
@@ -287,7 +282,6 @@ static PLDispatchTable dispatch_table[] = {
 	tek_polyline,
 	tek_clear,
 	tek_page,
-	tek_adv,
 	tek_tidy,
 	tek_color,
 	tek_text,
@@ -306,7 +300,6 @@ static PLDispatchTable dispatch_table[] = {
 	dg_polyline,
 	dg_clear,
 	dg_page,
-	dg_adv,
 	dg_tidy,
 	dg_color,
 	dg_text,
@@ -327,7 +320,6 @@ static PLDispatchTable dispatch_table[] = {
 	plm_polyline,
 	plm_clear,
 	plm_page,
-	plm_adv,
 	plm_tidy,
 	plm_color,
 	plm_text,
@@ -346,7 +338,6 @@ static PLDispatchTable dispatch_table[] = {
 	tek_polyline,
 	tek_clear,
 	tek_page,
-	tek_adv,
 	tek_tidy,
 	tek_color,
 	tek_text,
@@ -365,7 +356,6 @@ static PLDispatchTable dispatch_table[] = {
 	ps_polyline,
 	ps_clear,
 	ps_page,
-	ps_adv,
 	ps_tidy,
 	ps_color,
 	ps_text,
@@ -384,7 +374,6 @@ static PLDispatchTable dispatch_table[] = {
 	xfig_polyline,
 	xfig_clear,
 	xfig_page,
-	xfig_adv,
 	xfig_tidy,
 	xfig_color,
 	xfig_text,
@@ -403,7 +392,6 @@ static PLDispatchTable dispatch_table[] = {
 	jet_polyline,
 	jet_clear,
 	jet_page,
-	jet_adv,
 	jet_tidy,
 	jet_color,
 	jet_text,
@@ -422,7 +410,6 @@ static PLDispatchTable dispatch_table[] = {
 	amipr_polyline,
 	amipr_clear,
 	amipr_page,
-	amipr_adv,
 	amipr_tidy,
 	amipr_color,
 	amipr_text,
@@ -441,7 +428,6 @@ static PLDispatchTable dispatch_table[] = {
 	iff_polyline,
 	iff_clear,
 	iff_page,
-	iff_adv,
 	iff_tidy,
 	iff_color,
 	iff_text,
@@ -460,7 +446,6 @@ static PLDispatchTable dispatch_table[] = {
 	aegis_polyline,
 	aegis_clear,
 	aegis_page,
-	aegis_adv,
 	aegis_tidy,
 	aegis_color,
 	aegis_text,
@@ -479,7 +464,6 @@ static PLDispatchTable dispatch_table[] = {
 	hp7470_polyline,
 	hp7470_clear,
 	hp7470_page,
-	hp7470_adv,
 	hp7470_tidy,
 	hp7470_color,
 	hp7470_text,
@@ -498,7 +482,6 @@ static PLDispatchTable dispatch_table[] = {
 	hp7580_polyline,
 	hp7580_clear,
 	hp7580_page,
-	hp7580_adv,
 	hp7580_tidy,
 	hp7580_color,
 	hp7580_text,
@@ -517,7 +500,6 @@ static PLDispatchTable dispatch_table[] = {
 	imp_polyline,
 	imp_clear,
 	imp_page,
-	imp_adv,
 	imp_tidy,
 	imp_color,
 	imp_text,
@@ -536,7 +518,6 @@ static PLDispatchTable dispatch_table[] = {
 	null_polyline,
 	null_clear,
 	null_page,
-	null_adv,
 	null_tidy,
 	null_color,
 	null_text,
