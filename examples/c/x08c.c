@@ -5,8 +5,8 @@
 
 #include "plplot/plcdemos.h"
 
-#define XPTS    35		/* Data points in x */
-#define YPTS    46		/* Datat points in y */
+#define XPTS   120// 35		/* Data points in x */
+#define YPTS   160// 46		/* Datat points in y */
 
 static int opt[] = {DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, DRAW_LINEXY};
 static PLFLT alt[] = {60.0, 20.0, 60.0, 60.0};
@@ -134,8 +134,11 @@ main(int argc, char *argv[])
     xx = x[i];
     for (j = 0; j < YPTS; j++) {
       yy = y[j];
-      if (rosen)
+      if (rosen) {
 	z[i][j] = log(pow(1. - xx,2) + 100 * pow(yy - pow(xx,2),2));
+	if (isinf(z[i][j])) /* the log() of the function may become -inf */
+	  z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
+      }
       else {
 	r = sqrt(xx * xx + yy * yy);
 	z[i][j] = exp(-r * r) * cos(2.0 * PI * r);
