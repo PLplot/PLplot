@@ -1,8 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/11/07 09:03:42  mjl
-   Added escape code for flush handling.
+   Revision 1.13  1993/11/15 08:34:23  mjl
+   Prototype section completely reworked.  Now each prototype taken directly
+   from the definition (so includes variable names) and is accompanied by a
+   brief description of what the function does.  This makes the header file
+   much more useful as a quick reminder of the argument syntax for each
+   function (i.e. a poor man's manual).
 
+ * Revision 1.12  1993/11/07  09:03:42  mjl
+ * Added escape code for flush handling.
+ *
  * Revision 1.11  1993/10/06  19:52:57  mjl
  * Disabled the POSIX_TTY stuff (because it requires ANSI atexit()) when
  * NO_ANSI_LIBC is defined, and no longer define this by default for SunOS.
@@ -321,258 +328,626 @@ extern "C" {
 #endif
 	/* These should not be called directly by the user */
 
-void  pldtik		(PLFLT, PLFLT, PLFLT *, PLINT *, 
-			 PLINT *, PLINT *, PLINT, PLINT *);
+/* Determines interval between numeric labels */
 
-void  plP_pllclp	(PLINT *, PLINT *, PLINT, PLINT, PLINT, PLINT, PLINT, 
-			 void (*draw) (short *, short *, PLINT));
+void
+pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt,
+       PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale);
 
-void  plP_plfclp	(PLINT *, PLINT *, PLINT, PLINT, PLINT, PLINT, PLINT, 
-			 void (*draw) (short *, short *, PLINT));
+/* Draws a polyline within the clip limits. */
 
-void  plexit		(char *);
+void
+plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   void (*draw) (short *, short *, PLINT));
 
-void  pl_exit		(void);
+/* Fills a polygon within the clip limits. */
 
-void  plwarn		(char *errormsg);
+void
+plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   void (*draw) (short *, short *, PLINT));
 
-void  plfntld		(PLINT fnt);
+/* In case of an abort this routine is called.  It just prints out an */
+/* error message and tries to clean up as much as possible. */
 
-void  plfontrel		(void);
+void
+plexit(char *errormsg);
 
-void  plHLS_RGB		(PLFLT, PLFLT, PLFLT, PLFLT *, PLFLT *, PLFLT *);
+/* Just a front-end to exit().  */
 
-void  plhrsh		(PLINT, PLINT, PLINT);
+void
+pl_exit(void);
 
-void  plstik		(PLFLT, PLFLT, PLFLT, PLFLT);
+/* A handy way to issue warnings, if need be. */
 
-void  plstr		(PLINT, PLFLT *, PLINT, PLINT, const char *);
+void
+plwarn(char *errormsg);
 
-void  plxtik		(PLINT, PLINT, PLINT, PLINT);
+/* Loads either the standard or extended font. */
 
-void  plytik		(PLINT, PLINT, PLINT, PLINT);
+void
+plfntld(PLINT fnt);
 
-void  plP_glev		(PLINT *);
+/* Release memory for fonts. */
 
-void  plP_slev		(PLINT);
+void
+plfontrel(void);
 
-void  plP_gbase		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+/* Convert HLS color to RGB color. */
 
-void  plP_sbase		(PLFLT, PLFLT, PLFLT, PLFLT);
+void
+plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
-void  plP_gnms		(PLINT *);
+/* Writes the Hershey symbol "ch" centred at the physical coordinate */
+/* (x,y). */
 
-void  plP_snms		(PLINT);
+void
+plhrsh(PLINT ch, PLINT x, PLINT y);
 
-void  plP_gcurr		(PLINT *, PLINT *);
+/* Draws a slanting tick at position (mx,my) (measured in mm) of */
+/* vector length (dx,dy). */
 
-void  plP_scurr		(PLINT, PLINT);
+void 
+plstik(PLFLT mx, PLFLT my, PLFLT dx, PLFLT dy);
 
-void  plP_gdom		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+/* Prints out a "string" at reference position with physical coordinates */
+/* (refx,refy). */
 
-void  plP_sdom		(PLFLT, PLFLT, PLFLT, PLFLT);
+void
+plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string);
 
-void  plP_grange	(PLFLT *, PLFLT *, PLFLT *);
+/* Draws a tick parallel to x. */
 
-void  plP_srange	(PLFLT, PLFLT, PLFLT);
+void
+plxtik(PLINT x, PLINT y, PLINT below, PLINT above);
 
-void  plP_gw3wc		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+/* Draws a tick parallel to y. */
 
-void  plP_sw3wc		(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT);
+void
+plytik(PLINT x, PLINT y, PLINT left, PLINT right);
 
-void  plP_gvpp		(PLINT *, PLINT *, PLINT *, PLINT *);
+/* Get plot level */
 
-void  plP_svpp		(PLINT, PLINT, PLINT, PLINT);
+void
+plP_glev(PLINT *p_n);
 
-void  plP_gspp		(PLINT *, PLINT *, PLINT *, PLINT *);
+/* Set plot level */
 
-void  plP_sspp		(PLINT, PLINT, PLINT, PLINT);
+void
+plP_slev(PLINT n);
 
-void  plP_gclp		(PLINT *, PLINT *, PLINT *, PLINT *);
+/* Get parameters for 3d plot base */
 
-void  plP_sclp		(PLINT, PLINT, PLINT, PLINT);
+void
+plP_gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc);
 
-void  plP_gphy		(PLINT *, PLINT *, PLINT *, PLINT *);
+/* Set parameters for 3d plot base */
 
-void  plP_sphy		(PLINT, PLINT, PLINT, PLINT);
+void
+plP_sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc);
 
-void  plP_gsub		(PLINT *, PLINT *, PLINT *);
+/* Get number of elements for current broken line style */
 
-void  plP_ssub		(PLINT, PLINT, PLINT);
+void
+plP_gnms(PLINT *p_n);
 
-void  plP_gumpix	(PLINT *, PLINT *);
+/* Set number of elements for current broken line style */
 
-void  plP_sumpix	(PLINT, PLINT);
+void
+plP_snms(PLINT n);
 
-void  plP_gatt		(PLINT *, PLINT *);
+/* Get physical coordinates of current point */
 
-void  plP_satt		(PLINT, PLINT);
+void
+plP_gcurr(PLINT *p_ix, PLINT *p_iy);
 
-void  plP_gcol		(PLINT *);
+/* Set physical coordinates of current point */
 
-void  plP_scol		(PLINT);
+void
+plP_scurr(PLINT ix, PLINT iy);
 
-void  plP_gwid		(PLINT *);
+/* Get x-y domain in world coordinates for 3d plots */
 
-void  plP_swid		(PLINT);
+void
+plP_gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
 
-void  plP_gspd		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+/* Set x-y domain in world coordinates for 3d plots */
 
-void  plP_sspd		(PLFLT, PLFLT, PLFLT, PLFLT);
+void
+plP_sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
-void  plP_gvpd		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+/* Get vertical (z) scale parameters for 3-d plot */
 
-void  plP_svpd		(PLFLT, PLFLT, PLFLT, PLFLT);
+void
+plP_grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax);
 
-void  plP_gvpw		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+/* Set vertical (z) scale parameters for 3-d plot */
 
-void  plP_svpw		(PLFLT, PLFLT, PLFLT, PLFLT);
+void
+plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax);
 
-void  plP_gpixmm	(PLFLT *, PLFLT *);
+/* Get parameters used in 3d plots */
 
-void  plP_spixmm	(PLFLT, PLFLT);
+void
+plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz);
 
-void  plP_setpxl	(PLFLT, PLFLT);
+/* Set parameters used in 3d plots */
 
-void  plP_gwp		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+void
+plP_sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz);
 
-void  plP_swp		(PLFLT, PLFLT, PLFLT, PLFLT);
+/* Get viewport boundaries in physical coordinates */
 
-void  plP_gwm		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+void
+plP_gvpp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
 
-void  plP_swm		(PLFLT, PLFLT, PLFLT, PLFLT);
+/* Set viewport boundaries in physical coordinates */
 
-void  plP_gdp		(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+void
+plP_svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
-void  plP_sdp		(PLFLT, PLFLT, PLFLT, PLFLT);
+/* Get subpage boundaries in physical coordinates */
 
-void  plP_gmp		(PLFLT *, PLFLT *, PLFLT *,PLFLT *);
+void
+plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
 
-void  plP_smp		(PLFLT, PLFLT, PLFLT, PLFLT);
+/* Set subpage boundaries in physical coordinates */
 
-void  plP_schr		(PLFLT, PLFLT);
+void
+plP_sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
-void  plP_gsym		(PLFLT *, PLFLT *);
+/* Get clip boundaries in physical coordinates */
 
-void  plP_ssym		(PLFLT, PLFLT);
+void
+plP_gclp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
 
-void  plP_gmaj		(PLFLT *, PLFLT *);
+/* Set clip boundaries in physical coordinates */
 
-void  plP_smaj		(PLFLT, PLFLT);
+void
+plP_sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
-void  plP_gmin		(PLFLT *, PLFLT *);
+/* Get physical device limits in physical coordinates */
 
-void  plP_smin		(PLFLT, PLFLT);
+void
+plP_gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
 
-void  plP_gzback	(PLINT **, PLINT **, PLFLT **);
+/* Set physical device limits in physical coordinates */
 
-void  plP_movphy	(PLINT, PLINT);
+void
+plP_sphy(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
-void  plP_draphy	(PLINT, PLINT);
+/* Get number of subpages on physical device and current subpage */
 
-void  plP_movwor	(PLFLT, PLFLT);
+void
+plP_gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs);
 
-void  plP_drawor	(PLFLT, PLFLT);
+/* Set number of subpages on physical device and current subpage */
 
-void  plP_draphy_poly 	(PLINT *x, PLINT *y, PLINT n);
+void
+plP_ssub(PLINT nx, PLINT ny, PLINT cs);
 
-void  plP_drawor_poly 	(PLFLT *x, PLFLT *y, PLINT n);
+/* Get number of micrometers in a pixel */
 
-void  plP_setphy	(PLINT, PLINT, PLINT, PLINT);
+void
+plP_gumpix(PLINT *p_ix, PLINT *p_iy);
 
-void  plP_setsub	(void);
+/* Set number of micrometers in a pixel */
 
-void  plP_gmark		(PLINT **, PLINT **, PLINT *);
+void
+plP_sumpix(PLINT ix, PLINT iy);
 
-void  plP_gcure		(PLINT **, PLINT **, PLINT **, PLINT **);
+/* Get font and color attributes */
 
-void  plP_gpat		(PLINT **, PLINT **, PLINT *);
+void
+plP_gatt(PLINT *p_ifnt, PLINT *p_icol0);
 
-void  plP_spat		(PLINT *, PLINT *, PLINT);
+/* Set font and color attributes */
 
-void  plP_smark		(PLINT *, PLINT *, PLINT);
+void
+plP_satt(PLINT ifnt, PLINT icol0);
 
-void  plP_scure		(PLINT, PLINT, PLINT, PLINT);
+/* Get current color, map 0 */
 
-void  plP_gprec		(PLINT *, PLINT *);
+void
+plP_gcol(PLINT *p_icol0);
+
+/* Set current color, map 0 */
+
+void
+plP_scol(PLINT icol0);
+
+/* Get pen width */
+
+void
+plP_gwid(PLINT *p_pwid);
+
+/* Set pen width */
+
+void
+plP_swid(PLINT pwid);
+
+/* Get subpage boundaries in normalized device coordinates */
+
+void
+plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+
+/* Set subpage boundaries in normalized device coordinates */
+
+void
+plP_sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
+
+/* Get viewport boundaries in normalized device coordinates */
+
+void
+plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+
+/* Get viewport boundaries in normalized device coordinates */
+
+void
+plP_svpd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
+
+/* Get viewport boundaries in world coordinates */
+
+void
+plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+
+/* Set viewport boundaries in world coordinates */
+
+void
+plP_svpw(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
+
+/* Get number of pixels to a millimeter */
+
+void
+plP_gpixmm(PLFLT *p_x, PLFLT *p_y);
+
+/* Set number of pixels to a millimeter */
+
+void
+plP_spixmm(PLFLT x, PLFLT y);
+
+/* All the drivers call this to set physical pixels/mm. */
+
+void
+plP_setpxl(PLFLT xpmm0, PLFLT ypmm0);
+
+/* Get transformation variables for world to physical conversion */
+
+void
+plP_gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
+
+/* Set transformation variables for world to physical conversion */
+
+void
+plP_swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
+
+/* Get transformation variables for world coordinates to mm */
+
+void
+plP_gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
+
+/* Set transformation variables for world coordinates to mm */
+
+void
+plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
+
+/* Get transformation variables for device to physical conversion */
+
+void
+plP_gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
+
+/* Set transformation variables for device to physical conversion */
+
+void
+plP_sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
+
+/* Get transformation variables for millimeters from bottom left */
+
+void
+plP_gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff);
+
+/* Set transformation variables for millimeters from bottom left */
+
+void
+plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff);
+
+/* Set character default height and current (scaled) height */
+
+void
+plP_schr(PLFLT def, PLFLT ht);
+
+/* Get symbol default height and current (scaled) height */
+
+void
+plP_gsym(PLFLT *p_def, PLFLT *p_ht);
+
+/* Set symbol default height and current (scaled) height */
+
+void
+plP_ssym(PLFLT def, PLFLT ht);
+
+/* Get major tick default height and current (scaled) height */
+
+void
+plP_gmaj(PLFLT *p_def, PLFLT *p_ht);
+
+/* Set major tick default height and current (scaled) height */
+
+void
+plP_smaj(PLFLT def, PLFLT ht);
+
+/* Get minor tick default height and current (scaled) height */
+
+void
+plP_gmin(PLFLT *p_def, PLFLT *p_ht);
+
+/* Set minor tick default height and current (scaled) height */
+
+void
+plP_smin(PLFLT def, PLFLT ht);
+
+/* Get background parameters for 3d plot. */
+
+void
+plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt);
+
+/* Move to physical coordinates (x,y). */
+
+void
+plP_movphy(PLINT x, PLINT y);
+
+/* Draw to physical coordinates (x,y). */
+
+void
+plP_draphy(PLINT x, PLINT y);
+
+/* Move to world coordinates (x,y). */
+
+void
+plP_movwor(PLFLT x, PLFLT y);
+
+/* Draw to world coordinates (x,y). */
+
+void
+plP_drawor(PLFLT x, PLFLT y);
+
+/* Draw polyline in physical coordinates. */
+
+void
+plP_draphy_poly(PLINT *x, PLINT *y, PLINT n);
+
+/* Draw polyline in world coordinates. */
+
+void
+plP_drawor_poly(PLFLT *x, PLFLT *y, PLINT n);
+
+/* Sets up physical limits of plotting device and the mapping between
+   normalized device coordinates and physical coordinates. */
+
+void
+plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax);
+
+/* Set up the subpage boundaries according to the current subpage selected */
+
+void
+plP_setsub(void);
+
+/* Get defining parameters for broken lines */
+
+void
+plP_gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms);
+
+/* Get work variables used in broken line draws */
+
+void
+plP_gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala);
+
+/* Get defining parameters for pattern fill */
+
+void
+plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin);
+
+/* Set defining parameters for pattern fill */
+
+void
+plP_spat(PLINT inc[], PLINT del[], PLINT nlin);
+
+/* Set defining parameters for broken lines */
+
+void
+plP_smark(PLINT mar[], PLINT spa[], PLINT nms);
+
+/* Set work variables used in broken line draws */
+
+void
+plP_scure(PLINT cur, PLINT pen, PLINT tim, PLINT ala);
+
+/* Get the floating point precision (in number of places) in numeric labels. */
+
+void
+plP_gprec(PLINT *p_setp, PLINT *p_prec);
 
 	/* Functions that return floats */
 
-PLFLT plstrl		(const char *);
+/*----------------------------------------------------------------------*\
+* PLFLT plstrl()
+*
+* Computes the length of a string in mm, including escape sequences.
+\*----------------------------------------------------------------------*/
 
-	/* Stuff in convrt.c */
+PLFLT
+plstrl(const char *string);
 
-PLFLT plP_dcmmx		(PLFLT);
+	/* Conversion functions */
 
-PLFLT plP_dcmmy		(PLFLT);
+/* device coords to millimeters from bottom left-hand corner (x) */
 
-PLFLT plP_dcscx		(PLFLT);
+PLFLT
+plP_dcmmx(PLFLT x);
 
-PLFLT plP_dcscy		(PLFLT);
+/* device coords to millimeters from bottom left-hand corner (y) */
 
-PLFLT plP_mmdcx		(PLFLT);
+PLFLT
+plP_dcmmy(PLFLT y);
 
-PLFLT plP_mmdcy		(PLFLT);
+/* define transformations between device coords and subpage coords (x) */
 
-PLFLT plP_scdcx		(PLFLT);
+PLFLT
+plP_dcscx(PLFLT x);
 
-PLFLT plP_scdcy		(PLFLT);
+/* define transformations between device coords and subpage coords (y) */
 
-PLFLT plP_wcmmx		(PLFLT);
+PLFLT
+plP_dcscy(PLFLT y);
 
-PLFLT plP_wcmmy		(PLFLT);
+/* millimeters from bottom left corner into device coords (x) */
 
-PLFLT plP_w3wcx		(PLFLT, PLFLT, PLFLT);
+PLFLT
+plP_mmdcx(PLFLT x);
 
-PLFLT plP_w3wcy		(PLFLT, PLFLT, PLFLT);
+/* millimeters from bottom left corner into device coords (y) */
 
-	/* Functions returning PLINTs */
+PLFLT
+plP_mmdcy(PLFLT y);
 
-PLINT plctest		(PLFLT *, PLFLT);
+/* subpage coords to device coords (x) */
 
-PLINT plctestez		(PLFLT *, PLINT, PLINT, PLINT, PLINT, PLFLT);
+PLFLT
+plP_scdcx(PLFLT x);
 
-PLINT plcvec		(PLINT, SCHAR **);
+/* subpage coords to device coords (y) */
 
-PLINT plP_stindex	(const char *, const char *);
+PLFLT
+plP_scdcy(PLFLT y);
 
-PLINT plP_strpos	(char *, int);
+/* world coords into millimeters (x) */
 
-PLINT plP_stsearch	(const char *, int);
+PLFLT
+plP_wcmmx(PLFLT x);
 
-	/* More stuff from convrt.c */
+/* world coords into millimeters (y) */
 
-PLINT plP_dcpcx		(PLFLT);
+PLFLT
+plP_wcmmy(PLFLT y);
 
-PLINT plP_dcpcy		(PLFLT);
+/* undocumented transformation for 3d plot routines (x) */
 
-PLINT plP_mmpcx		(PLFLT);
+PLFLT
+plP_w3wcx(PLFLT x, PLFLT y, PLFLT z);
 
-PLINT plP_mmpcy		(PLFLT);
+/* undocumented transformation for 3d plot routines (y) */
 
-PLINT plP_wcpcx		(PLFLT);
+PLFLT
+plP_w3wcy(PLFLT x, PLFLT y, PLFLT z);
 
-PLINT plP_wcpcy		(PLFLT);
+/* device coords to physical coords (x) */
+
+PLINT
+plP_dcpcx(PLFLT x);
+
+/* device coords to physical coords (y) */
+
+PLINT
+plP_dcpcy(PLFLT y);
+
+/* millimeters from bottom left-hand corner to physical coords (x) */
+
+PLINT
+plP_mmpcx(PLFLT x);
+
+/* millimeters from bottom left-hand corner to physical coords (y) */
+
+PLINT
+plP_mmpcy(PLFLT y);
+
+/* world coords to physical coords (x) */
+
+PLINT
+plP_wcpcx(PLFLT x);
+
+/* world coords to physical coords (y) */
+
+PLINT
+plP_wcpcy(PLFLT y);
+
+/* Determines slope of contour level in box */
+
+PLINT 
+plctest(PLFLT *x, PLFLT level);
+
+/* Front-end to plctest */
+
+PLINT 
+plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
+	  PLINT iy, PLFLT level);
+
+/* Gets the character digitisation of Hershey table entry "char". */
+
+PLINT
+plcvec(PLINT ch, SCHAR ** xygr);
+
+/* Similar to strpos, but searches for occurence of string str2. */
+
+PLINT
+plP_stindex(const char *str1, const char *str2);
+
+/* Searches string str for first occurence of character chr.  */
+
+PLINT
+plP_strpos(char *str, int chr);
+
+/* Searches string str for character chr (case insensitive). */
+
+PLINT
+plP_stsearch(const char *str, int chr);
 
 	/* Driver calls */
 
-void plP_init		(void);
+/* Initialize device. */
 
-void plP_line		(short *, short *);
+void
+plP_init(void);
 
-void plP_polyline	(short *, short *, PLINT);
+/* Draw line between two points */
 
-void plP_fill		(short *, short *, PLINT);
+void
+plP_line(short *x, short *y);
 
-void plP_eop		(void);
+/* Draw polyline */
 
-void plP_bop		(void);
+void
+plP_polyline(short *x, short *y, PLINT npts);
 
-void plP_tidy		(void);
+/* Fill polygon */
 
-void plP_state		(PLINT);
+void
+plP_fill(short *x, short *y, PLINT npts);
 
-void plP_esc		(PLINT, void *);
+/* End of page */
+
+void
+plP_eop(void);
+
+/* End of page */
+
+void
+plP_bop(void);
+
+/* Tidy up device (flush buffers, close file, etc.) */
+
+void
+plP_tidy(void);
+
+/* Change state. */
+
+void
+plP_state(PLINT op);
+
+/* Escape function, for driver-specific commands. */
+
+void
+plP_esc(PLINT op, void *ptr);
 
 #ifdef __cplusplus
 }
