@@ -25,7 +25,7 @@ INSTALL_TK	= install_tk
 install_plserver:
 	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
 	  if test $(SHARED) = 1; then \
-	      $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+	      $(LDC) $(LDC_FLAGS) plserver$O -L$(PLLIB_DIR) $(TCL_LINK) \
 		  -o plserver$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	  fi; \
 	  strip plserver$E; \

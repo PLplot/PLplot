@@ -49,7 +49,7 @@ install_demos:
 
 install_plrender: install_lib_drivers
 	@-if test $(SHARED) = 1; then \
-	  $(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
+	  $(LDC) $(LDC_FLAGS) plrender$O -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) \
 		-o plrender$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	  fi; \
 	  strip plrender$E; \

@@ -64,7 +64,7 @@ tclIndex:
 
 install_pltcl:
 	@-if test $(SHARED) = 1; then \
-	     $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
+	     $(LDC) $(LDC_FLAGS) pltcl$O -L$(PLLIB_DIR) $(TCL_LINK) \
 		-o pltcl$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	  fi; \
 	  strip pltcl$E; $(CP) pltcl$E $(BIN_DIR)

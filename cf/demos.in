@@ -306,21 +306,24 @@ xtk01$O: xtk01.c
 
 xtk01$E:  $(PLLIBS) xtk01$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+	$(PLLIB_LDC) -l$(TCLLIB_NAME)$(LIB_TAG) \
+	$(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
 
 xtk02$O: xtk02.c
 	$(CC) $(CC_FLAGS_DEMOS) xtk02.c
 
 xtk02$E:  $(PLLIBS) xtk02$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+	$(PLLIB_LDC) -l$(TCLLIB_NAME)$(LIB_TAG) \
+	$(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
 
 xtk04$O: xtk04.c
 	$(CC) $(CC_FLAGS_DEMOS) xtk04.c
 
 xtk04$E:  $(PLLIBS) xtk04$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk04$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+	$(PLLIB_LDC) -l$(TCLLIB_NAME)$(LIB_TAG) \
+	$(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
 
 # -----------------------------------------------------------------------------
 # C++ example programs.
