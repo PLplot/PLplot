@@ -539,7 +539,7 @@ if test "$enable_dyndrivers" = "yes"; then
     fi
 
     # Clear out any prior drivers.
-    if test -e drivers/$DRIVERS_DB; then
+    if test -f drivers/$DRIVERS_DB; then
 	rm drivers/$DRIVERS_DB
     fi
     touch drivers/$DRIVERS_DB

@@ -49,8 +49,11 @@ libplf77d_la_LDFLAGS = $(version)
 
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
+# Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
+sfstubs.f: fmacs.m4 sfstubs.fm4
+
 .fm4.f:
 	@M4@ @M4_FLAGS@ $< >$*.f
 
 CLEANFILES = sfstubs.f
-SUFFIXES = .fm4
+SUFFIXES = .f .fm4
