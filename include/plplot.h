@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.60  1994/05/10 21:50:26  mjl
+ * Revision 1.61  1994/05/14 05:45:17  mjl
+ * Added a new parse flage -- PL_PARSE_NODASH -- for allowing options
+ * that don't begin with a dash.  Used for plSetInternalOpt, where
+ * now the user can either include the dash or not.
+ *
+ * Revision 1.60  1994/05/10  21:50:26  mjl
  * Changed name of position field in PLControlPt typedef.
  *
  * Revision 1.59  1994/04/25  19:04:51  mjl
@@ -233,6 +238,7 @@ typedef void* PLPointer;
 #define PL_PARSE_SHOWALL	0x0008	/* Show invisible options */
 #define PL_PARSE_OVERRIDE	0x0010	/* Overrides internal option(s) */
 #define PL_PARSE_NOPROGRAM	0x0020	/* Program name NOT in *argv[0].. */
+#define PL_PARSE_NODASH		0x0040	/* Set if leading dash NOT required */
 
 typedef struct {
     char *opt;
