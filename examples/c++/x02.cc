@@ -64,6 +64,7 @@ x02::x02( int argc, char ** argv ) {
   // Initialize PLplot.
   pls->init();
 
+  pls->schr(0.0, 3.5);
   pls->font(4);
 
   for (i = 0; i <= 15; i++) {
