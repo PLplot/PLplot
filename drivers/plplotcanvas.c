@@ -90,6 +90,7 @@ static void plplot_canvas_class_init(PlplotCanvasClass *klass) {
   klass->set_size=plplot_canvas_set_size;
   klass->get_viewport=plplot_canvas_get_viewport;
   klass->use_text=plplot_canvas_use_text;
+  klass->use_fast_rendering=plplot_canvas_use_fast_rendering;
   klass->use_foreground_group=plplot_canvas_use_foreground_group;
   klass->use_background_group=plplot_canvas_use_background_group;
   klass->use_default_group=plplot_canvas_use_default_group;
@@ -123,6 +124,10 @@ PlplotCanvas* plplot_canvas_new(gboolean aa) {
   
   PlplotCanvas *canvas;
   canvas = PLPLOT_CANVAS(g_object_new(PLPLOT_TYPE_CANVAS,"aa",aa,NULL));
+
+  /* Turn off text handling if this isn't an antialiased canvas */
+  if(!aa) plplot_canvas_use_text(canvas,FALSE); /* Defaults true */
+
   return canvas;
 }
 
@@ -163,6 +168,13 @@ void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
   gcw_use_text(GNOME_CANVAS(self),use_text);
+}
+
+void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
+				      gboolean use_fast_rendering)
+{
+  plsstrm(self->Nstream); /* Select stream before plplot call */
+  gcw_use_fast_rendering(GNOME_CANVAS(self),use_fast_rendering);
 }
 
 void plplot_canvas_use_foreground_group(PlplotCanvas* self)
