@@ -2490,6 +2490,9 @@ c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
 void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 {
+    if (plsc->level > 0)
+        plwarn("calling plspage() after plinit() may give unpredictable results");
+
     if (xp)
 	plsc->xdpi = xp;
     if (yp)
