@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/05/16 21:26:53  mjl
+ * Revision 1.7  1994/05/23 22:09:24  mjl
+ * Eliminated the "pixels" var as it is no longer being used.
+ *
+ * Revision 1.6  1994/05/16  21:26:53  mjl
  * Added ncol0 for storing number of colors allocated in cmap0.
  *
  * Revision 1.5  1994/05/07  03:20:40  mjl
@@ -59,7 +62,6 @@ typedef struct {
 
     unsigned	width, height;		/* Current window dimensions */
     unsigned	depth, border;		/* window depth & border size */
-    unsigned	pixels;			/* Number of colors available */
 
     double	xscale_init;		/* initial pixels/lx (virt. coords) */
     double	yscale_init;		/* initial pixels/ly (virt. coords) */
