@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/04/12 08:19:00  mjl
+ * Revision 1.14  1995/05/06 21:28:44  mjl
+ * Changed to use Tk driver instead of DP, since DP doesn't handle cleanup
+ * from multiple interpreters correctly (problem is in Tcl-DP I think).
+ *
+ * Revision 1.13  1995/04/12  08:19:00  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -67,9 +71,10 @@ main(void)
     int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
 
 /* Select either TK or DP driver and use a small window */
+/* Using DP results in a crash at the end due to some odd cleanup problems */
 /* The geometry strings MUST be in writable memory */
 
-    char driver[] = "dp";
+    char driver[] = "tk";
     char geometry_master[] = "500x410+100+200";
     char geometry_slave[]  = "500x410+650+200";
 
