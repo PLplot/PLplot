@@ -471,6 +471,19 @@ LIBS=""
 
 ### automake symbols for system-dependent results
 
+if test "$enable_cgm" = yes; then
+   if test "$CDINCDIR" != default; then
+      CDINCCMD="-I"$CDINCDIR
+      AC_SUBST(CDINCCMD)
+   fi
+   if test "$CDLIBDIR" = default; then
+      CDLIBCMD=$CDLIBSTR
+   else
+      CDLIBCMD="-L "$CDLIBDIR" "$CDLIBSTR
+   fi
+   AC_SUBST(CDLIBCMD)
+fi
+
 if test "$with_freetype" = yes; then
    if test "$FREETYPEINCDIR" != default; then
       FREETYPEINCCMD="-I"$FREETYPEINCDIR
@@ -484,30 +497,17 @@ if test "$with_freetype" = yes; then
    AC_SUBST(FREETYPELIBCMD)
 fi
 
-if test "$enable_tcl" = yes; then
-   if test "$TCLINCDIR" != default; then
-      TCLINCCMD="-I"$TCLINCDIR
-      AC_SUBST(TCLINCCMD)
+if test "$enable_png" = yes -o "$enable_jpeg" = yes; then
+   if test "$GDINCDIR" != default; then
+      GDINCCMD="-I"$GDINCDIR
+      AC_SUBST(GDINCCMD)
    fi
-   if test "$TCLLIBDIR" = default; then
-      TCLLIBCMD=$TCLLIBSTR
+   if test "$GDLIBDIR" = default; then
+      GDLIBCMD=$GDLIBSTR
    else
-      TCLLIBCMD="-L "$TCLLIBDIR" "$TCLLIBSTR
+      GDLIBCMD="-L "$GDLIBDIR" "$GDLIBSTR
    fi
-   AC_SUBST(TCLLIBCMD)
-fi
-
-if test "$enable_tk" = yes; then
-   if test "$TKINCDIR" != default; then
-      TKINCCMD="-I"$TKINCDIR
-      AC_SUBST(TKINCCMD)
-   fi
-   if test "$TKLIBDIR" = default; then
-      TKLIBCMD=$TKLIBSTR
-   else
-      TKLIBCMD="-L "$TKLIBDIR" "$TKLIBSTR
-   fi
-   AC_SUBST(TKLIBCMD)
+   AC_SUBST(GDLIBCMD)
 fi
 
 if test "$enable_itcl" = yes; then
@@ -536,6 +536,32 @@ if test "$enable_itk" = yes; then
       ITKLIBCMD="-L "$ITKLIBDIR" "$ITKLIBSTR
    fi
    AC_SUBST(ITKLIBCMD)
+fi
+
+if test "$enable_tcl" = yes; then
+   if test "$TCLINCDIR" != default; then
+      TCLINCCMD="-I"$TCLINCDIR
+      AC_SUBST(TCLINCCMD)
+   fi
+   if test "$TCLLIBDIR" = default; then
+      TCLLIBCMD=$TCLLIBSTR
+   else
+      TCLLIBCMD="-L "$TCLLIBDIR" "$TCLLIBSTR
+   fi
+   AC_SUBST(TCLLIBCMD)
+fi
+
+if test "$enable_tk" = yes; then
+   if test "$TKINCDIR" != default; then
+      TKINCCMD="-I"$TKINCDIR
+      AC_SUBST(TKINCCMD)
+   fi
+   if test "$TKLIBDIR" = default; then
+      TKLIBCMD=$TKLIBSTR
+   else
+      TKLIBCMD="-L "$TKLIBDIR" "$TKLIBSTR
+   fi
+   AC_SUBST(TKLIBCMD)
 fi
 
 ### Double vs single precison

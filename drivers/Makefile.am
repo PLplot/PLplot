@@ -53,6 +53,7 @@ EXTRA_LTLIBRARIES = \
 	pstexd_drv.la \
 	tekd_drv.la \
 	tkd_drv.la \
+	tkwind_drv.la \
 	xfigd_drv.la \
 	xwind_drv.la
 
@@ -75,6 +76,7 @@ EXTRA_LTLIBRARIES = \
 	pstex_drv.la \
 	tek_drv.la \
 	tk_drv.la \
+	tkwin_drv.la \
 	xfig_drv.la \
 	xwin_drv.la
 
@@ -96,10 +98,33 @@ endif
 # in this directory.  Some day when automake grows up, convert these
 # to xwin_drv_la_INCLUDES, etc.
 
-tk_includes = -I../bindings/tcl -I../bindings/tk @TCLINCCMD@ @TKINCCMD@
+cgm_includes = @CDINCCMD@
+gd_includes = @GDINCCMD@
+gnome_includes = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
+# ntk_includes more than covered by tk_includes
+tk_includes = \
+	-I../bindings/tcl \
+	-I../bindings/tk \
+	@TCLINCCMD@ \
+	@TKINCCMD@
+
+tkwin_includes = \
+	-I../bindings/tcl \
+	-I../bindings/tk \
+	-I../bindings//tk-x-plat \
+	@TCLINCCMD@ \
+	@TKINCCMD@
+
 xwin_includes = @X_CFLAGS@
 
-AM_CPPFLAGS = $(tk_includes) $(xwin_includes) @INCLTDL@
+AM_CPPFLAGS = \
+	$(cgm_includes) \
+	$(gd_includes) \
+	$(gnome_includes) \
+	$(tk_includes) \
+	$(tkwin_includes) \
+	$(xwin_includes) \
+	@INCLTDL@
 
 ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version 
 
@@ -107,7 +132,7 @@ ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version
 
 cgm_drv_la_SOURCES = cgm.c
 cgm_drv_la_LDFLAGS = $(ldflags)
-cgm_drv_la_LIBADD = $(libplplot)
+cgm_drv_la_LIBADD = $(libplplot) @CDLIBCMD@
 
 dg300_drv_la_SOURCES = dg300.c
 dg300_drv_la_LDFLAGS = $(ldflags)
@@ -115,11 +140,11 @@ dg300_drv_la_LIBADD = $(libplplot)
 
 gd_drv_la_SOURCES = gd.c
 gd_drv_la_LDFLAGS = $(ldflags)
-gd_drv_la_LIBADD = $(libplplot)
+gd_drv_la_LIBADD = $(libplplot) @GDLIBCMD@
 
 gnome_drv_la_SOURCES = gnome.c
 gnome_drv_la_LDFLAGS = $(ldflags)
-gnome_drv_la_LIBADD = $(libplplot)
+gnome_drv_la_LIBADD = $(libplplot) @GNOMELIBS@
 
 hpgl_drv_la_SOURCES = hpgl.c
 hpgl_drv_la_LDFLAGS = $(ldflags)
@@ -131,7 +156,7 @@ impress_drv_la_LIBADD = $(libplplot)
 
 linuxvga_drv_la_SOURCES = linuxvga.c
 linuxvga_drv_la_LDFLAGS = $(ldflags)
-linuxvga_drv_la_LIBADD = $(libplplot)
+linuxvga_drv_la_LIBADD = $(libplplot) @LINUXVGALIBS@
 
 ljii_drv_la_SOURCES = ljii.c
 ljii_drv_la_LDFLAGS = $(ldflags)
@@ -143,7 +168,7 @@ ljiip_drv_la_LIBADD = $(libplplot)
 
 ntk_drv_la_SOURCES = ntk.c
 ntk_drv_la_LDFLAGS = $(ldflags)
-ntk_drv_la_LIBADD = $(libplplot)
+ntk_drv_la_LIBADD = $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
 
 null_drv_la_SOURCES = null.c
 null_drv_la_LDFLAGS = $(ldflags)
@@ -157,11 +182,11 @@ plmeta_drv_la_SOURCES = plmeta.c
 plmeta_drv_la_LDFLAGS = $(ldflags)
 plmeta_drv_la_LIBADD = $(libplplot)
 
-ps_drv_la_SOURCES = ps.c
+ps_drv_la_SOURCES = ps.c pstex.c
 ps_drv_la_LDFLAGS = $(ldflags)
 ps_drv_la_LIBADD = $(libplplot)
 
-pstex_drv_la_SOURCES = pstex.c
+pstex_drv_la_SOURCES = ps.c pstex.c
 pstex_drv_la_LDFLAGS = $(ldflags)
 pstex_drv_la_LIBADD = $(libplplot)
 
@@ -172,6 +197,14 @@ tek_drv_la_LIBADD = $(libplplot)
 tk_drv_la_SOURCES = tk.c
 tk_drv_la_LDFLAGS = $(ldflags)
 tk_drv_la_LIBADD = $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
+
+tkwin_drv_la_SOURCES = \
+	tkwin.c \
+	../bindings/tk-x-plat/Plplotter_Init.c \
+	../bindings/tk-x-plat/plplotter.c
+
+tkwin_drv_la_LDFLAGS = $(ldflags)
+tkwin_drv_la_LIBADD = $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
 
 xfig_drv_la_SOURCES = xfig.c
 xfig_drv_la_LDFLAGS = $(ldflags)
@@ -250,6 +283,10 @@ tekd_drv_la_LIBADD = $(tek_drv_la_LIBADD)
 tkd_drv_la_SOURCES = $(tk_drv_la_SOURCES)
 tkd_drv_la_LDFLAGS = $(tk_drv_la_LDFLAGS)
 tkd_drv_la_LIBADD = $(tk_drv_la_LIBADD)
+
+tkwind_drv_la_SOURCES = $(tkwin_drv_la_SOURCES)
+tkwind_drv_la_LDFLAGS = $(tkwin_drv_la_LDFLAGS)
+tkwind_drv_la_LIBADD = $(tkwin_drv_la_LIBADD)
 
 xfigd_drv_la_SOURCES = $(xfig_drv_la_SOURCES)
 xfigd_drv_la_LDFLAGS = $(xfig_drv_la_LDFLAGS)

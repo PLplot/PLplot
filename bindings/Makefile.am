@@ -32,7 +32,7 @@ if enable_tk
 endif
 
 if enable_tkwin
-  index_tkwin = tkwin/pkgIndex.tcl.in
+  index_tkwin = tk-x-plat/pkgIndex.tcl.in
 endif
 
 index = $(index_tcl) $(index_tk) $(index_tkwin)
