@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/06/30 18:55:02  mjl
+ * Revision 1.6  1994/08/09 08:33:35  mjl
+ * Changed the tclMatrix API once again.  The 'matrix' operator now sets up a
+ * command for the actual name used to declare the matrix.  This is faster
+ * than the old way, more intuitive, and less robust (the created matrix is
+ * global).  The last problem can presumably fixed by modifications to the
+ * Tcl kernel to support a matrix type, and is worth sacrificing for now
+ * in favor of a better syntax.  The matrix declarator sets a local variable
+ * of the same name as the created (matrix) command in order to automatically
+ * free locally-declared matrix resources at the end of a proc.  So previous
+ * scripts will still work.
+ *
+ * Revision 1.5  1994/06/30  18:55:02  mjl
  * Now accepts an initializer when matrix is declared, for example:
  * matrix base i 4 = {0, 200, 500, 600}.  Only works for 1-d arrays so far.
  *
@@ -156,9 +167,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	matPtr->n[i] = 1;
 
 /* Create name */
-
-    matNum++;
-    sprintf(matPtr->name, "matrix_%d", matNum);
+/* Local variable mirrors matrix name for GC purposes */
 
     argc--; argv++;
     varName = argv[0];
@@ -170,6 +179,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
 
+    strcpy(matPtr->name, varName);
     if (Tcl_SetVar(interp, varName, matPtr->name, 0) == NULL) {
 	Tcl_AppendResult(interp, "unable to set variable to matrix name",
 			 (char *) NULL);
@@ -342,10 +352,6 @@ static tclMatrixXtnsnDescr *tail = (tclMatrixXtnsnDescr *) NULL;
 
 int Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
 {
-#ifdef DEBUG
-    fprintf(stderr, "Installing a tclMatrix extension -> %s\n", cmd );
-#endif
-
 /*
  * My goodness how I hate primitive/pathetic C.  With C++ this
  * could've been as easy as:
@@ -356,6 +362,10 @@ int Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
 
     tclMatrixXtnsnDescr *new =
 	(tclMatrixXtnsnDescr *) malloc(sizeof(tclMatrixXtnsnDescr));
+
+#ifdef DEBUG
+    fprintf(stderr, "Installing a tclMatrix extension -> %s\n", cmd );
+#endif
 
     new->cmd = malloc( strlen(cmd)+1 );
     strcpy( new->cmd, cmd );
@@ -631,10 +641,16 @@ static void
 DeleteMatrixCmd(ClientData clientData)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
+    Tcl_HashEntry *hPtr;
 
 #ifdef DEBUG
     fprintf(stderr, "Freeing space associated with matrix %s\n", matPtr->name);
 #endif
+
+    hPtr = Tcl_FindHashEntry(&matTable, matPtr->name);
+    if (hPtr != NULL) 
+	Tcl_DeleteHashEntry(hPtr);
+
     if (matPtr->fdata != NULL) 
 	ckfree((char *) matPtr->fdata);
 
