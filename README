@@ -40,7 +40,7 @@ there.  Consult "Changes.log" to see a list of recent changes.
 
 At present, PLPLOT is known to work on the following systems:
 
-	Unix:	A/IX 		(IBM)
+	Unix:	AIX 		(IBM)
 		ConvexOS	(Convex)
 		DG/UX		(Data General)
 		HP-UX		(Hewlett-Packard)
@@ -94,23 +94,10 @@ USMAIL	Dr. Maurice LeBrun
 
 
 Geoff Furnish
-Co-developer.  Can help with C++ and UNIX related questiosn.
+Co-developer.  Can help with C++ and UNIX related questions.
 
 EMAIL	furnish@dino.ph.utexas.edu
 USMAIL	Geoffrey Furnish
 	Institute for Fusion Studies
 	University of Texas
 	Austin, TX  78712
-
-
-Tony Richardson
-Creator of PLPLOT 2.6b, 3.0
-Please send questions regarding installation of PLPLOT on the NeXT to Tony.
-
-EMAIL   amr@egr.duke.edu
-
-USMAIL  Tony Richardson              Tony Richardson
-        184 Electrical Engineering   2920 Chapel Hill Road Apt. 41-D
-        Duke University              Durham, NC 27707
-        Durham, NC 27706
-        ph 919-684-5274              ph 919-493-1609
