@@ -5,15 +5,16 @@ Installation instructions for the win32/msdev port of plplot
 
 This file contains information on how to compile and run the
 plplot library using MS Visual C++ on PCs running MS Windows
-98/NT/2000 (the current distribution has not been tested on
-neither 95 nor XP however it should normally work on these
-two versions of Windows as well.)
+98/NT/2000/XP (the current distribution has not been tested on
+Windows 95 however it should normally work on this version of
+Windows as well.)
 
-Please note that the work on the win32/msdev port is under
-progress. These instructions will tell you how to build
-the plplot.lib library and all the C examples except x14c
-and x17c. However, the work on the plplot.dll is not yet
-finished. For more information about the win32/msdev port
+Please note that the work on the win32/msdev port is well
+advanced, but not finished yet. These instructions will tell
+you how to build the plplot.lib and plplotd.dll libraries and
+all the C examples except x14c and x17c.
+
+For more information about the win32/msdev port
 of plplot please see plplot/sys/win32/msdev/README.TXT.
 
 
@@ -23,7 +24,7 @@ You'll need MS Visual C++ version 5, 6 or higher for building
 plplot. You might be able to use an earlier version of Visual C++
 but you will probably not be able to use the provided makfiles.
 You will also need to make sure that you can execute the "nmake"
-command on a MS-DOS promt command line.
+command on a MS-DOS prompt command line.
 
 
 3. Source files

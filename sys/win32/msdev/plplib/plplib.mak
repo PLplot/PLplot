@@ -69,6 +69,12 @@ CLEAN :
 	-@erase "$(INTDIR)\plvpor.obj"
 	-@erase "$(INTDIR)\plwind.obj"
 	-@erase "$(INTDIR)\ps.obj"
+	-@erase "$(INTDIR)\gd.obj"
+	-@erase "$(INTDIR)\xfig.obj"
+	-@erase "$(INTDIR)\mem.obj"
+	-@erase "$(INTDIR)\hpgl.obj"
+	-@erase "$(INTDIR)\pstex.obj"
+	-@erase "$(INTDIR)\plfreetype.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\win3.obj"
 	-@erase ".\plplot.lib"
@@ -92,6 +98,11 @@ LIB32_OBJS= \
 	"$(INTDIR)\pbm.obj" \
 	"$(INTDIR)\null.obj" \
 	"$(INTDIR)\ps.obj" \
+	"$(INTDIR)\gd.obj" \
+	"$(INTDIR)\hpgl.obj" \
+	"$(INTDIR)\mem.obj" \
+	"$(INTDIR)\xfig.obj" \
+	"$(INTDIR)\pstex.obj" \
 	"$(INTDIR)\plbuf.obj" \
 	"$(INTDIR)\plcont.obj" \
 	"$(INTDIR)\plctrl.obj" \
@@ -164,6 +175,11 @@ CLEAN :
 	-@erase "$(INTDIR)\plvect.obj"
 	-@erase "$(INTDIR)\plwind.obj"
 	-@erase "$(INTDIR)\ps.obj"
+	-@erase "$(INTDIR)\gd.obj"
+	-@erase "$(INTDIR)\hpgl.obj"
+	-@erase "$(INTDIR)\mem.obj"
+	-@erase "$(INTDIR)\xfig.obj"
+	-@erase "$(INTDIR)\pstex.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(INTDIR)\win3.obj"
@@ -188,6 +204,13 @@ LIB32_OBJS= \
 	"$(INTDIR)\pbm.obj" \
 	"$(INTDIR)\null.obj" \
 	"$(INTDIR)\ps.obj" \
+	"$(INTDIR)\gd.obj" \
+	"$(INTDIR)\hpgl.obj" \
+	"$(INTDIR)\mem.obj" \
+	"$(INTDIR)\xfig.obj" \
+	"$(INTDIR)\pstex.obj" \
+	"$(INTDIR)\pbm.obj" \
+	"$(INTDIR)\plfreetype.obj" \
 	"$(INTDIR)\plbuf.obj" \
 	"$(INTDIR)\plcont.obj" \
 	"$(INTDIR)\plctrl.obj" \
@@ -446,6 +469,50 @@ SOURCE=$(TMPDIR)\plwind.c
 SOURCE=$(TMPDIR)\ps.c
 
 "$(INTDIR)\ps.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=$(TMPDIR)\gd.c
+
+"$(INTDIR)\gd.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE) /I..\..\..\..\gd\include
+
+#
+# Does not work correctly yet
+#
+SOURCE=$(TMPDIR)\plfreetype.c
+
+"$(INTDIR)\plfreetype.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE) /I..\..\..\..\gd\include /D "HAVE_FREETYPE"
+
+
+SOURCE=$(TMPDIR)\pstex.c
+
+"$(INTDIR)\pstex.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=$(TMPDIR)\hpgl.c
+
+"$(INTDIR)\hpgl.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=$(TMPDIR)\pbm.c
+
+"$(INTDIR)\pbm.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=$(TMPDIR)\mem.c
+
+"$(INTDIR)\mem.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=$(TMPDIR)\xfig.c
+
+"$(INTDIR)\xfig.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
