@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.59  1994/04/25 19:04:51  mjl
+ * Revision 1.60  1994/05/10 21:50:26  mjl
+ * Changed name of position field in PLControlPt typedef.
+ *
+ * Revision 1.59  1994/04/25  19:04:51  mjl
  * Added typedef for PLControlPt, used in specifying cmap1.  Added function
  * prototypes for plHLS_RGB (new) and plRGB_HLS (now global), for converting
  * between HLS and RGB color specifications.
@@ -336,7 +339,7 @@ typedef struct {
 /* PLControlPt is how cmap1 control points are represented. */
 
 typedef struct {
-    PLFLT h, l, s, i;
+    PLFLT h, l, s, p;
 } PLControlPt;
 
 /*----------------------------------------------------------------------*\
