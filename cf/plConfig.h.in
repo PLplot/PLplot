@@ -46,6 +46,9 @@
 /* Define if popen is available.  */
 #undef HAVE_POPEN
 
+/* Define if usleep is available.  */
+#undef HAVE_USLEEP
+
 /* Define if we're using a debugging malloc */
 #undef DEBUGGING_MALLOC
 
