@@ -19,29 +19,99 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+sources = \
+	x01cc.cc \
+	x01.cc \
+	x02.cc \
+	x03.cc \
+	x04.cc \
+	x05.cc \
+	x06.cc \
+	x07.cc \
+	x08.cc \
+	x09.cc \
+	x10.cc \
+	x11.cc \
+	x12.cc \
+	x13.cc \
+	x14.cc \
+	x15.cc \
+	x16.cc \
+	x17.cc \
+	x18.cc \
+	x19.cc \
+	x20.cc \
+	x21.cc
+
 if enable_cxx
 
-AM_CPPFLAGS = $(INCLTDL)
+AM_CPPFLAGS = $(INCLTDL) -I../../bindings/c++
 examples_cxxdir = ${prefix}/$(DATA_DIR)/../examples/c++
 examples_cxx_DATA = \
-	.samename/Makefile \
-	x01cc.cc
+	$(sources) \
+	Makefile.examples
 
-.samename/Makefile: Makefile.examples
-	mkdir -p .samename
-	cp Makefile.examples .samename/Makefile
-
+install-data-hook:
+	( cd $(DESTDIR)/$(examples_cxxdir) ; mv -f Makefile.examples Makefile )
+	
 libplplotcxx = ../../bindings/c++/libplplotcxx$(LIB_TAG).la
 
 check_PROGRAMS = \
-	x01cc
+	x01cc \
+	x01 \
+	x02 \
+	x03 \
+	x04 \
+	x05 \
+	x06 \
+	x07 \
+	x08 \
+	x09 \
+	x10 \
+	x11 \
+	x12 \
+	x13 \
+	x14 \
+	x15 \
+	x16 \
+	x17 \
+	x18 \
+	x19 \
+	x20 \
+	x21
 
-x01cc_CXXFLAGS = -I../../bindings/c++
 x01cc_SOURCES = x01cc.cc
-x01cc_LDFLAGS = $(libplplotcxx)
+x01_SOURCES = x01.cc
+x02_SOURCES = x02.cc
+x03_SOURCES = x03.cc
+x04_SOURCES = x04.cc
+x05_SOURCES = x05.cc
+x06_SOURCES = x06.cc
+x07_SOURCES = x07.cc
+x08_SOURCES = x08.cc
+x09_SOURCES = x09.cc
+x10_SOURCES = x10.cc
+x11_SOURCES = x11.cc
+x12_SOURCES = x12.cc
+x13_SOURCES = x13.cc
+x14_SOURCES = x14.cc
+x15_SOURCES = x15.cc
+x16_SOURCES = x16.cc
+x17_SOURCES = x17.cc
+x18_SOURCES = x18.cc
+x19_SOURCES = x19.cc
+x20_SOURCES = x20.cc
+x21_SOURCES = x21.cc
 
-EXTRA_DIST = $(examples_cxx_DATA) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples .samename/Makefile
+LDADD = $(libplplotcxx)
+
+else
+# work around automake brokeness (as of version 1.7.6) which demands
+# a install-data-hook target whether enable_cxx is true or not.
+install-data-hook:
 
 # enable_cxx
 endif
+
+EXTRA_DIST = $(sources) Makefile.examples.in
+DISTCLEANFILES = Makefile.examples 
