@@ -30,7 +30,7 @@ use Math::Trig qw [pi];
 
 # Parse and process command line arguments
 
-plParseOpts (\@ARGV, $PL_PARSE_SKIP | $PL_PARSE_NOPROGRAM);
+plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 # Initialize plplot
 

@@ -5,6 +5,7 @@
 # Font demo
 #
 # Copyright (C) 2004  Rafael Laboissiere
+# (inspired from t/x07.t of module Graphics::PLplot, by Tim Jenness)
 #
 # This file is part of PLplot.
 #

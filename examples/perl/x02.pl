@@ -33,7 +33,7 @@ plssub (4, 4);
 
 # Parse and process command line arguments
 
-plParseOpts (\@ARGV, $PL_PARSE_SKIP | $PL_PARSE_NOPROGRAM);
+plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 # Initialise plplot
 
