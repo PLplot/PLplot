@@ -713,7 +713,7 @@ plcont f [kx lx ky ly] clev [pltr x y] [wrap]
 </programlisting>
 <para>
 Note that the brackets here are used to signify optional arguments,
-<emphasis>NOT</emphasis> to represent Tcl command substitution!
+<emphasis>not</emphasis> to represent Tcl command substitution!
 </para>
 
 <para>
