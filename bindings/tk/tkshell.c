@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/03/23 06:54:40  mjl
+ * Revision 1.12  1994/04/08 12:06:09  mjl
+ * Function name changes to reduce namespace pollution.
+ *
+ * Revision 1.11  1994/03/23  06:54:40  mjl
  * Minor documentation change.
  *
  * Revision 1.10  1994/03/22  23:17:39  furnish
@@ -23,9 +26,6 @@
  *
  * Revision 1.6  1993/12/09  21:20:12  mjl
  * Simplified tk_toplevel() and eliminated obsolete functions.
- *
- * Revision 1.5  1993/11/19  07:55:44  mjl
- * Added missing CVS id and log fields.
 */
 
 /* 
@@ -42,12 +42,25 @@
 extern int Tdp_Init			_ANSI_ARGS_((Tcl_Interp *interp));
 #endif
 
-static int tcl_cmd	(Tcl_Interp *interp, char *cmd);
-static int tcl_eval	(Tcl_Interp *interp, char *cmd);
+/* Static functions */
+/* Sets up auto_path variable */
+
+static int
+set_auto_path(Tcl_Interp *interp);
+
+/* Evals the specified command, aborting on an error. */
+
+static int
+tcl_cmd(Tcl_Interp *interp, char *cmd);
+
+/* Evals the specified string, returning the result. */
+
+static int
+tcl_eval(Tcl_Interp *interp, char *cmd);
 
 /*----------------------------------------------------------------------*\
 *
-* tk_toplevel --
+* pltk_toplevel --
 *
 *	Create top level window without mapping it.
 *
@@ -60,8 +73,8 @@ static int tcl_eval	(Tcl_Interp *interp, char *cmd);
 \*----------------------------------------------------------------------*/
 
 int
-tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	    char *display, char *basename, char *classname)
+pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
+	      char *display, char *basename, char *classname)
 {
     char *new_name;
     static char wcmd[] = "wm withdraw .";
@@ -98,7 +111,7 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 
 /*----------------------------------------------------------------------*\
 *
-* tk_source --
+* pltk_source --
 *
 *	Run a script.
 *
@@ -111,7 +124,7 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 \*----------------------------------------------------------------------*/
 
 int
-tk_source(Tk_Window w, Tcl_Interp *interp, char *script)
+pltk_source(Tk_Window w, Tcl_Interp *interp, char *script)
 {
     int result;
     char *msg;
@@ -136,7 +149,7 @@ tk_source(Tk_Window w, Tcl_Interp *interp, char *script)
 /*
  *----------------------------------------------------------------------
  *
- * plTcl_AppInit --
+ * pltk_Init --
  *
  *	This procedure performs PLPLOT-specific Tcl initialization.
  *
@@ -151,7 +164,7 @@ tk_source(Tk_Window w, Tcl_Interp *interp, char *script)
  */
 
 int
-plTcl_AppInit(Tcl_Interp *interp)
+pltk_Init(Tcl_Interp *interp)
 {
     Tk_Window main;
 
@@ -169,7 +182,7 @@ plTcl_AppInit(Tcl_Interp *interp)
      */
 
 #if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
-    if (tk_source(main, interp, "$tk_library/wish.tcl")) {
+    if (pltk_source(main, interp, "$tk_library/wish.tcl")) {
 	return TCL_ERROR;
     }
 #else
@@ -186,14 +199,14 @@ plTcl_AppInit(Tcl_Interp *interp)
      * they weren't already created by the init procedures called above.
      */
 
-    Tcl_CreateCommand(interp, "wait_until", Wait_Until,
+    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 
 #ifdef TCL_DP
     if (Tdp_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
-    Tcl_CreateCommand(interp, "host_id", Host_ID,
+    Tcl_CreateCommand(interp, "host_id", plHost_ID,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 #endif
 
@@ -222,7 +235,7 @@ plTcl_AppInit(Tcl_Interp *interp)
 * the autoloaded proc is first found).
 \*----------------------------------------------------------------------*/
 
-int
+static int
 set_auto_path(Tcl_Interp *interp)
 {
     char *buf, *ptr=NULL, *dn;
@@ -256,7 +269,7 @@ set_auto_path(Tcl_Interp *interp)
 	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	    return TCL_ERROR;
 #ifdef DEBUG
-	fprintf(stderr, "adding %s to auto_path\n", buf);
+	fprintf(stderr, "adding %s to auto_path\n", ptr);
 	path = Tcl_GetVar(interp, "auto_path", 0);
 	fprintf(stderr, "auto_path is %s\n", path);
 #endif
@@ -348,7 +361,7 @@ tcl_eval(Tcl_Interp *interp, char *cmd)
 }
 
 /*----------------------------------------------------------------------*\
-* Wait_Until
+* plWait_Until
 *
 * Tcl command -- wait until the specified condition is satisfied.
 * Processes all events while waiting.
@@ -363,11 +376,11 @@ tcl_eval(Tcl_Interp *interp, char *cmd)
 \*----------------------------------------------------------------------*/
 
 int
-Wait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 {
     int result = 0;
 
-    dbug_enter("Wait_Until");
+    dbug_enter("plWait_Until");
 
     for (;;) {
 	if (Tcl_ExprBoolean(interp, argv[1], &result)) {
