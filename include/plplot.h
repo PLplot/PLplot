@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.74  1994/11/02 19:53:34  mjl
+ * Revision 1.75  1994/12/28 09:34:48  mjl
+ * Added PL_PARSE_MERGE flag for merging user option tables with internal one.
+ *
+ * Revision 1.74  1994/11/02  19:53:34  mjl
  * Changed stream variables vpX, vpY to vdX, vdY, since they now hold the
  * relative device coordinates (0 to 1) rather than the physical coordinates.
  *
@@ -252,6 +255,7 @@ typedef void* PLPointer;
 #define PL_PARSE_OVERRIDE	0x0010	/* Overrides internal option(s) */
 #define PL_PARSE_NOPROGRAM	0x0020	/* Program name NOT in *argv[0].. */
 #define PL_PARSE_NODASH		0x0040	/* Set if leading dash NOT required */
+#define PL_PARSE_MERGE		0x0080	/* Merge table with internal one */
 
 typedef struct {
     char *opt;
