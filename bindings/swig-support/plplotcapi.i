@@ -145,10 +145,17 @@ typedef void* PLPointer;
 /* Non-common API that are included here because they traditionally
  * were part of plmodule.c. */
 
+#if 0
+
+/* Deprecated function that we no longer want to propagate to the
+ * python API. */
+
 DOC(plarrows, "Plot an arrow.")
 void
 plarrows(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
          PLFLT scale, PLFLT dx, PLFLT dy) ;
+
+#endif
 
 DOC(plsxwin, "Set inferior X window.")
 void
