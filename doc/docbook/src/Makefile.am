@@ -65,6 +65,8 @@ MAINTAINERCLEANFILES = \
   $(HTML_MANIFEST) $(MAN_MANIFEST) \
   $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
 
+if enable_docbook
+
 htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
 
@@ -75,8 +77,6 @@ man3_MANS = $(shell ls *.$(MANVOL))
 
 geninfodir = $(infodir)
 geninfo_DATA = $(shell ls *.info*)
-
-if enable_docbook
 
 MAX_TEX_RECURSION = 4
 
