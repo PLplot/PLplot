@@ -1,3 +1,9 @@
+plplot (5.2.0.cvs.20030415-1) unstable; urgency=low
+
+  * Built with new CVS sources.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 13 Apr 2003 23:03:01 +0200
+
 plplot (5.2.0.cvs.20030411-1) unstable; urgency=low
 
   * Built with new CVS sources.

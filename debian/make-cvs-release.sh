@@ -6,6 +6,7 @@
 # This will prepare a PLplot source tree for a release <version>.cvs.<date>
 # of Debian packages.  Run it from the top dir.
 
+test -f Makefile && make maintainer-clean
 if [ "$1" = "" ] ; then
   optver=--date-version
 else
@@ -14,7 +15,6 @@ fi
 ./bootstrap.sh $optver
 rm -f config.status
 fakeroot debian/rules clean
-make maintainer-clean
 ./configure --enable-builddoc --enable-python --enable-octave --enable-f77
 make dist
 version=`debian/get-upstream-version.pl < configure.ac`
