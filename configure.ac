@@ -346,7 +346,7 @@ AC_REVISION($Revision$)
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AC_INIT(plplot, 5.3.0.cvs.20040211, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.3.0.cvs.20040220, plplot-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/plcore.c)
 
 ### Configuration headers
@@ -360,7 +360,7 @@ AM_INIT_AUTOMAKE
 ### is by specifying one of the option --version of --date-version to
 ### bootstrap.sh
 
-RELEASE_DATE=2004-02-05
+RELEASE_DATE=2004-02-20
 AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
@@ -546,7 +546,9 @@ AC_SUBST(enable_octave)
 
 # swig only needed for python and java interface so far.
 if test "$enable_python" = "yes" -o "$enable_java" = "yes"; then
+  pushdef([AC_MSG_WARN],[true])
   SWIG_PROG(1.3.21)
+  popdef([AC_MSG_WARN])
 fi
 
 ### Create list of valid examples subdirectories
