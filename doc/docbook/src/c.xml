@@ -43,7 +43,7 @@ is defined.  If PLSTDC is defined, all functions are prototyped as allowed
 under Standard C, and arguments passed exactly as specified in the
 prototype.  If PLSTDC is not defined, however, function prototypes are
 turned off and K&amp;R automatic argument promotion will occur, e.g. 
-<literal> float &rarr; double, int &rarr; long</literal>.  
+<literal> float &amp;rarr; double, int &amp;rarr; long</literal>.  
 There is no middle ground!  A PLplot
 library built with PLSTDC defined will not work (in general) with a program
 built with PLSTDC undefined, and vice versa.  It is possible in principle to
