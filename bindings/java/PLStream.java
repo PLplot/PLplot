@@ -186,11 +186,8 @@ public class PLStream {
     public native void plot3d( double[] x, double[] y, double[][] z,
                                int opt, int side );
 
-    public native void plotfc3d( float[] x, float[] y, float[][] z, int side );
-    public native void plotfc3d( double[] x, double[] y, double[][] z, int side );
-
-    public native void plotsh3d( float[] x, float[] y, float[][] z, int side );
-    public native void plotsh3d( double[] x, double[] y, double[][] z, int side );
+    public native void plsurf3d( float[] x, float[] y, float[][] z, int side );
+    public native void plsurf3d( double[] x, double[] y, double[][] z, int side );
 
 // pat
 
