@@ -1,11 +1,18 @@
 /* $Id$
-   $Log$
-   Revision 1.10  1994/01/17 19:27:15  mjl
-   Bug fix: changed declarations of xclp[] and yclp[] from static to local
-   variables in plP_pllclp() and plP_plfclp(). plP_pllclp can call itself
-   consequently it needs local variables. Fixed problem with dash line and
-   orientation=1.  (Submitted by Wesley Ebisuzaki)
-
+ * $Log$
+ * Revision 1.11  1994/01/25 06:34:20  mjl
+ * Dashed line generation desuckified!  Should now run much faster on some
+ * architectures.  The previous loop used only conditionals, assignments, and
+ * integer adds at the cost of a huge number of iterations (basically testing
+ * each pixel).  The new method draws directly to the desired end of dash.
+ * Contributed by Wesley Ebisuzaki.
+ *
+ * Revision 1.10  1994/01/17  19:27:15  mjl
+ * Bug fix: changed declarations of xclp[] and yclp[] from static to local
+ * variables in plP_pllclp() and plP_plfclp(). plP_pllclp can call itself
+ * consequently it needs local variables. Fixed problem with dash line and
+ * orientation=1.  (Submitted by Wesley Ebisuzaki)
+ *
  * Revision 1.9  1993/07/31  08:18:34  mjl
  * Clipping routine for polygons added (preliminary).
  *
@@ -498,9 +505,6 @@ genlin(short *x, short *y, PLINT npts)
 
 /*----------------------------------------------------------------------*\
 * void grdashline()
-*
-* Plot a dashed line using current pattern.
-* This routine is disgustingly slow -- somebody please fix it!
 \*----------------------------------------------------------------------*/
 
 static void
@@ -508,9 +512,11 @@ grdashline(short *x, short *y, PLINT *mark, PLINT *space, PLINT nms)
 {
     PLINT nx, ny, nxp, nyp;
     PLINT *timecnt, *alarm, *pendn, *curel;
-    PLINT modulo, incr, dx, dy, diax, diay, i, temp, xtmp, ytmp;
-    PLINT px, py, tstep;
+    PLINT modulo, dx, dy, i, xtmp, ytmp;
+    PLINT tstep, pix_distance, j;
     PLINT umx, umy;
+    int loop_x;
+    long incr, temp;
     short xl[2], yl[2];
     double nxstep, nystep;
 
@@ -524,37 +530,32 @@ grdashline(short *x, short *y, PLINT *mark, PLINT *space, PLINT nms)
 	*alarm = mark[0];
     }
 
-    lastx = x[0];
-    lasty = y[0];
+    lastx = xtmp = x[0];
+    lasty = ytmp = y[0];
 
     if (x[0] == x[1] && y[0] == y[1])
 	return;
 
     nx = x[1] - x[0];
-    ny = y[1] - y[0];
-
+    dx = (nx > 0) ? 1 : -1;
     nxp = ABS(nx);
+
+    ny = y[1] - y[0];
+    dy = (ny > 0) ? 1 : -1;
     nyp = ABS(ny);
 
     if (nyp > nxp) {
 	modulo = nyp;
 	incr = nxp;
-	dx = 0;
-	dy = (ny > 0) ? 1 : -1;
+	loop_x = 0;
     }
     else {
 	modulo = nxp;
 	incr = nyp;
-	dx = (nx > 0) ? 1 : -1;
-	dy = 0;
+	loop_x = 1;
     }
 
-    diax = (nx > 0) ? 1 : -1;
-    diay = (ny > 0) ? 1 : -1;
-
     temp = modulo / 2;
-    xtmp = x[0];
-    ytmp = y[0];
 
 /* Compute the timer step */
 
@@ -562,47 +563,40 @@ grdashline(short *x, short *y, PLINT *mark, PLINT *space, PLINT nms)
     nxstep = nxp * umx;
     nystep = nyp * umy;
     tstep = sqrt( nxstep * nxstep + nystep * nystep ) / modulo;
+    if (tstep < 1) tstep = 1;
+    /* tstep is distance per pixel moved */
 
-    for (i = 0; i < modulo; i++) {
-	temp = temp + incr;
-	px = xtmp;
-	py = ytmp;
-	if (temp > modulo) {
-	    temp = temp - modulo;
-	    xtmp = xtmp + diax;
-	    ytmp = ytmp + diay;
+    i = 0;
+    while (i < modulo) {
+        pix_distance = (*alarm - *timecnt + tstep - 1) / tstep;
+	i += pix_distance;
+	if (i > modulo)
+	    pix_distance -= (i - modulo);
+	*timecnt += pix_distance * tstep;
+
+	temp += pix_distance * incr;
+	j = temp / modulo;
+	temp = temp % modulo;
+
+	if (loop_x) {
+	    xtmp += pix_distance * dx;
+	    ytmp += j * dy;
 	}
 	else {
-	    xtmp = xtmp + dx;
-	    ytmp = ytmp + dy;
+	    xtmp += j * dx;
+	    ytmp += pix_distance * dy;
 	}
-	*timecnt += tstep;
-
-	if (*timecnt >= *alarm) {
-	    plupd(nms, mark, space, curel, pendn, timecnt, alarm);
-	    if (*pendn == 0) {
-		xl[0] = lastx;
-		yl[0] = lasty;
-		xl[1] = px;
-		yl[1] = py;
-		plP_line(xl, yl);
-	    }
-	    lastx = xtmp;
-	    lasty = ytmp;
+	if (*pendn != 0) {
+	    xl[0] = lastx;
+	    yl[0] = lasty;
+	    xl[1] = xtmp;
+	    yl[1] = ytmp;
+	    plP_line(xl, yl);
 	}
+	plupd(nms, mark, space, curel, pendn, timecnt, alarm);
+	lastx = xtmp;
+	lasty = ytmp;
     }
-
-/* Finish up */
-
-    if (*pendn != 0) {
-	xl[0] = lastx;
-	yl[0] = lasty;
-	xl[1] = xtmp;
-	yl[1] = ytmp;
-	plP_line(xl, yl);
-    }
-    lastx = x[1];
-    lasty = y[1];
 }
 
 /*----------------------------------------------------------------------*\
