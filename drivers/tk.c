@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/03/22 23:17:37  furnish
+ * Revision 1.31  1994/03/23 06:53:36  mjl
+ * Added support for: color map 1 color selection, color map 0 or color map 1
+ * state change (palette change), polygon fills.
+ *
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.30  1994/03/22  23:17:37  furnish
  * Avoid collision with user code when he wants to make a custom wish
  * combined with PLPLOT.
  *
@@ -57,22 +68,6 @@
  *
  * Revision 1.20  1993/12/09  20:35:14  mjl
  * Fixed some casts.
- *
- * Revision 1.19  1993/12/08  06:18:09  mjl
- * Changed to include new plplotX.h header file.
- *
- * Revision 1.18  1993/12/06  07:43:11  mjl
- * Fixed bogus tmpnam call.
- *
- * Revision 1.17  1993/11/19  07:31:36  mjl
- * Updated to new call syntax for tk_toplevel().
- *
- * Revision 1.16  1993/11/15  08:31:16  mjl
- * Now uses tmpnam() to get temporary file instead of tempnam().  Also,
- * put in rename of dangerous Tcl commands just after startup.
- *
- * Revision 1.15  1993/11/07  09:02:52  mjl
- * Added escape function handling for dealing with flushes.
 */
 
 /*	tk.c
@@ -99,10 +94,6 @@
 #include "plevent.h"
 #include <errno.h>
 
-/* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
-
-#define BUFFER_FIFO 0
-
 /* A handy command wrapper */
 
 #define tk_wr(code) \
@@ -121,7 +112,7 @@ if (code) { abort_session(pls, "Unable to write to pipe"); }
 typedef struct {
     Tk_Window w;		/* Main window */
     Tcl_Interp *interp;		/* Interpreter */
-    short xold, yold;		/* Coordinates of last point plotted */
+    PLINT xold, yold;		/* Coordinates of last point plotted */
     int   exit_eventloop;	/* Flag for breaking out of event loop */
     int   pass_thru;		/* Skips normal error termination when set */
     char  *cmdbuf;		/* Command buffer */
@@ -131,26 +122,27 @@ typedef struct {
 
 /* Function prototypes */
 
-static void  init		(PLStream *);
-static void  tk_start		(PLStream *);
-static void  tk_stop		(PLStream *);
-static void  tk_di		(PLStream *);
-static void  WaitForPage	(PLStream *);
-static void  HandleEvents	(PLStream *);
-static void  tk_configure	(PLStream *);
-static void  init_server	(PLStream *);
-static void  launch_server	(PLStream *);
-static void  flush_output	(PLStream *);
-static void  plwindow_init	(PLStream *);
-static void  link_init		(PLStream *);
+static void  init		(PLStream *pls);
+static void  tk_start		(PLStream *pls);
+static void  tk_stop		(PLStream *pls);
+static void  tk_di		(PLStream *pls);
+static void  tk_fill		(PLStream *pls);
+static void  WaitForPage	(PLStream *pls);
+static void  HandleEvents	(PLStream *pls);
+static void  tk_configure	(PLStream *pls);
+static void  init_server	(PLStream *pls);
+static void  launch_server	(PLStream *pls);
+static void  flush_output	(PLStream *pls);
+static void  plwindow_init	(PLStream *pls);
+static void  link_init		(PLStream *pls);
 
 /* Tcl/TK utility commands */
 
-static void  tk_wait		(PLStream *, char *);
-static void  abort_session	(PLStream *, char *);
-static void  server_cmd		(PLStream *, char *, int);
-static void  tcl_cmd		(PLStream *, char *);
-static int   tcl_eval		(PLStream *, char *);
+static void  tk_wait		(PLStream *pls, char *);
+static void  abort_session	(PLStream *pls, char *);
+static void  server_cmd		(PLStream *pls, char *, int);
+static void  tcl_cmd		(PLStream *pls, char *);
+static int   tcl_eval		(PLStream *pls, char *);
 static void  copybuf		(PLStream *pls, char *cmd);
 
 /* These are internal TCL commands */
@@ -217,6 +209,8 @@ init(PLStream *pls)
     pls->page = 0;
     pls->dev_di = 1;
     pls->dev_flush = 1;		/* Want to handle our own flushes */
+    pls->dev_fill0 = 1;
+    pls->dev_fill1 = 1;
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -285,6 +279,12 @@ init(PLStream *pls)
     pls->bytecnt += 2;
 
     tk_wr_header(pls, "");
+
+/* Write color map state info */
+/*
+    plD_state_plm(pls, PLSTATE_CMAP0);
+    plD_state_plm(pls, PLSTATE_CMAP1);
+    */
 
 /* Good place to make sure the data transfer is working OK */
 
@@ -386,9 +386,6 @@ plD_eop_tk(PLStream *pls)
 
     dbug_enter("plD_eop_tk");
 
-    if (pls->nopause)
-	return;
-
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
     pls->bytecnt += 1;
     WaitForPage(pls);
@@ -429,8 +426,6 @@ plD_tidy_tk(PLStream *pls)
     dbug_enter("plD_tidy_tk");
 
     tk_stop(pls);
-    pls->fileset = 0;
-    pls->page = 0;
     free_mem(dev->cmdbuf);
 }
 
@@ -444,24 +439,24 @@ void
 plD_state_tk(PLStream *pls, PLINT op)
 {
     U_CHAR c = (U_CHAR) CHANGE_STATE;
+    int i;
 
     dbug_enter("plD_state_tk");
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt += 1;
+    tk_wr( pdf_wr_1byte(pls->pdfs, op) );
+    pls->bytecnt += 2;
 
     switch (op) {
 
     case PLSTATE_WIDTH:
-	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
 	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) (pls->width)) );
 	pls->bytecnt += 3;
 	break;
 
     case PLSTATE_COLOR0:
-	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
 	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
-	pls->bytecnt += 2;
+	pls->bytecnt += 3;
 	if (pls->icol0 == PL_RGB_COLOR) {
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.g) );
@@ -471,6 +466,35 @@ plD_state_tk(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_COLOR1:
+	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->icol1) );
+	pls->bytecnt += 2;
+	break;
+
+    case PLSTATE_FILL:
+	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->patt) );
+	pls->bytecnt ++;
+	break;
+
+    case PLSTATE_CMAP0:
+	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->ncol0) );
+	pls->bytecnt += 1;
+	for (i = 0; i < pls->ncol0; i++) {
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].r) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].g) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].b) );
+	    pls->bytecnt += 3;
+	}
+	break;
+
+    case PLSTATE_CMAP1:
+	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncol1) );
+	pls->bytecnt += 2;
+	for (i = 0; i < pls->ncol1; i++) {
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].r) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].g) );
+	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].b) );
+	    pls->bytecnt += 3;
+	}
 	break;
     }
 
@@ -482,6 +506,12 @@ plD_state_tk(PLStream *pls, PLINT op)
 * plD_esc_tk()
 *
 * Escape function.
+* Functions:
+*
+*	PLESC_DI	Driver interface command
+*	PLESC_FLUSH	Flush output
+*	PLESC_FILL	Fill polygon
+*
 \*----------------------------------------------------------------------*/
 
 void
@@ -498,12 +528,17 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
     pls->bytecnt += 1;
 
     switch (op) {
-      case PLESC_DI:
+
+    case PLESC_DI:
 	tk_di(pls);
 	break;
 
-      case PLESC_FLUSH:
+    case PLESC_FLUSH:
 	flush_output(pls);
+	break;
+
+    case PLESC_FILL:
+	tk_fill(pls);
 	break;
     }
 }
@@ -525,8 +560,10 @@ tk_di(PLStream *pls)
 
 /* Safety feature, should never happen */
 
-    if (dev == NULL) 
-	plexit("tk_di: Illegal call to driver (not yet initialized)");
+    if (dev == NULL) {
+	plabort("tk_di: Illegal call to driver (not yet initialized)");
+	return;
+    }
 
 /* Flush the buffer before proceeding */
 
@@ -581,6 +618,30 @@ tk_di(PLStream *pls)
 
     server_cmd( pls, "update", 1 );
     server_cmd( pls, "plw_update_view $plwindow", 1 );
+}
+
+/*----------------------------------------------------------------------*\
+* tk_fill()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*----------------------------------------------------------------------*/
+
+static void
+tk_fill(PLStream *pls)
+{
+    PLDev *dev = (PLDev *) pls->dev;
+
+    dbug_enter("tk_fill");
+
+    tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->dev_npts) );
+    pls->bytecnt += 2;
+
+    tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
+    tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
+    pls->bytecnt += 4 * pls->dev_npts;
+
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1243,31 +1304,14 @@ HandleEvents(PLStream *pls)
 /*----------------------------------------------------------------------*\
 * flush_output()
 *
-* Flushes output and sends command to the server to read from the 
-* {FIFO|socket}.  The server processes the commands asynchronously since
-* the "readdata" widget command is issued in the background.
+* Sends graphics instructions to the {FIFO|socket} via a packet send.
 *
-* Some notes:
-*
-* When sending via a FIFO, we actually flush the FIFO _after_ the read
-* command is issued to the renderer.  This way bigger buffers can be used
-* since both processes can work on it asnychronously for a while.  If the
-* renderer just hangs at some point, it may indicate the buffer is too
-* large for your system and further writes aren't being permitted without
-* first reading from the pipe.  And since the data writer is responsible
-* for telling the server to do the reads, they both hang forever!  The
-* only way to get around this type of problem is to use i/o events in the
-* server's TK event loop.  (Actually there is another way: use
-* non-blocking i/o with good error recovery, but that's a lot of work!)
-* Maybe once the stock TK has this capability I will switch over, but
-* sticking the input events in the TK event loop may be bad for
-* performance.
-*
-* The socket i/o routines are modified versions of the ones from the
-* Tcl-DP package.  They have been altered to take a pointer to a PDFstrm
-* struct, and read-to or write-from pdfs->buffer.  The length of the
-* buffer is stored in pdfs->bp (the original Tcl-DP routine assume the
-* message is character data and use strlen).
+* The i/o routines are modified versions of the ones from the Tcl-DP
+* package.  They have been altered to take a pointer to a PDFstrm struct,
+* and read-to or write-from pdfs->buffer.  The length of the buffer is
+* stored in pdfs->bp (the original Tcl-DP routine assume the message is
+* character data and use strlen).  Also, they can send/receive from 
+* either a fifo or a socket.
 \*----------------------------------------------------------------------*/
 
 static void
