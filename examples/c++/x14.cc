@@ -235,7 +235,7 @@ void x14::plot1(plstream *pls)
 
     pls->col0(4);
     pls->line(60, x, y);
-    pls->plflush();
+    pls->flush();
 }
 
 
@@ -267,7 +267,7 @@ void x14::plot2(plstream *pls)
 
     pls->col0(3);
     pls->line(100, x, y);
-    pls->plflush();
+    pls->flush();
 }
 
  /* =============================================================== */
@@ -310,7 +310,7 @@ void x14::plot3(plstream *pls)
 
     pls->col0(4);
     pls->line(101, x, y);
-    pls->plflush();
+    pls->flush();
 }
 
  /* =============================================================== */
@@ -375,7 +375,7 @@ void x14::plot4(plstream *pls)
     pls->col0(4);
     pls->mtex("t", 2.0, 0.5, 0.5,
 	   "#frPLplot Example 3 - r(#gh)=sin 5#gh");
-    pls->plflush();
+    pls->flush();
 }
 
  /* =============================================================== */
@@ -411,7 +411,7 @@ void x14::plot5(plstream *pls)
     pls->cont(w, xpts, ypts, 1, xpts, 1, ypts, clevel, 11, x14::mypltr, NULL);
     pls->col0(1);
     pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    pls->plflush();
+    pls->flush();
 }
 
 

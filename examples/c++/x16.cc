@@ -278,7 +278,7 @@ x16::x16( int argc, char ** argv ) {
   pls->col0(1);
   pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   pls->col0(2);
-  pls->cont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
+  pls->cont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
   pls->lab("distance", "altitude", "Bogon density, with streamlines");
 

@@ -274,7 +274,7 @@ void x01::plot1( int do_test )
       for (i=0; i<60; i++) {
 	pls->poin(1, x+i, y+i,9);      /* draw a point */
 	usleep(50000);              /* wait a little */
-	pls->plflush();                  /* force an update of the tk driver */
+	pls->flush();                  /* force an update of the tk driver */
 	pls->poin(1, x+i, y+i,9);      /* erase point */
       }
       pls->xormod(0, &st);                     /* leave xor mode */

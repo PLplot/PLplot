@@ -119,11 +119,6 @@ void x04::plot1( int type ) {
   pls->mtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter");
   pls->col0(2);
   pls->mtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)");
-  pls->col0(1);
-  pls->mtex("b", 3.2, 0.5, 0.5, "Frequency");
-  pls->mtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter");
-  pls->col0(2);
-  pls->mtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)");
 
   // For the gridless case, put phase vs freq on same plot.
 
