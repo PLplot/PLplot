@@ -618,8 +618,8 @@ FT->face->ascender>>6,
  */
 
 FT->matrix.xx =(FT_Fixed)0x10000*t[0];
-FT->matrix.xy =(FT_Fixed)0x10000*t[2];
-FT->matrix.yx =(FT_Fixed)0x10000*t[1];
+FT->matrix.xy =(FT_Fixed)0x10000*t[1];
+FT->matrix.yx =(FT_Fixed)0x10000*t[2];
 FT->matrix.yy =(FT_Fixed)0x10000*t[3];
 
 
