@@ -27,16 +27,6 @@ PL_ARG_WITH(ltdlsystem,
    building the convenience version shipped with the sources],
   no)
 
-dnl If the user don't want (or the system is not capable of) to build
-dnl shared libraries, then disable dynamic drivers, as they are
-dnl dynamically loaded objects.
-
-if test "$enable_shared" != yes ; then
-    AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
-    AC_MSG_WARN([setting enable_dyndrivers=no])
-    enable_dyndrivers=no
-fi
-
 if test "$enable_dyndrivers" = "yes"; then
   AC_LIBTOOL_DLOPEN
   AC_CHECK_LIB(ltdl, lt_dlinit, [libltdl_in_system=yes],
@@ -60,3 +50,5 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
+
+

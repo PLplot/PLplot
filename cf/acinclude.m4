@@ -42,7 +42,7 @@ dnl PL_ARG_ENABLE(enable-option, help-string, default-value)
 dnl
 AC_DEFUN([PL_ARG_ENABLE],[
   AC_ARG_ENABLE($1,
-    AS_HELP_STRING([--enable-$1], [$2 (default=$3)]),
+    AS_HELP_STRING([--enable-$1], [$2 @<:@default=$3@:>@]),
     [enable_[]translit($1, [-], [_])=$enableval],
     [enable_[]translit($1, [-], [_])=$3])])
 dnl ------------------------------------------------------------------------
@@ -50,7 +50,7 @@ dnl PL_ARG_WITH(enable-option, help-string, default-value)
 dnl
 AC_DEFUN([PL_ARG_WITH],[
   AC_ARG_WITH($1,
-    AS_HELP_STRING([--with-$1], [$2 (default=$3)]),
+    AS_HELP_STRING([--with-$1], [$2 @<:@default=$3@:>@]),
     [with_[]translit($1, [-], [_])=$withval],
     [with_[]translit($1, [-], [_])=$3])])
 dnl ------------------------------------------------------------------------

@@ -22,3 +22,122 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+dnl Including a driver in the below list includes it by default.
+dnl Note that each driver should be treated separately even if
+dnl they are in the same source code file.
+dnl For example, the ps and psc drivers are defined in the ps.c source
+dnl code file.
+
+dnl N.B. This is ordered the same as the *driver pair* list below to help
+dnl humans keep the associations straight, but this is not necessary.
+
+dnl Note specifically which drivers are known to be loadable.  Eventually,
+dnl hopefully, every driver will show up on this list.  However, we add them one
+dnl at a time since each will have its own peculiarities in the build process
+dnl (none missing at present).
+
+dnl N.B. This is ordered the same as the *driver pair* list below to help
+dnl humans keep the associations straight, but this is not necessary.
+
+dnl We think of a "device" as the output medium.  Could be a machine
+dnl style (Tektronix, X11), or a file format (Postscript).
+dnl
+dnl A "driver" is the PLplot code that produces the output on the
+dnl medium.
+dnl
+dnl Some drivers support multiple devices.  But we we need to make sure
+dnl we compile only the selected drivers.  That is, if a driver supports
+dnl devices not selected, we don't want to compile it at all.  Or if it
+dnl supports multiple selected devices, we only want to compile it
+dnl once.  To support this, we build an association list between devices
+dnl and drivers.  This will be inspected to build up the set of drivers
+dnl to be compiled based on which devices are selected.
+
+dnl Ordered alphabetically by second in each pair (the driver) for human
+dnl consumption, but this is not necessary.
+
+PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
+
+PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
+
+# Set driver enable values
+#
+# You can enable/disable drivers either by the command line
+# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
+# (remember to use underscores instead of dashes here).  You can disable
+# all drivers by default by using --disable-drivers.
+
+# Special cases
+
+# ----------------------------------------------------------------------------
+# Set flag to enable searching for dynloadable drivers, if appropriate.
+# ----------------------------------------------------------------------------
+
+dnl If the user don't want (or the system is not capable of) to build
+dnl shared libraries, then disable dynamic drivers, as they are
+dnl dynamically loaded objects.
+
+if test "$enable_shared" != yes ; then
+    AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
+    AC_MSG_WARN([setting enable_dyndrivers=no])
+    enable_dyndrivers=no
+fi
+
+if test "$enable_dyndrivers" = "yes"; then
+    AC_DEFINE(ENABLE_DYNDRIVERS, [],
+              [Define if there is support for dynamically loaded drivers])
+fi
+
+builtin([define], [PL_DRIVERS_DEVICE_LIST], [
+    cgm:cgm:yes,
+    dg300:dg300:no,
+    png:gd:yes, jpeg:gd:yes,
+    gnome:gnome:no,
+    hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
+    imp:impress:no,
+    linuxvga:linuxvga:yes,
+    ljii:ljii:no,
+    ljiip:ljiip:no,
+    mem:mem:yes,
+    ntk:ntk:no,
+    null:null:yes,
+    pbm:pbm:yes,
+    plmeta:plmeta:yes,
+    ps:ps:yes, psc:ps:yes,
+    pstex:pstex:yes,
+    xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
+    versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
+    tek4107f:tek:no,
+    tk:tk:yes,
+    tkwin:tkwin:yes,
+    xfig:xfig:yes,
+    xwin:xwin:yes])
+
+AC_MSG_CHECKING(for dynamic drivers)
+PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+AC_MSG_RESULT
+
+AC_SUBST(STATIC_DRIVERS)
+AC_SUBST(DYNAMIC_DRIVERS)
+
+m4_include(gd.ac)
+m4_include(cgm.ac)
+m4_include(gnome.ac)
+m4_include(linuxvga.ac)
+m4_include(xwin.ac)
+
+PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+
+if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
+    enable_ps=yes
+fi
+
+AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
+AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
+AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
+AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
+AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
+AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
+
+
