@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1993/08/03 01:49:55  mjl
+ * Revision 1.6  1993/08/03 20:30:59  mjl
+ * Fixed more problems with writing into non-writable strings by gcc.
+ *
+ * Revision 1.5  1993/08/03  01:49:55  mjl
  * Fixed some code that caused problems with some compilers due to strings
  * that might be allocated in non-writable memory being passed to Tcl_Eval
  * (which may modify the string).
@@ -77,6 +80,9 @@ typedef struct {
     int   exit_eventloop;	/* Flag for breaking out of event loop */
     int   pass_thru;		/* Skips normal error termination when set */
     int   launched_server;	/* Keep track of who started server */
+
+    char *cmdbuf;		/* Command buffer */
+    int cmdbuf_len;
 } TkDev;
 
 /* Function prototypes */
@@ -100,6 +106,7 @@ static void  abort_session	(PLStream *, char *);
 static void  server_cmd		(PLStream *, char *);
 static void  tcl_cmd		(PLStream *, char *);
 static int   tcl_eval		(PLStream *, char *);
+static void  copybuf		(PLStream *pls, char *cmd);
 
 /* These are internal TCL commands */
 
@@ -324,11 +331,14 @@ plD_bop_tk(PLStream *pls)
 void
 plD_tidy_tk(PLStream *pls)
 {
+    TkDev *dev = (TkDev *) pls->dev;
+
     dbug_enter("plD_tidy_tk");
 
     tk_stop(pls);
     pls->fileset = 0;
     pls->page = 0;
+    free_mem(dev->cmdbuf);
 }
 
 /*----------------------------------------------------------------------*\
@@ -951,11 +961,9 @@ WaitForPage(PLStream *pls)
 static void
 HandleEvents(PLStream *pls)
 {
-    TkDev *dev = (TkDev *) pls->dev;
-
     dbug_enter("HandleEvents");
-    Tcl_Eval(dev->interp, "update", 0, (char **) NULL);
 
+    tcl_eval(pls, "update");
     if (pls->bytecnt > pls->bufmax)
 	flush_output(pls);
 }
@@ -1133,6 +1141,9 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 * Waits for the specified expression to evaluate to true before
 * proceeding.  While we are waiting to proceed, all events (for this
 * or other interpreters) are handled.  
+*
+* Use a static string buffer to hold the command, to ensure it's in
+* writable memory (grrr...).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1143,8 +1154,9 @@ tk_wait(PLStream *pls, char *cmd)
 
     dbug_enter("tk_wait");
 
+    copybuf(pls, cmd);
     while ( ! result) {
-	if (Tcl_ExprBoolean(dev->interp, cmd, &result)) {
+	if (Tcl_ExprBoolean(dev->interp, dev->cmdbuf, &result)) {
 	    fprintf(stderr, "tk_wait command \"%s\" failed:\n\t %s\n",
 		    cmd, dev->interp->result);
 	    break;
@@ -1203,29 +1215,41 @@ tcl_cmd(PLStream *pls, char *cmd)
 * tcl_eval
 *
 * Evals the specified string, returning the result.
-* Use a static string buffer to hold the command, to ensure it's in
-* writable memory (grrr...).
 \*----------------------------------------------------------------------*/
-
-static char *cmdbuf = NULL;
-static int cmdbuf_len = 100;
 
 static int
 tcl_eval(PLStream *pls, char *cmd)
 {
     TkDev *dev = (TkDev *) pls->dev;
 
-    if (cmdbuf == NULL) 
-	cmdbuf = (char *) malloc(cmdbuf_len);
+    copybuf(pls, cmd);
+    return(Tcl_Eval(dev->interp, dev->cmdbuf, 0, (char **) NULL));
+}
 
-    if (strlen(cmd) >= cmdbuf_len) {
-	free((void *) cmdbuf);
-	cmdbuf_len = strlen(cmd) + 20;
-	cmdbuf = (char *) malloc(cmdbuf_len);
+/*----------------------------------------------------------------------*\
+* copybuf
+*
+* Puts command in a static string buffer, to ensure it's in writable
+* memory (grrr...).
+\*----------------------------------------------------------------------*/
+
+static void
+copybuf(PLStream *pls, char *cmd)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+
+    if (dev->cmdbuf == NULL) {
+	dev->cmdbuf_len = 100;
+	dev->cmdbuf = (char *) malloc(dev->cmdbuf_len);
     }
 
-    strcpy(cmdbuf, cmd);
-    return(Tcl_Eval(dev->interp, cmdbuf, 0, (char **) NULL));
+    if (strlen(cmd) >= dev->cmdbuf_len) {
+	free((void *) dev->cmdbuf);
+	dev->cmdbuf_len = strlen(cmd) + 20;
+	dev->cmdbuf = (char *) malloc(dev->cmdbuf_len);
+    }
+
+    strcpy(dev->cmdbuf, cmd);
 }
 
 /*----------------------------------------------------------------------*/
