@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/07/29 20:27:40  mjl
+ * Revision 1.11  1994/08/25 04:10:03  mjl
+ * Moved plClrCWindows() out of pladv() into plP_eop(), to ensure it always
+ * gets called at the end of a page.  Put in handling for insufficient
+ * remaining space in windows struct.
+ *
+ * Revision 1.10  1994/07/29  20:27:40  mjl
  * Added plGetCursor() and other support routines for returning the cursor
  * location in world coordinates given a mouse click, if supported by the
  * driver.  Supports multiple windows per page, and gets the correct set
@@ -14,16 +19,6 @@
  * eliminated as a result.  Subpage initialization code moved to this file --
  * subpage settings can now be changed any time (previously, it had to be
  * done before calling plinit).
- *
- * Revision 1.8  1994/03/23  08:23:56  mjl
- * All external API source files: replaced call to plexit() on simple
- * (recoverable) errors with simply printing the error message (via
- * plabort()) and returning.  Should help avoid loss of computer time in some
- * critical circumstances (during a long batch run, for example).
- *
- * Revision 1.7  1993/12/08  06:22:58  mjl
- * Fix to plbop() so that the user can just use plbop/pleop if desired and
- * never need to call pladv().
 */
 
 /*	plpage.c
@@ -59,7 +54,6 @@ c_pladv(PLINT page)
 	if (plsc->cursub >= plsc->nsubx * plsc->nsuby) {
 	    plP_eop();
 	    plP_bop();
-	    plClrCWindows();	/* Paul Casteels */
 	    plsc->cursub = 1;
 	}
 	else
@@ -255,13 +249,16 @@ plGetCursor(PLCursor *cursor)
 void 
 plAddCWindow(CWindow window) 
 {
+    if (nrCWindows >= PL_MAXWINDOWS)
+	return;
+
     windows[nrCWindows++] = window;
 }
 
 /*----------------------------------------------------------------------*\
  * void plClrCWindows()
  *
- * Resets all known windows (called by pladv).
+ * Resets all known windows (called by plP_eop).
  * Written by Paul Casteels.
 \*----------------------------------------------------------------------*/
 
