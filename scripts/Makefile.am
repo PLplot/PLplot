@@ -33,6 +33,7 @@ bin_SCRIPTS = $(scripts)
 EXTRA_DIST = \
 	$(scripts) \
 	check-tarball-cvs.sh \
+	check-year-author.pl \
 	fixfort \
 	htdocs-gen_plot-examples.sh \
 	htdocs-replace.sh \
