@@ -1,0 +1,5 @@
+! Linker option file for FORTRAN.
+! Use this if the plplot.olb was build by DEC-C.
+plplot_lib:plplotfor.obj
+plplot_lib:plplot.olb/lib
+sys$share:decw$xlibshr/share

@@ -1,0 +1,48 @@
+This directory contains files for VMS.
+
+This port assumes that the working directory is [--.tmp] and the library
+directory is [--.lib].
+
+This port can't make the Tk driver, sorry.
+
+You should have...
+	An ANSI C compiler to make a PLPLOT library, DEC-C or GCC.
+	You can get a VAX version of GCC from the net, but there is no
+	AXP version that I know...
+
+Preparation before make...
+	1. Edit make.com to reflect your choice of C compiler.
+	2. Copy header files to include directory.
+	   You may choose the device drivers by editing pldevs.h.
+		$ copy *.h [--.include]
+	2. Copy files to working directory.
+		$ copy *.c [--.tmp]
+		$ copy *.com [--.tmp]
+	3. Copy linker option files to the library directory.
+	   If you use GCC;
+		$ copy copt.opt [--.lib]
+		$ copy fopt.opt [--.lib]
+	   If you use DEC-C;
+		$ copy deccopt.opt [--.lib]copt.opt
+		$ copy decfopt.opt [--.lib]fopt.opt
+
+Make...
+	$ set default [--.tmp]
+	$ @make
+	This makes plplot.olb and plplotfor.obj in the library directory.
+
+Make demos...
+	$ @makedemo
+
+How to use the library...
+	1. PLPLOT user must have the logical name PLPLOT_LIB to point the 
+	library directory. So, add the next one line to SYLOGIN.COM or
+	LOGIN.COM.
+		$ define PLPLOT_LIB disk:[plplot.lib]
+	2. To link a user program with the library, use the command:
+	(for C)	      $ link userprog,PLPLOT_LIB:COPT/OPT
+	(for FORTRAN) $ link userprog,PLPLOT_LIB:FOPT/OPT
+
+
+I hope this helps you.
+			Hiromi Kimura, hiromi@tac.tsukuba.ac.jp
