@@ -92,6 +92,7 @@ enable_tcl=yes
 enable_tk=yes
 enable_itcl=yes
 enable_dp=yes
+enable_xwin=yes
 
 divert(-1)
 
