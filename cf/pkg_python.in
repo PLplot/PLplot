@@ -43,12 +43,12 @@ PYTHON_INSTDIR = $(PREFIX)/@PYTHON_INSTDIR@
 
 install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c \
 	python_dynamic/pyqt_plmodule.c
-	@cd python_dynamic ; make -s distclean
+	@cd python_dynamic ; make -s -f Makefile.pre.in distclean
 	@echo '*shared*' > python_dynamic/Setup.in
 	@echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
 	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
 	 $(MV) $(PYTHON_EXE) ..
-	@cd python_dynamic ; make -s distclean
+	@cd python_dynamic ; make -s -f Makefile.pre.in distclean
 	@echo '*shared*' > python_dynamic/Setup.in
 	@echo 'pyqt_pl pyqt_plmodule.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
 	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
