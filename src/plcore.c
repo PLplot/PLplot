@@ -70,7 +70,7 @@
 enum {AT_BOP, DRAWING, AT_EOP};
 
 /* Initialize device. */
-/* The plot buffer must be called last */
+/* The plot buffer must be called last. */
 
 void
 plP_init(void)
@@ -84,15 +84,15 @@ plP_init(void)
 }
 
 /* End of page */
-/* The plot buffer must be called first */
-/* Ignore instruction if there's nothing drawn */
+/* The plot buffer must be called first. */
+/* Ignore instruction if already at eop. */
 
 void
 plP_eop(void)
 {
     int skip_driver_eop = 0;
 
-    if (plsc->page_status != DRAWING)
+    if (plsc->page_status == AT_EOP)
 	return;
 
     plsc->page_status = AT_EOP;
@@ -110,8 +110,8 @@ plP_eop(void)
 }
 
 /* Set up new page. */
-/* The plot buffer must be called last */
-/* Ignore if the bop was already issued. */
+/* The plot buffer must be called last. */
+/* Ignore if already at bop. */
 /* It's not actually necessary to be AT_EOP here, so don't check for it. */
 
 void
