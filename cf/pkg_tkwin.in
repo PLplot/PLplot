@@ -11,11 +11,11 @@ TKWIN_EXE	=
 ifneq ($(DYNAMIC_DRIVERS),)
 TKWIN_DRV	= tkwin_drv
 
-# target for preparing the tkxwin driver for installation with correct rpath.
+# target for rebuilding the tkwin driver with correct rpath for install.
 # The tkwin shared object includes TKWIN_OBJ (because the tkwin object
 # depends on the functions in TKWIN_OBJ).
 tkwin_drv:
-	$(SHLIB_BUILD) drivers/tkwin$(LIB_TAG)_drv.so \
+	@$(SHLIB_BUILD) $(DATA_DIR)/../drivers/tkwin$(LIB_TAG)_drv.so \
 	$(TKWIN_OBJ:%=shared/%) \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)
 endif

@@ -64,8 +64,9 @@ install_plplot_config:
 
 # Install the dynamically loadable drivers and the drivers database,
 # if any.  The XWIN_DRV, etc. targets are required because
-# of rpath options that need to be rebuilt before installation.
-install_drivers: $(XWIN_DRV) $(TKWIN_DRV) $(TK_DRV) install_dyndrivers
+# of rpath options that need to be rebuilt during installation.
+install_drivers: install_dyndrivers $(XWIN_DRV) $(TKWIN_DRV) $(TK_DRV)
+
 install_dyndrivers:
 	@-if test -d drivers; then \
 	      if test ! -d $(DATA_DIR)/../drivers; then mkdir -p $(DATA_DIR)/../drivers; fi; \

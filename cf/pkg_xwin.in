@@ -6,8 +6,8 @@
 
 ifneq ($(DYNAMIC_DRIVERS),)
 XWIN_DRV	= xwin_drv
-#target for preparing the xwin driver for installation with correct rpath.
+#target for rebuilding the xwin driver with correct rpath for install.
 xwin_drv:
-	$(SHLIB_BUILD) drivers/xwin$(LIB_TAG)_drv.so \
+	@$(SHLIB_BUILD) $(DATA_DIR)/../drivers/xwin$(LIB_TAG)_drv.so \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)
 endif
