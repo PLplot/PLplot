@@ -30,7 +30,7 @@ EXTRA_DIST = $(examples)
 
 if enable_octave
 
-examples_octavedir = ${prefix}/$(DATA_DIR)/../examples/octave
+examples_octavedir = $(DATA_DIR)/examples/octave
 examples_octave_DATA = $(examples)
 
 endif

@@ -110,7 +110,7 @@ SUFFIXES = .fm4
 
 if enable_f77
 
-examples_f77dir = ${prefix}/$(DATA_DIR)/../examples/f77
+examples_f77dir = $(DATA_DIR)/examples/f77
 examples_f77_DATA = $(f77_examples) Makefile.examples
 
 check_PROGRAMS = \

@@ -1596,7 +1596,7 @@ plGetDrvDir ()
 {
     char* drvdir;
 
-/* Get drivers directory in PLPLOT_DRV_DIR or DATA_DIR/DRV_DIR, 
+/* Get drivers directory in PLPLOT_DRV_DIR or DRV_DIR,
  *  on this order
  */
  
@@ -1609,8 +1609,8 @@ plGetDrvDir ()
 
       if (drvdir == NULL) {
         pldebug("plGetDrvDir", 
-	        "Will use drivers dir: " DATA_DIR "/" DRV_DIR "\n");
-	drvdir = DATA_DIR "/" DRV_DIR;
+	        "Will use drivers dir: " DRV_DIR "\n");
+	drvdir = DRV_DIR;
       }
     }
     

@@ -22,7 +22,7 @@ deblib		:= $(debusr)/lib
 debshr		:= $(debusr)/share
 debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
-debex		:= $(deblib)/plplot$(version)/examples
+debex		:= $(debshr)/plplot$(version)/examples
 
 # Architecture exclusion for octave-plplot package
 arch		:= $(shell dpkg-architecture -qDEB_HOST_ARCH)

@@ -46,7 +46,7 @@ sources = \
 if enable_cxx
 
 AM_CPPFLAGS = $(INCLTDL) -I$(top_builddir)/bindings/c++
-examples_cxxdir = ${prefix}/$(DATA_DIR)/../examples/c++
+examples_cxxdir = $(DATA_DIR)/examples/c++
 examples_cxx_DATA = \
 	$(sources) \
 	Makefile.examples

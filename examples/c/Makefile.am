@@ -21,7 +21,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 AM_CPPFLAGS = $(INCLTDL)
-examples_cdir = ${prefix}/$(DATA_DIR)/../examples/c
+examples_cdir = $(DATA_DIR)/examples/c
 sources = \
 	plcdemos.h \
 	lena.pgm \

@@ -20,7 +20,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-tcldir = ${prefix}/$(DATA_DIR)/../tcl
+tcldir = $(DATA_DIR)/tcl
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
 libmatrix = libtclmatrix$(LIB_TAG).la

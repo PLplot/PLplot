@@ -51,7 +51,7 @@ pythondir=python
 export pythondir
 tcldir=tcl
 export tcldir
-octavedir=@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:@prefix@/@DATA_DIR@/../examples/octave//:
+octavedir=@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:@prefix@/@DATA_DIR@/examples/octave//:
 export octavedir
 installbindir=@prefix@/bin
 export installbindir

@@ -902,8 +902,7 @@ AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
 ### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
 
 if test -z "$DATA_DIR"; then
-    ### NOTE: DATA_DIR is the only one that's relative to prefix!!
-    DATA_DIR="lib/${PACKAGE}${VERSION}/data"
+    DATA_DIR="$datadir/${PACKAGE}${VERSION}"
 fi
 if test -z "$LIB_DIR"; then
     LIB_DIR="$prefix/lib"
@@ -918,7 +917,7 @@ if test -z "$TCL_DIR"; then
     TCL_DIR="$prefix/lib/${PACKAGE}${VERSION}/tcl"
 fi
 if test -z "$DRV_DIR"; then
-    DRV_DIR="../drivers$LIB_TAG"
+    DRV_DIR="$libdir/${PACKAGE}${VERSION}/drivers$LIB_TAG"
 fi
 
 BUILD_DIR=`pwd`
@@ -929,16 +928,19 @@ AC_SUBST(INCLUDE_DIR)
 
 # Location substitutions for header files as well
 
-AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR",
+# The double "eval" + "echo" below is necessary to get the correct variable
+# substitutions, e.g. $libdir => $exec_prefix => $prefix.  (RL)
+
+AC_DEFINE_UNQUOTED(DATA_DIR, "`eval eval echo $DATA_DIR`",
                    [Location of package data files])
+AC_DEFINE_UNQUOTED(DRV_DIR, "`eval eval echo $DRV_DIR`",
+                   [Location of dynamically loaded drivers])
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR",
                    [Location of library files])
 AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR",
                    [Location of executables])
 AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR",
                    [Location of Tcl stuff])
-AC_DEFINE_UNQUOTED(DRV_DIR, "$DRV_DIR",
-                   [Location of dynamically loaded drivers (relative to DATA_DIR])
 AC_DEFINE_UNQUOTED(BUILD_DIR, "$BUILD_DIR",
                    [Location of Build tree])
 

@@ -47,7 +47,7 @@ EXTRA_LTLIBRARIES = \
 	xfig.la \
 	xwin.la
 
-driversdir = ${prefix}/$(DATA_DIR)/$(DRV_DIR)
+driversdir = $(DRV_DIR)
 drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 
 # The variable below will force building of the dyndrivers info files
