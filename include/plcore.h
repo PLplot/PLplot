@@ -30,6 +30,8 @@ static void	plgdevlst	(char **, char **, int *, int);
 static void	plInitDispatchTable	(void);
 static PLINT dispatch_table_inited = 0;
 
+static void	plLoadDriver	(void);
+
 /* Static variables */
 
 static PLINT xscl[PL_MAXPOLY], yscl[PL_MAXPOLY];
@@ -537,7 +539,7 @@ static PLDispatchTable static_devices[] = {
 
     /* File types */
 
-#ifdef PLD_plmeta
+#if defined(PLD_plmeta) && !defined(ENABLE_DYNAMIC_DRIVERS)
     {
 	"PLplot Native Meta-File",
 	"plmeta",
@@ -585,7 +587,7 @@ static PLDispatchTable static_devices[] = {
     },
 #endif
 
-#ifdef PLD_ps
+#if defined(PLD_ps) && !defined(ENABLE_DYNAMIC_DRIVERS)
     {
 	"PostScript File (monochrome)",
 	"ps",
@@ -774,7 +776,7 @@ static PLDispatchTable static_devices[] = {
     },
 #endif
 
-#ifdef PLD_null
+#if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
     {
 	"Null device",
 	"null",
@@ -792,5 +794,30 @@ static PLDispatchTable static_devices[] = {
 };
 
 static int nplstaticdevices = (sizeof(static_devices)/sizeof(PLDispatchTable));
+static int npldynamicdevices = 0;
+
+/*--------------------------------------------------------------------------*\
+ * Stuff to support the loadable device drivers.
+\*--------------------------------------------------------------------------*/
+
+typedef struct {
+    char *devnam;
+    char *description;
+    char *drvnam;
+    char *tag;
+    int drvidx;
+} PLLoadableDevice;
+
+typedef struct {
+    char *drvnam;
+    void *dlhand;
+    
+} PLLoadableDriver;
+
+
+static PLLoadableDevice *loadable_device_list;
+static PLLoadableDriver *loadable_driver_list;
+
+static int nloadabledrivers = 0;
 
 #endif	/* __PLCORE_H__ */
