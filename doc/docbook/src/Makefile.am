@@ -79,7 +79,7 @@ INDEX_HTML = ../www/index.html
 
 
 CLEANFILES = \
-  *.aux inline.ent *.log *.eps TMP.* *-tmp *.out *.txt \
+  *.aux inline.ent *.log *.eps TMP.* *-tmp *.out \
   $(TARBALL) $(HTML_TARBALL) $(INFO_TARBALL) $(MAN_TARBALL)
 
 MAINTAINERCLEANFILES = \
