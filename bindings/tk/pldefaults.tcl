@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.3  1994/06/17 21:22:15  mjl
+# Revision 1.4  1994/09/27 21:56:30  mjl
+# Changed print key to "P" because it's too easy to hit by mistake.
+#
+# Revision 1.3  1994/06/17  21:22:15  mjl
 # Removed check for color system before setting resources.  Eliminates some
 # problems with the Tk/DP drivers on mono displays.
 #
@@ -140,7 +143,7 @@ proc pldefaults {} {
 
     global key_zoom_select;	set key_zoom_select	"z"
     global key_zoom_reset;	set key_zoom_reset	"r"
-    global key_print;		set key_print		"p"
+    global key_print;		set key_print		"P"
     global key_save_again;	set key_save_again	"s"
     global key_scroll_right;	set key_scroll_right	"Right"
     global key_scroll_left;	set key_scroll_left	"Left"
