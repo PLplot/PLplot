@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.7  1992/10/27 22:14:00  mjl
-   Support for plflush() function.
+   Revision 1.8  1992/11/07 08:03:26  mjl
+   Added prototypes for a couple new set/get routines (gscale/sscale).
 
+ * Revision 1.7  1992/10/27  22:14:00  mjl
+ * Support for plflush() function.
+ *
  * Revision 1.6  1992/10/20  20:14:11  mjl
  * Added prototypes, definitions for new routine plfamadv(), for advancing
  * to next family member file.
@@ -294,7 +297,7 @@ typedef long PLINT;
 
 typedef struct {
     int icolor;
-    char *name;
+    char name[80];
 } pleNcol;
 
 typedef struct {
@@ -898,6 +901,10 @@ void  smp	(PLFLT, PLFLT, PLFLT, PLFLT);
 void  gchr	(PLFLT *, PLFLT *);
 
 void  schr	(PLFLT, PLFLT);
+
+void  gscale	(PLFLT *);
+
+void  sscale	(PLFLT);
 
 void  gsym	(PLFLT *, PLFLT *);
 
