@@ -9,7 +9,8 @@
  *
  * Purpose:        NaN definition
  *
- * Description:    Should cover 64 bit machines or other machines with GCC
+ * Description:    Should cover machines with 64 bit doubles or other machines
+ *                 with GCC
  *
  * Revisions:      None
  *

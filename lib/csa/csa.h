@@ -8,7 +8,7 @@
  *                 CSIRO Marine Research
  *
  * Purpose:        A header for csa library (2D data approximation with
- *                 bivariate cubic spline)
+ *                 bivariate C1 cubic spline)
  *
  * Revisions:      None
  *
@@ -39,8 +39,9 @@ void csa_calculatespline(csa* a);
 void csa_approximate_point(csa* a, point* p);
 void csa_approximate_points(csa* a, int n, point* points);
 
-void csa_setnmin(csa* a, int nmin);
-void csa_setnmax(csa* a, int nmax);
+void csa_setnpmin(csa* a, int npmin);
+void csa_setnpmax(csa* a, int npmax);
 void csa_setk(csa* a, int k);
+void csa_setnpps(csa* a, double npps);
 
 #endif

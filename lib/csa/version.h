@@ -14,6 +14,6 @@
 #if !defined(_VERSION_H)
 #define _VERSION_H
 
-char* csa_version = "0.05";
+char* csa_version = "0.23";
 
 #endif
