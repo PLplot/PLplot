@@ -66,10 +66,17 @@ typedef char * caddr_t;
 #define POSIX_TTY
 #endif
 
-/* Hacks to deal with non-ANSI libc */
+/*
+ * Macros for file positioning.  I tried switching to f[sg]etpos() because I
+ * like the semantics better, but ran into the problem that fpos_t is not
+ * always a base type (it may be a struct).  This is a problem because the
+ * metafile driver needs to write relative offsets into the file itself.  So
+ * instead we use f{seek,tell} at a low level but keep the f[sg]etpos
+ * semantics using these macros. 
+ */
 
-#if defined (STDC_HEADERS) && ! defined(USE_FSEEK)
-#define STDC_FPOS_T
+#ifdef STDC_FPOS_T
+#undef STDC_FPOS_T
 #endif
 
 #ifdef STDC_FPOS_T
