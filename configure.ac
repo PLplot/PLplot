@@ -531,11 +531,6 @@ AC_CHECK_LIB(m, sin)
 ### already too late)
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-### Modify system-dependent results based on availability
-AC_INCLUDE(sysloc.in)
-#disable LIBS so we don't have all libraries mentioned
-LIBS=""
-
 if test "$enable_python" = "yes"; then
    AM_PATH_PYTHON(1.5)
 ### PYTHON_INSTDIR is the same as $pythondir except that the
@@ -546,6 +541,11 @@ if test "$enable_python" = "yes"; then
    PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
    AC_SUBST(PYTHON_INSTDIR)
 fi
+
+### Modify system-dependent results based on availability
+AC_INCLUDE(sysloc.in)
+#disable LIBS so we don't have all libraries mentioned
+LIBS=""
 
 # Optional packages
 
@@ -1096,7 +1096,6 @@ AC_CONFIG_FILES([
 	utils/Makefile
 	scripts/Makefile
 	doc/Makefile
-	scripts/plplot-config
 	pkgcfg/Makefile
 	pkgcfg/plplot.pc
 	pkgcfg/plplot-float.pc
