@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.5  1994/06/16 21:56:32  mjl
+# Revision 1.6  1994/06/17 21:23:11  mjl
+# Removed option database settings since they were the same as those set
+# in the pldefaults proc.
+#
+# Revision 1.5  1994/06/16  21:56:32  mjl
 # Changed to new matrix declaration syntax.  Locally declared matrices go
 # away automatically when the proc exits.  It really works!
 #
@@ -90,8 +94,6 @@ message .msg \
 	 -width 500 -borderwidth 1 \
 	-text "TK02: Demo \[incr Tcl\] interface to PLplot"
 
-option add *plwin.background black
-
 PLXWin .plw -name foo
 
 pack append . .menu {top fillx} \
@@ -99,8 +101,6 @@ pack append . .menu {top fillx} \
     .plw {bottom expand fill}
 
 update
-
-option add "*font" "-Adobe-helvetica-medium-r-normal--*-180*"
 
 tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
 

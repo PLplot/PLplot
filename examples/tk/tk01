@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1994/06/09 20:28:15  mjl
+# Revision 1.5  1994/06/17 21:23:09  mjl
+# Removed option database settings since they were the same as those set
+# in the pldefaults proc.
+#
+# Revision 1.4  1994/06/09  20:28:15  mjl
 # Changed to new improved megawidget instantiation method.
 #
 # Revision 1.3  1994/05/09  18:00:37  furnish
@@ -84,13 +88,9 @@ message .msg \
 	 -width 500 -borderwidth 1 \
 	-text "TK01: Control x01c from TK"
 
-option add *plwin.background black
-
 pack append . \
 	.menu {top fillx} \
 	.msg {top padx 5 pady 5 fill} 
-
-option add "*font" "-Adobe-helvetica-medium-r-normal--*-180*"
 
 tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
 
