@@ -44,7 +44,7 @@ pltcl$E:	$(PLLIBS) pltcl$O
 
 plserver$E:	$(PLLIBS) plserver$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_LIBS)
+		$(LDC_LIBS) $(RPATH)
 
 # -----------------------------------------------------------------------------
 # Font files.
