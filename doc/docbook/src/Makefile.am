@@ -57,13 +57,13 @@ EXTRA_DIST = \
   $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
 
 CLEANFILES = \
-  $(INFO_MANIFEST) \
-  *.jadetex *.aux inline.ent *.log *.eps TMP.* \
-  *.out *.txml *.xml-info *-tmp *.texi
+  *.aux inline.ent *.log *.eps TMP.* *-tmp *.out
 
 MAINTAINERCLEANFILES = \
-  $(HTML_MANIFEST) $(MAN_MANIFEST) \
-  $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
+  $(MASTER_XML) $(STYLESHEET_HTML) $(STYLESHEET_PRINT) \
+  $(INFO_MANIFEST) $(HTML_MANIFEST) $(MAN_MANIFEST) \
+  *.jadetex $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA) \
+  *.txml *.xml-info *.texi
 
 if enable_docbook
 
@@ -88,7 +88,7 @@ html: $(HTML_MANIFEST)
 
 # N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is 
 # output to the $(HTML_MANIFEST) file.
-$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML) inline-html.ent
+$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML_IN) inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
@@ -117,7 +117,7 @@ $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 	fi
 
 
-$(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT) inline-print.ent
+$(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT_IN) inline-print.ent
 	ln -fs inline-print.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)
@@ -146,8 +146,8 @@ info: plplotdoc.info
 	  false ; \
 	fi
 
-%.xml-info: %.xml $(SOURCE_FILES)
-	$(PERL) $(BINDIR)/info-clean.pl $< > $@
+plplotdoc.xml-info: $(SOURCE_FILES)
+	$(PERL) $(BINDIR)/info-clean.pl plplotdoc.xml > $@
 
 man: $(MAN_MANIFEST)
 

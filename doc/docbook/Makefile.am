@@ -1,6 +1,6 @@
 EXTRA_DIST = README.developers bootstrap.sh cnf/* www/index.html.in perl
-CLEANFILES = $(TARBALL) *.tar.gz *-stamp conftest.*
-DISTCLEANFILES = $(CONFTEST).* $(JADELOG) www/index.html
+CLEANFILES = $(TARBALL) *.tar.gz *-stamp $(CONFTEST).* 
+DISTCLEANFILES = $(JADELOG) www/index.html
 SUBDIRS = src bin
 
 if enable_docbook
