@@ -43,7 +43,7 @@ if_linux( {define({RANLIB},)})dnl
 define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
 define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
 define(if_motif, {ifdef({MOTIF}, {$1},{$2})})dnl
-define(if_x11,	 {ifdef({X11},   {$1},{$2})})dnl
+define(if_xwin,	 {ifdef({XWIN},  {$1},{$2})})dnl
 
 define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
 define(if_dbl,     {ifdef({DOUBLE},    {$1},{$2})})dnl
@@ -208,18 +208,18 @@ PLLIB_LDC	= $(PLLIB_C)
 
 # Enable X driver by default if a Unix system.
 
-if_unix({define({X11})})
+if_unix({define({XWIN})})
 
 CFLAGS_MOTIF = -I/usr/{include}/Motif1.1
 
 LIB_MOTIF = /usr/lib/Motif1.1/libXm.a /usr/lib/X11R4/libXt.a -lPW
-LIB_X11   = -lX11
+LIB_XWIN  = -lX11
 
 define(DEF_MOTIF,{if_motif({-DMOTIF})})
-define(DEF_X11,  {if_x11({-DXWIN})})
+define(DEF_XWIN, {if_xwin({-DXWIN})})
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_MOTIF() DEF_X11()
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_MOTIF()
 
 # Compiler/linker macros.
 # These are pretty generic to many unix systems and may work as-is.
@@ -234,7 +234,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm
@@ -277,7 +277,7 @@ if_sunos({
 CC = gcc
 
 #define({MOTIF})
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_X11() DEF_MOTIF()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C =
 
 if_dbl({dnl
@@ -300,7 +300,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 
@@ -309,7 +309,7 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 #		HP-UX definitions
 
 #define({MOTIF})
-PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_X11() DEF_MOTIF()
+PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C =
 
 if_dbl({dnl
@@ -333,10 +333,10 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
 CFLAGS_MOTIF = -I/usr/{include}/Motif1.1 -D_HPUX_SOURCE
-LIB_X11 = -L/usr/lib/X11 -lX11
+LIB_XWIN = -L/usr/lib/X11 -lX11
 LIB_MOTIF = -L/usr/lib/Motif1.1 -lXm -L/usr/lib/X11R4 -lXt -lPW
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBS) -lm -g
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm -g
 
@@ -354,9 +354,9 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBC	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) \
+LIBC	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) \
 	 -lsocket -lsockdns -lsockhost -lnsl
-LIBF	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) \
+LIBF	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) \
 	 -lsocket -lSOCkdns
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
@@ -366,8 +366,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 })if_dgux({
 #		DG/UX definitions
 
-define({MOTIF})
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_X11() DEF_MOTIF()
+#define({MOTIF})
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C = -Dunix -DSTUB_LAU -ansi
 SYS_FLAGS_F = -novms
 
@@ -378,7 +378,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 
@@ -386,7 +386,7 @@ LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 })if_linux({
 #		LINUX definitions
 
-PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_X11() 
+PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_XWIN() 
 SYS_FLAGS_C =
 
 CC	= gcc
@@ -397,7 +397,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 
@@ -436,7 +436,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(LIBS) -lm
 LDFFLAGS= $(LIBS) -lm
 
@@ -444,8 +444,8 @@ LDFFLAGS= $(LIBS) -lm
 })if_aix({
 #		A/IX definitions
 
-define({MOTIF})
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_X11() DEF_MOTIF()
+#define({MOTIF})
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C =
 
 # Note that A/IX 3.0 has a bug in that getenv() calls in a C routine
@@ -466,7 +466,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(PROFILE_FLAG_C) $(LIBS) -lm
 LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm
 
@@ -474,7 +474,7 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm
 })if_unicos({
 #	UNICOS defs.
 
-define({MOTIF})
+#define({MOTIF})
 SYS_FLAGS_C =
 
 # These settings are appropriate for UNICOS 6.x.
@@ -488,13 +488,15 @@ PROFILE_FLAG_C = -Gp
 PROFILE_FLAG_LC = -lprof -lsci
 })
 
+OPT_FLAG_F	= 
+
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
 
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_x11({$(LIB_X11)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(PROFILE_FLAG_C) $(LIBS) -lm -lnet
 LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm -lnet
 
@@ -756,8 +758,11 @@ $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
 
 if_amiga({
 $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
-	-delete $(PLLIB_MAIN)
-	join \#?.o as $(PLLIB_MAIN)
+	skshbin:join $(OBJ)         t:plobj.lib
+	skshbin:join $(DRIVERS_OBJ) t:pldrivers.lib
+	skshbin:join $(AMIGA_OBJ)   t:plamiga.lib
+	skshbin:join t:plobj.lib t:pldrivers.lib t:plamiga.lib $(PLLIB_MAIN)
+	-delete t:plobj.lib t:pldrivers.lib t:plamiga.lib
 })
 #----------------------------------------------------------------------#
 # Font files.
