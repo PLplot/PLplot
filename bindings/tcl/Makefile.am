@@ -50,7 +50,15 @@ tclIndex: $(generated_scripts)
 pkginclude_HEADERS = pltcl.h tclMatrix.h
 
 tclgenfiles = tclgen.h tclgen_s.h tclgen.c
-$(top_srcdir)/bindings/tcl/tclAPI.c: $(tclgenfiles)
+
+PLTCLGEN = $(top_srcdir)/bindings/tcl/pltclgen
+$(tclgenfiles): $(PLTCLGEN) plapi.tpl tclcmd.tpl
+	$(PERL) $(PLTCLGEN) $(top_srcdir)/bindings/tcl
+
+# Build these files first to sort out dependency issues:
+BUILT_SOURCES = $(tclgenfiles)
+# uninstalled header files that should be distributed
+noinst_HEADERS = $(tclgenfiles)
 
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
@@ -96,10 +104,6 @@ libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 	$(TCLLIBCMD) \
 	$(X_LIBS) -lX11 -lm
 
-PLTCLGEN = $(top_srcdir)/bindings/tcl/pltclgen
-$(tclgenfiles): $(PLTCLGEN) plapi.tpl tclcmd.tpl
-	$(PERL) $(PLTCLGEN) $(top_srcdir)/bindings/tcl
-
 CLEANFILES = $(generated_scripts) tclIndex
 MAINTAINERCLEANFILES = $(tclgenfiles)
 
@@ -110,5 +114,4 @@ EXTRA_DIST = \
 	plapi.tpl \
 	tclcmd.tpl \
 	README.tclAPI \
-	plitclgen \
-	$(tclgenfiles)
+	plitclgen
