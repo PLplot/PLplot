@@ -1016,8 +1016,16 @@ c_plgra(void)
 void
 c_plxormod(PLINT mode)	/* xor mode */
 {
-    if (plsc->level > 0)
-	plP_esc(PLESC_XORMOD, &mode);
+  static int ostate = 0;
+
+  if (plsc->level > 0) {
+    plP_esc(PLESC_XORMOD, &mode);
+    if (mode) {
+      ostate = plsc->plbuf_write;
+      plsc->plbuf_write = 0;
+    } else
+      plsc->plbuf_write = ostate;
+  }
 }
 
 /*--------------------------------------------------------------------------*\
