@@ -374,7 +374,7 @@ plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z)
     vly = ylight - y[0];
     vlz = zlight - z[0];
     mag2 = vlx*vlx + vly*vly + vlz*vlz;
-    if (mag2 ==0)
+    if (mag2 ==0) 
 	return 1;
 
 /* Now have 3 vectors going through the first point on the given surface */
@@ -411,7 +411,7 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	x2d = plP_w3wcx(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	y2d = plP_w3wcy(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	if (threedshading) {
-	    fill3x[threedcount] = x[x0 - 1];
+	    fill3x[threedcount] = x[x0-1];
 	    fill3y[threedcount] = y[y0-1];
 	    fill3z[threedcount] = z[x0-1][y0-1];
 	    threedcount++;
@@ -450,6 +450,13 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	n++;
     }
 
+/* Get initial color value by linear interpolation. */
+    if (threedshading) {
+	c[1] = 2*c[2] - c[3];
+	if (c[1] < 0) c[1] = 0;
+	if (c[1] > 1) c[1] = 1;
+    }
+
     if (flag == 1 || flag == -2) {
 	if (flag == 1) {
 	    x0 -= dx;
@@ -462,11 +469,25 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	if (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	    x2d = plP_w3wcx( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	    y2d = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
+	/* Although this is a rare boundary case, it's good to be safe */
+	    if (threedshading) {
+		fill3x[threedcount] = x[x0-1];
+		fill3y[threedcount] = y[y0-1];
+		fill3z[threedcount] = z[x0-1][y0-1];
+		threedcount++;
+		if (threedcount > 2) threedcount = 0;
+		if (n > 1) {
+		    c[n] = plGetAngleToLight(fill3x,fill3y,fill3z);
+		}
+	    }
 	    u[n] = plP_wcpcx(x2d);
 	    v[n] = plP_wcpcy(y2d);
 	    n++;
 	}
     }
+
+/* All the setup is done.  Time to do the work. */
+
     plnxtv(u, v, c, n, *init);
     *init = 0;
 }
@@ -783,7 +804,6 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
     PLINT su1, su2, sv1, sv2;
     PLINT cx, cy, px, py;
     PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
-    PLINT threedcount = 0;
 
 /*
  * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
@@ -956,9 +976,9 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 	pnewhi = newhi;
 
 	if (ptold)
-	    i = i + 1;
+	    i++;
 	else
-	    j = j + 1;
+	    j++;
     }
 }
 
@@ -969,28 +989,41 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
  * colours previously assigned.  Otherwise does a simple move and line draw.
 \*--------------------------------------------------------------------------*/
 
+#define MAX_POLY 3
+
 static void
 plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
 {
     static count = 0;
     static vcount = 0;
-    static short px[3], py[3];
+    static short px[MAX_POLY], py[MAX_POLY];
 
     if (threedshading) {
+    /*
+     * Use two circular buffers for coordinates.
+     */
 	if (move) {
-	    count = 0;
-	    vcount = 0;
+	    count = vcount = 0;
 	    px[count] = x;
 	    py[count] = y;
 	} else {
-	    count++;
-	    vcount++;
-	    if (vcount==3) vcount = 0;
+	/* 
+	 * Scan for identical points already in the set.  For some reason the
+	 * drawing algorithm will include the same point or segment multiple
+	 * times.  Although this is harmless when covering the surface by
+	 * simple lines, when shading it causes triangles to be missed. 
+	 */
+	    int i, numpts = MIN(count+1, MAX_POLY);
+	    for (i = 0; i < numpts; i++)
+		if ((px[i] == x) && (py[i] == y)) return;
+
+	    count++; vcount++;
+	    if (vcount==MAX_POLY) vcount = 0;
 	    px[vcount] = x;
 	    py[vcount] = y;
-	    if (count>1) {
+	    if (count+1 >= MAX_POLY) {
 		plcol1(ctmp[j]);
-		plP_fill(px,py,3);
+		plP_fill(px, py, MAX_POLY);
 	    }
 	}
     } else {
@@ -1404,7 +1437,7 @@ plabv(PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2)
 	above = 1;
     else if (py < sy1 && py < sy2)
 	above = 0;
-    else if ((PLFLT) (sx2 - sx1) * (py - sy1) >
+    else if ((PLFLT) (sx2 - sx1) * (py - sy1) >=
 	     (PLFLT) (px - sx1) * (sy2 - sy1))
 	above = 1;
     else
