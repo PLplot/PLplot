@@ -60,7 +60,7 @@ built_files = \
 endif
 
 EXTRA_DIST = \
-  $(SOURCE_FILES) $(MASTER_XML) \
+  $(SOURCE_FILES) \
   jadetex.cfg stylesheet.css $(built_files) \
   inline-info.ent pdftex.map
 
