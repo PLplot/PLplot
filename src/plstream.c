@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/04/30 16:15:13  mjl
+ * Revision 1.15  1994/05/10 21:52:45  mjl
+ * Put in a slight optimization in cmap1 color interpolation.
+ *
+ * Revision 1.14  1994/04/30  16:15:13  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -53,7 +56,7 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
     if (ir > pls->ncol1 || il < 0)
 	fprintf(stderr, "Invalid color\n");
 
-    else if (ir == pls->ncol1) {
+    else if (ir == pls->ncol1 || (delta == 0.)) {
 	newcolor->r = pls->cmap1[il].r;
 	newcolor->g = pls->cmap1[il].g;
 	newcolor->b = pls->cmap1[il].b;
