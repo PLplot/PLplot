@@ -42,6 +42,9 @@ case "$system" in
 #    irix*|IRIX*|Irix*|sgi*|SGI* ) 
 #	CC="cc -ansi"
 #    ;;
+    Linux* )
+	LIBEXTNS="so a"
+    ;;
 #    SunOS-4* )
 #	CC=acc
 #    ;;
@@ -157,6 +160,9 @@ if test -z "$CC"; then
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc -ansi"
+	;;
+	Linux* )
+	    with_gcc=yes
 	;;
 	SunOS-4* )
 	    CC=acc
