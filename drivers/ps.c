@@ -1,13 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.17  1993/07/31 07:56:43  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
-
+ * $Log$
+ * Revision 1.18  1993/08/09 22:13:32  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.  Added struct
+ * specific to PS driver to improve reentrancy.
+ *
+ * Revision 1.17  1993/07/31  07:56:43  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.16  1993/07/16  22:14:18  mjl
  * Simplified and fixed dpi settings.
  *
@@ -28,6 +32,7 @@
 
 #include "plplotP.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -54,8 +59,25 @@ static void ps_init	(PLStream *);
 
 #define OF		pls->OutFile
 
+/* Struct to hold device-specific info. */
+/* INDENT OFF */
+
+typedef struct {
+    PLFLT pxlx, pxly;
+    PLINT xold, yold;
+
+    PLINT xmin, xmax, xlen;
+    PLINT ymin, ymax, ylen;
+
+    PLINT xmin_dev, xmax_dev, xlen_dev;
+    PLINT ymin_dev, ymax_dev, ylen_dev;
+
+    PLFLT xscale_dev, yscale_dev;
+
+    int llx, lly, urx, ury, ptcnt;
+} PSDev;
+
 static char outbuf[128];
-static int llx = XPSSIZE, lly = YPSSIZE, urx = 0, ury = 0, ptcnt;
 
 /*----------------------------------------------------------------------*\
 * plD_init_ps()
@@ -81,7 +103,7 @@ plD_init_psc(PLStream *pls)
 static void
 ps_init(PLStream *pls)
 {
-    PLDev *dev;
+    PSDev *dev;
     float r, g, b;
     float pxlx = YPSSIZE/LPAGE_X;
     float pxly = XPSSIZE/LPAGE_Y;
@@ -108,12 +130,25 @@ ps_init(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    dev = plAllocDev(pls);
+    if (pls->dev != NULL)
+	free((void *) pls->dev);
+
+    pls->dev = calloc(1, (size_t) sizeof(PSDev));
+    if (pls->dev == NULL)
+	plexit("ps_init: Out of memory.");
+
+    dev = (PSDev *) pls->dev;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
     plP_setpxl(pxlx, pxly);
+
+    dev->llx = XPSSIZE;
+    dev->lly = YPSSIZE;
+    dev->urx = 0;
+    dev->ury = 0;
+    dev->ptcnt = 0;
 
 /* Rotate by 90 degrees since portrait mode addressing is used */
 
@@ -276,7 +311,7 @@ ps_init(PLStream *pls)
 void
 plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PSDev *dev = (PSDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     if (pls->linepos + 21 > LINELENGTH) {
@@ -290,24 +325,25 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 /* Rotate by 90 degrees */
 
-    plRotPhy(1, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+	     &x1, &y1, &x2, &y2);
 
-    if (x1 == dev->xold && y1 == dev->yold && ptcnt < 40) {
+    if (x1 == dev->xold && y1 == dev->yold && dev->ptcnt < 40) {
 	sprintf(outbuf, "%d %d D", x2, y2);
-	ptcnt++;
+	dev->ptcnt++;
     }
     else {
 	sprintf(outbuf, "Z %d %d M %d %d D", x1, y1, x2, y2);
-	llx = MIN(llx, x1);
-	lly = MIN(lly, y1);
-	urx = MAX(urx, x1);
-	ury = MAX(ury, y1);
-	ptcnt = 1;
+	dev->llx = MIN(dev->llx, x1);
+	dev->lly = MIN(dev->lly, y1);
+	dev->urx = MAX(dev->urx, x1);
+	dev->ury = MAX(dev->ury, y1);
+	dev->ptcnt = 1;
     }
-    llx = MIN(llx, x2);
-    lly = MIN(lly, y2);
-    urx = MAX(urx, x2);
-    ury = MAX(ury, y2);
+    dev->llx = MIN(dev->llx, x2);
+    dev->lly = MIN(dev->lly, y2);
+    dev->urx = MAX(dev->urx, x2);
+    dev->ury = MAX(dev->ury, y2);
 
     fprintf(OF, "%s", outbuf);
     pls->bytecnt += strlen(outbuf);
@@ -352,7 +388,7 @@ plD_eop_ps(PLStream *pls)
 void
 plD_bop_ps(PLStream *pls)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PSDev *dev = (PSDev *) pls->dev;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -372,17 +408,19 @@ plD_bop_ps(PLStream *pls)
 void
 plD_tidy_ps(PLStream *pls)
 {
+    PSDev *dev = (PSDev *) pls->dev;
+
     fprintf(OF, "@end\n\n");
     fprintf(OF, "%%%%Trailer\n");
 
-    llx /= ENLARGE;
-    lly /= ENLARGE;
-    urx /= ENLARGE;
-    ury /= ENLARGE;
-    llx += XOFFSET;
-    lly += YOFFSET;
-    urx += XOFFSET;
-    ury += YOFFSET;
+    dev->llx /= ENLARGE;
+    dev->lly /= ENLARGE;
+    dev->urx /= ENLARGE;
+    dev->ury /= ENLARGE;
+    dev->llx += XOFFSET;
+    dev->lly += YOFFSET;
+    dev->urx += XOFFSET;
+    dev->ury += YOFFSET;
     fprintf(OF, "%%%%Pages: %d\n", pls->page);
 
 /* Backtrack to write the BoundingBox at the beginning */
@@ -390,7 +428,8 @@ plD_tidy_ps(PLStream *pls)
 
     rewind(OF);
     fprintf(OF, "%%!PS-Adobe-2.0 EPSF-2.0\n");
-    fprintf(OF, "%%%%BoundingBox: %d %d %d %d\n", llx, lly, urx, ury);
+    fprintf(OF, "%%%%BoundingBox: %d %d %d %d\n",
+	    dev->llx, dev->lly, dev->urx, dev->ury);
     fclose(OF);
     pls->fileset = 0;
     pls->page = 0;
@@ -407,7 +446,7 @@ plD_tidy_ps(PLStream *pls)
 void 
 plD_state_ps(PLStream *pls, PLINT op)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PSDev *dev = (PSDev *) pls->dev;
 
     switch (op) {
 
