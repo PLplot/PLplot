@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/08/09 22:18:02  mjl
-   Added function prototypes for pleop(), plbop(), eliminated them for plclr()
-   and plpage().  Inserted defines to translate from the latter in case
-   someone actually uses them.  Fixed prototype for plcpstrm().
+   Revision 1.8  1993/08/18 20:29:04  mjl
+   Added utility macro for updating stream variables from input values.
 
+ * Revision 1.7  1993/08/09  22:18:02  mjl
+ * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
+ * and plpage().  Inserted defines to translate from the latter in case
+ * someone actually uses them.  Fixed prototype for plcpstrm().
+ *
  * Revision 1.6  1993/08/05  22:35:21  mjl
  * Eliminated prototypes for nonexistant functions.
  *
@@ -190,6 +193,9 @@ typedef signed char SCHAR;
 
 #define free_mem(a) \
     if (a != NULL) { free((void *) a); a = NULL; }
+
+#define plsetvar(a, b) \
+    if (b != PL_NOTSET) a = b;
 
 #ifndef MAX
 #define MAX(a,b)    (((a) > (b)) ? (a) : (b))
