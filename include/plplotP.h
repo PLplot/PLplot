@@ -386,6 +386,13 @@ plxtik(PLINT x, PLINT y, PLINT below, PLINT above);
 void
 plytik(PLINT x, PLINT y, PLINT left, PLINT right);
 
+  /* Driver interface filter -- 
+     passes all coordinates through a variety of filters. */
+
+void
+difilt(PLINT *, PLINT *, PLINT,
+       PLINT *, PLINT *, PLINT *, PLINT *);
+
   /* Driver draws text */
 
 void
