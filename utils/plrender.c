@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.43  1994/12/28 09:44:49  mjl
+ * Revision 1.44  1995/01/14 06:04:58  mjl
+ * Changed exit code to 0 when a -h or -v is encountered -- better for shell
+ * scripts when you just want to check the version number.
+ *
+ * Revision 1.43  1994/12/28  09:44:49  mjl
  * Changed to new "merged" style of option table parsing.  Rewired command
  * line handling so that now any number of metafiles may be specified (note:
  * driver is reinitialized with each file, however).  Options now only apply
@@ -1815,7 +1819,7 @@ Opt_h(char *opt, char *optarg, void *client_data)
 
     Help();
 
-    return 1;
+    return 2;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1831,8 +1835,8 @@ Opt_v(char *opt, char *optarg, void *client_data)
 
     fprintf(stderr, "PLplot metafile version: %s\n", PLMETA_VERSION);
     fprintf(stderr, "PLplot library version: %s\n", PLPLOT_VERSION);
-    exit(1);
-    return 1;		/* This serves a purpose */
+    exit(0);
+    return 2;		/* This serves a purpose */
 }
 
 /*----------------------------------------------------------------------*\
