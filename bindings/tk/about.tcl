@@ -1,3 +1,8 @@
+# $Id$
+# $Log$
+# Revision 1.2  1994/05/26 19:22:48  mjl
+# Updated the ftp site, other fixes, to prepare for next beta drop.
+#
 #----------------------------------------------------------------------------
 # about w
 #
@@ -108,20 +113,20 @@ the more advanced features are only available from C).  C programs are
 required to include the header file ``plplot.h''; see the documentation for
 more details.
 
-      The main documentation for PLPLOT is in the doc/ directory of the 
-source distribution in the form of several TeX files; please consult this for
-additional information (``latex plotdoc'').  Unfortunately documentation
-tends to lag actual improvements to the code, so don't be surprised if some
-known features are not explained there.  Consult ``Changes.log'' to see a
-list of recent changes. For more information on how to get or use PLPLOT 
-on your system, see (1) the appendices to the PLPLOT manual, and (2) the
-system-specific documentation in the appropriate sys/<system> directory 
-of the source distribution.
+      The main documentation for PLPLOT is available in both postscript
+(plplot.ps) and info (plplot.info) form.  These are built from the various
+LaTeXinfo files stored in the doc/ directory of the source distribution.
+Unfortunately documentation tends to lag actual improvements to the code,
+so don't be surprised if some known features are not explained there.
+Consult ``Changes.log'' to see a list of recent changes. For more 
+information on how to get or use PLPLOT on your system, see (1) the
+appendices to the PLPLOT manual, and (2) the system-specific documentation
+in the appropriate sys/<system> directory of the source distribution.
 
       To become a subscriber to the PLPLOT mailing list, send a request to
 plplot-request@dino.ph.utexas.edu.  The latest plplot source distribution 
 and document in postscript form can be obtained via anonymous ftp from
-hagar.ph.utexas.edu, in the pub/plplot directory.
+dino.ph.utexas.edu, in the plplot/ directory.
 
 Maurice LeBrun
 Institute for Fusion Studies
