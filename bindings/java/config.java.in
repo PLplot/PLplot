@@ -1,0 +1,7 @@
+// -*-java-*-
+
+package plplot.core;
+
+public class config {
+    public static String libname = "@PLLIB_NAME@@LIB_TAG@";
+};
