@@ -42,8 +42,6 @@ EXTRA_DIST = \
 	Plframe.py \
 	README.pythonbuild \
 	TclSup.py \
-	plmodule.c \
-	plmodule.h \
 	$(MAINTAINERCLEANFILES)
 
 ### Only swig version 1.3.21 (and above?) will work here.

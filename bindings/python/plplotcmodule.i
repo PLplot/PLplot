@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 /* 
 A SWIG interface to PLplot for Python. This wrapper is different from
-the one supplied in plmodule.c in that:
+the one supplied in plmodule.c (now stored in the "old" subdirectory of
+the top-level build tree for reference purposes) in that:
 
    1) it strictly provides the C-API with the usual change of not
       requiring lengths for arrays,
