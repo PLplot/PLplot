@@ -20,7 +20,7 @@ usage()
 Usage: plplot-test.sh [OPTIONS]
 Options:
    [--flat] (Use this option when running this script from plplot/tmp)
-   [--driver=DRIVER] (DRIVER = one of psc [default], ps, png, jpeg, xfig, or plmeta.
+   [--driver=DRIVER] (DRIVER = one of psc [default], ps, png, jpeg, cgm, xfig, or plmeta.
    [--version]
    [--help]
 EOF
@@ -106,6 +106,12 @@ case $driver in
       ;;
    jpeg)
       dsuffix=jpeg
+      export dsuffix
+      options="-fam -fflen 2"
+      export options
+      ;;
+   cgm)
+      dsuffix=cgm
       export dsuffix
       options="-fam -fflen 2"
       export options
