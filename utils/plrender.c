@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.23  1993/04/26 19:58:03  mjl
-   Fixes to allow (once again) output to stdout and plrender to function as
-   a filter.  A type flag was added to handle file vs stream differences.
+   Revision 1.24  1993/07/02 07:19:21  mjl
+   Changed over to new namespace, new options parser.  Some options handlers
+   removed (no longer necessary).
 
+ * Revision 1.23  1993/04/26  19:58:03  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+ *
  * Revision 1.22  1993/03/28  08:47:36  mjl
  * Changed handling of -mar, -jx, -jy flags to allow zooming.
  *
@@ -80,7 +84,7 @@
  *
  * Revision 1.3  1992/10/12  17:12:58  mjl
  * Rearranged order of header file inclusion.
- * #include "plplot.h" must come first!!
+ * #include "plplotP.h" must come first!!
  *
  * Revision 1.2  1992/09/29  04:46:46  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
@@ -114,7 +118,7 @@
 
 char ident[] = "@(#) $Id$";
 
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -151,7 +155,6 @@ static void	NextFamilyFile	(U_CHAR *);
 static void	ReadPageHeader	(void);
 static void	plr_KeyEH	(PLKey *, void *, int *);
 static void	SeekToPage	(long);
-static void	check_alignment (FILE *);
 
 /* Initialization functions */
 
@@ -163,18 +166,12 @@ static void 	Usage		(char *);
 
 /* Option handlers */
 
-static int HandleOption_h	(char *, char *);
-static int HandleOption_v	(char *, char *);
-static int HandleOption_i	(char *, char *);
-static int HandleOption_f	(char *, char *);
-static int HandleOption_b	(char *, char *);
-static int HandleOption_e	(char *, char *);
-static int HandleOption_p	(char *, char *);
-static int HandleOption_a	(char *, char *);
-static int HandleOption_mar	(char *, char *);
-static int HandleOption_ori	(char *, char *);
-static int HandleOption_jx	(char *, char *);
-static int HandleOption_jy	(char *, char *);
+static int Opt_h	(char *, char *);
+static int Opt_v	(char *, char *);
+static int Opt_i	(char *, char *);
+static int Opt_p	(char *, char *);
+static int Opt_a	(char *, char *);
+static int Opt_ori	(char *, char *);
 
 /* Global variables */
 
@@ -253,77 +250,90 @@ static PLFLT	x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
 static PLOptionTable option_table[] = {
 {
     "h",			/* Help */
-    HandleOption_h,
-    0,
+    Opt_h,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-h",
     "Print out this message" },
 {
     "v",			/* Version */
-    HandleOption_v,
-    0,
+    Opt_v,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
     "-v",
     "Print out the plrender version number" },
 {
     "i",			/* Input file */
-    HandleOption_i,
-    PL_PARSE_ARG,
+    Opt_i,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-i name",
     "Input filename" },
 {
     "f",			/* Filter option */
-    HandleOption_f,
-    PL_PARSE_ARG,
+    NULL,
+    &input_type,
+    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_ARG,
     "-f",
     "Filter option -- equivalent to \"-i - -o -\"" },
 {
     "b",			/* Beginning page number */
-    HandleOption_b,
-    PL_PARSE_ARG,
+    NULL,
+    &page_begin,
+    PL_OPT_INT | PL_OPT_ENABLED | PL_OPT_ARG,
     "-b number",
     "Beginning page number" },
 {
     "e",			/* End page number */
-    HandleOption_e,
-    PL_PARSE_ARG,
+    NULL,
+    &page_end,
+    PL_OPT_INT | PL_OPT_ENABLED | PL_OPT_ARG,
     "-e number",
     "End page number" },
 {
     "p",			/* Specified page only */
-    HandleOption_p,
-    PL_PARSE_ARG,
+    Opt_p,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-p page",
     "Plot given page only" },
 {
     "a",			/* Aspect ratio */
-    HandleOption_a,
-    PL_PARSE_ARG,
+    Opt_a,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-a aspect",
     "Plot aspect ratio" },
 {
     "mar",			/* Margin */
-    HandleOption_mar,
-    PL_PARSE_ARG,
+    NULL,
+    &mar,
+    PL_OPT_FLOAT | PL_OPT_ENABLED | PL_OPT_ARG,
     "-mar margin",
     "Total fraction of page to reserve for margins" },
 {
     "ori",			/* Orientation */
-    HandleOption_ori,
-    PL_PARSE_ARG,
+    Opt_ori,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-ori orient",
     "Plot orientation (0,2=landscape, 1,3=portrait)" },
 {
     "jx",			/* Justification in x */
-    HandleOption_jx,
-    PL_PARSE_ARG,
+    NULL,
+    &jx,
+    PL_OPT_FLOAT | PL_OPT_ENABLED | PL_OPT_ARG,
     "-jx number",
     "Justification of plot on page in x (0.0 to 1.0)" },
 {
     "jy",			/* Justification in y */
-    HandleOption_jy,
-    PL_PARSE_ARG,
+    NULL,
+    &jy,
+    PL_OPT_FLOAT | PL_OPT_ENABLED | PL_OPT_ARG,
     "-jy number",
     "Justification of plot on page in y (0.0 to 1.0)" },
 {
+    NULL,
     NULL,
     NULL,
     0,
@@ -380,9 +390,9 @@ main(int argc, char *argv[])
 
     (void) fclose(MetaFile);
     if (strcmp(mf_version, "1993a") < 0) 
-	grclr();
+	plP_clr();
 
-    grtidy();
+    plP_tidy();
     exit(EX_SUCCESS);
 }
 
@@ -470,7 +480,7 @@ plr_init(U_CHAR c)
 /* Start up plplot */
 
     plinit();
-    gsub(&nsubx, &nsuby, &cursub);
+    plP_gsub(&nsubx, &nsuby, &cursub);
 
 /*
 * Aspect ratio scaling
@@ -494,8 +504,8 @@ plr_init(U_CHAR c)
 
 /* Aspect ratio of output device */
 
-    gphy(&dev_xmin, &dev_xmax, &dev_ymin, &dev_ymax);
-    gpixmm(&dev_xpmm, &dev_ypmm);
+    plP_gphy(&dev_xmin, &dev_xmax, &dev_ymin, &dev_ymax);
+    plP_gpixmm(&dev_xpmm, &dev_ypmm);
 
     dev_xlen = dev_xmax - dev_xmin;
     dev_ylen = dev_ymax - dev_ymin;
@@ -590,7 +600,7 @@ plr_line(U_CHAR c)
 	break;
 
       case POLYLINE:
-	plm_rd(read_2bytes(MetaFile, &npts));
+	plm_rd(pdf_rd_2bytes(MetaFile, &npts));
 	get_ncoords(x, y, npts);
 	break;
     }
@@ -614,8 +624,8 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
     PLINT i;
     short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
-    plm_rd(read_2nbytes(MetaFile, (U_SHORT *) xs, n));
-    plm_rd(read_2nbytes(MetaFile, (U_SHORT *) ys, n));
+    plm_rd(pdf_rd_2nbytes(MetaFile, (U_SHORT *) xs, n));
+    plm_rd(pdf_rd_2nbytes(MetaFile, (U_SHORT *) ys, n));
 
     switch (orient%4) {
 
@@ -671,7 +681,7 @@ plr_clr(U_CHAR c)
 
     if (end_of_page == 1) {
 	at_eop = 1;
-	grclr();
+	plP_clr();
 	at_eop = 0;
     }
 }
@@ -696,12 +706,12 @@ plr_page(U_CHAR c)
 /* Advance and setup the page or subpage */
 
     if (end_of_page) {
-	grpage();
+	plP_page();
 	end_of_page = 0;
     }
 
-    ssub(nsubx, nsuby, cursub);
-    setsub();
+    plP_ssub(nsubx, nsuby, cursub);
+    plP_setsub();
 
     plvpor(vpxmin, vpxmax, vpymin, vpymax);
     plwind((PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax);
@@ -724,12 +734,12 @@ plr_color(U_CHAR c)
 	return;
     }
     if (strcmp(mf_version, "1993a") >= 0) {
-	plm_rd(read_1byte(MetaFile, &icol0));
+	plm_rd(pdf_rd_1byte(MetaFile, &icol0));
 
 	if (icol0 == PL_RGB_COLOR) {
-	    plm_rd(read_1byte(MetaFile, &r));
-	    plm_rd(read_1byte(MetaFile, &g));
-	    plm_rd(read_1byte(MetaFile, &b));
+	    plm_rd(pdf_rd_1byte(MetaFile, &r));
+	    plm_rd(pdf_rd_1byte(MetaFile, &g));
+	    plm_rd(pdf_rd_1byte(MetaFile, &b));
 	    plrgb1(r, g, b);
 	}
 	else {
@@ -737,7 +747,7 @@ plr_color(U_CHAR c)
 	}
     }
     else {
-	plm_rd(read_2bytes(MetaFile, &icol));
+	plm_rd(pdf_rd_2bytes(MetaFile, &icol));
 	plcol(icol);
     }
 }
@@ -753,7 +763,7 @@ plr_width(U_CHAR c)
 {
     U_SHORT width;
 
-    plm_rd(read_2bytes(MetaFile, &width));
+    plm_rd(pdf_rd_2bytes(MetaFile, &width));
 
     plwid(width);
 }
@@ -769,7 +779,7 @@ plr_esc(U_CHAR c)
 {
     U_CHAR op;
 
-    plm_rd(read_1byte(MetaFile, &op));
+    plm_rd(pdf_rd_1byte(MetaFile, &op));
     switch (op) {
 
       case PL_SET_RGB:
@@ -781,10 +791,10 @@ plr_esc(U_CHAR c)
 	return;
 
       case PL_SET_LPB:
-	plm_rd(read_2bytes(MetaFile, &lpbpxmi));
-	plm_rd(read_2bytes(MetaFile, &lpbpxma));
-	plm_rd(read_2bytes(MetaFile, &lpbpymi));
-	plm_rd(read_2bytes(MetaFile, &lpbpyma));
+	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpxmi));
+	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpxma));
+	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpymi));
+	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpyma));
 	return;
     }
 }
@@ -803,9 +813,9 @@ plresc_rgb(void)
     float red, green, blue;
     U_SHORT ired, igreen, iblue;
 
-    plm_rd(read_2bytes(MetaFile, &ired));
-    plm_rd(read_2bytes(MetaFile, &igreen));
-    plm_rd(read_2bytes(MetaFile, &iblue));
+    plm_rd(pdf_rd_2bytes(MetaFile, &ired));
+    plm_rd(pdf_rd_2bytes(MetaFile, &igreen));
+    plm_rd(pdf_rd_2bytes(MetaFile, &iblue));
 
     red = (double) ired / 65535.;
     green = (double) igreen / 65535.;
@@ -827,8 +837,8 @@ plresc_ancol(void)
     U_CHAR icolor;
     char name[80];
 
-    plm_rd(read_1byte(MetaFile, &icolor));
-    plm_rd(read_header(MetaFile, name));
+    plm_rd(pdf_rd_1byte(MetaFile, &icolor));
+    plm_rd(pdf_rd_header(MetaFile, name));
 }
 
 /*----------------------------------------------------------------------*\
@@ -984,9 +994,9 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 		else if (direction_flag < 0)
 		    target_page = curpage - input_num;
 #ifdef DEBUG
-		grtext();
+		plP_text();
 		printf("seeking to page %d\n", target_page);
-		grgra();
+		plP_gra();
 #endif
 		SeekToPage(target_page);
 	    }
@@ -1060,9 +1070,9 @@ SeekToPage(long target_page)
 
     if (curpage_loc != 0) {
 #ifdef DEBUG
-	grtext();
+	plP_text();
 	printf("Seeking to: %d\n", curpage_loc);
-	grgra();
+	plP_gra();
 #endif
 	if (pl_fsetpos(MetaFile, &curpage_loc))
 	    plexit("plrender: fsetpos call failed");
@@ -1093,9 +1103,9 @@ SeekToPage(long target_page)
 	    }
 
 #ifdef DEBUG
-	    grtext();
+	    plP_text();
 	    printf("Seeking to: %d\n", nextpage_loc);
-	    grgra();
+	    plP_gra();
 #endif
 	    if (pl_fsetpos(MetaFile, &nextpage_loc))
 		plexit("plrender: fsetpos call failed");
@@ -1118,9 +1128,9 @@ SeekToPage(long target_page)
 	    }
 
 #ifdef DEBUG
-	    grtext();
+	    plP_text();
 	    printf("Seeking to: %d\n", prevpage_loc);
-	    grgra();
+	    plP_gra();
 #endif
 	    if (pl_fsetpos(MetaFile, &prevpage_loc))
 		plexit("plrender: fsetpos call failed");
@@ -1134,10 +1144,10 @@ SeekToPage(long target_page)
 	}
     }
 #ifdef DEBUG
-    grtext();
+    plP_text();
     printf("page, subpage after seek: %d, %d\n", curpage, cursub);
     printf("nsubx, nsuby: %d, %d\n", nsubx, nsuby);
-    grgra();
+    plP_gra();
 #endif
 
     end_of_page = 1;
@@ -1170,15 +1180,15 @@ ReadPageHeader(void)
 
     if (strcmp(mf_version, "1992a") >= 0) {
 	if (strcmp(mf_version, "1993a") >= 0) {
-	    plm_rd(read_2bytes(MetaFile, &page));
-	    plm_rd(read_4bytes(MetaFile, &prevpage));
-	    plm_rd(read_4bytes(MetaFile, &nextpage));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &page));
+	    plm_rd(pdf_rd_4bytes(MetaFile, &prevpage));
+	    plm_rd(pdf_rd_4bytes(MetaFile, &nextpage));
 	    prevpage_loc = prevpage;
 	    nextpage_loc = nextpage;
 	}
 	else {
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	}
     }
 }
@@ -1196,14 +1206,15 @@ Init(int argc, char **argv)
 
 /* First process plrender command line options */
 
-    mode = PL_PARSE_PARTIAL;
+    mode = PL_PARSE_OVERRIDE;
     status = plParseOpts(&argc, argv, mode, option_table, Usage);
 
 /*
-* We want the plplot command line options to override their possible
+* We want the plplot command line options to supercede their possible
 * counterparts in the metafile header.  So we defer parsing the
 * rest of the command line until after we process the metafile header.
 */
+
     OpenMetaFile(&argc, argv);
     if (ReadFileHeader())
 	exit(EX_BADFILE);
@@ -1217,6 +1228,7 @@ Init(int argc, char **argv)
 * name (which should be first).  Anything else is an error.  Handle illegal
 * flags first.
 */
+
     for (i = 1; i < argc; i++) {
 	if ((argv)[i][0] == '-')
 	    Usage(argv[i]);
@@ -1314,7 +1326,7 @@ ReadFileHeader(void)
 
 /* Read label field of header to make sure file is a PLPLOT metafile */
 
-    plm_rd(read_header(MetaFile, mf_magic));
+    plm_rd(pdf_rd_header(MetaFile, mf_magic));
     if (strcmp(mf_magic, PLMETA_HEADER)) {
 	fprintf(stderr, "Not a PLPLOT metafile!\n");
 	return (1);
@@ -1323,7 +1335,7 @@ ReadFileHeader(void)
 /* Read version field of header.  We need to check that we can read the
    metafile, in case this is an old version of plrender. */
 
-    plm_rd(read_header(MetaFile, mf_version));
+    plm_rd(pdf_rd_header(MetaFile, mf_version));
     if (strcmp(mf_version, PLMETA_VERSION) > 0) {
 	fprintf(stderr,
 	    "Error: incapable of reading metafile version %s.\n", mf_version);
@@ -1346,59 +1358,59 @@ ReadFileHeader(void)
 /* This is an easy way to guarantee backward compatibility. */
 
     for (;;) {
-	plm_rd(read_header(MetaFile, tag));
+	plm_rd(pdf_rd_header(MetaFile, tag));
 	if (*tag == '\0')
 	    break;
 
 	if (!strcmp(tag, "xmin")) {
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    xmin = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "xmax")) {
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    xmax = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "ymin")) {
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    ymin = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "ymax")) {
-	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    ymax = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "pxlx")) {
-	    plm_rd(read_ieeef(MetaFile, &pxlx));
+	    plm_rd(pdf_rd_ieeef(MetaFile, &pxlx));
 	    continue;
 	}
 
 	if (!strcmp(tag, "pxly")) {
-	    plm_rd(read_ieeef(MetaFile, &pxly));
+	    plm_rd(pdf_rd_ieeef(MetaFile, &pxly));
 	    continue;
 	}
 
 	if (!strcmp(tag, "aspect")) {
-	    plm_rd(read_ieeef(MetaFile, &dum_float));
+	    plm_rd(pdf_rd_ieeef(MetaFile, &dum_float));
 	    if (!aspectset)
 		aspect = dum_float;
 	    continue;
 	}
 
 	if (!strcmp(tag, "width")) {
-	    plm_rd(read_1byte(MetaFile, &dum_uchar));
+	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
 	    plwid(dum_uchar);
 	    continue;
 	}
 
 	if (!strcmp(tag, "orient")) {
-	    plm_rd(read_1byte(MetaFile, &dum_uchar));
+	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
 	    if (!orientset)
 		orient = dum_uchar;
 	    continue;
@@ -1491,13 +1503,13 @@ Usage(char *badOption)
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* HandleOption_h()
+* Opt_h()
 *
 * Performs appropriate action for option "h".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_h(char *opt, char *optarg)
+Opt_h(char *opt, char *optarg)
 {
 
 /* Help */
@@ -1508,13 +1520,13 @@ HandleOption_h(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_v()
+* Opt_v()
 *
 * Performs appropriate action for option "v".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_v(char *opt, char *optarg)
+Opt_v(char *opt, char *optarg)
 {
 
 /* Version */
@@ -1526,13 +1538,13 @@ HandleOption_v(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_i()
+* Opt_i()
 *
 * Performs appropriate action for option "i".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_i(char *opt, char *optarg)
+Opt_i(char *opt, char *optarg)
 {
 
 /* Input file */
@@ -1544,64 +1556,13 @@ HandleOption_i(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_f()
-*
-* Performs appropriate action for option "f".
-\*----------------------------------------------------------------------*/
-
-static int
-HandleOption_f(char *opt, char *optarg)
-{
-
-/* Filter option */
-
-    input_type = 1;
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* HandleOption_b()
-*
-* Performs appropriate action for option "b".
-\*----------------------------------------------------------------------*/
-
-static int
-HandleOption_b(char *opt, char *optarg)
-{
-
-/* Beginning page number */
-
-    page_begin = atoi(optarg);
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* HandleOption_e()
-*
-* Performs appropriate action for option "e".
-\*----------------------------------------------------------------------*/
-
-static int
-HandleOption_e(char *opt, char *optarg)
-{
-
-/* End page number */
-
-    page_end = atoi(optarg);
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* HandleOption_p()
+* Opt_p()
 *
 * Performs appropriate action for option "p".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_p(char *opt, char *optarg)
+Opt_p(char *opt, char *optarg)
 {
 
 /* Specified page only */
@@ -1613,13 +1574,13 @@ HandleOption_p(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_a()
+* Opt_a()
 *
 * Performs appropriate action for option "a".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_a(char *opt, char *optarg)
+Opt_a(char *opt, char *optarg)
 {
 
 /* Aspect ratio */
@@ -1631,31 +1592,13 @@ HandleOption_a(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* HandleOption_mar()
-*
-* Performs appropriate action for option "mar".
-\*----------------------------------------------------------------------*/
-
-static int
-HandleOption_mar(char *opt, char *optarg)
-{
-
-/* Set margin factor -- total fraction of page to reserve at edge (includes
-   contributions at both sides). */
-
-    mar = atof(optarg);
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* HandleOption_ori()
+* Opt_ori()
 *
 * Performs appropriate action for option "ori".
 \*----------------------------------------------------------------------*/
 
 static int
-HandleOption_ori(char *opt, char *optarg)
+Opt_ori(char *opt, char *optarg)
 {
 
 /* Orientation */
@@ -1665,57 +1608,4 @@ HandleOption_ori(char *opt, char *optarg)
 
     return(0);
 }
-
-/*----------------------------------------------------------------------*\
-* HandleOption_jx()
-*
-* Performs appropriate action for option "jx".
-\*----------------------------------------------------------------------*/
-
-static int
-HandleOption_jx(char *opt, char *optarg)
-{
-
-/* Set justification in x (0.0 < jx < 1.0). jx = 0.5 (centered) is default */
-
-    jx = atof(optarg);
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* HandleOption_jy()
-*
-* Performs appropriate action for option "jy".
-\*----------------------------------------------------------------------*/
-
-static int
-HandleOption_jy(char *opt, char *optarg)
-{
-
-/* Set justification in y (0.0 < jy < 1.0). jy = 0.5 (centered) is default */
-
-    jy = atof(optarg);
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* check_alignment()
-*
-* Reads the next byte and aborts if it is not an END_OF_HEADER.
-* Currently unused.
-\*----------------------------------------------------------------------*/
-
-static void
-check_alignment(FILE *file)
-{
-    U_CHAR c;
-
-    plm_rd(read_1byte(file, &c));
-    if (c != END_OF_FIELD)
-	plexit("check_alignment: Metafile alignment problem");
-}
-
-
 
