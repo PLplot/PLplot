@@ -16,7 +16,7 @@ LateXInfo format into the DocBook format.  This is work in progress, being
 maintained by Alan W. Irwin (irwin@beluga.phys.uvic.ca) and Rafael Laboissière
 (rafael@icp.inpg.fr).
 
-All the relevant files are under the src/ directory.  The file organization
+All the relevant files are under the src/ directory.  The file organisation
 is not very clean and the configure/build system is not yet perfect.
 Although, it should be usable now and we are aiming to achieve the goal
 "build-ability for anyone".  
@@ -64,12 +64,12 @@ Note on SGML Catalogs
 
 The jade program, as well as the programs in the sp suite
 (http://www.jclark.com/sp), work by loading the definitions of DTDs, which
-are files present in the system.  These files are refered in the SGML
-jargon as "system identifiers".
+are files present in the system.  These files are referred to as "system
+identifiers" in the SGML jargon.
 
 The PLplot DocBook SGML sources uses "public identifiers" for declaring the
 included DTDs.  Here is the complete list that is currently needed by
-the plplot documentation project:
+the PLplot documentation project:
 
 "-//James Clark//DTD DSSSL Style Sheet//EN"
 "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
