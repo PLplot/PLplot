@@ -68,7 +68,7 @@
 #undef BIN_DIR
 #undef TCL_DIR
 
-#endif	/* __PLCONFIG_H__ */
+/* Devices */
 
 #undef PLD_cgm
 #undef PLD_conex
@@ -102,3 +102,5 @@
 #undef PLD_xfig
 #undef PLD_xterm
 #undef PLD_xwin
+
+#endif	/* __PLCONFIG_H__ */
