@@ -1,4 +1,4 @@
-This is the first beta release (4.99a) of what will eventually become
+This is the 3rd beta release (4.99c) of what will eventually become
 the PLPLOT 5.0 distribution.  At this point I'm mainly trying to root out the
 remaining bugs and system dependencies, but there will undoubtably be a
 few improvements yet before the final version sees the light of day.
@@ -13,12 +13,20 @@ ToDo		Describes what's on the agenda (no promises, however :-).
 Also there is system-specific documentation under sys/<system-name>, and
 a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 
+For more detail of these changes, consult Changes.log.
+
+**************************************************************************
+Version 4.99c: Summary of major changes (minor update only)
+**************************************************************************
+
+"Install" target added to makefile, support for NEC SX-3 added, support for
+enlarging plots added.  
+
 **************************************************************************
 Version 4.99b: Summary of major changes (minor update only)
 **************************************************************************
 
-Improvements to plrender and near-completion of Amiga drivers.  See
-Changes.log for details.
+Improvements to plrender and near-completion of Amiga drivers.  
 
 **************************************************************************
 Version 4.99a: Summary of major changes
