@@ -88,13 +88,15 @@ main(int argc, char *argv[])
 	oldpage = ipage;
 	printf("Page %d/%d> ", ipage, npage);
 
-	gets(ibuf);
+	if (!fgets(ibuf, 128, stdin))
+	    break;
+
 	c = ibuf[0];
 
 /* User input a page number or a return */
 /* A carriage return in response to the prompt proceeds to the next page. */
 
-	if (c == '\0') {	 	/* CR = increment by one page */
+	if (c == '\n') {	 	/* CR = increment by one page */
 	    ipage++;
 	} else if (c == '+') {		/* +<n> = increment by <n> pages */
 	    ipage += atoi(ibuf+1);
