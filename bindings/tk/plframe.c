@@ -24,16 +24,12 @@
 \*----------------------------------------------------------------------*/
 
 #include "plserver.h"
-#include "default.h"
 #include "tkConfig.h"
 #include "tk.h"
 
+#define NDEV	20		/* Max number of output device types */
 #define plframe_cmd(code) \
     if ((code) == TCL_ERROR) return (TCL_ERROR);
-
-/* Externals */
-
-int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
 
 /*
  * A data structure of the following type is kept for each
@@ -74,7 +70,8 @@ typedef struct {
 
     char *client;		/* Client main window.  Malloc'ed. */
     PLRDev *plr;		/* Renderer state information.  Malloc'ed */
-    PLStream *pls;		/* Plplot internal state structure */
+    PLINT ipls;			/* Plplot stream number */
+    PLINT ipls_save;		/* Plplot stream number, save files */
 
     int prevWidth;		/* Previous window width */
     int prevHeight;		/* Previous window height */
@@ -82,45 +79,83 @@ typedef struct {
     XPoint pts[5];		/* Points for rubber-band drawing */
     int continue_draw;		/* Set when doing rubber-band draws */
     Cursor draw_cursor;		/* cursor used for drawing */
+    int once_mapped;		/* Set first time widget is mapped */
+    PLFLT pxl, pxr, pyl, pyr;	/* Bounds on plot viewing area */
+    PLFLT dxl, dxr, dyl, dyr;	/* Bounds on device viewing area */
+    char *yScrollCmd;		/* Command prefix for communicating with
+				 * vertical scrollbar.  NULL means no
+				 * command to issue.  Malloc'ed. */
+    char *xScrollCmd;		/* Command prefix for communicating with
+				 * horizontal scrollbar.  NULL means no
+				 * command to issue.  Malloc'ed. */
+    char **devDesc;		/* Descriptive names for file-oriented 
+				 * devices.  Malloc'ed. */
+    char **devName;		/* Keyword names of file-oriented devices.
+				 * Malloc'ed. */
 } PlFrame;
 
 /*
  * Flag bits for plframes:
  *
- * REDRAW_PENDING:		Non-zero means a DoWhenIdle handler
+ * REFRESH_PENDING:		Non-zero means a DoWhenIdle handler
  *				has already been queued to refresh
  *				this window.
  * CLEAR_NEEDED;		Need to clear the window when redrawing.
  * RESIZE_PENDING;		Used to reschedule resize events
+ * REDRAW_PENDING;		Used to redraw contents of plot buffer
+ * UPDATE_V_SCROLLBAR:		Non-zero means vertical scrollbar needs
+ *				to be updated.
+ * UPDATE_H_SCROLLBAR:		Non-zero means horizontal scrollbar needs
+ *				to be updated.
  */
 
-#define REDRAW_PENDING		1
+#define REFRESH_PENDING		1
 #define CLEAR_NEEDED		2
 #define RESIZE_PENDING		4
+#define REDRAW_PENDING		8
+#define UPDATE_V_SCROLLBAR	16
+#define UPDATE_H_SCROLLBAR	32
 
-/* Most of the configuration info is shared with frame widgets */
+/*
+ * Defaults for plframes:
+ */
+
+#define DEF_PLFRAME_BG_COLOR		"Black"
+#define DEF_PLFRAME_BG_MONO		"Black"
+#define DEF_PLFRAME_BORDER_WIDTH	"0"
+#define DEF_PLFRAME_CURSOR		((char *) NULL)
+#define DEF_PLFRAME_GEOMETRY		((char *) NULL)
+#define DEF_PLFRAME_HEIGHT		"0"
+#define DEF_PLFRAME_RELIEF		"flat"
+#define DEF_PLFRAME_WIDTH		"0"
+
+/* Configuration info */
 
 static Tk_ConfigSpec configSpecs[] = {
     {TK_CONFIG_BORDER, "-background", "background", "Background",
-	DEF_FRAME_BG_COLOR, Tk_Offset(PlFrame, border), TK_CONFIG_COLOR_ONLY},
+	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, border), TK_CONFIG_COLOR_ONLY},
     {TK_CONFIG_BORDER, "-background", "background", "Background",
-	DEF_FRAME_BG_MONO, Tk_Offset(PlFrame, border), TK_CONFIG_MONO_ONLY},
+	DEF_PLFRAME_BG_MONO, Tk_Offset(PlFrame, border), TK_CONFIG_MONO_ONLY},
     {TK_CONFIG_SYNONYM, "-bd", "borderWidth", (char *) NULL,
 	(char *) NULL, 0, 0},
     {TK_CONFIG_SYNONYM, "-bg", "background", (char *) NULL,
 	(char *) NULL, 0, 0},
     {TK_CONFIG_PIXELS, "-borderwidth", "borderWidth", "BorderWidth",
-	DEF_FRAME_BORDER_WIDTH, Tk_Offset(PlFrame, borderWidth), 0},
+	DEF_PLFRAME_BORDER_WIDTH, Tk_Offset(PlFrame, borderWidth), 0},
     {TK_CONFIG_ACTIVE_CURSOR, "-cursor", "cursor", "Cursor",
-	DEF_FRAME_CURSOR, Tk_Offset(PlFrame, cursor), TK_CONFIG_NULL_OK},
+	DEF_PLFRAME_CURSOR, Tk_Offset(PlFrame, cursor), TK_CONFIG_NULL_OK},
     {TK_CONFIG_STRING, "-geometry", "geometry", "Geometry",
-	DEF_FRAME_GEOMETRY, Tk_Offset(PlFrame, geometry), TK_CONFIG_NULL_OK},
+	DEF_PLFRAME_GEOMETRY, Tk_Offset(PlFrame, geometry), TK_CONFIG_NULL_OK},
     {TK_CONFIG_PIXELS, "-height", "height", "Height",
-	DEF_FRAME_HEIGHT, Tk_Offset(PlFrame, height), 0},
+	DEF_PLFRAME_HEIGHT, Tk_Offset(PlFrame, height), 0},
     {TK_CONFIG_RELIEF, "-relief", "relief", "Relief",
-	DEF_FRAME_RELIEF, Tk_Offset(PlFrame, relief), 0},
+	DEF_PLFRAME_RELIEF, Tk_Offset(PlFrame, relief), 0},
     {TK_CONFIG_PIXELS, "-width", "width", "Width",
-	DEF_FRAME_WIDTH, Tk_Offset(PlFrame, width), 0},
+	DEF_PLFRAME_WIDTH, Tk_Offset(PlFrame, width), 0},
+    {TK_CONFIG_STRING, "-xscrollcommand", "xScrollCommand", "ScrollCommand",
+	(char *) NULL, Tk_Offset(PlFrame, xScrollCmd), TK_CONFIG_NULL_OK},
+    {TK_CONFIG_STRING, "-yscrollcommand", "yScrollCommand", "ScrollCommand",
+	(char *) NULL, Tk_Offset(PlFrame, yScrollCmd), TK_CONFIG_NULL_OK},
     {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
 	(char *) NULL, 0, 0}
 };
@@ -129,22 +164,41 @@ static Tk_ConfigSpec configSpecs[] = {
  * Forward declarations for procedures defined later in this file:
  */
 
-static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
+/* Externals */
+
+int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
+
+/* These are invoked by the TK dispatcher */
+
 static void  DestroyPlFrame	(ClientData);
 static void  DisplayPlFrame	(ClientData);
 static void  PlFrameInit	(ClientData);
 static void  PlFrameEventProc	(ClientData, XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
 static void  MapPlFrame 	(ClientData);
+
+/* These are invoked by PlFrameWidgetCmd to process widget commands */
+
+static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
+static int   Draw		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Info		(Tcl_Interp *, PlFrame *, int, char **);
+static int   OpenFifo		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Orient		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Page		(Tcl_Interp *, PlFrame *, int, char **);
+static int   ReadData		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Redraw		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Save		(Tcl_Interp *, PlFrame *, int, char **);
+static int   View		(Tcl_Interp *, PlFrame *, int, char **);
+static int   xScroll		(Tcl_Interp *, PlFrame *, int, char **);
+static int   yScroll		(Tcl_Interp *, PlFrame *, int, char **);
+
+/* Utility routines */
+
 static int   tcl_eval		(PlFrame *, char *);
 static int   client_cmd		(PlFrame *, char *);
-
-static int   OpenFifo		(Tcl_Interp *, PlFrame *, int, char **);
-static int   ReadData		(Tcl_Interp *, PlFrame *, int, char **);
-static int   DumpPlot		(Tcl_Interp *, PlFrame *, int, char **);
-static int   ViewPlot		(Tcl_Interp *, PlFrame *, int, char **);
-static void  ScalePlot		(PlFrame *, int, int, int, int, int, int);
-static void  ResetPlot		(PlFrame *);
+static void  gbox		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, char **);
+static void  UpdateVScrollbar	(register PlFrame *);
+static void  UpdateHScrollbar	(register PlFrame *);
 
 /*
  *---------------------------------------------------------------------------
@@ -175,7 +229,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     Tk_Uid screenUid;
     char *className, *screen;
-    int src, dst;
+    int i, src, dst;
 
     XGCValues gcValues;
     unsigned long mask;
@@ -205,10 +259,12 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	if ((c == 'c')
 		&& (strncmp(argv[src], "-class", strlen(argv[src])) == 0)) {
 	    className = argv[src+1];
-	} else if ((argv[0][0] == 't') && (c == 's')
+	}
+	else if ((argv[0][0] == 't') && (c == 's')
 		&& (strncmp(argv[src], "-screen", strlen(argv[src])) == 0)) {
 	    screen = argv[src+1];
-	} else {
+	}
+	else {
 	    argv[dst] = argv[src];
 	    argv[dst+1] = argv[src+1];
 	    dst += 2;
@@ -226,7 +282,8 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     }
     if (screen != NULL) {
 	screenUid = Tk_GetUid(screen);
-    } else {
+    }
+    else {
 	screenUid = NULL;
     }
 
@@ -253,6 +310,21 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->prevWidth = Tk_Width(plFramePtr->tkwin);
     plFramePtr->prevHeight = Tk_Height(plFramePtr->tkwin);
     plFramePtr->continue_draw = 0;
+    plFramePtr->ipls = 0;
+    plFramePtr->ipls_save = 0;
+    plFramePtr->once_mapped = 0;
+    plFramePtr->yScrollCmd = NULL;
+    plFramePtr->xScrollCmd = NULL;
+    plFramePtr->pxl = 0.;
+    plFramePtr->pyl = 0.;
+    plFramePtr->pxr = 1.;
+    plFramePtr->pyr = 1.;
+    plFramePtr->dxl = 0.;
+    plFramePtr->dyl = 0.;
+    plFramePtr->dxr = 1.;
+    plFramePtr->dyr = 1.;
+    plFramePtr->devDesc = NULL;
+    plFramePtr->devName = NULL;
 
     plFramePtr->plr = (PLRDev *) ckalloc(sizeof(PLRDev));
     plr = plFramePtr->plr;
@@ -346,7 +418,8 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 		    argv[0], " attach clientname\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
-	} else {
+	}
+	else {
 	    if (plFramePtr->client != NULL) {
 		ckfree((char *) plFramePtr->client);
 		plFramePtr->client = NULL;
@@ -363,10 +436,12 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	if (argc == 2) {
 	    result = Tk_ConfigureInfo(interp, plFramePtr->tkwin, configSpecs,
 		    (char *) plFramePtr, (char *) NULL, 0);
-	} else if (argc == 3) {
+	}
+	else if (argc == 3) {
 	    result = Tk_ConfigureInfo(interp, plFramePtr->tkwin, configSpecs,
 		    (char *) plFramePtr, argv[2], 0);
-	} else {
+	}
+	else {
 	    result = ConfigurePlFrame(interp, plFramePtr, argc-2, argv+2,
 		    TK_CONFIG_ARGV_ONLY);
 	}
@@ -380,7 +455,8 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 		    argv[0], " detach\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
-	} else {
+	}
+	else {
 	    if (plFramePtr->client != NULL) {
 		ckfree((char *) plFramePtr->client);
 		plFramePtr->client = NULL;
@@ -389,17 +465,38 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	}
     }
 
-/* dump -- dumps plot to the specified plot file type */
+/* draw -- rubber-band draw used in region selection */
 
-    else if ((c == 'd') && (strncmp(argv[1], "dump", length) == 0)) {
+    else if ((c == 'd') && (strncmp(argv[1], "draw", length) == 0)) {
 	if (argc == 2) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " dump ?options?\"", (char *) NULL);
+		    argv[0], " draw op ?options?\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
-	} else {
-	    result = DumpPlot(interp, plFramePtr, argc-2, argv+2);
 	}
+	else {
+	    result = Draw(interp, plFramePtr, argc-2, argv+2);
+	}
+    }
+
+/* info -- returns requested info */
+
+    else if ((c == 'i') && (strncmp(argv[1], "info", length) == 0)) {
+	if (argc == 2) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], " info option\"", (char *) NULL);
+	    result = TCL_ERROR;
+	    goto done;
+	}
+	else {
+	    result = Info(interp, plFramePtr, argc-2, argv+2);
+	}
+    }
+
+/* orient -- Set plot orientation */
+
+    else if ((c == 'o') && (strncmp(argv[1], "orient", length) == 0)) {
+	result = Orient(interp, plFramePtr, argc-2, argv+2);
     }
 
 /* openfifo -- Open the specified fifo */
@@ -410,9 +507,16 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 		    argv[0], " openfifo fifoname\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
-	} else {
+	}
+	else {
 	    result = OpenFifo(interp, plFramePtr, argc-2, argv+2);
 	}
+    }
+
+/* page -- change or return window into device space */
+
+    else if ((c == 'p') && (strncmp(argv[1], "page", length) == 0)) {
+	result = Page(interp, plFramePtr, argc-2, argv+2);
     }
 
 /* read -- read <nbytes> of data from fifo or socket */
@@ -423,22 +527,63 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 		    argv[0], " read nbytes\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
-	} else {
+	}
+	else {
 	    result = ReadData(interp, plFramePtr, argc-2, argv+2);
 	}
     }
 
-/* view -- starts area selection and displays plot when finished */
-/* can be used with either zooms or pans */
+/* redraw -- redraw plot */
 
-    else if ((c == 'v') && (strncmp(argv[1], "view", length) == 0)) {
-	if (argc == 2) {
+    else if ((c == 'r') && (strncmp(argv[1], "redraw", length) == 0)) {
+	if (argc > 2) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " view ?options?\"", (char *) NULL);
+		    argv[0], " redraw\"", (char *) NULL);
 	    result = TCL_ERROR;
 	    goto done;
-	} else {
-	    result = ViewPlot(interp, plFramePtr, argc-2, argv+2);
+	}
+	else {
+	    result = Redraw(interp, plFramePtr, argc-2, argv+2);
+	}
+    }
+
+/* save -- saves plot to the specified plot file type */
+
+    else if ((c == 's') && (strncmp(argv[1], "save", length) == 0)) {
+	result = Save(interp, plFramePtr, argc-2, argv+2);
+    }
+
+/* view -- change or return window into plot */
+
+    else if ((c == 'v') && (strncmp(argv[1], "view", length) == 0)) {
+	result = View(interp, plFramePtr, argc-2, argv+2);
+    }
+
+/* xscroll -- horizontally scroll window into plot */
+
+    else if ((c == 'x') && (strncmp(argv[1], "xscroll", length) == 0)) {
+	if (argc == 2 || argc > 3) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], " xscroll pixel\"", (char *) NULL);
+	    result = TCL_ERROR;
+	    goto done;
+	}
+	else {
+	    result = xScroll(interp, plFramePtr, argc-2, argv+2);
+	}
+    }
+
+/* yscroll -- vertically scroll window into plot */
+
+    else if ((c == 'y') && (strncmp(argv[1], "yscroll", length) == 0)) {
+	if (argc == 2 || argc > 3) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], " yscroll pixel\"", (char *) NULL);
+	    result = TCL_ERROR;
+	    goto done;
+	}
+	else {
+	    result = yScroll(interp, plFramePtr, argc-2, argv+2);
 	}
     }
 
@@ -446,8 +591,10 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
-	 "\":  must be attach, configure, detach, dump, openfifo, read, ",
-	 "or view", (char *) NULL);
+	 "\":  must be attach, configure, draw, detach, dump, info, ",
+	 "openfifo, orient, page, read, redraw, save, view, ",
+	 "xscroll, or yscroll", (char *) NULL);
+
 	result = TCL_ERROR;
     }
 
@@ -497,6 +644,18 @@ DestroyPlFrame(ClientData clientData)
     if (plFramePtr->xorGC != None) {
 	Tk_FreeGC(plFramePtr->display, plFramePtr->xorGC);
     }
+    if (plFramePtr->yScrollCmd != NULL) {
+	ckfree(plFramePtr->yScrollCmd);
+    }
+    if (plFramePtr->xScrollCmd != NULL) {
+	ckfree(plFramePtr->xScrollCmd);
+    }
+    if (plFramePtr->devDesc != NULL) {
+	ckfree(plFramePtr->devDesc);
+    }
+    if (plFramePtr->devName != NULL) {
+	ckfree(plFramePtr->devName);
+    }
 
 /* Tell client to quit and close fifo */
 
@@ -511,7 +670,244 @@ DestroyPlFrame(ClientData clientData)
 
     ckfree((char *) plFramePtr->plr);
     ckfree((char *) plFramePtr);
+
+/* Tell plplot to clean up */
+
+    plend();
+    plFramePtr->once_mapped = 0;
 }
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameEventProc --
+ *
+ *	Invoked by the Tk dispatcher on exposes and structure
+ *	changes to a plframe. 
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	When the window gets deleted, internal structures get cleaned up.
+ *	When it gets exposed, it is redisplayed.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+
+    dbug_enter("PlFrameEventProc");
+
+    switch (eventPtr->type) {
+    case Expose:
+	if (eventPtr->xexpose.count == 0) {
+	    if ((plFramePtr->tkwin != NULL) &&
+		!(plFramePtr->flags & REFRESH_PENDING)) {
+
+		Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
+		plFramePtr->flags |= REFRESH_PENDING;
+	    }
+	}
+	break;
+
+    case ConfigureNotify:
+	plFramePtr->flags |= RESIZE_PENDING;
+	if ((plFramePtr->tkwin != NULL) &&
+	    !(plFramePtr->flags & REFRESH_PENDING)) {
+
+	    Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
+	    plFramePtr->flags |= REFRESH_PENDING;
+	    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+	}
+	break;
+
+    case DestroyNotify:
+	Tcl_DeleteCommand(plFramePtr->interp, Tk_PathName(plFramePtr->tkwin));
+	plFramePtr->tkwin = NULL;
+	if (plFramePtr->flags & REFRESH_PENDING) {
+	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
+	}
+	Tk_CancelIdleCall(MapPlFrame, (ClientData) plFramePtr);
+	Tk_EventuallyFree((ClientData) plFramePtr, DestroyPlFrame);
+	break;
+
+    case MapNotify:
+	if (plFramePtr->flags & REFRESH_PENDING) {
+	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
+	}
+	Tk_DoWhenIdle(PlFrameInit, (ClientData) plFramePtr);
+	break;
+    }
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameInit --
+ *
+ *	Invoked to handle miscellaneous initialization after window gets
+ *	mapped.  
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Plplot internal parameters and device driver are initialized.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+PlFrameInit(ClientData clientData)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    int i, ndev;
+
+/* Set up window parameters and arrange for window to be refreshed */
+
+    plFramePtr->flags &= REFRESH_PENDING;
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+
+/* Plplot initialization */
+
+    if ( ! plFramePtr->once_mapped) {
+	plsdev("xwin");
+	plsxwin(Tk_WindowId(tkwin));
+	plspause(0);
+	plinit();
+	pladv(0);
+	plFramePtr->once_mapped = 1;
+	plFramePtr->prevWidth = Tk_Width(tkwin);
+	plFramePtr->prevHeight = Tk_Height(tkwin);
+
+	plFramePtr->devDesc = ckalloc(NDEV * sizeof(char **));
+	plFramePtr->devName = ckalloc(NDEV * sizeof(char **));
+	for (i = 0; i < NDEV; i++) {
+	    plFramePtr->devDesc[i] = NULL;
+	    plFramePtr->devName[i] = NULL;
+	}
+	plgFileDevs(&plFramePtr->devDesc, &plFramePtr->devName, &ndev);
+    }
+    else {
+	plFramePtr->flags |= RESIZE_PENDING;
+    }
+
+/* Draw plframe */
+
+    DisplayPlFrame(clientData);
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * DisplayPlFrame --
+ *
+ *	This procedure is invoked to display a plframe widget.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Commands are output to X to display the plframe in its
+ *	current mode.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+DisplayPlFrame(ClientData clientData)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    PLWindow window;
+
+    dbug_enter("DisplayPlFrame");
+
+/* Update scrollbars if needed */
+
+    if (plFramePtr->flags & UPDATE_V_SCROLLBAR) {
+	UpdateVScrollbar(plFramePtr);
+    }
+    if (plFramePtr->flags & UPDATE_H_SCROLLBAR) {
+	UpdateHScrollbar(plFramePtr);
+    }
+    plFramePtr->flags &= ~(UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR);
+
+/* If not mapped yet, return and cancel pending refresh */
+
+    if ((plFramePtr->tkwin == NULL) || !Tk_IsMapped(tkwin)) {
+	plFramePtr->flags &= ~REFRESH_PENDING;
+	return;
+    }
+
+/* Clear window if needed */
+
+    if (plFramePtr->flags & CLEAR_NEEDED) {
+	XClearWindow(plFramePtr->display, Tk_WindowId(tkwin));
+	plFramePtr->flags &= ~CLEAR_NEEDED;
+    }
+
+/* Redraw border if necessary */
+
+    if ((plFramePtr->border != NULL)
+	    && (plFramePtr->relief != TK_RELIEF_FLAT)) {
+	Tk_Draw3DRectangle(plFramePtr->display, Tk_WindowId(tkwin),
+		plFramePtr->border, 0, 0, Tk_Width(tkwin), Tk_Height(tkwin),
+		plFramePtr->borderWidth, plFramePtr->relief);
+    }
+
+/* All refresh events */
+
+    if (plFramePtr->flags & REFRESH_PENDING) {
+	plFramePtr->flags &= ~REFRESH_PENDING;
+
+/* Reschedule resizes to avoid occasional ordering conflicts with */
+/* the packer's resize of the window (this call must come last). */
+
+	if (plFramePtr->flags & RESIZE_PENDING) {
+	    plFramePtr->flags |= REFRESH_PENDING;
+	    plFramePtr->flags &= ~RESIZE_PENDING;
+	    Tk_DoWhenIdle(DisplayPlFrame, clientData);
+	    return;
+	}
+
+/* Redraw -- replay contents of plot buffer */
+
+	if (plFramePtr->flags & REDRAW_PENDING) {
+	    plFramePtr->flags &= ~REDRAW_PENDING;
+	    pl_cmd(PL_REDRAW, (void *) NULL);
+	    return;
+	}
+
+/* Resize -- if window bounds have changed */
+
+	if ((plFramePtr->prevWidth != Tk_Width(tkwin)) ||
+	    (plFramePtr->prevHeight != Tk_Height(tkwin))) {
+
+	    window.width = Tk_Width(tkwin);
+	    window.height = Tk_Height(tkwin);
+
+	    pl_cmd(PL_RESIZE, (void *) &window);
+	    plFramePtr->prevWidth = Tk_Width(tkwin);
+	    plFramePtr->prevHeight = Tk_Height(tkwin);
+	}
+
+/* Expose -- if window bounds are unchanged */
+
+	else {
+	    pl_cmd(PL_EXPOSE, NULL);
+	}
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* Routines to process widget commands.
+\*----------------------------------------------------------------------*/
 
 /*
  *---------------------------------------------------------------------------
@@ -565,321 +961,39 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 	Tk_GeometryRequest(plFramePtr->tkwin, width, height);
-    } else if ((plFramePtr->width > 0) && (plFramePtr->height > 0)) {
+    }
+    else if ((plFramePtr->width > 0) && (plFramePtr->height > 0)) {
 	Tk_GeometryRequest(plFramePtr->tkwin, plFramePtr->width,
 		plFramePtr->height);
     }
 
     if (Tk_IsMapped(plFramePtr->tkwin)
-	    && !(plFramePtr->flags & REDRAW_PENDING)) {
+	    && !(plFramePtr->flags & REFRESH_PENDING)) {
 	Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
-	plFramePtr->flags |= REDRAW_PENDING|CLEAR_NEEDED;
+	plFramePtr->flags |= REFRESH_PENDING|CLEAR_NEEDED;
+	plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
     }
     return TCL_OK;
 }
 
-/*
- *---------------------------------------------------------------------------
- *
- * PlFrameEventProc --
- *
- *	Invoked by the Tk dispatcher on exposes and structure
- *	changes to a plframe. 
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	When the window gets deleted, internal structures get cleaned up.
- *	When it gets exposed, it is redisplayed.
- *
- *---------------------------------------------------------------------------
- */
-
-static void
-PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
-{
-    register PlFrame *plFramePtr = (PlFrame *) clientData;
-
-    dbug_enter("PlFrameEventProc");
-
-    switch (eventPtr->type) {
-    case Expose:
-	if (eventPtr->xexpose.count == 0) {
-	    if ((plFramePtr->tkwin != NULL) &&
-		!(plFramePtr->flags & REDRAW_PENDING)) {
-
-		Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
-		plFramePtr->flags |= REDRAW_PENDING;
-	    }
-	}
-	break;
-
-    case ConfigureNotify:
-	plFramePtr->flags |= RESIZE_PENDING;
-	if ((plFramePtr->tkwin != NULL) &&
-	    !(plFramePtr->flags & REDRAW_PENDING)) {
-
-	    Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
-	    plFramePtr->flags |= REDRAW_PENDING;
-	}
-	break;
-
-    case DestroyNotify:
-	Tcl_DeleteCommand(plFramePtr->interp, Tk_PathName(plFramePtr->tkwin));
-	plFramePtr->tkwin = NULL;
-	if (plFramePtr->flags & REDRAW_PENDING) {
-	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
-	}
-	Tk_CancelIdleCall(MapPlFrame, (ClientData) plFramePtr);
-	Tk_EventuallyFree((ClientData) plFramePtr, DestroyPlFrame);
-	break;
-
-    case MapNotify:
-	if (plFramePtr->flags & REDRAW_PENDING) {
-	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
-	}
-	Tk_DoWhenIdle(PlFrameInit, (ClientData) plFramePtr);
-	break;
-    }
-}
-
-/*
- *---------------------------------------------------------------------------
- *
- * PlFrameInit --
- *
- *	Invoked to handle miscellaneous initialization after window gets
- *	mapped.  
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	Plplot internal parameters and device driver are initialized.
- *	Client is also told to proceed here.
- *
- *---------------------------------------------------------------------------
- */
-
-static void
-PlFrameInit(ClientData clientData)
-{
-    register PlFrame *plFramePtr = (PlFrame *) clientData;
-    register Tk_Window tkwin = plFramePtr->tkwin;
-
-/* Plplot initialization */
-
-    plsdev("xwin");
-    plsxwin(Tk_WindowId(tkwin));
-    plspause(0);
-    plinit();
-    plgpls(&(plFramePtr->pls));
-    pladv(0);
-
-/* Draw plframe */
-
-    plFramePtr->prevWidth = Tk_Width(tkwin);
-    plFramePtr->prevHeight = Tk_Height(tkwin);
-    plFramePtr->flags &= REDRAW_PENDING;
-    DisplayPlFrame(clientData);
-}
-
-/*
- *---------------------------------------------------------------------------
- *
- * DisplayPlFrame --
- *
- *	This procedure is invoked to display a plframe widget.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	Commands are output to X to display the plframe in its
- *	current mode.
- *
- *---------------------------------------------------------------------------
- */
-
-static void
-DisplayPlFrame(ClientData clientData)
-{
-    register PlFrame *plFramePtr = (PlFrame *) clientData;
-    register Tk_Window tkwin = plFramePtr->tkwin;
-    PLWindow window;
-
-    dbug_enter("DisplayPlFrame");
-
-/* If not mapped yet, return and cancel pending redraws */
-
-    if ((plFramePtr->tkwin == NULL) || !Tk_IsMapped(tkwin)) {
-	plFramePtr->flags &= ~REDRAW_PENDING;
-	return;
-    }
-
-/* Clear window if needed */
-
-    if (plFramePtr->flags & CLEAR_NEEDED) {
-	XClearWindow(plFramePtr->display, Tk_WindowId(tkwin));
-	plFramePtr->flags &= ~CLEAR_NEEDED;
-    }
-
-/* Redraw border if necessary */
-
-    if ((plFramePtr->border != NULL)
-	    && (plFramePtr->relief != TK_RELIEF_FLAT)) {
-	Tk_Draw3DRectangle(plFramePtr->display, Tk_WindowId(tkwin),
-		plFramePtr->border, 0, 0, Tk_Width(tkwin), Tk_Height(tkwin),
-		plFramePtr->borderWidth, plFramePtr->relief);
-    }
-
-/* Process exposures and resizes */
-
-    if (plFramePtr->flags & REDRAW_PENDING) {
-
-/* Reschedule resizes to avoid occasional ordering conflicts with */
-/* the packer's resize of the window (this call must come last). */
-
-	if (plFramePtr->flags & RESIZE_PENDING) {
-	    plFramePtr->flags &= ~RESIZE_PENDING;
-	    Tk_DoWhenIdle(DisplayPlFrame, clientData);
-	    return;
-	}
-
-/* Do a resize if window bounds have changed, otherwise an expose */
-
-	if ((plFramePtr->prevWidth != Tk_Width(tkwin)) ||
-	    (plFramePtr->prevHeight != Tk_Height(tkwin))) {
-
-	    window.width = Tk_Width(tkwin);
-	    window.height = Tk_Height(tkwin);
-
-	    pl_cmd(PL_RESIZE, (void *) &window);
-	    plFramePtr->prevWidth = Tk_Width(tkwin);
-	    plFramePtr->prevHeight = Tk_Height(tkwin);
-	}
-	else {
-	    pl_cmd(PL_EXPOSE, NULL);
-	}
-	plFramePtr->flags &= ~REDRAW_PENDING;
-    }
-}
-
 /*----------------------------------------------------------------------*\
-* OpenFifo
+* Draw
 *
-* Open FIFO to transfer data from client to server.
+* Processes "draw" widget command.
+* Handles rubber-band drawing.
 \*----------------------------------------------------------------------*/
 
 static int
-OpenFifo(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
+Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
+     int argc, char **argv)
 {
-    int fd;
-    register PLRDev *plr = plFramePtr->plr;
-
-    dbug_enter("OpenFifo");
-
-    plr->filename = argv[0];
-
-/* Open fifo */
-
-    if ((fd = open (plr->filename, O_RDONLY | O_NONBLOCK)) == -1) {
-	Tcl_AppendResult(interp, "cannot open fifo ", plr->filename,
-			 " for read", (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plr->file = fdopen(fd, "rb");
-    plr->filetype = "fifo";
-
-    return TCL_OK;
-}
-
-/*----------------------------------------------------------------------*\
-* ReadData
-*
-* Reads data from fifo or socket and issues messages about it.
-\*----------------------------------------------------------------------*/
-
-static int
-ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
-{
-    register PLRDev *plr = plFramePtr->plr;
-    int i, nbytes, count;
-
-    plr->nbytes = atoi(argv[0]);
-
-/* Read & process data */
-
-#ifdef DEBUG
-    fprintf(stderr, "%s: Reading %d characters\n", __FILE__, plr->nbytes);
-    fflush(stderr);
-#endif
-
-    if (plr_process(plr) == -1) {
-	Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
-			 (char *) NULL);
-	return TCL_ERROR;
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* DumpPlot
-*
-* Dumps plot to a file.
-\*----------------------------------------------------------------------*/
-
-static int
-DumpPlot(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
-{
-    register PLStream *pls = plFramePtr->pls;
     register Tk_Window tkwin = plFramePtr->tkwin;
-
     int result = TCL_OK;
     char c = argv[0][0];
     int length = strlen(argv[0]);
-    int lx = Tk_Width(tkwin), ly = Tk_Height(tkwin);
-    int xmin = 0, xmax = lx - 1, ymin = 0, ymax = ly - 1;
     int x0, y0, x1, y1;
-
-/* list -- spits out list of supported device types */
-
-    if ((c == 'l') && (strncmp(argv[0], "list", length) == 0)) {
-    }
-
-/* anything else -- assume it is a device name */
-/* must be accompanied by a file name */
-
-    else {
-    }
-
-    return result;
-}
-
-/*----------------------------------------------------------------------*\
-* ViewPlot
-*
-* Handles translation & scaling of view into plot.
-* Also supports rubber-band drawing of the outline.
-\*----------------------------------------------------------------------*/
-
-static int
-ViewPlot(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
-{
-    register PLStream *pls = plFramePtr->pls;
-    register Tk_Window tkwin = plFramePtr->tkwin;
-
-    int result = TCL_OK;
-    char c = argv[0][0];
-    int length = strlen(argv[0]);
-    int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
-    int xmin = 0, xmax = width - 1, ymin = 0, ymax = height - 1;
-    int x0, y0, x1, y1;
+    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
+    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
 
 /* init -- sets up for rubber-band drawing */
 
@@ -887,15 +1001,24 @@ ViewPlot(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	Tk_DefineCursor(tkwin, plFramePtr->draw_cursor);
     }
 
-/* draw -- rubber-band draw around currently selected area */
+/* end -- ends rubber-band drawing */
+
+    else if ((c == 'e') && (strncmp(argv[0], "end", length) == 0)) {
+
+	Tk_DefineCursor(tkwin, plFramePtr->cursor);
+	plFramePtr->continue_draw = 0;
+    }
+
+/* rect -- draw a rectangle, used to select rectangular areas */
 /* first draw erases old outline */
 
-    else if ((c == 'd') && (strncmp(argv[0], "draw", length) == 0)) {
+    else if ((c == 'r') && (strncmp(argv[0], "rect", length) == 0)) {
 	if (argc < 5) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-			     " view draw x0 y0 x1 y1\"", (char *) NULL);
+			     " draw rect x0 y0 x1 y1\"", (char *) NULL);
 	    result = TCL_ERROR;
-	} else {
+	}
+	else {
 	    x0 = atoi(argv[1]);
 	    y0 = atoi(argv[2]);
 	    x1 = atoi(argv[3]);
@@ -928,90 +1051,521 @@ ViewPlot(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
     }
 
-/* reset -- Resets plot */
+    return result;
+}
 
-    else if ((c == 'r') && (strncmp(argv[0], "reset", length) == 0)) {
-	ResetPlot(plFramePtr);
+/*----------------------------------------------------------------------*\
+* Info
+*
+* Processes "info" widget command.
+* Returns requested info.
+\*----------------------------------------------------------------------*/
+
+static int
+Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
+     int argc, char **argv)
+{
+    int i, result = TCL_OK;
+    char c = argv[0][0];
+    int length = strlen(argv[0]);
+
+/* devices -- return list of supported device types */
+
+    if ((c == 'd') && (strncmp(argv[0], "devices", length) == 0)) {
+	i = 0;
+	while (plFramePtr->devDesc[i] != NULL) {
+	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++], 0);
+	}
+	result = TCL_OK;
     }
 
-/* select -- Redraws plot for selected view */
+/* unrecognized */
 
-    else if ((c == 's') && (strncmp(argv[0], "select", length) == 0)) {
-	Tk_DefineCursor(tkwin, plFramePtr->cursor);
-	if (argc < 5) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-			     " view select x0 y0 x1 y1\"", (char *) NULL);
-	    result = TCL_ERROR;
-	} else {
-	    x0 = atoi(argv[1]);
-	    y0 = atoi(argv[2]);
-	    x1 = atoi(argv[3]);
-	    y1 = atoi(argv[4]);
+    else {
+	Tcl_AppendResult(interp, "bad option \"", argv[0],
+	 "\":  info options are: devices", (char *) NULL);
 
-	    x0 = MAX(xmin, MIN(xmax, x0));
-	    y0 = MAX(ymin, MIN(ymax, y0));
-	    x1 = MAX(xmin, MIN(xmax, x1));
-	    y1 = MAX(ymin, MIN(ymax, y1));
-
-	    ScalePlot(plFramePtr, x0, y0, x1, y1, width, height);
-
-	    plFramePtr->continue_draw = 0;
-	}
+	result = TCL_ERROR;
     }
 
     return result;
 }
 
 /*----------------------------------------------------------------------*\
-* ScalePlot
+* OpenFifo
 *
-* Redraws plot in the specified view (X coordinates).
+* Processes "openfifo" widget command.
+* Opens FIFO for data transfer between client and server.
 \*----------------------------------------------------------------------*/
 
-static void
-ScalePlot(register PlFrame *plFramePtr, int x0, int y0, int x1, int y1,
-	  int width, int height)
+static int
+OpenFifo(Tcl_Interp *interp, register PlFrame *plFramePtr,
+	 int argc, char **argv)
 {
-    register PLStream *pls = plFramePtr->pls;
-    register Tk_Window tkwin = plFramePtr->tkwin;
+    int fd;
     register PLRDev *plr = plFramePtr->plr;
 
-    PLINT xmin, xmax, ymin, ymax;
-    double x0p, x1p, y0p, y1p, xl, xr, yl, yr, lx, ly;
+    dbug_enter("OpenFifo");
 
-/* Convert to relative coordinates and shift origin to lower left */
+    plr->filename = argv[0];
 
-    x0p = (double) x0 / (double) width;
-    x1p = (double) x1 / (double) width;
-    y0p = 1. - (double) y0 / (double) height;
-    y1p = 1. - (double) y1 / (double) height;
+/* Open fifo */
 
-/* Only need two vertices, pick the lower left and upper right */
+    if ((fd = open (plr->filename, O_RDONLY | O_NONBLOCK)) == -1) {
+	Tcl_AppendResult(interp, "cannot open fifo ", plr->filename,
+			 " for read", (char *) NULL);
+	return TCL_ERROR;
+    }
 
-    xl = MIN(x0p, x1p);
-    xr = MAX(x0p, x1p);
-    yl = MIN(y0p, y1p);
-    yr = MAX(y0p, y1p);
+    plr->file = fdopen(fd, "rb");
+    plr->filetype = "fifo";
 
-    plsdiplz(xl, yl, xr, yr);
-
-/* Issue plot command */
-
-    pl_cmd(PL_REDRAW, NULL);
+    return TCL_OK;
 }
 
 /*----------------------------------------------------------------------*\
-* ResetPlot
+* Orient
 *
-* Restores plot to original view.
+* Processes "orient" widget command.
+* Handles orientation of plot.
+\*----------------------------------------------------------------------*/
+
+static int
+Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
+       int argc, char **argv)
+{
+    int result = TCL_OK;
+    PLFLT rot;
+    char result_str[128];
+
+/* orient -- return orientation of current plot window */
+
+    if (argc == 0) {
+	plgdiori(&rot);
+	sprintf(result_str, "%f", rot);
+	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
+    }
+
+/* orient <rot> -- Set orientation to <rot> */
+
+    else {
+	plsdiori(atof(argv[0]));
+	result = Redraw(interp, plFramePtr, argc-1, argv+1);
+    }
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+* Page
+*
+* Processes "page" widget command.
+* Handles selection of page area in which to plot.
+\*----------------------------------------------------------------------*/
+
+static int
+Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
+     int argc, char **argv)
+{
+    int result = TCL_OK;
+    PLFLT xl, xr, yl, yr;
+    char result_str[128];
+
+/* page -- return coordinates of current device window */
+
+    if (argc == 0) {
+	plgdidev(&xl, &yl, &xr, &yr);
+	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
+	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
+	return TCL_OK;
+    }
+
+/* page <xmin> <ymin> <xmax> <ymax> -- set window into device space */
+
+    else {
+	if (argc < 4) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     " page xmin ymin xmax ymax\"", (char *) NULL);
+	    return TCL_ERROR;
+	} 
+	else {
+	    gbox(&xl, &yl, &xr, &yr, argv);
+	    plsdidev(xl, yl, xr, yr);
+	}
+    }
+
+    plFramePtr->dxl = xl;
+    plFramePtr->dyl = yl;
+    plFramePtr->dxr = xr;
+    plFramePtr->dyr = yr;
+
+    return(Redraw(interp, plFramePtr, argc-1, argv+1));
+}
+
+/*----------------------------------------------------------------------*\
+* ReadData
+*
+* Processes "read" widget command.
+* Reads data from fifo or socket and processes.
+\*----------------------------------------------------------------------*/
+
+static int
+ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
+	 int argc, char **argv)
+{
+    register PLRDev *plr = plFramePtr->plr;
+    int i, nbytes, count;
+
+    plr->nbytes = atoi(argv[0]);
+
+/* Read & process data */
+
+#ifdef DEBUG
+    fprintf(stderr, "%s: Reading %d characters\n", __FILE__, plr->nbytes);
+    fflush(stderr);
+#endif
+
+    if (plr_process(plr) == -1) {
+	Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* Redraw
+*
+* Processes "redraw" widget command.
+* Turns loose a DoWhenIdle command to redraw plot by replaying contents
+* of plot buffer.
+\*----------------------------------------------------------------------*/
+
+static int
+Redraw(Tcl_Interp *interp, register PlFrame *plFramePtr,
+       int argc, char **argv)
+{
+    dbug_enter("Redraw");
+
+    plFramePtr->flags |= REDRAW_PENDING;
+    if ((plFramePtr->tkwin != NULL) &&
+	!(plFramePtr->flags & REFRESH_PENDING)) {
+
+	Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
+	plFramePtr->flags |= REFRESH_PENDING;
+    }
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+* Save
+*
+* Processes "save" widget command.
+* Saves plot to a file.
+\*----------------------------------------------------------------------*/
+
+static int
+Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
+     int argc, char **argv)
+{
+    int i, idev, result = TCL_OK;
+    char *desc;
+
+/* save -- save to already open file */
+
+    if (argc == 0) {
+	if (! plFramePtr->ipls_save) {
+	    Tcl_AppendResult(interp, "Error -- no current save file", 
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+	plsstrm(plFramePtr->ipls_save);
+	plclr();
+	plpage();
+	plreplot();
+	plsstrm(plFramePtr->ipls);
+    }
+
+/* save to specified device & file */
+
+    else {
+	idev = atoi(argv[0]);
+#ifdef DEBUG
+	fprintf(stderr, "Trying to save to device %s file %s\n",
+		plFramePtr->devName[idev], argv[1]);
+#endif
+	if (plFramePtr->ipls_save != 0) {
+	    plsstrm(plFramePtr->ipls_save);
+	    plend1();
+	}
+	plcpstrm(&plFramePtr->ipls_save, plFramePtr->devName[idev], argv[1]);
+	if (plFramePtr->ipls_save == -1) {
+	    Tcl_AppendResult(interp, "Error -- cannot create stream", 
+			     (char *) NULL);
+	    plFramePtr->ipls_save = 0;
+	    return TCL_ERROR;
+	}
+	plreplot();
+	plsstrm(plFramePtr->ipls);
+    }
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+* View
+*
+* Processes "view" widget command.
+* Handles translation & scaling of view into plot.
+\*----------------------------------------------------------------------*/
+
+static int
+View(Tcl_Interp *interp, register PlFrame *plFramePtr,
+     int argc, char **argv)
+{
+    int length;
+    char c;
+    PLFLT xl, xr, yl, yr;
+    char result_str[128];
+
+/* view -- return coordinates of current plot window */
+
+    if (argc == 0) {
+	plgdiplt(&xl, &yl, &xr, &yr);
+	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
+	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
+	return TCL_OK;
+    }
+
+    c = argv[0][0];
+    length = strlen(argv[0]);
+
+/* view reset -- Resets plot */
+
+    if ((c == 'r') && (strncmp(argv[0], "reset", length) == 0)) {
+	xl = 0.;
+	yl = 0.;
+	xr = 1.;
+	yr = 1.;
+	plsdiplt(xl, yl, xr, yr);
+    }
+
+/* view select -- set window into plot space */
+
+    else if ((c == 's') && (strncmp(argv[0], "select", length) == 0)) {
+	if (argc < 5) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     " view select xmin ymin xmax ymax\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+	else {
+	    gbox(&xl, &yl, &xr, &yr, argv+1);
+	    plsdiplt(xl, yl, xr, yr);
+	}
+    }
+
+/* view zoom -- set window into plot space incrementally (zoom) */
+/* Here we need to take the page (device) offsets into account */
+
+    else if ((c == 'z') && (strncmp(argv[0], "zoom", length) == 0)) {
+	if (argc < 5) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     " view zoom xmin ymin xmax ymax\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+	else {
+	    gbox(&xl, &yl, &xr, &yr, argv+1);
+	    xl = (xl - plFramePtr->dxl) / (plFramePtr->dxr - plFramePtr->dxl);
+	    xr = (xr - plFramePtr->dxl) / (plFramePtr->dxr - plFramePtr->dxl);
+	    yl = (yl - plFramePtr->dyl) / (plFramePtr->dyr - plFramePtr->dyl);
+	    yr = (yr - plFramePtr->dyl) / (plFramePtr->dyr - plFramePtr->dyl);
+	    xl = MAX(0., MIN(1., xl));
+	    yl = MAX(0., MIN(1., yl));
+	    xr = MAX(0., MIN(1., xr));
+	    yr = MAX(0., MIN(1., yr));
+	    plsdiplz(xl, yl, xr, yr);
+	    plgdiplt(&xl, &yl, &xr, &yr);
+	}
+    }
+
+/* unrecognized */
+
+    else {
+	Tcl_AppendResult(interp, "bad option \"", argv[1],
+	 "\":  options to \"view\" are: reset, select, or zoom",
+	 (char *) NULL);
+
+	return TCL_ERROR;
+    }
+
+/* Update plot window bounds and arrange for plot to be updated */
+
+    plFramePtr->pxl = xl;
+    plFramePtr->pyl = yl;
+    plFramePtr->pxr = xr;
+    plFramePtr->pyr = yr;
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+
+    return(Redraw(interp, plFramePtr, argc, argv));
+}
+
+/*----------------------------------------------------------------------*\
+* xScroll
+*
+* Processes "xscroll" widget command.
+* Handles horizontal scroll-bar invoked translation of view into plot.
+\*----------------------------------------------------------------------*/
+
+static int
+xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
+	int argc, char **argv)
+{
+    int x0, width = Tk_Width(plFramePtr->tkwin);
+    PLFLT xl, xr, xlen;
+
+    xlen = plFramePtr->pxr - plFramePtr->pxl;
+    x0 = atoi(argv[0]);
+    xl = x0 / (double) width;
+    xl = MAX( 0., MIN((1. - xlen), xl));
+    xr = xl + xlen;
+
+    plFramePtr->pxl = xl;
+    plFramePtr->pxr = xr;
+
+    plsdiplt(plFramePtr->pxl, plFramePtr->pyl,
+	     plFramePtr->pxr, plFramePtr->pyr);
+
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+    return(Redraw(interp, plFramePtr, argc, argv));
+}
+
+/*----------------------------------------------------------------------*\
+* yScroll
+*
+* Processes "yscroll" widget command.
+* Handles vertical scroll-bar invoked translation of view into plot.
+\*----------------------------------------------------------------------*/
+
+static int
+yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
+	int argc, char **argv)
+{
+    int y0, height = Tk_Height(plFramePtr->tkwin);
+    PLFLT yl, yr, ylen;
+
+    ylen = plFramePtr->pyr - plFramePtr->pyl;
+    y0 = atoi(argv[0]);
+    yr = 1. - y0 / (double) height;
+    yr = MAX( ylen, MIN(1., yr));
+    yl = yr - ylen;
+
+    plFramePtr->pyl = yl;
+    plFramePtr->pyr = yr;
+
+    plsdiplt(plFramePtr->pxl, plFramePtr->pyl,
+	     plFramePtr->pxr, plFramePtr->pyr);
+
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+    return(Redraw(interp, plFramePtr, argc, argv));
+}
+
+/*----------------------------------------------------------------------*\
+* Utility routines
+\*----------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------*\
+* UpdateVScrollbar
+*
+* Updates vertical scrollbar if needed.
 \*----------------------------------------------------------------------*/
 
 static void
-ResetPlot(register PlFrame *plFramePtr)
+UpdateVScrollbar(register PlFrame *plFramePtr)
 {
-    plsdiplt(0., 0., 1., 1.);
+    int height = Tk_Height(plFramePtr->tkwin);
+    char string[60];
+    int totalUnits, windowUnits, firstUnit, lastUnit, result;
 
-    pl_cmd(PL_REDRAW, NULL);
+    if (plFramePtr->yScrollCmd == NULL)
+	return;
+
+    totalUnits  = height;
+    firstUnit   = 0.5 + (float) height * (1. - plFramePtr->pyr);
+    lastUnit    = 0.5 + (float) height * (1. - plFramePtr->pyl);
+    windowUnits = lastUnit - firstUnit;
+    sprintf(string, " %d %d %d %d",
+	    totalUnits, windowUnits, firstUnit, lastUnit);
+
+    result = Tcl_VarEval(plFramePtr->interp, plFramePtr->yScrollCmd, string,
+			 (char *) NULL);
+
+    if (result != TCL_OK) {
+	Tk_BackgroundError(plFramePtr->interp);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* UpdateHScrollbar
+*
+* Updates horizontal scrollbar if needed.
+\*----------------------------------------------------------------------*/
+
+static void
+UpdateHScrollbar(register PlFrame *plFramePtr)
+{
+    int width = Tk_Width(plFramePtr->tkwin);
+    char string[60];
+    int totalUnits, windowUnits, firstUnit, lastUnit, result;
+
+    if (plFramePtr->xScrollCmd == NULL)
+	return;
+
+    totalUnits  = width;
+    firstUnit   = 0.5 + (float) width * plFramePtr->pxl;
+    lastUnit    = 0.5 + (float) width * plFramePtr->pxr;
+    windowUnits = lastUnit - firstUnit;
+    sprintf(string, " %d %d %d %d",
+	    totalUnits, windowUnits, firstUnit, lastUnit);
+
+    result = Tcl_VarEval(plFramePtr->interp, plFramePtr->xScrollCmd, string,
+			 (char *) NULL);
+
+    if (result != TCL_OK) {
+	Tk_BackgroundError(plFramePtr->interp);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* gbox
+*
+* Returns selection box coordinates.
+* It's best if the TCL script does bounds checking on the input but I do it
+* here as well just to be safe.
+\*----------------------------------------------------------------------*/
+
+static void
+gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
+{
+    float x0, y0, x1, y1;
+
+    x0 = atof(argv[0]);
+    y0 = atof(argv[1]);
+    x1 = atof(argv[2]);
+    y1 = atof(argv[3]);
+
+    x0 = MAX(0., MIN(1., x0));
+    y0 = MAX(0., MIN(1., y0));
+    x1 = MAX(0., MIN(1., x1));
+    y1 = MAX(0., MIN(1., y1));
+
+/* Only need two vertices, pick the lower left and upper right */
+
+    *xl = MIN(x0, x1);
+    *yl = MIN(y0, y1);
+    *xr = MAX(x0, x1);
+    *yr = MAX(y0, y1);
 }
 
 /*----------------------------------------------------------------------*\
