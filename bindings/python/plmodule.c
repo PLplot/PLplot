@@ -1,51 +1,15 @@
-/*	plmodule.c : Version 0.3
+/*	plmodule.c 
 
 	Permission granted to copy and distribute this work provided that this 
 	notice remains intact.
 
 	Python interface bindings
 	Written by: interran@uluru.Stanford.EDU (John Interrante) 
-                         et@appl-math.tu-muenchen.de (Thomas Schwaller)
+                         et@appl-math.tu-muenchen.de (Thomas Schwaller)*/
 
-      1995/08/19:
-        -  I (Thomas) wrote the plmodule at exactly the same time as John using a script
-            and some handwritten procedures. As John used the new naming convention
-            I decided to support his version (included in the plplot distribution) and
-            to enhance and support it. Since the good data structures for this module
-            are matrices I waited for this module to make the big changes here.
-        -  Added the Macro PL_ARGS to test for PLFLT numbers at compile time 
-            and not at runtime.
-	  -  added plcont (contour plots!). If something is wrong with your
-            plotter function a Python RuntimeError will be raised, but only
-            after plcont is executed. There's no possibility to stop plcont after
-            the first error occured, at least I do not know any solution for that problem.
-	  -  plstyl arguments can be three integers or two integer lists now.
+/*  Additional changes under LGPL by Geoffrey Furnish and Alan W. Irwin */
 
-     1995/11/19 Big Changes (by Thomas Schwaller)
-        - Reworked the whole module.
-        - All List inputs are replaced by matrix inputs (Not backward compatible !)
-           Could have made boths inputs possible, but matrix input is much faster 
-           and is the first choice here (MatLab style), so wy people should use the 
-           slower lists instead? Changed that, see 1995/11/26)
-        - Replaced PyArg_Parse by PyArg_ParseTuple and added document strings.
-           (these were the C-comments of John, now they are available in the Python 
-            module, eg. print plsfam.__doc__)
-
-      1995/11/26 Some Improvements (by Thomas Schwaller)
-        - reworked pl_PyArray_AsFloat{Array, Matrix} .
-        - used PyArray_ContiguousFromObject to convert input to matrices
-           as suggested by James Hugunin. I'm not sure this works really with
-           non-matrices (Python lists and the like..) as input.
-        - Made extensive use of the TRY Macro
-        - added pl_arrows dor arrow plotting. This function is not documented in
-           plplot yet, but it's there! Produces strange results at the moment!
-
-      1995/12/10 Discovered a bug (Thomas Schwaller)
-	  - Py_DECREF(mp) was made too early! 
-	     For Matrices this has no effect, but for List or Tuple input the data
-           was destroyed before being used!
-
-   	Rules for translating C PLplot function calls into Python PLplot:
+/*   	Rules for translating C PLplot function calls into Python PLplot:
    	  - All names are the the same (plot3d modified to plplot3d for uniformity), but
            now for uniformity with C API change back to plot3d---AWI.
    	  - C arrays are replaced by Python matrices or objects which can be 
@@ -56,7 +20,6 @@
       Thanxs to Jim Fulton, James Hugunin, Konrad Hinsen and all the other people in the
       Python Matrix SIG for the stimulating talks and the same spirit of mind!
 
-      Bug Reports please to et@appl-math.tu-muenchen.de (Thomas Schwaller)
 */
 
 #include "plplot/plmodule.h"
@@ -305,6 +268,7 @@ static PyObject * pl_col1(PyObject *self, PyObject *args)
     return Py_None;
 }
 
+/* superseded by plcont
 static char doc_plcont_ts[]="Draws a contour plot from data in f(nx,ny).  Is just a front-end to plfcont, with a particular choice for f2eval and f2eval_data";
 
 static void pypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data)
@@ -337,6 +301,7 @@ static PyObject * pl_cont_ts(PyObject *self, PyObject *args)
     Py_INCREF(Py_None);
     return Py_None;
 }
+*/
 
 static char doc_plcont2[]="Draws a contour plot from data in f(nx,ny).  Is just a front-end to plfcont, with a particular choice for f2eval and f2eval_data";
 
@@ -1429,6 +1394,30 @@ static PyObject * pl_sesc(PyObject *self, PyObject *args)
     return Py_None;
 }
 
+static char doc_pl_setcontlabelformat[]="Set contour label format";
+
+static PyObject * pl__setcontlabelformat(PyObject *self, PyObject *args)
+{
+    PLINT lexp, sigdig;
+    TRY (PyArg_ParseTuple(args, "ii", &lexp, &sigdig));
+    pl_setcontlabelformat(lexp, sigdig);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static char doc_pl_setcontlabelparam[]="Set contour label parameters";
+
+static PyObject * pl__setcontlabelparam(PyObject *self, PyObject *args)
+{
+    PLFLT offset, size, spacing;
+    PLINT active;
+    TRY (PyArg_ParseTuple(args, PL_ARGS("dddi", "fffi"),
+			  &offset, &size, &spacing, &active));
+    pl_setcontlabelparam(offset, size, spacing, active);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static char doc_plsfam[]="Set family file parameters";
 
 static PyObject * pl_sfam(PyObject *self, PyObject *args)
@@ -2439,6 +2428,8 @@ static PyMethodDef pl_methods[] = {
     {"plsdiplt",		pl_sdiplt, 1, doc_plsdiplt},
     {"plsdiplz",		pl_sdiplz, 1, doc_plsdiplz},
     {"plsesc",		pl_sesc, 1, doc_plsesc},
+    {"pl_setcontlabelformat", pl__setcontlabelformat, 1, doc_pl_setcontlabelformat},
+    {"pl_setcontlabelparam", pl__setcontlabelparam, 1, doc_pl_setcontlabelparam},
     {"plsfam",		pl_sfam, 1, doc_plsfam},
     {"plsfnam",		pl_sfnam, 1, doc_plsfnam},
     {"plshade",		pl_shade, 1, doc_plshade},
