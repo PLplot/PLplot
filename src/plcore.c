@@ -1151,9 +1151,9 @@ c_plinit(void)
 
     plsc->ipls = ipls;
 
-/* If device isn't set, prompt for it */
+/* Set up devices */
 
-    plGetDev();
+    pllib_devinit();
 
 /* Auxiliary stream setup */
 
@@ -1413,6 +1413,20 @@ plstrm_init(void)
 }
 
 /*--------------------------------------------------------------------------*\
+ * pl_cpcolor
+ *
+ * Utility to copy one PLColor to another.
+\*--------------------------------------------------------------------------*/
+
+void
+pl_cpcolor(PLColor *to, PLColor *from)
+{
+    to->r = from->r;
+    to->g = from->g;
+    to->b = from->b;
+}
+
+/*--------------------------------------------------------------------------*\
  * void plcpstrm
  *
  * Copies state parameters from the reference stream to the current stream.
@@ -1425,14 +1439,6 @@ plstrm_init(void)
  * pleop() as appropriate.  The plot buffer must have previously been
  * enabled (done automatically by some display drivers, such as X).
 \*--------------------------------------------------------------------------*/
-
-static void
-cp_color(PLColor *to, PLColor *from)
-{
-    to->r = from->r;
-    to->g = from->g;
-    to->b = from->b;
-}
 
 void
 c_plcpstrm(PLINT iplsr, PLINT flags)
@@ -1479,7 +1485,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
 /* current color */
 
-    cp_color(&plsc->curcolor, &plsr->curcolor);
+    pl_cpcolor(&plsc->curcolor, &plsr->curcolor);
 
 /* cmap 0 */
 
@@ -1490,7 +1496,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
     plsc->cmap0 = (PLColor *) calloc(1, plsc->ncol0 * sizeof(PLColor));
     for (i = 0; i < plsc->ncol0; i++)
-	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
+	pl_cpcolor(&plsc->cmap0[i], &plsr->cmap0[i]);
 
 /* cmap 1 */
 
@@ -1501,7 +1507,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
     plsc->cmap1 = (PLColor *) calloc(1, plsc->ncol1 * sizeof(PLColor));
     for (i = 0; i < plsc->ncol1; i++) 
-	cp_color(&plsc->cmap1[i], &plsr->cmap1[i]);
+	pl_cpcolor(&plsc->cmap1[i], &plsr->cmap1[i]);
 
 /* Initialize if it hasn't been done yet. */
 
@@ -1510,29 +1516,38 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 }
 
 /*--------------------------------------------------------------------------*\
- * void plGetDev()
+ * pllib_devinit()
  *
- * plGetDev() used to be what is now shown as plSelectDev below.  However,
- * the situation is a bit more complicated now in the dynloadable drivers
- * era.  We have to:
+ * Does preliminary setup of device driver.
+ *
+ * This function (previously plGetDev) used to be what is now shown as
+ * plSelectDev below.  However, the situation is a bit more complicated now in
+ * the dynloadable drivers era.  We now have to:
+ *
  * 1) Make sure the dispatch table is initialized to the union of static
  *    drivers and available dynamic drivers (done from pllib_init now).
  * 2) Allow the user to select the desired device.
  * 3) Initiailize the dispatch table entries for the selected device, in the
  *    case that it is a dynloadable driver that has not yet been loaded.
+ *
+ * Also made non-static, in order to allow some device calls to be made prior
+ * to calling plinit().  E.g. plframe needs to tell the X driver to create its
+ * internal data structure during widget construction time (using the escape
+ * function), but doesn't call plinit() until the plframe is actually mapped.
 \*--------------------------------------------------------------------------*/
 
-static void
-plGetDev()
+void
+pllib_devinit()
 {
-    int n;
+    if (plsc->dev_initialized) return;
+    plsc->dev_initialized = 1;
 
     plSelectDev();
 
     plLoadDriver();
 
-    n = plsc->device - 1;
-    plsc->dispatch_table = dispatch_table[n];
+/* offset by one since table is zero-based, but input list is not */
+    plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
 /*--------------------------------------------------------------------------*\
