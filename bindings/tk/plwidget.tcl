@@ -683,6 +683,12 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
 
     #puts "keypress: $keyname $keycode $ascii $state"
 
+# Backward compatibility
+
+    if ![info exists key_resume] {
+	set key_resume		"Return"
+    }
+
 # Call user-defined key filter, if one exists
 
     if { [info exists user_key_filter] } then {
