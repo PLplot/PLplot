@@ -62,7 +62,7 @@ main(int argc, char *argv[])
 
 /* Define storage for the min and max values of the data. */
 
-    float xmin, xmax, ymin, ymax, xdiff, ydiff;
+    PLFLT xmin, xmax, ymin, ymax, xdiff, ydiff;
 
 /* Define storage for the filename and define the input file pointer. */
 
@@ -103,14 +103,14 @@ main(int argc, char *argv[])
 
 /* Allocate memory for all the arrays. */
 
-    x = (float *) malloc(N * sizeof(float));
+    x = (PLFLT *) malloc(N * sizeof(PLFLT));
     if (x == NULL)
 	error("Out of memory!");
-    y = (float **) malloc(M * sizeof(float *));
+    y = (PLFLT **) malloc(M * sizeof(PLFLT *));
     if (y == NULL)
 	error("Out of memory!");
     for (i = 0; i < M; i++) {
-	y[i] = (float *) malloc(N * sizeof(float));
+	y[i] = (PLFLT *) malloc(N * sizeof(PLFLT));
 	if (y[i] == NULL)
 	    error("Out of memory!");
     }
