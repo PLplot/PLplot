@@ -7,7 +7,10 @@
   Slightly modified by Geoffrey Furnish.
 
  * $Log$
- * Revision 1.1  1996/10/08 18:37:11  furnish
+ * Revision 1.2  1996/10/11 23:10:41  furnish
+ * Improve performance by writing out data in one shot.
+ *
+ * Revision 1.1  1996/10/08  18:37:11  furnish
  * First cut on a new driver for portable bitmaps.
  *
 
@@ -213,10 +216,14 @@ plD_eop_pbm(PLStream *pls)
 	fprintf(fp, "%s\n", "P6");
 	fprintf(fp, "%d %d\n", PIXELS_X, PIXELS_Y);
 	fprintf(fp, "%d\n", MAX_INTENSITY);
+    /*
 	for (i=0; i<PIXELS_Y; i++)
 	    for (j=0; j<PIXELS_X; j++)
 		for (k=0; k<3; k++)
 		    fprintf(fp, "%c", cmap[i][j][k]);
+		    */
+	fwrite( cmap, 1, PIXELS_X * PIXELS_Y * 3, fp );
+
 	fclose(fp);
     } 
 }
