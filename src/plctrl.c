@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/08/25 04:08:09  mjl
+ * Revision 1.26  1994/09/02 05:09:42  mjl
+ * Flush stdout before issuing error message, to be sure we are really on the
+ * text screen.
+ *
+ * Revision 1.25  1994/08/25  04:08:09  mjl
  * Fixed limiting saturation value in a case that was affecting grayscale
  * output.  Contributed by Radey Shouman.  Also modified pltext/plgra to
  * return silently if plinit not yet called.
@@ -946,8 +950,10 @@ c_plgra(void)
 void
 c_pltext(void)
 {
-    if (plsc->level > 0) 
+    if (plsc->level > 0) {
 	plP_esc(PLESC_TEXT, NULL);
+	plflush();
+    }
 }
 
 /*----------------------------------------------------------------------*\
