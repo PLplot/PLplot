@@ -25,5 +25,5 @@ endif
 install_tkwin_scripts:
 	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
 	cd $(top_srcdir)/bindings/tk-x-plat; \
-	$(CP) pkgIndex.tcl  $(TCL_DIR)
+	$(CP) pkgIndex.tcl  $(TCL_DIR)/..
 
