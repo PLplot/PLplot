@@ -43,6 +43,7 @@ static int plot3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plotsh3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plshadesCmd	(ClientData, Tcl_Interp *, int, char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -75,6 +76,7 @@ static CmdInfo Cmds[] = {
     {"plotsh3d",	plotsh3dCmd},
     {"plsetopt",	plsetoptCmd},
     {"plshade",		plshadeCmd},
+    {"plshades",	plshadesCmd},
     {NULL,		NULL}
 };
 
@@ -529,6 +531,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     PLINT nx, ny, kx, lx, ky, ly, nclev;
     char *pltrname = "pltr0";
     tclMatrix *mattrx = NULL, *mattry = NULL;
+    PLFLT **z, **zused, **zwrapped;
 
     int arg3_is_kx = 1, i, j;
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
@@ -552,12 +555,17 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     } else {
 	nx = matf->n[0];
 	ny = matf->n[1];
-
 	tclmateval_modx = nx;
 	tclmateval_mody = ny;
 
-	kx = 1; lx = nx;
-	ky = 1; ly = ny;
+        /* convert matf to 2d-array so can use standard wrap approach
+	 * from now on in this code. */
+        plAlloc2dGrid(&z, nx, ny );
+	for (i=0; i < nx; i++) {
+	   for (j=0; j < ny; j++) {
+	      z[i][j] = tclMatrix_feval(i, j, matf);
+	   }
+	}
     }
 
 /* Now check the next argument.  If it is all digits, then it must be kx,
@@ -635,6 +643,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( !strcmp( pltrname, "pltr0" ) ) {
 	pltr = pltr0;
+        zused = z;
 
     /* wrapping is only supported for pltr2. */
 	if (wrap) {
@@ -648,6 +657,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 	cgrid1.nx = nx;
 	cgrid1.yg = mattry->fdata;
 	cgrid1.ny = ny;
+        zused = z;
 
     /* wrapping is only supported for pltr2. */
 	if (wrap) {
@@ -670,6 +680,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 	    plAlloc2dGrid( &cgrid2.yg, nx, ny );
 	    cgrid2.nx = nx;
 	    cgrid2.ny = ny;
+	    zused = z;
 
 	    matPtr = mattrx;
 	    for( i=0; i < nx; i++ )
@@ -684,8 +695,10 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 	else if (wrap == 1) {
 	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
 	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    plAlloc2dGrid( &zwrapped, nx+1, ny );
 	    cgrid2.nx = nx+1;
 	    cgrid2.ny = ny;
+	    zused = zwrapped;
 
 	    matPtr = mattrx;
 	    for( i=0; i < nx; i++ )
@@ -693,22 +706,31 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
 
 	    matPtr = mattry;
-	    for( i=0; i < nx; i++ )
-		for( j=0; j < ny; j++ )
+	    for( i=0; i < nx; i++ ) {
+		for( j=0; j < ny; j++ ) {
 		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+	            zwrapped[i][j] = z[i][j];
+		}
+	    }
 
 	    for( j=0; j < ny; j++ ) {
 		cgrid2.xg[nx][j] = cgrid2.xg[0][j];
 		cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+		zwrapped[nx][j] = zwrapped[0][j];
 	    }
+	    /* z not used in executable path after this so free it before
+	     * nx value is changed. */
+	    plFree2dGrid( z, nx, ny );
 
 	    nx++;
 	}
 	else if (wrap == 2) {
 	    plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
 	    plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+	    plAlloc2dGrid( &zwrapped, nx, ny+1 );
 	    cgrid2.nx = nx;
 	    cgrid2.ny = ny+1;
+	    zused = zwrapped;
 
 	    matPtr = mattrx;
 	    for( i=0; i < nx; i++ )
@@ -716,20 +738,27 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
 
 	    matPtr = mattry;
-	    for( i=0; i < nx; i++ )
-		for( j=0; j < ny; j++ )
+	    for( i=0; i < nx; i++ ) {
+		for( j=0; j < ny; j++ ) {
 		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+		    zwrapped[i][j] = z[i][j];
+		}
+	    }
 
 	    for( i=0; i < nx; i++ ) {
 		cgrid2.xg[i][ny] = cgrid2.xg[i][0];
 		cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+		zwrapped[i][ny] = zwrapped[i][0];
 	    }
+            /* z not used in executable path after this so free it before
+	     * ny value is changed. */
+	    plFree2dGrid( z, nx, ny );
 
 	    ny++;
 	}
 	else {
 	    interp->result =
-		"Invalid wrap specifier, must be <empty>, 1 or 2.";
+		"Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
 	    return TCL_ERROR;
 	}
 
@@ -743,17 +772,20 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 			  (char *) NULL );
 	return TCL_ERROR;
     }
-/*
-    printf( "plcont: nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
+    if (!arg3_is_kx) {
+       /* default values must be set here since nx, ny can change with wrap. */
+       kx = 1; lx = nx;
+       ky = 1; ly = ny;
+    }
+
+/*    printf( "plcont: nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
 	    nx, ny, kx, lx, ky, ly );
-    printf( "plcont: tclmateval_modx=%d tclmateval_mody=%d\n",
-	    tclmateval_modx, tclmateval_mody );
     printf( "plcont: nclev=%d\n", nclev );
-    */
+ */
 
 /* contour the data.*/
 
-    plcontf( tclMatrix_feval, matf, nx, ny,
+    plcont( zused, nx, ny,
 	     kx, lx, ky, ly,
 	     matclev->fdata, nclev,
 	     pltr, pltr_data );
@@ -768,6 +800,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     /* printf( "plcont, freeing space for grids used in pltr2\n" ); */
 	plFree2dGrid( cgrid2.xg, nx, ny );
 	plFree2dGrid( cgrid2.yg, nx, ny );
+        if(wrap != 0) 
+	   plFree2dGrid( zwrapped, nx, ny );
     }
 
     plflush();
@@ -1327,7 +1361,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 	}
 	else {
 	    interp->result =
-		"Invalid wrap specifier, must be <empty>, 1 or 2.";
+		"Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
 	    return TCL_ERROR;
 	}
 
@@ -1365,3 +1399,236 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     plflush();
     return TCL_OK;
 }
+
+/*--------------------------------------------------------------------------*\
+ * plshadeCmd
+ *
+ * Processes plshade Tcl command.
+ * C version takes:
+ *    data, nx, ny, defined,
+ *    xmin, xmax, ymin, ymax,
+ *    sh_min, sh_max, sh_cmap, sh_color, sh_width,
+ *    min_col, min_wid, max_col, max_wid,
+ *    plfill, rect, pltr, pltr_data
+ *
+ * We will be getting data through a 2-d Matrix, which carries along
+ * nx and ny, so no need for those.  Toss defined since it's not supported
+ * anyway.  Toss plfill since it is the only valid choice.  Take an optional 
+ * pltr spec just as for plcont, and add a wrapping specifier, also just as
+ * in plcont.  So the new command looks like:
+ * 
+ * 	plshade z xmin xmax ymin ymax \
+ * 	    sh_min sh_max sh_cmap sh_color sh_width \
+ * 	    min_col min_wid max_col max_wid \
+ * 	    rect [pltr x y] [wrap]
+\*--------------------------------------------------------------------------*/
+
+static int
+plshadesCmd( ClientData clientData, Tcl_Interp *interp,
+	    int argc, char *argv[] )
+{
+    tclMatrix *matPtr, *matz, *mattrx = NULL, *mattry = NULL;
+    PLFLT xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
+
+    PLINT sh_cmap =1, sh_wid =2;
+    PLINT min_col =1, min_wid =0, max_col =0, max_wid =0;
+    PLINT rect =1;
+    char *pltrname = "pltr0";
+    void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
+    PLPointer pltr_data = NULL;
+    PLcGrid  cgrid1;
+    PLcGrid2 cgrid2;
+    PLINT wrap = 0;
+    int nx, ny, i, j;
+
+    if (argc < 16 ) {
+	Tcl_AppendResult(interp, "bogus syntax for plshade, see doc.",
+			 (char *) NULL );
+	return TCL_ERROR;
+    }
+
+    matz = Tcl_GetMatrixPtr( interp, argv[1] );
+    xmin = atof( argv[2] );
+    xmax = atof( argv[3] );
+    ymin = atof( argv[4] );
+    ymax = atof( argv[5] );
+    sh_min = atof( argv[6] );
+    sh_max = atof( argv[7] );
+    sh_cmap = atoi( argv[8] );
+    sh_col = atof( argv[9] );
+    sh_wid = atoi( argv[10] );
+    min_col = atoi( argv[11] );
+    min_wid = atoi( argv[12] );
+    max_col = atoi( argv[13] );
+    max_wid = atoi( argv[14] );
+    rect = atoi( argv[15] );
+
+    argc -= 16, argv += 16;
+
+    if (argc >= 3) {
+	pltrname = argv[0];
+	mattrx = Tcl_GetMatrixPtr( interp, argv[1] );
+	mattry = Tcl_GetMatrixPtr( interp, argv[2] );
+
+	argc -= 3, argv += 3;
+    }
+
+    if (argc) {
+	wrap = atoi( argv[0] );
+	argc--, argv++;
+    }
+
+    if (argc) {
+	interp->result = "plshade: bogus arg list";
+	return TCL_ERROR;
+    }
+
+    if (matz->dim != 2) {
+	interp->result = "Must plot a 2-d matrix.";
+	return TCL_ERROR;
+    }
+
+    nx = matz->n[0];
+    ny = matz->n[1];
+
+    tclmateval_modx = nx;
+    tclmateval_mody = ny;
+
+/* Figure out which coordinate transformation model is being used, and setup
+   accordingly. */
+
+    if ( !strcmp( pltrname, "pltr0" ) ) {
+	pltr = pltr0;
+
+    /* wrapping is only supported for pltr2. */
+	if (wrap) {
+	    interp->result = "Must use pltr2 if want wrapping.";
+	    return TCL_ERROR;
+	}
+    }
+    else if ( !strcmp( pltrname, "pltr1" ) ) {
+	pltr = pltr1;
+	cgrid1.xg = mattrx->fdata;
+	cgrid1.nx = nx;
+	cgrid1.yg = mattry->fdata;
+	cgrid1.ny = ny;
+
+    /* wrapping is only supported for pltr2. */
+	if (wrap) {
+	    interp->result = "Must use pltr2 if want wrapping.";
+	    return TCL_ERROR;
+	}
+
+	if (mattrx->dim != 1 || mattry->dim != 1) {
+	    interp->result = "Must use 1-d coord arrays with pltr1.";
+	    return TCL_ERROR;
+	}
+
+	pltr_data = &cgrid1;
+    }
+    else if ( !strcmp( pltrname, "pltr2" ) ) {
+    /* printf( "plshade, setting up for pltr2\n" ); */
+	if (!wrap) {
+	/* printf( "plshade, no wrapping is needed.\n" ); */
+	    plAlloc2dGrid( &cgrid2.xg, nx, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx, ny );
+	    cgrid2.nx = nx;
+	    cgrid2.ny = ny;
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+	}
+	else if (wrap == 1) {
+	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    cgrid2.nx = nx+1;
+	    cgrid2.ny = ny;
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+
+	    for( j=0; j < ny; j++ ) {
+		cgrid2.xg[nx][j] = cgrid2.xg[0][j];
+		cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+	    }
+
+	    nx++;
+	}
+	else if (wrap == 2) {
+	    plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
+	    plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+	    cgrid2.nx = nx;
+	    cgrid2.ny = ny+1;
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+
+	    for( i=0; i < nx; i++ ) {
+		cgrid2.xg[i][ny] = cgrid2.xg[i][0];
+		cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+	    }
+
+	    ny++;
+	}
+	else {
+	    interp->result =
+		"Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
+	    return TCL_ERROR;
+	}
+
+	pltr = pltr2;
+	pltr_data = &cgrid2;
+    }
+    else {
+	Tcl_AppendResult( interp,
+			  "Unrecognized coordinate transformation spec:",
+			  pltrname, ", must be pltr0 pltr1 or pltr2.",
+			  (char *) NULL );
+	return TCL_ERROR;
+    }
+
+/* Now go make the plot. */
+
+    plfshade( tclMatrix_feval, matz, NULL, NULL, nx, ny,
+	      xmin, xmax, ymin, ymax,
+	      sh_min, sh_max, sh_cmap, sh_col, sh_wid,
+	      min_col, min_wid, max_col, max_wid,
+	      plfill, rect, pltr, pltr_data );
+
+/* Now free up any space which got allocated for our coordinate trickery. */
+
+    if (pltr == pltr1) {
+    /* Hmm, actually, nothing to do here currently, since we just used the
+       Tcl Matrix data directly, rather than allocating private space. */
+    }
+    else if (pltr == pltr2) {
+    /* printf( "plshade, freeing space for grids used in pltr2\n" ); */
+	plFree2dGrid( cgrid2.xg, nx, ny );
+	plFree2dGrid( cgrid2.yg, nx, ny );
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
