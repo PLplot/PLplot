@@ -1,23 +1,33 @@
-! Test of drawing a histogram
+!
+! Draws a histogram from sample data
+!
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384)
-		
-      integer i
-      real*8 data(2048), delta
 
+      integer i
+      integer NPTS
+      parameter ( NPTS = 2047 )
+      real*8 data(NPTS), delta
+
+! Parse and process command line arguments
+
+      ! TODO: plParseOpts()
+
+! Initialize plplot
+      call plinit()
 ! Fill up data points
-      delta = 2.0 * PI / dble (2048)
-      do 1 i=1,2048
-        data(i)=sin(delta*dble (i))
+
+      delta = 2.0 * PI / dble (NPTS)
+      do 1 i=1,NPTS
+        data(i)=sin(delta*dble (i-1))
     1 continue
 
-      call plinit()
-      call plcol(1)
-      call plhist(2048, data, dble (-1.1), dble (1.1), 44, 0)
-      call plcol(2)
+      call plcol0(1)
+      call plhist(NPTS, data, dble (-1.1), dble (1.1), 44, 0)
+      call plcol0(2)
       call pllab('#frValue','#frFrequency',
-     *  '#frPLPLOT Example 5 - Probability function of Oscillator')
+     *  '#frPLplot Example 5 - Probability function of Oscillator')
 
       call plend
       end
