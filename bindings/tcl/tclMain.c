@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/09/18 07:15:39  mjl
+ * Revision 1.5  1995/10/22 17:37:25  mjl
+ * Added command line argument parsing ala plParseOpts.  Previously, no args
+ * except the file name were parsed, they were merely shoved into the Tcl
+ * variables argc, argv, and argv0.  Even -f was ignored (try it yourself:
+ * "tclsh -f <file>" doesn't work! ..amazing).  Now acts similar to plserver,
+ * in that -e and -f options are obeyed as well as all underlying plplot
+ * options.
+ *
+ * Revision 1.4  1994/09/18  07:15:39  mjl
  * Changed the syntax for pltclMain() in order for it to work better with
  * shared libraries.  In particular, Tcl_AppInit is no longer external but
  * passed as a function pointer.
@@ -30,6 +38,7 @@
  * 3. Tcl_AppInit -> AppInit, now passed in through the argument list.
  * 4. Changes to work with ANSI C
  * 5. Changes to support user-installable error handler.
+ * 6. PLplot argument parsing routine called to handle arguments.
  *
  * The original notes follow.
  */
@@ -69,12 +78,14 @@
 
 /*
  * Declarations for various library procedures and variables (don't want
- * to include tclUnix.h here, because people might copy this file out of
+ * to include tclPort.h here, because people might copy this file out of
  * the Tcl source directory to make their own modified versions).
+ * Note:  "exit" should really be declared here, but there's no way to
+ * declare it without causing conflicts with other definitions elsewher
+ * on some systems, so it's better just to leave it out.
  */
 
 extern int		errno;
-extern void		exit _ANSI_ARGS_((int status));
 extern int		isatty _ANSI_ARGS_((int fd));
 extern char *		strcpy _ANSI_ARGS_((char *dst, CONST char *src));
 
@@ -103,11 +114,54 @@ ErrorHandler _ANSI_ARGS_((Tcl_Interp *interp, int code, int tty));
 
 void (*tclErrorHandler)
     _ANSI_ARGS_((Tcl_Interp *interp, int code, int tty)) = ErrorHandler;
+
+/* Options data structure definition. */
+
+#include "plplot.h"
+
+static char *script = NULL;
+static char *fileName = NULL;
+
+static PLOptionTable options[] = {
+{
+    "f",			/* File to read & process */
+    NULL,
+    NULL,
+    &fileName,
+    PL_OPT_STRING,
+    "-f",
+    "File from which to read commands" },
+{
+    "file",			/* File to read & process (alias) */
+    NULL,
+    NULL,
+    &fileName,
+    PL_OPT_STRING | PL_OPT_INVISIBLE,
+    "-file",
+    "File from which to read commands" },
+{
+    "e",			/* Script to run on startup */
+    NULL,
+    NULL,
+    &script,
+    PL_OPT_STRING,
+    "-e",
+    "Script to execute on startup" },
+{
+    NULL,			/* option */
+    NULL,			/* handler */
+    NULL,			/* client data */
+    NULL,			/* address of variable to set */
+    0,				/* mode flag */
+    NULL,			/* short syntax */
+    NULL }			/* long syntax */
+};
+
 
 /*
  *----------------------------------------------------------------------
  *
- * main --
+ * pltclMain --
  *
  *	This is the main program for a Tcl-based shell that reads
  *	Tcl commands from standard input.
@@ -123,9 +177,9 @@ void (*tclErrorHandler)
 
 int
 pltclMain(int argc, char **argv, char *RcFileName,
-	  int (*AppInit)(Tcl_Interp *interp))
+	  int (*appInitProc)(Tcl_Interp *interp))
 {
-    char buffer[1000], *cmd, *args, *fileName;
+    char buffer[1000], *cmd, *args;
     int code, gotPartial, tty;
     int exitCode = 0;
 
@@ -138,21 +192,19 @@ pltclMain(int argc, char **argv, char *RcFileName,
 
     /*
      * Make command-line arguments available in the Tcl variables "argc"
-     * and "argv".  If the first argument doesn't start with a "-" then
-     * strip it off and use it as the name of a script file to process.
+     * and "argv".  
      */
 
-    fileName = NULL;
-    if ((argc > 1) && (argv[1][0] != '-')) {
-	fileName = argv[1];
-	argc--;
-	argv++;
-    }
     args = Tcl_Merge(argc-1, argv+1);
     Tcl_SetVar(interp, "argv", args, TCL_GLOBAL_ONLY);
     ckfree(args);
     sprintf(buffer, "%d", argc-1);
     Tcl_SetVar(interp, "argc", buffer, TCL_GLOBAL_ONLY);
+
+    /* Now process the args using the PLplot parser. */
+
+    plMergeOpts(options, "pltcl options", NULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
     Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
 	    TCL_GLOBAL_ONLY);
 
@@ -168,13 +220,27 @@ pltclMain(int argc, char **argv, char *RcFileName,
      * Invoke application-specific initialization.
      */
 
-    if ((*AppInit)(interp) != TCL_OK) {
-	fprintf(stderr, "(*AppInit) failed: %s\n", interp->result);
+    if ((*appInitProc)(interp) != TCL_OK) {
+	fprintf(stderr, "application-specific initialization failed: %s\n",
+		interp->result);
+    }
+
+    /*
+     * Process the startup script, if any.
+     */
+
+    if (script != NULL) {
+	code = Tcl_VarEval(interp, script, (char *) NULL);
+	if (code != TCL_OK) {
+	    fprintf(stderr, "%s\n", interp->result);
+	    exitCode = 1;
+	}
     }
 
     /*
      * If a script file was specified then just source that file
-     * and quit.
+     * and quit.  This is different from how wish proceeds: wish
+     * enters an event loop while tclsh is strictly procedural.
      */
 
     if (fileName != NULL) {
@@ -188,7 +254,7 @@ pltclMain(int argc, char **argv, char *RcFileName,
 
     /*
      * We're running interactively.  Source a user-specific startup
-     * file if the name was specified and if the file exists.
+     * file if the application specified one and if the file exists.
      */
 
     if (RcFileName != NULL) {
