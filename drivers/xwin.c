@@ -16,7 +16,7 @@
 static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */
 
-static int buffered = 1;        /* make it a buffered device by default */
+static int nobuffered = 0;      /* make it a buffered device by default */
                                 /* use "-drvopt buffered=0" to make it unbuffered */ 
 
 /* When USE_DEFAULT_VISUAL is defined, DefaultVisual() is used to get the
@@ -155,7 +155,7 @@ static void  StoreCmap1		(PLStream *pls);
 static void  imageops           (PLStream *pls, int *ptr);
 
 static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X server operation (0|1)"},
-				{"buffered", DRV_INT, &buffered, "Sets buffered operation (0|1)"},
+				{"nobuffered", DRV_INT, &nobuffered, "Sets unbuffered operation (0|1)"},
 				{NULL, DRV_INT, NULL, NULL}};
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
@@ -196,16 +196,14 @@ plD_init_xw(PLStream *pls)
     pls->termin = 1;		/* Is an interactive terminal */
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
-    /* pls->plbuf_write = 1; */	/* Activate plot buffer */
+    pls->plbuf_write = 1; 	/* Activate plot buffer */
     pls->dev_fastimg = 1;       /* is a fast image device */
     pls->dev_xor = 1;           /* device support xor mode */
 
     plParseDrvOpts(xwin_options);
 
-    if (buffered)
-      pls->plbuf_write = 1;	/* Activate plot buffer */
-    else
-      pls->plbuf_write = 0;	/* Dont activate plot buffer */
+    if (nobuffered)
+      pls->plbuf_write = 0;	/* desactivate plot buffer */
 
 /* The real meat of the initialization done here */
 
@@ -699,9 +697,11 @@ GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
 	MasterEH(pls, &event);
     }
     *ptr = *gin;
-    dev->locate_mode = 0;
-    DestroyXhairs(pls);
-}
+    if (dev->locate_mode) {
+      dev->locate_mode = 0;
+      DestroyXhairs(pls);
+    }
+   }
 
 /*--------------------------------------------------------------------------*\
  * FillPolygonCmd()
@@ -1089,7 +1089,8 @@ MasterEH(PLStream *pls, XEvent *event)
 	break;
 
     case MotionNotify:
-	if (event->xmotion.state) ButtonEH(pls, event); /* drag */
+	if (event->xmotion.state)
+	  ButtonEH(pls, event); /* drag */
 	MotionEH(pls, event);
 	break;
 
@@ -1431,8 +1432,8 @@ LocateButton(PLStream *pls)
     switch (gin->button) {
 
     case Button1:
-	Locate(pls);
-	break;
+        Locate(pls);
+        break;
     }
 }
 
