@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/04/12 08:26:07  mjl
+ * Revision 1.14  1995/04/12 21:17:54  mjl
+ * Changed plhrsh() to plot continuous symbols even if the current line style
+ * is dashed (symbols plotted in dashed line styles look pretty odd).
+ * Contributed by Radey Shouman.
+ *
+ * Revision 1.13  1995/04/12  08:26:07  mjl
  * Absorbed all string and font related code from plstring.c and plfont.c.  Now
  * most of this is all internal to this file, so some global variables and
  * functions were made static.  Changed names of a variable defined at file
@@ -198,7 +203,7 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 static void
 plhrsh(PLINT ch, PLINT x, PLINT y)
 {
-    PLINT cx, cy, k, penup;
+    PLINT cx, cy, k, penup, style;
     signed char *xygrid;
     PLFLT scale, xscale, yscale;
 
@@ -209,6 +214,11 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 	plP_movphy(x, y);
 	return;
     }
+
+/* Line style must be continuous */
+
+    style = plsc->nms;
+    plsc->nms = 0;
 
 /* Compute how many physical pixels correspond to a character pixel */
 
@@ -221,6 +231,7 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 	cy = xygrid[k++];
 	if (cx == 64 && cy == 64) {
 	    plP_movphy(x, y);
+	    plsc->nms = style;
 	    return;
 	}
 	else if (cx == 64 && cy == 0)
