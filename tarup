@@ -12,37 +12,24 @@ pldir="`basename $PWD`"
 tarfile=${pldir}.tar
 cd ..
 
-# top level text files & scripts
+# Store files, leaving out contents of certain directories as well as all
+# CVS-related junk.
 
-tar cf ${tarfile} ${pldir}/README
-tar rf ${tarfile} ${pldir}/README.1st
-tar rf ${tarfile} ${pldir}/README.local
-tar rf ${tarfile} ${pldir}/COPYRIGHTS
-tar rf ${tarfile} ${pldir}/Changes.log
-tar rf ${tarfile} ${pldir}/ToDo
-tar rf ${tarfile} ${pldir}/configure
-tar rf ${tarfile} ${pldir}/tarup
-tar rf ${tarfile} ${pldir}/zooup
-tar rf ${tarfile} ${pldir}/zipup
+echo "Creating ../${tarfile}..."
+tar cf $tarfile \
+	`find $pldir \
+	! -path ${pldir}/tmp/\* \
+	! -path ${pldir}/lib/\* \
+	! -path ${pldir}/private/\* \
+	! -path \*CVS\* \
+	! -path \*~ \
+        -type f`
 
-# Make sure tar creates these subdirectories to make installation easier.
+tar rf $tarfile ${pldir}/lib/*.fnt ${pldir}/tmp/.dummy ${pldir}/private/.dummy
 
-tar rf ${tarfile} ${pldir}/tmp/.dummy
+echo "Compressing..."
+gzip ${tarfile}
 
-# Font files
-
-tar rf ${tarfile} ${pldir}/lib/*.fnt
-
-# Subdirectories
-
-tar rf ${tarfile} `find ${pldir}/doc      ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/drivers  ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/examples ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/fonts    ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/include  ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/m4       ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/new      ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/utils    ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/scripts  ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/src      ! -path \*CVS\* -type f`
-tar rf ${tarfile} `find ${pldir}/sys      ! -path \*CVS\* -type f`
+echo "The resulting file is:"
+cd $pldir
+ls -l ../${tarfile}.gz
