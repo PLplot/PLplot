@@ -78,7 +78,7 @@ dnl SGML source files.
 DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
 DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
 DB_SS_PRINT_PUBID="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
-DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook XML V4.1//EN"
+DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook XML V4.2//EN"
 
 AC_SUBST(DSSSL_DTD_PUBID)
 AC_SUBST(DB_SS_HTML_PUBID)
