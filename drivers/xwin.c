@@ -2497,7 +2497,7 @@ AllocCmap0(PLStream *pls)
 	if (pls->verbose)
 	    fprintf( stderr, "Attempting to allocate r/o colors in cmap0.\n" );
 
-	for (i = 1; i < 16; i++) {
+	for (i = 1; i < pls->ncol0; i++) {
 	    int r;
 	    XColor c;
 	    PLColor_to_XColor(&pls->cmap0[i], &c);
