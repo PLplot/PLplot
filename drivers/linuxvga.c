@@ -20,6 +20,15 @@
 /* Function prototypes */
 /* INDENT OFF */
 
+void plD_init_vga		(PLStream *);
+void plD_line_vga		(PLStream *, short, short, short, short);
+void plD_polyline_vga		(PLStream *, short *, short *, PLINT);
+void plD_eop_vga		(PLStream *);
+void plD_bop_vga		(PLStream *);
+void plD_tidy_vga		(PLStream *);
+void plD_state_vga		(PLStream *, PLINT);
+void plD_esc_vga		(PLStream *, PLINT, void *);
+
 static void lxvga_text	(PLStream *pls);
 static void lxvga_graph	(PLStream *pls);
 static void pause	(PLStream *pls);
@@ -45,6 +54,22 @@ static int totcol = 16;
 #define DIRTY 1
 
 static page_state;
+
+void plD_dispatch_init_vga( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "Linux console VGA Screen";
+    pdt->pl_DevName  = "vga";
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 8;
+    pdt->pl_init     = (plD_init_fp)     plD_init_vga;
+    pdt->pl_line     = (plD_line_fp)     plD_line_vga;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_vga;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_vga;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_vga;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_vga;
+    pdt->pl_state    = (plD_state_fp)    plD_state_vga;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_vga;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_vga()

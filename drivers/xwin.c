@@ -69,6 +69,20 @@ static XColor sxwm_colors[MAX_COLORS];
 static XwDisplay *xwDisplay[PLXDISPLAYS];
 
 /* Function prototypes */
+
+/* Driver entry and dispatch setup */
+
+void plD_dispatch_init_xw	( PLDispatchTable *pdt );
+
+void plD_init_xw		(PLStream *);
+void plD_line_xw		(PLStream *, short, short, short, short);
+void plD_polyline_xw		(PLStream *, short *, short *, PLINT);
+void plD_eop_xw			(PLStream *);
+void plD_bop_xw			(PLStream *);
+void plD_tidy_xw		(PLStream *);
+void plD_state_xw		(PLStream *, PLINT);
+void plD_esc_xw			(PLStream *, PLINT, void *);
+
 /* Initialization */
 
 static void  Init		(PLStream *pls);
@@ -144,6 +158,22 @@ int XErrorProc(Display *dpy, XErrorEvent *errEventPtr)
         errEventPtr->error_code, errEventPtr->request_code,
         errEventPtr->minor_code);
     return 1;
+}
+
+void plD_dispatch_init_xw( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "X-Window (Xlib)";
+    pdt->pl_DevName  = "xwin";
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 5;
+    pdt->pl_init     = (plD_init_fp)     plD_init_xw;
+    pdt->pl_line     = (plD_line_fp)     plD_line_xw;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_xw;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_xw;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_xw;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_xw;
+    pdt->pl_state    = (plD_state_fp)    plD_state_xw;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_xw;
 }
 
 /*--------------------------------------------------------------------------*\

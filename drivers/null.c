@@ -9,6 +9,33 @@
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 
+void plD_dispatch_init_null	( PLDispatchTable *pdt );
+
+void plD_init_null		(PLStream *);
+void plD_line_null		(PLStream *, short, short, short, short);
+void plD_polyline_null		(PLStream *, short *, short *, PLINT);
+void plD_eop_null		(PLStream *);
+void plD_bop_null		(PLStream *);
+void plD_tidy_null		(PLStream *);
+void plD_state_null		(PLStream *, PLINT);
+void plD_esc_null		(PLStream *, PLINT, void *);
+
+void plD_dispatch_init_null( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "Null device";
+    pdt->pl_DevName  = "null";
+    pdt->pl_type     = plDevType_Null;
+    pdt->pl_seq      = 41;
+    pdt->pl_init     = (plD_init_fp)     plD_init_null;
+    pdt->pl_line     = (plD_line_fp)     plD_line_null;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_null;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_null;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_null;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_null;
+    pdt->pl_state    = (plD_state_fp)    plD_state_null;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_null;
+}
+
 /*--------------------------------------------------------------------------*\
  * plD_init_null()
  *

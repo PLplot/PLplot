@@ -36,6 +36,17 @@
 #include "plplot/metadefs.h"
 #include <string.h>
 
+void plD_dispatch_init_plm	( PLDispatchTable *pdt );
+
+void plD_init_plm		(PLStream *);
+void plD_line_plm		(PLStream *, short, short, short, short);
+void plD_polyline_plm		(PLStream *, short *, short *, PLINT);
+void plD_eop_plm		(PLStream *);
+void plD_bop_plm		(PLStream *);
+void plD_tidy_plm		(PLStream *);
+void plD_state_plm		(PLStream *, PLINT);
+void plD_esc_plm		(PLStream *, PLINT, void *);
+
 /* Struct to hold device-specific info. */
 
 typedef struct {
@@ -85,6 +96,22 @@ static void PrintLocation(PLStream *pls, char *tag)
 #else
 #define DEBUG_PRINT_LOCATION(a)
 #endif
+
+void plD_dispatch_init_plm( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "PLplot Native Meta-File";
+    pdt->pl_DevName  = "plmeta";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 26;
+    pdt->pl_init     = (plD_init_fp)     plD_init_plm;
+    pdt->pl_line     = (plD_line_fp)     plD_line_plm;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_plm;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_plm;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_plm;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_plm;
+    pdt->pl_state    = (plD_state_fp)    plD_state_plm;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_plm;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_plm()

@@ -36,6 +36,22 @@
 #include <string.h>
 #include "plplot/drivers.h"
 
+void plD_dispatch_init_hp7470	( PLDispatchTable *pdt );
+void plD_dispatch_init_hp7580	( PLDispatchTable *pdt );
+void plD_dispatch_init_hpgl	( PLDispatchTable *pdt );
+
+void plD_init_hp7470		(PLStream *);
+void plD_init_hp7580		(PLStream *);
+void plD_init_lj_hpgl		(PLStream *);
+
+void plD_line_hpgl		(PLStream *, short, short, short, short);
+void plD_polyline_hpgl		(PLStream *, short *, short *, PLINT);
+void plD_eop_hpgl		(PLStream *);
+void plD_bop_hpgl		(PLStream *);
+void plD_tidy_hpgl		(PLStream *);
+void plD_state_hpgl		(PLStream *, PLINT);
+void plD_esc_hpgl		(PLStream *, PLINT, void *);
+
 /* top level declarations */
 
 /* Plotter sizes */
@@ -59,6 +75,49 @@
 #define MIN_WIDTH	1		/* Minimum pen width */
 #define MAX_WIDTH	10		/* Maximum pen width */
 #define DEF_WIDTH	1		/* Default pen width */
+
+static void hpgl_dispatch_init_helper( PLDispatchTable *pdt,
+                                       char *menustr, char *devnam,
+                                       int type, int seq, plD_init_fp init )
+{
+    pdt->pl_MenuStr  = menustr;
+    pdt->pl_DevName  = devnam;
+    pdt->pl_type     = type;
+    pdt->pl_seq      = seq;
+    pdt->pl_init     = init;
+    pdt->pl_line     = (plD_line_fp)     plD_line_hpgl;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_hpgl;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_hpgl;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_hpgl;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_hpgl;
+    pdt->pl_state    = (plD_state_fp)    plD_state_hpgl;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_hpgl;
+}
+
+void plD_dispatch_init_hp7470( PLDispatchTable *pdt )
+{
+    hpgl_dispatch_init_helper( pdt,
+                               "HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
+                               "hp7470",
+                               plDevType_FileOriented, 34,
+                               (plD_init_fp) plD_init_hp7470 );
+}
+
+void plD_dispatch_init_hp7580( PLDispatchTable *pdt )
+{
+    hpgl_dispatch_init_helper( pdt,
+                               "HP 7580 Plotter File (Large Plotter)", "hp7580",
+                               plDevType_FileOriented, 35,
+                               (plD_init_fp) plD_init_hp7580 );
+}
+
+void plD_dispatch_init_hpgl( PLDispatchTable *pdt )
+{
+    hpgl_dispatch_init_helper( pdt,
+                               "HP Laserjet III, HPGL emulation mode", "lj_hpgl",
+                               plDevType_FileOriented, 36,
+                               (plD_init_fp) plD_init_lj_hpgl );
+}
 
 /*--------------------------------------------------------------------------*\
  * initialize_hpgl_pls()
