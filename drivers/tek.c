@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/08/03 01:46:42  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
+   Revision 1.16  1993/09/14 22:25:15  mjl
+   Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
 
+ * Revision 1.15  1993/08/03  01:46:42  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.14  1993/07/31  07:56:44  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
@@ -34,8 +37,6 @@
 	tektronix 4107 terminal & file.
 */
 #if defined(XTERM) || defined(TEK4010) || defined(TEK4107)
-
-#define POSIX_TTY
 
 #include "plplotP.h"
 #include <stdio.h>

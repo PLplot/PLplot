@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/08/18 20:29:04  mjl
-   Added utility macro for updating stream variables from input values.
+   Revision 1.9  1993/09/14 22:25:19  mjl
+   Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
 
+ * Revision 1.8  1993/08/18  20:29:04  mjl
+ * Added utility macro for updating stream variables from input values.
+ *
  * Revision 1.7  1993/08/09  22:18:02  mjl
  * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
  * and plpage().  Inserted defines to translate from the latter in case
@@ -83,6 +86,8 @@
 *
 \*----------------------------------------------------------------------*/
 
+#define POSIX_TTY
+
 #ifdef __aix
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
@@ -108,12 +113,14 @@
 #endif
 
 #ifdef CRAY
-#ifdef CRAY1
-#undef _POSIX_SOURCE
-#endif
+#undef _POSIX_SOURCE		/* because of moronic broken X headers */
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
+#endif
+
+#ifdef SX
+#undef POSIX_TTY		/* Not POSIX I'm afraid */
 #endif
 
 #ifdef MSDOS
