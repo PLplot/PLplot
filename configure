@@ -464,9 +464,12 @@ Configure () {
 
     ln -s \
 	../src/*.c \
+	../src/tcl/*.c \
 	../src/stubc/*.c \
 	../examples/C/*.c \
-	../examples/tk/* \
+	../examples/tcl/*.tcl \
+	../examples/tk/*.c \
+	../examples/tk/tk* \
 	../utils/*.c \
 	../fonts/*.c \
 	../scripts/pl* \
