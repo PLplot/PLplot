@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/02/01 22:46:23  mjl
+ * Revision 1.29  1994/02/07 23:02:11  mjl
+ * Changed to using pl_PacketSend for data transfer, which now requires no
+ * communication between interpreters.  Communication parameters stored in
+ * the dev->iodev structure.
+ *
+ * Revision 1.28  1994/02/01  22:46:23  mjl
  * Added support for starting remsh with -l <user> flag.
  *
  * Revision 1.27  1994/01/25  06:21:34  mjl
@@ -117,9 +122,7 @@ typedef struct {
     int   pass_thru;		/* Skips normal error termination when set */
     char  *cmdbuf;		/* Command buffer */
     int   cmdbuf_len;		/* and its length */
-#if BUFFER_FIFO
-    FILE *fifo;
-#endif
+    PLiodev *iodev;		/* I/O device info */
 } TkDev;
 
 /* Function prototypes */
@@ -231,6 +234,11 @@ init(PLStream *pls)
 	plexit("plD_init_tk: Out of memory.");
 
     dev = (TkDev *) pls->dev;
+
+    dev->iodev = calloc(1, (size_t) sizeof(PLiodev));
+    if (dev->iodev == NULL)
+	plexit("plD_init_tk: Out of memory.");
+
     dev->exit_eventloop = 0;
 
 /* Start interpreter and spawn server process */
@@ -1131,9 +1139,8 @@ static void
 link_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    int fd;
+    PLiodev *iodev = (PLiodev *) dev->iodev;
     long bufmax = pls->bufmax * 1.2;
-    char *filename;
 
     dbug_enter("link_init");
 
@@ -1141,35 +1148,31 @@ link_init(PLStream *pls)
 
     if ( ! pls->dp) {
 
-	filename = (char *) tmpnam(NULL);
-	if (mkfifo(filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) 
+	iodev->filename = (char *) tmpnam(NULL);
+	if (mkfifo(iodev->filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) 
 	    abort_session(pls, "mkfifo error");
 
 /* Tell plframe widget to open FIFO (for reading). */
 
-	Tcl_SetVar(dev->interp, "fifoname", filename, 0);
+	Tcl_SetVar(dev->interp, "fifoname", iodev->filename, 0);
 	server_cmd( pls, "$plwidget openlink fifo $fifoname", 1 );
 
 /* Open the FIFO for writing */
 /* This will block until the server opens it for reading */
 
-	if ((fd = open(filename, O_WRONLY)) == -1) 
+	if ((iodev->fd = open(iodev->filename, O_WRONLY)) == -1) 
 	    abort_session(pls, "Error opening fifo for write");
 
-/* If we are buffering FIFO output, create data buffer */
 /* Create stream interface (C file handle) to FIFO */
 
-#if BUFFER_FIFO
-	pls->pdfs = pdf_bopen( NULL, bufmax );
-	dev->fifo = fdopen(fd, "wb");
-#else
-	pls->pdfs = pdf_finit( fdopen(fd, "wb") );
-#endif
+	iodev->type = 0;
+	iodev->typename = "fifo";
+	iodev->file = fdopen(iodev->fd, "wb");
 
 /* Unlink FIFO so that it isn't left around if program crashes. */
 /* This also ensures no other program can mess with it. */
 
-	if (unlink(filename) == -1) 
+	if (unlink(iodev->filename) == -1) 
 	    abort_session(pls, "Error removing fifo");
     }
 
@@ -1177,12 +1180,24 @@ link_init(PLStream *pls)
 
     else {
 
+	iodev->type = 1;
+	iodev->typename = "socket";
 	tcl_cmd(pls, "plclient_dp_init");
+	iodev->filehandle = Tcl_GetVar(dev->interp, "data_sock", 0);
+
+	if (Tcl_GetOpenFile(dev->interp, iodev->filehandle,
+			    0, 1, &iodev->file) != TCL_OK) {
+
+	    fprintf(stderr, "Cannot get file info:\n\t %s\n",
+		    dev->interp->result);
+	    abort_session(pls, "");
+	}
+	iodev->fd = fileno(iodev->file);
+    }
 
 /* Create data buffer */
 
-	pls->pdfs = pdf_bopen( NULL, bufmax );
-    }
+    pls->pdfs = pdf_bopen( NULL, bufmax );
 }
 
 /*----------------------------------------------------------------------*\
@@ -1201,14 +1216,10 @@ WaitForPage(PLStream *pls)
     if (pls->bytecnt > 0) 
 	flush_output(pls);
 
-    server_cmd( pls, "$plw_flash_proc $plwindow", 1 );
-
     while ( ! dev->exit_eventloop)
 	Tk_DoOneEvent(0);
 
     dev->exit_eventloop = 0;
-
-    server_cmd( pls, "$plw_flash_proc $plwindow", 1 );
 }
 
 /*----------------------------------------------------------------------*\
@@ -1260,9 +1271,6 @@ flush_output(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
     PDFstrm *pdfs = (PDFstrm *) pls->pdfs;
-    char tmp[20];
-
-    char *data_sock;
 
     dbug_enter("flush_output");
 
@@ -1271,42 +1279,16 @@ flush_output(PLStream *pls)
 	    __FILE__, pls->bytecnt);
 #endif
 
-    sprintf(tmp, "%d", pls->bytecnt);
-    Tcl_SetVar(dev->interp, "nbytes", tmp, 0);
-
     tcl_cmd(pls, "$update_proc");
 
-/* Send data via FIFO */
+/* Send packet -- filehandler will be invoked automatically. */
 
-    if ( ! pls->dp) {
-
-	server_cmd( pls, "$plwidget read $nbytes", 1 );
-
-#if BUFFER_FIFO
-	if (fwrite(pdfs->buffer, 1, pdfs->bp, dev->fifo) != pdfs->bp)
-	    abort_session(pls, "Cannot transfer data to fifo\n");
-	pdfs->bp = 0;
-	tk_wr( fflush(dev->fifo) );
-#else
-	tk_wr( fflush(pdfs->file) );
-#endif
-
+    if (pl_PacketSend(dev->interp, dev->iodev, pls->pdfs)) {
+	fprintf(stderr, "Packet send failed:\n\t %s\n",
+		dev->interp->result);
+	abort_session(pls, "");
     }
-    
-/* Send data via socket */
-
-    else {
-
-	data_sock = Tcl_GetVar(dev->interp, "data_sock", 0);
-	if (pl_PacketSend(dev->interp, data_sock, pls->pdfs)) {
-	    fprintf(stderr, "Packet send failed:\n\t %s\n",
-		    dev->interp->result);
-	    abort_session(pls, "");
-	}
-
-	pdfs->bp = 0;
-	server_cmd( pls, "$plwidget read $nbytes", 1 );
-    }
+    pdfs->bp = 0;
     pls->bytecnt = 0;
 }
 
