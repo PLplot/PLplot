@@ -482,7 +482,7 @@ void plD_FreeType_init(PLStream *pls)
     static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
 				       "symbol.ttf"};
 #else
-    const char *default_unix_font_path="/usr/share/fonts/truetype/";
+    const char *default_unix_font_path="/usr/share/fonts/truetype/msttcorefonts/";
     static char *default_font_names[]={"Arial.ttf","Times_New_Roman.ttf",
 				       "Times_New_Roman_Italic.ttf","Comic_Sans_MS.ttf",
 				       "Arial.ttf"};
