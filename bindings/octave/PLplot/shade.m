@@ -27,6 +27,9 @@ function shade(x, y, z, levels, cont )
 
   global __pl __pl_inited
 
+  old_empty_list_elements_ok = empty_list_elements_ok;
+  empty_list_elements_ok = 1;
+
   if (!exist("__pl_inited") || plglevel == 0)
     figure(0)
   endif
@@ -103,6 +106,7 @@ function shade(x, y, z, levels, cont )
     __pl_plenv(xm, xM, ym, yM, 0, -2);
   else
     if (columns(__pl.axis(__pl_strm,:)) != 6)
+      empty_list_elements_ok = old_empty_list_elements_ok;
       error("You must contour/shade plot something before entering hold mode");
     endif
     xmm = xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);
@@ -160,5 +164,6 @@ function shade(x, y, z, levels, cont )
   plcol(15);
   pllab(tdeblank(__pl.xlabel(__pl_strm,:)), tdeblank(__pl.ylabel(__pl_strm,:)), tdeblank(__pl.tlabel(__pl_strm,:)));
   plflush;pleop;	
-
+  empty_list_elements_ok = old_empty_list_elements_ok;
+      
 endfunction
