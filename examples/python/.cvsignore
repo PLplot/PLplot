@@ -7,3 +7,4 @@ Makefile.in
 .libs
 *.la
 *.lo
+.check

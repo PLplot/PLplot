@@ -401,7 +401,7 @@ PlbasicInit( Tcl_Interp *interp )
 /* if we are in the build tree, search there */
     if (plInBuildTree()) {
 	if (debug) fprintf(stderr, "trying BUILD_DIR\n");
-	libDir = BUILD_DIR "/bindings/tk";
+	libDir = BUILD_DIR "/bindings/tcl";
 	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
 	if (Tcl_Eval(interp, initScript) != TCL_OK) {
 	    libDir = NULL;

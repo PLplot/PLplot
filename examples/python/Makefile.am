@@ -83,6 +83,19 @@ nodist_examples_python_DATA = plplot_python_start.py
 
 CLEANFILES = *.pyc
 
+check_DATA = \
+        .check
+
+.check: $(dist_examples_python_SCRIPTS) $(dist_examples_python_DATA)
+	( if [ ! -f x01 ] ; then \
+	    cd $(top_srcdir)/examples/python ; \
+	    for file in $(dist_examples_python_SCRIPTS) $(dist_examples_python_DATA) ; do \
+	      rm -f $(BUILD_DIR)/examples/python/$$file; $(LN_S) $(top_srcdir)/examples/python/$$file $(BUILD_DIR)/examples/python/$$file ; \
+	    done ; \
+	  fi )
+	touch .check
+
+
 endif
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may

@@ -31,6 +31,7 @@ else
   mkindex = ../../scripts/mktclIndex -tcl
 endif
 
+
 dist_examples_tcl_DATA = \
 	README.tcldemos \
 	plgrid.tcl \
@@ -89,5 +90,17 @@ $(top_srcdir)/examples/tcl/tclIndex:
 	$(mkindex)
 
 CLEANFILES = $(top_srcdir)/examples/tcl/tclIndex
+
+check_DATA = \
+	.check
+
+.check: $(dist_examples_tcl_SCRIPTS) $(dist_examples_tcl_DATA)
+	( if [ ! -f x01 ] ; then \
+	 cd $(top_srcdir)/examples/tcl ; \
+	 for file in $(dist_examples_tcl_SCRIPTS) $(dist_examples_tcl_DATA) ; do \
+	   rm -f $(BUILD_DIR)/examples/tcl/$$file; $(LN_S) $(top_srcdir)/examples/tcl/$$file $(BUILD_DIR)/examples/tcl/$$file ; \
+	 done ; \
+	 fi )
+	touch .check 
 
 endif
