@@ -1299,6 +1299,13 @@ c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 void
 c_plstripd(PLINT id);
 
+  /* plots a 2d image (or a matrix too large for plshade() ) */
+
+void
+plimage( PLFLT **data, PLINT nx, PLINT ny, 
+	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
+
 /* Set up a new line style */
 
 void

@@ -777,11 +777,6 @@ RestoreWrite2BufferPixmap();
 void
 grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny);
 
-void
-plimage( PLFLT **data, PLINT nx, PLINT ny, 
-	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
-
 #ifdef __cplusplus
 }
 #endif
