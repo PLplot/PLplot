@@ -8,35 +8,6 @@
 #
 # $Id$
 #
-# $Log$
-# Revision 1.1  2002/07/02 09:03:44  vincentdarley
-# x-platform tk code
-#
-# Revision 1.1.2.1  2000/07/27 16:11:05  airwin
-# AWI: apply initial pltcl.patch for TEA-based approach
-#
-# Revision 1.7  1994/10/10  19:44:45  furnish
-# Stub method for plshade.
-#
-# Revision 1.6  1994/10/10  17:22:32  furnish
-# New method, but need many more.
-#
-# Revision 1.5  1994/06/16  18:33:51  mjl
-# Modified argument lists for plline and plpoin methods to use matrix names.
-#
-# Revision 1.4  1994/06/10  20:46:58  furnish
-# Mirror plpoin.  More of the API still needs doing.
-#
-# Revision 1.3  1994/06/09  20:07:13  mjl
-# Cleaned up and switched to plplot direct commands embedded in plframe
-# widget (through "<widget> cmd <command> <args>" syntax).
-#
-# Revision 1.2  1994/05/11  08:07:30  furnish
-# Debugging.  Needs to do own toprow for some reason.
-#
-# Revision 1.1  1994/05/09  17:59:19  furnish
-# The new [incr Tcl] interface to the PLplot Tcl extensions.
-#
 ###############################################################################
 
 option add *Plwindow.width 250 widgetDefault
