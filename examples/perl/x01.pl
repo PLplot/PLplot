@@ -26,16 +26,167 @@
 use PDL;
 use PDL::Graphics::PLplot;
 use Math::Trig qw [pi];
+use Time::HiRes qw [usleep];
+use POSIX qw [isprint];
+use Getopt::Long qw [:config pass_through];
+use Text::Wrap;
+
+$Text::Wrap::columns = 72;
 
 $xscale = 6.;
 $yscale = 1.;
 $xoff = 0.;
 $yoff = 0.;
 
+my $test_xor = 0;
+
+#--------------------------------------------------------------------------
+# main
+#
+# Generates several simple line plots.  Demonstrates:
+#   - subwindow capability
+#   - setting up the window, drawing plot, and labelling
+#   - changing the color
+#   - automatic axis rescaling to exponential notation
+#   - placing the axes in the middle of the box
+#   - gridded coordinate axes
+#--------------------------------------------------------------------------
+
+sub main {
+
+  # Options data structure definition. */
+
+  my $locate_mode = 0;
+  my $fontset = "";
+
+  GetOptions ("locate" => \$locate_mode,
+              "xor"    => \$test_xor,
+              "font=i" => \$fontset,
+              "save=s" => \$f_name,
+              "help"   => \$help);
+
+  my @notes = ("Make sure you get it right!");
+
+  if ($help) {
+    print (<<EOT);
+$0 options:
+    --locate              Turns on test of API locate function
+    --xor                 Turns on test of XOR
+    --font number         Selects stroke font set (0 or 1, def:1)
+    --save filename       Save plot in color postscript 'filename'
+
+EOT
+    print (wrap ('', '', @notes), "\n");
+    push (@ARGV, "-h");
+  }
+
+  unshift (@ARGV, $0);
+
+  # plplot initialization
+  # Divide page into 2x2 plots unless user overrides
+
+  plssub (2, 2);
+
+  # Parse and process command line arguments
+
+  plParseOpts (\@ARGV, PL_PARSE_PARTIAL);
+
+  # Get version number, just for kicks */
+
+  my $ver = plgver ();
+  print STDERR "PLplot library version: $ver\n";
+
+  # Initialize plplot
+
+  plinit;
+
+  # Select font set as per input flag
+
+  plfontld ($fontset ? 1 : 0);
+
+  # Set up the data
+  # Original case
+
+  $xscale = 6.;
+  $yscale = 1.;
+  $xoff = 0.;
+  $yoff = 0.;
+
+  # Do a plot
+
+  plot1 (0);
+
+  # Set up the data
+
+  $xscale = 1.;
+  $yscale = 0.0014;
+  $yoff = 0.0185;
+
+  $digmax = 5;
+  plsyax ($digmax, 0);
+
+  plot1 (1);
+
+  plot2 ();
+
+  plot3 ();
+
+  #
+  # Show how to save a plot:
+  # Open a new device, make it current, copy parameters,
+  # and replay the plot buffer
+  #
+
+  if ($f_name) { # command line option '--save filename'
+
+    print (<<"EOT");
+The current plot was saved in color Postscript under the name `$f_name'
+EOT
+
+    my $cur_strm = plgstrm ();    # get current stream
+    my $new_strm = plmkstrm ();   # create a new one
+
+    plsfnam ($f_name);            # file name
+    plsdev ("psc");               # device type
+
+    plcpstrm ($cur_strm, 0);      # copy old stream parameters to new stream
+    plreplot ();                  # do the save by replaying the plot buffer
+    plend1 ();                    # finish the device
+
+    plsstrm ($cur_strm);          # return to previous stream
+  }
+
+  # Let's get some user input
+
+  if ($locate_mode) {
+    while (1) {
+      my %gin = plGetCursor ();
+      my $k = $gin{keysym};
+      last if not %gin or $k == PLK_Escape;
+
+      pltext ();
+
+      printf ("subwin = $gin{subwindow}, wx = %f,  wy = %f, dx = %f,  "
+              . "dy = %f,  c = "
+              . ($k < 0xFF and isprint (chr $k) ? "'%c'" : "0x%02x")
+              . "\n", $gin{wX}, $gin{wY}, $gin{dX}, $gin{dY}, $k);
+
+      plgra ();
+    }
+  }
+
+  # Don't forget to call plend() to finish off!
+
+  plend;
+
+}
+
 sub plot1 {
 
-  my $x = pdl ($xoff + $xscale * pdl ([1..60]) / 60.0);
-  my $y = pdl ($yoff + $yscale * ($x ** 2.));
+  my $do_test = shift;
+
+  my $x = $xoff + $xscale * sequence (60) / 60.0;
+  my $y = $yoff + $yscale * ($x ** 2);
 
   $xmin = $x->index (0);
   $xmax = $x->index (59);
@@ -66,6 +217,23 @@ sub plot1 {
   plcol0 (3);
   plline ($x, $y);
 
+# xor mode enable erasing a line/point/text by replotting it again
+# it does not work in double buffering mode, however
+
+  if ($do_test and $test_xor) {
+    my $st = plxormod (1);     # enter xor mode
+    if ($st) {
+      for (my $i = 0; $i < 60; $i++) {
+        my $xi = $x->index ($i);
+        my $yi = $y->index ($i);
+        plpoin ($xi, $yi, 9);  # draw a point
+        usleep (50000);	       # wait a little
+        plflush ();            # force an update of the tk driver
+        plpoin ($xi, $yi, 9);  # erase point
+      }
+      plxormod (0);            # leave xor mode
+    }
+  }
 }
 
 sub plot2 {
@@ -115,7 +283,7 @@ sub plot3 {
 
     # Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 
-    plstyl (pdl ([$mark1]), pdl ([$space1]));
+    plstyl ($mark1, $space1);
     plcol0 (2);
     plbox (30.0, 0, 0.2, 0, "g", "g");
     plstyl (pdl([]), pdl ([]));
@@ -130,44 +298,4 @@ sub plot3 {
     plline ($x, $y);
 }
 
-# plplot initialization
-# Divide page into 2x2 plots unless user overrides
-
-plssub (2, 2);
-
-# Parse and process command line arguments
-
-plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
-
-# Initialize plplot
-
-plinit;
-
-# Set up the data
-# Original case
-
-$xscale = 6.;
-$yscale = 1.;
-$xoff = 0.;
-$yoff = 0.;
-
-# Set up the data
-
-$xscale = 1.;
-$yscale = 0.0014;
-$yoff = 0.0185;
-
-# Do a plot
-
-plot1;
-
-$digmax = 5;
-plsyax ($digmax, 0);
-
-plot1;
-
-plot2;
-
-plot3;
-
-plend;
+main ();
