@@ -571,7 +571,7 @@ void plstream::famadv()
 
 void plstream::fill( PLINT n, PLFLT *x, PLFLT *y )
 {
-    set_stream();
+  //set_stream();
 
     plfill(n, x, y);
 }
@@ -1691,8 +1691,6 @@ void plstream::sexit( int (*handler) (char *) )
 void plstream::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 		    PLPointer pltr_data )
 {
-    set_stream();
-
     pltr0(x,y,tx,ty,pltr_data);
 }
 
@@ -1701,8 +1699,6 @@ void plstream::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 void plstream::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 		    PLPointer pltr_data )
 {
-    set_stream();
-
     pltr1(x,y,tx,ty,pltr_data);
 }
 
@@ -1712,8 +1708,6 @@ void plstream::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 void plstream::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 		    PLPointer pltr_data )
 {
-    set_stream();
-
     pltr2(x,y,tx,ty,pltr_data);
 }
 
@@ -1723,8 +1717,6 @@ void plstream::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 void plstream::tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 		     PLPointer pltr_data )
 {
-    set_stream();
-
     pltr2p(x,y,tx,ty,pltr_data);
 }
 

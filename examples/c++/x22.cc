@@ -90,7 +90,7 @@ x22::circulation() {
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
     pls->lab("(x)", "(y)", "#frPLplot Example 22 - circulation");
     pls->col0(2);
-    pls->vect(u,v,nx,ny,0.0,pltr2,(void *)&cgrid2);
+    pls->vect(u,v,nx,ny,0.0,plstream::tr2,(void *)&cgrid2);
     pls->col0(1);
 
 }
@@ -135,7 +135,7 @@ x22::constriction() {
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
     pls->lab("(x)", "(y)", "#frPLplot Example 22 - constriction");
     pls->col0(2);
-    pls->vect(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
+    pls->vect(u,v,nx,ny,-0.5,plstream::tr2,(void *)&cgrid2);
     pls->col0(1);
 
 }
@@ -214,13 +214,13 @@ x22::potential() {
     }
     pls->col0(3);
     pls->lsty(2);
-    pls->cont(z,nr,ntheta,1,nr,1,ntheta,clevel,nlevel,pltr2,(void *) &cgrid2);
+    pls->cont(z,nr,ntheta,1,nr,1,ntheta,clevel,nlevel,plstream::tr2,(void *) &cgrid2);
     pls->lsty(1);
     pls->col0(1);
     
     // Plot the vectors of the gradient of the potential
     pls->col0(2);
-    pls->vect(u,v,nr,ntheta,25.0,pltr2,(void *)&cgrid2);
+    pls->vect(u,v,nr,ntheta,25.0,plstream::tr2,(void *)&cgrid2);
     pls->col0(1);
 
     // Plot the perimeter of the cylinder

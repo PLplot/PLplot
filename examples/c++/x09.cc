@@ -196,11 +196,11 @@ x09::x09( int argc, char **argv ) {
   pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
   pls->col0(2);
   pls->cont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	    pltr1, (void *) &cgrid1 );
+	    plstream::tr1, (void *) &cgrid1 );
   pls->styl(1, &mark, &space);
   pls->col0(3);
   pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	    pltr1, (void *) &cgrid1 );
+	    plstream::tr1, (void *) &cgrid1 );
   pls->styl(0, NULL, NULL);
   pls->col0(1);
   pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -223,11 +223,11 @@ x09::x09( int argc, char **argv ) {
   pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
   pls->col0(2);
   pls->cont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	    pltr2, (void *) &cgrid2 );
+	    plstream::tr2, (void *) &cgrid2 );
   pls->styl(1, &mark, &space);
   pls->col0(3);
   pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	    pltr2, (void *) &cgrid2 );
+	    plstream::tr2, (void *) &cgrid2 );
   pls->styl(0, &mark, &space);
   pls->col0(1);
   pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -314,7 +314,7 @@ void x09::polar()
 
   pls->col0(2);
   pls->cont( z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
-	     pltr2, (void *) &cgrid2);
+	     plstream::tr2, (void *) &cgrid2);
   pls->col0(1);
   pls->lab("", "", "Polar Contour Plot");
 
@@ -445,14 +445,14 @@ const void x09::potential()
     // Negative contours
     pls->lsty(2);
     pls->cont( z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
-	       clevelneg, nlevelneg, pltr2, (void *) &cgrid2 );
+	       clevelneg, nlevelneg, plstream::tr2, (void *) &cgrid2 );
   }
 
   if(nlevelpos >0) {
     // Positive contours
     pls->lsty(1);
     pls->cont( z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
-	       clevelpos, nlevelpos, pltr2, (void *) &cgrid2 );
+	       clevelpos, nlevelpos, plstream::tr2, (void *) &cgrid2 );
   }
 
   // Draw outer boundary
