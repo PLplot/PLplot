@@ -1,6 +1,5 @@
 /*
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## Copyright (C) 2004 Andrew Ross.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -40,7 +39,7 @@ main()
   FILE	*fp, *fp1;
   struct stat buf;
 	
-  if ((fp = fopen("@OCTAVE_SRCDIR@/plplot_octave_txt/plplot.doc","r")) == NULL) {
+  if ((fp = fopen("plplot_octave_txt/plplot.doc","r")) == NULL) {
     perror("plplot.doc not found:");
     exit(1);
   }
@@ -71,7 +70,7 @@ main()
       fgets(b, sizeof(b), fp);
       printf("%s%%\n", b);	/* % function ... = ...(*/
 				
-      sprintf(b,"@OCTAVE_SRCDIR@/plplot_octave_txt/%s.txt", tok);
+      sprintf(b,"plplot_octave_txt/%s.txt", tok);
       if (stat(b, &buf) && errno == ENOENT) {
 	fprintf(stderr,"%s not found, trying plplot.doc... ", b);
 	strcat(tok, "\t");

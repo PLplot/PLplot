@@ -122,9 +122,6 @@ AC_SUBST(OCTAVE)
     fi
 fi
 
-# Set octave src dir for massage.c
-OCTAVE_SRCDIR="`pwd`/$srcdir/bindings/octave"
-
 AC_SUBST(MATWRAP)
 AC_SUBST(MKOCTFILE)
 AC_SUBST(OCTAVE_VERSION)
@@ -132,7 +129,6 @@ AC_SUBST(OCTAVE_OCT_DIR)
 AC_SUBST(OCTAVE_M_DIR)
 AC_SUBST(PLPLOT_OCTAVE_DIR)
 AC_SUBST(enable_octave)
-AC_SUBST(OCTAVE_SRCDIR)
 
 AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
 
@@ -144,7 +140,6 @@ AC_CONFIG_FILES([
     bindings/octave/PLplot/support/Makefile
     bindings/octave/demos/Makefile
     bindings/octave/misc/Makefile
-    bindings/octave/massage.c
 ])
 
 dnl The following is for use in bindings/octave/plplot_octave.h.in (RL)

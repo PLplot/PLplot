@@ -50,7 +50,7 @@ doc-stamp plplot_octave_txt: etc/plplot.doc \
 	   $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
 	   $(top_srcdir)/doc/docbook/src/api.xml
 	mkdir -p plplot_octave_txt
-	cp etc/plplot.doc plplot_octave_txt/plplot.doc
+	cp $(srcdir)/etc/plplot.doc plplot_octave_txt/plplot.doc
 if has_xml_pm
 	( cd plplot_octave_txt ; \
 	  $(PERL) ../$(top_srcdir)/doc/docbook/bin/api2text.pl \
@@ -113,7 +113,7 @@ octavesharedir = $(OCTAVE_OCT_DIR)
 octaveshare_SCRIPTS = plplot_octave.oct
 
 noinst_PROGRAMS = massage
-nodist_massage_SOURCES = massage.c
+massage_SOURCES = massage.c
 
 plplot_stub.m: doc-stamp tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
