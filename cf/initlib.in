@@ -68,6 +68,7 @@ LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 # These are what we link against.
 
 PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+PLLIB_LDCXX	= -L$(PLLIB_DIR) $(CXX_LINK) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 
 # Header file dependencies for demos.
