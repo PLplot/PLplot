@@ -38,7 +38,7 @@ def main():
     plinit()
 
     plenv(0., 10., 0., 10., 1, -2)
-    plcol(2)
+    plcol0(2)
 
     per = [10, 32, 12, 30, 16]
     theta0 = 0.
@@ -57,10 +57,10 @@ def main():
 	    y.append(5 + 3 * math.sin(theta))
 	    theta = theta + dthet
 
-	plcol(i + 1)
+	plcol0(i + 1)
 	plpsty((i + 3) % 8 + 1)
 	plfill(x, y)
-	plcol(1)
+	plcol0(1)
 	plline(x, y)
 	just = (theta0 + theta1) / 2.
 	dx = .25 * math.cos(just)

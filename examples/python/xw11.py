@@ -64,7 +64,7 @@ def main():
 
     for k in range(4):
 	pladv(0)
-	plcol(1)
+	plcol0(1)
 	plvpor(0.0, 1.0, 0.0, 0.8)
 	plwind(-1.0, 1.0, -1.0, 1.5)
 
@@ -74,9 +74,9 @@ def main():
 		"bnstu", "y axis", 0.0, 0,
 		"bcdmnstuv", "z axis", 0.0, 4)
 
-	plcol(2)
+	plcol0(2)
 	plmesh(x, y, z, opt[k])
-	plcol(3)
+	plcol0(3)
 	plmtex("t", 1.0, 0.5, 0.5, title[k])
 
 	pleop()

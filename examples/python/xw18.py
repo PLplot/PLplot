@@ -61,21 +61,21 @@ def main():
 		pladv(0)
 		plvpor(0.0, 1.0, 0.0, 0.9)
 		plwind(-1.0, 1.0, -0.9, 1.1)
-		plcol(1)
+		plcol0(1)
 		plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
 		       alt[k], az[k])
 		plbox3("bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0)
 
-		plcol(2)
+		plcol0(2)
 
 		if opt[k]:
 			plline3(x, y, z)
 		else:
 			plpoin3(x, y, z, 1)
 
-		plcol(3)
+		plcol0(3)
 		title = "#frPLplot Example 18 - Alt=%.0f, Az=%.0f" % (alt[k],
 								      az[k])
 		plmtex("t", 1.0, 0.5, 0.5, title)
@@ -92,13 +92,13 @@ def test_poly(k):
 	pladv(0)
 	plvpor(0.0, 1.0, 0.0, 0.9)
 	plwind(-1.0, 1.0, -0.9, 1.1)
-	plcol(1)
+	plcol0(1)
 	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k])
 	plbox3("bnstu", "x axis", 0.0, 0,
 		"bnstu", "y axis", 0.0, 0,
 		"bcdmnstuv", "z axis", 0.0, 0)
 
-	plcol(2)
+	plcol0(2)
 
 	def THETA(a):
 		return 2. * math.pi * (a) / 20.
@@ -146,7 +146,7 @@ def test_poly(k):
 
 			plpoly3(x, y, z, draw[k])
 
-	plcol(3)
+	plcol0(3)
 	plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" )
 
 main()

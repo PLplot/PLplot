@@ -34,7 +34,7 @@ def main():
     # Initialize plplot
 
     plinit()
-    plcol(1)
+    plcol0(1)
 
     # Set up viewport and window, but do not draw box
 
@@ -52,7 +52,7 @@ def main():
 
     plline(x, y)
 
-    plcol(2)
+    plcol0(2)
     for i in range(12):
 	theta = 30.0 * i
 	dx = math.cos(dtr * theta)
@@ -78,10 +78,10 @@ def main():
 	x[i] = x0[i] * r
 	y[i] = y0[i] * r
 
-    plcol(3)
+    plcol0(3)
     plline(x, y)
 
-    plcol(4)
+    plcol0(4)
     plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
 
     # Close the plot at end

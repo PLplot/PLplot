@@ -45,7 +45,7 @@ def main():
 	    w[i,j] = 2. * xx * yy
 
     plenv( 0., 1.*(xpts-1), 0., 1.*(ypts-1), 0, 0 )
-    plcol(2)
+    plcol0(2)
 #    plcont2( z, 1, xpts, 1, ypts, clevel )
 # Note this works, but the x and y range is just the index range.
 # I am sure that by using a longer argument list and a transformation
@@ -75,14 +75,14 @@ def main():
 
 
     plstyl( 1, mark, space )
-    plcol(3)
+    plcol0(3)
    # plcont2( w, 1, xpts, 1, ypts, clevel )
     plcont( w, clevel )
     plstyl( 0, mark, space )
 
     # other stuff
 
-    plcol(1)
+    plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pleop()

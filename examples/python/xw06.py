@@ -34,7 +34,7 @@ def main():
 
     # Set up viewport and window
 
-    plcol(2)
+    plcol0(2)
     plvpor(0.1, 1.0, 0.1, 0.9)
     plwind(0.0, 1.0, 0.0, 1.3)
 
@@ -44,7 +44,7 @@ def main():
 
     # Write the digits below the frame
 
-    plcol(15)
+    plcol0(15)
     for i in range(10):
 	plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, `i`)
 

@@ -99,9 +99,9 @@ def main():
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width, 1 )
 
-    plcol(1)
+    plcol0(1)
     plbox( "bcnst", 0., 0, "bcnstv", 0., 0 )
-    plcol(2)
+    plcol0(2)
 
     #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
 
@@ -126,9 +126,9 @@ def main():
 		   min_color, min_width, max_color, max_width,
 		   1, 'pltr1', xg1, yg1 )
 
-    plcol(1)
+    plcol0(1)
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
-    plcol(2)
+    plcol0(2)
 	       
     #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
 
@@ -153,9 +153,9 @@ def main():
 		   min_color, min_width, max_color, max_width,
 		   0, 'pltr2', xg2, yg2 )
 
-    plcol(1)
+    plcol0(1)
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
-    plcol(2)
+    plcol0(2)
 
 #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
@@ -216,12 +216,12 @@ def main():
 
     # Now we can draw the perimeter.
 
-    plcol(1)
+    plcol0(1)
     plline( px, py )
 
     # And label the plot.
 
-    plcol(2)
+    plcol0(2)
     pllab( "", "",  "Tokamak Bogon Instability" )
     plend()
 
