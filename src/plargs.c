@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1995/01/06 20:54:53  mjl
+ * Revision 1.24  1995/01/09 21:53:51  mjl
+ * Changed -bg option to set pls->nobg if a negative number was specified.
+ * Handling of the geometry string improved; now handles strings of the form:
+ *     1) -geometry WxH+Xoff+Yoff
+ *     2) -geometry WxH
+ *     3) -geometry +Xoff+Yoff or -geometry Xoff+Yoff
+ *     4) -geometry 0x0+Xoff+Yoff
+ * (previously only types 1&2 were handled).  Contributed by Mark Olesen.
+ *
+ * Revision 1.23  1995/01/06  20:54:53  mjl
  * Added -freeaspect command line flag, also fixed a bogosity introduced
  * last update.
  *
@@ -1267,10 +1276,19 @@ opt_bg(char *opt, char *optarg, void *client_data)
     else
 	rgb = optarg;
 
-/* Must be either a 3 or 6 digit hex number */
-/* If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC). */
+/* Get number in hex */
 
     bgcolor = strtol(rgb, NULL, 16);
+
+/* If (-1), eliminate background color handling */
+
+    if (bgcolor == -1) {
+	plsc->nobg = 1;
+	return 0;
+    }
+
+/* Must be either a 3 or 6 digit hex number */
+/* If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC). */
 
     switch (strlen(rgb)) {
     case 3:
@@ -1618,7 +1636,10 @@ opt_py(char *opt, char *optarg, void *client_data)
  * opt_geo()
  *
  * Performs appropriate action for option "geo":
- * Set geometry for output window (e.g. "400x400+100+0")
+ * Set geometry for output window
+ *   e.g.,  "-geometry 400x400+100+0"
+ * or with offsets alone "-geometry +Xoff+Yoff"
+ *   e.g., "-geometry +100+0"
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1626,38 +1647,45 @@ opt_geo(char *opt, char *optarg, void *client_data)
 {
     char *field;
     PLFLT xdpi = 0., ydpi = 0.;
-    PLINT xwid, ywid, xoff = 0, yoff = 0;
-
-/* The TK driver uses the geometry string directly */
+    PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
+    
+    /* The TK driver uses the geometry string directly */    
 
     plsc->geometry = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
-    strcpy(plsc->geometry, optarg);
+    strcpy (plsc->geometry, optarg);
 
-    if ((field = strtok(optarg, "x")) == NULL)
-	return 1;
+    if (strchr (optarg, 'x')) {
 
-    xwid = atoi(field);
-    if (xwid == 0) {
-	fprintf(stderr, "?invalid xwid\n");
-	return 1;
+    /* -geometry WxH or -geometry WxH+Xoff+Yoff */
+
+	field = strtok (optarg, "x");
+	xwid = atoi (field);
+	if (xwid == 0)
+	    fprintf (stderr, "?invalid xwid\n");
+
+	if ((field = strtok (NULL, "+")) == NULL)
+	    return 1;
+
+	ywid = atoi (field);
+	if (ywid == 0)
+	    fprintf (stderr, "?invalid ywid\n");
+
+	field = strtok (NULL, "+");
+    }
+    else {
+
+    /* -geometry +Xoff or -geometry +Xoff+Yoff only */
+
+	field = strtok (optarg, "+");
     }
 
-    if ((field = strtok(NULL, "+")) == NULL)
-	return 1;
-
-    ywid = atoi(field);
-    if (ywid == 0) {
-	fprintf(stderr, "?invalid ywid\n");
-	return 1;
+    if (field != NULL) {
+	xoff = atoi (field);
+	if ((field = strtok (NULL, "+")) != NULL)
+	    yoff = atoi (field);
     }
 
-    if ((field = strtok(NULL, "+")) != NULL) {
-	xoff = atoi(field);
-
-	if ((field = strtok(NULL, "+")) != NULL)
-	    yoff = atoi(field);
-    }
-
-    plspage(xdpi, ydpi, xwid, ywid, xoff, yoff);
+    plspage (xdpi, ydpi, xwid, ywid, xoff, yoff);
     return 0;
 }
+
