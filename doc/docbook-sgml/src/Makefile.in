@@ -5,6 +5,9 @@
 # Last modified on: Mon Oct 30 11:55:29 CET 2000
 # $Id$
 
+#temporary kludge to be replaced by a real version number system
+VERSION=0.0.1
+
 #This is the directory where the results are installed  Be careful with
 #the choice here.  This directory is completely destroyed by the uninstall
 #target
@@ -44,70 +47,7 @@ SGML_CATALOGS=@SGML_CATALOGS@
 BASE = plplotdoc
 MAIN_HTML = book1.html
 
-all: html ps
-
-#inline.manifest is a list of all the in-line jpeg images made by inline-greek.pl
-#These same jpeg images are referred to by inline-html.ent (see below)
-inline.manifest: inline-greek.pl
-	$(PERL) inline-greek.pl
-
-over-under.eps: over-under.tex tex2eps.pl
-	$(PERL) tex2eps.pl -s `cat over-under.tex` -x 1000 -o over-under.eps
-
-over-under-big.eps: over-under.tex tex2eps.pl
-	$(PERL) tex2eps.pl -s `cat over-under.tex` -x 5000 \
-          -o over-under-big.eps
-
-over-under.jpeg: over-under-big.eps eps2jpeg.pl
-	$(PERL) eps2jpeg.pl -g 35% -i over-under-big.eps -o over-under.jpeg
-
-
-
-#This dependency is incomplete.  $(MAIN_HTML) should be replaced by a
-#complete list of all html files produced by this stanza of commands, but I
-#have decided to wait until we specify meaningful file names (api.html, etc.)
-#to replace the current numerical file names.
-
-html: $(MAIN_HTML)
-$(MAIN_HTML): $(SGML_SOURCES) $(STYLESHEET_HTML) inline-html.ent \
-            over-under.jpeg inline.manifest
-	ln -fs inline-html.ent inline.ent
-	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml $(BASE).sgml
-
-ps: $(BASE).ps.gz
-
-$(BASE).ps.gz: $(BASE).dvi over-under.eps
-	dvips -f $(BASE).dvi | gzip -c > $(BASE).ps.gz
-
-$(BASE).dvi: $(BASE).tex over-under.eps
-	$(JADETEX) $(BASE).tex
-	$(JADETEX) $(BASE).tex
-
-$(BASE).tex: $(SGML_SOURCES) $(STYLESHEET_PRINT) inline-print.ent
-	ln -fs inline-print.ent inline.ent
-	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex $(BASE).sgml
-
-#temporary kludge to be replaced by a real version number system
-VERSION=0.0.1
-
-#The hard links below are so that browser retrievals get the full archive
-#and not just the symbolic link to it. (This behaviour seems strange to AWI
-#but it happened for at least the konqueror browser.)
-
-install: install-stamp
-install-stamp: src_tar html_tar $(BASE).dvi $(BASE).ps.gz
-	mkdir -p $(HTML_DESTDIR)
-	rm -rf $(HTML_DESTDIR)/*
-	cp -p $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
-	ln $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
-	cp -p $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
-	ln $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
-	cp -p $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
-	cp -p $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
-	touch install-stamp
-
-uninstall: 
-	rm -rf $(HTML_DESTDIR)
+all: src_tar html_tar ps
 
 src_tar: $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
 $(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
@@ -134,10 +74,67 @@ $(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
 	tar cfz $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
             $(PLPLOTDOC_HTML)-$(VERSION)
 
+#inline.manifest is a list of all the in-line jpeg images made by inline-greek.pl
+#These same jpeg images are referred to by inline-html.ent (see below)
+inline.manifest: inline-greek.pl
+	$(PERL) inline-greek.pl
+
+over-under.eps: over-under.tex tex2eps.pl
+	$(PERL) tex2eps.pl -s `cat over-under.tex` -x 1000 -o over-under.eps
+
+over-under-big.eps: over-under.tex tex2eps.pl
+	$(PERL) tex2eps.pl -s `cat over-under.tex` -x 5000 \
+          -o over-under-big.eps
+
+over-under.jpeg: over-under-big.eps eps2jpeg.pl
+	$(PERL) eps2jpeg.pl -g 35% -i over-under-big.eps -o over-under.jpeg
+
+#This dependency is incomplete.  $(MAIN_HTML) should be replaced by a
+#complete list of all html files produced by this stanza of commands, but I
+#have decided to wait until we specify meaningful file names (api.html, etc.)
+#to replace the current numerical file names.
+
+html: $(MAIN_HTML)
+$(MAIN_HTML): $(SGML_SOURCES) $(STYLESHEET_HTML) inline-html.ent \
+            over-under.jpeg inline.manifest
+	ln -fs inline-html.ent inline.ent
+	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml $(BASE).sgml
+
+ps: $(BASE).ps.gz
+$(BASE).ps.gz: $(BASE).dvi over-under.eps
+	dvips -f $(BASE).dvi | gzip -c > $(BASE).ps.gz
+
+$(BASE).dvi: $(BASE).tex over-under.eps
+	$(JADETEX) $(BASE).tex
+	$(JADETEX) $(BASE).tex
+
+$(BASE).tex: $(SGML_SOURCES) $(STYLESHEET_PRINT) inline-print.ent
+	ln -fs inline-print.ent inline.ent
+	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex $(BASE).sgml
+
+#The hard links below are so that browser retrievals get the full archive
+#and not just the symbolic link to it. (This behaviour seems strange to AWI
+#but it happened for at least the konqueror browser.)
+
+install: install-stamp
+install-stamp: all
+	mkdir -p $(HTML_DESTDIR)
+	rm -rf $(HTML_DESTDIR)/*
+	cp -p $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	ln $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
+	cp -p $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	ln $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
+	cp -p $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
+	cp -p $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
+	touch install-stamp
+
+uninstall: 
+	rm -rf $(HTML_DESTDIR) install-stamp
+
 clean:
 	rm -f *.html $(BASE).{tex,dvi,aux,log,ps.gz} \
 	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp \
-	      conftest.* config.* *~ @JADELOG@ \
+	      conftest.* config.* *~ \
 	      $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
 	      $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
 	      
@@ -145,6 +142,6 @@ clean:
 	rm -rf $(PLPLOTDOC_SRC)-$(VERSION)
 
 distclean: clean
-	rm -f Makefile eps2jpeg.pl inline-greek.pl  tex2eps.pl
+	rm -f Makefile eps2jpeg.pl inline-greek.pl  tex2eps.pl @JADELOG@
 
 .PHONY: all html ps src_tar html_tar install uninstall clean distclean
