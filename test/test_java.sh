@@ -5,8 +5,8 @@
 # N.B. $CLASSPATH must be defined properly and the path must point
 # to the java and javac commands for this to work.
 
-# To build the java examples before running this script do the following:
-# javac -d $CLASSPATH $CLASSPATH/plplot/examples/x??.java
+# The java examples were automatically built in the make install step
+# by javac -d $CLASSPATH $CLASSPATH/plplot/examples/x??.java
 
 java plplot.examples.x01 -dev $device -o x01j.$dsuffix $options
 java plplot.examples.x02 -dev $device -o x02j.$dsuffix $options
