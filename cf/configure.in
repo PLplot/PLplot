@@ -113,7 +113,6 @@ has_tk=yes
 
 divert(-1)
 
-
 # ------------------------------------------------------------------------
 # Support macros for driver inclusion and help entries.
 
@@ -126,17 +125,17 @@ divert(-1)
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, png, jpeg, cgm, ps, psc, xfig, ljii,
-hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex, ntk])
+hp7470, hp7580, lj_hpgl, ljiip, imp, xwin, tk, pbm, gnome, pstex, ntk])
 
-# Note specifically which drivers are known to be loadable.
-# Eventually, hopefully, every driver will show up on this list.
-# However, we add them one at a time since each will have its own
-# peculiarities in the build process.
+# Note specifically which drivers are known to be loadable.  Eventually,
+# hopefully, every driver will show up on this list.  However, we add them one
+# at a time since each will have its own peculiarities in the build process
+# (only ones missing at present: xwin and tk).
 
 define([PL_DYNAMIC_DRIVER_LIST],
-[null plmeta ps psc xfig png jpeg cgm pstex xterm tekt tek4107t \
-tekf tek4107f mskermit versaterm vlt conex pbm hp7470 hp7580 \
-lj_hpgl dg300 ljii ljiip imp gnome ntk])
+[plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit \
+conex linuxvga vlt versaterm dg300 png jpeg cgm ps psc xfig ljii \
+hp7470 hp7580 lj_hpgl ljiip imp pbm gnome pstex ntk])
 
 # We think of a "device" as the output medium.  Could be a machine
 # style (Tektronix, X11), or a file format (Postscript).
@@ -154,8 +153,8 @@ lj_hpgl dg300 ljii ljiip imp gnome ntk])
 
 define([PL_device_driver_pair_list],
 [plmeta:plmeta null:null \
-xterm:tek tekt:tek tek4107t:tek mskermit:tek \
-versaterm:tek vlt:tek conex:tek tekf:tek tek4107f:tek \
+xterm:tek tek4010:tek tek4107:tek mskermit:tek \
+versaterm:tek vlt:tek conex:tek tek4010f:tek tek4107f:tek \
 linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd cgm:cgm psc:ps ps:ps xfig:xfig \
 ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
 imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk])
@@ -183,8 +182,8 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 
     driver=""
     for devdrv in PL_device_driver_pair_list; do
-	dev=`echo $devdrv | cut -d: -f1`
-	if test "$dev" = "$1"; then
+	device=`echo $devdrv | cut -d: -f1`
+	if test "$device" = "$1"; then
 	    driver=`echo $devdrv | cut -d: -f2`
 	    break
 	fi
@@ -198,11 +197,12 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 		break
 	    fi
 	done
-
 	if test $found = 0; then
 	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver"
 	    echo -n $driver ""
 	fi
+
+	DYNAMIC_DEVICES="$DYNAMIC_DEVICES $1"
     else
 	found=0
 	for drv in $STATIC_DRIVERS; do
@@ -211,7 +211,6 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 		break
 	    fi
 	done
-
 	if test $found = 0; then
 	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"
 	fi
@@ -260,8 +259,7 @@ esac
 # before expanding ac_init) so that the user can override if necessary.
 
 with_defaults=yes
-for option
-    do
+for option; do
     case "$option" in
 	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
 	    with_defaults=yes
@@ -445,8 +443,6 @@ case $system in
     ;;
 esac
 
-dnl> PL_DRIVERS(PL_DRIVER_LIST)
-
 # ----------------------------------------------------------------------------
 # Set flag to enable searching for dynloadable drivers, if appropriate.
 # ----------------------------------------------------------------------------
@@ -494,7 +490,6 @@ AC_REQUIRE_CPP
 
 AC_INCLUDE(sysloc.in)
 
-# Now, try this here.
 AC_MSG_CHECKING( for dynamic drivers)
 PL_DRIVERS(PL_DRIVER_LIST)
 AC_MSG_RESULT
@@ -798,75 +793,104 @@ if test "$enable_dyndrivers" = "yes"; then
     fi
     touch drivers/drivers.db
 
-    # Now add a line for each supported lodable device.  Format is:
+    # Now add a line for each supported loadable device.  Format is:
     #     device name : description : driver name : device number: symbol tag
+    #
+    # Note the device name that appears first in the db line is not
+    # necessarily the same as the device name in the DYNAMIC_DEVICES (or
+    # DEVICES) list!  Rather, it's the name that appears in the old dispatch
+    # table entry (cf. tekt vs tek4010).  Oh well..
 
-    for drv in $DYNAMIC_DRIVERS; do
+    for drv in $DYNAMIC_DEVICES; do
 	case $drv in
-	    null)
+	    null )
 	    echo "null:Null device:null.drv:42:null" >> drivers/drivers.db
 	    ;;
-	    plmeta)
+	    plmeta )
 	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:26:plm" >> drivers/drivers.db
 	    ;;
-	    xfig)
+	    xfig )
 	    echo "xfig:Fig file:xfig.drv:31:xfig" >> drivers/drivers.db
 	    ;;
-	    pstex)
+	    pstex )
 	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
 	    ;;
-	    gd)
+	    png )
 	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
+	    ;;
+	    jpeg )
 	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
 	    ;;
-	    cgm)
+	    cgm )
 	    echo "cgm:CGM file:cgm.drv:44:cgm" >> drivers/drivers.db
 	    ;;
-	    tek)
+	    xterm )
 	    echo "xterm:Xterm Window:tek.drv:18:xterm" >> drivers/drivers.db
+	    ;;
+	    tek4010 )
 	    echo "tekt:Tektronix Terminal (4010):tek.drv:19:tekt" >> drivers/drivers.db
+	    ;;
+	    tek4107 )
 	    echo "tek4107t:Tektronix Terminal (4105/4107):tek.drv:20:tek4107t" >> drivers/drivers.db
+	    ;;
+	    vlt )
 	    echo "vlt:VLT vt100/tek emulator:tek.drv:23:vlt" >> drivers/drivers.db
+	    ;;
+	    conex )
 	    echo "conex:Conex vt320/tek emulator:tek.drv:24:conex" >> drivers/drivers.db
-	    echo "tekf:Tektronix File (4010):tek.drv:27:tekf" >> drivers/drivers.db
-	    echo "tek4107f:Tektronix File (4105/4107):tek.drv:28:tek4107f" >> drivers/drivers.db
+	    ;;
+	    versaterm )
 	    echo "versaterm:Versaterm vt100/tek emulator:tek.drv:22:versaterm" >> drivers/drivers.db
+	    ;;
+	    mskermit )
 	    echo "mskermit:MS-Kermit emulator:tek.drv:21:mskermit" >> drivers/drivers.db
 	    ;;
-	    pbm)
+	    tek4010f )
+	    echo "tekf:Tektronix File (4010):tek.drv:27:tekf" >> drivers/drivers.db
+	    ;;
+	    tek4107f )
+	    echo "tek4107f:Tektronix File (4105/4107):tek.drv:28:tek4107f" >> drivers/drivers.db
+	    ;;
+	    pbm )
 	    echo "pbm:PDB (PPM) Driver:pbm.drv:38:pbm" >> drivers/drivers.db
 	    ;;
-	    hpgl)
+	    hp7470 )
 	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):hpgl.drv:34:hp7470" >> drivers/drivers.db
+	    ;;
+	    hp7580 )
 	    echo "hp7580:HP 7580 Plotter File (Large Plotter):hpgl.drv:35:hp7580" >> drivers/drivers.db
+	    ;;
+	    lj_hpgl )
 	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:hpgl.drv:36:lj_hpgl" >> drivers/drivers.db
 	    ;;
-	    dg300)
+	    dg300 )
 	    echo "dg300:DG300 Terminal:dg300.drv:25:dg300" >> drivers/drivers.db
 	    ;;
-	    ljii)
+	    ljii )
 	    echo "ljii:LaserJet II Bitmap File (150 dpi):ljii.drv:33:ljii" >> drivers/drivers.db
 	    ;;
-	    ljiip)
+	    ljiip )
 	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:ljiip.drv:32:ljiip" >> drivers/drivers.db
 	    ;;
-	    imp)
+	    imp )
 	    echo "imp:Impress File:impress.drv:37:imp" >> drivers/drivers.db
 	    ;;
-	    gnome)
+	    gnome )
 	    echo "gnome:Gnome Canvas:gnome.drv:6:gnome" >> drivers/drivers.db
 	    ;;
-	    ps)
+	    ps )
 	    echo "ps:PostScript File (monochrome):ps.drv:29:psm" >> drivers/drivers.db
+	    ;;
+	    psc )
 	    echo "psc:PostScript File (color):ps.drv:30:psc" >> drivers/drivers.db
 	    ;;
-	    xwin)
+	    xwin )
 	    echo "xwin:X-Window (Xlib):xwin.drv:5:xw" >> drivers/drivers.db
 	    ;;
-	    tk)
+	    tk )
 	    echo "tk:Tcl/TK Window:tk.drv:7:tk" >> drivers/drivers.db
 	    ;;
-	    ntk)
+	    ntk )
 	    echo "ntk:New tk driver:ntk.drv:43:ntk" >> drivers/drivers.db
 	    ;;
 	esac
