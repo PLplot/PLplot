@@ -5,7 +5,7 @@ log), contour, 3D, fill, and almost 1000 characters (including Greek and
 mathematical) in its extended font set.  The package is designed to make it
 easy to quickly get graphical output; only a handful of function calls is
 typically required.  For more advanced use, virtually all aspects of plotting
-are configurable.
+are configurable. 
 
 The PLplot package is distributable under the terms of the GNU Library General
 Public License (LGPL) with some exceptions -- see the file "Copyright" for
