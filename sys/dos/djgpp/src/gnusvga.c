@@ -191,6 +191,8 @@ plD_init_gnu_grx_dev(PLStream *pls)
 
     if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
        pls->dev_compression=90;
+
+    if (pls->width<=0) pls->width=1;
     
     dev->colour=1;
     dev->totcol=16;
