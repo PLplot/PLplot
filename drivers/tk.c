@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/10/18 19:41:15  mjl
+ * Revision 1.15  1993/11/07 09:02:52  mjl
+ * Added escape function handling for dealing with flushes.
+ *
+ * Revision 1.14  1993/10/18  19:41:15  mjl
  * Moved functions for finding executable commands prior to an exec into
  * a more accessible place (plctrl.c).
  *
@@ -176,6 +179,7 @@ plD_init_tk(PLStream *pls)
     pls->bytecnt = 0;
     pls->page = 0;
     pls->dev_di = 1;
+    pls->dev_flush = 1;		/* Want to handle our own flushes */
 
     if ( ! pls->bgcolorset) 
 	bgcolor_init(pls);
@@ -446,9 +450,12 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
     pls->bytecnt += 1;
 
     switch (op) {
-
       case PLESC_DI:
 	tk_di(pls);
+	break;
+
+      case PLESC_FLUSH:
+	flush_output(pls);
 	break;
     }
 }
