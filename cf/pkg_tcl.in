@@ -22,20 +22,20 @@ MAKEINDEX	= $(srcdir)/scripts/mktclIndex
 
 MAT_C		= tclMatrix.c matrixInit.c
 MAT_OBJS	= tclMatrix$O matrixInit$O
-MAT_OBJS_SO	=tclMatrix$O matrixInit$O
+MAT_OBJS_SO	= tclMatrix$O matrixInit$O
 MAT_OBJS_SA	=
 
 # Variables used in accessing libraries.
 # These can be overridden in system-dependent files.
 
-MATLIB_AR        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$A
-MATLIB_SO        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SO)
-MATLIB_SA        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SA)
+MATLIB_AR	= $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$A
+MATLIB_SO	= $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SO)
+MATLIB_SA	= $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SA)
 MAT_LINK	= -l$(MATLIB_NAME)$(LIB_TAG)
 
-TCLLIB_AR        = $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$A
-TCLLIB_SO        = $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$(SO)
-TCLLIB_SA        = $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$(SA)
+TCLLIB_AR	= $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$A
+TCLLIB_SO	= $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$(SO)
+TCLLIB_SA	= $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$(SA)
 TCL_LINK	= -l$(TCLLIB_NAME)$(LIB_TAG)
 
 # Variables for use in "make" and "make install".
@@ -71,7 +71,7 @@ install_pltcl:
 
 install_tcl_index:
 	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
-	  $(CP) tclIndex $(TCL_DIR)
+	  cd $(TCL_DIR); $(MAKEINDEX)
 
 install_tcl_includes:
 	@-cd $(top_srcdir)/bindings/tcl; \
