@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/11/02 21:14:33  mjl
+ * Revision 1.13  1995/01/06 07:58:20  mjl
+ * Switched to the new syntax for the window structure variables and
+ * shortened the info printed out by the get cursor loop.
+ *
+ * Revision 1.12  1994/11/02  21:14:33  mjl
  * Name changes to locator coordinate variables.
  *
  * Revision 1.11  1994/08/05  22:24:05  mjl
@@ -113,10 +117,13 @@ main(int argc, char *argv[])
 	co = 0;
 	if (plGetCursor(&plc)) {
 	    pltext();
-	    printf(" wx = %f\n",plc.wX);
-	    printf(" wy = %f\n",plc.wY);
-	    printf(" vx = %f\n",plc.vdX);
-	    printf(" vy = %f\n",plc.vdY);
+	    if (isprint(plc.c)) 
+		printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = \"%c\"\n",
+		       plc.wX, plc.wY, plc.dX, plc.dY, plc.c);
+	    else
+		printf("wx = %f,  wy = %f, dx = %f,  dy = %f\n",
+		       plc.wX, plc.wY, plc.dX, plc.dY);
+
 	    plgra();
 	    co = 1;
 	}
