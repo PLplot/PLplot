@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/12/08 06:18:09  mjl
+ * Revision 1.20  1993/12/09 20:35:14  mjl
+ * Fixed some casts.
+ *
+ * Revision 1.19  1993/12/08  06:18:09  mjl
  * Changed to include new plplotX.h header file.
  *
  * Revision 1.18  1993/12/06  07:43:11  mjl
@@ -70,14 +73,6 @@
  * Now explicitly initializes remote plplot by using the "cmd" widget
  * command.  Added support for -nopixmap option, and all malloc'ed
  * memory is eventually freed.
- *
- * Revision 1.2  1993/07/16  22:09:12  mjl
- * Made keypress handler a bit easier to invoke.  Eliminated low-level
- * aspect and orientation handling.  Some name changes.  Now uses standard
- * meta coordinate system.
- *
- * Revision 1.1  1993/07/02  06:58:37  mjl
- * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
 */
 
 /*	tk.c
@@ -693,10 +688,10 @@ tk_configure(PLStream *pls)
 /* Tell interpreter about commands. */
 
     Tcl_CreateCommand(dev->interp, "abort", Abort,
-		      (ClientData) pls, (void (*)()) NULL);
+		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
     Tcl_CreateCommand(dev->interp, "keypress", KeyEH,
-		      (ClientData) pls, (void (*)()) NULL);
+		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
 /* Blow away exec and open commands for some additional security */
 
