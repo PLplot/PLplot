@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/06/16 19:04:32  mjl
+ * Revision 1.26  1994/06/23 22:33:53  mjl
+ * Fixed bug introduced in last update concerning exit handling for DP style
+ * communication.
+ *
+ * Revision 1.25  1994/06/16  19:04:32  mjl
  * Massively restructured.  Is now just a front-end to the pltkMain()
  * function.  Structured along the preferred lines for extended wish'es.
  *
@@ -63,11 +67,6 @@ static Tk_ArgvInfo argTable[] = {
 
 static int
 plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
-
-/* Sends specified command to client, aborting on an error. */
-
-static void
-client_cmd(Tcl_Interp *interp, char *cmd);
 
 /* Evals the specified command, aborting on an error. */
 
@@ -229,8 +228,6 @@ Tcl_AppInit(interp)
     Tcl_CreateCommand(interp, "exit", plExitCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
 
-/* Do plserver-specific startup */
-
     return TCL_OK;
 }
 
@@ -245,14 +242,20 @@ Tcl_AppInit(interp)
 static int
 plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 {
-    static int pass_thru = 0;
+    int value = 0;
 
-/* Safety check for out of control code */
+/* Best to check the syntax before proceeding */
 
-    if (pass_thru)
-	return;
-
-    pass_thru = 1;
+    if ((argc != 1) && (argc != 2)) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			 " ?returnCode?\"", (char *) NULL);
+	return TCL_ERROR;
+    }
+    if ((argc != 1) && (Tcl_GetInt(interp, argv[1], &value) != TCL_OK)) {
+	Tcl_AppendResult(interp, "non-integer return code: \"", argv[1],
+			 "\"", (char *) NULL);
+	return TCL_ERROR;
+    }
 
 /* Print error message if one given */
 
@@ -261,30 +264,18 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 /* If client exists, tell it to self destruct */
 
-    if (client_name != NULL)
-	client_cmd(interp, "abort");
+    if (client_name != NULL) {
+	client_name = NULL;
+	Tcl_VarEval(interp, "send $client after 1 abort", (char **) NULL);
+    }
+    else if (client_port != NULL) {
+	client_port = NULL;
+	Tcl_VarEval(interp, "dp_RDO $client abort", (char **) NULL);
+    }
 
-    Tcl_Eval(interp, "after 1 tkexit");
-}
+/* Now really exit */
 
-/*----------------------------------------------------------------------*\
- * client_cmd
- *
- * Sends specified command to client.  Don't bother with error handling
- * since this is only used for aborts right now.  Always either send
- * command in background or continue to process events, because client may
- * be busy and unable to respond.
-\*----------------------------------------------------------------------*/
-
-static void
-client_cmd(Tcl_Interp *interp, char *cmd)
-{
-    if (dp)
-	Tcl_VarEval(interp, "dp_RPC $client -events all ",
-		    cmd, (char **) NULL);
-    else
-	Tcl_VarEval(interp, "send $client after 1 ",
-		    cmd, (char **) NULL);
+    return Tcl_VarEval(interp, "tkexit", argv[1], (char **) NULL);
 }
 
 /*----------------------------------------------------------------------*\
