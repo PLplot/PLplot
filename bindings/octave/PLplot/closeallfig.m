@@ -20,7 +20,7 @@ function closeallfig
 
   global __pl
 
-  if (!struct_contains (__pl,"inited") || !exist("__pl"))
+  if (!exist("__pl") || !struct_contains (__pl,"inited"))
     return
   endif
 
