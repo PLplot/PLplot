@@ -43,7 +43,7 @@ class x06 {
 
     public x06( String[] args )
     {
-       PLplot pls = new PLplot();
+       PLStream pls = new PLStream();
 
         NumberFormat nf = NumberFormat.getNumberInstance();
 

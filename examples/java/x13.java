@@ -46,7 +46,7 @@ class x13 {
 
     public x13( String[] args )
     {
-        PLplot pls = new PLplot();
+        PLStream pls = new PLStream();
 
 	int i, j, dthet, theta0, theta1, theta;
 	double just, dx, dy;

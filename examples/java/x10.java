@@ -42,7 +42,7 @@ class x10 {
 
     public x10( String[] args )
     {
-       PLplot pls = new PLplot();
+       PLStream pls = new PLStream();
 
     // Parse and process command line arguments.
 

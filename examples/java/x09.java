@@ -55,7 +55,7 @@ class x09 {
 // Transformation function
     final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
    
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
 
 // State data used by f2mnmx
     double fmin, fmax;

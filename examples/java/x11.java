@@ -35,7 +35,7 @@ import java.lang.Math;
 
 class x11 {
 
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
 
     static final int XPTS = 35;
     static final int YPTS = 46;

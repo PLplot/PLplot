@@ -44,7 +44,7 @@ class x05 {
 
     public x05( String[] args )
     {
-       PLplot pls = new PLplot();
+       PLStream pls = new PLStream();
 
         int i;
         double[] data = new double[NPTS];

@@ -46,7 +46,7 @@ class x16 {
    static final double YSPA =  2./(YPTS-1);
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-   PLplot pls = new PLplot();
+   PLStream pls = new PLStream();
 
    double fmin, fmax;
 

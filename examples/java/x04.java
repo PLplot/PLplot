@@ -35,7 +35,7 @@ import java.lang.Math;
 
 class x04 {
 
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
 
     public static void main( String[] args ) 
     {

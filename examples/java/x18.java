@@ -40,7 +40,7 @@ class x18 {
    static int opt[] = { 1, 0, 1, 0 };
    static double alt[] = {20.0, 35.0, 50.0, 65.0};
    static double az[] = {30.0, 40.0, 50.0, 60.0};
-   PLplot pls = new PLplot();
+   PLStream pls = new PLStream();
 
    double THETA(int a)
      {

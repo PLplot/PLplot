@@ -47,7 +47,7 @@ class x02 {
         double vmin, vmax;
         NumberFormat nf = NumberFormat.getNumberInstance();
 
-        PLplot pls = new PLplot();
+        PLStream pls = new PLStream();
 
     // Divide screen into 16 regions.
 

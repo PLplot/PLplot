@@ -48,7 +48,7 @@ class x07 {
 
     public x07( String[] args )
     {
-       PLplot pls = new PLplot();
+       PLStream pls = new PLStream();
 
 //        NumberFormat nf = NumberFormat.getNumberInstance();
 //        Change to this custom format to get stupid locale commas

@@ -38,7 +38,7 @@ import java.lang.Math;
 class x01 {
 
     double xscale, yscale, xoff, yoff;
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
 
    public static void main( String[] args ) 
      {

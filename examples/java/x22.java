@@ -38,7 +38,7 @@ class x22 {
     double MIN(double x, double y) { return (x<y?x:y);}
     double MAX(double x, double y) { return (x>y?x:y);}
 
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
   
     double[][] u = null;
     double[][] v = null;

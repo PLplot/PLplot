@@ -38,7 +38,7 @@ class x12 {
 
     static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
    
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
    
     public static void main( String[] args ) 
     {

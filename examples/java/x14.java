@@ -38,7 +38,7 @@ import java.text.*;
 class x14 {
 
     double xscale, yscale, xoff, yoff;
-    PLplot pls = new PLplot();
+    PLStream pls = new PLStream();
 
    public static void main( String[] args ) 
      {
