@@ -603,6 +603,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   void do_pltr_callback(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data)
     {
       PyObject *pdata, *arglist, *result;
+      PyArrayObject *tmp;
 
       /* the data argument is acutally a pointer to a python object */
       pdata = (PyObject*)data;
@@ -618,14 +619,23 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 	/* release the argument list */
 	Py_DECREF(arglist);
 	/* check and unpack the result */
-	if(!PySequence_Check(result) || PySequence_Size(result) != 2) {
-	  fprintf(stderr, "pltr callback must return a 2 sequence\n");
-	  PyErr_SetString(PyExc_RuntimeError, "pltr callback must return a 2-sequence.");
+	if(result == NULL) {
+	  fprintf(stderr, "call to python pltr function with 3 arguments failed\n");
+	  PyErr_SetString(PyExc_RuntimeError, "pltr callback must take 3 argments.");
 	  *tx = *ty = 0;
+	} else {
+	  tmp = (PyArrayObject *)myArray_ContiguousFromObject(result, PyArray_PLFLT, 1, 1);
+	  if(tmp == 0 || tmp->dimensions[0] != 2) {
+	    fprintf(stderr, "pltr callback must return a 2 element array or sequence\n");
+	    PyErr_SetString(PyExc_RuntimeError, "pltr callback must return a 2-sequence.");
+	    *tx = *ty = 0;
+	  } else {
+	    PLFLT* t = (PLFLT*)tmp->data;
+	    *tx = t[0];
+	    *ty = t[1];
+	    Py_XDECREF(tmp);
+	  }
 	}
-	/* should I test the type here? */
-	*tx = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(result, 0));
-	*ty = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(result, 1));
 	/* release the result */
 	Py_XDECREF(result);
 	/* release the global interpreter lock */
@@ -706,23 +716,23 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 
   PLPointer marshal_PLPointer(PyObject* input) {
     PLPointer result = NULL;
-    if(input != Py_None) {
-      switch(pltr_type) {
-      case CB_0:
-	break;
-      case CB_1:
+    switch(pltr_type) {
+    case CB_0:
+      break;
+    case CB_1:
+      if(input != Py_None)
 	result = marshal_PLcGrid1(input);
-	break;
-      case CB_2:
+      break;
+    case CB_2:
+      if(input != Py_None)
 	result = marshal_PLcGrid2(input);
-	break;
-      case CB_Python:
-	Py_XINCREF(input);
-	result = (PLPointer*)input;
-	break;
-      default:
-	fprintf(stderr, "pltr_type is invalid\n");
-      }
+      break;
+    case CB_Python:
+      Py_XINCREF(input);
+      result = (PLPointer*)input;
+      break;
+    default:
+      fprintf(stderr, "pltr_type is invalid\n");
     }
     return result;
   }
