@@ -1,9 +1,10 @@
 Source: plplot
 Section: math
-Priority: optional
+Priority: extra
 Maintainer: Rafael Laboissiere <rafael@icp.inpg.fr>
-Standards-Version: 3.1.0
-Build-Depends: debhelper, tcl8.2-dev | tcl8.3-dev, tk8.2-dev | tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, autoconf, m4, !f2c, !fort77, g77, itk3.1-dev, iwidgets3.1-dev, python-numeric
+Standards-Version: 3.5.6
+Build-Depends: debhelper (>= 2.0.86), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, autoconf, m4, g77, itk3.1-dev, python-numeric [i386 m68k mips mipsel powerpc sparc], python2.1-dev
+Build-Conflicts: f2c, fort77
 
 Package: plplot
 Architecture: any
@@ -29,6 +30,7 @@ Package: plplot-common
 Architecture: any
 Conflicts: plplot (<< 5.0.2)
 Replaces: plplot (<< 5.0.2)
+Recommends: plplot-xwin | plplot-lib
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -45,8 +47,9 @@ Description: Scientific plotting library
 
 Package: plplot-bin
 Architecture: any
-Depends: ${shlibs:Depends}, plplot-lib
+Depends: ${shlibs:Depends}, plplot-xwin | plplot-lib
 Conflicts: plplot-tcl (<< 5), plplot-common (<< 5.0.1-0.potato.2)
+Recommends: ghostscript, lpr
 Description: Miscellaneous utilities for PLplot, a plotting library
  This package contains the following utility programs based on PLplot, a
  scientific plotting library: pltek (review a Tektronix vector file), plpr
@@ -58,8 +61,8 @@ Description: Miscellaneous utilities for PLplot, a plotting library
 Package: plplot-xwin
 Architecture: any
 Depends: plplot-common, ${shlibs:Depends}
-Conflicts: plplot-tcl, plplot (<< 5)
-Replaces: plplot (<< 5), plplot-tcl
+Conflicts: plplot-lib, plplot (<< 5)
+Replaces: plplot-lib, plplot (<< 5)
 Provides: plplot-lib
 Description: Scientific plotting library
  This package provides the basic shared library for PLplot, a scientific
@@ -71,9 +74,9 @@ Description: Scientific plotting library
 
 Package: plplot-tcl
 Architecture: any
-Depends: plplot-common, itk3.1, iwidgets3.1, ${shlibs:Depends}
-Conflicts: plplot-xwin
-Replaces: plplot-xwin
+Depends: plplot-common, iwidgets3.1, ${shlibs:Depends}
+Conflicts: plplot-lib
+Replaces: plplot-lib
 Provides: plplot-lib
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific
@@ -85,7 +88,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 
 Package: plplot-c++
 Architecture: any
-Depends: plplot-lib
+Depends: ${shlibs:Depends}
 Conflicts: plplot (<< 5)
 Description: C++ bindings for PLplot, a plotting library
  This package contains the C++ bindings for PLplot, a scientific plotting
@@ -95,7 +98,7 @@ Description: C++ bindings for PLplot, a plotting library
 
 Package: python-plplot
 Architecture: any
-Depends: plplot-lib
+Depends: ${shlibs:Depends}, python (>= 2.1), python (<< 2.2)
 Description: Python support for PLplot, a plotting library
  This package contains the library plmodule.so for gluing the PLplot
  scientific plotting library into Python applications.  Examples are also
@@ -106,7 +109,7 @@ Description: Python support for PLplot, a plotting library
 Package: plplot-dev
 Section: devel
 Architecture: any
-Depends: plplot-lib, plplot-c++
+Depends: plplot-tcl (= ${Source-Version}) | plplot-xwin (= ${Source-Version}), plplot-c++ (= ${Source-Version}), tcl8.3-dev, tk8.3-dev, xlibs-dev
 Conflicts: plplot (<< 5), plplot-doc (<< 5.0.1-0.potato.2)
 Description: Header and static libraries for PLplot, a plotting library
  This package contains all that is needed for doing development in C,

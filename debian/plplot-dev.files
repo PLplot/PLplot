@@ -2,8 +2,8 @@ usr/lib/libplplotd.a
 usr/lib/libplplotd.so
 usr/lib/libplcxxd.a
 usr/lib/libplcxxd.so
-usr/lib/libplmatrix.so
-usr/lib/libplmatrix.a
+usr/lib/libtclmatrixd.so
+usr/lib/libtclmatrixd.a
 usr/share/doc/plplot/examples
 usr/include
 usr/share/man/man3/*

@@ -1,5 +1,5 @@
 usr/lib/libplplotd.so.*
-usr/lib/libplmatrix.so.*
+usr/lib/libtclmatrixd.so.*
 usr/bin/plrender
 usr/bin/plserver
 usr/bin/pltcl

@@ -1,3 +1,60 @@
+plplot (5.1.0-1) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * New upstream version (Closes: #101264)
+  * handle changing of name of libplmatrixd to libtclmatrixd.  Since
+    this library is only used by libplplotd, it is not a ABI change.
+    libtclmatrixd should probably be in a separate directory or linked
+    directly with libplplotd -- this needs to be coordinated with
+    upstream, and may also be moot once this packaged is changed to
+    use loadable modules for the drivers.
+
+ -- David Schleef <ds@schleef.org>  Thu, 15 Aug 2002 18:31:37 -0700
+
+plplot (5.0.2-1.1) unstable; urgency=low
+
+  * NMU
+  * Fix hppa build problems. Closes: #141723
+  * Remove 'potato' from version number.
+
+ -- LaMont Jones <lamont@debian.org>  Sun,  7 Apr 2002 21:22:06 -0600
+
+plplot (5.0.2-0.potato.3.2) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * debian/control, debian/rules: plplot indirectly Build-Depends
+    on lapack to build python-plplot.  Since lapack is only available
+    on a few architectures, this causes problems building the other
+    packages on all architectures.  Fixed to Build-Depend and build
+    python-plplot only on working architectures.
+
+ -- David Schleef <ds@schleef.org>  Fri, 15 Mar 2002 20:49:18 -0500
+
+plplot (5.0.2-0.potato.3.1) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * Fix build dependencies (Closes: #92344, #98119, #102014)
+  * cf/syslog.in: backport configure rules for tcl/itcl and python2.1
+    (fixes new build problems)
+  * debian/control: add dependencies to plplot-dev (Closes: #101392)
+  * remove use of {} globbing in debian/rules (Closes: #101259)
+  * debian/changelog: removed emacs settings
+  * debian/control: change the tk/tcl build dependencies to 8.3
+  * debian/*: update for python2.1
+  * debian/control: fix python dependencies to coorespond to policy
+  * debian/control: remove dependency on itk3.1, since it's added by
+    ${shlibs:Depends}
+  * debian/*.shlibs: Added shlibs files
+    Note: the libplmatrix entry in plplot-tcl.shlibs specifies
+    plplot-xwin, but plplot-xwin doesn't actually have the
+    library.  This is ok, since it should only be used by
+    libplplotd.so.
+  * Fixed packages interdependencies and added ${shlibs:Depends}
+    where appropriate
+  * Fixed postinst, prerm scripts to use debhelper
+
+ -- David Schleef <ds@schleef.org>  Sun, 17 Feb 2002 18:51:57 -0800
+
 plplot (5.0.2-0.potato.3) unstable; urgency=low
 
   * debian/control: Made plplot-common conflict and replace plplot <<
