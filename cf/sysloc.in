@@ -660,7 +660,7 @@ if test "$with_shlib" = "yes"; then
 	    SONAME_FLAGS="-Wl,-soname -Wl,"
 
 	    if test "$CXX" = "KCC"; then
-		SHLIB_BUILD_CXX="KCC --thread_safe -o"
+		SHLIB_BUILD_CXX="KCC $KCC_THREAD_SAFE_FLAG -o"
 		SHLIB_CXXFLAGS=-fpic
 		SONAME_FLAGS="--soname "
 	    fi

@@ -187,11 +187,20 @@ if test "$enable_cxx" = "yes"; then
 	    found_cxx=yes
 	    AC_MSG_RESULT([Found KAI C++, using that!])
 	    CXX=KCC
-	    # Thread-safety is probably best.  It must be supplied when both
-	    # compiling and linking.  Note thread-safe C++ is not
-	    # link-compatible with (the default) non-thread-safe C++.
-	    SYS_FLAGS_CXX=--thread_safe
-	    SYS_FLAGS_LCXX=--thread_safe
+
+	    # See if we can compile with --thread_safe, which if available
+	    # means we're probably on an SMP and it's best to use it.  Note
+	    # the option must be supplied when both compiling and linking, and
+	    # thread-safe C++ is not link-compatible with non-thread-safe C++
+	    # (the default).
+
+	    KCC_THREAD_SAFE_FLAG="--thread_safe"
+	    AC_LANG_CPLUSPLUS
+	    CXXFLAGS=$KCC_THREAD_SAFE_FLAG
+	    AC_TRY_COMPILE(, , , KCC_THREAD_SAFE_FLAG="")
+
+	    SYS_FLAGS_CXX=$KCC_THREAD_SAFE_FLAG
+	    SYS_FLAGS_LCXX=$KCC_THREAD_SAFE_FLAG
 	fi
     fi
 
