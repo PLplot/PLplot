@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.67  1994/07/20 06:07:09  mjl
+ * Revision 1.68  1994/07/28 08:04:49  mjl
+ * Bumped version number, revision to various comments.
+ *
+ * Revision 1.67  1994/07/20  06:07:09  mjl
  * Changed names and prototypes for the new 3d functions -- now plline3(),
  * plpoin3(), and plpoly3().
  *
@@ -73,7 +76,7 @@
     Copyright (C) 1992 by 
     Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
 
-    Macros and prototypes for the PLPLOT package.  This header file must
+    Macros and prototypes for the PLplot package.  This header file must
     be included by all user codes.
 
     This software may be freely copied, modified and redistributed
@@ -86,7 +89,7 @@
     or its effect upon hardware or computer systems.
 
     Note: some systems allow the Fortran & C namespaces to clobber each
-    other.  So for PLPLOT to work from Fortran, we do some rather nasty
+    other.  So for PLplot to work from Fortran, we do some rather nasty
     things to the externally callable C function names.  This shouldn't
     affect any user programs in C as long as this file is included. 
 */
@@ -94,35 +97,35 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99g"
+#define PLPLOT_VERSION "4.99h"
 
 /*----------------------------------------------------------------------*\
-*    USING PLPLOT
-* 
-* To use PLPLOT from C or C++, it is only necessary to 
-* 
-*      #include "plplot.h"
-* 
-* This file does all the necessary setup to make PLPLOT accessible to
-* your program as documented in the manual.  Additionally, this file
-* allows you to request certain behavior by defining certain symbols
-* before inclusion.  At the moment the only one is:
-*
-* #define DOUBLE	or..
-* #define PL_DOUBLE
-*
-* This causes PLPLOT to use doubles instead of floats.  Use the type
-* PLFLT everywhere in your code, and it will always be the right thing.
-*
-* Note: most of the functions visible here begin with "pl", while all
-* of the data types and switches begin with "PL".  Eventually everything
-* will conform to this rule in order to keep namespace pollution of the
-* user code to a minimum.  All the PLPLOT source files actually include
-* "plplotP.h", which includes this file as well as all the internally-
-* visible declarations, etc.  
+ *    USING PLplot
+ * 
+ * To use PLplot from C or C++, it is only necessary to 
+ * 
+ *      #include "plplot.h"
+ * 
+ * This file does all the necessary setup to make PLplot accessible to
+ * your program as documented in the manual.  Additionally, this file
+ * allows you to request certain behavior by defining certain symbols
+ * before inclusion.  At the moment the only one is:
+ *
+ * #define DOUBLE	or..
+ * #define PL_DOUBLE
+ *
+ * This causes PLplot to use doubles instead of floats.  Use the type
+ * PLFLT everywhere in your code, and it will always be the right thing.
+ *
+ * Note: most of the functions visible here begin with "pl", while all
+ * of the data types and switches begin with "PL".  Eventually everything
+ * will conform to this rule in order to keep namespace pollution of the
+ * user code to a minimum.  All the PLplot source files actually include
+ * "plplotP.h", which includes this file as well as all the internally-
+ * visible declarations, etc.  
 \*----------------------------------------------------------------------*/
 
-/* The majority of PLPLOT source files require these, so.. */
+/* The majority of PLplot source files require these, so.. */
 /* Under ANSI C, they can be included any number of times */
 
 #include <stdio.h>
@@ -134,20 +137,20 @@
 #include <string.h>
 
 /*----------------------------------------------------------------------*\
-*        SYSTEM IDENTIFICATION
-*
-* Several systems are supported directly by PLPLOT.  In order to avoid
-* confusion, one id macro per system is used.  Since different compilers
-* may predefine different system id macros, we need to check all the
-* possibilities, and then set the one we will be referencing.  These are:
-*
-* __cplusplus                Any C++ compiler
-* __unix                     Any Unix-like system
-* __hpux                     Any HP/UX system
-* __aix                      Any AIX system
-* __linux                    Linux for i386
-* (others...)
-*
+ *        SYSTEM IDENTIFICATION
+ *
+ * Several systems are supported directly by PLplot.  In order to avoid
+ * confusion, one id macro per system is used.  Since different compilers
+ * may predefine different system id macros, we need to check all the
+ * possibilities, and then set the one we will be referencing.  These are:
+ *
+ * __cplusplus                Any C++ compiler
+ * __unix                     Any Unix-like system
+ * __hpux                     Any HP/UX system
+ * __aix                      Any AIX system
+ * __linux                    Linux for i386
+ * (others...)
+ *
 \*----------------------------------------------------------------------*/
 
 /* This will hopefully catch compilers that don't fully conform */
@@ -155,7 +158,7 @@
 #ifndef __STDC__
 #ifndef __cplusplus
 If you reach this line, it means your compiler is incapable of building
-plplot (not ANSI-compliant).  Time to get a new one.
+PLplot (not ANSI-compliant).  Time to get a new one.
 #endif
 #endif
 
@@ -185,20 +188,21 @@ plplot (not ANSI-compliant).  Time to get a new one.
 #define PLARGS(a)	a
 
 /*----------------------------------------------------------------------*\
-* Base types for PLPLOT
-*
-* Only those that are necessary for function prototypes are defined here.
-* Notes:
-*
-* PLINT is typedef'd to an int by default.  This is a change from previous
-* versions, where a long was used.  Under MSDOS, a PLINT is typedef'd to a
-* long, since 16 bits is too inaccurate for some PLPLOT functions.  So
-* under MSDOS you must use type PLINT for integer array arguments to PLplot
-* functions, but on other systems you can just use int.
-*
-* short is currently used for device page coordinates, so they are
-* bounded by (-32767, 32767).  This gives a max resolution of about 3000
-* dpi, and improves performance in some areas over using a PLINT.
+ * Base types for PLplot
+ *
+ * Only those that are necessary for function prototypes are defined here.
+ * Notes:
+ *
+ * PLINT is typedef'd to an int by default.  This is a change from some
+ * previous versions, where a long was used.  Under MSDOS, a PLINT is
+ * typedef'd to a long, since 16 bits is too inaccurate for some PLplot
+ * functions.  So under MSDOS you must use type PLINT for integer array
+ * arguments to PLplot functions, but on other systems you can just use
+ * an int.
+ *
+ * short is currently used for device page coordinates, so they are
+ * bounded by (-32767, 32767).  This gives a max resolution of about 3000
+ * dpi, and improves performance in some areas over using a PLINT.
 \*----------------------------------------------------------------------*/
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
@@ -218,7 +222,7 @@ typedef int PLINT;
 typedef void* PLPointer;
 
 /*----------------------------------------------------------------------*\
-* Complex data types and other good stuff
+ * Complex data types and other good stuff
 \*----------------------------------------------------------------------*/
 
 /* Switches for escape function call. */
@@ -238,7 +242,7 @@ typedef void* PLPointer;
 #define PLESC_FLUSH		11	/* flush output */
 #define PLESC_EH		12      /* handle Window events */
 
-/* Plplot Option table & support constants */
+/* PLplot Option table & support constants */
 
 /* Option-specific settings */
 
@@ -278,7 +282,7 @@ typedef struct {
     char *desc;
 } PLOptionTable;
 
-/* Plplot Key structure */
+/* PLplot Key structure */
 
 #define PL_NKEYSTRING 20
 
@@ -287,7 +291,7 @@ typedef struct {
     char string[PL_NKEYSTRING];
 } PLKey;
 
-/* Plplot Mouse structure */
+/* PLplot Mouse structure */
 
 typedef struct {
     int button;
@@ -312,10 +316,10 @@ typedef struct {
 /* See plcont.c for examples of the following */
 
 /*
-* PLfGrid is for passing (as a pointer to the first element) an arbitrarily
-* dimensioned array.  The grid dimensions MUST be stored, with a maximum of 3
-* dimensions assumed for now.
-*/
+ * PLfGrid is for passing (as a pointer to the first element) an arbitrarily
+ * dimensioned array.  The grid dimensions MUST be stored, with a maximum of 3
+ * dimensions assumed for now.
+ */
 
 typedef struct {
     PLFLT *f;
@@ -323,9 +327,9 @@ typedef struct {
 } PLfGrid;
 
 /*
-* PLfGrid2 is for passing (as an array of pointers) a 2d function array.  The
-* grid dimensions are passed for possible bounds checking.
-*/
+ * PLfGrid2 is for passing (as an array of pointers) a 2d function array.  The
+ * grid dimensions are passed for possible bounds checking.
+ */
 
 typedef struct {
     PLFLT **f;
@@ -333,15 +337,15 @@ typedef struct {
 } PLfGrid2;
 
 /*
-* NOTE: a PLfGrid3 is a good idea here but there is no way to exploit it yet
-* so I'll leave it out for now.
-*/
+ * NOTE: a PLfGrid3 is a good idea here but there is no way to exploit it yet
+ * so I'll leave it out for now.
+ */
 
 /*
-* PLcGrid is for passing (as a pointer to the first element) arbitrarily
-* dimensioned coordinate transformation arrays.  The grid dimensions MUST be
-* stored, with a maximum of 3 dimensions assumed for now.
-*/
+ * PLcGrid is for passing (as a pointer to the first element) arbitrarily
+ * dimensioned coordinate transformation arrays.  The grid dimensions MUST be
+ * stored, with a maximum of 3 dimensions assumed for now.
+ */
 
 typedef struct {
     PLFLT *xg, *yg, *zg;
@@ -349,10 +353,10 @@ typedef struct {
 } PLcGrid;
 
 /*
-* PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
-* transformation arrays.  The grid dimensions are passed for possible bounds
-* checking.
-*/
+ * PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
+ * transformation arrays.  The grid dimensions are passed for possible bounds
+ * checking.
+ */
 
 typedef struct {
     PLFLT **xg, **yg, **zg;
@@ -360,9 +364,9 @@ typedef struct {
 } PLcGrid2;
 
 /*
-* NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it yet
-* so I'll leave it out for now.
-*/
+ * NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it yet
+ * so I'll leave it out for now.
+ */
 
 /* PLColor is the usual way to pass an rgb color value. */
 
@@ -377,53 +381,52 @@ typedef struct {
 } PLControlPt;
 
 /*----------------------------------------------------------------------*\
-*		BRAINDEAD-ness
-*
-* Some systems allow the Fortran & C namespaces to clobber each other.
-* For plplot to work from Fortran on these systems, we must name the the
-* externally callable C functions something other than their Fortran entry
-* names.  In order to make this as easy as possible for the casual user,
-* yet reversible to those who abhor my solution, I have done the
-* following:
-*
-*	The C-language bindings are actually different from those
-*	described in the manual.  Macros are used to convert the
-*	documented names to the names used in this package.  The
-*	user MUST include plplot.h in order to get the name
-*	redefinition correct.
-*
-* Sorry to have to resort to such an ugly kludge, but it is really the
-* best way to handle the situation at present.  If all available compilers
-* offer a way to correct this stupidity, then perhaps we can eventually
-* reverse it (there is a way now, by throwing the -DNOBRAINDEAD switch,
-* but I discourage you from doing this unless you know what you are
-* doing).  If you feel like screaming at someone (I sure do), please
-* direct it at your nearest system vendor who has a braindead shared
-* C/Fortran namespace.  Some vendors do offer compiler switches that
-* change the object names, but then everybody who wants to use the package
-* must throw these same switches, leading to no end of trouble.
-*
-* Note that this definition should not cause any noticable effects, with
-* the exception of when doing PLPLOT debugging, in which case you will
-* need to remember the real function names (same as before but with a 'c_'
-* prepended).
-*
-* Also, to avoid macro conflicts, the BRAINDEAD part must not be expanded
-* in the stub routines.
-*
-* Aside: the reason why a shared Fortran/C namespace is deserving of the
-* BRAINDEAD characterization is that it completely precludes the the kind
-* of universal API that is attempted with PLPLOT, without Herculean
-* efforts (e.g. remapping all of the c bindings by macros as done here).
-* The vendors of such a scheme, in order to allow a SINGLE type of
-* argument to be passed transparently to both C and Fortran, namely, a
-* pointer to a conformable data type, have slammed the door on insertion
-* of stub routines to handle the conversions needed for other data types.
-* Intelligent linkers could solve this problem, but these are not anywhere
-* close to becoming universal.  So meanwhile, one must live with either
-* stub routines for the inevitable data conversions, or a different API.
-* The former is what is used here, but is made far more difficult in a
-* braindead shared Fortran/C namespace.
+ *		BRAINDEAD-ness
+ *
+ * Some systems allow the Fortran & C namespaces to clobber each other.
+ * For PLplot to work from Fortran on these systems, we must name the the
+ * externally callable C functions something other than their Fortran entry
+ * names.  In order to make this as easy as possible for the casual user,
+ * yet reversible to those who abhor my solution, I have done the
+ * following:
+ *
+ *	The C-language bindings are actually different from those
+ *	described in the manual.  Macros are used to convert the
+ *	documented names to the names used in this package.  The
+ *	user MUST include plplot.h in order to get the name
+ *	redefinition correct.
+ *
+ * Sorry to have to resort to such an ugly kludge, but it is really the
+ * best way to handle the situation at present.  If all available
+ * compilers offer a way to correct this stupidity, then perhaps we can
+ * eventually reverse it (there is a way now, by defining NOBRAINDEAD, but
+ * be careful because this will totally hose the Fortran interface on some
+ * systems).  If you feel like screaming at someone (I sure do), please
+ * direct it at your nearest system vendor who has a braindead shared
+ * C/Fortran namespace.  Some vendors do offer compiler switches that
+ * change the object names, but then everybody who wants to use the
+ * package must throw these same switches, leading to no end of trouble.
+ *
+ * Note that this definition should not cause any noticable effects except
+ * when debugging PLplot calls, in which case you will need to remember
+ * the real function names (same as before but with a 'c_' prepended).
+ *
+ * Also, to avoid macro conflicts, the BRAINDEAD part must not be expanded
+ * in the stub routines.
+ *
+ * Aside: the reason why a shared Fortran/C namespace is deserving of the
+ * BRAINDEAD characterization is that it completely precludes the the kind
+ * of universal API that is attempted (more or less) with PLplot, without
+ * Herculean efforts (e.g. remapping all of the c bindings by macros as
+ * done here).  The vendors of such a scheme, in order to allow a SINGLE
+ * type of argument to be passed transparently between C and Fortran,
+ * namely, a pointer to a conformable data type, have slammed the door on
+ * insertion of stub routines to handle the conversions needed for other
+ * data types.  Intelligent linkers could solve this problem, but these are
+ * not anywhere close to becoming universal.  So meanwhile, one must live
+ * with either stub routines for the inevitable data conversions, or a
+ * different API.  The former is what is used here, but is made far more
+ * difficult in a braindead shared Fortran/C namespace.
 \*----------------------------------------------------------------------*/
 
 #ifndef BRAINDEAD
@@ -671,7 +674,7 @@ typedef struct {
 #endif /* __PLSTUBS_H__ */
 
 /*----------------------------------------------------------------------*\
-*		Function Prototypes
+ *		Function Prototypes
 \*----------------------------------------------------------------------*/
 
 #ifdef __cplusplus
@@ -728,7 +731,8 @@ void
 c_plcol1(PLFLT col1);
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
-* plfcont, with a particular choice for f2eval and f2eval_data. */
+ * plfcont, with a particular choice for f2eval and f2eval_data. 
+ */
 
 void
 c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
@@ -737,8 +741,9 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLPointer pltr_data);
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
-* by way of the f2eval_data pointer.  This allows arbitrary organizations
-* of 2d array data to be used. */
+ * by way of the f2eval_data pointer.  This allows arbitrary organizations
+ * of 2d array data to be used. 
+ */
 
 void
 plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
@@ -913,7 +918,7 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 void
 c_plhls(PLFLT h, PLFLT l, PLFLT s);
 
-/* Initializes plplot, using preset or default options */
+/* Initializes PLplot, using preset or default options */
 
 void
 c_plinit(void);
@@ -1199,12 +1204,12 @@ c_plssub(PLINT nx, PLINT ny);
 void
 c_plssym(PLFLT def, PLFLT scale);
 
-/* Initialize plplot, passing in the windows/page settings. */
+/* Initialize PLplot, passing in the windows/page settings. */
 
 void
 c_plstar(PLINT nx, PLINT ny);
 
-/* Initialize plplot, passing the device name and windows/page settings. */
+/* Initialize PLplot, passing the device name and windows/page settings. */
 
 void
 c_plstart(const char *devname, PLINT nx, PLINT ny);
@@ -1383,7 +1388,7 @@ plHelp(PLINT mode);
 void
 plNotes(void);
 
-/* Process plplot internal options list */
+/* Process PLplot internal options list */
 
 int
 plParseInternalOpts(int *p_argc, char **argv, PLINT mode);
