@@ -2308,7 +2308,7 @@ from color map0
       <varlistentry>
 	<term>
 	  <parameter>icol0</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3759,7 +3759,7 @@ source
       <varlistentry>
 	<term>
 	  <parameter>n</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3770,7 +3770,7 @@ source
       <varlistentry>
 	<term>
 	  <parameter>x</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3781,7 +3781,7 @@ source
       <varlistentry>
 	<term>
 	  <parameter>y</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3792,7 +3792,7 @@ source
       <varlistentry>
 	<term>
 	  <parameter>z</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4743,7 +4743,7 @@ default
       <varlistentry>
 	<term>
 	  <parameter>n</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4754,7 +4754,7 @@ default
       <varlistentry>
 	<term>
 	  <parameter>x</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4765,7 +4765,7 @@ default
       <varlistentry>
 	<term>
 	  <parameter>y</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4776,7 +4776,7 @@ default
       <varlistentry>
 	<term>
 	  <parameter>z</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4787,7 +4787,7 @@ default
       <varlistentry>
 	<term>
 	  <parameter>draw</parameter> 
-	  (<literal>PLINT *</literal>, output)
+	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5490,7 +5490,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>itype</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5501,7 +5501,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>npts</parameter> 
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5512,7 +5512,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>pos</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5523,7 +5523,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>coord1</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5534,7 +5534,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>coord2</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5545,7 +5545,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>coord3</parameter> 
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5556,7 +5556,7 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>rev</parameter> 
-	  (<literal>PLINT *</literal>, output)
+	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7462,7 +7462,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>xp</parameter>
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7473,7 +7473,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>yp</parameter>
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7484,7 +7484,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>xleng</parameter>
-	  (<literal>PLINT </literal>, output)
+	  (<literal>PLINT </literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7495,7 +7495,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>yleng</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7506,7 +7506,7 @@ characters and their corresponding decimal ASCII values:
        <varlistentry>
         <term>
           <parameter>xoff</parameter>
-          (<literal>PLINT</literal>, output)
+          (<literal>PLINT</literal>, input)
         </term>
         <listitem>
           <para>
@@ -7517,7 +7517,7 @@ characters and their corresponding decimal ASCII values:
        <varlistentry>
         <term>
           <parameter>yoff</parameter>
-          (<literal>PLINT</literal>, output)
+          (<literal>PLINT</literal>, input)
         </term>
         <listitem>
           <para>
@@ -7592,7 +7592,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>strm</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8405,7 +8405,7 @@ stripchart
       <varlistentry>
 	<term>
 	  <parameter>digmax</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8587,7 +8587,7 @@ stripchart
       <varlistentry>
 	<term>
 	  <parameter>digmax</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8598,7 +8598,7 @@ stripchart
       <varlistentry>
 	<term>
 	  <parameter>digits</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
