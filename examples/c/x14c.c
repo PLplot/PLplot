@@ -1,10 +1,13 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:16:22  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.6  1993/07/02 07:04:41  mjl
+   Eliminated plrgb calls (to be deprecated in 5.0).
 
+ * Revision 1.5  1993/02/22  23:16:22  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:35  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
@@ -36,6 +39,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#ifndef ROUND
+#define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
+#endif
 
 static PLFLT xs[6] =
 {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
@@ -161,19 +168,19 @@ plot1(void)
 /* scaled separately (just = 0), and we just draw a labelled */
 /* box (axis = 0). */
 
-    plrgb((PLFLT) 0.0, (PLFLT) 0.0, (PLFLT) 1.0);
+    plcol(1);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
-    plrgb((PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.0);
+    plcol(6);
     pllab("(x)", "(y)", "#frPLPLOT Example 1 - y=x#u2");
 
 /* Plot the data points */
 
-    plrgb((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0);
+    plcol(9);
     plpoin(6, xs1, ys1, 9);
 
 /* Draw the line through the data */
 
-    plrgb((PLFLT) 0.5, (PLFLT) 0.5, (PLFLT) 0.5);
+    plcol(4);
     plline(60, x, y);
 }
 

@@ -1,10 +1,13 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.6  1993/03/02 18:58:46  mjl
-   Inserted a retrieve & display of the plplot library version as a
-   demonstration.
+   Revision 1.7  1993/07/02 07:04:40  mjl
+   Eliminated plrgb calls (to be deprecated in 5.0).
 
+ * Revision 1.6  1993/03/02  18:58:46  mjl
+ * Inserted a retrieve & display of the plplot library version as a
+ * demonstration.
+ *
  * Revision 1.5  1993/02/22  23:16:09  mjl
  * Changed over to new style of initialization using plinit(), and added
  * function to parse plplot command line flags.
@@ -43,9 +46,9 @@ static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
 
-void plot1();
-void plot2();
-void plot3();
+void plot1(void);
+void plot2(void);
+void plot3(void);
 
 int
 main(int argc, char *argv[])
@@ -133,19 +136,19 @@ plot1(void)
 /* scaled separately (just = 0), and we just draw a labelled */
 /* box (axis = 0). */
 
-    plrgb((PLFLT) 0.0, (PLFLT) 0.0, (PLFLT) 1.0);
+    plcol(1);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
-    plrgb((PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.0);
+    plcol(6);
     pllab("(x)", "(y)", "#frPLPLOT Example 1 - y=x#u2");
 
 /* Plot the data points */
 
-    plrgb((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0);
+    plcol(9);
     plpoin(6, xs1, ys1, 9);
 
 /* Draw the line through the data */
 
-    plrgb((PLFLT) 0.5, (PLFLT) 0.5, (PLFLT) 0.5);
+    plcol(4);
     plline(60, x, y);
 }
 
