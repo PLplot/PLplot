@@ -148,8 +148,6 @@ Areas currently under development
 
  - start using m4 to preprocess the Fortran demos?
 
- - figure out why plrender is barfing on my old metafiles under ~/data
-
  - add support for shared libs on AIX, Irix, Alpha/OSF
 
  - check out shared library support under SAS/C -- supposed to be easy
