@@ -10,5 +10,5 @@ Abstract: PLplot is a library of C functions that are useful for making
 Section: Apps/Math
 
 Format: HTML
-Index: /usr/share/doc/plplot-doc/html/index.html
-Files: /usr/share/doc/plplot-doc/html/*
+Index: /usr/share/doc/libplplot5/html/index.html
+Files: /usr/share/doc/libplplot5/html/*

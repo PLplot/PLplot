@@ -8,9 +8,9 @@ Build-Conflicts: f2c, fort77, python2.1-dev, python2.1
 
 Package: libplplot5
 Architecture: any
-Conflicts: plplot, plplot-common
-Replaces: plplot, plplot-common
-Suggests: python-plplot, plplot-doc, plplot-dev, gs, lpr
+Conflicts: plplot, plplot-xwin (<= 5.1.0), plplot-tcl (<= 5.1.0), plplot-bin, plplot-c++, plplot-common
+Replaces: plplot, plplot-bin, plplot-c++, plplot-common
+Provides: plplot
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -21,71 +21,49 @@ Description: Scientific plotting library
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
- This package is an empty 'transition' package. It is needed in order to
- transfer smoothly from the plplot packages prior to version 5.0, since the
- naming scheme has been changed.
- .
- This package contains the following utility programs based on PLplot, a
- scientific plotting library: pltek (review a Tektronix vector file), plpr
- (converts a PLplot metafile to a printable format), and plm2gif (converts a
- PLplot metafile to GIF).
+ This package contains the PLplot libraries for C, C++, and Fortran77, as
+ well as the necessary data files and some utility programs for PLplot.
  .
  See http://www.plplot.org for more information on PLplot.
 
 Package: libplplot-dev
 Architecture: any
-Conflicts: plplot, plplot-common
-Replaces: plplot, plplot-common
-Suggests: python-plplot, plplot-doc, plplot-dev
-Description: Scientific plotting library
- PLplot is relatively small, portable, freely distributable, and is rich
- enough to satisfy most users.  It has a wide range of plot types including
- line (linear, log), contour, 3D, fill, and almost 1000 characters
- (including Greek and mathematical) in its extended font set.  The package
- is designed to make it easy to quickly get graphical output; only a
- handful of function calls is typically required.  For more advanced use,
- virtually all aspects of plotting are configurable.
- .
- This package is an empty 'transition' package. It is needed in order to
- transfer smoothly from the plplot packages prior to version 5.0, since the
- naming scheme has been changed.
+Conflicts: plplot-dev, plplot-c++
+Replaces: plplot-dev
+Suggests: plplot-doc
+Depends: libplplot5
+Description: Scientific plotting library (development files)
+ This package contains all that is needed for doing development in C, C++,
+ and Fortran, a scientific plotting library.  Examples of programs for these
+ languages are also included.  For development in Tcl/Tk, Python, and
+ Octave, install the plplot-tcl, python-plplot, and octave-plplot packages,
+ respectively.
  .
  See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-xwin
 Architecture: any
-Depends: plplot-common, ${shlibs:Depends}
+Depends: ${shlibs:Depends}
 Conflicts: plplot-lib, plplot (<< 5)
-Replaces: plplot-lib, plplot (<< 5)
-Provides: plplot-lib
-Description: Scientific plotting library
- This package provides the basic shared library for PLplot, a scientific
- plotting library.  It contains all drivers, except the Tcl/Tk one (install
- package plplot-tcl if you need them).  Also included is the utility
- program plrender to render PLplot metafiles.
+Description: Scientific plotting library (X11 driver)
+ This package provides the X11 driver module for PLplot, a scientific
+ plotting library. 
  .
  See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-gnome
 Architecture: any
-Depends: plplot-common, ${shlibs:Depends}
-Conflicts: plplot-lib, plplot (<< 5)
-Replaces: plplot-lib, plplot (<< 5)
-Provides: plplot-lib
-Description: Scientific plotting library
- This package provides the basic shared library for PLplot, a scientific
- plotting library.  It contains all drivers, except the Tcl/Tk one (install
- package plplot-tcl if you need them).  Also included is the utility
- program plrender to render PLplot metafiles.
+Depends: ${shlibs:Depends}
+Description: Scientific plotting library (Gnome canvas driver)
+ This package provides the Gnome canvas driver module for PLplot, a
+ scientific plotting library.   
  .
  See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-tcl
 Architecture: any
-Depends: plplot-common, iwidgets3.1, ${shlibs:Depends}
+Depends: iwidgets3.1, ${shlibs:Depends}
 Conflicts: plplot-lib
-Replaces: plplot-lib
-Provides: plplot-lib
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific
  plotting library: shared libraries, Tcl modules, and some programs for
@@ -97,16 +75,16 @@ Description: Tcl/Tk support for PLplot, a plotting library
 Package: plplot-gd
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: plplot (<< 5)
-Description: C++ bindings for PLplot, a plotting library
- This package contains the C++ bindings for PLplot, a scientific plotting
- library, in the form of a shared library.
+Description: Scientific plotting library (GD driver)
+ This package provides the GD driver module for PLplot, a scientific plotting
+ library.  It allows the generation of PNG and JPEG files directly from
+ PLplot programs.
  .
  See http://www.plplot.org for more information on PLplot.
 
 Package: python-plplot
 Architecture: any
-Depends: ${shlibs:Depends}, python (>= 2.2), python (<< 2.3)
+Depends: ${shlibs:Depends}, python2.2
 Description: Python support for PLplot, a plotting library
  This package contains the library plmodule.so for gluing the PLplot
  scientific plotting library into Python applications.  Examples are also
@@ -116,20 +94,20 @@ Description: Python support for PLplot, a plotting library
 
 Package: octave-plplot
 Architecture: any
-Depends: ${shlibs:Depends}, python (>= 2.2), python (<< 2.3)
+Depends: ${shlibs:Depends}, octave2.1 (>= 2.1.36), octave2.1 (<< 2.1.37)
 Description: Python support for PLplot, a plotting library
- This package contains the library plmodule.so for gluing the PLplot
- scientific plotting library into Python applications.  Examples are also
- provided.
+ This package contains the Octave bindings for PLplot, a scientific plotting
+ library.  It provides an almost drop-in replacement for the traditional
+ Gnuplot graphical interface in Octave. Examples are also provided.
  .
  See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-doc
 Architecture: all
-Recommends: plplot-dev
-Conflicts: plplot (<< 5)
+Depends: libplplot5
+Suggests: libplplot-dev
 Description: Documentation for PLplot, a plotting library
- This package is just a placeholder for inclusion of the new PLplot docs in
- the future.  For the new docs in Docbook format, see:
+ This package contains the HTML and PDF forms of the PLplot
+ documentation.
  .
- http://www.plplot.org/resources/docbook-manual/
+ See http://www.plplot.org for more information on PLplot.

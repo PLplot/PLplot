@@ -1,9 +1,9 @@
 This package was debianized by Rafael Laboissiere rafael@debian.org on
-Sat, Tue Oct 13 10:01:28 CEST 1998.
+Sun Feb 16 18:44:55 CET 2003
 
-It was downloaded from: 
+It was built directly from the CVS sources available at:
 
-    http://emma.la.asu.edu/plplot/source/plplot-980407.tar.gz
+    http://sourceforge.net/cvs/?group_id=2915
 
 The documentation was obtained in PS format and info directly from the
 home page at locations:

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 www_host=shell1.sourceforge.net
 www_dir=/home/groups/p/pl/plplot/htdocs/resources/debian

@@ -24,14 +24,6 @@ debinfo		:= $(debshr)/info
 debex		:= $(deblib)/plplot$(version)/examples
 deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
 
-export DEMOS_DIR = /usr/share/doc/plplot/examples
-
-#ifeq (,$(findstring $(DEB_BUILD_ARCH),i386 m68k mips mipsel powerpc sparc))
-#export DH_OPTIONS += -Npython-plplot
-#else
-with_python = yes
-#endif
-
 config:
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers \
@@ -42,20 +34,6 @@ config:
 build: build-stamp
 build-stamp: config
 	dh_testdir
-#	make configure
-# Build first bare libraries (no Tcl/Tk)
-#	./configure --prefix=/usr --disable-tcl --disable-tk \
-#	                          --disable-python $(cfflags)
-# This PLLIB_PATH setting is necessary to avoid the lintian error
-# ldconfig-symlink-referencing-wrong-file
-#	make PLLIB_PATH=
-#	mv tmp/lib*.a* tmp/lib*.so* tmp/plrender $(debbase)
-# Build the Tcl/Tk libraries
-ifeq ($(with_python),yes)
-else
-	./configure --prefix=/usr --enable-tcl --enable-tk \
-	                          --disable-python --enable-octave $(cfflags)
-endif
 	$(MAKE)
 	touch build-stamp
 
@@ -73,29 +51,15 @@ install-stamp: build-stamp
 
 
 	make DESTDIR=$(debtmp) install
-# This hack ought to go away when it is fixed upstream
-#	chmod -x $(deblib)/plplot$(version)/tcl/plcolor.tcl ; \
 
-# Temporary hack
-#	rm -f $(debusr)/bin/plplot_linkage
-	#rm -f $(debusr)/bin/plplot-config
-	#rm -f $(debusr)/bin/pstex2eps
-
-#	( cd $(debdoc)/plplot ; \
-#	  mv CHANGES changelog ; \
-#	  rm -f Copyright COPYING.LIB mklinks README.local )
-
-#	dh_installmanpages --package=plplot
-#ifeq ($(with_python),yes)
-#	dh_movefiles --package=python-plplot
-# Make x16.py non-executable.  Temporary hack.
-#	chmod -x \
-#	  $(debbase)/python-plplot/usr/share/doc/plplot/examples/python/qplplot.py
-#endif
-
+	( cd $(debdoc)/plplot ; \
+	  rm -f COPYING.LIB ; \
+	  mv ChangeLog changelog )
 	mv $(debdoc)/plplot $(debdoc)/libplplot5
 	mv $(debex) $(debdoc)/libplplot5
 
+# The following completes the installation of the octave-plplot package.
+# This should be done upstream, though
 	mkdir -p $(debshr)/octave/site/m/PLplot
 	mv $(debshr)/plplot_octave/use_plplot.m $(debshr)/octave/site/m/PLplot
 	mkdir -p $(deboct)
@@ -105,22 +69,13 @@ install-stamp: build-stamp
 
 # Build architecture-independent files here.
 binary-indep: build install
-	#dh_testversion ge 2.0.86
 	dh_testdir -i
 	dh_testroot -i
 	dh_installdirs -i
 	ln -s libplplot5 $(debdoc)/plplot-doc
-#	dh_installdocs -i
-#	( cd $(debbase)/plplot-doc/usr/share/doc/plplot-doc ; \
-#	  mv plplotdoc-html-* html )
-#	( cd $(debbase) ; \
-#	  tar xfz ../doc/plplotdoc-info-*.tar.gz ; \
-#	  cp plplotdoc-info-*/* $(debinfo) )
-#	dh_installchangelogs -i
 	dh_movefiles -i
-#	dh_compress -i
-#	dh_fixperms -i
-	#dh_suidregister -i
+	dh_compress -i
+	dh_fixperms -i
 	dh_installdeb -i
 	dh_gencontrol -i
 	dh_md5sums -i
@@ -130,19 +85,7 @@ binary-arch: build install
 	#dh_testversion ge 2.0.86
 	dh_testdir -a
 	dh_testroot -a
-#	dh_installdocs --package=libplplot5
-#	( cd $(debbase) ; \
-#	  tar xfz ../doc/plplotdoc-man-*.tar.gz ; \
-#	  mv plplotdoc-man-* manpages )
-#	dh_installmanpages --package=plplot-dev $(debbase)/*.1
-#	dh_installmanpages --package=plplot
-#	dh_installchangelogs -a
-
 	dh_installdirs -a
-#	rm -f $(deblib)/libplcxxd.so.5.* $(deblib)/libplcxxd.so.5
-#	mv $(debbase)/libplcxxd.so.5.* \
-#	  $(debbase)/libplcxxd.so.5 \
-#	  $(deblib)
 
 	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
                  octave-plplot python-plplot plplot-gd plplot-doc; do \
@@ -153,22 +96,12 @@ binary-arch: build install
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=libplplot5
 
-
-
-# Why do not dh_movefiles remove empty dirs? Grumpf...
-#	( cd $(debusr) ; \
-#          rm -rf include lib share/info share/man share/doc/plplot/examples )
-#	mv $(debbase)/libplplotd.so.5.* \
-#	   $(debbase)/libplplotd.so.5 \
-#           $(debbase)/plplot-xwin/usr/lib
-#	mv $(debbase)/plrender $(debbase)/plplot-xwin/usr/bin
-#	cp $(debbase)/plrender.1 $(debbase)/plplot-xwin/usr/share/man/man1
+	dh_installdocs --package=libplplot5
+	dh_installchangelogs -a --package=libplplot5
 
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
-	#dh_suidregister -a
-	DH_COMPAT=3 dh_makeshlibs -a
 	dh_makeshlibs -V -a
 	dh_shlibdeps -L libplplot5 -l debian/libplplot5/usr/lib
 	dh_installdeb -a
