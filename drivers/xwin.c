@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1993/08/28 06:29:42  mjl
+ * Revision 1.24  1993/09/14 22:25:44  mjl
+ * One of the safety checks was mistakenly commented out.
+ *
+ * Revision 1.23  1993/08/28  06:29:42  mjl
  * Added a safety check that the escape function pointer for resizes is
  * initialized, and moved some XSync commands (deep magic, don't ask).
  *
@@ -864,7 +867,7 @@ ResizeCmd(PLStream *pls, PLWindow *window)
 	return;
     }
 
-/* Return if pointer to window not specified.
+/* Return if pointer to window not specified. */
 
     if (window == NULL) {
 	plwarn("ResizeCmd: Illegal call -- window pointer uninitialized");
