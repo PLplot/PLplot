@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/03/23 07:06:22  mjl
+ * Revision 1.3  1994/04/08 12:15:16  mjl
+ * Added CADDR_T_HACK -- define this and the typedef of caddr_t will be
+ * made here for braindead systems.  Added prototype for user specified
+ * X event handler (MasterEH).  Include of plstream.h now uses the
+ * search path.
+ *
+ * Revision 1.2  1994/03/23  07:06:22  mjl
  * Properly wrapped and commented.
  *
  * Revision 1.1  1993/12/08  06:20:38  mjl
@@ -18,6 +24,7 @@
 #define __PLPLOTX_H__
 
 #include <plplot.h>
+#include <plstream.h>
 
 /* System headers */
 
@@ -29,6 +36,10 @@
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
+
+#ifdef CADDR_T_HACK
+typedef char * caddr_t;
+#endif
 
 /* X driver utility functions */
 
@@ -51,8 +62,8 @@ typedef struct {
     long	init_width;		/* Initial window width */
     long	init_height;		/* Initial window height */
 
-    U_INT	width, height;		/* Current window dimensions */
-    U_INT	depth, border;		/* window depth & border size */
+    unsigned	width, height;		/* Current window dimensions */
+    unsigned	depth, border;		/* window depth & border size */
 
     double	xscale_init;		/* initial pixels/lx (virt. coords) */
     double	yscale_init;		/* initial pixels/ly (virt. coords) */
@@ -80,6 +91,8 @@ typedef struct {
     GC		gc;			/* Graphics context */
     Colormap	map;			/* Colormap */
     Pixmap	pixmap;			/* Off-screen pixmap */
+
+    void (*MasterEH) (PLStream *, XEvent *);	/* Master X event handler */
 } XwDev;
 
 #endif	/* __PLPLOTX_H__ */
