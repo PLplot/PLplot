@@ -573,6 +573,152 @@ Java_plplot_core_PLStream_col1__D( JNIEnv *env, jobject jthis, jdouble col1 )
     plcol1(col1);
 }
 
+static PLFLT f2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data )
+{
+    PLfGrid2 *grid = (PLfGrid2 *) plf2eval_data;
+
+    ix = ix % grid->nx;
+    iy = iy % grid->ny;
+
+    return grid->f[ix][iy];
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    cont
+ * Signature: ([[F[F[F[FI)V
+ */
+
+/* JNIEXPORT void JNICALL */
+/* Java_plplot_core_PLStream_cont___3_3F_3F_3F_3FI(JNIEnv *, jobject, jobjectArray, jfloatArray, jfloatArray, jfloatArray, jint) */
+/* { */
+/* } */
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    cont
+ * Signature: ([[D[D[D[DI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
+    JNIEnv *env, jobject jthis,
+    jobjectArray jz, jdoubleArray jclevel,
+    jdoubleArray jxg, jdoubleArray jyg, jint wrap )
+{
+    jdouble **zdat;
+    jobject *zi;
+
+    PLFLT **z;
+    int nx = (*env)->GetArrayLength( env, jxg );
+    int ny = (*env)->GetArrayLength( env, jyg );
+
+    jdouble *xgdat = (*env)->GetDoubleArrayElements( env, jxg, 0 );
+    jdouble *ygdat = (*env)->GetDoubleArrayElements( env, jyg, 0 );
+    PLFLT *xg, *yg;
+
+    int kx, ky, lx, ly;
+
+    jdouble *clevel_dat = (*env)->GetDoubleArrayElements( env, jclevel, 0 );
+    PLFLT *clevel;
+    int nlevel = (*env)->GetArrayLength( env, jclevel );
+
+    PLfGrid2 fgrid;
+    PLcGrid cgrid;
+
+    int must_free_buffers = 0;
+    int i, j;
+
+    zi = (jobject *) malloc( nx * sizeof(jobject) );
+    zdat = (jdouble **) malloc( nx * sizeof(jdouble *) );
+
+    for( i=0; i < nx; i++ )
+    {
+        zi[i] = (*env)->GetObjectArrayElement( env, jz, i );
+        zdat[i] = (*env)->GetDoubleArrayElements( env, zi[i], 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+        clevel = (PLFLT *) clevel_dat;
+        xg = (PLFLT *) xgdat;
+        yg = (PLFLT *) ygdat;
+        z  = (PLFLT **) zdat;
+    } else {
+/* No, we have to actually copy the data. */
+        clevel = (PLFLT *) malloc( nlevel * sizeof(PLFLT) );
+        xg = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        yg = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT*) );
+        for( i=0; i < nx; i++ )
+        {
+            z[i] = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        for( i=0; i < nlevel; i++ )
+            clevel[i] = clevel_dat[i];
+
+        for( i=0; i < nx; i++ )
+            xg[i] = xgdat[i];
+
+        for( i=0; i < ny; i++ )
+            yg[i] = ygdat[i];
+
+        must_free_buffers = 1;
+    }
+
+    fgrid.f = z;
+    fgrid.nx = nx;
+    fgrid.ny = ny;
+
+    cgrid.xg = xg;
+    cgrid.yg = yg;
+    cgrid.nx = nx;
+    cgrid.ny = ny;
+
+    kx = 1; lx = nx;
+    ky = 1; ly = ny;
+
+    set_PLStream(env,jthis);
+/*     plcont( z, nx, ny, kx, lx, ky, ly, clev, nlev,  */
+
+    plfcont( f2eval2, &fgrid, nx, ny, kx, lx, ky, ly,
+             clevel, nlevel, pltr1, &cgrid );
+
+    if (must_free_buffers) {
+        (*env)->ReleaseDoubleArrayElements( env, jclevel, clevel_dat, 0 );
+        (*env)->ReleaseDoubleArrayElements( env, jxg, xgdat, 0 );
+        (*env)->ReleaseDoubleArrayElements( env, jyg, ygdat, 0 );
+    }
+
+    for( i=0; i < nx; i++ )
+        (*env)->ReleaseDoubleArrayElements( env, zi[i], zdat[i], 0 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    cont
+ * Signature: ([[F[F[[F[[FI)V
+ */
+
+/* JNIEXPORT void JNICALL */
+/* Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(JNIEnv *, jobject, jobjectArray, jfloatArray, jobjectArray, jobjectArray, jint) */
+/* { */
+/* } */
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    cont
+ * Signature: ([[D[D[[D[[DI)V
+ */
+
+/* JNIEXPORT void JNICALL */
+/* Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(JNIEnv *, jobject, jobjectArray, jdoubleArray, jobjectArray, jobjectArray, jint) */
+/* { */
+/* } */
+
 /*
 /*
  * Class:     plplot_0002fcore_0002fPLStream
@@ -2348,6 +2494,54 @@ Java_plplot_core_PLStream_scompression( JNIEnv *env, jobject jthis, jint c )
 {
     set_PLStream(env,jthis);
     plscompression( c );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    setcontlabelparam
+ * Signature: (FFFI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_setcontlabelparam__FFFI( JNIEnv *env, jobject jthis,
+                                                   jfloat joffset, jfloat jsize,
+                                                   jfloat jspacing, jint active )
+{
+    PLFLT offset = joffset, size = jsize, spacing = jspacing;
+
+    set_PLStream(env,jthis);
+    pl_setcontlabelparam( offset, size, spacing, active );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    setcontlabelparam
+ * Signature: (DDDI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_setcontlabelparam__DDDI( JNIEnv *env, jobject jthis,
+                                                   jdouble joffset, jdouble jsize,
+                                                   jdouble jspacing, jint active )
+{
+    PLFLT offset = joffset, size = jsize, spacing = jspacing;
+
+    set_PLStream(env,jthis);
+    pl_setcontlabelparam( offset, size, spacing, active );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    setcontlabelformat
+ * Signature: (II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_setcontlabelformat( JNIEnv *env, jobject jthis,
+                                              jint lexp, jint sigdig )
+{
+    set_PLStream(env,jthis);
+    pl_setcontlabelformat( lexp, sigdig );
 }
 
 /*

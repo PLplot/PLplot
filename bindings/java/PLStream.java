@@ -79,6 +79,14 @@ public class PLStream {
     public native void col1( double col1 );
 
 // cont
+// pltr1 variants.
+    public native void cont( float[][] z, float[] clevel, float[] xg, float[] yg, int wrap );
+    public native void cont( double[][] z, double[] clevel, double[] xg, double[] yg, int wrap );
+
+// pltr2 variants.
+    public native void cont( float[][] z, float[] clevel, float[][] xg, float[][] yg, int wrap );
+    public native void cont( double[][] z, double[] clevel, double[][] xg, double[][] yg, int wrap );
+
 // fcont
 // cpstrm?
 // did2pc
@@ -260,15 +268,10 @@ public class PLStream {
 // void
 // c_plsesc(char esc);
 
-// /* set offset and spacing of contour labels */
+    public native void setcontlabelparam( float offset, float size, float spacing, int active );
+    public native void setcontlabelparam( double offset, double size, double spacing, int active );
 
-// void
-// c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
-
-// /* set the format of the contour labels */
-
-// void
-// c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
+    public native void setcontlabelformat( int lexp, int sigdig );
 
 // /* Set family file parameters */
 
