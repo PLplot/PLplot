@@ -90,17 +90,20 @@ $(BASE).tex: $(SGML_SOURCES) $(STYLESHEET_PRINT) inline-print.ent
 #temporary kludge to be replaced by a real version number system
 VERSION=0.0.1
 
+#The hard links below are so that browser retrievals get the full archive
+#and not just the symbolic link to it. (This behaviour seems strange to AWI
+#but it happened for at least the konqueror browser.)
 
 install: install-stamp
 install-stamp: src_tar html_tar $(BASE).dvi $(BASE).ps.gz
 	mkdir -p $(HTML_DESTDIR)
 	rm -rf $(HTML_DESTDIR)/*
-	cp $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
-	ln -s $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
-	cp $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
-	ln -s $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
-	cp $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
-	cp $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
+	cp -p $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	ln $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_SRC).tar.gz
+	cp -p $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
+	ln $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
+	cp -p $(PLPLOTDOC_HTML)-$(VERSION)/* $(HTML_DESTDIR)
+	cp -p $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
 	touch install-stamp
 
 uninstall: 
@@ -110,8 +113,8 @@ src_tar: $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
 $(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
 	$(OTHER_SOURCES) $(CONFDIR_SOURCES)
 	mkdir -p $(PLPLOTDOC_SRC)-$(VERSION)/conf
-	cp ../README.developers $(SGML_SOURCES) $(OTHER_SOURCES) $(PLPLOTDOC_SRC)-$(VERSION)
-	cp $(CONFDIR_SOURCES) $(PLPLOTDOC_SRC)-$(VERSION)/conf
+	cp -p ../README.developers $(SGML_SOURCES) $(OTHER_SOURCES) $(PLPLOTDOC_SRC)-$(VERSION)
+	cp -p $(CONFDIR_SOURCES) $(PLPLOTDOC_SRC)-$(VERSION)/conf
 	tar cfz $(PLPLOTDOC_SRC)-$(VERSION).tar.gz $(PLPLOTDOC_SRC)-$(VERSION)
 
 #(AWI discussion: as our documentation gets more complicated, book1.html may
@@ -125,7 +128,7 @@ html_tar: $(PLPLOTDOC_HTML)-$(VERSION).tar.gz
 $(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
 	   inline.manifest over-under.jpeg
 	mkdir $(PLPLOTDOC_HTML)-$(VERSION)
-	cp `$(PERL) included-html-files.pl < $(MAIN_HTML)` $(MAIN_HTML) \
+	cp -p `$(PERL) included-html-files.pl < $(MAIN_HTML)` $(MAIN_HTML) \
 	   `cat inline.manifest` \
            over-under.jpeg $(PLPLOTDOC_HTML)-$(VERSION) 
 	tar cfz $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
