@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/05/10 20:37:07  furnish
+ * Prototype of pdf_set added.  Rob Managan.
+ *
  * Revision 1.11  1995/09/22 16:03:26  mjl
  * Name changes to members of the PLiodev structure to reduce the chance
  * of collisions with possible new C++ keywords.
@@ -96,6 +99,7 @@ typedef struct {
 /* Prototypes */
 /* Use a wrapper for the prototypes for use from K&R C */
 
+void pdf_set		PLARGS((char *option, int value));
 PDFstrm *pdf_fopen	PLARGS((char *fileName, char *mode));
 PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
 PDFstrm *pdf_finit	PLARGS((FILE *file));
