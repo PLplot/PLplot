@@ -93,7 +93,7 @@ enable_python=yes
 enable_tcl=yes
 enable_itcl=yes
 enable_java=yes
-enable_octave=yes
+enable_octave=no
 #explicit default values must be specified here for library and header
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
@@ -505,8 +505,7 @@ if test "$enable_python" = "yes"; then
 ### symbolic prefix is replaced by the actual prefix.
 ### The actual prefix is required in examples/python/plplot_python_start.py
 ### (the only place that PYTHON_INSTDIR is used).
-        PYTHON_INSTDIR=`echo $pythondir |sed 's%${prefix}/%%'`
-        PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
+        EXPAND_EXPRESSION(PYTHON_INSTDIR, $pythondir)
     fi
 fi
 AC_SUBST(PYTHON_INSTDIR)
@@ -610,12 +609,7 @@ if test "$enable_java" = yes; then
    JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
 ### bindings/java/config.java.in requires JAVA_INSTDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
-   JAVA_INSTDIR=`echo $libdir |sed 's%${exec_prefix}/%%'`
-   JAVA_INSTDIR="$exec_prefix/$JAVA_INSTDIR/java/plplot/core"
-### The actual exec_prefix may be the symbolic prefix which must be replaced
-### by its actual value.
-   JAVA_INSTDIR=`echo $JAVA_INSTDIR |sed 's%${prefix}/%%'`
-   JAVA_INSTDIR="$prefix/$JAVA_INSTDIR"
+   EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
 fi
 AC_SUBST(JAVAINCCMD)
 AC_SUBST(JAVA_INSTDIR)
