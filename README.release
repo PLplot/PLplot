@@ -9,10 +9,14 @@ Feedback on this development release can be communicated to PLplot
 developers via the mailing lists at 
 http://sourceforge.net/mail/?group_id=2915 .
 
+Please see the license under which this software is distributed, and the
+disclaimer of all warrantees, given in the COPYING.LIB file.
+
 
 INDEX
 
 1. Build Instructions
+  1.1 Tcl
 2. Changes
   2.1 API
     2.1.1 Unicode
@@ -43,6 +47,20 @@ documentation on any new feature since PLplot 5.3.1), you must use:
 
 Note that it is often helpful to use the --with-pkg-config option if your
 system has the pkg-config program (typically *nix).
+
+
+1.1 Tcl
+
+Due to unresolved problems in the build process, tcl has been temporarily
+disabled for this release.
+
+If you must have tcl, here are the instrutions.  DO NOT ATTEMPT THIS
+UNLESS YOU ARE SURE YOU KNOW WHAT YOU ARE DOING.
+
+  1) Move all plplot files in /usr/lib and /usr/local/lib into a
+     temporary directory.
+
+  2) Use the --enable-tcl and --enable-itcl options during configure.
 
 
 2. Changes
