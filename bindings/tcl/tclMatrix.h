@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.11  1995/06/01 21:19:29  mjl
+ * Revision 1.12  1995/06/02 20:30:37  mjl
+ * Added missing include of iostream.h for C++ codes including this.
+ *
+ * Revision 1.11  1995/06/01  21:19:29  mjl
  * Eliminated extraneous include of tcl.h.
  *
  * Revision 1.10  1995/03/21  19:40:32  mjl
@@ -141,6 +144,8 @@ typedef struct {
 // HP C++ has exceptions, but most other compilers don't.  Will embellish
 // this as necessary.
 */
+
+#include <iostream.h>
 
 #ifdef throw
 #define TCL_NO_UNDEF
