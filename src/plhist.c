@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2000/08/04 04:17:49  vincentdarley
+ * Fixing indentation of previous patch, and testing commit process
+ *
  * Revision 1.10  2000/08/04 04:12:08  vincentdarley
  * patch 100406
  *
@@ -80,9 +83,9 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
     for (i = 0; i < n; i++) {
 	bin = (data[i] - datmin) / dx;
 	if (flags & 2 == 0) {
-	bin = bin > 0 ? bin : 0;
-	bin = bin < nbin ? bin : nbin - 1;
-	y[bin]++;
+	    bin = bin > 0 ? bin : 0;
+	    bin = bin < nbin ? bin : nbin - 1;
+	    y[bin]++;
 	} else {
 	    if(bin >= 0 && bin < nbin) {
 		y[bin]++;
@@ -138,10 +141,10 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags)
     if (!(flags & 1)) {
 	for (i = 0; i < nbin - 1; i++) {
 	    if (!(flags & 4) || (y[i] != vpwymi)) {
-	    pljoin(x[i], vpwymi, x[i], y[i]);
-	    pljoin(x[i], y[i], x[i + 1], y[i]);
-	    pljoin(x[i + 1], y[i], x[i + 1], vpwymi);
-	}
+		pljoin(x[i], vpwymi, x[i], y[i]);
+		pljoin(x[i], y[i], x[i + 1], y[i]);
+		pljoin(x[i + 1], y[i], x[i + 1], vpwymi);
+	    }
 	}
 	if (flags & 2) {
 	    if (!(flags & 4) || (y[i] != vpwymi)) {
@@ -157,15 +160,15 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags)
 		    pljoin(x[i], y[i], vpwxma, y[i]);
 		    pljoin(vpwxma, y[i], vpwxma, vpwymi);
 		}
+	    }
 	}
-    }
     } else {
 	if (nbin < 2)
 	    return;
 	if (flags & 2) {
 	    xmin = MAX(vpwxmi, 0.5 * (3 * x[0] - x[1]));
 	} else {
-	xmin = vpwxmi;
+	    xmin = vpwxmi;
 	}
 	/* Vince fixed bug May 1998 */
 	xmax = MAX(0.5 * (x[0] + x[1]), vpwxmi);
@@ -178,10 +181,10 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags)
 	    xmin = xmax;
 	    xmax = MIN(0.5 * (x[i] + x[i + 1]), vpwxma);
 	    if (!(flags & 4) || (y[i] != vpwymi)) {
-	    pljoin(xmin, vpwymi, xmin, y[i]);
-	    pljoin(xmin, y[i], xmax, y[i]);
-	    pljoin(xmax, y[i], xmax, vpwymi);
-	}
+		pljoin(xmin, vpwymi, xmin, y[i]);
+		pljoin(xmin, y[i], xmax, y[i]);
+		pljoin(xmax, y[i], xmax, vpwymi);
+	    }
 	}
 	xmin = xmax;
 	xmax = vpwxma;
