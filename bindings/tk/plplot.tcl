@@ -16,5 +16,5 @@ lappend auto_path $pllibrary
 set env(PL_LIB) $pllibrary
 # Set up defaults (auto-loaded from the auto_path)
 if {![catch {package present Tk}]} {
-    pldefaults
+    catch {pldefaults}
 }
