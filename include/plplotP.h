@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/10/06 19:52:57  mjl
-   Disabled the POSIX_TTY stuff (because it requires ANSI atexit()) when
-   NO_ANSI_LIBC is defined, and no longer define this by default for SunOS.
-   May require linking with -lansi on some systems (using acc).
+   Revision 1.12  1993/11/07 09:03:42  mjl
+   Added escape code for flush handling.
 
+ * Revision 1.11  1993/10/06  19:52:57  mjl
+ * Disabled the POSIX_TTY stuff (because it requires ANSI atexit()) when
+ * NO_ANSI_LIBC is defined, and no longer define this by default for SunOS.
+ * May require linking with -lansi on some systems (using acc).
+ *
  * Revision 1.10  1993/09/24  20:33:16  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
@@ -274,6 +277,7 @@ typedef signed char SCHAR;
 #define PLESC_GRAPH		8	/* switch to graphics screen */
 #define PLESC_FILL		9	/* fill polygon */
 #define PLESC_DI		10	/* handle DI command */
+#define PLESC_FLUSH		11	/* flush output */
 
 /* Switches for state function call. */
 
