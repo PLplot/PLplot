@@ -15,21 +15,18 @@ class x08 {
     final int XPTS = 35;
     final int YPTS = 46;
 
-    static int opt[] = {1, 2, 3, 3};
-    static double alt[] = {60.0, 20.0, 60.0, 60.0};
-    static double az[] = {30.0, 60.0, 120.0, 160.0};
+    PLStreamc plsdummy = new PLStreamc();
+    plplotjavac pls = new plplotjavac();
 
+    int opt[] = {pls.DRAW_LINEXY, pls.DRAW_LINEXY};
+    static double alt[] = {60.0, 20.0};
+    static double az[] = {30.0, 60.0};
+   
     static String[] title =
-    {
-        "#frPLplot Example 8 - Alt=60, Az=30",
-        "#frPLplot Example 8 - Alt=20, Az=60",
-        "#frPLplot Example 8 - Alt=60, Az=120",
-        "#frPLplot Example 8 - Alt=60, Az=160"
-    };
-
-   PLStreamc plsdummy = new PLStreamc();
-   plplotjavac pls = new plplotjavac();
-
+     {
+	"#frPLplot Example 8 - Alt=60, Az=30",
+	"#frPLplot Example 8 - Alt=20, Az=60",
+     };
     // cmap1_init1
     
     // Initializes color map 1 in HLS space.
@@ -93,51 +90,67 @@ class x08 {
         double[] x = new double[ XPTS ];
         double[] y = new double[ YPTS ];
         double[][] z = new double[XPTS][YPTS];
-	double clev[] = new double[LEVELS];
+	double clevel[] = new double[LEVELS];
         double clev_null [] = new double[0];
 
         double xx, yy, r;
-	double zmin=Double.MAX_VALUE, zmax=Double.MIN_VALUE;;
+	double zmin=Double.MAX_VALUE, zmax=Double.MIN_VALUE;
 
         int ifshade;
 
     // Parse and process command line arguments.
 
         pls.plParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        boolean rosen = true;
 
     // Initialize plplot.
 
         pls.plinit();
 
-        for( i=0; i < XPTS; i++ )
-            x[i] = (double) (i - (XPTS/2)) / (double) (XPTS/2);
+        for( i=0; i < XPTS; i++ ) {
+	   x[i] = (double) (i - (XPTS/2)) / (double) (XPTS/2);
+	   if (rosen)
+	     x[i] *=  1.5;
+	}
 
-        for( j=0; j < YPTS; j++ )
-            y[j] = (double) (j - (YPTS/2)) / (double) (YPTS/2);
+        for( j=0; j < YPTS; j++ ) {
+	   y[j] = (double) (j - (YPTS/2)) / (double) (YPTS/2);
+	   if (rosen)
+	     y[j] += 0.5;
+	}
 
         for( i = 0; i < XPTS; i++ )
         {
             xx = x[i];
             for( j = 0; j < YPTS; j++ )
             {
-                yy = y[j];
-                r = Math.sqrt(xx * xx + yy * yy);
-                z[i][j] = Math.exp(-r * r) * Math.cos(2.0 * Math.PI * r);
-		if (zmin > z[i][j])
-		    zmin = z[i][j];
-		if (zmax < z[i][j])
-		    zmax = z[i][j];
+	       yy = y[j];
+	       if (rosen) {
+		  z[i][j] = Math.log(Math.pow(1. - xx,2) + 100 * 
+				     Math.pow(yy - Math.pow(xx,2),2));
+		  
+		  if (Double.isInfinite(z[i][j])) /* the log() of the function may become -inf */
+		    z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
+	       }
+	       else {
+		  r = Math.sqrt(xx * xx + yy * yy);
+		  z[i][j] = Math.exp(-r * r) * Math.cos(2.0 * Math.PI * r);
+	       }
+	       if (zmin > z[i][j])
+		 zmin = z[i][j];
+	       if (zmax < z[i][j])
+		 zmax = z[i][j];
             }
         }
 
-	double step = (zmax-zmin)/LEVELS;
+	double step = (zmax-zmin)/(LEVELS+1);
 	for (i=0; i<LEVELS; i++)
-	    clev[i] = zmin + step*i;
+	    clevel[i] = zmin + step*(i+1);
 
         pls.pllightsource( 1., 1., 1. );
-        for( k = 0; k < 4; k++ )
+        for( k = 0; k < 2; k++ )
         {
-	   for( ifshade = 0; ifshade < 6; ifshade++)
+	   for( ifshade = 0; ifshade < 4; ifshade++)
 	   {
 	      pls.pladv(0);
 	      pls.plvpor(0.0, 1.0, 0.0, 0.9);
@@ -145,31 +158,30 @@ class x08 {
 	      pls.plcol0(3);
 	      pls.plmtex("t", 1.0, 0.5, 0.5, title[k]);
 	      pls.plcol0(1);
-	      pls.plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
-		       alt[k], az[k] );
+	      if(rosen)
+		pls.plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0,
+			   alt[k], az[k] );
+	      else
+		pls.plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+			   alt[k], az[k] );
 	      pls.plbox3( "bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0 );
 
 	      pls.plcol0(2);
-	      if( ifshade == 0) // wireframe plot
-		pls.plot3d( x, y, z, opt[k], 1 );
-	      else if (ifshade == 1) { // mag colored mesh plot
-		cmap1_init(0);
-		pls.plmesh( x, y, z, opt[k] | pls.MAG_COLOR);
-	      } else if (ifshade == 2) { // reflected light surface plot
-		cmap1_init(1);
+
+	      if (ifshade == 0) { /* diffuse light surface plot */
+		 cmap1_init(1);
 		 // with new interface haven't yet made null work so have
 		 // to put in specific zero-length array.
-		pls.plsurf3d( x, y, z, 0, clev_null);
-	      } else if (ifshade == 3) { // magnitude colored surface
+		 pls.plsurf3d( x, y, z, 0, clev_null );
+	      } else if (ifshade == 1) { /* magnitude colored plot */
 		 cmap1_init(0);
-		 pls.plsurf3d(x, y, z, pls.MAG_COLOR, clev_null);
-	      } else if (ifshade == 4) { //  magnitude colored surface with faceted squares
-		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null);
-	      } else { //  magnitude colored surface with surface and xy plane contour lines
-		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clev);
-	      }
+		 pls.plsurf3d( x, y, z, pls.MAG_COLOR, clev_null );
+	      } else if (ifshade == 2) { /*  magnitude colored plot with faceted squares */
+		 pls.plsurf3d( x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null );
+	      } else                     /* magnitude colored plot with contours */
+		 pls.plsurf3d( x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clevel );
 	   }
         }
 

@@ -1,3 +1,10 @@
+2003-01-02  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Make 8th Java example give the same result (to 1 unit in last
+	  digit of postscript file) as new 8th C example.  This involved
+	  defining some additional constants for the swig java interface
+	  file as well as substantial changes in x08.java.
+
 2002-12-31  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Changed version number of PLplot package *and* associated

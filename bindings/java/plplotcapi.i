@@ -66,11 +66,16 @@ typedef void* PLPointer;
 
 /* definitions for the opt argument in plsurf3d() */
 
-#define SURF_CONT 0x10 /* draw contour plot at surface */
-#define BASE_CONT 0x20 /* draw contour plot at xy plane */
+#define DRAW_LINEX 0x01 /* draw lines parallel to the X axis */
+#define DRAW_LINEY 0x02 /* draw lines parallel to the Y axis */
+#define DRAW_LINEXY 0x03 /* draw lines parallel to both the X and Y axes */
+#define MAG_COLOR 0x04 /* draw the mesh with a color dependent of the magnitude */
+#define BASE_CONT 0x08 /* draw contour plot at bottom xy plane */
+#define TOP_CONT 0x10 /* draw contour plot at top xy plane */
+#define SURF_CONT 0x20 /* draw contour plot at surface */
 #define DRAW_SIDES 0x40 /* draw sides */
 #define FACETED   0x80 /* draw outline for each square that makes up the surface */
-#define MAG_COLOR 0x04 /* draw the mesh with a color dependent of the magnitude */
+#define MESH 0x100 /* draw mesh */
 
 /* Window parameter tags */
 
