@@ -38,14 +38,20 @@ tkdemos:	tmp/Makefile
 install:	tmp/Makefile
 	cd tmp; $(MAKE) install
 
-clean:		tmp/Makefile
+clean:		tmp/Makefile cfclean
 	cd tmp; $(MAKE) clean
 
-distclean:	tmp/Makefile
+distclean:	tmp/Makefile cfclean
 	cd tmp; $(MAKE) distclean
 
 makefile:	tmp/Makefile
 	cd tmp; $(MAKE) makefile
 
-tmp/Makefile:
-	./configure
+tmp/Makefile: configure
+	if test -f ./reconfig; then ./reconfig; else ./configure; fi
+
+configure: cf/configure.in cf/sysconf.in cf/sysloc.in
+	cd cf; autoconf; mv configure ..
+
+cfclean:
+	rm -f reconfig
