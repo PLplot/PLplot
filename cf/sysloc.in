@@ -349,9 +349,11 @@ fi
 
 # ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever include directives.  These can go in
-# any order.
+# any order, except the first, which supports the 'include "plplot/<header>"'
+# syntax.
 # ----------------------------------------------------------------------------
 
+ADD_TO_INCS(., INCS, INCPATH)
 if test "$enable_xwin" = "yes"; then
     ADD_TO_INCS($XINCDIR, INCS, INCPATH)
 fi
@@ -595,11 +597,6 @@ if test -z "$EXTRA_LIBS"; then
 fi
 
 LIBS="$LIBS $EXTRA_LIBS"
-
-# Must add current path for includes in order for new plplot/*.h header
-# files to work properly in Linux.  Can do this above just for
-# Linux, but I (AWI) think this is probably a general requirement.
-ADD_TO_INCS(., INCS, INCPATH)
 
 AC_SUBST(INCS)
 AC_SUBST(LIBS)
