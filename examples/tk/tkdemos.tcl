@@ -21,7 +21,7 @@ plstdwin .
 plxframe .plw
 pack append . .plw {left expand fill}
 
-for {set i 1} {$i <= 18} {incr i} {
+for {set i 1} {$i <= 19} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
     proc $i {} "$demo .plw.plwin"
