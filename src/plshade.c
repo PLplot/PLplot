@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1993/08/09 22:18:57  mjl
+ * Revision 1.3  1993/08/31 17:58:06  mjl
+ * More cleaning up, merged documentation file into source file.
+ *
+ * Revision 1.2  1993/08/09  22:18:57  mjl
  * Miscellaneous cleaning up.
  *
  * Revision 1.1  1993/07/16  22:38:12  mjl
@@ -14,6 +17,102 @@
 	Can be used to shade contour plots or alone.
 	Copyright 1993 Wesley Ebisuzaki 
 */
+
+/*----------------------------------------------------------------------*\
+* Call syntax for plshade():
+* 
+* void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left, 
+* 	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform)(), 
+* 	PLFLT shade_min, PLFLT shade_max, 
+* 	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
+* 	PLINT max_color, PLINT max_width, void (*fill)(), PLINT rectangular)
+* 
+* arguments:
+* 
+* 	PLFLT &(a[0][0])
+* 
+* Contains array to be plotted. The array must have been declared as PLFLT
+* a[nx][ny].  See following note on fortran-style arrays.
+* 
+* 	PLINT nx, ny
+* 
+* Dimension of array "a".
+* 
+* 	char &(defined[0][0])
+* 
+* Contains array of flags, 1 = data is valid, 0 = data is not valid.  This
+* array determines which sections of the data is to be plotted.  This argument
+* can be NULL if all the values are valid.  Must have been declared as char
+* defined[nx][ny].
+* 
+* 	PLFLT left, right, bottom, top
+* 
+* Defines the "grid" coordinates.  The data a[0][0] has a position of
+* (left,bottom).
+* 
+* 	void (*mapform)()
+* 
+* Transformation from `grid' coordinates to world coordinates.  This pointer to
+* a function can be NULL in which case the grid coordinates are the same as the
+* world coordinates.
+* 
+* 	PLFLT shade_min, shade_max
+* 
+* Defines the interval to be shaded. If shade_max <= shade_min, plshade does
+* nothing.
+* 
+* 	PLINT sh_color, sh_width
+* 
+* Defines pen color, width used by the fill pattern.
+* 
+* 	PLINT min_color, min_width, max_color, max_width
+* 
+* Defines pen color, width used by the boundary of shaded region. The min
+* values are used for the shade_min boundary, and the max values are used on
+* the shade_max boundary.  Set color and width to zero for no plotted
+* boundaries.
+* 
+* 	void (*fill)()
+* 
+* Routine used to fill the region.  Use plfill.  Future version of plplot may
+* have other fill routines.
+* 
+* 	PLINT rectangular
+* 
+* Flag. Set to 1 if rectangles map to rectangles after (*mapform)() else set to
+* zero. If rectangular is set to 1, plshade tries to save time by filling large
+* rectangles.  This optimization fails if (*mapform)() distorts the shape of
+* rectangles.  For example a plot in polor coordinates has to have rectangular
+* set to zero.
+* 
+* Example mapform's:
+* 
+* Grid to world coordinate transformation.
+* This example goes from a r-theta to x-y for a polar plot.
+*
+* void mapform(PLINT n, PLFLT *x, PLFLT *y) {
+* 	int i;
+* 	double r, theta;
+* 	for (i = 0; i < n; i++) {
+* 	    r = x[i];
+* 	    theta = y[i];
+* 	    x[i] = r*cos(theta);
+* 	    y[i] = r*sin(theta);	
+* 	}
+* }
+* 
+* Grid was in cm, convert to world coordinates in inches.
+* Expands in x direction.
+*
+* void mapform(PLINT n, PLFLT *x, PLFLT *y) {
+* 	int i;
+* 	for (i = 0; i < n; i++) {
+* 		x[i] = (1.0 / 2.5) * x[i];
+* 		y[i] = (1.0 / 2.5) * y[i];
+* 	}
+* }
+*
+\*----------------------------------------------------------------------*/
 
 #include "plplotP.h"
 #include <stdio.h>
@@ -33,6 +132,225 @@ static int min_points, max_points, n_point;
 static int min_pts[4], max_pts[4];
 static PLINT pen_col_sh, pen_col_min, pen_col_max;
 static PLINT pen_wd_sh, pen_wd_min, pen_wd_max;
+
+/* Function prototypes */
+
+static void set_cond	  (register int *, register PLFLT *,
+			   register char *, register PLINT);
+static int  find_interval (PLFLT, PLFLT, PLINT, PLINT, PLFLT *);
+static void poly	  (void (*) (), PLFLT *, PLFLT *, PLINT , PLINT ,
+			   PLINT, PLINT);
+static void big_recl	  (int *, register int, int, int, int *, int *);
+static void draw_boundary (PLINT, PLFLT *, PLFLT *);
+
+/*----------------------------------------------------------------------*\
+* plshade()
+*
+* Shade region.
+\*----------------------------------------------------------------------*/
+
+void 
+plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left,
+	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform) (),
+	PLFLT shade_min, PLFLT shade_max,
+	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
+	PLINT max_color, PLINT max_width, void (*fill) (), PLINT rectangular)
+{
+
+    PLINT n, slope, ix, iy;
+    int nx1, ny1, count, i, j;
+    PLFLT *a0, *a1, dx, dy, b;
+    PLFLT x[8], y[8], xp[2];
+
+    int *c, *c0, *c1;
+
+    if (nx <= 0 || ny <= 0)
+	plexit("plshade: illegal args");
+    if (shade_min >= shade_max)
+	return;
+    if (mapform == NULL)
+	rectangular = 1;
+    pen_col_sh = sh_color;
+    pen_col_min = min_color;
+    pen_col_max = max_color;
+    pen_wd_sh = sh_width;
+    pen_wd_min = min_width;
+    pen_wd_max = max_width;
+
+    plstyl((PLINT) 0, NULL, NULL);
+    plcol(pen_col_sh);
+    plwid(pen_wd_sh);
+
+    /* alloc space for condition codes */
+    if ((c = (int *) malloc(nx * ny * sizeof(int))) == NULL)
+	plexit("ran out of memory");
+    sh_min = shade_min;
+    sh_max = shade_max;
+
+    set_cond(c, a, defined, nx * ny);
+
+    ny1 = ny - 1;
+    nx1 = nx - 1;
+    dx = (right - left) / (nx - 1);
+    dy = (top - bottom) / (ny - 1);
+    a0 = a;
+    a1 = a + ny;
+    c0 = c;
+    c1 = c + ny;
+
+    for (ix = 0; ix < nx1; ix++, a0 = a1, a1 += ny,
+	 c0 = c1, c1 += ny, left += dx) {
+
+	for (iy = 0; iy < ny1; iy++) {
+	    count = c0[iy] + c0[iy + 1] + c1[iy] + c1[iy + 1];
+	    if (count >= UNDEF)
+		continue;
+	    if (count == 4 * POS)
+		continue;
+	    if (count == 4 * NEG)
+		continue;
+	    b = bottom + iy * dy;
+
+	    if (count == 4 * OK) {
+		/* find bigest rectangle that fits */
+		if (rectangular) {
+		    big_recl(c0 + iy, ny, nx - ix, ny - iy, &i, &j);
+		}
+		else {
+		    i = j = 1;
+		}
+		x[0] = x[1] = left;
+		x[2] = x[3] = left + i * dx;
+		y[0] = y[3] = b;
+		y[1] = y[2] = b + j * dy;
+		if (mapform)
+		    (*mapform) ((PLINT) 4, x, y);
+		if (fill)
+		    (*fill) ((PLINT) 4, x, y);
+		iy += j - 1;
+		continue;
+	    }
+	    n_point = min_points = max_points = 0;
+	    n = find_interval(a0[iy], a0[iy + 1], c0[iy], c0[iy + 1], xp);
+	    for (j = 0; j < n; j++) {
+		x[j] = left;
+		y[j] = b + dy * xp[j];
+	    }
+
+	    i = find_interval(a0[iy + 1], a1[iy + 1],
+			      c0[iy + 1], c1[iy + 1], xp);
+
+	    for (j = 0; j < i; j++) {
+		x[j + n] = left + dx * xp[j];
+		y[j + n] = b + dy;
+	    }
+	    n += i;
+
+	    i = find_interval(a1[iy + 1], a1[iy], c1[iy + 1], c1[iy], xp);
+	    for (j = 0; j < i; j++) {
+		x[n + j] = left + dx;
+		y[n + j] = b + dy * (1.0 - xp[j]);
+	    }
+	    n += i;
+
+	    i = find_interval(a1[iy], a0[iy], c1[iy], c0[iy], xp);
+	    for (j = 0; j < i; j++) {
+		x[n + j] = left + dx * (1.0 - xp[j]);
+		y[n + j] = b;
+	    }
+	    n += i;
+
+	    if (mapform)
+		(*mapform) (n, x, y);
+	    if (min_points == 4)
+		slope = plctestez(a, nx, ny, ix, iy, shade_min);
+	    if (max_points == 4)
+		slope = plctestez(a, nx, ny, ix, iy, shade_max);
+
+	    /* special cases: check number of times a contour is in a box */
+
+	    switch ((min_points << 3) + max_points) {
+	      case 000:
+	      case 020:
+	      case 002:
+	      case 022:
+		if (fill)
+		    (*fill) (n, x, y);
+		break;
+	      case 040:	/* 2 contour lines in box */
+	      case 004:
+		if (n != 6)
+		    fprintf(stderr, "plshade err n=%d !6", n);
+
+		if (slope == 1 && c0[iy] == OK) {
+		    if (fill)
+			(*fill) (n, x, y);
+		}
+		else if (slope == 1) {
+		    poly(fill, x, y, 0, 1, 2, -1);
+		    poly(fill, x, y, 3, 4, 5, -1);
+		}
+		else if (c0[iy + 1] == OK) {
+		    if (fill)
+			(*fill) (n, x, y);
+		}
+		else {
+		    poly(fill, x, y, 0, 1, 5, -1);
+		    poly(fill, x, y, 2, 3, 4, -1);
+		}
+		break;
+	      case 044:
+		if (n != 8)
+		    fprintf(stderr, "plshade err n=%d !8", n);
+		if (fill == NULL)
+		    break;
+		if (slope == 1) {
+		    poly(fill, x, y, 0, 1, 2, 3);
+		    poly(fill, x, y, 4, 5, 6, 7);
+		}
+		else {
+		    poly(fill, x, y, 0, 1, 6, 7);
+		    poly(fill, x, y, 2, 3, 4, 5);
+		}
+		break;
+	      case 024:
+	      case 042:
+		/* 3 contours */
+		if (max_points == 4)
+		    i = NEG;
+		else
+		    i = POS;
+
+		if (c0[iy] == i) {
+		    slope = NEG;
+		    poly(fill, x, y, 0, 1, 5, 6);
+		    poly(fill, x, y, 2, 3, 4, -1);
+		}
+		else if (c0[iy + 1] == i) {
+		    slope = POS;
+		    poly(fill, x, y, 0, 1, 2, 3);
+		    poly(fill, x, y, 4, 5, 6, -1);
+		}
+		else if (c1[iy + 1] == i) {
+		    slope = NEG;
+		    poly(fill, x, y, 0, 1, 6, -1);
+		    poly(fill, x, y, 2, 3, 4, 5);
+		}
+		else if (c1[iy] == i) {
+		    slope = POS;
+		    poly(fill, x, y, 0, 1, 2, -1);
+		    poly(fill, x, y, 3, 4, 5, 6);
+		}
+		break;
+	      default:
+		fprintf(stderr, "prog err switch\n");
+		break;
+	    }
+	    draw_boundary(slope, x, y);
+	}
+    }
+    free(c);
+}
 
 /*----------------------------------------------------------------------*\
 * set_cond()
@@ -249,7 +567,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 }
 
 /*----------------------------------------------------------------------*\
-* poly()
+* draw_boundary()
 *
 * Draw boundaries of contour regions based on min_pts[], and max_pts[].
 \*----------------------------------------------------------------------*/
@@ -291,212 +609,4 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
     }
     plcol(pen_col_sh);
     plwid(pen_wd_sh);
-}
-
-/*----------------------------------------------------------------------*\
-* poly()
-*
-* Shade region.
-\*----------------------------------------------------------------------*/
-
-void 
-plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left,
-	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform) (),
-	PLFLT shade_min, PLFLT shade_max,
-	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-	PLINT max_color, PLINT max_width, void (*fill) (), PLINT rectangular)
-{
-
-    PLINT n, slope, ix, iy;
-    int nx1, ny1, count, i, j;
-    PLFLT *a0, *a1, dx, dy, b;
-    PLFLT x[8], y[8], xp[2];
-    PLINT plctestez(PLFLT *, PLINT, PLINT, PLINT, PLINT, PLFLT);
-
-    int *c, *c0, *c1;
-
-    if (nx <= 0 || ny <= 0)
-	plexit("plshade: illegal args");
-    if (shade_min >= shade_max)
-	return;
-    if (mapform == NULL)
-	rectangular = 1;
-    pen_col_sh = sh_color;
-    pen_col_min = min_color;
-    pen_col_max = max_color;
-    pen_wd_sh = sh_width;
-    pen_wd_min = min_width;
-    pen_wd_max = max_width;
-
-    plstyl((PLINT) 0, NULL, NULL);
-    plcol(pen_col_sh);
-    plwid(pen_wd_sh);
-
-    /* alloc space for condition codes */
-    if ((c = (int *) malloc(nx * ny * sizeof(int))) == NULL)
-	plexit("ran out of memory");
-    sh_min = shade_min;
-    sh_max = shade_max;
-
-    set_cond(c, a, defined, nx * ny);
-
-    ny1 = ny - 1;
-    nx1 = nx - 1;
-    dx = (right - left) / (nx - 1);
-    dy = (top - bottom) / (ny - 1);
-    a0 = a;
-    a1 = a + ny;
-    c0 = c;
-    c1 = c + ny;
-
-    for (ix = 0; ix < nx1; ix++, a0 = a1, a1 += ny,
-	 c0 = c1, c1 += ny, left += dx) {
-
-	for (iy = 0; iy < ny1; iy++) {
-	    count = c0[iy] + c0[iy + 1] + c1[iy] + c1[iy + 1];
-	    if (count >= UNDEF)
-		continue;
-	    if (count == 4 * POS)
-		continue;
-	    if (count == 4 * NEG)
-		continue;
-	    b = bottom + iy * dy;
-
-	    if (count == 4 * OK) {
-		/* find bigest rectangle that fits */
-		if (rectangular) {
-		    big_recl(c0 + iy, ny, nx - ix, ny - iy, &i, &j);
-		}
-		else {
-		    i = j = 1;
-		}
-		x[0] = x[1] = left;
-		x[2] = x[3] = left + i * dx;
-		y[0] = y[3] = b;
-		y[1] = y[2] = b + j * dy;
-		if (mapform)
-		    (*mapform) ((PLINT) 4, x, y);
-		if (fill)
-		    (*fill) ((PLINT) 4, x, y);
-		iy += j - 1;
-		continue;
-	    }
-	    n_point = min_points = max_points = 0;
-	    n = find_interval(a0[iy], a0[iy + 1], c0[iy], c0[iy + 1], xp);
-	    for (j = 0; j < n; j++) {
-		x[j] = left;
-		y[j] = b + dy * xp[j];
-	    }
-
-	    i = find_interval(a0[iy + 1], a1[iy + 1], c0[iy + 1], c1[iy + 1], xp);
-	    for (j = 0; j < i; j++) {
-		x[j + n] = left + dx * xp[j];
-		y[j + n] = b + dy;
-	    }
-	    n += i;
-
-	    i = find_interval(a1[iy + 1], a1[iy], c1[iy + 1], c1[iy], xp);
-	    for (j = 0; j < i; j++) {
-		x[n + j] = left + dx;
-		y[n + j] = b + dy * (1.0 - xp[j]);
-	    }
-	    n += i;
-
-	    i = find_interval(a1[iy], a0[iy], c1[iy], c0[iy], xp);
-	    for (j = 0; j < i; j++) {
-		x[n + j] = left + dx * (1.0 - xp[j]);
-		y[n + j] = b;
-	    }
-	    n += i;
-
-	    if (mapform)
-		(*mapform) (n, x, y);
-	    if (min_points == 4)
-		slope = plctestez(a, nx, ny, ix, iy, shade_min);
-	    if (max_points == 4)
-		slope = plctestez(a, nx, ny, ix, iy, shade_max);
-
-	    /* special cases: check number of times a contour is in a box */
-
-	    switch ((min_points << 3) + max_points) {
-	      case 000:
-	      case 020:
-	      case 002:
-	      case 022:
-		if (fill)
-		    (*fill) (n, x, y);
-		break;
-	      case 040:	/* 2 contour lines in box */
-	      case 004:
-		if (n != 6)
-		    fprintf(stderr, "plshade err n=%d !6", n);
-
-		if (slope == 1 && c0[iy] == OK) {
-		    if (fill)
-			(*fill) (n, x, y);
-		}
-		else if (slope == 1) {
-		    poly(fill, x, y, 0, 1, 2, -1);
-		    poly(fill, x, y, 3, 4, 5, -1);
-		}
-		else if (c0[iy + 1] == OK) {
-		    if (fill)
-			(*fill) (n, x, y);
-		}
-		else {
-		    poly(fill, x, y, 0, 1, 5, -1);
-		    poly(fill, x, y, 2, 3, 4, -1);
-		}
-		break;
-	      case 044:
-		if (n != 8)
-		    fprintf(stderr, "plshade err n=%d !8", n);
-		if (fill == NULL)
-		    break;
-		if (slope == 1) {
-		    poly(fill, x, y, 0, 1, 2, 3);
-		    poly(fill, x, y, 4, 5, 6, 7);
-		}
-		else {
-		    poly(fill, x, y, 0, 1, 6, 7);
-		    poly(fill, x, y, 2, 3, 4, 5);
-		}
-		break;
-	      case 024:
-	      case 042:
-		/* 3 contours */
-		if (max_points == 4)
-		    i = NEG;
-		else
-		    i = POS;
-
-		if (c0[iy] == i) {
-		    slope = NEG;
-		    poly(fill, x, y, 0, 1, 5, 6);
-		    poly(fill, x, y, 2, 3, 4, -1);
-		}
-		else if (c0[iy + 1] == i) {
-		    slope = POS;
-		    poly(fill, x, y, 0, 1, 2, 3);
-		    poly(fill, x, y, 4, 5, 6, -1);
-		}
-		else if (c1[iy + 1] == i) {
-		    slope = NEG;
-		    poly(fill, x, y, 0, 1, 6, -1);
-		    poly(fill, x, y, 2, 3, 4, 5);
-		}
-		else if (c1[iy] == i) {
-		    slope = POS;
-		    poly(fill, x, y, 0, 1, 2, -1);
-		    poly(fill, x, y, 3, 4, 5, 6);
-		}
-		break;
-	      default:
-		fprintf(stderr, "prog err switch\n");
-		break;
-	    }
-	    draw_boundary(slope, x, y);
-	}
-    }
-    free(c);
 }
