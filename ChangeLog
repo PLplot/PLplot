@@ -1,3 +1,15 @@
+2002-12-04  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* Begin configuration of octave.  plplot_octave.oct builds
+	* and installs, but no other part of octave is done yet.
+
+
+2002-12-03  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* With a lot of work required to work around state problems in the
+	  repository, merged the AT branch into MAIN.  Welcome to the world
+	  of autotools configuration on our MAIN branch!
+
 2002-12-02  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* drivers/Makefile.am for AT branch: instead of using the

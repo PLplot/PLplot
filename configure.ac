@@ -632,6 +632,7 @@ AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
 AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
 AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
 AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
+AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
 
 MY_ARG_ENABLE(itcl,
   [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
@@ -842,6 +843,7 @@ AC_OUTPUT([
 	bindings/python/Makefile
 	bindings/tcl/Makefile
 	bindings/tk/Makefile
+	bindings/octave/Makefile
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile

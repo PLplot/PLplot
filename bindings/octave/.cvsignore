@@ -1,0 +1,11 @@
+*.flc
+Makefile
+Makefile.in
+.deps
+.libs
+*.la
+*.lo
+plplot_octave.cc
+plplot_octave.h
+plplot_octave.oct
+tmp_stub

@@ -32,7 +32,7 @@
  * 
  * To use PLplot from C or C++, it is only necessary to 
  * 
- *      #include "plplot/plplot.h"
+ *      #include "plplot.h"
  * 
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file
@@ -677,7 +677,7 @@ typedef struct {
 extern "C" {
 #endif
 
-#include "plplot/plplot_octave_rej.h"
+#include "plplot_octave_rej.h"
 
 	/* All void types */
 
