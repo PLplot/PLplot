@@ -2,9 +2,9 @@
 plplot_octave FGA (frequently given answers):
 
 
---Make sure that you have octave-2.0.11 or latter, tcl7.6, tk4.2 or
-tcl-tk-8.0 and perl. Make sure that you have a correctly installed
-octave, configured with --enable-shared and --enable-dl. The command
+--Make sure that you have octave-2.0.16 or latter, matwrap and perl.
+Make sure that you have a correctly installed octave, configured with
+--enable-shared and --enable-dl. The command
 
 	ldd `which octave`
 
@@ -25,8 +25,7 @@ use the Xwindows driver.
 extracted directory from plplot_octave, as there are needed script files
 in directories misc, demos and PLplot. To run the plplot_octave demos,
 you must provide a LOADPATH that start at the current directory; being
-there, I find LOADPATH =[".//:" LOADPATH] a simple way of doing it after
-invoquing Octave.
+there.
 
 --There are problems with `semilogy, semilogx and loglog',
 

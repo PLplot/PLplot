@@ -1,8 +1,8 @@
 Install:
 
-plplot_octave.h is the main important file. It is a massaged version
-of plplot's plplot.h file, ready for use with Holt's matwrap, which
-you can find at
+plplot_octave_org.h is the main important file. It is a massaged version
+of plplot's plplot.h file, ready for use with Holt's matwrap, which you
+can find at
 
 	http://lnc.usc.edu/~holt/matwrap/
 
@@ -12,26 +12,16 @@ writing. You also need perl.
 You must compile PLplot with shared libraries, which 'configure' does
 by default if your OS is supported.
 
-What you get:
+Make sure that you have octave-2.0.16 or latter, matwrap and perl.
+Make sure that you have a correctly installed octave, configured with
+--enable-shared and --enable-dl. The command
 
-You have a 'demo' directory, with the equivalent octave script files
-x??c.m of PLplot C demos, and some new demos, p??.m.
+	ldd `which octave`
 
-You have a 'PLplot' directory with modified versions of the standard
-octave plot command, plus a lot of new ones ready for Octave use. You
-must have it on your LOADPATH before the standard octave/gnuplot plot
-scripts. If you install it in the default directory, use the octave
-command `octave_plplot_path' to setup the path. You can change between
-the default gnuplot plotter and octave_plplot using the octave command
-`use_plplot'.
+should report octave dynamic libs, liboctave.so, libcruft.so and
+liboctinterp.so
 
-You have a misc directory with some other octave demos/utilities.
-
-You have an etc directory where the "documentation" is.
-
-You have the directory where the LICENCE, README, INSTALL, PROBLEMS,
-BUGS, ToDo, are, plus 'plplot.h', 'plplot_octave.cc', 'plplot_stub.m',
-massage.c, etc.
+Configure PLplot --with-octave=yes in the main directory, and then 'make'.
 
 Testing:
 
@@ -66,10 +56,30 @@ If you just want to use the PLplot API, use it as you would from a C
 program, with the exception that you don't need to specify matrices
 dimensions; e.g., for plline(n,x,y) you just need to call it as
 plline(x,y), where x and y are column vectors. Look at the various
-x??x.m examples in the demos directory.
+x??c.m examples in the demos directory.
 
 You can't call API functions whose arguments are pointers to
 functions. Some wrappers for common situations are however available.
+
+What you get:
+
+You have a 'demo' directory, with the equivalent octave script files
+x??c.m of PLplot C demos, and some new demos, p??.m.
+
+You have a 'PLplot' directory with modified versions of the standard
+octave plot command, plus a lot of new ones ready for Octave use. You
+must have it on your LOADPATH before the standard octave/gnuplot plot
+scripts. If you install it in the default directory, use the octave
+command `octave_plplot_path' to setup the path. You can change between
+the default gnuplot plotter and octave_plplot using the octave command
+`use_plplot'.
+
+You have a misc directory with some other octave demos/utilities.
+
+You have an etc directory where the "documentation" is.
+
+You have the directory where the README, INSTALL, PROBLEMS,
+BUGS, ToDo, are, plus 'plplot_octave_org.h', massage.c, etc.
 
 As with every program, except D. Knuth ones, the programs in this
 package are not finished nor bug free. Please report bugs and send
