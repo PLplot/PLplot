@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x20 for PLplot PDL bindings
+# Demo x20 for the PLplot PDL binding
 #
 # plimage demo
 #

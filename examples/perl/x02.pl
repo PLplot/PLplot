@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x02 for PLplot PDL bindings
+# Demo x02 for the PLplot PDL binding
 #
 # Multiple window and color map 0 demo
 # (inspired from t/x02.t of module Graphics::PLplot, by Tim Jenness)

@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x14 for PLplot PDL bindings
+# Demo x14 for the PLplot PDL binding
 #
 # Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 #

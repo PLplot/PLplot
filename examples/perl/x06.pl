@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x06 for PLplot PDL bindings
+# Demo x06 for the PLplot PDL binding
 #
 # Font demo
 #

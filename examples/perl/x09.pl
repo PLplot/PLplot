@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x09 for PLplot PDL bindings
+# Demo x09 for the PLplot PDL binding
 #
 # Contour plot demo
 #

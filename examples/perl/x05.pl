@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x05 for PLplot PDL bindings
+# Demo x05 for the PLplot PDL binding
 #
 # Histogram demo
 # (inspired from t/x05.t of module Graphics::PLplot, by Tim Jenness)

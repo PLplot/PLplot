@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x08 for PLplot PDL bindings
+# Demo x08 for the PLplot PDL binding
 #
 # 3-d plot demo
 #

@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x10 for PLplot PDL bindings
+# Demo x10 for the PLplot PDL binding
 #
 # Window positioning demo.
 #

@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x13 for PLplot PDL bindings
+# Demo x13 for the PLplot PDL binding
 #
 # Does a simple pie chart
 #

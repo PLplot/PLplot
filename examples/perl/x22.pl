@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x22 for PLplot PDL bindings
+# Demo x22 for the PLplot PDL binding
 #
 # Simple vector plot example
 #

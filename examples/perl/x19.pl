@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x19 for PLplot PDL bindings
+# Demo x19 for the PLplot PDL binding
 #
 # Illustrates backdrop plotting of world, US maps.
 #

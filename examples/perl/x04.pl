@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x04 for PLplot PDL bindings
+# Demo x04 for the PLplot PDL binding
 #
 # Log plot demo
 # (inspired from t/x04.t of module Graphics::PLplot, by Tim Jenness)

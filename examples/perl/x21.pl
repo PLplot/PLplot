@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x21 for PLplot PDL bindings
+# Demo x21 for the PLplot PDL binding
 #
 # Grid data demo
 #

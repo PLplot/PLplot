@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Demo x01 for PLplot PDL binding
+# Demo x01 for the PLplot PDL binding
 #
 # Simple line plot and multiple windows demo
 #
