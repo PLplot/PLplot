@@ -75,7 +75,7 @@ You also have access to the PLplot API,
 NOTES: - You don't need to specify vector or matrix dimensions.
        - When setting Octave variable "automatic_replot = 1", changes take
 	 effect immediately, otherwise they only take effect at the next plot.
-	 (This does not yet apply to all plot kinds).
+	 (This does not yet apply to all plot types).
 
 
 --- Plot window control
@@ -185,6 +185,7 @@ tdeblank	-- Remove trailing amd leading blanks from string.
 pldef		-- set your defaults.
 plsetopt	-- set/view/reset/aplly plplot options.
 plimage		-- display octave images.
+griddata	-- grid irregularly sampled data
 
 toggle_plplot_use	-- use plplot or gnuplot.
 plplot_octave_path	-- set or return octave_plplot scripts directory path.
