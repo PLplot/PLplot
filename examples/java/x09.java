@@ -288,7 +288,7 @@ class x09 {
 	double [][] yg = new double[PRPTS][PTHETAPTS] ;
 	double [][] z = new double[PRPTS][PTHETAPTS] ;
 	int nlevelneg, nlevelpos;
-	double dz, clevel;
+	double dz, clev;
 	double [] clevelneg_store = new double[PNLEVEL];
 	double [] clevelpos_store = new double[PNLEVEL];
 	int  ncollin, ncolbox, ncollab;
@@ -376,11 +376,11 @@ class x09 {
 	nlevelneg = 0;
 	nlevelpos = 0;
 	for (i = 0; i < PNLEVEL; i++) {
-            clevel = zmin + ((double) i + 0.5)*dz;
-            if (clevel <= 0.)
-                clevelneg_store[nlevelneg++] = clevel;
+            clev = zmin + ((double) i + 0.5)*dz;
+            if (clev <= 0.)
+                clevelneg_store[nlevelneg++] = clev;
             else
-                clevelpos_store[nlevelpos++] = clevel;
+                clevelpos_store[nlevelpos++] = clev;
 	}
     // Colours!
 	ncollin = 11;
