@@ -1,10 +1,15 @@
 /* $Id$
-   $Log$
-   Revision 1.1  1993/01/23 05:36:01  mjl
-   This file added for inclusion by all user-defined event handlers to be
-   used with plplot.  It contains constant definitions used to transmit
-   info on the event that occurred (e.g. keystroke definitions).
-
+ * $Log$
+ * Revision 1.2  1995/03/16 23:25:57  mjl
+ * Changed definitions of control keys with ASCII equivalents to their ASCII
+ * value rather than the Xlib value.  These include: PLK_BackSpace, PLK_Tab,
+ * PLK_Linefeed, PLK_Return, PLK_Escape, and PLK_Delete.  Using ASCII for
+ * these just makes more sense.
+ *
+ * Revision 1.1  1993/01/23  05:36:01  mjl
+ * This file added for inclusion by all user-defined event handlers to be
+ * used with plplot.  It contains constant definitions used to transmit
+ * info on the event that occurred (e.g. keystroke definitions).
 */
 
 /*
@@ -13,13 +18,16 @@
     Input event (especially keyboard) definitions for use from plplot
     event handlers.
 
-    Key definitions are taken from the X11/keysymdef.h include file,
-    with only the control keys retained, and the "XK" prefix changed
-    to "PLK".  Users that wish to can handle the X keysym directly.
+    Key definitions are taken from the X11/keysymdef.h include file, with
+    some changes:
+        - only the control keys are retained
+	- the XK prefix has been changed to PLK
+	- control keys with ASCII equivalents use the ASCII code
 
-    This file can be included on all systems, whether X-based or not.
-    Drivers for non-X systems must translate the raw keycodes to those
-    used here, so not all keyboard input may be available.
+    By using the ASCII equivalent (if it exists) for all control keys, it
+    is easier to handle keyboard input from any device which is ASCII based.
+    Devices which use some other kind of key encoding must translate the raw
+    keycodes to those used here.
 */
 
 #ifndef __PLEVENT_H__
@@ -51,15 +59,20 @@ SOFTWARE.
 
 ******************************************************************/
 
-#define PLK_BackSpace		0xFF08	/* back space, back char */
-#define PLK_Tab			0xFF09
-#define PLK_Linefeed		0xFF0A	/* Linefeed, LF */
+/* Miscellaneous control keys, those with ASCII equivalents */
+
+#define PLK_BackSpace		0x08	/* back space, back char */
+#define PLK_Tab			0x09
+#define PLK_Linefeed		0x0A	/* Linefeed, LF */
+#define PLK_Return		0x0D	/* Return, enter */
+#define PLK_Escape		0x1B
+#define PLK_Delete		0xFF	/* Delete, rubout */
+
+/* Those without ASCII equivalents */
+
 #define PLK_Clear		0xFF0B
-#define PLK_Return		0xFF0D	/* Return, enter */
 #define PLK_Pause		0xFF13	/* Pause, hold */
 #define PLK_Scroll_Lock		0xFF14
-#define PLK_Escape		0xFF1B
-#define PLK_Delete		0xFFFF	/* Delete, rubout */
 
 /* Cursor control & motion */
 
