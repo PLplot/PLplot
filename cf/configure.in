@@ -365,6 +365,9 @@ if test "$with_shlib" = "yes"; then
 	AIX-* ) 
 	    cat $srcdir/cf/lib_sh_aix.in	>>Makefile.in
 	;;
+	Linux* )
+	    cat $srcdir/cf/lib_sh_linux.in	>>Makefile.in
+	;;
 	* )
 	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
 	;;
@@ -565,6 +568,7 @@ $srcdir/scripts/pl* \
 $srcdir/lib/*.fnt \
 $srcdir/lib/*.map \
 $srcdir/cf/*.in \
+$srcdir/sys/unix/version \
 . 2>/dev/null
 
 # ----------------------------------------------------------------------------

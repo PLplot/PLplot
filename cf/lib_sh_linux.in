@@ -1,0 +1,76 @@
+# ---------------------------*-Makefile-*--------------------------------
+# $Id$
+#
+# Geoffrey Furnish
+# IFS, University of Texas at Austin
+# 6-Jun-1995
+#
+# PLplot build rules for archive and shared library under Linux.
+# Based on prior work by Maurice.
+# -----------------------------------------------------------------------
+
+# -----------------------------------------------------------------------
+# Set up inference rules appropriate for building both archive and shared
+# libraries. 
+# -----------------------------------------------------------------------
+
+.cc.o:
+	$(CXX) $(CXX_FLAGS) $<
+	cd shared; $(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) ../$<
+
+.c.o:
+	$(CC) $(CC_FLAGS) $<
+	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$<
+
+.f.o:
+	$(F77) $(F77_FLAGS) $<
+	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$<
+
+# -----------------------------------------------------------------------
+# Library dependency list and targets
+# -----------------------------------------------------------------------
+
+SOVERSION	= @SOVERSION@
+LIBVERSION	:= $(shell ./version)
+
+PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+SONAME		= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+
+
+PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
+
+libs:	$(PLLIBS)
+
+$(PLLIB_AR):	$(LIB_OBJS)
+	-$(RM) $(PLLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
+	$(RANLIB) $(PLLIB_AR)
+
+# The following rule based (very) loosely on what I see David Engel
+# did in his Linux Tcl/Tk port.
+
+$(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
+	-$(RM) $(PLLIB_SO)
+	@echo ""; echo "Building shared library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
+		-Wl,-soname -Wl,$(SONAME) \
+		$(LIB_OBJS) stupidtk.o
+	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
+	ln -sf $(SONAME) $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so
+	@echo ""
+
+# -----------------------------------------------------------------------
+# Sick hacks.
+# -----------------------------------------------------------------------
+
+# Needs to be compiled using K&R C.
+
+tcpip.o:
+	$(OCC) $(CC_FLAGS) tcpip.c
+	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
+
+stupidtk.o:
+	$(CC) $(CC_FLAGS) stupidtk.c
+	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../stupidtk.c
