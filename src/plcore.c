@@ -352,6 +352,41 @@ plP_fill(short *x, short *y, PLINT npts)
 #define DEBUG_TEXT
 */
 
+#define hex2dec( a ) isdigit(a) ? a - 48 : (toupper(a) - 65) + 10
+
+/*--------------------------------------------------------------------------*\
+ *  char *text2num( char *text, char end, unsigned int *num)
+ *       char *text - pointer to the text to be parsed
+ *       char end   - end character (i.e. ')' or ']' to stop parsing
+ *       unsigned int *num - pointer to an unsigned int to store the value
+ *
+ *    Function takes a string, which can be either hex or decimal,
+ *    and converts it into an unsigned int, stopping at either a null,
+ *    or the character pointed to by 'end'. It is a bit brain-dead,
+ *    and probably should make more checks, but it works.
+\*--------------------------------------------------------------------------*/
+
+int text2num( char *text, char end, unsigned int *num)
+{
+  int base=10;
+  unsigned short i=0;
+  *num=0;
+
+  if (text[1]=='x')
+    {
+      base=16;
+      i=2;
+    }
+
+  while ((text[i]!=end)&&(text[i]!=0))
+    {
+      *num*=base;
+      *num+=hex2dec(text[i]);
+      i++;
+    }
+  return(i);
+}
+
 unsigned int unicode_buffer[1024];
 
 void
@@ -364,9 +399,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
     	EscText args;
       short len=0;
-      int i;
       char skip;
-      unsigned short j;
+      unsigned short i,j, k;
+      unsigned int code;
       char esc;
       int idx;
 
@@ -399,6 +434,22 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                   {
                     switch(string[i+1])
                       {
+                        case '(':  /* hershey code */
+                        i+=2+text2num(&string[i+2],')',&code);
+                        idx=plhershey2unicode(code);
+                        unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+                        skip=1;
+                        break;
+
+                        case '[':  /* unicode */
+                        i+=2+text2num(&string[i+2],']',&code);
+                        idx=plhershey2unicode(code);
+                        unicode_buffer[j]=code;
+                        skip=1;
+                        break;
+
+                        break;
+
                         case 'g':  /* Greek font */
                    	   idx=plhershey2unicode(string[i+2]-97+627); /* Get the index in the lookup table */
                    	                                              /* 97 = ASC-II position of 'a'
