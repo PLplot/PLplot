@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1993/08/11 19:23:33  mjl
+ * Revision 1.8  1993/09/28 21:26:38  mjl
+ * Fixed an inconsistency in the byte count.
+ *
+ * Revision 1.7  1993/08/11  19:23:33  mjl
  * Added some extra debugging code.
  *
  * Revision 1.6  1993/08/09  22:15:02  mjl
@@ -338,9 +341,8 @@ get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
     short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
     plr_rdn(pdf_rd_2nbytes(plr->file, (U_SHORT *) xs, n));
-    plr->nbytes -= 2*n;
     plr_rdn(pdf_rd_2nbytes(plr->file, (U_SHORT *) ys, n));
-    plr->nbytes -= 2*n;
+    plr->nbytes -= 4*n;
 
     for (i = 0; i < n; i++) {
 	x[i] = xs[i];
@@ -396,6 +398,7 @@ plr_state(PLRDev *plr)
     U_CHAR op;
 
     plr_rd(pdf_rd_1byte(plr->file, &op));
+    plr->nbytes -= 1;
 
     switch (op) {
 
