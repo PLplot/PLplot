@@ -39,7 +39,7 @@ pltek_LDFLAGS = $(RPATH) -no-undefined
 pltek_LDADD = $(libplplot)
 
 pltcl_SOURCES = pltcl.c
-pltcl_LDFLAGS = $(RPATH) -no-undefined $(TCLLIBCMD) $(ITCLLIBCMD)
+pltcl_LDFLAGS = $(RPATH) -no-undefined
 pltcl_LDADD = $(libplplottcltk)
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
