@@ -48,10 +48,10 @@ class x01 {
 
         pls.ssub(2, 2);
 
-//     // Parse and process command line arguments.
+    // Parse and process command line arguments.
 
 //         plMergeOpts(options, "x01c options", notes);
-//         plParseOpts(&argc, argv, PL_PARSE_FULL);
+        pls.ParseOpts( args, pls.PL_PARSE_FULL );
 
 //     // Get version number, just for kicks.
 
