@@ -2,6 +2,8 @@
 
 #****************************************************************************
 #
+# $Id$
+#
 # configure - configures plplot for build
 #
 # Maurice LeBrun (mjl@dino.ph.utexas.edu)
@@ -19,8 +21,6 @@
 # handled in the config file for that system or in a site-specific config
 # file (if you modify cf_plplot.m4 and put it in a directory ~/config,
 # configure will use that the next time you run it).
-#
-# $Id$
 #
 #****************************************************************************
 
