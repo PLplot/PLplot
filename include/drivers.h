@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/12/08 20:26:21  mjl
-   Changes to support MS-Kermit output device.
+   Revision 1.13  1993/12/21 10:34:40  mjl
+   Added prototype for new dp driver initialization function.
 
+ * Revision 1.12  1993/12/08  20:26:21  mjl
+ * Changes to support MS-Kermit output device.
+ *
  * Revision 1.11  1993/10/18  19:41:49  mjl
  * Prototypes for Borland C driver under DOS.
  *
@@ -46,6 +49,7 @@ extern "C" {
 #endif
 
 void plD_init_tk		(PLStream *);
+void plD_init_dp		(PLStream *);
 void plD_line_tk		(PLStream *, short, short, short, short);
 void plD_polyline_tk		(PLStream *, short *, short *, PLINT);
 void plD_eop_tk			(PLStream *);
