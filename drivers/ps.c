@@ -1,7 +1,32 @@
 /* $Id$
 
 	PLplot PostScript device driver.
+
+  Copyright (C) 1992, 2001  Geoffrey Furnish  
+  Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
+  Copyright (C) 2000, 2001, 2002, 2004  Alan W. Irwin 
+  Copyright (C) 2001, 2002  Joao Cardoso  
+  Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
+  Copyright (C) 2004  Thomas J. Duck
+
+  This file is part of PLplot.
+
+  PLplot is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Library Public License as published
+  by the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  PLplot is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Library General Public License for more details.
+
+  You should have received a copy of the GNU Library General Public License
+  along with PLplot; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
+
 #include "plDevs.h"
 
 #ifdef PLD_ps
@@ -870,7 +895,7 @@ proc_str (PLStream *pls, EscText *args)
 
     /* Apply the scaling and the shear */
     fprintf(OF, "/%s [%.3f 0 %.3f %.3f 0 0] SF\n",
-	    ofont,
+	    font,
 	    font_factor * ENLARGE * ft_ht * scale,
 	    shear * font_factor * ENLARGE * ft_ht * scale,
 	    font_factor * ENLARGE * ft_ht * scale);
