@@ -1019,7 +1019,7 @@ origin
 	      <listitem><para>aquamarine</para></listitem>
 	      <listitem><para>pink</para></listitem>
 	      <listitem><para>wheat</para></listitem>
-	      <listitem><para>grey</para></listitem>
+	      <listitem><para>gray</para></listitem>
 	      <listitem><para>brown</para></listitem>
 	      <listitem><para>blue</para></listitem>
 	      <listitem><para>BlueViolet</para></listitem>
@@ -1876,7 +1876,7 @@ origin
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>0</literal>: Draw box, labelled with coordinate
+		  <literal>0</literal>: Draw box, labeled with coordinate
 		  values around edge.
 		</para>
 	      </listitem>
@@ -2740,7 +2740,7 @@ error bar.
 
   <sect1 id="plgfam" renderas="sect3">
     <title>
-      <function>plgfam</function>: Get family file paramters
+      <function>plgfam</function>: Get family file parameters
     </title>
 
     <para>
@@ -2767,7 +2767,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to variable with the boolean family flag value.  If
+	    Pointer to variable with the Boolean family flag value.  If
 	    nonzero, familying is enabled.
 	  </para>
 	</listitem>
@@ -5947,7 +5947,7 @@ error bar.
 	</term>
 	<listitem>
 	  <para>
-	    Family flag (boolean).  If nonzero, familying is enabled.
+	    Family flag (Boolean).  If nonzero, familying is enabled.
 	  </para>
 	</listitem>
       </varlistentry>
