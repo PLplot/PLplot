@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.2  1993/07/16 22:03:15  mjl
+# Revision 1.3  1993/07/31 08:05:49  mjl
+# Enabled help menu entries; split off resource initialization into another
+# file for more flexibility.
+#
+# Revision 1.2  1993/07/16  22:03:15  mjl
 # Inserted hack to partially plug TK's security problem.  Also hard-coded
 # font selection temporarily (see explanation within).  Made debug menu
 # normally invisible.
@@ -30,22 +34,9 @@ proc plserver_init {} {
     rename exec {}
     rename open {}
 
-# First I change the default font.  Ideally, we would first check the
-# options database to see if an appropriate resource specification already
-# exists.  The problem with this is that if you have multiple plservers
-# running, you need to specify either (a) a resource for each one (for some
-# reason, under HP/UX at least, plserver*font is not matched if the main
-# window name is "plserver #2"), or (b) an unqualified resource i.e. *font.
-# Neither is a particularly attractive solution, and for now I just
-# hardwire the font to be used.  Aside: on systems that want you to use
-# "xrdb" to initialize the resource database, a syntax like the following
-# is used:
-#
-# echo "plserver*font: -adobe-helvetica-medium-r-normal--*-180*" | xrdb -merge
+# Set up configuration options.
 
-#    if { ! [ string compare "[option get . font Font]" "" ] } {
-	option add *font -adobe-helvetica-medium-r-normal--*-180*
-#    }
+    plconfig
 
 # Create the main window
 # Use the default window title.
@@ -85,7 +76,7 @@ proc plserver_init {} {
 
     .menu.file.m add command \
 	-label "About..." \
-	-command {null_command "About..."} \
+	-command about \
 	-underline 0
 
 #    if { ! [ info exists child ] } {
@@ -152,7 +143,7 @@ proc plserver_init {} {
 
 	.menu.debug.m add command \
 	    -label "Execute TCL command" \
-	    -command {evalCmd} \
+	    -command evalCmd \
 	    -underline 0
 
 	pack append .menu .menu.debug {left}
@@ -166,20 +157,25 @@ proc plserver_init {} {
     menu .menu.help.m
 
     .menu.help.m add command \
-	-label "On Keys..." \
-	-command {null_command "On Keys..."} \
+	-label "On Tcl/TK..." \
+	-command help_tcltk \
 	-underline 3
 
     .menu.help.m add command \
-	-label "Tutorial..." \
-	-command {null_command "Tutorial..."} \
-	-underline 0
+	-label "On GUI..." \
+	-command help_gui \
+	-underline 3
+
+    .menu.help.m add command \
+	-label "On Keys..." \
+	-command help_keys \
+	-underline 3
 
     pack append .menu .menu.help {right}
 
 # Set up for keyboard-based menu traversal
 
-    tk_menuBar .menu .menu.file .menu.options .menu.debug .menu.help
+    tk_menuBar .menu .menu.file .menu.options .menu.help
     tk_bindForTraversal . .menu
 
     focus default .
