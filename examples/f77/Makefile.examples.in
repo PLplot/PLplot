@@ -50,7 +50,8 @@ EXECUTABLES_list = \
 		 x16f$(EXEEXT) \
 		 x16af$(EXEEXT) \
 		 x17f$(EXEEXT) \
-		 x18f$(EXEEXT)
+		 x18f$(EXEEXT) \
+		 x22f$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 

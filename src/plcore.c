@@ -1263,7 +1263,7 @@ c_plinit(void)
     plstyl(0, &mk, &sp);
     plpat(1, &inc, &del);
 
-    plsarrow(def_arrow_x, def_arrow_y, 4, 0);
+    plsvect(def_arrow_x, def_arrow_y, 4, 0);
 
 /* Set clip limits. */
 

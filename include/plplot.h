@@ -536,6 +536,7 @@ typedef struct {
 #define    plstripd	c_plstripd
 #define    plstyl	c_plstyl
 #define    plsurf3d	c_plsurf3d
+#define    plsvect      c_plsvect
 #define    plsvpa	c_plsvpa
 #define    plsxax	c_plsxax
 #define    plsyax	c_plsyax
@@ -606,12 +607,12 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
          PLFLT scale, PLFLT dx, PLFLT dy) ;
 
 void
-plarrows2(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
               PLPointer pltr_data);
 
 void
-plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill);
+c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 // $Id$
-//    Simple arrow plot example
+//    Simple vector plot example
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -34,13 +34,6 @@
 #include <cmath>
 
 using namespace std;
-
-static int locate_mode;
-static int test_xor;
-static int fontset;
-static char *f_name;
-
-static char *notes[] = {"Make sure you get it right!", ""};
 
 class x22 {
 
@@ -115,7 +108,7 @@ x22::x22( int argc, char ** argv ) {
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
     pls->lab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
     pls->col0(2);
-    plarrows2(u,v,nx,ny,0.0,pltr2,(void *)&cgrid2);
+    plvect(u,v,nx,ny,0.0,pltr2,(void *)&cgrid2);
     pls->col0(1);
 
     narr = 6;
@@ -123,25 +116,24 @@ x22::x22( int argc, char ** argv ) {
 
     // Set arrow style using arrow_x and arrow_y then 
     // plot using these arrows.
-    pls->sarrow(arrow_x, arrow_y, narr, fill);
+    pls->svect(arrow_x, arrow_y, narr, fill);
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
     pls->lab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
     pls->col0(2);
-    plarrows2(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
+    plvect(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
     pls->col0(1);
 
     fill = 1;
 
     // Set arrow style using arrow2_x and arrow2_y then 
     // plot using these filled arrows.
-    pls->sarrow(arrow2_x, arrow2_y, narr, fill);
+    pls->svect(arrow2_x, arrow2_y, narr, fill);
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
     pls->lab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
     pls->col0(2);
-    plarrows2(u,v,nx,ny,0.3,pltr2,(void *)&cgrid2);
+    plvect(u,v,nx,ny,0.3,pltr2,(void *)&cgrid2);
     pls->col0(1);
 
-    // Create the polar data to plot
     dr = 0.5;
 
     for (i = 0; i<nx; i++) {
@@ -163,7 +155,7 @@ x22::x22( int argc, char ** argv ) {
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
     pls->lab("(x)", "(y)", "#frPLplot Example 22 - polar vector plot");
     pls->col0(2);
-    pls->arrows2(u,v,nx,ny,0.5,pltr2,(void *)&cgrid2);
+    pls->vect(u,v,nx,ny,0.5,pltr2,(void *)&cgrid2);
     pls->col0(1);
 
     pls->Free2dGrid(cgrid2.xg,nx,ny);

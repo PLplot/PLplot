@@ -51,7 +51,7 @@ in sfstubs.f(m4).
 fortran to C null-terminated strings or vice versa.
 
 * sccont.c contains plcont and plshade related routines (with a 7 suffix
-meaning there is a wrapper in sfstubs.f(m4).
+meaning there is a wrapper in sfstubs.f(m4). Also contains plvect routines.
 
 * scstubs.c contains all the simple (non-3D, non-cont, non-shade) API plus
 some 7-suffix routines that have a special wrapper in sfstubs.f(m4).

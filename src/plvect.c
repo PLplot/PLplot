@@ -61,6 +61,9 @@ void plvecf_int(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 
 /* definition of original arrow: 2 line segments */
 
+static PLFLT arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
+static PLFLT arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
+
 void
 plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	 PLFLT scale, PLFLT dx, PLFLT dy)
@@ -68,24 +71,11 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
     PLFLT uu, vv;
     PLINT i, j, npts;
     PLINT px0, py0, dpx, dpy;
-    PLFLT *arrow_x, *arrow_y;
     PLINT *a_x, *a_y;
     PLFLT max_u, max_v;
     double t;
 
     if (n <= 0) return;
-
-    if (plsc->level < 3) {
-        plabort("plarrows: Please set up window first");
-        return;
-    }
-
-    arrow_x = plsc->arrow_x;
-    arrow_y = plsc->arrow_y;
-    npts = plsc->arrow_npts;
-
-    a_x = (PLINT *) malloc(npts*sizeof(PLINT));
-    a_y = (PLINT *) malloc(npts*sizeof(PLINT));
 
     if (scale <= 0.0) {
 
@@ -142,25 +132,22 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	}
 
     /* draw the arrow */
-        plP_draphy_poly(a_x,a_y,npts);
-	if (plsc->arrow_fill) {
-	    plP_plfclp(a_x, a_y, npts, plsc->clpxmi, plsc->clpxma,
-	               plsc->clpymi, plsc->clpyma, plP_fill);
-	}
+	plP_movphy(a_x[0], a_y[0]);
+	plP_draphy(a_x[1], a_y[1]);
+	plP_movphy(a_x[2], a_y[2]);
+	plP_draphy(a_x[3], a_y[3]);
     }
 
-    free_mem(a_x);
-    free_mem(a_y);
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsarrow()
+ * void c_plsvect()
  *
  * Set the style of the arrow used by plarrows
 \*--------------------------------------------------------------------------*/
 
 void
-plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill) {
+c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill) {
     int i;
 
     if (plsc->arrow_x) free_mem(plsc->arrow_x);
@@ -294,7 +281,7 @@ void plvecf_int(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 }
 
 void
-plarrows2(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, 
+plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, 
 	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	PLPointer pltr_data)
 {

@@ -1,6 +1,6 @@
 /* $Id$
 
-    Simple arrow plot example
+    Simple vector plot example
     Copyright (C) 2004 Andrew Ross <andrewross@users.sourceforge.net>
 
     This file is part of PLplot.
@@ -91,30 +91,30 @@ main(int argc, char *argv[])
 /* Plot vectors using default arrow style */
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
-    plcol(2);
-    plarrows2(u,v,nx,ny,0.0,pltr2,(void *)&cgrid2);
-    plcol(1);
+    plcol0(2);
+    plvect(u,v,nx,ny,0.0,pltr2,(void *)&cgrid2);
+    plcol0(1);
 
     narr = 6;
     fill = 0;
 
 /* Create user defined arrow style and plot vectors using new style */
-    plsarrow(arrow_x, arrow_y, narr, fill);
+    plsvect(arrow_x, arrow_y, narr, fill);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - user defined arrow");
-    plcol(2);
-    plarrows2(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
-    plcol(1);
+    plcol0(2);
+    plvect(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
+    plcol0(1);
 
     fill = 1;
 	    
 /* Create user defined arrow style and plot vectors using new style */
-    plsarrow(arrow2_x, arrow2_y, narr, fill);
+    plsvect(arrow2_x, arrow2_y, narr, fill);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - filled arrow");
-    plcol(2);
-    plarrows2(u,v,nx,ny,0.3,pltr2,(void *)&cgrid2);
-    plcol(1);
+    plcol0(2);
+    plvect(u,v,nx,ny,0.3,pltr2,(void *)&cgrid2);
+    plcol0(1);
 
 /* Example of polar plot */
 
@@ -139,9 +139,9 @@ main(int argc, char *argv[])
 
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - polar vector plot");
-    plcol(2);
-    plarrows2(u,v,nx,ny,0.5,pltr2,(void *)&cgrid2);
-    plcol(1);
+    plcol0(2);
+    plvect(u,v,nx,ny,0.5,pltr2,(void *)&cgrid2);
+    plcol0(1);
     
     plFree2dGrid(cgrid2.xg,nx,ny);
     plFree2dGrid(cgrid2.yg,nx,ny);
