@@ -23,6 +23,7 @@ dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 dnl Disable the Tk drivers if Tcl is disabled or system has not X Window
+dnl (this file must be included in configure.ac after cf/xwin.ac)
 
 if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
     enable_tk=no
@@ -36,6 +37,9 @@ fi
 # ----------------------------------------------------------------------------
 # tk.h
 # ----------------------------------------------------------------------------
+
+incdirs=$incdirs_default
+libdirs=$libdirs_default
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then

@@ -211,8 +211,8 @@ m4_include(cf/cgm.ac)
 m4_include(cf/gd.ac)
 m4_include(cf/gnome.ac)
 m4_include(cf/linuxvga.ac)
-m4_include(cf/tk.ac)
 m4_include(cf/xwin.ac)
+m4_include(cf/tk.ac)
 m4_include(cf/drivers-post.ac)
 
 
