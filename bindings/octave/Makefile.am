@@ -94,7 +94,7 @@ plplot_octave_txt/plplot.doc: etc/plplot.doc
 	cp etc/plplot.doc plplot_octave_txt/plplot.doc
 	cd plplot_octave_txt; \
 	../../../doc/docbook/bin/api2text.pl \
-	../../../doc/docbook/src/plplotdoc.xml.in \
+	../../../doc/docbook/src/plplotdoc.xml \
 	../../../doc/docbook/src/api.xml
 
 plplot_stub.m: plplot_octave_txt/plplot.doc tmp_stub massage
