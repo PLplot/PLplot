@@ -1,7 +1,11 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.8  1994/08/05 17:45:31  furnish
+ * Revision 1.9  1994/08/11 01:43:07  furnish
+ * Implement redim methods for the C++ shadow class.  Somebody still
+ * needs to do it in the Tcl code :-).
+ *
+ * Revision 1.8  1994/08/05  17:45:31  furnish
  * More on the C++ shadow class.
  *
  * Revision 1.7  1994/06/30  18:38:49  mjl
@@ -160,6 +164,36 @@ class TclMatFloat {
     }
 
     int Dimensions() { return matPtr->dim; }
+
+    void redim( int nx )
+    {
+	free( matPtr->fdata );
+	matPtr->dim = 1;
+	matPtr->n[0] = nx;
+	matPtr->len = nx;
+	matPtr->fdata = (float *) malloc( matPtr->len * sizeof(float) );
+    }
+
+    void redim( int nx, int ny )
+    {
+	free( matPtr->fdata );
+	matPtr->dim = 2;
+	matPtr->n[0] = nx;
+	matPtr->n[1] = ny;
+	matPtr->len = nx * ny;
+	matPtr->fdata = (float *) malloc( matPtr->len * sizeof(float) );
+    }
+
+    void redim( int nx, int ny, int nz )
+    {
+	free( matPtr->fdata );
+	matPtr->dim = 3;
+	matPtr->n[0] = nx;
+	matPtr->n[1] = ny;
+	matPtr->n[2] = nz;
+	matPtr->len = nx * ny * nz;
+	matPtr->fdata = (float *) malloc( matPtr->len * sizeof(float) );
+    }
 
     Mat_float& operator()( int i )
     {
