@@ -68,10 +68,10 @@ typedef struct FT_Data
     int smooth_text;      /* Flag to indicate type of anti-aliasing used, if freetype text is active */
 
 
-    char                font_name[5][80];
+    char                font_name[5][1024];
 /*
- *  List of font names and paths corrosponding to the "predefined" fonts of
- *  plplot. 80 chars is probably very generous for each one's length, but at
+ *  List of font names and paths corresponding to the "predefined" fonts of
+ *  plplot. 1024 chars is presumably generous for each one's length, but at
  *  least we probably won't get in trouble this way.
  */
 

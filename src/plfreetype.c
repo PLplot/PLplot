@@ -373,7 +373,8 @@ void plD_FreeType_init(PLStream *pls)
 {
     FT_Data *FT;
     char *a;
-    char font_path[160];
+/* font paths and file names can be long so leave generous (1024) room */    
+    char font_path[1024];
     const char *env_var_names[]={"PLPLOT_NORMAL_FONT","PLPLOT_ROMAN_FONT",
 				 "PLPLOT_ITALIC_FONT","PLPLOT_SCRIPT_FONT",
 				 "PLPLOT_SYMBOL_FONT"};
