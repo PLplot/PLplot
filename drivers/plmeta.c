@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1995/03/11 21:38:33  mjl
+ * Revision 1.27  1995/05/06 16:50:19  mjl
+ * Changed debugging output to use new pldebug() function.
+ *
+ * Revision 1.26  1995/03/11  21:38:33  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.  Added preliminary code to write & restore plot window parameters.
  *
@@ -154,8 +157,8 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 	y1 < dev->ymin || y1 > dev->ymax ||
 	y2 < dev->ymin || y2 > dev->ymax) {
 
-	fprintf(stderr, "PLplot: coordinates out of bounds in driver.\n");
-	fprintf(stderr, "  Actual: (%i,%i), (%i,%i)   Bounds: (%i,%i,%i,%i)\n",
+	pldebug("plD_line_plm",
+		"coordinates out of bounds -- \nActual: (%i,%i), (%i,%i) Bounds: (%i,%i,%i,%i)\n", 
 		x1, y1, x2, y2, dev->xmin, dev->xmax, dev->ymin, dev->ymax);
     }
 #endif
@@ -262,9 +265,9 @@ plD_bop_plm(PLStream *pls)
     if (dev->lp_offset > 0) {
 #ifdef DEBUG
 	U_LONG foo;
-	fprintf(stderr, "Location: %d, seeking to: %d\n",
-		cp_offset, dev->lp_offset);
 #endif
+	pldebug("plD_bop_plm",
+		"Location: %d, seeking to: %d\n", cp_offset, dev->lp_offset);
 	fwbyte_offset = dev->lp_offset + 7;
 	if (pl_fsetpos(file, &fwbyte_offset))
 	    plexit("plD_bop_plm: fsetpos call failed");
@@ -273,8 +276,8 @@ plD_bop_plm(PLStream *pls)
 	if (pl_fgetpos(file, &fwbyte_offset))
 	    plexit("plD_bop_plm: fgetpos call failed");
 
-	fprintf(stderr, "Now at: %d, to write: %d\n",
-		fwbyte_offset, cp_offset);
+	pldebug("plD_bop_plm",
+		"Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
 #endif
 
 	plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset) );
@@ -285,7 +288,7 @@ plD_bop_plm(PLStream *pls)
 	    plexit("plD_bop_plm: fsetpos call failed");
 
 	plm_rd(pdf_rd_4bytes(pls->pdfs, &foo));
-	fprintf(stderr, "Value read as: %d\n", foo);
+	pldebug("plD_bop_plm", "Value read as: %d\n", foo);
 #endif
 
 	if (pl_fsetpos(file, &cp_offset))

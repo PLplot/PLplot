@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1995/03/11 21:40:32  mjl
+ * Revision 1.37  1995/05/06 16:50:20  mjl
+ * Changed debugging output to use new pldebug() function.
+ *
+ * Revision 1.36  1995/03/11  21:40:32  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
  * Substantially rewrote input loop to handle new locate mode (type 'L' while
@@ -622,12 +625,16 @@ fill_polygon(PLStream *pls)
     pls->bytecnt += fprintf(pls->OutFile, "\033MP%s", fillcol);
 
 /* Begin panel boundary */
-/* Change %s0 to %s1 to see the boundary of each fill box -- cool! */
+/* Set pls->debug to see the boundary of each fill box -- cool! */
 
-    pls->bytecnt += fprintf(pls->OutFile, "\033LP%s0", firstpoint);
+    if (pls->debug)
+	pls->bytecnt += fprintf(pls->OutFile, "\033LP%s1", firstpoint);
+    else
+	pls->bytecnt += fprintf(pls->OutFile, "\033LP%s0", firstpoint);
 
 /* Specify boundary (in vector mode) */
 
+    pls->bytecnt += fprintf(pls->OutFile, VECTOR_MODE);
     for (i = 1; i < pls->dev_npts; i++) 
 	tek_vector(pls, pls->dev_x[i], pls->dev_y[i]);
 
@@ -682,6 +689,7 @@ tek_text(PLStream *pls)
 	default:
 	    printf(ALPHA_MODE);		/* enter alpha mode */
 	}
+	fflush(stdout);
     }
 }
 
@@ -942,11 +950,8 @@ LookupEvent(PLStream *pls)
 	gin->string[0] = '\0';
     }
 
-#ifdef DEBUG
-    pltext();
-    fprintf(stderr, "Keycode %x, string: %s\n", gin->keysym, gin->string);
-    plgra();
-#endif
+    pldebug("LookupEvent",
+	    "Keycode %x, string: %s\n", gin->keysym, gin->string);
 }
 
 /*--------------------------------------------------------------------------*\
