@@ -843,6 +843,8 @@ AC_OUTPUT([
 	examples/python/Makefile
 	examples/python/plplot_python_start.py
 	examples/tcl/Makefile
+	examples/tk/Makefile
+	examples/tk/Makefile.examples
 	utils/Makefile
 	])
 

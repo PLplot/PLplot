@@ -1,0 +1,39 @@
+# examples/tk/Makefile.examples.in for PLplot
+###
+### Process this file with configure to produce Makefile.examples
+###
+# Copyright (C) 2002 Alan W. Irwin
+# 
+#This file is part of PLplot.
+#
+#This file is free software; you can redistribute it and/or modify
+#it under the terms of the GNU Library General Public License as published by
+#the Free Software Foundation; version 2 of the License.
+#
+#This file is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Library General Public License for more details.
+#
+#You should have received a copy of the GNU Library General Public License
+#along with the file; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+INCLUDEANDLIB = \
+	-I@INCLUDE_DIR@ \
+	@TCLINCCMD@ \
+	@TKINCCMD@ \
+	-L@LIB_DIR@ \
+	-lplplottcltk@LIB_TAG@ 
+
+all: xtk01 xtk02 xtk04
+
+xtk01: xtk01.c
+	plplot_libtool gcc xtk01.c $(INCLUDEANDLIB) -o xtk01
+
+xtk02: xtk02.c
+	plplot_libtool gcc xtk02.c $(INCLUDEANDLIB) -o xtk02
+
+xtk04: xtk04.c
+	plplot_libtool gcc xtk04.c $(INCLUDEANDLIB) -o xtk04
+

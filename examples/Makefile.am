@@ -1,1 +1,1 @@
-SUBDIRS =  c  c++  f77 python tcl
+SUBDIRS =  c  c++  f77 python tcl tk
