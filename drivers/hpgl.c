@@ -1,10 +1,13 @@
 /* ///////////////////////////////////////////////////////////////////
 // $Id$
 // $Log$
-// Revision 1.1  1994/05/25 09:34:14  mjl
-// Consolidated HP pen plotter driver, contributed by Mark Olesen
-// (olesen@weber.me.queensu.ca).
+// Revision 1.2  1994/05/26 19:21:45  mjl
+// Minor changes to bring up to spec with the other drivers.
 //
+ * Revision 1.1  1994/05/25  09:34:14  mjl
+ * Consolidated HP pen plotter driver, contributed by Mark Olesen
+ * (olesen@weber.me.queensu.ca).
+ *
 //
 //  File:       hpgl.c
 //
@@ -233,9 +236,6 @@ plD_tidy_hpgl(PLStream *pls)
 {
     fputs( "SP0\n", pls->OutFile );
     fclose(pls->OutFile);
-    pls->fileset = 0;
-    pls->page = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
