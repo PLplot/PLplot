@@ -3101,6 +3101,162 @@ space for this (80 characters is safe).
     
   </sect1>
   
+  <sect1 id="plggriddata" renderas="sect3">
+    <title>
+      <function>plggriddata</function>: #FILL SHORT DESCRIPTION HERE#
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plggriddata</function>
+	</funcdef>
+          <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>z</parameter></paramdef>
+	  <paramdef><parameter>npts</parameter></paramdef>
+	  <paramdef><parameter>xg</parameter></paramdef>
+	  <paramdef><parameter>nptsx</parameter></paramdef>
+	  <paramdef><parameter>yg</parameter></paramdef>
+	  <paramdef><parameter>nptsy</parameter></paramdef>
+	  <paramdef><parameter>zg</parameter></paramdef>
+	  <paramdef><parameter>type</parameter></paramdef>
+	  <paramdef><parameter>data</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      #FILL EXTENDED DESCRIPTION HERE#
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>npts</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xg</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nptsx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>yg</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nptsy</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sg</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>type</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>data</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    #DESC#
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plgspa" renderas="sect3">
     <title>
       <function>plgspa</function>: Get current subpage parameters

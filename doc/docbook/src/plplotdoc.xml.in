@@ -72,6 +72,7 @@
 <!ENTITY plglevel '<link linkend="plglevel"><function>plglevel</function></link>'>
 <!ENTITY plgpage '<link linkend="plgpage"><function>plgpage</function></link>'>
 <!ENTITY plgra '<link linkend="plgra"><function>plgra</function></link>'>
+<!ENTITY plgriddata '<link linkend="plgriddata"><function>plgriddata</function></link>'>
 <!ENTITY plgspa '<link linkend="plgspa"><function>plgspa</function></link>'>
 <!ENTITY plgstrm '<link linkend="plgstrm"><function>plgstrm</function></link>'>
 <!ENTITY plgver '<link linkend="plgver"><function>plgver</function></link>'>
