@@ -967,6 +967,11 @@ char *
 plP_FCI2FontName ( PLUNICODE fci, 
 		   const FCI_to_FontName_Table lookup[], const int nlookup);
 
+
+/* Internal function to free memory from driver options */
+void
+plP_FreeDrvOpts();
+
 #ifdef __cplusplus
 }
 #endif

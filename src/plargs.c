@@ -1329,6 +1329,35 @@ plHelpDrvOpts(DrvOpt *acc_opt) {
 }
 
 /*--------------------------------------------------------------------------*\
+ * tidyDrvOpts
+ *
+ * Tidy up and free memory associated with driver options
+\*--------------------------------------------------------------------------*/
+
+void
+plP_FreeDrvOpts() {
+  DrvOptCmd *drvp, *drvpl;
+
+  if (!drv_opt.option) 
+    return;
+
+  drvp = &drv_opt;
+  do {
+    drvpl = drvp;
+    drvp = drvpl->next;
+
+    free(drvpl->option);
+    free(drvpl->value);
+    /* Free additional DrvOptCmd variables - 
+     * first entry in list is a static global variable */ 
+    if (drvpl != &drv_opt)
+      free(drvpl);
+
+  } while(drvp != NULL);
+}
+
+
+/*--------------------------------------------------------------------------*\
  * Option handlers
 \*--------------------------------------------------------------------------*/
 
@@ -2228,3 +2257,5 @@ opt_dev_compression(char *opt, char *optarg, void *client_data)
 
     return 0;
 }
+
+

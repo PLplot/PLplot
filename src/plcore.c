@@ -1624,6 +1624,9 @@ c_plend(void)
       free_mem(dispatch_table[i]);
     }
     free_mem(dispatch_table);
+
+    plP_FreeDrvOpts();
+
     lib_initialized = 0;
 }
 
