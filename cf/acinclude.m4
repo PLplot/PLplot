@@ -381,3 +381,34 @@ dnl
 AC_DEFUN([PL_CONFIG_FILE_EXE],[
   AC_CONFIG_FILES([$1], [chmod +x $1])
 ])
+dnl ------------------------------------------------------------------------
+dnl PL_COMPARE_VERSIONS(version_string_1,version_string_2,
+dnl       action_if_v1_lt_v2,action_if_v1_eq_v2,action_if_v1_gt_v2)
+dnl
+dnl Compare version strings, fields are separated by periods (".")
+dnl
+AC_DEFUN([PL_COMPARE_VERSIONS],[
+  pl_verstr_1=$1
+  pl_verstr_2=$2
+  pl_cmp=eq
+  while test -n "$pl_verstr_1" -o -n "$pl_verstr_2" ; do 
+    pl_v1=`echo $pl_verstr_1 | cut -d. -f1`
+    test -z "$pl_v1" && pl_v1=0
+    pl_verstr_1=`echo $pl_verstr_1 | sed 's/[[^.]]\+.\?//'`
+    pl_v2=`echo $pl_verstr_2 | cut -d. -f1`
+    test -z "$pl_v2" && pl_v2=0
+    pl_verstr_2=`echo $pl_verstr_2 | sed 's/[[^.]]\+.\?//'`
+    if test "$pl_v1" -gt "$pl_v2" ; then
+      pl_cmp=gt
+      break;
+    else 
+      if test "$pl_v1" -lt "$pl_v2" ; then
+        pl_cmp=lt
+        break;
+      fi
+    fi
+  done
+  test $pl_cmp = lt && eval $3
+  test $pl_cmp = eq && eval $4
+  test $pl_cmp = gt && eval $5    
+])

@@ -1,0 +1,61 @@
+dnl cf/pdl.ac for PLplot  -*- autoconf -*-
+dnl
+dnl PDL checks
+dnl
+dnl Copyright (C) 2004  Rafael Laboissiere
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+AC_CHECK_PROGS(PERL, perl, no)
+
+if test "$PERL" = no ; then
+
+    HAS_PDL=no
+    
+else    
+
+    AC_MSG_CHECKING([for presence of PDL Perl module])
+    if $PERL -e 'use PDL' 2>/dev/null ; then 
+        HAS_PDL=yes
+    else 
+        HAS_PDL=no
+    fi
+    AC_MSG_RESULT([$HAS_PDL])
+
+    if test "$HAS_PDL" = yes ; then
+
+        PDL_MAJOR_VERSION=2
+        PDL_MINOR_VERSION=4
+        PDL_MICRO_VERSION=2
+
+        AC_MSG_CHECKING([version of PDL])
+        PDL_VERSION=`$PERL -e 'use PDL; print "$PDL::VERSION"'`
+        AC_MSG_RESULT($PDL_VERSION)
+
+        PL_COMPARE_VERSIONS([$PDL_VERSION], 
+          [$PDL_MAJOR_VERSION.$PDL_MINOR_VERSION.$PDL_MICRO_VERSION],
+          [HAS_PDL=no], [], [])
+
+        if test "$HAS_PDL" = no ; then
+            AC_MSG_WARN([Minimal required version of PDL is $PDL_MAJOR_VERSION.$PDL_MINOR_VERSION.$PDL_MICRO_VERSION])
+            AC_MSG_WARN([setting HAS_PDL=no]);
+        fi
+
+    fi
+
+fi    
+
+AC_SUBST(HAS_PDL)

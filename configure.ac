@@ -220,6 +220,7 @@ m4_include(cf/octave.ac)
 m4_include(cf/tcl.ac)
 m4_include(cf/c++.ac)
 m4_include(cf/f77.ac)
+m4_include(cf/pdl.ac)
 
 
 dnl =======================================================================
