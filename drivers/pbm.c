@@ -163,11 +163,6 @@ plD_line_pbm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = PIXELS_Y - (y1 - 0);
     y2 = PIXELS_Y - (y2 - 0);
 
-/* Rotate by 90 degrees */
-/*
-  plRotPhy(1, 0, 0, PIXELS_X, PIXELS_Y, &x1, &y1);
-  plRotPhy(1, 0, 0, PIXELS_X, PIXELS_Y, &x2, &y2);
-  */
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (PLFLT) sqrt((double)
 			  ((x2b - x1b) * (x2b - x1b) + (y2b - y1b) * (y2b - y1b)));
