@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.66  1994/07/19 22:14:45  furnish
+ * Revision 1.67  1994/07/20 06:07:09  mjl
+ * Changed names and prototypes for the new 3d functions -- now plline3(),
+ * plpoin3(), and plpoly3().
+ *
+ * Revision 1.66  1994/07/19  22:14:45  furnish
  * Stuff for pl3poly().
  *
  * Revision 1.65  1994/07/15  20:37:12  furnish
@@ -478,16 +482,16 @@ typedef struct {
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
 #define    plline	c_plline
+#define    plline3	c_plline3
 #define    pllsty	c_pllsty
 #define    plmesh	c_plmesh
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
-#define    pl3poly      c_pl3poly
-#define    pl3line      c_pl3line
-#define    pl3poin      c_pl3poin
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
+#define    plpoin3	c_plpoin3
+#define    plpoly3	c_plpoly3
 #define    plprec	c_plprec
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
@@ -588,16 +592,16 @@ typedef struct {
 #define    c_pljoin	pljoin
 #define    c_pllab	pllab
 #define    c_plline	plline
+#define    c_plline3	plline3
 #define    c_pllsty	pllsty
 #define    c_plmesh	plmesh
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
-#define    c_pl3poly    pl3poly
-#define    c_pl3line    pl3line
-#define    c_pl3poin    pl3poin
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
+#define    c_plpoin3	plpoin3
+#define    c_plpoly3	plpoly3
 #define    c_plprec	plprec
 #define    c_plpsty	plpsty
 #define    c_plptex	plptex
@@ -929,6 +933,11 @@ c_pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 void
 c_plline(PLINT n, PLFLT *x, PLFLT *y);
 
+/* Draws a line in 3 space.  */
+
+void
+c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
+
 /* Set line style. */
 
 void
@@ -956,15 +965,6 @@ void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
-void
-c_pl3poly(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT n);
-
-void
-c_pl3line(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n);
-
-void
-c_pl3poin(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n);
-
 /* Set fill pattern directly. */
 
 void
@@ -974,6 +974,16 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del);
 
 void
 c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code);
+
+/* Draws a series of points in 3 space. */
+
+void
+c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code);
+
+/* Draws a polygon in 3 space.  */
+
+void
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw);
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 
