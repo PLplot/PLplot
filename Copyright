@@ -34,6 +34,10 @@ read the full license for more info.
 Additional Copyrights
 ---------------------
 
+The octave front end which links to the PLplot library (but not vice versa),
+and which is otherwise independent of PLplot is copyright under the GPL
+license (see COPYING).
+
 The startup code used in argument handling (utils/plrender.c and
 src/plargs.c) is partially derived from "xterm.c" of the X11R5
 distribution, and its copyright is reproduced here:
