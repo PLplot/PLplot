@@ -132,6 +132,7 @@ typedef struct {
  * dev_swin	PLINT	Set if driver wants to handle 'set window' commands
  * dev_fastimg  PLINT   Set if driver has fast image drawing capabilities
  * dev_xor      PLINT   Set if driver supports xor mode.
+ * dev_clear    PLINT   Set if driver support clear.
  * termin	PLINT	Set for interactive devices
  * graphx	PLINT	Set if currently in graphics mode
  * nopause	PLINT	Set if we are skipping the pause between frames
@@ -451,7 +452,7 @@ typedef struct {
     PLINT color, colorset;
     PLINT family, member, finc, fflen, bytemax, famadv;
     PLINT dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin;
-    PLINT dev_text, dev_xor, dev_fastimg;
+    PLINT dev_text, dev_xor, dev_clear, dev_fastimg;
 
     char DevName[80];
     FILE *OutFile;
