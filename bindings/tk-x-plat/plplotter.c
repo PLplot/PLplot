@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.9  2002/07/13 15:34:55  airwin
+ * Work around missing compat/limits.h in private includes from tcl/tk.
+ *
  * Revision 1.8  2002/07/12 16:59:26  vincentdarley
  * option class for plframes fixed
  *
@@ -257,6 +260,8 @@ extern void XWarpPointer(
     #define realloc ckrealloc
     #define calloc ckcalloc
 #else
+/* work around missing compat/limits.h in private includes from tcl/tk */
+#define HAVE_LIMITS_H 1
 #include <tkInt.h>
 #endif
 
