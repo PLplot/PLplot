@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1993/09/08 02:34:44  mjl
+ * Revision 1.39  1993/09/17 06:43:19  mjl
+ * Now accepts -DDOUBLE as well as -DPL_DOUBLE for setting double precision
+ * floating points.
+ *
+ * Revision 1.38  1993/09/08  02:34:44  mjl
  * Added function prototype for plGetName, moved some others from plstream.h
  * into here.
  *
@@ -98,6 +102,7 @@
 * allows you to request certain behavior by defining certain symbols
 * before inclusion.  At the moment the only one is:
 *
+* #define DOUBLE	or..
 * #define PL_DOUBLE
 *
 * This causes PLPLOT to use doubles instead of floats.  Use the type
@@ -175,7 +180,7 @@
 * dpi, and improves performance in some areas over using a PLINT.
 \*----------------------------------------------------------------------*/
 
-#ifdef PL_DOUBLE
+#if defined(PL_DOUBLE) || defined(DOUBLE)
 typedef double PLFLT;
 #else
 typedef float PLFLT;
