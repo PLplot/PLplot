@@ -28,5 +28,5 @@ clean:
 	rm x??cc
 
 x01cc: x01cc.cc
-	plplot_libtool $(CXX) x01cc.cc $(INCLUDEANDLIB) -o x01cc
+	plplot_libtool --mode=link $(CXX) x01cc.cc $(INCLUDEANDLIB) -o x01cc
 
