@@ -754,7 +754,7 @@ AC_SUBST(INCLUDE_DIR)
 
 ### Configuration headers
 
-AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
+AM_CONFIG_HEADER(include/plConfig.h)
 
 # Location substitutions for header files as well
 
@@ -917,6 +917,7 @@ AC_OUTPUT([
 	Makefile 
 	src/Makefile 
 	include/Makefile
+	include/plDevs.h
 	lib/Makefile
 	bindings/Makefile
 	bindings/c++/Makefile
