@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1995/03/17 00:11:11  mjl
+ * Revision 1.19  1995/04/12 08:24:36  mjl
+ * Changed names of some variables defined at file scope to remove a conflict
+ * in the Mac port.
+ *
+ * Revision 1.18  1995/03/17  00:11:11  mjl
  * Eliminated many unnecessary accessor variables.
  *
  * Revision 1.17  1995/01/06  07:56:51  mjl
@@ -42,7 +46,7 @@ static PLINT *oldhiview;
 static PLINT *oldloview;
 static PLINT *newhiview;
 static PLINT *newloview;
-static PLINT *u, *v;
+static PLINT *utmp, *vtmp;
 
 static PLINT mhi, xxhi, newhisize;
 static PLINT mlo, xxlo, newlosize;
@@ -140,9 +144,9 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
 /* Allocate work arrays */
 
-    u = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-    v = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-    if ( ! u || ! v)
+    utmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
+    vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
+    if ( ! utmp || ! vtmp)
 	myexit("plot3d: Out of memory.");
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
@@ -153,61 +157,61 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     if (cxx >= 0.0 && cxy <= 0.0) {
 	if (opt == 2) 
-	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (iy = 2; iy <= ny; iy++)
-		plt3zz(1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
 	if (opt == 1)
-	    plt3zz(1, ny, 1, -1, opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(1, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (ix = 1; ix <= nx - 1; ix++)
-		plt3zz(ix, ny, 1, -1, opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(ix, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
     }
 
     else if (cxx <= 0.0 && cxy <= 0.0) {
 	if (opt == 1) 
-	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (ix = 2; ix <= nx; ix++) 
-		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
 	if (opt == 2)
-	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (iy = ny; iy >= 2; iy--)
-		plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
     }
 
     else if (cxx <= 0.0 && cxy >= 0.0) {
 	if (opt == 2) 
-	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (iy = ny - 1; iy >= 1; iy--) 
-		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
 	if (opt == 1)
-	    plt3zz(nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (ix = nx; ix >= 2; ix--)
-		plt3zz(ix, 1, -1, 1, opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(ix, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
     }
 
     else if (cxx >= 0.0 && cxy >= 0.0) {
 	if (opt == 1) 
-	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (ix = nx - 1; ix >= 1; ix--) 
-		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
 	if (opt == 2)
-	    plt3zz(1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, u, v);
+	    plt3zz(1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	else {
 	    for (iy = 1; iy <= ny - 1; iy++)
-		plt3zz(1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, u, v);
+		plt3zz(1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp);
 	}
     }
 
@@ -1136,8 +1140,8 @@ freework(void)
     free_mem(oldloview);
     free_mem(newhiview);
     free_mem(newloview);
-    free_mem(v);
-    free_mem(u);
+    free_mem(vtmp);
+    free_mem(utmp);
 }
 
 /*--------------------------------------------------------------------------*\
