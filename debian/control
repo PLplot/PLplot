@@ -56,7 +56,7 @@ Section: libs
 Conflicts: libplplot5, libplplot9 (<< 5.3.0.cvs.20040303)
 Depends: libplplot9 (= ${Source-Version}), ${shlibs:Depends}
 Description: Scientific plotting library
- This package contains two libraries developed by Pavel Sakov, form the
+ This package contains two libraries developed by Pavel Sakov, from the
  CSIRO Marine Research, used in geometry applications:
  .
   * libcsirocsa: bivariate Cubic Spline Approximation library
