@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/07/19 22:34:22  mjl
+ * Revision 1.4  1994/11/02 19:55:41  mjl
+ * Added cursorX, cursorY for holding coordinates at mouse click.
+ *
+ * Revision 1.3  1994/07/19  22:34:22  mjl
  * Internal header file inclusion changed to /not/ use a search path so that
  * it will work better with makedepend.
  *
@@ -35,14 +38,15 @@
 /* One of these holds the TK driver state information */
 
 typedef struct {
-    Tk_Window w;		/* Main window */
-    Tcl_Interp *interp;		/* Interpreter */
-    PLINT xold, yold;		/* Coordinates of last point plotted */
-    int   exit_eventloop;	/* Flag for breaking out of event loop */
-    int   pass_thru;		/* Skips normal error termination when set */
-    char  *cmdbuf;		/* Command buffer */
-    int   cmdbuf_len;		/* and its length */
-    PLiodev *iodev;		/* I/O device info */
+    Tk_Window	w;			/* Main window */
+    Tcl_Interp	*interp;		/* Interpreter */
+    PLINT	xold, yold;		/* Coordinates of last point plotted */
+    int		exit_eventloop;		/* Break out of event loop */
+    int		pass_thru;		/* Skip normal error termination */
+    char	*cmdbuf;		/* Command buffer */
+    int		cmdbuf_len;		/* and its length */
+    PLiodev	*iodev;			/* I/O device info */
+    float	cursorX, cursorY;	/* coordinates for mouse event */
 } TkDev;
 
 #endif	/* __PLPLOTTK_H__ */

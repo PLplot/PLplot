@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/10/11 18:59:57  mjl
+ * Revision 1.14  1994/11/02 19:55:50  mjl
+ * Added cursorX, cursorY for holding coordinates at mouse click.
+ *
+ * Revision 1.13  1994/10/11  18:59:57  mjl
  * Added prototypes for plD_open_xw() and plX_setBGFG().
  *
  * Revision 1.12  1994/07/28  07:42:58  mjl
@@ -78,6 +81,7 @@ typedef struct {
     XColor	cmap1[256];		/* Color entries for cmap 1 */
     XColor	fgcolor;		/* Foreground color (if grayscale) */
     XColor	curcolor;		/* Current pen color */
+    Cursor	cross_cursor;		/* Crosshair cursor */
 } XwDisplay;
 
 /* One of these holds the X driver state information */
@@ -101,6 +105,8 @@ typedef struct {
     double	yscale;			/*  (after possible resizing)  */
 
     short	xlen, ylen;		/* Lengths of device coord space */
+
+    float	cursorX, cursorY;	/* coordinates for mouse event */
 
     int		write_to_window;	/* Set if plotting direct to window */
     int		write_to_pixmap;	/* Set if plotting to pixmap */
