@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1995/06/09 22:50:19  mjl
+ * Revision 1.5  1996/02/23 16:50:12  furnish
+ * Initialize [incr Tk].
+ *
+ * Revision 1.4  1995/06/09  22:50:19  mjl
  * Eliminated vestigial lookup of tclMatrix variable (no longer works).
  *
  * Revision 1.3  1995/06/01  21:43:25  mjl
@@ -132,6 +135,9 @@ AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
     if (Itcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    if (Itk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
     if (Pltk_Init(interp) == TCL_ERROR) {
