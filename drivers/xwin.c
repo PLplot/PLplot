@@ -30,8 +30,15 @@ static int synchronize = 0;	/* change to 1 for synchronized operation */
 
 /* Pixels/mm */
 
-#define PHYSICAL	0		/* Enables physical scaling.. */
-#define DPMM		2.88		/* ..just experimental for now */
+/* The xwin driver uses the xscale and yscale values to convert from virtual
+ * to real pixels using the current size in pixels of the display window.
+ * We define PHYSICAL here so that PLplot core knows about this rescaling
+ * and mm values are converted to virtual pixels at a ratio consistent with
+ * a constant ratio of DPMM real pixels per mm. */
+#define PHYSICAL	1
+/* Desktop monitors of reasonable quality typically have 0.25 mm spacing 
+ * between dots which corresponds to 4.0 dots per mm. */
+#define DPMM		4.0
 
 /* These need to be distinguished since the handling is slightly different. */
 
@@ -191,8 +198,8 @@ plD_init_xw(PLStream *pls)
     dev->yscale = dev->yscale_init;
 
 #if PHYSICAL
-    pxlx = (double) PIXELS_X / dev->width  * DPMM;
-    pxly = (double) PIXELS_Y / dev->height * DPMM;
+    pxlx = DPMM/dev->xscale;
+    pxly = DPMM/dev->yscale;
 #else
     pxlx = (double) PIXELS_X / LPAGE_X;
     pxly = (double) PIXELS_Y / LPAGE_Y;
@@ -1832,8 +1839,8 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 
 #if PHYSICAL
     {
-	PLFLT pxlx = (double) PIXELS_X / dev->width  * DPMM;
-	PLFLT pxly = (double) PIXELS_Y / dev->height * DPMM;
+	PLFLT pxlx = DPMM/dev->xscale;
+	PLFLT pxly = DPMM/dev->yscale;
 	plP_setpxl(pxlx, pxly);
     }
 #endif
