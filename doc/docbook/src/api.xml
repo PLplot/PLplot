@@ -2851,7 +2851,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to the run level.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3127,7 +3127,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to the current library version number.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3704,7 +3704,7 @@ source
 
   <sect1 id="plline" renderas="sect3">
     <title>
-      <function>plline</function>: Draw lines between a number of points
+      <function>plline</function>: Draw a line
     </title>
 
     <para>
@@ -3721,9 +3721,10 @@ source
     </para>
 
     <para>
-      Draws <literal><parameter>n</parameter>-1</literal> line segments
-      joining points <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[i])</literal>.
+      Draws line defined by <literal><parameter>n</parameter></literal> 
+      points in 
+      <literal><parameter>x</parameter></literal> and
+      <literal><parameter>y</parameter></literal>.
     </para>
 
     <variablelist>
@@ -3734,7 +3735,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-	    Number of points to join.
+	    Number of points defining line.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3784,7 +3785,12 @@ source
     </para> 
 
     <para>
-      Draws a line in 3 space.  You must first set up the viewport, the
+      Draws line in 3 space defined by <literal><parameter>n</parameter></literal> 
+      points in 
+      <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal>, and
+      <literal><parameter>z</parameter></literal>.
+      You must first set up the viewport, the
       2d viewing window (in world coordinates), and the 3d normalized
       coordinate box.  See <filename>x18c.c</filename> for more info.
     </para>
@@ -3797,7 +3803,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Number of points defining line.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3808,7 +3814,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with x coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3819,7 +3825,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with y coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3830,7 +3836,7 @@ source
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with z coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
