@@ -2,6 +2,37 @@
 Areas currently under development
 ---------------------------------
 
+ - Need developers!  It is becoming too difficult to support PLplot on
+   all the many platforms it runs on.  If you want it to run correctly
+   on your platform it needs your support.  Current developers include:
+
+	Maurice LeBrun			HP-UX
+	mjl@dino.ph.utexas.edu
+
+	Geoff Furnish			Linux
+	furnish@dino.ph.utexas.edu
+
+	John C. Peterson		OS/2
+	jcp@trg.saic.com
+
+   This is not to say that other platforms are unsupported, as often we do
+   work on other platforms, and will fix whatever problems we encounter.
+   But there is no guarantee PLplot will work without problems on such
+   systems either.  The systems we really need help to support (in order
+   of most urgent need) include:
+
+	the various DOS drivers
+	Irix
+	Ultrix
+	(any other *ix not mentioned)
+	Amiga
+	UNICOS
+	SunOS
+	Super-UX
+	AIX
+
+    (also VMS, if anyone ever gets the package working there again)
+
  - Continue updating the manual.
 
  - improve color dialogs for TK driver:
@@ -44,8 +75,10 @@ Areas currently under development
 	- add vector field plot?
 	- better document the 2d function plotter API in plfcont, etc.
 
- - Give file familying a good workout, since it is most probably busted in
-   some respect or another.
+ - File familying is hosed.
+
+ - The DP driver still doesn't work from Crays.  What do I have to do
+   to make this work!?!?!
 
  - Various color drivers should be upgraded to work similar to the tek
    driver, with support for setting the color palette from the user
@@ -82,8 +115,6 @@ Areas currently under development
  - add more utility functions to make example programs easier to write?  
 
  - start using m4 to preprocess the Fortran demos?
-
- - Fix DP driver as needed, especially from Crays
 
  - figure out why plrender is barfing on my old metafiles under ~/data
 
@@ -138,10 +169,6 @@ Things planned for sometime in the future.
  - Japanese plplot/TK extensions?
 
  - Japanese font extensions?
-
- - Need developers to adopt the DOS, OS/2 ports, since original developers
-   no longer use those systems.  Also looking for an individual to adopt
-   the Amiga port.
 
 
 BUGS
