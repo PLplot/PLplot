@@ -14,6 +14,7 @@ function demo_page ($demo, $nfigs, $language) {
 <form ACTION="demo$demo_str.php" METHOD="GET">
 
 <input TYPE="submit" NAME="lbind" VALUE="C">
+<input TYPE="submit" NAME="lbind" VALUE="C++">
 <input TYPE="submit" NAME="lbind" VALUE="F77">
 <input TYPE="submit" NAME="lbind" VALUE="Tcl">
 <input TYPE="submit" NAME="lbind" VALUE="Java">
@@ -28,6 +29,9 @@ END;
   switch ($language) {
   case ("C"):
     $fname = "x" . $demo_str . "c.c-";
+    break;
+  case ("C++"):
+    $fname = "x" . $demo_str . ".cc-";
     break;
   case ("F77"):
     $fname = "x" . $demo_str . "f.f-";
