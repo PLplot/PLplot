@@ -44,9 +44,8 @@ driver may be very simple, as in the case of the many black and white file
 drivers (tektronix, etc.).  More complicated and/or color systems require a
 bit more effort by the driver, with the most effort required by an output
 device with a graphical user interface, including menus for screen dumps,
-palette manipulation, and so forth.  At present only the Amiga drivers do
-the latter, although we plan to eventually offer a nice user interface
-on other systems as well (X-windows, OS/2).  At present we aren't pursuing
+palette manipulation, and so forth.  At present only the tk driver does
+the latter on Unix systems.  At present we aren't pursuing
 a Macintosh development effort due to a lack of time and expertise, but
 will assist anyone wanting to volunteer for the job.
 </para>
@@ -69,105 +68,68 @@ system).
 </para>
 
 <para>
-The device drivers for PLplot terminal output at present are given in table
-\ref{tab:dev1}, with drivers for file output given in table \ref{tab:dev2}. 
+The device drivers for PLplot terminal output at present are given in 
+<xref linkend="tab_dev1"/> while 
+drivers for file output are given in
+<xref linkend="tab_dev2"/>.
+
 The driver for OS/2 PM is available separately.  See the section on OS/2 in
-Appendix C for more details.
+the Appendix for more details.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\renewcommand{\arraystretch}{1.5}
-\begin{table}[tb]
-  \centering
-  \begin{tabular}{|l|l|l|}  \hline
-    \multicolumn{1}{|c}{Device} 
-      & \multicolumn{1}{|c|}{keyword}
-        & \multicolumn{1}{|c|}{driver file}
-\\ \hline
-	Xterm Window
-	  & xterm
-	    & xterm.c
-\\ \hline
-	X-Window Screen
-	  & xwin
-	    & xwindow.c
-\\ \hline
-	DOS VGA Screen
-	  & vga
-	    & dosvga.c
-\\ \hline
-	Amiga Window/Screen
-	  & amiwn
-	    & amiwn.c
-\\ \hline
-	Tektronix Terminal
-	  & tekt
-	    & tektronx.c
-\\ \hline
-	DG300 Terminal
-	  & dg300
-	    & dg300.c
-\\ \hline
-    \end{tabular}
-  \caption{PLplot terminal output devices}
-  \label{tab:dev1}
-\end{table}
+<table frame="none" id="tab_dev1">
+<title>PLplot terminal output devices</title>
+<tgroup cols="3" align="center">
+<colspec colwidth="1.2*"/>
+<colspec colwidth="1.2*"/>
+<colspec colwidth="1.2*"/>
+<thead>
+<row><entry>Device</entry><entry>keyword</entry><entry>driver file</entry></row>
+</thead>
+<tbody>
+<row><entry>X-Window Screen</entry><entry>xwin</entry><entry>xwin.c</entry></row>
+<row><entry>Tcl/Tk widget</entry><entry>tk</entry><entry>tk.c</entry></row>
+<row><entry>Linux console VGA</entry><entry>vga</entry><entry>linuxvga.c</entry></row>
+<row><entry>Xterm Window</entry><entry>xterm</entry><entry>tek.c</entry></row>
+<row><entry>Tektronix Terminal (4010)</entry><entry>tekt</entry><entry>tek.c</entry></row>
+<row><entry>Tektronix Terminal (4105/4107)</entry><entry>tek4107t</entry><entry>tek.c</entry></row>
+<row><entry>MS-Kermit emulator</entry><entry>mskermit</entry><entry>tek.c</entry></row>
+<row><entry>Versaterm vt100/tek emulator</entry><entry>versaterm</entry><entry>tek.c</entry></row>
+<row><entry>VLT vt100/tek emulator</entry><entry>vlt</entry><entry>tek.c</entry></row>
+<row><entry>Conex vt320/tek emulator</entry><entry>conex</entry><entry>tek.c</entry></row>
+<row><entry>DG300 Terminal</entry><entry>dg300</entry><entry>dg300.c</entry></row>
+<row><entry>NeXT display (unsupported)</entry><entry>nx</entry><entry>next.c</entry></row>
+</tbody>
+</tgroup>
+</table>
 
-\begin{table}[tb]
-  \centering
-  \begin{tabular}{|l|l|l|}  \hline
-    \multicolumn{1}{|c}{Device} 
-      & \multicolumn{1}{|c|}{keyword}
-        & \multicolumn{1}{|c|}{driver file}
-\\ \hline
-	PLplot Native Meta-File
-	  & plmeta
-	    & plmeta.c
-\\ \hline
-	Tektronix File
-	  & tekf
-	    & tektronx.c
-\\ \hline
-	PostScript File
-	  & ps
-	    & pscript.c
-\\ \hline
-	LaserJet II Bitmap File (150 dpi)
-	  & ljii
-	    & ljii.c
-\\ \hline
-	XFig file
-	  & xfig
-	    & xfig.c
-\\ \hline
-	Amiga Printer
-	  & amipr
-	    & amipr.c
-\\ \hline
-	IFF file (Amiga)
-	  & iff
-	    & iff.c
-\\ \hline
-	Aegis Draw file (Amiga)
-	  & aegis
-	    & aegis.c
-\\ \hline
-	HP 7470 Plotter File (HPGL Cartridge Small Plotter)
-	  & hp7470
-	    & hp7470.c
-\\ \hline
-	HP 7580 Plotter File (Large Plotter)
-	  & hp7580
-	    & hp7580.c
-\\ \hline
-	Impress File
-	  & imp
-	    & impress.c
-\\ \hline
-    \end{tabular}
-  \caption{PLplot file output devices}
-  \label{tab:dev2}
-\end{table}
-\renewcommand{\arraystretch}{1.0}
+<table frame="none" id="tab_dev2">
+<title>PLplot file output devices</title>
+<tgroup cols="3" align="center" colsep="0" rowsep="0">
+<colspec colwidth="1.2*"/>
+<colspec colwidth="1.2*"/>
+<colspec colwidth="1.2*"/>
+<thead>
+<row><entry>Device</entry><entry>keyword</entry><entry>driver file</entry></row>
+</thead>
+<tbody>
+<row><entry>PLplot Native Meta-File</entry><entry>plmeta</entry><entry>plmeta.c</entry></row>
+<row><entry>Tektronix File (4010)</entry><entry>tekf</entry><entry>tek.c</entry></row>
+<row><entry>Tektronix File (4105/4107)</entry><entry>tek4107f</entry><entry>tek.c</entry></row>
+<row><entry>PostScript File (monochrome)</entry><entry>ps</entry><entry>ps.c</entry></row>
+<row><entry>PostScript File (color)</entry><entry>psc</entry><entry>ps.c</entry></row>
+<row><entry>XFig file</entry><entry>xfig</entry><entry>xfig.c</entry></row>
+<row><entry>LaserJet IIp Bitmap File </entry><entry>ljiip</entry><entry>ljiip.c</entry></row>
+<row><entry>LaserJet II Bitmap File (150 dpi)</entry><entry>ljii</entry><entry>ljii.c</entry></row>
+<row><entry>HP 7470 Plotter File (HPGL Cartridge Small Plotter)</entry><entry>hp7470</entry><entry>hpgl.c</entry></row>
+<row><entry>HP 7580 Plotter File (Large Plotter)</entry><entry>hp7580</entry><entry>hpgl.c</entry></row>
+<row><entry>HP Laser Jet, HPGL file</entry><entry>lj_hpgl</entry><entry>hpgl.c</entry></row>
+<row><entry>Impress File</entry><entry>imp</entry><entry>impress.c</entry></row>
+<row><entry>Portable bitmap file</entry><entry>pbm</entry><entry>pbm.c</entry></row>
+<row><entry>Null device</entry><entry>null</entry><entry>null.c</entry></row>
+<row><entry>MGR bitmap file (unsupported)</entry><entry>mgr</entry><entry>mgr.c</entry></row>
+</tbody>
+</tgroup>
+</table>
 </para>
 </sect1>
 
@@ -176,46 +138,93 @@ Appendix C for more details.
 
 <para> A dispatch table is used to direct function calls to whatever driver
 is chosen at run-time.  Below are listed the names of each entry in the
-generic dispatch table, defined in <filename>dispatch.h</filename>.  The
-entries specific to each device (defined in <filename>dispatch.c</filename>)
-are typically named similarly but with <quote>pl_</quote> replaced by a
-string specific for that device (the logical order must be preserved,
-however). The dispatch table entries are :
+PLDispatchTable dispatch table struct defined in
+<filename>plcore.h</filename>.  The entries specific to each device (defined
+in <filename>drivers/*.c</filename>) are typically named similarly but with
+<quote>pl_</quote> replaced by a string specific for that device (the
+logical order must be preserved, however). The dispatch table entries are :
 
-\begin{itemize}
-\item <literal>pl_MenuStr</literal> : Pointer to string that is printed in device menu.
-\item <literal>pl_DevName</literal> : A keyword (string) for device selection by name.
-\item <literal>pl_init</literal> : Initialize device.  
-			This routine may also prompt the user
-			for certain device parameters or open a graphics file.
-			Called only once to set things up.
-\item <literal>pl_line</literal> : Draws a line between two points.
-\item <literal>pl_clear</literal> : Clears screen or ejects page or closes file.
-\item <literal>pl_page</literal> : Set up for plotting on a new page. 
-			May also open a new a new graphics file.
-\item <literal>pl_adv</literal> : Advance to the next page.  Equivalent to
-a <literal>pl_clear</literal>
-			followed by a <literal>pl_page</literal> on most devices.
-\item <literal>pl_tidy</literal> : Tidy up. May close graphics file.
-\item <literal>pl_color</literal> : Change pen color.
-\item <literal>pl_text</literal> : Switch device to text mode.
-\item <literal>pl_graph</literal> : Switch device to graphics mode.
-\item <literal>pl_width</literal> : Set graphics pen width.
-\item <literal>pl_esc</literal> : Escape function for driver-specific commands.
-\end{itemize}
-
-It is recommended that when adding new functions to only a certain driver,
-the escape function be used.  Otherwise it is necessary to add a null
-routine to all the other drivers to handle the new function.
-
-For more information, see <filename>dispatch.h</filename> or 
-<filename>dispatch.c</filename>.
+      <itemizedlist>
+	<listitem>
+	  <para>
+<literal>pl_MenuStr</literal>: Pointer to string that is printed in device menu.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_DevName</literal>: A short device "name" for device selection by name.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_type</literal>: 0 for file-oriented device, 1 for interactive
+(the null driver uses -1 here).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_init</literal>: Initialize device.  This routine may also prompt the user
+for certain device parameters or open a graphics file
+(see Notes).  Called only once to set things up.  Certain
+options such as familying and resolution (dots/mm) should
+be set up before calling this routine (note: some drivers
+ignore these).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_line</literal>: Draws a line between two points.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_polyline</literal>: Draws a polyline (no broken segments).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_eop</literal>: Finishes out current page (see Notes).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_bop</literal>: Set up for plotting on a new page. May also open a new
+a new graphics file (see Notes).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_tidy</literal>: Tidy up. May close graphics file (see Notes).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_state</literal>: Handle change in PLStream state
+(color, pen width, fill attribute, etc).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+<literal>pl_esc</literal>: Escape function for driver-specific commands.
+	  </para>
+	</listitem>
+      </itemizedlist>
+Notes: Most devices allow multi-page plots to be stored in a single graphics
+file, in which case the graphics file should be opened in the pl_init()
+routine, closed in pl_tidy(), and page advances done by calling pl_eop and
+pl_bop() in sequence. If multi-page plots need to be stored in different
+files then pl_bop() should open the file and pl_eop() should close it.  Do
+NOT open files in both pl_init() and pl_bop() or close files in both
+pl_eop() and pl_tidy(). It is recommended that when adding new functions to
+only a certain driver, the escape function be used.  Otherwise it is
+necessary to add a null routine to all the other drivers to handle the new
+function. 
 </para>
 
 </sect1>
 
 <sect1 id="metafiles-plrender">
-<title>{PLplot Metafiles and plrender</title> 
+<title>PLplot Metafiles and Plrender</title> 
 
 <para>
 The PLplot metafile is a way to store and transport your graphical data for
@@ -240,89 +249,131 @@ can accept commands at a high rate (e.g. X windows).
 
 <para>
 The commands as written by the metafile driver at present are as follows:
-\begin{itemize}
-\item INITIALIZE 
-\item CLOSE 
-\item SWITCH_TO_TEXT 
-\item SWITCH_TO_GRAPH 
-\item CLEAR 
-\item PAGE 
-\item NEW_COLOR 
-\item NEW_WIDTH 
-\item LINE 
-\item LINETO 
-\item ESCAPE 
-\item ADVANCE
-\end{itemize}
+<itemizedlist>
+<listitem><para><literal>INITIALIZE</literal></para></listitem>
+<listitem><para><literal>CLOSE</literal></para></listitem>
+<listitem><para><literal>SWITCH_TO_TEXT</literal></para></listitem>
+<listitem><para><literal>SWITCH_TO_GRAPH</literal></para></listitem>
+<listitem><para><literal>CLEAR</literal></para></listitem>
+<listitem><para><literal>PAGE</literal></para></listitem>
+<listitem><para><literal>NEW_COLOR</literal></para></listitem>
+<listitem><para><literal>NEW_WIDTH</literal></para></listitem>
+<listitem><para><literal>LINE</literal></para></listitem>
+<listitem><para><literal>LINETO</literal></para></listitem>
+<listitem><para><literal>ESCAPE</literal></para></listitem>
+<listitem><para><literal>ADVANCE</literal></para></listitem>
+</itemizedlist>
 </para>
 
-<para>
-Each command is written as a single byte, possibly followed by additional
-data bytes.  The NEW_COLOR and NEW_WIDTH commands each write 2 data
-bytes, the LINETO command writes 4 data bytes, and the LINE command writes
-8 data bytes.  The most common instruction in the typical metafile will be
-the LINETO command, which draws a continuation of the previous line to the
-given point.  This data encoding is not quite as efficient as the tektronix
-format, which uses 4 bytes instead of 5 here (1 command $+$ 4 data),
-however the PLplot encoding is far simpler to implement and more robust.
-The ESCAPE function writes a second command character (opcode) followed by
-an arbitrary number of data bytes depending on the value of the opcode.
-Note that any data written must be in device independent form to maintain
-the transportability of the metafile so floating point numbers are not
-allowed. 
+<para> 
+Each command is written as a single byte, possibly followed by
+additional data bytes.  The <literal>NEW_COLOR</literal> and
+<literal>NEW_WIDTH</literal> commands each write 2 data bytes, the
+<literal>LINETO</literal> command writes 4 data bytes, and the
+<literal>LINE</literal> command writes 8 data bytes.  The most common
+instruction in the typical metafile will be the <literal>LINETO</literal>
+command, which draws a continuation of the previous line to the given point.
+This data encoding is not quite as efficient as the tektronix format, which
+uses 4 bytes instead of 5 here (1 command <literal>+</literal> 4 data),
+however the PLplot encoding is far simpler to implement and more robust. The
+<literal>ESCAPE</literal> function writes a second command character
+(opcode) followed by an arbitrary number of data bytes depending on the
+value of the opcode. Note that any data written must be in device
+independent form to maintain the transportability of the metafile so
+floating point numbers are not allowed. 
 </para>
 
 <para>
 The short usage message for <function>plrender</function> is printed if one inputs
 insufficient or invalid arguments, and is as follows:
-\begin{verbatim}
-% plrender
+<screen>
+<prompt>%</prompt> <userinput>plrender</userinput>
 
-usage:  plrender [-h] [-v] [-dev name] [-i name] [-o name] [-f] [-geo geom]
-    [-b number] [-e number] [-p page] [-a aspect] [-ori orient] [-px number]
-    [-py number] [-fam] [-fsiz size] [-fmem member] [-np] [filename]
+No filename specified.
+
+Usage:
+        plrender [options] [files]
+
+plrender options:
+    [-v] [-i name] [-b number] [-e number] [-p page]
+
+PLplot options:
+    [-h] [-v] [-verbose] [-debug] [-dev name] [-o name] [-display name]
+    [-px number] [-py number] [-geometry geom] [-wplt xl,yl,xr,yr]
+    [-mar margin] [-a aspect] [-jx justx] [-jy justy] [-ori orient]
+    [-freeaspect] [-width width] [-bg color] [-ncol0 n] [-ncol1 n] [-fam]
+    [-fsiz size] [-fbeg number] [-finc number] [-fflen length] [-nopixmap]
+    [-db] [-np] [-server_name name] [-server_host name] [-server_port name]
+    [-user name]
+
 
 Type plrender -h for a full description.
-\end{verbatim}
+
+</screen>
 </para>
 
 <para>
 The longer usage message goes into more detail, and is as follows:
-\begin{verbatim}
-% plrender -h
+<screen>
+<prompt>%</prompt> <userinput>plrender -h</userinput>
 
-usage:
-        plrender [-options ...] [filename]
+Usage:
+        plrender [options] [files]
 
-where options include:
-    -h                   Print out this message
-    -v                   Print out version info
-    -dev name            Output device name
+plrender options:
+    -v                   Print out the plrender version number
     -i name              Input filename
-    -o name              Output filename, or X server to contact
-    -f                   Filter option -- equivalent to "-i - -o -"
-    -geo geom            X window size, in pixels (e.g. -geo 400x400)
     -b number            Beginning page number
     -e number            End page number
     -p page              Plot given page only
-    -a aspect            Plot aspect ratio
-    -ori orient          Plot orientation (0=landscape, 1=portrait)
+
+If the "-i" flag is omitted, unrecognized input will assumed to be filename
+parameters.  Specifying "-" for the input or output filename means use stdin
+or stdout, respectively.  See the manual for more detail.
+
+PLplot options:
+    -h                   Print out this message
+    -v                   Print out the PLplot library version number
+    -verbose             Be more verbose than usual
+    -debug               Print debugging info (implies -verbose)
+    -dev name            Output device name
+    -o name              Output filename
+    -display name        X server to contact
     -px number           Plots per page in x
     -py number           Plots per page in y
+    -geometry geom       Window size, in pixels (e.g. -geometry 400x300)
+    -wplt xl,yl,xr,yr    Relative coordinates [0-1] of window into plot
+    -mar margin          Margin space in relative coordinates (0 to 0.5, def 0)
+    -a aspect            Page aspect ratio (def: same as output device)
+    -jx justx            Page justification in x (-0.5 to 0.5, def 0)
+    -jy justy            Page justification in y (-0.5 to 0.5, def 0)
+    -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
+    -freeaspect          Do not preserve aspect ratio on orientation swaps
+    -width width         Sets pen width (1 &lt;= width %lt;= 10)
+    -bg color            Background color (0=black, FFFFFF=white)
+    -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
+    -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
     -fam                 Create a family of output files
     -fsiz size           Output family file size in MB (e.g. -fsiz 1.0)
-    -fmem member         Starting family member number on input [1]
+    -fbeg number         First family member number on output
+    -finc number         Increment between family members
+    -fflen length        Family member number minimum field width
+    -nopixmap            Don't use pixmaps in X-based drivers
+    -db                  Double buffer X window output
     -np                  No pause between pages
+    -server_name name    Main window name of PLplot server (tk driver)
+    -server_host name    Host to run PLplot server on (dp driver)
+    -server_port name    Port to talk to PLplot server on (dp driver)
+    -user name           User name on remote node (dp driver)
+
+All parameters must be white-space delimited.  Some options are driver
+dependent.  Please see the PLplot reference document for more detail.
+</screen>
 </para>
 
 <para>
-All parameters must be white-space delimited.  If you omit the "-i" flag,
-the filename parameter must come last.  Specifying "-" for the input or
-output filename means use stdin or stdout, respectively.  Only one filename
-parameter is recognized.  Not all options valid with all drivers.
-Please see the man pages for more detail.
-\end{verbatim}
-These are generally self explanatory (family files are explained below).
+The options are generally self explanatory (family files are explained in
+<xref linkend="familying"/>).
 Most of these options have default values, and for those that don't
 <function>plrender</function> will prompt the user.  The
 <literal>-px</literal> and <literal>-py</literal> options are
@@ -338,12 +389,11 @@ Additional options may be added in future releases.
 </sect1>
 
 <sect1 id="familying">
-<title>Family file output</title> 
+<title>Family File Output</title> 
 
 <para>
 When sending PLplot to a file, the user has the option of generating a
-<quote>family</quote> of output files for certain output drivers (at present this
-is available for the plmeta, tektronix, and postscript drivers only).
+<quote>family</quote> of output files for most output file drivers.
 This can be valuable when generating a large amount of output, so as to not
 strain network or printer facilities by processing extremely large single
 files.  Each family member file can be treated as a completely independent
@@ -353,7 +403,8 @@ family member files as a single logical file.
 
 <para> To create a family file, one must simply call &plsfam; with the
 familying flag <literal>fam</literal> set to 1, and the desired maximum
-member size (in bytes) in <literal>bmax</literal>.  If the current output
+member size (in bytes) in <literal>bmax</literal>.  &plsfam also allows
+you to set the current family file number.  If the current output
 driver does not support familying, there will be no effect.  This call must
 be made <emphasis>before</emphasis> calling &plstar; or &plstart;. </para>
 
@@ -402,7 +453,8 @@ Here we shall discuss briefly some of the more common interactive output
 devices.  
 </para>
 
-<para> Many popular terminals or terminal emulators at present have a
+<para>
+Many popular terminals or terminal emulators at present have a
 facility for switching between text and graphics <quote>screens</quote>.
 This includes the xterm emulator under X-windows, vt100's with
 Retrographics, and numerous emulators for microcomputers which have a dual
@@ -425,28 +477,28 @@ page.  If indeed running from an xterm, you may resize, move, cover and
 uncover the window.  The behavior of the X-window driver is quite different,
 however.  First, it is much faster, as there is no tty-like handshaking
 going on.  Second, a mouse click is used to advance and clear the page,
-rather than a RETURN.  And last, the window cannot be resized or covered
-without losing the graphics inside (this will be improved in a later
-release).  On the other hand, the Amiga screen driver and the OS/2 PM driver
-both support resizing and exposure with automatic refresh.
+rather than a RETURN.
 </para>
 
 <para>
 On a tektronix 4014 compatible device, you may preview tektronix output
-files via the <function>pltek</function> utility.  <function>pltek</function> will let you step through the
-file interactively, skipping backward or forward if desired.  The help
-message for <function>pltek</function> is as follows:
-\begin{verbatim}
+files via the <function>pltek</function> utility.
+<function>pltek</function> will let you step through the file interactively,
+skipping backward or forward if desired.  The help message for
+<function>pltek</function> is as follows:
+
+<screen>
+<prompt>%</prompt> <userinput>pltek</userinput>
 Usage: pltek filename 
 At the prompt, the following replies are recognized:
+   h,?    Give this help message.
+    q     Quit program.
+   &lt;n>    Go to the specified page number.
+   -&lt;n>   Go back &lt;n> pages.
+   +&lt;n>   Go forward &lt;n> pages.
+ &lt;Return> Go to the next page.
 
-    h     Gives this help message.
-    ?     As above.
-    q     Quits program.
-   &lt;n>    Goes to the specified frame number (surprise!).
-          If negative, will go back the specified number of frames.
- &lt;Return> Goes to the next frame (first frame, if initial reply).
-\end{verbatim}
+</screen>
 The output device is switched to text mode before the prompt is given,
 which causes the prompt to go to the vt102 window under xterm and
 most vt100/tek4010 emulators.
@@ -605,7 +657,7 @@ main()
   </sect1>
 
   <sect1 id="arguments">
-    <title>Command line arguments</title>
+    <title>Command Line Arguments</title>
 
     <para>
       PLplot supports a large number of command line arguments, but it is
