@@ -1,31 +1,20 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1995/01/04 06:50:44  mjl
+ * Revision 1.16  1995/01/06 07:54:16  mjl
+ * Added new options:
+ *   f: Always use fixed point numeric labels
+ *   h: Draws a grid at the minor tick interval
+ * See x04c for an example of both of these (second plot).
+ * Upgraded plaxes() to be a perfect superset of plbox() (now plbox is
+ * just a front-end to plaxes).  Substantially improved code structure and
+ * eliminated some inconsistencies.
+ *
+ * Revision 1.15  1995/01/04  06:50:44  mjl
  * Fix for obscure 3d plotting bug, contributed by Bryan Peterson.
  *
  * Revision 1.14  1994/08/29  22:05:19  mjl
  * Fixed a bug that was preventing the exponential label from showing up
  * under certain circumstances.
- *
- * Revision 1.13  1994/06/30  18:22:00  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
- *
- * Revision 1.12  1994/04/30  16:15:04  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.11  1994/04/08  12:29:28  mjl
- * Hack to prevent labels like "-0.0" on some systems, caused by roundoff.
- *
- * Revision 1.10  1994/03/23  07:54:08  mjl
- * Replaced call to plexit() on simple (recoverable) errors with simply
- * printing the error message (via plabort()) and returning.  Should help
- * avoid loss of computer time in some critical circumstances (during a long
- * batch run, for example).
 */
 
 /*	plbox.c
@@ -62,25 +51,55 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text);
 
 static void
-plform(PLFLT value, PLINT scale, PLINT prec, char *result);
+plform(PLFLT value, PLINT scale, PLINT prec, char *result, PLINT ll, PLINT lf);
+
+static void
+grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
+	 const char *yopt, PLFLT ytick1, PLINT nysub1);
+
+static void
+label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1);
 
 /*----------------------------------------------------------------------*\
  * void plbox()
  *
- * This draws a box around the current viewport. XOPT and YOPT are
- * character strings which define the box as follows:
+ * This draws a box around the current viewport, complete with axes,
+ * ticks, numeric labels, and grids, according to input specification.
+ * Just a front-end to plaxes(), which allows arbitrary placement of
+ * coordinate axes when plotted (here the origin is at 0,0).  See the
+ * documentation for plaxes() for more info.
+\*----------------------------------------------------------------------*/
+
+void
+c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
+	const char *yopt, PLFLT ytick, PLINT nysub)
+{
+    c_plaxes(0.0, 0.0, xopt, xtick, nxsub, yopt, ytick, nysub);
+}
+
+/*----------------------------------------------------------------------*\
+ * void plaxes()
  *
- * A: Draw axis (X is horizontal line Y=0, Y is vertical line X=0)
- * B: Draw bottom (X) or left (Y) edge of frame
- * C: Draw top (X) or right (Y) edge of frame
- * G: Draws a grid at the major tick interval
- * I: Inverts tick marks
- * L: Logarithmic axes, major ticks at decades, minor ticks at units
- * N: Write numeric label at conventional location
- * M: Write numeric label at unconventional location
- * T: Draw major tick marks
- * S: Draw minor tick marks
- * V: (for Y only) Label vertically
+ * This draws a box around the current viewport, complete with axes,
+ * ticks, numeric labels, and grids, according to input specification.
+ *
+ * x0 and y0 specify the origin of the axes.
+ *
+ * xopt and yopt are character strings which define the box as follows:
+ *
+ * a: Draw axis (X is horizontal line Y=0, Y is vertical line X=0)
+ * b: Draw bottom (X) or left (Y) edge of frame
+ * c: Draw top (X) or right (Y) edge of frame
+ * f: Always use fixed point numeric labels
+ * g: Draws a grid at the major tick interval
+ * h: Draws a grid at the minor tick interval
+ * i: Inverts tick marks
+ * l: Logarithmic axes, major ticks at decades, minor ticks at units
+ * n: Write numeric label at conventional location
+ * m: Write numeric label at unconventional location
+ * t: Draw major tick marks
+ * s: Draw minor tick marks
+ * v: (for Y only) Label vertically
  *
  * xtick, ytick are the major tick intervals required, zero for
  * automatic selection
@@ -90,23 +109,22 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *result);
 \*----------------------------------------------------------------------*/
 
 void
-c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
-	const char *yopt, PLFLT ytick, PLINT nysub)
+c_plaxes(PLFLT x0, PLFLT y0,
+	 const char *xopt, PLFLT xtick, PLINT nxsub,
+	 const char *yopt, PLFLT ytick, PLINT nysub)
 {
     static char string[40];
-    PLINT lax, lbx, lcx, lgx, lix, llx, lmx, lnx, lsx, ltx;
-    PLINT lay, lby, lcy, lgy, liy, lly, lmy, lny, lsy, lty, lvy;
+    PLINT lax, lbx, lcx, lgx, lix, llx, lsx, ltx;
+    PLINT lay, lby, lcy, lgy, liy, lly, lsy, lty;
     PLINT xmajor, xminor, ymajor, yminor;
-    PLINT xmode, xprec, xdigmax, xdigits, xscale;
-    PLINT ymode, yprec, ydigmax, ydigits, yscale;
-    PLINT i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y, it0;
+    PLINT i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
     PLINT nxsub1, nysub1;
     PLINT lxmin, lxmax, lymin, lymax;
     PLINT pxmin, pxmax, pymin, pymax;
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLINT lstring;
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT pos, tn, tp, temp, offset, height, xcrit, ycrit;
+    PLFLT xp0, yp0, pos, tn, tp, temp, offset, height;
 
     if (plsc->level < 3) {
 	plabort("plbox: Please set up window first");
@@ -121,17 +139,12 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 
     plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
 
-/* Tick and subtick sizes in device coords */
+/* Convert world coordinates to physical */
 
-    xmajor = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
-    ymajor = MAX(ROUND(plsc->majht * plsc->xpmm), 1);
-    xminor = MAX(ROUND(plsc->minht * plsc->ypmm), 1);
-    yminor = MAX(ROUND(plsc->minht * plsc->xpmm), 1);
+    xp0 = plP_wcpcx(x0);
+    yp0 = plP_wcpcy(y0);
 
-    xtick1 = xtick;
-    nxsub1 = nxsub;
-    ytick1 = ytick;
-    nysub1 = nysub;
+/* Set plot options from input */
 
     lax = plP_stsearch(xopt, 'a');
     lbx = plP_stsearch(xopt, 'b');
@@ -139,8 +152,6 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     lgx = plP_stsearch(xopt, 'g');
     lix = plP_stsearch(xopt, 'i');
     llx = plP_stsearch(xopt, 'l');
-    lmx = plP_stsearch(xopt, 'm');
-    lnx = plP_stsearch(xopt, 'n');
     lsx = plP_stsearch(xopt, 's');
     ltx = plP_stsearch(xopt, 't');
 
@@ -150,34 +161,33 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     lgy = plP_stsearch(yopt, 'g');
     liy = plP_stsearch(yopt, 'i');
     lly = plP_stsearch(yopt, 'l');
-    lmy = plP_stsearch(yopt, 'm');
-    lny = plP_stsearch(yopt, 'n');
     lsy = plP_stsearch(yopt, 's');
     lty = plP_stsearch(yopt, 't');
-    lvy = plP_stsearch(yopt, 'v');
+
+/* Tick and subtick sizes in device coords */
+
+    xmajor = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
+    ymajor = MAX(ROUND(plsc->majht * plsc->xpmm), 1);
+    xminor = MAX(ROUND(plsc->minht * plsc->ypmm), 1);
+    yminor = MAX(ROUND(plsc->minht * plsc->xpmm), 1);
+
+    nxsub1 = nxsub;
+    nysub1 = nysub;
+    xtick1 = llx ? 1.0 : xtick;
+    ytick1 = lly ? 1.0 : ytick;
 
     plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
 
     lax = lax && (vpwymi * vpwyma < 0.0) && !llx;
     lay = lay && (vpwxmi * vpwxma < 0.0) && !lly;
 
-    plgxax(&xdigmax, &xdigits);
-    plgyax(&ydigmax, &ydigits);
-
-    if (llx)
-	xtick1 = 1.0;
-    if (lly)
-	ytick1 = 1.0;
-
 /* Calculate tick spacing */
 
-    if (ltx || lgx)
-	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1, &xmode, &xprec, xdigmax,
-	       &xscale);
+    if (ltx || lgx) 
+	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1);
 
-    if (lty || lgy)
-	pldtik(vpwymi, vpwyma, &ytick1, &nysub1, &ymode, &yprec, ydigmax,
-	       &yscale);
+    if (lty || lgy) 
+	pldtik(vpwymi, vpwyma, &ytick1, &nysub1);
 
 /* Set up tick variables */
 
@@ -225,7 +235,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 		    }
 		    else {
 			for (i = 1; i <= nxsub1 - 1; i++) {
-			    temp = tp + i * (tn - tp) / nxsub1;
+			    temp = tp + i * xtick1 / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
 				plxtik(plP_wcpcx(temp), vppymi, i1x, i2x);
 			}
@@ -258,7 +268,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 		    }
 		    else {
 			for (i = 1; i <= nysub1 - 1; i++) {
-			    temp = tp + i * (tn - tp) / nysub1;
+			    temp = tp + i * ytick1 / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
 				plytik(vppxma, plP_wcpcy(temp), i2y, i1y);
 			}
@@ -291,7 +301,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 		    }
 		    else {
 			for (i = nxsub1 - 1; i >= 1; i--) {
-			    temp = tn + i * (tp - tn) / nxsub1;
+			    temp = tn + i * xtick1 / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
 				plxtik(plP_wcpcx(temp), vppyma, i2x, i1x);
 			}
@@ -324,7 +334,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 		    }
 		    else {
 			for (i = nysub1 - 1; i >= 1; i--) {
-			    temp = tn + i * (tp - tn) / nysub1;
+			    temp = tn + i * ytick1 / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
 				plytik(vppxmi, plP_wcpcy(temp), i1y, i2y);
 			}
@@ -342,8 +352,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 /* Draw the horizontal axis */
 
     if (lax) {
-	it0 = plP_wcpcy(0.0);
-	plP_movphy(vppxmi, it0);
+	plP_movphy(vppxmi, yp0);
 	if (ltx) {
 	    tp = xtick1 * floor(vpwxmi / xtick1);
 	    for (;;) {
@@ -353,31 +362,30 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), it0, xminor, xminor);
+				plxtik(plP_wcpcx(temp), yp0, xminor, xminor);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nxsub1 - 1; i++) {
-			    temp = tp + i * (tn - tp) / nxsub1;
+			    temp = tp + i * xtick1 / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), it0, xminor, xminor);
+				plxtik(plP_wcpcx(temp), yp0, xminor, xminor);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwxmi, vpwxma))
 		    break;
-		plxtik(plP_wcpcx(tn), it0, xmajor, xmajor);
+		plxtik(plP_wcpcx(tn), yp0, xmajor, xmajor);
 		tp = tn;
 	    }
 	}
-	plP_draphy(vppxma, it0);
+	plP_draphy(vppxma, yp0);
     }
 
 /* Draw the vertical axis */
 
     if (lay) {
-	it0 = plP_wcpcx(0.0);
-	plP_movphy(it0, vppymi);
+	plP_movphy(xp0, vppymi);
 	if (lty) {
 	    tp = ytick1 * floor(vpwymi / ytick1);
 	    for (;;) {
@@ -387,419 +395,33 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(it0, plP_wcpcy(temp), yminor, yminor);
+				plytik(xp0, plP_wcpcy(temp), yminor, yminor);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nysub1 - 1; i++) {
-			    temp = tp + i * (tn - tp) / nysub1;
+			    temp = tp + i * ytick1 / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(it0, plP_wcpcy(temp), yminor, yminor);
+				plytik(xp0, plP_wcpcy(temp), yminor, yminor);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwymi, vpwyma))
 		    break;
-		plytik(it0, plP_wcpcy(tn), ymajor, ymajor);
+		plytik(xp0, plP_wcpcy(tn), ymajor, ymajor);
 		tp = tn;
 	    }
 	}
-	plP_draphy(it0, vppyma);
+	plP_draphy(xp0, vppyma);
     }
 
-/* Draw grid in x direction.  'xcrit' is the minimim distance away (in
- * fractional number of ticks) from the boundary a grid line can be drawn.
- * If you are too close, it looks bad.  The previous setting was 0.5 which
- * was too far.
-*/
-    if (lgx) {
-	xcrit = 0.1;
-	tp = xtick1 * (1. + floor(vpwxmi / xtick1 + xcrit));
-	for (tn = tp; BETW(tn + xtick1*xcrit, vpwxmi, vpwxma); tn += xtick1)
-	    pljoin(tn, vpwymi, tn, vpwyma);
-    }
+/* Draw grids */
 
-/* Draw grid in y direction */
-/* ycrit behaves analogously to xcrit */
+    grid_box(xopt, xtick1, nxsub1, yopt, ytick1, nysub1);
 
-    if (lgy) {
-	ycrit = 0.1;
-	tp = ytick1 * (1. + floor(vpwymi / ytick1 + 0.05));
-	for (tn = tp; BETW(tn + ytick1*ycrit, vpwymi, vpwyma); tn += ytick1)
-	    pljoin(vpwxmi, tn, vpwxma, tn);
-    }
+/* Write labels */
 
-/* Write horizontal label(s) */
-
-    if ((lmx || lnx) && ltx) {
-	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
-	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
-	    if (!llx)
-		plform(tn, xscale, xprec, string);
-	    else
-		sprintf(string, "10#u%d", (int) ROUND(tn));
-
-	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
-	    if (lnx)
-		plmtex("b", 1.5, pos, 0.5, string);
-	    if (lmx)
-		plmtex("t", 1.5, pos, 0.5, string);
-	}
-	xdigits = 2;
-	plsxax(xdigmax, xdigits);
-
-    /* Write separate exponential label if mode = 1. */
-
-	if (!llx && xmode) {
-	    pos = 1.0;
-	    height = 3.2;
-	    sprintf(string, "(x10#u%d#d)", (int) xscale);
-	    if (lnx)
-		plmtex("b", height, pos, 0.5, string);
-	    if (lmx)
-		plmtex("t", height, pos, 0.5, string);
-	}
-    }
-
-/* Write vertical label(s) */
-
-    if ((lmy || lny) && lty) {
-	ydigits = 0;
-	tp = ytick1 * (1. + floor(vpwymi / ytick1));
-	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
-	    if (!lly)
-		plform(tn, yscale, yprec, string);
-	    else
-		sprintf(string, "10#u%d", (int) ROUND(tn));
-
-	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
-	    if (lny) {
-		if (lvy)
-		    plmtex("lv", 0.5, pos, 1.0, string);
-		else
-		    plmtex("l", 1.5, pos, 0.5, string);
-	    }
-	    if (lmy) {
-		if (lvy)
-		    plmtex("rv", 0.5, pos, 0.0, string);
-		else
-		    plmtex("r", 1.5, pos, 0.5, string);
-	    }
-	    lstring = strlen(string);
-	    ydigits = MAX(ydigits, lstring);
-	}
-	if (!lvy)
-	    ydigits = 2;
-
-	plsyax(ydigmax, ydigits);
-
-    /* Write separate exponential label if mode = 1. */
-
-	if (!lly && ymode) {
-	    sprintf(string, "(x10#u%d#d)", (int) yscale);
-	    offset = 0.02;
-	    height = 2.0;
-	    if (lny) {
-		pos = 0.0 - offset;
-		plmtex("t", height, pos, 1.0, string);
-	    }
-	    if (lmy) {
-		pos = 1.0 + offset;
-		plmtex("t", height, pos, 0.0, string);
-	    }
-	}
-    }
-
-/* Restore the clip limits to viewport edge */
-
-    plP_sclp(lxmin, lxmax, lymin, lymax);
-}
-
-/*----------------------------------------------------------------------*\
- * void plaxes()
- *
- * This functions similarly to plbox() except that the origin of the axes
- * is placed at the user-specified point (x0, y0).
-\*----------------------------------------------------------------------*/
-
-void
-c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
-	 const char *yopt, PLFLT ytick, PLINT nysub)
-{
-    static char string[40];
-    PLINT lbx, lcx, lgx, llx, lmx, lnx, lsx, ltx;
-    PLINT lby, lcy, lgy, lly, lmy, lny, lsy, lty, lvy;
-    PLINT xmajor, xminor, ymajor, yminor;
-    PLINT xorigin, yorigin;
-    PLINT xmode, xprec, xdigmax, xdigits, xscale;
-    PLINT ymode, yprec, ydigmax, ydigits, yscale;
-    PLINT i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
-    PLINT nxsub1, nysub1;
-    PLINT lxmin, lxmax, lymin, lymax;
-    PLINT pxmin, pxmax, pymin, pymax;
-    PLINT vppxmi, vppxma, vppymi, vppyma;
-    PLINT lstring;
-    PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT pos, tn, tp, temp, offset, height;
-
-    if (plsc->level < 3) {
-	plabort("plaxes: Please set up window first");
-	return;
-    }
-
-/* Open the clip limits to the subpage limits */
-
-    plP_gclp(&lxmin, &lxmax, &lymin, &lymax);
-    plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
-    plP_sclp(pxmin, pxmax, pymin, pymax);
-
-    plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
-
-/* Convert world coordinates to physical */
-
-    xorigin = plP_wcpcx(x0);
-    yorigin = plP_wcpcy(y0);
-
-/* Tick and subtick sizes in device coords */
-
-    xmajor = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
-    ymajor = MAX(ROUND(plsc->majht * plsc->xpmm), 1);
-    xminor = MAX(ROUND(plsc->minht * plsc->ypmm), 1);
-    yminor = MAX(ROUND(plsc->minht * plsc->xpmm), 1);
-
-    xtick1 = xtick;
-    nxsub1 = nxsub;
-    ytick1 = ytick;
-    nysub1 = nysub;
-
-    lbx = plP_stsearch(xopt, 'b');
-    lcx = plP_stsearch(xopt, 'c');
-    lgx = plP_stsearch(xopt, 'g');
-    llx = plP_stsearch(xopt, 'l');
-    lmx = plP_stsearch(xopt, 'm');
-    lnx = plP_stsearch(xopt, 'n');
-    lsx = plP_stsearch(xopt, 's');
-    ltx = plP_stsearch(xopt, 't');
-
-    lby = plP_stsearch(yopt, 'b');
-    lcy = plP_stsearch(yopt, 'c');
-    lgy = plP_stsearch(yopt, 'g');
-    lly = plP_stsearch(yopt, 'l');
-    lmy = plP_stsearch(yopt, 'm');
-    lny = plP_stsearch(yopt, 'n');
-    lsy = plP_stsearch(yopt, 's');
-    lty = plP_stsearch(yopt, 't');
-    lvy = plP_stsearch(yopt, 'v');
-
-    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
-
-    plgxax(&xdigmax, &xdigits);
-    plgyax(&ydigmax, &ydigits);
-
-    if (llx)
-	xtick1 = 1.0;
-
-    if (lly)
-	ytick1 = 1.0;
-
-    if (ltx || lgx)
-	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1, &xmode, &xprec, xdigmax,
-	       &xscale);
-
-    if (lty || lgy)
-	pldtik(vpwymi, vpwyma, &ytick1, &nysub1, &ymode, &yprec, ydigmax,
-	       &yscale);
-
-/* Set up tick variables */
-
-    i1x = xminor;
-    i2x = xminor;
-    i3x = xmajor;
-    i4x = xmajor;
-
-    i1y = yminor;
-    i2y = yminor;
-    i3y = ymajor;
-    i4y = ymajor;
-
-/* draw boxing */
-
-    if (lbx) {
-	plP_movphy(vppxmi, vppymi);
-	plP_draphy(vppxma, vppymi);
-    }
-    if (lcx) {
-	plP_movphy(vppxmi, vppyma);
-	plP_draphy(vppxma, vppyma);
-    }
-    if (lby) {
-	plP_movphy(vppxmi, vppymi);
-	plP_draphy(vppxmi, vppyma);
-    }
-    if (lcy) {
-	plP_movphy(vppxma, vppymi);
-	plP_draphy(vppxma, vppyma);
-    }
-
-/* Draw the horizontal axis */
-
-    plP_movphy(vppxmi, yorigin);
-    if (ltx) {
-	tp = xtick1 * floor(vpwxmi / xtick1);
-	for (;;) {
-	    tn = tp + xtick1;
-	    if (lsx) {
-		if (llx) {
-		    for (i = 0; i <= 7; i++) {
-			temp = tp + xlog[i];
-			if (BETW(temp, vpwxmi, vpwxma))
-			    plxtik(plP_wcpcx(temp), yorigin, i1x, i2x);
-		    }
-		}
-		else {
-		    for (i = 1; i <= nxsub1 - 1; i++) {
-			temp = tp + i * (tn - tp) / nxsub1;
-			if (BETW(temp, vpwxmi, vpwxma))
-			    plxtik(plP_wcpcx(temp), yorigin, i1x, i2x);
-		    }
-		}
-	    }
-	    if (!BETW(tn, vpwxmi, vpwxma))
-		break;
-	    plxtik(plP_wcpcx(tn), yorigin, i3x, i4x);
-	    tp = tn;
-	}
-    }
-    plP_draphy(vppxma, yorigin);
-
-/* Draw vertical axis */
-
-    if (lby) {
-	plP_movphy(xorigin, vppyma);
-	if (lty) {
-	    tp = ytick1 * (floor(vpwyma / ytick1) + 1);
-	    for (;;) {
-		tn = tp - ytick1;
-		if (lsy) {
-		    if (lly) {
-			for (i = 7; i >= 0; i--) {
-			    temp = tn + xlog[i];
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(xorigin, plP_wcpcy(temp), i1y, i2y);
-			}
-		    }
-		    else {
-			for (i = nysub1 - 1; i >= 1; i--) {
-			    temp = tn + i * (tp - tn) / nysub1;
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(xorigin, plP_wcpcy(temp), i1y, i2y);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwymi, vpwyma))
-		    break;
-		plytik(xorigin, plP_wcpcy(tn), i3y, i4y);
-		tp = tn;
-	    }
-	}
-	plP_draphy(xorigin, vppymi);
-    }
-
-/* Draw grid in x direction */
-
-    if (lgx) {
-	tp = xtick1 * (1. + floor(vpwxmi / xtick1 + .5));
-	for (tn = tp; BETW(tn + xtick1 / 2., vpwxmi, vpwxma); tn += xtick1)
-	    pljoin(tn, vpwymi, tn, vpwyma);
-    }
-
-/* Draw grid in y direction */
-
-    if (lgy) {
-	tp = ytick1 * (1. + floor(vpwymi / ytick1 + .5));
-	for (tn = tp; BETW(tn + ytick1 / 2., vpwymi, vpwyma); tn += ytick1)
-	    pljoin(vpwxmi, tn, vpwxma, tn);
-    }
-
-/* Write horizontal label(s) */
-
-    if ((lmx || lnx) && ltx) {
-	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
-	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
-	    if (!llx)
-		plform(tn, xscale, xprec, string);
-	    else {
-		sprintf(string, "10#u%d", (int) ROUND(tn));
-	    }
-	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
-	    if (lnx)
-		plmtex("b", 1.5, pos, 0.5, string);
-	    if (lmx)
-		plmtex("t", 1.5, pos, 0.5, string);
-	}
-	xdigits = 2;
-	plsxax(xdigmax, xdigits);
-
-    /* Write separate exponential label if mode = 1. */
-
-	if (!llx && xmode) {
-	    pos = 1.0;
-	    height = 3.2;
-	    sprintf(string, "(x10#u%d#d)", (int) xscale);
-	    if (lnx)
-		plmtex("b", height, pos, 0.5, string);
-	    if (lmx)
-		plmtex("t", height, pos, 0.5, string);
-	}
-    }
-
-/* Write vertical label(s) */
-
-    if ((lmy || lny) && lty) {
-	ydigits = 0;
-	tp = ytick1 * (1. + floor(vpwymi / ytick1));
-	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
-	    if (!lly)
-		plform(tn, yscale, yprec, string);
-	    else
-		sprintf(string, "10#u%d", (int) ROUND(tn));
-
-	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
-	    if (lny) {
-		if (lvy)
-		    plmtex("lv", 0.5, pos, 1.0, string);
-		else
-		    plmtex("l", 1.5, pos, 0.5, string);
-	    }
-	    if (lmy) {
-		if (lvy)
-		    plmtex("rv", 0.5, pos, 0.0, string);
-		else
-		    plmtex("r", 1.5, pos, 0.5, string);
-	    }
-	    lstring = strlen(string);
-	    ydigits = MAX(ydigits, lstring);
-	}
-	if (!lvy)
-	    ydigits = 2;
-	plsyax(ydigmax, ydigits);
-
-    /* Write separate exponential label if mode = 1. */
-
-	if (!lly && ymode) {
-	    sprintf(string, "(x10#u%d#d)", (int) yscale);
-	    offset = 0.02;
-	    height = 2.0;
-	    if (lny) {
-		pos = 0.0 - offset;
-		plmtex("t", height, pos, 1.0, string);
-	    }
-	    if (lmy) {
-		pos = 1.0 + offset;
-		plmtex("t", height, pos, 0.0, string);
-	    }
-	}
-    }
+    label_box(xopt, xtick1, yopt, ytick1);
 
 /* Restore the clip limits to viewport edge */
 
@@ -968,7 +590,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
- * void plxbyx()
+ * void plxybx()
  *
  * This draws a sloping line from (wx1,wy1) to (wx2,wy2) which represents an
  * axis of a 3-d graph with data values from "vmin" to "vmax". Depending on
@@ -976,13 +598,14 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
  * interval "tick" with "nsub" subticks between major ticks. If "tick" and/or
  * "nsub" is zero, automatic tick positions are computed
  *
- * B: Draw box boundary
- * I: Inverts tick marks (i.e. drawn downwards)
- * L: Logarithmic axes, major ticks at decades, minor ticks at units
- * N: Write numeric label
- * T: Draw major tick marks
- * S: Draw minor tick marks
- * U: Write label on line
+ * b: Draw box boundary
+ * f: Always use fixed point numeric labels
+ * i: Inverts tick marks (i.e. drawn downwards)
+ * l: Logarithmic axes, major ticks at decades, minor ticks at units
+ * n: Write numeric label
+ * t: Draw major tick marks
+ * s: Draw minor tick marks
+ * u: Write label on line
 \*----------------------------------------------------------------------*/
 
 static void
@@ -991,7 +614,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
 {
     static char string[40];
-    PLINT lb, li, ll, ln, ls, lt, lu;
+    PLINT lb, lf, li, ll, ln, ls, lt, lu;
     PLINT major, minor, mode, prec, scale;
     PLINT i, i1, i2, i3, i4;
     PLINT nsub1;
@@ -1010,6 +633,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     nsub1 = nsub;
 
     lb = plP_stsearch(opt, 'b');
+    lf = plP_stsearch(opt, 'f');
     li = plP_stsearch(opt, 'i');
     ll = plP_stsearch(opt, 'l');
     ln = plP_stsearch(opt, 'n');
@@ -1025,7 +649,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     if (ll)
 	tick1 = (vmax > vmin) ? (PLFLT) 1.0 : (PLFLT) -1.0 ;
     if (lt)
-	pldtik(vmin, vmax, &tick1, &nsub1, &mode, &prec, *digits, &scale);
+	pldtik(vmin, vmax, &tick1, &nsub1);
 
     if (li) {
 	i1 = minor;
@@ -1087,6 +711,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 /* Label the line */
 
     if (ln && lt) {
+	pldprec(vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale);
 	pos = 1.0;
 	height = 3.2;
 	tp = tick1 * (1. + floor(vmin / tick1));
@@ -1095,10 +720,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 		pos = 0.8;
 		break;
 	    }
-	    if (!ll)
-		plform(tn, scale, prec, string);
-	    else
-		sprintf(string, "10#u%-d", (int) ROUND(tn));
+	    plform(tn, scale, prec, string, ll, lf);
 	    pos = (tn - vmin) / (vmax - vmin);
 	    plxytx(wx1, wy1, wx2, wy2, 1.5, pos, 0.5, string);
 	}
@@ -1159,16 +781,17 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
  * tick interval "tick" with "nsub" subticks between major ticks. If "tick"
  * and/or "nsub" is zero, automatic tick positions are computed
  *
- * B: Draws left-hand axis
- * C: Draws right-hand axis
- * I: Inverts tick marks (i.e. drawn to the left)
- * L: Logarithmic axes, major ticks at decades, minor ticks at units
- * M: Write numeric label on right axis
- * N: Write numeric label on left axis
- * S: Draw minor tick marks
- * T: Draw major tick marks
- * U: Writes left-hand label
- * V: Writes right-hand label
+ * b: Draws left-hand axis
+ * c: Draws right-hand axis
+ * f: Always use fixed point numeric labels
+ * i: Inverts tick marks (i.e. drawn to the left)
+ * l: Logarithmic axes, major ticks at decades, minor ticks at units
+ * m: Write numeric label on right axis
+ * n: Write numeric label on left axis
+ * s: Draw minor tick marks
+ * t: Draw major tick marks
+ * u: Writes left-hand label
+ * v: Writes right-hand label
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1177,7 +800,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
       PLFLT tick, PLINT nsub, PLINT *digits)
 {
     static char string[40];
-    PLINT lb, lc, li, ll, lm, ln, ls, lt, lu, lv;
+    PLINT lb, lc, lf, li, ll, lm, ln, ls, lt, lu, lv;
     PLINT i, mode, prec, scale;
     PLINT nsub1, lstring;
     PLFLT pos, tn, tp, temp, height, tick1;
@@ -1196,6 +819,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     lb = plP_stsearch(opt, 'b');
     lc = plP_stsearch(opt, 'c');
+    lf = plP_stsearch(opt, 'f');
     li = plP_stsearch(opt, 'i');
     ll = plP_stsearch(opt, 'l');
     lm = plP_stsearch(opt, 'm');
@@ -1221,7 +845,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	tick1 = 1.0;
 
     if (lt)
-	pldtik(vmin, vmax, &tick1, &nsub1, &mode, &prec, *digits, &scale);
+	pldtik(vmin, vmax, &tick1, &nsub1);
 
     if ((li && !right) || (!li && right)) {
 	minor = -minor;
@@ -1284,13 +908,11 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 /* Label the line */
 
     if ((ln || lm) && lt) {
+	pldprec(vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale);
 	*digits = 0;
 	tp = tick1 * floor(vmin / tick1);
 	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
-	    if (!ll)
-		plform(tn, scale, prec, string);
-	    else
-		sprintf(string, "10#u%d", (int) ROUND(tn));
+	    plform(tn, scale, prec, string, ll, lf);
 	    pos = (tn - vmin) / (vmax - vmin);
 	    if (ln && !right)
 		plztx("v", dx, dy, wx, wy1, wy2, 0.5, pos, 1.0, string);
@@ -1373,38 +995,294 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
 }
 
 /*----------------------------------------------------------------------*\
- * void plform()
+ * void grid_box()
  *
- * Formats a floating point value in one of the following formats 
- * (i)	If scale == 0, use floating point format with "prec" places
- *	after the decimal point. 
- * (ii)	If scale == 1, use scientific notation with one place before 
- *	the decimal point and "prec" places after.  In this case, the
- *	value must be divided by 10^scale.
+ * Draws grids at tick locations (major and/or minor).
+ *
+ * Note that 'tspace' is the minimim distance away (in fractional number
+ * of ticks or subticks) from the boundary a grid line can be drawn.  If
+ * you are too close, it looks bad.
 \*----------------------------------------------------------------------*/
 
 static void
-plform(PLFLT value, PLINT scale, PLINT prec, char *result)
+grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
+	 const char *yopt, PLFLT ytick1, PLINT nysub1)
 {
-    PLINT setpre, precis;
-    char form[10], temp[30];
-    double scale2;
+    PLINT lgx, lhx, llx;
+    PLINT lgy, lhy, lly;
+    PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT tn, tp, temp, tcrit, tspace = 0.1;
+    PLINT i;
 
-    plP_gprec(&setpre, &precis);
+/* Set plot options from input */
 
-    if(setpre)
-	prec = precis;
+    lgx = plP_stsearch(xopt, 'g');
+    lhx = plP_stsearch(xopt, 'h');
+    llx = plP_stsearch(xopt, 'l');
 
-    if(scale)
-	value /= pow(10.,(double)scale);
+    lgy = plP_stsearch(yopt, 'g');
+    lhy = plP_stsearch(yopt, 'h');
+    lly = plP_stsearch(yopt, 'l');
 
-/* This is necessary to prevent labels like "-0.0" on some systems */
+    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
 
-    scale2 = pow(10., prec);
-    value = floor((value * scale2) + .5) / scale2;
+/* Draw grid in x direction. */
 
-    sprintf(form, "%%.%df", (int) prec);
-    sprintf(temp, form, value);
-    strcpy(result, temp);
+    if (lgx) {
+	tn = xtick1 * floor(vpwxmi / xtick1 + tspace);
+	for (;;) {
+	    if (lhx) {
+		if (llx) {
+		    PLFLT otemp = tn;
+		    for (i = 0; i <= 7; i++) {
+			temp = tn + xlog[i];
+			tcrit = temp + (temp - otemp)*tspace;
+			otemp = temp;
+			if (BETW(tcrit, vpwxmi, vpwxma))
+			    pljoin(temp, vpwymi, temp, vpwyma);
+		    }
+		}
+		else {
+		    for (i = 1; i <= nxsub1 - 1; i++) {
+			temp = tn + i * xtick1 / nxsub1;
+			tcrit = temp + xtick1 / nxsub1 * tspace;
+			if (BETW(tcrit, vpwxmi, vpwxma))
+			    pljoin(temp, vpwymi, temp, vpwyma);
+		    }
+		}
+	    }
+	    tn += xtick1;
+	    tcrit = tn + xtick1*tspace;
+	    if (!BETW(tcrit, vpwxmi, vpwxma))
+		break;
+	    pljoin(tn, vpwymi, tn, vpwyma);
+	}
+    }
+
+/* Draw grid in y direction */
+
+    if (lgy) {
+	tn = ytick1 * floor(vpwymi / ytick1 + tspace);
+	for (;;) {
+	    if (lhy) {
+		if (lly) {
+		    PLFLT otemp = tn;
+		    for (i = 0; i <= 7; i++) {
+			temp = tn + xlog[i];
+			tcrit = temp + (temp - otemp)*tspace;
+			otemp = temp;
+			if (BETW(tcrit, vpwymi, vpwyma))
+			    pljoin(vpwxmi, temp, vpwxma, temp);
+		    }
+		}
+		else {
+		    for (i = 1; i <= nysub1 - 1; i++) {
+			temp = tn + i * ytick1 / nysub1;
+			tcrit = temp + ytick1 / nysub1 * tspace;
+			if (BETW(tcrit, vpwymi, vpwyma))
+			    pljoin(vpwxmi, temp, vpwxma, temp);
+		    }
+		}
+	    }
+	    tn += ytick1;
+	    tcrit = tn + ytick1*tspace;
+	    if (!BETW(tcrit, vpwymi, vpwyma))
+		break;
+	    pljoin(vpwxmi, tn, vpwxma, tn);
+	}
+    }
 }
 
+/*----------------------------------------------------------------------*\
+ * void label_box()
+ *
+ * Writes numeric labels on side(s) of box.
+\*----------------------------------------------------------------------*/
+
+static void
+label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
+{
+    static char string[40];
+    PLINT lfx, llx, lmx, lnx, ltx;
+    PLINT lfy, lly, lmy, lny, lty, lvy;
+    PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT pos, tn, tp, temp, offset, height;
+
+/* Set plot options from input */
+
+    lfx = plP_stsearch(xopt, 'f');
+    llx = plP_stsearch(xopt, 'l');
+    lmx = plP_stsearch(xopt, 'm');
+    lnx = plP_stsearch(xopt, 'n');
+    ltx = plP_stsearch(xopt, 't');
+
+    lfy = plP_stsearch(yopt, 'f');
+    lly = plP_stsearch(yopt, 'l');
+    lmy = plP_stsearch(yopt, 'm');
+    lny = plP_stsearch(yopt, 'n');
+    lty = plP_stsearch(yopt, 't');
+    lvy = plP_stsearch(yopt, 'v');
+
+    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+
+/* Write horizontal label(s) */
+
+    if ((lmx || lnx) && ltx) {
+	PLINT xmode, xprec, xdigmax, xdigits, xscale;
+
+	plgxax(&xdigmax, &xdigits);
+	pldprec(vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale);
+
+	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
+	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
+	    plform(tn, xscale, xprec, string, llx, lfx);
+	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
+	    if (lnx)
+		plmtex("b", 1.5, pos, 0.5, string);
+	    if (lmx)
+		plmtex("t", 1.5, pos, 0.5, string);
+	}
+	xdigits = 2;
+	plsxax(xdigmax, xdigits);
+
+    /* Write separate exponential label if mode = 1. */
+
+	if (!llx && xmode) {
+	    pos = 1.0;
+	    height = 3.2;
+	    sprintf(string, "(x10#u%d#d)", (int) xscale);
+	    if (lnx)
+		plmtex("b", height, pos, 0.5, string);
+	    if (lmx)
+		plmtex("t", height, pos, 0.5, string);
+	}
+    }
+
+/* Write vertical label(s) */
+
+    if ((lmy || lny) && lty) {
+	PLINT ymode, yprec, ydigmax, ydigits, yscale;
+
+	plgyax(&ydigmax, &ydigits);
+	pldprec(vpwymi, vpwyma, ytick1, lfy, &ymode, &yprec, ydigmax, &yscale);
+
+	ydigits = 0;
+	tp = ytick1 * (1. + floor(vpwymi / ytick1));
+	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
+	    plform(tn, yscale, yprec, string, lly, lfy);
+	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
+	    if (lny) {
+		if (lvy)
+		    plmtex("lv", 0.5, pos, 1.0, string);
+		else
+		    plmtex("l", 1.5, pos, 0.5, string);
+	    }
+	    if (lmy) {
+		if (lvy)
+		    plmtex("rv", 0.5, pos, 0.0, string);
+		else
+		    plmtex("r", 1.5, pos, 0.5, string);
+	    }
+	    ydigits = MAX(ydigits, strlen(string));
+	}
+	if (!lvy)
+	    ydigits = 2;
+
+	plsyax(ydigmax, ydigits);
+
+    /* Write separate exponential label if mode = 1. */
+
+	if (!lly && ymode) {
+	    sprintf(string, "(x10#u%d#d)", (int) yscale);
+	    offset = 0.02;
+	    height = 2.0;
+	    if (lny) {
+		pos = 0.0 - offset;
+		plmtex("t", height, pos, 1.0, string);
+	    }
+	    if (lmy) {
+		pos = 1.0 + offset;
+		plmtex("t", height, pos, 0.0, string);
+	    }
+	}
+    }
+}
+
+/*----------------------------------------------------------------------*\
+ * void plform()
+ *
+ * Formats a PLFLT value in one of the following formats.
+ *
+ * If ll (logarithmic), then:
+ *
+ *    -	If lf (fixed), then used fixed point notation, i.e. .1, 1, 10, etc,
+ *	with unnecessary trailing .'s or 0's removed.
+ *
+ *    -	If !lf (default), then use exponential notation, i.e. 10^-1, etc.
+ *
+ * If !ll (linear), then:
+ *
+ *    - If scale == 0, use fixed point format with "prec" places after the
+ *	decimal point.
+ *
+ *    -	If scale == 1, use scientific notation with one place before the
+ *	decimal point and "prec" places after.  In this case, the value
+ *	must be divided by 10^scale.
+\*----------------------------------------------------------------------*/
+
+static void
+plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT ll, PLINT lf)
+{
+    if (ll) {
+
+    /* Logarithmic */
+
+	if (lf) {
+
+	/* Fixed point, i.e. .1, 1, 10, etc */
+
+	    int exponent = ROUND(value);
+
+	    value = pow(10.0, exponent);
+	    if (exponent < 0) {
+		char form[10];
+		sprintf(form, "%%.%df", ABS(exponent));
+		sprintf(string, form, value);
+	    }
+	    else {
+		sprintf(string, "%d", (int) value);
+	    }
+	}
+	else {
+
+	/* Exponential, i.e. 10^-1, 10^0, 10^1, etc */
+
+	    sprintf(string, "10#u%d", (int) ROUND(value));
+	}
+    }
+    else {
+
+    /* Linear */
+
+	PLINT setpre, precis;
+	char form[10], temp[30];
+	double scale2;
+
+	plP_gprec(&setpre, &precis);
+
+	if(setpre)
+	    prec = precis;
+
+	if(scale)
+	    value /= pow(10.,(double)scale);
+
+    /* This is necessary to prevent labels like "-0.0" on some systems */
+
+	scale2 = pow(10., prec);
+	value = floor((value * scale2) + .5) / scale2;
+
+	sprintf(form, "%%.%df", (int) prec);
+	sprintf(temp, form, value);
+	strcpy(string, temp);
+    }
+}
