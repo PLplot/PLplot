@@ -46,7 +46,8 @@
            was destroyed before being used!
 
    	Rules for translating C PLplot function calls into Python PLplot:
-   	  - All names are the the same (plot3d modified to plplot3d for uniformity).
+   	  - All names are the the same (plot3d modified to plplot3d for uniformity), but
+           now for uniformity with C API change back to plot3d---AWI.
    	  - C arrays are replaced by Python matrices or objects which can be 
            converted to matrices.
    	  - Array and Matrix lengths are eliminated since matrices know how long they are.
@@ -998,9 +999,9 @@ static PyObject * pl_mtex(PyObject *self, PyObject *args)
     return Py_None;
 }
 
-static char doc_plplot3d[]="Plots a 3-d representation of the function z[x][y]";
+static char doc_plot3d[]="Plots a 3-d representation of the function z[x][y]";
 
-static PyObject * pl_plot3d(PyObject *self, PyObject *args)
+static PyObject * pl_ot3d(PyObject *self, PyObject *args)
 {
     PLFLT *x, *y, **z;
     PLINT nx, ny, opt, side;
@@ -1910,7 +1911,7 @@ static PyMethodDef pl_methods[] = {
     {"plmesh",		pl_mesh, 1, doc_plmesh},
     {"plmkstrm",		pl_mkstrm, 1, doc_plmkstrm},
     {"plmtex",		pl_mtex, 1, doc_plmtex},
-    {"plplot3d",		pl_plot3d, 1, doc_plplot3d},
+    {"plot3d",		pl_ot3d, 1, doc_plot3d},
     {"plpage",		pl_bop, 1, doc_plbop},		/* old name for backward compatibility */
     {"plpat",			pl_pat, 1, doc_plpat},
     {"plpoin",		pl_poin, 1, doc_plpoin},
