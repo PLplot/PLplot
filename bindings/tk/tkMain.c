@@ -49,11 +49,26 @@
 #include <tcl.h>
 #include <tk.h>
 #ifdef HAVE_ITCL
-#include <itcl.h>
+# include <itcl.h>
 #endif
+
+/* itk.h includes itclInt.h which includes tclInt.h ...disaster -mjl */
 /* #ifdef HAVE_ITK */
 /* #include <itk.h> */
 /* #endif */
+
+/* From itkDecls.h */
+
+EXTERN int		Itk_Init _ANSI_ARGS_((Tcl_Interp * interp));
+
+/* From tclIntDecls.h */
+
+EXTERN int		Tcl_Import _ANSI_ARGS_((Tcl_Interp * interp, 
+				Tcl_Namespace * nsPtr, char * pattern, 
+				int allowOverwrite));
+
+EXTERN Tcl_Namespace *	Tcl_GetGlobalNamespace _ANSI_ARGS_((
+				Tcl_Interp * interp));
 
 /*
  * Declarations for various library procedures and variables (don't want
@@ -70,9 +85,6 @@ extern char *		strrchr _ANSI_ARGS_((CONST char *string, int c));
  * Global variables used by the main program:
  */
 
-static Tk_Window mainWindow;	/* The main window for the application.  If
-				 * NULL then the application no longer
-				 * exists. */
 static Tcl_Interp *interp;	/* Interpreter for this application. */
 static Tcl_DString command;	/* Used to assemble lines of terminal input
 				 * into Tcl commands. */
@@ -108,14 +120,6 @@ static Tk_ArgvInfo argTable[] = {
     {(char *) NULL, TK_ARGV_END, (char *) NULL, (char *) NULL,
 	(char *) NULL}
 };
-
-/*
- * Declaration for Tcl command procedure to create demo widget.  This
- * procedure is only invoked if SQUARE_DEMO is defined.
- */
-
-extern int SquareCmd _ANSI_ARGS_((ClientData clientData,
-	Tcl_Interp *interp, int argc, char *argv[]));
 
 /*
  * Forward declarations for procedures defined later in this file:
@@ -194,17 +198,6 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * Initialize the Tk application.
      */
 
-#if TCL_MAJOR_VERSION < 7 || (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
-    mainWindow = Tk_CreateMainWindow(interp, display, name, "Tk");
-    if (mainWindow == NULL) {
-	fprintf(stderr, "%s\n", interp->result);
-	exit(1);
-    }
-    if (synchronize) {
-	XSynchronize(Tk_Display(mainWindow), True);
-    }
-    Tk_GeometryRequest(mainWindow, 200, 200);
-#else
     /* jc: this must be setup *before* calling Tk_Init,
        and `name' has already been setup above */
     Tcl_SetVar(interp, "argv0", name, TCL_GLOBAL_ONLY);  
@@ -248,7 +241,6 @@ pltkMain(int argc, char **argv, char *RcFileName,
         return TCL_ERROR;
     }
 #endif
-#endif
 
     /*
      * Make command-line arguments available in the Tcl variables "argc"
@@ -280,11 +272,6 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * Add a few application-specific commands to the application's
      * interpreter.
      */
-
-#ifdef SQUARE_DEMO
-    Tcl_CreateCommand(interp, "square", SquareCmd, (ClientData) mainWindow,
-	    (void (*)()) NULL);
-#endif
 
     /*
      * Invoke application-specific initialization.
