@@ -12,16 +12,23 @@
  * X and Y scales will be the same, otherwise they are scaled
  * independently. The "axis" parameter is interpreted as follows:
  *
- *	axis=-2 : draw no box, axis or labels
- *	axis=-1 : draw box only
- *	axis= 0 : Draw box and label with coordinates
- *	axis= 1 : Also draw the coordinate axes
- *	axis= 2 : Draw a grid at major tick positions
- *	axis=10 : Logarithmic X axis, Linear Y axis, No X=0 axis
- *	axis=11 : Logarithmic X axis, Linear Y axis, X=0 axis
- *	axis=20 : Linear X axis, Logarithmic Y axis, No Y=0 axis
- *	axis=21 : Linear X axis, Logarithmic Y axis, Y=0 axis
- *	axis=30 : Logarithmic X and Y axes
+ *	axis=-2 : draw no box, no tick marks, no numeric tick labels, no axes.
+ *	axis=-1 : draw box only.
+ *	axis= 0 : Draw box, ticks, and numeric tick labels.
+ *	axis= 1 : Also draw coordinate axes at X=0, and Y=0.
+ *	axis= 2 : Also draw a grid at major tick positions.
+ *	axis=10 : Same as 0 except Logarithmic X tick marks. (The X data have
+ *      to be converted to logarithms separately.)
+ *	axis=11 : Same as 10 with addition of Y axis at (log) X=0.
+ *	axis=12 : Same as 11 with addition of grid in both coordinates.
+ *	axis=20 : Same as 0 except Logarithmic Y tick marks. (The Y data have
+ *      to be converted to logarithms separately.)
+ *	axis=21 : Same as 20 with addition of X axis at (log) Y=0.
+ *	axis=22 : Same as 21 with addition of grid in both coordinates.
+ *	axis=30 : Same as 0 except Logarithmic X,Y tick marks. (The X,Y data have
+ *      to be converted to logarithms separately.)
+ *	axis=31 : Same as 30 (axis option specified but ignored since log in same coordinate).
+ *	axis=32 : Same as 31 with addition of grid in both coordinates.
 \*--------------------------------------------------------------------------*/
 
 void
