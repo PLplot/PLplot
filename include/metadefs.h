@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:39  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1993/01/23 05:29:18  mjl
+   Added support for polylines and new color model.
 
+ * Revision 1.1  1992/05/20  21:33:39  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -20,7 +23,7 @@
 */
 
 #define PLPLOT_HEADER	"PLPLOT"
-#define PLPLOT_VERSION	"1992a"
+#define PLPLOT_VERSION	"1993a"
 
 /* Symbolic constants for old metafile versions (prior to 1992a).
    Now these are stored in the metafile header. */
@@ -51,17 +54,20 @@
    NOT delete !!!
 */
 
-#define INITIALIZE 1
-#define CLOSE 2
-#define SWITCH_TO_TEXT 3
-#define SWITCH_TO_GRAPH 4
-#define CLEAR 5
-#define PAGE 6
-#define NEW_COLOR 7
-#define NEW_WIDTH 8
-#define LINE 9
-#define LINETO 10
-#define ESCAPE 11
-#define ADVANCE 12
+#define INITIALIZE	1
+#define CLOSE		2
+#define SWITCH_TO_TEXT	3
+#define SWITCH_TO_GRAPH	4
+#define CLEAR		5
+#define PAGE		6
+#define NEW_COLOR	7
+#define NEW_WIDTH	8
+#define LINE		9
+#define LINETO		10
+#define ESCAPE		11
+#define ADVANCE		12
+#define POLYLINE	13
+#define NEW_COLOR0 	NEW_COLOR
+#define NEW_COLOR1	14
 
 #define END_OF_FIELD 255
