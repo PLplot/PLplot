@@ -171,13 +171,16 @@ void
 plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 	
     PLFLT uu, vv, px0, py0, dpx, dpy;
-    PLINT a_x[plsc->arrow_npts], a_y[plsc->arrow_npts];
+    PLINT *a_x, *a_y;
     int i,j;
 
     uu = scale*u;
     vv = scale*v;
 
     if(uu == 0.0 && vv == 0.0) return;
+
+    a_x = (PLINT *)malloc(sizeof(PLINT)*(plsc->arrow_npts));
+    a_y = (PLINT *)malloc(sizeof(PLINT)*(plsc->arrow_npts));
 
     px0 = plP_wcpcx(x);
     py0 = plP_wcpcy(y);
@@ -200,6 +203,9 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 	plP_plfclp(a_x, a_y, plsc->arrow_npts, plsc->clpxmi, plsc->clpxma,
 	plsc->clpymi, plsc->clpyma, plP_fill);
     }
+
+    free((void *)a_x);
+    free((void *)a_y);
 
 }
 
