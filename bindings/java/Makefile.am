@@ -21,20 +21,19 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 
-CLEANFILES = \
-	java/plplot/core/SWIGTYPE_p_p_char.class \
-	java/plplot/core/PLStreamc.class \
-	java/plplot/core/config.class \
-	java/plplot/core/plplotjavac.class \
-	java/plplot/core/plplotjavacJNI.class
-
-javagenfiles = \
+swigjavafiles = \
 	SWIGTYPE_p_p_char.java \
 	plplotjavac.java \
-	plplotjavacJNI.java \
-	plplotjavac_wrap.c
+	plplotjavacJNI.java
 
-MAINTAINERCLEANFILES = $(javagenfiles)
+swigcfiles = plplotjavac_wrap.c
+
+swiggenfiles = $(swigjavafiles) $(swigcfiles)
+
+javafiles = \
+	PLStreamc.java \
+	config.java \
+	$(swigjavafiles)
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
@@ -45,52 +44,47 @@ EXTRA_DIST = \
 	javabind.c \
 	plplotcapi.i \
 	plplotjavac.i \
-	$(javagenfiles)
+	$(swiggenfiles)
 
-AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
-version = -version-info $(SOVERSION)
-
-sources = plplotjavac_wrap.c
-
-$(javagenfiles): plplotjavac.i plplotcapi.i
+$(swiggenfiles): plplotjavac.i plplotcapi.i
 	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
-if enable_java
+# Must have "exec" in the name.
+ourexecjavadir = $(libdir)/java/plplot/core
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
 
-lib_LTLIBRARIES = libplplotjava@LIB_TAG@.la
+AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
 
-nodist_libplplotjava@LIB_TAG@_la_SOURCES  = $(sources)
-libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
+nodist_plplotjavac_wrap_la_SOURCES  = plplotjavac_wrap.c
 
-javadir = $(libdir)/java/plplot/core
-# At some point specify javaJAVA for gcj support when gcc-3.2 becomes
+# Do not use -no-undefined here since symbols should be resolved by
+# java when it dynamically loads this shared object.
+plplotjavac_wrap_la_LDFLAGS = \
+	-rpath $(ourexecjavadir) \
+	-module \
+	-avoid-version \
+	$(libplplot)
+
+if enable_java
+
+# Use javaJAVA for gcj support once gcc-3.2 use becomes
 # widespread.
-java/plplot/core/SWIGTYPE_p_p_char.class java/plplot/core/PLStreamc.class \
-	java/plplot/core/config.class \
-	java/plplot/core/plplotjavac.class \
-	java/plplot/core/plplotjavacJNI.class: \
-	SWIGTYPE_p_p_char.java \
-	PLStreamc.java config.java plplotjavac.java plplotjavacJNI.java
-	mkdir -p java/plplot/core
-	cd java/plplot/core ; ln -sf ../../../*.java .
-	javac -d java SWIGTYPE_p_p_char.java PLStreamc.java \
-	config.java plplotjavac.java plplotjavacJNI.java 
+ourexecjava_DATA = README.javaAPI $(javafiles)
 
-java_DATA = \
-	README.javaAPI \
-	SWIGTYPE_p_p_char.java \
-	java/plplot/core/SWIGTYPE_p_p_char.class \
-	PLStreamc.java \
-	java/plplot/core/PLStreamc.class \
-	config.java \
-	java/plplot/core/config.class \
-	plplotjavac.java \
-	java/plplot/core/plplotjavac.class \
-	plplotjavacJNI.java \
-	java/plplot/core/plplotjavacJNI.class
+ourexecjava_LTLIBRARIES = plplotjavac_wrap.la
 
 # if enable_java
 endif
 
+### Use install-hook to remove the unneeded (by java) *.a and *.la files
+### and also compile the java files that have been installed.
+
+install-exec-hook:
+if enable_java
+	( cd $(DESTDIR)$(ourexecjavadir) ; \
+	  rm -f plplotjavac_wrap*.a plplotjavac_wrap*.la ; \
+	  javac -d ../../../java $(javafiles))
+endif
+
+MAINTAINERCLEANFILES = $(swiggenfiles)
