@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.56  1998/12/01 20:54:37  furnish
+ * Revision 1.57  1999/01/23 05:11:21  furnish
+ * Desuckify the interpretter bootstrapping code.
+ *
+ * Revision 1.56  1998/12/01  20:54:37  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
  * This file has a problem with one of Cardoso's mods, near line 2023.
@@ -712,12 +715,12 @@ tk_start(PLStream *pls)
 /* Instantiate a TCL interpreter, and get rid of the exec command */
 
     dev->interp = Tcl_CreateInterp();
-#if (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION > 4 )    
+
     if (Tcl_Init(dev->interp) != TCL_OK) {	// jc:
-    fprintf(stderr, "%s\n", dev->interp->result);
-    abort_session(pls, "Unable to initialize Tcl");
+	fprintf(stderr, "%s\n", dev->interp->result);
+	abort_session(pls, "Unable to initialize Tcl");
     }
-#endif
+
     tcl_cmd(pls, "rename exec {}");
 
 /* Initialize top level window */
@@ -2027,13 +2030,10 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	return 1;
     }
 #else
-    Tk_Init( interp );
-#if 0
     if (Tk_Init( interp )) {	/* jc: if added */
         fprintf(stderr,"tk_init:%s\n", interp->result); /* jc: */
-    return 1;
+	return 1;
     }
-#endif
 #endif
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);
