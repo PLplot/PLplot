@@ -88,5 +88,11 @@ be a much faster way of solving the problem).
 from HEAD.
 
 * fortran, C++, and octave "x" examples made consistent with the C, tcl,
-Java, and python examples as a test that the various front ends produce the
-same results.
+Java, and python examples as a test that the various interfaces to PLplot
+produce the same results.
+
+* fortran API used to be our most complete non-C interface, but now it has
+fallen behind python (and would also fall behind java and perl if/when those
+interfaces become based on swig).  We need a volunteer (or volunteers) to
+make sure all our additions/changes to the common API over the last few
+years are implemented in fortran. 
