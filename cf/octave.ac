@@ -68,12 +68,6 @@ if test "$enable_octave" = "yes"; then
 
 AC_SUBST(OCTAVE)
 
-AC_DEFUN(OCTAVE_CONFIG_INFO, [dnl
-`$OCTAVE -q -f 2>&1 <<EOF
-        printf(octave_config_info("$1"));
-EOF`])
-
-
 # Set Octave installation directories
     if test "$enable_octave" = "yes"; then
 
@@ -89,16 +83,16 @@ EOF`])
 
 	# Get Configuration default values for Octave
         AC_MSG_CHECKING([Octave prefix])
-        OCTAVE_PREFIX=OCTAVE_CONFIG_INFO(prefix)
+        PL_OCTAVE_CONFIG_INFO(OCTAVE_PREFIX, prefix)
         AC_MSG_RESULT($OCTAVE_PREFIX)
 
         AC_MSG_CHECKING([Octave m dir])
 	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p;d;q'`" ; then
             # Octave version 2.1
-            OCTAVE_M_DIR=OCTAVE_CONFIG_INFO(localfcnfiledir)
+            PL_OCTAVE_CONFIG_INFO(OCTAVE_M_DIR, localfcnfiledir)
         else
             # Octave version 2.0
-            OCTAVE_M_DIR=OCTAVE_CONFIG_INFO(localfcnfilepath)
+            PL_OCTAVE_CONFIG_INFO(OCTAVE_M_DIR, localfcnfilepath)
             [OCTAVE_M_DIR=`echo $OCTAVE_M_DIR | sed 's/[^:]*://g;s://$::'`]
         fi
 
@@ -114,10 +108,10 @@ EOF`])
         AC_MSG_CHECKING([Octave oct dir])
 	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p;d;q'`" ; then
             # Octave version 2.1
-            OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfiledir)
+            PL_OCTAVE_CONFIG_INFO(OCTAVE_OCT_DIR, localoctfiledir)
         else
             # Octave version 2.0
-            OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfilepath)
+            PL_OCTAVE_CONFIG_INFO(OCTAVE_OCT_DIR, localoctfilepath)
             [OCTAVE_OCT_DIR=`echo $OCTAVE_OCT_DIR | sed 's/[^:]*://g;s://$::'`]
         fi
 	if test "$OCTAVE_PREFIX" != "$prefix" ; then
@@ -134,6 +128,8 @@ AC_SUBST(OCTAVE_OCT_DIR)
 AC_SUBST(OCTAVE_M_DIR)
 AC_SUBST(PLPLOT_OCTAVE_DIR)
 AC_SUBST(enable_octave)
+
+AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
 
 AC_CONFIG_FILES([
     bindings/octave/Makefile

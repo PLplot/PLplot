@@ -365,6 +365,11 @@ AC_DEFUN([PL_EXPAND_EXPRESSION],[
    $1="$str2"
 ])
 dnl ------------------------------------------------------------------------
-dnl Include third-party files containing m4 macros
-dnl (This should not be here once aclocal know how to follow files
-dnl included from configure.ac)
+dnl PL_OCTAVE_CONFIG_INFO(variable, config-field)
+dnl
+dnl Get Octave configuration values
+dnl
+AC_DEFUN([PL_OCTAVE_CONFIG_INFO], [
+$1=`$OCTAVE -q -f 2>&1 <<EOF
+        printf(octave_config_info("$2"));
+EOF`])

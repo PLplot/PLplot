@@ -35,7 +35,9 @@ dnl   please keep the format up to and including the
 dnl   version number, otherwise it will fool up the bootstrap.sh script.  By
 dnl   the way, the line below can be changed using options --version and
 dnl   --date-version of that script. ]
+
 AC_INIT(plplot, 5.3.0.cvs.20040211, plplot-devel@lists.sourceforge.net)
+AC_REVISION($Revision$)
 
 dnl Date of release.  This can be set by hand, but the prefered method
 dnl is by specifying one of the option --version of --date-version to
@@ -43,8 +45,6 @@ dnl bootstrap.sh
 
 RELEASE_DATE=2004-02-05
 AC_SUBST(RELEASE_DATE)
-
-AC_REVISION($Revision$)
 
 AC_CONFIG_SRCDIR(src/plcore.c)
 
@@ -206,10 +206,7 @@ PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 ### Modify system-dependent results based on availability
 m4_include(cf/freetype.ac)
 
-dnl FIXME: inclusion of octave.ac should not be excluded
-dnl m4_include(cf/octave.ac)
-dnl FIXME: move the next line into octave.ac
-AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
+m4_include(cf/octave.ac)
 
 m4_include(cf/csiro.ac)
 
@@ -407,9 +404,6 @@ else
 fi
 AC_SUBST(RPATH)
 AC_SUBST(RPATHCMD)
-
-dnl All the AM_CONDITIONALs *_must_* appear in configure.ac, and not in
-dnl cf/*.ac, otherwise they will be hidden from Automake
 
 AM_CONDITIONAL(with_double, [test "$with_double" = yes])
 AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
