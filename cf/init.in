@@ -12,15 +12,15 @@
 # break at 5.0.  No way around it though.
 
 MAJOR_VERSION	= 4
-MINOR_VERSION	= 99g
+MINOR_VERSION	= 99
 
 # Utilities
 
 CC		= @CC@
-LDC		= $(CC)
+LDC		= @LDC@
 OCC		= @OCC@
 F77		= @F77@
-LDF		= $(F77)
+LDF		= @LDF@
 M4		= m4
 RANLIB		= @RANLIB@
 LIB_BUILD	= ar q
@@ -29,6 +29,9 @@ LIB_BUILD	= ar q
 
 CC_FLAGS	= @CC_FLAGS@ @INCS@
 F77_FLAGS	= @F77_FLAGS@
+CC_FLAGS_DEMOS	= @CC_FLAGS@ -I. @INCS@
+SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
+SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
 LDC_FLAGS	= @LDC_FLAGS@
 LDF_FLAGS	= @LDF_FLAGS@
 LDC_LIBS	= @LIBS@
@@ -45,27 +48,9 @@ TO		= -o
 CC_FLAGS_SCCONT = @CC_FLAGS_SCCONT@ @INCS@
 CC_FLAGS_XWIN	= @CC_FLAGS_XWIN@   @INCS@
 
-# -----------------------------------------------------------------------
-# Inference rules
-# -----------------------------------------------------------------------
-
-# Clear the suffix list, to avoid any possible problems with funny suffixes.
-# I can add them back as necessary.
+# Clear the suffix list.  The inference rules are set up later.
 
 .SUFFIXES:
-
-# The order here is important.  
-
-.SUFFIXES: .o .cc .c .p .f .q .h .i .ccm4 .cm4 .pm4 .fm4 .hm4 .im4
-
-.c.o:
-	$(CC) $(CC_FLAGS) $*.c
-
-.f.o:
-	$(F77) $(F77_FLAGS) $*.f
-
-.fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
 
 # -----------------------------------------------------------------------
 # Dependent directories
@@ -97,3 +82,4 @@ PLLIB_LDF	= -L$(PLLIB_DIR) -lplplot$(LIB_TAG)
 # The default target -- a convenient forward reference
 
 default: everything
+
