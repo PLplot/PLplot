@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1994/04/30 16:15:00  mjl
+ * Revision 1.34  1994/05/07 03:13:37  mjl
+ * Replaced bgcolor by cmap0[0].
+ *
+ * Revision 1.33  1994/04/30  16:15:00  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -1160,10 +1163,12 @@ plwindow_init(PLStream *pls)
 /* Configure background color if set */
 /* The default color is handled from a resource setting in plconfig.tcl */
 
-    if (pls->bgcolorset) {
+    if (pls->cmap0setcol[0]) {
 	long bg;
 
-	bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
+	bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) |
+	    (pls->cmap0[0].r << 16);
+
 	sprintf(str, "#%06x", (unsigned int) (bg & 0xFFFFFF));
 	Tcl_SetVar(dev->interp, "bg", str, 0);
 	server_cmd( pls, "$plwidget configure -bg $bg", 0 );
