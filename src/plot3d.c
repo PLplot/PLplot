@@ -700,8 +700,8 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
       int i, j;
 
       if(_nx <= 1 || _ny <= 1) {
-	fprintf(stderr, "bail\n");
-	return;
+	 myabort("plot3dc: selected x or y range has no data");
+	 return;
       }
 
       /* allocate storage for new versions of the input vectors */
