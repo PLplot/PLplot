@@ -524,8 +524,12 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    setup_array_2d_PLFLT( &$1, adat, nx, ny );
    $2 = nx;
    $3 = ny;
-   for( i=0; i < nx; i++ )
-     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+      (*jenv)->DeleteLocalRef(jenv, adat[i]);
+   }
+   
 
    free(adat);
    free(ai);
@@ -575,8 +579,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    setup_array_2d_PLFLT( &$1, adat, nx, ny );
    $2 = nx;
    $3 = ny;
-   for( i=0; i < nx; i++ )
-     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+      (*jenv)->DeleteLocalRef(jenv, adat[i]);
+   }
 
    free(adat);
    free(ai);
@@ -624,8 +631,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    Xlen = nx;
    Ylen = ny;
    setup_array_2d_PLFLT( &$1, adat, nx, ny );
-   for( i=0; i < nx; i++ )
-     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+      (*jenv)->DeleteLocalRef(jenv, adat[i]);
+   }
 
    free(adat);
    free(ai);
@@ -679,8 +689,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
       return;
    }
    setup_array_2d_PLFLT( &$1, adat, nx, ny );
-   for( i=0; i < nx; i++ )
-     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+      (*jenv)->DeleteLocalRef(jenv, adat[i]);
+   }
 
    free(adat);
    free(ai);
@@ -747,8 +760,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    /* Store whether second dimension is unity. */
    Alen = ny;
    setup_array_2d_PLFLT( &xg, adat, nx, ny );
-   for( i=0; i < nx; i++ )
-     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+      (*jenv)->DeleteLocalRef(jenv, adat[i]);
+   }
 
    free(adat);
    free(ai);
@@ -807,8 +823,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
       return;
    }
    setup_array_2d_PLFLT( &yg, adat, nx, ny );
-   for( i=0; i < nx; i++ )
-     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+      (*jenv)->DeleteLocalRef(jenv, adat[i]);
+   }
 
    free(adat);
    free(ai);
