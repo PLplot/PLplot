@@ -90,9 +90,6 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 #    redirection:
 #	m4 -DAMIGA <makefile.m4 >makefile
 #
-# 4. Do not bother with the Motif driver!  It is in the developmental stages
-#    only, and in fact is currently broken.
-#
 # Other notes:
 #
 # 1. The font locating code looks in the following places for the fonts:
@@ -156,7 +153,6 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 # Directory structure.  Note most of these aren't used at present.
 # See right before rule declaration for plot library specifications.
 
-PLPLOT_H	= plplot.h
 PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
@@ -282,7 +278,7 @@ CC = gcc
 #CC = acc
 
 #define({MOTIF})
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DLJII -DXFIG DEF_XWIN() DEF_MOTIF()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C =
 
 if_dbl({dnl
@@ -314,7 +310,7 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 #		HP-UX definitions
 
 #define({MOTIF})
-PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DLJII -DXFIG  DEF_XWIN() DEF_MOTIF()
+PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C =
 
 if_dbl({dnl
@@ -391,7 +387,7 @@ LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 })if_linux({
 #		LINUX definitions
 
-PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG -DLJII  DEF_XWIN()
+PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_XWIN() 
 SYS_FLAGS_C =
 
 CC	= gcc
@@ -578,10 +574,6 @@ LIBC		= lib:sc.lib lib:amiga.lib
 
 define(GST,{plplot.gst})
 
-ifdef({GST},{
-PLPLOT_H	= plplot.h GST
-})
-
 ifelse(MATH,FFP,{
 MATHFLAGS	= math=ffp
 LIBM		= lib:scmffp.lib
@@ -604,7 +596,7 @@ PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
 })
 
 CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) nover dbg=symbol \
-		  ign=84,89,161 ifdef({GST},{gst=GST})
+		  ign=84,89,147,161 ifdef({GST},{gst=GST})
 
 # Sigh
 
@@ -623,7 +615,8 @@ LDFFLAGS	=
 LN		= copy
 
 PLLIB_C		= $(PLLIB_MAIN)
-PLLIB_LDC	= lib $(PLLIB_C) $(LIBM) $(LIBC)
+PLLIB_LDC	= lib $(PLLIB_C) $(LIBM) $(LIBC) \
+		  lib:reqtools.lib 
 
 })
 #----------------------------------------------------------------------#
@@ -693,14 +686,11 @@ MOTIF_OBJ = \
 # Amiga
 
 AMIGA_OBJ = \
-	aminew.o \
-	amiwn.o \
-	amipr.o \
-	iff.o \
-	plmenu.o \
-	plprefs.o \
-	plsupport.o \
-	plwindow.o 
+	pla_wn.o \
+	pla_pr.o \
+	pla_iff.o \
+	pla_menu.o \
+	plsupport.o 
 
 # Drivers
 
@@ -762,7 +752,7 @@ $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
 })})
 
 if_amiga({
-$(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
+$(PLLIB_MAIN):	GST $(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 	skshbin:join $(OBJ)         t:plobj.lib
 	skshbin:join $(DRIVERS_OBJ) t:pldrivers.lib
 	skshbin:join $(AMIGA_OBJ)   t:plamiga.lib
@@ -797,32 +787,32 @@ $(PLFNT_DIR)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
 
 # source files
 
-plargs.o:	$(PLPLOT_H) plstream.h plargs.c
-plbox.o:	$(PLPLOT_H) plbox.c 
-plcont.o:	$(PLPLOT_H) plcont.c 
-plctrl.o:	$(PLPLOT_H) plctrl.c 
-plcvt.o:	$(PLPLOT_H) plcvt.c 
-pldtik.o:	$(PLPLOT_H) pldtik.c 
-plfill.o:	$(PLPLOT_H) plfill.c 
-plfont.o:	$(PLPLOT_H) plfont.c 
-plhist.o:	$(PLPLOT_H) plhist.c 
-plline.o:	$(PLPLOT_H) plline.c 
-plot3d.o:	$(PLPLOT_H) plot3d.c 
-plpage.o:	$(PLPLOT_H) plpage.c 
-plsdef.o:	$(PLPLOT_H) plsdef.c 
-plstream.o:	$(PLPLOT_H) plstream.h plstream.c
-plstring.o:	$(PLPLOT_H) plstring.c 
-plsym.o:	$(PLPLOT_H) plsym.c 
-pltick.o:	$(PLPLOT_H) pltick.c 
-plvpor.o:	$(PLPLOT_H) plvpor.c 
-plwind.o:	$(PLPLOT_H) plwind.c 
-pdfutils.o:	$(PLPLOT_H) pdfutils.c
+plargs.o:	plplot.h plstream.h plargs.c
+plbox.o:	plplot.h plbox.c 
+plcont.o:	plplot.h plcont.c 
+plctrl.o:	plplot.h plctrl.c 
+plcvt.o:	plplot.h plcvt.c 
+pldtik.o:	plplot.h pldtik.c 
+plfill.o:	plplot.h plfill.c 
+plfont.o:	plplot.h plfont.c 
+plhist.o:	plplot.h plhist.c 
+plline.o:	plplot.h plline.c 
+plot3d.o:	plplot.h plot3d.c 
+plpage.o:	plplot.h plpage.c 
+plsdef.o:	plplot.h plsdef.c 
+plstream.o:	plplot.h plstream.h plstream.c
+plstring.o:	plplot.h plstring.c 
+plsym.o:	plplot.h plsym.c 
+pltick.o:	plplot.h pltick.c 
+plvpor.o:	plplot.h plvpor.c 
+plwind.o:	plplot.h plwind.c 
+pdfutils.o:	plplot.h pdfutils.c
 
 # C language stubs for linking Plplot to Fortran.
 
-sc3d.o:		plstubs.h $(PLPLOT_H) sc3d.c
-sccont.o:	plstubs.h $(PLPLOT_H) sccont.c
-scstubs.o:	plstubs.h $(PLPLOT_H) scstubs.c
+sc3d.o:		plstubs.h plplot.h sc3d.c
+sccont.o:	plstubs.h plplot.h sccont.c
+scstubs.o:	plstubs.h plplot.h scstubs.c
 
 # Fortran language stubs for linking Plplot to Fortran.
 
@@ -833,18 +823,15 @@ sfstubs.o:	sfstubs.f
 
 if_amiga({
 
-aminew.o:	$(PLPLOT_H) drivers.h plamiga.h aminew.c
-amiwn.o:	$(PLPLOT_H) drivers.h plamiga.h amiwn.c
-amipr.o:	$(PLPLOT_H) drivers.h plamiga.h amipr.c
-iff.o:		$(PLPLOT_H) drivers.h plamiga.h iff.c
-plmenu.o:	$(PLPLOT_H) plamiga.h plmenu.c
-plprefs.o:	$(PLPLOT_H) plamiga.h plprefs.c
-plsupport.o:	$(PLPLOT_H) plamiga.h plsupport.c
-plwindow.o :	$(PLPLOT_H) plamiga.h plwindow.c
+pla_pr.o:	plplot.h drivers.h plamiga.h pla_pr.c
+pla_iff.o:	plplot.h drivers.h plamiga.h pla_iff.c
+pla_menu.o:	plplot.h plamiga.h pla_menu.c
+plsupport.o:	plplot.h plamiga.h plsupport.c
+pla_wn.o:	plplot.h drivers.h plamiga.h pla_wn.c
 
 ifdef({GST},{
 GST :		plplot.h plamiga.h
-	$(CC) makegst GST $(CFLAGS) $(PLDEVICES) gstskel.c
+	$(CC) makegst GST $(CFLAGS) $(PLDEVICES) pla_gstskel.c
 })
 })
 
@@ -853,7 +840,7 @@ GST :		plplot.h plamiga.h
 #
 # plfont.c may have font flags passed in
 
-plfont.o:	$(PLPLOT_H) plfont.c
+plfont.o:	plplot.h plfont.c
 	$(CC) $(CFLAGS) $(FONTFLAG) plfont.c
 
 # plcore.c and all the drivers need to know $(PLDEVICES).  The guts
@@ -861,66 +848,66 @@ plfont.o:	$(PLPLOT_H) plfont.c
 # the device list.  You may want to leave drivers for specific systems
 # (Amiga, MS-DOS, OS/2, etc) out of this list.
 
-plcore.o:	$(PLPLOT_H) plcore.h drivers.h plstream.h plcore.c
+plcore.o:	plplot.h plcore.h drivers.h plstream.h plcore.c
 	$(CC) $(CFLAGS) $(PLDEVICES) plcore.c
 
-dg300.o:	$(PLPLOT_H) plstream.h drivers.h dg300.c
+dg300.o:	plplot.h plstream.h drivers.h dg300.c
 	$(CC) $(CFLAGS) $(PLDEVICES) dg300.c
 
-hp7470.o:	$(PLPLOT_H) plstream.h drivers.h hp7470.c
+hp7470.o:	plplot.h plstream.h drivers.h hp7470.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7470.c
 
-hp7580.o:	$(PLPLOT_H) plstream.h drivers.h hp7580.c
+hp7580.o:	plplot.h plstream.h drivers.h hp7580.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7580.c
 
-impress.o:	$(PLPLOT_H) plstream.h drivers.h impress.c
+impress.o:	plplot.h plstream.h drivers.h impress.c
 	$(CC) $(CFLAGS) $(PLDEVICES) impress.c
 
-ljii.o:		$(PLPLOT_H) plstream.h drivers.h ljii.c
+ljii.o:		plplot.h plstream.h drivers.h ljii.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ljii.c
 
-next.o:		$(PLPLOT_H) plstream.h drivers.h next.c
+next.o:		plplot.h plstream.h drivers.h next.c
 	$(CC) $(CFLAGS) $(PLDEVICES) next.c
 
-null.o:		$(PLPLOT_H) plstream.h drivers.h null.c
+null.o:		plplot.h plstream.h drivers.h null.c
 	$(CC) $(CFLAGS) $(PLDEVICES) null.c
 
-ps.o:		$(PLPLOT_H) plstream.h drivers.h ps.c
+ps.o:		plplot.h plstream.h drivers.h ps.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ps.c
 
-tek.o:		$(PLPLOT_H) plstream.h drivers.h tek.c
+tek.o:		plplot.h plstream.h drivers.h tek.c
 	$(CC) $(CFLAGS) $(PLDEVICES) tek.c
 
-plbuf.o:	$(PLPLOT_H) plstream.h drivers.h metadefs.h plbuf.c
+plbuf.o:	plplot.h plstream.h drivers.h metadefs.h plbuf.c
 	$(CC) $(CFLAGS) plbuf.c
 
-plmeta.o:	$(PLPLOT_H) plstream.h drivers.h metadefs.h plmeta.c
+plmeta.o:	plplot.h plstream.h drivers.h metadefs.h plmeta.c
 	$(CC) $(CFLAGS) $(PLDEVICES) plmeta.c
 
-xfig.o:		$(PLPLOT_H) plstream.h drivers.h xfig.c
+xfig.o:		plplot.h plstream.h drivers.h xfig.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xfig.c
 
-xwin.o:		$(PLPLOT_H) plstream.h drivers.h xwin.c
+xwin.o:		plplot.h plstream.h drivers.h xwin.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xwin.c
 
-xterm.o:	$(PLPLOT_H) plstream.h drivers.h xterm.c
+xterm.o:	plplot.h plstream.h drivers.h xterm.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xterm.c
 
 # Motif driver
 
-xm.o:		$(PLPLOT_H) plstream.h drivers.h xm.h xmMenu.h xmIcon.h xm.c
+xm.o:		plplot.h plstream.h drivers.h xm.h xmMenu.h xmIcon.h xm.c
 	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) $(PLDEVICES) xm.c
 
-xmsupport.o:	$(PLPLOT_H) xm.h xmsupport.c
+xmsupport.o:	plplot.h xm.h xmsupport.c
 	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) xmsupport.c
 
-xmMenu.o: 	$(PLPLOT_H) xm.h xmMenu.h xmMenu.c
+xmMenu.o: 	plplot.h xm.h xmMenu.h xmMenu.c
 	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) xmMenu.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
 
-plrender.o:	$(PLPLOT_H) metadefs.h pdf.h plrender.c
+plrender.o:	plplot.h metadefs.h pdf.h plrender.c
 
 pltek:	pltek.o
 	$(LDC) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
