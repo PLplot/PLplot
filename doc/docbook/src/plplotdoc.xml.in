@@ -31,6 +31,7 @@
 <!ENTITY plbop '<link linkend="plbop"><function>plbop</function></link>'>
 <!ENTITY plbox '<link linkend="plbox"><function>plbox</function></link>'>
 <!ENTITY plbox3 '<link linkend="plbox3"><function> plbox3</function></link>'>
+<!ENTITY plclear '<link linkend="plclear"><function>plclear</function></link>'>
 <!ENTITY plclr '<link linkend="plclr"><function>plclr</function></link>'>
 <!ENTITY plcol '<link linkend="plcol"><function>plcol</function></link>'>
 <!ENTITY plcol0 '<link linkend="plcol0"><function>plcol0</function></link>'>

@@ -1083,6 +1083,32 @@ origin
 
   </sect1>
   
+  <sect1 id="plclear" renderas="sect3">
+    <title>
+      <function>plclear</function>: Clear current (sub)page
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plclear</function>
+	</funcdef>
+        <paramdef></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Clears the current page, effectively erasing everything that have
+      been drawn.  This command only works with interactive drivers and not
+      all of them support this yet.  If the current page is divided into
+      subpages, only the current subpage is erased.  The nth subpage
+      can be selected with &pladv;(n).
+    </para>
+
+  </sect1>
+
   <sect1 id="plclr" renderas="sect3">
     <title>
       <function>plclr</function>: Eject current page
@@ -9048,7 +9074,7 @@ sgml-minimize-attributes:nil
 sgml-always-quote-attributes:t
 sgml-indent-step:2
 sgml-indent-data:t
-sgml-parent-document: ("plplotdoc.sgml" "book" "chapter" "")
+sgml-parent-document: ("plplotdoc.sgml.in" "book" "chapter" "")
 sgml-default-dtd-file:nil
 sgml-exposed-tags:nil
 sgml-local-catalogs:("/usr/lib/sgml/catalog")
