@@ -109,6 +109,7 @@ AC_INIT(src/plcore.c)
 # can always use copy.  At least you will only have to do it once.
 # ----------------------------------------------------------------------------
 
+plplot_config_invocation="$0 $*"
 if test `pwd` = `(cd $srcdir; pwd)`; then
     AC_MSG_RESULT(setting up to configure in tmp directory -- hold on...)
     if test ! -d tmp; then
@@ -116,7 +117,9 @@ if test `pwd` = `(cd $srcdir; pwd)`; then
     fi
     cd tmp
     exec ../configure "$@"
+    plplot_config_invocation="$0 $*"
 fi
+
 AC_CONFIG_HEADER(plConfig.h plDevs.h)
 
 # ----------------------------------------------------------------------------
@@ -142,77 +145,10 @@ if test "$system" ; then
 fi
 
 # ----------------------------------------------------------------------------
-# Defaults based on system.
-# Mostly just to handle systems where optimization is iffy.
+# Set up defaults and command line args.
 # ----------------------------------------------------------------------------
 
-with_opt_default=yes
-
-case "$system" in
-    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	with_opt_default=no
-    ;;
-esac
-
-# ----------------------------------------------------------------------------
-# Set up command line arguments -- help entries and default values.
-# ----------------------------------------------------------------------------
-
-MY_ARG_WITH(defaults,   
-  [  --with-defaults         source defaults file at startup (default: yes)],
-  [])
-
-MY_ARG_WITH(debug,   
-  [  --with-debug            compile with debugging (default: no)],
-  [], with_debug="no")
-
-MY_ARG_WITH(opt,
-  [  --with-opt              compile with optimization (default: yes)],
-  [], with_opt=$with_opt_default)
-
-MY_ARG_WITH(double,
-  [  --with-double           use double precision floats (default: no)],
-  [], with_double="no")
-
-MY_ARG_WITH(profile,
-  [  --with-profile          turn on profiling option (defualt: no)],
-  [], with_profile="no")
-
-MY_ARG_WITH(shlib,
-  [  --with-shlib            build shared libraries (not all systems)],
-  [], with_shlib="yes")
-
-MY_ARG_WITH(f2c,
-  [  --with-f2c              use f2c to compile Fortran code (default: no)],
-  [], with_f2c="no")
-
-MY_ARG_WITH(gcc,
-  [  --with-gcc              use gcc to compile C and C++ code (default: no)],
-  [], with_gcc="no")
-
-MY_ARG_WITH(warn,
-  [  --with-warn             enable all compilation warnings (default: no)],
-  [], with_warn="no")
-
-MY_ARG_WITH(dbmalloc,
-  [  --with-dbmalloc         link with libdbmalloc (default: no)],
-  [], with_dbmalloc="no")
-
-MY_ARG_ENABLE(drivers,
-  [  --enable-drivers        enable all device drivers (default: yes)],
-  [], enable_drivers="yes")
-
-MY_ARG_ENABLE(f77,
-  [  --enable-f77            compile Fortran-77 interface code (default: yes)],
-  [], enable_f77="yes")
-
-MY_ARG_ENABLE(cxx,
-  [  --enable-cxx            compile C++ interface code (default: yes)],
-  [], enable_cxx="yes")
-
-MY_ARG_ENABLE(python,
-  [  --enable-python         compile python interface code (default: yes)],
-  [], enable_python="yes")
+AC_INCLUDE(defaults.in)
 
 # ----------------------------------------------------------------------------
 # Set up prefix
@@ -590,7 +526,8 @@ AC_OUTPUT(Makefile Makedemo)
 # to use an underscore in that case.
 # ----------------------------------------------------------------------------
 
-plplot_config_result_msg="Configuration results:
+plplot_config_result_msg="
+Results of command \"$plplot_config_invocation\":
 
 system:		$system
 prefix:		$prefix
@@ -614,7 +551,6 @@ enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 enable-cxx:	$enable_cxx		enable_python:	$enable_python
 "
-
 
 cat << EOF > config.summary
 $plplot_config_result_msg
