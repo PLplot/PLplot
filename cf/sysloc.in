@@ -517,21 +517,20 @@ fi
 # not here.
 #
 # Note: it is important to check in user directories _before_ checking
-# anywhere else.  That way you can easily compile custom versions (of Tcl,
-# Tk, etc), put them in your file space, and have them be found first.  Some
+# anywhere else.  That way you can easily compile custom versions (of Tcl, Tk,
+# etc), put them in your file space, and have them be found first.  Some
 # examples: libraries compiled with debugging turned on, or from a different
 # revision of the (Tcl, Tk, etc) package.  Also, when dealing with multiple
-# versions (e.g. libtcl7.4.a vs the older libtcl.a), check for the newer
-# version first.
+# versions, check for the newer version first.
 # ----------------------------------------------------------------------------
 
 # Default directories to search for include files
 
-# In Linux have a peculiar ambiguity where identical tcl.h files are found
-# both in /usr/include and /usr/include/tcl8.2/generic.  The latter is *much*
-# preferred because has everything else as well having to do with tcl.  Thus,
-# AWI puts the generic include site first on the list (note that prefix can be
-# "/usr" which would give bad result under Linux without this ordering.)
+# Linux has a peculiar ambiguity where identical tcl.h files are found both in
+# /usr/include and /usr/include/tcl<version>/generic.  The latter is
+# *much* preferred because it has everything else as well having to do with tcl.
+# So the generic include site is first on the list.  Note that prefix can be
+# "/usr" which would give bad result under Linux without this ordering.
 
 incdirs_default="\
 /usr/include/tcl8.3/tcl-private/generic \
@@ -570,7 +569,7 @@ fi
 # tcl.h
 # ----------------------------------------------------------------------------
 
-if test "$has_tcl" = "yes"; then
+if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
 	FIND_INC(tcl, TCLINCDIR, enable_tcl)
     fi
@@ -583,7 +582,7 @@ fi
 # But you can *try* linking against ANY non-versioned tcl.
 # ----------------------------------------------------------------------------
 
-if test "$has_tcl" = "yes"; then
+if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
 	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
 	for version in 8.3 8.2 8.1 8.0 ""; do
@@ -683,7 +682,7 @@ if test "$has_tcl" = "no" -o "$has_x11" = "no"; then
     enable_tk=no
 fi
 
-if test "$has_tk" = "yes"; then
+if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
 	FIND_INC(tk, TKINCDIR, enable_tk)
     fi
@@ -714,7 +713,7 @@ fi
 # libtk
 # ----------------------------------------------------------------------------
 
-if test "$has_tk" = "yes"; then
+if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
 	FIND_LIB_BEGIN(tk, TKLIBDIR)
 	for version in 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
