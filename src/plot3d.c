@@ -29,13 +29,6 @@ static PLINT mlo, xxlo, newlosize;
 /* Light source for shading */
 static PLFLT xlight, ylight, zlight;
 
-/* define WANT_MISSING_TRIANGLES if you want to enable the old buggy way in plotsh3 */
-/* #define WANT_MISSING_TRIANGLES 1 */
-
-#if WANT_MISSING_TRIANGLES
-static PLINT threedshading;
-#endif
-
 /* Prototypes for static functions */
 
 static void plgrid3	(PLFLT);
@@ -112,93 +105,6 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
  * values are in the 2-d array z[][]. 
 \*--------------------------------------------------------------------------*/
 
-#if WANT_MISSING_TRIANGLES
-void
-c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
-		 PLINT nx, PLINT ny, PLINT side)
-{
-    PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init, i, ix, iy, color;
-
-    if (plsc->level < 3) {
-	myabort("plot3d: Please set up window first");
-	return;
-    }
-    
-    if (nx <= 0 || ny <= 0) {
-	myabort("plot3d: Bad array dimensions.");
-	return;
-    }
-    
-/* Check that points in x and in y are strictly increasing */
-
-    for (i = 0; i < nx - 1; i++) {
-	if (x[i] >= x[i + 1]) {
-	    myabort("plot3d: X array must be strictly increasing");
-	    return;
-	}
-    }
-    for (i = 0; i < ny - 1; i++) {
-	if (y[i] >= y[i + 1]) {
-	    myabort("plot3d: Y array must be strictly increasing");
-	    return;
-	}
-    }
-
-/* Allocate work arrays */
-
-    utmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-    vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-    ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
-    if ( ! utmp || ! vtmp || ! ctmp)
-	myexit("plotsh3d: Out of memory.");
-
-    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    init = 1;
-
-    /* Extract shading info */
-    threedshading = 1;
-	
-/* Call 3d shline plotter.  Each viewing quadrant 
-   (perpendicular to x-y plane) must be handled separately. */ 
-
-    if (cxx >= 0.0 && cxy <= 0.0) {
-	for (iy = 2; iy <= ny; iy++)
-	    plt3zz(1, iy, 1, -1, -3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-	for (ix = 1; ix <= nx - 1; ix++)
-	    plt3zz(ix, ny, 1, -1, 3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-    } else if (cxx <= 0.0 && cxy <= 0.0) {
-	for (ix = 2; ix <= nx; ix++) 
-	    plt3zz(ix, ny, -1, -1, 3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-	for (iy = ny; iy >= 2; iy--)
-	    plt3zz(nx, iy, -1, -1, -3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-    } else if (cxx <= 0.0 && cxy >= 0.0) {
-	for (iy = ny - 1; iy >= 1; iy--) 
-	    plt3zz(nx, iy, -1, 1, -3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-	for (ix = nx; ix >= 2; ix--)
-	    plt3zz(ix, 1, -1, 1, 3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-    } else if (cxx >= 0.0 && cxy >= 0.0) {
-	for (ix = nx - 1; ix >= 1; ix--) 
-	    plt3zz(ix, 1, 1, 1, 3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-	for (iy = 1; iy <= ny - 1; iy++)
-	    plt3zz(1, iy, 1, 1, -3, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
-    }
-    
-/* Finish up by drawing sides, background grid (both are optional) */
-    threedshading = 0;
-    if (side)
-	plside3(x, y, z, nx, ny, 3);
-
-    if (zbflg) {
-	color = plsc->icol0;
-	plcol(zbcol);
-	plgrid3(zbtck);
-	plcol(color);
-    }
-
-    freework();
-}
-#else
 
 /* clipping helper for 3d polygons */
 
@@ -323,7 +229,6 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
     PLINT ixFast, ixSlow, iyFast, iySlow;
     PLINT iFast, iSlow;
     PLINT iX[2][2], iY[2][2];
-    PLFLT xbox[3], ybox[3], zbox[3];
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
 
@@ -488,7 +393,6 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
 }
-#endif
 
 /*--------------------------------------------------------------------------*\
  * void plot3d(x, y, z, nx, ny, opt, side)
@@ -542,34 +446,49 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	    myabort("plot3d: X array must be strictly increasing");
 	    return;
 	}
-	if (x[i] < xmin)
-	  ixmin = i;
-	if (x[i] < xmax)
-	  ixmax = i+1;
     }
     for (i = 0; i < ny - 1; i++) {
 	if (y[i] >= y[i + 1]) {
 	    myabort("plot3d: Y array must be strictly increasing");
 	    return;
 	}
-	if (y[i] < ymin)
-	  iymin = i;
-	if (y[i] < ymax)
-	  iymax = i+1;
     }
+    /* figure out the part of the data to use */
+    if (xmin < x[0])
+      xmin = x[0];
+    if (xmax > x[nx-1])
+      xmax = x[nx-1];
+    if (ymin < y[0])
+      ymin = y[0];
+    if (ymax > y[ny-1])
+      ymax = y[ny-1];
+    for (ixmin = 0; ixmin < nx-1 && x[ixmin+1] < xmin; ixmin++) {}
+    for (ixmax = nx-1; ixmax > 0 && x[ixmax-1] > xmax; ixmax--) {}
+    for (iymin = 0; iymin < ny-1 && y[iymin+1] < ymin; iymin++) {}
+    for (iymax = ny-1; iymax > 0 && y[iymax-1] > ymax; iymax--) {}
+    /*fprintf(stderr, "(%d,%d) %d %d %d %d\n", nx, ny, ixmin, ixmax, iymin, iymax);*/
     /* do we need to clip? */
     if(ixmin > 0 || ixmax < nx-1 || iymin > 0 || iymax < ny-1) {
       /* adjust the input so it stays within bounds */
       int _nx = ixmax - ixmin + 1;
       int _ny = iymax - iymin + 1;
-      PLFLT *_x = (PLFLT*)malloc(_nx * sizeof(PLFLT));
-      PLFLT *_y = (PLFLT*)malloc(_ny * sizeof(PLFLT));
-      PLFLT **_z = (PLFLT**)malloc(_nx * sizeof(PLFLT*));
+      PLFLT *_x, *_y, **_z;
       PLFLT ty0, ty1, tx0, tx1;
       int i, j;
 
+      if(_nx <= 1 || _ny <= 1) {
+	fprintf(stderr, "bail\n");
+	return;
+      }
+
+      /* allocate storage for new versions of the input vectors */
+      _x = (PLFLT*)malloc(_nx * sizeof(PLFLT));
+      _y = (PLFLT*)malloc(_ny * sizeof(PLFLT));
+      _z = (PLFLT**)malloc(_nx * sizeof(PLFLT*));
+
       clipped = 1;
 
+      /* copy over the independent variables */
       _x[0] = xmin;
       _x[_nx-1] = xmax;
       for(i=1; i<_nx-1; i++)
@@ -579,13 +498,15 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       for(i=1; i<_ny-1; i++)
 	_y[i] = y[iymin+i];
 
+      /* copy the data array so we can interpolate around the edges */
       for(i=0; i<_nx; i++)
 	_z[i] = (PLFLT*)malloc(_ny * sizeof(PLFLT));
 
-      ty0 = (ymin - y[iymin]) / (y[iymin+1] - y[iymin]);
-      ty1 = (ymax - y[iymax-1]) / (y[iymax] - y[iymax-1]);
-      tx0 = (xmin - x[ixmin]) / (x[ixmin+1] - x[ixmin]);
-      tx1 = (xmax - x[ixmax-1]) / (x[ixmax] - x[ixmax-1]);
+      /* interpolation factors for the 4 edges */
+      ty0 = (_y[0] - y[iymin]) / (y[iymin+1] - y[iymin]);
+      ty1 = (_y[_ny-1] - y[iymax-1]) / (y[iymax] - y[iymax-1]);
+      tx0 = (_x[0] - x[ixmin]) / (x[ixmin+1] - x[ixmin]);
+      tx1 = (_x[_nx-1] - x[ixmax-1]) / (x[ixmax] - x[ixmax-1]);
       for(i=0; i<_nx; i++) {
 	if(i==0) {
 	  _z[i][0] = z[ixmin][iymin]*(1-ty0)*(1-tx0) + z[ixmin][iymin+1]*(1-tx0)*ty0
@@ -614,6 +535,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	    _z[i][j] = zmax;
 	}
       }
+      /* replace the input with our clipped versions */
       x = _x;
       y = _y;
       z = _z;
@@ -631,9 +553,6 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
-#if WANT_MISSING_TRIANGLES
-    threedshading = 0;
-#endif
 /* Call 3d line plotter.  Each viewing quadrant 
    (perpendicular to x-y plane) must be handled separately. */ 
 
@@ -802,24 +721,10 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 {
     PLINT n = 0;
     PLFLT x2d, y2d;
-    PLFLT fill3x[3],fill3y[3],fill3z[3];
-    PLINT threedcount = 0;
 
     while (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	x2d = plP_w3wcx(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	y2d = plP_w3wcy(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
-#if WANT_MISSING_TRIANGLES
-	if (threedshading) {
-	    fill3x[threedcount] = x[x0-1];
-	    fill3y[threedcount] = y[y0-1];
-	    fill3z[threedcount] = z[x0-1][y0-1];
-	    threedcount++;
-	    if (threedcount > 2) threedcount = 0;
-	    if (n > 1) {
-		c[n] = plGetAngleToLight(fill3x,fill3y,fill3z);
-	    }
-	}
-#endif
 	u[n] = plP_wcpcx(x2d);
 	v[n] = plP_wcpcy(y2d);
 
@@ -850,15 +755,6 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	n++;
     }
 
-/* Get initial color value by linear interpolation. */
-#if WANT_MISSING_TRIANGLES
-    if (threedshading) {
-	c[1] = 2*c[2] - c[3];
-	if (c[1] < 0) c[1] = 0;
-	if (c[1] > 1) c[1] = 1;
-    }
-#endif
-
     if (flag == 1 || flag == -2) {
 	if (flag == 1) {
 	    x0 -= dx;
@@ -871,19 +767,6 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	if (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	    x2d = plP_w3wcx( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	    y2d = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
-#if WANT_MISSING_TRIANGLES
-	/* Although this is a rare boundary case, it's good to be safe */
-	    if (threedshading) {
-		fill3x[threedcount] = x[x0-1];
-		fill3y[threedcount] = y[y0-1];
-		fill3z[threedcount] = z[x0-1][y0-1];
-		threedcount++;
-		if (threedcount > 2) threedcount = 0;
-		if (n > 1) {
-		    c[n] = plGetAngleToLight(fill3x,fill3y,fill3z);
-		}
-	    }
-#endif
 	    u[n] = plP_wcpcx(x2d);
 	    v[n] = plP_wcpcy(y2d);
 	    n++;
@@ -1361,46 +1244,6 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 		    savehipoint(cx, cy);
 		}
 		ochange = 1;
-
-#if MJL_HACK
-	    /*
-	     * I tried experimenting with some of the different boundary cases
-	     * here.   x08c shows some improvement, but there are errors.  SIGH.
-	     * I'm beginning to thing it will take a thorough rewrite to fix
-	     * this. 
-	     */
-#if WANT_MISSING_TRIANGLES
-		if (threedshading && (j > 1)) {
-		    PLINT cx0, cy0, cx1 = cx, cy1 = cy, cx2, cy2;
-		    PLINT su0 = u[j-2], sv0 = v[j-2];
-		    int hi0 = plabv(su0, sv0, sx1, sy1, sx2, sy2);
-		    int hi1 = plabv(su1, sv1, sx1, sy1, sx2, sy2);
-		    int hi2 = plabv(su2, sv2, sx1, sy1, sx2, sy2);
-		    pl3cut(sx1, sy1, sx2, sy2, su0, sv0, su1, sv1, &cx0, &cy0);
-		    pl3cut(sx1, sy1, sx2, sy2, su2, sv2, su0, sv0, &cx2, &cy2);
-
-		    if ( !(cx0 == sx2 && cy0 == sy2) && 
-			 !(cx0 == su1 && cy0 == sv1) &&
-			 !(cx1 == sx2 && cy1 == sy2) && 
-			 !(cx1 == su2 && cy1 == sv2) &&
-			 !(cx2 == sx2 && cy2 == sy2) && 
-			 !(cx2 == su0 && cy2 == sv0) && 1) {
-
-			if (0 && !hi0 && !hi1 && hi2)
-			    plP_fill3(cx2, cy2, cx1, cy1, su2, sv2, j);
-
-			if (0 && hi0 && !hi1 && hi2)
-			    plP_fill4(cx0, cy0, cx1, cy1, su2, sv2, su0, sv0, j);
-
-			if (0 && hi0 && hi1 && !hi2)
-			    plP_fill4(cx2, cy2, cx1, cy1, su1, sv1, su0, sv0, j);
-
-			if (0 && !hi0 && hi1 && !hi2)
-			    plP_fill3(cx0, cy0, su1, sv1, cx1, cy1, j);
-		    }
-		}
-#endif
-#endif
 	    }
 	}
 
@@ -1440,94 +1283,11 @@ plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
     static int count = 0;
     static int vcount = 0;
     static short px[MAX_POLY], py[MAX_POLY];
-#if WANT_MISSING_TRIANGLES
-    if (threedshading) {
-    /*
-     * Use two circular buffers for coordinates.
-     */
-	if (move) {
-	    count = vcount = 0;
-	    px[count] = x;
-	    py[count] = y;
-	} else {
-	/* 
-	 * Scan for identical points already in the set.  For some reason the
-	 * drawing algorithm will include the same point or segment multiple
-	 * times.  Although this is harmless when covering the surface by
-	 * simple lines, when shading it causes triangles to be missed. 
-	 */
-	    int i, numpts = MIN(count+1, MAX_POLY);
-	    for (i = 0; i < numpts; i++)
-		if ((px[i] == x) && (py[i] == y)) return;
-
-	    count++; vcount++;
-	    if (vcount==MAX_POLY) vcount = 0;
-	    px[vcount] = x;
-	    py[vcount] = y;
-	    if (count+1 >= MAX_POLY) {
-		plcol1(ctmp[j]);
-		plP_fill(px, py, MAX_POLY);
-	    }
-	}
-    } else {
-#else
-    {
-#endif
-	if (move)
-	    plP_movphy(x, y);
-	else
-	    plP_draphy(x, y);
-    }
+    if (move)
+      plP_movphy(x, y);
+    else
+      plP_draphy(x, y);
 }
-
-/*--------------------------------------------------------------------------*\
- * void plP_fill3()
- *
- * Fills the polygon specified.  Just for experimentation.
-\*--------------------------------------------------------------------------*/
-
-#if MJL_HACK
-static void
-plP_fill3(PLINT x0, PLINT y0, PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT j)
-{
-    short px[3], py[3];
-    int m, n;
-
-    px[0] = x0; py[0] = y0;
-    px[1] = x1; py[1] = y1;
-    px[2] = x2; py[2] = y2;
-    for (m = 1; m < 3; m++)
-	for (n = 0; n < m; n++)
-	    if ((px[m] == px[n]) && (py[m] == py[n])) return;
-
-    plcol1(ctmp[j]);
-    plP_fill(px, py, 3);
-}
-
-/*--------------------------------------------------------------------------*\
- * void plP_fill4()
- *
- * Fills the polygon specified.  Just for experimentation.
-\*--------------------------------------------------------------------------*/
-
-static void
-plP_fill4(PLINT x0, PLINT y0, PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j)
-{
-    short px[4], py[4];
-    int m, n;
-
-    px[0] = x0; py[0] = y0;
-    px[1] = x1; py[1] = y1;
-    px[2] = x2; py[2] = y2;
-    px[3] = x3; py[3] = y3;
-    for (m = 1; m < 4; m++)
-	for (n = 0; n < m; n++)
-	    if ((px[m] == px[n]) && (py[m] == py[n])) return;
-
-    plcol1(ctmp[j]);
-    plP_fill(px, py, 4);
-}
-#endif	/* MJL_HACK */
 
 /*--------------------------------------------------------------------------*\
  * void plnxtvlo()
