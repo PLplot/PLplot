@@ -288,7 +288,7 @@ practices used in compiled code.
 </para>
 
 <sect2 id="tcl-using-tcl">
-  <title>Using Tcl matrices from Tcl</title>
+  <title>Using Tcl Matrices from Tcl</title>
 
 <para>
 Much like the Tk widget creation commands, the Tcl <literal>matrix</literal>
@@ -416,7 +416,7 @@ pltcl> y info
 
 </sect2>
 <sect2 id="tcl-using-c">
-  <title>Using Tcl matrices from C</title>
+  <title>Using Tcl Matrices from C</title>
 
 <para>
 Normally you will create a matrix in Tcl, and then want to pass it to
@@ -458,7 +458,7 @@ compiled code, read <filename>tclMatrix.h</filename> to learn the definition of 
 
 </sect2>
 <sect2 id="tcl-using-cplusplus">
-  <title>Using Tcl matrices from C++</title>
+  <title>Using Tcl Matrices from C++</title>
 
 <para>
 Using a Tcl matrix from C++ is very much like using it from C, except
@@ -495,7 +495,7 @@ There are other things you can do too, see the definitions of the
 
 </sect2>
 <sect2 id="tcl-extending">
-  <title>Extending the Tcl matrix facility</title>
+  <title>Extending the Tcl Matrix facility</title>
 
 <para>
 The Tcl matrix facility provides creation, indexing, and information

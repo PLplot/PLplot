@@ -1,5 +1,5 @@
 <chapter id="API-FORTRAN">
-  <title>The specialized Fortran API for PLplot</title>
+  <title>The Specialized Fortran API for PLplot</title>
   
   <para>
   The purpose of this Chapter is to document the API for each Fortran function 

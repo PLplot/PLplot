@@ -1,5 +1,5 @@
 <chapter id="API-C">
-  <title>The specialized C API for PLplot</title>
+  <title>The Specialized C API for PLplot</title>
   
   <para>
   The purpose of this chapter is to document the API for every C function 

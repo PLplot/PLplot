@@ -76,7 +76,7 @@ The driver for OS/2 PM is available separately.  See the section on OS/2 in
 the Appendix for more details.
 
 <table frame="none" id="tab_dev1">
-<title>PLplot terminal output devices</title>
+<title>PLplot Terminal Output Devices</title>
 <tgroup cols="3" align="center">
 <colspec colwidth="1*"/>
 <colspec colwidth="1*"/>
@@ -102,7 +102,7 @@ the Appendix for more details.
 </table>
 
 <table frame="none" id="tab_dev2">
-<title>PLplot file output devices</title>
+<title>PLplot File Output Devices</title>
 <tgroup cols="3" align="center" colsep="0" rowsep="0">
 <colspec colwidth="1*"/>
 <colspec colwidth="1*"/>
@@ -1489,7 +1489,7 @@ plcmap1_def(void)
     </para>
 
     <table frame="all" id="greek">
-      <title>Roman characters corresponding to Greek characters</title>
+      <title>Roman Characters Corresponding to Greek Characters</title>
       <tgroup align="center" cols="13">
 	<colspec align="center" colnum="1" colwidth="2*"/>
 	<tbody valign="top">

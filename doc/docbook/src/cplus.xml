@@ -13,7 +13,7 @@ rationale and intended usage for the bundled C++ language support.
     </para>
 
   <sect1 id="cplusplus-motivation">
-    <title>Motivation for the C++ interface</title>
+    <title>Motivation for the C++ Interface</title>
     
     <para>
 PLplot has a fairly complex C API.  There are lots of functions, and
@@ -79,7 +79,7 @@ its architecture and usage.
   <title>Design of the PLplot C++ Interface</title>
 
 <sect2 id="cpluscplus-stream">
-  <title>Stream/object identity</title>
+  <title>Stream/Object Identity</title>
 
     <para>
 A C++ class named <literal>plstream</literal> has been introduced.  It's central
@@ -101,7 +101,7 @@ appreciated in the context of Tk extended wish applications in which a
 </sect2>
 
 <sect2 id="cpluscplus-namespace">
-  <title>Namespace management</title>
+  <title>Namespace Management</title>
 
     <para>
 The PLplot C API is composed of a set of drawing functions, all
