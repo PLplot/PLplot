@@ -144,5 +144,9 @@ CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
 	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
 	plplot_stub.m missing_help $(doc_DATA)
 
+else
+
+install-data-hook:
+
 #enable_octave
 endif
