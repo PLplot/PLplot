@@ -280,12 +280,12 @@ set_auto_path(void)
     fprintf(stderr, "plserver: auto_path is %s\n", path);
 #endif
 
-/* Add $HOME/bin */
+/* Add $HOME/tcl */
 
     ptr = getenv("HOME");
     if (ptr != NULL) {
 	strcpy(buf, ptr);
-	strcat(buf, "/bin");
+	strcat(buf, "/tcl");
 	Tcl_SetVar(interp, "dir", buf, 0);
 	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
