@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/01/15 17:38:12  mjl
+ * Revision 1.10  1994/02/01 22:43:47  mjl
+ * Slight change to error handling for unrecognized commands.
+ *
+ * Revision 1.9  1994/01/15  17:38:12  mjl
  * Changed to new PDF function call syntax.
  *
  * Revision 1.8  1993/09/28  21:26:38  mjl
@@ -191,7 +194,7 @@ plr_process1(PLRDev *plr, int c)
 	break;
 
       default:
-	barf("plr_process1: Unrecognized command");
+	fprintf(stderr, "plr_process1: Unrecognized command code %d\n", c);
     }
 
     return 0;
