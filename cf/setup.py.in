@@ -41,8 +41,12 @@ libraries = ["@PLLIB_NAME@@LIB_TAG@"]
 
 # Now sort out the LIBS mixture of -l and -L options
 #libs = "@LIBS@"
+# Only need this to support legacy python 1.5.  Once we drop that support
+# and go to pure python 2 use libs.split method here and below for incs_list.
+import string
 libs = ""
-libs_list = libs.split(" ")
+libs_list = string.split(libs," ")
+#python 2.x libs_list = libs.split(" ")
 for option in libs_list:
     if option == "":
 	# Do nothing if any extra blank space makes for empty string
@@ -56,7 +60,8 @@ for option in libs_list:
 
 # Now sort out other additions to include_dirs
 incs = "@INCS@"
-incs_list = incs.split(" ")
+incs_list = string.split(incs," ")
+#python 2.x incs_list = incs.split(" ")
 for option in incs_list:
     if option == "":
 	# Do nothing if any extra blank space makes for empty string
