@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1993/08/30 19:13:06  mjl
+ * Revision 1.11  1993/09/08 02:31:34  mjl
+ * Fixes to work with TK 3.3b3.  Search path for autoloaded Tcl procs now
+ * follows ".", ${PLPLOT_DIR}/tcl, ${HOME}/tcl, INSTALL_DIR/tcl, where
+ * INSTALL_DIR is passed in from the makefile.
+ *
+ * Revision 1.10  1993/08/30  19:13:06  mjl
  * Send command modified in last updated enclosed in a [list ...] to undo
  * the tokenization done by the "after 1".
  *
@@ -16,7 +21,6 @@
  *
  * Revision 1.6  1993/08/10  04:51:32  mjl
  * Fixed -mkidx option (broken in last update).
- *
 */
 
 /* 
@@ -119,10 +123,18 @@ main(int argc, char **argv)
 
     configure(argc, argv);
 
-/* Run TK startup code */
+/* Run Tcl/TK startup code */
 
+#if (TK_MAJOR_VERSION == 3) && (TK_MINOR_VERSION == 2)
     if (tk_source(w, interp, "$tk_library/wish.tcl"))
 	abort_session("");
+#else
+    if (Tcl_Init(interp) == TCL_ERROR) 
+	abort_session(interp->result);
+
+    if (Tk_Init(interp) == TCL_ERROR) 
+	abort_session(interp->result);
+#endif
 
 /* Create new tclIndex file -- a convenience */
 
@@ -284,7 +296,7 @@ configure(int argc, char **argv)
 static void
 set_auto_path(void)
 {
-    char *buf, *ptr;
+    char *buf, *ptr, *foo;
 #ifdef DEBUG
     char *path;
 #endif
@@ -292,36 +304,38 @@ set_auto_path(void)
     dbug_enter("set_auto_path");
     buf = malloc(256 * sizeof(char));
 
-/* Add /usr/local/plplot/tcl */
+/* Add INSTALL_DIR/tcl */
 
-    Tcl_SetVar(interp, "dir", "/usr/local/plplot/tcl", TCL_GLOBAL_ONLY);
+#ifdef INSTALL_DIR
+    plGetName(INSTALL_DIR, "tcl", "", &ptr);
+    Tcl_SetVar(interp, "dir", ptr, TCL_GLOBAL_ONLY);
     tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
     fprintf(stderr, "plserver: adding %s to auto_path\n", "/usr/local/plplot");
     path = Tcl_GetVar(interp, "auto_path", 0);
     fprintf(stderr, "plserver: auto_path is %s\n", path);
 #endif
+#endif
 
 /* Add $HOME/tcl */
 
-    ptr = getenv("HOME");
-    if (ptr != NULL) {
-	strcpy(buf, ptr);
-	strcat(buf, "/tcl");
-	Tcl_SetVar(interp, "dir", buf, 0);
+    foo = getenv("HOME");
+    if (foo != NULL) {
+	plGetName(foo, "tcl", "", &ptr);
+	Tcl_SetVar(interp, "dir", ptr, 0);
 	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
 	fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
 	path = Tcl_GetVar(interp, "auto_path", 0);
 	fprintf(stderr, "plserver: auto_path is %s\n", path);
 #endif
-
     }
 
-/* Add $PL_LIBRARY */
+/* Add $(PLPLOT_DIR)/tcl */
 
-    ptr = getenv("PL_LIBRARY");
-    if (ptr != NULL) {
+    foo = getenv("PLPLOT_DIR");
+    if (foo != NULL) {
+	plGetName(foo, "tcl", "", &ptr);
 	Tcl_SetVar(interp, "dir", ptr, 0);
 	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
@@ -358,7 +372,8 @@ set_auto_path(void)
 
     }
 
-    free ((void *) buf);
+    free_mem(buf);
+    free_mem(ptr);
 }
 
 /*----------------------------------------------------------------------*\
@@ -427,5 +442,5 @@ tcl_eval(char *cmd)
     }
 
     strcpy(cmdbuf, cmd);
-    return(Tcl_Eval(interp, cmdbuf, 0, (char **) NULL));
+    return(Tcl_VarEval(interp, cmdbuf, (char **) NULL));
 }
