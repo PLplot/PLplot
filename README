@@ -36,7 +36,7 @@ The main documentation for PLplot is in the doc/ directory in the form of
 several TeX files; please consult this for additional information ("latex
 plotdoc").  Unfortunately documentation tends to lag actual improvements to
 the code, so don't be surprised if some known features are not explained
-there.  Consult "Changes.log" to see a list of recent changes.  
+there.  Consult "NEWS" to see a list of recent changes.  
 
 At present, PLplot is known to work on the following systems:
 
