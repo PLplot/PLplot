@@ -83,7 +83,7 @@ common:
 #define __PLCONFIG_H__
 #define LIB_DIR "$(PLLIB:\=\\)"
 #define BIN_DIR "$(PLBIN:\=\\)"
-#define PLPLOT_VERSION "5.0.4"
+#define PLPLOT_VERSION "5.1.0"
 #endif
 <<keep
 # Create pldevs.h file
