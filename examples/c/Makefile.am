@@ -54,6 +54,8 @@ examples_c_DATA = \
 	Makefile.examples
 
 dist_examples_c_DATA = \
+	plplotcanvas_demo.c \
+	plplotcanvas_animation.c \
 	README.plplotcanvas \
 	lena.pgm \
 	$(sources)
