@@ -49,9 +49,6 @@
 
 # Defaults
 
-CC="cc"
-OCC="cc"
-F77="f77"
 M4="m4"
 
 # Debugging
@@ -107,80 +104,111 @@ fi
 # "fc" since some systems may have both programs.  If "fc" can't be found,
 # "f77" is tried instead.
 #
-# The actual setup for gcc or f2c is done AFTER the following case
-# statement.  Done this way because they're pretty predictable across
-# platforms, and this way we can just override what is set below.  Systems
-# that use gcc or f2c by default should set shell variables as follows:
-# with_gcc=yes (to get gcc), or with_f2c=yes (to get f2c).  IMPORTANT:
-# the command line argument uses a "-" (dash) to separate words, while
-# the shell variable uses a "_" (underscore).
+# On systems where gcc or f2c are actually undesirable (e.g. on Crays --
+# gcc isn't ported and why would you want to use f2c?), I set with_gcc
+# and/or with_f2c to "no" to prevent their use.
+#
+# The actual setup for gcc or f2c is done AFTER the case statements.  Done
+# this way because they're pretty predictable across platforms, and this
+# way we can just override what is set below.  Systems that use gcc or f2c
+# by default should set shell variables as follows: with_gcc=yes (to get
+# gcc), or with_f2c=yes (to get f2c).  IMPORTANT: the command line
+# argument uses a "-" (dash) to separate words, while the shell variable
+# uses a "_" (underscore).
 # -----------------------------------------------------------------------
 
-case $system in 
-    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	CC="xlc"
-	F77="xlf"
-    ;;
-    alpha*|ALPHA*|Alpha*|OSF* ) 
-	CC="cc -std"
-    ;;
-    bsd*|BSD* ) 
-    ;;
-    convex*|ConvexOS* ) 
-	CC="cc -std"
-	with_gcc="no"
-	with_f2c="no"
-    ;;
-    dg*|DG* ) 
-	CC="cc -ansi"
-	F77="ghf77"
-    ;;
-    hp*|HP* ) 
-	CC="c89"
+# Set up ANSI C compiler
 
-	# Use fort77 compiler instead of f77, since the f77 flags are
-	# very nonstandard.
+if test -z "$CC"; then
+    CC="cc"
+    case "$system" in 
+	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+	    CC="xlc"
+	;;
+	alpha*|ALPHA*|Alpha*|OSF* ) 
+	    CC="cc -std"
+	;;
+	convex*|ConvexOS* ) 
+	    CC="cc -std"
+	    with_gcc="no"
+	;;
+	dg*|DG* ) 
+	    CC="cc -ansi"
+	;;
+	hp*|HP* ) 
+	    CC="c89"
+	;;
+	irix*|IRIX*|Irix*|sgi*|SGI* ) 
+	    CC="cc -ansi"
+	;;
+	linux*|LINUX*|Linux* ) 
+	    with_gcc="yes"
+	;;
+	next*|NeXT*|NEXT* ) 
+	    with_gcc="yes"
+	;;
+	SunOS-* )
+	    CC="acc"
+	;;
+	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+	    CC="cc -hansi"
+	    with_gcc="no"
+	;;
+	ultrix*|ULTRIX* ) 
+	    with_gcc="yes"
+	;;
+	CRAY* ) 
+	    with_gcc="no"
+	;;
+    esac
+fi
 
-	F77="fort77"
-    ;;
-    irix*|IRIX*|Irix*|sgi*|SGI* ) 
-	CC="cc -ansi"
-    ;;
-    linux*|LINUX*|Linux* ) 
-	with_gcc="yes"
-	with_f2c="yes"
-    ;;
-    next*|NeXT*|NEXT* ) 
-	with_f2c="yes"
-    ;;
-    SunOS-4.* )
-	CC="acc"
-    ;;
-    SunOS-5.* )
-	CC="acc"
-	OCC="cc -Xs"
-    ;;
-    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
-	CC="cc -hansi"
+# Set up K&R C compiler
 
-	# Use f77 compiler instead of f77sx, since the f77sx flags are
-	# very nonstandard (-L handles output listing options, etc).
+if test -z "$OCC"; then
+    OCC="cc"
+    case "$system" in 
+	SunOS-5.* )
+	    OCC="cc -Xs"
+	;;
+    esac
+fi
 
-	F77="f77sx"
-	with_gcc="no"
-	with_f2c="no"
-    ;;
-    ultrix*|ULTRIX* ) 
-	with_gcc="yes"
-    ;;
-    CRAY* ) 
-	F77="cf77"
-	with_gcc="no"
-	with_f2c="no"
-    ;;
-    * ) 	
-    ;;
-esac
+# Set up Fortran compiler
+
+if test -z "$F77"; then
+    F77="f77"
+    case "$system" in 
+	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+	    F77="xlf"
+	;;
+	dg*|DG* ) 
+	    F77="ghf77"
+	;;
+	hp*|HP* ) 
+	    # The fort77 front-end uses a cc-like set of command line flags.
+
+	    F77="fort77"
+	;;
+	linux*|LINUX*|Linux* ) 
+	    with_f2c="yes"
+	;;
+	next*|NeXT*|NEXT* ) 
+	    with_f2c="yes"
+	;;
+	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+	    # The f77 front-end uses a cc-like set of command line flags,
+	    # but I've had problems with it, so use f77sx here instead.
+
+	    F77="f77sx"
+	    with_f2c="no"
+	;;
+	CRAY* ) 
+	    F77="cf77"
+	    with_f2c="no"
+	;;
+    esac
+fi
 
 # -----------------------------------------------------------------------
 # gcc
@@ -237,23 +265,25 @@ fi
 # Can finally set linker defaults.
 # -----------------------------------------------------------------------
 
-LDC="$CC"
-LDF="$F77"
+if test -z "$LDC"; then
+    LDC="$CC"
+fi
+if test -z "$LDF"; then
+    LDF="$F77"
+fi
 
 # -----------------------------------------------------------------------
 # Now get system-specific compiler flags.
-# Best to check if f2c or gcc are in use before setting system-specific
-# flags.
 #
-# If your Fortran compiler supports auto-promotion to double precision,
-# it is best to set DBL_FLAG_F with the appropriate command option.  This
-# is only used for the PLplot demo programs -- the Fortran interface
-# uses m4 to generate single and double precision versions.  So if your
-# compiler can't do command-line promotion to double precision, the only
-# loss is that you won't be able to run the demos in double precision.
+# If your Fortran compiler supports auto-promotion to double precision, it
+# is best to set DBL_FLAG_F with the appropriate command option.  This is
+# only used for the PLplot demo programs -- the Fortran interface uses m4
+# to generate single and double precision versions.  So if your compiler
+# can't do command-line promotion to double precision, the only loss is
+# that you won't be able to run the Fortran demos in double precision.
 # -----------------------------------------------------------------------
 
-case $system in 
+case "$system" in 
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 	if test "$with_double" = "yes" -a "$with_f2c" = "no"; then
 	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
@@ -419,7 +449,7 @@ echo "checking how to make shared libraries"
 SHLIB_CCFLAGS=""
 SHLIB_BUILD=""
 SHLIB_SUFFIX=""
-case $system in 
+case "$system" in 
     SunOS-4* ) 
 	SHLIB_CCFLAGS="-pic"
 	SHLIB_F77FLAGS="-pic"
@@ -434,8 +464,8 @@ case $system in
 	SHLIB_SUFFIX=".sl"
     ;;
 
-    # The rest are clearly broken.  Someone please fix them.
-    # Remove the with_shlib line and go wild.
+    # The rest are probably broken.  Someone please fix them.
+    # Remove the 'with_shlib="no"' line and go wild.
 
     SunOS-5* )
 	with_shlib="no"
@@ -505,7 +535,7 @@ LDCXX_FLAGS=\
 LDF_FLAGS=\
 "$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
 
-M4_FLAGS="-S2000 -B8192 -DSYSTEM=SYSTEM $DBL_FLAG_M4"
+M4_FLAGS="-S2000 -B8192 -DSYSTEM=$SYSTEM $DBL_FLAG_M4"
 
 AC_SUBST(CC)
 AC_SUBST(OCC)
@@ -527,7 +557,7 @@ AC_SUBST(SHLIB_F77FLAGS)
 CC_FLAGS_XWIN=$CC_FLAGS
 CC_FLAGS_SCCONT=$CC_FLAGS
 
-case $system in 
+case "$system" in 
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 	CC_FLAGS_XWIN=$CC_FLAGS_NOOPT
     ;;
