@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.52  1995/06/01 21:37:16  mjl
+ * Revision 1.53  1995/06/23 02:55:35  mjl
+ * Better debugging support, also inserted experimental code for using physical
+ * window dimensions in the library.  Still needs work.
+ *
+ * Revision 1.52  1995/06/01  21:37:16  mjl
  * Changes to header file inclusion.
  *
  * Revision 1.51  1995/05/06  17:15:14  mjl
@@ -60,10 +64,10 @@
  */
 
 /*
+#define DEBUG_ENTER
 */
 
 #define DEBUG
-#define DEBUG_ENTER
 
 #include "plDevs.h"
 
@@ -92,6 +96,11 @@
 /* Number of instructions to skip between updates */
 
 #define MAX_INSTR 100
+
+/* Pixels/mm */
+
+#define PHYSICAL	0		/* Enables physical scaling.. */
+#define DPMM		2.88		/* ..just experimental for now */
 
 /* These need to be distinguished since the handling is slightly different. */
 
@@ -147,6 +156,7 @@ static void  Locate		(PLStream *pls);
 /* These are internal TCL commands */
 
 static int   Abort		(ClientData, Tcl_Interp *, int, char **);
+static int   Plfinfo		(ClientData, Tcl_Interp *, int, char **);
 static int   KeyEH		(ClientData, Tcl_Interp *, int, char **);
 static int   ButtonEH		(ClientData, Tcl_Interp *, int, char **);
 static int   LookupTkKeyEvent	(PLStream *pls, Tcl_Interp *interp,
@@ -194,13 +204,11 @@ init(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
     TkDev *dev;
+    float pxlx, pxly;
     int xmin = 0;
     int xmax = PIXELS_X - 1;
     int ymin = 0;
     int ymax = PIXELS_Y - 1;
-
-    float pxlx = (double) PIXELS_X / (double) LPAGE_X;
-    float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
     dbug_enter("plD_init_tk");
 
@@ -251,6 +259,14 @@ init(PLStream *pls)
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
+
+#if PHYSICAL
+    pxlx = (double) PIXELS_X / dev->width  * DPMM;
+    pxly = (double) PIXELS_Y / dev->height * DPMM;
+#else
+    pxlx = (double) PIXELS_X / LPAGE_X;
+    pxly = (double) PIXELS_Y / LPAGE_Y;
+#endif
 
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
@@ -875,6 +891,9 @@ pltkdriver_Init(PLStream *pls)
     Tcl_CreateCommand(interp, "abort", Abort,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
+    Tcl_CreateCommand(interp, "plfinfo", Plfinfo,
+		      (ClientData) pls, (void (*) (ClientData)) NULL);
+
     Tcl_CreateCommand(interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
@@ -1275,6 +1294,11 @@ plwindow_init(PLStream *pls)
     if (pls->nopixmap) 
 	server_cmd( pls, "$plwidget cmd plsetopt -nopixmap", 0 );
 
+/* debugging */
+
+    if (pls->debug)
+	server_cmd( pls, "$plwidget cmd plsetopt -debug", 0 );
+
 /* color map options */
 
     if (pls->ncol0) {
@@ -1451,8 +1475,10 @@ flush_output(PLStream *pls)
 /* Send packet -- plserver filehandler will be invoked automatically. */
 
     if (pdfs->bp > 0) {
+#ifdef DEBUG_ENTER
 	pldebug("flush_output", "%s: Flushing buffer, bytes = %ld\n",
 		__FILE__, pdfs->bp);
+#endif
 	if (pl_PacketSend(dev->interp, dev->iodev, pls->pdfs)) {
 	    fprintf(stderr, "Packet send failed:\n\t %s\n",
 		    dev->interp->result);
@@ -1477,6 +1503,42 @@ Abort(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
     abort_session(pls, "");
     return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * Plfinfo
+ *
+ * Sends info about the server plframe.  Usually issued after some
+ * modification to the plframe is made by the user, such as a resize.
+\*--------------------------------------------------------------------------*/
+
+static int
+Plfinfo(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+{
+    PLStream *pls = (PLStream *) clientData;
+    TkDev *dev = (TkDev *) pls->dev;
+    int result = TCL_OK;
+
+    dbug_enter("Plfinfo");
+
+    if (argc < 3) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 " plfinfo wx wy\"", (char *) NULL);
+	result = TCL_ERROR;
+    }
+    else {
+	dev->width = atoi(argv[1]);
+	dev->height = atoi(argv[2]);
+#if PHYSICAL
+	{
+	    float pxlx = (double) PIXELS_X / dev->width  * DPMM;
+	    float pxly = (double) PIXELS_Y / dev->height * DPMM;
+	    plP_setpxl(pxlx, pxly);
+	}
+#endif
+    }
+
+    return result;
 }
 
 /*--------------------------------------------------------------------------*\
