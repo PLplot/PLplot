@@ -5,7 +5,7 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-       install-info --quiet --remove /usr/share/info/plplotdoc.info*
+       install-info --quiet --remove /usr/share/info/plplotdoc.info
         ;;
     failed-upgrade)
         ;;

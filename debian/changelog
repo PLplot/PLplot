@@ -1,3 +1,43 @@
+plplot (5.2.0.cvs.20030227-2) unstable; urgency=low
+
+  * This is the first release of this cvs snapshot series to the Debian
+    repository (closes: #101264).
+  * A big thanks to David Schleef, who has acted as interim maintainer
+    (and made a great job) while I have been unavailable.
+  * Many bugs that have been around for ages are fixed in this
+    release:
+    - The plplot-tcl package depends on tcl8.3 and tk8.3 (closes: #117186).
+    - The octave-plplot package is totally new and has been integrated
+      into the upstream sources of PLplot (closes: #91308).  Octave
+      bindings are working correctly now (closes: #158446).  In
+      particular, the plplot_octave-demo.m script works fine (closes: #69710).
+    - use_plplot.m works correctly now (closes: #181875, closes: #74908),
+      and all the files are found in the LOADPATH of Octave (closes: #179224).
+    - Python examples should run now, thanks to the new dynamic drivers
+      scheme (closes: #92150).
+    - All PLplot manpages have proper whatis entries nows (closes: #100867).
+    - Dependences on tk8.3-dev have been dropped (closes: #167412).
+    - Build failure on sparc, due to bad c++ command line options should
+      be fixed now (it was already in David's NMU, closes: #86880).
+    - Packages should be fully installable in unstabel (closes: #161569).
+    - "octave2.1-headers | octave2.0-headers" have been added to
+      Build-Depends, so that octave-plplot can be built from source
+      (closes: 117708).
+    - Packages build correctly on m68k (fixed in David's NMU,
+      closes: #159807).
+    - A problem in setting up octave2.1 has been fixed in Dirk
+      Eddelbuettel's NMU (closes: #123700).
+    - There is no plplot-bin package anymore.  Also, there is no
+      dependency on nonexistent ghostscript package (closes: #136358).
+    - The build failure due to a wrong Python directory has been fixed
+      (closes:  #159811).
+  * debian/control: Added warning message telling that the packages are
+    experimental.
+  * plplot-doc.prerm: Calling install-info with the correct number of
+    arguments (closes: #182509).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 28 Feb 2003 18:52:55 +0100
+
 plplot (5.2.0.cvs.20030227-1) unstable; urgency=low
 
   * Built with new CVS sources.  Many DocBook related configuration
@@ -79,8 +119,6 @@ plplot (5.2.0.cvs.20030214-1) unstable; urgency=low
   * There has been a huge reorganization of the packages, thanks to the new
     dynamical loading of driver modules.  There has been too many changes to
     report here.
-  * A big thanks go to David Schleef, who has acted as interim maintainer
-    (and made a great job) while I have been unavailable.
 
  -- Rafael Laboissiere <rafael@debian.org>  Tue, 16 Feb 2003 21:16:34 +0100
 
