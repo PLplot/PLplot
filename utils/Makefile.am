@@ -32,7 +32,7 @@ if enable_tcl
 bin_PROGRAMS += pltcl
 pltcl_SOURCES = pltcl.c
 pltcl_LDFLAGS = $(RPATH) -no-undefined
-pltcl_LDADD = $(libplplottcltk)
+pltcl_LDADD = $(libplplot) $(libplplottcltk)
 endif
 
 plrender_SOURCES = plrender.c
