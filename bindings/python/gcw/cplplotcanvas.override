@@ -52,8 +52,8 @@ headers
 #include <Python.h>        
        
 #include "pygobject.h"
-#include "plplot/plplot.h"
-#include "plplot/plplotcanvas.h"
+#include "plplot.h"
+#include "plplotcanvas.h"
 
 #define PY_ARRAY_UNIQUE_SYMBOL plplotcanvasapi
 #include "Numeric/arrayobject.h"
