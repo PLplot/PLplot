@@ -794,6 +794,11 @@ AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
 AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
                                [Define if isnan is available]))
 
+### The following seems to be necessary because the replacement of
+### the default value for prefix only happens in AC_OUTPUT (it is already
+### too late)
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+
 ### Define PLplot default install locations:
 ### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
 
