@@ -1,6 +1,14 @@
 # $Id$
 # $Log$
-# Revision 1.27  1994/09/23 07:42:01  mjl
+# Revision 1.28  1994/09/27 22:06:11  mjl
+# Several important additions to the zooming capability:
+#  - A double click now zooms by 2X, centered at the mouse cursor.  If the
+#    cursor is too close to the boundary to allow this, an appropriately
+#    higher magnification is used.
+#  - The zoomed window positions are retained and can be recalled.  The keys
+#    "b" (backward) and "f" (forward) are used to traverse the window list.
+#
+# Revision 1.27  1994/09/23  07:42:01  mjl
 # Added a status message while waiting for plot to print.
 #
 # Revision 1.26  1994/08/25  04:01:23  mjl
@@ -110,6 +118,17 @@ proc plxframe {w {client {}}} {
 
     tk_bindForTraversal $w.plwin
     focus $w.plwin
+
+# Set up zoom windows list
+
+    global zidx zidx_max zxl zyl zxr zyr
+
+    set zidx($w) 0
+    set zidx_max($w) 0
+    set zxl($w,0) 0.0
+    set zyl($w,0) 0.0
+    set zxr($w,0) 1.0
+    set zyr($w,0) 1.0
 
 # Bindings
 #
@@ -480,6 +499,8 @@ proc key_filter {w client k n a shift control} {
 
     switch $k \
 	$key_zoom_select	"plw_zoom_select $w" \
+	"b"			"plw_zoom_back $w" \
+	"f"			"plw_zoom_forward $w" \
 	$key_zoom_reset		"plw_zoom_reset $w" \
 	$key_print		"plw_print $w" \
 	$key_save_again		"plw_save $w" \
@@ -657,6 +678,17 @@ proc plw_zoom_reset {w} {
     if { [winfo exists $w.vscroll] && [winfo exists $w.vscroll] } then {
 	pack unpack $w.vscroll
     }
+
+# Reset zoom windows list
+
+    global zidx zidx_max zxl zyl zxr zyr
+
+    set zidx($w) 0
+    set zidx_max($w) 0
+    set zxl($w,0) 0.0
+    set zyl($w,0) 0.0
+    set zxr($w,0) 1.0
+    set zyr($w,0) 1.0
 }
 
 #----------------------------------------------------------------------------
@@ -747,6 +779,7 @@ proc plw_zoom_mouse_end {w wx0 wy0 wx1 wy1} {
     bind $w.plwin <B1-ButtonRelease> {}
     bind $w.plwin <B1-Motion> {}
     plw_label_reset $w
+    $w.plwin draw end
 
     set wlx [winfo width $w.plwin]
     set wly [winfo height $w.plwin]
@@ -754,8 +787,6 @@ proc plw_zoom_mouse_end {w wx0 wy0 wx1 wy1} {
     set xr [expr "$wx1/$wlx."     ]
     set yl [expr "1 - $wy1/$wly." ]
     set yr [expr "1 - $wy0/$wly." ]
-
-    $w.plwin draw end
 
 # Select new plot region
 
@@ -816,12 +847,50 @@ proc plw_view_select {w x0 y0 x1 y1} {
 
 proc plw_view_zoom {w x0 y0 x1 y1} {
     
-# Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
+    global xl xr yl yr
+
+# Adjust arguments to be properly ordered (xl < xr, etc)
 
     set xl [min $x0 $x1]
     set yl [min $y0 $y1]
     set xr [max $x0 $x1]
     set yr [max $y0 $y1]
+
+# Check for double-click (specified zoom region less than a few pixels
+# wide).  In this case, magnification is 2X in each direction, centered at
+# the mouse location.  At the boundary, the magnification is determined
+# by the distance to the boundary.
+
+    set stdzoom 0.5
+    if { ($xr - $xl < 0.02) && ($yr - $yl < 0.02) } then {
+	set nxl [expr $xl - 0.5*$stdzoom]
+	set nxr [expr $xl + 0.5*$stdzoom]
+	if { $nxl < 0.0 } then {
+	    set nxl 0.0
+	    set nxr [expr 2.0*$xl]
+	} 
+	if { $nxr > 1.0 } then {
+	    set nxr 1.0
+	    set nxl [expr 2.0*$xl - 1.0]
+	}
+	set xl $nxl
+	set xr $nxr
+
+	set nyl [expr $yl - 0.5*$stdzoom]
+	set nyr [expr $yl + 0.5*$stdzoom]
+	if { $nyl < 0.0 } then {
+	    set nyl 0.0
+	    set nyr [expr 2.0*$yl]
+	}
+	if { $nyr > 1.0 } then {
+	    set nyr 1.0
+	    set nyl [expr 2.0*$yl - 1.0]
+	}
+	set yl $nyl
+	set yr $nyr
+    }
+
+# Adjust arguments to be in bounds (in case margins are in effect).
 
     set bounds [$w.plwin view bounds]
     set xmin [lindex "$bounds" 0]
@@ -851,6 +920,68 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 # Fix up view
 
     plw_fixview $w $hscroll $vscroll
+
+# Add window to zoom windows list
+
+    global zidx zidx_max zxl zyl zxr zyr
+
+    incr zidx($w)
+    set zidx_max($w) $zidx($w)
+
+    set coords [$w.plwin view]
+    set zxl($w,$zidx($w)) [lindex "$coords" 0]
+    set zyl($w,$zidx($w)) [lindex "$coords" 1]
+    set zxr($w,$zidx($w)) [lindex "$coords" 2]
+    set zyr($w,$zidx($w)) [lindex "$coords" 3]
+}
+
+#----------------------------------------------------------------------------
+# plw_zoom_back
+#
+# Traverses the zoom windows list backward.
+#----------------------------------------------------------------------------
+
+proc plw_zoom_back {w} {
+    
+    global zidx zxl zyl zxr zyr
+
+    if { $zidx($w) == 0 } then return
+
+    incr zidx($w) -1
+
+    set xl $zxl($w,$zidx($w))
+    set yl $zyl($w,$zidx($w))
+    set xr $zxr($w,$zidx($w))
+    set yr $zyr($w,$zidx($w))
+
+# Select plot region
+
+    $w.plwin view select $xl $yl $xr $yr
+}
+
+#----------------------------------------------------------------------------
+# plw_zoom_forward
+#
+# Traverses the zoom windows list forward.
+#----------------------------------------------------------------------------
+
+proc plw_zoom_forward {w} {
+    
+    global zidx zidx_max zxl zyl zxr zyr
+
+    if { $zidx_max($w) == 0 } then return
+    if { $zidx($w) == $zidx_max($w) } then return
+
+    incr zidx($w)
+
+    set xl $zxl($w,$zidx($w))
+    set yl $zyl($w,$zidx($w))
+    set xr $zxr($w,$zidx($w))
+    set yr $zyr($w,$zidx($w))
+
+# Select plot region
+
+    $w.plwin view select $xl $yl $xr $yr
 }
 
 #----------------------------------------------------------------------------
