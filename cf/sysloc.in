@@ -25,6 +25,16 @@ ITCLLIBSTR=-litcl
 TCLLIBSTR=-ltcl
 XLIBSTR=-lX11
 
+# Add the current directory to the include path.  This must occur
+# first in the list, before we add the directories for any auxilliary
+# packages, in order to ensure that the build dir takes precedence
+# over anything that may be just lying around in the environment.  For
+# example, we don't want the files from a previous version of PLplot
+# which may be left in $prefix/include/plplot/*.h to take precedence
+# over the files from the current build.
+
+ADD_TO_INCS(., INCS, INCPATH)
+
 # ----------------------------------------------------------------------------
 # Run xmkmf to check for location of X libraries and includes.  If not
 # found, I have to assume that X isn't available (it happens).  Can disable
@@ -360,7 +370,6 @@ fi
 # syntax.
 # ----------------------------------------------------------------------------
 
-ADD_TO_INCS(., INCS, INCPATH)
 if test "$enable_xwin" = "yes"; then
     ADD_TO_INCS($XINCDIR, INCS, INCPATH)
 fi
@@ -603,7 +612,21 @@ if test -z "$EXTRA_LIBS"; then
     LIBS=$SAVE_LIBS
 fi
 
-LIBS="$LIBS $EXTRA_LIBS"
+# Now add EXTRA_LIBS to LIBS, but don't introduce duplicates.
+# Used to be: LIBS="$LIBS $EXTRA_LIBS"
+
+for lib in $EXTRA_LIBS; do
+    sw=$lib
+    for token in $LIBS; do
+	if test $token = $lib; then
+	    sw=""
+	    break
+	fi
+    done
+    if test -n "$sw"; then
+	LIBS="$LIBS $sw"
+    fi
+done
 
 AC_SUBST(INCS)
 AC_SUBST(LIBS)
