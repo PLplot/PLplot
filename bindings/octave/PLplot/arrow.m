@@ -30,7 +30,7 @@ function arrow (coord, mag, rot, col)
     mag = sqrt((x2-x1).^2 + (y2-y1).^2);
     rot = 180*atan((y2-y1)/(x2-x1))/pi;
     if (x2 < x1)
-      rot += 180;
+      rot = rot+180;
     endif
     
     arrow([x1, y1], mag, rot, coord);
