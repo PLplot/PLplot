@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.64  1995/06/01 21:37:23  mjl
+ * Revision 1.65  1995/06/23 02:56:11  mjl
+ * Fix to crossing event handling after leaving locate mode.  Inserted
+ * experimental code for using physical window dimensions in the library.
+ * Still needs work.
+ *
+ * Revision 1.64  1995/06/01  21:37:23  mjl
  * Changes to header file inclusion.
  *
  * Revision 1.63  1995/05/19  22:16:58  mjl
@@ -123,6 +128,11 @@ static int synchronize = 0;	/* change to 1 for synchronized operation */
 
 #define MAX_INSTR 20
 
+/* Pixels/mm */
+
+#define PHYSICAL	0		/* Enables physical scaling.. */
+#define DPMM		2.88		/* ..just experimental for now */
+
 /* These need to be distinguished since the handling is slightly different. */
 
 #define LOCATE_INVOKED_VIA_API		1
@@ -228,13 +238,11 @@ void
 plD_init_xw(PLStream *pls)
 {
     XwDev *dev;
+    float pxlx, pxly;
     int xmin = 0;
     int xmax = PIXELS_X - 1;
     int ymin = 0;
     int ymax = PIXELS_Y - 1;
-
-    float pxlx = (double) PIXELS_X / (double) LPAGE_X;
-    float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
     dbug_enter("plD_init_xw");
 
@@ -262,6 +270,14 @@ plD_init_xw(PLStream *pls)
 
     dev->xscale = dev->xscale_init;
     dev->yscale = dev->yscale_init;
+
+#if PHYSICAL
+    pxlx = (double) PIXELS_X / dev->width  * DPMM;
+    pxly = (double) PIXELS_Y / dev->height * DPMM;
+#else
+    pxlx = (double) PIXELS_X / LPAGE_X;
+    pxly = (double) PIXELS_Y / LPAGE_Y;
+#endif
 
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
@@ -1601,9 +1617,10 @@ DestroyXhairs(PLStream *pls)
 
     XUndefineCursor(xwd->display, dev->window);
 
-/* Don't catch PointerMotion events any more */
+/* Don't catch PointerMotion or crossing events any more */
 
-    dev->event_mask &= ~PointerMotionMask;
+    dev->event_mask &=
+	~PointerMotionMask & ~EnterWindowMask & ~LeaveWindowMask;
     XSelectInput(xwd->display, dev->window, dev->event_mask);
 
 /* This draw removes the last set of graphic crosshairs */
@@ -1863,6 +1880,14 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 
     dev->xscale = dev->xscale * dev->xscale_init;
     dev->yscale = dev->yscale * dev->yscale_init;
+
+#if PHYSICAL
+    {
+	float pxlx = (double) PIXELS_X / dev->width  * DPMM;
+	float pxly = (double) PIXELS_Y / dev->height * DPMM;
+	plP_setpxl(pxlx, pxly);
+    }
+#endif
 
 /* Initialize & redraw to window */
 /* The ordering of this block and the next is reversed from a simple redraw; */
