@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/06/09 20:30:50  mjl
+ * Revision 1.9  1994/07/01 22:38:09  mjl
+ * All display-dependent data broken off into a separate structure.  The X
+ * driver now saves only one of these XwDisplay structs for each physical
+ * X display.  These are then shared between all PLplot streams.  This
+ * ensures that using multiple streams -> multiple X windows does not cause
+ * abnormal termination due to running out of resources since most are now
+ * shared (allocated colors, graphics contexts, etc).  The drawback is that
+ * colors are no longer independent between windows, if created by a single
+ * process (but this can also be an advantage).
+ *
+ * Revision 1.8  1994/06/09  20:30:50  mjl
  * Changed to storing the Visual instead of VisualInfo pointer.
  *
  * Revision 1.7  1994/05/23  22:09:24  mjl
@@ -56,15 +66,46 @@
 typedef char * caddr_t;
 #endif
 
+/* Specify max number of displays in use */
+
+#define PLXDISPLAYS 100
+
+/* One of these holds the display info, shared by all streams on a given */
+/* display */
+
+typedef struct {
+    int		count;			/* Number of streams using display */
+    int		ixwd;			/* Specifies xwDisplay number */
+    char	*displayName;		/* Name of X display */
+    int		screen;			/* X screen */
+    Display	*display;		/* X display */
+    Visual	*visual;		/* X Visual */
+    GC		gc;			/* Graphics context */
+    Colormap	map;			/* Colormap */
+    unsigned	depth;			/* display depth */
+    int		color;			/* Set to 1 if a color output device */
+    int		ncol0;			/* Number of cmap 0 colors allocated */
+    int		ncol1;			/* Number of cmap 1 colors allocated */
+    XColor	cmap0[16];		/* Color entries for cmap 0 */
+    XColor	cmap1[256];		/* Color entries for cmap 1 */
+    XColor	fgcolor;		/* Foreground color (if grayscale) */
+    XColor	curcolor;		/* Current pen color */
+} XwDisplay;
+
 /* One of these holds the X driver state information */
 
 typedef struct {
+    XwDisplay	*xwd;			/* Pointer to display info */
+
+    int		is_main;		/* Set if the toplevel X window */
+    Window	window;			/* X window id */
+    Pixmap	pixmap;			/* Off-screen pixmap */
+
     int		exit_eventloop;		/* Breaks the event loop when set */
     long	init_width;		/* Initial window width */
     long	init_height;		/* Initial window height */
 
-    unsigned	width, height;		/* Current window dimensions */
-    unsigned	depth, border;		/* window depth & border size */
+    unsigned	width, height, border;	/* Current window dimensions */
 
     double	xscale_init;		/* initial pixels/lx (virt. coords) */
     double	yscale_init;		/* initial pixels/ly (virt. coords) */
@@ -73,26 +114,8 @@ typedef struct {
 
     short	xlen, ylen;		/* Lengths of device coord space */
 
-    int		color;			/* Set to 1 if a color output device */
-    int		ncol0;			/* Number of cmap 0 colors allocated */
-    int		ncol1;			/* Number of cmap 1 colors allocated */
-    XColor	cmap0[16];		/* Color entries for cmap 0 */
-    XColor	cmap1[256];		/* Color entries for cmap 1 */
-    XColor	bgcolor;		/* Background color */
-    XColor	fgcolor;		/* Foreground color (if grayscale) */
-    XColor	curcolor;		/* Current pen color */
-
     int		write_to_window;	/* Set if plotting direct to window */
     int		write_to_pixmap;	/* Set if plotting to pixmap */
-
-    int		is_main;		/* Set if the toplevel X window */
-    int		screen;			/* X screen */
-    Display	*display;		/* X display */
-    Window	window;			/* X window id */
-    Visual	*visual;		/* X Visual */
-    GC		gc;			/* Graphics context */
-    Colormap	map;			/* Colormap */
-    Pixmap	pixmap;			/* Off-screen pixmap */
 
     void (*MasterEH) (PLStream *, XEvent *);	/* Master X event handler */
 } XwDev;
