@@ -1346,6 +1346,17 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plinit();
 }
 
+static int plDispatchSequencer( const void *p1, const void *p2 )
+{
+    const PLDispatchTable* t1 = *(PLDispatchTable **) p1;
+    const PLDispatchTable* t2 = *(PLDispatchTable **) p2;
+
+/*     printf( "sorting: t1.name=%s t1.seq=%d t2.name=%s t2.seq=%d\n", */
+/*             t1->pl_DevName, t1->pl_seq, t2->pl_DevName, t2->pl_seq ); */
+
+    return t1->pl_seq - t2->pl_seq;
+}
+
 /*--------------------------------------------------------------------------*\
  * void plGetDev()
  *
@@ -1376,14 +1387,15 @@ plGetDev()
     plLoadDriver();
 
     n = plsc->device - 1;
-    plsc->dispatch_table = &dispatch_table[n];
+    plsc->dispatch_table = dispatch_table[n];
 }
 
 static void
 plInitDispatchTable()
 {
     char buf[300];
-    char *devnam, *devdesc, *driver, *tag;
+    char *devnam, *devdesc, *driver, *tag, *seqstr;
+    int seq;
     int i, j, n, driver_found, done=0;
 
 #ifdef ENABLE_DYNAMIC_DRIVERS
@@ -1408,22 +1420,25 @@ plInitDispatchTable()
 #endif
 
 /* Allocate space for the dispatch table. */
-    dispatch_table = malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable) );
+    dispatch_table = malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
 
 /* Copy the static devices into the dispatch table */
     for( n=0; n < nplstaticdevices; n++ )
     {
-        dispatch_table[n].pl_MenuStr = static_devices[n].pl_MenuStr;
-        dispatch_table[n].pl_DevName = static_devices[n].pl_DevName;
-        dispatch_table[n].pl_type = static_devices[n].pl_type;
-        dispatch_table[n].pl_init = static_devices[n].pl_init;
-        dispatch_table[n].pl_line = static_devices[n].pl_line;
-        dispatch_table[n].pl_polyline = static_devices[n].pl_polyline;
-        dispatch_table[n].pl_eop = static_devices[n].pl_eop;
-        dispatch_table[n].pl_bop = static_devices[n].pl_bop;
-        dispatch_table[n].pl_tidy = static_devices[n].pl_tidy;
-        dispatch_table[n].pl_state = static_devices[n].pl_state;
-        dispatch_table[n].pl_esc = static_devices[n].pl_esc;
+        dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
+
+        dispatch_table[n]->pl_MenuStr = static_devices[n].pl_MenuStr;
+        dispatch_table[n]->pl_DevName = static_devices[n].pl_DevName;
+        dispatch_table[n]->pl_type = static_devices[n].pl_type;
+        dispatch_table[n]->pl_seq = static_devices[n].pl_seq;
+        dispatch_table[n]->pl_init = static_devices[n].pl_init;
+        dispatch_table[n]->pl_line = static_devices[n].pl_line;
+        dispatch_table[n]->pl_polyline = static_devices[n].pl_polyline;
+        dispatch_table[n]->pl_eop = static_devices[n].pl_eop;
+        dispatch_table[n]->pl_bop = static_devices[n].pl_bop;
+        dispatch_table[n]->pl_tidy = static_devices[n].pl_tidy;
+        dispatch_table[n]->pl_state = static_devices[n].pl_state;
+        dispatch_table[n]->pl_esc = static_devices[n].pl_esc;
     }
     npldrivers = nplstaticdevices;
 
@@ -1450,22 +1465,28 @@ plInitDispatchTable()
         devnam  = strtok( buf, ":" );
         devdesc = strtok( 0, ":" );
         driver  = strtok( 0, ":" );
+        seqstr  = strtok( 0, ":" );
         tag     = strtok( 0, "\n" );
+
+        seq     = atoi(seqstr);
 
         n = npldrivers++;
 
+        dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
+
     /* Fill in the dispatch table entries. */
-        dispatch_table[n].pl_MenuStr = plstrdup(devdesc);
-        dispatch_table[n].pl_DevName = plstrdup(devnam);
-        dispatch_table[n].pl_type = 0;
-        dispatch_table[n].pl_init = 0;
-        dispatch_table[n].pl_line = 0;
-        dispatch_table[n].pl_polyline = 0;
-        dispatch_table[n].pl_eop = 0;
-        dispatch_table[n].pl_bop = 0;
-        dispatch_table[n].pl_tidy = 0;
-        dispatch_table[n].pl_state = 0;
-        dispatch_table[n].pl_esc = 0;
+        dispatch_table[n]->pl_MenuStr = plstrdup(devdesc);
+        dispatch_table[n]->pl_DevName = plstrdup(devnam);
+        dispatch_table[n]->pl_type = 0;
+        dispatch_table[n]->pl_seq = seq;
+        dispatch_table[n]->pl_init = 0;
+        dispatch_table[n]->pl_line = 0;
+        dispatch_table[n]->pl_polyline = 0;
+        dispatch_table[n]->pl_eop = 0;
+        dispatch_table[n]->pl_bop = 0;
+        dispatch_table[n]->pl_tidy = 0;
+        dispatch_table[n]->pl_state = 0;
+        dispatch_table[n]->pl_esc = 0;
 
     /* Add a record to the loadable device list */
         loadable_device_list[i].devnam = plstrdup(devnam);
@@ -1497,6 +1518,12 @@ plInitDispatchTable()
     }
 #endif
 
+/* Finally, we need to sort the list into presentation order, based on the
+   sequence number in the dispatch ttable entries. */
+
+    qsort( dispatch_table, npldrivers, sizeof(PLDispatchTable*),
+           plDispatchSequencer );
+
     dispatch_table_inited = 1;
 }
 
@@ -1522,9 +1549,9 @@ plSelectDev()
     if (*(plsc->DevName) != '\0' && *(plsc->DevName) != '?') {
 	length = strlen(plsc->DevName);
 	for (i = 0; i < npldrivers; i++) {
-	    if ((*plsc->DevName == *dispatch_table[i].pl_DevName) &&
+	    if ((*plsc->DevName == *dispatch_table[i]->pl_DevName) &&
 		(strncmp(plsc->DevName,
-			 dispatch_table[i].pl_DevName, length) == 0))
+			 dispatch_table[i]->pl_DevName, length) == 0))
 		break;
 	}
 	if (i < npldrivers) {
@@ -1549,8 +1576,8 @@ plSelectDev()
 	fprintf(stdout, "\nPlotting Options:\n");
 	for (i = 0; i < npldrivers; i++) {
 	    fprintf(stdout, " <%2d> %-10s %s\n", i + 1,
-		    dispatch_table[i].pl_DevName,
-		    dispatch_table[i].pl_MenuStr);
+		    dispatch_table[i]->pl_DevName,
+		    dispatch_table[i]->pl_MenuStr);
 	}
 	if (ipls == 0)
 	    fprintf(stdout, "\nEnter device number or keyword: ");
@@ -1568,7 +1595,7 @@ plSelectDev()
 	    length--;
 
 	for (i = 0; i < npldrivers; i++) {
-	    if ( ! strncmp(response, dispatch_table[i].pl_DevName,
+	    if ( ! strncmp(response, dispatch_table[i]->pl_DevName,
 			   (unsigned int) length))
 		break;
 	}
@@ -1585,7 +1612,7 @@ plSelectDev()
 	    plexit("plGetDev: Too many tries.");
     }
     plsc->device = dev;
-    strcpy(plsc->DevName, dispatch_table[dev - 1].pl_DevName);
+    strcpy(plsc->DevName, dispatch_table[dev - 1]->pl_DevName);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1605,7 +1632,7 @@ plLoadDriver(void)
     char *tag;
 
     int n=plsc->device - 1;
-    PLDispatchTable *dev = dispatch_table + n;
+    PLDispatchTable *dev = dispatch_table[n];
     PLLoadableDriver *driver = 0;
 
 /* If the dispatch table is already filled in, then either the device was
@@ -1755,9 +1782,9 @@ plgdevlst(char **p_menustr, char **p_devname, int *p_ndev, int type)
     int i, j;
 
     for (i = j = 0; i < npldrivers; i++) {
-	if (type < 0 || dispatch_table[i].pl_type == type) {
-	    p_menustr[j] = dispatch_table[i].pl_MenuStr;
-	    p_devname[j] = dispatch_table[i].pl_DevName;
+	if (type < 0 || dispatch_table[i]->pl_type == type) {
+	    p_menustr[j] = dispatch_table[i]->pl_MenuStr;
+	    p_devname[j] = dispatch_table[i]->pl_DevName;
 	    if (++j + 1 >= *p_ndev) {
 	        plwarn("plgdevlst:  too many devices");
 		break;
