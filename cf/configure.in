@@ -159,7 +159,7 @@ xterm:tek tek4010:tek tek4107:tek mskermit:tek \
 versaterm:tek vlt:tek conex:tek tek4010f:tek tek4107f:tek \
 linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd cgm:cgm psc:ps ps:ps xfig:xfig \
 ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
-imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk])
+imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:ps ntk:ntk])
 
 # Macro to set one driver enable value
 
@@ -817,7 +817,7 @@ if test "$enable_dyndrivers" = "yes"; then
 	    echo "xfig:Fig file:0:xfig.drv:31:xfig" >> drivers/drivers.db
 	    ;;
 	    pstex )
-	    echo "pstex:Postscript/LaTeX file:0:pstex.drv:41:pstex" >> drivers/drivers.db
+	    echo "pstex:Combined Postscript/LaTeX files:0:ps.drv:41:pstex" >> drivers/drivers.db
 	    ;;
 	    png )
 	    echo "png:PNG file:0:gd.drv:39:png" >> drivers/drivers.db

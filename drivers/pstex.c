@@ -17,24 +17,6 @@
  * Initialize device.
 \*--------------------------------------------------------------------------*/
 
-void plD_init_pstex		(PLStream *);
-void plD_line_pstex		(PLStream *, short, short, short, short);
-void plD_polyline_pstex		(PLStream *, short *, short *, PLINT);
-void plD_eop_pstex		(PLStream *);
-void plD_bop_pstex		(PLStream *);
-void plD_tidy_pstex		(PLStream *);
-void plD_state_pstex		(PLStream *, PLINT);
-void plD_esc_pstex		(PLStream *, PLINT, void *);
-
-extern void plD_init_psm		(PLStream *);
-extern void plD_init_psc		(PLStream *);
-extern void plD_line_ps		(PLStream *, short, short, short, short);
-extern void plD_polyline_ps	(PLStream *, short *, short *, PLINT);
-extern void plD_eop_ps		(PLStream *);
-extern void plD_bop_ps			(PLStream *);
-extern void plD_tidy_ps		(PLStream *);
-extern void plD_state_ps	(PLStream *, PLINT);
-extern void plD_esc_ps			(PLStream *, PLINT, void *);
 
 static void parse_str(const char *str, char *dest);
 static void proc_str (PLStream *pls, EscText *args);
@@ -48,7 +30,7 @@ static DrvOpt pstex_options[] = {{"color", DRV_INT, &color,
 
 void plD_dispatch_init_pstex( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  ="Postscript/LaTeX file" ;
+    pdt->pl_MenuStr  ="Combined Postscript/LaTeX files" ;
     pdt->pl_DevName  = "pstex";
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 41;

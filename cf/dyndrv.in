@@ -49,9 +49,6 @@ drivers/gd.drv : shared/gd$O libs
 drivers/cgm.drv : shared/cgm$O libs
 	$(SHLIB_BUILD) $@ $< @CDLIBS@ $(driverlibs)
 
-drivers/pstex.drv : shared/pstex$O drivers/ps.drv libs
-	(cd drivers; ln -sf ps.drv pstex.drv)
-
 drivers/tek.drv : shared/tek$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 

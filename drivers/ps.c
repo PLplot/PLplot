@@ -18,16 +18,6 @@
 void plD_dispatch_init_psm	( PLDispatchTable *pdt );
 void plD_dispatch_init_psc	( PLDispatchTable *pdt );
 
-void plD_init_psm		(PLStream *);
-void plD_init_psc		(PLStream *);
-void plD_line_ps		(PLStream *, short, short, short, short);
-void plD_polyline_ps		(PLStream *, short *, short *, PLINT);
-void plD_eop_ps			(PLStream *);
-void plD_bop_ps			(PLStream *);
-void plD_tidy_ps		(PLStream *);
-void plD_state_ps		(PLStream *, PLINT);
-void plD_esc_ps			(PLStream *, PLINT, void *);
-
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);

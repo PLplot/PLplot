@@ -48,4 +48,23 @@ typedef struct {
     int llx, lly, urx, ury, ptcnt;
 } PSDev;
 
+void plD_init_pstex		(PLStream *);
+void plD_line_pstex		(PLStream *, short, short, short, short);
+void plD_polyline_pstex		(PLStream *, short *, short *, PLINT);
+void plD_eop_pstex		(PLStream *);
+void plD_bop_pstex		(PLStream *);
+void plD_tidy_pstex		(PLStream *);
+void plD_state_pstex		(PLStream *, PLINT);
+void plD_esc_pstex		(PLStream *, PLINT, void *);
+
+void plD_init_psm		(PLStream *);
+void plD_init_psc		(PLStream *);
+void plD_line_ps		(PLStream *, short, short, short, short);
+void plD_polyline_ps	        (PLStream *, short *, short *, PLINT);
+void plD_eop_ps		        (PLStream *);
+void plD_bop_ps			(PLStream *);
+void plD_tidy_ps		(PLStream *);
+void plD_state_ps	        (PLStream *, PLINT);
+void plD_esc_ps			(PLStream *, PLINT, void *);
+
 #endif /* __PS_H__ */
