@@ -1,6 +1,23 @@
 /* $Id$
  * $Log$
- * Revision 1.77  1995/01/13 23:22:18  mjl
+ * Revision 1.78  1995/03/16 23:39:23  mjl
+ * Added include of ctype.h.  Added PLESC_SWIN driver escape function define,
+ * used to set plot window parameters.  Added defines for window parameter
+ * flags PLSWIN_DEVICE and PLSWIN_WORLD.  Obsoleted the PL_PARSE_OVERRIDE and
+ * PL_PARSE_MERGE flags as well as plParseInternalOpts() and plSetInternalOpt()
+ * function calls.  Eliminated the PLCursor, PLKey and PLMouse input structures
+ * in favor of a PLGraphicsIn structure, which is used for all graphics input.
+ * Changed the PLWindow struct to the name PLDisplay (holds display-oriented
+ * data) and added the width and height members.  Changed the plCWindow struct
+ * to the name PLWindow and tweaked the types of the structure members to be
+ * more relevant.  Eliminated defines and prototypes for the obsolete plsasp()
+ * and plslpb() API functions.  Changed/added prototypes for plsKeyEH and
+ * plsButtonEH to expect first handler argument to receive a (PLGraphicsIn *).
+ * Changed/added prototypes for parse routines (see plargs.c).  plGetCursor()
+ * also now expects a (PLGraphicsIn *), and prototype for plTranslateCursor()
+ * added.
+ *
+ * Revision 1.77  1995/01/13  23:22:18  mjl
  * Changed prototype for plscmap1l().
  *
  * Revision 1.76  1995/01/06  07:50:56  mjl
@@ -20,45 +37,6 @@
  *
  * Revision 1.72  1994/09/23  07:48:24  mjl
  * Fixed prototype for pltkMain().
- *
- * Revision 1.71  1994/09/16  04:50:07  mjl
- * Bumped version to 4.99j.
- *
- * Revision 1.70  1994/08/25  05:19:18  mjl
- * Bumped version number.
- *
- * Revision 1.69  1994/07/29  20:17:02  mjl
- * Added typedef for new PLCursor struct and driver escape code for the get
- * cursor operation (contributed by Paul Casteels).  Added prototypes for
- * plmap() and plmeridians() (contributed by Wesley Ebisuzaki).
- *
- * Revision 1.68  1994/07/28  08:04:49  mjl
- * Bumped version number, revision to various comments.
- *
- * Revision 1.67  1994/07/20  06:07:09  mjl
- * Changed names and prototypes for the new 3d functions -- now plline3(),
- * plpoin3(), and plpoly3().
- *
- * Revision 1.66  1994/07/19  22:14:45  furnish
- * Stuff for pl3poly().
- *
- * Revision 1.65  1994/07/15  20:37:12  furnish
- * Added routines pl3line and pl3poin for drawing lines and points in 3
- * space.  Added a new example program, and dependency info to build it.
- *
- * Revision 1.64  1994/07/12  19:18:00  mjl
- * Fixed prototype for plshade().
- *
- * Revision 1.63  1994/06/30  18:33:36  mjl
- * Now includes math.h and string.h, since I was tired of getting burned by
- * leaving these out (and having strange run-time errors as a result).  The
- * PLINT type now is an "int" by default, except on MSDOS where it's a long
- * (16 bits not being enough).  The latter can be modified under 32 bit
- * compilation systems to use an int also.  So currently, you can use an
- * int as a PLINT on all systems except MSDOS, there you must use PLINT.
- *
- * Revision 1.62  1994/06/16  19:48:36  mjl
- * Inserted prototype for pltkMain(), removed prototype for plframeCmd().
 */
 
 /*
@@ -90,7 +68,7 @@
 
 #define PLPLOT_VERSION "4.99j"
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *    USING PLplot
  * 
  * To use PLplot from C or C++, it is only necessary to 
@@ -114,10 +92,10 @@
  * user code to a minimum.  All the PLplot source files actually include
  * "plplotP.h", which includes this file as well as all the internally-
  * visible declarations, etc.  
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 /* The majority of PLplot source files require these, so.. */
-/* Under ANSI C, they can be included any number of times */
+/* Under ANSI C, they can be included any number of times. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,8 +104,9 @@
 
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *        SYSTEM IDENTIFICATION
  *
  * Several systems are supported directly by PLplot.  In order to avoid
@@ -142,7 +121,7 @@
  * __linux                    Linux for i386
  * (others...)
  *
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #ifdef unix			/* the old way */
 #ifndef __unix
@@ -169,7 +148,7 @@
 
 #define PLARGS(a)	a
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Base types for PLplot
  *
  * Only those that are necessary for function prototypes are defined here.
@@ -185,7 +164,7 @@
  * short is currently used for device page coordinates, so they are
  * bounded by (-32767, 32767).  This gives a max resolution of about 3000
  * dpi, and improves performance in some areas over using a PLINT.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
 typedef double PLFLT;
@@ -203,9 +182,9 @@ typedef int PLINT;
 
 typedef void* PLPointer;
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Complex data types and other good stuff
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 /* Switches for escape function call. */
 /* Some of these are obsolete but are retained in order to process
@@ -224,6 +203,12 @@ typedef void* PLPointer;
 #define PLESC_FLUSH		11	/* flush output */
 #define PLESC_EH		12      /* handle Window events */
 #define PLESC_GETC		13	/* get cursor position */
+#define PLESC_SWIN		14	/* set window parameters */
+
+/* Window parameter tags */
+
+#define PLSWIN_DEVICE		1	/* device coordinates */
+#define PLSWIN_WORLD		2	/* world coordinates */
 
 /* PLplot Option table & support constants */
 
@@ -251,10 +236,16 @@ typedef void* PLPointer;
 #define PL_PARSE_NODELETE	0x0004	/* Don't delete options after */
 					/* processing */
 #define PL_PARSE_SHOWALL	0x0008	/* Show invisible options */
-#define PL_PARSE_OVERRIDE	0x0010	/* Overrides internal option(s) */
+#define PL_PARSE_OVERRIDE	0x0010	/* Obsolete */
 #define PL_PARSE_NOPROGRAM	0x0020	/* Program name NOT in *argv[0].. */
 #define PL_PARSE_NODASH		0x0040	/* Set if leading dash NOT required */
-#define PL_PARSE_MERGE		0x0080	/* Merge table with internal one */
+
+/* Obsolete names */
+
+#define plParseInternalOpts(a, b, c)	plParseOpts(a, b, c)
+#define plSetInternalOpt(a, b)		plSetOpt(a, b)
+
+/* Option table definition */
 
 typedef struct {
     char *opt;
@@ -266,40 +257,37 @@ typedef struct {
     char *desc;
 } PLOptionTable;
 
-/* PLplot Key structure */
+/* PLplot Graphics Input structure */
 
-#define PL_NKEYSTRING 20
-
-typedef struct {
-    unsigned long code;
-    char string[PL_NKEYSTRING];
-} PLKey;
-
-/* PLplot Mouse structure */
+#define PL_MAXKEY 16
 
 typedef struct {
-    int button;
-    int state;
-    PLFLT x;
-    PLFLT y;
-} PLMouse;
+    int type;			/* of event (CURRENTLY UNUSED) */
+    unsigned int state;		/* key or button mask */
+    unsigned int keysym;	/* key selected */
+    unsigned int button;	/* mouse button selected */
+    char string[PL_MAXKEY];	/* translated string */
+    int pX, pY;			/* absolute device coordinates of pointer */
+    float dX, dY;		/* relative device coordinates of pointer */
+    PLFLT wX, wY;		/* world coordinates of pointer */
+} PLGraphicsIn;
 
-/* Window coordinate structure */
+/* Structure for describing the plot window */
 
 #define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
 
 typedef struct {
-    PLFLT dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
+    float dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
     PLFLT wxmi, wxma, wymi, wyma;	/* min, max window world coords */
-} plCWindow;
+} PLWindow;
 
-/* Window structure for doing resizes without calling the X driver directly */
+/* Structure for doing display-oriented operations via escape commands */
 /* May add other attributes in time */
 
 typedef struct {
-    unsigned int width;
-    unsigned int height;
-} PLWindow;
+    unsigned int x, y;			/* upper left hand corner */
+    unsigned int width, height;		/* window dimensions */
+} PLDisplay;
 
 /* Macro used (in some cases) to ignore value of argument */
 /* I don't plan on changing the value so you can hard-code it */
@@ -379,15 +367,7 @@ typedef struct {
     int rev;			/* if set, interpolate through h=0 */
 } PLControlPt;
 
-/* For returning the coordinates of the cursor */
-
-typedef struct {
-    char c;			/* character pressed at cursor position */
-    PLFLT dX, dY;		/* relative device coordinates of cursor */
-    PLFLT wX, wY;		/* world coordinates of cursor */
-} PLCursor;
-
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *		BRAINDEAD-ness
  *
  * Some systems allow the Fortran & C namespaces to clobber each other.
@@ -434,7 +414,7 @@ typedef struct {
  * with either stub routines for the inevitable data conversions, or a
  * different API.  The former is what is used here, but is made far more
  * difficult in a braindead shared Fortran/C namespace.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #ifndef BRAINDEAD
 #define BRAINDEAD
@@ -508,7 +488,6 @@ typedef struct {
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
-#define    plsasp	c_plsasp
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
 #define    plscmap1	c_plscmap1
@@ -529,7 +508,6 @@ typedef struct {
 #define    plsfnam	c_plsfnam
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
-#define    plslpb	c_plslpb
 #define    plsmaj	c_plsmaj
 #define    plsmin	c_plsmin
 #define    plsori	c_plsori
@@ -618,7 +596,6 @@ typedef struct {
 #define    c_plreplot	plreplot
 #define    c_plrgb	plrgb
 #define    c_plrgb1	plrgb1
-#define    c_plsasp	plsasp
 #define    c_plschr	plschr
 #define    c_plscmap0	plscmap0
 #define    c_plscmap1	plscmap1
@@ -639,7 +616,6 @@ typedef struct {
 #define    c_plsfnam	plsfnam
 #define    c_plshade	plshade
 #define    c_plshade1	plshade1
-#define    c_plslpb	plslpb
 #define    c_plsmaj	plsmaj
 #define    c_plsmin	plsmin
 #define    c_plsori	plsori
@@ -680,9 +656,9 @@ typedef struct {
 
 #endif /* __PLSTUBS_H__ */
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  *		Function Prototypes
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -1040,11 +1016,6 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b);
 void
 c_plrgb1(PLINT r, PLINT g, PLINT b);
 
-/* Obsolete.  Use page driver interface instead. */
-
-void
-c_plsasp(PLFLT asp);
-
 /* Set character height. */
 
 void
@@ -1177,11 +1148,6 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
-
-/* I've canned this for now */
-
-void
-c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma);
 
 /* Set up lengths of major tick marks. */
 
@@ -1324,7 +1290,13 @@ plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
 /* Set the function pointer for the keyboard event handler */
 
 void
-plsKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data);
+plsKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void *KeyEH_data);
+
+/* Set the function pointer for the (mouse) button event handler */
+
+void
+plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
+	    void *ButtonEH_data);
 
 /* Sets an optional user exit handler. */
 
@@ -1393,36 +1365,40 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data);
 
 	/* Command line parsing utilities */
 
-/* Front-end to Syntax() for external use. */
+/* Clear internal option table info structure. */
 
 void
-plSyntax(PLINT mode);
+plClearOpts(void);
 
-/* Front-end to Help() for external use. */
-
-void
-plHelp(PLINT mode);
-
-/* Print usage notes. */
+/* Reset internal option table info structure. */
 
 void
-plNotes(void);
+plResetOpts(void);
 
-/* Process PLplot internal options list */
+/* Merge user option table into internal info structure. */
 
 int
-plParseInternalOpts(int *p_argc, char **argv, PLINT mode);
+plMergeOpts(PLOptionTable *options, char *name, char **notes);
 
-/* Process options list */
+/* Set the strings used in usage and syntax messages. */
 
-int
-plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
-	    void (*usage_handler) (char *));
+void
+plSetUsage(char *program_string, char *usage_string);
 
 /* Process input strings, treating them as an option and argument pair. */
 
 int
-plSetInternalOpt(char *opt, char *optarg);
+plSetOpt(char *opt, char *optarg);
+
+/* Process options list using current options info. */
+
+int
+plParseOpts(int *p_argc, char **argv, PLINT mode);
+
+/* Print usage & syntax message. */
+
+void
+plOptUsage(void);
 
 	/* Miscellaneous */
 
@@ -1492,10 +1468,15 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 void
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
-/* Wait for right button mouse event and translate to world coordinates */
+/* Wait for graphics input event and translate to world coordinates */
 
 int
-plGetCursor(PLCursor *cursor);
+plGetCursor(PLGraphicsIn *gin);
+
+/* Translates relative device coordinates to world coordinates.  */
+
+int
+plTranslateCursor(PLGraphicsIn *gin);
 
 /* Utility functions for use with Tk */
 
