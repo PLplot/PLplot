@@ -73,7 +73,7 @@
       flux and will be fleshed out in more detail in later updates.
     </para>
     <para>
-      Some of the improvements in PLplot 4.0 include: the addition of
+      Some of the improvements in PLplot 5.0 include: the addition of
       several new routines to enhance usage from Fortran and design of a
       portable C to Fortran interface.  Additional support was added for
       coordinate mappings in contour plots and some bugs fixed.  New
@@ -92,7 +92,7 @@
       and maintainers of PLplot.
     </para>
     <para>
-      We have attempted to keep PLplot 4.0 backward compatible with
+      We have attempted to keep PLplot 5.0 backward compatible with
       previous versions of PLplot.  However, some functions are now
       obsolete, and many new ones have been added (e.g.  new contouring
       functions, variable get/set routines, functions that affect label
@@ -101,9 +101,10 @@
       linking to the new PLplot library.
     </para>
     <para>
-      PLplot is currently known to work on the following systems: SUNOS,
-      HP-UX, A/IX, DG/UX, UNICOS, Ultrix, VMS, Amiga/Exec, MS-DOS, OS/2,
-      and NeXT, with more expected.  The PLplot package is freely
+      PLplot is currently known to work on the following systems: 
+      Unix/Linux, OS/2, Mac, MS-DOS, and Win9x.  The Unix/Linux version is
+      the best supported of these possibilities.
+      The PLplot package is freely
       distributable, but <emphasis>not</emphasis> in the public domain.
       See <xref linkend="copyrights"/> for distribution criteria.
     </para>
