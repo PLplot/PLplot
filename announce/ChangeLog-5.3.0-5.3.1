@@ -1,3 +1,158 @@
+Commit from rlaboiss (2004-06-24 14:49 CEST)
+--------------------
+
+Fixed typos recently introduced, which were screwing up the tarball build.
+After making changes to any XML file, please run "make validate".
+
+  plplot  doc/docbook/src/api.xml  1.68
+
+
+Commit from arjenmarkus (2004-06-24 10:32 CEST)
+-----------------------
+
+Small corrections and extensions made to the documentation of the general API
+
+  plplot  doc/docbook/src/api.xml  1.67
+
+
+Commit from andrewross (2004-06-24 10:08 CEST)
+----------------------
+
+Make plstream::tr[012] and plstream::fill static member functions so they
+can be used as arguments to the contouring and shading functions.
+Update examples to use these rather than the C versions.
+Fixes make check failure on some of the C++ examples.
+
+  plplot  bindings/c++/plstream.cc  1.27
+  plplot  bindings/c++/plstream.h   1.20
+  plplot  examples/c++/x09.cc       1.6
+  plplot  examples/c++/x15.cc       1.6
+  plplot  examples/c++/x16.cc       1.7
+  plplot  examples/c++/x22.cc       1.8
+
+
+Commit from airwin (2004-06-24 04:55 CEST)
+------------------
+
+pltcl calls functions defined in libplplot.  It is linked to the
+tcl wrapper library libplplottcltkd which in turn is linked to libplplot, and
+libtool figures out how to resolve all the symbols in pltcl from this.  Also,
+at run-time for installed examples all is well since libtools sets the
+rpath options appropriately.
+
+However at run-time for make check in the build tree there is what I believe
+is a bug in libtool since it appears that although all the relevant
+information is available in the relevant *.la files, the run-time loader is
+not properly informed of the location of libplplot in the build tree.  You
+must set LD_LIBRARY_PATH to point to the build-tree location of libplplot or
+else install the libplplot library (which opens up the can of worms that if
+you rely on the installed version, it might be out of date relative to build
+tree changes you are testing).
+
+To work around this bug in libtool for the make check case, I now explictly
+link pltcl to libplplot. This change allows make check to work at run time
+for all the tcl examples, but this redundant linking should not be necessary
+and should be removed when the libtool "make check" bug is sorted out.
+
+  plplot  utils/Makefile.am  1.11
+
+
+Commit from airwin (2004-06-24 03:19 CEST)
+------------------
+
+Replace C calls by C++ calls to remove direct dependence on libplplot that
+was screwing up make check.
+
+  plplot  examples/c++/x20.cc  1.7
+
+
+Commit from airwin (2004-06-24 03:13 CEST)
+------------------
+
+Get rid of redundant x01 execution.
+
+  plplot  test/test_cxx.sh  1.12
+
+
+Commit from airwin (2004-06-24 02:57 CEST)
+------------------
+
+Replace C calls by C++ calls to remove direct dependence on libplplot that
+was screwing up make check.
+
+  plplot  examples/c++/x01cc.cc  1.14
+
+
+Commit from airwin (2004-06-24 02:06 CEST)
+------------------
+
+Get rid of pedantic warnings for gcc.  The change to a constant dimension
+(according to Don Spong's test) is required for the xlc compiler on AIX.
+
+  plplot  src/plvect.c  1.7
+
+
+Commit from airwin (2004-06-23 01:36 CEST)
+------------------
+
+Get rid of --disable tcl make install bug found by Ullah.
+
+  plplot  examples/tk/Makefile.am  1.18
+
+
+Commit from airwin (2004-06-22 23:32 CEST)
+------------------
+
+For tests use individual standalone python and tcl scripts rather combined
+python and tcl scripts which produce results lumped into one multi-paged
+file.
+
+  plplot  test/test_python.sh.in  1.7
+  plplot  test/test_tcl.sh        1.11
+
+
+Commit from airwin (2004-06-22 23:24 CEST)
+------------------
+
+Install and distribute new python standalone scripts.
+
+  plplot  examples/python/Makefile.am  1.15
+
+
+Commit from airwin (2004-06-22 22:59 CEST)
+------------------
+
+Initial commit of x python examples that stand on their own.
+
++ plplot  examples/python/x01  1.1
++ plplot  examples/python/x02  1.1
++ plplot  examples/python/x03  1.1
++ plplot  examples/python/x04  1.1
++ plplot  examples/python/x05  1.1
++ plplot  examples/python/x06  1.1
++ plplot  examples/python/x07  1.1
++ plplot  examples/python/x08  1.1
++ plplot  examples/python/x09  1.1
++ plplot  examples/python/x10  1.1
++ plplot  examples/python/x11  1.1
++ plplot  examples/python/x12  1.1
++ plplot  examples/python/x13  1.1
++ plplot  examples/python/x14  1.1
++ plplot  examples/python/x15  1.1
++ plplot  examples/python/x16  1.1
++ plplot  examples/python/x17  1.1
++ plplot  examples/python/x18  1.1
++ plplot  examples/python/x22  1.1
+
+
+Commit from rlaboiss (2004-06-20 19:54 CEST)
+--------------------
+
+Update copyright holder info.
+
+  plplot  bindings/octave/PLplot/figure.m  1.21
+
+
 Commit from rlaboiss (2004-06-18 08:18 CEST)
 --------------------
 
@@ -2411,7 +2566,7 @@ Improve the swig.m4 subset of acinclude.m4.
 * Improve the messages.
 
 * Disable swig in a self-documenting way when the version check does not
-  succeed. 
+  succeed.
 
   plplot  acinclude.m4  1.19
 
@@ -4359,5 +4514,11 @@ Fix two memory leaks in xwin driver due to unfreed memory. There are
 still more in there but some may be Xlib's fault.
 
   plplot  drivers/xwin.c  1.119
+
+
+
+Local Variables:
+mode: indented-text
+End:
 
 
