@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.2  1994/04/25 18:50:18  mjl
+# Revision 1.3  1994/06/17 21:22:15  mjl
+# Removed check for color system before setting resources.  Eliminates some
+# problems with the Tk/DP drivers on mono displays.
+#
+# Revision 1.2  1994/04/25  18:50:18  mjl
 # Added resource setting for scale fonts (used in palette widgets).
 # Also added variables governing fast and faster scrolling speed.
 #
@@ -74,50 +78,48 @@ proc pldefaults {} {
 
 #----------------------------------------------------------------------------
 # Color-related resources. 
-# Sets colors in a Motif-like way, but only if on a color system.
+# Sets colors in a Motif-like way.
+# It doesn't actually hurt to do this if not on a color system.
 
-    if {[tk colormode .] == "color"} {
+    set gen_bg		lightgray
+    set gen_fg		black
+    set gen_darker_bg	gray
+    set gen_darker_fg	black
+    set gen_active_bg	$gen_bg
+    set gen_active_fg	$gen_fg
 
-	set gen_bg		lightgray
-	set gen_fg		black
-	set gen_darker_bg	gray
-	set gen_darker_fg	black
-	set gen_active_bg	$gen_bg
-	set gen_active_fg	$gen_fg
-
-	option add *background			$gen_bg
-	option add *foreground			$gen_fg
-	option add *activeBackground      	$gen_active_bg
-	option add *activeForeground      	$gen_active_fg
-	option add *disabledForeground		gray45
-	option add *Checkbutton.selector	yellow
-	option add *Radiobutton.selector	yellow
-	option add *Entry.background		#c07070
-	option add *Entry.foreground		black
-	option add *Entry.insertBackground	black
-	option add *Listbox.background		$gen_darker_bg
-	option add *Scale.foreground		$gen_fg
-	option add *Scale.activeForeground	$gen_bg
-	option add *Scale.background		$gen_bg
-	option add *Scale.sliderForeground	$gen_bg
-	option add *Scale.sliderBackground	$gen_darker_bg
-	option add *Scrollbar.foreground	$gen_bg
-	option add *Scrollbar.activeForeground	$gen_bg
-	option add *Scrollbar.background	$gen_darker_bg
-
-# This specifies the default plplot widget background color.
-
-	option add *plwin.background		black
+    option add *background			$gen_bg
+    option add *foreground			$gen_fg
+    option add *activeBackground      		$gen_active_bg
+    option add *activeForeground      		$gen_active_fg
+    option add *disabledForeground		gray45
+    option add *Checkbutton.selector		yellow
+    option add *Radiobutton.selector		yellow
+    option add *Entry.background		#c07070
+    option add *Entry.foreground		black
+    option add *Entry.insertBackground		black
+    option add *Listbox.background		$gen_darker_bg
+    option add *Scale.foreground		$gen_fg
+    option add *Scale.activeForeground		$gen_bg
+    option add *Scale.background		$gen_bg
+    option add *Scale.sliderForeground		$gen_bg
+    option add *Scale.sliderBackground		$gen_darker_bg
+    option add *Scrollbar.foreground		$gen_bg
+    option add *Scrollbar.activeForeground	$gen_bg
+    option add *Scrollbar.background		$gen_darker_bg
 
 # End of page indicator
 
-	option add *leop.off			$gen_bg
-	option add *leop.on			gray45
+    option add *leop.off			$gen_bg
+    option add *leop.on				gray45
 
+# This specifies the default plplot widget background color.
+# A white background looks better on grayscale or mono.
+
+    if {[tk colormode .] == "color"} {
+	option add *plwin.background		black
     } else {
-
 	option add *plwin.background		white
-
     }
 
 #----------------------------------------------------------------------------
