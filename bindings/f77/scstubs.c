@@ -10,6 +10,18 @@
 #include "plstubs.h"
 
 void
+PL_SETCONTLABELFORMAT(PLINT *lexp, PLINT *sigdig)
+{
+    c_pl_setcontlabelformat(*lexp, *sigdig);
+}
+
+void
+PL_SETCONTLABELPARAM(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
+{
+    c_pl_setcontlabelparam(*offset, *size, *spacing, *active);
+}
+
+void
 PLADV(PLINT *sub)
 {
     c_pladv(*sub);
@@ -29,7 +41,7 @@ PLBIN(PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center)
 }
 
 void
-PLBOP()
+PLBOP(void)
 {
     c_plbop();
 }
@@ -49,6 +61,18 @@ PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
     c_plbox3(xopt, xlabel, *xtick, *nxsub,
 	     yopt, ylabel, *ytick, *nysub,
 	     zopt, zlabel, *ztick, *nzsub);
+}
+
+void
+PLCALC_WORLD(PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window)
+{
+    c_plcalc_world(*rx, *ry, wx, wy, window);
+}
+
+void
+PLCLEAR(void)
+{
+    c_plclear();
 }
 
 void
@@ -72,7 +96,13 @@ PLCOL(PLINT *icol)
 }
 
 void
-PLEND()
+PLCPSTRM(PLINT *iplsr, PLINT *flags)
+{
+    c_plcpstrm(*iplsr, *flags);
+}
+
+void
+PLEND(void)
 {
     c_plend();
 }
@@ -91,7 +121,7 @@ PLENV(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 }
 
 void
-PLEOP()
+PLEOP(void)
 {
     c_pleop();
 }
@@ -121,6 +151,12 @@ PLFILL(PLINT *n, PLFLT *x, PLFLT *y)
 }
 
 void
+PLFILL3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z)
+{
+    c_plfill3(*n, x, y, z);
+}
+
+void
 PLFLUSH(void)
 {
     c_plflush();
@@ -145,9 +181,45 @@ PLGCHR(PLFLT *chrdef, PLFLT *chrht)
 }
 
 void
+PLGCOL0(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b)
+{
+    c_plgcol0(*icol0, r, g, b);
+}
+
+void
+PLGCOLBG(PLINT *r, PLINT *g, PLINT *b)
+{
+    c_plgcolbg(r, g, b);
+}
+
+void
+PLGCOMPRESSION(PLINT *compression)
+{
+    c_plgcompression(compression);
+}
+
+void
 PLGDEV7(char *dev)
 {
     c_plgdev(dev);
+}
+
+void
+PLGDIDEV(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy)
+{
+    c_plgdidev(p_mar, p_aspect, p_jx, p_jy);
+}
+
+void
+PLGDIORI(PLFLT *p_rot)
+{
+    c_plgdiori(p_rot);
+}
+
+void
+PLGDIPLT(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
+{
+    c_plgdiplt(p_xmin, p_ymin, p_xmax, p_ymax);
 }
 
 void
@@ -176,9 +248,19 @@ PLGPAGE(PLFLT *xpmm, PLFLT *ypmm, PLINT *xwid, PLINT *ywid,
 }
 
 void
-PLGRA()
+PLGRA(void)
 {
     c_plgra();
+}
+
+void
+PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts,
+	   PLFLT *xg, PLINT *nptsx, PLFLT *yg,  PLINT *nptsy,
+	   PLFLT **zg, PLINT *type, PLFLT *data)
+{
+    c_plgriddata(x, y, z, *npts,
+		 xg, *nptsx, yg, *nptsy,
+		 zg, *type, *data);
 }
 
 void
@@ -197,6 +279,18 @@ void
 PLGVER7(char *ver)
 {
     c_plgver(ver);
+}
+
+void
+PLGVPD(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+{
+    c_plgvpd(p_xmin, p_xmax, p_ymin, p_ymax);
+}
+
+void
+PLGVPW(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+{
+    c_plgvpw(p_xmin, p_xmax, p_ymin, p_ymax);
 }
 
 void
@@ -249,6 +343,12 @@ PLLAB7(char *xlab, char *ylab, char *title)
 }
 
 void
+PLLIGHTSOURCE(PLFLT *x, PLFLT *y, PLFLT *z)
+{
+    c_pllightsource(*x, *y, *z);
+}
+
+void
 PLLINE(PLINT *n, PLFLT *x, PLFLT *y)
 {
     c_plline(*n, x, y);
@@ -264,6 +364,12 @@ void
 PLLSTY(PLINT *lin)
 {
     c_pllsty(*lin);
+}
+
+void
+PLMKSTRM(PLINT *p_strm)
+{
+    c_plmkstrm(p_strm);
 }
 
 void
@@ -315,6 +421,12 @@ PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text)
 }
 
 void
+PLREPLOT(void)
+{
+    c_plreplot();
+}
+
+void
 PLRGB(PLFLT *red, PLFLT *green, PLFLT *blue)
 {
     c_plrgb(*red, *green, *blue);
@@ -339,15 +451,15 @@ PLSCMAP0(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0)
 }
 
 void
-PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
-{
-    c_plscmap1(r, g, b, *ncol1);
-}
-
-void
 PLSCMAP0N(PLINT *n)
 {
     c_plscmap0n(*n);
+}
+
+void
+PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
+{
+    c_plscmap1(r, g, b, *ncol1);
 }
 
 void
@@ -355,6 +467,12 @@ PLSCMAP1L(PLINT *itype, PLINT *npts, PLFLT *intensity,
 	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
 {
     c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, rev);
+}
+
+void
+PLSCMAP1N(PLINT *n)
+{
+    c_plscmap1n(*n);
 }
 
 void
@@ -376,15 +494,59 @@ PLSCOLOR(PLINT *color)
 }
 
 void
+PLSCOMPRESSION(PLINT *compression)
+{
+    c_plscompression(*compression);
+}
+
+void
 PLSDEV7(char *dev)
 {
     c_plsdev(dev);
 }
 
 void
-PLSESC7(PLINT *esc)
+PLSDIDEV(PLFLT *mar, PLFLT *aspect, PLFLT *jx, PLFLT *jy)
+{
+    c_plsdidev(*mar, *aspect, *jx, *jy);
+}
+
+void
+PLSDIMAP(PLINT *dimxmin, PLINT *dimxmax, PLINT *dimymin, PLINT *dimymax,
+	 PLFLT *dimxpmm, PLFLT *dimypmm)
+{
+    c_plsdimap(*dimxmin, *dimxmax, *dimymin, *dimymax,
+	       *dimxpmm, *dimypmm);
+}
+
+void
+PLSDIORI(PLFLT *rot)
+{
+    c_plsdiori(*rot);
+}
+
+void
+PLSDIPLT(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
+{
+    c_plsdiplt(*xmin, *ymin, *xmax, *ymax);
+}
+
+void
+PLSDIPLZ(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
+{
+    c_plsdiplz(*xmin, *ymin, *xmax, *ymax);
+}
+
+void
+PLSESC(PLINT *esc)
 {
     c_plsesc((char) *esc);
+}
+
+void
+PLSETOPT7(char *opt, char *optarg)
+{
+    c_plsetopt(opt, optarg);
 }
 
 void
@@ -406,15 +568,15 @@ PLSMAJ(PLFLT *def, PLFLT *scale)
 }
 
 void
-PLSMIN(PLFLT *def, PLFLT *scale)
+PLSMEM(PLINT *maxx, PLINT *maxy, void *plotmem)
 {
-    c_plsmin(*def, *scale);
+    c_plsmem(*maxx, *maxy, plotmem);
 }
 
 void
-PLSETOPT7(char *opt, char *optarg)
+PLSMIN(PLFLT *def, PLFLT *scale)
 {
-    c_plsetopt(opt, optarg);
+    c_plsmin(*def, *scale);
 }
 
 void
@@ -467,6 +629,36 @@ PLSTART7(char *devname, PLINT *nx, PLINT *ny)
 }
 
 void
+PLSTRIPA(PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y)
+{
+    c_plstripa(*id, *pen, *x, *y);
+}
+
+void
+PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
+	  PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
+	  PLFLT *xlpos, PLFLT *ylpos,
+	  PLINT *y_ascl, PLINT *acc,
+	  PLINT *colbox, PLINT *collab,
+	  PLINT *colline, PLINT *styline, char **legline,
+	  char *labx, char *laby, char *labtop)
+{
+    c_plstripc(id, xspec, yspec,
+	       *xmin, *xmax, *xjump, *ymin, *ymax,
+	       *xlpos, *ylpos,
+	       *y_ascl, *acc,
+	       *colbox, *collab,
+	       colline, styline, legline,
+	       labx, laby, labtop);
+}
+
+void
+PLSTRIPD(PLINT *id)
+{
+    c_plstripd(*id);
+}
+
+void
 PLSTYL(PLINT *n, PLINT *mark, PLINT *space)
 {
     c_plstyl(*n, mark, space);
@@ -503,7 +695,7 @@ PLSZAX(PLINT *digmax, PLINT *digits)
 }
 
 void
-PLTEXT()
+PLTEXT(void)
 {
     c_pltext();
 }
@@ -527,7 +719,7 @@ PLVPOR(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 }
 
 void
-PLVSTA()
+PLVSTA(void)
 {
     c_plvsta();
 }
@@ -553,3 +745,10 @@ PLWIND(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {
     c_plwind(*xmin, *xmax, *ymin, *ymax);
 }
+
+void
+PLXORMOD(PLINT *mode, PLINT *status)
+{
+    c_plxormod(*mode, status);
+}
+
