@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/22 17:04:56  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.5  1992/11/07 07:48:47  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.4  1992/10/22  17:04:56  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.3  1992/09/30  18:24:58  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -19,6 +23,7 @@
 
 	PLPLOT PostScript device driver.
 */
+static int dummy;
 #ifdef PS
 
 #include <stdio.h>
@@ -85,20 +90,25 @@ psinit (PLStream *pls)
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
-    dev->xmin = 0;
-    dev->xmax = PSX;
-    dev->ymin = 0;
-    dev->ymax = PSY;
 
     setpxl((PLFLT) 11.81, (PLFLT) 11.81);	/* 300 dpi */
 
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    if (!!pls->orient)
-	setphy(0, PSX, 0, PSY);
-    else
-	setphy(0, PSY, 0, PSX);
+    dev->xmin = 0;
+    dev->ymin = 0;
+
+    if (pls->orient) {
+	dev->xmax = PSX;
+	dev->ymax = PSY;
+    }
+    else {
+	dev->xmax = PSY;
+	dev->ymax = PSX;
+    }
+
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
     /* Header comments into PostScript file */
 
@@ -210,10 +220,8 @@ psinit (PLStream *pls)
 void 
 psline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1, y1, x2, y2;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     PLINT ori;
-
-    x1 = (int) x1a; y1 = (int) y1a; x2 = (int) x2a; y2 = (int) y2a;
 
     if (pls->linepos + 21 > LINELENGTH) {
 	putc('\n', pls->OutFile);
@@ -227,7 +235,7 @@ psline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    ori = pls->orient; pls->orient = ~pls->orient;
+    ori = pls->orient; pls->orient = !pls->orient;
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     pls->orient = ori;
 

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:52  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/11/07 07:48:41  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/09/30  18:24:52  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:42  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -16,6 +20,7 @@
 
 	PLPLOT hp7580 device driver.
 */
+static int dummy;
 #ifdef HP7580
 
 #include <stdio.h>
@@ -66,19 +71,24 @@ hp7580init (PLStream *pls)
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
-    dev->xmin = HPXMIN;
-    dev->xmax = HPXMAX;
-    dev->ymin = HPYMIN;
-    dev->ymax = HPYMAX;
 
     setpxl((PLFLT) 40., (PLFLT) 40.);
 
-    if (!pls->orient)
-	setphy(HPXMIN, HPXMAX, HPYMIN, HPYMAX);
-    else
-	setphy(HPYMIN, HPYMAX, HPXMIN, HPXMAX);
+    if (!pls->orient) {
+	dev->xmin = HPXMIN;
+	dev->xmax = HPXMAX;
+	dev->ymin = HPYMIN;
+	dev->ymax = HPYMAX;
+    }
+    else {
+	dev->xmin = HPYMIN;
+	dev->xmax = HPYMAX;
+	dev->ymin = HPXMIN;
+	dev->ymax = HPXMAX;
+    }
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n", ESC, ESC, ESC);
+    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n", ESC,ESC,ESC);
     fprintf(pls->OutFile, "ro 90;ip;sp 4;pa;");
 }
 
@@ -91,7 +101,7 @@ hp7580init (PLStream *pls)
 void 
 hp7580line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)

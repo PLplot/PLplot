@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:51  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/11/07 07:48:40  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/09/30  18:24:51  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:41  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -16,6 +20,7 @@
 
 	PLPLOT hp7470 device driver.
 */
+static int dummy;
 #ifdef HP7470
 
 #include <stdio.h>
@@ -65,18 +70,21 @@ hp7470init (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
-    dev->xmax = HP7470X;
     dev->ymin = 0;
-    dev->ymax = HP7470Y;
 
     setpxl((PLFLT) 40., (PLFLT) 40.);
 
-    if (!pls->orient)
-	setphy(0, HP7470X, 0, HP7470Y);
-    else
-	setphy(0, HP7470Y, 0, HP7470X);
+    if (!pls->orient) {
+	dev->xmax = HP7470X;
+	dev->ymax = HP7470Y;
+    }
+    else {
+	dev->xmax = HP7470Y;
+	dev->ymax = HP7470X;
+    }
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n", ESC, ESC, ESC);
+    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n",ESC,ESC,ESC);
 }
 
 /*----------------------------------------------------------------------*\
@@ -88,7 +96,7 @@ hp7470init (PLStream *pls)
 void 
 hp7470line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)

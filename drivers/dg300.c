@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:48  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/11/07 07:48:35  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/09/30  18:24:48  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:35  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -16,6 +20,7 @@
 
 	PLPLOT dg300 device driver.
 */
+static int dummy;
 #ifdef DG300
 
 #include <stdio.h>
@@ -89,7 +94,7 @@ dginit (PLStream *pls)
 void 
 dgline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);

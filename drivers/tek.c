@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/22 17:04:58  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.4  1992/11/07 07:48:48  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/10/22  17:04:58  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.2  1992/09/29  04:44:50  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -15,6 +19,7 @@
 
 	PLPLOT tektronix device driver.
 */
+static int dummy;
 #ifdef TEK
 
 #include <stdio.h>
@@ -101,23 +106,20 @@ tekinit (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
-    dev->xmax = TEKX;
     dev->ymin = 0;
-    dev->ymax = TEKY;
 
     if (!pls->orient) {				/* landscape mode */
-
+	dev->xmax = TEKX * 16;
+	dev->ymax = TEKY * 16;
 	setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
-
-	setphy(0, TEKX * 16, 0, TEKY * 16);
     }
-
     else {					/* portrait mode */
-
+	dev->xmax = TEKY * 16;
+	dev->ymax = TEKX * 16;
 	setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
-
-	setphy(0, TEKY * 16, 0, TEKX * 16);
     }
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+
     fprintf(pls->OutFile, "%c", GS);
 }
 
@@ -130,18 +132,17 @@ tekinit (PLStream *pls)
 void 
 tekline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1, y1, x2, y2, hy, ly, hx, lx;
-
-    x1a >>= 4;
-    y1a >>= 4;
-    x2a >>= 4;
-    y2a >>= 4;
-
-    x1 = (int) x1a; y1 = (int) y1a; x2 = (int) x2a; y2 = (int) y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    int hy, ly, hx, lx;
 
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
+
+    x1 >>= 4;
+    y1 >>= 4;
+    x2 >>= 4;
+    y2 >>= 4;
 
 /* If continuation of previous line just send new point */
 

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:53  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/11/07 07:48:42  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/09/30  18:24:53  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:43  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -16,6 +20,7 @@
 
 	PLPLOT ImPress device driver.
 */
+static int dummy;
 #ifdef IMP
 
 #include <stdio.h>
@@ -93,16 +98,19 @@ impinit (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
-    dev->xmax = IMPX;
     dev->ymin = 0;
-    dev->ymax = IMPY;
 
     setpxl((PLFLT) 11.81, (PLFLT) 11.81);
 
-    if (!pls->orient)
-	setphy(0, IMPX, 0, IMPY);
-    else
-	setphy(0, IMPY, 0, IMPX);
+    if (!pls->orient) {
+	dev->xmax = IMPX;
+	dev->ymax = IMPY;
+    }
+    else {
+	dev->xmax = IMPY;
+	dev->ymax = IMPX;
+    }
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
     LineBuff = (short *) malloc(BUFFLENG * sizeof(short));
     if (LineBuff == NULL) {
@@ -124,7 +132,7 @@ impinit (PLStream *pls)
 void 
 impline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:24:54  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/11/07 07:48:43  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/09/30  18:24:54  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:44:44  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -19,6 +23,7 @@
 	should work by just changing the value of DPI and changing the 
 	values passed to setphy().
 */
+static int dummy;
 #ifdef LJII
 
 #include <stdio.h>
@@ -94,19 +99,23 @@ jetinit (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
-    dev->xmax = JETX;
     dev->ymin = 0;
-    dev->ymax = JETY;
 
     setpxl((PLFLT) 5.905, (PLFLT) 5.905);
 
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    if (!!pls->orient)
-	setphy(0, JETX, 0, JETY);
-    else
-	setphy(0, JETY, 0, JETX);
+    if (pls->orient) {
+	dev->xmax = JETX;
+	dev->ymax = JETY;
+    }
+    else {
+	dev->xmax = JETY;
+	dev->ymax = JETX;
+    }
+
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
 /* Allocate storage for bit map matrix */
 
@@ -133,14 +142,14 @@ void
 jetline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int   i, ori;
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     PLINT x1b, y1b, x2b, y2b;
     float length, fx, fy, dx, dy;
 
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    ori = pls->orient; pls->orient = ~pls->orient;
+    ori = pls->orient; pls->orient = !pls->orient;
     plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
     pls->orient = ori;
 

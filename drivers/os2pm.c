@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:38  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/11/07 07:48:45  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.1  1992/05/20  21:32:38  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*

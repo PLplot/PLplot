@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:44:39  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/11/07 07:48:37  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.2  1992/09/29  04:44:39  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:32  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -34,13 +38,12 @@
 	ANSI compiler, then don't expect this to work.  No appologies,
 	now or ever."
 */
-
+static int dummy;
+#ifdef MSDOS		/* Only compile for MSDOS */
 
 #include <stdio.h>
 #include "plplot.h"
 #include "dispatch.h"
-
-#ifdef MSDOS		/* Only compile for MSDOS */
 
 #include <graph.h>
 #include <conio.h>

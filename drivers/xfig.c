@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/22 17:04:58  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.5  1992/11/07 07:48:49  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.4  1992/10/22  17:04:58  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.3  1992/09/30  18:24:59  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -19,6 +23,7 @@
 
 	PLPLOT xfig device driver.
 */
+static int dummy;
 #ifdef XFIG
 
 #include <stdio.h>
@@ -104,10 +109,8 @@ xfiginit (PLStream *pls)
 void 
 xfigline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1, y1, x2, y2;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     short *tempptr;
-
-    x1 = (int) x1a; y1 = (int) y1a; x2 = (int) x2a; y2 = (int) y2a;
 
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/22 17:04:59  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.4  1992/11/07 07:48:50  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.3  1992/10/22  17:04:59  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.2  1992/09/29  04:44:51  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -15,6 +19,7 @@
 
 	PLPLOT xterm device driver.
 */
+static int dummy;
 #ifdef XTERM
 
 #include <stdio.h>
@@ -67,9 +72,9 @@ xteinit (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
-    dev->xmax = TEKX;
+    dev->xmax = TEKX * 16;
     dev->ymin = 0;
-    dev->ymax = TEKY;
+    dev->ymax = TEKY * 16;
 
     /* set device resolution in dots/mm */
 
@@ -78,7 +83,7 @@ xteinit (PLStream *pls)
     /* set page size using setphy(xmin,xmax,ymin,ymax) */
     /* plplot assumes that the min coordinates are in the lower left */
 
-    setphy(0, 16 * TEKX, 0, 16 * TEKY);
+    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
     printf("%c[?38h", ESC);	/* open graphics window */
     printf("%c", GS);		/* set to vector mode */
@@ -96,17 +101,16 @@ xteinit (PLStream *pls)
 void 
 xteline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
-    int x1, y1, x2, y2, hy, ly, hx, lx;
-
-    x1a >>= 4;
-    y1a >>= 4;
-    x2a >>= 4;
-    y2a >>= 4;
-
-    x1 = (int) x1a; y1 = (int) y1a; x2 = (int) x2a; y2 = (int) y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    int hy, ly, hx, lx;
 
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
+
+    x1 >>= 4;
+    y1 >>= 4;
+    x2 >>= 4;
+    y2 >>= 4;
 
 /* If continuation of previous line just send new point */
 

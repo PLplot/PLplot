@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/22 17:04:54  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.6  1992/11/07 07:48:36  mjl
+   Fixed orientation operation in several files and standardized certain startup
+   operations. Fixed bugs in various drivers.
 
+ * Revision 1.5  1992/10/22  17:04:54  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.4  1992/10/20  20:12:26  mjl
  * Modified file open routine to open next family member file if requested
  * to do so.
@@ -116,9 +120,26 @@ DISPATCH_TABLE plDispatchTable[] = {
 	os2esc
     },
 #endif
+#ifdef MOTIF
+    {
+	"X-Window Screen (Motif)",
+	"xm",
+	xm_init,
+	xm_line,
+	xm_clear,
+	xm_page,
+	xm_adv,
+	xm_tidy,
+	xm_color,
+	xm_text,
+	xm_graph,
+	xm_width,
+	xm_esc
+    },
+#endif
 #ifdef XWIN
     {
-	"X-Window Screen",
+	"X-Window Screen (Xlib)",
 	"xwin",
 	xw_init,
 	xw_line,
@@ -404,6 +425,23 @@ DISPATCH_TABLE plDispatchTable[] = {
 	impgraph,
 	impwidth,
 	impesc
+    }
+#endif
+#ifdef NULLDEV
+    {
+	"Null device",
+	"null",
+	null_init,
+	null_line,
+	null_clear,
+	null_page,
+	null_adv,
+	null_tidy,
+	null_color,
+	null_text,
+	null_graph,
+	null_width,
+	null_esc
     }
 #endif
 };
