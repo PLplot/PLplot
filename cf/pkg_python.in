@@ -20,6 +20,7 @@
 
 SO		= @SO@
 PYTHON_EXE	= plmodule$(SO)
+PYQT_PYTHON_EXE	= pyqt_plmodule$(SO)
 PYTHON_INC_DIR	= @PYTHON_INC_DIR@
 PYTHON_NUM_DIR	= @PYTHON_NUM_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
@@ -40,12 +41,18 @@ INSTALL_PYTHON	= install_python
 
 PYTHON_INSTDIR = $(PREFIX)/@PYTHON_INSTDIR@
 
-install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
+install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c \
+	python_dynamic/pyqt_plmodule.c
 	@cd python_dynamic ; make -s distclean
 	@echo '*shared*' > python_dynamic/Setup.in
 	@echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
 	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
 	 $(MV) $(PYTHON_EXE) ..
+	@cd python_dynamic ; make -s distclean
+	@echo '*shared*' > python_dynamic/Setup.in
+	@echo 'pyqt_pl pyqt_plmodule.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
+	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
+	 $(MV) $(PYQT_PYTHON_EXE) ..
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
 	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
@@ -55,13 +62,7 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	  echo "plmodule.so is not the same as the expected Python location for"  ; \
 	  echo "dynamic libraries $(PYTHON_MACH_DIR)"  ; \
 	  echo "so you must set the environment variable PYTHONDIR to the install"  ; \
-	  echo "location in order to make the Python PLplot module work." ; \
-	  echo "" ; \
-	  echo "As an alternative to setting PYTHONDIR, you may create a symbolic link " ; \
-	  echo "at the expected Python location for dynamic libraries pointing to the " ; \
-	  echo "installed module, like this:" ; \
-	  echo "" ; \
-	  echo "$(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR)" ; \
+	  echo "location in order to make the Python PLplot module(s) work."
 	fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	@-cd $(top_srcdir)/examples/python ; \

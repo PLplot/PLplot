@@ -944,6 +944,7 @@ if test "$enable_python" = "yes"; then
 	cd python_dynamic
 	ln -s ../plmodule.c
 	ln -s ../plmodule2.c
+	ln -s ../pyqt_plmodule.c
 	ln -s $PYTHON_CFG_DIR/Makefile.pre.in
 	# Following needed for includes to work properly with new plplot/*.h style.
 	ln -s ../plplot
@@ -961,6 +962,7 @@ ln -sf $srcdir/bindings/python/Plframe.py .
 ln -sf $srcdir/bindings/python/TclSup.py .
 ln -sf $srcdir/bindings/python/plmodule.c .
 ln -sf $srcdir/bindings/python/plmodule2.c .
+ln -sf $srcdir/bindings/python/pyqt_plmodule.c .
 ln -sf $srcdir/bindings/python/plmodule.h plplot
 ln -sf $srcdir/bindings/python/setup.py .
 
