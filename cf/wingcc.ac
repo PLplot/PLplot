@@ -1,0 +1,62 @@
+dnl cf/wingcc.ac for PLplot  -*- autoconf -*-
+dnl
+dnl ------------------------------------------------------------------------
+dnl Find libgdi32 library and header required for building wingcc driver.
+dnl Written by Andrew Roach following what is done for gd driver.
+dnl ------------------------------------------------------------------------
+dnl
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
+dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+GDI32LIBSTR=-lgdi32
+
+if test "$enable_wingcc" = "yes"; then
+    AC_MSG_CHECKING(for libgdi32.a)
+
+    if test -z "$GDI32LIBDIR"; then
+        AC_CHECK_LIB(gdi32, main, [ GDI32LIBDIR=default ], [
+        libdirs="\
+        /usr/lib \
+        /usr/local/lib"
+
+        for dir in $libdirs; do
+            if test -r "$dir/libgdi32.so" -o -r "$dir/libgdi32.a"; then
+                GDI32LIBDIR="$dir"
+                break
+            fi
+        done
+        if test -z "$GDI32LIBDIR"; then
+            AC_MSG_WARN([GDI32 library not found, setting enable_wingcc=no])
+            GDI32LIBDIR=default
+            enable_wingcc=no
+        fi ])
+    fi
+    if test "$GDI32LIBDIR" = "/usr/lib"; then
+        GDI32LIBDIR=default
+    fi
+fi
+
+GDI32LIBCMD=""
+GDI32LIBPATH=""
+if test "$enable_wingcc" = "yes"; then
+    PL_ADD_TO_LIBS($GDI32LIBDIR, $GDI32LIBSTR, GDI32LIBCMD, GDI32LIBPATH)
+fi
+AC_SUBST(GDI32LIBCMD)
+
