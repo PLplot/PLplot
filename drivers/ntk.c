@@ -46,7 +46,7 @@ static PLFLT ppm; /* pixels per mm */
 
 static Tcl_Interp *interp = NULL;
 static Tk_Window mainw;
-static char *name = NULL;
+
 static char curcolor[80];
 static char cmd[10000];
 static int ccanv = 0;
@@ -60,66 +60,116 @@ static PLINT xmin = 0;
 static PLINT xmax = XPIXELS;
 static PLINT ymin = 0;
 static PLINT ymax = YPIXELS;
+static PLGraphicsIn gin;
 
-void
-tclevent()
-{
-  while(Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT));
-}
-
-void
+static void
 tk_cmd(char *cmd)
 {
-  static char ocmd[10000];
+  static char scmd[10000];
 
   if (local)
     Tcl_Eval(interp, cmd);
   else {
-    sprintf(ocmd, "send -async %s {%s}", rem_interp, cmd);
-    Tcl_Eval(interp, ocmd);
+    /* the -async option makes it block, some times! but is *much* faster!
+     * and was working OK till now :(
+     * sprintf(scmd, "send -async %s {%s}", rem_interp, cmd);
+     */
+    sprintf(scmd, "send %s {%s}", rem_interp, cmd);
+    if (Tcl_Eval(interp, scmd) != TCL_OK)
+      fprintf(stderr,"%s\n", interp->result);
   }
 }
 
-void
+static void
 create_canvas(PLStream *pls)
 {
   ccanv++;
 
-  sprintf(cmd, "canvas $plf.f2.c%d -width %d -height %d -background #%02x%02x%02x -xscrollcommand \"$plf.f2.hscroll set\" -yscrollcommand \"$plf.f2.vscroll set\" -scrollregion {0 0 %d %d}", ccanv, XPIXELS, YPIXELS, pls->cmap0[0].r, pls->cmap0[0].g , pls->cmap0[0].b, XPIXELS+20, YPIXELS+20);
+  /* create new canvas */
+  sprintf(cmd, "set ccanv %d; canvas $plf.f2.c$ccanv -width $xmax -height $ymax -background #%02x%02x%02x -xscrollcommand \"$hs set\" -yscrollcommand \"$vs set\" -scrollregion \"0 0 $xmax $ymax\"", ccanv, pls->cmap0[0].r, pls->cmap0[0].g , pls->cmap0[0].b);
   tk_cmd(cmd);
 
-  sprintf(cmd, "$plf.f1.mb.menu add command -label \"Page %d\" -command {$plf.f2.hscroll configure -command \"$plf.f2.c%d xview\"; $plf.f2.vscroll configure -command \"$plf.f2.c%d yview\"; set dname \"Page %d\"; pack forget $ocanvas; set ocanvas $plf.f2.c%d; pack $ocanvas -fill both -expand 1}", ccanv, ccanv, ccanv, ccanv, ccanv);
+  /* add new canvas to option menu */
+  sprintf(cmd, "$plf.f1.mb.menu add command -label \"Page $ccanv\" -command {
+set w $plf.f2.c%d;
+$hs configure -command \"$w xview\";
+$vs configure -command \"$w yview\";
+set dname \"Page %d\";
+pack forget $ocanvas;
+set ocanvas $plf.f2.c%d;
+pack $ocanvas -fill both -expand 1;
+scan [$w xview] \"%%f %%f\" i j;
+$hs set $i $j;
+scan [$w yview] \"%%f %%f\" i j;
+$vs set $i $j;}",
+	  ccanv, ccanv, ccanv);
   tk_cmd(cmd);
   
-  sprintf(cmd, "set item%d 0", ccanv);
+  sprintf(cmd, "set item(%d) 0", ccanv);
   tk_cmd(cmd);
 
-  /* FIXME -- the zoom needs to set scrollbars x/yview */
-  /* Shift B1, zooms in */
-  sprintf(cmd, "bind $plf.f2.c%d <Shift-Button-1> {pack $plf.f2.hscroll -side bottom -fill x; pack $plf.f2.vscroll -side right -fill y;incr item%d; set zx%d($item%d) %%x; set zy%d($item%d) %%y; %%W scale all %%x %%y 1.6 1.6; set t [lindex [$plf.f2.c%d configure -scrollregion] 4]; set tx [expr [lindex $t 0] - $zx%d($item%d)]; set ty [expr [lindex $t 1] - $zy%d($item%d)]; $plf.f2.c%d configure -scrollregion \"$tx $ty [expr ([lindex $t 2] + [lindex $t 0])* 1.6 - $tx] [expr ([lindex $t 3] + [lindex $t 1]) * 1.6 - $ty] \"}", ccanv, ccanv, ccanv, ccanv,ccanv, ccanv, ccanv, ccanv, ccanv, ccanv, ccanv, ccanv);
+  /* Shif-B1, zooms in */
+  /* FIXME inform the core lib of the zoom, see plframe.c around line 2818 */
+
+  sprintf(cmd, "bind $plf.f2.c$ccanv <Shift-Button-1> {
+set cc %d;
+incr item($cc); set tt $item($cc);
+if {$tt == 1} {
+incr scroll_use;
+pack $hs -side bottom -fill x;
+pack $vs -side right -fill y;
+pack forget %%W; pack %%W -fill both -expand 1}
+set zx($cc,$tt) %%x;
+set zy($cc,$tt) %%y;
+%%W scale all %%x %%y 1.6 1.6;
+%%W configure -scrollregion [%%W bbox all];
+}", ccanv);
+
   tk_cmd(cmd);
   
-  /* Shift B3, zooms out */
-  sprintf(cmd,"bind $plf.f2.c%d <Shift-Button-3> {if {$item%d != 0} {%%W scale all $zx%d($item%d) $zy%d($item%d) 0.625 0.625; set item%d [expr $item%d - 1]} {pack forget $plf.f2.hscroll $plf.f2.vscroll}}", ccanv, ccanv, ccanv, ccanv, ccanv, ccanv, ccanv, ccanv);
+  /* Shif-B3, zooms out */
+  sprintf(cmd,"bind $plf.f2.c$ccanv <Shift-Button-3> {
+set cc %d; set tt $item($cc);
+if {$tt != 0} {
+%%W scale all $zx($cc,$tt) $zy($cc,$tt) 0.625 0.625
+%%W configure -scrollregion [%%W bbox all];
+set item($cc) [expr $tt - 1]}
+if { $item($cc) == 0} {
+set scroll_use [expr $scroll_use - 1];
+if {$scroll_use == 0} {
+pack forget $plf.f2.hscroll $plf.f2.vscroll}
+%%W configure -scrollregion \"0 0 $xmax $ymax\"}}", ccanv);
   tk_cmd(cmd);
 
-  /* Shift B2, resets */
-  sprintf(cmd,"bind $plf.f2.c%d <Shift-Button-2> {while {$item%d != 0} {%%W scale all $zx%d($item%d) $zy%d($item%d) 0.625 0.625; set item%d [expr $item%d - 1]}; pack forget $plf.f2.hscroll $plf.f2.vscroll}", ccanv, ccanv, ccanv, ccanv, ccanv, ccanv, ccanv, ccanv);
+  /* Shift-B2, resets */
+  sprintf(cmd,"bind $plf.f2.c$ccanv <Shift-Button-2> {
+set cc %d; set tt $item($cc); 
+while {$tt != 0} {
+%%W scale all $zx($cc,$tt) $zy($cc,$tt) 0.625 0.625
+set tt [expr $tt - 1]};
+set item($cc) 0;
+%%W configure -scrollregion \"0 0 $xmax $ymax\";
+set scroll_use [expr $scroll_use - 1];
+if {$scroll_use == 0} {
+pack forget $plf.f2.hscroll $plf.f2.vscroll}}", ccanv);
   tk_cmd(cmd);
 
-  /* B2-Motion, pan FIXME--not working */
-  if(0) {
-  sprintf(cmd, "bind $plf.f2.c%d <B2> \"$plf.f2.c%d scan mark %%x %%y\"", ccanv, ccanv);
+  /* Control-B1-Motion, pan */
+  sprintf(cmd, "bind $plf.f2.c$ccanv <Control-Button-1> \"$plf.f2.c%d scan mark %%x %%y\"", ccanv);
   tk_cmd(cmd);
 
-  sprintf(cmd, "bind $plf.f2.c%d <B2-Motion> \"$plf.f2.c%d scan dragto %%x %%y\"", ccanv, ccanv);
-  tk_cmd(cmd);
-  }
-
-  /* Control B1, identify and edit object */
-  sprintf(cmd, "bind  $plf.f2.c%d <Control-Button-1> {set w $plf.f2.c%d; set xx [ expr [winfo pointerx .] - [winfo rootx $w]];set yy [ expr [winfo pointery .] - [winfo rooty $w]]; set item [$w find closest $xx $yy]; $w move $item 20 20; puts \"item=$item [$w itemconfigure $item]\"; after 500 \"$w move $item -20 -20\"}", ccanv, ccanv);
+  sprintf(cmd, "bind $plf.f2.c$ccanv <Control-Button1-Motion> \"$plf.f2.c%d scan dragto %%x %%y\"", ccanv);
   tk_cmd(cmd);
 
+  /* Control-B2, identify and (in the far future) edit object */
+  tk_cmd("bind $plf.f2.c$ccanv <Control-Button-2> {
+set xx [ expr [winfo pointerx .] - [winfo rootx %W]];
+set yy [ expr [winfo pointery .] - [winfo rooty %W]];
+set near [%W find closest $xx $yy];
+%W move $near 20 20;
+after 500 \"%W move $near -20 -20\"}");
+
+  /* change view to the new canvas by invoking the menu buttom */
   sprintf(cmd, "$plf.f1.mb.menu invoke %d", ccanv-1);
   tk_cmd(cmd);
 }
@@ -140,13 +190,21 @@ plD_init_ntk(PLStream *pls)
     pls->plbuf_write = 1;   /* Use plot buffer */
 
     strcpy(curcolor, "black");
-    strcpy(base,".plf");
+
 
     if (pls->server_name != NULL) {
       local = 0;
       strcpy(rem_interp, pls->server_name);
     }
 
+    if (pls->geometry != NULL)
+      sscanf(pls->geometry, "%dx%d", &xmax, &ymax);
+
+    if (pls->plwindow != NULL)
+      strcpy(base, pls->plwindow);
+    else
+      strcpy(base,".plf");
+    
     interp = Tcl_CreateInterp();
   
     if (Tcl_Init(interp) != TCL_OK) 
@@ -170,23 +228,33 @@ plD_init_ntk(PLStream *pls)
       }
     }
 
-    sprintf(cmd, "set ocanvas .; set plf %s", base);
+    sprintf(cmd, "set scroll_use 0; set plf %s; set vs $plf.f2.vscroll; set hs $plf.f2.hscroll; set xmax %d; set ymax %d; set ocanvas .;", base, xmax, ymax);
     tk_cmd(cmd);
       
-    tk_cmd("frame $plf; pack $plf -fill both -expand 1");
+    tk_cmd("catch \"frame $plf\"; pack $plf -fill both -expand 1");
 
-    tk_cmd("frame $plf.f1; frame $plf.f2; pack $plf.f1 -fill x; pack $plf.f2 -fill both -expand 1");
+    sprintf(cmd, "frame $plf.f1;
+frame $plf.f2 -width %d -height %d;
+pack $plf.f1 -fill x;
+pack $plf.f2 -fill both -expand 1", xmax, ymax);
+    tk_cmd(cmd);
 
-    tk_cmd("scrollbar $plf.f2.hscroll -orient horiz; scrollbar $plf.f2.vscroll");
 
-    // tk_cmd("pack $plf.f2.hscroll -side bottom -fill x; pack $plf.f2.vscroll -side right -fill y");
+    tk_cmd("scrollbar $plf.f2.hscroll -orient horiz;
+scrollbar $plf.f2.vscroll");
 
-    tk_cmd("menubutton $plf.f1.mb -text \"Page 1\" -textvariable dname -relief raised -indicatoron 1 -menu $plf.f1.mb.menu; menu $plf.f1.mb.menu -tearoff 0; pack $plf.f1.mb -side left");
+    tk_cmd("menubutton $plf.f1.mb -text \"Page 1\" -textvariable dname -relief raised -indicatoron 1 -menu $plf.f1.mb.menu;
+menu $plf.f1.mb.menu -tearoff 0;
+pack $plf.f1.mb -side left");
 
     if (local)
-      tk_cmd("button $plf.f1.quit -text Quit -command exit; pack $plf.f1.quit -side right");
+      tk_cmd("button $plf.f1.quit -text Quit -command exit;
+pack $plf.f1.quit -side right");
     else
-      tk_cmd("button $plf.f1.quit -text Quit -command {send -async $client exit; destroy $plf; wm withdraw .}; pack $plf.f1.quit -side right");
+      tk_cmd("button $plf.f1.quit -text Quit -command {send -async $client exit;
+destroy $plf;
+wm withdraw .};
+pack $plf.f1.quit -side right");
 
 
     /* FIXME: I just discovered that Tcl_Eval is slower than Tcl_EvalObj. Fix it global-wide, `man Tcl_Eval' */
@@ -253,6 +321,59 @@ plD_state_ntk(PLStream *pls, PLINT op)
     }
 }
 
+static void
+getcursor(PLStream *pls, PLGraphicsIn *ptr)
+{
+  int st = 0;
+
+  plGinInit(&gin);
+
+  if (0) {
+    while (st != 1) {
+      tk_cmd("update; update idletasks");
+      tk_cmd("winfo exists $plf.f2.c$ccanv");
+      sscanf(interp->result,"%d", &st);
+    }
+    st = 0;
+    /* this give a "Segmentation fault", even after checking for the canvas! */
+    tk_cmd("set ocursor [lindex [$plf.f2.c$ccanv configure -cursor] 4]");
+  }
+
+  tk_cmd("$plf.f2.c$ccanv configure -cursor cross;
+bind $plf.f2.c$ccanv <Button> {set xloc %x; set yloc %y; set bloc %b; set sloc %s};
+bind $plf.f2.c$ccanv <B1-Motion> {set xloc %x; set yloc %y; set bloc %b; set sloc %s};
+bind $plf.f2.c$ccanv <B2-Motion> {set xloc %x; set yloc %y; set bloc %b; set sloc %s};
+bind $plf.f2.c$ccanv <B3-Motion> {set xloc %x; set yloc %y; set bloc %b; set sloc %s};");
+
+  while (st != 1) {
+    tk_cmd("update");
+    tk_cmd("info exists xloc");
+    sscanf(interp->result,"%d", &st);
+  }
+  tk_cmd("set xloc");
+  sscanf(interp->result,"%d", &gin.pX);
+  tk_cmd("set yloc");
+  sscanf(interp->result,"%d", &gin.pY);
+  tk_cmd("set bloc");
+  sscanf(interp->result,"%d", &gin.button);
+  tk_cmd("set sloc");
+  sscanf(interp->result,"%d", &gin.state);
+
+  gin.dX = (PLFLT) gin.pX/xmax;
+  gin.dY = 1. - (PLFLT) gin.pY/ymax;
+
+  tk_cmd("bind $plf.f2.c$ccanv <ButtonPress> {};
+bind $plf.f2.c$ccanv <ButtonMotion> {};
+bind $plf.f2.c$ccanv <B2-Motion> {};
+bind $plf.f2.c$ccanv <B3-Motion> {};
+unset xloc");
+
+  /* seg fault, see above. tk_cmd("$plf.f2.c$ccanv configure -cursor $ocursor"); */
+  tk_cmd("$plf.f2.c$ccanv configure -cursor {}");
+
+  *ptr = gin;
+}
+
 void
 plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
 {
@@ -287,6 +408,10 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
 
   case PLESC_FLUSH:
     tk_cmd("update");
+    break;
+
+  case PLESC_GETC:
+    getcursor(pls, (PLGraphicsIn *) ptr);
     break;
 
   case PLESC_FILL:
