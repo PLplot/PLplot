@@ -1,7 +1,11 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.12  1995/06/02 20:30:37  mjl
+ * Revision 1.13  1995/06/05 21:44:44  furnish
+ * Correct several points of bogosity in the C++ Tcl Matrix shadow class
+ * for float's, and add a new one int's.
+ *
+ * Revision 1.12  1995/06/02  20:30:37  mjl
  * Added missing include of iostream.h for C++ codes including this.
  *
  * Revision 1.11  1995/06/01  21:19:29  mjl
@@ -202,7 +206,8 @@ class TclMatFloat {
 	matPtr->dim = 1;
 	matPtr->n[0] = nx;
 	matPtr->len = nx;
-	matPtr->fdata = (float *) malloc( matPtr->len * sizeof(float) );
+	matPtr->fdata = (Mat_float *) malloc( matPtr->len *
+					      sizeof(Mat_float) );
     }
 
     void redim( int nx, int ny )
@@ -212,7 +217,8 @@ class TclMatFloat {
 	matPtr->n[0] = nx;
 	matPtr->n[1] = ny;
 	matPtr->len = nx * ny;
-	matPtr->fdata = (float *) malloc( matPtr->len * sizeof(float) );
+	matPtr->fdata = (Mat_float *) malloc( matPtr->len * 
+					      sizeof(Mat_float) );
     }
 
     void redim( int nx, int ny, int nz )
@@ -223,7 +229,8 @@ class TclMatFloat {
 	matPtr->n[1] = ny;
 	matPtr->n[2] = nz;
 	matPtr->len = nx * ny * nz;
-	matPtr->fdata = (float *) malloc( matPtr->len * sizeof(float) );
+	matPtr->fdata = (Mat_float *) malloc( matPtr->len * 
+					      sizeof(Mat_float) );
     }
 
     Mat_float& operator()( int i )
@@ -239,8 +246,8 @@ class TclMatFloat {
     {
 	tMat_Assert( matPtr->dim == 2, "Wrong number of indicies." );
 	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
-		    j >= 0 && j < matPtr->n[1],
-		    "Out of bounds reference" );
+		     j >= 0 && j < matPtr->n[1],
+		     "Out of bounds reference" );
 		
 	return matPtr->fdata[I2D(i,j)];
     }
@@ -249,11 +256,91 @@ class TclMatFloat {
     {
 	tMat_Assert( matPtr->dim = 3, "Wrong number of indicies." );
 	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
-		    j >= 0 && j < matPtr->n[1] &&
-		    k >= 0 && k < matPtr->n[2],
-		    "Out of bounds reference" );
+		     j >= 0 && j < matPtr->n[1] &&
+		     k >= 0 && k < matPtr->n[2],
+		     "Out of bounds reference" );
 
 	return matPtr->fdata[I3D(i,j,k)];
+    }
+};
+
+/*---------------------------------------------------------------------------//
+// class TclMatInt
+
+// This class provides a convenient way to access the data of a
+// tclMatrix from within compiled code.  This is just like TclMatFloat above,
+// but for ints.
+//---------------------------------------------------------------------------*/
+
+class TclMatInt {
+    tclMatrix *matPtr;
+  public:
+    TclMatInt( tclMatrix *ptm )
+	: matPtr(ptm)
+    {
+	tMat_Assert( matPtr->type == TYPE_INT, "Type mismatch" );
+    }
+
+    int Dimensions() { return matPtr->dim; }
+
+    void redim( int nx )
+    {
+	free( matPtr->idata );
+	matPtr->dim = 1;
+	matPtr->n[0] = nx;
+	matPtr->len = nx;
+	matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof(Mat_int) );
+    }
+
+    void redim( int nx, int ny )
+    {
+	free( matPtr->idata );
+	matPtr->dim = 2;
+	matPtr->n[0] = nx;
+	matPtr->n[1] = ny;
+	matPtr->len = nx * ny;
+	matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof(Mat_int) );
+    }
+
+    void redim( int nx, int ny, int nz )
+    {
+	free( matPtr->idata );
+	matPtr->dim = 3;
+	matPtr->n[0] = nx;
+	matPtr->n[1] = ny;
+	matPtr->n[2] = nz;
+	matPtr->len = nx * ny * nz;
+	matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof(Mat_int) );
+    }
+
+    Mat_int& operator()( int i )
+    {
+	tMat_Assert( matPtr->dim == 1, "Wrong number of indicies." );
+	tMat_Assert( i >= 0 && i < matPtr->n[0],
+		     "Out of bounds reference" );
+
+	return matPtr->idata[i];
+    }
+
+    Mat_int& operator()( int i, int j )
+    {
+	tMat_Assert( matPtr->dim == 2, "Wrong number of indicies." );
+	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
+		     j >= 0 && j < matPtr->n[1],
+		     "Out of bounds reference" );
+		
+	return matPtr->idata[I2D(i,j)];
+    }
+
+    Mat_int& operator()( int i, int j, int k )
+    {
+	tMat_Assert( matPtr->dim = 3, "Wrong number of indicies." );
+	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
+		     j >= 0 && j < matPtr->n[1] &&
+		     k >= 0 && k < matPtr->n[2],
+		     "Out of bounds reference" );
+
+	return matPtr->idata[I3D(i,j,k)];
     }
 };
 
