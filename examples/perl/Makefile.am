@@ -44,6 +44,7 @@ examples_perl_SCRIPTS = \
 	x20.pl \
 	x21.pl \
 	x22.pl \
+	x23.pl \
 	x24.pl	
 
 examples_perl_DATA = \
