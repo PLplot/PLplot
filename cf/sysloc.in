@@ -46,7 +46,7 @@ if test "$enable_x11" = "yes"; then
 
 	    for dir in $places; do
 		if test -r "$dir/X11/Intrinsic.h"; then
-		    XINCDIR=$dir
+		    XINCDIR="$dir"
 		    break
 		fi
 	    done
@@ -79,7 +79,7 @@ if test "$enable_x11" = "yes"; then
 
 	    for dir in $places; do
 		if test -r "$dir/libX11.a"; then
-		    XLIBDIR=$dir
+		    XLIBDIR="$dir"
 		    break
 		fi
 	    done
@@ -142,7 +142,7 @@ if test "$enable_tcl" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/tcl.h"; then
-		TCLINCDIR=$dir
+		TCLINCDIR="$dir"
 		break
 	    fi
 	done
@@ -188,7 +188,7 @@ if test "$enable_tcl" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/libtcl.a" -o -r "$dir/libtcl.sl"; then
-		TCLLIBDIR=$dir
+		TCLLIBDIR="$dir"
 		break
 	    fi
 	done
@@ -265,7 +265,7 @@ if test "$enable_itcl" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/libitcl.a" -o -r "$dir/libitcl.sl"; then
-		ITCLLIBDIR=$dir
+		ITCLLIBDIR="$dir"
 		break
 	    fi
 	done
@@ -302,7 +302,7 @@ if test "$enable_tk" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/tk.h"; then
-		TKINCDIR=$dir
+		TKINCDIR="$dir"
 		break
 	    fi
 	done
@@ -347,7 +347,7 @@ if test "$enable_tk" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/libtk.a" -o -r "$dir/libtk.sl"; then
-		TKLIBDIR=$dir
+		TKLIBDIR="$dir"
 		break
 	    fi
 	done
