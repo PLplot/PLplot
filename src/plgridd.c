@@ -1,27 +1,15 @@
 
 #include "plplotP.h"
+#ifdef PL_DOUBLE
 #include "../lib/csa/csa.h"
 #include "../lib/csa/nan.h"
+#endif
 #ifdef HAVE_QHULL
 #include "../lib/nn/nn.h"
 #include <qhull/qhull_a.h>
 #endif
 
 /* forward declarations */
-
-static void
-grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-	  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg,
-	  PLFLT wmin);
-
-static void
-grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-	  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
-
-static void
-grid_dtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
-
 static void
 grid_nnaidw (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	     PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
@@ -35,6 +23,23 @@ static void
 grid_nnidw (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	    PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg,
 	    int knn_order);
+
+#ifdef PL_DOUBLE
+static void
+grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+	  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
+#endif
+
+#ifdef HAVE_QHULL
+static void
+grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+	  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg,
+	  PLFLT wmin);
+
+static void
+grid_dtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
+#endif
 
 static void
 dist1(PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts, int knn_order);
@@ -115,7 +120,11 @@ plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   switch (type) {
     
   case (GRID_CSA):     /*  Bivariate Cubic Spline Approximation */
+#ifdef PL_DOUBLE
     grid_csa(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
+#else
+    plabort("plgriddata(): you must configure plplot with doubles to use GRID_CSA.");
+#endif
     break;
 
   case (GRID_NNIDW): /* Nearest Neighbors Inverse Distance Weighted */
@@ -151,6 +160,7 @@ plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 }
 
+#ifdef PL_DOUBLE
 /* 
  * Bivariate Cubic Spline Approximation using Pavel Sakov's csa package
  *
@@ -206,6 +216,7 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   free(pin);
   free(pgrid); 
 }
+#endif /* PL_DOUBLE */
 
 /* Nearest Neighbors Inverse Distance Weighted, brute force approach.
  *
@@ -457,6 +468,7 @@ grid_nnaidw (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 }
 
+#ifdef HAVE_QHULL
 /*
  * Delaunay Triangulation Linear Interpolation using Pavel Sakov's nn package
  *
@@ -567,6 +579,7 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   free(pin);
   free(pgrid); 
 }
+#endif /* HAVE_QHULL*/
 
 /* 
  * this function just calculates the K Nearest Neighbors of grid point
@@ -655,7 +668,7 @@ dist2(PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts)
       items[i].dist = sqrt(items[i].dist); /* now calculate the distance */
 }
 
-#ifdef NONN /* another DTLI */ 
+#ifdef NONN /* another DTLI, based only on QHULL, not nn */ 
 static void
 grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg)
@@ -814,4 +827,4 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	     "qhull: did not free %d bytes of long memory (%d pieces)\n",
 	     totlong, curlong);
 }
-#endif
+#endif /* NONN */
