@@ -1,0 +1,26 @@
+# -----------------------------------------------------------------------
+# Make assignments for PLplot/Python support.
+# -----------------------------------------------------------------------
+
+# If Python doesn't support dynamically loaded modules on your system,
+# you'll have to link plmodule.o with the Python library to build a
+# new Python executable.  Copy plmodule.c into Python's Modules
+# subdirectory, add something like the following to Modules/Setup,
+#
+# pl plmodule.c -I<PLplot include directory> -L<PLplot lib directory>
+# -lplplotfX -L<X11 lib directory> -lX11
+#
+# and rebuild python.  If Python supports dynamically loaded modules,
+# then all you have to worry about is passing the right flags to the
+# compiler and linker to build a dynamically loaded module from
+# plmodule.c (-I/usr/local/include/Py if the Python header files are
+# installed, -I.../Python-VERSION/Include if not; Solaris 5.x requires
+# ld -G while SunOS 4.x uses just ld, etc.).
+
+SO		= @SO@
+PYTHON_EXE	= plmodule$(SO)
+PYTHON_INSTALL	= install_plmodule
+PYTHON_INC_DIR	= @PYTHON_INC_DIR@
+PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
+LDSHARED	= @LDSHARED@
+
