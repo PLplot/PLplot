@@ -341,6 +341,86 @@ Java_plplot_core_PLStream_gstrm( JNIEnv *env, jobject jthis )
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    hist
+ * Signature: (I[FFFII)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_hist__I_3FFFII( JNIEnv *env, jobject jthis,
+                                          jint n, jfloatArray jdatarr,
+                                          jfloat jdatmin, jfloat jdatmax,
+                                          jint nbin, jint oldwin )
+{
+    PLFLT datmin = jdatmin, datmax = jdatmax;
+    jfloat *jdata = (*env)->GetFloatArrayElements( env, jdatarr, 0 );
+    PLFLT *data;
+    int must_free_buffer = 0, i;
+    
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        data = (PLFLT *) jdata;
+    } else {
+        data = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+            data[i] = jdata[i];
+
+        must_free_buffer = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plhist( n, data, datmin, datmax, nbin, oldwin );
+
+    if (must_free_buffer)
+        free(data);
+
+    (*env)->ReleaseFloatArrayElements( env, jdatarr, jdata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    hist
+ * Signature: (I[DDDII)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_hist__I_3DDDII( JNIEnv *env, jobject jthis,
+                                          jint n, jdoubleArray jdatarr,
+                                          jdouble jdatmin, jdouble jdatmax,
+                                          jint nbin, jint oldwin )
+{
+    PLFLT datmin = jdatmin, datmax = jdatmax;
+    jdouble *jdata = (*env)->GetDoubleArrayElements( env, jdatarr, 0 );
+    PLFLT *data;
+    int must_free_buffer = 0, i;
+    
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        data = (PLFLT *) jdata;
+    } else {
+        data = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+            data[i] = jdata[i];
+
+        must_free_buffer = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plhist( n, data, datmin, datmax, nbin, oldwin );
+
+    if (must_free_buffer)
+        free(data);
+
+    (*env)->ReleaseDoubleArrayElements( env, jdatarr, jdata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
  * Method:    init
  * Signature: ()V
  */

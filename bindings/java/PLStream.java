@@ -61,6 +61,12 @@ public class PLStream {
     public native void font( int fnt );
     public native void fontld( int fnt );
     public native int gstrm();
+
+    public native void hist( int n, float[] data, float datmin, float datmax,
+                             int nbin, int oldwin );
+    public native void hist( int n, double[] data, double datmin, double datmax,
+                             int nbin, int oldwin );
+
     public native void init();
 
     public native void join( float x1, float y1, float x2, float y2 );
