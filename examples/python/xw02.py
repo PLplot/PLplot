@@ -5,6 +5,11 @@ from plplot import *
 
 def main():
 
+    # For starting from scratch this call to pladv increments cursub, but 
+    # then the following plssub sets it to zero so the whole thing is 
+    # essentially a nop.  However, for the case when other examples are run 
+    # first, this call to pladv is absolutely essential to finish the 
+    # preceding page.
     pladv(0)
     # Divide screen into 16 regions
     plssub(4, 4)

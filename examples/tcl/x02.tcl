@@ -6,6 +6,11 @@ proc x02 {{w loopback}} {
 
 # Divide screen into 16 regions
 
+    # For starting from scratch this call to pladv increments cursub, but 
+    # then the following plssub sets it to zero so the whole thing is 
+    # essentially a nop.  However, for the case when other examples are run 
+    # first, this call to pladv is absolutely essential to finish the 
+    # preceding page.
     $w cmd pladv 0
     $w cmd plssub 4 4
     $w cmd plschr 0.0 3.5
