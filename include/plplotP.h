@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/10/11 18:59:03  mjl
+ * Revision 1.31  1994/11/02 19:54:58  mjl
+ * Changed stream variables vpx.. to vdx.. since they now hold the relative
+ * device coordinates (0 to 1) rather than the physical coordinates.
+ *
+ * Revision 1.30  1994/10/11  18:59:03  mjl
  * Virtual coordinate space for X-based drivers and metafile increased to
  * 32K by 32K, in order to improve appearance of plots at high levels of
  * magnification.
@@ -137,7 +141,7 @@ typedef signed char SCHAR;
 /* Window coordinate structure */
 
 typedef struct {
-    PLFLT vpx1, vpx2, vpy1, vpy2;
+    PLFLT vdx1, vdx2, vdy1, vdy2;
     PLFLT wx1, wx2, wy1, wy2;
 } CWindow;
 
@@ -597,10 +601,10 @@ plP_setsub(void);
 void
 plP_gprec(PLINT *p_setp, PLINT *p_prec);
 
-/* Adds a window to the window list (called by plwind).  */
+/* Adds the current window to the window list (called by plwind).  */
 
 void 
-plAddCWindow(CWindow window);
+plAddCWindow(void);
 
 /* Resets all known windows (called by pladv). */
 
