@@ -635,8 +635,8 @@ if test "$enable_cxx" = yes; then
 	    fi
 	fi
     fi
-    AC_PROG_CXX
 fi
+AC_PROG_CXX
 
 ### Fortran 77 binding
 
