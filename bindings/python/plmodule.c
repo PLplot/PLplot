@@ -1084,15 +1084,13 @@ static PyObject * pl_poin3(PyObject *self, PyObject *args)
 }
 
 static char doc_plpoly3[]="Draws a polygon in 3 space";
-/* N.B. note optional extra cc (counter-clockwise) argument compared to 
- * C API. */
 
 static PyObject * pl_poly3(PyObject *self, PyObject *args)
 {
-    PLINT n, *draw, ylen, zlen, drawlen, cc=0;
+    PLINT n, *draw, ylen, zlen, drawlen, ifcc;
     PLFLT *x, *y, *z;
     PyObject *xop, *yop, *zop, *drawop;
-    TRY (PyArg_ParseTuple(args, "OOOO|i", &xop, &yop, &zop, &drawop, &cc));
+    TRY (PyArg_ParseTuple(args, "OOOOi", &xop, &yop, &zop, &drawop, &ifcc));
     TRY (pl_PyArray_AsFloatArray(&xop, &x, &n));
     TRY (pl_PyArray_AsFloatArray(&yop, &y, &ylen));
     TRY (pl_PyArray_AsFloatArray(&zop, &z, &zlen));
@@ -1114,10 +1112,7 @@ static PyObject * pl_poly3(PyObject *self, PyObject *args)
         Py_DECREF(drawop);
 	  return NULL;
     }
-    if (cc)
-       plpoly3(-n, x, y, z, draw);
-    else
-       plpoly3(n, x, y, z, draw);
+    plpoly3(n, x, y, z, draw, ifcc);
     Py_DECREF(xop);
     Py_DECREF(yop);
     Py_DECREF(zop);           

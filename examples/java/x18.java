@@ -78,7 +78,7 @@ class x18 {
 	      y[4] = Math.sin( PHI(j) ) * Math.sin( THETA(i) );
 	      z[4] = Math.cos( PHI(j) );
 
-//API	      pls.poly3( -5, x, y, z, draw[k] );
+//API	      pls.poly3( 5, x, y, z, draw[k], 1 );
 	   }
 	}
 

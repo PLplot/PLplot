@@ -1066,7 +1066,7 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code);
 /* Draws a polygon in 3 space.  */
 
 void
-c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw);
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc);
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 

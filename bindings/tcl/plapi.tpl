@@ -414,6 +414,7 @@ x	PLFLT *
 y	PLFLT *
 z	PLFLT *
 draw	PLINT *
+ifcc	PLINT
 
 # Set the floating point precision (in number of places) in numeric labels.
 

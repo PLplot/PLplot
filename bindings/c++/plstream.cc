@@ -837,11 +837,11 @@ void plstream::poin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
 
 /* Draws a polygon in 3 space.  */
 
-void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw )
+void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc )
 {
     set_stream();
 
-    plpoly3(n,x,y,z,draw);
+    plpoly3(n,x,y,z,draw,ifcc);
 }
 
 /* Set the floating point precision (in number of places) in numeric labels. */

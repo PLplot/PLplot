@@ -291,9 +291,9 @@ PLPOIN3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *code)
 }
 
 void
-PLPOLY3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
+PLPOLY3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT *ifcc)
 {
-    c_plpoly3(*n, x, y, z, draw);
+    c_plpoly3(*n, x, y, z, draw, *ifcc);
 }
 
 void

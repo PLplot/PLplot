@@ -114,7 +114,7 @@ proc test_poly {{w loopback} k} {
 	    y 4 = [expr sin( $pi * $j / 20.1 ) * sin( $two_pi * $i / 20 )]
 	    z 4 = [expr cos( $pi * $j / 20.1 )]
 
-	    $w cmd plpoly3 -5 x y z draw$k
+	    $w cmd plpoly3 5 x y z draw$k 1
 	}
     }
 

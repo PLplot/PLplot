@@ -362,7 +362,7 @@ class plstream {
 
 /* Draws a polygon in 3 space.  */
 
-    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw );
+    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc );
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 

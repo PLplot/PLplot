@@ -1056,10 +1056,10 @@ void c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code); //%name plpoi
 
 /* Draws a polygon in 3 space.  */
 
-void c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw); //%nowrap
+void c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc); //%nowrap
 
 void my_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT clockwise) {
-	c_plpoly3(n*clockwise,x,y,z,draw); } //%name plpoly3 //%input x(n), y(n), z(n), draw(4)
+	c_plpoly3(n,x,y,z,draw,(1-clockwise)/2); } //%name plpoly3 //%input x(n), y(n), z(n), draw(4)
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 

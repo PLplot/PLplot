@@ -94,7 +94,7 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 }
 
 /*----------------------------------------------------------------------*\
- * void plpoly3( n, x, y, z, draw )
+ * void plpoly3( n, x, y, z, draw, ifcc )
  *
  * Draws a polygon in 3 space.  This differs from plline3() in that
  * this attempts to determine if the polygon is viewable.  If the back
@@ -109,10 +109,11 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
  * So if you're 3 space polygons are too far from planar, consider
  * breaking them into smaller polygons.  "3 points define a plane" :-).
  *
- * The directionality of the polygon is determined by assuming the
- * points are laid out in clockwise order.  If you are drawing them in
- * counter clockwise order, make n the negative of the number of
- * points.
+ * For ifcc == 1, the directionality of the polygon is determined by assuming
+ * the points are laid out in counter-clockwise order.
+ *
+ * For ifcc == 0, the directionality of the polygon is determined by assuming
+ * the points are laid out in clockwise order.
  *
  * BUGS:  If one of the first two segments is of zero length, or if
  * they are colinear, the calculation of visibility has a 50/50 chance
@@ -121,9 +122,9 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 \*----------------------------------------------------------------------*/
 
 void
-c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc)
 {
-    int i, nn;
+    int i;
     PLFLT u, v;
     PLFLT u1, v1, u2, v2, u3, v3;
     PLFLT c;
@@ -133,8 +134,7 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
 	return;
     }
 
-    nn = abs(n);
-    if ( nn < 3 ) {
+    if ( n < 3 ) {
 	plabort("plpoly3: Must specify at least 3 points");
 	return;
     }
@@ -152,10 +152,10 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
 
     c = (u1-u2)*(v3-v2)-(v1-v2)*(u3-u2);
 
-    if ( c * n < 0. )
+    if ( c *(1 - 2*ifcc) < 0. )
 	return;
 
-    for( i=0; i < nn; i++ ) {
+    for( i=0; i < n; i++ ) {
 	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
 	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
 	if (i==0)
