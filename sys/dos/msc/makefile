@@ -5,135 +5,88 @@
 # MS C 6.0 Professional Development System (it's not actually very expensive).
 # It is currently set up to be run in an OS/2 session, and will build the
 # PLPLOT system of libraries, utilities and examples for execution under either
-# OS/2 native mode or under DOS (and the OS/2 DOS box).  
+# OS/2 native mode or under DOS (and the OS/2 DOS box).
 #
 # To build the DOS version, you will need to modify the makefile in a couple
-# of places, in order to include the DOSVGA driver.  These changes are marked
+# of places, in order to include the MSCVGA driver.  These changes are marked
 # in the makefile with comments starting with "# DOS".
 #
 # Questions or problems, send (e)mail to:
-#	Geoffrey Furnish
-#	furnish@fusion.ph.utexas.edu
-#	Institute for Fusion Studies
-#	Department of Physics
-#	The University of Texas at Austin
-#	Austin, Texas	78712
+#       <insert supporter's name here>
 
-PLDIR	= d:\plplot\ 
-PLLIBS	= .
-PLFONTS	= $(PLDIR)plfonts\ 
-PLFNT_DIR=\lib
-PLTMP	= $(PLDIR)tmp\ 
+PLDIR	= c:\plplot\
+PLFNT_DIR=c:\etc\
 PLLIBDIR = .
-FONTFLAG= "-DPLFONTDEV1=\"c:\\lib\\ \""
+FONTFLAG= "-DPLFONTDEV1=\"c:\\etc\\ \""
 
 CC	= cl
-CFLAGS	= /FPi87  /nologo /Od /Zi /AL
-#CFLAGS	= /FPi87  /nologo /Ox /G2 /AL
 F77	= fl
-FFLAGS	= /FPi87  /nologo /Od /Zi /AL
-#FFLAGS	= /FPi87  /nologo /Ox /G2 /AL
+# CFLAGS	= /FPi87  /nologo /Od /Zi /AL
+# FFLAGS	= /FPi87  /nologo /Od /Zi /AL
+#
+# CFLAGS	= /FPi87  /nologo /Ox /G2 /AL
+# FFLAGS	= /FPi87  /nologo /Ox /G2 /AL
+
+CFLAGS	= /FPi87  /nologo /Ox /G2 /AL /Za /W4
+FFLAGS	= /FPi87  /nologo /Ox /G2 /AL
 
 # OS/2	Enable -DOS2PM if you have purchassed this add-on driver.
 #	Also, you'll need to enable it in the driver list below...
-# DRIVERS	= -DPS -DLJII -DPLMETA -DHP7470 -DIMP #-DOS2PM
+# PLDEVICES	= -DPS -DLJII -DPLMETA -DHP7470 -DIMP -DOS2PM -DNULLDEV
 
 # DOS
-DRIVERS	= -DPS -DLJII -DPLMETA -DHP7470 -DIMP -DVGA
+# PLDEVICES	= -DPS -DLJII -DPLMETA -DHP7470 -DIMP -DVGA -DNULLDEV
+# PLDEVICES = -DLJII -DPLMETA -DHP7470 -DVGA -DNULLDEV
+#
+# define a minimum set of drivers
+PLDEVICES =  -DPLMETA -DHP7470 -DHP7580 -DVGA
 
 # Rules
 .SUFFIXES:
-.SUFFIXES: .o .c .for
+.SUFFIXES: .o .c .for .exe
 
 .c.o:
-	$(CC) -c $(CFLAGS) /Fo$*.o $*.c 
+	$(CC) -c $(CFLAGS) -DMSDOS $(PLDEVICES) /Fo$*.o $*.c
+
+.c.exe:
+	$(CC) $(CFLAGS) -DMSDOS $*.c -link graphics.lib plplot.lib
+
 .for.o:
 	$(F77) -c $(FFLAGS) /Fo$*.o $*.for
 
+##############################################################################
+#
+# Dependencies for plplot package.
+#
+##############################################################################
+
 # Object file macros
+# Main sources.
 
 OBJ =	\
-	base.o \
-	convert.o \
-	genlin.o \
-	move.o \
-	pladv.o \
-	plaxes.o \
-	plbeg.o \
-	plbin.o \
+	pdfutils.o \
+	plargs.o \
 	plbox.o \
-	plbox3.o \
-	plccal.o \
-	plcntr.o \
-	plcol.o \
 	plcont.o \
-	plconf.o \
+	plcore.o \
+	plctest.o \
+	plctrl.o \
+	plcvt.o \
 	pldtik.o \
-	plend.o \
-	plenv.o \
-	plerr.o \
-	plexit.o \
 	plfill.o \
 	plfont.o \
-	plform.o \
-	plgra.o \
-	plgrid3.o \
-	plgspa.o \
 	plhist.o \
-	pljoin.o \
-	pllab.o \
-	pllclp.o \
 	plline.o \
-	pllsty.o \
-	plmesh.o \
-	plmtex.o \
-	plnxtv.o \
 	plot3d.o \
-	plpat.o \
-	plpsty.o \
-	plptex.o \
-	plrot.o \
+	plpage.o \
 	plsdef.o \
-	plside3.o \
-	plstar.o \
-	plstyl.o \
-	plsvpa.o \
+	plshade.o \
+	plstream.o \
+	plstring.o \
 	plsym.o \
-	plt3zz.o \
 	pltick.o \
-	plvasp.o \
-	plvpas.o \
 	plvpor.o \
-	plvsta.o \
-	plw3d.o \
-	plwid.o \
-	plwind.o \
-	plxybx.o \
-	plzbx.o \
-	string.o 
-
-OS2_OBJ = \
-	dispatch.o \
-	pdfutils.o \
-	hp7470.o \
-	hp7580.o \
-	impress.o \
-	ljii.o \
-	ps.o \
-	tek.o \
-	dosvga.o \
-	plmeta.o
-
-# DOS
-# Add dosvga.o to the above list.
-# (Just copy the next line to right above plmeta.o, and strip the leading #.
-#	dosvga.o \
-
-# OS/2
-# Take dosvga.o out of the list and add os2pm.o if you've purchassed it.
-# (Just copy the next line to right above plmeta.o, and strip the leading #.
-#	os2pm.o \
-
+	plwind.o
 
 # Support files for font generators.
 
@@ -150,26 +103,47 @@ FONT_OBJ = \
 	font10.o \
 	font11.o
 
-# C language stubs for linking Plplot to Fortran.
+# C & Fortran stubs for linking Plplot to Fortran.
 
 CSTUB_OBJ = \
-	long2str.o \
 	sc3d.o \
-	scconf.o \
+	sccont.o \
 	scstubs.o
 
-# Fortran language stubs for linking Plplot to Fortran.
-
 FSTUB_OBJ = \
+	strutil.o \
 	sfstubs.o
+
+
+# DOS *or* OS/2         comment/uncomment of the next two declarations
+
+# DOS
+OS2_OBJ = mscvga.o
+
+# OS/2
+# OS2_OBJ = os2pm.o
+
+# Drivers
+
+DRIVERS_OBJ = \
+	dg300.o \
+	hpgl.o \
+	impress.o \
+	ljii.o \
+	null.o \
+	plbuf.o \
+	plmeta.o \
+	ps.o
+
+#################
 
 # Library dependencies
 
 libs:	libc libf
-libc:	$(PLLIBS)\plplot.lib
-libf:	$(PLLIBS)\plstub.lib
+libc:	$(PLLIBDIR)\plplot.lib
+libf:	$(PLLIBDIR)\plstub.lib
 
-$(PLLIBS)\plplot.lib:	$(OBJ) $(OS2_OBJ)
+$(PLLIBDIR)\plplot.lib:	$(OBJ) $(DRIVERS_OBJ) $(OS2_OBJ)
 	@echo Ready to build plplot.lib
 	-@del plplot.lib
 	lib @<<
@@ -177,27 +151,39 @@ plplot
 y
 + $(OBJ:.o =.o &
 +) &
++ $(DRIVERS_OBJ:.o =.o &
++) &
 + $(OS2_OBJ:.o =.o &
 +) ;
 <<
 
-$(PLLIBS)\plstub.lib:	$(CSTUB_OBJ) $(FSTUB_OBJ)
+$(PLLIBDIR)\plstub.lib:	$(CSTUB_OBJ)
 	@echo Ready to build plstub.lib
 	-@del plstub.lib
 	lib @<<
 plstub
 y
 + $(CSTUB_OBJ:.o =.o &
-+) &
-+ $(FSTUB_OBJ:.o =.o &
 +) ;
 <<
+
+# $(PLLIBDIR)\plstub.lib:	$(CSTUB_OBJ) $(FSTUB_OBJ)
+# 	@echo Ready to build plstub.lib
+# 	-@del plstub.lib
+# 	lib @<<
+# plstub
+# y
+# + $(CSTUB_OBJ:.o =.o &
+# +) &
+# + $(FSTUB_OBJ:.o =.o &
+# +) ;
+# <<
 
 # In case you REALLY mean it!
 
 force: links libs
 
-# First time only, should be executed from $(PLTMP)
+# First time only, should be executed from $(PLDIR)tmp\
 
 links: linkmain linkstubs
 
@@ -209,6 +195,7 @@ linkmain:
 	copy ..\drivers\*.* .
 	copy ..\fonts\*.* .
 	copy ..\utils\*.* .
+	copy ..\sys\dos\msc\*.c .
 	ren *.f *.for
 
 linkstubs:	
@@ -218,8 +205,10 @@ linkstubs:
 
 # The metafile renderer.
 
-plrender:
-	cl $(CFLAGS) plrender.c getopt.c plplot.lib
+plrender: plrender.exe
+
+# 	$(CC) $(CFLAGS) plrender.c plplot.lib
+# 	cl $(CFLAGS) plrender.c getopt.c plplot.lib
 
 #----------------------------------------------------------------------#
 # Font files.
@@ -234,11 +223,11 @@ sfont:	$(PLFNT_DIR)plstnd.fnt
 xfont:	$(PLFNT_DIR)plxtnd.fnt
 
 $(PLFNT_DIR)plstnd.fnt:
-	$(CC) $(CFLAGS:AL=AH) /Gt16 stndfont.c font*.c
+	$(CC) $(CFLAGS:AL=AH) /Gt16 stndfont.c font*.c pdfutils.c
 	-stndfont
 
 $(PLFNT_DIR)plxtnd.fnt:
-	$(CC) $(CFLAGS:AL=AH) /Gt16 xtndfont.c font*.obj
+	$(CC) $(CFLAGS:AL=AH) /Gt16 xtndfont.c font*.obj pdfutils.obj
 	-xtndfont
 
 #----------------------------------------------------------------------#
@@ -247,36 +236,12 @@ $(PLFNT_DIR)plxtnd.fnt:
 # plfont.c may have font flags passed in
 
 plfont.o: plfont.c
-	$(CC) -c $(CFLAGS) $(FONTFLAG)	/Fo$*.o $*.c
+	$(CC) -c $(CFLAGS) $(FONTFLAG) $(PLDEVICES) /Fo$*.o $*.c
 
 # dispatch.c and all the drivers need to know $(PLDEVICES).  The guts
 # of the driver routine are not compiled if its name is not present in
 # the device list.  You may want to leave drivers for specific systems
 # (Amiga, MS-DOS, OS/2, etc) out of this list.
-
-dispatch.o: dispatch.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-hp7470.o:	hp7470.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-hp7580.o:	hp7580.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-impress.o:	impress.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-ljii.o:	ljii.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-ps.o:	ps.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-tek.o:	tek.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
-
-plmeta.o:	plmeta.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) /Fo$*.o $*.c 
 
 #----------------------------------------------------------------------#
 # Build all the demos
@@ -285,67 +250,42 @@ demos : cdemos fdemos
 
 # Example programs, in c.
 
-cdemos:	x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
-	x12c x13c x14c tutor
+heap: chkheap.exe
 
-x01c:	x01c.c
-	$(CC) $(CFLAGS) x01c.c plplot.lib 
-x02c:	x02c.c
-	$(CC) $(CFLAGS) x02c.c plplot.lib 
-x03c:	x03c.c
-	$(CC) $(CFLAGS) x03c.c plplot.lib 
-x04c:	x04c.c
-	$(CC) $(CFLAGS) x04c.c plplot.lib 
-x05c:	x05c.c
-	$(CC) $(CFLAGS) x05c.c plplot.lib 
-x06c:	x06c.c
-	$(CC) $(CFLAGS) x06c.c plplot.lib 
-x07c:	x07c.c
-	$(CC) $(CFLAGS) x07c.c plplot.lib 
-x08c:	x08c.c
-	$(CC) $(CFLAGS) x08c.c plplot.lib 
-x09c:	x09c.c
-	$(CC) $(CFLAGS) x09c.c plplot.lib 
-x10c:	x10c.c
-	$(CC) $(CFLAGS) x10c.c plplot.lib 
-x11c:	x11c.c
-	$(CC) $(CFLAGS) x11c.c plplot.lib 
-x12c:	x12c.c
-	$(CC) $(CFLAGS) x12c.c plplot.lib 
-x13c:	x13c.c
-	$(CC) $(CFLAGS) x13c.c plplot.lib 
-x14c:	x14c.c
-	$(CC) $(CFLAGS) x14c.c plplot.lib 
-tutor:	tutor.c
-	$(CC) $(CFLAGS) tutor.c plplot.lib
+cdemos: x01c.exe x02c.exe x03c.exe x04c.exe\
+        x05c.exe x06c.exe x07c.exe x08c.exe\
+        x09c.exe x10c.exe x11c.exe x12c.exe\
+        x13c.exe x15c.exe tutor.exe
+
+# remove x14c.exe, since dos does not have xwindows
 
 # Example programs, in Fortran.
 
-fdemos:	x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f
+fdemos: x01f.exe x02f.exe x03f.exe x04f.exe x05f.exe x06f.exe x07f.exe x08f.exe x09f.exe x10f.exe x11f.exe x12f.exe x13f.exe
 
-x01f:
+x01f.exe:
 	$(F77) $(FFLAGS) x01f.for plplot.lib plstub.lib
-x02f:
+x02f.exe:
 	$(F77) $(FFLAGS) x02f.for plplot.lib plstub.lib
-x03f:
+x03f.exe:
 	$(F77) $(FFLAGS) x03f.for plplot.lib plstub.lib
-x04f:
+x04f.exe:
 	$(F77) $(FFLAGS) x04f.for plplot.lib plstub.lib
-x05f:
+x05f.exe:
 	$(F77) $(FFLAGS) x05f.for plplot.lib plstub.lib
-x06f:
+x06f.exe:
 	$(F77) $(FFLAGS) x06f.for plplot.lib plstub.lib
-x07f:
+x07f.exe:
 	$(F77) $(FFLAGS) x07f.for plplot.lib plstub.lib
-x08f:
+x08f.exe:
 	$(F77) $(FFLAGS) x08f.for plplot.lib plstub.lib
-x09f:
+x09f.exe:
 	$(F77) $(FFLAGS) /Gt512 x09f.for plplot.lib plstub.lib
-x10f:
+x10f.exe:
 	$(F77) $(FFLAGS) x10f.for plplot.lib plstub.lib
-x11f:
+x11f.exe:
 	$(F77) $(FFLAGS) x11f.for plplot.lib plstub.lib
-x12f:
+x12f.exe:
 	$(F77) $(FFLAGS) x12f.for plplot.lib plstub.lib
-x13f:
+x13f.exe:
 	$(F77) $(FFLAGS) x13f.for plplot.lib plstub.lib

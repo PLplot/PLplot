@@ -8,18 +8,13 @@
 # Note that Fortran support in is the makefile and uses f2c and gcc,
 #
 # Questions or problems, send (e)mail to:
-#	Geoffrey Furnish
-#	furnish@fusion.ph.utexas.edu
-#	Institute for Fusion Studies
-#	Department of Physics
-#	The University of Texas at Austin
-#	Austin, Texas	78712
+#       <insert supporter's name here>
 
-PLDIR	= c:\plplotp\ 
+PLDIR	= c:\plplotp\
 PLLIBS	= ..\lib
-PLFONTS	= $(PLDIR)plfonts\ 
+PLFONTS	= $(PLDIR)plfonts\
 PLFNT_DIR=..\lib
-PLTMP	= $(PLDIR)tmp\ 
+PLTMP	= $(PLDIR)tmp\
 FONTFLAG=
 PLLIB	= plplt
 PLSTB	= plstb
@@ -78,8 +73,7 @@ OBJ =	\
 	plwind.o
 
 DRIVERS_OBJ = \
-	hp7470.o \
-	hp7580.o \
+	hpgl.o \
 	impress.o \
 	ljii.o \
 	null.o \
@@ -156,6 +150,7 @@ linkmain:
 	copy ..\fonts\*.* .
 	copy ..\utils\*.* .
 	copy ..\lib\*.fnt .
+	copy ..\sys\dos\djgpp\*.c .
 #	ren *.f *.for
 
 linkstubs:	
@@ -249,11 +244,8 @@ plcore.o:	plplotP.h plplot.h plcore.h drivers.h plstream.h plcore.c
 dg300.o:	plplotP.h plplot.h plstream.h drivers.h dg300.c
 	$(CC) $(CC_FLAGS) $(PLDEVICES) dg300.c
 
-hp7470.o:	plplotP.h plplot.h plstream.h drivers.h hp7470.c
-	$(CC) $(CC_FLAGS) $(PLDEVICES) hp7470.c
-
-hp7580.o:	plplotP.h plplot.h plstream.h drivers.h hp7580.c
-	$(CC) $(CC_FLAGS) $(PLDEVICES) hp7580.c
+hpgl.o:		plplotP.h plplot.h plstream.h drivers.h hpgl.c
+	$(CC) $(CC_FLAGS) $(PLDEVICES) hpgl.c
 
 impress.o:	plplotP.h plplot.h plstream.h drivers.h impress.c
 	$(CC) $(CC_FLAGS) $(PLDEVICES) impress.c

@@ -2,6 +2,12 @@
 # Makefile for PLPLOT
 #
 #
+# Questions or problems, send (e)mail to:
+#
+#	Paul Casteels   casteels@uia.ac.be
+#	University of Antwerp   Dpt Physics
+#	Belgium
+
 PLDIR   = c:\plplot\  # 
 PLLIBS  = .  #
 PLFONTS = $(PLDIR)plfonts\  # 
