@@ -42,5 +42,6 @@ install_includes:
 
 install_lib: install_dirs install_fonts install_libbase \
 	$(INSTALL_MATLIB) $(INSTALL_CXXLIB) \
-	install_textfiles install_scriptfiles install_includes
+	install_textfiles install_scriptfiles install_includes \
+	$(INSTALL_MAT)
 
