@@ -19,15 +19,18 @@ static void flushbuffer(PLStream *);
 #define FIGY	599
 #define DPI	80
 #define BSIZE	25
+#define XFIG_COLBASE 33 /* xfig first user color */
 
 static short *buffptr, bufflen;
 static short count;
 static int curwid = 1;
-static int curcol0 = 0;
+static int curcol = 1;
 static int firstline = 1;
+static long cmap0_pos, cmap1_pos;
+static int cmap0_ncol, cmap1_ncol;
 
-/* transformation matrix from plplot *default* colormap0 to xfig colors */
-static int trans[] = {0, 4, 6, 2, 33, 34, 35, 36, 37, 1, 38, 3, 39, 5, 40, 7};
+static void stcmap0(PLStream *);
+static void stcmap1(PLStream *);
 
 /*--------------------------------------------------------------------------*\
  * plD_init_xfig()
@@ -39,6 +42,7 @@ void
 plD_init_xfig(PLStream *pls)
 {
     PLDev *dev;
+    int i;
 
 /* Initialize family file info */
 
@@ -58,7 +62,9 @@ plD_init_xfig(PLStream *pls)
     dev->xmax = FIGX;
     dev->ymin = 0;
     dev->ymax = FIGY;
-    pls->dev_fill0 = 1;		/* Handle solid fills */
+    pls->dev_fill0 = 1;	    /* Handle solid fills */
+    if (!pls->colorset)
+      pls->color = 1;         /* Is a color device */
 
     plP_setpxl(3.1496, 3.1496);	/* 80 DPI */
 
@@ -77,20 +83,68 @@ plD_init_xfig(PLStream *pls)
     fprintf(pls->OutFile, "-2\n");
     fprintf(pls->OutFile, "%d 2\n", DPI);
 
-    /* user defined colors, for colormap0--xfig only has 8 default colors */
-    fprintf(pls->OutFile, "0 33 #7fffd4\n");
-    fprintf(pls->OutFile, "0 34 #ffc0cb\n");
-    fprintf(pls->OutFile, "0 35 #f5deb3\n");
-    fprintf(pls->OutFile, "0 36 #bebebe\n");
-    fprintf(pls->OutFile, "0 37 #a52a2a\n");
-    fprintf(pls->OutFile, "0 38 #8a2be2\n");
-    fprintf(pls->OutFile, "0 39 #40e0d0\n");
-    fprintf(pls->OutFile, "0 40 #fa8072\n");
-    
+    /* user defined colors, for colormap0 */
+    cmap0_ncol = pls->ncol0;
+    cmap0_pos = ftell(pls->OutFile);
+    stcmap0(pls);
+
+    /* user defined colors, for colormap1 */
+    cmap1_pos = ftell(pls->OutFile);
+    cmap1_ncol = pls->ncol1;
+    stcmap1(pls);
+
     bufflen = 2 * BSIZE;
     buffptr = (short *) malloc(sizeof(short) * bufflen);
     if (buffptr == NULL)
 	plexit("Out of memory!");
+}
+
+void
+stcmap0(PLStream *pls)
+{
+  long cur_pos;
+  int i;
+
+  if (pls->ncol0 > cmap0_ncol)
+    fprintf(stderr,"Too much colors for cmap0. Preallocate using command line '-ncol0 n.\n'");
+
+      cur_pos = ftell(pls->OutFile);
+
+      if (fseek(pls->OutFile, cmap0_pos, SEEK_SET)) {
+	fprintf(stderr,"Sorry, only file based output, no pipes.\n");
+	exit(0);
+      }
+
+      for (i=0; i<pls->ncol0; i++)
+	fprintf(pls->OutFile,"0 %d #%.2x%.2x%.2x\n", i+XFIG_COLBASE,
+		pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
+
+      if (cur_pos != cmap0_pos)
+	fseek(pls->OutFile, cur_pos, SEEK_SET);
+}
+
+void
+stcmap1(PLStream *pls)
+{
+  long cur_pos;
+  int i;
+
+  if (pls->ncol1 > cmap1_ncol)
+    fprintf(stderr,"Too much colors for cmap1. Preallocate using command line '-ncol1 n.\n'");
+
+      cur_pos = ftell(pls->OutFile);
+
+      if (fseek(pls->OutFile, cmap1_pos, SEEK_SET)) {
+	fprintf(stderr,"Sorry, only file based output, no pipes.\n");
+	exit(0);
+      }
+
+      for (i=0; i<pls->ncol1; i++)
+	fprintf(pls->OutFile,"0 %d #%.2x%.2x%.2x\n", i+XFIG_COLBASE+cmap0_ncol,
+		pls->cmap1[i].r, pls->cmap1[i].g, pls->cmap1[i].b);
+
+      if (cur_pos != cmap1_pos)
+	fseek(pls->OutFile, cur_pos, SEEK_SET);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -188,8 +242,9 @@ plD_bop_xfig(PLStream *pls)
     firstline = 1;
 
     if (!pls->termin)
-	plGetFam(pls);
+      plGetFam(pls);
 
+    pls->famadv = 1;
     pls->page++;
 }
 
@@ -216,30 +271,36 @@ plD_tidy_xfig(PLStream *pls)
 void 
 plD_state_xfig(PLStream *pls, PLINT op)
 {
-    switch (op) {
+  switch (op) {
 
-    case PLSTATE_WIDTH:
-	flushbuffer(pls);
-	firstline = 1;
+  case PLSTATE_WIDTH:
+    flushbuffer(pls);
+    firstline = 1;
+    curwid = pls->width;
+    break;
 
-	if (pls->width <= 1)
-	    curwid = 1;
-	else if (pls->width >= 4)
-	    curwid = 3;
-	else
-	    curwid = (int) pls->width;
+  case PLSTATE_COLOR0:
+    flushbuffer(pls);
+    curcol =  pls->icol0 + XFIG_COLBASE;
+    break;
 
-	break;
+  case PLSTATE_COLOR1:
+    flushbuffer(pls);
+    curcol =  pls->icol1 + XFIG_COLBASE + pls->ncol0;
+    break;
 
-    case PLSTATE_COLOR0:
-      flushbuffer(pls);
-      curcol0 =  trans[pls->icol0];
-      break;
+  case PLSTATE_CMAP0:
+    stcmap0(pls);
+    break;
 
-    case PLSTATE_COLOR1:
-      fprintf(stderr, "Yeah\n");
-      break;
-    }
+  case PLSTATE_CMAP1:
+    stcmap1(pls);
+    break;
+
+  default:
+    fprintf(stderr, "state opt=%d\n", op);
+  }
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -255,24 +316,27 @@ plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
   PLDev *dev = pls->dev;
   int i, npts;
  
-   switch (op) { 
-   case PLESC_FILL:
+  switch (op) { 
+  case PLESC_FILL:
 
-     npts = pls->dev_npts;
-     if (npts > PL_MAXPOLY)
-       plexit("FillPolygonCmd: Too many points in polygon\n");
+    npts = pls->dev_npts;
+    if (npts > PL_MAXPOLY)
+      plexit("FillPolygonCmd: Too many points in polygon\n");
      
-     flushbuffer(pls);
-     fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 0 0 0 %d\n",
-	     curcol0, curcol0, npts);
+    flushbuffer(pls);
+    fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 0 0 0 %d\n",
+	    curcol, curcol, npts);
 
-     for (i = 0; i < npts; i++)
-       fprintf(pls->OutFile,"%d %d ",  pls->dev_x[i],
-	        dev->ymax - pls->dev_y[i]);
+    for (i = 0; i < npts; i++)
+      fprintf(pls->OutFile,"%d %d ",  pls->dev_x[i],
+	      dev->ymax - pls->dev_y[i]);
 
-     fprintf(pls->OutFile, "\n");
-     break;
-   }  
+    fprintf(pls->OutFile, "\n");
+    break;
+
+  default:
+    fprintf(stderr, "esc opt=%d\n", op);
+  }  
 }
 
 /*--------------------------------------------------------------------------*\
@@ -288,7 +352,7 @@ flushbuffer(PLStream *pls)
 	return;
 
     fprintf(pls->OutFile, "2 1 0 %d %d 0 50 0 -1 0.0 0 0 0 0 0 %d\n",
-	    curwid, curcol0, count/2);
+	    curwid, curcol, count/2);
     while (i < count) {
 	fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
 		FIGY - *(buffptr + i + 1));
