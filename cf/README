@@ -79,7 +79,8 @@ pl_prefix='/usr/local/plplot'
 DEFS=' -DSTDC_HEADERS=1'
 with_opt="no"
 
-# Devices are selected by --enable or --disable.
+# Devices are selected by --enable or --disable on the command line, but
+# only shell variables of the form enable_<option> are recognized here.
 
 enable_dg300="no"
 enable_imp="no"
