@@ -2,7 +2,8 @@
 # Test suite for Tcl demos.  
 # This is called from plplot-test.sh with $tcldir, $installbindir, $driver, 
 # $dsuffix, and $options defined.
-export results=`pwd`
+results=`pwd`
+export results
 cd $tcldir
 $installbindir/pltcl -dev $driver -o $results/plot.$dsuffix $options <<EOF
 plinit

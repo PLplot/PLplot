@@ -29,13 +29,20 @@ EOF
 
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/share/doc/plplot/examples.
-export cdir=c
-export cxxdir=c++
-export f77dir=f77
-export pythondir=python
-export tcldir=tcl
-export octavedir=octave
-export installbindir=@prefix@/@BIN_DIR@
+cdir=c
+export cdir
+cxxdir=c++
+export cxxdir
+f77dir=f77
+export f77dir
+pythondir=python
+export pythondir
+tcldir=tcl
+export tcldir
+octavedir=octave
+export octavedir
+installbindir=@prefix@/@BIN_DIR@
+export installbindir
 
 while test $# -gt 0; do
    case "$1" in
@@ -46,16 +53,24 @@ while test $# -gt 0; do
    case $1 in
       --flat)
 #        We are running this script from the flat plplot/tmp directory.
-         export cdir=.
-	 export cxxdir=.
-	 export f77dir=.
-	 export pythondir=.
-	 export tcldir=.
-	 export octavedir=.
-	 export installbindir=.
+         cdir=.
+         export cdir
+	 cxxdir=.
+	 export cxxdir
+	 f77dir=.
+	 export f77dir
+	 pythondir=.
+	 export pythondir
+	 tcldir=.
+	 export tcldir
+	 octavedir=.
+	 export octavedir
+	 installbindir=.
+	 export installbindir
 	 ;;
       --driver=*)
-         export driver=$optarg
+         driver=$optarg
+         export driver
          ;;
       --version)
          echo $version
@@ -72,25 +87,34 @@ while test $# -gt 0; do
 done
 
 if test -z "$driver"; then
-   export driver=psc
+   driver=psc
+   export driver
 fi
 
 case $driver in
    ps|psc)
-      export dsuffix=ps
-      export options=
+      dsuffix=ps
+      export dsuffix
+      options=
+      export options
       ;;
    png)
-      export dsuffix=png
-      export options="-fam -fflen 2"
+      dsuffix=png
+      export dsuffix
+      options="-fam -fflen 2"
+      export options
       ;;
    jpeg)
-      export dsuffix=jpeg
-      export options="-fam -fflen 2"
+      dsuffix=jpeg
+      export dsuffix
+      options="-fam -fflen 2"
+      export options
       ;;
    plmeta)
-      export dsuffix=plmeta
-      export options=
+      dsuffix=plmeta
+      export dsuffix
+      options=
+      export options
       ;;
    *)
       usage 1 1>&2
