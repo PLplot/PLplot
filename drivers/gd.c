@@ -147,11 +147,7 @@ void plD_init_png(PLStream *pls)
 	 plspage(0., 0., 800, 600, 0, 0);
       }
 
-      dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
-      
-      setcmap(pls);
-      pls->graphx = GRAPHICS_MODE;
-		
+     pls->graphx = GRAPHICS_MODE;
 
      dev->pngx = pls->xlength - 1;	/* should I use -1 or not??? */
      dev->pngy = pls->ylength - 1;
@@ -159,11 +155,11 @@ void plD_init_png(PLStream *pls)
      if (pls->xdpi<=0) 
      {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
-	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
+        plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
      }
      else
      {
-	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
+        pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
      } 
 /* Convert DPI to pixels/mm */
      plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4);
@@ -245,7 +241,7 @@ png_Dev *dev=(png_Dev *)pls->dev;
 static void
 setcmap(PLStream *pls)
 {
-    int i, ncol1=pls->ncol1, orig_ncol1=pls->ncol1;
+    int i, ncol1=pls->ncol1;
     int ncol0=pls->ncol0, total_colours;
     PLColor cmap1col;
     png_Dev *dev=(png_Dev *)pls->dev;
@@ -266,7 +262,14 @@ setcmap(PLStream *pls)
              dev->colour_index[i]=-8888;
             }
         }
-        
+
+    if (ncol0>NCOLOURS)       /* Check for rediculous number of colours */
+       {                      /* in ncol0, and appropriately adjust the */ 
+        plwarn("Too many colours in cmap0.");      /* number, issuing a */ 
+        if (ncol1<NCOLOURS) ncol0=NCOLOURS-ncol1;  /*warning if it does */
+        pls->ncol0=ncol0;
+       }
+
     dev->totcol=0;       /* Reset the number of colours counter to zero */
     
     total_colours=ncol0+ncol1;  /* Work out how many colours are wanted */
@@ -297,7 +300,7 @@ if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
                                    pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
         ++dev->totcol; /* count the number of colours we use as we use them */
         }
-    
+
 #ifdef SWAP_BALCK_WHEN_WHITE
 
 /* 
@@ -373,10 +376,6 @@ if (ncol1>0)    /* make sure that we want to define cmap1 first */
              plcol_interp(pls, &cmap1col, i, ncol1);
             }
 
-         if (dev->colour_index[i + pls->ncol0]!=-8888) /* Should not be necessary  */
-            {                                          /* But won't hurt to be sure */
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[i + pls->ncol0]);
-            } 
 
          dev->colour_index[i + pls->ncol0]=gdImageColorAllocate(dev->im_out,
                                    cmap1col.r, cmap1col.g, cmap1col.b);
@@ -502,7 +501,6 @@ void plD_tidy_png(PLStream *pls)
    png_Dev *dev=(png_Dev *)pls->dev;
 
    fclose(pls->OutFile);
-
 }
 
 #ifdef PLD_png
@@ -516,8 +514,27 @@ void plD_tidy_png(PLStream *pls)
 void plD_eop_png(PLStream *pls)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
+int i;
+
     if (pls->family || pls->page == 1) {
        gdImagePng(dev->im_out, pls->OutFile);
+
+/*
+ * In theory when you call "gdImageDestroy()" the colourmap for that image
+ * should be reset. Just to make absolutely sure it dies, and is completely
+ * cleared out, the next bit of code will go through and try to flush out
+ * all the colours, even if they should already have been flushed.
+ */
+ 
+    for (i=0;i<NCOLOURS;++i)
+        {
+         if (dev->colour_index[i]!=-8888)
+            {
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[i]);
+             dev->colour_index[i]=-8888;
+            }
+        }
+
        gdImageDestroy(dev->im_out);
     }
 }
@@ -535,8 +552,20 @@ png_Dev *dev=(png_Dev *)pls->dev;
 void plD_eop_jpeg(PLStream *pls)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
+int i;
+
     if (pls->family || pls->page == 1) {
        gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression);
+ 
+    for (i=0;i<NCOLOURS;++i)
+        {
+         if (dev->colour_index[i]!=-8888)
+            {
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[i]);
+             dev->colour_index[i]=-8888;
+            }
+        }
+
        gdImageDestroy(dev->im_out);
     }
 }
