@@ -19,12 +19,8 @@
 # Nothing to do for the moment thanks to Rafael's efforts
 
 # Prepare tree for configure; make; make install
-aclocal_opts="$*"
-aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
-./bootstrap.sh $aclocal_opts
-cd doc/docbook
-./bootstrap.sh
-cd ../..
+
+./bootstrap.sh 
 
 # Compensate for autoconf bug which invokes autoheader inappropriately on these
 # files if they are out of date.
