@@ -63,13 +63,15 @@ print_defaults () {
   exit 0
 }
 
+bypass_rtag=no
 do_check=no
 prefix=""
 preparation_prefix=""
 
-while getopts "cdhi:no:p:r:t:u:v:w:" option
+while getopts "bcdhi:no:p:r:t:u:v:w:" option
 do
   case $option in
+    b) bypass_rtag=yes ;;
     c) do_check=yes ;;
     d) print_defaults ;;
     h) usage 0 ;;
@@ -96,6 +98,12 @@ cleanup ( ) {
 trap "cleanup" 0 HUP INT QUIT PIPE TERM
 
 cleanup
+
+test $bypass_rtag = yes \
+  || date_tag=cvs-tarball_`date +%Y-%m-%d-%H-%M-%S` \
+  && echo "Tagging repository with $date_tag" \
+  && cvs -d${WWW_USER}@$CVSROOTDIR rtag $BRANCH $date_tag plplot \
+  && BRANCH="-r $date_tag"
 
 cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
