@@ -169,6 +169,11 @@ public class PLStream {
 // map
 // meridians
 
+    public final int DRAW_LINEX = 0x01; // draw lines parallel to the X axis
+    public final int DRAW_LINEY = 0x02; // draw lines parallel to the Y axis
+    public final int DRAW_LINEXY = DRAW_LINEX | DRAW_LINEY; // draw lines parallel to both the X and Y axis
+    public final int MAG_COLOR = 0x04; // draw the mesh with a color dependent of the magnitude
+
     public native void mesh( float[] x, float[] y, float[][] z, int opt );
     public native void mesh( double[] x, double[] y, double[][] z, int opt );
 
@@ -181,13 +186,22 @@ public class PLStream {
                              double disp, double pos, double just,
                              String text);
 
+// see the meaning of "opt" in mesh() above
+
     public native void plot3d( float[] x, float[] y, float[][] z,
                                int opt, int side );
     public native void plot3d( double[] x, double[] y, double[][] z,
                                int opt, int side );
 
-    public native void plsurf3d( float[] x, float[] y, float[][] z, int side );
-    public native void plsurf3d( double[] x, double[] y, double[][] z, int side );
+
+    public final int SURF_CONT = 0x10; // draw contour plot at surface
+    public final int BASE_CONT = 0x20; // draw contour plot at xy plane
+    public final int DRAW_SIDES = 0x40; // draw sides
+    public final int FACETED   = 0x80; // draw outline for each square that makes up the surface
+    // also MAG_COLOR, defined above // draw the mesh with a color dependent of the magnitude
+
+    public native void surf3d( float[] x, float[] y, float[][] z, int opt, float clev[] );
+    public native void surf3d( double[] x, double[] y, double[][] z, int opt, double clev[] );
 
 // pat
 
