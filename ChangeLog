@@ -1,22 +1,28 @@
-2002-12-12  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-22  Maurice LeBrun <mlebrun@users.sourceforge.net>
+
+	* configure.ac: AM_CONFIG_HEADER must be called *before* AC_DEFINE's
+	  This solves infamous -dev tk problem and also problems with
+	  ./xtk?? -f tk??
+
+2002-12-12  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Implement autotools support for building and installing java
 	  plplot wrapper library, libplplotjava, java/plplot/core classes,
 	  and installing java source for examples in java/plplot/examples.
 
-2002-12-13  "[iso-8859-1] João Cardoso" <jcard@fe.up.pt>
+2002-12-13  "[iso-8859-1] João Cardoso" <jcard@users.sourceforge.net>
 
 	* Fixed p7 and p15 problem.  This finishes the last of the problems
 	  with the octave examples.  (x example segfaults solved earlier
 	  by plend ==> plend1 change in those examples.)
 
-2002-12-12  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-12  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* configure.ac: Drop ".so" suffix from records in created drivers.db.
 	  Apparently, this makes libtldl work properly on OSF1, and it
 	  still also works properly on Linux with this change.
 
-2002-12-11  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-11  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* src/plcore.c: reactivate release of libltdl resources in plend.
 
@@ -27,7 +33,7 @@
 	  Additional AM_CONDITIONALS were done in configure.ac to help
 	  implement this.
 
-2002-12-09  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-09  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* configure.ac: only run AM_PATH_PYTHON(1.5) if python is enabled.
 
@@ -53,7 +59,7 @@
 	  the last so these libltdl resources must always remain allocated
 	  until the overall programme exits.
 
-2002-12-07  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-07  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* drivers/Makefile.am: Make tk and tkwin static drivers work. This
 	  completes the static drivers configuration.
@@ -66,7 +72,7 @@
 	* PROBLEMS: reorganization and updating to help set our priorities
 	  for what must be accomplished before the next release.
 
-2002-12-06  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-06  Alan W. Irwin <airwin@users.sourceforge.net>
 
         * Configure test executables in examples for c++, f77, and tk.  make
 	  check builds the uninstalled c, c++, f77, and tk examples fine,
@@ -77,7 +83,7 @@
 	  implementation will be more complicated) work using the automake
 	  convenience library approach.
 
-2002-12-05  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-05  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Configure test executables in examples/c/Makefile.am
 	
@@ -87,7 +93,7 @@
 	* Change fortran and C++ driver names to libplplotf77 and libplplotcxx
 	  because of name-clash concerns.
 
-2002-12-04  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-04  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Begin configuration of octave using autotools.  plplot_octave.oct
 	  builds and installs, but no other part of octave is done yet.
@@ -101,13 +107,13 @@
 	  don't work and why none of the x??.m examples work.
 
 
-2002-12-03  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-03  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* With a lot of work required to work around state problems in the
 	  repository, merged the AT branch into MAIN.  Welcome to the world
 	  of autotools configuration on our MAIN branch!
 
-2002-12-02  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-02  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* drivers/Makefile.am for AT branch: instead of using the
 	  concatanation of all compiler flags for all dynamic drivers, apply
@@ -123,7 +129,7 @@
 	  MAIN branch (except in a few cases where there is version skew
 	  between the examples since AT was branched from MAIN).
 
-2002-12-01  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-01  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Finish (nearly) all the dynamic driver builds for AT. Checked that
 	  gnome, png, xfig, ntk all worked.  Also, package require Plplotter
@@ -133,7 +139,7 @@
 	  stand-alone driver).  As far as I know, the only driver that still
 	  has errors under AT is tk.
 
-2002-11-30  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-30  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Finish AT libplplottcltk.so* build when itcl and tk are enabled.
 
@@ -143,7 +149,7 @@
 	* acinclude.m4 copied (again) from cf/aclocal.m4 for AT branch to
 	  pick up all the autoconf 2.5.3 changes.
 
-2002-11-29  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-29  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Finish AT tcl binding.  These are only small fairly
 	  non-consequential refinements that I did while trying to debug the
@@ -154,7 +160,7 @@
 	  by dropping "plplot/" from the #include statements in the 
 	  source files.
 	
-2002-11-28  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-28  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* AT build of libplplottcl (including a substantial reorganization
 	  of configure.in).
@@ -163,7 +169,7 @@
 
 	* AT reorganize src/Makefile.am, but no substantive changes.
 
-2002-11-27  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-27  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Creation of python extension modules now works.  Replaced the
 	  setup.py method (which had some cross-platform question marks)
@@ -180,7 +186,7 @@
 	* Fixed single precision bugs in bindings/c++/Makefile.am and
 	  bindings/f77/Makefile.am.
 
-2002-11-26  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-26  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Support for examples/c examples/c++ and examples/f77 on AT
 	  branch.
@@ -191,7 +197,7 @@
 	* f77 works (required a fix to linking of libplf77 consistent
 	  with hierarchical linking model.)
 
-2002-11-25  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-25  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Makefile.am files: some reorganization, but mostly adding
 	  EXTRA_DIST macros so the distributed tarball generated by
@@ -199,7 +205,7 @@
 	* configure.in and /bindings/f77/Makefile.am: Cross-platform 
 	  glitches fixed for solaris.
 
-2002-11-24  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-24  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Add plConfig.h to installed headers.
 	* Remove aclocal.m4 from cvs control (was stale cvs deleted file which
@@ -213,11 +219,11 @@
 	  and need for lt_dlinit() and lt_dlexit() calls which I chose to
 	  make for each stream created and destroyed.)
 
-2002-11-23  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-23  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* FREETYPEINCCMD and FREETYPELIBCMD
 
-2002-11-22  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-11-22  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Initial creation (from resurrected AM-LT merged into 20021122
 	  MAIN HEAD) and checkin of AT branch.  Details given on plplot_devel 

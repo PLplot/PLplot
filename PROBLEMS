@@ -15,9 +15,6 @@ everybody on the development team with access to different platforms.
 OSF1 environment completed, but we need much more especially a Solaris
 environment with tcl/tk)
 
-* -dev tk problem finding the tcl scripts (specifically plclient.tcl).  One
-of Joao, Maurice, or Geoffrey?
-
 Essential, minor effort required.
 
 * sort out option implications for --disable-shared.  For example, we
@@ -36,9 +33,6 @@ the many minor memory leaks found by valgrind throughout the dynloader area.
 Anybody with good understanding of that code section?  Joao is planning to
 make an internal pllib_end function called from plend where overall memory
 that is allocated at pllib_init is released again.
-
-* Linking problems on xtk0[124].  For static devices these work fine, but
-  for dynamic devices there are problems.  Alan
 
 * Move to modern autoconf API.  There are lots of warnings now about the
 deprecated functions that we use.
