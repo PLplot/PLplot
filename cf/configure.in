@@ -525,6 +525,16 @@ AC_FUNC_VFORK
 AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
 
 # ----------------------------------------------------------------------------
+# For some systems the XCreateWindow call in xwin.c needs the default visual.
+
+case $system in 
+    SunOS-4* ) 
+	AC_DEFINE(USE_DEFAULT_VISUAL)
+	;;
+    * )
+esac
+
+# ----------------------------------------------------------------------------
 # Some X11 headers require "caddr_t" even on systems that claim POSIX.1
 # compliance, which is illegal.  This makes it impossible to compile
 # programs that include X11 headers if _POSIX_SOURCE is defined.  I work
