@@ -93,7 +93,13 @@ install_matlib:
 	      $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$(LIB_TAG)$A; \
 	  fi
 
+# redo the shared library build using the correct rpath.
 install_tcllib:
+	@-cd shared; \
+	$(SHLIB_BUILD) ../$(TCLLIB_SO) \
+	-Wl,-soname -Wl,$(TCL_SONAME) \
+	$(TCL_OBJS) -L.. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) \
+        @PLTCLLIBS@ @EXTRA_LIBS@ $(INSTALL_RPATH)
 	@-$(CP) $(TCLLIB_BASE)* $(LIB_DIR); \
 	  if test -r $(TCLLIB_BASE)$(LIB_TAG)$A; then \
 	      $(RANLIB) $(LIB_DIR)/$(TCLLIB_BASE)$(LIB_TAG)$A; \

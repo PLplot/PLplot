@@ -155,14 +155,15 @@ $(MATLIB_SO): $(MAT_OBJS:%=shared/%)
 	@echo ""
 
 # $(TCLLIB_SO) depends on $(PLLIB_SO) $(MATLIB_SO)
+# This must be rebuilt later for install location because of rpath.
 $(TCLLIB_SO): $(TCL_OBJS:%=shared/%) $(PLLIB_SO) $(MATLIB_SO)
 	-$(RM) $(TCLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(TCLLIB_SO) \
-		-Wl,-soname -Wl,$(TCL_SONAME) \
-		$(TCL_OBJS) -L.. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) \
-		@PLTCLLIBS@ @EXTRA_LIBS@
+	-Wl,-soname -Wl,$(TCL_SONAME) \
+	$(TCL_OBJS) -L.. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) \
+	@PLTCLLIBS@ @EXTRA_LIBS@ $(RPATH)
 	ln -sf $(TCLLIB_SO) $(TCL_SONAME)
 	ln -sf $(TCL_SONAME) $(TCL_LINKNAME)
 	@echo ""
