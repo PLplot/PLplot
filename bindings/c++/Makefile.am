@@ -26,11 +26,7 @@ if enable_cxx
 
 pkginclude_HEADERS = plstream.h
 
-if with_double
-lib_LTLIBRARIES = libplplotcxxd.la
-else
-lib_LTLIBRARIES = libplplotcxx.la
-endif
+lib_LTLIBRARIES = libplplotcxx@LIB_TAG@.la
 
 endif
 
@@ -39,9 +35,6 @@ version = -version-info $(SOVERSION)
 
 sources = plstream.cc
 
-libplplotcxx_la_SOURCES  = $(sources)
-libplplotcxx_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
-
-libplplotcxxd_la_SOURCES = $(libplplotcxx_la_SOURCES)
-libplplotcxxd_la_LDFLAGS = $(libplplotcxx_la_LDFLAGS)
+libplplotcxx@LIB_TAG@_la_SOURCES  = $(sources)
+libplplotcxx@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 

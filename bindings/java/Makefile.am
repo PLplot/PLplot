@@ -23,12 +23,7 @@ if enable_java
 
 libplplot = -L../../src/ -lplplot$(LIB_TAG)
 
-if with_double
-lib_LTLIBRARIES = libplplotjavad.la
-else
-lib_LTLIBRARIES = libplplotjava.la
-endif
-
+lib_LTLIBRARIES = libplplotjava@LIB_TAG@.la
 
 AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
 version = -version-info $(SOVERSION)
@@ -38,11 +33,8 @@ sources = plplotjavac_wrap.c
 plplotjavac_wrap.c plplotjavac.java: plplotjavac.i plplotcapi.i
 	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
-nodist_libplplotjava_la_SOURCES  = $(sources)
-libplplotjava_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
-
-nodist_libplplotjavad_la_SOURCES = $(nodist_libplplotjava_la_SOURCES)
-libplplotjavad_la_LDFLAGS = $(libplplotjava_la_LDFLAGS)
+nodist_libplplotjava@LIB_TAG@_la_SOURCES  = $(sources)
+libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 
 javadir = $(libdir)/java/plplot/core
 # At some point specify javaJAVA for gcj support when gcc-3.2 becomes

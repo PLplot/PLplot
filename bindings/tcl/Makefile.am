@@ -34,11 +34,7 @@ else
 mkindex = ../../scripts/mktclIndex -tcl
 endif
 
-if with_double
-lib_LTLIBRARIES = libtclmatrixd.la libplplottcltkd.la 
-else
-lib_LTLIBRARIES = libtclmatrix.la libplplottcltk.la
-endif
+lib_LTLIBRARIES = libtclmatrix@LIB_TAG@.la libplplottcltk@LIB_TAG@.la 
 
 endif
 
@@ -63,11 +59,11 @@ MAINTAINERCLEANFILES = tclgen.h tclgen_s.h tclgen.c
 AM_CPPFLAGS = $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
 version = -version-info $(SOVERSION)
 
-libtclmatrix_la_SOURCES  = \
+libtclmatrix@LIB_TAG@_la_SOURCES  = \
 	tclMatrix.c \
 	matrixInit.c
 
-libtclmatrix_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined \
+libtclmatrix@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined \
 	$(TCLLIBCMD)
 
 if enable_tcl
@@ -88,9 +84,9 @@ endif
 ## This library should probably be broken up further into at least a tcl
 ## and tk component.
 
-libplplottcltk_la_SOURCES  = $(tclsources) $(tksources)
+libplplottcltk@LIB_TAG@_la_SOURCES  = $(tclsources) $(tksources)
 
-libplplottcltk_la_LDFLAGS  = \
+libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 	$(version) \
 	-rpath \
 	$(libdir) \
@@ -101,9 +97,3 @@ libplplottcltk_la_LDFLAGS  = \
 	$(TKLIBCMD) \
 	$(libplplot) \
 	$(libmatrix)
-
-libtclmatrixd_la_SOURCES = $(libtclmatrix_la_SOURCES)
-libtclmatrixd_la_LDFLAGS = $(libtclmatrix_la_LDFLAGS)
-
-libplplottcltkd_la_SOURCES = $(libplplottcltk_la_SOURCES)
-libplplottcltkd_la_LDFLAGS = $(libplplottcltk_la_LDFLAGS)

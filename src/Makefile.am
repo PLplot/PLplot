@@ -20,11 +20,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if with_double
-lib_LTLIBRARIES = libplplotd.la
-else
-lib_LTLIBRARIES = libplplot.la
-endif
+lib_LTLIBRARIES = libplplot@LIB_TAG@.la
 
 version = -version-info $(SOVERSION)
 
@@ -57,13 +53,10 @@ sources = \
 
 AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 
-libplplot_la_SOURCES  = $(sources)
-libplplot_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(FREETYPELIBCMD) -lm
+libplplot@LIB_TAG@_la_SOURCES  = $(sources)
+libplplot@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(FREETYPELIBCMD) -lm
 if !enable_dyndrivers
 libdrv = ../drivers/libplplotdrv.la
 endif
-libplplot_la_LIBADD  = $(LIBLTDL) $(libdrv)
+libplplot@LIB_TAG@_la_LIBADD  = $(LIBLTDL) $(libdrv)
 
-libplplotd_la_SOURCES = $(libplplot_la_SOURCES)
-libplplotd_la_LDFLAGS = $(libplplot_la_LDFLAGS)
-libplplotd_la_LIBADD = $(libplplot_la_LIBADD)

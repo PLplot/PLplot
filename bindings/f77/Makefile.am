@@ -23,11 +23,7 @@
 libplplot = -L../../src -lplplot$(LIB_TAG)
 
 if enable_f77
-if with_double
-lib_LTLIBRARIES = libplplotf77d.la
-else
-lib_LTLIBRARIES = libplplotf77.la
-endif
+lib_LTLIBRARIES = libplplotf77@LIB_TAG@.la
 endif
 
 AM_CPPFLAGS = $(INCLTDL)
@@ -41,11 +37,8 @@ sources = \
 	strutil.f \
 	sfstubs.f
 
-libplplotf77_la_SOURCES  = $(sources)
-libplplotf77_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
-
-libplplotf77d_la_SOURCES = $(libplplotf77_la_SOURCES)
-libplplotf77d_la_LDFLAGS = $(libplplotf77_la_LDFLAGS)
+libplplotf77@LIB_TAG@_la_SOURCES  = $(sources)
+libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
 
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
