@@ -795,7 +795,8 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 /* If program name is first argument, save and advance */
 
     if ( ! mode_noprogram) {
-	plsc->program = program = argv[0];
+	program = plstrdup(argv[0]);
+	plsc->program = program;
 	--myargc; ++argv;
     }
     if (myargc == 0)
@@ -1948,7 +1949,7 @@ opt_bufmax(char *opt, char *optarg, void *client_data)
 static int
 opt_server_name(char *opt, char *optarg, void *client_data)
 {
-    plsc->server_name = optarg;
+    plsc->server_name = plstrdup(optarg);
     return 0;
 }
 
@@ -1962,7 +1963,7 @@ opt_server_name(char *opt, char *optarg, void *client_data)
 static int
 opt_server_host(char *opt, char *optarg, void *client_data)
 {
-    plsc->server_host = optarg;
+    plsc->server_host = plstrdup(optarg);
     return 0;
 }
 
@@ -1976,7 +1977,7 @@ opt_server_host(char *opt, char *optarg, void *client_data)
 static int
 opt_server_port(char *opt, char *optarg, void *client_data)
 {
-    plsc->server_port = optarg;
+    plsc->server_port = plstrdup(optarg);
     return 0;
 }
 
@@ -1990,7 +1991,7 @@ opt_server_port(char *opt, char *optarg, void *client_data)
 static int
 opt_user(char *opt, char *optarg, void *client_data)
 {
-    plsc->user = optarg;
+    plsc->user = plstrdup(optarg);
     return 0;
 }
 
@@ -2004,7 +2005,7 @@ opt_user(char *opt, char *optarg, void *client_data)
 static int
 opt_plserver(char *opt, char *optarg, void *client_data)
 {
-    plsc->plserver = optarg;
+    plsc->plserver = plstrdup(optarg);
     return 0;
 }
 
@@ -2058,7 +2059,7 @@ opt_tcl_cmd(char *opt, char *optarg, void *client_data)
 static int
 opt_auto_path(char *opt, char *optarg, void *client_data)
 {
-    plsc->auto_path = optarg;
+    plsc->auto_path = plstrdup(optarg);
     return 0;
 }
 

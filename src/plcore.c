@@ -1364,6 +1364,13 @@ c_plend1(void)
     free_mem(plsc->geometry);
     free_mem(plsc->dev);
     free_mem(plsc->BaseName);
+    if (plsc->program) free_mem(plsc->program);
+    if (plsc->server_name) free_mem(plsc->server_name);
+    if (plsc->server_host) free_mem(plsc->server_host);
+    if (plsc->server_port) free_mem(plsc->server_port);
+    if (plsc->user) free_mem(plsc->user);
+    if (plsc->plserver) free_mem(plsc->plserver);
+    if (plsc->auto_path) free_mem(plsc->auto_path);
 
 /* Free malloc'ed stream if not in initial stream, else clear it out */
 
