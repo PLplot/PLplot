@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/08/29 22:05:19  mjl
+ * Revision 1.15  1995/01/04 06:50:44  mjl
+ * Fix for obscure 3d plotting bug, contributed by Bryan Peterson.
+ *
+ * Revision 1.14  1994/08/29  22:05:19  mjl
  * Fixed a bug that was preventing the exponential label from showing up
  * under certain circumstances.
  *
@@ -110,7 +113,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	return;
     }
 
-    /* Open  the clip limits to the subpage limits */
+/* Open the clip limits to the subpage limits */
 
     plP_gclp(&lxmin, &lxmax, &lymin, &lymax);
     plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
@@ -118,7 +121,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 
     plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
 
-    /* Tick and subtick sizes in device coords */
+/* Tick and subtick sizes in device coords */
 
     xmajor = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
     ymajor = MAX(ROUND(plsc->majht * plsc->xpmm), 1);
@@ -166,7 +169,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     if (lly)
 	ytick1 = 1.0;
 
-    /* Calculate tick spacing */
+/* Calculate tick spacing */
 
     if (ltx || lgx)
 	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1, &xmode, &xprec, xdigmax,
@@ -176,7 +179,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	pldtik(vpwymi, vpwyma, &ytick1, &nysub1, &ymode, &yprec, ydigmax,
 	       &yscale);
 
-    /* Set up tick variables */
+/* Set up tick variables */
 
     if (lix) {
 	i1x = xminor;
@@ -204,7 +207,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	i4y = ymajor;
     }
 
-    /* Draw the bottom edge of the box */
+/* Draw the bottom edge of the box */
 
     if (lbx) {
 	plP_movphy(vppxmi, vppymi);
@@ -237,7 +240,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(vppxma, vppymi);
     }
 
-    /* Draw right-hand edge of box */
+/* Draw right-hand edge of box */
 
     if (lcy) {
 	plP_movphy(vppxma, vppymi);
@@ -270,7 +273,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(vppxma, vppyma);
     }
 
-    /* Draw the top edge of the box */
+/* Draw the top edge of the box */
 
     if (lcx) {
 	plP_movphy(vppxma, vppyma);
@@ -303,7 +306,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(vppxmi, vppyma);
     }
 
-    /* Draw left-hand edge of box */
+/* Draw left-hand edge of box */
 
     if (lby) {
 	plP_movphy(vppxmi, vppyma);
@@ -336,7 +339,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(vppxmi, vppymi);
     }
 
-    /* Draw the horizontal axis */
+/* Draw the horizontal axis */
 
     if (lax) {
 	it0 = plP_wcpcy(0.0);
@@ -370,7 +373,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(vppxma, it0);
     }
 
-    /* Draw the vertical axis */
+/* Draw the vertical axis */
 
     if (lay) {
 	it0 = plP_wcpcx(0.0);
@@ -404,11 +407,11 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(it0, vppyma);
     }
 
-    /* Draw grid in x direction */
-    /* xcrit is the minimim distance away (in fractional number of ticks) */
-    /* from the boundary a grid line can be drawn.  If you are too close, */
-    /* it looks bad.  The previous setting was 0.5 which was too far. */
-
+/* Draw grid in x direction.  'xcrit' is the minimim distance away (in
+ * fractional number of ticks) from the boundary a grid line can be drawn.
+ * If you are too close, it looks bad.  The previous setting was 0.5 which
+ * was too far.
+*/
     if (lgx) {
 	xcrit = 0.1;
 	tp = xtick1 * (1. + floor(vpwxmi / xtick1 + xcrit));
@@ -416,8 +419,8 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    pljoin(tn, vpwymi, tn, vpwyma);
     }
 
-    /* Draw grid in y direction */
-    /* ycrit behaves analogously to xcrit */
+/* Draw grid in y direction */
+/* ycrit behaves analogously to xcrit */
 
     if (lgy) {
 	ycrit = 0.1;
@@ -426,7 +429,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    pljoin(vpwxmi, tn, vpwxma, tn);
     }
 
-    /* Write horizontal label(s) */
+/* Write horizontal label(s) */
 
     if ((lmx || lnx) && ltx) {
 	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
@@ -445,7 +448,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	xdigits = 2;
 	plsxax(xdigmax, xdigits);
 
-/* Write separate exponential label if mode = 1. */
+    /* Write separate exponential label if mode = 1. */
 
 	if (!llx && xmode) {
 	    pos = 1.0;
@@ -458,7 +461,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	}
     }
 
-    /* Write vertical label(s) */
+/* Write vertical label(s) */
 
     if ((lmy || lny) && lty) {
 	ydigits = 0;
@@ -490,7 +493,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 
 	plsyax(ydigmax, ydigits);
 
-/* Write separate exponential label if mode = 1. */
+    /* Write separate exponential label if mode = 1. */
 
 	if (!lly && ymode) {
 	    sprintf(string, "(x10#u%d#d)", (int) yscale);
@@ -506,7 +509,8 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    }
 	}
     }
-    /* Restore the clip limits to viewport edge */
+
+/* Restore the clip limits to viewport edge */
 
     plP_sclp(lxmin, lxmax, lymin, lymax);
 }
@@ -543,7 +547,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	return;
     }
 
-    /* Open  the clip limits to the subpage limits */
+/* Open the clip limits to the subpage limits */
 
     plP_gclp(&lxmin, &lxmax, &lymin, &lymax);
     plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
@@ -551,12 +555,12 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 
     plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
 
-    /* convert world coordinates to physical	 */
+/* Convert world coordinates to physical */
 
     xorigin = plP_wcpcx(x0);
     yorigin = plP_wcpcy(y0);
 
-    /* Tick and subtick sizes in device coords */
+/* Tick and subtick sizes in device coords */
 
     xmajor = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
     ymajor = MAX(ROUND(plsc->majht * plsc->xpmm), 1);
@@ -606,7 +610,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	pldtik(vpwymi, vpwyma, &ytick1, &nysub1, &ymode, &yprec, ydigmax,
 	       &yscale);
 
-    /* Set up tick variables */
+/* Set up tick variables */
 
     i1x = xminor;
     i2x = xminor;
@@ -618,7 +622,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
     i3y = ymajor;
     i4y = ymajor;
 
-    /* draw boxing */
+/* draw boxing */
 
     if (lbx) {
 	plP_movphy(vppxmi, vppymi);
@@ -637,7 +641,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(vppxma, vppyma);
     }
 
-    /* Draw the horizontal axis */
+/* Draw the horizontal axis */
 
     plP_movphy(vppxmi, yorigin);
     if (ltx) {
@@ -668,7 +672,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
     }
     plP_draphy(vppxma, yorigin);
 
-    /* Draw vertical axis */
+/* Draw vertical axis */
 
     if (lby) {
 	plP_movphy(xorigin, vppyma);
@@ -701,7 +705,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	plP_draphy(xorigin, vppymi);
     }
 
-    /* Draw grid in x direction */
+/* Draw grid in x direction */
 
     if (lgx) {
 	tp = xtick1 * (1. + floor(vpwxmi / xtick1 + .5));
@@ -709,14 +713,15 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    pljoin(tn, vpwymi, tn, vpwyma);
     }
 
-    /* Draw grid in y direction */
+/* Draw grid in y direction */
+
     if (lgy) {
 	tp = ytick1 * (1. + floor(vpwymi / ytick1 + .5));
 	for (tn = tp; BETW(tn + ytick1 / 2., vpwymi, vpwyma); tn += ytick1)
 	    pljoin(vpwxmi, tn, vpwxma, tn);
     }
 
-    /* Write horizontal label(s) */
+/* Write horizontal label(s) */
 
     if ((lmx || lnx) && ltx) {
 	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
@@ -735,7 +740,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	xdigits = 2;
 	plsxax(xdigmax, xdigits);
 
-/* Write separate exponential label if mode = 1. */
+    /* Write separate exponential label if mode = 1. */
 
 	if (!llx && xmode) {
 	    pos = 1.0;
@@ -748,7 +753,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	}
     }
 
-    /* Write vertical label(s) */
+/* Write vertical label(s) */
 
     if ((lmy || lny) && lty) {
 	ydigits = 0;
@@ -779,7 +784,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    ydigits = 2;
 	plsyax(ydigmax, ydigits);
 
-/* Write separate exponential label if mode = 1. */
+    /* Write separate exponential label if mode = 1. */
 
 	if (!lly && ymode) {
 	    sprintf(string, "(x10#u%d#d)", (int) yscale);
@@ -795,7 +800,8 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    }
 	}
     }
-    /* Restore the clip limits to viewport edge */
+
+/* Restore the clip limits to viewport edge */
 
     plP_sclp(lxmin, lxmax, lymin, lymax);
 }
@@ -844,9 +850,8 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     plP_gzback(&zbflg, &zbcol, &zbtck);
     *zbflg = plP_stsearch(zopt, 'd');
     if (*zbflg) {
-	/* save tick spacing and color */
 	*zbtck = ztick;
-	plP_gatt(&font, zbcol);
+	plP_gatt(&font, zbcol);	/* save tick spacing and color */
     }
 
     if (cxx >= 0.0 && cxy <= 0.0) {
@@ -996,7 +1001,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     dwx = wx2 - wx1;
     dwy = wy2 - wy1;
 
-    /* Tick and subtick sizes in device coords */
+/* Tick and subtick sizes in device coords */
 
     major = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
     minor = MAX(ROUND(plsc->minht * plsc->ypmm), 1);
@@ -1018,7 +1023,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	return;
 
     if (ll)
-	tick1 = 1.0;
+	tick1 = (vmax > vmin) ? (PLFLT) 1.0 : (PLFLT) -1.0 ;
     if (lt)
 	pldtik(vmin, vmax, &tick1, &nsub1, &mode, &prec, *digits, &scale);
 
@@ -1035,7 +1040,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	i4 = major;
     }
 
-    /* Draw the line */
+/* Draw the line */
 
     plP_movwor(wx1, wy1);
     if (lt) {
@@ -1079,7 +1084,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 
     plP_drawor(wx2, wy2);
 
-    /* Label the line */
+/* Label the line */
 
     if (ln && lt) {
 	pos = 1.0;
@@ -1181,7 +1186,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     dwy = wy2 - wy1;
 
-    /* Tick and subtick sizes in device coords */
+/* Tick and subtick sizes in device coords */
 
     major = plsc->majht;
     minor = plsc->minht;
@@ -1233,7 +1238,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     yminor = minor * dym / diag;
     ymajor = major * dym / diag;
 
-    /* Draw the line */
+/* Draw the line */
 
     plP_movwor(wx, wy1);
     if (lt) {
@@ -1276,7 +1281,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     plP_drawor(wx, wy2);
 
-    /* Label the line */
+/* Label the line */
 
     if ((ln || lm) && lt) {
 	*digits = 0;
