@@ -1160,11 +1160,11 @@ void c_plsesc(char esc); //%name plsesc
 
 /* set offset and spacing of contour labels */
 
-void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active); //%name plclabel_param
+void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active); //%name pl_setcontlabelparam
 
 /* set the format of the contour labels */
 
-void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig); //%name plclabel_format
+void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig); //%name pl_setcontlabelformat
 
 /* Set family file parameters */
 
