@@ -49,23 +49,37 @@ javadir = $(libdir)/java/plplot/core
 # widespread.
 java_DATA = \
 	README.javaAPI \
-	PLStreamc.java \
 	SWIGTYPE_p_p_char.java \
+	java/plplot/core/SWIGTYPE_p_p_char.class \
+	PLStreamc.java \
+	java/plplot/core/PLStreamc.class \
 	config.java \
+	java/plplot/core/config.class \
 	plplotjavac.java \
-	plplotjavacJNI.java
+	java/plplot/core/plplotjavac.class \
+	plplotjavacJNI.java \
+	java/plplot/core/plplotjavacJNI.class
 
-java/plplot/core/PLStreamc.class java/plplot/core/config.class: \
-	PLStreamc.java config.java
+java/plplot/core/SWIGTYPE_p_p_char.class java/plplot/core/PLStreamc.class \
+	java/plplot/core/config.class \
+	java/plplot/core/plplotjavac.class \
+	java/plplot/core/plplotjavacJNI.class: \
+	SWIGTYPE_p_p_char.java \
+	PLStreamc.java config.java plplotjavac.java plplotjavacJNI.java
 	mkdir -p java/plplot/core
 	cd java/plplot/core ; ln -sf ../../../*.java .
-	javac -d java config.java
-	javac -d java PLStreamc.java
+	javac -d java SWIGTYPE_p_p_char.java PLStreamc.java \
+	config.java plplotjavac.java plplotjavacJNI.java 
 
 CLEANFILES = \
 	SWIGTYPE_p_p_char.java \
+	java/plplot/core/SWIGTYPE_p_p_char.class \
+	java/plplot/core/PLStreamc.class \
+	java/plplot/core/config.class \
 	plplotjavac.java \
+	java/plplot/core/plplotjavac.class \
 	plplotjavacJNI.java \
+	java/plplot/core/plplotjavacJNI.class \
 	plplotjavac_wrap.c
 
 # if enable_java

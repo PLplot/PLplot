@@ -848,6 +848,7 @@ PLINT
 plSetOpt(char *opt, char *optarg);
 #endif
 
+//temporary
 #if 0
 PLINT
 plParseOpts(PLINT *p_argc, char **argv, PLINT mode);
@@ -856,6 +857,7 @@ plParseOpts(PLINT *p_argc, char **argv, PLINT mode);
 
 void
 plOptUsage(void);
+//temporary
 #endif
 
 	/* Miscellaneous */
