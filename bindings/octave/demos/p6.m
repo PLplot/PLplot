@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -17,15 +17,15 @@ function p6
   [x y z] = rosenbrock; z = log(z);
 
   t = automatic_replot;
-  as = autostyle;
-
-  autostyle "off";
   automatic_replot = 0;
+
+  as = autostyle;
+  autostyle "off";
   
   title("Contour example");
   contour(x,y,z)
 
-  automatic_replot = t;
   autostyle(as);
+  automatic_replot = t;
 
 endfunction

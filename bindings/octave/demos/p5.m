@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -14,15 +14,15 @@
 
 function p5
 
-  x=-pi:0.01:pi;
-  y=sin(x).+cos(3*x);
-
   t = automatic_replot;
   automatic_replot = 0;
 
+  x=-pi:0.01:pi;
+  y=sin(x).+cos(3*x);
+
   grid "on"
   title("Polar example");
-  polar(x,y)
+  polar(x,y,'y')
   grid "off"
 
   automatic_replot = t;

@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -14,19 +14,17 @@
 
 function p4
 
-  x=0.01:0.1:10;
-  y=exp(x);
-
   t = automatic_replot;
   automatic_replot = 0;
  
+  x=0.01:0.1:10;
+  y=exp(x);
+
   grid "minor"
   title("Log-log example");
-  loglog(x,y)
+  loglog(x,y,'y')
   grid "off"
  
   automatic_replot = t;
-
-  
 
 endfunction
