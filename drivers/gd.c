@@ -92,6 +92,8 @@ void plD_tidy_png		(PLStream *);
 void plD_state_png		(PLStream *, PLINT);
 void plD_esc_png		(PLStream *, PLINT, void *);
 
+#ifdef PLD_png
+
 void plD_dispatch_init_png( PLDispatchTable *pdt )
 {
     pdt->pl_MenuStr  = "PNG file";
@@ -108,6 +110,10 @@ void plD_dispatch_init_png( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_png;
 }
 
+#endif
+
+#ifdef PLD_jpeg
+
 void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 {
     pdt->pl_MenuStr  = "JPEG File";
@@ -123,7 +129,7 @@ void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
     pdt->pl_state    = (plD_state_fp)    plD_state_png;
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_png;
 }
-
+#endif
         
 /*--------------------------------------------------------------------------*\
  * plD_init_png_Dev()
