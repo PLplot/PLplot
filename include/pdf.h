@@ -1,30 +1,17 @@
 /* $Id$
    $Log$
-   Revision 1.8  1994/03/23 06:58:11  mjl
-   Minor change to file wrapper to make consistent with rest of package.
+   Revision 1.9  1994/04/08 12:10:08  mjl
+   Moved unsigned type defines to this header file.
 
+ * Revision 1.8  1994/03/23  06:58:11  mjl
+ * Minor change to file wrapper to make consistent with rest of package.
+ *
  * Revision 1.7  1994/02/07  23:02:38  mjl
  * PLiodev struct defined.
  *
  * Revision 1.6  1994/01/15  17:33:16  mjl
  * Added typedef of PDFstrm and wrapped function prototypes in a macro so
  * the header can be read without problems by K&R compilers (cc).
- *
- * Revision 1.5  1993/07/02  07:21:41  mjl
- * All PDF routines now start with "pdf_".
- *
- * Revision 1.4  1993/01/23  05:31:46  mjl
- * Added prototypes for functions that support polyline read/writes.
- *
- * Revision 1.3  1992/09/30  18:25:33  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:30  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:33:40  furnish
- * Initial checkin of the whole PLPLOT project.
 */
 
 /*
@@ -47,9 +34,27 @@
 #ifndef __PDF_H__
 #define __PDF_H__
 
+/* Some unsigned types */
+
+#ifndef U_CHAR
+#define U_CHAR unsigned char
+#endif
+
+#ifndef U_SHORT
+#define U_SHORT unsigned short
+#endif
+
+#ifndef U_INT
+#define U_INT unsigned int
+#endif
+
+#ifndef U_LONG
+#define U_LONG unsigned long
+#endif
+
 /* PDFstrm definition */
-/* The low level routines use the transfer method appropriate for the */
-/* first non-null type below */
+/* The low level PDF i/o routines use the transfer method appropriate for */
+/* the first non-null type below */
 
 typedef struct {
     FILE *file;				/* Filesystem */
