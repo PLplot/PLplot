@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1993/09/08 02:40:34  mjl
+ * Revision 1.6  1993/11/15 08:40:09  mjl
+ * Changed some empty argument lists to be explicitly void.
+ *
+ * Revision 1.5  1993/09/08  02:40:34  mjl
  * Trivial documentation correction.
  *
  * Revision 1.4  1993/08/09  22:15:05  mjl
@@ -61,7 +64,7 @@ c_pladv(PLINT page)
 \*----------------------------------------------------------------------*/
 
 void
-c_pleop()
+c_pleop(void)
 {
     PLINT level;
     plP_glev(&level);
@@ -78,7 +81,7 @@ c_pleop()
 \*----------------------------------------------------------------------*/
 
 void
-c_plbop()
+c_plbop(void)
 {
     plP_bop();
 }
