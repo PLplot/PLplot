@@ -30,51 +30,51 @@
 # basis through your normal login.
 
 if [ ! "$system" ] ; then
-	uname 1>/dev/null 2>&1 && system=`uname`
+    uname 1>/dev/null 2>&1 && system=`uname`
 fi
 
 if [ ! "$double" ]; then
-	double=off
+    double=off
 fi
 
 if [ ! "$debug" ]; then
-	debug=on
+    debug=on
 fi
 
 if [ ! "$opt" ]; then
-	opt=0
+    opt=0
 fi
 
 if [ ! "$warn" ]; then
-	warn=off
+    warn=off
 fi
 
 if [ ! "$profile" ]; then
-	profile=off
+    profile=off
 fi
 
 if [ ! "$no_x" ]; then
-	no_x=off
+    no_x=off
 fi
 
 if [ ! "$gcc" ]; then
-	gcc=off
+    gcc=off
 fi
 
 if [ ! "$f2c" ]; then
-	f2c=off
+    f2c=off
 fi
 
 if [ ! "$no_tk" ]; then
-	no_tk=off
+    no_tk=off
 fi
 
 if [ ! "$no_dp" ]; then
-	no_dp=off
+    no_dp=off
 fi
 
 if [ ! "$no_share" ]; then
-	no_share=off
+    no_share=off
 fi
 
 # Define a symbol for echo to save a little bit of space.
@@ -156,91 +156,117 @@ $e ""
 
 Parse_args () {
 
-	while [ $# -gt 0 ]
-	do
-		arg=$1
-		case "$arg" in
-		h|he|hel|help)
-			give_me_help=1
-			;;
-		s=*|sy=*|sys=*|syst=*|syste=*|system=*)
-			system=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		de=*|deb=*|debu=*|debug=*)
-			debug=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			if [ $debug = "on" ]; then opt=0; fi
-			;;
-		de|deb|debu|debug)
-			debug=on
-			opt=0
-			;;
-		dbl=*|dou=*|doub=*|doubl=*|double=*)
-			double=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		dbl|dou|doub|doubl|double)
-			double=on
-			;;
-		o=*|op=*|opt=*)
-			opt=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			if [ $opt -gt 0 ]; then debug=off; fi
-			;;
-		o|op|opt)
-			opt=1; debug=off
-			;;
-		wa=*|war=*|warn=*)
-			warn=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		wa|war|warn)
-			warn=on
-			;;
-		p=*|pr=*|pro=*|prof=*|profi=*|profil=*|profile=*)
-			profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		prof|profi|profil|profile)
-			profile=on
-			;;
-		gcc=*)
-			gcc=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		gcc)
-			gcc=on
-			;;
-		f2c=*)
-			f2c=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		f2c)
-			f2c=on
-			;;
-		no_x=*)
-			no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		no_x)
-			no_x=on
-			;;
-		no_t=*|no_tk=*)
-			no_tk=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		no_tk)
-			no_tk=on
-			;;
-		no_d=*|no_dp=*)
-			no_dp=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		no_dp)
-			no_dp=on
-			;;
-		no_s=*|no_sh=*|no_sha=*|no_shar=*|no_share=*)
-			no_share=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
-			;;
-		no_share)
-			no_share=on
-			;;
-		*)
-			give_me_help=1
-			;;
-		esac
-		shift
-	done
+    while [ $# -gt 0 ]
+    do
+	arg=$1
+	case "$arg" in
+
+	h|he|hel|help)
+	    give_me_help=1
+	    ;;
+
+	s=*|sy=*|sys=*|syst=*|syste=*|system=*)
+	    system=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	de=*|deb=*|debu=*|debug=*)
+	    debug=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    if [ $debug = "on" ]; then opt=0; fi
+	    ;;
+
+	de|deb|debu|debug)
+	    debug=on
+	    opt=0
+	    ;;
+
+	dbl=*|dou=*|doub=*|doubl=*|double=*)
+	    double=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	dbl|dou|doub|doubl|double)
+	    double=on
+	    ;;
+
+	o=*|op=*|opt=*)
+	    opt=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    if [ $opt -gt 0 ]; then debug=off; fi
+	    ;;
+
+	o|op|opt)
+	    opt=1; debug=off
+	    ;;
+
+	wa=*|war=*|warn=*)
+	    warn=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	wa|war|warn)
+	    warn=on
+	    ;;
+
+	p=*|pr=*|pro=*|prof=*|profi=*|profil=*|profile=*)
+	    profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	prof|profi|profil|profile)
+	    profile=on
+	    ;;
+
+	gcc=*)
+	    gcc=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	gcc)
+	    gcc=on
+	    ;;
+
+	f2c=*)
+	    f2c=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	f2c)
+	    f2c=on
+	    ;;
+
+	no_x=*)
+	    no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	no_x)
+	    no_x=on
+	    ;;
+
+	no_t=*|no_tk=*)
+	    no_tk=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	no_tk)
+	    no_tk=on
+	    ;;
+
+	no_d=*|no_dp=*)
+	    no_dp=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	no_dp)
+	    no_dp=on
+	    ;;
+
+	no_s=*|no_sh=*|no_sha=*|no_shar=*|no_share=*)
+	    no_share=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+	    ;;
+
+	no_share)
+	    no_share=on
+	    ;;
+
+	*)
+	    give_me_help=1
+	    ;;
+
+	esac
+	shift
+    done
 }
 
 #****************************************************************************
@@ -251,135 +277,146 @@ Setup_options () {
 
 # Allow various abbreviations for system name, including output of `uname`.  
 
-	case "$system" in
+    case "$system" in
 
-	aix*|AIX*|rs*|RS*|ibm*|IBM*)
-		system="AIX"
+    aix*|AIX*|rs*|RS*|ibm*|IBM*)
+	system="AIX"
+	;;
+
+    alpha*|ALPHA*|Alpha*|OSF*)
+	system="ALPHAOSF"
+	;;
+
+    bsd*|BSD*)
+	system="BSD"
+	;;
+
+    convex*|ConvexOS*)
+	system="CONVEX"
+	;;
+
+    dg*|DG*)
+	system="DGUX"
+	;;
+
+    hp*|HP*)
+	system="HP"
+	;;
+
+    irix*|IRIX*|Irix*|sgi*|SGI*)
+	system="IRIX"
+	;;
+
+    linux*|LINUX*|Linux*)
+	system="LINUX"
+	;;
+
+    next*|NeXT*|NEXT*)
+	system="NEXT"
+	;;
+
+    sun*|SUN*|Sun*)
+	system="SUN"
+	;;
+
+    sx*|Sx*|SX*|monte*|Monte*|MONTE*)
+	system="SX"
+	;;
+
+    sysv*|SYSV*|Sysv*)
+	system="SYSV"
+	;;
+
+    ultrix*|ULTRIX*)
+	system="ULTRIX"
+	;;
+
+    unicos*|Unicos*|UNICOS*|Cray*|cray*|sn*)
+	system="UNICOS"
+	;;
+
+    *)	
+	echo "Unrecognized system"
+	Help
 		;;
+    esac
 
-	alpha*|ALPHA*|Alpha*|OSF*)
-		system="ALPHAOSF"
-		;;
-
-	bsd*|BSD*)
-		system="BSD"
-		;;
-
-	convex*|ConvexOS*)
-		system="CONVEX"
-		;;
-
-	dg*|DG*)
-		system="DGUX"
-		;;
-
-	hp*|HP*)
-		system="HP"
-		;;
-
-	irix*|IRIX*|Irix*|sgi*|SGI*)
-		system="IRIX"
-		;;
-
-	linux*|LINUX*|Linux*)
-		system="LINUX"
-		;;
-
-	next*|NeXT*|NEXT*)
-		system="NEXT"
-		;;
-
-	sun*|SUN*|Sun*)
-		system="SUN"
-		;;
-
-	sx*|Sx*|SX*|monte*|Monte*|MONTE*)
-		system="SX"
-		;;
-
-	sysv*|SYSV*|Sysv*)
-		system="SYSV"
-		;;
-
-	ultrix*|ULTRIX*)
-		system="ULTRIX"
-		;;
-
-	unicos*|Unicos*|UNICOS*|Cray*|cray*|sn*)
-		system="UNICOS"
-		;;
-
-	*)	
-		echo "Unrecognized system"
-		Help
-		;;
-	esac
-
-	system_flag="-DSYSTEM=$system"
+    system_flag="-DSYSTEM=$system"
 
 # Set up machine name if necessary.  Use output from `uname -m`.
 
-	case "$system" in 
+    case "$system" in 
 
-	UNICOS)
-		if [ ! "$machine" ]; then
-			machine=`uname -m`
-		fi
+    UNICOS)
+	if [ ! "$machine" ]; then
+	    machine=`uname -m`
+	fi
 
-		case "$machine" in
+	case "$machine" in
 
-		"CRAY C90"|"CRAY Y-MP"|"cray y-mp"|y*|Y*|CRAY*1|cray*1|1)
-			machine="CRAY_1"
+	"CRAY C90"|"CRAY Y-MP"|"cray y-mp"|y*|Y*|CRAY*1|cray*1|1)
+	    machine="CRAY_1"
+	    ;;
+
+	CRAY*2|cray*2|2)
+	    machine="CRAY_2"
 			;;
-
-		CRAY*2|cray*2|2)
-			machine="CRAY_2"
-			;;
-		esac
-		machine_flag="-DMACHINE=$machine"
-		;;
 	esac
+	machine_flag="-DMACHINE=$machine"
+	;;
+    esac
 
 # Set up everything else.
 
-	if [ "$debug" = "on" ]; then
-		debug_flag="-DDEBUG"
-	fi
-	if [ "$opt" -eq 1 ]; then
-		opt_flag="-DOPT=1"
-	fi
-	if [ "$opt" -eq 2 ]; then
-		opt_flag="-DOPT=2"
-	fi
-	if [ "$warn" = "on" ]; then
-		warn_flag="-DWARN"
-	fi
-	if [ "$profile" = "on" ]; then
-		profile_flag="-DPROF"
-	fi
-	if [ "$double" = "on" ]; then
-		double_flag="-DDOUBLE"
-	fi
-	if [ "$gcc" = "on" ]; then
-		gcc_flag="-DGCC"
-	fi
-	if [ "$f2c" = "on" ]; then
-		f2c_flag="-DF2C"
-	fi
-	if [ "$no_x" = "on" ]; then
-		no_x_flag="-DNO_X"
-	fi
-	if [ "$no_tk" = "on" ]; then
-		no_tk_flag="-DNO_TK"
-	fi
-	if [ "$no_dp" = "on" ]; then
-		no_dp_flag="-DNO_DP"
-	fi
-	if [ "$no_share" = "on" ]; then
-		no_share_flag="-DNO_SHARE"
-	fi
+    if [ "$debug" = "on" ]; then
+	debug_flag="-DDEBUG"
+    fi
 
-	all_flags="$system_flag $machine_flag $double_flag $debug_flag \
+    if [ "$opt" -eq 1 ]; then
+	opt_flag="-DOPT=1"
+    fi
+
+    if [ "$opt" -eq 2 ]; then
+	opt_flag="-DOPT=2"
+    fi
+
+    if [ "$warn" = "on" ]; then
+	warn_flag="-DWARN"
+    fi
+
+    if [ "$profile" = "on" ]; then
+	profile_flag="-DPROF"
+    fi
+
+    if [ "$double" = "on" ]; then
+	double_flag="-DDOUBLE"
+    fi
+
+    if [ "$gcc" = "on" ]; then
+	gcc_flag="-DGCC"
+    fi
+
+    if [ "$f2c" = "on" ]; then
+	f2c_flag="-DF2C"
+    fi
+
+    if [ "$no_x" = "on" ]; then
+	no_x_flag="-DNO_X"
+    fi
+
+    if [ "$no_tk" = "on" ]; then
+	no_tk_flag="-DNO_TK"
+    fi
+
+    if [ "$no_dp" = "on" ]; then
+	no_dp_flag="-DNO_DP"
+    fi
+
+    if [ "$no_share" = "on" ]; then
+	no_share_flag="-DNO_SHARE"
+    fi
+
+    all_flags="$system_flag $machine_flag $double_flag $debug_flag \
 $opt_flag $warn_flag $profile_flag $gcc_flag $f2c_flag $no_x_flag $no_tk_flag \
 $no_dp_flag $no_share_flag"
 }
@@ -390,31 +427,41 @@ $no_dp_flag $no_share_flag"
 
 Configure () {
 
-	if [ ! -d ../src ] || [ ! -d ../drivers ] || [ ! -d ../include ]
-	then
-		echo \
-"Run configure from tmp directory, e.g. cd tmp; ../configure."
-		exit 1
-	fi
+# First figure out where we are and go to the tmp directory if possible.
+
+    pwd=`pwd`
+    curdir=`basename $pwd`
+
+    if [ "$curdir" != "tmp" ] && [ -d tmp ]; then
+	cd tmp
+    fi
+
+# One last check
+
+    if [ ! -d ../src ] || [ ! -d ../drivers ] || [ ! -d ../include ]; then
+	echo \
+"Must run configure from root or tmp PLplot directory."
+	exit 1
+    fi
 
 # Create links to source code.
 
-	echo "Creating links.."
+    echo "Creating links.."
 
-	ln -s \
-		../src/*.c \
-		../src/stubc/*.c \
-		../examples/C/*.c \
-		../examples/tk/* \
-		../utils/*.c \
-		../fonts/*.c \
-		../scripts/pl* \
-		../include/*.h \
-		../drivers/*.c \
-		../drivers/tk/*.* \
-		../drivers/tk/tclIndex \
-		../lib/*.fnt \
-		.
+    ln -s \
+	../src/*.c \
+	../src/stubc/*.c \
+	../examples/C/*.c \
+	../examples/tk/* \
+	../utils/*.c \
+	../fonts/*.c \
+	../scripts/pl* \
+	../include/*.h \
+	../drivers/*.c \
+	../drivers/tk/*.* \
+	../drivers/tk/tclIndex \
+	../lib/*.fnt \
+	.
 
 # Create links to the Fortran files.  
 # Double precision Fortran files in the stub interface are obtained
@@ -425,41 +472,40 @@ Configure () {
 # compiler did not support this, but it's supported under 9.0).
 
 
-	ln -s	../src/stubf/*.* \
-		../examples/f77/*.* \
-		.
+    ln -s \
+	../src/stubf/*.* \
+	../examples/f77/*.* \
+	.
 
 # Create links to m4 config files.
 
-	ln -s ../m4/*.* .
+    ln -s ../m4/*.* .
 
 # Try to locate site-specific config file.
 # Look in ${configdir} first if it exists, then ${HOME}/config.  If not
 # found, the default one in ../m4 (typically just a template) is retained.
 
-	configfile=
-	if [ -f ${configdir}/cf_plplot.m4 ]; 
-	then 
-		configfile=${configdir}/cf_plplot.m4
+    configfile=
+    if [ -f ${configdir}/cf_plplot.m4 ]; then 
+	configfile=${configdir}/cf_plplot.m4
 
-	elif [ -f ${HOME}/config/cf_plplot.m4 ]; 
-	then 
-		configfile=${HOME}/config/cf_plplot.m4
-	fi
+    elif [ -f ${HOME}/config/cf_plplot.m4 ]; then 
+	configfile=${HOME}/config/cf_plplot.m4
+    fi
 
-	if [ "$configfile" ]; then
-		rm cf_plplot.m4
-		ln -s $configfile .
-		echo "Using $configfile as config file"
-	fi
+    if [ "$configfile" ]; then
+	rm cf_plplot.m4
+	ln -s $configfile .
+	echo "Using $configfile as config file"
+    fi
 
 # Now time to build the makefile.
 
-	echo "Building makefile with command:"
-	echo ""
-	echo "m4 $all_flags makefile.m4 >Makefile"
+    echo "Building makefile in tmp directory with command:"
+    echo ""
+    echo "m4 $all_flags makefile.m4 >Makefile"
 
-	m4 $all_flags makefile.m4 >Makefile
+    m4 $all_flags makefile.m4 >Makefile
 }
 
 #****************************************************************************
@@ -470,7 +516,7 @@ Parse_args $*
 Setup_options
 
 if [ "$give_me_help" ]; then
-	Help
+    Help
 fi
 
 Settings
