@@ -9620,6 +9620,16 @@ stripchart
                   between the base XY plane and the borders of the plotted function.
 		</para>
 	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>:
+		  the surface is colored according to the value of Z; if
+		  <literal>MAG_COLOR</literal> is not used, then the default
+		  the surface is colored according to the intensity of the
+		  reflected light in the surface from a light source whose
+		  position is set using &pllightsource;.
+		</para>
+	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
@@ -9633,7 +9643,6 @@ stripchart
 	<listitem>
 	  <para>
 	    Pointer to the array that defines the contour level spacing.
-	    evaluated.
 	  </para>
 	</listitem>
       </varlistentry>
