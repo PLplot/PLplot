@@ -174,11 +174,12 @@ void plD_bop_bmp		(PLStream *);
 void plD_tidy_bmp		(PLStream *);
 void plD_esc_bmp		(PLStream *, PLINT, void *);
 
-void plD_init_jpeg		(PLStream *);
-void plD_eop_jpeg		(PLStream *);
-void plD_bop_jpeg		(PLStream *);
-void plD_tidy_jpeg		(PLStream *);
-void plD_esc_jpeg		(PLStream *, PLINT, void *);
+/*These are for the GRX20-based jpeg driver in the djgpp area*/
+void plD_init_jpg		(PLStream *);
+void plD_eop_jpg		(PLStream *);
+void plD_bop_jpg		(PLStream *);
+void plD_tidy_jpg		(PLStream *);
+void plD_esc_jpg		(PLStream *, PLINT, void *);
 
 
 void plD_init_mac1		(PLStream *);
@@ -254,6 +255,7 @@ void plD_tidy_pbm		(PLStream *);
 void plD_state_pbm		(PLStream *, PLINT);
 void plD_esc_pbm		(PLStream *, PLINT, void *);
 
+/* These are for the general PNG and JPEG drivers based on libgd */
 void plD_init_png               (PLStream *);
 void plD_line_png               (PLStream *, short, short, short, short);
 void plD_polyline_png           (PLStream *, short *, short *, PLINT);
@@ -262,7 +264,7 @@ void plD_bop_png                (PLStream *);
 void plD_tidy_png               (PLStream *);
 void plD_state_png              (PLStream *, PLINT);
 void plD_esc_png                (PLStream *, PLINT, void *);
-void plD_eop_jpg                (PLStream *);
+void plD_eop_jpeg                (PLStream *);
    
 void plD_init_null		(PLStream *);
 void plD_line_null		(PLStream *, short, short, short, short);

@@ -352,19 +352,19 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PLD_jpeg
+#ifdef PLD_jpg
     {
-	"JPEG File (Independent JPEG Group/ GRX20)",
-	"jpeg",
+	"JPEG File (Independent JPEG Group based on GRX20)",
+	"jpg",
 	0,
-	plD_init_jpeg,
+	plD_init_jpg,
 	plD_line_vga,
 	plD_polyline_vga,
-	plD_eop_jpeg,
-	plD_bop_jpeg,
-	plD_tidy_jpeg,
+	plD_eop_jpg,
+	plD_bop_jpg,
+	plD_tidy_jpg,
 	plD_state_vga,
-	plD_esc_jpeg
+	plD_esc_jpg
     },
 #endif
 
@@ -748,15 +748,15 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PLD_jpg
+#ifdef PLD_jpeg
     {
-        "JPG File (Independent JPEG Group/GD)",
-	"jpg",
+        "JPEG File (Independent JPEG Group based on libgd)",
+	"jpeg",
 	0,
 	plD_init_png,
 	plD_line_png,
 	plD_polyline_png,
-	plD_eop_jpg,
+	plD_eop_jpeg,
 	plD_bop_png,
 	plD_tidy_png,
 	plD_state_png,
