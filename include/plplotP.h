@@ -386,6 +386,23 @@ plxtik(PLINT x, PLINT y, PLINT below, PLINT above);
 void
 plytik(PLINT x, PLINT y, PLINT left, PLINT right);
 
+  /* Driver draws text */
+
+void
+plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
+		 PLINT refx, PLINT refy, const char *string);
+
+typedef struct {
+  PLINT base; /* ref point at base(1) or center(0) of text. Currently plplot only use 0 */
+  PLFLT just; /* continuos justification, 0 left, 0.5 center, 1 right */
+  PLFLT *xform; /* transformation (rotation) matrix */
+  PLINT x; /* raw reference point--after any transformation */
+  PLINT y;
+  PLINT refx; /* processed ref. point--after justification, displacement, etc, processing */
+  PLINT refy;
+  const char *string; /* text to draw */
+}EscText;
+
 /* Get x-y domain in world coordinates for 3d plots */
 
 void

@@ -748,6 +748,22 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
+#ifdef PLD_pstex
+    {
+	"Postscript/LaTeX device",
+	"pstex",
+	-1,
+	plD_init_pstex,
+	plD_line_ps,
+	plD_polyline_ps,
+	plD_eop_ps,
+	plD_bop_pstex,
+	plD_tidy_pstex,
+	plD_state_ps,
+	plD_esc_pstex
+    },
+#endif
+
 #ifdef PLD_null
     {
 	"Null device",

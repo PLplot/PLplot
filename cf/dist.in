@@ -91,6 +91,7 @@ DRIVERS_C = \
 	plbuf.c \
 	plmeta.c \
 	ps.c \
+	pstex.c \
 	tek.c \
 	xfig.c \
 	xwin.c
@@ -109,6 +110,7 @@ DRIVERS_OBJ = \
 	plbuf$O \
 	plmeta$O \
 	ps$O \
+	pstex$O \
 	tek$O \
 	xfig$O \
 	xwin$O
