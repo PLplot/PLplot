@@ -470,8 +470,7 @@ AC_SUBST(LIBLTDL)
 
 # This required for dll support under cygwin.  Must occur before
 # AC_PROG_LIBTOOL (AM_PROG_LIBTOOL? FIXME).
-# comment out until this proves to work on cygwin.
-#AC_LIBTOOL_WIN32_DLL
+AC_LIBTOOL_WIN32_DLL
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
