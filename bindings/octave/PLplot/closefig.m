@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -22,7 +22,7 @@ function closefig(n)
   global __pl
 
   if ( !(exist "__pl") || !struct_contains (__pl,"inited"))
-    return
+    return;
   endif
 
   ## old_fig = plgstrm;
@@ -38,13 +38,13 @@ function closefig(n)
 
   if ( n != old_fig)
     if (__pl.open(old_fig+1))
-      plsstrm(old_fig)
-      figure(old_fig)
+      plsstrm(old_fig);
+      figure(old_fig);
     endif
   else
     n = min(find(__pl.open == 1));
     if (isempty(n))
-      return
+      return;
     endif
     plsstrm(n-1);
     figure(n-1);
