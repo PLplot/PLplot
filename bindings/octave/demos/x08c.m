@@ -76,11 +76,12 @@ endfunction
     [xx, yy] = meshgrid(x,y);
 
     if (rosen)
-      z = log((1 - xx) .^ 2 + 100 .* (yy - xx .^ 2) .^ 2);
+      z = (1 - xx) .^ 2 + 100 .* (yy - xx .^ 2) .^ 2;
       of = do_fortran_indexing;
       do_fortran_indexing = 1;
-      z(isinf(z)) = -5;
+      z(z <= 0) = exp(-5); # make sure the minimum after applying log() is -5
       do_fortran_indexing = of;
+      z = log(z);
     else
       r = sqrt(xx .* xx + yy .* yy);
       z = exp(-r .* r) .* cos(2.0 * 3.141592654 .* r);
