@@ -1028,6 +1028,13 @@ if test "$enable_tcl" = "yes"; then
     ln -s \
     $srcdir/bindings/tcl/*.h \
     plplot 2>/dev/null
+    # Put in specific symlinks for generated files.  Those files may or may
+    # not be in existence at configure time so use the -f option.
+    ln -sf \
+    $srcdir/bindings/tcl/tclgen.c \
+    $srcdir/bindings/tcl/tclgen.h \
+    $srcdir/bindings/tcl/tclgen_s.h \
+    plplot 2>/dev/null
 fi
 
 if test "$enable_tk" = "yes"; then
