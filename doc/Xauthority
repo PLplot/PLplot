@@ -318,25 +318,6 @@ for help:
 
 -----------------------------------------------------------------------
 
-From schwartz@roke.cse.psu.edu Mon Sep 13 15:53:30 1993
-Newsgroups: comp.lang.tcl
-From: schwartz@roke.cse.psu.edu (Scott Schwartz)
-Subject: Re: New security "feature" in Tk 3.3
-In-Reply-To: mjl@dino.ph.utexas.edu's message of 10 Sep 93 12:03:54
-Nntp-Posting-Host: roke.cse.psu.edu
-Distribution: comp
-Date: Fri, 10 Sep 1993 23:15:30 GMT
-
-mjl@dino.ph.utexas.edu (Maurice J. LeBrun) writes:
-   So far no responses.  Does this mean that no one has tried 3.3bx over a
-   net?  It's easy, just install Tk 3.3b3 on your machine, telnet somewhere,
-   set DISPLAY appropriately, and type "wish".
-
-I do it all the time, without difficulty.  You said you ftp-ed your
-.Xauthority file---I hope you remembered to do it in binary mode.  I'm
-using a Sparc2 running SunOS 4.1.1 and MIT X11R5, all versions of Tcl/Tk
-(i.e. it has never failed).
-
 From ashoks@duckjibe.Eng.Sun.COM Mon Sep 13 15:53:33 1993
 From: ashoks@duckjibe.Eng.Sun.COM (Ashok Singhal)
 Newsgroups: comp.lang.tcl
@@ -366,50 +347,6 @@ I restarted the window system.
 
 - Ashok Singhal
 Sun Microsystems
-
-
-In article 93Sep10120354@dino.ph.utexas.edu, mjl@dino.ph.utexas.edu (Maurice J. LeBrun) writes:
-> In a previous article, I wrote:
-> 
->    OK, my first cut at getting up under Tk 3.3b3 result in no major problems
->    save one: unauthorized attempts to connect.  This is due to the new
->    security check.  Turns out if ANY hosts are enabled by the older xhost
->    mechanism, the Tk send command aborts.
-> 
->    In trying to get my stuff working with the new security method, I:
-> 	   - disabled xhost-type access
-> 	   - created a file ~/.Xauthority containing access list
-> 
->    This worked for local connections on my HP running X11R5.  But when I 
->    ftp'ed .Xauthority off to some other systems I commonly use, and then
->    tried an X connection, try as I might all X connections were rejected.
-> 
->    Hopefully I am doing something wrong.  Any suggestions?
-> 
-> So far no responses.  Does this mean that no one has tried 3.3bx over a
-> net?  It's easy, just install Tk 3.3b3 on your machine, telnet somewhere,
-> set DISPLAY appropriately, and type "wish".
-> 
-> As it stands now I'm going to have to tell everyone to install 3.3 with
-> the TK_NO_SECURITY flag defined just to have the darn thing work, and then
-> it becomes questionable as to why it's in there to begin with.  If anyone
-> has some information to add, please speak up, even if it's "I didn't have
-> any problems and don't know what you're doing wrong".  Please specify the
-> configuration for the client and the server machines, including what OS,
-> X11 version, and Tcl/TK versions on both machines.  I have personally
-> installed Tk 3.2 on a Sun, an RS-6000 cluster, an HP 720, and have built it
-> and tested it (for someone else to install) for a Cray and NEC SX-3 (and
-> I am supposedly a physicist..).  So before I go through all of this again
-> for Tk 3.3 I'd really like to get it sorted out.
-> 
-> --
-> Maurice LeBrun    mjl@dino.ph.utexas.edu
-> Institute for Fusion Studies, University of Texas at Austin
-> 
-> Faire de la bonne cuisine demande un certain temps.  Si on vous fait
-> attendre, c'est pour mieux vous servir, et vous plaire.
->                                 [menu of restaurant Antoine, New Orleans]
-
 
 
 From schwartz@roke.cse.psu.edu Mon Sep 13 15:53:35 1993
