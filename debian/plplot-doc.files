@@ -1,1 +1,5 @@
-usr/share/info/*
+usr/share/doc/plplot-doc
+usr/share/doc/libplplot5/html
+usr/share/doc/libplplot5/*.pdf
+
+

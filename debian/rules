@@ -93,6 +93,9 @@ install-stamp: build-stamp
 #	  $(debbase)/python-plplot/usr/share/doc/plplot/examples/python/qplplot.py
 #endif
 
+	mv $(debdoc)/plplot $(debdoc)/libplplot5
+	mv $(debex) $(debdoc)/libplplot5
+
 	mkdir -p $(debshr)/octave/site/m/PLplot
 	mv $(debshr)/plplot_octave/use_plplot.m $(debshr)/octave/site/m/PLplot
 	mkdir -p $(deboct)
@@ -105,6 +108,8 @@ binary-indep: build install
 	#dh_testversion ge 2.0.86
 	dh_testdir -i
 	dh_testroot -i
+	dh_installdirs -i
+	ln -s libplplot5 $(debdoc)/plplot-doc
 #	dh_installdocs -i
 #	( cd $(debbase)/plplot-doc/usr/share/doc/plplot-doc ; \
 #	  mv plplotdoc-html-* html )
@@ -112,14 +117,14 @@ binary-indep: build install
 #	  tar xfz ../doc/plplotdoc-info-*.tar.gz ; \
 #	  cp plplotdoc-info-*/* $(debinfo) )
 #	dh_installchangelogs -i
-#	dh_movefiles -i
+	dh_movefiles -i
 #	dh_compress -i
 #	dh_fixperms -i
 	#dh_suidregister -i
-#	dh_installdeb -i
-#	dh_gencontrol -i
-#	dh_md5sums -i
-#	dh_builddeb -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
 
 binary-arch: build install
 	#dh_testversion ge 2.0.86
@@ -140,12 +145,9 @@ binary-arch: build install
 #	  $(deblib)
 
 	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
-                 octave-plplot python-plplot plplot-gd ; do \
+                 octave-plplot python-plplot plplot-gd plplot-doc; do \
 	  ln -s libplplot5 $(debdoc)/$$i ; \
 	done
-
-	mv $(debdoc)/plplot $(debdoc)/libplplot5
-	mv $(debex) $(debdoc)/libplplot5
 
 	dh_movefiles -a --no-package=libplplot5 --no-package=libplplot-dev
 	dh_movefiles --package=libplplot-dev
