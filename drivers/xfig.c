@@ -42,7 +42,7 @@ static void proc_str (PLStream *, EscText *);
 
 static int text=0;
 
-static DrvOpt driver_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
+static DrvOpt xfig_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
 				  {NULL, DRV_INT, NULL, NULL}};
 
 /*--------------------------------------------------------------------------*\
@@ -56,7 +56,7 @@ plD_init_xfig(PLStream *pls)
 {
     PLDev *dev;
 
-    plParseDrvOpts(driver_options);
+    plParseDrvOpts(xfig_options);
     if (text)
       pls->dev_text = 1; /* want to draw text */
 
@@ -80,7 +80,7 @@ plD_init_xfig(PLStream *pls)
     dev->ymax = FIGY;
     dev->xscale_dev = DPI/25.4;
     dev->yscale_dev = DPI/25.4;
-    offset_inc = dev->ymax * (int)dev->yscale_dev;
+    offset_inc = dev->ymax * (PLINT)dev->yscale_dev;
     offset = - offset_inc;
 
     pls->dev_fill0 = 1;	    /* Handle solid fills */
@@ -125,14 +125,12 @@ stcmap0(PLStream *pls)
   int i;
 
   if (pls->ncol0 > cmap0_ncol)
-    fprintf(stderr,"Too much colors for cmap0. Preallocate using command line '-ncol0 n.\n'");
+    plwarn("Too much colors for cmap0. Preallocate using command line '-ncol0 n.\n'");
 
       cur_pos = ftell(pls->OutFile);
 
-      if (fseek(pls->OutFile, cmap0_pos, SEEK_SET)) {
-	fprintf(stderr,"Sorry, only file based output, no pipes.\n");
-	exit(0);
-      }
+      if (fseek(pls->OutFile, cmap0_pos, SEEK_SET))
+	plexit("Sorry, only file based output, no pipes.\n");
 
       /* fill the colormap */
       for (i=0; i<pls->ncol0; i++)
@@ -154,14 +152,12 @@ stcmap1(PLStream *pls)
   int i;
 
   if (pls->ncol1 > cmap1_ncol)
-    fprintf(stderr,"Too much colors for cmap1. Preallocate using command line '-ncol1 n.\n'");
+    plwarn("Too much colors for cmap1. Preallocate using command line '-ncol1 n.\n'");
 
       cur_pos = ftell(pls->OutFile);
 
-      if (fseek(pls->OutFile, cmap1_pos, SEEK_SET)) {
-	fprintf(stderr,"Sorry, only file based output, no pipes.\n");
-	exit(0);
-      }
+      if (fseek(pls->OutFile, cmap1_pos, SEEK_SET))
+	plexit("Sorry, only file based output, no pipes.\n");
 
       /* fill the colormap */
       for (i=0; i<pls->ncol1; i++)
@@ -279,7 +275,7 @@ plD_bop_xfig(PLStream *pls)
     offset += offset_inc;
     flushbuffer(pls);
     
-    /* create background */
+    /* create background FIXME -- sync with orientation in header and pls->diorot */
     curcol = XFIG_COLBASE; /* colormap entry 0, background */
     fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 -1 0 0 5\n", curcol, curcol );
     fprintf(pls->OutFile, "%d %d %d %d %d %d %d %d %d %d\n",
@@ -410,6 +406,7 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT *t = args->xform;
   PLFLT a1, alpha, ft_ht, angle, ref;
   PLDev *dev = (PLDev *) pls->dev;
+  PLINT clxmin, clxmax, clymin, clymax;
   int jst, font;
 
   /* font height */
@@ -427,6 +424,17 @@ proc_str (PLStream *pls, EscText *args)
 
   /* TODO: parse string for format (escape) characters */
   //parse_str(args->string, return_string);
+
+  /* apply transformations */
+  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+
+  /* check clip limits. For now, only the reference point of the string is checked;
+     but the the whole string should be checked -- using a postscript construct
+     such as gsave/clip/grestore. This method can also be applied to the xfig and
+     pstex drivers. Zoom side effect: the font size must be adjusted! */
+
+  if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax)
+    return;
 
   /* 
    * Text justification.  Left, center and right justification, which
