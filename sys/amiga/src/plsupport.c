@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/07/01 21:59:55  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.6  1994/03/23 08:56:30  mjl
+   Header file rearrangement.
 
+ * Revision 1.5  1993/07/01  21:59:55  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.4  1993/03/15  21:34:29  mjl
  * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
  * OS 2.0 capabilities.
@@ -21,12 +24,10 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "plamiga.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <exec/memory.h>
 #include <devices/printer.h>
 #include <devices/prtbase.h>
@@ -214,7 +215,7 @@ queryprint(long *bmapx, long *bmapy, long *bmapxmax, long *bmapymax,
     dmpport((long) (SPECIAL_NOPRINT), 0, 0);
 
     *bmapxmax = PED->ped_MaxXDots;
-    *bmapymax = 95 * PED->ped_YDotsInch / 10;	/* 9.5" to prevent problems */
+    *bmapymax = 95 * PED->ped_YDotsInch / 10;	/* 9.5in to prevent problems */
 
     *xdpi = PED->ped_XDotsInch;
     *ydpi = PED->ped_YDotsInch;
