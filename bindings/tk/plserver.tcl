@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.19  1994/09/23 07:41:41  mjl
+# Revision 1.20  1995/04/12 08:06:16  mjl
+# Offloaded the C code for cleaning up from plserver.c into the proc
+# plserver_link_end in plserver.tcl.  The Tcl code was modified to better
+# handshake with the client (plplot TK driver) program.
+#
+# Revision 1.19  1994/09/23  07:41:41  mjl
 # Some cleanup code at exit moved into plserver.c, and the exit_app proc was
 # eliminated (in favor of just exit).
 #
@@ -150,8 +155,8 @@ proc plserver_init {} {
 # the client can reply (so there is nothing to reply to).
 #----------------------------------------------------------------------------
 
-proc client_cmd {client msg} {
-    global dp
+proc client_cmd {msg} {
+    global dp client
 
     if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
@@ -192,6 +197,45 @@ proc plserver_link_init {} {
 
 	send $client "set server_name [list $server_name]"
 	send $client "set client [list $client]"
+    }
+}
+
+#----------------------------------------------------------------------------
+# plserver_link_end
+#
+# Terminate link between client and server interpreters.
+# Operates on the 1 client / 1 plserver principle for now.
+#----------------------------------------------------------------------------
+
+proc plserver_link_end {} {
+    global dp client plclient_exiting
+
+    if { [info exists client] } then {
+
+	# Tell client we are exiting.
+
+	if { $dp } then {
+	    dp_RPC [list $client] set plserver_exiting 1
+	} else {
+	    send $client "set plserver_exiting 1"
+	}
+
+	# If the client isn't exiting, cause it to.
+
+	if { ! [info exists plclient_exiting] } then {
+	    if { $dp } then {
+		dp_RPC [list $client] dp_after 1 abort
+	    } else {
+		send $client "after 1 abort"
+	    }
+	    wait_until {[info exists plclient_exiting]}
+	}
+
+	# Clean up socket communications if using Tcl-DP.
+
+	if { $dp } then {
+	    catch dp_CloseRPC [list $client]
+	}
     }
 }
 

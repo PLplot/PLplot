@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1995/03/16 23:13:57  mjl
+ * Revision 1.34  1995/04/12 08:06:15  mjl
+ * Offloaded the C code for cleaning up from plserver.c into the proc
+ * plserver_link_end in plserver.tcl.  The Tcl code was modified to better
+ * handshake with the client (plplot TK driver) program.
+ *
+ * Revision 1.33  1995/03/16  23:13:57  mjl
  * Fixed the Copyright message and general cleaning up.
  *
  * Revision 1.32  1994/09/27  21:56:50  mjl
@@ -307,20 +312,7 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 /* If client exists, tell it to self destruct */
 
-    if (client_name != NULL) {
-	client_name = NULL;
-	Tcl_VarEval(interp, "send $client set plserver_exited 1",
-		    (char **) NULL);
-	Tcl_VarEval(interp, "send $client after 1 abort", (char **) NULL);
-    }
-    else if (client_port != NULL) {
-	client_port = NULL;
-	Tcl_VarEval(interp, "dp_RDO $client set plserver_exited 1",
-		    (char **) NULL);
-	Tcl_VarEval(interp, "dp_RDO $client abort", (char **) NULL);
-	Tcl_VarEval(interp, "catch dp_CloseRPC $client", (char **) NULL);
-	Tcl_VarEval(interp, "dp_update", (char **) NULL);
-    }
+    Tcl_Eval(interp, "plserver_link_end");
 
 /* Now really exit */
 
