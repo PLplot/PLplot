@@ -2,14 +2,14 @@
 win3.cpp
 
   Driver for Win32
-  
+
 	Paul Casteels	11-Sep-1996	(casteels@uia.ua.ac.be)
 	
 	  Color Handling by
-	  
+	
 		Carla Carmelo Rosa  (l36658@alfa.ist.utl.pt)
 		
-		  
+		
   Modified 20/12/01 by Olof Svensson and Alexandre Gobbo
 			
 */
@@ -87,7 +87,7 @@ typedef struct {
 
 	float 	xScale,yScale;
 	int     xPhMax,yPhMax;
-	int 	nextPlot; 	  
+	int 	nextPlot; 	
 	int 	rePaint;          /* if the background is cleared we need a repaint */
 	int 	rePaintBsy;       /* if we are repainting block the rest */
 	int     externalWindow;   /* if true the window is provided externally */
@@ -118,7 +118,7 @@ BOOLEAN ok;
   pdlg.lStructSize = sizeof( PRINTDLG );
   // Set the flag to return printer DC
   pdlg.Flags = PD_RETURNDC;
-  
+
     // Invoke the printer dialog box
     ok = PrintDlg( &pdlg );
     // hDC member of the PRINTDLG structure contains
@@ -202,7 +202,7 @@ void plD_init_win3(PLStream *pls)
 	if (buffered)
 		pls->plbuf_write = 1; /* buffer the output */
 	else
-		pls->plbuf_write = 0; 
+		pls->plbuf_write = 0;
 	pls->dev_flush   = 1; /* flush as we like */
 	pls->dev_fill0   = 1;	
 	pls->dev_fastimg = 1; /* is a fast image device */
@@ -384,8 +384,25 @@ void plD_state_win3(PLStream *pls, PLINT op)
 void plD_line_win3(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
 	WinDev *dev = (WinDev *)pls->dev;
-	MoveToEx(dev->hdc,x1a * dev->xScale,(PIXELS_Y - y1a) * dev->yScale,NULL);
-	LineTo(dev->hdc,x2a * dev->xScale,(PIXELS_Y - y2a) * dev->yScale);
+	int    xpixb ;
+	int    ypixb ;
+	int    xpixe ;
+	int    ypixe ;
+	xpixb = x1a * dev->xScale ;
+	ypixb = (PIXELS_Y - y1a) * dev->yScale ;
+	xpixe = x2a * dev->xScale ;
+	ypixe = (PIXELS_Y - y2a) * dev->yScale ;
+	if ( xpixb == xpixe && ypixb == ypixe ) {
+		SetPixel(dev->hdc,xpixb,ypixb,dev->PenColor);
+	} else {
+		MoveToEx(dev->hdc,xpixb,ypixb,NULL);
+		LineTo(dev->hdc,xpixe,ypixe);
+	}
+	
+/* Was:
+		MoveToEx(dev->hdc,x1a * dev->xScale,(PIXELS_Y - y1a) * dev->yScale,NULL);
+		LineTo(dev->hdc,x2a * dev->xScale,(PIXELS_Y - y2a) * dev->yScale);
+*/
 }
 
 /*--------------------------------------------------------------------------*\
@@ -613,7 +630,7 @@ void plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 		}
 		else
 			plreplot ();
-		break;      
+		break;
 		
         case PLESC_IMAGE:
                 plD_DrawImage_win3(pls);
@@ -664,7 +681,7 @@ void plD_DrawImage_win3(PLStream *pls)
   int i, npts, nx, ny, ix, iy, corners[5], Ppts_x[5], Ppts_y[5];
   int clpxmi, clpxma, clpymi, clpyma, icol1;
 
-  int level; 
+  int level;
   float wcxmi, wcxma, wcymi, wcyma;
   long ptr1, ptr2;
 
@@ -681,7 +698,7 @@ void plD_DrawImage_win3(PLStream *pls)
   wcyma = (clpyma - pls->wpyoff)/pls->wpyscl;
 
   npts = plsc->dev_nptsX*plsc->dev_nptsY;
-  
+
   nx = pls->dev_nptsX;
   ny = pls->dev_nptsY;
 
@@ -738,7 +755,7 @@ void plD_DrawImage_win3(PLStream *pls)
     if ((ix >= image_kx_start) || (ix <= image_kx_end))
       {
 	ptr1 = 4*ix;
-	for (iy=0; iy<ny; iy++) 
+	for (iy=0; iy<ny; iy++)
 	  if ((iy >= image_ky_start) || (iy <= image_ky_end))
 	  {
 	    icol1 = pls->dev_z[ix*(ny-1)+iy]/65535.*pls->ncol1;
@@ -759,7 +776,7 @@ void plD_DrawImage_win3(PLStream *pls)
   hdcMemory = CreateCompatibleDC(dev->hdc);
   bitmapOld = (HBITMAP)SelectObject(hdcMemory, bitmap);
   SetStretchBltMode(dev->hdc, HALFTONE);
-  //  printf("%d %d %d %d %d %d %d %d\n",imageX0, imageY0, imageWX, imageWY, image_kx_start, image_ky_start, image_wkx, image_wky); 
+  //  printf("%d %d %d %d %d %d %d %d\n",imageX0, imageY0, imageWX, imageWY, image_kx_start, image_ky_start, image_wkx, image_wky);
   StretchBlt(dev->hdc, imageX0, imageY0, imageWX, imageWY, hdcMemory, image_kx_start, image_ky_start, image_wkx, image_wky, SRCCOPY);
   SelectObject(hdcMemory, bitmapOld);
   DeleteObject(bitmap);
@@ -924,14 +941,14 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
 		  hmf = CloseMetaFile(dev->hdc);
 		  hGMem = GlobalAlloc(GHND,(DWORD)sizeof(METAFILEPICT));
 		  lpMFP = (LPMETAFILEPICT) GlobalLock(hGMem);
-		  
+		
 			lpMFP->mm = MM_ISOTROPIC;
 			lpMFP->xExt = PIXELS_X;
 			lpMFP->yExt = PIXELS_Y;
 			lpMFP->hMF = hmf;
 			
 			  GlobalUnlock(hGMem);
-			  
+			
 				OpenClipboard(dev->hwnd);
 				EmptyClipboard();
 				SetClipboardData(CF_METAFILEPICT,hGMem);
@@ -943,7 +960,7 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
 				  case CM_ABOUT :
 				  //			 MessageBox(hwnd,aboutText,"About",MB_OK);
 				  return 0;
-				  
+				
 					}
 		*/
   }
