@@ -1,12 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/07/16 22:35:05  mjl
-   Addition of driver interface function for converting between device
-   coordinate systems, functions for retrieving current driver interface
-   parameters.  Also added functions for creating a new stream, copying
-   an existing stream, replaying the current plot, returning a list of
-   file-oriented devices.
+   Revision 1.13  1993/07/28 05:53:23  mjl
+   Put in code to ensure all malloc'ed memory is freed upon exit.
 
+ * Revision 1.12  1993/07/16  22:35:05  mjl
+ * Addition of driver interface function for converting between device
+ * coordinate systems, functions for retrieving current driver interface
+ * parameters.  Also added functions for creating a new stream, copying
+ * an existing stream, replaying the current plot, returning a list of
+ * file-oriented devices.
+ *
  * Revision 1.11  1993/07/01  22:25:16  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -937,9 +940,19 @@ c_plend1()
     plP_clr();
     plP_tidy();
     plP_slev(0);
+
+/* Free all malloc'ed stream memory */
+
+    free_mem(plsc->plwindow);
+    free_mem(plsc->geometry);
+    free_mem(plsc->dev);
+    free_mem(plsc->FileName);
+    free_mem(plsc->FamilyName);
+
+/* Free malloc'ed stream if not in initial stream */
+
     if (ipls > 0) {
-	free(pls[ipls]->dev);
-	free(pls[ipls]);
+	free_mem(plsc);
 	pls[ipls] = NULL;
 	plsstrm(0);
     }
@@ -1641,11 +1654,6 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 void
 c_plscolbg(PLINT r, PLINT g, PLINT b)
 {
-    if (plsc->level > 0) {
-	plwarn("plscolbg: Must becalled before plinit.");
-	return;
-    }
-
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
 	plwarn("plscolbg: Invalid color");
 	return;

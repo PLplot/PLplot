@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/01 22:13:39  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.7  1993/07/28 05:54:10  mjl
+   Put in code to ensure all malloc'ed memory is freed upon exit.
 
+ * Revision 1.6  1993/07/01  22:13:39  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.5  1993/01/23  05:57:23  mjl
  * Now holds all routines dealing with 3d plots (and hence has become rather
  * large).  A capability similar to that in the contour plotter (passing
@@ -54,6 +57,7 @@ static PLINT *oldhiview;
 static PLINT *oldloview;
 static PLINT *newhiview;
 static PLINT *newloview;
+static PLINT *work;
 
 static PLINT mhi, xxhi, newhisize;
 static PLINT mlo, xxlo, newlosize;
@@ -73,6 +77,7 @@ static void savehipoint	(PLINT, PLINT);
 static void savelopoint	(PLINT, PLINT);
 static void swaphiview	(void);
 static void swaploview	(void);
+static void myexit	(char *);
 static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
@@ -96,7 +101,7 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     pl3mode = 1;
     plot3d(x, y, z, nx, ny, opt, 0);
 
-    free((void *) oldloview);
+    free_mem(oldloview);
     pl3mode = 0;
 }
 
@@ -118,33 +123,33 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 {
     PLINT b, color, font;
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init, *work;
+    PLINT init;
     PLINT i, ix, iy;
     PLINT level;
 
     plP_glev(&level);
     if (level < 3)
-	plexit("plot3d: Please set up window first");
+	myexit("plot3d: Please set up window first");
 
     if (opt < 1 || opt > 3)
-	plexit("plot3d: Bad option");
+	myexit("plot3d: Bad option");
 
     if (nx <= 0 || ny <= 0)
-	plexit("plot3d: Bad array dimensions.");
+	myexit("plot3d: Bad array dimensions.");
 
 /* Check that points in x and in y are strictly increasing */
 
     for (i = 0; i < nx - 1; i++)
 	if (x[i] >= x[i + 1])
-	    plexit("plot3d: X array must be strictly increasing");
+	    myexit("plot3d: X array must be strictly increasing");
 
     for (i = 0; i < ny - 1; i++)
 	if (y[i] >= y[i + 1])
-	    plexit("plot3d: Y array must be strictly increasing");
+	    myexit("plot3d: Y array must be strictly increasing");
 
     work = (PLINT *) malloc((size_t) (4 * MAX(nx, ny) * sizeof(PLINT)));
-    if (!work)
-	plexit("plot3d: Out of memory.");
+    if ( ! work)
+	myexit("plot3d: Out of memory.");
 
     b = 2 * MAX(nx, ny) + 1;
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
@@ -235,7 +240,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		   &work[0], &work[b - 1]);
     }
 
-    free((void *) work);
+    free_mem(work);
 
     if (side)
 	plside3(x, y, z, nx, ny, opt);
@@ -247,7 +252,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	plcol(color);
     }
 
-    free((void *) oldhiview);
+    free_mem(oldhiview);
 }
 
 /*----------------------------------------------------------------------*\
@@ -604,7 +609,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 
 	oldhiview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
 	if (!oldhiview)
-	    plexit("plnxtvhi: Out of memory.");
+	    myexit("plnxtvhi: Out of memory.");
 
 	plP_movphy(u[0], v[0]);
 	oldhiview[0] = u[0];
@@ -637,10 +642,8 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
     if (pl3upv != 0) {
 	newhisize = 2 * (mhi + BINC);
 	newhiview = (PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
-	if (!newhiview) {
-	    free((void *) oldhiview);
-	    plexit("plnxtvhi: Out of memory.");
-	}
+	if ( ! newhiview) 
+	    myexit("plnxtvhi: Out of memory.");
     }
 
 /*
@@ -719,7 +722,8 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		pthi = 0;
 		ochange = 0;
 	    }
-	    else if (pl3upv == 0 && ((!ptold && i >= mhi) || (ptold && j >= n))) {
+	    else if (pl3upv == 0 &&
+		     (( ! ptold && i >= mhi) || (ptold && j >= n))) {
 		plP_movphy(px, py);
 		lstold = ptold;
 		pthi = 0;
@@ -850,7 +854,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 
 	oldloview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
 	if (!oldloview)
-	    plexit("plnxtvlo: Out of memory.");
+	    myexit("plnxtvlo: Out of memory.");
 
 	plP_movphy(u[0], v[0]);
 	oldloview[0] = u[0];
@@ -883,10 +887,8 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
     if (pl3upv != 0) {
 	newlosize = 2 * (mlo + BINC);
 	newloview = (PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
-	if (!newloview) {
-	    free((void *) oldloview);
-	    plexit("plnxtvlo: Out of memory.");
-	}
+	if ( ! newloview) 
+	    myexit("plnxtvlo: Out of memory.");
     }
 
 /*
@@ -965,7 +967,8 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		ptlo = 0;
 		ochange = 0;
 	    }
-	    else if (pl3upv == 0 && ((!ptold && i >= mlo) || (ptold && j >= n))) {
+	    else if (pl3upv == 0 &&
+		     (( ! ptold && i >= mlo) || (ptold && j >= n))) {
 		plP_movphy(px, py);
 		lstold = ptold;
 		ptlo = 0;
@@ -1069,7 +1072,11 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 }
 
 /*----------------------------------------------------------------------*\
-* Utility functions.
+* savehipoint
+* savelopoint
+*
+* Add a point to the list of currently visible peaks/valleys, when
+* drawing the top/bottom surface, respectively.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1083,11 +1090,9 @@ savehipoint(PLINT px, PLINT py)
 	newhisize += 2 * BINC;
 	temp = (PLINT *) realloc((void *) newhiview,
 				 (size_t) (newhisize * sizeof(PLINT)));
-	if (!temp) {
-	    free((void *) oldhiview);
-	    free((void *) newhiview);
-	    plexit("savehipoint: Out of memory.");
-	}
+	if (!temp) 
+	    myexit("savehipoint: Out of memory.");
+
 	newhiview = temp;
     }
     newhiview[xxhi] = px;
@@ -1107,11 +1112,9 @@ savelopoint(PLINT px, PLINT py)
 	newlosize += 2 * BINC;
 	temp = (PLINT *) realloc((void *) newloview,
 				 (size_t) (newlosize * sizeof(PLINT)));
-	if (!temp) {
-	    free((void *) oldloview);
-	    free((void *) newloview);
-	    plexit("savelopoint: Out of memory.");
-	}
+	if (!temp)
+	    myexit("savelopoint: Out of memory.");
+
 	newloview = temp;
     }
     newloview[xxlo] = px;
@@ -1120,24 +1123,56 @@ savelopoint(PLINT px, PLINT py)
     xxlo++;
 }
 
+/*----------------------------------------------------------------------*\
+* swaphiview
+* swaploview
+*
+* Swaps the top/bottom views.  Need to do a real swap so that the 
+* memory cleanup routine really frees everything (and only once).
+\*----------------------------------------------------------------------*/
+
 static void
 swaphiview(void)
 {
+    PLINT *tmp;
+
     if (pl3upv != 0) {
 	mhi = xxhi / 2;
-	free((void *) oldhiview);
+	tmp = oldhiview;
 	oldhiview = newhiview;
+	newhiview = tmp;
     }
 }
 
 static void
 swaploview(void)
 {
+    PLINT *tmp;
+
     if (pl3upv != 0) {
 	mlo = xxlo / 2;
-	free((void *) oldloview);
+	tmp = newloview;
 	oldloview = newloview;
+	newloview = tmp;
     }
+}
+
+/*----------------------------------------------------------------------*\
+* myexit
+*
+* Calls plexit, cleaning up first.
+\*----------------------------------------------------------------------*/
+
+static void
+myexit(char *msg)
+{
+    free_mem(oldhiview);
+    free_mem(oldloview);
+    free_mem(newhiview);
+    free_mem(newloview);
+    free_mem(work);
+
+    plexit(msg);
 }
 
 /*----------------------------------------------------------------------*\
