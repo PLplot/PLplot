@@ -2613,7 +2613,7 @@ if test "$enable_tcl" = "yes"; then
     echo $ac_n "checking for libtcl""... $ac_c" 1>&6
     TCLLIBDIR=""
 
-	for version in 7.4 ""; do
+	for version in 7.4 7.5 ""; do
 	    if test -n "$TCLLIBDIR"; then
 		break
 	    fi
@@ -2773,7 +2773,7 @@ if test "$enable_tk" = "yes"; then
     echo $ac_n "checking for libtk""... $ac_c" 1>&6
     TKLIBDIR=""
 
-	for version in 4.0 ""; do
+	for version in 4.0 4.1 ""; do
 	    if test -n "$TKLIBDIR"; then
 		break
 	    fi
@@ -3444,6 +3444,9 @@ if test -z "$EXTRA_LIBS"; then
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
+	HP-UX* )
+	    EXTRA_LIBS="-ldld -lm"
+	;;
 	* ) 	
 	    echo $ac_n "checking for -lXbsd""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_lib_Xbsd'+set}'`\" = set"; then
@@ -3452,7 +3455,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3456 "configure"
+#line 3459 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3485,7 +3488,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3489 "configure"
+#line 3492 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3518,7 +3521,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3522 "configure"
+#line 3525 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3551,7 +3554,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3555 "configure"
+#line 3558 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3584,7 +3587,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3588 "configure"
+#line 3591 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3760,7 +3763,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3764 "configure"
+#line 3767 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3781,7 +3784,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3785 "configure"
+#line 3788 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3803,7 +3806,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3807 "configure"
+#line 3810 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3821,7 +3824,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3825 "configure"
+#line 3828 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3842,7 +3845,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3846 "configure"
+#line 3849 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3879,7 +3882,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3883 "configure"
+#line 3886 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3940,7 +3943,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3944 "configure"
+#line 3947 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3972,7 +3975,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3976 "configure"
+#line 3979 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -4006,7 +4009,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 4010 "configure"
+#line 4013 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -4121,7 +4124,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4125 "configure"
+#line 4128 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -4176,7 +4179,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4180 "configure"
+#line 4183 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
