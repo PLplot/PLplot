@@ -25,6 +25,7 @@ TCLLIBSTR=-ltcl
 XLIBSTR=-lX11
 GDLIBSTR=-lgd
 PNGLIBSTR=-lpng
+JPEGLIBSTR=-ljpeg
 ZLIBLIBSTR=-lz
 
 # Add the current directory to the include path.  This must occur
@@ -128,7 +129,7 @@ if test "$enable_xwin" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# Find libgd, libpng, and zlib libraries and headers required for building 
+# Find libgd, libpng, libjpeg, and zlib libraries and headers required for building 
 # png or jpg drivers.  Written by Alan W. Irwin following what is done for X.
 # ----------------------------------------------------------------------------
 
@@ -225,6 +226,54 @@ if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
     fi
     if test "$PNGLIBDIR" = "/usr/lib"; then
         PNGLIBDIR=default
+    fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+    if test -z "$JPEGINCDIR"; then
+        AC_TRY_CPP([#include <jpeglib.h>], [ JPEGINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/jpeglib.h"; then
+	       JPEGINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$JPEGINCDIR"; then
+	    AC_MSG_RESULT(warning: jpeg header files not found)
+	    JPEGINCDIR=default
+	    enable_png=no
+	    enable_jpg=no
+	fi ])
+    fi
+    if test "$JPEGINCDIR" = "/usr/include"; then
+        JPEGINCDIR=default
+    fi
+
+    if test -z "$JPEGLIBDIR"; then
+        AC_CHECK_LIB(jpeg, main, [ JPEGLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libjpeg.a"; then
+	        JPEGLIBDIR="$dir"
+		break
+	    fi
+	done
+	if test -z "$JPEGLIBDIR"; then
+	    AC_MSG_RESULT(warning: jpeg library not found)
+	    JPEGLIBDIR=default
+	    enable_png=no
+	    enable_jpg=no
+	fi ])
+    fi
+    if test "$JPEGLIBDIR" = "/usr/lib"; then
+        JPEGLIBDIR=default
     fi
 fi
 
