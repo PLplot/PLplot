@@ -7,6 +7,7 @@ critical versus not) with each of those categories further classified into
 minor or major effort required.
 
 Essential, major effort required.
+********************************
 
 * The new Unix/Linux configuration scheme must be tested for as wide a
 variety of Unix/Linux platforms as possible.  This is the responsibility of
@@ -16,8 +17,7 @@ OSF1 environment completed, but we need much more especially a Solaris
 environment with tcl/tk)
 
 Essential, minor effort required.
-
-* Document new API (plmesh3[c], plot3d[c], plsurf3d), etc.  Alan
+********************************
 
 * PLplot documentation of python, java, etc., interfaces.  Alan
 
@@ -37,6 +37,18 @@ that is allocated at pllib_init is released again.
 first page is skipped.
 
 "Would be nice", major effort required.
+***************************************
+
+* Get PLplot to work on Mac OS X and Cygwin platforms.  Have to wait for
+libtool-1.5 tarball to be officially reinstated on ftp.gnu.org.  Current
+rate of progress is 7 per day with 450 to go ==> time scale of November 2003
+or so before we can make further progress.  At that point, if libtool-1.5
+solves the major problems, there will probably still need to be some
+additional work to smooth out minor configuration and cross-platform issues
+for Mac OS X and Cygwin.
+
+* Move from DSSL based docbook stylesheets to XSL.  Rafael, as soon as
+the XSL results look as good (pdf currently a problem) as the DSSL results.
 
 * Maurice's idea of plsopt and plsdopt so that our API doesn't keep
 proliferating.  Example, instead of plenv0 do:
@@ -69,19 +81,21 @@ with the remaining rotation problems for the font handling, but those issues
 should not be tackled until the parallelogram core problem is straightened
 out.
 
-* There is still one issue holding back Olof et al from moving to our
-supported python interface for their pyqt GUI work. They require two output
-devices (one for the GUI and one to store results more permanently).  This
-is possible with -dev tk.  If a simple solution for the pyqt GUI following
-what is done for the plframe widget for -dev tk is possible, then this item
-should be reclassified to "Would be nice", minor effort.
-
 * Uniform 3D API for handling z, x, y, and exclusion.  The shaded and
 contour plots do this fairly well (although not uniformly), but the plot3d,
 plmesh, and plsurf3d API's are much too simplistic for general work.  For
 example, they don't handle non-rectangular x,y regions at all.
 
+* Much more extended plarrows API.  Question on list about this as of 2003
+September, but no decision made.
+
 "Would be nice", minor effort required.
+***************************************
+
+* plplot_general list 2003-08-26: Arjen Markus <arjen.markus@wldelft.nl> "I
+have found that with the X Window driver the values returned by plgspa()
+are/can be too small by a factor of approximately 1.4."  This should be
+followed up by an attempt to confirm the bug, and if it is there, fix it.
 
 * Error messages for when the extended search fails in tclAPI.c.  This is
 required when running in tcl-only mode with no plframe or stack trace.
@@ -102,25 +116,20 @@ API.  Also, this issue only affects "make check" environment since the
 installed versions should have the correct permissions using the autotools
 approach.
 
-* debian subdirectory made part of HEAD so can build debs directly
-from HEAD.  Careful here! Any further cvs merges should check that repository
-fixup for zombied files really worked so that all those old files in
-the top level and doc directories (to name two obvious examples) are
-not resurrected.
-
-* fortran, and C++ examples made consistent with the C, tcl, Java, python,
-and octave examples as a test that the API is implemented correctly
-for each front end and as a teaching device of how to produce *exactly* the
-same plot for each front end.  Java, python, and Tcl are consistent, but
-octave is not (Joao?) and fortran and C++ need a lot of work.
+* fortran examples made consistent with the C, C++, tcl, Java, python, and
+octave examples as a test that the API is implemented correctly for each
+front end and as a teaching device of how to produce *exactly* the same plot
+for each front end.  C++, Java, python, and Tcl are consistent, but octave
+is not (Joao?) and fortran needs a lot of work.
 
 * fortran API used to be our most complete non-C interface, but now it has
-fallen behind python and java (and would also fall behind perl if/when that
-interface becomes based on swig).  We need a volunteer (or volunteers) to
-make sure all our additions/changes to the common API over the last few
-years are implemented in fortran. 
+fallen behind C++, python and java (and the swig-based perl interface that
+has been developed as a separate project).  Alan
 
-* Implement plgetopt for both fortran and c++ interfaces.  Probably some
-cross-platform issues (especially with fortran) so have it act reasonably
-when, e.g., getarg is not available on some fortran platforms.
+* Implement plgetopt for fortran so can do command-line processing. Probably
+some cross-platform issues (especially with fortran) so have it act
+reasonably when, e.g., getarg is not available on some fortran platforms.
+
+* Drop NOBRAINDEAD or completely support it with autotools.  Question on
+list about this as of 2003 September, but no resolution made yet.
 
