@@ -15,47 +15,56 @@ DYNLOAD_STUFF := dynamic_drivers_target
 dynamic_drivers_target: $(dynamic_drivers)
 	@echo "dynamic_drivers built: $(dynamic_drivers)"
 
+# no driver needs this:
+# -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+
 drivers/null.drv : shared/null$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/plmeta.drv : shared/plmeta$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/ps.drv : shared/ps$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/xfig.drv : shared/xfig$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/gd.drv : shared/gd$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< @GDLIBS@
 
-drivers/pstex.drv : shared/pstex$O shared/ps$O
-	$(SHLIB_BUILD) $@ $< shared/ps$O -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+# drivers/ps.drv behaves as a dynamic library, and so this target
+# need rebuilt at install time, pointing, through rpath,
+# to the proper driver install directory.
+# Not done yet!
+
+drivers/pstex.drv : shared/pstex$O drivers/ps.drv
+	$(SHLIB_BUILD) $@ $< drivers/ps.drv 
 
 drivers/tek.drv : shared/tek$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/pbm.drv : shared/pbm$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $<
 
 drivers/hpgl.drv : shared/hpgl$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/dg300.drv : shared/dg300$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/ljii.drv : shared/ljii$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/ljiip.drv : shared/ljiip$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/impress.drv : shared/impress$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< 
 
 drivers/gnome.drv : shared/gnome$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< @GNOMELIBS@
 
 drivers/ntk.drv : shared/ntk$O
-	$(SHLIB_BUILD) $@ $< -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@
+

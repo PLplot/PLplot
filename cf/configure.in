@@ -103,6 +103,12 @@ enable_jpeg=yes
 enable_tk=yes
 enable_xwin=yes
 
+# separate the concept of desiring a driver (above) with
+# having system support for it.
+has_x11=yes
+has_tcl=yes
+has_tk=yes
+
 divert(-1)
 
 
