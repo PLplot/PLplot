@@ -46,6 +46,7 @@ EXECUTABLES_list = \
 		 x11f$(EXEEXT) \
 		 x12f$(EXEEXT) \
 		 x13f$(EXEEXT) \
+		 x14f$(EXEEXT) \
 		 x15f$(EXEEXT) \
 		 x16f$(EXEEXT) \
 		 x16af$(EXEEXT) \

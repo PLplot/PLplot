@@ -39,6 +39,7 @@ f77_examples = \
 	x11f.f \
 	x12f.f \
 	x13f.f \
+	x14f.f \
 	x15f.f \
 	x16f.f \
 	x16af.f \
@@ -62,6 +63,7 @@ f77m4_sources = \
 	x11f.fm4 \
 	x12f.fm4 \
 	x13f.fm4 \
+	x14f.fm4 \
 	x15f.fm4 \
 	x16f.fm4 \
 	x16af.fm4 \
@@ -95,6 +97,8 @@ x11f.f: x11f.fm4
 x12f.f: x12f.fm4
 
 x13f.f: x13f.fm4
+
+x14f.f: x14f.fm4
 
 x15f.f: x15f.fm4
 
@@ -137,6 +141,7 @@ check_PROGRAMS = \
 	x11f \
 	x12f \
 	x13f \
+	x14f \
 	x15f \
 	x16f \
 	x16af \
@@ -157,6 +162,7 @@ x10f_SOURCES = x10f.f
 x11f_SOURCES = x11f.f
 x12f_SOURCES = x12f.f
 x13f_SOURCES = x13f.f
+x14f_SOURCES = x14f.f
 x15f_SOURCES = x15f.f
 x16f_SOURCES = x16f.f
 x16af_SOURCES = x16af.f
