@@ -36,7 +36,7 @@ cat > ${ofile}.tex <<EOF
 \usepackage{graphicx}
 \begin{document}
 \pagestyle{empty}
-\rotatebox{90}{\scalebox{0.5}{\input{${ifile}_t}}}
+\rotatebox{0}{\scalebox{1.0}{\input{${ifile}_t}}}
 \end{document}
 EOF
 
