@@ -26,7 +26,7 @@ dnl ### AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
 dnl Utility macros
 
 dnl CHECK_PROG(program, url)
-AC_DEFUN(CHECK_PROG, [
+AC_DEFUN([CHECK_PROG], [
 
 pushdef([PROG], translit($1, [a-z], [A-Z]))
 
@@ -64,7 +64,7 @@ dnl           origin_package)
 dnl ### CONFTEST=conftest
 CONFTEST=doc/docbook/conftest
 AC_SUBST(CONFTEST)
-AC_DEFUN(CHECK_DTD, [
+AC_DEFUN([CHECK_DTD], [
 AC_CACHE_CHECK($1, pldb_cv_$2, [
 echo -e "\nChecking for $1" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$DSSSL_DTD_PUBID\"|" -e "s|@DB_STYLE_SHEET@|$3|" \
@@ -124,7 +124,7 @@ popdef([FILE])
 
 dnl Info building
 
-AC_DEFUN(CHECK_PERL_SCRIPT, [
+AC_DEFUN([CHECK_PERL_SCRIPT], [
 
 pushdef([PROG], translit($1, [a-z], [A-Z]))
 
@@ -159,7 +159,7 @@ Program $1 not found.
 popdef([PROG])
 ])
 
-AC_DEFUN(CHECK_PM, [
+AC_DEFUN([CHECK_PM], [
 AC_CACHE_CHECK( $1, pldb_cv_$2, [
 cat > conftest.pl << EOF
 use $1;
@@ -187,7 +187,7 @@ pldb_cv_$2=$pldb_cv_$2
 
 dnl Output commands
 
-AC_DEFUN(DOC_OUTPUT_COMMANDS, [
+AC_DEFUN([DOC_OUTPUT_COMMANDS], [
 AC_OUTPUT_COMMANDS( [
 if test "$print" = "" ; then
   echo
