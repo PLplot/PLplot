@@ -688,24 +688,45 @@ AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
 AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF))
 AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE))
 
-### Directory for PLplot specific data files
+### Define PLplot default install locations:
+### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
 
-DATA_DIR=lib/${PACKAGE}${VERSION}/data 
-AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR")
-AC_SUBST(DATA_DIR)
-
-### Other install locations needed.
+if test -z "$DATA_DIR"; then
+    ### NOTE: DATA_DIR is the only one that's relative to prefix!!
+    DATA_DIR="lib/${PACKAGE}${VERSION}/data"
+fi
 if test -z "$LIB_DIR"; then
-    LIB_DIR=$prefix/lib
+    LIB_DIR="$prefix/lib"
 fi
 if test -z "$INCLUDE_DIR"; then
-    INCLUDE_DIR=$prefix/include/plplot
+    INCLUDE_DIR="$prefix/include/plplot"
 fi
-AC_SUBST(LIB_DIR)
+if test -z "$BIN_DIR"; then
+    BIN_DIR="$prefix/bin"
+fi
+if test -z "$TCL_DIR"; then
+    TCL_DIR="$prefix/lib/${PACKAGE}${VERSION}/tcl"
+fi
+
+# Location substitutions for makefiles only
+
 AC_SUBST(INCLUDE_DIR)
+
 ### Configuration headers
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
+
+# Location substitutions for header files as well
+
+AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR")
+AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
+AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR")
+AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
+
+AC_SUBST(DATA_DIR)
+AC_SUBST(LIB_DIR)
+AC_SUBST(BIN_DIR)
+AC_SUBST(TCL_DIR)
 
 ### define X_CFLAGS, X_PRE_LIBS, X_LIBS, and X_EXTRA_LIBS
 
