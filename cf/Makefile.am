@@ -19,14 +19,14 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-EXTRA_DIST =      \
-    README        \
-    acinclude.m4  \
-    bootstrap.sh  \
-    docbook.m4    \
-    gnome.m4      \
-    gnu-make.m4   \
-    gtk.m4        \
-    ac_pkg_swig.m4 \
+EXTRA_DIST =           \
+    README             \
+    acinclude.m4       \
+    bootstrap.sh       \
+    docbook.m4         \
+    gnome.m4           \
+    gnu-make.m4        \
+    gtk.m4             \
+    ac_pkg_swig.m4     \
     ac_python_devel.m4
     
