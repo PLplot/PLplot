@@ -1,29 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/05/25 21:56:46  mjl
- * Dispatch table entries for Win3 driver, contributed by Paul Casteels.
+ * Revision 1.21  1994/06/30 18:29:21  mjl
+ * Include-guards included, and the PLStream pointer made global.  The latter
+ * will make access to PLplot state information much easier.
  *
- * Revision 1.19  1994/05/25  09:36:58  mjl
- * All VGA driver function names now end with "_vga", a nice simplification.
- * Since all are compiler-dependent and mutually exclusive, this should pose
- * no problem.  Also HP pen plotter driver were consolidated.  Both
- * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
- *
- * Revision 1.18  1994/04/08  12:10:37  mjl
- * Added dispatch table entries for new ljiip driver.
- *
- * Revision 1.17  1994/03/23  06:59:00  mjl
- * Name changes for xterm & mskermit driver functions, addition of versaterm
- * and vlt driver functions.
- *
- * Revision 1.16  1993/12/21  10:35:07  mjl
- * Added entry for new Tcl-DP driver.
- *
- * Revision 1.15  1993/12/08  20:26:22  mjl
- * Changes to support MS-Kermit output device.
- *
- * Revision 1.14  1993/10/18  19:42:06  mjl
- * Driver vectors for Borland C driver under DOS.
 */
 
 /*	plcore.h
@@ -32,12 +12,11 @@
 	should be included only by plcore.c.
 */
 
+#ifndef __PLCORE_H__
+#define __PLCORE_H__
+
 #include "plplotP.h"
 #include "drivers.h"
-
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
 /* Static function prototypes */
 
@@ -70,10 +49,13 @@ static PLINT offset;			/* offset for dispatch calls */
 \*----------------------------------------------------------------------*/
 
 static PLStream pls0;			/* preallocated stream */
-static PLStream *plsc = &pls0;		/* current stream pointer */
 static PLINT ipls;			/* current stream number */
 
 static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
+
+/* Current stream pointer.  Global, for easier access to state info */
+
+PLStream *plsc = &pls0;
 
 /*----------------------------------------------------------------------*\
 * Define structure containing pointers to device dependent functions.
@@ -709,3 +691,5 @@ static PLDispatchTable dispatch_table[] = {
 };
 
 static PLINT npldrivers = (sizeof(dispatch_table)/sizeof(PLDispatchTable));
+
+#endif	/* __PLCORE_H__ */
