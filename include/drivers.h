@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/07/19 22:35:14  mjl
+ * Revision 1.20  1994/07/25 06:04:58  mjl
+ * Added prototype for new lj_hpgl driver.
+ *
+ * Revision 1.19  1994/07/19  22:35:14  mjl
  * Cruft elimination.
  *
  * Revision 1.18  1994/05/25  21:58:25  mjl
@@ -100,6 +103,7 @@ void plD_esc_dg			(PLStream *, PLINT, void *);
 
 void plD_init_hp7470		(PLStream *);
 void plD_init_hp7580		(PLStream *);
+void plD_init_lj_hpgl		(PLStream *);
 
 void plD_line_hpgl		(PLStream *, short, short, short, short);
 void plD_polyline_hpgl		(PLStream *, short *, short *, PLINT);
