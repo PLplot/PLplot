@@ -995,7 +995,7 @@ plD_eop_gnome(PLStream *pls)
 
   canvas->need_update = 1;
   gnome_canvas_update_now (canvas);
-
+  
   gdk_threads_leave ();
 
   /*//  for (i=0;i<16;i++)*/
@@ -1057,7 +1057,10 @@ plD_tidy_gnome(PLStream *pls)
 
 #else
 
-  gtk_main();
+  if (pls->nopause) {
+    gtk_main_quit();
+  } else
+    gtk_main();
 
 #endif
 
