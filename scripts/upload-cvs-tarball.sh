@@ -26,6 +26,7 @@ DATE=`date --utc +"%Y-%m-%d %H:%M UTC"`
 cat > $INDEX <<EOF
 <html>
 <head>
+<title>PLplot CVS tarball</title>
 </head>
 <body>
 <h2>Latest PLplot CVS snapshot distribution</h2>
