@@ -43,11 +43,9 @@ AC_DEFUN(CHECK_DTD, [
 echo -n "checking for $1... "
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
 sed "s|@DB_STYLE_SHEET@|$2|" < conftest.tmp > conftest.dsl
-sed "s|@DOCBOOK_DTD@|$3|" < conf/test.sgml.in \
-|sed "s|</book>|$4|" > conftest.sgml
-jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t $5 \
+sed "s|@DOCBOOK_DTD@|$3|" < conf/test.sgml.in > conftest.sgml
+jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t $4 \
              conftest.sgml 2>&1 | egrep ":(E|W):"`
-jade_result=""
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -55,10 +53,10 @@ else
   AC_MSG_ERROR([Could not find $1.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
-        $6
+        $5
     Its system identifier, i.e., a file usually called 
-        \"$7\" 
-    is distributed with the $8 package.  Install it in your 
+        \"$6\" 
+    is distributed with the $7 package.  Install it in your 
     system and put the correct entry in the catalog file.
     You might also use the configure option --with-sgml-catalog to specify 
     alternative SGML catalogs.])
@@ -103,8 +101,7 @@ dnl Check public identifiers
 CHECK_DTD(
   [DSSSL Style Sheet DTD],
   [],
-  [[[<!ELEMENT book o o EMPTY>]]],
-  [],
+  [[[<!ELEMENT book - o (#PCDATA)>]]],
   [sgml],
   [\"$dsssl_dtd_pubid\"],
   [style-sheet.dtd],
@@ -113,8 +110,7 @@ CHECK_DTD(
 CHECK_DTD(
   [DocBook HTML Stylesheet],
   [[[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]]],
-  [[[<!ELEMENT book - o EMPTY>]]],
-  [],
+  [[[<!ELEMENT book - o (#PCDATA)>]]],
   [sgml],
   [\"$db_ss_html_pubid\"],
   [html/docbook.dsl],
@@ -123,8 +119,7 @@ CHECK_DTD(
 CHECK_DTD(
   [DocBook Print Stylesheet],
   [[[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]]],
-  [[[<!ELEMENT book o o EMPTY>]]],
-  [],
+  [[[<!ELEMENT book - o (#PCDATA)>]]],
   [tex],
   [\"$db_ss_print_pubid\"],
   [print/docbook.dsl],
@@ -134,7 +129,6 @@ CHECK_DTD(
   [DocBook DTD],
   [],
   [PUBLIC \"$docbook_dtd_pubid\"],
-  [</book>],
   [sgml],
   [\"$docbook_dtd_pubid\"],
   [declaration/docbook.dtd],
