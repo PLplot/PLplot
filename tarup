@@ -16,6 +16,7 @@ cd ..
 
 tar cf ${tarfile} ${pldir}/README
 tar rf ${tarfile} ${pldir}/README.1st
+tar rf ${tarfile} ${pldir}/README.local
 tar rf ${tarfile} ${pldir}/COPYRIGHTS
 tar rf ${tarfile} ${pldir}/Changes.log
 tar rf ${tarfile} ${pldir}/ToDo
