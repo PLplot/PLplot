@@ -51,14 +51,16 @@ STYLESHEETS_IN = \
   $(STYLESHEET_HTML).in \
   $(STYLESHEET_PRINT).in
 
+if enable_docbook
 built_files = \
   $(INFO_MANIFEST) $(HTML_MANIFEST) $(MAN_MANIFEST) \
   $(BASE).jadetex \
   $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA) \
   plplotdoc.txml plplotdoc.xml-info plplotdoc.texi
+endif
 
 EXTRA_DIST = \
-  $(SOURCE_FILES) $(MASTER_XML) \
+  $(SOURCE_FILES) \
   jadetex.cfg stylesheet.css $(built_files) \
   inline-info.ent pdftex.map
 
