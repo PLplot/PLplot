@@ -31,7 +31,7 @@ endif
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
 AM_FFLAGS = -I$(srcdir)
 
-version = -version-info $(SOVERSION)
+version = -version-info $(F77_SOVERSION)
 
 # Keep Fortran and C libraries completely separate so libplplot will know how
 # to link them without relying on poorly known (for most platforms)
@@ -68,7 +68,7 @@ libplplotf77c@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplpl
 # Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
 sfstubs.f: sfstubs.h
 
-# cp for the double-precision case, convert with sed for the 
+# cp for the double-precision case, convert with sed for the
 # single-precision case.
 if with_double
 .fm4.f:

@@ -79,7 +79,7 @@ dnl =======================================================================
 
 dnl Version numbers for the shared C libraries.
 
-SOVERSION=9:0:0
+SOVERSION=10:0:1
 AC_SUBST(SOVERSION)
 
 dnl Version number for the shared C++ library.  After version 5.2.1 was
@@ -87,8 +87,16 @@ dnl released, the C++ bindings were changed and backward incompatibilities
 dnl were introduced.  Hence the different strings for SOVERSION and
 dnl CPP_SOVERSION.
 
-CPP_SOVERSION=9:0:0
+CPP_SOVERSION=10:0:1
 AC_SUBST(CPP_SOVERSION)
+
+dnl Version number for the shared F77 library.  Starting with release 5.3.1
+dnl of PLplot, the Fortran shared library will have a separate SOVERSION
+dnl than that of the C PLplot library.  This is necessary because there is a
+dnl specialized Fortran API.
+
+F77_SOVERSION=9:0:0
+AC_SUBST(F77_SOVERSION)
 
 dnl Version number for the CSIRO libraries distributed in lib/csa and
 dnl lib/nn.  This information was buried into lib/{csa,nn}/Makefile.am and it
