@@ -73,12 +73,10 @@ get_drv_info_LDADD += $(top_builddir)/lib/nn/libcsironn.la
 endif
 # add the following directories if either tk or tkwin devices are enabled.
 if enable_tk
-get_drv_info_LDADD += $(libplplottcltk)
-get_drv_info_LDADD += $(libtclmatrix)
+get_drv_info_LDADD += $(libplplottcltk) $(libtclmatrix)
 else
 if enable_tkwin
-get_drv_info_LDADD += $(libplplottcltk)
-get_drv_info_LDADD += $(libtclmatrix)
+get_drv_info_LDADD += $(libplplottcltk) $(libtclmatrix)
 endif
 endif
 
