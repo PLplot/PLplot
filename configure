@@ -1090,11 +1090,18 @@ case "$system" in
 	fi
     ;;
     CRAY* ) 
+	machine=`uname -m`
 	if test "$with_debug" = "yes" ; then
 	    DEBUG_FLAG_F="-Wf\"-ez\""
 	fi
 
 	OPT_FLAG_F= 
+
+	case "$machine" in
+	    CRAY-2 )
+		SYS_FLAGS_C="-h pagelm"
+	    ;;
+	esac
 
 	if test "$with_profile" = "yes" ; then
 	    PROF_FLAG_C=
@@ -1105,7 +1112,6 @@ case "$system" in
 	    DEBUG_FLAG_LC="-Gp"
 	    DEBUG_FLAG_LF= 
 
-	    machine=`uname -m`
 	    case "$machine" in
 		CRAY-2 )
 		    LIBS=$LIBS -lprof -lsci -lu
@@ -1268,19 +1274,19 @@ esac
 # -----------------------------------------------------------------------
 # Run xmkmf to check for location of X libraries and includes.
 # If not found, I have to assume that X isn't available (it happens).
-# Can disable explicitly by specifying --disable-x11.
+# Can disable explicitly by specifying --disable-xwin.
 # -----------------------------------------------------------------------
 
-# check whether --enable-x11 was given
-enableval="$enable_x11"
+# check whether --enable-xwin was given
+enableval="$enable_xwin"
 if test -n "$enableval"; then
   :
 else
-  enable_x11="yes"
+  enable_xwin="yes"
 fi
 
 
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
 	# If we find X, set shell vars x_includes and x_libraries to the paths.
 no_x=true
@@ -1500,7 +1506,7 @@ else
 	    if test -z "$XINCDIR"; then
 		echo "Warning:  couldn't find any X11 include files."
 		XINCDIR="default"
-		enable_x11="no"
+		enable_xwin="no"
 	    fi 
 fi
 rm -f conftest*
@@ -1581,7 +1587,7 @@ enableval="$enable_tcl"
 if test -n "$enableval"; then
   :
 else
-  enable_tcl=$enable_x11
+  enable_tcl=$enable_xwin
 fi
 
 header="tcl.h"
@@ -1915,7 +1921,7 @@ fi
 
 inc_path=""
 
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     XINCSW=""
     if test "$XINCDIR" != "default"; then
 	XINCSW="-I$XINCDIR"
@@ -2069,7 +2075,7 @@ if test "$enable_tcl" = "yes"; then
     lib_path="$lib_path $TCLLIBDIR"
 fi
 
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     XLIBSW=""
     if test "$XLIBDIR" != "default"; then
 	XLIBSW="-L$XLIBDIR"
@@ -2631,7 +2637,7 @@ fi
 # and libplplotd to create the system default.  
 
 TAG_ENABLE="b"
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     TAG_ENABLE="X"
 fi
 if test "$enable_tk" = "yes"; then
@@ -3335,9 +3341,9 @@ with-debug:	$with_debug		with-opt:	$with_opt
 with-warn:	$with_warn		with-profile:	$with_profile
 with-f2c:	$with_f2c		with-gcc:	$with_gcc
 
-enable-tcl:	$enable_tcl		enable-tk:	$enable_tk
-enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
-enable-f77:	$enable_f77
+enable-xwin:	$enable-xwin		enable-tcl:	$enable_tcl
+enable-tk:	$enable_tk		enable-dp:	$enable_dp
+enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 "
 
 

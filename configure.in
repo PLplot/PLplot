@@ -206,7 +206,7 @@ fi
 # and libplplotd to create the system default.  
 
 TAG_ENABLE="b"
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     TAG_ENABLE="X"
 fi
 if test "$enable_tk" = "yes"; then
@@ -449,9 +449,9 @@ with-debug:	$with_debug		with-opt:	$with_opt
 with-warn:	$with_warn		with-profile:	$with_profile
 with-f2c:	$with_f2c		with-gcc:	$with_gcc
 
-enable-tcl:	$enable_tcl		enable-tk:	$enable_tk
-enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
-enable-f77:	$enable_f77
+enable-xwin:	$enable-xwin		enable-tcl:	$enable_tcl
+enable-tk:	$enable_tk		enable-dp:	$enable_dp
+enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 "
 
 AC_OUTPUT(tmp/Makefile tmp/Makedemo)
