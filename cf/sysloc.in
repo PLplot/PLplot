@@ -330,9 +330,7 @@ AC_LANG_SAVE
 AC_LANG_C
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 # All required headers and libraries are present for libgd, libpng, libjpeg,
-# and zlib.  Now check if this version of libgd supports jpeg.
-
-    AC_MSG_CHECKING(for jpeg support in libgd)
+# and zlib.  Now check if this version of libgd supports png and/or jpeg.
 
     CFLAGS_SAVE=$CFLAGS
     LIBS_SAVE=$LIBS
@@ -342,6 +340,17 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     LIBS="-L$GDLIBDIR -L$PNGLIBDIR -L$JPEGLIBDIR -L$ZLIBLIBDIR $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR"
     LDFLAGS=
 
+# This test for png support is made in case this is an ancient libgd that
+# only supported giff (e.g., the Redhat 6.2 version).
+    AC_MSG_CHECKING(for png support in libgd)
+    AC_TRY_LINK_FUNC([
+      gdImagePng
+    ], [AC_MSG_RESULT(yes)], [
+      AC_MSG_RESULT(no: png driver disabled)
+      enable_png=no
+    ])
+
+    AC_MSG_CHECKING(for jpeg support in libgd)
     AC_TRY_LINK_FUNC([
       gdImageJpeg
     ], [AC_MSG_RESULT(yes)], [
