@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/03/15 21:34:28  mjl
-   Reorganization and update of Amiga drivers.  Window driver now uses Amiga
-   OS 2.0 capabilities.
+   Revision 1.4  1994/03/23 08:56:55  mjl
+   Added prototype for plamiga_saveiff().
 
+ * Revision 1.3  1993/03/15  21:34:28  mjl
+ * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
+ * OS 2.0 capabilities.
+ *
  * Revision 1.2  1993/01/23  06:12:46  mjl
  * Preliminary work on new graphical interface (2.04-specific) for the Amiga.
  *
@@ -110,6 +113,9 @@ void  pla_SetFont	(void);
 
 void  pla_OpenLibs	(void);
 void  pla_CloseLibs	(void);
+
+int
+plamiga_saveiff(char *filename);
 
 void  dmpport		(long, int, int);
 int   openprinter	(void);
