@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.19  1994/01/17 21:30:24  mjl
+# Revision 1.20  1994/02/07 22:58:11  mjl
+# Eliminated plw_flash in favor of plw_bop and plw_eop.  Added widget
+# configure commands to set bop/eop behavior.
+#
+# Revision 1.19  1994/01/17  21:30:24  mjl
 # Improved security for Tcl-DP communication by disabling any further
 # connections after the initial client/server handshaking is finished.
 #
@@ -416,6 +420,11 @@ proc plw_init_plplot {w client} {
 
     client_cmd $client "set plwidget $w.plwin"
 
+# Set up bop/eop signal.
+
+    $w.plwin configure -bopcmd "plw_bop $w"
+    $w.plwin configure -eopcmd "plw_eop $w"
+
 # I want the focus
 
     focus $w.plwin
@@ -442,20 +451,26 @@ proc plw_start {w client} {
 }
 
 #----------------------------------------------------------------------------
-# plw_flash
+# plw_bop
 #
-# Set end-of-page indicator to help user out.
+# Set button color to indicate we have started a new page.
 #----------------------------------------------------------------------------
 
-proc plw_flash {w} {
+proc plw_bop {w} {
+    set default [lindex [$w.ftop.lstat config -bg] 4]
+    $w.ftop.leop config -bg $default
+    update
+}
 
-    set bg [lindex [$w.ftop.leop config -bg] 4]
-    if {$bg == "gray"} {
-	set default [lindex [$w.ftop.lstat config -bg] 4]
-	$w.ftop.leop config -bg $default
-    } else {
-	$w.ftop.leop config -bg gray
-    }
+#----------------------------------------------------------------------------
+# plw_eop
+#
+# Set button color to indicate we are at the end of a page.
+#----------------------------------------------------------------------------
+
+proc plw_eop {w} {
+    $w.ftop.leop config -bg gray
+    update
 }
 
 #----------------------------------------------------------------------------
@@ -919,6 +934,7 @@ proc plw_dplink {w client} {
 
     global list_sock data_sock
 
+    dp_Host +
     set rv [dp_connect -server 0]
     set list_sock [lindex $rv 0]
     set data_port [lindex $rv 1]
@@ -926,6 +942,5 @@ proc plw_dplink {w client} {
     dp_RDO $client set data_port $data_port
     set data_sock [lindex [dp_accept $list_sock] 0]
     $w.plwin openlink socket $data_sock
-
     dp_Host -
 }
