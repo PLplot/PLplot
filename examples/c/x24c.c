@@ -113,10 +113,7 @@ static char* peace[] = {
 int
 main(int argc, char *argv[])
 {
-  PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
-  PLFLT chardef, charht, deltax, deltay, x, y;
-  int i, j, page, length, slice;
-  char cmdString[20];
+  int i, j;
 
   plParseOpts (&argc, argv, PL_PARSE_FULL);
 
@@ -126,7 +123,7 @@ main(int argc, char *argv[])
   plvpor (0.0, 1.0, 0.0, 1.0);
   plwind (0.0, 1.0, 0.0, 1.0);
   plcol0 (0);
-  plbox("", 1.0, 0, "", 1.0, 0);
+  plbox ("", 1.0, 0, "", 1.0, 0);
 
   plscmap0n (7);
   plscmap0 (red, green, blue, 7);
