@@ -1,32 +1,18 @@
 /* $Id$
-   $Log$
-   Revision 1.8  1993/07/28 05:53:47  mjl
-   Put in code to ensure all malloc'ed memory is freed upon exit.
-
+ * $Log$
+ * Revision 1.9  1993/09/08 02:40:16  mjl
+ * Added search of INSTALL_DIR, passed in from makefile.  Directories
+ * now can be specified without the trailing slash, and the path name
+ * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
+ * handling for passing strings with a trailing backslash is gone).
+ *
+ * Revision 1.8  1993/07/28  05:53:47  mjl
+ * Put in code to ensure all malloc'ed memory is freed upon exit.
+ *
  * Revision 1.7  1993/07/01  22:15:32  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Improved code that locates fonts, and changed the default font
  * locations on the Amiga.
- *
- * Revision 1.6  1993/02/23  05:14:13  mjl
- * Changed reference in error message from plstar to plinit.
- *
- * Revision 1.5  1993/01/23  05:54:32  mjl
- * Added support for device-independent font files.
- *
- * Revision 1.4  1992/10/22  17:05:35  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.3  1992/09/30  18:25:47  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:57  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:27  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plfont.c
@@ -35,32 +21,33 @@
 *
 * The current directory is always searched for the fonts first, followed
 * by a system-dependent (and perhaps site-dependent) search path.
-* Note that directory names, if unix-like, must be defined with the
-* trailing slash, if non-null.  Each system has three hard-wired devices
-* (may be a logical name) that are searched (default value listed below).
-* The default may be overridden from the makefile.
+* Directory names can be given with or without the trailing slash.  Each
+* system has three hard-wired devices (may be a logical name) that are
+* searched (default value listed below).  The value for INSTALL_DIR is
+* set from the makefile.
 *
 * Unix:
 *	current directory
-*	$(HOME)/lib/
-*	$(PLFONTS)
-*	PLFONTDEV1	(/usr/local/lib/)
-*	PLFONTDEV2	(/usr/local/lib/plplot/
-*	PLFONTDEV3	(/usr/local/plplot/)
+*	$(HOME)/lib
+*	$(PLPLOT_DIR)
+*	INSTALL_DIR
+*	PLFONTDEV1	(/usr/local/lib)
+*	PLFONTDEV2	(/usr/local/lib/plplot
+*	PLFONTDEV3	(/usr/local/plplot)
 *
 * VMS:
 *	current directory
+*	INSTALL_DIR
 *	PLFONTDEV1	(lib:)
-*	PLFONTDEV1	(sys$login:)
-*	PLFONTDIR	(sys$sysroot:[sysfont.plplot])
+*	PLFONTDEV2	(sys$login:)
+*	PLFONTDEV3	(sys$sysroot:[sysfont.plplot])
 *
 * Amiga:
 *	current directory
-*	$(PLFONTS)
-*	PLFONTDEV1	(s:plplot/)
-*	PLFONTDEV2	(fonts:plplot/)
-*	PLFONTDEV3	(plfonts:)
-*/
+*	$(PLPLOT_DIR)
+*	INSTALL_DIR
+*	PLFONTDEV1	(fonts:plplot)
+*	PLFONTDEV2	(plfonts:) */
 
 #define PL_NEED_MALLOC
 #include "plplotP.h"
@@ -74,23 +61,23 @@
  /* MSDOS search path */
 
 #ifdef MSDOS
-#define PLFONTENV "PLFONTS"	/* C> set PLFONTS=dir_name_for_fonts */
+#define PLFONTENV "PLPLOT_DIR"	/* C> set PLPLOT_DIR=dir_name_for_fonts */
 #endif
 
  /* Unix search path */
 
 #ifdef __unix
 #define HOME_LIB
-#define PLFONTENV  "PLFONTS"
+#define PLFONTENV  "PLPLOT_DIR"
 
 #ifndef PLFONTDEV1
-#define PLFONTDEV1 "/usr/local/lib/"
+#define PLFONTDEV1 "/usr/local/lib"
 #endif
 #ifndef PLFONTDEV2
-#define PLFONTDEV2 "/usr/local/lib/plplot/"
+#define PLFONTDEV2 "/usr/local/lib/plplot"
 #endif
 #ifndef PLFONTDEV3
-#define PLFONTDEV3 "/usr/local/plplot/"
+#define PLFONTDEV3 "/usr/local/plplot"
 #endif
 #endif
 
@@ -111,10 +98,10 @@
  /* Amiga search path */
 
 #ifdef AMIGA
-#define PLFONTENV  "PLFONTS"
+#define PLFONTENV  "PLPLOT_DIR"
 
 #ifndef PLFONTDEV1
-#define PLFONTDEV1  "fonts:plplot/"
+#define PLFONTDEV1  "fonts:plplot"
 #endif
 #ifndef PLFONTDEV2
 #define PLFONTDEV2  "plfonts:"
@@ -123,7 +110,7 @@
 
 #ifdef GNU386
 #include <stddef.h>
-#define PLFONTDEV1 "c:/lib/"
+#define PLFONTDEV1 "c:/lib"
 #endif
 
 /* A/IX system 3 doesn't like you to call getenv() from a C program
@@ -137,12 +124,6 @@
 #undef HOME_LIB
 #endif
 #endif
-
-/* Font directory */
-/* Total length for total path+file spec limited to 256 chars */
-
-#define NFILEN	256
-static char fontdir[NFILEN];
 
 /* Function prototypes. */
 
@@ -254,115 +235,63 @@ static FILE *
 plfontopen(char *fn)
 {
     FILE *plfp;
-    char fs[NFILEN];
-    char *dn;
-
-/****	use results of previous search	****/
-
-    if (fontdir != NULL) {
-	strcpy(fs, fontdir);
-	strcat(fs, fn);
-	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
-	    return (plfp);
-    }
+    char *fs = NULL, *dn = NULL;
 
 /****	search current directory	****/
 
-    strcpy(fontdir, "");
     if ((plfp = fopen(fn, BINARY_READ)) != NULL)
-	return (plfp);
+	goto done;
 
 /**** 	search $(HOME)/lib	****/
 
 #ifdef HOME_LIB
     if ((dn = getenv("HOME")) != NULL) {
-	if ((strlen(dn) + 5 + strlen(fn)) > NFILEN)
-	    plexit("plfontopen: Too many characters in font file name.\n");
-
-	strcpy(fontdir, dn);
-	strcat(fontdir, "/lib/");
-	strcpy(fs, fontdir);
-	strcat(fs, fn);
+	plGetName(dn, "lib", fn, &fs);
 
 	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
-	    return (plfp);
+	    goto done;
     }
 #endif
 
-/****	search $(PLFONTS)	****/
+/****	search $(PLPLOT_DIR)	****/
 
 #ifdef PLFONTENV
     if ((dn = getenv(PLFONTENV)) != NULL) {
-	if ((strlen(dn) + strlen(fn)) > NFILEN)
-	    plexit("plfontopen: Too many characters in font file name.\n");
-
-	strcpy(fontdir, dn);
-	strcpy(fs, fontdir);
-	strcat(fs, fn);
+	plGetName(dn, "", fn, &fs);
 
 	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
-	    return (plfp);
+	    goto done;
     }
 #endif
 
 /**** 	search devices		****/
 
-#ifdef PLFONTDEV1
-    if ((strlen(PLFONTDEV1) + strlen(fn)) > NFILEN)
-	plexit("plfontopen: Too many characters in font file name.\n");
-
-    strcpy(fontdir, PLFONTDEV1);
-#ifdef MSDOS
-    /* Strip off the trailing space.  No way to get PLFONTDEV1 to be
-    the dir path without a space before the final quote.  Unbelievalbe idiots
-    at Microsoft.  You can say:
-	cl "-DPLFONTDEV1=\"d:\\lib\\ \""
-    but you can't say:
-	cl "-DPLFONTDEV1=\"d:\\lib\\\""
-    or it generates an error.  Somebody fire the moron.
-
-    And, thanks to the idiots on the ANSI committee, there is no way to use
-    the stringizing operator to get a string literal in your code with the
-    value specified on the command line.  With standards committees like
-    these, maybe we should go back to abacci.
-    */
-    fontdir[strlen(fontdir) - 1] = '\0';
-#endif
-    strcpy(fs, fontdir);
-    strcat(fs, fn);
+#ifdef INSTALL_DIR
+    plGetName(INSTALL_DIR, "", fn, &fs);
 
     if ((plfp = fopen(fs, BINARY_READ)) != NULL)
-	return (plfp);
+	goto done;
+#endif
+
+#ifdef PLFONTDEV1
+    plGetName(PLFONTDEV1, "", fn, &fs);
+
+    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+	goto done;
 #endif
 
 #ifdef PLFONTDEV2
-    if ((strlen(PLFONTDEV2) + strlen(fn)) > NFILEN)
-	plexit("plfontopen: Too many characters in font file name.\n");
-
-    strcpy(fontdir, PLFONTDEV2);
-#ifdef MSDOS
-    fontdir[strlen(fontdir) - 1] = '\0';
-#endif
-    strcpy(fs, fontdir);
-    strcat(fs, fn);
+    plGetName(PLFONTDEV2, "", fn, &fs);
 
     if ((plfp = fopen(fs, BINARY_READ)) != NULL)
-	return (plfp);
+	goto done;
 #endif
 
 #ifdef PLFONTDEV3
-    if ((strlen(PLFONTDEV3) + strlen(fn)) > NFILEN)
-	plexit("plfontopen: Too many characters in font file name.\n");
-
-    strcpy(fontdir, PLFONTDEV3);
-#ifdef MSDOS
-    fontdir[strlen(fontdir) - 1] = '\0';
-#endif
-    strcpy(fs, fontdir);
-    strcat(fs, fn);
+    plGetName(PLFONTDEV3, "", fn, &fs);
 
     if ((plfp = fopen(fs, BINARY_READ)) != NULL)
-	return (plfp);
+	goto done;
 #endif
 
 /**** 	not found, give up 	****/
@@ -370,7 +299,9 @@ plfontopen(char *fn)
     fprintf(stderr, "\nUnable to open font file: %s.\n", fn);
     plexit("");
 
-    return (NULL);		/* don't ask */
+ done:
+    free_mem(fs);
+    return (plfp);
 }
 
 /*----------------------------------------------------------------------*\
