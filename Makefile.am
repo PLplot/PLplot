@@ -58,7 +58,6 @@ EXTRA_DIST = \
 	fonts \
 	rpm \
 	sys \
-	CHANGES \
 	Copyright \
 	FAQ \
 	PROBLEMS \
