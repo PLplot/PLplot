@@ -68,6 +68,13 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plsc->wmyscl = (mmyma - mmymi) / dy;
     plsc->wmyoff = (ymax * mmymi - ymin * mmyma) / dy;
 
+/* Set transformation variables for world coordinates to device coords */
+
+    plsc->wdxscl = plsc->wmxscl * plsc->xpmm / (plsc->phyxma - plsc->phyxmi);
+    plsc->wdxoff = plsc->wmxoff * plsc->xpmm / (plsc->phyxma - plsc->phyxmi);
+    plsc->wdyscl = plsc->wmyscl * plsc->ypmm / (plsc->phyyma - plsc->phyymi);
+    plsc->wdyoff = plsc->wmyoff * plsc->ypmm / (plsc->phyyma - plsc->phyymi);
+
 /* Register plot window attributes */
 
     w.dxmi = plsc->vpdxmi;
