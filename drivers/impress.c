@@ -11,6 +11,17 @@
 
 /* Function prototypes */
 
+void plD_dispatch_init_imp	( PLDispatchTable *pdt );
+
+void plD_init_imp		(PLStream *);
+void plD_line_imp		(PLStream *, short, short, short, short);
+void plD_polyline_imp		(PLStream *, short *, short *, PLINT);
+void plD_eop_imp		(PLStream *);
+void plD_bop_imp		(PLStream *);
+void plD_tidy_imp		(PLStream *);
+void plD_state_imp		(PLStream *, PLINT);
+void plD_esc_imp		(PLStream *, PLINT, void *);
+
 static void flushline(PLStream *);
 
 /* top level declarations */
@@ -43,6 +54,22 @@ static short *LineBuff;
 static short FirstLine;
 static int penchange = 0, penwidth = 1;
 static short count;
+
+void plD_dispatch_init_imp( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "Impress File";
+    pdt->pl_DevName  = "imp";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 37;
+    pdt->pl_init     = (plD_init_fp)     plD_init_imp;
+    pdt->pl_line     = (plD_line_fp)     plD_line_imp;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_imp;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_imp;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_imp;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_imp;
+    pdt->pl_state    = (plD_state_fp)    plD_state_imp;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_imp;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_imp()

@@ -11,6 +11,17 @@
 
 /* Function prototypes */
 
+void plD_dispatch_init_xfig	( PLDispatchTable *pdt );
+
+void plD_init_xfig		(PLStream *);
+void plD_line_xfig		(PLStream *, short, short, short, short);
+void plD_polyline_xfig		(PLStream *, short *, short *, PLINT);
+void plD_eop_xfig		(PLStream *);
+void plD_bop_xfig		(PLStream *);
+void plD_tidy_xfig		(PLStream *);
+void plD_state_xfig		(PLStream *, PLINT);
+void plD_esc_xfig		(PLStream *, PLINT, void *);
+
 static void flushbuffer(PLStream *);
 
 /* top level declarations */
@@ -44,6 +55,22 @@ static int text=0;
 
 static DrvOpt xfig_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
 				  {NULL, DRV_INT, NULL, NULL}};
+
+void plD_dispatch_init_xfig( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "Xfig file";
+    pdt->pl_DevName  = "xfig";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 31;
+    pdt->pl_init     = (plD_init_fp)     plD_init_xfig;
+    pdt->pl_line     = (plD_line_fp)     plD_line_xfig;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_xfig;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_xfig;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_xfig;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_xfig;
+    pdt->pl_state    = (plD_state_fp)    plD_state_xfig;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_xfig;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_xfig()

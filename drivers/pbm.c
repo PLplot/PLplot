@@ -13,6 +13,17 @@
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 
+void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
+
+void plD_init_pbm		(PLStream *);
+void plD_line_pbm		(PLStream *, short, short, short, short);
+void plD_polyline_pbm		(PLStream *, short *, short *, PLINT);
+void plD_eop_pbm		(PLStream *);
+void plD_bop_pbm		(PLStream *);
+void plD_tidy_pbm		(PLStream *);
+void plD_state_pbm		(PLStream *, PLINT);
+void plD_esc_pbm		(PLStream *, PLINT, void *);
+
 #undef PIXELS_X
 #undef PIXELS_Y
 #define PIXELS_X 640
@@ -26,6 +37,23 @@ static char cmap[PIXELS_Y][PIXELS_X][3];
 #define ABS(a) ((a<0) ? -a : a)
 
 #define MAX_INTENSITY 255
+
+void plD_dispatch_init_pbm( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "PDB (PPM) Driver";
+    pdt->pl_DevName  = "pbm";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 38;
+    pdt->pl_init     = (plD_init_fp)     plD_init_pbm;
+    pdt->pl_line     = (plD_line_fp)     plD_line_pbm;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_pbm;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_pbm;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_pbm;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_pbm;
+    pdt->pl_state    = (plD_state_fp)    plD_state_pbm;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_pbm;
+}
+
 /*--------------------------------------------------------------------------*\
  * plD_init_pbm()
  *

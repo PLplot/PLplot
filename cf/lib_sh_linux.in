@@ -20,11 +20,15 @@
 
 .c.o:
 	$(CC) $(CC_FLAGS) $<
-	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$<
+
+#	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$<
 
 .f.o:
 	$(F77) $(F77_FLAGS) $<
 	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$<
+
+shared/%.o : %.c
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) $*.c -o $@
 
 # -----------------------------------------------------------------------------
 # Library dependency list and targets
@@ -92,7 +96,7 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # stupidtk.o handled symbolically for the case where tk is not enabled.
 STUPIDTK_OBJ = @STUPIDTK_OBJ@
 
-$(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS) $(STUPIDTK_OBJ)
+$(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS:%=shared/%) $(STUPIDTK_OBJ)
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \

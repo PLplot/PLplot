@@ -15,6 +15,19 @@
 
 /* Prototypes for functions in this file. */
 
+void plD_dispatch_init_psm	( PLDispatchTable *pdt );
+void plD_dispatch_init_psc	( PLDispatchTable *pdt );
+
+void plD_init_psm		(PLStream *);
+void plD_init_psc		(PLStream *);
+void plD_line_ps		(PLStream *, short, short, short, short);
+void plD_polyline_ps		(PLStream *, short *, short *, PLINT);
+void plD_eop_ps			(PLStream *);
+void plD_bop_ps			(PLStream *);
+void plD_tidy_ps		(PLStream *);
+void plD_state_ps		(PLStream *, PLINT);
+void plD_esc_ps			(PLStream *, PLINT, void *);
+
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);
@@ -32,6 +45,41 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
 /* text > 1 uses some postscript tricks, namely a transformation matrix
    that scales, rotates (with slanting) and offsets text strings.
    It has yet some bugs for 3d plots. */
+
+
+static void ps_dispatch_init_helper( PLDispatchTable *pdt,
+                                     char *menustr, char *devnam,
+                                     int type, int seq, plD_init_fp init )
+{
+    pdt->pl_MenuStr = menustr;
+    pdt->pl_DevName = devnam;
+    pdt->pl_type = type;
+    pdt->pl_seq = seq;
+    pdt->pl_init     = init;
+    pdt->pl_line     = (plD_line_fp)     plD_line_ps;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_ps;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_ps;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_ps;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_ps;
+    pdt->pl_state    = (plD_state_fp)    plD_state_ps;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_ps;
+}
+
+void plD_dispatch_init_psm	( PLDispatchTable *pdt )
+{
+    ps_dispatch_init_helper( pdt,
+                             "PostScript File (monochrome)", "ps",
+                             plDevType_FileOriented, 29,
+                             (plD_init_fp) plD_init_psm );
+}
+
+void plD_dispatch_init_psc	( PLDispatchTable *pdt )
+{
+    ps_dispatch_init_helper( pdt,
+                             "PostScript File (color)", "psc",
+                             plDevType_FileOriented, 30,
+                             (plD_init_fp) plD_init_psc );
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_ps()

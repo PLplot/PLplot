@@ -12,6 +12,10 @@
 #define NEED_PLDEBUG
 #include "plplot/plcore.h"
 
+#ifdef ENABLE_DYNAMIC_DRIVERS
+#include <dlfcn.h>
+#endif
+
 /*--------------------------------------------------------------------------*\
  * Driver Interface
  *
@@ -51,8 +55,7 @@ plP_init(void)
 {
     plsc->page_status = AT_EOP;
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_init) (plsc);
+    (*plsc->dispatch_table->pl_init) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_init(plsc);
@@ -73,8 +76,7 @@ plP_eop(void)
     if (plsc->plbuf_write)
 	plbuf_eop(plsc);
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_eop) (plsc);
+    (*plsc->dispatch_table->pl_eop) ((struct PLStream_struct *) plsc);
 }
 
 /* Set up new page. */
@@ -92,8 +94,7 @@ plP_bop(void)
     plsc->page_status = AT_BOP;
     plsc->nplwin = 0;
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_bop) (plsc);
+    (*plsc->dispatch_table->pl_bop) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_bop(plsc);
@@ -110,8 +111,7 @@ plP_tidy(void)
 	plsc->tidy_data = NULL;
     }
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_tidy) (plsc);
+    (*plsc->dispatch_table->pl_tidy) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_tidy(plsc);
@@ -125,8 +125,7 @@ plP_tidy(void)
 void
 plP_state(PLINT op)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_state) (plsc, op);
+    (*plsc->dispatch_table->pl_state) ((struct PLStream_struct *) plsc, op);
 
     if (plsc->plbuf_write)
 	plbuf_state(plsc, op);
@@ -137,8 +136,7 @@ plP_state(PLINT op)
 void
 plP_esc(PLINT op, void *ptr)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_esc) (plsc, op, ptr);
+    (*plsc->dispatch_table->pl_esc) ((struct PLStream_struct *) plsc, op, ptr);
 
     if (plsc->plbuf_write)
 	plbuf_esc(plsc, op, ptr);
@@ -189,8 +187,8 @@ plP_swin(PLWindow *plwin)
 /* It must use the filtered data, which it can get from *plsc */
 
     if (plsc->dev_swin) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_SWIN, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_SWIN, NULL );
     }
 }
 
@@ -332,15 +330,15 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y, PLINT refx, PLI
 static void
 grline(short *x, short *y, PLINT npts)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_line) (plsc, x[0], y[0], x[1], y[1]);
+    (*plsc->dispatch_table->pl_line) ( (struct PLStream_struct *) plsc,
+                                       x[0], y[0], x[1], y[1] );
 }
 
 static void
 grpolyline(short *x, short *y, PLINT npts)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_polyline) (plsc, x, y, npts);
+    (*plsc->dispatch_table->pl_polyline) ( (struct PLStream_struct *) plsc,
+                                           x, y, npts );
 }
 
 static void
@@ -350,8 +348,8 @@ grfill(short *x, short *y, PLINT npts)
     plsc->dev_x = x;
     plsc->dev_y = y;
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_esc) (plsc, PLESC_FILL, NULL);
+    (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                      PLESC_FILL, NULL );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -638,8 +636,8 @@ calc_diplt(void)
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_DI, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_DI, NULL );
     }
 
     if ( ! (plsc->difilt & PLDI_PLT))
@@ -720,8 +718,8 @@ calc_didev(void)
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_DI, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_DI, NULL );
     }
 
     if ( ! (plsc->difilt & PLDI_DEV))
@@ -838,8 +836,8 @@ calc_diori(void)
     PLFLT x0, y0, lx, ly, aspect;
 
     if (plsc->dev_di) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_DI, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_DI, NULL );
     }
 
     if ( ! (plsc->difilt & PLDI_ORI))
@@ -987,8 +985,8 @@ void
 c_plflush(void)
 {
     if (plsc->dev_flush) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FLUSH, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_FLUSH, NULL );
     }
     else {
 	if (plsc->OutFile != NULL)
@@ -1412,10 +1410,191 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plinit();
 }
 
+static int plDispatchSequencer( const void *p1, const void *p2 )
+{
+    const PLDispatchTable* t1 = *(PLDispatchTable **) p1;
+    const PLDispatchTable* t2 = *(PLDispatchTable **) p2;
+
+/*     printf( "sorting: t1.name=%s t1.seq=%d t2.name=%s t2.seq=%d\n", */
+/*             t1->pl_DevName, t1->pl_seq, t2->pl_DevName, t2->pl_seq ); */
+
+    return t1->pl_seq - t2->pl_seq;
+}
+
 /*--------------------------------------------------------------------------*\
  * void plGetDev()
  *
- * If the the user has not already specified the output device, or the
+ * plGetDev() used to be what is now shown as plSelectDev below.  However,
+ * the situation is a bit more complicated now in the dynloadable drivers
+ * era.  We have to:
+ * 1) Make sure the dispatch table is initialized to the union of static
+ *    drivers and available dynamic drivers.
+ * 2) Allow the user to select the desired device.
+ * 3) Initiailize the dispatch table entries for the selected device, in the
+ *    case that it is a dynloadable driver that has not yet been loaded.
+\*--------------------------------------------------------------------------*/
+
+static void
+plGetDev()
+{
+    int n;
+
+/* Start by checking to see that the dispatch table has been initialized with
+ * the info from the static drivers table and the available dynamic
+ * drivers. */
+
+    if (!dispatch_table_inited)
+        plInitDispatchTable();
+
+    plSelectDev();
+
+    plLoadDriver();
+
+    n = plsc->device - 1;
+    plsc->dispatch_table = dispatch_table[n];
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plInitDispatchTable()
+ *
+ * ...
+\*--------------------------------------------------------------------------*/
+
+static void
+plInitDispatchTable()
+{
+    char buf[300];
+    char *devnam, *devdesc, *driver, *tag, *seqstr;
+    int seq;
+    int i, j, n, driver_found, done=0;
+    FILE *fp_drvdb = 0;
+
+#ifdef ENABLE_DYNAMIC_DRIVERS
+    fp_drvdb = plLibOpen( "drivers/drivers.db" );
+
+    if (!fp_drvdb) {
+        fprintf( stderr, "Can't open drivers/drivers.db\n" );
+        return;
+    }
+
+/* Count the number of dynamic devices. */
+    while( !done ) {
+        char *p = fgets( buf, 300, fp_drvdb );
+
+        if (p == 0) {
+            done = 1;
+            continue;
+        }
+
+        npldynamicdevices++;
+    }
+#endif
+
+/* Allocate space for the dispatch table. */
+    dispatch_table = malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
+
+/* Initialize the dispatch table entries for the static devices by calling
+   the dispatch table initialization function for each static device.  This
+   is the same function that would be called at load time for dynamic
+   drivers. */
+
+    for( n=0; n < nplstaticdevices; n++ )
+    {
+        dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
+
+        (*static_device_initializers[n])( dispatch_table[n] );
+    }
+    npldrivers = nplstaticdevices;
+
+#ifdef ENABLE_DYNAMIC_DRIVERS
+/*     printf( "Ready to read drivers/drivers.db\n" ); */
+
+/* Allocate space for the device and driver specs.  We may not use all of
+ * these driver descriptors, but we obviously won't need more drivers than
+ * devices... */
+    loadable_device_list = malloc( npldynamicdevices * sizeof(PLLoadableDevice) );
+    loadable_driver_list = malloc( npldynamicdevices * sizeof(PLLoadableDriver) );
+
+    rewind( fp_drvdb );
+    done = 0;
+    i = 0;
+    while( !done ) {
+        char *p = fgets( buf, 300, fp_drvdb );
+
+        if (p == 0) {
+            done = 1;
+            continue;
+        }
+
+        devnam  = strtok( buf, ":" );
+        devdesc = strtok( 0, ":" );
+        driver  = strtok( 0, ":" );
+        seqstr  = strtok( 0, ":" );
+        tag     = strtok( 0, "\n" );
+
+        seq     = atoi(seqstr);
+
+        n = npldrivers++;
+
+        dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
+
+    /* Fill in the dispatch table entries. */
+        dispatch_table[n]->pl_MenuStr = plstrdup(devdesc);
+        dispatch_table[n]->pl_DevName = plstrdup(devnam);
+        dispatch_table[n]->pl_type = 0;
+        dispatch_table[n]->pl_seq = seq;
+        dispatch_table[n]->pl_init = 0;
+        dispatch_table[n]->pl_line = 0;
+        dispatch_table[n]->pl_polyline = 0;
+        dispatch_table[n]->pl_eop = 0;
+        dispatch_table[n]->pl_bop = 0;
+        dispatch_table[n]->pl_tidy = 0;
+        dispatch_table[n]->pl_state = 0;
+        dispatch_table[n]->pl_esc = 0;
+
+    /* Add a record to the loadable device list */
+        loadable_device_list[i].devnam = plstrdup(devnam);
+        loadable_device_list[i].description = plstrdup(devdesc);
+        loadable_device_list[i].drvnam = plstrdup(driver);
+        loadable_device_list[i].tag = plstrdup(tag);
+
+    /* Now see if this driver has been seen before.  If not, add a driver
+     * entry for it. */
+        driver_found = 0;
+        for( j=0; j < nloadabledrivers; j++ )
+            if (strcmp( driver, loadable_driver_list[j].drvnam) == 0)
+            {
+                driver_found = 1;
+                break;
+            }
+
+        if (!driver_found)
+        {
+            loadable_driver_list[nloadabledrivers].drvnam = plstrdup(driver);
+            loadable_driver_list[nloadabledrivers].dlhand = 0;
+            nloadabledrivers++;
+        }
+
+        loadable_device_list[i].drvidx = j;
+
+    /* Get ready for next loadable device spec */
+        i++;
+    }
+#endif
+
+/* Finally, we need to sort the list into presentation order, based on the
+   sequence number in the dispatch ttable entries. */
+
+    qsort( dispatch_table, npldrivers, sizeof(PLDispatchTable*),
+           plDispatchSequencer );
+
+    dispatch_table_inited = 1;
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plSelectDev()
+ *
+ * If the user has not already specified the output device, or the
  * one specified is either: (a) not available, (b) "?", or (c) NULL, the
  * user is prompted for it.
  *
@@ -1424,7 +1603,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 \*--------------------------------------------------------------------------*/
 
 static void
-plGetDev()
+plSelectDev()
 {
     int dev, i, count, length;
     char response[80];
@@ -1434,9 +1613,9 @@ plGetDev()
     if (*(plsc->DevName) != '\0' && *(plsc->DevName) != '?') {
 	length = strlen(plsc->DevName);
 	for (i = 0; i < npldrivers; i++) {
-	    if ((*plsc->DevName == *dispatch_table[i].pl_DevName) &&
+	    if ((*plsc->DevName == *dispatch_table[i]->pl_DevName) &&
 		(strncmp(plsc->DevName,
-			 dispatch_table[i].pl_DevName, length) == 0))
+			 dispatch_table[i]->pl_DevName, length) == 0))
 		break;
 	}
 	if (i < npldrivers) {
@@ -1461,8 +1640,8 @@ plGetDev()
 	fprintf(stdout, "\nPlotting Options:\n");
 	for (i = 0; i < npldrivers; i++) {
 	    fprintf(stdout, " <%2d> %-10s %s\n", i + 1,
-		    dispatch_table[i].pl_DevName,
-		    dispatch_table[i].pl_MenuStr);
+		    dispatch_table[i]->pl_DevName,
+		    dispatch_table[i]->pl_MenuStr);
 	}
 	if (ipls == 0)
 	    fprintf(stdout, "\nEnter device number or keyword: ");
@@ -1480,7 +1659,7 @@ plGetDev()
 	    length--;
 
 	for (i = 0; i < npldrivers; i++) {
-	    if ( ! strncmp(response, dispatch_table[i].pl_DevName,
+	    if ( ! strncmp(response, dispatch_table[i]->pl_DevName,
 			   (unsigned int) length))
 		break;
 	}
@@ -1497,7 +1676,94 @@ plGetDev()
 	    plexit("plGetDev: Too many tries.");
     }
     plsc->device = dev;
-    strcpy(plsc->DevName, dispatch_table[dev - 1].pl_DevName);
+    strcpy(plsc->DevName, dispatch_table[dev - 1]->pl_DevName);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plLoadDriver()
+ *
+ * Make sure the selected driver is loaded.  Static drivers are already
+ * loaded, but if the user selected a dynamically loadable driver, we may
+ * have to take care of that now.
+\*--------------------------------------------------------------------------*/
+
+static void
+plLoadDriver(void)
+{
+#ifdef ENABLE_DYNAMIC_DRIVERS
+    int i, drvidx;
+    char sym[60];
+    char *tag;
+
+    int n=plsc->device - 1;
+    PLDispatchTable *dev = dispatch_table[n];
+    PLLoadableDriver *driver = 0;
+
+/* If the dispatch table is already filled in, then either the device was
+ * linked in statically, or else perhaps it was already loaded.  In either
+ * case, we have nothing left to do. */
+    if (dev->pl_init)
+        return;
+
+/*     fprintf( stderr, "Device not loaded!\n" ); */
+
+/* Now search through the list of loadable devices, looking for the record
+ * taht corresponds to the requested device. */
+    for( i=0; i < npldynamicdevices; i++ )
+        if (strcmp( dev->pl_DevName, loadable_device_list[i].devnam ) == 0)
+            break;
+
+/* If we couldn't find such a record, then the user is in deep trouble. */
+    if (i == npldynamicdevices) {
+        fprintf( stderr, "No such device: %s.\n", dev->pl_DevName );
+        return;
+    }
+
+/* Note the device tag, and the driver index. Note that a given driver could
+ * supply multiple devices, each with a unique tag to distinguish the driver
+ * entry points for the differnet supported devices. */
+    tag = loadable_device_list[i].tag;
+    drvidx = loadable_device_list[i].drvidx;
+
+/*     printf( "tag=%s, drvidx=%d\n", tag, drvidx ); */
+
+    driver = &loadable_driver_list[drvidx];
+
+/* Load the driver if it hasn't been loaded yet. */
+    if (!driver->dlhand)
+    {
+        char drvspec[ 100 ];
+        sprintf( drvspec, "./drivers/%s", driver->drvnam );
+
+/*         printf( "Trying to load %s\n", driver->drvnam ); */
+
+        driver->dlhand = dlopen( drvspec, RTLD_NOW );
+    }
+
+/* If it still isn't loaded, then we're doomed. */
+    if (!driver->dlhand)
+    {
+        fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
+        return;
+    }
+
+/* Now we are ready to ask the driver's device dispatch init function to
+   initialize the entries in the dispatch table. */
+
+    sprintf( sym, "plD_dispatch_init_%s", tag );
+
+    {
+        PLDispatchInit dispatch_init = dlsym( driver->dlhand, sym );
+        if (!dispatch_init)
+        {
+            fprintf( stderr,
+                     "Unable to locate dispatch table initialization function for driver: %s.\n", driver->drvnam );
+            return;
+        }
+
+        (*dispatch_init)( dev );
+    }
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1570,9 +1836,9 @@ plgdevlst(char **p_menustr, char **p_devname, int *p_ndev, int type)
     int i, j;
 
     for (i = j = 0; i < npldrivers; i++) {
-	if (type < 0 || dispatch_table[i].pl_type == type) {
-	    p_menustr[j] = dispatch_table[i].pl_MenuStr;
-	    p_devname[j] = dispatch_table[i].pl_DevName;
+	if (type < 0 || dispatch_table[i]->pl_type == type) {
+	    p_menustr[j] = dispatch_table[i]->pl_MenuStr;
+	    p_devname[j] = dispatch_table[i]->pl_DevName;
 	    if (++j + 1 >= *p_ndev) {
 	        plwarn("plgdevlst:  too many devices");
 		break;

@@ -18,6 +18,7 @@ CORE_C = \
 	pdfutils.c \
 	plargs.c \
 	plbox.c \
+	plbuf.c \
 	plcont.c \
 	plcore.c \
 	plctrl.c \
@@ -41,6 +42,7 @@ CORE_OBJ = \
 	pdfutils$O \
 	plargs$O \
 	plbox$O \
+	plbuf$O \
 	plcont$O \
 	plcore$O \
 	plctrl$O \
@@ -75,52 +77,19 @@ FONT_OBJ = \
 	font10$O \
 	font11$O
 
-# Drivers
-
-DRIVERS_C = \
-	dg300.c \
-	gd.c \
-	hpgl.c \
-	impress.c \
-	linuxvga.c \
-	ljiip.c \
-	ljii.c \
-	next.c \
-	null.c \
-	pbm.c \
-	plbuf.c \
-	plmeta.c \
-	ps.c \
-	pstex.c \
-	tek.c \
-	xfig.c \
-	xwin.c
-
-DRIVERS_OBJ = \
-	dg300$O \
-	gd$O \
-	hpgl$O \
-	impress$O \
-	linuxvga$O \
-	ljiip$O \
-	ljii$O \
-	next$O \
-	null$O \
-	pbm$O \
-	plbuf$O \
-	plmeta$O \
-	ps$O \
-	pstex$O \
-	tek$O \
-	xfig$O \
-	xwin$O
-
 # Utilities
 
 UTIL_C = \
 	plrender.c \
 	plserver.c \
 	pltcl.c 
+
+# Driver stuff
+
+STATIC_DRIVERS	= @STATIC_DRIVERS@
+DYNAMIC_DRIVERS	= @DYNAMIC_DRIVERS@
+
+static_drivers_obj := $(STATIC_DRIVERS:%=%$(O))
 
 # Fortran language stubs for linking Plplot to Fortran.
 # I keep these dependencies here because (a) they use an implicit build

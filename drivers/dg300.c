@@ -9,6 +9,17 @@
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 
+void plD_dispatch_init_dg	( PLDispatchTable *pdt );
+
+void plD_init_dg		(PLStream *);
+void plD_line_dg		(PLStream *, short, short, short, short);
+void plD_polyline_dg		(PLStream *, short *, short *, PLINT);
+void plD_eop_dg			(PLStream *);
+void plD_bop_dg			(PLStream *);
+void plD_tidy_dg		(PLStream *);
+void plD_state_dg		(PLStream *, PLINT);
+void plD_esc_dg			(PLStream *, PLINT, void *);
+
 /* top level declarations */
 
 #define  DGX    639
@@ -21,6 +32,22 @@ struct termattr {
     unsigned char con[5];
     unsigned char eor;
 } termattr;
+
+void plD_dispatch_init_dg( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "DG300 Terminal";
+    pdt->pl_DevName  = "dg300";
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 25;
+    pdt->pl_init     = (plD_init_fp)     plD_init_dg;
+    pdt->pl_line     = (plD_line_fp)     plD_line_dg;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_dg;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_dg;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_dg;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_dg;
+    pdt->pl_state    = (plD_state_fp)    plD_state_dg;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_dg;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_dg()

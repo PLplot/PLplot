@@ -19,6 +19,27 @@
 
 #include <ctype.h>
 
+/* Prototype the driver entry points that will be used to initialize the
+   dispatch table entries. */
+
+void plD_init_xterm		(PLStream *);
+void plD_init_tekt		(PLStream *);
+void plD_init_tekf		(PLStream *);
+void plD_init_tek4107t		(PLStream *);
+void plD_init_tek4107f		(PLStream *);
+void plD_init_mskermit		(PLStream *);
+void plD_init_versaterm		(PLStream *);
+void plD_init_vlt		(PLStream *);
+void plD_init_conex		(PLStream *);
+
+void plD_line_tek		(PLStream *, short, short, short, short);
+void plD_polyline_tek		(PLStream *, short *, short *, PLINT);
+void plD_eop_tek		(PLStream *);
+void plD_bop_tek		(PLStream *);
+void plD_tidy_tek		(PLStream *);
+void plD_state_tek		(PLStream *, PLINT);
+void plD_esc_tek		(PLStream *, PLINT, void *);
+
 /* Static function prototypes */
 
 static void  WaitForPage	(PLStream *pls);
@@ -100,6 +121,97 @@ static char *kermit_color[15]= {
    "1;35","1;32","1;36","0;34",
    "0;33"};
 #endif
+
+static void tek_dispatch_init_helper( PLDispatchTable *pdt,
+                                      char *menustr, char *devnam,
+                                      int type, int seq, plD_init_fp init )
+{
+    pdt->pl_MenuStr = menustr;
+    pdt->pl_DevName = devnam;
+    pdt->pl_type = type;
+    pdt->pl_seq = seq;
+    pdt->pl_init     = init;
+    pdt->pl_line     = (plD_line_fp)     plD_line_tek;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_tek;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_tek;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_tek;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_tek;
+    pdt->pl_state    = (plD_state_fp)    plD_state_tek;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_tek;
+}
+
+void plD_dispatch_init_xterm	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Xterm Window", "xterm",
+                              plDevType_Interactive, 18,
+                              (plD_init_fp) plD_init_xterm );
+}
+
+void plD_dispatch_init_tekt	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix Terminal (4010)", "tekt",
+                              plDevType_Interactive, 19,
+                              (plD_init_fp) plD_init_tekt );
+}
+
+void plD_dispatch_init_tek4107t	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix Terminal (4105/4107)", "tek4107t",
+                              plDevType_Interactive, 20,
+                              (plD_init_fp) plD_init_tek4107t );
+}
+
+void plD_dispatch_init_mskermit	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "MS-Kermit emulator", "mskermit",
+                              plDevType_Interactive, 21,
+                              (plD_init_fp) plD_init_mskermit );
+}
+
+void plD_dispatch_init_versaterm( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Versaterm vt100/tek emulator", "versaterm",
+                              plDevType_Interactive, 22,
+                              (plD_init_fp) plD_init_versaterm );
+}
+
+void plD_dispatch_init_vlt	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "VLT vt100/tek emulator", "vlt",
+                              plDevType_Interactive, 23,
+                              (plD_init_fp) plD_init_vlt );
+}
+
+void plD_dispatch_init_conex	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Conex vt320/tek emulator", "conex",
+                              plDevType_Interactive, 24,
+                              (plD_init_fp) plD_init_conex );
+}
+
+void plD_dispatch_init_tekf	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix File (4010)", "tekf",
+                              plDevType_FileOriented, 27,
+                              (plD_init_fp) plD_init_tekf );
+}
+
+void plD_dispatch_init_tek4107f	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix File (4105/4107)", "tek4107f",
+                              plDevType_FileOriented, 28,
+                              (plD_init_fp) plD_init_tek4107f );
+}
+
 /*--------------------------------------------------------------------------*\
  * plD_init_xterm()	xterm 
  * plD_init_tekt()	Tek 4010 terminal

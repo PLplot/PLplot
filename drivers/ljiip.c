@@ -13,7 +13,7 @@
 */
 #include "plplot/plDevs.h"
 
-#ifdef PLD_ljii
+#ifdef PLD_ljiip
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
@@ -27,6 +27,17 @@
 #endif
 
 /* Function prototypes */
+
+void plD_dispatch_init_ljiip	( PLDispatchTable *pdt );
+
+void plD_init_ljiip		(PLStream *);
+void plD_line_ljiip		(PLStream *, short, short, short, short);
+void plD_polyline_ljiip		(PLStream *, short *, short *, PLINT);
+void plD_eop_ljiip		(PLStream *);
+void plD_bop_ljiip		(PLStream *);
+void plD_tidy_ljiip		(PLStream *);
+void plD_state_ljiip		(PLStream *, PLINT);
+void plD_esc_ljiip		(PLStream *, PLINT, void *);
 
 static void setpoint(PLINT, PLINT);
 
@@ -75,6 +86,22 @@ static char mask[8] =
 #endif
 
 static unsigned char _HUGE *bitmap;	/* memory area NBYTES in size */
+
+void plD_dispatch_init_ljiip( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "LaserJet IIp/deskjet compressed graphics";
+    pdt->pl_DevName  = "ljiip";
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 32;
+    pdt->pl_init     = (plD_init_fp)     plD_init_ljiip;
+    pdt->pl_line     = (plD_line_fp)     plD_line_ljiip;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_ljiip;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_ljiip;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_ljiip;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_ljiip;
+    pdt->pl_state    = (plD_state_fp)    plD_state_ljiip;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_ljiip;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_ljiip()

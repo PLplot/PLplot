@@ -9,6 +9,8 @@
 #ifndef __PLSTRM_H__
 #define __PLSTRM_H__
 
+#include "plplot/dispatch.h"
+
 /*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.
  *
@@ -418,6 +420,10 @@ typedef struct {
 
     PLINT width;
     PLINT widthset, widthlock;
+
+/* Driver dispatch table, obsoletes "device" member below. */
+
+    PLDispatchTable *dispatch_table;
 
 /* Variables used for interacting with or by device driver */
 

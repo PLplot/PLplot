@@ -85,6 +85,7 @@ with_rpath=yes
 with_nobraindead=no
 
 enable_drivers=yes
+enable_dynamic_drivers=no
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
@@ -118,6 +119,36 @@ define(PL_DRIVER_LIST,
 conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, hp7470, hp7580,
 lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
 
+# Note specifically which drivers are known to be loadable.
+# Eventually, hopefully, every driver will show up on this list.
+# However, we add them one at a time since each will have its own
+# peculiarities in the build process.
+
+define([PL_DYNAMIC_DRIVER_LIST],
+[null plmeta ps])
+
+# We think of a "device" as the output medium.  Could be a machine
+# style (Tektronix, X11), or a file format (Postscript).
+#
+# A "driver" is the PLplot code that produces the output on the
+# medium.
+#
+# Some drivers support multiple devices.  But we we need to make sure
+# we compile only the selected drivers.  That is, if a driver supports
+# devices not selected, we don't want to compile it at all.  Or if it
+# supports multiple selected devices, we only want to compile it
+# once.  To support this, we build an association list between devices
+# and drivers.  This will be inspected to build up the set of drivers
+# to be compiled based on which devices are selected.
+
+define([PL_device_driver_pair_list],
+[plmeta:plmeta null:null \
+xterm:tek tek4010:tek tek4107:tek mskermit:tek \
+versaterm:tek vlt:tek conex:tek \
+linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd ps:ps xfig:xfig \
+ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
+imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome ])
+
 # Macro to set one driver enable value
 
 define(PL_ADD_DRIVER,[dnl
@@ -125,6 +156,59 @@ MY_ARG_ENABLE($1, builtin(format,
 [  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
 if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     enable_$1="yes"
+
+#    echo "[PL_DYNAMIC_DRIVER_LIST] = PL_DYNAMIC_DRIVER_LIST"
+#    echo "[PL_device_driver_pair_list] = PL_device_driver_pair_list"
+
+    driver_is_dynamic=0
+    if test "$enable_dynamic_drivers" = "yes"; then
+	for drv in PL_DYNAMIC_DRIVER_LIST;
+	    do
+	    if test "$drv" = "$1"; then
+		driver_is_dynamic=1
+	    fi
+	    done
+    fi
+
+#    echo "1 = $1"
+#    echo "driver_is_dynamic: $driver_is_dynamic"
+
+    driver=""
+    for devdrv in PL_device_driver_pair_list;
+	do
+	dev=`echo $devdrv | cut -d: -f1`
+	drv=`echo $devdrv | cut -d: -f2`
+
+	if test "$dev" = "$1"; then
+	    driver=$drv
+	fi
+
+	done
+
+    if test $driver_is_dynamic != 0; then
+	found=0
+	for drv in $DYNAMIC_DRIVERS; do
+	    if test "$drv" = "$driver"; then
+		found=1
+	    fi
+	    done
+
+	if test $found = 0; then
+	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver"
+	fi
+    else
+	found=0
+	for drv in $STATIC_DRIVERS; do
+	    if test "$drv" = "$driver"; then
+		found=1
+	    fi
+	    done
+
+	if test $found = 0; then
+	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"
+	fi
+    fi
+
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
 else
@@ -309,6 +393,9 @@ MY_ARG_WITH(nobraindead)
 MY_ARG_ENABLE(drivers,
   [  --enable-drivers        enable all device drivers ($enable_drivers)])
 
+MY_ARG_ENABLE(dynamic-drivers,
+  [  --enable-dynamic-drivers    enable dynamic loading of drivers ($enable_dynamic_drivers)])
+
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
 
@@ -348,6 +435,14 @@ case $system in
 esac
 
 dnl> PL_DRIVERS(PL_DRIVER_LIST)
+
+# ----------------------------------------------------------------------------
+# Set flag to enable searching for dynloadable drivers, if appropriate.
+# ----------------------------------------------------------------------------
+
+if test "$enable_dynamic_drivers" = "yes"; then
+    AC_DEFINE(ENABLE_DYNAMIC_DRIVERS)
+fi
 
 # ----------------------------------------------------------------------------
 # Set up prefix
@@ -392,6 +487,17 @@ AC_INCLUDE(sysloc.in)
 
 PL_DRIVERS(PL_DRIVER_LIST)
 
+# ----------------------------------------------------------------------------
+# Okay, we're about to start emiting the configuration information.
+# But first start with a bogus file, so we can have a time stamp
+# marking when it all began.  That will let us write a clean target
+# that avoids killing off the CVS files (and the ./CVS control
+# directory), while using only the features of POSIX find.
+# ----------------------------------------------------------------------------
+
+touch .plcfg
+
+# ----------------------------------------------------------------------------
 # Okay, NOW we're done searching for stuff, so all the driver flags
 # and what not will finally be set right.
 
@@ -451,6 +557,13 @@ fi
 AC_SUBST(LIB_TAG)
 
 # ----------------------------------------------------------------------------
+# Set up library names and suffix.
+# ----------------------------------------------------------------------------
+
+AC_SUBST(STATIC_DRIVERS)
+AC_SUBST(DYNAMIC_DRIVERS)
+
+# ----------------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
 #
 # The order here is very important so that variable definitions are made in
@@ -477,6 +590,9 @@ AC_SUBST(enable_python)
 AC_SUBST(enable_tcl)
 AC_SUBST(enable_octave)
 
+if test "$enable_dynamic_drivers" = "yes"; then
+    cat $srcdir/cf/dyndrv.in    >>Makefile.in
+fi
 if test "$enable_cxx" = "yes"; then
     cat $srcdir/cf/pkg_cxx.in	>>Makefile.in 
 fi
@@ -637,6 +753,44 @@ AC_SUBST_STRIP(INFO_DIR,prefix)
 AC_SUBST_STRIP(INCLUDE_DIR,prefix)
 AC_SUBST_STRIP(DEMOS_DIR,prefix)
 AC_SUBST_STRIP(SHARED,prefix)
+
+# ----------------------------------------------------------------------------
+# Now build the dynamic driver database.
+# ----------------------------------------------------------------------------
+
+if test "$enable_dynamic_drivers" = "yes"; then
+
+    AC_MSG_RESULT(creating drivers/drivers.db)
+
+    # Dynamic (loadable) drivers go in a subdir all their own.
+    if test ! -d drivers; then
+	mkdir drivers
+    fi
+
+    # Clear out any prior drivers.
+    if test -e drivers/drivers.db; then
+	rm drivers.db
+    fi
+    touch drivers/drivers.db
+
+    # Now add a line for each supported lodable device.  Format is:
+    #     device name : description : driver name : symbol tag
+    
+    for drv in PL_DYNAMIC_DRIVER_LIST; do
+	case $drv in
+	    null)
+	    echo "null:Null device:null.drv:41:null" >> drivers/drivers.db
+	    ;;
+	    plmeta)
+	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:26:plm" >> drivers/drivers.db
+	    ;;
+	    ps)
+	    echo "ps:PostScript File (monochrome):ps.drv:29:psm" >> drivers/drivers.db
+	    echo "psc:PostScript File (color):ps.drv:30:psc" >> drivers/drivers.db
+	    ;;
+	esac
+    done
+fi
 
 # ----------------------------------------------------------------------------
 # Create links to source code.
@@ -843,6 +997,10 @@ INCS:		$INCS
 LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
+
+Available device drivers
+static:		$STATIC_DRIVERS
+dynamic:	$DYNAMIC_DRIVERS
 
 with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
