@@ -2385,23 +2385,25 @@ Java_plplot_core_PLStream_plot3d___3D_3D_3_3DII(
 
 /*
  * Class:     plplot_core_PLStream
- * Method:    plsurf3d
- * Signature: ([F[F[[FI)V
+ * Method:    surf3d
+ * Signature: ([F[F[[FI[F)V
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_plsurf3d___3F_3F_3_3FI(
+Java_plplot_core_PLStream_surf3d___3F_3F_3_3FI_3F(
     JNIEnv *env, jobject jthis,
-    jfloatArray xarr, jfloatArray yarr, jobjectArray zarr, jint opt )
+    jfloatArray xarr, jfloatArray yarr, jobjectArray zarr, jint opt, jfloatArray carr)
 {
     int nx = (*env)->GetArrayLength( env, xarr );
     int ny = (*env)->GetArrayLength( env, yarr );
-
+    int nlev = (*env)->GetArrayLength( env, carr );
+    
     jfloat *xdat = (*env)->GetFloatArrayElements( env, xarr, 0 );
     jfloat *ydat = (*env)->GetFloatArrayElements( env, yarr, 0 );
     jfloat **zdat = (jfloat **) malloc( nx * sizeof(jfloat*) );
+    jfloat *cdat = (*env)->GetFloatArrayElements( env, carr, 0 );
 
-    PLFLT *x, *y, **z, *zbuf;
+    PLFLT *x, *y, **z, *zbuf, *clev;
     int must_free_buffers = 0;
     int i, j;
 
@@ -2420,14 +2422,17 @@ Java_plplot_core_PLStream_plsurf3d___3F_3F_3_3FI(
         x = (PLFLT *) xdat;
         y = (PLFLT *) ydat;
         z = (PLFLT **) zdat;
+        clev = (PLFLT *) cdat;
     } else {
         x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
         y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
         z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
         zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+        clev = (PLFLT *) malloc( nlev * sizeof(PLFLT) );
 
         for( i=0; i < nx; i++ ) x[i] = xdat[i];
         for( j=0; j < ny; j++ ) y[j] = ydat[j];
+        for( j=0; j < nlev; j++ ) clev[j] = cdat[j];
 
         for( i=0; i < nx; i++ ) {
             z[i] = zbuf + i*ny;
@@ -2439,11 +2444,12 @@ Java_plplot_core_PLStream_plsurf3d___3F_3F_3_3FI(
     }
 
     set_PLStream(env,jthis);
-    plsurf3d( x, y, z, nx, ny, opt, NULL, 0 );
+    plsurf3d( x, y, z, nx, ny, opt, clev, nlev );
 
     if (must_free_buffers) {
         free(x);
         free(y);
+        free(clev);
         free(z);
         free(zbuf);
     }
@@ -2451,6 +2457,7 @@ Java_plplot_core_PLStream_plsurf3d___3F_3F_3_3FI(
 
     (*env)->ReleaseFloatArrayElements( env, xarr, xdat, 0 );
     (*env)->ReleaseFloatArrayElements( env, yarr, ydat, 0 );
+    (*env)->ReleaseFloatArrayElements( env, yarr, cdat, 0 );
 
 /* Seems to me we need to release these elements of zarr[i] too, but for some
  * reason the JVM gets sick to its stomach when I do this...  I must be doing
@@ -2465,25 +2472,36 @@ Java_plplot_core_PLStream_plsurf3d___3F_3F_3_3FI(
 
 /*
  * Class:     plplot_core_PLStream
- * Method:    plsurf3d
- * Signature: ([D[D[[DI)V
+ * Method:    surf3d
+ * Signature: ([D[D[[DI[D)V
  */
 
 JNIEXPORT void JNICALL
-Java_plplot_core_PLStream_plsurf3d___3D_3D_3_3DI(
+Java_plplot_core_PLStream_surf3d___3D_3D_3_3DI_3D(
     JNIEnv *env, jobject jthis,
-    jdoubleArray xarr, jdoubleArray yarr, jobjectArray zarr, jint opt )
+    jdoubleArray xarr, jdoubleArray yarr, jobjectArray zarr, jint opt, jdoubleArray carr )
 {
     int nx = (*env)->GetArrayLength( env, xarr );
     int ny = (*env)->GetArrayLength( env, yarr );
+    int nlev;
 
     jdouble *xdat = (*env)->GetDoubleArrayElements( env, xarr, 0 );
     jdouble *ydat = (*env)->GetDoubleArrayElements( env, yarr, 0 );
     jdouble **zdat = (jdouble **) malloc( nx * sizeof(jdouble*) );
+    jdouble *cdat;
 
-    PLFLT *x, *y, **z, *zbuf;
+    PLFLT *x, *y, **z, *zbuf, *clev;
     int must_free_buffers = 0;
     int i, j;
+
+    if (carr != NULL) {
+      nlev = (*env)->GetArrayLength( env, carr );
+      cdat = (*env)->GetDoubleArrayElements( env, carr, 0 );\
+    } else {
+      nlev = 0;
+      cdat = NULL;
+    }
+
 
 /* Should really check that z.length == nx */
 
@@ -2500,14 +2518,20 @@ Java_plplot_core_PLStream_plsurf3d___3D_3D_3_3DI(
         x = (PLFLT *) xdat;
         y = (PLFLT *) ydat;
         z = (PLFLT **) zdat;
+        clev = (PLFLT *) cdat;
     } else {
         x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
         y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
         z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
         zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+	if (nlev != 0) /* some OS don't return 0 for a malloced size of 0 */
+	  clev = (PLFLT *) malloc( nlev * sizeof(PLFLT) );
+	else
+	  clev = NULL;
 
         for( i=0; i < nx; i++ ) x[i] = xdat[i];
         for( j=0; j < ny; j++ ) y[j] = ydat[j];
+        for( j=0; j < nlev; j++ ) clev[j] = cdat[j];
 
         for( i=0; i < nx; i++ ) {
             z[i] = zbuf + i*ny;
@@ -2519,11 +2543,13 @@ Java_plplot_core_PLStream_plsurf3d___3D_3D_3_3DI(
     }
 
     set_PLStream(env,jthis);
-    plsurf3d( x, y, z, nx, ny, opt, NULL, 0 );
+    plsurf3d( x, y, z, nx, ny, opt, clev, nlev);
 
     if (must_free_buffers) {
         free(x);
         free(y);
+	if (nlev != 0)
+	  free(clev);
         free(z);
         free(zbuf);
     }
@@ -2531,6 +2557,8 @@ Java_plplot_core_PLStream_plsurf3d___3D_3D_3_3DI(
 
     (*env)->ReleaseDoubleArrayElements( env, xarr, xdat, 0 );
     (*env)->ReleaseDoubleArrayElements( env, yarr, ydat, 0 );
+    if (nlev != 0)
+      (*env)->ReleaseDoubleArrayElements( env, yarr, cdat, 0 );
 
 /* Seems to me we need to release these elements of zarr[i] too, but for some
  * reason the JVM gets sick to its stomach when I do this...  I must be doing
