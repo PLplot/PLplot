@@ -113,6 +113,7 @@ with_rpath=yes
 with_nobraindead=no
 with_freetype=yes
 with_qhull=yes
+with_csa=yes
 
 enable_drivers=yes
 enable_dyndrivers=yes
@@ -440,6 +441,10 @@ MY_ARG_WITH(qhull,
   AC_HELP_STRING([--with-qhull], 
     [Enable use of the Qhull library ($with_qhull)]))
 
+MY_ARG_WITH(csa,
+  AC_HELP_STRING([--with-csa], 
+    [Enable use of the csa library ($with_csa)]))
+
 MY_ARG_ENABLE(drivers,
   AC_HELP_STRING([--enable-drivers],
     [enable all device drivers ($enable_drivers)]))
@@ -721,6 +726,7 @@ AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
 AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
 AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
+AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
 
 ### Checks for existence of headers
 
@@ -968,7 +974,9 @@ enable_shared:	$enable_shared		enable_static:	$enable_static
 with_rpath:	$with_rpath		with_double:	$with_double
 
 Optional libraries:
-with_freetype:	$with_freetype		with_qhull:	$with_qhull
+with_qhull:	$with_qhull		with_csa:	$with_csa
+with_freetype:	$with_freetype		
+
 
 Language Bindings:
 enable_tcl:	$enable_tcl		enable_itcl:	$enable_itcl
