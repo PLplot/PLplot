@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.42  1993/10/18 19:43:20  mjl
+ * Revision 1.43  1993/10/21 19:25:32  mjl
+ * Added prototype for plFindName().
+ *
+ * Revision 1.42  1993/10/18  19:43:20  mjl
  * Added prototype for plFindCommand function.
  *
  * Revision 1.41  1993/09/28  21:30:17  mjl
@@ -871,6 +874,8 @@ int   plSetInternalOpt	(char *, char *);
 void  plgesc	(char *);
 
 void  pl_cmd	(PLINT, void *);
+
+int   plFindName	(char *p);
 
 char *plFindCommand	(char *);
 
