@@ -1,6 +1,16 @@
 # $Id$
 # $Log$
-# Revision 1.9  1995/06/02 20:31:53  mjl
+# Revision 1.10  1995/09/01 20:19:58  mjl
+# Run tk_focusFollowsMouse under Tk 4.0 to ensure that the new scale keypress
+# bindings are active.  Added bindings for scale focus in/out under Tk 3.6 and
+# keypress bindings to emulate the Tk 4.0 behavior.  Changed button 1 binding
+# for scales under Tk 4.0 to be the same as in Tk 3.6, which is much more
+# useful IMO (button-1 in trough moves slider to that position; button-2 moves
+# incrementally).  Now scale behavior should be the same under both Tk 3.6 or
+# Tk 4.0 with the exception of the button-2 binding (which can't be reproduced
+# under Tk 3.6 because it's scale widget isn't powerful enough).
+#
+# Revision 1.9  1995/06/02  20:31:53  mjl
 # Set zoom starting point to default to center.  Better for zooming in on
 # small plot features, although worse for large objects (e.g. entire plots).
 #
@@ -185,6 +195,13 @@ proc pldefaults {} {
 
     option add *highlightThickness		0
 
+# Have focus follow mouse, only available in Tk 4.0+
+# This is needed if you want to control scales using keystrokes.
+
+    if {$tk_version >= 4.0} then {
+	tk_focusFollowsMouse
+    }
+
 # Various options -- use global variables for simplicity.
 # Not a great solution but will have to do for now.
 
@@ -201,6 +218,22 @@ proc pldefaults {} {
 
     global saveopt_0;		set saveopt_0 psc
     global saveopt_1;		set saveopt_1 0
+
+# Scale widget bindings
+# Emulate the Tk 3.6 behavior in Tk 4.0+ for button-1 presses.
+# Emulate the Tk 4.0+ behavior in Tk 3.6 for keystroke presses.
+
+    if {$tk_version >= 4.0} then {
+	bind Scale <Button-1>  {%W set [%W get %x %y] }
+	bind Scale <B1-Motion> {%W set [%W get %x %y] }
+    } else {
+	bind Scale <Any-Enter> "focus %W"
+	bind Scale <Any-Leave> "focus none"
+	bind Scale <Left>  {%W set [expr [%W get] - 1]}
+	bind Scale <Right> {%W set [expr [%W get] + 1]}
+	bind Scale <Down>  {%W set [expr [%W get] - 1]}
+	bind Scale <Up>    {%W set [expr [%W get] + 1]}
+    }
 
 # Key shortcut definitions -- change them if you want!
 # Turn them into an empty string to disable.
