@@ -47,7 +47,8 @@ main (int argc, char* argv[])
   lt_dlinit ();
   dlhand = lt_dlopenext (drvnam);
   if (dlhand == NULL) {
-    fprintf (stderr, "Could not open driver module %s\n", drvnam);
+    fprintf (stderr, "Could not open driver module %s\n"
+                     "libltdl error: %s\n", drvnam, lt_dlerror ());
     return 1;
   }
   sprintf (sym, "plD_DEVICE_INFO_%s", drvnam);
@@ -57,8 +58,8 @@ main (int argc, char* argv[])
     return 0;
   }
   else {
-    fprintf (stderr, "Could not read symbol %s in driver module %s\n",
-             sym, drvnam);
+    fprintf (stderr, "Could not read symbol %s in driver module %s\n"
+                     "libltdl error: %s\n", sym, drvnam, lt_dlerror ());
     return 1;
   }
 }
