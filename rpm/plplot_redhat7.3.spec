@@ -16,6 +16,7 @@ Name: plplot
 Version: %{version}
 Release: %{rpmversion}
 Source0: http://prdownloads.sourceforge.net/plplot/plplot-%{version}.tar.gz
+Patch0: plplot-%{version}.patch
 URL: http://plplot.sourceforge.net
 Copyright: LGPL with some exceptions, see file "Copyright"
 Group: Applications/Math
@@ -33,52 +34,55 @@ of plotting are configurable.
 Notes on the plplot configuration underlying this package for the
 RH 7.3 build environment: 
 
-(i) We use --with-double --enable-dyndrivers --enable-gnome --enable-ntk --disable-linuxvga
-to give double precision, dynamic drivers, and the experimental gnome
-and ntp drivers.  We exclude the linuxvga driver because the contributed
+(i) We use 
+--with-double --enable-dyndrivers --enable-octave --enable-gnome --enable-ntk --disable-linuxvga
+to give double precision, dynamic drivers, and the experimental octave, gnome
+and ntk drivers.  We exclude the linuxvga driver because the contributed
 RedHat svgalib rpm is so outdated (1999), and it is not clear it will even
-work for RH 7.3.  We do not enable java.
+work for RH 7.3.  We do not enable java since that demands having system java
+installed and apparently that is not possible on RedHat because of the
+Sun licensing issue. Eventually, we will get around this with a gcc-libgcj
+approach.
 
 (ii) In addition, a large number of drivers are configured by default
 including tk, ps, psc, png and jpeg.
 
 (iii) The supported front ends are c, c++, fortran 77, python (with numpy),
-tcl/tk, and octave.  The octave front end requires installation of the
-matwrap rpm (available at http://prdownloads.sourceforge.net/plplot/) for
-building purposes, but matwrap is not required for the binary rpm.
+tcl/tk, and octave.
 
-The configuration summary is as follows:
+Configure results:
 
-CC:             gcc -c          -O  
-LDC:            gcc    
-CXX:            g++ -c            -O 
-LDCXX:          g++      
-F77:            f77 -c           -O 
-LDF:            f77    
-INCS:            -I. -I/usr/include/gtk-1.2 -I/usr/include/glib-1.2 -I/usr/lib/glib/include -I/usr/X11R6/include -I/usr/include -I/usr/lib/gnome-libs/include
-LIBS:            -litk -ltk8.3 -litcl -ltcl8.3 -L/usr/X11R6/lib -lX11 -ldl -lm -lg2c
-LIB_TAG:        d
-devices:         plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit conex vlt versaterm dg300 png jpeg ps psc xfig ljii hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk
+command:	./configure --prefix=/usr --with-double --enable-dyndrivers --enable-octave --enable-gnome --enable-ntk --disable-linuxvga
+system:		i686-pc-linux-gnu
+prefix:		/usr
+CC:		gcc 
+CXX:		g++ 
+F77:		g77 
+LIB_TAG:	d
+devices:	 dg300 png jpeg gnome hp7470 hp7580 lj_hpgl imp ljii ljiip ntk null pbm plmeta ps psc pstex xterm tek4010 tek4107 mskermit versaterm vlt conex tek4010f tek4107f tk xfig xwin
 
 Available device drivers
-static:          xwin tk
-dynamic:         plmeta null tek dg300 gd ps xfig ljii hpgl ljiip impress pbm gnome pstex ntk
+static:		
+dynamic:	 dg300d_drv.la gdd_drv.la gnomed_drv.la hpgld_drv.la impressd_drv.la ljiid_drv.la ljiipd_drv.la ntkd_drv.la nulld_drv.la pbmd_drv.la plmetad_drv.la psd_drv.la pstexd_drv.la tekd_drv.la tkd_drv.la xfigd_drv.la xwind_drv.la
 
-with_shlib:     yes             with_double:    yes
-with_debug:     no              with_opt:       yes
-with_warn:      no              with_profile:   no
-with_gcc:       yes             with_rpath:     yes
+with_shlib:	yes		with_double:	yes
+with_debug:	no		with_opt:	yes
+with_warn:	no		with_profile:	no
+with_gcc:	yes		with_rpath:	yes
+with_freetype:	no
 
-enable_xwin:    yes             enable_tcl:     yes
-enable_tk:      yes             enable_itcl:    yes
-enable_cxx:     yes             enable_python:  yes
-enable_f77:     yes             enable_java:    no
-enable_octave:  yes             enable_gnome:   yes
+enable_xwin:	yes		enable_tcl:	yes
+enable_tk:	yes		enable_itcl:	no
+enable_cxx:	yes		enable_python:	yes
+enable_f77:	yes		enable_java:	no
+enable_octave:	yes		enable_gnome:	yes
+enable_tkwin:	no
 
 %prep
+%setup -q
+%patch -p1
 
-%setup
-make configure
+# This workaround won't be needed for the next version!
 PY_VERSION=`python -c 'import sys ; print sys.version[0:3]'`
 export PYTHON_INC_DIR=/usr/include/python${PY_VERSION}/
 echo PYTHON_INC_DIR=${PYTHON_INC_DIR}
@@ -87,7 +91,7 @@ export PYTHON_CFG_DIR=${PYTHON_MOD_DIR}/config
 export PYTHON_NUM_DIR=${PYTHON_INC_DIR}/Numeric/
 export PYTHON_MACH_DIR=${PYTHON_MOD_DIR}/site-packages
 export PYTHON_DIR=${PYTHON_MACH_DIR}
-./configure --prefix=/usr --with-double --enable-dyndrivers --enable-gnome --enable-ntk --disable-linuxvga
+./configure --prefix=/usr --with-double --enable-dyndrivers --enable-octave --enable-gnome --enable-ntk --disable-linuxvga
 
 %build
 make
@@ -98,20 +102,10 @@ make
 # can be overridden in error from outside
 rm -rf /tmp/software/redhat_install_area/plplot
 
-# The PREFIX value makes this package relocatable.  So all compilation was
-# done with --prefix=/usr, but the install occurs to PREFIX (temporarily)
-# until the binary rpm is put together.
-# Note also that install linking won't work unless set the LD_LIBRARY_PATH
-# variable so that some form of the other PLplot libraries can be found 
-# with new hierarchical linking scheme.
-export LD_LIBRARY_PATH=.
-make install PREFIX=$RPM_BUILD_ROOT/usr
-
-# hack to get rid of these non-working examples (that screw things up in any
-# case because they start with #!/usr/local/bin/python which adds a wrong
-# dependency)
-rm -f $RPM_BUILD_ROOT/usr/share/doc/plplot/examples/python/tutor.py
-rm -f $RPM_BUILD_ROOT/usr/share/doc/plplot/examples/python/x??.py
+# We use the automake DESTDIR here so the pre-install occurs in
+# $RPM_BUILD_ROOT/usr until the binary rpm is put together to actually
+# install in /usr.
+make DESTDIR=$RPM_BUILD_ROOT install
 
 # install extra documentation
 cd doc
@@ -168,20 +162,20 @@ fi
 # octave support files for Plplot.
 %attr(-, root, root) /usr/share/plplot_octave
 # python modules
-%attr(-, root, root) /usr/lib/python*/site-packages/plplotcmodule.so
+%attr(-, root, root) /usr/lib/python*/site-packages/_plplotcmodule.so
 %attr(-, root, root) /usr/lib/python*/site-packages/plplot.py
 %attr(-, root, root) /usr/lib/python*/site-packages/plplot_widgetmodule.so
+%attr(-, root, root) /usr/lib/python*/site-packages/plplotc.py
+
 # fonts, maps, tcl data, dyndrivers, and examples
-#temporary until version information made consistent
-#%attr(-, root, root) /usr/lib/plplot%{version}
-%attr(-, root, root) /usr/lib/plplot*
+%attr(-, root, root) /usr/lib/plplot%{version}
 # info files
 %attr(-, root, root) /usr/share/info/plplotdoc.info*.gz
 # headers
 %attr(-, root, root) /usr/include/plplot
 # executables
 %attr(-, root, root) /usr/bin/plm2gif
-%attr(-, root, root) /usr/bin/plplot-config
+%attr(-, root, root) /usr/bin/plplot_libtool
 %attr(-, root, root) /usr/bin/plpr
 %attr(-, root, root) /usr/bin/plrender
 %attr(-, root, root) /usr/bin/plserver
@@ -189,7 +183,8 @@ fi
 %attr(-, root, root) /usr/bin/pltek
 %attr(-, root, root) /usr/bin/pstex2eps
 # libraries
-%attr(-, root, root) /usr/lib/libplcxxd.*
+%attr(-, root, root) /usr/lib/libplplotcxxd.*
 %attr(-, root, root) /usr/lib/libplplotd.*
+%attr(-, root, root) /usr/lib/libplplotf77d.*
 %attr(-, root, root) /usr/lib/libplplottcltkd.*
 %attr(-, root, root) /usr/lib/libtclmatrixd.*
