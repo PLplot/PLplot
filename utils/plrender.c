@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/02/26 05:21:35  mjl
-   Changed to a fatal error when unrecognized metafile input is encountered.
+   Revision 1.13  1993/02/27 01:42:09  mjl
+   Changed from ftell/fseek to fgetpos/fsetpos, also added debugging output.
 
+ * Revision 1.12  1993/02/26  05:21:35  mjl
+ * Changed to a fatal error when unrecognized metafile input is encountered.
+ *
  * Revision 1.11  1993/02/26  04:20:14  mjl
  * Made minor change to fix prototype warning.
  *
@@ -140,6 +143,7 @@ static int HandleOption_jy	(char *, char *);
 
 /* Page info */
 
+
 static PLINT	page_begin=1;	/* Where to start plotting */
 static PLINT	page_end=-1;	/* Where to stop (0 to disable) */
 static PLINT	curpage=1;	/* Current page number */
@@ -147,11 +151,12 @@ static PLINT	cursub=0;	/* Current subpage */
 static PLINT	nsubx;		/* subpages in x */
 static PLINT	nsuby;		/* subpages in y */
 static PLINT	target_page;	/* Page we are seeking to */
-static U_LONG	prevpage_loc;	/* Byte position of previous page header */
-static U_LONG	curpage_loc;	/* Byte position of current page header */
-static U_LONG	nextpage_loc;	/* Byte position of next page header */
 static int	no_pagelinks;	/* Set if metafile doesn't have page links */
 static int	end_of_page;	/* Set when we're at the end of a page */
+
+static fpos_t	prevpage_loc;	/* Byte position of previous page header */
+static fpos_t	curpage_loc;	/* Byte position of current page header */
+static fpos_t	nextpage_loc;	/* Byte position of next page header */
 
 /* File info */
 
@@ -407,7 +412,7 @@ process_next(U_CHAR c)
 	break;
 
       default:
-	plexit("process_next: Unrecognized command\n");
+	plexit("process_next: Unrecognized command");
     }
 }
 
@@ -634,9 +639,11 @@ plr_page(U_CHAR c)
     if (curpage == 1) {
 	if (page_begin > 1) {
 	    if (no_pagelinks) 
-		plwarn("plrender: Metafile does not support page seeks\n");
+		plwarn("plrender: Metafile does not support page seeks");
 	    else 
 		SeekToPage(page_begin);
+
+	    page_begin = 0;
 	}
     }
 
@@ -946,7 +953,11 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 		    target_page = curpage + input_num;
 		else if (direction_flag < 0)
 		    target_page = curpage - input_num;
-
+#ifdef DEBUG
+		grtext();
+		printf("seeking to page %d\n", target_page);
+		grgra();
+#endif
 		SeekToPage(target_page);
 	    }
 	}
@@ -994,37 +1005,49 @@ SeekToPage(long target_page)
 {
     long delta;
 
+    delta = (target_page - 1) - curpage;
+
 /*
-* The first seek we have to handle specially, since we're actually at the end
-* of a page, and haven't yet read the page header for the next page.  So the
-* first thing to do is find the next page header in the direction we want to
-* go, and make sure the subpage and page counters are updated appropriately.
+* At this point we're actually at the end of a page, and haven't yet read the
+* page header for the next page.  It would be most convenient if we could
+* just decrement the target_page and start seeking with the next page header,
+* but this fails if we're at the end of a file.  Instead, I backup to the
+* beginning of the current page and start seeking from there.  This keeps the
+* logic simple at the cost of a small loss in performance.
 */
-    if (target_page > curpage) {
-	if (nextpage_loc == 0) 
-	    return;
-	fseek(MetaFile, nextpage_loc, 0);
-	cursub++;
-	if (cursub > nsubx * nsuby) {
-	    cursub = 1;
-	    curpage++;
-	}
+
+    if (delta == 0)
+	return;
+
+    if (curpage_loc == 0) 
+	plexit("curpage_loc is zero");
+
+    if (fsetpos(MetaFile, &curpage_loc))
+	plexit("plrender: fsetpos call failed");
+
+    cursub--;
+    if (cursub < 1) {
+	cursub = nsubx * nsuby;
+	curpage--;
     }
-    else {
-	if (curpage_loc == 0) 
-	    return;
-	fseek(MetaFile, curpage_loc, 0);
-    }
-    delta = target_page - curpage;
+    delta = (target_page - 1) - curpage;
 
 /* Now loop until we arrive at the target page */
 
     while (delta != 0) {
 	ReadPageHeader();
 	if (delta > 0) {
-	    if (nextpage_loc == 0) 
+
+/* For seeks past eof, just stay on last page */
+
+	    if (nextpage_loc == 0) {
+		if (fsetpos(MetaFile, &curpage_loc))
+		    plexit("plrender: fsetpos call failed");
 		break;
-	    fseek(MetaFile, nextpage_loc, 0);
+	    }
+	    if (fsetpos(MetaFile, &nextpage_loc))
+		plexit("plrender: fsetpos call failed");
+
 	    cursub++;
 	    if (cursub > nsubx * nsuby) {
 		cursub = 1;
@@ -1032,17 +1055,31 @@ SeekToPage(long target_page)
 	    }
 	}
 	else {
-	    if (prevpage_loc == 0) 
+
+/* For seeks past bof, just stay on first page */
+
+	    if (prevpage_loc == 0) {
+		if (fsetpos(MetaFile, &curpage_loc))
+		    plexit("plrender: fsetpos call failed");
 		break;
-	    fseek(MetaFile, prevpage_loc, 0);
+	    }
+	    if (fsetpos(MetaFile, &prevpage_loc))
+		plexit("plrender: fsetpos call failed");
+
 	    cursub--;
 	    if (cursub < 1) {
 		cursub = nsubx * nsuby;
 		curpage--;
 	    }
 	}
-	delta = target_page - curpage;
+	delta = (target_page - 1) - curpage;
     }
+#ifdef DEBUG
+    grtext();
+    printf("page, subpage after seek: %d, %d\n", curpage, cursub);
+    printf("nsubx, nsuby: %d, %d\n", nsubx, nsuby);
+    grgra();
+#endif
 }
 
 /*----------------------------------------------------------------------*\
@@ -1057,19 +1094,24 @@ ReadPageHeader(void)
 {
     U_CHAR c;
     U_SHORT page;
+    U_LONG prevpage, nextpage;
 
 /* Read page header */
 
-    curpage_loc = ftell(MetaFile);
+    if (fgetpos(MetaFile, &curpage_loc))
+	plexit("plrender: fgetpos call failed");
+
     c = getcommand();
     if (c != PAGE && c != ADVANCE) 
-	plexit("plrender: page advance expected; none found\n");
+	plexit("plrender: page advance expected; none found");
 
     if (strcmp(mf_version, "1992a") >= 0) {
 	if (strcmp(mf_version, "1993a") >= 0) {
 	    plm_rd(read_2bytes(MetaFile, &page));
-	    plm_rd(read_4bytes(MetaFile, &prevpage_loc));
-	    plm_rd(read_4bytes(MetaFile, &nextpage_loc));
+	    plm_rd(read_4bytes(MetaFile, &prevpage));
+	    plm_rd(read_4bytes(MetaFile, &nextpage));
+	    prevpage_loc = prevpage;
+	    nextpage_loc = nextpage;
 	}
 	else {
 	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
