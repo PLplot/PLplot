@@ -20,9 +20,8 @@
     along with PLplot; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
 
-/* In Debian, run like this:
+   In Debian, run like this:
 
    PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
    PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
@@ -104,7 +103,7 @@ static char* peace[] = {
   /* Spanish */
   "#<0x10>Paz",
   /* Arabic */
-  "#<0x10>مالﺳ",
+  "#<0x10>مﻼﺳ",
   /* Turkish*/
   "#<0x10>Barış",
   /* Kurdish */
