@@ -11,6 +11,9 @@
 
 #include "plplot/plplotP.h"
 #include "plplot/pltcl.h"
+#ifdef HAVE_ITCL
+# include <itcl.h>
+#endif
 
 static int
 AppInit(Tcl_Interp *interp);
