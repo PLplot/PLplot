@@ -14,7 +14,17 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
  *
  * Simple interface for defining viewport and window. If "just"=1,
  * X and Y scales will be the same, otherwise they are scaled
- * independently. The "axis" parameter is interpreted as follows:
+ * independently.
+ *
+ * The "just" parameter control how axis will be scaled:
+ *
+ *       just= 1 : X and Y scales will be the same;
+ *       just= 0 : they are scaled independently using some defaults;
+ *       just=-1 : they will not be scaled, user must set scale before
+ *                 calling plenv(), using plsvpa(), plvasp() or other.
+ * 
+ * The "axis" parameter is interpreted as follows:
+ *
  *
  *	axis=-2 : draw no box, no tick marks, no numeric tick labels, no axes.
  *	axis=-1 : draw box only.
@@ -84,7 +94,7 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	plabort("plenv: Invalid ymin and ymax arguments");
 	return;
     }
-    if ((just != 0) && (just != 1)) {
+    if ((just != 0) && (just != 1) && (just != -1)) {
 	plabort("plenv: Invalid just option");
 	return;
     }
@@ -99,7 +109,7 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
     if (just == 0)
 	plvsta();
-    else {
+    else  if (just == 1){
 	lb = 8.0 * plsc->chrht;
 	rb = 5.0 * plsc->chrht;
 	tb = 5.0 * plsc->chrht;
