@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1995/10/19 00:02:25  mjl
+ * Revision 1.21  1995/10/22 17:39:16  mjl
+ * Moved pls_auto_path to this file, and inserted call to it by Pltcl_Init to
+ * allow more intelligent autoload behavior by pltcl and similarly enhanced
+ * tclsh's.
+ *
+ * Revision 1.20  1995/10/19  00:02:25  mjl
  * Some more cleaning up, somehow I missed all this last time.
  *
  * Revision 1.19  1995/10/16  18:27:31  mjl
@@ -97,6 +102,9 @@
 
 #include "plplotP.h"
 #include "pltcl.h"
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #include "tclgen.h"
 
@@ -146,6 +154,13 @@ static CmdInfo Cmds[] = {
 
 static int cmdTable_initted;
 static Tcl_HashTable cmdTable;
+
+/* Static functions */
+
+/* Evals the specified command, aborting on an error. */
+
+static int
+tcl_cmd(Tcl_Interp *interp, char *cmd);
 
 /*--------------------------------------------------------------------------*\
  * Append_Cmdlist
@@ -344,8 +359,8 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 /*--------------------------------------------------------------------------*\
  * Pltcl_Init
  *
- * Initialization routine for extended wish'es.
- * Creates the matrix command, as well as numerous commands for
+ * Initialization routine for extended tclsh's.
+ * Sets up auto_path, creates the matrix command and numerous commands for
  * interfacing to PLplot.  Should not be used in a widget-based system.
 \*--------------------------------------------------------------------------*/
 
@@ -367,7 +382,133 @@ Pltcl_Init( Tcl_Interp *interp )
 			  (ClientData) NULL, (void (*)(ClientData)) NULL);
     }
 
+/* Set up auto_path */
+
+    if (pls_auto_path(interp) == TCL_ERROR)
+	return TCL_ERROR;
+
     return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * pls_auto_path
+ *
+ * Sets up auto_path variable.  
+ * Directories are added to the FRONT of autopath.  Therefore, they are
+ * searched in reverse order of how they are listed below.
+ *
+ * Note: there is no harm in adding extra directories, even if they don't
+ * actually exist (aside from a slight increase in processing time when
+ * the autoloaded proc is first found).
+\*----------------------------------------------------------------------*/
+
+int
+pls_auto_path(Tcl_Interp *interp)
+{
+    char *buf, *ptr=NULL, *dn;
+#ifdef DEBUG
+    char *path;
+#endif
+
+    buf = (char *) malloc(256 * sizeof(char));
+
+/* Add TCL_DIR */
+
+#ifdef TCL_DIR
+    Tcl_SetVar(interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY);
+    if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+	return TCL_ERROR;
+#ifdef DEBUG
+    fprintf(stderr, "adding %s to auto_path\n", TCL_DIR);
+    path = Tcl_GetVar(interp, "auto_path", 0);
+    fprintf(stderr, "auto_path is %s\n", path);
+#endif
+#endif
+
+/* Add $HOME/tcl */
+
+    if ((dn = getenv("HOME")) != NULL) {
+	plGetName(dn, "tcl", "", &ptr);
+	Tcl_SetVar(interp, "dir", ptr, 0);
+	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+	    return TCL_ERROR;
+#ifdef DEBUG
+	fprintf(stderr, "adding %s to auto_path\n", ptr);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "auto_path is %s\n", path);
+#endif
+    }
+
+/* Add PL_TCL_ENV = $(PL_TCL) */
+
+#if defined (PL_TCL_ENV)
+    if ((dn = getenv(PL_TCL_ENV)) != NULL) {
+	plGetName(dn, "", "", &ptr);
+	Tcl_SetVar(interp, "dir", ptr, 0);
+	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+	    return TCL_ERROR;
+#ifdef DEBUG
+	fprintf(stderr, "adding %s to auto_path\n", ptr);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "auto_path is %s\n", path);
+#endif
+    }
+#endif  /* PL_TCL_ENV */
+
+/* Add PL_HOME_ENV/tcl = $(PL_HOME_ENV)/tcl */
+
+#if defined (PL_HOME_ENV)
+    if ((dn = getenv(PL_HOME_ENV)) != NULL) {
+	plGetName(dn, "tcl", "", &ptr);
+	Tcl_SetVar(interp, "dir", ptr, 0);
+	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+	    return TCL_ERROR;
+#ifdef DEBUG
+	fprintf(stderr, "adding %s to auto_path\n", ptr);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "auto_path is %s\n", path);
+#endif
+    }
+#endif  /* PL_HOME_ENV */
+
+/* Add cwd */
+
+    if (getcwd(buf, 256) == NULL) 
+	return TCL_ERROR;
+
+    Tcl_SetVar(interp, "dir", buf, 0);
+    if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+	return TCL_ERROR;
+
+#ifdef DEBUG
+    fprintf(stderr, "adding %s to auto_path\n", buf);
+    path = Tcl_GetVar(interp, "auto_path", 0);
+    fprintf(stderr, "auto_path is %s\n", path);
+#endif
+
+    free_mem(buf);
+    free_mem(ptr);
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * tcl_cmd
+ *
+ * Evals the specified command, aborting on an error.
+\*----------------------------------------------------------------------*/
+
+static int
+tcl_cmd(Tcl_Interp *interp, char *cmd)
+{
+    int result;
+
+    result = Tcl_VarEval(interp, cmd, (char **) NULL);
+    if (result != TCL_OK) {
+	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
+		cmd, interp->result);
+    }
+    return result;
 }
 
 /*--------------------------------------------------------------------------*\
