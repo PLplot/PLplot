@@ -43,7 +43,10 @@ Usage: $0 [OPTIONS]
 Options:
   --version=VER
   --date-version
+  --aclocal-incdir=DIR
   --help
+Note:
+  Option --aclocal-incdir can be used more than one time.
 EOF
   exit 0
 }
@@ -58,6 +61,7 @@ automake --version | sed 1q \
 version=""
 date_version=no
 set_date=no
+aclocal_incdir="-I cf"
 
 while test $# -gt 0 ; do
   case $1 in
@@ -68,6 +72,10 @@ while test $# -gt 0 ; do
   --date-version)
     date_version=yes
     set_date=yes
+    ;;
+  --aclocal-incdir=*)
+    val=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+    test -z "$val" || aclocal_incdir="$aclocal_incdir -I $val"
     ;;
   --help)
     usage
@@ -100,7 +108,7 @@ if [ $set_date = yes ] ; then
   echo done
 fi
 
-# The following lines give redundant informations and are commented out 
+# The following lines give redundant informations and are commented out
 # for now, until we decide the best way to present the program versions.
 #
 # echo "Autotools versions are the following:"
@@ -114,7 +122,7 @@ fi
 # the future in which case we should be able to replace the commands below
 # with "run autoreconf -vfi -I cf".
 
-run aclocal -I cf  \
+run aclocal $aclocal_incdir \
   && run autoheader \
   && rm -rf libltdl \
   && run libtoolize --force --copy --ltdl --automake \
