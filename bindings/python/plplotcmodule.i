@@ -329,11 +329,12 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 /* This currently just used for plgdev, plgfnam, and plgver which apparently
  * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
  * have a 1000 byte limit here. */
-%typemap(in, numinputs=0) char* OUTPUT ( char buff[1000] ) {
+%typemap(in, numinputs=0) char *OUTPUT ( char buff[1000] ) {
   $1 = buff;
 }
-%typemap(argout) char* OUTPUT {
-  $result = PyString_FromString($1);
+%typemap(argout,fragment="t_output_helper") char *OUTPUT {
+   PyObject *o = PyString_FromString($1);
+   $result = t_output_helper($result,o);
 }
 
 /***************************
