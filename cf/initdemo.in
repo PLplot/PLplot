@@ -19,7 +19,7 @@ CXX_FLAGS_DEMOS	= @CXX_FLAGS@ -I$(INCLUDE_DIR)/.. @INCS@
 # These are what we link against.
 
 PLLIB_LDC	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
-PLLIB_LDCXX	= -L$(LIB_DIR) -lPLcxx -l$(PLLIB_NAME)$(LIB_TAG)
+PLLIB_LDCXX	= -L$(LIB_DIR) -l$(CXXLIB_NAME)$(LIB_TAG) -l$(PLLIB_NAME)$(LIB_TAG)
 PLLIB_LDF	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 
 # Not sure of exact name of library (might be shared).
