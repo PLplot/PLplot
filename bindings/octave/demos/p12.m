@@ -25,5 +25,6 @@ function p12
   else
     text(x,y,"ouch! Gently!")
   endif
+  legend("on");
 
 endfunction

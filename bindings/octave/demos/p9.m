@@ -24,5 +24,6 @@ function p9
   title("Vector field example");
   contour(x,y,z)
   hold on, arrows(yy,xx,gx./2,gy./2), hold off
+  legend "on"
 
 endfunction
