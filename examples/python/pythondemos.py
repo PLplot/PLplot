@@ -14,25 +14,22 @@ plParseOpts(sys.argv, PL_PARSE_FULL)
 # Initialize plplot
 plinit()
 
-import xw01
-import xw02
-import xw03
-import xw04
-import xw05
-import xw06
-import xw07
-import xw08
-import xw09
-import xw10
-import xw11
-import xw12
-import xw13
 # xw14.py must be standalone so cannot be run from pythondemos.py
-import xw15
-import xw16
 # xw17.py must be standalone and interactive so cannot be run from pythondemos.py
-import xw18
-import xw19
+
+failed = []
+for i in range(1, 14) + [15, 16, 18, 19]:
+    script = 'xw' + '%02d' % i
+    try:
+	__import__(script, globals(), locals(), [])
+    except:
+	failed.append(script)
 
 # Terminate plplot
 plend()
+
+if len(failed) != 0:
+    import string
+    print "Failed script(s): " + string.join(failed,", ")
+    sys.exit(1)
+
