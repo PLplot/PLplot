@@ -172,6 +172,7 @@ void plD_init_win3(PLStream *pls)
 	HINSTANCE hInstance;
 	WinDev    *dev;
 	int       greyvalue;
+	char      *ptitle;
 	//long      backGroundColor;
 	
 	/* Initial window position */
@@ -249,9 +250,10 @@ void plD_init_win3(PLStream *pls)
 		wndclass.lpszMenuName = NULL;
 		wndclass.lpszClassName = szPlPlotClass;
 		RegisterClass (&wndclass);
+		ptitle = (char *) &szPlPlotWName[0] ;
+		if ( pls->plwindow ) ptitle = pls->plwindow ;
 		
-		
-		dev->hwnd = CreateWindow(szPlPlotClass,szPlPlotWName,
+		dev->hwnd = CreateWindow(szPlPlotClass,ptitle,
 			WS_OVERLAPPEDWINDOW,
 			xPos,yPos,nWidth,nHeight,
 			NULL,dev->hMenu,
