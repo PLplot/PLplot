@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/06/09 22:47:45  mjl
+ * Revision 1.10  1995/06/28 14:48:25  furnish
+ * Little hack to try to cope with the insidious trailing space which
+ * screws up Tcl expr something awfull.  This needs to be exercised quite
+ * a bit before the next release, though, to be sure it works ok.
+ *
+ * Revision 1.9  1995/06/09  22:47:45  mjl
  * Eliminated practice of setting local variable (used for tracing) to matrix
  * name.  Was originally used for backward compatibility with old tclMatrix
  * declaration syntax.  The old way will no longer work -- time to upgrade.
@@ -690,6 +695,17 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    }
 	}
     }
+
+/* Try to hack off the trailing space, it causes endless troubles. */
+    {
+	int len = strlen( tmp );
+	if ( tmp[len-1] == ' ' )
+	    tmp[len-1] = '\0';
+    }
+
+/* BTW, how the heck do we know that tmp is big enough for a multi-value
+   return?  Looks like we should be calculating the size of tmp, then using
+   the TCL_DYNAMIC result management protocol.  Maurice? */
 
     return TCL_OK;
 }
