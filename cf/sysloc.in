@@ -187,17 +187,29 @@ fi
 
 # ----------------------------------------------------------------------------
 # libtcl
+#
+# Includes checks against old versions of tcl no longer supported.
+# But you can *try* linking against ANY non-versioned tcl.
 # ----------------------------------------------------------------------------
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
 	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
-	for version in 8.3 8.2 8.1 8.0 7.6i 7.5i 7.6 7.5 7.4 ""; do
+	for version in 8.3 8.2 8.1 8.0 ""; do
+	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
 	    if test -n "$TCLLIBDIR"; then
 		break
 	    fi
-	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
 	done
+	if test -n "$version"; then
+	    for oldversion in 8.1 8.0; do
+		if test "$version" = "$oldversion"; then
+		    echo "Tcl version $oldversion not supported.. please upgrade!"
+		    enable_tcl="no"
+		    break
+		fi
+	    done
+	fi
 	FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
     fi
     if test "$enable_tcl" = "yes"; then
