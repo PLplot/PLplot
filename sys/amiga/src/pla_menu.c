@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/07/01 21:59:51  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.3  1994/03/23 08:57:43  mjl
+   Header file rearrangement.  Broke code for saving an iff file from the
+   current screen off into plamiga_saveiff().
 
+ * Revision 1.2  1993/07/01  21:59:51  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.1  1993/03/15  21:34:22  mjl
  * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
  * OS 2.0 capabilities.
@@ -17,13 +21,13 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "drivers.h"
 #include "plamiga.h"
 #include "plevent.h"
+
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 extern PLStream *the_pls;
 
@@ -67,7 +71,6 @@ plamiga_SaveAs_ILBM(void)
 {
     struct rtFileRequester *filereq;
     char filename[34];
-    APTR windowlock;
     int status;
 
     if (filereq = rtAllocRequestA (RT_FILEREQ, NULL)) {
@@ -76,15 +79,31 @@ plamiga_SaveAs_ILBM(void)
 			   RT_LockWindow, 1, RTFI_Flags, FREQF_PATGAD,
 			   TAG_END)) {
 
-	    windowlock = rtLockWindow(pla->window);
-	    status = saveiff(filename);
-	    rtUnlockWindow(pla->window, windowlock);
-	    if (status)
+	    if (plamiga_saveiff(filename))
 		rtEZRequest ("Unable to save bitmap.\n", "OK", NULL, NULL);
 	}
     }
 
     return(1);
+}
+
+/*----------------------------------------------------------------------*\
+* plamiga_saveiff()
+*
+* Screen dump work routine.
+\*----------------------------------------------------------------------*/
+
+int
+plamiga_saveiff(char *filename)
+{
+    APTR windowlock;
+    int status;
+
+    windowlock = rtLockWindow(pla->window);
+    status = saveiff(filename);
+    rtUnlockWindow(pla->window, windowlock);
+
+    return(status);
 }
 
 /*----------------------------------------------------------------------*\
