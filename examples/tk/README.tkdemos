@@ -52,7 +52,7 @@ the rest should work smoothly without problems.
 runAllDemos.tcl now works both under plserver 
 and wish
 
-./plserver
+plserver
 source runAllDemos.tcl
 
 wish
