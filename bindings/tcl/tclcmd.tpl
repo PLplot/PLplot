@@ -9,7 +9,8 @@ static int
 {
 <argdecls>
 
-    if ( (argc != (%nargs% + 1)) ||
+    if ( ( %ndefs% && (argc < (1 + %nargs% - %ndefs%))) ||
+         (!%ndefs% && (argc != (%nargs% + 1))) ||
          ((argc == 2) && (strcmp(argv[1],"-help") == 0)) ) {
 
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
