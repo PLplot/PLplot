@@ -214,7 +214,8 @@ int
 plTranslateCursor(PLGraphicsIn *plg)
 {
     int window;
-    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, &window);
+    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, 
+                  (PLINT *) &window);
     if ( window >= 0 )
      return 1;
     else
