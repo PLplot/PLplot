@@ -58,6 +58,7 @@ dist_examples_python_SCRIPTS = \
 # This list contains python modules that can be imported.
 dist_examples_python_DATA = \
 	README.pythondemos \
+	README.plplotcanvas \
 	qplplot.py \
 	xw01.py \
 	xw02.py \
