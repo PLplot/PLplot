@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/07/15 20:37:21  furnish
+ * Revision 1.14  1994/07/18 20:33:30  mjl
+ * Some more cleaning up.
+ *
+ * Revision 1.13  1994/07/15  20:37:21  furnish
  * Added routines pl3line and pl3poin for drawing lines and points in 3
  * space.  Added a new example program, and dependency info to build it.
  *
@@ -45,7 +48,7 @@ static PLINT *oldhiview;
 static PLINT *oldloview;
 static PLINT *newhiview;
 static PLINT *newloview;
-static PLINT *work;
+static PLINT *u, *v;
 
 static PLINT mhi, xxhi, newhisize;
 static PLINT mlo, xxlo, newlosize;
@@ -57,7 +60,7 @@ static void plgrid3	(PLFLT);
 static void plnxtv	(PLINT *, PLINT *, PLINT, PLINT);
 static void plside3	(PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT);
 static void plt3zz	(PLINT, PLINT, PLINT, PLINT, 
-			 PLINT, PLINT, PLFLT *, PLFLT *, PLFLT **, 
+			 PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **, 
 			 PLINT, PLINT, PLINT *, PLINT *);
 static void plnxtvhi	(PLINT *, PLINT *, PLINT, PLINT);
 static void plnxtvlo	(PLINT *, PLINT *, PLINT, PLINT);
@@ -144,10 +147,9 @@ void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side)
 {
-    PLINT b, color, font;
+    PLINT color, font;
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init;
-    PLINT i, ix, iy;
+    PLINT init, i, ix, iy;
 
     if (plsc->level < 3) {
 	myabort("plot3d: Please set up window first");
@@ -179,98 +181,80 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	}
     }
 
-    work = (PLINT *) malloc((size_t) (4 * MAX(nx, ny) * sizeof(PLINT)));
-    if ( ! work)
+/* Allocate work arrays */
+
+    u = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
+    v = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
+    if ( ! u || ! v)
 	myexit("plot3d: Out of memory.");
 
-    b = 2 * MAX(nx, ny) + 1;
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
 
+/* Call 3d line plotter.  Each viewing quadrant (perpendicular to x-y */
+/* plane) must be handled separately. */ 
+
     if (cxx >= 0.0 && cxy <= 0.0) {
-	if (opt != 2) {
-	    for (iy = 2; iy <= ny; iy++) {
-		plt3zz(1, iy, 1, -1, -opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-		init = 0;
-	    }
-	}
+	if (opt == 2) 
+	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, u, v);
 	else {
-	    plt3zz(1, ny, 1, -1, -opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
-	    init = 0;
+	    for (iy = 2; iy <= ny; iy++)
+		plt3zz(1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, u, v);
 	}
-	if (opt != 1)
+	if (opt == 1)
+	    plt3zz(1, ny, 1, -1, opt, &init, x, y, z, nx, ny, u, v);
+	else {
 	    for (ix = 1; ix <= nx - 1; ix++)
-		plt3zz(ix, ny, 1, -1, opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-	else
-	    plt3zz(1, ny, 1, -1, opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
+		plt3zz(ix, ny, 1, -1, opt, &init, x, y, z, nx, ny, u, v);
+	}
     }
+
     else if (cxx <= 0.0 && cxy <= 0.0) {
-	if (opt != 1) {
-	    for (ix = 2; ix <= nx; ix++) {
-		plt3zz(ix, ny, -1, -1, opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-		init = 0;
-	    }
-	}
+	if (opt == 1) 
+	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, u, v);
 	else {
-	    plt3zz(nx, ny, -1, -1, opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
-	    init = 0;
+	    for (ix = 2; ix <= nx; ix++) 
+		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, u, v);
 	}
-	if (opt != 2)
+	if (opt == 2)
+	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, u, v);
+	else {
 	    for (iy = ny; iy >= 2; iy--)
-		plt3zz(nx, iy, -1, -1, -opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-	else
-	    plt3zz(nx, ny, -1, -1, -opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
+		plt3zz(nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, u, v);
+	}
     }
+
     else if (cxx <= 0.0 && cxy >= 0.0) {
-	if (opt != 2) {
-	    for (iy = ny - 1; iy >= 1; iy--) {
-		plt3zz(nx, iy, -1, 1, -opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-		init = 0;
-	    }
-	}
+	if (opt == 2) 
+	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, u, v);
 	else {
-	    plt3zz(nx, 1, -1, 1, -opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
-	    init = 0;
+	    for (iy = ny - 1; iy >= 1; iy--) 
+		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, u, v);
 	}
-	if (opt != 1)
+	if (opt == 1)
+	    plt3zz(nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, u, v);
+	else {
 	    for (ix = nx; ix >= 2; ix--)
-		plt3zz(ix, 1, -1, 1, opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-	else
-	    plt3zz(nx, 1, -1, 1, opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
+		plt3zz(ix, 1, -1, 1, opt, &init, x, y, z, nx, ny, u, v);
+	}
     }
+
     else if (cxx >= 0.0 && cxy >= 0.0) {
-	if (opt != 1) {
-	    for (ix = nx - 1; ix >= 1; ix--) {
-		plt3zz(ix, 1, 1, 1, opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-		init = 0;
-	    }
-	}
+	if (opt == 1) 
+	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, u, v);
 	else {
-	    plt3zz(1, 1, 1, 1, opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
-	    init = 0;
+	    for (ix = nx - 1; ix >= 1; ix--) 
+		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, u, v);
 	}
-	if (opt != 2)
+	if (opt == 2)
+	    plt3zz(1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, u, v);
+	else {
 	    for (iy = 1; iy <= ny - 1; iy++)
-		plt3zz(1, iy, 1, 1, -opt, init, x, y, z, nx, ny,
-		       &work[0], &work[b - 1]);
-	else
-	    plt3zz(1, 1, 1, 1, -opt, init, x, y, z, nx, ny,
-		   &work[0], &work[b - 1]);
+		plt3zz(1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, u, v);
+	}
     }
+
+/* Finish up by drawing sides, background grid (both are optional) */
 
     if (side)
 	plside3(x, y, z, nx, ny, opt);
@@ -312,7 +296,7 @@ plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
 \*----------------------------------------------------------------------*/
 
 static void
-plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init,
+plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT *init,
        PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT *u, PLINT *v)
 {
     PLINT flag;
@@ -324,8 +308,7 @@ plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init,
     ystart = ystar0;
     flag = flg0;
 
-  lab1:
-    if (1 <= xstart && xstart <= nx && 1 <= ystart && ystart <= ny) {
+    while (1 <= xstart && xstart <= nx && 1 <= ystart && ystart <= ny) {
 	u[n] = plP_wcpcx(plP_w3wcx(
 		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
 
@@ -341,21 +324,20 @@ plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init,
 
 	else if (flag == -1) {
 	    ystart = ystart + dy;
-	    flag = 1;
+	    flag = -flag;
 	}
 	else if (flag == 1)
 	    xstart = xstart + dx;
 
 	else if (flag == 2) {
 	    xstart = xstart + dx;
-	    flag = -2;
+	    flag = -flag;
 	}
 	else if (flag == 3) {
 	    xstart = xstart + dx;
 	    flag = -flag;
 	}
 	n = n + 1;
-	goto lab1;
     }
 
     if (flag == 1 || flag == -2) {
@@ -378,7 +360,8 @@ plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init,
 	    n = n + 1;
 	}
     }
-    plnxtv(u, v, n, init);
+    plnxtv(u, v, n, *init);
+    *init = 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1210,7 +1193,8 @@ freework(void)
     free_mem(oldloview);
     free_mem(newhiview);
     free_mem(newloview);
-    free_mem(work);
+    free_mem(v);
+    free_mem(u);
 }
 
 /*----------------------------------------------------------------------*\
