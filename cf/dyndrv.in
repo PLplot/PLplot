@@ -61,8 +61,8 @@ drivers/impress$(LIB_TAG).drv : shared/impress$O $(PLLIBS)
 drivers/gnome$(LIB_TAG).drv : shared/gnome$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @GNOMELIBS@ $(driverlibs)
 
-drivers/tkwin$(LIB_TAG).drv : shared/tkwin$O $(PLLIBS)
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+#drivers/tkwin$(LIB_TAG).drv : shared/tkwin$O $(PLLIBS)
+#	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
 drivers/ntk$(LIB_TAG).drv : shared/ntk$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
