@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1995/07/19 20:22:13  mjl
+ * Revision 1.36  1995/10/22 17:41:33  mjl
+ * Fixed PL_OPT_STRING arg handling -- should actually work now.
+ *
+ * Revision 1.35  1995/07/19  20:22:13  mjl
  * Fixed arglist compression when PL_PARSE_SKIP is specified.
  *
  * Revision 1.34  1995/07/19  18:52:52  mjl
@@ -284,7 +287,7 @@ static int  mode_skip;
  * PL_OPT_BOOL		Set *var=1
  * PL_OPT_INT		Set *var=atoi(optarg)
  * PL_OPT_FLOAT		Set *var=atof(optarg)
- * PL_OPT_STRING	Set var=optarg
+ * PL_OPT_STRING	Set *var=optarg
  *
  * where opt points to the option string and optarg points to the
  * argument string.
@@ -1033,7 +1036,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 
     /* Set var (can be NULL initially) to point to optarg string */
 
-	tab->var = optarg;
+	*(char **)tab->var = (char *)optarg;
 	break;
 
     default:
