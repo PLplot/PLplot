@@ -753,6 +753,9 @@ tk_start(PLStream *pls)
 	abort_session(pls, "");
     }
 
+    if (pls->debug)
+	tcl_cmd(pls, "global auto_path; puts \"auto_path: $auto_path\""); 
+
 /* Other initializations. */
 /* Autoloaded, so the user can customize it if desired */
 
