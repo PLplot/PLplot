@@ -25,6 +25,9 @@ swigjavafiles = \
 	plplotjavac.java \
 	plplotjavacJNI.java
 
+# This required for swig-1.3.21, but not for swig-1.3.17
+swigjavafiles += plplotjavacConstants.java
+
 swigcfiles = plplotjavac_wrap.c
 
 swiggenfiles = $(swigjavafiles) $(swigcfiles)
