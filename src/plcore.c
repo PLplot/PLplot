@@ -312,7 +312,6 @@ grfill(short *x, short *y, PLINT npts)
     }
     if (plsc->dev_fill1) {
 	plsc->patt = -ABS(plsc->patt);
-	plpsty(plsc->patt);
     }
 
     if (plsc->patt <= 0) {
