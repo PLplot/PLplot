@@ -165,11 +165,11 @@ tutor$E:	$(PLLIBS) tutor$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-bug$O:	$(CDEMO_HEADERS) bug.c
-	$(CC) $(CC_FLAGS_DEMOS) bug.c
+bugc$O:	$(CDEMO_HEADERS) bugc.c
+	$(CC) $(CC_FLAGS_DEMOS) bugc.c
 
-bug$E:	$(PLLIBS) bug$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) bug$O \
+bugc$E:	$(PLLIBS) bugc$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) bugc$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 # -----------------------------------------------------------------------
@@ -276,6 +276,13 @@ x16f$O:	x16f.f
 
 x16f$E:	$(PLLIBS) x16f$O
 	$(LDF) $(LDF_FLAGS) x16f$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+bugf$O:	bugf.f
+	$(F77) $(F77_FLAGS) bugf.f
+
+bugf$E:	$(PLLIBS) bugf$O
+	$(LDF) $(LDF_FLAGS) bugf$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 # -----------------------------------------------------------------------
