@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/03/30 07:21:58  mjl
+ * Revision 1.8  1994/05/14 05:43:56  mjl
+ * Now uses the DP driver and finally works the way I always wanted it to.
+ *
+ * Revision 1.7  1994/03/30  07:21:58  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
@@ -48,29 +51,37 @@ main(void)
     int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
     int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
 
-    printf("Demo for illustrating multiple output streams via X.\n");
-    printf("Running with plplot_1 window as slave.\n");
+/* Tcl-DP driver the only one that really gets this right */
+
+    char driver[] = "dp";
+
+    printf("Demo of multiple output streams via the DP driver.\n");
+    printf("Running with the second window as slave.\n");
     printf("\n");
 
-/* Select X driver */
+/* Set up first stream */
 
-    plspage(0., 0., xleng0, yleng0, xoff0, yoff0);
-    plstart("xwin", 2, 2);
+    plSetInternalOpt("geometry", "400x300+100+200");
+
+    plsdev(driver);
+    plssub(2, 2);
+    plinit();
 
 /* Start next stream */
 
     plsstrm(1);
 
-/* Select X driver */
 /* Turn off pause to make this a slave (must follow master) */
 
-    plspage(0., 0., xleng1, yleng1, xoff1, yoff1);
+    plSetInternalOpt("geometry", "400x300+550+200");
     plspause(0);
-    plstart("xwin", 1, 1);
-    plsstrm(0);
+    plsdev(driver);
+    plinit();
 
 /* Set up the data & plot */
 /* Original case */
+
+    plsstrm(0);
 
     xscale = 6.;
     yscale = 1.;
