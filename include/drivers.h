@@ -254,6 +254,15 @@ void plD_tidy_pbm		(PLStream *);
 void plD_state_pbm		(PLStream *, PLINT);
 void plD_esc_pbm		(PLStream *, PLINT, void *);
 
+void plD_init_png               (PLStream *);
+void plD_line_png               (PLStream *, short, short, short, short);
+void plD_polyline_png           (PLStream *, short *, short *, PLINT);
+void plD_eop_png                (PLStream *);
+void plD_bop_png                (PLStream *);
+void plD_tidy_png               (PLStream *);
+void plD_state_png              (PLStream *, PLINT);
+void plD_esc_png                (PLStream *, PLINT, void *);
+   
 void plD_init_null		(PLStream *);
 void plD_line_null		(PLStream *, short, short, short, short);
 void plD_polyline_null		(PLStream *, short *, short *, PLINT);
