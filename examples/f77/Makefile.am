@@ -126,6 +126,10 @@ if enable_f77
 examples_f77dir = $(DATA_DIR)/examples/f77
 examples_f77_DATA = $(f77_examples) Makefile.examples
 
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
+libplplotf77c = $(top_builddir)/bindings/f77/libplplotf77c$(LIB_TAG).la
+libplplotf77 = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
+
 check_PROGRAMS = \
 	x01f \
 	x02f \
@@ -169,7 +173,7 @@ nodist_x17f_SOURCES = x17f.f
 nodist_x18f_SOURCES = x18f.f
 nodist_x22f_SOURCES = x22f.f
 
-LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
+LDADD = $(libplplot) $(libplplotf77c) $(libplplotf77)
 
 install-data-hook:
 	( cd $(DESTDIR)$(examples_f77dir) ; mv -f Makefile.examples Makefile )

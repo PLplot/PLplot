@@ -56,6 +56,7 @@ examples_cxx_DATA = \
 	$(sources) \
 	Makefile.examples
 
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplotcxx = $(top_builddir)/bindings/c++/libplplotcxx$(LIB_TAG).la
 
 check_PROGRAMS = \
@@ -118,7 +119,7 @@ x22_SOURCES = x22.cc
 x23_SOURCES = x23.cc
 x24_SOURCES = x24.cc
 
-LDADD = $(libplplotcxx)
+LDADD = $(libplplot) $(libplplotcxx)
 
 # enable_cxx
 endif
