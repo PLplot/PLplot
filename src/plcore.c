@@ -2641,7 +2641,7 @@ return(ret);
 \*--------------------------------------------------------------------------*/
 
 void
-plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy)
+plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy, unsigned short zmin, unsigned short zmax)
 {
   PLINT i, npts;
   short *xscl, *yscl;
@@ -2649,9 +2649,9 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
 
   plsc->page_status = DRAWING;
 
-  if(plsc->dev_fastimg == 0) {
-    plimageslow(z, nx-1, ny-1, 
-         xmin, ymin, dx, dy);
+  if (plsc->dev_fastimg == 0) {
+    plimageslow(x, y, z, nx-1, ny-1, 
+         xmin, ymin, dx, dy, zmin, zmax);
     return ;
   }
 
@@ -2668,6 +2668,8 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
     plsc->dev_z = z;
     plsc->dev_nptsX = nx;
     plsc->dev_nptsY = ny;
+    plsc->dev_zmin = zmin;
+    plsc->dev_zmax = zmax;
 
     plbuf_esc(plsc, PLESC_IMAGE, &img_dt);
   }
@@ -2691,9 +2693,7 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
     plsc->imclymin = clpymi;
     plsc->imclxmax = clpxma;
     plsc->imclymax = clpyma;
-
-    grimage(xscl, yscl, z, nx, ny);
-    
+    grimage(xscl, yscl, z, nx, ny);    
     free(xscl);
     free(yscl);
   } else { 

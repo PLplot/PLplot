@@ -94,6 +94,7 @@ typedef char * caddr_t;
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
+#include <limits.h>
 
 /*
  * Macros for file positioning.  I tried switching to f[sg]etpos() because I
@@ -714,7 +715,7 @@ plP_fill(short *x, short *y, PLINT npts);
 /* draw image */
 
 void
-plP_image(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy);
+plP_image(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy, unsigned short zmin, unsigned short zmax);
 
 /* End of page */
 
@@ -783,8 +784,9 @@ void
 grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny);
 
 void
-plimageslow(unsigned short *data, PLINT nx, PLINT ny, 
-	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy);
+plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny, 
+	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+	    unsigned short zmin,  unsigned short zmax);
 
 typedef struct {
   PLFLT xmin, ymin, dx, dy;} IMG_DT;

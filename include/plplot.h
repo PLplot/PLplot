@@ -1305,7 +1305,7 @@ c_plstripd(PLINT id);
 
 void
 plimage( PLFLT **data, PLINT nx, PLINT ny, 
-	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
 /* Set up a new line style */

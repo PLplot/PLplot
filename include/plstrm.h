@@ -158,7 +158,9 @@ typedef struct {
  * For images
  * dev_nptsX	PLINT	Number of points we are plotting in X
  * dev_nptsY	PLINT	Number of points we are plotting in Y
- * dev_z	PLFLT*	Pointer to array of z values for the color 
+ * dev_z	ushort*	Pointer to array of z values for the color 
+ * dev_zmin,
+ * dev_zmax     ushort  Min and max values of z to plot
  *
  * The following pointer is for drivers that require device-specific 
  * data.  At initialization the driver should malloc the necessary
@@ -464,6 +466,7 @@ typedef struct {
     PLINT dev_nptsX, dev_nptsY;
     short *dev_ix, *dev_iy;
     unsigned short *dev_z;
+    unsigned short dev_zmin, dev_zmax;
     PLINT imclxmin, imclxmax, imclymin, imclymax;
 
   /* end of variables for plimage() */
