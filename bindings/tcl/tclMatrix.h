@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.15  1995/12/15 18:48:16  furnish
+ * Revision 1.16  1996/07/26 18:50:02  furnish
+ * Correct bug in tclMatrix assertions.
+ *
+ * Revision 1.15  1995/12/15  18:48:16  furnish
  * Improvements to the C++ Tcl matrix wrapper objects.
  *
  * Revision 1.14  1995/06/09  19:19:32  furnish
@@ -266,7 +269,7 @@ class TclMatFloat {
 
     Mat_float& operator()( int i, int j, int k )
     {
-	tMat_Assert( matPtr->dim = 3, "Wrong number of indicies." );
+	tMat_Assert( matPtr->dim == 3, "Wrong number of indicies." );
 	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
 		     j >= 0 && j < matPtr->n[1] &&
 		     k >= 0 && k < matPtr->n[2],
@@ -351,7 +354,7 @@ class TclMatInt {
 
     Mat_int& operator()( int i, int j, int k )
     {
-	tMat_Assert( matPtr->dim = 3, "Wrong number of indicies." );
+	tMat_Assert( matPtr->dim == 3, "Wrong number of indicies." );
 	tMat_Assert( i >= 0 && i < matPtr->n[0] &&
 		     j >= 0 && j < matPtr->n[1] &&
 		     k >= 0 && k < matPtr->n[2],
