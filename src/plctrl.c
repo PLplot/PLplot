@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/07/26 21:14:41  mjl
+ * Revision 1.23  1994/07/29 20:23:53  mjl
+ * Added new function plLibOpen(), used for opening and returning the file
+ * handle for "library" files -- font files, map files, etc.  These are all
+ * located by the same search path.
+ *
+ * Revision 1.22  1994/07/26  21:14:41  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
  * locations of each directory (for Tcl, binary, and library files).
@@ -99,6 +104,34 @@ strcat_delim(char *dirspec);
 
 static int
 (*exit_handler) (char *errormsg);
+
+/* An additional hardwired location for lib files. */
+/* I have no plans to change these again, ever. */
+
+#if defined(AMIGA)
+#ifndef PLLIBDEV
+#define PLLIBDEV  "plplot:lib"
+#endif
+
+#elif defined(GNU386)
+#ifndef PLLIBDEV
+#define PLLIBDEV "c:plplot/lib"
+#endif
+
+#elif defined(MSDOS)
+#ifndef PLLIBDEV
+#define PLLIBDEV "c:\\plplot\\lib"
+#endif
+
+#else
+
+/* Anything else is assumed to be Unix */
+
+#ifndef PLLIBDEV
+#define PLLIBDEV "/usr/local/plplot/lib"
+#endif
+
+#endif
 
 /*----------------------------------------------------------------------*\
  *  Routines that deal with colors & color maps.
@@ -1044,6 +1077,87 @@ plFindCommand(char *fn)
     fprintf(stderr, "bin dir=\"" BIN_DIR "\"\n" );      /* what WAS set? */
 #endif  /* BIN_DIR */
     return NULL;
+}
+
+/*----------------------------------------------------------------------*\
+ * FILE *plLibOpen(fn)
+ *
+ * Return file pointer to lib file.
+ * Locations checked:
+ *	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
+ *	current directory
+ *	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
+ *	LIB_DIR
+ *	PLLIBDEV
+\*----------------------------------------------------------------------*/
+
+FILE *
+plLibOpen(char *fn)
+{
+    FILE *file;
+    char *fs = NULL, *dn = NULL;
+
+/****	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	****/
+
+#if defined(PLPLOT_LIB_ENV)
+    if ((dn = getenv(PLPLOT_LIB_ENV)) != NULL) {
+        plGetName(dn, "", fn, &fs);
+
+        if ((file = fopen(fs, "rb")) != NULL)
+            goto done;
+
+        fprintf(stderr, PLPLOT_LIB_ENV"=\"%s\"\n", dn); /* what IS set? */
+    }
+#endif  /* PLPLOT_LIB_ENV */
+
+/****	search current directory	****/
+
+    if ((file = fopen(fn, "rb")) != NULL)
+        goto done;
+
+/****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
+
+#if defined (PLPLOT_HOME_ENV)
+    if ((dn = getenv(PLPLOT_HOME_ENV)) != NULL) {
+        plGetName(dn, "lib", fn, &fs);
+
+        if ((file = fopen(fs, "rb")) != NULL)
+            goto done;
+        fprintf(stderr, PLPLOT_HOME_ENV"=\"%s\"\n",dn); /* what IS set? */
+    }
+#endif  /* PLPLOT_HOME_ENV/lib */
+
+/**** 	search installed location	****/
+
+#if defined (LIB_DIR)
+    plGetName(LIB_DIR, "", fn, &fs);
+
+    if ((file = fopen(fs, "rb")) != NULL)
+        goto done;
+#endif  /* LIB_DIR */
+
+/**** 	search hardwired location	****/
+
+#ifdef PLLIBDEV
+    plGetName(PLLIBDEV, "", fn, &fs);
+
+    if ((file = fopen(fs, "rb")) != NULL)
+	goto done;
+#endif	/* PLLIBDEV */
+
+/**** 	not found, give up 	****/
+
+    pltext();
+    fprintf(stderr, "\nCannot open library file: %s\n", fn);
+#if defined (LIB_DIR)
+    fprintf(stderr, "lib dir=\"" LIB_DIR "\"\n" );      /* what WAS set? */
+#endif  /* LIB_DIR */
+    plgra();
+    return NULL;
+
+ done:
+    free_mem(fs);
+    return (file);
 }
 
 /*----------------------------------------------------------------------*\
