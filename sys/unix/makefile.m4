@@ -624,6 +624,7 @@ PLLIB_LDC	= lib $(PLLIB_C) $(LIBM) $(LIBC)
 # Main sources.
 
 OBJ =	\
+	plargs.o \
 	plbox.o \
 	plcont.o \
 	plctrl.o \
@@ -728,7 +729,7 @@ DRIVERS_OBJ = if_motif({$(MOTIF_OBJ)}) \
 # but you must create the links ('make links') beforehand.
 
 default: libs
-everything: libs fonts plrender pltek
+everything: libs plrender pltek
 
 libs:	$(PLLIB_MAIN)
 
@@ -760,14 +761,16 @@ $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 })
 #----------------------------------------------------------------------#
 # Font files.
-# Note 6 font files actually created.
+# Note it is no longer necessary to actually make these since as of
+# PLPLOT 4.99a the font files are portable.
+#
 # sfont - standard font
 # xfont - extended fonts
 
 fonts:	sfont xfont
 
-sfont:	$(PLFNT_DIR)plstnd.fnt
-xfont:	$(PLFNT_DIR)plxtnd.fnt
+sfont:	$(PLFNT_DIR)plstnd5.fnt
+xfont:	$(PLFNT_DIR)plxtnd5.fnt
 
 $(PLFNT_DIR)plstnd.fnt: stndfont.o pdfutils.o $(FONT_OBJ)
 	$(LDC) -o stndfont stndfont.o pdfutils.o $(FONT_OBJ) $(LDCFLAGS)
@@ -784,6 +787,7 @@ $(PLFNT_DIR)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
 
 # source files
 
+plargs.o:	$(PLPLOT_H) plstream.h plargs.c
 plbox.o:	$(PLPLOT_H) plbox.c 
 plcont.o:	$(PLPLOT_H) plcont.c 
 plctrl.o:	$(PLPLOT_H) plctrl.c 
@@ -796,16 +800,13 @@ plline.o:	$(PLPLOT_H) plline.c
 plot3d.o:	$(PLPLOT_H) plot3d.c 
 plpage.o:	$(PLPLOT_H) plpage.c 
 plsdef.o:	$(PLPLOT_H) plsdef.c 
+plstream.o:	$(PLPLOT_H) plstream.h plstream.c
 plstring.o:	$(PLPLOT_H) plstring.c 
 plsym.o:	$(PLPLOT_H) plsym.c 
 pltick.o:	$(PLPLOT_H) pltick.c 
 plvpor.o:	$(PLPLOT_H) plvpor.c 
 plwind.o:	$(PLPLOT_H) plwind.c 
 pdfutils.o:	$(PLPLOT_H) pdfutils.c
-
-# Stream/device support library
-
-plstream.o:	$(PLPLOT_H) plstream.h plstream.c
 
 # C language stubs for linking Plplot to Fortran.
 
@@ -1038,7 +1039,6 @@ if_dbl({dnl
 })dnl
 		../examples/C/*.c \
 		../utils/*.c \
-		../fonts/*.c \
 		../{include}/*.h \
 		../drivers/*.c \
 		../drivers/motif/*.c \
@@ -1050,7 +1050,6 @@ links:
 	copy /src/\#?.c ""
 	copy /drivers/\#?.c ""
 	copy /utils/\#?.c ""
-	copy /fonts/\#?.c ""
 	copy /examples/C/\#?.c ""
 	copy /sys/amiga/src/\#?.c ""
 })

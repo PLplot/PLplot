@@ -8,7 +8,6 @@
 ./ln ../include/*.h .
 ./ln ../drivers/*.c .
 ./ln ../utils/*.c .
-./ln ../fonts/*.c .
 ./ln ../examples/C/*.c .
 ./ln ../sys/amiga/src/*.c .
 ./ln ../sys/amiga/src/*.h .
