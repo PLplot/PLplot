@@ -16,10 +16,32 @@
 ;; Here we register the recognized keywords.
 ;; Their handlers are defined below.
 
-(put 'name 'latexinfo-format 'plplot-format-name)
+(put 'message 'latexinfo-format 'latexinfo-message)
+
+(put 'name 'latexinfo-format 'plplot-format-bname)
+(put 'bname 'latexinfo-format 'plplot-format-bname)
+(put 'bnameC 'latexinfo-format 'plplot-format-bnameC)
+(put 'bnameF 'latexinfo-format 'plplot-format-bnameF)
+(put 'bnameCF 'latexinfo-format 'plplot-format-bnameCF)
+
 (put 'namend 'latexinfo-format 'plplot-format-namend)
+(put 'descr 'latexinfo-format 'plplot-format-descr)
 (put 'argu 'latexinfo-format 'plplot-format-argu)
 (put 'rou 'latexinfo-format 'plplot-format-rou)
+(put 'addcontentsline 'latexinfo-format 'plplot-format-addcontentsline)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; latexinfo-message
+;;
+;; Handle the \message{string} macro.
+;; Handy for sending messages to the user (for debugging or whatever).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun latexinfo-message ()
+  (let ((args (latexinfo-format-parse-multiargs)))
+    (latexinfo-discard-command)
+    (message (nth 0 args))
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; latexinfo-format-parse-multiargs
@@ -31,9 +53,9 @@
 ;;
 ;; Limitations: 
 ;;
-;; - Only one level of brace nesting inside arguments is permitted.  So
-;;   constructs like \foo{\code{x}}{\code{y}} are OK, but not any deeper
-;;   than that.  Constructs like \foo{\code{x}, \code{y}} are also OK.
+;; - Only two levels of brace nesting inside arguments is permitted.  
+;;   Typically the deepest you will need is one level anyway, so this
+;;   isn't likely to be a problem.
 ;;
 ;; - The open brace on multi-args must IMMEDIATELY follow the close brace
 ;;   from the previous arg.  You can skip to the next line after that
@@ -52,16 +74,20 @@
       (skip-chars-forward " \t\n")
       (setq beg (point))
 
-; Here I check for one extra level of brace.
+; Here I check for two extra levels of brace nesting.
 
       (re-search-forward "[{}]")
       (while (= (preceding-char) ?\{)
 	(re-search-forward "[{}]")
-	(if (= (preceding-char) ?\{)
-	    (progn
-	      (message "Too many nested braces in argument, hoser")
-	      (re-search-forward "}")
-	      ))
+	(while (= (preceding-char) ?\{)
+	  (re-search-forward "[{}]")
+	  (if (= (preceding-char) ?\{)
+	      (progn
+		(message "Too many nested braces in argument, hoser")
+		(re-search-forward "}")
+		))
+	  (re-search-forward "[{}]")
+	  )
 	(re-search-forward "[{}]")
 	)
 
@@ -77,17 +103,18 @@
     (nreverse args)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; plplot-format-name
+;; plplot-format-bname
 ;;
-;; Handle the \name{arg} macro.
+;; Handle the \bname{arg} and \name{arg} macros.
 ;; `arg' is the name of the function and its arguments.
 ;;
 ;; This is used for setting off a function specification.  In the printed
-;; document, a box is drawn around the function.  Note: I tried adding
-;; indentation but it's hard to customize without massive elisp hacking.
+;; document, a box is drawn around the function (\bname only; \name just
+;; causes it to be offset).  Note: I tried adding indentation but there's
+;; no easy way -- it'd require massive elisp hacking.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun plplot-format-name ()
+(defun plplot-format-bname ()
   (let ((args (latexinfo-format-parse-multiargs)))
     (latexinfo-discard-command)
     (insert
@@ -99,14 +126,91 @@
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; plplot-format-bnameC
+;;
+;; Handle the \bnameC{arg} macro.
+;; `arg' is the name of the function and its arguments.
+;;
+;; Like \bname but designates it for use from C only.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun plplot-format-bnameC ()
+  (let ((args (latexinfo-format-parse-multiargs)))
+    (latexinfo-discard-command)
+    (insert
+"--------------------------------------------------------------------------\n")
+    (insert (nth 0 args) "      (C)\n")
+    (insert
+"--------------------------------------------------------------------------\n")
+    (goto-char latexinfo-command-start)
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; plplot-format-bnameF
+;;
+;; Handle the \bnameF{arg} macro.
+;; `arg' is the name of the function and its arguments.
+;;
+;; Like \bname but designates it for use from Fortran only.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun plplot-format-bnameF ()
+  (let ((args (latexinfo-format-parse-multiargs)))
+    (latexinfo-discard-command)
+    (insert
+"--------------------------------------------------------------------------\n")
+    (insert (nth 0 args) "      (Fortran)\n")
+    (insert
+"--------------------------------------------------------------------------\n")
+    (goto-char latexinfo-command-start)
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; plplot-format-bnameCF
+;;
+;; Handle the \bnameCF{arg1}{arg2}{arg3}{arg4} macro.
+;; `arg1' and `arg2' is the specification for use from C.
+;; `arg3' and `arg4' is the specification for use from Fortran.
+;;
+;; Like \bname but displays 2 specifications: one for C and one for Fortran.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun plplot-format-bnameCF ()
+  (let ((args (latexinfo-format-parse-multiargs)))
+    (latexinfo-discard-command)
+    (insert
+"--------------------------------------------------------------------------\n")
+    (insert (nth 0 args) (nth 1 args) "\n")
+    (insert (nth 2 args) (nth 3 args) "\n")
+    (insert
+"--------------------------------------------------------------------------\n")
+    (goto-char latexinfo-command-start)
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; plplot-format-descr
+;;
+;; Handle the \descr{arg} macro.
+;; `arg' is the description of a function.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun plplot-format-descr ()
+  (let ((args (latexinfo-format-parse-multiargs)))
+    (latexinfo-discard-command)
+    (insert (nth 0 args))
+    (insert "\\refill\n")
+    (goto-char latexinfo-command-start)
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; plplot-format-rou
 ;;
 ;; Handle the \rou{arg} macro.
 ;; `arg' is the name of the function.
 ;;
-;; This is used for referencing a function.  It uses a tt font (in the
-;; printed doc) and refers the reader to its location in the API section.
-;; In the info document, a hot link is set up for this.
+;; This is used for referencing a function for the first time.  It uses a
+;; tt font (in the printed doc) and refers the reader to its location in
+;; the API section.  In the info document, a hot link is set up for this.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun plplot-format-rou ()
@@ -154,3 +258,17 @@
     (insert "\\refill\n")
     (goto-char latexinfo-command-start)
     ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; plplot-format-addcontentsline
+;;
+;; Handle the \addcontentsline{arg1}{arg2}{arg3} macro.
+;; Just a null function to satisfy the latex side.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun plplot-format-addcontentsline ()
+  (let ((args (latexinfo-format-parse-multiargs)))
+    (latexinfo-discard-command)
+    (goto-char latexinfo-command-start)
+    ))
+
