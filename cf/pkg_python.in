@@ -23,16 +23,20 @@ SO		= @SO@
 PYTHON_EXE	= plmodule$(SO)
 PYTHON_INSTALL	= install_python
 PYTHON_INC_DIR	= @PYTHON_INC_DIR@
+PYTHON_NUM_DIR	= @PYTHON_NUM_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
 PYTHON_MACH_DIR	= @PYTHON_MACH_DIR@
 PYTHON_CFG_DIR	= @PYTHON_CFG_DIR@
-PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lModules -lObjects -lParser -lPython
+#These libraries do not exist on Linux systems (at least for python-1.5) so
+#must comment out.  If required on other systems, must do something fancy.
+#PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lModules -lObjects -lParser -lPython
+PYTHON_LIBS=
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
 plmodule$O:	plmodule.c plmodule2.c plplot/plmodule.h
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) \
-		-I$(PYTHON_INC_DIR) -I$(PYTHON_CFG_DIR) \
+		-I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -I$(PYTHON_CFG_DIR) \
 		plmodule.c
 
 $(PYTHON_EXE): plmodule$O
