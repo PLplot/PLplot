@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/03/23 06:39:22  mjl
+ * Revision 1.24  1994/04/08 11:38:11  mjl
+ * Now allocate a PLmDev in order to keep file offset information local
+ * to the driver where it belongs.  No longer keep track of bytes written
+ * since the PDF output routines do that automatically.
+ *
+ * Revision 1.23  1994/03/23  06:39:22  mjl
  * Added support for: color map 1 color selection, color map 0 or color map 1
  * state change (palette change), polygon fills.
  *
@@ -17,10 +22,6 @@
  * Revision 1.21  1993/11/15  08:29:19  mjl
  * Now writes number of pages in file to beginning of file on each
  * new page.  For seeking to a specified number of pages before EOF.
- *
- * Revision 1.20  1993/08/20  19:35:53  mjl
- * Deleted save of pen width at every page boundary.  Eventually I'll come up
- * with a better way to save the state.
 */
 
 /*
@@ -51,15 +52,23 @@
 #include "metadefs.h"
 #include <string.h>
 
+/* Struct to hold device-specific info. */
+
+typedef struct {
+    PLFLT pxlx, pxly;
+    PLINT xold, yold;
+
+    PLINT xmin, xmax, xlen;
+    PLINT ymin, ymax, ylen;
+
+    FPOS_T lp_offset, toc_offset;
+} PLmDev;
+
 /* Function prototypes */
 /* INDENT OFF */
 
 static void WriteHeader		(PLStream *pls);
 static void plm_fill		(PLStream *pls);
-
-/* Global variables */
-
-static FPOS_T toc_offset;
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
@@ -71,7 +80,7 @@ static FPOS_T toc_offset;
 void
 plD_init_plm(PLStream *pls)
 {
-    PLDev *dev;
+    PLmDev *dev;
     U_CHAR c = (U_CHAR) INITIALIZE;
 
     dbug_enter("plD_init_plm");
@@ -79,7 +88,6 @@ plD_init_plm(PLStream *pls)
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->color = 1;
-    pls->bytecnt = 0;
     pls->page = 0;
     pls->dev_fill0 = 1;
     pls->dev_fill1 = 1;
@@ -95,7 +103,11 @@ plD_init_plm(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    dev = plAllocDev(pls);
+    pls->dev = calloc(1, (size_t) sizeof(PLmDev));
+    if (pls->dev == NULL)
+	plexit("plD_init_plm: Out of memory.");
+
+    dev = (PLmDev *) pls->dev;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -134,7 +146,7 @@ plD_init_plm(PLStream *pls)
 void
 plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PLmDev *dev = (PLmDev *) pls->dev;
     U_CHAR c;
     U_SHORT xy[4];
 
@@ -168,24 +180,20 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 
 	c = (U_CHAR) LINETO;
 	plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-	pls->bytecnt++;
 
 	xy[0] = x2;
 	xy[1] = y2;
 	plm_wr( pdf_wr_2nbytes(pls->pdfs, xy, 2) );
-	pls->bytecnt += 4;
     }
     else {
 	c = (U_CHAR) LINE;
 	plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-	pls->bytecnt++;
 
 	xy[0] = x1;
 	xy[1] = y1;
 	xy[2] = x2;
 	xy[3] = y2;
 	plm_wr( pdf_wr_2nbytes(pls->pdfs, xy, 4) );
-	pls->bytecnt += 8;
     }
     dev->xold = x2;
     dev->yold = y2;
@@ -200,20 +208,17 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 void
 plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PLmDev *dev = (PLmDev *) pls->dev;
     U_CHAR c = (U_CHAR) POLYLINE;
 
     dbug_enter("plD_polyline_plm");
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt++;
 
     plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) npts) );
-    pls->bytecnt += 2;
 
     plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) xa, npts) );
     plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) ya, npts) );
-    pls->bytecnt += 4 * npts;
 
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
@@ -231,7 +236,6 @@ plD_eop_plm(PLStream *pls)
     U_CHAR c = (U_CHAR) CLEAR;
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt++;
 }
 
 /*----------------------------------------------------------------------*\
@@ -243,7 +247,7 @@ plD_eop_plm(PLStream *pls)
 void
 plD_bop_plm(PLStream *pls)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PLmDev *dev = (PLmDev *) pls->dev;
     U_CHAR c = (U_CHAR) PAGE;
     FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
     FILE *file = pls->OutFile;
@@ -261,13 +265,13 @@ plD_bop_plm(PLStream *pls)
 
 /* Seek back to previous page header and write forward byte offset. */
 
-    if (pls->lp_offset > 0) {
+    if (dev->lp_offset > 0) {
 #ifdef DEBUG
 	U_LONG foo;
 	fprintf(stderr, "Location: %d, seeking to: %d\n",
-		cp_offset, pls->lp_offset);
+		cp_offset, dev->lp_offset);
 #endif
-	fwbyte_offset = pls->lp_offset + 7;
+	fwbyte_offset = dev->lp_offset + 7;
 	if (pl_fsetpos(file, &fwbyte_offset))
 	    plexit("plD_bop_plm: fsetpos call failed");
 
@@ -296,6 +300,7 @@ plD_bop_plm(PLStream *pls)
 
 /* Start next family file if necessary. */
 
+    pls->bytecnt = pls->pdfs->bp;
     plGetFam(pls);
 
 /* Update page counter */
@@ -305,8 +310,8 @@ plD_bop_plm(PLStream *pls)
 /* Update table of contents info.  Right now only number of pages. */
 /* The order here is critical */
 
-    if (toc_offset > 0) {
-	if (pl_fsetpos(file, &toc_offset))
+    if (dev->toc_offset > 0) {
+	if (pl_fsetpos(file, &dev->toc_offset))
 	    plexit("plD_bop_plm: fsetpos call failed");
 
 	plm_wr( pdf_wr_header(pls->pdfs, "pages") );
@@ -318,15 +323,14 @@ plD_bop_plm(PLStream *pls)
 
 /* Write new page header */
 
-    bwbyte_offset = pls->lp_offset;
+    bwbyte_offset = dev->lp_offset;
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
     plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
     plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) bwbyte_offset) );
     plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) 0) );
 
-    pls->bytecnt += 11;
-    pls->lp_offset = cp_offset;
+    dev->lp_offset = cp_offset;
 
 /* Write some page state information just to make things nice later on */
 /* Eventually there will be more */
@@ -348,8 +352,6 @@ plD_tidy_plm(PLStream *pls)
     dbug_enter("plD_tidy_plm");
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt++;
-
     pdf_close(pls->pdfs);
 }
 
@@ -368,59 +370,47 @@ plD_state_plm(PLStream *pls, PLINT op)
     dbug_enter("plD_state_plm");
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt++;
-
     plm_wr( pdf_wr_1byte(pls->pdfs, op) );
-    pls->bytecnt++;
 
     switch (op) {
 
     case PLSTATE_WIDTH:
 	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) (pls->width)) );
-	pls->bytecnt += 2;
 	break;
 
     case PLSTATE_COLOR0:
 	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
-	pls->bytecnt ++;
 
 	if (pls->icol0 == PL_RGB_COLOR) {
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.g) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.b) );
-	    pls->bytecnt += 3;
 	}
 	break;
 
     case PLSTATE_COLOR1:
 	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->icol1) );
-	pls->bytecnt += 2;
 	break;
 
     case PLSTATE_FILL:
 	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->patt) );
-	pls->bytecnt += 1;
 	break;
 
     case PLSTATE_CMAP0:
 	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->ncol0) );
-	pls->bytecnt += 1;
 	for (i = 0; i < pls->ncol0; i++) {
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].r) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].g) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].b) );
-	    pls->bytecnt += 3;
 	}
 	break;
 
     case PLSTATE_CMAP1:
 	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncol1) );
-	pls->bytecnt += 2;
 	for (i = 0; i < pls->ncol1; i++) {
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].r) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].g) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap1[i].b) );
-	    pls->bytecnt += 3;
 	}
 	break;
     }
@@ -446,10 +436,7 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_plm");
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-    pls->bytecnt++;
-
     plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) op) );
-    pls->bytecnt++;
 
     switch (op) {
     case PLESC_FILL:
@@ -467,16 +454,14 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 static void
 plm_fill(PLStream *pls)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PLmDev *dev = (PLmDev *) pls->dev;
 
     dbug_enter("plm_fill");
 
     plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->dev_npts) );
-    pls->bytecnt += 2;
 
     plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
     plm_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
-    pls->bytecnt += 4 * pls->dev_npts;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -491,7 +476,7 @@ plm_fill(PLStream *pls)
 static void
 WriteHeader(PLStream *pls)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    PLmDev *dev = (PLmDev *) pls->dev;
     FILE *file = pls->OutFile;
 
     dbug_enter("WriteHeader(PLStream *pls");
@@ -502,7 +487,7 @@ WriteHeader(PLStream *pls)
 /* Write table of contents info.  Right now only number of pages. */
 /* The order here is critical */
 
-    if (pl_fgetpos(file, &toc_offset))
+    if (pl_fgetpos(file, &dev->toc_offset))
 	plexit("WriteHeader: fgetpos call failed");
 
     plm_wr( pdf_wr_header(pls->pdfs, "pages") );
