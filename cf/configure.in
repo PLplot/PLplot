@@ -259,7 +259,7 @@ esac
 # before expanding ac_init) so that the user can override if necessary.
 
 with_defaults=yes
-for option; do
+for option in $*; do
     case "$option" in
 	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
 	    with_defaults=yes
@@ -1002,6 +1002,7 @@ ln -sf $srcdir/bindings/python/setup.py .
 
 # Handle setting up the Java stuff.
 
+javaconfig=""
 if test "$enable_java" = "yes"; then
     # Set up the Java tree in the build dir.
     if test ! -d java; then
@@ -1038,6 +1039,8 @@ if test "$enable_java" = "yes"; then
         ln -s $srcdir/bindings/java/config.java.in . 2>/dev/null
 
     test -L java/plplot/core/config.java || (cd java/plplot/core; ln -s ../../../config.java .)
+
+    javaconfig="config.java"
 fi
 
 if test "$enable_tcl" = "yes"; then
@@ -1113,7 +1116,7 @@ plplot 2>/dev/null
 # Create output files.
 # ----------------------------------------------------------------------------
 
-AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh config.java)
+AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh $javaconfig)
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
