@@ -138,14 +138,6 @@ proc plot {{file {}} {columns {}}} {
 	plgdev device
     }
 
-# Turn off pause for tk driver since it is redundant.  For X output, however,
-# if we return control to the interpreter immediately, we will stop processing
-# X events (like expose!) so we keep the pause in.
-
-    switch $device {
-	tk	{plspause 0}
-    }
-
 # Initialize data arrays
 
     set matlen 128
