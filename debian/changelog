@@ -1,3 +1,13 @@
+plplot (5.2.1-4) unstable; urgency=low
+
+  * Exclude architectures hppa and powerpc from the building of the
+    octave-plplot package (in debian/control).  There are now variables
+    octave_cfg and octave_pkg in debian/rules to control this.
+  * debian/control: Changed description to comply with the Best Packaging
+    Practices of the Debian Developer's Reference.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  6 May 2003 11:03:40 +0200
+
 plplot (5.2.1-3) unstable; urgency=low
 
   * Fixed AC_MSG_CHECKING for the Octave prefix in sysloc.in (upstream

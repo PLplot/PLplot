@@ -24,7 +24,7 @@ Description: Scientific plotting library
  This package contains the PLplot libraries for C, C++, and Fortran77, as
  well as the necessary data files and some utility programs for PLplot.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: libplplot-dev
 Architecture: all
@@ -40,7 +40,7 @@ Description: Scientific plotting library (development files)
  Octave, install the plplot-tcl, python-plplot, and octave-plplot packages,
  respectively.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: plplot-xwin
 Architecture: any
@@ -50,7 +50,7 @@ Description: Scientific plotting library (X11 driver)
  This package provides the X11 driver module for PLplot, a scientific
  plotting library.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: plplot-gnome
 Architecture: any
@@ -59,7 +59,7 @@ Description: Scientific plotting library (Gnome canvas driver)
  This package provides the Gnome canvas driver module for PLplot, a
  scientific plotting library.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: plplot-tcl
 Architecture: any
@@ -73,7 +73,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
  Also included is the utility program plrender to render PLplot
  metafiles.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: plplot-tcl-dev
 Architecture: all
@@ -85,7 +85,7 @@ Description: Tcl/Tk development support for PLplot, a plotting library
  with PLplot, a scientific plotting library: header files, shared
  libraries links, and examples.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: plplot-gd
 Architecture: any
@@ -95,7 +95,7 @@ Description: Scientific plotting library (GD driver)
  library.  It allows the generation of PNG and JPEG files directly from
  PLplot programs.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: python-plplot
 Architecture: any
@@ -106,10 +106,10 @@ Description: Python support for PLplot, a plotting library
  scientific plotting library into Python applications.  Examples are also
  provided.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: octave-plplot
-Architecture: any
+Architecture: i386 alpha ia64 sparc mips mipsel m68k s390
 Priority: extra
 Depends: ${shlibs:Depends}, ${octave:Depends}
 Description: Octave support for PLplot, a plotting library
@@ -117,7 +117,7 @@ Description: Octave support for PLplot, a plotting library
  library.  It provides an almost drop-in replacement for the traditional
  Gnuplot graphical interface in Octave. Examples are also provided.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org
 
 Package: plplot-doc
 Architecture: all
@@ -126,7 +126,8 @@ Depends: libplplot5
 Suggests: libplplot-dev
 Conflicts: libplplot5 (<< 5.2.0.cvs.20030305)
 Description: Documentation for PLplot, a plotting library
- This package contains the HTML, PDF, PS and info forms of the PLplot
- documentation.  It also contains the man pages for the API functions.
+ This package contains the HTML, PDF, PostScript and info forms of the
+ PLplot documentation.  It also contains the man pages for the API
+ functions.
  .
- See http://www.plplot.org for more information on PLplot.
+ Homepage: http://www.plplot.org

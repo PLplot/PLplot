@@ -22,7 +22,20 @@ debshr		:= $(debusr)/share
 debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(deblib)/plplot$(version)/examples
-deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
+
+# Architecture exclusion for octave-plplot package
+arch		:= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+ifeq ($(shell if test "$(arch)" = hppa -o "$(arch)" = powerpc ; then \
+                echo yes ; \
+              else \
+                echo no ; \
+              fi), no)
+octave_cfg := --enable-octave
+octave_pkg := octave-plplot
+else
+octave_cfg := --disable-octave
+octave_pkg :=
+endif
 
 autotools:
 	-rm -f config.sub config.guess
@@ -33,7 +46,7 @@ config: config-stamp
 config-stamp: autotools
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers        \
-                    --disable-static --enable-python --enable-octave   \
+                    --disable-static --enable-python $(octave_cfg)     \
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
                     --without-rpath --with-prebuiltdoc
@@ -80,7 +93,7 @@ install-stamp: build-stamp
 	mv $(debex) $(debdoc)/libplplot5
 
 	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
-                 octave-plplot python-plplot plplot-gd plplot-doc  \
+                 $(octave_pkg) python-plplot plplot-gd plplot-doc  \
                  plplot-tcl-dev ; do \
 	  ln -s libplplot5 $(debdoc)/$$i ; \
 	done
