@@ -32,6 +32,7 @@ install_tcl:
 	 fi
 	-strip pltcl$E
 	-cp pltcl$E $(BIN_DIR)
+	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
 	-cp tclIndex $(TCL_DIR)
 	-cd $(top_srcdir)/bindings/tcl; \
 	 cp pltcl.h tclMatrix.h $(INCLUDE_DIR)
