@@ -29,8 +29,10 @@
 
 #include "plDevs.h"
 
-#ifdef PLD_ps
+#define DEBUG
 
+#ifdef PLD_ps
+#define NEED_PLDEBUG
 #include "plplotP.h"
 #include "drivers.h"
 #include "ps.h"
@@ -38,7 +40,7 @@
 #include <string.h>
 #include <time.h>
 #include "plunicode-type1.h"
-
+#include "plfci.h"
 
 /* Device info */
 
@@ -67,7 +69,7 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
 			      {NULL, DRV_INT, NULL, NULL}};
 
 static unsigned char 
-plunicode2type1 (const unsigned int index,
+plunicode2type1 (const PLUNICODE index,
 		 const Unicode_to_Type1_table lookup[], 
 		 const int number_of_entries);
 
@@ -701,8 +703,12 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT theta, shear;  /* Rotation angle and shear from the matrix */
   PLFLT ft_ht, offset; /* Font height and offset */
   PSDev *dev = (PSDev *) pls->dev;
-  char *font, *ofont, esc;
-  unsigned char *strp, str[128], *cur_strp, cur_str[128];
+  char *font, esc;
+  /* Be generous.  Used to store lots of font changes which take
+   * 3 characters per change.*/
+  #define PROC_STR_STRING_LENGTH 1000
+  unsigned char *strp, str[PROC_STR_STRING_LENGTH], *cur_strp, 
+     cur_str[PROC_STR_STRING_LENGTH];
   float font_factor = 1.4;
   int symbol;
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
@@ -711,57 +717,77 @@ proc_str (PLStream *pls, EscText *args)
 
   int i=0; /* String index */
 
-  const unsigned int *cur_text;
-  const unsigned int *cur_text_limit;
   short text_len;
 
    /* unicode only! so test for it. */
    if (args->unicode_array_len>0)
      {
-	int j;
+	int j,s,f;
+	char  *fonts[PROC_STR_STRING_LENGTH];
 	int nlookup;
 	const Unicode_to_Type1_table *lookup;
-	const unsigned int *cur_text;
+	const PLUNICODE *cur_text;
+	const PLUNICODE *cur_text_limit;
+	PLUNICODE fci;
 	/* translate from unicode into type 1 font index. */
 	/*
-	 * Choose the font family, series and shape. Currently not fully 
-	 * supported by plplot
-	 *
-	 * For plplot:
-	 *   1: Normal font
-	 *   2: Roman font
-	 *   3: Italic font
-	 *   4: cursive
+	 * Choose the font family, style, variant, and weight using
+	 * the FCI (font characterization integer).
 	 */
-	switch (pls->cfont) {
-	 case 1: ofont = "Helvetica"; break;
-	 case 2: ofont = "Times-Roman"; break;
-	 case 3: ofont = "Times-Italic"; break;
-	 case 4: ofont = "Symbol"; break; /* Temporary */
-	   /*case 4: ofont = "ZapfChancery"; break; /* there is no script (cursive) 
-						     * font in the standard 35 
-						     * postscript fonts.  
-						     * ZapfChancery is the 
-						     * fanciest. 
-						     */
-	 default:  ofont = "Helvetica";
-	}
 
-	if (pls->cfont == 4) {
+	plgesc(&esc);
+	plgfci(&fci);
+	font = plP_FCI2FontName(fci, Type1Lookup, N_Type1Lookup);
+	if (font == NULL) {
+	   fprintf(stderr, "fci = 0x%x, font name pointer = NULL \n", fci);
+	   plabort("proc_str: FCI inconsistent with Type1Lookup; "
+		   "internal PLplot error");
+	   return;
+	}
+	/*pldebug("proc_str", "fci = 0x%x, font name = %s\n", fci, font);*/
+	if (!strcmp(font, "Symbol")) {
 	   nlookup = number_of_entries_in_unicode_to_symbol_table;
 	   lookup = unicode_to_symbol_lookup_table;
 	}
-	
 	else {
 	   nlookup = number_of_entries_in_unicode_to_standard_table;
 	   lookup = unicode_to_standard_lookup_table;
 	}
 	cur_text =  args->unicode_array;
-	for (j=0; j < args->unicode_array_len; j++) {
-	   cur_str[j] = plunicode2type1(cur_text[j], lookup, nlookup);
+	for (f=s=j=0; j < args->unicode_array_len; j++) {
+	   if ((cur_text[j] >> (7*4)) == 0x1) {
+	      /* process an FCI by saving it and escaping cur_str
+	       * with an escff to make it a 2-character escape
+	       * that is not used in legacy Hershey code
+	       */
+	      if ((f < PROC_STR_STRING_LENGTH) && (s+3 < PROC_STR_STRING_LENGTH)) {
+		 fonts[f] = plP_FCI2FontName(cur_text[j], Type1Lookup, N_Type1Lookup);
+		 if (fonts[f] == NULL) {
+		    fprintf(stderr, "string-supplied FCI = 0x%x, font name pointer = NULL \n", cur_text[j]);
+		    plabort("proc_str: string-supplied FCI inconsistent with Type1Lookup;");
+		    return;
+		 }
+		 pldebug("proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f]);
+		 if (!strcmp(fonts[f++], "Symbol")) {
+		    lookup = unicode_to_symbol_lookup_table;
+		    nlookup = number_of_entries_in_unicode_to_symbol_table;
+		 }
+		 else {
+		    lookup = unicode_to_standard_lookup_table;
+		    nlookup = number_of_entries_in_unicode_to_standard_table;
+		 }
+		 cur_str[s++] = esc;
+		 cur_str[s++] = 'f';
+		 cur_str[s++] = 'f';
+	      }
+	   }
+	   else if (s+1 < PROC_STR_STRING_LENGTH) {
+	      cur_str[s++] = plunicode2type1(cur_text[j], lookup, nlookup);
+	      /*pldebug("proc_str", "unicode = 0x%x, type 1 code = %d\n",
+	                cur_text[j], cur_str[j]);*/
+	   }
 	}
-	cur_str[j] = '\0';
-	
+	cur_str[s] = '\0';
 	  
   /* finish previous polyline */
 
@@ -814,8 +840,6 @@ proc_str (PLStream *pls, EscText *args)
 
   /* Output */
 
-  plgesc(&esc);
-
   /* move to string reference point */
   fprintf(OF, " %d %d M\n", args->x, args->y );
 
@@ -829,7 +853,7 @@ proc_str (PLStream *pls, EscText *args)
 
   esc_purge(str, cur_str);
 
-  fprintf(OF, "/%s %.3f SF\n", ofont,font_factor * ENLARGE * ft_ht);    
+  fprintf(OF, "/%s %.3f SF\n", font,font_factor * ENLARGE * ft_ht);    
 
   /* Output string, writing brackets as \( and \); this string is
    * output for measurement purposes only.
@@ -849,10 +873,10 @@ proc_str (PLStream *pls, EscText *args)
   /* Parse string for escape sequences and print everything out */
 
   cur_strp = cur_str;
+  f = 0;
   do {
 
     strp = str;
-    font = ofont;
     symbol = 0;
 
     if (*cur_strp == esc) {
@@ -863,24 +887,18 @@ proc_str (PLStream *pls, EscText *args)
       }
       else switch (*cur_strp) {
 
-        case 'f':
-	cur_strp++;
-	switch (*cur_strp) {
-	case 'n': font = "Helvetica"; break;
-	case 'r': font = "Times-Roman"; break;
-	case 'i': font = "Times-Italic"; break;
-	case 's': font = "Symbol"; break;  /* Temporary.*/
-	/*case 's': font = "ZapfChancery"; break;  /* there is no script
-						  * (cursive) font in the 
-						  * standard 35 postscript 
-						  * fonts.  ZapfChancery is 
-						  * the fanciest. 
-						  */
-	default:  font = "Helvetica";
-	}
-	cur_strp++;
-	break;
-
+      case 'f':
+	 cur_strp++;
+	 if (*cur_strp++ != 'f') {
+	    /* escff occurs because of logic above. But any suffix
+	     * other than "f" should never happen. */
+	    plabort("proc_str, internal PLplot logic error;"
+		    "wrong escape sequence");
+	    return;
+	 }
+	 font = fonts[f++];
+	 /*pldebug("proc_str", "string-specified fci = 0x%x, font name = %s\n", fci, font);*/
+	 break;
       case 'd':
 	if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
 	else scale *= 0.8;  /* Subscript scaling parameter */
@@ -905,7 +923,7 @@ proc_str (PLStream *pls, EscText *args)
 	break;
 
       case '(':
-	plwarn("'g(...)' text escape sequence not processed.");
+	plwarn("'(...)' text escape sequence not processed.");
 	while (*cur_strp++ != ')');
 	break;
       }
@@ -994,11 +1012,11 @@ esc_purge(char *dstr, unsigned char *sstr) {
 }
 
 /*--------------------------------------------------------------------------*\
- *  unsigned char plunicode2type1 (const unsigned int index, 
+ *  unsigned char plunicode2type1 (const PLUNICODE index, 
  *       const Unicode_to_Type1_table lookup[], const int number_of_entries)
  *
  *  Function takes an input unicode index, looks through the lookup
- *  table (which must be sorted by unsigned int Unicode), then returns the 
+ *  table (which must be sorted by PLUNICODE Unicode), then returns the 
  *  corresponding Type1 code in the lookup table.  If the Unicode index is
  *  not present the returned value is 0 (which is normally undefined
  *  for Type 1 fonts and thus results in a blank character being printed
@@ -1006,7 +1024,7 @@ esc_purge(char *dstr, unsigned char *sstr) {
 \*--------------------------------------------------------------------------*/
 
 static unsigned char 
-plunicode2type1 (const unsigned int index,
+plunicode2type1 (const PLUNICODE index,
 		 const Unicode_to_Type1_table lookup[],
 		 const int nlookup)
 {
