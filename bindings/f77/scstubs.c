@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:46:37  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/10/12 17:05:37  mjl
+   Converted to string-integer equivalence method for C-Fortran string passing.
 
+ * Revision 1.2  1992/09/29  04:46:37  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:35:08  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -26,19 +29,16 @@ PLADV(PLINT *sub)
 }
 
 void 
-PLANCOL_( PLINT *icolor, long *name )
+PLANCOL_( PLINT *icolor, char *name )
 {
-    long2str(name, cstring1);
-    c_plancol(*icolor, cstring1);
+    c_plancol(*icolor, name);
 }
 
 void 
-PLAXES_( PLFLT *x0, PLFLT *y0, long *xopt, PLFLT *xtick,
-	PLINT *nxsub, long *yopt, PLFLT *ytick, PLINT *nysub)
+PLAXES_( PLFLT *x0, PLFLT *y0, char *xopt, PLFLT *xtick,
+	PLINT *nxsub, char *yopt, PLFLT *ytick, PLINT *nysub)
 {
-    long2str(xopt, cstring1);
-    long2str(yopt, cstring2);
-    c_plaxes(*x0, *y0, cstring1, *xtick, *nxsub, cstring2, *ytick, *nysub);
+    c_plaxes(*x0, *y0, xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
 
 void 
@@ -54,31 +54,20 @@ PLBIN( PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center)
 }
 
 void 
-PLBOX_( long *xopt, PLFLT *xtick, PLINT *nxsub,
-       long *yopt, PLFLT *ytick, PLINT *nysub )
+PLBOX_( char *xopt, PLFLT *xtick, PLINT *nxsub,
+       char *yopt, PLFLT *ytick, PLINT *nysub )
 {
-    long2str(xopt, cstring1);
-    long2str(yopt, cstring2);
-    c_plbox(cstring1, *xtick, *nxsub, cstring2, *ytick, *nysub);
+    c_plbox(xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
 
 void 
-PLBOX3_(long *xopt, long *xlabel, PLFLT *xtick, PLINT *nxsub,
-	long *yopt, long *ylabel, PLFLT *ytick, PLINT *nysub,
-	long *zopt, long *zlabel, PLFLT *ztick, PLINT *nzsub)
+PLBOX3_(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
+	char *yopt, char *ylabel, PLFLT *ytick, PLINT *nysub,
+	char *zopt, char *zlabel, PLFLT *ztick, PLINT *nzsub)
 {
-    long2str(xopt, cstring1);
-    long2str(xlabel, cstring2);
-
-    long2str(yopt, cstring3);
-    long2str(ylabel, cstring4);
-
-    long2str(zopt, cstring5);
-    long2str(zlabel, cstring6);
-
-    c_plbox3(cstring1, cstring2, *xtick, *nxsub,
-	    cstring3, cstring4, *ytick, *nysub,
-	    cstring5, cstring6, *ztick, *nzsub);
+    c_plbox3(xopt, xlabel, *xtick, *nxsub,
+	     yopt, ylabel, *ytick, *nysub,
+	     zopt, zlabel, *ztick, *nzsub);
 }
 
 void 
@@ -155,10 +144,9 @@ PLGFAM( PLINT *fam, PLINT *num, PLINT *bmax )
 }
 
 void 
-PLGFNAM_(long *fnam)
+PLGFNAM_(char *fnam)
 {
-    c_plgfnam(cstring1);
-    str2long(cstring1, fnam);
+    c_plgfnam(fnam);
 }
 
 void 
@@ -218,12 +206,9 @@ PLJOIN( PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2 )
 }
 
 void 
-PLLAB_( long *xlab, long *ylab, long *title )
+PLLAB_( char *xlab, char *ylab, char *title )
 {
-    long2str(xlab, cstring1);
-    long2str(ylab, cstring2);
-    long2str(title, cstring3);
-    c_pllab(cstring1, cstring2, cstring3);
+    c_pllab(xlab, ylab, title);
 }
 
 void 
@@ -239,11 +224,9 @@ PLLSTY(PLINT *lin)
 }
 
 void 
-PLMTEX_( long *side, PLFLT *disp, PLFLT *pos, PLFLT *just, long *text )
+PLMTEX_( char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text )
 {
-    long2str(side, cstring1);
-    long2str(text, cstring2);
-    c_plmtex(cstring1, *disp, *pos, *just, cstring2);
+    c_plmtex(side, *disp, *pos, *just, text);
 }
 
 void 
@@ -271,10 +254,9 @@ PLPSTY(PLINT *patt)
 }
 
 void 
-PLPTEX_( PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, long *text )
+PLPTEX_( PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text )
 {
-    long2str(text, cstring1);
-    c_plptex(*x, *y, *dx, *dy, *just, cstring1);
+    c_plptex(*x, *y, *dx, *dy, *just, text);
 }
 
 void 
@@ -296,10 +278,9 @@ PLSFAM( PLINT *fam, PLINT *num, PLINT *bmax )
 }
 
 void 
-PLSFNAM_( long *fnam )
+PLSFNAM_( char *fnam )
 {
-    long2str(fnam, cstring1);
-    c_plsfnam(cstring1);
+    c_plsfnam(fnam);
 }
 
 void 
@@ -364,10 +345,9 @@ PLSTAR( PLINT *nx, PLINT *ny )
 }
 
 void 
-PLSTART_( long *devname, PLINT *nx, PLINT *ny )
+PLSTART_( char *devname, PLINT *nx, PLINT *ny )
 {
-    long2str(devname, cstring1);
-    c_plstart(cstring1, *nx, *ny);
+    c_plstart(devname, *nx, *ny);
 }
 
 void 
@@ -438,11 +418,12 @@ PLVSTA()
 
 void 
 PLW3D( PLFLT *basex, PLFLT *basey, PLFLT *height,
-      PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-      PLFLT *zmin, PLFLT *zmax,
-      PLFLT *alt, PLFLT *az )
+       PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+       PLFLT *zmin, PLFLT *zmax,
+       PLFLT *alt, PLFLT *az )
 {
-    c_plw3d(*basex, *basey, *height, *xmin, *xmax, *ymin, *ymax, *zmin, *zmax, *alt, *az);
+    c_plw3d(*basex, *basey, *height,
+	    *xmin, *xmax, *ymin, *ymax, *zmin, *zmax, *alt, *az);
 }
 
 void 

@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/09/30 18:26:00  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.5  1992/10/12 17:05:36  mjl
+   Converted to string-integer equivalence method for C-Fortran string passing.
 
+ * Revision 1.4  1992/09/30  18:26:00  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.3  1992/09/29  04:46:35  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -20,10 +23,9 @@
 	Contour plotter front-ends for Fortran.
 */
 
-#include <stdio.h>
-
 #define PL_NEED_MALLOC
 #include "plstubs.h"
+#include <stdio.h>
 
 /*----------------------------------------------------------------------*\
 * pltr0f()
