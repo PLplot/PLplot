@@ -1,4 +1,18 @@
-Here's how to make *everything* conveniently on a unix-like system.
+I'm reasonably confident the latest plplot works fine on the following
+platforms: HPUX, Unicos, AIX 3.x, SunOS 4.x, Super-UX (NEC), Linux.  Other
+systems (which we use less or don't spend much time on) are less well
+supported.  If changes to the config files are required to compile it on
+other platforms, please forward your fixes.
+
+Maurice LeBrun
+mjl@dino.ph.utexas.edu
+
+Below are installation notes, system dependencies, gotchas, and anything
+else worth remembering for Unix platforms.  More generic stuff in the
+FAQ (I may move some of this stuff there eventually).
+
+---------------------------------------------------------------------------
+1. Building and installing PLPLOT.
 
 From the top level directory, just type the following:
 
@@ -76,11 +90,11 @@ installation (NOTE: currently very out of date).
 Finally, there are several shell scripts in the top level directory to
 help you archive all the source files using 'zoo', 'tar', or 'zip'.
 
-System specific notes
----------------------
+---------------------------------------------------------------------------
+2. System specific notes
 
--- 
-SunOS: I now rely on ANSI libc functions both for seeking (fsetpos,
+---
+2.1 SunOS: I now rely on ANSI libc functions both for seeking (fsetpos,
 fgetpos) and for cleanup (atexit).  If you don't have an ANSI libc handy
 or if it is inconvenient to use, you can specify -DNO_ANSI_LIBC when
 building.  This will switch to the older ftell/fseek form of seeking and
@@ -95,8 +109,8 @@ EXT_FLAGS_C	= -DNO_ANSI_LIBC
 I haven't tried building shared libraries for SunOS yet but hope to get
 around to it one of these days.
 
---
-HPUX: This is the platform I use every day; you should have no problems.
+---
+2.2 HPUX: This is the platform I use every day; you should have no problems.
 One nice thing is that shared libraries are particularly easy to build, and
 the config file (cf_hp.m4) is set up to do that by default (except when gcc
 is being used).
@@ -112,34 +126,53 @@ If you are still running X11R4 or have your Tcl/TK libraries located
 somewhere else (actually mine are in a separate directory under /usr/local
 but there are softlinks to /usr/local/lib), these will need modification.
 
---
-A/IX: The optimizer under 3.2.3 fails on the file "xwin.o" (it goes into
-some kind of loop where it forever allocates memory, eventually crapping
-out when you hit some limit).  I've hacked cf_depend.m4 to get around it
-temporarily.  I tried building a shared library under AIX but failed due
-to some missing externals, I think from X.  I think I need to specify an
-import file of external symbols or some such, because of the X library
-being shared.  If anyone has success doing this I'd be very interested.
+---
+2.3 A/IX: The optimizer under 3.2.3 fails on the file "xwin.o" (it goes
+into some kind of loop where it forever allocates memory, eventually
+crapping out when you hit some limit).  I've hacked cf_depend.m4 to get
+around it temporarily.  I tried building a shared library under AIX but
+failed due to some missing externals, I think from X.  I think I need to
+specify an import file of external symbols or some such, because of the X
+library being shared.  If anyone has success doing this I'd be very
+interested.
 
---
-Super-UX (NEC): The optimizer creates bad code for sccont.c.  I've hacked
-cf_depend.m4 to get around it temporarily.
+---
+2.4 Super-UX (NEC): The optimizer creates bad code for sccont.c.  I've
+hacked cf_depend.m4 to get around it temporarily.  I have had no luck
+getting Tcl/TK to build on this machine (the 32 bit ints/longs, 64 bit
+pointers causes headaches for a LOT of codes).
 
---
-Ultrix: The stock Bourne shell on some systems will not run the configure
-script correctly.  Look for a shell named "sh5" or try ksh if this is so.
+---
+2.5 Ultrix: The stock Bourne shell on some systems will not run the
+configure script correctly.  Look for a shell named "sh5" or try ksh if
+this is so.
 
+---
+2.6 Unicos: see 2.7
 
-f2c users: Make sure you link with the f2c support lib.  On unix systems,
-f2c generally comes with an "f77" script, which takes care of this
-transparently.
+---
+2.7 DG/UX: On older versions of the OS (pre 5.42) the error
+"parse error before `caddr_t'" would crop up inside of the Xutil.h
+header file.  This is often seen on systems that have X11R4 and
+claim POSIX conformance but that don't quite have their act together
+(also seen on old versions of UNICOS).  Some possible ways of fixing
+it includes: (a) undefine _POSIX_SOURCE after the include of plplotP.h
+(b) add the appropriate typedef for caddr_t explicitly at the head
+of the file.  For the DG, the support rep replied:
+
+  Took another look at /usr/include/sys/types.h and found that the 
+  #define "_USING_SYSV3_OR_BSD_OR_DGUX" is not being defined. You can 
+  work around this problem by changing your make files to include the 
+  following additional #define:
+       -D_USING_SYSV3_OR_BSD_OR_DGUX.
+  It turns out that this is a header file bug that is fixed starting 
+  with rev 5.42. bob.
 
 ---------------------------------------------------------------------------
+3. Using f2c to compile fortran stubs
 
-The other platforms on which I know plplot 4.99g works fine includes:
-Unicos, AIX 3.x, SunOS 4.x, Super-UX (NEC), Linux.  If changes to the
-config files are required to compile it on other platforms, please forward
-your fixes.
+There should be no problem using f2c with plplot now.  Make sure you link
+with the f2c support lib.  On unix systems, f2c generally comes with an
+"f77" script, which takes care of this transparently.
 
-Maurice LeBrun
-mjl@dino.ph.utexas.edu
+---------------------------------------------------------------------------
