@@ -15,12 +15,14 @@
 ## function plsetopt(option, value)
 ##
 ## set "option" to "value". Must be called before openning a plot window.
-## No check in "value" is done, and some options might be senseless.
+## No check in "value" is done, and some options might be senseless,
+## depending on the driver.
 ##
 ## If "reset" is specified as an option, all stored options are cleared.
 ## If "show" is specified as an option, all stored options are printed.
 ## If "help" is specified as an option, all options and help are printed.
 ## If "apply" is specified as an option, all set options are applied.
+## If "get" is specified as an option, the current option value is returned
 
 function ret = plsetopt(option, value)
 
@@ -28,6 +30,7 @@ function ret = plsetopt(option, value)
 	     "show"; "Show set options";
 	     "help"; "Show all possible options";
 	     "apply"; "Apply the set options";
+	     "get"; "Get current set value";
 	     "display"; "X server to contact";
 	     "server_name"; "Main window name of PLplot server (tk driver)";
 	     "server_host";"Host to run PLplot server on (dp driver)";
@@ -73,6 +76,8 @@ function ret = plsetopt(option, value)
   
   global set_options = "";
 
+  ret = "";
+
   if (nargin == 0 || (nargin >= 1 && !isstr(option)) || (nargin == 2 && !isstr(value)))
     help "plsetopt"
     return
@@ -99,15 +104,16 @@ function ret = plsetopt(option, value)
     return
   endif
 
-  if (strcmp(option, "show") || strcmp(option, "apply"))
+  if (strcmp(option, "show") || strcmp(option, "apply") || strcmp(option,"get"))
     for i=1:2:rows(set_options)
-      if (!isempty(deblank((set_options(i,:)))))
+      sopt =  deblank(set_options(i,:)); opt =  deblank(options(i,:));
+      if (!isempty(sopt))
 	if (strcmp(option, "show"))
-	  printf("%s: %s\n", deblank(options(i,:)), \
-		 deblank(set_options(i,:)));
-	  ret = deblank(set_options(i,:));
-	else
-	  plSetOpt(deblank(options(i,:)), deblank(set_options(i,:)));
+	  printf("%s: %s\n", opt, sopt);
+	elseif (strcmp(option, "apply"))
+	  plSetOpt(opt, sopt);
+	  elseif (strcmp(opt, value))
+	    ret = sopt;
 	endif
       endif
     endfor
