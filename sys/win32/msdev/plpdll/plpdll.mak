@@ -49,6 +49,7 @@ CPP=cl.exe
 # PROP Target_Dir ""
 OUTDIR=.\Release
 INTDIR=.\Release
+BUILD_DIR=\"tmp\"
 
 ALL : "$(OUTDIR)\plplotd.dll"
 
@@ -78,6 +79,7 @@ CLEAN :
 	-@erase ".\Release\plhist.obj"
 	-@erase ".\Release\plvpor.obj"
 	-@erase ".\Release\plcont.obj"
+	-@erase ".\Release\plimage.obj"
 	-@erase ".\Release\plshade.obj"
 	-@erase ".\Release\pldtik.obj"
 	-@erase ".\Release\plcore.obj"
@@ -93,7 +95,7 @@ CLEAN :
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
 # ADD CPP /nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /YX /c
 CPP_PROJ=/nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS"\
- /Fp"$(INTDIR)/plpdll.pch" /YX /Fo"$(INTDIR)/" /c 
+/D "BUILD_DIR=$(BUILD_DIR)" /Fp"$(INTDIR)/plpdll.pch" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\Release/
 CPP_SBRS=
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
@@ -113,7 +115,7 @@ LINK32=link.exe
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib /nologo /subsystem:windows /dll /incremental:no\
- /pdb:"$(OUTDIR)/plplotd.pdb" /machine:I386 /def:"\plplot\tmp\plplotd.def"\
+ /pdb:"$(OUTDIR)/plplotd.pdb" /machine:I386 /def:"..\..\..\..\tmp\plplotd.def"\
  /out:"plplotd.dll" /implib:"$(OUTDIR)/plplotd.lib" 
 DEF_FILE= \
 	"..\..\..\..\tmp\plplotd.def"
@@ -142,6 +144,7 @@ LINK32_OBJS= \
 	".\Release\plhist.obj" \
 	".\Release\plvpor.obj" \
 	".\Release\plcont.obj" \
+	".\Release\plimage.obj" \
 	".\Release\plshade.obj" \
 	".\Release\pldtik.obj" \
 	".\Release\plcore.obj" \
@@ -168,6 +171,7 @@ LINK32_OBJS= \
 # PROP Target_Dir ""
 OUTDIR=.\Debug
 INTDIR=.\Debug
+BUILD_DIR=\"tmp\"
 
 ALL : "$(OUTDIR)\plplotd.dll"
 
@@ -189,6 +193,7 @@ CLEAN :
 	-@erase ".\Debug\plctrl.obj"
 	-@erase ".\Debug\pltick.obj"
 	-@erase ".\Debug\plfill.obj"
+	-@erase ".\Debug\plimage.obj"
 	-@erase ".\Debug\plshade.obj"
 	-@erase ".\Debug\plpage.obj"
 	-@erase ".\Debug\plcont.obj"
@@ -216,8 +221,9 @@ CLEAN :
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
 # ADD CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /YX /c
 CPP_PROJ=/nologo /MTd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS"\
- /Fp"$(INTDIR)/plpdll.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c 
-CPP_OBJS=.\Debug/
+ /Fp"$(INTDIR)/plpdll.pch" /D "BUILD_DIR=$(BUILD_DIR)" /YX /Fo"$(INTDIR)/"
+/Fd"$(INTDIR)/"
+/c CPP_OBJS=.\Debug/
 CPP_SBRS=
 # ADD BASE MTL /nologo /D "_DEBUG" /win32
 # ADD MTL /nologo /D "_DEBUG" /win32
@@ -237,7 +243,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib /nologo /subsystem:windows /dll /incremental:yes\
  /pdb:"$(OUTDIR)/plplotd.pdb" /debug /machine:I386\
- /def:"\plplot\tmp\plplotd.def" /out:"plplotd.dll"\
+ /def:"..\..\..\..\tmp\plplotd.def" /out:"plplotd.dll"\
  /implib:"$(OUTDIR)/plplotd.lib" 
 DEF_FILE= \
 	"..\..\..\..\tmp\plplotd.def"
@@ -256,6 +262,7 @@ LINK32_OBJS= \
 	".\Debug\plctrl.obj" \
 	".\Debug\pltick.obj" \
 	".\Debug\plfill.obj" \
+	".\Debug\plimage.obj" \
 	".\Debug\plshade.obj" \
 	".\Debug\plpage.obj" \
 	".\Debug\plcont.obj" \
@@ -313,16 +320,16 @@ LINK32_OBJS= \
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\xfig.cpp
+SOURCE=..\..\..\..\tmp\xfig.c
 DEP_CPP_XFIG_=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 !IF  "$(CFG)" == "plpdll - Win32 Release"
@@ -345,19 +352,19 @@ DEP_CPP_XFIG_=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\win3.cpp
+SOURCE=..\..\..\..\tmp\win3.cpp
 
 !IF  "$(CFG)" == "plpdll - Win32 Release"
 
 DEP_CPP_WIN3_=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\win3.obj" : $(SOURCE) $(DEP_CPP_WIN3_) "$(INTDIR)"
@@ -367,14 +374,14 @@ DEP_CPP_WIN3_=\
 !ELSEIF  "$(CFG)" == "plpdll - Win32 Debug"
 
 DEP_CPP_WIN3_=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 NODEP_CPP_WIN3_=\
 	".\..\..\..\..\tmp\CreatePalette"\
@@ -392,16 +399,16 @@ NODEP_CPP_WIN3_=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\ps.cpp
+SOURCE=..\..\..\..\tmp\ps.c
 DEP_CPP_PS_CP=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\ps.obj" : $(SOURCE) $(DEP_CPP_PS_CP) "$(INTDIR)"
@@ -412,14 +419,14 @@ DEP_CPP_PS_CP=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plwind.cpp
+SOURCE=..\..\..\..\tmp\plwind.c
 DEP_CPP_PLWIN=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plwind.obj" : $(SOURCE) $(DEP_CPP_PLWIN) "$(INTDIR)"
@@ -430,14 +437,14 @@ DEP_CPP_PLWIN=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plvpor.cpp
+SOURCE=..\..\..\..\tmp\plvpor.c
 DEP_CPP_PLVPO=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plvpor.obj" : $(SOURCE) $(DEP_CPP_PLVPO) "$(INTDIR)"
@@ -448,14 +455,14 @@ DEP_CPP_PLVPO=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\pltick.cpp
+SOURCE=..\..\..\..\tmp\pltick.c
 DEP_CPP_PLTIC=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\pltick.obj" : $(SOURCE) $(DEP_CPP_PLTIC) "$(INTDIR)"
@@ -466,14 +473,14 @@ DEP_CPP_PLTIC=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plsym.cpp
+SOURCE=..\..\..\..\tmp\plsym.c
 DEP_CPP_PLSYM=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plsym.obj" : $(SOURCE) $(DEP_CPP_PLSYM) "$(INTDIR)"
@@ -484,9 +491,9 @@ DEP_CPP_PLSYM=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plstub.cpp
+SOURCE=..\..\..\..\tmp\plstub.cpp
 DEP_CPP_PLSTU=\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plplot.h"\
 	
 
 "$(INTDIR)\plstub.obj" : $(SOURCE) $(DEP_CPP_PLSTU) "$(INTDIR)"
@@ -497,14 +504,32 @@ DEP_CPP_PLSTU=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plshade.cpp
+SOURCE=..\..\..\..\tmp\plimage.c
+DEP_CPP_PLIMA=\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
+	
+
+"$(INTDIR)\plimage.obj" : $(SOURCE) $(DEP_CPP_PLIMA) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=..\..\..\..\tmp\plshade.c
 DEP_CPP_PLSHA=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plshade.obj" : $(SOURCE) $(DEP_CPP_PLSHA) "$(INTDIR)"
@@ -515,14 +540,14 @@ DEP_CPP_PLSHA=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plsdef.cpp
+SOURCE=..\..\..\..\tmp\plsdef.c
 DEP_CPP_PLSDE=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plsdef.obj" : $(SOURCE) $(DEP_CPP_PLSDE) "$(INTDIR)"
@@ -533,14 +558,14 @@ DEP_CPP_PLSDE=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plpage.cpp
+SOURCE=..\..\..\..\tmp\plpage.c
 DEP_CPP_PLPAG=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plpage.obj" : $(SOURCE) $(DEP_CPP_PLPAG) "$(INTDIR)"
@@ -551,14 +576,14 @@ DEP_CPP_PLPAG=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plot3d.cpp
+SOURCE=..\..\..\..\tmp\plot3d.c
 DEP_CPP_PLOT3=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plot3d.obj" : $(SOURCE) $(DEP_CPP_PLOT3) "$(INTDIR)"
@@ -569,17 +594,17 @@ DEP_CPP_PLOT3=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plmeta.cpp
+SOURCE=..\..\..\..\tmp\plmeta.c
 DEP_CPP_PLMET=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\metadefs.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\metadefs.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plmeta.obj" : $(SOURCE) $(DEP_CPP_PLMET) "$(INTDIR)"
@@ -590,14 +615,14 @@ DEP_CPP_PLMET=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plmap.cpp
+SOURCE=..\..\..\..\tmp\plmap.c
 DEP_CPP_PLMAP=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plmap.obj" : $(SOURCE) $(DEP_CPP_PLMAP) "$(INTDIR)"
@@ -608,14 +633,14 @@ DEP_CPP_PLMAP=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plline.cpp
+SOURCE=..\..\..\..\tmp\plline.c
 DEP_CPP_PLLIN=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plline.obj" : $(SOURCE) $(DEP_CPP_PLLIN) "$(INTDIR)"
@@ -626,14 +651,14 @@ DEP_CPP_PLLIN=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plhist.cpp
+SOURCE=..\..\..\..\tmp\plhist.c
 DEP_CPP_PLHIS=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plhist.obj" : $(SOURCE) $(DEP_CPP_PLHIS) "$(INTDIR)"
@@ -644,17 +669,17 @@ DEP_CPP_PLHIS=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plfill.cpp
+SOURCE=..\..\..\..\tmp\plfill.c
 
 !IF  "$(CFG)" == "plpdll - Win32 Release"
 
 DEP_CPP_PLFIL=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plfill.obj" : $(SOURCE) $(DEP_CPP_PLFIL) "$(INTDIR)"
@@ -664,12 +689,12 @@ DEP_CPP_PLFIL=\
 !ELSEIF  "$(CFG)" == "plpdll - Win32 Debug"
 
 DEP_CPP_PLFIL=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 NODEP_CPP_PLFIL=\
 	"..\..\..\..\tmp\n"\
@@ -689,14 +714,14 @@ NODEP_CPP_PLFIL=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\pldtik.cpp
+SOURCE=..\..\..\..\tmp\pldtik.c
 DEP_CPP_PLDTI=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\pldtik.obj" : $(SOURCE) $(DEP_CPP_PLDTI) "$(INTDIR)"
@@ -707,14 +732,14 @@ DEP_CPP_PLDTI=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plcvt.cpp
+SOURCE=..\..\..\..\tmp\plcvt.c
 DEP_CPP_PLCVT=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plcvt.obj" : $(SOURCE) $(DEP_CPP_PLCVT) "$(INTDIR)"
@@ -725,16 +750,16 @@ DEP_CPP_PLCVT=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plctrl.cpp
+SOURCE=..\..\..\..\tmp\plctrl.c
 DEP_CPP_PLCTR=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
 	{$(INCLUDE)}"\sys\TYPES.H"\
 	{$(INCLUDE)}"\sys\STAT.H"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plctrl.obj" : $(SOURCE) $(DEP_CPP_PLCTR) "$(INTDIR)"
@@ -745,17 +770,17 @@ DEP_CPP_PLCTR=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plcore.cpp
+SOURCE=..\..\..\..\tmp\plcore.c
 DEP_CPP_PLCOR=\
-	".\..\..\..\..\..\plplot\tmp\plcore.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plcore.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plcore.obj" : $(SOURCE) $(DEP_CPP_PLCOR) "$(INTDIR)"
@@ -766,14 +791,14 @@ DEP_CPP_PLCOR=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plcont.cpp
+SOURCE=..\..\..\..\tmp\plcont.c
 DEP_CPP_PLCON=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plcont.obj" : $(SOURCE) $(DEP_CPP_PLCON) "$(INTDIR)"
@@ -784,7 +809,7 @@ DEP_CPP_PLCON=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plconsole.cpp
+SOURCE=..\..\..\..\tmp\plconsole.cpp
 
 "$(INTDIR)\plconsole.obj" : $(SOURCE) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
@@ -794,16 +819,16 @@ SOURCE=\plplot\tmp\plconsole.cpp
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plbuf.cpp
+SOURCE=..\..\..\..\tmp\plbuf.c
 DEP_CPP_PLBUF=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\metadefs.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\metadefs.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plbuf.obj" : $(SOURCE) $(DEP_CPP_PLBUF) "$(INTDIR)"
@@ -814,14 +839,14 @@ DEP_CPP_PLBUF=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plbox.cpp
+SOURCE=..\..\..\..\tmp\plbox.c
 DEP_CPP_PLBOX=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plbox.obj" : $(SOURCE) $(DEP_CPP_PLBOX) "$(INTDIR)"
@@ -832,14 +857,14 @@ DEP_CPP_PLBOX=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plargs.cpp
+SOURCE=..\..\..\..\tmp\plargs.c
 DEP_CPP_PLARG=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\plargs.obj" : $(SOURCE) $(DEP_CPP_PLARG) "$(INTDIR)"
@@ -850,14 +875,14 @@ DEP_CPP_PLARG=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\pdfutils.cpp
+SOURCE=..\..\..\..\tmp\pdfutils.c
 DEP_CPP_PDFUT=\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\pdfutils.obj" : $(SOURCE) $(DEP_CPP_PDFUT) "$(INTDIR)"
@@ -868,16 +893,16 @@ DEP_CPP_PDFUT=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\null.cpp
+SOURCE=..\..\..\..\tmp\null.c
 DEP_CPP_NULL_=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\null.obj" : $(SOURCE) $(DEP_CPP_NULL_) "$(INTDIR)"
@@ -888,16 +913,16 @@ DEP_CPP_NULL_=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\hpgl.cpp
+SOURCE=..\..\..\..\tmp\hpgl.c
 DEP_CPP_HPGL_=\
-	".\..\..\..\..\..\plplot\tmp\plDevs.h"\
-	".\..\..\..\..\..\plplot\tmp\plplotP.h"\
-	".\..\..\..\..\..\plplot\tmp\drivers.h"\
-	".\..\..\..\..\..\plplot\tmp\plConfig.h"\
-	".\..\..\..\..\..\plplot\tmp\plplot.h"\
-	".\..\..\..\..\..\plplot\tmp\plstrm.h"\
-	".\..\..\..\..\..\plplot\tmp\pldebug.h"\
-	".\..\..\..\..\..\plplot\tmp\pdf.h"\
+	".\..\..\..\..\tmp\plDevs.h"\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\drivers.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
 	
 
 "$(INTDIR)\hpgl.obj" : $(SOURCE) $(DEP_CPP_HPGL_) "$(INTDIR)"
@@ -908,7 +933,7 @@ DEP_CPP_HPGL_=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plplotd.def
+SOURCE=..\..\..\..\tmp\plplotd.def
 
 !IF  "$(CFG)" == "plpdll - Win32 Release"
 
@@ -920,16 +945,16 @@ SOURCE=\plplot\tmp\plplotd.def
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\plplot.rc
+SOURCE=..\..\..\..\tmp\plplot.rc
 DEP_RSC_PLPLO=\
-	".\..\..\..\..\..\plplot\tmp\plplot.ico"\
+	".\..\..\..\..\tmp\plplot.ico"\
 	
 
 !IF  "$(CFG)" == "plpdll - Win32 Release"
 
 
 "$(INTDIR)\plplot.res" : $(SOURCE) $(DEP_RSC_PLPLO) "$(INTDIR)"
-   $(RSC) /l 0x409 /fo"$(INTDIR)/plplot.res" /i "\plplot\tmp" /d "NDEBUG"\
+   $(RSC) /l 0x409 /fo"$(INTDIR)/plplot.res" /i "..\..\..\..\tmp" /d "NDEBUG"\
  $(SOURCE)
 
 
@@ -937,7 +962,7 @@ DEP_RSC_PLPLO=\
 
 
 "$(INTDIR)\plplot.res" : $(SOURCE) $(DEP_RSC_PLPLO) "$(INTDIR)"
-   $(RSC) /l 0x409 /fo"$(INTDIR)/plplot.res" /i "\plplot\tmp" /d "_DEBUG"\
+   $(RSC) /l 0x409 /fo"$(INTDIR)/plplot.res" /i "..\..\..\..\tmp" /d "_DEBUG"\
  $(SOURCE)
 
 
