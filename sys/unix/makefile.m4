@@ -544,8 +544,8 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 
-LDCFLAGS= $(PROFILE_FLAG_C) $(LIBC) -lm
-LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm
+LDCFLAGS= -L $(TK_LINKDIR) $(PROFILE_FLAG_C) $(LIBC) -lm
+LDFFLAGS= -L $(TK_LINKDIR) $(PROFILE_FLAG_F) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_unicos({
