@@ -1,5 +1,5 @@
 EXTRA_DIST = README.developers bootstrap.sh cnf/* www/index.html.in perl
-CLEANFILES = $(TARBALL) *.tar.gz *-stamp
+CLEANFILES = $(TARBALL) *.tar.gz *-stamp conftest.*
 DISTCLEANFILES = $(CONFTEST).* $(JADELOG) www/index.html
 SUBDIRS = src bin
 
