@@ -1,6 +1,4 @@
 *.flc
-plplotcmodule.c
-plplotcmodule_p.c
 setup.py
 Makefile
 Makefile.in
@@ -8,6 +6,8 @@ Makefile.in
 .libs
 *.la
 *.lo
-plplotcmodule_p_single.c
-plplotcmodule_p_double.c
 plplotc.py
+plplotcmodule_p_single.c
+plplotcmodule_single.c
+plplotcmodule_p_double.c
+plplotcmodule_double.c
