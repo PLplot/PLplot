@@ -22,6 +22,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+lmflag = -lm
+
 if enable_dyndrivers
 
 EXTRA_LTLIBRARIES = \
@@ -136,7 +138,6 @@ gd_la_SOURCES = gd.c
 gd_la_LDFLAGS = $(ldflags) $(libplplot) $(GDLIBCMD)
 
 if enable_gnome
-lmflag = -lm
 gnome_la_SOURCES = gnome.c
 gnome_la_LDFLAGS = $(ldflags) $(libplplot) $(GNOMELIBS) $(lmflag)
 endif
@@ -150,17 +151,11 @@ impress_la_LDFLAGS = $(ldflags) $(libplplot)
 linuxvga_la_SOURCES = linuxvga.c
 linuxvga_la_LDFLAGS = $(ldflags) $(libplplot) $(LINUXVGALIBS)
 
-if enable_ljii
-lmflag = -lm
 ljii_la_SOURCES = ljii.c
 ljii_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
-endif
 
-if enable_ljiip
-lmflag = -lm
 ljiip_la_SOURCES = ljiip.c
 ljiip_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
-endif
 
 mem_la_SOURCES = mem.c
 mem_la_LDFLAGS = $(ldflags) $(libplplot)
@@ -175,26 +170,17 @@ ntk_la_LDFLAGS = $(ldflags) $(libplplot) $(TKLIBCMD) $(TCLLIBCMD) \
 null_la_SOURCES = null.c
 null_la_LDFLAGS = $(ldflags) $(libplplot)
 
-if enable_pbm
-lmflag = -lm
 pbm_la_SOURCES = pbm.c
 pbm_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
-endif
 
 plmeta_la_SOURCES = plmeta.c
 plmeta_la_LDFLAGS = $(ldflags) $(libplplot)
 
-if enable_ps
-lmflag = -lm
 ps_la_SOURCES = ps.c
 ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
-endif
 
-if enable_pstex
-lmflag = -lm
 pstex_la_SOURCES = ps.c pstex.c
 pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
-endif
 
 tek_la_SOURCES = tek.c
 tek_la_LDFLAGS = $(ldflags) $(libplplot)
@@ -214,15 +200,11 @@ tkwin_la_SOURCES = \
 tkwin_la_LDFLAGS = $(ldflags) $(libplplottcltk) $(TKLIBCMD) $(TCLLIBCMD) \
 	       $(X_LIBS) -lX11 -lm
 
-if enable_xfig
-lmflag = -lm
 xfig_la_SOURCES = xfig.c
 xfig_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
-endif
 
 if enable_xwin
 xflags = $(X_LIBS) -lX11 $(PTHREADLIBS)
-lmflag = -lm
 xwin_la_SOURCES = xwin.c
 xwin_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
 endif
@@ -367,37 +349,8 @@ AM_CPPFLAGS = \
 libplplotdrv_la_LIBADD = $(STATIC_DRIVERS)
 # Concatanate all LDFLAGS for individual drivers above together
 
-if enable_gnome
-lmflag = -lm
-endif
-
-if enable_ljii
-lmflag = -lm
-endif
-
-if enable_ljiip
-lmflag = -lm
-endif
-
-if enable_pbm
-lmflag = -lm
-endif
-
-if enable_ps
-lmflag = -lm
-endif
-
-if enable_pstex
-lmflag = -lm
-endif
-
-if enable_xfig
-lmflag = -lm
-endif
-
 if enable_xwin
 xflags = $(X_LIBS) -lX11 $(PTHREADLIBS)
-lmflag = -lm
 endif
 
 ## Library ordering is important here

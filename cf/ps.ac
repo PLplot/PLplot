@@ -1,6 +1,6 @@
 dnl cf/drivers-post.ac for PLplot  -*- autoconf -*-
 dnl
-dnl Finalize driver initializations
+dnl Configuration for the ps driver
 dnl
 dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
@@ -25,14 +25,3 @@ dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
     enable_ps=yes
 fi
-
-PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
-
-AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
-AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
-AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
-AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
-AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
-AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
-AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
-
