@@ -113,7 +113,6 @@ Program $1 not found.
     The $1 package can be found at
     $3.])
 [fi], has_$1=$has_$1)
-AM_CONDITIONAL(has_$1, [test "$has_$1" = found])
 popdef([PROG])
 ])
 

@@ -839,6 +839,7 @@ AC_ARG_ENABLE(docbook,
 if test $enable_docbook = yes ; then
 AC_INCLUDE(doc/docbook/configure.ac)
 fi
+AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
 AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
 
 BASE=$PACKAGE-$VERSION
