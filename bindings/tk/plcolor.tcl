@@ -1,13 +1,14 @@
 # $Id$
+
 #----------------------------------------------------------------------------
-# Color palette editors in Tcl for PLPlot.
+# Color palette editors in iTcl for PLPlot.
 # Maurice LeBrun
 # 13-Apr-1994
 # IFS, University of Texas at Austin
 #
+# Conversion to iTcl by Vince Darley.
 # Based on the very nice pixmap editor by Sam Shen (sls@aero.org)
 # Also some code taken from "coloredit.tk" (author?)
-# Note: this should really be rewritten in itcl.
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
@@ -50,7 +51,6 @@ proc plfile_open {op} {
 }
 
 #----------------------------------------------------------------------------
-#
 # ColorEditor is ripped off from the Tk demo program tcolor.
 # This version differs from the one by Sam Shen in that:
 #
@@ -65,39 +65,40 @@ proc plfile_open {op} {
 # 4. Saturation and Lightness go from 0 to 100.  I'd really prefer 0 to 1
 #    but TK doesn't support floating point scales yet, so this is the next
 #    best thing.
-#
 #----------------------------------------------------------------------------
-
 
 set colorSpace hsl
 
-sclass ColorEditor {
-    member r 255
-    member g 0
-    member b 0
-    member color "#ff0000"
-    member updating 0
-    member name ""
-    member w .ceditor
-    member ok 0
-    method run {{color gray} {cmd none} {instance {}} args} {
+package require Itcl 
+
+itcl::class ColorEditor {
+    private variable r 255
+    private variable g 0
+    private variable b 0
+    private variable color "#ff0000"
+    private variable updating 0
+    private variable name ""
+    private variable w .ceditor
+    private variable ok 0
+
+    method run {{_color gray} {cmd none} {instance {}} args} {
 	global colorSpace
-	set w [getmember w]
+	set color $_color
 	catch {destroy $w}
 	toplevel $w
 	wm title $w "Color Editor"
 	frame $w.buttons
 	radiobutton $w.rgb -text "RGB" -variable colorSpace \
 	    -value rgb  -relief flat \
-	    -command "ColorEditor:changeColorSpace $this rgb"
+	    -command "$this changeColorSpace rgb"
 	radiobutton $w.cmy -text "CMY" -variable colorSpace \
 	    -value cmy  -relief flat \
-	    -command "ColorEditor:changeColorSpace $this cmy"
+	    -command "$this changeColorSpace cmy"
 	radiobutton $w.hsl -text "HSL" -variable colorSpace \
 	    -value hsl  -relief flat \
-	    -command "ColorEditor:changeColorSpace $this hsl"
-	button $w.ok -text "Ok" -command "ColorEditor:ok $this"
-	button $w.cancel -text "Cancel" -command "ColorEditor:cancel $this"
+	    -command "$this changeColorSpace hsl"
+	button $w.ok -text "Ok" -command "$this ok"
+	button $w.cancel -text "Cancel" -command "$this cancel"
 	pack append $w.buttons \
 	    $w.rgb "left padx 4" \
 	    $w.cmy "left padx 4" \
@@ -109,11 +110,11 @@ sclass ColorEditor {
 	    frame $w.left$i
 	    label $w.label$i
 	    scale $w.scale$i -from 0 -to 255 -length 10c -orient horizontal \
-		-command "ColorEditor:colChanged $this $cmd $instance $args"
+		-command "$this colChanged $cmd $instance $args"
 	    button $w.up$i -width 2 -text + \
-		-command "ColorEditor:inc $this $i 1"
+		-command "$this inc $i 1"
 	    button $w.down$i -width 2 -text - \
-		-command "ColorEditor:inc $this $i -1"
+		-command "$this inc $i -1"
 	    pack append $w.left$i \
 		$w.label$i {top frame w} \
 		$w.down$i {left padx .5c} \
@@ -137,30 +138,32 @@ sclass ColorEditor {
 	changeColorSpace $colorSpace
 	grab set $w
 	tkwait window $w
-	if [getmember ok] {
-	    return [getmember color]
+	if {$ok} {
+	    return $color
 	} else {
 	    return {}
 	}
     }
+
     method cancel {} {
-	setmember ok 0
-	destroy [getmember w]
+	set ok 0
+	destroy $w
     }
+
     method ok {} {
-	setmember ok 1
-	destroy [getmember w]
+	set ok 1
+	destroy $w
     }
+
     method inc {i inc} {
-	set w [getmember w]
 	$w.scale$i set [expr [$w.scale$i get]+$inc]
     }
+
     method colChanged {cmd instance args} {
-	if [getmember updating] {
+	if {$updating} {
 	    return
 	}
 	global colorSpace
-	set w [getmember w]
 	if {$colorSpace == "rgb"} {
 	    set r [format %.0f [$w.scale1 get]]
 	    set g [format %.0f [$w.scale2 get]]
@@ -182,10 +185,6 @@ sclass ColorEditor {
 	    set b [format %.0f [expr [lindex $list 2]*255]]
 	}
 	set color [format "#%02x%02x%02x" $r $g $b]
-	setmember color $color
-	setmember r $r
-	setmember g $g
-	setmember b $b
 	$w.swatch config -bg $color
 	$w.value config -text $color
 	if { $cmd != "none" } {
@@ -193,12 +192,9 @@ sclass ColorEditor {
 	}
 	update idletasks
     }
+
     method setScales {} {
-	set r [getmember r]
-	set b [getmember b]
-	set g [getmember g]
-	set w [getmember w]
-	setmember updating 1
+	set updating 1
 	global colorSpace
 
 	if {$colorSpace == "rgb"} {
@@ -230,10 +226,10 @@ sclass ColorEditor {
 	    $w.scale2 set [format %.0f [expr {[lindex $list 1] * 100.0}]]
 	    $w.scale3 set [format %.0f [expr {[lindex $list 2] * 100.0}]]
 	}
-	setmember updating 0
+	set updating 0
     }
+
     method loadNamedColor name {
-	set w [getmember w]
 	if {[string index $name 0] != "#"} {
 	    set list [winfo rgb $w.swatch $name]
 	    set r [lindex $list 0]
@@ -259,22 +255,19 @@ sclass ColorEditor {
 	set g [expr $g>>8]
 	set b [expr $b>>8]
 
-	setmember r $r
-	setmember g $g
-	setmember b $b
 	set color [format "#%02x%02x%02x" $r $g $b]
 
-	setmember color $color
 	setScales
 	$w.swatch config -bg $color
 	$w.value config -text $name
     }
+
     method setLabels {l1 l2 l3} {
-	set w [getmember w]
 	$w.label1 config -text $l1
 	$w.label2 config -text $l2
 	$w.label3 config -text $l3
     }
+
     method changeColorSpace space {
 	global colorSpace
 	set colorSpace $space
@@ -373,7 +366,6 @@ sclass ColorEditor {
 }
 
 #----------------------------------------------------------------------------
-# 
 # Color map 0 editor
 #
 # For now, the colors are only actually set when you punch the OK button.
@@ -381,19 +373,17 @@ sclass ColorEditor {
 # map in this case so only the color cell values need to be changed).
 #----------------------------------------------------------------------------
 
-#
 # Buttons0 implements the buttons on the main window.
-#
 
-sclass Buttons0 {
-    method create {w plot} {
+itcl::class Buttons0 {
+    constructor {w plot} {
 	frame $w
 	button $w.savep -text "Save Palette" \
-	    -command "Buttons0:savePalette $this"
+	    -command "$this savePalette"
 	button $w.loadp -text "Load Palette" \
-	    -command "Buttons0:loadPalette $this $plot"
+	    -command "$this loadPalette $plot"
 	button $w.ok -text "OK" \
-	    -command "Buttons0:ok $this"
+	    -command "$this ok"
 
 	pack append $w \
 	    $w.savep "left fill expand" \
@@ -402,31 +392,33 @@ sclass Buttons0 {
 
 	return $w
     }
+
     method ok {} {
 	destroy .edit
     }
+
     method savePalette {} {
 	global palette
-	ColorPalette0:savePalette $palette
+	$palette savePalette
     }
+
     method loadPalette {plot} {
 	global palette
-	ColorPalette0:loadPalette $palette $plot
+	$palette loadPalette $plot
     }
 }
 
-#
 # ColorPalette0 implements the color palette.
-#
 
-sclass ColorPalette0 {
-    member w {}
-    member editor {}
-    method create {w plot} {
+itcl::class ColorPalette0 {
+    variable w {}
+    variable editor {}
+
+    constructor {_w plot} {
+	set w $_w
 	global ncol0 plcmap0_col
-	setmember w $w
 	frame $w -bd 2 -relief raised
-	set cmap0 [$plot.plwin cmd plgcmap0]
+	set cmap0 [$plot cmd plgcmap0]
 	set ncol0 [lindex $cmap0 0]
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set plcmap0_col($i) [lindex $cmap0 [expr $i+1]]
@@ -434,16 +426,17 @@ sclass ColorPalette0 {
 	    label $w.$i.color -width 14 \
 		-anchor w 
 	    button $w.$i.patch -text Edit \
-		-command "ColorPalette0:edit $this $i $plot"
+		-command "$this edit $i $plot"
 	    pack append $w.$i \
 		$w.$i.color "right frame e" \
 		$w.$i.patch "left padx 4 pady 4 frame w"
 	    pack append $w $w.$i "top fillx"
 	}
-	ColorPalette0:loadcmap $this
-	setmember editor [ColorEditor]
+	loadcmap
+	set editor [ColorEditor \#auto]
 	return $w
     }
+
     method savePalette {} {
 	set file [plfile_open w]
 	if {$file != {}} {
@@ -451,12 +444,13 @@ sclass ColorPalette0 {
 	    global ncol0
 	    puts $f "$ncol0"
 	    for {set i 0} {$i < $ncol0} {incr i} {
-		set color [ColorPalette0:getColor $this $i]
+		set color [getColor $i]
 		puts $f "$color"
 	    }
 	    close $f
 	}
     }
+
     method loadPalette {plot} {
 	set file [plfile_open r]
 	if {$file != {}} {
@@ -475,25 +469,26 @@ sclass ColorPalette0 {
 	    close $f
 	    setcmap $plot
 	    destroy .edit.palette
-	    pack append .edit \
-		[ColorPalette0:create $this .edit.palette $plot] "left filly"
+	    ColorPalette0 \#auto .edit.palette $plot
+	    pack append .edit .edit.palette "left filly"
 	}
     }
+
     method loadcmap {} {
-	set w [getmember w]
 	global ncol0 plcmap0_col 
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    $w.$i.color config -text $plcmap0_col($i) 
 	    $w.$i.patch config -background $plcmap0_col($i)
 	}
     }
+
     method edit {i plot} {
-	set w [getmember w]
-	global ncol0 plcmap0_col 
-	set orig [ColorPalette0:getColor $this $i]
-	set color [ColorEditor:run [getmember editor] \
+	global ncol0 plcmap0_col
+	global static_redraw dynamic_redraw
+	set orig [getColor $i]
+	set color [$editor run \
 		       [lindex [$w.$i.patch config -background] 4] \
-		       ColorPalette0:colChanged $this $i $plot]
+		       $this colChanged $i $plot]
 
 	if {$color != {}} {
 	    set plcmap0_col($i) $color
@@ -503,37 +498,46 @@ sclass ColorPalette0 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot.plwin cmd plscol0 $i $color
+	$plot cmd plscol0 $i $color
+	if $static_redraw {
+	    $plot redraw
+	}
     }
+
     method colChanged {data color} {
+	global static_redraw dynamic_redraw
 	set i    [lindex $data 0]
 	set plot [lindex $data 1]
-	set w    [getmember w]
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot.plwin cmd plscol0 $i $color
+	$plot cmd plscol0 $i $color
+	if $dynamic_redraw {
+	    $plot redraw
+	}
     }
+
     method setcmap {plot} {
 	global ncol0 plcmap0_col 
+	global static_redraw dynamic_redraw
 	set cmap0 ""
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set cmap0 "$cmap0 $plcmap0_col($i)"
 	}
-	$plot.plwin cmd plscmap0 $ncol0 $cmap0
+	$plot cmd plscmap0 $ncol0 $cmap0
+	if $static_redraw {
+	    $plot redraw
+	}
     }
+
     method getColor {i} {
-	set w [getmember w]
 	return [lindex [$w.$i.patch config -background] 4]
     }
 }
 
-#
 # External entry point
-#
 
 proc plcmap0_edit {plot} {
-
     global ncol0 plcmap0_col palette
 
     catch {destroy .edit}
@@ -542,36 +546,32 @@ proc plcmap0_edit {plot} {
     wm title .edit "Color Map 0 Editor"
     wm iconname .edit "Cmap0 Editor"
     wm minsize .edit 100 100
-
-    pack append .edit \
-	[Buttons0:create [Buttons0] .edit.buttons $plot] "top fillx"
-
-    pack append .edit \
-	[ColorPalette0:create \
-	     [set palette [ColorPalette0]] .edit.palette $plot] "left filly"
+    Buttons0 \#auto .edit.buttons $plot
+    pack append .edit .edit.buttons \
+      "top fillx"
+    
+    set palette [ColorPalette0 \#auto .edit.palette $plot]
+    pack append .edit .edit.palette \
+      "left filly"
 }
 
 #----------------------------------------------------------------------------
-# 
 # Color map 1 editor
 #
 # The default colors are set the first time this file is sourced.
-#
 #----------------------------------------------------------------------------
 
-#
 # Buttons1 implements the buttons on the main window.
-#
 
-sclass Buttons1 {
-    method create {w plot} {
+itcl::class Buttons1 {
+    constructor {w plot} {
 	frame $w
 	button $w.savep -text "Save Palette" \
-	    -command "Buttons1:savePalette $this"
+	    -command "$this savePalette"
 	button $w.loadp -text "Load Palette" \
-	    -command "Buttons1:loadPalette $this $plot"
+	    -command "$this loadPalette $plot"
 	button $w.ok -text "OK" \
-	    -command "Buttons0:ok $this"
+	    -command [code $this ok]
 
 	pack append $w \
 	    $w.savep "left fill expand" \
@@ -580,32 +580,34 @@ sclass Buttons1 {
 
 	return $w
     }
+
     method ok {} {
 	destroy .edit
     }
+
     method savePalette {} {
 	global palette
-	ColorPalette1:savePalette $palette
+	$palette savePalette
     }
+
     method loadPalette {plot} {
 	global palette
-	ColorPalette1:loadPalette $palette $plot
+	$palette loadPalette $plot
     }
 }
 
-#
 # ColorPalette1 implements the color palette.
 #
 # Anchor the position of each control point by its neighboring control points.
 # The ones at the end must stay fixed.
-#
 
-sclass ColorPalette1 {
-    member w {}
-    member editor {}
-    method create {w plot} {
+itcl::class ColorPalette1 {
+    variable w {}
+    variable editor {}
+
+    constructor {_w plot} {
+	set w $_w
 	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
-	setmember w $w
 
 	frame $w -bd 2 -relief flat
 	frame $w.l -bd 2 -relief flat
@@ -619,15 +621,18 @@ sclass ColorPalette1 {
 	label $w.lab.rev -relief flat -text "Reverse"
 
 	pack append $w.lab \
-	    $w.lab.color {left padx 150}
+	    $w.lab.color \
+	    {left padx 50}
 
 	pack append $w.lab \
-	    $w.lab.pos {left padx 120}
+	    $w.lab.rev \
+	    {right fillx}
 
 	pack append $w.lab \
-	    $w.lab.rev {right padx 20}
+	    $w.lab.pos \
+	    {right padx 200}
 
-	set cmap1 [$plot.plwin cmd plgcmap1]
+	set cmap1 [$plot cmd plgcmap1]
 	set ncol1 [lindex $cmap1 0]
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    set plcmap1_col($i) [lindex $cmap1 [expr 3*$i+1]]
@@ -636,19 +641,33 @@ sclass ColorPalette1 {
 	    frame $w.l.$i
 	    label $w.l.$i.color -width 14 -anchor w
 	    button $w.l.$i.patch -text Edit \
-		-command "ColorPalette1:edit $this $i $plot"
+		-command "$this edit $i $plot"
 
 	    scale $w.l.$i.scale -from 0 -to 100 -length 8c \
 		-orient horizontal \
-		-command "ColorPalette1:posChanged $this $i $plot"
+		-command "$this posChanged $i $plot"
 
-	    pack append $w.l.$i \
-		$w.l.$i.scale "right expand padx 8 pady 4" 
+	# I only decorate the movable sliders (i.e. not endpoints) by +/-
+	# buttons.  But the sliders themselves are a good visual cue as to
+	# what's going on so they get to stay.
 
+	    if {$i == 0 || $i == $ncol1-1} {
+		pack append $w.l.$i \
+		    $w.l.$i.scale "right expand padx 8 pady 4" 
+	    } else {
+		button $w.l.$i.up -width 2 -text + \
+		    -command "$this inc $i 1"
+		button $w.l.$i.down -width 2 -text - \
+		    -command "$this inc $i -1"
+
+		pack append $w.l.$i \
+		    $w.l.$i.up "right padx .5c" \
+		    $w.l.$i.scale "right expand padx 8 pady 4" \
+		    $w.l.$i.down "right padx .5c" 
+	    }
 	    pack append $w.l.$i \
 		$w.l.$i.color "right frame e" \
 		$w.l.$i.patch "left padx 4 pady 4 frame w" 
-
 	    pack append $w.l $w.l.$i "top fillx"
 	}
 
@@ -661,15 +680,15 @@ sclass ColorPalette1 {
 	    if {$i < $ncol1-1} {
 		checkbutton $w.r.$i.rev \
 		    -variable plcmap1_rev($i) -relief flat \
-		    -command "ColorPalette1:setcmap $this $plot"
+		    -command "$this setcmap $plot"
 		pack append $w.r.$i \
 		    $w.r.$i.rev "right padx .5c" 
 	    }
 	    pack append $w.r $w.r.$i "top filly expand"
 	}
 
-	ColorPalette1:loadcmap $this
-	setmember editor [ColorEditor]
+	$this loadcmap
+	set editor [ColorEditor \#auto]
 
 	pack append $w \
 	    $w.lab "top fillx" \
@@ -678,6 +697,7 @@ sclass ColorPalette1 {
 
 	return $w
     }
+
     method savePalette {} {
 	set file [plfile_open w]
 	if {$file != {}} {
@@ -686,12 +706,13 @@ sclass ColorPalette1 {
 
 	    puts $f "$ncol1"
 	    for {set i 0} {$i < $ncol1} {incr i} {
-		set color [ColorPalette1:getColor $this $i]
+		set color [$this getColor $i]
 		puts $f "$color $plcmap1_pos($i) $plcmap1_rev($i)"
 	    }
 	    close $f
 	}
     }
+
     method loadPalette {plot} {
 	set file [plfile_open r]
 	if {$file != {}} {
@@ -716,26 +737,26 @@ sclass ColorPalette1 {
 	    close $f
 	    setcmap $plot
 	    destroy .edit.palette
-	    pack append .edit \
-		[ColorPalette1:create $this .edit.palette $plot] "left filly"
+	    ColorPalette1 \#auto .edit.palette $plot
+	    pack append .edit .edit.palette "left filly"
 	}
     }
+
     method inc {i inc} {
-	set w [getmember w]
 	$w.l.$i.scale set [expr [$w.l.$i.scale get]+$inc]
     }
+
     method posChanged {i plot args} {
 	global plcmap1_pos
-	set w [getmember w]
 	set curr [getpos $i]
 
 	$w.l.$i.scale set $curr
 	set plcmap1_pos($i) $curr
-	setcmap $plot
+	setcmap $plot 1
     }
+
     method getpos {i} {
 	global ncol1
-	set w [getmember w]
 	if {$i == 0} {
 	    return 0
 	}
@@ -765,8 +786,8 @@ sclass ColorPalette1 {
 	}
 	return $curr
     }
+
     method loadcmap {} {
-	set w [getmember w]
 	global ncol1 plcmap1_col plcmap1_pos
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    $w.l.$i.color config -text $plcmap1_col($i) 
@@ -774,14 +795,16 @@ sclass ColorPalette1 {
 	    $w.l.$i.scale set $plcmap1_pos($i)
 	}
     }
-    method edit {i plot} {
-	set w [getmember w]
-	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
-	set orig [ColorPalette1:getColor $this $i]
-	set color [ColorEditor:run [getmember editor] \
-		       [lindex [$w.l.$i.patch config -background] 4] \
-		       ColorPalette1:colChanged $this $i $plot]
 
+    method edit {i plot} {
+	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
+	global static_redraw dynamic_redraw
+	set orig [$this getColor $i]
+	set color [$editor run \
+		       [lindex [$w.l.$i.patch config -background] 4] \
+		       $this colChanged $i $plot]
+
+	puts "new color: $color"
 	if {$color != {}} {
 	    set plcmap1_col($i) $color
 	} else {
@@ -790,39 +813,48 @@ sclass ColorPalette1 {
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
-	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
+	$plot cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
+	if $static_redraw {
+	    $plot redraw
+	}
     }
+
     method colChanged {data color} {
 	global plcmap1_pos plcmap1_rev
+	global static_redraw dynamic_redraw
 	set i    [lindex $data 0]
 	set plot [lindex $data 1]
-	set w    [getmember w]
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
-	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
+	$plot cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
+	if $dynamic_redraw {
+	    $plot redraw
+	}
     }
-    method setcmap {plot} {
+
+    method setcmap {plot {dynamic 0}} {
 	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
+	global static_redraw dynamic_redraw
 	set cmap1 ""
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    set cmap1 \
 		"$cmap1 $plcmap1_col($i) $plcmap1_pos($i) $plcmap1_rev($i)"
 	}
-	$plot.plwin cmd plscmap1 $ncol1 $cmap1
+	$plot cmd plscmap1 $ncol1 $cmap1
+	if { (!$dynamic && $static_redraw) || ($dynamic && $dynamic_redraw) } {
+	    $plot redraw
+	}
     }
+
     method getColor {i} {
-	set w [getmember w]
 	return [lindex [$w.l.$i.patch config -background] 4]
     }
 }
 
-#
 # External entry point
-#
 
 proc plcmap1_edit {plot} {
-
     global ncol1 plcmap1_col plcmap1_pos palette
 
     catch {destroy .edit}
@@ -831,12 +863,13 @@ proc plcmap1_edit {plot} {
     wm title .edit "Color Map 1 Editor"
     wm iconname .edit "Cmap1 Editor"
     wm minsize .edit 100 100
-
-    pack append .edit \
-	[Buttons1:create [Buttons1] .edit.buttons $plot] "top fillx"
-
-    pack append .edit \
-	[ColorPalette1:create \
-	     [set palette [ColorPalette1]] .edit.palette $plot] "left filly"
+    Buttons1 \#auto .edit.buttons $plot
+    pack append .edit .edit.buttons \
+      "top fillx"
+    set palette [ColorPalette1 \#auto .edit.palette $plot]
+    pack append .edit .edit.palette \
+	 "left filly"
 }
+
+
 
