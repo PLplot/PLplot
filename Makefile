@@ -51,7 +51,7 @@ tmp/Makefile: configure
 	if test -f ./reconfig; then ./reconfig; else ./configure; fi
 
 configure: cf/configure.in cf/sysconf.in cf/sysloc.in cf/aclocal.m4 cf/version.in
-	cd cf; autoconf; mv configure ..
+	cd cf && autoconf && mv configure ..
 
 cfclean:
 	rm -f reconfig
