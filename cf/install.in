@@ -26,7 +26,9 @@ install_lib:
 	-cp ../mklinks $(INSTALL_DIR)
 	-cp ../lib/libplplot* ../lib/*.fnt $(LIB_DIR)
 	$(RANLIB) $(LIB_DIR)/libplplot*.*
-	-cd ..; cp README* Changes.log COPYRIGHTS FAQ ToDo $(DOC_DIR)
+	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo $(DOC_DIR)
+	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
+		cp ../README.local $(DOC_DIR); fi
 	-cd ../scripts; cp pl* $(BIN_DIR)
 	-cd ../include; \
 	cp plplotP.h plplot.h plplotX.h plplotTK.h \
