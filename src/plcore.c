@@ -282,7 +282,7 @@ plP_fill(short *x, short *y, PLINT npts)
     }
 }
 
-/* Driver wants to raws text */
+/* Driver wants to draw text itself */
 
 void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y, PLINT refx, PLINT refy, const char *string)
