@@ -23,36 +23,29 @@ static long cur_pos;
 static FILE *fp;
 static int  color = 1;
 
-static DrvOpt driver_options[] = {{"color", DRV_INT, &color, "Color Postscript/LaTeX (color=1|0)"},
-              {NULL, DRV_INT, NULL, NULL}};
+static DrvOpt pstex_options[] = {{"color", DRV_INT, &color, "Color Postscript/LaTeX (color=1|0)"},
+				  {NULL, DRV_INT, NULL, NULL}};
 
 void
 plD_init_pstex(PLStream *pls)
 {
   char ofile[80];
-  PLFLT rot_scale;
 
-  pls->dev_text = 1; /* want to draw text */
-
-  plParseDrvOpts(driver_options);
-
+  plParseDrvOpts(pstex_options);
   if (color)
     plD_init_psc(pls); /* init color postscript driver */
   else
     plD_init_psm(pls); /* init monochrome postscript driver */
+
+  pls->dev_text = 1; /* want to draw text */
 
   /* open latex output file */
   strncpy(ofile, pls->FileName, 80);
   strcat(ofile, "_t");
   fp = fopen(ofile, "w");
 
-  /* Shouldn't these be set? I have to calculate rot_scale instead */
-  /* fprintf(stderr,"%f %f\n", pls->aspdev, pls->aspori); */
-
-  rot_scale = ((int)(pls->diorot) % 2) ? (float)YSIZE/(float)XSIZE : 1.;
-
   fprintf(fp,"\\begin{picture}(0,0)(0,0)%%
-\\includegraphics[scale=%f,clip]{%s}%%
+\\includegraphics[scale=1.,clip]{%s}%%
 \\end{picture}%%
 \\setlength{\\unitlength}{%fbp}%%
 \\begingroup\\makeatletter\\ifx\\SetFigFont\\undefined%%
@@ -61,7 +54,7 @@ plD_init_pstex(PLStream *pls)
 \\fontfamily{#3}\\fontseries{#4}\\fontshape{#5}%%
 \\selectfont}%%
 \\fi\\endgroup%%\n", 
-     rot_scale, pls->FileName, 72./25.4/pls->xpmm);
+	  pls->FileName, 72./25.4/pls->xpmm);
 
   cur_pos = ftell(fp);
   fprintf(fp,"\\begin{picture}(xxxxxx,xxxxxx)(xxxxxx,xxxxxx)%%\n");
@@ -90,21 +83,20 @@ void
 plD_tidy_pstex(PLStream *pls)
 {
   PSDev *dev = (PSDev *) pls->dev;
-  float rot_scale, scale;
+  PLFLT scale;
 
   plD_tidy_ps(pls);
   
   scale = pls->xpmm * 25.4 / 72.;
-  rot_scale = ((int)(pls->diorot) % 2) ? (float)YSIZE/(float)XSIZE : 1.;
-
+  
   fprintf(fp,"\\end{picture}\n");
 
   fseek(fp, cur_pos, SEEK_SET);
   fprintf(fp,"\\begin{picture}(%d,%d)(%d,%d)%%\n%%",
-     ROUND((dev->urx - dev->llx) * scale * rot_scale),
-     ROUND((dev->ury - dev->lly) * scale * rot_scale),
-     ROUND((dev->llx - XOFFSET) * scale * rot_scale),
-     ROUND((dev->lly - YOFFSET) * scale * rot_scale));
+     ROUND((dev->urx - dev->llx) * scale),
+     ROUND((dev->ury - dev->lly) * scale),
+     ROUND((dev->llx - XOFFSET) * scale),
+     ROUND((dev->lly - YOFFSET) * scale));
 
   fclose(fp);
 }
@@ -116,6 +108,7 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT a1, alpha, ft_ht, angle;
   char cptr[256], jst, ref;
   PSDev *dev = (PSDev *) pls->dev;
+  PLINT clxmin, clxmax, clymin, clymax;
 
   /* font height */
   ft_ht = 1.6 /*!*/ * pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
@@ -162,12 +155,25 @@ proc_str (PLStream *pls, EscText *args)
     args->y = args->refy;
   }
 
-  plRotPhy(pls->diorot+1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-      &(args->x), &(args->y));
+  /* apply transformations */
+  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+
+  /* check clip limits. For now, only the reference point of the string is checked;
+     but the the whole string should be checked -- using a postscript construct
+     such as gsave/clip/grestore. This method can also be applied to the xfig and
+     pstex drivers. Zoom side effect: the font size must be adjusted! */
+
+  if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax)
+    return;
+
+  plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+     &(args->x), &(args->y));
+
 #ifdef DEBUG
   fprintf(fp,"\\put(%d,%d){\\circle{10}}\n",
      args->x, args->y);
 #endif
+
   fprintf(fp,"\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]
 {\\SetFigFont{%.1f}{12}",
      args->x, args->y, alpha, jst, ref, ft_ht);
@@ -208,16 +214,14 @@ proc_str (PLStream *pls, EscText *args)
    * keep ps driver happy -- needed for background and orientation.
    * arghhh! can't calculate it, as I only have the string reference
    * point, not its extent!
-   * The solution will be to use the current latex font size in pt?
-   * Also need to take into account rotation and justification?!
    * Quick (and final?) *hack*, ASSUME that no more than a char height
    * extents after/before the string reference point.
    */
 
   dev->llx = MIN(dev->llx, args->x - ft_ht * 25.4 / 72. * pls->xpmm);
-  dev->lly = MIN(dev->lly, args->y - ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->lly = MIN(dev->lly, args->y - ft_ht * 25.4 / 72. * pls->ypmm);
   dev->urx = MAX(dev->urx, args->x + ft_ht * 25.4 / 72. * pls->xpmm);
-  dev->ury = MAX(dev->ury, args->y + ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->ury = MAX(dev->ury, args->y + ft_ht * 25.4 / 72. * pls->ypmm);
 }
 
 void
