@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1994/10/10 17:23:50  furnish
+# Revision 1.2  1994/10/10 19:45:02  furnish
+# Imlemented plshade from Tcl.
+#
+# Revision 1.1  1994/10/10  17:23:50  furnish
 # Tk script to show off new 2-d plframe API.
 #
 ###############################################################################
@@ -84,118 +87,31 @@ proc contour {} {
     }
 
     .plw plcont x clev
-#    .plw.plwin cmd plcont x clev
 }
 
-# This is supposed to work just like the plot1() in x01c.c
+proc shade {} {
+    
+    global x
+    .plw plcol 1
+    .plw plenv 0 1 0 1 0 0
+    .plw plcol 6
+    .plw pllab "(x)" "(y)" "Cool shade plot example from Tcl"
 
-proc plot1 {w} {
-    global xscale yscale xoff yoff
+    set max [x max]
+    set min [x min]
 
-    set npts 60
-    matrix x f $npts
-    matrix y f $npts
+    set xmin 0
+    set xmax 1
+    set ymin 0
+    set ymax 1
 
-    for {set i 0} {$i < $npts} {incr i} {
-	$x $i = [expr $xoff + $xscale * ($i + 1) / $npts]
-	$y $i = [expr $yoff + $yscale * pow([$x $i],2)]
+    for {set i 0} {$i < 20} {incr i} {
+	set sh_min [expr $min + ($max-$min)*$i/20]
+	set sh_max [expr $min + ($max-$min)*($i+1)/20]
+	set sh_col [expr $i/20.]
+
+	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max $sh_col
     }
-
-    set xmax [$x [expr $npts-1]]
-    set ymax [$y [expr $npts-1]]
-
-    matrix x1 f 6
-    matrix y1 f 6
-
-    for {set i 0} {$i < 6} {incr i} {
-	set j [expr $i*10+3]
-	$x1 $i = [$x $j]
-	$y1 $i = [$y $j]
-    }
-
-    $w cmd plcol 1
-    $w cmd plenv $xoff $xmax $yoff $ymax 0 0
-    $w cmd plcol 6
-    $w cmd pllab "(x)" "(y)" "#frPLplot Example 1 - y=x#u2"
-
-    # plot the data points
-
-    $w cmd plcol 9
-    $w cmd plpoin 6 $x1 $y1 9
-
-    # draw the line through the data
-
-    $w cmd plcol 4
-    $w cmd plline $npts $x $y
-}
-
-# This is supposed to work just like the plot2() in x01c.c
-
-proc plot2 {w} {
-    $w cmd plcol 1
-    $w cmd plenv -2 10 -.4 1.2 0 1
-    $w cmd plcol 2
-    $w cmd pllab "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function"
-
-    # Fill up the array
-
-    matrix x1 f 101
-    matrix y1 f 101
-
-    for {set i 0} {$i < 101} {incr i} {
-	set x [expr ($i - 19.)/6.]
-	$x1 $i = $x
-	$y1 $i = 1
-	if {$x != 0} { $y1 $i = [expr sin($x)/$x] }
-    }
-
-    $w cmd plcol 3
-    $w cmd plline 101 $x1 $y1
-}
-
-# This is supposed to work just like the plot3() in x01c.c
-
-proc plot3 {w} {
-
-    $w cmd pladv
-    $w cmd plvsta
-    $w cmd plwind 0.0 360.0 -1.2 1.2
-
-# Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
-
-    $w cmd plcol 1
-    $w cmd plbox "bcnst" 60.0 2 "bcnstv" 0.2 2
-
-# Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
-# plstyl expects two integer matrices for mark and space!
-
-    matrix mark i 1
-    matrix space i 1
-
-    $mark 0 = 1500
-    $space 0 = 1500
-    $w cmd plstyl 1 $mark $space
-
-    $w cmd plcol 2
-    $w cmd plbox "g" 30.0 0 "g" 0.2 0
-
-    $mark 0 = 0
-    $space 0 = 0
-    $w cmd plstyl 0 $mark $space
-
-    $w cmd plcol 3
-    $w cmd pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
-
-    matrix x f 101
-    matrix y f 101
-
-    for {set i 0} {$i < 101} {incr i} {
-	$x $i = [expr 3.6 * $i]
-	$y $i = [expr sin([$x $i] * 3.141592654 / 180.0)]
-    }
-
-    $w cmd plcol 4
-    $w cmd plline 101 $x $y
 }
 
 ###############################################################################

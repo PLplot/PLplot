@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/10/10 17:25:30  furnish
+ * Revision 1.8  1994/10/10 19:45:07  furnish
+ * Imlemented plshade from Tcl.
+ *
+ * Revision 1.7  1994/10/10  17:25:30  furnish
  * Add knowledge of contouring.
  *
  * Revision 1.6  1994/09/23  07:53:14  mjl
@@ -70,6 +73,7 @@ static int plpoinCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plptexCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plschrCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plssubCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsstrmCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsymCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -126,6 +130,7 @@ static CmdInfo Cmds[] = {
     {"plpoin",		plpoinCmd},
     {"plptex",		plptexCmd},
     {"plschr",		plschrCmd},
+    {"plshade",		plshadeCmd},
     {"plssub",		plssubCmd},
     {"plsstrm",		plsstrmCmd},
     {"plstyl",		plstylCmd},
@@ -452,13 +457,6 @@ plcontCmd(ClientData clientData, Tcl_Interp *interp,
     char *mat;
     tclMatrix *matPtr, *pclev;
 
-    printf( "argc = %d\n", argc );
-
-    { int i;
-    for( i=0; i < argc; i++ )
-	printf( "argv_i = %s\n", argv[i] );
-    }
-
     if (argc != 3 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
 			 argv[0], " data clev\"",
@@ -490,8 +488,6 @@ plcontCmd(ClientData clientData, Tcl_Interp *interp,
 	     matPtr->n[0], matPtr->n[1],
 	     1, matPtr->n[0], 1, matPtr->n[1],
 	     pclev->fdata, pclev->n[0], pltr0, NULL );
-
-    printf( "Drawing the contour.\n" );
 
     plflush();
     return TCL_OK;
@@ -970,6 +966,86 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
 
     plflush();
     return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plshadeCmd
+ *
+ * Processes plshade Tcl command.
+ * C version takes:
+ *    data, nx, ny, defined,
+ *    xmin, xmax, ymin, ymax,
+ *    sh_min, sh_max, sh_cmap, sh_color, sh_width,
+ *    min_col, min_wid, max_col, max_wid,
+ *    plfill, rect, pltr, pltr_data
+ *
+ * We will be getting data through a 2-d Matrix, which carries along
+ * nx and ny, so no need for those.  Toss defined.  Toss plfill since
+ * it is the only valid choice anyway, and assume rect==1 and no
+ * transformation, since I don't know how to do anything else anyway.
+\*----------------------------------------------------------------------*/
+
+static int
+plshadeCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    int result = TCL_OK;
+    char *mat;
+    tclMatrix *matPtr;
+
+    PLFLT xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
+
+    PLFLT **z;
+    PLINT sh_cmap =1, sh_wid =2;
+    PLINT min_col =1, min_wid =0, max_col =0, max_wid =0;
+    PLINT rect =1;
+    int i, j;
+
+    if (argc < 9 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " \"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    mat = Tcl_GetVar( interp, argv[1], 0 );
+    matPtr = Tcl_GetMatrixPtr( interp, mat );
+
+    if (matPtr->dim != 2) {
+	interp->result = "Must plot a 2-d matrix.";
+	return TCL_ERROR;
+    }
+
+    plAlloc2dGrid( &z, matPtr->n[0], matPtr->n[1] );
+    
+    for( i=0; i < matPtr->n[0]; i++ )
+	for( j=0; j < matPtr->n[1]; j++ )
+	    z[i][j] = matPtr->fdata[I2D(i,j)];
+
+    xmin = atof( argv[2] );
+    xmax = atof( argv[3] );
+    ymin = atof( argv[4] );
+    ymax = atof( argv[5] );
+    sh_min = atof( argv[6] );
+    sh_max = atof( argv[7] );
+    sh_col = atof( argv[8] );
+
+    for( i=9; i < argc; i++ ) {
+	/* process argv[i] for options like -min_col 4, etc. */
+	/* Jump to end if error, so z is freed. */
+    }
+
+    plshade( z, matPtr->n[0], matPtr->n[1], NULL,
+	     xmin, xmax, ymin, ymax,
+	     sh_min, sh_max, sh_cmap, sh_col, sh_wid,
+	     min_col, min_wid, max_col, max_wid,
+	     plfill, rect, NULL, NULL );
+
+    plflush();
+
+  end:
+    free( (void *) z );
+    return result;
 }
 
 /*----------------------------------------------------------------------*\

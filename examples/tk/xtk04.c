@@ -1,31 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/10/10 17:22:51  furnish
+ * Revision 1.2  1994/10/10 19:45:04  furnish
+ * Imlemented plshade from Tcl.
+ *
+ * Revision 1.1  1994/10/10  17:22:51  furnish
  * New Tk demo to show off the 2-d api.
  *
- * Revision 1.8  1994/09/23  07:47:30  mjl
- * Modified to use the new syntax for pltkMain().
- *
- * Revision 1.7  1994/07/01  20:44:35  mjl
- * Cruft elimination.
- *
- * Revision 1.6  1994/06/30  05:46:21  furnish
- * Another plot command in tk02 which invokes a private tclMatrix
- * extension for demo purposes.  xtk02.c adds a new tclMatrix subcommand
- * "stuff", and tk02 exercises it.  Dumb, but shows how it all works.
- *
- * Revision 1.5  1994/06/23  22:40:29  mjl
- * Fix to get prototype of pltkMain() correct, and some cleaning up.
- *
- * Revision 1.4  1994/06/16  19:30:25  mjl
- * Changes to use pltkMain() for creating extended wish.  Should be more
- * portable and robust than old method.
- *
- * Revision 1.3  1994/06/10  20:47:34  furnish
- * Big time clean up.
- *
- * Revision 1.2  1994/05/26  22:38:08  mjl
- * Added missing CVS Id and Log fields.
  */
 
 /* Before including plplot.h you must define TK to get all prototypes */
@@ -66,34 +46,6 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
     sprintf( interp->result, "%f", min );
     return TCL_OK;
 }
-
-/* A pithy little proc to show off how to install and use a tclMatrix
-   extension subcommand. This example is silly--only intended to show
-   how to do it.  What to do with it is your problem.  Could implement
-   subcommands for filling a matrix with special functions, performing
-   fft's, etc.
-   */
-
-int stuff( tclMatrix *pm, Tcl_Interp *interp,
-	   int argc, char *argv[] )
-{
-    int i;
-    float x, y;
-    printf( "made it into stuff, pm->n[0] = %d.\n", pm->n[0] );
-
-/* Should check that matrix is right type, size, etc. */
-
-    for( i = 0; i < pm->n[0]; i++ ) {
-	x = (float) i / pm->n[0];
-	y = sin( 6.28 * 4. * i / pm->n[0] ) * x * (1. - x) * 2 +
-	    2. * x * (1. - x);
-	pm->fdata[i] = y;
-    }
-
-    interp->result = "Things are cool in gumbyville.";
-    return TCL_OK;
-}
-
 
 /*----------------------------------------------------------------------*\
  * main --
@@ -152,7 +104,6 @@ main(int argc, char **argv)
  *----------------------------------------------------------------------
  */
 
-int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
 int   get_dataCmd        (ClientData, Tcl_Interp *, int, char **);
 
 static int
@@ -191,213 +142,12 @@ AppInit(Tcl_Interp *interp)
      * they weren't already created by the init procedures called above.
      */
 
-    Tcl_CreateCommand(interp, "myplot", myplotCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
     Tcl_CreateCommand(interp, "get_data", get_dataCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
 
-    Tcl_MatrixInstallXtnsn( "stuff", stuff );
     Tcl_MatrixInstallXtnsn( "max", mat_max );
     Tcl_MatrixInstallXtnsn( "min", mat_min );
 
-    return TCL_OK;
-}
-
-void myplot1();
-void myplot2();
-void myplot3();
-void myplot4();
-
-/* Plots several simple functions */
-/* Note the compiler should automatically convert all non-pointer arguments
-   to satisfy the prototype, but some have problems with constants. */
-
-static PLFLT x[101], y[101];
-static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
-static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
-
-void plot1(void);
-void plot2(void);
-void plot3(void);
-
-/* This has been superceeded by Tcl code in tk02 */
-
-void myplot1()
-{
-/* Set up the data */
-/* Original case */
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff = 0.;
-    yoff = 0.;
-
-/* Do a plot */
-
-    plot1();
-}
-
-void myplot2()
-{
-    PLINT digmax;
-
-/* Set up the data */
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff = 0.0185;
-
-/* Do a plot */
-
-    digmax = 5;
-    plsyax(digmax, 0);
-    plot1();
-}
-
-void myplot3()
-{
-    plot2();
-}
-
-void myplot4()
-{
-    plot3();
-}
-
- /* =============================================================== */
-
-void
-plot1(void)
-{
-    int i;
-    PLFLT xmin, xmax, ymin, ymax;
-
-    for (i = 0; i < 60; i++) {
-	x[i] = xoff + xscale * (i + 1) / 60.0;
-	y[i] = yoff + yscale * pow(x[i], 2.);
-    }
-
-    xmin = x[0];
-    xmax = x[59];
-    ymin = y[0];
-    ymax = y[59];
-
-    for (i = 0; i < 6; i++) {
-	xs[i] = x[i * 10 + 3];
-	ys[i] = y[i * 10 + 3];
-    }
-
-/* Set up the viewport and window using PLENV. The range in X is */
-/* 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
-/* scaled separately (just = 0), and we just draw a labelled */
-/* box (axis = 0). */
-
-    plcol(1);
-    plenv(xmin, xmax, ymin, ymax, 0, 0);
-    plcol(6);
-    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
-
-/* Plot the data points */
-
-    plcol(9);
-    plpoin(6, xs, ys, 9);
-
-/* Draw the line through the data */
-
-    plcol(4);
-    plline(60, x, y);
-}
-
- /* =============================================================== */
-
-void
-plot2(void)
-{
-    int i;
-
-/* Set up the viewport and window using PLENV. The range in X is -2.0 to
-   10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-   (just = 0), and we draw a box with axes (axis = 1). */
-
-    plcol(1);
-    plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
-    plcol(2);
-    pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
-
-/* Fill up the arrays */
-
-    for (i = 0; i < 100; i++) {
-	x[i] = (i - 19.0) / 6.0;
-	y[i] = 1.0;
-	if (x[i] != 0.0)
-	    y[i] = sin(x[i]) / x[i];
-    }
-
-/* Draw the line */
-
-    plcol(3);
-    plline(100, x, y);
-
-}
-
- /* =============================================================== */
-
-void
-plot3(void)
-{
-    int i;
-
-/* For the final graph we wish to override the default tick intervals, and
-   so do not use PLENV */
-
-    pladv(0);
-
-/* Use standard viewport, and define X range from 0 to 360 degrees, Y range
-       from -1.2 to 1.2. */
-
-    plvsta();
-    plwind(0.0, 360.0, -1.2, 1.2);
-
-/* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
-
-    plcol(1);
-    plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
-
-/* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
-   expects a pointer!! */
-
-    plstyl(1, &mark1, &space1);
-    plcol(2);
-    plbox("g", 30.0, 0, "g", 0.2, 0);
-    plstyl(0, &mark0, &space0);
-
-    plcol(3);
-    pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
-
-    for (i = 0; i < 101; i++) {
-	x[i] = 3.6 * i;
-	y[i] = sin(x[i] * 3.141592654 / 180.0);
-    }
-
-    plcol(4);
-    plline(101, x, y);
-}
-
-int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
-{
-    if (!strcmp(argv[1],"1"))
-      myplot1();
-
-    if (!strcmp(argv[1],"2"))
-      myplot2();
-
-    if (!strcmp(argv[1],"3"))
-      myplot3();
-
-    if (!strcmp(argv[1],"4"))
-      myplot4();
-
-    plflush();
     return TCL_OK;
 }
 
