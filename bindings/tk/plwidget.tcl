@@ -1,6 +1,19 @@
 # $Id$
 # $Log$
-# Revision 1.31  1995/04/12 08:15:46  mjl
+# Revision 1.32  1995/05/26 20:18:43  mjl
+# Split up the plot-menu building code into different procs and rewrote
+# substantially.  Save menu changed: the device is now specified as an option,
+# with all Save-As.. selections going to this device.  A file type option
+# was added, to select between 1 plot/file (the default) and many plots/file
+# (archive files).  Intended to reduce errors caused by forgetting to close
+# the save file.  The Again and Close commands are now disabled unless an
+# archive type save file is open.  Zoom menu changed: forward/back entries
+# added, to go forward or back one zoom level.  Disabled if it's not possible
+# to do so.  Zoom options added: preserve aspect ratio (check button), zoom
+# starting from corner or center (radio button).  Default is to zoom from
+# one corner, preserving aspect ratio.
+#
+# Revision 1.31  1995/04/12  08:15:46  mjl
 # Changed the way the client variable is treated.  If specified, enables
 # settings relevant to working with the plplot/TK driver.  To simplify the
 # code, the client variable is now kept globally and not passed as an argument
@@ -128,6 +141,10 @@ proc plxframe {w {client_id {}}} {
     pack append $w \
 	$w.plwin {bottom expand fill}
 
+# Set up defaults
+
+    plw_setup_defaults $w
+
 # Make frame for top row widgets.
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
@@ -136,12 +153,60 @@ proc plxframe {w {client_id {}}} {
     pack append $w \
 	$w.ftop {top fill}
 
-# Initialize plplot widget
 # Enable keyboard traversal when widget has the input focus.
 # Also grab the initial input focus.
 
     tk_bindForTraversal $w.plwin
     focus $w.plwin
+
+# Set up bop/eop signal and inform client of plplot widget name for widget
+# commands.
+
+    if { [info exists client] } then {
+	set bop_col [option get $w.ftop.leop off Label]
+	set eop_col [option get $w.ftop.leop on Label]
+
+	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
+	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
+	client_cmd "set plwidget $w.plwin"
+    }
+
+    return $w
+}
+
+#----------------------------------------------------------------------------
+# plw_setup_defaults
+#
+# Set up default settings.
+#----------------------------------------------------------------------------
+
+proc plw_setup_defaults {w} {
+
+# In the two cases below, the options can be specified in advance through
+# the global variables zoomopt_0, etc, and saveopt_0, etc.  Not a great
+# solution but will have to do for now.
+
+# zoom options:
+#  0:	0=don't preserve aspect ratio, 1=do
+#  1:	0=stretch from corner, 1=stretch from center
+
+    global zoomopts zoomopt_0 zoomopt_1
+
+    set zoomopts($w,0) 1
+    set zoomopts($w,1) 0
+    if { [info exists zoomopt_0] } {set zoomopts($w,0) $zoomopt_0}
+    if { [info exists zoomopt_1] } {set zoomopts($w,1) $zoomopt_1}
+
+# save options:
+#  0:   name of default save device
+#  1:   0=save 1 plot/file, 1=save multi plots/file (must close!)
+
+    global saveopts saveopt_0 saveopt_1
+
+    set saveopts($w,0) "psc"
+    set saveopts($w,1) 0
+    if { [info exists saveopt_0] } {set saveopts($w,0) $saveopt_0}
+    if { [info exists saveopt_1] } {set saveopts($w,1) $saveopt_1}
 
 # Set up zoom windows list
 
@@ -164,20 +229,6 @@ proc plxframe {w {client_id {}}} {
 
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
-
-# Set up bop/eop signal and inform client of plplot widget name for widget
-# commands.
-
-    if { [info exists client] } then {
-	set bop_col [option get $w.ftop.leop off Label]
-	set eop_col [option get $w.ftop.leop on Label]
-
-	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
-	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
-	client_cmd "set plwidget $w.plwin"
-    }
-
-    return $w
 }
 
 #----------------------------------------------------------------------------
@@ -206,7 +257,7 @@ proc plw_create_TopRow {w} {
 # Plot menu
 
     pack append $w.ftop \
-	[plw_create_pmenu $w] \
+	[plw_create_pmenu $w $w.ftop.pmenu] \
 	{left fill padx 12}
 
 # Forward and backward (plrender only) page buttons.
@@ -252,190 +303,263 @@ proc plw_create_TopRow {w} {
 # zoom-reset (r), print (P), and save-again (s).
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu {w} {
+proc plw_create_pmenu {w pmbut} {
 
-    menubutton $w.ftop.pmenu -menu $w.ftop.pmenu.m \
-	-text "Plot" \
-	-relief raised
+    global pmenu; set pmenu($w) $pmbut.m
 
-    menu $w.ftop.pmenu.m
+    menubutton $pmbut -text "Plot" -menu $pmenu($w) -relief raised
+    menu $pmenu($w)
 
-#-------
-# Print
-#-------
+    plw_create_pmenu_print   $w
+    plw_create_pmenu_save    $w
+    plw_create_pmenu_orient  $w
+    plw_create_pmenu_zoom    $w
+    plw_create_pmenu_page    $w
+    plw_create_pmenu_options $w
 
-    $w.ftop.pmenu.m add command \
-	-label "Print" \
+    return $pmbut
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_print
+#
+# Create plot-print menu
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_print {w} {
+
+    global pmenu
+
+    $pmenu($w) add command -label "Print" \
 	-command "plw_print $w"
+}
 
-#-----------------
-# Save (cascade)
-#-----------------
+#----------------------------------------------------------------------------
+# plw_create_pmenu_save
+#
+# Create plot-save menu (cascade)
+#----------------------------------------------------------------------------
 
-    $w.ftop.pmenu.m add cascade \
-	-label "Save" \
-	-menu $w.ftop.pmenu.m.save
+proc plw_create_pmenu_save {w} {
 
-    menu $w.ftop.pmenu.m.save
+    global pmenu; set m $pmenu($w).save
 
-# Save - As.. (another cascade)
+    $pmenu($w) add cascade -label "Save" -menu $m
+    menu $m
 
-    $w.ftop.pmenu.m.save add cascade \
-	-label "As" \
-	-menu $w.ftop.pmenu.m.save.as
+# Save - As
 
-    menu $w.ftop.pmenu.m.save.as
-
-# Generate the device list in the "Save/As" widget menu, by querying the
-# plframe widget for the available output devices (which are listed).
-
-    set j 0
-    foreach i [$w.plwin info devices] {
-	$w.ftop.pmenu.m.save.as add command \
-	    -label $i \
-	    -command "plw_saveas $w $j"
-	set j [expr "$j + 1"]
-    }
+    $m add command -label "As" \
+	-command "plw_save_as $w"
 
 # Save - Again
 
-    $w.ftop.pmenu.m.save add command \
-	-label "Again" \
-	-command "plw_save $w"
+    $m add command -label "Again" \
+	-command "plw_save_again $w" \
+	-state disabled
 
 # Save - Close
 
-    $w.ftop.pmenu.m.save add command \
-	-label "Close" \
-	-command "plw_close $w"
+    $m add command -label "Close" \
+	-command "plw_save_close $w" \
+	-state disabled
 
-#-----------------
-# Orient (cascade)
-#-----------------
+    $m add separator
 
-    $w.ftop.pmenu.m add cascade \
-	-label "Orient" \
-	-menu $w.ftop.pmenu.m.orient
+# Save - Set device.. (another cascade)
 
-    menu $w.ftop.pmenu.m.orient
+    $m add cascade -label "Set device" -menu $m.sdev
+    menu $m.sdev
+
+# Generate the device list in the "Save/Set device" widget menu, by querying
+# the plframe widget for the available output devices (which are listed).
+
+    global saveopts
+
+    set devnames [$w.plwin info devnames]
+    set devkeys [$w.plwin info devkeys]
+    set ndevs [llength $devnames]
+    for {set i 0} {$i < $ndevs} {incr i} {
+	set devnam [lindex $devnames $i]
+	set devkey [lindex $devkeys $i]
+
+	$m.sdev add radio -label $devnam \
+	    -variable saveopts($w,0) -value $devkey
+    }
+
+# Save - Set file type.. (another cascade)
+
+    $m add cascade -label "Set file type" -menu $m.sfile
+    menu $m.sfile
+
+# Single file (one plot/file)
+
+    $m.sfile add radio -label "Single file (one plot/file)" \
+	-variable saveopts($w,1) -value 0
+
+# Archive file (many plots/file)
+
+    $m.sfile add radio -label "Archive file (many plots/file)" \
+	-variable saveopts($w,1) -value 1
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_orient
+#
+# Create plot-orient menu (cascade)
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_orient {w} {
+
+    global pmenu; set m $pmenu($w).orient
+
+    $pmenu($w) add cascade -label "Orient" -menu $m 
+    menu $m
+
+    $m configure -postcommand "plw_update_orient $w"
 
 # Orient - 0 degrees
 
-    $w.ftop.pmenu.m.orient add radio \
-	-label "0 degrees" \
+    $m add radio -label "0 degrees" \
 	-command "plw_orient $w 0"
 
 # Orient - 90 degrees
 
-    $w.ftop.pmenu.m.orient add radio \
-	-label "90 degrees" \
+    $m add radio -label "90 degrees" \
 	-command "plw_orient $w 1"
 
 # Orient - 180 degrees
 
-    $w.ftop.pmenu.m.orient add radio \
-	-label "180 degrees" \
+    $m add radio -label "180 degrees" \
 	-command "plw_orient $w 2"
 
 # Orient - 270 degrees
 
-    $w.ftop.pmenu.m.orient add radio \
-	-label "270 degrees" \
+    $m add radio -label "270 degrees" \
 	-command "plw_orient $w 3"
+}
 
-#-----------------
-# Zoom (cascade)
-#-----------------
+#----------------------------------------------------------------------------
+# plw_create_pmenu_zoom
+#
+# Create plot-zoom menu (cascade)
+#----------------------------------------------------------------------------
 
-    $w.ftop.pmenu.m add cascade \
-	-label "Zoom" \
-	-menu $w.ftop.pmenu.m.zoom
+proc plw_create_pmenu_zoom {w} {
 
-    menu $w.ftop.pmenu.m.zoom
+    global pmenu; set m $pmenu($w).zoom
+
+    $pmenu($w) add cascade -label "Zoom" -menu $m
+    menu $m
+
+    $m configure -postcommand "plw_update_zoom $w"
 
 # Zoom - select (by mouse)
 
-    $w.ftop.pmenu.m.zoom add command \
-	-label "Select" \
+    $m add command -label "Select" \
 	-command "plw_zoom_select $w"
+
+# Zoom - back (go back 1 zoom level)
+
+    $m add command -label "Back" \
+	-command "plw_zoom_back $w" \
+	-state disabled
+
+# Zoom - forward (go forward 1 zoom level)
+
+    $m add command -label "Forward" \
+	-command "plw_zoom_forward $w" \
+	-state disabled
 
 # Zoom - enter bounds
 
-    $w.ftop.pmenu.m.zoom add command \
-	-label "Enter bounds.." \
+    $m add command -label "Enter bounds.." \
 	-command "plw_zoom_enter $w"
 
 # Zoom - reset
 
-    $w.ftop.pmenu.m.zoom add command \
-	-label "Reset" \
+    $m add command -label "Reset" \
 	-command "plw_zoom_reset $w"
 
-#------------------------
-# Set up page (cascade)
-#------------------------
+# Zoom - options (another cascade)
 
-    $w.ftop.pmenu.m add cascade \
-	-label "Page" \
-	-menu $w.ftop.pmenu.m.page
+    $m add cascade -label "Options" -menu $m.options
+    menu $m.options
 
-    menu $w.ftop.pmenu.m.page
+    global zoomopts
+
+    $m.options add check -label "Preserve aspect ratio" \
+	-variable zoomopts($w,0)
+
+    $m.options add separator
+
+    $m.options add radio -label "Start from corner" \
+	-variable zoomopts($w,1) -value 0
+
+    $m.options add radio -label "Start from center" \
+	-variable zoomopts($w,1) -value 1
+
+    $m.options invoke 1
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_page
+#
+# Create plot-page menu (cascade)
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_page {w} {
+
+    global pmenu; set m $pmenu($w).page
+
+    $pmenu($w) add cascade -label "Page" -menu $m
+    menu $m
 
 # Page - enter bounds
 
-    $w.ftop.pmenu.m.page add command \
-	-label "Setup.." \
+    $m add command -label "Setup.." \
 	-command "plw_page_enter $w"
 
 # Page - reset
 
-    $w.ftop.pmenu.m.page add command \
-	-label "Reset" \
+    $m add command -label "Reset" \
 	-command "plw_page_reset $w"
+}
 
-#---------
-# Redraw (only for debugging)
-#---------
+#----------------------------------------------------------------------------
+# plw_create_pmenu_redraw
 #
-#    $w.ftop.pmenu.m add command \
-#	-label "Redraw" \
-#	-command "$w.plwin redraw"
+# Create plot-redraw menu
+# I only use this for debugging in cases where the normal redraw capability
+# isn't working right.
+#----------------------------------------------------------------------------
 
-#------------------
-# Options (cascade)
-#------------------
+proc plw_create_pmenu_redraw {w} {
 
-    $w.ftop.pmenu.m add cascade \
-	-label "Options" \
-	-menu $w.ftop.pmenu.m.options
+    global pmenu
 
-    menu $w.ftop.pmenu.m.options
+    $pmenu($w) add command -label "Redraw" \
+	-command "$w.plwin redraw"
+}
 
-    $w.ftop.pmenu.m.options add command \
-	-label "Palette 0" \
+#----------------------------------------------------------------------------
+# plw_create_pmenu_options
+#
+# Create plot-options menu (cascade)
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_options {w} {
+
+    global pmenu; set m $pmenu($w).options
+
+    $pmenu($w) add cascade -label "Options" -menu $m
+    menu $m
+
+    $m add command -label "Palette 0" \
 	-command "plcmap0_edit $w" 
 
-    $w.ftop.pmenu.m.options add command \
-	-label "Palette 1" \
+    $m add command -label "Palette 1" \
 	-command "plcmap1_edit $w" 
-
-#    $w.ftop.pmenu.m.options add separator
-
-#    $w.ftop.pmenu.m.options add command \
-#	-label "Load Configuration" \
-#	-command {null_command "Load Configuration"} 
-
-#    $w.ftop.pmenu.m.options add command \
-#	-label "Save Configuration" \
-#	-command {null_command "Save Configuration"} 
-
-#    $w.ftop.pmenu.m.options add command \
-#	-label "Save Configuration As..." \
-#	-command {null_command "Save Configuration As..."} 
-
-# Los endos
-
-    return $w.ftop.pmenu
 }
 
 #----------------------------------------------------------------------------
@@ -498,16 +622,16 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
 # Interpret keystroke
 
     switch $keyname \
-	$key_zoom_select  "plw_zoom_select $w" \
-	"b"		  "plw_zoom_back $w" \
-	"f"		  "plw_zoom_forward $w" \
-	$key_zoom_reset	  "plw_zoom_reset $w" \
-	$key_print	  "plw_print $w" \
-	$key_save_again	  "plw_save $w" \
-	$key_scroll_right "plw_view_scroll $w  1  0 $state" \
-	$key_scroll_left  "plw_view_scroll $w -1  0 $state" \
-	$key_scroll_up	  "plw_view_scroll $w  0 -1 $state" \
-	$key_scroll_down  "plw_view_scroll $w  0  1 $state" 
+	$key_zoom_select	"plw_zoom_select $w" \
+	"b"			"plw_zoom_back $w" \
+	"f"			"plw_zoom_forward $w" \
+	$key_zoom_reset		"plw_zoom_reset $w" \
+	$key_print		"plw_print $w" \
+	$key_save_again		"plw_save_again $w" \
+	$key_scroll_right	"plw_view_scroll $w  1  0 $state" \
+	$key_scroll_left	"plw_view_scroll $w -1  0 $state" \
+	$key_scroll_up		"plw_view_scroll $w  0 -1 $state" \
+	$key_scroll_down	"plw_view_scroll $w  0  1 $state" 
 
 # Pass keypress event info back to client.
 
@@ -632,14 +756,15 @@ proc plw_print {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_saveas
+# plw_save_as
 #
-# Saves plot to specified device.
+# Saves plot to default device, prompting for file name.
 # I have to go through a bit of trickery to get "~" expanded, since the
 # Tcl 7.0 glob no longer expands names if the file doesn't already exist.
 #----------------------------------------------------------------------------
 
-proc plw_saveas {w dev} {
+proc plw_save_as {w} {
+    global pmenu saveopts
     set file [getItem "Enter file name"]
     if { [string index $file 0] == "~" } {
 	set file [glob ~][string trimleft $file ~]
@@ -650,13 +775,22 @@ proc plw_saveas {w dev} {
 		return
 	    }
 	}
+
 	plw_label_set $w "Saving plot..."
 	update
-	if { [catch "$w.plwin save as $dev $file" foo] } {
+	if { [catch "$w.plwin save as $saveopts($w,0) $file" foo] } {
 	    plw_label_reset $w
 	    bogue_out "$foo"
 	} else {
 	    status_msg $w "Plot saved."
+	}
+
+	if { $saveopts($w,1) == 0 } then {
+	    $w.plwin save close
+	} else {
+	    $pmenu($w).save entryconfigure 1 -state normal
+	    $pmenu($w).save entryconfigure 2 -state normal
+	    bogue_out "Warning: archive files must be closed before using"
 	}
     } else {
 	bogue_out "No file specified"
@@ -664,12 +798,12 @@ proc plw_saveas {w dev} {
 }
 
 #----------------------------------------------------------------------------
-# plw_save
+# plw_save_again
 #
-# Saves plot to an already open file.  If none open, issues an error dialog.
+# Saves plot to an already open file.
 #----------------------------------------------------------------------------
 
-proc plw_save {w} {
+proc plw_save_again {w} {
     if { [catch "$w.plwin save" foo] } {
 	bogue_out "$foo"
     } else {
@@ -678,16 +812,48 @@ proc plw_save {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_close
+# plw_save_close
 #
-# Close save file.
+# Close archive save file.
 #----------------------------------------------------------------------------
 
-proc plw_close {w} {
+proc plw_save_close {w} {
+    global pmenu
     if { [catch "$w.plwin save close" foo] } {
 	bogue_out "$foo"
     } else {
-	status_msg $w "Plot file closed."
+	status_msg $w "Archive file closed."
+	$pmenu($w).save entryconfigure 1 -state disabled
+	$pmenu($w).save entryconfigure 2 -state disabled
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_update_zoom
+#
+# Responsible for making sure zoom menu entries are normal or disabled as
+# appropriate.  In particular, that "Back" or "Forward" are only displayed
+# if it is possible to traverse the zoom windows list in that direction.
+#----------------------------------------------------------------------------
+
+proc plw_update_zoom {w} {
+    global zidx zidx_max zxl zyl zxr zyr
+    global pmenu
+
+# Back
+
+    if { $zidx($w) == 0 } then {
+	$pmenu($w).zoom entryconfigure 1 -state disabled
+    } else {
+	$pmenu($w).zoom entryconfigure 1 -state normal
+    }
+
+# Forward
+
+    if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then {
+	$pmenu($w).zoom entryconfigure 2 -state disabled
+    } else {
+	$pmenu($w).zoom entryconfigure 2 -state normal
     }
 }
 
@@ -698,17 +864,14 @@ proc plw_close {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_select {w} {
-    global def_button_cmd zoomopt
+    global def_button_cmd zoomopts
 
-    if { ! [info exists zoomopt] } then {
-	set zoomopt 0
-    }
     set def_button_cmd [bind $w.plwin <ButtonPress>]
 
-    if { $zoomopt == 0 } then {
-	plw_label_set $w "Click on center of zoom region."
+    if { $zoomopts($w,1) == 0 } then {
+	plw_label_set $w "Click on one corner of zoom region."
     } else {
-	plw_label_set $w "Click on upper left hand corner of zoom region."
+	plw_label_set $w "Click on center of zoom region."
     }
 
     bind $w.plwin <ButtonPress> "plw_zoom_start $w %x %y"
@@ -776,13 +939,28 @@ proc plw_zoom_reset {w} {
 }
 
 #----------------------------------------------------------------------------
+# plw_update_orient
+#
+# Responsible for making sure orientation radio buttons are up to date.
+#----------------------------------------------------------------------------
+
+proc plw_update_orient {w} {
+    global pmenu
+    set rot [$w.plwin orient]
+    set entry [expr [format "%.0f" $rot] % 4]
+    $pmenu($w).orient invoke $entry
+}
+
+#----------------------------------------------------------------------------
 # plw_orient
 #
 # Changes plot orientation.
 #----------------------------------------------------------------------------
 
 proc plw_orient {w rot} {
-    $w.plwin orient $rot
+    if { [$w.plwin orient] != $rot} then {
+	$w.plwin orient $rot
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -848,44 +1026,108 @@ proc plw_zoom_start {w wx wy} {
 # opt = 0	device coordinates
 # opt = 1	normalized device coordinates
 #
-# The global variable "zoomopt" is used to determine zoom behavior:
+# The global variable "zoomopts" is used to determine zoom behavior:
 #
-# zoomopt = 0	box is centered about the first point clicked on, 
-#		perimeter follows mouse while preserving aspect ratio. 
-#		(default)
+# zoomopts($w,0):
+#   0	box follows mouse movements exactly
+#   1	box follows mouse movements so that aspect ratio is preserved (default)
 #
-# zoomopt = 1	first and last points specified determine opposite corners
-#		of zoom box.
+# zoomopts($w,1):
+#   0	first and last points specified determine opposite corners
+#	of zoom box.
+#   1	box is centered about the first point clicked on, 
+#	perimeter follows mouse	(default)
 #
 #----------------------------------------------------------------------------
 
 proc plw_zoom_coords {w x0 y0 x1 y1 opt} {
-    global zoomopt
+    global zoomopts
 
     set Lx [winfo width  $w.plwin]
     set Ly [winfo height $w.plwin]
 
-# zoomopt == 0: zoom from center out, preserving aspect ratio
-
-    if { $zoomopt == 0 } then {
-
 # Enforce boundaries in device coordinate space
 
-	set bounds [$w.plwin view bounds]
-	set xmin [expr [lindex "$bounds" 0] * $Lx]
-	set ymin [expr [lindex "$bounds" 1] * $Ly]
-	set xmax [expr [lindex "$bounds" 2] * $Lx]
-	set ymax [expr [lindex "$bounds" 3] * $Ly]
+    set bounds [$w.plwin view bounds]
+    set xmin [expr [lindex "$bounds" 0] * $Lx]
+    set ymin [expr [lindex "$bounds" 1] * $Ly]
+    set xmax [expr [lindex "$bounds" 2] * $Lx]
+    set ymax [expr [lindex "$bounds" 3] * $Ly]
 
-	set x1 [max $xmin [min $xmax $x1]]
-	set y1 [max $ymin [min $ymax $y1]]
+    set x1 [max $xmin [min $xmax $x1]]
+    set y1 [max $ymin [min $ymax $y1]]
 
-# Scale factors used to maintain plot aspect ratio
+# Two-corners zoom.
 
-	set xscale [expr $xmax - $xmin]
-	set yscale [expr $ymax - $ymin]
+    if { $zoomopts($w,1) == 0 } then {
 
-# Get box lengths, adjusting downward if necessary to keep in bounds
+    # Get box lengths
+
+	set dx [expr $x1 - $x0]
+	set dy [expr $y1 - $y0]
+
+	set sign_dx [expr ($dx > 0) ? 1 : -1]
+	set sign_dy [expr ($dy > 0) ? 1 : -1]
+
+	set xl $x0
+	set yl $y0
+
+    # Constant aspect ratio
+
+	if { $zoomopts($w,0) == 1 } then {
+
+	# Scale factors used to maintain plot aspect ratio
+
+	    set xscale [expr $xmax - $xmin]
+	    set yscale [expr $ymax - $ymin]
+
+	# Adjust box size for proper aspect ratio
+
+	    set rx [expr double(abs($dx)) / $xscale]
+	    set ry [expr double(abs($dy)) / $yscale]
+
+	    if { $rx > $ry } then {
+		set dy [expr $yscale * $rx * $sign_dy]
+	    } else {
+		set dx [expr $xscale * $ry * $sign_dx]
+	    }
+
+	    set xr [expr $xl + $dx]
+	    set yr [expr $yl + $dy]
+
+	# Now check again to see if in bounds, and adjust if not
+
+	    if { $xr < $xmin || $xr > $xmax } then {
+		if { $xr < $xmin } then {
+		    set dx [expr $xmin - $x0]
+		} else {
+		    set dx [expr $xmax - $x0]
+		}
+		set rx [expr double(abs($dx)) / $xscale]
+		set dy [expr $yscale * $rx * $sign_dy]
+	    }
+
+	    if { $yr < $ymin || $yr > $ymax } then {
+		if { $yr < $ymin } then {
+		    set dy [expr $ymin - $y0]
+		} else {
+		    set dy [expr $ymax - $y0]
+		}
+		set ry [expr double(abs($dy)) / $yscale]
+		set dx [expr $xscale * $ry * $sign_dx]
+	    }
+	}
+
+    # Final box coordinates
+
+	set xr [expr $xl + $dx]
+	set yr [expr $yl + $dy]
+
+# zoom from center out, preserving aspect ratio
+
+    } else {
+
+    # Get box lengths, adjusting downward if necessary to keep in bounds
 
 	set dx [expr abs($x1 - $x0)]
 	set dy [expr abs($y1 - $y0)]
@@ -908,59 +1150,61 @@ proc plw_zoom_coords {w x0 y0 x1 y1 opt} {
 	    set dy [expr $ymax - $y0]
 	}
 
-# Adjust box size for proper aspect ratio
+    # Constant aspect ratio
 
-	set rx [expr double($dx) / $xscale]
-	set ry [expr double($dy) / $yscale]
+	if { $zoomopts($w,0) == 1 } then {
 
-	if { $rx > $ry } then {
-	    set dy [expr $yscale*$rx]
-	} else {
-	    set dx [expr $xscale*$ry]
+	# Scale factors used to maintain plot aspect ratio
+
+	    set xscale [expr $xmax - $xmin]
+	    set yscale [expr $ymax - $ymin]
+
+	# Adjust box size for proper aspect ratio
+
+	    set rx [expr double($dx) / $xscale]
+	    set ry [expr double($dy) / $yscale]
+
+	    if { $rx > $ry } then {
+		set dy [expr $yscale * $rx]
+	    } else {
+		set dx [expr $xscale * $ry]
+	    }
+
+	    set xr [expr $x0 + $dx]
+	    set xl [expr $x0 - $dx]
+	    set yr [expr $y0 + $dy]
+	    set yl [expr $y0 - $dy]
+
+	# Now check again to see if in bounds, and adjust downward if not
+
+	    if { $xl < $xmin } then {
+		set dx [expr $x0 - $xmin]
+		set rx [expr double($dx) / $xscale]
+		set dy [expr $yscale * $rx]
+	    }
+	    if { $xr > $xmax } then {
+		set dx [expr $xmax - $x0]
+		set rx [expr double($dx) / $xscale]
+		set dy [expr $yscale * $rx]
+	    }
+	    if { $yl < $ymin } then {
+		set dy [expr $y0 - $ymin]
+		set ry [expr double($dy) / $yscale]
+		set dx [expr $xscale * $ry]
+	    }
+	    if { $yr > $ymax } then {
+		set dy [expr $ymax - $y0]
+		set ry [expr double($dy) / $yscale]
+		set dx [expr $xscale * $ry]
+	    }
 	}
+
+    # Final box coordinates
 
 	set xr [expr $x0 + $dx]
 	set xl [expr $x0 - $dx]
 	set yr [expr $y0 + $dy]
 	set yl [expr $y0 - $dy]
-
-# Now check again to see if in bounds, and adjust downward if not
-
-	if { $xl < $xmin } then {
-	    set dx [expr $x0 - $xmin]
-	    set rx [expr double($dx) / $xscale]
-	    set dy [expr $yscale*$rx]
-	}
-	if { $xr > $xmax } then {
-	    set dx [expr $xmax - $x0]
-	    set rx [expr double($dx) / $xscale]
-	    set dy [expr $yscale*$rx]
-	}
-	if { $yl < $ymin } then {
-	    set dy [expr $y0 - $ymin]
-	    set ry [expr double($dy) / $yscale]
-	    set dx [expr $xscale*$ry]
-	}
-	if { $yr > $ymax } then {
-	    set dy [expr $ymax - $y0]
-	    set ry [expr double($dy) / $yscale]
-	    set dx [expr $xscale*$ry]
-	}
-
-# Final box coordinates
-
-	set xr [expr $x0 + $dx]
-	set xl [expr $x0 - $dx]
-	set yr [expr $y0 + $dy]
-	set yl [expr $y0 - $dy]
-
-# zoomopt == 1: two-corners zoom.  No boundary handling.
-
-    } else {
-	set xr $x0
-	set xl $x1
-	set yr $y0
-	set yl $y1
     }
 
 # Optional translation to relative device coordinates.
@@ -1090,28 +1334,28 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 
     set stdzoom 0.5
     if { ($xr - $xl < 0.02) && ($yr - $yl < 0.02) } then {
-	set nxl [expr $xl - 0.5*$stdzoom]
-	set nxr [expr $xl + 0.5*$stdzoom]
+	set nxl [expr $xl - 0.5 * $stdzoom]
+	set nxr [expr $xl + 0.5 * $stdzoom]
 	if { $nxl < 0.0 } then {
 	    set nxl 0.0
-	    set nxr [expr 2.0*$xl]
+	    set nxr [expr 2.0 * $xl]
 	} 
 	if { $nxr > 1.0 } then {
 	    set nxr 1.0
-	    set nxl [expr 2.0*$xl - 1.0]
+	    set nxl [expr 2.0 * $xl - 1.0]
 	}
 	set xl $nxl
 	set xr $nxr
 
-	set nyl [expr $yl - 0.5*$stdzoom]
-	set nyr [expr $yl + 0.5*$stdzoom]
+	set nyl [expr $yl - 0.5 * $stdzoom]
+	set nyr [expr $yl + 0.5 * $stdzoom]
 	if { $nyl < 0.0 } then {
 	    set nyl 0.0
-	    set nyr [expr 2.0*$yl]
+	    set nyr [expr 2.0 * $yl]
 	}
 	if { $nyr > 1.0 } then {
 	    set nyr 1.0
-	    set nyl [expr 2.0*$yl - 1.0]
+	    set nyl [expr 2.0 * $yl - 1.0]
 	}
 	set yl $nyl
 	set yr $nyr
@@ -1196,8 +1440,7 @@ proc plw_zoom_forward {w} {
     
     global zidx zidx_max zxl zyl zxr zyr
 
-    if { $zidx_max($w) == 0 } then return
-    if { $zidx($w) == $zidx_max($w) } then return
+    if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then return
 
     incr zidx($w)
 
