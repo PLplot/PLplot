@@ -385,7 +385,7 @@ sgml-minimize-attributes:nil
 sgml-always-quote-attributes:t
 sgml-indent-step:2
 sgml-indent-data:t
-sgml-parent-document: ("plplotdoc.sgml" "book" "chapter" "")
+sgml-parent-document: ("plplotdoc.xml" "book" "chapter" "")
 sgml-default-dtd-file:nil
 sgml-exposed-tags:nil
 sgml-local-catalogs:("/usr/lib/sgml/catalog")

@@ -2298,6 +2298,6 @@ sgml-indent-data:t
 sgml-default-dtd-file:nil
 sgml-exposed-tags:nil
 sgml-local-ecat-files:nil
-sgml-doctype:"plplotdoc.sgml"
+sgml-doctype:"plplotdoc.xml"
 End:
 -->
