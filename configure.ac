@@ -681,6 +681,9 @@ AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
+### Find dirname program, needed for test/plplot-test.sh
+AC_CHECK_PROGS(DIRNAME, dirname, [])
+
 ### C++ binding
 
 MY_ARG_ENABLE(cxx,
