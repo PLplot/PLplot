@@ -40,46 +40,47 @@ Contents
 ==============================================================================
 Section 1: Installing plplot
 
- 1.1 How do I build & install plplot?
- 1.2 Why should I use plplot?
- 1.3 I don't have an ANSI compiliant C compiler.  How do I compile plplot?
- 1.4 I don't have a fortran compiler; how do I compile plplot?
- 1.5 The linker complains of unresolved functions atexit(), fsetpos(),
-     fgetpos(), and so on.
- 1.6 The compiler complains about the use of "malloc" or "size_t".
- 1.7 configure script doesn't run correctly
- 1.8 makefile doesn't build correctly using m4.
- 1.9 The linker complains that it can't resolve Tcl_AppInit. 
+ 1.1  How do I build & install plplot?
+ 1.2  Why should I use plplot?
+ 1.3  I don't have an ANSI compiliant C compiler.  How do I compile plplot?
+ 1.4  I don't have a fortran compiler; how do I compile plplot?
+ 1.5  The linker complains of unresolved functions atexit(), fsetpos(),
+      fgetpos(), and so on.
+ 1.6  The compiler complains about the use of "malloc" or "size_t".
+ 1.7  The compiler complains about "caddr_t" in one of the X support files.
+ 1.8  configure script doesn't run correctly
+ 1.9  makefile doesn't build correctly using m4.
+ 1.10 The linker complains that it can't resolve Tcl_AppInit. 
 
 ==============================================================================
 Section 2: General features
 
- 2.1 The manual doesn't mention capability X.
- 2.2 How do I change to change the default background color?
- 2.3 I'm getting core dumps when calling a contour function from C.
+ 2.1  The manual doesn't mention capability X.
+ 2.2  How do I change to change the default background color?
+ 2.3  I'm getting core dumps when calling a contour function from C.
 
 ==============================================================================
 Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
 
- 3.1 Where do I get Tcl/TK?   
- 3.2 How do I use "xauth"?
- 3.3 How do I use the Tcl/TK driver?
- 3.4 I've been having trouble getting the TK/TCL and plplot working on...
- 3.5 I would like to issue a plot command, have the window appear,...
- 3.6 The X driver seems to run slower than on older versions of plplot.
- 3.7 How do I change the title on the TK window menu bar, i.e.,...
+ 3.1  Where do I get Tcl/TK?   
+ 3.2  How do I use "xauth"?
+ 3.3  How do I use the Tcl/TK driver?
+ 3.4  I've been having trouble getting the TK/TCL and plplot working on...
+ 3.5  I would like to issue a plot command, have the window appear,...
+ 3.6  The X driver seems to run slower than on older versions of plplot.
+ 3.7  How do I change the title on the TK window menu bar, i.e.,...
 
 ==============================================================================
 Section 4: All other drivers & supported platforms
 
- 4.1 What about support for platform X?
- 4.2 What about plplot support for VMS?
+ 4.1  What about support for platform X?
+ 4.2  What about plplot support for VMS?
 
 ==============================================================================
 Section 1: Installing plplot
 ==============================================================================
 
- 1.1 How do I build & install plplot?
+ 1.1  How do I build & install plplot?
 
 Read the system dependent notes, in sys/<system>.  On a Unix-like system,
 "configure" is NOT the GNU auto-configure script.  Instead, you must cd
@@ -90,14 +91,22 @@ to tmp and configure from there, e.g.:
 % make
 % make install
 
-will often give the desired results.  You really should check the readme
-file first, though (especially before typing "make install").  You can
-easily set up a site-specific build environment for PLPLOT under Unix
-that will enable painless upgrades (using the config file, cf_plplot.m4).
+will often give the desired results.  You should check the readme file
+first, though (especially before typing "make install").  I strongly
+recommend that you configure & build plplot along these lines.  I
+regularly build and install plplot on 8 different systems, which includes
+5 different OS's.  My scheme has evolved to the point that I typically
+unpack the archive, then from the tmp directory type "../configure opt"
+and then "make" then "make install".  Site-specific stuff goes in
+cf_plplot.m4, which I have placed in ~/config.  The configure script uses
+this when building the Makefile, allowing site-specific customizations.
+This will typically not need modification after the first time you set it
+up.
+
 For more info on the Unix build scripts, see m4/README.
 
 
- 1.2 Why should I use plplot?
+ 1.2  Why should I use plplot?
 
 This is probably the first question I was ever asked, and it continues
 to come up often enough to dwell on it a bit.
@@ -139,7 +148,7 @@ most bugs, which is better turnaround time than you typically get from
 vendors.  New features can be added with astonishing speed if the need
 (ours) is great enough.
 
-So those are some of the reasons _I_ got involved, which may differ from
+So those are some of the reasons /I/ got involved, which may differ from
 those of the casual user.  Most people won't be digging into the source
 code to fix bugs, but it's very reassuring to know that you can if you
 need to.  I can't promise to support the package or make specific
@@ -187,17 +196,18 @@ broad changes to the package, but any of the following would be great:
 	plplot demos?  (especially using Tcl/TK)
 	an improved contour plotter
 	any interesting ideas/code for TK widgets for use with plplot
+	anything from the ToDo list you'd like to tackle?
 	help rewriting the manual?  (OK, so I'm really reaching here)
 
 
- 1.3 I don't have an ANSI compiliant C compiler.  How do I compile plplot?
+ 1.3  I don't have an ANSI compiliant C compiler.  How do I compile plplot?
 
 Get an ANSI C compiler.  The cheap solution is to get gcc up if it has
 been ported to your machine.  This is not unreasonable IMHO -- the C
 standard was approved in 1989.  Isn't it about time you upgraded?
 
 
- 1.4 I don't have a fortran compiler; how do I compile plplot?
+ 1.4  I don't have a fortran compiler; how do I compile plplot?
 
 The Fortran files are only part of the interface layer for Fortran codes
 that use plplot.  If you don't need this capability the layer can be
@@ -214,10 +224,10 @@ Alternately, you can use 'f2c' (freeware fortran-to-C translator) to
 compile the layer, assuming it (f2c) has been ported to your system.
 
 
- 1.5 The linker complains of unresolved functions atexit(), fsetpos(),
-     fgetpos(), and so on.
+ 1.5  The linker complains of unresolved functions atexit(), fsetpos(),
+      fgetpos(), and so on.
 
-This is caused by a non-ANSI libc.  It _is_ possible to run plplot on such
+This is caused by a non-ANSI libc.  It /is/ possible to run plplot on such
 a system, but at somewhat reduced functionality -- I rely on ANSI libc
 functions both for seeking (fsetpos, fgetpos) and for cleanup (atexit).
 If you don't have an ANSI libc handy or if it is inconvenient to use, you
@@ -232,7 +242,7 @@ this switch is to use the following in ~/config/cf_plplot.m4 --
 EXT_FLAGS_C	= -DNO_ANSI_LIBC
 
 
- 1.6 The compiler complains about the use of "malloc" or "size_t".
+ 1.6  The compiler complains about the use of "malloc" or "size_t".
 
 Once upon a time, the source code went to some lengths to make sure
 these were properly prototyped/typedef'ed even on systems that weren't
@@ -258,13 +268,26 @@ Then add an identical declaration where it is *supposed* to be.  The
 second way is to hack plplot.h to explicitly prototype/typedef it.
 
 
- 1.7 configure script doesn't run correctly
+ 1.7  The compiler complains about "caddr_t" in one of the X support files.
+
+This is sometimes seen on systems that have X11R4 and claim POSIX
+conformance but that don't quite have their act together.  Typically on
+old versions of Unicos, Ultrix, and DGUX for example.  Some possible ways
+of fixing it includes: (a) upgrade your OS, (b) fix the system header
+files yourself, (c) undefine _POSIX_SOURCE after the include of plplotP.h,
+or (d) add -DCADDR_T_HACK to the compile line, which inserts the
+appropriate typedef for caddr_t explicitly inside of plplotX.h.
+
+
+ 1.8  configure script doesn't run correctly
 
 Look around for a different shell to run it under (posix shell, ksh).
-See notes in sys/unix.
+E.g. under Ultrix there should be a non-braindead shell named /bin/sh5 that
+will do the trick.  Ask your system administrator to "cd /bin; mv sh sh_old;
+ln sh5 sh".  It is completely backwardly compatible with sh I believe.
 
 
- 1.8 makefile doesn't build correctly using m4.
+ 1.9  makefile doesn't build correctly using m4.
 
 Some m4's do not handle the -D<macro-def> switch correctly.  In this case
 I suggest installing GNU m4, as it installs easily (for me) and works
@@ -277,13 +300,10 @@ Since the configure script uses the -D <macro-def> syntax, however,
 the best thing to do is to find a non-braindead m4 and use that.
 
 
- 1.9 The linker complains that it can't resolve Tcl_AppInit. 
+ 1.10 The linker complains that it can't resolve Tcl_AppInit. 
 
 The Tcl7.0/TK3.3 and later libraries contain a function called "main".
-Hmmm.  Sounds dangerous, eh?
-
-It's dangerous because it's relying on the linker to do what you expect --
-pick out the correct main program when you have multiple copies.
+As a result, when linking you don't always get the correct main program.
 
 This was done to make it easier to build custom versions of wish, so
 all you had to do is to create your own version of Tcl_AppInit, link
@@ -300,16 +320,20 @@ tkMain.o).  I installed the new libraries as well as the separately compiled
 *Main.o's in case someone needed them.  No more problem with the Fortran
 compiler.
 
+Another case where this may come up is using f2c to compile a Fortran
+main, in which case the true main is in libf2c.a.  In this case, putting
+-lf2c BEFORE -ltk -ltcl on the link line will usually do the trick.
+
 ==============================================================================
 Section 2: General features
 
- 2.1 The manual doesn't mention capability X.
- 2.2 How do I change to change the default background color?
- 2.3 I'm getting core dumps when calling a contour function from C.
+ 2.1  The manual doesn't mention capability X.
+ 2.2  How do I change to change the default background color?
+ 2.3  I'm getting core dumps when calling a contour function from C.
 
 ==============================================================================
 
- 2.1 The manual doesn't mention capability X.
+ 2.1  The manual doesn't mention capability X.
 
 The manual is waaay out of date.  Consult the last few update files to
 keep tabs of what's going on.  Take a look if there are are any
@@ -318,12 +342,12 @@ update the manual as soon as practical (writing code is so much more
 interesting..).
 
 
- 2.2 How do I change to change the default background color?
+ 2.2  How do I change to change the default background color?
 
 Use the -bg option.  Type plrender -h.
 
 
- 2.3 I'm getting core dumps when calling a contour function from C.
+ 2.3  I'm getting core dumps when calling a contour function from C.
 
 Aha.  Did you specify the minimum index as 1, not 0?  This is a leftover
 from when the package was written in Fortran, sigh.  I'm not sure why this
@@ -338,18 +362,18 @@ Maybe add some new function calls to fix up the API..
 ==============================================================================
 Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
 
- 3.1 Where do I get Tcl/TK?   
- 3.2 How do I use "xauth"?
- 3.3 How do I use the Tcl/TK driver?
- 3.4 I've been having trouble getting the TK/TCL and plplot working on...
- 3.5 I would like to issue a plot command, have the window appear,...
- 3.6 The X driver seems to run slower than on older versions of plplot.
- 3.7 The linker complains that it can't resolve Tcl_AppInit. 
- 3.8 How do I change the title on the TK window menu bar, i.e.,...
+ 3.1  Where do I get Tcl/TK?   
+ 3.2  How do I use "xauth"?
+ 3.3  How do I use the Tcl/TK driver?
+ 3.4  I've been having trouble getting the TK/TCL and plplot working on...
+ 3.5  I would like to issue a plot command, have the window appear,...
+ 3.6  The X driver seems to run slower than on older versions of plplot.
+ 3.7  The linker complains that it can't resolve Tcl_AppInit. 
+ 3.8  How do I change the title on the TK window menu bar, i.e.,...
 
 ==============================================================================
 
- 3.1 Where do I get Tcl/TK?   
+ 3.1  Where do I get Tcl/TK?   
 
 You can get the Tcl/TK package by anonymous ftp from sprite.berkeley.edu
 in the tcl subdirectory (or from harbor.ecn.purdue.edu in directory
@@ -362,7 +386,7 @@ to have the Tcl/TK header files where they can be found by the C compiler
 (e.g. /usr/local/include, or softlinks to it will work fine).
 
 
- 3.2 How do I use "xauth"?
+ 3.2  How do I use "xauth"?
 
 The 7.0/3.3 and later releases of Tcl/TK require xauth security in order
 to accept send requests.  The only problem is that you have to
@@ -375,13 +399,13 @@ are some notes on setting this up in the file Xauthority in the doc
 directory.
 
 
- 3.3 How do I use the Tcl/TK driver?
+ 3.3  How do I use the Tcl/TK driver?
 
 Get it going with the example programs, and play with it.  Read the online
 docs.
 
 
- 3.4 I've been having trouble getting the TK/TCL and plplot working on
+ 3.4  I've been having trouble getting the TK/TCL and plplot working on
 my Indigo running IRIX 4.0.5. I got TCL7.0 and TK3.3 as advised and built the
 libraries and moved them to "/usr/lib" directory and then went about 
 (re)building plplot. I then compiled the c-demos and ran them. The tk driver
@@ -414,7 +438,7 @@ the installation and that would explain the observed behavior.  If not
 we need to do some more hunting.  
 
 
- 3.5 I would like to issue a plot command, have the window appear,
+ 3.5  I would like to issue a plot command, have the window appear,
 or be re-painted, and allow the user to continue with command line operation
 of RLaB. I would like the user to be able to resize the window at any time
 or cover/un-cover it at any time and have it re-paint itself. The way  I 
@@ -454,7 +478,7 @@ and there has been some interest in doing that (but I don't plan to
 work on it).
 
 
- 3.6 The X driver seems to run slower than on older versions of plplot.
+ 3.6  The X driver seems to run slower than on older versions of plplot.
 
 This may be caused by writing into the pixmap.  Each instruction is
 essentially done twice -- once to the screen and once to the offscreen
@@ -470,7 +494,7 @@ to see if that's any better.  I do almost all my plplot X development on
 an HP 720 color console and graphics speed is usually not a problem :-).
 
 
- 3.7 How do I change the title on the TK window menu bar, i.e.,
+ 3.7  How do I change the title on the TK window menu bar, i.e.,
 
 >   Plot >> plclient_#2
 > 
@@ -505,12 +529,12 @@ interpreters).
 ==============================================================================
 Section 4: All other drivers & supported platforms
 
- 4.1 What about support for platform X?
- 4.2 What about plplot support for VMS?
+ 4.1  What about support for platform X?
+ 4.2  What about plplot support for VMS?
 
 ==============================================================================
 
- 4.1 What about support for platform X?
+ 4.1  What about support for platform X?
 
 We are most likely to have the package be up-to-date on the following
 systems: HP-UX, Linux; less likely on the following: SunOS, AIX, Unicos,
@@ -519,11 +543,12 @@ volunteers to pick up the slack here.  I could get prerelease versions to
 you in order to make whatever fixes are needed ahead of time.  I am
 gradually moving away from supporting the Amiga driver so could use some
 help here.  Geoff has abandoned the DOS drivers and is leaning away from
-supporting the OS/2 driver, so here again target platform developers are
-needed.
+supporting the OS/2 driver, so here target platform developers are
+needed.  Tony Richardson no longer has access to a NeXT, so also the 
+NeXT is no longer supported by anyone.
 
 
- 4.2 What about plplot support for VMS?
+ 4.2  What about plplot support for VMS?
 
 It's true, I did support plplot under VMS at one time, although I never
 DID see the X driver running on it (supposedly it did).  However after
