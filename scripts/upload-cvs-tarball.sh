@@ -12,7 +12,7 @@
 WWW_HOST=${WWW_HOST:-plplot.sf.net}
 WWW_USER=${WWW_USER:-tomduck}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot/htdocs/cvs-tarball}
-GPGKEY=${GPGKEY:-0x4A5D72FE}
+GPGKEY=${GPGKEY:-0xBB25AB83}
 
 function run () {
     echo $*
@@ -71,4 +71,4 @@ run scp $INDEX $HOST:$WWW_DIR/index.html
 run ssh $HOST chgrp -R plplot $WWW_DIR
 run ssh $HOST chmod -R g=u $WWW_DIR
 
-rm -f $TARBALL.asc $INDEX
+#rm -f $TARBALL.asc $INDEX
