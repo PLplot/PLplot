@@ -6,3 +6,4 @@ Makefile.examples
 .libs
 *.la
 *.lo
+x??c
