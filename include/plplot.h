@@ -487,6 +487,7 @@ typedef struct {
 #define    plsdidev	c_plsdidev
 #define    plsdimap	c_plsdimap
 #define    plsdiori	c_plsdiori
+#define    plSetOpt	c_plSetOpt
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
@@ -611,6 +612,7 @@ typedef struct {
 #define    c_plsdidev	plsdidev
 #define    c_plsdimap	plsdimap
 #define    c_plsdiori	plsdiori
+#define    c_plSetOpt	plSetOpt
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
