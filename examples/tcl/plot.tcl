@@ -6,12 +6,28 @@
 # 10/18/95
 # DejaNews, Inc.
 #
-# Generates a line plot given a file of ASCII data (similar to the GNUPLOT
-# "plot" command).  Mostly for quicky plots, i.e. if you need something
-# more sophisticated, just copy this and modify to taste!
+# Generates line plot(s) given a file of ASCII data (similar to the GNUPLOT
+# "plot" command).  Can be easily modified to particular needs.
 #
 # Usage:
-#	plot [data file]
+#	plot [data file [columns]]
+#
+# Example:
+#
+#	plot stats.log {1 4}
+#
+# would plot columns 1 & 4 (y) vs column 0 (x).
+
+# The layout of the data file is as follows:
+#
+# <comment section, may include plotting options>
+# <x>  <y1>  <y2> ... <yn>
+# [etc]
+#
+# The number of dependent vars to plot defaults to the number found in the
+# data file, up to a maximum of 10 (you can plot more by specifying ny in
+# the call).  When there are more than one, they are plotted in different
+# colors (chosen from cmap0).
 #
 # Two powerful mechanisms are used to allow customization of the output.
 # First, local plotting options may be specified in the data file itself.
@@ -40,6 +56,8 @@
 #	xmax	max x value	(data maximum - x)
 #	ymin	min y value	(data minimum - y)
 #	ymax	max y value	(data maximum - y)
+#	nfilt	filter points	0 (no filtering)
+#	dx	x scale value	1
 #
 # control parameters:
 #
@@ -68,13 +86,17 @@
 #
 #----------------------------------------------------------------------------
 # $Log$
-# Revision 1.3  1995/10/19 00:04:37  mjl
+# Revision 1.4  1996/04/18 19:31:42  mjl
+# Implemented ability to plot multiple columns of data or any subset thereof.
+# Added ability to filter and switched to using new min/max matrix commands.
+#
+# Revision 1.3  1995/10/19  00:04:37  mjl
 # Massively rewritten, is now quite powerful.  For a full features list, see
 # the internal documentation.
 #
 #----------------------------------------------------------------------------
 
-proc plot {{file {}}} {
+proc plot {{file {}} {columns {}}} {
     global plopt
 
 # Make sure there is a data file
@@ -96,6 +118,8 @@ proc plot {{file {}}} {
     set yopt	bcnstv
     set lsty	1
     set poin	-1
+    set nfilt	0
+    set dx	1
 
 # Turn off pause on xwin devices since it's really not necessary for a
 # single plot application.
@@ -107,69 +131,124 @@ proc plot {{file {}}} {
 	dp	{plspause 0}
     }
 
+# Initialize data arrays
+
+    set matlen 128
+    set matinc 128
+    matrix x f $matlen
+
+    set nx 0
+    set first_time 1
+
 # Open file and read into data arrays
 
-    set matlen 200
-    set matinc 200
-    matrix x f $matlen
-    matrix y f $matlen
-
     set fileid [open $file]
-    set n 0
     while {[expr [gets $fileid input] > -1]} {
-	set firstchar [string index [lindex $input 0] 0]
-	if {$firstchar == ""} continue
-	if {$firstchar == "\#"} {
+	set first_char [string index [lindex $input 0] 0]
+
+    # Ignore blank lines
+
+	if {$first_char == ""} continue
+
+    # Comments or set commands
+
+	if {$first_char == "\#"} {
 	    set nextword [lindex $input 1]
 	    if {"$nextword" == "set"} {
 		set command [lrange $input 1 end]
 		eval $command
-	    } else {
-		continue
 	    }
-	}
-	if {$n == $matlen} {
-	    incr matlen $matinc
-	    x redim $matlen
-	    y redim $matlen
+	    continue
 	}
 
-	x $n = [lindex $input 0]
-	y $n = [lindex $input 1]
-	incr n
+    # Now we should be to the data part.  First time through only, allocate
+    # sufficient arrays for holding all the dependent data (faster this way
+    # than putting too much control logic in this loop).  If you are missing
+    # entries later on, this will probably fail.
+
+	if {$first_time} {
+	    set first_time 0
+	    set nymax [expr [llength $input] - 1]
+	    for {set iy 1} {$iy <= $nymax} {incr iy} {
+		matrix y$iy f $matlen
+	    }
+	    if {$columns == {}} {
+		set columns 1
+		for {set iy 2} {$iy <= $nymax} {incr iy} {
+		    set columns "$columns $iy"
+		}
+	    }
+	}
+
+    # Increase array bounds if necessary
+
+	if {$nx == $matlen} {
+	    incr matlen $matinc
+	    x redim $matlen
+	    for {set iy 1} {$iy <= $nymax} {incr iy} {
+		y$iy redim $matlen
+	    }
+	}
+
+    # Read data into arrays
+
+	x $nx = [lindex $input 0]
+	for {set iy 1} {$iy <= $nymax} {incr iy} {
+	    y$iy $nx = [lindex $input $iy]
+	}
+	incr nx
     }
     close $fileid
 
-    puts "Read $n data points"
+    set ny [llength $columns]
+
+    puts "Read $nx data points, $ny separate streams"
+
+# Filter if necessary
+
+    if {$nfilt != 0} {
+	for {set iy 0} {$iy < $ny} {incr iy} {
+	    set jy [lindex $columns $iy]
+	    y$jy filter $nfilt
+	}
+    }
 
 # Get data min/max
 
-    if {[info exists xmin] == 0} {
-	set xmin [x 0]
-	for {set i 1} {$i < $n} {incr i} {
-	    if {[expr [x $i] < $xmin]} then {set xmin [x $i]}
+    if {![info exists xmin]} {
+	set xmin [x min $nx]
+    }
+
+    if {![info exists xmax]} {
+	set xmax [x max $nx]
+    }
+
+    if {![info exists ymin]} {
+	set jy [lindex $columns 0]
+	set ymin [y$jy min $nx]
+	for {set iy 1} {$iy < $ny} {incr iy} {
+	    set jy [lindex $columns $iy]
+	    set y1min [y$jy min $nx]
+	    if {[expr $y1min < $ymin]} then {set ymin $y1min}
 	}
     }
 
-    if {[info exists xmax] == 0} {
-	set xmax [x 0]
-	for {set i 1} {$i < $n} {incr i} {
-	    if {[expr [x $i] > $xmax]} then {set xmax [x $i]}
+    if {![info exists ymax]} {
+	set jy [lindex $columns 0]
+	set ymax [y$jy max $nx]
+	for {set iy 1} {$iy < $ny} {incr iy} {
+	    set jy [lindex $columns $iy]
+	    set y1max [y$jy max $nx]
+	    if {[expr $y1max < $ymax]} then {set ymax $y1max}
 	}
     }
 
-    if {[info exists ymin] == 0} {
-	set ymin [y 0]
-	for {set i 1} {$i < $n} {incr i} {
-	    if {[expr [y $i] < $ymin]} then {set ymin [y $i]}
-	}
-    }
+# Rescale if necessary
 
-    if {[info exists ymax] == 0} {
-	set ymax [y 0]
-	for {set i 1} {$i < $n} {incr i} {
-	    if {[expr [y $i] > $ymax]} then {set ymax [y $i]}
-	}
+    if {$dx != 1} {
+	x scale $dx
+	set xmin [expr $xmin * $dx]
+	set xmax [expr $xmax * $dx]
     }
 
 # Set up plot options
@@ -185,6 +264,8 @@ proc plot {{file {}}} {
     if {[info exists plopt(xmax)]}	{set xmax $plopt(xmax)}
     if {[info exists plopt(ymin)]}	{set ymin $plopt(ymin)}
     if {[info exists plopt(ymax)]}	{set ymax $plopt(ymax)}
+    if {[info exists plopt(nfilt)]}	{set nfilt $plopt(nfilt)}
+    if {[info exists plopt(dx)]}	{set dx $plopt(dx)}
     if {[info exists plopt(noeop)]}	{set noeop $plopt(noeop)}
 
 # Set up the plot
@@ -203,15 +284,21 @@ proc plot {{file {}}} {
 
 # Plot the data
 
-    plcol 3
-
     if { $lsty > 0 } {
 	pllsty $lsty
-	plline $n x y
+	for {set iy 0} {$iy < $ny} {incr iy} {
+	    set jy [lindex $columns $iy]
+	    plcol [expr 2 + $jy]
+	    plline $nx x y$jy
+	}
 
     } else {
 	if { $poin < 0 } {set poin 1}
-	plpoin $n x y $poin
+	for {set iy 0} {$iy < $ny} {incr iy} {
+	    set jy [lindex $columns $iy]
+	    plcol [expr 2 + $jy]
+	    plpoin $nx x y$jy $poin
+	}
     }
 
 # End the page (see note about pause above).
