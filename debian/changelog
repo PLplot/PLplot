@@ -1,3 +1,10 @@
+plplot (5.2.1.cvs.20040104-2) unstable; urgency=low
+
+  * NOT YET RELEASED!
+  * debian/control: Made Build-Conflicts on libplplot5 unversioned.
+
+ --
+
 plplot (5.2.1.cvs.20040104-1) unstable; urgency=low
 
   * debian/control: Added pkg-config to build-dependencies and to
