@@ -39,8 +39,8 @@ proc plconfig {} {
     set gen_menu_font	-*-helvetica-medium-o-normal-*-*-180-*-*-*-*-*-*
     set gen_italic_font	-*-helvetica-bold-o-normal-*-*-180-*-*-*-*-*-*
 
-    set dialog_font		-*-Times-Medium-R-Normal--*-180-*
-    set dialog_bold_font	-*-Times-Bold-R-Normal--*-180-*
+    set dialog_font	 -*-times-medium-r-normal-*-*-180-*-*-*-*-*-*
+    set dialog_bold_font -*-times-bold-r-normal-*-*-180-*-*-*-*-*-*
 
     option add *font		$gen_font
     option add *Entry.font	$gen_font
