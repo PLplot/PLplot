@@ -5,6 +5,35 @@
 # Does a series of 3-d plots for a given data set, with different
 # viewing options in each plot.
 
+# Routine for restoring colour map1 to default.
+# See static void plcmap1_def(void) in plctrl.c for reference.
+proc restore_cmap1 {w} {
+   # For center control points, pick black or white, whichever is closer to bg 
+   # Be careful to pick just short of top or bottom else hue info is lost
+   $w cmd plgcolbg rbg gbg bbg
+   set vertex [expr ($rbg + $gbg + $bbg)/(3.*255.)]
+   if {$vertex < 0.5} {
+      set vertex 0.01
+   } else {
+      set vertex 0.99
+   }
+   # Independent variable of control points.
+   matrix i f 4 = { 0., 0.45, 0.55, 1.}
+   # Hue for control points.  Blue-violet to red
+   matrix h f 4 = { 260., 260., 0., 0.}
+   # Lightness ranging from medium to vertex to medium
+   matrix l f 4 = { 0.5, $vertex, $vertex, 0.5}
+   # Saturation is complete for default
+   matrix s f 4 = { 1., 1., 1., 1.}
+   # Integer flag array is zero (no interpolation along far-side of colour
+   # figure
+   matrix rev i 4 = { 0, 0, 0, 0}
+   # Default number of cmap1 colours
+   $w cmd plscmap1n 128
+   # Interpolate between control points to set up default cmap1.
+   $w cmd plscmap1l 0 4 i h l s rev
+}
+
 proc x08 {{w loopback}} {
 
     matrix opt i 4 = {1, 2, 3, 3}
@@ -72,5 +101,5 @@ proc x08 {{w loopback}} {
 
 # Restore defaults
     $w cmd plcol0 1
-
+    restore_cmap1 $w
 }
