@@ -15,10 +15,10 @@ static void cmap1_init(int);
 
 static char *title[4] =
 {
-    "#frPLplot Example 8 - Alt=60, Az=30",
-    "#frPLplot Example 8 - Alt=20, Az=60",
-    "#frPLplot Example 8 - Alt=60, Az=120",
-    "#frPLplot Example 8 - Alt=60, Az=160"
+    "#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
+    "#frPLplot Example 8 - Alt=20, Az=60, Opt=2",
+    "#frPLplot Example 8 - Alt=60, Az=120, Opt=3",
+    "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"
 };
 
 /*--------------------------------------------------------------------------*\
@@ -115,7 +115,6 @@ main(int argc, char *argv[])
       plvpor(0.0, 1.0, 0.0, 0.9);
       plwind(-1.0, 1.0, -0.9, 1.1);
       plcol0(1);
-      plmtex("t", 1.0, 0.5, 0.5, title[k]);
       plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
       plbox3("bnstu", "x axis", 0.0, 0,
 	     "bnstu", "y axis", 0.0, 0,
@@ -135,6 +134,8 @@ main(int argc, char *argv[])
 	  plot3d(x, y, z, XPTS, YPTS, opt[k], 0);
 	}
       }
+      plcol0(3);
+      plmtex("t", 1.0, 0.5, 0.5, title[k]);
     }   
   }
 
