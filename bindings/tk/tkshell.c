@@ -1,44 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/06/09 20:27:35  mjl
+ * Revision 1.17  1994/06/16 19:15:17  mjl
+ * Moved the Tk initialization function for the tk driver into tk.c.  Changed
+ * Pltk_Init to include by default some of the other Tcl commands used by
+ * the PLplot/Tk driver.  Turned set_auto_path() into pls_auto_path() and
+ * made it global.
+ *
+ * Revision 1.16  1994/06/09  20:27:35  mjl
  * Hacked out direct widget support; this was moved to plframe.c.
- *
- * Revision 1.15  1994/05/24  19:46:35  mjl
- * Now autoloads the directory TCL_DIR for PLplot Tcl scripts.
- *
- * Revision 1.14  1994/05/09  18:00:05  furnish
- * Tcl extension code for mirroring the PLplot C API in Tcl.
- *
- * Revision 1.13  1994/05/07  03:14:57  mjl
- * Consolidated Tk code by moving Pltk_Init() to this file.  Startup routine
- * now sets auto_path and saves initial color map as well.
- *
- * Revision 1.12  1994/04/08  12:06:09  mjl
- * Function name changes to reduce namespace pollution.
- *
- * Revision 1.11  1994/03/23  06:54:40  mjl
- * Minor documentation change.
- *
- * Revision 1.10  1994/03/22  23:17:39  furnish
- * Avoid collision with user code when he wants to make a custom wish
- * combined with PLPLOT.
- *
- * Revision 1.9  1994/01/15  17:48:31  mjl
- * Added built-in Tcl commands: wait_until (for general use -- waits until
- * the specified condition evaluates to true) and host_id (Tcl-DP only).
- *
- * Revision 1.8  1993/12/21  10:32:04  mjl
- * Moved a part of the set_auto_path function back into plserver.c where
- * it belonged (adding directories to auto_path based on an input flag).
- *
- * Revision 1.7  1993/12/15  09:05:43  mjl
- * Added functions Tcl_AppInit() and set_autoload(), to be shared by both
- * the plserver and tk driver interpreter startup code.  Changes to
- * Tcl_AppInit() to support Tcl-DP style communication (taken from Tcl-DP
- * source distribution).
- *
- * Revision 1.6  1993/12/09  21:20:12  mjl
- * Simplified tk_toplevel() and eliminated obsolete functions.
 */
 
 /* 
@@ -51,15 +20,8 @@
  */
 
 #include "plserver.h"
-#ifdef TCL_DP
-extern int Tdp_Init			_ANSI_ARGS_((Tcl_Interp *interp));
-#endif
 
 /* Static functions */
-/* Sets up auto_path variable */
-
-static int
-set_auto_path(Tcl_Interp *interp);
 
 /* Evals the specified command, aborting on an error. */
 
@@ -156,82 +118,6 @@ pltk_source(Tk_Window w, Tcl_Interp *interp, char *script)
     return(0);
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * pltk_Init --
- *
- *	This procedure performs PLPLOT-specific Tcl initialization.
- *
- * Results:
- *	Returns a standard Tcl completion code, and leaves an error
- *	message in interp->result if an error occurs.
- *
- * Side effects:
- *	Depends on the startup script.
- *
- *----------------------------------------------------------------------
- */
-
-static int auto_path_set;
-
-int
-pltk_Init(Tcl_Interp *interp)
-{
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
-
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
-
-    if (Tcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (main && Tk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
-
-    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
-		      (ClientData) NULL, (void (*) (ClientData)) NULL);
-
-#ifdef TCL_DP
-    if (Tdp_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    Tcl_CreateCommand(interp, "host_id", plHost_ID,
-		      (ClientData) NULL, (void (*) (ClientData)) NULL);
-#endif
-
-    /*
-     * Specify a user-specific startup file to invoke if the application
-     * is run interactively.  Typically the startup file is "~/.apprc"
-     * where "app" is the name of the application.  If this line is deleted
-     * then no user-specific startup file will be run under any conditions.
-     */
-
-/* Set up auto_path */
-
-    auto_path_set = 1;
-    if (set_auto_path(interp) == TCL_ERROR)
-	return TCL_ERROR;
-
-    return TCL_OK;
-}
-
 /*----------------------------------------------------------------------*\
 * Pltk_Init
 *
@@ -247,18 +133,33 @@ Pltk_Init( Tcl_Interp *interp )
 
     main = Tk_MainWindow(interp);
 
-/* Add plframe command */
+/* plframe -- PLplot graphing widget */
 
     Tcl_CreateCommand(interp, "plframe", plFrameCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
 
+/* wait_until -- waits for a specific condition to arise */
+/* Can be used with either Tcl-DP or TK */
+
+    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
+		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+
+/* host_id -- returns host IP number.  Only for use with Tcl-DP */
+
+#ifdef TCL_DP
+    Tcl_CreateCommand(interp, "host_id", plHost_ID,
+		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+#endif
+
+/* matrix -- matrix support command */
+
+    Tcl_CreateCommand(interp, "matrix", Tcl_MatrixCmd,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
 /* Set up auto_path */
 
-    if ( ! auto_path_set ) {
-	auto_path_set = 1;
-	if (set_auto_path(interp) == TCL_ERROR)
-	    return TCL_ERROR;
-    }
+    if (pls_auto_path(interp) == TCL_ERROR)
+	return TCL_ERROR;
 
 /* Save initial RGB colormap components */
 
@@ -271,7 +172,7 @@ Pltk_Init( Tcl_Interp *interp )
 }
 
 /*----------------------------------------------------------------------*\
-* set_autopath
+* pls_auto_path
 *
 * Sets up auto_path variable
 * Note: there is no harm in adding extra directories, even if they don't
@@ -279,8 +180,8 @@ Pltk_Init( Tcl_Interp *interp )
 * the autoloaded proc is first found).
 \*----------------------------------------------------------------------*/
 
-static int
-set_auto_path(Tcl_Interp *interp)
+int
+pls_auto_path(Tcl_Interp *interp)
 {
     char *buf, *ptr=NULL, *dn;
 #ifdef DEBUG
@@ -363,44 +264,19 @@ set_auto_path(Tcl_Interp *interp)
 static int
 tcl_cmd(Tcl_Interp *interp, char *cmd)
 {
+    int result;
+
     dbug_enter("tcl_cmd");
 #ifdef DEBUG_ENTER
     fprintf(stderr, "evaluating command %s\n", cmd);
 #endif
 
-    if (tcl_eval(interp, cmd)) {
+    result = Tcl_VarEval(interp, cmd, (char **) NULL);
+    if (result != TCL_OK) {
 	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
 		cmd, interp->result);
-	return TCL_ERROR;
     }
-    return TCL_OK;
-}
-
-/*----------------------------------------------------------------------*\
-* tcl_eval
-*
-* Evals the specified string, returning the result.
-* Use a static string buffer to hold the command, to ensure it's in
-* writable memory (grrr...).
-\*----------------------------------------------------------------------*/
-
-static char *cmdbuf = NULL;
-static int cmdbuf_len = 100;
-
-static int
-tcl_eval(Tcl_Interp *interp, char *cmd)
-{
-    if (cmdbuf == NULL) 
-	cmdbuf = (char *) malloc(cmdbuf_len);
-
-    if (strlen(cmd) >= cmdbuf_len) {
-	free((void *) cmdbuf);
-	cmdbuf_len = strlen(cmd) + 20;
-	cmdbuf = (char *) malloc(cmdbuf_len);
-    }
-
-    strcpy(cmdbuf, cmd);
-    return(Tcl_VarEval(interp, cmdbuf, (char **) NULL));
+    return result;
 }
 
 /*----------------------------------------------------------------------*\
