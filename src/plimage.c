@@ -50,39 +50,56 @@ enabledisplay()
   plP_esc(PLESC_EXPOSE, NULL); 
 }
 
+
+
 void
-plimageslow(unsigned short *data, PLINT nx, PLINT ny, 
-	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy)
+plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny, 
+	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+	    unsigned short zmin, unsigned short zmax)
 {
-
   PLINT ix, iy, i;
-  PLFLT x[4], y[4];
-  short xs[4], ys[4];
-
-  if (plsc->plbuf_read == 1)
-    printf("Replot to a slow device, not working.\n");fflush(stdout);
+  PLFLT xf[4], yf[4];
+  short xs[5], ys[5];
+  int corners[4];
+  unsigned short col;
 
   for (ix = 0; ix < nx ; ix++) {
     for (iy = 0; iy < ny ; iy++) {
 
-      plcol1(data[ix*ny+iy]/65535.);
+      col = data[ix*ny+iy];
+      /* only plot points within zmin/zmax range */
+      if (col < zmin || col > zmax)
+	continue;
 
-      x[0] = x[1] = ix;
-      x[2] = x[3] = ix+1;
-      y[0] = y[3] = iy;
-      y[1] = y[2] = iy+1;
-      if (plsc->plbuf_read == 1) { /* buffer read, is a replot to a slow device. Not working when the old device is a fast one. Device scale problems */
+      plcol1(col/(float)USHRT_MAX);
+
+      if (plsc->plbuf_read == 1) {
+	/* buffer read, is a replot to a slow device. */
+
+	corners[0] = ix*(ny+1)+iy;       /* [ix][iy] */
+	corners[1] = (ix+1)*(ny+1)+iy;   /* [ix+1][iy] */
+	corners[2] = (ix+1)*(ny+1)+iy+1; /* [ix+1][iy+1] */
+	corners[3] = ix*(ny+1)+iy+1;     /* [ix][iy+1] */
+
 	for (i = 0; i < 4; i++) {
-	  xs[i] = (xmin + x[i]*dx)*30; /* 30: just to see something in the output file */
-	  ys[i] = (ymin + y[i]*dy)*30;
+	  xs[i] = x[corners[i]];
+	  ys[i] = y[corners[i]];
 	}
-	plP_fill(xs, ys, 4);
+	xs[4] = xs[0]; ys[4] = ys[0];
+	plP_fill(xs, ys, 5);
+
       } else {
+
+	xf[0] = xf[1] = ix;
+	xf[2] = xf[3] = ix+1;
+	yf[0] = yf[3] = iy;
+	yf[1] = yf[2] = iy+1;
+
 	for (i = 0; i < 4; i++) {
-	  x[i] = xmin + x[i]*dx;
-	  y[i] = ymin + y[i]*dy;
+	  xf[i] = xmin + xf[i]*dx;
+	  yf[i] = ymin + yf[i]*dy;
 	}
-	plfill(4, x, y);
+	plfill(4, xf, yf);
       }
     }
   }
@@ -114,6 +131,10 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
  *       data[0][0] corresponds to (xmin,ymin)
  *       data[nx-1][ny-1] to (xmax,ymax)
  *
+ *   zmin, zmax:
+ *       only data within bounds zmin <= data <= zmax will be
+ *       plotted. If zmin == zmax, all data will be ploted.
+ *
  *   Dxmin, Dxmax, Dymin, Dymax:
  *       plots only the window of points whose(x,y)'s fall
  *       inside the [Dxmin->Dxmax]X[Dymin->Dymax] window
@@ -122,14 +143,14 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
 
 void
 plimage(PLFLT **idata, PLINT nx, PLINT ny, 
-	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
   PLINT nnx, nny, ix, iy, ixx, iyy, xm, ym;
   PLFLT dx, dy;
-  unsigned short *Zf;
+  unsigned short *Zf, szmin, szmax;
   short *Xf, *Yf;
-  PLFLT zmin, zmax, tz;
+  PLFLT lzmin, lzmax, tz;
   
   if (plsc->level < 3) {
     plabort("plimage: window must be set up first");
@@ -154,15 +175,15 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short));
 
   xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
-  zmin = zmax = idata[xm][ym];
+  lzmin = lzmax = idata[xm][ym];
   
   for (ix=xm; ix<xm+nnx; ix++) {
     for (iy=ym; iy<ym+nny; iy++) {
       tz = idata[ix][iy];
-      if (zmax < tz)
-	zmax = tz;
-      if (zmin > tz)
-	zmin = tz;
+      if (lzmax < tz)
+	lzmax = tz;
+      if (lzmin > tz)
+	lzmin = tz;
     }
   }
 
@@ -170,8 +191,22 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   for (ix=xm; ix<xm+nnx; ix++) {
     ixx++; iyy=0;
     for (iy=ym; iy<ym+nny; iy++)
-      Zf[ixx*nny+iyy++] = (idata[ix][iy] - zmin)/(zmax-zmin)*65535.;
+      Zf[ixx*nny+iyy++] = (idata[ix][iy] - lzmin)/(lzmax-lzmin)*USHRT_MAX;
   }
+
+  if (zmin == zmax) {
+    zmin = lzmin;
+    zmax = lzmax;
+  } else {
+    if (zmin < lzmin)
+      zmin = lzmin;
+
+    if (zmax > lzmax)
+      zmax = lzmax;
+  }
+
+  szmin = (zmin - lzmin)/(lzmax-lzmin)*USHRT_MAX;
+  szmax = (zmax - lzmin)/(lzmax-lzmin)*USHRT_MAX;
 
   xmin = Dxmin;  xmax = Dxmax;
   ymin = Dymin;  ymax = Dymax;
@@ -192,7 +227,7 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
       Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
     }
 
-  plP_image(Xf, Yf, Zf, nnx, nny, xmin, ymin, dx, dy);
+  plP_image(Xf, Yf, Zf, nnx, nny, xmin, ymin, dx, dy, szmin, szmax);
 
   free(Xf);
   free(Yf);
