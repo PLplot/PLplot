@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Generate an Encapsulated Postscript file (eps) from the
-# PLplot pstex driver generated files. 
+# PLplot pstex driver generated files.
 
 if test $# = "0"; then
 	echo -e "\n\
@@ -15,10 +15,7 @@ if test $# = "0"; then
 	\n\
 	The Computer Modern Type 1 fonts will be included in the output\n\
 	eps file. If you intent to use the plot figure in LaTeX, just\n\
-	use a plain \include{<filename_t>} in your latex file.\n\
-	\n\
-	Warning: the ghostscript utility 'ps2epsi', used in this script,\n\
-	can mis-calculate the postscript Bounding Box.\n"
+	use a plain \include{<filename_t>} in your latex file.\n"
 	exit 1
 fi
 
@@ -32,18 +29,22 @@ ofile=`mktemp pstex2eps.XXXXXX`
 
 cat > ${ofile}.tex <<EOF
 \documentclass{article}
-\usepackage{aecompl}
+\usepackage{ae,aecompl}
 \usepackage{graphicx}
 \begin{document}
 \pagestyle{empty}
-\rotatebox{0}{\scalebox{1.0}{\input{${ifile}_t}}}
+This is a  preview demo of your plot, the 'pstex' driver is intended 
+to be used with \LaTeX.
+Use \LaTeX math capabilities as strings in your plots,
+and they will appear as you would expect.
+\begin{figure}[!htb]
+{\centering{\rotatebox{-90}{\scalebox{0.5}{\input{${ifile}_t}}}}
+\caption{This is how your plot will look.}}
+\end{figure}
 \end{document}
 EOF
 
 latex ${ofile} > /dev/null \
-&& dvips -Pcmz -o ${ofile}.ps $ofile 2> /dev/null \
-&& ps2epsi ${ofile}.ps
-
-sed  -e '/BeginPreview/,/EndPreview/d'  ${ofile}.epsi > ${ifile}.eps
+&& dvips -Pcmz -o ${ifile}.eps $ofile 2> /dev/null 
 
 rm ${ofile}*
