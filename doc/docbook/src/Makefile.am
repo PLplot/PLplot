@@ -157,6 +157,14 @@ man: $(MAN_MANIFEST)
 $(MAN_MANIFEST): $(MASTER_XML_IN) api.xml
 	$(PERL) $(BINDIR)/api2man.pl $(MASTER_XML) api.xml $(MANVOL) > $@
 
+validate: plplotdoc.xml
+if has_onsgmls
+	@echo Validating $<:
+	@$(ONSGMLS) $(XML_DECL) $< > /dev/null
+	@echo "No problems found."
+else
+	@echo "onsgmls not found: cannot validate $<"
+endif
 
 .PHONY: all html print info man
 .PRECIOUS: %.info %.texi %.txml %.xml-info %.pdf

@@ -113,7 +113,7 @@ Program $1 not found.
     The $1 package can be found at
     $3.])
 [fi], has_$1=$has_$1)
-
+AM_CONDITIONAL(has_$1, [test "$has_$1" = found])
 popdef([PROG])
 ])
 
@@ -215,11 +215,12 @@ FILE_EXT(html)
 
 dnl Check programs
 
-CHECK_PROG(openjade, [HTML PRINT], http://sf.net/projects/openjade/)
+CHECK_PROG(openjade, [HTML PRINT], http://www.openjade.org)
 CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
 CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
 CHECK_PROG(dvips, PRINT, http://www.ctan.org)
 CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
+CHECK_PROG(onsgmls, [], http://www.openjade.org)
 
 dnl Check public identifiers
 
