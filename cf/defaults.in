@@ -87,6 +87,10 @@ MY_ARG_WITH(dbmalloc,
   [  --with-dbmalloc         link with libdbmalloc (default: no)],
   [], with_dbmalloc=$default_with_dbmalloc)
 
+MY_ARG_WITH(pkgdir,
+  [  --with-pkgdir           first place to look for libraries and includes)],
+  [], with_pkgdir="")
+
 MY_ARG_ENABLE(drivers,
   [  --enable-drivers        enable all device drivers (default: yes)],
   [], enable_drivers=$default_enable_drivers)
