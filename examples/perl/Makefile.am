@@ -27,7 +27,8 @@ examples_perl_SCRIPTS = \
 	x03.pl \
 	x04.pl \
 	x05.pl \
-	x06.pl
+	x06.pl \
+	x12.pl
 
 examples_perl_DATA = \
 	README.perldemos
