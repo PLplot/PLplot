@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.21  1995/05/06 17:18:37  mjl
+# Revision 1.22  1995/06/13 21:28:23  mjl
+# Miscellaneous tk4 fixes.
+#
+# Revision 1.21  1995/05/06  17:18:37  mjl
 # Shave and a haircut.
 #
 # Revision 1.20  1995/04/12  08:06:16  mjl
@@ -135,7 +138,10 @@ proc plserver_init {} {
     tk_menuBar .menu .menu.file .menu.help
     tk_bindForTraversal . .menu
 
-    focus default .
+    global tk_version
+    if {$tk_version < 4.0} then {
+	focus default .
+    }
 
 # Set up initial link to client.
 

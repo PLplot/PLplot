@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.34  1995/06/02 20:31:54  mjl
+# Revision 1.35  1995/06/13 21:28:24  mjl
+# Miscellaneous tk4 fixes.
+#
+# Revision 1.34  1995/06/02  20:31:54  mjl
 # Set zoom starting point to default to center.  Better for zooming in on
 # small plot features, although worse for large objects (e.g. entire plots).
 #
@@ -494,7 +497,6 @@ proc plw_create_pmenu_zoom {w} {
     menu $m.options
 
     global zoomopts
-
     $m.options add check -label "Preserve aspect ratio" \
 	-variable zoomopts($w,0)
 
@@ -506,7 +508,7 @@ proc plw_create_pmenu_zoom {w} {
     $m.options add radio -label "Start from center" \
 	-variable zoomopts($w,1) -value 1
 
-    $m.options invoke 1
+    $m.options invoke [plw_entry 1]
 }
 
 #----------------------------------------------------------------------------
@@ -567,6 +569,23 @@ proc plw_create_pmenu_options {w} {
 
     $m add command -label "Palette 1" \
 	-command "plcmap1_edit $w" 
+}
+
+#----------------------------------------------------------------------------
+# plw_entry
+#
+# Compensates for tk3.6 -> tk4.0 lunacy, where the menu entries are all
+# incremented by 1!  This happens because of the tear-off entry.  You can
+# create the menu without a tear-off, but that's even more intrusive.
+#----------------------------------------------------------------------------
+
+proc plw_entry {entry} {
+
+    global tk_version
+    if { $tk_version >= 4.0 } then {
+	incr entry
+    }
+    return $entry
 }
 
 #----------------------------------------------------------------------------
@@ -950,7 +969,7 @@ proc plw_update_orient {w} {
     global pmenu
     set rot [$w.plwin orient]
     set entry [expr [format "%.0f" $rot] % 4]
-    $pmenu($w).orient invoke $entry
+    $pmenu($w).orient invoke [plw_entry $entry]
 }
 
 #----------------------------------------------------------------------------
