@@ -1,5 +1,8 @@
 # $Id$
 # $Log$
+# Revision 1.1  2002/07/10 10:18:40  vincentdarley
+# plwidget conflict resolved
+#
 # Revision 1.2  2002/07/10 09:52:38  vincentdarley
 # resolve name clashes, and sync pltools.tcl
 #
@@ -130,7 +133,9 @@
 # menu-accessible commands, or "pl_" for utility commands.
 #----------------------------------------------------------------------------
 
-namespace eval plw {}
+namespace eval plw {
+    namespace export create plr_create plxframe
+}
 
 #----------------------------------------------------------------------------
 # plw::create
@@ -150,7 +155,7 @@ proc plw::create {w {client_id {}}} {
 # A front-end to plw::create, used by plrender.
 #----------------------------------------------------------------------------
 
-proc plr_create {w {client_id {}}} {
+proc plw::plr_create {w {client_id {}}} {
     global is_plrender; set is_plrender 1
     plw::create $w $client_id
 }
@@ -172,7 +177,7 @@ proc plr_create {w {client_id {}}} {
 # the client_id variable should not be used.
 #----------------------------------------------------------------------------
 
-proc plxframe {w {client_id {}}} {
+proc plw::plxframe {w {client_id {}}} {
 
 # Note the window name w must never be a global.
     global client plot_menu_on
@@ -831,7 +836,7 @@ proc plw::print {w} {
 
 proc plw::save_as {w} {
     global pmenu saveopts
-    set file [plSaveFile $saveopts($w,0)]
+    set file [plw::SaveFile $saveopts($w,0)]
     if { [string length $file] > 0 } {
 	if { [file exists $file] } {
 	    if { ! [confirm "File $file already exists.  Are you sure?"] } {
@@ -874,7 +879,7 @@ proc plw::save_as {w} {
     }
 }
 
-proc plSaveFile {devkey} {
+proc plw::SaveFile {devkey} {
     switch -- "$devkey" \
       "ps"	"set filter .ps" \
       "psc"	"set filter .ps" \
@@ -1716,21 +1721,5 @@ proc plw::dplink {w client} {
     $w.plwin openlink socket $data_sock
     dp_Host -
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
