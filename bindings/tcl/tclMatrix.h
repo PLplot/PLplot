@@ -87,12 +87,9 @@ typedef struct {
 // libplplot*.a for each compiler you'd like to use.
 
 // Start by setting up some important macros.
-
-// HP C++ has exceptions, but most other compilers don't.  Will embellish
-// this as necessary.
 */
 
-#include <iostream.h>
+#include <iostream>
 
 #ifdef throw
 #define TCL_NO_UNDEF
