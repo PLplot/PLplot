@@ -80,11 +80,13 @@ plplot_widgetmodule_la_SOURCES  = plplot_widgetmodule.c
 plplot_widgetmodule_la_LDFLAGS = $(_plplotcmodule_la_LDFLAGS)
 
 CLEANFILES = \
-	plplotc.py \
-	plplotcmodule_p_double.c \
-	plplotcmodule_p_single.c \
 	plplotcmodule_double.c \
 	plplotcmodule_single.c
+  
+MAINTAINERCLEANFILES = \
+	plplotc.py \
+	plplotcmodule_p_double.c \
+	plplotcmodule_p_single.c
   
 EXTRA_DIST = \
 	setup.py.in \

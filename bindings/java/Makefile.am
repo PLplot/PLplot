@@ -72,14 +72,16 @@ java/plplot/core/SWIGTYPE_p_p_char.class java/plplot/core/PLStreamc.class \
 	config.java plplotjavac.java plplotjavacJNI.java 
 
 CLEANFILES = \
-	SWIGTYPE_p_p_char.java \
 	java/plplot/core/SWIGTYPE_p_p_char.class \
 	java/plplot/core/PLStreamc.class \
 	java/plplot/core/config.class \
-	plplotjavac.java \
 	java/plplot/core/plplotjavac.class \
+	java/plplot/core/plplotjavacJNI.class
+
+MAINTAINERCLEANFILES = \
+	SWIGTYPE_p_p_char.java \
+	plplotjavac.java \
 	plplotjavacJNI.java \
-	java/plplot/core/plplotjavacJNI.class \
 	plplotjavac_wrap.c
 
 # if enable_java

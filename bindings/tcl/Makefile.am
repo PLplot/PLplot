@@ -62,8 +62,8 @@ tclgen.h tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
 	perl pltclgen
 
 EXTRA_DIST = pltclgen plapi.tpl tclcmd.tpl ../tk/plplot.tcl $(mkindex)
-CLEANFILES = tclgen.h tclgen_s.h tclgen.c $(generated_scripts) tclIndex
-
+CLEANFILES = $(generated_scripts) tclIndex
+MAINTAINERCLEANFILES = tclgen.h tclgen_s.h tclgen.c
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
 AM_CPPFLAGS = @INCLTDL@ @TCLINCCMD@ @ITCLINCCMD@ @TKINCCMD@
 version = -version-info @SOVERSION@
