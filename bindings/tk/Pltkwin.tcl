@@ -40,7 +40,7 @@ package	require	Itcl
 package	require	Itk
 package require Iwidgets
 
-class Pltkwin {
+itcl::class Pltkwin {
     inherit PLWin
 
     constructor	{args} {}

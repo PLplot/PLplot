@@ -7,7 +7,7 @@
 # $Id$
 ###############################################################################
 
-class PLWin {
+itcl::class PLWin {
     inherit itk::Widget
 
     protected variable hull
