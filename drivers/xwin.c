@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1994/05/27 22:19:17  mjl
+ * Revision 1.41  1994/06/09 20:05:58  mjl
+ * Fixed Visual handling to support grayscale and mono displays.  Enabled
+ * exporting of colormap hack flag for other files (plframe.c) that need it.
+ *
+ * Revision 1.40  1994/05/27  22:19:17  mjl
  * Window now placed properly when offsets (+x+y) are specified.  Thanks
  * to Mark S. Glover (glover@zombi.res.utc.com) for the fix.
  *
@@ -91,7 +95,7 @@
  * See Init_CustomCmap() and  Init_DefaultCmap() for more info.
  */
 
-static int ccmap = 0;
+int plplot_ccmap = 0;
 
 #define XWM_COLORS 70
 #define CMAP0_COLORS 16
@@ -655,7 +659,7 @@ Init_main(PLStream *pls)
 		       DefaultRootWindow(dev->display),
 		       hint.x, hint.y, hint.width, hint.height,
 		       dev->border, dev->depth,
-		       InputOutput, dev->vi->visual,
+		       InputOutput, dev->visual,
 		       0, NULL );
 
     XSetStandardProperties(dev->display, dev->window, header, header,
@@ -1161,6 +1165,7 @@ Init_Colors(PLStream *pls)
     default_map = DefaultColormap(dev->display, dev->screen);
 
 /* Get visual info */
+/* Try for an 8 plane display, if unavailable go for the default */
 
     vTemplate.screen = dev->screen;
     vTemplate.depth = 8;
@@ -1169,11 +1174,14 @@ Init_Colors(PLStream *pls)
 				 VisualScreenMask | VisualDepthMask,
 				 &vTemplate, &visuals_matched );
 
-    if ( ! visuals_matched) 
-	plexit("Unable to allocate adequate visuals.");
-
-    dev->vi = &visualList[0];	/* Chose # 0 for lack of a better idea. */
-    dev->depth = vTemplate.depth;
+    if (visuals_matched) {
+	dev->visual = visualList->visual;	/* Choose first match. */
+	dev->depth = vTemplate.depth;
+    }
+    else {
+	dev->visual = DefaultVisual( dev->display, dev->screen );
+	dev->depth = DefaultDepth( dev->display, dev->screen );
+    }
 
 /*
  * Figure out if we have a color display or not.
@@ -1232,7 +1240,7 @@ Init_Colors(PLStream *pls)
 
 /* Create custom color map and initialize cmap0 */
 
-    if (ccmap) 
+    if (plplot_ccmap) 
 	Init_CustomCmap(pls);
     else 
 	Init_DefaultCmap(pls);
@@ -1313,7 +1321,7 @@ Init_CustomCmap(PLStream *pls)
 /* Create color map */
 
     dev->map = XCreateColormap( dev->display, DefaultRootWindow(dev->display),
-				dev->vi->visual, AllocNone );
+				dev->visual, AllocNone );
 
 /* Now allocate all colors so we can fill the ones we want to copy */
 
@@ -1617,6 +1625,9 @@ void
 PLX_save_colormap(Display *display, Colormap colormap)
 {
     int i;
+
+    if ( ! plplot_ccmap)
+	return;
 
     sxwm_colors_set = 1;
     for (i = 0; i < 256; i++) {
