@@ -1,56 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.23  1999/06/19 05:36:39  furnish
-# Integrated patch set from Joao Cardoso.
-#
-# Revision 1.22  1998/12/01  20:49:21  furnish
-# Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
-#
-# Revision 1.21  1997/06/20  15:20:17  furnish
-# Minor updates for working with Itcl better.
-#
-# Revision 1.20  1995/12/15  18:49:10  furnish
-# Hack out more of the evil class system which was missed before, and
-# also hack out the remaining support for [itcl 1.5] which was messing
-# things up pretty bad under 2.0.  Seems to all work a lot better now.
-#
-# Revision 1.19  1995/11/29  20:55:13  furnish
-# Hack the itcl file selection support for itcl 2.  itcl 1.5 is no
-# longer supported.
-#
-# Revision 1.18  1995/09/18  20:15:01  furnish
-# Move aside the evil class system so it isn't fouling up the new itcl.
-#
-# Revision 1.17  1995/06/01  21:27:51  mjl
-# Added procs getSaveFile and getPaletteFile for retrieving a save or palette
-# file name, respectively.  Checks to see if [incr Tcl] is available and if
-# so, uses the non-sucky file selector.  Otherwise uses the getItem proc.
-# Added modified destroy proc by Michael J. McLennan, to ensure that [incr
-# Tcl] objects get destroyed properly.
-#
-# Revision 1.16  1995/05/19  22:19:21  mjl
-# Fix for Tk 4.0.  Lines of the form
-#      if {[tk colormodel $w] == "color"}
-# no longer work (the command was eliminated), and have been replaced with
-#      if {[winfo depth $w] == 1}
-# which has the same effect -- to determine if we are on a color or mono
-# system.
-#
-# Revision 1.15  1995/05/06  17:08:15  mjl
-# Shave and a haircut.
-#
-# Revision 1.14  1995/03/16  23:15:25  mjl
-# Allow exec's since some people need them.  Shouldn't be a problem unless
-# you compile TK without security (don't do this).  If you have a problem
-# running the plplot/TK driver using Xauthority style authentication, use
-# the Tcl-DP driver instead.
-#
-# Revision 1.13  1994/07/01  20:39:57  mjl
-# Added proc plstdwin to handle "standard" initialization code.
-#
-# Revision 1.12  1994/04/25  18:58:48  mjl
-# Added the simple class system by Sam Shen for support of the palette
-# manipulators.  Will probably rewrite in itcl at some point.
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer support procs
@@ -287,32 +235,26 @@ proc max {args} {
 }
 
 #----------------------------------------------------------------------------
-# getSaveFile
+# fileSelect
 #
-# Puts up a file selector for save file.  Uses the itcl File selector by
-# Mark L. Ulferts.  If itcl isn't available, just a front-end to getItem.
+# Puts up a file selector.  Uses iWidgets 3.0 File selector if available,
+# otherwise just getItem.
 #
 # I have to go through a bit of trickery to get "~" expanded, since the
-# Tcl 7.0 glob no longer expands names if the file doesn't already exist.
+# Tcl glob doesn't expand it if the file doesn't already exist.
 #----------------------------------------------------------------------------
 
-proc getSaveFile {devkey} {
-    if { [info commands itcl_class] != "" } then {
-	set filter "*"
-	switch "$devkey" \
-	    "ps"	"set filter *.ps" \
-	    "psc"	"set filter *.ps" \
-	    "plmeta"	"set filter *.plm" \
-	    "xfig"	"set filter *.fig"
+proc fileSelect {{filter {}}} {
 
-#	FileSelect .fs -title "Enter file name" -full 0 -filter $filter
-
-    # Modify for [incr Tcl] 2.x (which uses the iwidgets package...
-
+    # Use the Iwidgets file selector if available
+    if ![catch {package require Iwidgets 3.0}] {
 	if {![winfo exist .fs]} {
-	    Fileselectiondialog .fs -title "Enter file name" \
-		-mask $filter \
-		-modality application
+	    iwidgets::fileselectiondialog .fs -modality application
+	}
+
+	if {$filter > ""} {
+	    .fs configure -mask $filter
+	    .fs filter
 	}
 
 	if {[.fs activate]} {
@@ -321,11 +263,10 @@ proc getSaveFile {devkey} {
 	    set file ""
 	}
 
-#	destroy .fs
 	.fs deactivate
 
     } else {
-	set file [getItem "Enter save file name"]
+	set file [getItem "Enter file name"]
     }
 
     if { [string index $file 0] == "~" } {
@@ -336,46 +277,35 @@ proc getSaveFile {devkey} {
 }
 
 #----------------------------------------------------------------------------
+# getSaveFile
+#
+# Puts up a file selector for save file.
+#----------------------------------------------------------------------------
+
+proc getSaveFile {devkey} {
+
+    set filter "*"
+
+    # Map device name to filter suffix.
+    # Add to this as desired.
+    switch "$devkey" \
+	"ps"		"set filter *.ps" \
+	"psc"		"set filter *.ps" \
+	"plmeta"	"set filter *.plm" \
+	"xfig"		"set filter *.fig"
+
+    return [fileSelect $filter]
+}
+
+#----------------------------------------------------------------------------
 # getPaletteFile
 #
-# Puts up a file selector for a palette file.  Uses the itcl File selector by
-# Mark L. Ulferts.  If itcl isn't available, just a front-end to getItem.
-#
-# I have to go through a bit of trickery to get "~" expanded, since the
-# Tcl 7.0 glob no longer expands names if the file doesn't already exist.
+# Puts up a file selector for a palette file.
 #----------------------------------------------------------------------------
 
 proc getPaletteFile {} {
-    if { [info commands itcl_class] != "" } then {
 
-	if {![winfo exist .fs]} {
-	    Fileselectiondialog .fs -title "Enter file name" \
-		-mask *.pal \
-		-modality application
-	}
-    # Should probably try to do something to fix the filter if it
-    # /does/ already exist...  
-
-#	FileSelect .fs -title "Enter file name" -full 0 -filter *.pal
-
-	if {[.fs activate]} {
-	    set file [.fs get]
-	} else {
-	    set file ""
-	}
-
-#	destroy .fs
-	.fs deactivate
-
-    } else {
-	set file [getItem "Enter palette file name"]
-    }
-
-    if { [string index $file 0] == "~" } {
-	set file [glob ~][string trimleft $file ~]
-    }
-
-    return $file
+    return [fileSelect *.pal]
 }
 
 #----------------------------------------------------------------------------
@@ -806,10 +736,6 @@ proc lappendmember {var val} {
     uplevel $cmd
 }
 
-#proc delete object {
-#    uplevel "unset $object"
-#}
-
 #------------------------------------------------------------------------------
 # Proc to set up debug bindings.
 #------------------------------------------------------------------------------
@@ -843,63 +769,3 @@ bind $w <Any-Unmap>		{puts stderr "Widget event: Unmap"}
 bind $w <Any-Visibility>	{puts stderr "Widget event: Visibility"}
 
 }
-
-# destroy
-# ----------------------------------------------------------------------
-# Replacement for the usual Tk "destroy" command.
-# Recognizes mega-widgets as [incr Tcl] objects and deletes them
-# appropriately.  Destroys ordinary Tk windows in the usual manner.
-#
-# mjl: Modified to work even on a vanilla wish.  Kept in this file to make
-# sure this copy is loaded rather than the one that comes with [incr Tcl].
-# ----------------------------------------------------------------------
-#   AUTHOR:  Michael J. McLennan       Phone: (610)712-2842
-#            AT&T Bell Laboratories   E-mail: michael.mclennan@att.com
-#
-#      RCS:  destroy.tcl,v 1.1 1994/04/22 13:36:07 mmc Exp
-# ----------------------------------------------------------------------
-#               Copyright (c) 1994  AT&T Bell Laboratories
-# ======================================================================
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted,
-# provided that the above copyright notice appear in all copies and that
-# both that the copyright notice and warranty disclaimer appear in
-# supporting documentation, and that the names of AT&T Bell Laboratories
-# any of their entities not be used in advertising or publicity
-# pertaining to distribution of the software without specific, written
-# prior permission.
-#
-# AT&T disclaims all warranties with regard to this software, including
-# all implied warranties of merchantability and fitness.  In no event
-# shall AT&T be liable for any special, indirect or consequential
-# damages or any damages whatsoever resulting from loss of use, data or
-# profits, whether in an action of contract, negligence or other
-# tortuous action, arising out of or in connection with the use or
-# performance of this software.
-# ======================================================================
-
-#if {[info commands tk_destroy] == ""} { rename destroy tk_destroy }
-
-# ----------------------------------------------------------------------
-#  USAGE:  destroy ?window window...?
-#
-#  Replacement for the usual Tk "destroy" command.  Destroys both
-#  Tk windows and [incr Tcl] objects.
-# ----------------------------------------------------------------------
-
-#proc destroy {args} {
-#    global itcl_destroy
-
-#    foreach win $args {
-#	if { "[info commands itcl_class]" != "" &&
-#	     "[itcl_info objects $win]" != "" &&
-#	     ![info exists itcl_destroy($win)]} {
-
-#	    set itcl_destroy($win) "in progress"
-#	    $win delete
-#	    unset itcl_destroy($win)
-#	} else {
-#	    tk_destroy $win
-#	}
-#    }
-#}
