@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/07/26 21:08:47  mjl
+ * Revision 1.12  1994/07/28 07:42:39  mjl
+ * Fix for side-effect of defining caddr_t in plConfig.h.
+ *
+ * Revision 1.11  1994/07/26  21:08:47  mjl
  * Put in a user-suggested portability fix (lost track of who sent it).
  *
  * Revision 1.10  1994/07/25  06:04:21  mjl
@@ -105,6 +108,9 @@
 #include "plConfig.h"
 #ifdef _POSIX_SOURCE
 #undef _POSIX_SOURCE
+#endif
+#ifdef caddr_t
+#undef caddr_t
 #endif
 #define PLARGS(a)	()
 
@@ -219,9 +225,9 @@ pl_Unread (fd, buffer, numBytes, copy)
 {
     PartialRead *new;
 
-    new = (PartialRead *)malloc (sizeof(PartialRead));
+    new = (PartialRead *) malloc (sizeof(PartialRead));
     if (copy) {
-	new->buffer = malloc (numBytes);
+	new->buffer = (char *) malloc (numBytes);
 	memcpy (new->buffer, buffer, numBytes);
     } else {
 	new->buffer = buffer;
