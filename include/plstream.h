@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/05/07 03:22:08  mjl
+ * Revision 1.29  1994/06/30 18:37:03  mjl
+ * Added status flag to keep track of current page status.
+ *
+ * Revision 1.28  1994/05/07  03:22:08  mjl
  * Eliminated bgcolor, fgcolor, and bgcolorset.  Now fgcolor is a figment of
  * the X driver's imagination :-).  bgcolor is identically the same as the
  * 0th entry of cmap0.  About time I introduced some sanity to these.
@@ -41,19 +44,6 @@
  * Revision 1.21  1993/12/21  10:35:46  mjl
  * Added flag to be set by driver to indicate whether TK or DP style
  * communication is being used.
- *
- * Revision 1.20  1993/12/09  20:35:58  mjl
- * Inserted some missing function prototypes.
- *
- * Revision 1.19  1993/12/06  07:45:23  mjl
- * Modifications for new color model.
- *
- * Revision 1.18  1993/11/15  08:34:43  mjl
- * Documentation changes.
- *
- * Revision 1.17  1993/11/07  09:04:17  mjl
- * Added device variable to specify that driver wants to handle its own
- * flushes.
 */
 
 /*	plstream.h
@@ -323,6 +313,8 @@ typedef struct {
 * dimyay 	PLFLT
 * dimyb 	PLFLT	  y' = dimyay * y + dimyb
 *
+* status	PLINT	Flag to indicate current action
+*
 ***********************************************************************
 *
 * Fill pattern state information. 
@@ -507,6 +499,7 @@ typedef struct {
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
     PLFLT dimxax, dimxb, dimyay, dimyb;
     PLFLT dimxmin, dimymin, dimxmax, dimymax, dimxpmm, dimypmm;
+    PLINT status;
 
 /* Fill pattern info */
 
