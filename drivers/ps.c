@@ -342,8 +342,7 @@ ps_init(PLStream *pls)
     fprintf(OF, "/SW {stringwidth 2 index mul exch 2 index mul exch rmoveto pop} bind def\n");
     fprintf(OF, "/B {Z %d %d M %d %d D %d %d D %d %d D %d %d closepath} def\n",
 	    XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN);
-    fprintf(OF, "/CL {/y2 exch def /x2 exch def /y1 exch def /x1 exch def newpath ");
-    fprintf(OF, "x1 y1 M x2 y1 D x2 y2 D x1 y2 D closepath clip} def\n");
+    fprintf(OF, "/CL {M D D D closepath clip} def\n");
 
 /* End of dictionary definition */
 
@@ -715,7 +714,7 @@ proc_str (PLStream *pls, EscText *args)
      cur_str[PROC_STR_STRING_LENGTH];
   float font_factor = 1.4;
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
-  PLINT clipxmin, clipxmax, clipymin, clipymax; /* Current clip limits */
+  PLINT clipx[4],clipy[4]; /* Current clip limits */
 
   PLFLT scale = 1., up = 0.; /* Font scaling and shifting parameters */
 
@@ -846,17 +845,24 @@ proc_str (PLStream *pls, EscText *args)
 	
 	/* Output */
 	/* Set clipping */
-	clipxmin=pls->clpxmi;
-	clipxmax=pls->clpxma;
-	clipymin=pls->clpymi;
-	clipymax=pls->clpyma;
-	difilt(&clipxmin, &clipymin, 1, &clxmin, &clxmax, &clymin, &clymax);
-	difilt(&clipxmax, &clipymax, 1, &clxmin, &clxmax, &clymin, &clymax);
+	clipx[0]=pls->clpxmi;
+	clipx[2]=pls->clpxma;
+	clipy[0]=pls->clpymi;
+	clipy[2]=pls->clpyma;
+	clipx[1]=clipx[2];
+	clipy[1]=clipy[0];
+	clipx[3]=clipx[0];
+	clipy[3]=clipy[2];
+	difilt(&clipx, &clipy, 4, &clxmin, &clxmax, &clymin, &clymax);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-	         &clipxmin, &clipymin);
+	         &clipx[0], &clipy[0]);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-		 &clipxmax, &clipymax);
-	fprintf(OF," gsave %d %d %d %d CL\n",clipxmin, clipymin, clipxmax, clipymax);
+	         &clipx[1], &clipy[1]);
+	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+	         &clipx[2], &clipy[2]);
+	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+	         &clipx[3], &clipy[3]);
+	fprintf(OF," gsave %d %d %d %d %d %d %d %d CL\n",clipx[0],clipy[0],clipx[1],clipy[1],clipx[2],clipy[2],clipx[3],clipy[3]);
 	
 	/* move to string reference point */
 	fprintf(OF, " %d %d M\n", args->x, args->y );
