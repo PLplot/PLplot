@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 05:21:09  mjl
-   Eliminated negative orientations.  Recognized settings are now 0, 1, 2, 3
-   (multiply by 90 degrees to get orientation).
+   Revision 1.3  1993/03/03 17:04:50  mjl
+   Changed orient-setting code to switch on the basis of orient%4, so that
+   any value of orient give valid output.
 
+ * Revision 1.2  1993/02/23  05:21:09  mjl
+ * Eliminated negative orientations.  Recognized settings are now 0, 1, 2, 3
+ * (multiply by 90 degrees to get orientation).
+ *
  * Revision 1.1  1993/01/23  06:00:28  mjl
  * Added to hold functions that primarily deal with manipulation of stream
  * quantities, through a pointer to a stream passed as an argument.  You may
@@ -80,6 +84,10 @@ color_def(PLStream *pls, PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
 * Initial RGB values for color map 0 taken from HPUX 8.07 X-windows 
 * rgb.txt file, and may not accurately represent the described colors on 
 * all systems.
+*
+* Note the background color is not set, since the device driver may be
+* able to detect if a monochrome output device is being used, in which
+* case I want to choose the default background color there.
 \*----------------------------------------------------------------------*/
 
 void
@@ -95,7 +103,7 @@ plCmaps_init(PLStream *pls)
 
 /* Color map 0 */
 
-    color_def(pls, 0, 0, 0, 0);		/* black */
+    color_def(pls, 0, 255, 114, 86);	/* coral */
     color_def(pls, 1, 255, 0, 0);	/* red */
     color_def(pls, 2, 255, 255, 0);	/* yellow */
     color_def(pls, 3, 0, 255, 0);	/* green */
@@ -281,6 +289,7 @@ plGetFlt(char *s)
 * plRotPhy()
 *
 * Rotates physical coordinates if necessary for given orientation.
+* Each time orient is incremented, the plot is rotated 90 deg clockwise.
 \*----------------------------------------------------------------------*/
 
 void
@@ -293,7 +302,7 @@ plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
     x2 = *px2;
     y2 = *py2;
 
-    switch (orient) {
+    switch (orient%4) {
 
     case 1:
 	*px1 = dev->xmin + (y1 - dev->ymin);
