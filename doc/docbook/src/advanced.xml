@@ -692,7 +692,7 @@ PLplot options:
     -jy justy            Page justification in y (-0.5 to 0.5, def 0)
     -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
     -freeaspect          Do not preserve aspect ratio on orientation swaps
-    -width width         Sets pen width (1 <= width <= 10)
+    -width width         Sets pen width (1 &lt;= width &lt;= 10)
     -bg color            Background color (0=black, FFFFFF=white)
     -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
     -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
