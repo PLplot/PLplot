@@ -1,7 +1,27 @@
-//--------------------------------*-C++-*------------------------------------//
+//---------------------------------------------------------------------------//
 // $Id$
-// Geoffrey Furnish
-// 17 October 1994
+//---------------------------------------------------------------------------//
+//
+//---------------------------------------------------------------------------//
+// Copyright (C) 1994 Geoffrey Furnish
+// Copyright (C) 1995, 2000 Maurice LeBrun
+// Copyright (C) 2002, 2002, 2003 Alan W. Irwin
+// This file is part of PLplot.
+//
+// This file is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published by
+// the Free Software Foundation; version 2 of the License.
+//
+// This file is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with the file; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+//---------------------------------------------------------------------------//
+//
 //---------------------------------------------------------------------------//
 // This example program demonstrates the use of the plstream C++ class, and
 // some aspects of its improvements over the klunky C API, mostly those
@@ -124,31 +144,29 @@ class CoordinateMatrix : public Coord_2d {
     }
 };
 
-void plot1( plstream& pls );
-void plot2( plstream& pls );
+class x01cc {
 
-//---------------------------------------------------------------------------//
-// Finally!
-//---------------------------------------------------------------------------//
+public:
+   x01cc(int, char**);
+   void plot1();
+   void plot2();
 
-main()
-{
-    plstream pls;
 
-    plot1( pls );
-    plot2( pls );
-}
+private:
+   plstream *pls;
+   
+};
 
 //---------------------------------------------------------------------------//
 // Just a simple little routine to show simple use of the plstream object.
 //---------------------------------------------------------------------------//
 
-void plot1( plstream& pls )
+void x01cc::plot1()
 {
-    pls.col( Red );
-    pls.env( 0., 1., 0., 1., 0, 0 );
+    pls->col( Red );
+    pls->env( 0., 1., 0., 1., 0, 0 );
 
-    pls.col( Yellow );
+    pls->col( Yellow );
     pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
     PLFLT x[6], y[6];
@@ -157,11 +175,11 @@ void plot1( plstream& pls )
 	y[i] = x[i] * x[i];
     }
 
-    pls.col( Cyan );
-    pls.poin( 6, x, y, 9 );
+    pls->col( Cyan );
+    pls->poin( 6, x, y, 9 );
 
-    pls.col( Green );
-    pls.line( 6, x, y );
+    pls->col( Green );
+    pls->line( 6, x, y );
 }
 
 //---------------------------------------------------------------------------//
@@ -170,9 +188,9 @@ void plot1( plstream& pls )
 // the C and Fortran API's do.
 //---------------------------------------------------------------------------//
 
-void plot2( plstream& pls )
+void x01cc::plot2()
 {
-    pls.adv(0);
+    pls->adv(0);
 
 // First declare some objects to hold the data and the coordinates.  Note,
 // if you don't want to go to the trouble of making these derived classes so
@@ -218,8 +236,8 @@ void plot2( plstream& pls )
     int sh_cmap =1, sh_width;
     int min_color = 1, min_width = 0, max_color = 0, max_width = 0;
 
-    pls.vpor( .1, .9, .1, .9 );
-    pls.wind( 0., 1., 0., twopi );
+    pls->vpor( .1, .9, .1, .9 );
+    pls->wind( 0., 1., 0., twopi );
 
     for (i = 0; i < NCONTR; i++) {
 	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
@@ -228,24 +246,24 @@ void plot2( plstream& pls )
 	sh_width = 2;
 	plpsty(0);
 
-	pls.shade( d, 0., 1., 0., twopi,
+	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width,
 		   1, NULL );
     }
 
-    pls.col(Red);
-    pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+    pls->col(Red);
+    pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 
 // Now do it again, but with the coordinate transformation taken into
 // account. 
 
-    pls.adv(0);
+    pls->adv(0);
 
     cxx_pltr2 tr( xg, yg );
 
-    pls.vpas( .1, .9, .1, .9, 1. );
-    pls.wind( -1., 1., -1., 1. );
+    pls->vpas( .1, .9, .1, .9, 1. );
+    pls->wind( -1., 1., -1., 1. );
 
     for (i = 0; i < NCONTR; i++) {
 	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
@@ -254,13 +272,13 @@ void plot2( plstream& pls )
 	sh_width = 2;
 	plpsty(0);
 
-	pls.shade( d, 0., 1., 0., twopi,
+	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width,
 		   0, &tr );
     }
 
-    pls.col(Red);
+    pls->col(Red);
 
 // Now draw the border around the drawing region.
 
@@ -271,7 +289,7 @@ void plot2( plstream& pls )
 	y[i] = yg(63,i);
     }
 
-    pls.line( 65, x, y );
+    pls->line( 65, x, y );
 
 // Finally, let's "squoosh" the plot, and draw it all again.
 
@@ -293,10 +311,10 @@ void plot2( plstream& pls )
     PLFLT xmin, xmax, ymin, ymax;
     xg.min_max(xmin, xmax), yg.min_max(ymin, ymax);
 
-    pls.adv(0);
+    pls->adv(0);
 
-    pls.vpas( .1, .9, .1, .9, 1. );
-    pls.wind( xmin, xmax, ymin, ymax );
+    pls->vpas( .1, .9, .1, .9, 1. );
+    pls->wind( xmin, xmax, ymin, ymax );
 
     for (i = 0; i < NCONTR; i++) {
 	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
@@ -305,13 +323,13 @@ void plot2( plstream& pls )
 	sh_width = 2;
 	plpsty(0);
 
-	pls.shade( d, 0., 1., 0., twopi,
+	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width,
 		   0, &tr );
     }
 
-    pls.col(Red);
+    pls->col(Red);
 
 // Now draw the border around the drawing region.
 
@@ -320,5 +338,34 @@ void plot2( plstream& pls )
 	y[i] = yg(63,i);
     }
 
-    pls.line( 65, x, y );
+    pls->line( 65, x, y );
 }
+
+x01cc::x01cc( int argc, char **argv ) {
+
+   pls = new plstream();
+
+   // Parse and process command line arguments.
+  
+   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+
+   // Initialize plplot.
+  
+   pls->init();
+   plot1();
+   plot2();
+   delete pls;
+}
+
+//---------------------------------------------------------------------------//
+// Finally!
+//---------------------------------------------------------------------------//
+
+int main( int argc, char **argv ) 
+{
+   x01cc *x = new x01cc( argc, argv );
+}
+
+//---------------------------------------------------------------------------//
+//                              End of x01cc.cc
+//---------------------------------------------------------------------------//
