@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 05:58:48  mjl
-   Holds functions that modify plplot defaults.  These do not need direct
-   access to the stream data.
+   Revision 1.5  1993/02/23 05:19:29  mjl
+   Changed references in error messages from plstar to plinit.  Also changed
+   behavior of size-setting routines (should not affect user code).  Fixed
+   data structure initializers to be ANSI-conformant.
 
+ * Revision 1.4  1993/01/23  05:58:48  mjl
+ * Holds functions that modify plplot defaults.  These do not need direct
+ * access to the stream data.
+ *
  * Revision 1.3  1992/11/07  08:04:28  mjl
  * Fixed a problem encountered when a user tried to change the default
  * character/symbol scale heights.
@@ -34,43 +39,75 @@ static struct line {
 
     {
 	0,			/* Continuous line */
-	0, 0, 0, 0,
-	0, 0, 0, 0
+	{
+	    0, 0, 0, 0
+	},
+	{
+	    0, 0, 0, 0
+	}
     },
     {
 	1,
-	1000, 0, 0, 0,
-	1000, 0, 0, 0
+	{
+	    1000, 0, 0, 0
+	},
+	{
+	    1000, 0, 0, 0
+	}
     },
     {
 	1,
-	2000, 0, 0, 0,
-	2000, 0, 0, 0
+	{
+	    2000, 0, 0, 0
+	},
+	{
+	    2000, 0, 0, 0
+	}
     },
     {
 	1,
-	2000, 0, 0, 0,
-	1000, 0, 0, 0
+	{
+	    2000, 0, 0, 0
+	},
+	{
+	    1000, 0, 0, 0
+	}
     },
     {
 	2,
-	2500, 1000, 0, 0,
-	1000, 1000, 0, 0
+	{
+	    2500, 1000, 0, 0
+	},
+	{
+	    1000, 1000, 0, 0
+	}
     },
     {
 	2,
-	2000, 1000, 0, 0,
-	2000, 1000, 0, 0
+	{
+	    2000, 1000, 0, 0
+	},
+	{
+	    2000, 1000, 0, 0
+	}
     },
     {
 	3,
-	1000, 1500, 2000, 0,
-	1000, 1500, 2000, 0
+	{
+	    1000, 1500, 2000, 0
+	},
+	{
+	    1000, 1500, 2000, 0
+	}
     },
     {
 	3,
-	1000, 1500, 2000, 0,
-	1000, 1000, 1000, 0
+	{
+	    1000, 1500, 2000, 0
+	},
+	{
+	    1000, 1000, 1000, 0
+	}
     }
 };
 
@@ -84,43 +121,75 @@ static struct pattern {
 
     {
 	1,
-	0, 0,
-	2000, 0
+	{
+	    0, 0
+	},
+	{
+	    2000, 0
+	}
     },
     {
 	1,
-	900, 0,
-	2000, 0
+	{
+	    900, 0
+	},
+	{
+	    2000, 0
+	}
     },
     {
 	1,
-	450, 0,
-	2000, 0
+	{
+	    450, 0
+	},
+	{
+	    2000, 0
+	}
     },
     {
 	1,
-	-450, 0,
-	2000, 0
+	{
+	    -450, 0
+	},
+	{
+	    2000, 0
+	}
     },
     {
 	1,
-	300, 0,
-	2000, 0
+	{
+	    300, 0
+	},
+	{
+	    2000, 0
+	}
     },
     {
 	1,
-	-300, 0,
-	2000, 0
+	{
+	    -300, 0
+	},
+	{
+	    2000, 0
+	}
     },
     {
 	2,
-	0, 900,
-	2000, 2000
+	{
+	    0, 900
+	},
+	{
+	    2000, 2000
+	}
     },
     {
 	2,
-	450, -450,
-	2000, 2000
+	{
+	    450, -450
+	},
+	{
+	    2000, 2000
+	}
     }
 };
 
@@ -133,11 +202,10 @@ static struct pattern {
 void
 c_plschr(PLFLT def, PLFLT scale)
 {
-    PLFLT defalt, ht, base_scale;
+    PLFLT defalt, ht;
 
-    gscale(&base_scale);
     if (def != 0.0)
-	schr((PLFLT) (def * base_scale), (PLFLT) (scale * def));
+	schr((PLFLT) (def), (PLFLT) (scale * def));
     else {
 	gchr(&defalt, &ht);
 	schr(defalt, (PLFLT) (scale * defalt));
@@ -153,14 +221,13 @@ c_plschr(PLFLT def, PLFLT scale)
 void
 c_plsmin(PLFLT def, PLFLT scale)
 {
-    PLFLT defalt, ht, base_scale;
+    PLFLT defalt, ht;
 
-    gscale(&base_scale);
     if (def != 0.0)
-	smin(def, (PLFLT) (scale * def * base_scale));
+	smin(def, (PLFLT) (scale * def));
     else {
 	gmin(&defalt, &ht);
-	smin(defalt, (PLFLT) (scale * defalt * base_scale));
+	smin(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -173,14 +240,13 @@ c_plsmin(PLFLT def, PLFLT scale)
 void
 c_plsmaj(PLFLT def, PLFLT scale)
 {
-    PLFLT defalt, ht, base_scale;
+    PLFLT defalt, ht;
 
-    gscale(&base_scale);
     if (def != 0.0)
-	smaj(def, (PLFLT) (scale * def * base_scale));
+	smaj(def, (PLFLT) (scale * def));
     else {
 	gmaj(&defalt, &ht);
-	smaj(defalt, (PLFLT) (scale * defalt * base_scale));
+	smaj(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -193,14 +259,13 @@ c_plsmaj(PLFLT def, PLFLT scale)
 void
 c_plssym(PLFLT def, PLFLT scale)
 {
-    PLFLT defalt, ht, base_scale;
+    PLFLT defalt, ht;
 
-    gscale(&base_scale);
     if (def != 0.0)
-	ssym(def, (PLFLT) (scale * def * base_scale));
+	ssym(def, (PLFLT) (scale * def));
     else {
 	gsym(&defalt, &ht);
-	ssym(defalt, (PLFLT) (scale * defalt * base_scale));
+	ssym(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -217,7 +282,7 @@ c_pllsty(PLINT lin)
 
     glev(&level);
     if (level < 1)
-	plexit("pllsty: Please call plstar first.");
+	plexit("pllsty: Please call plinit first.");
 
     if (lin < 1 || lin > 8)
 	plexit("pllsty: Invalid line style.");
@@ -239,7 +304,7 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del)
 
     glev(&level);
     if (level < 1)
-	plexit("plpat: Please call plstar first.");
+	plexit("plpat: Please call plinit first.");
 
     if (nlin < 1 || nlin > 2)
 	plexit("plpat: Only 1 or 2 line styles allowed.");
@@ -264,7 +329,7 @@ c_plpsty(PLINT patt)
 
     glev(&level);
     if (level < 1)
-	plexit("plpsty: Please call plstar first.");
+	plexit("plpsty: Please call plinit first.");
 
     if (patt < 1 || patt > 8)
 	plexit("plpsty: Invalid pattern.");
