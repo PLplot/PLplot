@@ -541,7 +541,7 @@ if test "$enable_itk" = "yes"; then
 fi
 if test "$enable_tk" = "yes"; then
     ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, LIBS, LIBPATH)
-    #needed in Linux case (and SCO eventually?)
+    #needed in Linux case (and SCO)
     STUPIDTK_OBJ=stupidtk.o
 fi
 AC_SUBST(STUPIDTK_OBJ)
@@ -914,8 +914,8 @@ if test "$with_shlib" = "yes"; then
 #       SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
         AC_MSG_RESULT([Assuming sco-3.2v5 with gcc. Otherwise, reconfigure --without-shlib])
         SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-        LDSHARED='gcc -fPIC -shared'
-        SHLIB_BUILD="gcc -shared -fPIC -o"
+        LDSHARED='gcc -fPIC -G'
+        SHLIB_BUILD="gcc -G -fPIC -o"
     ;;
 	Linux* )
 	    # Should do something to make sure this is an ELF system, as
