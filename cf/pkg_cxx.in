@@ -12,16 +12,15 @@ CXX_C		= plstream.cc
 CXX_OBJS	= plstream$O
 CXX_OBJS_SO	=
 CXX_OBJS_SA	=
-CXXLIB_AR	= libPLcxx.a
-CXXLIB_SO	= libPLcxx$(SO)
+CXXLIB_AR        = $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG)$A
+CXXLIB_SO        = $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG)$(SO)
+CXXLIB_SA        = $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG)$(SA)
 
 CXX_INSTALL	= install_cxx
-CXX_LINK	= -lPLcxx
+CXX_LINK	= -l$(CXXLIB_NAME)$(LIB_TAG)
 
 install_cxx:
 	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
-	-cp libPLcxx* $(LIB_DIR)
-	if test -r libPLcxx.a; then $(RANLIB) $(LIB_DIR)/libPLcxx.a; fi
 	-if test ! -d $(DEMOS_DIR)/c++; then mkdir -p $(DEMOS_DIR)/c++; fi
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c++
 	-cd $(top_srcdir)/examples/c++; cp * $(DEMOS_DIR)/c++
