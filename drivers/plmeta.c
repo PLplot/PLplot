@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/08/11 19:18:05  mjl
+ * Revision 1.20  1993/08/20 19:35:53  mjl
+ * Deleted save of pen width at every page boundary.  Eventually I'll come up
+ * with a better way to save the state.
+ *
+ * Revision 1.19  1993/08/11  19:18:05  mjl
  * Changed debugging code to print to stderr instead of stdout.
  *
  * Revision 1.18  1993/08/03  01:46:41  mjl
@@ -312,7 +316,6 @@ plD_bop_plm(PLStream *pls)
 /* Write some page state information just to make things nice later on */
 /* Eventually there will be more */
 
-    plD_state_plm(pls, PLSTATE_WIDTH);
     plD_state_plm(pls, PLSTATE_COLOR0);
 }
 
