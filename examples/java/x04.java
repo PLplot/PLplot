@@ -13,7 +13,6 @@ import java.lang.Math;
 class x04 {
 
     PLStream pls;
-    final float PI = 3.1415927f;
 
     public static void main( String[] args ) 
     {
@@ -46,22 +45,22 @@ class x04 {
     void plot1( int type )
     {
         int i;
-        float[] freql = new float[101];
-        float[] ampl  = new float[101];
-        float[] phase = new float[101];
-        float f0, freq;
+        double[] freql = new double[101];
+        double[] ampl  = new double[101];
+        double[] phase = new double[101];
+        double f0, freq;
 
         pls.adv(0);
 
     // Set up data for log plot.
 
-        f0 = 1.0f;
+        f0 = 1.0;
         for (i = 0; i <= 100; i++) {
-            freql[i] = -2.0f + i / 20.0f;
-            freq = (float) Math.pow(10.0, freql[i]);
+            freql[i] = -2.0 + i / 20.0;
+            freq = Math.pow(10.0, freql[i]);
         // Unbelievably, Java has no log10() that I can find...
-            ampl[i] = (float) (20.0 * Math.log(1.0 / Math.sqrt(1.0 + Math.pow((freq / f0), 2.))) / Math.log(10));
-            phase[i] = (float) (-(180.0 / PI) * Math.atan(freq / f0));
+            ampl[i] = 20.0 * Math.log(1.0 / Math.sqrt(1.0 + Math.pow((freq / f0), 2.))) / Math.log(10.);
+            phase[i] = -(180.0 / Math.PI) * Math.atan(freq / f0);
         }
 
         pls.vpor(0.15, 0.85, 0.1, 0.9);

@@ -41,8 +41,6 @@ class x11 {
     {
         pls = new PLStream();
 
-        double PI = 4. * Math.atan(1.);
-
         int i, j, k;
 
         double[] x = new double[ XPTS ];
@@ -71,7 +69,7 @@ class x11 {
             for( j = 0; j < YPTS; j++ )
             {
                 yy = y[j];
-                z[i][j] = Math.cos(2.0 * PI * xx) * Math.sin(2.0 * PI * yy);
+                z[i][j] = Math.cos(2.0 * Math.PI * xx) * Math.sin(2.0 * Math.PI * yy);
             }
         }
 

@@ -14,7 +14,6 @@ import java.text.*;
 class x03 {
 
     PLStream pls;
-    final float PI = 3.1415927f;
 
     public static void main( String[] args ) 
     {
@@ -27,18 +26,18 @@ class x03 {
         NumberFormat nf = NumberFormat.getNumberInstance();
 
         int i, j;
-        float dtr, theta, dx, dy, r;
+        double dtr, theta, dx, dy, r;
 
-        float[] x0 = new float[361];
-        float[] y0 = new float[361];
-        float[] x  = new float[361];
-        float[] y  = new float[361];
+        double[] x0 = new double[361];
+        double[] y0 = new double[361];
+        double[] x  = new double[361];
+        double[] y  = new double[361];
 
-        dtr = PI / 180.0f;
+        dtr = Math.PI / 180.0;
         for( i = 0; i <= 360; i++ )
         {
-            x0[i] = (float) Math.cos(dtr * i);
-            y0[i] = (float) Math.sin(dtr * i);
+            x0[i] = Math.cos(dtr * i);
+            y0[i] = Math.sin(dtr * i);
         }
 
     // Parse and process command line arguments.
@@ -54,8 +53,8 @@ class x03 {
         pls.env(-1.3, 1.3, -1.3, 1.3, 1, -2);
         for (i = 1; i <= 10; i++) {
             for (j = 0; j <= 360; j++) {
-                x[j] = 0.1f * i * x0[j];
-                y[j] = 0.1f * i * y0[j];
+                x[j] = 0.1 * i * x0[j];
+                y[j] = 0.1 * i * y0[j];
             }
 
         // Draw circles for polar grid.
@@ -65,9 +64,9 @@ class x03 {
 
         pls.col0(2);
         for (i = 0; i <= 11; i++) {
-            theta = 30.0f * i;
-            dx = (float) Math.cos(dtr * theta);
-            dy = (float) Math.sin(dtr * theta);
+            theta = 30.0 * i;
+            dx = Math.cos(dtr * theta);
+            dy = Math.sin(dtr * theta);
 
         // Draw radial spokes for polar grid.
 
@@ -85,7 +84,7 @@ class x03 {
     // Draw the graph.
 
         for (i = 0; i <= 360; i++) {
-            r = (float) Math.sin(dtr * (5 * i));
+            r = Math.sin(dtr * (5 * i));
             x[i] = x0[i] * r;
             y[i] = y0[i] * r;
         }

@@ -41,8 +41,6 @@ class x08 {
     {
         pls = new PLStream();
 
-        double PI = 4. * Math.atan(1.);
-
         int i, j, k;
 
         double[] x = new double[ XPTS ];
@@ -77,7 +75,7 @@ class x08 {
             {
                 yy = y[j];
                 r = Math.sqrt(xx * xx + yy * yy);
-                z[i][j] = Math.exp(-r * r) * Math.cos(2.0 * PI * r);
+                z[i][j] = Math.exp(-r * r) * Math.cos(2.0 * Math.PI * r);
             }
         }
 

@@ -12,12 +12,9 @@ import java.lang.Math;
 
 class x01 {
 
-    float[] x, y, xs, ys;
-    float xscale, yscale, xoff, yoff;
+    double[] x, y, xs, ys;
+    double xscale, yscale, xoff, yoff;
     PLStream pls;
-
-// Is there a better way to do this in Java?
-    final float PI = 3.1415927f;
 
     public static void main( String[] args ) 
     {
@@ -29,11 +26,11 @@ class x01 {
     x01()
     {
     // Java lacks static arrays.
-        x = new float[101];
-        y = new float[101];
+        x = new double[101];
+        y = new double[101];
 
-        xs = new float[6];
-        ys = new float[6];
+        xs = new double[6];
+        ys = new double[6];
     }
 
     public void run( String[] args )
@@ -71,19 +68,19 @@ class x01 {
     // Set up the data
     // Original case
 
-        xscale = 6.f;
-        yscale = 1.f;
-        xoff = 0.f;
-        yoff = 0.f;
+        xscale = 6.;
+        yscale = 1.;
+        xoff = 0.;
+        yoff = 0.;
 
     // Do a plot
         plot1(0);
 
     // Set up the data
 
-        xscale = 1.f;
-        yscale = 0.0014f;
-        yoff = 0.0185f;
+        xscale = 1.;
+        yscale = 0.0014;
+        yoff = 0.0185;
 
     // Do a plot
 
@@ -122,12 +119,12 @@ class x01 {
     void plot1( int do_test )
     {
         int i;
-        float xmin, xmax, ymin, ymax;
+        double xmin, xmax, ymin, ymax;
 
         for( i=0; i < 60; i++ )
         {
-            x[i] = xoff + xscale * (i + 1) / 60.0f;
-            y[i] = yoff + yscale * (float) Math.pow(x[i], 2.f);
+            x[i] = xoff + xscale * (i + 1) / 60.0;
+            y[i] = yoff + yscale * Math.pow(x[i], 2.);
         }
 
         xmin = x[0];
@@ -170,17 +167,17 @@ class x01 {
     // separately (just = 0), and we draw a box with axes (axis = 1).
 
         pls.col0(1);
-        pls.env(-2.0f, 10.0f, -0.4f, 1.2f, 0, 1);
+        pls.env(-2.0, 10.0, -0.4, 1.2, 0, 1);
         pls.col0(2);
         pls.lab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
     // Fill up the arrays.
 
         for (i = 0; i < 100; i++) {
-            x[i] = (i - 19.0f) / 6.0f;
-            y[i] = 1.0f;
+            x[i] = (i - 19.0) / 6.0;
+            y[i] = 1.0;
             if (x[i] != 0.0)
-                y[i] = (float) Math.sin(x[i]) / x[i];
+                y[i] = Math.sin(x[i]) / x[i];
         }
 
     // Draw the line.
@@ -203,19 +200,19 @@ class x01 {
     // range from -1.2 to 1.2.
 
         pls.vsta();
-        pls.wind( 0.0f, 360.0f, -1.2f, 1.2f );
+        pls.wind( 0.0, 360.0, -1.2, 1.2 );
 
     // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
         pls.col0(1);
-        pls.box("bcnst", 60.0f, 2, "bcnstv", 0.2f, 2);
+        pls.box("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
     // Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
     // plstyl expects a pointer!
 
         pls.styl(1, mark1, space1);
         pls.col0(2);
-        pls.box("g", 30.0f, 0, "g", 0.2f, 0);
+        pls.box("g", 30.0, 0, "g", 0.2, 0);
         pls.styl(0, mark0, space0);
 
         pls.col0(3);
@@ -223,8 +220,8 @@ class x01 {
                  "#frPLplot Example 1 - Sine function" );
 
         for (i = 0; i < 101; i++) {
-            x[i] = 3.6f * i;
-            y[i] = (float) Math.sin(x[i] * PI / 180.0);
+            x[i] = 3.6 * i;
+            y[i] = Math.sin(x[i] * Math.PI / 180.0);
         }
 
         pls.col0(4);

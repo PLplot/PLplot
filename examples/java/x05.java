@@ -13,7 +13,6 @@ import java.lang.Math;
 class x05 {
 
     final int NPTS = 2047;
-    final float PI = 3.1415927f;
 
     PLStream pls;
 
@@ -27,8 +26,8 @@ class x05 {
         pls = new PLStream();
 
         int i;
-        float[] data = new float[NPTS];
-        float delta;
+        double[] data = new double[NPTS];
+        double delta;
 
     // Parse and process command line arguments.
 
@@ -40,12 +39,12 @@ class x05 {
 
     // Fill up data points.
 
-        delta = 2.0f * PI / (float) NPTS;
+        delta = 2.0 * Math.PI / (double) NPTS;
         for (i = 0; i < NPTS; i++)
-            data[i] = (float) Math.sin(i * delta);
+            data[i] = Math.sin(i * delta);
 
         pls.col0(1);
-        pls.hist( NPTS, data, -1.1f, 1.1f, 44, 0);
+        pls.hist( NPTS, data, -1.1, 1.1, 44, 0);
         pls.col0(2);
         pls.lab( "#frValue", "#frFrequency",
                  "#frPLplot Example 5 - Probability function of Oscillator" );
