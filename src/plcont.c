@@ -1,8 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.10  1993/11/15 08:36:12  mjl
-   Updated the documentation.
-
+ * $Log$
+ * Revision 1.11  1994/03/23 07:56:35  mjl
+ * Changed name of plcontf() to plfcont(), as part of the new 2d function
+ * plotter API.  plcontf is now a macro for backward compatibility.
+ *
+ * Replaced call to plexit() on simple (recoverable) errors with simply
+ * printing the error message (via plabort()) and returning.  Should help
+ * avoid loss of computer time in some critical circumstances (during a long
+ * batch run, for example).
+ *
+ * Revision 1.10  1993/11/15  08:36:12  mjl
+ * Updated the documentation.
+ *
  * Revision 1.9  1993/07/17  21:31:55  mjl
  * Improved error message for out of range indices.
  *
@@ -10,38 +19,6 @@
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
  * plplot functions now start with "plP_".
- *
- * Revision 1.7  1993/02/23  05:02:25  mjl
- * Replaced (void *) declaration for user data structures to (PLPointer), in
- * the spirit of Xt's XtPointer.  It was hoped that this would eliminate
- * certain warnings having to do with alignment (only showing up with all
- * warnings turned on), but it didn't.
- *
- * Revision 1.6  1993/01/23  05:47:12  mjl
- * Now holds all contouring routines.  The multiple contour functions have been
- * removed, since now a function is passed in instead of an array.  Through use
- * of a suitable function evaluator and array evaluator, the same contouring
- * code can now be used from Fortran (with no transpose necessary), C with
- * C-like 2d arrays, C with 2d arrays stored as 1d, etc.
- *
- * Revision 1.5  1992/10/12  17:08:02  mjl
- * Added PL_NEED_SIZE_T define to those files that need to know the value
- * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
- * to include <stddef.h> to get it.
- *
- * Revision 1.4  1992/09/30  18:25:44  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.3  1992/09/29  04:45:51  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.2  1992/07/31  06:03:13  mjl
- * Minor bug fixes.
- *
- * Revision 1.1  1992/05/20  21:34:20  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plcont.c
@@ -49,11 +26,7 @@
 	Contour plotter.
 */
 
-#define PL_NEED_MALLOC
-#define PL_NEED_SIZE_T
 #include "plplotP.h"
-
-#include <stdlib.h>
 #include <math.h>
 
 #ifdef MSDOS
@@ -94,6 +67,10 @@ plr45 (PLINT *ix, PLINT *iy, PLINT isens);
 static void 
 plr135 (PLINT *ix, PLINT *iy, PLINT isens);
 
+/* Error flag for aborts */
+
+static int error;
+
 /*----------------------------------------------------------------------*\
 * plf2eval2()
 *
@@ -109,7 +86,7 @@ plf2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 
     value = grid->f[ix][iy];
 
-    return(value);
+    return value;
 }
 
 /*----------------------------------------------------------------------*\
@@ -128,7 +105,7 @@ plf2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 
     value = grid->f[ix * grid->ny + iy];
 
-    return(value);
+    return value;
 }
 
 /*----------------------------------------------------------------------*\
@@ -147,14 +124,14 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 
     value = grid->f[ix + iy * grid->nx];
 
-    return(value);
+    return value;
 }
 
 /*----------------------------------------------------------------------*\
 * void plcont()
 *
 * Draws a contour plot from data in f(nx,ny).  Is just a front-end to
-* plcontf, with a particular choice for f2eval and f2eval_data.
+* plfcont, with a particular choice for f2eval and f2eval_data.
 \*----------------------------------------------------------------------*/
 
 void
@@ -166,13 +143,13 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
     PLfGrid2 grid;
 
     grid.f = f;
-    plcontf(plf2eval2, (PLPointer) &grid,
+    plfcont(plf2eval2, (PLPointer) &grid,
 	    nx, ny, kx, lx, ky, ly, clevel, nlevel,
 	    pltr, pltr_data);
 }
 
 /*----------------------------------------------------------------------*\
-* void plcontf()
+* void plfcont()
 *
 * Draws a contour plot using the function evaluator f2eval and data stored
 * by way of the f2eval_data pointer.  This allows arbitrary organizations
@@ -190,7 +167,7 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 \*----------------------------------------------------------------------*/
 
 void
-plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	PLPointer f2eval_data,
 	PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
@@ -202,22 +179,34 @@ plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     mx = lx - kx + 1;
     my = ly - ky + 1;
 
-    if (kx < 1 || kx >= lx)
-	plexit("plcontf: indices must satisfy  1 <= kx <= lx <= nx.");
-
-    if (ky < 1 || ky >= ly)
-	plexit("plcontf: indices must satisfy  1 <= ky <= ly <= ny.");
+    if (kx < 1 || kx >= lx) {
+	plabort("plfcont: indices must satisfy  1 <= kx <= lx <= nx");
+	return;
+    }
+    if (ky < 1 || ky >= ly) {
+	plabort("plfcont: indices must satisfy  1 <= ky <= ly <= ny");
+	return;
+    }
 
     nstor = mx * my;
     heapc = (PLINT *) malloc((size_t) (mx + 2 * nstor) * sizeof(PLINT));
-    if (heapc == NULL)
-	plexit("plcontf: Out of memory.");
+    if (heapc == NULL) {
+	plabort("plfcont: out of memory in heap allocation");
+	return;
+    }
 
     for (i = 0; i < nlevel; i++) {
 	plcntr(f2eval, f2eval_data,
 	       nx, ny, kx-1, lx-1, ky-1, ly-1, clevel[i], &heapc[0],
 	       &heapc[nx], &heapc[nx + nstor], nstor, pltr, pltr_data);
+
+	if (error) {
+	    error = 0;
+	    goto done;
+	}
     }
+
+  done:
     free((void *) heapc);
 }
 
@@ -225,9 +214,7 @@ plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 * void plcntr()
 *
 * The contour for a given level is drawn here.
-*
-* f is a pointer to a 2d array of nx by ny points.
-* iscan has nx elements. ixstor and iystor each have nstor elements.
+* Note iscan has nx elements. ixstor and iystor each have nstor elements.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -255,6 +242,9 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		     nx, ny, kx, lx, ky, ly, flev, kcol, krow,
 		     &kscan, &kstor, iscan, ixstor, iystor, nstor,
 		     pltr, pltr_data);
+
+	    if (error)
+		return;
 	}
 
 	/* Search of row complete */
@@ -462,7 +452,9 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		else if (iy > krow) {
 		    *p_kstor = *p_kstor + 1;
 		    if (*p_kstor > nstor) {
-			plexit("plcontf: Heap exhausted.");
+			plabort("plfcont: heap exhausted");
+			error = 1;
+			return;
 		    }
 		    ixstor[*p_kstor - 1] = ix;
 		    iystor[*p_kstor - 1] = iy;
@@ -962,4 +954,3 @@ pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 	}
     }
 }
-
