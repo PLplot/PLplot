@@ -68,22 +68,42 @@ GRX_DO_BMP = 1
 # and even though the JPEG support works, and will save the image as a JPEG, 
 # it will be big (lots bigger than the TIFF) and ugly ! I only did this 
 # because I have the JPEG library on my system; didn't have the TIFF lib
-# (then) and was lazy. It was an unsuccessful experiment, but since I did it,
-# I kept it. It uses the Independent JPEG Group's libjpeg library
+# (then); and, was lazy. It was an unsuccessful experiment, but since I 
+# did it, I kept it. It uses the Independent JPEG Group's libjpeg library
 #            ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 # Just hit "F11" while an image is on the screen, and it will dump the file.
-# To Turn on support for saving as JPEGs, 
-# make sure the next line is uncommented
+# To Turn on support for saving as JPEGs, make sure the 
+# next line is uncommented
 
 # GRX_DO_JPEG = 1
 
 # If you want to add a "stand alone" JPEG device driver (in addition to or
-# instead of the screen-dump) edit "pldev.h" and make sure "PLD_jpeg" is
-# defined, then make sure the next line is uncommented
+# instead of the screen-dump) then you have two choices. 
+# First, there is the GRX23 JPEG driver. That is has a small amount
+# of overhead on top of the screen dump feature. It is the better of
+# the two JPEG drivers for DOS, so if you want that driver make sure 
+# "PLD_jpg" is defined in "pldev.h". The second JPEG driver is part of GD, 
+# which itself is used by the PNG driver. If you *really* want to use 
+# GD's JPEG driver (ie if you are also using the PNG driver), then make 
+# sure "PLD_jpeg" is defined in "pldev.h". If you are using GD's JPEG
+# driver, you will have to activate and install the PNG libraries as well.
+# Regardless of which JPEG driver you select (and if you *really* want, you
+# can have both), make sure the next line is uncommented
 
-# LDC_LIBS_JPEG =-ljpeg
+LDC_LIBS_JPEG =-ljpeg
 
+# If you want to use the PNG device driver, or the JPEG driver that runs 
+# from GD (ie PLD_jpeg), you will need to make sure that you have 
+# compiled and installed libpng, libgd, and libz.
+# Details about obtaining these libraries can be found at:
+#               http://www.boutell.com/gd/    ;  and
+#               http://www.libpng.org
+# Even if you are NOT using the PNG driver, its library is needed if
+# you want to use GD's JPEG driver rather than GRX23's JPEG driver.
+# To activate the PNG driver, edit "pldev.h" and define "PLD_png". 
+# Then make sure the next line is uncommented
 
+# LDC_LIBS_PNG=-lgd -lpng -lz
 
 links: linkmain
 
@@ -117,9 +137,9 @@ install_includes:
 	mkdir ..\..\..\..\include\plplot
 	copy .\plplot\*.h ..\..\..\..\include\plplot
 
-copy: copymain
+move: movemain
 
-copymain:
+movemain:
 	mkdir plplot
 	move ../../../../src/*.c .
 	move ../../../../include/*.h ./plplot
@@ -137,7 +157,7 @@ copymain:
 	utod *.c
 	utod ./plplot/*.h
 
-copyexamples:
+moveexamples:
 	move ../../../../examples/c/*.c .
 	utod x*.c
 	move ../../../../examples/c/*.h ./plplot

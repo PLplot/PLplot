@@ -4,7 +4,7 @@
 
 #include "plplot/plDevs.h"
 
-#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined (PLD_gnusvga)
+#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined (PLD_gnusvga) || defined(PLD_bmp) || defined(PLD_jpg) || defined(PLD_tiff)  
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
@@ -44,7 +44,7 @@ static void	setcmap		(PLStream *pls);
 static void     plD_init_gnu_grx_dev(PLStream *pls);
 static void     XorMod          (PLStream *pls, PLINT *mod);
  
-#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined(PLD_tiff) || defined(PLD_jpeg) || defined(PLD_bmp)
+#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined(PLD_tiff) || defined(PLD_jpg) || defined(PLD_bmp)
 #if GRX_VERSION_API >= 0x0229 
 char            *newname        (char *ext);
 #endif
@@ -1328,7 +1328,7 @@ static void RestoreTopOfScreen ( gnu_grx_Dev *dev )
 
 #endif
 
-#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined(PLD_tiff) || defined(PLD_jpeg) || defined(PLD_bmp)
+#if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined(PLD_tiff) || defined(PLD_jpg) || defined(PLD_bmp)
 
 const char gnu_alphabet[]="0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -1543,11 +1543,12 @@ void plD_init_tiff(PLStream *pls)
       dev->Old_Driver_Vector=GrDriverInfo->vdriver;
       GrSetDriver ("memory");
 
-      if (pls->pageset!=1)
-         {
-	  pls->xlength = plGetInt("Enter desired horizontal size in pixels  : ");
-          pls->ylength = plGetInt("Enter desired vertical   size in pixels  : ");
-         }
+      if (pls->xlength <= 0 || pls->ylength <=0)
+      {
+/* use default width, height of 800x600 if not specifed by -geometry option
+ * or plspage */
+	 plspage(0., 0., 800, 600, 0, 0);
+      }
 
         if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
            {
@@ -1574,14 +1575,15 @@ void plD_init_tiff(PLStream *pls)
 
     if (pls->xdpi==0) 
        {
-        plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
+/* This corresponds to a typical monitor resolution of 4 pixels/mm. */
+	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
        }
     else
        {
         pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-        plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
        } 
 
+    plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
     plP_setphy(0, dev->vgax, 0, dev->vgay);
 
 dev->gnusvgaline.lno_width=pls->width;
@@ -1674,23 +1676,23 @@ void plD_tidy_tiff(PLStream *pls)
 }
 #endif
 
-#ifdef PLD_jpeg
+#ifdef PLD_jpg
 
-void plD_init_jpeg(PLStream *pls);
-void plD_tidy_jpeg(PLStream *pls);
-void plD_bop_jpeg(PLStream *pls);
-void plD_esc_jpeg(PLStream *pls, PLINT op, void *ptr);
-void plD_eop_jpeg(PLStream *pls);
+void plD_init_jpg(PLStream *pls);
+void plD_tidy_jpg(PLStream *pls);
+void plD_bop_jpg(PLStream *pls);
+void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr);
+void plD_eop_jpg(PLStream *pls);
 
 
 
 /*----------------------------------------------------------------------*\
- * plD_init_jpeg()
+ * plD_init_jpg()
  *
  * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void plD_init_jpeg(PLStream *pls)
+void plD_init_jpg(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
     pls->termin = 0;		/* is an interactive terminal */
@@ -1713,11 +1715,12 @@ void plD_init_jpeg(PLStream *pls)
       dev->Old_Driver_Vector=GrDriverInfo->vdriver;
       GrSetDriver ("memory");
 
-      if (pls->pageset!=1)
-         {
-	  pls->xlength = plGetInt("Enter desired horizontal size in pixels  : ");
-          pls->ylength = plGetInt("Enter desired vertical   size in pixels  : ");
-         }
+      if (pls->xlength <= 0 || pls->ylength <=0)
+      {
+/* use default width, height of 800x600 if not specifed by -geometry option
+ * or plspage */
+	 plspage(0., 0., 800, 600, 0, 0);
+      }
 
 
         GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
@@ -1734,14 +1737,15 @@ void plD_init_jpeg(PLStream *pls)
 
     if (pls->xdpi==0) 
        {
-        plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
+/* This corresponds to a typical monitor resolution of 4 pixels/mm. */
+	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
        }
     else
        {
         pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-        plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
        } 
 
+    plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
     plP_setphy(0, dev->vgax, 0, dev->vgay);
 
     dev->gnusvgaline.lno_width=pls->width;
@@ -1752,12 +1756,12 @@ void plD_init_jpeg(PLStream *pls)
 
 
 /*----------------------------------------------------------------------*\
- * plD_esc_jpeg()
+ * plD_esc_jpg()
  *
  * Escape function.
 \*----------------------------------------------------------------------*/
 
-void plD_esc_jpeg(PLStream *pls, PLINT op, void *ptr)
+void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr)
 {
     switch (op) {
 
@@ -1777,12 +1781,12 @@ void plD_esc_jpeg(PLStream *pls, PLINT op, void *ptr)
 
 
 /*----------------------------------------------------------------------*\
- * plD_eop_jpeg()
+ * plD_eop_jpg()
  *
  * End of page.
 \*----------------------------------------------------------------------*/
 
-void plD_eop_jpeg(PLStream *pls)
+void plD_eop_jpg(PLStream *pls)
 {
 
     if (page_state == DIRTY) 
@@ -1805,26 +1809,26 @@ void plD_eop_jpeg(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
- * plD_bop_jpeg()
+ * plD_bop_jpg()
  *
  * Set up for the next page.
  * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void plD_bop_jpeg(PLStream *pls)
+void plD_bop_jpg(PLStream *pls)
 {
     pls->page++;
-    plD_eop_jpeg(pls);
+    plD_eop_jpg(pls);
     GrClearScreen(0);
 }
 
 /*----------------------------------------------------------------------*\
- * plD_tidy_jpeg()
+ * plD_tidy_jpg()
  *
  * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void plD_tidy_jpeg(PLStream *pls)
+void plD_tidy_jpg(PLStream *pls)
 {
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
@@ -1875,11 +1879,12 @@ void plD_init_bmp(PLStream *pls)
       dev->Old_Driver_Vector=GrDriverInfo->vdriver;
       GrSetDriver ("memory");
 
-      if (pls->pageset!=1)
-         {
-	  pls->xlength = plGetInt("Enter desired horizontal size in pixels  : ");
-          pls->ylength = plGetInt("Enter desired vertical   size in pixels  : ");
-         }
+      if (pls->xlength <= 0 || pls->ylength <=0)
+      {
+/* use default width, height of 800x600 if not specifed by -geometry option
+ * or plspage */
+	 plspage(0., 0., 800, 600, 0, 0);
+      }
        
         if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
            {
@@ -1906,14 +1911,15 @@ void plD_init_bmp(PLStream *pls)
 
     if (pls->xdpi==0) 
        {
-        plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
+/* This corresponds to a typical monitor resolution of 4 pixels/mm. */
+	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
        }
     else
        {
         pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-        plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
        } 
 
+    plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
     plP_setphy(0, dev->vgax, 0, dev->vgay);
 
     dev->gnusvgaline.lno_width=pls->width;
