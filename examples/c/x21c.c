@@ -5,6 +5,10 @@
 #include "plcdemos.h"
 #include <time.h>
 
+#if !defined(HAVE_ISNAN)
+  #define isnan(x) ((x) != (x))
+#endif
+
 /* Options data structure definition. */
 
 static int pts = 500;
