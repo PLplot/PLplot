@@ -4,18 +4,10 @@
 # $dsuffix defined.
 
 octave -f -q -p $octavedir//: <<EOF
-figure(1, "$driver", "octave.$dsuffix");
-p1
-p2
-p3
-p4
-p5
-p6
 #p7 # p7 works OK with plmeta, e.g., but not ps or psc. pleop/plbop issue?
-p8
-p9
-p13
-p15
-p16
-closefig
+for i=[1:6 8 9 13 15 16];
+   figure(i,"$driver",sprintf("p%d.$dsuffix",i))
+   feval(sprintf("p%d",i))
+   closefig
+endfor
 EOF
