@@ -3,10 +3,15 @@ plplot (5.2.0-1) unstable; urgency=low
   * New upstream release.
   * In several files, changed e-mail address of maintainer to his
     debian.org one.
-  * debian/control: Bumped Standards-Version to 3.5.8.
+  * debian/control:
+      - Bumped Standards-Version to 3.5.8.
+      - Changed name of main package from plplot to libplplot5.
+      - Removed autoconf2.13 from Build-Depends list.
+  *
   * NOT YET RELEASED!
+  *
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 11 Feb 2003 21:16:34 +0100
 
 plplot (5.1.0-1.1) unstable; urgency=low
 

@@ -1,5 +1,4 @@
-usr/lib/libplplotd.so.*
-usr/lib/libtclmatrixd.so.*
+usr/lib/lib*tcl*
 usr/bin/plrender
 usr/bin/plserver
 usr/bin/pltcl
@@ -7,3 +6,10 @@ usr/share/man/man1/plrender.1
 usr/share/man/man1/plserver.1
 usr/share/man/man1/pltcl.1
 usr/lib/plplot*/tcl
+usr/lib/plplot*/driversd/tk*
+usr/include/plplot/pltcl.h
+usr/include/plplot/pltk.h
+usr/include/plplot/tclMatrix.h
+usr/share/doc/plplot-tcl
+usr/share/doc/libplplot5/examples/*tcl*
+usr/share/doc/libplplot5/examples/tk

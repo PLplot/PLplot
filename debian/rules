@@ -8,18 +8,23 @@
 # Modified by Rafael Laboissiere <rafael@debian.org> on 1998/06/12
 # for the plplot package
 
-# Uncomment this to turn on verbose mode. 
+# Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-version		:= 5.1.0
+export DH_COMPAT=4
+
+version		:= 5.2.0
 
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
 debusr		:= $(debtmp)/usr
 deblib		:= $(debusr)/lib
-debdoc		:= $(debusr)/share/doc
-debinfo		:= $(debusr)/share/info
-cfflags		:= --with-double --disable-linuxvga --without-rpath
+debshr		:= $(debusr)/share
+debdoc		:= $(debshr)/doc
+debinfo		:= $(debshr)/info
+debex		:= $(deblib)/plplot$(version)/examples
+deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
+cfflags		:= --with-double --disable-linuxvga
 
 export DEMOS_DIR = /usr/share/doc/plplot/examples
 
@@ -32,113 +37,129 @@ with_python = yes
 build: build-stamp
 build-stamp:
 	dh_testdir
-	make configure
-# Build first bare libraries (no Tcl/Tk) 
-	./configure --prefix=/usr --disable-tcl --disable-tk \
-	                          --disable-python $(cfflags)
+#	make configure
+# Build first bare libraries (no Tcl/Tk)
+#	./configure --prefix=/usr --disable-tcl --disable-tk \
+#	                          --disable-python $(cfflags)
 # This PLLIB_PATH setting is necessary to avoid the lintian error
-# ldconfig-symlink-referencing-wrong-file 
-	make PLLIB_PATH=
-	mv tmp/lib*.a* tmp/lib*.so* tmp/plrender $(debbase)
+# ldconfig-symlink-referencing-wrong-file
+#	make PLLIB_PATH=
+#	mv tmp/lib*.a* tmp/lib*.so* tmp/plrender $(debbase)
 # Build the Tcl/Tk libraries
 ifeq ($(with_python),yes)
-	./configure --prefix=/usr --enable-tcl --enable-tk \
-	                          --enable-python --enable-octave $(cfflags)
+	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
+                    --enable-tk --enable-gd --enable-dyndrivers \
+                    --disable-static --enable-python --enable-octave \
+                    --enable-gnome $(cfflags)
 else
 	./configure --prefix=/usr --enable-tcl --enable-tk \
 	                          --disable-python --enable-octave $(cfflags)
 endif
-	make PLLIB_PATH=
+	$(MAKE)
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
+	rm -f build-stamp install-stamp
 	-$(MAKE) clean
-	rm -rf configure confdefs.h config.log $(debbase)/lib* \
-              $(debbase)/plrender $(debbase)/plplotdoc-info-* \
-	      $(debbase)/plplotdoc-man-* $(debbase)/manpages
-	rm -rf tmp
 	dh_clean
 
 install: install-stamp
 install-stamp: build-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k
 
-	(cd tmp; make PREFIX=$(debusr) install)
+
+	make DESTDIR=$(debtmp) install
 # This hack ought to go away when it is fixed upstream
-	chmod -x $(deblib)/plplot$(version)/tcl/plcolor.tcl ; \
+#	chmod -x $(deblib)/plplot$(version)/tcl/plcolor.tcl ; \
 
 # Temporary hack
-	rm -f $(debusr)/bin/plplot_linkage
+#	rm -f $(debusr)/bin/plplot_linkage
 	#rm -f $(debusr)/bin/plplot-config
 	#rm -f $(debusr)/bin/pstex2eps
 
-	( cd $(debdoc)/plplot ; \
-	  mv CHANGES changelog ; \
-	  rm -f Copyright COPYING.LIB mklinks README.local )
+#	( cd $(debdoc)/plplot ; \
+#	  mv CHANGES changelog ; \
+#	  rm -f Copyright COPYING.LIB mklinks README.local )
 
-	dh_installmanpages --package=plplot
-ifeq ($(with_python),yes)
-	dh_movefiles --package=python-plplot
+#	dh_installmanpages --package=plplot
+#ifeq ($(with_python),yes)
+#	dh_movefiles --package=python-plplot
 # Make x16.py non-executable.  Temporary hack.
-	chmod -x \
-	  $(debbase)/python-plplot/usr/share/doc/plplot/examples/python/qplplot.py
-endif
+#	chmod -x \
+#	  $(debbase)/python-plplot/usr/share/doc/plplot/examples/python/qplplot.py
+#endif
 
-	touch install-stamp	
+	mkdir -p $(debshr)/octave/site/m/PLplot
+	mv $(debshr)/plplot_octave/use_plplot.m $(debshr)/octave/site/m/PLplot
+	mkdir -p $(deboct)
+	mv $(debshr)/plplot_octave/plplot_octave.oct $(deboct)
+
+	touch install-stamp
 
 # Build architecture-independent files here.
 binary-indep: build install
 	#dh_testversion ge 2.0.86
 	dh_testdir -i
 	dh_testroot -i
-	dh_installdocs -i
-	( cd $(debbase)/plplot-doc/usr/share/doc/plplot-doc ; \
-	  mv plplotdoc-html-* html )
-	( cd $(debbase) ; \
-	  tar xfz ../doc/plplotdoc-info-*.tar.gz ; \
-	  cp plplotdoc-info-*/* $(debinfo) )
-	dh_installchangelogs -i 
-	dh_movefiles -i
-	dh_compress -i
-	dh_fixperms -i
+#	dh_installdocs -i
+#	( cd $(debbase)/plplot-doc/usr/share/doc/plplot-doc ; \
+#	  mv plplotdoc-html-* html )
+#	( cd $(debbase) ; \
+#	  tar xfz ../doc/plplotdoc-info-*.tar.gz ; \
+#	  cp plplotdoc-info-*/* $(debinfo) )
+#	dh_installchangelogs -i
+#	dh_movefiles -i
+#	dh_compress -i
+#	dh_fixperms -i
 	#dh_suidregister -i
-	dh_installdeb -i
-	dh_gencontrol -i
-	dh_md5sums -i
-	dh_builddeb -i
+#	dh_installdeb -i
+#	dh_gencontrol -i
+#	dh_md5sums -i
+#	dh_builddeb -i
 
 binary-arch: build install
 	#dh_testversion ge 2.0.86
 	dh_testdir -a
 	dh_testroot -a
-	dh_installdocs -a
-	( cd $(debbase) ; \
-	  tar xfz ../doc/plplotdoc-man-*.tar.gz ; \
-	  mv plplotdoc-man-* manpages )
-	dh_installmanpages --package=plplot-dev $(debbase)/*.1
-	dh_installmanpages --package=plplot
-	dh_installchangelogs -a 
+#	dh_installdocs --package=libplplot5
+#	( cd $(debbase) ; \
+#	  tar xfz ../doc/plplotdoc-man-*.tar.gz ; \
+#	  mv plplotdoc-man-* manpages )
+#	dh_installmanpages --package=plplot-dev $(debbase)/*.1
+#	dh_installmanpages --package=plplot
+#	dh_installchangelogs -a
 
 	dh_installdirs -a
-	rm -f $(deblib)/libplcxxd.so.5.* $(deblib)/libplcxxd.so.5
-	mv $(debbase)/libplcxxd.so.5.* \
-	  $(debbase)/libplcxxd.so.5 \
-	  $(deblib)
+#	rm -f $(deblib)/libplcxxd.so.5.* $(deblib)/libplcxxd.so.5
+#	mv $(debbase)/libplcxxd.so.5.* \
+#	  $(debbase)/libplcxxd.so.5 \
+#	  $(deblib)
 
-	dh_movefiles -a
+	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
+                 octave-plplot python-plplot plplot-gd ; do \
+	  ln -s libplplot5 $(debdoc)/$$i ; \
+	done
+
+	mv $(debdoc)/plplot $(debdoc)/libplplot5
+	mv $(debex) $(debdoc)/libplplot5
+
+	dh_movefiles -a --no-package=libplplot5 --no-package=libplplot-dev
+	dh_movefiles --package=libplplot-dev
+	dh_movefiles --package=libplplot5
+
+
+
 # Why do not dh_movefiles remove empty dirs? Grumpf...
-	( cd $(debusr) ; \
-          rm -rf include lib share/info share/man share/doc/plplot/examples )
-	mv $(debbase)/libplplotd.so.5.* \
-	   $(debbase)/libplplotd.so.5 \
-           $(debbase)/plplot-xwin/usr/lib
-	mv $(debbase)/plrender $(debbase)/plplot-xwin/usr/bin
-	cp $(debbase)/plrender.1 $(debbase)/plplot-xwin/usr/share/man/man1
+#	( cd $(debusr) ; \
+#          rm -rf include lib share/info share/man share/doc/plplot/examples )
+#	mv $(debbase)/libplplotd.so.5.* \
+#	   $(debbase)/libplplotd.so.5 \
+#           $(debbase)/plplot-xwin/usr/lib
+#	mv $(debbase)/plrender $(debbase)/plplot-xwin/usr/bin
+#	cp $(debbase)/plrender.1 $(debbase)/plplot-xwin/usr/share/man/man1
 
 	dh_strip -a
 	dh_compress -a -Xexamples/
@@ -151,7 +172,7 @@ binary-arch: build install
 	dh_md5sums -a
 	dh_builddeb -a
 
-source diff:                                                                  
+source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
 binary: binary-indep binary-arch
