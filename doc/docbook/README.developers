@@ -129,6 +129,10 @@ perfectly to find all the DTD's required.  Our catalog experience with RH
 6.2 was terrible, but it now looks like RedHat 7.x has a similar catalog
 setup to Debian.
 
+On SuSE-8.1, the configure options must be:
+--with-sgml-catalogs=/etc/sgml/catalog:/usr/share/sgml/CATALOG.db42xml \
+--with-xml-declaration=/usr/share/sgml/openjade/xml.dcl
+
 The configure script also checks for certain essential perl modules (see
 package list above).
 
@@ -155,6 +159,9 @@ to 50000.
 To make these new values available:
 dpkg-reconfigure tetex-bin
 dpkg-reconfigure jadetex
+
+[Under SuSE-8.1 and some other distributions, that's enough to execute
+"texconfig init" after editing /etc/texmf/texmf.cnf]
 
 E. Build documentation
 
