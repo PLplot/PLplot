@@ -1,0 +1,360 @@
+\chapter{Output devices}
+\label{ap:dev}
+
+PLPLOT supports a variety of output devices, via a set of device drivers.
+Each driver is required to emulate a small set of low-level graphics
+primitives such as initialization, line draw and page advance, as well
+as be completely independent of the PLPLOT package as a whole.  Thus a
+driver may be very simple, as in the case of the many black \& white file
+drivers (tektronix, etc.).  More complicated and/or color systems require a
+bit more effort by the driver, with the most effort required by an output
+device with a graphical user interface, including menus for screen dumps,
+palette manipulation, and so forth.  At present only the Amiga drivers do
+the latter, although we plan to eventually offer a nice user interface
+on other systems as well (X-windows, OS/2).  At present we aren't pursuing
+a Macintosh development effort due to a lack of time and expertise, but
+will assist anyone wanting to volunteer for the job.
+
+A Computer Graphics Metafile driver is under development and may be finished
+by the time you read this (see the release notes to be sure).  Note that if
+you always render to a PLPLOT metafile, you can always {\tt plrender} them
+to new devices as they become available.
+
+The list of available devices presented when starting PLPLOT (via {\tt
+plstar}) is determined at compile-time.  When installing PLPLOT you may wish
+to exclude devices not available on your system in order to reduce screen
+clutter.  To include a specified device, simply define the appropriate macro
+constant when building PLPLOT (see the installation instructions for your
+system).
+
+The device drivers for PLPLOT terminal output at present are given in table
+\ref{tab:dev1}, with drivers for file output given in table \ref{tab:dev2}. 
+The driver for OS/2 PM is available separately.  See the section on OS/2 in
+Appendix C for more details.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[tb]
+  \centering
+  \begin{tabular}{|l|l|l|}  \hline
+    \multicolumn{1}{|c}{Device} 
+      & \multicolumn{1}{|c|}{keyword}
+        & \multicolumn{1}{|c|}{driver file}
+\\ \hline
+	Xterm Window
+	  & xterm
+	    & xterm.c
+\\ \hline
+	X-Window Screen
+	  & xwin
+	    & xwindow.c
+\\ \hline
+	DOS VGA Screen
+	  & vga
+	    & dosvga.c
+\\ \hline
+	Amiga Window/Screen
+	  & amiwn
+	    & amiwn.c
+\\ \hline
+	Tektronix Terminal
+	  & tekt
+	    & tektronx.c
+\\ \hline
+	DG300 Terminal
+	  & dg300
+	    & dg300.c
+\\ \hline
+    \end{tabular}
+  \caption{PLPLOT terminal output devices}
+  \label{tab:dev1}
+\end{table}
+
+\begin{table}[tb]
+  \centering
+  \begin{tabular}{|l|l|l|}  \hline
+    \multicolumn{1}{|c}{Device} 
+      & \multicolumn{1}{|c|}{keyword}
+        & \multicolumn{1}{|c|}{driver file}
+\\ \hline
+	PLPLOT Native Meta-File
+	  & plmeta
+	    & plmeta.c
+\\ \hline
+	Tektronix File
+	  & tekf
+	    & tektronx.c
+\\ \hline
+	PostScript File
+	  & ps
+	    & pscript.c
+\\ \hline
+	LaserJet II Bitmap File (150 dpi)
+	  & ljii
+	    & ljii.c
+\\ \hline
+	XFig file
+	  & xfig
+	    & xfig.c
+\\ \hline
+	Amiga Printer
+	  & amipr
+	    & amipr.c
+\\ \hline
+	IFF file (Amiga)
+	  & iff
+	    & iff.c
+\\ \hline
+	Aegis Draw file (Amiga)
+	  & aegis
+	    & aegis.c
+\\ \hline
+	HP 7470 Plotter File (HPGL Cartridge Small Plotter)
+	  & hp7470
+	    & hp7470.c
+\\ \hline
+	HP 7580 Plotter File (Large Plotter)
+	  & hp7580
+	    & hp7580.c
+\\ \hline
+	Impress File
+	  & imp
+	    & impress.c
+\\ \hline
+    \end{tabular}
+  \caption{PLPLOT file output devices}
+  \label{tab:dev2}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Driver functions}
+
+A dispatch table is used to direct function calls to whatever driver is
+chosen at run-time.  Below are listed the names of each entry in the generic
+dispatch table, defined in {\tt dispatch.h}.  The entries specific to each
+device (defined in {\tt dispatch.c}) are typically named similarly but with
+``pl\_'' replaced by a string specific for that device (the logical order
+must be preserved, however).  The dispatch table entries are :
+\begin{itemize}
+\item {\tt pl\_MenuStr} : Pointer to string that is printed in device menu.
+\item {\tt pl\_DevName} : A keyword (string) for device selection by name.
+\item {\tt pl\_init} : Initialize device.  
+			This routine may also prompt the user
+			for certain device parameters or open a graphics file.
+			Called only once to set things up.
+\item {\tt pl\_line} : Draws a line between two points.
+\item {\tt pl\_clear} : Clears screen or ejects page or closes file.
+\item {\tt pl\_page} : Set up for plotting on a new page. 
+			May also open a new a new graphics file.
+\item {\tt pl\_adv} : Advance to the next page.  Equivalent to a {\tt pl\_clear}
+			followed by a {\tt pl\_page} on most devices.
+\item {\tt pl\_tidy} : Tidy up. May close graphics file.
+\item {\tt pl\_color} : Change pen color.
+\item {\tt pl\_text} : Switch device to text mode.
+\item {\tt pl\_graph} : Switch device to graphics mode.
+\item {\tt pl\_width} : Set graphics pen width.
+\item {\tt pl\_esc} : Escape function for driver-specific commands.
+\end{itemize}
+
+It is recommended that when adding new functions to only a certain driver,
+the escape function be used.  Otherwise it is necessary to add a null
+routine to all the other drivers to handle the new function.
+
+For more information, see {\tt dispatch.h} or {\tt dispatch.c}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{PLPLOT metafiles and plrender}
+
+The PLPLOT metafile is a way to store and transport your graphical data for
+rendering at a later time or on a different system.  A PLPLOT metafile is
+in binary format in order to speed access and keep storage costs
+reasonable.  All data is stored in device-independent format (written as a
+stream of bytes); the resulting file is about as portable as a tektronix
+vector graphics file and only slightly larger. 
+
+Each PLPLOT metafile begins with a header string that identifies it as
+such, as well as the version number (year \& letter) of the format since
+this may change in time.  The utility for rendering the metafile, {\tt
+plrender}, verifies that the input file is indeed a valid PLPLOT metafile,
+and that it ``understands'' the format the metafile is written in.  {\tt
+plrender} is part of the PLPLOT package and should be built at the time of
+building PLPLOT, and then put into your search path.  It is capable of 
+high speed rendering of the graphics file, especially if the output device
+can accept commands at a high rate (e.g. X windows). 
+
+The commands as written by the metafile driver at present are as follows:
+\begin{itemize}
+\item INITIALIZE 
+\item CLOSE 
+\item SWITCH\_TO\_TEXT 
+\item SWITCH\_TO\_GRAPH 
+\item CLEAR 
+\item PAGE 
+\item NEW\_COLOR 
+\item NEW\_WIDTH 
+\item LINE 
+\item LINETO 
+\item ESCAPE 
+\item ADVANCE
+\end{itemize}
+
+Each command is written as a single byte, possibly followed by additional
+data bytes.  The NEW\_COLOR and NEW\_WIDTH commands each write 2 data
+bytes, the LINETO command writes 4 data bytes, and the LINE command writes
+8 data bytes.  The most common instruction in the typical metafile will be
+the LINETO command, which draws a continuation of the previous line to the
+given point.  This data encoding is not quite as efficient as the tektronix
+format, which uses 4 bytes instead of 5 here (1 command $+$ 4 data),
+however the PLPLOT encoding is far simpler to implement and more robust.
+The ESCAPE function writes a second command character (opcode) followed by
+an arbitrary number of data bytes depending on the value of the opcode.
+Note that any data written must be in device independent form to maintain
+the transportability of the metafile (so floating point numbers are not
+allowed {\it per se}). 
+
+The short usage message for {\tt plrender} is printed if one inputs
+insufficient or invalid arguments, and is as follows:
+\begin{verbatim}
+% plrender
+
+usage:  plrender [-h] [-v] [-dev name] [-i name] [-o name] [-f] [-geo geom]
+    [-b number] [-e number] [-p page] [-a aspect] [-ori orient] [-px number]
+    [-py number] [-fam] [-fsiz size] [-fmem member] [-np] [filename]
+
+Type plrender -h for a full description.
+\end{verbatim}
+
+The longer usage message goes into more detail, and is as follows:
+\begin{verbatim}
+% plrender -h
+
+usage:
+        plrender [-options ...] [filename]
+
+where options include:
+    -h                   Print out this message
+    -v                   Print out version info
+    -dev name            Output device name
+    -i name              Input filename
+    -o name              Output filename, or X server to contact
+    -f                   Filter option -- equivalent to "-i - -o -"
+    -geo geom            X window size, in pixels (e.g. -geo 400x400)
+    -b number            Beginning page number
+    -e number            End page number
+    -p page              Plot given page only
+    -a aspect            Plot aspect ratio
+    -ori orient          Plot orientation (0=landscape, 1=portrait)
+    -px number           Plots per page in x
+    -py number           Plots per page in y
+    -fam                 Create a family of output files
+    -fsiz size           Output family file size in MB (e.g. -fsiz 1.0)
+    -fmem member         Starting family member number on input [1]
+    -np                  No pause between pages
+
+All parameters must be white-space delimited.  If you omit the "-i" flag,
+the filename parameter must come last.  Specifying "-" for the input or
+output filename means use stdin or stdout, respectively.  Only one filename
+parameter is recognized.  Not all options valid with all drivers.
+Please see the man pages for more detail.
+\end{verbatim}
+These are generally self explanatory (family files are explained below).
+Most of these options have default values, and for those that don't {\tt
+plrender} will prompt the user.  The {\tt -px} and {\tt -py} options are
+not so useful at present, because everything is scaled down by the
+specified factor --- resulting in labels that are too small (future
+versions of {\tt plrender} might allow changing the label size as well). 
+
+Additional options may be added in future releases.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Family file output}\label{sec:family}
+
+When sending PLPLOT to a file, the user has the option of generating a
+``family'' of output files for certain output drivers (at present this
+is available for the plmeta, tektronix, and postscript drivers only).
+This can be valuable when generating a large amount of output, so as to not
+strain network or printer facilities by processing extremely large single
+files.  Each family member file can be treated as a completely independent
+file.  In addition, {\tt plrender} has the ability to process a set of
+family member files as a single logical file.
+
+To create a family file, one must simply call {\tt plsfam} with the
+familying flag {\tt fam} set to 1, and the desired maximum member size
+(in bytes) in {\tt bmax}.  If the current output driver does not support
+familying, there will be no effect.  This call must be made {\em before}
+calling {\tt plstar} or {\tt plstart}.
+
+If familying is enabled, the name given for the output file (in response to
+the {\tt plstar} prompt or as a {\tt plstart} argument) becomes the stem
+name for the family.  Thus, if you request a plmeta output file with name
+{\tt test.plm}, the files actually created will be {\tt test.plm.1},
+{\tt test.plm.2}, and so on.  A new file is automatically started once the
+byte limit for the current file is passed, but not until the next page break.
+
+The {\tt plgfam} routine can be used from within the user program to find
+out more about the graphics file being written.  In particular, by
+periodically checking the number of the member file currently being written
+to, one can detect when a new member file is started.  This information
+might be used in various ways; for example you could spawn a process to
+automatically plrender each metafile after it is closed (perhaps during a
+long simulation run) and send it off to be printed. 
+
+{\tt plrender} has several options for dealing with family files.  It can
+process a single member file ({\tt plrender test.plm.1}) or the entire
+family if given only the stem name ({\tt plrender test.plm}).  It can also
+create family files on output, rendering to any device that supports
+familying, including another metafile if desired.  The size of member files
+in this case is input through the argument list, and defaults to 1MB if
+unspecified (this may be changed during the PLPLOT installation, however). 
+{\tt plrender} can also create a single output file from a familied input
+metafile.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Interactive output devices}
+
+Here we shall discuss briefly some of the more common interactive output
+devices.  
+
+Many popular terminals or terminal emulators at present have a facility for
+switching between text and graphics ``screens''.  This includes the xterm
+emulator under X-windows, vt100's with Retrographics, and numerous
+emulators for microcomputers which have a dual vt100/tek4010 emulation
+capability.  On these devices, it is possible to switch between the text
+and graphics screens by surrounding your PLPLOT calls by calls to {\tt
+plgra()} and {\tt pltext()}.  This will allow your diagnostic and
+informational code output to not interfere with your graphical output. 
+
+At present, only the xterm driver supports switching between text
+and graphics screens.  The escape sequences as sent by the xterm driver
+are fairly standard, however, and have worked correctly on most other
+popular vt100/tek4010 emulators we've tried.
+
+When using the xterm driver, hitting a RETURN will advance and clear the
+page.  If indeed running from an xterm, you may resize, move, cover and
+uncover the window.  The behavior of the X-window driver is quite different,
+however.  First, it is much faster, as there is no tty-like handshaking
+going on.  Second, a mouse click is used to advance and clear the page,
+rather than a RETURN.  And last, the window cannot be resized or covered
+without losing the graphics inside (this will be improved in a later
+release).  On the other hand, the Amiga screen driver and the OS/2 PM driver
+both support resizing and exposure with automatic refresh.
+
+On a tektronix 4014 compatible device, you may preview tektronix output
+files via the {\tt pltek} utility.  {\tt pltek} will let you step through the
+file interactively, skipping backward or forward if desired.  The help
+message for {\tt pltek} is as follows:
+\begin{verbatim}
+Usage: pltek filename 
+At the prompt, the following replies are recognized:
+
+    h     Gives this help message.
+    ?     As above.
+    q     Quits program.
+   <n>    Goes to the specified frame number (surprise!).
+          If negative, will go back the specified number of frames.
+ <Return> Goes to the next frame (first frame, if initial reply).
+\end{verbatim}
+The output device is switched to text mode before the prompt is given,
+which causes the prompt to go to the vt102 window under xterm and
+most vt100/tek4010 emulators.

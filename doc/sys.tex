@@ -1,0 +1,29 @@
+\chapter{System dependent usage and installation}
+\label{ap:sys}
+
+Here are listed notes for PLPLOT usage and installation on various systems.
+The user must have access to the proper PLPLOT library(s), utilities ({\tt
+plrender} and optionally {\tt pltek}), and runtime access to the required
+font files ({\tt plstnd4.fnt, plxtnd4.fnt}).  It is best to supplement these
+notes with a site-dependent document outlining the exact procedure for using
+PLPLOT.
+
+Eventually we may make available the PLPLOT library binaries for different
+machines via anonymous ftp, but for now users typically must build the
+package themselves unless the site adminstrator has done so already.
+Typically this will entail unpacking the .zoo or .tar PLPLOT source archive
+on your system, making appropriate changes to set up the makefile or script
+files, and then letting the computer take over.  A complete build of PLPLOT
+will typically take only a few minutes on a fast workstation.  Systems
+that are currently on the ``officially'' supported list should pose few
+difficulties (we hope).  If you find that your system and/or compiler
+require changes to the makefile and/or header files, feel free to contact us
+about including these in the next PLPLOT release.
+
+\input{unix}
+\input{vms}
+\input{amiga}
+\input{os2}
+\input{dos}
+\input{dos386}
+\input{linux}

@@ -1,0 +1,21 @@
+This is the beta (!) PLPLOT 4.0 distribution.  There are undoubtably some
+bugs remaining due to the number of changes, although I've given it a
+fairly good workout.  Please send all bug fixes, etc, so I can incorporate
+them in the final version.
+
+The drivers that are the best tested include:
+
+metafile
+X-window
+X-term
+tektronix
+postscript
+MS-DOS		(G. Furnish handling this)
+OS/2		(contact G. Furnish for this)
+Amiga		(some features implemented differently and/or missing)
+
+Those known to have bugs are
+
+laserjet	(I'm working on it)
+
+and all the rest are iffy right now.

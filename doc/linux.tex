@@ -1,0 +1,26 @@
+\section{LINUX}
+
+PLPLOT can be built on LINUX.  For basic info, see the section on Unix-type
+systems earlier.  There are however some additional considerations which
+bear mentioning.
+
+First, LINUX does not currently support any video drivers.  Consequently the
+only output options which are present in the makefile by default are those
+for printers and the metafile.  This situation will hopefully be resolved
+once the X-11 port to LINUX is completed.  If X is already available for
+LINUX when you read this, you should be able to just add {\tt -DXWIN} to
+the {\tt PLDEVICES} macro in the makefile.  In that event, be sure to fix
+the link step to link against the X11 libraries as well.
+
+Secondly, at the time of this writing (Spring '92), there are some problems
+with some forms of binary file i/o on LINUX.  Specifically, using the
+kernel 0.95c+ and the GCC 2.1 compiler, it is not possible to correctly
+generate the fonts for PLPLOT.  This would appear to be totally crippling
+since every PLPLOT program must be able to load the fonts.  The best
+solution to this problem right now is to build PLPLOT on DOS, and copy the
+{\tt *.fnt} files over to LINUX.  Hopefully this problem with the
+interaction of GCC 2.1 and LINUX will be resolved soon, so this may not be
+a problem when you read this.  You are welcome to attempt to build the
+fonts and see what happens.  If you observe that {\tt plstnd4.fnt} has a
+file size other than {\tt 6424} then you can be sure the fonts were not
+built correctly.  In that case, build them on DOS and copy them over.

@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# File: pltar1
+# Usage: pltar1
+# 
+# Builds tar archive of plplot files for tape.
+
+# Build archive from parent directory.  It must also be unpacked from there.
+
+cd ..
+tar c plplot/README \
+      plplot/README.1st \
+      plplot/COPYRIGHTS \
+      plplot/Installation \
+      plplot/Changes \
+      plplot/pltar* \
+      plplot/plzoo* \
+      plplot/plzip* \
+      plplot/tmp/.dummy \
+      plplot/lib/.dummy \
+      plplot/doc  \
+      plplot/drivers \
+      plplot/examples \
+      plplot/fonts \
+      plplot/include \
+      plplot/new \
+      plplot/utils \
+      plplot/src \
+      plplot/sys

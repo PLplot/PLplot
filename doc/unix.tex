@@ -1,0 +1,145 @@
+\section{Unix-type systems}
+\label{sec:unix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Linking}
+
+Linking your program with the PLPLOT library on a Unix type
+system can be done using something similar to (this is system specific):
+\begin{verbatim}
+cc  -o main main.c libplplotf.a -lm -lX11     or
+f77 -o main main.f libplplotf.a -lm -lX11
+\end{verbatim}
+for the single precision library ({\tt -lplplotd} for double).  
+You can also link using the {\tt -l} option to the linker,
+i.e.:
+\begin{verbatim}
+cc  -o main main.c -lplplotf -lm -lX11     or
+f77 -o main main.f -lplplotf -lm -lX11
+\end{verbatim}
+however in this case you must be very careful to get the order of libraries
+on the command line right (libraries to be searched last should be placed at
+the end of the command line).  In the latter case the library ({\tt
+libplplotf.a}) must be in the search path used by the linker or specified by
+the {\tt -L} option.
+
+The utilities {\tt plrender} and {\tt pltek} should be in your search path.
+Some good places to put these include {\tt /usr/local/bin/} or {\tt
+/usr/local/plplot/}.
+
+The PLPLOT font files must be where the library can find them.
+The current directory is always searched for the fonts first, followed
+by a system-dependent (and perhaps site-dependent) search path.
+This can be modified from the makefile, but is structured so that it won't
+often need to be modified.  Note that directory names must be defined with
+the trailing slash, if non-null.  The default search order for Unix-type
+systems is as follows:
+\begin{verbatim}
+        current directory
+        $(HOME)/lib/
+        $(PLFONTS)
+        PLFONTDEV1      (/usr/local/lib/)
+        PLFONTDEV2      (/usr/local/lib/plplot/
+        PLFONTDEV3      (/usr/local/plplot/)
+\end{verbatim}
+
+This is will not be a concern to the user if the fonts are located correctly
+during installation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Installation}
+
+To achieve a degree of flexibility and system independence for the PLPLOT
+makefile, it is written in the macro language m4.  System dependencies are
+resolved conditionally via m4 macros.  Using this method, only one file
+({\tt makefile.m4}) is required for all systems with a SystemV-compatible
+{\tt make}.  This enables us to easily support many different systems.
+
+Here's how to make everything conveniently on a unix-like system.  First,
+if you run into problems, you should read {\tt sys/unix/makefile.m4}
+carefully, as it has much additional information inside.  If your system is
+not already supported, you must add system specific defines analogous to
+the existing ones in {\tt makefile.m4}.  Then: 
+\begin{verbatim}
+% cd tmp
+% cp ../sys/unix/makefile.m4 .
+% m4 -D<sys> makefile.m4 >makefile 
+\end{verbatim}
+where $\langle$sys$\rangle$ is an abbreviation for your system name, e.g.
+SUNOS, UNICOS, AIX, etc.  To get the double precision library for your
+system, specify {\tt -DDOUBLE} on the {\tt m4} command line (note: Fortran
+double precision may not be supported on your system using this method;
+check the release notes to be sure).  At this point, you may wish to edit
+{\tt makefile} to change whatever settings are required {\em for your site
+only}.  For example, you may wish to edit the device list to include only
+those devices which you actually have access to. 
+
+Then, while in the {\tt tmp} directory:
+%
+\begin{verbatim}
+% make links
+\end{verbatim}
+%
+sets up soft links to all the files you will ever need.
+%
+\begin{verbatim}
+% make [libs]
+\end{verbatim}
+%
+will make the PLPLOT library(s) ({\tt libs} is the first target and
+therefore optional), whereas
+%
+\begin{verbatim}
+% make everything
+\end{verbatim}
+%
+makes the main library, fonts, {\tt plrender}, and {\tt pltek}, for the
+default precision (probably single on a workstation).  This is just an
+abbreviation for typing {\tt \% make libs fonts plrender pltek}.
+To make one of the example programs,
+%
+\begin{verbatim}
+% make x01c
+\end{verbatim}
+%
+for the first C demo, or
+%
+\begin{verbatim}
+% make x01f
+\end{verbatim}
+%
+for the first Fortran demo (other example programs are similar).  To make
+all the C program or Fortran program demos, specify {\tt cdemos} or
+{\tt fdemos} as the target.
+
+Finally, you must move the PLPLOT library, fonts, and utilities to 
+a more permanent location, for example:
+\begin{verbatim}
+% mv ../lib/*.lib /usr/local/plplot
+% mv *.fnt *.idx *.lkp /usr/local/plplot
+% mv plrender pltek /usr/local/plplot
+\end{verbatim}
+if you are installing into system directories, or
+\begin{verbatim}
+% mv ../lib/*.lib ~/lib
+% mv *.fnt *.idx *.lkp ~/lib
+% mv plrender pltek ~/bin
+\end{verbatim}
+if you are installing in your directory tree only (note under SUNOS you must
+run {\tt ranlib} on libraries after moving them).  You should then test the
+library again using one of the example programs to ensure that everything
+works perfectly.  After you are finished, you may delete everything in the
+tmp directory.
+
+Note that starting with PLPLOT version 4.0, the {\tt *.idx} and the {\tt
+*.lkp} files are no longer generated.  The info they contained has been
+stuffed into the {\tt *.fnt} files.  This means when you move the font
+files to their permanent locale, you only need to do
+\begin{verbatim}
+mv *.fnt wherever
+\end{verbatim}
+
+If you have any difficutly with installing the PLPLOT files into their
+permanent places, your local unix system wizard may be able to help you.

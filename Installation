@@ -1,0 +1,59 @@
+---------------------------
+How to get a copy of plplot
+---------------------------
+
+This is just a brief note to help you get started.  If you are installing a
+new version of plplot on your system, please refer to the installation
+notes in the sys/<sys-name>/ directory.  There are also system-specific
+Appendices to the plplot manual.
+
+
+UNIX
+----
+On a Unix type system, it is best to just copy the source distribution and
+build the library on your machine.  This is very easy to do with the
+provided master makefile (system selection done via m4 macros).  See
+sys/unix/README for more information.
+
+
+VMS
+---
+[note this will change for the final 4.0 release]
+On VMS the build is a bit complicated although a makefile is provided (uses
+Todd Aven's MAKE/VMS, a PD make-like utility).  Here it's perhaps best to
+just copy the libraries.  On either the IFS vaxen FUSION or SOLAR these are
+located in DISK1:[MJL.LIB] as
+
+ (libraries)	libplplotf1.obj   libplplotf2.obj   libplplotf3.obj
+ (fonts)	*.idx	*.lkp	*.fnt
+
+The fonts and library should be put in a directory with logical name "lib:".
+The libraries are single precision ('float' in C) and are really just
+concatenated object files (due to VMS linker problems with C, the standard
+library file will not work with plplot).  You will need to link with the 3
+plplot object files as well as sys$library:vaxcrtl/lib.
+
+In the future perhaps these will be available by anonymous ftp.  Meanwhile a
+guest account on SOLAR (also at IFS) may be available for copying purposes
+only, to those who ask.
+
+Note:  the X window driver is NOT included.  I do not know what libraries to
+link with or how common they are on vaxen in general (e.g.  the vax I
+currently use the most does not have any X libraries on it).  Send some mail
+if you know more about this and want to use X under VMS.
+
+
+Amiga
+-----
+See sys/amiga/README for more info.
+
+
+OS/2
+----
+See the README file in sys/os2.
+
+
+MS-DOS
+------
+See the README file in sys/dos.
+

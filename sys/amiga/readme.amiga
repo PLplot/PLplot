@@ -1,0 +1,84 @@
+
+PLPLOT Amiga Release Notes
+--------------------------
+
+Most of my PLPLOT hacking has been on various Unix systems, so the Amiga
+version is not as well tested as it could be.  The window and iff drivers
+seem to be in pretty good shape, the others (specific to the Amiga) may
+not be.  plrender and the metafile driver do work as advertised.  The guts
+of the Amiga drivers could use a bit of rewriting, specifically in order to
+use 2.0 features, but I don't know when/if I'll get around to that.
+
+The Amiga build is patterned after the Unix one, to keep (my) life easy.
+This relies on links to all the required source files in the distribution
+for the make to proceed.  If you are running 2.0, you can in fact use soft
+links (except on the ram disk), with Stefan Becker's MakeLink replacement.
+Unfortunately, the syntax for MakeLink is rather cumbersome (compared to the
+Unix ln), and currently there is no easy way to use it except with the
+provided 'ln' script for use under SKsh.  If anyone writes a script to do
+the necessary links under a different shell, please send it to me and I will
+include it here on the next release.
+
+The alternative to links is to just copy all the files to the tmp directory,
+and you may do this by typing:
+
+	make links
+
+If you are running SKsh, you can get softlinks instead by copying the
+provided sksh/ln and sksh/makelinks scripts to skshscr:, and from the tmp
+directory typing:
+
+	makelinks
+
+Soft links are excellent for this purpose, as you can edit the original file
+and the link is automatically updated, forcing make to do a rebuild.  This
+nice behavior does not occur for hard links -- once the hard link is made
+the contents are always preserved, even if you modify the original file.
+Note that the CBM MakeLink command as distributed with 2.0 cannot do soft
+links.  
+
+The build for the Amiga is basically the same as for Unix.  There are two
+extra utilities you need for this to proceed flawlessly:
+
+	make	(PD version, ported from mod.sources posting)
+	m4	(also PD)
+
+'m4' is used to convert the master makefile.m4 into a makefile suited
+for your system.  This handles system dependencies, compiler dependencies,
+and choice of math library.  From the plplot/tmp directory, you can create
+the makefile via:
+
+	% copy /sys/unix/makefile.m4 ""
+	% m4 -DAMIGA <makefile.m4 >makefile
+
+The default is to use IEEE single precision math, with the library
+libs:mathieeedoubbas.library located at run-time.  By contrast, if you
+want to use FFP math, you would build the makefile via:
+
+	% m4 -DAMIGA -DMATH=FFP <makefile.m4 >makefile
+
+Eventually there will be switches for compiler as well (right now it is set
+up for SAS/C; if someone makes the changes for their favorite compiler,
+please send me a copy).
+
+Then, while in the tmp directory:
+
+	% make links
+
+sets up links (copies) to all the files you will ever need.
+
+	% make
+
+makes the main library.  Finally, to make a demo,
+
+	% make x01c
+
+for the first C demo, or
+
+	% make cdemos
+
+for all demos.
+
+Maurice LeBrun				mjl@fusion.ph.utexas.edu
+Institute for Fusion Studies
+University of Texas at Austin

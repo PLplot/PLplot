@@ -1,0 +1,35 @@
+Here's how to make *everything* conveniently on a unix-like system.
+
+First, edit mf/makefile.m4 if necessary, to add system specific defines
+analogous to the existing ones.  Documentation is inside.  Then:
+
+	% cd tmp
+	% cp ../sys/unix/makefile.m4 .
+	% m4 -D<sys> makefile.m4 >makefile
+
+where <sys> is an abbreviation for your system name.
+Then, while in the tmp directory:
+
+	% make links
+
+sets up links to all the files you will ever need.
+
+	% make
+
+makes the main library, for the default precision (probably single on a
+workstation).  Finally, to make a demo,
+
+	% make x01c
+
+for the first C demo, or
+
+	% make x01f
+
+for the first Fortran demo.
+
+You probably should also print & read the TeX documentation (alternately
+the makefile.m4) on the Unix installation.  
+
+Finally, there's a bunch of shell scripts in the plplot directory to help
+you archive all the source files using 'zoo' or 'tar'.  See plzoo and
+pltar (or any of the others).

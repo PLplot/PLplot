@@ -1,0 +1,2 @@
+Fix the bug that causes no labels in y to appear on a log plot when the
+min and max are both within the same decade.

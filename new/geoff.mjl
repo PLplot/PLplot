@@ -1,0 +1,44 @@
+4-21-92
+
+Geoff,
+
+I finally got around to unpacking your update and looking at your release
+notes.   I'll probably start right away on some minor modifications that
+I've been sitting on.  Some comments:
+
+>stndfont.c does not work on LINUX, unfortunately.  I stuck a modified copy
+>of it in plplot/new.  Please leave it there till I get this problem
+>resolved. 
+
+Does the one in plplot/new work on LINUX?  How about OTHER_UX?
+
+>I fixed some stuff in the docs.  In particular, I added a file for DOS 386.
+>This one was in the version of the manual most recently printed for the
+>IFS.  Tonight I added one for LINUX.  It will probably be removed once the
+>stndfont.c problem is fixed.  I also made some changes to the unix.tex
+>file.  There was a place where metafile should've been makefile, and I also
+>noticed that the installation instructios had  become dated with respect to
+>the fonts.  So I added a pp at the end.  You might want to kill it and just
+>fix the prior note, but I'll let you decide.
+
+Sounds ok by me if its ok by you.  As coauthor, you are fully entitled to
+improve the docs :-).  Also, I don't really have the time to mess with it.
+
+>The only thing I am aware of which is still broken is the ljii.c file.
+
+Well there are a few other minor things people have informed me about..
+
+>Also, there are still some files which don't fit the 8.3 form factor.
+>Mainly I'm thinking of those in the top level plplot directory.  How about
+>changing them to be 8.3 as well?
+
+AAAAAAAAAAHHHHHHHHHHHHHHH!!!!!!  I HATE MSDOS!!!!!
+
+(sigh)
+
+'Installation' could be changed back to 'Install.txt' (as previous) with no
+sweat off my back, although it's not as nice (English spoken here :-).  But
+truncating COPYRIGHTS would be a much harder decision.  When you unpack on
+DOS, do the names just get truncated? 
+
+Maurice

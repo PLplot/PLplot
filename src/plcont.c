@@ -1,0 +1,87 @@
+/* $Id$
+   $Log$
+   Revision 1.1  1992/05/20 21:34:20  furnish
+   Initial checkin of the whole PLPLOT project.
+
+*/
+
+/*	plcont.c
+
+	Contour plotter.
+*/
+
+#include "plplot.h"
+#include <stdio.h>
+
+#ifdef PLSTDC
+#include <stdlib.h>
+#ifdef INCLUDE_STDDEF
+#include <stddef.h>
+#endif
+#ifdef INCLUDE_MALLOC
+#include <malloc.h>
+#endif
+
+#else
+extern char *malloc();
+extern void free();
+#define size_t	int
+#endif
+
+/*----------------------------------------------------------------------*\
+* void plcont()
+*
+* Draws a contour plot from data in z(nx,ny), using the subarray 
+* from kx to lx in the x direction and from ky to ly in the y 
+* direction. The array of contour levels is clevel(nlevel), and 
+* "pltr" is the name of a subroutine which transforms array indicies 
+* into world coordinates.
+\*----------------------------------------------------------------------*/
+
+#ifdef PLSTDC
+void 
+c_plcont(PLFLT ** z, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+       PLINT ky, PLINT ly, PLFLT * clevel, PLINT nlevel,
+       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *))
+#else
+void 
+c_plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)
+PLINT nx, ny, kx, lx, ky, ly, nlevel;
+PLFLT **z, *clevel;
+void (*pltr) ();
+#endif
+{
+    PLINT i, mx, my, nstor, *heapc;
+
+    mx = lx - kx + 1;
+    my = ly - ky + 1;
+
+    if (kx < 1 || lx > nx || kx >= lx || ky < 1 || ky > ny || ky >= ly)
+	plexit("Argument error in plcont.");
+
+    nstor = mx * my;
+    if ((heapc = (PLINT *) malloc((size_t)(mx + 2 * nstor) * sizeof(PLINT))) 
+		== NULL)
+	plexit("Out of memory in plcont.");
+    for (i = 0; i < nlevel; i++) {
+	plcntr(z, nx, ny, kx, lx, ky, ly, clevel[i], &heapc[0],
+	       &heapc[nx], &heapc[nx + nstor], nstor, pltr);
+    }
+    free((VOID *) heapc);
+
+}
+
+/* Function for no transformation case */
+
+#ifdef PLSTDC
+void 
+pltr0(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
+#else
+void 
+pltr0(x, y, tx, ty)
+PLFLT x, y, *tx, *ty;
+#endif
+{
+    *tx = x;
+    *ty = y;
+}

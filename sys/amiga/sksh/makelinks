@@ -1,0 +1,12 @@
+#!c:sksh
+
+#*************************************************************************
+# Makes links to all PLPLOT source files using the SKsh ln script.
+#*************************************************************************
+
+ln ../src/*.c .
+ln ../drivers/*.c .
+ln ../utils/*.c .
+ln ../fonts/*.c .
+ln ../examples/C/*.c .
+ln ../sys/amiga/src/*.c .

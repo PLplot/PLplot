@@ -1,0 +1,14 @@
+Date: Mon, 4 May 92 16:08:58 MDT
+From: wdn@ctrss2.lanl.gov (William D. Nystrom)
+Message-Id: <9205042208.AA01432@ctrss2.lanl.gov.lanl.gov>
+To: mjl@p.lanl.gov
+Subject: hp stuff
+
+Hi Maurice,
+
+     There seems to be a problem with value being defined twice in plcol.c at
+line 111 and so the compiler is choosing to define it as static.  I wonder if
+that is the source of the trouble with plplot on the hp.
+
+Dave
+

@@ -1,0 +1,204 @@
+\section{OS/2}
+
+At the time of this writing (Fall '91), the current release of OS/2 is version
+1.3.  Consequently the current implementation of PLPLOT is 16-bit in nature,
+and was developed using Microsoft 16 bit compilers.  Like all the rest of 
+the industry, this author is anxiously awaiting the arrival of OS/2 2.0 with
+its accompanying 32-bit programming model.  So, rest assured that there will
+be a port of PLPLOT to OS/2 2.0 with all possible speed.  For the time being
+PLPLOT does work with OS/2 1.3, and has been used with OS/2 1.2 as well.  
+This author
+has no experience with OS/2 versions prior to version 1.2, so no guarantees 
+can be
+made on that.
+
+See the README file in {\tt sys$\backslash$os2} for additional 
+information not covered herein.
+
+\subsection{Compiler Support}
+
+The OS/2 implementation of PLPLOT was developed using Microsoft C 6.0
+and Microsoft Fortran 5.0 (these compilers were used for the DOS port
+as well).  The majority of the code is of course independent of any
+vendor specific compiler peculiarities, as evidenced by the wide range
+of supported platforms.  However, in the case of OS/2 and DOS there is 
+one notable exception.
+Specifically, the way Microsoft chose to implement string argument 
+passing in Fortran 5.0.  The details are rather involved, so will not
+be given here.  Suffice it to say that it was necessary to write a 
+special set of Fortran language interface stubs just for use with 
+Microsoft Fortran 5.  If you wish to use some other compiler, you may
+very well find that the Unix stubs work better.  It is genuinely hard
+to imagine how anyone could write a compiler in such a way that would
+make string handling any more difficult than Microsoft did in Fortran 5.0.
+
+Further note that the supplied makefile is written with the syntax of
+Microsoft NMAKE version 1.11.  Please do NOT attempt to use versions of
+Microsoft NMAKE prior to 1.11, as both 1.0 and 1.1 have been known to
+dramatically fail, and even to trash source files (through the misapplication,
+of default rules).  It should not be
+difficult to transform the provided makefile for use with other vendor's
+make facilities.  If you do so, please send in the changes so they can
+be provided to other users in future releases of this software.
+
+\subsection{Installation}
+
+Compiling the libraries is not too much work if you have the compilers
+listed above.  Just get into the {\tt plplot$\backslash$tmp } directory, 
+and issue the following commands:
+
+\begin{verbatim}
+copy ..\sys\os2\makefile .
+nmake links
+nmake
+nmake fonts
+nmake plrender
+nmake cdemos fdemos
+\end{verbatim}
+
+The {\tt fonts } target bears special mention.  It compiles the programs which
+create the fonts, runs them, and copies the resulting font files to 
+{\tt $\backslash$lib }
+on the current drive.  You should make sure you have such a directory before
+you begin this process, or else change the makefile.
+
+Once done building the software, you'll probably want to copy the files
+{\tt plplot.lib } and {\tt plstub.lib } to someplace like {\tt $\backslash$lib } 
+and  the {\tt plrender } utility to someplace in your path.
+
+For programs to run, they need access to the fonts.  This is most easily
+accomplished by setting the {\tt plfonts } environment variable.  If you
+leave the fonts in the default place, the command would be:
+\begin{verbatim}
+set plfonts=d:\lib\
+\end{verbatim}
+where d is the drive where you'll be keeping the fonts.
+
+\subsection{Linking}
+
+Once the libraries are built, linking with them is not too difficult at all.
+
+\begin{verbatim}
+cl /AL main.c plplot.lib
+fl /AL prog.for plplot.lib plstub.lib
+\end{verbatim}
+
+You will of course need to have the various compiler and linker recognized
+environment variables correctly specified.  A sample file 
+{\tt plplot$\backslash$sys$\backslash$os2$\backslash$plconfig.cmd } is 
+provided to show how I do this.  Here 
+is the important portion of the file:
+\begin{verbatim} 
+
+set	 path=d:\c6.0\binp;d:\c6.0\binb;c:\f5.0\bin;%syspath%
+set	 path=%path%d:\util;c:\bndutil;d:\cmd
+
+set	  lib=d:\c6.0\lib;c:\f5.0\lib
+set   include=d:\c6.0\include;c:\f5.0\include
+set helpfiles=d:\c6.0\help\*.hlp
+set	   cl= /FPi87 /Lp
+set	   fl= /FPi87 /link /NOE /NOD:llibfor7 /NOD:llibc7 llibc7p llibf7pc
+
+set   plfonts=d:\lib\
+
+\end{verbatim}
+whwere {\tt syspath} is an environment variable containing all the directories
+needed for the system to operate normally.
+For descriptions of each of the various command options, see the compiler
+reference materials.  Note that PLPLOT is compiled using the large memory 
+model.  Note also that to use Microsoft Fortran with PLPLOT you 
+will need to have the C compatible Fortran libraries built.
+
+\subsection{Presentation Manager Support}
+
+Providing PLPLOT graphics under OS/2 PM proved to be a demanding project.
+The basic problem is that in order for an OS/2 program to interact with
+PM, it must be event driven and must do all its work in response to messages
+which are sent to it by the PM.  In other words, it is simply not possible
+with the current version of OS/2 (1.3 at the time of this writing) to 
+write a program which operates in the normal procedural paradigm, and which
+makes calls to OS/2 services to draw things on the screen---that's just
+not the way it works.  Rather a program which uses PM to draw windows and 
+images must set up a message queue, and then go into an infinite loop
+in which it obtains messages from the queue and processes them.  These
+messages are sent to the program by PM, and tell it to do things like ``resize
+thyself'',  ``redraw thyself'', ``redraw this subsection of window such
+and such'', and so forth.  This style
+of programming is basically the exact inverse of how normal scientific and
+technical programs are constructed.  Furthermore, OS/2 PM applications 
+cannot write to {\tt stdout}.  These restrictions conspire to make it
+very difficult to generate visual graphics from a ``normal'' program when
+run on OS/2.  (The same is true of MS Windows, but due to the notorious
+instability of that environment, no effort has been made to solve the
+problem in that context--so far).
+
+In spite of the substantial difficulties involved, an output capability for
+OS/2 PM has been developed which allows the user of PLPLOT to be totally
+unconcerned with the inner workings of a native PM code.  That is, the 
+user/programmer may write programs which call plplot functions, just as
+s/he would on any other platform, and it is possible to view the output
+in a window.  {\tt stdout} is also made available, as one would expect,
+so that in fact no special programming whatsoever is required to make
+a ``normal'' PLPLOT program work on OS/2.  
+
+Due to the substantial effort which was required to provide a transparent
+and high quality graphics output capability on OS/2, this PM specific
+code (and documentation) is not being provided under the same distribution
+terms as the rest of the PLPLOT package.  Rather a small fee of \$15 for
+individual users is required.  Note, the free distribution of PLPLOT will 
+run on OS/2---it just won't come with the PM driver.
+
+To obtain the add-on package which will allow PLPLOT programs to generate
+output for OS/2 Presentation Manager, individual users should mail \$15. to:
+\begin{quote}
+Physical Dynamics \\
+P.O. Box 8556 \\
+Austin, Texas~~~78713 \\
+\end{quote}
+Companies or institutions with multiple users may obtain site licenses for
+the following rates:
+\begin{quote}
+First 100 users, \$15 each. \\
+Next 100 users, \$10 each.  \\
+Additional users, \$5 each. \\
+\end{quote}
+Texas residents add 8\% sales tax.  When you send in your money, be sure 
+to specify your preferred delivery mechanism.  Options are: postal mailing
+of the floppy of your choice, and internet e-mail of uuencoded ZOO, ZIP, 
+etc.  Just
+state your preference.  For those who request e-mail delivery, please include
+a postal address in case there is any problem with the networks.
+Companies requesting mulitple user site licenses should include a contact.
+
+In brief, the capabilities of the OS/2 PM driver are:
+\begin{itemize}
+
+\item	Windowed output.  Like the X Windows driver.
+
+\item	Image redraws when the window is exposed or resized.  This is the most
+	important way in which the OS/2 PM driver is superior to the
+        X Windows driver.
+
+\item	Optional automatic frame advance.  The other major point of 
+	functionality which the X driver doesn't have  (yet).
+        
+\item	Color selection compatible with the X driver.
+
+\item	Minimizable/Maximizable, and preserves window contents  (just a
+	special case of item 2 above).
+
+\end{itemize}
+
+If you choose not to obtain the OS/2 PM option  from Physical Dynamics, you
+can certainly still use the free version of PLPLOT on OS/2.  The included 
+metafile output option in PLPLOT allows you to generate a PLPLOT native
+metafile from any OS/2 PLPLOT application.  You can then switch to a DOS box
+and view the metafile using the {\tt plrender} utility.  You will need to
+build a DOS version of {\tt plrender} once, and store it in a place accessible 
+to your DOS path.  In fact, the PLPLOT metafile driver was originally invented 
+specifically to allow viewing output in the DOS box from programs run in
+OS/2 native mode, prior to the development of the OS/2 PM driver.
+
+Be sure to check for README files in the 
+{\tt plplot$\backslash$sys$\backslash$os2} directory for any additional
+information not available at the time of preparation of this manual.

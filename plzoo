@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# File: plzoo
+# Usage: plzoo
+# 
+# Builds zoo archive of plplot files for distribution.
+# No binary files should be included.
+
+# Build archive from parent directory.  It must also be unpacked from there.
+
+cd ..
+
+# top level text files & scripts
+
+zoo a plplot plplot/README
+zoo a plplot plplot/README.1st
+zoo a plplot plplot/COPYRIGHTS
+zoo a plplot plplot/Installation
+zoo a plplot plplot/Changes
+zoo a plplot plplot/pltar*
+zoo a plplot plplot/plzoo*
+zoo a plplot plplot/plzip*
+
+# Make sure zoo creates these subdirectories to make installation easier.
+
+zoo a plplot plplot/tmp/.dummy
+zoo a plplot plplot/lib/.dummy
+
+# Source code & docs.
+
+find plplot/doc      -print | zoo aI plplot
+find plplot/drivers  -print | zoo aI plplot
+find plplot/examples -print | zoo aI plplot
+find plplot/fonts    -print | zoo aI plplot
+find plplot/include  -print | zoo aI plplot
+find plplot/new      -print | zoo aI plplot
+find plplot/utils    -print | zoo aI plplot
+find plplot/src      -print | zoo aI plplot
+find plplot/sys      -print | zoo aI plplot
