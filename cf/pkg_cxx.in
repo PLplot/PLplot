@@ -9,7 +9,8 @@
 # -----------------------------------------------------------------------------
 
 CXX_C		= plstream.cc
-CXX_OBJ		= plstream$O
+CXX_OBJS	= plstream$O
+CXXLIB_AR	= libPLcxx.a
 
 CXX_INSTALL	= install_cxx
 
