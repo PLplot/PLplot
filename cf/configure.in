@@ -89,7 +89,9 @@ enable_f77=yes
 enable_cxx=yes
 enable_python=yes
 enable_tcl=yes
+enable_tk=yes
 enable_itcl=yes
+enable_dp=yes
 
 divert(-1)
 
@@ -112,7 +114,7 @@ lj_hpgl, imp, xwin, tk, dp, pbm])
 define(PL_ADD_DRIVER,[dnl
 MY_ARG_ENABLE($1, builtin(format,
 [  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
-if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes"; then
+if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     enable_$1="yes"
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
@@ -231,7 +233,11 @@ fi
 # Set up defaults and command line args.
 # ----------------------------------------------------------------------------
 
-AC_CONFIG_HEADER(plConfig.h plDevs.h)
+# Can't really do this yet, b/c if we fail to find something, then
+# enable_xxx will be set to no, but we will have already set it to
+# yes.  So, comment this out and put it down further in the file.
+
+dnl> AC_CONFIG_HEADER(plConfig.h plDevs.h)
 
 if test "$system" ; then
     AC_MSG_RESULT(system is: $system)
@@ -310,7 +316,7 @@ case $system in
     ;;
 esac
 
-PL_DRIVERS(PL_DRIVER_LIST)
+dnl> PL_DRIVERS(PL_DRIVER_LIST)
 
 # ----------------------------------------------------------------------------
 # Set up prefix
@@ -351,6 +357,15 @@ AC_REQUIRE_CPP
 AC_ISC_POSIX
 
 AC_INCLUDE(sysloc.in)
+
+# Now, try this here.
+
+PL_DRIVERS(PL_DRIVER_LIST)
+
+# Okay, NOW we're done searching for stuff, so all the driver flags
+# and what not will finally be set right.
+
+AC_CONFIG_HEADER(plConfig.h plDevs.h)
 
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h)
