@@ -32,9 +32,9 @@ MAT_LINK	= -lMatrix
 
 MAT_BUILD	= $(MATLIBS)
 
-tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+tclAPI.c: plplot/tclgen.h plplot/tclgen_s.h tclgen.c
 
-tclgen.h tclgen_s.h tclgen.c : plapi.tpl
+plplot/tclgen.h plplot/tclgen_s.h tclgen.c : plapi.tpl
 	pltclgen
 
 #tclIndex:
@@ -57,7 +57,7 @@ install_tcl:
 	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
 
 install_mat:
-	cp tclMatrix.h $(INCLUDE_DIR)
+	cp plplot/tclMatrix.h $(INCLUDE_DIR)
 	cp libMatrix* $(LIB_DIR)
 	if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/libMatrix.a; fi
 

@@ -30,7 +30,7 @@ PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lModules -lObjects -lParser -lPython
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
-plmodule$O:	plmodule.c plmodule2.c plmodule.h
+plmodule$O:	plmodule.c plmodule2.c plplot/plmodule.h
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) \
 		-I$(PYTHON_INC_DIR) -I$(PYTHON_CFG_DIR) \
 		plmodule.c
