@@ -39,38 +39,43 @@ DEVELOPMENT NOTES
   which was cloned from gnome-print.  This text item was chosen because 
   it rotates and scales under a zoom correctly and easily.
 
-  It would be better to use GNOME_CANVAS_TEXT with pango, but currently 
-  (4 March 2005) it doesn't scale under a zoom on the Gnome Canvas,
-  and the bounding box doesn't rotate with the text under the pango 
-  api (!), which results in clipping.  The pango authors have been less
-  than helpful in providing either advice or documentation to address 
-  these problems, and so we must wait until the issues sort themselves 
-  out.
+  It would be better to use GNOME_CANVAS_TEXT, but currently 
+  (4 March 2005) it doesn't rotate or scale under a zoom on the 
+  GnomeCanvas.  GNOME_CANVAS_TEXT uses Pango, and rotations were only
+  recently implemented in the Pango API (i.e., Fall 2004).  If the
+  Pango API is used directly, the bounding box doesn't rotate with the 
+  text on GnomeCanvas, which results in clipping.  It is likely that
+  GnomeCanvas is not querying the bounding box from Pango correctly,
+  and is not directing Pango to scale.  So, GnomeCanvas needs to be 
+  updated to deal with Pango properly.
 
   Another problem is that drawing polylines on the Gnome Canvas sometimes
   results in an 'attempt to put segment in horiz list twice' error.
   The workaround here is to plot single line segments only, but this
   results in a performance hit.  This problem will need to be corrected
-  in the Gnome Canvas.
+  in the GnomeCanvas.
 
 
 KNOWN BUGS
 
-  Dashed lines don't work properly.  This should be handled by the plplot
-  core, but isn't happening correctly.
+  Dashed lines and area hatching don't work properly.  They should be 
+  handled by the plplot core, but it isn't working correctly.
 
-  Clipping has not been implemented.
+  Text clipping is not completely working, although it is implemented
+  here.  Proper text clipping will require Pango, as it is not
+  implemented for Hacktext.
 
-  Example x17c, the strip chart demo, doesn't do a strip chart 
-  (try the xwin driver to see how it should work).
+  PLplot test suite problems:
 
-  Example x20c causes the following error and then freezes:
+    1) Example x10c does not clip the text.
 
-    (<unknown>:32734): GnomeCanvas-CRITICAL **: file gnome-canvas.c: 
-    line 879 (gnome_canvas_item_show): assertion `GNOME_IS_CANVAS_ITEM (item)' 
-    failed
+    2) Example x17c, the strip chart demo, doesn't do a strip chart 
+       (try the xwin driver to see how it should work).  This example
+       probably isn't so important for this driver, which gives 
+       alternative and more flexible ways of drawing animations.
 
-  Example x21c: Second page does not print out correctly (missing plots!).
+    3) Example x20c freezes during the drawing of Lena, likely due to 
+       too many items on the canvas.
 
 */
 
@@ -97,6 +102,14 @@ char* plD_DEVICE_INFO_libgcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 /*
 #define DEBUG_GCW
 */
+
+/*
+#define ASSERT_GCW
+*/
+
+#define POLYGON_GCW
+
+#define OUTLINE_POLYGON_GCW
 
 /* Physical dimensions */
 
@@ -401,16 +414,25 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
   g_object_set_data(G_OBJECT(canvas),"dev",(gpointer)dev);
 
   /* Add the background to the canvas and move it to the back */
-  dev->group_background = (GnomeCanvasGroup*)gnome_canvas_item_new(
+  if(!GNOME_IS_CANVAS_ITEM(
+    dev->group_background = (GnomeCanvasGroup*)gnome_canvas_item_new(
 					  gnome_canvas_root(canvas),
 					  gnome_canvas_clipgroup_get_type(),
 					  "x",0.,
 					  "y",0.,
-					  NULL);
+					  NULL)
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+    return;
+  }
 
-  dev->background = gnome_canvas_item_new(
+  /* Set the clip to NULL */
+  g_object_set(G_OBJECT(dev->group_background),"path",NULL,NULL);
+
+  if(!GNOME_IS_CANVAS_ITEM(
+    dev->background = gnome_canvas_item_new(
 		        dev->group_background,
-			gnome_canvas_rect_get_type(),
+			GNOME_TYPE_CANVAS_RECT,
 			"x1", 0.0,
 			"y1", -dev->height,
 			"x2", dev->width,
@@ -418,16 +440,30 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 			"fill-color-rgba",
 			plcolor_to_rgba(pls->cmap0[0],0xFF),
 			"width-units", 0.0,
-			NULL);
+			NULL)
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+    return;
+  }
+
   gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
 
   /* Add the foreground to the canvas and move it to the front */
-  dev->group_foreground = (GnomeCanvasGroup*)gnome_canvas_item_new(
+  if(!GNOME_IS_CANVAS_ITEM(
+    dev->group_foreground = (GnomeCanvasGroup*)gnome_canvas_item_new(
 					  gnome_canvas_root(canvas),
 					  gnome_canvas_clipgroup_get_type(),
 					  "x",0.,
 					  "y",0.,
-					  NULL);
+					  NULL)
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+    return;
+  }
+
+  /* Set the clip to NULL */
+  g_object_set(G_OBJECT(dev->group_foreground),"path",NULL,NULL);
+
   gnome_canvas_item_raise_to_top(GNOME_CANVAS_ITEM(dev->group_foreground));
 
   /* Set the canvas width and height */
@@ -838,10 +874,10 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   GnomeCanvasGroup* group;
   GnomeCanvasItem* item;
   GnomeCanvas* canvas;
-  GdkGC* gc;
-  GdkPoint* gdkpoints;
   guint i,j;
 
+  gdouble width;
+  guint color;
 
 #ifdef DEBUG_GCW
   debug("<plD_polyline_gcw>\n");
@@ -851,8 +887,17 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
-  group = dev->group_current;
 
+#ifdef ASSERT_GCW
+  if(!GNOME_IS_CANVAS_ITEM(
+    group = dev->group_current
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
+    return;
+  }
+#else
+  group = dev->group_current;
+#endif
 
   /* Put the data in a points structure */
   points = gnome_canvas_points_new(npts);
@@ -861,15 +906,24 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
     points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;
   }
 
+  /* Get the width and color */
+  width = pls->width*PIXELS_PER_DU*WSCALE;
+  color = dev->color;
+
   if(dev->use_fast_rendering) {
-    item=gnome_canvas_item_new(group,
-			       gnome_canvas_line_get_type (),
-			       "cap_style", GDK_CAP_ROUND,
-			       "join-style", GDK_JOIN_ROUND,
-			       "points", points,
-			       "fill-color-rgba",dev->color,
-			       "width-units",pls->width*PIXELS_PER_DU*WSCALE,
-			       NULL);
+    if(!GNOME_IS_CANVAS_ITEM(
+      item=gnome_canvas_item_new(group,
+				 GNOME_TYPE_CANVAS_LINE,
+				 "cap_style", GDK_CAP_ROUND,
+				 "join-style", GDK_JOIN_ROUND,
+				 "points", points,
+				 "fill-color-rgba", color,
+				 "width-units",width,
+				 NULL)
+      )) {
+      fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+      return;
+    }
 
     /* Free the points structure */
     gnome_canvas_points_free(points);
@@ -898,15 +952,19 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
     for(i=0;i<npts-1;i++) {
       pts.coords=&(points->coords[2*i]);
 
-      item=gnome_canvas_item_new(group,
-				 gnome_canvas_line_get_type (),
+      if(!GNOME_IS_CANVAS_ITEM(
+        item=gnome_canvas_item_new(group,
+				 GNOME_TYPE_CANVAS_LINE,
 				 "cap_style", GDK_CAP_ROUND,
 				 "join-style", GDK_JOIN_ROUND,
 				 "points", &pts,
-				 "fill-color-rgba",dev->color,
-				 "width-units",pls->width*PIXELS_PER_DU*WSCALE,
-				 NULL);
-
+				 "fill-color-rgba", color,
+				 "width-units", width,
+				 NULL)
+	)) {
+	fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+	return;
+      }
     }
 
     /* Free the points structure */
@@ -949,8 +1007,6 @@ void plD_eop_gcw(PLStream *pls)
 {
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
-  GnomeCanvasItem* item;
-  GnomeCanvasGroup* group;
 
   int i;
   short x, y;
@@ -1026,12 +1082,22 @@ void plD_bop_gcw(PLStream *pls)
     if(!dev->zoom_is_initialized) gcw_set_canvas_zoom(canvas,1.);
 
     /* Creat a new hidden group; all new drawing will be to this group */
-    dev->group_hidden = (GnomeCanvasGroup*)gnome_canvas_item_new(
+    if(!GNOME_IS_CANVAS_ITEM(
+      dev->group_hidden = (GnomeCanvasGroup*)gnome_canvas_item_new(
 					  gnome_canvas_root(canvas),
 					  gnome_canvas_clipgroup_get_type(),
 					  "x",0.,
 					  "y",0.,
-					  NULL);
+					  NULL)
+      )) {
+      fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+      return;
+    }
+
+    /* Set the clip to NULL */
+    g_object_set(G_OBJECT(dev->group_hidden),"path",NULL,NULL);
+
+    /* Hide this group until drawing is done */
     gnome_canvas_item_hide((GnomeCanvasItem*)(dev->group_hidden));
 
     /* Set the hidden group as current unless it is fore or background */
@@ -1120,7 +1186,7 @@ void plD_state_gcw(PLStream *pls, PLINT op)
 /*       if(dev->canvas==NULL) install_canvas(pls); */
       break;
     case (6): /* PLSTATE_CMAP1 */
-      if(dev->canvas==NULL) install_canvas(pls);
+/*      if(dev->canvas==NULL) install_canvas(pls); */
       break;
     default: 
       if(dev->canvas==NULL) install_canvas(pls);
@@ -1144,12 +1210,9 @@ static void fill_polygon (PLStream* pls)
   GdkGC* gc;
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
-  GdkPoint* gdkpoints;
   guint i;
 
-  gboolean flag=TRUE;
-
-  PLINT tmp;
+  guint tmp;
 
 #ifdef DEBUG_GCW
   debug("<fill_polygon>\n");
@@ -1159,8 +1222,17 @@ static void fill_polygon (PLStream* pls)
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
-  group = dev->group_current;
 
+#ifdef ASSERT_GCW
+  if(!GNOME_IS_CANVAS_ITEM(
+    group = dev->group_current
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
+    return;
+  }
+#else
+  group = dev->group_current;
+#endif
   points = gnome_canvas_points_new (pls->dev_npts);
 
   for (i=0; i<pls->dev_npts; i++) {
@@ -1168,23 +1240,29 @@ static void fill_polygon (PLStream* pls)
     points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
   }
 
-  item = gnome_canvas_item_new (group,
+  if(!GNOME_IS_CANVAS_ITEM(
+    item = gnome_canvas_item_new (group,
 				GNOME_TYPE_CANVAS_POLYGON,
 				"points", points,
 				"fill-color-rgba",dev->color,
 				/* "outline-color-rgba",dev->color, */
-				NULL);
+				NULL)
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+    return;
+  }
   
   gnome_canvas_points_free (points);
 
 
   /* Draw a thin outline for each polygon */
-  tmp = pls->width;
-  pls->width=1;
-  plD_polyline_gcw(pls,pls->dev_x,pls->dev_y,pls->dev_npts);
-  pls->width = tmp;
+#ifdef OUTLINE_POLYGON_GCW
+    tmp = pls->width;
+    pls->width=1;
+    plD_polyline_gcw(pls,pls->dev_x,pls->dev_y,pls->dev_npts);
+    pls->width = tmp;
+#endif
 }
-
 
 /*--------------------------------------------------------------------------*\
  * dashed_line()
@@ -1215,7 +1293,17 @@ static void dashed_line(PLStream* pls)
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
+
+#ifdef ASSERT_GCW
+  if(!GNOME_IS_CANVAS_ITEM(
+    group = dev->group_current
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
+    return;
+  }
+#else
   group = dev->group_current;
+#endif
 
 /*   /\* Save the dash list in a handy construct *\/ */
 /*   dash_list_len = 2 * pls->nms; */
@@ -1233,7 +1321,8 @@ static void dashed_line(PLStream* pls)
     points->coords[2*i+1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
   }
 
-  item = gnome_canvas_item_new (group,
+  if(!GNOME_IS_CANVAS_ITEM(
+    item = gnome_canvas_item_new (group,
 				GNOME_TYPE_CANVAS_LINE,
 				"cap_style", GDK_CAP_BUTT,
 				"join_style", GDK_JOIN_ROUND,
@@ -1241,7 +1330,11 @@ static void dashed_line(PLStream* pls)
  				"line-style", GDK_LINE_ON_OFF_DASH,
 				"fill-color-rgba",dev->color,
                                 "width-units",pls->width*PIXELS_PER_DU*WSCALE,
-                                NULL);
+                                NULL)
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+    return;
+  }
 
   gnome_canvas_points_free (points);
 }
@@ -1256,7 +1349,6 @@ static void dashed_line(PLStream* pls)
 static void clear (PLStream* pls)
 {
   GcwPLdev* dev = pls->dev;
-  GnomeCanvasGroup* group;
 
 #ifdef DEBUG_GCW
   debug("<clear>\n");
@@ -1307,6 +1399,8 @@ void proc_str(PLStream *pls, EscText *args)
   gdouble affine_plplot[6] = {0.,0.,0.,0.,0.,0.};
 
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
+  ArtBpath* clip;
+  GnomeCanvasPathDef* path;
 
   GnomeCanvasItem* item[200]; /* List of string segments */
   double width[200],height[200]; /* Height and width of string segment */
@@ -1325,6 +1419,7 @@ void proc_str(PLStream *pls, EscText *args)
 
   guint symbol;
 
+
 #ifdef DEBUG_GCW
   debug("<proc_str>\n");
 #endif
@@ -1333,7 +1428,17 @@ void proc_str(PLStream *pls, EscText *args)
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
+
+#ifdef ASSERT_GCW
+  if(!GNOME_IS_CANVAS_ITEM(
+    group = dev->group_current
+    )) {
+    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
+    return;
+  }
+#else
   group = dev->group_current;
+#endif
 
   /* Retrieve the escape character */
   plgesc(&esc);
@@ -1352,6 +1457,20 @@ void proc_str(PLStream *pls, EscText *args)
    * position and clip limits.
    */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+
+  /* Set the clip in this clipgroup */
+  path = gnome_canvas_path_def_new();
+  gnome_canvas_path_def_ensure_space(path,6);
+  gnome_canvas_path_def_moveto(path,clxmin*PIXELS_PER_DU,
+			       -clymin*PIXELS_PER_DU);
+  gnome_canvas_path_def_lineto(path,clxmin*PIXELS_PER_DU,
+			       -clymax*PIXELS_PER_DU);
+  gnome_canvas_path_def_lineto(path,clxmax*PIXELS_PER_DU,
+			       -clymax*PIXELS_PER_DU);
+  gnome_canvas_path_def_lineto(path,clxmax*PIXELS_PER_DU,
+			       -clymin*PIXELS_PER_DU);
+  gnome_canvas_path_def_closepath(path);
+  g_object_set(G_OBJECT(group),"path",path,NULL);
 
   /* Font size: size is in pixels but chrht is in mm.
    * The factor at the end matches the font size to plplot's native
@@ -1507,20 +1626,26 @@ void proc_str(PLStream *pls, EscText *args)
       if(N!=0) total_width += 2; /* Add a little extra space */
 
       /* Create the canvas text item */
-      item[N] = gnome_canvas_item_new (group,
+      if(!GNOME_IS_CANVAS_ITEM(
+        item[N] = gnome_canvas_item_new (group,
 				       PLPLOT_TYPE_CANVAS_HACKTEXT,
 				       "glyphlist",glyphlist,
 				       "fill-color-rgba",dev->color,
 				       "x",0.,
 				       "y",0.,
-				       NULL);
+				       NULL)
+	)) {
+	fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
+	return;
+      }
 
       /* Free the glyphlist */
       gnome_glyphlist_unref(glyphlist);
       
       /* Advance to next string segment */
       N++;
-    }
+    } /* if(Nglyphs) */
+
 
     /* Don't overflow buffer */
     if(N==200 && i<Ntext) {
@@ -1528,7 +1653,7 @@ void proc_str(PLStream *pls, EscText *args)
 	             "too many text segments.\n\n");
       break;
     }
-  }
+  } /* while(i<Ntext) */
 
   /* We have all of the string segments.  Place each on the canvas 
    * appropriately.
@@ -1568,11 +1693,10 @@ void proc_str(PLStream *pls, EscText *args)
 
 void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
 {
-  GcwPLdev* dev = pls->dev;
-
-  char msg[100];
 
 #ifdef DEBUG_GCW
+  char msg[100];
+
   sprintf(msg,"<plD_esc_gcw>: %d\n",op);
   debug(msg);
 #endif
@@ -1584,7 +1708,7 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
     break;
 
   case PLESC_CLEAR:
-    clear(pls);
+    /*    clear(pls); */
     break;
 
   case PLESC_DASH:
@@ -1592,15 +1716,24 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
     break;
 
   case PLESC_FILL:
+#ifdef POLYGON_GCW
     fill_polygon(pls);
+#endif
     break;
 
   case PLESC_HAS_TEXT:
     if(ptr!=NULL) {
       proc_str(pls, ptr); /* Draw the text */
     }
-    else { /* Assume this was a request to change the text handling */
-      if(dev->use_text) pls->dev_text = 1; /* Allow text handling */
+    else { 
+
+      /* Assume this was a request to change the text handling,
+       * which is a special hack for this driver.  This is done 
+       * through the escape function so that we can get easy access
+       * to pls.
+       */
+      if(((GcwPLdev*)(pls->dev))->use_text) 
+	pls->dev_text = 1; /* Allow text handling */
       else pls->dev_text = 0; /* Disallow text handling */
     }
     break;
