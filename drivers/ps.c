@@ -729,13 +729,14 @@ proc_str (PLStream *pls, EscText *args)
    */ 
 
   if (args->base == 2) /* not supported by plplot */
-    offset = font_factor*ENLARGE * ft_ht / 2.; /* half font height */
+    offset = ENLARGE * ft_ht / 2.; /* half font height */
   else if (args->base == 1)
     offset = 0.;
   else
-    offset = -font_factor*ENLARGE * ft_ht / 2.;
+    offset = -ENLARGE * ft_ht / 2.;
 
-  args->y += offset;
+  args->y += offset*cos(theta*PI/180.);
+  args->x -= offset*sin(theta*PI/180.);
 
   /* Apply plplot difilt transformations */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
