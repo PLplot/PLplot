@@ -2498,7 +2498,8 @@ space for this (80 characters is safe).
 
   <sect1 id="plgdidev" renderas="sect3">
     <title>
-      <function>plgdidev</function>: Retrieve parameters that define current window
+      <function>plgdidev</function>: Get parameters that define current
+      device-space window
     </title> 
 
     <para>
@@ -2516,8 +2517,14 @@ space for this (80 characters is safe).
     </para> 
 
     <para>
-      Retrieve relative margin width, aspect ratio, and relative justification
-      that define current window.
+      Get relative margin width, aspect ratio, and relative justification
+      that define current device-space window. 
+      If &plsdidev; has not been called the default values pointed to by
+      <literal><parameter>p_mar</parameter></literal>,
+      <literal><parameter>p_aspect</parameter></literal>,
+      <literal><parameter>p_jx</parameter></literal>, and
+      <literal><parameter>p_jy</parameter></literal>
+      will all be 0.
     </para>
 
     <variablelist>
@@ -2585,8 +2592,16 @@ space for this (80 characters is safe).
       </funcsynopsis> 
     </para> 
 
-    <para>
-      Get plot orientation.
+    <para> 
+      Get plot orientation parameter which is multiplied by 90&deg; to
+      obtain the angle of rotation.  Note, arbitrary rotation parameters
+      such as 0.2 (corresponding to 18&deg;) are possible, but the usual
+      values for the rotation parameter are 0., 1., 2., and 3. corresponding
+      to 0&deg; (landscape mode), 90&deg; (portrait mode), 180&deg;
+      (seascape mode), and 270&deg; (upside-down mode). 
+      If &plsdiori; has not been called the default value pointed to by
+      <literal><parameter>p_rot</parameter></literal>
+      will be 0.
     </para>
 
     <variablelist>
@@ -2597,7 +2612,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to orientation parameter.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2607,7 +2622,8 @@ space for this (80 characters is safe).
 
   <sect1 id="plgdiplt" renderas="sect3">
     <title>
-      <function>plgdiplt</function>: Retrieve current window into plot space
+      <function>plgdiplt</function>: Get parameters that define current
+      plot-space window
     </title> 
 
     <para>
@@ -2625,7 +2641,15 @@ space for this (80 characters is safe).
     </para> 
 
     <para>
-      Retrieve current window into plot space.
+      Get relative minima and maxima that define current
+      plot-space window.  
+      If &plsdiplt; has not been called the default values pointed to by
+      <literal><parameter>p_xmin</parameter></literal>,
+      <literal><parameter>p_ymin</parameter></literal>,
+      <literal><parameter>p_xmax</parameter></literal>, and
+      <literal><parameter>p_ymax</parameter></literal>
+      will be 0., 0., 1., and 1.
+				    
     </para>
 
     <variablelist>
@@ -2636,7 +2660,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative minimum in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2647,7 +2671,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative minimum in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2658,7 +2682,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative maximum in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2669,7 +2693,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative maximum in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5876,7 +5900,8 @@ linkend="color-map-0"/>).
 
   <sect1 id="plsdidev" renderas="sect3">
     <title>
-      <function>plsdidev</function>: Set parameters that define current window
+      <function>plsdidev</function>: Set parameters that define current
+      device-space window
     </title> 
 
     <para>
@@ -5895,10 +5920,16 @@ linkend="color-map-0"/>).
 
     <para>
       Set relative margin width, aspect ratio, and relative
-      justification that define current window.  If you want to just use the previous value for any of
+      justification that define current device-space window.  If you want to just use the previous value for any of
       these, just pass in the magic value PL_NOTSET. It is unlikely that one
       should ever need to change the aspect ratio but it's in there for
       completeness.
+      If &plsdidev; is not called the default values
+      of <literal><parameter>mar</parameter></literal>,
+      <literal><parameter>aspect</parameter></literal>,
+      <literal><parameter>jx</parameter></literal>, and
+      <literal><parameter>jy</parameter></literal>
+      are all 0.
     </para>
 
     <variablelist>
@@ -6052,8 +6083,7 @@ coordinates
 
   <sect1 id="plsdiori" renderas="sect3">
     <title>
-      <function>plsdiori</function>: Set plot orientation, specifying
-rotation in units of pi/2
+      <function>plsdiori</function>: Set plot orientation
     </title> 
 
     <para>
@@ -6068,7 +6098,15 @@ rotation in units of pi/2
     </para> 
 
     <para>
-      Set plot orientation, specifying rotation in units of pi/2.
+      Set plot orientation parameter which is multiplied by 90&deg; to
+      obtain the angle of rotation.  Note, arbitrary rotation parameters such as 0.2
+      (corresponding to 18&deg;) are possible, but the usual values for
+      the rotation parameter are 0., 1., 2., and 3. corresponding to 0&deg;
+      (landscape mode), 90&deg; (portrait mode), 180&deg; (seascape
+      mode), and 270&deg; (upside-down mode).
+      If &plsdiori; is not called the default value
+      of <literal><parameter>rot</parameter></literal>
+      is 0.
     </para>
 
     <variablelist>
@@ -6079,7 +6117,7 @@ rotation in units of pi/2
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Plot orientation parameter.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6089,7 +6127,8 @@ rotation in units of pi/2
 
   <sect1 id="plsdiplt" renderas="sect3">
     <title>
-      <function>plsdiplt</function>: Set window into plot space
+      <function>plsdiplt</function>: Set parameters that define current
+      plot-space window
     </title> 
 
     <para>
@@ -6107,7 +6146,13 @@ rotation in units of pi/2
     </para> 
 
     <para>
-    Set window into plot space.
+      Set relative minima and maxima that define current
+      plot-space window.  If &plsdiplt; is not called the default values
+      of <literal><parameter>xmin</parameter></literal>,
+      <literal><parameter>ymin</parameter></literal>,
+      <literal><parameter>xmax</parameter></literal>, and
+      <literal><parameter>ymax</parameter></literal>
+      are 0., 0., 1., and 1.
     </para>
 
     <variablelist>
@@ -6118,7 +6163,7 @@ rotation in units of pi/2
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative minimum in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6129,7 +6174,7 @@ rotation in units of pi/2
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative minimum in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6140,7 +6185,7 @@ rotation in units of pi/2
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative maximum in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6151,7 +6196,7 @@ rotation in units of pi/2
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative maximum in y.
 	  </para>
 	</listitem>
       </varlistentry>
