@@ -5,9 +5,13 @@
 # Last modified on: Mon Oct 30 11:55:29 CET 2000
 # $Id$
 
+#This is the directory where the results are installed  Be careful with
+#the choice here.  This directory is completely destroyed by the uninstall
+#target
+HTML_DESTDIR = ../html
+
 STYLESHEET_HTML = plplotdoc-html.dsl
 STYLESHEET_PRINT = plplotdoc-print.dsl
-HTML_DESTDIR = ../html
 
 #the combination of these 3 file lists gives everything in the cvs.  This is
 #all that is required to build docbook results from source.  These 3 lists
@@ -21,7 +25,7 @@ SGML_SOURCES = \
 	inline-html.ent  inline-print.ent
 
 OTHER_SOURCES = \
-	Makefile.in README configure configure.in \
+	CHANGES Makefile.in README configure configure.in \
 	eps2jpeg.pl.in included-html-files.pl inline-greek.pl.in \
 	jadetex.cfg over-under.tex parse-api.pl parse.pl tex2eps.pl.in \
 	$(STYLESHEET_HTML) $(STYLESHEET_PRINT)
@@ -97,6 +101,9 @@ install-stamp: src_tar html_tar $(BASE).dvi $(BASE).ps.gz
 	cp $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
 	touch install-stamp
 
+uninstall: 
+	rm -rf $(HTML_DESTDIR)
+
 src_tar: $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
 $(PLPLOTDOC_SRC)-$(VERSION).tar.gz: ../README.developers $(SGML_SOURCES) \
 	$(OTHER_SOURCES) $(CONFDIR_SOURCES)
@@ -124,13 +131,15 @@ $(PLPLOTDOC_HTML)-$(VERSION).tar.gz: included-html-files.pl $(MAIN_HTML) \
 
 clean:
 	rm -f *.html $(BASE).{tex,dvi,aux,log,ps.gz} \
-	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp\
-	      conftest.* config.*
-	rm -rf $(HTML_DESTDIR)
+	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp \
+	      conftest.* config.* *~ \
+	      $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
+	      $(PLPLOTDOC_SRC)-$(VERSION).tar.gz
+	      
 	rm -rf $(PLPLOTDOC_HTML)-$(VERSION)
 	rm -rf $(PLPLOTDOC_SRC)-$(VERSION)
 
 distclean: clean
 	rm -f Makefile eps2jpeg.pl inline-greek.pl  tex2eps.pl
 
-.PHONY: all html ps src_tar html_tar install clean distclean
+.PHONY: all html ps src_tar html_tar install uninstall clean distclean

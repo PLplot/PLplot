@@ -1,0 +1,22 @@
+This file summarises changes to the cvs of the plplot documentation project.
+For some background about that project see README. Alan W. Irwin (AWI) and
+Rafael Laboissiere (RL) have been the principal contributors to this project
+so far.
+
+2000 November 4 (AWI): extensive changes to Makefile.in plus split
+functionality of old README into README plus CHANGES.
+
+2000 November 3 (AWI): Refined configuration so that it worked on both
+Debian/potato and RedHat 6.2 (with a workaround for the broken principal
+catalog for that system).  Also made extensive changes to
+../README.developers.
+
+2000 October 30-31 (RL): Generalized configuration method using autoconf,
+configure.in approach.
+
+2000 October 19 (AWI and RL): added the plplot docbook documentation project
+to the sourceforge cvs repository at location plplot/doc/docbook-sgml.  The
+source was http://www.icp.inpg.fr/~rafael/plplotdoc/src with some additional
+files (jatex.cfg and over-under.tex) added later by RL. eps2jpeg.pl and the
+Makefile were then modified to make the build work on Debian/potato.
+
