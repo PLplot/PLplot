@@ -1,0 +1,351 @@
+PLPLOT FAQ (Frequently Asked Questions)
+---------------------------------------
+
+This note contains answers to some Frequently Asked Questions (FAQ)
+regarding plplot.  There is no particular order of topics at present.
+
+------------------------------------------------------------------------------
+1. Why should I use plplot?
+
+This is probably the first question I was ever asked, and it continues
+to come up often enough to dwell on it a bit.
+
+First off, my involvement with plplot came from a very simple need: a
+portable, free, reasonable quality scientific graphics package.  At the
+time I had a 1 year fellowship in Japan, to continue my work on numerical
+simulation of plasmas.  Previous to this, I and my colleagues had
+laboriously translated the simulation code graphics to use two other
+libraries (one quasi-commercial and one PD), only to find both packages
+lacking in some important respects (most notably the PD one) and unable to
+easily (or cheaply) obtain the commercial one where I was working in
+Japan.  This was an extremely frustrating situation, which had always been
+apparent to me but only then came to a head.  Scientific graphics is an
+utter necessity to anyone doing numerical modeling, and I decided that
+being at the mercy of vendors and computer centers on this issue was
+unacceptable.  I have no objection to commercial software, but to depend
+on it for basic graphics capability is far too limiting.  I was somewhat
+familiar with plplot for the Amiga, and seeing that it was fairly capable
+and portable I decided this would be the "last" major graphics package I
+would develop for.
+
+It turned out that plplot required some substantial investment of my time
+before it satisfied all of my (then) needs, but has nonetheless performed
+quite well.  In the interim I took over development for it from Tony
+Richardson.  The package has become almost trivially portable -- we can
+now get our codes running on a new machine in record time.  We can fix
+bugs in record time, although it doesn't always happen that way :-).
+Still, it takes less than a month or two for me to get around to fixing
+most bugs, which is better turnaround time than you typically get from
+vendors.  New features can be added with astonishing speed if the need
+(ours) is great enough.
+
+So those are some of the reasons _I_ got involved, which may differ from
+those of the casual user.  Most people won't be digging into the source
+code to fix bugs, but it's very reassuring to know that you can if you
+need to.  I can't promise to support the package or make specific
+enhancements as my responsibilities (i.e. funding) lie elsewhere.  But I
+am always interested to hear what people want, since if it's a good idea I
+will benefit too.  User contributions are always welcomed (I have had
+quite a few).  And backward incompatibilities will be introduced into
+the package sparingly if at all.
+
+The features supported by plplot are necessarily fewer in number than a
+big commercial package.  Plplot has a fairly complete set of basic
+graphical capabilities, and a few very strong capabilities (e.g.  the
+Tcl/TK X-based GUI driver or its sibling the DP driver, the latter of
+which supports distributed rendering).  This has its good and bad points.
+The good part is that the library is relatively small, and can be modified
+without too much difficulty.  The disk space required is reasonable
+(especially if shared libraries are used), and the learning curve mild.
+The effort I might expend adhering to some large set of capabilities (many
+of which may be only rarely used; e.g. look at the GKS standard) can be
+focused instead on portability, user interface, and certain select
+capabilities.
+
+On the other hand, there are many nice capabilities missing from plplot at
+present, such as support for solid 3d modeling, maps, postscript fonts,
+and so on.  New features are continually being added, but the fact remains
+that other more special purpose (and/or high priced) products will always
+have things that plplot lacks (or do them better).  One way I see to fit
+plplot in the overall software environment is to add more output drivers,
+both for generic file formats (e.g. TIFF, CGM) as well as for specific
+graphics packages (e.g. AVS).  That way you could produce your graphics
+and view them using plplot, dumping to disk those pages or plots you want
+to process using a separate package.  This can already be done using the
+XFig driver, for example.  For this to be most effective, plplot should
+have internal knowlege of more varied objects than "line" (currently the
+fundamental unit).
+
+I'm always interested in gaining new collaborators and contributors for
+plplot, so feel free to send me email (mjl@dino.ph.utexas.edu) so we can
+discuss additions you'd like to make.
+
+------------------------------------------------------------------------------
+2. I don't have an ANSI compiliant C compiler.  How do I compile plplot?
+
+Get an ANSI C compiler.  The cheap solution is to get gcc up if it has
+been ported to your machine.
+
+------------------------------------------------------------------------------
+3. What about plplot support for VMS?
+
+It's true, I did support plplot under VMS at one time, although I never
+DID see the X driver running on it (supposedly it did).  However after
+exclusively using Unix for a while I vowed never to go back to VMS :-).
+It certainly caused me lots of pain to get up, but at least I learned a
+few things about portability.  Anyway, there may still be people out there
+who would find it useful under VMS, so if anyone succeeds in making plplot
+work and want to continue supporting it there, the job is yours for the
+asking.  I certainly don't have the time or patience for it.
+
+------------------------------------------------------------------------------
+4. What about support for platform X?
+
+We are most likely to have the package be up-to-date on the following
+systems: HP-UX, Linux; less likely on the following: SunOS, AIX, Unicos,
+Super-UX, Amiga, and maybe not at all on any others.  I'd love to have
+volunteers to pick up the slack here.  I could get prerelease versions to
+you in order to make whatever fixes are needed ahead of time.  I am
+gradually moving away from supporting the Amiga driver so could use some
+help here.  Geoff has abandoned the DOS drivers and is leaning away from
+supporting the OS/2 driver, so here again target platform developers are
+needed.
+
+------------------------------------------------------------------------------
+5. I'm getting core dumps when calling a contour function from C.
+
+Aha.  Did you specify the minimum index as 1, not 0?  This is a leftover
+from when the package was written in Fortran, sigh.  I'm not sure why this
+isn't explained in the manual -- I just looked and there is no mention of
+it.  When I first got involved I mainly learned how to use the package
+from the demo programs and so didn't really notice the inconsistency.
+I've added some more explanatory error messages and will improve the
+document in this area.  Unfortunately it may be too late I think to change
+the minimum index to 0, since by now many people are used to this way.
+Maybe add some new function calls to fix up the API..
+
+------------------------------------------------------------------------------
+6a. Where do I get Tcl/TK?   
+
+You can get the Tcl/TK package by anonymous ftp from sprite.berkeley.edu
+in the tcl subdirectory (or from harbor.ecn.purdue.edu in directory
+pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.  The
+most recent version at the time of this writing is Tcl 7.3 and TK 3.6, and
+if you are just starting out make sure to get that.  Plplot may eventually
+require these versions but for now works with earlier releases (Tcl 6.7,
+TK 3.2 is iffy).  Note: to build, you need to have the Tcl/TK header files
+where they can be found by the C compiler (/usr/local/include is a good
+place).  
+
+6b. How do I use "xauth"?
+
+The 7.0/3.3 and later releases of Tcl/TK require xauth security in order
+to accept send requests.  The only problem is that you have to
+*completely* eliminate use of the older xhost method.  So typing "xhost -"
+isn't good enough -- you must also explicitly delete all the names from
+the xhost access list (type just "xhost" to see them).  That should do it
+for your local node.  To grant remote nodes access, just ftp your
+~/.Xauthority file (server machine) to your remote home directory.  There
+are some notes on setting this up in the file Xauthority in the doc
+directory.
+
+6c. How do I use the Tcl/TK driver?
+
+Get it going with the example programs, and play with it.  Read the online
+docs.
+
+------------------------------------------------------------------------------
+7. The manual doesn't mention capability X.
+
+The manual is waaay out of date.  Consult the last few update files to
+keep tabs of what's going on.  Take a look if there are are any
+substantial new capabilities in the example programs.  Sorry, I'll try to
+update the manual as soon as practical (writing code is so much more
+interesting..).
+
+------------------------------------------------------------------------------
+
+8. I've been having trouble getting the TK/TCL and plplot working on
+my Indigo running IRIX 4.0.5. I got TCL7.0 and TK3.3 as advised and built the
+libraries and moved them to "/usr/lib" directory and then went about 
+(re)building plplot. I then compiled the c-demos and ran them. The tk driver
+would pop up a window and disappear with the following complaints...
+...
+>>Starting up ./plserver
+>>Server command "[list $plw_init $plwindow $client]" failed:
+>>         remote interpreter did not respond
+>>Program aborted
+
+I think what is happening is that plserver is dumping core for some
+reason.  So why don't you get a "core dumped" message?  It has something
+to do with it being created through fork/exec from the TK driver.  Never
+quite knew what, but now that I am thinking about it once again I bet I
+know what the deal is.  It takes a little bit of time for it to dump core,
+and in that time the sending interpreter in the TK driver times out, and
+aborts.  Since the application is the parent process, once it exits you
+don't see any pending messages that the plserver (child) has.  In this
+circumstance I'm not sure if one should always get a core file or not.
+
+So, the key is to find out why plserver is dumping core.  There are
+a few things you can do.  When you built Tcl/TK, did you run the tests?
+You need to type "make test" in either the tk3.3 or tcl7.0 directory, and
+it will merrily go on its way.  After you have done that, try cd'ing to
+the tk3.3/tests directory and running the tests using your installed
+version of wish.  Some of the tests will fail because "make test" actually
+compiles a custom version of wish with some extra functionality just for
+the test suite.  But most of the tests will do ok.  If not, you hosed
+the installation and that would explain the observed behavior.  If not
+we need to do some more hunting.  
+
+------------------------------------------------------------------------------
+9. How do I build & install plplot?
+
+Read the system dependent notes, in sys/<system>.  On a Unix-like system,
+the short answer is that :
+
+% cd tmp
+% ../configure
+% make
+% make install
+
+will often give the desired results.  You really should check the readme
+file first, though (especially before typing "make install").
+
+------------------------------------------------------------------------------
+10. How do I change to change the default background color?
+
+Use the -bg option.  Type plrender -h.
+
+------------------------------------------------------------------------------
+11.  I would like to issue a plot command, have the window appear,
+or be re-painted, and allow the user to continue with command line operation
+of RLaB. I would like the user to be able to resize the window at any time
+or cover/un-cover it at any time and have it re-paint itself. The way  I 
+can get it to work is: the user issues plot command, window appears and is
+resizable, etc... the user must use the 3rd mouse button to "release" the
+window, after that control returns to the command line, but the window will
+no longer resize/repaint.
+
+This is a feature, not a bug :-).
+
+When the plotting package is waiting for the user to advance the page, it
+is actually waiting for any X event.  So events like refresh and resize
+get intercepted and processed.
+
+Also during the normal course of plotting, the X server is periodically
+polled to find out if there are any events that need processing, and
+handles them if so.  I don't do this on every graphics instruction because
+otherwise the overhead is too large -- currently on every 20 line draws,
+every 10 polyline draws, and on every other call.
+
+But once the user signals for the page advance, and control is returned
+to the user program, there is no way for the X driver to process any
+events simply because the control is in your program, not in the X driver.
+The single-headedness of your process becomes the culprit here.  You can
+either sit in an event loop, or be doing user code specific things, but
+not both.  There is one improvement that could still be made which is to
+provide a plevents() call so you can explicitly force all events to
+be handled, but that's just a bandaid solution so I never put it in.
+
+The real solution is to fork off the rendering into a separate process,
+and this is just what I did with the Tcl/TK driver.  So, if you select
+the tk driver, your code can go about its merry way while the graphics
+window can be refreshed, resized, zoomed, printed, dumped, or whatever.
+
+It'd also be a worthwhile project to split the X driver up similarly,
+and there has been some interest in doing that (but I don't plan to
+work on it).
+
+------------------------------------------------------------------------------
+12.  The X driver seems to run slower than on older versions of plplot.
+
+This may be caused by writing into the pixmap.  Each instruction is
+essentially done twice -- once to the screen and once to the offscreen
+pixmap.  I'm not at all happy about the tradeoff but there's not much that
+can be done.  With the pixmap, you get fast refreshes but slow draws, and
+the other way around without it.  What made me decide on using a pixmap as
+the default is the smooth scrolling that you can get (try a zoom followed
+by a scroll in the TK driver -- without writing into a pixmap the
+scrolling really sucks).  One way would be to write only to the pixmap and
+occasionally blit it to the screen, but that would be jerky and you'd have
+to worry about incomplete pages.  Try plotting with the -nopixmap option
+to see if that's any better.  I do almost all my plplot X development on
+an HP 720 color console and graphics speed is usually not a problem :-).
+
+------------------------------------------------------------------------------
+13.  The linker complains that it can't resolve Tcl_AppInit. 
+
+The Tcl7.0/TK3.3 and later libraries contain a function called "main".
+Hmmm.  Sounds dangerous, eh?
+
+It's dangerous because it's relying on the linker to do what you expect --
+pick out the correct main program when you have multiple copies.
+
+This was done to make it easier to build custom versions of wish, so
+all you had to do is to create your own version of Tcl_AppInit, link
+with the library, and POOF! there is your modified wish.  Unfortunately
+it sometimes sends the fortran compiler / linker into spasms, because
+it gets the wrong main!  I have had exactly this problem under a 2-year
+old version of SunOS (but not under a more recent one), and couldn't
+get it to work despite varied link invocations.  BTW, I hear a similar
+problem exists under Linux from a C++ main.
+
+My solution on these platforms was to recompile the tcl and tk libraries
+without the file including the main program (I think it was tclMain.o and
+tkMain.o).  I installed the new libraries as well as the separately compiled
+*Main.o's in case someone needed them.  No more problem with the Fortran
+compiler.
+
+------------------------------------------------------------------------------
+14a. configure script doesn't run correctly
+
+Look around for a different shell to run it under (posix shell, ksh).
+See notes in sys/unix.
+
+14b. makefile doesn't build correctly using m4.
+
+There are braindead versions of this floating around too.  
+See notes in sys/unix.
+
+------------------------------------------------------------------------------
+15.  The linker complains of unresolved functions atexit(), fsetpos(),
+     fgetpos(), and so on.
+
+You must have a non-ANSI libc.  It _is_ possible to run plplot on
+such a system, but at somewhat reduced functionality.  Specify 
+-DNO_ANSI_LIBC during compilation (see readme file in sys/unix).
+
+------------------------------------------------------------------------------
+16.  How do I change the title on the TK window menu bar, i.e.,
+
+>   Plot >> plclient_#2
+> 
+>            ^^^^
+>            I'd like this to read SuperCode
+
+It uses the name of the main window if nothing else is set.  You can set
+it two ways.  One, use plParseOpts to parse your command line, then it
+will use argv[0] out of that list.  Two, just glom pls->program directly,
+via: 
+
+#include <plstream.h>
+
+PLStream *pls;
+
+...
+
+    plgpls(&pls);
+    pls->program = "myprogram";
+
+Yes, by this method you have access to the complete internal state of
+the current plplot stream.  So be careful what you change :-).
+
+There is one catch, though.  The way it is set up now it must be a unique
+name since it corresponds to your main window name (to which X property
+messages are sent).  If there is a previous Tcl interpreter of that name
+hanging around (say, as a result of some sort of abnormal exit like a core
+dump) you will get the mysterious _#2 appended (and _#3, and so on; note
+there is a utility called delinterp that will delete these zombie
+interpreters).
+
+------------------------------------------------------------------------------
