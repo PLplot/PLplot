@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/03/11 20:27:12  mjl
+ * Revision 1.14  1995/10/22 17:40:33  mjl
+ * Removed message "Sending output to null device.." being sent to stderr -- a
+ * null device should act accordingly.
+ *
+ * Revision 1.13  1995/03/11  20:27:12  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
  *
@@ -36,8 +40,6 @@ plD_init_null(PLStream *pls)
 
     float pxlx = (double) PIXELS_X / (double) LPAGE_X;
     float pxly = (double) PIXELS_Y / (double) LPAGE_Y;
-
-    fprintf(stderr, "Sending output to Null device..\n");
 
 /* Set up device parameters */
 
