@@ -82,7 +82,7 @@ man3_MANS = $(shell ls *.$(MANVOL))
 geninfodir = $(infodir)
 geninfo_DATA = $(shell ls *.info*)
 
-MAX_TEX_RECURSION = 4
+MAX_TEX_RECURSION = 10
 
 BINDIR = ../bin
 
