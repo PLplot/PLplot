@@ -181,6 +181,7 @@ if __name__ == "__main__":
     # Create the first canvas, set its size, draw some axes on it, and
     # place it in a frame
     canvas0=plplotcanvas.Canvas(aa=False)
+    canvas0.use_fast_rendering(True)
     canvas0.set_aspect(ASPECT)
     canvas0.set_zoom(ZOOM)
     canvas0.pladv(0)  # Advance the page
@@ -192,6 +193,7 @@ if __name__ == "__main__":
     # Create the second canvas, set its size, draw some axes on it, and
     # place it in a frame
     canvas1=plplotcanvas.Canvas(aa=False)
+    canvas1.use_fast_rendering(True)
     canvas1.set_aspect(ASPECT)
     canvas1.set_zoom(ZOOM)
     canvas1.pladv(0)  # Advance the page
