@@ -1,6 +1,15 @@
 # $Id$
 # $Log$
-# Revision 1.10  1994/01/15 17:43:21  mjl
+# Revision 1.11  1994/04/08 11:57:12  mjl
+# Now the default resources are first loaded, then the user's customizations,
+# if present.  A keystroke filtering proc was added to allow binding useful
+# GUI operations to keystrokes.  The defaults are pretty reasonable, set
+# in the pldefaults proc (and should be modified in plconfig).  Supported
+# operations are "z" to zoom, "r" to reset zoom, "p" to print, "s" to save
+# again, <Right>, <Left>, <Up>, <Down>, to scroll by cursor key while in
+# zoom mode (units scrolled is user alterable as well).
+#
+# Revision 1.10  1994/01/15  17:43:21  mjl
 # Added procs to handle communication link.  plserver_link_init gets invoked
 # automatically when plserver is started by the Tcl/TK/DP driver.
 # plserver_start is used when running plserver in stand-alone mode.
@@ -14,32 +23,6 @@
 #
 # Revision 1.7  1993/12/09  20:34:45  mjl
 # Added code to tell client to abort when exit is selected.
-#
-# Revision 1.6  1993/09/08  18:39:14  mjl
-# Added global cascade_arrow variable to fake cascade menu arrows under
-# Tk 3.2 (Tk 3.3 has default ones that are much nicer).
-#
-# Revision 1.5  1993/09/01  14:51:05  mjl
-# Removed window specification for top level TK driver window.  This might
-# have had something to do with the window coming up on the wrong screen
-# under tvtwm, and there appears to be no problem under VUE this way
-# (although at one time I did have problems, dunno why).
-#
-# Revision 1.4  1993/08/03  20:29:27  mjl
-# Put security hole plug in a more useful spot.
-#
-# Revision 1.3  1993/07/31  08:05:49  mjl
-# Enabled help menu entries; split off resource initialization into another
-# file for more flexibility.
-#
-# Revision 1.2  1993/07/16  22:03:15  mjl
-# Inserted hack to partially plug TK's security problem.  Also hard-coded
-# font selection temporarily (see explanation within).  Made debug menu
-# normally invisible.
-#
-# Revision 1.1  1993/07/02  06:58:33  mjl
-# The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
-#
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer menu procs
@@ -60,14 +43,16 @@ proc plserver_init {} {
     global cascade_arrow tkVersion
 
 # Set up configuration options.
+# The first is to hold default values of everything, the second is for
+# user customization.  See pldefaults.tcl for more info.
 
+    pldefaults
     plconfig
 
-# Hack to plug TK's gaping security hole.  This is a minimal set.  
+# Hack to plug TK's gaping security hole, just in case security has been
+# compromised in some way.  This is a minimal set.
 #
-# Note: if you want to do some fancy autoload stuff, the open command will
-# be necessary.  It is a real security risk to keep it in, however.  You
-# should probably autoload or source all the files you want procs from
+# It is necessary to autoload or source all the files you want procs from
 # before this point is reached.
 
     rename exec {}
@@ -242,6 +227,48 @@ proc exit_app {} {
 	update
     }
     after 1 exit
+}
+
+#----------------------------------------------------------------------------
+# key_filter
+#
+# Front-end to key handler.
+# For supported operations it's best to modify the global key variables
+# to get the desired action.  More advanced stuff can be done with the
+# $user_key_filter proc.  Find anything particularly useful?  Let me know,
+# so it can be added to the default behavior.
+#----------------------------------------------------------------------------
+
+proc key_filter {w client k n a} {
+    global user_key_filter
+
+    global key_zoom_select
+    global key_zoom_reset
+    global key_print
+    global key_save_again
+    global key_scroll_right
+    global key_scroll_left
+    global key_scroll_up
+    global key_scroll_down
+    global key_scroll_speed
+
+#    puts "keypress: $k $n $a"
+
+    if {[info exists user_key_filter]} then {
+	$user_key_filter $w $client $k $n $a
+    }
+
+    switch $k \
+	$key_zoom_select	"plw_zoom_select $w" \
+	$key_zoom_reset		"plw_zoom_reset $w" \
+	$key_print		"plw_print $w" \
+	$key_save_again		"plw_save $w" \
+	$key_scroll_right	"plw_view_scroll $w  $key_scroll_speed  0" \
+	$key_scroll_left	"plw_view_scroll $w -$key_scroll_speed  0" \
+	$key_scroll_up		"plw_view_scroll $w  0 -$key_scroll_speed" \
+	$key_scroll_down	"plw_view_scroll $w  0  $key_scroll_speed" 
+
+    client_cmd [list $client] "keypress $k $n $a"
 }
 
 #----------------------------------------------------------------------------
