@@ -324,23 +324,32 @@ plP_fill(short *x, short *y, PLINT npts)
     }
 }
 
-/* Driver wants to draw text itself */
+/* Account for driver ability to draw text itself */
 
 void
-plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y, PLINT refx, PLINT refy, const char *string)
+plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
+	 PLINT refx, PLINT refy, const char *string)
 {
-  EscText args;
+    if (plsc->dev_text) {
+	EscText args;
 
-  args.base = base;
-  args.just = just;
-  args.xform = xform;
-  args.x = x;
-  args.y = y;
-  args.refx = refx;
-  args.refy = refy;
-  args.string = string;
-  
-  plP_esc(PLESC_HAS_TEXT, &args);
+	args.base = base;
+	args.just = just;
+	args.xform = xform;
+	args.x = x;
+	args.y = y;
+	args.refx = refx;
+	args.refy = refy;
+	args.string = string;
+
+	if (plsc->plbuf_write)
+	    plbuf_esc(plsc, PLESC_HAS_TEXT, &args);
+
+	plP_esc(PLESC_HAS_TEXT, &args);
+
+    } else {
+	plstr(base, xform, refx, refy, string);
+    }
 }
 
 static void

@@ -455,7 +455,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	refy = y - shift * plsc->ypmm;
     }
     else {
-	  plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore inicial clip limits */
+	plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore initial clip limits */
 	return;
     }
 
@@ -472,16 +472,8 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	xform[3] = 1.0;
     }
 
-    if (plsc->dev_text) {      
-      plP_text(0, just, xform, x, y, refx, refy, text);
-#ifndef DEBUG
-       plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore clip limits */
-       return; /* just for comparison */
-#endif
-    }
-
-    plstr(0, xform, refx, refy, text);
-    plP_sclp(clpxmi, clpxma, clpymi, clpyma);
+    plP_text(0, just, xform, x, y, refx, refy, text);
+    plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore clip limits */
 }
 
 /*--------------------------------------------------------------------------*\
@@ -526,14 +518,7 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     refx = plP_wcpcx(x) - shift * cc * plsc->xpmm;
     refy = plP_wcpcy(y) - shift * ss * plsc->ypmm;
 
-    if (plsc->dev_text) {
-      plP_text(0, just, xform, plP_wcpcx(x), plP_wcpcy(y), refx, refy, text);      
-#ifndef DEBUG
-	  return; /* just for comparison */
-#endif
-    }
-
-    plstr(0, xform, refx, refy, text);
+    plP_text(0, just, xform, plP_wcpcx(x), plP_wcpcy(y), refx, refy, text);      
 }
 
 /*--------------------------------------------------------------------------*\
@@ -558,13 +543,6 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
     
     PLINT ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
-
-	/* program flow should never arrive here if dev_text == 1, but if it does */
-	if (plsc->dev_text) {
-#ifndef DEBUG
-	   return; /* for comparison only */
-#endif
-	}
 
     plgchr(&def, &ht);
     dscale = 0.05 * ht;

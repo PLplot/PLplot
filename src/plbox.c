@@ -777,16 +777,9 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
     xform[2] = ss;
     xform[3] = 1.0;
 
-    if (plsc->dev_text) {      
-      plP_text(0, just, xform, plP_mmpcx(plP_wcmmx(wx)),
-			   plP_mmpcy(plP_wcmmy(wy) - disp * ht),
-			   refx, refy, text);
-#ifndef DEBUG
-	  return; /* just for comparison */
-#endif
-    }
-
-    plstr(0, xform, refx, refy, text);
+    plP_text(0, just, xform,
+	     plP_mmpcx(plP_wcmmx(wx)), plP_mmpcy(plP_wcmmy(wy) - disp * ht),
+	     refx, refy, text);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1018,14 +1011,7 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
 	  xform[3] = 1.0;
     }
 
-    if (plsc->dev_text) {
-      plP_text(0, just, xform, x, y, refx, refy, text);
-#ifndef DEBUG
-      return; /* just for comparison */
-#endif
-    }
-
-    plstr(0, xform, refx, refy, text);
+    plP_text(0, just, xform, x, y, refx, refy, text);
 }
 
 /*--------------------------------------------------------------------------*\
