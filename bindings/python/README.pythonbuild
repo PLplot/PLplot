@@ -43,7 +43,8 @@ generally useful when plplot is used as part of the pyqt or Tkinter python
 widgets.
 
 Historically we used the setup.py method of building the _plplotc extension
-module (and we still keep setup.py.in around for reference purposes), but
+module (and we still keep setup.py.in in the "old" subdirectory of
+the top of the source tree for reference purposes), but
 our procedure for building the module now is completely autotools based.
 
 The automake/libtool approach for generating _plplotcmodule.so, the
@@ -66,7 +67,11 @@ _________________________________________________________________________
 
 The remainder of this document describes an alternative build approach that
 does make the plframe widget available under python by rebuilding python
-itself.  Geoffrey Furnish tells us this method is still working, but the
+itself.  It makes use of the historical hand-crafted interface files
+plmodule.c and plmodule2.c (now combined together in old/plmodule.c for
+historical reference purposes in the the top-level source tree) and
+plmodule.h (now stored in old/plmodule.h for reference purposes).
+Geoffrey Furnish told us the method still worked in 2000, but the
 instructions have not been updated since 1996 so there may be some changes
 which you should ask him about.  This approach is based on the old
 hand-crafted (as opposed to swig-generated) plmodule.c wrapper which is
