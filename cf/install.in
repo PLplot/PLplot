@@ -16,6 +16,9 @@
 # If a shared library was built, rebuild executables before installing.
 # -----------------------------------------------------------------------------
 
+# TCL must appear before TK in this list because symlinks installed by
+# TK are decided by the existence of the x??.tcl files installed by TCL.
+
 install: install_lib \
 	$(INSTALL_F77) \
 	$(INSTALL_PYTHON) \
