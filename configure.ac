@@ -698,6 +698,12 @@ the Fortran bindings])
   fi
   M4_FLAGS="-S2000 -B8192 $DBL_FLAG_M4"
   AC_SUBST(M4_FLAGS)
+
+  # If no F77 compiler is found, then disable f77 bindings building
+  if test -z "$F77" ; then
+    enable_f77=no
+    AC_MSG_WARN([Disabling F77 bindings building because no compiler was found])
+  fi
 fi
 
 ### Python binding
