@@ -16,12 +16,13 @@
 #	if Tk support is not included, TK_INSTALL will be null.
 #	if Tcl support is not included, TCL_INSTALL will be null.
 #	if C++ support is not included, CXX_INSTALL will be null.
+#	if Python support is not included, PYTHON_INSTALL will be null.
 #
 # If a shared library was built, rebuild executables before installing.
 # -----------------------------------------------------------------------
 
 install: install_lib install_utils \
-	$(TCL_INSTALL) $(TK_INSTALL) $(CXX_INSTALL) \
+	$(PYTHON_INSTALL) $(TCL_INSTALL) $(TK_INSTALL) $(CXX_INSTALL) \
 	install_demos
 
 install_lib:
@@ -41,14 +42,14 @@ install_lib:
 	-cp $(top_srcdir)/doc/*.info $(INFO_DIR)
 	-cd $(top_srcdir)/scripts; cp pl* $(BIN_DIR)
 	-cd $(top_srcdir)/include; \
-	 cp plplotP.h plplot.h plplotX.h pltk.h pltcl.h plplotTK.h \
-	    plevent.h plstream.h pdf.h tclMatrix.h plcdemos.h \
+	 cp plplotP.h plplot.h plplotX.h plevent.h plstream.h pdf.h \
 	    $(INCLUDE_DIR)
 
 install_demos:
 	-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi
 	-if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi
 	-if test ! -d $(DEMOS_DIR)/f77; then mkdir -p $(DEMOS_DIR)/f77; fi
+	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
 	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-cp Makedemo $(DEMOS_DIR)/Makefile
@@ -57,6 +58,7 @@ install_demos:
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
 	-cd $(top_srcdir)/examples/c; cp * $(DEMOS_DIR)/c
 	-cd $(top_srcdir)/examples/f77; cp * $(DEMOS_DIR)/f77
+	-cd $(top_srcdir)/examples/python; cp * $(DEMOS_DIR)/python
 	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
 	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
 	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
@@ -73,6 +75,11 @@ install_utils:
 	-strip plrender$E pltek$E
 	-cp plrender$E pltek$E $(BIN_DIR)
 
+install_plmodule:
+	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(LIB_INSTALL) \
+		-o plmodule$(SO) $(LDC_LIBS)
+	-cp plmodule$(SO) $(PYTHON_MOD_DIR)
+
 install_tcl:
 	-if test $(SHARED) = 1; then \
 	 $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
@@ -80,6 +87,8 @@ install_tcl:
 	 fi
 	-strip pltcl$E
 	-cp pltcl$E $(BIN_DIR)
+	-cd $(top_srcdir)/bindings/tcl; \
+	 cp pltcl.h tclMatrix.h $(INCLUDE_DIR)
 
 install_tk:
 	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
@@ -89,7 +98,9 @@ install_tk:
 	 fi
 	-strip plserver$E
 	-cp plserver$E $(BIN_DIR)
-	-cd $(top_srcdir)/drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
+	-cd $(top_srcdir)/bindings/tk; \
+	 cp pltk.h plplotTK.h $(INCLUDE_DIR); \
+	 cp *.tcl *.pal tclIndex $(TCL_DIR)
 
 install_cxx:
-	-cd $(top_srcdir)/include; cp stream.h $(INCLUDE_DIR)
+	-cd $(top_srcdir)/bindings/c++; cp stream.h $(INCLUDE_DIR)
