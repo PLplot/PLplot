@@ -95,6 +95,7 @@ binding_m_files = \
 	stripc.m \
 	stripc_add.m \
 	stripc_del.m \
+	struct_contains.m \	
 	subplot.m \
 	subwindow.m \
 	surf.m \
@@ -116,7 +117,11 @@ user_m_files = \
 	plplot_octave_path.m \
 	toggle_plplot_use.m
 
-EXTRA_DIST = $(binding_m_files) use_plplot.m toggle_plplot_use.m
+EXTRA_DIST = \
+	$(binding_m_files) \
+	struct_contains.m \
+	use_plplot.m \
+	toggle_plplot_use.m 
 
 if enable_octave
 
