@@ -319,6 +319,20 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 }
 
 /***************************
+	String returning functions
+****************************/
+
+/* This currently just used for plgdev, plgfnam, and plgver which apparently
+ * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
+ * have a 1000 byte limit here. */
+%typemap(ignore) char* OUTPUT ( char buff[1000] ) {
+  $1 = buff;
+}
+%typemap(argout) char* OUTPUT {
+  $result = PyString_FromString($1);
+}
+
+/***************************
 	A trick for docstrings
 ****************************/
 
