@@ -24,7 +24,7 @@ TCL_INSTALL = install_tcl
 
 install_tcl:
 	$(LDC) $(LDC_FLAGS) pltcl.o $(LIB_INSTALL) \
-		-o pltcl $(LDC_PATH) $(LDC_LIBS)
+		-o pltcl $(LDC_LIBS)
 	-strip pltcl
 	-cp pltcl $(BIN_DIR)
 

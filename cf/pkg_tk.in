@@ -31,7 +31,7 @@ TK_INSTALL = install_tk
 install_tk:
 	-if [ ! -d $(TCL_DIR) ] ; then mkdir -p $(TCL_DIR); fi
 	$(LDC) $(LDC_FLAGS) plserver.o $(LIB_INSTALL) \
-		-o plserver $(LDC_PATH) $(LDC_LIBS)
+		-o plserver $(LDC_LIBS)
 	-strip plserver
 	-cp plserver $(BIN_DIR)
 	-cd ../drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
