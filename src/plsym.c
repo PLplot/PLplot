@@ -392,6 +392,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     PLINT vert, refx, refy, x, y;
     PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, shift, xform[4];
     PLFLT chrdef, chrht;
+    PLFLT dispx, dispy;
 
     if (plsc->level < 2) {
 	plabort("plmtex: Please set up viewport first");
@@ -403,91 +404,83 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     plP_gclp(&clpxmi, &clpxma, &clpymi, &clpyma); /* get and store current clip limits */
     plP_sclp(plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma);
 
-    plgchr(&chrdef, &chrht);
-    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
-
     if (plP_stsearch(side, 'b')) {
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
 	ydv = plsc->vpdymi;
-
-	xmm = plP_dcmmx(xdv);
-	ymm = plP_dcmmy(ydv) - disp * chrht;
-	refxmm = xmm - shift;
-	refymm = ymm;
+	dispx = 0;
+	dispy = -disp;
 
     } else if (plP_stsearch(side, 't')) {
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
 	ydv = plsc->vpdyma;
-
-	xmm = plP_dcmmx(xdv);
-	ymm = plP_dcmmy(ydv) + disp * chrht;
-	refxmm = xmm - shift;
-	refymm = ymm;
+	dispx = 0;
+	dispy = disp;
 
     } else if (plP_stindex(side, "LV") != -1 || plP_stindex(side, "lv") != -1) {
 	vert = 0;
 	xdv = plsc->vpdxmi;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-
-	xmm = plP_dcmmx(xdv) - disp * chrht;
-	ymm = plP_dcmmy(ydv);
-	refxmm = xmm - shift;
-	refymm = ymm;
+	dispx = -disp;
+	dispy = 0;
 
     } else if (plP_stindex(side, "RV") != -1 || plP_stindex(side, "rv") != -1) {
 	vert = 0;
 	xdv = plsc->vpdxma;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-
-	xmm = plP_dcmmx(xdv) + disp * chrht;
-	ymm = plP_dcmmy(ydv);
-	refxmm = xmm - shift;
-	refymm = ymm;
+	dispx = disp;
+	dispy = 0;
 
     } else if (plP_stsearch(side, 'l')) {
 	vert = 1;
 	xdv = plsc->vpdxmi;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-
-	xmm = plP_dcmmx(xdv) - disp * chrht;
-	ymm = plP_dcmmy(ydv);
-	refxmm = xmm;
-	refymm = ymm - shift;
+	dispx = -disp;
+	dispy = 0;
 
     } else if (plP_stsearch(side, 'r')) {
 	vert = 1;
 	xdv = plsc->vpdxma;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-
-	xmm = plP_dcmmx(xdv) + disp * chrht;
-	ymm = plP_dcmmy(ydv);
-	refxmm = xmm;
-	refymm = ymm - shift;
+	dispx = disp;
+	dispy = 0;
 
     } else {
 	plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore initial clip limits */
 	return;
     }
 
-    x = plP_mmpcx(xmm);
-    y = plP_mmpcy(ymm);
-    refx = plP_mmpcx(refxmm);
-    refy = plP_mmpcy(refymm);
+/* Transformation matrix */
 
     if (vert != 0) {
 	xform[0] = 0.0;
 	xform[1] = -1.0;
 	xform[2] = 1.0;
 	xform[3] = 0.0;
-    }
-    else {
+    } else {
 	xform[0] = 1.0;
 	xform[1] = 0.0;
 	xform[2] = 0.0;
 	xform[3] = 1.0;
     }
+
+/* Convert to physical units (mm) and compute shifts */
+
+    plgchr(&chrdef, &chrht);
+    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+
+    xmm = plP_dcmmx(xdv) + dispx * chrht;
+    ymm = plP_dcmmy(ydv) + dispy * chrht;
+    refxmm = xmm - shift * xform[0];
+    refymm = ymm - shift * xform[2];
+
+/* Convert to device units (pixels) and call text plotter */
+
+    x = plP_mmpcx(xmm);
+    y = plP_mmpcy(ymm);
+    refx = plP_mmpcx(refxmm);
+    refy = plP_mmpcy(refymm);
 
     plP_text(0, just, xform, x, y, refx, refy, text);
     plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore clip limits */
@@ -508,7 +501,7 @@ void
 c_plptex(PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
 {
     PLINT x, y, refx, refy;
-    PLFLT xmm, ymm, refxmm, refymm, shift, cc, ss;
+    PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, shift, cc, ss;
     PLFLT xform[4], diag;
 
     if (plsc->level < 3) {
@@ -525,17 +518,21 @@ c_plptex(PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     diag = sqrt(cc * cc + ss * ss);
     cc /= diag;
     ss /= diag;
-    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
 
     xform[0] = cc;
     xform[1] = -ss;
     xform[2] = ss;
     xform[3] = cc;
 
-    xmm = plP_wcmmx(wx);
-    ymm = plP_wcmmy(wy);
-    refxmm = xmm - shift * cc;
-    refymm = ymm - shift * ss;
+    xdv = plP_wcdcx(wx);
+    ydv = plP_wcdcy(wy);
+
+    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+
+    xmm = plP_dcmmx(xdv);
+    ymm = plP_dcmmy(ydv);
+    refxmm = xmm - shift * xform[0];
+    refymm = ymm - shift * xform[2];
 
     x = plP_mmpcx(xmm);
     y = plP_mmpcy(ymm);
