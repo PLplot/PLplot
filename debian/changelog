@@ -1,3 +1,9 @@
+plplot (5.3.1-2) unstable; urgency=low
+ 
+   * Rebuilt against Octave 2.1.64.
+  
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  4 Dec 2004 16:57:04 +0100
+
 plplot (5.3.1.cvs.20040822-0.sarge.1) unstable; urgency=low
 
   * Build on Debian testing (NOT OFFICIALLY RELEASED!).
