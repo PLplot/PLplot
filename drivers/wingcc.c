@@ -62,7 +62,7 @@
 
 /* Device info */
 
-char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:5:wingcc";
+char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:47:wingcc";
 
 /* Struct to hold device-specific info. */
 
@@ -243,10 +243,11 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
         if (dev)
           {
           	Debug("WM_PAINT\t");
-            if (GetUpdateRect(hwnd,&dev->rect,TRUE))
+            if (GetUpdateRect(dev->hwnd,&dev->rect,TRUE))
               {
+
               	 BusyCursor();
-                BeginPaint (hwnd, &dev->ps);
+                BeginPaint (dev->hwnd, &dev->ps);
                 if (dev->waiting==1)
                 {
                     plRemakePlot(pls);
@@ -254,7 +255,7 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                     pl_RemakeFreeType_text_from_buffer(pls);
                     #endif
                  }
-                EndPaint (hwnd, &dev->ps);
+                EndPaint (dev->hwnd, &dev->ps);
                 NormalCursor();
          		 return(0);
               }
@@ -334,23 +335,28 @@ void
 plD_init_wingcc(PLStream *pls)
 {
     wingcc_Dev *dev;
+
 #ifdef HAVE_FREETYPE
     static int freetype=0;
     static int smooth_text=0;
+    static int save_reg=0;
     FT_Data *FT;
 
+/*
+ *  Variables used for reading the registary keys
+ *  might eventually add a user defined pallette here, but for now it just does freetype
+ */
     char key_name[]="Software\\PLplot\\wingcc";
     char Keyword_text[]="freetype";
     char Keyword_smooth[]="smooth";
-    char reg_text=0;
-    char reg_smooth=0;
-
 #endif
 
     DrvOpt wingcc_options[] = {
 #ifdef HAVE_FREETYPE
                               	{"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
                               {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+                              {"save", DRV_INT, &save_reg, "Save defaults to registary"},
+
 #endif
 			      {NULL, DRV_INT, NULL, NULL}};
 
@@ -383,8 +389,8 @@ plD_init_wingcc(PLStream *pls)
 
 /*
  *  Read registry to see if the user has set up default values
- *  for text and smoothing. These will over ride anything that
- *  might be given on the command line, so we will load the 
+ *  for text and smoothing. These will be overriden by anything that
+ *  might be given on the command line, so we will load the
  *  values right into the same memory slots we pass to plParseDrvOpts
  */
 
@@ -397,6 +403,19 @@ plD_init_wingcc(PLStream *pls)
 
     plParseDrvOpts(wingcc_options);
 
+#ifdef HAVE_FREETYPE
+
+/*
+ *  We will now save the settings to the registary if the user wants
+ */
+
+    if (save_reg==1)
+      {
+        SetRegIntValue(key_name, Keyword_text, &freetype);
+        SetRegIntValue(key_name, Keyword_smooth, &smooth_text);
+      }
+
+#endif
 
 /* Set up device parameters */
 
@@ -457,8 +476,8 @@ plD_init_wingcc(PLStream *pls)
                                   szWndClass,               /* Class name */
                                   pls->program,             /* Caption */
                                   WS_OVERLAPPEDWINDOW,      /* Style */
-                                  CW_USEDEFAULT,            /* Initial x (use default) */
-                                  CW_USEDEFAULT,            /* Initial y (use default) */
+                                  pls->xoffset,            /* Initial x (use default) */
+                                  pls->yoffset,            /* Initial y (use default) */
                                   pls->xlength,             /* Initial x size (use default) */
                                   pls->ylength,             /* Initial y size (use default) */
                                   NULL,                     /* No parent window */
@@ -507,7 +526,7 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
 
      if (pls->xdpi<=0) /* Get DPI from windows */
      {
-        plspage(GetDeviceCaps(dev->hdc,HORZRES)/GetDeviceCaps(dev->hdc,HORZSIZE)*25.4,
+         plspage(GetDeviceCaps(dev->hdc,HORZRES)/GetDeviceCaps(dev->hdc,HORZSIZE)*25.4,
          GetDeviceCaps(dev->hdc,VERTRES)/GetDeviceCaps(dev->hdc,VERTSIZE)*25.4, 0, 0, 0, 0);
      }
      else
