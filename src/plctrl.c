@@ -14,7 +14,7 @@
 /* for plMacLibOpen prototype; used in plLibOpen */
 #endif
 
-#ifdef __GO32__			/* dos386/djgpp */
+#ifdef DJGPP			/* dos386/djgpp */
 #ifdef __unix
 #undef __unix
 #endif
@@ -55,7 +55,7 @@ value(double n1, double n2, double hue);
 /* An additional hardwired location for lib files. */
 /* I have no plans to change these again, ever. */
 
-#if defined(GNU386)
+#if defined(DJGPP)
 #ifndef PLLIBDEV
 #define PLLIBDEV "c:/plplot/lib"
 #endif
