@@ -148,6 +148,7 @@ fi
 
 incdirs_default="\
 /usr/include/tcl8.2/generic \
+/usr/include/itcl3.1/generic \
 $prefix/include/itcl \
 $prefix/include \
 $HOME/local/include \
