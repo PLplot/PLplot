@@ -1,3 +1,14 @@
+plplot (5.3.0.rc1.5.3.1-3) unstable; urgency=low
+
+  * debian/control: Added build-dependency on atlas3-base-dev.  For some
+    obscure reason, plplot is FTBFS on the architectures ia64, s390,
+    sparc, powerpc, hppa, and mipsel, because neither atlas3-base-dev nor
+    lapack3-dev are automatically installed.  This should be the case, due
+    to the build-dependency on octave2.1.-headers.  I will keep
+    atlas3-base-dev in Build-Depends until the problem is fixed.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 17 Jun 2004 10:51:07 +0200
+
 plplot (5.3.0.rc1.5.3.1-2) unstable; urgency=low
 
   * debian/control: Added dependency on libplplot3-dev to libplplot-dev.
