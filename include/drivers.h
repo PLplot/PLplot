@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/08/03 03:26:51  mjl
-   Additions to support new MGR and LinuxVGA drivers.
+   Revision 1.11  1993/10/18 19:41:49  mjl
+   Prototypes for Borland C driver under DOS.
 
+ * Revision 1.10  1993/08/03  03:26:51  mjl
+ * Additions to support new MGR and LinuxVGA drivers.
+ *
  * Revision 1.9  1993/07/31  07:56:50  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
@@ -188,6 +191,15 @@ void plD_bop_svga		(PLStream *);
 void plD_tidy_svga		(PLStream *);
 void plD_state_svga		(PLStream *, PLINT);
 void plD_esc_svga		(PLStream *, PLINT, void *);
+
+void plD_init_bgi		(PLStream *);
+void plD_line_bgi		(PLStream *, short, short, short, short);
+void plD_polyline_bgi		(PLStream *, short *, short *, PLINT);
+void plD_eop_bgi		(PLStream *);
+void plD_bop_bgi		(PLStream *);
+void plD_tidy_bgi		(PLStream *);
+void plD_state_bgi		(PLStream *, PLINT);
+void plD_esc_bgi		(PLStream *, PLINT, void *);
 
 void plD_init_os2		(PLStream *);				 
 void plD_line_os2		(PLStream *, short, short, short, short);
