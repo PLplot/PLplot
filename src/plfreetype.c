@@ -1,7 +1,10 @@
 /* $Id$
  *
- * Copyright (C) 2004  Joao Cardoso
- * Copyright (C) 2004  Andrew Roach
+ * Copyright (C) 2002, 2004  Andrew Roach
+ * Copyright (C) 2002  Maurice LeBrun
+ * Copyright (C) 2002, 2004  Alan W. Irwin
+ * Copyright (C) 2003, 2004  Joao Cardoso
+ * Copyright (C) 2003, 2004  Rafael Laboissiere
  * Copyright (C) 2004  Andrew Ross
  *
  * This file is part of PLplot.
@@ -119,7 +122,7 @@ static void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, in
 static void FT_SetFace( PLStream *pls, int fnt );
 static PLFLT CalculateIncrement( int bg, int fg, int levels);
 static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
-
+static FT_ULong hershey_to_unicode (char in);
 
 /*----------------------------------------------------------------------*\
  * FT_StrX_Y()
@@ -340,7 +343,16 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 */
 
                 FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+
+/* RL on 2004-12-11: 
+ * 
+ * The following offset is apparently valid only for the TT font available 
+ * in Windows systems.  In Unix/Linux, we use a Unicode encoding for 
+ * accessing the Greek characters.  See below.
+ */
+#if defined(MSDOS) || defined(WIN32)
 		FT->textbuf[i+2]-=29;
+#endif	      
                 i++;
                 break;
 
@@ -386,11 +398,30 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 
             }
 
+	  
+/* RL on 2004-12-11: 
+ * 
+ * The following code adds an offset for the Greek symbols according to the 
+ * Unicode encoding.  This works with the Arial.ttf and FreeSans.ttf fonts, 
+ * so that the offset is only added in non-Windows systems.
+ */
+
+#if defined(MSDOS) || defined(WIN32)
 	    if (FT->smooth_text==0)
 		FT_Load_Char( FT->face, (FT->textbuf[i] > 0 ? FT->textbuf[i] : FT->textbuf[i] + 255), FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
 	    else
 		FT_Load_Char( FT->face, (FT->textbuf[i] > 0 ? FT->textbuf[i] : FT->textbuf[i] + 255), FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
-
+#else
+	    FT_Load_Char( FT->face, 
+		FT->greek 
+	           ? hershey_to_unicode (FT->textbuf[i])
+		   : FT->textbuf[i] > 0 
+		       ? FT->textbuf[i] 
+		       : FT->textbuf[i] + 255,
+	        FT->smooth_text == 0
+		   ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER 
+		   : FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT);
+#endif	  
 	    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, 2 ); /* render the text */
 	    x += (FT->face->glyph->advance.x >> 6);
 	    y -= (FT->face->glyph->advance.y >> 6);
@@ -1014,6 +1045,29 @@ static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
   FT->num_strings++;
 }
 
+
+/*--------------------------------------------------------------------------*\
+ * char hershey_to_unicode (char in)
+ *
+ * Translates the Hershey codes for Greek symbols into the corresponding 
+ * character in the Unicode encoding.  This is a temporary hack and should go 
+ * away when Unicode support is introduced into the PLplot core.
+\*--------------------------------------------------------------------------*/
+
+static char hershey_to_unicode_table [58] = {
+  'A', 'B', 'N', 'D', 'E', 'V', 'C', 'H', 'I',   0, 'J', 'K', 'L', 'M', 
+  'O', 'P', 'X', 'Q', 'S', 'T', 'U',   0, 'Y', 'W', 'G', 'F', 0, 0, 0, 0, 0, 0,
+  'a', 'b', 'n', 'd', 'e', 'v', 'c', 'h', 'i',   0, 'j', 'k', 'l', 'm', 
+  'o', 'p', 'x', 'q', 's', 't', 'u',   0, 'y', 'w', 'g', 'f'
+};
+      
+FT_ULong hershey_to_unicode (char in)
+{
+  in = in + (in > 0 ? 0 : 255);
+  return (in < 'A' || in > 'z') 
+      ? in 
+      : 848 + hershey_to_unicode_table [in - 'A'];
+}
 
 /*--------------------------------------------------------------------------*\
  *  void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
