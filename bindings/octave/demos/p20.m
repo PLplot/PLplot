@@ -43,7 +43,7 @@ function p20
   subwindow(4 ,2)
   p15
   subwindow(4 ,3)
-  p14
+  p14(1)
   subwindow(1 ,2)
   p12
 
