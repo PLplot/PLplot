@@ -22,7 +22,7 @@
 AM_CPPFLAGS = $(INCLTDL)
 examples_cdir = ${prefix}/$(DATA_DIR)/../examples/c
 examples_c_DATA = \
-	.samename/Makefile \
+	Makefile.examples \
 	plcdemos.h \
 	lena.pgm \
 	tutor.c \
@@ -48,9 +48,8 @@ examples_c_DATA = \
 	x20c.c \
 	x21c.c
 
-.samename/Makefile: Makefile.examples
-	mkdir -p .samename
-	cp Makefile.examples .samename/Makefile
+install-data-hook:
+	( cd $(DESTDIR)/$(examples_cdir) ; mv Makefile.examples Makefile )
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
 
@@ -77,27 +76,7 @@ check_PROGRAMS = \
 	x20c \
 	x21c
 
-x01c_LDFLAGS = $(libplplot)
-x02c_LDFLAGS = $(libplplot)
-x03c_LDFLAGS = $(libplplot)
-x04c_LDFLAGS = $(libplplot)
-x05c_LDFLAGS = $(libplplot)
-x06c_LDFLAGS = $(libplplot)
-x07c_LDFLAGS = $(libplplot)
-x08c_LDFLAGS = $(libplplot)
-x09c_LDFLAGS = $(libplplot)
-x10c_LDFLAGS = $(libplplot)
-x11c_LDFLAGS = $(libplplot)
-x12c_LDFLAGS = $(libplplot)
-x13c_LDFLAGS = $(libplplot)
-x14c_LDFLAGS = $(libplplot)
-x15c_LDFLAGS = $(libplplot)
-x16c_LDFLAGS = $(libplplot)
-x17c_LDFLAGS = $(libplplot)
-x18c_LDFLAGS = $(libplplot)
-x19c_LDFLAGS = $(libplplot)
-x20c_LDFLAGS = $(libplplot)
-x21c_LDFLAGS = $(libplplot)
+AM_LDFLAGS = $(libplplot)
 
-EXTRA_DIST = $(examples_c_DATA) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples .samename/Makefile
+EXTRA_DIST = $(examples_c_DATA)
+DISTCLEANFILES = Makefile.examples
