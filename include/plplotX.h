@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1995/04/12 21:10:26  mjl
+ * Revision 1.17  1995/05/26 20:20:13  mjl
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Revision 1.16  1995/04/12  21:10:26  mjl
  * Made the ordinary graphics context and the current color a device-dependent
  * quantity rather than a display-dependent one, to fix problems with color
  * selection when plotting to separate streams/xwindows.  Thanks to Radey
@@ -52,8 +55,8 @@
 #ifndef __PLPLOT_H__
 #include <plplot.h>
 #endif
-#ifndef __PLSTREAM_H__
-#include <plstream.h>
+#ifndef __PLSTRM_H__
+#include <plstrm.h>
 #endif
 
 /* System headers */

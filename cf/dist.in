@@ -31,7 +31,6 @@ CORE_C = \
 	plpage.c \
 	plsdef.c \
 	plshade.c \
-	plstream.c \
 	plsym.c \
 	pltick.c \
 	plvpor.c \
@@ -54,7 +53,6 @@ CORE_OBJ = \
 	plpage$O \
 	plsdef$O \
 	plshade$O \
-	plstream$O \
 	plsym$O \
 	pltick$O \
 	plvpor$O \

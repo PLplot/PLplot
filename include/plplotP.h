@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1995/05/07 02:28:58  mjl
+ * Revision 1.38  1995/05/26 20:20:12  mjl
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Revision 1.37  1995/05/07  02:28:58  mjl
  * Added include of pldebug.h so that all PLplot source files now get it.
  * Eliminated prototypes for obsolete functions plCmap0_init() and
  * plCmap1_init() and added prototype for new function plstrm_init().
@@ -160,7 +163,7 @@
 
 /* plstream definition */
 
-#include "plstream.h"
+#include "plstrm.h"
 
 /* If not including this file from inside of plcore.h, declare plsc */
 

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1995/04/11 09:40:25  mjl
+ * Revision 1.23  1995/05/26 20:20:11  mjl
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Revision 1.22  1995/04/11  09:40:25  mjl
  * Prototypes for Mac driver.
  *
  * Revision 1.21  1994/08/26  19:17:42  mjl
@@ -31,7 +34,7 @@
 #define __DRIVERS_H__
 
 #include "pdf.h"
-#include "plstream.h"
+#include "plstrm.h"
 
 #ifdef __cplusplus
 extern "C" {

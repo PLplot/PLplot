@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1995/05/07 02:32:51  mjl
+ * Revision 1.39  1995/05/26 20:20:14  mjl
+ * Changed plstream.h -> plstrm.h everywhere.
+ *
+ * Revision 1.38  1995/05/07  02:32:51  mjl
  * Added new stream variables: verbose (be more verbose than usual), debug
  * (print debugging output to stderr), and initialized (set if the stream has
  * been initialized).  Eliminated cmap0setcol and cmap1set.  Changed cmap0 and
@@ -84,7 +87,7 @@
  * communication is being used.
 */
 
-/*	plstream.h
+/*	plstrm.h
 
 	Contains declarations for PLStream and PLDev structs.
 	Also prototypes for stream & device utility functions.
@@ -92,8 +95,8 @@
 
 #include "pdf.h"
 
-#ifndef __PLSTREAM_H__
-#define __PLSTREAM_H__
+#ifndef __PLSTRM_H__
+#define __PLSTRM_H__
 
 /*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.
@@ -668,4 +671,4 @@ plAllocDev(PLStream *pls);
 void
 plGinInit(PLGraphicsIn *gin);
 
-#endif	/* __PLSTREAM_H__ */
+#endif	/* __PLSTRM_H__ */
