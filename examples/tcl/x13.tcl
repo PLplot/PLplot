@@ -7,10 +7,10 @@
 proc x13 {{w loopback}} {
 
     set text0 "Maurice"
-    set text1 "Randy"
-    set text2 "Mark"
-    set text3 "Steve"
-    set text4 "Warner"
+    set text1 "Geoffrey"
+    set text2 "Alan"
+    set text3 "Rafael"
+    set text4 "Vince"
 
 #    int i, j;
 #    PLFLT dthet, theta0, theta1, theta, just, dx, dy;
@@ -66,4 +66,6 @@ proc x13 {{w loopback}} {
     $w cmd plfont 2
     $w cmd plschr 0. 1.3
     $w cmd plptex 5.0 9.0 1.0 0.0 0.5 "Percentage of Sales"
+# Restore defaults
+    $w cmd plcol0 1
 }
