@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.9  2002/07/11 08:55:22  vincentdarley
+ * abort if no tk widget
+ *
  * Revision 1.8  2002/07/10 13:59:25  vincentdarley
  * removing symbols conflict with xwin and use tk.h
  *
@@ -392,6 +395,14 @@ plD_open_tkwin(PLStream *pls)
 	tkwDisplay[i] = tkwd = (TkwDisplay *) dev->tkwd;
 	tkwd->nstreams = 1;
 	
+	/* 
+	 * If we don't have a tk widget we're being called on, then
+	 * abort operations now 
+	 */
+	if (pls->plPlotterPtr == NULL) {
+	    fprintf(stderr, "No tk plframe widget to connect to\n");
+	    exit(1);
+	}
 	/* Old version for MacOS Tk8.0 */
 	/* 
 	 * char deflt[] = "Macintosh:0";
