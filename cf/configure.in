@@ -912,7 +912,6 @@ if test "$enable_dyndrivers" = "yes"; then
 	    ;;
 	    tk )
 	    echo "tk:Tcl/TK Window:1:tk"$LIB_TAG"_drv.so:7:tk" >> drivers/$DRIVERS_DB
-	    ln -s drivers/tk"$LIB_TAG"_drv.so libplplot_tk_driver"$LIB_TAG".so
 	    ;;
 	    tkwin )
 	    echo "tkwin:New tk driver:1:tkwin"$LIB_TAG"_drv.so:45:tkwin" >> drivers/$DRIVERS_DB

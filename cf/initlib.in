@@ -66,8 +66,8 @@ PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
 # Collect extra libraries and corresponding links to be used 
 # for linking libplplot only.
 
-PLLIB_LIBRARIES = $(BLD_MATLIB_SO) $(TKDRV_SO) $(XWINDRV_SO) $(TKWINDRV_SO)
-PLLIB_LINKS = $(MAT_LINK) $(TKDRV_LINK) $(XWINDRV_LINK) $(TKWINDRV_LINK)
+PLLIB_LIBRARIES = $(BLD_MATLIB_SO) $(XWINDRV_SO) $(TKWINDRV_SO)
+PLLIB_LINKS = $(MAT_LINK) $(XWINDRV_LINK) $(TKWINDRV_LINK)
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
