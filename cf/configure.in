@@ -768,14 +768,14 @@ if test "$enable_dynamic_drivers" = "yes"; then
     for drv in PL_DYNAMIC_DRIVER_LIST; do
 	case $drv in
 	    null)
-	    echo "null:Null device:null.drv:null" >> drivers/drivers.db
+	    echo "null:Null device:null.drv:41:null" >> drivers/drivers.db
 	    ;;
 	    plmeta)
-	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:plm" >> drivers/drivers.db
+	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:26:plm" >> drivers/drivers.db
 	    ;;
 	    ps)
-	    echo "ps:PostScript File (monochrome):ps.drv:psm" >> drivers/drivers.db
-	    echo "psc:PostScript File (color):ps.drv:psc" >> drivers/drivers.db
+	    echo "ps:PostScript File (monochrome):ps.drv:29:psm" >> drivers/drivers.db
+	    echo "psc:PostScript File (color):ps.drv:30:psc" >> drivers/drivers.db
 	    ;;
 	esac
     done
