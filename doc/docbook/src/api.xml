@@ -3142,8 +3142,8 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to variable with the maximum number of digits.  If
-	    nonzero, the printed label will be switched to a floating point
+	    Pointer to variable with the maximum number of digits for the x axis.  If
+	    nonzero, the printed label has been switched to a floating point
 	    representation when the number of digits exceeds
 	    <literal><parameter>digmax</parameter></literal>.
 	  </para>
@@ -3195,7 +3195,10 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Pointer to variable with the maximum number of digits for the y axis.  If
+	    nonzero, the printed label has been switched to a floating point
+	    representation when the number of digits exceeds
+	    <literal><parameter>digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3206,12 +3209,12 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Pointer to variable with the actual number of digits for the
+	    numeric labels (y axis) from the last plot.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
-
 
   </sect1>
 
@@ -3245,7 +3248,10 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Pointer to variable with the maximum number of digits for the z axis.  If
+	    nonzero, the printed label has been switched to a floating point
+	    representation when the number of digits exceeds
+	    <literal><parameter>digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3256,12 +3262,12 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Pointer to variable with the actual number of digits for the
+	    numeric labels (z axis) from the last plot.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
-
 
   </sect1>
 
@@ -8394,13 +8400,10 @@ stripchart
     </para>
 
     <para>
-      Returns current values of the
+      Sets values of the
       <literal><parameter>digmax</parameter></literal> and
       <literal><parameter>digits</parameter></literal> flags for the x
-      axis.  <literal><parameter>digits</parameter></literal> is updated
-      after the plot is drawn, so so this routine should only be called
-      <emphasis>after</emphasis> the call to &plbox; (or &plbox3;) is
-      complete.  See <xref linkend="annotation"/> for more information.
+      axis.  See <xref linkend="annotation"/> for more information.
     </para>
 
     <variablelist>
@@ -8411,7 +8414,7 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    Variable to set the maximum number of digits.  If nonzero, the
+	    Variable to set the maximum number of digits for the x axis.  If nonzero, the
 	    printed label will be switched to a floating point
 	    representation when the number of digits exceeds
 	    <literal><parameter>digmax</parameter></literal>.
@@ -8427,7 +8430,7 @@ stripchart
 	  <para>
 	    Field digits value.  Currently, changing its value here has no
 	    effect since it is set only by &plbox; or &plbox3;.  However,
-	    the user may obtain its value after a call to &plbox; by
+	    the user may obtain its value after a call to either of these functions by
 	    calling &plgxax;.
 	  </para>
 	</listitem>
@@ -8466,7 +8469,10 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Variable to set the maximum number of digits for the y axis.  If nonzero, the
+	    printed label will be switched to a floating point
+	    representation when the number of digits exceeds
+	    <literal><parameter>digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8477,7 +8483,10 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Field digits value.  Currently, changing its value here has no
+	    effect since it is set only by &plbox; or &plbox3;.  However,
+	    the user may obtain its value after a call to either of these functions by
+	    calling &plgyax;.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8593,7 +8602,10 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Variable to set the maximum number of digits for the z axis.  If nonzero, the
+	    printed label will be switched to a floating point
+	    representation when the number of digits exceeds
+	    <literal><parameter>digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8604,12 +8616,14 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    [Needs doc.]
+	    Field digits value.  Currently, changing its value here has no
+	    effect since it is set only by &plbox; or &plbox3;.  However,
+	    the user may obtain its value after a call to either of these functions by
+	    calling &plgzax;.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
-
 
   </sect1>
 
