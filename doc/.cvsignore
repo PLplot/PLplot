@@ -5,3 +5,5 @@
 *.dvi
 *.info
 *.ps
+Makefile
+Makefile.in

@@ -1,5 +1,6 @@
-Makefile Makefile.in aclocal.m4
-*.tar.gz plplotdoc-html* plplotdoc-info-*
-config.* configure *-stamp
-tarball.tgz *.prcs_aux conftest.* *.out *.log *.prj
-autom4te.cache
+Makefile
+Makefile.in
+conftest.dsl
+conftest.html
+conftest.out
+conftest.xm
