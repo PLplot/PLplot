@@ -126,6 +126,8 @@ the Appendix for more details.
 <row><entry>Portable bitmap file</entry><entry>pbm</entry><entry>pbm.c</entry></row>
 <row><entry>Null device</entry><entry>null</entry><entry>null.c</entry></row>
 <row><entry>MGR bitmap file (unsupported)</entry><entry>mgr</entry><entry>mgr.c</entry></row>
+<row><entry>JPEG file</entry><entry>jpeg</entry><entry>gd.c</entry></row>
+<row><entry>PNG file</entry><entry>png</entry><entry>gd.c</entry></row>
 </tbody>
 </tgroup>
 </table>
