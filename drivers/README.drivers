@@ -72,22 +72,35 @@ driver to this dynamic list.
 
 png:gd jpeg:gd
 
-Add a stanza to 
-for drv in $DYNAMIC_DRIVERS; do
+Add a definition for DEVICE_INFO_<file> in the driver source <file>.c:
 
-e.g.,
+/* Device info */
+char* DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
+                       "png:PNG file:0:gd:39:png";
 
-            gd)
-	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
-	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
-	    ;;
+If more than one device is provided in <file>.c, their entries should be
+separated by "\n".  Notice that the last entry has no leading "\n".
 
-Note these stanzas give the definitive sequence numbers that define the
+Note these entries give the definitive sequence numbers that define the
 order of the drivers presented to the user.  Care should be used to insure
 the sequence numbers are the same in drivers/*.c.  (Confirmed 2002/01/18)
 so there is a uniform look regardless of whether the drivers are statically
 or dynamically loaded.
-						
+
+This is the comment that was in configure.ac and has been deleted (R.
+Laboissiere on 2003-02-04):
+
+    # Now add a line for each supported loadable device.  Format is:
+    #     device name : description : type : driver name : device number: symbol tag
+    #
+    # (type=1 if interactive, 0 if file-oriented, -1 for other).
+    #
+    # Note the device name that appears first in the db line is not
+    # necessarily the same as the device name in the DYNAMIC_DEVICES (or
+    # DEVICES) list!  Rather, it's the name that appears in the old dispatch
+    # table entry (cf. tekt vs tek4010).  Oh well..
+
+
 (3) ../cf/dyndrv.in
 
 This is a fragment of the Makefile that deals with linking dynamic drivers.

@@ -28,7 +28,7 @@ dnl cf/configure.in.  It makes possible to give default values to the
 dnl configure options and set up appropriate device and driver lists.
 dnl
 dnl After that part, a whole rewrite for Automake/Libtool has been
-dnl done by Rafael Laboissiere. 
+dnl done by Rafael Laboissiere.
 dnl
 divert(0)dnl --*-Autoconf-*--
 #!/bin/sh
@@ -128,7 +128,7 @@ enable_tcl=yes
 enable_itcl=yes
 enable_java=no
 enable_octave=no
-#explicit default values must be specified here for library and header 
+#explicit default values must be specified here for library and header
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
 #(e.g., enable_tek4010) do not require a default to be specified here.
@@ -171,26 +171,26 @@ divert(-1)
 # humans keep the associations straight, but this is not necessary.
 
 define(PL_DRIVER_LIST,
-[cgm, 
-dg300, 
-png, jpeg, 
-gnome, 
-hp7470, hp7580, lj_hpgl, 
-imp, 
-linuxvga, 
-ljii, 
-ljiip, 
-ntk, 
-null, 
-pbm, 
-plmeta, 
-ps, psc, 
-pstex, 
-xterm, tek4010, tek4107, mskermit, 
-versaterm, vlt, conex, tek4010f, tek4107f, 
-tk, 
-tkwin, 
-xfig, 
+[cgm,
+dg300,
+png, jpeg,
+gnome,
+hp7470, hp7580, lj_hpgl,
+imp,
+linuxvga,
+ljii,
+ljiip,
+ntk,
+null,
+pbm,
+plmeta,
+ps, psc,
+pstex,
+xterm, tek4010, tek4107, mskermit,
+versaterm, vlt, conex, tek4010f, tek4107f,
+tk,
+tkwin,
+xfig,
 xwin])
 
 # Note specifically which drivers are known to be loadable.  Eventually,
@@ -339,24 +339,24 @@ divert(0)dnl
 # Special cases
 
 case "$system" in
-    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+    aix*|AIX*|rs*|RS*|ibm*|IBM* )
 	with_opt=no
     ;;
-    BSD/OS* ) 
+    BSD/OS* )
 	with_fseek=yes
 	with_gcc=yes
     ;;
-    linux*|LINUX*|Linux* ) 
+    linux*|LINUX*|Linux* )
 	with_gcc=yes
     ;;
-    Darwin* ) 
+    Darwin* )
         # Apparently, this is gcc with some add-ons, ugh!
 	with_gcc=yes
     ;;
-    next*|NeXT*|NEXT* ) 
+    next*|NeXT*|NEXT* )
 	with_gcc=yes
     ;;
-    ultrix*|ULTRIX* ) 
+    ultrix*|ULTRIX* )
 	with_gcc=yes
     ;;
 esac
@@ -399,14 +399,14 @@ fi
 
 # Set up mjl's pet command for doing reconfigures.  This ensures whatever
 # switches have been thrown previously are used again.
- 
+
 plplot_config_invocation="$0 $*"
 if test -n "$*"; then
     echo "$plplot_config_invocation" >reconfig
-    chmod +x reconfig 
+    chmod +x reconfig
 else
     rm -f reconfig >/dev/null 2>&1
-fi 
+fi
 
 divert(-1)
 
@@ -432,9 +432,9 @@ AM_INIT_AUTOMAKE(plplot, 5.2.0)
 ### contradiction to the libtool directive on this.  Thus, these numbers
 ### don't mean a lot in terms of binary compatibility.  Someday, we should
 ### start over with 0:0:0 and rigourously enforce number changes whenever
-### binary compatibility changes.  
+### binary compatibility changes.
 
-### N.B. The "secret" libtool code for getting 5.y.x for the library 
+### N.B. The "secret" libtool code for getting 5.y.x for the library
 ### version is 5+y:x:y.  Thus 7:0:2 ==> 5.2.0.
 
 SOVERSION=7:0:2
@@ -447,7 +447,7 @@ AC_CONFIG_SUBDIRS(libltdl)
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 
-# This required for dll support under cygwin.  Must occur before 
+# This required for dll support under cygwin.  Must occur before
 # AC_PROG_LIBTOOL (AM_PROG_LIBTOOL? FIXME).
 # comment out until this proves to work on cygwin.
 #AC_LIBTOOL_WIN32_DLL
@@ -488,7 +488,7 @@ esac
 # ----------------------------------------------------------------------------
 
 if test "$enable_dyndrivers" = "yes"; then
-    AC_DEFINE(ENABLE_DYNDRIVERS, [], 
+    AC_DEFINE(ENABLE_DYNDRIVERS, [],
               [Define if there is support for dynamically loaded drivers])
 fi
 
@@ -612,7 +612,7 @@ if test "$enable_tk" = yes; then
    AC_SUBST(TKLIBCMD)
 fi
 
-# Java stanza completely different from others.  sysloc.in must have 
+# Java stanza completely different from others.  sysloc.in must have
 # found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
 if test "$enable_java" = yes; then
    JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
@@ -622,7 +622,7 @@ fi
 ### Double vs single precison
 
 if test "$with_double" = yes; then
-  AC_DEFINE(PL_DOUBLE, [], 
+  AC_DEFINE(PL_DOUBLE, [],
             [Define if you want PLplot's float type to be double])
   DBL_FLAG_M4=-DDOUBLE
   LIB_TAG="d"
@@ -630,10 +630,6 @@ else
   LIB_TAG=""
 fi
 AC_SUBST(LIB_TAG)
-DRIVERS_DB="drivers.db"
-AC_SUBST(DRIVERS_DB)
-AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB", 
-                   [Define if drivers database is specified])
 
 ### C++ binding
 
@@ -723,6 +719,7 @@ AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h termios.h)
 AC_HEADER_SYS_WAIT
+AC_HEADER_DIRENT
 
 ### Check for typedefs
 
@@ -738,7 +735,7 @@ AC_CHECK_TYPE(caddr_t, char *)
 ### Check for functions
 
 AC_FUNC_VFORK
-AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [], 
+AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [],
                                [Define if popen is available]))
 AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP, [],
                                [Define if usleep is available]))
@@ -805,144 +802,11 @@ AC_MSG_RESULT
 AC_SUBST(STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
 
-# ----------------------------------------------------------------------------
-# Now build the dynamic driver database.
-# ----------------------------------------------------------------------------
-
-if test "$enable_dyndrivers" = "yes"; then
-
-    AC_MSG_RESULT(creating drivers/$DRIVERS_DB)
-
-    # Dynamic (loadable) drivers go in a subdir all their own.
-    if test ! -d drivers; then
-	mkdir drivers
-    fi
-
-dnl Essentially, everything related to DRIVERS_DB belo will disappear.
-
-    # Clear out any prior drivers.
-    if test -f drivers/$DRIVERS_DB; then
-	rm drivers/$DRIVERS_DB
-    fi
-    touch drivers/$DRIVERS_DB
-
-    # Now add a line for each supported loadable device.  Format is:
-    #     device name : description : type : driver name : device number: symbol tag
-    #
-    # (type=1 if interactive, 0 if file-oriented, -1 for other).
-    #
-    # Note the device name that appears first in the db line is not
-    # necessarily the same as the device name in the DYNAMIC_DEVICES (or
-    # DEVICES) list!  Rather, it's the name that appears in the old dispatch
-    # table entry (cf. tekt vs tek4010).  Oh well..
-
-    for drv in $DYNAMIC_DEVICES; do
-	case $drv in
-	    cgm )
-	    echo "cgm:CGM file:0:cgm:44:cgm" >> drivers/$DRIVERS_DB
-	    ;;
-	    conex )
-	    echo "conex:Conex vt320/tek emulator:1:tek:24:conex" >> drivers/$DRIVERS_DB
-	    ;;
-	    dg300 )
-	    echo "dg300:DG300 Terminal:0:dg300:25:dg300" >> drivers/$DRIVERS_DB
-	    ;;
-	    gnome )
-	    echo "gnome:Gnome Canvas:1:gnome:6:gnome" >> drivers/$DRIVERS_DB
-	    ;;
-	    hp7470 )
-	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl:34:hp7470" >> drivers/$DRIVERS_DB
-	    ;;
-	    hp7580 )
-	    echo "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl:35:hp7580" >> drivers/$DRIVERS_DB
-	    ;;
-	    imp )
-	    echo "imp:Impress File:0:impress:37:imp" >> drivers/$DRIVERS_DB
-	    ;;
-	    jpeg )
-	    echo "jpeg:JPEG file:0:gd:40:jpeg" >> drivers/$DRIVERS_DB
-	    ;;
-	    linuxvga )
-	    echo "linuxvga:Linux VGA driver:0:linuxvga:8:vga" >> drivers/$DRIVERS_DB
-	    ;;
-	    lj_hpgl )
-	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl:36:lj_hpgl" >> drivers/$DRIVERS_DB
-	    ;;
-	    ljii )
-	    echo "ljii:LaserJet II Bitmap File (150 dpi):0:ljii:33:ljii" >> drivers/$DRIVERS_DB
-	    ;;
-	    ljiip )
-	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip:32:ljiip" >> drivers/$DRIVERS_DB
-	    ;;
-	    mskermit )
-	    echo "mskermit:MS-Kermit emulator:1:tek:21:mskermit" >> drivers/$DRIVERS_DB
-	    ;;
-	    ntk )
-	    echo "ntk:New tk driver:1:ntk:43:ntk" >> drivers/$DRIVERS_DB
-	    ;;
-	    null )
-	    echo "null:Null device:-1:null:42:null" >> drivers/$DRIVERS_DB
-	    ;;
-	    pbm )
-	    echo "pbm:PDB (PPM) Driver:0:pbm:38:pbm" >> drivers/$DRIVERS_DB
-	    ;;
-	    plmeta )
-	    echo "plmeta:PLplot Native Meta-File:0:plmeta:26:plm" >> drivers/$DRIVERS_DB
-	    ;;
-	    png )
-	    echo "png:PNG file:0:gd:39:png" >> drivers/$DRIVERS_DB
-	    ;;
-	    ps )
-	    echo "ps:PostScript File (monochrome):0:ps:29:psm" >> drivers/$DRIVERS_DB
-	    ;;
-	    psc )
-	    echo "psc:PostScript File (color):0:ps:30:psc" >> drivers/$DRIVERS_DB
-	    ;;
-	    pstex )
-	    echo "pstex:Combined Postscript/LaTeX files:0:ps:41:pstex" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4107 )
-	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek:20:tek4107t" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4107f )
-	    echo "tek4107f:Tektronix File (4105/4107):0:tek:28:tek4107f" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4010 )
-	    echo "tekt:Tektronix Terminal (4010):1:tek:19:tekt" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4010f )
-	    echo "tekf:Tektronix File (4010):0:tek:27:tekf" >> drivers/$DRIVERS_DB
-	    ;;
-	    tk )
-	    echo "tk:Tcl/TK Window:1:tk:7:tk" >> drivers/$DRIVERS_DB
-	    ;;
-	    tkwin )
-	    echo "tkwin:New tk driver:1:tkwin:45:tkwin" >> drivers/$DRIVERS_DB
-	    ;;
-	    versaterm )
-	    echo "versaterm:Versaterm vt100/tek emulator:1:tek:22:versaterm" >> drivers/$DRIVERS_DB
-	    ;;
-	    vlt )
-	    echo "vlt:VLT vt100/tek emulator:1:tek:23:vlt" >> drivers/$DRIVERS_DB
-	    ;;
-	    xfig )
-	    echo "xfig:Fig file:0:xfig:31:xfig" >> drivers/$DRIVERS_DB
-	    ;;
-	    xterm )
-	    echo "xterm:Xterm Window:1:tek:18:xterm" >> drivers/$DRIVERS_DB
-	    ;;
-	    xwin )
-	    echo "xwin:X-Window (Xlib):1:xwin:5:xw" >> drivers/$DRIVERS_DB
-	    ;;
-	esac
-    done
-fi
-
 ### Build Makefiles
 
 AC_OUTPUT([
-	Makefile 
-	src/Makefile 
+	Makefile
+	src/Makefile
 	include/Makefile
 	lib/Makefile
 	bindings/Makefile

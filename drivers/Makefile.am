@@ -46,7 +46,6 @@ EXTRA_LTLIBRARIES = \
 
 driversdir = ${prefix}/@DATA_DIR@/@DRV_DIR@
 drivers_LTLIBRARIES = @DYNAMIC_DRIVERS@
-drivers_DATA = drivers.db
 
 if with_double
 libplplot = -L../src -lplplotd

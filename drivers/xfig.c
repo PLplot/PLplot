@@ -9,6 +9,9 @@
 #include "plplotP.h"
 #include "drivers.h"
 
+/* Device info */
+char* DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig";
+
 /* Function prototypes */
 
 void plD_dispatch_init_xfig	( PLDispatchTable *pdt );

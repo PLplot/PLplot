@@ -36,6 +36,10 @@
 #include "metadefs.h"
 #include <string.h>
 
+/* Device info */
+char* DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm";
+
+
 void plD_dispatch_init_plm	( PLDispatchTable *pdt );
 
 void plD_init_plm		(PLStream *);

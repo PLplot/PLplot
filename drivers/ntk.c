@@ -12,6 +12,10 @@
 
 #include <tk.h>
 
+/* Device info */
+char* DEVICE_INFO_ntk = "ntk:New tk driver:1:ntk:43:ntk";
+
+
 void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
 
 void plD_init_ntk		(PLStream *);

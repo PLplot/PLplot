@@ -42,6 +42,10 @@
 # include <dp.h>
 #endif
 
+/* Device info */
+char* DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
+
+
 /* Number of instructions to skip between updates */
 
 #define MAX_INSTR 100

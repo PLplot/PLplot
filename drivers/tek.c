@@ -21,6 +21,19 @@
 
 #include <ctype.h>
 
+/* Device info */
+
+char* DEVICE_INFO_tek = 
+  "conex:Conex vt320/tek emulator:1:tek:24:conex\n"
+  "mskermit:MS-Kermit emulator:1:tek:21:mskermit\n"
+  "tek4107t:Tektronix Terminal (4105/4107):1:tek:20:tek4107t\n"
+  "tek4107f:Tektronix File (4105/4107):0:tek:28:tek4107f\n"
+  "tekt:Tektronix Terminal (4010):1:tek:19:tekt\n"
+  "tekf:Tektronix File (4010):0:tek:27:tekf\n"
+  "versaterm:Versaterm vt100/tek emulator:1:tek:22:versaterm\n"
+  "vlt:VLT vt100/tek emulator:1:tek:23:vlt\n"
+  "xterm:Xterm Window:1:tek:18:xterm";
+
 /* Prototype the driver entry points that will be used to initialize the
    dispatch table entries. */
 

@@ -9,6 +9,9 @@
 #include "plplotP.h"
 #include "drivers.h"
 
+/* Device info */
+char* DEVICE_INFO_null = "null:Null device:-1:null:42:null";
+
 void plD_dispatch_init_null	( PLDispatchTable *pdt );
 
 void plD_init_null		(PLStream *);

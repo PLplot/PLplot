@@ -18,6 +18,9 @@
 
 #include <unistd.h>
 
+/* Device info */
+char* DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
+
 /*#undef DEBUG*/
 #define DEBUG
 

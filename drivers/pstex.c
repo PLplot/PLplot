@@ -11,6 +11,10 @@
 #include "drivers.h"
 #include "ps.h"
 
+/* Device info */
+char* DEVICE_INFO_pstex = 
+  "pstex:Combined Postscript/LaTeX files:0:ps:41:pstex";
+
 /*--------------------------------------------------------------------------*\
  * plD_init_pstex()
  *

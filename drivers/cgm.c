@@ -80,6 +80,9 @@
 
 #include <cd.h>
 
+/* Device info */
+char* DEVICE_INFO_cgm = "cgm:CGM file:0:cgm:44:cgm";
+
 /* Prototypes for functions in this file. */
 
 static void	fill_polygon	(PLStream *pls);

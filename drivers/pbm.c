@@ -13,6 +13,10 @@
 #include "plplotP.h"
 #include "drivers.h"
 
+/* Device info */
+char* DEVICE_INFO_pbm = "pbm:PDB (PPM) Driver:0:pbm:38:pbm";
+
+
 void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
 
 void plD_init_pbm		(PLStream *);

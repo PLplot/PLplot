@@ -1599,25 +1599,67 @@ plInitDispatchTable()
     char *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
     int seq;
     int i, j, driver_found, done=0;
-    FILE *fp_drvdb = 0;
+    FILE *fp_drvdb = NULL;
+    DIR* dp_drvdir = NULL;
+    struct dirent* entry;
+    lt_dlhandle dlhand;
 
-    fp_drvdb = plLibOpen( DRV_DIR "/" DRIVERS_DB );
+/* Open a temporary file in which all the DEVICE_INFO_<driver> strings
+   will be stored */
+    fp_drvdb = tmpfile ();
 
-    if (fp_drvdb) {
-    /* Count the number of dynamic devices. */
-        while( !done ) {
-            char *p = fgets( buf, 300, fp_drvdb );
+/* Open the drivers directory in DATA_DIR */
+    dp_drvdir = opendir (DATA_DIR "/" DRV_DIR);
 
-            if (p == 0) {
-                done = 1;
-                continue;
-            }
+/* Loop over each entry in the drivers directory */
+    while ((entry = readdir (dp_drvdir)) != NULL) 
+    {
+        char* name = entry->d_name;
+        int len = strlen (name) - 3;
 
-            npldynamicdevices++;
-        }
-    } else {
-        plexit("Can't open " DRV_DIR "/" DRIVERS_DB "\n" );
+/* Only consider entries that have the ".la" suffix */
+	if ((len > 0) && (strcmp (name + len, ".la") == 0)) {
+	    char driver[300];
+	    char path[300];
+	    char sym[300];
+	    char** info;
+            char* p;
+	    
+/* Get the basename of the driver's file */
+            strncpy (driver, name, len);
+	    driver[len] = '\0';
+	    
+/* Dynamically open the the module */
+            sprintf (path, "%s/%s/%s", DATA_DIR, DRV_DIR, driver);
+            dlhand = lt_dlopenext (path);
+
+/* Look for symbol DEVICE_INFO_<driver> */
+	    sprintf (sym, "DEVICE_INFO_%s", driver);
+	    info = (char **) lt_dlsym (dlhand, sym);
+
+/* DEVICE_INFO_<driver> may contain more than one device entry and they
+ * must be separated by an '\n' character */
+	    if (info != NULL) {
+	        p = *info;
+	        while (1) {
+                    npldynamicdevices++;
+		    p = strchr (p, '\n');
+		    if (p == NULL)
+		        break;
+		    else
+		        p++;
+
+	        }
+
+/* Finally, write the device entries to the temporary file */
+		fprintf (fp_drvdb, "%s\n", *info);
+	    }
+	    lt_dlclose (dlhand);
+	}
     }
+
+    closedir (dp_drvdir);
+
 #endif
 
 /* Allocate space for the dispatch table. */
@@ -1638,7 +1680,6 @@ plInitDispatchTable()
     npldrivers = nplstaticdevices;
 
 #ifdef ENABLE_DYNDRIVERS
-/*     printf( "Ready to read drivers/" DRIVERS_DB "\n" ); */
 
 /* Allocate space for the device and driver specs.  We may not use all of
  * these driver descriptors, but we obviously won't need more drivers than
@@ -1713,6 +1754,10 @@ plInitDispatchTable()
     /* Get ready for next loadable device spec */
         i++;
     }
+    
+/* RML: close fp_drvdb */
+    fclose (fp_drvdb);
+
 #endif
 
 /* Finally, we need to sort the list into presentation order, based on the
