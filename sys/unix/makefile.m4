@@ -48,7 +48,13 @@ if_linux( {define({RANLIB},)})dnl
 
 define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
 define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
+
+ifdef({NO_X},{dnl
+define({NO_TK})dnl
+define(if_xwin,	 {$2})dnl
+},{dnl
 define(if_xwin,	 {ifdef({XWIN},  {$1},{$2})})dnl
+})dnl
 
 ifdef({NO_TK},{dnl
 define(if_tk,    {$2})dnl
@@ -328,7 +334,9 @@ CC	= c89
 F77	= fort77
 
 SYS_FLAGS_C	= 
-LIBS		= $(LIB_TK) $(LIB_XWIN)
+
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -336,8 +344,8 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBS) -lm -g
-LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm -g
+LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm -g
+LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm -g
 
 #----------------------------------------------------------------------#
 })if_sysv({
@@ -406,7 +414,7 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 #		DG/UX definitions
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
-SYS_FLAGS_C = -Dunix -DSTUB_LAU -ansi
+SYS_FLAGS_C = -Dunix -DSTUB_LINKAGE=STUB_LAU -ansi
 SYS_FLAGS_F = -novms
 
 F77	= ghf77
@@ -416,9 +424,11 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
-LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
-LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+
+LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBC) -lm
+LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_linux({
@@ -435,9 +445,11 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
-LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
-LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+
+LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBC) -lm
+LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_next({
@@ -471,9 +483,11 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
-LDCFLAGS= $(LIBS) -lm
-LDFFLAGS= $(LIBS) -lm
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+
+LDCFLAGS= $(LIBC) -lm
+LDFFLAGS= $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_aix({
@@ -500,9 +514,11 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
-LDCFLAGS= $(PROFILE_FLAG_C) $(LIBS) -lm
-LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+
+LDCFLAGS= $(PROFILE_FLAG_C) $(LIBC) -lm
+LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_unicos({
@@ -532,9 +548,11 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
-LDCFLAGS= $(PROFILE_FLAG_C) $(LIBS) -lm -lnet
-LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm -lnet
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+
+LDCFLAGS= $(PROFILE_FLAG_C) $(LIBC) -lm -lnet
+LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm -lnet
 
 #----------------------------------------------------------------------#
 })if_alphaosf({
@@ -566,9 +584,11 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
-LDCFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LC) $(LIBS) -lm
-LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+
+LDCFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LC) $(LIBC) -lm
+LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBF) -lm
 
 })
 #----------------------------------------------------------------------#
@@ -578,19 +598,36 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 if_unix({
 
 # Library names
+#
+# Single precision: libplplotf
+# Double precision: libplplotd
+# Add suffix of:
+#	b	for baseline library (no X or TK)
+#	X	with Xlib included
+#	tk	with Xlib and tk included
+#
+# Build those best suited to your system and softlink to libplplotf.a
+# and libplplotd.a to create the system default.
 
 if_dbl({
 if_tk({
 PLLIB_MAIN	= $(PLLIB_PATH)libplplotdtk.a
 },{
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotd.a
-})
+if_xwin({
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotdX.a
+},{
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotdb.a
+})})
+
 },{
 if_tk({
 PLLIB_MAIN	= $(PLLIB_PATH)libplplotftk.a
 },{
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotf.a
-})
+if_xwin({
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotfX.a
+},{
+PLLIB_MAIN	= $(PLLIB_PATH)libplplotfb.a
+})})
 })
 
 PLLIB_C		= $(PLLIB_MAIN)
