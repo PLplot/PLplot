@@ -905,16 +905,16 @@ if test -z "$DATA_DIR"; then
     DATA_DIR="$datadir/${PACKAGE}${VERSION}"
 fi
 if test -z "$LIB_DIR"; then
-    LIB_DIR="$prefix/lib"
+    LIB_DIR="$libdir"
 fi
 if test -z "$INCLUDE_DIR"; then
     INCLUDE_DIR="$prefix/include/plplot"
 fi
 if test -z "$BIN_DIR"; then
-    BIN_DIR="$prefix/bin"
+    BIN_DIR="$bindir"
 fi
 if test -z "$TCL_DIR"; then
-    TCL_DIR="$prefix/lib/${PACKAGE}${VERSION}/tcl"
+    TCL_DIR='${datadir}/${PACKAGE}${VERSION}/tcl'
 fi
 if test -z "$DRV_DIR"; then
     DRV_DIR="$libdir/${PACKAGE}${VERSION}/drivers$LIB_TAG"
@@ -939,18 +939,15 @@ AC_DEFINE_UNQUOTED(DATA_DIR, "`eval eval echo $DATA_DIR`",
                    [Location of package data files])
 AC_DEFINE_UNQUOTED(DRV_DIR, "`eval eval echo $DRV_DIR`",
                    [Location of dynamically loaded drivers])
-AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR",
-                   [Location of library files])
 AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR",
                    [Location of executables])
-AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR",
+AC_DEFINE_UNQUOTED(TCL_DIR, "`eval eval echo $TCL_DIR`",
                    [Location of Tcl stuff])
 AC_DEFINE_UNQUOTED(BUILD_DIR, "$BUILD_DIR",
                    [Location of Build tree])
 
 AC_SUBST(DATA_DIR)
 AC_SUBST(LIB_DIR)
-AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
 AC_SUBST(DRV_DIR)
 AC_SUBST(BUILD_DIR)
