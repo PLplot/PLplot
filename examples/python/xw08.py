@@ -10,10 +10,10 @@ alt = [60.0, 20.0, 60.0, 60.0]
 
 az = [30.0, 60.0, 120.0, 160.0]
 
-title = ["#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
-	 "#frPLplot Example 8 - Alt=20, Az=60, Opt=2",
-	 "#frPLplot Example 8 - Alt=60, Az=120, Opt=3",
-	 "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"]
+title = ["#frPLplot Example 8 - Alt=60, Az=30",
+	 "#frPLplot Example 8 - Alt=20, Az=60",
+	 "#frPLplot Example 8 - Alt=60, Az=120",
+	 "#frPLplot Example 8 - Alt=60, Az=160"]
 
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.
@@ -84,12 +84,19 @@ def main():
     x.shape = (-1,)
     z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
+    zmin = min(z.flat)
+    zmax = max(z.flat)
+    nlevel = 10
+    step = (zmax-zmin)/nlevel
+    clevel = zmin + arange(nlevel)*step
     pllightsource(1., 1., 1.)
     for k in range(4):
-	for ifshade in range(4):
+	for ifshade in range(6):
 	    pladv(0)
 	    plvpor(0.0, 1.0, 0.0, 0.9)
 	    plwind(-1.0, 1.0, -0.9, 1.1)
+	    plcol0(3)
+	    plmtex("t", 1.0, 0.5, 0.5, title[k])
 	    plcol0(1)
 	    plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
 	    alt[k], az[k])
@@ -101,19 +108,29 @@ def main():
 	    if ifshade == 0:
 		plot3d(x, y, z, opt[k], 1)
 	    elif ifshade == 1:
-		#set up modified gray scale cmap1.
-		cmap1_init(1)
-		plotsh3d(x, y, z, 0)
-	    else:
-		#set up false colour cmap1.
+		# set up false colour cmap1.
 		cmap1_init(0)
-		plotfc3d(x, y, z, 0)
-		if ifshade == 3:
-		    # add black wireframe to false color plot
-		    plcol0(0)
-		    plot3d(x, y, z, opt[k], 0)
-	    plcol0(3)
-	    plmtex("t", 1.0, 0.5, 0.5, title[k])
+		plmesh(x, y, z, opt[k] | MAG_COLOR)
+	    elif ifshade == 2:
+		# diffuse light surface plot.
+		# set up modified gray scale cmap1.
+		cmap1_init(1)
+		plsurf3d(x, y, z, 0, ())
+	    elif ifshade == 3:
+		# magnitude coloured surface plot.
+		# set up false colour cmap1.
+		cmap1_init(0)
+		plsurf3d(x, y, z, MAG_COLOR, ())
+	    elif ifshade == 4:
+		# magnitude coloured surface plot with faceted squares.
+		# set up modified gray scale cmap1.
+		cmap1_init(0)
+		plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
+	    elif ifshade == 5:
+		# magnitude coloured surface plot with contours.
+		# set up modified gray scale cmap1.
+		cmap1_init(0)
+		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
 
     # Restore defaults
     plcol0(1)
