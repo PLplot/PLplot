@@ -45,7 +45,8 @@ noinst_HEADERS = \
 	ps.h \
 	plhershey-unicode.h \
 	plunicode-type1.h \
-	plfci.h
+	plfci-type1.h \
+	plfci-truetype.h
 
 BUILT_SOURCES = plhershey-unicode.h
 MAINTAINERCLEANFILES = plhershey-unicode.h
