@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/07/22 16:03:29  furnish
+ * Revision 1.6  1994/08/10 01:13:12  mjl
+ * Put in conditional for PI define.
+ *
+ * Revision 1.5  1994/07/22  16:03:29  furnish
  * "Little Miss Muffet, sat on a tuffet, eating her curds and whey.
  * Along came a spider and sat down beside her, and frightened Miss
  * Muffet away."
@@ -26,6 +29,10 @@
 
 #include <plplot.h>
 
+#ifndef PI
+#define PI 3.1415927
+#endif
+
 static int opt[] =
 { 1, 0, 1, 0 };
 
@@ -45,7 +52,6 @@ void test_poly();
 \*----------------------------------------------------------------------*/
 
 #define NPTS 1000
-#define PI 3.1415927
 
 int
 main(int argc, char *argv[])
