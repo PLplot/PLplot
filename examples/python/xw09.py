@@ -114,9 +114,28 @@ def potential():
     nlevel = 20
     dz = (zmax-zmin)/float(nlevel)
     clevel = zmin + (arange(20)+0.5)*dz
-    clevelpos = compress(clevel > 0., clevel)
-    clevelneg = compress(clevel <= 0., clevel)
-    
+    try:
+	#This works with numpy 20.3
+	clevelpos = compress(clevel > 0., clevel)
+	clevelneg = compress(clevel <= 0., clevel)
+    except:
+	#Eventually eliminate this as we quit supporting old numpy versions.
+	print "Calculate negative and positive contours the old-fashioned way"
+	clevelpos = zeros(20,"double")
+	clevelneg = zeros(20,"double")
+	nclevelpos = 0
+	nclevelneg = 0
+	for i in range(20):
+	    if clevel[i] > 0.:
+		clevelpos[nclevelpos] = clevel[i]
+		nclevelpos = nclevelpos+1
+	    else:
+		clevelneg[nclevelneg] = clevel[i]
+		nclevelneg = nclevelneg+1
+
+	clevelpos = clevelpos[0:nclevelpos]
+	clevelneg = clevelneg[0:nclevelneg]
+
     #Colours!
     ncollin = 11
     ncolbox = 1
