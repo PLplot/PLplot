@@ -159,6 +159,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
     char buf[20];
     int code;
 
+    Tcl_FindExecutable(argv[0]);
     interp = Tcl_CreateInterp();
 #ifdef TCL_MEM_DEBUG
     Tcl_InitMemory(interp);
