@@ -5,7 +5,7 @@
 # @> [incr Tcl] interface to PLplot
 ###############################################################################
 
-class PLXWin {
+itcl::class PLXWin {
     inherit PLWin
 
     constructor {args} {
