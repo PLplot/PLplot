@@ -89,9 +89,11 @@ UTIL_C = \
 # Driver stuff
 
 STATIC_DRIVERS	= @STATIC_DRIVERS@
+TCL_STATIC_DRIVERS	= @TCL_STATIC_DRIVERS@
 DYNAMIC_DRIVERS	= @DYNAMIC_DRIVERS@
 
 static_drivers_obj := $(STATIC_DRIVERS:%=%$(O))
+tcl_static_drivers_obj := $(TCL_STATIC_DRIVERS:%=%$(O))
 
 # Fortran language stubs for linking Plplot to Fortran.
 # I keep these dependencies here because (a) they use an implicit build

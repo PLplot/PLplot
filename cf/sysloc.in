@@ -771,6 +771,36 @@ if test "$has_x11" = "yes" -a "$has_tcl" = "yes" -a "$has_tk" = "yes"; then
     fi
 fi
 
+# Prepare library options for linking the pltcl library.
+PLTCLPATH=""
+PLTCLLIBS=""
+if test "$has_x11" = "yes" -a "$has_tcl" = "yes"; then
+   ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, PLTCLLIBS, PLTCLPATH)
+   if test "$enable_itcl" = "yes"; then
+      ADD_TO_LIBS($ITCLLIBDIR, $ITCLLIBSTR, PLTCLLIBS, PLTCLPATH)
+   fi
+   if test "$has_tk" = "yes"; then
+      ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, PLTCLLIBS, PLTCLPATH)
+      if test "$enable_itk" = "yes"; then
+      	 ADD_TO_LIBS($ITKLIBDIR, $ITKLIBSTR, PLTCLLIBS, PLTCLPATH)
+      fi
+   fi
+   ADD_TO_LIBS($XLIBDIR, $XLIBSTR, PLTCLLIBS, PLTCLPATH)
+fi
+
+# Prepare library options for linking the plf77 (someday) library.
+PLF77PATH=""
+PLF77LIBS=""
+case $system in 
+     Linux* )
+     	    if test "$enable_f77" = "yes"; then
+	       ADD_TO_LIBS(default, "-lg2c", PLF77LIBS, PLF77PATH)
+   	    fi
+       ;;
+     * ) 	
+       ;;
+    esac
+
 # ----------------------------------------------------------------------------
 # Gnome/GTK configuration tests
 # Added by Rafael Laboissier on Fri Feb 23 21:34:40 CET 2001
@@ -1372,6 +1402,12 @@ AC_SUBST(SHLIB_CCFLAGS)
 AC_SUBST(SHLIB_CXXFLAGS)
 AC_SUBST(SHLIB_F77FLAGS)
 AC_SUBST(SHLIB_LIBS)
+
+# Substitution for linking options for the pltcl library
+AC_SUBST(PLTCLLIBS)
+
+# Substitution for linking options for the plf77 (someday) library
+AC_SUBST(PLF77LIBS)
 
 # Substitutions for the dynamic drivers.
 # if enable-dynamic-drivers is enabled, those libs don't go to "LIBS"

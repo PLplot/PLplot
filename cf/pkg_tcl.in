@@ -33,14 +33,23 @@ MATLIB_SO        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SO)
 MATLIB_SA        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SA)
 MAT_LINK	= -l$(MATLIB_NAME)$(LIB_TAG)
 
+TCLLIB_AR        = $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$A
+TCLLIB_SO        = $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$(SO)
+TCLLIB_SA        = $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG)$(SA)
+TCL_LINK	= -l$(TCLLIB_NAME)$(LIB_TAG)
+
 # Variables for use in "make" and "make install".
 
 BLD_MATLIB_AR	= $(MATLIB_AR)
 BLD_MATLIB_SO	= $(MATLIB_SO)
 BLD_MATLIB_SA	= $(MATLIB_SA)
+BLD_TCLLIB_AR	= $(TCLLIB_AR)
+BLD_TCLLIB_SO	= $(TCLLIB_SO)
+BLD_TCLLIB_SA	= $(TCLLIB_SA)
 INSTALL_TCL	= install_tcl
 INSTALL_MAT	= install_mat_includes
 INSTALL_MATLIB	= install_matlib
+INSTALL_TCLLIB	= install_tcllib
 
 # Targets
 
@@ -83,3 +92,10 @@ install_matlib:
 	  if test -r $(MATLIB_BASE)$(LIB_TAG)$A; then \
 	      $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$(LIB_TAG)$A; \
 	  fi
+
+install_tcllib:
+	@-$(CP) $(TCLLIB_BASE)* $(LIB_DIR); \
+	  if test -r $(TCLLIB_BASE)$(LIB_TAG)$A; then \
+	      $(RANLIB) $(LIB_DIR)/$(TCLLIB_BASE)$(LIB_TAG)$A; \
+	  fi
+

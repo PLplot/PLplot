@@ -40,7 +40,8 @@ libraries = ["@PLLIB_NAME@@LIB_TAG@"]
 # library_dirs and libraries.
 
 # Now sort out the LIBS mixture of -l and -L options
-libs = "@LIBS@"
+#libs = "@LIBS@"
+libs = ""
 libs_list = libs.split(" ")
 for option in libs_list:
     if option == "":

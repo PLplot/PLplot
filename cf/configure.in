@@ -207,6 +207,17 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	fi
 
 	DYNAMIC_DEVICES="$DYNAMIC_DEVICES $1"
+    elif test "$driver" = "xwin" -o "$driver" = "tkwin"; then
+	found=0
+	for drv in $TCL_STATIC_DRIVERS; do
+	    if test "$drv" = "$driver"; then
+		found=1
+		break
+	    fi
+	done
+	if test $found = 0; then
+	    TCL_STATIC_DRIVERS="$TCL_STATIC_DRIVERS $driver"
+	fi
     else
 	found=0
 	for drv in $STATIC_DRIVERS; do
@@ -576,13 +587,16 @@ fi
 PLLIB_NAME=plplot
 if test "$enable_tcl" = "yes"; then
     MATLIB_NAME=tclmatrix
+    TCLLIB_NAME=pltcl
 else
     MATLIB_NAME=""
+    TCLLIB_NAME=""
 fi    
 CXXLIB_NAME=plcxx
 
 AC_SUBST(PLLIB_NAME)
 AC_SUBST(MATLIB_NAME)
+AC_SUBST(TCLLIB_NAME)
 AC_SUBST(CXXLIB_NAME)
 
 # ----------------------------------------------------------------------------
@@ -590,6 +604,7 @@ AC_SUBST(CXXLIB_NAME)
 # ----------------------------------------------------------------------------
 
 AC_SUBST(STATIC_DRIVERS)
+AC_SUBST(TCL_STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
 
 # ----------------------------------------------------------------------------
@@ -1188,7 +1203,7 @@ LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
 Available device drivers
-static:		$STATIC_DRIVERS
+static:		$STATIC_DRIVERS $TCL_STATIC_DRIVERS
 dynamic:	$DYNAMIC_DRIVERS
 
 with_shlib:	$with_shlib		with_double:	$with_double

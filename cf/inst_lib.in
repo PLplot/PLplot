@@ -43,7 +43,7 @@ install_includes:
 	     pldebug.h drivers.h disptab.h $(INCLUDE_DIR)
 
 install_lib: install_dirs install_fonts install_libbase \
-	$(INSTALL_MATLIB) $(INSTALL_CXXLIB) \
+	$(INSTALL_MATLIB) $(INSTALL_TCLLIB) $(INSTALL_CXXLIB) \
 	install_textfiles install_scriptfiles install_includes \
 	$(INSTALL_MAT)
 

@@ -51,9 +51,12 @@ PLFNT_PATH	= $(PLFNT_DIR)/
 
 # The library components
 
-LIB_OBJS_SO	= $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(TKWIN_OBJ) $(static_drivers_obj) $(FSTUB_OBJ) $(JAVA_OBJ)
-LIB_OBJS_SA	= $(TCL_OBJ_SA) $(TK_OBJ_SA) $(TKWIN_OBJ_SA) $(FSTUB_OBJ_SA)
+LIB_OBJS_SO	= $(CORE_OBJ) $(static_drivers_obj) $(FSTUB_OBJ) $(JAVA_OBJ)
+LIB_OBJS_SA	= $(FSTUB_OBJ_SA)
 LIB_OBJS	= $(LIB_OBJS_SO) $(LIB_OBJS_SA)
+TCL_OBJS_SO	= $(TCL_OBJ) $(TK_OBJ) $(TKWIN_OBJ) $(tcl_static_drivers_obj)
+TCL_OBJS_SA	= $(TCL_OBJ_SA) $(TK_OBJ_SA) $(TKWIN_OBJ_SA)
+TCL_OBJS	= $(TCL_OBJS_SO) $(TCL_OBJS_SA)
 DEMOS_RPATH	= $(RPATH)
 # Library names
 
@@ -66,8 +69,8 @@ PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
 # Collect extra libraries and corresponding links to be used 
 # for linking libplplot only.
 
-PLLIB_LIBRARIES = $(BLD_MATLIB_SO) $(XWINDRV_SO) $(TKWINDRV_SO)
-PLLIB_LINKS = $(MAT_LINK) $(XWINDRV_LINK) $(TKWINDRV_LINK)
+PLLIB_LIBRARIES = $(MATLIB_SO) $(TCLLIB_SO)
+PLLIB_LINKS = $(MAT_LINK) $(TCL_LINK)
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
@@ -76,9 +79,9 @@ LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 
 # These are what we link against.
 
-PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
-PLLIB_LDCXX	= -L$(PLLIB_DIR) $(CXX_LINK) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
-PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
+PLLIB_LDCXX	= -L$(PLLIB_DIR) $(CXX_LINK) -l$(PLLIB_NAME)$(LIB_TAG)
+PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 
 # Header file dependencies for demos.
 # Done this way to only pick up the dependency during development, and not

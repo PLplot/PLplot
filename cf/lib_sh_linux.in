@@ -77,18 +77,24 @@ MATLIB_SO	= $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 MAT_SONAME     	= $(MATLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
 MAT_LINKNAME   	= $(MATLIB_BASE)$(LIB_TAG).so
 
+TCLLIB_SO	= $(PLLIB_PATH)$(TCLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+TCL_SONAME     	= $(TCLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
+TCL_LINKNAME   	= $(TCLLIB_BASE)$(LIB_TAG).so
+
 CXXLIB_SO	= $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 CXX_SONAME	= $(CXXLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
 CXX_LINKNAME	= $(CXXLIB_BASE)$(LIB_TAG).so
 
 # These need to use the BLD_ prefix so they can be left out.
 MATLIBS = $(BLD_MATLIB_AR) $(BLD_MATLIB_SO)
+TCLLIBS = $(BLD_TCLLIB_AR) $(BLD_TCLLIB_SO)
 CXXLIBS = $(BLD_CXXLIB_AR) $(BLD_CXXLIB_SO)
 
-PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(MATLIBS) $(CXXLIBS)
+PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(MATLIBS) $(TCLLIBS) $(CXXLIBS)
 
 PLLINKS = $(LINKNAME) $(SONAME) \
 	  $(MAT_SONAME) $(MAT_LINKNAME) \
+	  $(TCL_SONAME) $(TCL_LINKNAME) \
 	  $(CXX_SONAME) $(CXX_LINKNAME)
 
 libs:	$(PLLIBS)
@@ -107,6 +113,13 @@ $(MATLIB_AR): $(MAT_OBJS)
 	$(RANLIB) $(MATLIB_AR)
 	@echo ""
 
+$(TCLLIB_AR): $(TCL_OBJS)
+	-$(RM) $(TCLLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(TCLLIB_AR) $(TCL_OBJS)
+	$(RANLIB) $(TCLLIB_AR)
+	@echo ""
+
 $(CXXLIB_AR): $(CXX_OBJS)
 	-$(RM) $(CXXLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
@@ -123,7 +136,7 @@ $(PLLIB_SO):	$(LIB_OBJS:%=shared/%) $(PLLIB_LIBRARIES)
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) -L.. $(PLLIB_LINKS) $(LDC_LIBS)
+		$(LIB_OBJS) -L.. $(PLLIB_LINKS) @PLF77LIBS@
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""
@@ -138,6 +151,17 @@ $(MATLIB_SO): $(MAT_OBJS:%=shared/%)
 		$(MAT_OBJS)
 	ln -sf $(MATLIB_SO) $(MAT_SONAME)
 	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
+	@echo ""
+
+$(TCLLIB_SO): $(TCL_OBJS:%=shared/%) $(XWINDRV_SO) $(TKWINDRV_SO)
+	-$(RM) $(TCLLIB_SO)
+	@echo ""; echo "Building shared library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(TCLLIB_SO) \
+		-Wl,-soname -Wl,$(TCL_SONAME) \
+		$(TCL_OBJS) @PLTCLLIBS@ -L.. $(XWINDRV_LINK) $(TKWINDRV_LINK)
+	ln -sf $(TCLLIB_SO) $(TCL_SONAME)
+	ln -sf $(TCL_SONAME) $(TCL_LINKNAME)
 	@echo ""
 
 $(CXXLIB_SO): $(CXX_OBJS:%=shared/%)
