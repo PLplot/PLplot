@@ -1769,8 +1769,7 @@ int t() {
 ${x_direct_test_function}()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   LIBS="$ac_save_LIBS" no_x= ac_x_libraries=
 else
@@ -1848,7 +1847,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1852 "configure"
+#line 1851 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1905,7 +1904,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1909 "configure"
+#line 1908 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1913,8 +1912,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_X11=yes"
 else
@@ -2806,7 +2804,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2810 "configure"
+#line 2808 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2814,8 +2812,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_f2c=yes"
 else
@@ -2851,8 +2848,8 @@ fi
 # you try to link with nonexistant libraries, so need to handle these
 # explicitly.
 #
-# Note: these tests do not work right when LIBS is set.  So save the value
-# and set it to null temporarily, restoring when done.
+# Note: using Autoconf-2.3, these tests do not work right when LIBS is set.
+# So save the value and set it to null temporarily, restoring when done.
 # ----------------------------------------------------------------------------
 
 if test -z "$EXTRA_LIBS"; then
@@ -2863,9 +2860,6 @@ if test -z "$EXTRA_LIBS"; then
 	CRAY* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
-	Linux* )
-	    EXTRA_LIBS="$EXTRA_LIBS -lieee -lm"
-	;;
 	* ) 	
 	    echo $ac_n "checking for -lXbsd""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_lib_Xbsd'+set}'`\" = set"; then
@@ -2874,7 +2868,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2878 "configure"
+#line 2872 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2882,8 +2876,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_Xbsd=yes"
 else
@@ -2908,7 +2901,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2912 "configure"
+#line 2905 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2916,8 +2909,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_socket=yes"
 else
@@ -2942,7 +2934,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2946 "configure"
+#line 2938 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2950,8 +2942,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_nsl=yes"
 else
@@ -2976,7 +2967,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2980 "configure"
+#line 2971 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2984,8 +2975,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_ieee=yes"
 else
@@ -3010,7 +3000,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3014 "configure"
+#line 3004 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3018,8 +3008,7 @@ int t() {
 main()
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_m=yes"
 else
@@ -3187,7 +3176,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3191 "configure"
+#line 3180 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3208,7 +3197,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3212 "configure"
+#line 3201 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3230,7 +3219,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3234 "configure"
+#line 3223 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3248,7 +3237,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3252 "configure"
+#line 3241 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3269,7 +3258,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3273 "configure"
+#line 3262 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3306,7 +3295,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3310 "configure"
+#line 3299 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3367,7 +3356,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3371 "configure"
+#line 3360 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3399,7 +3388,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3403 "configure"
+#line 3392 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3433,7 +3422,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3437 "configure"
+#line 3426 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3548,7 +3537,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3552 "configure"
+#line 3541 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3570,8 +3559,7 @@ popen();
 
 ; return 0; }
 EOF
-cp conftest* /tmp
-if eval $ac_link -v; then
+if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_func_popen=yes"
 else
@@ -3604,7 +3592,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3608 "configure"
+#line 3596 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3773,6 +3761,16 @@ cat $srcdir/cf/demos.in		>>Makefile.in
 # Installation and miscellaneous.
 
 cat $srcdir/cf/install.in	>>Makefile.in 
+
+case $system in
+    Linux* )
+	cat $srcdir/cf/inst_lib_linux.in	>>Makefile.in
+    ;;
+    * )
+	cat $srcdir/cf/inst_lib.in		>>Makefile.in
+    ;;
+esac
+
 cat $srcdir/cf/misc.in		>>Makefile.in 
 
 # Object file dependencies
