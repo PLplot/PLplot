@@ -11,14 +11,15 @@
 # Cleanup
 
 clean:
-	-rm * shared/* ../lib/libpl*
+	-rm * shared/* ../lib/$(PLLIB_BASE)*
 
 # Autogeneration of dependencies.  Use gcc -MM because X11's "makedepend"
 # includes system headers, and that really sucks.
 
 depend:
-	gcc -MM $(CORE_C) $(DRIVERS_C) $(UTIL_C) $(FSTUB_C) $(TCL_C) $(TK_C) \
-		| ./cvtdeps
+	gcc -MM $(CORE_C) $(DRIVERS_C)  $(ADD_DRIVERS_C) \
+	$(UTIL_C) $(FSTUB_C) $(TCL_C) $(TK_C) \
+	| ./cvtdeps
 	@echo "Rerun configure for the new dependencies to take effect"
 
 # -----------------------------------------------------------------------

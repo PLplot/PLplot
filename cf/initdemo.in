@@ -19,8 +19,8 @@ PLLIBS		=
 
 # These are what we link against.
 
-PLLIB_LDC	= -L$(LIB_DIR) -lplplot$(LIB_TAG)
-PLLIB_LDF	= -L$(LIB_DIR) -lplplot$(LIB_TAG)
+PLLIB_LDC	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
+PLLIB_LDF	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 
 # Default is to build every demo program.
 

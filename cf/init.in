@@ -29,7 +29,17 @@ LDF_LIBS	= @LIBS@
 LIB_TAG		= @LIB_TAG@
 TO		= -o
 O		= .o
+A		= .a
 E		=
+
+# Library names
+# (PLLIB_NAME) is for ld/linking
+# (PLLIB_BASE) is the base library name for installation
+#
+# good for filesystems that truncate names (eg, DOS)
+
+PLLIB_NAME	= plplot
+PLLIB_BASE	= libplplot
 
 # Install directories
 
@@ -40,4 +50,3 @@ INFO_DIR	= @INFO_DIR@
 INCLUDE_DIR	= @INCLUDE_DIR@
 TCL_DIR		= @TCL_DIR@
 DEMOS_DIR	= @DEMOS_DIR@
-
