@@ -23,22 +23,44 @@ def restore_cmap1():
     vertex = sum(array(plgcolbg()))/(3.*255.)
     if vertex < 0.5:
 	vertex = 0.01
+	midpt = 0.10
     else:
 	vertex = 0.99
+	midpt = 0.90
     # Independent variable of control points.
-    i = array((0., 0.45, 0.55, 1.))
+    i = array((0., 0.44, 0.50, 0.50, 0.56, 1.))
     # Hue for control points.  Blue-violet to red
-    h = array((260., 260., 0., 0.))
+    h = array((260., 260., 260., 0., 0., 0.))
     # Lightness ranging from medium to vertex to medium
-    l = array((0.5, vertex, vertex, 0.5))
+    l = array((0.5, midpt, vertex, vertex, midpt, 0.5))
     # Saturation is complete for default
-    s = array((1., 1., 1., 1.))
+    s = array((1., 1., 1., 1., 1., 1.))
     # Integer flag array is zero (no interpolation along far-side of colour
-    # figure
-    rev = array((0, 0, 0, 0))
+    # figure.)  Not used in python plplot API, but soon will be changed.
+    rev = array((0, 0, 0, 0, 0, 0))
     # Default number of cmap1 colours
     plscmap1n(128)
     # Interpolate between control points to set up default cmap1.
+    plscmap1l(0, i, h, l, s)
+
+# Routine for initializing color map 1 in HLS space.
+# Basic grayscale variation from half-dark (which makes more interesting
+# looking plot compared to dark) to light.
+def cmap1_init():
+    # Independent variable of control points.
+    i = array((0., 1.))
+    # Hue for control points.  Blue-violet to red
+    h = array((0., 0.))
+    # Lightness ranging from half-dark (for interest) to light.
+    l = array((0.5, 1.))
+    # Gray scale has zero saturation
+    s = array((0., 0.))
+    # Integer flag array is zero (no interpolation along far-side of colour
+    # figure.)  Not used in python plplot API, but soon will be changed.
+    rev = array((0, 0))
+    # number of cmap1 colours is 256
+    plscmap1n(256)
+    # Interpolate between control points to set up cmap1.
     plscmap1l(0, i, h, l, s)
 
 # main
@@ -56,12 +78,8 @@ def main():
     z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
     pllightsource(1., 1., 1.)
-    #set up gray scale.
-    rr = arrayrange(256)
-    gg = rr
-    bb = rr
-    plscmap1(rr, gg, bb)
-    
+    #set up modified gray scale.
+    cmap1_init()
     for k in range(4):
 	for ifshade in range(2):
 	    pladv(0)
