@@ -20,7 +20,6 @@
 <!ENTITY chap-gui SYSTEM "gui.xml">
 <!ENTITY chap-perl SYSTEM "perl.xml">
 <!ENTITY chap-python SYSTEM "python.xml">
-<!ENTITY chap-scheme SYSTEM "scheme.xml">
 <!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
 <!ENTITY pl_setcontlabelformat '<link linkend="pl_setcontlabelformat"><function>pl_setcontlabelformat</function></link>'>
 <!ENTITY pladv '<link linkend="pladv"><function>pladv</function></link>'>
@@ -286,7 +285,6 @@
     &chap-gui;
     &chap-perl;
     &chap-python;
-    &chap-scheme;
   </part>
 
 </book>
