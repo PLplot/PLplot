@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/12/09 20:35:58  mjl
+ * Revision 1.21  1993/12/21 10:35:46  mjl
+ * Added flag to be set by driver to indicate whether TK or DP style
+ * communication is being used.
+ *
+ * Revision 1.20  1993/12/09  20:35:58  mjl
  * Inserted some missing function prototypes.
  *
  * Revision 1.19  1993/12/06  07:45:23  mjl
@@ -192,6 +196,7 @@ typedef struct {
 * tcl_cmd	char*	TCL command(s) to eval on startup
 * auto_path	char*	Additional directories to autoload
 * bufmax	int	number of bytes sent before output buffer is flushed
+* dp		int	Use Tcl-DP for communication, if set
 *
 ***********************************************************************
 *
@@ -387,7 +392,7 @@ typedef struct {
     char *plwindow;
     char *tcl_cmd;
     char *auto_path;
-    int  bufmax;
+    int  bufmax, dp;
 
 /* Driver-specific data */
 
