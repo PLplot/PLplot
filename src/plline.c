@@ -1,6 +1,18 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/01/25 06:34:20  mjl
+ * Revision 1.12  1994/03/23 08:21:33  mjl
+ * Fiddled endlessly with plP_plfclp() trying to correctly clip polygons
+ * after a zoom (in TK driver).  Eventually realized it was resistant against
+ * quick hacks and got out the big gun: Foley, VanDam, et al (2nd ed), p 930:
+ * the Liang-Barsky Polygon Algorithm.  Unfortunately I don't have time to
+ * implement this right now; how about a volunteer?
+ *
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
+ *
+ * Revision 1.11  1994/01/25  06:34:20  mjl
  * Dashed line generation desuckified!  Should now run much faster on some
  * architectures.  The previous loop used only conditionals, assignments, and
  * integer adds at the cost of a huge number of iterations (basically testing
@@ -15,13 +27,6 @@
  *
  * Revision 1.9  1993/07/31  08:18:34  mjl
  * Clipping routine for polygons added (preliminary).
- *
- * Revision 1.8  1993/07/01  22:18:13  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".  Added new function plP_pllclp()
- * to clip a polyline within input clip limits and using the input function
- * to do the actual draw.  Used from the new driver interface functions.
 */
 
 /*	plline.c
@@ -35,7 +40,7 @@
 
 #define INSIDE(ix,iy) (BETW(ix,xmin,xmax) && BETW(iy,ymin,ymax))
 
-static PLINT xline[PL_MAXPOLYLINE], yline[PL_MAXPOLYLINE];
+static PLINT xline[PL_MAXPOLY], yline[PL_MAXPOLY];
 
 static PLINT lastx = UNDEFINED, lasty = UNDEFINED;
 
@@ -77,9 +82,10 @@ c_plline(PLINT n, PLFLT *x, PLFLT *y)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plline: Please set up window first.");
-
+    if (level < 3) {
+	plabort("plline: Please set up window first");
+	return;
+    }
     plP_drawor_poly(x, y, n);
 }
 
@@ -97,15 +103,19 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plstyl: Please call plinit first.");
-
-    if ((nms < 0) || (nms > 10))
-	plexit("plstyl: Broken lines cannot have <0 or >10 elements");
-
+    if (level < 1) {
+	plabort("plstyl: Please call plinit first");
+	return;
+    }
+    if ((nms < 0) || (nms > 10)) {
+	plabort("plstyl: Broken lines cannot have <0 or >10 elements");
+	return;
+    }
     for (i = 0; i < nms; i++) {
-	if ((mark[i] < 0) || (space[i] < 0))
-	    plexit("plstyl: Mark and space lengths must be > 0.");
+	if ((mark[i] < 0) || (space[i] < 0)) {
+	    plabort("plstyl: Mark and space lengths must be > 0");
+	    return;
+	}
     }
 
     plP_smark(mark, space, nms);
@@ -180,7 +190,7 @@ plP_drawor(PLFLT x, PLFLT y)
 * void plP_draphy_poly()
 *
 * Draw polyline in physical coordinates.
-* Need to draw buffers in increments of (PL_MAXPOLYLINE-1) since the
+* Need to draw buffers in increments of (PL_MAXPOLY-1) since the
 * last point must be repeated (for solid lines).
 \*----------------------------------------------------------------------*/
 
@@ -189,8 +199,8 @@ plP_draphy_poly(PLINT *x, PLINT *y, PLINT n)
 {
     PLINT i, j, ib, ilim;
 
-    for (ib = 0; ib < n; ib += PL_MAXPOLYLINE - 1) {
-	ilim = MIN(PL_MAXPOLYLINE, n - ib);
+    for (ib = 0; ib < n; ib += PL_MAXPOLY - 1) {
+	ilim = MIN(PL_MAXPOLY, n - ib);
 
 	for (i = 0; i < ilim; i++) {
 	    j = ib + i;
@@ -205,7 +215,7 @@ plP_draphy_poly(PLINT *x, PLINT *y, PLINT n)
 * void plP_drawor_poly()
 *
 * Draw polyline in world coordinates.
-* Need to draw buffers in increments of (PL_MAXPOLYLINE-1) since the
+* Need to draw buffers in increments of (PL_MAXPOLY-1) since the
 * last point must be repeated (for solid lines).
 \*----------------------------------------------------------------------*/
 
@@ -214,8 +224,8 @@ plP_drawor_poly(PLFLT *x, PLFLT *y, PLINT n)
 {
     PLINT i, j, ib, ilim;
 
-    for (ib = 0; ib < n; ib += PL_MAXPOLYLINE - 1) {
-	ilim = MIN(PL_MAXPOLYLINE, n - ib);
+    for (ib = 0; ib < n; ib += PL_MAXPOLY - 1) {
+	ilim = MIN(PL_MAXPOLY, n - ib);
 
 	for (i = 0; i < ilim; i++) {
 	    j = ib + i;
@@ -255,7 +265,7 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 {
     PLINT x1, x2, y1, y2;
     PLINT i, iclp = 0;
-    short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
+    short xclp[PL_MAXPOLY], yclp[PL_MAXPOLY];
     int drawable;
 
     for (i = 0; i < npts - 1; i++) {
@@ -265,8 +275,8 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 	y2 = y[i + 1];
 
 	drawable = (INSIDE(x1, y1) && INSIDE(x2, y2));
-	if (!drawable)
-	    drawable = !clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
+	if ( ! drawable)
+	    drawable = ! clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
 
 	if (drawable) {
 
@@ -324,11 +334,10 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	   void (*draw) (short *, short *, PLINT))
 {
     PLINT x1, x2, y1, y2;
-    PLINT i, iclp = 0;
-    short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
+    PLINT i, j, iclp = -1;
+    short xclp[PL_MAXPOLY], yclp[PL_MAXPOLY];
     int drawable;
 
-    iclp = 0;
     for (i = 0; i < npts - 1; i++) {
 	x1 = x[i];
 	x2 = x[i + 1];
@@ -336,37 +345,81 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	y2 = y[i + 1];
 
 	drawable = (INSIDE(x1, y1) && INSIDE(x2, y2));
-	if (!drawable)
-	    drawable = !clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
+	if ( ! drawable)
+	    drawable = ! clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
 
 	if (drawable) {
-
-/* First point of polyline. */
-
-	    if (iclp == 0) {
-		xclp[iclp] = x1;
-		yclp[iclp] = y1;
-		iclp++;
-		xclp[iclp] = x2;
-		yclp[iclp] = y2;
-	    }
 
 /* Not first point.  If first point of this segment matches up to the
    previous point, just add it.  */
 
-	    else if (x1 == xclp[iclp] && y1 == yclp[iclp]) {
+	    if (iclp >= 0 && x1 == xclp[iclp] && y1 == yclp[iclp]) {
 		iclp++;
 		xclp[iclp] = x2;
 		yclp[iclp] = y2;
 	    }
 
-/* If not, we need to add both points, to connect the points in the
-   polygon along the clip boundary.  */
+/* First point of polyline, OR . */
 
+/* If not, we need to add both points, to connect the points in the
+ * polygon along the clip boundary.  If any of the previous points were
+ * outside one of the 4 corners, assume the corner was encircled and add
+ * it first. 
+ */
 	    else {
 		iclp++;
 		xclp[iclp] = x1;
 		yclp[iclp] = y1;
+
+		if ((x1 == xmin && y2 == ymin) ||
+		    (x2 == xmin && y1 == ymin)) {
+		    iclp++;
+		    xclp[iclp] = xmin;
+		    yclp[iclp] = ymin;
+		}
+		else if ((x1 == xmax && y2 == ymin) ||
+			 (x2 == xmax && y1 == ymin)) {
+		    iclp++;
+		    xclp[iclp] = xmax;
+		    yclp[iclp] = ymin;
+		}
+		else if ((x1 == xmax && y2 == ymax) ||
+			 (x2 == xmax && y1 == ymax)) {
+		    iclp++;
+		    xclp[iclp] = xmax;
+		    yclp[iclp] = ymax;
+		}
+		else if ((x1 == xmin && y2 == ymax) ||
+			 (x2 == xmin && y1 == ymax)) {
+		    iclp++;
+		    xclp[iclp] = xmin;
+		    yclp[iclp] = ymax;
+		}
+/*
+		for (j = 0; j < i; j++) {
+		    if (x[j] < xmin && y[j] < ymin) {
+			break;
+		    }
+		    else if (x[j] < xmin && y[j] > ymax) {
+			iclp++;
+			xclp[iclp] = xmin;
+			yclp[iclp] = ymax;
+			break;
+		    }
+		    else if (x[j] > xmax && y[j] < ymin) {
+			iclp++;
+			xclp[iclp] = xmax;
+			yclp[iclp] = ymin;
+			break;
+		    }
+		    else if (x[j] > xmax && y[j] > ymax) {
+			iclp++;
+			xclp[iclp] = xmax;
+			yclp[iclp] = ymax;
+			break;
+		    }
+		}
+*/
 		iclp++;
 		xclp[iclp] = x2;
 		yclp[iclp] = y2;
@@ -376,8 +429,35 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 
 /* Draw the sucker */
 
-    if (iclp + 1 >= 3)
+    if (iclp + 1 >= 2) {
+	if ((xclp[0] == xmin && yclp[iclp] == ymin) ||
+	    (xclp[iclp] == xmin && yclp[0] == ymin)) {
+	    iclp++;
+	    xclp[iclp] = xmin;
+	    yclp[iclp] = ymin;
+	}
+	else if ((xclp[0] == xmax && yclp[iclp] == ymin) ||
+		 (xclp[iclp] == xmax && yclp[0] == ymin)) {
+	    iclp++;
+	    xclp[iclp] = xmax;
+	    yclp[iclp] = ymin;
+	}
+	else if ((xclp[0] == xmax && yclp[iclp] == ymax) ||
+		 (xclp[iclp] == xmax && yclp[0] == ymax)) {
+	    iclp++;
+	    xclp[iclp] = xmax;
+	    yclp[iclp] = ymax;
+	}
+	else if ((xclp[0] == xmin && yclp[iclp] == ymax) ||
+		 (xclp[iclp] == xmin && yclp[0] == ymax)) {
+	    iclp++;
+	    xclp[iclp] = xmin;
+	    yclp[iclp] = ymax;
+	}
+    }
+    if (iclp + 1 >= 3) {
 	(*draw)(xclp, yclp, iclp + 1);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -391,9 +471,10 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
 	 PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 {
     PLINT t, dx, dy, flipx, flipy;
-    PLFLT slope;
+    double dydx, dxdy;
 
-/* If both points are outside clip region, return with an error */
+/* If both points are outside clip region with no hope of intersection,
+   return with an error */
 
     if ((*p_x1 <= xmin && *p_x2 <= xmin) ||
 	(*p_x1 >= xmax && *p_x2 >= xmax) ||
@@ -427,18 +508,20 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
     dx = *p_x2 - *p_x1;
     dy = *p_y2 - *p_y1;
 
-    if (dx != 0)
-	slope = (double) dy / (double) dx;
+    if (dx != 0 && dy != 0) {
+	dydx = (double) dy / (double) dx;
+	dxdy = 1./ dydx;
+    }
 
     if (*p_x1 < xmin) {
 	if (dx != 0 && dy != 0)
-	    *p_y1 = *p_y1 + ROUND(slope * (xmin - *p_x1));
+	    *p_y1 = *p_y1 + ROUND((xmin - *p_x1) * dydx);
 	*p_x1 = xmin;
     }
 
     if (*p_y1 < ymin) {
 	if (dx != 0 && dy != 0)
-	    *p_x1 = *p_x1 + ROUND((ymin - *p_y1) / slope);
+	    *p_x1 = *p_x1 + ROUND((ymin - *p_y1) * dxdy);
 	*p_y1 = ymin;
     }
 
@@ -447,13 +530,13 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
 
     if (*p_y2 > ymax) {
 	if (dx != 0 && dy != 0)
-	    *p_x2 = *p_x2 - ROUND((*p_y2 - ymax) / slope);
+	    *p_x2 = *p_x2 - ROUND((*p_y2 - ymax) * dxdy);
 	*p_y2 = ymax;
     }
 
     if (*p_x2 > xmax) {
 	if (dx != 0 && dy != 0)
-	    *p_y2 = *p_y2 - ROUND((*p_x2 - xmax) * slope);
+	    *p_y2 = *p_y2 - ROUND((*p_x2 - xmax) * dydx);
 	*p_x2 = xmax;
     }
 
