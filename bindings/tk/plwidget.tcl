@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.3  1993/07/28 05:43:41  mjl
+# Revision 1.4  1993/07/31 08:04:31  mjl
+# Documentation changes only.
+#
+# Revision 1.3  1993/07/28  05:43:41  mjl
 # Changed << and >> buttons when running plrender to simulate keyboard
 # input, by sending a <Backspace> and <CR>, respectively (works better
 # this way).
@@ -27,11 +30,13 @@
 # menu-accessible commands, or "pl_" for utility commands.
 #----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
-# Proc to create the plplot widget container frame as well as the plplot
-# widget and any desired siblings.  Note the client may modify widget
-# parameters using configure.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# plw_create
+#
+# Create the plplot widget container frame as well as the plplot widget
+# and any desired siblings.  Note the client may modify widget parameters
+# using configure.
+#----------------------------------------------------------------------------
 
 proc plw_create {w {pack {bottom expand fill}}} {
     
@@ -57,9 +62,11 @@ proc plw_create {w {pack {bottom expand fill}}} {
     plw_configure_TopRow $w
 }
 
-#------------------------------------------------------------------------------
-# This is just a front-end to plw_create, used by plrender.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# plr_create
+#
+# A front-end to plw_create, used by plrender.
+#----------------------------------------------------------------------------
 
 proc plr_create {w {pack {bottom expand fill}}} {
     global is_plrender
@@ -68,9 +75,11 @@ proc plr_create {w {pack {bottom expand fill}}} {
     plw_create $w $pack
 }
 
-#------------------------------------------------------------------------------
-# Proc to create top row widgets.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# plw_create_TopRow
+#
+# Create top row widgets.
+#----------------------------------------------------------------------------
 
 proc plw_create_TopRow {w} {
     global is_plrender
@@ -110,15 +119,17 @@ proc plw_create_TopRow {w} {
 	{right expand fill} 
 }
 
-#------------------------------------------------------------------------------
-# Proc to create plot menu.
+#----------------------------------------------------------------------------
+# plw_create_pmenu
+#
+# Create plot menu.
 #
 # It is tempting to create buttons for some of these options, but buttons are
 # difficult to effectively place and extend.  Menus have a clear placement
 # mechanism and are easy to add to.  Further, TK menus can be torn off
 # (select menu with middle mouse button and move to where you want it) which
 # makes selecting top-level menu buttons easy.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 
 proc plw_create_pmenu {w} {
 
@@ -243,10 +254,12 @@ proc plw_create_pmenu {w} {
     return $w.ftop.pmenu
 }
 
-#------------------------------------------------------------------------------
-# Proc to finish configuration of top row widgets.
+#----------------------------------------------------------------------------
+# plw_configure_TopRow
+#
+# Finish configuration of top row widgets.
 # Right now it just generates the device list in the "Save As" widget menu.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 
 proc plw_configure_TopRow {w} {
     update
@@ -259,8 +272,10 @@ proc plw_configure_TopRow {w} {
     }
 }
 
-#------------------------------------------------------------------------------
-# Proc to initialize the container frame and child widgets.
+#----------------------------------------------------------------------------
+# plw_init
+#
+# Initialize the container frame and child widgets.
 # All the bindings as well as communication links to the client are made here.
 #
 # Note: when passing a TCL command as a string argument, it is necessary to
@@ -268,7 +283,7 @@ proc plw_configure_TopRow {w} {
 # spaces (such as occurs when you have multiple copies running).  The [list
 # $client] construct will enclose $client with a pair of braces if necessary
 # (can't do it directly since braces prevent variable expansion).
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 
 proc plw_init {w client} {
     global is_plrender
@@ -290,9 +305,11 @@ proc plw_init {w client} {
     plw_init_plplot $w $client
 }
 
-#------------------------------------------------------------------------------
-# Proc to initialize plplot widget.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# plw_init_plplot
+#
+# Initialize plplot widget.
+#----------------------------------------------------------------------------
 
 proc plw_init_plplot {w client} {
     
@@ -318,9 +335,11 @@ proc plw_init_plplot {w client} {
     focus $w.plwin
 }
 
-#------------------------------------------------------------------------------
-# Proc to set end-of-page indicator to help user out.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# plw_flash
+#
+# Set end-of-page indicator to help user out.
+#----------------------------------------------------------------------------
 
 proc plw_flash {w} {
 
@@ -333,9 +352,11 @@ proc plw_flash {w} {
     }
 }
 
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# plw_end
+#
 # Executed as part of orderly shutdown procedure.
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 
 proc plw_end {w} {
     $w.plwin detach
