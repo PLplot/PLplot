@@ -50,7 +50,7 @@ $(MATLIB_AR): $(MAT_OBJS)
 $(CXXLIB_AR): $(CXX_OBJS)
 	-$(RM) $(CXXLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
-	$(ARLIB_BUILD) $(CXXLIB_AR) $(CXX_OBJS)
+	$(ARLIB_BUILD_CXX) $(CXXLIB_AR) $(CXX_OBJS)
 	$(RANLIB) $(CXXLIB_AR)
 	@echo ""
 
