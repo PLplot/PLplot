@@ -9,7 +9,13 @@
 # Generates line plot(s) given a file of ASCII data (similar to the GNUPLOT
 # "plot" command).  Can be easily modified to particular needs.
 #
+# To run this demo execute pltcl.  Then from within that environment
+# execute "plinit" (which gives you a choice of drivers),
+# "source plot.tcl" (this file), then finally "plot" following
+# the usage below.
+
 # Usage:
+#
 #	plot [data file [columns]]
 #
 # Example:
@@ -86,6 +92,9 @@
 #
 #----------------------------------------------------------------------------
 # $Log$
+# Revision 1.5  2000/12/29 05:59:51  airwin
+# Improve the self-documentation.
+#
 # Revision 1.4  1996/04/18 19:31:42  mjl
 # Implemented ability to plot multiple columns of data or any subset thereof.
 # Added ability to filter and switched to using new min/max matrix commands.

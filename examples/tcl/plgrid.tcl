@@ -3,8 +3,15 @@
 #
 # $Id$
 # $Log$
+# Revision 1.2  2000/12/29 05:59:51  airwin
+# Improve the self-documentation.
+#
 # Revision 1.1  1995/05/06 21:32:03  mjl
 # Demo proc for plotting a polar grid.
+
+# To run this demo execute pltcl.  Then from within that environment
+# execute "plinit" (which gives you a choice of drivers),
+# "source plgrid.tcl" (this file), then finally "plgrid"
 #
 #----------------------------------------------------------------------------
 
