@@ -13,13 +13,13 @@
 # -----------------------------------------------------------------------
 
 .cc$O:
-	$(CXX) $(CXX_FLAGS) $*.cc
+	$(CXX) $(CXX_FLAGS) $<
 
 .c$O:
-	$(CC) $(CC_FLAGS) $*.c
+	$(CC) $(CC_FLAGS) $<
 
 .f$O:
-	$(F77) $(F77_FLAGS) $*.f
+	$(F77) $(F77_FLAGS) $<
 
 # -----------------------------------------------------------------------
 # Library dependency list and targets
@@ -42,17 +42,5 @@ $(PLLIB_AR):	$(LIB_OBJS)
 
 # Needs to be compiled using K&R C.
 
-tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
-		plstrm.h tcpip.c
+tcpip$O:
 	$(OCC) $(CC_FLAGS) tcpip.c
-
-# Optimizer under AIX 3.2.3 bogues out here.
-
-xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstrm.h plplotX.h xwin.c
-	$(CC) $(CC_FLAGS_XWIN) xwin.c
-
-# Optimizer on SX-3 makes bogus code here.
-
-sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
-	$(CC) $(CC_FLAGS_SCCONT) sccont.c
-

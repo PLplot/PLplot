@@ -12,10 +12,13 @@
 # Set up inference rules appropriate for building shared libraries.
 # -----------------------------------------------------------------------
 
-.c$O:
+.cc.o:
+	$(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) $<
+
+.c.o:
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) $*.c
 
-.f$O:
+.f.o:
 	$(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) $*.f
 
 # -----------------------------------------------------------------------
@@ -45,17 +48,5 @@ $(PLLIB_AR):	$(LIB_OBJS)
 
 # Needs to be compiled using K&R C.
 
-tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
-		plstrm.h tcpip.c
+tcpip.o:
 	$(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) tcpip.c
-
-# Optimizer under AIX 3.2.3 bogues out here.
-
-xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstrm.h plplotX.h xwin.c
-	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_XWIN) xwin.c
-
-# Optimizer on SX-3 makes bogus code here.
-
-sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
-	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_SCCONT) sccont.c
-

@@ -13,23 +13,23 @@
 # libraries. 
 # -----------------------------------------------------------------------
 
-.cc$O:
-	$(CXX) $(CXX_FLAGS) $*.cc
-	cd shared; $(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) ../$*.cc
+.cc.o:
+	$(CXX) $(CXX_FLAGS) $<
+	cd shared; $(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) ../$<
 
-.c$O:
-	$(CC) $(CC_FLAGS) $*.c
-	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$*.c
+.c.o:
+	$(CC) $(CC_FLAGS) $<
+	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$<
 
-.f$O:
-	$(F77) $(F77_FLAGS) $*.f
-	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$*.f
+.f.o:
+	$(F77) $(F77_FLAGS) $<
+	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$<
 
 # -----------------------------------------------------------------------
 # Library dependency list and targets
 # -----------------------------------------------------------------------
 
-PLLIBS = $(PLLIB_AR) $(PLLIB_SH)
+PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
 
 libs:	$(PLLIBS)
 
@@ -39,11 +39,11 @@ $(PLLIB_AR):	$(LIB_OBJS)
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
 
-$(PLLIB_SH):	$(LIB_OBJS)
-	-$(RM) $(PLLIB_SH)
+$(PLLIB_SO):	$(LIB_OBJS)
+	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(PLLIB_SH) $(LIB_OBJS)
+	$(SHLIB_BUILD) ../$(PLLIB_SO) $(LIB_OBJS)
 	@echo ""
 
 # -----------------------------------------------------------------------
@@ -52,20 +52,6 @@ $(PLLIB_SH):	$(LIB_OBJS)
 
 # Needs to be compiled using K&R C.
 
-tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
-		plstrm.h tcpip.c
+tcpip.o:
 	$(OCC) $(CC_FLAGS) tcpip.c
 	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
-
-# Optimizer under AIX 3.2.3 bogues out here.
-
-xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstrm.h plplotX.h xwin.c
-	$(CC) $(CC_FLAGS_XWIN) xwin.c
-	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_XWIN) ../xwin.c
-
-# Optimizer on SX-3 makes bogus code here.
-
-sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
-	$(CC) $(CC_FLAGS_SCCONT) sccont.c
-	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_SCCONT) ../sccont.c
-
