@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/07/19 22:33:05  mjl
+ * Revision 1.6  1994/09/23 07:53:14  mjl
+ * New Tcl API functions added: plend, plend1, plsstrm, and plinit.
+ *
+ * Revision 1.5  1994/07/19  22:33:05  mjl
  * Internal header file inclusion changed to /not/ use a search path so that
  * it will work better with makedepend.
  *
@@ -47,11 +50,14 @@ static int plbopCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plboxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plcol0Cmd	(ClientData, Tcl_Interp *, int, char **);
 static int pleopCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plendCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plend1Cmd	(ClientData, Tcl_Interp *, int, char **);
 static int plenvCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plfontCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plfontldCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plgraCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plhistCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plinitCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pljoinCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pllabCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pllineCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -61,6 +67,7 @@ static int plptexCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plschrCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plssubCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plsstrmCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsymCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plstylCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsxaxCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -99,11 +106,14 @@ static CmdInfo Cmds[] = {
     {"plcol",		plcol0Cmd},
     {"plcol0",		plcol0Cmd},
     {"pleop",		pleopCmd},
+    {"plend",		plendCmd},
+    {"plend1",		plend1Cmd},
     {"plenv",		plenvCmd},
     {"plfont",		plfontCmd},
     {"plfontld",	plfontldCmd},
     {"plgra",		plgraCmd},
     {"plhist",		plhistCmd},
+    {"plinit",		plinitCmd},
     {"pljoin",		pljoinCmd},
     {"pllab",		pllabCmd},
     {"plline",		pllineCmd},
@@ -112,6 +122,7 @@ static CmdInfo Cmds[] = {
     {"plptex",		plptexCmd},
     {"plschr",		plschrCmd},
     {"plssub",		plssubCmd},
+    {"plsstrm",		plsstrmCmd},
     {"plstyl",		plstylCmd},
     {"plsxax",		plsxaxCmd},
     {"plsyax",		plsyaxCmd},
@@ -417,6 +428,48 @@ plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
 }
 
 /*----------------------------------------------------------------------*\
+ * plendCmd
+ *
+ * Processes plend Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plendCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    if (argc != 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			 "\"", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plend();
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plend1Cmd
+ *
+ * Processes plend1 Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plend1Cmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    if (argc != 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			 "\"", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plend1();
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
  * plenvCmd
  *
  * Processes plenv Tcl command.
@@ -578,6 +631,31 @@ plhistCmd(ClientData clientData, Tcl_Interp *interp,
     plhist(n, data, datmin, datmax, nbin, oldwin);
 
     plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plinitCmd
+ *
+ * Processes plinit Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plinitCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLINT n, nbin, oldwin;
+    PLFLT *data, datmin, datmax;
+    tclMatrix *mat;
+
+    if (argc != 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], "\"", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plinit();
+
     return TCL_OK;
 }
 
@@ -849,6 +927,32 @@ plssubCmd(ClientData clientData, Tcl_Interp *interp,
     plssub(nsubx, nsuby);
 
     plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plsstrmCmd
+ *
+ * Processes plsstrm Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plsstrmCmd(ClientData clientData, Tcl_Interp *interp,
+	   int argc, char **argv)
+{
+    PLINT strm;
+
+    if (argc != 2 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " stream-number\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    strm = atoi(argv[1]);
+
+    plsstrm(strm);
+
     return TCL_OK;
 }
 
