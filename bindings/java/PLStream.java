@@ -218,14 +218,10 @@ public class PLStream {
     public native void scmap1n( int ncol1 );
     public native void scmap0( int[] r, int[] g, int[] b, int ncol0 );
     public native void scmap1( int[] r, int[] g, int[] b, int ncol1 );
-
-// /* Set color map 1 colors using a piece-wise linear relationship between */
-// /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
-
-// void
-// c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-// 	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
-
+    public native void scmap1l( int itype, int npts, float[] i, float[] c1,
+				float[] c2, float[] c3, int[] rev );
+    public native void scmap1l( int itype, int npts, double[] i, double[] c1,
+				double[] c2, double[] c3, int[] rev );
     public native void scol0( int icol0, int r, int g, int b );
     public native void scolbg( int r, int g, int b );
     public native void scolor( int color );
