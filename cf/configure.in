@@ -199,6 +199,10 @@ MY_ARG_ENABLE(cxx,
   [  --enable-cxx            compile C++ interface code (default: yes)],
   [], enable_cxx="yes")
 
+MY_ARG_ENABLE(python,
+  [  --enable-python         compile python interface code (default: yes)],
+  [], enable_python="yes")
+
 # ----------------------------------------------------------------------------
 # Set up prefix
 #
@@ -323,6 +327,9 @@ if test "$enable_cxx" = "yes"; then
 fi
 if test "$enable_f77" = "yes"; then
     cat $srcdir/cf/pkg_f77.in	>>Makefile.in 
+fi
+if test "$enable_python" = "yes"; then
+    cat $srcdir/cf/pkg_python.in >>Makefile.in 
 fi
 if test "$enable_tcl" = "yes"; then
     cat $srcdir/cf/pkg_tcl.in	>>Makefile.in 
@@ -490,6 +497,27 @@ if test "$enable_cxx" = "yes"; then
     . 2>/dev/null
 fi
 
+# Note that double precision Fortran files in the stub interface are
+# obtained entirely by m4 macro expansion.  This should work anywhere.
+# Double precision example programs are obtained through automatic compiler
+# promotion, however.  Your compiler needs to be able to automatically
+# promote all real variables and constants for this to work (the HPUX 8.x
+# compiler did not support this, but it's supported under 9.0).
+
+if test "$enable_f77" = "yes"; then
+    ln -s \
+    $srcdir/bindings/f77/*.* \
+    $srcdir/examples/f77/*.* \
+    . 2>/dev/null
+fi
+
+if test "$enable_python" = "yes"; then
+    ln -s \
+    $srcdir/bindings/python/*.* \
+    $srcdir/examples/python/*py \
+    . 2>/dev/null
+fi
+
 if test "$enable_tcl" = "yes"; then
     ln -s \
     $srcdir/bindings/tcl/*.* \
@@ -503,20 +531,6 @@ if test "$enable_tk" = "yes"; then
     $srcdir/bindings/tk/tclIndex \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
-    . 2>/dev/null
-fi
-
-# Note that double precision Fortran files in the stub interface are
-# obtained entirely by m4 macro expansion.  This should work anywhere.
-# Double precision example programs are obtained through automatic compiler
-# promotion, however.  Your compiler needs to be able to automatically
-# promote all real variables and constants for this to work (the HPUX 8.x
-# compiler did not support this, but it's supported under 9.0).
-
-if test "$enable_f77" = "yes"; then
-    ln -s \
-    $srcdir/bindings/f77/*.* \
-    $srcdir/examples/f77/*.* \
     . 2>/dev/null
 fi
 
@@ -573,7 +587,7 @@ with-f2c:	$with_f2c		with-gcc:	$with_gcc
 enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
-enable-cxx:	$enable_cxx
+enable-cxx:	$enable_cxx		enable_python:	$enable_python
 "
 
 
