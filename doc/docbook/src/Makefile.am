@@ -59,8 +59,6 @@ CLEANFILES = \
   *.jadetex *.aux *.dvi *.ps* *.pdf* inline.ent *.log *.eps TMP.* \
   *.out *.info* *.texi *.txml *.xml-info *-tmp *.$(MANVOL)
 
-info_TEXINFOS = plplotdoc.texi
-
 if enable_docbook
 
 MAX_TEX_RECURSION = 4
@@ -74,6 +72,9 @@ pdfdir = $(prefix)/share/doc/$(PACKAGE)
 pdf_DATA = $(BASE).pdf
 
 man3_MANS = $(shell ls *.$(MANVOL))
+
+geninfodir = $(infodir)
+geninfo_DATA = $(shell ls *.info)
 
 all: $(TARGETS)
 
