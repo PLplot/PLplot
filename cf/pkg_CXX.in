@@ -11,4 +11,4 @@
 CXX_C		= stream.cc
 CXX_OBJ		= stream$O
 
-
+CXX_INSTALL	= install_cxx

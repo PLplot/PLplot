@@ -15,10 +15,13 @@
 # Notes: 
 #	if Tk support is not included, TK_INSTALL will be null.
 #	if Tcl support is not included, TCL_INSTALL will be null.
+#	if C++ support is not included, CXX_INSTALL will be null.
 #
 # -----------------------------------------------------------------------
 
-install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) install_demos
+install: install_lib install_utils \
+	$(TCL_INSTALL) $(TK_INSTALL) $(CXX_INSTALL) \
+	install_demos
 
 install_lib:
 	-if [ ! -d $(INCLUDE_DIR) ] ; then mkdir -p $(INCLUDE_DIR); fi
@@ -76,3 +79,5 @@ install_tk:
 	-cp plserver$E $(BIN_DIR)
 	-cd ../drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
 
+install_cxx:
+	-cd ../include; cp stream.h $(INCLUDE_DIR)
