@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/08/25 04:10:03  mjl
+ * Revision 1.12  1994/11/02 19:57:34  mjl
+ * Name changes to cursor variables, changed plAddCWindow() call syntax.
+ *
+ * Revision 1.11  1994/08/25  04:10:03  mjl
  * Moved plClrCWindows() out of pladv() into plP_eop(), to ensure it always
  * gets called at the end of a page.  Put in handling for insufficient
  * remaining space in windows struct.
@@ -204,13 +207,13 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 /*----------------------------------------------------------------------*\
  * int plGetCursor()
  *
- * Wait for right button mouse event and translate to world coordinates.
+ * Wait for left button mouse event and translate to world coordinates.
  * Returns 0 if no translation to world coordinates is possible.  
  * Written by Paul Casteels.
 \*----------------------------------------------------------------------*/
 
 int
-plGetCursor(PLCursor *cursor) 
+plGetCursor(PLCursor *cursor)
 {
     int i;
     CWindow *w;
@@ -220,18 +223,18 @@ plGetCursor(PLCursor *cursor)
     cursor->wY = 0;
     for (i = 0; i < nrCWindows; i++) {
 	w = &windows[i];
-	if ((cursor->vpX > w->vpx1) &&
-	    (cursor->vpX < w->vpx2) &&
-	    (cursor->vpY > w->vpy1) &&
-	    (cursor->vpY < w->vpy2) ) {
+	if ((cursor->vdX > w->vdx1) &&
+	    (cursor->vdX < w->vdx2) &&
+	    (cursor->vdY > w->vdy1) &&
+	    (cursor->vdY < w->vdy2) ) {
 
 	    cursor->wX = w->wx1 +
-		(cursor->vpX - w->vpx1) * (w->wx2 - w->wx1) / 
-		    (w->vpx2 - w->vpx1);
+		(cursor->vdX - w->vdx1) * (w->wx2 - w->wx1) / 
+		    (w->vdx2 - w->vdx1);
 
 	    cursor->wY = w->wy1 +
-		(cursor->vpY - w->vpy1) * (w->wy2 - w->wy1) / 
-		    (w->vpy2 - w->vpy1);
+		(cursor->vdY - w->vdy1) * (w->wy2 - w->wy1) / 
+		    (w->vdy2 - w->vdy1);
 
 	    return 1;
 	}
@@ -242,17 +245,29 @@ plGetCursor(PLCursor *cursor)
 /*----------------------------------------------------------------------*\
  * void plAddCWindow()
  *
- * Adds a window to the window list (called by plwind).  
+ * Adds the current window to the window list (called by plwind).
  * Written by Paul Casteels.
 \*----------------------------------------------------------------------*/
 
 void 
-plAddCWindow(CWindow window) 
+plAddCWindow(void) 
 {
+    CWindow *w;
+
     if (nrCWindows >= PL_MAXWINDOWS)
 	return;
 
-    windows[nrCWindows++] = window;
+    w = &windows[nrCWindows++];
+
+    w->wx1 = plsc->vpwxmi;
+    w->wx2 = plsc->vpwxma;
+    w->wy1 = plsc->vpwymi;
+    w->wy2 = plsc->vpwyma;
+
+    w->vdx1 = plsc->vpdxmi;
+    w->vdx2 = plsc->vpdxma;
+    w->vdy1 = plsc->vpdymi;
+    w->vdy2 = plsc->vpdyma;
 }
 
 /*----------------------------------------------------------------------*\
