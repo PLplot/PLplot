@@ -68,7 +68,7 @@ sub cmap1_init {
   }
 
   plscmap1n (256);
-  plscmap1l (0, 2, $i, $h, $l, $s, pdl [0, 0]);
+  plscmap1l (0, $i, $h, $l, $s, pdl []);
 }
 
 my $LEVELS = 10;
@@ -88,11 +88,11 @@ $rosen = 0
 
 plinit ();
 
-my $x = (pdl ([0 .. (XPTS - 1)]) - (XPTS / 2)) / (XPTS / 2);
+my $x = (sequence (XPTS) - (XPTS / 2)) / (XPTS / 2);
 $x *=  1.5
   if $rosen;
 
-my $y = (pdl ([0 .. (YPTS - 1)]) - (YPTS / 2)) / (YPTS / 2);
+my $y = (sequence (YPTS) - (YPTS / 2)) / (YPTS / 2);
 $y += 0.5
   if $rosen;
 
@@ -123,7 +123,7 @@ for ($i = 0; $i < XPTS; $i++) {
 my $zmin = min ($z);
 my $zmax = max ($z);
 my $step = ($zmax - $zmin) / ($nlevel + 1);
-my $clevel = $zmin + $step + $step * pdl [0 .. ($nlevel - 1)];
+my $clevel = $zmin + $step + $step * sequence ($nlevel);
 
 pllightsource (1., 1., 1.);
 

@@ -29,8 +29,8 @@ use PDL::Graphics::PLplot;
 use Math::Trig qw [pi];
 
 my $dtr = pi / 180.0;
-my $x0 = cos ($dtr * pdl ([0 .. 360]));
-my $y0 = sin ($dtr * pdl ([0 .. 360]));
+my $x0 = cos ($dtr * sequence (361));
+my $y0 = sin ($dtr * sequence (361));
 
 # Parse and process command line arguments
 
@@ -76,7 +76,7 @@ for my $i (0 .. 11) {
 
 # Draw the graph
 
-my $r = sin ($dtr * 5 * pdl [0 .. 360]);
+my $r = sin ($dtr * 5 * sequence (361));
 $x = $x0 * $r;
 $y = $y0 * $r;
 

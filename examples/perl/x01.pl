@@ -42,7 +42,7 @@ sub plot1 {
   $ymin = $y->index (0);
   $ymax = $y->index (59);
 
-  my $idx = pdl ([0..5]) * 10 + 3;
+  my $idx = sequence (6) * 10 + 3;
   $xs = $x->index ($idx);
   $ys = $y->index ($idx);
 
@@ -81,7 +81,7 @@ sub plot2 {
 
   # Fill up the arrays
 
-  my $x = (pdl ([0..99]) - 19.0) / 6.0;
+  my $x = (sequence (100) - 19.0) / 6.0;
   my $y = sin ($x) / $x;
   $y->index (which ($x == 0)) .= 1.0;
 
@@ -123,7 +123,7 @@ sub plot3 {
     plcol0 (3);
     pllab ("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
-    my $x = 3.6 * pdl ([0..100]);
+    my $x = 3.6 * sequence (101);
     my $y = sin ($x * pi / 180.0);
 
     plcol0 (4);

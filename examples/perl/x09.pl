@@ -78,7 +78,7 @@ sub polar {
 
   # Perimeter
 
-  my $t = (2 * pi / (PERIMETERPTS - 1)) * (pdl [0 .. (PERIMETERPTS - 1)]);
+  my $t = (2 * pi / (PERIMETERPTS - 1)) * sequence (PERIMETERPTS);
   my $px = cos ($t);
   my $py = sin ($t);
 
@@ -86,15 +86,15 @@ sub polar {
 
   # Create data to be contoured
 
-  my $r = transpose (pdl ([0 .. (RPTS - 1)]) / (RPTS - 1));
-  my $theta = (2 * pi / (THETAPTS - 1)) * (pdl [0 .. (THETAPTS - 1)]);
+  my $r = transpose (sequence (RPTS)) / (RPTS - 1);
+  my $theta = (2 * pi / (THETAPTS - 1)) * sequence (THETAPTS);
 
   my $cgrid2 = zeroes (RPTS, THETAPTS, 2);
   $cgrid2->slice (',,0') .= transpose ($r x cos ($theta));
   $cgrid2->slice (',,1') .= transpose ($r x sin ($theta));
   my $z = transpose ($r x ones (THETAPTS));
 
-  my $lev = 0.05 + 0.10 * pdl [0 .. 9];
+  my $lev = 0.05 + 0.10 * sequence (10);
 
   plcol0 (2);
   plcont ($z, 1, RPTS, 1, THETAPTS, $lev, \&pltr2, $cgrid2);
@@ -119,8 +119,8 @@ sub potential {
 
   # create data to be contoured
 
-  my $r = transpose (0.5 + pdl ([0 .. (PRPTS - 1)]));
-  my $theta = (2 * pi / (PTHETAPTS - 1)) * (0.5 + pdl [0 .. (PTHETAPTS - 1)]);
+  my $r = transpose (0.5 + sequence (PRPTS));
+  my $theta = (2 * pi / (PTHETAPTS - 1)) * (0.5 + sequence (PTHETAPTS));
 
   my $cgrid2 = zeroes (PRPTS, PTHETAPTS, 2);
 
@@ -226,7 +226,7 @@ sub potential {
 
   # Draw outer boundary
 
-  my $t = (2 * pi / (PPERIMETERPTS - 1)) * pdl [0 .. (PPERIMETERPTS - 1)];
+  my $t = (2 * pi / (PPERIMETERPTS - 1)) * sequence (PPERIMETERPTS);
   my $px = $x0 + $rmax * cos ($t);
   my $py = $y0 + $rmax * sin ($t);
 

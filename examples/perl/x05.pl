@@ -40,7 +40,7 @@ plinit ();
 
 use constant NPTS => 2047;
 my $delta = 2 * pi / NPTS;
-my $data = sin ( pdl ([0..NPTS]) * $delta);
+my $data = sin (sequence (NPTS) * $delta);
 
 plcol0 (1);
 plhist ($data, -1.1, 1.1, 44, 0);

@@ -52,7 +52,7 @@ sub plot1 {
 
   my $f0 = 1.0;
   my ($freql, $ampl, $phase);
-  my $i = pdl [0..100];
+  my $i = sequence (101);
   $freql = -2.0 + $i / 20.0;
   my $freq = 10 ** $freql;
   $ampl = 20 * log10 (1 / sqrt (1 + ($freq / $f0) ** 2 ));
