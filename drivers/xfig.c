@@ -15,9 +15,9 @@ static void flushbuffer(PLStream *);
 
 /* top level declarations */
 
-#define FIGX	599
-#define FIGY	599
-#define DPI	80
+#define FIGX	297 /* portrait A4 mm */
+#define FIGY    210
+#define DPI	1200
 #define BSIZE	25
 #define XFIG_COLBASE 33 /* xfig first user color */
 
@@ -28,6 +28,7 @@ static int curcol = 1;
 static int firstline = 1;
 static long cmap0_pos, cmap1_pos;
 static int cmap0_ncol, cmap1_ncol;
+static int offset, offset_inc;
 
 static void stcmap0(PLStream *);
 static void stcmap1(PLStream *);
@@ -62,13 +63,17 @@ plD_init_xfig(PLStream *pls)
     dev->xmax = FIGX;
     dev->ymin = 0;
     dev->ymax = FIGY;
+    dev->xscale_dev = DPI/25.4;
+    dev->yscale_dev = DPI/25.4;
+    offset_inc = dev->ymax * (int)dev->yscale_dev;
+    offset = - offset_inc;
+
     pls->dev_fill0 = 1;	    /* Handle solid fills */
     if (!pls->colorset)
       pls->color = 1;         /* Is a color device */
 
-    plP_setpxl(3.1496, 3.1496);	/* 80 DPI */
-
-    plP_setphy(0, FIGX, 0, FIGY);
+    plP_setpxl(dev->xscale_dev, dev->xscale_dev); /* dpmm -- dots per mm */
+    plP_setphy(0, FIGX * dev->xscale_dev, 0, FIGY * dev->xscale_dev); /* physical dimension in mm */ 
 
 /* Write out header */
 
@@ -246,6 +251,8 @@ plD_bop_xfig(PLStream *pls)
 
     pls->famadv = 1;
     pls->page++;
+
+    offset += offset_inc;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -296,9 +303,6 @@ plD_state_xfig(PLStream *pls, PLINT op)
   case PLSTATE_CMAP1:
     stcmap1(pls);
     break;
-
-  default:
-    fprintf(stderr, "state opt=%d\n", op);
   }
 
 }
@@ -329,13 +333,10 @@ plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 
     for (i = 0; i < npts; i++)
       fprintf(pls->OutFile,"%d %d ",  pls->dev_x[i],
-	      dev->ymax - pls->dev_y[i]);
+	      offset + dev->ymax * (int)dev->xscale_dev - pls->dev_y[i]);
 
     fprintf(pls->OutFile, "\n");
     break;
-
-  default:
-    fprintf(stderr, "esc opt=%d\n", op);
   }  
 }
 
@@ -346,20 +347,21 @@ plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 static void
 flushbuffer(PLStream *pls)
 {
-    short i = 0;
+  PLDev *dev = pls->dev;
+  short i = 0;
 
-    if (count == 0)
-	return;
+  if (count == 0)
+    return;
 
-    fprintf(pls->OutFile, "2 1 0 %d %d 0 50 0 -1 0.0 0 0 0 0 0 %d\n",
-	    curwid, curcol, count/2);
-    while (i < count) {
-	fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
-		FIGY - *(buffptr + i + 1));
-	i += 2;
-    }
-    fprintf(pls->OutFile, "\n");
-    count = 0;
+  fprintf(pls->OutFile, "2 1 0 %d %d 0 50 0 -1 0.0 0 0 0 0 0 %d\n",
+	  curwid, curcol, count/2);
+  while (i < count) {
+    fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
+	     offset + dev->ymax * (int)dev->yscale_dev - *(buffptr + i + 1));
+    i += 2;
+  }
+  fprintf(pls->OutFile, "\n");
+  count = 0;
 }
 
 #else
