@@ -117,18 +117,21 @@ xtk01_LDFLAGS = $(libplplottcltk)
 xtk02_LDFLAGS = $(libplplottcltk)
 xtk04_LDFLAGS = $(libplplottcltk)
 
+# enable_tk
+endif
+
 ### Assumes tcl install is done before tk install.
 install-data-hook:
+if enable_tk
 	( cd $(DESTDIR)$(examples_tkdir) ; \
 	  mv -f Makefile.examples Makefile ; \
 	  cd ../tcl ; \
 	  for file in x??.tcl ; do \
 	    rm -f ../tk/$$file; $(LN_S) ../tcl/$$file ../tk/$$file ; \
 	  done )
+endif
 
 EXTRA_DIST = $(data_files) Makefile.examples.in $(examples_tk_SCRIPTS)
 CLEANFILES = tclIndex $(check_DATA) check_stamp
 DISTCLEANFILES = Makefile.examples
 
-# enable_tk
-endif
