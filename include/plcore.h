@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1995/04/12 08:21:49  mjl
+ * Revision 1.27  1995/05/07 02:22:36  mjl
+ * Added include of pldebug.h for debugging support.
+ *
+ * Revision 1.26  1995/04/12  08:21:49  mjl
  * Two font control variables moved elsewhere.
  *
  * Revision 1.25  1994/09/23  07:49:35  mjl
@@ -73,6 +76,10 @@ static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
 /* Current stream pointer.  Global, for easier access to state info */
 
 PLStream *plsc = &pls0;
+
+/* Only now can we include this */
+
+#include "pldebug.h"
 
 /*----------------------------------------------------------------------*\
 * Define structure containing pointers to device dependent functions.
