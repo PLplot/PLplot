@@ -101,6 +101,18 @@ endif
 ourexecpython_DATA = plplot.py plplotc.py
 ourexecpython_LTLIBRARIES = UNDERSCORE_plplotcmodule.la plplot_widgetmodule.la
 
+### Do a similar job as install-exec-hook in the .libs directory, but
+### also removing "module" from teh file names.  This regards make
+### check.
+
+check_DATA = .libs/check-stamp
+.libs/check-stamp:
+	( cd .libs ; \
+	  for f in UNDERSCORE_plplot* ; do \
+             cp $$f `echo $$f | sed s/UNDERSCORE// | sed s/module//` ; \
+          done ; \
+	  touch check-stamp )
+
 # enable_python
 endif
 
