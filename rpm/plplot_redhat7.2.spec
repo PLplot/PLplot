@@ -33,9 +33,11 @@ of plotting are configurable.
 Notes on the plplot configuration underlying this package for the
 RH 7.2 build environment: 
 
-(i) We use --with-double --enable-dyndrivers --enable-gnome --enable-ntk  
+(i) We use --with-double --enable-dyndrivers --enable-gnome --enable-ntk --disable-linuxvga
 to give double precision, dynamic drivers, and the experimental gnome
-and ntp drivers.  We do not enable java.
+and ntp drivers.  We exclude the linuxvga driver because the contributed
+RedHat svgalib rpm is so outdated (1999), and it is not clear it will even
+work for RH 7.2.  We do not enable java.
 
 (ii) In addition, a large number of drivers are configured by default
 including tk, ps, psc, png and jpeg.
@@ -55,11 +57,11 @@ LDF:            f77
 INCS:            -I. -I/usr/include/gtk-1.2 -I/usr/include/glib-1.2 -I/usr/lib/glib/include -I/usr/X11R6/include -I/usr/include -I/usr/lib/gnome-libs/include
 LIBS:            -litk -ltk8.3 -litcl -ltcl8.3 -L/usr/X11R6/lib -lX11 -ldl -lm -lg2c
 LIB_TAG:        d
-devices:         plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit conex linuxvga vlt versaterm dg300 png jpeg ps psc xfig ljii hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk
+devices:         plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit conex vlt versaterm dg300 png jpeg ps psc xfig ljii hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk
 
 Available device drivers
 static:          xwin tk
-dynamic:         plmeta null tek linuxvga dg300 gd ps xfig ljii hpgl ljiip impress pbm gnome pstex ntk
+dynamic:         plmeta null tek dg300 gd ps xfig ljii hpgl ljiip impress pbm gnome pstex ntk
 
 with_shlib:     yes             with_double:    yes
 with_debug:     no              with_opt:       yes
@@ -84,7 +86,7 @@ export PYTHON_CFG_DIR=${PYTHON_MOD_DIR}/config
 export PYTHON_NUM_DIR=${PYTHON_INC_DIR}/Numeric/
 export PYTHON_MACH_DIR=${PYTHON_MOD_DIR}/site-packages
 export PYTHON_DIR=${PYTHON_MACH_DIR}
-./configure --prefix=/usr --with-double --enable-dyndrivers --enable-gnome --enable-ntk
+./configure --prefix=/usr --with-double --enable-dyndrivers --enable-gnome --enable-ntk --disable-linuxvga
 
 %build
 make
