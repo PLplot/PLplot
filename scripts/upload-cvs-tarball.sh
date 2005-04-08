@@ -12,7 +12,7 @@
 WWW_HOST=${WWW_HOST:-plplot.sf.net}
 WWW_USER=${WWW_USER:-tomduck}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot/htdocs/cvs-tarball}
-GPGKEY=${GPGKEY:-0xBB25AB83}
+GPGKEY=${GPGKEY:-0x17D965DB}
 
 function run () {
     echo $*
