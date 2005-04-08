@@ -29,9 +29,12 @@ dnl get help on by issuing a --help option) and the internal
 dnl representation.  It's necessary to remember this for when you want
 dnl to set the variable directly via ~/config/cf_plplot.in.
 
-plplot_config_invocation="$0 `./config.status --version \
+dnl The following command is done in two parts to allow AIX 5.2 shell to
+dnl parse it.
+plplot_config_invocation1=`./config.status --version \
   | grep 'with options' \
-  | sed 's/^  with options "//' | sed 's/"$//' | sed "s/'//g"`"
+  | sed 's/^  with options "//' | sed 's/"$//' | sed "s/'//g"`
+plplot_config_invocation="$0 $plplot_config_invocation1"
 
 plplot_config_result_msg="
 Configure results:
