@@ -12,21 +12,26 @@ General instructions for Unix-based systems
 PLplot building and installation is trivially easy on most Unix systems.
 From the distribution directory, type:
 
-./configure
+./configure --prefix=MYPREFIX
 make
 make install
+# Important, for the remainder to work, MYPREFIX/bin must be on your path.
+cd MYPREFIX/share/plplotVERSION/examples
+make
+./plplot-test.sh
+
+MYPREFIX stands symbolically for the installation prefix.  That could be
+/usr/local/plplot, but that requires root account access to use that system
+location.  Another alternative is some convenient location under your home
+account such as $HOME/local/plplot where you have write access under your
+ordinary user account.
+
+VERSION stands symbolically for the version.  Currently, that is 5.5.1, but
+it will change.
 
 IMPORTANT.  In prior versions we only supported the Gnu form of the make
 command, but thanks to autotools the native form of the make command is now
 supported.
-
-The most important ./configure option is --prefix as this determines where
-the files are installed.  E.g.
-
-./configure --prefix=$HOME/local/plplot
-
-sets up $HOME/local/plplot as the home directory for the installed
-package.
 
 To find out all options available for configure type
 ./configure --help |less
@@ -152,7 +157,7 @@ make check
 
 make install
 
-cd $MYPREFIX/share/plplot-5.3.0.cvs.20040223/examples
+cd MYPREFIX/share/plplotVERSION/examples
 
 make
 
@@ -342,7 +347,7 @@ files in the build tree), and make install proceeded without errors. After I
 installed (to a non-root MYPREFIX that was under my control as an ordinary
 user) I did the usual install tree test as well:
 
-cd $MYPREFIX/share/plplot5.2.1.rc1.5.3.0/examples; make; ./plplot-test.sh
+cd MYPREFIX/share/plplotVERSION/examples; make; ./plplot-test.sh
 
 and 34 postscript figures were produced.  Roughly half were identical with
 Linux-produced figures, and the other half were only slightly distinguishable
@@ -401,3 +406,32 @@ N.B. with this version FLIBS is no longer required!
     examples.
 
   + make install 
+
+------------------------------------------------------------------------------
+Build Instructions for AIX5.2 (as of the forthcoming plplot-5.5.2 since
+there was one ./configure script problem for plplot-5.5.1 that has just
+been fixed in CVS).
+(This report compiled by Alan W. Irwin on 2005-04-12
+from e-mail sent by Simon Pinches)
+------------------------------------------------------------------------------
+
+* Platform AIX 5.2
+
+* Development environment: gcc
+
+* Environment variables that should be set _before_ ./configure is run: None
+
+Simon found a ./configure issue for plplot-5.5.1 which has since been fixed
+in CVS.  He also found that dynamic devices and shared libraries did not
+work for AIX5.2.  This is probably a libtool problem, and it will be worth
+checking this again every year or so to see if this libtool problem has been
+fixed.
+
+When Simon used the fix in CVS (which should be released in the
+forthcoming plplot-5.5.2) and used
+
+./configure --prefix=MYPREFIX --disable-shared --enable-static
+
+followed by the remainder of the generic install instructions at the top of
+this file, then he got good results.  Note, the --disable-shared option also
+automatically invokes the --disable-dyndrivers option internally.
