@@ -209,7 +209,7 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
  * Internal routine to plot a vector array with arbitrary coordinate
  * and vector transformations
  */
-static void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
+void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLPointer f2eval_data1, PLPointer f2eval_data2,
 		PLINT nx, PLINT ny, PLFLT scale,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
