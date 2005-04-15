@@ -20,15 +20,21 @@
 #define _NAN_H
 
 #if defined(__GNUC__)
+
 static const double NaN = 0.0 / 0.0;
-#elif defined(BIG_ENDIAN) || defined(_BIG_ENDIAN)
-static const long long lNaN = 0x7fffffffffffffff;
+
+#elif defined(_WIN32)
+
+static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63) - 1;
 
 #define NaN (*(double*)&lNaN)
+
 #else
-static const long long lNaN = 0xfff8000000000000;
+
+static const long long lNaN = ((unsigned long long) 1 << 63) - 1;
 
 #define NaN (*(double*)&lNaN)
+
 #endif
 
 #endif
