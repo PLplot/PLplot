@@ -43,7 +43,17 @@ AC_SUBST(DRV_DIR)
 test -z "$DOC_DIR" && DOC_DIR='${datadir}/doc/plplot'
 AC_SUBST(DOC_DIR)
 
-BUILD_DIR=`pwd`
+# On some systems pwd produces a logical path rather than 
+# a physical path which is different to getcwd, which always
+# returns a physical path. Try to work around this.
+
+if test -x "/bin/pwd" ; then
+  BUILD_DIR=`/bin/pwd`
+elif pwd -P ; then
+  BUILD_DIR=`pwd -P`
+else
+  BUILD_DIR=`pwd`
+fi
 AC_SUBST(BUILD_DIR)
 
 # The following *_CMD variables are needed in examples/*/Makefile.examples.in
