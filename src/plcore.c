@@ -78,7 +78,7 @@ enum {AT_BOP, DRAWING, AT_EOP};
 /* The following array of chars is used both here and in plsym.c for
  * translating the Greek characters from the #g escape sequences into
  * the Hershey and Unicode codings
- */ 
+ */
 const char plP_greek_mnemonic[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
 
 void
@@ -414,7 +414,7 @@ int text2num( const char *text, char end, PLUNICODE *num)
 
 int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower)
 {
-   typedef struct 
+   typedef struct
      {
 	char *ptext;
 	unsigned char hexdigit;
@@ -457,7 +457,7 @@ void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	 PLINT refx, PLINT refy, const char *string)
 {
-   
+
    if (plsc->dev_text) { /* Does the device render it's own text ? */
       EscText args;
       short len=0;
@@ -466,7 +466,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       PLUNICODE code;
       char esc;
       int idx;
-      
+
       args.base = base;
       args.just = just;
       args.xform = xform;
@@ -481,21 +481,21 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	 if (string!=NULL) {        /* If the string isn't blank, then we will continue */
 	    len=strlen(string);     /* this length is only used in the loop counter, we will work out the length of the unicode string as we go */
 	    plgesc(&esc);
-	    
+	
 	    /*  At this stage we will do some translations into unicode, like conversion to
 	     *  Greek , and will save other translations such as superscript for the driver to
 	     *  do later on. As we move through the string and do the translations, we will get
 	     * rid of the esc character sequence, just replacing it with unicode.
 	     */
-	    
+	
 	    /* Obtain FCI (font characterization integer) for start of string. */
 	    plgfci(&fci);
 	    for (j=i=0;i<len;i++) {    /* Walk through the strings, and convert some stuff to unicode on the fly */
 	       skip=0;
-	       
-	       if (string[i]==esc) { 
+	
+	       if (string[i]==esc) {
 		  switch(string[i+1]) {
-		   case '(':  /* hershey code */ 
+		   case '(':  /* hershey code */
 		     i+=2+text2num(&string[i+2],')',&code);
 		     idx=plhershey2unicode(code);
 		     /* momentarily switch to symbol font. */
@@ -514,7 +514,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     unicode_buffer[j]= fci;
 		     skip=1;
 		     break;
-		     
+		
 		   case '[':  /* unicode */
 		     i+=2+text2num(&string[i+2],']',&code);
 		     /* momentarily switch to symbol font. */
@@ -533,13 +533,13 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     unicode_buffer[j] = fci;
 		     skip=1;
 		     break;
-		     
+		
 		   case '<':  /* change font*/
 		     i+=2;
 		     if ('0' <= string[i] && string[i] <= '9' ) {
 			i+=text2num(&string[i],'>', &code);
 			if (code & PL_FCI_MARK) {
-			   /* code is a complete FCI (font characterization 
+			   /* code is a complete FCI (font characterization
 			    * integer): change FCI to this value.
 			    */
 			   fci = code;
@@ -559,7 +559,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   skip=1;
 			}
 		     }
-		     
+		
 		     else {
 			/* align i on "<" because that is what text2fci
 			 * expects. */
@@ -572,12 +572,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			}
 		     }
 		     break;
-		     
+		
 		   case 'f':  /* Deprecated Hershey-style font change*/
 		   case 'F':  /* Deprecated Hershey-style font change*/
 		     /* We implement an approximate response here so that reasonable
 		      * results are obtained for unicode fonts, but this
-		      * method is deprecated and the #<nnn> or 
+		      * method is deprecated and the #<nnn> or
 		      * #<command string> methods should be used instead
 		      * to change unicode fonts in mid-string.
 		      */
@@ -597,17 +597,17 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			plP_hex2fci(PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci);
 		     } else
 		       fci = PL_FCI_IMPOSSIBLE;
-		     
+		
 		     if (fci != PL_FCI_IMPOSSIBLE){
 			i+=2;
 			unicode_buffer[j] = fci;
 			skip = 1;
 		     }
 		     break;
-		     
+		
 		   case 'g':  /* Greek font */
 		   case 'G':  /* Greek font */
-		     /* Get the index in the lookup table 
+		     /* Get the index in the lookup table
 		      * 527 = upper case alpha displacement in Hershey Table
 		      * 627 = lower case alpha displacement in Hershey Table
 		      */
@@ -634,19 +634,19 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     fci = fcisave;
 		     unicode_buffer[j]= fci;
 		     break;
-		     
+		
 		  }
 	       }
-	       
+	
 	       if (skip==0) {
 #ifdef HAVE_LIBUNICODE
                   unicode_char_t unichar;
-		  char* ptr = 
+		  char* ptr =
 		    unicode_get_utf8 (string + i, &unichar);
                   if (ptr == NULL) {
                     char buf[80];
                     strncpy (buf, string, 30);
-                    sprintf (buf, "UTF-8 string is malformed: %s%s", 
+                    sprintf (buf, "UTF-8 string is malformed: %s%s",
                              buf, strlen (string) > 30 ? "[...]" : "");
                     plabort (buf);
                   }
@@ -676,10 +676,10 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       } else  {
 	 args.string = string;
       }
-      
+
       if (plsc->plbuf_write)
 	plbuf_esc(plsc, PLESC_HAS_TEXT, &args);
-      
+
       plP_esc(PLESC_HAS_TEXT, &args);
 #ifndef DEBUG_TEXT
    } else {
@@ -708,7 +708,7 @@ grfill(short *x, short *y, PLINT npts)
    plsc->dev_npts = npts;
    plsc->dev_x = x;
    plsc->dev_y = y;
-   
+
    (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
 				     PLESC_FILL, NULL );
 }
@@ -1956,6 +1956,14 @@ int plInBuildTree()
   if (inited == 0) {
     char currdir[256];
 
+/* AM: getcwd has a somewhat strange status on Windows, its proper
+   name is _getcwd, this is a problem in the case of DLLs, like with
+   the Java bindings.
+*/
+#ifdef WIN32
+#define getcwd _getcwd
+#endif
+
     if (getcwd(currdir, 256) == NULL) {
       pldebug("plInBuildTree():", "Not enough buffer space");
     } else if (strncmp(BUILD_DIR, currdir, strlen(BUILD_DIR)) == 0)
@@ -2793,7 +2801,7 @@ plgesc(char *p_esc)
 }
 
 /* Set the FCI (font characterization integer) for unicode-enabled device
- * drivers.  
+ * drivers.
  */
 void
 c_plsfci(PLUNICODE fci)
@@ -2803,7 +2811,7 @@ c_plsfci(PLUNICODE fci)
 }
 
 /* Get the FCI (font characterization integer) for unicode-enabled device
- * drivers.  
+ * drivers.
  */
 void
 c_plgfci(PLUNICODE *pfci)
@@ -2811,8 +2819,8 @@ c_plgfci(PLUNICODE *pfci)
    /* Always mark FCI as such. */
    *pfci = plsc->fci | PL_FCI_MARK;
 }
-/* Store hex digit value shifted to the left by hexdigit hexadecimal digits 
- * into pre-existing FCI. 
+/* Store hex digit value shifted to the left by hexdigit hexadecimal digits
+ * into pre-existing FCI.
  */
 void
 plP_hex2fci(unsigned char hexdigit, unsigned char hexpower, PLUNICODE *pfci)
@@ -2833,7 +2841,7 @@ plP_fci2hex(PLUNICODE fci, unsigned char *phexdigit, unsigned char hexpower)
    PLUNICODE mask;
    hexpower = hexpower & PL_FCI_HEXPOWER_MASK;
    mask = (((PLUNICODE) PL_FCI_HEXPOWER_MASK) << ((PLUNICODE) (4*hexpower)));
-   *phexdigit = (unsigned char) ((fci & mask) >> 
+   *phexdigit = (unsigned char) ((fci & mask) >>
 				 ((PLUNICODE) (4*hexpower)));
 }
 
