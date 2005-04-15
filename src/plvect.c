@@ -28,8 +28,8 @@
 
 /* Static function prototypes */
 
-void plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale);
-    
+static void plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale);
+
 /*--------------------------------------------------------------------------*\
  * void plarrows()
  *
@@ -161,7 +161,7 @@ c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill) {
 /*
  * Plot an individual vector
  */
-void
+static void
 plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 	
     PLFLT uu, vv, px0, py0, dpx, dpy;
@@ -206,16 +206,16 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 /*
  * void plfvect()
  *
- * Internal routine to plot a vector array with arbitrary coordinate 
+ * Internal routine to plot a vector array with arbitrary coordinate
  * and vector transformations
  */
-void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer), 
+static void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLPointer f2eval_data1, PLPointer f2eval_data2,
 		PLINT nx, PLINT ny, PLFLT scale,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		PLPointer pltr_data) {
     PLINT i, j;
-    PLFLT **u, **v, **x, **y; 
+    PLFLT **u, **v, **x, **y;
     PLFLT lscale, dx, dy, dxmin, dymin, umax, vmax;
 
     plAlloc2dGrid(&u, nx, ny);
@@ -230,7 +230,7 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 	    pltr((PLFLT) i, (PLFLT) j, &x[i][j], &y[i][j], pltr_data);
 	}
     }
-	    
+	
     /* Calculate apropriate scaling if necessary */
     if (scale <= 0.0 ) {
 	if (nx <= 1 && ny <= 1) {
@@ -281,7 +281,7 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 }
 
 void
-c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, 
+c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
 	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	PLPointer pltr_data)
 {
@@ -290,6 +290,6 @@ c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
     grid1.f = u;
     grid2.f = v;
 
-    plfvect(plf2eval2, (PLPointer) &grid1, (PLPointer) &grid2, 
+    plfvect(plf2eval2, (PLPointer) &grid1, (PLPointer) &grid2,
 	       nx, ny, scale, pltr, pltr_data);
 }
