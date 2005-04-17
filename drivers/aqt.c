@@ -101,13 +101,14 @@ static int windowYSize = 0;
 
 /* AquaTerm font look-up table */
 
-#define AQT_N_Type1Lookup 5
+#define AQT_N_Type1Lookup 6
 const FCI_to_FontName_Table AQT_Type1Lookup[AQT_N_Type1Lookup] = {
      {0x10000000, "Helvetica"},
      {0x10000001, "Times-Roman"},
      {0x10000002, "Courier"},
      {0x10000003, "Times-Roman"},
      {0x10000004, "Symbol"},
+     {0x10000011, "Times-Italic"},
 };
 
 //---------------------------------------------------------------------
@@ -552,7 +553,16 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 	char *font;
 
 	font = plP_FCI2FontName(fci, AQT_Type1Lookup, AQT_N_Type1Lookup);
-	if(font == NULL) printf("could not find font given by fci = 0x%x\n", fci);
+	
+	// check whether that font exists & if not, use standard font instread
+	
+	if(font == NULL){
+		printf("could not find font given by fci = 0x%x\n", fci);
+		font = "Helvetica";
+	}
+	
+	// printf("Font at %d is : %s\n", cur_loc, font);
+	
     [str addAttribute:@"AQTFontname"
                 value:[NSString stringWithCString:font]
                 range:NSMakeRange(0, (MAX_STRING_LEN - cur_loc))];
@@ -571,7 +581,7 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 {
 	int i,len;
 	static char utf8[5];
-	
+
 	if (ucs4 < 0x80){
 		utf8[0] = ucs4;
 		utf8[1] = '\0';
@@ -599,10 +609,11 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 		len = 4;
 	}
 
-/*	printf("as utf8 : (%d) 0x", len);
+/*	printf("ucs4 : %d\n", ucs4);
+	printf("as utf8 : (%d) 0x", len);
 	for(i=0;i<len;i++) printf("%x", utf8[i]);
 	printf("\n"); */
-
+	
 	return utf8;
 }
 
