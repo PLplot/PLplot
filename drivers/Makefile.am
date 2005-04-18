@@ -106,18 +106,21 @@ gnome_la_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
 libgcw_la_CFLAGS = $(GCW_CFLAGS)
 ntk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_builddir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_builddir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tkwin_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_builddir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
 	-I$(top_srcdir)/bindings/tk-x-plat \
 	$(TCLINCCMD) \
@@ -344,18 +347,21 @@ gnome_lo_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
 libgcw_lo_CFLAGS = $(GCW_CFLAGS)
 ntk_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_builddir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tk_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_builddir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
 tkwin_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
+	-I$(top_builddir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
 	-I$(top_srcdir)/bindings/tk-x-plat \
 	$(TCLINCCMD) \
