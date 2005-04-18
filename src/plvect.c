@@ -263,12 +263,10 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		vmax = (v[i][j]>vmax)?v[i][j]:vmax;
 	    }
 	}
-	printf("umax = %f vmax = %f dxmin = %f dymin = %f\n",umax,vmax,dxmin,dymin);
 	umax = umax/dxmin;
 	vmax = vmax/dymin;
 	lscale = (umax<vmax)?umax:vmax;
 	lscale = 1.5/lscale;
-	printf("umax = %f vmax = %f lscale =  %f\n",umax,vmax,lscale);
 	if (scale < 0.0) {
 	    scale = -scale*lscale;
 	}
