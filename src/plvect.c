@@ -214,7 +214,7 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLINT nx, PLINT ny, PLFLT scale,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		PLPointer pltr_data) {
-    PLINT i, j;
+    PLINT i, j, i1, j1;
     PLFLT **u, **v, **x, **y;
     PLFLT lscale, dx, dy, dxmin, dymin, umax, vmax;
 
@@ -233,18 +233,26 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 	
     /* Calculate apropriate scaling if necessary */
     if (scale <= 0.0 ) {
-	if (nx <= 1 && ny <= 1) {
-	    fprintf(stderr,"plfvect: not enough points for autoscaling\n");
-	    return;
-	}
-	dxmin = x[1][0]-x[0][0];
-	dymin = y[0][1]-y[0][0];
-        for (j=0; j<ny-1; j++) {
-            for (i=0 ;i<nx-1 ;i++) {
-		dx = (x[i+1][j]-x[i][j]);
-		dy = (y[i][j+1]-y[i][j]);
-		dxmin = (dx<dxmin)?dx:dxmin;
-		dymin = (dy<dymin)?dy:dymin;
+        if (nx <= 1 && ny <= 1) {
+            fprintf(stderr,"plfvect: not enough points for autoscaling\n");
+            return;
+        }
+	dxmin = 10E10;
+	dymin = 10E10;
+        for (j=0; j<ny; j++) {
+            for (i=0 ;i<nx ;i++) {
+                for (j1=j; j1<ny; j1++) {
+                    for (i1=0 ;i1<nx ;i1++) {
+		        dx = fabs(x[i1][j1]-x[i][j]);
+		        dy = fabs(y[i1][j1]-y[i][j]);
+			if (dx > 0) {
+		            dxmin = (dx<dxmin)?dx:dxmin;
+			}
+			if (dy > 0) {
+		            dymin = (dy<dymin)?dy:dymin;
+			}
+		    }
+		}
 	    }
 	}
 	umax = u[0][0];
@@ -255,10 +263,12 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		vmax = (v[i][j]>vmax)?v[i][j]:vmax;
 	    }
 	}
+	printf("umax = %f vmax = %f dxmin = %f dymin = %f\n",umax,vmax,dxmin,dymin);
 	umax = umax/dxmin;
 	vmax = vmax/dymin;
 	lscale = (umax<vmax)?umax:vmax;
-	lscale = 2.0/lscale;
+	lscale = 1.5/lscale;
+	printf("umax = %f vmax = %f lscale =  %f\n",umax,vmax,lscale);
 	if (scale < 0.0) {
 	    scale = -scale*lscale;
 	}
