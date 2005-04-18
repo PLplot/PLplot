@@ -61,8 +61,8 @@ substantial number of minor tweaks and bug fixes.
 
 2.1 API
 
-No change.
-
+plParseOpts deprecated.  Use plparseopts (now documented) instead for all
+language interfaces.
 
 2.2 Drivers
 
@@ -71,6 +71,8 @@ No change.
 
 3. Changes Relative to our last stable release, PLplot 5.3.1
 
+plParseOpts deprecated.  Use plparseopts (now documented) instead for all
+language interfaces.
 
 3.1 API
 
