@@ -46,7 +46,11 @@ interfaces.
 <title>Embedding Plots in Gnome/GTK Applications</title> 
 
 <para>
-PLplot plots can be embedded into Gnome/GTK applications written in C or Python by installing a GnomeCanvas widget into the GCW "Gnome Canvas Widget" driver.  Once the canvas is installed and set up, the standard PLplot commands may be used.  A special Canvas called the PlplotCanvas is also provided, and provides an object-oriented interface which simplifies plotting to multiple Canvasses (i.e., multiple streams).
+PLplot plots can be embedded into Gnome/GTK applications by installing a GnomeCanvas widget into the GCW "Gnome Canvas Widget" driver.  Once the canvas is installed and set up, the standard PLplot commands may be used.  A special Canvas called the PlplotCanvas is also provided, and provides an object-oriented interface which simplifies plotting to multiple Canvasses (i.e., multiple streams).
+</para>
+
+<para>
+A specialized API is provided both GCW and the PlplotCanvas, and bindings are included for C and Python.  Bindings for the other languages supported by PLplot are possible, and can be requested via PLplot mailing lists at plplot.sourceforge.net.
 </para>
 
 <para>
@@ -68,11 +72,11 @@ The plplotcanvas_demo example is discussed at the end of this section.
 <title>GCW API</title> 
 
 <para>
-Use of GCW in conjunction with a user-supplied GnomeCanvas requires the use of a specialized widget-driver API, which may be accessed via either C or Python.  It is typically easier to use the PlplotCanvas API instead, but the GCW API is described here for reference.  An understanding of both Gnome and GnomeCanvas usage is assumed.
+Use of GCW in conjunction with a user-supplied GnomeCanvas requires the use of a specialized widget-driver API.  It is typically easier to use the PlplotCanvas API instead, but the GCW API is described here for reference.  An understanding of both GTK and GnomeCanvas usage is assumed.
 </para>
 
 <para>
-On the Canvas, plot commands draw into three different groups, each with different behaviours.  The default group is shown when the page is advanced, and is cleared for every new page.  The foreground and background groups are persistent (i.e., never cleared), and so are useful for when static material on the Canvas is required.  Manipulation of the Canvas groups can help render fast animations on a common set of axes, but is not usually employed otherwise.
+On the Canvas, plot commands draw into three different groups, each with different behaviours.  The default group is shown when the page is advanced, and is cleared for every new PLplot page.  The foreground and background groups are persistent (i.e., never cleared), and so are useful for when static material on the Canvas is required.  Manipulation of the Canvas groups can help render fast animations on a common set of axes, but is not usually employed otherwise.
 </para>
 
 <para>
@@ -316,7 +320,7 @@ Determines whether or not truetype text (use_text = TRUE) or Hershey fonts (use_
   </varlistentry>
   <varlistentry>
     <term>
-      <parameter>use_text</parameter> (<literal>gboolean</literal>, input)
+      <parameter>use_text</parameter> (<literal>PLINT</literal>, input)
     </term>
     <listitem><para>TRUE for truetype fonts, FALSE for Hershey fonts.</para></listitem>
   </varlistentry>
@@ -357,7 +361,7 @@ Set use_fast_rendering to TRUE for fast rendering on the Canvas (default FALSE).
   </varlistentry>
   <varlistentry>
     <term>
-      <parameter>use_fast_rendering</parameter> (<literal>gboolean</literal>, input)
+      <parameter>use_fast_rendering</parameter> (<literal>PLINT</literal>, input)
     </term>
     <listitem><para>TRUE for fast rendering, FALSE for slow.</para></listitem>
   </varlistentry>
@@ -402,7 +406,7 @@ The drawback of the pixmap approach is that lines and text cannot be drawn with 
   </varlistentry>
   <varlistentry>
     <term>
-      <parameter>use_pixmap</parameter> (<literal>gboolean</literal>, input)
+      <parameter>use_pixmap</parameter> (<literal>PLINT</literal>, input)
     </term>
     <listitem><para>TRUE to use pixmap, FALSE for normal polygon rendering.</para></listitem>
   </varlistentry>
@@ -535,7 +539,7 @@ To access the GCW driver from python, import gcw.  PyGTK provides the required G
 <title>PlplotCanvas API</title> 
 
 <para>
-PlplotCanvas is a GnomeCanvas subclass that provides an object-oriented interface which abstracts away some of the complexity of using the GCW driver with PLplot.  When a new Canvas is initialized, &plsdev; and &plinit; are automatically invoked, and the Canvas is automatically installed into the driver.  Object-oriented wrappers to all PLplot functions are provided (see the discussion in <function>plplot_canvas_get_stream_number</function>, below), and allows multiple streams to be coordinated automatically (i.e., calls to &plsstrm; are not required).
+PlplotCanvas is a GnomeCanvas subclass that provides an object-oriented interface which abstracts away some of the complexity of using the GCW driver with PLplot.  When a new Canvas is initialized, &plsdev; and &plinit; are automatically invoked, and the Canvas is automatically installed into the driver.  Object-oriented wrappers to all PLplot functions are provided (see the discussion in <function>plplot_canvas_get_stream_number</function>, below), which coordinates the access to multiple streams automatically (i.e., calls to &plsstrm; are not required).
 </para>
 
 <para>
@@ -548,9 +552,16 @@ The methods described below assume an understanding of the GCW API.
 <title>C API for PlplotCanvas</title> 
 
 <para>
-To use the PlplotCanvas in C, include plplotcanvas.h.  The object model is the same as Gnome's glib-object system used by GnomeCanvas, and the methods are as follows.
+To use the PlplotCanvas in C, include plplotcanvas.h.  The object model is the same as Gnome's GLib Object system used by GnomeCanvas.
 </para>
 
+<para>
+Each of the GCW driver functions have object-oriented PlplotCanvas method analogues, and these are not repeated below.  For example, <function>gcw_set_canvas_size(...)</function> maps to <function>plplot_canvas_set_size(canvas,...)</function>.  Notice that we don't repeat the word "canvas" twice.  When in doubt, check plplotcanvas.h for the method names and arguments.
+</para>
+
+<para>
+The additional methods are as follows.
+</para>
 
 <!-- plplot_canvas_new ================================================ -->
 
@@ -647,11 +658,7 @@ Alternatively, object-oriented methods are provided that wrap each of the PLplot
 </para>
 
 <para>
-Similarly, each of the GCW driver functions have object-oriented PlplotCanvas method analogues.  For example, <function>gcw_set_canvas_size(...)</function> maps to <function>plplot_canvas_set_size(canvas,...)</function>.  Notice that we don't repeat the word "canvas" twice.
-</para>
-
-<para>
-When in doubt, check plplotcanvas.h for the method names.  Go to the Examples section below to see each of these alternatives in action.
+When in doubt, check plplotcanvas.h for the method names and arguments.  Go to the Examples section below to see each of these alternatives in action.
 </para>
 
 <variablelist>
@@ -773,11 +780,11 @@ int main(int argc,char *argv[] )
 }
 </programlisting>
 
-So, what's going on here?  After the preliminaries, the GTK and the Glib type system are initialized by calls to <function>gtk_init</function> and <function>g_type_init</function>.  A PlplotCanvas is created using <function>plplot_canvas_new</function>, and it's size is set using <function>plplot_canvas_set_size</function>.  We want the viewport to have normalized coordinates (0.12,0.95,0.15,0.88), but this must be transformed for use with the GCW driver by using <function>plplot_canvas_get_viewport</function>.  Next, a window is created (<function>gtk_window_new</function>), the border is set (<function>gtk_set_border_width</function>), and the canvas is stuffed into it (<function>gtk_container_add</function>).  Callback functions are installed using <function>g_signal_connect</function> so that the window decorations respond, and the window is set to display everything (<function>gtk_widget_show_all</function>).
+So, what's going on here?  After the preliminaries, the GTK and the GLib type system are initialized by calls to <function>gtk_init</function> and <function>g_type_init</function>.  A PlplotCanvas is created using <function>plplot_canvas_new</function>, and it's size is set using <function>plplot_canvas_set_size</function>.  We want the viewport to have normalized coordinates (0.12,0.95,0.15,0.88), but this must be transformed for use with the GCW driver by using <function>plplot_canvas_get_viewport</function>.  Next, a window is created (<function>gtk_window_new</function>), the border is set (<function>gtk_set_border_width</function>), and the canvas is stuffed into it (<function>gtk_container_add</function>).  Callback functions are installed using <function>g_signal_connect</function> so that the window decorations respond, and the window is set to display everything (<function>gtk_widget_show_all</function>).
 </para>
 
 <para>
-Now come the plplot commands, invoked using PlplotCanvas's object-oriented interface.  First we must advance the page using <function>plplot_canvas_pladv</function>.  Next, the pen color and width are set with <function>plplot_canvas_plcol0</function> and <function>plplot_canvas_plwid</function>.  The PLplot viewport, window, box and labels are created using <function>plplot_canvas_plvpor</function>, <function>plplot_canvas_plwind</function>, <function>plplot_canvas_plbox</function> and <function>plplot_canvas_pllab</function>, respectively.  Note that the viewport is set using the transformed coordinates.  A line is drawn on the canvas using <function>plplot_canvas_plline</function>, and advancing the page with <function>plplot_canvas_pladv</function> displays the plot.  The GTK main loop is entered using <function>gtk_main</function>, where it resides until the program is exited.
+Now come the PLplot commands, invoked using PlplotCanvas's object-oriented interface.  First we must advance the page using <function>plplot_canvas_pladv</function>.  Next, the pen color and width are set with <function>plplot_canvas_plcol0</function> and <function>plplot_canvas_plwid</function>.  The PLplot viewport, window, box and labels are created using <function>plplot_canvas_plvpor</function>, <function>plplot_canvas_plwind</function>, <function>plplot_canvas_plbox</function> and <function>plplot_canvas_pllab</function>, respectively.  Note that the viewport is set using the transformed coordinates.  A line is drawn on the canvas using <function>plplot_canvas_plline</function>, and advancing the page with <function>plplot_canvas_pladv</function> displays the plot.  The GTK main loop is entered using <function>gtk_main</function>, where it resides until the program is exited.
 </para>
 
 <para>
