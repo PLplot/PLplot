@@ -139,19 +139,17 @@ char* plD_DEVICE_INFO_libgcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
 /* Global driver options */
 
-static int aa = 1;
+static PLINT aa = 1;
 
 #ifdef HAVE_FREETYPE
-static int text = 1;
+static PLINT text = 1;
 #else
-static int text = 0;
+static PLINT text = 0;
 #endif
 
-static int hrshsym = 0;
-
-static int fast = 0; 
-
-int pixmap = 0;
+static PLINT hrshsym = 0;
+static PLINT fast = 0; 
+static PLINT pixmap = 0;
 
 
 static DrvOpt gcw_options[] = 
@@ -215,7 +213,7 @@ void zoom(gpointer data, gint flag) {
 
   GcwPLdev* dev;
 
-  double curmag,dum;
+  gdouble curmag,dum;
 
   /* Get the current canvas */
   notebook = GTK_NOTEBOOK(data);
@@ -237,7 +235,7 @@ void zoom(gpointer data, gint flag) {
     /* Get the current magnification */
     if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
     curmag = 1./curmag;
-    gcw_set_canvas_zoom(canvas,ZOOM100/curmag);
+    gcw_set_canvas_zoom(canvas,(PLFLT)(ZOOM100/curmag));
   }
 
   /* Set the focus on the notebook */
@@ -496,7 +494,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect)
 {
   GcwPLdev* dev;
-  PLFLT default_aspect = CANVAS_WIDTH/CANVAS_HEIGHT;
+  gdouble default_aspect = CANVAS_WIDTH/CANVAS_HEIGHT;
 
 #ifdef DEBUG_GCW
   debug("<gcw_set_canvas_aspect>\n");
@@ -512,11 +510,13 @@ void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect)
 
   /* Set the new width and height */
   if(aspect < default_aspect) {
-    dev->width = PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH*aspect/default_aspect;
+    dev->width = PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH *
+      (gdouble)(aspect)/default_aspect;
     dev->height = PIXELS_PER_DU * DU_PER_IN * CANVAS_HEIGHT;
   }
   else {
-    dev->height = PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT*default_aspect/aspect;
+    dev->height = PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT*default_aspect / 
+      (gdouble)(aspect);
     dev->width = PIXELS_PER_DU * DU_PER_IN * CANVAS_WIDTH;
   }
 
@@ -535,7 +535,7 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
 {
   GcwPLdev* dev;
 
-  double curmag=1.,dum;
+  gdouble curmag=1.,dum;
 
 #ifdef DEBUG_GCW
   debug("<gcw_set_canvas_zoom>\n");
@@ -590,7 +590,7 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height)
 
   gcw_set_canvas_aspect(canvas,width/height);
 
-  magnification = width/dev->width;
+  magnification = width/(PLFLT)(dev->width);
 
   gcw_set_canvas_zoom(canvas,magnification);
 }
@@ -620,10 +620,10 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
-  *xmin2 = xmin1*dev->width/(PIXELS_PER_DU * DU_PER_IN * CANVAS_WIDTH);
-  *xmax2 = xmax1*dev->width/(PIXELS_PER_DU * DU_PER_IN * CANVAS_WIDTH);
-  *ymin2 = ymin1*dev->height/(PIXELS_PER_DU * DU_PER_IN * CANVAS_HEIGHT);
-  *ymax2 = ymax1*dev->height/(PIXELS_PER_DU * DU_PER_IN * CANVAS_HEIGHT);
+  *xmin2 = xmin1*(PLFLT)(dev->width)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH);
+  *xmax2 = xmax1*(PLFLT)(dev->width)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH);
+  *ymin2 = ymin1*(PLFLT)(dev->height)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT);
+  *ymax2 = ymax1*(PLFLT)(dev->height)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT);
 }
 
 
@@ -632,7 +632,7 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
  *
  * Used to turn text usage on and off.
 \*--------------------------------------------------------------------------*/
-void gcw_use_text(GnomeCanvas* canvas,gboolean use_text)
+void gcw_use_text(GnomeCanvas* canvas,PLINT use_text)
 {
   GcwPLdev* dev;
 
@@ -649,7 +649,7 @@ void gcw_use_text(GnomeCanvas* canvas,gboolean use_text)
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
 #ifdef HAVE_FREETYPE
-  dev->use_text = use_text;
+  dev->use_text = (gboolean)use_text;
 
   /* Use a hack to the plplot escape mechanism to update text handling */
   plP_esc(PLESC_HAS_TEXT,NULL);
@@ -665,7 +665,7 @@ void gcw_use_text(GnomeCanvas* canvas,gboolean use_text)
  * plD_polyline_gcw, where fast rendering can cause errors on the
  * GnomeCanvas.
 \*--------------------------------------------------------------------------*/
-void gcw_use_fast_rendering(GnomeCanvas* canvas,gboolean use_fast_rendering)
+void gcw_use_fast_rendering(GnomeCanvas* canvas,PLINT use_fast_rendering)
 {
   GcwPLdev* dev;
 
@@ -681,7 +681,7 @@ void gcw_use_fast_rendering(GnomeCanvas* canvas,gboolean use_fast_rendering)
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
-  dev->use_fast_rendering = use_fast_rendering;
+  dev->use_fast_rendering = (gboolean)use_fast_rendering;
 }
 
 
@@ -712,7 +712,7 @@ void clear_pixmap(PLStream* pls)
   gdk_gc_unref(gc);
 }
 
-void gcw_use_pixmap(GnomeCanvas* canvas,gboolean use_pixmap)
+void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap)
 {
   GcwPLdev* dev;
 
@@ -724,16 +724,15 @@ void gcw_use_pixmap(GnomeCanvas* canvas,gboolean use_pixmap)
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
-  dev->use_pixmap=use_pixmap;
+  dev->use_pixmap=(gboolean)use_pixmap;
 
   /* Allocate the pixmap */
   if(use_pixmap) {
     dev->pixmap = gdk_pixmap_new(NULL,dev->width,
 				 dev->height,gdk_visual_get_best_depth());
-
   }
 
-  dev->pixmap_has_data=FALSE;
+  dev->pixmap_has_data = FALSE;
 }
 
 
@@ -867,8 +866,7 @@ void plD_init_gcw(PLStream *pls)
 
   /* Create the device */
   if((dev = g_malloc(sizeof(GcwPLdev))) == NULL) {
-    fprintf(stdout,"Insufficient memory\n");
-    exit(0);
+    plabort("GCW driver: Insufficient memory");
   }
   pls->dev = dev;
 
@@ -906,10 +904,10 @@ void plD_init_gcw(PLStream *pls)
 #endif
 
   /* Set fast rendering for polylines */
-  dev->use_fast_rendering = fast;
+  dev->use_fast_rendering = (gboolean)fast;
 
   /* Set up the pixmap support */
-  dev->use_pixmap = pixmap;
+  dev->use_pixmap = (gboolean)pixmap;
   dev->pixmap = NULL;
   dev->pixmap_has_data = FALSE;
 
@@ -945,10 +943,11 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   GnomeCanvasGroup* group;
   GnomeCanvasItem* item;
   GnomeCanvas* canvas;
-  guint i,j;
+
+  PLINT i;
 
   gdouble width;
-  guint color;
+  guint32 color;
 
 #ifdef DEBUG_GCW
   debug("<plD_polyline_gcw>\n");
@@ -973,8 +972,8 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   /* Put the data in a points structure */
   points = gnome_canvas_points_new(npts);
   for ( i = 0; i < npts; i++ ) {
-    points->coords[2*i] = ((double) x[i]) * PIXELS_PER_DU;
-    points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;
+    points->coords[2*i] = ((gdouble) x[i]) * PIXELS_PER_DU;
+    points->coords[2*i + 1] = ((gdouble) -y[i]) * PIXELS_PER_DU;
   }
 
   /* Get the width and color */
@@ -1081,9 +1080,6 @@ void plD_eop_gcw(PLStream *pls)
 
   GdkPixbuf* pixbuf;
   GnomeCanvasItem* item;
-
-  int i;
-  short x, y;
 
   gdouble dx, dy;
 
@@ -1323,12 +1319,13 @@ static void fill_polygon (PLStream* pls)
   GdkGC* gc;
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
-  guint i;
+  
+  PLINT i;
 
   GdkColor color;
   GdkPoint* gdkpoints;
 
-  guint tmp;
+  PLINT tmp;
 
 #ifdef DEBUG_GCW
   debug("<fill_polygon>\n");
@@ -1357,7 +1354,7 @@ static void fill_polygon (PLStream* pls)
     if(dev->pixmap == NULL) gcw_use_pixmap(canvas,TRUE);
 
     /* Clear the pixmap if required */
-    if(dev->pixmap_has_data==FALSE) clear_pixmap(pls);
+    if(! dev->pixmap_has_data) clear_pixmap(pls);
 
     gc = gdk_gc_new(dev->pixmap);
 
@@ -1382,7 +1379,7 @@ static void fill_polygon (PLStream* pls)
 
     gdk_draw_polygon(dev->pixmap,gc,TRUE,gdkpoints,pls->dev_npts);
 
-    dev->pixmap_has_data=TRUE;
+    dev->pixmap_has_data = TRUE;
 
     gdk_gc_unref(gc);
     free(gdkpoints);
@@ -1390,8 +1387,8 @@ static void fill_polygon (PLStream* pls)
   else { /* Use Gnome Canvas polygons */
 
     for (i=0; i<pls->dev_npts; i++) {
-      points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
-      points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
+      points->coords[2*i] = ((gdouble) pls->dev_x[i]) * PIXELS_PER_DU;
+      points->coords[2*i + 1] = ((gdouble) -pls->dev_y[i]) * PIXELS_PER_DU;
     }
 
     if(!GNOME_IS_CANVAS_ITEM(
@@ -1406,7 +1403,7 @@ static void fill_polygon (PLStream* pls)
       return;
     }
   
-    gnome_canvas_points_free (points);
+    gnome_canvas_points_free(points);
 
 
     /* Draw a thin outline for each polygon */
@@ -1548,7 +1545,7 @@ void proc_str(PLStream *pls, EscText *args)
   GnomeFont *font;
   GnomeFontFace *face;
   GnomeGlyphList *glyphlist;
-  gint Nglyphs;
+  guint Nglyphs;
 
   gdouble affine_baseline[6] = {0.,0.,0.,0.,0.,0.}; /* Affine transforms */
   gdouble affine_translate[6] = {0.,0.,0.,0.,0.,0.};
@@ -1559,19 +1556,19 @@ void proc_str(PLStream *pls, EscText *args)
   GnomeCanvasPathDef* path;
 
   GnomeCanvasItem* item[200]; /* List of string segments */
-  double width[200],height[200]; /* Height and width of string segment */
-  double up_list[200]; /* Indicates sub/sup position of string segment */
-  double up=0,scale=1; /* Used to create superscripts and subscripts */
+  gdouble width[200],height[200]; /* Height and width of string segment */
+  gdouble up_list[200]; /* Indicates sub/sup position of string segment */
+  gdouble up=0,scale=1; /* Used to create superscripts and subscripts */
 
   ArtDRect bbox; /* Bounding box for each segment to get width & height */
 
   const PLUNICODE *text; /* The text and pointers to it */
-  int i=0,Ntext; /* The text index and maximum length */
+  guint i=0,Ntext; /* The text index and maximum length */
 
   char esc; /* The escape character */
 
-  int N=0; /* The number of text segments */
-  double total_width=0,sum_width=0;
+  guint N=0; /* The number of text segments */
+  gdouble total_width=0,sum_width=0;
 
   guint symbol;
 
@@ -1649,7 +1646,7 @@ void proc_str(PLStream *pls, EscText *args)
 
   /* Get the unicode string */
   text = args->unicode_array;
-  Ntext = args->unicode_array_len;
+  Ntext = (guint)(args->unicode_array_len);
 
   /* Process the string: Break it into segments of constant font and size,
    * making sure we process control characters as we come to them.  Save
