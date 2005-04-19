@@ -107,32 +107,32 @@ const FCI_to_FontName_Table AQT_Type1Lookup[AQT_N_Type1Lookup] = {
 	{0x10000001, "Times-Roman"},
 	{0x10000002, "Courier"},
 	{0x10000003, "Times-Roman"},
-	{0x10000004, "Symbol"},
+	{0x10000004, "LucidaGrande Regular"},
 	{0x10000010, "Helvetica-Oblique"},
 	{0x10000011, "Times-Italic"},
 	{0x10000012, "Courier-Oblique"},
 	{0x10000013, "Times-Italic"},
-	{0x10000014, "Symbol"},
+	{0x10000014, "LucidaGrande Regular"},
 	{0x10000020, "Helvetica-Oblique"},
 	{0x10000021, "Times-Italic"},
 	{0x10000022, "Courier-Oblique"},
 	{0x10000023, "Times-Italic"},
-	{0x10000024, "Symbol"},
+	{0x10000024, "LucidaGrande Regular"},
 	{0x10000100, "Helvetica-Bold"},
 	{0x10000101, "Times-Bold"},
 	{0x10000102, "Courier-Bold"},
 	{0x10000103, "Times-Bold"},
-	{0x10000104, "Symbol"},
+	{0x10000104, "LucidaGrande Regular"},
 	{0x10000110, "Helvetica-BoldOblique"},
 	{0x10000111, "Times-BoldItalic"},
 	{0x10000112, "Courier-BoldOblique"},
 	{0x10000113, "Times-BoldItalic"},
-	{0x10000114, "Symbol"},
+	{0x10000114, "LucidaGrande Regular"},
 	{0x10000120, "Helvetica-BoldOblique"},
 	{0x10000121, "Times-BoldItalic"},
 	{0x10000122, "Courier-BoldOblique"},
 	{0x10000123, "Times-BoldItalic"},
-	{0x10000124, "Symbol"}
+	{0x10000124, "LucidaGrande Regular"}
 };
 
 //---------------------------------------------------------------------
@@ -587,10 +587,10 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 	
     [str addAttribute:@"AQTFontname"
                 value:[NSString stringWithCString:font]
-                range:NSMakeRange(0, (MAX_STRING_LEN - cur_loc))];
+                range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
     [str addAttribute:@"AQTFontsize"
                 value:[NSNumber numberWithFloat:font_height]
-                range:NSMakeRange(0, (MAX_STRING_LEN - cur_loc))];
+                range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
 }
 
 //---------------------------------------------------------------------
@@ -631,10 +631,12 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 		len = 4;
 	}
 
-/*	printf("ucs4 : %d\n", ucs4);
+/*
+	printf("ucs4 : %d\n", ucs4);
 	printf("as utf8 : (%d) 0x", len);
 	for(i=0;i<len;i++) printf("%x", utf8[i]);
-	printf("\n"); */
+	printf("\n");
+*/
 	
 	return utf8;
 }
