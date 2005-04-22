@@ -58,6 +58,9 @@ grdashline(short *x, short *y);
 static int
 pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp );
 
+static int
+pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp );
+
 /*----------------------------------------------------------------------*\
  * void pljoin()
  *
@@ -627,6 +630,8 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
     int crossed_ymin1 = 0, crossed_ymax1 = 0;
     int crossed_xmin2 = 0, crossed_xmax2 = 0;
     int crossed_ymin2 = 0, crossed_ymax2 = 0;
+    int crossed_up    = 0, crossed_down  = 0;
+    int crossed_left  = 0, crossed_right = 0;
 
 /* Must have at least 3 points and draw() specified */
     if (npts < 3 || !draw) return;
@@ -648,8 +653,12 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	/* Boundary crossing condition -- coming in. */
 	    crossed_xmin2 = (x1 == xmin); crossed_xmax2 = (x1 == xmax);
 	    crossed_ymin2 = (y1 == ymin); crossed_ymax2 = (y1 == ymax);
-	    iout = iclp+2;
 
+	    crossed_left  = (crossed_left  || crossed_xmin2);
+	    crossed_right = (crossed_right || crossed_xmax2);
+	    crossed_down  = (crossed_down  || crossed_ymin2);
+	    crossed_up    = (crossed_up    || crossed_ymax2);
+	    iout = iclp+2;
 	/* If the first segment, just add it. */
 
 	    if (iclp == 0) {
@@ -962,6 +971,39 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
 	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
 	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
+	}
+    }
+
+/* Check for the case that only one side has been crossed */
+    if ( crossed_left+crossed_right+crossed_down+crossed_up == 1 &&
+		pointinpolygonPLINT(npts,x,y,xmin,ymin) ) {
+	int dir = circulation(x, y, npts);
+	PLINT xlim[4], ylim[4];
+	int insert;
+	int incr;
+
+     printf( "Add corners\n" ) ;
+
+	xlim[0] = xmin ; ylim[0] = ymin ;
+	xlim[1] = xmax ; ylim[1] = ymin ;
+	xlim[2] = xmax ; ylim[2] = ymax ;
+	xlim[3] = xmin ; ylim[3] = ymax ;
+	if ( dir > 0 ) {
+	    incr   = 1;
+	    insert = 0*crossed_left + 1*crossed_down + 2*crossed_right +
+	             3*crossed_up ;
+	} else {
+	    incr   = -1;
+	    insert = 3*crossed_left + 2*crossed_up + 1*crossed_right +
+	             0*crossed_down ;
+	}
+	for ( i=0; i < 4; i ++ ) {
+	    xclp[iclp] = xlim[insert] ;
+	    yclp[iclp] = ylim[insert] ;
+	    iclp   ++ ;
+	    insert += incr ;
+	    if ( insert > 3 ) insert = 0 ;
+	    if ( insert < 0 ) insert = 3 ;
 	}
     }
 
@@ -1284,8 +1326,8 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
         yv1 = y1 - yout;
         xv2 = x2 - xout;
         yv2 = y2 - yout;
-        inprod1 = xv1*xvp + yv1*yvp;
-        inprod2 = xv2*xvp + yv2*yvp;
+        inprod1 = xv1*yvp - yv1*xvp; /* Well, with the normal vector */
+        inprod2 = xv2*yvp - yv2*xvp;
         if ( inprod1 * inprod2 > 0.0 ) {
             /* No crossing possible! */
             continue;
@@ -1299,8 +1341,8 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
         yv1 = ypp  - y1;
         xv2 = xout - x2;
         yv2 = yout - y2;
-        inprod1 = xv1*xvv + yv1*yvv;
-        inprod2 = xv2*xvv + yv2*yvv;
+        inprod1 = xv1*yvv - yv1*xvv;
+        inprod2 = xv2*yvv - yv2*xvv;
         if ( inprod1 * inprod2 > 0.0 ) {
             /* No crossing possible! */
             continue;
@@ -1313,6 +1355,107 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
     /* Return the result: an even number of crossings means the
        point is outside the polygon */
 
-    printf( "Number of crossings: %d\n", count_crossings );
+    return (count_crossings%2);
+}
+
+/*----------------------------------------------------------------------*\
+ * int pointinpolygonPLINT()
+ *
+ * Returns 1 if the point is inside the polygon, 0 otherwise
+ *
+ * (AM) Unfortunately I had to have a version that can deal with
+ * PLINT coordinates ... this was the easiest way.
+\*----------------------------------------------------------------------*/
+
+static int
+pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
+{
+    int i;
+    int count_crossings;
+    PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
+    PLFLT xvp, yvp, xvv, yvv, xv1, yv1, xv2, yv2;
+    PLFLT inprod1, inprod2;
+
+    xpp = (PLFLT) xp;
+    ypp = (PLFLT) yp;
+
+    count_crossings = 0;
+
+
+    /* Determine a point outside the polygon  */
+
+    xmax = x[0] ;
+    xout = x[0] ;
+    yout = y[0] ;
+    for ( i = 0; i < n ; i ++ ) {
+        if ( xout > x[i] ) {
+            xout = x[i] ;
+        }
+        if ( xmax < x[i] ) {
+            xmax = x[i] ;
+        }
+    }
+    xout = xout - (xmax-xout) ;
+
+    /* Determine for each side whether the line segment between
+       our two points crosses the vertex */
+
+    xpp = (PLFLT) xp;
+    ypp = (PLFLT) yp;
+
+    xvp = xpp - xout;
+    yvp = ypp - yout;
+
+    for ( i = 0; i <= n; i ++ ) {
+        x1 = (PLFLT) x[i] ;
+        y1 = (PLFLT) y[i] ;
+        if ( i < n ) {
+            x2 = (PLFLT) x[i+1] ;
+            y2 = (PLFLT) y[i+1] ;
+        } else {
+            x2 = (PLFLT) x[0] ;
+            y2 = (PLFLT) y[0] ;
+        }
+
+        /* Skip zero-length segments */
+        if ( x1 == x2 && y1 == y2 ) {
+            continue;
+        }
+
+        /* Line through the two fixed points:
+           Are x1 and x2 on either side? */
+        xv1 = x1 - xout;
+        yv1 = y1 - yout;
+        xv2 = x2 - xout;
+        yv2 = y2 - yout;
+        inprod1 = xv1*yvp - yv1*xvp; /* Well, with the normal vector */
+        inprod2 = xv2*yvp - yv2*xvp;
+        if ( inprod1 * inprod2 > 0.0 ) {
+            /* No crossing possible! */
+            continue;
+        }
+
+        /* Line through the two vertices:
+           Are xout and xpp on either side? */
+        xvv = x2   - x1;
+        yvv = y2   - y1;
+        xv1 = xpp  - x1;
+        yv1 = ypp  - y1;
+        xv2 = xout - x2;
+        yv2 = yout - y2;
+        inprod1 = xv1*yvv - yv1*xvv;
+        inprod2 = xv2*yvv - yv2*xvv;
+        if ( inprod1 * inprod2 > 0.0 ) {
+            /* No crossing possible! */
+            continue;
+        }
+
+        /* We do have a crossing */
+        count_crossings ++;
+    }
+
+    /* Return the result: an even number of crossings means the
+       point is outside the polygon */
+
     return (count_crossings%2);
 }
