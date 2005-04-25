@@ -329,6 +329,12 @@ free_grid(PLFLT *xi, PLFLT *yi)
   free((void *)yi);
 }
 
+/* No function drand48() on Windows, so provide an alternative
+   implementation */
+#ifdef WIN32
+#define drand48 (1.0/RAND_MAX)*(PLFLT)rand
+#endif
+
 void
 create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
 {
