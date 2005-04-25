@@ -982,8 +982,6 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	int insert;
 	int incr;
 
-     printf( "Add corners\n" ) ;
-
 	xlim[0] = xmin ; ylim[0] = ymin ;
 	xlim[1] = xmax ; ylim[1] = ymin ;
 	xlim[2] = xmax ; ylim[2] = ymax ;
@@ -1263,6 +1261,8 @@ grdashline(short *x, short *y)
  * int pointinpolygon()
  *
  * Returns 1 if the point is inside the polygon, 0 otherwise
+ * Note:
+ * Points on the polygon are considered to be outside
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1328,7 +1328,7 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
         yv2 = y2 - yout;
         inprod1 = xv1*yvp - yv1*xvp; /* Well, with the normal vector */
         inprod2 = xv2*yvp - yv2*xvp;
-        if ( inprod1 * inprod2 > 0.0 ) {
+        if ( inprod1 * inprod2 >= 0.0 ) {
             /* No crossing possible! */
             continue;
         }
@@ -1343,7 +1343,7 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
         yv2 = yout - y2;
         inprod1 = xv1*yvv - yv1*xvv;
         inprod2 = xv2*yvv - yv2*xvv;
-        if ( inprod1 * inprod2 > 0.0 ) {
+        if ( inprod1 * inprod2 >= 0.0 ) {
             /* No crossing possible! */
             continue;
         }
@@ -1362,6 +1362,8 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
  * int pointinpolygonPLINT()
  *
  * Returns 1 if the point is inside the polygon, 0 otherwise
+ * Note:
+ * Points on the polygon are considered to be outside
  *
  * (AM) Unfortunately I had to have a version that can deal with
  * PLINT coordinates ... this was the easiest way.
@@ -1430,7 +1432,7 @@ pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
         yv2 = y2 - yout;
         inprod1 = xv1*yvp - yv1*xvp; /* Well, with the normal vector */
         inprod2 = xv2*yvp - yv2*xvp;
-        if ( inprod1 * inprod2 > 0.0 ) {
+        if ( inprod1 * inprod2 >= 0.0 ) {
             /* No crossing possible! */
             continue;
         }
@@ -1445,7 +1447,7 @@ pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
         yv2 = yout - y2;
         inprod1 = xv1*yvv - yv1*xvv;
         inprod2 = xv2*yvv - yv2*xvv;
-        if ( inprod1 * inprod2 > 0.0 ) {
+        if ( inprod1 * inprod2 >= 0.0 ) {
             /* No crossing possible! */
             continue;
         }
