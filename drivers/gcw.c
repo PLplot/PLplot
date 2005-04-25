@@ -150,7 +150,7 @@ static PLINT text = 0;
 static PLINT hrshsym = 0;
 static PLINT fast = 0; 
 static PLINT pixmap = 0;
-
+static PLINT replot = 1;
 
 static DrvOpt gcw_options[] = 
   {
@@ -159,8 +159,11 @@ static DrvOpt gcw_options[] =
     {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
     {"fast", DRV_INT, &fast, "Use fast rendering (fast=0|1)"},
     {"pixmap", DRV_INT, &pixmap, "Use pixmap for plotting shades (pixmap=0|1)"},
+    {"replot", DRV_INT, &replot, "Allow replotting to other devices (replot=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
   };
+
+GtkWidget *filew = NULL;
 
 void debug (char* msg)
 {
@@ -185,14 +188,16 @@ static guint32 plcolor_to_rgba(PLColor color, guchar alpha)
 
 
 /*--------------------------------------------------------------------------*\
- * install_canvas()
+ * Callback functions
  *
- * Creates and installs a canvas into a window on the fly.  This function
- * is called if a canvas hasn't been supplied to the driver.
+ * Employed when this driver is used in standalone mode.
+ *
 \*--------------------------------------------------------------------------*/
 
 /* Delete event callback */
 gint delete_event(GtkWidget *widget, GdkEvent *event, gpointer data ) {
+  if(filew!=NULL)
+    g_signal_emit_by_name( G_OBJECT(filew),"delete-event");
   return FALSE;
 }
 
@@ -200,6 +205,10 @@ gint delete_event(GtkWidget *widget, GdkEvent *event, gpointer data ) {
 void destroy(GtkWidget *widget, gpointer data) {
   gtk_main_quit ();
 }
+
+/******************
+ * Zoom callbacks *
+ ******************/
 
 /* All-purpose zoom callback */
 void zoom(gpointer data, gint flag) {
@@ -258,13 +267,172 @@ void zoom_out(GtkWidget *widget, gpointer data ) {
   zoom(data,0);
 }
 
-/* Callback when keys are released */
+/*****************************
+ * File selection callbacks. *
+ *****************************/
+
+/* Get the selected filename and replay the plot buffer to it */
+void file_ok_sel(GtkWidget *w, gpointer data)
+{
+  gchar *fname;
+  FILE *f;
+  guint n;
+  char devname[10];
+
+  PLINT cur_strm, new_strm;
+
+  GtkNotebook *notebook;
+  GnomeCanvas *canvas;
+  GtkWidget *scrolled_window;
+  GList *list;
+
+  GtkWidget *fs;
+
+  gdouble curmag,dum;
+
+  GcwPLdev* dev;
+
+  PLINT icol0,icol1,ncol0,ncol1;
+  PLColor *cmap0,*cmap1;
+  
+  /* Get the current canvas */
+  notebook = GTK_NOTEBOOK(data);
+  n = gtk_notebook_get_current_page(notebook);
+  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
+  canvas = GNOME_CANVAS(gtk_container_get_children(
+	   GTK_CONTAINER(gtk_container_get_children(
+           GTK_CONTAINER(scrolled_window))->data))->data);
+
+  /* Hide the file selection widget, and get the file name */
+  fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
+  gtk_widget_hide(GTK_WIDGET(fs));
+  fname = strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
+  if(fname==NULL) plabort("GCW driver: Insufficient memor");
+
+/*   /\* Put the focus back on the notebook *\/ */
+/*   dev = g_object_get_data(G_OBJECT(canvas),"dev"); */
+/*   gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook)); */
+
+  /* Test that we can open and write to the file */
+  if((f=fopen(fname,"w"))==NULL) {
+    plwarn("GCW driver: Cannot open output file");
+    return;
+  }
+  fclose(f);
+
+  /* Get the file extension and make sure we recognize it */
+  n = strlen(fname);
+  if     (strcasecmp(&fname[n-3],"png")==0)  sprintf(devname,"png");
+  else if(strcasecmp(&fname[n-3],"gif")==0)  sprintf(devname,"gif");
+  else if(strcasecmp(&fname[n-3],"jpg")==0)  sprintf(devname,"jpeg");
+  else if(strcasecmp(&fname[n-4],"jpeg")==0) sprintf(devname,"jpeg");
+  else if(strcasecmp(&fname[n-2],"ps")==0)   sprintf(devname,"ps");
+  else if(strcasecmp(&fname[n-3],"psc")==0)  sprintf(devname,"psc");
+  else {
+    plwarn("GCW driver: File type not recognized");
+    return;
+  }
+
+  /* Hack: Swap in the saved tempfile and colormaps */
+  f = plsc->plbufFile;
+  plsc->plbufFile = g_object_get_data(G_OBJECT(canvas),"plotbuf");
+
+  icol0=plsc->icol0;
+  plsc->icol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol0");
+
+  ncol0=plsc->ncol0;
+  plsc->ncol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol0");
+
+  cmap0=plsc->cmap0;
+  plsc->cmap0 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap0");
+
+  icol1=plsc->icol1;
+  plsc->icol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol1");
+
+  ncol1=plsc->ncol1;
+  plsc->ncol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol1");
+
+  cmap1=plsc->cmap1;
+  plsc->cmap1 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap1");
+
+
+  /* Get the current stream and make a new one */
+  plgstrm(&cur_strm);
+  plmkstrm(&new_strm);
+
+  plsfnam(fname); /* Set the file name */
+
+  plsdev(devname); /* Set the device */
+
+  plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
+
+  plreplot();            /* do the save by replaying the plot buffer */
+
+  plend1();              /* finish the device */
+
+  plsstrm(cur_strm);     /* return to previous stream */
+
+  /* Reverse the swap */
+  plsc->plbufFile = f;
+  plsc->icol0 = icol0;
+  plsc->ncol0 = ncol0;
+  plsc->cmap0 = cmap0;
+  plsc->icol1 = icol1;
+  plsc->ncol1 = ncol1;
+  plsc->cmap1 = cmap1;
+}
+
+/* Callback to create file selection dialog */
+void filesel(GtkWidget *widget, gpointer data ) {
+
+  GtkNotebook *notebook;
+
+  /* Create a new file dialog if it doesn't already exist */
+  if(filew == NULL) {
+
+    /* Create a new file selection widget */
+    filew = gtk_file_selection_new ("File selection");
+    
+    /* Connect the ok_button to file_ok_sel function */
+    g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filew)->ok_button),
+		     "clicked", G_CALLBACK(file_ok_sel), (gpointer)data);
+    
+    /* Connect the cancel_button to destroy the widget */
+    g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filew)->cancel_button),
+			     "clicked", G_CALLBACK(gtk_widget_destroy),filew);
+    
+    /* Lets set the filename, as if this were a save dialog, and we are giving
+       a default filename */
+    gtk_file_selection_set_filename(GTK_FILE_SELECTION(filew), 
+				    "plot.png");
+
+    /* Get the notebook, and attach the fileselector to it */
+    notebook = GTK_NOTEBOOK(data);
+    g_object_set_data(G_OBJECT(notebook),"fs",(gpointer)filew);
+
+  }
+    
+  gtk_widget_show(filew);
+}
+
+/**************************
+ * Key release callbacks. *
+ **************************/
+
 void key_release(GtkWidget *widget, GdkEventKey  *event, gpointer data ) {
   if(event->keyval == '+')  zoom(data,2);
   if(event->keyval == '=')  zoom(data,1);
   if(event->keyval == '-')  zoom(data,0);
   if(event->keyval == 'q')  destroy(widget,data);
 }
+
+
+/*--------------------------------------------------------------------------*\
+ * install_canvas()
+ *
+ * Creates and installs a canvas into a window on the fly.  This function
+ * is called if a canvas hasn't been supplied to the driver.
+\*--------------------------------------------------------------------------*/
 
 void install_canvas(PLStream *pls)
 {
@@ -352,6 +520,17 @@ void install_canvas(PLStream *pls)
 		      G_CALLBACK(zoom_out), G_OBJECT(dev->notebook));
     g_signal_connect(G_OBJECT(button), "key_release_event",
                          G_CALLBACK(key_release), G_OBJECT(dev->notebook));
+
+    /* Add save button and create callbacks */
+    if(pls->plbuf_write) {
+      image = gtk_image_new_from_stock(GTK_STOCK_SAVE,
+				       GTK_ICON_SIZE_SMALL_TOOLBAR);
+      button = gtk_button_new();
+      gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
+      gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+      g_signal_connect (G_OBJECT(button), "clicked",
+			G_CALLBACK(filesel), G_OBJECT(dev->notebook));
+    }
   }
 
   /* Create a new canvas */
@@ -835,12 +1014,7 @@ void plD_dispatch_init_gcw( PLDispatchTable *pdt )
  *
  * Initializes the device.
  *
- * This routine is invoked by a call to plinit, along with others:
- *
- *   <plD_init_gcw>
- *   <plD_bop_gcw>
- *   <plD_esc_gcw>: PLESC_GRAPH
- *   <plD_state_gcw>: PLSTATE_COLOR0
+ * This routine is invoked by a call to plinit.
  *
 \*--------------------------------------------------------------------------*/
 
@@ -858,7 +1032,7 @@ void plD_init_gcw(PLStream *pls)
   /* Set up the stream */
   pls->termin = 1;      /* Is an interactive terminal */
   pls->dev_flush = 1;   /* Handle our own flushes */
-  pls->plbuf_write = 1; /* Use plot buffer to replot to another device */
+  pls->plbuf_write = replot; /* Use plot buffer to replot to another device */
   pls->width = 1;
   pls->dev_clear = 1;   /* Handle plclear() */
   pls->dev_fill0 = 1;	/* Handle solid fills */
@@ -1083,6 +1257,15 @@ void plD_eop_gcw(PLStream *pls)
 
   gdouble dx, dy;
 
+  FILE *f;
+  gint count,n;
+  U_CHAR tmp;
+
+  gint *icol,*ncol;
+  PLColor *cmap;
+
+  guint i;
+
 #ifdef DEBUG_GCW
   debug("<plD_eop_gcw>\n");
 #endif
@@ -1091,8 +1274,11 @@ void plD_eop_gcw(PLStream *pls)
 
     canvas = dev->canvas;
 
-    /* Render the pixmap to a pixbuf on the canvas and move it to the back
-     * of the current group */
+    /* 
+     * Render the pixmap to a pixbuf on the canvas and move it to the back
+     * of the current group 
+     */
+
     if(dev->pixmap_has_data) {
 
       if((pixbuf=gdk_pixbuf_get_from_drawable(NULL,
@@ -1145,6 +1331,63 @@ void plD_eop_gcw(PLStream *pls)
     canvas->need_update = 1;
     gnome_canvas_update_now (canvas);
     
+    /*
+     * Copy the plot buffer for future reference, otherwise it is 
+     * thrown out.  We will also need to store the colormaps.
+     */
+    if(pls->plbuf_write) {
+ 
+      pls->plbuf_write = FALSE;
+      pls->plbuf_read = TRUE;
+
+      /* Copy the plot buffer to a tempfile */
+      if((f=tmpfile())==NULL) plabort("GCW driver: Could not create tempfile");
+      rewind(pls->plbufFile);
+      while(count){
+	if(count = fread(&tmp, sizeof(U_CHAR), 1, pls->plbufFile)) {
+	  if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count)
+	    plabort("GCW driver: Could not write to tempfile");
+	}
+      }
+
+      /* Attach the tempfile to the canvas */
+      g_object_set_data(G_OBJECT(canvas),"plotbuf",(gpointer)f);
+
+      pls->plbuf_write = TRUE;
+      pls->plbuf_read = FALSE;      
+
+      /* cmap 0 */
+      if((icol=(gint*)malloc(sizeof(gint)))==NULL)
+	plabort("GCW driver: Insufficient memory");
+      *icol = pls->icol0;
+      g_object_set_data(G_OBJECT(canvas),"icol0",(gpointer)icol);
+      if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
+	plabort("GCW driver: Insufficient memory");
+      *ncol = pls->ncol0;
+      g_object_set_data(G_OBJECT(canvas),"ncol0",(gpointer)ncol);
+      if((cmap=(PLColor *) calloc(1, pls->ncol0 * sizeof(PLColor)))==NULL)
+	plabort("GCW driver: Insufficient memory");
+      for (i = 0; i < pls->ncol0; i++)
+	pl_cpcolor(&cmap[i], &pls->cmap0[i]);
+      g_object_set_data(G_OBJECT(canvas),"cmap0",(gpointer)cmap);
+
+      /* cmap 1 */
+      if((icol=(gint*)malloc(sizeof(gint)))==NULL)
+	plabort("GCW driver: Insufficient memory");
+      *icol = pls->icol1;
+      g_object_set_data(G_OBJECT(canvas),"icol1",(gpointer)icol);
+      if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
+	plabort("GCW driver: Insufficient memory");
+      *ncol = pls->ncol1;
+      g_object_set_data(G_OBJECT(canvas),"ncol1",(gpointer)ncol);
+      if((cmap=(PLColor *) calloc(1, pls->ncol1 * sizeof(PLColor)))==NULL)
+	plabort("GCW driver: Insufficient memory");
+      for (i = 0; i < pls->ncol1; i++)
+	pl_cpcolor(&cmap[i], &pls->cmap1[i]);
+      g_object_set_data(G_OBJECT(canvas),"cmap1",(gpointer)cmap);
+    }
+
+
     /* If the driver is creating its own canvasses, set dev->canvas to be
      * NULL now in order to force creation of a new canvas when the next
      * drawing call is made.
@@ -1165,13 +1408,6 @@ void plD_eop_gcw(PLStream *pls)
  * plD_bop_gcw()
  *
  * Set up for the next page.
- *
- * This routine is invoked by a call to plinit, along with others:
- *
- *   <plD_init_gcw>
- *   <plD_bop_gcw>
- *   <plD_esc_gcw>: PLESC_GRAPH
- *   <plD_state_gcw>: PLSTATE_COLOR0
  *
 \*--------------------------------------------------------------------------*/
 
@@ -1257,13 +1493,6 @@ void plD_tidy_gcw(PLStream *pls)
  * plD_state_gcw()
  *
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
- *
- * This routine is invoked by a call to plinit, along with others:
- *
- *   <plD_init_gcw>
- *   <plD_bop_gcw>
- *   <plD_esc_gcw>: PLESC_GRAPH
- *   <plD_state_gcw>: PLSTATE_COLOR0
  *
 \*--------------------------------------------------------------------------*/
 
@@ -1835,13 +2064,6 @@ void proc_str(PLStream *pls, EscText *args)
  *
  * Escape functions.
  *
- * This routine is invoked by a call to plinit, along with others:
- *
- *   <plD_init_gcw>
- *   <plD_bop_gcw>
- *   <plD_esc_gcw>: PLESC_GRAPH
- *   <plD_state_gcw>: PLSTATE_COLOR0
-
 \*--------------------------------------------------------------------------*/
 
 void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
