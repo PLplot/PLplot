@@ -199,8 +199,7 @@ program for Mac OS X that provides a familiar look and feel to Mac users.
 More details about AquaTerm and how to install it can be found at 
 http://aquaterm.sourceforge.net/.
 
-The driver is unicode-enabled, however it currently only supports the 
-default OS X fonts which are not TrueType.
+The driver is unicode-enabled and uses default OS X fonts.
 
 To install the AquaTerm driver, use the options "--disable-dyndrivers" and
 "--disable-f77" during the configure step of the install process.
