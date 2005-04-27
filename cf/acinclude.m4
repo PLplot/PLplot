@@ -24,7 +24,7 @@ dnl GNU Library General Public License for more details.
 dnl
 dnl You should have received a copy of the GNU Library General Public License
 dnl along with PLplot; if not, write to the Free Software
-dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 dnl
 dnl ------------------------------------------------------------------------
 dnl Include macro which knows about the cf/ directory
