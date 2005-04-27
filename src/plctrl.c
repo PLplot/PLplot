@@ -639,22 +639,23 @@ plcmap0_def(int imin, int imax)
 {
     int i;
 
-    color_def(0,    0,   0,   0, "black" );	/* black */
-    color_def(1,  255,   0,   0, "red");	/* red */
-    color_def(2,  255, 255,   0, "yellow" );	/* yellow */
-    color_def(3,    0, 255,   0, "green" );	/* green */
-    color_def(4,  127, 255, 212, "aquamarine" );	/* aquamarine */
-    color_def(5,  255, 192, 203, "pink" );	/* pink */
-    color_def(6,  245, 222, 179, "wheat" );	/* wheat */
-    color_def(7,  190, 190, 190, "grey" );	/* grey */
-    color_def(8,  165,  42,  42, "brown" );	/* brown */
-    color_def(9,    0,   0, 255, "blue" );	/* blue */
-    color_def(10, 138,  43, 226, "BlueViolet" );	/* Blue Violet */
+    color_def(0, 255, 255, 255, "white" );	/* white */
+    color_def(1,    0,   0,   0, "black" );	/* black */
+    color_def(2,    0,   0, 255, "blue" );	/* blue */
+    color_def(3,  255,   0,   0, "red");	/* red */
+    color_def(4,  165,  42,  42, "brown" );	/* brown */
+    color_def(5, 250, 128, 114, "salmon" );	/* salmon */
+    color_def(6,  255, 192, 203, "pink" );	/* pink */
+    color_def(7,  127, 255, 212, "aquamarine" );	/* aquamarine */
+    color_def(8,  245, 222, 179, "wheat" );	/* wheat */
+    color_def(9,  64, 224, 208, "turquoise" );	/* turquoise */
+    color_def(10,  190, 190, 190, "grey" );	/* grey */
     color_def(11,   0, 255, 255, "cyan" );	/* cyan */
-    color_def(12,  64, 224, 208, "turquoise" );	/* turquoise */
-    color_def(13, 255,   0, 255, "magenta" );	/* magenta */
-    color_def(14, 250, 128, 114, "salmon" );	/* salmon */
-    color_def(15, 255, 255, 255, "white" );	/* white */
+    color_def(12,    0, 255,   0, "green" );	/* green */
+    color_def(13,  255, 255,   0, "yellow" );	/* yellow */
+    color_def(14, 255,   0, 255, "magenta" );	/* magenta */
+    color_def(15, 138,  43, 226, "BlueViolet" );	/* Blue Violet */
+
 
 /* Any others are just arbitrarily set */
 
