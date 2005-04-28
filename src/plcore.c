@@ -668,17 +668,23 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	    if (j > 0) {
 	       args.unicode_array_len=j; /* Much easier to set the length than work it out later :-) */
 	       args.unicode_array=&unicode_buffer[0];   /* Get address of the unicode buffer (even though it is currently static) */
-	       args.string=NULL;  /* Since we are using unicode, we want this to be NULL */
 	    } else
 	      /* Don't print anything, if there is no unicode to print! */
 	      return;
 	 }
-      } else  {
-	 args.string = string;
       }
+
+      args.string = string; /* Needed by plbuf_esc */
 
       if (plsc->plbuf_write)
 	plbuf_esc(plsc, PLESC_HAS_TEXT, &args);
+
+      if (plsc->dev_unicode) {
+	args.string=NULL;  /* Since we are using unicode, we want this to be NULL */
+      }
+      else  {
+	args.string = string;
+      }
 
       plP_esc(PLESC_HAS_TEXT, &args);
 #ifndef DEBUG_TEXT
