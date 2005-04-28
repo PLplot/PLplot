@@ -263,7 +263,7 @@ typedef void* PLPointer;
 
 /* Obsolete names */
 
-#define plParseInternalOpts(a, b, c)    plParseOpts(a, b, c)
+#define plParseInternalOpts(a, b, c)    plparseopts(a, b, c)
 #define plSetInternalOpt(a, b)          plSetOpt(a, b)
 
 /* Option table definition */
@@ -527,6 +527,7 @@ typedef struct {
 #define    plot3d       c_plot3d
 #define    plot3dc	c_plot3dc
 #define    plot3dcl     c_plot3dcl
+#define    plparseopts  c_plparseopts
 #define    plpat        c_plpat
 #define    plpoin       c_plpoin
 #define    plpoin3      c_plpoin3
@@ -739,7 +740,7 @@ typedef struct {
 #define    plAlloc2dGrid    win_plAlloc2dGrid
 #define    plFree2dGrid     win_plFree2dGrid
 #define    plGetCursor      win_plGetCursor
-#define    plParseOpts      win_plParseOpts
+#define    c_plparseopts    win_plParseOpts
 #define    plMergeOpts      win_plMergeOpts
 
 #else
@@ -1766,7 +1767,7 @@ plSetOpt(char *opt, char *optarg);
 /* Process options list using current options info. */
 
 int API
-plParseOpts(int *p_argc, char **argv, PLINT mode);
+c_plparseopts(int *p_argc, char **argv, PLINT mode);
 
 /* Print usage & syntax message. */
 

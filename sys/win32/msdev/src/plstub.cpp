@@ -426,7 +426,7 @@ plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
 int WINAPI
 win_plParseOpts(int *p_argc, char **argv, PLINT mode) {
-    return plParseOpts(p_argc, argv, mode) ;
+    return c_plparseopts(p_argc, argv, mode) ;
 }
 
 /* Set fill pattern directly. */
