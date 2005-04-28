@@ -58,9 +58,6 @@ DEVELOPMENT NOTES
 
 KNOWN BUGS
 
-  Dashed lines and area hatching don't work properly.  They should be 
-  handled by the plplot core, but it isn't working correctly.
-
   Text clipping is not completely working, although it is implemented
   here.  Proper text clipping will require Pango, as it is not
   implemented for Hacktext.
@@ -113,29 +110,22 @@ char* plD_DEVICE_INFO_libgcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
 /* Physical dimensions */
 
-/* Drawing units per inch; 1 DU corresponds to a pen width of 1 */
-#define DU_PER_IN (360.)
-
-/* Pixels per drawing unit: The default value of 0.2 pixes per drawing 
- * unit gives 72 pixels per inch. */
-#define PIXELS_PER_DU (0.2)
-
 /* mm per inch */
 #define MM_PER_IN (25.4)
 
-/* pixels per mm for this device */
-#define PIXELS_PER_MM (PIXELS_PER_DU * DU_PER_IN / MM_PER_IN)
+/* pixels per inch */
+#define PIXELS_PER_IN (133.333333)
+
+/* pixels per mm */
+#define PIXELS_PER_MM (PIXELS_PER_IN / MM_PER_IN)
 
 /* Default dimensions of the canvas (in inches) */
-#define CANVAS_WIDTH (9.0)
-#define CANVAS_HEIGHT (7.0)
+#define CANVAS_WIDTH (10.)
+#define CANVAS_HEIGHT (7.)
 
 /* The zoom factor for 100% zoom in */
-#define ZOOM100 1.5
+#define ZOOM100 0.8
 #define ZOOMSTEP 1.25
-
-/* The scale factor for line widths */
-#define WSCALE 3
 
 /* Global driver options */
 
@@ -307,15 +297,15 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
   gtk_widget_hide(GTK_WIDGET(fs));
   fname = strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
-  if(fname==NULL) plabort("GCW driver: Insufficient memor");
+  if(fname==NULL) plabort("GCW driver: Insufficient memory.");
 
-/*   /\* Put the focus back on the notebook *\/ */
-/*   dev = g_object_get_data(G_OBJECT(canvas),"dev"); */
-/*   gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook)); */
+  /* Put the focus back on the notebook */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
 
   /* Test that we can open and write to the file */
   if((f=fopen(fname,"w"))==NULL) {
-    plwarn("GCW driver: Cannot open output file");
+    plwarn("GCW driver: Cannot open output file.");
     return;
   }
   fclose(f);
@@ -382,6 +372,33 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   plsc->cmap1 = cmap1;
 }
 
+void file_cancel_sel(GtkWidget *w, gpointer data)
+{
+  GtkNotebook *notebook;
+  GnomeCanvas *canvas;
+  GtkWidget *scrolled_window;
+  GList *list;
+  GtkWidget *fs;
+  GcwPLdev* dev;
+  guint n;
+  
+  /* Get the current canvas */
+  notebook = GTK_NOTEBOOK(data);
+  n = gtk_notebook_get_current_page(notebook);
+  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
+  canvas = GNOME_CANVAS(gtk_container_get_children(
+	   GTK_CONTAINER(gtk_container_get_children(
+           GTK_CONTAINER(scrolled_window))->data))->data);
+
+  /* Hide the file selection widget */
+  fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
+  gtk_widget_hide(GTK_WIDGET(fs));
+
+  /* Put the focus back on the notebook */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
+}
+
 /* Callback to create file selection dialog */
 void filesel(GtkWidget *widget, gpointer data ) {
 
@@ -398,13 +415,13 @@ void filesel(GtkWidget *widget, gpointer data ) {
 		     "clicked", G_CALLBACK(file_ok_sel), (gpointer)data);
     
     /* Connect the cancel_button to destroy the widget */
-    g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filew)->cancel_button),
-			     "clicked", G_CALLBACK(gtk_widget_destroy),filew);
+    g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filew)->cancel_button),
+		     "clicked", G_CALLBACK(file_cancel_sel), (gpointer)data);
     
     /* Lets set the filename, as if this were a save dialog, and we are giving
        a default filename */
     gtk_file_selection_set_filename(GTK_FILE_SELECTION(filew), 
-				    "plot.png");
+				    "plot.psc");
 
     /* Get the notebook, and attach the fileselector to it */
     notebook = GTK_NOTEBOOK(data);
@@ -563,7 +580,7 @@ void install_canvas(PLStream *pls)
     gtk_window_set_focus(GTK_WINDOW(window),GTK_WIDGET(dev->notebook));
 
     /* Size the window */
-    gtk_window_resize(GTK_WINDOW(window),dev->width*ZOOM100+50,
+    gtk_window_resize(GTK_WINDOW(window),dev->width*ZOOM100+65,
  		      dev->height*ZOOM100+50);
   }
 
@@ -590,10 +607,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
   /* Add the canvas to the device */
   dev->canvas=canvas;
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Attach the device to the canvas widget */
   g_object_set_data(G_OBJECT(canvas),"dev",(gpointer)dev);
@@ -611,8 +625,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 					  "y",0.,
 					  NULL)
     )) {
-    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-    return;
+    plabort("GCW driver: Canvas item not created.");
   }
 
   /* Set the clip to NULL */
@@ -631,8 +644,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 			"width-units", 0.0,
 			NULL)
     )) {
-    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-    return;
+    plabort("GCW driver: Canvas item not created.");
   }
 
   gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
@@ -646,8 +658,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 					  "y",0.,
 					  NULL)
     )) {
-    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-    return;
+    plabort("GCW driver: Canvas item not created.");
   }
 
   /* Set the clip to NULL */
@@ -679,24 +690,19 @@ void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect)
   debug("<gcw_set_canvas_aspect>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
   /* Set the new width and height */
   if(aspect < default_aspect) {
-    dev->width = PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH *
-      (gdouble)(aspect)/default_aspect;
-    dev->height = PIXELS_PER_DU * DU_PER_IN * CANVAS_HEIGHT;
+    dev->width = PIXELS_PER_IN*CANVAS_WIDTH * (gdouble)(aspect)/default_aspect;
+    dev->height = PIXELS_PER_IN * CANVAS_HEIGHT;
   }
   else {
-    dev->height = PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT*default_aspect / 
-      (gdouble)(aspect);
-    dev->width = PIXELS_PER_DU * DU_PER_IN * CANVAS_WIDTH;
+    dev->height = PIXELS_PER_IN*CANVAS_HEIGHT*default_aspect/(gdouble)(aspect);
+    dev->width = PIXELS_PER_IN * CANVAS_WIDTH;
   }
 
   /* Resize the background */
@@ -720,10 +726,7 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
   debug("<gcw_set_canvas_zoom>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -759,10 +762,7 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height)
   debug("<gcw_set_canvas_size>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -791,18 +791,15 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
   debug("<gcw_set_canvas_viewport>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
-  *xmin2 = xmin1*(PLFLT)(dev->width)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH);
-  *xmax2 = xmax1*(PLFLT)(dev->width)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_WIDTH);
-  *ymin2 = ymin1*(PLFLT)(dev->height)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT);
-  *ymax2 = ymax1*(PLFLT)(dev->height)/(PIXELS_PER_DU*DU_PER_IN*CANVAS_HEIGHT);
+  *xmin2 = xmin1*(PLFLT)(dev->width)/(PIXELS_PER_IN*CANVAS_WIDTH);
+  *xmax2 = xmax1*(PLFLT)(dev->width)/(PIXELS_PER_IN*CANVAS_WIDTH);
+  *ymin2 = ymin1*(PLFLT)(dev->height)/(PIXELS_PER_IN*CANVAS_HEIGHT);
+  *ymax2 = ymax1*(PLFLT)(dev->height)/(PIXELS_PER_IN*CANVAS_HEIGHT);
 }
 
 
@@ -819,10 +816,7 @@ void gcw_use_text(GnomeCanvas* canvas,PLINT use_text)
   debug("<gcw_use_text>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -852,10 +846,7 @@ void gcw_use_fast_rendering(GnomeCanvas* canvas,PLINT use_fast_rendering)
   debug("<gcw_use_fast_rendering>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -895,10 +886,7 @@ void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -929,10 +917,7 @@ void gcw_use_background_group(GnomeCanvas* canvas)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -943,10 +928,7 @@ void gcw_use_foreground_group(GnomeCanvas* canvas)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -957,10 +939,7 @@ void gcw_use_default_group(GnomeCanvas* canvas)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
+  if(!GNOME_IS_CANVAS(canvas))  plabort("GCW driver: Canvas not found.");
 
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
@@ -1036,24 +1015,29 @@ void plD_init_gcw(PLStream *pls)
   pls->width = 1;
   pls->dev_clear = 1;   /* Handle plclear() */
   pls->dev_fill0 = 1;	/* Handle solid fills */
-  pls->dev_dash = 0;	/* Handle dashed lines */
 
   /* Create the device */
-  if((dev = g_malloc(sizeof(GcwPLdev))) == NULL) {
+  if((dev = g_malloc(sizeof(GcwPLdev))) == NULL) 
     plabort("GCW driver: Insufficient memory");
-  }
   pls->dev = dev;
+
+  /* Set up the physical device in the next two commands.  It is very 
+   * important to do this properly, because many of the calculations are
+   * based on physical coordinates.  If this is not done correctly, then
+   * dashed lines and hatched areas will not scale correctly, and the 
+   * replot mechanism will produce incorrect results.
+   */
 
   /* Set the number of pixels per mm */
   plP_setpxl((PLFLT)PIXELS_PER_MM,(PLFLT)PIXELS_PER_MM);
 
   /* Set up physical limits of plotting device (in drawing units) */
-  plP_setphy((PLINT)0,(PLINT)CANVAS_WIDTH*DU_PER_IN,
-	     (PLINT)0,(PLINT)CANVAS_HEIGHT*DU_PER_IN);
+  plP_setphy((PLINT)0,(PLINT)CANVAS_WIDTH*PIXELS_PER_IN,
+	     (PLINT)0,(PLINT)CANVAS_HEIGHT*PIXELS_PER_IN);
 
   /* Set the width and height for the device */
-  dev->width = PIXELS_PER_DU * DU_PER_IN * CANVAS_WIDTH;
-  dev->height = PIXELS_PER_DU * DU_PER_IN * CANVAS_HEIGHT;
+  dev->width = PIXELS_PER_IN * CANVAS_WIDTH;
+  dev->height = PIXELS_PER_IN * CANVAS_HEIGHT;
 
   /* Set text handling */
 #ifdef HAVE_FREETYPE
@@ -1136,8 +1120,7 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   if(!GNOME_IS_CANVAS_ITEM(
     group = dev->group_current
     )) {
-    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
-    return;
+    plabort("GCW driver: Canvas group is NULL.");
   }
 #else
   group = dev->group_current;
@@ -1146,12 +1129,12 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   /* Put the data in a points structure */
   points = gnome_canvas_points_new(npts);
   for ( i = 0; i < npts; i++ ) {
-    points->coords[2*i] = ((gdouble) x[i]) * PIXELS_PER_DU;
-    points->coords[2*i + 1] = ((gdouble) -y[i]) * PIXELS_PER_DU;
+    points->coords[2*i] = ((gdouble) x[i]);
+    points->coords[2*i + 1] = ((gdouble) -y[i]);
   }
 
   /* Get the width and color */
-  width = pls->width*PIXELS_PER_DU*WSCALE;
+  width = pls->width;
   color = dev->color;
 
   if(dev->use_fast_rendering) {
@@ -1165,8 +1148,7 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 				 "width-units",width,
 				 NULL)
       )) {
-      fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-      return;
+      plabort("GCW driver: Canvas item not created.");
     }
 
     /* Free the points structure */
@@ -1206,8 +1188,7 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 				 "width-units", width,
 				 NULL)
 	)) {
-	fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-	return;
+	plabort("GCW driver: Canvas item not created.");
       }
     }
 
@@ -1258,7 +1239,7 @@ void plD_eop_gcw(PLStream *pls)
   gdouble dx, dy;
 
   FILE *f;
-  gint count,n;
+  gint count=1,n;
   U_CHAR tmp;
 
   gint *icol,*ncol;
@@ -1287,9 +1268,7 @@ void plD_eop_gcw(PLStream *pls)
 					      0,0,
 					      0,0,
 					      dev->width,dev->height))==NULL) {
-	fprintf(stderr,"\n\nGCW driver error: Can't draw pixmap into pixbuf\n\n");
-	fflush(stderr);
-	return;
+	plabort("GCW driver: Can't draw pixmap into pixbuf.");
       }
 
       /* Different offsets depending on the type of canvas */
@@ -1341,13 +1320,13 @@ void plD_eop_gcw(PLStream *pls)
       pls->plbuf_read = TRUE;
 
       /* Copy the plot buffer to a tempfile */
-      if((f=tmpfile())==NULL) plabort("GCW driver: Could not create tempfile");
+      if((f=tmpfile())==NULL) {
+	plabort("GCW driver: Could not create tempfile.");
+      }
       rewind(pls->plbufFile);
-      while(count){
-	if(count = fread(&tmp, sizeof(U_CHAR), 1, pls->plbufFile)) {
-	  if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count)
-	    plabort("GCW driver: Could not write to tempfile");
-	}
+      while(count = fread(&tmp, sizeof(U_CHAR), 1, pls->plbufFile)) {
+	  if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count) 
+	    plabort("GCW driver: Could not write to tempfile.");
       }
 
       /* Attach the tempfile to the canvas */
@@ -1358,30 +1337,30 @@ void plD_eop_gcw(PLStream *pls)
 
       /* cmap 0 */
       if((icol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory");
+	plabort("GCW driver: Insufficient memory.");
       *icol = pls->icol0;
       g_object_set_data(G_OBJECT(canvas),"icol0",(gpointer)icol);
       if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory");
+	plabort("GCW driver: Insufficient memory.");
       *ncol = pls->ncol0;
       g_object_set_data(G_OBJECT(canvas),"ncol0",(gpointer)ncol);
       if((cmap=(PLColor *) calloc(1, pls->ncol0 * sizeof(PLColor)))==NULL)
-	plabort("GCW driver: Insufficient memory");
+	plabort("GCW driver: Insufficient memory.");
       for (i = 0; i < pls->ncol0; i++)
 	pl_cpcolor(&cmap[i], &pls->cmap0[i]);
       g_object_set_data(G_OBJECT(canvas),"cmap0",(gpointer)cmap);
 
       /* cmap 1 */
       if((icol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory");
+	plabort("GCW driver: Insufficient memory.");
       *icol = pls->icol1;
       g_object_set_data(G_OBJECT(canvas),"icol1",(gpointer)icol);
       if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory");
+	plabort("GCW driver: Insufficient memory.");
       *ncol = pls->ncol1;
       g_object_set_data(G_OBJECT(canvas),"ncol1",(gpointer)ncol);
       if((cmap=(PLColor *) calloc(1, pls->ncol1 * sizeof(PLColor)))==NULL)
-	plabort("GCW driver: Insufficient memory");
+	plabort("GCW driver: Insufficient memory.");
       for (i = 0; i < pls->ncol1; i++)
 	pl_cpcolor(&cmap[i], &pls->cmap1[i]);
       g_object_set_data(G_OBJECT(canvas),"cmap1",(gpointer)cmap);
@@ -1435,8 +1414,7 @@ void plD_bop_gcw(PLStream *pls)
 					  "y",0.,
 					  NULL)
       )) {
-      fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-      return;
+      plabort("GCW driver: Canvas item not created.");
     }
 
     /* Set the clip to NULL */
@@ -1569,8 +1547,7 @@ static void fill_polygon (PLStream* pls)
   if(!GNOME_IS_CANVAS_ITEM(
     group = dev->group_current
     )) {
-    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
-    return;
+    plabort("GCW driver: Canvas group is NULL.");
   }
 #else
   group = dev->group_current;
@@ -1596,14 +1573,12 @@ static void fill_polygon (PLStream* pls)
     gdk_gc_set_foreground(gc,&color);
 
     if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL) {
-      fprintf(stderr,"\n\nGCW driver error: Insufficient memory\n\n");
-      fflush(stderr);
-      return;
+      plabort("GCW driver: Insufficient memory.");
     }
 
     for(i=0;i<pls->dev_npts;i++) {
-      gdkpoints[i].x = pls->dev_x[i] * PIXELS_PER_DU;
-      gdkpoints[i].y = dev->height-pls->dev_y[i] * PIXELS_PER_DU;
+      gdkpoints[i].x = pls->dev_x[i];
+      gdkpoints[i].y = dev->height-pls->dev_y[i];
     }
 
     gdk_draw_polygon(dev->pixmap,gc,TRUE,gdkpoints,pls->dev_npts);
@@ -1616,8 +1591,8 @@ static void fill_polygon (PLStream* pls)
   else { /* Use Gnome Canvas polygons */
 
     for (i=0; i<pls->dev_npts; i++) {
-      points->coords[2*i] = ((gdouble) pls->dev_x[i]) * PIXELS_PER_DU;
-      points->coords[2*i + 1] = ((gdouble) -pls->dev_y[i]) * PIXELS_PER_DU;
+      points->coords[2*i] = ((gdouble) pls->dev_x[i]);
+      points->coords[2*i + 1] = ((gdouble) -pls->dev_y[i]);
     }
 
     if(!GNOME_IS_CANVAS_ITEM(
@@ -1628,8 +1603,7 @@ static void fill_polygon (PLStream* pls)
 				    /* "outline-color-rgba",dev->color, */
 				    NULL)
       )) {
-      fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-      return;
+      plabort("GCW driver: Canvas item not created.");
     }
   
     gnome_canvas_points_free(points);
@@ -1645,81 +1619,6 @@ static void fill_polygon (PLStream* pls)
   }
 }
 
-
-/*--------------------------------------------------------------------------*\
- * dashed_line()
- *
- * Handles call for dashed line.  Currently there is no facility for
- * setting dash lengths on the Gdk-type GnomeCanvas; there is no dash
- * facility whatsoever for antialiased GnomeCanvas objects.
-\*--------------------------------------------------------------------------*/
-
-static void dashed_line(PLStream* pls)
-{
-  GcwPLdev* dev = pls->dev;
-  GnomeCanvasPoints* points;
-  GnomeCanvasGroup* group;
-  GnomeCanvasItem* item;
-  GnomeCanvas* canvas;
-
-/*   gchar* dash_list; */
-/*   gint dash_list_len; */
-
-  guint i;
-
-#ifdef DEBUG_GCW
-  debug("<dashed_line>\n");
-#endif
-
-  if(dev->canvas==NULL) install_canvas(pls);
-  canvas = dev->canvas;
-
-  if(dev->group_hidden==NULL) plD_bop_gcw(pls);
-
-#ifdef ASSERT_GCW
-  if(!GNOME_IS_CANVAS_ITEM(
-    group = dev->group_current
-    )) {
-    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
-    return;
-  }
-#else
-  group = dev->group_current;
-#endif
-
-/*   /\* Save the dash list in a handy construct *\/ */
-/*   dash_list_len = 2 * pls->nms; */
-/*   dash_list = g_malloc (dash_list_len * sizeof(gchar)); */
-/*   for (i = 0; i < pls->nms; i++) { */
-/*     dash_list[2*i] = (gchar) ceil ((pls->mark[i]/1e3) * PIXELS_PER_MM); */
-/*     dash_list[2*i+1] = (gchar) floor ((pls->space[i]/1e3) * PIXELS_PER_MM); */
-/*   } */
-
-
-  /* Save the points list */
-  points = gnome_canvas_points_new (pls->dev_npts);
-  for (i = 0; i < pls->dev_npts; i++) {
-    points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
-    points->coords[2*i+1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
-  }
-
-  if(!GNOME_IS_CANVAS_ITEM(
-    item = gnome_canvas_item_new (group,
-				GNOME_TYPE_CANVAS_LINE,
-				"cap_style", GDK_CAP_BUTT,
-				"join_style", GDK_JOIN_ROUND,
-                                "points", points,
- 				"line-style", GDK_LINE_ON_OFF_DASH,
-				"fill-color-rgba",dev->color,
-                                "width-units",pls->width*PIXELS_PER_DU*WSCALE,
-                                NULL)
-    )) {
-    fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-    return;
-  }
-
-  gnome_canvas_points_free (points);
-}
 
 
 /*--------------------------------------------------------------------------*\
@@ -1762,7 +1661,6 @@ static void clear (PLStream* pls)
 void proc_str(PLStream *pls, EscText *args)
 {
   PLFLT *t = args->xform; /* Transform matrix for string */
-  FT_Data *FT=(FT_Data *)pls->FT; /* Freetype information */
 
   GnomeCanvasGroup* group;
   GcwPLdev* dev = pls->dev;
@@ -1815,8 +1713,7 @@ void proc_str(PLStream *pls, EscText *args)
   if(!GNOME_IS_CANVAS_ITEM(
     group = dev->group_current
     )) {
-    fprintf(stderr,"\n\n*** GCW driver error: group is NULL.\n");
-    return;
+    plabort("GCW driver: Canvas group is NULL.");
   }
 #else
   group = dev->group_current;
@@ -1843,31 +1740,21 @@ void proc_str(PLStream *pls, EscText *args)
   /* Set the clip in this clipgroup */
   path = gnome_canvas_path_def_new();
   gnome_canvas_path_def_ensure_space(path,6);
-  gnome_canvas_path_def_moveto(path,clxmin*PIXELS_PER_DU,
-			       -clymin*PIXELS_PER_DU);
-  gnome_canvas_path_def_lineto(path,clxmin*PIXELS_PER_DU,
-			       -clymax*PIXELS_PER_DU);
-  gnome_canvas_path_def_lineto(path,clxmax*PIXELS_PER_DU,
-			       -clymax*PIXELS_PER_DU);
-  gnome_canvas_path_def_lineto(path,clxmax*PIXELS_PER_DU,
-			       -clymin*PIXELS_PER_DU);
+  gnome_canvas_path_def_moveto(path,clxmin,-clymin);
+  gnome_canvas_path_def_lineto(path,clxmin,-clymax);
+  gnome_canvas_path_def_lineto(path,clxmax,-clymax);
+  gnome_canvas_path_def_lineto(path,clxmax,-clymin);
   gnome_canvas_path_def_closepath(path);
   g_object_set(G_OBJECT(group),"path",path,NULL);
 
-  /* Font size: size is in pixels but chrht is in mm.
-   * The factor at the end matches the font size to plplot's native
-   * font size.
-   */
-  font_size = (gint)(pls->chrht/MM_PER_IN*DU_PER_IN*PIXELS_PER_DU/2.75);
+  /* Font size: size is in pixels but chrht is in mm.  Why the extra factor? */
+  font_size = (gint)(pls->chrht*PIXELS_PER_MM*1.5);
 
   /* Determine the default font */
   plgfci(&fci);
   fontname = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
   if (fontname == NULL) {
-    fprintf(stderr, "fci = 0x%x, font name pointer = NULL \n", fci);
-    plabort("PLplot GCW driver (proc_str): FCI inconsistent with"
-	    "TrueTypeLookup; internal PLplot error");
-    return;
+    plabort("GCW driver: FCI inconsistent with TrueTypeLookup.");
   }
 
   /* Retrieve the font face */
@@ -1891,10 +1778,7 @@ void proc_str(PLStream *pls, EscText *args)
       /* Determine the font name */
       fontname = plP_FCI2FontName(text[i], FontLookup, N_TrueTypeLookup);
       if (fontname == NULL) {
-	fprintf(stderr, "fci = 0x%x, font name pointer = NULL \n", fci);
-	plabort("PLplot GCW driver (proc_str): FCI inconsistent with"
-		"TrueTypeLookup; internal PLplot error");
-	return;
+	plabort("GCW driver: FCI inconsistent with TrueTypeLookup.");
       }
 
       /* Retrieve the font face */
@@ -1912,8 +1796,7 @@ void proc_str(PLStream *pls, EscText *args)
 
 	i++; /* Move on to next character */
 	if(i>=Ntext) {
-	  fprintf(stderr,"\n\nPLplot GCW driver error: "
-		  "invalid escape sequence.\n\n");
+	  plwarn("GCW driver: Invalid escape sequence provided in text.");
 	  return;
 	}
 
@@ -2017,8 +1900,7 @@ void proc_str(PLStream *pls, EscText *args)
 				       "y",0.,
 				       NULL)
 	)) {
-	fprintf(stderr,"\n\n*** GCW driver error: item not created.\n");
-	return;
+	plabort("GCW driver: Canvas item not created.");
       }
 
       /* Free the glyphlist */
@@ -2031,8 +1913,7 @@ void proc_str(PLStream *pls, EscText *args)
 
     /* Don't overflow buffer */
     if(N==200 && i<Ntext) {
-      fprintf(stderr,"\n\nPLplot GCW driver internal error: " \
-	             "too many text segments.\n\n");
+      plwarn("GCW driver: too many text segments.");
       break;
     }
   } /* while(i<Ntext) */
@@ -2047,7 +1928,7 @@ void proc_str(PLStream *pls, EscText *args)
 			 -total_width*args->just + sum_width,
 			 height[0]/2.5-up_list[i]);
     art_affine_translate(affine_translate,
-			 args->x*PIXELS_PER_DU,-args->y*PIXELS_PER_DU);
+			 args->x,-args->y);
     gnome_canvas_item_affine_relative(item[i],affine_translate);
     gnome_canvas_item_affine_relative(item[i],affine_plplot);
     gnome_canvas_item_affine_relative(item[i],affine_baseline);
@@ -2084,10 +1965,6 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
 
   case PLESC_CLEAR:
     /*    clear(pls); */
-    break;
-
-  case PLESC_DASH:
-    dashed_line(pls);
     break;
 
   case PLESC_FILL:
