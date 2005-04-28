@@ -505,8 +505,18 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 {
     PLINT x1, x2, y1, y2;
     PLINT i, iclp = 0;
-    short xclp[PL_MAXPOLY], yclp[PL_MAXPOLY];
+
+    short _xclp[PL_MAXPOLY], _yclp[PL_MAXPOLY];
+    short *xclp, *yclp;
     int drawable;
+
+    if ( npts < PL_MAXPOLY ) {
+        xclp = _xclp;
+        yclp = _yclp;
+    } else {
+        xclp = (short *) malloc( npts*sizeof(short) ) ;
+        yclp = (short *) malloc( npts*sizeof(short) ) ;
+    }
 
     for (i = 0; i < npts - 1; i++) {
 	x1 = x[i];
@@ -561,6 +571,11 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 
     plsc->currx = x[npts-1];
     plsc->curry = y[npts-1];
+
+    if ( xclp != _xclp ) {
+        free( xclp );
+        free( yclp );
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -624,7 +639,8 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 {
     PLINT i, x1, x2, y1, y2;
     int iclp = 0, iout = 2;
-    short xclp[2*PL_MAXPOLY+2], yclp[2*PL_MAXPOLY+2];
+    short _xclp[2*PL_MAXPOLY+2], _yclp[2*PL_MAXPOLY+2];
+    short *xclp, *yclp;
     int drawable;
     int crossed_xmin1 = 0, crossed_xmax1 = 0;
     int crossed_ymin1 = 0, crossed_ymax1 = 0;
@@ -635,6 +651,14 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 
 /* Must have at least 3 points and draw() specified */
     if (npts < 3 || !draw) return;
+
+    if ( npts < PL_MAXPOLY ) {
+        xclp = _xclp;
+        yclp = _yclp;
+    } else {
+        xclp = (short *) malloc( (2*npts+2)*sizeof(short) ) ;
+        yclp = (short *) malloc( (2*npts+2)*sizeof(short) ) ;
+    }
 
     for (i = 0; i < npts - 1; i++) {
 	x1 = x[i]; x2 = x[i+1];
@@ -799,6 +823,13 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
 	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
 	    (*draw)(xclp, yclp, iclp);
+
+	    if ( xclp != _xclp ) {
+	        free( xclp );
+	        free( yclp );
+	    }
+
+
 	    return;
 	}
     }
@@ -1008,6 +1039,11 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 /* Draw the sucker */
     if (iclp >= 3)
 	(*draw)(xclp, yclp, iclp);
+
+    if ( xclp != _xclp ) {
+        free( xclp );
+        free( yclp );
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -1304,10 +1340,10 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
     xvp = xpp - xout;
     yvp = ypp - yout;
 
-    for ( i = 0; i <= n; i ++ ) {
+    for ( i = 0; i < n; i ++ ) {
         x1 = (PLFLT) x[i] ;
         y1 = (PLFLT) y[i] ;
-        if ( i < n ) {
+        if ( i < n-1 ) {
             x2 = (PLFLT) x[i+1] ;
             y2 = (PLFLT) y[i+1] ;
         } else {
@@ -1408,10 +1444,10 @@ pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
     xvp = xpp - xout;
     yvp = ypp - yout;
 
-    for ( i = 0; i <= n; i ++ ) {
+    for ( i = 0; i < n; i ++ ) {
         x1 = (PLFLT) x[i] ;
         y1 = (PLFLT) y[i] ;
-        if ( i < n ) {
+        if ( i < n-1 ) {
             x2 = (PLFLT) x[i+1] ;
             y2 = (PLFLT) y[i+1] ;
         } else {
