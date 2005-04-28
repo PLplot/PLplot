@@ -20,13 +20,12 @@ INDEX
 1. Build Instructions
 2. Changes relative to PLplot 5.5.2
   2.1 API
-    2.1.1 Default colour scheme
   2.2 Drivers
     2.2.1 GCW "Gnome Canvas Widget"
 3. Changes relative to PLplot 5.3.1
   3.1 API
-    3.1.1 Unicode
-    3.1.2 Default colour scheme
+    3.1.1 Deprecated functions
+    3.1.2 Unicode
     3.1.3 Extended cmap0 support
   3.2 Drivers
     3.2.1 PostScript
@@ -63,12 +62,7 @@ system has the pkg-config program (typically *nix systems).
 
 2.1 API
 
-
-2.1.1 Default colour scheme
-
-The default cmap0 colour scheme has been changed to use a Black pen on a
-White background.  The remaining colours were reorganized to produce the
-best possible results for the suite of PLplot examples.
+no change
 
 
 2.2 Drivers
@@ -77,21 +71,33 @@ best possible results for the suite of PLplot examples.
 2.2.1 GCW "Gnome Canvas Widget"
 
 A new feature allowing users to save plots to other file formats
-(ps, psc, png, jpg, gif) was added.  The save feature only is only
-partially functional at the moment -- there is no unicode text, and
-cmap1 shades are occasionally crazy.
+(ps, psc, png, jpg, gif) was added.  There are some issues with
+png, jpg, and gif files, and also with colormap changes, but these
+issues should be resolved soon.
+
+Dashed lines and hatched areas are now supported.  The fix that 
+enabled these features may also result in performance improvements
+for shade plots, and so render pixmap support unnecessary (although
+it won't be removed).  We would appreciate hearing user experiences
+on the mailing lists.
+
+The default page size has been changed to be consistent with that
+for the PostScript driver.
 
 
 3. Changes Relative to PLplot 5.3.1 (our last stable release)
-
-plParseOpts deprecated.  Use plparseopts (now documented) instead for all
-language interfaces.
 
 
 3.1 API
 
 
-3.1.1 Unicode
+3.1.1 Deprecated functions
+
+plParseOpts is deprecated.  Use plparseopts (now documented) instead 
+for all language interfaces.
+
+
+3.1.2 Unicode
 
 PLplot now supports unicode text, and this is detailed in the PLplot
 Programmers Reference Manual in the section on "Setting Character
@@ -111,13 +117,6 @@ especially demonstrated in examples x23 and x24.  (The latter example
 requires special fonts to be installed and at run time environment 
 variables have to be set to access them, see the self-documentation of 
 the example 24 source code).  
-
-
-3.1.2 Default colour scheme
-
-The default cmap0 colour scheme has been changed to use a Black pen on a
-White background.  The remaining colours were reorganized to produce the
-best possible results for the suite of PLplot examples.
 
 
 3.1.3 Extended cmap0 support.
