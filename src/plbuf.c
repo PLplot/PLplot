@@ -4,6 +4,7 @@
 
     Copyright (C) 1992  Maurice LeBrun
     Copyright (C) 2004  Alan W. Irwin
+    Copyright (C) 2005  Thomas J. Duck
 
     This file is part of PLplot.
 
@@ -251,6 +252,45 @@ plbuf_image(PLStream *pls, IMG_DT *img_dt)
 }
 
 /*--------------------------------------------------------------------------*\
+ * plbuf_text()
+ *
+ * Handle text call.
+\*--------------------------------------------------------------------------*/
+
+static void
+plbuf_text(PLStream *pls, EscText *text)
+{
+  PLINT n;
+
+  dbug_enter("plbuf_text");
+  
+  fwrite(&pls->chrht, sizeof(PLFLT), 1, pls->plbufFile);
+  fwrite(&pls->diorot, sizeof(PLFLT), 1, pls->plbufFile);
+  fwrite(&pls->clpxmi, sizeof(PLFLT), 1, pls->plbufFile);
+  fwrite(&pls->clpxma, sizeof(PLFLT), 1, pls->plbufFile);
+  fwrite(&pls->clpymi, sizeof(PLFLT), 1, pls->plbufFile);
+  fwrite(&pls->clpyma, sizeof(PLFLT), 1, pls->plbufFile);
+    
+  fwrite(&text->base, sizeof(PLINT), 1, pls->plbufFile);
+  fwrite(&text->just, sizeof(PLFLT), 1, pls->plbufFile);
+  fwrite(text->xform, sizeof(PLFLT), 4, pls->plbufFile);
+  fwrite(&text->x, sizeof(PLINT), 1, pls->plbufFile);
+  fwrite(&text->y, sizeof(PLINT), 1, pls->plbufFile);
+  fwrite(&text->refx, sizeof(PLINT), 1, pls->plbufFile);
+  fwrite(&text->refy, sizeof(PLINT), 1, pls->plbufFile);
+
+  if(text->string!=NULL) {
+    n = strlen(text->string)+1;
+    fwrite(&n,sizeof(PLINT),1,pls->plbufFile);
+    fwrite(text->string, sizeof(char), n, pls->plbufFile);
+  }
+  else {
+    n = 0;
+    fwrite(&n,sizeof(PLINT),1,pls->plbufFile);
+  }
+}
+
+/*--------------------------------------------------------------------------*\
  * plbuf_esc()
  *
  * Escape function.  Note that any data written must be in device
@@ -261,6 +301,7 @@ plbuf_image(PLStream *pls, IMG_DT *img_dt)
  *	PLESC_FILL	Fill polygon
  *	PLESC_SWIN	Set plot window parameters
  *      PLESC_IMAGE     Draw image
+ *      PLESC_HAS_TEXT  Draw PostScript text
 \*--------------------------------------------------------------------------*/
 
 void
@@ -280,6 +321,10 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 	break;
     case PLESC_IMAGE:
 	plbuf_image(pls, (IMG_DT *) ptr);
+	break;
+    case PLESC_HAS_TEXT:
+      if(ptr!=NULL) /* Check required by GCW driver, please don't remove */
+	  plbuf_text(pls, (EscText *) ptr);
 	break;
     }
 }
@@ -501,10 +546,14 @@ rdbuf_state(PLStream *pls)
  *	PLESC_FILL	Fill polygon
  *	PLESC_SWIN	Set plot window parameters
  *      PLESC_IMAGE     Draw image
+ *      PLESC_HAS_TEXT  Draw PostScript text
 \*--------------------------------------------------------------------------*/
 
 static void
 rdbuf_image(PLStream *pls);
+
+static void
+rdbuf_text(PLStream *pls);
 
 static void
 rdbuf_esc(PLStream *pls)
@@ -524,6 +573,9 @@ rdbuf_esc(PLStream *pls)
 	break;
     case PLESC_IMAGE:
 	rdbuf_image(pls);
+	break;
+    case PLESC_HAS_TEXT:
+        rdbuf_text(pls);
 	break;
     }
 }
@@ -614,6 +666,53 @@ rdbuf_swin(PLStream *pls)
     fread(&plwin.wyma, sizeof(PLFLT), 1, pls->plbufFile);
 
     plP_swin(&plwin);
+}
+
+/*--------------------------------------------------------------------------*\
+ * rdbuf_text()
+ *
+ * Draw PostScript text.
+\*--------------------------------------------------------------------------*/
+
+static void
+rdbuf_text(PLStream *pls)
+{
+  EscText text;
+  PLFLT xform[4];
+  PLINT n;
+
+  text.xform = xform;
+
+  fread(&pls->chrht, sizeof(PLFLT), 1, pls->plbufFile);
+  fread(&pls->diorot, sizeof(PLFLT), 1, pls->plbufFile);
+  fread(&pls->clpxmi, sizeof(PLFLT), 1, pls->plbufFile);
+  fread(&pls->clpxma, sizeof(PLFLT), 1, pls->plbufFile);
+  fread(&pls->clpymi, sizeof(PLFLT), 1, pls->plbufFile);
+  fread(&pls->clpyma, sizeof(PLFLT), 1, pls->plbufFile);
+
+  fread(&text.base, sizeof(PLINT), 1, pls->plbufFile);
+  fread(&text.just, sizeof(PLFLT), 1, pls->plbufFile);
+  fread(text.xform, sizeof(PLFLT), 4, pls->plbufFile);
+  fread(&text.x, sizeof(PLINT), 1, pls->plbufFile);
+  fread(&text.y, sizeof(PLINT), 1, pls->plbufFile);
+  fread(&text.refx, sizeof(PLINT), 1, pls->plbufFile);
+  fread(&text.refy, sizeof(PLINT), 1, pls->plbufFile);
+
+  fread(&n,sizeof(PLINT),1,pls->plbufFile);
+
+  if(n>0) {
+    if( (text.string=(char *)malloc(n*sizeof(char))) == NULL)
+      plabort("rdbuf_text: Insufficient memory");
+
+    fread(text.string, sizeof(char), n, pls->plbufFile);
+  }
+  else {
+    text.string = NULL;
+  }
+
+  if(text.string != NULL)
+    plP_text(1, text.just, text.xform, text.x, text.y,
+	     text.refx, text.refy, text.string);
 }
 
 /*--------------------------------------------------------------------------*\
