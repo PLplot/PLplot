@@ -26,6 +26,10 @@
 #include "plcdemos.h"
 #include "plevent.h"
 
+#if !defined(M_PI)
+#define M_PI 3.14159265358979323846
+#endif
+
 /* Pairs of points making the line segments used to plot the user defined arrow */
 static PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
 static PLFLT arrow_y[6] = {0.0, 0.0, 0.2, 0.0, -0.2, 0.0};
@@ -35,11 +39,11 @@ static PLFLT arrow2_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
 /*--------------------------------------------------------------------------*\
  * main
  *
- * Generates several simple vector plots.  
+ * Generates several simple vector plots.
  \*--------------------------------------------------------------------------*/
 
-/* 
- * Vector plot of the circulation about the origin 
+/*
+ * Vector plot of the circulation about the origin
  */
 void
 circulation() {
@@ -94,8 +98,8 @@ circulation() {
 
 }
 
-/* 
- * Vector plot of flow through a constricted pipe 
+/*
+ * Vector plot of flow through a constricted pipe
  */
 void
 constriction() {
@@ -176,15 +180,22 @@ f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
     }
 }
 
-/* 
- * Vector plot of the gradient of a shielded potential (see example 9) 
+/*
+ * Vector plot of the gradient of a shielded potential (see example 9)
  */
 void potential() {
+#if !defined(WIN32)
     const int nper = 100;
     const int nlevel = 10;
     const int nr = 20;
     const int ntheta = 20;
-  
+#else
+#define nper    100
+#define nlevel   10
+#define nr       20
+#define ntheta   20
+#endif
+
     int i,j;
     PLFLT eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
     PLFLT div1, div1i, div2, div2i;
@@ -193,7 +204,7 @@ void potential() {
     PLFLT px[nper], py[nper], clevel[nlevel];
     PLcGrid2 cgrid2;
 
-  
+
     /* Create data to be plotted */
     plAlloc2dGrid(&cgrid2.xg,nr,ntheta);
     plAlloc2dGrid(&cgrid2.yg,nr,ntheta);
@@ -239,9 +250,9 @@ void potential() {
 	    div2 = sqrt(pow(x-d2, 2.) + pow(y+d2, 2.) + pow(eps, 2.));
 	    div2i = sqrt(pow(x-d2i, 2.) + pow(y+d2i, 2.) + pow(eps, 2.));
 	    z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
-	    u[i][j] = -q1*(x-d1)/pow(div1,3.) - q1i*(x-d1i)/pow(div1i,3.0) 
+	    u[i][j] = -q1*(x-d1)/pow(div1,3.) - q1i*(x-d1i)/pow(div1i,3.0)
 		- q2*(x-d2)/pow(div2,3.) - q2i*(x-d2i)/pow(div2i,3.);
-	    v[i][j] = -q1*(y-d1)/pow(div1,3.) - q1i*(y-d1i)/pow(div1i,3.0) 
+	    v[i][j] = -q1*(y-d1)/pow(div1,3.) - q1i*(y-d1i)/pow(div1i,3.0)
 		- q2*(y+d2)/pow(div2,3.) - q2i*(y+d2i)/pow(div2i,3.);
 	}
     }
@@ -262,7 +273,7 @@ void potential() {
     plcont(z,nr,ntheta,1,nr,1,ntheta,clevel,nlevel,pltr2,(void *) &cgrid2);
     pllsty(1);
     plcol0(1);
-    
+
     /* Plot the vectors of the gradient of the potential */
     plcol0(2);
     plvect(u,v,nr,ntheta,25.0,pltr2,(void *)&cgrid2);
@@ -275,7 +286,7 @@ void potential() {
 	py[i] = rmax*sin(theta);
     }
     plline(nper,px,py);
-    
+
     plFree2dGrid(z,nr,ntheta);
     plFree2dGrid(cgrid2.xg,nr,ntheta);
     plFree2dGrid(cgrid2.yg,nr,ntheta);
@@ -304,12 +315,12 @@ main(int argc, char *argv[])
     narr = 6;
     fill = 0;
 
-    /* Set arrow style using arrow_x and arrow_y then 
+    /* Set arrow style using arrow_x and arrow_y then
        plot using these arrows.*/
     plsvect(arrow_x, arrow_y, narr, fill);
     constriction();
 
-    /* Set arrow style using arrow2_x and arrow2_y then 
+    /* Set arrow style using arrow2_x and arrow2_y then
        plot using these filled arrows. */
     fill = 1;
     plsvect(arrow2_x, arrow2_y, narr, fill);
