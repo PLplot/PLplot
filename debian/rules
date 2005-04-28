@@ -47,7 +47,7 @@ config-stamp: autotools-stamp
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl  \
                     --enable-tk --enable-gd --enable-dyndrivers         \
                     --enable-static --enable-python --with-pkg-config   \
-                    --enable-gnome --with-double --disable-linuxvga     \
+                    --enable-gcw --with-double --disable-linuxvga     \
                     --infodir=/usr/share/info --with-freetype           \
                     --without-rpath --with-prebuiltdoc --enable-java    \
 		    $(javasetup) --with-pthreads --with-ltdlsystem      \

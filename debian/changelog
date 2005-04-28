@@ -1,3 +1,13 @@
+plplot (5.5.2-1) experimental; urgency=low
+
+  NOT YET RELEASED !
+
+  * New uspstream release (development branch, hence the upload to
+    experiemntal).
+  * The plplot9-driver-gnome package is replaced by plplot9-driver-gcw.
+
+ --
+
 plplot (5.3.1-4) unstable; urgency=low
 
   * debian/rules: Added --with-freefont option to configure

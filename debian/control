@@ -11,7 +11,7 @@ Architecture: any
 Section: libs
 Conflicts: libplplot5, plplot (<< 5)
 Depends: ${shlibs:Depends}
-Suggests: plplot9-driver-xwin, plplot9-driver-gnome, plplot9-driver-gd, plplot-tcl
+Suggests: plplot9-driver-xwin, plplot9-driver-gcw, plplot9-driver-gd, plplot-tcl
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -97,13 +97,16 @@ Description: Scientific plotting library (X11 driver)
  .
  Homepage: http://www.plplot.org
 
-Package: plplot9-driver-gnome
+Package: plplot9-driver-gcw
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}
-Description: Scientific plotting library (Gnome canvas driver)
- This package provides the Gnome canvas driver module for PLplot, a
- scientific plotting library.
+Conflicts: plplot9-driver-gnome
+Replaces: plplot9-driver-gnome
+Description: Scientific plotting library (Gnome Canvas Widget driver)
+ This package provides the Gnome Canvas Widget driver module for PLplot, a
+ scientific plotting library.  This package replaces the (now deprecated)
+ plplot9-driver-gnome package.
  .
  Homepage: http://www.plplot.org
 
