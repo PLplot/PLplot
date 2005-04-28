@@ -284,6 +284,12 @@ void file_ok_sel(GtkWidget *w, gpointer data)
 
   PLINT icol0,icol1,ncol0,ncol1;
   PLColor *cmap0,*cmap1;
+
+  struct stat buf;
+
+  GtkDialog *dialog;
+  GtkWidget *hbox,*message,*icon;
+  gint result;
   
   /* Get the current canvas */
   notebook = GTK_NOTEBOOK(data);
@@ -293,11 +299,41 @@ void file_ok_sel(GtkWidget *w, gpointer data)
 	   GTK_CONTAINER(gtk_container_get_children(
            GTK_CONTAINER(scrolled_window))->data))->data);
 
-  /* Hide the file selection widget, and get the file name */
+  /* Get the file name */
   fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
-  gtk_widget_hide(GTK_WIDGET(fs));
   fname = strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
   if(fname==NULL) plabort("GCW driver: Insufficient memory.");
+
+  /* Check to see if the file already exists, and respond appropriately */
+  if(stat(fname,&buf)==0) {
+
+    /* Confirm the user wants to overwrite the existing file */
+    dialog = GTK_DIALOG(gtk_dialog_new_with_buttons("",
+		          GTK_WINDOW(filew),
+			  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                          GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL));
+
+    message = gtk_label_new ("");
+    gtk_label_set_markup(GTK_LABEL(message),
+			 "<span size=\"large\"><b>File exists.  "
+			 "Overwrite?</b></span>");
+    icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION,
+				       GTK_ICON_SIZE_DIALOG);
+    hbox = gtk_hbox_new(FALSE,0);
+    gtk_box_pack_start(GTK_BOX(hbox), icon, TRUE, TRUE, 10);
+    gtk_box_pack_start(GTK_BOX(hbox), message, TRUE, TRUE, 10);
+    gtk_container_add(GTK_CONTAINER(dialog->vbox),hbox);
+
+    gtk_widget_show_all(GTK_WIDGET(dialog));
+
+    result = gtk_dialog_run(dialog);
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+    if(result==GTK_RESPONSE_REJECT) return;
+  }
+
+  /* Hide the file selection widget */
+  gtk_widget_hide(GTK_WIDGET(fs));
 
   /* Put the focus back on the notebook */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
