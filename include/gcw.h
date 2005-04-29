@@ -71,6 +71,24 @@ typedef struct {
 
 } GcwPLdev;
 
+/* Physical dimensions */
+
+/* mm per inch */
+#define MM_PER_IN (25.4)
+
+/* pixels per inch */
+#define PIXELS_PER_IN (133.333333)
+
+/* pixels per mm */
+#define PIXELS_PER_MM (PIXELS_PER_IN / MM_PER_IN)
+
+/* Default dimensions of the canvas (in inches) */
+#define CANVAS_WIDTH (10.)
+#define CANVAS_HEIGHT (7.)
+
+/* The zoom factor for 100% zoom in */
+#define ZOOM100 0.8
+#define ZOOMSTEP 1.25
 
 /* Prototypes */
 void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas);
@@ -86,3 +104,4 @@ void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap);
 void gcw_use_foreground_group(GnomeCanvas* canvas);
 void gcw_use_background_group(GnomeCanvas* canvas);
 void gcw_use_default_group(GnomeCanvas* canvas);
+guint32 plcolor_to_rgba(PLColor color, guchar alpha);

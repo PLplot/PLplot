@@ -36,7 +36,7 @@ EXTRA_LTLIBRARIES = \
 	gnome.la \
 	hpgl.la \
 	impress.la \
-	libgcw.la \
+	gcw.la \
 	linuxvga.la \
 	ljii.la \
 	ljiip.la \
@@ -60,6 +60,7 @@ drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 libtclmatrix = $(top_builddir)/bindings/tcl/libtclmatrix$(LIB_TAG).la
+libplplotcanvas = $(top_builddir)/drivers/libplplotcanvas$(LIB_TAG).la
 
 # The variable below will force building of the dyndrivers info files
 # (<driver>.rc) and their installation in the drivers directory
@@ -103,7 +104,7 @@ cgm_la_CFLAGS = $(CDINCCMD)
 gd_la_CFLAGS = $(GDINCCMD)
 aqt_la_CFLAGS = $(AQTINCCMD)
 gnome_la_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
-libgcw_la_CFLAGS = $(GCW_CFLAGS)
+gcw_la_CFLAGS = $(GCW_CFLAGS)
 ntk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_builddir)/bindings/tcl \
@@ -167,8 +168,16 @@ impress_la_SOURCES = impress.c
 impress_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_gcw
-libgcw_la_SOURCES = gcw.c plplotcanvas.c plplotcanvas-hacktext.c
-libgcw_la_LDFLAGS = $(ldflags) $(libplplot) $(GCW_LIBS) $(lmflag)
+lib_LTLIBRARIES = libplplotcanvas@LIB_TAG@.la
+libplplotcanvas@LIB_TAG@_la_SOURCES = plplotcanvas.c
+libplplotcanvas@LIB_TAG@_la_LDFLAGS = \
+	-version-info 0:0:0 $(RPATH) -no-undefined \
+	$(libplplot) $(GCW_LIBS) $(lmflag)
+
+gcw_la_SOURCES = gcw.c plplotcanvas-hacktext.c
+gcw_la_LDFLAGS = $(ldflags) $(libplplotcanvas) \
+	$(libplplot) $(GCW_LIBS) $(lmflag)
+gcw_la_DEPENDENCIES = libplplotcanvas@LIB_TAG@.la
 endif
 
 linuxvga_la_SOURCES = linuxvga.c
@@ -241,6 +250,12 @@ else
 # a convenience library to be included in libplplot.
 
 noinst_LTLIBRARIES = libplplotdrv.la
+
+if enable_gcw
+# All source that is in libplplotcanvas.
+gcwsources = \
+	$(top_srcdir)
+endif
 
 if enable_tk
 # All source that is in libplplottcltk.
@@ -344,7 +359,7 @@ cgm_lo_CFLAGS = $(CDINCCMD)
 gd_lo_CFLAGS = $(GDINCCMD)
 aqt_lo_CFLAGS = $(AQTINCCMD)
 gnome_lo_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
-libgcw_lo_CFLAGS = $(GCW_CFLAGS)
+gcw_lo_CFLAGS = $(GCW_CFLAGS)
 ntk_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_builddir)/bindings/tcl \
@@ -381,7 +396,7 @@ AM_CPPFLAGS = \
 	$(gd_lo_CFLAGS) \
 	$(aqt_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
-	$(libgcw_lo_CFLAGS) \
+	$(gcw_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
 	$(wingcc_lo_CFLAGS) \
 	$(xwin_lo_CFLAGS) \

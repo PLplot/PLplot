@@ -40,7 +40,7 @@ ourexecpythondir = $(pythondir)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
-libgcw = $(top_builddir)/drivers/libgcw.la
+libplplotcanvas = $(top_builddir)/drivers/libplplotcanvas$(LIB_TAG).la
 
 
 # NUMERICINCCMD only required until we quit supporting python 1.5
@@ -86,13 +86,13 @@ plplotcanvas.defs:
 
 gcwmodule_la_SOURCES  = gcwmodule.c
 gcwmodule_la_CFLAGS = $(GCW_CFLAGS) $(PYGCW_CFLAGS)
-gcwmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS) $(libgcw) \
-	               $(GCW_LIBS) $(PYGCW_LIBS)
+gcwmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS) \
+		       $(libplplotcanvas) $(GCW_LIBS) $(PYGCW_LIBS)
 
 cplplotcanvasmodule_la_SOURCES  = cplplotcanvas.c cplplotcanvasmodule.c
 cplplotcanvasmodule_la_CFLAGS = $(GCW_CFLAGS) $(PYGCW_CFLAGS)
 cplplotcanvasmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS) \
-                                 $(libgcw) $(GCW_LIBS) $(PYGCW_LIBS)
+                                 $(libplplotcanvas) $(GCW_LIBS) $(PYGCW_LIBS)
 
 
 if enable_python
