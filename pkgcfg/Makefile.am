@@ -42,6 +42,10 @@ if enable_f77
 pkgconfig_DATA += plplot@LIB_TAG@-f77.pc
 endif
 
+if enable_gcw
+pkgconfig_DATA += plplot@LIB_TAG@-gnome2.pc
+endif
+
 ### How?
 
 $(pkgconfig_DATA): pc-stamp
