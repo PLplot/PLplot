@@ -67,7 +67,7 @@ builtin([define], [PL_DRIVERS_DEVICE_LIST], [
     gnome:gnome:no,
     hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
     imp:impress:no,
-    gcw:gcw:no,
+    gcw:gcw:yes,
     linuxvga:linuxvga:yes,
     ljii:ljii:no,
     ljiip:ljiip:no,
