@@ -22,11 +22,16 @@ NOTICE
   USA 
 */
 
+#ifndef __GCW_H__
+#define __GCW_H__
+
 #include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
 
 #include <math.h>
+#include <stdio.h>
+#include <sys/stat.h>
 
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -73,24 +78,29 @@ typedef struct {
 
 /* Physical dimensions */
 
+/* pixels per mm */
+#define PIXELS_PER_MM (4.)
+
 /* mm per inch */
 #define MM_PER_IN (25.4)
 
 /* pixels per inch */
-#define PIXELS_PER_IN (133.333333)
-
-/* pixels per mm */
-#define PIXELS_PER_MM (PIXELS_PER_IN / MM_PER_IN)
+#define PIXELS_PER_IN (PIXELS_PER_MM*MM_PER_IN)
 
 /* Default dimensions of the canvas (in inches) */
 #define CANVAS_WIDTH (10.)
-#define CANVAS_HEIGHT (7.)
+#define CANVAS_HEIGHT (7.5)
 
 /* The zoom factor for 100% zoom in */
-#define ZOOM100 0.8
-#define ZOOMSTEP 1.25
+#define ZOOM100 (1.0)
+#define ZOOMSTEP (1.25)
 
-/* Prototypes */
+
+/*=========================================================================*/
+/* GCW "Gnome Canvas Widget" Library prototypes.  The functions are defined
+ * in gcw-lib.c. 
+ */
+
 void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas);
 void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect);
 void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
@@ -104,4 +114,6 @@ void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap);
 void gcw_use_foreground_group(GnomeCanvas* canvas);
 void gcw_use_background_group(GnomeCanvas* canvas);
 void gcw_use_default_group(GnomeCanvas* canvas);
-guint32 plcolor_to_rgba(PLColor color, guchar alpha);
+
+
+#endif /* __GCW_H__ */

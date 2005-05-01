@@ -26,10 +26,15 @@ NOTICE
   USA 
 */
 
+#ifndef __PLPLOTCANVAS_H__
+#define __PLPLOTCANVAS_H__
+
 #include "plplot.h"
+#include "gcw.h"
 
 #include <glib-object.h>
 #include <libgnomecanvas/libgnomecanvas.h>
+
 
 G_BEGIN_DECLS
 
@@ -48,6 +53,7 @@ G_BEGIN_DECLS
 typedef struct _PlplotCanvas PlplotCanvas;
 typedef struct _PlplotCanvasClass PlplotCanvasClass;
 
+
 struct _PlplotCanvas {
   GnomeCanvas parent;
 
@@ -56,19 +62,6 @@ struct _PlplotCanvas {
 
 struct _PlplotCanvasClass {
   GnomeCanvasClass parent;
-
-  void (*set_aspect)(PlplotCanvas*,gdouble);
-  void (*set_zoom)(PlplotCanvas*,gdouble);
-  void (*set_size)(PlplotCanvas*,gdouble,gdouble);
-  void (*get_viewport)(PlplotCanvas* self,gdouble xmin1,
-				gdouble xmax1,gdouble ymin1,gdouble ymax1,
-				gdouble* xmin2,gdouble* xmax2,
-				gdouble* ymin2,gdouble* ymax2);
-  void (*use_text)(PlplotCanvas* canvas,gboolean use_text);
-  void (*use_fast_rendering)(PlplotCanvas* canvas,gboolean use_fast_rendering);
-  void (*use_foreground_group)(PlplotCanvas* canvas);
-  void (*use_background_group)(PlplotCanvas* canvas);
-  void (*use_default_group)(PlplotCanvas* canvas);
 };
 
 GType plplot_canvas_get_type();
@@ -672,3 +665,5 @@ void plplot_canvas_plxormod(PlplotCanvas* self, PLINT mode, PLINT *status);
 
 
 G_END_DECLS
+
+#endif /* __PLPLOTCANVAS_H__ */
