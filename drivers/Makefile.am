@@ -60,7 +60,7 @@ drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 libtclmatrix = $(top_builddir)/bindings/tcl/libtclmatrix$(LIB_TAG).la
-libplplotcanvas = $(top_builddir)/drivers/libplplotcanvas$(LIB_TAG).la
+libplplotgnome2 = $(top_builddir)/drivers/libplplotgnome2$(LIB_TAG).la
 
 # The variable below will force building of the dyndrivers info files
 # (<driver>.rc) and their installation in the drivers directory
@@ -168,16 +168,16 @@ impress_la_SOURCES = impress.c
 impress_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_gcw
-lib_LTLIBRARIES = libplplotcanvas@LIB_TAG@.la
-libplplotcanvas@LIB_TAG@_la_SOURCES = plplotcanvas.c
-libplplotcanvas@LIB_TAG@_la_LDFLAGS = \
+lib_LTLIBRARIES = libplplotgnome2@LIB_TAG@.la
+libplplotgnome2@LIB_TAG@_la_SOURCES = plplotcanvas.c gcw-lib.c
+libplplotgnome2@LIB_TAG@_la_LDFLAGS = \
 	-version-info 0:0:0 $(RPATH) -no-undefined \
 	$(libplplot) $(GCW_LIBS) $(lmflag)
 
-gcw_la_SOURCES = gcw.c plplotcanvas-hacktext.c
-gcw_la_LDFLAGS = $(ldflags) $(libplplotcanvas) \
+gcw_la_SOURCES = gcw-driver.c plplotcanvas-hacktext.c
+gcw_la_LDFLAGS = $(ldflags) $(libplplotgnome2) \
 	$(libplplot) $(GCW_LIBS) $(lmflag)
-gcw_la_DEPENDENCIES = libplplotcanvas@LIB_TAG@.la
+gcw_la_DEPENDENCIES = libplplotgnome2@LIB_TAG@.la
 endif
 
 linuxvga_la_SOURCES = linuxvga.c
@@ -252,9 +252,12 @@ else
 noinst_LTLIBRARIES = libplplotdrv.la
 
 if enable_gcw
-# All source that is in libplplotcanvas.
-gcwsources = \
-	$(top_srcdir)
+# All source that is in libplplotgnome2.
+gnome2sources = \
+	$(top_srcdir)/drivers/plplotcanvas.c \
+	$(top_srcdir)/drivers/plplotcanvas-hacktext.c \
+	$(top_srcdir)/drivers/gcw-lib.c \
+	$(top_srcdir)/drivers/gcw-driver.c
 endif
 
 if enable_tk
@@ -317,9 +320,8 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	aqt.c \
 	cgm.c \
 	dg300.c \
-	gcw.c \
-	plplotcanvas.c \
-	plplotcanvas-hacktext.c \
+	gcw-lib.c \
+	gcw-driver.c
 	gd.c \
 	gnome.c \
 	hpgl.c \
@@ -332,6 +334,8 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	null.c \
 	pbm.c \
 	plmeta.c \
+	plplotcanvas.c \
+	plplotcanvas-hacktext.c \
 	ps.c \
 	pstex.c \
 	tek.c \
