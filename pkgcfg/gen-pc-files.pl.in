@@ -57,6 +57,11 @@ $master_pkg = "";
              LIB  => "${stem}f77$lib_tag",
              INC  => '' },
 
+  'gnome2' => { NAME => 'Gnome',
+       	     DESC => 'PLplot for Gnome/GTK, ',
+             LIB  => "${stem}gnome2$lib_tag",
+             INC  => '@GCW_CFLAGS@' },
+
   'tcl' => { NAME => 'Tcl/Tk',
              DESC => 'Tcl/Tk bindings, ',
              LIB  => "${stem}tcltk$lib_tag",
@@ -78,8 +83,15 @@ for $pkg (keys %pc_files_info) {
     : "$top_builddir/bindings/$pkg/.libs/$libname.lai";
 
   if (not open (LAI, "< $lai_file")) {
-    warn "Cannot open $lai_file";
-    next;
+
+    $lai_file = ($pkg eq $master_pkg)
+      ? "$top_builddir/src/.libs/$libname.lai"
+      : "$top_builddir/drivers/.libs/$libname.lai";
+
+    if (not open (LAI, "< $lai_file")) {
+      warn "Cannot open $lai_file";
+      next;
+    }
   }
 
   while (<LAI>) {
