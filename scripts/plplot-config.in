@@ -3,7 +3,7 @@
 # plplot-config -- Utility to help building projects against plplot
 #
 # Copyright (C) 2004  Maurice LeBrun
-# Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004, 2005  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -30,6 +30,9 @@ output_cflags () {
     if test "$with_tcl" = "yes" -a "$enable_tcl" = "yes" ; then
         OUT="$OUT @TCLINCCMD@ @TKINCCMD@"
     fi
+    if test "$with_gcw" = "yes" -a "$enable_gcw" = "yes" ; then
+        OUT="$OUT @GCW_CFLAGS@"
+    fi
 }
 
 #----------------------------------------------------------------------------
@@ -49,6 +52,10 @@ output_libs () {
     fi
     if test "$with_tcl" = "yes" -a "$enable_tcl" = "yes" ; then
 	plplot_libspec="-L${prefix}/lib -lplplottcltk@LIB_TAG@"
+	LINKER=@CC@
+    fi
+    if test "$with_gcw" = "yes" -a "$enable_gcw" = "yes" ; then
+	plplot_libspec="-L${prefix}/lib -lplplotgnome2@LIB_TAG@"
 	LINKER=@CC@
     fi
 
@@ -101,9 +108,10 @@ Options:
         [--with-c++]
         [--with-f77]
         [--with-tcl]
+        [--with-gcw]
 	[--help]
 
-Note: --with-c++, --with-f77, and --with-tcl are mutually exclusive
+Note: --with-c++, --with-f77, --with-tcl, and with-gcw are mutually exclusive
 EOF
 	exit $1
 }
@@ -116,6 +124,7 @@ version=@VERSION@
 enable_cxx=@enable_cxx@
 enable_f77=@enable_f77@
 enable_tcl=@enable_tcl@
+enable_gcw=@enable_gcw@
 
 if test $# -eq 0; then
     usage 1 1>&2
@@ -146,22 +155,28 @@ while test $# -gt 0; do
 	    echo_libs=yes
 	    ;;
 	--with-c++)
-	    if test "$with_f77" = "yes" -o "$with_tcl" = "yes"; then
+	    if test "$with_f77" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_cxx=yes
 	    ;;
 	--with-f77)
-	    if test "$with_cxx" = "yes" -o "$with_tcl" = "yes"; then
+	    if test "$with_cxx" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_f77=yes
 	    ;;
 	--with-tcl)
-	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes"; then
+	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes" -o "$with_gcw" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_tcl=yes
+	    ;;
+	--with-gcw)
+	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes" -o "$with_tcl" = "yes"; then
+	      usage 1 1>&2
+	    fi
+	    with_gcw=yes
 	    ;;
 	--help)
 	    usage 1 1>&2

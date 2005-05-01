@@ -71,6 +71,9 @@ if test "$enable_gcw" = "yes"; then
 
   else
 
+    dnl Test for gthread-2.0 required by plplotcanvas_animation.c example
+    PKG_CHECK_MODULES(GCWTHREAD,gthread-2.0,, enable_gcwthread=no )
+
     dnl Test for the header files required by gcw/plplotcanvas
     headers=yes
     CPPFLAGS="$CPPFLAGS $GCW_CFLAGS"
@@ -147,10 +150,13 @@ fi # if test "$with_pkg_config""
 dnl The choice of the names GCW_FLAGS and GCW_LIBS is made by
 dnl the PKG_CHECK_MODULES macro.
 
+AC_SUBST(enable_gcw)
 AC_SUBST(GCW_CFLAGS)
 AC_SUBST(GCW_LIBS)
 AC_SUBST(PYGCW_CFLAGS)
 AC_SUBST(PYGCW_LIBS)
+AC_SUBST(GCWTHREAD_CFLAGS)
+AC_SUBST(GCWTHREAD_LIBS)
 
 AM_CONDITIONAL(enable_gcw, [test "$enable_gcw" = yes])
 AM_CONDITIONAL(enable_pygcw, [test "$enable_pygcw" = yes])
