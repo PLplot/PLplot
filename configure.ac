@@ -109,6 +109,11 @@ dnl unique soversion for now.
 CSIRO_SOVERSION=0:0:0
 AC_SUBST(CSIRO_SOVERSION)
 
+dnl Version number for the libplplotgnome* library distributed in drivers/.
+
+PLPLOTGNOME_SOVERSION=0:0:0
+AC_SUBST(PLPLOTGNOME_SOVERSION)
+
 dnl According to man package, PLPLOT_TCL_VERSION (used in the various
 dnl pkgIndex.tcl scripts) should be strictly numbers alternativing with
 dnl decimal points with the first number (the major number) signifying

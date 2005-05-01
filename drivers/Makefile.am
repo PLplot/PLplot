@@ -171,7 +171,7 @@ if enable_gcw
 lib_LTLIBRARIES = libplplotgnome2@LIB_TAG@.la
 libplplotgnome2@LIB_TAG@_la_SOURCES = plplotcanvas.c gcw-lib.c
 libplplotgnome2@LIB_TAG@_la_LDFLAGS = \
-	-version-info 0:0:0 $(RPATH) -no-undefined \
+	-version-info $(PLPLOTGNOME_SOVERSION) $(RPATH) -no-undefined \
 	$(libplplot) $(GCW_LIBS) $(lmflag)
 
 gcw_la_SOURCES = gcw-driver.c plplotcanvas-hacktext.c
