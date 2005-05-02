@@ -70,19 +70,41 @@ no change
 
 2.2.1 GCW "Gnome Canvas Widget"
 
-A new feature allowing users to save plots to other file formats
-(ps, psc, png, jpg, gif) was added.  There are some issues with
-png, jpg, and gif files, and also with colormap changes, but these
-issues should be resolved soon.
+The specialized gcw/plplotcanvas API is now contained in its own
+library named libplplotgnome2d.  To use this API, link your
+programs against that library instead of libplplotd.  This can most
+easily be achieved using pkg-config.  For example, to build foo.c
+with libplplotgnome2d, use
 
-Dashed lines and hatched areas are now supported.  The fix that 
+  gcc foo.c -o foo `PKG_CONFIG_PATH=/usr/local/lib/pkgconfig \
+  pkg-config --cflags --libs plplotd-gnome2`
+
+Users of the GCW driver in standalone mode (i.e., standard PLplot usage)
+do not need to worry about this.
+
+     Note that there will be some changes made to the specialized 
+gcw/plplotcanvas API in the coming weeks to try to simplify things
+and improve interoperability with other drivers.  The changes will be
+seen in both the C and Python interfaces.
+
+     In standalone mode, the user-interface has a new feature that 
+allows users to save plots to other file formats (ps, psc, png, jpg, 
+gif).  There are some font size issues with png, jpg, and gif files, and
+also with using multiple colormaps on one page, but these issues should 
+be resolved soon.
+
+     Dashed lines and hatched areas are now supported.  The fix that 
 enabled these features may also result in performance improvements
 for shade plots, and so render pixmap support unnecessary (although
 it won't be removed).  We would appreciate hearing user experiences
 on the mailing lists.
 
-The default page size has been changed to be consistent with that
+     The default page size has been changed to be consistent with that
 for the PostScript driver.
+
+     Finally, the gcw driver and libplplotgnome2d are now automatically
+built by any system that supports all of the required dependencies.
+There is no more need to use --enable-gcw with configure.
 
 
 3. Changes Relative to PLplot 5.3.1 (our last stable release)
@@ -194,14 +216,11 @@ in the PLplot Programmer's Reference Manual in the sections titled
 "The GCW Driver" and "Embedding Plots in Gnome/GTK Applications", 
 respectively.
 
-     Bindings for the PlplotCanvas are provided for the C and Python 
-programming languages.  Bindings for other languages that support GTK 
-are also possible, and expressions of interest can be sent to the PLplot 
-mailing lists.  Special examples that demonstrate the use of the 
-PlplotCanvas are provided for each language binding.
-
-     To install the GCW driver, use the "--enable-gcw" option during the
-configure step of the install process.
+     Bindings for the specialized GCW and PlplotCanvas APIs are provided
+for the C and Python programming languages.  Bindings for other languages 
+that support GTK are also possible, and expressions of interest can be 
+sent to the PLplot mailing lists.  Special examples that demonstrate the 
+use of the PlplotCanvas are provided for each language binding.
 
 For more information on GTK, see http://www.gtk.org/ .
 
