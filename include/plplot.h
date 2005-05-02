@@ -260,9 +260,9 @@ typedef void* PLPointer;
 /* Obsolete names */
 
 #define plParseInternalOpts(a, b, c)	c_plparseopts(a, b, c)
-#define plParseOpts(a, b, c)	c_plparseopts(a, b, c)
+#define plParseOpts(a, b, c)		c_plparseopts(a, b, c)
+#define c_plParseOpts(a, b, c)		c_plparseopts(a, b, c)
 #define plSetInternalOpt(a, b)		plSetOpt(a, b)
-
 /* Option table definition */
 
 typedef struct {
