@@ -35,7 +35,7 @@ function ix01c
   ## Parse and process command line arguments */
 
   ##    plMergeOpts(options, "x01c options", notes);
-  ##    plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ##    plparseopts(&argc, argv, PL_PARSE_FULL);
 
   ## Get version number, just for kicks */
 

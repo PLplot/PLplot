@@ -33,7 +33,7 @@ function x02c
 
   ## Parse and process command line arguments */
 
-  ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
   plschr(0.0, 3.5);
   plfont(4);

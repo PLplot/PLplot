@@ -37,7 +37,7 @@ function x03c
   
   ## Parse and process command line arguments */
 
-  ##    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ##    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
   ## Set up viewport and window, but do not draw box */
 

@@ -146,7 +146,7 @@ plResetOpts	--  Reset external option table info structure.
 plMergeOpts	--  Merge user option table into external info structure.  
 plSetUsage	--  Set the strings used in usage and syntax messages.  
 plSetOpt	--  Process input strings, treating them as an option and argument pair.  
-plParseOpts	--  Process options list using current options info.  
+plparseopts	--  Process options list using current options info.  
 plOptUsage	--  Print usage & syntax message.  
 
  Miscellaneous

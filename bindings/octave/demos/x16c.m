@@ -56,7 +56,7 @@ function ix16c
   ## Parse and process command line arguments 
 
   ##    plMergeOpts(options, "x16c options", notes);
-  ##    plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ##    plparseopts(&argc, argv, PL_PARSE_FULL);
 
   ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
 
