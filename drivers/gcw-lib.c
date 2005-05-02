@@ -47,17 +47,16 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
   debug("<gcw_set_canvas>\n");
 #endif
 
+  if(!GNOME_IS_CANVAS(canvas)) plexit("GCW driver: Canvas not found");
+
   /* Add the canvas to the device */
   dev->canvas=canvas;
-
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
 
   /* Attach the device to the canvas widget */
   g_object_set_data(G_OBJECT(canvas),"dev",(gpointer)dev);
 
   /* Determine if the canvas is antialiased */
   g_object_get(G_OBJECT(canvas),"aa",&(dev->aa),NULL);
-
 
   /* Add the background to the canvas and move it to the back */
   if(!GNOME_IS_CANVAS_ITEM(
@@ -68,7 +67,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 					  "y",0.,
 					  NULL)
     )) {
-    plabort("GCW driver: Canvas item not created.");
+    plabort("GCW driver <gcw_set_canvas>: Canvas item not created");
   }
 
   /* Set the clip to NULL */
@@ -87,7 +86,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 			"width-units", 0.0,
 			NULL)
     )) {
-    plabort("GCW driver: Canvas item not created.");
+    plabort("GCW driver <gcw_set_canvas>: Canvas item not created");
   }
 
   gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
@@ -101,7 +100,7 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 					  "y",0.,
 					  NULL)
     )) {
-    plabort("GCW driver: Canvas item not created.");
+    plabort("GCW driver <gcw_set_canvas>: Canvas item not created");
   }
 
   /* Set the clip to NULL */
@@ -133,10 +132,9 @@ void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect)
   debug("<gcw_set_canvas_aspect>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL )
+    plabort("GCW driver <gcw_set_canvas_aspect>: Device not found");
 
   /* Set the new width and height */
   if(aspect < default_aspect) {
@@ -169,10 +167,9 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
   debug("<gcw_set_canvas_zoom>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_set_canvas_zoom>: Device not found");
 
   /* Get the current magnification */
   if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
@@ -207,10 +204,9 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height)
   debug("<gcw_set_canvas_size>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_set_canvas_size>: Device not found");
 
   gcw_set_canvas_aspect(canvas,width/height);
 
@@ -236,10 +232,9 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
   debug("<gcw_set_canvas_viewport>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_set_canvas_viewport>: Device not found");
 
   *xmin2 = xmin1*(PLFLT)(dev->width)/(PIXELS_PER_IN*CANVAS_WIDTH);
   *xmax2 = xmax1*(PLFLT)(dev->width)/(PIXELS_PER_IN*CANVAS_WIDTH);
@@ -261,10 +256,9 @@ void gcw_use_text(GnomeCanvas* canvas,PLINT use_text)
   debug("<gcw_use_text>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_use_text>: Device not found");
 
 #ifdef HAVE_FREETYPE
   dev->use_text = (gboolean)use_text;
@@ -291,10 +285,9 @@ void gcw_use_fast_rendering(GnomeCanvas* canvas,PLINT use_fast_rendering)
   debug("<gcw_use_fast_rendering>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_use_fast_rendering>: Device not found");
 
   dev->use_fast_rendering = (gboolean)use_fast_rendering;
 }
@@ -310,10 +303,9 @@ void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_use_pixmap>: Device not found");
 
   dev->use_pixmap=(gboolean)use_pixmap;
 
@@ -341,10 +333,9 @@ void gcw_use_background_group(GnomeCanvas* canvas)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_use_background_group>: Device not found");
 
   dev->group_current = dev->group_background;
 }
@@ -352,10 +343,9 @@ void gcw_use_foreground_group(GnomeCanvas* canvas)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas)) plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_use_foreground_group>: Device not found");
 
   dev->group_current = dev->group_foreground;
 }
@@ -363,10 +353,9 @@ void gcw_use_default_group(GnomeCanvas* canvas)
 {
   GcwPLdev* dev;
 
-  if(!GNOME_IS_CANVAS(canvas))  plabort("GCW driver: Canvas not found.");
-
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <gcw_use_default_group>: Device not found");
 
   dev->group_current = dev->group_hidden;
 }
