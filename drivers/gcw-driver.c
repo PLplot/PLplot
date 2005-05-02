@@ -26,12 +26,12 @@ NOTICE
 DESCRIPTION
 
   This is the Gnome Canvas Widget driver, written by Thomas J. Duck 
-  following the heritage of the plplot Gnome driver by Rafael Laboissiere.  
-  Like all plplot drivers, this operates in standalone mode by default.  
+  following the heritage of the PLplot Gnome driver by Rafael Laboissiere.  
+  Like all PLplot drivers, this operates in standalone mode by default.  
   However, this driver can also be used to write to a user-supplied 
   GnomeCanvas.
 
-  Please see the plplot documentation for more information.
+  Please see the PLplot documentation for more information.
 
 
 DEVELOPMENT NOTES
@@ -137,7 +137,7 @@ static DrvOpt gcw_options[] =
     {NULL, DRV_INT, NULL, NULL}
   };
 
-GtkWidget *filew = NULL;
+GtkWidget *filew=NULL, *statusbar=NULL;
 
 void debug (char* msg)
 {
@@ -197,7 +197,8 @@ void zoom(gpointer data, gint flag) {
            GTK_CONTAINER(scrolled_window))->data))->data);
 
   /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <zoom>: Device not found");
 
   /* Determine the new magnification */
   if(flag==2) /* Zoom in */
@@ -243,7 +244,7 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   gchar *fname;
   FILE *f;
   guint n;
-  char devname[10];
+  char devname[10],str[100];
 
   PLINT cur_strm, new_strm;
 
@@ -261,11 +262,15 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   PLINT icol0,icol1,ncol0,ncol1;
   PLColor *cmap0,*cmap1;
 
+  gboolean errflag = FALSE;
+
   struct stat buf;
 
   GtkDialog *dialog;
   GtkWidget *hbox,*message,*icon;
   gint result;
+
+  guint context;
   
   /* Get the current canvas */
   notebook = GTK_NOTEBOOK(data);
@@ -278,7 +283,7 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   /* Get the file name */
   fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
   fname = strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
-  if(fname==NULL) plabort("GCW driver: Insufficient memory.");
+  if(fname==NULL) plabort("GCW driver <file_ok_sel>: Cannot obtain filename");
 
   /* Check to see if the file already exists, and respond appropriately */
   if(stat(fname,&buf)==0) {
@@ -290,12 +295,14 @@ void file_ok_sel(GtkWidget *w, gpointer data)
                           GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                           GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL));
 
-    message = gtk_label_new ("");
+    message = gtk_label_new("");
     gtk_label_set_markup(GTK_LABEL(message),
 			 "<span size=\"large\"><b>File exists.  "
 			 "Overwrite?</b></span>");
+
     icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION,
-				       GTK_ICON_SIZE_DIALOG);
+				    GTK_ICON_SIZE_DIALOG);
+
     hbox = gtk_hbox_new(FALSE,0);
     gtk_box_pack_start(GTK_BOX(hbox), icon, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(hbox), message, TRUE, TRUE, 10);
@@ -311,68 +318,123 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   /* Hide the file selection widget */
   gtk_widget_hide(GTK_WIDGET(fs));
 
+  /* Retrieve the device */
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <file_sel_ok>: Device not found");
+
   /* Put the focus back on the notebook */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
   gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
 
   /* Test that we can open and write to the file */
-  if((f=fopen(fname,"w"))==NULL) {
-    plwarn("GCW driver: Cannot open output file.");
-    return;
-  }
+  if((f=fopen(fname,"w"))==NULL)
+    plabort("GCW driver <file_ok_sel>: Cannot open output file");
   fclose(f);
+  remove(fname);
 
-  /* Get the file extension and make sure we recognize it */
+  /* Get the file extension and make sure we recognize it.  Allow names
+   * of display devices as well.
+   *
+   * Note that we can't replot to xwin or tk devices, which can't open a
+   * display for some reason.
+   *
+   */
   n = strlen(fname);
   if     (strcasecmp(&fname[n-3],"png")==0)  sprintf(devname,"png");
   else if(strcasecmp(&fname[n-3],"gif")==0)  sprintf(devname,"gif");
-  else if(strcasecmp(&fname[n-3],"jpg")==0)  sprintf(devname,"jpeg");
+  else if(strcasecmp(&fname[n-3],"jpg")==0)  sprintf(devname,"jpg");
   else if(strcasecmp(&fname[n-4],"jpeg")==0) sprintf(devname,"jpeg");
   else if(strcasecmp(&fname[n-2],"ps")==0)   sprintf(devname,"ps");
   else if(strcasecmp(&fname[n-3],"psc")==0)  sprintf(devname,"psc");
+  else if(strcasecmp(&fname[n-4],"xwin")==0) sprintf(devname,"xwin");
+  else if(strcasecmp(&fname[n-3],"gcw")==0) sprintf(devname,"gcw");
+  else if(strcasecmp(&fname[n-2],"tk")==0) sprintf(devname,"tk");
   else {
-    plwarn("GCW driver: File type not recognized");
-    return;
+    if(statusbar!=NULL) {
+      context=gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar),"PLplot");
+      gtk_statusbar_push(GTK_STATUSBAR(statusbar), context,
+			 " WARNING: File type not recognized (unknown "
+			 "extension).  Use one of ps, psc, png, jpg, or "
+			 "gif."
+			 );
+      return;
+    }
+    else plabort("GCW driver <file_ok_sel>: File type not recognized");
+  }
+  /* Check that we are set up appropriately for device */
+  if( strcmp(devname,"ps")==0 || strcmp(devname,"psc")==0 ) {
+    if(plsc->dev_hrshsym != 1)
+      if(statusbar!=NULL) {
+	context=gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar),
+					     "PLplot");
+
+	gtk_statusbar_push(GTK_STATUSBAR(statusbar),context,
+			   " NOTE: Use '-drvopt hrshsym' in command-line "
+			   "arguments if symbols are missing in saved "
+			   "PostScript files."
+			   );
+      }
+      else
+	plwarn("GCW driver: Use '-drvopt hrshsym' if symbols are missing in "
+	       "saved PostScript files.");
+  }
+  if( strcmp(devname,"xwin")==0 || strcmp(devname,"tk")==0 ) {
+    if(plsc->dev_text != 0)
+      plwarn("GCW driver: Use '-drvopt text=0'");
   }
 
   /* Hack: Swap in the saved tempfile and colormaps */
   f = plsc->plbufFile;
   plsc->plbufFile = g_object_get_data(G_OBJECT(canvas),"plotbuf");
+  if(plsc->plbufFile == NULL) errflag=TRUE;
 
   icol0=plsc->icol0;
-  plsc->icol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol0");
+  if( g_object_get_data(G_OBJECT(canvas),"icol0") != NULL )
+    plsc->icol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol0");
+  else errflag=TRUE;
 
   ncol0=plsc->ncol0;
-  plsc->ncol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol0");
-
+  if( g_object_get_data(G_OBJECT(canvas),"ncol0") != NULL )
+    plsc->ncol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol0");
+  else errflag=TRUE;
+    
   cmap0=plsc->cmap0;
-  plsc->cmap0 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap0");
+  if( g_object_get_data(G_OBJECT(canvas),"cmap0") )
+    plsc->cmap0 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap0");
+  else errflag=TRUE;
 
   icol1=plsc->icol1;
-  plsc->icol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol1");
+  if( g_object_get_data(G_OBJECT(canvas),"icol1") != NULL )
+    plsc->icol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol1");
+  else errflag=TRUE;
 
   ncol1=plsc->ncol1;
-  plsc->ncol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol1");
+  if( g_object_get_data(G_OBJECT(canvas),"ncol1") != NULL )
+    plsc->ncol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol1");
+  else errflag=TRUE;
 
   cmap1=plsc->cmap1;
-  plsc->cmap1 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap1");
+  if( g_object_get_data(G_OBJECT(canvas),"cmap1") != NULL )
+    plsc->cmap1 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap1");
+  else errflag=TRUE;
 
+  if(!errflag) {
+    /* Get the current stream and make a new one */
+    plgstrm(&cur_strm);
+    plmkstrm(&new_strm);
 
-  /* Get the current stream and make a new one */
-  plgstrm(&cur_strm);
-  plmkstrm(&new_strm);
+    plsfnam(fname); /* Set the file name */
 
-  plsfnam(fname); /* Set the file name */
+    plsdev(devname); /* Set the device */
 
-  plsdev(devname); /* Set the device */
+    plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
 
-  plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
+    plreplot();            /* do the save by replaying the plot buffer */
 
-  plreplot();            /* do the save by replaying the plot buffer */
+    plend1();              /* finish the device */
 
-  plend1();              /* finish the device */
-
-  plsstrm(cur_strm);     /* return to previous stream */
+    plsstrm(cur_strm);     /* return to previous stream */
+  }
+  else plwarn("GCW driver <file_ok_sel>: Cannot set up output stream.");
 
   /* Reverse the swap */
   plsc->plbufFile = f;
@@ -407,8 +469,11 @@ void file_cancel_sel(GtkWidget *w, gpointer data)
   fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
   gtk_widget_hide(GTK_WIDGET(fs));
 
+  /* Retrieve the device */
+  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
+    plabort("GCW driver <file_cancel_sel>: Device not found");
+
   /* Put the focus back on the notebook */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
   gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
 }
 
@@ -492,9 +557,18 @@ void install_canvas(PLStream *pls)
 		     G_CALLBACK(delete_event),NULL);
     g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy),NULL);
 
-    /* Create a hbox and put it into the window */
+
+    /* Create a vbox and put it into the window */
+    vbox = gtk_vbox_new(FALSE,2);
+    gtk_container_add(GTK_CONTAINER(window),GTK_WIDGET(vbox));
+
+    /* Create a hbox and put it into the vbox */
     hbox = gtk_hbox_new(FALSE,0);
-    gtk_container_add(GTK_CONTAINER(window),GTK_WIDGET(hbox));
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(hbox),TRUE,TRUE,0);
+
+    /* Create a statusbar and put it into the vbox */
+    statusbar = gtk_statusbar_new();
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(statusbar),FALSE,FALSE,0);
 
     /* Add an vbox to the hbox */
     vbox = gtk_vbox_new(FALSE,5);
@@ -561,11 +635,13 @@ void install_canvas(PLStream *pls)
 
   /* Create a new canvas */
   if(aa) {
-    canvas = GNOME_CANVAS(gnome_canvas_new_aa());
+    if( !GNOME_IS_CANVAS(canvas = GNOME_CANVAS(gnome_canvas_new_aa())) )
+      plexit("GCW driver <install_canvas>: Could not create aa canvas");
     dev->aa = TRUE;
   }
   else {
-    canvas = GNOME_CANVAS(gnome_canvas_new());
+    if( !GNOME_IS_CANVAS(canvas = GNOME_CANVAS(gnome_canvas_new())) )
+      plexit("GCW driver <install_canvas>: Could not create canvas");
     dev->aa = FALSE;
   }
 
@@ -590,7 +666,7 @@ void install_canvas(PLStream *pls)
 
     /* Size the window */
     gtk_window_resize(GTK_WINDOW(window),dev->width*ZOOM100+65,
- 		      dev->height*ZOOM100+50);
+ 		      dev->height*ZOOM100+75);
   }
 
   /* Display everything */
@@ -689,7 +765,7 @@ void plD_init_gcw(PLStream *pls)
 
   /* Create the device */
   if((dev = g_malloc(sizeof(GcwPLdev))) == NULL) 
-    plabort("GCW driver: Insufficient memory");
+    plexit("GCW driver <plD_init_gcw>: Cannot create device");
   pls->dev = dev;
 
   /* Initialize gtk */
@@ -803,14 +879,15 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   if(!GNOME_IS_CANVAS_ITEM(
     group = dev->group_current
     )) {
-    plabort("GCW driver: Canvas group is NULL.");
+    plexit("GCW driver <plD_polyline_gcw>: Canvas group is NULL");
   }
 #else
   group = dev->group_current;
 #endif
 
   /* Put the data in a points structure */
-  points = gnome_canvas_points_new(npts);
+  if( (points = gnome_canvas_points_new(npts)) == NULL )
+    plabort("GCW driver <plD_polyline_gcw>: Cannot create points");
   for ( i = 0; i < npts; i++ ) {
     points->coords[2*i] = ((gdouble) x[i]);
     points->coords[2*i + 1] = ((gdouble) -y[i]);
@@ -831,7 +908,7 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 				 "width-units",width,
 				 NULL)
       )) {
-      plabort("GCW driver: Canvas item not created.");
+      plwarn("GCW driver <plD_polyline_gcw>: Canvas item not created.");
     }
 
     /* Free the points structure */
@@ -863,15 +940,15 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 
       if(!GNOME_IS_CANVAS_ITEM(
         item=gnome_canvas_item_new(group,
-				 GNOME_TYPE_CANVAS_LINE,
-				 "cap_style", GDK_CAP_ROUND,
-				 "join-style", GDK_JOIN_ROUND,
-				 "points", &pts,
-				 "fill-color-rgba", color,
-				 "width-units", width,
-				 NULL)
+				   GNOME_TYPE_CANVAS_LINE,
+				   "cap_style", GDK_CAP_ROUND,
+				   "join-style", GDK_JOIN_ROUND,
+				   "points", &pts,
+				   "fill-color-rgba", color,
+				   "width-units", width,
+				   NULL)
 	)) {
-	plabort("GCW driver: Canvas item not created.");
+	plwarn("GCW driver <plD_polyline_gcw>: Canvas item not created.");
       }
     }
 
@@ -934,134 +1011,156 @@ void plD_eop_gcw(PLStream *pls)
   debug("<plD_eop_gcw>\n");
 #endif
 
-  if(dev->canvas!=NULL) {
+  canvas = dev->canvas;
+  if(canvas == NULL) return;
 
-    canvas = dev->canvas;
-
-    /* 
-     * Render the pixmap to a pixbuf on the canvas and move it to the back
-     * of the current group 
-     */
-
-    if(dev->pixmap_has_data) {
-
-      if((pixbuf=gdk_pixbuf_get_from_drawable(NULL,
-					      dev->pixmap,
-					      dev->colormap,
-					      0,0,
-					      0,0,
-					      dev->width,dev->height))==NULL) {
-	plabort("GCW driver: Can't draw pixmap into pixbuf.");
-      }
+  /* 
+   * Render the pixmap to a pixbuf on the canvas and move it to the back
+   * of the current group 
+   */
+  
+  if(dev->pixmap_has_data) {
+    
+    if((pixbuf=gdk_pixbuf_get_from_drawable(NULL,
+					    dev->pixmap,
+					    dev->colormap,
+					    0,0,
+					    0,0,
+					    dev->width,dev->height))==NULL) {
+      plwarn("GCW driver <plD_eop_gcw>: Can't draw pixmap into pixbuf.");
+    }
+    else {
 
       /* Different offsets depending on the type of canvas */
       if(dev->aa) { dx=0.; dy=0.; }
       else { dx=1.; dy=1.; }
-
-      item = gnome_canvas_item_new (dev->group_current,
-				    GNOME_TYPE_CANVAS_PIXBUF,
-				    "pixbuf",pixbuf,
-				    "x", dx,
-				    "y", -dev->height+dy,
-				    "width", dev->width,
-				    "height", dev->height,
-				    NULL);
-      gnome_canvas_item_lower_to_bottom(item);
-      gnome_canvas_item_lower_to_bottom (dev->background);
-
-      /* Set the pixmap as unused */
-      dev->pixmap_has_data = FALSE;
-
+      
+      if(!GNOME_IS_CANVAS_ITEM(
+        item = gnome_canvas_item_new(dev->group_current,
+				     GNOME_TYPE_CANVAS_PIXBUF,
+				     "pixbuf",pixbuf,
+				     "x", dx,
+				     "y", -dev->height+dy,
+				     "width", dev->width,
+				     "height", dev->height,
+				     NULL)
+	)) {
+	plwarn("GCW driver <plD_eop_gcw>: Canvas item not created.");
+      }
+      else {
+	gnome_canvas_item_lower_to_bottom(item);
+	gnome_canvas_item_lower_to_bottom (dev->background);
+      }
+      
       /* Free the pixbuf */
       gdk_pixbuf_unref(pixbuf);
     }
-
-    /* Make the hidden group visible */
-    gnome_canvas_item_show((GnomeCanvasItem*)(dev->group_hidden));
-
-    /* Destroy the current visible group */
-    if(dev->group_visible!=NULL) {
-      gtk_object_destroy((GtkObject*)(dev->group_visible));
-      dev->group_visible = NULL;
+    
+    /* Set the pixmap as unused */
+    dev->pixmap_has_data = FALSE;
+  }
+  
+  /* Make the hidden group visible */
+  gnome_canvas_item_show((GnomeCanvasItem*)(dev->group_hidden));
+  
+  /* Destroy the current visible group */
+  if(dev->group_visible!=NULL) {
+    gtk_object_destroy((GtkObject*)(dev->group_visible));
+    dev->group_visible = NULL;
+  }
+  
+  /* Name the hidden group as visible */
+  dev->group_visible = dev->group_hidden;
+  dev->group_hidden=NULL;
+  
+  /* Update the canvas */
+  canvas->need_update = 1;
+  gnome_canvas_update_now (canvas);
+  
+  /*
+   * Copy the plot buffer for future reference, otherwise it is 
+   * thrown out.  We will also need to store the colormaps.
+   */
+  if(pls->plbuf_write) {
+    
+    pls->plbuf_write = FALSE;
+    pls->plbuf_read = TRUE;
+    
+    /* Remove the old tempfile, if it exists */
+    if( (f=g_object_get_data(G_OBJECT(canvas),"plotbuf")) != NULL ) {
+      fclose(f);
+      g_object_set_data(G_OBJECT(canvas),"plotbuf",NULL);
     }
 
-    /* Name the hidden group as visible */
-    dev->group_visible = dev->group_hidden;
-    dev->group_hidden=NULL;
-
-    /* Update the canvas */
-    canvas->need_update = 1;
-    gnome_canvas_update_now (canvas);
-    
-    /*
-     * Copy the plot buffer for future reference, otherwise it is 
-     * thrown out.  We will also need to store the colormaps.
-     */
-    if(pls->plbuf_write) {
- 
-      pls->plbuf_write = FALSE;
-      pls->plbuf_read = TRUE;
-
-      /* Copy the plot buffer to a tempfile */
-      if((f=tmpfile())==NULL) {
-	plabort("GCW driver: Could not create tempfile.");
-      }
+    /* Copy the plot buffer to a tempfile */
+    if((f=tmpfile())==NULL) {
+      plwarn("GCW driver <plD_eop_gcw>: Could not create tempfile.");
+    }
+    else {
       rewind(pls->plbufFile);
       while(count = fread(&tmp, sizeof(U_CHAR), 1, pls->plbufFile)) {
-	  if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count) 
-	    plabort("GCW driver: Could not write to tempfile.");
+	if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count) {
+	  plwarn("GCW driver <plD_eop_gcw>: Could not write to tempfile.");
+	  fclose(f);
+	  f=NULL;
+	}
       }
-
+      
       /* Attach the tempfile to the canvas */
       g_object_set_data(G_OBJECT(canvas),"plotbuf",(gpointer)f);
-
+      
       pls->plbuf_write = TRUE;
       pls->plbuf_read = FALSE;      
-
+      
       /* cmap 0 */
       if((icol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory.");
-      *icol = pls->icol0;
+	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+      else *icol = pls->icol0;
       g_object_set_data(G_OBJECT(canvas),"icol0",(gpointer)icol);
       if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory.");
-      *ncol = pls->ncol0;
+	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+      else *ncol = pls->ncol0;
       g_object_set_data(G_OBJECT(canvas),"ncol0",(gpointer)ncol);
-      if((cmap=(PLColor *) calloc(1, pls->ncol0 * sizeof(PLColor)))==NULL)
-	plabort("GCW driver: Insufficient memory.");
-      for (i = 0; i < pls->ncol0; i++)
-	pl_cpcolor(&cmap[i], &pls->cmap0[i]);
+      if((cmap=(PLColor *) calloc(1, pls->ncol0 * sizeof(PLColor)))==NULL) {
+	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+      }
+      else {
+	for (i = 0; i < pls->ncol0; i++)
+	  pl_cpcolor(&cmap[i], &pls->cmap0[i]);
+      }
       g_object_set_data(G_OBJECT(canvas),"cmap0",(gpointer)cmap);
-
+      
       /* cmap 1 */
       if((icol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory.");
-      *icol = pls->icol1;
+	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+      else *icol = pls->icol1;
       g_object_set_data(G_OBJECT(canvas),"icol1",(gpointer)icol);
       if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
-	plabort("GCW driver: Insufficient memory.");
-      *ncol = pls->ncol1;
+	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+      else *ncol = pls->ncol1;
       g_object_set_data(G_OBJECT(canvas),"ncol1",(gpointer)ncol);
-      if((cmap=(PLColor *) calloc(1, pls->ncol1 * sizeof(PLColor)))==NULL)
-	plabort("GCW driver: Insufficient memory.");
-      for (i = 0; i < pls->ncol1; i++)
-	pl_cpcolor(&cmap[i], &pls->cmap1[i]);
+      if((cmap=(PLColor *) calloc(1, pls->ncol1 * sizeof(PLColor)))==NULL) {
+	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+      }
+      else {
+	for (i = 0; i < pls->ncol1; i++)
+	  pl_cpcolor(&cmap[i], &pls->cmap1[i]);
+      }
       g_object_set_data(G_OBJECT(canvas),"cmap1",(gpointer)cmap);
     }
-
-
-    /* If the driver is creating its own canvasses, set dev->canvas to be
-     * NULL now in order to force creation of a new canvas when the next
-     * drawing call is made.
-     */
-    if(dev->window!=NULL) {
-      dev->canvas=NULL;
-      dev->group_visible=NULL;
-      dev->group_hidden=NULL;
-      dev->group_background=NULL;
-      dev->group_foreground=NULL;
-      dev->group_current=NULL;
-    }
+  }
+  
+  /* If the driver is creating its own canvasses, set dev->canvas to be
+   * NULL now in order to force creation of a new canvas when the next
+   * drawing call is made.
+   */
+  if(dev->window!=NULL) {
+    dev->canvas=NULL;
+    dev->group_visible=NULL;
+    dev->group_hidden=NULL;
+    dev->group_background=NULL;
+    dev->group_foreground=NULL;
+    dev->group_current=NULL;
   }
 }
 
@@ -1082,43 +1181,40 @@ void plD_bop_gcw(PLStream *pls)
   debug("<plD_bop_gcw>\n");
 #endif
 
-  if(dev->canvas!=NULL) { 
-    canvas = dev->canvas;
-
-    /* Make sure the zoom is initialized */
-    if(!dev->zoom_is_initialized) gcw_set_canvas_zoom(canvas,1.);
-
-    /* Creat a new hidden group; all new drawing will be to this group */
-    if(!GNOME_IS_CANVAS_ITEM(
-      dev->group_hidden = (GnomeCanvasGroup*)gnome_canvas_item_new(
-					  gnome_canvas_root(canvas),
-					  gnome_canvas_clipgroup_get_type(),
-					  "x",0.,
-					  "y",0.,
-					  NULL)
-      )) {
-      plabort("GCW driver: Canvas item not created.");
-    }
-
-    /* Set the clip to NULL */
-    g_object_set(G_OBJECT(dev->group_hidden),"path",NULL,NULL);
-
-    /* Hide this group until drawing is done */
-    gnome_canvas_item_hide((GnomeCanvasItem*)(dev->group_hidden));
-
-    /* Set the hidden group as current unless it is fore or background */
-    if( (dev->group_current != dev->group_foreground) &&
-	(dev->group_current != dev->group_background) )
-      dev->group_current = dev->group_hidden;
-
-    /* Make sure the foreground group is at the front, and the background
-     * group is at the back 
-     */
-    gnome_canvas_item_raise_to_top(
-			    GNOME_CANVAS_ITEM(dev->group_foreground));
-    gnome_canvas_item_lower_to_bottom(
-			    GNOME_CANVAS_ITEM(dev->group_background));
+  canvas = dev->canvas;
+  if(canvas == NULL) return;
+  
+  /* Make sure the zoom is initialized */
+  if(!dev->zoom_is_initialized) gcw_set_canvas_zoom(canvas,1.);
+  
+  /* Creat a new hidden group; all new drawing will be to this group */
+  if(!GNOME_IS_CANVAS_ITEM(
+    dev->group_hidden = (GnomeCanvasGroup*)gnome_canvas_item_new(
+                                             gnome_canvas_root(canvas),
+					     gnome_canvas_clipgroup_get_type(),
+					     "x",0.,
+					     "y",0.,
+					     NULL)
+    )) {
+    plexit("GCW driver <plD_bop_gcw>: Canvas group cannot be created");
   }
+  
+  /* Set the clip to NULL */
+  g_object_set(G_OBJECT(dev->group_hidden),"path",NULL,NULL);
+  
+  /* Hide this group until drawing is done */
+  gnome_canvas_item_hide((GnomeCanvasItem*)(dev->group_hidden));
+
+  /* Set the hidden group as current unless it is fore or background */
+  if( (dev->group_current != dev->group_foreground) &&
+      (dev->group_current != dev->group_background) )
+    dev->group_current = dev->group_hidden;
+  
+  /* Make sure the foreground group is at the front, and the background
+   * group is at the back 
+   */
+  gnome_canvas_item_raise_to_top(GNOME_CANVAS_ITEM(dev->group_foreground));
+  gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
 }
 
 
@@ -1239,12 +1335,11 @@ static void fill_polygon (PLStream* pls)
   if(!GNOME_IS_CANVAS_ITEM(
     group = dev->group_current
     )) {
-    plabort("GCW driver: Canvas group is NULL.");
+    plexit("GCW driver <fill_polygon>: Canvas group is NULL");
   }
 #else
   group = dev->group_current;
 #endif
-  points = gnome_canvas_points_new (pls->dev_npts);
 
   if(dev->use_pixmap) { /* Write to a pixmap */
 
@@ -1264,9 +1359,8 @@ static void fill_polygon (PLStream* pls)
 			     &color,FALSE,TRUE);
     gdk_gc_set_foreground(gc,&color);
 
-    if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL) {
-      plabort("GCW driver: Insufficient memory.");
-    }
+    if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL)
+      plabort("GCW driver <fill_polygon>: Could not create gdkpoints");
 
     for(i=0;i<pls->dev_npts;i++) {
       gdkpoints[i].x = pls->dev_x[i];
@@ -1274,13 +1368,16 @@ static void fill_polygon (PLStream* pls)
     }
 
     gdk_draw_polygon(dev->pixmap,gc,TRUE,gdkpoints,pls->dev_npts);
-
+    
     dev->pixmap_has_data = TRUE;
 
-    gdk_gc_unref(gc);
     free(gdkpoints);
+    gdk_gc_unref(gc);
   }
   else { /* Use Gnome Canvas polygons */
+
+    if( (points = gnome_canvas_points_new (pls->dev_npts)) == NULL )
+      plabort("GCW driver <fill_polygon>: Could not create points");
 
     for (i=0; i<pls->dev_npts; i++) {
       points->coords[2*i] = ((gdouble) pls->dev_x[i]);
@@ -1295,7 +1392,7 @@ static void fill_polygon (PLStream* pls)
 				    /* "outline-color-rgba",dev->color, */
 				    NULL)
       )) {
-      plabort("GCW driver: Canvas item not created.");
+      plwarn("GCW driver <fill_polygon>: Canvas item not created.");
     }
   
     gnome_canvas_points_free(points);
@@ -1405,7 +1502,7 @@ void proc_str(PLStream *pls, EscText *args)
   if(!GNOME_IS_CANVAS_ITEM(
     group = dev->group_current
     )) {
-    plabort("GCW driver: Canvas group is NULL.");
+    plexit("GCW driver <proc_str>: Canvas group is NULL");
   }
 #else
   group = dev->group_current;
@@ -1446,7 +1543,7 @@ void proc_str(PLStream *pls, EscText *args)
   plgfci(&fci);
   fontname = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
   if (fontname == NULL) {
-    plabort("GCW driver: FCI inconsistent with TrueTypeLookup.");
+    plabort("GCW driver <proc_str>: FCI inconsistent with TrueTypeLookup");
   }
 
   /* Retrieve the font face */
@@ -1470,7 +1567,8 @@ void proc_str(PLStream *pls, EscText *args)
       /* Determine the font name */
       fontname = plP_FCI2FontName(text[i], FontLookup, N_TrueTypeLookup);
       if (fontname == NULL) {
-	plabort("GCW driver: FCI inconsistent with TrueTypeLookup.");
+	plabort("GCW driver <proc_str>: FCI inconsistent with "
+		"TrueTypeLookup");
       }
 
       /* Retrieve the font face */
@@ -1488,7 +1586,8 @@ void proc_str(PLStream *pls, EscText *args)
 
 	i++; /* Move on to next character */
 	if(i>=Ntext) {
-	  plwarn("GCW driver: Invalid escape sequence provided in text.");
+	  plwarn("GCW driver <proc_str>: Invalid escape sequence "
+		 "provided in text.");
 	  return;
 	}
 
@@ -1524,7 +1623,8 @@ void proc_str(PLStream *pls, EscText *args)
 	/* Backspace */
 	case 'b':
 	case 'B':
-	  plwarn("'+', '-', and 'b' text escape sequences not processed.");
+	  plwarn("GCW driver <proc_str>: '+', '-', and 'b' text "
+		 "escape sequences not processed.");
 	  break;
 
 	} /* switch(text[i]) */
@@ -1592,7 +1692,7 @@ void proc_str(PLStream *pls, EscText *args)
 				       "y",0.,
 				       NULL)
 	)) {
-	plabort("GCW driver: Canvas item not created.");
+	plabort("GCW driver <proc_str>: Canvas item not created");
       }
 
       /* Free the glyphlist */
@@ -1604,10 +1704,9 @@ void proc_str(PLStream *pls, EscText *args)
 
 
     /* Don't overflow buffer */
-    if(N==200 && i<Ntext) {
-      plwarn("GCW driver: too many text segments.");
-      break;
-    }
+    if(N==200 && i<Ntext)
+      plabort("GCW driver <proc_str>: too many text segments");
+
   } /* while(i<Ntext) */
 
   /* We have all of the string segments.  Place each on the canvas 
