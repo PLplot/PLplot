@@ -2368,20 +2368,6 @@ plLoadDriver(void)
         driver->dlhand = lt_dlopenext( drvspec);
     }
 
-/* If it hasn't been loaded yet, try loading the driver again using the
- * lib* naming convention. TJD
- */
-    if (!driver->dlhand)
-    {
-        char drvspec[ 400 ];
-        sprintf( drvspec, "%s/lib%s", plGetDrvDir (), driver->drvnam );
-
-	pldebug("plLoadDriver", "Trying to load lib%s on %s\n",
-		driver->drvnam, drvspec );
-
-        driver->dlhand = lt_dlopenext( drvspec);
-    }
-
 /* If it still isn't loaded, then we're doomed. */
     if (!driver->dlhand)
     {
