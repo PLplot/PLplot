@@ -1,0 +1,4 @@
+usr/lib/python*/*/gcw*
+usr/lib/python*/*/*plplotcanvas*
+usr/share/doc/libplplot9/examples/python/*plplotcanvas*
+usr/share/doc/python-plplot-gnome2

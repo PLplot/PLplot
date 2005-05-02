@@ -43,14 +43,14 @@ autotools-stamp:
 
 config: config-stamp
 config-stamp: autotools-stamp
-	PKG_CONFIG_ENV=" "                                              \
-	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl  \
-                    --enable-tk --enable-gd --enable-dyndrivers         \
-                    --enable-static --enable-python --with-pkg-config   \
-                    --enable-gcw --with-double --disable-linuxvga     \
-                    --infodir=/usr/share/info --with-freetype           \
-                    --without-rpath --with-prebuiltdoc --enable-java    \
-		    $(javasetup) --with-pthreads --with-ltdlsystem      \
+	PKG_CONFIG_ENV=" "						\
+	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl	\
+                    --enable-tk --enable-gd --enable-dyndrivers		\
+                    --enable-static --enable-python --with-pkg-config	\
+                    --enable-gcw --with-double --disable-linuxvga	\
+                    --infodir=/usr/share/info --with-freetype		\
+                    --without-rpath --with-prebuiltdoc --enable-java	\
+		    $(javasetup) --with-pthreads --with-ltdlsystem	\
 		    --with-freefont
 	touch config-stamp
 
@@ -69,6 +69,7 @@ clean: unpatch
 	rm -f config.sub config.guess
 	find . -name config.log -o -name config.status | xargs rm -f
 	rm -f Makefile
+	rm -rf $(debbase)/$(libpkg)
 	dh_clean
 
 install: install-stamp
@@ -92,8 +93,9 @@ install-stamp: build-stamp
 	done
 
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-	                --no-package=plplot-bin
+	                --no-package=plplot-bin --no-package=python-plplot
 	dh_movefiles -i
+	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
