@@ -252,6 +252,51 @@ There is no need on my system to use that flag.
   -- RL ]
 
 ------------------------------------------------------------------------------
+Alternative Build Instructions for MacOS X 10.3
+------------------------------------------------------------------------------
+
+To install the CVS version of PLplot you will need :
+
+GNU automake 1.8.5+
+GNU Autoconf 2.59+
+GNU libtool 1.5.10+
+
+In the top plplot directory issue the following commands (also see notes)
+
+cf/bootstrap.sh
+./configure --disable-dyndrivers --disable-f77
+make LIBS="-Wl,-framework -Wl,Foundation"
+make check
+make install
+
+
+To install the latest release (5.5.2+) issue the following commands in the 
+top plplot directory (also see notes)
+
+./configure --disable-dyndrivers --disable-f77
+make LIBS="-Wl,-framework -Wl,Foundation"
+make check
+make install
+
+
+Notes :
+
+Make check is only necessary if you want to compile the examples.
+
+Linking with f77 is often problematic but it can be made to work...
+
+Dynamic drivers doesn't seem to be compatible with Objective C and by 
+extension the AquaTerm driver, but can be used if you don't plan to 
+use this driver.
+
+The extra LIBS flags at the make step are only necessary if you are trying 
+to use the AquaTerm driver, which uses the Foundation framework.
+
+If you want to be able to display plots you will need either X11 from Apple
+(X11 1.0 - XFree86 4.3.0 or later recommended) and the X11 SDK, or AquaTerm 
+(v1.0.b3 or later recommended, http://aquaterm.sourceforge.net).
+
+------------------------------------------------------------------------------
 Build Instructions for Solaris (as of plplot-5.3.0.cvs.20040217.tar.gz)
 N.B. with this version FLIBS is no longer required!
 ------------------------------------------------------------------------------
