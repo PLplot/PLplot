@@ -33,6 +33,7 @@ sources = \
   plcore.c \
   plctrl.c \
   plcvt.c \
+  pldeprecated.c \
   pldtik.c \
   plfill.c \
   plfreetype.c \

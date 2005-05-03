@@ -260,8 +260,6 @@ typedef void* PLPointer;
 /* Obsolete names */
 
 #define plParseInternalOpts(a, b, c)	c_plparseopts(a, b, c)
-#define plParseOpts(a, b, c)		c_plparseopts(a, b, c)
-#define c_plParseOpts(a, b, c)		c_plparseopts(a, b, c)
 #define plSetInternalOpt(a, b)		plSetOpt(a, b)
 /* Option table definition */
 
@@ -612,8 +610,6 @@ typedef struct {
 #define    plP_gvpd	plgvpd
 #define    plP_gvpw	plgvpw
 #define    plotsh3d(x,y,z,nx,ny,opt)     plsurf3d(x,y,z,nx,ny,opt, NULL, 0)
-#define    plHLS_RGB    plhlsrgb
-#define    plRGB_HLS    plrgbhls
 
 #endif /* __PLSTUBS_H__ */
 
@@ -1696,6 +1692,17 @@ plGetCursor(PLGraphicsIn *gin);
 int
 plTranslateCursor(PLGraphicsIn *gin);
 
+/* Deprecated function names which are handled as wrappers for strict
+ * backwards compatibility of the library API*/
+
+int
+plParseOpts(int *p_argc, char **argv, PLINT mode);
+
+void
+plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+
+void
+plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 #ifdef __cplusplus
 }
 #endif
