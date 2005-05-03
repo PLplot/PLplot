@@ -124,7 +124,7 @@ void gcw_use_background_group(GnomeCanvas* canvas);
 void gcw_use_default_group(GnomeCanvas* canvas);
 
 /* Private functions */
-void gcw_init_canvas(PLStream* pls,GnomeCanvas* canvas);
+void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas);
 void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect);
 void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
 void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
