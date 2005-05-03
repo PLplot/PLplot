@@ -50,13 +50,19 @@ sources = \
 	x23c.c \
 	x24c.c
 
+plplotcanvas_data = \
+	plplotcanvas_demo.c \
+	plplotcanvas_animation.c \
+	README.plplotcanvas
+
 examples_c_DATA = \
 	Makefile.examples
 
+if enable_gcw
+examples_c_DATA += $(plplotcanvas_data)
+endif
+
 dist_examples_c_DATA = \
-	plplotcanvas_demo.c \
-	plplotcanvas_animation.c \
-	README.plplotcanvas \
 	lena.pgm \
 	$(sources)
 
@@ -92,4 +98,4 @@ check_PROGRAMS = \
 
 LDADD = $(libplplot)
 
-EXTRA_DIST = Makefile.examples.in
+EXTRA_DIST = Makefile.examples.in $(plplotcanvas_data)
