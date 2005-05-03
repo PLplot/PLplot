@@ -28,7 +28,11 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
 
-EXECUTABLES_list = \
+@gcw_true@PLPLOTCANVAS_EXECUTABLES_list = \
+		 plplotcanvas_demo$(EXEEXT) \
+		 plplotcanvas_animation$(EXEEXT)
+
+EXECUTABLES_list = $(PLPLOTCANVAS_EXECUTABLES_list) \
 		 x01c$(EXEEXT) \
 		 x02c$(EXEEXT) \
 		 x03c$(EXEEXT) \
@@ -52,26 +56,24 @@ EXECUTABLES_list = \
 		 x21c$(EXEEXT) \
 		 x22c$(EXEEXT) \
 		 x23c$(EXEEXT) \
-		 x24c$(EXEEXT) \
-		 plplotcanvas_demo$(EXEEXT) \
-		 plplotcanvas_animation$(EXEEXT)
+		 x24c$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 
 clean:
 	rm -f $(EXECUTABLES_list)
 
-plplotcanvas_demo$(EXEEXT): plplotcanvas_demo.c
-@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) \
+@gcw_true@plplotcanvas_demo$(EXEEXT): plplotcanvas_demo.c
+@gcw_true@@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) \
 			`$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-gnome2`
-@pkg_config_false@	$(CC) $< -o $@ \
+@gcw_true@@pkg_config_false@	$(CC) $< -o $@ \
 			`plplot-config --cflags --libs --with-gcw`
 
-plplotcanvas_animation$(EXEEXT): plplotcanvas_animation.c
-@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) \
+@gcw_true@plplotcanvas_animation$(EXEEXT): plplotcanvas_animation.c
+@gcw_true@@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) \
 			`$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-gnome2` \
 			`pkg-config --cflags --libs gthread-2.0`			
-@pkg_config_false@	$(CC) $< -o \
+@gcw_true@@pkg_config_false@	$(CC) $< -o \
 			$@ `plplot-config --cflags --libs --with-gcw` \
 			@GCWTHREAD_CFLAGS@ @GCWTHREAD_LIBS@
 

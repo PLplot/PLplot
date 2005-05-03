@@ -146,6 +146,16 @@ fi
 
 fi # if test "$with_pkg_config""
 
+if test "$enable_gcw" = yes ; then
+  gcw_true=""
+  gcw_false="# "
+else
+  gcw_true="# "
+  gcw_false=""
+fi
+
+AC_SUBST(gcw_true)
+AC_SUBST(gcw_false)
 
 dnl The choice of the names GCW_FLAGS and GCW_LIBS is made by
 dnl the PKG_CHECK_MODULES macro.
