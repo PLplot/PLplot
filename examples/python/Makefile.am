@@ -22,14 +22,12 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if enable_python
-
-examples_pythondir = $(DATA_DIR)/examples/python
-
-# This list contains standalone scripts which are executable.
-dist_examples_python_SCRIPTS = \
+# These lists contain standalone scripts which are executable.
+plplotcanvas_scripts = \
 	plplotcanvas_demo.py \
-	plplotcanvas_animation.py \
+	plplotcanvas_animation.py
+
+python_scripts = \
 	prova.py \
 	pythondemos.py \
 	x01 \
@@ -55,10 +53,12 @@ dist_examples_python_SCRIPTS = \
 	xw14.py \
 	xw17.py
 
-# This list contains python modules that can be imported.
-dist_examples_python_DATA = \
+# These lists contain python modules that can be imported and README files.
+plplotcanvas_data = \
+	README.plplotcanvas
+
+python_data = \
 	README.pythondemos \
-	README.plplotcanvas \
 	qplplot.py \
 	xw01.py \
 	xw02.py \
@@ -80,6 +80,24 @@ dist_examples_python_DATA = \
 	xw22.py \
 	xw23.py
 
+if enable_python
+
+examples_pythondir = $(DATA_DIR)/examples/python
+
+# This list contains standalone scripts which are executable.
+examples_python_SCRIPTS = $(python_scripts)
+
+if enable_gcw
+examples_python_SCRIPTS += $(plplotcanvas_scripts)
+endif
+
+# This list contains python modules that can be imported and README files.
+examples_python_DATA = $(python_data)
+
+if enable_gcw
+examples_python_DATA += $(plplotcanvas_data)
+endif
+
 nodist_examples_python_DATA = plplot_python_start.py
 
 CLEANFILES = *.pyc
@@ -87,21 +105,23 @@ CLEANFILES = *.pyc
 check_DATA = \
         .check
 
-.check: $(dist_examples_python_SCRIPTS) $(dist_examples_python_DATA)
+.check: $(examples_python_SCRIPTS) $(examples_python_DATA)
 	( if [ ! -f x01 ] ; then \
 	    cd $(top_srcdir)/examples/python ; \
-	    for file in $(dist_examples_python_SCRIPTS) $(dist_examples_python_DATA) ; do \
+	    for file in $(examples_python_SCRIPTS) $(examples_python_DATA) ; do \
 	      rm -f $(BUILD_DIR)/examples/python/$$file; $(LN_S) $(top_srcdir)/examples/python/$$file $(BUILD_DIR)/examples/python/$$file ; \
 	    done ; \
 	  fi )
 	touch .check
 
 
-endif
+endif #if enable_python
 
-### FIXME: Brute force inclusion in dist tarball.  The files below may
-### be treated in a different way for installation [RL, 2003-03-06]
-EXTRA_DIST = \
+# A list of old stuff that should still (as of 2005-05-03, AWI) be 
+# distributed since it contains useful information that could be used 
+# to develop a python GUI that has the plframe capabilities.
+
+old_dist = \
 	pytkdemo \
 	tutor.py \
 	x01.py \
@@ -124,3 +144,10 @@ EXTRA_DIST = \
 	x18.py \
 	x19.py \
 	xtkpy
+
+EXTRA_DIST = \
+	$(plplotcanvas_scripts) \
+	$(python_scripts) \
+	$(plplotcanvas_data) \
+	$(python_data) \
+	$(old_dist)
