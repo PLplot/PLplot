@@ -775,28 +775,39 @@ void plD_init_gcw(PLStream *pls)
    * important to do this properly, because many of the calculations are
    * based on physical coordinates.  If this is not done correctly, then
    * dashed lines and hatched areas will not scale correctly, and the 
-   * replot mechanism will produce incorrect results.
+   * replot mechanism will produce incorrect results.  Problems can also
+   * crop up with hidden line removal.
+   *
+   * Notice that coordinates in this driver are measured in device units,
+   * which correspond to the pixel size on a typical screen.  The coordinates
+   * reported and received from the PLplot core, however, are in virtual
+   * coordinates, which is just a scaled version of the device coordinates.
+   * This strateg is used so that the calculations performed in the PLplot
+   * core are performed at reasonably high resolution.
    */
 
-  /* Determine the page width and height, measured in pixels */
+  /* Determine the page width and height in virtual coordinate units */
   if (pls->xlength > 0 && pls->ylength > 0) {
-    width = pls->xlength;
-    height = pls->ylength;
+    /* The width and height are given by the user in device units, so we must
+     * do the conversion to virtual coordinate units.
+     */
+    width = pls->xlength * VSCALE;
+    height = pls->ylength * VSCALE;
   }
   else {    
-    width = (PLINT)(CANVAS_WIDTH*PIXELS_PER_IN);
-    height = (PLINT)(CANVAS_HEIGHT*PIXELS_PER_IN);
+    width = (PLINT)(CANVAS_WIDTH*VIRTUAL_PIXELS_PER_IN);
+    height = (PLINT)(CANVAS_HEIGHT*VIRTUAL_PIXELS_PER_IN);
   }
 
-  /* Set the number of pixels per mm */
-  plP_setpxl((PLFLT)PIXELS_PER_MM,(PLFLT)PIXELS_PER_MM);
+  /* Set the number of virtual coordinate units per mm */
+  plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
 
-  /* Set up physical limits of plotting device (in drawing units) */
+  /* Set up physical limits of plotting device, in virtual coordinate units */
   plP_setphy((PLINT)0,width,(PLINT)0,height);
 
-  /* Set the width and height for the device */
-  dev->width = width;
-  dev->height = height;
+  /* Save the width and height for the device, in device units */
+  dev->width = width/VSCALE;
+  dev->height = height/VSCALE;
 
   /* Set text handling */
 #ifdef HAVE_FREETYPE
@@ -889,11 +900,14 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   if( (points = gnome_canvas_points_new(npts)) == NULL )
     plabort("GCW driver <plD_polyline_gcw>: Cannot create points");
   for ( i = 0; i < npts; i++ ) {
-    points->coords[2*i] = ((gdouble) x[i]);
-    points->coords[2*i + 1] = ((gdouble) -y[i]);
+    /* The points must be converted from virtual coordinate units
+     *  to device coordinate units.
+     */
+    points->coords[2*i] = (gdouble)(x[i]/VSCALE);
+    points->coords[2*i + 1] = (gdouble)(-y[i]/VSCALE);
   }
 
-  /* Get the width and color */
+  /* Get the pen width and color */
   width = pls->width;
   color = dev->color;
 
@@ -1380,8 +1394,11 @@ static void fill_polygon (PLStream* pls)
       plabort("GCW driver <fill_polygon>: Could not create points");
 
     for (i=0; i<pls->dev_npts; i++) {
-      points->coords[2*i] = ((gdouble) pls->dev_x[i]);
-      points->coords[2*i + 1] = ((gdouble) -pls->dev_y[i]);
+      /* The points must be converted from virtual coordinates units
+       * to device coordinate units.
+       */
+      points->coords[2*i] = (gdouble)(pls->dev_x[i]/VSCALE);
+      points->coords[2*i + 1] = (gdouble)(-pls->dev_y[i]/VSCALE);
     }
 
     if(!GNOME_IS_CANVAS_ITEM(
@@ -1525,6 +1542,10 @@ void proc_str(PLStream *pls, EscText *args)
    * position and clip limits.
    */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+  clxmin /= VSCALE;
+  clxmax /= VSCALE;
+  clymin /= VSCALE;
+  clymax /= VSCALE;
 
   /* Set the clip in this clipgroup */
   path = gnome_canvas_path_def_new();
@@ -1537,7 +1558,7 @@ void proc_str(PLStream *pls, EscText *args)
   g_object_set(G_OBJECT(group),"path",path,NULL);
 
   /* Font size: size is in pixels but chrht is in mm.  Why the extra factor? */
-  font_size = (gint)(pls->chrht*PIXELS_PER_MM*1.5);
+  font_size = (gint)(pls->chrht*DEVICE_PIXELS_PER_MM*1.5);
 
   /* Determine the default font */
   plgfci(&fci);
@@ -1719,7 +1740,7 @@ void proc_str(PLStream *pls, EscText *args)
 			 -total_width*args->just + sum_width,
 			 height[0]/2.5-up_list[i]);
     art_affine_translate(affine_translate,
-			 args->x,-args->y);
+			 args->x/VSCALE,-args->y/VSCALE);
     gnome_canvas_item_affine_relative(item[i],affine_translate);
     gnome_canvas_item_affine_relative(item[i],affine_plplot);
     gnome_canvas_item_affine_relative(item[i],affine_baseline);

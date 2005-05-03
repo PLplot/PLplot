@@ -136,14 +136,16 @@ void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect)
   if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL )
     plabort("GCW driver <gcw_set_canvas_aspect>: Device not found");
 
-  /* Set the new width and height */
+  /* Set the new width and height in virtual coordinate units*/
   if(aspect < default_aspect) {
-    dev->width = PIXELS_PER_IN*CANVAS_WIDTH * (gdouble)(aspect)/default_aspect;
-    dev->height = PIXELS_PER_IN * CANVAS_HEIGHT;
+    dev->width = CANVAS_WIDTH * DEVICE_PIXELS_PER_IN * \
+      (gdouble)(aspect)/default_aspect;
+    dev->height = CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN;
   }
   else {
-    dev->height = PIXELS_PER_IN*CANVAS_HEIGHT*default_aspect/(gdouble)(aspect);
-    dev->width = PIXELS_PER_IN * CANVAS_WIDTH;
+    dev->height = CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN * \
+      default_aspect/(gdouble)(aspect);
+    dev->width = CANVAS_WIDTH * DEVICE_PIXELS_PER_IN;
   }
 
   /* Resize the background */
@@ -236,10 +238,10 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
   if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
     plabort("GCW driver <gcw_set_canvas_viewport>: Device not found");
 
-  *xmin2 = xmin1*(PLFLT)(dev->width)/(PIXELS_PER_IN*CANVAS_WIDTH);
-  *xmax2 = xmax1*(PLFLT)(dev->width)/(PIXELS_PER_IN*CANVAS_WIDTH);
-  *ymin2 = ymin1*(PLFLT)(dev->height)/(PIXELS_PER_IN*CANVAS_HEIGHT);
-  *ymax2 = ymax1*(PLFLT)(dev->height)/(PIXELS_PER_IN*CANVAS_HEIGHT);
+  *xmin2 = xmin1*(PLFLT)(dev->width)/(DEVICE_PIXELS_PER_IN*CANVAS_WIDTH);
+  *xmax2 = xmax1*(PLFLT)(dev->width)/(DEVICE_PIXELS_PER_IN*CANVAS_WIDTH);
+  *ymin2 = ymin1*(PLFLT)(dev->height)/(DEVICE_PIXELS_PER_IN*CANVAS_HEIGHT);
+  *ymax2 = ymax1*(PLFLT)(dev->height)/(DEVICE_PIXELS_PER_IN*CANVAS_HEIGHT);
 }
 
 
