@@ -129,32 +129,16 @@ gint plplot_canvas_get_stream_number(PlplotCanvas* self)
   return self->Nstream;
 }
 
-void plplot_canvas_set_aspect(PlplotCanvas* self,gdouble aspect)
-{
-  plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_set_canvas_aspect(GNOME_CANVAS(self),aspect);
-}
-
-void plplot_canvas_set_zoom(PlplotCanvas* self,gdouble zoom)
-{
-  plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_set_canvas_zoom(GNOME_CANVAS(self),zoom);
-}
-
 void plplot_canvas_set_size(PlplotCanvas* self,gdouble width,gdouble height)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
   gcw_set_canvas_size(GNOME_CANVAS(self),width,height);
 }
 
-void plplot_canvas_get_viewport(PlplotCanvas* self,gdouble xmin1,
-				gdouble xmax1,gdouble ymin1,gdouble ymax1,
-				gdouble* xmin2,gdouble* xmax2,
-				gdouble* ymin2,gdouble* ymax2) {
-
+void plplot_canvas_set_zoom(PlplotCanvas* self,gdouble zoom)
+{
   plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_get_canvas_viewport(GNOME_CANVAS(self),xmin1,xmax1,
-			  ymin1,ymax1,xmin2,xmax2,ymin2,ymax2);
+  gcw_set_canvas_zoom(GNOME_CANVAS(self),zoom);
 }
 
 void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text)
