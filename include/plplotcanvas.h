@@ -70,13 +70,8 @@ PlplotCanvas* plplot_canvas_new(gboolean aa);
 void plplot_canvas_dispose(PlplotCanvas *self);
 
 gint plplot_canvas_get_stream_number(PlplotCanvas* self);
-void plplot_canvas_set_aspect(PlplotCanvas* self,gdouble aspect);
 void plplot_canvas_set_zoom(PlplotCanvas* self,gdouble magnification);
 void plplot_canvas_set_size(PlplotCanvas* self,gdouble width,gdouble height);
-void plplot_canvas_get_viewport(PlplotCanvas* self,gdouble xmin1,
-				gdouble xmax1,gdouble ymin1,gdouble ymax1,
-				gdouble* xmin2,gdouble* xmax2,
-				gdouble* ymin2,gdouble* ymax2);
 void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text);
 void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
 				      gboolean use_fast_rendering);

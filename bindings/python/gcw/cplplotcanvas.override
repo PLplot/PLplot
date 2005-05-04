@@ -138,25 +138,6 @@ ignore-glob
   plplot_canvas_plsym
   plplot_canvas_plxormod
 %%
-override plplot_canvas_get_viewport kwargs
-static PyObject* _wrap_plplot_canvas_get_viewport(PyGObject *self,
-						 PyObject *args, 
-						 PyObject *kwargs)
-{
-    static char *kwlist[] = {"xmin1","xmax1","ymin1","ymax1",NULL};
-    double xmin1,xmax1,ymin1,ymax1;
-    double xmin2,xmax2,ymin2,ymax2;
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-				     "dddd:PlplotCanvas.get_viewport",
-				     kwlist, &xmin1,&xmax1,&ymin1,&ymax1))
-        return NULL;
-    plplot_canvas_get_viewport(PLPLOT_CANVAS(self->obj),
-			       xmin1,xmax1,ymin1,ymax1,
-			       &xmin2,&xmax2,&ymin2,&ymax2);
-    return Py_BuildValue("dddd",xmin2,xmax2,ymin2,ymax2);
-}
-%%
 override plplot_canvas_plline args
 static PyObject* _wrap_plplot_canvas_plline(PyGObject *self,
 					    PyObject *args)
