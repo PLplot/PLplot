@@ -60,9 +60,6 @@ y = x**2/10.
 canvas=plplotcanvas.Canvas(aa=True)  
 canvas.set_size(WIDTH,HEIGHT)
 
-# Determine the viewport so that everything is drawn on the canvas
-xmin,xmax,ymin,ymax = canvas.get_viewport(0.12,0.95,0.15,0.88)
-
 # Create a new window and stuff the canvas into it
 window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 window.set_border_width(10)
@@ -79,7 +76,7 @@ window.show_all()
 canvas.pladv(0)  # Advance the page
 canvas.plcol0(15) # Set color to black
 canvas.plwid(2) # Set the pen width
-canvas.plvpor(xmin,xmax,ymin,ymax); # Set the viewport
+canvas.plvsta() # Set the viewport
 canvas.plwind(0.,10.,0.,10.); # Set the window
 canvas.plbox("bcnst",0.,0,"bcnstv",0.,0); # Set the box
 canvas.pllab("x-axis","y-axis","A Simple Plot") # Draw some labels

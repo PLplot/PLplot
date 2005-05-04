@@ -53,12 +53,12 @@
 #define STEPS 300
 
 /* The number of points and period for the first wave */
-#define NPTS 200
-#define PERIOD 60
+#define NPTS 100
+#define PERIOD 30
 
-/* The aspect and zoom for each plot widget */
-#define ASPECT 2.5
-#define ZOOM 0.75
+/* The width and height for each plot widget */
+#define WIDTH 600
+#define HEIGHT 200
 
 /* Run the plots in different threads */
 GThread* thread0=NULL; 
@@ -86,16 +86,14 @@ static volatile int gtkstate = GTKSTATE_CONTINUE;
 /* setup_axes - sets up plot and draws axes */
 void setup_axes(PlplotCanvas *canvas,char* title)
 {
-  gdouble xmin,xmax,ymin,ymax;
-
   /* Plot the axes in the foreground (for persistency) */
   plplot_canvas_use_foreground_group(canvas);
 
   /* Set up the viewport and window  */
   plplot_canvas_pllsty(canvas,1);
   plplot_canvas_plcol0(canvas,15);
-  plplot_canvas_get_viewport(canvas,0.15,0.9,0.2,0.8,&xmin,&xmax,&ymin,&ymax);
-  plplot_canvas_plvpor(canvas,xmin,xmax,ymin,ymax);
+  plplot_canvas_plschr(canvas,0,0.6);
+  plplot_canvas_plvsta(canvas);
   plplot_canvas_plwind(canvas,x[0],x[NPTS-1],-2.,2.);
   plplot_canvas_plbox(canvas,"bcnst",0.,0,"bcnstv",0.,0);
   plplot_canvas_pllab(canvas,"(x)","(y)",title);
@@ -225,10 +223,9 @@ int main(int argc,char *argv[] )
   /* Create the first canvas, set its size, draw some axes on it, and
    *  place it in a frame 
    */
-  canvas0 = plplot_canvas_new(FALSE);
+  canvas0 = plplot_canvas_new(TRUE);
   plplot_canvas_use_fast_rendering(canvas0,TRUE);
-  plplot_canvas_set_aspect(canvas0,ASPECT);
-  plplot_canvas_set_zoom(canvas0,ZOOM);
+  plplot_canvas_set_size(canvas0,WIDTH,HEIGHT);
   plplot_canvas_pladv(canvas0,0);  /* Advance the page */
   setup_axes(canvas0,"A phase-progressing wave");
   canvas0frame = GTK_FRAME(gtk_frame_new(NULL));
@@ -238,10 +235,9 @@ int main(int argc,char *argv[] )
   /* Create the second canvas, set its size, draw some axes on it, and
    * place it in a frame
    */
-  canvas1 = plplot_canvas_new(FALSE);
+  canvas1 = plplot_canvas_new(TRUE);
   plplot_canvas_use_fast_rendering(canvas1,TRUE);
-  plplot_canvas_set_aspect(canvas1,ASPECT);
-  plplot_canvas_set_zoom(canvas1,ZOOM);
+  plplot_canvas_set_size(canvas1,WIDTH,HEIGHT);
   plplot_canvas_pladv(canvas1,0);  /* Advance the page */
   setup_axes(canvas1,"Another phase-progressing wave");
   canvas1frame = GTK_FRAME(gtk_frame_new(NULL));

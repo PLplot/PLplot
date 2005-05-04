@@ -56,8 +56,6 @@ int main(int argc,char *argv[] )
   PlplotCanvas* canvas;
   GtkWidget *window;
 
-  gdouble xmin,xmax,ymin,ymax;
-
   /* The data to plot */
   double x[11] = {0,1,2,3,4,5,6,7,8,9,10};
   double y[11] = {0,0.1,0.4,0.9,1.6,2.6,3.6,4.9,6.4,8.1,10};
@@ -71,10 +69,6 @@ int main(int argc,char *argv[] )
    */
   canvas=plplot_canvas_new(TRUE);
   plplot_canvas_set_size(canvas,WIDTH,HEIGHT);
-
-  /* Determine the viewport so that everything is drawn on the canvas */
-  plplot_canvas_get_viewport(canvas,0.12,0.95,0.15,0.88,
-			     &xmin,&xmax,&ymin,&ymax);
 
   /* Create a new window and stuff the canvas into it */
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -93,7 +87,7 @@ int main(int argc,char *argv[] )
   plplot_canvas_pladv(canvas,0); /* Advance to first page */
   plplot_canvas_plcol0(canvas,15); /* Set color to black */
   plplot_canvas_plwid(canvas,2); /* Set the pen width */
-  plplot_canvas_plvpor(canvas,xmin,xmax,ymin,ymax); /* Set the viewport */
+  plplot_canvas_plvsta(canvas); /* Set the viewport */
   plplot_canvas_plwind(canvas,0.,10.,0.,10.); /* Set the window */
   plplot_canvas_plbox(canvas,"bcnst",0.,0,"bcnstv",0.,0); /* Set the box */
   plplot_canvas_pllab(canvas,"x-axis","y-axis","A Simple Plot"); /* Draw some labels */

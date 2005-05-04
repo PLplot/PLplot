@@ -53,12 +53,12 @@ import gtk
 STEPS = 300
 
 # The number of points and period for the first wave
-NPTS = 200
-PERIOD = 60
+NPTS = 100
+PERIOD = 30
 
-# The aspect and zoom for each plot widget
-ASPECT = 2.5
-ZOOM = 0.75
+# The width and height for each plot widget
+WIDTH = 600
+HEIGHT = 200
 
 # Run the plots in different threads
 thread0 = None
@@ -86,8 +86,8 @@ def setup_axes(canvas,title):
     # Set up the viewport and window
     canvas.pllsty(1)
     canvas.plcol0(15)
-    xmin,xmax,ymin,ymax = canvas.get_viewport(0.15,0.9,0.2,0.8);
-    canvas.plvpor(xmin,xmax,ymin,ymax);
+    canvas.plschr(0,0.6)
+    canvas.plvsta()
     canvas.plwind(x[0],x[NPTS-1],-2.,2.);
     canvas.plbox("bcnst",0.,0,"bcnstv",0.,0);
     canvas.pllab("Phase","Amplitude",title);
@@ -180,10 +180,9 @@ if __name__ == "__main__":
 
     # Create the first canvas, set its size, draw some axes on it, and
     # place it in a frame
-    canvas0=plplotcanvas.Canvas(aa=False)
+    canvas0=plplotcanvas.Canvas(aa=True)
     canvas0.use_fast_rendering(True)
-    canvas0.set_aspect(ASPECT)
-    canvas0.set_zoom(ZOOM)
+    canvas0.set_size(WIDTH,HEIGHT)
     canvas0.pladv(0)  # Advance the page
     setup_axes(canvas0,"A phase-progressing wave")
     canvas0frame=gtk.Frame()
@@ -192,10 +191,9 @@ if __name__ == "__main__":
 
     # Create the second canvas, set its size, draw some axes on it, and
     # place it in a frame
-    canvas1=plplotcanvas.Canvas(aa=False)
+    canvas1=plplotcanvas.Canvas(aa=True)
     canvas1.use_fast_rendering(True)
-    canvas1.set_aspect(ASPECT)
-    canvas1.set_zoom(ZOOM)
+    canvas1.set_size(WIDTH,HEIGHT)
     canvas1.pladv(0)  # Advance the page
     setup_axes(canvas1,"Another phase-progressing wave")
     canvas1frame=gtk.Frame()
