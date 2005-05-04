@@ -39,6 +39,17 @@ NOTICE
 #include <libart_lgpl/libart.h>
 #include <libgnomeprint/gnome-print.h>
 
+
+/* #define DEBUG_GCW_1 */
+/* #define DEBUG_GCW_2 */
+/* #define ASSERT_GCW */
+
+
+#define POLYGON_GCW
+
+#define OUTLINE_POLYGON_GCW
+
+
 typedef struct {
   GnomeCanvas* canvas;                /* The canvas to draw on */
   GnomeCanvasItem* background;        /* The background of the canvas */
@@ -49,31 +60,34 @@ typedef struct {
   GnomeCanvasGroup* group_hidden;     /* Hidden group --> visible at eop */
   GnomeCanvasGroup* group_current;    /* A pointer to one of the above */
 
-  GtkWidget* window;         /* A window used in standalone mode */
-  GtkWidget* notebook;       /* A notebook pager in the window */
-  GtkWidget* statusbar=NULL; /* A statusbar for the window */
-  GtkWidget *filew=NULL;     /* A file widget chooser when Save is pressed */
+  GtkWidget* window;    /* A window used in standalone mode */
+  GtkWidget* notebook;  /* A notebook pager in the window */
+  GtkWidget* statusbar; /* A statusbar for the window */
+  GtkWidget* filew;     /* A file widget chooser when Save is pressed */
 
   GdkColormap* colormap;
-  guint32 color;
 
-  gdouble width;  /* Width of the canvas in device pixels */
-  gdouble height; /* Height of the canvas in device pixels */
+  guint32 color;   /* Current pen color */
+  guint32 bgcolor; /* Background color (shouldn't change) */
+
+  gdouble width;   /* Width of the canvas in device pixels */
+  gdouble height;  /* Height of the canvas in device pixels */
 
   PLINT pen_color; /* Current pen color */
   PLINT pen_width; /* Current pen width */
 
-  gboolean zoom_is_initialized;
+  gboolean use_text;            /* Flag to use TrueType text */
+  gboolean use_fast_rendering;  /* Flag for fastest (but buggy) rendering */
 
-  gboolean use_text;           /* Flag to use TrueType text */
-  gboolean use_fast_rendering; /* Flag for fastest (but buggy) rendering */
+  gboolean aa;                  /* Flag for an antialiased Canvas */
 
-  gboolean aa;                 /* Flag for an antialiased Canvas */
+  gboolean use_pixmap;          /* Flags a pixmap should be used for shades */
+  GdkPixmap* pixmap;            /* The pixmap */
+  gboolean pixmap_has_data;     /* Flags the pixmap has data */
 
-  gboolean use_pixmap;         /* Flags a pixmap should be used for shades */
-  GdkPixmap* pixmap;           /* The pixmap */
-  gboolean pixmap_has_data;    /* Flags the pixmap has data */
+  gboolean use_plot_buffer;    /* Flags that the plot buffer should be used */
 
+  gboolean zoom_is_initialized; /* Flags that the zoom is initialized */
 } GcwPLdev;
 
 /* Physical dimensions */
@@ -114,8 +128,10 @@ typedef struct {
  */
 
 /* Public_functions */
-/* void gcw_install_canvas(PLStream *pls, GnomeCanvas *canvas); */
+
+void gcw_install_canvas(GnomeCanvas *canvas);
 void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height);
+void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
 void gcw_use_text(GnomeCanvas* canvas,PLINT use_text);
 void gcw_use_fast_rendering(GnomeCanvas* canvas,PLINT use_fast_rendering);
 void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap);
@@ -123,12 +139,10 @@ void gcw_use_foreground_group(GnomeCanvas* canvas);
 void gcw_use_background_group(GnomeCanvas* canvas);
 void gcw_use_default_group(GnomeCanvas* canvas);
 
+
 /* Private functions */
-void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas);
-void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect);
-void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
-void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
-			     PLFLT ymin1,PLFLT ymax1,PLFLT* xmin2,PLFLT* xmax2,
-			     PLFLT* ymin2,PLFLT* ymax2);
+
+void gcw_init_canvas(GnomeCanvas* canvas);
+void gcw_debug(char* msg);
 
 #endif /* __GCW_H__ */
