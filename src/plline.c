@@ -56,10 +56,7 @@ grdashline(short *x, short *y);
 /* Determines if a point is inside a polygon or not */
 
 static int
-pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp );
-
-static int
-pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp );
+pointinpolygon( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp );
 
 /*----------------------------------------------------------------------*\
  * void pljoin()
@@ -648,6 +645,10 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
     int crossed_ymin2 = 0, crossed_ymax2 = 0;
     int crossed_up    = 0, crossed_down  = 0;
     int crossed_left  = 0, crossed_right = 0;
+    int inside_lb ;
+    int inside_lu ;
+    int inside_rb ;
+    int inside_ru ;
 
 /* Must have at least 3 points and draw() specified */
     if (npts < 3 || !draw) return;
@@ -659,6 +660,12 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
         xclp = (short *) malloc( (2*npts+2)*sizeof(short) ) ;
         yclp = (short *) malloc( (2*npts+2)*sizeof(short) ) ;
     }
+
+
+    inside_lb = pointinpolygon(npts,x,y,xmin,ymin) ;
+    inside_lu = pointinpolygon(npts,x,y,xmin,ymax) ;
+    inside_rb = pointinpolygon(npts,x,y,xmax,ymin) ;
+    inside_ru = pointinpolygon(npts,x,y,xmax,ymax) ;
 
     for (i = 0; i < npts - 1; i++) {
 	x1 = x[i]; x2 = x[i+1];
@@ -709,11 +716,11 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	       the extra points */
 		xclp[iclp+1] = x2; yclp[iclp+1] = y2;
 		xclp[iclp+2] = x1; yclp[iclp+2] = y1;
-		iout = iout - iclp;
+		iout = iout - iclp + 1;
 	    /* Upper two */
 		if ( ((crossed_xmin1 && crossed_xmax2) ||
 			     (crossed_xmin2 && crossed_xmax1)) &&
-			pointinpolygon(iout,&xclp[iclp+1],&yclp[iclp+1],xmin,ymax) )
+			inside_lu )
 		{
 		    if ( crossed_xmin1 )
 		    {
@@ -727,7 +734,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	    /* Lower two */
 		else if ( ((crossed_xmin1 && crossed_xmax2) ||
 			          (crossed_xmin2 && crossed_xmax1)) &&
-			pointinpolygon(iout,&xclp[iclp+1],&yclp[iclp+1],xmin,ymin) )
+			inside_lb )
 		{
 		    if ( crossed_xmin1 )
 		    {
@@ -741,7 +748,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	    /* Left two */
 		else if ( ((crossed_ymin1 && crossed_ymax2) ||
 			          (crossed_ymin2 && crossed_ymax1)) &&
-			pointinpolygon(iout,&xclp[iclp+1],&yclp[iclp+1],xmin,ymin) )
+			inside_lb )
 		{
 		    if ( crossed_ymin1 )
 		    {
@@ -755,7 +762,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	    /* Right two */
 		else if ( ((crossed_ymin1 && crossed_ymax2) ||
 			          (crossed_ymin2 && crossed_ymax1)) &&
-			pointinpolygon(iout,&xclp[iclp+1],&yclp[iclp+1],xmax,ymin) )
+			inside_rb )
 		{
 		    if ( crossed_ymin1 )
 		    {
@@ -1007,7 +1014,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 
 /* Check for the case that only one side has been crossed */
     if ( crossed_left+crossed_right+crossed_down+crossed_up == 1 &&
-		pointinpolygonPLINT(npts,x,y,xmin,ymin) ) {
+		inside_lb ) {
 	int dir = circulation(x, y, npts);
 	PLINT xlim[4], ylim[4];
 	int insert;
@@ -1302,7 +1309,7 @@ grdashline(short *x, short *y)
 \*----------------------------------------------------------------------*/
 
 static int
-pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
+pointinpolygon( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
 {
     int i;
     int count_crossings;
@@ -1375,112 +1382,8 @@ pointinpolygon( int n, short *x, short *y, PLINT xp, PLINT yp )
         yvv = y2   - y1;
         xv1 = xpp  - x1;
         yv1 = ypp  - y1;
-        xv2 = xout - x2;
-        yv2 = yout - y2;
-        inprod1 = xv1*yvv - yv1*xvv;
-        inprod2 = xv2*yvv - yv2*xvv;
-        if ( inprod1 * inprod2 >= 0.0 ) {
-            /* No crossing possible! */
-            continue;
-        }
-
-        /* We do have a crossing */
-        count_crossings ++;
-    }
-
-    /* Return the result: an even number of crossings means the
-       point is outside the polygon */
-
-    return (count_crossings%2);
-}
-
-/*----------------------------------------------------------------------*\
- * int pointinpolygonPLINT()
- *
- * Returns 1 if the point is inside the polygon, 0 otherwise
- * Note:
- * Points on the polygon are considered to be outside
- *
- * (AM) Unfortunately I had to have a version that can deal with
- * PLINT coordinates ... this was the easiest way.
-\*----------------------------------------------------------------------*/
-
-static int
-pointinpolygonPLINT( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
-{
-    int i;
-    int count_crossings;
-    PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
-    PLFLT xvp, yvp, xvv, yvv, xv1, yv1, xv2, yv2;
-    PLFLT inprod1, inprod2;
-
-    xpp = (PLFLT) xp;
-    ypp = (PLFLT) yp;
-
-    count_crossings = 0;
-
-
-    /* Determine a point outside the polygon  */
-
-    xmax = x[0] ;
-    xout = x[0] ;
-    yout = y[0] ;
-    for ( i = 0; i < n ; i ++ ) {
-        if ( xout > x[i] ) {
-            xout = x[i] ;
-        }
-        if ( xmax < x[i] ) {
-            xmax = x[i] ;
-        }
-    }
-    xout = xout - (xmax-xout) ;
-
-    /* Determine for each side whether the line segment between
-       our two points crosses the vertex */
-
-    xpp = (PLFLT) xp;
-    ypp = (PLFLT) yp;
-
-    xvp = xpp - xout;
-    yvp = ypp - yout;
-
-    for ( i = 0; i < n; i ++ ) {
-        x1 = (PLFLT) x[i] ;
-        y1 = (PLFLT) y[i] ;
-        if ( i < n-1 ) {
-            x2 = (PLFLT) x[i+1] ;
-            y2 = (PLFLT) y[i+1] ;
-        } else {
-            x2 = (PLFLT) x[0] ;
-            y2 = (PLFLT) y[0] ;
-        }
-
-        /* Skip zero-length segments */
-        if ( x1 == x2 && y1 == y2 ) {
-            continue;
-        }
-
-        /* Line through the two fixed points:
-           Are x1 and x2 on either side? */
-        xv1 = x1 - xout;
-        yv1 = y1 - yout;
-        xv2 = x2 - xout;
-        yv2 = y2 - yout;
-        inprod1 = xv1*yvp - yv1*xvp; /* Well, with the normal vector */
-        inprod2 = xv2*yvp - yv2*xvp;
-        if ( inprod1 * inprod2 >= 0.0 ) {
-            /* No crossing possible! */
-            continue;
-        }
-
-        /* Line through the two vertices:
-           Are xout and xpp on either side? */
-        xvv = x2   - x1;
-        yvv = y2   - y1;
-        xv1 = xpp  - x1;
-        yv1 = ypp  - y1;
-        xv2 = xout - x2;
-        yv2 = yout - y2;
+        xv2 = xout - x1;
+        yv2 = yout - y1;
         inprod1 = xv1*yvv - yv1*xvv;
         inprod2 = xv2*yvv - yv2*xvv;
         if ( inprod1 * inprod2 >= 0.0 ) {
