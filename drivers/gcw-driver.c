@@ -99,18 +99,6 @@ extern void plD_FreeType_Destroy(PLStream *pls);
 /* Device info */
 char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
-/*
-#define DEBUG_GCW
-*/
-
-/*
-#define ASSERT_GCW
-*/
-
-#define POLYGON_GCW
-
-#define OUTLINE_POLYGON_GCW
-
 /* Global driver options */
 
 static PLINT aa = 1;
@@ -137,541 +125,20 @@ static DrvOpt gcw_options[] =
     {NULL, DRV_INT, NULL, NULL}
   };
 
-GtkWidget *filew=NULL, *statusbar=NULL;
 
-void debug (char* msg)
+/*********************
+ * Utility functions *
+ *********************/
+
+guint32 plcolor_to_rgba(PLColor color, guchar alpha)
 {
-  fprintf(stderr,msg);
-  fflush(stderr);
+  return
+    ((int)(color.r) << 24)
+    + ((int)(color.g) << 16)
+    + ((int)(color.b) << 8)
+    + alpha;
 }
 
-/*--------------------------------------------------------------------------*\
- * Callback functions
- *
- * Employed when this driver is used in standalone mode.
- *
-\*--------------------------------------------------------------------------*/
-
-/*******************************
- * Main window event callbacks *
- *******************************/
-
-/* Delete event callback */
-gint delete_event(GtkWidget *widget, GdkEvent *event, gpointer data ) {
-  if(filew!=NULL)
-    g_signal_emit_by_name( G_OBJECT(filew),"delete-event");
-  return FALSE;
-}
-
-/* Destroy event calback */
-void destroy(GtkWidget *widget, gpointer data) {
-  gtk_main_quit ();
-}
-
-/******************
- * Zoom callbacks *
- ******************/
-
-/* All-purpose zoom callback.  Referred to by specific zoom callbacks given
- *  below.
- */
-void zoom(gpointer data, gint flag) {
-
-  gint n;
-
-  GtkNotebook *notebook;
-  GnomeCanvas *canvas;
-  GtkWidget *scrolled_window;
-  GList *list;
-
-  GcwPLdev* dev;
-
-  gdouble curmag,dum;
-
-  /* Get the current canvas */
-  notebook = GTK_NOTEBOOK(data);
-  n = gtk_notebook_get_current_page(notebook);
-  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
-  canvas = GNOME_CANVAS(gtk_container_get_children(
-	   GTK_CONTAINER(gtk_container_get_children(
-           GTK_CONTAINER(scrolled_window))->data))->data);
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <zoom>: Device not found");
-
-  /* Determine the new magnification */
-  if(flag==2) /* Zoom in */
-    gcw_set_canvas_zoom(canvas,ZOOMSTEP);
-  else if(flag==0) /* Zoom out */
-    gcw_set_canvas_zoom(canvas,1./ZOOMSTEP);
-  else { /* Zoom 100 */
-    /* Get the current magnification */
-    if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
-    curmag = 1./curmag;
-    gcw_set_canvas_zoom(canvas,(PLFLT)(ZOOM100/curmag));
-  }
-
-  /* Set the focus on the notebook */
-  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook));
-}
-
-
-/* Callback when zoom in button is pressed */
-void zoom_in(GtkWidget *widget, gpointer data ) {
-  zoom(data,2);
-}
-
-/* Callback when zoom 100 button is pressed */
-void zoom_100(GtkWidget *widget, gpointer data ) {
-  zoom(data,1);
-}
-
-/* Callback when zoom out button is pressed */
-void zoom_out(GtkWidget *widget, gpointer data ) {
-  zoom(data,0);
-}
-
-/*****************************
- * File selection callbacks. *
- *****************************/
-
-/* Callback to OK file selection.  Retrieves the selected filename and 
- * replays the plot buffer to it through the associated driver. 
- */
-void file_ok_sel(GtkWidget *w, gpointer data)
-{
-  gchar *fname;
-  FILE *f;
-  guint n;
-  char devname[10],str[100];
-
-  PLINT cur_strm, new_strm;
-
-  GtkNotebook *notebook;
-  GnomeCanvas *canvas;
-  GtkWidget *scrolled_window;
-  GList *list;
-
-  GtkWidget *fs;
-
-  gdouble curmag,dum;
-
-  GcwPLdev* dev;
-
-  PLINT icol0,icol1,ncol0,ncol1;
-  PLColor *cmap0,*cmap1;
-
-  gboolean errflag = FALSE;
-
-  struct stat buf;
-
-  GtkDialog *dialog;
-  GtkWidget *hbox,*message,*icon;
-  gint result;
-
-  guint context;
-  
-  /* Get the current canvas */
-  notebook = GTK_NOTEBOOK(data);
-  n = gtk_notebook_get_current_page(notebook);
-  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
-  canvas = GNOME_CANVAS(gtk_container_get_children(
-	   GTK_CONTAINER(gtk_container_get_children(
-           GTK_CONTAINER(scrolled_window))->data))->data);
-
-  /* Get the file name */
-  fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
-  fname = strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(fs)));
-  if(fname==NULL) plabort("GCW driver <file_ok_sel>: Cannot obtain filename");
-
-  /* Check to see if the file already exists, and respond appropriately */
-  if(stat(fname,&buf)==0) {
-
-    /* Confirm the user wants to overwrite the existing file */
-    dialog = GTK_DIALOG(gtk_dialog_new_with_buttons("",
-		          GTK_WINDOW(filew),
-			  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                          GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL));
-
-    message = gtk_label_new("");
-    gtk_label_set_markup(GTK_LABEL(message),
-			 "<span size=\"large\"><b>File exists.  "
-			 "Overwrite?</b></span>");
-
-    icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION,
-				    GTK_ICON_SIZE_DIALOG);
-
-    hbox = gtk_hbox_new(FALSE,0);
-    gtk_box_pack_start(GTK_BOX(hbox), icon, TRUE, TRUE, 10);
-    gtk_box_pack_start(GTK_BOX(hbox), message, TRUE, TRUE, 10);
-    gtk_container_add(GTK_CONTAINER(dialog->vbox),hbox);
-
-    gtk_widget_show_all(GTK_WIDGET(dialog));
-
-    result = gtk_dialog_run(dialog);
-    gtk_widget_destroy(GTK_WIDGET(dialog));
-    if(result==GTK_RESPONSE_REJECT) return;
-  }
-
-  /* Hide the file selection widget */
-  gtk_widget_hide(GTK_WIDGET(fs));
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <file_sel_ok>: Device not found");
-
-  /* Put the focus back on the notebook */
-  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
-
-  /* Test that we can open and write to the file */
-  if((f=fopen(fname,"w"))==NULL)
-    plabort("GCW driver <file_ok_sel>: Cannot open output file");
-  fclose(f);
-  remove(fname);
-
-  /* Get the file extension and make sure we recognize it.  Allow names
-   * of display devices as well.
-   *
-   * Note that we can't replot to xwin or tk devices, which can't open a
-   * display for some reason.
-   *
-   */
-  n = strlen(fname);
-  if     (strcasecmp(&fname[n-3],"png")==0)  sprintf(devname,"png");
-  else if(strcasecmp(&fname[n-3],"gif")==0)  sprintf(devname,"gif");
-  else if(strcasecmp(&fname[n-3],"jpg")==0)  sprintf(devname,"jpg");
-  else if(strcasecmp(&fname[n-4],"jpeg")==0) sprintf(devname,"jpeg");
-  else if(strcasecmp(&fname[n-2],"ps")==0)   sprintf(devname,"ps");
-  else if(strcasecmp(&fname[n-3],"psc")==0)  sprintf(devname,"psc");
-  else if(strcasecmp(&fname[n-4],"xwin")==0) sprintf(devname,"xwin");
-  else if(strcasecmp(&fname[n-3],"gcw")==0) sprintf(devname,"gcw");
-  else if(strcasecmp(&fname[n-2],"tk")==0) sprintf(devname,"tk");
-  else {
-    if(statusbar!=NULL) {
-      context=gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar),"PLplot");
-      gtk_statusbar_push(GTK_STATUSBAR(statusbar), context,
-			 " WARNING: File type not recognized (unknown "
-			 "extension).  Use one of ps, psc, png, jpg, or "
-			 "gif."
-			 );
-      return;
-    }
-    else plabort("GCW driver <file_ok_sel>: File type not recognized");
-  }
-  /* Check that we are set up appropriately for device */
-  if( strcmp(devname,"ps")==0 || strcmp(devname,"psc")==0 ) {
-    if(plsc->dev_hrshsym != 1)
-      if(statusbar!=NULL) {
-	context=gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar),
-					     "PLplot");
-
-	gtk_statusbar_push(GTK_STATUSBAR(statusbar),context,
-			   " NOTE: Use '-drvopt hrshsym' in command-line "
-			   "arguments if symbols are missing in saved "
-			   "PostScript files."
-			   );
-      }
-      else
-	plwarn("GCW driver: Use '-drvopt hrshsym' if symbols are missing in "
-	       "saved PostScript files.");
-  }
-  if( strcmp(devname,"xwin")==0 || strcmp(devname,"tk")==0 ) {
-    if(plsc->dev_text != 0)
-      plwarn("GCW driver: Use '-drvopt text=0'");
-  }
-
-  /* Hack: Swap in the saved tempfile and colormaps */
-  f = plsc->plbufFile;
-  plsc->plbufFile = g_object_get_data(G_OBJECT(canvas),"plotbuf");
-  if(plsc->plbufFile == NULL) errflag=TRUE;
-
-  icol0=plsc->icol0;
-  if( g_object_get_data(G_OBJECT(canvas),"icol0") != NULL )
-    plsc->icol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol0");
-  else errflag=TRUE;
-
-  ncol0=plsc->ncol0;
-  if( g_object_get_data(G_OBJECT(canvas),"ncol0") != NULL )
-    plsc->ncol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol0");
-  else errflag=TRUE;
-    
-  cmap0=plsc->cmap0;
-  if( g_object_get_data(G_OBJECT(canvas),"cmap0") )
-    plsc->cmap0 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap0");
-  else errflag=TRUE;
-
-  icol1=plsc->icol1;
-  if( g_object_get_data(G_OBJECT(canvas),"icol1") != NULL )
-    plsc->icol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol1");
-  else errflag=TRUE;
-
-  ncol1=plsc->ncol1;
-  if( g_object_get_data(G_OBJECT(canvas),"ncol1") != NULL )
-    plsc->ncol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol1");
-  else errflag=TRUE;
-
-  cmap1=plsc->cmap1;
-  if( g_object_get_data(G_OBJECT(canvas),"cmap1") != NULL )
-    plsc->cmap1 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap1");
-  else errflag=TRUE;
-
-  if(!errflag) {
-    /* Get the current stream and make a new one */
-    plgstrm(&cur_strm);
-    plmkstrm(&new_strm);
-
-    plsfnam(fname); /* Set the file name */
-
-    plsdev(devname); /* Set the device */
-
-    plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
-
-    plreplot();            /* do the save by replaying the plot buffer */
-
-    plend1();              /* finish the device */
-
-    plsstrm(cur_strm);     /* return to previous stream */
-  }
-  else plwarn("GCW driver <file_ok_sel>: Cannot set up output stream.");
-
-  /* Reverse the swap */
-  plsc->plbufFile = f;
-  plsc->icol0 = icol0;
-  plsc->ncol0 = ncol0;
-  plsc->cmap0 = cmap0;
-  plsc->icol1 = icol1;
-  plsc->ncol1 = ncol1;
-  plsc->cmap1 = cmap1;
-}
-
-/* Callback to cancel file selection */
-void file_cancel_sel(GtkWidget *w, gpointer data)
-{
-  GtkNotebook *notebook;
-  GnomeCanvas *canvas;
-  GtkWidget *scrolled_window;
-  GList *list;
-  GtkWidget *fs;
-  GcwPLdev* dev;
-  guint n;
-  
-  /* Get the current canvas */
-  notebook = GTK_NOTEBOOK(data);
-  n = gtk_notebook_get_current_page(notebook);
-  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
-  canvas = GNOME_CANVAS(gtk_container_get_children(
-	   GTK_CONTAINER(gtk_container_get_children(
-           GTK_CONTAINER(scrolled_window))->data))->data);
-
-  /* Hide the file selection widget */
-  fs = GTK_WIDGET(g_object_get_data(G_OBJECT(notebook),"fs"));
-  gtk_widget_hide(GTK_WIDGET(fs));
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <file_cancel_sel>: Device not found");
-
-  /* Put the focus back on the notebook */
-  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
-}
-
-/* Callback to create file selection dialog */
-void filesel(GtkWidget *widget, gpointer data ) {
-
-  GtkNotebook *notebook;
-
-  /* Create a new file dialog if it doesn't already exist */
-  if(filew == NULL) {
-
-    /* Create a new file selection widget */
-    filew = gtk_file_selection_new ("File selection");
-    
-    /* Connect the ok_button to file_ok_sel function */
-    g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filew)->ok_button),
-		     "clicked", G_CALLBACK(file_ok_sel), (gpointer)data);
-    
-    /* Connect the cancel_button to destroy the widget */
-    g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filew)->cancel_button),
-		     "clicked", G_CALLBACK(file_cancel_sel), (gpointer)data);
-    
-    /* Lets set the filename, as if this were a save dialog, and we are giving
-       a default filename */
-    gtk_file_selection_set_filename(GTK_FILE_SELECTION(filew), 
-				    "plot.psc");
-
-    /* Get the notebook, and attach the fileselector to it */
-    notebook = GTK_NOTEBOOK(data);
-    g_object_set_data(G_OBJECT(notebook),"fs",(gpointer)filew);
-
-  }
-    
-  gtk_widget_show(filew);
-}
-
-/**************************
- * Key release callbacks. *
- **************************/
-
-void key_release(GtkWidget *widget, GdkEventKey  *event, gpointer data ) {
-  if(event->keyval == '+')  zoom(data,2);
-  if(event->keyval == '=')  zoom(data,1);
-  if(event->keyval == '-')  zoom(data,0);
-  if(event->keyval == 'q')  destroy(widget,data);
-}
-
-
-/*--------------------------------------------------------------------------*\
- * install_canvas()
- *
- * Creates and installs a canvas into a window on the fly.  This function
- * is called if a canvas hasn't been supplied to the driver.
-\*--------------------------------------------------------------------------*/
-
-void install_canvas(PLStream *pls)
-{
-  GcwPLdev* dev = pls->dev;
-  GtkWidget *window,*vbox,*hbox,*button,*image,*scrolled_window;
-  GnomeCanvas *canvas;
-
-  gboolean flag = FALSE;
-
-#ifdef DEBUG_GCW
-  debug("<install_canvas>\n");
-#endif
-
-  if(dev->window==NULL) {
-
-    flag = TRUE;
-
-    /* Create a new window and prepare a notebook for it */
-
-    /* Create a new window */
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    dev->window = window;
-    gtk_window_set_title(GTK_WINDOW(window),"PLplot");
-
-    /* Connect the signal handlers to the window decorations */
-    g_signal_connect(G_OBJECT(window),"delete_event",
-		     G_CALLBACK(delete_event),NULL);
-    g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy),NULL);
-
-
-    /* Create a vbox and put it into the window */
-    vbox = gtk_vbox_new(FALSE,2);
-    gtk_container_add(GTK_CONTAINER(window),GTK_WIDGET(vbox));
-
-    /* Create a hbox and put it into the vbox */
-    hbox = gtk_hbox_new(FALSE,0);
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(hbox),TRUE,TRUE,0);
-
-    /* Create a statusbar and put it into the vbox */
-    statusbar = gtk_statusbar_new();
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(statusbar),FALSE,FALSE,0);
-
-    /* Add an vbox to the hbox */
-    vbox = gtk_vbox_new(FALSE,5);
-    gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
-    gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(vbox),FALSE,FALSE,0);
-
-    /* Create the new notebook and add it to the hbox*/
-    dev->notebook = gtk_notebook_new();
-    gtk_notebook_set_scrollable(GTK_NOTEBOOK(dev->notebook),TRUE);
-    gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(dev->notebook),TRUE,TRUE,0);
-    g_signal_connect(G_OBJECT(dev->notebook), "key_release_event",
-                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
-
-    /* Use a few labels as spacers */
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
-		       FALSE,FALSE,0);
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
-		       FALSE,FALSE,0);
-
-    /* Add buttons to the vbox */
-
-    /* Add zoom in button and create callbacks */
-    image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_IN,
-				     GTK_ICON_SIZE_SMALL_TOOLBAR);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
-    g_signal_connect (G_OBJECT(button), "clicked",
-		      G_CALLBACK(zoom_in), G_OBJECT(dev->notebook));
-    g_signal_connect(G_OBJECT(button), "key_release_event",
-                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
-
-    /* Add zoom100 button and create callbacks */
-    image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_100,
-				     GTK_ICON_SIZE_SMALL_TOOLBAR);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
-    g_signal_connect (G_OBJECT(button), "clicked",
-		      G_CALLBACK(zoom_100), G_OBJECT(dev->notebook));
-
-    /* Add zoom out button and create callbacks */
-    image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_OUT,
-				     GTK_ICON_SIZE_SMALL_TOOLBAR);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
-    g_signal_connect (G_OBJECT(button), "clicked",
-		      G_CALLBACK(zoom_out), G_OBJECT(dev->notebook));
-    g_signal_connect(G_OBJECT(button), "key_release_event",
-                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
-
-    /* Add save button and create callbacks */
-    if(pls->plbuf_write) {
-      image = gtk_image_new_from_stock(GTK_STOCK_SAVE,
-				       GTK_ICON_SIZE_SMALL_TOOLBAR);
-      button = gtk_button_new();
-      gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-      gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
-      g_signal_connect (G_OBJECT(button), "clicked",
-			G_CALLBACK(filesel), G_OBJECT(dev->notebook));
-    }
-  }
-
-  /* Create a new canvas */
-  if(aa) {
-    if( !GNOME_IS_CANVAS(canvas = GNOME_CANVAS(gnome_canvas_new_aa())) )
-      plexit("GCW driver <install_canvas>: Could not create aa canvas");
-    dev->aa = TRUE;
-  }
-  else {
-    if( !GNOME_IS_CANVAS(canvas = GNOME_CANVAS(gnome_canvas_new())) )
-      plexit("GCW driver <install_canvas>: Could not create canvas");
-    dev->aa = FALSE;
-  }
-
-  gcw_set_canvas(pls,canvas);
-  gcw_set_canvas_zoom(canvas,ZOOM100);
-
-  /* Put the canvas in a scrolled window */
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-                                 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-					GTK_WIDGET(canvas));
-
-  /* Install the scrolled window in the notebook */
-  gtk_notebook_append_page(GTK_NOTEBOOK(dev->notebook),
-			   GTK_WIDGET(scrolled_window), NULL);
-
-  if(flag) {
-
-    /* Set the focus on the notebook */
-    gtk_window_set_focus(GTK_WINDOW(window),GTK_WIDGET(dev->notebook));
-
-    /* Size the window */
-    gtk_window_resize(GTK_WINDOW(window),dev->width*ZOOM100+65,
- 		      dev->height*ZOOM100+75);
-  }
-
-  /* Display everything */
-  gtk_widget_show_all(dev->window);
-}
 
 void clear_pixmap(PLStream* pls)
 {
@@ -693,6 +160,7 @@ void clear_pixmap(PLStream* pls)
   gdk_gc_unref(gc);
 }
 
+
 /*--------------------------------------------------------------------------*\
  * plD_dispatch_init_gcw()
  *
@@ -712,8 +180,8 @@ void plD_esc_gcw(PLStream *, PLINT, void *);
 void plD_dispatch_init_gcw( PLDispatchTable *pdt )
 {
 
-#ifdef DEBUG_GCW
-  debug("<plD_dispatch_init_gcw>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<plD_dispatch_init_gcw>\n");
 #endif
 
 #ifndef ENABLE_DYNDRIVERS
@@ -730,6 +198,10 @@ void plD_dispatch_init_gcw( PLDispatchTable *pdt )
   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_gcw;
   pdt->pl_state    = (plD_state_fp)    plD_state_gcw;
   pdt->pl_esc      = (plD_esc_fp)      plD_esc_gcw;
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</plD_dispatch_init_gcw>\n");
+#endif
 }
 
 
@@ -748,8 +220,8 @@ void plD_init_gcw(PLStream *pls)
 
   PLINT width, height;
 
-#ifdef DEBUG_GCW
-  debug("<plD_init_gcw>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<plD_init_gcw>\n");
 #endif
 
   /* Parse the driver options */
@@ -771,43 +243,33 @@ void plD_init_gcw(PLStream *pls)
   /* Initialize gtk */
   gtk_init(0,NULL);
 
-  /* Set up the physical device in the following command block.  It is very 
+  /* Set up the physical device by using gcw_set_canvas_size.  It is very 
    * important to do this properly, because many of the calculations are
    * based on physical coordinates.  If this is not done correctly, then
    * dashed lines and hatched areas will not scale correctly, and the 
    * replot mechanism will produce incorrect results.  Problems can also
    * crop up with hidden line removal.
    *
-   * Notice that coordinates in this driver are measured in device units,
-   * which correspond to the pixel size on a typical screen.  The coordinates
-   * reported and received from the PLplot core, however, are in virtual
-   * coordinates, which is just a scaled version of the device coordinates.
-   * This strateg is used so that the calculations performed in the PLplot
-   * core are performed at reasonably high resolution.
    */
-
-  /* Determine the page width and height in virtual coordinate units */
   if (pls->xlength > 0 && pls->ylength > 0) {
-    /* The width and height are given by the user in device units, so we must
-     * do the conversion to virtual coordinate units.
+    /* xlength and length are the dimensions specified using -geometry
+     * on the command line, in device coordinates.
      */
-    width = pls->xlength * VSCALE;
-    height = pls->ylength * VSCALE;
+    width = pls->xlength;
+    height = pls->ylength;
   }
   else {    
-    width = (PLINT)(CANVAS_WIDTH*VIRTUAL_PIXELS_PER_IN);
-    height = (PLINT)(CANVAS_HEIGHT*VIRTUAL_PIXELS_PER_IN);
+    width = (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN);
+    height = (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN);
   }
+  gcw_set_canvas_size(NULL,width,height);
 
-  /* Set the number of virtual coordinate units per mm */
-  plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
+  /* Initialize the device colors */
+  dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
+  dev->bgcolor = plcolor_to_rgba(pls->cmap0[0],0xFF);
 
-  /* Set up physical limits of plotting device, in virtual coordinate units */
-  plP_setphy((PLINT)0,width,(PLINT)0,height);
-
-  /* Save the width and height for the device, in device units */
-  dev->width = width/VSCALE;
-  dev->height = height/VSCALE;
+  /* Remember if we are buffering the plot */
+  dev->use_plot_buffer = pls->plbuf_write;
 
   /* Set text handling */
 #ifdef HAVE_FREETYPE
@@ -831,21 +293,27 @@ void plD_init_gcw(PLStream *pls)
   dev->use_text = FALSE;
 #endif
 
+  /* Flag antialiased canvas */
+  dev->aa = aa;
+
   /* Set fast rendering for polylines */
   dev->use_fast_rendering = (gboolean)fast;
+
+  /* Only initialize the zoom after all other initialization is complete */
+  dev->zoom_is_initialized = FALSE;
 
   /* Set up the pixmap support */
   dev->use_pixmap = (gboolean)pixmap;
   dev->pixmap = NULL;
   dev->pixmap_has_data = FALSE;
 
-  /* Only initialize the zoom after all other initialization is complete */
-  dev->zoom_is_initialized = FALSE;
-
-  /* Set the device canvas pointer and window */
+  /* Set the device canvas and window pointers */
   dev->canvas = NULL;
   dev->window = NULL;
-
+  dev->notebook = NULL;
+  dev->statusbar = NULL;
+  dev->filew = NULL;
+    
   /* Initialize the visible and hidden groups.  All of the plplot plotting
    * commands are drawn to the hidden group.  When the page is finalized,
    * the group is made visible, and the old group destroyed. */
@@ -854,6 +322,10 @@ void plD_init_gcw(PLStream *pls)
   dev->group_background=NULL;
   dev->group_foreground=NULL;
   dev->group_current=NULL;
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</plD_init_gcw>\n");
+#endif
 }
 
 
@@ -877,11 +349,11 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   gdouble width;
   guint32 color;
 
-#ifdef DEBUG_GCW
-  debug("<plD_polyline_gcw>\n");
+#ifdef DEBUG_GCW_2
+  gcw_debug("<plD_polyline_gcw />\n");
 #endif
 
-  if(dev->canvas==NULL) install_canvas(pls);
+  if(dev->canvas==NULL) gcw_install_canvas(NULL);
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
@@ -983,8 +455,8 @@ void plD_line_gcw(PLStream *pls, short x1, short y1, short x2, short y2)
   short x[2];
   short y[2];
 
-#ifdef DEBUG_GCW
-  debug("<plD_line_gcw>\n");
+#ifdef DEBUG_GCW_2
+  gcw_debug("<plD_line_gcw />\n");
 #endif
 
   x[0] = x1;
@@ -1021,8 +493,8 @@ void plD_eop_gcw(PLStream *pls)
 
   guint i;
 
-#ifdef DEBUG_GCW
-  debug("<plD_eop_gcw>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<plD_eop_gcw>\n");
 #endif
 
   canvas = dev->canvas;
@@ -1147,6 +619,7 @@ void plD_eop_gcw(PLStream *pls)
       /* cmap 1 */
       if((icol=(gint*)malloc(sizeof(gint)))==NULL)
 	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
+
       else *icol = pls->icol1;
       g_object_set_data(G_OBJECT(canvas),"icol1",(gpointer)icol);
       if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
@@ -1176,6 +649,10 @@ void plD_eop_gcw(PLStream *pls)
     dev->group_foreground=NULL;
     dev->group_current=NULL;
   }
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</plD_eop_gcw>\n");
+#endif
 }
 
 
@@ -1191,16 +668,18 @@ void plD_bop_gcw(PLStream *pls)
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
 
-#ifdef DEBUG_GCW
-  debug("<plD_bop_gcw>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<plD_bop_gcw>\n");
 #endif
 
+  if(dev->canvas==NULL) return; /* Bop gets called before PLESC_DEVINIT;
+				 * so don't install a canvas here.  Force
+				 * bop again where hidden group is missing. */
   canvas = dev->canvas;
-  if(canvas == NULL) return;
   
   /* Make sure the zoom is initialized */
   if(!dev->zoom_is_initialized) gcw_set_canvas_zoom(canvas,1.);
-  
+
   /* Creat a new hidden group; all new drawing will be to this group */
   if(!GNOME_IS_CANVAS_ITEM(
     dev->group_hidden = (GnomeCanvasGroup*)gnome_canvas_item_new(
@@ -1229,6 +708,10 @@ void plD_bop_gcw(PLStream *pls)
    */
   gnome_canvas_item_raise_to_top(GNOME_CANVAS_ITEM(dev->group_foreground));
   gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</plD_bop_gcw>\n");
+#endif
 }
 
 
@@ -1242,8 +725,8 @@ void plD_tidy_gcw(PLStream *pls)
 {
   GcwPLdev* dev = pls->dev;
 
-#ifdef DEBUG_GCW
-  debug("<plD_tidy_gcw>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<plD_tidy_gcw>\n");
 #endif
 
 #ifdef HAVE_FREETYPE
@@ -1257,6 +740,10 @@ void plD_tidy_gcw(PLStream *pls)
   if(dev->window!=NULL) {
     gtk_main ();
   }
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</plD_tidy_gcw>\n");
+#endif
 }
 
 
@@ -1267,47 +754,38 @@ void plD_tidy_gcw(PLStream *pls)
  *
 \*--------------------------------------------------------------------------*/
 
-guint32 plcolor_to_rgba(PLColor color, guchar alpha)
-{
-  return
-    ((int)(color.r) << 24)
-    + ((int)(color.g) << 16)
-    + ((int)(color.b) << 8)
-    + alpha;
-}
-
 void plD_state_gcw(PLStream *pls, PLINT op)
 {
   GcwPLdev* dev = pls->dev;
   char msg[100];
 
-#ifdef DEBUG_GCW
-  sprintf(msg,"<plD_state_gcw>: %d\n",op);
-  debug(msg);
+#ifdef DEBUG_GCW_2
+  sprintf(msg,"<plD_state_gcw />: %d\n",op);
+  gcw_debug(msg);
 #endif
 
   switch (op) {
     case (1): /* PLSTATE_WIDTH */
-      if(dev->canvas==NULL) install_canvas(pls);
+      if(dev->canvas==NULL) gcw_install_canvas(NULL);
       break;
     case (2): /* PLSTATE_COLOR0 */
       dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
       break;
     case (3): /* PLSTATE_COLOR1 */
-      if(dev->canvas==NULL) install_canvas(pls);
+      if(dev->canvas==NULL) gcw_install_canvas(NULL);
       dev->color = plcolor_to_rgba(pls->cmap1[pls->icol1],0xFF);
       break;
     case (4): /* PLSTATE_FILL */
-      if(dev->canvas==NULL) install_canvas(pls);
+      if(dev->canvas==NULL) gcw_install_canvas(NULL);
       break;
     case (5): /* PLSTATE_CMAP0 */
-/*       if(dev->canvas==NULL) install_canvas(pls); */
+/*       if(dev->canvas==NULL) gcw_install_canvas(NULL); */
       break;
     case (6): /* PLSTATE_CMAP1 */
-/*      if(dev->canvas==NULL) install_canvas(pls); */
+/*      if(dev->canvas==NULL) gcw_install_canvas(NULL); */
       break;
     default: 
-      if(dev->canvas==NULL) install_canvas(pls);
+      if(dev->canvas==NULL) gcw_install_canvas(NULL);
       break;
   }
 }
@@ -1336,11 +814,11 @@ static void fill_polygon (PLStream* pls)
 
   PLINT tmp;
 
-#ifdef DEBUG_GCW
-  debug("<fill_polygon>\n");
+#ifdef DEBUG_GCW_2
+  gcw_debug("<fill_polygon />\n");
 #endif
 
-  if(dev->canvas==NULL) install_canvas(pls);
+  if(dev->canvas==NULL) gcw_install_canvas(NULL);
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
@@ -1437,11 +915,11 @@ static void clear (PLStream* pls)
 {
   GcwPLdev* dev = pls->dev;
 
-#ifdef DEBUG_GCW
-  debug("<clear>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<clear>\n");
 #endif
 
-  if(dev->canvas==NULL) install_canvas(pls);
+  if(dev->canvas==NULL) gcw_install_canvas(NULL);
 
   if(dev->group_visible!=NULL) {
     gtk_object_destroy((GtkObject*)(dev->group_visible));
@@ -1452,6 +930,10 @@ static void clear (PLStream* pls)
     gtk_object_destroy((GtkObject*)(dev->group_hidden));
     dev->group_hidden = NULL;
   }
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</clear>\n");
+#endif
 }
 
 
@@ -1506,11 +988,11 @@ void proc_str(PLStream *pls, EscText *args)
   guint symbol;
 
 
-#ifdef DEBUG_GCW
-  debug("<proc_str>\n");
+#ifdef DEBUG_GCW_1
+  gcw_debug("<proc_str>\n");
 #endif
 
-  if(dev->canvas==NULL) install_canvas(pls);
+  if(dev->canvas==NULL) gcw_install_canvas(NULL);
   canvas = dev->canvas;
 
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
@@ -1749,6 +1231,10 @@ void proc_str(PLStream *pls, EscText *args)
     sum_width += width[i];
     if(i!=N-1) sum_width += 2; /* Add a little extra space */
   }
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</proc_str>\n");
+#endif
 }
 
 
@@ -1762,17 +1248,16 @@ void proc_str(PLStream *pls, EscText *args)
 void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
 {
 
-#ifdef DEBUG_GCW
+#ifdef DEBUG_GCW_2
   char msg[100];
-
-  sprintf(msg,"<plD_esc_gcw>: %d\n",op);
-  debug(msg);
+  sprintf(msg,"<plD_esc_gcw />: %d\n",op);
+  gcw_debug(msg);
 #endif
 
   switch(op) {
 
   case PLESC_DEVINIT:
-    gcw_set_canvas(pls,GNOME_CANVAS(ptr));
+    gcw_init_canvas(GNOME_CANVAS(ptr));
     break;
 
   case PLESC_CLEAR:
