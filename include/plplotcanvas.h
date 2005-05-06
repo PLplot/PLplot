@@ -66,19 +66,16 @@ struct _PlplotCanvasClass {
 
 GType plplot_canvas_get_type();
 
-PlplotCanvas* plplot_canvas_new(gboolean aa);
+PlplotCanvas* plplot_canvas_new();
+void plplot_canvas_devinit(PlplotCanvas* self);
 void plplot_canvas_dispose(PlplotCanvas *self);
 
 gint plplot_canvas_get_stream_number(PlplotCanvas* self);
+void plplot_canvas_set_size(PlplotCanvas* self,gint width,gint height);
 void plplot_canvas_set_zoom(PlplotCanvas* self,gdouble magnification);
-void plplot_canvas_set_size(PlplotCanvas* self,gdouble width,gdouble height);
 void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text);
-void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
-				      gboolean use_fast_rendering);
 void plplot_canvas_use_pixmap(PlplotCanvas* self,gboolean use_pixmap);
-void plplot_canvas_use_foreground_group(PlplotCanvas* self);
-void plplot_canvas_use_background_group(PlplotCanvas* self);
-void plplot_canvas_use_default_group(PlplotCanvas* self);
+void plplot_canvas_use_persistence(PlplotCanvas* self,gboolean use_persistence);
 
 
 /*--------------------------------------------------------------------------*
