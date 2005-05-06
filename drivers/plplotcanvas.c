@@ -36,11 +36,6 @@ DESCRIPTION
 
 #include "plplotcanvas.h"
 
-/*
-#define DEBUG_GCW
-*/
-
-
 
 /*==========================================================================*/
 /* PlplotCanvas API */
@@ -71,13 +66,6 @@ static void plplot_canvas_init(PlplotCanvas *self) {
     self->Nstream = (gint)Nstream;
   }
   else self->Nstream=0;
-
-  plscol0(0,255,255,255); /* Change the plplot background color to white */
-  plscol0(15,0,0,0);
-
-  plsdev("gcw"); /* Set the device */
-  plinit(); /* Initialize the device */
-  plP_esc(PLESC_DEVINIT,(void*)self); /* Install this widget into the driver */
 }
 
 static void plplot_canvas_class_init(PlplotCanvasClass *klass) {
@@ -87,6 +75,16 @@ static void plplot_canvas_class_init(PlplotCanvasClass *klass) {
   gobject_class->dispose = (void*)plplot_canvas_dispose;
   gobject_class->finalize = (void*)plplot_canvas_finalize;
 
+}
+
+void plplot_canvas_devinit(PlplotCanvas *self) {
+
+  plscol0(0,255,255,255); /* Change the plplot background color to white */
+  plscol0(15,0,0,0);
+
+  plsdev("gcw"); /* Set the device */
+  plinit(); /* Initialize the device */
+  plP_esc(PLESC_DEVINIT,(void*)self); /* Install into the driver */
 }
 
 GType plplot_canvas_get_type() {
@@ -113,13 +111,13 @@ GType plplot_canvas_get_type() {
   return this_type;
 }
 
-PlplotCanvas* plplot_canvas_new(gboolean aa) {
+PlplotCanvas* plplot_canvas_new() {
   
   PlplotCanvas *canvas;
-  canvas = PLPLOT_CANVAS(g_object_new(PLPLOT_TYPE_CANVAS,"aa",aa,NULL));
 
-  /* Turn off text handling if this isn't an antialiased canvas */
-  if(!aa) plplot_canvas_use_text(canvas,FALSE); /* Defaults true */
+  canvas = PLPLOT_CANVAS(g_object_new(PLPLOT_TYPE_CANVAS,"aa",TRUE,NULL));
+
+  plplot_canvas_devinit(canvas);
 
   return canvas;
 }
@@ -129,53 +127,34 @@ gint plplot_canvas_get_stream_number(PlplotCanvas* self)
   return self->Nstream;
 }
 
-void plplot_canvas_set_size(PlplotCanvas* self,gdouble width,gdouble height)
+void plplot_canvas_set_size(PlplotCanvas* self,gint width,gint height)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_set_canvas_size(GNOME_CANVAS(self),width,height);
+  gcw_set_canvas_size(GNOME_CANVAS(self),(PLINT)width,(PLINT)height);
 }
 
 void plplot_canvas_set_zoom(PlplotCanvas* self,gdouble zoom)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_set_canvas_zoom(GNOME_CANVAS(self),zoom);
+  gcw_set_canvas_zoom(GNOME_CANVAS(self),(PLFLT)zoom);
 }
 
 void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_use_text(GNOME_CANVAS(self),use_text);
-}
-
-void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
-				      gboolean use_fast_rendering)
-{
-  plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_use_fast_rendering(GNOME_CANVAS(self),use_fast_rendering);
+  gcw_use_text((PLINT)use_text);
 }
 
 void plplot_canvas_use_pixmap(PlplotCanvas* self,gboolean use_pixmap)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_use_pixmap(GNOME_CANVAS(self),use_pixmap);
+  gcw_use_pixmap((PLINT)use_pixmap);
 }
 
-void plplot_canvas_use_foreground_group(PlplotCanvas* self)
+void plplot_canvas_use_persistence(PlplotCanvas* self,gboolean use_persistence)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_use_foreground_group(GNOME_CANVAS(self));
-}
-
-void plplot_canvas_use_background_group(PlplotCanvas* self)
-{
-  plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_use_background_group(GNOME_CANVAS(self));
-}
-
-void plplot_canvas_use_default_group(PlplotCanvas* self)
-{
-  plsstrm(self->Nstream); /* Select stream before plplot call */
-  gcw_use_default_group(GNOME_CANVAS(self));
+  gcw_use_persistence((PLINT)use_persistence);
 }
 
 
