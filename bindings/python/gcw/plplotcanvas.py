@@ -33,8 +33,9 @@ import exceptions
 
 class Canvas(cplplotcanvas.Canvas):
 
-    def __init__(self,aa=False):
-        cplplotcanvas.Canvas.__init__(self,aa)
+    def __init__(self):
+        cplplotcanvas.Canvas.__init__(self)
+        self.devinit()
 
     def __getattr__(self,name):
 
