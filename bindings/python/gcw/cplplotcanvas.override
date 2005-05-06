@@ -138,6 +138,22 @@ ignore-glob
   plplot_canvas_plsym
   plplot_canvas_plxormod
 %%
+override plplot_canvas_new args, kwargs
+static int
+_wrap_plplot_canvas_new(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    GType obj_type = pyg_type_from_object((PyObject *) self);
+
+    self->obj = g_object_new(obj_type, "aa", TRUE, NULL);
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError, "could not create %(typename)s object");
+        return -1;
+    }
+
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
+%%
 override plplot_canvas_plline args
 static PyObject* _wrap_plplot_canvas_plline(PyGObject *self,
 					    PyObject *args)
