@@ -321,7 +321,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	cgm.c \
 	dg300.c \
 	gcw-lib.c \
-	gcw-driver.c
+	gcw-driver.c \
 	gd.c \
 	gnome.c \
 	hpgl.c \
