@@ -46,7 +46,7 @@ static PyObject * _wrap_gcw_install_canvas(PyObject *self, PyObject *args)
   if(!PyArg_UnpackTuple(args,"ref",1,1,&canvas_))
   {
     PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_background_group: Cannot parse arguments.");
+                    "_wrap_gcw_install_canvas: Cannot parse arguments.");
     return NULL;
   }
 
@@ -55,6 +55,49 @@ static PyObject * _wrap_gcw_install_canvas(PyObject *self, PyObject *args)
 
   /* Make the call */
   gcw_install_canvas(canvas);
+
+  return Py_BuildValue("");
+}
+
+/*-------------------------------------------------------------------------*/
+
+static PyObject * _wrap_gcw_set_canvas_size(PyObject *self, PyObject *args)
+{
+  /* Variables for parsing the args and converting the PyObjects */
+  PyGObject *canvas_;
+  PyObject *width_, *height_;
+  GnomeCanvas* canvas;
+  PLFLT width,height;
+
+  /* Parse the args */
+  if(!PyArg_UnpackTuple(args,"ref",3,3,&canvas_,&width_,&height_))
+  {
+    PyErr_SetString(PyExc_TypeError,
+                    "_wrap_gcw_set_canvas_size: Cannot parse arguments.");
+    return NULL;
+  }
+
+  /* Convert the PyObjects */
+  canvas=GNOME_CANVAS(canvas_->obj);
+
+  if(!PyFloat_Check(width_))
+  {
+    PyErr_SetString(PyExc_TypeError,
+                    "_wrap_gcw_set_canvas_size: PyFloat expected as arg 2.");
+    return NULL;
+  }
+  width=PyFloat_AsDouble(width_);
+
+  if(!PyFloat_Check(height_))
+  {
+    PyErr_SetString(PyExc_TypeError,
+                    "_wrap_gcw_set_canvas_size: PyFloat expected as arg 3.");
+    return NULL;
+  }
+  height=PyFloat_AsDouble(height_);
+
+  /* Make the call */
+  gcw_set_canvas_size(canvas,width,height);
 
   return Py_BuildValue("");
 }
@@ -96,59 +139,14 @@ static PyObject * _wrap_gcw_set_canvas_zoom(PyObject *self, PyObject *args)
 
 /*-------------------------------------------------------------------------*/
 
-static PyObject * _wrap_gcw_set_canvas_size(PyObject *self, PyObject *args)
-{
-  /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
-  PyObject *width_, *height_;
-  GnomeCanvas* canvas;
-  PLFLT width,height;
-
-  /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",3,3,&canvas_,&width_,&height_))
-  {
-    PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_set_canvas_size: Cannot parse arguments.");
-    return NULL;
-  }
-
-  /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
-
-  if(!PyFloat_Check(width_))
-  {
-    PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_set_canvas_width: PyFloat expected as arg 2.");
-    return NULL;
-  }
-  width=PyFloat_AsDouble(width_);
-
-  if(!PyFloat_Check(height_))
-  {
-    PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_set_canvas_height: PyFloat expected as arg 3.");
-    return NULL;
-  }
-  height=PyFloat_AsDouble(height_);
-
-  /* Make the call */
-  gcw_set_canvas_size(canvas,width,height);
-
-  return Py_BuildValue("");
-}
-
-/*-------------------------------------------------------------------------*/
-
 static PyObject * _wrap_gcw_use_text(PyObject *self, PyObject *args)
 {
   /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
   PyObject *use_text_;
-  GnomeCanvas* canvas;
   gboolean use_text;
 
   /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",2,2,&canvas_,&use_text_))
+  if(!PyArg_UnpackTuple(args,"ref",1,1,&use_text_))
   {
     PyErr_SetString(PyExc_TypeError,
                     "_wrap_gcw_use_text: Cannot parse arguments.");
@@ -156,7 +154,6 @@ static PyObject * _wrap_gcw_use_text(PyObject *self, PyObject *args)
   }
 
   /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
 
   if(!PyInt_Check(use_text_))
   {
@@ -167,42 +164,7 @@ static PyObject * _wrap_gcw_use_text(PyObject *self, PyObject *args)
   use_text=(gboolean)PyInt_AsLong(use_text_);
 
   /* Make the call */
-  gcw_use_text(canvas,use_text);
-
-  return Py_BuildValue("");
-}
-
-/*-------------------------------------------------------------------------*/
-
-static PyObject * _wrap_gcw_use_fast_rendering(PyObject *self, PyObject *args)
-{
-  /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
-  PyObject *use_fast_rendering_;
-  GnomeCanvas* canvas;
-  gboolean use_fast_rendering;
-
-  /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",2,2,&canvas_,&use_fast_rendering_))
-  {
-    PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_fast_rendering: Cannot parse arguments.");
-    return NULL;
-  }
-
-  /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
-
-  if(!PyInt_Check(use_fast_rendering_))
-  {
-    PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_fast_rendering: PyInt expected as arg 2.");
-    return NULL;
-  }
-  use_fast_rendering=(gboolean)PyInt_AsLong(use_fast_rendering_);
-
-  /* Make the call */
-  gcw_use_fast_rendering(canvas,use_fast_rendering);
+  gcw_use_text(use_text);
 
   return Py_BuildValue("");
 }
@@ -212,107 +174,61 @@ static PyObject * _wrap_gcw_use_fast_rendering(PyObject *self, PyObject *args)
 static PyObject * _wrap_gcw_use_pixmap(PyObject *self, PyObject *args)
 {
   /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
   PyObject *use_pixmap_;
-  GnomeCanvas* canvas;
   gboolean use_pixmap;
 
   /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",2,2,&canvas_,&use_pixmap_))
+  if(!PyArg_UnpackTuple(args,"ref",1,1,&use_pixmap_))
   {
     PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_fast_rendering: Cannot parse arguments.");
+                    "_wrap_gcw_use_pixmap: Cannot parse arguments.");
     return NULL;
   }
 
   /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
 
   if(!PyInt_Check(use_pixmap_))
   {
     PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_fast_rendering: PyInt expected as arg 2.");
+                    "_wrap_gcw_use_pixmap: PyInt expected as arg 2.");
     return NULL;
   }
   use_pixmap=(gboolean)PyInt_AsLong(use_pixmap_);
 
   /* Make the call */
-  gcw_use_pixmap(canvas,use_pixmap);
+  gcw_use_pixmap(use_pixmap);
 
   return Py_BuildValue("");
 }
 
 /*-------------------------------------------------------------------------*/
 
-static PyObject * _wrap_gcw_use_foreground_group(PyObject *self, PyObject *args)
+static PyObject * _wrap_gcw_use_persistence(PyObject *self, PyObject *args)
 {
   /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
-  GnomeCanvas* canvas;
+  PyObject *use_persistence_;
+  gboolean use_persistence;
 
   /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",1,1,&canvas_))
+  if(!PyArg_UnpackTuple(args,"ref",1,1,&use_persistence_))
   {
     PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_foreground_group: Cannot parse arguments.");
+                    "_wrap_gcw_use_persistence: Cannot parse arguments.");
     return NULL;
   }
 
   /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
 
-  /* Make the call */
-  gcw_use_foreground_group(canvas);
-
-  return Py_BuildValue("");
-}
-
-/*-------------------------------------------------------------------------*/
-
-static PyObject * _wrap_gcw_use_background_group(PyObject *self, PyObject *args)
-{
-  /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
-  GnomeCanvas* canvas;
-
-  /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",1,1,&canvas_))
+  if(!PyInt_Check(use_persistence_))
   {
     PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_background_group: Cannot parse arguments.");
+                    "_wrap_gcw_use_persistence: PyInt expected as arg 2.");
     return NULL;
   }
-
-  /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
+  use_persistence=(gboolean)PyInt_AsLong(use_persistence_);
 
   /* Make the call */
-  gcw_use_background_group(canvas);
-
-  return Py_BuildValue("");
-}
-
-/*-------------------------------------------------------------------------*/
-
-static PyObject * _wrap_gcw_use_default_group(PyObject *self, PyObject *args)
-{
-  /* Variables for parsing the args and converting the PyObjects */
-  PyGObject *canvas_;
-  GnomeCanvas* canvas;
-
-  /* Parse the args */
-  if(!PyArg_UnpackTuple(args,"ref",1,1,&canvas_))
-  {
-    PyErr_SetString(PyExc_TypeError,
-                    "_wrap_gcw_use_default_group: Cannot parse arguments.");
-    return NULL;
-  }
-
-  /* Convert the PyObjects */
-  canvas=GNOME_CANVAS(canvas_->obj);
-
-  /* Make the call */
-  gcw_use_default_group(canvas);
+  gcw_use_persistence(use_persistence);
 
   return Py_BuildValue("");
 }
@@ -322,15 +238,11 @@ static PyObject * _wrap_gcw_use_default_group(PyObject *self, PyObject *args)
 /* Method table mapping names to wrappers */
 static PyMethodDef gcwmoduleMethods[]=
 {
-  { "install_canvas", _wrap_gcw_install_canvas, METH_VARARGS },
-  { "set_canvas_zoom", _wrap_gcw_set_canvas_zoom, METH_VARARGS },
   { "set_canvas_size", _wrap_gcw_set_canvas_size, METH_VARARGS },
+  { "set_canvas_zoom", _wrap_gcw_set_canvas_zoom, METH_VARARGS },
   { "use_text", _wrap_gcw_use_text, METH_VARARGS },
-  { "use_fast_rendering", _wrap_gcw_use_fast_rendering, METH_VARARGS },
   { "use_pixmap", _wrap_gcw_use_pixmap, METH_VARARGS },
-  { "use_foreground_group", _wrap_gcw_use_foreground_group, METH_VARARGS },
-  { "use_background_group", _wrap_gcw_use_background_group, METH_VARARGS },
-  { "use_default_group", _wrap_gcw_use_default_group, METH_VARARGS },
+  { "use_persistence", _wrap_gcw_use_persistence, METH_VARARGS },
   { NULL, NULL }
 };
 
