@@ -40,25 +40,23 @@ DESCRIPTION
   two different waves progress through the graph in real time.  Plotting
   to the two graphs is handled in two different threads.
 """
-# Append to effective python path so that can find plplot modules.
-from plplot_python_start import *
-
 import sys,threading
 import Numeric
 import plplotcanvas
+import plplot
 import gtk
 
 
 # The number of time steps
-STEPS = 300
+STEPS = 100
 
 # The number of points and period for the first wave
 NPTS = 100
 PERIOD = 30
 
 # The width and height for each plot widget
-WIDTH = 600
-HEIGHT = 200
+WIDTH = 800
+HEIGHT = 300
 
 # Run the plots in different threads
 thread0 = None
@@ -77,26 +75,29 @@ GTKSTATE_QUIT=False
 gtk_state_lock = threading.Lock()
 gtk_state = GTKSTATE_CONTINUE
 
-# setup_axes - sets up plot and draws axes
-def setup_axes(canvas,title):
-
-    # Plot the axes in the foreground (for persistency)
-    canvas.use_foreground_group()
-    
+# setup_plt - preparation for plotting an animation to a canvas
+def setup_plot(canvas,title):
     # Set up the viewport and window
-    canvas.pllsty(1)
-    canvas.plcol0(15)
-    canvas.plschr(0,0.6)
     canvas.plvsta()
-    canvas.plwind(x[0],x[NPTS-1],-2.,2.);
+    canvas.plwind(x[0],x[NPTS-1],-2.,2.)
+
+    # Set the pen width
+    canvas.plwid(2)
+
+    # The axes should be persistent, so that they don't have to be 
+    # replotted every time (which would slow down the animation)
+    canvas.use_persistence(True);
+
+    # Draw the axes
+    canvas.plcol0(15)
     canvas.plbox("bcnst",0.,0,"bcnstv",0.,0);
     canvas.pllab("Phase","Amplitude",title);
 
-    # Return to the default group
-    canvas.use_default_group()
-
-    # Set the drawing color
+    # Prepare for plotting
     canvas.plcol0(canvas.get_stream_number()+8)
+
+    # The animated data should not be persistent
+    canvas.use_persistence(False);
 
 # plot - draws a plot on a canvas
 def plot(canvas,offset,title):
@@ -175,27 +176,28 @@ def start_threads(widget,data):
   
 if __name__ == "__main__":
 
+    # Parse the options
+    plplot.plparseopts(sys.argv,plplot.PL_PARSE_FULL);
+
     # Initialize
     gtk.threads_init()
 
     # Create the first canvas, set its size, draw some axes on it, and
     # place it in a frame
-    canvas0=plplotcanvas.Canvas(aa=True)
-    canvas0.use_fast_rendering(True)
+    canvas0=plplotcanvas.Canvas()
     canvas0.set_size(WIDTH,HEIGHT)
-    canvas0.pladv(0)  # Advance the page
-    setup_axes(canvas0,"A phase-progressing wave")
+    canvas0.pladv(0)  # Advance the page to finalize the plot
+    setup_plot(canvas0,"A phase-progressing wave")
     canvas0frame=gtk.Frame()
     canvas0frame.set_shadow_type(type=gtk.SHADOW_ETCHED_OUT)
     canvas0frame.add(canvas0)
 
     # Create the second canvas, set its size, draw some axes on it, and
     # place it in a frame
-    canvas1=plplotcanvas.Canvas(aa=True)
-    canvas1.use_fast_rendering(True)
+    canvas1=plplotcanvas.Canvas()
     canvas1.set_size(WIDTH,HEIGHT)
-    canvas1.pladv(0)  # Advance the page
-    setup_axes(canvas1,"Another phase-progressing wave")
+    canvas1.pladv(0)  # Advance the page to finalize the plot
+    setup_plot(canvas1,"Another phase-progressing wave")
     canvas1frame=gtk.Frame()
     canvas1frame.set_shadow_type(type=gtk.SHADOW_ETCHED_OUT)
     canvas1frame.add(canvas1)

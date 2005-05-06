@@ -56,6 +56,9 @@ int main(int argc,char *argv[] )
   PlplotCanvas* canvas;
   GtkWidget *window;
 
+  /* Parse the options */
+  plparseopts(&argc, argv, PL_PARSE_FULL);
+
   /* The data to plot */
   double x[11] = {0,1,2,3,4,5,6,7,8,9,10};
   double y[11] = {0,0.1,0.4,0.9,1.6,2.6,3.6,4.9,6.4,8.1,10};

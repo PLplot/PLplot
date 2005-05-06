@@ -32,12 +32,11 @@ NOTICE
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301  USA
 """
-# Append to effective python path so that can find plplot modules.
-from plplot_python_start import *
-
 import Numeric
 import plplotcanvas
+import plplot
 import gtk
+import sys
 
 # The width and height of the plplot canvas widget
 WIDTH = 1000 # 500
@@ -51,13 +50,16 @@ def delete_event(widget, event, data=None):
 def destroy(widget, data=None):
     gtk.main_quit()
 
+# Parse the options
+plplot.plparseopts(sys.argv,plplot.PL_PARSE_FULL);
+
 # The data to plot
 x = Numeric.arange(11)
 y = x**2/10.
 
 # Create the canvas and set its size; during the creation process,
 # the gcw driver is loaded into plplot, and plinit() is invoked.
-canvas=plplotcanvas.Canvas(aa=True)  
+canvas=plplotcanvas.Canvas()  
 canvas.set_size(WIDTH,HEIGHT)
 
 # Create a new window and stuff the canvas into it

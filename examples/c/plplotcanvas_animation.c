@@ -57,8 +57,8 @@
 #define PERIOD 30
 
 /* The width and height for each plot widget */
-#define WIDTH 600
-#define HEIGHT 200
+#define WIDTH 800
+#define HEIGHT 300
 
 /* Run the plots in different threads */
 GThread* thread0=NULL; 
@@ -83,26 +83,31 @@ static PLFLT x[NPTS], y[NPTS];
 G_LOCK_DEFINE_STATIC(gtkstate);
 static volatile int gtkstate = GTKSTATE_CONTINUE;
 
-/* setup_axes - sets up plot and draws axes */
-void setup_axes(PlplotCanvas *canvas,char* title)
+/* setup_plot - preparation for plotting an animation to a canvas */
+void setup_plot(PlplotCanvas *canvas, char* title)
 {
-  /* Plot the axes in the foreground (for persistency) */
-  plplot_canvas_use_foreground_group(canvas);
-
-  /* Set up the viewport and window  */
-  plplot_canvas_pllsty(canvas,1);
-  plplot_canvas_plcol0(canvas,15);
-  plplot_canvas_plschr(canvas,0,0.6);
+  /* Set up the viewport and window */
   plplot_canvas_plvsta(canvas);
   plplot_canvas_plwind(canvas,x[0],x[NPTS-1],-2.,2.);
+
+  /* Set the pen width */
+  plplot_canvas_plwid(canvas,2); 
+
+  /* The axes should be persistent, so that they don't have to be 
+   * replotted every time (which would slow down the animation)
+   */
+  plplot_canvas_use_persistence(canvas,TRUE);
+
+  /* Draw the axes */
+  plplot_canvas_plcol0(canvas,15);
   plplot_canvas_plbox(canvas,"bcnst",0.,0,"bcnstv",0.,0);
   plplot_canvas_pllab(canvas,"(x)","(y)",title);
 
-  /* Return to the default group */
-  plplot_canvas_use_default_group(canvas);
-
-  /* Set the drawing color */
+  /* Prepare for plotting */
   plplot_canvas_plcol0(canvas,plplot_canvas_get_stream_number(canvas)+8); 
+
+  /* The animated data should not be persistent */
+  plplot_canvas_use_persistence(canvas,FALSE);
 }
 
 /* plot - draws a plot on a canvas */
@@ -122,7 +127,8 @@ void plot(PlplotCanvas *canvas,gdouble offset,char* title)
   /* Draw the line */
   plplot_canvas_plline(canvas,NPTS, x, y);
 
-  plplot_canvas_pladv(canvas,0);   /* Advance the page to finalize the plot */
+  /* Advance the page to finalize the plot */
+  plplot_canvas_pladv(canvas,0);   
 }
 
 /* Delete event callback */
@@ -211,6 +217,9 @@ int main(int argc,char *argv[] )
 
   GtkBox* vbox;
 
+  /* Parse the options */
+  plparseopts(&argc, argv, PL_PARSE_FULL);
+
   /* Initialize */
   g_thread_init(NULL);
   gdk_threads_init();
@@ -221,13 +230,13 @@ int main(int argc,char *argv[] )
   for(i=0;i<NPTS;i++) x[i] = (PLFLT)i;
 
   /* Create the first canvas, set its size, draw some axes on it, and
-   *  place it in a frame 
+   *  place it in a frame
    */
   canvas0 = plplot_canvas_new(TRUE);
-  plplot_canvas_use_fast_rendering(canvas0,TRUE);
   plplot_canvas_set_size(canvas0,WIDTH,HEIGHT);
-  plplot_canvas_pladv(canvas0,0);  /* Advance the page */
-  setup_axes(canvas0,"A phase-progressing wave");
+  plplot_canvas_pladv(canvas0,0);
+  setup_plot(canvas0,"A phase-progressing wave");
+  plplot_canvas_pladv(canvas0,0);   /* Advance the page to finalize the plot */
   canvas0frame = GTK_FRAME(gtk_frame_new(NULL));
   gtk_frame_set_shadow_type(canvas0frame,GTK_SHADOW_ETCHED_OUT);
   gtk_container_add(GTK_CONTAINER(canvas0frame),GTK_WIDGET(canvas0));
@@ -236,10 +245,10 @@ int main(int argc,char *argv[] )
    * place it in a frame
    */
   canvas1 = plplot_canvas_new(TRUE);
-  plplot_canvas_use_fast_rendering(canvas1,TRUE);
   plplot_canvas_set_size(canvas1,WIDTH,HEIGHT);
-  plplot_canvas_pladv(canvas1,0);  /* Advance the page */
-  setup_axes(canvas1,"Another phase-progressing wave");
+  plplot_canvas_pladv(canvas1,0);
+  setup_plot(canvas1,"Another phase-progressing wave");
+  plplot_canvas_pladv(canvas1,0);   /* Advance the page to finalize the plot */
   canvas1frame = GTK_FRAME(gtk_frame_new(NULL));
   gtk_frame_set_shadow_type(canvas1frame,GTK_SHADOW_ETCHED_OUT);
   gtk_container_add(GTK_CONTAINER(canvas1frame),GTK_WIDGET(canvas1));
