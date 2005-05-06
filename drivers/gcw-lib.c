@@ -39,16 +39,86 @@ void gcw_debug(char* msg)
 
 
 /*--------------------------------------------------------------------------*\
+ * gcw_set_gdk_color()
+ *
+ * Sets the gdk foreground color for drawing in the current device 
+ * (required for background pixmap).
+ *
+\*--------------------------------------------------------------------------*/
+
+void gcw_set_gdk_color()
+{
+#ifdef DEBUG_GCW_1
+  gcw_debug("<gcw_set_gdk_color>\n");
+#endif
+
+  GcwPLdev* dev = plsc->dev;
+  GdkColor color;
+
+  color.red=(guint16)(plsc->curcolor.r/255.*65535); 
+  color.green=(guint16)(plsc->curcolor.g/255.*65535); 
+  color.blue=(guint16)(plsc->curcolor.b/255.*65535);
+  
+  if(!gdk_colormap_alloc_color(
+        gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
+	&color,FALSE,TRUE))
+    plwarn("GCW driver <set_gdk_color>: Could not allocate color.");
+  
+  gdk_gc_set_foreground(dev->gc,&color);
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</gcw_set_gdk_color>\n");
+#endif
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * gcw_clear_background()
+ *
+ * Clears the background pixmap for the current gcw device with the 
+ * background color.
+ *
+\*--------------------------------------------------------------------------*/
+
+void gcw_clear_background()
+{
+  GcwPLdev* dev = plsc->dev;
+  GdkGC* gc_tmp;
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("<clear_background>\n");
+#endif
+
+  /* Allocate the background color*/
+  gdk_colormap_alloc_color(gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
+			   &(dev->bgcolor),FALSE,TRUE);
+
+  /* Clear the background pixmap with the background color */
+  gdk_gc_set_foreground(dev->gc,&(dev->bgcolor));
+  gdk_draw_rectangle(dev->background,dev->gc,TRUE,0,0,dev->width,dev->height);
+
+  dev->pixmap_has_data = FALSE;
+
+  /* Reset the current gdk drawing color */
+  gcw_set_gdk_color();
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</clear_background>\n");
+#endif
+}
+
+
+/*--------------------------------------------------------------------------*\
  * gcw_init_canvas()
  *
- * Initializes a canvas, and prepares it to be drawn to.
+ * Initializes a canvas for use with this driver, and installs it into
+ * the current gcw device.
  *
- * The associated device is attached to the canvas as the property "dev".
 \*--------------------------------------------------------------------------*/
 
 void gcw_init_canvas(GnomeCanvas* canvas)
 {
-  GcwPLdev* dev;
+  GcwPLdev* dev = plsc->dev;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_init_canvas>\n");
@@ -56,72 +126,26 @@ void gcw_init_canvas(GnomeCanvas* canvas)
 
   if(!GNOME_IS_CANVAS(canvas)) plexit("GCW driver: Canvas not found");
 
-  /* Get the device */
-  dev = plsc->dev;
-
   /* Add the canvas to the device */
   dev->canvas=canvas;
-
-  /* Attach the device and associated stream pointer to the canvas widget */
-  g_object_set_data(G_OBJECT(canvas),"dev",(gpointer)dev);
-
-  /* Determine if the canvas is antialiased */
-  g_object_get(G_OBJECT(canvas),"aa",&(dev->aa),NULL);
 
   /* Size the canvas */
   gcw_set_canvas_size(canvas,dev->width,dev->height);
 
-  /* Add the background to the canvas and move it to the back */
+  /* Create the persistent group, which is always visible */
   if(!GNOME_IS_CANVAS_ITEM(
-    dev->group_background = (GnomeCanvasGroup*)gnome_canvas_item_new(
-					  gnome_canvas_root(canvas),
-					  gnome_canvas_clipgroup_get_type(),
-					  "x",0.,
-					  "y",0.,
-					  NULL)
+    dev->group_persistent = GNOME_CANVAS_GROUP(gnome_canvas_item_new(
+			      gnome_canvas_root(canvas),
+			      gnome_canvas_clipgroup_get_type(),
+			      "x",0.,
+			      "y",0.,
+			      NULL))
     )) {
-    plabort("GCW driver <gcw_init_canvas>: Canvas item not created");
+    plexit("GCW driver <gcw_init_canvas>: Canvas group cannot be created");
   }
 
   /* Set the clip to NULL */
-  g_object_set(G_OBJECT(dev->group_background),"path",NULL,NULL);
-
-  if(!GNOME_IS_CANVAS_ITEM(
-    dev->background = gnome_canvas_item_new(
-		        dev->group_background,
-			GNOME_TYPE_CANVAS_RECT,
-			"x1", 0.0,
-			"y1", -dev->height,
-			"x2", dev->width,
-			"y2", 0.0,
-			"fill-color-rgba", dev->bgcolor,
-			"width-units", 0.0,
-			NULL)
-    )) {
-    plabort("GCW driver <gcw_init_canvas>: Canvas item not created");
-  }
-
-  gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
-
-  /* Add the foreground to the canvas and move it to the front */
-  if(!GNOME_IS_CANVAS_ITEM(
-    dev->group_foreground = (GnomeCanvasGroup*)gnome_canvas_item_new(
-					  gnome_canvas_root(canvas),
-					  gnome_canvas_clipgroup_get_type(),
-					  "x",0.,
-					  "y",0.,
-					  NULL)
-    )) {
-    plabort("GCW driver <gcw_init_canvas>: Canvas item not created");
-  }
-
-  /* Set the clip to NULL */
-  g_object_set(G_OBJECT(dev->group_foreground),"path",NULL,NULL);
-
-  gnome_canvas_item_raise_to_top(GNOME_CANVAS_ITEM(dev->group_foreground));
-
-  /* Get the colormap */
-  dev->colormap = gtk_widget_get_colormap(GTK_WIDGET(dev->canvas));
+  g_object_set(G_OBJECT(dev->group_persistent),"path",NULL,NULL);
 
 #ifdef DEBUG_GCW1
   gcw_debug("</gcw_init_canvas>\n");
@@ -132,7 +156,7 @@ void gcw_init_canvas(GnomeCanvas* canvas)
 /*--------------------------------------------------------------------------*\
  * gcw_install_canvas()
  *
- * Installs a canvas into the standalone driver window.  The canvas is
+ * Installs a canvas into the current gcw device's window.  The canvas is
  * created if necessary.  A variety of callbacks are defined for actions
  * in the window.
  *
@@ -163,41 +187,47 @@ void zoom(gpointer data, gint flag) {
 
   gint n;
 
-  GtkNotebook *notebook;
   GnomeCanvas *canvas;
   GtkWidget *scrolled_window;
   GList *list;
 
-  GcwPLdev* dev;
+  GcwPLdev* dev = data;
 
   gdouble curmag,dum;
 
   /* Get the current canvas */
-  notebook = GTK_NOTEBOOK(data);
-  n = gtk_notebook_get_current_page(notebook);
-  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
+  n = gtk_notebook_get_current_page(GTK_NOTEBOOK(dev->notebook));
+  scrolled_window = gtk_notebook_get_nth_page(GTK_NOTEBOOK(dev->notebook),n);
   canvas = GNOME_CANVAS(gtk_container_get_children(
 	   GTK_CONTAINER(gtk_container_get_children(
            GTK_CONTAINER(scrolled_window))->data))->data);
 
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <zoom>: Device not found");
-
   /* Determine the new magnification */
   if(flag==2) /* Zoom in */
     gcw_set_canvas_zoom(canvas,ZOOMSTEP);
-  else if(flag==0) /* Zoom out */
-    gcw_set_canvas_zoom(canvas,1./ZOOMSTEP);
+  else if(flag==0) { /* Zoom out */
+
+    /* Don't zoom smaller than the original size: this causes GDK pixmap
+     * errors.
+     */
+    gnome_canvas_c2w(canvas,1,0,&curmag,&dum); 
+    curmag = 1./curmag;
+    if(curmag/ZOOMSTEP>1.) {
+      gcw_set_canvas_zoom(canvas,1./ZOOMSTEP);
+    }
+    else {
+      gcw_set_canvas_zoom(canvas,(PLFLT)(ZOOM100/curmag));
+    }
+  }
   else { /* Zoom 100 */
     /* Get current magnification */
-    if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum); 
+    gnome_canvas_c2w(canvas,1,0,&curmag,&dum); 
     curmag = 1./curmag;
     gcw_set_canvas_zoom(canvas,(PLFLT)(ZOOM100/curmag));
   }
 
   /* Set the focus on the notebook */
-  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(notebook));
+  gtk_window_set_focus(GTK_WINDOW(dev->window),dev->notebook);
 }
 
 
@@ -292,10 +322,10 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   }
 
   /* Hide the file selection widget */
-  gtk_widget_hide(GTK_WIDGET(dev->filew));
+  gtk_widget_hide(dev->filew);
 
   /* Put the focus back on the notebook */
-  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook));
+  gtk_window_set_focus(GTK_WINDOW(dev->window),dev->notebook);
 
   /* Test that we can open and write to the file */
   if((f=fopen(fname,"w"))==NULL)
@@ -399,6 +429,9 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   else errflag=TRUE;
 
   if(!errflag) {
+
+    plsetopt ("drvopt","text"); /* Blank out the drvopts (not needed here) */
+
     /* Get the current stream and make a new one */
     plgstrm(&cur_strm);
     plmkstrm(&new_strm);
@@ -414,6 +447,7 @@ void file_ok_sel(GtkWidget *w, gpointer data)
     plend1();              /* finish the device */
 
     plsstrm(cur_strm);     /* return to previous stream */
+
   }
   else plwarn("GCW driver <file_ok_sel>: Cannot set up output stream.");
 
@@ -435,34 +469,28 @@ void file_cancel_sel(GtkWidget *w, gpointer data)
   GcwPLdev* dev = data;
   
   /* Hide the file selection widget */
-  gtk_widget_hide(GTK_WIDGET(dev->filew));
+  gtk_widget_hide(dev->filew);
 
   /* Put the focus back on the notebook */
-  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook));
+  gtk_window_set_focus(GTK_WINDOW(dev->window),dev->notebook);
 }
 
 /* Callback to create file selection dialog */
 void filesel(GtkWidget *widget, gpointer data ) {
 
-  GtkNotebook *notebook;
   GtkWidget *scrolled_window;
   GnomeCanvas *canvas;
 
-  GcwPLdev* dev;
+  GcwPLdev* dev = data;
 
   guint n;
 
   /* Get the current canvas */
-  notebook = GTK_NOTEBOOK(data);
-  n = gtk_notebook_get_current_page(notebook);
-  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
+  n = gtk_notebook_get_current_page(GTK_NOTEBOOK(dev->notebook));
+  scrolled_window = gtk_notebook_get_nth_page(GTK_NOTEBOOK(dev->notebook),n);
   canvas = GNOME_CANVAS(gtk_container_get_children(
 	   GTK_CONTAINER(gtk_container_get_children(
            GTK_CONTAINER(scrolled_window))->data))->data);
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <file_cancel_sel>: Device not found");
 
   /* Create a new file dialog if it doesn't already exist */
   if(dev->filew == NULL) {
@@ -504,7 +532,7 @@ void key_release(GtkWidget *widget, GdkEventKey  *event, gpointer data ) {
 
 void gcw_install_canvas(GnomeCanvas *canvas)
 {
-  GcwPLdev* dev;
+  GcwPLdev* dev = plsc->dev;
   GtkWidget *vbox,*hbox,*button,*image,*scrolled_window;
 
   gboolean flag = FALSE;
@@ -513,23 +541,14 @@ void gcw_install_canvas(GnomeCanvas *canvas)
   gcw_debug("<gcw_install_canvas>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(canvas)) {   /* Create a new canvas */
-    if(((GcwPLdev*)(plsc->dev))->aa) {
+  /* Create a new canvas if needed */
+  if(!GNOME_IS_CANVAS(canvas)) {   
       if( !GNOME_IS_CANVAS(canvas = GNOME_CANVAS(gnome_canvas_new_aa())) )
-	plexit("GCW driver <gcw_install_canvas>: Could not create aa Canvas");
-    }
-    else {
-      if( !GNOME_IS_CANVAS(canvas = GNOME_CANVAS(gnome_canvas_new())) )
-	plexit("GCW driver <gcw_install_canvas>: Could not create gdk Canvas");
-    }
+	plexit("GCW driver <gcw_install_canvas>: Could not create Canvas");
   }
 
   /* Initialize canvas */
   gcw_init_canvas(canvas);
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plexit("GCW driver <zoom>: Device not found");
 
   if(dev->window==NULL) { /* Create a new window and install a notebook */
 
@@ -547,33 +566,31 @@ void gcw_install_canvas(GnomeCanvas *canvas)
 
     /* Create a vbox and put it into the window */
     vbox = gtk_vbox_new(FALSE,2);
-    gtk_container_add(GTK_CONTAINER(dev->window),GTK_WIDGET(vbox));
+    gtk_container_add(GTK_CONTAINER(dev->window),vbox);
 
     /* Create a hbox and put it into the vbox */
     hbox = gtk_hbox_new(FALSE,0);
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(hbox),TRUE,TRUE,0);
+    gtk_box_pack_start(GTK_BOX(vbox),hbox,TRUE,TRUE,0);
 
     /* Create a statusbar and put it into the vbox */
     dev->statusbar = gtk_statusbar_new();
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(dev->statusbar),FALSE,FALSE,0);
+    gtk_box_pack_start(GTK_BOX(vbox),dev->statusbar,FALSE,FALSE,0);
 
     /* Add an vbox to the hbox */
     vbox = gtk_vbox_new(FALSE,5);
     gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
-    gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(vbox),FALSE,FALSE,0);
+    gtk_box_pack_start(GTK_BOX(hbox),vbox,FALSE,FALSE,0);
 
     /* Create the new notebook and add it to the hbox*/
     dev->notebook = gtk_notebook_new();
     gtk_notebook_set_scrollable(GTK_NOTEBOOK(dev->notebook),TRUE);
-    gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(dev->notebook),TRUE,TRUE,0);
+    gtk_box_pack_start(GTK_BOX(hbox),dev->notebook,TRUE,TRUE,0);
     g_signal_connect(G_OBJECT(dev->notebook), "key_release_event",
                          G_CALLBACK(key_release), G_OBJECT(dev->notebook));
 
     /* Use a few labels as spacers */
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
-		       FALSE,FALSE,0);
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
-		       FALSE,FALSE,0);
+    gtk_box_pack_start(GTK_BOX(vbox),gtk_label_new(" "),FALSE,FALSE,0);
+    gtk_box_pack_start(GTK_BOX(vbox),gtk_label_new(" "),FALSE,FALSE,0);
 
     /* Add buttons to the vbox */
 
@@ -581,46 +598,44 @@ void gcw_install_canvas(GnomeCanvas *canvas)
     image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_IN,
 				     GTK_ICON_SIZE_SMALL_TOOLBAR);
     button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+    gtk_container_add(GTK_CONTAINER(button),image);
+    gtk_box_pack_start(GTK_BOX(vbox),button,FALSE,FALSE,0);
     g_signal_connect (G_OBJECT(button), "clicked",
-		      G_CALLBACK(zoom_in), G_OBJECT(dev->notebook));
+		      G_CALLBACK(zoom_in), (gpointer)dev);
     g_signal_connect(G_OBJECT(button), "key_release_event",
-                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
+                         G_CALLBACK(key_release), (gpointer)dev);
 
     /* Add zoom100 button and create callbacks */
     image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_100,
 				     GTK_ICON_SIZE_SMALL_TOOLBAR);
     button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+    gtk_container_add(GTK_CONTAINER(button),image);
+    gtk_box_pack_start(GTK_BOX(vbox),button,FALSE,FALSE,0);
     g_signal_connect (G_OBJECT(button), "clicked",
-		      G_CALLBACK(zoom_100), G_OBJECT(dev->notebook));
+		      G_CALLBACK(zoom_100), (gpointer)dev);
 
     /* Add zoom out button and create callbacks */
     image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_OUT,
 				     GTK_ICON_SIZE_SMALL_TOOLBAR);
     button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+    gtk_container_add(GTK_CONTAINER(button),image);
+    gtk_box_pack_start(GTK_BOX(vbox),button,FALSE,FALSE,0);
     g_signal_connect (G_OBJECT(button), "clicked",
-		      G_CALLBACK(zoom_out), G_OBJECT(dev->notebook));
+		      G_CALLBACK(zoom_out), (gpointer)dev);
     g_signal_connect(G_OBJECT(button), "key_release_event",
-                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
+                         G_CALLBACK(key_release), (gpointer)dev);
 
     /* Add save button and create callbacks */
-    if(dev->use_plot_buffer) {
+    if(plsc->plbuf_write) {
       image = gtk_image_new_from_stock(GTK_STOCK_SAVE,
 				       GTK_ICON_SIZE_SMALL_TOOLBAR);
       button = gtk_button_new();
-      gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-      gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+      gtk_container_add(GTK_CONTAINER(button),image);
+      gtk_box_pack_start(GTK_BOX(vbox),button,FALSE,FALSE,0);
       g_signal_connect (G_OBJECT(button), "clicked",
-			G_CALLBACK(filesel), G_OBJECT(dev->notebook));
+			G_CALLBACK(filesel), (gpointer)dev);
     }
   } /* if(dev->window==NULL) */
-
-  gcw_set_canvas_zoom(canvas,ZOOM100);
 
   /* Put the canvas in a scrolled window */
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
@@ -630,13 +645,12 @@ void gcw_install_canvas(GnomeCanvas *canvas)
 					GTK_WIDGET(canvas));
 
   /* Install the scrolled window in the notebook */
-  gtk_notebook_append_page(GTK_NOTEBOOK(dev->notebook),
-			   GTK_WIDGET(scrolled_window), NULL);
+  gtk_notebook_append_page(GTK_NOTEBOOK(dev->notebook),scrolled_window, NULL);
 
   if(flag) {
 
     /* Set the focus on the notebook */
-    gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook));
+    gtk_window_set_focus(GTK_WINDOW(dev->window),dev->notebook);
 
     /* Size the window */
     gtk_window_resize(GTK_WINDOW(dev->window),dev->width*ZOOM100+65,
@@ -653,51 +667,9 @@ void gcw_install_canvas(GnomeCanvas *canvas)
 
 
 /*--------------------------------------------------------------------------*\
- * gcw_set_canvas_zoom()
- *
- * Sets the zoom magnification on the canvas and resizes the widget
- * appropriately.
-\*--------------------------------------------------------------------------*/
-
-void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
-{
-  GcwPLdev* dev;
-
-  gdouble curmag=1.,dum;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("<gcw_set_canvas_zoom>\n");
-#endif
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_set_canvas_zoom>: Device not found");
-
-  /* Get the current magnification */
-  if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
-  curmag = 1./curmag;
-
-  gnome_canvas_set_pixels_per_unit(canvas,magnification*curmag);
-
-  gtk_widget_set_size_request(GTK_WIDGET(canvas),
-			      (dev->width+1)*magnification*curmag,
-			      (dev->height+2)*magnification*curmag);
-
-  gnome_canvas_set_scroll_region(canvas,0,-dev->height,
-				 dev->width+1,1);
-
-  dev->zoom_is_initialized = TRUE;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("</gcw_set_canvas_zoom>\n");
-#endif
-}
-
-
-/*--------------------------------------------------------------------------*\
  * gcw_set_canvas_size()
  *
- * Sets the canvas size.
+ * Sets the canvas size for the current device.
  *
  * Width and height are both measured in device coordinate units.
  *
@@ -705,26 +677,19 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
  * which correspond to the pixel size on a typical screen.  The coordinates
  * reported and received from the PLplot core, however, are in virtual
  * coordinates, which is just a scaled version of the device coordinates.
- * This strategy is used so that the calculations performed in the PLplot
+ * This strategy is used so that the calculations in the PLplot
  * core are performed at reasonably high resolution.
  *
 \*--------------------------------------------------------------------------*/
 
-void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height)
+void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
 {
-  GcwPLdev* dev;
+  GcwPLdev* dev = plsc->dev;
   PLINT w, h;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_set_canvas_size>\n");
 #endif
-
-  /* Retrieve the device */
-  if(GNOME_IS_CANVAS(canvas)) {
-    if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-      plabort("GCW driver <gcw_set_canvas_size>: Device not found");
-  }
-  else dev = plsc->dev;
 
   /* Set the number of virtual coordinate units per mm */
   plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
@@ -738,6 +703,37 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height)
   dev->width = width;
   dev->height = height;
 
+  /* Attach the device width and height to the canvas */
+  g_object_set_data(G_OBJECT(canvas),"dev-width",(gpointer)&(dev->width));
+  g_object_set_data(G_OBJECT(canvas),"dev-height",(gpointer)&(dev->height));
+
+  /* Size the canvas appropriately */
+  gtk_widget_set_size_request(GTK_WIDGET(canvas),(gint)(width),
+			      (gint)(height));
+
+  /* Position the canvas appropriately */
+  gnome_canvas_set_scroll_region(canvas,0.,(gdouble)(-height),
+				 (gdouble)(width),1.);
+
+  /* Remove the old background pixmap */
+  if(GDK_IS_PIXMAP(dev->background)) {
+    g_object_unref(dev->background);
+    g_object_unref(dev->gc);
+  }
+
+  /* Set up the new background pixmap */
+  dev->background = gdk_pixmap_new(NULL,dev->width,
+				   dev->height,gdk_visual_get_best_depth());
+  dev->gc = gdk_gc_new(dev->background);
+
+  /* Clear the background pixmap */
+  gcw_clear_background(dev);
+
+  /* Advance to the first subpage.  This resets some of the scaling
+   * parameters according to our new page size.
+   */
+  pladv(1);
+
 #ifdef DEBUG_GCW_1
   gcw_debug("</gcw_set_canvas_size>\n");
 #endif
@@ -745,28 +741,67 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height)
 
 
 /*--------------------------------------------------------------------------*\
- * gcw_use_text()
+ * gcw_set_canvas_zoom()
  *
- * Used to turn text usage on and off.
+ * Sets the zoom magnification on the canvas and resizes the widget
+ * appropriately.
 \*--------------------------------------------------------------------------*/
 
-void gcw_use_text(GnomeCanvas* canvas,PLINT use_text)
+void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
 {
-  GcwPLdev* dev;
+  gdouble curmag=1.,dum;
+
+  gdouble width,height;
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("<gcw_set_canvas_zoom>\n");
+#endif
+
+  /* Retrieve the device width and height */
+  width = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"dev-width");
+  height = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"dev-height");
+
+  /* Get the current magnification */
+  gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
+  curmag = 1./curmag;
+
+  /* Apply the new magnification */
+  gnome_canvas_set_pixels_per_unit(canvas,magnification*curmag);
+
+  /* Size the canvas appropriately */
+  gtk_widget_set_size_request(GTK_WIDGET(canvas),
+			      (gint)((width)*magnification*curmag),
+			      (gint)((height)*magnification*curmag));
+
+  /* Position the canvas appropriately */
+  gnome_canvas_set_scroll_region(canvas,0.,(gdouble)(-height),
+				 (gdouble)(width),1.);
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</gcw_set_canvas_zoom>\n");
+#endif
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * gcw_use_text()
+ *
+ * Used to turn text usage on and off for the current device.
+\*--------------------------------------------------------------------------*/
+
+void gcw_use_text(PLINT use_text)
+{
+  GcwPLdev* dev = plsc->dev;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_use_text>\n");
 #endif
 
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_use_text>: Device not found");
-
 #ifdef HAVE_FREETYPE
-  dev->use_text = (gboolean)use_text;
 
-  /* Use a hack to the plplot escape mechanism to update text handling */
-  plP_esc(PLESC_HAS_TEXT,NULL);
+  if(use_text) plsc->dev_text = 1; /* Allow text handling */
+  else plsc->dev_text = 0; /* Disallow text handling */
+
 #endif
 
 #ifdef DEBUG_GCW_1
@@ -776,132 +811,45 @@ void gcw_use_text(GnomeCanvas* canvas,PLINT use_text)
 
 
 /*--------------------------------------------------------------------------*\
- * gcw_use_fast_rendering()
- *
- * Used to turn fast rendering on and off.  This matters in 
- * plD_polyline_gcw, where fast rendering can cause errors on the
- * GnomeCanvas.
-\*--------------------------------------------------------------------------*/
-
-void gcw_use_fast_rendering(GnomeCanvas* canvas,PLINT use_fast_rendering)
-{
-  GcwPLdev* dev;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("<gcw_use_fast_rendering>\n");
-#endif
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_use_fast_rendering>: Device not found");
-
-  dev->use_fast_rendering = (gboolean)use_fast_rendering;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("</gcw_use_fast_rendering>\n");
-#endif
-}
-
-
-/*--------------------------------------------------------------------------*\
  * gcw_use_pixmap()
  *
- * Used to turn pixmap usage on and off for polygon fills (used during
- * shading calls).
+ * Used to turn pixmap usage on and off for the current device.
+ * This is relevant for polygon fills (used during shading calls).
 \*--------------------------------------------------------------------------*/
 
-void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap)
+void gcw_use_pixmap(PLINT use_pixmap)
 {
-  GcwPLdev* dev;
+  GcwPLdev* dev = plsc->dev;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_use_pixmap>\n");
 #endif
 
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_use_pixmap>: Device not found");
-
-  dev->use_pixmap=(gboolean)use_pixmap;
-
-  /* Allocate the pixmap */
-  if(use_pixmap) {
-    dev->pixmap = gdk_pixmap_new(NULL,dev->width,
-				 dev->height,gdk_visual_get_best_depth());
-  }
-
-  dev->pixmap_has_data = FALSE;
+  dev->use_pixmap = (gboolean)use_pixmap;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("</gcw_use_pixmap>\n");
 #endif
 }
 
-
 /*--------------------------------------------------------------------------*\
- * gcw_use_*_group()
+ * gcw_use_persistence
  *
- * Used to switch which groups plplot is writing to.  The choices are:
- *
- *  background - persistent (never clears)
- *  foreground - persistent (never clears)
- *  default - shown when the page is advanced, cleared for next page
- *
+ * Directs the GCW driver whether or not the subsequent drawing operations
+ * should be persistent.
 \*--------------------------------------------------------------------------*/
 
-void gcw_use_background_group(GnomeCanvas* canvas)
+void gcw_use_persistence(PLINT use_persistence)
 {
-  GcwPLdev* dev;
+  GcwPLdev* dev = plsc->dev;
 
 #ifdef DEBUG_GCW_1
-  gcw_debug("<gcw_use_background_group>\n");
+  gcw_debug("<gcw_use_persistence>\n");
 #endif
 
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_use_background_group>: Device not found");
-
-  dev->group_current = dev->group_background;
+  dev->use_persistence = (gboolean)use_persistence;
 
 #ifdef DEBUG_GCW_1
-  gcw_debug("</gcw_use_background_group>\n");
-#endif
-}
-
-void gcw_use_foreground_group(GnomeCanvas* canvas)
-{
-  GcwPLdev* dev;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("<gcw_use_foreground_group>\n");
-#endif
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_use_foreground_group>: Device not found");
-
-  dev->group_current = dev->group_foreground;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("</gcw_use_foreground_group>\n");
-#endif
-}
-
-void gcw_use_default_group(GnomeCanvas* canvas)
-{
-  GcwPLdev* dev;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("<gcw_use_default_group>\n");
-#endif
-
-  /* Retrieve the device */
-  if( (dev = g_object_get_data(G_OBJECT(canvas),"dev")) == NULL)
-    plabort("GCW driver <gcw_use_default_group>: Device not found");
-
-  dev->group_current = dev->group_hidden;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("<gcw_use_default_group>\n");
+  gcw_debug("</gcw_use_persistence>\n");
 #endif
 }

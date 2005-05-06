@@ -45,52 +45,49 @@ NOTICE
 /* #define ASSERT_GCW */
 
 
-#define POLYGON_GCW
-
-#define OUTLINE_POLYGON_GCW
-
+/*=========================================================================*/
+/* GcwPLdev - the PLplot device structure for the GCW driver */
 
 typedef struct {
-  GnomeCanvas* canvas;                /* The canvas to draw on */
-  GnomeCanvasItem* background;        /* The background of the canvas */
+  GnomeCanvas* canvas;   /* The canvas to draw on */
+  GdkPixmap* background; /* The background */
+  GdkGC* gc;             /* A graphics context for the pixmap */
 
-  GnomeCanvasGroup* group_background; /* Background group for plot items */
-  GnomeCanvasGroup* group_foreground; /* Foreground group for plot items */
   GnomeCanvasGroup* group_visible;    /* Visible group, removed at next eop */
   GnomeCanvasGroup* group_hidden;     /* Hidden group --> visible at eop */
-  GnomeCanvasGroup* group_current;    /* A pointer to one of the above */
+  GnomeCanvasGroup* group_persistent; /* Persistent group, at from and never erased */
+
+  gboolean use_persistence;      /* Flags the persistent group should be used,
+				  * and that it and the background should not be 
+				  * erased when the page is advanced. 
+				  */
 
   GtkWidget* window;    /* A window used in standalone mode */
   GtkWidget* notebook;  /* A notebook pager in the window */
   GtkWidget* statusbar; /* A statusbar for the window */
   GtkWidget* filew;     /* A file widget chooser when Save is pressed */
 
-  GdkColormap* colormap;
+  guint32 color;    /* Current pen color */
+  GdkColor bgcolor; /* Background color (shouldn't change) */
 
-  guint32 color;   /* Current pen color */
-  guint32 bgcolor; /* Background color (shouldn't change) */
-
-  gdouble width;   /* Width of the canvas in device pixels */
-  gdouble height;  /* Height of the canvas in device pixels */
+  PLINT width;   /* Width of the canvas in device pixels */
+  PLINT height;  /* Height of the canvas in device pixels */
 
   PLINT pen_color; /* Current pen color */
   PLINT pen_width; /* Current pen width */
 
-  gboolean use_text;            /* Flag to use TrueType text */
-  gboolean use_fast_rendering;  /* Flag for fastest (but buggy) rendering */
+  gboolean use_pixmap;      /* Flags pixmap use for lines and fills */
+  gboolean pixmap_has_data; /* Flags that the pixmap has data */
 
-  gboolean aa;                  /* Flag for an antialiased Canvas */
+  gboolean plstate_width;  /* Flags indicating change of state before */
+  gboolean plstate_color0; /*  device is fully initialized */
+  gboolean plstate_color1;
 
-  gboolean use_pixmap;          /* Flags a pixmap should be used for shades */
-  GdkPixmap* pixmap;            /* The pixmap */
-  gboolean pixmap_has_data;     /* Flags the pixmap has data */
-
-  gboolean use_plot_buffer;    /* Flags that the plot buffer should be used */
-
-  gboolean zoom_is_initialized; /* Flags that the zoom is initialized */
 } GcwPLdev;
 
-/* Physical dimensions */
+
+/*=========================================================================*/
+/* Physical dimension constants used by the driver */
 
 /* Virtual coordinate scaling parameter, used to do calculations at
  * higher resolution.  Chosen to be 32 for consistency with the PLplot
@@ -123,26 +120,22 @@ typedef struct {
 
 
 /*=========================================================================*/
-/* GCW "Gnome Canvas Widget" Library prototypes.  The functions are defined
- * in gcw-lib.c. 
- */
+/* GCW "Gnome Canvas Widget" Library prototypes (see gcw-lib.c) */
 
 /* Public_functions */
 
-void gcw_install_canvas(GnomeCanvas *canvas);
-void gcw_set_canvas_size(GnomeCanvas* canvas,PLFLT width,PLFLT height);
+void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height);
 void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
-void gcw_use_text(GnomeCanvas* canvas,PLINT use_text);
-void gcw_use_fast_rendering(GnomeCanvas* canvas,PLINT use_fast_rendering);
-void gcw_use_pixmap(GnomeCanvas* canvas,PLINT use_pixmap);
-void gcw_use_foreground_group(GnomeCanvas* canvas);
-void gcw_use_background_group(GnomeCanvas* canvas);
-void gcw_use_default_group(GnomeCanvas* canvas);
-
+void gcw_use_text(PLINT use_text);
+void gcw_use_pixmap(PLINT use_pixmap);
+void gcw_use_persistence(PLINT use_persistence);
 
 /* Private functions */
 
-void gcw_init_canvas(GnomeCanvas* canvas);
 void gcw_debug(char* msg);
+void gcw_set_gdk_color();
+void gcw_clear_background();
+void gcw_init_canvas(GnomeCanvas* canvas);
+void gcw_install_canvas(GnomeCanvas *canvas);
 
 #endif /* __GCW_H__ */

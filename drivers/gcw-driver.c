@@ -101,8 +101,6 @@ char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
 /* Global driver options */
 
-static PLINT aa = 1;
-
 #ifdef HAVE_FREETYPE
 static PLINT text = 1;
 #else
@@ -110,16 +108,13 @@ static PLINT text = 0;
 #endif
 
 static PLINT hrshsym = 0;
-static PLINT fast = 0; 
-static PLINT pixmap = 0;
+static PLINT pixmap = 1;
 static PLINT replot = 1;
 
 static DrvOpt gcw_options[] = 
   {
-    {"aa", DRV_INT, &aa, "Use antialiased canvas (aa=0|1)"},
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
     {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
-    {"fast", DRV_INT, &fast, "Use fast rendering (fast=0|1)"},
     {"pixmap", DRV_INT, &pixmap, "Use pixmap for plotting shades (pixmap=0|1)"},
     {"replot", DRV_INT, &replot, "Allow replotting to other devices (replot=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
@@ -137,27 +132,6 @@ guint32 plcolor_to_rgba(PLColor color, guchar alpha)
     + ((int)(color.g) << 16)
     + ((int)(color.b) << 8)
     + alpha;
-}
-
-
-void clear_pixmap(PLStream* pls)
-{
-  GcwPLdev* dev=pls->dev;
-  GdkGC* gc;
-  GdkColor color;
-  PLColor plcolor = pls->cmap0[0];
-
-  /* Allocate the background color*/
-  color.red=(guint16)(plcolor.r/255.*65535); 
-  color.green=(guint16)(plcolor.g/255.*65535); 
-  color.blue=(guint16)(plcolor.b/255.*65535);
-  gdk_colormap_alloc_color(dev->colormap,&color,FALSE,TRUE);
-
-  /* Clear the pixmap with the background color */
-  gc = gdk_gc_new(dev->pixmap);
-  gdk_gc_set_foreground(gc,&color);
-  gdk_draw_rectangle(dev->pixmap,gc,TRUE,0,0,dev->width,dev->height);
-  gdk_gc_unref(gc);
 }
 
 
@@ -219,6 +193,9 @@ void plD_init_gcw(PLStream *pls)
   GcwPLdev* dev;
 
   PLINT width, height;
+  PLINT w, h;
+
+  PLColor bgcolor = pls->cmap0[0];
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<plD_init_gcw>\n");
@@ -232,7 +209,7 @@ void plD_init_gcw(PLStream *pls)
   pls->dev_flush = 1;   /* Handle our own flushes */
   pls->plbuf_write = replot; /* Use plot buffer to replot to another device */
   pls->width = 1;
-  pls->dev_clear = 1;   /* Handle plclear() */
+  pls->dev_clear = 0;   /* Handle plclear() */
   pls->dev_fill0 = 1;	/* Handle solid fills */
 
   /* Create the device */
@@ -240,15 +217,43 @@ void plD_init_gcw(PLStream *pls)
     plexit("GCW driver <plD_init_gcw>: Cannot create device");
   pls->dev = dev;
 
+  /* Set text handling */
+#ifdef HAVE_FREETYPE
+  if(text) {
+    pls->dev_text = TRUE;
+    pls->dev_unicode = TRUE;
+    if(hrshsym) pls->dev_hrshsym = 1;
+
+    /* Initialize freetype */
+    plD_FreeType_init(pls);
+  }
+  else {
+    pls->dev_text = FALSE;
+    pls->dev_unicode = FALSE;
+  }
+#else
+  pls->dev_text = FALSE;
+  pls->dev_unicode = FALSE;
+#endif
+
+  /* Set up pixmap support */
+  dev->use_pixmap = (gboolean)pixmap;
+  dev->pixmap_has_data = FALSE;
+
   /* Initialize gtk */
   gtk_init(0,NULL);
 
-  /* Set up the physical device by using gcw_set_canvas_size.  It is very 
-   * important to do this properly, because many of the calculations are
-   * based on physical coordinates.  If this is not done correctly, then
-   * dashed lines and hatched areas will not scale correctly, and the 
-   * replot mechanism will produce incorrect results.  Problems can also
-   * crop up with hidden line removal.
+  /* Set up the physical device in the next series of commands.  It is very 
+   * important to do this properly, because many PLplot routines depend on
+   * physical coordinates (e.g., dashed lines, hatched areas, the
+   * replot mechanism, hidden line removal, etc.
+   *
+   * Notice that coordinates in the driver are measured in device units,
+   * which correspond to the pixel size on a typical screen.  The coordinates
+   * reported and received from the PLplot core, however, are in virtual
+   * coordinates, which is just a scaled version of the device coordinates.
+   * This strategy is used so that the calculations in the PLplot
+   * core are performed at reasonably high resolution.
    *
    */
   if (pls->xlength > 0 && pls->ylength > 0) {
@@ -262,66 +267,49 @@ void plD_init_gcw(PLStream *pls)
     width = (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN);
     height = (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN);
   }
-  gcw_set_canvas_size(NULL,width,height);
+
+  /* Set the number of virtual coordinate units per mm */
+  plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
+
+  /* Set up physical limits of plotting device, in virtual coordinate units */
+  w = (PLINT)(width*VSCALE);
+  h = (PLINT)(height*VSCALE);
+  plP_setphy((PLINT)0,w,(PLINT)0,h);
+
+  /* Save the width and height for the device, in device units */
+  dev->width = width;
+  dev->height = height;
 
   /* Initialize the device colors */
   dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
-  dev->bgcolor = plcolor_to_rgba(pls->cmap0[0],0xFF);
-
-  /* Remember if we are buffering the plot */
-  dev->use_plot_buffer = pls->plbuf_write;
-
-  /* Set text handling */
-#ifdef HAVE_FREETYPE
-  if(aa && text) {
-    pls->dev_text = TRUE;
-    pls->dev_unicode = TRUE;
-    dev->use_text = TRUE;
-    if(hrshsym) pls->dev_hrshsym = 1;
-
-    /* Initialize freetype */
-    plD_FreeType_init(pls);
-  }
-  else {
-    pls->dev_text = FALSE;
-    pls->dev_unicode = FALSE;
-    dev->use_text = FALSE;
-  }
-#else
-  pls->dev_text = FALSE;
-  pls->dev_unicode = FALSE;
-  dev->use_text = FALSE;
-#endif
-
-  /* Flag antialiased canvas */
-  dev->aa = aa;
-
-  /* Set fast rendering for polylines */
-  dev->use_fast_rendering = (gboolean)fast;
-
-  /* Only initialize the zoom after all other initialization is complete */
-  dev->zoom_is_initialized = FALSE;
-
-  /* Set up the pixmap support */
-  dev->use_pixmap = (gboolean)pixmap;
-  dev->pixmap = NULL;
-  dev->pixmap_has_data = FALSE;
+  dev->bgcolor.red=(guint16)(bgcolor.r/255.*65535); 
+  dev->bgcolor.green=(guint16)(bgcolor.b/255.*65535); 
+  dev->bgcolor.blue=(guint16)(bgcolor.g/255.*65535);
 
   /* Set the device canvas and window pointers */
   dev->canvas = NULL;
+  dev->background = NULL;
   dev->window = NULL;
   dev->notebook = NULL;
   dev->statusbar = NULL;
   dev->filew = NULL;
     
-  /* Initialize the visible and hidden groups.  All of the plplot plotting
+  /* Initialize the Canvas groups.  All of the plplot plotting
    * commands are drawn to the hidden group.  When the page is finalized,
-   * the group is made visible, and the old group destroyed. */
+   * the group is made visible, and the old group destroyed. The persistent
+   * group is never erased, and always plotted at the very front.
+   */
   dev->group_visible=NULL;
   dev->group_hidden=NULL;
-  dev->group_background=NULL;
-  dev->group_foreground=NULL;
-  dev->group_current=NULL;
+  dev->group_persistent=NULL;
+
+  /* Assume that pladv should completeley refresh the page */
+  dev->use_persistence = FALSE;
+
+  /* Set the initialization state monitors to FALSE */
+  dev->plstate_width = FALSE;
+  dev->plstate_color0 = FALSE;
+  dev->plstate_color1 = FALSE;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("</plD_init_gcw>\n");
@@ -344,6 +332,8 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   GnomeCanvasItem* item;
   GnomeCanvas* canvas;
 
+  GdkPoint* gdkpoints;
+
   PLINT i;
 
   gdouble width;
@@ -353,54 +343,46 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   gcw_debug("<plD_polyline_gcw />\n");
 #endif
 
-  if(dev->canvas==NULL) gcw_install_canvas(NULL);
+  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
   canvas = dev->canvas;
 
-  if(dev->group_hidden==NULL) plD_bop_gcw(pls);
+  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
+  if(dev->use_persistence) group = dev->group_persistent;
+  else group = dev->group_hidden;
 
-#ifdef ASSERT_GCW
-  if(!GNOME_IS_CANVAS_ITEM(
-    group = dev->group_current
-    )) {
-    plexit("GCW driver <plD_polyline_gcw>: Canvas group is NULL");
-  }
-#else
-  group = dev->group_current;
-#endif
+  if(dev->use_pixmap && !dev->use_persistence) { /* Write to bg pixmap */
 
-  /* Put the data in a points structure */
-  if( (points = gnome_canvas_points_new(npts)) == NULL )
-    plabort("GCW driver <plD_polyline_gcw>: Cannot create points");
-  for ( i = 0; i < npts; i++ ) {
-    /* The points must be converted from virtual coordinate units
-     *  to device coordinate units.
-     */
-    points->coords[2*i] = (gdouble)(x[i]/VSCALE);
-    points->coords[2*i + 1] = (gdouble)(-y[i]/VSCALE);
-  }
+    if((gdkpoints = (GdkPoint*)malloc(npts*sizeof(GdkPoint)))==NULL)
+      plabort("GCW driver <plD_polyline_gcw>: Could not create gdkpoints");
 
-  /* Get the pen width and color */
-  width = pls->width;
-  color = dev->color;
-
-  if(dev->use_fast_rendering) {
-    if(!GNOME_IS_CANVAS_ITEM(
-      item=gnome_canvas_item_new(group,
-				 GNOME_TYPE_CANVAS_LINE,
-				 "cap_style", GDK_CAP_ROUND,
-				 "join-style", GDK_JOIN_ROUND,
-				 "points", points,
-				 "fill-color-rgba", color,
-				 "width-units",width,
-				 NULL)
-      )) {
-      plwarn("GCW driver <plD_polyline_gcw>: Canvas item not created.");
+    for(i=0;i<npts;i++) {
+      gdkpoints[i].x = (gint)(x[i]/VSCALE);
+      gdkpoints[i].y = (gint)(dev->height-y[i]/VSCALE);
     }
 
-    /* Free the points structure */
-    gnome_canvas_points_free(points);
+    gdk_draw_lines(dev->background,dev->gc,gdkpoints,npts);
+
+    dev->pixmap_has_data = TRUE;
+
+    free(gdkpoints);
   }
-  else {
+  else { /* Draw Canvas lines */
+
+    /* Put the data in a points structure */
+    if( (points = gnome_canvas_points_new(npts)) == NULL )
+      plabort("GCW driver <plD_polyline_gcw>: Cannot create points");
+    for ( i = 0; i < npts; i++ ) {
+      /* The points must be converted from virtual coordinate units
+       *  to device coordinate units.
+       */
+      points->coords[2*i] = (gdouble)(x[i]/VSCALE);
+      points->coords[2*i + 1] = (gdouble)(-y[i]/VSCALE);
+    }
+
+    /* Get the pen width and color */
+    width = pls->width;
+    color = dev->color;
+
 
     /* Workaround for the 'attempt to put segment in horiz list twice'
      * from libgnomecanvas:
@@ -420,20 +402,20 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
     pts.num_points = 2;
     pts.ref_count = 1;
     pts.coords = points->coords;
-
+      
     for(i=0;i<npts-1;i++) {
       pts.coords=&(points->coords[2*i]);
 
       if(!GNOME_IS_CANVAS_ITEM(
-        item=gnome_canvas_item_new(group,
-				   GNOME_TYPE_CANVAS_LINE,
-				   "cap_style", GDK_CAP_ROUND,
-				   "join-style", GDK_JOIN_ROUND,
-				   "points", &pts,
-				   "fill-color-rgba", color,
-				   "width-units", width,
-				   NULL)
-	)) {
+	    item=gnome_canvas_item_new(group,
+				       GNOME_TYPE_CANVAS_LINE,
+				       "cap_style", GDK_CAP_ROUND,
+				       "join-style", GDK_JOIN_ROUND,
+				       "points", &pts,
+				       "fill-color-rgba", color,
+				       "width-units", width,
+				       NULL)
+      )) {
 	plwarn("GCW driver <plD_polyline_gcw>: Canvas item not created.");
       }
     }
@@ -481,6 +463,7 @@ void plD_eop_gcw(PLStream *pls)
 
   GdkPixbuf* pixbuf;
   GnomeCanvasItem* item;
+  GnomeCanvasGroup* group;
 
   gdouble dx, dy;
 
@@ -497,64 +480,82 @@ void plD_eop_gcw(PLStream *pls)
   gcw_debug("<plD_eop_gcw>\n");
 #endif
 
+  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
   canvas = dev->canvas;
-  if(canvas == NULL) return;
 
-  /* 
-   * Render the pixmap to a pixbuf on the canvas and move it to the back
-   * of the current group 
-   */
-  
+  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
+  if(dev->use_persistence) group = dev->group_persistent;
+  else group = dev->group_hidden;
+
   if(dev->pixmap_has_data) {
-    
-    if((pixbuf=gdk_pixbuf_get_from_drawable(NULL,
-					    dev->pixmap,
-					    dev->colormap,
-					    0,0,
-					    0,0,
-					    dev->width,dev->height))==NULL) {
+
+    /* Render the pixmap to a pixbuf on the canvas. */
+  
+    if(!GDK_IS_PIXBUF(pixbuf=gdk_pixbuf_get_from_drawable(NULL,
+			      dev->background,
+			      gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
+			      0,0,
+			      0,0,
+			      dev->width,dev->height))) {
       plwarn("GCW driver <plD_eop_gcw>: Can't draw pixmap into pixbuf.");
     }
-    else {
+    else { /* Pixbuf creation succeeded */
 
-      /* Different offsets depending on the type of canvas */
-      if(dev->aa) { dx=0.; dy=0.; }
-      else { dx=1.; dy=1.; }
-      
       if(!GNOME_IS_CANVAS_ITEM(
-        item = gnome_canvas_item_new(dev->group_current,
-				     GNOME_TYPE_CANVAS_PIXBUF,
-				     "pixbuf",pixbuf,
-				     "x", dx,
-				     "y", -dev->height+dy,
-				     "width", dev->width,
-				     "height", dev->height,
-				     NULL)
-	)) {
+	    item = gnome_canvas_item_new(dev->group_hidden,
+				         GNOME_TYPE_CANVAS_PIXBUF,
+				         "pixbuf",pixbuf,
+				         "x", 1.,
+				         "y", (gdouble)(-dev->height+1.),
+				         "width", (gdouble)(dev->width),
+				         "height", (gdouble)(dev->height),
+				         NULL)
+      )) {
 	plwarn("GCW driver <plD_eop_gcw>: Canvas item not created.");
       }
-      else {
-	gnome_canvas_item_lower_to_bottom(item);
-	gnome_canvas_item_lower_to_bottom (dev->background);
-      }
-      
+
       /* Free the pixbuf */
-      gdk_pixbuf_unref(pixbuf);
+      g_object_unref(pixbuf);
     }
-    
-    /* Set the pixmap as unused */
-    dev->pixmap_has_data = FALSE;
   }
-  
+  else {
+
+    /* Use a rectangle for the background instead (faster) */
+
+    if(!GNOME_IS_CANVAS_ITEM(
+	  item = gnome_canvas_item_new(
+		       dev->group_hidden,
+		       GNOME_TYPE_CANVAS_RECT,
+		       "x1", 0.,
+		       "y1", (gdouble)(-dev->height),
+		       "x2", (gdouble)(dev->width),
+		       "y2", 0.,
+		       "fill-color-rgba", plcolor_to_rgba(pls->cmap0[0],0xFF),
+		       "width-units", 0.,
+		       NULL)
+    )) {
+      plabort("GCW driver <pld_eop_gcw>: Canvas item not created");
+    }
+  }
+
+  /* Move the persistent group to the front */
+  gnome_canvas_item_raise_to_top(GNOME_CANVAS_ITEM(dev->group_persistent));
+
+  /* Move the background to the back */
+  if(GNOME_IS_CANVAS_ITEM(item)) gnome_canvas_item_lower_to_bottom(item);
+    
   /* Make the hidden group visible */
-  gnome_canvas_item_show((GnomeCanvasItem*)(dev->group_hidden));
-  
-  /* Destroy the current visible group */
-  if(dev->group_visible!=NULL) {
+  gnome_canvas_item_show(GNOME_CANVAS_ITEM(dev->group_hidden));
+
+  /* Destroy the old visible group */
+  if(GNOME_IS_CANVAS_GROUP(dev->group_visible)) {
     gtk_object_destroy((GtkObject*)(dev->group_visible));
     dev->group_visible = NULL;
   }
-  
+
+  /* Clear the background pixmap */
+  if(!dev->use_persistence && dev->pixmap_has_data) gcw_clear_background();
+
   /* Name the hidden group as visible */
   dev->group_visible = dev->group_hidden;
   dev->group_hidden=NULL;
@@ -562,7 +563,7 @@ void plD_eop_gcw(PLStream *pls)
   /* Update the canvas */
   canvas->need_update = 1;
   gnome_canvas_update_now (canvas);
-  
+
   /*
    * Copy the plot buffer for future reference, otherwise it is 
    * thrown out.  We will also need to store the colormaps.
@@ -639,15 +640,14 @@ void plD_eop_gcw(PLStream *pls)
   
   /* If the driver is creating its own canvasses, set dev->canvas to be
    * NULL now in order to force creation of a new canvas when the next
-   * drawing call is made.
+   * drawing call is made.  The new canvas will be placed in a new
+   * notebook page.
    */
   if(dev->window!=NULL) {
-    dev->canvas=NULL;
-    dev->group_visible=NULL;
-    dev->group_hidden=NULL;
-    dev->group_background=NULL;
-    dev->group_foreground=NULL;
-    dev->group_current=NULL;
+    dev->canvas = NULL;
+    dev->group_visible = NULL;
+    dev->group_hidden = NULL;
+    dev->group_persistent = NULL;
   }
 
 #ifdef DEBUG_GCW_1
@@ -672,22 +672,39 @@ void plD_bop_gcw(PLStream *pls)
   gcw_debug("<plD_bop_gcw>\n");
 #endif
 
-  if(dev->canvas==NULL) return; /* Bop gets called before PLESC_DEVINIT;
-				 * so don't install a canvas here.  Force
-				 * bop again where hidden group is missing. */
-  canvas = dev->canvas;
-  
-  /* Make sure the zoom is initialized */
-  if(!dev->zoom_is_initialized) gcw_set_canvas_zoom(canvas,1.);
+  if(!GNOME_IS_CANVAS(dev->canvas)) {
 
+#ifdef DEBUG_GCW_1
+    gcw_debug("</plD_bop_gcw>\n");
+#endif
+
+ /* Bop gets called before PLESC_DEVINIT, so don't install a 
+  * canvas here -- the user may still want to.  Call bop
+  * when the hidden group is found missing for drawing operations. 
+  */
+
+    return;
+  }
+  canvas = dev->canvas;
+
+  /* Remake escape calls that come in before PLESC_DEVINIT.  Some of them
+   * required a Canvas that didn't exist yet.
+   */
+  if(dev->plstate_width)  plD_state_gcw(pls, PLSTATE_WIDTH);
+  if(dev->plstate_color0) plD_state_gcw(pls, PLSTATE_COLOR0);
+  if(dev->plstate_color1) plD_state_gcw(pls, PLSTATE_COLOR1);
+  dev->plstate_width = FALSE;
+  dev->plstate_color0 = FALSE;
+  dev->plstate_color1 = FALSE;
+  
   /* Creat a new hidden group; all new drawing will be to this group */
   if(!GNOME_IS_CANVAS_ITEM(
-    dev->group_hidden = (GnomeCanvasGroup*)gnome_canvas_item_new(
-                                             gnome_canvas_root(canvas),
+    dev->group_hidden = GNOME_CANVAS_GROUP(gnome_canvas_item_new(
+					     gnome_canvas_root(canvas),
 					     gnome_canvas_clipgroup_get_type(),
 					     "x",0.,
 					     "y",0.,
-					     NULL)
+					     NULL))
     )) {
     plexit("GCW driver <plD_bop_gcw>: Canvas group cannot be created");
   }
@@ -696,18 +713,7 @@ void plD_bop_gcw(PLStream *pls)
   g_object_set(G_OBJECT(dev->group_hidden),"path",NULL,NULL);
   
   /* Hide this group until drawing is done */
-  gnome_canvas_item_hide((GnomeCanvasItem*)(dev->group_hidden));
-
-  /* Set the hidden group as current unless it is fore or background */
-  if( (dev->group_current != dev->group_foreground) &&
-      (dev->group_current != dev->group_background) )
-    dev->group_current = dev->group_hidden;
-  
-  /* Make sure the foreground group is at the front, and the background
-   * group is at the back 
-   */
-  gnome_canvas_item_raise_to_top(GNOME_CANVAS_ITEM(dev->group_foreground));
-  gnome_canvas_item_lower_to_bottom(GNOME_CANVAS_ITEM(dev->group_background));
+  gnome_canvas_item_hide(GNOME_CANVAS_ITEM(dev->group_hidden));
 
 #ifdef DEBUG_GCW_1
   gcw_debug("</plD_bop_gcw>\n");
@@ -752,40 +758,70 @@ void plD_tidy_gcw(PLStream *pls)
  *
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
  *
+ * Note that PLplot sometimes tries to change states before the device is
+ * fully initialized (i.e., via PLESC_DEVINIT).  We must keep track of
+ * such attempts, and invoke the state change during the next call to
+ * plD_bop_gcw.
+ *
 \*--------------------------------------------------------------------------*/
 
 void plD_state_gcw(PLStream *pls, PLINT op)
 {
   GcwPLdev* dev = pls->dev;
-  char msg[100];
+  char opname[20],msg[100];
 
-#ifdef DEBUG_GCW_2
-  sprintf(msg,"<plD_state_gcw />: %d\n",op);
+#ifdef DEBUG_GCW_1
+  if(op==PLSTATE_WIDTH) strcpy(opname,"PLSTATE_WIDTH");
+  else if(op==PLSTATE_COLOR0) strcpy(opname,"PLSTATE_COLOR0");
+  else if(op==PLSTATE_COLOR1) strcpy(opname,"PLSTATE_COLOR1");
+  else if(op==PLSTATE_FILL) strcpy(opname,"PLSTATE_FILL");
+  else if(op==PLSTATE_CMAP0) strcpy(opname,"PLSTATE_CMAP0");
+  else if(op==PLSTATE_CMAP1) strcpy(opname,"PLSTATE_CMAP1");
+  else strcpy(opname,"unknown");
+  sprintf(msg,"<plD_state_gcw />: %s\n",opname);
   gcw_debug(msg);
 #endif
 
   switch (op) {
-    case (1): /* PLSTATE_WIDTH */
-      if(dev->canvas==NULL) gcw_install_canvas(NULL);
+
+    case PLSTATE_WIDTH:
+      if(GNOME_IS_CANVAS(dev->canvas)) {
+	if(dev->use_pixmap) {
+	  gdk_gc_set_line_attributes(dev->gc, pls->width,
+				     GDK_LINE_SOLID,
+				     GDK_CAP_BUTT,
+				     GDK_JOIN_MITER);
+	}
+      }
+      else dev->plstate_width = TRUE;
       break;
-    case (2): /* PLSTATE_COLOR0 */
-      dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
+
+    case PLSTATE_COLOR0:
+      if(GNOME_IS_CANVAS(dev->canvas)) {
+	dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
+	if(dev->use_pixmap) gcw_set_gdk_color();
+      }
+      else dev->plstate_color0 = TRUE;
       break;
-    case (3): /* PLSTATE_COLOR1 */
-      if(dev->canvas==NULL) gcw_install_canvas(NULL);
-      dev->color = plcolor_to_rgba(pls->cmap1[pls->icol1],0xFF);
+
+    case PLSTATE_COLOR1:
+      if(GNOME_IS_CANVAS(dev->canvas)) {
+	dev->color = plcolor_to_rgba(pls->cmap1[pls->icol1],0xFF);
+	if(dev->use_pixmap) gcw_set_gdk_color();
+      }
+      else dev->plstate_color1 = TRUE;
       break;
-    case (4): /* PLSTATE_FILL */
-      if(dev->canvas==NULL) gcw_install_canvas(NULL);
+
+    case PLSTATE_FILL:
       break;
-    case (5): /* PLSTATE_CMAP0 */
-/*       if(dev->canvas==NULL) gcw_install_canvas(NULL); */
+
+    case PLSTATE_CMAP0:
       break;
-    case (6): /* PLSTATE_CMAP1 */
-/*      if(dev->canvas==NULL) gcw_install_canvas(NULL); */
+
+    case PLSTATE_CMAP1:
       break;
+
     default: 
-      if(dev->canvas==NULL) gcw_install_canvas(NULL);
       break;
   }
 }
@@ -803,13 +839,11 @@ static void fill_polygon (PLStream* pls)
   GnomeCanvasPoints* points;
   GnomeCanvasGroup* group;
   GnomeCanvasItem* item;
-  GdkGC* gc;
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
   
   PLINT i;
 
-  GdkColor color;
   GdkPoint* gdkpoints;
 
   PLINT tmp;
@@ -818,53 +852,28 @@ static void fill_polygon (PLStream* pls)
   gcw_debug("<fill_polygon />\n");
 #endif
 
-  if(dev->canvas==NULL) gcw_install_canvas(NULL);
+  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
   canvas = dev->canvas;
 
-  if(dev->group_hidden==NULL) plD_bop_gcw(pls);
+  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
+  if(dev->use_persistence) group = dev->group_persistent;
+  else group = dev->group_hidden;
 
-#ifdef ASSERT_GCW
-  if(!GNOME_IS_CANVAS_ITEM(
-    group = dev->group_current
-    )) {
-    plexit("GCW driver <fill_polygon>: Canvas group is NULL");
-  }
-#else
-  group = dev->group_current;
-#endif
-
-  if(dev->use_pixmap) { /* Write to a pixmap */
-
-    /* Allocate a new pixmap if needed */
-    if(dev->pixmap == NULL) gcw_use_pixmap(canvas,TRUE);
-
-    /* Clear the pixmap if required */
-    if(! dev->pixmap_has_data) clear_pixmap(pls);
-
-    gc = gdk_gc_new(dev->pixmap);
-
-    color.red=(guint16)(pls->curcolor.r/255.*65535); 
-    color.green=(guint16)(pls->curcolor.g/255.*65535); 
-    color.blue=(guint16)(pls->curcolor.b/255.*65535);
-
-    gdk_colormap_alloc_color(gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
-			     &color,FALSE,TRUE);
-    gdk_gc_set_foreground(gc,&color);
+  if(dev->use_pixmap && !dev->use_persistence) { /* Write to a pixmap */
 
     if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL)
       plabort("GCW driver <fill_polygon>: Could not create gdkpoints");
 
     for(i=0;i<pls->dev_npts;i++) {
-      gdkpoints[i].x = pls->dev_x[i];
-      gdkpoints[i].y = dev->height-pls->dev_y[i];
+      gdkpoints[i].x = (gint)(pls->dev_x[i]/VSCALE);
+      gdkpoints[i].y = (gint)(dev->height-pls->dev_y[i]/VSCALE);
     }
 
-    gdk_draw_polygon(dev->pixmap,gc,TRUE,gdkpoints,pls->dev_npts);
+    gdk_draw_polygon(dev->background,dev->gc,TRUE,gdkpoints,pls->dev_npts);
     
     dev->pixmap_has_data = TRUE;
 
     free(gdkpoints);
-    gdk_gc_unref(gc);
   }
   else { /* Use Gnome Canvas polygons */
 
@@ -893,47 +902,15 @@ static void fill_polygon (PLStream* pls)
     gnome_canvas_points_free(points);
 
 
-    /* Draw a thin outline for each polygon */
-#ifdef OUTLINE_POLYGON_GCW
+    /* Draw a thin outline for each polygon; note that doing this
+     * using the "outline-color-rgba" property above can result in 
+     * Canvas errors.
+     */
     tmp = pls->width;
     pls->width=1;
     plD_polyline_gcw(pls,pls->dev_x,pls->dev_y,pls->dev_npts);
     pls->width = tmp;
-#endif
   }
-}
-
-
-
-/*--------------------------------------------------------------------------*\
- * clear()
- *
- * Handles call to clear the canvas.
-\*--------------------------------------------------------------------------*/
-
-static void clear (PLStream* pls)
-{
-  GcwPLdev* dev = pls->dev;
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("<clear>\n");
-#endif
-
-  if(dev->canvas==NULL) gcw_install_canvas(NULL);
-
-  if(dev->group_visible!=NULL) {
-    gtk_object_destroy((GtkObject*)(dev->group_visible));
-    dev->group_visible = NULL;
-  }
-
-  if(dev->group_hidden!=NULL){
-    gtk_object_destroy((GtkObject*)(dev->group_hidden));
-    dev->group_hidden = NULL;
-  }
-
-#ifdef DEBUG_GCW_1
-  gcw_debug("</clear>\n");
-#endif
 }
 
 
@@ -988,24 +965,16 @@ void proc_str(PLStream *pls, EscText *args)
   guint symbol;
 
 
-#ifdef DEBUG_GCW_1
+#ifdef DEBUG_GCW_2
   gcw_debug("<proc_str>\n");
 #endif
 
-  if(dev->canvas==NULL) gcw_install_canvas(NULL);
+  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
   canvas = dev->canvas;
 
-  if(dev->group_hidden==NULL) plD_bop_gcw(pls);
-
-#ifdef ASSERT_GCW
-  if(!GNOME_IS_CANVAS_ITEM(
-    group = dev->group_current
-    )) {
-    plexit("GCW driver <proc_str>: Canvas group is NULL");
-  }
-#else
-  group = dev->group_current;
-#endif
+  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
+  if(dev->use_persistence) group = dev->group_persistent;
+  else group = dev->group_hidden;
 
   /* Retrieve the escape character */
   plgesc(&esc);
@@ -1232,7 +1201,7 @@ void proc_str(PLStream *pls, EscText *args)
     if(i!=N-1) sum_width += 2; /* Add a little extra space */
   }
 
-#ifdef DEBUG_GCW_1
+#ifdef DEBUG_GCW_2
   gcw_debug("</proc_str>\n");
 #endif
 }
@@ -1247,10 +1216,17 @@ void proc_str(PLStream *pls, EscText *args)
 
 void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
 {
+  GcwPLdev* dev = pls->dev;
 
-#ifdef DEBUG_GCW_2
-  char msg[100];
-  sprintf(msg,"<plD_esc_gcw />: %d\n",op);
+#ifdef DEBUG_GCW_1
+  char opname[20], msg[100];
+  if(op==PLESC_DEVINIT) strcpy(opname,"PLESC_DEVINIT");
+  else if(op==PLESC_CLEAR) strcpy(opname,"PLESC_CLEAR");
+  else if(op==PLESC_FILL) strcpy(opname,"PLESC_FILL");
+  else if(op==PLESC_HAS_TEXT) strcpy(opname,"PLESC_HAS_TEXT");
+  else if(op==PLESC_GRAPH) strcpy(opname,"PLESC_GRAPH");
+  else strcpy(opname,"unknown");
+  sprintf(msg,"<plD_esc_gcw />: %s\n",opname);
   gcw_debug(msg);
 #endif
 
@@ -1261,30 +1237,14 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
     break;
 
   case PLESC_CLEAR:
-    /*    clear(pls); */
     break;
 
   case PLESC_FILL:
-#ifdef POLYGON_GCW
     fill_polygon(pls);
-#endif
     break;
 
   case PLESC_HAS_TEXT:
-    if(ptr!=NULL) {
-      proc_str(pls, ptr); /* Draw the text */
-    }
-    else { 
-
-      /* Assume this was a request to change the text handling,
-       * which is a special hack for this driver.  This is done 
-       * through the escape function so that we can get easy access
-       * to pls.
-       */
-      if(((GcwPLdev*)(pls->dev))->use_text) 
-	pls->dev_text = 1; /* Allow text handling */
-      else pls->dev_text = 0; /* Disallow text handling */
-    }
+    proc_str(pls, ptr); /* Draw the text */
     break;
 
   case PLESC_GRAPH:
