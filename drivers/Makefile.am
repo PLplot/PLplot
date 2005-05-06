@@ -343,9 +343,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	tkwin.c \
 	wingcc.c \
 	xfig.c \
-	xwin.c \
-	$(extra_tksources) \
-	$(extra_tkwinsources)
+	xwin.c
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
