@@ -42,6 +42,7 @@ DESCRIPTION
 """
 import sys,threading
 import Numeric
+import plplot_python_start
 import plplotcanvas
 import plplot
 import gtk

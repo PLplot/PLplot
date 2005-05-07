@@ -33,6 +33,7 @@ NOTICE
   MA  02110-1301  USA
 """
 import Numeric
+import plplot_python_start
 import plplotcanvas
 import plplot
 import gtk
