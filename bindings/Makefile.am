@@ -20,7 +20,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-SUBDIRS = c++ f77 python tcl tk octave java
+SUBDIRS = c++ f77 python tcl tk octave java gnome2
 
 abovedatadir = $(DATA_DIR)
 

@@ -3,7 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
-# Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+# Copyright (C) 2002, 2003, 2004, 2005  Alan W. Irwin
 # Copyright (C) 2003  Joao Cardoso
 # Copyright (C) 2004  Andrew Roach
 # Copyright (C) 2005  Thomas J. Duck
@@ -60,7 +60,7 @@ drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 libtclmatrix = $(top_builddir)/bindings/tcl/libtclmatrix$(LIB_TAG).la
-libplplotgnome2 = $(top_builddir)/drivers/libplplotgnome2$(LIB_TAG).la
+libplplotgnome2 = $(top_builddir)/bindings/gnome2/libplplotgnome2$(LIB_TAG).la
 
 # The variable below will force building of the dyndrivers info files
 # (<driver>.rc) and their installation in the drivers directory
@@ -168,16 +168,9 @@ impress_la_SOURCES = impress.c
 impress_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_gcw
-lib_LTLIBRARIES = libplplotgnome2@LIB_TAG@.la
-libplplotgnome2@LIB_TAG@_la_SOURCES = plplotcanvas.c gcw-lib.c
-libplplotgnome2@LIB_TAG@_la_LDFLAGS = \
-	-version-info $(PLPLOTGNOME_SOVERSION) $(RPATH) -no-undefined \
-	$(libplplot) $(GCW_LIBS) $(lmflag)
-
-gcw_la_SOURCES = gcw-driver.c plplotcanvas-hacktext.c
+gcw_la_SOURCES = gcw.c plplotcanvas-hacktext.c
 gcw_la_LDFLAGS = $(ldflags) $(libplplotgnome2) \
 	$(libplplot) $(GCW_LIBS) $(lmflag)
-gcw_la_DEPENDENCIES = libplplotgnome2@LIB_TAG@.la
 endif
 
 linuxvga_la_SOURCES = linuxvga.c
@@ -252,12 +245,12 @@ else
 noinst_LTLIBRARIES = libplplotdrv.la
 
 if enable_gcw
-# All source that is in libplplotgnome2.
+# All sources that are in libplplotgnome2 + plplotcanvas-hacktext.c
+# (which is part of the source for gcw.la that is not contained in gcw.c.)
 gnome2sources = \
-	$(top_srcdir)/drivers/plplotcanvas.c \
-	$(top_srcdir)/drivers/plplotcanvas-hacktext.c \
-	$(top_srcdir)/drivers/gcw-lib.c \
-	$(top_srcdir)/drivers/gcw-driver.c
+	plplotcanvas.c \
+	gcw-lib.c \
+	plplotcanvas-hacktext.c
 endif
 
 if enable_tk
@@ -315,13 +308,17 @@ endif
 endif
 
 # For AM_CONDITIONALS must use SOURCES, not LIBADD
-libplplotdrv_la_SOURCES = $(tksources) $(matrixsources) $(tkwinsources)
+libplplotdrv_la_SOURCES = \
+	$(gnome2sources) \
+	$(tksources) \
+	$(matrixsources) \
+	$(tkwinsources)
+
 EXTRA_libplplotdrv_la_SOURCES = \
 	aqt.c \
 	cgm.c \
 	dg300.c \
-	gcw-lib.c \
-	gcw-driver.c \
+	gcw.c plplotcanvas-hacktext.c \
 	gd.c \
 	gnome.c \
 	hpgl.c \
@@ -334,8 +331,6 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	null.c \
 	pbm.c \
 	plmeta.c \
-	plplotcanvas.c \
-	plplotcanvas-hacktext.c \
 	ps.c \
 	pstex.c \
 	tek.c \

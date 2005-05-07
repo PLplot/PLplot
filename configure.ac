@@ -271,9 +271,6 @@ dnl =======================================================================
 dnl Notice that there are other calls to AC_CONFIG_FILES in the cf/*.ac
 dnl files.
 
-dnl Note: Must build the python/gcw binding *after* building drivers; hence
-dnl separate entry.  TJD
-
 AC_CONFIG_FILES([
     Makefile
     fonts/Makefile
@@ -281,6 +278,7 @@ AC_CONFIG_FILES([
     include/Makefile
     data/Makefile
     bindings/Makefile
+    bindings/gnome2/Makefile
     bindings/python/gcw/Makefile
     cf/Makefile
     drivers/Makefile
