@@ -25,7 +25,7 @@
  * ascending order in fci! 
  */
 #define N_TrueTypeLookup 30
-const FCI_to_FontName_Table TrueTypeLookup[N_TrueTypeLookup] = {
+static const FCI_to_FontName_Table TrueTypeLookup[N_TrueTypeLookup] = {
      {0x10000000, PL_FREETYPE_SANS},
      {0x10000001, PL_FREETYPE_SERIF},
      {0x10000002, PL_FREETYPE_MONO},
