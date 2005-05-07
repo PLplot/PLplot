@@ -87,14 +87,14 @@ examples_pythondir = $(DATA_DIR)/examples/python
 # This list contains standalone scripts which are executable.
 examples_python_SCRIPTS = $(python_scripts)
 
-if enable_gcw
+if enable_pygcw
 examples_python_SCRIPTS += $(plplotcanvas_scripts)
 endif
 
 # This list contains python modules that can be imported and README files.
 examples_python_DATA = $(python_data)
 
-if enable_gcw
+if enable_pygcw
 examples_python_DATA += $(plplotcanvas_data)
 endif
 
