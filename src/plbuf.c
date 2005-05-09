@@ -261,9 +261,17 @@ static void
 plbuf_text(PLStream *pls, EscText *text)
 {
   PLINT n;
+  PLUNICODE fci;
 
   dbug_enter("plbuf_text");
   
+  /* Retrieve the font characterization integer */
+  plgfci(&fci);
+
+  /* Write the text information */
+
+  fwrite(&fci, sizeof(PLUNICODE), 1, pls->plbufFile);
+
   fwrite(&pls->chrht, sizeof(PLFLT), 1, pls->plbufFile);
   fwrite(&pls->diorot, sizeof(PLFLT), 1, pls->plbufFile);
   fwrite(&pls->clpxmi, sizeof(PLFLT), 1, pls->plbufFile);
@@ -677,11 +685,18 @@ rdbuf_swin(PLStream *pls)
 static void
 rdbuf_text(PLStream *pls)
 {
+  PLUNICODE(fci);
   EscText text;
   PLFLT xform[4];
   PLINT n;
+  char* str;
 
   text.xform = xform;
+
+
+  /* Read in the data */
+
+  fread(&fci, sizeof(PLUNICODE), 1, pls->plbufFile);
 
   fread(&pls->chrht, sizeof(PLFLT), 1, pls->plbufFile);
   fread(&pls->diorot, sizeof(PLFLT), 1, pls->plbufFile);
@@ -701,18 +716,22 @@ rdbuf_text(PLStream *pls)
   fread(&n,sizeof(PLINT),1,pls->plbufFile);
 
   if(n>0) {
-    if( (text.string=(char *)malloc(n*sizeof(char))) == NULL)
-      plabort("rdbuf_text: Insufficient memory");
+    if( (str=(char *)malloc(n*sizeof(char))) == NULL)
+      plexit("rdbuf_text: Insufficient memory");
 
-    fread(text.string, sizeof(char), n, pls->plbufFile);
+    fread(str, sizeof(char), n, pls->plbufFile);
+    text.string = (const char*)str;
   }
   else {
     text.string = NULL;
   }
 
-  if(text.string != NULL)
-    plP_text(1, text.just, text.xform, text.x, text.y,
+  /* Make the call */
+  if(text.string != NULL) {
+    plsfci(fci);
+    plP_text(0, text.just, text.xform, text.x, text.y,
 	     text.refx, text.refy, text.string);
+  }
 }
 
 /*--------------------------------------------------------------------------*\
