@@ -278,9 +278,6 @@ AC_CONFIG_FILES([
     include/Makefile
     data/Makefile
     bindings/Makefile
-    bindings/gnome2/Makefile
-    bindings/gnome2/lib/Makefile
-    bindings/python/gcw/Makefile
     cf/Makefile
     drivers/Makefile
     examples/Makefile

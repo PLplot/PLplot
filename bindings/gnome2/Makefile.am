@@ -20,4 +20,5 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-SUBDIRS = lib
+# Order is important here; lib has to be built before python.
+SUBDIRS = lib python
