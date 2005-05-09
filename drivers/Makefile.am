@@ -307,13 +307,6 @@ tkwinsources = \
 endif
 endif
 
-# For AM_CONDITIONALS must use SOURCES, not LIBADD
-libplplotdrv_la_SOURCES = \
-	$(gnome2sources) \
-	$(tksources) \
-	$(matrixsources) \
-	$(tkwinsources)
-
 EXTRA_libplplotdrv_la_SOURCES = \
 	aqt.c \
 	cgm.c \
@@ -338,7 +331,11 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	tkwin.c \
 	wingcc.c \
 	xfig.c \
-	xwin.c
+	xwin.c \
+	$(gnome2sources) \
+	$(tksources) \
+	$(matrixsources) \
+	$(tkwinsources)
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
