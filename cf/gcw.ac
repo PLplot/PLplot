@@ -172,6 +172,6 @@ AM_CONDITIONAL(enable_gcw, [test "$enable_gcw" = yes])
 AM_CONDITIONAL(enable_pygcw, [test "$enable_pygcw" = yes])
 AC_CONFIG_FILES([
     bindings/gnome2/Makefile
-    bindings/gnome2/libMakefile
+    bindings/gnome2/lib/Makefile
     bindings/gnome2/python/Makefile
 ])
