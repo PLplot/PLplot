@@ -835,10 +835,7 @@ proc_str (PLStream *pls, EscText *args)
 	
 	args->y += offset*cos(theta*PI/180.);
 	args->x -= offset*sin(theta*PI/180.);
-	
-	/* Apply plplot difilt transformations */
-	difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
-	
+		
 	/* ps driver is rotated by default */
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
 		 &(args->x), &(args->y));
