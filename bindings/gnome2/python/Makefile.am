@@ -1,4 +1,4 @@
-# bindings/python/gcw/Makefile.am for PLplot
+# bindings/gnome2/python/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
