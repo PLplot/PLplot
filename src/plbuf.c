@@ -729,7 +729,7 @@ rdbuf_text(PLStream *pls)
   /* Make the call */
   if(text.string != NULL) {
     plsfci(fci);
-    plP_text(0, text.just, text.xform, text.x, text.y,
+    plP_text(text.base, text.just, text.xform, text.x, text.y,
 	     text.refx, text.refy, text.string);
   }
 }
