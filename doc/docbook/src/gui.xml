@@ -35,670 +35,463 @@
 <title>Embedding Plots in Graphical User Interfaces</title>
 
 <para>
-This chapter shows how to use PLplot to embed plots in graphical user 
-interfaces.
+This chapter describes how to embed plots in graphical user interfaces.
 </para>
 
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+<!-- PLPLOTCANVAS -->
+
+<sect1 id="plplotcanvas">
+  <title>The PlplotCanvas Widget for Gnome/GTK Applications</title> 
+
+  <para>
+    Plots can be embedded into Gnome/GTK applications by using the
+    PlplotCanvas widget.  Information on the GTK toolkit is provided
+    at http://www.gtk.org/.  PlplotCanvas is a subclass of the GnomeCanvas
+    (see *** ??? ***), and so includes all of its functionality.  The 
+    specialized C API for PlplotCanvas is described in
+    <xref linkend="plplotcanvas-api" />, and bindings to other languages
+    are described in *** ??? ***.
+  </para>
+
+
+  <!-- PlplotCanvas  Basics -->
+
+  <sect2 id="plplotcanvas-basics">
+    <title>PlplotCanvas Basics</title>
+
+    <para>
+      The method declarations and data structures are defined in 
+      <filename>plplotcanvas.h</filename>.  Programs using the PlplotCanvas
+      widget must be linked against the 
+      <filename>libplplotgnome2d</filename> library 
+      rather than <filename>libplplotd</filename>.  This is most easily 
+      accomplished using pkg-config; i.e.,
+
+      <programlisting>
+        gcc plplotcanvas_demo.c -o plplotcanvas_demo `pkg-config --cflags --libs plplotd-gnome2`
+      </programlisting>
+
+      You may need to remind pkg-config where to look for the 
+      <filename>plplotd-gnome2.pc</filename> file installed by PLplot; e.g.,
+
+      <programlisting>
+        gcc plplotcanvas_demo.c -o plplotcanvas_demo `PKG_CONFIG_PATH=/usr/local/lib/pkgconfig pkg-config --cflags --libs plplotd-gnome2`
+      </programlisting>
+    </para>
+
+    <para>
+      A specialized API is provided for PlplotCanvas in
+      <xref linkend="plplotcanvas-api" />.  It provides methods
+      to create and manipulate PlplotCanvas widgets, and in addition to
+      analogues for each of the PLplot functions.
+    </para>
+
+    <para>
+      Example programs are provided that demonstrate the use of the 
+      PlplotCanvas widget in <xref linkend="plplotcanvas-examples" />.
+    </para>
+
+  </sect2>
+
+
+  <!-- ================================================================== -->
+
+  <sect2 id="plplotcanvas-api">
+    <title>PlplotCanvas API</title>
+
+    <para>
+      The PlplotCanvas methods are as follows.  Because PlplotCanvas is a
+      GTK widget, GLib types (gint, gdouble, gboolean, etc) are sometimes 
+      used rather than PLplot types (PLINT, PLFLT, etc).  See 
+      *** ??? *** for more information on GLib types.
+    </para>
+
+    <!-- plplot_canvas_new -->
+
+    <sect3 id="plplot_canvas_new">
+
+      <title>
+        <function>plplot_canvas_new</function>: Creates a new PlplotCanvas.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>
+            PlplotCanvas* plplot_canvas_new
+          </function></funcdef>
+          <paramdef><parameter>void</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Returns a pointer to a new PlplotCanvas widget.  Methods that
+	apply to a PlplotCanvas are given next.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>void</parameter> 
+          </term>
+          <listitem><para>
+            There are no arguments for this method.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplot_canvas_plfunc -->
+
+    <sect3 id="plplot_canvas_plfunc">
+      <title>
+        <function>plplot_canvas_pl...</function>: PLplot function analogues.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>void plplot_canvas_plfunc</function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+          <paramdef><parameter>...</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        The PLplot functions have analogue methods named like
+	<function>plplot_canvas_plfunc</function>.  For example, the 
+        PLplot function &plline; maps to 
+        <function>plplot_canvas_plline</function>.  The 
+        <function>plplot_canvas_plfunc</function> methods
+	should be used rather than the standard PLplot API.
+      </para>
+
+      <para>
+        Lines drawn to the canvas are not shown until the page is
+        advanced using <function>plplot_canvas_pladv</function>.  The 
+        plot will remain on the canvas until the next page advance.
+      </para>
+
+      <para>
+        The PLplot &plinit; and &plgstrm; functions are not used with 
+        PlplotCanvas because the <function>plplot_canvas_new</function>
+        function does the necessary initialization and returns an 
+        object with a unique stream number.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter> 
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>The canvas on which to operate.</para></listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>...</parameter> 
+          </term>
+          <listitem><para>
+            The list of arguments from the PLplot function analogue.  The
+	    same types used in the PLplot function are used here.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplot_canvas_dispose -->
+
+    <sect3 id="plplot_canvas_dispose">
+      <title>
+        <function>plplot_canvas_dispose</function>: Disposes the canvas.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>void plplot_canvas_dispose</function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Disposes the Canvas.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter> 
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>The canvas to dispose.</para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplotcanvas_canvas_set_size -->
+
+    <sect3 id ="plplot_canvas_set_size">
+      <title>
+        <function>gcw_set_canvas_size</function>: Sets the canvas size.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>
+            void plplot_canvas_set_size
+          </function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+          <paramdef><parameter>width</parameter></paramdef>
+          <paramdef><parameter>height</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Sets the PlplotCanvas widget width and height.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter> 
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>The PlplotCanvas to size.</para></listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>width</parameter> (<literal>gint</literal>, input)
+          </term>
+          <listitem><para>The width, in pixels.</para></listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>height</parameter> (<literal>gint</literal>, input)
+          </term>
+          <listitem><para>The height, in pixels.</para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplot_canvas_use_text -->
+
+    <sect3 id="plplot_canvas_use_text">
+      <title>
+        <function>plplot_canvas_use_text</function>: Sets text handling.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>void plplot_canvas_use_text</function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+          <paramdef><parameter>use_text</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Sets whether TrueType text or Hershey fonts are used by the
+	PlplotCanvas widget.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter> 
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>The PlplotCanvas to set.</para></listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>use_text</parameter> 
+            (<literal>gboolean</literal>, input)
+          </term>
+          <listitem><para>
+            TRUE for TrueType fonts (default), FALSE for Hershey fonts.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplot_canvas_use_pixmap -->
+
+    <sect3 id="plplot_canvas_use_pixmap">
+      <title>
+        <function>plplot_canvas_use_pixmap</function>: Sets pixmap usage.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>void plplot_canvas_use_pixmap</function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+          <paramdef><parameter>use_pixmap</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Sets whether lines and shades are drawn to a pixmap,
+        or instead as vector graphics.
+      </para>
+
+      <para>
+        Lines and shade drawn to the pixmap are not anti-aliased, and so may
+        appear pixelated.  Vector graphics are fully anti-aliased, but are
+        rendered at a slower speed.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter> 
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>The PlplotCanvas to set.</para></listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>use_pixmap</parameter> 
+            (<literal>gboolean</literal>, input)
+          </term>
+          <listitem><para>
+            TRUE to use pixmap (default), FALSE for vector graphics instead.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplot_canvas_use_persistence -->
+
+    <sect3 id="plplot_canvas_use_persistence">
+      <title>
+        <function>plplot_canvas_use_persistence</function>: Sets persistence
+        of subsequent drawing operations.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>
+            void plplot_canvas_use_persistence
+          </function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+          <paramdef><parameter>use_persistence</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Sets whether the subsequent drawing commands are persistent,
+	or refreshed when the PLplot page is advanced.  This feature
+	is useful for plot animations, because the axes can be persistent
+	rather than redrawn for each frame.
+      </para>
+
+      <para>
+        Note that lines that are persistent are always anti-aliased and
+        drawn at the front.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter> 
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>The PlplotCanvas to set.</para></listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>use_persistence</parameter> 
+            (<literal>gboolean</literal>, input)
+          </term>
+          <listitem><para>
+            TRUE for persistence, FALSE for erasing at new page (default).
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- plplot_canvas_get_stream_number -->
+
+    <sect3 id="plplot_canvas_get_stream_number">
+      <title>
+        <function>plplot_canvas_get_stream_number</function>: Retrieves the
+	PLplot stream number.
+      </title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>
+            PLINT plplot_canvas_get_stream_number
+          </function></funcdef>
+          <paramdef><parameter>canvas</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Returns the stream number for the given Canvas.  Although the 
+	concept of streams that exists in the standard PLplot API is not
+	used here, the stream number provides a unique ID number for
+	the given PlplotCanvas widget.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>canvas</parameter>
+            (<literal>PlplotCanvas*</literal>, input)
+          </term>
+          <listitem><para>
+            The canvas to retrieve the stream number from.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+  </sect2>
+
+
+
+  <!-- ================================================================== -->
+
+  <sect2 id="plplotcanvas-examples">
+    <title>PlplotCanvas Examples</title> 
+
+    <para>
+
+      Two example programs are provided that demonstrate the use of the
+      PlplotCanvas widget.  They are:
+
+      <itemizedlist>
+        <listitem><para>
+          plplotcanvas_demo: Demonstrates the basic usage of the 
+          PlplotCanvas to embed a plot in a Gnome application.
+        </para></listitem>
+        <listitem><para>
+          plplotcanvas_animation: Demonstrates advanced multi-threaded 
+          dual-stream usage of the PlplotCanvas.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      The code from plplotcanvas_demo.c is given below, and is explained
+      in what follows.
+    </para>
 
-<sect1 id="gnome-gui">
-<title>Embedding Plots in Gnome/GTK Applications</title> 
-
-<para>
-PLplot plots can be embedded into Gnome/GTK applications by installing a GnomeCanvas widget into the GCW "Gnome Canvas Widget" driver.  Once the canvas is installed and set up, the standard PLplot commands may be used.  A special Canvas called the PlplotCanvas is also provided, and provides an object-oriented interface which simplifies plotting to multiple Canvasses (i.e., multiple streams).
-</para>
-
-<para>
-A specialized API is provided both GCW and the PlplotCanvas, and bindings are included for C and Python.  Bindings for the other languages supported by PLplot are possible, and can be requested via PLplot mailing lists at plplot.sourceforge.net.
-</para>
-
-<para>
-Example programs are provided for both C and Python, and demonstrate the use of the PlplotCanvas object-oriented API.  They are:
-<itemizedlist>
-<listitem><para>
-plplotcanvas_demo: Demonstrates the basic usage of the PlplotCanvas to embed a plot in a Gnome application.
-</para></listitem>
-<listitem><para>
-plplotcanvas_animation: Demonstrates advanced multi-threaded dual-stream usage of the PlplotCanvas.
-</para></listitem>
-</itemizedlist>
-The plplotcanvas_demo example is discussed at the end of this section.
-</para>
-
-<!-- ================================================================== -->
-
-<sect2 id="gcw-api">
-<title>GCW API</title> 
-
-<para>
-Use of GCW in conjunction with a user-supplied GnomeCanvas requires the use of a specialized widget-driver API.  It is typically easier to use the PlplotCanvas API instead, but the GCW API is described here for reference.  An understanding of both GTK and GnomeCanvas usage is assumed.
-</para>
-
-<para>
-On the Canvas, plot commands draw into three different groups, each with different behaviours.  The default group is shown when the page is advanced, and is cleared for every new PLplot page.  The foreground and background groups are persistent (i.e., never cleared), and so are useful for when static material on the Canvas is required.  Manipulation of the Canvas groups can help render fast animations on a common set of axes, but is not usually employed otherwise.
-</para>
-
-<para>
-For multiple streams, you must keep track of the stream number for each Canvas and switch to the required stream as appropriate before calling PLplot commands.  A key benefit to the PlplotCanvas is that stream coordination is handled automatically.
-</para>
-
-</sect2>
-
-<!-- ================================================================== -->
-
-
-<sect2 id="gcw-c-api">
-<title>C API for GCW</title> 
-
-<para>
-To access the C API for GCW, include "gcw.h".  The GnomeCanvas should be installed into the GCW driver after the device is set and initialized.  The sequence of commands is as follows:
-<programlisting>
-  plsdev("gcw"); /* Set the device */
-  plinit(); /* Initialize the device */
-  plP_esc(PLESC_DEVINIT,(void*)canvas); /* Install canvas into the driver */
-</programlisting>
-</para>
-
-<para>
-Once the canvas is installed into the driver, the GCW API and PLplot commands ma be used.
-</para>
-
-
-
-<!-- gcw_set_canvas_size ============================================== -->
-
-
-<sect3 id ="gcw_set_canvas_size">
-
-<title><function>gcw_set_canvas_size</function>: Sets the canvas width and height in pixels.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_set_canvas_size</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-    <paramdef><parameter>width</parameter></paramdef>
-    <paramdef><parameter>height</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Sets the canvas width and height in pixels.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>width</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The canvas width.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>height</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The canvas height.</para></listitem>
-  </varlistentry>
-</variablelist>
-</sect3>
-
-<!-- gcw_set_canvas_zoom ============================================== -->
-
-
-<sect3 id ="gcw_set_canvas_zoom">
-
-<title><function>gcw_set_canvas_zoom</function>: Zooms in on the Canvas according to the magnification factor.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_set_canvas_zoom</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-    <paramdef><parameter>magnification</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Zooms in on the Canvas according to the magnification factor.  Note that all magnifications are multiplicative.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>magnification</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The magnification factor.</para></listitem>
-  </varlistentry>
-</variablelist>
-</sect3>
-
-
-<!-- gcw_get_canvas_viewport ========================================== -->
-
-
-<sect3 id="gcw_get_canvas_viewport">
-
-<title><function>gcw_get_canvas_viewport</function>: Transforms a PLplot viewport into one appropriate for the GCW driver.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_get_canvas_viewport</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-    <paramdef><parameter>xmin1</parameter></paramdef>
-    <paramdef><parameter>xmax1</parameter></paramdef>
-    <paramdef><parameter>ymin1</parameter></paramdef>
-    <paramdef><parameter>ymax1</parameter></paramdef>
-    <paramdef><parameter>xmin2</parameter></paramdef>
-    <paramdef><parameter>xmax2</parameter></paramdef>
-    <paramdef><parameter>ymin2</parameter></paramdef>
-    <paramdef><parameter>ymax2</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>Transforms a PLplot viewport into coordinates appropriate for use with the GCW driver.  The returned limits should be set with &plvpor;.  This transformation is required because of the way the GCW driver sizes the canvas.  The viewport should only be retrieved after the canvas size is set.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>xmin1</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The minimum viewport x-coordinate (0 to 1).
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>xmax1</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The maximum viewport x-coordinate (0 to 1).
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>ymin1</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The minimum viewport y-coordinate (0 to 1).
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>ymax1</parameter> (<literal>PLFLT</literal>, input)
-    </term>
-    <listitem><para>The maximum viewport y-coordinate (0 to 1).
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>xmin2</parameter> (<literal>PLFLT*</literal>, output)
-    </term>
-    <listitem><para>The transformed minimum viewport x-coordinate.
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>xmax2</parameter> (<literal>PLFLT*</literal>, output)
-    </term>
-    <listitem><para>The transformed maximum viewport x-coordinate.
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>ymin2</parameter> (<literal>PLFLT*</literal>, output)
-    </term>
-    <listitem><para>The transformed minimum viewport y-coordinate.
-    </para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>ymax2</parameter> (<literal>PLFLT*</literal>, output)
-    </term>
-    <listitem><para>The transformed maximum viewport y-coordinate.
-    </para></listitem>
-  </varlistentry>
-</variablelist>
-</sect3>
-
-
-<!-- gcw_use_text ===================================================== -->
-
-
-<sect3 id="gcw_use_text">
-
-<title><function>gcw_use_text</function>: Sets up text handling capabilities.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_set_use_text</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-    <paramdef><parameter>use_text</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Determines whether or not truetype text (use_text = TRUE) or Hershey fonts (use_text = FALSE) are used.  For non-antialiased Canvasses, only Hershey fonts are available, and truetype fonts will not display.  Truetype fonts are the default.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>use_text</parameter> (<literal>PLINT</literal>, input)
-    </term>
-    <listitem><para>TRUE for truetype fonts, FALSE for Hershey fonts.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- gcw_use_fast_rendering =========================================== -->
-
-
-<sect3 id="gcw_use_fast_rendering">
-
-<title><function>gcw_use_fast_rendering</function>: Uses fast (but buggy) rendering on the Canvas.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_use_fast_rendering</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-    <paramdef><parameter>use_fast_rendering</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Set use_fast_rendering to TRUE for fast rendering on the Canvas (default FALSE).  This might occasionally result in an 'attempt to put segment in horiz list twice' error message from libgnomecanvas, which may be accompanied by plotting errors.  The problem occurs particularly for shade and vector plots.  However, the error does not often occur for line plots, and the use of fast rendering can dramatically improve the performance of real-time displays.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>use_fast_rendering</parameter> (<literal>PLINT</literal>, input)
-    </term>
-    <listitem><para>TRUE for fast rendering, FALSE for slow.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- gcw_use_pixmap =================================================== -->
-
-
-<sect3 id="gcw_use_pixmap">
-
-<title><function>gcw_use_pixmap</function>: Use a pixmap for shade rendering.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_use_pixmap</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-    <paramdef><parameter>use_pixmap</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Set use_pixmap to TRUE to render shades using a pixmap (default FALSE).  This is useful for contour plots, which display much faster and have a smaller memory footprint when a pixmap is used.
-</para>
-
-<para>
-The drawback of the pixmap approach is that lines and text cannot be drawn with antialiasing to the pixmap.  Instead, the pixmap is moved to the back of the current group, and all lines on the canvas are drawn over top.  For this reason, use of the pixmap is usually appropriate for contour plots, but not for 3D plots.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-  <varlistentry>
-    <term>
-      <parameter>use_pixmap</parameter> (<literal>PLINT</literal>, input)
-    </term>
-    <listitem><para>TRUE to use pixmap, FALSE for normal polygon rendering.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- gcw_use_default_group =========================================== -->
-
-
-<sect3 id="gcw_use_default_group">
-
-<title><function>gcw_use_default_group</function>: Sets GCW to direct all subsequent plotting commands into the default group.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_use_default_group</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Sets GCW to direct all subsequent plotting commands into the default group.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- gcw_use_foreground_group ======================================== -->
-
-
-<sect3 id="gcw_use_foreground_group">
-
-<title><function>gcw_use_foreground_group</function>: Sets GCW to direct all subsequent plotting commands into the foreground group.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_use_foreground_group</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Sets GCW to direct all subsequent plotting commands into the foreground group.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- gcw_use_background_group ======================================== -->
-
-
-<sect3 id="gcw_use_background_group">
-
-<title><function>gcw_use_background_group</function>: Sets GCW to direct all subsequent plotting commands into the background group.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void gcw_use_background_group</function>
-    </funcdef>
-    <paramdef><parameter>canvas</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Sets GCW to direct all subsequent plotting commands into the background group.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
-    </term>
-    <listitem><para>The GnomeCanvas.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-</sect2>
-
-
-<!-- ================================================================== -->
-
-
-<sect2 id="gcw-python-api">
-<title>Python API for GCW</title> 
-
-<para>
-To access the GCW driver from python, import gcw.  PyGTK provides the required Gnome components.  The API is much the same as the C API. For example, the canvas size is set using <function>gcw.set_canvas_size</function>.  Output variables are returned in a tuple instead of being passed as parameters to a function.
-</para>
-
-</sect2>
-
-
-<!-- ================================================================== -->
-
-
-<sect2 id="plplotcanvas-api">
-<title>PlplotCanvas API</title> 
-
-<para>
-PlplotCanvas is a GnomeCanvas subclass that provides an object-oriented interface which abstracts away some of the complexity of using the GCW driver with PLplot.  When a new Canvas is initialized, &plsdev; and &plinit; are automatically invoked, and the Canvas is automatically installed into the driver.  Object-oriented wrappers to all PLplot functions are provided (see the discussion in <function>plplot_canvas_get_stream_number</function>, below), which coordinates the access to multiple streams automatically (i.e., calls to &plsstrm; are not required).
-</para>
-
-<para>
-The methods described below assume an understanding of the GCW API.
-</para>
-
-</sect2>
-
-<sect2 id="plplotcanvas-c-api">
-<title>C API for PlplotCanvas</title> 
-
-<para>
-To use the PlplotCanvas in C, include plplotcanvas.h.  The object model is the same as Gnome's GLib Object system used by GnomeCanvas.
-</para>
-
-<para>
-Each of the GCW driver functions have object-oriented PlplotCanvas method analogues, and these are not repeated below.  For example, <function>gcw_set_canvas_size(...)</function> maps to <function>plplot_canvas_set_size(canvas,...)</function>.  Notice that we don't repeat the word "canvas" twice.  When in doubt, check plplotcanvas.h for the method names and arguments.
-</para>
-
-<para>
-The additional methods are as follows.
-</para>
-
-<!-- plplot_canvas_new ================================================ -->
-
-
-<sect3 id="plplot_canvas_new">
-
-<title><function>plplot_canvas_new</function>: Creates a new canvas.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>PlplotCanvas* plplot_canvas_new</function>
-    </funcdef>
-    <paramdef><parameter>aa</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Returns a pointer to the new PlplotCanvas.  Either an antialiased or non-antialiased Canvas ma be used.  Antialiased Canvasses provide nicer looking results, but the performance is somewhat poorer for animated displays.  Truetype fonts can only be used with the antialiased Canvas.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>aa</parameter> (<literal>gboolean</literal>, input)
-    </term>
-    <listitem><para>TRUE for an antialiased canvas, FALSE for a non-antialiased canvas.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- plplot_canvas_dispose ============================================ -->
-
-
-<sect3 id="plplot_canvas_dispose">
-
-<title><function>plplot_canvas_dispose</function>: Disposes the Canvas.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>void plplot_canvas_dispose</function>
-    </funcdef>
-    <paramdef><parameter>self</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Disposes the Canvas.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>self</parameter> (<literal>PlplotCanvas*</literal>, input)
-    </term>
-    <listitem><para>The canvas to dispose of.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-
-<!-- plplot_canvas_get_stream_number ================================== -->
-
-
-<sect3 id="plplot_canvas_get_stream_number">
-
-<title><function>plplot_canvas_get_stream_number</function>: Returns the stream number of the given Canvas.</title>
-
-<para>
-  <funcsynopsis>
-  <funcprototype>
-    <funcdef>
-      <function>PLINT plplot_canvas_get_stream_number</function>
-    </funcdef>
-    <paramdef><parameter>self</parameter></paramdef>
-  </funcprototype>
-  </funcsynopsis>
-</para>
-
-<para>
-Returns the stream number for the given Canvas.  When using multiple streams (i.e., multiple Canvasses), this number should be used with &plsstrm; to select the stream before any PLplot functions are called; e.g., <function>plline(...)</function>.
-</para>
-
-<para>
-Alternatively, object-oriented methods are provided that wrap each of the PLplot functions; e.g., <function>plplot_canvas_plline(canvas,...)</function>.  The first argument to an object-oriented methods is the object itself, followed by the same arguments as used in the PLplot functions.  The object-oriented methods automatically set the stream.
-</para>
-
-<para>
-When in doubt, check plplotcanvas.h for the method names and arguments.  Go to the Examples section below to see each of these alternatives in action.
-</para>
-
-<variablelist>
-  <varlistentry>
-    <term>
-      <parameter>self</parameter> (<literal>PlplotCanvas*</literal>, input)
-    </term>
-    <listitem><para>The canvas to retrieve the stream number from.</para></listitem>
-  </varlistentry>
-</variablelist>
-
-</sect3>
-
-</sect2>
-
-<!-- ================================================================== -->
-
-
-<sect2 id="plplotcanvas-python-api">
-<title>Python API for PlplotCanvas</title> 
-
-<para>
-To use the PlplotCanvas in python, import plplotcanvas.  A call to plplotcanvas.Canvas() returns a new Canvas, and accepts an optional argument "aa" (True/False) which sets the canvas as antialiased or not.  The PlplotCanvas can be used with PyGTK like any other GnomeCanvas.
-</para>
-
-<para>
-The PlplotCanvas methods in Python are analogous to their C counterparts.  For example, if the object is "canvas", use <function>canvas.plline(...)</function> to draw lines, where the usual arguments for &plline; are employed.
-</para>
-
-</sect2>
-
-
-
-<!-- ================================================================== -->
-
-<sect2 id="gnome-examples">
-<title>PLplot-Gnome Example</title> 
-
-<para>
-As an example, the code from plplotcanvas_demo.c is given below.  An identical program is implemented in Python as plplotcanvas_demo.py, and is provided with the PLplot distribution.
 
 <programlisting>
 
@@ -706,8 +499,8 @@ As an example, the code from plplotcanvas_demo.c is given below.  An identical p
 #include &lt;gtk/gtk.h&gt;
 
 /* The width and height of the plplot canvas widget */
-#define WIDTH 1000
-#define HEIGHT 600
+#define WIDTH 1000 /* 500 */
+#define HEIGHT 600 /* 300 */
 
 /* Delete event callback */
 gint delete_event( GtkWidget *widget,GdkEvent *event,gpointer data ) {
@@ -726,7 +519,8 @@ int main(int argc,char *argv[] )
   PlplotCanvas* canvas;
   GtkWidget *window;
 
-  gdouble xmin,xmax,ymin,ymax;
+  /* Parse the options */
+  plparseopts(&amp;argc, argv, PL_PARSE_FULL);
 
   /* The data to plot */
   double x[11] = {0,1,2,3,4,5,6,7,8,9,10};
@@ -741,10 +535,6 @@ int main(int argc,char *argv[] )
    */
   canvas=plplot_canvas_new(TRUE);
   plplot_canvas_set_size(canvas,WIDTH,HEIGHT);
-
-  /* Determine the viewport so that everything is drawn on the canvas */
-  plplot_canvas_get_viewport(canvas,0.12,0.95,0.15,0.88,
-			     &amp;xmin,&amp;xmax,&amp;ymin,&amp;ymax);
 
   /* Create a new window and stuff the canvas into it */
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -763,7 +553,7 @@ int main(int argc,char *argv[] )
   plplot_canvas_pladv(canvas,0); /* Advance to first page */
   plplot_canvas_plcol0(canvas,15); /* Set color to black */
   plplot_canvas_plwid(canvas,2); /* Set the pen width */
-  plplot_canvas_plvpor(canvas,xmin,xmax,ymin,ymax); /* Set the viewport */
+  plplot_canvas_plvsta(canvas); /* Set the viewport */
   plplot_canvas_plwind(canvas,0.,10.,0.,10.); /* Set the window */
   plplot_canvas_plbox(canvas,"bcnst",0.,0,"bcnstv",0.,0); /* Set the box */
   plplot_canvas_pllab(canvas,"x-axis","y-axis","A Simple Plot"); /* Draw some labels */
@@ -780,59 +570,73 @@ int main(int argc,char *argv[] )
 }
 </programlisting>
 
-So, what's going on here?  After the preliminaries, the GTK and the GLib type system are initialized by calls to <function>gtk_init</function> and <function>g_type_init</function>.  A PlplotCanvas is created using <function>plplot_canvas_new</function>, and it's size is set using <function>plplot_canvas_set_size</function>.  We want the viewport to have normalized coordinates (0.12,0.95,0.15,0.88), but this must be transformed for use with the GCW driver by using <function>plplot_canvas_get_viewport</function>.  Next, a window is created (<function>gtk_window_new</function>), the border is set (<function>gtk_set_border_width</function>), and the canvas is stuffed into it (<function>gtk_container_add</function>).  Callback functions are installed using <function>g_signal_connect</function> so that the window decorations respond, and the window is set to display everything (<function>gtk_widget_show_all</function>).
-</para>
 
-<para>
-Now come the PLplot commands, invoked using PlplotCanvas's object-oriented interface.  First we must advance the page using <function>plplot_canvas_pladv</function>.  Next, the pen color and width are set with <function>plplot_canvas_plcol0</function> and <function>plplot_canvas_plwid</function>.  The PLplot viewport, window, box and labels are created using <function>plplot_canvas_plvpor</function>, <function>plplot_canvas_plwind</function>, <function>plplot_canvas_plbox</function> and <function>plplot_canvas_pllab</function>, respectively.  Note that the viewport is set using the transformed coordinates.  A line is drawn on the canvas using <function>plplot_canvas_plline</function>, and advancing the page with <function>plplot_canvas_pladv</function> displays the plot.  The GTK main loop is entered using <function>gtk_main</function>, where it resides until the program is exited.
-</para>
+    <para>
+      So, what's going on here?  After the preliminaries, the GTK and the 
+      GLib type system are initialized by calls to 
+      <function>gtk_init</function> and <function>g_type_init</function>.  
+      A PlplotCanvas is created using 
+      <function>plplot_canvas_new</function>, and it's size is set using 
+      <function>plplot_canvas_set_size</function>.  
+    </para>
 
-<para>
-Alternatively, the PLplot API can be used instead of the object-oriented methods given above.  In place of the given plot commands, use:
+    <para>
+      Next, a window is created (<function>gtk_window_new</function>), 
+      the border is set (<function>gtk_set_border_width</function>), 
+      and the canvas is stuffed into the window 
+      (<function>gtk_container_add</function>).  
+    </para>
 
-<programlisting>
-  pladv(0); /* Advance to first page */
-  plcol0(15); /* Set color to black */
-  plwid(2); /* Set the pen width */
-  plvpor(xmin,xmax,ymin,ymax); /* Set the viewport */
-  plwind(0.,10.,0.,10.); /* Set the window */
-  plbox("bcnst",0.,0,"bcnstv",0.,0); /* Set the box */
-  pllab("x-axis","y-axis","A Simple Plot"); /* Draw some labels */
+    <para>
+      Callback functions are installed using 
+      <function>g_signal_connect</function> so that the window 
+      decorations respond. The window is set to display everything using
+      <function>gtk_widget_show_all</function>.
+    </para>
 
-  /* Draw the line */
-  plcol0(1); /* Set the pen color */
-  plline(canvas,11,x,y);
+    <para>
+      Now come the PLplot analogue commands.  First, the page using is
+      advanced using <function>plplot_canvas_pladv</function>.  The pen 
+      color and width are set with <function>plplot_canvas_plcol0</function> 
+      and <function>plplot_canvas_plwid</function>,respectively.  The PLplot
+      viewport, window, box and labels are created using 
+      <function>plplot_canvas_plvpor</function>, 
+      <function>plplot_canvas_plwind</function>, 
+      <function>plplot_canvas_plbox</function> and 
+      <function>plplot_canvas_pllab</function>, respectively.  A line is 
+      drawn on the canvas using <function>plplot_canvas_plline</function>, 
+      the page is advanced with <function>plplot_canvas_pladv</function>.
+    </para>
 
-  /* Advancing the page finalizes this plot */
-  pladv(canvas,0);
-</programlisting>
+    <para>
+      Finally, the GTK main loop is entered using 
+      <function>gtk_main</function>, where it resides until the program
+      is exited.
+    </para>
 
-If multiple canvasses are to be used, the stream for each canvas must be obtained using <function>plplot_canvas_get_stream_number</function> and set using &plsstrm;, prior to PLplot API calls; e.g.,
+  </sect2>
 
-<programlisting>
-  PLINT N;
+</sect1>
 
-  .
-  .
-  .
-
-  N = plplot_canvas_get_stream_number(canvas);
-  plsstrm(N);
-
-  pladv(0); /* Advance to first page */
-  plcol0(15); /* Set color to black */
-  .
-  .
-  .  
-</programlisting>
-
-</para>
-
-</sect2>
-
-</sect1> <!-- Gnome -->
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
 
 </chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: ("plplotdoc.xml" "book" "chapter" "")
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:("/usr/lib/sgml/catalog")
+sgml-local-ecat-files:nil
+End:
+-->
