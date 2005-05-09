@@ -467,6 +467,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       char esc;
       int idx;
 
+      PLFLT xtmp,ytmp;
+      PLINT clpxmi, clpxma, clpymi, clpyma;
+
       args.base = base;
       args.just = just;
       args.xform = xform;
@@ -474,23 +477,44 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       args.y = y;
       args.refx = refx;
       args.refy = refy;
+      args.string = string;
+
+      /* The plot buffer must be called first */
+      if (plsc->plbuf_write)
+	plbuf_esc(plsc, PLESC_HAS_TEXT, &args);
+
+      /* Next comes the driver interface filter */
+      if (plsc->difilt) {
+	difilt(&args.x, &args.y, 1, &clpxmi, &clpxma, &clpymi, &clpyma);
+      }
+
+      /* 
+       * Now process the text string 
+       */
+
       if (plsc->dev_unicode) {       /* Does the device also understand unicode  ? */
 	 PLINT ig;
 	 PLUNICODE fci, fcisave;
 	 unsigned char hexdigit, hexpower;
-	 if (string!=NULL) {        /* If the string isn't blank, then we will continue */
-	    len=strlen(string);     /* this length is only used in the loop counter, we will work out the length of the unicode string as we go */
+	 if (string!=NULL) {        /* If the string isn't blank, then we will 
+                                     * continue 
+				     */
+	    len=strlen(string);     /* this length is only used in the loop 
+				     * counter, we will work out the length of 
+				     * the unicode string as we go */
 	    plgesc(&esc);
 	
-	    /*  At this stage we will do some translations into unicode, like conversion to
-	     *  Greek , and will save other translations such as superscript for the driver to
-	     *  do later on. As we move through the string and do the translations, we will get
+	    /* At this stage we will do some translations into unicode, like 
+	     * conversion to Greek , and will save other translations such as 
+	     * superscript for the driver to do later on. As we move through 
+	     * the string and do the translations, we will get
 	     * rid of the esc character sequence, just replacing it with unicode.
 	     */
 	
 	    /* Obtain FCI (font characterization integer) for start of string. */
 	    plgfci(&fci);
-	    for (j=i=0;i<len;i++) {    /* Walk through the strings, and convert some stuff to unicode on the fly */
+	    for (j=i=0;i<len;i++) {    /* Walk through the strings, and convert 
+					* some stuff to unicode on the fly */
 	       skip=0;
 	
 	       if (string[i]==esc) {
@@ -502,7 +526,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     fcisave = fci;
 		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
-		     unicode_buffer[j++]=(PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+		     unicode_buffer[j++] = \
+		       (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+
 		     /* if unicode_buffer[j-1] corresponds to the escape character
 		      * must unescape it by appending one more.  This will probably
 		      * always be necessary since it is likely unicode_buffer
@@ -620,16 +646,19 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			if (ig >= 24)
 			  ig = ig + 100 - 24;
 			idx=plhershey2unicode(ig+527);
-			unicode_buffer[j++]=(PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+			unicode_buffer[j++] = \
+			  (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 			i+=2;
-			skip=1;  /* skip is set if we have copied something into the unicode table */
+			skip=1;  /* skip is set if we have copied something into 
+				  * the unicode table */
 		     }
 		     else {
 			/* Use "unknown" unicode character if string[i+2] is not in
 			 * the Greek array.*/
 			unicode_buffer[j++]=(PLUNICODE)0x00;
 			i+=2;
-			skip=1;  /* skip is set if we have copied something into the unicode table */
+			skip=1;  /* skip is set if we have copied something into 
+				  * the unicode table */
 		     }
 		     fci = fcisave;
 		     unicode_buffer[j]= fci;
@@ -666,18 +695,17 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	       j++;
 	    }
 	    if (j > 0) {
-	       args.unicode_array_len=j; /* Much easier to set the length than work it out later :-) */
-	       args.unicode_array=&unicode_buffer[0];   /* Get address of the unicode buffer (even though it is currently static) */
+	       args.unicode_array_len=j; /* Much easier to set the length than 
+					  * work it out later :-) */
+	       args.unicode_array=&unicode_buffer[0];   /* Get address of the 
+							 * unicode buffer (even 
+							 * though it is currently 
+							 * static) */
 	    } else
 	      /* Don't print anything, if there is no unicode to print! */
 	      return;
 	 }
       }
-
-      args.string = string; /* Needed by plbuf_esc */
-
-      if (plsc->plbuf_write)
-	plbuf_esc(plsc, PLESC_HAS_TEXT, &args);
 
       if (plsc->dev_unicode) {
 	args.string=NULL;  /* Since we are using unicode, we want this to be NULL */
