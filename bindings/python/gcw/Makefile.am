@@ -40,7 +40,7 @@ ourexecpythondir = $(pythondir)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
-libplplotgnome2 = $(top_builddir)/bindings/gnome2/libplplotgnome2$(LIB_TAG).la
+libplplotgnome2 = $(top_builddir)/bindings/gnome2/lib/libplplotgnome2$(LIB_TAG).la
 
 
 # NUMERICINCCMD only required until we quit supporting python 1.5

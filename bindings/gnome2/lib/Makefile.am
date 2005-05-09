@@ -1,9 +1,8 @@
-# bindings/gnome2/Makefile.am for PLplot
+# bindings/gnome2/lib/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002, 2003  Alan W. Irwin
-# Copyright (C) 2003, 2004  Rafael Laboissiere
+# Copyright (C) 2005  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -20,4 +19,13 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-SUBDIRS = lib
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
+if enable_gcw
+lib_LTLIBRARIES = libplplotgnome2@LIB_TAG@.la
+libplplotgnome2@LIB_TAG@_la_SOURCES = \
+	plplotcanvas.c \
+	gcw-lib.c
+libplplotgnome2@LIB_TAG@_la_LDFLAGS = \
+	-version-info $(PLPLOTGNOME_SOVERSION) $(RPATH) -no-undefined \
+	$(libplplot) $(GCW_LIBS) $(lmflag)
+endif

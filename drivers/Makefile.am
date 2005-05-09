@@ -60,7 +60,7 @@ drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 libtclmatrix = $(top_builddir)/bindings/tcl/libtclmatrix$(LIB_TAG).la
-libplplotgnome2 = $(top_builddir)/bindings/gnome2/libplplotgnome2$(LIB_TAG).la
+libplplotgnome2 = $(top_builddir)/bindings/gnome2/lib/libplplotgnome2$(LIB_TAG).la
 
 # The variable below will force building of the dyndrivers info files
 # (<driver>.rc) and their installation in the drivers directory
@@ -248,8 +248,8 @@ if enable_gcw
 # All sources that are in libplplotgnome2 + plplotcanvas-hacktext.c
 # (which is part of the source for gcw.la that is not contained in gcw.c.)
 gnome2sources = \
-	plplotcanvas.c \
-	gcw-lib.c \
+	$(top_builddir)/bindings/gnome2/lib/plplotcanvas.c \
+	$(top_builddir)/bindings/gnome2/lib/gcw-lib.c \
 	plplotcanvas-hacktext.c
 endif
 
@@ -318,7 +318,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	aqt.c \
 	cgm.c \
 	dg300.c \
-	gcw.c plplotcanvas-hacktext.c \
+	gcw.c \
 	gd.c \
 	gnome.c \
 	hpgl.c \
