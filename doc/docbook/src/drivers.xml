@@ -35,57 +35,97 @@
 -->
 
 <chapter id="x-drivers">
-  <title>The PLplot X Driver Family</title>
+<title>The PLplot Display Driver Family</title>
 
-  <para>
-    Drivers for use with the X-Windows system are described in this chapter.  Each of the drivers has a list of options, and these may be set as outlined in <xref linkend="arguments"/>.
+<para>
+  Drivers that provide screen displays are described in this chapter.  
+  Each of the drivers has a list of options, and these may be set as 
+  outlined in <xref linkend="arguments" />.
+</para>
+
+
+<!-- ================================================================== -->
+<!-- XWIN -->
+
+<sect1 id="xwin-driver">
+  <title>The Xwin Driver</title>
+    
+  <para> 
+    The Xwin driver draws plots in an X-window.  Although some of the
+    newer features are not supported, it remains the reference driver
+    for PLplot.
   </para>
 
-  <sect1 id="xwin-driver">
-    <title>The Xwin Driver</title>
-    
-    <para> 
-      The Xwin driver draws plots in an X-window using Xlib.  The raster
-      output is rather coarse, but renders very fast.  The Xwin driver
-      is excellent for quick-look plots, and is the reference driver
-      for plplot.  However, it should be noted that the Xwin driver 
-      is not unicode-enabled.
-    </para>
+  <para>
+    Plots are displayed one page at a time.  The pager is advanced by 
+    pressing the Enter key, and may only be advanced in the foreward
+    direction.
+  </para> 
 
-    <para>
-      The Xwin driver displays plots one page at a time.  The pager
-      is advanced by pressing the Enter key.
-    </para> 
+  <para>
+    Anti-aliasing is not supported, and the Xwin driver is not 
+    unicode-enabled.
+  </para>
 
-    <para>
-      The available driver options are:
-      <itemizedlist>
-        <listitem><para>sync: Synchronized X server operation (0|1)</para></listitem>
-	<listitem><para>nobuffered: Sets unbuffered operation (0|1)</para></listitem>
-	<listitem><para>noinitcolors: Sets cmap0 allocation (0|1)</para></listitem>
-	<listitem><para>defvis: Use the Default Visual (0|1)</para></listitem>
-	<listitem><para>usepth: Use pthreads (0|1)</para></listitem>
+  <para>
+    The available driver options are:
+    <itemizedlist>
+      <listitem><para>
+        sync: Synchronized X server operation (0|1)
+      </para></listitem>
+      <listitem><para>
+        nobuffered: Sets unbuffered operation (0|1)
+      </para></listitem>
+      <listitem><para>
+        noinitcolors: Sets cmap0 allocation (0|1)
+      </para></listitem>
+      <listitem><para>
+        defvis: Use the Default Visual (0|1)
+      </para></listitem>
+	<listitem><para>
+          usepth: Use pthreads (0|1)
+        </para></listitem>
       </itemizedlist>
-    </para>
+  </para>
+</sect1>
 
-  </sect1>
 
-  <sect1 id="gcw-driver">
-    <title>The GCW Driver</title>
+<!-- ================================================================== -->
+<!-- GCW -->
+
+<sect1 id="gcw-driver">
+  <title>The GCW Driver</title>
+
+  <para> 
+    The GCW driver draws plots into a tabbed Gnome window.  The driver's
+    features and user interface are described in 
+    <xref linkend="gcw-driver-basics" />.  A specialized API allows 
+    interaction with the driver, and this is described in 
+    <xref linkend="gcw-driver-api" />.
+  </para>
+
+  <!-- GCW Driver Basics -->
+
+  <sect2 id="gcw-driver-basics">
+    <title>GCW Driver Basics</title>
     
-    <para> 
-      The GCW (Gnome Canvas Widget) driver produces high-quality output
-      in a Gnome window, but renders slower than the Xwin driver.  The
-      GCW driver can also be used to embed plots in Gnome applications,
-      and this is described in <xref linkend="gnome-gui"/>.  The GCW 
-      driver is unicode enabled.
+    <para>
+      The GCW driver plots each page into an individual tab within
+      a Gnome window.  The user interface built into the window allows 
+      a variety of actions.  In particular, pages can be saved to files
+      with extensions .ps, .psc, .png, .jpg, and .gif, which correspond 
+      to PLplot output driver devices described in 
+      <xref linkend="arguments" />.
     </para>
 
     <para>
-      Plots are presented in separate tabs.  There are a variety of hot keys
-      that may be used:
+      The GCW driver supports anti-aliasing and is unicode enabled.
+    </para>
+
+    <para>
+      There are a variety of hot keys that may be used in the user interface:
       <itemizedlist>
-	<listitem><para>Arrows : Change page</para></listitem>
+        <listitem><para>Arrows : Change page</para></listitem>
 	<listitem><para>+ : Zooms in</para></listitem>
 	<listitem><para>- : Zooms out</para></listitem>
 	<listitem><para>= : Zooms to 100%</para></listitem>
@@ -96,21 +136,157 @@
     <para>
       The available driver options are:
       <itemizedlist>
-        <listitem><para>aa: Use antialiased canvas (aa=0|1)</para></listitem>
-	<listitem><para>text: Use truetype fonts (text=0|1)</para></listitem>
-	<listitem><para>hrshsym: Use Hershey symbol set (hrshsym=0|1)</para></listitem>
-	<listitem><para>fast: Use fast (but somewhat buggy) rendering (fast=0|1)</para></listitem>
-	<listitem><para>pixmap: Use pixmap for plotting shades (pixmap=0|1)</para></listitem>
+        <listitem><para>
+          text: Use TrueType fonts (0|1); default 1
+	</para></listitem>
+	<listitem><para>
+	  pixmap: Use pixmap for plotting lines and shades (0|1); 
+	  default 1
+	</para></listitem>
+	<listitem><para>
+	  hrshsym: Use Hershey symbol set (0|1); default 0
+	</para></listitem>
       </itemizedlist>
-
     </para>
 
-  </sect1>
+    <para>
+      The <parameter>text</parameter> option toggles between TrueType and
+      Hershey fonts.  The Hershey fonts provide a reference implementation
+      for text representation in PLplot.
+    </para>
 
-  <sect1 id="tk-driver">
-    <title>The Tk Driver</title>
+    <para>
+      The <parameter>pixmap</parameter> options toggles between the use of
+      an internal pixmap and vector graphics for lines and shades.
+      When pixmap=1, lines and shades may appear pixelated.  Use pixmap=0
+      instead for anti-aliasing, which will provide higher quality plots but
+      at a slower speed.  Note that this option does not affect the quality
+      of plots saved from the GCW user interface, and that TrueType fonts
+      are always anti-aliased.
+    </para>
+
+    <para>
+      The <parameter>hrshsym</parameter> option is used to indicate that
+      symbols should be drawn using the Hershey fonts.  This is
+      useful when plots need to be saved to PostScript files, because
+      the Type I fonts used by the PS and PSC devices do not support all
+      Unicode symbols.
+    </para>
+
+  </sect2>
+
+
+  <!-- GCW Driver API -->
+
+  <sect2 id="gcw-driver-api">
+    <title>GCW Driver API</title> 
+
+    <para>
+      The GCW driver provides an additional API that allows for a higher
+      degree of control by the user.  The C API is described below, and
+      bindings to other languages are described in
+      *** ??? ***.
+    </para>
+
+    <para>
+      The function prototypes are defined in <filename>gcw.h</filename>.
+      Programs that need access to this API must be linked against the 
+      libplplotgnome2d library rather than libplplotd.  This is most easily 
+      accomplished using pkg-config; i.e.,
+
+      <programlisting>
+        gcc x01c.c -o x01c `pkg-config --cflags --libs plplotd-gnome2`
+      </programlisting>
+
+      You may need to remind pkg-config where to look for the 
+      plplotd-gnome2 file installed by PLplot; e.g.,
+
+      <programlisting>
+        gcc x01c.c -o x01c `PKG_CONFIG_PATH=/usr/local/lib/pkgconfig pkg-config --cflags --libs plplotd-gnome2`
+      </programlisting>
+    </para>
+
+
+    <!-- gcw_use_text -->
+
+    <sect3 id="gcw_use_text">
+      <title><function>gcw_use_text</function>: Sets font usage.</title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>void gcw_use_text</function></funcdef>
+          <paramdef><parameter>use_text</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Sets whether TrueType text or Hershey fonts are used.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>use_text</parameter> (<literal>PLINT</literal>, input)
+          </term>
+          <listitem><para>
+            1 for TrueType fonts (default), 0 for Hershey fonts.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+
+    <!-- gcw_use_pixmap -->
+
+    <sect3 id="gcw_use_pixmap">
+      <title><function>gcw_use_pixmap</function>Sets pixmap usage.</title>
+
+      <para>
+        <funcsynopsis><funcprototype>
+          <funcdef><function>void gcw_use_pixmap</function></funcdef>
+          <paramdef><parameter>use_pixmap</parameter></paramdef>
+        </funcprototype></funcsynopsis>
+      </para>
+
+      <para>
+        Sets whether lines and shades are drawn to a pixmap,
+        or instead as vector graphics.
+      </para>
+
+      <para>
+        Lines and shade drawn to the pixmap are not anti-aliased, and so may
+        appear pixelated.  Vector graphics are fully anti-aliased, but are
+        rendered at a slower speed.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>use_pixmap</parameter> 
+            (<literal>PLINT</literal>, input)
+          </term>
+          <listitem><para>
+            1 to use pixmap (default), 0 for vector graphics instead.
+          </para></listitem>
+        </varlistentry>
+      </variablelist>
+
+    </sect3>
+
+  </sect2>
+</sect1>
+
+
+
+<!-- ================================================================== -->
+<!-- TK -->
+
+
+<sect1 id="tk-driver">
+  <title>The Tk Driver</title>
     
-    <para> 
+  <para> 
       is the prototype of a whole new interaction paradigm.  See next
       chapter.
     </para>
@@ -119,51 +295,88 @@
 
 </chapter>
 
+
+<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+
+
 <chapter id="output-drivers">
   <title>The PLplot Output Driver Family</title>
 
   <para>
-    Drivers which produce output files are described in this chapter.  Each of the drivers has a list of options, and these may be set as outlined in <xref linkend="arguments"/>.
+    Drivers which produce output files are described in this chapter.  
+    Each of the drivers has a list of options, and these may be set as 
+    outlined in <xref linkend="arguments" />.
   </para>
+
+
+<!-- ================================================================== -->
+<!-- PS -->
 
   <sect1 id="postscript-driver">
     <title>The Postscript Driver</title>
     
     <para> 
       The Postscript driver produces publication-quality postscript
-      output.  This driver is unicode enabled.
+      output.  The driver provides two devices: the ps device for 
+      black-and-white plots, and the psc device for color plots.
+    </para>
+
+    <para>
+      This driver is unicode enabled, and PostScript Type I fonts are used.
+      Type I fonts do not have all of the available unicode symbols
+      represented.  For this reason, Hershey fonts are used for drawing 
+      symbols by default, unless specified otherwise using the driver options.
     </para>
 
     <para>
       The available driver options are:
       <itemizedlist>
-        <listitem><para>text: Use Postscript text (text=0|1)</para></listitem>
-	<listitem><para>color: Use color (color=0|1)</para></listitem>
-	<listitem><para>hrshsym: Use Hershey symbol set (hrshsym=0|1)</para></listitem>
+        <listitem><para>
+          text: Use Postscript text (0|1); default 1
+        </para></listitem>
+	<listitem><para>
+          hrshsym: Use Hershey fonts for symbols (0|1); default 1
+        </para></listitem>
       </itemizedlist>
     </para>
 
   </sect1>
 
+
+<!-- ================================================================== -->
+<!-- GD -->
+
   <sect1 id="gd-driver">
     <title>The GD Driver</title>
     
     <para> 
-      The GD driver is used to produce high-quality png, jpeg, and 
-      gif images, using devices by the same name.  All of the GD 
-      devices are unicode enabled.
+      The GD driver produces png, jpeg, and gif images, using devices by 
+      the same name.  The GD driver is unicode enabled.  Text is 
+      anti-aliased, but lines and shades are not.
     </para>
 
     <para>
       The available driver options are:
       <itemizedlist>
-        <listitem><para>optimise: Optimise PNG palette when possible</para></listitem>
-	<listitem><para>def_black15: Define idx 15 as black. If the background is "whiteish" (from "-bg" option), force index 15 (traditionally white) to be "black"</para></listitem>
-	<listitem><para>swp_red15: Swap index 1 (usually red) and 1 (usually white); always done after "black15"; quite useful for quick changes to web pages</para></listitem>
+        <listitem><para>
+          optimise: Optimise PNG palette when possible
+        </para></listitem>
+	<listitem><para>
+          def_black15: Define idx 15 as black. If the background is 
+          "whiteish" (from "-bg" option), force index 15 (traditionally 
+           white) to be "black"
+        </para></listitem>
+	<listitem><para>
+          swp_red15: Swap index 1 (usually red) and 1 (usually white); 
+          always done after "black15"; quite useful for quick changes to
+          web pages
+        </para></listitem>
 	<listitem><para>8bit: Palette (8 bit) mode</para></listitem>
 	<listitem><para>24bit: Truecolor (24 bit) mode</para></listitem>
 	<listitem><para>text: Use driver text (FreeType)</para></listitem>
-	<listitem><para>smooth: Turn text smoothing on (1) or off (0)</para></listitem>
+	<listitem><para>
+          smooth: Turn text smoothing on (1) or off (0)
+        </para></listitem>
       </itemizedlist>
     </para>
 
@@ -187,4 +400,3 @@ sgml-local-catalogs:("/usr/lib/sgml/catalog")
 sgml-local-ecat-files:nil
 End:
 -->
-
