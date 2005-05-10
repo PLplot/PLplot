@@ -293,8 +293,24 @@
 
   </sect1>
 
-</chapter>
+<!-- ================================================================== -->
+<!-- AquaTerm -->
 
+  <sect1 id="aqt-driver">
+    <title>The AquaTerm Driver</title>
+    
+    <para> 
+      The AquaTerm driver is a Mac OS X specific driver that is used with 
+      the AquaTerm Graphics Terminal. It is unicode enabled. Text, lines
+      and shades are anti-aliased.
+    </para>
+    
+    <para>
+      There are no options...
+    </para>
+  </sect1>
+
+</chapter>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
@@ -381,8 +397,6 @@
     </para>
 
   </sect1>
-
-</chapter>
 
 <!-- Keep this comment at the end of the file
 Local variables:
