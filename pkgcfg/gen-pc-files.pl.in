@@ -78,20 +78,19 @@ for $pkg (keys %pc_files_info) {
 
   $lib = $pc_files_info{$pkg}->{LIB};
   $libname = "lib$lib";
-  $lai_file = ($pkg eq $master_pkg)
-    ? "$top_builddir/src/.libs/$libname.lai"
-    : "$top_builddir/bindings/$pkg/.libs/$libname.lai";
+  @lai_files = `find $top_builddir -name $libname.lai`;
+  warn "More than one $libname.lai file found in build tree"
+    if $#lai_files > 0;
+  if ($#lai_files < 0) {
+    warn "Cannot find $libname.lai";
+    next;
+  }
+  
+  $lai_file = @lai_files[0];
 
   if (not open (LAI, "< $lai_file")) {
-
-    $lai_file = ($pkg eq $master_pkg)
-      ? "$top_builddir/src/.libs/$libname.lai"
-      : "$top_builddir/drivers/.libs/$libname.lai";
-
-    if (not open (LAI, "< $lai_file")) {
-      warn "Cannot open $lai_file";
-      next;
-    }
+    warn "Cannot open $lai_file";
+    next;
   }
 
   while (<LAI>) {
