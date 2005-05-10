@@ -788,7 +788,7 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  *  reference point for the text using plplot functions.
  */
 
-  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+/*   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax); */
 
 
 /*
@@ -1176,6 +1176,7 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
     int x,y;
     FT_Vector  adjust;
     PLUNICODE fci;
+    PLINT clxmin, clxmax, clymin, clymax;
 
     x=args->x/FT->scale;
 
