@@ -124,11 +124,8 @@ typedef struct {
 
 /* Public_functions */
 
-void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height);
-void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
 void gcw_use_text(PLINT use_text);
 void gcw_use_pixmap(PLINT use_pixmap);
-void gcw_use_persistence(PLINT use_persistence);
 
 /* Private functions */
 
@@ -137,5 +134,8 @@ void gcw_set_gdk_color();
 void gcw_clear_background();
 void gcw_init_canvas(GnomeCanvas* canvas);
 void gcw_install_canvas(GnomeCanvas *canvas);
+void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height);
+void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
+void gcw_use_persistence(PLINT use_persistence);
 
 #endif /* __GCW_H__ */
