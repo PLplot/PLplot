@@ -287,15 +287,10 @@ plbuf_text(PLStream *pls, EscText *text)
   fwrite(&text->refx, sizeof(PLINT), 1, pls->plbufFile);
   fwrite(&text->refy, sizeof(PLINT), 1, pls->plbufFile);
 
-  if(text->string!=NULL) {
-    n = strlen(text->string)+1;
-    fwrite(&n,sizeof(PLINT),1,pls->plbufFile);
-    fwrite(text->string, sizeof(char), n, pls->plbufFile);
-  }
-  else {
-    n = 0;
-    fwrite(&n,sizeof(PLINT),1,pls->plbufFile);
-  }
+  fwrite(&text->unicode_array_len, sizeof(PLINT), 1, pls->plbufFile);
+  if(text->unicode_array_len)
+    fwrite(text->unicode_array, sizeof(PLUNICODE), 
+	   text->unicode_array_len, pls->plbufFile);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -689,7 +684,7 @@ rdbuf_text(PLStream *pls)
   EscText text;
   PLFLT xform[4];
   PLINT n;
-  char* str;
+  PLUNICODE* unicode;
 
   text.xform = xform;
 
@@ -713,24 +708,21 @@ rdbuf_text(PLStream *pls)
   fread(&text.refx, sizeof(PLINT), 1, pls->plbufFile);
   fread(&text.refy, sizeof(PLINT), 1, pls->plbufFile);
 
-  fread(&n,sizeof(PLINT),1,pls->plbufFile);
-
-  if(n>0) {
-    if( (str=(char *)malloc(n*sizeof(char))) == NULL)
+  fread(&text.unicode_array_len, sizeof(PLINT), 1, pls->plbufFile);
+  if(text.unicode_array_len) {
+    if((unicode=(PLUNICODE *)malloc(text.unicode_array_len*sizeof(PLUNICODE)))
+       == NULL)
       plexit("rdbuf_text: Insufficient memory");
 
-    fread(str, sizeof(char), n, pls->plbufFile);
-    text.string = (const char*)str;
+    fread(unicode, sizeof(PLUNICODE), text.unicode_array_len, pls->plbufFile);
+    text.unicode_array = unicode;
   }
-  else {
-    text.string = NULL;
-  }
+  else text.unicode_array = NULL;
 
-  /* Make the call */
-  if(text.string != NULL) {
+  /* Make the call for unicode devices */
+  if(pls->dev_unicode) {
     plsfci(fci);
-    plP_text(text.base, text.just, text.xform, text.x, text.y,
-	     text.refx, text.refy, text.string);
+    plP_esc(PLESC_HAS_TEXT,&text);
   }
 }
 
