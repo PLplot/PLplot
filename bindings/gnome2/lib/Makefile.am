@@ -19,6 +19,8 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+AM_CPPFLAGS = -I$(top_srcdir)/include
+
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 if enable_gcw
 lib_LTLIBRARIES = libplplotgnome2@LIB_TAG@.la
