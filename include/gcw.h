@@ -83,6 +83,8 @@ typedef struct {
   gboolean plstate_color0; /*  device is fully initialized */
   gboolean plstate_color1;
 
+  gboolean allow_resize; /* Flags whether device resizing is allowed */
+
 } GcwPLdev;
 
 
@@ -99,9 +101,9 @@ typedef struct {
  */
 #define VSCALE (32.)
 
-/* pixels per mm; note DPMM = 4. in plplotP.h */
-#define DEVICE_PIXELS_PER_MM (DPMM)
-#define VIRTUAL_PIXELS_PER_MM (DPMM*VSCALE)
+/* pixels per mm */
+#define DEVICE_PIXELS_PER_MM (3.4)
+#define VIRTUAL_PIXELS_PER_MM (DEVICE_PIXELS_PER_MM*VSCALE)
 
 /* mm per inch */
 #define MM_PER_IN (25.4)
@@ -134,6 +136,7 @@ void gcw_set_gdk_color();
 void gcw_clear_background();
 void gcw_init_canvas(GnomeCanvas* canvas);
 void gcw_install_canvas(GnomeCanvas *canvas);
+void gcw_set_device_size(PLINT width,PLINT height);
 void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height);
 void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
 void gcw_use_persistence(PLINT use_persistence);

@@ -59,21 +59,17 @@ DEVELOPMENT NOTES
 
 KNOWN BUGS
 
-  Text clipping is not completely working, although it is implemented
-  here.  Proper text clipping will require Pango, as it is not
-  implemented for Hacktext.
-
   PLplot test suite problems:
 
-    1) Example x10c does not clip the text.
+    1) Example x10c does not clip the text (there is no text clipping).
 
     2) Example x17c, the strip chart demo, doesn't do a strip chart 
-       (try the xwin driver to see how it should work).  This example
-       probably isn't so important for this driver, which gives 
-       alternative and more flexible ways of drawing animations.
+       (try the xwin driver to see how it should work).  Strip charts 
+       are fundamentally incompatible with the tabbed window design of
+       the GCW driver.  Use the PlplotCanvas to create animations 
+       instead.
 
-    3) Example x20c freezes during the drawing of Lena, likely due to 
-       too many items on the canvas.
+    3) Example x24c
 
 */
 
@@ -192,8 +188,7 @@ void plD_init_gcw(PLStream *pls)
 {
   GcwPLdev* dev;
 
-  PLINT width, height;
-  PLINT w, h;
+  PLINT width, height, tmp;
 
   PLColor bgcolor = pls->cmap0[0];
 
@@ -240,46 +235,6 @@ void plD_init_gcw(PLStream *pls)
   dev->use_pixmap = (gboolean)pixmap;
   dev->pixmap_has_data = FALSE;
 
-  /* Initialize gtk */
-  gtk_init(0,NULL);
-
-  /* Set up the physical device in the next series of commands.  It is very 
-   * important to do this properly, because many PLplot routines depend on
-   * physical coordinates (e.g., dashed lines, hatched areas, the
-   * replot mechanism, hidden line removal, etc.
-   *
-   * Notice that coordinates in the driver are measured in device units,
-   * which correspond to the pixel size on a typical screen.  The coordinates
-   * reported and received from the PLplot core, however, are in virtual
-   * coordinates, which is just a scaled version of the device coordinates.
-   * This strategy is used so that the calculations in the PLplot
-   * core are performed at reasonably high resolution.
-   *
-   */
-  if (pls->xlength > 0 && pls->ylength > 0) {
-    /* xlength and length are the dimensions specified using -geometry
-     * on the command line, in device coordinates.
-     */
-    width = pls->xlength;
-    height = pls->ylength;
-  }
-  else {    
-    width = (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN);
-    height = (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN);
-  }
-
-  /* Set the number of virtual coordinate units per mm */
-  plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
-
-  /* Set up physical limits of plotting device, in virtual coordinate units */
-  w = (PLINT)(width*VSCALE);
-  h = (PLINT)(height*VSCALE);
-  plP_setphy((PLINT)0,w,(PLINT)0,h);
-
-  /* Save the width and height for the device, in device units */
-  dev->width = width;
-  dev->height = height;
-
   /* Initialize the device colors */
   dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
   dev->bgcolor.red=(guint16)(bgcolor.r/255.*65535); 
@@ -310,6 +265,58 @@ void plD_init_gcw(PLStream *pls)
   dev->plstate_width = FALSE;
   dev->plstate_color0 = FALSE;
   dev->plstate_color1 = FALSE;
+
+  /* Initialize gtk */
+  gtk_init(0,NULL);
+
+  /* Set up the physical device in the next series of commands.  It is very 
+   * important to do this properly, because many PLplot routines depend on
+   * physical coordinates (e.g., dashed lines, hatched areas, the
+   * replot mechanism, hidden line removal, etc.
+   *
+   * Note that coordinates in the driver are measured in device units,
+   * which correspond to the pixel size on a typical screen.  The coordinates
+   * reported and received from the PLplot core, however, are in virtual
+   * coordinates, which is just a scaled version of the device coordinates.
+   * This strategy is used so that the calculations in the PLplot
+   * core are performed at reasonably high resolution.
+   *
+   */
+  if (pls->xlength > 0 && pls->ylength > 0) {
+    /* xlength and length are the dimensions specified using -geometry
+     * on the command line, in device coordinates.
+     */
+    width = pls->xlength;
+    height = pls->ylength;
+  }
+  else {    
+    width = (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN);
+    height = (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN);
+  }
+
+  /* If portrait mode, apply a rotation and set freeaspect */
+  if(pls->portrait) {
+/*     tmp = width; */
+/*     width = height; */
+/*     height = tmp; */
+    plsdiori((PLFLT)(4 - ORIENTATION));
+    pls->freeaspect = 1;
+  }
+
+  /* Setup the page size for this device.  Very important for any driver! */
+  gcw_set_device_size(width,height);
+
+  /* Install a canvas... unless plsc->hack is set, which is a driver-specific
+   * hack that indicates a PLESC_DEVINIT escape call will provide us with a 
+   * canvas to use.  This hack is used by the PlplotCanvas.
+   */
+  if(!pls->hack) {
+    dev->allow_resize = FALSE; /* The size is set an should not be changed */
+    gcw_install_canvas(NULL);
+  }
+  else dev->allow_resize = TRUE; /* Resizing allowed for canvasses
+				  * provided via PLESC_DEVINIT */
+
 
 #ifdef DEBUG_GCW_1
   gcw_debug("</plD_init_gcw>\n");
@@ -343,10 +350,10 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   gcw_debug("<plD_polyline_gcw />\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
+  if(!GNOME_IS_CANVAS(dev->canvas))
+    plexit("GCW driver <plD_polyline_gcw>: Canvas not found");
   canvas = dev->canvas;
 
-  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
   if(dev->use_persistence) group = dev->group_persistent;
   else group = dev->group_hidden;
 
@@ -356,8 +363,14 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
       plabort("GCW driver <plD_polyline_gcw>: Could not create gdkpoints");
 
     for(i=0;i<npts;i++) {
-      gdkpoints[i].x = (gint)(x[i]/VSCALE);
-      gdkpoints[i].y = (gint)(dev->height-y[i]/VSCALE);
+      if(!pls->portrait) {
+	gdkpoints[i].x = (gint)(x[i]/VSCALE);
+	gdkpoints[i].y = (gint)(dev->height-y[i]/VSCALE);
+      }
+      else { /* Swap x and y for portrait mode */
+	gdkpoints[i].x = (gint)(dev->height-y[i]/VSCALE);
+	gdkpoints[i].y = (gint)(dev->width-x[i]/VSCALE);
+      }
     }
 
     gdk_draw_lines(dev->background,dev->gc,gdkpoints,npts);
@@ -375,8 +388,14 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
       /* The points must be converted from virtual coordinate units
        *  to device coordinate units.
        */
-      points->coords[2*i] = (gdouble)(x[i]/VSCALE);
-      points->coords[2*i + 1] = (gdouble)(-y[i]/VSCALE);
+      if(!pls->portrait) {
+	points->coords[2*i] = (gdouble)(x[i]/VSCALE);
+	points->coords[2*i + 1] = (gdouble)(-y[i]/VSCALE);
+      }
+      else { /* Swap x and y for portrait mode */
+	points->coords[2*i] = (gdouble)(dev->height-y[i]/VSCALE);
+	points->coords[2*i + 1] = (gdouble)(-x[i]/VSCALE);
+      }
     }
 
     /* Get the pen width and color */
@@ -476,16 +495,27 @@ void plD_eop_gcw(PLStream *pls)
 
   guint i;
 
+  PLINT width,height;
+
+  if(!GNOME_IS_CANVAS(dev->canvas))
+    plexit("GCW driver <plD_eop_gcw>: Canvas not found");
+  canvas = dev->canvas;
+
+  /* Ignore if there is no hidden group.  This means BOP has not been
+   * called yet.
+   */
+  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) return;
+
 #ifdef DEBUG_GCW_1
   gcw_debug("<plD_eop_gcw>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
-  canvas = dev->canvas;
-
-  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
   if(dev->use_persistence) group = dev->group_persistent;
   else group = dev->group_hidden;
+
+  /* Retrieve the device width and height */
+  width = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-width");
+  height = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-height");
 
   if(dev->pixmap_has_data) {
 
@@ -493,10 +523,10 @@ void plD_eop_gcw(PLStream *pls)
   
     if(!GDK_IS_PIXBUF(pixbuf=gdk_pixbuf_get_from_drawable(NULL,
 			      dev->background,
-			      gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
+			      gtk_widget_get_colormap(GTK_WIDGET(canvas)),
 			      0,0,
 			      0,0,
-			      dev->width,dev->height))) {
+			      width,height))) {
       plwarn("GCW driver <plD_eop_gcw>: Can't draw pixmap into pixbuf.");
     }
     else { /* Pixbuf creation succeeded */
@@ -506,9 +536,9 @@ void plD_eop_gcw(PLStream *pls)
 				         GNOME_TYPE_CANVAS_PIXBUF,
 				         "pixbuf",pixbuf,
 				         "x", 1.,
-				         "y", (gdouble)(-dev->height+1.),
-				         "width", (gdouble)(dev->width),
-				         "height", (gdouble)(dev->height),
+				         "y", (gdouble)(-height+1.),
+				         "width", (gdouble)(width),
+				         "height", (gdouble)(height),
 				         NULL)
       )) {
 	plwarn("GCW driver <plD_eop_gcw>: Canvas item not created.");
@@ -521,14 +551,13 @@ void plD_eop_gcw(PLStream *pls)
   else {
 
     /* Use a rectangle for the background instead (faster) */
-
     if(!GNOME_IS_CANVAS_ITEM(
 	  item = gnome_canvas_item_new(
 		       dev->group_hidden,
 		       GNOME_TYPE_CANVAS_RECT,
 		       "x1", 0.,
-		       "y1", (gdouble)(-dev->height),
-		       "x2", (gdouble)(dev->width),
+		       "y1", (gdouble)(-height),
+		       "x2", (gdouble)(width),
 		       "y2", 0.,
 		       "fill-color-rgba", plcolor_to_rgba(pls->cmap0[0],0xFF),
 		       "width-units", 0.,
@@ -668,26 +697,17 @@ void plD_bop_gcw(PLStream *pls)
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
 
+  if(!GNOME_IS_CANVAS(dev->canvas)) {
+    if(pls->hack) return; /* Wait for a canvas via DEVINIT */
+    else gcw_install_canvas(NULL);
+  }
+  canvas = dev->canvas;
+
 #ifdef DEBUG_GCW_1
   gcw_debug("<plD_bop_gcw>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(dev->canvas)) {
-
-#ifdef DEBUG_GCW_1
-    gcw_debug("</plD_bop_gcw>\n");
-#endif
-
- /* Bop gets called before PLESC_DEVINIT, so don't install a 
-  * canvas here -- the user may still want to.  Call bop
-  * when the hidden group is found missing for drawing operations. 
-  */
-
-    return;
-  }
-  canvas = dev->canvas;
-
-  /* Remake escape calls that come in before PLESC_DEVINIT.  Some of them
+  /* Replay escape calls that come in before PLESC_DEVINIT.  Some of them
    * required a Canvas that didn't exist yet.
    */
   if(dev->plstate_width)  plD_state_gcw(pls, PLSTATE_WIDTH);
@@ -852,10 +872,10 @@ static void fill_polygon (PLStream* pls)
   gcw_debug("<fill_polygon />\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
+  if(!GNOME_IS_CANVAS(dev->canvas))
+    plexit("GCW driver <fill_polygon>: Canvas not found");
   canvas = dev->canvas;
 
-  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
   if(dev->use_persistence) group = dev->group_persistent;
   else group = dev->group_hidden;
 
@@ -865,8 +885,14 @@ static void fill_polygon (PLStream* pls)
       plabort("GCW driver <fill_polygon>: Could not create gdkpoints");
 
     for(i=0;i<pls->dev_npts;i++) {
-      gdkpoints[i].x = (gint)(pls->dev_x[i]/VSCALE);
-      gdkpoints[i].y = (gint)(dev->height-pls->dev_y[i]/VSCALE);
+      if(!pls->portrait) {
+	gdkpoints[i].x = (gint)(pls->dev_x[i]/VSCALE);
+	gdkpoints[i].y = (gint)(dev->height-pls->dev_y[i]/VSCALE);
+      }
+      else { /* Swap x and y for portrait mode */
+	gdkpoints[i].x = (gint)(dev->height-pls->dev_y[i]/VSCALE);
+	gdkpoints[i].y = (gint)(dev->width-pls->dev_x[i]/VSCALE);
+      }
     }
 
     gdk_draw_polygon(dev->background,dev->gc,TRUE,gdkpoints,pls->dev_npts);
@@ -884,8 +910,15 @@ static void fill_polygon (PLStream* pls)
       /* The points must be converted from virtual coordinates units
        * to device coordinate units.
        */
-      points->coords[2*i] = (gdouble)(pls->dev_x[i]/VSCALE);
-      points->coords[2*i + 1] = (gdouble)(-pls->dev_y[i]/VSCALE);
+      if(!pls->portrait) {
+	points->coords[2*i] = (gdouble)(pls->dev_x[i]/VSCALE);
+	points->coords[2*i + 1] = (gdouble)(-pls->dev_y[i]/VSCALE);
+      }
+      else { /* Swap x and y for portrait mode */
+	points->coords[2*i] = (gdouble)(dev->height-pls->dev_y[i]/VSCALE);
+	points->coords[2*i + 1] = (gdouble)(-pls->dev_x[i]/VSCALE);
+      }
+
     }
 
     if(!GNOME_IS_CANVAS_ITEM(
@@ -941,11 +974,8 @@ void proc_str(PLStream *pls, EscText *args)
 
   gdouble affine_baseline[6] = {0.,0.,0.,0.,0.,0.}; /* Affine transforms */
   gdouble affine_translate[6] = {0.,0.,0.,0.,0.,0.};
+  gdouble affine_rotate[6] = {0.,0.,0.,0.,0.,0.};
   gdouble affine_plplot[6] = {0.,0.,0.,0.,0.,0.};
-
-  PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
-  ArtBpath* clip;
-  GnomeCanvasPathDef* path;
 
   GnomeCanvasItem* item[200]; /* List of string segments */
   gdouble width[200],height[200]; /* Height and width of string segment */
@@ -969,10 +999,10 @@ void proc_str(PLStream *pls, EscText *args)
   gcw_debug("<proc_str>\n");
 #endif
 
-  if(!GNOME_IS_CANVAS(dev->canvas)) gcw_install_canvas(NULL);
+  if(!GNOME_IS_CANVAS(dev->canvas))
+    plexit("GCW driver <proc_str>: Canvas not found");
   canvas = dev->canvas;
 
-  if(!GNOME_IS_CANVAS_GROUP(dev->group_hidden)) plD_bop_gcw(pls);
   if(dev->use_persistence) group = dev->group_persistent;
   else group = dev->group_hidden;
 
@@ -988,25 +1018,6 @@ void proc_str(PLStream *pls, EscText *args)
   affine_plplot[1] = -t[2]; /* sin(theta) */
   affine_plplot[2] = -t[1]; /* a cos(theta) - sin(theta) */
   affine_plplot[3] = t[3];  /* a sin(theta) + cos(theta) */
-
-  /* Apply plplot difilt transformations; i.e., determine the string
-   * position and clip limits.
-   */
-  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
-  clxmin /= VSCALE;
-  clxmax /= VSCALE;
-  clymin /= VSCALE;
-  clymax /= VSCALE;
-
-  /* Set the clip in this clipgroup */
-  path = gnome_canvas_path_def_new();
-  gnome_canvas_path_def_ensure_space(path,6);
-  gnome_canvas_path_def_moveto(path,clxmin,-clymin);
-  gnome_canvas_path_def_lineto(path,clxmin,-clymax);
-  gnome_canvas_path_def_lineto(path,clxmax,-clymax);
-  gnome_canvas_path_def_lineto(path,clxmax,-clymin);
-  gnome_canvas_path_def_closepath(path);
-  g_object_set(G_OBJECT(group),"path",path,NULL);
 
   /* Font size: size is in pixels but chrht is in mm.  Why the extra factor? */
   font_size = (gint)(pls->chrht*DEVICE_PIXELS_PER_MM*1.5);
@@ -1187,12 +1198,23 @@ void proc_str(PLStream *pls, EscText *args)
   for(i=0;i<N;i++) {
 
     /* Calculate and apply the affine transforms */
-    art_affine_translate(affine_baseline,
-			 -total_width*args->just + sum_width,
-			 height[0]/2.5-up_list[i]);
-    art_affine_translate(affine_translate,
-			 args->x/VSCALE,-args->y/VSCALE);
+    art_affine_rotate(affine_rotate,90.*(pls->diorot-pls->portrait));
+    if(!pls->portrait) {
+      art_affine_translate(affine_baseline,
+			   -total_width*args->just + sum_width,
+			   height[0]/2.5-up_list[i]);
+      art_affine_translate(affine_translate,
+			   args->x/VSCALE,-args->y/VSCALE);
+    }
+    else { /* Swap x and y for portrait mode */
+      art_affine_translate(affine_baseline,
+			   -total_width*args->just + sum_width,
+			   height[0]/2.5-up_list[i]);
+      art_affine_translate(affine_translate,
+			   dev->height-args->y/VSCALE,-args->x/VSCALE);
+    }
     gnome_canvas_item_affine_relative(item[i],affine_translate);
+    gnome_canvas_item_affine_relative(item[i],affine_rotate);
     gnome_canvas_item_affine_relative(item[i],affine_plplot);
     gnome_canvas_item_affine_relative(item[i],affine_baseline);
 

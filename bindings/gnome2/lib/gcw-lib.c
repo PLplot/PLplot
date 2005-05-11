@@ -30,6 +30,7 @@ DESCRIPTION
 
 #include "gcw.h"
 
+extern PLStream *pls[];
 
 void gcw_debug(char* msg)
 {
@@ -85,9 +86,15 @@ void gcw_clear_background()
   GcwPLdev* dev = plsc->dev;
   GdkGC* gc_tmp;
 
+  PLINT width,height;
+
 #ifdef DEBUG_GCW_1
   gcw_debug("<clear_background>\n");
 #endif
+
+  /* Retrieve the device width and height */
+  width = *(PLINT*)g_object_get_data(G_OBJECT(dev->canvas),"canvas-width");
+  height = *(PLINT*)g_object_get_data(G_OBJECT(dev->canvas),"canvas-height");
 
   /* Allocate the background color*/
   gdk_colormap_alloc_color(gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
@@ -95,7 +102,7 @@ void gcw_clear_background()
 
   /* Clear the background pixmap with the background color */
   gdk_gc_set_foreground(dev->gc,&(dev->bgcolor));
-  gdk_draw_rectangle(dev->background,dev->gc,TRUE,0,0,dev->width,dev->height);
+  gdk_draw_rectangle(dev->background,dev->gc,TRUE,0,0,width,height);
 
   dev->pixmap_has_data = FALSE;
 
@@ -266,6 +273,7 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   char devname[10],str[100];
 
   PLINT cur_strm, new_strm;
+  PLStream *plsr;
 
   GtkWidget *fs;
 
@@ -434,20 +442,20 @@ void file_ok_sel(GtkWidget *w, gpointer data)
 
     /* Get the current stream and make a new one */
     plgstrm(&cur_strm);
+    plsr = plsc; /* Save a pointer to the current stream */
+
     plmkstrm(&new_strm);
-
     plsfnam(fname); /* Set the file name */
-
     plsdev(devname); /* Set the device */
 
-    plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
+    /* Copy the current stream to the new stream. */
+    plcpstrm(cur_strm, 0); 
 
     plreplot();            /* do the save by replaying the plot buffer */
 
     plend1();              /* finish the device */
 
     plsstrm(cur_strm);     /* return to previous stream */
-
   }
   else plwarn("GCW driver <file_ok_sel>: Cannot set up output stream.");
 
@@ -536,6 +544,8 @@ void gcw_install_canvas(GnomeCanvas *canvas)
   GtkWidget *vbox,*hbox,*button,*image,*scrolled_window;
 
   gboolean flag = FALSE;
+
+  PLINT width,height;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_install_canvas>\n");
@@ -652,9 +662,13 @@ void gcw_install_canvas(GnomeCanvas *canvas)
     /* Set the focus on the notebook */
     gtk_window_set_focus(GTK_WINDOW(dev->window),dev->notebook);
 
+    /* Retrieve the canvas width and height */
+    width = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-width");
+    height = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-height");
+
     /* Size the window */
-    gtk_window_resize(GTK_WINDOW(dev->window),dev->width*ZOOM100+65,
- 		      dev->height*ZOOM100+75);
+    gtk_window_resize(GTK_WINDOW(dev->window),width*ZOOM100+65,
+ 		      height*ZOOM100+75);
   }
 
   /* Display everything */
@@ -667,13 +681,13 @@ void gcw_install_canvas(GnomeCanvas *canvas)
 
 
 /*--------------------------------------------------------------------------*\
- * gcw_set_canvas_size()
+ * gcw_set_device_size()
  *
- * Sets the canvas size for the current device.
+ * Sets the page size for this device.
  *
  * Width and height are both measured in device coordinate units.
  *
- * Notice that coordinates in the driver are measured in device units,
+ * Note that coordinates in driver-space are measured in device units,
  * which correspond to the pixel size on a typical screen.  The coordinates
  * reported and received from the PLplot core, however, are in virtual
  * coordinates, which is just a scaled version of the device coordinates.
@@ -682,30 +696,66 @@ void gcw_install_canvas(GnomeCanvas *canvas)
  *
 \*--------------------------------------------------------------------------*/
 
+void gcw_set_device_size(PLINT width,PLINT height) {
+  GcwPLdev* dev = plsc->dev;
+  PLINT w, h;
+
+  /* Set the number of virtual coordinate units per mm */
+  plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
+  
+  /* Set up physical limits of plotting device, in virtual coord units */
+  w = (PLINT)(width*VSCALE);
+  h = (PLINT)(height*VSCALE);
+  plP_setphy((PLINT)0,w,(PLINT)0,h);
+  
+  /* Save the width and height for the device, in device units */
+  dev->width = width;
+  dev->height = height;
+}
+
+/*--------------------------------------------------------------------------*\
+ * gcw_set_canvas_size()
+ *
+ * Sets the canvas size.  If resizing is not allowed, this function
+ * ensures that the canvas size matches the physical page size.
+ *
+\*--------------------------------------------------------------------------*/
+
 void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
 {
   GcwPLdev* dev = plsc->dev;
-  PLINT w, h;
+  PLINT tmp;
+
+  PLINT *w,*h;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_set_canvas_size>\n");
 #endif
 
-  /* Set the number of virtual coordinate units per mm */
-  plP_setpxl((PLFLT)VIRTUAL_PIXELS_PER_MM,(PLFLT)VIRTUAL_PIXELS_PER_MM);
+  /* Set the device size, if resizing is allowed. */
+  if(dev->allow_resize) gcw_set_device_size(width,height);
 
-  /* Set up physical limits of plotting device, in virtual coordinate units */
-  w = (PLINT)(width*VSCALE);
-  h = (PLINT)(height*VSCALE);
-  plP_setphy((PLINT)0,w,(PLINT)0,h);
+  width = dev->width;
+  height = dev->height;
+  if(plsc->portrait) { /* Swap width and height of display */
+    tmp=width;
+    width=height;
+    height=tmp;
+  }
 
-  /* Save the width and height for the device, in device units */
-  dev->width = width;
-  dev->height = height;
+  /* The width and height need to be enlarged by 1 pixel for the canvas */
+  width += 1;
+  height += 1;
 
-  /* Attach the device width and height to the canvas */
-  g_object_set_data(G_OBJECT(canvas),"dev-width",(gpointer)&(dev->width));
-  g_object_set_data(G_OBJECT(canvas),"dev-height",(gpointer)&(dev->height));
+  /* Attach the width and height to the canvas */
+  if((w=(PLINT*)malloc(sizeof(gint)))==NULL)
+    plwarn("GCW driver <gcw_set_canvas_size>: Insufficient memory.");
+  if((h=(PLINT*)malloc(sizeof(gint)))==NULL)
+    plwarn("GCW driver <gcw_set_canvas_size>: Insufficient memory.");
+  *w = width;
+  *h = height;
+  g_object_set_data(G_OBJECT(canvas),"canvas-width",(gpointer)w);
+  g_object_set_data(G_OBJECT(canvas),"canvas-height",(gpointer)h);
 
   /* Size the canvas appropriately */
   gtk_widget_set_size_request(GTK_WIDGET(canvas),(gint)(width),
@@ -722,17 +772,17 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
   }
 
   /* Set up the new background pixmap */
-  dev->background = gdk_pixmap_new(NULL,dev->width,
-				   dev->height,gdk_visual_get_best_depth());
+  dev->background = gdk_pixmap_new(NULL,width,
+				   height,gdk_visual_get_best_depth());
   dev->gc = gdk_gc_new(dev->background);
 
   /* Clear the background pixmap */
   gcw_clear_background(dev);
 
-  /* Advance to the first subpage.  This resets some of the scaling
-   * parameters according to our new page size.
+  /* Advance the page if we are allowing resizing.  This ensures that
+   * the physical coordinate system is set up correctly.
    */
-  pladv(1);
+  if(dev->allow_resize) pladv(0);
 
 #ifdef DEBUG_GCW_1
   gcw_debug("</gcw_set_canvas_size>\n");
@@ -751,15 +801,15 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
 {
   gdouble curmag=1.,dum;
 
-  gdouble width,height;
+  PLINT width,height;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_set_canvas_zoom>\n");
 #endif
 
   /* Retrieve the device width and height */
-  width = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"dev-width");
-  height = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"dev-height");
+  width = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-width");
+  height = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-height");
 
   /* Get the current magnification */
   gnome_canvas_c2w(canvas,1,0,&curmag,&dum);

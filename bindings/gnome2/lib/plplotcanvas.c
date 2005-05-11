@@ -82,6 +82,11 @@ void plplot_canvas_devinit(PlplotCanvas *self) {
   plscol0(0,255,255,255); /* Change the plplot background color to white */
   plscol0(15,0,0,0);
 
+  /* Use the hack variable to tell the driver to expect a PLESC_DEVINIT
+   * escape call to finish the driver initialization
+   */
+  plsc->hack = 1;
+
   plsdev("gcw"); /* Set the device */
   plinit(); /* Initialize the device */
   plP_esc(PLESC_DEVINIT,(void*)self); /* Install into the driver */
