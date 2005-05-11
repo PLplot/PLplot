@@ -833,6 +833,8 @@ proc_str (PLStream *pls, EscText *args)
 	else
 	  offset = -ENLARGE * ft_ht / 2.;
 	
+	/* Determine the adjustment for page orientation */
+	theta -= 90.*pls->diorot;
 	args->y += offset*cos(theta*PI/180.);
 	args->x -= offset*sin(theta*PI/180.);
 		
@@ -840,8 +842,8 @@ proc_str (PLStream *pls, EscText *args)
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
 		 &(args->x), &(args->y));
 	
-	/* Determine the adjustment for page orientation */
-	theta += 90. - 90.*pls->diorot;
+	/* Correct for the fact ps driver uses landscape by default */
+	theta += 90.;
 	
 	/* Output */
 	/* Set clipping */
