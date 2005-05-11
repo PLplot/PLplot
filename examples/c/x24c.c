@@ -27,16 +27,16 @@
    PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
    PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
    PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
-   PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
+   PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bengali-fonts/JamrulNormal.ttf \
    ./x24c -dev png -drvopt text,smooth=0 -o x24c.png
 
    Packages needed:
 
    ttf-arphic-bkai00mp
    ttf-freefont
-   ttf-indic-fonts
+   ttf-devanagari-fonts
    ttf-unfonts
-   ttf-bangla-fonts
+   ttf-bengali-fonts
  */
 
 
