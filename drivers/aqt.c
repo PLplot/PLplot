@@ -425,10 +425,6 @@ void proc_str (PLStream *pls, EscText *args)
 
 	shear = 90.0 - acos(t[0]*t[1] + t[2]*t[3]) * 180.0 / PI;
 
-	/* apply plplot difilt transformations */
-
-	difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
-
 	/* text justification, AquaTerm only supports 3 options, so we round appropriately */
 	
 	if (args->just < 0.33)
@@ -488,7 +484,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	int updown;
 	char dummy[MAX_STRING_LEN+1];
 	char *font;
-	char *utf8;
+	unsigned char *utf8;
 	NSMutableAttributedString *str;
 
 	updown = 0;
@@ -582,9 +578,9 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 		printf("could not find font given by fci = 0x%x\n", fci);
 		font = "Helvetica";
 	}
-	
-	// printf("Font at %d is : %s\n", cur_loc, font);
-	
+	// font = "FreeSerif";	// force the font for debugging purposes
+	//printf("Font at %d is : %s\n", cur_loc, font);
+
     [str addAttribute:@"AQTFontname"
                 value:[NSString stringWithCString:font]
                 range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
@@ -602,7 +598,7 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 char * UCS4_to_UTF8(const PLUNICODE ucs4)
 {
 	int i,len;
-	static char utf8[5];
+	static unsigned char utf8[5];
 
 	if (ucs4 < 0x80){
 		utf8[0] = ucs4;
@@ -631,13 +627,15 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 		len = 4;
 	}
 
-/*
+	// for debugging
+
+/*	
 	printf("ucs4 : %d\n", ucs4);
 	printf("as utf8 : (%d) 0x", len);
 	for(i=0;i<len;i++) printf("%x", utf8[i]);
 	printf("\n");
 */
-	
+
 	return utf8;
 }
 
