@@ -68,9 +68,6 @@ KNOWN BUGS
        are fundamentally incompatible with the tabbed window design of
        the GCW driver.  Use the PlplotCanvas to create animations 
        instead.
-
-    3) Example x24c
-
 */
 
 #include <sys/stat.h>
@@ -104,14 +101,12 @@ static PLINT text = 0;
 #endif
 
 static PLINT hrshsym = 0;
-static PLINT pixmap = 1;
 static PLINT replot = 1;
 
 static DrvOpt gcw_options[] = 
   {
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
     {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
-    {"pixmap", DRV_INT, &pixmap, "Use pixmap for plotting shades (pixmap=0|1)"},
     {"replot", DRV_INT, &replot, "Allow replotting to other devices (replot=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
   };
@@ -232,8 +227,8 @@ void plD_init_gcw(PLStream *pls)
 #endif
 
   /* Set up pixmap support */
-  dev->use_pixmap = (gboolean)pixmap;
-  dev->pixmap_has_data = FALSE;
+  dev->use_pixmap = (gboolean)(!pls->nopixmap);
+   dev->pixmap_has_data = FALSE;
 
   /* Initialize the device colors */
   dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
