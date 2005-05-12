@@ -62,15 +62,15 @@ system has the pkg-config program (typically *nix systems).
 
 2.1 API
 
-The functions plParseOpts, plHLS_RGB, and plRGB_HLS have been restored into
-the API.  They are still deprecated; use plparseopts, plhlsrgb, and plrgbhls
-instead.  The reintroduction of these functions make the resulting PLplot
-library backward compatible.
+The deprecated functions plParseOpts, plHLS_RGB, and plRGB_HLS have been
+temporarily restored into the API to make the resulting PLplot library
+backward compatible with our last stable release (5.3.1).  However, since
+these functions are deprecated, they will eventually be removed from the
+API, and you should use plparseopts, plhlsrgb, and plrgbhls instead.
   	 
 The soversion numbers for the different libraries in C, C++ and Fortran77,
 as well as for the helper library libcsiro, are bumped to reflect the
-addition of functions in the API.  Unfortunately, this has not been done
-yet in the 5.5.x series.
+addition of functions in the API since our last stable release (5.3.1).
 
 Please see section 2.2.1 for changes in the GCW driver and PlplotCanvas
 APIs.
@@ -134,7 +134,8 @@ automatically built if the required dependencies are available.
 
 3.1.1 Deprecated functions
 
-plParseOpts is deprecated.  Use plparseopts (now documented) instead 
+plParseOpts, plHLS_RGB, and plRGB_HLS are now deprecated and will eventually
+be removed from the API.  Use plparseopts, plhlsrgb, and plrgbhls instead
 for all language interfaces.
 
 
