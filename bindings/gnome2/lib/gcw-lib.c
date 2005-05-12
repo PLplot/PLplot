@@ -43,7 +43,7 @@ void gcw_debug(char* msg)
  * gcw_set_gdk_color()
  *
  * Sets the gdk foreground color for drawing in the current device 
- * (required for background pixmap).
+ * according to the current drawing color.
  *
 \*--------------------------------------------------------------------------*/
 
@@ -84,7 +84,6 @@ void gcw_set_gdk_color()
 void gcw_clear_background()
 {
   GcwPLdev* dev = plsc->dev;
-  GdkGC* gc_tmp;
 
   PLINT width,height;
 
@@ -100,10 +99,13 @@ void gcw_clear_background()
   gdk_colormap_alloc_color(gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
 			   &(dev->bgcolor),FALSE,TRUE);
 
-  /* Clear the background pixmap with the background color */
+  /* Clear the background pixmap with the background color.  Note that
+   * we are going to reset the current gdk drawing color below, so we
+   * can reuse the gc. */
   gdk_gc_set_foreground(dev->gc,&(dev->bgcolor));
   gdk_draw_rectangle(dev->background,dev->gc,TRUE,0,0,width,height);
 
+  /* Note that our pixmpa is currently clear */
   dev->pixmap_has_data = FALSE;
 
   /* Reset the current gdk drawing color */
@@ -727,6 +729,9 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
 
   PLINT *w,*h;
 
+  GdkGC *gc_new;
+  GdkGCValues values;
+
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_set_canvas_size>\n");
 #endif
@@ -764,16 +769,29 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
   gnome_canvas_set_scroll_region(canvas,0.,(gdouble)(-height),
 				 (gdouble)(width),1.);
 
-  /* Remove the old background pixmap */
-  if(GDK_IS_PIXMAP(dev->background)) {
-    g_object_unref(dev->background);
-    g_object_unref(dev->gc);
+  /* Set up the background pixmap */
+  if(dev->background==NULL || dev->allow_resize) { 
+
+    if(GDK_IS_PIXMAP(dev->background)) gdk_pixmap_unref(dev->background);
+
+    dev->background = gdk_pixmap_new(NULL,width,height,
+				     gdk_visual_get_best_depth());
   }
 
-  /* Set up the new background pixmap */
-  dev->background = gdk_pixmap_new(NULL,width,
-				   height,gdk_visual_get_best_depth());
-  dev->gc = gdk_gc_new(dev->background);
+  /* Set up the drawing context for the background pixmap */
+  if(dev->gc==NULL || dev->allow_resize) {
+
+    /* Maintain the old values for pen width, color, etc */
+    if(GDK_IS_GC(dev->gc)) {
+      gdk_gc_get_values(dev->gc,&values);
+      gdk_gc_unref(dev->gc);
+      dev->gc = gdk_gc_new_with_values(dev->background,&values,
+				       GDK_GC_FOREGROUND | GDK_GC_LINE_WIDTH |
+				       GDK_GC_LINE_STYLE | GDK_GC_CAP_STYLE |
+				       GDK_GC_JOIN_STYLE);
+    }
+    else dev->gc = gdk_gc_new(dev->background);
+  }
 
   /* Clear the background pixmap */
   gcw_clear_background(dev);
