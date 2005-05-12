@@ -69,8 +69,8 @@ library backward compatible.
 
 The soversion numbers for the different libraries in C, C++ and Fortran77,
 as well as for the helper library libcsiro, are bumped to reflect the
-addition of functions in the API.  Unfortunately, this have done been done
-yet in the 5.5.x series.
+addition of functions in the API.  Unfortunately, this have not yet been
+done in the 5.5.x series.
 
 
 2.2 Drivers
