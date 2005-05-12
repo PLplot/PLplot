@@ -48,7 +48,7 @@
 <!-- XWIN -->
 
 <sect1 id="xwin-driver">
-  <title>The Xwin Driver</title>
+  <title>The Xwin Driver (X-Windows)</title>
     
   <para> 
     The Xwin driver draws plots in an X-window.  Although some of the
@@ -94,7 +94,7 @@
 <!-- GCW -->
 
 <sect1 id="gcw-driver">
-  <title>The GCW Driver</title>
+  <title>The GCW Driver (Gnome 2)</title>
 
   <para> 
     The GCW driver draws plots into a tabbed Gnome window.  The driver's
@@ -115,7 +115,7 @@
       a variety of actions.  In particular, pages can be saved to files
       with extensions .ps, .psc, .png, .jpg, and .gif, which correspond 
       to PLplot output driver devices described in 
-      <xref linkend="arguments" />.
+      <xref linkend="output-drivers" />.
     </para>
 
     <para>
@@ -134,7 +134,8 @@
     </para>
 
     <para>
-      The available driver options are:
+      The available driver options (used with the
+      <parameter>-drvopt</parameter> command-line argument) are:
       <itemizedlist>
         <listitem><para>
           text: Use TrueType fonts (0|1); default 1
@@ -156,21 +157,39 @@
     </para>
 
     <para>
-      The <parameter>pixmap</parameter> options toggles between the use of
-      an internal pixmap and vector graphics for lines and shades.
-      When pixmap=1, lines and shades may appear pixelated.  Use pixmap=0
-      instead for anti-aliasing, which will provide higher quality plots but
-      at a slower speed.  Note that this option does not affect the quality
-      of plots saved from the GCW user interface, and that TrueType fonts
-      are always anti-aliased.
-    </para>
-
-    <para>
       The <parameter>hrshsym</parameter> option is used to indicate that
       symbols should be drawn using the Hershey fonts.  This is
       useful when plots need to be saved to PostScript files, because
       the Type I fonts used by the PS and PSC devices do not support all
       Unicode symbols.
+    </para>
+
+    <para>
+      Most of the command-line arguments described in
+      <xref linkend="arguments" /> are also supported.  Some key arguments
+      for use with the GCW driver are:
+      <itemizedlist>
+        <listitem><para>
+	  geometry geom:  Sets page size, in pixels (e.g. -geometry 400x300)
+	</para></listitem>
+	<listitem><para>
+	  nopixmap: Disables pixmap usage for plotting lines and shades
+	</para></listitem>
+	<listitem><para>
+	  portrait: Sets portrait mode (both orientation and aspect ratio)
+	</para></listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      The <parameter>nopixmap</parameter> option disables the use of
+      the internal pixmap for drawing lines and shades, which will 
+      normally appear somewhat pixelated.  The 
+      <parameter>nopixmap</parameter> option directs the driver to use 
+      anti-aliased vector graphics instead, resulting in higher quality
+      plots but rendered at a slower speed.  This option does not affect 
+      the quality of plots saved from the GCW user interface.  Note that
+      the TrueType fonts are always anti-aliased.
     </para>
 
   </sect2>
@@ -185,7 +204,7 @@
       The GCW driver provides an additional API that allows for a higher
       degree of control by the user.  The C API is described below, and
       bindings to other languages are described in
-      *** ??? ***.
+      *** NEEDS DOCUMENTATION ***.
     </para>
 
     <para>
@@ -255,9 +274,9 @@
       </para>
 
       <para>
-        Lines and shade drawn to the pixmap are not anti-aliased, and so may
-        appear pixelated.  Vector graphics are fully anti-aliased, but are
-        rendered at a slower speed.
+        Lines and shade drawn to the pixmap may appear pixelated.
+        Vector graphics are fully anti-aliased, but are rendered at a 
+        slower speed.
       </para>
 
       <variablelist>
@@ -297,7 +316,7 @@
 <!-- AquaTerm -->
 
   <sect1 id="aqt-driver">
-    <title>The AquaTerm Driver</title>
+    <title>The AquaTerm Driver (Mac OS X)</title>
     
     <para> 
       The AquaTerm driver is a Mac OS X specific driver that is used with 
