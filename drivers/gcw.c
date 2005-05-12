@@ -239,6 +239,7 @@ void plD_init_gcw(PLStream *pls)
   /* Set the device canvas and window pointers */
   dev->canvas = NULL;
   dev->background = NULL;
+  dev->gc = NULL;
   dev->window = NULL;
   dev->notebook = NULL;
   dev->statusbar = NULL;
