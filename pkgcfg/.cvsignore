@@ -4,10 +4,12 @@ plplot-f77.pc
 plplot-master-pc
 plplot-tcl.pc
 plplot.pc
+plplotd-gnome2.pc
 plplotd-c++.pc
 plplotd-f77.pc
 plplotd-tcl.pc
 plplotd.pc
+plplot-gnome2.pc
 Makefile.in
 Makefile
 gen-pc-files.pl
