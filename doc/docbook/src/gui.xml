@@ -49,10 +49,11 @@ This chapter describes how to embed plots in graphical user interfaces.
     Plots can be embedded into Gnome/GTK applications by using the
     PlplotCanvas widget.  Information on the GTK toolkit is provided
     at http://www.gtk.org/.  PlplotCanvas is a subclass of the GnomeCanvas
-    (see *** ??? ***), and so includes all of its functionality.  The 
-    specialized C API for PlplotCanvas is described in
+    (see http://developer.gnome.org/doc/API/2.0/libgnomecanvas/index.html), 
+    and so includes all of its functionality.  The specialized C API for 
+    PlplotCanvas is described in
     <xref linkend="plplotcanvas-api" />, and bindings to other languages
-    are described in *** ??? ***.
+    are described in *** NEEDS DOCUMENTATION ***.
   </para>
 
 
@@ -82,10 +83,10 @@ This chapter describes how to embed plots in graphical user interfaces.
     </para>
 
     <para>
-      A specialized API is provided for PlplotCanvas in
-      <xref linkend="plplotcanvas-api" />.  It provides methods
-      to create and manipulate PlplotCanvas widgets, and in addition to
-      analogues for each of the PLplot functions.
+      A specialized API is provided for PlplotCanvas and is described in
+      <xref linkend="plplotcanvas-api" />.  The API provides methods
+      to create and manipulate PlplotCanvas widgets, in addition to
+      object-oriented analogues for each of the PLplot functions.
     </para>
 
     <para>
@@ -105,7 +106,8 @@ This chapter describes how to embed plots in graphical user interfaces.
       The PlplotCanvas methods are as follows.  Because PlplotCanvas is a
       GTK widget, GLib types (gint, gdouble, gboolean, etc) are sometimes 
       used rather than PLplot types (PLINT, PLFLT, etc).  See 
-      *** ??? *** for more information on GLib types.
+      http://developer.gnome.org/doc/API/2.0/glib/index.html for more 
+      information on GLib and GLib types.
     </para>
 
     <!-- plplot_canvas_new -->
@@ -148,7 +150,7 @@ This chapter describes how to embed plots in graphical user interfaces.
 
     <sect3 id="plplot_canvas_plfunc">
       <title>
-        <function>plplot_canvas_pl...</function>: PLplot function analogues.
+        <function>plplot_canvas_plfunc</function>: PLplot function analogues.
       </title>
 
       <para>
@@ -165,7 +167,8 @@ This chapter describes how to embed plots in graphical user interfaces.
         PLplot function &plline; maps to 
         <function>plplot_canvas_plline</function>.  The 
         <function>plplot_canvas_plfunc</function> methods
-	should be used rather than the standard PLplot API.
+	should be used rather than the standard PLplot API when the
+	PlplotCanvas is used.
       </para>
 
       <para>
@@ -238,7 +241,7 @@ This chapter describes how to embed plots in graphical user interfaces.
 
     <sect3 id ="plplot_canvas_set_size">
       <title>
-        <function>gcw_set_canvas_size</function>: Sets the canvas size.
+        <function>plplot_canvas_set_size</function>: Sets the canvas size.
       </title>
 
       <para>
