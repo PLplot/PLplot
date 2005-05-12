@@ -380,9 +380,8 @@ void file_ok_sel(GtkWidget *w, gpointer data)
 					     "PLplot");
 
 	gtk_statusbar_push(GTK_STATUSBAR(dev->statusbar),context,
-			   " NOTE: Use '-drvopt hrshsym' in command-line "
-			   "arguments if symbols are missing in saved "
-			   "PostScript files."
+			   " NOTE: Use '-drvopt hrshsym' on command-line "
+			   "for complete symbol set in PostScript files."
 			   );
       }
       else
