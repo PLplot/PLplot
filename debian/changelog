@@ -1,3 +1,9 @@
+plplot (5.5.3-0.sarge.1) experimental; urgency=low
+
+  * Build on Debian sarge (NOT OFFICIALLY RELEASED!)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat, 14 May 2005 15:27:20 +0200
+
 plplot (5.5.3-1) experimental; urgency=low
 
   * New uspstream release (development branch, hence the upload to
