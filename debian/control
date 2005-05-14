@@ -100,7 +100,7 @@ Description: Scientific plotting library (X11 driver)
 Package: plplot9-driver-gnome2
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}
+Depends: libplplot9, ${shlibs:Depends}
 Conflicts: plplot9-driver-gnome
 Replaces: plplot9-driver-gnome
 Description: Scientific plotting library (Gnome Canvas Widget driver)
@@ -161,7 +161,7 @@ Description: Python support for PLplot, a plotting library
 Package: python-plplot-gnome2
 Architecture: any
 Section: python
-Depends: ${shlibs:Depends}, python-plplot
+Depends: ${shlibs:Depends}, libplplot9, python-plplot
 Description: Python support for PLplot, a plotting library
  This package allows the use of the plplotcanvas widget in the PLplot
  scientific plotting library Python applications.  Examples are also

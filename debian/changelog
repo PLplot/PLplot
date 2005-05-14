@@ -1,6 +1,4 @@
-plplot (5.5.2-1) experimental; urgency=low
-
-  NOT YET RELEASED !
+plplot (5.5.3-1) experimental; urgency=low
 
   * New uspstream release (development branch, hence the upload to
     experimental).
@@ -9,7 +7,7 @@ plplot (5.5.2-1) experimental; urgency=low
   * The new package python-plplot-gnome2 contains the glue code for using
     libplplotgnome2 with Python.
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  3 May 2005 09:15:10 +0200
 
 plplot (5.3.1-4) unstable; urgency=low
 
