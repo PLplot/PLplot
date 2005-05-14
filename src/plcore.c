@@ -415,7 +415,8 @@ int text2num( const char *text, char end, PLUNICODE *num)
  *
  *    Function takes a pointer to a string, which is looked up in a table
  *    to determine the corresponding FCI (font characterization integer)
- *    hex digit value and hex power (left shift).
+ *    hex digit value and hex power (left shift).  All matched strings
+ *    start with "<" and end with the two characters "/>".
  *    If the lookup succeeds, hexdigit and hexpower are set to the appropriate
  *    values in the table, and the function returns the number of characters
  *    in text that are consumed by the matching string in the table lookup.
@@ -567,9 +568,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     break;
 		
 		   case '<':  /* change font*/
-		     i+=2;
-		     if ('0' <= string[i] && string[i] <= '9' ) {
-			i+=text2num(&string[i],'>', &code);
+		     if ('0' <= string[i+2] && string[i+2] <= '9' ) {
+			i+=2+text2num(&string[i+2],'>', &code);
 			if (code & PL_FCI_MARK) {
 			   /* code is a complete FCI (font characterization
 			    * integer): change FCI to this value.
@@ -593,10 +593,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     }
 		
 		     else {
-			/* align i on "<" because that is what text2fci
-			 * expects. */
-			i--;
-			i+=text2fci(&string[i], &hexdigit, &hexpower);
+			i+=text2fci(&string[i+1], &hexdigit, &hexpower);
 			if (hexpower < 7) {
 			   plP_hex2fci(hexdigit, hexpower, &fci);
 			   unicode_buffer[j]=fci;
