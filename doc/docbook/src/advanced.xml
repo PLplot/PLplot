@@ -2058,14 +2058,14 @@ plcmap1_def(void)
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>&lt;0x1nnnnnnn&gt;</literal>: absolute FCI to be used to
+	    <literal>#&lt;0x1nnnnnnn&gt;</literal>: absolute FCI to be used to
 	    change fonts in mid-string.  (nnnnnnn must be exactly 7
 	    digits). (UNICODE ONLY).
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>&lt;0xmn&gt;</literal>: change just one attribute
+	    <literal>#&lt;0xmn&gt;</literal>: change just one attribute
 	    of the FCI in mid-string where m is the hexdigit and n is
 	    the hexpower.  If more than two digits are given (so long
 	    as the eigth digit does not mark this as an absolute FCI, see
@@ -2075,7 +2075,7 @@ plcmap1_def(void)
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>&lt;FCI COMMAND STRING/&gt;</literal>: the FCI COMMAND
+	    <literal>#&lt;FCI COMMAND STRING/&gt;</literal>: the FCI COMMAND
 	    STRING is currently one of "sans-serif", "serif", "monospace",
 	    "script", "symbol", "upright", "italic", "oblique" "medium",
 	    or "bold" (without the surrounding quotes).  These FCI
