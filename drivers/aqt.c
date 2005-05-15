@@ -23,73 +23,21 @@
    	
 */
 
+//---------------------------------------------
+// Header files, defines and local variables
+//---------------------------------------------
+
+/* OS X specific header files */
+
 #import <Foundation/Foundation.h>
 #import <aquaterm/AQTAdapter.h>
 
-/* Debugging extras */
-static inline void NOOP_(id x, ...) {;}
-
-#ifdef LOGGING
-#define LOG  NSLog
-#else
-#define LOG  NOOP_
-#endif  /* LOGGING */
-
-static NSAutoreleasePool *arpool;   // Objective-C autorelease pool
-static id adapter;					// Adapter object
-
-// ----------------------------------------------------------------
-// --- Start of PlPlot function aqtrm()
-// ----------------------------------------------------------------
+/* PLplot header files */
 
 #include "plplotP.h"
 #include "drivers.h"
 
-char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
-
-/* declarations for functions local to aqt.c */
-
-void get_cursor(PLGraphicsIn *);
-void proc_str (PLStream *, EscText *);
-NSMutableAttributedString * create_string(const PLUNICODE *, int, PLFLT);
-void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
-char * UCS4_to_UTF8(const PLUNICODE);
-
-/* Driver entry and dispatch setup */
-
-void plD_dispatch_init_aqt      ( PLDispatchTable *pdt );
-
-void plD_init_aqt               (PLStream *);
-void plD_line_aqt               (PLStream *, short, short, short, short);
-void plD_polyline_aqt   		(PLStream *, short *, short *, PLINT);
-void plD_eop_aqt                (PLStream *);
-void plD_bop_aqt                (PLStream *);
-void plD_tidy_aqt               (PLStream *);
-void plD_state_aqt              (PLStream *, PLINT);
-void plD_esc_aqt                (PLStream *, PLINT, void *);
-
-void plD_dispatch_init_aqt( PLDispatchTable *pdt )
-{
-   pdt->pl_MenuStr  = "AquaTerm - Mac OS X";
-   pdt->pl_DevName  = "aqt";
-   pdt->pl_type     = plDevType_Interactive;
-   pdt->pl_seq      = 1;
-   pdt->pl_init     = (plD_init_fp)     plD_init_aqt;
-   pdt->pl_line     = (plD_line_fp)     plD_line_aqt;
-   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_aqt;
-   pdt->pl_eop      = (plD_eop_fp)      plD_eop_aqt;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_aqt;
-   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_aqt;
-   pdt->pl_state    = (plD_state_fp)    plD_state_aqt;
-   pdt->pl_esc      = (plD_esc_fp)      plD_esc_aqt;
-}
-
-/* global variables & defines */
-
-static int currentPlot = 0;
-static int maxWindows = 30;
-static int windowXSize = 0;
-static int windowYSize = 0;
+/* constants */
 
 #define SCALE			0.1
 #define AQT_Default_X	720
@@ -99,10 +47,29 @@ static int windowYSize = 0;
 #define MAX_STRING_LEN	1000
 #define FCI 			0x10000000
 
-/* AquaTerm font look-up table */
+/* local variables */
 
-#define AQT_N_Type1Lookup 30
-const FCI_to_FontName_Table AQT_Type1Lookup[AQT_N_Type1Lookup] = {
+static NSAutoreleasePool *arpool;   // Objective-C autorelease pool
+static id adapter;					// Adapter object
+
+char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
+
+static int currentPlot = 0;
+static int maxWindows = 30;
+static int windowXSize = 0;
+static int windowYSize = 0;
+
+/* font stuff */
+
+/*
+	AquaTerm font look-up table
+
+	The table is initialized with lowest commong denominator truetype 
+	fonts that (I hope) most Macs will have.
+*/
+
+#define AQT_N_FontLookup 30
+static FCI_to_FontName_Table AQT_FontLookup[AQT_N_FontLookup] = {
 	{0x10000000, "Helvetica"},
 	{0x10000001, "Times-Roman"},
 	{0x10000002, "Courier"},
@@ -135,6 +102,120 @@ const FCI_to_FontName_Table AQT_Type1Lookup[AQT_N_Type1Lookup] = {
 	{0x10000124, "LucidaGrande Regular"}
 };
 
+/*
+	AquaTerm font environment variables
+
+	When the driver is initialized it will check to see if 
+	the user has opted to overide one of the above fonts by 
+	setting one of the environment variables below.
+
+	This list must be in the same order with the same number of
+	elements as the above list
+	
+	These are the same environment variable names as would be used
+	on a linux system, but they have a slightly different meaning.
+	Since AquaTerm will find the font for us (if it can) given
+	just the font name, you should only set the environment
+	variable to the font name. You don't need to provide
+	a path. If you installed the font using Font Book, AquaTerm
+	should not have any trouble finding it.
+	
+	FIXME: Would it be better to use different environment variable 
+		names then plfreetype.c? If not, then it probably isn't
+		ideal to have two different copies of the same list of
+		environment variable names.
+*/
+
+const char *aqt_font_env_names[AQT_N_FontLookup] = {
+	"PLPLOT_FREETYPE_SANS_FONT",
+	"PLPLOT_FREETYPE_SERIF_FONT",
+	"PLPLOT_FREETYPE_MONO_FONT",
+	"PLPLOT_FREETYPE_SCRIPT_FONT",
+	"PLPLOT_FREETYPE_SYMBOL_FONT",
+	"PLPLOT_FREETYPE_SANS_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SERIF_ITALIC_FONT",
+	"PLPLOT_FREETYPE_MONO_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SANS_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_MONO_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SANS_BOLD_FONT",
+	"PLPLOT_FREETYPE_SERIF_BOLD_FONT",
+	"PLPLOT_FREETYPE_MONO_BOLD_FONT",
+	"PLPLOT_FREETYPE_SCRIPT_BOLD_FONT",
+	"PLPLOT_FREETYPE_SYMBOL_BOLD_FONT",
+	"PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT",
+	"PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT",
+	"PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT",
+	"PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT"
+};
+
+/* Debugging extras */
+
+static inline void NOOP_(id x, ...) {;}
+
+#ifdef LOGGING
+#define LOG  NSLog
+#else
+#define LOG  NOOP_
+#endif  /* LOGGING */
+
+//-----------------------------------------------
+// function declarations
+//-----------------------------------------------
+
+/* helper functions */
+
+void get_cursor(PLGraphicsIn *);
+void proc_str (PLStream *, EscText *);
+NSMutableAttributedString * create_string(const PLUNICODE *, int, PLFLT);
+void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
+char * UCS4_to_UTF8(const PLUNICODE);
+void check_font_environment_variables(void);
+
+/* PLplot interface functions */
+
+void plD_dispatch_init_aqt      (PLDispatchTable *pdt);
+void plD_init_aqt               (PLStream *);
+void plD_line_aqt               (PLStream *, short, short, short, short);
+void plD_polyline_aqt   		(PLStream *, short *, short *, PLINT);
+void plD_eop_aqt                (PLStream *);
+void plD_bop_aqt                (PLStream *);
+void plD_tidy_aqt               (PLStream *);
+void plD_state_aqt              (PLStream *, PLINT);
+void plD_esc_aqt                (PLStream *, PLINT, void *);
+
+//---------------------------------------------------------------------
+//   dispatch_init_init()
+//
+//   Initialize device dispatch table
+//----------------------------------------------------------------------
+
+void plD_dispatch_init_aqt( PLDispatchTable *pdt )
+{
+   pdt->pl_MenuStr  = "AquaTerm - Mac OS X";
+   pdt->pl_DevName  = "aqt";
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 1;
+   pdt->pl_init     = (plD_init_fp)     plD_init_aqt;
+   pdt->pl_line     = (plD_line_fp)     plD_line_aqt;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_aqt;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_aqt;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_aqt;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_aqt;
+   pdt->pl_state    = (plD_state_fp)    plD_state_aqt;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_aqt;
+}
+
 //---------------------------------------------------------------------
 //   aqt_init()
 //
@@ -151,14 +232,14 @@ void plD_init_aqt(PLStream *pls)
    }
    [adapter setBackgroundColorRed:0.5 green:0.5 blue:0.5];
 
-   pls->termin = 1;		// If interactive terminal, set true.
-   pls->color = 1;		// aqt is color terminal
+   pls->termin = 1;			/* interactive device */
+   pls->color = 1;			/* supports color */
    pls->width = 1;
    pls->verbose = 1;
    pls->bytecnt = 0;
    pls->debug = 1;
-   pls->dev_text = 1;
-   pls->dev_unicode = 1; 	/* want unicode */
+   pls->dev_text = 1;		/* handles text */
+   pls->dev_unicode = 1; 	/* wants text as unicode */
    pls->page = 0;
    pls->dev_fill0 = 1;		/* supports hardware solid fills */
    pls->dev_fill1 = 1;
@@ -167,13 +248,13 @@ void plD_init_aqt(PLStream *pls)
 
    if (!pls->colorset)
       pls->color = 1; 
-   //
-   // Set up device parameters
-   //
+
+   /* Set up device parameters */
+   
    plP_setpxl(DPI/25.4/SCALE, DPI/25.4/SCALE);           /* Pixels/mm. */
-   //
-   // Set the bounds for plotting.  default is AQT_Default_X x AQT_Default_Y unless otherwise specified.
-   //
+   
+   /* Set the bounds for plotting.  default is AQT_Default_X x AQT_Default_Y unless otherwise specified. */
+   
    if (pls->xlength <= 0 || pls->ylength <= 0){
       windowXSize = AQT_Default_X;
       windowYSize = AQT_Default_Y;
@@ -183,6 +264,10 @@ void plD_init_aqt(PLStream *pls)
       windowYSize = pls->ylength;
       plP_setphy((PLINT) 0, (PLINT) (pls->xlength/SCALE), (PLINT) 0, (PLINT) (pls->ylength/SCALE));
    }   
+
+	/* check font environment variables & update font table as necessary */
+	
+	check_font_environment_variables();
 }
 
 //----------------------------------------------------------------------
@@ -355,17 +440,6 @@ void get_cursor(PLGraphicsIn *gin){
 
 	temp = [adapter waitNextEvent];
 	scanned = sscanf([temp cString],"1:{%d, %d}:%d", &x, &y, &button);
-
-	// multiple FIXMEs
-	// 1) should the returned coordinates be adjusted by scale?
-	// 2) should different coordinates be adjusted in different ways?
-	//     i.e. what is the difference between the absolute, relative and world
-	//     coordinates?
-	// 3) why are the world coordinates (wX, wY) set to zero between when this 
-	//     sub-routine is called and the values are returned to the program
-	//     that made the plplot call?	
-	// 4) should the structure members state and keysym be set to something?
-	// 5) is the translated string structure member relevant?
 
 	if(scanned == 3){	// check that we did actually get a reasonable event string
 		gin->button = button;
@@ -570,7 +644,7 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 {
 	char *font;
 
-	font = plP_FCI2FontName(fci, AQT_Type1Lookup, AQT_N_Type1Lookup);
+	font = plP_FCI2FontName(fci, AQT_FontLookup, AQT_N_FontLookup);
 	
 	// check whether that font exists & if not, use standard font instread
 	
@@ -579,7 +653,7 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 		font = "Helvetica";
 	}
 	// font = "FreeSerif";	// force the font for debugging purposes
-	//printf("Font at %d is : %s\n", cur_loc, font);
+	// printf("Font at %d is : %s\n", cur_loc, font);
 
     [str addAttribute:@"AQTFontname"
                 value:[NSString stringWithCString:font]
@@ -639,6 +713,24 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 	return utf8;
 }
 
-// ----------------------------------------------------------------
-// --- End of PlPLOT function aqtrm()
-// ----------------------------------------------------------------
+//---------------------------------------------------------------------
+// check_font_environment_variables
+//
+// Checks to see if any font environment variables are defined.
+// If a font environment variable is defined, then the appropriate 
+// element of the default font table is replaced with the font name
+// string specified by the environment variable.
+//---------------------------------------------------------------------
+
+
+void check_font_environment_variables(void){
+	int i;
+	char *new_font;
+	
+	for(i=0;i<AQT_N_FontLookup;i++){
+		if ((new_font = getenv(aqt_font_env_names[i])) != NULL){
+			// printf("new font : %s\n", new_font);
+			AQT_FontLookup[i].pfont = new_font;
+		}
+	}
+}
