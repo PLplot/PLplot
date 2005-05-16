@@ -1,4 +1,4 @@
-PLplot Development Release 5.5.3
+PLplot Development Release 5.5.4
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a routine development release of PLplot, and represents the 
@@ -19,8 +19,9 @@ file.
 INDEX
 
 1. Build Instructions
-2. Changes relative to PLplot 5.5.2
+2. Changes relative to PLplot 5.5.3
   2.1 API
+    2.1.1 PlplotCanvas
   2.2 Drivers
     2.2.1 GCW (Gnome 2)
 3. Changes relative to PLplot 5.3.1
@@ -57,23 +58,17 @@ Note that it is often helpful to use the --with-pkg-config option if your
 system has the pkg-config program (typically *nix systems).
 
 
-2. Changes relative to PLplot 5.5.2 (our previous development release)
+2. Changes relative to PLplot 5.5.3 (the previous development release)
 
 
 2.1 API
 
-The deprecated functions plParseOpts, plHLS_RGB, and plRGB_HLS have been
-temporarily restored into the API to make the resulting PLplot library
-backward compatible with our last stable release (5.3.1).  However, since
-these functions are deprecated, they will eventually be removed from the
-API, and you should use plparseopts, plhlsrgb, and plrgbhls instead.
-  	 
-The soversion numbers for the different libraries in C, C++ and Fortran77,
-as well as for the helper library libcsiro, are bumped to reflect the
-addition of functions in the API since our last stable release (5.3.1).
 
-Please see section 2.2.1 for changes in the GCW driver and PlplotCanvas
-APIs.
+2.1.1 PlplotCanvas
+
+PlplotCanvas method wrappers for PLplot functions have dropped
+the prefix "pl" from the function name.  For example, the
+method plplot_canvas_plline is now plplot_canvas_line.
 
 
 2.2 Drivers
@@ -81,52 +76,10 @@ APIs.
 
 2.2.1 GCW (Gnome 2)
 
-The GCW driver and associated PlplotCanvas widget have undergone
-significant revisions since the previous release.  Please read the
-PLplot Programmer's Reference Manual for a complete description of 
-the current capabilities and publically available APIs.
-
-     The specialized GCW and PlplotCanvas APIs are now contained in a
-library named libplplotgnome2d.  To use this API, link your
-programs against libplplotgnome2d instead of libplplotd.  This can 
-most easily be achieved using pkg-config.  For example, to build foo.c
-with libplplotgnome2d, use
-
-  gcc foo.c -o foo `PKG_CONFIG_PATH=/usr/local/lib/pkgconfig \
-  pkg-config --cflags --libs plplotd-gnome2`
-
-     The specialized GCW and PlplotCanvas APIs have been streamlined
-and enhanced, although no basic functionality has been removed.  Some 
-methods were deleted because they were no longer required.  Others 
-have had their argument list changed, or have been made private.  Some
-GCW functions were determined to be best handled by existing 
-command-line arguments.  In all cases, please consult the PLplot
-Programmers Reference Manual for proper usage.
-
-     By default, lines and shades are now rendered on a pixmap, which
-has resulted in a significant speed increase.  To obtain the old
-anti-aliased behaviour, use the "-nopixmap" command-line option.
-Note that in both cases the fonts are antialiased, and so the results
-generally look quite good.
-
-     In standalone mode, the user-interface has a new feature that 
-allows users to save plots to other file formats (ps, psc, png, jpg, 
-gif).  There are some font size issues with png, jpg, and gif files, 
-and occasional problems with colormaps, but these issues should 
-be resolved soon.
-
-     Dashed lines and hatched areas are now supported, as are plots in
-portrait mode using the "-portrait" command-line option.  Nearly all of 
-PLplot's command-line arguments are handled.
-
-     The default page size has been changed to be consistent with the 
-PostScript driver.
-
-     Finally, the GCW driver and libplplotgnome2d library are now
-automatically built if the required dependencies are available.
+Performance improvements have been implemented.
 
 
-3. Changes Relative to PLplot 5.3.1 (our last stable release)
+3. Changes Relative to PLplot 5.3.1 (the previous stable release)
 
 
 3.1 API
@@ -188,12 +141,12 @@ a demo of the expanded cmap0 capability.
 
 3.1.4 The PlplotCanvas Widget for Gnome/GTK Applications
 
-PlplotCanvas is a new widget for use in Gnome/GTK applications, and
+PlplotCanvas is a widget for use in Gnome/GTK applications, and
 is contained in the libplplotgnome2d library.  A specialzed API is
 provided, and bindings are included for the C and Python programming 
 languages.  Special example programs that demonstrate the use of 
-PlplotCanvas in Gnome/GTK applications are provided for each 
-language binding.
+PlplotCanvas in Gnome/GTK applications are given for each language 
+binding.
 
 
 3.2 Drivers
@@ -230,15 +183,15 @@ this driver.
 
 3.2.3 GCW (Gnome 2)
 
-GCW is a new driver for Gnome 2 that displays plots in a tabbed GTK 
-window.  The driver is unicode-enabled, and uses TrueType fonts.  The 
-GCW user interface supports zooming, and saves to a variety of output 
-file formats (ps, psc, png, jpg, gif).  All of the relevant
-command-line options for PLplot are supported.
+GCW is a new driver for Gnome 2 that displays plots in a tabbed window.  
+The driver is unicode-enabled, and uses TrueType fonts.  The GCW user 
+interface supports zooming, and saves to a variety of output file 
+formats (ps, psc, png, jpg, gif).  All of the relevant command-line 
+options for PLplot are supported.
 
-     A separate library and specialized API are also provided, which
-allow for a higher degree of interaction with the driver.  Bindings
-are provided for the C and Python programming languages.
+     A specialized API, which allows interaction with the driver,
+is provided in libplplotgnome2d.  Bindings are provided for the C and 
+Python programming languages.
 
 
 3.2.4 AquaTerm (Mac OS X)
