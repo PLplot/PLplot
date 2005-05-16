@@ -58,85 +58,76 @@ headers
 #define PY_ARRAY_UNIQUE_SYMBOL plplotcanvasapi
 #include "Numeric/arrayobject.h"
 %%
-modulename c_plplotcanvas
+%%modulename c_plplotcanvas
 %%
 import gnome.canvas.Canvas as PyGnomeCanvas_Type
 %%
 ignore-glob
   *_get_type
-  plplot_canvas_plarrows
-  plplot_canvas_plvect
-  plplot_canvas_plsvect
-  plplot_canvas_plaxes
-  plplot_canvas_plbin
-  plplot_canvas_plbox
-  plplot_canvas_plbox3
-  plplot_canvas_plcalc_world
-  plplot_canvas_plcont
-  plplot_canvas_plfcont
-  plplot_canvas_pldid2pc
-  plplot_canvas_pldip2dc
-  plplot_canvas_plerrx
-  plplot_canvas_plerry
-  plplot_canvas_plfill
-  plplot_canvas_plfill3
-  plplot_canvas_plgchr
-  plplot_canvas_plgcol0
-  plplot_canvas_plgcolbg
-  plplot_canvas_plgcompression
-  plplot_canvas_plgdev
-  plplot_canvas_plgdidev
-  plplot_canvas_plgdiori
-  plplot_canvas_plgdiplt
-  plplot_canvas_plgfam
-  plplot_canvas_plgfnam
-  plplot_canvas_plglevel
-  plplot_canvas_plgpage
-  plplot_canvas_plgriddata
-  plplot_canvas_plgspa
-  plplot_canvas_plgstrm
-  plplot_canvas_plgver
-  plplot_canvas_plgvpd
-  plplot_canvas_plgvpw
-  plplot_canvas_plgxax
-  plplot_canvas_plgyax
-  plplot_canvas_plgzax
-  plplot_canvas_plhist
-  plplot_canvas_pllab
-  plplot_canvas_plline3
-  plplot_canvas_plmap
-  plplot_canvas_plmeridians
-  plplot_canvas_plmesh
-  plplot_canvas_plmeshc
-  plplot_canvas_plmkstrm
+  plplot_canvas_arrows
+  plplot_canvas_vect
+  plplot_canvas_svect
+  plplot_canvas_axes
+  plplot_canvas_bin
+  plplot_canvas_box
+  plplot_canvas_box3
+  plplot_canvas_calc_world
+  plplot_canvas_cont
+  plplot_canvas_fcont
+  plplot_canvas_did2pc
+  plplot_canvas_dip2dc
+  plplot_canvas_errx
+  plplot_canvas_erry
+  plplot_canvas_fill
+  plplot_canvas_fill3
+  plplot_canvas_gchr
+  plplot_canvas_gcol0
+  plplot_canvas_gcolbg
+  plplot_canvas_gcompression
+  plplot_canvas_gdev
+  plplot_canvas_gdidev
+  plplot_canvas_gdiori
+  plplot_canvas_gdiplt
+  plplot_canvas_glevel
+  plplot_canvas_gpage
+  plplot_canvas_griddata
+  plplot_canvas_gspa
+  plplot_canvas_gver
+  plplot_canvas_gvpd
+  plplot_canvas_gvpw
+  plplot_canvas_gxax
+  plplot_canvas_gyax
+  plplot_canvas_gzax
+  plplot_canvas_hist
+  plplot_canvas_lab
+  plplot_canvas_line3
+  plplot_canvas_map
+  plplot_canvas_meridians
+  plplot_canvas_mesh
+  plplot_canvas_meshc
   plplot_canvas_plmtex
   plplot_canvas_plot3d
   plplot_canvas_plot3dc
   plplot_canvas_plot3dcl
-  plplot_canvas_plpat
-  plplot_canvas_plpoin
-  plplot_canvas_plpoin3
-  plplot_canvas_plpoly3
-  plplot_canvas_plptex
-  plplot_canvas_plscmap0
-  plplot_canvas_plgcmap0n
-  plplot_canvas_plscmap1
-  plplot_canvas_plscmap1l
-  plplot_canvas_plsdev
-  plplot_canvas_plsfnam
-  plplot_canvas_plshade
-  plplot_canvas_plshade1
-  plplot_canvas_plshades
-  plplot_canvas_plfshade
-  plplot_canvas_plsmem
-  plplot_canvas_plstart
-  plplot_canvas_plstripc
-  plplot_canvas_plimage
-  plplot_canvas_plstyl
-  plplot_canvas_plsurf3d
-  plplot_canvas_plsurf3dl
-  plplot_canvas_plsym
-  plplot_canvas_plxormod
+  plplot_canvas_pat
+  plplot_canvas_poin
+  plplot_canvas_poin3
+  plplot_canvas_poly3
+  plplot_canvas_ptex
+  plplot_canvas_scmap0
+  plplot_canvas_gcmap0n
+  plplot_canvas_scmap1
+  plplot_canvas_scmap1l
+  plplot_canvas_shade
+  plplot_canvas_shade1
+  plplot_canvas_shades
+  plplot_canvas_fshade
+  plplot_canvas_image
+  plplot_canvas_styl
+  plplot_canvas_surf3d
+  plplot_canvas_surf3dl
+  plplot_canvas_sym
+  plplot_canvas_xormod
 %%
 override plplot_canvas_new args, kwargs
 static int
@@ -154,9 +145,9 @@ _wrap_plplot_canvas_new(PyGObject *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 %%
-override plplot_canvas_plline args
-static PyObject* _wrap_plplot_canvas_plline(PyGObject *self,
-					    PyObject *args)
+override plplot_canvas_line args
+static PyObject* _wrap_plplot_canvas_line(PyGObject *self,
+					  PyObject *args)
 {
     PyObject *x_,*y_;
     PyArrayObject *x, *y;
@@ -174,8 +165,8 @@ static PyObject* _wrap_plplot_canvas_plline(PyGObject *self,
 	 PyArray_ContiguousFromObject(y_, PyArray_DOUBLE, 1, 1)) == NULL)
 	return NULL;
 
-    plplot_canvas_plline(PLPLOT_CANVAS(self->obj),
-			 x->dimensions[0],(double*)x->data,(double*)y->data);
+    plplot_canvas_line(PLPLOT_CANVAS(self->obj),
+		       x->dimensions[0],(double*)x->data,(double*)y->data);
 
     return Py_BuildValue("");
 }
