@@ -228,7 +228,7 @@ void plD_init_gcw(PLStream *pls)
 
   /* Set up pixmap support */
   dev->use_pixmap = (gboolean)(!pls->nopixmap);
-   dev->pixmap_has_data = FALSE;
+  dev->pixmap_has_data = FALSE;
 
   /* Initialize the device colors */
   dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
@@ -240,6 +240,7 @@ void plD_init_gcw(PLStream *pls)
   dev->canvas = NULL;
   dev->background = NULL;
   dev->gc = NULL;
+  dev->colormap = NULL;
   dev->window = NULL;
   dev->notebook = NULL;
   dev->statusbar = NULL;
@@ -292,9 +293,6 @@ void plD_init_gcw(PLStream *pls)
 
   /* If portrait mode, apply a rotation and set freeaspect */
   if(pls->portrait) {
-/*     tmp = width; */
-/*     width = height; */
-/*     height = tmp; */
     plsdiori((PLFLT)(4 - ORIENTATION));
     pls->freeaspect = 1;
   }
@@ -358,12 +356,14 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
     if((gdkpoints = (GdkPoint*)malloc(npts*sizeof(GdkPoint)))==NULL)
       plabort("GCW driver <plD_polyline_gcw>: Could not create gdkpoints");
 
-    for(i=0;i<npts;i++) {
-      if(!pls->portrait) {
+    if(!pls->portrait) {
+      for(i=0;i<npts;i++) {
 	gdkpoints[i].x = (gint)(x[i]/VSCALE);
 	gdkpoints[i].y = (gint)(dev->height-y[i]/VSCALE);
       }
-      else { /* Swap x and y for portrait mode */
+    }
+    else { /* Swap x and y for portrait mode */
+      for(i=0;i<npts;i++) {
 	gdkpoints[i].x = (gint)(dev->height-y[i]/VSCALE);
 	gdkpoints[i].y = (gint)(dev->width-x[i]/VSCALE);
       }
@@ -380,20 +380,19 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
     /* Put the data in a points structure */
     if( (points = gnome_canvas_points_new(npts)) == NULL )
       plabort("GCW driver <plD_polyline_gcw>: Cannot create points");
-    for ( i = 0; i < npts; i++ ) {
-      /* The points must be converted from virtual coordinate units
-       *  to device coordinate units.
-       */
-      if(!pls->portrait) {
+    if(!pls->portrait) {
+      for ( i = 0; i < npts; i++ ) {
 	points->coords[2*i] = (gdouble)(x[i]/VSCALE);
 	points->coords[2*i + 1] = (gdouble)(-y[i]/VSCALE);
       }
-      else { /* Swap x and y for portrait mode */
+    }
+    else { /* Swap x and y for portrait mode */
+      for ( i = 0; i < npts; i++ ) {
 	points->coords[2*i] = (gdouble)(dev->height-y[i]/VSCALE);
 	points->coords[2*i + 1] = (gdouble)(-x[i]/VSCALE);
       }
     }
-
+    
     /* Get the pen width and color */
     width = pls->width;
     color = dev->color;
@@ -509,17 +508,16 @@ void plD_eop_gcw(PLStream *pls)
   if(dev->use_persistence) group = dev->group_persistent;
   else group = dev->group_hidden;
 
-  /* Retrieve the device width and height */
+  /* Retrieve the device width and height of the canvas */
   width = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-width");
   height = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"canvas-height");
 
   if(dev->pixmap_has_data) {
 
     /* Render the pixmap to a pixbuf on the canvas. */
-  
     if(!GDK_IS_PIXBUF(pixbuf=gdk_pixbuf_get_from_drawable(NULL,
 			      dev->background,
-			      gtk_widget_get_colormap(GTK_WIDGET(canvas)),
+			      dev->colormap,
 			      0,0,
 			      0,0,
 			      width,height))) {
@@ -587,7 +585,7 @@ void plD_eop_gcw(PLStream *pls)
   
   /* Update the canvas */
   canvas->need_update = 1;
-  gnome_canvas_update_now (canvas);
+  gnome_canvas_update_now(canvas);
 
   /*
    * Copy the plot buffer for future reference, otherwise it is 
@@ -880,12 +878,14 @@ static void fill_polygon (PLStream* pls)
     if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL)
       plabort("GCW driver <fill_polygon>: Could not create gdkpoints");
 
-    for(i=0;i<pls->dev_npts;i++) {
-      if(!pls->portrait) {
+    if(!pls->portrait) {
+      for(i=0;i<pls->dev_npts;i++) {
 	gdkpoints[i].x = (gint)(pls->dev_x[i]/VSCALE);
 	gdkpoints[i].y = (gint)(dev->height-pls->dev_y[i]/VSCALE);
       }
-      else { /* Swap x and y for portrait mode */
+    }
+    else { /* Swap x and y for portrait mode */
+      for(i=0;i<pls->dev_npts;i++) {
 	gdkpoints[i].x = (gint)(dev->height-pls->dev_y[i]/VSCALE);
 	gdkpoints[i].y = (gint)(dev->width-pls->dev_x[i]/VSCALE);
       }
@@ -902,19 +902,17 @@ static void fill_polygon (PLStream* pls)
     if( (points = gnome_canvas_points_new (pls->dev_npts)) == NULL )
       plabort("GCW driver <fill_polygon>: Could not create points");
 
-    for (i=0; i<pls->dev_npts; i++) {
-      /* The points must be converted from virtual coordinates units
-       * to device coordinate units.
-       */
-      if(!pls->portrait) {
+    if(!pls->portrait) {
+      for (i=0; i<pls->dev_npts; i++) {
 	points->coords[2*i] = (gdouble)(pls->dev_x[i]/VSCALE);
 	points->coords[2*i + 1] = (gdouble)(-pls->dev_y[i]/VSCALE);
       }
-      else { /* Swap x and y for portrait mode */
+    }
+    else { /* Swap x and y for portrait mode */
+      for (i=0; i<pls->dev_npts; i++) {
 	points->coords[2*i] = (gdouble)(dev->height-pls->dev_y[i]/VSCALE);
 	points->coords[2*i + 1] = (gdouble)(-pls->dev_x[i]/VSCALE);
-      }
-
+      } 
     }
 
     if(!GNOME_IS_CANVAS_ITEM(
@@ -1252,6 +1250,7 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
 
   case PLESC_DEVINIT:
     gcw_init_canvas(GNOME_CANVAS(ptr));
+    pls->hack=0;
     break;
 
   case PLESC_CLEAR:
