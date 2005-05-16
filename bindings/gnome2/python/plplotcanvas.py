@@ -39,15 +39,17 @@ class Canvas(cplplotcanvas.Canvas):
 
     def __getattr__(self,name):
 
-        if name in dir(plplot):
+        # Select the stream
+        Nstream = self.get_stream_number()
+        plplot.plsstrm(Nstream)
 
-            # Select the stream
-            Nstream = self.get_stream_number()
-            plplot.plsstrm(Nstream)
-
-            # Return the plplot function to call
-            return eval('plplot.' + name)
-
+        # Try to get the function using all of the available prefixes
+        if 'pl'+name in dir(plplot):
+            return eval('plplot.' + 'pl' + name)
+        elif '' + name in dir(plplot):
+            return eval('plplot.' + '' + name)
+        elif 'pl_' + name in dir(plplot):
+            return eval('plplot.' + 'pl_' + name)
         else:
             msg = "'Canvas' object has no attribute '%s'" % (name)
             raise exceptions.AttributeError, msg
