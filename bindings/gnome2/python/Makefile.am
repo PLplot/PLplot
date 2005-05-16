@@ -79,12 +79,24 @@ cplplotcanvas.c: plplotcanvas.defs cplplotcanvas.override
 	--override cplplotcanvas.override \
 	plplotcanvas.defs > $@
 
+# Use sed to rename PLINT and PLFLT so that h2def.py knows what to do
 plplotcanvas.defs: 
 	/usr/share/pygtk/2.0/codegen/h2def.py \
 		$(top_srcdir)/include/plplotcanvas.h \
-		| sed -e s/PLINT/long/ -e s/PLFLT/double/ > plplotcanvas.defs
+		| sed -e s/PLINT/gint32/ -e s/PLFLT/double/ > $@
 
-gcwmodule_la_SOURCES  = gcwmodule.c
+# Use sed to remove the gcw_ prefix from functions
+gcw.c: gcw.defs gcw.override
+	pygtk-codegen-2.0 --prefix gcw --override gcw.override gcw.defs \
+	| sed -e s/\"gcw_/\"/ > $@
+
+# Use sed to rename PLINT and PLFLT so that h2def.py knows what to do
+gcw.defs:
+	/usr/share/pygtk/2.0/codegen/h2def.py \
+		$(top_srcdir)/include/gcw.h \
+		| sed -e s/PLINT/gint32/ -e s/PLFLT/double/ > $@
+
+gcwmodule_la_SOURCES  = gcw.c gcwmodule.c
 gcwmodule_la_CFLAGS = $(GCW_CFLAGS) $(PYGCW_CFLAGS)
 gcwmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS) \
 		       $(libplplotgnome2) $(GCW_LIBS) $(PYGCW_LIBS)
@@ -108,4 +120,6 @@ endif
 
 MAINTAINERCLEANFILES =    \
 	cplplotcanvas.c   \
-	plplotcanvas.defs
+	plplotcanvas.defs   \
+	gcw.c   \
+	gcw.defs
