@@ -1,0 +1,95 @@
+README FOR PLPLOT-GNOME 2 PYTHON BINDING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-- describes the strategy used to create the PLplot-Gnome2 python 
+   binding for the GCW driver and PlplotCanvas APIs
+
+
+  Thomas J. Duck <tom.duck@dal.ca>
+  16 May 2005
+
+
+GCW
+~~~
+  The GCW driver API is autmoatically generated using PyGtk's h2def 
+  and codegen utilities.  
+
+  First, the h2def program is used to create the gcw.defs file from 
+  gcw.h.  The defs files contain the API in an easy to parse format,
+  and will likely prove helpful in automating the construction of 
+  bindings for other languages.
+
+  Next, codegen uses the defs file to create gcw.c, which contains 
+  the function wrappers.  In the process, the gcw.override file is
+  consulted to fine tune the binding by overriding or ignoring the
+  wrappers for specified functions.
+
+  The gcwmodule.c file does the module initialization, and imports 
+  the wrapped functions into python.
+
+
+PLPLOTCANVAS
+~~~~~~~~~~~~
+  The PlplotCanvas API is also automatically generated, and in a
+  similar way to the GCW driver API.  There are a few important 
+  caveats, though.
+
+  A key criterion in wrapping PlplotCanvas is that it should 
+  interoperate with the PyGtk binding.
+
+  To understand how the binding works, it is important to 
+  understand the PlplotCanvas construction.  PlplotCanvas is a 
+  GTK/Gnome widget that is derived from GnomeCanvas.  It defines 
+  methods to control various aspects of the object and its 
+  presentation.  PlplotCanvas also wraps the entire PLplot API so 
+  that the PLplot functions can be called in an object-oriented 
+  fashion.
+
+  Now, on to the binding description and construction:
+
+  The top level class is plplotcanvas.Canvas, and it is defined
+  in plplotcanvas.py.  plplotcanvas.Canvas inherits from 
+  cplplotcanvas.Canvas, which is automatically generated as
+  described below.
+
+  plplotcanvas.Canvas is a small piece of code that contains only
+  a few special methods.  When a method is called on 
+  plplotcanvas.Canvas, it first checks to see if it inherited that 
+  method from cplplotcanvas.Canvas. If not, then it uses __getattr__
+  to check for the method in the standard PLplot python API.  Failing
+  that, an exception is thrown.
+
+  cplplotcanvas.Canvas wraps the C PlplotCanvas code, and is
+  automatically generated using PyGtk's h2def and codegen utilities,
+  as described above for the GCW driver API.  Codegen automatically
+  handles PlplotCanvas methods with constant arguments.  In some
+  special cases where something different needs to be done 
+  (e.g., plplot_canvas_new constructor needs to set the "aa" property
+  to TRUE), or speed is important, cplplotcanvas.override defines the 
+  binding code explicitly.
+
+  Methods using pointers or anything else that codegen doesn't 
+  understand are put into the ignore-glob of cplplotcanvas.override
+  so that codegen doesn't try to wrap them.  Because those methods 
+  aren't wrapped and therefore aren't inherited by plplotcanvas.Canvas, 
+  they are the ones that default to the standard PLplot python API via
+  __getattr__, as described above.
+
+  So, this is not a true binding per se: Where it is inconvenient
+  to do a wrapping, the binding simply replaces the functionality.
+
+  That's all there is to it.
+
+  Why not just let the standard python API handle all method calls by
+  by defining all PLplot functions in the ignore-glob?  First, codegen
+  is *required* to make a binding for the PlplotCanvas class that is
+  compatible with PyGtk.  The codegen wrappers will be much faster than
+  the python calls, and so there doesn't seem to be any good reason not
+  to let codegen wrap what it can.
+
+  As the PLplot API grows, most functions will be automatically added
+  as methods to cplplotcanvas.Canvas.  Occasionally a new function will
+  cause a compile error or warning, and these are the functions that
+  need to be specified in the ignore-glob so that they are handled
+  via the __getattr__ method of plplotcanvas.Canvas.
+
