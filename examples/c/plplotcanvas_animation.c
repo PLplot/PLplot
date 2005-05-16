@@ -87,11 +87,11 @@ static volatile int gtkstate = GTKSTATE_CONTINUE;
 void setup_plot(PlplotCanvas *canvas, char* title)
 {
   /* Set up the viewport and window */
-  plplot_canvas_plvsta(canvas);
-  plplot_canvas_plwind(canvas,x[0],x[NPTS-1],-2.,2.);
+  plplot_canvas_vsta(canvas);
+  plplot_canvas_wind(canvas,x[0],x[NPTS-1],-2.,2.);
 
   /* Set the pen width */
-  plplot_canvas_plwid(canvas,2); 
+  plplot_canvas_wid(canvas,2); 
 
   /* The axes should be persistent, so that they don't have to be 
    * replotted every time (which would slow down the animation)
@@ -99,12 +99,12 @@ void setup_plot(PlplotCanvas *canvas, char* title)
   plplot_canvas_use_persistence(canvas,TRUE);
 
   /* Draw the axes */
-  plplot_canvas_plcol0(canvas,15);
-  plplot_canvas_plbox(canvas,"bcnst",0.,0,"bcnstv",0.,0);
-  plplot_canvas_pllab(canvas,"(x)","(y)",title);
+  plplot_canvas_col0(canvas,15);
+  plplot_canvas_box(canvas,"bcnst",0.,0,"bcnstv",0.,0);
+  plplot_canvas_lab(canvas,"(x)","(y)",title);
 
   /* Prepare for plotting */
-  plplot_canvas_plcol0(canvas,plplot_canvas_get_stream_number(canvas)+8); 
+  plplot_canvas_col0(canvas,plplot_canvas_get_stream_number(canvas)+8); 
 
   /* The animated data should not be persistent */
   plplot_canvas_use_persistence(canvas,FALSE);
@@ -125,10 +125,10 @@ void plot(PlplotCanvas *canvas,gdouble offset,char* title)
     y[i] = sin(2.*3.14*(x[i]+offset*(Nstream+1))/PERIOD/(float)(Nstream+1));
 
   /* Draw the line */
-  plplot_canvas_plline(canvas,NPTS, x, y);
+  plplot_canvas_line(canvas,NPTS, x, y);
 
   /* Advance the page to finalize the plot */
-  plplot_canvas_pladv(canvas,0);   
+  plplot_canvas_adv(canvas,0);   
 }
 
 /* Delete event callback */
@@ -234,9 +234,9 @@ int main(int argc,char *argv[] )
    */
   canvas0 = plplot_canvas_new(TRUE);
   plplot_canvas_set_size(canvas0,WIDTH,HEIGHT);
-  plplot_canvas_pladv(canvas0,0);
+  plplot_canvas_adv(canvas0,0);
   setup_plot(canvas0,"A phase-progressing wave");
-  plplot_canvas_pladv(canvas0,0);   /* Advance the page to finalize the plot */
+  plplot_canvas_adv(canvas0,0);   /* Advance the page to finalize the plot */
   canvas0frame = GTK_FRAME(gtk_frame_new(NULL));
   gtk_frame_set_shadow_type(canvas0frame,GTK_SHADOW_ETCHED_OUT);
   gtk_container_add(GTK_CONTAINER(canvas0frame),GTK_WIDGET(canvas0));
@@ -246,9 +246,9 @@ int main(int argc,char *argv[] )
    */
   canvas1 = plplot_canvas_new(TRUE);
   plplot_canvas_set_size(canvas1,WIDTH,HEIGHT);
-  plplot_canvas_pladv(canvas1,0);
+  plplot_canvas_adv(canvas1,0);
   setup_plot(canvas1,"Another phase-progressing wave");
-  plplot_canvas_pladv(canvas1,0);   /* Advance the page to finalize the plot */
+  plplot_canvas_adv(canvas1,0);   /* Advance the page to finalize the plot */
   canvas1frame = GTK_FRAME(gtk_frame_new(NULL));
   gtk_frame_set_shadow_type(canvas1frame,GTK_SHADOW_ETCHED_OUT);
   gtk_container_add(GTK_CONTAINER(canvas1frame),GTK_WIDGET(canvas1));

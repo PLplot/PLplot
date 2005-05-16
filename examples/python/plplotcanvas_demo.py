@@ -76,20 +76,20 @@ window.connect("destroy",destroy)
 window.show_all()
 
 # Draw on the canvas with Plplot
-canvas.pladv(0)  # Advance the page
-canvas.plcol0(15) # Set color to black
-canvas.plwid(2) # Set the pen width
-canvas.plvsta() # Set the viewport
-canvas.plwind(0.,10.,0.,10.); # Set the window
-canvas.plbox("bcnst",0.,0,"bcnstv",0.,0); # Set the box
-canvas.pllab("x-axis","y-axis","A Simple Plot") # Draw some labels
+canvas.adv(0)  # Advance the page
+canvas.col0(15) # Set color to black
+canvas.wid(2) # Set the pen width
+canvas.vsta() # Set the viewport
+canvas.wind(0.,10.,0.,10.); # Set the window
+canvas.box("bcnst",0.,0,"bcnstv",0.,0); # Set the box
+canvas.lab("x-axis","y-axis","A Simple Plot") # Draw some labels
 
 # Draw the line
-canvas.plcol0(1) # Set the pen color
-canvas.plline(x,y)
+canvas.col0(1) # Set the pen color
+canvas.line(x,y)
 
 # Advancing the page finalizes this plot
-canvas.pladv(0)
+canvas.adv(0)
 
 # Start the gtk main loop
 gtk.main()

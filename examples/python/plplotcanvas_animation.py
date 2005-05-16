@@ -79,23 +79,23 @@ gtk_state = GTKSTATE_CONTINUE
 # setup_plt - preparation for plotting an animation to a canvas
 def setup_plot(canvas,title):
     # Set up the viewport and window
-    canvas.plvsta()
-    canvas.plwind(x[0],x[NPTS-1],-2.,2.)
+    canvas.vsta()
+    canvas.wind(x[0],x[NPTS-1],-2.,2.)
 
     # Set the pen width
-    canvas.plwid(2)
+    canvas.wid(2)
 
     # The axes should be persistent, so that they don't have to be 
     # replotted every time (which would slow down the animation)
     canvas.use_persistence(True);
 
     # Draw the axes
-    canvas.plcol0(15)
-    canvas.plbox("bcnst",0.,0,"bcnstv",0.,0);
-    canvas.pllab("Phase","Amplitude",title);
+    canvas.col0(15)
+    canvas.box("bcnst",0.,0,"bcnstv",0.,0);
+    canvas.lab("Phase","Amplitude",title);
 
     # Prepare for plotting
-    canvas.plcol0(canvas.get_stream_number()+8)
+    canvas.col0(canvas.get_stream_number()+8)
 
     # The animated data should not be persistent
     canvas.use_persistence(False);
@@ -112,10 +112,10 @@ def plot(canvas,offset,title):
     y = Numeric.sin(2.*3.14*(x+offset*(Nstream+1))/PERIOD/(Nstream+1))
     
     # Draw the line
-    canvas.plline(x, y)
+    canvas.line(x, y)
 
     # Advance the page
-    canvas.pladv(0)
+    canvas.adv(0)
 
 # Delete event callback
 def delete_event(widget, event, data=None):
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     # place it in a frame
     canvas0=plplotcanvas.Canvas()
     canvas0.set_size(WIDTH,HEIGHT)
-    canvas0.pladv(0)  # Advance the page to finalize the plot
+    canvas0.adv(0)  # Advance the page to finalize the plot
     setup_plot(canvas0,"A phase-progressing wave")
     canvas0frame=gtk.Frame()
     canvas0frame.set_shadow_type(type=gtk.SHADOW_ETCHED_OUT)
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     # place it in a frame
     canvas1=plplotcanvas.Canvas()
     canvas1.set_size(WIDTH,HEIGHT)
-    canvas1.pladv(0)  # Advance the page to finalize the plot
+    canvas1.adv(0)  # Advance the page to finalize the plot
     setup_plot(canvas1,"Another phase-progressing wave")
     canvas1frame=gtk.Frame()
     canvas1frame.set_shadow_type(type=gtk.SHADOW_ETCHED_OUT)

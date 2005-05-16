@@ -87,20 +87,20 @@ int main(int argc,char *argv[] )
   gtk_widget_show_all(window);
 
   /* Draw on the canvas with Plplot */
-  plplot_canvas_pladv(canvas,0); /* Advance to first page */
-  plplot_canvas_plcol0(canvas,15); /* Set color to black */
-  plplot_canvas_plwid(canvas,2); /* Set the pen width */
-  plplot_canvas_plvsta(canvas); /* Set the viewport */
-  plplot_canvas_plwind(canvas,0.,10.,0.,10.); /* Set the window */
-  plplot_canvas_plbox(canvas,"bcnst",0.,0,"bcnstv",0.,0); /* Set the box */
-  plplot_canvas_pllab(canvas,"x-axis","y-axis","A Simple Plot"); /* Draw some labels */
+  plplot_canvas_adv(canvas,0); /* Advance to first page */
+  plplot_canvas_col0(canvas,15); /* Set color to black */
+  plplot_canvas_wid(canvas,2); /* Set the pen width */
+  plplot_canvas_vsta(canvas); /* Set the viewport */
+  plplot_canvas_wind(canvas,0.,10.,0.,10.); /* Set the window */
+  plplot_canvas_box(canvas,"bcnst",0.,0,"bcnstv",0.,0); /* Set the box */
+  plplot_canvas_lab(canvas,"x-axis","y-axis","A Simple Plot"); /* Draw some labels */
 
   /* Draw the line */
-  plplot_canvas_plcol0(canvas,1); /* Set the pen color */
-  plplot_canvas_plline(canvas,11,x,y);
+  plplot_canvas_col0(canvas,1); /* Set the pen color */
+  plplot_canvas_line(canvas,11,x,y);
 
   /* Advancing the page finalizes this plot */
-  plplot_canvas_pladv(canvas,0);
+  plplot_canvas_adv(canvas,0);
 
   /* Start the gtk main loop */
   gtk_main();
