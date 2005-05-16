@@ -69,6 +69,7 @@ typedef struct {
 
   guint32 color;    /* Current pen color */
   GdkColor bgcolor; /* Background color (shouldn't change) */
+  GdkColormap* colormap; /* The gdk colormap for the canvas */
 
   PLINT width;   /* Width of the canvas in device pixels */
   PLINT height;  /* Height of the canvas in device pixels */
@@ -128,6 +129,7 @@ typedef struct {
 
 void gcw_use_text(PLINT use_text);
 void gcw_use_pixmap(PLINT use_pixmap);
+void gcw_use_hrshsym(PLINT use_hrshsym);
 
 /* Private functions */
 
