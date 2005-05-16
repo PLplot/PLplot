@@ -60,9 +60,7 @@ void gcw_set_gdk_color()
   color.green=(guint16)(plsc->curcolor.g/255.*65535); 
   color.blue=(guint16)(plsc->curcolor.b/255.*65535);
   
-  if(!gdk_colormap_alloc_color(
-        gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
-	&color,FALSE,TRUE))
+  if(!gdk_colormap_alloc_color(dev->colormap,&color,FALSE,TRUE))
     plwarn("GCW driver <set_gdk_color>: Could not allocate color.");
   
   gdk_gc_set_foreground(dev->gc,&color);
@@ -96,8 +94,7 @@ void gcw_clear_background()
   height = *(PLINT*)g_object_get_data(G_OBJECT(dev->canvas),"canvas-height");
 
   /* Allocate the background color*/
-  gdk_colormap_alloc_color(gtk_widget_get_colormap(GTK_WIDGET(dev->canvas)),
-			   &(dev->bgcolor),FALSE,TRUE);
+  gdk_colormap_alloc_color(dev->colormap,&(dev->bgcolor),FALSE,TRUE);
 
   /* Clear the background pixmap with the background color.  Note that
    * we are going to reset the current gdk drawing color below, so we
@@ -105,7 +102,7 @@ void gcw_clear_background()
   gdk_gc_set_foreground(dev->gc,&(dev->bgcolor));
   gdk_draw_rectangle(dev->background,dev->gc,TRUE,0,0,width,height);
 
-  /* Note that our pixmpa is currently clear */
+  /* Note that our pixmap is currently clear */
   dev->pixmap_has_data = FALSE;
 
   /* Reset the current gdk drawing color */
@@ -137,6 +134,9 @@ void gcw_init_canvas(GnomeCanvas* canvas)
 
   /* Add the canvas to the device */
   dev->canvas=canvas;
+
+  /* Get the colormap */
+  dev->colormap = gtk_widget_get_colormap(GTK_WIDGET(dev->canvas));
 
   /* Size the canvas */
   gcw_set_canvas_size(canvas,dev->width,dev->height);
@@ -722,6 +722,8 @@ void gcw_set_device_size(PLINT width,PLINT height) {
  *
 \*--------------------------------------------------------------------------*/
 
+gint count = 0;
+
 void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
 {
   GcwPLdev* dev = plsc->dev;
@@ -731,6 +733,10 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
 
   GdkGC *gc_new;
   GdkGCValues values;
+
+  PLINT strm;
+
+  GdkPixmap *background;
 
 #ifdef DEBUG_GCW_1
   gcw_debug("<gcw_set_canvas_size>\n");
@@ -772,7 +778,16 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
   /* Set up the background pixmap */
   if(dev->background==NULL || dev->allow_resize) { 
 
-    if(GDK_IS_PIXMAP(dev->background)) gdk_pixmap_unref(dev->background);
+    if(GDK_IS_PIXMAP(dev->background)) g_object_unref(dev->background);
+
+    /* Why does this next *useless* command speed up the animation demo?
+     * If we unref the allocated pixmaps, the benefit goes away!! */
+/*     if(count<2) { */
+/*       gdk_pixmap_new(NULL,width,height,gdk_visual_get_best_depth()); */
+/*       printf("Count %d\n",count); */
+/*       count++; */
+/*     } */
+/*     else { printf("Count %d\n",count); count ++; } */
 
     dev->background = gdk_pixmap_new(NULL,width,height,
 				     gdk_visual_get_best_depth());
@@ -898,6 +913,29 @@ void gcw_use_pixmap(PLINT use_pixmap)
   gcw_debug("</gcw_use_pixmap>\n");
 #endif
 }
+
+
+/*--------------------------------------------------------------------------*\
+ * gcw_use_hrshsym()
+ *
+ * Used to turn hershey symbol usage on and off for the current device.
+\*--------------------------------------------------------------------------*/
+
+void gcw_use_hrshsym(PLINT use_hrshsym)
+{
+  GcwPLdev* dev = plsc->dev;
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("<gcw_use_hrshsym>\n");
+#endif
+
+  plsc->dev_hrshsym = use_hrshsym;
+
+#ifdef DEBUG_GCW_1
+  gcw_debug("</gcw_use_hrshsym>\n");
+#endif
+}
+
 
 /*--------------------------------------------------------------------------*\
  * gcw_use_persistence
