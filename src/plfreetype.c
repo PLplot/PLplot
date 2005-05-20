@@ -850,7 +850,7 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  */
 
     if ((args->unicode_array_len == 2)
-      && (args->unicode_array[0] == 0x10000004))
+      && (args->unicode_array[0] == (PL_FCI_MARK |0x004)))
     {
         adjust.x = args->just * ROUND (FT->face->glyph->metrics.width / 64.0);
         adjust.y = (FT_Pos) ROUND (FT->face->glyph->metrics.height / 128.0);
