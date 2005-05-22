@@ -63,7 +63,7 @@ static int windowYSize = 0;
 /*
 	AquaTerm font look-up table
 
-	The table is initialized with lowest commong denominator truetype 
+	The table is initialized with lowest common denominator truetype 
 	fonts that (I hope) most Macs will have.
 */
 
@@ -648,7 +648,7 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 	// check whether that font exists & if not, use standard font instread
 	
 	if(font == NULL){
-		printf("could not find font given by fci = 0x%x\n", fci);
+		printf("AquaTerm : Warning, could not find font given by fci = 0x%x\n", fci);
 		font = "Helvetica";
 	}
 	// font = "FreeSerif";	// force the font for debugging purposes
@@ -725,10 +725,32 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 void check_font_environment_variables(void){
 	int i;
 	char *new_font;
+	char *begin;
+	char *end;
 	
 	for(i=0;i<AQT_N_FontLookup;i++){
 		if ((new_font = getenv(aqt_font_env_names[i])) != NULL){
+		
+			// If the user is just blindly following the suggestions in
+			// the plplot examples then we might get a font name with
+			// a path and extension. We need to remove that since it
+			// isn't relevant and will only cause trouble. We warn them
+			// AquaTerm was not expecting a path or extension.
+			
+			begin = strrchr(new_font,'/');
+			end = strrchr(new_font,'.');
+
+			if(end != NULL) {
+				printf("Aquaterm : Warning, removing extension from font name : %s\n", new_font);
+				*end = '\0'; 
+			}
+			if(begin != NULL) {
+				printf("AquaTerm : Warning, removing path from font name : %s\n", new_font);
+				new_font = begin+1;
+			}
+
 			// printf("new font : %s\n", new_font);
+
 			AQT_FontLookup[i].pfont = new_font;
 		}
 	}
