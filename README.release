@@ -22,6 +22,7 @@ INDEX
 2. Changes relative to PLplot 5.5.3
   2.1 API
     2.1.1 PlplotCanvas
+    2.1.2 FCI
   2.2 Drivers
     2.2.1 GCW (Gnome 2)
 3. Changes relative to PLplot 5.3.1
@@ -70,6 +71,15 @@ PlplotCanvas method wrappers for PLplot functions have dropped
 the prefix "pl" from the function name.  For example, the
 method plplot_canvas_plline is now plplot_canvas_line.
 
+
+2.1.2 FCI
+
+Backwards incompatible API change (with respect to 5.5.3, but not with
+respect to 5.3.1 since this involves a new feature within the 5.5.x
+development releases).  PL_FCI_MARK changed from 0x10000000 to 0x80000000.
+This should only affect users who have been inserting absolute FCI (font
+characterization integer) changes within their strings to change the font in
+mid-string.
 
 2.2 Drivers
 
