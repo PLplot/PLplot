@@ -45,7 +45,6 @@
 #define DPI             72.0
 
 #define MAX_STRING_LEN	1000
-#define FCI 			0x10000000
 
 /* local variables */
 
@@ -541,7 +540,7 @@ void proc_str (PLStream *pls, EscText *args)
 // create a NSMutableAttributedString from the plplot ucs4 string
 //
 // assumptions :
-//	1. font changes are unicode >= FCI
+//	1. font changes are unicode >= PL_FCI_MARK
 //  2. we'll never have to deal with a string longer then MAX_STRING_LEN characters
 // 	3. <esc><esc> means we desired <esc> as a character & not actually as <esc>
 //  4. there are no two character <esc> sequences... i.e. <esc>fn is now covered by fci
@@ -583,7 +582,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	cur_loc = 0;
 	i = 0;
 	while (i < ucs4_len){
-		if (ucs4[i] < FCI){	/* not a font change */
+		if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
 			if (ucs4[i] != (PLUNICODE)plplot_esc) {		/* a character to display */
 				utf8 = UCS4_to_UTF8(ucs4[i]);
 				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)

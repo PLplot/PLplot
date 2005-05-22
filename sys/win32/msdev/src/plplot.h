@@ -238,7 +238,7 @@ typedef void* PLPointer;
 #define PL_PARSE_SKIP           0x0080  /* Skip over unrecognized args */
 
 /* FCI (font characterization integer) related constants. */
-#define PL_FCI_MARK 0x10000000
+#define PL_FCI_MARK 0x80000000
 #define PL_FCI_IMPOSSIBLE 0x00000000
 #define PL_FCI_HEXDIGIT_MASK 0xf
 #define PL_FCI_HEXPOWER_MASK 0x7

@@ -446,7 +446,7 @@ typedef struct {
  * fci             FCI (font characterization integer)
  * An FCI is sometimes inserted in the middle of a stream of
  * unicode glyph indices.  Thus to distinguish it from those, the FCI is marked
- * by 0x1 in the most significant 4 bits.  The remaining 7 hex digits
+ * by 0x8 in the most significant 4 bits.  The remaining 7 hex digits
  * stored in the 32-bit integer characterize 7 different font attributes.
  * The font attributes are interpreted as follows:
  * hexdigit =>                    0        1          2        3       4        5
@@ -463,7 +463,7 @@ typedef struct {
  * hexdigit in the FCI.  The hexpower = 3 position is essentially undefined
  * since there is currently only one hexdigit (0) defined, and similarly
  * for hexpower = 4-6 so there is room for expansion of this scheme into more
- * font attributes if required.  (hexpower = 7 is reserved for the 0x1 marker 
+ * font attributes if required.  (hexpower = 7 is reserved for the 0x8 marker 
  * of the FCI.)
 \*--------------------------------------------------------------------------*/
 

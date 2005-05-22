@@ -1893,17 +1893,16 @@ plcmap1_def(void)
     <para>
       We specify the properties of unicode fonts with the FCI (font
       characterization integer).  The FCI is a 32-bit unsigned integer whose
-      left-most hexadecimal digit is marked with an 0x1 to distinguish it
-      from a unicode (UCS4) integer (which is also an unsigned 32-bit
-      integer but with a maximum value of 0x0010ffff). Users obtain the current
-      FCI by calling &plgfci; and store a new FCI to be used at the start
-      of each subsequent string using &plsfci;. Independent
-      hexadecimal values within the FCI are characterized by the
-      hexdigit and hexpower.  The hexpower is defined as the power of 16 or
-      number of hexadecimal places to the left of the "decimal place" in the FCI 
-      where the hexdigit is stored.
-      The interpretation of the hexdigit and hexpower values in the FCI are
-      given in <xref linkend="fci-table"/>.
+      most significant hexadecimal digit is marked with an 0x8 (0x80000000
+      is ORed with the FCI value to mark it) to distinguish it from a unicode
+      (UCS4) integer (whose maximum value 0x7fffffff). Users obtain the
+      current FCI by calling &plgfci; and store a new FCI to be used at the
+      start of each subsequent string using &plsfci;. Independent
+      hexadecimal values within the FCI are characterized by the hexdigit
+      and hexpower.  The hexpower is defined as the power of 16 or number of
+      hexadecimal places to the left of the "decimal place" in the FCI 
+      where the hexdigit is stored. The interpretation of the hexdigit and
+      hexpower values in the FCI are given in <xref linkend="fci-table"/>.
     </para>
     <table frame="all" id="fci-table">
       <title>FCI interpretation</title>
@@ -2058,7 +2057,7 @@ plcmap1_def(void)
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>#&lt;0x1nnnnnnn&gt;</literal>: absolute FCI to be used to
+	    <literal>#&lt;0x8nnnnnnn&gt;</literal>: absolute FCI to be used to
 	    change fonts in mid-string.  (nnnnnnn must be exactly 7
 	    digits). (UNICODE ONLY).
 	  </para>
@@ -2251,7 +2250,7 @@ plcmap1_def(void)
       fonts are being used.  However, for maximum flexibility when using
       unicode fonts, these 5 escape sequences should be replaced by using
       the 4 escape sequences <literal>#[nnn]</literal>,
-      <literal>&lt;0x1nnnnnnn&gt;</literal>,
+      <literal>&lt;0x8nnnnnnn&gt;</literal>,
       <literal>&lt;0xmn&gt;</literal>, or <literal>&lt;FCI COMMAND
       STRING/&gt;</literal> as appropriate.
     </para>
