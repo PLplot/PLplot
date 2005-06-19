@@ -25,6 +25,7 @@ INDEX
     2.1.2 FCI
   2.2 Drivers
     2.2.1 GCW (Gnome 2)
+    2.2.2 wxwidgets
 3. Changes relative to PLplot 5.3.1
   3.1 API
     3.1.1 Deprecated functions
@@ -37,6 +38,7 @@ INDEX
     3.2.3 GCW (Gnome 2)
     3.2.4 AquaTerm (Mac OS X)
     3.2.5 Tk
+    3.2.6 wxwidgets
 
 
 1. Build Instructions
@@ -88,6 +90,12 @@ mid-string.
 
 Performance improvements have been implemented.
 
+2.2.2 wxwidgets
+
+Initial version of a device to run on the wxWidgets cross-platform GUI (see
+http://www.wxwidgets.org/) has been donated by Werner Smekal.  Most examples
+work out of the box, but some (e.g., a segfault for example 8) currently
+have problems.  More development of this immature device driver is planned.
 
 3. Changes Relative to PLplot 5.3.1 (the previous stable release)
 
@@ -223,4 +231,11 @@ and "--disable-f77" during the configure step of the install process.
 The plframe widget (and by extension, the Tk driver) now saves a plot using 
 the correct aspect ratio, as represented by the actual window size.  For 
 complicit output drivers only, e.g. png.
+
+3.2.6 wxwidgets
+
+Initial version of a device to run on the wxWidgets cross-platform GUI (see
+http://www.wxwidgets.org/) has been donated by Werner Smekal.  Most examples
+work out of the box, but some (e.g., a segfault for example 8) currently
+have problems.  More development of this immature device driver is planned.
 
