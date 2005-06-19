@@ -445,7 +445,7 @@ if enable_dyndrivers
 endif
 
 docdir = $(DOC_DIR)
-doc_DATA = README.drivers
+doc_DATA = README.drivers README.wxwidgets
 
 EXTRA_DIST = $(doc_DATA) next.c
 
