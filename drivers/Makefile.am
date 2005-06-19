@@ -52,7 +52,8 @@ EXTRA_LTLIBRARIES = \
 	tkwin.la \
 	wingcc.la \
 	xfig.la \
-	xwin.la
+	xwin.la \
+	wxwidgets.la
 
 driversdir = $(DRV_DIR)
 drivers_LTLIBRARIES = $(DYNAMIC_DRIVERS)
@@ -129,10 +130,12 @@ tkwin_la_CFLAGS = \
 
 wingcc_la_CFLAGS = $(GDI32INCCMD)
 
+wxwidgets_la_CFLAGS = $(WXWIDGETSINCCMD)
+
 xwin_la_CFLAGS = $(X_CFLAGS)
 
 # Set overall preprocessor options
-AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(wxwidgets_la_CFLAGS) $(FREETYPEINCCMD) $(INCLTDL)
 
 ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version \
           $(FREETYPELIBCMD)
@@ -155,6 +158,9 @@ aqt_la_LDFLAGS = $(ldflags) $(libplplot) $(AQTLIBCMD)
 
 wingcc_la_SOURCES = wingcc.c
 wingcc_la_LDFLAGS = $(ldflags) $(libplplot) $(GDI32LIBCMD)
+
+wxwidgets_la_SOURCES = wxwidgets.cpp
+wxwidgets_la_LDFLAGS = $(ldflags) $(libplplot) $(WXWIDGETSLIBCMD)
 
 if enable_gnome
 gnome_la_SOURCES = gnome.c
@@ -336,6 +342,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	tk.c \
 	tkwin.c \
 	wingcc.c \
+	wxwidgets.cpp \
 	xfig.c \
 	xwin.c
 
@@ -380,6 +387,8 @@ tkwin_lo_CFLAGS = \
 
 wingcc_lo_CFLAGS = $(GDI32INCCMD)
 
+wxwidgets_lo_CFLAGS = $(WXWIDGETSINCCMD)
+
 xwin_lo_CFLAGS = $(X_CFLAGS)
 
 # tkwin covers ntk, tk, and tkwin
@@ -395,6 +404,7 @@ AM_CPPFLAGS = \
 	$(gcw_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
 	$(wingcc_lo_CFLAGS) \
+	$(wxwidgets_lo_CFLAGS) \
 	$(xwin_lo_CFLAGS) \
 	$(FREETYPEINCCMD) \
 	$(ITCLINCCMD)
@@ -410,6 +420,7 @@ endif
 libplplotdrv_la_LDFLAGS = \
 	$(CDLIBCMD) \
 	$(GCW_LIBS) \
+	$(WXWIDGETSLIBCMD) \
 	$(GDLIBCMD) \
 	$(GNOMELIBS) \
 	$(LINUXVGALIBS) \

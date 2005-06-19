@@ -71,5 +71,6 @@
 #undef PLD_tkwin
 #undef PLD_mem
 #undef PLD_wingcc
+#undef PLD_wxwidgets
 
 #endif	/* __PLDEVS_H__ */
