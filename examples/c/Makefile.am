@@ -48,7 +48,8 @@ sources = \
 	x21c.c \
 	x22c.c \
 	x23c.c \
-	x24c.c
+	x24c.c \
+	x25c.c
 
 plplotcanvas_data = \
 	plplotcanvas_demo.c \
@@ -94,7 +95,9 @@ check_PROGRAMS = \
 	x20c \
 	x21c \
 	x22c \
-	x23c
+	x23c \
+	x24c \
+	x25c
 
 LDADD = $(libplplot)
 
