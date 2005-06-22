@@ -675,12 +675,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	if ( ! drawable)
 	    drawable = ! clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
 
-	if (!drawable) {
-	/* Store the edges outside the viewport */
-	    xclp[iout] = x2;
-	    yclp[iout] = y2;
-	    iout ++;
-	} else {
+	if (drawable) {
 	/* Boundary crossing condition -- coming in. */
 	    crossed_xmin2 = (x1 == xmin); crossed_xmax2 = (x1 == xmax);
 	    crossed_ymin2 = (y1 == ymin); crossed_ymax2 = (y1 == ymax);
@@ -1012,9 +1007,13 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	}
     }
 
-/* Check for the case that only one side has been crossed */
+/* Check for the case that only one side has been crossed
+   (AM) Just checking a single point turns out not to be
+   enough, apparently the crossed_*1 and crossed_*2 variables
+   are not quite what I expected.
+*/
     if ( crossed_left+crossed_right+crossed_down+crossed_up == 1 &&
-		inside_lb ) {
+		inside_lb+inside_rb+inside_lu+inside_ru == 4 ) {
 	int dir = circulation(x, y, npts);
 	PLINT xlim[4], ylim[4];
 	int insert;
