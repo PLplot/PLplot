@@ -103,7 +103,7 @@ class x11 {
 
     // Parse and process command line arguments.
 
-        pls.parseopts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 
@@ -161,15 +161,15 @@ class x11 {
 	       
 	       /* magnitude colored wireframe plot */
 	       else if (i==1)
-		 pls.mesh(x, y, z, opt[k] | pls.MAG_COLOR);
+		 pls.mesh(x, y, z, opt[k] | PLStream.MAG_COLOR);
 	       
 	       /* magnitude colored wireframe plot with sides */
 	       else if (i==2)
-		 pls.plot3d(x, y, z, opt[k] | pls.MAG_COLOR, 1);
+		 pls.plot3d(x, y, z, opt[k] | PLStream.MAG_COLOR, 1);
 	       
 	       /* magnitude colored wireframe plot with base contour */
 	       else if (i==3)
-		 pls.meshc(x, y, z, opt[k] | pls.MAG_COLOR | pls.BASE_CONT,
+		 pls.meshc(x, y, z, opt[k] | PLStream.MAG_COLOR | PLStream.BASE_CONT,
 			 clevel);
 	       
 	       

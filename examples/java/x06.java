@@ -53,7 +53,7 @@ class x06 {
 
     // Parse and process command line arguments.
 
-        pls.parseopts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot
 

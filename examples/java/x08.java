@@ -123,7 +123,7 @@ class x08 {
 
     // Parse and process command line arguments.
 
-        pls.parseopts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
         boolean rosen = true;
 
     // Initialize plplot.
@@ -202,13 +202,13 @@ class x08 {
 		 pls.surf3d( x, y, z, 0, clev_null );
 	      } else if (ifshade == 1) { /* magnitude colored plot */
 		 cmap1_init(0);
-		 pls.surf3d( x, y, z, pls.MAG_COLOR, clev_null );
+		 pls.surf3d( x, y, z, PLStream.MAG_COLOR, clev_null );
 	      } else if (ifshade == 2) { /*  magnitude colored plot with faceted squares */
 		 cmap1_init(0);
-		 pls.surf3d( x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null );
+		 pls.surf3d( x, y, z, PLStream.MAG_COLOR | PLStream.FACETED, clev_null );
 	      } else {                   /* magnitude colored plot with contours */
 		 cmap1_init(0);
-		 pls.surf3d( x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clevel );
+		 pls.surf3d( x, y, z, PLStream.MAG_COLOR | PLStream.SURF_CONT | PLStream.BASE_CONT, clevel );
 	      }
 	   }
         }

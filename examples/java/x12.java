@@ -53,7 +53,7 @@ class x12 {
 	DecimalFormat nf4 = new DecimalFormat("####");
 	int i;
 
-        pls.parseopts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
         pls.init();
 
