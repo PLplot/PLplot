@@ -97,10 +97,13 @@ if enable_java
 
 noinst_DATA = jar-stamp
 
-jar-stamp: $(javaclasses) $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI
-	$(mkdir_p) plplot/core
-	cp $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI plplot/core
+jar-stamp: $(javaclasses) 
 	touch jar-stamp
+
+#jar-stamp: $(javaclasses) $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI
+#	$(mkdir_p) plplot/core
+#	cp $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI plplot/core
+#	touch jar-stamp
 
 execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 
