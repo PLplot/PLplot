@@ -94,7 +94,9 @@ $(top_builddir)/bindings/java/jar-stamp:
 plplot.jar: $(example_classes) $(top_builddir)/bindings/java/jar-stamp \
             $(top_srcdir)/examples/java/README.javademos $(javafiles)
 	$(mkdir_p) plplot/examples
-	cp $(top_srcdir)/examples/java/README.javademos $(javafiles) $(example_classes) plplot/examples
+	$(mkdir_p) plplot/examples/src
+	cp $(top_srcdir)/examples/java/README.javademos $(example_classes) plplot/examples
+	cp $(javafiles) plplot/examples/src
 	$(JAR) -cf plplot.jar \
 	       -C $(top_builddir)/bindings/java/ plplot/core \
 	       -C . plplot/examples
