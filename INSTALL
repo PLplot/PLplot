@@ -480,3 +480,29 @@ forthcoming plplot-5.5.2) and used
 followed by the remainder of the generic install instructions at the top of
 this file, then he got good results.  Note, the --disable-shared option also
 automatically invokes the --disable-dyndrivers option internally.
+
+------------------------------------------------------------------------------
+Build Instructions for an IBM SP system for plplot-5.5.3. (This report
+compiled by Alan W. Irwin on 2005-08-03 from e-mail sent by Andrew Ware)
+------------------------------------------------------------------------------
+I thought you might like to know that I have successfully compiled PLPLOT on
+the IBM-SP.  It turns out g77 does not work correctly in the latest AIX so I
+had to use the native Fortran and C compilers to get it to work.  The build
+I used was (from the bash shell):
+
+export CC=xlc_r
+export F77=xlf_r
+export OBJECT_MODE=64
+./configure --prefix=????? --disable-shared --disable-dyndrivers --disable-cxx
+
+The OBJECT_MODE=64 is not necessary to compile PLPLOT but it was necessary
+to link to a program which is compiled with the -q64 option (specifying a
+64-bit executable).
+
+A couple of the examples did not compile due to incompatibilities between
+xlf and g77: x01f.f and x14f.f use an intrinsic g77 function, lnblnk, which
+is not found in xlf. x17f.f uses the random number generator rand for which
+xlf expects a different number of arguments than g77.
+
+------------------------------------------------------------------------------
+
