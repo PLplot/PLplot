@@ -315,7 +315,7 @@ AC_DEFUN([PL_GET_DLNAME],[
     echo "void f(void){}" > foo.c
     ../libtool --mode=compile $CC -c foo.c > /dev/null
     ../libtool --mode=link $CC foo.lo -rpath /usr/lib -version-info $2 \
-        -o lib$1.la > /dev/null
+        -o lib$1.la -no-undefined > /dev/null
     $3=`grep ^dlname= lib$1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
     rm -rf $TMP_DIR
@@ -324,7 +324,7 @@ AC_DEFUN([PL_GET_DLNAME],[
 ])
 dnl ------------------------------------------------------------------------
 dnl Determine the dlname of a DLL to be installed by libtool
-dnl This is a usefule variation of GET_DLNAME above for dynamically loaded
+dnl This is a useful variation of GET_DLNAME above for dynamically loaded
 dnl libraries (DLL's).
 dnl     PL_GET_DLLNAME(STEM,VARIABLE)
 dnl For a given DLL STEM determine the dlname of the
@@ -343,7 +343,7 @@ AC_DEFUN([PL_GET_DLLNAME],[
     echo "void f(void){}" > foo.c
     ../libtool --mode=compile $CC -c foo.c > /dev/null
     ../libtool --mode=link $CC foo.lo -rpath /usr/lib -avoid-version -module \
-        -o $1.la > /dev/null
+        -o $1.la -no-undefined > /dev/null
     $2=`grep ^dlname= $1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
     rm -rf $TMP_DIR
