@@ -302,6 +302,7 @@ main(int argc, char *argv[])
   free_grid(xg, yg);
   free((void *)clev);
   plFree2dGrid(zg, xp, yp);
+  exit(0);
 }
 
 

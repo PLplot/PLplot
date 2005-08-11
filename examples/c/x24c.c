@@ -148,6 +148,7 @@ main(int argc, char *argv[])
 
 
   plend();
+  exit(0);
 
 }
 

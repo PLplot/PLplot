@@ -228,6 +228,7 @@ main(int argc, char *argv[])
     plcol0(1);
 
     plend();
+    exit(0);
 
 }
 
