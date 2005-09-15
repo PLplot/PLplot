@@ -199,6 +199,84 @@ options if plplot was compiled with freetype support: "text" and "smooth".
 "-drvopt text,smooth", as with the GD drivers, makes the driver use freetype 
 to render text, rather than plplot's hershey fonts.
 
+------------------------------------------------------------------------------
+Build Instructions for shared libraries on either Cygwin or MinGW
+------------------------------------------------------------------------------
+
+The above Cygwin and MinGW (minimalist Cygwin) instructions are for the
+static library case. Since those static tests were done, PLplot core
+developers (Arjen Markus for the Cygwin case, and Andrew Roach for the MinGW
+case) have also got shared libraries to work on both Cygwin and MinGW.
+
+An important prerequisite for shared libraries on these two platforms is to
+have the "file" command installed.  (The libtool script uses the "file"
+command to test for shared libraries so that script fails to detect shared
+libraries if the "file" command is not available.) If your ./configure step
+is warning you that the "file" command is not installed and shared libraries
+have been disabled because of this, then you should install that command.  
+For Cygwin systems that command is available from 
+http://cygwin.com/packages . For MinGW systems that command is available
+from http://gnuwin32.sourceforge.net/packages/file.htm .
+
+For Cygwin systems, the "--disable-shared" configure option from above can
+then be replaced with the combination "--disable-static --disable-dyndrivers".
+You will also want to set --prefix.  Consult the results of ./configure --help
+to find how to tell libtool about the locations of other required DLL's
+such as libfreetype, libgd, libpng, libjpeg, and zlib.  To install those
+libraries for either Cygwin or MinGW platforms, please consult the
+Cygwin packages page (http://cygwin.com/packages).
+
+For MinGW, the shared library build is pretty much the same as for the
+Cygwin case except that cf/ltmain.sh has to patched to fix libtool bugs (as
+of 2005-09-15) for the MinGW case.  Here is the patch file.
+
+--- ltmain.bak  Wed Sep 14 13:42:46 2005
++++ ltmain.sh   Wed Sep 14 13:45:26 2005
+@@ -132,7 +132,7 @@
+     if eval $OBJDUMP -f $1 | $SED -e '10q' 2>/dev/null | \
+       grep -E 'file format pe-i386(.*architecture: i386)?' >/dev/null ; then
+       win32_nmres=`eval $NM -f posix -A $1 | \
+-       sed -n -e '1,100{/ I /{x;/import/!{s/^/import/;h;p;};x;};}'`
++       sed -n -e '1,100{/ I /{x;/import/!{s/^.*/import/;h;p;};x;};}'`
+       if test "X$win32_nmres" = "Ximport" ; then
+         win32_libid_type="x86 archive import"
+       else
+@@ -1258,11 +1258,11 @@
+       -l*)
+        if test "X$arg" = "X-lc" || test "X$arg" = "X-lm"; then
+          case $host in
+-         *-*-cygwin* | *-*-pw32* | *-*-beos*)
++         *-*-cygwin* | *-*-pw32* | *-*-mingw* | *-*-beos*)
+            # These systems don't actually have a C or math library (as such)
+            continue
+            ;;
+-         *-*-mingw* | *-*-os2*)
++         *-*-os2*)
+            # These systems don't actually have a C library (as such)
+            test "X$arg" = "X-lc" && continue
+            ;;
+
+Instead of applying this patch blindly, we suggest MinGW users check
+cf/ltmain.sh to make sure these bugs have not been cleaned up already by the
+libtool developers (in case this documentation gets out of date).  Then edit
+cf/ltmain.sh by hand (once _before_ ./configure is run) to make the changes
+to the 3 lines.  ./configure then propagates the changed ltmain.sh into its
+configured version (the libtool script in the top-level of the build tree that
+is used for all builds).
+
+1) The first fix to ltmain.sh is because the sed version on MinGW does not
+   recognize the empty start of line anchor in the sed s/^/import/
+   substitution command.  Instead that has to be replaced by s/^.*/import/
+   for the sed logic to work on MinGW.
+
+2) The second two-line fix to ltmain.sh is to ignore -lm flags on MinGW just
+like occurs for Cygwin.  Historically, MinGW has adjusted to the libtool
+need for a specific math library by providing a dummy one, but that dummy
+one is only static so it fails the shared library test which causes shared
+library builds  on MinGW to crash and burn.  A better approach is simply
+for libtool to recognize there is no purpose for any math library on MinGW
+(just as for Cygwin), and the last two lines of the above patch accomplishes
+this change.
 
 ------------------------------------------------------------------------------
 Build Instructions for the MacOS X 10.3 (note we do not support older versions
