@@ -671,10 +671,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	       }
 	
 	       if (skip==0) {
+                  PLUNICODE unichar;
 #ifdef HAVE_LIBUNICODE
-                  unicode_char_t unichar;
-		  char* ptr =
-		    unicode_get_utf8 (string + i, &unichar);
+		  char* ptr = unicode_get_utf8 (string + i, &unichar);
+#else
+		  char* ptr = utf8_to_ucs4 (string + i, &unichar);
+#endif
                   if (ptr == NULL) {
                     char buf[80];
                     strncpy (buf, string, 30);
@@ -682,11 +684,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              buf, strlen (string) > 30 ? "[...]" : "");
                     plabort (buf);
                   }
-                  unicode_buffer [j] = (PLUNICODE) unichar;
+                  unicode_buffer [j] = unichar;
                   i += ptr - (string + i) - 1;
-#else
-		  unicode_buffer[j]=string[i];
-#endif
+
 		  /* Search for escesc (an unescaped escape) in the input 
 		   * string and adjust unicode_buffer accordingly).
 		   */
@@ -723,6 +723,55 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 #endif
       plstr(base, xform, refx, refy, string);
    }
+}
+
+/* convert utf8 string to ucs4 unichar */
+static char *
+utf8_to_ucs4(const char *ptr, PLUNICODE *unichar)
+{
+   char tmp;
+   int isFirst = 1;
+   int cnt;
+   
+   do {
+      /* Get next character in string */
+      tmp = *ptr++;
+      if (isFirst) { /* First char in UTF8 sequence */
+	 isFirst = 0;
+	 /* Determine length of sequence */
+	 if ((unsigned char)(tmp & 0x80) == 0x00) { /* single char */
+	    *unichar = (unsigned int)tmp & 0x7F;
+	    cnt = 0;
+	 } else if ((unsigned char)(tmp & 0xE0) == 0xC0) { /* 2 chars */
+	    *unichar = (unsigned int)tmp & 0x1F;
+	    cnt = 1;
+	 } else if ((unsigned char)(tmp & 0xF0) == 0xE0) { /* 3 chars */
+	    *unichar = (unsigned char)tmp & 0x0F;
+	    cnt = 2;
+	 } else if ((unsigned char)(tmp & 0xF8) == 0xF0) { /* 4 chars */
+	    *unichar = (unsigned char)tmp & 0x07;
+	    cnt = 3;
+	 } else if ((unsigned char)(tmp & 0xFC) == 0xF8) { /* 5 chars */
+	    *unichar = (unsigned char)tmp & 0x03;
+	    cnt = 4;
+	 } else if ((unsigned char)(tmp & 0xFE) == 0xFC) { /* 6 chars */
+	    *unichar = (unsigned char)tmp & 0x01;
+	    cnt = 5;
+	 } else { /* Malformed */
+	    ptr = NULL;
+	    cnt = 0;
+	 }
+      } else { /* Subsequent char in UTF8 sequence */
+	 if ((unsigned char)(tmp & 0xC0) == 0x80) {
+	    *unichar = (*unichar << 6) | ((unsigned int)tmp & 0x3F);
+	    cnt--;
+	 } else { /* Malformed */
+	    ptr = NULL;
+	    cnt = 0;
+	 }
+      }
+   } while (cnt > 0);
+   return (char *) ptr;
 }
 
 static void
