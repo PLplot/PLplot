@@ -21,7 +21,8 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-PL_ARG_WITH(libunicode, [Use libunicode for decoding UTF-8 strings], [yes])
+PL_ARG_WITH(libunicode, [Use libunicode for decoding UTF-8 strings rather
+than internal function], [no])
 
 UNICODEINCS=
 UNICODELIBS=
