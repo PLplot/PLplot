@@ -1296,40 +1296,24 @@ from relative device coordinates,
 	  <para>
 	    Integer representing the color.  The defaults at present are
 	    (these may change):
-	    <simplelist type="vert" columns="2">
-	      <member> 0 </member>
-	      <member> 1 </member>
-	      <member> 2 </member>
-	      <member> 3 </member>
-	      <member> 4 </member>
-	      <member> 5 </member>
-	      <member> 6 </member>
-	      <member> 7 </member>
-	      <member> 8 </member>
-	      <member> 9 </member>
-	      <member>10 </member>
-	      <member>11 </member>
-	      <member>12 </member>
-	      <member>13 </member>
-	      <member>14 </member>
-	      <member>15 </member>
-	      <member>black (default background)</member>
-	      <member>red (default foreground)</member>
-	      <member>yellow</member>
-	      <member>green</member>
-	      <member>aquamarine</member>
-	      <member>pink</member>
-	      <member>wheat</member>
-	      <member>grey</member>
-	      <member>brown</member>
-	      <member>blue</member>
-	      <member>BlueViolet</member>
-	      <member>cyan</member>
-	      <member>turquoise</member>
-	      <member>magenta</member>
-	      <member>salmon</member>
-	      <member>white</member>
-	    </simplelist>
+	    <simplelist type="horiz" columns="2">
+              <member> 0 </member> <member>black (default background)</member>
+	      <member> 1 </member> <member>red (default foreground)</member>
+	      <member> 2 </member> <member>yellow</member>
+	      <member> 3 </member> <member>green</member>
+	      <member> 4 </member> <member>aquamarine</member>
+	      <member> 5 </member> <member>pink</member>
+	      <member> 6 </member> <member>wheat</member>
+	      <member> 7 </member> <member>grey</member>
+	      <member> 8 </member> <member>brown</member>
+	      <member> 9 </member> <member>blue</member>
+	      <member>10 </member> <member>BlueViolet</member>
+	      <member>11 </member> <member>cyan</member>
+	      <member>12 </member> <member>turquoise</member>
+	      <member>13 </member> <member>magenta</member>
+	      <member>14 </member> <member>salmon</member>
+	      <member>15 </member> <member>white</member>
+            </simplelist>
 	    Use &plscmap0; to change the entire map0 color palette and
 	    &plscol0; to change an individual color in the map0 color
 	    palette.

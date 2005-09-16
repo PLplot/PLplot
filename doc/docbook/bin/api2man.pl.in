@@ -4,7 +4,7 @@
 #              manual) into a series of man pages.
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Mon Dec  4 16:35:32 CET 2000
-# Last modified on: Mon Mar 17 15:19:31 CET 2003
+# Last modified on: Fri Sep 16 22:11:15 CEST 2005
 # $Id$
 #
 # Copyright (C) 2000, 2003  Rafael Laboissiere
@@ -146,6 +146,18 @@ sub process_node {
       }
       elsif  ($tag eq "xref") {
         $ret .= "the PLplot documentation";
+      }
+      elsif ($tag eq "simplelist") {
+        my $ncols = $e->getAttributeNode ("columns")->getValue;
+        my $children = $e->getElementsByTagName ("member");
+        my $nc = $children->getLength;
+        $ret .= "\n.RS\n.P\n.PD 0"
+          . join ("", map {
+            ($_ % $ncols ? "\n" : "\n.P\n")
+              . process_node ($children->item ($_))
+                . " ";
+           } (0 .. ($nc - 1)))
+            . "\n.PD\n.P\n";
       }
       else {
         $ret .= process_node ($e);
