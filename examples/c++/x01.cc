@@ -32,11 +32,7 @@
 #include <iostream>
 #include <cctype>
 
-#ifdef HAVE_CMATH
 #include <cmath>
-#else
-#include <math.h>
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
