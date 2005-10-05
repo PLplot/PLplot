@@ -76,15 +76,21 @@ typedef struct {
  */
 
     COLORREF      colour;              /* Current Colour               */
+    COLORREF      oldcolour;           /* Used for high-speed background erasing */
     MSG		      msg;		            /* A Win32 message structure. */
     WNDCLASSEX	   wndclass;	         /* An extended window class structure. */
     HWND          hwnd;                /* Handle for the main window. */
     HPEN          pen;                 /* Windows pen used for drawing */
     HDC           hdc;                 /* Driver Context */
+    HDC           hdc2;                /* Driver Context II - used for Blitting */
     PAINTSTRUCT   ps;                  /* used to paint the client area of a window owned by that application */
     RECT		      rect;                /* defines the coordinates of the upper-left and lower-right corners of a rectangle */
-    HBRUSH        bgbrush;             /* brush used for filling the background */
+    RECT		      oldrect;             /* used for re-sizing comparisons */
+    RECT		      paintrect;           /* used for painting etc... */
+    HBRUSH        fillbrush;           /* brush used for fills */
     HCURSOR       cursor;              /* Current windows cursor for this window */
+    HBITMAP       bitmap;              /* Bitmap of current display; used for fast redraws via blitting */
+    HGDIOBJ       oldobject;           /* Used for tracking objects… probably not really needed but… */
 
     PLINT         draw_mode;
     char          truecolour;          /* Flag to indicate 24 bit mode */
@@ -92,6 +98,7 @@ typedef struct {
                                        /* we only do a windows redraw if plplot is plotting */
     char          enterresize;         /* Used to keep track of reszing messages from windows */
     char          resize;              /* When "entersize" is set and "reszie" isnt, user maximised the window */
+    char          already_erased;      /* Used to track first and only first backgroudn erases */
 
   } wingcc_Dev;
 
@@ -130,6 +137,7 @@ static int GetRegValue(char *key_name, char *key_word, char *buffer, int size);
 static int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size);
 static void Resize ( PLStream *pls );
 static void plD_fill_polygon_wingcc(PLStream *pls);
+static void CopySCRtoBMP(PLStream *pls);
 
 #define SetRegStringValue(a,b,c) SetRegValue(a, b, c, REG_SZ, strlen(c)+1 )
 #define SetRegBinaryValue(a,b,c,d) SetRegValue(a, b, (char *)c, REG_BINARY, d )
@@ -153,6 +161,11 @@ NULL, GetLastError(), \
 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),(LPTSTR) &lpMsgBuf, 0, NULL ); \
 MessageBox( NULL, lpMsgBuf, "GetLastError", MB_OK|MB_ICONINFORMATION ); \
 LocalFree( lpMsgBuf );}while(0)
+
+#define CrossHairCursor() do { \
+dev->cursor = LoadCursor(NULL,IDC_CROSS); \
+SetClassLong(dev->hwnd,GCL_HCURSOR,(long)dev->cursor); \
+SetCursor(dev->cursor);}while(0)
 
 #define NormalCursor() do { \
 dev->cursor = LoadCursor(NULL,IDC_ARROW); \
@@ -198,7 +211,7 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
   wingcc_Dev *dev = NULL;
 
 /*
- * The window carries a 32bit user defined pointer which points to the 
+ * The window carries a 32bit user defined pointer which points to the
  * plplot stream (pls). This is used for tracking the window.
  * Unfortunately, this is "attached" to the window AFTER it is created
  * so we can not initialise PLStream or wingcc_Dev "blindly" because
@@ -243,18 +256,31 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
         if (dev)
           {
           	Debug("WM_PAINT\t");
-            if (GetUpdateRect(dev->hwnd,&dev->rect,TRUE))
+            if (GetUpdateRect(dev->hwnd,&dev->paintrect,TRUE))
               {
-
               	 BusyCursor();
                 BeginPaint (dev->hwnd, &dev->ps);
-                if (dev->waiting==1)
-                {
-                    plRemakePlot(pls);
-                    #ifdef HAVE_FREETYPE
-                    pl_RemakeFreeType_text_from_buffer(pls);
-                    #endif
-                 }
+
+                if ((dev->waiting==1)&&(dev->already_erased==1))
+                  {
+                    Debug("Remaking\t");
+                      plRemakePlot(pls);
+                      #ifdef HAVE_FREETYPE
+                      pl_RemakeFreeType_text_from_buffer(pls);
+                      #endif
+                      CopySCRtoBMP(pls);
+                      dev->already_erased++;
+                   }
+                else if ((dev->waiting==1)&&(dev->already_erased==2))
+                  {
+                    dev->oldobject = SelectObject(dev->hdc2,dev->bitmap);
+/*                    BitBlt(dev->hdc,0,0,dev->rect.right,dev->rect.bottom,dev->hdc2,0,0,SRCCOPY); */
+                    BitBlt(dev->hdc,dev->paintrect.left,dev->paintrect.top,
+                           dev->paintrect.right,dev->paintrect.bottom,
+                           dev->hdc2,dev->paintrect.left,dev->paintrect.top,SRCCOPY);
+                    SelectObject(dev->hdc2,dev->oldobject);
+                  }
+
                 EndPaint (dev->hwnd, &dev->ps);
                 NormalCursor();
          		 return(0);
@@ -300,12 +326,34 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
       case WM_ERASEBKGND:
       if (dev)
         {
-          Debug("WM_ERASEBKGND\t");
+          if (dev->already_erased==0)
+          {
+           Debug("WM_ERASEBKGND\t");
+
+          /*
+           *    This is a new "High Speed" way of filling in the background.
+           *    supposidely this executes faster than creating a brush and
+           *    filling a rectangle - go figure ?
+           */
+/*          GetClientRect(dev->hwnd,&dev->rect); */
+           dev->oldcolour = SetBkColor(dev->hdc, RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
+           ExtTextOut(dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0);
+           SetBkColor(dev->hdc, dev->oldcolour);
+
+          /*
+           *   This is the old "low speed" way of filling the background
+
+
           dev->bgbrush = CreateSolidBrush(RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
-          GetClientRect(hwnd,&dev->rect);
+          GetClientRect(dev->hwnd,&dev->rect);
           SelectObject (dev->hdc, dev->bgbrush);
           FillRect(dev->hdc, &dev->rect,dev->bgbrush);
           DeleteObject (dev->bgbrush);
+
+          */
+           dev->already_erased=1;
+          }
+
           return(1);
         }
         return(0);
@@ -500,8 +548,8 @@ dev->hdc = GetDC (dev->hwnd);
 
 if (freetype)
    {
-    pls->dev_text = 1; /* want to draw text */
-    pls->dev_unicode = 1; /* want unicode */
+    pls->dev_text = 1;     /* want to draw text */
+    pls->dev_unicode = 1;  /* want unicode */
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
     FT->want_smooth_text=smooth_text;
@@ -544,6 +592,7 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
  */
 
   	 GetClientRect(dev->hwnd,&dev->rect);
+/*    GetClipBox(dev->hdc,&dev->rect); */
     dev->width=dev->rect.right;
     dev->height=dev->rect.bottom;
 
@@ -583,12 +632,15 @@ plD_line_wingcc(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
   POINT points[2];
 
+
   points[0].x=x1a/dev->scale;
   points[1].x=x2a/dev->scale;
   points[0].y=dev->height - (y1a/dev->scale);
   points[1].y=dev->height - (y2a/dev->scale);
 
+  dev->oldobject = SelectObject (dev->hdc, dev->pen);
   Polyline(dev->hdc, points,2);
+  SelectObject (dev->hdc, dev->oldobject);
 
 }
 
@@ -616,7 +668,9 @@ plD_polyline_wingcc(PLStream *pls, short *xa, short *ya, PLINT npts)
               points[i].x =  (unsigned long) xa[i]/dev->scale;
               points[i].y =  (unsigned long) dev->height - (ya[i]/dev->scale);
             }
+          dev->oldobject = SelectObject (dev->hdc, dev->pen);
           Polyline(dev->hdc,points,npts);
+          SelectObject (dev->hdc, dev->oldobject);
           GlobalFree(points);
         }
       else
@@ -653,13 +707,44 @@ plD_fill_polygon_wingcc(PLStream *pls)
           points[i].y = dev->height -(pls->dev_y[i]/dev->scale);
         }
 
-      dev->bgbrush = CreateSolidBrush(dev->colour);
-      SelectObject (dev->hdc, dev->bgbrush);
+      dev->fillbrush = CreateSolidBrush(dev->colour);
+      dev->oldobject = SelectObject (dev->hdc, dev->fillbrush);
       Polygon(dev->hdc,points,pls->dev_npts);
-      DeleteObject (dev->bgbrush);
+      SelectObject (dev->hdc, dev->oldobject);
+      DeleteObject (dev->fillbrush);
       GlobalFree(points);
     }
 }
+
+/*--------------------------------------------------------------------------*\
+ *    static void CopySCRtoBMP(PLStream *pls)
+ *       Function copies the screen contents into a bitmap which is
+ *       later used for fast redraws of the screen (when it gets corrupted)
+ *       rather than remaking the plot from the plot buffer.
+\*--------------------------------------------------------------------------*/
+
+static void CopySCRtoBMP(PLStream *pls)
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+  RECT rect;
+
+  /*
+   *   Clean up the old bitmap and DC
+   */
+
+  if (dev->hdc2!=NULL) DeleteDC(dev->hdc2);
+  if (dev->bitmap!=NULL) DeleteObject(dev->bitmap);
+
+  dev->hdc2=CreateCompatibleDC(dev->hdc);
+/*  GetClipBox(dev->hdc,&rect);
+  GetClientRect(dev->hwnd,&dev->rect); */
+  dev->bitmap=CreateCompatibleBitmap(dev->hdc,dev->rect.right,dev->rect.bottom);
+  dev->oldobject=SelectObject(dev->hdc2,dev->bitmap);
+  BitBlt(dev->hdc2,0,0,rect.right,rect.bottom,dev->hdc,0,0,SRCCOPY);
+  SelectObject(dev->hdc2,dev->oldobject);
+}
+
+
 
 void
 plD_eop_wingcc(PLStream *pls)
@@ -667,6 +752,8 @@ plD_eop_wingcc(PLStream *pls)
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
 
   Debug("End of the page\n");
+  CopySCRtoBMP(pls);
+  dev->already_erased=2;
 
   NormalCursor();
 
@@ -730,8 +817,8 @@ plD_bop_wingcc(PLStream *pls)
 #endif
 
   BusyCursor();
-  RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE);
-
+  dev->already_erased=0;
+  RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_ERASENOW);
 
   plD_state_wingcc(pls, PLSTATE_COLOR0);
 }
@@ -784,7 +871,6 @@ plD_state_wingcc(PLStream *pls, PLINT op)
 
   if (dev->pen!=NULL) DeleteObject(dev->pen);
   dev->pen=CreatePen( PS_SOLID, pls->width,dev->colour);
-  SelectObject (dev->hdc, dev->pen);
 }
 
 void
@@ -845,33 +931,46 @@ static void Resize( PLStream *pls )
 #ifdef HAVE_FREETYPE
   FT_Data *FT=(FT_Data *)pls->FT;
 #endif
+   Debug("Resizing");
 
  	if (dev->waiting==1)     /* Only resize the window IF plplot has finished with it */
   	{
-   	GetClientRect(dev->hwnd,&dev->rect);
-   	if ((dev->rect.right>0)&&(dev->rect.bottom>0))
+  	   memcpy(&dev->oldrect,&dev->rect,sizeof(RECT));
+/*   	GetClipBox(dev->hdc,&dev->rect); */                 /* Find out how big the region is NOW */
+      GetClientRect(dev->hwnd,&dev->rect);
+      Debug("[%d %d]",dev->rect.right,dev->rect.bottom);
+   	if ((dev->rect.right>0)&&(dev->rect.bottom>0))    /* Check to make sure it isn't just minimised (i.e. zero size) */
         {
-          dev->width=dev->rect.right;
-          dev->height=dev->rect.bottom;
-          if (dev->width>dev->height)           /* Work out the scaling factor for the  */
-            {                                   /* "virtual" (oversized) page           */
-              dev->scale=(PLFLT)PIXELS_X/dev->width;
-            }
-          else
+          if (memcmp(&dev->rect,&dev->oldrect,sizeof(RECT))!=0)   /* See if the window's changed size or not */
             {
-              dev->scale=(PLFLT)PIXELS_Y/dev->height;
-            }
+              dev->already_erased=0;
+              dev->width=dev->rect.right;
+              dev->height=dev->rect.bottom;
+              if (dev->width>dev->height)           /* Work out the scaling factor for the  */
+                {                                   /* "virtual" (oversized) page           */
+                  dev->scale=(PLFLT)PIXELS_X/dev->width;
+                }
+              else
+                {
+                  dev->scale=(PLFLT)PIXELS_Y/dev->height;
+                }
 
 #ifdef HAVE_FREETYPE
-          if (FT)
-            {
-              FT->scale=dev->scale;
-              FT->ymax=dev->height;
-            }
+              if (FT)
+                {
+                  FT->scale=dev->scale;
+                  FT->ymax=dev->height;
+                }
 #endif
-
-          RedrawWindow(dev->hwnd,NULL,NULL,RDW_INVALIDATE|RDW_ERASE);
+           }
+          RedrawWindow(dev->hwnd,NULL,NULL,RDW_INVALIDATE|RDW_ERASE|RDW_ERASENOW);
+          SendMessage(dev->hwnd,WM_PAINT,0,0);
+          dev->already_erased=2;
         }
+       else
+         {
+           memcpy(&dev->rect,&dev->oldrect,sizeof(RECT)); /* restore the old size to current size since the window is minimised */
+         }
      }
 }
 
