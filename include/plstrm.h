@@ -455,7 +455,7 @@ typedef struct {
  *    1       font-style        upright   italic    oblique |
  *    2       font-weight       medium     bold  |   bolder    light  lighter
  *    3       font-variant      normal | small caps
- * 
+ *
  * Everything to the right of the vertical bars is not implemented and is
  * subject to change.  The four font attributes (font-family, font-style,
  * font-weight, and font-variant are stored in the FCI in the order of
@@ -463,7 +463,7 @@ typedef struct {
  * hexdigit in the FCI.  The hexpower = 3 position is essentially undefined
  * since there is currently only one hexdigit (0) defined, and similarly
  * for hexpower = 4-6 so there is room for expansion of this scheme into more
- * font attributes if required.  (hexpower = 7 is reserved for the 0x8 marker 
+ * font attributes if required.  (hexpower = 7 is reserved for the 0x8 marker
  * of the FCI.)
 \*--------------------------------------------------------------------------*/
 
@@ -663,21 +663,27 @@ typedef struct {
 
   PLINT dev_compression;
   PLINT cfont;
-  
+
   void *FT;
 
 /* Stuff used by the Tkwin driver for Plframe */
   struct PlPlotter *plPlotterPtr;
 
-  
+
 /* Unicode section */
 
   PLINT dev_unicode;
-  
+
   PLUNICODE fci;
 
   PLINT dev_hrshsym;
-  
+
+/* Used to keep a hold of a temporary copy of the original character height
+ * which I overload as a quick hack to fix up a bug in freetype an plsym()
+ */
+
+  PLFLT original_chrdef,original_chrht;
+
 } PLStream;
 
 /*--------------------------------------------------------------------------*\

@@ -227,7 +227,7 @@ PLUNICODE unicode_char;
   /* Check to see if the device understands unicode and wants to draw
    * symbols.
    */
-  if ((plsc->dev_text)&&(plsc->dev_unicode)&&(!plsc->dev_hrshsym))       
+  if ((plsc->dev_text)&&(plsc->dev_unicode)&&(!plsc->dev_hrshsym))
     {
       idx=plhershey2unicode(ch); /* Get the index in the lookup table */
       unicode_char=hershey_to_unicode_lookup_table[idx].Unicode;
@@ -273,11 +273,19 @@ PLUNICODE unicode_char;
 	     args.unicode_array_len=3;
 	     plhrsh_unicode_buffer[2] = unicode_char;
 	  }
-	   
+
 	  /* No need to change font back since only one character. */
 	  args.unicode_array=&plhrsh_unicode_buffer[0];   /* Get address of the unicode buffer (even though it is currently static) */
 
+          plsc->original_chrht=plsc->chrht;
+          plsc->original_chrdef=plsc->chrdef;
+          plsc->chrht=plsc->symht;
+          plsc->chrdef=plsc->symdef;
+
           plP_esc(PLESC_HAS_TEXT, &args);
+
+          plsc->chrht=plsc->original_chrht;
+          plsc->chrdef=plsc->original_chrdef;
         }
 
     }
