@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Copyright (C) 2002, 2004  Andrew Roach
+ * Copyright (C) 2002, 2004, 2005  Andrew Roach
  * Copyright (C) 2002  Maurice LeBrun
  * Copyright (C) 2002, 2004, 2005  Alan W. Irwin
  * Copyright (C) 2003, 2004  Joao Cardoso
@@ -94,10 +94,6 @@ FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 /* If we wanted to be fancy we could add sizing, but this should be big enough */
 
 #define NTEXT_ALLOC 1024
-
-/* Default size of the text cache used with buffering */
-
-#define FT_TEXT_CACHESZ 65536
 
 /*--------------------------------------------------------------------------*\
  *  Some debugging macros
@@ -484,13 +480,6 @@ void plD_FreeType_init(PLStream *pls)
     if ((FT->textbuf=calloc(NTEXT_ALLOC, 1))==NULL)
 	plexit("Could not allocate memory for Freetype text buffer");
 
-    if (pls->plbuf_write==1)
-    {
-      if((FT->text_cache=calloc(1, (size_t) FT_TEXT_CACHESZ))==NULL)
-         plexit("Could not allocate memory for Freetype text cache");
-      FT->mem_allocated=FT_TEXT_CACHESZ;
-    }
-
     if ( FT_Init_FreeType( &FT->library ) )
 	plexit("Could not initialise Freetype library");
 
@@ -645,14 +634,6 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     PLUNICODE fci;
     FT_Fixed height;
     PLFLT height_factor;
-
-/*
- *  First of all we will see if we are buffering the output. If we are,
- *  then we will take this opportunity to save the text to our local
- *  cached buffer here.
- */
-    if ((pls->plbuf_write==1)&&(FT->redraw==0))
-       pl_save_FreeType_text_to_buffer (pls, args);
 
 if ((args->string!=NULL)||(args->unicode_array_len>0))
 {
@@ -902,14 +883,8 @@ void plD_FreeType_Destroy(PLStream *pls)
 
     if (FT) {
 	if (FT->smooth_text==1) plscmap0n(FT->ncol0_org);
-   if (pls->plbuf_write==1)
-    {
-      if (FT->text_cache!=NULL)
-         free(FT->text_cache);
-    }
 
 	FT_Done_Library(FT->library);
-	free(FT->textbuf);
 	free(pls->FT);
 	pls->FT=NULL;
     }
@@ -980,183 +955,6 @@ void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org)
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
- *
- * Function to save the text calls to freetype to a local cache which we
- * will later use to replay the commands, and therefore plot the text
- * (since the plReplot function doesn't cache text as "text" but rather as
- * vectors.) We need to save the EscText structure, naturally, as well as
- * the string pointed to in that structure, the colour of text from pls,
- * and also the size of text from pls.
-\*--------------------------------------------------------------------------*/
-
-static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
-{
-  FT_Data *FT=(FT_Data *)pls->FT;
-  unsigned short len=0;
-  unsigned short unicode_len=0,mem_used_by_unicode=0;
-  unsigned short total_mem;
-  int i;
-
-
-  if (args->string!=NULL) len=strlen(args->string); /* If no string, then the length will be 0 */
-  unicode_len=args->unicode_array_len;      /* Length of the unicode string */
-  mem_used_by_unicode=sizeof(PLUNICODE)*unicode_len;
-
-
-/*
- * Calcualte how much memory this piece of text will take up
- * We have to add in the text structure, text colour, the transform matrix,
- * the font size, and the text itself
- */
-
-  total_mem=len+mem_used_by_unicode+sizeof(unsigned short)+sizeof(PLINT)+sizeof(EscText)+(4*sizeof(PLFLT))+1;
-
-  i=FT->mem_pointer;
-
-  /*
-   *  Next we check to see if the cache has enough memory in it for the text
-   *  it was just asked to draw - if it doesn't we will try to realloc some
-   *  more memory to it. Assuming we get this extra memory, we will keep it
-   *  until the program terminates.
-   */
-
-  while ((FT->mem_pointer+total_mem)>FT->mem_allocated)
-    {
-     if ((FT->text_cache=(realloc(FT->text_cache,(size_t) (FT_TEXT_CACHESZ+FT->mem_allocated))))==NULL)
-        {
-        	plexit("Could not allocate extra memory to Freetype text cache");
-        }
-     FT->mem_allocated+=FT_TEXT_CACHESZ;
-    }
-
-  /*
-   *  Now we will start copying the stuff we want to keep to our cache
-   *  This isn't the most efficient way of doing stuff in terms of speed,
-   *  for example, if we really wanted this to be fast we would keep things
-   *  on 32 bit boundaries, but it's good enough for our purposes.
-   *  We basically have a pair system of a memcpy command to copy the stuff
-   *  to the cache, then advance the pointer for the next write.
-   */
-
-  memcpy(&FT->text_cache[i],&len,sizeof(unsigned short));  /* Length of the text string we are printing */
-  i+=sizeof(unsigned short);
-
-  memcpy(&FT->text_cache[i],&pls->icol0,sizeof(PLINT));  /* Text colour */
-  i+=sizeof(PLINT);
-
-  memcpy(&FT->text_cache[i],&pls->chrht,sizeof(PLFLT));  /* Text size */
-  i+=sizeof(PLFLT);
-
-  memcpy(&FT->text_cache[i],&FT->scale,sizeof(PLFLT));  /* scale */
-  i+=sizeof(PLFLT);
-
-  memcpy(&FT->text_cache[i],args,sizeof(EscText));
-  i+=sizeof(EscText);
-
-  if (args->xform!=NULL)   /* Do not try to copy the matrix if it is blank, or BAD THINGS will happen */
-    {
-      memcpy(&FT->text_cache[i],args->xform,(4*sizeof(PLFLT)));
-    }
-  i+=(4*sizeof(PLFLT));
-
-  if (args->string!=NULL)
-    {
-      memcpy(&FT->text_cache[i],args->string,len+1); /* Add the "len+1" at the end to get the terminating NULL */
-    }
-  else if (args->unicode_array_len>0)
-    {
-      memcpy(&FT->text_cache[i],args->unicode_array,mem_used_by_unicode); /* Add the "len+1" at the end to get the terminating NULL */
-      i+=mem_used_by_unicode;
-    }
-
-  i+=(len+1);
-
-  FT->mem_pointer=i; /* Advance the memory pointer */
-  FT->num_strings++;
-
-}
-
-/*--------------------------------------------------------------------------*\
- *  void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
- *
- *  The function replays the contents of our "local" plot text buffer to the
- *  freetype engine, therefore replaying the text drawing commands.
-\*--------------------------------------------------------------------------*/
-
-void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
-{
-  FT_Data *FT=(FT_Data *)pls->FT;
-  unsigned short len;
-  PLINT colour, last_colour;
-  PLFLT chrht, last_chrht,scale;
-  int i,j;
-  EscText text;
-
-  if ((pls->plbuf_write==1)&&(pls->dev_text==1)&&(FT->num_strings>0))
-    {
-
-    /*
-     *  Save the current colours and font size so we can restore stuff later. Should not
-     *  be needed since this function should ONLY be getting called at the END of pages,
-     *  when all plotting is done, and since the BOP functions should be setting these
-     *  up anyway before the start of each page... BUT best done just in case.
-     */
-
-      last_colour=pls->icol0;
-      last_chrht=pls->chrht;
-
-      for (i=j=0;j<FT->num_strings;j++)
-        {
-          memcpy(&len,&FT->text_cache[i],sizeof(unsigned short));  /* Length of the text string we are printing */
-          i+=sizeof(unsigned short);
-
-          memcpy(&colour,&FT->text_cache[i],sizeof(PLINT));  /* Text writing colour */
-          i+=sizeof(PLINT);
-          pls->icol0=colour;
-
-          memcpy(&chrht,&FT->text_cache[i],sizeof(PLFLT));  /* Text size */
-          i+=sizeof(PLFLT);
-
-          memcpy(&scale,&FT->text_cache[i],sizeof(PLFLT));  /* driver scale */
-          i+=sizeof(PLFLT);
-
-          memcpy(&text,&FT->text_cache[i],sizeof(EscText)); /* Structure which holds everything */
-          i+=sizeof(EscText);
-
-          text.xform=(PLFLT *)&FT->text_cache[i]; /* We just point back to our buffer :-) */
-          i+=(4*sizeof(PLFLT));
-
-          if (len>0)
-            {
-              text.string=&FT->text_cache[i];  /* Again, we just point to the copy in our buffer */
-            }
-          else if (text.unicode_array_len>0)
-            {
-              text.unicode_array= (PLUNICODE *) &FT->text_cache[i];
-              i+=text.unicode_array_len*sizeof(PLUNICODE);
-            }
-          i+=(len+1);
-
-          pls->chrht=chrht*scale/FT->scale;
-
-        /*
-         *   Since we are calling plD_render_freetype_text here, we need
-         *   to set a special "redraw" flag to make sure we don't get
-         *   recursion, since "plD_render_freetype_text" also ADDs text
-         *   to the text buffer.
-         */
-
-          FT->redraw=1;
-          plD_render_freetype_text(pls, &text);
-          FT->redraw=0;
-        }
-      pls->icol0=last_colour;     /* Reset the colour */
-      pls->chrht=last_chrht;      /* reset the font size */
-
-    }
-}
 
 /*----------------------------------------------------------------------*\
  * plD_render_freetype_sym( PLStream *pls, EscText *args )

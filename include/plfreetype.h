@@ -121,19 +121,6 @@ typedef struct FT_Data {
     PLINT ncol0_width;          /* Number of greyscale levels for each of the original colours */
     PLINT last_icol0;           /* Last colour in cmap0, which should be one of the originals */
 
-/*
- *  The next block of variables are used to store text within plplot's local
- *  text buffer. This buffer is used to overcome the unfortunate fact that
- *  the API does not cache text for plRemakePlot calls
- */
-
-    char          *text_cache;         /* We have to maintain our own text buffer for each line */
-                                       /* of text we are asked to draw because plplot's API doesn't */
-    int           mem_allocated;
-    int           mem_pointer;         /* Pointer of where we are up to in our buffer */
-    int           num_strings;         /* Number of strings to be drawn by freetype */
-    char          redraw;              /* Flag used to stop ugly recursion */
-
 
 /*
  *  The rest of the variables should be considered very much PRIVATE, and
@@ -155,13 +142,6 @@ typedef struct FT_Data {
 
 } FT_Data;
 
-
-/*  Macros that look like functions  */
-
-#define pl_FreeTypeBOP() \
-   if ((pls->plbuf_write==1)&&(pls->dev_text==1)) \
-      if (FT->text_cache!=NULL) \
-          FT->num_strings=FT->mem_pointer=0; \
 
 #endif
 

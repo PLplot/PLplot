@@ -125,7 +125,6 @@ extern void plD_FreeType_init(PLStream *pls);
 extern void plD_render_freetype_text (PLStream *pls, EscText *args);
 extern void plD_FreeType_Destroy(PLStream *pls);
 extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
-extern void pl_RemakeFreeType_text_from_buffer (PLStream *pls);
 #endif
 
 
@@ -265,9 +264,6 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                   {
                     Debug("Remaking\t");
                       plRemakePlot(pls);
-                      #ifdef HAVE_FREETYPE
-                      pl_RemakeFreeType_text_from_buffer(pls);
-                      #endif
                       CopySCRtoBMP(pls);
                       dev->already_erased++;
                    }
@@ -809,12 +805,8 @@ plD_bop_wingcc(PLStream *pls)
 
 /*
  *  Turn the cursor to a busy sign, clear the page by "invalidating" it
- *  reset freetype, if we have to, then reset the colours and pen width
+ *  then reset the colours and pen width
  */
-
-#ifdef HAVE_FREETYPE
- pl_FreeTypeBOP();
-#endif
 
   BusyCursor();
   dev->already_erased=0;
