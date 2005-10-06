@@ -4,6 +4,7 @@
  */
 
 #include "plcdemos.h"
+#include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #else
@@ -19,10 +20,6 @@
 static PLINT errcode;
 static char errmsg[160];
 
-static unsigned long pl_rand_seed = 1; /* Variable used for the random seed */
-
-
-
 /*--------------------------------------------------------------------------*\
  * main program
 \*--------------------------------------------------------------------------*/
@@ -35,8 +32,7 @@ main(int argc, char *argv[])
     PLFLT t, tmin, tmax, tjump, dt, noise;
     PLINT colbox, collab, colline[4], styline[4];
     char *legline[4], toplab[20];
-    double pl_rand(void);
-    
+
 /* plplot initialization */
 /* Parse and process command line arguments */
 
@@ -135,7 +131,7 @@ main(int argc, char *argv[])
 # endif
 #endif
 	t = (double)n * dt;
-	noise = pl_rand() - 0.5;
+	noise = ((double)rand()/(RAND_MAX+1.0)) - 0.5;
 	y1 = y1 + noise;
 	y2 = sin(t*PI/18.);
 	y3 = y2 * noise;
@@ -161,14 +157,4 @@ main(int argc, char *argv[])
     plend();
     exit(0);
 }
-
-/*--------------------------------------------------------------------------*\
- *  double pl_rand(void)
- *  Returns a random number between 0.0 and 1.0
-\*--------------------------------------------------------------------------*/
-double pl_rand(void)
-  {
-    pl_rand_seed = pl_rand_seed * 1103515245 + 12345;
-    return((pl_rand_seed/65536) / (double)65536);
-  }
 
