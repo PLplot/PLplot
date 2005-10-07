@@ -26,10 +26,7 @@
 // Implementation of PLplot example 21 in C++.
 //---------------------------------------------------------------------------//
 
-#include "plstream.h"
-
-#include <iostream>
-#include <cmath>
+#include "plc++demos.h"
 #include <time.h>
 
 #if !defined(HAVE_ISNAN)

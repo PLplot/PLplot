@@ -26,10 +26,7 @@
 // Implementation of PLplot example 8 in C++.
 //---------------------------------------------------------------------------//
 
-#include "plstream.h"
-
-#include <iostream>
-#include <cmath>
+#include "plc++demos.h"
 
 #ifdef USE_NAMESPACE
 using namespace std;

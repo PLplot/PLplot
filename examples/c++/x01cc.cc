@@ -30,11 +30,7 @@
 // relating to 2-d plotting.
 //---------------------------------------------------------------------------//
 
-#include <cmath>
-
-#include <iostream>
-
-#include "plstream.h"
+#include "plc++demos.h"
 
 #ifdef USE_NAMESPACE
 using namespace std;

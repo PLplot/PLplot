@@ -26,13 +26,10 @@
 // Implementation of PLplot example 1 in C++.
 //---------------------------------------------------------------------------//
 
-#include "plstream.h"
+#include "plc++demos.h"
+
 #include "plevent.h"
-
-#include <iostream>
 #include <cctype>
-
-#include <cmath>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

@@ -26,12 +26,9 @@
 // Implementation of PLplot example 20 in C++.
 //---------------------------------------------------------------------------//
 
-#include "plstream.h"
+#include "plc++demos.h"
 #include "plevent.h"
-
 #include <fstream>
-#include <iostream>
-#include <cmath>
 
 #ifdef USE_NAMESPACE
 using namespace std;

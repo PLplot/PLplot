@@ -27,7 +27,7 @@
 // Implementation of PLplot example 23 in C++.
 //---------------------------------------------------------------------------//
 
-#include "plstream.h"
+#include "plc++demos.h"
 
 class x23 {
 

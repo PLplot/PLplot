@@ -41,7 +41,7 @@
 //
 
 
-#include "plstream.h"
+#include "plc++demos.h"
 
 class x24 {
 

@@ -22,6 +22,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 sources = \
+	plc++demos.h \
 	x01cc.cc \
 	x01.cc \
 	x02.cc \
