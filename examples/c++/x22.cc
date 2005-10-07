@@ -27,7 +27,6 @@
 //---------------------------------------------------------------------------//
 
 #include "plstream.h"
-#include "plevent.h"
 
 #include <iostream>
 #include <cmath>
