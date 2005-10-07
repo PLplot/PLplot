@@ -24,7 +24,6 @@
 */
 
 #include "plcdemos.h"
-#include "plevent.h"
 
 /*
  * main

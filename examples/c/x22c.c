@@ -24,7 +24,6 @@
 */
 
 #include "plcdemos.h"
-#include "plevent.h"
 
 /* Pairs of points making the line segments used to plot the user defined arrow */
 static PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
