@@ -121,12 +121,12 @@ main(int argc, char *argv[])
   if (!nosombrero) { 
     plAlloc2dGrid(&r, XDIM, YDIM);
     plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
-    plenv(0., 2.*PI, 0, 3.*PI, 1, -1);
+    plenv(0., 2.*M_PI, 0, 3.*M_PI, 1, -1);
 
     for (i=0; i<XDIM; i++)
-      x[i] = i*2.*PI/(XDIM-1);
+      x[i] = i*2.*M_PI/(XDIM-1);
     for (i=0; i<YDIM; i++)
-      y[i] = i*3.*PI/(YDIM-1);
+      y[i] = i*3.*M_PI/(YDIM-1);
 
     for (i=0; i<XDIM; i++)
       for (j=0; j<YDIM; j++) {
@@ -136,8 +136,8 @@ main(int argc, char *argv[])
 
     pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
     plptex(2., 2., 3., 4., 0., "Transparent image");
-    plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0.05, 1.,
-	    0., 2.*PI, 0, 3.*PI); 
+    plimage(z, XDIM, YDIM, 0., 2.*M_PI, 0, 3.*M_PI, 0.05, 1.,
+	    0., 2.*M_PI, 0, 3.*M_PI); 
     plFree2dGrid(r, XDIM, YDIM);
 
     /* save the plot */

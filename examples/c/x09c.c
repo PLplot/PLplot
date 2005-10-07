@@ -69,7 +69,7 @@ static void polar()
        
 /*Perimeter*/
    for (i = 0; i < PERIMETERPTS; i++) {
-      t = (2.*PI/(PERIMETERPTS-1))*(double)i;
+      t = (2.*M_PI/(PERIMETERPTS-1))*(double)i;
       px[i] = cos(t);
       py[i] = sin(t);
    }
@@ -85,7 +85,7 @@ static void polar()
    for (i = 0; i < RPTS; i++) {
       r = i/(double)(RPTS-1);
       for (j = 0; j < THETAPTS; j++) {
-	 theta = (2.*PI/(double)(THETAPTS-1))*(double)j;
+	 theta = (2.*M_PI/(double)(THETAPTS-1))*(double)j;
 	 cgrid2.xg[i][j] = r*cos(theta);
 	 cgrid2.yg[i][j] = r*sin(theta);
 	 z[i][j] = r;
@@ -154,7 +154,7 @@ static void potential()
    for (i = 0; i < PRPTS; i++) {
       r = 0.5 + (double) i;
       for (j = 0; j < PTHETAPTS; j++) {
-	 theta = (2.*PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
+	 theta = (2.*M_PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
 	 cgrid2.xg[i][j] = r*cos(theta);
 	 cgrid2.yg[i][j] = r*sin(theta);
       }
@@ -249,7 +249,7 @@ static void potential()
 		 
    /* Draw outer boundary  */
    for (i = 0; i < PPERIMETERPTS; i++) {
-      t = (2.*PI/(PPERIMETERPTS-1))*(double)i;
+      t = (2.*M_PI/(PPERIMETERPTS-1))*(double)i;
       px[i] = x0 + rmax*cos(t);
       py[i] = y0 + rmax*sin(t);
    }
@@ -322,8 +322,8 @@ main(int argc, char *argv[])
 	for (j = 0; j < YPTS; j++) {
 	    mypltr((PLFLT) i, (PLFLT) j, &xx, &yy, NULL);
 
-	    argx = xx * PI/2;
-	    argy = yy * PI/2;
+	    argx = xx * M_PI/2;
+	    argy = yy * M_PI/2;
 	    distort = 0.4;
 
 	    cgrid1.xg[i] = xx + distort * cos(argx);

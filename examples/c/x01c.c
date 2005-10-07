@@ -347,7 +347,7 @@ plot3(void)
 
     for (i = 0; i < 101; i++) {
 	x[i] = 3.6 * i;
-	y[i] = sin(x[i] * PI / 180.0);
+	y[i] = sin(x[i] * M_PI / 180.0);
     }
 
     plcol0(4);

@@ -185,8 +185,8 @@ main(int argc, char *argv[])
 	for (j = 0; j < ny; j++) {
 	    mypltr((PLFLT) i, (PLFLT) j, &x, &y, NULL);
 
-	    argx = x * PI/2;
-	    argy = y * PI/2;
+	    argx = x * M_PI/2;
+	    argy = y * M_PI/2;
 	    distort = 0.4;
 
 	    cgrid1.xg[i] = x + distort * cos(argx);
@@ -314,10 +314,10 @@ main(int argc, char *argv[])
     for (i = 0; i < nx; i++) {
         r = ((PLFLT) i)/ (nx-1);
 	for (j = 0; j < ny; j++) {
-	   t = (2.*PI/(ny-1.))*j;
+	   t = (2.*M_PI/(ny-1.))*j;
 	   cgrid2.xg[i][j] = r*cos(t);
 	   cgrid2.yg[i][j] = r*sin(t);
-	   z[i][j] = exp(-r*r)*cos(5.*PI*r)*cos(5.*t);
+	   z[i][j] = exp(-r*r)*cos(5.*M_PI*r)*cos(5.*t);
 	}
     }
 
@@ -336,7 +336,7 @@ main(int argc, char *argv[])
 
 /* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
       for (i = 0; i < PERIMETERPTS; i++) {
-	       t = (2.*PI/(PERIMETERPTS-1))*(double)i;
+	       t = (2.*M_PI/(PERIMETERPTS-1))*(double)i;
 	       px[i] = cos(t);
 	       py[i] = sin(t);
       }

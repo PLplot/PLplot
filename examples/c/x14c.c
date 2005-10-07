@@ -270,7 +270,7 @@ plot3(void)
 
     for (i = 0; i < 101; i++) {
 	x[i] = 3.6 * i;
-	y[i] = sin(x[i] * PI / 180.0);
+	y[i] = sin(x[i] * M_PI / 180.0);
     }
 
     plcol0(4);
@@ -289,7 +289,7 @@ plot4(void)
     PLFLT x0[361], y0[361];
     PLFLT x[361], y[361];
 
-    dtr = PI / 180.0;
+    dtr = M_PI / 180.0;
     for (i = 0; i <= 360; i++) {
 	x0[i] = cos(dtr * i);
 	y0[i] = sin(dtr * i);

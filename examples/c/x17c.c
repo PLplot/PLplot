@@ -133,7 +133,7 @@ main(int argc, char *argv[])
 	t = (double)n * dt;
 	noise = ((double)rand()/(RAND_MAX+1.0)) - 0.5;
 	y1 = y1 + noise;
-	y2 = sin(t*PI/18.);
+	y2 = sin(t*M_PI/18.);
 	y3 = y2 * noise;
 	y4 = y2 + noise/3.;
 

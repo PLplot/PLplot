@@ -15,8 +15,13 @@
 
 /* define PI if not defined by math.h */
 
+/* Actually M_PI seems to be more widely used so we deprecate PI. */
 #ifndef PI
 #define PI 3.1415926535897932384
+#endif
+
+#ifndef M_PI
+#define M_PI 3.1415926535897932384
 #endif
 
 /* various utility macros */

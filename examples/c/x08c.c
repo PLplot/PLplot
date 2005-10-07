@@ -167,7 +167,7 @@ main(int argc, char *argv[])
       }
       else {
 	r = sqrt(xx * xx + yy * yy);
-	z[i][j] = exp(-r * r) * cos(2.0 * PI * r);
+	z[i][j] = exp(-r * r) * cos(2.0 * M_PI * r);
       }
     }
   }

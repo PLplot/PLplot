@@ -21,8 +21,8 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
     double xp, yp, radius;
     for (i = 0; i < n; i++) {
 	radius = 90.0 - y[i];
-	xp = radius * cos(x[i] * PI / 180.0);
-	yp = radius * sin(x[i] * PI / 180.0);
+	xp = radius * cos(x[i] * M_PI / 180.0);
+	yp = radius * sin(x[i] * M_PI / 180.0);
 	x[i] = xp;
 	y[i] = yp;
     }	

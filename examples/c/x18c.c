@@ -53,8 +53,8 @@ main(int argc, char *argv[])
 /*	r    = 1. - ( (PLFLT) i / (PLFLT) NPTS ); */
 	r    = z[i];
 
-	x[i] = r * cos( 2. * PI * 6. * i / NPTS );
-	y[i] = r * sin( 2. * PI * 6. * i / NPTS );
+	x[i] = r * cos( 2. * M_PI * 6. * i / NPTS );
+	y[i] = r * sin( 2. * M_PI * 6. * i / NPTS );
     }
 
     for (k = 0; k < 4; k++) {
@@ -100,7 +100,7 @@ void test_poly(int k)
 		      { 0, 1, 0, 1 },
 		      { 1, 1, 0, 0 } };
 
-    pi = PI, two_pi = 2. * pi;
+    pi = M_PI, two_pi = 2. * pi;
 
     x = (PLFLT *) malloc(5 * sizeof(PLFLT));
     y = (PLFLT *) malloc(5 * sizeof(PLFLT));

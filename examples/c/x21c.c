@@ -353,12 +353,12 @@ create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
       *x = xt + xm;
       *y = yt + ym;
     } else { /* std=1, meaning that many points are outside the plot range */
-      *x = sqrt(-2.*log(xt)) * cos(2.*PI*yt) + xm;
-      *y = sqrt(-2.*log(xt)) * sin(2.*PI*yt) + ym;
+      *x = sqrt(-2.*log(xt)) * cos(2.*M_PI*yt) + xm;
+      *y = sqrt(-2.*log(xt)) * sin(2.*M_PI*yt) + ym;
     }
     if (!rosen) {
       r = sqrt((*x) * (*x) + (*y) * (*y));
-      *z = exp(-r * r) * cos(2.0 * PI * r);
+      *z = exp(-r * r) * cos(2.0 * M_PI * r);
     } else {
       *z = log(pow(1. - *x, 2.) + 100. * pow(*y - pow(*x, 2.), 2.));
     }

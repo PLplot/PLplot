@@ -26,10 +26,6 @@
 #include "plcdemos.h"
 #include "plevent.h"
 
-#if !defined(M_PI)
-#define M_PI 3.14159265358979323846
-#endif
-
 /* Pairs of points making the line segments used to plot the user defined arrow */
 static PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
 static PLFLT arrow_y[6] = {0.0, 0.0, 0.2, 0.0, -0.2, 0.0};
@@ -240,7 +236,7 @@ void potential() {
     for (i = 0; i < nr; i++) {
 	r = 0.5 + (double) i;
 	for (j = 0; j < ntheta; j++) {
-	    theta = 2.*PI/(ntheta-1)*(0.5+(double)j);
+	    theta = 2.*M_PI/(ntheta-1)*(0.5+(double)j);
 	    x = r*cos(theta);
 	    y = r*sin(theta);
 	    cgrid2.xg[i][j] = x;
@@ -281,7 +277,7 @@ void potential() {
 
     /* Plot the perimeter of the cylinder */
     for (i=0;i<nper;i++) {
-	theta = (2.*PI/(nper-1))*(double)i;
+	theta = (2.*M_PI/(nper-1))*(double)i;
 	px[i] = rmax*cos(theta);
 	py[i] = rmax*sin(theta);
     }
