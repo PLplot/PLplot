@@ -331,7 +331,7 @@ There is no need on my system to use that flag.
   -- RL ]
 
 ------------------------------------------------------------------------------
-Alternative Build Instructions for MacOS X 10.3
+Alternative Build Instructions for MacOS X 10.3 (10-21-05 HPB)
 ------------------------------------------------------------------------------
 
 To install the CVS version of PLplot you will need :
@@ -349,7 +349,7 @@ make check
 make install
 
 
-To install the latest release (5.5.2+) issue the following commands in the 
+To install the latest release (5.5.1+) issue the following commands in the 
 top plplot directory (also see notes)
 
 ./configure --disable-dyndrivers --disable-f77
@@ -357,12 +357,20 @@ make LIBS="-Wl,-framework -Wl,Foundation"
 make check
 make install
 
+Compiling with Fortran:
+
+./configure --disable-dyndrivers
+...as above...
+
+If you encounter the error: 
+ "g77: installation problem, cannot exec `c++filt3': No such file or directory"
+You may be able to get around it by going to /usr/bin and creating c++filt3 
+as a link to c++filt (i.e. ln -s c++filt c++filt3, which you'll probably have 
+to sudo).
 
 Notes :
 
 Make check is only necessary if you want to compile the examples.
-
-Linking with f77 is often problematic but it can be made to work...
 
 Dynamic drivers doesn't seem to be compatible with Objective C and by 
 extension the AquaTerm driver, but can be used if you don't plan to 
