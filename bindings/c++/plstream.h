@@ -95,7 +95,8 @@ class plstream {
     plstream( const plstream& );
     plstream& operator=( const plstream& );
 
-    void set_stream() { ::c_plsstrm(stream); }
+  protected:
+    virtual void set_stream() { ::c_plsstrm(stream); }
 
   public:
     plstream();
