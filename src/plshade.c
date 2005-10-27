@@ -153,7 +153,7 @@ static int
 find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x);
 
 static void
-poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
+selected_polygon(void (*fill) (PLINT, PLFLT *, PLFLT *),
      PLINT (*defined) (PLFLT, PLFLT),
      PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4);
 
@@ -631,28 +631,28 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 			exfill (fill, defined, n, x, y);
 		}
 		else if (slope == 1) {
-		    poly(fill, defined, x, y, 0, 1, 2, -1);
-		    poly(fill, defined, x, y, 3, 4, 5, -1);
+		    selected_polygon(fill, defined, x, y, 0, 1, 2, -1);
+		    selected_polygon(fill, defined, x, y, 3, 4, 5, -1);
 		}
 		else if (c0[iy + 1] == OK) {
 		    if (fill != NULL)
 			exfill (fill, defined, n, x, y);
 		}
 		else {
-		    poly(fill, defined, x, y, 0, 1, 5, -1);
-		    poly(fill, defined, x, y, 2, 3, 4, -1);
+		    selected_polygon(fill, defined, x, y, 0, 1, 5, -1);
+		    selected_polygon(fill, defined, x, y, 2, 3, 4, -1);
 		}
 		break;
 	      case 044:
 		if (n != 8)
 		    fprintf(stderr, "plfshade err n=%d !8", (int) n);
 		if (slope == 1) {
-		    poly(fill, defined, x, y, 0, 1, 2, 3);
-		    poly(fill, defined, x, y, 4, 5, 6, 7);
+		    selected_polygon(fill, defined, x, y, 0, 1, 2, 3);
+		    selected_polygon(fill, defined, x, y, 4, 5, 6, 7);
 		}
 		else {
-		    poly(fill, defined, x, y, 0, 1, 6, 7);
-		    poly(fill, defined, x, y, 2, 3, 4, 5);
+		    selected_polygon(fill, defined, x, y, 0, 1, 6, 7);
+		    selected_polygon(fill, defined, x, y, 2, 3, 4, 5);
 		}
 		break;
 	      case 024:
@@ -671,20 +671,20 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		}
 
 		else if (c0[iy] == OK) {
-		    poly(fill, defined, x, y, 0, 1, 6, -1);
-		    poly(fill, defined, x, y, 2, 3, 4, 5);
+		    selected_polygon(fill, defined, x, y, 0, 1, 6, -1);
+		    selected_polygon(fill, defined, x, y, 2, 3, 4, 5);
 		}
 		else if (c0[iy+1] == OK) {
-		    poly(fill, defined, x, y, 0, 1, 2, -1);
-		    poly(fill, defined, x, y, 3, 4, 5, 6);
+		    selected_polygon(fill, defined, x, y, 0, 1, 2, -1);
+		    selected_polygon(fill, defined, x, y, 3, 4, 5, 6);
 		}
 		else if (c1[iy+1] == OK) {
-		    poly(fill, defined, x, y, 0, 1, 5, 6);
-		    poly(fill, defined, x, y, 2, 3, 4, -1);
+		    selected_polygon(fill, defined, x, y, 0, 1, 5, 6);
+		    selected_polygon(fill, defined, x, y, 2, 3, 4, -1);
 		}
 		else if (c1[iy] == OK) {
-		    poly(fill, defined, x, y, 0, 1, 2, 3);
-		    poly(fill, defined, x, y, 4, 5, 6, -1);
+		    selected_polygon(fill, defined, x, y, 0, 1, 2, 3);
+		    selected_polygon(fill, defined, x, y, 4, 5, 6, -1);
 		}
 		else {
 		    fprintf(stderr, "plfshade err logic case 024:042\n");
@@ -782,14 +782,14 @@ find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x)
 }
 
 /*----------------------------------------------------------------------*\
- * poly()
+ * selected_polygon()
  *
  * Draws a polygon from points in x[] and y[].
  * Point selected by v1..v4
 \*----------------------------------------------------------------------*/
 
 static void
-poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
+selected_polygon(void (*fill) (PLINT, PLFLT *, PLFLT *),
      PLINT (*defined) (PLFLT, PLFLT),
      PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4)
 {
