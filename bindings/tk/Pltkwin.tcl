@@ -104,7 +104,7 @@ body Pltkwin::constructor {args} {
     } {
 	keep -background -cursor
     }
-    pack $itk_component(ftop) -side top	-fill x
+    pack $itk_component(ftop) -side top	-fill x -before $hull.plwin
 #-fill both 
 #-expand yes
     itk_component add pmenub {

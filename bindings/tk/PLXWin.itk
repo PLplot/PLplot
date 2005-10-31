@@ -20,7 +20,7 @@ itcl::class PLXWin {
     # for page dumps).
 
 	plw::create_TopRow $hull
-	pack append $hull $hull.ftop {top fill}
+        pack $hull.ftop -side top -fill both -before $hull.plwin
 
     # Initialize plplot widget.  Enable keyboard traversal when widget has
     # the input focus.  Also grab the initial input focus.
