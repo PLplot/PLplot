@@ -62,6 +62,12 @@
 /* Define if isnan is available */
 #undef HAVE_ISNAN
 
+/* Define if you have c++ accessible stdint.h */
+#undef HAVE_CXX_STDINT_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 

@@ -99,7 +99,17 @@ main()
       [AC_DEFINE(BROKEN_ISNAN_CXX,[],[isnan is in math.h but not cmath])
        AC_MSG_RESULT(broken)])
     fi
-
+    AC_MSG_CHECKING([if stdint.h can be used from c++])
+    AC_COMPILE_IFELSE([
+#include <stdint.h>
+typedef uint32_t PLINT;
+PLINT foo=1;
+],
+                    [AC_DEFINE([HAVE_CXX_STDINT_H],[],
+                               [Define if you have c++ accessible stdint.h])
+                    AC_MSG_RESULT([yes])],
+                    [AC_MSG_RESULT([no])]
+                    )
     AC_LANG_POP([C++])
 
 fi

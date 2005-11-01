@@ -140,7 +140,8 @@ typedef float PLFLT;
 #define PLFLT_MIN  FLT_MIN
 #endif
 
-#if defined(HAVE_STDINT_H)
+#if (defined(HAVE_STDINT_H) && !defined(__cplusplus)) ||\
+(defined(__cplusplus) && defined(HAVE_CXX_STDINT_H))
 #include <stdint.h>
 /* This is apparently portable if stdint.h exists. */
 typedef uint32_t PLUNICODE;
