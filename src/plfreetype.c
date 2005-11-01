@@ -99,8 +99,7 @@ FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
  *  Some debugging macros
 \*--------------------------------------------------------------------------*/
 
-#define Verbose(...) do {if (pls->verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
-#define Debug(...) do {if (pls->debug){fprintf(stderr,__VA_ARGS__);}}while(0)
+#define Debug5(a,b,c,d,e) do {if (pls->debug){fprintf(stderr,a,b,c,d,e);}}while(0)
 
 
 /*              FUNCTION PROTOTYPES    */
@@ -649,7 +648,7 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
 
 /*  this will help work out underlining and overlining*/
 
-    Debug("%d %d %d %d;",FT->face->underline_position>>6,
+    Debug5("%d %d %d %d;",FT->face->underline_position>>6,
 	   FT->face->descender>>6,
 	   FT->face->ascender>>6,
 	   ((FT->face->underline_position*-1)+FT->face->ascender)>>6);

@@ -36,13 +36,7 @@
  *   Function-like macro definitions
 \*--------------------------------------------------------------------------*/
 
-#define Warning(a,...) do {if (verbose){fprintf(stderr,"WARNING %d\n" a "\n",__LINE__,##__VA_ARGS__);}}while(0)
-#define Error(a,...) do {fprintf(stderr,"ERROR %d\n" a "\n",__LINE__,##__VA_ARGS__);exit(__LINE__);}while(0)
-#define MemError(a,...) do {fprintf(stderr,"MEMORY ERROR %d\n" a "\n",__LINE__,##__VA_ARGS__);exit(__LINE__);}while(0)
-#define Verbose(...) do {if (verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
-#define Debug(...) do {if (debug){fprintf(stderr,__VA_ARGS__);}}while(0)
-
-
+#define MemError1(a) do {fprintf(stderr,"MEMORY ERROR %d\n" a "\n",__LINE__);exit(__LINE__);}while(0)
 
 const char header[]=""\
 "/*\n"\
@@ -113,13 +107,13 @@ if ((fr=fopen(argv[1],"r"))!=NULL)
      */
 
     if ((Hershey=(int *)calloc(number_of_lines, (size_t)sizeof(int)))==NULL)
-      MemError("Allocating memory to the hershey table");
+      MemError1("Allocating memory to the hershey table");
 
     if ((Unicode=(int *)calloc(number_of_lines, (size_t)sizeof(int)))==NULL)
-      MemError("Allocating memory to the unicode table");
+      MemError1("Allocating memory to the unicode table");
 
     if ((Font=(char *)calloc(number_of_lines, (size_t)sizeof(char)))==NULL)
-      MemError("Allocating memory to the font table");
+      MemError1("Allocating memory to the font table");
 
     rewind(fr);   /* Go back to the start of the file */
 
