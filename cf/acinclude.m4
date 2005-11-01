@@ -394,10 +394,10 @@ AC_DEFUN([PL_COMPARE_VERSIONS],[
   while test -n "$pl_verstr_1" -o -n "$pl_verstr_2" ; do 
     pl_v1=`echo $pl_verstr_1 | cut -d. -f1`
     test -z "$pl_v1" && pl_v1=0
-    pl_verstr_1=`echo $pl_verstr_1 | sed 's/[[^.]]\+.\?//'`
+    pl_verstr_1=`echo $pl_verstr_1 | sed -e 's,^[[^\.]]*\.,,'`
     pl_v2=`echo $pl_verstr_2 | cut -d. -f1`
     test -z "$pl_v2" && pl_v2=0
-    pl_verstr_2=`echo $pl_verstr_2 | sed 's/[[^.]]\+.\?//'`
+    pl_verstr_2=`echo $pl_verstr_2 | sed -e 's,^[[^\.]]*\.,,'`
     if test "$pl_v1" -gt "$pl_v2" ; then
       pl_cmp=gt
       break;
