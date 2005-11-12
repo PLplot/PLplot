@@ -276,19 +276,14 @@ interactive driver is being developed. </para>
       distribution directory.  Exceptions are noted below.
     </para>
     <para>
-      The intent behind distributing PLplot under the LGPL is to ensure
-      that it continues to evolve in a positive way, while remaining freely
-      distributable.  The package is considered a "library" even though
-      there are associated programs, such as plrender, pltek, plserver, and
-      pltcl.  The ties between these programs and the library are so great
-      that I consider them as part of the library, so distribution under
-      the terms of the LGPL makes sense.  Software developers are allowed
-      and encouraged to use PLplot as an integral part of their product,
-      even a commercial product.  Under the conditions of the LGPL,
-      however, the PLplot source code must remain freely available,
-      including any modifications you make to it (if you distribute a
-      program based on the modified library).  Please read the full license
-      for more info.
+      The intent behind distributing PLplot under the LGPL is to ensure that
+      it continues to evolve in a positive way, while remaining freely
+      distributable. Note in particular that either open-source or
+      proprietary code can be linked to LGPLed code such as PLplot, see the
+      interpretation <ulink
+      url="http://www.gnu.org/philosophy/license-list.html">here</ulink>.
+      Full details of the LGPL are given <ulink
+      url="http://www.gnu.org/copyleft/lesser.html">here</ulink>.
     </para>
     <sect2 id="additional-copyrights">
       <title>Additional Copyrights</title>
