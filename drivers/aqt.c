@@ -322,7 +322,10 @@ void plD_polyline_aqt(PLStream *pls, short *xa, short *ya, PLINT npts)
 
 void plD_eop_aqt(PLStream *pls)
 {
-   [adapter renderPlot];
+	[arpool release]; 	// prevents a memory leak by freeing everything in
+						// the auto-release pool when the plot is closed.
+	arpool = [[NSAutoreleasePool alloc] init];
+	[adapter renderPlot];
 }
 
 //---------------------------------------------------------------------
