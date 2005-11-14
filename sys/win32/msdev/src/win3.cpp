@@ -39,7 +39,7 @@ static DrvOpt    win3_options[] = {
 	{NULL, DRV_INT, NULL, NULL}
 };
 
-LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,UINT wParam,LONG lParam);
+LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,UINT wParam,LONG lParam);
 
 static const char szPlPlotClass[] = "PlplotClass";
 static const char szPlPlotWName[] = "Plplot Window";
