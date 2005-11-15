@@ -40,7 +40,7 @@ We also support a wide variety of environment variables to help the
 configuration system find software that has been installed in non-standard
 places.  Eventually, all those environment variables will be replaced by
 documented configuration options, but for now see the code in sysloc.in to
-see what environment variables can be set prior to running ./configure, e.g., 
+see what environment variables can be set prior to running ./configure, e.g.,
 
 JAVAMDINCDIR
 GDINCDIR
@@ -125,7 +125,7 @@ dynamic devices) is not quite ready for prime time for Cygwin.
 
 Must disable the xterm device because the Cygwin version of the xterm
 application that comes with XFree86 has trouble switching between the xterm
-plot windown and the ordinary command-line window for the xterm application.
+plot window and the ordinary command-line window for the xterm application.
 However, the xterm device is disabled by default in any case since you would
 only use it as last resort (monochrome, rather lame software fill) so no
 need to be explicit.
@@ -135,10 +135,10 @@ need to be explicit.
 
 make
 
-Simple Cygwin g77 test programmes indicate iargc works fine, but
+Simple Cygwin g77 test programs indicate iargc works fine, but
 nevertheless for our configurable.f which is linked as part of libplplotf77
 iargc always returns -1 for the number of arguments regardless of the actual
-number so fortran command-line parsing fails.  We assume this problem is 
+number so fortran command-line parsing fails.  We assume this problem is
 caused by some sort of linking problem and maturation of Cygwin and/or
 libtool will fix it. Meanwhile to work-around this problem do the following:
 
@@ -161,7 +161,7 @@ cd MYPREFIX/share/plplotVERSION/examples
 
 make
 
-Finally, run 
+Finally, run
 
 ./plplot-test.sh
 
@@ -172,6 +172,47 @@ Use
 ./plplot-test.sh --help
 
 for instructions on testing additional file devices.
+
+
+Here is a list of packages that need to be installed so that you can
+successfully build PLplot (including antialiasing fonts):
+
+From "Devel":
+- gcc-core: C compiler
+- gcc-g++: C++ compiler (even if you do not use C++)
+- libfontconfig-devel: Font configuration and customisation library (development)
+- libfreetype2-devel: High-quality software font engine (development files)
+- make: The GNU version of the 'make' utility
+
+
+From "Graphics":
+- gd: A graphics library for fast image creation - documentation and applications
+- jpeg: A library for manipulating JPEG image format files
+- libgd-devel: A graphics library for fast image creation - 2.0.x development libraries
+- libgd2: A graphics library for fast image creation - 2.0.x runtime
+- libpng12-devel: PNG library - 1.2.x development libraries and headers
+
+From "X11":
+- XFree86-lib-compat: Cygwin/X 4.2.0 shared libraries
+- xorg-x11-devel: Cygwin/X headers and import libraries
+
+Notes:
+- It is quite possible that one or two packages in the above list are
+  superfluous, but the given collection should work.
+- Getting GNU C++ is required to avoid confusion over an "executable" cc.exe
+  in the cygwin/bin directory: the configure script recognises this as a
+  CC executable and tries to work out if it is a valid C++ compiler.
+- If the GNU FORTRAN 77 compiler is not installed, then you need to add
+  "--disable-f77" to the configuration options. Somehow, the configure
+  script still recognises it to be present, but the build will fail
+  later on.
+- If you want to build individual examples, use:
+
+     make x01c.exe
+
+  for instance. A target "x01c" will fail (make will use default rules
+  to create the program then)
+
 
 ------------------------------------------------------------------------------
 Build Instructions for Mingw
@@ -185,18 +226,18 @@ Windows XP SP1
 Athlon XP Processor
 
 
-You must install Msys as well as Mingw in order to build plplot under Mingw. 
+You must install Msys as well as Mingw in order to build plplot under Mingw.
 If you want to rebuild from CVS, you will also need MsysDTK as well.
 
 The library must be built with "--disable-shared".
 
-Under Mingw & Msys, simply use "configure --disable-shared" then 
+Under Mingw & Msys, simply use "configure --disable-shared" then
 "make install" to build.
 
-The Mingw display driver is called "wingcc". As a driver, it is still under 
-development and is only in its infancy. The driver has two driver specific 
-options if plplot was compiled with freetype support: "text" and "smooth". 
-"-drvopt text,smooth", as with the GD drivers, makes the driver use freetype 
+The Mingw display driver is called "wingcc". As a driver, it is still under
+development and is only in its infancy. The driver has two driver specific
+options if plplot was compiled with freetype support: "text" and "smooth".
+"-drvopt text,smooth", as with the GD drivers, makes the driver use freetype
 to render text, rather than plplot's hershey fonts.
 
 ------------------------------------------------------------------------------
@@ -213,8 +254,8 @@ have the "file" command installed.  (The libtool script uses the "file"
 command to test for shared libraries so that script fails to detect shared
 libraries if the "file" command is not available.) If your ./configure step
 is warning you that the "file" command is not installed and shared libraries
-have been disabled because of this, then you should install that command.  
-For Cygwin systems that command is available from 
+have been disabled because of this, then you should install that command.
+For Cygwin systems that command is available from
 http://cygwin.com/packages . For MinGW systems that command is available
 from http://gnuwin32.sourceforge.net/packages/file.htm .
 
@@ -327,7 +368,7 @@ make install
 There is no need on my system to use that flag.
 
 [ N.B.: some users reported that the --with-pthreads option cause problems
-  with interactive demos, like using the mouse with the xwin driver.  
+  with interactive demos, like using the mouse with the xwin driver.
   -- RL ]
 
 ------------------------------------------------------------------------------
@@ -349,7 +390,7 @@ make check
 make install
 
 
-To install the latest release (5.5.1+) issue the following commands in the 
+To install the latest release (5.5.1+) issue the following commands in the
 top plplot directory (also see notes)
 
 ./configure --disable-dyndrivers --disable-f77
@@ -362,25 +403,25 @@ Compiling with Fortran:
 ./configure --disable-dyndrivers
 ...as above...
 
-If you encounter the error: 
+If you encounter the error:
  "g77: installation problem, cannot exec `c++filt3': No such file or directory"
-You may be able to get around it by going to /usr/bin and creating c++filt3 
-as a link to c++filt (i.e. ln -s c++filt c++filt3, which you'll probably have 
+You may be able to get around it by going to /usr/bin and creating c++filt3
+as a link to c++filt (i.e. ln -s c++filt c++filt3, which you'll probably have
 to sudo).
 
 Notes :
 
 Make check is only necessary if you want to compile the examples.
 
-Dynamic drivers doesn't seem to be compatible with Objective C and by 
-extension the AquaTerm driver, but can be used if you don't plan to 
+Dynamic drivers doesn't seem to be compatible with Objective C and by
+extension the AquaTerm driver, but can be used if you don't plan to
 use this driver.
 
-The extra LIBS flags at the make step are only necessary if you are trying 
+The extra LIBS flags at the make step are only necessary if you are trying
 to use the AquaTerm driver, which uses the Foundation framework.
 
 If you want to be able to display plots you will need either X11 from Apple
-(X11 1.0 - XFree86 4.3.0 or later recommended) and the X11 SDK, or AquaTerm 
+(X11 1.0 - XFree86 4.3.0 or later recommended) and the X11 SDK, or AquaTerm
 (v1.0.b3 or later recommended, http://aquaterm.sourceforge.net).
 
 ------------------------------------------------------------------------------
@@ -433,7 +474,7 @@ N.B. with this version FLIBS is no longer required!
     ld linker.
 
   + make
-  
+
   + make check
 
   + make install
@@ -444,13 +485,13 @@ command:        ./configure --prefix=/home/users/a/ai/airwin/plplot_install_sola
 system:         sparc-sun-solaris2.9
 have_x:         yes
 prefix:         /home/users/a/ai/airwin/plplot_install_solaris_sparc
-CC:             cc 
-F77:            f95 
+CC:             cc
+F77:            f95
 LIB_TAG:        d
 devices:         hp7470 hp7580 lj_hpgl mem null pbm plmeta ps psc pstex xfig xwin
 
 Available device drivers:
-static:         
+static:
 dynamic:         hpgl.la mem.la null.la pbm.la plmeta.la ps.la pstex.la xfig.la xwin.la
 
 Compilation options:
@@ -488,10 +529,10 @@ Presumably these differences are due to our current 16-bit rendering.
 
 In sum, it was a good result for plplot-5.3.0.cvs.20040217.tar.gz and it
 should also be a good native (cc, f95, and ld) solaris result for
-PLplot-5.3.1 (when that official release is completed).  
+PLplot-5.3.1 (when that official release is completed).
 
 Adjust these instructions if you want to use the Gnu versions of everything
-(which allows you to use g++). 
+(which allows you to use g++).
 
 ------------------------------------------------------------------------------
 Build Instructions for IRIX (as of plplot-5.3.0.cvs.20040217.tar.gz)
@@ -527,17 +568,17 @@ N.B. with this version FLIBS is no longer required!
       lines "use namespace std" and suggested this option to be added.
     - --disable-cxx was required nonetheless because the examples would
       not compile.
-    - --disable-tk and --disable-tkwin were necessary, because the 
+    - --disable-tk and --disable-tkwin were necessary, because the
       installation of Tcl/Tk was incomplete (change of directory structure)
 
   + make
-  
+
   + make check
 
     This produced almost identical PostScript files for the C and F77
     examples.
 
-  + make install 
+  + make install
 
 ------------------------------------------------------------------------------
 Build Instructions for AIX5.2 (as of the forthcoming plplot-5.5.2 since
