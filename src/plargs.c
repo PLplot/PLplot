@@ -404,7 +404,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG,
     "-bg color",
-    "Background color (0=black, FFFFFF=white)" },
+    "Background color (000000=black, FFFFFF=white)" },
 {
     "ncol0",			/* Allocated colors in cmap 0 */
     opt_ncol0,
