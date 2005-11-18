@@ -192,6 +192,9 @@ From "Graphics":
 - libgd2: A graphics library for fast image creation - 2.0.x runtime
 - libpng12-devel: PNG library - 1.2.x development libraries and headers
 
+From "Utils":
+- file: Determine file type using 'magic' numbers
+
 From "X11":
 - XFree86-lib-compat: Cygwin/X 4.2.0 shared libraries
 - xorg-x11-devel: Cygwin/X headers and import libraries
@@ -206,6 +209,10 @@ Notes:
   "--disable-f77" to the configuration options. Somehow, the configure
   script still recognises it to be present, but the build will fail
   later on.
+- The "file" utility is essential if you want to build shared libraries:
+  libtool uses it to identify the proper libraries the library you want
+  to build depends on. However, it does not check that the file command
+  actually exists and this gives _wrong_ results.
 - If you want to build individual examples, use:
 
      make x01c.exe

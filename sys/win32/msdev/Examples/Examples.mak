@@ -30,7 +30,8 @@ ALL :   $(SOURCEDIR)\x01c.exe \
 	$(SOURCEDIR)\x18c.exe \
 	$(SOURCEDIR)\x19c.exe \
 	$(SOURCEDIR)\x20c.exe \
-	$(SOURCEDIR)\x22c.exe
+	$(SOURCEDIR)\x22c.exe \
+	$(SOURCEDIR)\x25c.exe
 
 
 CLEAN :
@@ -75,6 +76,8 @@ CLEAN :
 	-@erase $(SOURCEDIR)\x20c.exe"
 	-@erase $(INTDIR)\x22c.obj
 	-@erase $(SOURCEDIR)\x22c.exe"
+	-@erase $(INTDIR)\x25c.obj
+	-@erase $(SOURCEDIR)\x25c.exe"
 
 
 "$(OUTDIR)" :
@@ -223,6 +226,11 @@ $(SOURCEDIR)\x22c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x22c.obj $(LINK32_OBJS)
   $(LINK32_FLAGS) /pdb:$(OUTDIR)\x22c.pdb /out:$(SOURCEDIR)\x22c.exe $(INTDIR)\x22c.obj $(LINK32_OBJS)
 <<
 
+$(SOURCEDIR)\x25c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x25c.obj $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) /pdb:$(OUTDIR)\x25c.pdb /out:$(SOURCEDIR)\x25c.exe $(INTDIR)\x25c.obj $(LINK32_OBJS)
+<<
+
 
 
 $(INTDIR)\x01c.obj : $(SOURCEDIR)\x01c.c $(INTDIR)
@@ -284,6 +292,9 @@ $(INTDIR)\x20c.obj : $(SOURCEDIR)\x20c.c $(INTDIR)
 
 $(INTDIR)\x22c.obj : $(SOURCEDIR)\x22c.c $(INTDIR)
 	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x22c.pch $(SOURCEDIR)\x22c.c
+
+$(INTDIR)\x25c.obj : $(SOURCEDIR)\x25c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x25c.pch $(SOURCEDIR)\x25c.c
 
 
 
