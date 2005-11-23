@@ -123,10 +123,10 @@
  * short is currently used for device page coordinates, so they are
  * bounded by (-32767, 32767).  This gives a max resolution of about 3000
  * dpi, and improves performance in some areas over using a PLINT.
- * 
+ *
  * PLUNICODE should be a 32-bit unsigned integer on all platforms.
- * For now, we are using unsigned int for our Linux ix86 unicode experiments, 
- * but that doesn't guarantee 32 bits exactly on all platforms so this will 
+ * For now, we are using unsigned int for our Linux ix86 unicode experiments,
+ * but that doesn't guarantee 32 bits exactly on all platforms so this will
  * be subject to change.
 \*--------------------------------------------------------------------------*/
 
@@ -516,6 +516,8 @@ typedef struct {
 #define    plline	c_plline
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
+#define    plmap	c_plmap
+#define    plmeridians	c_plmeridians
 #define    plmesh	c_plmesh
 #define    plmeshc	c_plmeshc
 #define    plmkstrm	c_plmkstrm
@@ -994,13 +996,13 @@ c_pllsty(PLINT lin);
 /* plot continental outline in world coordinates */
 
 void
-plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
 
 void
-plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
+c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
@@ -1045,7 +1047,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 void
 c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt,
-	 PLFLT *clevel, PLINT nlevel, 
+	 PLFLT *clevel, PLINT nlevel,
 	 PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
 
 /*
