@@ -29,7 +29,7 @@
 # PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
 # PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
 # PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
-# ./x24c -dev png -drvopt text,smooth=0 -o x24c.png
+# ./x24.pl -dev png -drvopt text,smooth=0 -o x24c.png
 #
 # Packages needed:
 #
