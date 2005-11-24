@@ -29,7 +29,7 @@
      PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
      PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
      PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
-     ./x24c -dev png -drvopt text,smooth=0 -o x24c.png )
+     ./x24c -dev png -drvopt smooth=0 -o x24c.png )
 
    Packages needed:
 

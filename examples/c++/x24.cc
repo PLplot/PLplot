@@ -28,7 +28,7 @@
 // PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
 // PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
 // PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
-// ./x24 -dev png -drvopt text,smooth=0 -o x24cxx.png
+// ./x24 -dev png -drvopt smooth=0 -o x24cxx.png
 //
 // Packages needed:
 //
