@@ -84,7 +84,7 @@ builtin([define], [PL_DRIVERS_DEVICE_LIST], [
     tk:tk:yes,
     tkwin:tkwin:yes,
     wingcc:wingcc:yes,
-    wxwidgets:wxwidgets:no,
+    wxwidgets:wxwidgets:yes,
     xfig:xfig:yes,
     xwin:xwin:yes])
 
