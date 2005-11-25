@@ -886,7 +886,7 @@ static void init_freetype_lv2( PLStream *pls )
   }
 }
 
-
+#endif
 
 
 
@@ -1090,8 +1090,6 @@ void wxPLplotFrame::OnPaint( wxPaintEvent& WXUNUSED(event) )
   MemoryDC.SelectObject( wxNullBitmap );  
 }
  
-#endif
-
 #else
 int pldummy_wxwidgets()
 {
