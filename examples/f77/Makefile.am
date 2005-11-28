@@ -47,7 +47,7 @@ f77_examples = \
 	x18f.f \
 	x19f.f \
 	x22f.f \
-	x22f.f
+	x23f.f
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
 
@@ -73,7 +73,7 @@ f77m4_sources = \
 	x18f.fm4 \
 	x19f.fm4 \
 	x22f.fm4 \
-	x22f.fm4
+	x23f.fm4
 
 # Need explicit dependencies for Solaris make.
 x01f.f: x01f.fm4 $(top_builddir)/config.status
@@ -160,7 +160,7 @@ check_PROGRAMS = \
 	x18f \
 	x19f \
 	x22f \
-	x22f
+	x23f
 
 nodist_x01f_SOURCES = x01f.f
 nodist_x02f_SOURCES = x02f.f
