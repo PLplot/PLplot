@@ -790,7 +790,7 @@ void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height)
 /*     else { printf("Count %d\n",count); count ++; } */
 
     dev->background = gdk_pixmap_new(NULL,width,height,
-				     gdk_visual_get_best_depth());
+		            gtk_widget_get_visual(GTK_WIDGET(canvas))->depth);
   }
 
   /* Set up the drawing context for the background pixmap */
