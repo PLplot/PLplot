@@ -105,6 +105,7 @@ typedef struct FT_Data {
 
     PLUNICODE               fci;
     PLFLT chrht; /* Mirror of pls's copy so we can detect when the font SIZE has been changed */
+    PLFLT xdpi, ydpi;  /* Mirror of pls's copy, so that we can detect, if resolution was changed */
 
     FT_Matrix           matrix;         /* used for rotating etc... the font. */
     FT_Vector           pos;            /* used for calculating offsets of text boxes/sizes */

@@ -584,7 +584,12 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci)
 {
    FT_Data *FT=(FT_Data *)pls->FT;
    double font_size = pls->chrht * 72/25.4; /* font_size in points, chrht is in mm */
+
+   /* save a copy of character height and resolution */    
    FT->chrht=pls->chrht;
+   FT->xdpi=pls->xdpi;
+   FT->ydpi=pls->ydpi;
+    
    if (fci != FT->fci) {
       char *font_name = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
       if (font_name == NULL) {
@@ -638,11 +643,12 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
 {
 
 /*
- *   Work out if either the font size or the font face has changed.
+ *   Work out if either the font size, the font face or the
+ *   resolution has changed.
  *   If either has, then we will reload the font face.
  */
     plgfci(&fci);
-    if ((FT->fci!=fci)||(FT->chrht!=pls->chrht))
+    if ((FT->fci!=fci)||(FT->chrht!=pls->chrht)||(FT->xdpi!=pls->xdpi)||(FT->ydpi!=pls->ydpi))
         FT_SetFace(pls,fci);
 
 
