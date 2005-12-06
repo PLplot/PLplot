@@ -187,7 +187,7 @@ void x18::test_poly(int k) {
       y[4] = sin( PHI(j) ) * sin( THETA(i) );
       z[4] = cos( PHI(j) );
 
-      pls->poly3(5, x, y, z, draw[k], 1 );
+      pls->poly3(5, x, y, z, draw[k], true );
     }
   }
 

@@ -250,7 +250,8 @@ x22::f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
 
 x22::x22( int argc, char ** argv ) {
 
-    PLINT narr, fill;
+    PLINT narr;
+    bool fill;
 
     // Set of points making a polygon to use as the arrow
     PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
@@ -285,7 +286,7 @@ x22::x22( int argc, char ** argv ) {
     circulation();
 
     narr = 6;
-    fill = 0;
+    fill = false;
 
     // Set arrow style using arrow_x and arrow_y then 
     // plot using these arrows.

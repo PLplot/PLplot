@@ -127,7 +127,7 @@ class plstream {
 		   PLPointer pltr_data);
 
 // Set the arrow style
-    void svect( PLFLT *arrox_x, PLFLT *arrow_y, PLINT npts, PLINT fill);
+    void svect( PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, bool fill);
 
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).
@@ -198,7 +198,7 @@ class plstream {
 // /* Copies state parameters from the reference stream to the current stream. */
 
 //     void cpstrm( PLINT iplsr, PLINT flags );
-     void cpstrm( plstream &pls, PLINT flags );
+     void cpstrm( plstream &pls, bool flags );
 
 // Converts input values from relative device coordinates to relative plot
 // coordinates.
@@ -481,7 +481,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 
 /* Draws a polygon in 3 space.  */
 
-    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc );
+    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, bool ifcc );
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 
@@ -531,8 +531,8 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 /* Set color map 1 colors using a piece-wise linear relationship between */
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
-    void scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
-		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev );
+    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
+		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, bool *rev );
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
@@ -614,7 +614,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 		PLINT min_color, PLINT min_width,
 		PLINT max_color, PLINT max_width,
-		void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		void (*fill) (PLINT, PLFLT *, PLFLT *), bool rectangular,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		PLPointer pltr_data );
 
@@ -622,7 +622,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
               	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 		PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                 PLINT cont_color, PLINT cont_width,
-                void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+                void (*fill) (PLINT, PLFLT *, PLFLT *), bool rectangular,
                 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
                 PLPointer pltr_data);
 
@@ -635,7 +635,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 		PLINT min_color, PLINT min_width,
 		PLINT max_color, PLINT max_width,
-		PLINT rectangular,
+		bool rectangular,
 		Coord_Xformer *pcxf );
 
     void  shade1( PLFLT *a, PLINT nx, PLINT ny,
@@ -645,7 +645,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 		  PLINT min_color, PLINT min_width,
 		  PLINT max_color, PLINT max_width,
-		  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		  void (*fill) (PLINT, PLFLT *, PLFLT *), bool rectangular,
 		  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		  PLPointer pltr_data);
 
@@ -659,7 +659,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 		 PLINT min_color, PLINT min_width,
 		 PLINT max_color, PLINT max_width,
-		 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		 void (*fill) (PLINT, PLFLT *, PLFLT *), bool rectangular,
 		 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		 PLPointer pltr_data );
 
@@ -682,7 +682,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Set the pause (on end-of-page) status */
 
-    void spause( PLINT pause );
+    void spause( bool pause );
 
 /* Set stream number.  */
 
@@ -709,7 +709,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
     void stripc(PLINT *id, char *xspec, char *yspec,
         PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
         PLFLT xlpos, PLFLT ylpos,
-        PLINT y_ascl, PLINT acc,
+        bool y_ascl, bool acc,
         PLINT colbox, PLINT collab,
         PLINT colline[], PLINT styline[], char *legline[],
         char *labx, char *laby, char *labtop);
@@ -794,7 +794,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
     void wind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
 /* set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device */
-    void xormod(PLINT mode, PLINT *status);
+    void xormod(bool mode, bool *status);
 
 	/* The rest for use from C only */
 
@@ -968,7 +968,80 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 /* Wait for graphics input event and translate to world coordinates */
 
     int GetCursor( PLGraphicsIn *plg );
+
+// Depreciated versions of methods which use PLINT instead of bool
+    void svect( PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, PLINT fill);
+    void cpstrm( plstream &pls, PLINT flags );
+    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc );
+    void scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
+		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev );
+
+    void shade( PLFLT **a, PLINT nx, PLINT ny,
+		PLINT (*defined) (PLFLT, PLFLT),
+		PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+		PLFLT shade_min, PLFLT shade_max,
+		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		PLINT min_color, PLINT min_width,
+		PLINT max_color, PLINT max_width,
+		void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		PLPointer pltr_data );
+
+    void shades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+              	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                PLINT cont_color, PLINT cont_width,
+                void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+                void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+                PLPointer pltr_data);
+
+    void shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
+		PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
+		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		PLINT min_color, PLINT min_width,
+		PLINT max_color, PLINT max_width,
+		PLINT rectangular,
+		Coord_Xformer *pcxf );
+
+    void  shade1( PLFLT *a, PLINT nx, PLINT ny,
+		  PLINT (*defined) (PLFLT, PLFLT),
+		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+		  PLFLT shade_min, PLFLT shade_max,
+		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		  PLINT min_color, PLINT min_width,
+		  PLINT max_color, PLINT max_width,
+		  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		  PLPointer pltr_data);
+
+    void fshade( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+		 PLPointer f2eval_data,
+		 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
+		 PLPointer c2eval_data,
+		 PLINT nx, PLINT ny,
+		 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+		 PLFLT shade_min, PLFLT shade_max,
+		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		 PLINT min_color, PLINT min_width,
+		 PLINT max_color, PLINT max_width,
+		 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		 PLPointer pltr_data );
+
+    void spause( PLINT pause );
+
+    void stripc(PLINT *id, char *xspec, char *yspec,
+        PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+        PLFLT xlpos, PLFLT ylpos,
+        PLINT y_ascl, PLINT acc,
+        PLINT colbox, PLINT collab,
+        PLINT colline[], PLINT styline[], char *legline[],
+        char *labx, char *laby, char *labtop);
+
+    void xormod(PLINT mode, PLINT *status);
 };
+
+
 
 #endif                          // __plstream_h__
 

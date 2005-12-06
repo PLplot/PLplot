@@ -252,7 +252,7 @@ void x01cc::plot2()
 	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width,
-		   1, NULL );
+		   true, NULL );
     }
 
     pls->col(Red);
@@ -278,7 +278,7 @@ void x01cc::plot2()
 	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width,
-		   0, &tr );
+		   false, &tr );
     }
 
     pls->col(Red);
@@ -329,7 +329,7 @@ void x01cc::plot2()
 	pls->shade( d, 0., 1., 0., twopi,
 		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		   min_color, min_width, max_color, max_width,
-		   0, &tr );
+		   false, &tr );
     }
 
     pls->col(Red);

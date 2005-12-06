@@ -240,19 +240,19 @@ x20::x20( int argc, char ** argv ) {
     /* pls->bop(); */
 
     /*
-       spause(0), adv(0), spause(1), also works,
+       spause(false), adv(0), spause(true), also works,
        but the above question remains.
        With this approach, the previous pause state is lost,
        as there is no API call to get its current state.
     */
 
-    pls->spause(0);
+    pls->spause(false);
     pls->adv(0);
 
     // display selection only
     pls->image(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
 
-    pls->spause(1);
+    pls->spause(true);
     pls->adv(0);
 
     // zoom in selection
@@ -324,7 +324,7 @@ void x20::save_plot(char *fname) {
   pls2->sdev("psc"); // new device type. Use a known existing driver
   pls2->sfnam(fname); // file name
 
-  pls2->cpstrm(*pls, 0); // copy old stream parameters to new stream
+  pls2->cpstrm(*pls, false); // copy old stream parameters to new stream
   pls2->replot();	// do the save
 
   delete pls2; // close new device
@@ -335,17 +335,18 @@ void x20::save_plot(char *fname) {
 int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
   PLGraphicsIn gin;
   PLFLT xxi=*xi, yyi=*yi, xxe=*xe, yye=*ye, t;
-  PLINT st, start = 0;
+  PLINT start = 0;
+  bool st;
 
-  pls->xormod(1, &st); /* enter xor mode to draw a selection rectangle */
+  pls->xormod(true, &st); /* enter xor mode to draw a selection rectangle */
 
   if (st) { /* driver has xormod capability, continue */
     while(1) {
       PLFLT sx[5], sy[5];
 
-      pls->xormod(0, &st);
+      pls->xormod(false, &st);
       pls->GetCursor(&gin);
-      pls->xormod(1, &st);
+      pls->xormod(true, &st);
 
       if (gin.button == 1) {
 	xxi = gin.wX; yyi = gin.wY;
@@ -377,7 +378,7 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
 	break;
       }
     }
-    pls->xormod(0, &st); /* leave xor mod */
+    pls->xormod(false, &st); /* leave xor mod */
   }
 
   if (xxe < xxi) {
@@ -403,7 +404,7 @@ void x20::gray_cmap(PLINT num_col) {
   pos[1] = 1.0;
 
   pls->scmap1n(num_col);
-  pls->scmap1l(1, 2, pos, r, g, b, NULL);
+  pls->scmap1l(true, 2, pos, r, g, b, NULL);
 }
 
 int main( int argc, char ** argv ) {

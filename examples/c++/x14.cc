@@ -125,7 +125,7 @@ x14::x14( int argc, char ** argv ) {
   // Turn off pause to make this a slave (must follow master)
 
   pls2->SetOpt("geometry", geometry_slave);
-  pls2->spause(0);
+  pls2->spause(false);
   pls2->sdev(driver);
   pls2->init();
 

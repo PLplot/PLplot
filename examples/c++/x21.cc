@@ -288,7 +288,7 @@ x21::x21( int argc, char ** argv ) {
 	pls->col0(15);
 	pls->lab(xlab, ylab, title[alg-1]);
 	pls->shades(zg, xp, yp, NULL, xm, xM, ym, yM,
-		 clev, nl, 1, 0, 1, plfill, 1, NULL, NULL);
+		 clev, nl, 1, 0, 1, plfill, true, NULL, NULL);
 	pls->col0(2);
       } else {
 
@@ -344,7 +344,7 @@ void x21::cmap1_init() {
   s[1] = 0.8;
 
   pls->scmap1n(256);
-  pls->scmap1l(0, 2, i, h, l, s, NULL);
+  pls->scmap1l(false, 2, i, h, l, s, NULL);
 }
 
 void x21::create_grid(PLFLT **xi, PLINT px, PLFLT **yi, PLINT py) {

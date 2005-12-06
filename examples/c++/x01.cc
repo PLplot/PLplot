@@ -186,7 +186,7 @@ x01::x01( int argc, char ** argv ) {
     pls2->sfnam(f_name);       /* file name */
     pls2->sdev("psc");         /* device type */
 
-    pls2->cpstrm(*pls, 0);     /* copy old stream parameters to new stream */
+    pls2->cpstrm(*pls, false); /* copy old stream parameters to new stream */
     pls2->replot();            /* do the save by replaying the plot buffer */
     
     delete pls2;
@@ -224,7 +224,7 @@ x01::x01( int argc, char ** argv ) {
 void x01::plot1( int do_test )
 {
   int i;
-  PLINT st;
+  bool st;
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT *x = new PLFLT[60];
   PLFLT *y = new PLFLT[60];
@@ -272,7 +272,7 @@ void x01::plot1( int do_test )
 
   if (do_test && test_xor) {
 #ifdef HAVE_USLEEP
-    pls->xormod(1, &st); /* enter xor mode */
+    pls->xormod(true, &st); /* enter xor mode */
     if (st) {
       for (i=0; i<60; i++) {
 	pls->poin(1, x+i, y+i,9);      /* draw a point */
@@ -280,7 +280,7 @@ void x01::plot1( int do_test )
 	pls->flush();                  /* force an update of the tk driver */
 	pls->poin(1, x+i, y+i,9);      /* erase point */
       }
-      pls->xormod(0, &st);                     /* leave xor mode */
+      pls->xormod(false, &st);                     /* leave xor mode */
     }
 #else
     cout << "The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen." << endl;

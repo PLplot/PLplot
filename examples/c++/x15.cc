@@ -142,7 +142,7 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax) {
 	       shade_min, shade_max,
 	       sh_cmap, sh_color, sh_width,
 	       min_color, min_width, max_color, max_width,
-	       plstream::fill, 1, NULL, NULL );
+	       plstream::fill, true, NULL, NULL );
 
   pls->col0(1);
   pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -177,7 +177,7 @@ void x15::plot2(PLFLT **z, PLFLT zmin, PLFLT zmax)
 		 shade_min, shade_max,
 		 sh_cmap, sh_color, sh_width,
 		 min_color, min_width, max_color, max_width,
-		 plstream::fill, 1, NULL, NULL );
+		 plstream::fill, true, NULL, NULL );
   }
 
   pls->col0(1);

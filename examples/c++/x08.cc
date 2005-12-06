@@ -99,7 +99,7 @@ void x08::cmap1_init(int gray)
   PLFLT *h = new PLFLT[2];
   PLFLT *l = new PLFLT[2];
   PLFLT *s = new PLFLT[2];
-  PLINT *rev = new PLINT[2];
+  bool *rev = new bool[2];
 
   i[0] = 0.0;         // left boundary
   i[1] = 1.0;         // right boundary
@@ -125,11 +125,11 @@ void x08::cmap1_init(int gray)
     s[1] = 0.8;
   }
 
-  rev[0] = 0;         // interpolate on front side of colour wheel.
-  rev[1] = 0;         // interpolate on front side of colour wheel.
+  rev[0] = false;         // interpolate on front side of colour wheel.
+  rev[1] = false;         // interpolate on front side of colour wheel.
 
   pls->scmap1n(256);
-  pls->scmap1l(0, 2, i, h, l, s, rev);
+  pls->scmap1l(false, 2, i, h, l, s, rev);
 
   delete[] i;
   delete[] h;
