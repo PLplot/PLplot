@@ -295,7 +295,14 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
 static void plfloatlabel(PLFLT value, char *string)
 {
     PLINT  setpre, precis;
-    char   form[10], tmpstring[10];
+    /* form[10] gives enough space for all non-malicious formats.
+     * tmpstring[14] gives enough room for 3 digits in a negative exponent
+     * or 4 digits in a positive exponent which should be enough for all
+     * non-malicious use.
+     * Obviously there are security issues here that
+     * should be addressed as well.
+     */
+    char   form[10], tmpstring[14];
     PLINT  exponent = 0;
     PLFLT  mant, tmp;
 
@@ -330,7 +337,6 @@ static void plfloatlabel(PLFLT value, char *string)
 
     sprintf(form, "%%.%df", prec-1);
     sprintf(string, form, mant);
-    /* sprintf(tmpstring, "#(229)10#u%d", exponent); */
     sprintf(tmpstring, "#(229)10#u%d", exponent);
     strcat(string, tmpstring);
 
