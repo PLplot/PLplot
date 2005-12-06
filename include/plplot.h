@@ -152,6 +152,12 @@ typedef unsigned int PLUNICODE;
 typedef int PLINT;
 #endif
 
+/* For identifying logical (boolean) arguments */
+typedef PLINT PLBOOL;
+
+/* For identifying bitwise (sequence of booleans) arguments */
+typedef PLINT PLFLAGS;
+
 /* For passing user data, as with X's XtPointer */
 
 typedef void* PLPointer;
@@ -655,7 +661,7 @@ void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
               PLPointer pltr_data);
 
 void
-c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill);
+c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
@@ -667,7 +673,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 /* Plot a histogram using x to store data values and y to store frequencies */
 
 void
-c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center);
+c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLFLAGS center);
 
 /* Start new page.  Should only be used with pleop(). */
 
@@ -733,7 +739,7 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 /* Copies state parameters from the reference stream to the current stream. */
 
 void
-c_plcpstrm(PLINT iplsr, PLINT flags);
+c_plcpstrm(PLINT iplsr, PLBOOL flags);
 
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
@@ -947,7 +953,7 @@ c_plgzax(PLINT *p_digmax, PLINT *p_digits);
 
 void
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-	 PLINT nbin, PLINT oldwin);
+	 PLINT nbin, PLFLAGS oldwin);
 
 /* Set current color (map 0) by hue, lightness, and saturation. */
 
@@ -1096,7 +1102,7 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code);
 /* Draws a polygon in 3 space.  */
 
 void
-c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc);
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLBOOL ifcc);
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 
@@ -1157,8 +1163,8 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
 void
-c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
+c_plscmap1l(PLBOOL itype, PLINT npts, PLFLT *intensity,
+	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev);
 
 /* Set number of colors in cmap 1 */
 
@@ -1246,7 +1252,7 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	  PLINT min_color, PLINT min_width,
 	  PLINT max_color, PLINT max_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
 
@@ -1257,7 +1263,7 @@ c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
@@ -1266,7 +1272,7 @@ c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
 	  PLINT cont_color, PLINT cont_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
 
@@ -1281,7 +1287,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
@@ -1314,7 +1320,7 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 /* Set the pause (on end-of-page) status */
 
 void
-c_plspause(PLINT pause);
+c_plspause(PLBOOL pause);
 
 /* Set stream number.  */
 
@@ -1352,7 +1358,7 @@ void
 c_plstripc(PLINT *id, char *xspec, char *yspec,
 	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
 	PLFLT xlpos, PLFLT ylpos,
-	PLINT y_ascl, PLINT acc,
+	PLBOOL y_ascl, PLBOOL acc,
 	PLINT colbox, PLINT collab,
 	PLINT colline[], PLINT styline[], char *legline[],
 	char *labx, char *laby, char *labtop);
@@ -1466,7 +1472,7 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 /*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
 
 void
-c_plxormod(PLINT mode, PLINT *status);
+c_plxormod(PLBOOL mode, PLBOOL *status);
 
 /*--------------------------------------------------------------------------*\
  *		Functions for use from C or C++ only
