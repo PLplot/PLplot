@@ -296,13 +296,13 @@ static void plfloatlabel(PLFLT value, char *string)
 {
     PLINT  setpre, precis;
     /* form[10] gives enough space for all non-malicious formats.
-     * tmpstring[14] gives enough room for 3 digits in a negative exponent
-     * or 4 digits in a positive exponent which should be enough for all
-     * non-malicious use.
+     * tmpstring[15] gives enough room for 3 digits in a negative exponent
+     * or 4 digits in a positive exponent + null termination.  That
+     * should be enough for all non-malicious use.
      * Obviously there are security issues here that
      * should be addressed as well.
      */
-    char   form[10], tmpstring[14];
+    char   form[10], tmpstring[15];
     PLINT  exponent = 0;
     PLFLT  mant, tmp;
 
