@@ -45,7 +45,6 @@ f77_examples = \
 	x16af.f \
 	x17f.f \
 	x18f.f \
-	x19f.f \
 	x22f.f \
 	x23f.f
 
@@ -71,7 +70,6 @@ f77m4_sources = \
 	x16af.fm4 \
 	x17f.fm4 \
 	x18f.fm4 \
-	x19f.fm4 \
 	x22f.fm4 \
 	x23f.fm4
 
@@ -113,8 +111,6 @@ x16af.f: x16af.fm4 $(top_builddir)/config.status
 x17f.f: x17f.fm4 $(top_builddir)/config.status
 
 x18f.f: x18f.fm4 $(top_builddir)/config.status
-
-x19f.f: x19f.fm4 $(top_builddir)/config.status
 
 x22f.f: x22f.fm4 $(top_builddir)/config.status
 
@@ -158,7 +154,6 @@ check_PROGRAMS = \
 	x16af \
 	x17f \
 	x18f \
-	x19f \
 	x22f \
 	x23f
 
@@ -181,7 +176,6 @@ nodist_x16f_SOURCES = x16f.f
 nodist_x16af_SOURCES = x16af.f
 nodist_x17f_SOURCES = x17f.f
 nodist_x18f_SOURCES = x18f.f
-nodist_x19f_SOURCES = x19f.f
 nodist_x22f_SOURCES = x22f.f
 nodist_x23f_SOURCES = x23f.f
 
