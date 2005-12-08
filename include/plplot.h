@@ -155,9 +155,6 @@ typedef int PLINT;
 /* For identifying logical (boolean) arguments */
 typedef PLINT PLBOOL;
 
-/* For identifying bitwise (sequence of booleans) arguments */
-typedef PLINT PLFLAGS;
-
 /* For passing user data, as with X's XtPointer */
 
 typedef void* PLPointer;
@@ -673,7 +670,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 /* Plot a histogram using x to store data values and y to store frequencies */
 
 void
-c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLFLAGS center);
+c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center);
 
 /* Start new page.  Should only be used with pleop(). */
 
@@ -953,7 +950,7 @@ c_plgzax(PLINT *p_digmax, PLINT *p_digits);
 
 void
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-	 PLINT nbin, PLFLAGS oldwin);
+	 PLINT nbin, PLINT oldwin);
 
 /* Set current color (map 0) by hue, lightness, and saturation. */
 
