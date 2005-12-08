@@ -53,7 +53,7 @@ class x07 {
 //        NumberFormat nf = NumberFormat.getNumberInstance();
 //        Change to this custom format to get stupid locale commas
 //        separating hundreds and thousands place out of labels.
-        DecimalFormat nf = new DecimalFormat("#####");
+        DecimalFormat nf = new DecimalFormat("####0");
 
         int i, j, k, l;
         double x[] = new double[1];
@@ -87,6 +87,7 @@ class x07 {
             for (i = 0; i <= 9; i++) {
                 String text = nf.format(i);
                 pls.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+		System.out.println(text);
             }
 
             k = 0;
