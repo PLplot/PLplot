@@ -174,9 +174,9 @@ public void cont(double[][] f, int kx, int lx, int ky, int ly,
     plplotjavac.plcont(f, kx, lx, ky, ly, clevel, pltr, OBJECT_DATA);
 }
 
-public void cpstrm(int iplsr, int flags) {
+public void cpstrm(int iplsr, boolean flags) {
     if (set_stream() == -1) return;
-    plplotjavac.plcpstrm(iplsr, flags);
+    plplotjavac.plcpstrm(iplsr, flags?1:0);
 }
 
 // The end / end1 functions have extra code in to keep track of the
@@ -466,9 +466,9 @@ public void poin3(double[] x, double[] y, double[] z, int code) {
     plplotjavac.plpoin3(x, y, z, code);
 }
 
-public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {
+public void poly3(double[] x, double[] y, double[] z, int[] draw, boolean ifcc) {
     if (set_stream() == -1) return;
-    plplotjavac.plpoly3(x, y, z, draw, ifcc);
+    plplotjavac.plpoly3(x, y, z, draw, ifcc?1:0);
 }
 
 public void prec(int setp, int prec) {
@@ -511,10 +511,15 @@ public void scmap1(int[] r, int[] g, int[] b) {
     plplotjavac.plscmap1(r, g, b);
 }
 
-public void scmap1l(int itype, double[] intensity, double[] coord1, 
-		double[] coord2, double[] coord3, int[] rev) {
+public void scmap1l(boolean itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3, boolean[] rev) {
     if (set_stream() == -1) return;
-    plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, rev);
+    int [] loc_rev = new int[rev.length];
+    for (int i=0;i<rev.length;i++) {
+	loc_rev[i] = rev[i]?1:0;
+    }
+
+    plplotjavac.plscmap1l(itype?1:0, intensity, coord1, coord2, coord3, loc_rev);
 }
 
 public void scmap1n(int ncol1) {
@@ -595,22 +600,22 @@ public void sfnam(String fnam) {
 
 public void shades( double[][] a, double xmin, double xmax, double ymin,
 		double ymax, double[] clevel, int fill_width, int cont_color,
-		int cont_width, int rectangular, 
+		int cont_width, boolean rectangular, 
 		double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plshades( a, xmin, xmax, ymin, ymax, clevel, fill_width,
-		    cont_color, cont_width, rectangular, pltr, OBJECT_DATA);
+		    cont_color, cont_width, rectangular?1:0, pltr, OBJECT_DATA);
 }
 
 public void shade(double[][] a, double left, double right, double bottom,
 		double top, double shade_min, double shade_max, int sh_cmap,
 		double sh_color, int sh_width, int min_color, int min_width, 
-		int max_color, int max_width, int rectangular, 
+		int max_color, int max_width, boolean rectangular, 
 		double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plshade(a, left, right, bottom, top, shade_min, shade_max,
 		    sh_cmap, sh_color, sh_width, min_color, min_width, 
-		    max_color, max_width, rectangular, pltr, OBJECT_DATA);
+		    max_color, max_width, rectangular?1:0, pltr, OBJECT_DATA);
 }
 
 public void smaj(double def, double scale) {
@@ -633,9 +638,9 @@ public void spage(double xp, double yp, int xleng, int yleng, int xoff, int yoff
     plplotjavac.plspage(xp, yp, xleng, yleng, xoff, yoff);
 }
 
-public void spause(int pause) {
+public void spause(boolean pause) {
     if (set_stream() == -1) return;
-    plplotjavac.plspause(pause);
+    plplotjavac.plspause(pause?1:0);
 }
 
 public void sstrm(int strm) {
@@ -671,12 +676,12 @@ public void stripa(int id, int pen, double x, double y) {
 public void stripc(int[] id, String xspec, String yspec, 
 		double xmin, double xmax, double xjump, 
 		double ymin, double ymax, double xlpos, double ylpos, 
-		int y_ascl, int acc, int colbox, int collab, 
+		boolean y_ascl, boolean acc, int colbox, int collab, 
 		int[] colline, int[] styline, SWIGTYPE_p_p_char legline, 
 		String labx, String laby, String labtop) {
     if (set_stream() == -1) return;
     plplotjavac.plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, 
-		    xlpos, ylpos, y_ascl, acc, colbox, collab, colline,
+		    xlpos, ylpos, y_ascl?1:0, acc?1:0, colbox, collab, colline,
 		    styline, legline, labx, laby, labtop);
 }
 
@@ -690,9 +695,9 @@ public void styl(int[] mark, int[] space) {
     plplotjavac.plstyl(mark, space);
 }
 
-public void svect(double[] arrow_x, double[] arrow_y, int fill) {
+public void svect(double[] arrow_x, double[] arrow_y, boolean fill) {
     if (set_stream() == -1) return;
-    plplotjavac.plsvect(arrow_x, arrow_y, fill);
+    plplotjavac.plsvect(arrow_x, arrow_y, fill?1:0);
 }
 
 public void svpa(double xmin, double xmax, double ymin, double ymax) {
@@ -768,9 +773,15 @@ public void wind(double xmin, double xmax, double ymin, double ymax) {
     plplotjavac.plwind(xmin, xmax, ymin, ymax);
 }
 
-public void xormod(int mode, int[] status) {
+public void xormod(boolean mode, boolean[] status) {
     if (set_stream() == -1) return;
-    plplotjavac.plxormod(mode, status);
+    int [] loc_status = new int[1];
+    plplotjavac.plxormod(mode?1:0, loc_status);
+    if (loc_status[0] == 1) 
+        status[0] = true; 
+    else
+	status[0] = false;
+
 }
 
 public void ClearOpts() {
@@ -803,6 +814,69 @@ public void rgbhls(double r, double g, double b, double[] h, double[] l, double[
     plplotjavac.plrgbhls(r,g,b,h,l,s);
 }
 
+// Depreciated versions of methods which use int for a flag instead of 
+// boolean.
+public void svect(double[] arrow_x, double[] arrow_y, int fill) {
+    if (set_stream() == -1) return;
+    plplotjavac.plsvect(arrow_x, arrow_y, fill);
+}
 
+public void cpstrm(int iplsr, int flags) {
+    if (set_stream() == -1) return;
+    plplotjavac.plcpstrm(iplsr, flags);
+}
+
+public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {
+    if (set_stream() == -1) return;
+    plplotjavac.plpoly3(x, y, z, draw, ifcc);
+}
+
+public void scmap1l(int itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3, int[] rev) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, rev);
+}
+
+public void shades( double[][] a, double xmin, double xmax, double ymin,
+		double ymax, double[] clevel, int fill_width, int cont_color,
+		int cont_width, int rectangular, 
+		double[][] pltr, double[][] OBJECT_DATA) {
+    if (set_stream() == -1) return;
+    plplotjavac.plshades( a, xmin, xmax, ymin, ymax, clevel, fill_width,
+		    cont_color, cont_width, rectangular, pltr, OBJECT_DATA);
+}
+
+public void shade(double[][] a, double left, double right, double bottom,
+		double top, double shade_min, double shade_max, int sh_cmap,
+		double sh_color, int sh_width, int min_color, int min_width, 
+		int max_color, int max_width, int rectangular, 
+		double[][] pltr, double[][] OBJECT_DATA) {
+    if (set_stream() == -1) return;
+    plplotjavac.plshade(a, left, right, bottom, top, shade_min, shade_max,
+		    sh_cmap, sh_color, sh_width, min_color, min_width, 
+		    max_color, max_width, rectangular, pltr, OBJECT_DATA);
+}
+
+public void spause(int pause) {
+    if (set_stream() == -1) return;
+    plplotjavac.plspause(pause);
+}
+
+public void stripc(int[] id, String xspec, String yspec, 
+		double xmin, double xmax, double xjump, 
+		double ymin, double ymax, double xlpos, double ylpos, 
+		int y_ascl, int acc, int colbox, int collab, 
+		int[] colline, int[] styline, SWIGTYPE_p_p_char legline, 
+		String labx, String laby, String labtop) {
+    if (set_stream() == -1) return;
+    plplotjavac.plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, 
+		    xlpos, ylpos, y_ascl, acc, colbox, collab, 
+		    colline, styline, legline, labx, laby, labtop);
+}
+
+public void xormod(int mode, int[] status) {
+    if (set_stream() == -1) return;
+    plplotjavac.plxormod(mode, status);
+}
 
 }

@@ -241,7 +241,7 @@ class x22 {
 
     public x22( String[] args) {
 
-	int fill;
+	boolean fill;
 
 	// Set of points making a polygon to use as the arrow
 	final double arrow_x[] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
@@ -269,7 +269,7 @@ class x22 {
 
 	circulation();
 
-	fill = 0;
+	fill = false;
 
 	// Set arrow style using arrow_x and arrow_y then 
 	// plot uMath.sing these arrows.
@@ -278,7 +278,7 @@ class x22 {
 
 	// Set arrow style using arrow2_x and arrow2_y then 
 	// plot using these filled arrows.
-	fill = 1;
+	fill = true;
 	pls.svect(arrow2_x, arrow2_y, fill);
 	constriction();
 

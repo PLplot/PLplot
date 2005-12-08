@@ -64,7 +64,7 @@ class x08 {
 	double [] h = new double[2];
 	double [] l = new double[2];
 	double [] s = new double[2];
-	int [] rev = new int[2];
+	boolean [] rev = new boolean[2];
 
         i[0] = 0.0;         // left boundary
         i[1] = 1.0;         // right boundary
@@ -90,11 +90,11 @@ class x08 {
 	   s[1] = 0.8;
 	}
 
-        rev[0] = 0;         // interpolate on front side of colour wheel.
-        rev[1] = 0;         // interpolate on front side of colour wheel.
+        rev[0] = false;         // interpolate on front side of colour wheel.
+        rev[1] = false;         // interpolate on front side of colour wheel.
 
         pls.scmap1n(256);
-        pls.scmap1l(0, i, h, l, s, rev);
+        pls.scmap1l(false, i, h, l, s, rev);
     }
 
 // Does a series of 3-d plots for a given data set, with different viewing

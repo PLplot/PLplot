@@ -77,7 +77,7 @@ class x14 {
 	// Turn off pause to make this a slave (must follow master)
 	
 	pls.setopt("geometry", geometry_slave);
-	pls.spause(0);
+	pls.spause(false);
 	pls.sdev(sdriver);
 	pls.init();
 	

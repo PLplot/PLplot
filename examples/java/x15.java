@@ -150,7 +150,7 @@ class x15 {
                    shade_min, shade_max,
                    sh_cmap, sh_color, sh_width,
                    min_color, min_width, max_color, max_width,
-		     1, xg0, yg0 );
+		   true, xg0, yg0 );
 
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -185,7 +185,7 @@ class x15 {
                        shade_min, shade_max,
                        sh_cmap, sh_color, sh_width,
                        min_color, min_width, max_color, max_width,
-			 1, xg0, yg0 );
+		       true, xg0, yg0 );
 	}
 
 	pls.col0(1);
