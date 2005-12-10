@@ -87,7 +87,6 @@ class x07 {
             for (i = 0; i <= 9; i++) {
                 String text = nf.format(i);
                 pls.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
-		System.out.println(text);
             }
 
             k = 0;
