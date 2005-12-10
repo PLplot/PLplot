@@ -72,6 +72,7 @@ typedef float PLFLT;
 
 typedef long PLINT;
 typedef unsigned int PLUNICODE;
+typedef PLINT PLBOOL;
 
 /* We have to get import_array called in our extension before we can use Numeric */
 %init %{

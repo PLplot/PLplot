@@ -227,7 +227,7 @@ plcont(PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 DOC(plcpstrm, "Copy state parameters from the reference stream to the current stream.")
 void
-plcpstrm(PLINT iplsr, PLINT flags);
+plcpstrm(PLINT iplsr, PLBOOL flags);
 
 DOC(plend, "End a plotting session for all open streams.")
 void
@@ -473,7 +473,7 @@ plpoin3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT code);
 DOC(plpoly3, "Draw a polygon in 3 space. ")
 void
 plpoly3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT *ArrayCkMinus1,
-	    PLINT flag);
+	    PLBOOL flag);
 
 DOC(plprec, "Set the floating point precision (in number of places) in numeric labels.")
 void
@@ -509,7 +509,7 @@ plscmap0n(PLINT ncol0);
 
 DOC(plscmap1, "Set color map 1 colors by 8 bit RGB values.")
 void
-plscmap1(PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n);
+plscmap1(PLBOOL *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLBOOL n);
 
 DOC(plscmap1l, "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.")
 void
@@ -587,7 +587,7 @@ plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	  PLFLT *Array, PLINT n, PLINT fill_width,
 	  PLINT cont_color, PLINT cont_width,
-	  fill_func ff, PLINT rectangular,
+	  fill_func ff, PLBOOL rectangular,
 	  pltr_func pltr,
 	  PLPointer SWIG_OBJECT_DATA);
 
@@ -599,7 +599,7 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	  PLINT min_color, PLINT min_width,
 	  PLINT max_color, PLINT max_width,
-	  fill_func ff, PLINT rectangular,
+	  fill_func ff, PLBOOL rectangular,
 	  pltr_func pltr,
 	  PLPointer SWIG_OBJECT_DATA);
 
@@ -622,7 +622,7 @@ plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 DOC(plspause, "Set the pause (on end-of-page) status.")
 void
-plspause(PLINT pause);
+plspause(PLBOOL pause);
 
 DOC(plsstrm, "Set stream number.")
 void
@@ -653,7 +653,7 @@ void
 plstripc(PLINT *OUTPUT, char *xspec, char *yspec,
 	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
 	PLFLT xlpos, PLFLT ylpos,
-	PLINT y_ascl, PLINT acc,
+	PLBOOL y_ascl, PLBOOL acc,
 	PLINT colbox, PLINT collab,
 	PLINT *Array, PLINT *ArrayCk, char *legline[4],
 	char *labx, char *laby, char *labtop);
@@ -668,7 +668,7 @@ plstyl(PLINT n, PLINT *Array, PLINT *ArrayCk);
 
 DOC(plsvect, "Set vector arrow style.")
 void
-plsvect(PLFLT *Array, PLFLT *ArrayCk, PLINT n, PLINT fill);
+plsvect(PLFLT *Array, PLFLT *ArrayCk, PLINT n, PLBOOL fill);
 
 DOC(plsvpa, "Set the edges of the viewport to the specified absolute coordinates.")
 void
@@ -732,7 +732,7 @@ plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 DOC(plxormod, "Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device.")
 void
-plxormod(PLINT mode, PLINT *OUTPUT);
+plxormod(PLBOOL mode, PLBOOL *OUTPUT);
 
 #if 0
 
@@ -754,7 +754,7 @@ plshade1(PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 fill_func ff, PLINT rectangular,
+	 fill_func ff, PLBOOL rectangular,
 	 pltr_func pltr,
 	 PLPointer SWIG_OBJECT_DATA);
 
@@ -804,7 +804,7 @@ plfshade(f2eval_func,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 fill_func, PLINT rectangular,
+	 fill_func, PLBOOL rectangular,
 	 pltr_func,
 	 PLPointer SWIG_OBJECT_DATA);
 

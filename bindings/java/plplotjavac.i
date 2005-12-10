@@ -48,6 +48,7 @@ typedef float PLFLT;
 
 typedef long PLINT;
 typedef unsigned int PLUNICODE;
+typedef PLINT PLBOOL;
 
 /***************************
 	A trick for docstrings
