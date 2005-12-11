@@ -509,11 +509,11 @@ plscmap0n(PLINT ncol0);
 
 DOC(plscmap1, "Set color map 1 colors by 8 bit RGB values.")
 void
-plscmap1(PLBOOL *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n);
+plscmap1(PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n);
 
 DOC(plscmap1l, "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.")
 void
-plscmap1l(PLINT itype, PLINT n, PLFLT *Array,
+plscmap1l(PLBOOL itype, PLINT n, PLFLT *Array,
 	    PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
 	    PLBOOL *ArrayCkMinus1);
 
