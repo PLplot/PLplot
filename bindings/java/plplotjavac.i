@@ -50,6 +50,81 @@ typedef long PLINT;
 typedef unsigned int PLUNICODE;
 typedef PLINT PLBOOL;
 
+/* Simple (input) PLBOOL arguments */
+/* Use macro style similar to INPUT_TYPEMAP defined in typemaps.i, but
+ * actually follow what is done in java.swg for bool C type except 
+ * change action of typemap(in) from "? true : false;" to "? 1 : 0;" to
+ * be consistent with actual C type of PLBOOL which is PLINT.  If C type
+ * of PLBOOL ever changed to bool, none of this would be necessary, but
+ * such a change would demand using the c99 standard for PLplot which is
+ * not widely implemented yet.
+ */
+%define PLBOOL_INPUT_TYPEMAP(TYPE, JNITYPE, JTYPE, JNIDESC)
+%typemap(jni) TYPE "JNITYPE"
+%typemap(jtype) TYPE "JTYPE"
+%typemap(jstype) TYPE "JTYPE"
+
+%typemap(in) TYPE
+%{ $1 = $input ? 1 : 0; %}
+
+%typemap(javadirectorin) TYPE "$jniinput"
+%typemap(javadirectorout) TYPE "$javacall"
+
+%typemap(directorin,descriptor=JNIDESC) TYPE
+%{$input = (JNITYPE *) $1; %}
+
+%typemap(javain) TYPE "$javainput"
+%enddef
+
+PLBOOL_INPUT_TYPEMAP(PLBOOL, jboolean, boolean, "Z");
+
+/* This renamed macro copied exactly from OUTPUT_TYPEMAP macro
+ * in typemaps.i which handles *OUTPUT types. */
+
+%define PLBOOL_OUTPUT_TYPEMAP(TYPE, JNITYPE, JTYPE, JAVATYPE, JNIDESC, TYPECHECKTYPE)
+%typemap(jni) TYPE *OUTPUT, TYPE &OUTPUT %{JNITYPE##Array%}
+%typemap(jtype) TYPE *OUTPUT, TYPE &OUTPUT "JTYPE[]"
+%typemap(jstype) TYPE *OUTPUT, TYPE &OUTPUT "JTYPE[]"
+%typemap(javain) TYPE *OUTPUT, TYPE &OUTPUT "$javainput"
+%typemap(javadirectorin) TYPE *OUTPUT, TYPE &OUTPUT "$jniinput"
+%typemap(javadirectorout) TYPE *OUTPUT, TYPE &OUTPUT "$javacall"
+
+%typemap(in) TYPE *OUTPUT($*1_ltype temp), TYPE &OUTPUT($*1_ltype temp)
+{
+  if (!$input) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "array null");
+    return $null;
+  }
+  if (JCALL1(GetArrayLength, jenv, $input) == 0) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, "Array must contain at least 1 element");
+    return $null;
+  }
+  $1 = &temp; 
+}
+
+%typemap(directorin,descriptor=JNIDESC) TYPE &OUTPUT
+%{ *(($&1_ltype) $input = &$1; %}
+
+%typemap(directorin,descriptor=JNIDESC) TYPE *OUTPUT
+%{
+#error "Need to provide OUT directorin typemap, TYPE array length is unknown"
+%}
+
+%typemap(freearg) TYPE *OUTPUT, TYPE &OUTPUT ""
+
+%typemap(argout) TYPE *OUTPUT, TYPE &OUTPUT 
+{
+  JNITYPE jvalue = (JNITYPE)temp$argnum;
+  JCALL4(Set##JAVATYPE##ArrayRegion, jenv, $input, 0, 1, &jvalue);
+}
+
+%typemap(typecheck) TYPE *INOUT = TYPECHECKTYPE;
+%typemap(typecheck) TYPE &INOUT = TYPECHECKTYPE;
+%enddef
+
+/* Copy what is done for C bool type, only use PLBOOL instead. */
+PLBOOL_OUTPUT_TYPEMAP(PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;", jbooleanArray);
+
 /***************************
 	A trick for docstrings
 ****************************/
