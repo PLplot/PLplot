@@ -81,6 +81,20 @@ typedef void* PLPointer;
 #define FACETED   0x80 /* draw outline for each square that makes up the surface */
 #define MESH 0x100 /* draw mesh */
 
+/* Flags for plbin() - opt argument */
+#define PL_BIN_DEFAULT          0
+#define PL_BIN_CENTRED          1
+#define PL_BIN_NOEXPAND         2
+#define PL_BIN_NOEMPTY          4
+
+/* Flags for plhist() - opt argument; note: some flags are passed to
+   plbin() for the actual plotting */
+#define PL_HIST_DEFAULT         0
+#define PL_HIST_NOSCALING       1
+#define PL_HIST_IGNORE_OUTLIERS 2
+#define PL_HIST_NOEXPAND        8
+#define PL_HIST_NOEMPTY        16
+
 /* Window parameter tags */
 
 #define PLSWIN_DEVICE		1	/* device coordinates */
