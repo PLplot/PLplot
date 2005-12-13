@@ -669,8 +669,14 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 
 /* Plot a histogram using x to store data values and y to store frequencies */
 
+/* Flags for plbin() - opt argument */
+#define PL_BIN_DEFAULT          0
+#define PL_BIN_CENTRED          1
+#define PL_BIN_NOEXPAND         2
+#define PL_BIN_NOEMPTY          4
+
 void
-c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center);
+c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt);
 
 /* Start new page.  Should only be used with pleop(). */
 
@@ -948,9 +954,17 @@ c_plgzax(PLINT *p_digmax, PLINT *p_digits);
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */
 
+/* Flags for plhist() - opt argument; note: some flags are passed to
+   plbin() for the actual plotting */
+#define PL_HIST_DEFAULT         0
+#define PL_HIST_NOSCALING       1
+#define PL_HIST_IGNORE_OUTLIERS 2
+#define PL_HIST_NOEXPAND        8
+#define PL_HIST_NOEMPTY        16
+
 void
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-	 PLINT nbin, PLINT oldwin);
+	 PLINT nbin, PLINT opt);
 
 /* Set current color (map 0) by hue, lightness, and saturation. */
 

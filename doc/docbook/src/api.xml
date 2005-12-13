@@ -475,7 +475,7 @@ origin
         <paramdef><parameter>nbin</parameter></paramdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
-        <paramdef><parameter>center</parameter></paramdef>
+        <paramdef><parameter>opt</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
@@ -489,12 +489,11 @@ origin
       <literal><parameter>y</parameter>[i]</literal>.  For proper
       operation, the values in
       <literal><parameter>x</parameter>[i]</literal> must form a strictly
-      increasing sequence.  If
-      <literal><parameter>center</parameter>=0</literal>,
+      increasing sequence.  By default,
       <literal><parameter>x</parameter>[i]</literal> is the left-hand edge
-      of the <literal>i</literal>'th bin, and if
-      <literal><parameter>center</parameter>=1</literal>, the bin
-      boundaries are placed midway between the values in the
+      of the <literal>i</literal>'th bin. If
+      <literal><parameter>opt</parameter>=PL_BIN_CENTRED</literal> is
+      used, the bin boundaries are placed midway between the values in the
       <literal><parameter>x</parameter></literal> array.  Also see &plhist;
       for drawing histograms from unbinned data.
     </para>
@@ -540,23 +539,44 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>center</parameter>
+	  <parameter>opt</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Indicates whether the values in
-	    <literal><parameter>x</parameter></literal> represent the lower
-	    bin boundaries
-	    (<literal><parameter>center</parameter>=0</literal>) or whether
-	    the bin boundaries are to be midway between the
-	    <literal><parameter>x</parameter></literal> values
-	    (<literal><parameter>center</parameter>=1</literal>).  If the
-	    values in <literal><parameter>x</parameter></literal> are
-	    equally spaced and
-	    <literal><parameter>center</parameter>=1</literal>, the values
-	    in <literal><parameter>x</parameter></literal> are the center
-	    values of the bins.
+	    Is a combination of several flags:
+	    <itemizedlist>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_BIN_DEFAULT</literal>:
+	            The <literal><parameter>x</parameter></literal> represent the lower
+	            bin boundaries, the outer bins are expanded to fill up the
+	            entire x-axis and bins of zero height are simply drawn.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_BIN_CENTRED|...</literal>:
+	            The bin boundaries are to be midway between the
+	            <literal><parameter>x</parameter></literal> values. If the
+	            values in <literal><parameter>x</parameter></literal> are
+	            equally spaced, the values are the center values of the bins.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_BIN_NOEXPAND|...</literal>:
+	            The outer bins are drawn with equal size as the ones inside.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_BIN_NOEMPTY|...</literal>:
+	            Bins with zero height are not drawn (there is a gap for
+	            such bins).
+	        </para>
+	      </listitem>
+	    </itemizedlist>
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1297,23 +1317,23 @@ from relative device coordinates,
 	    Integer representing the color.  The defaults at present are
 	    (these may change):
 	    <simplelist type="horiz" columns="2">
-              <member> 0 </member> <member>black (default background)</member>
-	      <member> 1 </member> <member>red (default foreground)</member>
-	      <member> 2 </member> <member>yellow</member>
-	      <member> 3 </member> <member>green</member>
-	      <member> 4 </member> <member>aquamarine</member>
-	      <member> 5 </member> <member>pink</member>
-	      <member> 6 </member> <member>wheat</member>
-	      <member> 7 </member> <member>grey</member>
-	      <member> 8 </member> <member>brown</member>
-	      <member> 9 </member> <member>blue</member>
-	      <member>10 </member> <member>BlueViolet</member>
-	      <member>11 </member> <member>cyan</member>
-	      <member>12 </member> <member>turquoise</member>
-	      <member>13 </member> <member>magenta</member>
-	      <member>14 </member> <member>salmon</member>
-	      <member>15 </member> <member>white</member>
-            </simplelist>
+	      <member> 0 </member>  <member>black (default background)</member>
+	      <member> 1 </member>  <member>red (default foreground)</member>
+	      <member> 2 </member>  <member>yellow</member>
+	      <member> 3 </member>  <member>green</member>
+	      <member> 4 </member>  <member>aquamarine</member>
+	      <member> 5 </member>  <member>pink</member>
+	      <member> 6 </member>  <member>wheat</member>
+	      <member> 7 </member>  <member>grey</member>
+	      <member> 8 </member>  <member>brown</member>
+	      <member> 9 </member>  <member>blue</member>
+	      <member>10 </member>  <member>BlueViolet</member>
+	      <member>11 </member>  <member>cyan</member>
+	      <member>12 </member>  <member>turquoise</member>
+	      <member>13 </member>  <member>magenta</member>
+	      <member>14 </member>  <member>salmon</member>
+	      <member>15 </member>  <member>white</member>
+	    </simplelist>
 	    Use &plscmap0; to change the entire map0 color palette and
 	    &plscol0; to change an individual color in the map0 color
 	    palette.
@@ -4131,7 +4151,7 @@ device coordinates
         <paramdef><parameter>datmin</parameter></paramdef>
         <paramdef><parameter>datmax</parameter></paramdef>
         <paramdef><parameter>nbin</parameter></paramdef>
-        <paramdef><parameter>oldwin</parameter></paramdef>
+        <paramdef><parameter>opt</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
@@ -4145,9 +4165,10 @@ device coordinates
       <literal><parameter>datmin</parameter></literal> and
       <literal><parameter>datmax</parameter></literal>, and calls &plbin;
       to draw the resulting histogram.  Parameter
-      <literal><parameter>oldwin</parameter></literal> allows the histogram
-      either to be plotted in an existing window or causes &plhist; to call
-      &plenv; with suitable limits before plotting the histogram.
+      <literal><parameter>opt</parameter></literal> allows, among
+      other things, the histogram either to be plotted in an existing window
+      or causes &plhist; to call &plenv; with suitable limits before plotting
+      the histogram.
     </para>
 
     <variablelist>
@@ -4211,14 +4232,52 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>oldwin</parameter>
+	  <parameter>opt</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    If one, the histogram is plotted in the currently-defined
-	    window, and if zero, &plenv; is called automatically before
-	    plotting.
+	    Is a combination of several flags:
+	    <itemizedlist>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_HIST_DEFAULT</literal>:
+	            The axes are automatically rescaled to fit the histogram data,
+	            the outer bins are expanded to fill up the entire x-axis,
+	            data outside the given extremes are assigned to the outer
+	            bins and bins of zero height are simply drawn.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_HIST_NOSCALING|...</literal>:
+	            The existing axes are not rescaled to fit the histogram data,
+	            without this flag, &plenv; is called to set the world coordinates.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_HIST_IGNORE_OUTLIERS|...</literal>:
+	            Data outside the given extremes are not taken into account.
+	            This option should probably be combined with
+	            <literal><parameter>opt</parameter>=PL_HIST_NOEXPAND|...</literal>,
+	            so as to properly present the data.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_HIST_NOEXPAND|...</literal>:
+	            The outer bins are drawn with equal size as the ones inside.
+	        </para>
+	      </listitem>
+	      <listitem>
+	        <para>
+	          <literal><parameter>opt</parameter>=PL_HIST_NOEMPTY|...</literal>:
+	            Bins with zero height are not drawn (there is a gap for
+	            such bins).
+	        </para>
+	      </listitem>
+	    </itemizedlist>
 	  </para>
 	</listitem>
       </varlistentry>
