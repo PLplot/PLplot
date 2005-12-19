@@ -65,7 +65,7 @@ class x05 {
             data[i] = Math.sin(i * delta);
 
         pls.col0(1);
-        pls.hist(data, -1.1, 1.1, 44, 0);
+        pls.hist(data, -1.1, 1.1, 44, PLStream.PL_HIST_DEFAULT);
         pls.col0(2);
         pls.lab( "#frValue", "#frFrequency",
                  "#frPLplot Example 5 - Probability function of Oscillator" );
