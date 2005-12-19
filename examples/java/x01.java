@@ -40,6 +40,9 @@ class x01 {
     double xscale, yscale, xoff, yoff;
     PLStream pls = new PLStream();
 
+    // Set this to 1 to test the xormod method
+    static int test_xor = 0;
+
    public static void main( String[] args ) 
      {
         x01 x = new x01( args );
@@ -80,7 +83,7 @@ class x01 {
         yoff = 0.;
 
     // Do a plot
-        plot1(0);
+        plot1(false);
 
     // Set up the data
 
@@ -93,7 +96,7 @@ class x01 {
         int digmax = 5;
         pls.syax(digmax, 0);
 
-        plot1(1);
+        plot1(true);
 
         plot2();
 
@@ -122,7 +125,7 @@ class x01 {
         pls.end();
     }
 
-    void plot1( int do_test )
+    void plot1( boolean do_test )
     {
         int i;
         double xmin, xmax, ymin, ymax;
@@ -130,6 +133,9 @@ class x01 {
         double y[] = new double[60];
         double xs[] = new double[6];
         double ys[] = new double[6];
+	boolean st[] = new boolean[1];
+	double xx[] = new double[1];
+	double yy[] = new double[1];
 
         for( i=0; i < 60; i++ )
         {
@@ -166,6 +172,29 @@ class x01 {
 
         pls.col0(3);
         pls.line(x, y);
+
+        // xor mode enable erasing a line/point/text by replotting it again
+        // it does not work in double buffering mode, however
+
+        if (do_test && (test_xor == 1) ) {
+            pls.xormod(true, st); // enter xor mode
+            if (st[0]) {
+                for (i=0; i<60; i++) {
+		    xx[0] = x[i];
+		    yy[0] = y[i];
+                    pls.poin(xx, yy,9);    // draw a point
+		    try {
+                        Thread.sleep(50);           // wait a little
+		    }
+		    catch (InterruptedException ie) {
+		    }
+                    pls.flush();        // force an update of the tk driver
+                    pls.poin(xx, yy,9);    // erase point
+                }
+                pls.xormod(false, st);       // leave xor mode
+            }
+        }
+
     }
 
     void plot2()
