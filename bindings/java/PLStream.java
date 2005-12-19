@@ -511,17 +511,10 @@ public void scmap1(int[] r, int[] g, int[] b) {
     plplotjavac.plscmap1(r, g, b);
 }
 
-// rev array still needs work (change over to straight pass through) 
-// *after* swig interface changes completed.
 public void scmap1l(boolean itype, double[] intensity, double[] coord1, 
 		double[] coord2, double[] coord3, boolean[] rev) {
     if (set_stream() == -1) return;
-    int [] loc_rev = new int[rev.length];
-    for (int i=0;i<rev.length;i++) {
-	loc_rev[i] = rev[i]?1:0;
-    }
-
-    plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, loc_rev);
+    plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, rev);
 }
 
 public void scmap1n(int ncol1) {
@@ -822,12 +815,14 @@ public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {
     plplotjavac.plpoly3(x, y, z, draw, ifcc != 0);
 }
 
-// rev array still needs work (convert each element to boolean) 
-// *after* swig interface changes completed.
 public void scmap1l(int itype, double[] intensity, double[] coord1, 
 		double[] coord2, double[] coord3, int[] rev) {
     if (set_stream() == -1) return;
-    plplotjavac.plscmap1l(itype != 0, intensity, coord1, coord2, coord3, rev);
+    boolean [] loc_rev = new boolean[rev.length];
+    for (int i=0;i<rev.length;i++) {
+	loc_rev[i] = (rev[i]!=0);
+    }
+    plplotjavac.plscmap1l(itype != 0, intensity, coord1, coord2, coord3, loc_rev);
 }
 
 public void shades( double[][] a, double xmin, double xmax, double ymin,

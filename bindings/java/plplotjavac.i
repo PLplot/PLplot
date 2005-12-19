@@ -165,6 +165,18 @@ PLBOOL_OUTPUT_TYPEMAP(PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;"
  * afterwards.  Thus, the must_free_buffers logic is gone as well.
  *---------------------------------------------------------------------------*/
 
+/* 1d array of jbooleans */
+
+static void
+setup_array_1d_b( PLBOOL **pa, jboolean *adat, int n )
+{
+   int i;
+   *pa = (PLBOOL *) malloc( n * sizeof(PLBOOL) );
+   for( i=0; i < n; i++ ) {
+      (*pa)[i] = adat[i] ? 1 : 0;
+   }
+}
+
 /* 1d array of jints */
 
 static void
@@ -338,6 +350,30 @@ Naming rules:
 }
 
 /* Weird case to allow argument to be one shorter than others */
+/* This case is used both for PLBOOL and PLINT.  Define PLBOOL version
+ * first.  (AWI thinks this may be necessary because of the above
+ * typedef PLINT PLBOOL;)
+ */
+%typemap(in) PLBOOL *ArrayCkMinus1 {
+   jboolean *jydata = (*jenv)->GetBooleanArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
+      printf("Vector must be at least length of others minus 1.\n");
+      return;
+   }
+   setup_array_1d_b( &$1, jydata, Alen);
+   (*jenv)->ReleaseBooleanArrayElements( jenv, $input, jydata, 0 );
+}
+%typemap(freearg) PLBOOL *ArrayCkMinus1 {
+   free($1);
+}
+%typemap(jni) PLBOOL *ArrayCkMinus1 "jbooleanArray"
+%typemap(jtype) PLBOOL *ArrayCkMinus1 "boolean[]"
+%typemap(jstype) PLBOOL *ArrayCkMinus1 "boolean[]"
+%typemap(javain) PLBOOL *ArrayCkMinus1 "$javainput"
+%typemap(javaout) PLBOOL *ArrayCkMinus1 {
+   return $jnicall;
+}
+
 %typemap(in) PLINT *ArrayCkMinus1 {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
