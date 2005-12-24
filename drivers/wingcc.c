@@ -235,7 +235,7 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 /*
  * Process the windows messages
  *
- * Everything except WM_CREATE is done here and it is generally hoped that 
+ * Everything except WM_CREATE is done here and it is generally hoped that
  * pls and dev are defined already by this stage.
  * That will be true MOST of the time. Some times WM_PAINT will be called
  * before we get to initialise the user data area of the window with the
@@ -978,10 +978,10 @@ static void Resize( PLStream *pls )
 static int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size)
 {
   int j=0;
-  
+
   DWORD lpdwDisposition;
   HKEY hKey;
-  
+
   j=RegCreateKeyEx(
                     HKEY_CURRENT_USER,
                     key_name,
@@ -1082,7 +1082,7 @@ FT=(FT_Data *)pls->FT;
 
 x=GetDeviceCaps(dev->hdc,RASTERCAPS);
 
-if (x&&RC_BITBLT)
+if (x & RC_BITBLT)
   FT->pixel= (plD_pixel_fp)plD_pixelV_wingcc;
 else
   FT->pixel= (plD_pixel_fp)plD_pixel_wingcc;
