@@ -35,6 +35,10 @@
 !  two modules.
 !
 !  NB
+!  The INTENT attribute is not currently used. This is a matter to
+!  be looked into.
+!
+!  NB
 !  It is assumed in the current implementation that all arrays are
 !  passed with correct dimensions. It would be wiser, perhaps, to
 !  use the minimum dimension instead of just the dimension of the
@@ -62,14 +66,8 @@
       end module plplotp
 
       module plplot
-!     use plplotp,  plbin_f77   => plbin,     &
-!                   plerrx_f77  => plerrx,    &
-!                   plerry_f77  => plerry,    &
-!                   plfill_f77  => plfill,    &
-!                   plfill3_f77 => plfill3,   &
-!                   plpoin_f77  => plpoin
-      use plplot_flt
       use plplotp
+      use plplot_flt
       !
       ! To be added: renaming list
       !
@@ -129,9 +127,7 @@
             integer                        :: nbin, center
             real(kind=plflt), dimension(*) :: x, y
          end subroutine plbin_f77
-         module procedure plbin_f77_log
-         module procedure plbin_f95_int
-         module procedure plbin_f95_log
+         module procedure plbin_f95
       end interface
 
       interface
@@ -171,10 +167,11 @@
          end subroutine plcol1
       end interface
 
-      interface
-         subroutine plcpstrm( iplsr, flags )
+      interface plcpstrm
+         subroutine plcpstrm_f77( iplsr, flags )
             integer          :: iplsr, flags
-         end subroutine plcpstrm
+         end subroutine plcpstrm_f77
+         module procedure plcpstrm_f95
       end interface
 
       interface
@@ -203,6 +200,7 @@
       interface plerrx
          subroutine plerrx_f77( n, xmin, xmax, y )
             use plplot_flt
+            integer                        :: n
             real(kind=plflt), dimension(*) :: xmin, xmax, y
          end subroutine plerrx_f77
          module procedure plerrx_f95
@@ -211,6 +209,7 @@
       interface plerry
          subroutine plerry_f77( n, x, ymin, ymax )
             use plplot_flt
+            integer                        :: n
             real(kind=plflt), dimension(*) :: x, ymin, ymax
          end subroutine plerry_f77
          module procedure plerry_f95
@@ -224,6 +223,7 @@
       interface plfill
          subroutine plfill_f77( n, x, y )
             use plplot_flt
+            integer                        :: n
             real(kind=plflt), dimension(*) :: x, y
          end subroutine plfill_f77
          module procedure plfill_f95
@@ -232,6 +232,7 @@
       interface plfill3
          subroutine plfill3_f77( n, x, y, z )
             use plplot_flt
+            integer                        :: n
             real(kind=plflt), dimension(*) :: x, y, z
          end subroutine plfill3_f77
          module procedure plfill_f95
@@ -399,9 +400,9 @@
       end interface
 
       interface
-         subroutine plhlsrgb( r, g, b, h, l, s )
+         subroutine plhlsrgb( h, l, s, r, g, b )
             use plplot_flt
-            real(kind=plflt) :: r, g, b, h, l, s
+            real(kind=plflt) :: h, l, s, r, g, b
          end subroutine plhlsrgb
       end interface
 
@@ -525,7 +526,7 @@
       interface plpoly3
          subroutine plpoly3_f77( n, x, y, z, draw, ifcc )
             use plplot_flt
-            integer                        :: ifcc
+            integer                        :: n, ifcc
             integer, dimension(*)          :: draw
             real(kind=plflt), dimension(*) :: x, y, z
          end subroutine plpoly3_f77
@@ -533,9 +534,9 @@
       end interface
 
       interface
-         subroutine plrec( setp, prec )
+         subroutine plprec( setp, prec )
             integer :: setp, prec
-         end subroutine plrec
+         end subroutine plprec
       end interface
 
       interface
@@ -579,18 +580,44 @@
          end subroutine plschr
       end interface
 
-      interface plsmap0
-         subroutine plsmap0_f77( r, g, b, ncol0)
+      interface plscmap0
+         subroutine plscmap0_f77( r, g, b, ncol0)
             integer, dimension(*) :: r, g, b
             integer               :: ncol0
-         end subroutine plsmap0_f77
-         module procedure plsmap0_f95
+         end subroutine plscmap0_f77
+         module procedure plscmap0_f95
       end interface
 
       interface
-         subroutine plsmap0n( n )
+         subroutine plscmap0n( n )
             integer :: n
-         end subroutine plsmap0n
+         end subroutine plscmap0n
+      end interface
+
+      interface plscmap1
+         subroutine plscmap1_f77( r, g, b, ncol1)
+            integer, dimension(*) :: r, g, b
+            integer               :: ncol1
+         end subroutine plscmap1_f77
+         module procedure plscmap1_f95
+      end interface
+
+      interface plscmap1l
+         subroutine plscmap1l_f77( itype, npts, intensity, coord1,
+     &                             coord2, coord3, rev)
+            use plplot_flt
+            real(kind=plflt), dimension(*) :: intensity, coord1,
+     &                                        coord2, coord3
+            integer, dimension(*)          :: rev
+            integer                        :: npts, itype
+         end subroutine plscmap1l_f77
+         module procedure plscmap1l_f95
+      end interface
+
+      interface
+         subroutine plscmap1n( n )
+            integer :: n
+         end subroutine plscmap1n
       end interface
 
       interface
@@ -770,8 +797,9 @@
          subroutine plsurf3d_f77( x, y, z, nx, ny, opt, clevel,
      &                             nlevel, lx )
             use plplot_flt
-            integer                        :: nx, ny, nlevel, lx
-            real(kind=plflt), dimension(*) :: x, y, z, clevel
+            integer                           :: nx, ny, nlevel, lx
+            real(kind=plflt), dimension(*)    :: x, y, clevel
+            real(kind=plflt), dimension(nx,*) :: z
          end subroutine plsurf3d_f77
          module procedure plsurf3d_f95
       end interface
@@ -803,6 +831,15 @@
             integer :: digmax, digits
          end subroutine plsyax
       end interface
+
+      interface plsym
+         subroutine plsym_f77( n, x, y, code )
+            use plplot_flt
+            integer                        :: n, code
+            real(kind=plflt), dimension(*) :: x, y
+         end subroutine plsym_f77
+         module procedure plsym_f95
+      end interface plsym
 
       interface
          subroutine plszax( digmax, digits )
@@ -878,35 +915,25 @@
       integer function convert_to_int( logvalue )
          logical :: logvalue
          convert_to_int = 0
-         if ( logvalue) convert_to_int = 1
+         if ( logvalue ) convert_to_int = 1
       end function convert_to_int
 
-
-      subroutine plbin_f77_log( nbin, x, y, center )
-         integer                        :: nbin
-         logical                        :: center
+      subroutine plbin_f95( x, y, center )
          real(kind=plflt), dimension(:) :: x, y
-         integer                        :: icenter
-         icenter = convert_to_int( center )
+         integer                        :: center
 
-         call plbin_f77( nbin, x, y, icenter )
-      end subroutine plbin_f77_log
+         call plbin_f77( size(x), x, y, center )
+      end subroutine plbin_f95
 
-      subroutine plbin_f95_log( x, y, center )
-         logical                        :: center
-         real(kind=plflt), dimension(:) :: x, y
-         integer                        :: icenter
-         icenter = convert_to_int( center )
+      subroutine plcpstrm_f95( iplsr, flags )
+         integer                        :: iplsr
+         logical                        :: flags
 
-         call plbin_f77( size(x), x, y, icenter )
-      end subroutine plbin_f95_log
+         integer                        :: iflags
 
-      subroutine plbin_f95_int( x, y, icenter )
-         real(kind=plflt), dimension(:) :: x, y
-         integer                        :: icenter
-
-         call plbin_f77( size(x), x, y, icenter )
-      end subroutine plbin_f95_int
+         iflags = convert_to_int( flags )
+         call plcpstrm_f77( iplsr, iflags )
+      end subroutine plcpstrm_f95
 
 
       subroutine plerrx_f95( xmin, xmax, y )
@@ -934,7 +961,6 @@
       end subroutine plfill3_f95
 
       subroutine plgriddata_f95( x, y, z, xg, yg, zg, type, data )
-         use plplot_flt
          real(kind=plflt), dimension(:)   :: x, y, z, xg, yg, data
          real(kind=plflt), dimension(:,:) :: zg
          integer                          :: type
@@ -965,7 +991,6 @@
       end subroutine plline3_f95
 
       subroutine plmesh_f95( x, y, z, opt )
-         use plplot_flt
          integer                          :: opt
          real(kind=plflt), dimension(:)   :: x, y
          real(kind=plflt), dimension(:,:) :: z
@@ -975,7 +1000,6 @@
       end subroutine plmesh_f95
 
       subroutine plmeshc_f95( x, y, z, opt, clevel )
-         use plplot_flt
          integer                          :: opt
          real(kind=plflt), dimension(:)   :: x, y, clevel
          real(kind=plflt), dimension(:,:) :: z
@@ -1032,11 +1056,36 @@
          call plpoly3_f77( size(x), x, y, z, draw, ifcc )
       end subroutine plpoly3_f95
 
-      subroutine plsmap0_f95( r, g, b )
+      subroutine plscmap0_f95( r, g, b )
          integer, dimension(:) :: r, g, b
 
-         call plsmap0_f77( r, g, b, size(r) )
-      end subroutine plsmap0_f95
+         call plscmap0_f77( r, g, b, size(r) )
+      end subroutine plscmap0_f95
+
+      subroutine plscmap1_f95( r, g, b )
+         integer, dimension(:) :: r, g, b
+
+         call plscmap1_f77( r, g, b, size(r) )
+      end subroutine plscmap1_f95
+
+      subroutine plscmap1l_f95( rgbtype, intensity, coord1,
+     &                             coord2, coord3, rev)
+            logical                        :: rgbtype
+            real(kind=plflt), dimension(:) :: intensity, coord1,
+     &                                        coord2, coord3
+            logical, dimension(:)          :: rev
+
+            integer, dimension(size(rev))  :: irev
+            integer                        :: i
+            integer                        :: type
+
+         type = convert_to_int( rgbtype )
+         do i = 1,size(rev)
+            irev(i) = convert_to_int( rev(i) )
+         enddo
+         call plscmap1l_f77( type, size(rev), intensity, coord1,
+     &                      coord2, coord3, irev )
+      end subroutine plscmap1l_f95
 
       subroutine plsvect_f95( arrowx, arrowy, fill )
          integer                        :: fill
@@ -1044,6 +1093,13 @@
 
          call plsvect_f77( arrowx, arrowy, size(arrowx), fill )
       end subroutine plsvect_f95
+
+      subroutine plsym_f95( x, y, code )
+         integer                        :: code
+         real(kind=plflt), dimension(:) :: x, y
+
+         call plsym_f77( size(x), x, y, code )
+      end subroutine plsym_f95
 
       end module plplot
 
