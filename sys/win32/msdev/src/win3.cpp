@@ -11,6 +11,9 @@ win3.cpp
 		
 		
   Modified 20/12/01 by Olof Svensson and Alexandre Gobbo
+
+  Modified 26/12/05 by Arjen Markus: copied anti-aliasing font
+  handling from wingcc driver
 			
 */
 
@@ -30,12 +33,53 @@ static unsigned int      hwnd = 0;
 static unsigned int      buffered = 1;
 
 
+#ifdef HAVE_FREETYPE
+
+/*
+ *  Original text:
+ *  Freetype support has been added to the wingcc driver using the
+ *  plfreetype.c module, and implemented as a driver-specific optional extra
+ *  invoked via the -drvopt command line toggle. It uses the
+ *  "PLESC_HAS_TEXT" command for rendering within the driver.
+ *
+ *  Freetype support is turned on/off at compile time by defining
+ *  "HAVE_FREETYPE".
+ *
+ *  To give the user some level of control over the fonts that are used,
+ *  environmental variables can be set to over-ride the definitions used by
+ *  the five default plplot fonts.
+ *
+ *  Freetype rendering is used with the command line "-drvopt text".
+ *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
+ */
+
+#include "plfreetype.h"
+
+#ifndef max_number_of_grey_levels_used_in_text_smoothing
+#define max_number_of_grey_levels_used_in_text_smoothing 64
+#endif
+
+#endif
+
 
 static MSG       msg;
+
+
+#ifdef HAVE_FREETYPE
+    static int freetype=0;
+    static int smooth_text=0;
+    static int save_reg=0;
+#endif
+
 static DrvOpt    win3_options[] = {
 	{"color", DRV_INT, &color, "Use color (color=0|1)"},
 	{"hwnd", DRV_INT, &hwnd, "Windows HWND handle (not supposed to be given as a command line argument)"},
 	{"buffered", DRV_INT, &buffered, "Sets buffered operation"},
+#ifdef HAVE_FREETYPE
+	{"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
+	{"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+	{"save", DRV_INT, &save_reg, "Save defaults to registary"},
+#endif
 	{NULL, DRV_INT, NULL, NULL}
 };
 
@@ -59,6 +103,36 @@ void plD_DrawImage_win3(PLStream *pls);
 static void imageops(PLStream *pls, PLINT *ptr);
 /* BOOL CALLBACK AbortProc( HDC hDC, int Error ); */
 
+
+#ifdef HAVE_FREETYPE
+
+static void plD_pixel_win3 (PLStream *pls, short x, short y);
+static void plD_pixelV_win3 (PLStream *pls, short x, short y);
+static void init_freetype_lv1 (PLStream *pls);
+static void init_freetype_lv2 (PLStream *pls);
+
+extern "C" {
+
+extern void plD_FreeType_init(PLStream *pls);
+extern void plD_render_freetype_text (PLStream *pls, EscText *args);
+extern void plD_FreeType_Destroy(PLStream *pls);
+extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
+
+}
+
+static int GetRegValue(char *key_name, char *key_word, char *buffer, int size);
+static int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size);
+
+
+#define SetRegStringValue(a,b,c) SetRegValue(a, b, c, REG_SZ, strlen(c)+1 )
+#define SetRegBinaryValue(a,b,c,d) SetRegValue(a, b, (char *)c, REG_BINARY, d )
+#define SetRegIntValue(a,b,c) SetRegValue(a, b, (char *)c, REG_DWORD, 4 )
+#define GetRegStringValue(a,b,c,d) GetRegValue(a, b, c, d)
+#define GetRegIntValue(a,b,c) GetRegValue(a, b, (char *)c, 4)
+#define GetRegBinaryValue(a,b,c,d) GetRegValue(a, b, (char *)c, d )
+
+#endif
+
 void plD_dispatch_init_win3	( PLDispatchTable *pdt )
 {
 	pdt->pl_MenuStr  = "PLplot Win32 Window";
@@ -74,6 +148,7 @@ void plD_dispatch_init_win3	( PLDispatchTable *pdt )
 	pdt->pl_state    = (plD_state_fp)    plD_state_win3;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_win3;
 }
+
 
 typedef struct {
 	HWND	hwnd;
@@ -170,6 +245,7 @@ void plD_init_win3(PLStream *pls)
 	HWND      hwndMain;
 	WNDCLASS  wndclass;
 	HINSTANCE hInstance;
+	RECT      rect;
 	WinDev    *dev;
 	int       greyvalue;
 	char      *ptitle;
@@ -187,11 +263,52 @@ void plD_init_win3(PLStream *pls)
 	int xmax = PIXELS_X-1;
 	int ymin = 0;
 	int ymax = PIXELS_Y-1;
+
+#ifdef HAVE_FREETYPE
+    FT_Data *FT;
+
+/*
+ *  Variables used for reading the registary keys
+ *  might eventually add a user defined pallette here, but for now it just does freetype
+ */
+    char key_name[]="Software\\PLplot\\win32";
+    char Keyword_text[]="freetype";
+    char Keyword_smooth[]="smooth";
+#endif
 	
 	color = 1;
 	hwnd = 0;
 	pls->color = 1;		/* Is a color device */
+
+#ifdef HAVE_FREETYPE
+
+/*
+ *  Read registry to see if the user has set up default values
+ *  for text and smoothing. These will be overriden by anything that
+ *  might be given on the command line, so we will load the
+ *  values right into the same memory slots we pass to plParseDrvOpts
+ */
+
+    GetRegIntValue(key_name, Keyword_text, &freetype);
+    GetRegIntValue(key_name, Keyword_smooth, &smooth_text);
+
+#endif
+
 	plParseDrvOpts(win3_options);
+
+#ifdef HAVE_FREETYPE
+
+/*
+ *  We will now save the settings to the registary if the user wants
+ */
+
+    if (save_reg==1) {
+        SetRegIntValue(key_name, Keyword_text, &freetype);
+        SetRegIntValue(key_name, Keyword_smooth, &smooth_text);
+    }
+
+#endif
+
 	if (!color) pls->color = 0; /* But user does not want color */
 	
 	/* Set up device parameters */
@@ -288,6 +405,31 @@ void plD_init_win3(PLStream *pls)
 		SelectObject(dev->db_hdc, dev->db_bmp);
 		dev->hdc=dev->db_hdc;
 	}
+
+	GetClientRect(dev->hwnd,&rect);
+	dev->xPhMax = rect.right;
+	dev->yPhMax = rect.bottom;
+	dev->xScale = rect.right / ((float)PIXELS_X);
+	dev->yScale = rect.bottom / ((float)PIXELS_Y);
+
+#ifdef HAVE_FREETYPE
+
+if (freetype)
+   {
+    pls->dev_text = 1;     /* want to draw text */
+    pls->dev_unicode = 1;  /* want unicode */
+    init_freetype_lv1(pls);
+    FT=(FT_Data *)pls->FT;
+    FT->want_smooth_text=smooth_text;
+   }
+
+   if (pls->dev_text)
+   {
+    init_freetype_lv2(pls);
+   }
+
+#endif
+
 }
 
 
@@ -499,6 +641,10 @@ void plD_bop_win3(PLStream *pls)
 	else
 		dev->hdc = GetDC(dev->hwnd);
 
+#ifdef HAVE_FREETYPE
+  FT_Data *FT=(FT_Data *)pls->FT;
+#endif
+
 	
 	GetClientRect(dev->hwnd,&rect);
 	dev->xPhMax = rect.right;
@@ -521,7 +667,16 @@ void plD_bop_win3(PLStream *pls)
 void plD_tidy_win3(PLStream *pls)
 {
 	WinDev *dev = (WinDev *)pls->dev;
-	
+
+#ifdef HAVE_FREETYPE
+  if (pls->dev_text)
+    {
+      FT_Data *FT=(FT_Data *)pls->FT;
+      plscmap0n(FT->ncol0_org);
+      plD_FreeType_Destroy(pls);
+    }
+#endif
+
 	pls->page = 0;
 	pls->OutFile = NULL;
 	if (!dev->externalWindow) DestroyWindow(dev->hwnd);
@@ -595,6 +750,18 @@ void plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 			plP_setpxl(pxlx, pxly);
 			}
 
+#ifdef HAVE_FREETYPE
+			{
+			  FT_Data *FT=(FT_Data *)pls->FT;
+			  if (FT)
+			    {
+/* TODO !!!!
+			      FT->scale=dev->scale;
+			      FT->ymax=dev->height;
+*/
+			    }
+			}
+#endif
 
 			if (pls->db)
 			{
@@ -612,6 +779,17 @@ void plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 			
 		}
 		break;
+
+#ifdef HAVE_FREETYPE
+     case PLESC_HAS_TEXT:
+        plD_render_freetype_text(pls, (EscText *)ptr);
+        break;
+
+/*     case PLESC_LIKES_UNICODE:
+        plD_render_freetype_sym(pls, (EscText *)ptr);
+        break;*/
+
+#endif
 		
 	case PLESC_EXPOSE:
 		if (pls->db)
@@ -987,6 +1165,198 @@ DispatchMessage( &msg );
 return TRUE;
 }
 */
+
+#ifdef HAVE_FREETYPE
+
+/*--------------------------------------------------------------------------*\
+ * int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size)
+ *
+ *  Function set the registry; if registry entry does not exist, it is
+ *  created. Actually, the key is created before it is set just to make sure
+ *  that is is there !
+\*--------------------------------------------------------------------------*/
+
+static int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size)
+{
+  int j=0;
+
+  DWORD lpdwDisposition;
+  HKEY hKey;
+
+  j=RegCreateKeyEx(
+                    HKEY_CURRENT_USER,
+                    key_name,
+                    0,                          /* reserved */
+                    NULL,                       /* address of class string */
+                    REG_OPTION_NON_VOLATILE,       /* special options flag */
+                    KEY_WRITE,                  /* desired security access */
+                    NULL,                       /* address of key security structure */
+                    &hKey,                      /* address of buffer for opened handle */
+                    &lpdwDisposition            /* address of disposition value buffer */
+                  );
+
+  if (j==ERROR_SUCCESS)
+    {
+      RegSetValueEx(hKey, key_word, 0, dwType, (unsigned char *)buffer, size);
+      RegCloseKey(hKey);
+    }
+  return(j);
+}
+
+/*--------------------------------------------------------------------------*\
+ * int GetRegValue(char *key_name, char *key_word, char *buffer, int size)
+ *
+ *  Function reads the registry and gets a string value from it
+ *  buffer must be allocated by the caller, and the size is given in the size
+ *  paramater.
+ *  Return code is 1 for success, and 0 for failure.
+\*--------------------------------------------------------------------------*/
+
+static int GetRegValue(char *key_name, char *key_word, char *buffer, int size)
+{
+  int ret=0;
+  HKEY hKey;
+  int dwType;
+  int dwSize=size;
+
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, key_name, 0, KEY_READ, &hKey)==ERROR_SUCCESS)
+      {
+      if (RegQueryValueEx(hKey, key_word, 0, (LPDWORD)&dwType,(unsigned char *)buffer,(LPDWORD)&dwSize)==ERROR_SUCCESS)
+        {
+          ret=1;
+        }
+      RegCloseKey(hKey);
+      }
+  return(ret);
+}
+
+/*----------------------------------------------------------------------*\
+ *  void plD_pixel_wingcc (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is set in the current colour.
+\*----------------------------------------------------------------------*/
+
+void plD_pixel_win3 (PLStream *pls, short x, short y)
+{
+  WinDev *dev=(WinDev *)pls->dev;
+
+   SetPixel(dev->hdc, x, y,dev->PenColor);
+
+}
+
+void plD_pixelV_win3 (PLStream *pls, short x, short y)
+{
+  WinDev *dev=(WinDev *)pls->dev;
+
+   SetPixelV(dev->hdc, x, y,dev->PenColor);
+
+}
+
+
+/*----------------------------------------------------------------------*\
+ *  void init_freetype_lv1 (PLStream *pls)
+ *
+ *  "level 1" initialisation of the freetype library.
+ *  "Level 1" initialisation calls plD_FreeType_init(pls) which allocates
+ *  memory to the pls->FT structure, then sets up the pixel callback
+ *  function.
+\*----------------------------------------------------------------------*/
+
+static void init_freetype_lv1 (PLStream *pls)
+{
+FT_Data *FT;
+int x;
+WinDev *dev=(WinDev *)pls->dev;
+
+plD_FreeType_init(pls);
+
+FT=(FT_Data *)pls->FT;
+
+
+/*
+ *  Work out if our device support "fast" pixel setting
+ *  and if so, use that instead of "slow" pixel setting
+ */
+
+x=GetDeviceCaps(dev->hdc,RASTERCAPS);
+
+if (x & RC_BITBLT)
+  FT->pixel= (plD_pixel_fp)plD_pixelV_win3;
+else
+  FT->pixel= (plD_pixel_fp)plD_pixel_win3;
+
+
+}
+
+/*----------------------------------------------------------------------*\
+ *  void init_freetype_lv2 (PLStream *pls)
+ *
+ *  "Level 2" initialisation of the freetype library.
+ *  "Level 2" fills in a few setting that aren't public until after the
+ *  graphics sub-syetm has been initialised.
+ *  The "level 2" initialisation fills in a few things that are defined
+ *  later in the initialisation process for the GD driver.
+ *
+ *  FT->scale is a scaling factor to convert co-ordinates. This is used by
+ *  the GD and other drivers to scale back a larger virtual page and this
+ *  eliminate the "hidden line removal bug". Set it to 1 if your device
+ *  doesn't have scaling.
+ *
+ *  Some coordinate systems have zero on the bottom, others have zero on
+ *  the top. Freetype does it one way, and most everything else does it the
+ *  other. To make sure everything is working ok, we have to "flip" the
+ *  coordinates, and to do this we need to know how big in the Y dimension
+ *  the page is, and whether we have to invert the page or leave it alone.
+ *
+ *  FT->ymax specifies the size of the page FT->invert_y=1 tells us to
+ *  invert the y-coordinates, FT->invert_y=0 will not invert the
+ *  coordinates.
+\*----------------------------------------------------------------------*/
+
+static void init_freetype_lv2 (PLStream *pls)
+{
+WinDev *dev=(WinDev *)pls->dev;
+FT_Data *FT=(FT_Data *)pls->FT;
+
+/*
+FT->scale=dev->scale;
+FT->ymax=dev->height;
+*/
+if ( dev->xPhMax > dev->yPhMax ) {
+   FT->scale=1.0/dev->xScale;
+} else {
+   FT->scale=1.0/dev->yScale;
+}
+FT->ymax=dev->yPhMax;
+FT->invert_y=1;
+
+if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? */
+   {
+    FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
+    FT->ncol0_xtra=16777216-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
+    FT->ncol0_width=max_number_of_grey_levels_used_in_text_smoothing;              /* find out how many different shades of anti-aliasing we can do */
+    FT->ncol0_width=max_number_of_grey_levels_used_in_text_smoothing;                 /* set a maximum number of shades */
+    plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
+/* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
+ * call in plscmap0 which (a) leads to segfaults since the GD image is
+ * not defined at this point and (b) would be inefficient in any case since
+ * setcmap is always called later (see plD_bop_png) to update the driver
+ * color palette to be consistent with cmap0. */
+         {
+          PLINT level_save;
+          level_save = pls->level;
+          pls->level = 0;
+          pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
+          pls->level = level_save;
+         }
+        FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
+      }
+}
+
+#endif
+
+
 #else
 pldummy_win3() {
 	return 0;
