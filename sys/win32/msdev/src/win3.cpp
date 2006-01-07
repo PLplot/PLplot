@@ -301,6 +301,7 @@ void plD_init_win3(PLStream *pls)
 /*
  *  We will now save the settings to the registary if the user wants
  */
+    pls->FT = NULL ;
 
     if (save_reg==1) {
         SetRegIntValue(key_name, Keyword_text, &freetype);
@@ -1002,6 +1003,9 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
 	HMETAFILE hmf;
 	GLOBALHANDLE hGMem;
 	LPMETAFILEPICT lpMFP;
+#ifdef HAVE_FREETYPE
+FT_Data *FT=(FT_Data *)pls->FT;
+#endif
 	
 	if (pls)
 		dev = (WinDev *)pls->dev;
@@ -1054,6 +1058,30 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
 				dev->yPhMax = rect.bottom;
 				dev->xScale = rect.right / ((float)PIXELS_X);
 				dev->yScale = rect.bottom / ((float)PIXELS_Y);
+FILE *outf = fopen("aa", "w") ;
+fprintf( outf, "rect: %d %d\n", rect.right, rect.bottom ) ; fflush(outf);
+fclose( outf ) ;
+#ifdef HAVE_FREETYPE
+				/* if ( FT != NULL ) { */
+				/* if ( freetype ) { */
+				if ( freetype ) {
+FILE *outf = fopen("aa", "w") ;
+/* fclose( outf ) ; */
+fprintf( outf, "ft: %p\n", pls->FT ) ; fflush(outf);
+fprintf( outf, "x: %f\n", (float)dev->xScale ) ; fflush(outf);
+fprintf( outf, "y: %f\n", (float)dev->yScale ) ; fflush(outf);
+				   FT = (FT_Data *) pls->FT ;
+fprintf( outf, "ft: %p\n", FT ) ; fflush(outf);
+fclose( outf );
+				   if ( dev->xPhMax < dev->yPhMax ) {
+				       FT->scale=1.0/dev->xScale;
+				   } else {
+				       FT->scale=1.0/dev->yScale;
+				   }
+				   FT->ymax=dev->yPhMax;
+				   FT->invert_y=1;
+				}
+#endif
 				plRemakePlot(pls);
 				dev->rePaintBsy = 0;
 				SetCursor(hcurSave);
@@ -1328,8 +1356,14 @@ if ( dev->xPhMax > dev->yPhMax ) {
 } else {
    FT->scale=1.0/dev->yScale;
 }
-FT->ymax=dev->yPhMax;
-FT->invert_y=1;
+/* AM: Workaround for double painting problem
+   These settings will make sure the freetype text does
+   not appear on the first time round, only after the
+   initial WM_PAINT.
+*/
+FT->scale = dev->xScale ;
+FT->ymax=2*dev->yPhMax;
+FT->invert_y=0;
 
 if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? */
    {
