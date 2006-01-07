@@ -65,7 +65,22 @@
  *
  */
 
+#ifndef WIN32
 #include <unistd.h>
+#else
+#define F_OK 1
+#include <stdio.h>
+int access( char *filename, int flag ) {
+    FILE *infile ;
+    infile = fopen( filename, "r" ) ;
+    if ( infile != NULL ) {
+        fclose(infile) ;
+        return 0 ;
+    } else {
+        return 1 ;
+    }
+}
+#endif
 
 #include "plDevs.h"
 #include "plplotP.h"
@@ -494,16 +509,16 @@ void plD_FreeType_init(PLStream *pls)
  * At present, it only looks in two places, on one drive. I might change this
  * soon.
  */
-
-    if (access("c:/windows/fonts/arial.ttf", F_OK)==0)
-	strcpy(font_dir,"c:/windows/fonts/");
-
-    else if (access("c:/windows/system/arial.ttf", F_OK)==0)
-	strcpy(font_dir,"c:/windows/system/");
-
+    if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
+        strcpy(font_dir,"c:/windows/fonts/");
+    }
+    else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
+        strcpy(font_dir,"c:/windows/system/");
+    }
     else
 	plwarn("Could not find font path; I sure hope you have defined fonts manually !");
 
+    fprintf( stderr, "%s\n", font_dir ) ;
 #else
 
 /*
@@ -556,13 +571,18 @@ void plD_FreeType_init(PLStream *pls)
 	    strcat(FT->font_name[i],TrueTypeLookup[i].pfont);
 	}
 
-	if (access(FT->font_name[i], F_OK)!=0) {
+   {
+   FILE *infile ;
+	if ( (infile=fopen(FT->font_name[i], "r"))==NULL) {
 	    char msgbuf[1024];
 	    sprintf(msgbuf,
 		    "plD_FreeType_init: Could not find the freetype compatible font:\n %s",
 		    FT->font_name[i]);
 	    plwarn(msgbuf);
-	}
+	} else {
+        fclose(infile);
+   }
+   }
         FontLookup[i].fci = TrueTypeLookup[i].fci;
         FontLookup[i].pfont = FT->font_name[i];
     }
@@ -585,11 +605,11 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci)
    FT_Data *FT=(FT_Data *)pls->FT;
    double font_size = pls->chrht * 72/25.4; /* font_size in points, chrht is in mm */
 
-   /* save a copy of character height and resolution */    
+   /* save a copy of character height and resolution */
    FT->chrht=pls->chrht;
    FT->xdpi=pls->xdpi;
    FT->ydpi=pls->ydpi;
-    
+
    if (fci != FT->fci) {
       char *font_name = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
       if (font_name == NULL) {
