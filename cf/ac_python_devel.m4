@@ -1,6 +1,19 @@
-dnl Available from the GNU Autoconf Macro Archive at:
-dnl http://www.gnu.org/software/ac-archive/htmldoc/ac_python_devel.html
+dnl @synopsis AC_PYTHON_DEVEL
 dnl
+dnl Checks for Python and tries to get the include path to 'Python.h'.
+dnl It provides the $(PYTHON_CPPFLAGS) and $(PYTHON_LDFLAGS) output
+dnl variables. It also exports $(PYTHON_EXTRA_LIBS) and
+dnl $(PYTHON_EXTRA_LDFLAGS) for embedding Python in your code.
+dnl
+dnl @category InstalledPackages
+dnl @author Sebastian Huber <sebastian-huber@web.de>
+dnl @author Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+dnl @author Rafael Laboissiere <laboissiere@psy.mpg.de>
+dnl @author Andrew Collier <colliera@nu.ac.za>
+dnl @author Matteo Settenvini <matteo@member.fsf.org>
+dnl @version 2006-01-13
+dnl @license GPLWithACException
+
 AC_DEFUN([AC_PYTHON_DEVEL],[
 	#
 	# should allow for checking of python version here...
@@ -47,7 +60,16 @@ AC_DEFUN([AC_PYTHON_DEVEL],[
 	AC_MSG_CHECKING(python extra libraries)
 	PYTHON_EXTRA_LIBS=`$PYTHON -c "import distutils.sysconfig; \
                 conf = distutils.sysconfig.get_config_var; \
-                print conf('LOCALMODLIBS')+' '+conf('LIBS')"
-	AC_MSG_RESULT($PYTHON_EXTRA_LIBS)`
+                print conf('LOCALMODLIBS')+' '+conf('LIBS')"`
+	AC_MSG_RESULT([$PYTHON_EXTRA_LIBS])
 	AC_SUBST(PYTHON_EXTRA_LIBS)
+	#
+	# linking flags needed when embedding
+	#
+	AC_MSG_CHECKING(python extra linking flags)
+	PYTHON_EXTRA_LDFLAGS=`$PYTHON -c "import distutils.sysconfig; \
+		conf = distutils.sysconfig.get_config_var; \
+		print conf('LINKFORSHARED')"`
+	AC_MSG_RESULT([$PYTHON_EXTRA_LDFLAGS])
+	AC_SUBST(PYTHON_EXTRA_LDFLAGS)
 ])
