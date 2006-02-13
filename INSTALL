@@ -379,7 +379,7 @@ There is no need on my system to use that flag.
   -- RL ]
 
 ------------------------------------------------------------------------------
-Alternative Build Instructions for MacOS X 10.3 (10-21-05 HPB)
+Build Instructions for MacOS X 10.3 & 10.4 (02-12-06 HPB)
 ------------------------------------------------------------------------------
 
 To install the CVS version of PLplot you will need :
@@ -391,8 +391,10 @@ GNU libtool 1.5.10+
 In the top plplot directory issue the following commands (also see notes)
 
 cf/bootstrap.sh
-./configure --disable-dyndrivers --disable-f77
-make LIBS="-Wl,-framework -Wl,Foundation"
+(OS-X 10.3) ./configure --disable-dyndrivers --disable-f77
+(OS-X 10.4) ./configure --disable-f77 --disable-wxwidgets
+(OS-X 10.3) make LIBS="-Wl,-framework -Wl,Foundation"
+(OS-X 10.4) make
 make check
 make install
 
@@ -400,8 +402,10 @@ make install
 To install the latest release (5.5.1+) issue the following commands in the
 top plplot directory (also see notes)
 
-./configure --disable-dyndrivers --disable-f77
-make LIBS="-Wl,-framework -Wl,Foundation"
+(OS-X 10.3) ./configure --disable-dyndrivers --disable-f77
+(OS-X 10.4) ./configure
+(OS-X 10.3) make LIBS="-Wl,-framework -Wl,Foundation"
+(OS-X 10.4) make
 make check
 make install
 
@@ -420,12 +424,12 @@ Notes :
 
 Make check is only necessary if you want to compile the examples.
 
-Dynamic drivers doesn't seem to be compatible with Objective C and by
-extension the AquaTerm driver, but can be used if you don't plan to
+In OS-X 10.3 Dynamic drivers doesn't seem to be compatible with Objective C 
+and by extension the AquaTerm driver, but can be used if you don't plan to 
 use this driver.
 
-The extra LIBS flags at the make step are only necessary if you are trying
-to use the AquaTerm driver, which uses the Foundation framework.
+The extra LIBS flags at the make step are only necessary if you have OS-X 10.3 
+and are trying to use the AquaTerm driver, which uses the Foundation framework.
 
 If you want to be able to display plots you will need either X11 from Apple
 (X11 1.0 - XFree86 4.3.0 or later recommended) and the X11 SDK, or AquaTerm
