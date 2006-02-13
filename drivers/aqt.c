@@ -69,36 +69,36 @@ static int windowYSize = 0;
 
 #define AQT_N_FontLookup 30
 static FCI_to_FontName_Table AQT_FontLookup[AQT_N_FontLookup] = {
-	{PL_FCI_MARK | 0x000, "Helvetica"},
-	{PL_FCI_MARK | 0x001, "Times-Roman"},
-	{PL_FCI_MARK | 0x002, "Courier"},
-	{PL_FCI_MARK | 0x003, "Times-Roman"},
-	{PL_FCI_MARK | 0x004, "LucidaGrande Regular"},
-	{PL_FCI_MARK | 0x010, "Helvetica-Oblique"},
-	{PL_FCI_MARK | 0x011, "Times-Italic"},
-	{PL_FCI_MARK | 0x012, "Courier-Oblique"},
-	{PL_FCI_MARK | 0x013, "Times-Italic"},
-	{PL_FCI_MARK | 0x014, "LucidaGrande Regular"},
-	{PL_FCI_MARK | 0x020, "Helvetica-Oblique"},
-	{PL_FCI_MARK | 0x021, "Times-Italic"},
-	{PL_FCI_MARK | 0x022, "Courier-Oblique"},
-	{PL_FCI_MARK | 0x023, "Times-Italic"},
-	{PL_FCI_MARK | 0x024, "LucidaGrande Regular"},
-	{PL_FCI_MARK | 0x100, "Helvetica-Bold"},
-	{PL_FCI_MARK | 0x101, "Times-Bold"},
-	{PL_FCI_MARK | 0x102, "Courier-Bold"},
-	{PL_FCI_MARK | 0x103, "Times-Bold"},
-	{PL_FCI_MARK | 0x104, "LucidaGrande Regular"},
-	{PL_FCI_MARK | 0x110, "Helvetica-BoldOblique"},
-	{PL_FCI_MARK | 0x111, "Times-BoldItalic"},
-	{PL_FCI_MARK | 0x112, "Courier-BoldOblique"},
-	{PL_FCI_MARK | 0x113, "Times-BoldItalic"},
-	{PL_FCI_MARK | 0x114, "LucidaGrande Regular"},
-	{PL_FCI_MARK | 0x120, "Helvetica-BoldOblique"},
-	{PL_FCI_MARK | 0x121, "Times-BoldItalic"},
-	{PL_FCI_MARK | 0x122, "Courier-BoldOblique"},
-	{PL_FCI_MARK | 0x123, "Times-BoldItalic"},
-	{PL_FCI_MARK | 0x124, "LucidaGrande Regular"}
+	{PL_FCI_MARK | 0x000, (unsigned char *) "Helvetica"},
+	{PL_FCI_MARK | 0x001, (unsigned char *) "Times-Roman"},
+	{PL_FCI_MARK | 0x002, (unsigned char *) "Courier"},
+	{PL_FCI_MARK | 0x003, (unsigned char *) "Times-Roman"},
+	{PL_FCI_MARK | 0x004, (unsigned char *) "LucidaGrande Regular"},
+	{PL_FCI_MARK | 0x010, (unsigned char *) "Helvetica-Oblique"},
+	{PL_FCI_MARK | 0x011, (unsigned char *) "Times-Italic"},
+	{PL_FCI_MARK | 0x012, (unsigned char *) "Courier-Oblique"},
+	{PL_FCI_MARK | 0x013, (unsigned char *) "Times-Italic"},
+	{PL_FCI_MARK | 0x014, (unsigned char *) "LucidaGrande Regular"},
+	{PL_FCI_MARK | 0x020, (unsigned char *) "Helvetica-Oblique"},
+	{PL_FCI_MARK | 0x021, (unsigned char *) "Times-Italic"},
+	{PL_FCI_MARK | 0x022, (unsigned char *) "Courier-Oblique"},
+	{PL_FCI_MARK | 0x023, (unsigned char *) "Times-Italic"},
+	{PL_FCI_MARK | 0x024, (unsigned char *) "LucidaGrande Regular"},
+	{PL_FCI_MARK | 0x100, (unsigned char *) "Helvetica-Bold"},
+	{PL_FCI_MARK | 0x101, (unsigned char *) "Times-Bold"},
+	{PL_FCI_MARK | 0x102, (unsigned char *) "Courier-Bold"},
+	{PL_FCI_MARK | 0x103, (unsigned char *) "Times-Bold"},
+	{PL_FCI_MARK | 0x104, (unsigned char *) "LucidaGrande Regular"},
+	{PL_FCI_MARK | 0x110, (unsigned char *) "Helvetica-BoldOblique"},
+	{PL_FCI_MARK | 0x111, (unsigned char *) "Times-BoldItalic"},
+	{PL_FCI_MARK | 0x112, (unsigned char *) "Courier-BoldOblique"},
+	{PL_FCI_MARK | 0x113, (unsigned char *) "Times-BoldItalic"},
+	{PL_FCI_MARK | 0x114, (unsigned char *) "LucidaGrande Regular"},
+	{PL_FCI_MARK | 0x120, (unsigned char *) "Helvetica-BoldOblique"},
+	{PL_FCI_MARK | 0x121, (unsigned char *) "Times-BoldItalic"},
+	{PL_FCI_MARK | 0x122, (unsigned char *) "Courier-BoldOblique"},
+	{PL_FCI_MARK | 0x123, (unsigned char *) "Times-BoldItalic"},
+	{PL_FCI_MARK | 0x124, (unsigned char *) "LucidaGrande Regular"}
 };
 
 /*
@@ -201,8 +201,10 @@ void plD_esc_aqt                (PLStream *, PLINT, void *);
 
 void plD_dispatch_init_aqt( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
    pdt->pl_MenuStr  = "AquaTerm - Mac OS X";
    pdt->pl_DevName  = "aqt";
+#endif
    pdt->pl_type     = plDevType_Interactive;
    pdt->pl_seq      = 1;
    pdt->pl_init     = (plD_init_fp)     plD_init_aqt;
@@ -560,7 +562,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	int updown;
 	char dummy[MAX_STRING_LEN+1];
 	char *font;
-	unsigned char *utf8;
+	char *utf8;
 	NSMutableAttributedString *str;
 
 	updown = 0;
@@ -674,7 +676,7 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 char * UCS4_to_UTF8(const PLUNICODE ucs4)
 {
 	int i,len;
-	static unsigned char utf8[5];
+	static char utf8[5];
 
 	if (ucs4 < 0x80){
 		utf8[0] = ucs4;
@@ -754,7 +756,7 @@ void check_font_environment_variables(void){
 
 			// printf("new font : %s\n", new_font);
 
-			AQT_FontLookup[i].pfont = new_font;
+			AQT_FontLookup[i].pfont = (unsigned char*) new_font;
 		}
 	}
 }
