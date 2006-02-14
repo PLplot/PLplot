@@ -41,7 +41,11 @@ class x01 {
     PLStream pls = new PLStream();
 
     // Set this to 1 to test the xormod method
-    static int test_xor = 0;
+    static boolean test_xor = false;
+
+    static boolean locate_mode = false;
+    static int fontset = 1;
+    static String f_name = null;
 
    public static void main( String[] args ) 
      {
@@ -72,7 +76,10 @@ class x01 {
         pls.init();
 
     // Select the multi-stroke font.
-        pls.fontld( 1 );
+        if (fontset) 
+            pls.fontld( 1 );
+	else
+            pls.fontld( 0 );
 
     // Set up the data
     // Original case
@@ -102,6 +109,9 @@ class x01 {
 
         plot3();
 
+	// Test option to save file
+	if (f_name != null) {
+	}
     // Let's get some user input
 
 //         if (locate_mode) {
@@ -176,7 +186,7 @@ class x01 {
         // xor mode enable erasing a line/point/text by replotting it again
         // it does not work in double buffering mode, however
 
-        if (do_test && (test_xor == 1) ) {
+        if (do_test && test_xor ) {
             pls.xormod(true, st); // enter xor mode
             if (st[0]) {
                 for (i=0; i<60; i++) {
