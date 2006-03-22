@@ -174,7 +174,7 @@ static inline void NOOP_(id x, ...) {;}
 
 /* helper functions */
 
-void get_cursor(PLGraphicsIn *);
+void get_cursor(PLStream *, PLGraphicsIn *);
 void proc_str (PLStream *, EscText *);
 NSMutableAttributedString * create_string(const PLUNICODE *, int, PLFLT);
 void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
@@ -422,7 +422,7 @@ void plD_esc_aqt(PLStream *pls, PLINT op, void *ptr)
          break;
       case PLESC_GETC:                // get cursor position
          [adapter renderPlot]; // needed to give the user something to click on
-         get_cursor((PLGraphicsIn*)ptr);
+         get_cursor(pls, (PLGraphicsIn*)ptr);
          break;
       case PLESC_SWIN:                // set window parameters
          break;
@@ -438,10 +438,12 @@ void plD_esc_aqt(PLStream *pls, PLINT op, void *ptr)
 // returns the location of the next mouse click
 //---------------------------------------------------------------------
 
-void get_cursor(PLGraphicsIn *gin){
+void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 	int scanned, x, y, button;
     NSString *temp;
 
+	plGinInit(gin);
+	
 	temp = [adapter waitNextEvent];
 	scanned = sscanf([temp cString],"1:{%d, %d}:%d", &x, &y, &button);
 
@@ -449,9 +451,10 @@ void get_cursor(PLGraphicsIn *gin){
 		gin->button = button;
 		gin->pX = x;
 		gin->pY = y;
-		gin->dX = (PLFLT)x;
-		gin->dY = (PLFLT)y;
+		gin->dX = (PLFLT)x/((PLFLT)(pls->xlength));
+		gin->dY = (PLFLT)y/((PLFLT)(pls->ylength));
 	} else {	// just return zeroes if we did not
+		printf("AquaTerm did not return a valid mouse location!\n");
 		gin->button = 0;
 		gin->pX = 0;
 		gin->pY = 0;
