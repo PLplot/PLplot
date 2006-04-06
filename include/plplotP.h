@@ -978,6 +978,10 @@ plP_FCI2FontName ( PLUNICODE fci,
 void
 plP_FreeDrvOpts();
 
+/* Convert a ucs4 unichar to utf8 char string*/
+int
+ucs4_to_utf8(PLUNICODE unichar, char *ptr);
+
 #ifdef __cplusplus
 }
 #endif

@@ -774,6 +774,55 @@ utf8_to_ucs4(const char *ptr, PLUNICODE *unichar)
    return (char *) ptr;
 }
 
+/* convert ucs4 unichar to utf8 string */
+int
+ucs4_to_utf8(PLUNICODE unichar, char *ptr)
+{
+  unsigned char *tmp;
+  int len;
+
+  tmp = ptr;
+
+  if ( (unichar & 0xffff80) == 0 ) {  /* single byte */
+    *tmp = (unsigned char) unichar;
+    tmp++;
+    len = 1;
+  }
+  else if ( (unichar & 0xfff800) == 0) { /* two bytes */
+    *tmp = (unsigned char) 0xc0 | (unichar >> 6);
+    tmp++;
+    *tmp = (unsigned char) 0x80 | (unichar & 0x3f);
+    tmp++;
+    len = 2;
+  }
+  else if ( (unichar & 0xff0000) == 0) { /* three bytes */
+    *tmp = (unsigned char) 0xe0 | (unichar >> 12);
+    tmp++;
+    *tmp = (unsigned char) 0x80 | ((unichar >> 6) & 0x3f);
+    tmp++;      
+    *tmp = (unsigned char) 0x80 | (unichar & 0x3f);
+    tmp++;
+    len = 3;
+  }
+  else if ( (unichar & 0xe0000) == 0){ /* four bytes */
+    *tmp = (unsigned char) 0xf0 | (unichar >> 18);
+    tmp++;
+    *tmp = (unsigned char) 0x80 | ((unichar >> 12) & 0x3f);
+    tmp++;      
+    *tmp = (unsigned char) 0x80 | ((unichar >> 6) & 0x3f);
+    tmp++;      
+    *tmp = (unsigned char) 0x80 | (unichar & 0x3f);
+    tmp++;
+    len = 4;
+  }
+  else {  /* Illegal coding */
+    len = 0;
+  }
+  *tmp = '\0';
+
+  return len;
+}
+
 static void
 grline(short *x, short *y, PLINT npts)
 {

@@ -80,6 +80,8 @@ void plD_dispatch_init_cgm	( PLDispatchTable *pdt );
 void plD_dispatch_init_null	( PLDispatchTable *pdt );
 void plD_dispatch_init_tkwin	( PLDispatchTable *pdt );
 void plD_dispatch_init_pstex	( PLDispatchTable *pdt );
+void plD_dispatch_init_psnewc	( PLDispatchTable *pdt );
+void plD_dispatch_init_psnewm	( PLDispatchTable *pdt );
 void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
 void plD_dispatch_init_mem	( PLDispatchTable *pdt );
 void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );

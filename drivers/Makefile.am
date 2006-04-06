@@ -46,6 +46,7 @@ EXTRA_LTLIBRARIES = \
 	pbm.la \
 	plmeta.la \
 	ps.la \
+	psnew.la \
 	pstex.la \
 	tek.la \
 	tk.la \
@@ -112,7 +113,7 @@ ntk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
-
+psnew_la_CFLAGS = $(PSNEW_CFLAGS)
 tk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_builddir)/bindings/tcl \
@@ -209,6 +210,9 @@ plmeta_la_LDFLAGS = $(ldflags) $(libplplot)
 
 ps_la_SOURCES = ps.c
 ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+
+psnew_la_SOURCES = psnew.cc
+psnew_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSNEW_LIBS)
 
 pstex_la_SOURCES = ps.c pstex.c
 pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
@@ -337,6 +341,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	pbm.c \
 	plmeta.c \
 	ps.c \
+	psnew.cc \
 	pstex.c \
 	tek.c \
 	tk.c \

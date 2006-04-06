@@ -1,0 +1,58 @@
+dnl cf/drivers-post.ac for PLplot  -*- autoconf -*-
+dnl
+dnl Configuration for the psnew driver
+dnl
+dnl Copyright (C) 2006  Andrew Ross
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+dnl Configure psnew driver using pkg-config
+
+AC_CHECK_PROG(PKG_CONFIG_CHECK, pkg-config, yes, no)
+
+if test "$PKG_CONFIG_CHECK" = "no"; then
+
+  AC_MSG_WARN([pkg-config not found])
+  AC_MSG_WARN([Setting enable_psnew to no])
+
+  enable_psnew=no
+
+fi
+
+if test "$enable_psnew" = "yes"; then
+
+  dnl Test for pango library
+  PKG_CHECK_MODULES(PSNEW,pango,,enable_psnew=no )
+
+  dnl Test for pangoft2 ibrary
+  PKG_CHECK_MODULES(PSNEW,pangoft2,,enable_psnew=no )
+
+  dnl Test for LASi library
+  PKG_CHECK_MODULES(PSNEW,lasi,,enable_psnew=no )
+
+  dnl Continue if the required libraries exist
+  if test "$enable_psnew" = "no"; then
+
+    AC_MSG_WARN([required libraries not found via pkg-config;])
+    AC_MSG_WARN([  psnew driver disabled])
+
+  fi
+
+fi
+
+AC_SUBST(enable_psnew)
+AC_SUBST(PSNEW_CFLAGS)
+AC_SUBST(PSNEW_LIBS)
