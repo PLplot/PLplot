@@ -76,7 +76,7 @@ class x01 {
         pls.init();
 
     // Select the multi-stroke font.
-        if (fontset) 
+        if (fontset == 1) 
             pls.fontld( 1 );
 	else
             pls.fontld( 0 );
