@@ -9,7 +9,7 @@
 
   Copyright (C) 2004  Joao Cardoso
   Copyright (C) 2004, 2005  Rafael Laboissiere
-  Copyright (C) 2004  Andrew Ross
+  Copyright (C) 2004, 2006  Andrew Ross
   Copyright (C) 2004  Andrew Roach
   Copyright (C) 2005  Alan W. Irwin
   Copyright (C) 2005  Thomas J. Duck

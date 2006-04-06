@@ -7,6 +7,7 @@
 # Copyright (C) 2003  Joao Cardoso
 # Copyright (C) 2004  Andrew Roach
 # Copyright (C) 2005  Thomas J. Duck
+# Copyright (C) 2006  Andrew Ross
 #
 #
 # This file is part of PLplot.

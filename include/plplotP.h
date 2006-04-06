@@ -11,6 +11,7 @@
     Copyright (C) 2004  Rafael Laboissiere
     Copyright (C) 2004  Joao Cardoso
     Copyright (C) 2004  Andrew Roach
+    Copyright (C) 2006  Andrew Ross
 
 
     This file is part of PLplot.

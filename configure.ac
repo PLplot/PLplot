@@ -8,6 +8,7 @@ dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
 dnl Copyright (C) 2004  Andrew Roach
 dnl Copyright (C) 2005  Thomas J. Duck
+dnl Copyright (C) 2006  Andrew Ross
 dnl
 dnl This file is part of PLplot.
 dnl
