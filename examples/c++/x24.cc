@@ -106,7 +106,7 @@ char* x24::peace[] = {
   /* English */
   "#<0x10>Peace",
   /* Hebrew */
-  "#<0x10>םולש",
+  "#<0x10>שלום",
   /* Russian */
   "#<0x10>Мир",
   /* German */
@@ -118,7 +118,7 @@ char* x24::peace[] = {
   /* Spanish */
   "#<0x10>Paz",
   /* Arabic */
-  "#<0x10>مﻼﺳ",
+  "#<0x10>ﺳﻼم",
   /* Turkish*/
   "#<0x10>Barış",
   /* Kurdish */

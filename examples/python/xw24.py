@@ -98,7 +98,7 @@ def main():
         # English
         "#<0x10>Peace",
         # Hebrew
-        "#<0x10>םולש",
+        "#<0x10>שלום",
         # Russian
         "#<0x10>Мир",
         # German
@@ -110,7 +110,7 @@ def main():
         # Spanish
         "#<0x10>Paz",
         # Arabic
-        "#<0x10>مﻼﺳ",
+        "#<0x10>ﺳﻼم",
         # Turkish
         "#<0x10>Barış",
         # Kurdish
