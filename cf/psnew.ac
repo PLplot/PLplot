@@ -34,14 +34,8 @@ fi
 
 if test "$enable_psnew" = "yes"; then
 
-  dnl Test for pango library
-  PKG_CHECK_MODULES(PSNEW,pango,,enable_psnew=no )
-
-  dnl Test for pangoft2 ibrary
-  PKG_CHECK_MODULES(PSNEW,pangoft2,,enable_psnew=no )
-
-  dnl Test for LASi library
-  PKG_CHECK_MODULES(PSNEW,lasi,,enable_psnew=no )
+  dnl Test for pango, pangoft2 and LASI libraries
+  PKG_CHECK_MODULES(PSNEW,pango pangoft2 lasi,,enable_psnew=no )
 
   dnl Continue if the required libraries exist
   if test "$enable_psnew" = "no"; then

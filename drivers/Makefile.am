@@ -114,7 +114,7 @@ ntk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
-psnew_la_CFLAGS = $(PSNEW_CFLAGS)
+psnew_la_CXXFLAGS = $(PSNEW_CFLAGS)
 tk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_builddir)/bindings/tcl \
@@ -212,8 +212,10 @@ plmeta_la_LDFLAGS = $(ldflags) $(libplplot)
 ps_la_SOURCES = ps.c
 ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 
+## Currently pkg-config --libs lasi does not return -lLASi as I think
+## it should - needs adding manually.
 psnew_la_SOURCES = psnew.cc
-psnew_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSNEW_LIBS)
+psnew_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSNEW_LIBS) -lLASi
 
 pstex_la_SOURCES = ps.c pstex.c
 pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
@@ -376,6 +378,8 @@ ntk_lo_CFLAGS = \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
+psnew_lo_CFLAGS = $(PSNEW_CFLAGS)
+
 tk_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_builddir)/bindings/tcl \
@@ -408,6 +412,7 @@ AM_CPPFLAGS = \
 	$(aqt_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
 	$(gcw_lo_CFLAGS) \
+	$(psnew_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
 	$(wingcc_lo_CFLAGS) \
 	$(wxwidgets_lo_CFLAGS) \
@@ -437,6 +442,7 @@ libplplotdrv_la_LDFLAGS = \
 	$(FREETYPELIBCMD) \
 	$(GDI32LIBCMD) \
 	$(AQTLIBCMD) \
+	$(PSNEW_LIBS) \
 	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.
