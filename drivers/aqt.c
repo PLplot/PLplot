@@ -178,7 +178,7 @@ void get_cursor(PLStream *, PLGraphicsIn *);
 void proc_str (PLStream *, EscText *);
 NSMutableAttributedString * create_string(const PLUNICODE *, int, PLFLT);
 void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
-char * UCS4_to_UTF8(const PLUNICODE);
+//char * UCS4_to_UTF8(const PLUNICODE);
 void check_font_environment_variables(void);
 
 /* PLplot interface functions */
@@ -565,7 +565,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	int updown;
 	char dummy[MAX_STRING_LEN+1];
 	char *font;
-	char *utf8;
+	static char utf8[5];
 	NSMutableAttributedString *str;
 
 	updown = 0;
@@ -592,7 +592,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	while (i < ucs4_len){
 		if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
 			if (ucs4[i] != (PLUNICODE)plplot_esc) {		/* a character to display */
-				utf8 = UCS4_to_UTF8(ucs4[i]);
+				ucs4_to_utf8(ucs4[i],&utf8);
 				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
 								   withString:[NSString stringWithUTF8String:utf8]];
 				i++;
@@ -601,7 +601,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 			}
 			i++;
 			if (ucs4[i] == (PLUNICODE)plplot_esc){
-				utf8 = UCS4_to_UTF8(ucs4[i]);
+				ucs4_to_utf8(ucs4[i],&utf8);
 				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
 								   withString:[NSString stringWithUTF8String:utf8]];
 				i++;
@@ -676,6 +676,7 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 // convert PLplot UCS4 unicode character to UTF8 character for Mac
 //---------------------------------------------------------------------
 
+/*
 char * UCS4_to_UTF8(const PLUNICODE ucs4)
 {
 	int i,len;
@@ -709,16 +710,18 @@ char * UCS4_to_UTF8(const PLUNICODE ucs4)
 	}
 
 	// for debugging
-
+*/
 /*	
 	printf("ucs4 : %d\n", ucs4);
 	printf("as utf8 : (%d) 0x", len);
 	for(i=0;i<len;i++) printf("%x", utf8[i]);
 	printf("\n");
 */
+/*
 
 	return utf8;
 }
+*/
 
 //---------------------------------------------------------------------
 // check_font_environment_variables
