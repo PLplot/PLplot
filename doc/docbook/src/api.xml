@@ -4801,19 +4801,19 @@ source
     </title>
 
     <para>
-      <funcsynopsis>
+     <funcsynopsis>
       <funcprototype>
-	<funcdef>
-	  <function>plmap</function>
-	</funcdef>
-        <paramdef><parameter>mapform</parameter></paramdef>
-        <paramdef><parameter>type</parameter></paramdef>
-        <paramdef><parameter>minlong</parameter></paramdef>
-        <paramdef><parameter>maxlong</parameter></paramdef>
-        <paramdef><parameter>minlat</parameter></paramdef>
-        <paramdef><parameter>maxlat</parameter></paramdef>
+	   <funcdef>
+	    <function>plmap</function>
+	   </funcdef>
+       <paramdef><parameter>mapform</parameter></paramdef>
+       <paramdef><parameter>type</parameter></paramdef>
+       <paramdef><parameter>minlong</parameter></paramdef>
+       <paramdef><parameter>maxlong</parameter></paramdef>
+       <paramdef><parameter>minlat</parameter></paramdef>
+       <paramdef><parameter>maxlat</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis>
+     </funcsynopsis>
     </para>
 
     <para>
@@ -4823,13 +4823,13 @@ source
     </para>
 
     <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>mapform</parameter>
-	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+     <varlistentry>
+	  <term>
+	   <parameter>mapform</parameter>
+	   (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       A user supplied function to transform the coordinate 
       longitudes and latitudes to a plot coordinate system.  
       By using this transform, we can change from a longitude, 
@@ -4838,117 +4838,117 @@ source
       are the corresponding latitudes.  After the call to mapform(), x[] 
       and y[] should be replaced by the corresponding plot coordinates.  
       If no transform is desired, mapform can be replaced by NULL.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>type</parameter>
-	  (<literal>char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>type</parameter>
+	    (<literal>char *</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       type is a character string. The value of this parameter determines the
       type of background. The possible values are:
-      <itemizedlist>
-       <listitem>
-        <para>
-	     "globe" -- continental outlines
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         "usa" -- USA and state boundaries
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-         "cglobe" -- continental outlines and countries
-        </para>
-       </listitem>
-       <listitem>
-        <para>
-          "usaglobe" -- USA, state boundaries and continental outlines
-        </para>
-       </listitem>
-	   </itemizedlist>
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>minlong</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+        <itemizedlist>
+         <listitem>
+          <para>
+	       <literal>"globe"</literal> -- continental outlines
+          </para>
+         </listitem>
+         <listitem>
+          <para>
+           <literal>"usa"</literal> -- USA and state boundaries
+          </para>
+         </listitem>
+         <listitem>
+          <para>
+           <literal>"cglobe"</literal> -- continental outlines and countries
+          </para>
+         </listitem>
+         <listitem>
+          <para>
+           <literal>"usaglobe"</literal> -- USA, state boundaries and continental outlines
+          </para>
+         </listitem>
+	    </itemizedlist>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>minlong</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       The value of the longitude on the left side of the plot. 
       The value of minlong must be less than the value of maxlong, and the 
       quantity maxlong-minlong must be less than or equal to 360.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>maxlong</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-      The value of the longitude on the right side of the plot.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>minlat</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-      The minimum latitude to be plotted on the background.  
-      One can always use -90.0 as the boundary outside the plot window 
-      will be automatically eliminated.  However, the program will be 
-      faster if one can reduce the size of the background plotted.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>maxlat</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-      The maximum latitudes to be plotted on the background.  
-      One can always use 90.0 as the boundary outside the plot window 
-      will be automatically eliminated.
-	  </para>
-	</listitem>
-      </varlistentry>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>maxlong</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
+       The value of the longitude on the right side of the plot.
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>minlat</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
+       The minimum latitude to be plotted on the background.  
+       One can always use -90.0 as the boundary outside the plot window 
+       will be automatically eliminated.  However, the program will be 
+       faster if one can reduce the size of the background plotted.
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>maxlat</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
+       The maximum latitudes to be plotted on the background.  
+       One can always use 90.0 as the boundary outside the plot window 
+       will be automatically eliminated.
+	   </para>
+	  </listitem>
+     </varlistentry>
     </variablelist>
   </sect1>
 
   <sect1 id="plmeridians" renderas="sect3">
     <title>
-      <function>plmeridians</function>: Plot latitude and longitude lines.
+     <function>plmeridians</function>: Plot latitude and longitude lines.
     </title>
 
     <para>
-      <funcsynopsis>
+     <funcsynopsis>
       <funcprototype>
-	<funcdef>
-	  <function>plmeridians</function>
-	</funcdef>
-        <paramdef><parameter>mapform</parameter></paramdef>
-        <paramdef><parameter>dlong</parameter></paramdef>
-        <paramdef><parameter>dlat</parameter></paramdef>
-        <paramdef><parameter>minlong</parameter></paramdef>
-        <paramdef><parameter>maxlong</parameter></paramdef>
-        <paramdef><parameter>minlat</parameter></paramdef>
-        <paramdef><parameter>maxlat</parameter></paramdef>
+	   <funcdef>
+	    <function>plmeridians</function>
+	   </funcdef>
+       <paramdef><parameter>mapform</parameter></paramdef>
+       <paramdef><parameter>dlong</parameter></paramdef>
+       <paramdef><parameter>dlat</parameter></paramdef>
+       <paramdef><parameter>minlong</parameter></paramdef>
+       <paramdef><parameter>maxlong</parameter></paramdef>
+       <paramdef><parameter>minlat</parameter></paramdef>
+       <paramdef><parameter>maxlat</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis>
+     </funcsynopsis>
     </para>
 
     <para>
@@ -4957,13 +4957,13 @@ source
     </para>
 
     <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>mapform</parameter>
-	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+     <varlistentry>
+	  <term>
+	   <parameter>mapform</parameter>
+	   (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       A user supplied function to transform the coordinate 
       longitudes and latitudes to a plot coordinate system.  
       By using this transform, we can change from a longitude, 
@@ -4972,82 +4972,82 @@ source
       are the corresponding latitudes.  After the call to mapform(), x[] 
       and y[] should be replaced by the corresponding plot coordinates.  
       If no transform is desired, mapform can be replaced by NULL.
-	  </para>
-	</listitem>
-    </varlistentry>
-    <varlistentry>
-	<term>
-	  <parameter>dlong</parameter>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>dlong</parameter>
 	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	  </term>
+	  <listitem>
+	   <para>
        The interval in degrees at which the longitude lines are to be plotted.
-	  </para>
-	</listitem>
-    </varlistentry>
-    <varlistentry>
-	<term>
-	  <parameter>dlat</parameter>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>dlat</parameter>
 	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	  </term>
+	  <listitem>
+	   <para>
        The interval in degrees at which the latitude lines are to be plotted.
-	  </para>
-	</listitem>
-      </varlistentry>
-    <varlistentry>
-	<term>
-	  <parameter>minlong</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>minlong</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       The value of the longitude on the left side of the plot. 
       The value of minlong must be less than the value of maxlong, and the 
       quantity maxlong-minlong must be less than or equal to 360.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>maxlong</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>maxlong</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       The value of the longitude on the right side of the plot.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>minlat</parameter>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>minlat</parameter>
 	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	  </term>
+	  <listitem>
+	   <para>
       The minimum latitude to be plotted on the background.  
       One can always use -90.0 as the boundary outside the plot window 
       will be automatically eliminated.  However, the program will be 
       faster if one can reduce the size of the background plotted.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>maxlat</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
+	   </para>
+	  </listitem>
+     </varlistentry>
+     <varlistentry>
+	  <term>
+	   <parameter>maxlat</parameter>
+	   (<literal>PLFLT</literal>, input)
+	  </term>
+	  <listitem>
+	   <para>
       The maximum latitudes to be plotted on the background.  
       One can always use 90.0 as the boundary outside the plot window 
       will be automatically eliminated.
-	  </para>
-	</listitem>
-      </varlistentry>
+	   </para>
+	  </listitem>
+     </varlistentry>
     </variablelist>
   </sect1>
 
