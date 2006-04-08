@@ -654,8 +654,8 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 
 void
 c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
-void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-              PLPointer pltr_data);
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+       	PLPointer pltr_data);
 
 void
 c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
@@ -1569,11 +1569,6 @@ pltr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
 
 void
 pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
-
-/* Example linear transformation function for contour plotter. */
-
-void
-xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty);
 
 	/* Function evaluators */
 
