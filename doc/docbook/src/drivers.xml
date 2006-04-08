@@ -329,6 +329,60 @@
     </para>
   </sect1>
 
+<!-- ================================================================== -->
+<!-- wxWidgets -->
+
+<sect1 id="wxWidgets-driver">
+   <title>The wxWidgets Driver (Linux, Mac OS X, Windows)</title>
+
+   <para>
+   The basic wxWidgets driver's features and user interface are described 
+   in the section called 'Driver Basics'. The file 
+   drivers/README.wxwidgets describes how you can use the PLplot library 
+   within your wxWidgets application.
+   </para>
+
+   <sect2 id="wxWidgets-driver-basics">
+      <title>wxWidgets Driver Basics</title>
+
+      <para>
+      The wxWidgets driver plots in a Frame provided by the wxWidgets 
+      library. The driver is quite complete but lacks many of the GUI 
+      features of the TK or GCW drivers. All plots are available at once 
+      an one can switch between all plots by pressing Alt-n. The 
+      application can be quit with Alt-x. These functions are also 
+      available in the menu. After the last plot one will advance again 
+      to the first plot. Anti-aliasing is supported and and the wxWidgets 
+      driver is unicode enabled. It is also possible to address the 
+      wxWidgets driver from within a wxWidgets application - this is 
+      described in the next section.
+      </para>
+    
+     <para>
+      The available driver options (used with the
+      <parameter>-drvopt</parameter> command-line argument) are:
+     <itemizedlist>
+        <listitem><para>
+		text: Use TrueType fonts (0|1); default 1
+        </para></listitem>
+	 <listitem><para>
+        smooth: switch on/off anti-aliasing (0|1); default 1
+        </para></listitem>
+     </itemizedlist>
+     </para>
+
+     <para>
+     The text option toggles between TrueType and Hershey fonts. The 
+     Hershey fonts provide a reference implementation for text 
+     representation in PLplot.
+     </para>
+
+     <para>
+     The smooth option will turn on or off text smoothing for True 
+     Type fonts. This will increase the time for a plot considerably.
+     </para>
+  </sect2>
+</sect1>
 </chapter>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
