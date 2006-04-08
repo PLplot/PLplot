@@ -65,6 +65,102 @@ Installation instructions for Mac OS X
    - run: ./x01c
 
 
+--------- Using the driver in a wxWidgets Application -------------------------------------
+
+The wxWidgets driver is already capable of redirecting the plot to any canvas (wxDC), which can also be provided by a wxApp. The API is not quite ready for release, but it's easy to implement. First we need to inherit a class from plstream
+
+
+#include "plplotP.h"
+#include "plstream.h"
+#include "wx/dc.h"
+
+class wxPLplotstream : public plstream
+{
+public:
+  wxPLplotstream( wxDC *dc, int width, int height );  //!< Constructor.
+  void set_stream();   //!< Calls some code before every PLplot command.
+	void SetSize( int width, int height );   //!< Set new size of plot area.
+	void RenewPlot();   //!< Redo plot.
+private:
+	wxDC* m_dc;   //!< Pointer to wxDC to plot into.
+	int m_width;   //!< Width of dc/plot area.
+	int m_height;   //!< Height of dc/plot area.
+};
+
+
+wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height ) : 
+                m_dc(dc), m_width(width), m_height(height)
+{
+  ::plstream();
+  sdev( "wxwidgets" );
+  spage( 0.0, 0.0, m_width, m_height, 0, 0 );
+  SetOpt( "text", "1" ); // use freetype?
+  SetOpt( "smooth", "1" );  // antialiased text?
+  init();
+  plP_esc( PLESC_DEVINIT, (void*)m_dc );
+}
+
+void wxPLplotstream::set_stream()
+{
+  plstream::set_stream();
+}
+
+void wxPLplotstream::SetSize( int width, int height )
+{
+	m_width=width;
+	m_height=height;
+  plP_esc( PLESC_CLEAR, NULL );
+  wxSize size( m_width, m_height );
+  plP_esc( PLESC_RESIZE, (void*)&size );
+}
+
+void wxPLplotstream::RenewPlot()
+{
+  plP_esc( PLESC_CLEAR, NULL );
+  replot();
+}
+
+
+In the wxWidgets application a wxMemoryDC must be created (e.g. in the constructor of a wxWindow) and made known to the driver, e.g.
+
+
+	MemPlotDC = new wxMemoryDC;
+  MemPlotDCBitmap = new wxBitmap( 640, 400, -1 );
+  MemPlotDC->SelectObject( *MemPlotDCBitmap );
+	my_stream = new wxPLplotstream( (wxDC*)MemPlotDC, MemPlotDC_width, MemPlotDC_height );
+
+
+The OnPaint() event handler looks like this (double buffering is used here)
+
+
+void plotwindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
+{
+  int width, height;
+  GetSize( &width, &height );
+
+	// Check if we window was resized (or dc is invalid)
+	if( (my_stream == NULL) || (MemPlotDC_width!=width) || (MemPlotDC_height!=height) ) {
+    MemPlotDC->SelectObject( wxNullBitmap );
+    if( MemPlotDCBitmap )
+      delete MemPlotDCBitmap;
+    MemPlotDCBitmap = new wxBitmap( width, height, -1 );
+    MemPlotDC->SelectObject( *MemPlotDCBitmap );
+		my_stream->SetSize( width, height );
+    my_stream->replot();
+    MemPlotDC_width = width;
+    MemPlotDC_height = height;
+	}
+
+  wxPaintDC dc( this );
+	dc.SetClippingRegion( GetUpdateRegion() );
+  dc.BeginDrawing();
+  dc.Blit( 0, 0, width, height, MemPlotDC, 0, 0 );
+  dc.EndDrawing();
+}
+
+The whole PLplot API is then available via the my_stream object.
+
+
 --------- don't bother with stuff below this line -----------------------------------------
 
 
