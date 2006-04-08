@@ -360,7 +360,10 @@
 	</term>
 	<listitem>
 	  <para>
-	    File pointer.
+	    File pointer. The type (i.e. text or binary) doesn't matter
+            on *ix systems. On systems where it might matter it should
+            match the type of file that the output driver would produce,
+            i.e. text for the postscript driver.
 	  </para>
 	</listitem>
       </varlistentry>
