@@ -229,7 +229,7 @@ complicit output drivers only, e.g. png.
 3.2.6 wxwidgets
 
 This is a device driver that runs on the wxWidgets cross-platform GUI (see
-http://www.wxwidgets.org/) has been donated by Werner Smekal.  Most examples
-work out of the box, but some (e.g., a segfault for example 8) currently
-have problems.  More development of this immature device driver is planned.
+http://www.wxwidgets.org/) that has been donated by Werner Smekal. The driver
+is unicode-enabled. It currently provides a limited GUI but additional 
+capabilities are being developed.
 
