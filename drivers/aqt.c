@@ -565,7 +565,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	int updown;
 	char dummy[MAX_STRING_LEN+1];
 	char *font;
-	static char utf8[5];
+	char utf8[5];
 	NSMutableAttributedString *str;
 
 	updown = 0;
@@ -592,7 +592,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	while (i < ucs4_len){
 		if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
 			if (ucs4[i] != (PLUNICODE)plplot_esc) {		/* a character to display */
-				ucs4_to_utf8(ucs4[i],&utf8);
+				ucs4_to_utf8(ucs4[i],utf8);
 				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
 								   withString:[NSString stringWithUTF8String:utf8]];
 				i++;
@@ -601,7 +601,7 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 			}
 			i++;
 			if (ucs4[i] == (PLUNICODE)plplot_esc){
-				ucs4_to_utf8(ucs4[i],&utf8);
+				ucs4_to_utf8(ucs4[i],utf8);
 				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
 								   withString:[NSString stringWithUTF8String:utf8]];
 				i++;
