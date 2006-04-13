@@ -134,7 +134,25 @@ common:
 !ifdef CGM
 #define PLD_cgm
 !endif
-!ifdef LJ_HPGL
+!ifdef CPS
+#define PLD_cps
+!endif
+!ifdef GIF
+#define PLD_gif
+!endif
+!ifdef HPGL
+#define PLD_hp7470
+!endif
+!ifdef HPGLL
+#define PLD_hp7580
+!endif
+!ifdef JPEG
+#define PLD_jpeg
+!endif
+!ifdef LJII
+#define PLD_ljii
+!endif
+!ifdef LJHPGL
 #define PLD_lj_hpgl
 !endif
 !ifdef MEM
@@ -149,8 +167,14 @@ common:
 !ifdef PLMETA
 #define PLD_plmeta
 !endif
+!ifdef PNG
+#define PLD_png
+!endif
 !ifdef PS
 #define PLD_ps
+!endif
+!ifdef PSTEX
+#define PLD_pstex
 !endif
 !ifdef XFIG
 #define PLD_xfig

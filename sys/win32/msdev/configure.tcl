@@ -673,7 +673,7 @@ proc handleCmdOptions {arglist} {
 global savefile
 global options
 set savefile         "config.res"
-set options(version) "5.5.0"
+set options(version) "5.6.0"
 set options(float)   "double"
 set options(install) "c:\\plplot"
 set options(drivers) "?"
@@ -687,7 +687,7 @@ set options(usenn)         "No"
 set options(libqhull)      "?"
 set options(incqhull)      "?"
 set options(minimum_drivers)  {win3 ps}
-set options(standard_drivers) {win3 cgm lj_hpgl mem null pbm plmeta ps xfig}
+set options(standard_drivers) {win3 lj_hpgl null plmeta ps xfig}
 set options(drivers)       [join $options(standard_drivers) ", "]
 
 load jim-aio

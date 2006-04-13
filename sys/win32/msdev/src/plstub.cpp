@@ -631,7 +631,7 @@ plsfnam(const char *fnam) {
 }
 
 /* Shade region. */
-typedef int  DefineFuncPtr( PLFLT, PLFLT ) ;
+typedef long  DefineFuncPtr( PLFLT, PLFLT ) ;
 typedef void *FillFuncPtr(PLINT, PLFLT *, PLFLT *) ;
 typedef void *PlotFuncPtr(PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) ;
 

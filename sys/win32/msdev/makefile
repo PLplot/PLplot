@@ -1,5 +1,26 @@
+# PLplot:
+# This makefile takes care of the overall building process.
+# It has the following targets:
+# - default:
+#      The default make step (links, common, libs)
+# - prepare:
+#      The default make step without the actual build, useful
+#      when you want to adjust the set of drivers manually
+# - links:
+#      Copies all the source files to the $(PLTMP) directory
+# - libs:
+#      Target for building the static and dynamic libraries
+# - libstat:
+#      Build the static library (plplot.lib)
+# - libdyn:
+#      Build the dynamic library (plplotd.lib, plplotd.dll)
+# - common:
+#      Writes the plconfig.h and pldevs.h header files
+#      (Here the available drivers are selected)
+# - install:
+#      Installs the built libraries and other files into
+#      the directory indicated by $(PLDEST)
 #
-# This makefile copies all source files to PLTMP.
 # Additional drivers should be uncommented from this
 # file before running nmake.
 #
@@ -24,6 +45,8 @@
 #
 # Location of plplot directories
 #
+#PLDEST = c:\plplot
+PLDEST = c:\plplot
 PLDIR = ..\..\..
 PLTMP = $(PLDIR)\tmp
 PLLIB = $(PLDIR)\lib
@@ -32,24 +55,19 @@ PLBIN = $(PLDIR)\bin
 #
 # Device selection
 #
-META = PLD_plmeta
-PS   = PLD_ps
-PSTEX = PLD_pstex
-CPS  = PLD_cps
-#PNG  = PLD_png
-MEM  = PLD_mem
-NULL = PLD_null
-PBM  = PLD_pbm
-XFIG = PLD_xfig
-#LJII = PLD_ljii
-HPGL = PLD_hp7470
-HPGLL = PLD_hp7580
-LJHPGL = PLD_lj_hpgl
-
-#BGI = PLD_bgi
 WIN3 = PLD_win3
+LJ_HPGL = PLD_lj_hpgl
+NULL = PLD_null
+PLMETA = PLD_plmeta
+PS = PLD_ps
+XFIG = PLD_xfig
+
+
 .IGNORE:
-default: links common
+default: links common libs
+
+prepare: links common
+
 links:
 #
 # Copy the necessary files to the temp dir
@@ -95,6 +113,7 @@ links:
 #  @crlf -fs $(PLTMP)\*.h
 #  @crlf -fs $(PLTMP)\*.rc
 #  @crlf -fs $(PLTMP)\*.def
+
 common:
 #
 # Create plconfig.h file
@@ -108,32 +127,24 @@ common:
 #define BIN_DIR "$(PLBIN:\=\\)"
 #define DATA_DIR "$(PLLIB:\=\\)"
 #define DRV_DIR "$(PLLIB:\=\\)"
-#define VERSION "5.5.0"
+#define VERSION "5.6.0"
 #define PL_DOUBLE
 #endif
 <<keep
+
 # Create pldevs.h file
 #
   @echo ``
   @echo `Creating $(PLTMP)\pldevs.h`
   @echo <<$(PLTMP)\pldevs.h
-!ifdef META
-#define PLD_plmeta
-!endif
-!ifdef PS
-#define PLD_ps
+!ifdef CGM
+#define PLD_cgm
 !endif
 !ifdef CPS
 #define PLD_cps
 !endif
-!ifdef PBM
-#define PLD_pbm
-!endif
-!ifdef XFIG
-#define PLD_xfig
-!endif
-!ifdef LJII
-#define PLD_ljii
+!ifdef GIF
+#define PLD_gif
 !endif
 !ifdef HPGL
 #define PLD_hp7470
@@ -141,24 +152,56 @@ common:
 !ifdef HPGLL
 #define PLD_hp7580
 !endif
+!ifdef JPEG
+#define PLD_jpeg
+!endif
+!ifdef LJII
+#define PLD_ljii
+!endif
 !ifdef LJHPGL
 #define PLD_lj_hpgl
+!endif
+!ifdef MEM
+#define PLD_mem
 !endif
 !ifdef NULL
 #define PLD_null
 !endif
-!ifdef WIN3
-#define PLD_win3
+!ifdef PBM
+#define PLD_pbm
+!endif
+!ifdef PLMETA
+#define PLD_plmeta
 !endif
 !ifdef PNG
 #define PLD_png
 !endif
+!ifdef PS
+#define PLD_ps
+!endif
 !ifdef PSTEX
 #define PLD_pstex
 !endif
+!ifdef XFIG
+#define PLD_xfig
+!endif
+!ifdef WIN3
+#define PLD_win3
+!endif
 <<keep
+
+libs: libstat libdyn
+
+libstat:
+    @cd plplib
+    @nmake -f plplib.mak
+    @cd ..
+
+libdyn:
+    @cd plpdll
+    @nmake -f plpdll.mak
+    @cd ..
+
 install:
-        @copy $(PLDIR)\sys\win32\msdev\plplib\plplot.lib $(PLLIB)
-#        @copy $(PLDIR)\sys\win32\msdev\plpdll\Debug\plplotd.lib $(PLLIB)
-#        @copy $(PLDIR)\sys\win32\msdev\plpdll\Release\plplotd.lib $(PLLIB)
-#        @copy $(PLDIR)\sys\win32\msdev\plpdll\plplotd.dll $(PLBIN)
+    @runinstall.bat $(PLDEST)
+
