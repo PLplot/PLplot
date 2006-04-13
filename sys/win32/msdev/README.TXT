@@ -1,9 +1,35 @@
 README file for the win32/msdev port of plplot
 ==============================================
 
-Belongs to PLplot version: 5.3.1
-Information updated:       january 2004
+Belongs to PLplot version: 5.6.0
+Information updated:       april 2006
 
+
+Information dd. april 2006
+--------------------------
+Since version 5.5.3 the most important changes to the win32/msdev
+port have been:
+
+- Support for UNICODE and anti-aliasing fonts in the win32 driver
+- A more flexible configuration system to accommodate this change
+
+If you want to use these new features, then you will have to
+install extra software. This software is described in the
+file UNICODE_WIN.TXT.
+
+
+Information dd. january 2004
+----------------------------
+I have volunteered to take over the maintenance of this
+port. So, please contact me about problems and suggestions:
+
+Arjen Markus
+WL | Delft Hydraulics
+email: arjen.markus@wldelft.nl
+
+
+Information dd. january 2002
+----------------------------
 I will here give some background information, information
 on current status and future developments of the win32/msdev
 port of plplot. For installation instructions please see the
@@ -54,15 +80,4 @@ January 2002
 Olof Svensson
 European Synchrotron Radiation Facility
 email: svensson@esrf.fr
-
-
-
-January 2004
-
-I have volunteered to take over the maintenance of this
-port. So, please contact me about problems and suggestions:
-
-Arjen Markus
-WL | Delft Hydraulics
-email: arjen.markus@wldelft.nl
 

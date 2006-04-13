@@ -30,7 +30,10 @@ ALL :   $(SOURCEDIR)\x01c.exe \
 	$(SOURCEDIR)\x18c.exe \
 	$(SOURCEDIR)\x19c.exe \
 	$(SOURCEDIR)\x20c.exe \
+	$(SOURCEDIR)\x21c.exe \
 	$(SOURCEDIR)\x22c.exe \
+	$(SOURCEDIR)\x23c.exe \
+	$(SOURCEDIR)\x24c.exe \
 	$(SOURCEDIR)\x25c.exe
 
 
@@ -74,8 +77,14 @@ CLEAN :
 	-@erase $(SOURCEDIR)\x19c.exe"
 	-@erase $(INTDIR)\x20c.obj
 	-@erase $(SOURCEDIR)\x20c.exe"
+	-@erase $(INTDIR)\x21c.obj
+	-@erase $(SOURCEDIR)\x21c.exe"
 	-@erase $(INTDIR)\x22c.obj
 	-@erase $(SOURCEDIR)\x22c.exe"
+	-@erase $(INTDIR)\x23c.obj
+	-@erase $(SOURCEDIR)\x23c.exe"
+	-@erase $(INTDIR)\x24c.obj
+	-@erase $(SOURCEDIR)\x24c.exe"
 	-@erase $(INTDIR)\x25c.obj
 	-@erase $(SOURCEDIR)\x25c.exe"
 
@@ -221,9 +230,24 @@ $(SOURCEDIR)\x20c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x20c.obj $(LINK32_OBJS)
   $(LINK32_FLAGS) /pdb:$(OUTDIR)\x20c.pdb /out:$(SOURCEDIR)\x20c.exe $(INTDIR)\x20c.obj $(LINK32_OBJS)
 <<
 
+$(SOURCEDIR)\x21c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x21c.obj $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) /pdb:$(OUTDIR)\x21c.pdb /out:$(SOURCEDIR)\x21c.exe $(INTDIR)\x21c.obj $(LINK32_OBJS)
+<<
+
 $(SOURCEDIR)\x22c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x22c.obj $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) /pdb:$(OUTDIR)\x22c.pdb /out:$(SOURCEDIR)\x22c.exe $(INTDIR)\x22c.obj $(LINK32_OBJS)
+<<
+
+$(SOURCEDIR)\x23c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x23c.obj $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) /pdb:$(OUTDIR)\x23c.pdb /out:$(SOURCEDIR)\x23c.exe $(INTDIR)\x23c.obj $(LINK32_OBJS)
+<<
+
+$(SOURCEDIR)\x24c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x24c.obj $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) /pdb:$(OUTDIR)\x24c.pdb /out:$(SOURCEDIR)\x24c.exe $(INTDIR)\x24c.obj $(LINK32_OBJS)
 <<
 
 $(SOURCEDIR)\x25c.exe : $(OUTDIR) $(DEF_FILE) $(INTDIR)\x25c.obj $(LINK32_OBJS)
@@ -290,8 +314,17 @@ $(INTDIR)\x19c.obj : $(SOURCEDIR)\x19c.c $(INTDIR)
 $(INTDIR)\x20c.obj : $(SOURCEDIR)\x20c.c $(INTDIR)
 	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x20c.pch $(SOURCEDIR)\x20c.c
 
+$(INTDIR)\x21c.obj : $(SOURCEDIR)\x21c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x21c.pch $(SOURCEDIR)\x21c.c
+
 $(INTDIR)\x22c.obj : $(SOURCEDIR)\x22c.c $(INTDIR)
 	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x22c.pch $(SOURCEDIR)\x22c.c
+
+$(INTDIR)\x23c.obj : $(SOURCEDIR)\x23c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x23c.pch $(SOURCEDIR)\x23c.c
+
+$(INTDIR)\x24c.obj : $(SOURCEDIR)\x24c.c $(INTDIR)
+	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x24c.pch $(SOURCEDIR)\x24c.c
 
 $(INTDIR)\x25c.obj : $(SOURCEDIR)\x25c.c $(INTDIR)
 	$(CPP) $(CPP_PROJ) /Fp$(INTDIR)\x25c.pch $(SOURCEDIR)\x25c.c

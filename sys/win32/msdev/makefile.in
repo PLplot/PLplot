@@ -55,19 +55,8 @@ PLBIN = $(PLDIR)\bin
 #
 # Device selection
 #
-META = PLD_plmeta
-PS   = PLD_ps
-CPS  = PLD_cps
-NULL = PLD_null
-#PBM  = PLD_pbm
-#XFIG = PLD_xfig
-#LJII = PLD_ljii
-#HPGL = PLD_hp7470
-#HPGLL = PLD_hp7580
-#LJHPGL = PLD_lj_hpgl
+~devices~
 
-#BGI = PLD_bgi
-WIN3 = PLD_win3
 .IGNORE:
 default: links common libs
 
@@ -132,7 +121,7 @@ common:
 #define BIN_DIR "$(PLBIN:\=\\)"
 #define DATA_DIR "$(PLLIB:\=\\)"
 #define DRV_DIR "$(PLLIB:\=\\)"
-#define VERSION "5.2.1"
+#define VERSION ~version~
 ~define_plflt~
 #endif
 <<keep
@@ -142,35 +131,29 @@ common:
   @echo ``
   @echo `Creating $(PLTMP)\pldevs.h`
   @echo <<$(PLTMP)\pldevs.h
-!ifdef META
+!ifdef CGM
+#define PLD_cgm
+!endif
+!ifdef LJ_HPGL
+#define PLD_lj_hpgl
+!endif
+!ifdef MEM
+#define PLD_mem
+!endif
+!ifdef NULL
+#define PLD_null
+!endif
+!ifdef PBM
+#define PLD_pbm
+!endif
+!ifdef PLMETA
 #define PLD_plmeta
 !endif
 !ifdef PS
 #define PLD_ps
 !endif
-!ifdef CPS
-#define PLD_cps
-!endif
-!ifdef PBM
-#define PLD_pbm
-!endif
 !ifdef XFIG
 #define PLD_xfig
-!endif
-!ifdef LJII
-#define PLD_ljii
-!endif
-!ifdef HPGL
-#define PLD_hp7470
-!endif
-!ifdef HPGLL
-#define PLD_hp7580
-!endif
-!ifdef LJHPGL
-#define PLD_lj_hpgl
-!endif
-!ifdef NULL
-#define PLD_null
 !endif
 !ifdef WIN3
 #define PLD_win3

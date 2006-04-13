@@ -1,0 +1,15 @@
+INFORMATION ON UNICODE AND ANTI-ALIASING FONTS
+==============================================
+
+Belongs to PLplot version: 5.6.0
+Information updated:       april 2006
+
+
+The following libraries are required for UNICODE
+and anti-aliasing:
+
+1. The BGD library from: http://www.boutel.com/gd
+
+2. The freetype library from: http://gnuwin32.sourceforge.net/packages/freetype.htm
+
+TODO: detailed instructions
