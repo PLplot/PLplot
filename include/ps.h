@@ -67,14 +67,14 @@ void plD_tidy_ps		(PLStream *);
 void plD_state_ps	        (PLStream *, PLINT);
 void plD_esc_ps			(PLStream *, PLINT, void *);
 
-void plD_init_psnewm		(PLStream *);
-void plD_init_psnewc		(PLStream *);
-void plD_line_psnew		(PLStream *, short, short, short, short);
-void plD_polyline_psnew	        (PLStream *, short *, short *, PLINT);
-void plD_eop_psnew	        (PLStream *);
-void plD_bop_psnew		(PLStream *);
-void plD_tidy_psnew		(PLStream *);
-void plD_state_psnew	        (PLStream *, PLINT);
-void plD_esc_psnew		(PLStream *, PLINT, void *);
+void plD_init_psttfm		(PLStream *);
+void plD_init_psttfc		(PLStream *);
+void plD_line_psttf		(PLStream *, short, short, short, short);
+void plD_polyline_psttf	        (PLStream *, short *, short *, PLINT);
+void plD_eop_psttf	        (PLStream *);
+void plD_bop_psttf		(PLStream *);
+void plD_tidy_psttf		(PLStream *);
+void plD_state_psttf	        (PLStream *, PLINT);
+void plD_esc_psttf		(PLStream *, PLINT, void *);
 
 #endif /* __PS_H__ */

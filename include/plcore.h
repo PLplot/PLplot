@@ -258,9 +258,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_wxwidgets) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_wxwidgets,
 #endif
-#if defined(PLD_psnew) && !defined(ENABLE_DYNDRIVERS)
-    plD_dispatch_init_psnewm,
-    plD_dispatch_init_psnewc,
+#if defined(PLD_psttf) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_psttfm,
+    plD_dispatch_init_psttfc,
 #endif
     NULL
 };

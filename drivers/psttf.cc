@@ -33,7 +33,7 @@
 
 #define DEBUG
 
-#ifdef PLD_psnew
+#ifdef PLD_psttf
 #define NEED_PLDEBUG
 #include "plplotP.h"
 #include "drivers.h"
@@ -51,15 +51,15 @@ using namespace std;
 
 /* Device info */
 
-char* plD_DEVICE_INFO_psnew = 
-  "psnew:PostScript File (monochrome):0:psnew:55:psnewm\n"
-  "psnewc:PostScript File (color):0:psnew:56:psnewc";
+char* plD_DEVICE_INFO_psttf = 
+  "psttf:PostScript File (monochrome):0:psttf:55:psttfm\n"
+  "psttfc:PostScript File (color):0:psttf:56:psttfc";
 
 
 /* Prototypes for functions in this file. */
 
-void plD_dispatch_init_psnewm	( PLDispatchTable *pdt );
-void plD_dispatch_init_psnewc	( PLDispatchTable *pdt );
+void plD_dispatch_init_psttfm	( PLDispatchTable *pdt );
+void plD_dispatch_init_psttfc	( PLDispatchTable *pdt );
 
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
@@ -106,7 +106,7 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
    It has yet some bugs for 3d plots. */
 
 
-static void psnew_dispatch_init_helper( PLDispatchTable *pdt,
+static void psttf_dispatch_init_helper( PLDispatchTable *pdt,
                                      char *menustr, char *devnam,
                                      int type, int seq, plD_init_fp init )
 {
@@ -117,39 +117,39 @@ static void psnew_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_type = type;
     pdt->pl_seq = seq;
     pdt->pl_init     = init;
-    pdt->pl_line     = (plD_line_fp)     plD_line_psnew;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_psnew;
-    pdt->pl_eop      = (plD_eop_fp)      plD_eop_psnew;
-    pdt->pl_bop      = (plD_bop_fp)      plD_bop_psnew;
-    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_psnew;
-    pdt->pl_state    = (plD_state_fp)    plD_state_psnew;
-    pdt->pl_esc      = (plD_esc_fp)      plD_esc_psnew;
+    pdt->pl_line     = (plD_line_fp)     plD_line_psttf;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_psttf;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_psttf;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_psttf;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_psttf;
+    pdt->pl_state    = (plD_state_fp)    plD_state_psttf;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_psttf;
 }
 
-void plD_dispatch_init_psnewm	( PLDispatchTable *pdt )
+void plD_dispatch_init_psttfm	( PLDispatchTable *pdt )
 {
-    psnew_dispatch_init_helper( pdt,
-                             "PostScript File (monochrome)", "psnew",
+    psttf_dispatch_init_helper( pdt,
+                             "PostScript File (monochrome)", "psttf",
                              plDevType_FileOriented, 55,
-                             (plD_init_fp) plD_init_psnewm );
+                             (plD_init_fp) plD_init_psttfm );
 }
 
-void plD_dispatch_init_psnewc	( PLDispatchTable *pdt )
+void plD_dispatch_init_psttfc	( PLDispatchTable *pdt )
 {
-    psnew_dispatch_init_helper( pdt,
-                             "PostScript File (color)", "psnewc",
+    psttf_dispatch_init_helper( pdt,
+                             "PostScript File (color)", "psttfc",
                              plDevType_FileOriented, 56,
-                             (plD_init_fp) plD_init_psnewc );
+                             (plD_init_fp) plD_init_psttfc );
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_init_psnew()
+ * plD_init_psttf()
  *
  * Initialize device.
 \*--------------------------------------------------------------------------*/
 
 void
-plD_init_psnewm(PLStream *pls)
+plD_init_psttfm(PLStream *pls)
 {
   color = 0;
   pls->color = 0;		/* Not a color device */
@@ -161,7 +161,7 @@ plD_init_psnewm(PLStream *pls)
 }
 
 void
-plD_init_psnewc(PLStream *pls)
+plD_init_psttfc(PLStream *pls)
 {
   color = 1;
   pls->color = 1;		/* Is a color device */
@@ -403,13 +403,13 @@ writeHeader(PLStream *pls) {
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_line_psnew()
+ * plD_line_psttf()
  *
  * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*--------------------------------------------------------------------------*/
 
 void
-plD_line_psnew(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_psttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     PSDev *dev = (PSDev *) pls->dev;
     PLINT x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
@@ -458,41 +458,41 @@ plD_line_psnew(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_polyline_psnew()
+ * plD_polyline_psttf()
  *
  * Draw a polyline in the current color.
 \*--------------------------------------------------------------------------*/
 
 void
-plD_polyline_psnew(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_psttf(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	plD_line_psnew(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_psttf(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_eop_psnew()
+ * plD_eop_psttf()
  *
  * End of page.
 \*--------------------------------------------------------------------------*/
 
 void
-plD_eop_psnew(PLStream *pls)
+plD_eop_psttf(PLStream *pls)
 {
     doc->osBody() << " S\neop\n";
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_bop_psnew()
+ * plD_bop_psttf()
  *
  * Set up for the next page.
  * Advance to next family file if necessary (file output).
 \*--------------------------------------------------------------------------*/
 
 void
-plD_bop_psnew(PLStream *pls)
+plD_bop_psttf(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
 
@@ -528,18 +528,18 @@ plD_bop_psnew(PLStream *pls)
 /* This ensures the color and line width are set correctly at the beginning of
    each page */
 
-    plD_state_psnew(pls, PLSTATE_COLOR0);
-    plD_state_psnew(pls, PLSTATE_WIDTH);
+    plD_state_psttf(pls, PLSTATE_COLOR0);
+    plD_state_psttf(pls, PLSTATE_WIDTH);
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_tidy_psnew()
+ * plD_tidy_psttf()
  *
  * Close graphics file or otherwise clean up.
 \*--------------------------------------------------------------------------*/
 
 void
-plD_tidy_psnew(PLStream *pls)
+plD_tidy_psttf(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
 
@@ -594,13 +594,13 @@ plD_tidy_psnew(PLStream *pls)
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_state_psnew()
+ * plD_state_psttf()
  *
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
 void 
-plD_state_psnew(PLStream *pls, PLINT op)
+plD_state_psttf(PLStream *pls, PLINT op)
 {
     PSDev *dev = (PSDev *) pls->dev;
 
@@ -646,13 +646,13 @@ plD_state_psnew(PLStream *pls, PLINT op)
 }
 
 /*--------------------------------------------------------------------------*\
- * plD_esc_psnew()
+ * plD_esc_psttf()
  *
  * Escape function.
 \*--------------------------------------------------------------------------*/
 
 void
-plD_esc_psnew(PLStream *pls, PLINT op, void *ptr)
+plD_esc_psttf(PLStream *pls, PLINT op, void *ptr)
 {
     switch (op) {
     case PLESC_FILL:
@@ -1095,9 +1095,9 @@ esc_purge(char *dstr, char *sstr) {
 
 #else
 int 
-pldummy_psnew()
+pldummy_psttf()
 {
     return 0;
 }
 
-#endif				/* PLD_psnew */
+#endif				/* PLD_psttf */

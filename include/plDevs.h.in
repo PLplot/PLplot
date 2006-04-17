@@ -68,7 +68,7 @@
 #undef PLD_gcw
 #undef PLD_gnome
 #undef PLD_pstex
-#undef PLD_psnew
+#undef PLD_psttf
 #undef PLD_ntk
 #undef PLD_tkwin
 #undef PLD_mem
