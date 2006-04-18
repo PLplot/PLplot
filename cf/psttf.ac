@@ -32,6 +32,12 @@ if test "$PKG_CONFIG_CHECK" = "no"; then
 
 fi
 
+if test "$enable_dyndrivers" = "no" -a "$enable_psttf" = "yes"; then 
+  AC_MSG_WARN([psttf requires dynamic drivers])
+  AC_MSG_WARN([Setting enable_psttf to no])
+  enable_psttf=no
+fi
+
 if test "$enable_psttf" = "yes"; then
 
   dnl Test for pango, pangoft2 and LASI libraries

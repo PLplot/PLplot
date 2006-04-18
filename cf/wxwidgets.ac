@@ -27,6 +27,13 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+if test "$enable_dyndrivers" = "no" -a "$enable_wxwidgets" = "yes"; then
+  AC_MSG_WARN([wxwidgets requires dynamic drivers])
+  AC_MSG_WARN([Setting enable_wxwidgets to no])
+  enable_wxwidgets=no
+fi
+
+
 PL_ARG_WITH(wxwidgets-bindir, [User-specified path to the wxwidgets config tool], [])
 if test "$enable_wxwidgets" = "yes"; then
 	if test -z "$with_wxwidgets_bindir"; then
