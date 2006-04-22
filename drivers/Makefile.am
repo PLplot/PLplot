@@ -114,7 +114,7 @@ ntk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tk \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
-psttf_la_CXXFLAGS = $(PSNEW_CFLAGS)
+psttf_la_CXXFLAGS = $(PSTTF_CFLAGS)
 tk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_builddir)/bindings/tcl \
@@ -215,7 +215,7 @@ ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 ## Currently pkg-config --libs lasi does not return -lLASi as I think
 ## it should - needs adding manually.
 psttf_la_SOURCES = psttf.cc
-psttf_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSNEW_LIBS) -lLASi
+psttf_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSTTF_LIBS) -lLASi
 
 pstex_la_SOURCES = ps.c pstex.c
 pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
@@ -378,7 +378,7 @@ ntk_lo_CFLAGS = \
 	$(TCLINCCMD) \
 	$(TKINCCMD)
 
-psttf_lo_CFLAGS = $(PSNEW_CFLAGS)
+psttf_lo_CFLAGS = $(PSTTF_CFLAGS)
 
 tk_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
@@ -442,7 +442,7 @@ libplplotdrv_la_LDFLAGS = \
 	$(FREETYPELIBCMD) \
 	$(GDI32LIBCMD) \
 	$(AQTLIBCMD) \
-	$(PSNEW_LIBS) \
+	$(PSTTF_LIBS) \
 	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.
