@@ -48,7 +48,7 @@ usage()
 Usage: plplot-test.sh [OPTIONS]
 
 Options:
-   [--device=DEVICE] (DEVICE = one of psc [default], ps, png, gif, jpeg, cgm,
+   [--device=DEVICE] (DEVICE = one of psc [default], ps, psttf, psttfc, png, gif, jpeg, cgm,
                       xfig, or plmeta)
    [--front-end=FE]  (FE = one of c, cxx, f77, java, octave, python, tcl, or perl)
                      If this option is not specified, then all front-ends will
@@ -151,7 +151,7 @@ export cdir cxxdir f77dir pythondir javadir octave octavedir tcldir perldir PATH
 fe=""
 
 case "$device" in
-   ps|psc)
+   ps|psc|psttf|psttfc)
       dsuffix=ps
       options=
       export dsuffix options
