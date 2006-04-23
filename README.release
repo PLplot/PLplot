@@ -39,7 +39,9 @@ INDEX
     3.2.5 AquaTerm (Mac OS X)
     3.2.6 Tk
     3.2.7 wxwidgets
-
+4. Notes on Autotools
+  4.1 Autotools versions
+  4.2 cf/bootstrap.sh output
 
 1. Build Instructions
 
@@ -262,3 +264,24 @@ http://www.wxwidgets.org/) that has been donated by Werner Smekal. The driver
 is unicode-enabled. It currently provides a limited GUI but additional
 capabilities are being developed.
 
+
+4. Note on the Autotools that were used for this release
+
+4.1 Autotools versions
+
+autoconf (GNU Autoconf) 2.59
+Written by David J. MacKenzie and Akim Demaille.
+
+automake (GNU automake) 1.9.6
+Written by Tom Tromey <tromey@redhat.com>.
+
+ltmain.sh (GNU libtool) 1.5.22 (1.1220.2.365 2005/12/18 22:14:06)
+
+4.2 cf/bootstrap.sh output
+
+Running aclocal (GNU automake) 1.9.6... done
+Running autoheader (GNU Autoconf) 2.59... done
+Running libtoolize (GNU libtool) 1.5.22... done
+Running automake (GNU automake) 1.9.6... done
+Running autoconf (GNU Autoconf) 2.59... done
+Regenerating libltdl/aclocal+configure... done
