@@ -275,57 +275,11 @@ libraries for either Cygwin or MinGW platforms, please consult the
 Cygwin packages page (http://cygwin.com/packages).
 
 For MinGW, the shared library build is pretty much the same as for the
-Cygwin case except that cf/ltmain.sh has to patched to fix libtool bugs (as
-of 2005-09-15) for the MinGW case.  Here is the patch file:
-
---- ltmain.sh_original	2005-09-15 16:55:41.000000000 -0700
-+++ ltmain.sh	2005-09-15 16:57:25.000000000 -0700
-@@ -157,7 +157,7 @@
-     if eval $OBJDUMP -f $1 | $SED -e '10q' 2>/dev/null | \
-       $EGREP -e 'file format pe-i386(.*architecture: i386)?' >/dev/null ; then
-       win32_nmres=`eval $NM -f posix -A $1 | \
--	sed -n -e '1,100{/ I /{x;/import/!{s/^/import/;h;p;};x;};}'`
-+	sed -n -e '1,100{/ I /{x;/import/!{s/^.*/import/;h;p;};x;};}'`
-       if test "X$win32_nmres" = "Ximport" ; then
-         win32_libid_type="x86 archive import"
-       else
-@@ -1479,11 +1479,11 @@
-       -l*)
- 	if test "X$arg" = "X-lc" || test "X$arg" = "X-lm"; then
- 	  case $host in
--	  *-*-cygwin* | *-*-pw32* | *-*-beos*)
-+	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-beos*)
- 	    # These systems don't actually have a C or math library (as such)
- 	    continue
- 	    ;;
--	  *-*-mingw* | *-*-os2*)
-+	  *-*-os2*)
- 	    # These systems don't actually have a C library (as such)
- 	    test "X$arg" = "X-lc" && continue
- 	    ;;
-
-This patch applies cleanly to libtool-1.5.6 and libtool-1.5.20 versions of
-ltmain.sh.  However, instead of applying this patch blindly, we suggest
-MinGW users check cf/ltmain.sh to make sure these bugs have not been cleaned
-up already by the libtool developers (in case this documentation gets out of
-date).  Then edit cf/ltmain.sh by hand (once _before_ ./configure is run) to
-make the changes to the 3 lines.  ./configure then propagates the changed
-ltmain.sh into its configured version (the libtool script in the top-level
-of the build tree that is used for all builds).
-
-1) The first fix to ltmain.sh is because the sed version on MinGW does not
-   recognize the empty start of line anchor in the sed s/^/import/
-   substitution command.  Instead that has to be replaced by s/^.*/import/
-   for the sed logic to work on MinGW.
-
-2) The second two-line fix to ltmain.sh is to ignore -lm flags on MinGW just
-like occurs for Cygwin.  Historically, MinGW has adjusted to the libtool
-need for a specific math library by providing a dummy one, but that dummy
-one is only static so it fails the shared library test which causes shared
-library builds  on MinGW to crash and burn.  A better approach is simply
-for libtool to recognize there is no purpose for any math library on MinGW
-(just as for Cygwin), and the last two lines of the above patch accomplishes
-this change.
+Cygwin case.  For example, you must make sure that the "file" command is
+available on your MinGW system.  Our fixes for the MinGW case got into libtool
+package so for libtool-1.5.22 (used to generate the tarball for PLplot-5.6.0)
+no patch should be applied to cf/ltmain.sh as was required for older
+versions of PLplot on MinGW.
 
 ------------------------------------------------------------------------------
 Build Instructions for the MacOS X 10.3 (note we do not support older versions
