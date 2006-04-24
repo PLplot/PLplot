@@ -28,10 +28,12 @@
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
+	README \
 	gcwmodule.c \
 	plplotcanvas.py \
         cplplotcanvasmodule.c \
 	cplplotcanvas.override \
+	gcw.override \
 	$(MAINTAINERCLEANFILES)
 
 
