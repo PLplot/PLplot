@@ -66,7 +66,8 @@ PL_ARG_WITH(python-incdir, [User-specified path to the python header files], [])
 if test "$enable_python" = "yes"; then
     if test -z "$with_python_incdir"; then
         incdirs="$prefix/include/python$PYTHON_VERSION \
-	         /usr/include/python$PYTHON_VERSION"
+	         /usr/include/python$PYTHON_VERSION \
+		 /Library/Frameworks/Python.framework/Versions/$PYTHON_VERSION/include/python$PYTHON_VERSION"
         PL_FIND_INC(Python, with_python_incdir, enable_python)
 
 	if test "$enable_python" = no ; then
