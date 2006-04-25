@@ -114,7 +114,7 @@ http://eyegene.ophthy.med.umich.edu/lasi/. The library is small and
 easy to build and install.
 
 This driver is disabled by default. To try it you will need to add 
-the --enable-psttf option when running configure.
+the --enable-psttf --enable-psttfc options when running configure.
 
 2.2.2 wingcc
 

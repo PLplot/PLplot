@@ -66,6 +66,29 @@ ITKLIBDIR
 VGALIBDIR
 
 ------------------------------------------------------------------------------
+Additional note for the psttf driver.
+
+This version of the postscript driver supports TrueType fonts, allowing 
+access to a far greater range of fonts and characters than is possible 
+using purely postscript fonts. 
+
+The driver requires the LASi, pango and pangoft2 libraries to work.
+The pango and pangoft2 libraries are widely distributed with most
+Linux distributions at least. The LASi library is not part of most
+distributions at this time. The source code can be downloaded from
+http://eyegene.ophthy.med.umich.edu/lasi/. The library is small and
+easy to build and install.
+
+This driver is disabled by default. To try it you will need to add
+the --enable-psttf --enable-psttfc options when running configure.
+
+If you have installed libLASi in a non-standard location you will need 
+to set the PKG_CONFIG_PATH variable to point to the location of the 
+libLASi pkg-config information. E.g. (for bash)
+export PKG_CONFIG_PATH=/home/software/libLASi/install/lib/pkgconfig
+
+
+------------------------------------------------------------------------------
 
 To compile your own programs, there are two ways possible:
 

@@ -77,7 +77,7 @@ builtin([define], [PL_DRIVERS_DEVICE_LIST], [
     pbm:pbm:yes,
     plmeta:plmeta:yes,
     ps:ps:yes, psc:ps:yes,
-    psttf:psttf:no,
+    psttf:psttf:no, psttfc:psttf:no,
     pstex:pstex:yes,
     xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
     versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
