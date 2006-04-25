@@ -684,6 +684,12 @@ typedef struct {
 
   PLFLT original_chrdef,original_chrht;
 
+  /*
+   * Pointer to postscript document class used by psttf
+   */
+  void *psdoc;
+  
+
 } PLStream;
 
 /*--------------------------------------------------------------------------*\

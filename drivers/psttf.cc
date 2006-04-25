@@ -72,9 +72,6 @@ static int text = 1;
 static int color;
 static int hrshsym = 1;
 
-PostscriptDocument *doc;
-
-
 /* Font style and weight lookup tables */
 
 const char * FamilyLookup[5] = {
@@ -202,7 +199,10 @@ ps_init(PLStream *pls)
     plOpenFile(pls);
 
 /* Create postscript document object */
-    doc = new PostscriptDocument();
+    if (pls->psdoc != NULL) 
+      delete (PostscriptDocument *) pls->psdoc;
+
+    pls->psdoc = new PostscriptDocument();
 
 /* Allocate and initialize device-specific data */
 
@@ -260,6 +260,7 @@ ps_init(PLStream *pls)
 
 void
 writeHeader(PLStream *pls) {
+    PostscriptDocument *doc = (PostscriptDocument *) (pls->psdoc);
 
     doc->osHeader() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
     
@@ -412,6 +413,7 @@ void
 plD_line_psttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     PSDev *dev = (PSDev *) pls->dev;
+    PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
     PLINT x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
 /* Rotate by 90 degrees */
@@ -481,6 +483,7 @@ plD_polyline_psttf(PLStream *pls, short *xa, short *ya, PLINT npts)
 void
 plD_eop_psttf(PLStream *pls)
 {
+    PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
     doc->osBody() << " S\neop\n";
 }
 
@@ -495,6 +498,7 @@ void
 plD_bop_psttf(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
+    PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
@@ -542,8 +546,7 @@ void
 plD_tidy_psttf(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
-
-    //doc->osFooter() << "\n%%Trailer\n";
+    PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
 
     dev->llx /= ENLARGE;
     dev->lly /= ENLARGE;
@@ -591,6 +594,9 @@ plD_tidy_psttf(PLStream *pls)
       out.close();      
     }
 
+    delete doc;
+    pls->psdoc = NULL;
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -603,6 +609,7 @@ void
 plD_state_psttf(PLStream *pls, PLINT op)
 {
     PSDev *dev = (PSDev *) pls->dev;
+    PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
 
     switch (op) {
 
@@ -675,6 +682,7 @@ static void
 fill_polygon(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
+    PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
     PLINT n, ix = 0, iy = 0;
     PLINT x, y;
 
@@ -762,6 +770,7 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT ft_ht, offset; /* Font height and offset */
   PLFLT cs,sn,l1,l2;
   PSDev *dev = (PSDev *) pls->dev;
+  PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
   char *font, esc;
   FontStyle style;
   FontWeight weight;
