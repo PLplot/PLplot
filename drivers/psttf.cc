@@ -932,10 +932,14 @@ proc_str (PLStream *pls, EscText *args)
 	
 	/* Save the current position and set the string rotation */
 	doc->osBody() << "gsave " << theta << " R\n";
+
+	doc->osBody() << "[" << tt[0] << " " << tt[2] << " " << tt[1]
+		      << " " << tt[3] << " 0 0] concat\n";
 	
-	/* Purge escape sequences from string, so that postscript can find it's 
-	 * length.  The string length is computed with the current font, and can
-	 * thus be wrong if there are font change escape sequences in the string 
+	/* Purge escape sequences from string, to find it's 
+	 * length. The string length is computed with the current font, 
+	 * and can thus be wrong if there are font change escape sequences 
+	 * in the string 
 	 */	
 	esc_purge(str, cur_str);
 
