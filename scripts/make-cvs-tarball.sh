@@ -45,7 +45,7 @@ usage () {
 }
 
 DOC_ARG=${DOC_ARG:---enable-builddoc}
-WWW_USER=${WWW_USER:-tomduck}
+WWW_USER=${WWW_USER:-hbabcock}
 CVSROOTDIR=${CVSROOTDIR:-cvs.sourceforge.net:/cvsroot/plplot}
 VERSION=${VERSION:+--version=$1}
 BRANCH=${BRANCH:--D now}
