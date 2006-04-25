@@ -66,6 +66,7 @@
  */
 
 #ifndef WIN32
+#ifndef MINGW
 #include <unistd.h>
 #else
 #define F_OK 1
@@ -80,6 +81,7 @@ int access( char *filename, int flag ) {
         return 1 ;
     }
 }
+#endif
 #endif
 
 #include "plDevs.h"
