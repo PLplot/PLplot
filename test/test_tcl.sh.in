@@ -23,6 +23,7 @@
 
 # This is called from plplot-test.sh with $tcldir, $device, $dsuffix,
 # and $options defined.
+cd $OUTPUT_DIR
 results=`pwd`
 export results
 cd $tcldir
