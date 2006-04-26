@@ -19,9 +19,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-examples_perldir = $(DATA_DIR)/examples/perl
-
-examples_perl_SCRIPTS = \
+perl_scripts = \
 	x01.pl \
 	x02.pl \
 	x03.pl \
@@ -47,9 +45,19 @@ examples_perl_SCRIPTS = \
 	x23.pl \
 	x24.pl	
 
-examples_perl_DATA = \
+perl_data = \
 	README.perldemos
 
+if enable_pdl
+
+examples_perldir = $(DATA_DIR)/examples/perl
+
+examples_perl_SCRIPTS = $(perl_scripts)
+
+examples_perl_DATA = $(perl_data)
+
+endif
+
 EXTRA_DIST = \
-	$(examples_perl_SCRIPTS) \
-	$(examples_perl_DATA)
+	$(perl_scripts) \
+	$(perl_data)
