@@ -58,6 +58,9 @@ static int maxWindows = 30;
 static int windowXSize = 0;
 static int windowYSize = 0;
 
+static bool didTestShear = false;
+static bool hasShear = false;
+
 /* font stuff */
 
 /*
@@ -269,6 +272,14 @@ void plD_init_aqt(PLStream *pls)
 	/* check font environment variables & update font table as necessary */
 	
 	check_font_environment_variables();
+	
+	/* Check to see if the users version of aquaterm supports sheared labels. */
+	/* If it isn't available 3D plots will look a little strange but things should otherwise be okay. */
+	
+	if (!didTestShear) {
+  		hasShear = [adapter respondsToSelector:@selector(addLabel:atPoint:angle:shearAngle:align:)];
+		didTestShear = true;
+	}
 }
 
 //----------------------------------------------------------------------
@@ -533,11 +544,19 @@ void proc_str (PLStream *pls, EscText *args)
 	[adapter setColorRed:(float)(pls->curcolor.r/255.)
                    green:(float)(pls->curcolor.g/255.)
                     blue:(float)(pls->curcolor.b/255.)];
-    [adapter addLabel:str 
-              atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
-                angle:angle 
-           shearAngle:shear 
-                align:(jst | ref)];
+	
+	if(hasShear){
+	    [adapter addLabel:str 
+    	          atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
+        	        angle:angle 
+           	   shearAngle:shear 
+                    align:(jst | ref)];
+    } else {
+	    [adapter addLabel:str 
+    	          atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
+        	        angle:angle
+                    align:(jst | ref)];
+    }
 
     [str release];
 }
@@ -669,59 +688,6 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
                 value:[NSNumber numberWithFloat:font_height]
                 range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
 }
-
-//---------------------------------------------------------------------
-// UCS4_to_UTF8()
-//
-// convert PLplot UCS4 unicode character to UTF8 character for Mac
-//---------------------------------------------------------------------
-
-/*
-char * UCS4_to_UTF8(const PLUNICODE ucs4)
-{
-	int i,len;
-	static char utf8[5];
-
-	if (ucs4 < 0x80){
-		utf8[0] = ucs4;
-		utf8[1] = '\0';
-		len = 1;
-	}
-	else if (ucs4 < 0x800) {
-		utf8[0] = (0xC0 | ucs4 >> 6);
-		utf8[1] = (0x80 | ucs4 & 0x3F);
-		utf8[2] = '\0';
-		len = 2;
-	}
-	else if (ucs4 < 0x10000) {
-		utf8[0] = (0xE0 | ucs4 >> 12);
-		utf8[1] = (0x80 | ucs4 >> 6 & 0x3F);
-		utf8[2] = (0x80 | ucs4 & 0x3F);
-		utf8[3] = '\0';
-		len = 3;
-	}
-	else if (ucs4 < 0x200000) {
-		utf8[0] = (0xF0 | ucs4 >> 18);
-		utf8[1] = (0x80 | ucs4 >> 12 & 0x3F);
-		utf8[2] = (0x80 | ucs4 >> 6 & 0x3F);
-		utf8[3] = (0x80 | ucs4 & 0x3F);
-		utf8[4] = '\0';
-		len = 4;
-	}
-
-	// for debugging
-*/
-/*	
-	printf("ucs4 : %d\n", ucs4);
-	printf("as utf8 : (%d) 0x", len);
-	for(i=0;i<len;i++) printf("%x", utf8[i]);
-	printf("\n");
-*/
-/*
-
-	return utf8;
-}
-*/
 
 //---------------------------------------------------------------------
 // check_font_environment_variables
