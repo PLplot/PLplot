@@ -208,3 +208,131 @@ output is equivalent to above in both cases).
 
 2. Building a Release.
 
+Courtesy of Thomas Duck.
+
+Release Instructions
+~~~~~~~~~~~~~~~~~~~~
+
+* Be sure to change 5.5.0 to the appropriate release number in each
+  step below.
+
+Update your local cvs first in case people made any last-minute changes.
+
+Update the release version and date in configure.ac, and commit it 
+to CVS.  Be sure the README.release file is updated for the new 
+version.  These things are best done earlier.
+
+
+Build a release tarball:
+
+  scripts/make-cvs-tarball.sh -v 5.5.0 2>&1 | tee build.log
+
+<HB: This can take a while depending on how fast your computer is
+
+Install the release locally:
+
+  tar -zxvf plplot-5.5.0.tar.gz
+  cd plplot-5.5.0
+  ./configure --with-pkg-config --with-prebuiltdoc
+  make
+  make install
+
+
+Test the release (go to a temp directory first):
+
+  cp -R /usr/local/share/plplot5.5.0/examples ./plplot-5.5.0-examples
+  cd plplot-5.5.0-examples
+  make
+  ./plplot-test.sh
+
+
+Tag the cvs repository (go back to the cvs plplot directory):
+
+  cvs rtag -r cvs-tarball-<date>-<time> v5_5_0 plplot
+
+<HB: My impression is that this is now done automatically by 
+   make-cvs-tarball.sh
+
+where cvs-tarball-<date>-<time> was obtained earlier (you can also get
+this from the build.log).  This may take some time, but you can move
+on to the next steps in parallel.
+
+
+Upload the tarball to the cvs release page:
+
+  scripts/upload-cvs-tarball.sh plplot-5.5.0.tar.gz
+
+A file called <tarball>.asc containing the detached GPG signature will also
+be generated and uploaded.
+
+
+Prepare ChangeLog file:
+
+  cvs2cl -l "-d< today" --stdout > ChangeLog.release
+
+Edit ChangeLog.release to be the appropriate date range.
+
+
+Upload the plplot-5.5.0.tar.gz.* files to SF upload section:
+
+  ftp upload.sourceforge.net  #username is ftp, password is your e-mail address
+  cd incoming
+  bin
+  put plplot-5.5.0.tar.gz
+  put plplot-5.5.0.tar.gz.asc
+  quit
+
+
+Prepare a file release:
+
+  + login to sf.net
+  + go to PLplot project page
+  + click admin (in shortcuts at top of page)
+  + click file releases (in second (bold face) set of shortcuts at top of
+    admin page)
+  + click "add release" at bottom of page (package name should stay the same
+    as plplot)
+  + enter new release name ("5.5.0 Source" to be consistent with previous
+    release names)
+
+
+Here is the list of things to do with the SourceForge file release GUI:
+
+  + upload README.release as Notes with "Preserve my pre-formatted 
+    text" checkbox checked.
+  + upload ChangeLog.release as Change Log with "Preserve my pre-formatted 
+    text" checkbox checked.
+  + select plplot-5.5.0.tar.gz and plplot-5.5.0.tar.gz.asc from list of
+    files available.  Note, only select files that you have uploaded in the
+    ftp step above.
+  + for the tarball select a filetype of "source.gz" and processor type
+    of "any".
+  + for the tarball signature file select a filetype of "other source"
+    and processor type of "any".
+  + There is a click box to e-mail a notice to those who have signed
+    up.  Do that.
+
+
+Update the documentation on the Web site:
+
+  cd doc/docbook/src
+  make WWW_USER=tomduck www-install
+
+
+Post the release announcement on the News page at:
+
+  http://sourceforge.net/news/?group_id=2915
+
+
+
+Send a release announcement to:
+
+  plplot-devel@lists.sourceforge.net, plplot-general@lists.sourceforge.net
+
+
+
+Remove the temporary cvs tags: 
+
+  scripts/rm-cvs-tarball-tags.pl
+
+
