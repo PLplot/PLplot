@@ -482,6 +482,7 @@ typedef struct {
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
 #define    plot3dc	c_plot3dc
+#define    plparseopts  c_plparseopts
 #define    plsurf3d	c_plsurf3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
