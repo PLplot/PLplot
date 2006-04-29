@@ -66,9 +66,19 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24; do
               PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-indic-fonts/lohit_hi.ttf \
               PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
               PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf ; \
-          examples/c/x24c -dev png -drvopt text,smooth=0 -o x24 -fam -fflen 2 ; \
-          examples/c/x24c -dev png -drvopt text,smooth=0 -o prev-x24 \
-              -geometry 200x150 -fam -fflen 2 )
+          #examples/c/x24c -dev png -drvopt text,smooth=0 -o x24 -fam -fflen 2 ; \
+          #examples/c/x24c -dev png -drvopt text,smooth=0 -o prev-x24 \
+          #    -geometry 200x150 -fam -fflen 2 )
+	  # Temporary workaround for CTL problem with -dev png
+          examples/c/x24c -bg FFFFFF -dev psttfc -o test.ps ; \
+	  ps2eps --ignoreBB test.ps >| test.eps ; \
+	  convert -rotate 90 test.eps -geometry 800x600 x24.01.png ; \
+	  convert -rotate 90 test.eps -geometry 200x150 prev-x24.01.png ; \
+	  rm test.ps test.eps ; \
+	  #convert command needs the png suffix, but now take it off to
+	  #be consistent with script below which puts it back on again.
+	  mv x24.01.png x24.01 ; \
+	  mv prev-x24.01.png prev-x24.01 )
     fi
 
     # give png extension
