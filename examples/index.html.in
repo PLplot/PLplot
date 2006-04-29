@@ -171,6 +171,23 @@ PLplot Examples
   [22,  4, 3, ""],
   [23, 11, 1, ""],
   [24,  1, 1, "
+<p>This png image was created with device psttfc and converted from
+postscript to png with the ImageMagick \\\"convert\\\" command.  
+Our new psttf and psttfc devices generate postscript output using
+<a href=\\\"http://www.unifont.org/lasi/\\\">libLASi</a> to handle TrueType
+fonts.  libLASI in turn
+uses libpango to render the text. Thus, because of libpango, all complex
+text layout (CTL) languages should be rendered correctly by default with
+these devices. </p>
+<p>Warning: Although our gd-related devices (png, jpeg, and gif) work well
+for the other examples, they currently have the limitation of using simple
+left-to-right rendering of TrueType fonts without the aid of libpango. Thus,
+for these devices the CTL languages such as Arabic, Hebrew, and Hindi will
+be rendered in the wrong order for example 24.  A current workaround for
+gd-related devices is to reorder the UTF8 strings into non-standard order
+but this workaround will not help for CTL languages where vertical
+positioning is important.  We plan to convert the gd-related devices to use
+libpango to deal permanently with this CTL-related issue.</p>
 <p>Credits:
 <ul>
 <li><a href=\\\"http://www.columbia.edu/~fdc/pace/\\\">Say Peace in all languages!</a>
