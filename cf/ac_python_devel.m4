@@ -46,6 +46,7 @@ AC_DEFUN([AC_PYTHON_DEVEL],[
 	AC_PATH_PROG([PYTHON],[python[$PYTHON_VERSION]])
 	if test -z "$PYTHON"; then
 	   AC_MSG_ERROR([Cannot find python$PYTHON_VERSION in your system path])
+	   PYTHON_VERSION=""
 	fi
 
 	#
@@ -66,7 +67,7 @@ variables PYTHON_CPPFLAGS, PYTHON_LDFLAGS, PYTHON_SITE_PKG,
 PYTHON_EXTRA_LIBS and PYTHON_EXTRA_LDFLAGS by hand.
 Moreover, to disable this check, set PYTHON_NOVERSIONCHECK
 to something else than an empty string.
-])dnl
+])
 		else
 			AC_MSG_RESULT([skip at user request])
 		fi
@@ -90,7 +91,8 @@ to something else than an empty string.
 If you have it installed, but it isn't the default Python
 interpreter in your system path, please pass the PYTHON_VERSION 
 variable to configure. See ``configure --help'' for reference.
-])dnl
+])
+			PYTHON_VERSION=""
 		fi
 	fi
 
@@ -106,6 +108,7 @@ variable to configure. See ``configure --help'' for reference.
 		AC_MSG_ERROR([cannot import Python module "distutils".
 Please check your Python installation. The error was:
 $ac_distutils_result])
+		PYTHON_VERSION=""
 	fi
 
 	#
@@ -212,6 +215,7 @@ $ac_distutils_result])
    for your distribution.  The exact name of this package varies among them.
   ============================================================================
 	   ])
+	  PYTHON_VERSION=""
 	fi
 	AC_LANG_POP
 	# turn back to default flags
