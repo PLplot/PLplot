@@ -124,8 +124,18 @@ To compile your own programs, there are two ways possible:
    and the variables PLPLOT_CFLAGS and PLPLOT_LIBS will be set.
 
 ------------------------------------------------------------------------------
-Build Instructions for Cygwin (from information supplied by U.D.Kini)
+Build Instructions for Cygwin 
 ------------------------------------------------------------------------------
+
+addendum: According to Arjen Markus shared libraries now work on Cygwin if
+you have the "file" package installed (see further details below in our
+comments about shared libraries on Cygwin and MinGW).  Python works as well.
+However, modern Cygwin PATH is quite bare so it is necessary to execute the
+following command:
+
+export PATH=/usr/bin:/usr/X11R6/bin:$PATH
+
+Remaining Cygwin remarks from (now dated) information supplied by U.D.Kini
 
 Platform: i686-pc-cygwin
 
