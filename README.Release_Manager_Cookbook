@@ -31,6 +31,10 @@ wget http://ftp.gnu.org/gnu/libtool/libtool-1.5.22.tar.gz.sig
 
 Make sure you have
 
+keyserver x-hkp://pgp.mit.edu
+
+(or some other keyserver of your choosing) and
+
 keyserver-options auto-key-retrieve
 
 uncommented in ~/.gnupg/gpg.conf so that you can conveniently use gpg --verify
