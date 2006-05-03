@@ -212,13 +212,8 @@ output is equivalent to above in both cases).
 
 2. Building a Release.
 
-Courtesy of Thomas Duck.
-
-Release Instructions
-~~~~~~~~~~~~~~~~~~~~
-
-* Be sure to change 5.5.0 to the appropriate release number in each
-  step below.
+* Be sure to change RELEASE_NUMBER and RELEASE_TAG below to the appropriate
+  values (currently 5.6.0 and v5_6_0) for the release.
 
 Update your local cvs first in case people made any last-minute changes.
 
@@ -229,14 +224,14 @@ version.  These things are best done earlier.
 
 Build a release tarball:
 
-  scripts/make-cvs-tarball.sh -v 5.5.0 2>&1 | tee build.log
+  scripts/make-cvs-tarball.sh -v RELEASE_NUMBER 2>&1 | tee build.log
 
 <HB: This can take a while depending on how fast your computer is
 
 Install the release locally:
 
-  tar -zxvf plplot-5.5.0.tar.gz
-  cd plplot-5.5.0
+  tar -zxvf plplot-RELEASE_NUMBER.tar.gz
+  cd plplot-RELEASE_NUMBER
   ./configure --with-pkg-config --with-prebuiltdoc
   make
   make install
@@ -244,18 +239,15 @@ Install the release locally:
 
 Test the release (go to a temp directory first):
 
-  cp -R /usr/local/share/plplot5.5.0/examples ./plplot-5.5.0-examples
-  cd plplot-5.5.0-examples
+  cp -R /usr/local/share/plplotRELEASE_NUMBER/examples ./plplot-RELEASE_NUMBER-examples
+  cd plplot-RELEASE_NUMBER-examples
   make
   ./plplot-test.sh
 
 
 Tag the cvs repository (go back to the cvs plplot directory):
 
-  cvs rtag -r cvs-tarball-<date>-<time> v5_5_0 plplot
-
-<HB: My impression is that this is now done automatically by 
-   make-cvs-tarball.sh
+  cvs rtag -r cvs-tarball-<date>-<time> RELEASE_TAG plplot
 
 where cvs-tarball-<date>-<time> was obtained earlier (you can also get
 this from the build.log).  This may take some time, but you can move
@@ -264,7 +256,7 @@ on to the next steps in parallel.
 
 Upload the tarball to the cvs release page:
 
-  scripts/upload-cvs-tarball.sh plplot-5.5.0.tar.gz
+  scripts/upload-cvs-tarball.sh plplot-RELEASE_NUMBER.tar.gz
 
 A file called <tarball>.asc containing the detached GPG signature will also
 be generated and uploaded.
@@ -277,20 +269,29 @@ be generated and uploaded.
 
 Prepare ChangeLog file:
 
-  cvs2cl -l "-d< today" --stdout > ChangeLog.release
+  cvs2cl -l "-d > LAST_RELEASE_DATE" --stdout > ChangeLog.release
 
-Edit ChangeLog.release to be the appropriate date range.
+Where LAST_RELEASE_DATE is the date when the tarball for the previous
+release was created.  Use a standard form for the date (e.g., 
 
-<HB: This file will be huge, choose your text editor wisely
+2004-06-24
 
+or 
 
-Upload the plplot-5.5.0.tar.gz.* files to SF upload section:
+2004-06-24 02:00
+
+), and if slightly unsure of the exact date/time don't be afraid to use a
+slightly earlier date than the previous release.  In all cases, edit the
+file afterward to be sure ChangeLog.release represents the exact appropriate
+date/time range for the release.
+
+Upload the plplot-RELEASE_NUMBER.tar.gz.* files to SF upload section:
 
   ftp upload.sourceforge.net  #username is ftp, password is your e-mail address
   cd incoming
   bin
-  put plplot-5.5.0.tar.gz
-  put plplot-5.5.0.tar.gz.asc
+  put plplot-RELEASE_NUMBER.tar.gz
+  put plplot-RELEASE_NUMBER.tar.gz.asc
   quit
 
 
@@ -303,7 +304,7 @@ Prepare a file release:
     admin page)
   + click "add release" at bottom of page (package name should stay the same
     as plplot)
-  + enter new release name ("5.5.0 Source" to be consistent with previous
+  + enter new release name ("RELEASE_NUMBER Source" to be consistent with previous
     release names)
 
 
@@ -313,7 +314,7 @@ Here is the list of things to do with the SourceForge file release GUI:
     text" checkbox checked.
   + upload ChangeLog.release as Change Log with "Preserve my pre-formatted 
     text" checkbox checked.
-  + select plplot-5.5.0.tar.gz and plplot-5.5.0.tar.gz.asc from list of
+  + select plplot-RELEASE_NUMBER.tar.gz and plplot-RELEASE_NUMBER.tar.gz.asc from list of
     files available.  Note, only select files that you have uploaded in the
     ftp step above.
   + for the tarball select a filetype of "source.gz" and processor type
