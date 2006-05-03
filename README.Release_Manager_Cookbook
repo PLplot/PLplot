@@ -269,12 +269,19 @@ Upload the tarball to the cvs release page:
 A file called <tarball>.asc containing the detached GPG signature will also
 be generated and uploaded.
 
+<HB: I was not able to get this to work by putting my GPG key id into the
+  above the upload-cvs-tarball.sh script. I had to manually set the GPG
+  key environment variable. (i.e. export GPGKEY=2A8F0248, where the
+  complicated alphanumeric is obtained via the command "gpg --list-keys")
+
 
 Prepare ChangeLog file:
 
   cvs2cl -l "-d< today" --stdout > ChangeLog.release
 
 Edit ChangeLog.release to be the appropriate date range.
+
+<HB: This file will be huge, choose your text editor wisely
 
 
 Upload the plplot-5.5.0.tar.gz.* files to SF upload section:
@@ -316,6 +323,9 @@ Here is the list of things to do with the SourceForge file release GUI:
   + There is a click box to e-mail a notice to those who have signed
     up.  Do that.
 
+<HB: You can verify the success or failure of your attempts checking the
+  file release page 
+  (http://sourceforge.net/project/showfiles.php?group_id=2915)
 
 Update the documentation on the Web site:
 
@@ -327,7 +337,7 @@ Post the release announcement on the News page at:
 
   http://sourceforge.net/news/?group_id=2915
 
-
+<HB: Be sure to get the links correct
 
 Send a release announcement to:
 
