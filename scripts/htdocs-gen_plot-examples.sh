@@ -12,6 +12,9 @@
 # as that at SF, then launch the script like this:
 #     
 #     WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
+# 
+# It is also possible to override the variables WWW_HOST and WWW_DIR in 
+# the same way as with WWW_USER in the example above.
 #
 # To avoid rebuild launch it like this:
 #     build=false scripts/htdocs-gen_plot-examples.sh
@@ -27,7 +30,7 @@ if test "$build" = true; then
 
     ./configure --disable-static --enable-dyndrivers --prefix=/tmp/plplot \
     --disable-cxx --disable-python --disable-java --disable-itcl \
-    --disable-octave --enable-f77
+    --disable-octave --enable-f77 --enable-psttf --enable-psttfc
 
     make
     make install
@@ -44,9 +47,9 @@ cp examples/c/lena.pgm .
 
 EXDIR=htdocs/examples-data
 
-for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24; do
+for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25; do
 
-    echo Working in example ${exe}
+    echo Working on example ${exe}
 
     # generate standard and preview size images
     if test $exe != 24 ; then
@@ -117,8 +120,8 @@ rm -rf htdocs
 # Transfer the tarball to Sourceforge and unpack it, such that the files will
 # appear in the PLplot web site
 
-WWW_HOST=${WWW_USER:+$WWW_USER@}shell.sf.net
-WWW_DIR=/home/groups/p/pl/plplot
+WWW_HOST=${WWW_HOST:-${WWW_USER:+$WWW_USER@}shell.sf.net}
+WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot}
 
 echo Copying the tarball to WWW site
 scp $TARBALL $WWW_HOST:$WWW_DIR
@@ -126,7 +129,7 @@ echo Changing its permission to allow group access
 ssh $WWW_HOST chmod g=u $WWW_DIR/$TARBALL
 echo Unpacking the remote tarball
 ssh $WWW_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL
-echo Changing its group permissions of the remote demo direcotry
+echo Changing its group permissions of the remote demo directory
 ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
 echo Removing the remote tarball
 ssh $WWW_HOST rm -f $WWW_DIR/$TARBALL
