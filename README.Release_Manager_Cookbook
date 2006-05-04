@@ -328,17 +328,44 @@ Here is the list of things to do with the SourceForge file release GUI:
   file release page 
   (http://sourceforge.net/project/showfiles.php?group_id=2915)
 
-Update the documentation on the Web site:
+In the event that one of the files is not right you can upload an improved
+version just by going back to the file release area.
 
-  cd doc/docbook/src
-  make WWW_USER=tomduck www-install
+
+Update the Web site:
+
+First you need to get the www directory from CVS (if you don't already
+have it). "cvs checkout www" in your plplot root directory.
+
+then cd to www and type:
+WWW_USER=joeplplotter make
+  
+(This command seems to have some Perl dependencies that can be resolved with
+Bundle::Readline, you also need xlmto, passivetex...)
+
+then cd back to root and type:
+WWW_USER=hbabcock build=false scripts/htdocs-gen_plot-examples.sh
+
+(if you have already built plplot you can set build=false).
+
+then build the documentation by typing 
+./configure --enable-builddoc
+cd doc/docbook/src
+make
+
+and finally:
+
+cd doc/docbook/src
+make WWW_USER=yourname www-install
 
 
 Post the release announcement on the News page at:
 
   http://sourceforge.net/news/?group_id=2915
 
-<HB: Be sure to get the links correct
+Be sure to get the links correct, but if you don't you can always edit the
+release announcement by clicking the "admin" tab underneath the annoucment.
+
 
 Send a release announcement to:
 
