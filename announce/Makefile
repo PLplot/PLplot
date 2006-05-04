@@ -2,7 +2,7 @@
 # web site.  This file only works with GNU make.  The packages xmlto,
 # passivetex, and opensp must be installed.
 #
-# Rafael Labosisiere, 
+# Rafael Laboissiere,
 # Created on 2004-02-04
 # Last changed on 2004-06-20
 
@@ -14,7 +14,7 @@ PWD = $(shell cd .. ; pwd)
 
 SOURCES =                 \
     announce-plplot-5.3.0 \
-    announce-plplot-5.3.1 
+    announce-plplot-5.3.1
 
 TARGETS = $(SOURCES:%=%.xhtml) $(SOURCES:%=%.txt) $(SOURCES:%=%.pdf)
 
@@ -27,7 +27,7 @@ WWW_FILES =                    \
     $(SOURCES:%=%.xml)         \
     $(TARGETS)                 \
     Makefile
-    
+
 WWW_ANNOUNCE_DIR = $(WWW_DIR)/announce
 
 all: $(TARGETS)
@@ -57,7 +57,7 @@ install: $(TARGETS)
 	ssh $(USER_AT_HOST) rm -rf $(WWW_ANNOUNCE_DIR)
 	ssh $(USER_AT_HOST) mkdir $(WWW_ANNOUNCE_DIR)
 	scp -r $(WWW_FILES) $(USER_AT_HOST):$(WWW_ANNOUNCE_DIR)
-	ssh $(USER_AT_HOST) chgrp -R plplot $(WWW_ANNOUNCE_DIR)
+	ssh $(USER_AT_HOST) chgrp -R $(WWW_GROUP) $(WWW_ANNOUNCE_DIR)
 	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_ANNOUNCE_DIR)
 
 .PHONY: all clean validate install

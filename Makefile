@@ -32,7 +32,7 @@ install: examples/index.html
 	    fi ; \
 	    scp -r $$f $(USER_AT_HOST):$(WWW_DIR)/$$dir ; \
 	done
-	ssh $(USER_AT_HOST) chgrp -R plplot $(WWW_FILES)
+	ssh $(USER_AT_HOST) chgrp -R $(WWW_GROUP) $(WWW_FILES)
 	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_FILES)
 
 install-announce:
