@@ -129,7 +129,7 @@ echo Changing its permission to allow group access
 ssh $WWW_HOST chmod g=u $WWW_DIR/$TARBALL
 echo Unpacking the remote tarball
 ssh $WWW_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL
-echo Changing its group permissions of the remote demo directory
+echo Changing group permissions of the remote examples directory
 ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
 echo Removing the remote tarball
 ssh $WWW_HOST rm -f $WWW_DIR/$TARBALL
