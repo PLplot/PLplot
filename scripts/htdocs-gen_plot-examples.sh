@@ -6,14 +6,14 @@
 # This script must be run in the top plplot source directory as:
 #
 #     scripts/htdocs-gen_plot-examples.sh
-# 
-# The tarball will be copied to SourceForge and unpacked at the www area.  
+#
+# The tarball will be copied to SourceForge and unpacked at the www area.
 # If your user name (as given by the environment variable USER) is different
 # as that at SF, then launch the script like this:
-#     
+#
 #     WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
-# 
-# It is also possible to override the variables WWW_HOST and WWW_DIR in 
+#
+# It is also possible to override the variables WWW_HOST and WWW_DIR in
 # the same way as with WWW_USER in the example above.
 #
 # To avoid rebuild launch it like this:
@@ -93,18 +93,25 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25;
     echo populating www directory demo${exe}
     mkdir -p $EXDIR/demo${exe}
     mv *${exe}.??.png $EXDIR/demo${exe}/
-    cp examples/c/x${exe}c.c examples/tcl/x${exe}.tcl               \
-       examples/java/x${exe}.java examples/f77/x${exe}f.f           \
-       bindings/octave/demos/x${exe}c.m	examples/python/xw${exe}.py \
-       examples/c++/x${exe}.cc 	examples/perl/x${exe}.pl            \
-       $EXDIR/demo${exe}
+    for f in examples/c/x${exe}c.c examples/tcl/x${exe}.tcl		\
+             examples/java/x${exe}.java examples/f77/x${exe}f.f		\
+             bindings/octave/demos/x${exe}c.m				\
+             examples/python/xw${exe}.py examples/c++/x${exe}.cc	\
+             examples/perl/x${exe}.pl ; do
+        if test -f $f ; then
+            cp $f $EXDIR/demo${exe}
+        else
+            echo Example `basename $f` is not yet available \
+                > $EXDIR/demo${exe}/`basename $f`
+        fi
+    done
 
     # rename executables, to avoid browsers trying to execute files instead of showing them.
     (cd  htdocs/examples-data/demo${exe};
     for j in *.c *.cc *.f *.m *.tcl *.java *.py *.pl; do
 	    mv $j $j-
     done
-    )  
+    )
 
 done
 
@@ -133,3 +140,4 @@ echo Changing group permissions of the remote examples directory
 ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
 echo Removing the remote tarball
 ssh $WWW_HOST rm -f $WWW_DIR/$TARBALL
+ 
