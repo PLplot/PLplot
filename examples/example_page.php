@@ -6,7 +6,7 @@ function demo_page ($demo, $nfigs, $language, $credits) {
 
   $demo_str = sprintf ("%02d", $demo);
   $demo_dir = "../examples-data/demo$demo_str";
-  $demos = range (1, 25);
+  $demos = array_merge (range (1, 13), array (15, 16), range (18, 25));
 
   print <<<END
 <div ALIGN="CENTER"><b>Select to see the example $demo source code</b></div>
