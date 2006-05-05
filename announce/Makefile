@@ -57,7 +57,7 @@ install: $(TARGETS)
 	ssh $(USER_AT_HOST) rm -rf $(WWW_ANNOUNCE_DIR)
 	ssh $(USER_AT_HOST) mkdir $(WWW_ANNOUNCE_DIR)
 	scp -r $(WWW_FILES) $(USER_AT_HOST):$(WWW_ANNOUNCE_DIR)
-	ssh $(USER_AT_HOST) chgrp -R $(WWW_GROUP) $(WWW_ANNOUNCE_DIR)
-	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_ANNOUNCE_DIR)
+	-ssh $(USER_AT_HOST) chgrp -R $(WWW_GROUP) $(WWW_ANNOUNCE_DIR)
+	-ssh $(USER_AT_HOST) chmod -R g=u $(WWW_ANNOUNCE_DIR)
 
 .PHONY: all clean validate install
