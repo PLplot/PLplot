@@ -129,6 +129,8 @@ WWW_GROUP=${WWW_GROUP:-plplot}
 WWW_HOST=${WWW_HOST:-${WWW_USER:+$WWW_USER@}shell.sf.net}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot}
 
+echo Removing remote examples directory
+ssh $WWW_HOST rm -rf $WWW_DIR/$EXDIR
 echo Copying the tarball to WWW site
 scp $TARBALL $WWW_HOST:$WWW_DIR
 echo Changing its permission to allow group access
