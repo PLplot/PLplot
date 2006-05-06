@@ -13,8 +13,8 @@
 #
 #     WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
 #
-# It is also possible to override the variables WWW_HOST and WWW_DIR in
-# the same way as with WWW_USER in the example above.
+# It is also possible to override the variables WWW_GROUP, WWW_HOST,
+# and WWW_DIR in the same way as with WWW_USER in the example above.
 #
 # To avoid rebuild launch it like this:
 #     build=false scripts/htdocs-gen_plot-examples.sh
@@ -125,6 +125,7 @@ rm -rf htdocs
 # Transfer the tarball to Sourceforge and unpack it, such that the files will
 # appear in the PLplot web site
 
+WWW_GROUP=${WWW_GROUP:-plplot}
 WWW_HOST=${WWW_HOST:-${WWW_USER:+$WWW_USER@}shell.sf.net}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot}
 
@@ -134,6 +135,8 @@ echo Changing its permission to allow group access
 ssh $WWW_HOST chmod g=u $WWW_DIR/$TARBALL
 echo Unpacking the remote tarball
 ssh $WWW_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL
+echo Changing group of the remote examples directory
+ssh $WWW_HOST chgrp -R $WWW_GROUP $WWW_DIR/$EXDIR
 echo Changing group permissions of the remote examples directory
 ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
 echo Removing the remote tarball
