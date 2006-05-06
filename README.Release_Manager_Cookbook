@@ -340,8 +340,7 @@ have it). "cvs checkout www" in your plplot root directory.
 then cd to www and type:
 WWW_USER=joeplplotter make
   
-(This command seems to have some Perl dependencies that can be resolved with
-Bundle::Readline, you also need xlmto, passivetex...)
+(This command depends on eperl, xlmto, passivetex...)
 
 then cd back to root and type:
 WWW_USER=hbabcock build=false scripts/htdocs-gen_plot-examples.sh
