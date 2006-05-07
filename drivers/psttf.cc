@@ -70,7 +70,7 @@ static void  esc_purge          (char *, char *);
 static char  outbuf[128];
 static int text = 1;
 static int color;
-static int hrshsym = 1;
+static int hrshsym = 0;
 
 /* Font style and weight lookup tables */
 
