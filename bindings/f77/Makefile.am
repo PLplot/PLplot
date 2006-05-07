@@ -29,7 +29,7 @@ lib_LTLIBRARIES = libplplotf77c@LIB_TAG@.la libplplotf77@LIB_TAG@.la
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
-AM_FCLAGS = -I$(srcdir)
+AM_FFLAGS = -I$(srcdir)
 
 version = -version-info $(F77_SOVERSION)
 
