@@ -1,8 +1,102 @@
-plplot (5.5.3-0.sarge.1) experimental; urgency=low
+plplot (5.6.0-1) unstable; urgency=low
 
-  * Build on Debian sarge (NOT OFFICIALLY RELEASED!)
+  * New upstream release:
+    - New language binding for Java (package libplplot9-java, which was
+      already in version 5.5.3-1, uploaded to experimental)
+    - New drivers:
+      + Gnome Canvas Widget (packages python-plplot-gnome2 and
+        python-plplot-gnome2 (which were already in version 5.5.3-1,
+        uploaded to experimental)
+      + wxWidgets tool kit (package plplot9-driver-wxwidgets)
+      + PostScript with Unicode support (package plplot9-driver-psttf)
+  * debian/control:
+    - Bumped Standards-Version to 3.7.2 (no changes needed)
+    - Build-Depends on liblasi-dev (>= 1.0.5-2) and libwxgtk2.6-dev
+    - Updated build dependency on libgcj4-dev to libgcj6-dev
+      (closes: #333785)
+    - octave-plplot suggests the xwin driver package (closes: #358323)
+  * debian/patches/50_simplelist-in-man-page: Removed patch (applied
+    upstream)
 
- -- Rafael Laboissiere <rafael@debian.org>  Sat, 14 May 2005 15:27:20 +0200
+ -- Rafael Laboissiere <rafael@debian.org>  Sun,  7 May 2006 20:09:16 +0200
+
+plplot (5.3.1-11) unstable; urgency=low
+
+  * debian/rules: the plplot-doc package has now its own /usr/share/doc
+    directory (really closes: #361781)
+  * debian/control: Removed dependency of plplot-doc on libplplot9
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 12 Apr 2006 16:11:00 +0200
+
+plplot (5.3.1-10) unstable; urgency=low
+
+  * debian/control: Made the dependency of plplot-doc on libplplot9
+    unversioned (closes: #361781)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 11 Apr 2006 17:38:13 +0200
+
+plplot (5.3.1-9+b1) unstable; urgency=low
+
+  * Binary-only non-maintainer upload for i386; no source changes.
+  * Rebuild against libhdf5-1.6.5
+
+ -- Debian/i386 Build Daemon <buildd_i386-cyberhq>  Wed,  5 Apr 2006 23:47:20 -0700
+
+pplplot (5.3.1-9) unstable; urgency=low
+
+  * Recompiled against latest version of libc6.  PLplot does not cause
+    Octave to crash anymore (closes: #351734).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed,  8 Mar 2006 11:27:30 +0100
+
+plplot (5.3.1-8) unstable; urgency=low
+
+  * Due to the gnome1 -> gnome2 transition in sid, the plplot9-driver-gnome
+    package is removed.  The experimental release of plplot (5.5.3)
+    already contains the gcw driver, which replaces the gnome driver.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 27 Sep 2005 09:34:01 +0200
+
+plplot (5.3.1-7) unstable; urgency=low
+
+  * Build-depends on gfortran instead of g77.  This should get around a
+    build failure on the ia64 architecture.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 27 Sep 2005 00:11:33 +0200
+
+plplot (5.3.1-6) unstable; urgency=low
+
+  * This version will *_really_* complete the C++ ABI transition.  I forgot
+    to do it for the libplplot-c++9 package, which is now called
+    libplplot-c++9c2.  Most of the changes come from the Ubuntu patch
+    (thanks to Stephan Hermann <sh@sourcecode.de>):
+
+    + debian/control: adjusted packagename, conflicts/replaces, dependencies
+    + debian/rules: adjusted packagename
+    + debian/libplplot-c++9c2.files: renamed and edited to new packagename
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 18 Sep 2005 14:51:55 +0200
+
+plplot (5.3.1-5) unstable; urgency=low
+
+  * First build with gcc/g++ 4.0.  This should complete the C++ ABI
+    transition for the octave-plplot package (closes: #328198).
+
+  * debian/rules: Avoid compilation problem of unrecognized type
+    '__builtin_va_list' when building the Octave binding
+    (closes: #274359).  I am fixing this bug using the hack of setting the
+    CC variable of the Makefile, instead applying the patch suggested by
+    Kaare Hviid <ukh_at_id.cbs.dk>, because otherwise I would have to run
+    automake/libtool/autoconf to build the package. Lame, But It Works (TM).
+
+  * debian/control: Upgraded Standards-Version to 3.6.2 (no changes needed).
+
+  * debian/copyright: New FSF address.
+
+  * debian/patches/50_simplelist-in-man-page.dpatch: Added patch to fix
+    processing of plcol0.3plplot man page.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 16 Sep 2005 22:46:28 +0200
 
 plplot (5.5.3-1) experimental; urgency=low
 
@@ -24,26 +118,6 @@ plplot (5.3.1-4) unstable; urgency=low
       /usr/lib/libplplotcxxd.so (closes: #303830)
 
  -- Rafael Laboissiere <rafael@debian.org>  Sat,  9 Apr 2005 11:03:11 +0200
-
-plplot (5.3.1.cvs.20040822-0.sarge.1) unstable; urgency=low
-
-  * Build on Debian testing (NOT OFFICIALLY RELEASED!).
-
- -- Rafael Laboissiere <rafael@debian.org>  Sun, 22 Aug 2004 20:56:09 +0200
-
-plplot (5.3.1.cvs-1) unstable; urgency=low
-
-  * New upstream release (DEBIAN PACKAGES NOT YET RELEASED!!!). A Java
-    binding package is created (libplplot9-java).
-  * debian/libplplot9-java.files: New dh_movefiles file containing the files
-    for the Java package.
-  * debian/rules: Enable java build.  Give option --enable-java to configure
-    and use variable $(javasetup) to specify the --with-java-home option when
-    building the package with kaffe
-  * debian/control: Add Java releated packages to Build-Depends.  Create
-    entry for the libplplot9-java binary package.
-
- -- Rafael Laboissiere <rafael@debian.org>  Fri,  2 Jul 2004 18:12:40 +0200
 
 plplot (5.3.1-3) unstable; urgency=low
 
@@ -1154,7 +1228,7 @@ plplot (4.99j-8) frozen unstable; urgency=low
 
  -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 11 Dec 1998 22:20:08 +0100
 
-plplot (4.99j-7) frozen unstable; urgency=low, closes=29694 29704
+plplot (4.99j-7) frozen unstable; urgency=low
 
   * Set Conflicts relationship because files were moved around in the
     latest release (Fixes Bug#29694, reported by  Francesco Potorti`
@@ -1164,7 +1238,7 @@ plplot (4.99j-7) frozen unstable; urgency=low, closes=29694 29704
 
  -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 19 Nov 1998 16:33:24 +0100
 
-plplot (4.99j-6) frozen unstable; urgency=low, closes=28534
+plplot (4.99j-6) frozen unstable; urgency=low
 
   * Uploading to frozen and unstable.  (The previous release, 4.99j-5, was
     rejected and I never reuploaded it.)

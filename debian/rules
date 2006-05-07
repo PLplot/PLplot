@@ -11,12 +11,11 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-export DH_COMPAT=4
-
 include /usr/share/octave/debian/defs.make
 
 version		:= $(shell perl debian/get-upstream-version.pl < configure.ac)
 libpkg          := libplplot9
+docpkg          := plplot-doc
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
 debusr		:= $(debtmp)/usr
@@ -43,20 +42,24 @@ autotools-stamp:
 
 config: config-stamp
 config-stamp: autotools-stamp
-	PKG_CONFIG_ENV=" "						\
-	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl	\
-                    --enable-tk --enable-gd --enable-dyndrivers		\
-                    --enable-static --enable-python --with-pkg-config	\
-                    --enable-gcw --with-double --disable-linuxvga	\
-                    --infodir=/usr/share/info --with-freetype		\
-                    --without-rpath --with-prebuiltdoc --enable-java	\
-		    $(javasetup) --with-pthreads --with-ltdlsystem	\
-		    --with-freefont
+	PKG_CONFIG_ENV=" "					\
+	./configure --prefix=/usr --mandir=/usr/share/man	\
+                    --infodir=/usr/share/info --with-pkg-config	\
+                    --without-rpath --with-prebuiltdoc		\
+                    --with-pthreads --with-ltdlsystem		\
+                    --disable-linuxvga  --enable-psttf		\
+		    --enable-psttfc $(javasetup)
 	touch config-stamp
 
 build: build-stamp
 build-stamp: patch config-stamp
 	dh_testdir
+	# The hack below is to go around a bug in matwrap that was
+	# preventing the Octave binding to compile with g++ 4.0
+	( cd lib ; $(MAKE) )
+	( cd src ; $(MAKE) )
+	( cd bindings/octave ; \
+	  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	$(MAKE)
 	touch build-stamp
 
@@ -85,15 +88,20 @@ install-stamp: build-stamp
 	  rm -f COPYING.LIB *.dvi ; \
 	  mv ChangeLog changelog )
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
+	mkdir -p $(debdoc)/$(docpkg)
+	(cd $(debdoc)/$(libpkg) ; mv html *.pdf *.ps.gz $(debdoc)/$(docpkg))
 	mv $(debex) $(debdoc)/$(libpkg)
 
-	for i in `grep ^Package: debian/control | grep -v libplplot9$$ \
-	          | sed 's/Package: //'` ; do \
-	  ln -s $(libpkg) $(debdoc)/$$i ; \
+	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
+		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
+		python-plplot plplot-bin libplplot-c++9c2 		\
+		libcsiro0 plplot9-driver-gnome2 libplplot9-java		\
+		plplot9-driver-wxwidgets plplot9-driver-psttf ; do	\
+	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-	                --no-package=plplot-bin --no-package=python-plplot
+		     --no-package=plplot-bin --no-package=python-plplot
 	dh_movefiles -i
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-dev
@@ -107,7 +115,8 @@ binary-indep: build install
 	dh_testdir -i
 	dh_testroot -i
 	dh_installdirs -i
-	dh_installdocs --package=plplot-doc --exclude=copyright
+	dh_installdocs --package=$(docpkg)
+	dh_installchangelogs --package=$(docpkg)
 	dh_compress -i --exclude=.pdf
 	dh_fixperms -i
 	dh_installdeb -i

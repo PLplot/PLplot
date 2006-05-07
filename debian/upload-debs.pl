@@ -36,14 +36,12 @@ env_default ("GPGKEY", "0x4A5D72FE");
 $debver = `cat /etc/debian_version`;
 chomp $debver;
 
-env_default ("DEBIAN_VERSION", $debver);
-
-
 $md5sum = "md5sum.txt";
 $md5sum_asc = "$md5sum.asc";
 
-system "dpkg-scanpackages . /dev/null | gzip -c >| Packages.gz";
-system "dpkg-scansources . /dev/null | gzip -c >| Sources.gz";
+system "touch override";
+system "dpkg-scanpackages . override | gzip -c > Packages.gz";
+system "dpkg-scansources . override | gzip -c > Sources.gz";
 
 @files = ("Release")
     if -f "Release";
@@ -94,7 +92,7 @@ print INDEX <<EOF
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Apt-getable repository for PLplot (Debian $DEBIAN_VERSION)</title>
+<title>Apt-getable repository for PLplot (Debian version $debver)</title>
 <style type="text/css">
   body { color: black; background-color: white; }
   h1 { font-size: 1.5em; border-bottom: solid black 1px;
@@ -115,7 +113,7 @@ print INDEX <<EOF
 </style>
 </head>
 <body>
-<h1>Apt-getable Repository for PLplot (Debian $DEBIAN_VERSION)</h1>
+<h1>Apt-getable Repository for PLplot (Debian version $debver)</h1>
 <dl>
 <dt> Available packages: </dt>
 <dd>

@@ -2,8 +2,17 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
-Standards-Version: 3.6.1
-Build-Depends: debhelper (>= 4.1.67), tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev, libxi-dev, g77, fort77 [m68k], itk3-dev, python-numeric | python2.3-numeric, python-dev | python2.3-dev, octave2.1-headers (>= 2.1.65), libgd2-noxpm-dev | libgd2-xpm-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev, libltdl3-dev, pkg-config, dpatch, atlas3-base-dev [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k], libgcj4-dev | kaffe-dev | libsablevm1-dev, gcj | java-compiler, fastjar | kaffe
+Standards-Version: 3.7.2
+Build-Depends: debhelper (>= 4.1.67), tcl8.4-dev, tk8.4-dev, itcl3-dev,
+ libx11-dev, libxext-dev, libxi-dev, gfortran, itk3-dev, python-dev,
+ octave2.1-headers (>= 2.1.65), libgd2-noxpm-dev | libgd2-xpm-dev,
+ libgnome2-dev, libgnomeprintui2.2-dev, libgnomeui-dev, m4, libqhull-dev,
+ libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev,
+ libltdl3-dev, pkg-config, dpatch, atlas3-base-dev [!arm !m68k],
+ refblas3-dev [arm m68k], lapack3-dev [arm m68k], python-gtk2-dev,
+ libgcj6-dev | kaffe-dev | libsablevm1-dev, gcj | java-compiler,
+ fastjar | kaffe, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
+ python-gnome2-dev
 Build-Conflicts: libplplot5
 
 Package: libplplot9
@@ -11,7 +20,8 @@ Architecture: any
 Section: libs
 Conflicts: libplplot5, plplot (<< 5)
 Depends: ${shlibs:Depends}
-Suggests: plplot9-driver-xwin, plplot9-driver-gnome2, plplot9-driver-gd, plplot-tcl
+Suggests: plplot9-driver-xwin, plplot9-driver-gnome2, plplot9-driver-gd,
+ plplot-tcl
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -30,7 +40,8 @@ Package: libplplot-dev
 Architecture: any
 Section: libdevel
 Recommends: pkg-config
-Depends: libplplot9 (= ${Source-Version}), libplplot-c++9 (= ${Source-Version}), libqhull-dev, libfreetype6-dev, libltdl3-dev, plplot9-driver-gnome2
+Depends: libplplot9 (= ${Source-Version}), libqhull-dev, libfreetype6-dev,
+ libltdl3-dev, libplplot-c++9c2 (= ${Source-Version}), plplot9-driver-gnome2
 Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
  and Fortran with PLplot, a scientific plotting library.  Examples of
@@ -40,10 +51,11 @@ Description: Scientific plotting library (development files)
  .
  Homepage: http://www.plplot.org
 
-Package: libplplot-c++9
+Package: libplplot-c++9c2
 Architecture: any
 Section: libs
-Conflicts: libplplot5
+Conflicts: libplplot5, libplplot-c++9
+Replaces: libplplot-c++9
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library
  This package contains the C++ binding for PLplot, a scientific plotting
@@ -110,6 +122,26 @@ Description: Scientific plotting library (Gnome Canvas Widget driver)
  .
  Homepage: http://www.plplot.org
 
+Package: plplot9-driver-psttf
+Architecture: any
+Section: libs
+Depends: libplplot9, ${shlibs:Depends}
+Description: Scientific plotting library (PostScript with Unicode support)
+ This package provides the PostScript driver module with Unicode
+ support for PLplot, a scientific plotting library.
+ .
+ Homepage: http://www.plplot.org
+
+Package: plplot9-driver-wxwidgets
+Architecture: any
+Section: libs
+Depends: libplplot9, ${shlibs:Depends}
+Description: Scientific plotting library (wxWidgets driver)
+ This package provides the wxWidgets driver module for PLplot, a
+ scientific plotting library.
+ .
+ Homepage: http://www.plplot.org
+
 Package: plplot-tcl
 Architecture: any
 Priority: extra
@@ -158,17 +190,6 @@ Description: Python support for PLplot, a plotting library
  .
  Homepage: http://www.plplot.org
 
-Package: python-plplot-gnome2
-Architecture: any
-Section: python
-Depends: ${shlibs:Depends}, libplplot9, python-plplot
-Description: Python support for PLplot, a plotting library
- This package allows the use of the plplotcanvas widget in the PLplot
- scientific plotting library Python applications.  Examples are also
- provided.
- .
- Homepage: http://www.plplot.org
-
 Package: octave-plplot
 Architecture: any
 Priority: extra
@@ -183,7 +204,6 @@ Description: Octave support for PLplot, a plotting library
 Package: plplot-doc
 Architecture: all
 Section: doc
-Depends: libplplot9 (= ${Source-Version})
 Suggests: libplplot-dev
 Description: Documentation for PLplot, a plotting library
  This package contains the HTML, PDF, PostScript and info forms of the
