@@ -4,7 +4,7 @@
 #
 # Rafael Laboissiere,
 # Created on 2004-02-04
-# Last changed on 2004-06-20
+# $Id$
 
 include ../Makefile-vars
 
@@ -16,16 +16,16 @@ SOURCES =                 \
     announce-plplot-5.3.0 \
     announce-plplot-5.3.1
 
-TARGETS = $(SOURCES:%=%.xhtml) $(SOURCES:%=%.txt) $(SOURCES:%=%.pdf)
+TARGETS = $(SOURCES:%=%.xhtml) $(SOURCES:%=%.txt)
 
-WWW_FILES =                    \
-    announce-plplot-5.1.0.html \
-    announce-plplot-5.2.1.html \
-    announce.css               \
-    ChangeLog-5.2.1-5.3.0      \
-    ChangeLog-5.3.0-5.3.1      \
-    $(SOURCES:%=%.xml)         \
-    $(TARGETS)                 \
+WWW_FILES =			\
+    announce-plplot-5.1.0.html	\
+    announce-plplot-5.2.1.html	\
+    announce.css		\
+    ChangeLog-5.2.1-5.3.0	\
+    ChangeLog-5.3.0-5.3.1	\
+    $(SOURCES:%=%.xml)		\
+    $(TARGETS)			\
     Makefile
 
 WWW_ANNOUNCE_DIR = $(WWW_DIR)/announce
@@ -42,16 +42,13 @@ all: $(TARGETS)
 	lynx -force_html -dump -width=80 $< \
 	| sed "s,file://localhost$(PWD),$(URL)," > $@
 
-%.pdf: %.xml print.xsl
-	xmlto pdf -m print.xsl $<
-
 validate:
 	for f in $(SOURCES:%=%.xml) ; do \
 	    onsgmls $(XML_DCL) $$f > /dev/null ; \
 	done
 
 clean:
-	rm -f *.xhtml *.html *.txt *.pdf
+	rm -f *.xhtml *.txt
 
 install: $(TARGETS)
 	ssh $(USER_AT_HOST) rm -rf $(WWW_ANNOUNCE_DIR)

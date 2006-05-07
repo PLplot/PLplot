@@ -160,14 +160,13 @@
 
     <para role="foot">
       <ulink url="../index.html">PLplot home page</ulink> | <ulink
-      url="announce-plplot-5.3.1.txt">Text version</ulink>
-      | <ulink url="announce-plplot-5.3.1.pdf">PDF version</ulink> |
+      url="announce-plplot-5.3.1.txt">Text version</ulink> |
       <ulink url="announce-plplot-5.3.1.xml">XML source</ulink> |
       <ulink url="Makefile">Makefile</ulink>
     </para>
 
     <para role="foot">
-      $$
+      $Id$
     </para>
 
   </sect2>
