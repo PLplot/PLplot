@@ -43,18 +43,18 @@ command:	$plplot_config_invocation
 host:		$host
 have_x:		$have_x
 prefix:		$prefix
-CC:		$CC $CC_FLAGS"
+CC CFLAGS:	$CC $CFLAGS"
 
 if test "$enable_cxx" = "yes"; then
     plplot_config_result_msg=\
 "$plplot_config_result_msg
-CXX:		$CXX $CXX_FLAGS"
+CXX CXXFLAGS:	$CXX $CXXFLAGS"
 fi
 
 if test "$enable_f77" = "yes"; then
     plplot_config_result_msg=\
 "$plplot_config_result_msg
-F77:		$F77 $F77_FLAGS"
+F77 FFLAGS:	$F77 $FFLAGS"
 fi
 
 plplot_config_result_msg=\
