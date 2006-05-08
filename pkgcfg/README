@@ -20,6 +20,7 @@ pkg-config files for the different libraries shipped with PLplot.  They are:
     plplot.pc
     plplot-c++.pc
     plplot-f77.pc
+    plplot-f95.pc
     plplot-tcl.pc
 
 for the single precision case, and:
@@ -27,6 +28,7 @@ for the single precision case, and:
     plplotd.pc
     plplotd-c++.pc
     plplotd-f77.pc
+    plplotd-f95.pc
     plplotd-tcl.pc
 
 for the double precision case.

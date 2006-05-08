@@ -57,6 +57,11 @@ $master_pkg = "";
              LIB  => "${stem}f77$lib_tag",
              INC  => '' },
 
+  'f95' => { NAME => 'F95',
+             DESC => 'Fortran95 bindings, ',
+             LIB  => "${stem}f95$lib_tag",
+             INC  => '' },
+
   'gnome2' => { NAME => 'Gnome',
        	     DESC => 'PLplot for Gnome/GTK, ',
              LIB  => "${stem}gnome2$lib_tag",
