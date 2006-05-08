@@ -50,6 +50,10 @@ output_libs () {
 	plplot_libspec="-L${prefix}/lib -lplplotf77@LIB_TAG@"
 	LINKER=@F77@
     fi
+    if test "$with_f95" = "yes" -a "$enable_f95" = "yes" ; then
+	plplot_libspec="-L${prefix}/lib -lplplotf95@LIB_TAG@"
+	LINKER=@F77@
+    fi
     if test "$with_tcl" = "yes" -a "$enable_tcl" = "yes" ; then
 	plplot_libspec="-L${prefix}/lib -lplplottcltk@LIB_TAG@"
 	LINKER=@CC@
@@ -107,11 +111,12 @@ Options:
 	[--cflags]
         [--with-c++]
         [--with-f77]
+        [--with-f95]
         [--with-tcl]
         [--with-gcw]
 	[--help]
 
-Note: --with-c++, --with-f77, --with-tcl, and with-gcw are mutually exclusive
+Note: --with-c++, --with-f77, --with-f95, --with-tcl, and with-gcw are mutually exclusive
 EOF
 	exit $1
 }
@@ -123,6 +128,7 @@ prefix=@prefix@
 version=@VERSION@
 enable_cxx=@enable_cxx@
 enable_f77=@enable_f77@
+enable_f95=@enable_f95@
 enable_tcl=@enable_tcl@
 enable_gcw=@enable_gcw@
 
@@ -155,25 +161,31 @@ while test $# -gt 0; do
 	    echo_libs=yes
 	    ;;
 	--with-c++)
-	    if test "$with_f77" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
+	    if test "$with_f77" = "yes" -o "$with_f95" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_cxx=yes
 	    ;;
 	--with-f77)
-	    if test "$with_cxx" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
+	    if test "$with_f95" = "yes" -o "$with_cxx" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_f77=yes
 	    ;;
+	--with-f95)
+	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes" -o "$with_tcl" = "yes" -o "$with_gcw" = "yes"; then
+	      usage 1 1>&2
+	    fi
+	    with_f95=yes
+	    ;;
 	--with-tcl)
-	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes" -o "$with_gcw" = "yes"; then
+	    if test "$with_f77" = "yes" -o "$with_f95" = "yes" -o "$with_cxx" = "yes" -o "$with_gcw" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_tcl=yes
 	    ;;
 	--with-gcw)
-	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes" -o "$with_tcl" = "yes"; then
+	    if test "$with_f77" = "yes" -o "$with_f95" = "yes" -o "$with_cxx" = "yes" -o "$with_tcl" = "yes"; then
 	      usage 1 1>&2
 	    fi
 	    with_gcw=yes
