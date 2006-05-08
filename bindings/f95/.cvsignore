@@ -4,3 +4,8 @@ Makefile.in
 .libs
 *.la
 *.lo
+plflt
+plflt.inc
+plplot.mod
+plplot_flt.mod
+plplotp.mod
