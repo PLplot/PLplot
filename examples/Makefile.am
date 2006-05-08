@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-SUBDIRS =  c  c++  f77 python tcl tk java perl
+SUBDIRS =  c  c++  f77 f95 python tcl tk java perl
 
 examplesdir = $(DATA_DIR)/examples
 

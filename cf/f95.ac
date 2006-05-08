@@ -1,0 +1,47 @@
+dnl cf/f95.ac for PLplot  -*- autoconf -*-
+dnl
+dnl Fortran 95 binding
+dnl
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
+dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+PL_ARG_ENABLE(f95, [compile Fortran-95 interface code], no)
+
+if test "$enable_f95" = yes ; then
+  if test "$enable_f77" != yes ; then
+    AC_PROG_FC
+  fi
+  # If no F95 compiler is found, then disable f95 bindings building
+  # N.B. Currently have no test for fortran 95 capability so just test
+  # for whether _any_ fortran compiler was found.
+  if test -z "$FC" ; then
+    enable_f95=no
+    AC_MSG_WARN([Disabling F95 bindings building because no compiler was found])
+  fi
+fi
+AC_SUBST(enable_f95)
+
+AM_CONDITIONAL(enable_f95, [test "$enable_f95" = yes])
+
+AC_CONFIG_FILES([
+    bindings/f95/Makefile
+    examples/f95/Makefile
+    examples/f95/Makefile.examples
+])

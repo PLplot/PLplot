@@ -101,6 +101,11 @@ dnl specialized Fortran API.
 F77_SOVERSION=10:0:1
 AC_SUBST(F77_SOVERSION)
 
+dnl Version number for the shared F95 library.
+
+F95_SOVERSION=0:0:0
+AC_SUBST(F95_SOVERSION)
+
 dnl Version number for the CSIRO libraries distributed in lib/csa and
 dnl lib/nn.  This information was buried into lib/{csa,nn}/Makefile.am and it
 dnl is made explicit below.  It may happen that, in the future, we will need
@@ -229,6 +234,7 @@ m4_include(cf/octave.ac)
 m4_include(cf/tcl.ac)
 m4_include(cf/c++.ac)
 m4_include(cf/f77.ac)
+m4_include(cf/f95.ac)
 m4_include(cf/pdl.ac)
 
 

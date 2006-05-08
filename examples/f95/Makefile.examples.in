@@ -1,0 +1,48 @@
+# examples/f95/Makefile.examples.in for PLplot
+###
+### Process this file with configure to produce Makefile.examples
+###
+# Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
+# Copyright (C) 2004  Andrew Ross
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the file PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+F95 = @F77@
+EXEEXT = @EXEEXT@
+
+@pkg_config_true@LIB_TAG = @LIB_TAG@
+@pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+@pkg_config_true@RPATHCMD = @RPATHCMD@
+
+# x19f excluded from this list because the plmap and plmeridians fortran
+# API is not implemented as part of the common API (and probably won't be
+# for a long time because of having to work around the mapform type of
+# argument for these functions).
+
+EXECUTABLES_list = \
+		 x01f$(EXEEXT)
+
+all: $(EXECUTABLES_list)
+
+clean:
+	rm -f $(EXECUTABLES_list)
+
+.f$(EXEEXT):
+@pkg_config_true@	$(F95) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-f77`
+@pkg_config_false@	$(F95) $< -o $@ `plplot-config --cflags --libs --with-f95`
+
+.SUFFIXES: .f95 $(EXEEXT)
