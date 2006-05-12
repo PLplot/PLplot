@@ -32,6 +32,10 @@ if enable_f77
 scripts += test_f77.sh
 endif
 
+if enable_f95
+scripts += test_f95.sh
+endif
+
 if enable_java
 scripts += test_java.sh
 endif
