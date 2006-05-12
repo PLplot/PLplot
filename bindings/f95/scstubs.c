@@ -137,7 +137,7 @@ PLCOL(PLINT *icol)
 }
 
 void
-PLCPSTRM(PLINT *iplsr, PLINT *flags)
+PLCPSTRM(PLINT *iplsr, PLBOOL *flags)
 {
     c_plcpstrm(*iplsr, *flags);
 }
