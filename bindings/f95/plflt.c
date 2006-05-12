@@ -18,10 +18,10 @@ main(int argc, char *argv[] )
    kind = "1.0";
 #endif
 
-   fprintf( outfile, "C     NOTE: Generated code\n");
-   fprintf( outfile, "C\n");
-   fprintf( outfile, "C     Type of floating-point numbers in PLplot\n");
-   fprintf( outfile, "C\n");
+   fprintf( outfile, "!     NOTE: Generated code\n");
+   fprintf( outfile, "!\n");
+   fprintf( outfile, "!     Type of floating-point numbers in PLplot\n");
+   fprintf( outfile, "!\n");
    fprintf( outfile, "      integer, parameter :: plf   = kind(%s)\n", kind);
    fprintf( outfile, "      integer, parameter :: plflt = plf\n");
    fclose( outfile);
