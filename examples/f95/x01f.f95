@@ -1,25 +1,25 @@
-!      $Id$
-!      Simple line plot and multiple windows demo.
+!   $Id$
+!   Simple line plot and multiple windows demo.
 !
-!      Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004  Alan W. Irwin
 !
-!      This file is part of PLplot.
+!   This file is part of PLplot.
 !
-!      PLplot is free software; you can redistribute it and/or modify
-!      it under the terms of the GNU General Library Public License as
-!      published by the Free Software Foundation; either version 2 of the
-!      License, or (at your option) any later version.
+!   PLplot is free software; you can redistribute it and/or modify
+!   it under the terms of the GNU General Library Public License as
+!   published by the Free Software Foundation; either version 2 of the
+!   License, or (at your option) any later version.
 !
-!      PLplot is distributed in the hope that it will be useful,
-!      but WITHOUT ANY WARRANTY; without even the implied warranty of
-!      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!      GNU Library General Public License for more details.
+!   PLplot is distributed in the hope that it will be useful,
+!   but WITHOUT ANY WARRANTY; without even the implied warranty of
+!   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!   GNU Library General Public License for more details.
 !
-!      You should have received a copy of the GNU Library General Public
-!      License along with PLplot; if not, write to the Free Software
-!      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+!   You should have received a copy of the GNU Library General Public
+!   License along with PLplot; if not, write to the Free Software
+!   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x01f95
+   program x01f95
    use plplot, PI => PL_PI
 
    implicit none
@@ -36,8 +36,7 @@ program x01f95
 
 !  Print plplot version
    call plgver(version)
-   write (0,'(a,a)') 'PLplot library version: ', &
-     &  trim(version)
+   write (0,'(a,a)') 'PLplot library version: ', trim(version)
 
 !  Initialize plplot
    call plinit()
@@ -60,7 +59,7 @@ program x01f95
    yscale = 0.0014_plflt
    yoff = 0.0185_plflt
 
-!      Do a plot
+!  Do a plot
 
    digmax = 5
    call plsyax(digmax,  0)
@@ -72,13 +71,14 @@ program x01f95
 
    call plend()
 
-contains
+   contains
 
 !======================================================================
-subroutine plot1()
+   subroutine plot1()
 
    real(plflt), dimension(1:60) :: x, y
    real(plflt), dimension(1:6)  :: xs, ys
+   real(plflt) :: xmin, xmax, ymin, ymax 
    integer :: i
 
    do i = 1, 60
@@ -96,10 +96,10 @@ subroutine plot1()
      ys(i) = y((i-1)*10+4)
    enddo
 
-!      Set up the viewport and window using PLENV. The range in X is
-!      0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
-!      scaled separately (just = 0), and we just draw a labelled
-!      box (axis = 0).
+!   Set up the viewport and window using PLENV. The range in X is
+!   0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+!   scaled separately (just = 0), and we just draw a labelled
+!   box (axis = 0).
 
    call plcol0(1)
    call plenv( xmin, xmax, ymin, ymax, 0, 0 )
@@ -116,10 +116,10 @@ subroutine plot1()
    call plcol0(3)
    call plline( x, y )
 
-end subroutine plot1
+   end subroutine plot1
 
 !======================================================================
-subroutine plot2()
+   subroutine plot2()
 
    real(plflt), dimension(1:100) :: x, y
    integer :: i
@@ -150,10 +150,10 @@ subroutine plot2()
    call plline( x, y )
    call plwid(1)
 
-end subroutine plot2
+   end subroutine plot2
 
 !======================================================================
-subroutine plot3()
+   subroutine plot3()
 
 !
 !   For the final graph we wish to override the default tick intervals,
@@ -194,6 +194,6 @@ subroutine plot3()
    call plcol0(4)
    call plline( x, y )
 
-end subroutine plot3
+   end subroutine plot3
 
-end program x01f95
+   end program x01f95
