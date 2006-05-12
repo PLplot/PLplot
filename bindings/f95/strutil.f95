@@ -70,7 +70,7 @@
          endif
  100  continue
 
-C      If string is blank or length 0, return length 0
+!      If string is blank or length 0, return length 0
       islen = 0
       return
       end function islen

@@ -157,8 +157,8 @@
 
 !***********************************************************************
 
-      subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub,
-     &  zopt,zlabel,ztick,nzsub)
+      subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
+       zopt,zlabel,ztick,nzsub)
 
       implicit none
       real(kind=plflt) xtick, ytick, ztick
@@ -174,9 +174,9 @@
       call plstrf2c(zopt, string5, maxlen)
       call plstrf2c(zlabel, string6, maxlen)
 
-      call plbox37(s1,s2,xtick,nxsub,
-     &  s3,s4,ytick,nysub,
-     &  s5,s6,ztick,nzsub)
+      call plbox37(s1,s2,xtick,nxsub, &
+        s3,s4,ytick,nysub, &
+        s5,s6,ztick,nzsub)
 
       end subroutine
 
@@ -260,8 +260,8 @@
 
       implicit none
       integer nx, ny
-      real(kind=plflt) u(nx, ny), v(nx,ny), xg(nx, ny), yg(nx, ny),
-     &                 scale
+      real(kind=plflt) u(nx, ny), v(nx,ny), xg(nx, ny), yg(nx, ny), &
+                       scale
 
       call plvec27(u,v,nx,ny,scale,xg,yg)
 
@@ -283,11 +283,11 @@
 
 !***********************************************************************
 
-      subroutine plshade0(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width, lx)
+      subroutine plshade0(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, lx)
 
       implicit none
       character defined*(*)
@@ -300,22 +300,22 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshade07(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width, lx)
+      call plshade07(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade1(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width,
-     &  xg, yg, lx)
+      subroutine plshade1(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, &
+        xg, yg, lx)
 
       implicit none
       character defined*(*)
@@ -328,23 +328,23 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshade17(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width,
-     &  xg, yg, lx)
+      call plshade17(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, &
+        xg, yg, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade2(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width,
-     &  xg, yg, lx)
+      subroutine plshade2(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, &
+        xg, yg, lx)
 
       implicit none
       character defined*(*)
@@ -357,22 +357,22 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshade27(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width,
-     &  xg, yg, lx)
+      call plshade27(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, &
+        xg, yg, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width, lx)
+      subroutine plshade(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, lx)
 
       implicit none
       character defined*(*)
@@ -385,20 +385,20 @@
 
       include 'sfstubs.h'
 
-      call plshade7(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  shade_min, shade_max,
-     &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width, tr, lx)
+      call plshade7(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        shade_min, shade_max, &
+        sh_cmap, sh_color, sh_width, &
+        min_color, min_width, max_color, max_width, tr, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades0(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, lx)
+      subroutine plshades0(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, lx)
 
       implicit none
       character defined*(*)
@@ -410,69 +410,69 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades07(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, lx)
+      call plshades07(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades1(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, xg1, yg1, lx)
+      subroutine plshades1(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, xg1, yg1, lx)
 
       implicit none
       character defined*(*)
       integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
       real(kind=plflt) clevel(nlevel)
-      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax,
-     &                 xg1(nx), yg1(ny)
+      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax, &
+                       xg1(nx), yg1(ny)
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades17(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, xg1, yg1, lx)
+      call plshades17(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, xg1, yg1, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades2(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, xg2, yg2, lx)
+      subroutine plshades2(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, xg2, yg2, lx)
 
       implicit none
       character defined*(*)
       integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
       real(kind=plflt) clevel(nlevel)
-      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax,
-     &  xg2(lx, ny), yg2(lx, ny)
+      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax, &
+        xg2(lx, ny), yg2(lx, ny)
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades27(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, xg2, yg2, lx)
+      call plshades27(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, xg2, yg2, lx)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades(z, nx, ny, defined,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, lx)
+      subroutine plshades(z, nx, ny, defined, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, lx)
 
       implicit none
       character defined*(*)
@@ -486,10 +486,10 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades7(z, nx, ny, s1,
-     &  xmin, xmax, ymin, ymax,
-     &  clevel, nlevel, fill_width,
-     &  cont_color, cont_width, tr, lx)
+      call plshades7(z, nx, ny, s1, &
+        xmin, xmax, ymin, ymax, &
+        clevel, nlevel, fill_width, &
+        cont_color, cont_width, tr, lx)
 
       end subroutine
 
@@ -561,10 +561,10 @@
 
 !***********************************************************************
 
-      subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump,
-     &  ymin, ymax, xlpos, ylpos, y_ascl, acc,
-     &  colbox, collab, colline, styline, legline,
-     &  labx, laby, labtop)
+      subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump, &
+        ymin, ymax, xlpos, ylpos, y_ascl, acc, &
+        colbox, collab, colline, styline, legline, &
+        labx, laby, labtop)
 
       implicit none
       integer id, y_ascl, acc, colbox, collab, colline(4), styline(4)
@@ -584,11 +584,11 @@
       call plstrf2c(laby, string8, maxlen)
       call plstrf2c(labtop, string9, maxlen)
 
-      call plstripc7(id, s1, s2, xmin, xmax, xjump,
-     &  ymin, ymax, xlpos, ylpos, y_ascl, acc,
-     &  colbox, collab, colline, styline,
-     &  s3, s4, s5, s6,
-     &  s7, s8, s9)
+      call plstripc7(id, s1, s2, xmin, xmax, xjump, &
+        ymin, ymax, xlpos, ylpos, y_ascl, acc, &
+        colbox, collab, colline, styline, &
+        s3, s4, s5, s6, &
+        s7, s8, s9)
 
       end subroutine
 
@@ -612,8 +612,8 @@
 
 !***********************************************************************
 
-      subroutine plmeridians(mapform,dlong,dlat,minlong,maxlong,
-     &                       minlat,maxlat)
+      subroutine plmeridians(mapform,dlong,dlat,minlong,maxlong, &
+                             minlat,maxlat)
 
       implicit none
       real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
