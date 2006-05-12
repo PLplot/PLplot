@@ -57,6 +57,12 @@ if test "$enable_f77" = "yes"; then
 F77 FFLAGS:	$F77 $FFLAGS"
 fi
 
+if test "$enable_f95" = "yes"; then
+    plplot_config_result_msg=\
+"$plplot_config_result_msg
+FC FCLAGS:	$FC $FCFLAGS"
+fi
+
 plplot_config_result_msg=\
 "$plplot_config_result_msg
 LIB_TAG:	$LIB_TAG
@@ -78,10 +84,11 @@ with_qhull:	$with_qhull		with_csa:	$with_csa
 with_freetype:	$with_freetype		with_pthreads:	$with_pthreads
 
 Language Bindings:
+enable_f77:	$enable_f77		enable_f95:	$enable_f95
+enable_cxx:	$enable_cxx		enable_java:	$enable_java
+enable_python:	$enable_python		enable_octave:	$enable_octave
 enable_tcl:	$enable_tcl		enable_itcl:	$enable_itcl
-enable_cxx:	$enable_cxx		enable_f77:	$enable_f77
-enable_java:	$enable_java		enable_python:	$enable_python
-enable_octave:	$enable_octave		enable_pdl:	$enable_pdl
+enable_pdl:	$enable_pdl
 "
 
 cat << EOF > config.summary
