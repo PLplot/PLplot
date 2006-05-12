@@ -230,10 +230,11 @@ interactive driver is being developed. </para>
       described in this manual.  The meaning of function (subroutine)
       arguments is typically the same regardless of whether you are calling
       from C or Fortran (but there are some exceptions to this).  The
-      arguments for each function are usually specified in terms of PLFLT
-      and PLINT&mdash;these are the internal PLplot representations for
-      integer and floating point, and are typically a long and a float (or
-      an INTEGER and a REAL, for Fortran programmers).  See Appendix
+      arguments for each function are usually specified in terms of PLBOOL,
+      PLINT,and PLFLT&mdash;these are the internal PLplot representations for
+      logical, integer, and floating point, and are typically a zero (false) or
+      non-zero (true) contained in a long, a long, and a float (or
+      a LOGICAL, INTEGER, and a REAL, for Fortran programmers).  See Appendix
       \ref{ap:lang} for more detail.
     </para>
     <para>
