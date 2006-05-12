@@ -136,9 +136,9 @@
  */
 
 #define    PL_SETCONTLABELFORMAT	FNAME(PL_SETCONTLABELFORMAT,pl_setcontlabelformat)
-#define    PL_SETCONTLABELFORMATa	FNAME(PL_SETCONTLABELFORMAT,pl_setcontlabelformat_)
+#define    PL_SETCONTLABELFORMATa	FNAME(PL_SETCONTLABELFORMAT_,pl_setcontlabelformat_)
 #define    PL_SETCONTLABELPARAM		FNAME(PL_SETCONTLABELPARAM,pl_setcontlabelparam)
-#define    PL_SETCONTLABELPARAMa	FNAME(PL_SETCONTLABELPARAM,pl_setcontlabelparam_)
+#define    PL_SETCONTLABELPARAMa	FNAME(PL_SETCONTLABELPARAM_,pl_setcontlabelparam_)
 #define    PLADV	FNAME(PLADV,pladv)
 #define    PLAXES7	FNAME(PLAXES7,plaxes7)
 #define    PLBIN	FNAME(PLBIN,plbin)
@@ -146,7 +146,7 @@
 #define    PLBOX37	FNAME(PLBOX37,plbox37)
 #define    PLBOX7	FNAME(PLBOX7,plbox7)
 #define    PLCALC_WORLD 	FNAME(PLCALC_WORLD,plcalc_world)
-#define    PLCALC_WORLDa	FNAME(PLCALC_WORLD,plcalc_world_)
+#define    PLCALC_WORLDa	FNAME(PLCALC_WORLD_,plcalc_world_)
 #define    PLCLEAR	FNAME(PLCLEAR,plclear)
 #define    PLCLR	FNAME(PLCLR,plclr)
 #define    PLCOL	FNAME(PLCOL,plcol)
