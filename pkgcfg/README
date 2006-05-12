@@ -6,7 +6,7 @@ have before two files, plplot.pc.in and plplot-float.pc.in, which were
 almost identical.  The *.pc were obtained at configure time.  Essentially,
 only the -lplplot(d) flag was included in the Libs entries of these files.
 This works correctly in platforms like Linux, in which the linker program
-searches recursively for the dependency libraires.
+searches recursively for the dependency libraries.
 
 With the new system, we try to make the pkg-config support for PLplot work
 better cross-platform.  For that, the whole set of dependency libraries is
