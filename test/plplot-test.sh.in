@@ -50,7 +50,7 @@ Usage: plplot-test.sh [OPTIONS]
 Options:
    [--device=DEVICE] (DEVICE = one of psc [default], ps, psttf, psttfc, png, gif, jpeg, cgm,
                       xfig, or plmeta)
-   [--front-end=FE]  (FE = one of c, cxx, f77, java, octave, python, tcl, or perl)
+   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, or perl)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -95,6 +95,7 @@ while test $# -gt 0; do
 	 test $i = "c"         \
               -o $i = "cxx"    \
               -o $i = "f77"    \
+              -o $i = "f95"    \
               -o $i = "java"   \
               -o $i = "octave" \
               -o $i = "python" \
@@ -139,6 +140,7 @@ fi
 cdir=$EXAMPLES_DIR/c
 cxxdir=$EXAMPLES_DIR/c++
 f77dir=$EXAMPLES_DIR/f77
+f95dir=$EXAMPLES_DIR/f95
 pythondir=$EXAMPLES_DIR/python
 tcldir=$EXAMPLES_DIR/tcl
 perldir=$SRC_EXAMPLES_DIR/perl
@@ -146,7 +148,7 @@ javadir=$EXAMPLES_DIR/java
 octave=@OCTAVE@
 octavedir=$SRC_EXAMPLES_DIR/../bindings/octave//:$SRC_EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:
 PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
-export cdir cxxdir f77dir pythondir javadir octave octavedir tcldir perldir PATH
+export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir PATH
 
 fe=""
 
@@ -196,6 +198,7 @@ if test -z "$FRONT_END" ; then
    FRONT_END=c
    test @enable_cxx@ = yes    && FRONT_END="$FRONT_END cxx"
    test @enable_f77@ = yes    && FRONT_END="$FRONT_END f77"
+   test @enable_f95@ = yes    && FRONT_END="$FRONT_END f95"
    test @enable_java@ = yes   && FRONT_END="$FRONT_END java"
    test @enable_octave@ = yes && FRONT_END="$FRONT_END octave"
    test @enable_python@ = yes && FRONT_END="$FRONT_END python"
