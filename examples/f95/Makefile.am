@@ -26,9 +26,30 @@
 # argument for these functions).
 
 f95_examples = \
-	x01f.f
+	x01f.f95 \
+	x02f.f95 \
+	x03f.f95 \
+	x04f.f95 \
+	x05f.f95 \
+	x06f.f95 \
+	x07f.f95 \
+	x08f.f95 \
+	x09f.f95 \
+	x10f.f95 \
+	x11f.f95 \
+	x12f.f95 \
+	x13f.f95 \
+	x14f.f95 \
+	x15f.f95 \
+	x16af.f95 \
+	x16f.f95 \
+	x17f.f95 \
+	x18f.f95 \
+	x19f.f95 \
+	x22f.f95 \
+	x23f.f95
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
+AM_FCFLAGS = -I$(top_srcdir)/include $(INCLTDL) -I$(top_builddir)/bindings/f95
 
 if enable_f95
 
@@ -40,9 +61,51 @@ libplplotf95c = $(top_builddir)/bindings/f95/libplplotf95c$(LIB_TAG).la
 libplplotf95 = $(top_builddir)/bindings/f95/libplplotf95$(LIB_TAG).la
 
 check_PROGRAMS = \
-	x01f
+	x01f \
+	x02f \
+	x03f \
+	x04f \
+	x05f \
+	x06f \
+	x07f \
+	x08f \
+	x09f \
+	x10f \
+	x11f \
+	x12f \
+	x13f \
+	x14f \
+	x15f \
+	x16af \
+	x16f \
+	x17f \
+	x18f \
+	x19f \
+	x22f \
+	x23f
 
-x01f_SOURCES = x01f.f
+x01f_SOURCES = x01f.f95
+x02f_SOURCES = x02f.f95
+x03f_SOURCES = x03f.f95
+x04f_SOURCES = x04f.f95
+x05f_SOURCES = x05f.f95
+x06f_SOURCES = x06f.f95
+x07f_SOURCES = x07f.f95
+x08f_SOURCES = x08f.f95
+x09f_SOURCES = x09f.f95
+x10f_SOURCES = x10f.f95
+x11f_SOURCES = x11f.f95
+x12f_SOURCES = x12f.f95
+x13f_SOURCES = x13f.f95
+x14f_SOURCES = x14f.f95
+x15f_SOURCES = x15f.f95
+x16f_SOURCES = x16f.f95
+x16af_SOURCES = x16af.f95
+x17f_SOURCES = x17f.f95
+x18f_SOURCES = x18f.f95
+x19f_SOURCES = x19f.f95
+x22f_SOURCES = x22f.f95
+x23f_SOURCES = x23f.f95
 
 LDADD = $(libplplot) $(libplplotf95c) $(libplplotf95)
 
