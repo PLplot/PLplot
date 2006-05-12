@@ -55,6 +55,10 @@ TCLLIBSTR=-ltcl
 # "/usr" which would give bad result under Linux without this ordering.
 
 incdirs_default="\
+/usr/include/tcl-private/generic \
+/usr/include/tk-private/generic \
+/usr/include/itcl-private/generic \
+/usr/include/tcl8.4 \
 /usr/include/tcl8.4/tcl-private/generic \
 /usr/include/tcl8.4/tk-private/generic \
 /usr/include/tcl8.4/itcl-private/generic \
@@ -81,6 +85,7 @@ $prefix/lib \
 $HOME/local/lib \
 $HOME/lib \
 /usr/local/lib \
+/usr/lib64 \
 /usr/lib"
 
 incdirs=$incdirs_default
