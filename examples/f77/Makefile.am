@@ -48,7 +48,7 @@ f77_examples = \
 	x22f.f \
 	x23f.f
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
+AM_FFLAGS = -I$(top_srcdir)/include $(INCLTDL)
 
 f77m4_sources = \
 	x01f.fm4 \
