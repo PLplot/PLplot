@@ -42,6 +42,10 @@ if enable_f77
 pkgconfig_DATA += plplot@LIB_TAG@-f77.pc
 endif
 
+if enable_f95
+pkgconfig_DATA += plplot@LIB_TAG@-f95.pc
+endif
+
 if enable_gcw
 pkgconfig_DATA += plplot@LIB_TAG@-gnome2.pc
 endif
@@ -63,5 +67,3 @@ endif
 
 EXTRA_DIST = README
 CLEANFILES = *.pc pc-stamp
-
-
