@@ -97,22 +97,22 @@ C
       data (title(i) ,i=1,11 )/
      & "#<0x10>PLplot Example 23 - Greek Letters",
      & "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode
-     & (a)",
+     &(a)",
      & "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode
-     & (b)",
+     &(b)",
      & "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode
-     & (c)",
+     &(c)",
      & "#<0x10>PLplot Example 23 - Number Forms Unicode Block",
      & "#<0x10>PLplot Example 23 - Arrows Unicode Block (a)",
      & "#<0x10>PLplot Example 23 - Arrows Unicode Block (b)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     & (a)",
+     &(a)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     & (b)",
+     &(b)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     & (c)",
+     &(c)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     & (d)" /
+     &(d)" /
 
       data (lo(i) ,i=1,11) /
      &  z'0',
@@ -208,12 +208,12 @@ C        Draw the grid using plbox
          call plbox("bcg", deltax, 0, "bcg", deltay, 0)
          call plcol0(15)
          length=hi(page)-lo(page)
-         slice = 0
+         slice = 1
          do 120 j=nycells(page),0,-1
             y = (j-0.5d0)*deltay
             do 110 i=1,nxcells(page)
                x  = (i-0.5d0)*deltax
-               if (slice .lt. length) then
+               if (slice .le. length) then
                   if (page .eq. 1) then
                      write(cmdString, '("#",a)') Greek(slice)
                   elseif (page .ge. 1 .and. page .le. 4) then
@@ -221,11 +221,13 @@ C        Draw the grid using plbox
      &                  type1(offset(page)+slice)
                   elseif (page .ge. 5) then
                      write(cmdString, '("##[0x",z4.4,"]")')
-     &                  lo(page)+slice
+     &                  lo(page)+slice-1
                   endif
+                  call plptex(x,y+yoffset,1.d0,0.d0,0.5d0,
+     &              cmdString(2:20))
+                  call plptex(x,y-yoffset,1.d0,0.d0,0.5d0,
+     &              cmdString)
                endif
-               call plptex(x,y+yoffset,1.d0,0.d0,0.5d0, cmdString(2:20))
-               call plptex(x,y-yoffset,1.d0,0.d0,0.5d0, cmdString)
                slice = slice + 1
   110       continue
 
