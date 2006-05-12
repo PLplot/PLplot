@@ -1585,11 +1585,11 @@ reference stream to the current stream
       <varlistentry>
 	<term>
 	  <parameter>flags</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLBOOL</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            If <literal><parameter>flags</parameter></literal> is set to 1
+            If <literal><parameter>flags</parameter></literal> is set to true
 	    the device coordinates are <emphasis>not</emphasis> copied from the reference to current
 	    stream.
 	  </para>
@@ -5707,13 +5707,13 @@ default
       <varlistentry>
 	<term>
 	  <parameter>side</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLBOOL</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Flag to indicate whether or not ``sides'' should be draw on the
-	    figure.  If <literal><parameter>side</parameter>=0</literal> no
-	    sides are drawn, otherwise the sides are drawn.
+	    figure.  If <literal><parameter>side</parameter>=true</literal>
+	    sides are drawn, otherwise no sides are drawn.
 	  </para>
 	</listitem>
       </varlistentry>
