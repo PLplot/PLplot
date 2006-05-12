@@ -723,9 +723,9 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	 PLINT nx, PLINT ny, PLINT opt, PLINT side)
+	 PLINT nx, PLINT ny, PLINT opt, PLBOOL side)
 {
-  c_plot3dc( x, y, z, nx, ny, opt | (side == 1 ? DRAW_SIDES : 0), NULL, 0);
+  c_plot3dc( x, y, z, nx, ny, opt | (side != 0 ? DRAW_SIDES : 0), NULL, 0);
 }
 
 /*--------------------------------------------------------------------------*\
