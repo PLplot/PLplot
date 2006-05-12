@@ -431,7 +431,7 @@ class plstream {
 /* Plots a 3-d representation of the function z[x][y]. */
 
     void plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
-		 PLINT nx, PLINT ny, PLINT opt, PLINT side );
+		 PLINT nx, PLINT ny, PLINT opt, bool side );
 
 /* Plots a 3-d representation of the function z[x][y] with contour. */
 
@@ -969,9 +969,11 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     int GetCursor( PLGraphicsIn *plg );
 
-// Depreciated versions of methods which use PLINT instead of bool
+// Deprecated versions of methods which use PLINT instead of bool
     void svect( PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, PLINT fill);
     void cpstrm( plstream &pls, PLINT flags );
+    void plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+		 PLINT nx, PLINT ny, PLINT opt, PLINT side );
     void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc );
     void scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
 		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev );

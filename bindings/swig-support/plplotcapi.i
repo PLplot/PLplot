@@ -444,7 +444,7 @@ plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 DOC(plot3d, "Plot a 3-d representation of the function z[x][y].")
 void
 plot3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
+	 PLINT nx, PLINT ny, PLINT opt, PLBOOL side);
 
 DOC(plot3dc, "Plot a 3-d contoured representation of the function z[x][y].")
 void

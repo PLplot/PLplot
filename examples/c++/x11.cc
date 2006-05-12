@@ -187,7 +187,7 @@ x11::x11( int argc, char **argv ) {
 
       /* magnitude colored wireframe plot with sides */
       else if (i==2) {
-	pls->plot3d(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, 1);
+	pls->plot3d(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true);
       }
 
       /* magnitude colored wireframe plot with base contour */

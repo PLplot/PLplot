@@ -419,7 +419,7 @@ public void mtex(String side, double disp, double pos, double just, String text)
     plplotjavac.plmtex(side, disp, pos, just, text);
 }
 
-public void plot3d(double[] x, double[] y, double[][] z, int opt, int side) {
+public void plot3d(double[] x, double[] y, double[][] z, int opt, boolean side) {
     if (set_stream() == -1) return;
     plplotjavac.plot3d(x, y, z, opt, side);
 }
@@ -808,6 +808,11 @@ public void rgbhls(double r, double g, double b, double[] h, double[] l, double[
 public void cpstrm(int iplsr, int flags) {
     if (set_stream() == -1) return;
     plplotjavac.plcpstrm(iplsr, flags != 0);
+}
+
+public void plot3d(double[] x, double[] y, double[][] z, int opt, int side) {
+    if (set_stream() == -1) return;
+    plplotjavac.plot3d(x, y, z, opt, side != 0);
 }
 
 public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {

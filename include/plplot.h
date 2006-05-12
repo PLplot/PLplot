@@ -1049,7 +1049,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
+	 PLINT nx, PLINT ny, PLINT opt, PLBOOL side);
 
 /* Plots a 3-d representation of the function z[x][y] with contour. */
 

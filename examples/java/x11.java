@@ -165,7 +165,7 @@ class x11 {
 	       
 	       /* magnitude colored wireframe plot with sides */
 	       else if (i==2)
-		 pls.plot3d(x, y, z, opt[k] | PLStream.MAG_COLOR, 1);
+		 pls.plot3d(x, y, z, opt[k] | PLStream.MAG_COLOR, true);
 	       
 	       /* magnitude colored wireframe plot with base contour */
 	       else if (i==3)

@@ -339,7 +339,7 @@ plstream::svect(PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, bool fill)
     plsvect(arrow_x, arrow_y, npts, (PLBOOL) fill);
 }
 
-// Depreciated version using PLINT instead of bool
+// Deprecated version using PLINT instead of bool
 void
 plstream::svect(PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, PLINT fill)
 {
@@ -483,13 +483,6 @@ void plstream::fcont( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 // /* Copies state parameters from the reference stream to the current stream. */
 
-// void plstream::cpstrm( PLINT iplsr, PLINT flags )
-// {
-//     set_stream();
-
-//     plcpstrm(iplsr,flags);
-// }
-
 void plstream::cpstrm( plstream &pls, bool flags )
 {
     set_stream();
@@ -497,7 +490,7 @@ void plstream::cpstrm( plstream &pls, bool flags )
     plcpstrm(pls.stream,(PLBOOL) flags);
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void plstream::cpstrm( plstream &pls, PLINT flags )
 {
     set_stream();
@@ -1029,11 +1022,20 @@ void plstream::surf3dl( PLFLT *x, PLFLT *y, PLFLT **z,
 /* Plots a 3-d representation of the function z[x][y]. */
 
 void plstream::plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+		       PLINT nx, PLINT ny, PLINT opt, bool side )
+{
+    set_stream();
+
+    ::plot3d(x,y,z,nx,ny,opt,(PLBOOL)side);
+}
+
+// Deprecated version using PLINT not bool
+void plstream::plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
 		       PLINT nx, PLINT ny, PLINT opt, PLINT side )
 {
     set_stream();
 
-    ::plot3d(x,y,z,nx,ny,opt,side);
+    ::plot3d(x,y,z,nx,ny,opt,(PLBOOL)side);
 }
 
 /* Plots a 3-d representation of the function z[x][y] with contour. */
@@ -1106,7 +1108,7 @@ void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, bool i
     plpoly3(n,x,y,z,draw,(PLBOOL) ifcc);
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc )
 {
     set_stream();
@@ -1233,7 +1235,7 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
     delete loc_rev;
 }
 
-// Depreciated version using PLINT instead of bool
+// Deprecated version using PLINT instead of bool
 void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
 			PLINT *rev )
@@ -1427,7 +1429,7 @@ plstream::shade( PLFLT **a, PLINT nx, PLINT ny,
 	     fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
 
-// Depreciated version using PLINT instead of bool
+// Deprecated version using PLINT instead of bool
 void
 plstream::shade( PLFLT **a, PLINT nx, PLINT ny,
 		 PLINT (*defined) (PLFLT, PLFLT),
@@ -1466,7 +1468,7 @@ plstream::shades( PLFLT **a, PLINT nx, PLINT ny,
 	     fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
 
-// Depreciated version using PLINT instead of bool
+// Deprecated version using PLINT instead of bool
 void
 plstream::shades( PLFLT **a, PLINT nx, PLINT ny,
 		 PLINT (*defined) (PLFLT, PLFLT),
@@ -1508,7 +1510,7 @@ plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
 		Coord_Xform_evaluator, pcxf );
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void
 plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
 		 PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
@@ -1555,7 +1557,7 @@ plstream::shade1( PLFLT *a, PLINT nx, PLINT ny,
 	      fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void
 plstream::shade1( PLFLT *a, PLINT nx, PLINT ny,
 		  PLINT (*defined) (PLFLT, PLFLT),
@@ -1604,7 +1606,7 @@ plstream::fshade( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void
 plstream::fshade( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		  PLPointer f2eval_data,
@@ -1677,7 +1679,7 @@ void plstream::spause( bool pause )
     plspause((PLBOOL) pause);
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void plstream::spause( PLINT pause )
 {
     set_stream();
@@ -1748,7 +1750,7 @@ void plstream::stripc(PLINT *id, char *xspec, char *yspec,
 }
 
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void plstream::stripc(PLINT *id, char *xspec, char *yspec,
         PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
         PLFLT xlpos, PLFLT ylpos,
@@ -1950,7 +1952,7 @@ void plstream::xormod(bool mode, bool *status)
    *status = (bool) loc_status;
 }
 
-// Depreciated version using PLINT not bool
+// Deprecated version using PLINT not bool
 void plstream::xormod(PLINT mode, PLINT *status)
 {
    PLBOOL loc_status;

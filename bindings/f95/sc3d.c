@@ -113,7 +113,7 @@ PLMESHC(PLFLT *x, PLFLT *y, PLFLT *z,
 
 void
 PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
-       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *side, PLINT *lx)
+       PLINT *nx, PLINT *ny, PLINT *opt, PLBOOL *side, PLINT *lx)
 {
    PLINT optlocal, nlevel = 0;
    PLFLT clevel = 0.;
