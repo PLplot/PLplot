@@ -203,6 +203,7 @@ C      Draw the line through the data
 C======================================================================
 
       subroutine plot2()
+      implicit none
       real*8  x(101), y(101)
       real*8  xs(6), ys(6)
       real*8  xscale, yscale, xoff, yoff
@@ -242,6 +243,7 @@ C======================================================================
 C
 C      For the final graph we wish to override the default tick intervals,
 C      and so do not use PLENV
+      implicit none
 
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
@@ -288,6 +290,7 @@ C      only a single mark and space element, we do not need arrays
 C======================================================================
 
       subroutine plot4()
+      implicit none
 
       character*3 text
       real*8 x0(0:360), y0(0:360)
