@@ -574,8 +574,8 @@ plD_tidy_psttf(PLStream *pls)
 /* Some applications don't like it atend */
 
     //doc->osHeader() << "%%!PS-Adobe-2.0 EPSF-2.0\n";
-    doc->osHeader() << "%%BoundingBox: " << dev->llx << " " << 
-      dev->lly << " " << dev->urx << " " << dev->ury << endl;
+    //doc->osHeader() << "%%BoundingBox: " << dev->llx << " " << 
+    //  dev->lly << " " << dev->urx << " " << dev->ury << endl;
 
 /* Now write the rest of the header */
     writeHeader(pls);
@@ -585,12 +585,12 @@ plD_tidy_psttf(PLStream *pls)
        the C FILE * handle, then reopen as a ofstream. Yuck! */
     fclose(pls->OutFile);
     if (! strcmp(pls->FileName,"-")) {
-      doc->write(cout);
+      doc->write(cout,dev->llx,dev->lly,dev->urx,dev->ury);
     }
     else {      
       ofstream out;
       out.open(pls->FileName);
-      doc->write(out);
+      doc->write(out,dev->llx,dev->lly,dev->urx,dev->ury);
       out.close();      
     }
 
