@@ -6884,11 +6884,11 @@ piece-wise linear relationship
     </para>
 
 <para> The hue is interpolated around the "front" of the color wheel
-      (red&lt;->green&lt;->blue&lt;->red) unless the "rev" flag is set, in
-      which case interpolation (between the <literal>i</literal> and
+      (red&lt;->green&lt;->blue&lt;->red) unless the "rev" flag is set to true,
+      in which case interpolation (between the <literal>i</literal> and
       <literal>i + 1</literal> control point for <literal>rev[i]</literal>)
       proceeds around the back (reverse) side.  Specifying rev=NULL is
-      equivalent to setting rev[]=0 for every control point. </para>
+      equivalent to setting rev[]= false for every control point. </para>
 
 <para>
 <table frame="none"><title> Bounds on coordinates</title>
@@ -6909,11 +6909,11 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>itype</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLBOOL</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            0: HLS, 1: RGB
+            true: RGB, false: HLS.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6976,11 +6976,12 @@ piece-wise linear relationship
       <varlistentry>
 	<term>
 	  <parameter>rev</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>PLBOOL: *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            reverse flag for each control point (<literal>rev[i]</literal> refers
+            reverse flag for each control point. (<literal>rev[i]</literal> 
+	    refers
 	    to the interpolation interval between the <literal>i</literal> and
 	    <literal>i + 1</literal> control points).
 	  </para>
@@ -10150,13 +10151,13 @@ stripchart
       <varlistentry>
         <term>
 	  <parameter>fill</parameter>
-	  (<literal>PLINT</literal>,input)
+	  (<literal>PLBOOL</literal>,input)
 	</term>
 	<listitem>
 	  <para>
-	    If <literal><parameter>fill</parameter> = 0</literal> then the
-	    arrow is open, if <literal><parameter>fill</parameter> = 1</literal>
-	    then the arrow is filled.
+	    If <literal><parameter>fill</parameter></literal> is true then the
+	    arrow is closed, if <literal><parameter>fill</parameter></literal>
+	    is false then the arrow is open.
 	  </para>
 	</listitem>
       </varlistentry>
