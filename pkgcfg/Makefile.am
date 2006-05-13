@@ -62,7 +62,7 @@ endif
 install-data-hook:
 if with_pkg_config
 	$(mkinstalldirs) $(DESTDIR)$(docdir)
-	$(INSTALL) README $(DESTDIR)$(docdir)/README.pkg-config
+	$(INSTALL) `pwd`/$(top_srcdir)/pkgcfg/README $(DESTDIR)$(docdir)/README.pkg-config
 endif
 
 EXTRA_DIST = README
