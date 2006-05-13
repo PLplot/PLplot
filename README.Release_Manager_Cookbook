@@ -350,30 +350,51 @@ In the event that one of the files is not right you can upload an improved
 version just by going back to the file release area.
 
 
-Update the Web site:
+To test your ability to update the website:
+(This assumes that you have Apache running on your build machine)
+
+1) in plplot directory:
+WWW_USER=joeplotter WWW_GROUP=joesgroup WWW_HOST=localhost WWW_DIR=/var/www/plplot scripts/htdocs-gen_plot-examples.sh
+
+2) in plplot/www:
+make WWW_USER=joeplotter WWW_GROUP=joesgroup WWW_HOST=localhost WWW_DIR=/var/www/plplot/htdocs
+
+3) in plplot:
+./configure --enable-builddoc
+cd doc/docbook/src/
+make
+make WWW_USER=joeplotter WWW_GROUP=joesgroup WWW_HOST=localhost WWW_DIR=/var/www/plplot/htdocs/docbook-manual www-install
+
+4) Check that things look okay:
+ a) surf to: 
+  http://127.0.0.1/plplot/htdocs/
+ b) document count (as of May 13, 2006):
+  go to the /var/www/plplot/htdocs directory
+  "find -type d |wc -l" -> 42
+  "find -type f |wc -l" -> 756
+
+
+Update the Real Web site:
 
 First you need to get the www directory from CVS (if you don't already
 have it). "cvs checkout www" in your plplot root directory.
 
-then cd to www and type:
+1) in plplot/www:
 WWW_USER=joeplplotter make
   
-(This command depends on eperl, xlmto, passivetex...)
+(This command depends on eperl, xlmto and passivetex)
 
-then cd back to root and type:
-WWW_USER=hbabcock build=false scripts/htdocs-gen_plot-examples.sh
+2) in plplot directory:
+WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
 
 (if you have already built plplot you can set build=false).
 
-then build the documentation by typing 
+3) in plplot
 ./configure --enable-builddoc
 cd doc/docbook/src
 make
-
-and finally:
-
 cd doc/docbook/src
-make WWW_USER=yourname www-install
+make WWW_USER=joeplplotter www-install
 
 
 Post the release announcement on the News page at:
