@@ -1111,6 +1111,8 @@ void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, bool *draw, bool if
     set_stream();
 
     plpoly3(n,x,y,z,loc_draw,(PLBOOL) ifcc);
+
+    delete loc_draw;
 }
 
 // Deprecated version using PLINT not bool
@@ -1124,6 +1126,8 @@ void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT 
     set_stream();
 
     plpoly3(n,x,y,z,loc_draw,(PLBOOL) ifcc);
+
+    delete loc_draw;
 }
 
 /* Set the floating point precision (in number of places) in numeric labels. */
