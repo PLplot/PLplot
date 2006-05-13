@@ -195,9 +195,8 @@ class plstream {
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		PLPointer pltr_data );
 
-// /* Copies state parameters from the reference stream to the current stream. */
+// Copies state parameters from the reference stream to the current stream.
 
-//     void cpstrm( PLINT iplsr, PLINT flags );
      void cpstrm( plstream &pls, bool flags );
 
 // Converts input values from relative device coordinates to relative plot
