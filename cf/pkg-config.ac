@@ -26,7 +26,7 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  US
 PL_ARG_WITH(pkg-config,
   [Use pkg-config in Makefile.examples.  If value is "yes"
    then check for availability of the program in the system.],
-  no)
+  yes)
 
 if test "$with_pkg_config" = yes ; then
   AC_CHECK_PROG(PKG_CONFIG_CHECK, pkg-config, found, not found)
