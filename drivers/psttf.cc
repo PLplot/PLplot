@@ -74,13 +74,25 @@ static int hrshsym = 0;
 
 /* Font style and weight lookup tables */
 
-const char * FamilyLookup[5] = {
-  "FreeSans",
-  "FreeSerif",
-  "FreeMono",
-  "Script",
-  "FreeSerif"
+#define N_Pango_Lookup 5
+
+const char * DefaultFamilyLookup[N_Pango_Lookup] = {
+  "sans",
+  "serif",
+  "monospace",
+  "sans,serif",
+  "sans,serif"
 };
+
+const char * EnvFamilyLookup[N_Pango_Lookup] = {
+  "PLPLOT_FREETYPE_SANS_FAMILY",
+  "PLPLOT_FREETYPE_SERIF_FAMILY",
+  "PLPLOT_FREETYPE_MONO_FAMILY",
+  "PLPLOT_FREETYPE_SCRIPT_FAMILY",
+  "PLPLOT_FREETYPE_SYMBOL_FAMILY"
+};
+
+char FamilyLookup[N_Pango_Lookup][1024];
 
 const FontWeight WeightLookup[2] = {
   NORMAL_WEIGHT,
@@ -173,9 +185,8 @@ plD_init_psttfc(PLStream *pls)
 static void
 ps_init(PLStream *pls)
 {
-    int i = 0, count = 0;
-    size_t len;
-    char line[256];
+    int i;
+    char *a;
     PSDev *dev;
 
     PLFLT pxlx = YPSSIZE/LPAGE_X;
@@ -247,6 +258,17 @@ ps_init(PLStream *pls)
     if (pls->portrait) {
        plsdiori((PLFLT)(4 - ORIENTATION));
        pls->freeaspect = 1;
+    }
+
+    // File table for font families using either environment variables 
+    // or defaults.
+    for (i=0;i<N_Pango_Lookup;i++) {
+      if ( (a = getenv(EnvFamilyLookup[i])) != NULL ) {
+	strcpy(FamilyLookup[i],a);
+      }
+      else {
+	strcpy(FamilyLookup[i],DefaultFamilyLookup[i]);
+      }
     }
 
 }
@@ -570,13 +592,6 @@ plD_tidy_psttf(PLStream *pls)
 
     doc->osFooter() << "@end" << endl;
 
-/* Backtrack to write the BoundingBox at the beginning */
-/* Some applications don't like it atend */
-
-    //doc->osHeader() << "%%!PS-Adobe-2.0 EPSF-2.0\n";
-    //doc->osHeader() << "%%BoundingBox: " << dev->llx << " " << 
-    //  dev->lly << " " << dev->urx << " " << dev->ury << endl;
-
 /* Now write the rest of the header */
     writeHeader(pls);
 
@@ -768,7 +783,7 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT *t = args->xform, tt[4]; /* Transform matrices */
   PLFLT theta;  /* Rotation angle and shear from the matrix */
   PLFLT ft_ht, offset; /* Font height and offset */
-  PLFLT cs,sn,l1,l2;
+  PLFLT cs,sn;
   PSDev *dev = (PSDev *) pls->dev;
   PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
   char *font, esc;
@@ -785,7 +800,8 @@ proc_str (PLStream *pls, EscText *args)
 
   PLFLT scale = 1., up = 0.; /* Font scaling and shifting parameters */
 
-  double lineSpacing, xAdvance;
+  double lineSpacing, xAdvance, xwid, ymintmp, ymaxtmp, ymin, ymax, xmin, xmax;
+  PLINT xx[4], yy[4];
 
   int i=0; /* String index */
   int k=0;
@@ -954,11 +970,18 @@ proc_str (PLStream *pls, EscText *args)
 
 	doc->setFont(font,style,weight);
 	doc->setFontSize(font_factor*ENLARGE*ft_ht);
+
+	// Get the approximate length of the string to calculate offset
+	// Also used later for bounding box
 	doc->get_dimensions((const char *)str, &lineSpacing, &xAdvance);
+	xmin = -xAdvance*args->just;
+	xmax = xmin;
+	ymin = 0;
+	ymax = 0;
 
 	/* Move relative to position to account for justification */
-	doc->osBody() << " gsave " << -xAdvance*args->just*tt[0] << " " <<
-	  -xAdvance*args->just*tt[2] << " rmoveto\n";
+	doc->osBody() << " gsave " << xmin*tt[0] << " " <<
+	  xmin*tt[2] << " rmoveto\n";
 	
 	/* Parse string for PLplot escape sequences and print everything out */
 	
@@ -1030,7 +1053,11 @@ proc_str (PLStream *pls, EscText *args)
 	   /* Set the font size */
 	   doc->setFontSize(font_factor*ENLARGE*ft_ht*scale);
 	   doc->setFont(font,style,weight);
-	   
+	   doc->get_dimensions((const char *)str, &lineSpacing, &xAdvance, &ymintmp, &ymaxtmp);
+	   ymin = MIN(ymintmp+up,ymin);
+	   ymax = MAX(ymaxtmp+up,ymax);
+	   xmax += xAdvance;
+
 	   /* if up/down escape sequences, save current point and adjust baseline;
 	    * take the shear into account */
 	   if(up!=0.) 
@@ -1049,28 +1076,41 @@ proc_str (PLStream *pls, EscText *args)
 	doc->osBody() << "grestore\n";
 	
 	/*
-	 * keep driver happy -- needed for background and orientation.
-	 * arghhh! can't calculate it, as I only have the string reference
-	 * point, not its extent!
-	 * Still a hack - but at least it takes into account the string
-	 * length and justification. Character width is assumed to be
-	 * 0.6 * character height. Add on an extra 1.5 * character height 
-	 * for safety. 
+	 * Estimate text bounding box from LASi get_dimensions function.
+	 * xmin, xmax are text left and right extents,
+	 * ymin, ymax are top and bottom extents.
+	 * These need to be rotated / transformed to get the correct values
 	 */
-	cs = cos(theta/180.*PI);
-	sn = sin(theta/180.*PI);
-	l1 = -i*args->just;
-	l2 = i*(1.-args->just);
-	/* Factor of 0.6 is an empirical fudge to convert character 
-	 * height to average character width */
-	l1 *= 0.6;
-	l2 *= 0.6;
-	
-	dev->llx = (int) (MIN(dev->llx, args->x + (MIN(l1*cs,l2*cs)-1.5) * font_factor * ft_ht * ENLARGE ));
-	dev->lly = (int) (MIN(dev->lly, args->y + (MIN(l1*sn,l2*sn)-1.5) * font_factor * ft_ht * ENLARGE ));
-	dev->urx = (int) (MAX(dev->urx, args->x + (MAX(l1*cs,l2*cs)+1.5) * font_factor * ft_ht * ENLARGE ));
-	dev->ury = (int) (MAX(dev->ury, args->y + (MAX(l1*sn,l2*sn)+1.5) * font_factor * ft_ht * ENLARGE ));
+	xx[0] = (PLINT) (t[0]*xmin+t[1]*ymin);
+	yy[0] = (PLINT) (t[2]*xmin+t[3]*ymin);
+	xx[1] = (PLINT) (t[0]*xmin+t[1]*ymax);
+	yy[1] = (PLINT) (t[2]*xmin+t[3]*ymax);
+	xx[2] = (PLINT) (t[0]*xmax+t[1]*ymin);
+	yy[2] = (PLINT) (t[2]*xmax+t[3]*ymin);
+	xx[3] = (PLINT) (t[0]*xmax+t[1]*ymax);
+	yy[3] = (PLINT) (t[2]*xmax+t[3]*ymax);
 
+	plRotPhy(ORIENTATION, 0,0,0,0, &xx[0], &yy[0]);
+	plRotPhy(ORIENTATION, 0,0,0,0, &xx[1], &yy[1]);
+	plRotPhy(ORIENTATION, 0,0,0,0, &xx[2], &yy[2]);
+	plRotPhy(ORIENTATION, 0,0,0,0, &xx[3], &yy[3]);
+
+
+	xmin = MIN(MIN(MIN(xx[0],xx[1]),xx[2]),xx[3])+args->x;
+	xmax = MAX(MAX(MAX(xx[0],xx[1]),xx[2]),xx[3])+args->x;
+	ymin = MIN(MIN(MIN(yy[0],yy[1]),yy[2]),yy[3])+args->y;
+	ymax = MAX(MAX(MAX(yy[0],yy[1]),yy[2]),yy[3])+args->y;
+	
+	dev->llx = (int) (MIN(dev->llx, xmin));
+	dev->lly = (int) (MIN(dev->lly, ymin));
+	dev->urx = (int) (MAX(dev->urx, xmax));
+	dev->ury = (int) (MAX(dev->ury, ymax));
+// 	doc->osBody() << "Z " << xmin << " " << ymin << " M "
+// 		      << xmin << " " << ymax << " D " 
+// 		      << xmax << " " << ymax << " D " 
+// 		      << xmax << " " << ymin << " D " 
+// 		      << xmin << " " << ymin << " closepath\n"
+// 		      << "Z " << args->x << " " << args->y << " A closepath\n";
      }
 }
 
