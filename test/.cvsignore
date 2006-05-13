@@ -9,6 +9,7 @@ Makefile.examples
 plplot-test.sh
 test_python.sh
 test_f77.sh
+test_f95.sh
 test_java.sh
 test_c.sh
 test_cxx.sh

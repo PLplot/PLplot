@@ -1,12 +1,14 @@
 pc-stamp
 plplot-c++.pc
 plplot-f77.pc
+plplot-f95.pc
 plplot-master-pc
 plplot-tcl.pc
 plplot.pc
 plplotd-gnome2.pc
 plplotd-c++.pc
 plplotd-f77.pc
+plplotd-f95.pc
 plplotd-tcl.pc
 plplotd.pc
 plplot-gnome2.pc
