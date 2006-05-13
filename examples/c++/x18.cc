@@ -138,11 +138,11 @@ PLFLT x18::PHI (int a) {
 
 void x18::test_poly(int k) {
   int i, j;
-  PLINT draw[4][4]  = {
-    { 1, 1, 1, 1 },
-    { 1, 0, 1, 0 },
-    { 0, 1, 0, 1 },
-    { 1, 1, 0, 0 }
+  bool draw[4][4]  = {
+    { true, true, true, true },
+    { true, false, true, false },
+    { false, true, false, true },
+    { true, true, false, false }
   };
 
   PLFLT *x = new PLFLT [5];

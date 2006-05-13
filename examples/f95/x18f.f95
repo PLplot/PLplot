@@ -111,12 +111,12 @@
       integer i, j
       real(kind=plflt) two_pi
       parameter ( two_pi = 2.0_plflt*pi                )
-      integer draw(4,4)
+      logical draw(4,4)
       DATA draw / &
-        1, 1, 1, 1, &
-        1, 0, 1, 0, &
-        0, 1, 0, 1, &
-        1, 1, 0, 0 /
+        .true., .true., .true., .true., &
+        .true., .false., .true., .false., &
+        .false., .true., .false., .true., &
+        .true., .true., .false., .false. /
       real(kind=plflt) theta, phi
       integer ia
       THETA(ia) = (two_pi * (ia) /20._plflt)
@@ -164,7 +164,7 @@
           y(5) = sin( PHI(j) ) * sin( THETA(i) )
           z(5) = cos( PHI(j) )
 
-          call plpoly3(x, y, z, draw(:,k), 1)
+          call plpoly3(x, y, z, draw(:,k), .true.)
         enddo
       enddo
 

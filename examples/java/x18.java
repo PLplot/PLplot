@@ -53,11 +53,11 @@ class x18 {
    void test_poly(int k)
      {
 	int i, j;
-	int [][] draw = { 
-	     { 1, 1, 1, 1 },
-	     { 1, 0, 1, 0 },
-	     { 0, 1, 0, 1 },
-	     { 1, 1, 0, 0 }
+	boolean [][] draw = { 
+	     { true, true, true, true },
+	     { true, false, true, false },
+	     { false, true, false, true },
+	     { true, true, false, false }
 	};
 
 	double [] x = new double [5];
@@ -102,7 +102,7 @@ class x18 {
 	      y[4] = Math.sin( PHI(j) ) * Math.sin( THETA(i) );
 	      z[4] = Math.cos( PHI(j) );
 
-	      pls.poly3(x, y, z, draw[k], 1 );
+	      pls.poly3(x, y, z, draw[k], true );
 	   }
 	}
 

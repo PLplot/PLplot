@@ -486,7 +486,7 @@ plpoin3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT code);
 
 DOC(plpoly3, "Draw a polygon in 3 space. ")
 void
-plpoly3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT *ArrayCkMinus1,
+plpoly3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLBOOL *ArrayCkMinus1,
 	    PLBOOL flag);
 
 DOC(plprec, "Set the floating point precision (in number of places) in numeric labels.")

@@ -466,7 +466,7 @@ public void poin3(double[] x, double[] y, double[] z, int code) {
     plplotjavac.plpoin3(x, y, z, code);
 }
 
-public void poly3(double[] x, double[] y, double[] z, int[] draw, boolean ifcc) {
+public void poly3(double[] x, double[] y, double[] z, boolean[] draw, boolean ifcc) {
     if (set_stream() == -1) return;
     plplotjavac.plpoly3(x, y, z, draw, ifcc);
 }
@@ -817,7 +817,11 @@ public void plot3d(double[] x, double[] y, double[][] z, int opt, int side) {
 
 public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {
     if (set_stream() == -1) return;
-    plplotjavac.plpoly3(x, y, z, draw, ifcc != 0);
+    boolean [] loc_draw = new boolean[draw.length];
+    for (int i=0;i<draw.length;i++) {
+	loc_draw[i] = (draw[i]!=0);
+    }
+    plplotjavac.plpoly3(x, y, z, loc_draw, ifcc != 0);
 }
 
 public void scmap1l(int itype, double[] intensity, double[] coord1, 

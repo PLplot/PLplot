@@ -925,7 +925,7 @@
 
       subroutine plpoly3( x, y, z, draw, ifcc )
          logical                        :: ifcc
-         integer, dimension(:)          :: draw
+         logical, dimension(:)          :: draw
          real(kind=plflt), dimension(:) :: x, y, z
 
          call plpoly3f77( size(x), x, y, z, draw, ifcc )

@@ -1101,19 +1101,29 @@ void plstream::poin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
 
 /* Draws a polygon in 3 space.  */
 
-void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, bool ifcc )
+void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, bool *draw, bool ifcc )
 {
+    PLBOOL * loc_draw = new PLBOOL[n-1];
+    for (int i=0;i<n-1;i++) {
+        loc_draw[i] = (PLBOOL) draw[i];
+    }
+    
     set_stream();
 
-    plpoly3(n,x,y,z,draw,(PLBOOL) ifcc);
+    plpoly3(n,x,y,z,loc_draw,(PLBOOL) ifcc);
 }
 
 // Deprecated version using PLINT not bool
 void plstream::poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc )
 {
+    PLBOOL * loc_draw = new PLBOOL[n-1];
+    for (int i=0;i<n-1;i++) {
+        loc_draw[i] = (PLBOOL) draw[i];
+    }
+    
     set_stream();
 
-    plpoly3(n,x,y,z,draw,(PLBOOL) ifcc);
+    plpoly3(n,x,y,z,loc_draw,(PLBOOL) ifcc);
 }
 
 /* Set the floating point precision (in number of places) in numeric labels. */
@@ -1223,8 +1233,8 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
 			bool *rev )
 {
-    PLBOOL * loc_rev = new PLBOOL[npts];
-    for (int i=0;i<npts;i++) {
+    PLBOOL * loc_rev = new PLBOOL[npts-1];
+    for (int i=0;i<npts-1;i++) {
         loc_rev[i] = (PLBOOL) rev[i];
     }
     
@@ -1240,8 +1250,8 @@ void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
 			PLINT *rev )
 {
-    PLBOOL * loc_rev = new PLBOOL[npts];
-    for (int i=0;i<npts;i++) {
+    PLBOOL * loc_rev = new PLBOOL[npts-1];
+    for (int i=0;i<npts-1;i++) {
         loc_rev[i] = (PLBOOL) rev[i];
     }
 

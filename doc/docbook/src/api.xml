@@ -6210,7 +6210,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
       <varlistentry>
 	<term>
 	  <parameter>draw</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>PLBOOL *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6225,14 +6225,13 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
       <varlistentry>
 	<term>
 	  <parameter>ifcc</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLBOOL</literal>, input)
 	</term>
 	<listitem>
     <para>
-      If <literal><parameter>ifcc</parameter>=1</literal>
+      If <literal><parameter>ifcc</parameter></literal> is true
       the directionality of the polygon is determined by assuming the points
-      are laid out in a counter-clockwise order.
-      If <literal><parameter>ifcc</parameter>=0</literal>
+      are laid out in a counter-clockwise order.  Otherwise,
       the directionality of the polygon is determined by assuming the points
       are laid out in a clockwise order.
     </para>

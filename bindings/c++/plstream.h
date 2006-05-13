@@ -481,7 +481,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 
 /* Draws a polygon in 3 space.  */
 
-    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, bool ifcc );
+    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, bool *draw, bool ifcc );
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 

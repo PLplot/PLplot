@@ -212,7 +212,7 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 \*----------------------------------------------------------------------*/
 
 void
-c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc)
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc)
 {
     int i;
     PLFLT vmin[3], vmax[3], zscale;
@@ -242,7 +242,7 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc)
 
     c = (u1-u2)*(v3-v2)-(v1-v2)*(u3-u2);
 
-    if ( c *(1 - 2*ifcc) < 0. )
+    if ( c *(1 - 2*ABS(ifcc)) < 0. )
         return;
 
     /* get the bounding box in 3d */
