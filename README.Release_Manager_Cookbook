@@ -267,6 +267,24 @@ be generated and uploaded.
   complicated alphanumeric is obtained via the command "gpg --list-keys")
 
 
+A brief summary of developer relevant gpg commands, see also:
+http://webber.dewinter.com/gnupg_howto/
+man gpg
+
+create a new key:
+gpg --gen-key
+
+list keys so that you can find the ID of the key you created:
+gpg --list-keys
+
+upload your (public) key to GPG key server so that others can obtain it to
+verify your signature on the release tarball.
+gpg --send-keys 6C58D1AC
+(where 6C58D1AC is replaced with the appropriate value from the list-keys
+command)
+
+
+
 Prepare ChangeLog file:
 
   cvs2cl -l "-d > LAST_RELEASE_DATE" --stdout > ChangeLog.release
