@@ -556,8 +556,8 @@ PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
 }
 
 void
-PLSCMAP1L(PLINT *itype, PLINT *npts, PLFLT *intensity,
-	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
+PLSCMAP1L(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev)
 {
     c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, rev);
 }
@@ -771,7 +771,7 @@ PLSTYL(PLINT *n, PLINT *mark, PLINT *space)
 }
 
 void
-PLSVECT(PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLINT *fill)
+PLSVECT(PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill)
 {
     c_plsvect(arrowx, arrowy, *npts, *fill);
 }

@@ -928,7 +928,15 @@
          logical, dimension(:)          :: draw
          real(kind=plflt), dimension(:) :: x, y, z
 
-         call plpoly3f77( size(x), x, y, z, draw, ifcc )
+         integer, dimension(size(draw))  :: idraw
+         integer                        :: i
+         integer                        :: iifcc
+
+         iifcc = convert_to_int( ifcc )
+         do i = 1,size(draw)
+            idraw(i) = convert_to_int( draw(i) )
+         enddo
+         call plpoly3f77( size(x), x, y, z, idraw, iifcc )
       end subroutine plpoly3
 
       subroutine plscmap0( r, g, b )

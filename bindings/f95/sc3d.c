@@ -118,7 +118,7 @@ PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
    PLINT optlocal, nlevel = 0;
    PLFLT clevel = 0.;
 
-   optlocal = *opt | (*side == 1 ? DRAW_SIDES : 0);
+   optlocal = *opt | (*side != 0 ? DRAW_SIDES : 0);
    PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 
