@@ -295,7 +295,7 @@ x22::x22( int argc, char ** argv ) {
 
     // Set arrow style using arrow2_x and arrow2_y then 
     // plot using these filled arrows.
-    fill = 1;
+    fill = true;
     pls->svect(arrow2_x, arrow2_y, narr, fill);
     constriction();
 
