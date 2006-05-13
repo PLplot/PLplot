@@ -218,10 +218,18 @@ C        Draw the grid using plbox
                      write(cmdString, '("#",a)') Greek(slice)
                   elseif (page .ge. 1 .and. page .le. 4) then
                      write(cmdString, '("##[0x",z4.4,"]")')
-     &                  type1(offset(page)+slice)
+     &                 type1(offset(page)+slice)
+C                     Not required for command which is case insensitive,
+C                     but lowercase the command simply to get same
+C                     lowercase display of command as corresponding C example.
+                     call lowercase23(cmdString)
                   elseif (page .ge. 5) then
                      write(cmdString, '("##[0x",z4.4,"]")')
      &                  lo(page)+slice-1
+C                     Not required for command which is case insensitive,
+C                     but lowercase the command simply to get same
+C                     lowercase display of command as corresponding C example.
+                     call lowercase23(cmdString)
                   endif
                   call plptex(x,y+yoffset,1.d0,0.d0,0.5d0,
      &              cmdString(2:20))
@@ -243,4 +251,17 @@ C     Restore defaults
 
       call plend()
 
+      end
+
+      subroutine lowercase23(string)
+      implicit none
+      character*(*) string
+      integer i, len, iascii
+      do i = 1, len(string)
+        iascii = iachar(string(i:i))
+        if(65.le.iascii.and.iascii.le.90) then
+C          convert uppercase to lowercase.
+          string(i:i) = achar(iascii+32)
+        endif
+      enddo
       end

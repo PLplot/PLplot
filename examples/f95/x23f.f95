@@ -210,9 +210,17 @@
                   elseif (page .ge. 1 .and. page .le. 4) then
                      write(cmdString, '("##[0x",z4.4,"]")') &
                         type1(offset(page)+slice)
+!                     Not required for command which is case insensitive,
+!                     but lowercase the command simply to get same
+!                     lowercase display of command as corresponding C example.
+                     call lowercase23(cmdString)
                   elseif (page .ge. 5) then
                      write(cmdString, '("##[0x",z4.4,"]")') &
                         lo(page)+slice-1
+!                     Not required for command which is case insensitive,
+!                     but lowercase the command simply to get same
+!                     lowercase display of command as corresponding C example.
+                     call lowercase23(cmdString)
                   endif
                   call plptex(x,y+yoffset,1._plflt,0._plflt,0.5_plflt, &
                     cmdString(2:20))
@@ -234,4 +242,17 @@
 
       call plend()
 
+      end
+
+      subroutine lowercase23(string)
+      implicit none
+      character*(*) string
+      integer i, len, iascii
+      do i = 1, len(string)
+        iascii = iachar(string(i:i))
+        if(65.le.iascii.and.iascii.le.90) then
+!          convert uppercase to lowercase.
+          string(i:i) = achar(iascii+32)
+        endif
+      enddo
       end
