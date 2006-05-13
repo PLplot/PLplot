@@ -89,6 +89,35 @@ MAINTAINERCLEANFILES = \
 DISTCLEANFILES = $(JADELOG) $(INDEX_HTML)
 
 
+BINDIR = ../bin
+
+# The following files are included in api-compat.sml and are required
+# for validation.
+
+plplot-symbols.txt: $(BINDIR)/get-library-symbols.pl                  \
+	            $(top_srcdir)/include/plplot.h
+	( cd $(top_builddir)/lib ; make )
+	( cd $(top_builddir)/libltdl ; make )	
+	( cd $(top_builddir)/src ; make )
+	$(PERL) $(BINDIR)/get-library-symbols.pl > plplot-symbols.txt \
+	  $(top_builddir)/src/.libs/libplplot$(LIB_TAG).so            \
+          $(top_srcdir)/include/plplot.h 3
+	  
+plplot-structs.txt: $(BINDIR)/get-library-structs.pl \
+	            $(top_srcdir)/include/plplot.h 
+	$(PERL) $(BINDIR)/get-library-structs.pl > plplot-structs.txt \
+	  $(top_srcdir)/include/plplot.h
+
+validate: plplotdoc.xml plplot-symbols.txt plplot-structs.txt
+if has_onsgmls
+	@ln -fs inline-html.ent inline.ent
+	@echo Validating $<:
+	@$(ONSGMLS) $(XML_DECL) $< > /dev/null
+	@echo "No problems found."
+else
+	@echo "onsgmls not found: cannot validate $<"
+endif
+
 if enable_docbook
 
 # These required so that "wildcard" lists made using $(shell ls ...) will
@@ -109,25 +138,7 @@ geninfo_DATA = $(shell ls *.info*)
 
 MAX_TEX_RECURSION = 10
 
-BINDIR = ../bin
-
 if docbook_build
-
-# The following files are included in api-compat.sml
-
-plplot-symbols.txt: $(BINDIR)/get-library-symbols.pl                  \
-	            $(top_srcdir)/include/plplot.h
-	( cd $(top_builddir)/lib ; make )
-	( cd $(top_builddir)/libltdl ; make )	
-	( cd $(top_builddir)/src ; make )
-	$(PERL) $(BINDIR)/get-library-symbols.pl > plplot-symbols.txt \
-	  $(top_builddir)/src/.libs/libplplot$(LIB_TAG).so            \
-          $(top_srcdir)/include/plplot.h 3
-	  
-plplot-structs.txt: $(BINDIR)/get-library-structs.pl \
-	            $(top_srcdir)/include/plplot.h 
-	$(PERL) $(BINDIR)/get-library-structs.pl > plplot-structs.txt \
-	  $(top_srcdir)/include/plplot.h
 
 # N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is
 # output to the $(HTML_MANIFEST) file.
@@ -192,16 +203,6 @@ $(MAN_MANIFEST): $(BINDIR)/api2man.pl $(MASTER_XML) api.xml
 	$(PERL) $(BINDIR)/api2man.pl $(MASTER_XML) api.xml $(MANVOL) > $@
 
 endif # docbook_build
-
-validate: plplotdoc.xml
-if has_onsgmls
-	@ln -fs inline-html.ent inline.ent
-	@echo Validating $<:
-	@$(ONSGMLS) $(XML_DECL) $< > /dev/null
-	@echo "No problems found."
-else
-	@echo "onsgmls not found: cannot validate $<"
-endif
 
 # Everything below here has to do with www-install.
 

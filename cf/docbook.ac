@@ -183,6 +183,10 @@ CHECK_PM(XML::Parser, xml_parser, [MAN])
 CHECK_PM(XML::DOM, xml_dom, [MAN])
 fi
 
+dnl Check validate program regardless of whether builddoc is enabled.
+
+CHECK_PROG(onsgmls, [], http://www.openjade.org)
+
 if test "$enable_builddoc" = yes ; then
 
 dnl Check for GNU make
@@ -196,7 +200,6 @@ CHECK_PROG(openjade, [HTML PRINT], http://www.openjade.org)
 CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
 CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
 CHECK_PROG(dvips, PRINT, http://www.ctan.org)
-CHECK_PROG(onsgmls, [], http://www.openjade.org)
 CHECK_PROG(makeinfo, [INFO], [http://www.gnu.org])
 
 dnl Check public identifiers
