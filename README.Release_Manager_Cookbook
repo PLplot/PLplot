@@ -393,7 +393,6 @@ WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
 ./configure --enable-builddoc
 cd doc/docbook/src
 make
-cd doc/docbook/src
 make WWW_USER=joeplplotter www-install
 
 
