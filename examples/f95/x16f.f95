@@ -38,7 +38,7 @@
 !      dummy to fill argument list with something not currently used.
       character*1 defined
       real(kind=plflt) tr(6)
-      common /plplot/tr
+      common /plplot_tr_block/tr
 
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)

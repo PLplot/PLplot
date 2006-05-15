@@ -33,7 +33,7 @@
         xg2(xdim, ydim), yg2(xdim, ydim)
       real(kind=plflt) tr, xx, yy, argx, argy, distort
 
-      common /plplot/ tr(6)
+      common /plplot_tr_block/ tr(6)
 
       data clevel /-1._plflt, -0.8_plflt, -0.6_plflt, &
         -0.4_plflt, -0.2_plflt, &
