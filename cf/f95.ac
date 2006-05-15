@@ -22,7 +22,7 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-PL_ARG_ENABLE(f95, [compile Fortran-95 interface code], yes)
+PL_ARG_ENABLE(f95, [compile Fortran-95 interface code], no)
 
 if test "$enable_f95" = yes ; then
   if test "$enable_f77" != yes ; then
