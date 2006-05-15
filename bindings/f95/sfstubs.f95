@@ -224,7 +224,7 @@
       integer nx, ny, kx, lx, ky, ly, nlevel
       real(kind=plflt) z(nx, ny), clevel(nlevel)
       real(kind=plflt) tr(6)
-      common /plplot/ tr
+      common /plplot_tr_block/ tr
 
       call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
 
@@ -275,7 +275,7 @@
       integer nx, ny
       real(kind=plflt) u(nx, ny), v(nx,ny), scale
       real(kind=plflt) tr(6)
-      common /plplot/ tr
+      common /plplot_tr_block/ tr
 
       call plvect7(u,v,nx,ny,scale,tr)
 
@@ -381,7 +381,7 @@
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
-      common /plplot/ tr
+      common /plplot_tr_block/ tr
 
       include 'sfstubs.h'
 
@@ -480,7 +480,7 @@
       real(kind=plflt) clevel(nlevel)
       real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
-      common /plplot/ tr
+      common /plplot_tr_block/ tr
 
       include 'sfstubs.h'
 
