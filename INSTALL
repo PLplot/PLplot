@@ -66,6 +66,25 @@ ITKLIBDIR
 VGALIBDIR
 
 ------------------------------------------------------------------------------
+Additional note for the --enable-f95 option.  
+
+This option enables the build and install of our new fortran 95 interface
+and examples.  So far, good results have been obtained with gfortran.  But
+the current libtool support of fortran 9x is quite limited so for most
+platforms where gfortran exists you have to set the environment variables
+F77 and FFLAGS to the values output for FC and FCFLAGS in config.summary.
+Once that change is completed, then config.summary should show that F77 is
+the same as FC, and FFLAGS is the same FCFLAGS.  Our experience is that if
+config.summary doesn't show that equality, then libtool will not work.
+Because of these gfortran configuration complications, f95 is disabled by
+default.
+
+Also, note that libtool currently does not have support for commercial
+fortran compilers such as ifort and pgf90 so we cannot support them either
+at this time, but the libtool team are actively working to improve that
+situation.
+
+------------------------------------------------------------------------------
 Additional note for the psttf driver.
 
 This version of the postscript driver supports TrueType fonts, allowing 
