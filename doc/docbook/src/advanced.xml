@@ -2572,7 +2572,12 @@ from C.  The interpretation of all parameters (see &plcont;) is also the
 same except there is no transformation function supplied as the last
 parameter.  Instead, a 6-element array specifying coefficients to use in the
 transformation is supplied via the named common block
-<literal>plplot</literal> (see code). Since this approach is somewhat
+<literal>plplot_tr_block</literal> (see code). (The name
+of the common block is <literal>plplot</literal> for the fortran 77
+interface to preserve backwards compatibility in that case,
+but the name was changed to <literal>plplot_tr_block</literal> for
+the fortran 95 interface to avoid a nameclash.)  
+Since this approach is somewhat
 inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
 &plcon2; instead.
       </para>
