@@ -41,9 +41,6 @@
       real(kind=plflt)  xscale, yscale, xoff, yoff
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       character*80 version
-!      some fortran compilers demand typing of intrinsic lnblnk, and
-!      although this is not demanded on g77 it also works there.
-      integer lnblnk
 
       xleng0 = 400
       yleng0 = 300
@@ -63,7 +60,7 @@
       call plgdev(driver)
 
       write(*,*) 'Demo of multiple output streams via the ', &
-        driver(:lnblnk(driver)), ' driver.'
+        trim(driver), ' driver.'
       write(*,*) 'Running with the second stream as slave ', &
         'to the first.'
       write(*,*)
