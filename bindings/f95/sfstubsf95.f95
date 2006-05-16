@@ -208,7 +208,7 @@
       end interface
 
       interface plfill3
-         module procedure plfill
+         module procedure plfill3
       end interface
 
       interface
