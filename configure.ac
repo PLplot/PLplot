@@ -139,15 +139,48 @@ dnl =======================================================================
 dnl Require C compile
 
 AC_PROG_CC
+AM_PROG_CC_C_O
 AM_CONDITIONAL(cc_is_gcc, [test "$GCC" = yes])
 
-dnl Libtool configuration
+dnl =======================================================================
+dnl Compilation and build options (PLFLT, rpath, install locations)
+dnl Note, must come before cf/java.ac since that depends on, e.g., LIB_DIR.
+dnl =======================================================================
 
-m4_include(cf/libtool.ac)
+m4_include(cf/double.ac)
+m4_include(cf/rpath.ac)
+m4_include(cf/instdirs.ac)
 
 
 dnl =======================================================================
-dnl Libraires
+dnl Language bindings
+dnl =======================================================================
+
+m4_include(cf/c++.ac)
+m4_include(cf/f77.ac)
+m4_include(cf/f95.ac)
+
+dnl =======================================================================
+dnl Libtool configuration
+dnl Must come after compiler definition stuff that occurs in 
+dnl cf/c++.ac, cf/f77.ac, and cf/f95.ac.
+dnl =======================================================================
+
+m4_include(cf/libtool.ac)
+
+dnl =======================================================================
+dnl Language bindings, continued.
+dnl =======================================================================
+
+m4_include(cf/python.ac)
+m4_include(cf/java.ac)
+m4_include(cf/swig.ac)
+m4_include(cf/octave.ac)
+m4_include(cf/tcl.ac)
+m4_include(cf/pdl.ac)
+
+dnl =======================================================================
+dnl Libraries
 dnl =======================================================================
 
 dnl Add libm to LIBS, as some non linux unices might require this.
@@ -213,30 +246,6 @@ AC_CHECK_FUNC(isnan,
     [AC_DEFINE(HAVE_ISNAN, [], [Define if isnan is available])
      have_isnan=yes],
     [have_isnan=no])
-
-dnl =======================================================================
-dnl Compilation and build options (PLFLT, rpath, install locations)
-dnl =======================================================================
-
-m4_include(cf/double.ac)
-m4_include(cf/rpath.ac)
-m4_include(cf/instdirs.ac)
-
-
-dnl =======================================================================
-dnl Language bindings
-dnl =======================================================================
-
-m4_include(cf/python.ac)
-m4_include(cf/java.ac)
-m4_include(cf/swig.ac)
-m4_include(cf/octave.ac)
-m4_include(cf/tcl.ac)
-m4_include(cf/c++.ac)
-m4_include(cf/f77.ac)
-m4_include(cf/f95.ac)
-m4_include(cf/pdl.ac)
-
 
 dnl =======================================================================
 dnl pkg-config support

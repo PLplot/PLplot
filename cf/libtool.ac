@@ -77,11 +77,11 @@ AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 
 dnl This required for dll support under cygwin.  Must occur before
-dnl AM_PROG_LIBTOOL
+dnl AC_PROG_LIBTOOL
 
 AC_LIBTOOL_WIN32_DLL
 
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 
 AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
 

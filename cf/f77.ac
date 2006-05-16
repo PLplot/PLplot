@@ -24,16 +24,16 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  US
 
 PL_ARG_ENABLE(f77, [compile Fortran-77 interface code], yes)
 
-if test "$enable_f77" = yes ; then
-  AC_PROG_FC
+AS_IF([test "$enable_f77" = yes],
+ [AC_PROG_FC
   # If no F77 compiler is found, then disable f77 bindings building
   if test -z "$FC" ; then
     enable_f77=no
     AC_MSG_WARN([Disabling F77 bindings building because no compiler was found])
   fi
-fi
-if test "$enable_f77" = yes ; then
-  HAVE_F77PARSE_CL=yes
+])
+AS_IF([test "$enable_f77" = yes],
+ [HAVE_F77PARSE_CL=yes
   AC_LANG_PUSH([Fortran 77])
   AC_MSG_CHECKING([if fortran command-line parsing is possible])
   AC_RUN_IFELSE([
@@ -83,7 +83,7 @@ c     circumstances, iargc() could return -1
     HAVE_F77PARSE_CL_TRUE="C "
     HAVE_F77PARSE_CL_FALSE=""
   fi
-fi
+])
 
 AC_SUBST(HAVE_F77PARSE_CL_TRUE)
 AC_SUBST(HAVE_F77PARSE_CL_FALSE)

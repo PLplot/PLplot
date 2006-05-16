@@ -56,6 +56,11 @@ dnl Check for systems where we need extra options for the C++ compiler.
       fi
       ;;
     esac
+fi
+
+AC_PROG_CXX
+
+if test "$enable_cxx" = yes; then
 
     AC_LANG_PUSH([C++])
 
@@ -113,8 +118,6 @@ PLINT foo=1;
     AC_LANG_POP([C++])
 
 fi
-
-AC_PROG_CXX
 
 AC_SUBST(enable_cxx)
 
