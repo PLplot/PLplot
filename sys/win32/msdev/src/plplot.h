@@ -1,24 +1,33 @@
 /* $Id$
 
-    Copyright (C) 1992 by
-    Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-
     Macros and prototypes for the PLplot package.  This header file must
     be included by all user codes.
-
-    This software may be freely copied, modified and redistributed
-    without fee provided that this copyright notice is preserved intact
-    on all copies and modified copies.
-
-    There is no warranty or other guarantee of fitness of this software.
-    It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage
-    or its effect upon hardware or computer systems.
 
     Note: some systems allow the Fortran & C namespaces to clobber each
     other.  So for PLplot to work from Fortran, we do some rather nasty
     things to the externally callable C function names.  This shouldn't
     affect any user programs in C as long as this file is included.
+
+    Copyright (C) 1992  Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
+    Copyright (C) 2004  Alan W. Irwin
+    Copyright (C) 2004  Rafael Laboissiere
+    Copyright (C) 2004  Andrew Ross
+
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Library General Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
 #ifndef __PLPLOT_H__
@@ -154,6 +163,8 @@ typedef uint32_t PLUNICODE;
 typedef unsigned int PLUNICODE;
 #endif
 
+/* For identifying logical (boolean) arguments */
+typedef PLINT PLBOOL;
 
 /* For passing user data, as with X's XtPointer */
 
@@ -520,7 +531,9 @@ typedef struct {
 #define    plline       c_plline
 #define    plline3      c_plline3
 #define    pllsty       c_pllsty
-#define    plmesh       c_plmesh
+#define    plmap        c_plmap
+#define    plmeridians  c_plmeridians
+#define    plmesh	c_plmesh
 #define    plmeshc	c_plmeshc
 #define    plmkstrm     c_plmkstrm
 #define    plmtex       c_plmtex
@@ -820,6 +833,12 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 
 /* Plot a histogram using x to store data values and y to store frequencies */
 
+/* Flags for plbin() - opt argument */
+#define PL_BIN_DEFAULT          0
+#define PL_BIN_CENTRED          1
+#define PL_BIN_NOEXPAND         2
+#define PL_BIN_NOEMPTY          4
+
 void API
 c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center);
 
@@ -1099,9 +1118,17 @@ c_plgzax(PLINT *p_digmax, PLINT *p_digits);
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */
 
+/* Flags for plhist() - opt argument; note: some flags are passed to
+   plbin() for the actual plotting */
+#define PL_HIST_DEFAULT         0
+#define PL_HIST_NOSCALING       1
+#define PL_HIST_IGNORE_OUTLIERS 2
+#define PL_HIST_NOEXPAND        8
+#define PL_HIST_NOEMPTY        16
+
 void API
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-	 PLINT nbin, PLINT oldwin);
+	 PLINT nbin, PLINT opt);
 
 /* Set current color (map 0) by hue, lightness, and saturation. */
 
@@ -1311,8 +1338,8 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
 void API
-c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
+c_plscmap1l(PLBOOL itype, PLINT npts, PLFLT *intensity,
+	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev);
 
 /* Set number of colors in cmap 1 */
 
@@ -1399,7 +1426,7 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	  PLINT min_color, PLINT min_width,
 	  PLINT max_color, PLINT max_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
 
@@ -1410,7 +1437,7 @@ c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
@@ -1434,7 +1461,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
@@ -1467,7 +1494,7 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 /* Set the pause (on end-of-page) status */
 
 void API
-c_plspause(PLINT pause);
+c_plspause(PLBOOL pause);
 
 /* Set stream number.  */
 
@@ -1505,7 +1532,7 @@ void API
 c_plstripc(PLINT *id, char *xspec, char *yspec,
 	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
 	PLFLT xlpos, PLFLT ylpos,
-	PLINT y_ascl, PLINT acc,
+	PLBOOL y_ascl, PLBOOL acc,
 	PLINT colbox, PLINT collab,
 	PLINT colline[], PLINT styline[], char *legline[],
 	char *labx, char *laby, char *labtop);
@@ -1619,7 +1646,7 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 /*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
 
 void API
-c_plxormod(PLINT mode, PLINT *status);
+c_plxormod(PLBOOL mode, PLBOOL *status);
 
 /*--------------------------------------------------------------------------*\
  *              Functions for use from C or C++ only
@@ -1848,6 +1875,19 @@ plGetCursor(PLGraphicsIn *gin);
 
 int API
 plTranslateCursor(PLGraphicsIn *gin);
+
+/* Deprecated function names which are handled as wrappers for strict
+ * backwards compatibility of the library API*/
+
+int
+plParseOpts(int *p_argc, char **argv, PLINT mode);
+
+void
+plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+
+void
+plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
+
 
 #ifdef __cplusplus
 }

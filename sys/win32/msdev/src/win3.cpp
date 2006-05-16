@@ -167,8 +167,8 @@ typedef struct {
 	int 	rePaintBsy;       /* if we are repainting block the rest */
 	int     externalWindow;   /* if true the window is provided externally */
 	
-        int	write_to_window;	/* Set if plotting direct to window */
-        int	write_to_pixmap;	/* Set if plotting to pixmap */
+	int		write_to_window;	/* Set if plotting direct to window */
+    int		write_to_pixmap;	/* Set if plotting to pixmap */
 
 	int 	newCursor, button, state;
 	float 	cursorX,cursorY;
@@ -179,7 +179,7 @@ typedef struct {
 	int		PenWidth;
 	long    backGroundColor;
 
-        bool    isDead;	
+    bool    isDead;	
 } WinDev;
 
 /*
@@ -578,38 +578,53 @@ void plD_eop_win3(PLStream *pls)
 {
 	WinDev *dev = (WinDev *)pls->dev;
 	HCURSOR hCursor;
+	BOOL bRet;
+
 	if (!pls->db)
 		ReleaseDC(dev->hwnd,dev->hdc);
+
 	if (!dev->externalWindow) {
-	       /* EnableMenuItem(dev->hMenu,CM_PRINTPLOT,MF_ENABLED); */
-	       /* EnableMenuItem(dev->hMenu,CM_NEXTPLOT,MF_ENABLED);  */
-	       hCursor = LoadCursor(NULL,IDC_ARROW);
-		   SetClassLong(GetActiveWindow(),GCL_HCURSOR,(long)hCursor);
-		   SetCursor(hCursor);
-		   while (!dev->nextPlot && !dev->isDead) {
-			   GetMessage(&msg,NULL,0,0);
-			   TranslateMessage(&msg);
-			   DispatchMessage(&msg);
-		   }
+		/* EnableMenuItem(dev->hMenu,CM_PRINTPLOT,MF_ENABLED); */
+	    /* EnableMenuItem(dev->hMenu,CM_NEXTPLOT,MF_ENABLED);  */
+
+		/* Load and set the cursor */
+		hCursor = LoadCursor(NULL,IDC_ARROW);
+		SetClassLong(GetActiveWindow(),GCL_HCURSOR,(long)hCursor);
+		SetCursor(hCursor);
+
+		/* Retrieve messages from the queue.  Passing NULL for the window
+		 * handle allows message retrieval for any window that belongs to 
+		 * calling thread.  The choice between PeekMessage and GetMessage
+		 * depends on whether we are pausing between pages.
+		 */
+		do {
+			if(pls->nopause) {
+				bRet = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
+			} else {
+				bRet = GetMessage(&msg, NULL, 0, 0);
+			}
+			if(bRet == -1) {
+				/* Error getting message */
+			} else if(bRet != 0) {
+				/* Successfully got a message */
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		} while(!dev->nextPlot && !dev->isDead && bRet != 0);
 	}
-	if (!pls->db)
-	{
+	if (!pls->db) {
 		InvalidateRect(dev->hwnd,NULL,TRUE);
 		//UpdateWindow(dev->hwnd);
 		PAINTSTRUCT ps;
 		HDC winDC;
 		winDC = BeginPaint(dev->hwnd, &ps);
 		EndPaint(dev->hwnd,  &ps);
-
-	}
-	else
-	{
+	} else {
 		RECT rect;
 		GetClientRect(dev->hwnd,&rect);
 		HBRUSH hbr = CreateSolidBrush(dev->backGroundColor);
 		FillRect(dev->hdc, &rect,hbr);
 	}
-
 
 	dev->nextPlot = 0;
 }

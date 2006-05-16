@@ -53,6 +53,7 @@ CLEAN :
 	-@erase "$(INTDIR)\plcvt.obj"
 	-@erase "$(INTDIR)\pldtik.obj"
 	-@erase "$(INTDIR)\plfill.obj"
+	-@erase "$(INTDIR)\plgridd.obj"
 	-@erase "$(INTDIR)\plhist.obj"
 	-@erase "$(INTDIR)\plimage.obj"
 	-@erase "$(INTDIR)\plline.obj"
@@ -106,6 +107,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\plctrl.obj" \
 	"$(INTDIR)\plcvt.obj" \
 	"$(INTDIR)\plfill.obj" \
+	"$(INTDIR)\plgridd.obj" \
 	"$(INTDIR)\plhist.obj" \
 	"$(INTDIR)\plimage.obj" \
 	"$(INTDIR)\plline.obj" \
@@ -113,7 +115,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\plmeta.obj" \
 	"$(INTDIR)\plot3d.obj" \
 	"$(INTDIR)\plpage.obj" \
-	"$(INTDIR)\plrender.obj" \
 	"$(INTDIR)\plsdef.obj" \
 	"$(INTDIR)\plshade.obj" \
 	"$(INTDIR)\plstripc.obj" \
@@ -156,6 +157,7 @@ CLEAN :
 	-@erase "$(INTDIR)\plcvt.obj"
 	-@erase "$(INTDIR)\pldtik.obj"
 	-@erase "$(INTDIR)\plfill.obj"
+	-@erase "$(INTDIR)\plgridd.obj"
 	-@erase "$(INTDIR)\plhist.obj"
 	-@erase "$(INTDIR)\plimage.obj"
 	-@erase "$(INTDIR)\plline.obj"
@@ -210,6 +212,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\plctrl.obj" \
 	"$(INTDIR)\plcvt.obj" \
 	"$(INTDIR)\plfill.obj" \
+	"$(INTDIR)\plgridd.obj" \
 	"$(INTDIR)\plhist.obj" \
 	"$(INTDIR)\plimage.obj" \
 	"$(INTDIR)\plline.obj" \
@@ -217,7 +220,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\plmeta.obj" \
 	"$(INTDIR)\plot3d.obj" \
 	"$(INTDIR)\plpage.obj" \
-	"$(INTDIR)\plrender.obj" \
 	"$(INTDIR)\plsdef.obj" \
 	"$(INTDIR)\plshade.obj" \
 	"$(INTDIR)\plstripc.obj" \
@@ -361,6 +363,12 @@ SOURCE=$(TMPDIR)\pldtik.c
 SOURCE=$(TMPDIR)\plfill.c
 
 "$(INTDIR)\plfill.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=$(TMPDIR)\plgridd.c
+
+"$(INTDIR)\plgridd.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
