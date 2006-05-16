@@ -710,7 +710,7 @@
 
       interface plsym
          module procedure plsym
-      end interface plsym
+      end interface 
 
       interface
          subroutine plszax( digmax, digits )
