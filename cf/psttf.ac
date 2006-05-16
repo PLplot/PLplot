@@ -40,16 +40,17 @@ if test "$enable_dyndrivers" = "no" -a "$enable_psttf" = "yes"; then
   enable_psttfc=no
 fi
 
-if test "$enable_psttf" = "yes" -o "$enable_psttfc"; then
+if test "$enable_psttf" = "yes" -o "$enable_psttfc" = "yes"; then
 
   dnl Test for pango, pangoft2 and LASI libraries
-  PKG_CHECK_MODULES(PSTTF,pango pangoft2 lasi,[],[enable_psttf=no] )
+  PKG_CHECK_MODULES(PSTTF,pango pangoft2 lasi,enable_psttf_lib=yes,enable_psttf_lib=no )
 
   dnl Continue if the required libraries exist
-  if test "$enable_psttf" = "no"; then
+  if test "$enable_psttf_lib" = "no"; then
 
     AC_MSG_WARN([required libraries not found via pkg-config;])
-    AC_MSG_WARN([  psttf driver disabled])
+    AC_MSG_WARN([  psttf and psttfc devices disabled])
+    enable_psttf=no
     enable_psttfc=no
 
   fi
