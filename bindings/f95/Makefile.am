@@ -44,9 +44,9 @@ version = -version-info $(F95_SOVERSION)
 # same library.
 
 fortran_sources = \
-	strutil.f95 \
-	configurable.f95 \
-	sfstubsf95.f95 \
+	strutil.f90 \
+	configurable.f90 \
+	sfstubsf95.f90 \
 	sfstubs.h
 
 generated_fortran_sources = plflt.inc
@@ -71,9 +71,9 @@ libplplotf95c@LIB_TAG@_la_SOURCES  = $(c_sources)
 libplplotf95c@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 
 # Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
-sfstubsf95.f95: plflt.inc sfstubs.f95 sfstubs.h
+sfstubsf95.f90: plflt.inc sfstubs.f90 sfstubs.h
 
-EXTRA_DIST = readme_f95.txt sfstubs.f95
+EXTRA_DIST = readme_f95.txt sfstubs.f90
 
 BUILT_SOURCES = $(generated_fortran_sources)
 MAINTAINERCLEANFILES = $(generated_fortran_sources)

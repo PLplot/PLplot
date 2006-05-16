@@ -63,7 +63,7 @@
          use plplot_flt
          implicit none
       contains
-         include 'sfstubs.f95'
+         include 'sfstubs.f90'
       end module plplotp
 
       module plplot

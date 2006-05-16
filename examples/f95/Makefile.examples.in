@@ -62,7 +62,7 @@ all: $(EXECUTABLES_list)
 clean:
 	rm -f $(EXECUTABLES_list)
 
-.f95$(EXEEXT):
+.f90$(EXEEXT):
 @pkg_config_true@	$(F95) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-f95`
 @pkg_config_false@	$(F95) $< -o $@ `plplot-config --cflags --libs --with-f95`
 

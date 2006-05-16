@@ -26,28 +26,28 @@
 # argument for these functions).
 
 f95_examples = \
-	x01f.f95 \
-	x02f.f95 \
-	x03f.f95 \
-	x04f.f95 \
-	x05f.f95 \
-	x06f.f95 \
-	x07f.f95 \
-	x08f.f95 \
-	x09f.f95 \
-	x10f.f95 \
-	x11f.f95 \
-	x12f.f95 \
-	x13f.f95 \
-	x14f.f95 \
-	x15f.f95 \
-	x16af.f95 \
-	x16f.f95 \
-	x17f.f95 \
-	x18f.f95 \
-	x19f.f95 \
-	x22f.f95 \
-	x23f.f95
+	x01f.f90 \
+	x02f.f90 \
+	x03f.f90 \
+	x04f.f90 \
+	x05f.f90 \
+	x06f.f90 \
+	x07f.f90 \
+	x08f.f90 \
+	x09f.f90 \
+	x10f.f90 \
+	x11f.f90 \
+	x12f.f90 \
+	x13f.f90 \
+	x14f.f90 \
+	x15f.f90 \
+	x16af.f90 \
+	x16f.f90 \
+	x17f.f90 \
+	x18f.f90 \
+	x19f.f90 \
+	x22f.f90 \
+	x23f.f90
 
 AM_FCFLAGS = -I$(top_srcdir)/include $(INCLTDL) -I$(top_builddir)/bindings/f95
 
@@ -84,28 +84,28 @@ check_PROGRAMS = \
 	x22f \
 	x23f
 
-x01f_SOURCES = x01f.f95
-x02f_SOURCES = x02f.f95
-x03f_SOURCES = x03f.f95
-x04f_SOURCES = x04f.f95
-x05f_SOURCES = x05f.f95
-x06f_SOURCES = x06f.f95
-x07f_SOURCES = x07f.f95
-x08f_SOURCES = x08f.f95
-x09f_SOURCES = x09f.f95
-x10f_SOURCES = x10f.f95
-x11f_SOURCES = x11f.f95
-x12f_SOURCES = x12f.f95
-x13f_SOURCES = x13f.f95
-x14f_SOURCES = x14f.f95
-x15f_SOURCES = x15f.f95
-x16f_SOURCES = x16f.f95
-x16af_SOURCES = x16af.f95
-x17f_SOURCES = x17f.f95
-x18f_SOURCES = x18f.f95
-x19f_SOURCES = x19f.f95
-x22f_SOURCES = x22f.f95
-x23f_SOURCES = x23f.f95
+x01f_SOURCES = x01f.f90
+x02f_SOURCES = x02f.f90
+x03f_SOURCES = x03f.f90
+x04f_SOURCES = x04f.f90
+x05f_SOURCES = x05f.f90
+x06f_SOURCES = x06f.f90
+x07f_SOURCES = x07f.f90
+x08f_SOURCES = x08f.f90
+x09f_SOURCES = x09f.f90
+x10f_SOURCES = x10f.f90
+x11f_SOURCES = x11f.f90
+x12f_SOURCES = x12f.f90
+x13f_SOURCES = x13f.f90
+x14f_SOURCES = x14f.f90
+x15f_SOURCES = x15f.f90
+x16f_SOURCES = x16f.f90
+x16af_SOURCES = x16af.f90
+x17f_SOURCES = x17f.f90
+x18f_SOURCES = x18f.f90
+x19f_SOURCES = x19f.f90
+x22f_SOURCES = x22f.f90
+x23f_SOURCES = x23f.f90
 
 LDADD = $(libplplot) $(libplplotf95c) $(libplplotf95)
 
