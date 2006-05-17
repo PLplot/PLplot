@@ -157,7 +157,7 @@ class x16 {
 	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 cont_color, cont_width,
-		 1, xg0, yg0);
+		 true, xg0, yg0);
 
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -175,7 +175,7 @@ class x16 {
 	pls.shades(z, -1., 1., -1., 1., 
 	     shedge, fill_width,
 	     cont_color, cont_width,
-	     1, xg1, yg1);
+	     true, xg1, yg1);
 
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -194,7 +194,7 @@ class x16 {
 	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 cont_color, cont_width,
-		 0, xg2, yg2);
+		 false, xg2, yg2);
 
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -214,7 +214,7 @@ class x16 {
 	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 2, 3,
-		 0, xg2, yg2);
+		 false, xg2, yg2);
 
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -258,7 +258,7 @@ class x16 {
 	pls.shades(z, -1., 1., -1., 1., 
 		 shedge, fill_width,
 		 cont_color, cont_width,
-		 0, xg2, yg2);
+		 false, xg2, yg2);
 
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
 	for (i = 0; i < PERIMETERPTS; i++) {
