@@ -710,7 +710,7 @@
 
       interface plsym
          module procedure plsym
-      end interface 
+      end interface
 
       interface
          subroutine plszax( digmax, digits )
@@ -834,7 +834,10 @@
          real(kind=plflt), dimension(:,:) :: zg
          integer                          :: type
 
-         ! TODO
+
+         call plgriddataf77( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
+            type, data )
+
          return
       end subroutine plgriddata
 

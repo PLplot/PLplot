@@ -721,3 +721,24 @@ PLSHADES7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 /* Clean up memory allocated for a */
    plFree2dGrid(a, *nx, *ny);
 }
+
+void
+PLGRIDDATAF77(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
+	 PLINT *nx, PLFLT *yg, PLINT *ny, PLFLT *zg, PLINT *type, PLFLT *data )
+{
+   PLFLT ** a;
+   int i,j;
+
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *nx];
+      }
+   }
+
+   c_plgriddata( x, y, z, *npts, xg, *nx, yg, *ny, a, *type, *data ) ;
+
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
+}
