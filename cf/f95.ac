@@ -34,10 +34,22 @@ AS_IF([test "$enable_f95" = yes],
   AC_MSG_RESULT(yes),
   AC_MSG_RESULT(no); enable_f95=no)
   AC_LANG_POP([Fortran])
-])
-if test "$enable_f95" = no ; then
-    AC_MSG_WARN([Disabling f95 interface])
-fi
+ ]
+)
+AS_IF([test "$enable_f95" = yes],
+ [
+  ### Directory for fortran 95 modules
+  test -z "$MODULES_DIR" && MODULES_DIR="$datadir/fortran/modules/plplot"
+  ### examples/f95/Makefile.examples.in requires MODULESINCCMD
+  ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
+  PL_EXPAND_EXPRESSION(MODULESINCCMD, $MODULES_DIR)
+  MODULESINCCMD="-I$MODULESINCCMD"
+ ],
+ [
+  AC_MSG_WARN([Disabling f95 interface])
+ ]
+)
+AC_SUBST(MODULESINCCMD)
 AC_SUBST(enable_f95)
 
 AM_CONDITIONAL(enable_f95, [test "$enable_f95" = yes])
