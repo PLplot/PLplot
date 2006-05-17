@@ -27,6 +27,7 @@ NULL=nul
 
 CPP=cl.exe
 F90=ifort.exe
+F90=df.exe
 RSC=rc.exe
 
 BINDDIR=..\..\..\..\bindings
@@ -100,7 +101,7 @@ CLEAN :
 
 F90_PROJ=/check:bounds /compile_only /debug:full /include:"$(INTDIR)\\" /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB"
 F90_OBJS=.\Debug/
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /I..\src /I..\..\..\..\..\plplot-cvs-build\include /I..\..\..\..\include /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c
+CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /I$(TMPDIR) /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc"
 BSC32_SBRS= \
@@ -189,7 +190,7 @@ SOURCE=$(BINDDIR)\f95\plflt.c
 	cd "$(INTDIR)"
 	plflt
 
-SOURCE=$(BINDDIR)\f77\strutil.f
+SOURCE=$(BINDDIR)\f95\strutil.f95
 
 "$(INTDIR)\strutil.obj" : $(SOURCE) "$(INTDIR)"
 	$(F90) $(F90_PROJ) $(SOURCE)
@@ -209,7 +210,7 @@ SOURCE=$(BINDDIR)\f95\scstubs.c
 "$(INTDIR)\scstubs.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(MANGLING) $(SOURCE)
 
-SOURCE=$(BINDDIR)\f95\sfstubsf95.f
+SOURCE=$(BINDDIR)\f95\sfstubsf95.f95
 
 "$(INTDIR)\sfstubsf95.obj" : $(SOURCE) "$(INTDIR)"
 	$(F90) $(F90_PROJ) $(SOURCE)
