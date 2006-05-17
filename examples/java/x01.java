@@ -40,7 +40,7 @@ class x01 {
     double xscale, yscale, xoff, yoff;
     PLStream pls = new PLStream();
 
-    // Set this to 1 to test the xormod method
+    // Set this to true to test the xormod method
     static boolean test_xor = false;
 
     static boolean locate_mode = false;
