@@ -140,8 +140,8 @@ x17::x17( int argc, char ** argv ) {
 
   pls->sError(NULL, NULL);
 
-  autoy = 0;  // autoscale y
-  acc = 1;    // accumulate/
+  autoy = false;  // autoscale y
+  acc = true;    // accumulate/
 
   // This is to represent a loop over time
   // Let's try a random walk process
