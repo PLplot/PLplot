@@ -692,7 +692,7 @@ PLSPAGE(PLFLT *xpmm, PLFLT *ypmm,
 }
 
 void
-PLSPAUSE(PLINT *pause)
+PLSPAUSE(PLBOOL *pause)
 {
     c_plspause(*pause);
 }
@@ -734,10 +734,10 @@ PLSTRIPA(PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y)
 }
 
 void
-PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
+PLSTRIPC(PLINT *id, char *xspec, char *yspec,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *xlpos, PLFLT *ylpos,
-	  PLINT *y_ascl, PLINT *acc,
+	  PLBOOL *y_ascl, PLBOOL *acc,
 	  PLINT *colbox, PLINT *collab,
 	  PLINT *colline, PLINT *styline,
 	  char *legline0, char *legline1, char *legline2, char *legline3,
@@ -859,7 +859,7 @@ PLWIND(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 }
 
 void
-PLXORMOD(PLINT *mode, PLINT *status)
+PLXORMOD(PLBOOL *mode, PLBOOL *status)
 {
     c_plxormod(*mode, status);
 }

@@ -80,7 +80,7 @@
 !      Turn off pause to make this a slave (must follow master)
 
       call plsetopt( 'geometry', geometry_slave)
-      call plspause(0)
+      call plspause(.false.)
       call plsdev(driver)
       call plinit()
 

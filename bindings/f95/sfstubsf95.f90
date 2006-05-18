@@ -629,10 +629,8 @@
          end subroutine plspage
       end interface
 
-      interface
-         subroutine plspause( pause )
-            integer :: pause
-         end subroutine plspause
+      interface plspause
+         module procedure plspause
       end interface
 
       interface
@@ -683,6 +681,10 @@
 
       interface plsurf3d
          module procedure plsurf3d
+      end interface
+
+      interface plstripc
+         module procedure plstripc
       end interface
 
       interface plsvect
@@ -769,23 +771,30 @@
          end subroutine plwind
       end interface
 
-      interface
-         subroutine plxormod( mode, status )
-            integer :: mode, status
-         end subroutine plxormod
+      interface plxormod
+         module procedure plxormod
       end interface
 
 
       private :: convert_to_int
+      private :: convert_to_log
 
 ! -------------------------------------------------------------------
       contains
 ! -------------------------------------------------------------------
       integer function convert_to_int( logvalue )
          logical :: logvalue
-         convert_to_int = 0
-         if ( logvalue ) convert_to_int = 1
+         if ( logvalue ) then
+           convert_to_int = 1
+         else
+           convert_to_int = 0
+         endif
       end function convert_to_int
+
+      logical function convert_to_log( intvalue )
+         integer :: intvalue
+         convert_to_log = intvalue.ne.0
+      end function convert_to_log
 
       subroutine plbin( x, y, center )
          real(kind=plflt), dimension(:) :: x, y
@@ -803,7 +812,6 @@
          iflags = convert_to_int( flags )
          call plcpstrmf77( iplsr, iflags )
       end subroutine plcpstrm
-
 
       subroutine plerrx( xmin, xmax, y )
          real(kind=plflt), dimension(:) :: xmin, xmax, y
@@ -902,6 +910,15 @@
 
       end subroutine plot3dc
 
+      subroutine plspause( lpause )
+         logical                        :: lpause
+
+         integer                        :: ipause
+
+         ipause = convert_to_int( lpause )
+         call plspausef77( ipause )
+      end subroutine plspause
+
       subroutine plsurf3d( x, y, z, opt, clevel )
          integer                        :: opt
          real(kind=plflt), dimension(:) :: x, y, clevel
@@ -970,6 +987,42 @@
          call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, irev )
       end subroutine plscmap1l
 
+      subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump, &
+        ymin, ymax, xlpos, ylpos, y_ascl, acc, &
+        colbox, collab, colline, styline, legline, &
+        labx, laby, labtop)
+
+      implicit none
+      integer id, colbox, collab, colline(4), styline(4)
+      character*(*) xspec, yspec, legline(4), labx, laby, labtop
+      real(kind=plflt) xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
+      integer nx, ny
+      logical y_ascl, acc
+      integer iy_ascl, iacc
+
+      include 'sfstubs.h'
+
+      call plstrf2c(xspec, string1, maxlen)
+      call plstrf2c(yspec, string2, maxlen)
+      call plstrf2c(legline(1), string3, maxlen)
+      call plstrf2c(legline(2), string4, maxlen)
+      call plstrf2c(legline(3), string5, maxlen)
+      call plstrf2c(legline(4), string6, maxlen)
+      call plstrf2c(labx, string7, maxlen)
+      call plstrf2c(laby, string8, maxlen)
+      call plstrf2c(labtop, string9, maxlen)
+
+      iy_ascl = convert_to_int( y_ascl )
+      iacc = convert_to_int( acc )
+
+      call plstripcf77(id, s1, s2, xmin, xmax, xjump, &
+        ymin, ymax, xlpos, ylpos, iy_ascl, iacc, &
+        colbox, collab, colline, styline, &
+        s3, s4, s5, s6, &
+        s7, s8, s9)
+
+      end subroutine plstripc
+
       subroutine plsvect( arrowx, arrowy, fill )
            logical                        :: fill
            real(kind=plflt), dimension(:) :: arrowx, arrowy
@@ -986,5 +1039,12 @@
          call plsymf77( size(x), x, y, code )
       end subroutine plsym
 
+      subroutine plxormod( mode, status )
+         logical :: mode, status
+         integer :: imode, istatus
+         imode = convert_to_int(mode)
+         call plxormodf77( imode, istatus)
+         status = convert_to_log(istatus)
+      end subroutine plxormod
       end module plplot
 

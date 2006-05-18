@@ -26,7 +26,8 @@
       program x17f
       use plplot, PI => PL_PI
       implicit none
-      integer id1, id2, n, autoy, acc, nsteps
+      integer id1, id2, n, nsteps
+      logical autoy, acc
       parameter ( nsteps = 1000 )
       real(kind=plflt) y1, y2, y3, y4, ymin, ymax, xlab, ylab
       real(kind=plflt) t, tmin, tmax, tjump, dt, noise
@@ -100,9 +101,9 @@
       ylab = 0.25_plflt
 
 !      autoscale y
-      autoy = 1
+      autoy = .true.
 !      don't scrip, accumulate
-      acc = 1
+      acc = .true.
 
 !      Initialize plplot
 
@@ -135,9 +136,9 @@
 !      TODO: call plsError(NULL, NULL)
 
 !      autoscale y
-      autoy = 0
+      autoy = .false.
 !      accumulate
-      acc = 1
+      acc = .true.
 
 !      This is to represent a loop over time
 !      Let's try a random walk process
