@@ -20,6 +20,21 @@
 # along with the file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+data_files = \
+	README.tkdemos \
+	runAllDemos.tcl \
+	runExtendedDemos.tcl \
+	tkdemos.tcl \
+	xtk01.c \
+	xtk02.c \
+	xtk04.c
+
+tk_scripts = \
+	tk01 \
+	tk02 \
+	tk03 \
+	tk04
+
 if enable_tk
 
 examples_tkdir = $(DATA_DIR)/examples/tk
@@ -81,15 +96,6 @@ x01.tcl: \
 	    rm -f $(BUILD_DIR)/examples/tk/$$file; $(LN_S) $(top_srcdir)/examples/tcl/$$file $(BUILD_DIR)/examples/tk/$$file ; \
 	  done )
 
-data_files = \
-	README.tkdemos \
-	runAllDemos.tcl \
-	runExtendedDemos.tcl \
-	tkdemos.tcl \
-	xtk01.c \
-	xtk02.c \
-	xtk04.c
-
 dist_examples_tk_DATA = $(data_files)
 
 nodist_examples_tk_DATA = Makefile.examples tclIndex
@@ -97,11 +103,7 @@ nodist_examples_tk_DATA = Makefile.examples tclIndex
 tclIndex: x01.tcl
 	$(mkindex)
 
-examples_tk_SCRIPTS = \
-	tk01 \
-	tk02 \
-	tk03 \
-	tk04
+examples_tk_SCRIPTS = tk_scripts
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
@@ -134,7 +136,7 @@ if enable_tk
 	  done )
 endif
 
-EXTRA_DIST = $(data_files) Makefile.examples.in $(examples_tk_SCRIPTS)
+EXTRA_DIST = $(data_files) Makefile.examples.in $(tk_scripts)
 CLEANFILES = tclIndex $(check_DATA) check_stamp
 DISTCLEANFILES = Makefile.examples
 

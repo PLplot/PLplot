@@ -79,6 +79,8 @@ EXTRA_DIST = \
 	PROBLEMS \
 	README.developers \
 	README.release \
+	OLD-README.release  \
+	README.Release_Manager_Cookbook \
 	SERVICE \
 	TODO.AM-LT \
 	ToDo

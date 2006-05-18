@@ -25,22 +25,6 @@ tcldir = $(TCL_DIR)
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
-if enable_tk
-
-# ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
-AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/bindings/tcl/ \
-	$(INCLTDL) \
-	$(TCLINCCMD) \
-	$(TKINCCMD)
-
-pkginclude_HEADERS = pltk.h
-bin_PROGRAMS = plserver
-plserver_SOURCES = plserver.c
-plserver_LDFLAGS = $(RPATH) -no-undefined
-plserver_LDADD = $(libplplot) $(libplplottcltk)
-
 tcldata = \
 	FileSelector.tcl \
 	Pltkwin.tcl \
@@ -61,6 +45,30 @@ itkdata = \
 	PLWin.itk \
 	PLXWin.itk
 
+paldata = \
+	cmap0a.pal \
+	cmap1a.pal \
+	cmap1a1.pal \
+	cmap1b.pal \
+	cmap1c.pal \
+	cmap1d.pal
+
+if enable_tk
+
+# ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/bindings/tcl/ \
+	$(INCLTDL) \
+	$(TCLINCCMD) \
+	$(TKINCCMD)
+
+pkginclude_HEADERS = pltk.h
+bin_PROGRAMS = plserver
+plserver_SOURCES = plserver.c
+plserver_LDFLAGS = $(RPATH) -no-undefined
+plserver_LDADD = $(libplplot) $(libplplottcltk)
+
 if enable_itcl
 mkindex = ../../scripts/mktclIndex -itcl
 else
@@ -70,14 +78,6 @@ endif
 $(top_srcdir)/bindings/tk/tclIndex: $(tcldata) $(itkdata)
 	cd $(top_srcdir)/bindings/tk ; \
 	$(mkindex)
-
-paldata = \
-	cmap0a.pal \
-	cmap1a.pal \
-	cmap1a1.pal \
-	cmap1b.pal \
-	cmap1c.pal \
-	cmap1d.pal
 
 nodist_tcl_DATA = $(top_srcdir)/bindings/tk/tclIndex
 tcl_DATA = $(tcldata) $(itkdata) $(paldata)

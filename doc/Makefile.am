@@ -32,6 +32,6 @@ man_MANS = $(manpages)
 
 EXTRA_DIST = \
   $(core_manpages) $(tcl_manpages) \
-  README.local Xauthority abs.txt
+  README.local Xauthority abs.txt .indent.pro
 
 SUBDIRS = docbook
