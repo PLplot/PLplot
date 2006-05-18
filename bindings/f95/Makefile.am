@@ -25,7 +25,7 @@ libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 # Location to install fortran 95  "module" files (which allows users of
 # fortran libraries to access library-define modules with the "use" statement).
 # This location picked using fairly generic advice from the LFHS mailing list.
-plplotmoduledir = $(datadir)/fortran/modules/plplot
+plplotmoduledir = $(libdir)/fortran/modules/plplot
 
 if enable_f95
 # order is important here since libplplotf95c@LIB_TAG@.la must be
