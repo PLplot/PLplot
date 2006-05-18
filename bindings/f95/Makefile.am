@@ -40,7 +40,9 @@ plplotmodule_DATA = \
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
-AM_FCFLAGS = -I$(srcdir)
+# -I. flag needed so that for separate build tree the fortran compiler
+# can find the plflt.inc that is generated in the build tree.
+AM_FCFLAGS = -I$(srcdir) -I.
 
 version = -version-info $(F95_SOVERSION)
 
