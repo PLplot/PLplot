@@ -23,35 +23,32 @@ dnl Configure psttf driver using pkg-config
 
 AC_CHECK_PROG(PKG_CONFIG_CHECK, pkg-config, yes, no)
 
-if test "$PKG_CONFIG_CHECK" = "no"; then
+if test "$PKG_CONFIG_CHECK" = no; then
 
   AC_MSG_WARN([pkg-config not found])
   AC_MSG_WARN([Setting enable_psttf to no])
 
   enable_psttf=no
-  enable_psttfc=no
 
 fi
 
-if test "$enable_dyndrivers" = "no" -a "$enable_psttf" = "yes"; then 
+if test "$enable_dyndrivers" = no -a "$enable_psttf" = yes; then 
   AC_MSG_WARN([psttf requires dynamic drivers])
   AC_MSG_WARN([Setting enable_psttf to no])
   enable_psttf=no
-  enable_psttfc=no
 fi
 
-if test "$enable_psttf" = "yes" -o "$enable_psttfc" = "yes"; then
+if test "$enable_psttf" = yes ; then
 
   dnl Test for pango, pangoft2 and LASI libraries
   PKG_CHECK_MODULES(PSTTF,pango pangoft2 lasi,enable_psttf_lib=yes,enable_psttf_lib=no )
 
   dnl Continue if the required libraries exist
-  if test "$enable_psttf_lib" = "no"; then
+  if test "$enable_psttf_lib" = no; then
 
     AC_MSG_WARN([required libraries not found via pkg-config;])
-    AC_MSG_WARN([  psttf and psttfc devices disabled])
+    AC_MSG_WARN([  psttf driver disabled])
     enable_psttf=no
-    enable_psttfc=no
 
   fi
 

@@ -38,9 +38,16 @@
 
 /* Device info */
 char* plD_DEVICE_INFO_hpgl =
+#if defined(PLD_hp7470)
   "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl:34:hp7470\n"
+#endif
+#if defined(PLD_hp7580)
   "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl:35:hp7580\n"
-  "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl:36:lj_hpgl";
+#endif
+#if defined(PLD_lj_hpgl)        
+  "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl:36:lj_hpgl"
+#endif
+;
 
 
 void plD_line_hpgl		(PLStream *, short, short, short, short);

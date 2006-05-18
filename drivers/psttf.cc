@@ -33,8 +33,8 @@
 
 #define DEBUG
 
-#if defined(PLD_psttf) ||	/* monochrome device*/ \
-    defined(PLD_psttfc)		/* colour device*/
+#if defined(PLD_psttf)
+
 #define NEED_PLDEBUG
 #include "plplotP.h"
 #include "drivers.h"

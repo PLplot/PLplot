@@ -24,15 +24,34 @@
 /* Device info */
 
 char* plD_DEVICE_INFO_tek = 
+#if defined(PLD_conex)
   "conex:Conex vt320/tek emulator:1:tek:24:conex\n"
+#ifdef
+#if defined(PLD_mskermit)
   "mskermit:MS-Kermit emulator:1:tek:21:mskermit\n"
+#ifdef
+#if defined(PLD_tek4107t)
   "tek4107t:Tektronix Terminal (4105/4107):1:tek:20:tek4107t\n"
+#ifdef
+#if defined(PLD_tek4107f)
   "tek4107f:Tektronix File (4105/4107):0:tek:28:tek4107f\n"
+#ifdef
+#if defined(PLD_tekt)
   "tekt:Tektronix Terminal (4010):1:tek:19:tekt\n"
+#ifdef
+#if defined(PLD_tekf)
   "tekf:Tektronix File (4010):0:tek:27:tekf\n"
+#ifdef
+#if defined(PLD_versaterm)
   "versaterm:Versaterm vt100/tek emulator:1:tek:22:versaterm\n"
+#ifdef
+#if defined(PLD_vlt)
   "vlt:VLT vt100/tek emulator:1:tek:23:vlt\n"
-  "xterm:Xterm Window:1:tek:18:xterm";
+#ifdef
+#if defined(PLD_xterm)
+  "xterm:Xterm Window:1:tek:18:xterm"
+#ifdef
+;
 
 /* Prototype the driver entry points that will be used to initialize the
    dispatch table entries. */

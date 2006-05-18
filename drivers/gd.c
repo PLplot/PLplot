@@ -127,36 +127,17 @@
  *  and finally one of each.
  */
 
-#if defined(PLD_png) && defined(PLD_jpeg) && defined(PLD_gif)
-  char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
-                         "png:PNG file:0:gd:39:png\n"
-                         "gif:GIF file:0:gd:47:gif";
-#else
-  #if defined(PLD_png) && defined(PLD_jpeg)
-    char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
-                           "png:PNG file:0:gd:39:png\n";
-  #else
-    #if defined(PLD_png) && defined(PLD_gif)
-      char* plD_DEVICE_INFO_gd = "png:PNG file:0:gd:39:png\n";
-                             "gif:GIF file:0:gd:47:gif";
-    #else
-
-      #if defined(PLD_png)
-      char* plD_DEVICE_INFO_gd = "png:PNG file:0:gd:39:png";
-      #endif
-
-      #if defined(PLD_jpeg)
-      char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg";
-      #endif
-  
-      #if defined(PLD_gif)
-      char* plD_DEVICE_INFO_gd = "gif:GIF file:0:gd:47:gif";
-      #endif
-  
-    #endif
-  #endif
+char* plD_DEVICE_INFO_gd = 
+#if defined(PLD_png)
+  "png:PNG file:0:gd:39:png\n"
 #endif
-
+#if defined(PLD_jpeg)
+  "jpeg:JPEG file:0:gd:40:jpeg\n"
+#endif
+#if defined(PLD_gif)
+  "gif:GIF file:0:gd:47:gif"
+#endif
+;
 
 
 #ifdef HAVE_FREETYPE
