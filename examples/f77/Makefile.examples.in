@@ -53,6 +53,7 @@ EXECUTABLES_list = \
 		 x16af$(EXEEXT) \
 		 x17f$(EXEEXT) \
 		 x18f$(EXEEXT) \
+		 x19f$(EXEEXT) \
 		 x22f$(EXEEXT) \
 		 x23f$(EXEEXT)
 
