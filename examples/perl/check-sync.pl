@@ -3,6 +3,10 @@
 # Check if the perl examples are in sync with the C examples
 #
 # Run like this: check-sync.pl *.pl
+#
+# Copyright (C) 2006  Rafael Laboisssiere
+# This file is part of PLplot and is distributed under the terms of the 
+# GNU Lesser General Public License, version 2.1 or later.  No warranties.
 
 (my $prog = $0) =~ s:.*/::;
 

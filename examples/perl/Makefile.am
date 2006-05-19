@@ -58,6 +58,7 @@ examples_perl_DATA = $(perl_data)
 
 endif
 
-EXTRA_DIST = \
-	$(perl_scripts) \
-	$(perl_data)
+EXTRA_DIST =		\
+	$(perl_scripts)	\
+	$(perl_data)	\
+	check-sync.pl
