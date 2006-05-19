@@ -87,10 +87,10 @@
       call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1)
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcont(z,1,nptsx,1,nptsy,clevel)
+      call plcont(z,1,nptsx,1,nptsy,clevel,tr)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcont(w,1,nptsx,1,nptsy,clevel)
+      call plcont(w,1,nptsx,1,nptsy,clevel,tr)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -329,12 +329,12 @@
       if(nlevlt .gt. 0) then
          call pllsty(2)
          call plcont(ztmp, kx, lx, ky, ly+1, &
-           clevel(ilevlt:), xg, yg)
+           clevel(ilevlt:nlevlt), xg, yg)
       endif
       if(nlevgt .gt. 0) then
         call pllsty(1)
         call plcont(ztmp, kx, lx, ky, ly+1, &
-          clevel(ilevgt:), xg, yg)
+          clevel(ilevgt:ilevgt-1+nlevgt), xg, yg)
       endif
 
 !      Draw boundary.
