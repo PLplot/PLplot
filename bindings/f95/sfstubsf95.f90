@@ -880,7 +880,6 @@
          real(kind=plflt), dimension(:,:) :: zg
          integer                          :: type
 
-
          call plgriddataf77( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
             type, data )
 
