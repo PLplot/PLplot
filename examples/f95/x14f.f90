@@ -440,10 +440,10 @@
 !      Plot using identity transform
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcont(z,clevel,tr)
+      call plcont(z,1,nptsx,1,nptsy,clevel,tr)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcont(w,clevel,tr)
+      call plcont(w,1,nptsx,1,nptsy,clevel,tr)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
