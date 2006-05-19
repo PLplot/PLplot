@@ -103,7 +103,7 @@ nodist_examples_tk_DATA = Makefile.examples tclIndex
 tclIndex: x01.tcl
 	$(mkindex)
 
-examples_tk_SCRIPTS = tk_scripts
+examples_tk_SCRIPTS = $(tk_scripts)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
