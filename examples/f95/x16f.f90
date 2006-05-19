@@ -157,7 +157,7 @@
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
       call plcol0(2)
-      call plcontours(w, clevel, xg2, yg2)
+      call plcont(w, clevel, xg2, yg2)
       call pllab('distance', 'altitude', &
         'Bogon density, with streamlines')
 

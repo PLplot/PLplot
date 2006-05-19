@@ -87,10 +87,10 @@
       call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1)
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcontour(z,1,nptsx,1,nptsy,clevel)
+      call plcont(z,1,nptsx,1,nptsy,clevel)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcontour(w,1,nptsx,1,nptsy,clevel)
+      call plcont(w,1,nptsx,1,nptsy,clevel)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -100,10 +100,10 @@
 !      Plot using 1d coordinate transform
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcontour(z,1,nptsx,1,nptsy,clevel, xg1, yg1)
+      call plcont(z,1,nptsx,1,nptsy,clevel, xg1, yg1)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcontour(w,xdim,ydim,1,nptsx,1,nptsy,clevel, xg1, yg1)
+      call plcont(w,1,nptsx,1,nptsy,clevel, xg1, yg1)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -112,10 +112,10 @@
 !      Plot using 2d coordinate transform
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcontour(z,1,nptsx,1,nptsy,clevel,xg2,yg2)
+      call plcont(z,1,nptsx,1,nptsy,clevel,xg2,yg2)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcon2(w,1,nptsx,1,nptsy,clevel,xg2,yg2)
+      call plcont(w,1,nptsx,1,nptsy,clevel,xg2,yg2)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -171,7 +171,7 @@
 
 !      plot the (polar) contours.
       call plcol0(2)
-      call plcontour(z, 1, RPTS, 1, THETAPTS, lev, xg, yg)
+      call plcont(z, 1, RPTS, 1, THETAPTS, lev, xg, yg)
       call plcol0(1)
       call pllab('', '', 'Polar Contour Plot')
       end
@@ -328,12 +328,12 @@
       call plcol0(ncollin)
       if(nlevlt .gt. 0) then
          call pllsty(2)
-         call plcontour(ztmp, kx, lx, ky, ly+1, &
+         call plcont(ztmp, kx, lx, ky, ly+1, &
            clevel(ilevlt:), xg, yg)
       endif
       if(nlevgt .gt. 0) then
         call pllsty(1)
-        call plcon2(ztmp, xdim, ydim+1, kx, lx, ky, ly+1, &
+        call plcont(ztmp, kx, lx, ky, ly+1, &
           clevel(ilevgt:), xg, yg)
       endif
 

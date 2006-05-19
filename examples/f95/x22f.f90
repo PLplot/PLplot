@@ -99,7 +99,7 @@
       	'#frPLplot Example 22 - circulation')
       call plcol0(2)
       scaling = 0.0_plflt
-      call plvectors(u,v,scaling,xg,yg)
+      call plvect(u,v,scaling,xg,yg)
       call plcol0(1)
 
       end
@@ -149,7 +149,7 @@
       	'#frPLplot Example 22 - constriction')
       call plcol0(2)
       scaling = -0.5_plflt
-      call plvectors(u,v,scaling,xg,yg)
+      call plvect(u,v,scaling,xg,yg)
       call plcol0(1)
 
       end
@@ -225,13 +225,13 @@
       enddo
       call plcol0(3)
       call pllsty(2)
-      call plcontours(z,1,nr,1,ntheta,clevel,xg,yg)
+      call plcont(z,1,nr,1,ntheta,clevel,xg,yg)
       call pllsty(1)
       call plcol0(1)
 
       call plcol0(2)
       scaling = 25.0_plflt
-      call plvectors(u,v,scaling,xg,yg)
+      call plvect(u,v,scaling,xg,yg)
       call plcol0(1)
 
       do i=1,nper

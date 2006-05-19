@@ -63,7 +63,7 @@
          use plplot_flt
          implicit none
 
-         interface plcontours
+         interface plcont
             module procedure plcontour_0
             module procedure plcontour_1
             module procedure plcontour_2
@@ -76,7 +76,7 @@
          private :: plcontour_0, plcontour_1, plcontour_2, plcontour_tr
          private :: plcontour_0_all, plcontour_1_all, plcontour_2_all, plcontour_tr_all
 
-         interface plvectors
+         interface plvect
             module procedure plvectors_0
             module procedure plvectors_1
             module procedure plvectors_2
