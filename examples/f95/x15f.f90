@@ -198,11 +198,11 @@
       call plpsty(8)
 
 !      Use plshade0 instead of plshade1 - identity mapping
-      call plshade0(z, XPTS, YPTS, undefined, &
+      call plshade(z, undefined, &
         -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, xdim)
+        min_color, min_width, max_color, max_width )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -250,11 +250,11 @@
         sh_color = i+5
         call plpsty(mod((i + 1),8) + 1)
 !        Use plshade0 instead of plshade1 - identity mapping
-        call plshade0(z, XPTS, YPTS, undefined, &
+        call plshade(z, undefined, &
           -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
-          min_color, min_width, max_color, max_width, xdim)
+          min_color, min_width, max_color, max_width)
       enddo
 
       call plcol0(1)

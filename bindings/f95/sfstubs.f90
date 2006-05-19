@@ -182,314 +182,371 @@
 
 !***********************************************************************
 
-      subroutine plcon0(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+      subroutine plcontour_0(z,kx,lx,ky,ly,clevel)
 
       implicit none
-      integer nx, ny, kx, lx, ky, ly, nlevel
-      real(kind=plflt) z(nx, ny), clevel(nlevel)
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), clevel(:)
 
-      call plcon07(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+      call plcon07(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plcon1(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+      subroutine plcontour_1(z,kx,lx,ky,ly,clevel,xg,yg)
 
       implicit none
-      integer nx, ny, kx, lx, ky, ly, nlevel
-      real(kind=plflt) z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
 
-      call plcon17(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+      call plcon17(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plcon2(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+      subroutine plcontour_2(z,kx,lx,ky,ly,clevel,xg,yg)
 
       implicit none
-      integer nx, ny, kx, lx, ky, ly, nlevel
-      real(kind=plflt) z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
 
-      call plcon27(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+      call plcon27(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plcont(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+      subroutine plcontour_tr(z,kx,lx,ky,ly,clevel,tr)
 
       implicit none
-      integer nx, ny, kx, lx, ky, ly, nlevel
-      real(kind=plflt) z(nx, ny), clevel(nlevel)
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), clevel(:)
       real(kind=plflt) tr(6)
-      common /plplot_tr_block/ tr
 
-      call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
-
-      end subroutine
-
-!***********************************************************************
-
-      subroutine plvec0(u, v, nx, ny, scale)
-
-      implicit none
-      integer nx, ny
-      real(kind=plflt) u(nx, ny), v(nx, ny), scale
-
-      call plvec07(u,v,nx,ny,scale)
+      call plcont7(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),tr)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plvec1(u, v, nx, ny, scale, xg, yg)
+      subroutine plcontour_0_all(z,clevel)
 
       implicit none
-      integer nx, ny
-      real(kind=plflt) u(nx, ny), v(nx,ny), xg(nx), yg(ny), scale
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), clevel(:)
 
-      call plvec17(u,v,nx,ny,scale,xg,yg)
+      kx = 1
+      lx = size(z,1)
+      ky = 1
+      ly = size(z,2)
+      call plcon07(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plvec2(u, v, nx, ny, scale, xg, yg)
+      subroutine plcontour_1_all(z,clevel,xg,yg)
 
       implicit none
-      integer nx, ny
-      real(kind=plflt) u(nx, ny), v(nx,ny), xg(nx, ny), yg(nx, ny), &
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
+
+      kx = 1
+      lx = size(z,1)
+      ky = 1
+      ly = size(z,2)
+      call plcon17(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plcontour_2_all(z,clevel,xg,yg)
+
+      implicit none
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
+
+      kx = 1
+      lx = size(z,1)
+      ky = 1
+      ly = size(z,2)
+      call plcon27(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plcontour_tr_all(z,clevel,tr)
+
+      implicit none
+      integer kx, lx, ky, ly
+      real(kind=plflt) z(:,:), clevel(:)
+      real(kind=plflt) tr(6)
+
+      kx = 1
+      lx = size(z,1)
+      ky = 1
+      ly = size(z,2)
+      call plcont7(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),tr)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plvectors_0(u, v, scale)
+
+      implicit none
+      real(kind=plflt) u(:,:), v(:,:), scale
+
+      call plvec07(u,v,size(u,1),size(u,2),scale)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plvectors_1(u, v, scale, xg, yg)
+
+      implicit none
+      real(kind=plflt) u(:,:), v(:,:), xg(:), yg(:), scale
+
+      call plvec17(u,v,size(u,1),size(u,2),scale,xg,yg)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plvectors_2(u, v, scale, xg, yg)
+
+      implicit none
+      real(kind=plflt) u(:,:), v(:,:), xg(:,:), yg(:,:), &
                        scale
 
-      call plvec27(u,v,nx,ny,scale,xg,yg)
+      call plvec27(u,v,size(u,1),size(u,2),scale,xg,yg)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plvect(u, v, nx, ny, scale)
+      subroutine plvectors_tr(u, v, scale, tr)
 
       implicit none
-      integer nx, ny
-      real(kind=plflt) u(nx, ny), v(nx,ny), scale
+      real(kind=plflt) u(:,:), v(:,:), scale
       real(kind=plflt) tr(6)
-      common /plplot_tr_block/ tr
 
-      call plvect7(u,v,nx,ny,scale,tr)
+      call plvect7(u,v,size(u,1),size(u,2),scale,tr)
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade0(z, nx, ny, defined, &
+      subroutine plshade_single_0(z, defined, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, lx)
+        min_color, min_width, max_color, max_width)
 
       implicit none
       character defined*(*)
-      integer nx, ny, sh_cmap, sh_width, lx
+      integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
-      real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshade07(z, nx, ny, s1, &
+      call plshade07(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, lx)
+        min_color, min_width, max_color, max_width, size(z,1))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade1(z, nx, ny, defined, &
+      subroutine plshade_single_1(z, defined, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
         min_color, min_width, max_color, max_width, &
-        xg, yg, lx)
+        xg, yg )
 
       implicit none
       character defined*(*)
-      integer nx, ny, sh_cmap, sh_width, lx
+      integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
-      real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:), yg(:)
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshade17(z, nx, ny, s1, &
+      call plshade17(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
         min_color, min_width, max_color, max_width, &
-        xg, yg, lx)
+        xg, yg, size(z,1))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade2(z, nx, ny, defined, &
+      subroutine plshade_single_2(z, defined, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
         min_color, min_width, max_color, max_width, &
-        xg, yg, lx)
+        xg, yg )
 
       implicit none
       character defined*(*)
-      integer nx, ny, sh_cmap, sh_width, lx
+      integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
-      real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:,:), yg(:,:)
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshade27(z, nx, ny, s1, &
+      call plshade27(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
         min_color, min_width, max_color, max_width, &
-        xg, yg, lx)
+        xg, yg, size(z,1) )
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshade(z, nx, ny, defined, &
+      subroutine plshade_single_tr(z, defined, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, lx)
+        min_color, min_width, max_color, max_width, tr)
 
       implicit none
-      character defined*(*)
-      integer nx, ny, sh_cmap, sh_width, lx
+      character(len=*) defined
+      integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
-      real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
-      common /plplot_tr_block/ tr
 
       include 'sfstubs.h'
 
-      call plshade7(z, nx, ny, s1, &
+      call plshade7(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, tr, lx)
+        min_color, min_width, max_color, max_width, tr, size(z,1))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades0(z, nx, ny, defined, &
+      subroutine plshades_multiple_0(z, defined, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, lx)
+        clevel, fill_width, &
+        cont_color, cont_width )
 
       implicit none
       character defined*(*)
-      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
-      real(kind=plflt) clevel(nlevel)
-      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax
+      integer fill_width, cont_color, cont_width
+      real(kind=plflt) clevel(:)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades07(z, nx, ny, s1, &
+      call plshades07(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, lx)
+        clevel, size(clevel), fill_width, &
+        cont_color, cont_width, size(z,1))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades1(z, nx, ny, defined, &
+      subroutine plshades_multiple_1(z, defined, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, xg1, yg1, lx)
+        clevel, fill_width, &
+        cont_color, cont_width, xg1, yg1)
 
       implicit none
       character defined*(*)
-      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
-      real(kind=plflt) clevel(nlevel)
-      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax, &
-                       xg1(nx), yg1(ny)
+      integer fill_width, cont_color, cont_width
+      real(kind=plflt) clevel(:)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
+                       xg1(:), yg1(:)
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades17(z, nx, ny, s1, &
+      call plshades17(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, xg1, yg1, lx)
+        clevel, size(clevel), fill_width, &
+        cont_color, cont_width, xg1, yg1, size(z,1))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades2(z, nx, ny, defined, &
+      subroutine plshades_multiple_2(z, defined, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, xg2, yg2, lx)
+        clevel, fill_width, &
+        cont_color, cont_width, xg2, yg2)
 
       implicit none
       character defined*(*)
-      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
-      real(kind=plflt) clevel(nlevel)
-      real(kind=plflt) z(lx, ny), xmin, xmax, ymin, ymax, &
-        xg2(lx, ny), yg2(lx, ny)
+      integer fill_width, cont_color, cont_width
+      real(kind=plflt) clevel(:)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
+        xg2(:,:), yg2(:,:)
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades27(z, nx, ny, s1, &
+      call plshades27(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, xg2, yg2, lx)
+        clevel, size(clevel), fill_width, &
+        cont_color, cont_width, xg2, yg2, size(z,1))
 
       end subroutine
 
 !***********************************************************************
 
-      subroutine plshades(z, nx, ny, defined, &
+      subroutine plshades_multiple_tr(z, defined, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, lx)
+        clevel, fill_width, &
+        cont_color, cont_width, tr)
 
       implicit none
       character defined*(*)
-      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
-      real(kind=plflt) clevel(nlevel)
-      real(kind=plflt) z(nx, ny), xmin, xmax, ymin, ymax
+      integer fill_width, cont_color, cont_width
+      real(kind=plflt) clevel(:)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
-      common /plplot_tr_block/ tr
 
       include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-      call plshades7(z, nx, ny, s1, &
+      call plshades7(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, nlevel, fill_width, &
-        cont_color, cont_width, tr, lx)
+        clevel, size(clevel), fill_width, &
+        cont_color, cont_width, tr, size(z,1))
 
       end subroutine
 

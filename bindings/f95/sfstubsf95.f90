@@ -62,6 +62,44 @@
       module plplotp
          use plplot_flt
          implicit none
+
+         interface plcontours
+            module procedure plcontour_0
+            module procedure plcontour_1
+            module procedure plcontour_2
+            module procedure plcontour_tr
+            module procedure plcontour_0_all
+            module procedure plcontour_1_all
+            module procedure plcontour_2_all
+            module procedure plcontour_tr_all
+         end interface
+         private :: plcontour_0, plcontour_1, plcontour_2, plcontour_tr
+         private :: plcontour_0_all, plcontour_1_all, plcontour_2_all, plcontour_tr_all
+
+         interface plvectors
+            module procedure plvectors_0
+            module procedure plvectors_1
+            module procedure plvectors_2
+            module procedure plvectors_tr
+         end interface
+         private :: plvectors_0, plvectors_1, plvectors_2, plvectors_tr
+
+         interface plshade
+            module procedure plshade_single_0
+            module procedure plshade_single_1
+            module procedure plshade_single_2
+            module procedure plshade_single_tr
+         end interface
+         private :: plshade_single_0, plshade_single_1, plshade_single_2, plshade_single_tr
+
+         interface plshades
+            module procedure plshades_multiple_0
+            module procedure plshades_multiple_1
+            module procedure plshades_multiple_2
+            module procedure plshades_multiple_tr
+         end interface
+         private :: plshades_multiple_0, plshades_multiple_1, &
+                    plshades_multiple_2, plshades_multiple_tr
       contains
          include 'sfstubs.f90'
       end module plplotp

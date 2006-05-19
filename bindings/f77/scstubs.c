@@ -29,6 +29,9 @@
 
 #include "plstubs.h"
 
+static void (*plmapform)(PLINT *, PLFLT *, PLFLT *) ; /* Note: slightly different prototype than
+                                                         (*mapform)! */
+
 void
 PL_SETCONTLABELFORMAT(PLINT *lexp, PLINT *sigdig)
 {
@@ -134,7 +137,7 @@ PLCOL(PLINT *icol)
 }
 
 void
-PLCPSTRM(PLINT *iplsr, PLINT *flags)
+PLCPSTRM(PLINT *iplsr, PLBOOL *flags)
 {
     c_plcpstrm(*iplsr, *flags);
 }
@@ -410,6 +413,28 @@ PLLSTY(PLINT *lin)
     c_pllsty(*lin);
 }
 
+static void
+plmapf2c( PLINT n, PLFLT *x, PLFLT *y )
+{
+    (*plmapform)( &n, x, y );
+}
+
+void
+PLMAPC( char *type,
+        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
+
+{
+    c_plmap(plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat);
+}
+
+
+void
+PLMERIDIANSC( PLFLT *dlong, PLFLT *dlat,
+              PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
+{
+    c_plmeridians(plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat);
+}
+
 void
 PLMKSTRM(PLINT *p_strm)
 {
@@ -433,6 +458,7 @@ PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
       for(i = 0; i < *numargs; i++) {
 	 argv[i] = iargs + (i* *maxindex);
 /*	 fprintf(stderr, "%s\n", argv[i]); */
+  fprintf(stderr, "%d - %s\n", i, argv[i]);
       }
       c_plparseopts(numargs, argv, *mode);
    }  else
@@ -458,7 +484,7 @@ PLPOIN3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *code)
 }
 
 void
-PLPOLY3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT *ifcc)
+PLPOLY3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL *ifcc)
 {
     c_plpoly3(*n, x, y, z, draw, *ifcc);
 }
@@ -530,8 +556,8 @@ PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
 }
 
 void
-PLSCMAP1L(PLINT *itype, PLINT *npts, PLFLT *intensity,
-	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
+PLSCMAP1L(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev)
 {
     c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, rev);
 }
@@ -611,6 +637,12 @@ PLSESC(PLINT *esc)
 }
 
 void
+PLSETMAPFORMC( void (*mapform)(PLINT *, PLFLT *, PLFLT *) )
+{
+    plmapform = mapform ;
+}
+
+void
 PLSETOPT7(char *opt, char *optarg)
 {
     c_plsetopt(opt, optarg);
@@ -660,7 +692,7 @@ PLSPAGE(PLFLT *xpmm, PLFLT *ypmm,
 }
 
 void
-PLSPAUSE(PLINT *pause)
+PLSPAUSE(PLBOOL *pause)
 {
     c_plspause(*pause);
 }
@@ -705,7 +737,7 @@ void
 PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *xlpos, PLFLT *ylpos,
-	  PLINT *y_ascl, PLINT *acc,
+	  PLBOOL *y_ascl, PLBOOL *acc,
 	  PLINT *colbox, PLINT *collab,
 	  PLINT *colline, PLINT *styline,
 	  char *legline0, char *legline1, char *legline2, char *legline3,
@@ -738,8 +770,8 @@ PLSTYL(PLINT *n, PLINT *mark, PLINT *space)
     c_plstyl(*n, mark, space);
 }
 
-void 
-PLSVECT(PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLINT *fill)
+void
+PLSVECT(PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill)
 {
     c_plsvect(arrowx, arrowy, *npts, *fill);
 }
@@ -827,7 +859,7 @@ PLWIND(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 }
 
 void
-PLXORMOD(PLINT *mode, PLINT *status)
+PLXORMOD(PLBOOL *mode, PLBOOL *status)
 {
     c_plxormod(*mode, status);
 }

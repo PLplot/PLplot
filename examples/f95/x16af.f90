@@ -104,11 +104,11 @@
         sh_color = dble (i - 1) / dble (NCONTR - 1)
         sh_width = 2
         call plpsty(0)
-        call plshade0(z, NX, NY, ' ', &
+        call plshade(z, ' ', &
           dble ( -1._plflt), 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
-          min_color, min_width, max_color, max_width, xdim)
+          min_color, min_width, max_color, max_width )
       enddo
 
       call plcol(1)
@@ -271,11 +271,11 @@
         sh_width = 2
         call plpsty(0)
 
-        call plshade2(z, NX, NY, ' ', &
+        call plshade(z, ' ', &
           -1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
-          min_color, min_width, max_color, max_width, xg, yg, xdim)
+          min_color, min_width, max_color, max_width, xg, yg )
       enddo
 
 !      Draw boundary.

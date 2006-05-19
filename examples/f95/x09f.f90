@@ -31,9 +31,8 @@
       real(kind=plflt) z(xdim, ydim), w(xdim, ydim), clevel(11), &
         xg1(xdim), yg1(ydim), &
         xg2(xdim, ydim), yg2(xdim, ydim)
-      real(kind=plflt) tr, xx, yy, argx, argy, distort
-
-      common /plplot_tr_block/ tr(6)
+      real(kind=plflt) xx, yy, argx, argy, distort
+      real(kind=plflt) tr(6)
 
       data clevel /-1._plflt, -0.8_plflt, -0.6_plflt, &
         -0.4_plflt, -0.2_plflt, &
@@ -88,10 +87,10 @@
       call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1)
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcont(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11)
+      call plcontour(z,1,nptsx,1,nptsy,clevel)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcont(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11)
+      call plcontour(w,1,nptsx,1,nptsy,clevel)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -101,10 +100,10 @@
 !      Plot using 1d coordinate transform
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcon1(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
+      call plcontour(z,1,nptsx,1,nptsy,clevel, xg1, yg1)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcon1(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
+      call plcontour(w,xdim,ydim,1,nptsx,1,nptsy,clevel, xg1, yg1)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -113,10 +112,10 @@
 !      Plot using 2d coordinate transform
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcon2(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
+      call plcontour(z,1,nptsx,1,nptsy,clevel,xg2,yg2)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcon2(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
+      call plcon2(w,1,nptsx,1,nptsy,clevel,xg2,yg2)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &
@@ -172,8 +171,7 @@
 
 !      plot the (polar) contours.
       call plcol0(2)
-      call plcon2(z, xdim, ydim, 1, RPTS, 1, THETAPTS, &
-        lev, NLEVEL, xg, yg)
+      call plcontour(z, 1, RPTS, 1, THETAPTS, lev, xg, yg)
       call plcol0(1)
       call pllab('', '', 'Polar Contour Plot')
       end
@@ -330,13 +328,13 @@
       call plcol0(ncollin)
       if(nlevlt .gt. 0) then
          call pllsty(2)
-         call plcon2(ztmp, xdim, ydim+1, kx, lx, ky, ly+1, &
-           clevel(ilevlt), nlevlt, xg, yg)
+         call plcontour(ztmp, kx, lx, ky, ly+1, &
+           clevel(ilevlt:), xg, yg)
       endif
       if(nlevgt .gt. 0) then
         call pllsty(1)
         call plcon2(ztmp, xdim, ydim+1, kx, lx, ky, ly+1, &
-          clevel(ilevgt), nlevgt, xg, yg)
+          clevel(ilevgt:), xg, yg)
       endif
 
 !      Draw boundary.

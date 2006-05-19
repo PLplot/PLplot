@@ -559,6 +559,41 @@
 
 !***********************************************************************
 
+      subroutine plmap(mapform,mapname,minx,maxx,miny,maxy)
+
+      implicit none
+      real*8 minx, maxx, miny, maxy
+      character*(*) mapname
+      external mapform
+
+      include 'sfstubs.h'
+
+      call plstrf2c(mapname, string1, maxlen)
+
+      call plsetmapformc(mapform)
+      call plmapc(s1,minx,maxx,miny,maxy)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plmeridians(mapform,dlong,dlat,minlong,maxlong,
+     &                       minlat,maxlat)
+
+      implicit none
+      real*8 dlong, dlat, minlong, maxlong, minlat, maxlat
+      external mapform
+
+      include 'sfstubs.h'
+
+      call plsetmapformc(mapform)
+      call plmeridiansc(dlong,dlat,minlong,maxlong,minlat,maxlat)
+
+      end subroutine
+
+
+!***********************************************************************
+
       subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump,
      &  ymin, ymax, xlpos, ylpos, y_ascl, acc,
      &  colbox, collab, colline, styline, legline,

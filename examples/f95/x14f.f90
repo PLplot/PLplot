@@ -389,9 +389,8 @@
       real(kind=plflt) z(xdim, ydim), w(xdim, ydim), clevel(11), &
         xg1(xdim), yg1(ydim), &
         xg2(xdim, ydim), yg2(xdim, ydim)
-      real(kind=plflt) tr, xx, yy, argx, argy, distort
-
-      common /plplot_tr_block/ tr(6)
+      real(kind=plflt) xx, yy, argx, argy, distort
+      real(kind=plflt) tr(6)
 
       data clevel /-1._plflt, -0.8_plflt, -0.6_plflt, -0.4_plflt, &
         -0.2_plflt, &
@@ -405,7 +404,7 @@
       tr(6) = -1.0_plflt
 
 !      Calculate the data matrices.
-4     do i=1,nptsx
+      do i=1,nptsx
         xx = dble(i-1-(nptsx/2))/dble (nptsx/2)
         do j=1,nptsy
           yy = dble(j-1-(nptsy/2))/dble (nptsy/2) - 1.0_plflt
@@ -441,10 +440,10 @@
 !      Plot using identity transform
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)
-      call plcont(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11)
+      call plcontours(z,clevel,tr)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcont(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11)
+      call plcontours(w,clevel,tr)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate', &

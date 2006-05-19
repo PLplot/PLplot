@@ -59,7 +59,7 @@
       call potential
 
       call plend
-      
+
       end
 
 !     vector plot of the circulation around the origin
@@ -99,7 +99,7 @@
       	'#frPLplot Example 22 - circulation')
       call plcol0(2)
       scaling = 0.0_plflt
-      call plvec2(u,v,nx,ny,scaling,xg,yg)
+      call plvectors(u,v,scaling,xg,yg)
       call plcol0(1)
 
       end
@@ -149,7 +149,7 @@
       	'#frPLplot Example 22 - constriction')
       call plcol0(2)
       scaling = -0.5_plflt
-      call plvec2(u,v,nx,ny,scaling,xg,yg)
+      call plvectors(u,v,scaling,xg,yg)
       call plcol0(1)
 
       end
@@ -178,22 +178,22 @@
 
       q1 = 1.0_plflt;
       d1 = rmax/4.0_plflt;
-      
+
       q1i = - q1*rmax/d1;
       d1i = rmax**2.0_plflt/d1;
-      
+
       q2 = -1.0_plflt;
       d2 = rmax/4.0_plflt;
-      
+
       q2i = - q2*rmax/d2;
       d2i = rmax**2.0_plflt/d2;
-           
+
       do i = 1, nr
          r = 0.5 + dble(i-1)
         do j = 1, ntheta
           theta = 2.*PI/dble(ntheta-1)*(dble(j)-0.5)
           xx = r*cos(theta)
-          yy = r*sin(theta) 
+          yy = r*sin(theta)
           xg(i,j) = xx
           yg(i,j) = yy
           div1 = sqrt((xg(i,j)-d1)**2 + (yg(i,j)-d1)**2 + eps**2)
@@ -225,13 +225,13 @@
       enddo
       call plcol0(3)
       call pllsty(2)
-      call plcon2(z,nr,ntheta,1,nr,1,ntheta,clevel,nlevel,xg,yg)
+      call plcontours(z,1,nr,1,ntheta,clevel,xg,yg)
       call pllsty(1)
       call plcol0(1)
 
       call plcol0(2)
       scaling = 25.0_plflt
-      call plvec2(u,v,nr,ntheta,scaling,xg,yg)
+      call plvectors(u,v,scaling,xg,yg)
       call plcol0(1)
 
       do i=1,nper
