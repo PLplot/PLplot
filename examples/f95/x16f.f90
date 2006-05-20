@@ -109,7 +109,7 @@
       fill_width = 2
       cont_color = 0
       cont_width = 0
-      call plshades(z, defined, -1._plflt, 1._plflt, -1._plflt, &
+      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
         cont_color, cont_width )
@@ -129,10 +129,10 @@
       fill_width = 2
       cont_color = 0
       cont_width = 0
-      call plshades(z, defined, -1._plflt, 1._plflt, -1._plflt, &
+      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg1, yg1 )
+        cont_color, cont_width, xg1(:NX), yg1(:NY))
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -149,15 +149,15 @@
       fill_width = 2
       cont_color = 0
       cont_width = 0
-      call plshades(z, defined, -1._plflt, 1._plflt, -1._plflt, &
+      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg2, yg2 )
+        cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
       call plcol0(2)
-      call plcont(w, clevel, xg2, yg2)
+      call plcont(w, 1, nx, 1, ny, clevel, xg2, yg2)
       call pllab('distance', 'altitude', &
         'Bogon density, with streamlines')
 
@@ -171,10 +171,10 @@
       fill_width = 2
       cont_color = 2
       cont_width = 3
-      call plshades(z, defined, -1._plflt, 1._plflt, -1._plflt, &
+      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg2, yg2 )
+        cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -209,10 +209,10 @@
       fill_width = 2
       cont_color = 0
       cont_width = 0
-      call plshades(z, defined, -1._plflt, 1._plflt, -1._plflt, &
+      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg2, yg2 )
+        cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
 
 !      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
       do i = 1, PERIMETERPTS
