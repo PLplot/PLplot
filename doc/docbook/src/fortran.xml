@@ -33,12 +33,12 @@
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<chapter id="fortran">
-  <title>Fortran Language</title>
+<chapter id="fortran77">
+  <title>Fortran 77 Language</title>
   <para>
 As discussed in the preceding section, PLplot's integer representation is a
 PLINT and its floating point representation is a PLFLT.  To the
-Fortran user, this most commonly translates to a type
+Fortran 77 user, this most commonly translates to a type
 <literal>integer</literal> and
 type <literal>real</literal>, respectively.  This is somewhat system dependent (and up to
 the installer of the package) so you should check the release notes to be
@@ -53,7 +53,7 @@ easy and can be summarized here.  As an example, the routine
 <programlisting>
 	plline(n,x,y);
 </programlisting>
-while from Fortran it would look like:
+while from Fortran 77 it would look like:
 <programlisting>
 	call plline(n,x,y)
 </programlisting>
@@ -92,16 +92,16 @@ used in the text translates roughly as follows:
 	  </tgroup>
         </informaltable>
 In C there are two ways to pass a variable --- by value (the default) or by
-reference (pointer), whereas only the latter is used by Fortran.
+reference (pointer), whereas only the latter is used by Fortran 77.
 Therefore when you see references in the text to <emphasis>either</emphasis> an ordinary
 argument or a pointer argument (e.g.  <literal>*data</literal>), you simply use an
-ordinary Fortran variable or array name.
+ordinary Fortran 77 variable or array name.
   </para>
   <para>
-The PLplot library comes with a set of Fortran interface routines that
+The PLplot library comes with a set of Fortran 77 interface routines that
 allow the exact same call syntax (usually) regardless of whether calling
-from C or Fortran.  In some cases, this means the subroutine name <emphasis>
-exceeds 8 characters in length</emphasis>.  Nearly every Fortran compiler
+from C or Fortran 77.  In some cases, this means the subroutine name <emphasis>
+exceeds 8 characters in length</emphasis>.  Nearly every Fortran 77 compiler
 available
 today allows subroutine names longer than 8 characters, so this should not
 be a problem (although if it ever is, in principle a truncated name could
@@ -109,19 +109,19 @@ be defined for that platform).
   </para>
   <para>
 These <quote>stub</quote> routines handle transforming the data
-from the normal Fortran representation to that typically used in C.  This
+from the normal Fortran 77 representation to that typically used in C.  This
 includes:
 <itemizedlist>
 <listitem><para>
 Variables passed by value instead of by reference.
   </para>
   <para>
-Fortran passes all subroutine arguments by reference, i.e., a pointer to the
+Fortran 77 passes all subroutine arguments by reference, i.e., a pointer to the
 argument value is pushed on the stack.  In C all values, except for arrays
 (including char arrays), are passed by value, i.e., the argument value
-itself is pushed on the stack.  The stub routine converts the Fortran call
+itself is pushed on the stack.  The stub routine converts the Fortran 77 call
 by reference to a call by value.  As an example, here is how the plpoin stub
-routine works.  In your Fortran program you might have a call to plpoin that
+routine works.  In your Fortran 77 program you might have a call to plpoin that
 looks something like
 <programlisting>
       call plpoin(6,x,y,9)
@@ -147,12 +147,12 @@ symbol <literal>*code</literal> to call by value (i.e.  pushes their value on th
 and then calls the C plpoin library routine.
 </para></listitem>
 <listitem><para>
-Get mapping between Fortran and C namespace right (system dependent).
+Get mapping between Fortran 77 and C namespace right (system dependent).
   </para>
   <para>
 The external symbols (i.e. function and subroutine names) as you see them
 in your program often appear differently to the linker.  For example, the
-Fortran routine names may be converted to uppercase or lowercase, and/or
+Fortran 77 routine names may be converted to uppercase or lowercase, and/or
 have an underscore appended or prepended.  This translation is handled
 entirely via redefinition of the stub routine names, which are macros.
 There are several options for compiling PLplot that simplify getting the
@@ -161,15 +161,15 @@ case, once the name translation is established during installation, name
 translation is completely transparent to the user.
 </para></listitem>
 <listitem><para>
-Translation of character string format from Fortran to C.
+Translation of character string format from Fortran 77 to C.
   </para>
   <para>
-Fortran character strings are passed differently than other quantities, in
+Fortran 77 character strings are passed differently than other quantities, in
 that a string descriptor is pushed on the stack along with the string
 address.  C doesn't want the descriptor, it wants a NULL terminated string.
 For routines that handle strings two stub routines are necessary, one
-written in Fortran and one written in C.  Your Fortran program calls the
-Fortran stub routine first.  This stub converts the character string to a
+written in Fortran 77 and one written in C.  Your Fortran 77 program calls the
+Fortran 77 stub routine first.  This stub converts the character string to a
 null terminated integer array and then calls the C stub routine.  The C
 stub routine converts the integer array (type <literal>long</literal>) to the usual C
 string representation (which may be different, depending on whether your
@@ -178,7 +178,7 @@ way it is done in PLplot is portable).  See the <literal>plmtex</literal> stubs 
 example of this. 
   </para>
   <para>
-Note that the portion of a Fortran character string that exceeds 299
+Note that the portion of a Fortran 77 character string that exceeds 299
 characters will not be plotted by the text routines (<literal>plmtex</literal>
 and <literal>plptex</literal>). 
 </para></listitem>
@@ -187,7 +187,7 @@ Multidimensional array arguments are changed from row-dominant to
 column-dominant ordering through use of a temporary array.
   </para>
   <para>
-In Fortran, arrays are always stored so that the first index increases most
+In Fortran 77, arrays are always stored so that the first index increases most
 rapidly as one steps through memory.  This is called
 <quote>row-dominant</quote>
 storage.  In C, on the other hand, the first index increases 
@@ -204,15 +204,15 @@ but could be a factor if you are using very large 2d arrays.
 </itemizedlist>
   </para>
   <para>
-This all seems a little messy, but is very user friendly.  Fortran and C
+This all seems a little messy, but is very user friendly.  Fortran 77 and C
 programmers can use the same basic interface to the library, which is a
 powerful plus for this method.  The fact that stub routines are being used
-is completely transparent to the Fortran programmer.
+is completely transparent to the Fortran 77 programmer.
   </para>
   <para>
-For more information on calling PLplot from Fortran, please see the
-example Fortran programs (<filename>x01f.f</filename> through
-<filename>x16f.f</filename>) distributed
+For more information on calling PLplot from Fortran 77, please see the
+example Fortran 77 programs (<filename>/examples/f77/x??f.f</filename>) through
+distributed
 with PLplot.
   </para>
 </chapter>

@@ -35,34 +35,34 @@
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<chapter id="API-FORTRAN">
-  <title>The Specialized Fortran API for PLplot</title>
+<chapter id="API-FORTRAN-77">
+  <title>The Specialized Fortran 77 API for PLplot</title>
 
   <para>
-  The purpose of this Chapter is to document the API for each Fortran function
+  The purpose of this Chapter is to document the API for each Fortran 77 function
   in PLplot that differs substantially (usually in argument lists)
   from the common API that has already been
   documented in <xref linkend="API"/>.
   </para>
 
   <para>
-  Normally, the common API is wrapped in such a way for Fortran that there is
-  and one-to-one correspondence between each fortran and C argument
-  (see <xref linkend="fortran"/>
+  Normally, the common API is wrapped in such a way for Fortran 77 that there is
+  and one-to-one correspondence between each Fortran 77 and C argument
+  (see <xref linkend="fortran77"/>
   for discussion).  However, for certain routines documented in this
-  chapter the fortran argument lists
+  chapter the Fortran 77 argument lists
   necessarily differ substantially from the C versions.
   </para>
 
   <para>
-  This chapter is incomplete and NEEDS DOCUMENTATION of, e.g., the fortran
+  This chapter is incomplete and NEEDS DOCUMENTATION of, e.g., the Fortran 77
   equivalent of the plshade C routines.
   </para>
 
 
   <sect1 id="plcon0" renderas="sect3">
     <title>
-      <function>plcon0</function>: Contour plot, identity mapping for fortran
+      <function>plcon0</function>: Contour plot, identity mapping for Fortran 77
     </title>
 
     <para>
@@ -168,7 +168,7 @@
       </varlistentry>
     </variablelist>
     <para>
-      NOTE: this function is intended for use from a Fortran caller only.
+      NOTE: this function is intended for use from a Fortran 77 caller only.
       The C user should instead call &plcont; using the built-in
       transformation function <function>pltr0</function> for the same
       capability.
@@ -178,7 +178,7 @@
   <sect1 id="plcon1" renderas="sect3">
     <title>
       <function>plcon1</function>: Contour plot, general 1-d mapping for
-fortran
+Fortran 77
     </title>
 
     <para>
@@ -306,7 +306,7 @@ fortran
       </varlistentry>
     </variablelist>
     <para>
-      NOTE: this function is intended for use from a Fortran caller only.
+      NOTE: this function is intended for use from a Fortran 77 caller only.
       The C user should instead call &plcont; using the built-in
       transformation function <function>pltr1</function> for the same
       capability.
@@ -317,7 +317,7 @@ fortran
   <sect1 id="plcon2" renderas="sect3">
     <title>
       <function>plcon2</function>: Contour plot, general 2-d mapping for
-fortran
+Fortran 77
     </title>
 
     <para>
@@ -442,7 +442,7 @@ fortran
       </varlistentry>
     </variablelist>
     <para>
-      NOTE: this function is intended for use from a Fortran caller only.
+      NOTE: this function is intended for use from a Fortran 77 caller only.
       The C user should instead call &plcont; using the built-in
       transformation function <function>pltr2</function> for the same
       capability.
@@ -450,10 +450,10 @@ fortran
 
   </sect1>
 
-  <sect1 id="plcontfortran" renderas="sect3">
+  <sect1 id="plcontfortran77" renderas="sect3">
     <title>
       <function>plcont</function>: Contour plot, fixed linear mapping for
-fortran
+Fortran 77
     </title>
 
     <para>
@@ -476,16 +476,12 @@ fortran
     </para>
 
     <para>
-      When called from Fortran, this routine has the same effect as when
+      When called from Fortran 77, this routine has the same effect as when
       invoked from C.  The interpretation of all parameters (see &plcont;)
       is also the same except there is no transformation function supplied
       as the last parameter.  Instead, a 6-element array specifying
       coefficients to use in the transformation is supplied via the named
-      common block <literal>plplot_tr_block</literal> (see code). (The name
-      of the common block is <literal>plplot</literal> for the
-      fortran 77 interface to preserve backwards compatibility in that case,
-      but the name was changed to <literal>plplot_tr_block</literal> for
-      the fortran 95 interface to avoid a nameclash.)  Since this
+      common block <literal>plplot</literal> (see code). Since this
       approach is somewhat inflexible, the user is recommended to call
       either of &plcon0;, &plcon1;, or &plcon2; instead.
     </para>
@@ -494,7 +490,7 @@ fortran
 
   <sect1 id="plvec0" renderas="sect3">
     <title>
-      <function>plvec0</function>: Vector plot, identity mapping for fortran
+      <function>plvec0</function>: Vector plot, identity mapping for Fortran 77
     </title>
 
     <para>
@@ -563,7 +559,7 @@ fortran
       </varlistentry>
     </variablelist>
     <para>
-      NOTE: this function is intended for use from a Fortran caller only.
+      NOTE: this function is intended for use from a Fortran 77 caller only.
       The C user should instead call &plvect; using the built-in
       transformation function <function>pltr0</function> for the same
       capability.
@@ -573,7 +569,7 @@ fortran
   <sect1 id="plvec1" renderas="sect3">
     <title>
       <function>plvec1</function>: Vector plot, general 1-d mapping for
-fortran
+Fortran 77
     </title>
 
     <para>
@@ -661,7 +657,7 @@ fortran
       </varlistentry>
     </variablelist>
     <para>
-      NOTE: this function is intended for use from a Fortran caller only.
+      NOTE: this function is intended for use from a Fortran 77 caller only.
       The C user should instead call &plvect; using the built-in
       transformation function <function>pltr1</function> for the same
       capability.
@@ -672,7 +668,7 @@ fortran
   <sect1 id="plvec2" renderas="sect3">
     <title>
       <function>plvec2</function>: Vector plot, general 2-d mapping for
-fortran
+Fortran 77
     </title>
 
     <para>
@@ -759,7 +755,7 @@ fortran
       </varlistentry>
     </variablelist>
     <para>
-      NOTE: this function is intended for use from a Fortran caller only.
+      NOTE: this function is intended for use from a Fortran 77 caller only.
       The C user should instead call &plvect; using the built-in
       transformation function <function>pltr2</function> for the same
       capability.
@@ -767,10 +763,10 @@ fortran
 
   </sect1>
 
-  <sect1 id="plvectfortran" renderas="sect3">
+  <sect1 id="plvectfortran77" renderas="sect3">
     <title>
       <function>plvect</function>: Vector plot, fixed linear mapping for
-fortran
+Fortran 77
     </title>
 
     <para>
@@ -789,25 +785,21 @@ fortran
     </para>
 
     <para>
-      When called from Fortran, this routine has the same effect as when
+      When called from Fortran 77, this routine has the same effect as when
       invoked from C.  The interpretation of all parameters (see &plvect;)
       is also the same except there is no transformation function supplied
       as the last parameter.  Instead, a 6-element array specifying
       coefficients to use in the transformation is supplied via the named
-      common block <literal>plplot_tr_block</literal> (see code). (The name
-      of the common block is <literal>plplot</literal> for the fortran 77
-      interface to preserve backwards compatibility in that case,
-      but the name was changed to <literal>plplot_tr_block</literal> for
-      the fortran 95 interface to avoid a nameclash.)  Since this
+      common block <literal>plplot</literal> (see code).  Since this
       approach is somewhat inflexible, the user is recommended to call
       either of &plvec0;, &plvec1;, or &plvec2; instead.
     </para>
 
   </sect1>
 
-  <sect1 id="plmeshfortran" renderas="sect3">
+  <sect1 id="plmeshfortran77" renderas="sect3">
     <title>
-      <function>plmesh</function>: Plot surface mesh for fortran
+      <function>plmesh</function>: Plot surface mesh for Fortran 77
     </title>
 
     <para>
@@ -828,7 +820,7 @@ fortran
     </para>
 
     <para>
-      When called from Fortran, this routine has the same effect as when
+      When called from Fortran 77, this routine has the same effect as when
       invoked from C.  The interpretation of all parameters (see &plmesh;)
       is also the same except there is an additional parameter given by:
     </para>
@@ -849,9 +841,9 @@ fortran
 
   </sect1>
 
-  <sect1 id="plot3dfortran" renderas="sect3">
+  <sect1 id="plot3dfortran77" renderas="sect3">
     <title>
-      <function>plot3d</function>: Plot 3-d surface plot for fortran
+      <function>plot3d</function>: Plot 3-d surface plot for Fortran 77
     </title>
 
     <para>
@@ -873,7 +865,7 @@ fortran
     </para>
 
     <para>
-      When called from Fortran, this routine has the same effect as when
+      When called from Fortran 77, this routine has the same effect as when
       invoked from C.  The interpretation of all parameters (see &plot3d;)
       is also the same except there is an additional parameter given by:
     </para>
@@ -894,9 +886,9 @@ fortran
 
   </sect1>
 
-  <sect1 id="plparseoptsfortran" renderas="sect3">
+  <sect1 id="plparseoptsfortran77" renderas="sect3">
     <title>
-      <function>plparseopts</function>: parse arguments for fortran
+      <function>plparseopts</function>: parse arguments for Fortran 77
     </title>
 
     <para>
@@ -910,16 +902,16 @@ fortran
       </funcsynopsis>
     </para>
 
-    <para> When called from Fortran, this routine has the same effect as
+    <para> When called from Fortran 77, this routine has the same effect as
       when invoked from C (see &plparseopts;) except that the argument list
-      just contains the parsing mode and the fortran system routines
+      just contains the parsing mode and the Fortran 77 system routines
       <function>iargc</function> and <function>getarg</function> 
       are used internally to obtain the number of arguments and
       argument values.  (Note, during configuration, the user's
-      fortran compiler
+      Fortran 77 compiler
       is checked to see whether it supports 
       <function>iargc</function> and <function>getarg</function>.  If it
-      does not, the fortran plparseopts simply writes a warning message
+      does not, the Fortran 77 plparseopts simply writes a warning message
       and returns.
     </para>
 
@@ -939,10 +931,10 @@ fortran
 
   </sect1>
 
-  <sect1 id="plsescfortran" renderas="sect3">
+  <sect1 id="plsescfortran77" renderas="sect3">
     <title>
       <function>plsesc</function>: Set the escape character for text strings
-for fortran
+for Fortran 77
     </title>
 
     <para>
@@ -958,7 +950,7 @@ for fortran
 
     <para>
     Set the escape character for text strings.  From
-    Fortran it needs to be the decimal ASCII value.  Only
+    Fortran 77 it needs to be the decimal ASCII value.  Only
     selected characters are allowed to prevent the user from shooting
     himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
     of backslash as a character escape).  Here are the allowed escape

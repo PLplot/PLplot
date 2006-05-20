@@ -51,7 +51,7 @@
 <!ENTITY chap-deploying SYSTEM "deploying.xml">
 <!ENTITY chap-drivers SYSTEM "drivers.xml">
 <!ENTITY chap-c SYSTEM "c.xml">
-<!ENTITY chap-fortran SYSTEM "fortran.xml">
+<!ENTITY chap-fortran77 SYSTEM "fortran.xml">
 <!ENTITY chap-cplus SYSTEM "cplus.xml">
 <!ENTITY chap-tcl SYSTEM "tcl.xml">
 <!ENTITY chap-wish SYSTEM "wish.xml">
@@ -61,7 +61,7 @@
 <!ENTITY chap-bibliography SYSTEM "bibliography.xml">
 <!ENTITY chap-api SYSTEM "api.xml">
 <!ENTITY chap-api-c SYSTEM "api-c.xml">
-<!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
+<!ENTITY chap-api-fortran77 SYSTEM "api-fortran.xml">
 <!ENTITY chap-api-compat SYSTEM "api-compat.xml">
 <!ENTITY chap-api-obsolete SYSTEM "api-obsolete.xml">
 <!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
@@ -87,7 +87,7 @@
 <!ENTITY plcon2 '<link linkend="plcon2"><function>plcon2</function></link>'>
 <!ENTITY plconf '<link linkend="plconf"><function>plconf</function></link>'>
 <!ENTITY plcont '<link linkend="plcont"><function>plcont</function></link>'>
-<!ENTITY plcontfortran '<link linkend="plcontfortran"><function>plcontfortran</function></link>'>
+<!ENTITY plcontfortran77 '<link linkend="plcontfortran77"><function>plcontfortran77</function></link>'>
 <!ENTITY plcpstrm '<link linkend="plcpstrm"><function>plcpstrm</function></link>'>
 <!ENTITY plend '<link linkend="plend"><function>plend</function></link>'>
 <!ENTITY plend1 '<link linkend="plend1"><function>plend1</function></link>'>
@@ -137,14 +137,14 @@
 <!ENTITY pllsty '<link linkend="pllsty"><function>pllsty</function></link>'>
 <!ENTITY plmesh '<link linkend="plmesh"><function>plmesh</function></link>'>
 <!ENTITY plmeshc '<link linkend="plmeshc"><function>plmeshc</function></link>'>
-<!ENTITY plmeshfortran '<link linkend="plmeshfortran"><function>plmeshfortran</function></link>'>
+<!ENTITY plmeshfortran77 '<link linkend="plmeshfortran77"><function>plmeshfortran77</function></link>'>
 <!ENTITY plmkstrm '<link linkend="plmkstrm"><function>plmkstrm</function></link>'>
 <!ENTITY plmtex '<link linkend="plmtex"><function>plmtex</function></link>'>
 <!ENTITY plot3d '<link linkend="plot3d"><function>plot3d</function></link>'>
 <!ENTITY plot3dc '<link linkend="plot3dc"><function>plot3dc</function></link>'>
-<!ENTITY plot3dfortran '<link linkend="plot3dfortran"><function>plot3dfortran</function></link>'>
+<!ENTITY plot3dfortran77 '<link linkend="plot3dfortran77"><function>plot3dfortran77</function></link>'>
 <!ENTITY plparseopts '<link linkend="plparseopts"><function>plparseopts</function></link>'>
-<!ENTITY plparseoptsfortran '<link linkend="plparseoptsfortran"><function>plparseoptsfortran</function></link>'>
+<!ENTITY plparseoptsfortran77 '<link linkend="plparseoptsfortran77"><function>plparseoptsfortran77</function></link>'>
 <!ENTITY plpat '<link linkend="plpat"><function>plpat</function></link>'>
 <!ENTITY plpoin '<link linkend="plpoin"><function>plpoin</function></link>'>
 <!ENTITY plpoin3 '<link linkend="plpoin3"><function>plpoin3</function></link>'>
@@ -172,7 +172,7 @@
 <!ENTITY plsdiplt '<link linkend="plsdiplt"><function>plsdiplt</function></link>'>
 <!ENTITY plsdiplz '<link linkend="plsdiplz"><function>plsdiplz</function></link>'>
 <!ENTITY plsesc '<link linkend="plsesc"><function>plsesc</function></link>'>
-<!ENTITY plsescfortran '<link linkend="plsescfortran"><function>plsescfortran</function></link>'>
+<!ENTITY plsescfortran77 '<link linkend="plsescfortran77"><function>plsescfortran77</function></link>'>
 <!ENTITY plsetopt '<link linkend="plsetopt"><function>plsetopt</function></link>'>
 <!ENTITY plsexit '<link linkend="plsexit"><function>plsexit</function></link>'>
 <!ENTITY plsfam '<link linkend="plsfam"><function>plsfam</function></link>'>
@@ -212,7 +212,7 @@
 <!ENTITY plvec1 '<link linkend="plvec1"><function>plvec1</function></link>'>
 <!ENTITY plvec2 '<link linkend="plvec2"><function>plvec2</function></link>'>
 <!ENTITY plvect '<link linkend="plvect"><function>plvect</function></link>'>
-<!ENTITY plvectfortran '<link linkend="plvectfortran"><function>plvectfortran</function></link>'>
+<!ENTITY plvectfortran77 '<link linkend="plvectfortran77"><function>plvectfortran77</function></link>'>
 <!ENTITY plvpas '<link linkend="plvpas"><function>plvpas</function></link>'>
 <!ENTITY plvpor '<link linkend="plvpor"><function>plvpor</function></link>'>
 <!ENTITY plvsta '<link linkend="plvsta"><function>plvsta</function></link>'>
@@ -356,7 +356,7 @@
   <part>
     <title> Language Bindings </title>
     &chap-c;
-    &chap-fortran;
+    &chap-fortran77;
     &chap-cplus;
     &chap-tcl;
     &chap-wish;
@@ -370,7 +370,7 @@
     &chap-bibliography;
     &chap-api;
     &chap-api-c;
-    &chap-api-fortran;
+    &chap-api-fortran77;
     &chap-api-compat;
     &chap-api-obsolete;
     &chap-os-notes;

@@ -41,7 +41,7 @@
   <para>
   The purpose of this chapter is to document the API for every C function in
   PLplot that should have a counterpart in other PLplot language bindings such as
-  Fortran.  These common API routines have a special
+  Fortran 77.  These common API routines have a special
   <quote>c_</quote> prefix name assigned to them in <filename>plplot.h</filename>.
   This common API between the various languages constitutes the
   most important part of the PLplot API that programmers need to know.
@@ -7691,7 +7691,7 @@ coordinates
 
     <para>
     Set the escape character for text strings.  From C (in contrast to
-    fortran, see &plsescfortran;) you pass
+    Fortran 77, see &plsescfortran77;) you pass
     <literal><parameter>esc</parameter></literal> as a character.
     Only selected characters are allowed to prevent the user from shooting
     himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
