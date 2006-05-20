@@ -28,12 +28,12 @@ SOURCE_FILES = \
   api.xml \
   api-c.xml \
   api-compat.xml \
-  api-fortran.xml \
+  api-fortran77.xml \
   api-obsolete.xml \
   bibliography.xml \
   c.xml \
   deploying.xml \
-  fortran.xml \
+  fortran77.xml \
   cplus.xml \
   drivers.xml \
   gui.xml \
