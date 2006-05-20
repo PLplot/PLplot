@@ -67,8 +67,8 @@ The driver requires the LASi (v1.0.5), pango and pangoft2 libraries to work.
 The pango and pangoft2 libraries are widely distributed with most 
 Linux distributions at least. The LASi library is not part of most 
 distributions at this time. The source code can be downloaded from 
-http://eyegene.ophthy.med.umich.edu/lasi/. The library is small and 
-easy to build and install.
+http://www.unifont.org/lasi/. The library is small and easy to build and 
+install.
 
 This driver is now enabled by default. 
 
