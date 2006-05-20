@@ -397,28 +397,34 @@ GNU libtool 1.5.10+
 In the top plplot directory issue the following commands (also see notes)
 
 cf/bootstrap.sh
-(OS-X 10.3) ./configure --disable-dyndrivers --disable-f77
-(OS-X 10.4) ./configure --disable-f77 --disable-wxwidgets
-(OS-X 10.3) make LIBS="-Wl,-framework -Wl,Foundation"
-(OS-X 10.4) make
-make check
+
+Then proceed as you would with a release.
+
+Installing plplot 5.6.1:
+(OS-X 10.3)
+./configure --disable-dyndrivers --disable-f77
+make LIBS="-Wl,-framework -Wl,Foundation"
 make install
-
-
-To install the latest release (5.5.1+) issue the following commands in the
-top plplot directory (also see notes)
-
-(OS-X 10.3) ./configure --disable-dyndrivers --disable-f77
-(OS-X 10.4) ./configure
-(OS-X 10.3) make LIBS="-Wl,-framework -Wl,Foundation"
-(OS-X 10.4) make
 make check
+
+(OS-X 10.4)
+1) Without fortran:
+./configure --disable-f77 --disable-wxwidgets
+make
 make install
+make check
 
-Compiling with Fortran:
+2) With g77: [GNU Fortran (GCC) 3.4.3]
+./configure --disable-wxwidgets
+make FFLAGS="-Wl,-single_module"
+make install
+make check
 
-./configure --disable-dyndrivers
-...as above...
+3) With g95: [Fortran 95 (GCC) 4.2.0 20060512 (experimental)]
+./configure --disable-wxwidgets --enable-f95 FC=gfortran F77=gfortran
+make FFLAGS="-Wl,-single_module" FCFLAGS="-Wl,-single_module"
+make install
+make check
 
 If you encounter the error:
  "g77: installation problem, cannot exec `c++filt3': No such file or directory"
@@ -428,7 +434,8 @@ to sudo).
 
 Notes :
 
-Make check is only necessary if you want to compile the examples.
+Make check is only necessary if you want to compile the examples. It may 
+complain during the testing process, but it should build the examples.
 
 In OS-X 10.3 Dynamic drivers doesn't seem to be compatible with Objective C 
 and by extension the AquaTerm driver, but can be used if you don't plan to 
