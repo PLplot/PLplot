@@ -1,3 +1,304 @@
+PLplot Development Release 5.6.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is a stable release of PLplot. It represents the ongoing efforts of the
+community to improve the PLplot plotting package. Development releases in the
+5.7.x series will be available every few months. The next full release will
+be 5.8.0.
+
+     If you encounter a problem that is not already documented in the
+PROBLEMS file, then please send bug reports to PLplot developers via the
+mailing lists at http://sourceforge.net/mail/?group_id=2915 .
+
+     Please see the license under which this software is distributed
+(LGPL), and the disclaimer of all warrantees, given in the COPYING.LIB
+file.
+
+
+INDEX
+
+1. Build Instructions
+2. Changes relative to PLplot 5.5.3
+  2.1 API
+    2.1.1 PLBOOL
+  2.2 Drivers
+    2.2.1 psttf
+    2.2.2 wingcc
+    2.2.3 wxwidgets
+3. Changes relative to PLplot 5.3.1
+  3.1 API
+    3.1.1 Deprecated functions
+    3.1.2 Unicode
+    3.1.3 Extended cmap0 support
+    3.1.4 The PlplotCanvas Widget for Gnome/GTK Applications
+  3.2 Drivers
+    3.2.1 PostScript
+    3.2.2 psttf
+    3.2.3 GD (png, jpeg, gif)
+    3.2.4 GCW (Gnome 2)
+    3.2.5 AquaTerm (Mac OS X)
+    3.2.6 Tk
+    3.2.7 wxwidgets
+4. Notes on Autotools
+  4.1 Autotools versions
+  4.2 cf/bootstrap.sh output
+
+1. Build Instructions
+
+For detailed instructions on how to build and install PLplot from this
+tarball, please read the INSTALL file.  The basic procedure is to execute
+the following commands:
+
+  ./configure
+  make
+  make install
+
+     There are a variety of configuration options, and these are explained
+in the INSTALL document, and below as required.  In particular, if you
+want to install the PLplot Programmer's Reference Manual, please use:
+
+  ./configure --with-prebuiltdoc
+
+Note that it is often helpful to use the --with-pkg-config option if your
+system has the pkg-config program (typically *nix systems).
+
+
+2. Changes relative to PLplot 5.5.3 (the previous development release)
+
+
+2.1 API
+
+
+2.1.1 PLBOOL
+
+The java interface was reworked to use the PLBOOL type.
+
+2.1.2 Fortran 95
+
+The language bindings have been extended to Fortran 95. While it is
+possible to use the F77 bindings in a program that uses the Fortran 95
+features (as Fortran 95 is almost 100% compatible with FORTRAN 77),
+there are a few aspects specific to this newer standard that made
+it worthwhile to support Fortran 95 explicitly:
+
+- The API is defined via a module, so that the compiler can now check
+  the argument types.
+- It is now possible to pass arrays as assumed-shape arrays. This
+  means: less arguments and less chances for interface errors.
+- The module also defines specific parameters to describe PLplot
+  options. This way, you can use symbolic names instead of
+  numbers.
+- The floating-point type PLFLT is now available as a KIND parameter,
+  making it possible to use the same code for single and double
+  precision applications - simply declare all real variables
+  using the KIND facility and link with the corresponding version of
+  the PLplot library.
+
+More information is found in bindings/f95/readme_f95.txt
+
+
+2.2 Drivers
+
+
+2.2.1 psttf
+
+Initial version of a postscript driver that supports TrueType fonts. 
+This allows access to a far greater range of fonts and characters than 
+is possible using purely postscript fonts. 
+
+The driver requires the LASi, pango and pangoft2 libraries to work. 
+The pango and pangoft2 libraries are widely distributed with most 
+Linux distributions at least. The LASi library is not part of most 
+distributions at this time. The source code can be downloaded from 
+http://eyegene.ophthy.med.umich.edu/lasi/. The library is small and 
+easy to build and install.
+
+This driver is disabled by default. To try it you will need to add 
+the --enable-psttf --enable-psttfc options when running configure.
+
+2.2.2 wingcc
+
+Performance improvements have been implemented.
+
+2.2.3 wxwidgets
+
+Major upgrade that eliminated a number of bugs and added support for unicode
+fonts.
+
+2.2.4 win32
+
+Support for UNICODE and anti-aliasing fonts added
+
+
+3. Changes Relative to PLplot 5.3.1 (the previous stable release)
+
+
+3.1 API
+
+
+3.1.1 Deprecated functions
+
+plParseOpts, plHLS_RGB, and plRGB_HLS are now deprecated and will eventually
+be removed from the API.  Use plparseopts, plhlsrgb, and plrgbhls instead
+for all language interfaces.
+
+
+3.1.2 Unicode
+
+PLplot now supports unicode text.  The escape sequence for unicode
+characters is
+
+     #[nnn]
+
+where nnn can be decimal or hexadecimal.  Escape sequences are also defined
+to change fonts mid-string.
+
+     There are known bugs for our unicode font implementation that are
+listed in a special section of the PROBLEMS file, but the current
+implementation is good enough so we turn on unicode support by default
+for the psc, ps, png, gif, jpeg, and gcw devices.  Although all examples
+look better with unicode fonts, the new PLplot unicode capabilities are
+especially demonstrated in examples x23 and x24.  (The latter example
+requires special fonts to be installed and at run time environment
+variables have to be set to access them;  see the self-documentation of
+the example 24 source code).
+
+
+3.1.3 Extended cmap0 support.
+
+There have been many updates to cmap0 handling in the effort to wipe away
+all vestiges of the old 16 color limit.  The theoretical limit should now
+be 2^15 colors, since the metafile and tk drivers use a short for
+communication of the cmap0 index.  Should be *plenty* for the given
+application, i.e. fixing colors for lines, points, labels, and such.
+
+     Since both the metafile & tk data stream formats have changed due to
+the change from U_CHAR -> short for cmap0 index representation, the format
+versions have been upgraded.  If you see something like this:
+
+  $ x02c -dev tk
+  Error: incapable of reading output of version 2005a.
+  plr_init: Please obtain a newer copy of plserver.
+  Command code: 1, byte count: 14
+  plr_process1: Unrecognized command code 0
+  ...
+
+then you know it's using the wrong version of plserver (in which case
+either you didn't install or your path is wrong).
+
+     The second example program (multiple bindings available) contains
+a demo of the expanded cmap0 capability.
+
+
+3.1.4 The PlplotCanvas Widget for Gnome/GTK Applications
+
+PlplotCanvas is a widget for use in Gnome/GTK applications, and
+is contained in the libplplotgnome2d library.  A specialzed API is
+provided, and bindings are included for the C and Python programming
+languages.  Special example programs that demonstrate the use of
+PlplotCanvas in Gnome/GTK applications are given for each language
+binding.
+
+
+3.2 Drivers
+
+Some of the drivers have undergone important revisions in order to provide
+unicode support.  Several now present TrueType or PostScript fonts by
+default, which produces higher-quality output than in the past: see the
+examples from the GD (png) driver on the PLplot Web site at
+http://plplot.sourceforge.net/examples/index.html .
+
+
+3.2.1 PostScript
+
+The PostScript driver produces "publication quality" output files.  It
+is unicode-enabled, and Type 1 PostScript fonts are used by default.
+Although the Type 1 symbol fonts have a significant number of
+mathemetical symbols available, some key special symbols (squares,
+triangles) are missing.  Thus, by default, Hershey fonts are used to
+produce the symbols generated by calls to "plpoin" and "plsym", while
+PostScript fonts are used for calls to PLplot routines that plot text
+strings (e.g., "plmtex").  If you prefer a pure Hershey font environment,
+specify -drvopt text=0, and if you prefer a pure Postscript font
+environment, specify -drvopt hrshsym=0.
+
+
+3.2.2 psttf
+
+An initial version of a new PostScript driver that has all the functionality
+of the current postscript driver and also handles TrueType fonts.
+
+
+3.2.2 GD (png, jpeg, gif)
+
+The GD driver is used to produce png, jpeg, and gif files.  It is
+unicode-enabled, and uses TrueType fonts by default.  The examples on
+the PLplot Web site at
+http://plplot.sourceforge.net/examples/index.html were produced using
+this driver.
+
+
+3.2.3 GCW (Gnome 2)
+
+GCW is a new driver for Gnome 2 that displays plots in a tabbed window.
+The driver is unicode-enabled, and uses TrueType fonts.  The GCW user
+interface supports zooming, and saves to a variety of output file
+formats (ps, psc, png, jpg, gif).  All of the relevant command-line
+options for PLplot are supported.
+
+     A specialized API, which allows interaction with the driver,
+is provided in libplplotgnome2d.  Bindings are provided for the C and
+Python programming languages.
+
+
+3.2.4 AquaTerm (Mac OS X)
+
+AquaTerm is a new driver for Mac OS X that provides PLplot output in
+the AquaTerm graphics terminal program.  Aquaterm is a native Cocoa
+graphics terminal program for Mac OS X that provides a familiar look and
+feel to Mac users.  More details about AquaTerm and how to install it can
+be found at http://aquaterm.sourceforge.net/. The driver is unicode-enabled
+and uses default OS X fonts.
+
+
+3.2.5 Tk
+
+The plframe widget (and by extension, the Tk driver) now saves a plot using
+the correct aspect ratio, as represented by the actual window size.  For
+complicit output drivers only, e.g. png.
+
+
+3.2.6 wxwidgets
+
+This is a device driver that runs on the wxWidgets cross-platform GUI (see
+http://www.wxwidgets.org/) that has been donated by Werner Smekal. The driver
+is unicode-enabled. It currently provides a limited GUI but additional
+capabilities are being developed.
+
+
+4. Note on the Autotools that were used for this release
+
+4.1 Autotools versions
+
+autoconf (GNU Autoconf) 2.59
+Written by David J. MacKenzie and Akim Demaille.
+
+automake (GNU automake) 1.9.6
+Written by Tom Tromey <tromey@redhat.com>.
+
+ltmain.sh (GNU libtool) 1.5.22 (1.1220.2.365 2005/12/18 22:14:06)
+
+4.2 cf/bootstrap.sh output
+
+Running aclocal (GNU automake) 1.9.6... done
+Running autoheader (GNU Autoconf) 2.59... done
+Running libtoolize (GNU libtool) 1.5.22... done
+Running automake (GNU automake) 1.9.6... done
+Running autoconf (GNU Autoconf) 2.59... done
+Regenerating libltdl/aclocal+configure... done
+
+
+
 PLplot Development Release 5.5.4
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
