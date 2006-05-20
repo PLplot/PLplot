@@ -60,12 +60,14 @@ More information is found in bindings/f95/readme_f95.txt
 psttf
 
 This is a postscript driver that supports TrueType fonts. This allows access 
-to a far greater range of fonts and characters than is possible using purely 
+to a far greater range of fonts and characters than is possible using Type 1
 postscript fonts. 
 
-The driver requires the LASi (v1.0.5), pango and pangoft2 libraries to work. 
-The pango and pangoft2 libraries are widely distributed with most 
-Linux distributions at least. The LASi library is not part of most 
+The driver requires the LASi (v1.0.5), pango and pangoft2 libraries to work.
+The pango and pangoft2 libraries are widely distributed with most Linux
+distributions and give the psttf driver full complex text layout (CTL)
+capability (see http://plplot.sourceforge.net/examples/demo24.php for an
+example of this capability).  The LASi library is not part of most 
 distributions at this time. The source code can be downloaded from 
 http://www.unifont.org/lasi/. The library is small and easy to build and 
 install.
