@@ -104,7 +104,7 @@
         sh_color = dble (i - 1) / dble (NCONTR - 1)
         sh_width = 2
         call plpsty(0)
-        call plshade(z, ' ', &
+        call plshade(z(:NX,:NY), ' ', &
           dble ( -1._plflt), 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
@@ -271,11 +271,12 @@
         sh_width = 2
         call plpsty(0)
 
-        call plshade(z, ' ', &
+        call plshade(z(:NX,:NY), ' ', &
           -1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
-          min_color, min_width, max_color, max_width, xg, yg )
+          min_color, min_width, max_color, max_width, &
+            xg(:NX,:NY), yg(:NX,:NY) )
       enddo
 
 !      Draw boundary.
