@@ -402,10 +402,18 @@ Then proceed as you would with a release.
 
 Installing plplot 5.6.1:
 (OS-X 10.3)
+1) Without fortran
 ./configure --disable-dyndrivers --disable-f77
 make LIBS="-Wl,-framework -Wl,Foundation"
 make install
 make check
+
+2) With g77 [GNU Fortran (GCC) 3.4 20031015 (experimental)]
+./configure --disable-dyndrivers 
+make LIBS="-Wl,-framework -Wl,Foundation" FFLAGS="-Wl,-single_module"
+make install
+make check
+
 
 (OS-X 10.4)
 1) Without fortran:
