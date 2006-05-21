@@ -226,7 +226,11 @@ Build a release tarball:
 
   scripts/make-cvs-tarball.sh -v RELEASE_NUMBER 2>&1 | tee build.log
 
-<HB: This can take a while depending on how fast your computer is
+This can take a while depending on computer speed. It is also important that
+your computer's clock is set properly. The recommended way to do this is
+install the debian package "ntp", which should automatically keep your
+computer's clock in sync with internet time servers. 
+
 
 Install the release locally:
 
