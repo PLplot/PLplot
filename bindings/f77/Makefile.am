@@ -65,8 +65,8 @@ libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined libplplotf
 libplplotf77c@LIB_TAG@_la_SOURCES  = $(c_sources)
 libplplotf77c@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 
-# Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
-sfstubs.f: sfstubs.h
+# Must be explicit here with dependencies.
+sfstubs.lo: sfstubs.h
 
 # cp for the double-precision case, convert with sed for the
 # single-precision case.
