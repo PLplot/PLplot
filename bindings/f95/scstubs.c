@@ -457,8 +457,7 @@ PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
       int i;
       for(i = 0; i < *numargs; i++) {
 	 argv[i] = iargs + (i* *maxindex);
-/*	 fprintf(stderr, "%s\n", argv[i]); */
-  fprintf(stderr, "%d - %s\n", i, argv[i]);
+/*	 fprintf(stderr, "%d - %s\n", i, argv[i]); */
       }
       c_plparseopts(numargs, argv, *mode);
    }  else
