@@ -78,8 +78,8 @@ libplplotf95@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined libplplotf
 libplplotf95c@LIB_TAG@_la_SOURCES  = $(c_sources)
 libplplotf95c@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 
-# Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
-sfstubsf95.f90: plflt.inc sfstubs.f90 sfstubs.h
+# Must be explicit here with dependencies.
+sfstubsf95.lo: plflt.inc sfstubs.f90 sfstubs.h
 
 EXTRA_DIST = readme_f95.txt sfstubs.f90
 
@@ -89,5 +89,5 @@ MAINTAINERCLEANFILES = $(generated_fortran_sources)
 noinst_PROGRAMS = plflt
 plflt_SOURCES = plflt.c
 
-plflt.inc: plflt
-	./plflt
+plflt.inc: plflt$(EXEEXT)
+	./plflt$(EXEEXT)
