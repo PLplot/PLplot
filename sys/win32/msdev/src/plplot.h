@@ -754,6 +754,7 @@ typedef struct {
 #define    plFree2dGrid     win_plFree2dGrid
 #define    plGetCursor      win_plGetCursor
 #define    c_plparseopts    win_plParseOpts
+#define    plparseopts      win_plParseOpts
 #define    plMergeOpts      win_plMergeOpts
 
 #else
@@ -1879,13 +1880,13 @@ plTranslateCursor(PLGraphicsIn *gin);
 /* Deprecated function names which are handled as wrappers for strict
  * backwards compatibility of the library API*/
 
-int
+int API
 plParseOpts(int *p_argc, char **argv, PLINT mode);
 
-void
+void API
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
-void
+void API
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
 
