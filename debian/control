@@ -63,6 +63,16 @@ Description: Scientific plotting library
  .
  Homepage: http://www.plplot.org
 
+Package: libplplot-fortran9
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Description: Scientific plotting library
+ This package contains the Fortran 77 and Fortran 95 bindings for
+ PLplot, a scientific plotting library.
+ .
+ Homepage: http://www.plplot.org
+
 Package: libcsiro0
 Architecture: any
 Section: libs

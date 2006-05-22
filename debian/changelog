@@ -1,3 +1,20 @@
+plplot (5.6.0.rc1.5.6.1-1) unstable; urgency=low
+
+  NOT OFFICIALLY RELEASED !!!
+
+  * New upstream release candidate (5.6.1_RC1). This version contains the
+    binding for Fortran 95.
+  * debian/rules:
+    + Enabled compilation of Fortran 95 binding.  Due to some strange
+      libtool problem, "FC=gfortran and F77=gfortran" must be given to
+      configure.
+    + Run "make check" after "make" in target build-stamp
+  * debian/control: Created the new package libplplot-fortran9 containing
+    the F77 and F95 bindings.
+  * debian/plplot-doc.doc-base: Fixed path for Files and Index.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 22 May 2006 17:14:51 +0200
+
 plplot (5.6.0-1) unstable; urgency=low
 
   * New upstream release:
