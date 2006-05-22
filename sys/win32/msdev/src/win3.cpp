@@ -593,7 +593,7 @@ void plD_eop_win3(PLStream *pls)
 		SetCursor(hCursor);
 
 		/* Retrieve messages from the queue.  Passing NULL for the window
-		 * handle allows message retrieval for any window that belongs to 
+		 * handle allows message retrieval for any window that belongs to
 		 * calling thread.  The choice between PeekMessage and GetMessage
 		 * depends on whether we are pausing between pages.
 		 */
@@ -1073,9 +1073,11 @@ FT_Data *FT=(FT_Data *)pls->FT;
 				dev->yPhMax = rect.bottom;
 				dev->xScale = rect.right / ((float)PIXELS_X);
 				dev->yScale = rect.bottom / ((float)PIXELS_Y);
+/*
 FILE *outf = fopen("aa", "w") ;
 fprintf( outf, "rect: %d %d\n", rect.right, rect.bottom ) ; fflush(outf);
 fclose( outf ) ;
+*/
 #ifdef HAVE_FREETYPE
 				/* if ( FT != NULL ) { */
 				/* if ( freetype ) { */
