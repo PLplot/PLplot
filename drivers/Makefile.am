@@ -94,8 +94,8 @@ endif
 get_drv_info_CFLAGS = $(INCLTDL)
 
 SUFFIXES = .la .rc
-.la.rc: get-drv-info
-	./get-drv-info `echo $< | sed 's/.la//'` > $@ || { rm -f $@ ; exit 1 ;}
+.la.rc: get-drv-info$(EXEEXT)
+	./get-drv-info$(EXEEXT) `echo $< | sed 's/.la//'` > $@ || { rm -f $@ ; exit 1 ;}
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these

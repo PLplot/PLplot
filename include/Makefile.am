@@ -58,7 +58,7 @@ MAINTAINERCLEANFILES = plhershey-unicode.h
 noinst_PROGRAMS = plhershey-unicode-gen
 plhershey_unicode_gen_SOURCES = $(top_srcdir)/fonts/plhershey-unicode-gen.c
 
-plhershey-unicode.h: plhershey-unicode-gen \
+plhershey-unicode.h: plhershey-unicode-gen$(EXEEXT) \
 	$(top_srcdir)/fonts/plhershey-unicode.csv
-	./plhershey-unicode-gen \
+	./plhershey-unicode-gen$(EXEEXT) \
 	$(top_srcdir)/fonts/plhershey-unicode.csv plhershey-unicode.h

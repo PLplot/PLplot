@@ -115,7 +115,7 @@ octaveshare_SCRIPTS = plplot_octave.oct
 noinst_PROGRAMS = massage
 massage_SOURCES = massage.c
 
-plplot_stub.m: doc-stamp tmp_stub massage
+plplot_stub.m: doc-stamp tmp_stub massage$(EXEEXT)
 	@head -5 tmp_stub > plplot_stub.m
 	@echo "# It was also massaged to add online documentation" >> plplot_stub.m
 	@echo "# extracted from some PLplot distribution files" >> plplot_stub.m
@@ -124,7 +124,7 @@ plplot_stub.m: doc-stamp tmp_stub massage
 	@echo >> plplot_stub.m
 	@cat $(srcdir)/plplot_octave_def >> plplot_stub.m
 	@echo >> plplot_stub.m
-	./massage >> plplot_stub.m 2> missing_help
+	./massage$(EXEEXT) >> plplot_stub.m 2> missing_help
 
 plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
 plplot_octave_DATA = plplot_stub.m
