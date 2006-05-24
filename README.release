@@ -67,10 +67,11 @@ The driver requires the LASi (v1.0.5), pango and pangoft2 libraries to work.
 The pango and pangoft2 libraries are widely distributed with most Linux
 distributions and give the psttf driver full complex text layout (CTL)
 capability (see http://plplot.sourceforge.net/examples/demo24.php for an
-example of this capability).  The LASi library is not part of most 
-distributions at this time. The source code can be downloaded from 
-http://www.unifont.org/lasi/. The library is small and easy to build and 
-install.
+example of this capability).  The LASi library is not part of most
+distributions at this time. The source code can be downloaded from
+http://www.unifont.org/lasi/. The library is small and easy to build and
+install.  Make sure you use LASi-1.0.5.  The psttf device driver uses new
+capabilities in this version of LASi and no longer works with LASi-1.0.4.
 
 This driver is now enabled by default. 
 
