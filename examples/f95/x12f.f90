@@ -52,14 +52,14 @@
       do i = 0, 9
         call plcol0(i + 1)
         call plpsty(0)
-        call plfbox( dble (1980._plflt+i), y0(i+1) )
+        call plfbox( 1980._plflt+i, y0(i+1) )
         write (string, '(i8)')int(y0(i+1))
         call lalign(string)
-        call plptex( dble (1980._plflt+i+0.5_plflt), y0(i+1)+1._plflt, &
+        call plptex( 1980._plflt+i+0.5_plflt, y0(i+1)+1._plflt, &
           1._plflt, 0._plflt, 0.5_plflt, string )
         write (string, '(i8)')1980+i
         call lalign(string)
-        call plmtex( 'b', 1._plflt, dble ((i+1)*0.1_plflt-0.05_plflt), &
+        call plmtex( 'b', 1._plflt, (i+1)*0.1_plflt-0.05_plflt, &
           0.5_plflt, string )
       enddo
 
