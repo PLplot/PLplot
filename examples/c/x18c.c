@@ -23,7 +23,7 @@ void test_poly(int k);
 int
 main(int argc, char *argv[])
 {
-    int i, j, k;
+    int i, k;
     PLFLT *x, *y, *z;
     PLFLT r;
     char title[80];

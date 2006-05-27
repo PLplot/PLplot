@@ -38,7 +38,6 @@ int
 main(int argc, char **argv) 
 {
     PLFLT minx, maxx, miny, maxy;
-    int c;
 
 /* Parse and process command line arguments */
 
