@@ -48,7 +48,6 @@ EXTRA_LTLIBRARIES = \
 	plmeta.la \
 	ps.la \
 	psttf.la \
-	pstex.la \
 	tek.la \
 	tk.la \
 	tkwin.la \
@@ -217,8 +216,8 @@ ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 psttf_la_SOURCES = psttf.cc
 psttf_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSTTF_LIBS) -lLASi
 
-pstex_la_SOURCES = ps.c pstex.c
-pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+##pstex_la_SOURCES = ps.c pstex.c
+##pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 
 tek_la_SOURCES = tek.c
 tek_la_LDFLAGS = $(ldflags) $(libplplot)
@@ -345,7 +344,6 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	plmeta.c \
 	ps.c \
 	psttf.cc \
-	pstex.c \
 	tek.c \
 	tk.c \
 	tkwin.c \
@@ -459,7 +457,7 @@ endif
 docdir = $(DOC_DIR)
 doc_DATA = README.drivers README.wxwidgets
 
-EXTRA_DIST = $(doc_DATA) next.c
+EXTRA_DIST = $(doc_DATA) next.c pstex.c
 
 CLEANFILES = *.rc
 DISTCLEANFILES = $(drivers_DATA)

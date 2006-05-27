@@ -23,6 +23,7 @@ INDEX
     1.1.1 f95
   1.2 Drivers
     1.2.1 psttf
+    1.2.2 pstex
 
 
 1. Changes relative to PLplot 5.6.0 (the previous stable release)
@@ -57,7 +58,7 @@ More information is found in bindings/f95/readme_f95.txt
 
 1.2 Drivers
 
-psttf
+1.2.1 psttf
 
 This is a postscript driver that supports TrueType fonts. This allows access 
 to a far greater range of fonts and characters than is possible using Type 1
@@ -75,3 +76,8 @@ capabilities in this version of LASi and no longer works with LASi-1.0.4.
 
 This driver is now enabled by default. 
 
+1.2.2 pstex
+
+Permanently disable the autotools build of pstex.  Other PostScript devices
+(either ps or psttf) appear to give better solutions so there doesn't seem
+to be much purpose in maintaining this currently broken device.
