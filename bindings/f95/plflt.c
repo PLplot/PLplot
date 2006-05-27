@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "plConfig.h"
 
-main(int argc, char *argv[] )
+void main(int argc, char *argv[] )
 {
    FILE *outfile;
    char *kind;
