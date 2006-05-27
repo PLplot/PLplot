@@ -1531,7 +1531,9 @@ plOpenFile(PLStream *pls)
 	if (pls->FileName == NULL) {
 	    do {
 		fprintf(stdout, "Enter graphics output file name: ");
-		fgets(line, sizeof(line), stdin);
+		if(!(fgets(line, sizeof(line), stdin))){
+			plexit("plOpenFile: Failed to process response.");
+		}
 		len = strlen(line);
 		if (len)
 		    len--;
@@ -1766,7 +1768,10 @@ plGetInt(char *s)
 
     while (i++ < 10) {
 	fprintf(stdout, s);
-	fgets(line, sizeof(line), stdin);
+	if(!(fgets(line, sizeof(line), stdin))){
+		plexit("plGetInt: Failed to process response.");
+	}
+
 #ifdef MSDOS
 	m = atoi(line);
 	return (m);
@@ -1796,7 +1801,10 @@ plGetFlt(char *s)
 
     while (i++ < 10) {
 	fprintf(stdout, s);
-	fgets(line, sizeof(line), stdin);
+	if(!(fgets(line, sizeof(line), stdin))){
+		plexit("plOpenFile: Failed to process response.");
+	}
+
 #ifdef MSDOS
 	m = atof(line);
 	return (m);
