@@ -164,10 +164,6 @@ x02::draw_windows(int nw, int cmap0_offset) {
 
 x02::x02( int argc, char ** argv ) {
 
-  int i, j;
-  double vmin, vmax;
-  char text[3];
-
   // plplot initialization
 
   pls = new plstream();

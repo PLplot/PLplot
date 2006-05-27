@@ -70,7 +70,6 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
 x19::x19( int argc, char ** argv ) {
 
   PLFLT minx, maxx, miny, maxy;
-  int c;
 
   // plplot initialization
 

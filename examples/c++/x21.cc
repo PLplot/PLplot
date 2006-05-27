@@ -166,7 +166,7 @@ PLOptionTable x21::options[] = {
 
 x21::x21( int argc, char ** argv ) {
   PLFLT *x, *y, *z, *clev;
-  PLFLT *xg, *yg, **zg, **szg;
+  PLFLT *xg, *yg, **zg;
   PLFLT zmin, zmax, lzm, lzM;
   long ct;
   int i, j, k;
@@ -230,7 +230,7 @@ x21::x21( int argc, char ** argv ) {
 
       ct = clock();
       pls->griddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg-1]);
-      sprintf(xlab, "time=%d ms", (clock() - ct)/1000);
+      sprintf(xlab, "time=%ld ms", (clock() - ct)/1000);
       sprintf(ylab, "opt=%.3f", opt[alg-1]);
 
       /* - CSA can generate NaNs (only interpolates?!).

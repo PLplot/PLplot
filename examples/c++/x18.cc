@@ -60,7 +60,7 @@ const PLFLT x18::az[4] = {30.0, 40.0, 50.0, 60.0};
 
 x18::x18( int argc, char ** argv ) {
 
-  int i, j, k;
+  int i, k;
   PLFLT r;
   char title[80];
 

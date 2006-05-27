@@ -172,8 +172,6 @@ x16::x16( int argc, char ** argv ) {
   // calculated constants and array that depends on them
   PLFLT xspa =  2./(nx-1);
   PLFLT yspa =  2./(ny-1);
-  PLFLT tr[] = {xspa, 0.0, -1.0, 0.0, yspa, -1.0};
-
 
 
   // Set up data array

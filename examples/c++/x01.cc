@@ -114,7 +114,6 @@ private:
 
 x01::x01( int argc, char ** argv ) {
 
-  PLINT cur_strm, new_strm;
   char ver[80];
 
   fontset = 1;

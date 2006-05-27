@@ -152,7 +152,7 @@ x08::x08( int argc, char **argv ) {
   bool rosen = true;
 
   PLFLT xx, yy, r;
-  PLFLT zmin, zmax;
+  PLFLT zmin = 0.0, zmax = 0.0;
 
   int ifshade;
 
