@@ -19,14 +19,11 @@ main(int argc, char *argv[])
 {
     int i;
     int j;
-    int npts ;
-    char string[20];
+    int npts = 0;
     PLFLT xextreme[10][2];
     PLFLT yextreme[10][2];
     PLFLT x0[10];
     PLFLT y0[10];
-    PLFLT x1[10];
-    PLFLT y1[10];
 
 /* Parse and process command line arguments */
 
