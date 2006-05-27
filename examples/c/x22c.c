@@ -160,7 +160,7 @@ constriction() {
 
 
 
-f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
+void f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
 {
     int i, j;
 
@@ -294,7 +294,6 @@ void potential() {
 int
 main(int argc, char *argv[])
 {
-    int i, j;
     PLINT narr, fill;
 
     /* Parse and process command line arguments */
