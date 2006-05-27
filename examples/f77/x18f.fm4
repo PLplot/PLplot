@@ -33,7 +33,7 @@ C--------------------------------------------------------------------------
       integer NPTS
       parameter ( NPTS = 1000 )
 
-      integer i, j, k
+      integer i, k
       real*8    x(NPTS), y(NPTS), z(NPTS)
       real*8    r
       character*80 title

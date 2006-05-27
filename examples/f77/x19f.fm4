@@ -76,7 +76,6 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       program x19f
       implicit none
       real*8    minx, maxx, miny, maxy
-      integer c
       external ident
       external mapform19
 

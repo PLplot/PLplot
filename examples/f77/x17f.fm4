@@ -25,13 +25,12 @@ C--------------------------------------------------------------------------
 
       program x17f
       implicit none
-      integer id1, id2, n, autoy, acc, nsteps
+      integer id1, n, autoy, acc, nsteps
       parameter ( nsteps = 1000 )
       real*8 y1, y2, y3, y4, ymin, ymax, xlab, ylab
       real*8 t, tmin, tmax, tjump, dt, noise
       integer colbox, collab, colline(4), styline(4)
       character*20 legline(4)
-      character*20 toplab
 
       real*8 PI
       parameter ( PI = 3.1415926535897932384d0 )

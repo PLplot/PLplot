@@ -25,7 +25,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       integer i, j, k, ifshade, xpts, ypts
       parameter (xpts=35, ypts=46)
 
-      real*8 x(xpts), y(ypts), z(xpts,ypts), xx, yy, r
+      real*8 x(xpts), y(ypts), z(xpts,ypts), xx, yy
 
       character*80 title(2)
       real*8 alt(2),az(2)

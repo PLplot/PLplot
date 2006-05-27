@@ -27,9 +27,9 @@ C independent streams.
 
       implicit none
 
-      integer i, digmax
+      integer digmax
       integer xleng0 , yleng0 , xoff0 , yoff0
-      integer xleng1 , yleng1 , xoff1 , yoff1
+      integer xleng1 , xoff1 , yoff1
 
       character*80 driver
       character*15 geometry_master
@@ -39,7 +39,6 @@ C independent streams.
       real*8  xs(6), ys(6)
       real*8  xscale, yscale, xoff, yoff
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
-      character*80 version
 C      some fortran compilers demand typing of intrinsic lnblnk, and
 C      although this is not demanded on g77 it also works there.
       integer lnblnk
