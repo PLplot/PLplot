@@ -49,9 +49,7 @@ void plot5();
 int
 main(int argc, char *argv[])
 {
-    int i, digmax;
-    int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
-    int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
+    int digmax;
 
 /* Select either TK or DP driver and use a small window */
 /* Using DP results in a crash at the end due to some odd cleanup problems */

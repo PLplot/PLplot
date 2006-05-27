@@ -27,11 +27,11 @@ static char errmsg[160];
 int
 main(int argc, char *argv[])
 {
-    PLINT id1, id2, n, autoy, acc, nsteps = 1000;
+    PLINT id1, n, autoy, acc, nsteps = 1000;
     PLFLT y1, y2, y3, y4, ymin, ymax, xlab, ylab;
     PLFLT t, tmin, tmax, tjump, dt, noise;
     PLINT colbox, collab, colline[4], styline[4];
-    char *legline[4], toplab[20];
+    char *legline[4];
 
 /* plplot initialization */
 /* Parse and process command line arguments */
