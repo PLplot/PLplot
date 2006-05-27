@@ -125,5 +125,4 @@ C      Process command-line arguments
      &        0.0d0, 360.0d0, -10.0d0,
      &        80.0d0)
       call plend()
-      stop
       end
