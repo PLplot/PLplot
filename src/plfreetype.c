@@ -135,8 +135,14 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args);
 static void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, int y, short colour );
 static void FT_SetFace( PLStream *pls, PLUNICODE fci );
 static PLFLT CalculateIncrement( int bg, int fg, int levels);
+
+/* These are never defined, maybe they will be used in the future?
+
 static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
 static FT_ULong hershey_to_unicode (char in);
+
+*/
+
 static void FT_WriteStrW(PLStream *pls,const PLUNICODE  *text, short len, int x, int y);
 static void FT_StrX_YW(PLStream *pls,const PLUNICODE *text, short len, int *xx, int *yy);
 
@@ -570,7 +576,7 @@ void plD_FreeType_init(PLStream *pls)
 
 	} else {
 	    strcpy(FT->font_name[i],font_dir);
-	    strcat(FT->font_name[i],TrueTypeLookup[i].pfont);
+	    strcat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont);
 	}
 
    {
@@ -586,7 +592,7 @@ void plD_FreeType_init(PLStream *pls)
    }
    }
         FontLookup[i].fci = TrueTypeLookup[i].fci;
-        FontLookup[i].pfont = FT->font_name[i];
+        FontLookup[i].pfont = (unsigned char *)FT->font_name[i];
     }
 /*
  * Next, we check to see if -drvopt has been used on the command line to
@@ -654,7 +660,11 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     PLFLT *t = args->xform;
     FT_Matrix matrix;
     PLFLT angle=PI*pls->diorot/2;
-    PLINT clxmin, clxmax, clymin, clymax;
+/*
+  Used later in a commented out section (See Rotate The Page), if that
+  section will never be used again, remove these as well.
+	PLINT clxmin, clxmax, clymin, clymax; 
+*/
     PLFLT Sin_A,Cos_A;
     FT_Vector adjust;
     PLUNICODE fci;
@@ -1001,7 +1011,6 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
     int x,y;
     FT_Vector  adjust;
     PLUNICODE fci;
-    PLINT clxmin, clxmax, clymin, clymax;
 
     x=args->x/FT->scale;
 
