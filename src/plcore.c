@@ -475,7 +475,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       EscText args;
       short len=0;
       char skip;
-      unsigned short i,j, k;
+      unsigned short i,j;
       PLUNICODE code;
       char esc;
       int idx;
@@ -493,8 +493,6 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	 PLINT ig;
 	 PLUNICODE fci, fcisave;
 	 unsigned char hexdigit, hexpower;
-
-	 PLINT clpxmi, clpxma, clpymi, clpyma;
 
 	 /* Now process the text string */
 
@@ -671,7 +669,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	       }
 	
 	       if (skip==0) {
-                  PLUNICODE unichar;
+                  PLUNICODE unichar = 0;
 #ifdef HAVE_LIBUNICODE
 		  char* ptr = unicode_get_utf8 (string + i, &unichar);
 #else
@@ -731,7 +729,7 @@ utf8_to_ucs4(const char *ptr, PLUNICODE *unichar)
 {
    char tmp;
    int isFirst = 1;
-   int cnt;
+   int cnt = 0;
    
    do {
       /* Get next character in string */
@@ -781,7 +779,7 @@ ucs4_to_utf8(PLUNICODE unichar, char *ptr)
   unsigned char *tmp;
   int len;
 
-  tmp = ptr;
+  tmp = (unsigned char *)ptr;
 
   if ( (unichar & 0xffff80) == 0 ) {  /* single byte */
     *tmp = (unsigned char) unichar;
@@ -2405,7 +2403,9 @@ plSelectDev()
 	    fprintf(stdout, "\nEnter device number or keyword (stream %d): ",
 		   (int) ipls);
 
-	fgets(response, sizeof(response), stdin);
+	if(!(fgets(response, sizeof(response), stdin))){
+		plexit("plSelectDev: Failed to process response.");
+	}
 
     /* First check to see if device keyword was entered. */
     /* Final "\n" in response messes things up, so ignore it.  */
