@@ -59,7 +59,7 @@ static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);
 static void  proc_str           (PLStream *, EscText *);
-static void  esc_purge          (char *, unsigned char *);
+static void  esc_purge          (unsigned char *, unsigned char *);
 
 static char  outbuf[128];
 static int text = 1;
@@ -723,8 +723,6 @@ proc_str (PLStream *pls, EscText *args)
 
   int i=0; /* String index */
 
-  short text_len;
-
    /* unicode only! so test for it. */
    if (args->unicode_array_len>0)
      {
@@ -733,7 +731,6 @@ proc_str (PLStream *pls, EscText *args)
 	int nlookup;
 	const Unicode_to_Type1_table *lookup;
 	const PLUNICODE *cur_text;
-	const PLUNICODE *cur_text_limit;
 	PLUNICODE fci;
 	/* translate from unicode into type 1 font index. */
 	/*
@@ -1011,7 +1008,7 @@ proc_str (PLStream *pls, EscText *args)
 }
 
 static void
-esc_purge(char *dstr, unsigned char *sstr) {
+esc_purge(unsigned char *dstr, unsigned char *sstr) {
   char esc;
 
   plgesc(&esc);
