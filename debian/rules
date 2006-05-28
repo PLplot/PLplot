@@ -42,13 +42,13 @@ autotools-stamp:
 
 config: config-stamp
 config-stamp: autotools-stamp
-	PKG_CONFIG_ENV=" "					\
+	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran		\
 	./configure --prefix=/usr --mandir=/usr/share/man	\
                     --infodir=/usr/share/info --with-pkg-config	\
                     --without-rpath --with-prebuiltdoc		\
                     --with-pthreads --with-ltdlsystem		\
                     --disable-linuxvga  --enable-psttf		\
-		    --enable-psttfc $(javasetup)
+		    --enable-f95 --enable-psttfc $(javasetup)
 	touch config-stamp
 
 build: build-stamp
@@ -61,6 +61,7 @@ build-stamp: patch config-stamp
 	( cd bindings/octave ; \
 	  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	$(MAKE)
+	$(MAKE) check
 	touch build-stamp
 
 clean: unpatch
@@ -96,7 +97,8 @@ install-stamp: build-stamp
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
 		libcsiro0 plplot9-driver-gnome2 libplplot9-java		\
-		plplot9-driver-wxwidgets plplot9-driver-psttf ; do	\
+		plplot9-driver-wxwidgets plplot9-driver-psttf		\
+		libplplot-fortran9 ; do					\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
