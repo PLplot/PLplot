@@ -84,7 +84,7 @@ sfstubsf95.lo: plflt.inc sfstubs.f90 sfstubs.h
 EXTRA_DIST = readme_f95.txt sfstubs.f90
 
 BUILT_SOURCES = $(generated_fortran_sources)
-MAINTAINERCLEANFILES = $(generated_fortran_sources)
+CLEANFILES = $(generated_fortran_sources) $(plplotmodule_DATA)
 
 noinst_PROGRAMS = plflt
 plflt_SOURCES = plflt.c
