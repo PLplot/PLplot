@@ -48,7 +48,8 @@ config-stamp: autotools-stamp
                     --without-rpath --with-prebuiltdoc		\
                     --with-pthreads --with-ltdlsystem		\
                     --disable-linuxvga  --enable-psttf		\
-		    --enable-f95 --enable-psttfc $(javasetup)
+		    --enable-f95 --enable-psttfc $(javasetup)	\
+		    --enable-pdl
 	touch config-stamp
 
 build: build-stamp
