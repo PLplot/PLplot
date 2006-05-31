@@ -43,7 +43,8 @@ example_classes = \
 	x18.class \
 	x19.class \
 	x22.class \
-	x23.class
+	x23.class \
+	x24.class
 
 all: $(example_classes)
 
@@ -51,7 +52,7 @@ clean:
 	rm -rf plplot $(example_classes)
 
 .java.class:
-	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH)
+	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH) -encoding utf8
 	cp plplot/examples/$@ .
 
 .SUFFIXES: .java .class

@@ -40,7 +40,8 @@ javafiles = \
 	$(top_srcdir)/examples/java/x18.java \
 	$(top_srcdir)/examples/java/x19.java \
 	$(top_srcdir)/examples/java/x22.java \
-	$(top_srcdir)/examples/java/x23.java
+	$(top_srcdir)/examples/java/x23.java \
+	$(top_srcdir)/examples/java/x24.java
 
 javademos = \
 	$(top_srcdir)/examples/java/README.javademos \
@@ -71,7 +72,8 @@ example_classes = \
 	x18.class \
 	x19.class \
 	x22.class \
-	x23.class
+	x23.class \
+	x24.class
 
 if enable_java
 
@@ -109,7 +111,7 @@ if enable_java
 endif
 
 .java.class:
-	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH)
+	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH) -encoding utf8
 	cp plplot/examples/$@ .
 
 CLEANFILES = $(example_classes) plplot.jar
