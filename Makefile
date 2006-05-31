@@ -40,3 +40,4 @@ install-announce:
 
 clean:
 	rm -f examples/index.html examples/demo*.php
+	( cd announce ; $(MAKE) clean )
