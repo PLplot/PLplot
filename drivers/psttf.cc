@@ -801,13 +801,8 @@ proc_str (PLStream *pls, EscText *args)
 
   PLFLT scale = 1., up = 0.; /* Font scaling and shifting parameters */
 
-  double lineSpacing, xAdvance, xwid, ymintmp, ymaxtmp, ymin, ymax, xmin, xmax;
+  double lineSpacing, xAdvance, ymintmp, ymaxtmp, ymin, ymax, xmin, xmax;
   PLINT xx[4], yy[4];
-
-  int i=0; /* String index */
-  int k=0;
-
-  short text_len;
 
   FT_Data *FT;
 
@@ -821,7 +816,6 @@ proc_str (PLStream *pls, EscText *args)
 	FontStyle styles[PROC_STR_STRING_LENGTH];
 	FontWeight weights[PROC_STR_STRING_LENGTH];
 	const PLUNICODE *cur_text;
-	const PLUNICODE *cur_text_limit;
 	PLUNICODE fci;
 	unsigned char fontfamily, fontstyle, fontweight;
 	/* translate from unicode into type 1 font index. */
