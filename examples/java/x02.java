@@ -31,7 +31,6 @@ package plplot.examples;
 
 import plplot.core.*;
 
-import java.lang.Math;
 import java.text.*;
 
 class x02 {

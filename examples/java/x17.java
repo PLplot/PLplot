@@ -27,10 +27,6 @@
 
 package plplot.examples;
 
-import plplot.core.*;
-
-import java.lang.Math;
-
 class x17 {
 
     public static void main( String[] args ) 

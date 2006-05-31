@@ -120,7 +120,7 @@ class x18 {
      {
 	NumberFormat nf = NumberFormat.getNumberInstance();
 	
-	int i, j, k;
+	int i, k;
 	double r;
 
         // Parse and process command line arguments.

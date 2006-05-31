@@ -31,8 +31,6 @@ package plplot.examples;
 
 import plplot.core.*;
 
-import java.lang.Math;
-
 class x15 {
 
    static final int XPTS = 35;

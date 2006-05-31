@@ -31,8 +31,6 @@ package plplot.examples;
 
 import plplot.core.*;
 
-import java.lang.Math;
-
 //
 // Displays Greek letters and mathematically interesting Unicode ranges
 //
