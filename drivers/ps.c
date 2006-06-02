@@ -43,6 +43,10 @@
 #include "plunicode-type1.h"
 #include "plfci-type1.h"
 
+/* Define macro to truncate small values to zero - prevents
+ * printf printing -0.000 */
+#define TRMFLT(a)     ((fabs(a)<5.0e-4) ? 0.0 : (a))
+
 /* Device info */
 
 char* plD_DEVICE_INFO_ps = 
@@ -867,7 +871,7 @@ proc_str (PLStream *pls, EscText *args)
 	fprintf(OF, " %d %d M\n", args->x, args->y );
 	
 	/* Save the current position and set the string rotation */
-	fprintf(OF, "gsave %.3f R\n",theta);
+	fprintf(OF, "gsave %.3f R\n",TRMFLT(theta));
 	
 	/* Purge escape sequences from string, so that postscript can find it's 
 	 * length.  The string length is computed with the current font, and can
@@ -876,12 +880,12 @@ proc_str (PLStream *pls, EscText *args)
 	
 	esc_purge(str, cur_str);
 	
-	fprintf(OF, "/%s %.3f SF\n", font,font_factor * ENLARGE * ft_ht);    
+	fprintf(OF, "/%s %.3f SF\n", font,TRMFLT(font_factor * ENLARGE * ft_ht));    
 	
 	/* Output string, while escaping the '(', ')' and '\' characters.
 	 * this string is output for measurement purposes only.
 	 */
-	fprintf(OF, "%.3f (", - args->just);
+	fprintf(OF, "%.3f (", TRMFLT(- args->just));
 	while (str[i]!='\0') {
 	   if (str[i]=='(' || str[i]==')' || str[i]=='\\')
 	     fprintf(OF,"\\%c",str[i]);
@@ -961,14 +965,14 @@ proc_str (PLStream *pls, EscText *args)
 	   /* Apply the scaling and the shear */
 	   fprintf(OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n",
 		   font,
-		   tt[0]*font_factor * ENLARGE * ft_ht * scale,
-		   tt[2]*font_factor * ENLARGE * ft_ht * scale,
-		   tt[1]*font_factor * ENLARGE * ft_ht * scale,
-		   tt[3]*font_factor * ENLARGE * ft_ht * scale);
+		   TRMFLT(tt[0]*font_factor * ENLARGE * ft_ht * scale),
+		   TRMFLT(tt[2]*font_factor * ENLARGE * ft_ht * scale),
+		   TRMFLT(tt[1]*font_factor * ENLARGE * ft_ht * scale),
+		   TRMFLT(tt[3]*font_factor * ENLARGE * ft_ht * scale));
 	   
 	   /* if up/down escape sequences, save current point and adjust baseline;
 	    * take the shear into account */
-	   if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",up*tt[1],up*tt[3]);
+	   if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",TRMFLT(up*tt[1]),TRMFLT(up*tt[3]));
 	   
 	   /* print the string */
 	   fprintf(OF, "(%s) show\n", str);  

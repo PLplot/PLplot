@@ -47,6 +47,10 @@
 #include <fstream>
 #include <LASi.h>
 
+/* Define macro to truncate small values to zero - prevents
+ *  * printf printing -0.000 */
+#define TRMFLT(a)     ((fabs(a)<5.0e-4) ? 0.0 : (a))
+
 using namespace LASi;
 using namespace std;
 
@@ -189,6 +193,7 @@ ps_init(PLStream *pls)
     int i;
     char *a;
     PSDev *dev;
+    PostscriptDocument *doc; 
 
     PLFLT pxlx = YPSSIZE/LPAGE_X;
     PLFLT pxly = XPSSIZE/LPAGE_Y;
@@ -215,6 +220,9 @@ ps_init(PLStream *pls)
       delete (PostscriptDocument *) pls->psdoc;
 
     pls->psdoc = new PostscriptDocument();
+    doc = (PostscriptDocument *) (pls->psdoc);
+    doc->osBody() << fixed;
+    doc->osBody().precision(3);
 
 /* Allocate and initialize device-specific data */
 
@@ -951,10 +959,10 @@ proc_str (PLStream *pls, EscText *args)
 	doc->osBody() << " " << args->x << " " << args->y << " M\n";
 	
 	/* Save the current position and set the string rotation */
-	doc->osBody() << "gsave " << theta << " R\n";
+	doc->osBody() << "gsave " << TRMFLT(theta) << " R\n";
 
-	doc->osBody() << "[" << tt[0] << " " << tt[2] << " " << tt[1]
-		      << " " << tt[3] << " 0 0] concat\n";
+	doc->osBody() << "[" << TRMFLT(tt[0]) << " " << TRMFLT(tt[2]) << " " << TRMFLT(tt[1])
+		      << " " << TRMFLT(tt[3]) << " 0 0] concat\n";
 	
 	/* Purge escape sequences from string, to find it's 
 	 * length. The string length is computed with the current font, 
@@ -975,8 +983,8 @@ proc_str (PLStream *pls, EscText *args)
 	ymax = 0;
 
 	/* Move relative to position to account for justification */
-	doc->osBody() << " gsave " << xmin*tt[0] << " " <<
-	  xmin*tt[2] << " rmoveto\n";
+	doc->osBody() << " gsave " << TRMFLT(xmin*tt[0]) << " " <<
+	  TRMFLT(xmin*tt[2]) << " rmoveto\n";
 	
 	/* Parse string for PLplot escape sequences and print everything out */
 	
@@ -1056,7 +1064,7 @@ proc_str (PLStream *pls, EscText *args)
 	   /* if up/down escape sequences, save current point and adjust baseline;
 	    * take the shear into account */
 	   if(up!=0.) 
-	     doc->osBody() << "gsave " << up*tt[1] << " " << up*tt[3] << " rmoveto\n";
+	     doc->osBody() << "gsave " << TRMFLT(up*tt[1]) << " " << TRMFLT(up*tt[3]) << " rmoveto\n";
 	   
 	   /* print the string */
 	   doc->osBody() << show((const char *)str);
