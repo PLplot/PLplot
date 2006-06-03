@@ -334,59 +334,13 @@ no patch should be applied to cf/ltmain.sh as was required for older
 versions of PLplot on MinGW.
 
 ------------------------------------------------------------------------------
-Build Instructions for the MacOS X 10.3 (note we do not support older versions
-of Mac OS X)
+Build Instructions for MacOS X 10.3 & 10.4 (06-03-06 HPB)
 ------------------------------------------------------------------------------
 
-From: Koen van der Drift <kvddrift@earthlink.net>
-Subject: Re: [Plplot-devel] Positive test on the Mac
-Date: Tue, 20 Jan 2004 17:43:45 -0500
-To: "Alan W. Irwin" <irwin@beluga.phys.uvic.ca>
-Cc: PLplot development list <Plplot-devel@lists.sourceforge.net>
-
-
-On Jan 20, 2004, at 11:35 AM, Alan W. Irwin wrote:
-> Koen, could you also give some input on what belongs in the MacOS X
-> documentation?  A listing of all the environment variables you had
-> to set in order to specify header/library locations would be quite
-> useful.  It would be useful to list any other Mac OS X workarounds
-> you had to make as well.
-
-My instructions are based on the installation through fink, which is
-what I recommend :)
-
-Here are the settings I use for fink (where /sw is the prefix - if
-people don't want to use fink, they need to adjust the paths in
-configure to wherever the corresponding files are located):
-
-
-export CFLAGS=-Wno-long-double
-export FLIBS='-L/sw/lib -lfrtbegin -lSystem'
-
-./configure --mandir=/sw/share/man FREETYPELIBDIR=/usr/X11R6/lib
-FREETYPEINCDIR=/usr/X11R6/include/freetype2 TCLLIBDIR=/sw/lib
-TKLIBDIR=/sw/lib GDLIBDIR=/sw/lib
-JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Home
---with-pthreads --with-pkg-config
-
-make
-make install
-
-> Also, is Michel's use of F77="g77 -lcc_dynamic" really necessary or
-> can -lcc_dynamic be specified with FLIBS? I prefer the latter since
-> FLIBS will ultimately be used to transmit the correct linker flags
-> (presumably including -lcc_dynamic) when the AC_F77_LIBRARY_LDFLAGS
-> macro begins to work as documented for the MacOSX platform.
-
-There is no need on my system to use that flag.
-
-[ N.B.: some users reported that the --with-pthreads option cause problems
-  with interactive demos, like using the mouse with the xwin driver.
-  -- RL ]
-
-------------------------------------------------------------------------------
-Build Instructions for MacOS X 10.3 & 10.4 (02-12-06 HPB)
-------------------------------------------------------------------------------
+These instructions describe how to install PLplot by compiling it from source. 
+A recommended alternative is to use the fink package manager system to install
+the plplot package. See http://pdb.finkproject.org/pdb/package.php/plplot 
+for details.
 
 To install the CVS version of PLplot you will need :
 
@@ -445,9 +399,9 @@ Notes :
 Make check is only necessary if you want to compile the examples. It may 
 complain during the testing process, but it should build the examples.
 
-In OS-X 10.3 Dynamic drivers doesn't seem to be compatible with Objective C 
+In OS-X 10.3 Dynamic drivers don't seem to be compatible with Objective C 
 and by extension the AquaTerm driver, but can be used if you don't plan to 
-use this driver.
+use the AquaTerm driver.
 
 The extra LIBS flags at the make step are only necessary if you have OS-X 10.3 
 and are trying to use the AquaTerm driver, which uses the Foundation framework.
