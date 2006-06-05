@@ -10,8 +10,7 @@ Build-Depends: debhelper (>= 4.1.67), tcl8.4-dev, tk8.4-dev, itcl3-dev,
  libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev,
  libltdl3-dev, pkg-config, dpatch, atlas3-base-dev [!arm !m68k],
  refblas3-dev [arm m68k], lapack3-dev [arm m68k], python-gtk2-dev,
- libgcj6-dev | kaffe-dev | libsablevm1-dev, gcj | java-compiler,
- fastjar | kaffe, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
+ java-gcj-compat-dev, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
  python-gnome2-dev, pdl
 Build-Conflicts: libplplot5
 
