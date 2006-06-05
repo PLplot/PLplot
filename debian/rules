@@ -12,6 +12,7 @@
 #export DH_VERBOSE=1
 
 include /usr/share/octave/debian/defs.make
+include /usr/share/dpatch/dpatch.make
 
 version		:= $(shell perl debian/get-upstream-version.pl < configure.ac)
 libpkg          := libplplot9
@@ -24,10 +25,6 @@ debshr		:= $(debusr)/share
 debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
-
-javasetup	:= --with-java-home=/usr/lib/gcc/i486-linux-gnu/4.1.2
-
-include /usr/share/dpatch/dpatch.make
 
 autotools: autotools-stamp
 autotools-stamp:
@@ -44,8 +41,8 @@ config-stamp: autotools-stamp
                     --without-rpath --with-prebuiltdoc		\
                     --with-pthreads --with-ltdlsystem		\
                     --disable-linuxvga  --enable-psttf		\
-		    --enable-f95 --enable-psttfc $(javasetup)	\
-		    --enable-pdl
+		    --enable-f95 --enable-psttfc --enable-pdl	\
+		    --with-java-home=/usr/lib/jvm/java-gcj
 	touch config-stamp
 
 build: build-stamp

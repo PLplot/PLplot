@@ -4,8 +4,9 @@ plplot (5.6.1-2) unstable; urgency=low
     java-gcj-compat-dev, which will be default java environment for
     building packages soon (thanks to Michael Koch <konqueror@gmx.de>
     for the hint)
+  * debian/rules: Set JAVA_HOME to /usr/lib/jvm/java-gcj
 
- -- Rafael Laboissiere <rafael@debian.org>  Mon,  5 Jun 2006 19:07:48 +0200
+ --
 
 plplot (5.6.1-1) unstable; urgency=low
 
