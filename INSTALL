@@ -349,6 +349,8 @@ Now you can install the PLplot package using the command "fink install plplot".
 Note that PLplot depends on some big packages, such as octave and fortran, so 
 it may take a long time before all the packages are installed.
 
+For 10.3 users an older version of PLplot is available
+
 
 Installing PLplot by compiling it yourself from the source. 
 
