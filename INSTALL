@@ -334,13 +334,23 @@ no patch should be applied to cf/ltmain.sh as was required for older
 versions of PLplot on MinGW.
 
 ------------------------------------------------------------------------------
-Build Instructions for MacOS X 10.3 & 10.4 (06-03-06 HPB)
+Build Instructions for MacOS X 10.3 & 10.4 (06-05-06 HPB)
 ------------------------------------------------------------------------------
 
-These instructions describe how to install PLplot by compiling it from source. 
-A recommended alternative is to use the fink package manager system to install
-the plplot package. See http://pdb.finkproject.org/pdb/package.php/plplot 
-for details.
+Installing PLplot using fink on Mac OS X.
+
+The most recent version of PLplot is available for 10.4 users using 
+the fink package manager (http://fink.sourceforge.net). Fink will 
+take care of installing all the required packages, and setting the 
+appropriate environment variables. After installing the fink package, 
+make sure you enable the so-called 'unstable tree' 
+(see http://fink.sourceforge.net/faq/usage-fink.php#unstable for instructions).
+Now you can install the PLplot package using the command "fink install plplot". 
+Note that PLplot depends on some big packages, such as octave and fortran, so 
+it may take a long time before all the packages are installed.
+
+
+Installing PLplot by compiling it yourself from the source. 
 
 To install the CVS version of PLplot you will need :
 
@@ -353,6 +363,9 @@ In the top plplot directory issue the following commands (also see notes)
 cf/bootstrap.sh
 
 Then proceed as you would with a release.
+
+
+To install the current release of PLplot:
 
 Installing plplot 5.6.1:
 (OS-X 10.3)
