@@ -3,7 +3,7 @@ plplot (5.6.1-2) unstable; urgency=low
   * debian/control: Replaced all build-dependencies for java by
     java-gcj-compat-dev, which will be default java environment for
     building packages soon (thanks to Michael Koch <konqueror@gmx.de>
-    for the hint)
+    for the hint, closes: #370655)
   * debian/rules: Set JAVA_HOME to /usr/lib/jvm/java-gcj
 
  --
