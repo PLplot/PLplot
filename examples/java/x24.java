@@ -56,7 +56,7 @@ class x24 {
     int blue[]  = {240,   0,   0,   0,   0, 204, 125};
     
     double px[] = {0.0, 0.0, 1.0, 1.0};
-    double py[] = {0.0, 0.16667, 0.16667, 0.0};
+    double py[] = {0.0, 0.25, 0.25, 0.0};
     
     double sx[] = {
 	0.16374,
@@ -137,13 +137,13 @@ class x24 {
 	pls.schr (0, 4.0);
 	pls.font (1);
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < 4; i++) {
 
 	    pls.col0 (i + 1);
 	    pls.fill (px, py);
 
 	    for (j = 0; j < 4; j++)
-		py [j] += 1.0 / 6.0;
+		py [j] += 1.0 / 4.0;
 	    
 	}
 	

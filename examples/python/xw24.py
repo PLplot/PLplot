@@ -55,7 +55,7 @@ def main():
     blue =  Numeric.array([240,   0,   0,   0,   0, 204, 125])
 
     px = Numeric.array([0.0, 0.0, 1.0, 1.0])
-    py = Numeric.array([0.0, 0.16667, 0.16667, 0.0])
+    py = Numeric.array([0.0, 0.25, 0.25, 0.0])
     
     sx = Numeric.array([
         0.16374,
@@ -130,13 +130,13 @@ def main():
     plschr(0, 4.0)
     plfont(1)
 
-    for i in range(6):
+    for i in range(4):
 
         plcol0(i + 1)
         plfill(px, py)
 
         for j in range(4):
-            py[j] += 1.0 / 6.0
+            py[j] += 1.0 / 4.0
 
     plcol0(0)
 

@@ -48,7 +48,7 @@ static PLINT green[] = {240,   0, 125, 204, 204,  80,   0};
 static PLINT blue[]  = {240,   0,   0,   0,   0, 204, 125};
 
 static PLFLT px[] = {0.0, 0.0, 1.0, 1.0};
-static PLFLT py[] = {0.0, 0.16667, 0.16667, 0.0};
+static PLFLT py[] = {0.0, 0.25, 0.25, 0.0};
 
 static PLFLT sx[] = {
   0.16374,
@@ -131,13 +131,13 @@ main(int argc, char *argv[])
   plschr (0, 4.0);
   plfont (1);
 
-  for (i = 0; i < 6; i++) {
+  for (i = 0; i < 4; i++) {
 
     plcol0 (i + 1);
     plfill (4, px, py);
 
     for (j = 0; j < 4; j++)
-      py [j] += 1.0 / 6.0;
+      py [j] += 1.0 / 4.0;
 
   }
 
