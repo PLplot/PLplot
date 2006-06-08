@@ -940,7 +940,7 @@ static void fill_polygon (PLStream* pls)
   }
 }
 
-
+#ifdef HAVE_FREETYPE
 /*--------------------------------------------------------------------------*\
  * proc_str()
  *
@@ -1221,6 +1221,7 @@ void proc_str(PLStream *pls, EscText *args)
   gcw_debug("</proc_str>\n");
 #endif
 }
+#endif /*HAVE_FREETYPE */
 
 
 /*--------------------------------------------------------------------------*\
@@ -1260,9 +1261,11 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
     fill_polygon(pls);
     break;
 
+#ifdef HAVE_FREETYPE
   case PLESC_HAS_TEXT:
     proc_str(pls, ptr); /* Draw the text */
     break;
+#endif
 
   case PLESC_GRAPH:
     break;
