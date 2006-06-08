@@ -282,7 +282,7 @@ if test "$with_freetype" = "yes"; then
        freetype_font_dir="$with_freetype_font_dir"
     fi
     if test -z "$freetype_font_dir" ; then
-        AC_MSG_WARN(["freetype fonts not found - please check fonts.  Freetype font support is disabled.",])
+        AC_MSG_WARN(["freetype fonts not found - please check fonts.  Freetype font support is disabled."])
 	with_freetype=no
     else
         AC_MSG_RESULT([fonts found in $freetype_font_dir])
