@@ -118,6 +118,9 @@ fi
 PL_ARG_WITH(freetype-sans-font,
   [user-specified sans-serif, medium-weight, upright font that is accessible with freetype],
   [])
+PL_ARG_WITH(freetype-sans-bold-font,
+  [user-specified sans-serif, bold-weight, upright font that is accessible with freetype],
+  [])
 PL_ARG_WITH(freetype-sans-oblique-font,
   [user-specified sans-serif, medium-weight, oblique font that is accessible with freetype],
   [])
