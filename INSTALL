@@ -95,11 +95,12 @@ The driver requires the LASi, pango and pangoft2 libraries to work.
 The pango and pangoft2 libraries are widely distributed with most
 Linux distributions at least. The LASi library is not part of most
 distributions at this time. The source code can be downloaded from
-http://eyegene.ophthy.med.umich.edu/lasi/. The library is small and
-easy to build and install.
+http://www.unifont.org/lasi/. The library is small and
+easy to build and install. You must have at least version 1.0.5 of 
+LASi.
 
-This driver is disabled by default. To try it you will need to add
-the --enable-psttf --enable-psttfc options when running configure.
+This driver is enabled by default. You can change this using the 
+--enable-psttf option to configure.
 
 If you have installed libLASi in a non-standard location you will need 
 to set the PKG_CONFIG_PATH variable to point to the location of the 
