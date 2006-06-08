@@ -82,11 +82,11 @@ static int hrshsym = 0;
 #define N_Pango_Lookup 5
 
 const char * DefaultFamilyLookup[N_Pango_Lookup] = {
-  "Arial,FreeSans,Bitstream-Vera-Sans,sans",
-  "Times-Roman,FreeSerif,Bitstream-Vera-Serif,serif",
-  "Courier,FreeMono,monospace",
-  "Arial,FreeSans,Bitstream-Vera-Sans,sans,serif",
-  "Arial,FreeSans,Bitstream-Vera-Sans,sans,serif"
+  "Arial,Bitstream-Vera-Sans,sans",
+  "Times-Roman,Bitstream-Vera-Serif,serif",
+  "Courier,Bitstream-Vera-Sans-Mono,monospace",
+  "Arial,Bitstream-Vera-Sans,sans,serif",
+  "Arial,Bitstream-Vera-Sans,sans,serif"
 };
 
 const char * EnvFamilyLookup[N_Pango_Lookup] = {
