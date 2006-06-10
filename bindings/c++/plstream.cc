@@ -1237,16 +1237,20 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
 			bool *rev )
 {
-    PLBOOL * loc_rev = new PLBOOL[npts-1];
-    for (int i=0;i<npts-1;i++) {
-        loc_rev[i] = (PLBOOL) rev[i];
+    PLBOOL * loc_rev = NULL;
+    if (rev != NULL) {
+        loc_rev = new PLBOOL[npts-1];
+        for (int i=0;i<npts-1;i++) {
+            loc_rev[i] = (PLBOOL) rev[i];
+	}
     }
     
     set_stream();
 
     plscmap1l((PLBOOL) itype,npts,intensity,coord1,coord2,coord3,loc_rev);
 
-    delete loc_rev;
+    if (loc_rev != NULL)
+        delete loc_rev;
 }
 
 // Deprecated version using PLINT instead of bool
@@ -1254,16 +1258,20 @@ void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
 			PLINT *rev )
 {
-    PLBOOL * loc_rev = new PLBOOL[npts-1];
-    for (int i=0;i<npts-1;i++) {
-        loc_rev[i] = (PLBOOL) rev[i];
+    PLBOOL * loc_rev = NULL;
+    if (rev != NULL) {
+        loc_rev = new PLBOOL[npts-1];
+        for (int i=0;i<npts-1;i++) {
+            loc_rev[i] = (PLBOOL) rev[i];
+	}
     }
-
+    
     set_stream();
 
     plscmap1l((PLBOOL) itype,npts,intensity,coord1,coord2,coord3,loc_rev);
 
-    delete loc_rev;
+    if (loc_rev != NULL)
+        delete loc_rev;
 }
 
 /* Set a given color from color map 0 by 8 bit RGB value */
