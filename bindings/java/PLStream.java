@@ -201,6 +201,11 @@ public void env(double xmin, double xmax, double ymin, double ymax, int just, in
     plplotjavac.plenv(xmin, xmax, ymin, ymax, just, axis);
 }
 
+public void env0(double xmin, double xmax, double ymin, double ymax, int just, int axis) {
+    if (set_stream() == -1) return;
+    plplotjavac.plenv0(xmin, xmax, ymin, ymax, just, axis);
+}
+
 public void eop() {
     if (set_stream() == -1) return;
     plplotjavac.pleop();
@@ -311,6 +316,12 @@ public void gra() {
     plplotjavac.plgra();
 }
 
+public void griddata(double[] x, double[] y, double[] z, double[] xg, 
+		     double[] yg, double[][] zg, int type, double data) {
+    if (set_stream() == -1) return;
+    plplotjavac.plgriddata(x, y, z, xg, yg, zg, type, data);
+}
+
 public void gspa(double[] xmin, double[] xmax, double[] ymin, double[] ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plgspa(xmin, xmax, ymin, ymax);
@@ -396,6 +407,12 @@ public void line3(double[] x, double[] y, double[] z) {
 public void lsty(int lin) {
     if (set_stream() == -1) return;
     plplotjavac.pllsty(lin);
+}
+
+public void minMax2dGrid(double[][]f, double[] fmax, double[] fmin) {
+    if (set_stream() == -1) return;
+    plplotjavac.plMinMax2dGrid(f,fmax,fmin);
+    
 }
 
 public void mesh(double[] x, double[] y, double[][] z, int opt) {

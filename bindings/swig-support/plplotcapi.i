@@ -148,6 +148,14 @@ typedef void* PLPointer;
 #define PLESPLFLTBUFFERING_DISABLE    2
 #define PLESPLFLTBUFFERING_QUERY      3
 
+#define GRID_CSA    1 /* Bivariate Cubic Spline approximation */
+#define GRID_DTLI   2 /* Delaunay Triangulation Linear Interpolation */
+#define GRID_NNI    3 /* Natural Neighbors Interpolation */
+#define GRID_NNIDW  4 /* Nearest Neighbors Inverse Distance Weighted */
+#define GRID_NNLI   5 /* Nearest Neighbors Linear Interpolation */
+#define GRID_NNAIDW 6 /* Nearest Neighbors Around Inverse Distance Weighted  */
+
+
 #ifdef SWIG_PYTHON
 #define SWIG_OBJECT_DATA PYOBJECT_DATA
 #else
@@ -256,6 +264,11 @@ void
 plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis);
 
+DOC(plenv0, "Simple interface for defining viewport and window.")
+void
+plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLINT just, PLINT axis);
+
 DOC(pleop, "End current page.  Should only be used with plbop().")
 void
 pleop(void);
@@ -348,6 +361,13 @@ plgpage(PLFLT *OUTPUT, PLFLT *OUTPUT,
 DOC(plgra, "Switch to graphics screen.")
 void
 plgra(void);
+
+DOC(plgriddata, "Grid irregular sample data")
+void
+plgriddata(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
+           PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY,  PLINT ny,
+	   PLFLT **OutMatrixCk, PLINT type, PLFLT data);
+
 
 DOC(plgspa, "Get subpage boundaries in absolute coordinates.")
 void
@@ -1014,10 +1034,10 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 
 /* Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid(). */
 
-void
-plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
-
 #endif
+
+void
+plMinMax2dGrid(PLFLT **Matrix, PLINT nx, PLINT ny, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
 /* Wait for graphics input event and translate to world coordinates */
 
