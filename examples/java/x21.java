@@ -332,7 +332,7 @@ class x21 {
 	s[1] = 0.8;
 
 	pls.scmap1n(256);
-	pls.scmap1l(false, i, h, l, s, null);
+	pls.scmap1l(false, i, h, l, s);
     }
 
     void create_grid(double xx[], double yy[]) {

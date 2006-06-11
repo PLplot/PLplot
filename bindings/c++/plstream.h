@@ -533,6 +533,9 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
     void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
 		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, bool *rev );
 
+    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
+		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
+
 /* Set a given color from color map 0 by 8 bit RGB value */
 
     void scol0( PLINT icol0, PLINT r, PLINT g, PLINT b );

@@ -534,6 +534,12 @@ public void scmap1l(boolean itype, double[] intensity, double[] coord1,
     plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, rev);
 }
 
+public void scmap1l(boolean itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, null);
+}
+
 public void scmap1n(int ncol1) {
     if (set_stream() == -1) return;
     plplotjavac.plscmap1n(ncol1);
@@ -844,9 +850,12 @@ public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {
 public void scmap1l(int itype, double[] intensity, double[] coord1, 
 		double[] coord2, double[] coord3, int[] rev) {
     if (set_stream() == -1) return;
-    boolean [] loc_rev = new boolean[rev.length];
-    for (int i=0;i<rev.length;i++) {
-	loc_rev[i] = (rev[i]!=0);
+    boolean [] loc_rev = null;
+    if (rev != null) {
+        loc_rev = new boolean[rev.length];
+        for (int i=0;i<rev.length;i++) {
+	    loc_rev[i] = (rev[i]!=0);
+        }
     }
     plplotjavac.plscmap1l(itype != 0, intensity, coord1, coord2, coord3, loc_rev);
 }

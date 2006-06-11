@@ -1253,6 +1253,15 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
         delete loc_rev;
 }
 
+void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
+			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
+{
+    set_stream();
+
+    plscmap1l((PLBOOL) itype,npts,intensity,coord1,coord2,coord3,NULL);
+
+}
+
 // Deprecated version using PLINT instead of bool
 void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
