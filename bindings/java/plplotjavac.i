@@ -1255,6 +1255,40 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    free($2);
 }
 
+%typemap(jni) (char *legline[4]) "jobjectArray"
+%typemap(jtype) (char *legline[4]) "String[]"
+%typemap(jstype) (char *legline[4]) "String[]"
+%typemap(javain) (char *legline[4]) "$javainput"
+%typemap(javaout) (char *legline[4]) {
+   return $jnicall;
+}
+%typemap(in) (char *legline[4])  {
+   int i = 0;
+   int size = (*jenv)->GetArrayLength(jenv, $input);
+   if (size != 4) {
+       printf("legline must be an array of length 4\n");
+       return;
+   }
+   $1 = (char **) malloc(4*sizeof(char *));
+   /* make a copy of each string */
+   for (i = 0; i<4; i++) {
+      jstring j_string = (jstring)(*jenv)->GetObjectArrayElement(jenv, $input, i);
+      const char * c_string = (char *) (*jenv)->GetStringUTFChars(jenv, j_string, 0);
+      $1[i] = malloc((strlen(c_string)+1)*sizeof(const char *));
+      strcpy($1[i], c_string);
+      (*jenv)->ReleaseStringUTFChars(jenv, j_string, c_string);
+      (*jenv)->DeleteLocalRef(jenv, j_string);
+   }
+}
+
+/* This cleans up the memory we malloc'd before the function call */
+%typemap(freearg) (char *legline[4]) {
+   int i;
+   for (i=0; i<4; i++)
+     free($1[i]);
+   free($1);
+}
+
 #if 0
 %typemap(in) PLGraphicsIn *gin (PLGraphicsIn tmp) {
   if(!PySequence_Check($input) || PySequence_Size($input) != 2) {

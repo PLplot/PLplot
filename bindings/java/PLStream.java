@@ -705,7 +705,7 @@ public void stripc(int[] id, String xspec, String yspec,
 		double xmin, double xmax, double xjump, 
 		double ymin, double ymax, double xlpos, double ylpos, 
 		boolean y_ascl, boolean acc, int colbox, int collab, 
-		int[] colline, int[] styline, SWIGTYPE_p_p_char legline, 
+		int[] colline, int[] styline, String[] legline, 
 		String labx, String laby, String labtop) {
     if (set_stream() == -1) return;
     plplotjavac.plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, 
@@ -899,7 +899,7 @@ public void stripc(int[] id, String xspec, String yspec,
 		double xmin, double xmax, double xjump, 
 		double ymin, double ymax, double xlpos, double ylpos, 
 		int y_ascl, int acc, int colbox, int collab, 
-		int[] colline, int[] styline, SWIGTYPE_p_p_char legline, 
+		int[] colline, int[] styline, String[] legline, 
 		String labx, String laby, String labtop) {
     if (set_stream() == -1) return;
     plplotjavac.plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, 
