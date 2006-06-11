@@ -226,6 +226,7 @@
 #define    PLSCMAP0N	FNAME(PLSCMAP0N,plscmap0n)
 #define    PLSCMAP1	FNAME(PLSCMAP1F77,plscmap1f77)
 #define    PLSCMAP1L	FNAME(PLSCMAP1LF77,plscmap1lf77)
+#define    PLSCMAP1LA	FNAME(PLSCMAP1LAF77,plscmap1laf77)
 #define    PLSCMAP1N	FNAME(PLSCMAP1N,plscmap1n)
 #define    PLSCOL0	FNAME(PLSCOL0,plscol0)
 #define    PLSCOLBG	FNAME(PLSCOLBG,plscolbg)

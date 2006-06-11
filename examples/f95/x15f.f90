@@ -72,7 +72,6 @@
       use plplot
       implicit none
       real(kind=plflt)   i(4), h(4), l(4), s(4)
-      logical rev(4)
 
       i(1) = 0.0_plflt    ! left boundary
       i(2) = 0.45_plflt   ! just before center
@@ -101,12 +100,7 @@
       s(3) = 1.0_plflt    ! maximum saturation
       s(4) = 1.0_plflt    ! maximum saturation
 
-      rev(1) = .false.
-      rev(2) = .false.
-      rev(3) = .false.
-      rev(4) = .false.
-
-      call plscmap1l(.false., i, h, l, s, rev)
+      call plscmap1l(.false., i, h, l, s)
       end
 
 ! -------------------------------------------------------------------------
@@ -119,7 +113,6 @@
       use plplot
       implicit none
       real(kind=plflt) i(4), h(4), l(4), s(4)
-      logical rev(4)
 
       i(1) = 0.0_plflt    ! left boundary
       i(2) = 0.45_plflt   ! just before center
@@ -148,12 +141,7 @@
       s(3) = 0.5_plflt    ! maximum saturation
       s(4) = 1.0_plflt    ! maximum saturation
 
-      rev(1) = .false.
-      rev(2) = .false.
-      rev(3) = .false.
-      rev(4) = .false.
-
-      call plscmap1l(.false., i, h, l, s, rev)
+      call plscmap1l(.false., i, h, l, s)
       end
 
 ! -------------------------------------------------------------------------

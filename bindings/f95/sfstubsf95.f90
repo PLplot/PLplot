@@ -540,6 +540,7 @@
 
       interface plscmap1l
          module procedure plscmap1l
+         module procedure plscmap1la
       end interface
 
       interface
@@ -1023,6 +1024,16 @@
          enddo
          call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, irev )
       end subroutine plscmap1l
+      
+      subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3)
+            logical                        :: rgbtype
+            real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
+
+            integer                        :: type
+
+         type = convert_to_int( rgbtype )
+         call plscmap1laf77( type, size(intensity), intensity, coord1, coord2, coord3)
+      end subroutine plscmap1la
 
       subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump, &
         ymin, ymax, xlpos, ylpos, y_ascl, acc, &

@@ -562,6 +562,13 @@ PLSCMAP1L(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 }
 
 void
+PLSCMAP1LA(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
+{
+    c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, NULL);
+}
+
+void
 PLSCMAP1N(PLINT *n)
 {
     c_plscmap1n(*n);

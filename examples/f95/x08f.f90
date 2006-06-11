@@ -151,7 +151,6 @@
       implicit none
       integer gray
       real(kind=plflt) i(0:1), h(0:1), l(0:1), s(0:1)
-      logical rev(0:1)
 !      left boundary
       i(0) = 0._plflt
 !      right boundary
@@ -187,10 +186,8 @@
 !        minimum saturation
         s(1) = 0.8_plflt
       endif
-      rev(0) = .false.
-      rev(1) = .false.
       call plscmap1n(256)
-      call plscmap1l(.false., i, h, l, s, rev)
+      call plscmap1l(.false., i, h, l, s)
       end
 
 !----------------------------------------------------------------------------
