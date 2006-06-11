@@ -353,6 +353,7 @@ Naming rules:
 /* This case is used both for PLBOOL and PLINT.  Define PLBOOL version
  * first.  (AWI thinks this may be necessary because of the above
  * typedef PLINT PLBOOL;)
+ * Also add version which must be one shorter than others or null.
  */
 %typemap(in) PLBOOL *ArrayCkMinus1 {
    jboolean *jydata = (*jenv)->GetBooleanArrayElements( jenv, $input, 0 );
@@ -374,6 +375,32 @@ Naming rules:
    return $jnicall;
 }
 
+%typemap(in) PLBOOL *ArrayCkMinus1Null {
+   if ($input != NULL) {
+   jboolean *jydata = (*jenv)->GetBooleanArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
+      printf("Vector must be at least length of others minus 1.\n");
+      return;
+   }
+   setup_array_1d_b( &$1, jydata, Alen);
+   (*jenv)->ReleaseBooleanArrayElements( jenv, $input, jydata, 0 );
+   }
+   else {
+       $1 = NULL;
+   }
+}
+%typemap(freearg) PLBOOL *ArrayCkMinus1Null {
+   if ($1 != NULL) 
+       free($1);
+}
+%typemap(jni) PLBOOL *ArrayCkMinus1Null "jbooleanArray"
+%typemap(jtype) PLBOOL *ArrayCkMinus1Null "boolean[]"
+%typemap(jstype) PLBOOL *ArrayCkMinus1Null "boolean[]"
+%typemap(javain) PLBOOL *ArrayCkMinus1Null "$javainput"
+%typemap(javaout) PLBOOL *ArrayCkMinus1Null {
+   return $jnicall;
+}
+
 %typemap(in) PLINT *ArrayCkMinus1 {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
@@ -391,6 +418,32 @@ Naming rules:
 %typemap(jstype) PLINT *ArrayCkMinus1 "int[]"
 %typemap(javain) PLINT *ArrayCkMinus1 "$javainput"
 %typemap(javaout) PLINT *ArrayCkMinus1 {
+   return $jnicall;
+}
+
+%typemap(in) PLINT *ArrayCkMinus1Null {
+   if ($input != NULL) {
+   jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
+      printf("Vector must be at least length of others minus 1.\n");
+      return;
+   }
+   setup_array_1d_i( &$1, jydata, Alen);
+   (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
+   }
+   else {
+     $1 = NULL;
+   }
+}
+%typemap(freearg) PLINT *ArrayCkMinus1Null {
+   if ($1 != NULL)
+       free($1);
+}
+%typemap(jni) PLINT *ArrayCkMinus1Null "jintArray"
+%typemap(jtype) PLINT *ArrayCkMinus1Null "int[]"
+%typemap(jstype) PLINT *ArrayCkMinus1Null "int[]"
+%typemap(javain) PLINT *ArrayCkMinus1Null "$javainput"
+%typemap(javaout) PLINT *ArrayCkMinus1Null {
    return $jnicall;
 }
 

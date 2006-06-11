@@ -318,7 +318,6 @@ class x21 {
 	double h[] = new double[2];
 	double l[] = new double[2];
 	double s[] = new double[2];
-	boolean r[] = new boolean[2];
 
 	i[0] = 0.0;           /* left boundary */
 	i[1] = 1.0;           /* right boundary */
@@ -332,11 +331,8 @@ class x21 {
 	s[0] = 0.8;
 	s[1] = 0.8;
 
-	r[0] = false;
-	r[1] = false;
-
 	pls.scmap1n(256);
-	pls.scmap1l(false, i, h, l, s, r);
+	pls.scmap1l(false, i, h, l, s, null);
     }
 
     void create_grid(double xx[], double yy[]) {

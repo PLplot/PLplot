@@ -549,7 +549,7 @@ DOC(plscmap1l, "Set color map 1 colors using a piece-wise linear relationship be
 void
 plscmap1l(PLBOOL itype, PLINT n, PLFLT *Array,
 	    PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
-	    PLBOOL *ArrayCkMinus1);
+	    PLBOOL *ArrayCkMinus1Null);
 
 DOC(plscmap1n, "Set number of colors in cmap 1.")
 void

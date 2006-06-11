@@ -151,6 +151,17 @@ Naming rules:
 }
 %typemap(freearg) PLINT *ArrayCkMinus1 { Py_DECREF(tmp$argnum);}
 
+%typemap(in) PLINT *ArrayCkMinus1Null (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] < Alen-1) {
+    PyErr_SetString(PyExc_ValueError, "Vector must be at least length of others minus 1.");
+    return NULL;
+  }
+  $1 = (PLINT*)tmp->data;
+}
+%typemap(freearg) PLINT *ArrayCkMinus1 { Py_DECREF(tmp$argnum);}
+
 /* No length but remember size to check others */
 %typemap(in) PLINT *Array (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
