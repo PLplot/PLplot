@@ -174,9 +174,9 @@ public void cont(double[][] f, int kx, int lx, int ky, int ly,
     plplotjavac.plcont(f, kx, lx, ky, ly, clevel, pltr, OBJECT_DATA);
 }
 
-public void cpstrm(int iplsr, boolean flags) {
+public void cpstrm(PLStream pls, boolean flags) {
     if (set_stream() == -1) return;
-    plplotjavac.plcpstrm(iplsr, flags);
+    plplotjavac.plcpstrm(pls.stream_id, flags);
 }
 
 // The end / end1 functions have extra code in to keep track of the
@@ -291,6 +291,11 @@ public void gdiplt(double[] xmin, double[] xmax, double[] ymin, double[] ymax) {
     plplotjavac.plgdiplt(xmin, xmax, ymin, ymax);
 }
 
+public int getCursor(PLGraphicsIn gin) {
+    if (set_stream() == -1) return 0;
+    return plplotjavac.plGetCursor(gin);
+}
+
 public void gfam(int[] fam, int[] num, int[]  bmax) {
     if (set_stream() == -1) return;
     plplotjavac.plgfam(fam, num, bmax);
@@ -372,6 +377,11 @@ public void hist(double[] data, double datmin, double datmax, int nbin, int oldw
 public void hls(double h, double l, double s) {
     if (set_stream() == -1) return;
     plplotjavac.plhls(h, l, s);
+}
+
+public void image(double[][] data, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double Dxmin, double Dxmax, double Dymin, double Dymax) {
+    if (set_stream() == -1) return;
+    plplotjavac.plimage(data, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax);
 }
 
 public void init() {

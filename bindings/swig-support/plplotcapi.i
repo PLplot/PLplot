@@ -134,6 +134,19 @@ typedef void* PLPointer;
 
 #define PL_MAXKEY 16
 
+typedef struct {
+    int type;                   /* of event (CURRENTLY UNUSED) */
+    unsigned int state;         /* key or button mask */
+    unsigned int keysym;        /* key selected */
+    unsigned int button;        /* mouse button selected */
+    PLINT subwindow;            /* subwindow (alias subpage, alias subplot) number */
+    char string[PL_MAXKEY];     /* translated string */
+    int pX, pY;                 /* absolute device coordinates of pointer */
+    PLFLT dX, dY;               /* relative device coordinates of pointer */
+    PLFLT wX, wY;               /* world coordinates of pointer */
+} PLGraphicsIn;
+
+
 /* Structure for describing the plot window */
 
 #define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
@@ -854,6 +867,7 @@ pldid2pc(PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT);
 
 void
 pldip2dc(PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT);
+#endif
 
 /* plots a 2d image (or a matrix too large for plshade() ). */
 
@@ -862,6 +876,7 @@ plimage( PLFLT **Matrix, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
+#ifdef 0
 /* Returns a list of file-oriented device names and their menu strings */
 void
 plgFileDevs(char ***p_menustr, char ***p_devname, PLINT *p_ndev);
@@ -1041,13 +1056,11 @@ plMinMax2dGrid(PLFLT **Matrix, PLINT nx, PLINT ny, PLFLT *OUTPUT, PLFLT *OUTPUT)
 
 /* Wait for graphics input event and translate to world coordinates */
 
-#ifndef SWIG_JAVA
 DOC(plGetCursor, "Wait for graphics input event and translate to world coordinates")
 PLINT
 plGetCursor(PLGraphicsIn *gin);
 
 /* Translates relative device coordinates to world coordinates.  */
-#endif
 
 #if 0
 /* Use plcalc_world instead of plTranslateCursor. */

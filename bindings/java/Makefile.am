@@ -29,7 +29,8 @@ SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_JAVA_DIR) -DPL_DOUBLE -DSWIG_J
 swigjavafiles = \
 	plplotjavacJNI.java \
 	SWIGTYPE_p_p_char.java \
-	plplotjavac.java 
+	PLGraphicsIn.java \
+	plplotjavac.java
 
 # This required for swig-1.3.21, but not for swig-1.3.17
 swigjavafiles += plplotjavacConstants.java
@@ -49,6 +50,7 @@ javaclasses = \
 	config.class \
 	plplotjavacJNI.class \
 	SWIGTYPE_p_p_char.class\
+	PLGraphicsIn.class \
 	plplotjavacConstants.class \
 	plplotjavac.class \
 	PLStream.class

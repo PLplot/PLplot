@@ -39,6 +39,7 @@ javafiles = \
 	$(top_srcdir)/examples/java/x17.java \
 	$(top_srcdir)/examples/java/x18.java \
 	$(top_srcdir)/examples/java/x19.java \
+	$(top_srcdir)/examples/java/x20.java \
 	$(top_srcdir)/examples/java/x21.java \
 	$(top_srcdir)/examples/java/x22.java \
 	$(top_srcdir)/examples/java/x23.java \
@@ -72,6 +73,7 @@ example_classes = \
 	x17.class \
 	x18.class \
 	x19.class \
+	x20.class \
 	x21.class \
 	x22.class \
 	x23.class \
