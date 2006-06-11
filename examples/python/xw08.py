@@ -51,14 +51,10 @@ def restore_cmap1():
     l = array((0.5, midpt, vertex, vertex, midpt, 0.5))
     # Saturation is complete for default
     s = array((1., 1., 1., 1., 1., 1.))
-    # Integer flag array is zero (no interpolation along far-side of colour
-    # figure.)
-    # Drop array, see plplot-devel discussion on 2004-10-27
-    rev = array((0, 0, 0, 0, 0, 0))
     # Default number of cmap1 colours
     plscmap1n(128)
     # Interpolate between control points to set up default cmap1.
-    plscmap1l(0, i, h, l, s, rev)
+    plscmap1l(0, i, h, l, s)
 
 # Routine for defining a specific color map 1 in HLS space.
 # if gray is true, use basic grayscale variation from half-dark to light.
@@ -80,14 +76,10 @@ def cmap1_init(gray):
 	l = array((0.6, 0.6))
 	s = array((0.8, 0.8))
 
-    # Integer flag array is zero (no interpolation along far-side of colour
-    # figure.)
-    # Drop array, see plplot-devel discussion on 2004-10-27
-    rev = array((0, 0))
     # number of cmap1 colours is 256 in this case.
     plscmap1n(256)
     # Interpolate between control points to set up cmap1.
-    plscmap1l(0, i, h, l, s, rev)
+    plscmap1l(0, i, h, l, s)
 # main
 #
 # Does a series of 3-d plots for a given data set, with different
