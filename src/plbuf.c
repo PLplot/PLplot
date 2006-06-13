@@ -33,7 +33,9 @@
 /* Function prototypes */
 
 static int	rd_command	(PLStream *pls, U_CHAR *p_c);
-static int	wr_command	(PLStream *pls, U_CHAR c);
+static void	rd_data		(PLStream *pls, void *buf, size_t buf_size);
+static void	wr_command	(PLStream *pls, U_CHAR c);
+static void	wr_data		(PLStream *pls, void *buf, size_t buf_size);
 static void	plbuf_control	(PLStream *pls, U_CHAR c);
 
 static void	rdbuf_init	(PLStream *pls);
@@ -63,8 +65,13 @@ plbuf_init(PLStream *pls)
     dbug_enter("plbuf_init");
 
     pls->plbuf_read = FALSE;
+#ifdef BUFFERED_FILE
     if (pls->plbufFile != NULL)
-	pls->plbuf_write = FALSE;
+        pls->plbuf_write = FALSE;
+#else
+    if (pls->plbuf_buffer != NULL)
+        pls->plbuf_write = FALSE;
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -87,8 +94,8 @@ plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     ypl[0] = y1a;
     ypl[1] = y2a;
 
-    fwrite(xpl, sizeof(short), 2, pls->plbufFile);
-    fwrite(ypl, sizeof(short), 2, pls->plbufFile);
+    wr_data(pls, xpl, sizeof(short) * 2);
+    wr_data(pls, ypl, sizeof(short) * 2);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -103,10 +110,12 @@ plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
     dbug_enter("plbuf_polyline");
 
     wr_command(pls, (U_CHAR) POLYLINE);
-    fwrite(&npts, sizeof(PLINT), 1, pls->plbufFile);
 
-    fwrite(xa, sizeof(short), npts, pls->plbufFile);
-    fwrite(ya, sizeof(short), npts, pls->plbufFile);
+    wr_data(pls, &npts, sizeof(PLINT));
+
+    wr_data(pls, xa, sizeof(short) * npts);
+    wr_data(pls, ya, sizeof(short) * npts);
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -139,9 +148,27 @@ plbuf_bop(PLStream *pls)
 
     plbuf_tidy(pls);
 
+#ifdef BUFFERED_FILE
     pls->plbufFile = tmpfile();
     if (pls->plbufFile == NULL)
-	plexit("plbuf_init: Error opening plot data storage file.");
+	plexit("plbuf_bop: Error opening plot data storage file.");
+#else
+// Need a better place to initialize this value
+    pls->plbuf_buffer_grow = 128 * 1024;
+
+    if (pls->plbuf_buffer == NULL) {
+    // We have not allocated a buffer, so do it now
+        if ((pls->plbuf_buffer = malloc(pls->plbuf_buffer_grow)) == NULL)
+            plexit("plbuf_bop: Error allocating plot buffer.");
+
+        pls->plbuf_buffer_size = pls->plbuf_buffer_grow;
+        pls->plbuf_top = 0;
+        pls->plbuf_readpos = 0;
+    } else {
+    // Buffer is allocated, move the top to the beginning
+        pls->plbuf_top = 0;
+    }
+#endif
 
     wr_command(pls, (U_CHAR) BOP);
     plbuf_state(pls, PLSTATE_COLOR0);
@@ -159,11 +186,13 @@ plbuf_tidy(PLStream *pls)
 {
     dbug_enter("plbuf_tidy");
 
+#ifdef BUFFERED_FILE
     if (pls->plbufFile == NULL)
 	return;
 
-    fclose(pls->plbufFile);
+    fclose(pls->plbufFile)
     pls->plbufFile = NULL;
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -182,41 +211,26 @@ plbuf_state(PLStream *pls, PLINT op)
 
     switch (op) {
 
-    case PLSTATE_WIDTH: {
-	U_CHAR width = pls->width;
+    case PLSTATE_WIDTH: 
+		wr_data(pls, &(pls->width), sizeof(pls->width));
+		break;
 
-	fwrite(&width, sizeof(U_CHAR), 1, pls->plbufFile);
-	break;
-    }
-
-    case PLSTATE_COLOR0: {
-	short icol0 = pls->icol0;
-	U_CHAR r = pls->curcolor.r;
-	U_CHAR g = pls->curcolor.g;
-	U_CHAR b = pls->curcolor.b;
-
-	fwrite(&icol0, sizeof(short), 1, pls->plbufFile);
-	if (icol0 == PL_RGB_COLOR) {
-	    fwrite(&r, sizeof(U_CHAR), 1, pls->plbufFile);
-	    fwrite(&g, sizeof(U_CHAR), 1, pls->plbufFile);
-	    fwrite(&b, sizeof(U_CHAR), 1, pls->plbufFile);
-	}
-	break;
-    }
-
-    case PLSTATE_COLOR1: {
-	short icol1 = pls->icol1;
-
-	fwrite(&icol1, sizeof(short), 1, pls->plbufFile);
-	break;
-    }
-
-    case PLSTATE_FILL:{
-	signed char patt = pls->patt;
-
-	fwrite(&patt, sizeof(signed char), 1, pls->plbufFile);
-	break;
-    }
+    case PLSTATE_COLOR0:
+		wr_data(pls, &(pls->icol0), sizeof(pls->icol0));
+		if (pls->icol0 == PL_RGB_COLOR) {
+			wr_data(pls, &(pls->curcolor.r), sizeof(pls->curcolor.r));
+			wr_data(pls, &(pls->curcolor.g), sizeof(pls->curcolor.g));
+			wr_data(pls, &(pls->curcolor.b), sizeof(pls->curcolor.b));
+		}
+		break;
+    
+    case PLSTATE_COLOR1:
+		wr_data(pls, &(pls->icol1), sizeof(pls->icol1));
+		break;
+    
+    case PLSTATE_FILL:
+		wr_data(pls, &(pls->patt), sizeof(pls->patt));
+		break;
     }
 }
 
@@ -235,20 +249,20 @@ plbuf_image(PLStream *pls, IMG_DT *img_dt)
 
     dbug_enter("plbuf_image");
 
-    fwrite(&pls->dev_nptsX, sizeof(PLINT), 1, pls->plbufFile);
-    fwrite(&pls->dev_nptsY, sizeof(PLINT), 1, pls->plbufFile);
+    wr_data(pls, &pls->dev_nptsX, sizeof(PLINT));
+    wr_data(pls, &pls->dev_nptsY, sizeof(PLINT));
 
-    fwrite(&img_dt->xmin, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&img_dt->ymin, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&img_dt->dx, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&img_dt->dy, sizeof(PLFLT), 1, pls->plbufFile);
+    wr_data(pls, &img_dt->xmin, sizeof(PLFLT));
+    wr_data(pls, &img_dt->ymin, sizeof(PLFLT));
+    wr_data(pls, &img_dt->dx, sizeof(PLFLT));
+    wr_data(pls, &img_dt->dy, sizeof(PLFLT));
 
-    fwrite(&pls->dev_zmin, sizeof(short), 1, pls->plbufFile);
-    fwrite(&pls->dev_zmax, sizeof(short), 1, pls->plbufFile);
+    wr_data(pls, &pls->dev_zmin, sizeof(short));
+    wr_data(pls, &pls->dev_zmax, sizeof(short));
 
-    fwrite(pls->dev_ix, sizeof(short), npts, pls->plbufFile);
-    fwrite(pls->dev_iy, sizeof(short), npts, pls->plbufFile);
-    fwrite(pls->dev_z, sizeof(unsigned short), (pls->dev_nptsX-1)*(pls->dev_nptsY-1), pls->plbufFile);
+    wr_data(pls, pls->dev_ix, sizeof(short) * npts);
+    wr_data(pls, pls->dev_iy, sizeof(short) * npts);
+    wr_data(pls, pls->dev_z, sizeof(unsigned short) * (pls->dev_nptsX-1)*(pls->dev_nptsY-1));
 }
 
 /*--------------------------------------------------------------------------*\
@@ -260,7 +274,6 @@ plbuf_image(PLStream *pls, IMG_DT *img_dt)
 static void
 plbuf_text(PLStream *pls, EscText *text)
 {
-  PLINT n;
   PLUNICODE fci;
 
   dbug_enter("plbuf_text");
@@ -270,27 +283,26 @@ plbuf_text(PLStream *pls, EscText *text)
 
   /* Write the text information */
 
-  fwrite(&fci, sizeof(PLUNICODE), 1, pls->plbufFile);
+  wr_data(pls, &fci, sizeof(PLUNICODE));
 
-  fwrite(&pls->chrht, sizeof(PLFLT), 1, pls->plbufFile);
-  fwrite(&pls->diorot, sizeof(PLFLT), 1, pls->plbufFile);
-  fwrite(&pls->clpxmi, sizeof(PLFLT), 1, pls->plbufFile);
-  fwrite(&pls->clpxma, sizeof(PLFLT), 1, pls->plbufFile);
-  fwrite(&pls->clpymi, sizeof(PLFLT), 1, pls->plbufFile);
-  fwrite(&pls->clpyma, sizeof(PLFLT), 1, pls->plbufFile);
+  wr_data(pls, &pls->chrht, sizeof(PLFLT));
+  wr_data(pls, &pls->diorot, sizeof(PLFLT));
+  wr_data(pls, &pls->clpxmi, sizeof(PLFLT));
+  wr_data(pls, &pls->clpxma, sizeof(PLFLT));
+  wr_data(pls, &pls->clpymi, sizeof(PLFLT));
+  wr_data(pls, &pls->clpyma, sizeof(PLFLT));
     
-  fwrite(&text->base, sizeof(PLINT), 1, pls->plbufFile);
-  fwrite(&text->just, sizeof(PLFLT), 1, pls->plbufFile);
-  fwrite(text->xform, sizeof(PLFLT), 4, pls->plbufFile);
-  fwrite(&text->x, sizeof(PLINT), 1, pls->plbufFile);
-  fwrite(&text->y, sizeof(PLINT), 1, pls->plbufFile);
-  fwrite(&text->refx, sizeof(PLINT), 1, pls->plbufFile);
-  fwrite(&text->refy, sizeof(PLINT), 1, pls->plbufFile);
+  wr_data(pls, &text->base, sizeof(PLINT));
+  wr_data(pls, &text->just, sizeof(PLFLT));
+  wr_data(pls, text->xform, sizeof(PLFLT) * 4);
+  wr_data(pls, &text->x, sizeof(PLINT));
+  wr_data(pls, &text->y, sizeof(PLINT));
+  wr_data(pls, &text->refx, sizeof(PLINT));
+  wr_data(pls, &text->refy, sizeof(PLINT));
 
-  fwrite(&text->unicode_array_len, sizeof(PLINT), 1, pls->plbufFile);
+  wr_data(pls, &text->unicode_array_len, sizeof(PLINT));
   if(text->unicode_array_len)
-    fwrite(text->unicode_array, sizeof(PLUNICODE), 
-	   text->unicode_array_len, pls->plbufFile);
+    wr_data(pls, text->unicode_array, sizeof(PLUNICODE) * text->unicode_array_len);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -343,9 +355,9 @@ plbuf_fill(PLStream *pls)
 {
     dbug_enter("plbuf_fill");
 
-    fwrite(&pls->dev_npts, sizeof(PLINT), 1, pls->plbufFile);
-    fwrite(pls->dev_x, sizeof(short), pls->dev_npts, pls->plbufFile);
-    fwrite(pls->dev_y, sizeof(short), pls->dev_npts, pls->plbufFile);
+    wr_data(pls, &pls->dev_npts, sizeof(PLINT));
+    wr_data(pls, pls->dev_x, sizeof(short) * pls->dev_npts);
+    wr_data(pls, pls->dev_y, sizeof(short) * pls->dev_npts);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -357,15 +369,15 @@ plbuf_fill(PLStream *pls)
 static void
 plbuf_swin(PLStream *pls, PLWindow *plwin)
 {
-    fwrite(&plwin->dxmi, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&plwin->dxma, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&plwin->dymi, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&plwin->dyma, sizeof(PLFLT), 1, pls->plbufFile);
+    wr_data(pls, &plwin->dxmi, sizeof(PLFLT));
+    wr_data(pls, &plwin->dxma, sizeof(PLFLT));
+    wr_data(pls, &plwin->dymi, sizeof(PLFLT));
+    wr_data(pls, &plwin->dyma, sizeof(PLFLT));
 
-    fwrite(&plwin->wxmi, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&plwin->wxma, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&plwin->wymi, sizeof(PLFLT), 1, pls->plbufFile);
-    fwrite(&plwin->wyma, sizeof(PLFLT), 1, pls->plbufFile);
+    wr_data(pls, &plwin->wxmi, sizeof(PLFLT));
+    wr_data(pls, &plwin->wxma, sizeof(PLFLT));
+    wr_data(pls, &plwin->wymi, sizeof(PLFLT));
+    wr_data(pls, &plwin->wyma, sizeof(PLFLT));
 }
 
 /*--------------------------------------------------------------------------*\
@@ -398,8 +410,8 @@ rdbuf_line(PLStream *pls)
 
     dbug_enter("rdbuf_line");
 
-    fread(xpl, sizeof(short), npts, pls->plbufFile);
-    fread(ypl, sizeof(short), npts, pls->plbufFile);
+    rd_data(pls, xpl, sizeof(short) * npts);
+    rd_data(pls, ypl, sizeof(short) * npts);
 
     plP_line(xpl, ypl);
 }
@@ -418,9 +430,9 @@ rdbuf_polyline(PLStream *pls)
 
     dbug_enter("rdbuf_polyline");
 
-    fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
-    fread(xpl, sizeof(short), npts, pls->plbufFile);
-    fread(ypl, sizeof(short), npts, pls->plbufFile);
+    rd_data(pls, &npts, sizeof(PLINT));
+    rd_data(pls, xpl, sizeof(short) * npts);
+    rd_data(pls, ypl, sizeof(short) * npts);
 
     plP_polyline(xpl, ypl, npts);
 }
@@ -464,14 +476,14 @@ rdbuf_state(PLStream *pls)
 
     dbug_enter("rdbuf_state");
 
-    fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
+    rd_data(pls, &op, sizeof(U_CHAR));
 
     switch (op) {
 
     case PLSTATE_WIDTH:{
 	U_CHAR width;
 
-	fread(&width, sizeof(U_CHAR), 1, pls->plbufFile);
+	rd_data(pls, &width, sizeof(U_CHAR));
 	pls->width = width;
 	plP_state(PLSTATE_WIDTH);
 
@@ -482,11 +494,11 @@ rdbuf_state(PLStream *pls)
 	short icol0;
 	U_CHAR r, g, b;
 
-	fread(&icol0, sizeof(short), 1, pls->plbufFile);
+	rd_data(pls, &icol0, sizeof(short));
 	if (icol0 == PL_RGB_COLOR) {
-	    fread(&r, sizeof(U_CHAR), 1, pls->plbufFile);
-	    fread(&g, sizeof(U_CHAR), 1, pls->plbufFile);
-	    fread(&b, sizeof(U_CHAR), 1, pls->plbufFile);
+	    rd_data(pls, &r, sizeof(U_CHAR));
+	    rd_data(pls, &g, sizeof(U_CHAR));
+	    rd_data(pls, &b, sizeof(U_CHAR));
 	}
 	else {
 	    if ((int) icol0 >= pls->ncol0) {
@@ -511,7 +523,7 @@ rdbuf_state(PLStream *pls)
     case PLSTATE_COLOR1: {
 	short icol1;
 
-	fread(&icol1, sizeof(short), 1, pls->plbufFile);
+	rd_data(pls, &icol1, sizeof(short));
 
 	pls->icol1 = icol1;
 	pls->curcolor.r = pls->cmap1[icol1].r;
@@ -525,7 +537,7 @@ rdbuf_state(PLStream *pls)
     case PLSTATE_FILL: {
 	signed char patt;
 
-	fread(&patt, sizeof(signed char), 1, pls->plbufFile);
+	rd_data(pls, &patt, sizeof(signed char));
 
 	pls->patt = patt;
 	plP_state(PLSTATE_FILL);
@@ -565,7 +577,7 @@ rdbuf_esc(PLStream *pls)
 
     dbug_enter("rdbuf_esc");
 
-    fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
+    rd_data(pls, &op, sizeof(U_CHAR));
 
     switch (op) {
     case PLESC_FILL:
@@ -597,9 +609,9 @@ rdbuf_fill(PLStream *pls)
 
     dbug_enter("rdbuf_fill");
 
-    fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
-    fread(xpl, sizeof(short), npts, pls->plbufFile);
-    fread(ypl, sizeof(short), npts, pls->plbufFile);
+    rd_data(pls, &npts, sizeof(PLINT));
+    rd_data(pls, xpl, sizeof(short) * npts);
+    rd_data(pls, ypl, sizeof(short) * npts);
 
     plP_fill(xpl, ypl, npts);
 }
@@ -620,25 +632,29 @@ rdbuf_image(PLStream *pls)
 
     dbug_enter("rdbuf_image");
 
-    fread(&nptsX, sizeof(PLINT), 1, pls->plbufFile);
-    fread(&nptsY, sizeof(PLINT), 1, pls->plbufFile);
+    rd_data(pls, &nptsX, sizeof(PLINT));
+    rd_data(pls, &nptsY, sizeof(PLINT));
     npts = nptsX*nptsY;
 
-    fread(&xmin, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&ymin, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&dx, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&dy, sizeof(PLFLT), 1, pls->plbufFile);
+    rd_data(pls, &xmin, sizeof(PLFLT));
+    rd_data(pls, &ymin, sizeof(PLFLT));
+    rd_data(pls, &dx, sizeof(PLFLT));
+    rd_data(pls, &dy, sizeof(PLFLT));
 
-    fread(&dev_zmin, sizeof(short), 1, pls->plbufFile);
-    fread(&dev_zmax, sizeof(short), 1, pls->plbufFile);
+    rd_data(pls, &dev_zmin, sizeof(short));
+    rd_data(pls, &dev_zmax, sizeof(short));
 
+	/* NOTE:  Even though for memory buffered version all the data is in memory,
+	 * we still allocate and copy the data because I think that method works
+	 * better in a multithreaded environment.  I could be wrong.
+	 */
     dev_ix=(short *)malloc(npts*sizeof(short));
     dev_iy=(short *)malloc(npts*sizeof(short));
     dev_z=(unsigned short *)malloc((nptsX-1)*(nptsY-1)*sizeof(unsigned short));
 
-    fread(dev_ix, sizeof(short), npts, pls->plbufFile);
-    fread(dev_iy, sizeof(short), npts, pls->plbufFile);
-    fread(dev_z, sizeof(unsigned short), (nptsX-1)*(nptsY-1), pls->plbufFile);
+    rd_data(pls, dev_ix, sizeof(short) * npts);
+    rd_data(pls, dev_iy, sizeof(short) * npts);
+    rd_data(pls, dev_z, sizeof(unsigned short) * (nptsX-1)*(nptsY-1));
 
     plP_image(dev_ix, dev_iy, dev_z, nptsX, nptsY, xmin, ymin, dx, dy, dev_zmin, dev_zmax);
 
@@ -658,15 +674,15 @@ rdbuf_swin(PLStream *pls)
 {
     PLWindow plwin;
 
-    fread(&plwin.dxmi, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&plwin.dxma, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&plwin.dymi, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&plwin.dyma, sizeof(PLFLT), 1, pls->plbufFile);
+    rd_data(pls, &plwin.dxmi, sizeof(PLFLT));
+    rd_data(pls, &plwin.dxma, sizeof(PLFLT));
+    rd_data(pls, &plwin.dymi, sizeof(PLFLT));
+    rd_data(pls, &plwin.dyma, sizeof(PLFLT));
 
-    fread(&plwin.wxmi, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&plwin.wxma, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&plwin.wymi, sizeof(PLFLT), 1, pls->plbufFile);
-    fread(&plwin.wyma, sizeof(PLFLT), 1, pls->plbufFile);
+    rd_data(pls, &plwin.wxmi, sizeof(PLFLT));
+    rd_data(pls, &plwin.wxma, sizeof(PLFLT));
+    rd_data(pls, &plwin.wymi, sizeof(PLFLT));
+    rd_data(pls, &plwin.wyma, sizeof(PLFLT));
 
     plP_swin(&plwin);
 }
@@ -683,7 +699,6 @@ rdbuf_text(PLStream *pls)
   PLUNICODE(fci);
   EscText text;
   PLFLT xform[4];
-  PLINT n;
   PLUNICODE* unicode;
 
   text.xform = xform;
@@ -691,30 +706,30 @@ rdbuf_text(PLStream *pls)
 
   /* Read in the data */
 
-  fread(&fci, sizeof(PLUNICODE), 1, pls->plbufFile);
+  rd_data(pls, &fci, sizeof(PLUNICODE));
 
-  fread(&pls->chrht, sizeof(PLFLT), 1, pls->plbufFile);
-  fread(&pls->diorot, sizeof(PLFLT), 1, pls->plbufFile);
-  fread(&pls->clpxmi, sizeof(PLFLT), 1, pls->plbufFile);
-  fread(&pls->clpxma, sizeof(PLFLT), 1, pls->plbufFile);
-  fread(&pls->clpymi, sizeof(PLFLT), 1, pls->plbufFile);
-  fread(&pls->clpyma, sizeof(PLFLT), 1, pls->plbufFile);
+  rd_data(pls, &pls->chrht, sizeof(PLFLT));
+  rd_data(pls, &pls->diorot, sizeof(PLFLT));
+  rd_data(pls, &pls->clpxmi, sizeof(PLFLT));
+  rd_data(pls, &pls->clpxma, sizeof(PLFLT));
+  rd_data(pls, &pls->clpymi, sizeof(PLFLT));
+  rd_data(pls, &pls->clpyma, sizeof(PLFLT));
 
-  fread(&text.base, sizeof(PLINT), 1, pls->plbufFile);
-  fread(&text.just, sizeof(PLFLT), 1, pls->plbufFile);
-  fread(text.xform, sizeof(PLFLT), 4, pls->plbufFile);
-  fread(&text.x, sizeof(PLINT), 1, pls->plbufFile);
-  fread(&text.y, sizeof(PLINT), 1, pls->plbufFile);
-  fread(&text.refx, sizeof(PLINT), 1, pls->plbufFile);
-  fread(&text.refy, sizeof(PLINT), 1, pls->plbufFile);
+  rd_data(pls, &text.base, sizeof(PLINT));
+  rd_data(pls, &text.just, sizeof(PLFLT));
+  rd_data(pls, text.xform, sizeof(PLFLT) * 4);
+  rd_data(pls, &text.x, sizeof(PLINT));
+  rd_data(pls, &text.y, sizeof(PLINT));
+  rd_data(pls, &text.refx, sizeof(PLINT));
+  rd_data(pls, &text.refy, sizeof(PLINT));
 
-  fread(&text.unicode_array_len, sizeof(PLINT), 1, pls->plbufFile);
+  rd_data(pls, &text.unicode_array_len, sizeof(PLINT));
   if(text.unicode_array_len) {
     if((unicode=(PLUNICODE *)malloc(text.unicode_array_len*sizeof(PLUNICODE)))
        == NULL)
       plexit("rdbuf_text: Insufficient memory");
 
-    fread(unicode, sizeof(PLUNICODE), text.unicode_array_len, pls->plbufFile);
+    rd_data(pls, unicode, sizeof(PLUNICODE) * text.unicode_array_len);
     text.unicode_array = unicode;
   }
   else text.unicode_array = NULL;
@@ -738,19 +753,39 @@ plRemakePlot(PLStream *pls)
 {
     U_CHAR c;
     int plbuf_status;
+	PLStream *save_pls;
 
     dbug_enter("plRemakePlot");
 
-    if (pls->plbufFile == NULL)
-	return;
-
-    rewind(pls->plbufFile);
-
+    /* Change the status of the flags before checking for a buffer.
+     * Actually, more thought is needed if we want to support multithreaded
+     * code correctly, specifically the case where two threads are using
+     * the same plot stream (e.g. one thread is drawing the plot and another
+     * thread is processing window manager messages).
+     */
     plbuf_status = pls->plbuf_write;
     pls->plbuf_write = FALSE;
     pls->plbuf_read = TRUE;
-    while (rd_command(pls, &c)) {
-	plbuf_control(pls, c);
+
+#ifdef BUFFERED_FILE
+    if (pls->plbufFile) {
+        rewind(pls->plbufFile);
+#else
+    if (pls->plbuf_buffer) {
+        pls->plbuf_readpos = 0;
+#endif
+        /* Need to change where plsc points to before processing the commands.
+         * If we have multiple plot streams, this will prevent the commands from
+         * going to the wrong plot stream.
+         */
+        save_pls = plsc;
+        plsc = pls;
+
+        while (rd_command(pls, &c)) {
+            plbuf_control(pls, c);
+        }
+
+        plsc = save_pls;
     }
 
     pls->plbuf_read = FALSE;
@@ -817,8 +852,40 @@ rd_command(PLStream *pls, U_CHAR *p_c)
 {
     int count;
 
+#ifdef BUFFERED_FILE
     count = fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
-    return (count);
+#else
+    if (pls->plbuf_readpos < pls->plbuf_top) {
+        *p_c = *(U_CHAR *)((U_CHAR *)pls->plbuf_buffer + pls->plbuf_readpos);
+        pls->plbuf_readpos += sizeof(U_CHAR);
+        count = sizeof(U_CHAR);
+    } else {
+        count = 0;
+    }
+#endif
+    return(count);
+}
+
+/*--------------------------------------------------------------------------*\
+ * rd_data()
+ *
+ * Read the data associated with the command
+\*--------------------------------------------------------------------------*/
+
+static void
+rd_data(PLStream *pls, void *buf, size_t buf_size)
+{
+#ifdef BUFFERED_FILE
+    int count;
+    count = fread(buf, buf_size, 1, pls->plbufFile);
+#else
+/* If U_CHAR is not the same size as what memcpy() expects (typically 1 byte)
+ * then this code will have problems.  A better approach might be to use
+ * uint8_t from <stdint.h> but I do not know how portable that approach is
+ */
+    memcpy(buf, (U_CHAR *)pls->plbuf_buffer + pls->plbuf_readpos, buf_size);
+    pls->plbuf_readpos += buf_size;
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -827,12 +894,54 @@ rd_command(PLStream *pls, U_CHAR *p_c)
  * Write the next command
 \*--------------------------------------------------------------------------*/
 
-static int
+static void
 wr_command(PLStream *pls, U_CHAR c)
 {
-    U_CHAR c1 = c;
+#ifdef BUFFERED_FILE
     int count;
-
     count = fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
-    return (count);
+#else
+    if ((pls->plbuf_top + sizeof(U_CHAR)) >= pls->plbuf_buffer_size) {
+    // Not enough space, need to grow the buffer
+        pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
+
+        if (pls->verbose)
+            printf("Growing buffer to %d KB\n", pls->plbuf_buffer_size / 1024);
+        if ((pls->plbuf_buffer = realloc(pls->plbuf_buffer, pls->plbuf_buffer_size)) == NULL) 
+            plexit("plbuf wr_data:  Plot buffer grow failed");
+    }
+
+    *(U_CHAR *)((U_CHAR *)pls->plbuf_buffer + pls->plbuf_top) = c;
+    pls->plbuf_top += sizeof(U_CHAR);
+#endif
+}
+
+/*--------------------------------------------------------------------------*\
+ * wr_data()
+ *
+ * Write the data associated with a command
+\*--------------------------------------------------------------------------*/
+
+static void 
+wr_data(PLStream *pls, void *buf, size_t buf_size)
+{
+#ifdef BUFFERED_FILE
+    int count;
+    count = fwrite(buf, buf_size, 1, pls->plbufFile);
+#else
+    if ((pls->plbuf_top + buf_size) >= pls->plbuf_buffer_size) {
+    // Not enough space, need to grow the buffer
+        pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
+
+        if ((pls->plbuf_buffer = realloc(pls->plbuf_buffer, pls->plbuf_buffer_size)) == NULL) 
+            plexit("plbuf wr_data:  Plot buffer grow failed");
+    }
+
+/* If U_CHAR is not the same size as what memcpy() expects (typically 1 byte)
+ * then this code will have problems.  A better approach might be to use
+ * uint8_t from <stdint.h> but I do not know how portable that approach is
+ */
+    memcpy((U_CHAR *)pls->plbuf_buffer + pls->plbuf_top, buf, buf_size);
+    pls->plbuf_top += buf_size;
+#endif
 }

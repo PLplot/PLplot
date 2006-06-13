@@ -1992,7 +1992,11 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 /* Plot buffer -- need to copy file pointer so that plreplot() works */
 /* This also prevents inadvertent writes into the plot buffer */
 
+#ifdef BUFFERED_FILE
     plsc->plbufFile = plsr->plbufFile;
+#else
+    plsc->plbuf_buffer = plsr->plbuf_buffer;
+#endif
 
 /* Driver interface */
 /* Transformation must be recalculated in current driver coordinates */
@@ -2554,7 +2558,11 @@ c_plfontld(PLINT ifont)
 void
 c_plreplot(void)
 {
+#ifdef BUFFERED_FILE
     if (plsc->plbufFile != NULL) {
+#else
+    if (plsc->plbuf_buffer != NULL) {
+#endif
 	plRemakePlot(plsc);
     }
     else {

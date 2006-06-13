@@ -607,6 +607,7 @@ void plD_eop_gcw(PLStream *pls)
       plwarn("GCW driver <plD_eop_gcw>: Could not create tempfile.");
     }
     else {
+#ifdef BUFFERED_FILE
       rewind(pls->plbufFile);
       while(count = fread(&tmp, sizeof(U_CHAR), 1, pls->plbufFile)) {
 	if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count) {
@@ -615,7 +616,14 @@ void plD_eop_gcw(PLStream *pls)
 	  f=NULL;
 	}
       }
-      
+#else
+      if(fwrite(pls->plbuf_buffer, pls->plbuf_top, 1, f)!=count) {
+	plwarn("GCW driver <plD_eop_gcw>: Could not write to tempfile.");
+	fclose(f);
+	f=NULL;
+      }
+#endif
+
       /* Attach the tempfile to the canvas */
       g_object_set_data(G_OBJECT(canvas),"plotbuf",(gpointer)f);
       
