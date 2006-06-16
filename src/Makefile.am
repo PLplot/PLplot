@@ -45,6 +45,7 @@ sources = \
   plpage.c \
   plsdef.c \
   plshade.c \
+  plstdio.c \
   plstripc.c \
   plsym.c \
   pltick.c \
