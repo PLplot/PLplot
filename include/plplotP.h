@@ -12,6 +12,7 @@
     Copyright (C) 2004  Joao Cardoso
     Copyright (C) 2004  Andrew Roach
     Copyright (C) 2006  Andrew Ross
+    Copyright (C) 2006  Hazen Babcock
 
 
     This file is part of PLplot.
@@ -983,6 +984,25 @@ plP_FreeDrvOpts();
 int
 ucs4_to_utf8(PLUNICODE unichar, char *ptr);
 
+/*
+ * Wrapper functions for the system IO routines fread, fwrite, printf
+ */
+
+/* wraps fwrite */
+
+void 
+plio_fwrite(void *, size_t, size_t, FILE *);
+
+/* wraps fread */
+
+void
+plio_fread(void *, size_t, size_t, FILE *);
+
+/* wraps printf */
+
+void
+plio_printf(FILE *, const char *, ...);
+ 
 #ifdef __cplusplus
 }
 #endif
