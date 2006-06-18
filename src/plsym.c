@@ -1106,7 +1106,7 @@ plfntld(PLINT fnt)
 #if PLPLOT_USE_TCL_CHANNELS
     pdf_rdx(fntbffr, sizeof(signed char)*(2 * bffrleng), pdfs);
 #else
-    fread((void *) fntbffr, (size_t) sizeof(signed char),
+    plio_fread((void *) fntbffr, (size_t) sizeof(signed char),
 	  (size_t) (2 * bffrleng), pdfs->file);
 #endif
 
