@@ -1,3 +1,89 @@
+PLplot Bug Fix Release 5.6.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This release corrects a number of outstanding issues with plplot that were
+discovered subsequent to the 5.6.0 release. It represents the ongoing efforts 
+of the community to improve the PLplot plotting package. Development releases 
+in the 5.7.x series will be available every few months. The next full release 
+will be 5.8.0.
+
+     If you encounter a problem that is not already documented in the
+PROBLEMS file, then please send bug reports to PLplot developers via the
+mailing lists at http://sourceforge.net/mail/?group_id=2915 .
+
+     Please see the license under which this software is distributed
+(LGPL), and the disclaimer of all warrantees, given in the COPYING.LIB
+file.
+
+
+INDEX
+
+1. Changes relative to PLplot 5.6.0
+  1.1 API
+    1.1.1 f95
+  1.2 Drivers
+    1.2.1 psttf
+    1.2.2 pstex
+
+
+1. Changes relative to PLplot 5.6.0 (the previous stable release)
+
+1.1 Fortran 95
+
+A lot of work was done to correct a number of outstanding issues with
+Fortran 95 interface. All of plplot API is now available to f95 users and
+a complete set of examples was created to demonstrate how to use plplot with 
+a f95. In its current form it is known to work with gfortran compiler. Due
+to limitations in the current version of libtool it not possible to use both
+a f77 and a f95 compiler to build plplot. If you desire both interfaces the
+recommended approach is to compile the f77 interface with your f95 compiler,
+which can be done by setting the FC and F77 environment variables at the
+configuration stage.
+
+- The API is defined via a module, so that the compiler can now check
+  the argument types.
+- It is now possible to pass arrays as assumed-shape arrays. This
+  means: less arguments and less chances for interface errors.
+- The module also defines specific parameters to describe PLplot
+  options. This way, you can use symbolic names instead of
+  numbers.
+- The floating-point type PLFLT is now available as a KIND parameter,
+  making it possible to use the same code for single and double
+  precision applications - simply declare all real variables
+  using the KIND facility and link with the corresponding version of
+  the PLplot library.
+
+More information is found in bindings/f95/readme_f95.txt
+
+
+1.2 Drivers
+
+1.2.1 psttf
+
+This is a postscript driver that supports TrueType fonts. This allows access 
+to a far greater range of fonts and characters than is possible using Type 1
+postscript fonts. 
+
+The driver requires the LASi (v1.0.5), pango and pangoft2 libraries to work.
+The pango and pangoft2 libraries are widely distributed with most Linux
+distributions and give the psttf driver full complex text layout (CTL)
+capability (see http://plplot.sourceforge.net/examples/demo24.php for an
+example of this capability).  The LASi library is not part of most
+distributions at this time. The source code can be downloaded from
+http://www.unifont.org/lasi/. The library is small and easy to build and
+install.  Make sure you use LASi-1.0.5.  The psttf device driver uses new
+capabilities in this version of LASi and no longer works with LASi-1.0.4.
+
+This driver is now enabled by default. 
+
+1.2.2 pstex
+
+Permanently disable the autotools build of pstex.  Other PostScript devices
+(either ps or psttf) appear to give better solutions so there doesn't seem
+to be much purpose in maintaining this currently broken device.
+
+
+
 PLplot Development Release 5.6.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
