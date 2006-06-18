@@ -876,8 +876,7 @@ static void
 rd_data(PLStream *pls, void *buf, size_t buf_size)
 {
 #ifdef BUFFERED_FILE
-    int count;
-    count = fread(buf, buf_size, 1, pls->plbufFile);
+    plio_fread(buf, buf_size, 1, pls->plbufFile);
 #else
 /* If U_CHAR is not the same size as what memcpy() expects (typically 1 byte)
  * then this code will have problems.  A better approach might be to use
@@ -898,8 +897,7 @@ static void
 wr_command(PLStream *pls, U_CHAR c)
 {
 #ifdef BUFFERED_FILE
-    int count;
-    count = fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
+    plio_fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
 #else
     if ((pls->plbuf_top + sizeof(U_CHAR)) >= pls->plbuf_buffer_size) {
     // Not enough space, need to grow the buffer
@@ -926,8 +924,7 @@ static void
 wr_data(PLStream *pls, void *buf, size_t buf_size)
 {
 #ifdef BUFFERED_FILE
-    int count;
-    count = fwrite(buf, buf_size, 1, pls->plbufFile);
+    plio_fwrite(buf, buf_size, 1, pls->plbufFile);
 #else
     if ((pls->plbuf_top + buf_size) >= pls->plbuf_buffer_size) {
     // Not enough space, need to grow the buffer
