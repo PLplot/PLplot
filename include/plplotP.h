@@ -985,7 +985,7 @@ int
 ucs4_to_utf8(PLUNICODE unichar, char *ptr);
 
 /*
- * Wrapper functions for the system IO routines fread, fwrite, printf
+ * Wrapper functions for the system IO routines fread, fwrite
  */
 
 /* wraps fwrite */
@@ -997,11 +997,6 @@ plio_fwrite(void *, size_t, size_t, FILE *);
 
 void
 plio_fread(void *, size_t, size_t, FILE *);
-
-/* wraps printf */
-
-void
-plio_printf(FILE *, const char *, ...);
  
 #ifdef __cplusplus
 }

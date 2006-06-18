@@ -38,7 +38,7 @@ plio_fwrite(void *buf, size_t size, size_t nmemb, FILE *stream)
 {
   size_t bytes;
 
-  dbug_enter("plio_write");
+  dbug_enter("plio_fwrite");
 
   // Exit if there is nothing to write
   if(size == 0 || nmemb == 0) return;
@@ -68,7 +68,7 @@ plio_fread(void *buf, size_t size, size_t nmemb, FILE *stream)
 {
   size_t bytes;
 
-  dbug_enter("plio_read");
+  dbug_enter("plio_fread");
 
   // If the buffer has a size of zero, we should complain
   if(size == 0 || nmemb == 0) {
@@ -86,32 +86,3 @@ plio_fread(void *buf, size_t size, size_t nmemb, FILE *stream)
     plabort("Error reading from file");
   }
 }
-
-/*
- * plio_printf()
- *
- * Send formatted output to stream.
- */
- 
-void
-plio_printf(FILE *stream, const char *format, ...)
-{
-  va_list ap;
-  int bytes;
-
-  dbug_enter("plio_printf");
-  //va_start(ap, format);
-
-  // Clear the error flag for this steam
-  clearerr(stream);
-
-  bytes = vfprintf(stream, format, ap);
-
-  va_end(ap);
-
-  if(ferror(stream)) {
-    // The output resulted in an error
-    plabort("Error writing to file");
-  }
-}
-
