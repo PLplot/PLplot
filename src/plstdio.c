@@ -23,8 +23,8 @@
 
 */
 
-#include <stdio.h>
-#include <stdarg.h>
+#define NEED_PLDEBUG
+#include "plplotP.h"
 
 /* 
  * plio_write()
@@ -34,11 +34,11 @@
  */
  
 void 
-plio_write(void *buf, size_t size, size_t nmemb, FILE *stream)
+plio_fwrite(void *buf, size_t size, size_t nmemb, FILE *stream)
 {
   size_t bytes;
 
-  //dbug_enter("plio_write");
+  dbug_enter("plio_write");
 
   // Exit if there is nothing to write
   if(size == 0 || nmemb == 0) return;
@@ -62,13 +62,13 @@ plio_write(void *buf, size_t size, size_t nmemb, FILE *stream)
  * Read from stream into buf.  Like plio_write(), this function will 
  * handle any I/O error conditions.
  */
- 
+
 void
-plio_read(void *buf, size_t size, size_t nmemb, FILE *stream)
+plio_fread(void *buf, size_t size, size_t nmemb, FILE *stream)
 {
   size_t bytes;
 
-  //dbug_enter("plio_read");
+  dbug_enter("plio_read");
 
   // If the buffer has a size of zero, we should complain
   if(size == 0 || nmemb == 0) {
@@ -99,6 +99,7 @@ plio_printf(FILE *stream, const char *format, ...)
   va_list ap;
   int bytes;
 
+  dbug_enter("plio_printf");
   //va_start(ap, format);
 
   // Clear the error flag for this steam
