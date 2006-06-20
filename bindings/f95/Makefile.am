@@ -88,6 +88,7 @@ CLEANFILES = $(generated_fortran_sources) $(plplotmodule_DATA)
 
 noinst_PROGRAMS = plflt
 plflt_SOURCES = plflt.c
+plflt_CFLAGS = -I../../include
 
 plflt.inc: plflt$(EXEEXT)
 	./plflt$(EXEEXT)

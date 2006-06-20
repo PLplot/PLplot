@@ -71,6 +71,7 @@ CLEAN :
 	-@erase ".\Release\plcvt.obj"
 	-@erase ".\Release\plbuf.obj"
 	-@erase ".\Release\plsdef.obj"
+	-@erase ".\Release\plstdio.obj"
 	-@erase ".\Release\plsym.obj"
 	-@erase ".\Release\win3.obj"
 	-@erase ".\Release\plmap.obj"
@@ -137,6 +138,7 @@ LINK32_OBJS= \
 	".\Release\plcvt.obj" \
 	".\Release\plbuf.obj" \
 	".\Release\plsdef.obj" \
+	".\Release\plstdio.obj" \
 	".\Release\plsym.obj" \
 	".\Release\win3.obj" \
 	".\Release\plmap.obj" \
@@ -190,6 +192,7 @@ CLEAN :
 	-@erase ".\Debug\plconsole.obj"
 	-@erase ".\Debug\plbuf.obj"
 	-@erase ".\Debug\plsdef.obj"
+	-@erase ".\Debug\plstdio.obj"
 	-@erase ".\Debug\plmap.obj"
 	-@erase ".\Debug\plargs.obj"
 	-@erase ".\Debug\plctrl.obj"
@@ -260,6 +263,7 @@ LINK32_OBJS= \
 	".\Debug\plconsole.obj" \
 	".\Debug\plbuf.obj" \
 	".\Debug\plsdef.obj" \
+	".\Debug\plstdio.obj" \
 	".\Debug\plmap.obj" \
 	".\Debug\plargs.obj" \
 	".\Debug\plctrl.obj" \
@@ -573,6 +577,24 @@ DEP_CPP_PLSDE=\
 	
 
 "$(INTDIR)\plsdef.obj" : $(SOURCE) $(DEP_CPP_PLSDE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=..\..\..\..\tmp\plstdio.c
+DEP_CPP_PLSDE=\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
+	
+
+"$(INTDIR)\plstdio.obj" : $(SOURCE) $(DEP_CPP_PLSDE) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 

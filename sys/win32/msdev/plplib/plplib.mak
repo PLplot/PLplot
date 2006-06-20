@@ -63,6 +63,7 @@ CLEAN :
 	-@erase "$(INTDIR)\plpage.obj"
 	-@erase "$(INTDIR)\plrender.obj"
 	-@erase "$(INTDIR)\plsdef.obj"
+	-@erase "$(INTDIR)\plstdio.obj"
 	-@erase "$(INTDIR)\plshade.obj"
 	-@erase "$(INTDIR)\plstripc.obj"
 	-@erase "$(INTDIR)\plsym.obj"
@@ -116,6 +117,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\plot3d.obj" \
 	"$(INTDIR)\plpage.obj" \
 	"$(INTDIR)\plsdef.obj" \
+	"$(INTDIR)\plstdio.obj" \
 	"$(INTDIR)\plshade.obj" \
 	"$(INTDIR)\plstripc.obj" \
 	"$(INTDIR)\plsym.obj" \
@@ -167,6 +169,7 @@ CLEAN :
 	-@erase "$(INTDIR)\plpage.obj"
 	-@erase "$(INTDIR)\plrender.obj"
 	-@erase "$(INTDIR)\plsdef.obj"
+	-@erase "$(INTDIR)\plstdio.obj"
 	-@erase "$(INTDIR)\plshade.obj"
 	-@erase "$(INTDIR)\plstripc.obj"
 	-@erase "$(INTDIR)\plsym.obj"
@@ -221,6 +224,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\plot3d.obj" \
 	"$(INTDIR)\plpage.obj" \
 	"$(INTDIR)\plsdef.obj" \
+	"$(INTDIR)\plstdio.obj" \
 	"$(INTDIR)\plshade.obj" \
 	"$(INTDIR)\plstripc.obj" \
 	"$(INTDIR)\plsym.obj" \
@@ -423,6 +427,11 @@ SOURCE=$(TMPDIR)\plrender.c
 SOURCE=$(TMPDIR)\plsdef.c
 
 "$(INTDIR)\plsdef.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+SOURCE=$(TMPDIR)\plstdio.c
+
+"$(INTDIR)\plstdio.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
