@@ -51,7 +51,7 @@ javademos = \
 	Makefile.examples
 
 # These are for make check compilation of examples.
-PLPLOT_CLASSPATH= `pwd`/$(top_builddir)/bindings/java
+PLPLOT_CLASSPATH= $(top_builddir)/bindings/java
 
 example_classes = \
 	x01.class \
