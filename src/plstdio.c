@@ -86,3 +86,46 @@ plio_fread(void *buf, size_t size, size_t nmemb, FILE *stream)
     plabort("Error reading from file");
   }
 }
+
+/*
+ * plio_fgets()
+ *
+ * Read from stream into buf.  This version of fgets is designed for the occasions
+ * where the caller wants to ignore the return value.  
+ *
+ * NOTE: If one is reading from a file until an EOF condition, fgets() is better suited 
+ * than this function, i.e.
+ *
+ *     while(fgets(buf, size, fp) != NULL) { ... do some stuff ... }
+ *
+ * rather than
+ *
+ *     while(!feof(fp)) { plio_fgets(buf, size, fp);  ... do some stuff ... }
+ *
+ * which would require checking for an empty buffer.
+ */
+
+void
+plio_fgets(char *buf, int size, FILE *stream)
+{
+  size_t bytes;
+  char *s;
+
+  dbug_enter("plio_fgets");
+
+  // If the buffer has a size of zero, we should complain
+  if(size == 0) {
+    plwarn("Zero length buffer size in plio_fgets, returning");    
+    return;
+  }
+
+  // Clear the error flag for this steam
+  clearerr(stream);
+
+  s = fgets(buf, size, stream);
+
+  if(s == NULL && ferror(stream)) {
+    // The read resulted in an error
+    plabort("Error reading from file");
+  }
+}

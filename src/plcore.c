@@ -2407,9 +2407,7 @@ plSelectDev()
 	    fprintf(stdout, "\nEnter device number or keyword (stream %d): ",
 		   (int) ipls);
 
-	if(!(fgets(response, sizeof(response), stdin))){
-		plexit("plSelectDev: Failed to process response.");
-	}
+	plio_fgets(response, sizeof(response), stdin);
 
     /* First check to see if device keyword was entered. */
     /* Final "\n" in response messes things up, so ignore it.  */

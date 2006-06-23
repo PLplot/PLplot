@@ -997,6 +997,11 @@ plio_fwrite(void *, size_t, size_t, FILE *);
 
 void
 plio_fread(void *, size_t, size_t, FILE *);
+
+/* wraps fgets */
+
+void
+plio_fgets(char *, int, FILE *);
  
 #ifdef __cplusplus
 }
