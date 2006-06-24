@@ -481,14 +481,9 @@ void plD_eop_gcw(PLStream *pls)
 
   gdouble dx, dy;
 
-  FILE *f;
   gint count=1,n;
-  U_CHAR tmp;
-
-  gint *icol,*ncol;
-  PLColor *cmap;
-
-  guint i;
+  
+  void *save_state;
 
   PLINT width,height;
 
@@ -589,86 +584,15 @@ void plD_eop_gcw(PLStream *pls)
 
   /*
    * Copy the plot buffer for future reference, otherwise it is 
-   * thrown out.  We will also need to store the colormaps.
+   * thrown out.
    */
-  if(pls->plbuf_write) {
-    
-    pls->plbuf_write = FALSE;
-    pls->plbuf_read = TRUE;
-    
-    /* Remove the old tempfile, if it exists */
-    if( (f=g_object_get_data(G_OBJECT(canvas),"plotbuf")) != NULL ) {
-      fclose(f);
-      g_object_set_data(G_OBJECT(canvas),"plotbuf",NULL);
-    }
+ 
+  save_state = g_object_get_data(G_OBJECT(canvas),"plotbuf");
+  save_state = (void *)plbuf_save(pls, save_state);
 
-    /* Copy the plot buffer to a tempfile */
-    if((f=tmpfile())==NULL) {
-      plwarn("GCW driver <plD_eop_gcw>: Could not create tempfile.");
-    }
-    else {
-#ifdef BUFFERED_FILE
-      rewind(pls->plbufFile);
-      while(count = fread(&tmp, sizeof(U_CHAR), 1, pls->plbufFile)) {
-	if(fwrite(&tmp, sizeof(U_CHAR), 1, f)!=count) {
-	  plwarn("GCW driver <plD_eop_gcw>: Could not write to tempfile.");
-	  fclose(f);
-	  f=NULL;
-	}
-      }
-#else
-      if(fwrite(pls->plbuf_buffer, pls->plbuf_top, 1, f)!=count) {
-	plwarn("GCW driver <plD_eop_gcw>: Could not write to tempfile.");
-	fclose(f);
-	f=NULL;
-      }
-#endif
+  /* Attach the saved state to the canvas */
+  g_object_set_data(G_OBJECT(canvas),"plotbuf",(gpointer)save_state);
 
-      /* Attach the tempfile to the canvas */
-      g_object_set_data(G_OBJECT(canvas),"plotbuf",(gpointer)f);
-      
-      pls->plbuf_write = TRUE;
-      pls->plbuf_read = FALSE;      
-      
-      /* cmap 0 */
-      if((icol=(gint*)malloc(sizeof(gint)))==NULL)
-	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
-      else *icol = pls->icol0;
-      g_object_set_data(G_OBJECT(canvas),"icol0",(gpointer)icol);
-      if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
-	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
-      else *ncol = pls->ncol0;
-      g_object_set_data(G_OBJECT(canvas),"ncol0",(gpointer)ncol);
-      if((cmap=(PLColor *) calloc(1, pls->ncol0 * sizeof(PLColor)))==NULL) {
-	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
-      }
-      else {
-	for (i = 0; i < pls->ncol0; i++)
-	  pl_cpcolor(&cmap[i], &pls->cmap0[i]);
-      }
-      g_object_set_data(G_OBJECT(canvas),"cmap0",(gpointer)cmap);
-      
-      /* cmap 1 */
-      if((icol=(gint*)malloc(sizeof(gint)))==NULL)
-	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
-
-      else *icol = pls->icol1;
-      g_object_set_data(G_OBJECT(canvas),"icol1",(gpointer)icol);
-      if((ncol=(gint*)malloc(sizeof(gint)))==NULL)
-	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
-      else *ncol = pls->ncol1;
-      g_object_set_data(G_OBJECT(canvas),"ncol1",(gpointer)ncol);
-      if((cmap=(PLColor *) calloc(1, pls->ncol1 * sizeof(PLColor)))==NULL) {
-	plwarn("GCW driver <plD_eop_gcw>: Insufficient memory.");
-      }
-      else {
-	for (i = 0; i < pls->ncol1; i++)
-	  pl_cpcolor(&cmap[i], &pls->cmap1[i]);
-      }
-      g_object_set_data(G_OBJECT(canvas),"cmap1",(gpointer)cmap);
-    }
-  }
-  
   /* If the driver is creating its own canvasses, set dev->canvas to be
    * NULL now in order to force creation of a new canvas when the next
    * drawing call is made.  The new canvas will be placed in a new
@@ -680,7 +604,7 @@ void plD_eop_gcw(PLStream *pls)
     dev->group_hidden = NULL;
     dev->group_persistent = NULL;
   }
-
+  
 #ifdef DEBUG_GCW_1
   gcw_debug("</plD_eop_gcw>\n");
 #endif

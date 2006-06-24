@@ -270,9 +270,11 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   GnomeCanvas *canvas;
 
   gchar *fname;
-  FILE *f;
   guint n;
   char devname[10],str[100];
+
+  void *save_state;
+  void *new_state;
 
   PLINT cur_strm, new_strm;
   PLStream *plsr;
@@ -280,10 +282,7 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   GtkWidget *fs;
 
   gdouble curmag,dum;
-
-  PLINT icol0,icol1,ncol0,ncol1;
-  PLColor *cmap0,*cmap1;
-
+  
   gboolean errflag = FALSE;
 
   struct stat buf;
@@ -293,6 +292,8 @@ void file_ok_sel(GtkWidget *w, gpointer data)
   gint result;
 
   guint context;
+  
+  FILE *f;
   
   /* Get the file name */
   if( (fname = 
@@ -402,42 +403,11 @@ void file_ok_sel(GtkWidget *w, gpointer data)
 	   GTK_CONTAINER(gtk_container_get_children(
            GTK_CONTAINER(scrolled_window))->data))->data);
 
-  /* Hack: Swap in the saved tempfile and colormaps */
-  f = plsc->plbufFile;
-  plsc->plbufFile = g_object_get_data(G_OBJECT(canvas),"plotbuf");
-  if(plsc->plbufFile == NULL) errflag=TRUE;
+  /* Switch in the previously saved plot state */
+  new_state = g_object_get_data(G_OBJECT(canvas),"plotbuf");
 
-  icol0=plsc->icol0;
-  if( g_object_get_data(G_OBJECT(canvas),"icol0") != NULL )
-    plsc->icol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol0");
-  else errflag=TRUE;
-
-  ncol0=plsc->ncol0;
-  if( g_object_get_data(G_OBJECT(canvas),"ncol0") != NULL )
-    plsc->ncol0 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol0");
-  else errflag=TRUE;
-    
-  cmap0=plsc->cmap0;
-  if( g_object_get_data(G_OBJECT(canvas),"cmap0") )
-    plsc->cmap0 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap0");
-  else errflag=TRUE;
-
-  icol1=plsc->icol1;
-  if( g_object_get_data(G_OBJECT(canvas),"icol1") != NULL )
-    plsc->icol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"icol1");
-  else errflag=TRUE;
-
-  ncol1=plsc->ncol1;
-  if( g_object_get_data(G_OBJECT(canvas),"ncol1") != NULL )
-    plsc->ncol1 = *(PLINT*)g_object_get_data(G_OBJECT(canvas),"ncol1");
-  else errflag=TRUE;
-
-  cmap1=plsc->cmap1;
-  if( g_object_get_data(G_OBJECT(canvas),"cmap1") != NULL )
-    plsc->cmap1 = (PLColor*)g_object_get_data(G_OBJECT(canvas),"cmap1");
-  else errflag=TRUE;
-
-  if(!errflag) {
+  if(new_state != NULL) {
+    save_state = (void *)plbuf_switch(plsc, new_state);
 
     plsetopt ("drvopt","text"); /* Blank out the drvopts (not needed here) */
 
@@ -457,19 +427,12 @@ void file_ok_sel(GtkWidget *w, gpointer data)
     plend1();              /* finish the device */
 
     plsstrm(cur_strm);     /* return to previous stream */
+
+    plbuf_restore(plsc, save_state);
+    free(save_state);
+  } else {
+    plwarn("GCW driver <file_ok_sel>: Cannot set up output stream.");
   }
-  else plwarn("GCW driver <file_ok_sel>: Cannot set up output stream.");
-
-
-  /* Restore */
-
-  plsc->plbufFile = f;
-  plsc->icol0 = icol0;
-  plsc->ncol0 = ncol0;
-  plsc->cmap0 = cmap0;
-  plsc->icol1 = icol1;
-  plsc->ncol1 = ncol1;
-  plsc->cmap1 = cmap1;
 }
 
 /* Callback to cancel file selection */
