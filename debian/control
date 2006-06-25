@@ -12,7 +12,8 @@ Build-Depends: debhelper (>= 5.0.37.2), tcl8.4-dev, tk8.4-dev, itcl3-dev,
  refblas3-dev [arm m68k], lapack3-dev [arm m68k], python-gtk2-dev,
  java-gcj-compat-dev, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
  python-gnome2-dev, pdl, python-all-dev (>= 2.3.5-11),
- python-central (>= 0.4.17), python2.3-numeric, python2.4-numeric
+ python-central (>= 0.4.17), python-numeric (>= 24.2-3),
+ ttf-freefont
 Build-Conflicts: libplplot5
 XS-Python-Version: all
 
