@@ -26,6 +26,16 @@ debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 
+PYVERS = $(shell pyversions -vr)
+CONFIGURE_OPTIONS =				\
+    --prefix=/usr --mandir=/usr/share/man	\
+    --infodir=/usr/share/info --with-pkg-config	\
+    --without-rpath --with-prebuiltdoc		\
+    --with-pthreads --with-ltdlsystem		\
+    --disable-linuxvga  --enable-psttf		\
+    --enable-f95 --enable-psttfc --enable-pdl	\
+    --with-java-home=/usr/lib/jvm/java-gcj
+
 autotools: autotools-stamp
 autotools-stamp:
 	-rm -f config.sub config.guess
@@ -36,13 +46,7 @@ autotools-stamp:
 config: config-stamp
 config-stamp: autotools-stamp
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran		\
-	./configure --prefix=/usr --mandir=/usr/share/man	\
-                    --infodir=/usr/share/info --with-pkg-config	\
-                    --without-rpath --with-prebuiltdoc		\
-                    --with-pthreads --with-ltdlsystem		\
-                    --disable-linuxvga  --enable-psttf		\
-		    --enable-f95 --enable-psttfc --enable-pdl	\
-		    --with-java-home=/usr/lib/jvm/java-gcj
+	./configure $(CONFIGURE_OPTIONS) --disable-python
 	touch config-stamp
 
 build: build-stamp
@@ -66,11 +70,12 @@ clean: unpatch
 	-$(MAKE) -k distclean
 	rm -f config.sub config.guess
 	find . -name config.log -o -name config.status | xargs rm -f
-	rm -f Makefile
+	rm -f Makefile install-python*
 	rm -rf $(debbase)/$(libpkg)
 	dh_clean
 
-install: install-stamp
+install: install-stamp install-python
+
 install-stamp: build-stamp
 	dh_testdir
 	dh_testroot
@@ -90,7 +95,7 @@ install-stamp: build-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
-		libcsiro0 plplot9-driver-gnome2 libplplot9-java		\
+		plplot9-driver-gnome2 libplplot9-java			\
 		plplot9-driver-wxwidgets plplot9-driver-psttf		\
 		libplplot-fortran9 ; do					\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
@@ -99,12 +104,27 @@ install-stamp: build-stamp
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 		     --no-package=plplot-bin --no-package=python-plplot
 	dh_movefiles -i
-	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
 
 	touch install-stamp
+
+install-python: $(PYVERS:%=install-python%)
+	( cd examples/python ; make DESTDIR=$(debtmp) install )
+	mv $(debex)/python $(debdoc)/$(libpkg)/examples
+	dh_movefiles --package=python-plplot
+	touch $@
+
+install-python%: build-stamp
+	PYTHON=python$* ./configure $(CONFIGURE_OPTIONS)
+	for d in python gnome2/python ; do		\
+	    ( cd  bindings/$$d;				\
+	      make clean ;				\
+	      make ;					\
+	      make DESTDIR=$(debtmp) install ) ;	\
+	done
+	touch $@
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -125,10 +145,11 @@ binary-arch: build install
 	dh_testroot -a
 	dh_installdirs -a
 
-	dh_installdocs --package=$(libpkg)
-	dh_installchangelogs --package=$(libpkg)
+	dh_installdocs --package=$(libpkg) --package=libcsiro0
+	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
 
-	dh_python
+	dh_pycentral --package=python-plplot
+	dh_python --package=python-plplot
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a

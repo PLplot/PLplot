@@ -3,10 +3,25 @@ plplot (5.6.1-2) unstable; urgency=low
   * debian/control: Replaced all build-dependencies for java by
     java-gcj-compat-dev, which will be default java environment for
     building packages soon (thanks to Michael Koch <konqueror@gmx.de>
-    for the hint, closes: #370655)
+    for the hint, closes: #370655, #372644)
   * debian/rules: Set JAVA_HOME to /usr/lib/jvm/java-gcj
+  * The libcsiro0 package has now its own /usr/share/doc/libcsiro0
+    directory, eliminating the need for a symlink to
+    /usr/share/doc/libplplot9, which avoids the circular dependency
+    libcsiro0 <-> liplplot9 (closes: #342897)
+  * Following now the new Python Policy (closes: #373478):
+    - debian/control:
+      + Build-Depends on debhelper >= 5.0.37.2, python-all-dev >=
+        2.3.5-11, and python-central >= 0.4.17
+      + Added a XB-Python-Version field to the python-plplot package
+      + Added a XS-Python-Version with value "all"
+    - debian/rules:
+      + Added call to dh_pycentral
+      + Generate the Python modules for versions 2.3 and 2.4 by calling
+        twice the configure script + make + make install in the newly
+        created rule install-python%
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Sat, 24 Jun 2006 23:42:02 +0200
 
 plplot (5.6.1-1) unstable; urgency=low
 
