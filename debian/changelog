@@ -1,3 +1,17 @@
+plplot (5.6.1-5) unstable; urgency=low
+
+  * debian/control: Removed build-dependency on pdl, which causes circular
+    dependencies because pdl depends on libplplot9.  It is a bad thing to
+    require libplplot9 installed in order to build libplplot9.
+  * debian/rules:
+    - Dropped --enable-pdl from the list of options to configure
+    - Call the dh_movefiles command only after everything has been
+      installed in debian/tmp, including the python2.{3,4} specific stuff.
+      This will avoid build errors due to libraries being moved away from
+      debian/tmp/usr/lib (closes: #375396)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 26 Jun 2006 10:45:51 +0200
+
 plplot (5.6.1-4) unstable; urgency=low
 
   * debian/control: Build-Depends on python-numeric >= 24.2-3, because

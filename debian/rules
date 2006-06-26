@@ -33,7 +33,7 @@ CONFIGURE_OPTIONS =				\
     --without-rpath --with-prebuiltdoc		\
     --with-pthreads --with-ltdlsystem		\
     --disable-linuxvga  --enable-psttf		\
-    --enable-f95 --enable-psttfc --enable-pdl	\
+    --enable-f95 --enable-psttfc		\
     --with-java-home=/usr/lib/jvm/java-gcj
 
 autotools: autotools-stamp
@@ -75,12 +75,19 @@ clean: unpatch
 	dh_clean
 
 install: install-stamp install-python
+	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
+		     --no-package=plplot-bin --no-package=python-plplot
+	dh_movefiles -i
+	dh_movefiles --package=python-plplot
+	dh_movefiles --package=libplplot-dev
+	dh_movefiles --package=plplot-bin
+	dh_movefiles --package=$(libpkg)
 
 install-stamp: build-stamp
 	dh_testdir
 	dh_testroot
 
-	make DESTDIR=$(debtmp) OCTAVE_OCT_DIR=$(OCTDIR) install
+	$(MAKE) DESTDIR=$(debtmp) OCTAVE_OCT_DIR=$(OCTDIR) install
 
 	rm -f $(debtmp)/usr/bin/plplot-config
 
@@ -101,28 +108,20 @@ install-stamp: build-stamp
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
-	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-		     --no-package=plplot-bin --no-package=python-plplot
-	dh_movefiles -i
-	dh_movefiles --package=libplplot-dev
-	dh_movefiles --package=plplot-bin
-	dh_movefiles --package=$(libpkg)
-
 	touch install-stamp
 
 install-python: $(PYVERS:%=install-python%)
-	( cd examples/python ; make DESTDIR=$(debtmp) install )
+	( cd examples/python ; $(MAKE) DESTDIR=$(debtmp) install )
 	mv $(debex)/python $(debdoc)/$(libpkg)/examples
-	dh_movefiles --package=python-plplot
 	touch $@
 
 install-python%: build-stamp
 	PYTHON=python$* ./configure $(CONFIGURE_OPTIONS)
-	for d in python gnome2/python ; do		\
+	for d in gnome2/python python ; do		\
 	    ( cd  bindings/$$d;				\
-	      make clean ;				\
-	      make ;					\
-	      make DESTDIR=$(debtmp) install ) ;	\
+	      $(MAKE) clean ;				\
+	      $(MAKE) ;					\
+	      $(MAKE) DESTDIR=$(debtmp) install ) ;	\
 	done
 	touch $@
 
