@@ -1,2 +1,4 @@
 version=3
-ftp://download.sf.net/pub/sourceforge/p/pl/plplot/plplot-([\d+\.]+|\d+)\.tar.*
+http://sourceforge.net/project/showfiles.php?group_id=2915 \
+  http://prdownloads.sourceforge.net/plplot/plplot-([\d\.]+).tar.gz\?download
+

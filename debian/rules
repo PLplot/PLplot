@@ -97,6 +97,9 @@ install-stamp: build-stamp
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 	mkdir -p $(debdoc)/$(docpkg)
 	(cd $(debdoc)/$(libpkg) ; mv html *.pdf *.ps.gz $(debdoc)/$(docpkg))
+	install -d $(debex)/perl
+	install --mode=644 examples/perl/x* examples/perl/README* \
+		$(debex)/perl
 	mv $(debex) $(debdoc)/$(libpkg)
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\

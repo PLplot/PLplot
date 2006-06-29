@@ -1,3 +1,10 @@
+plplot (5.6.1-6) unstable; urgency=low
+
+  * debian/watch: Fixed http entry
+  * debian/rules: Install Perl examples in the libplplot-dev package
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 29 Jun 2006 02:23:30 +0200
+
 plplot (5.6.1-5) unstable; urgency=low
 
   * debian/control: Removed build-dependency on pdl, which causes circular
