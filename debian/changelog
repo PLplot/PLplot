@@ -1,3 +1,12 @@
+plplot (5.6.1-7) unstable; urgency=low
+
+  * debian/patches/50_check-for-octave2.1.dpatch: Do string comparisons
+    instead of numeric comparisons on the value returned by
+    split(version,".").  Thanks to Thomas Weber the patch
+    (closes: #376247)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  1 Jul 2006 13:57:26 +0200
+
 plplot (5.6.1-6) unstable; urgency=low
 
   * debian/watch: Fixed http entry
@@ -23,7 +32,7 @@ plplot (5.6.1-4) unstable; urgency=low
 
   * debian/control: Build-Depends on python-numeric >= 24.2-3, because
     this version is the first one built with python central.  Previous
-    build dependecies on python2.{3,4}-numeric are removed.
+    build dependencies on python2.{3,4}-numeric are removed.
 
  -- Rafael Laboissiere <rafael@debian.org>  Sun, 25 Jun 2006 23:17:45 +0200
 
