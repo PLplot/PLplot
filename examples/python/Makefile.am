@@ -51,6 +51,7 @@ python_scripts = \
 	x22 \
 	x23 \
 	x24 \
+	x26 \
 	xw14.py \
 	xw17.py
 
@@ -80,7 +81,8 @@ python_data = \
 	xw19.py \
 	xw22.py \
 	xw23.py \
-	xw24.py
+	xw24.py \
+	xw26.py
 
 if enable_python
 
