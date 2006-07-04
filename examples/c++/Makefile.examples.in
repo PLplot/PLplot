@@ -53,8 +53,8 @@ EXECUTABLES_list = \
 		 x21$(EXEEXT) \
 		 x22$(EXEEXT) \
 		 x23$(EXEEXT) \
-		 x24$(EXEEXT)
-
+		 x24$(EXEEXT) \
+		 x26$(EXEEXT)
 all: $(EXECUTABLES_list)
 
 clean:
