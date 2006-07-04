@@ -2250,8 +2250,8 @@ plcmap1_def(void)
       fonts are being used.  However, for maximum flexibility when using
       unicode fonts, these 5 escape sequences should be replaced by using
       the 4 escape sequences <literal>#[nnn]</literal>,
-      <literal>&lt;0x8nnnnnnn&gt;</literal>,
-      <literal>&lt;0xmn&gt;</literal>, or <literal>&lt;FCI COMMAND
+      <literal>#&lt;0x8nnnnnnn&gt;</literal>,
+      <literal>#&lt;0xmn&gt;</literal>, or <literal>#&lt;FCI COMMAND
       STRING/&gt;</literal> as appropriate.
     </para>
 
