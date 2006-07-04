@@ -43,7 +43,8 @@ javafiles = \
 	$(top_srcdir)/examples/java/x21.java \
 	$(top_srcdir)/examples/java/x22.java \
 	$(top_srcdir)/examples/java/x23.java \
-	$(top_srcdir)/examples/java/x24.java
+	$(top_srcdir)/examples/java/x24.java \
+	$(top_srcdir)/examples/java/x26.java
 
 javademos = \
 	$(top_srcdir)/examples/java/README.javademos \
@@ -77,7 +78,8 @@ example_classes = \
 	x21.class \
 	x22.class \
 	x23.class \
-	x24.class
+	x24.class \
+	x26.class
 
 if enable_java
 
