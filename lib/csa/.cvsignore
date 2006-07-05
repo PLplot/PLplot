@@ -6,3 +6,5 @@ Makefile.in
 *.la
 *.lo
 *.csa
+CMakeFiles
+cmake_install.cmake

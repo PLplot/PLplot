@@ -25,3 +25,6 @@ stamp-h1
 .htm
 .out
 .xml
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
