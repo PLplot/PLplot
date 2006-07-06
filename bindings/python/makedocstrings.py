@@ -47,7 +47,7 @@ def main():
       #print 'here'
       while 1:
         line = infile.readline()
-        m = re.match('[ \t]+\{[ \t]\(char \*\)"([a-zA-Z_0-9]+)"(.*)\, NULL \},', line)
+        m = re.match('[ \t]+\{[ \t]\(char \*\)"([a-zA-Z_0-9]+)"(.*)\,[ ]*NULL[ ]*\},', line)
         if not m:
           m = re.match('[ \t]+\{[ \t]\(char \*\)"([a-zA-Z_0-9]+)"(.*)\},', line)
           if not m:
