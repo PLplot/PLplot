@@ -1,1 +1,2 @@
-SUBDIRS(csa nn)
+add_subdirectory(csa)
+add_subdirectory(nn)
