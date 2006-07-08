@@ -2,6 +2,13 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 project(plplot)
 
+# parameters to control cmake behaviour.
+
+# Print out complete Makefile commands.
+# This is commented out because if ever need this, just
+# use "make VERBOSE=1"
+#SET(CMAKE_VERBOSE_MAKEFILE ON)
+
 # libraries are all shared for now.
 set(BUILD_SHARED_LIBS ON)
 
