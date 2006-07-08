@@ -1,9 +1,13 @@
 set(csirocsa_LIB_SRCS
-    csa.c
-   )
+csa.c
+)
 add_library(csirocsa ${csirocsa_LIB_SRCS})
 SET_TARGET_PROPERTIES(csirocsa PROPERTIES SOVERSION 0 VERSION 0.0.1)
-
 install(TARGETS csirocsa  DESTINATION ${LIB_INSTALL_DIR})
+
+set(csa_DOCFILES
+README
+README.1st
+)
 install(FILES README DESTINATION ${DOC_INSTALL_DIR} RENAME README.csa)
 install(FILES README.1st DESTINATION ${DOC_INSTALL_DIR} RENAME README.1st.csa)
