@@ -1,17 +1,21 @@
-#Version 2.4.2 or above of cmake is required!
+# Version 2.4.2 or above of cmake is required!
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 project(plplot)
 
-#libraries are all shared for now.
+# libraries are all shared for now.
 set(BUILD_SHARED_LIBS ON)
 
-#relative path of installed libraries.
+# relative path of installed libraries.
 set(LIB_INSTALL_DIR lib)
 
-#relative path of installed documentation.
+# relative path of installed headers.
+set(HEADER_INSTALL_DIR include/plplot)
+
+# relative path of installed documentation.
 set(DOC_INSTALL_DIR share/doc/plplot)
 
 add_subdirectory(lib)
+add_subdirectory(include)
 
 #
 # Packing stuff
@@ -36,7 +40,6 @@ set(CPACK_SOURCE_IGNORE_FILES
 "^${PROJECT_SOURCE_DIR}/drivers/"
 "^${PROJECT_SOURCE_DIR}/examples/"
 "^${PROJECT_SOURCE_DIR}/fonts/"
-"^${PROJECT_SOURCE_DIR}/include/"
 "^${PROJECT_SOURCE_DIR}/libltdl/"
 "^${PROJECT_SOURCE_DIR}/old/"
 "^${PROJECT_SOURCE_DIR}/pkgcfg/"
