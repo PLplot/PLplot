@@ -40,7 +40,7 @@ plstrm.h
 plxwd.h
 gcw.h
 plplotcanvas.h
-plConfig.h
-plDevs.h
+${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
+${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
 )
 install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${HEADER_INSTALL_DIR})
