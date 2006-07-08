@@ -2,7 +2,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 project(plplot)
 
-# parameters to control cmake behaviour.
+# parameters to control overall cmake behaviour.
 
 # Print out complete Makefile commands.
 # This is commented out because if ever need this, just
@@ -12,14 +12,45 @@ project(plplot)
 # libraries are all shared for now.
 set(BUILD_SHARED_LIBS ON)
 
-# relative path of installed libraries.
+# Install locations.
+
+# Relative path of installed libraries.
 set(LIB_INSTALL_DIR lib)
 
-# relative path of installed headers.
+# Relative path of installed headers.
 set(HEADER_INSTALL_DIR include/plplot)
 
-# relative path of installed documentation.
+# Relative path of installed documentation.
 set(DOC_INSTALL_DIR share/doc/plplot)
+
+# Configure PLplot components variables....
+
+# To be done RSN...
+
+# Use configured variables to process configurable top-level files.
+
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake 
+${CMAKE_CURRENT_BINARY_DIR}/config.h
+)
+
+# Install top-level files
+
+set(top_level_DOCFILES
+AUTHORS
+COPYING.LIB
+ChangeLog
+Copyright
+FAQ
+NEWS
+PROBLEMS
+README
+README.release
+)
+install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
+
+# Process other directories including using configured variables to 
+# process configurable files in those directories.
 
 add_subdirectory(lib)
 add_subdirectory(include)
@@ -35,6 +66,9 @@ set(CPACK_PACKAGE_VERSION_MINOR 6)
 set(CPACK_PACKAGE_VERSION_PATCH 1)
 set(CPACK_GENERATOR TGZ)
 set(CPACK_SOURCE_GENERATOR TGZ)
+# The following components are regex's to match anywhere (unless anchored)
+# in absolute patch + filename to find files or directories to be excluded
+# from source tarball.
 set(CPACK_SOURCE_IGNORE_FILES
 "Makefile\\\\.in$"
 "~$"
