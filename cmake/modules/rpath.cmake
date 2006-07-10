@@ -1,4 +1,4 @@
-# cmake/modules/plplot.cmake
+# cmake/modules/rpath.cmake
 #
 # Start driver initializations
 #
@@ -19,15 +19,10 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining all configuration variables for PLplot.
+# Module for determining treatment of rpath for PLplot.  Must be
+# included after the instdirs module which defines LIB_DIR.
 
-# =======================================================================
-# Compilation and build options (PLFLT, install locations, and rpath)
-# Note, must come before java since that depends on, e.g., LIB_DIR.
-# =======================================================================
-include(double)
-include(instdirs)
-include(rpath)
-
-
-include(drivers)
+option(USE_RPATH "use -rpath when linking libraries" ON)
+if(USE_RPATH)
+  set(CMAKE_INSTALL_RPATH ${LIB_DIR})
+endif(USE_RPATH)
