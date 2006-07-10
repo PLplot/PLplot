@@ -22,7 +22,7 @@
 project(plplot)
 
 # Start of version area that needs modification for each release.
-set(VERSION 5.6.2)
+set(VERSION 5.6.1)
 
 # PLplot library version information.
 
@@ -98,9 +98,14 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
 # Process other directories including using configured variables to 
 # process configurable files in those directories.
 
+# fonts directory needs no cmake processing
+#add_subdirectory(fonts)
 add_subdirectory(lib)
 add_subdirectory(include)
 add_subdirectory(src)
+add_subdirectory(data)
+# bindings not ready.
+#add_subdirectory(bindings)
 
 #
 # Packing stuff
@@ -122,7 +127,6 @@ set(CPACK_SOURCE_IGNORE_FILES
 "^${PROJECT_SOURCE_DIR}.*/CVS/"
 "^${PROJECT_SOURCE_DIR}/bindings/"
 "^${PROJECT_SOURCE_DIR}/cf/"
-"^${PROJECT_SOURCE_DIR}/data/"
 "^${PROJECT_SOURCE_DIR}/debian/"
 "^${PROJECT_SOURCE_DIR}/doc/"
 "^${PROJECT_SOURCE_DIR}/drivers/"
