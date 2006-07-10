@@ -1,83 +1,90 @@
+# src/CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### next target ###############
-
-SET(plplot@LIB_TAG@_LIB_SRCS
-$(sources)
+SET(plplot${LIB_TAG}_LIB_SRCS
+pdfutils.c
+plargs.c
+plbox.c
+plcont.c
+plcore.c
+plctrl.c
+plcvt.c
+pldeprecated.c
+pldtik.c
+plfill.c
+plfreetype.c
+plhist.c
+plimage.c
+plline.c
+plmap.c
+plot3d.c
+plpage.c
+plsdef.c
+plshade.c
+plstdio.c
+plstripc.c
+plsym.c
+pltick.c
+plvpor.c
+plwind.c
+plbuf.c
+plgridd.c
+plvect.c
 )
 
-KDE3_AUTOMOC(${plplot@LIB_TAG@_LIB_SRCS})
+if(NOT ENABLE_DYNDRIVERS)
+  # Static device drivers must be included in the core PLplot library.
+  foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
+    message("SOURCE_ROOT_NAME = ${SOURCE_ROOT_NAME}")
+    set(plplot${LIB_TAG}_LIB_SRCS 
+       ${plplot${LIB_TAG}_LIB_SRCS} 
+       ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
+       )
+  endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
+endif(NOT ENABLE_DYNDRIVERS)
 
-ADD_LIBRARY(plplot@LIB_TAG@ SHARED ${plplot@LIB_TAG@_LIB_SRCS})
+INCLUDE_DIRECTORIES(
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+)
+ADD_LIBRARY(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
-TARGET_LINK_LIBRARIES(plplot@LIB_TAG@  ${QT_AND_KDECORE_LIBS} m plplotdrv )
+#TARGET_LINK_LIBRARIES(plplot${LIB_TAG}  m plplotdrv )
 
-SET_TARGET_PROPERTIES(plplot@LIB_TAG@ PROPERTIES VERSION 4.2.0 SOVERSION 4 )
-INSTALL_TARGETS(/lib plplot@LIB_TAG@ )
-
+SET_TARGET_PROPERTIES(plplot${LIB_TAG}
+PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
+)
+install(TARGETS plplot${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 
-
-
-
 #original Makefile.am contents follow:
 
-## src/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002 Rafael Laboissiere
-## Copyright (C) 2002, 2004 Alan W. Irwin
-## Copyright (C) 2004 Andrew Ross
-##
-## This file is part of PLplot.
-##
-## PLplot is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## PLplot is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with PLplot; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 #
 #lib_LTLIBRARIES = libplplot@LIB_TAG@.la
 #
 #version = -version-info $(SOVERSION)
 #
 #sources = \
-#  pdfutils.c \
-#  plargs.c \
-#  plbox.c \
-#  plcont.c \
-#  plcore.c \
-#  plctrl.c \
-#  plcvt.c \
-#  pldeprecated.c \
-#  pldtik.c \
-#  plfill.c \
-#  plfreetype.c \
-#  plhist.c \
-#  plimage.c \
-#  plline.c \
-#  plmap.c \
-#  plot3d.c \
-#  plpage.c \
-#  plsdef.c \
-#  plshade.c \
-#  plstdio.c \
-#  plstripc.c \
-#  plsym.c \
-#  pltick.c \
-#  plvpor.c \
-#  plwind.c \
-#  plbuf.c \
-#  plgridd.c \
-#  plvect.c
 #
 #AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL) \
 #  $(UNICODEINCS)

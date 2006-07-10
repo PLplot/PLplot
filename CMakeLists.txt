@@ -78,7 +78,8 @@ configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake 
 ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
-
+# Allow access to the generated config.h for this build.
+ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 # Install top-level files
 
 set(top_level_DOCFILES
@@ -99,7 +100,7 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
 
 add_subdirectory(lib)
 add_subdirectory(include)
-#add_subdirectory(src)
+add_subdirectory(src)
 
 #
 # Packing stuff
@@ -132,7 +133,6 @@ set(CPACK_SOURCE_IGNORE_FILES
 "^${PROJECT_SOURCE_DIR}/pkgcfg/"
 "^${PROJECT_SOURCE_DIR}/rpm/"
 "^${PROJECT_SOURCE_DIR}/scripts/"
-"^${PROJECT_SOURCE_DIR}/src/"
 "^${PROJECT_SOURCE_DIR}/sys/"
 "^${PROJECT_SOURCE_DIR}/test/"
 "^${PROJECT_SOURCE_DIR}/utils/"
