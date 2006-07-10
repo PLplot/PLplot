@@ -55,13 +55,12 @@ set(DOC_DIR ${CMAKE_INSTALL_PREFIX}/${DOC_INSTALL_DIR})
 
 # Absolute path of top-level build directory.
 set(BUILD_DIR ${CMAKE_BINARY_DIR})
-message("BUILD_DIR = ${BUILD_DIR})
 
 # The following *_CMD variables are needed in 
 # examples/*/Makefile.examples.cmake
 
 set(LIB_DIR_CMD "-L${LIB_DIR}")
-set(INCLUDE_DIR_CMD "-I${INCLUDE_DIR})
+set(INCLUDE_DIR_CMD "-I${INCLUDE_DIR}")
 
 
 
