@@ -7,19 +7,19 @@
  * to have access to the configured symbol.*/
 
 /* Location of executables */
-#cmakedefine BIN_DIR
+#define BIN_DIR "${BIN_DIR}"
 
 /* isnan is in math.h but not cmath */
 #cmakedefine BROKEN_ISNAN_CXX
 
 /* Location of Build tree */
-#cmakedefine BUILD_DIR
+#define BUILD_DIR "${BUILD_DIR}"
 
 /* Location of package data files */
-#cmakedefine DATA_DIR
+#define DATA_DIR "${DATA_DIR}"
 
 /* Location of dynamically loaded drivers */
-#cmakedefine DRV_DIR
+#define DRV_DIR "${DRV_DIR}"
 
 /* Define if there is support for dynamically loaded drivers */
 #cmakedefine ENABLE_DYNDRIVERS
@@ -167,7 +167,7 @@
 #cmakedefine NO_MINUS_C_MINUS_O
 
 /* Name of package */
-#cmakedefine PACKAGE
+#define PACKAGE "${PACKAGE}"
 
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine PACKAGE_BUGREPORT
@@ -402,13 +402,13 @@
 #cmakedefine STDC_HEADERS
 
 /* Location of Tcl stuff */
-#cmakedefine TCL_DIR
+#define TCL_DIR "${TCL_DIR}"
 
 /* Define if C++ compiler accepts using namespace */
 #cmakedefine USE_NAMESPACE
 
 /* Version number of package */
-#cmakedefine VERSION
+#define VERSION "${VERSION}"
 
 /* Define if csa is desired */
 #cmakedefine WITH_CSA
