@@ -1,5 +1,28 @@
+# Top-level CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+
 # Version 2.4.2 or above of cmake is required!
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
+
 project(plplot)
 
 # parameters to control overall cmake behaviour.
@@ -7,10 +30,39 @@ project(plplot)
 # Print out complete Makefile commands.
 # This is commented out because if ever need this, just
 # use "make VERBOSE=1"
-#SET(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+
+# Location where PLplot cmake build system first looks for cmake modules.
+
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 # libraries are all shared for now.
 set(BUILD_SHARED_LIBS ON)
+
+# PLplot library version information.
+
+# Rules: 
+# (1) If a backwards incompatible API change has been made in the library
+#     API (e.g., if old compiled and linked applications will no longer work)
+#     then increment SOVERSION and zero the corresponding minor and patch
+#     numbers just before release.
+# (2) If the library changes are limited to additions to the API, then
+#     then leave SOVERSION alone, increment the minor number and zero the
+#     patch number just before release.
+# (3) If the library changes are limited to implementation changes with 
+#     no API changes at all, then leave SOVERSION and minor number alone, and
+#     increment the patch number just before the release.
+# (4) If there are no library source code changes at all, then leave all
+#     library version numbers the same for the release.
+
+set(csirocsa_SOVERSION 0)
+set(csirocsa_VERSION ${csirocsa_SOVERSION}.0.1)
+
+set(csironn_SOVERSION 0)
+set(csironn_VERSION ${csironn_SOVERSION}.0.1)
+
+set(plplot_SOVERSION 9)
+set(plplot_VERSION ${plplot_SOVERSION}.2.0)
 
 # Install locations.
 
@@ -23,9 +75,9 @@ set(HEADER_INSTALL_DIR include/plplot)
 # Relative path of installed documentation.
 set(DOC_INSTALL_DIR share/doc/plplot)
 
-# Configure PLplot components variables....
+# Configure PLplot component variables....
 
-# To be done RSN...
+include(plplot)
 
 # Use configured variables to process configurable top-level files.
 
@@ -54,6 +106,7 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
 
 add_subdirectory(lib)
 add_subdirectory(include)
+#add_subdirectory(src)
 
 #
 # Packing stuff
