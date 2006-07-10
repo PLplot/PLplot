@@ -19,25 +19,10 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-
-# Version 2.4.2 or above of cmake is required!
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
-
 project(plplot)
 
-# parameters to control overall cmake behaviour.
-
-# Print out complete Makefile commands.
-# This is commented out because if ever need this, just
-# use "make VERBOSE=1"
-#set(CMAKE_VERBOSE_MAKEFILE ON)
-
-# Location where PLplot cmake build system first looks for cmake modules.
-
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
-
-# libraries are all shared for now.
-set(BUILD_SHARED_LIBS ON)
+# Start of version area that needs modification for each release.
+set(VERSION 5.6.2)
 
 # PLplot library version information.
 
@@ -63,17 +48,25 @@ set(csironn_VERSION ${csironn_SOVERSION}.0.1)
 
 set(plplot_SOVERSION 9)
 set(plplot_VERSION ${plplot_SOVERSION}.2.0)
+# End of version area that needs modification for each release.
 
-# Install locations.
+# Version 2.4.2 or above of cmake is required!
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 
-# Relative path of installed libraries.
-set(LIB_INSTALL_DIR lib)
+# parameters to control overall cmake behaviour.
 
-# Relative path of installed headers.
-set(HEADER_INSTALL_DIR include/plplot)
+# Print out complete Makefile commands.
+# This is commented out because if ever need this, just
+# use "make VERBOSE=1"
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# Relative path of installed documentation.
-set(DOC_INSTALL_DIR share/doc/plplot)
+# libraries are all shared for now.
+set(BUILD_SHARED_LIBS ON)
+
+set(PACKAGE plplot)
+
+# Location where PLplot cmake build system first looks for cmake modules.
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 # Configure PLplot component variables....
 
