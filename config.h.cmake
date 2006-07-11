@@ -296,7 +296,7 @@
 #cmakedefine PLD_xwin
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
-#cmakedefine PLPLOT_MUTEX_RECURSIVE
+#define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
 
 /* PLplot's PLFLT floating-point is "double" by default, undefine PL_DOUBLE if
    single precision is required */
