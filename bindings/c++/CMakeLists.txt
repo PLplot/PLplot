@@ -1,65 +1,50 @@
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Andrew Ross
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### next target ###############
+##IF(ENABLE_CXX)
 
-SET(plplotcxx@LIB_TAG@_LIB_SRCS
-$(sources)
+SET(plplotcxx${LIB_TAG}_LIB_SRCS
+plstream.cc
 )
 
-KDE3_AUTOMOC(${plplotcxx@LIB_TAG@_LIB_SRCS})
+# Set the include path
+INCLUDE_DIRECTORIES(
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+)
 
-ADD_LIBRARY(plplotcxx@LIB_TAG@ SHARED ${plplotcxx@LIB_TAG@_LIB_SRCS})
+# Add the src directory to the link path to pick up plplot library
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src)
 
-TARGET_LINK_LIBRARIES(plplotcxx@LIB_TAG@  ${QT_AND_KDECORE_LIBS} )
+# Create plplotcxx[d] library
+ADD_LIBRARY(plplotcxx${LIB_TAG} ${plplotcxx${LIB_TAG}_LIB_SRCS})
 
-SET_TARGET_PROPERTIES(plplotcxx@LIB_TAG@ PROPERTIES VERSION 4.2.0 SOVERSION 4 )
-INSTALL_TARGETS(/lib plplotcxx@LIB_TAG@ )
+TARGET_LINK_LIBRARIES(plplotcxx${LIB_TAG} plplot${LIB_TAG})
+
+# Set version number
+SET_TARGET_PROPERTIES(plplotcxx${LIB_TAG}
+PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
+)
+
+# Install library in lib/
+install(TARGETS plplotcxx${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 
-########### install files ###############
-
-INSTALL_FILES(  FILES  plstream.h )
-
-
-
-#original Makefile.am contents follow:
-
-## bindings/c++/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
-## Copyright (C) 2002  Alan W. Irwin
-##
-## This file is part of PLplot.
-##
-## This file is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## This file is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with the file; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-#
-#libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
-#
-#if enable_cxx
-#
-#pkginclude_HEADERS = plstream.h
-#
-#lib_LTLIBRARIES = libplplotcxx@LIB_TAG@.la
-#
-#endif
-#
-#AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
-#version = -version-info $(CPP_SOVERSION)
-#
-#sources = plstream.cc
-#
-#libplplotcxx@LIB_TAG@_la_SOURCES  = $(sources)
-#libplplotcxx@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
-#
+##ENDIF(ENABLE_CXX)

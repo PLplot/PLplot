@@ -72,6 +72,10 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(plplot)
 
+# Language binding specific tests
+
+include(c++)
+
 # Use configured variables to process configurable top-level files.
 
 configure_file(
@@ -105,7 +109,7 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(data)
 # bindings not ready.
-#add_subdirectory(bindings)
+add_subdirectory(bindings)
 
 #
 # Packing stuff
