@@ -29,5 +29,12 @@ include(double)
 include(instdirs)
 include(rpath)
 
+# =======================================================================
+# Language bindings
+# =======================================================================
+
+include(c++)
+#include(f77)
+#include(f95)
 
 include(drivers)
