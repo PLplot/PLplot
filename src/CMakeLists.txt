@@ -58,8 +58,8 @@ if(NOT ENABLE_DYNDRIVERS)
        ${plplot${LIB_TAG}_LIB_SRCS} 
        ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
        )
-       set_source_files_properties(
-       ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
+#       set_source_files_properties(
+#       ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
 #       PROPERTIES COMPILE_FLAGS -I${${SOURCE_ROOT_NAME}_INCLUDE_DIR})
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(NOT ENABLE_DYNDRIVERS)
