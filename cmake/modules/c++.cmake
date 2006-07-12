@@ -21,6 +21,10 @@
 
 # Module for determining C++ bindings configuration options
 
+# Option to enable C++ bindings
+OPTION(ENABLE_CXX "Enable C++ bindings" ON)
+
+IF (ENABLE_CXX)
 # Check if "using namespace std;" works
 INCLUDE(TestForNamespace)
 
@@ -32,3 +36,5 @@ CHECK_INCLUDE_FILE_CXX(cmath HAVE_CMATH)
 
 # Need to add check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
 INCLUDE(TestForStdintCXX)
+
+ENDIF(ENABLE_CXX)

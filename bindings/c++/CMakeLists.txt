@@ -17,7 +17,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-##IF(ENABLE_CXX)
+IF(ENABLE_CXX)
 
 SET(plplotcxx${LIB_TAG}_LIB_SRCS
 plstream.cc
@@ -46,5 +46,4 @@ PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
 # Install library in lib/
 install(TARGETS plplotcxx${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-
-##ENDIF(ENABLE_CXX)
+ENDIF(ENABLE_CXX)
