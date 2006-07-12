@@ -1,5 +1,4 @@
-./bindings/f77/CMakeLists.txt
-./bindings/f95/CMakeLists.txt
+# bindings/c++/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
