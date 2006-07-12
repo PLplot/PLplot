@@ -22,19 +22,19 @@
 # Module for determining F77/F95 bindings configuration options
 
 # Options to enable Fortran bindings
-OPTION(ENABLE_F77 "Enable f77 bindings" ON)
-OPTION(ENABLE_F95 "Enable f95 bindings" OFF)
+OPTION(ENABLE_f77 "Enable f77 bindings" ON)
+OPTION(ENABLE_f95 "Enable f95 bindings" OFF)
 
-IF (ENABLE_F77 OR ENABLE_F95)
+IF (ENABLE_f77 OR ENABLE_f95)
 
 # Check for fortran compiler
 ENABLE_LANGUAGE(Fortran)
 
 # Don't compile Fortran 95 binding if compiler doesn't support it
-IF (ENABLE_F95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
+IF (ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
   MESSAGE("Fortran compiler does not support f90/95. Disabling f95 bindings")
-  SET(ENABLE_F95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
-ENDIF (ENABLE_F95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
+  SET(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+ENDIF (ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
-ENDIF (ENABLE_F77 OR ENABLE_F95)
+ENDIF (ENABLE_f77 OR ENABLE_f95)
 

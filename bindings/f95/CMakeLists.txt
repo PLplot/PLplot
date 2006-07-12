@@ -17,7 +17,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF(ENABLE_F95)
+IF(ENABLE_f95)
 
 # Set the include path
 INCLUDE_DIRECTORIES(
@@ -86,7 +86,7 @@ INSTALL(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 INSTALL_FILES(  FILES  plplot.mod  	plplotp.mod  	plplot_flt.mod )
 
-ENDIF(ENABLE_F95)
+ENDIF(ENABLE_f95)
 
 
 

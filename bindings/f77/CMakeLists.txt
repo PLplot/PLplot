@@ -17,7 +17,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF(ENABLE_F77)
+IF(ENABLE_f77)
 
 ## Generate source files depending on type of PLFLT
 ## Note: Sed will possibly fail on windows. Would this be better 
@@ -90,4 +90,4 @@ LINKER_LANGUAGE Fortran
 
 INSTALL(TARGETS plplotf77${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-ENDIF(ENABLE_F77)
+ENDIF(ENABLE_f77)

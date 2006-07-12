@@ -1,3 +1,5 @@
+./bindings/f77/CMakeLists.txt
+./bindings/f95/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
@@ -17,7 +19,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF(ENABLE_CXX)
+IF(ENABLE_c++)
 
 SET(plplotcxx${LIB_TAG}_LIB_SRCS
 plstream.cc
@@ -46,4 +48,4 @@ PROPERTIES SOVERSION ${plplotcxx_SOVERSION} VERSION ${plplotcxx_VERSION}
 # Install library in lib/
 install(TARGETS plplotcxx${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-ENDIF(ENABLE_CXX)
+ENDIF(ENABLE_c++)
