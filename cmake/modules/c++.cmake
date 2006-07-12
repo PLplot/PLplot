@@ -33,6 +33,7 @@ INCLUDE(CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX(cmath HAVE_CMATH)
 
 # Need to add check for broken cmath with isnan missing (BROKEN_ISNAN_CXX)
+INCLUDE(TestBrokenIsnanCXX)
 
 # Need to add check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
 INCLUDE(TestForStdintCXX)
