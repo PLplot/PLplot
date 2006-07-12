@@ -30,6 +30,16 @@ include(instdirs)
 include(rpath)
 
 # =======================================================================
+# System checks for headers etc
+# =======================================================================
+include(CheckFunctionExists)
+CHECK_FUNCTION_EXISTS(popen HAVE_POPEN)
+CHECK_FUNCTION_EXISTS(usleep HAVE_USLEEP)
+CHECK_FUNCTION_EXISTS(isinf HAVE_ISINF)
+CHECK_FUNCTION_EXISTS(finite HAVE_FINITE)
+CHECK_FUNCTION_EXISTS(isnan HAVE_ISNAN)
+
+# =======================================================================
 # Language bindings
 # =======================================================================
 
