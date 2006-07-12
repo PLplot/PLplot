@@ -48,6 +48,16 @@ set(csironn_VERSION ${csironn_SOVERSION}.0.1)
 
 set(plplot_SOVERSION 9)
 set(plplot_VERSION ${plplot_SOVERSION}.2.0)
+
+set(plplotcxx_SOVERSION 9)
+set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.2.0)
+
+set(plplotf77_SOVERSION 9)
+set(plplotf77_VERSION ${plplotf77_SOVERSION}.1.0)
+
+set(plplotf95_SOVERSION 9)
+set(plplotf95_VERSION ${plplotf95_SOVERSION}.1.0)
+
 # End of version area that needs modification for each release.
 
 # Version 2.4.2 or above of cmake is required!

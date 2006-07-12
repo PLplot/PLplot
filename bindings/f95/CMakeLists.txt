@@ -1,52 +1,93 @@
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Andrew Ross
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### next target ###############
+IF(ENABLE_F95)
 
-SET(plplotf95c@LIB_TAG@_LIB_SRCS
-$(c_sources)
+# Set the include path
+INCLUDE_DIRECTORIES(
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-KDE3_AUTOMOC(${plplotf95c@LIB_TAG@_LIB_SRCS})
-
-ADD_LIBRARY(plplotf95c@LIB_TAG@ SHARED ${plplotf95c@LIB_TAG@_LIB_SRCS})
-
-TARGET_LINK_LIBRARIES(plplotf95c@LIB_TAG@  ${QT_AND_KDECORE_LIBS} )
-
-SET_TARGET_PROPERTIES(plplotf95c@LIB_TAG@ PROPERTIES VERSION 4.2.0 SOVERSION 4 )
-INSTALL_TARGETS(/lib plplotf95c@LIB_TAG@ )
-
-
-########### next target ###############
-
-SET(plplotf95@LIB_TAG@_LIB_SRCS
-$(fortran_sources)
-)
-
-KDE3_AUTOMOC(${plplotf95@LIB_TAG@_LIB_SRCS})
-
-ADD_LIBRARY(plplotf95@LIB_TAG@ SHARED ${plplotf95@LIB_TAG@_LIB_SRCS})
-
-TARGET_LINK_LIBRARIES(plplotf95@LIB_TAG@  ${QT_AND_KDECORE_LIBS} )
-
-SET_TARGET_PROPERTIES(plplotf95@LIB_TAG@ PROPERTIES VERSION 4.2.0 SOVERSION 4 )
-INSTALL_TARGETS(/lib plplotf95@LIB_TAG@ )
-
-
-########### next target ###############
-
-SET(plflt_SRCS
+# Build plflt to determine KIND for PLFLT
+SET(plflt_SRC
 plflt.c
 )
 
-KDE3_AUTOMOC(${plflt_SRCS})
+ADD_EXECUTABLE(plflt ${plflt_SRC})
 
-KDE3_ADD_EXECUTABLE(plflt ${plflt_SRCS})
+ADD_CUSTOM_COMMAND(
+  OUTPUT plflt.inc
+  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/plflt
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plflt
+  WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}
+)
 
-TARGET_LINK_LIBRARIES(plflt  ${QT_AND_KDECORE_LIBS} )
+## Build C part of F95 bindings
+
+SET(plplotf95c${LIB_TAG}_LIB_SRCS
+plstubs.h
+sc3d.c
+sccont.c
+scstubs.c
+)
+
+ADD_LIBRARY(plplotf95c${LIB_TAG} SHARED ${plplotf95c${LIB_TAG}_LIB_SRCS})
+
+TARGET_LINK_LIBRARIES(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
+
+SET_TARGET_PROPERTIES(plplotf95c${LIB_TAG}
+PROPERTIES SOVERSION ${plplotf95_SOVERSION} VERSION ${plplotf95_VERSION}
+)
+
+INSTALL(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 
-########### install files ###############
+## Build fortran part of F95 bindings
+SET(plplotf95${LIB_TAG}_LIB_SRCS
+strutil.f90 
+configurable.f90 
+sfstubsf95.f90 
+sfstubs.h
+)
+
+# Explicitly include dependancies for sfstubsf95.f90
+INCLUDE(AddFileDependencies)
+ADD_FILE_DEPENDENCIES(sfstubsf95.f90 plflt.inc)
+
+ADD_LIBRARY(plplotf95${LIB_TAG} SHARED ${plplotf95${LIB_TAG}_LIB_SRCS})
+
+TARGET_LINK_LIBRARIES(plplotf95${LIB_TAG}  plplot${LIB_TAG})
+
+SET_TARGET_PROPERTIES(plplotf95${LIB_TAG}
+PROPERTIES SOVERSION ${plplotf95_SOVERSION} VERSION ${plplotf95_VERSION}
+LINKER_LANGUAGE Fortran
+)
+
+INSTALL(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 INSTALL_FILES(  FILES  plplot.mod  	plplotp.mod  	plplot_flt.mod )
+
+ENDIF(ENABLE_F95)
+
 
 
 

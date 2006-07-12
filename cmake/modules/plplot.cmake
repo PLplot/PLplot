@@ -44,6 +44,7 @@ CHECK_FUNCTION_EXISTS(isnan HAVE_ISNAN)
 # =======================================================================
 
 include(c++)
+include(fortran)
 #include(f77)
 #include(f95)
 

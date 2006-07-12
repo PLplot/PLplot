@@ -40,7 +40,7 @@ TARGET_LINK_LIBRARIES(plplotcxx${LIB_TAG} plplot${LIB_TAG})
 
 # Set version number
 SET_TARGET_PROPERTIES(plplotcxx${LIB_TAG}
-PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
+PROPERTIES SOVERSION ${plplotcxx_SOVERSION} VERSION ${plplotcxx_VERSION}
 )
 
 # Install library in lib/
