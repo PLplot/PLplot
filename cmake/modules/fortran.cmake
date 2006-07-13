@@ -23,7 +23,7 @@
 
 # Options to enable Fortran bindings
 OPTION(ENABLE_f77 "Enable f77 bindings" ON)
-OPTION(ENABLE_f95 "Enable f95 bindings" OFF)
+OPTION(ENABLE_f95 "Enable f95 bindings" ON)
 
 IF (ENABLE_f77 OR ENABLE_f95)
 

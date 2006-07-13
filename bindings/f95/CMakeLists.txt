@@ -26,6 +26,7 @@ ${CMAKE_SOURCE_DIR}/include
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 ${CMAKE_CURRENT_SOURCE_DIR}
+${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # Build plflt to determine KIND for PLFLT
@@ -35,11 +36,9 @@ plflt.c
 
 ADD_EXECUTABLE(plflt ${plflt_SRC})
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT plflt.inc
+ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc
   COMMAND ${CMAKE_CURRENT_BINARY_DIR}/plflt
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plflt
-  WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 ## Build C part of F95 bindings
@@ -72,7 +71,7 @@ sfstubs.h
 
 # Explicitly include dependancies for sfstubsf95.f90
 INCLUDE(AddFileDependencies)
-ADD_FILE_DEPENDENCIES(sfstubsf95.f90 plflt.inc)
+ADD_FILE_DEPENDENCIES(sfstubsf95.f90 ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc)
 
 ADD_LIBRARY(plplotf95${LIB_TAG} SHARED ${plplotf95${LIB_TAG}_LIB_SRCS})
 
