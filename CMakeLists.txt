@@ -114,8 +114,9 @@ add_subdirectory(lib)
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(data)
-# bindings not ready.
 add_subdirectory(bindings)
+# pkgcfg directory needs no cmake processing
+#add_subdirectory(pkgcfg)
 
 #
 # Packing stuff
