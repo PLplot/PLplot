@@ -19,7 +19,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-SET(plplot${LIB_TAG}_LIB_SRCS
+set(plplot${LIB_TAG}_LIB_SRCS
 pdfutils.c
 plargs.c
 plbox.c
@@ -58,29 +58,91 @@ if(NOT ENABLE_DYNDRIVERS)
        ${plplot${LIB_TAG}_LIB_SRCS} 
        ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
        )
-#       set_source_files_properties(
-#       ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
-#       PROPERTIES COMPILE_FLAGS -I${${SOURCE_ROOT_NAME}_INCLUDE_DIR})
+       if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+         set_source_files_properties(
+         ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
+         PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS})
+	 set(libplplot${LIB_TAG}_COMPILE_FLAGS
+	 ${libplplot${LIB_TAG}_COMPILE_FLAGS}
+	 ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+	 )
+       endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(NOT ENABLE_DYNDRIVERS)
 
-INCLUDE_DIRECTORIES(
+include_directories(
 ${CMAKE_SOURCE_DIR}/include
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
-ADD_LIBRARY(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
+add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
 if(NOT ENABLE_DYNDRIVERS)
-  TARGET_LINK_LIBRARIES(plplot${LIB_TAG} ${DRIVERS_LIBRARIES})
+  TARGET_LINK_LIBRARIES(plplot${LIB_TAG} ${DRIVERS_LINK_FLAGS})
+  set(libplplot${LIB_TAG}_LINK_FLAGS
+  ${libplplot${LIB_TAG}_LINK_FLAGS}
+  ${DRIVERS_LINK_FLAGS}
+  )
 endif(NOT ENABLE_DYNDRIVERS)
 
-SET_TARGET_PROPERTIES(plplot${LIB_TAG}
+set_target_properties(plplot${LIB_TAG}
 PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
 )
 install(TARGETS plplot${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-########### install files ###############
+string(REGEX REPLACE ";" " " 
+libplplot${LIB_TAG}_LINK_FLAGS
+"${libplplot${LIB_TAG}_LINK_FLAGS}"
+)
+message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
+
+string(REGEX REPLACE ";" " " 
+libplplot${LIB_TAG}_COMPILE_FLAGS
+"${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+)
+message("libplplot${LIB_TAG}_COMPILE_FLAGS = ${libplplot${LIB_TAG}_COMPILE_FLAGS}")
+
+# Configure pkg-config *.pc file corresponding to libplplot${LIB_TAG}
+if(PKGCONFIG_EXECUTABLE)
+  if(LIB_TAG)
+    set(PC_PRECISION "double")
+  else(LIB_TAG)
+    set(PC_PRECISION "single")
+  endif(LIB_TAG)
+  # Each list element must consist of a colon-separated string with the
+  # following fields which are parsed out in the foreach loop below and
+  # used to configure the corresponding pkg-config *.pc file.
+  # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
+  # 			    binding has been enabled (ON) or not (OFF).
+  #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
+  #			    which helps to determine name of configured 
+  #			    *.pc file.
+  # PC_SHORT_NAME	  - Used in *.pc NAME: field
+  # PC_LONG_NAME	  - Used in *.pc Description: field
+  # PC_LINK_FLAGS	  - Used in *.pc Libs: field
+  # PC_COMPILE_FLAGS	  - Used in *.pc Cflags: field
+  set(PC_DATA
+  "c++:C++:C++ bindings:${libplplot${LIB_TAG}_LINK_FLAGS}:${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+  )
+
+  string(REGEX REPLACE "^(.*):.*:.*:.*:.*$" "\\1" BINDING ${PC_DATA})
+  set(PC_FILE_SUFFIX "")
+  set(PC_REQUIRES "")
+  string(REGEX REPLACE "^.*:(.*):.*:.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:(.*):.*:.*$" "\\1" PC_LONG_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:.*:(.*):.*$" "\\1" PC_LINK_FLAGS ${PC_DATA})
+  set(PC_LINK_FLAGS "-L${LIB_DIR} -lplplotd ${PC_LINK_FLAGS}")
+  string(REGEX REPLACE "^.*:.*:.*:.*:(.*)$" "\\1" PC_COMPILE_FLAGS ${PC_DATA})
+  set(PC_COMPILE_FLAGS "-I${INCLUDE_DIR} ${PC_COMPILE_FLAGS}")
+  set(PC_CONFIGURED_FILE
+  ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
+  )
+  configure_file(
+  ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+  ${PC_CONFIGURED_FILE}
+  )
+  install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
+endif(PKGCONFIG_EXECUTABLE)
 
 #original Makefile.am contents follow:
 
