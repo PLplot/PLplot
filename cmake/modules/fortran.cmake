@@ -32,7 +32,8 @@ ENABLE_LANGUAGE(Fortran)
 
 # Don't compile Fortran 95 binding if compiler doesn't support it
 IF (ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
-  MESSAGE("Fortran compiler does not support f90/95. Disabling f95 bindings")
+  MESSAGE(STATUS "WARNING: " 
+  "fortran compiler does not support f90/95. Disabling f95 bindings")
   SET(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
 ENDIF (ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
