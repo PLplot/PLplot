@@ -1,34 +1,28 @@
-
-########### install files ###############
-
-INSTALL_FILES(  FILES  plplot@LIB_TAG@.pc )
-
-
-
-#original Makefile.am contents follow:
-
-## Makefile.am for PLplot (directory pkgcfg/)
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2003, 2004  Rafael Laboissiere
-##
-## This file is part of PLplot.
-##
-## PLplot is free software; you can redistribute it and/or modify it
-## under the terms of the GNU Library General Public License as published by
-## the Free Software Foundation; version 2 of the License.
-##
-## PLplot is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-## License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with the file PLplot; if not, write to the Free Software Foundation, Inc.,
-## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+# pkgcfg/CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
 #
-#### Where?
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+#    "f77:F77:Fortran77 bindings, :${libplplot${LIB_TAG}_LINK_FLAGS}:${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+#    "f95:F95:Fortran95 bindings, :${libplplot${LIB_TAG}_LINK_FLAGS}:${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+#    "gnome2:Gnome:PLplot for Gnome/GTK, :${libplplot${LIB_TAG}_LINK_FLAGS}:${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+#    "tcl:Tcl/Tk:Tcl/Tk bindings, :${libplplot${LIB_TAG}_LINK_FLAGS}:${libplplot${LIB_TAG}_COMPILE_FLAGS}"
 #
 #pkgconfigdir = $(PKG_CONFIG_DIR)
 #docdir = $(DOC_DIR)
