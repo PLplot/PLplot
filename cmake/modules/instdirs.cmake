@@ -61,7 +61,3 @@ set(BUILD_DIR ${CMAKE_BINARY_DIR})
 
 set(LIB_DIR_CMD "-L${LIB_DIR}")
 set(INCLUDE_DIR_CMD "-I${INCLUDE_DIR}")
-
-
-
-
