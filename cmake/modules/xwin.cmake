@@ -21,22 +21,25 @@
 # device driver.
 # The following variables are set/modified:
 # PLD_xwin		  - ON means the xwin device is enabled.
-# xwin_INCLUDE_DIR	  - individual INCLUDE_DIR required to compile xwin
+# xwin_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile xwin
 # 			    device.
-# xwin_LIBRARIES	  - individual LIBRARIES for dynamic xwin device.
-# DRIVERS_LIBRARIES	  - list of LIBRARIES for all static devices.
+# xwin_LINK_FLAGS	  - individual LINK_FLAGS for dynamic xwin device.
+# DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 # HAVE_PTHREAD		  - ON means use pthreads with xwin driver.
 # PLPLOT_MUTEX_RECURSIVE  - Portable definition for PTHREAD_MUTEX_RECURSIVE
 if(PLD_xwin)
   find_package(X11)
   if(X11_FOUND)
-    set(xwin_INCLUDE_DIR ${X11_INCLUDE_DIR})
-    set(xwin_LIBRARIES ${X11_LIBRARIES})
+    string(REGEX REPLACE ";" ";-I" 
+    xwin_COMPILE_FLAGS
+    "-I${X11_INCLUDE_DIR}"
+    )
+    set(xwin_LINK_FLAGS ${X11_LIBRARIES})
     option(HAVE_PTHREAD "use pthreads with the xwin driver" OFF)
     if(HAVE_PTHREAD)
       find_package(Threads)
       if(CMAKE_USE_PTHREADS_INIT)
-        set(xwin_LIBRARIES ${xwin_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+        set(xwin_LINK_FLAGS ${xwin_LINK_FLAGS} ${CMAKE_THREAD_LIBS_INIT})
 	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
 	else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -49,7 +52,7 @@ if(PLD_xwin)
         set(HAVE_PTHREAD OFF)
       endif(CMAKE_USE_PTHREADS_INIT)
     endif(HAVE_PTHREAD)
-    set(DRIVERS_LIBRARIES ${DRIVERS_LIBRARIES} ${xwin_LIBRARIES})
+    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${xwin_LINK_FLAGS})
   else(X11_FOUND)
     set(PLD_xwin OFF)
   endif(X11_FOUND)
