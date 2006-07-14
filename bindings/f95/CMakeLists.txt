@@ -84,7 +84,14 @@ LINKER_LANGUAGE C
 
 INSTALL(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-INSTALL_FILES( FILES plplot.mod plplotp.mod plplot_flt.mod )
+# Yuk! All Makefiles are run from the top level build directory and
+# so the f90 .mod files end up there rather than in the bindings/f95
+# directory. Ifort and pgf90 both have a -module command line option to 
+# override this location, but I'm not sure how portable that?
+INSTALL( 
+FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod  
+DESTINATION ${LIB_INSTALL_DIR}/fortran/modules/plplot
+)
 
 ENDIF(ENABLE_f95)
 
