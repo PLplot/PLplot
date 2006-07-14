@@ -90,7 +90,7 @@ INSTALL(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 # override this location, but I'm not sure how portable that?
 INSTALL( 
 FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod  
-DESTINATION ${LIB_INSTALL_DIR}/fortran/modules/plplot
+DESTINATION ${F95_MOD_DIR}
 )
 
 ENDIF(ENABLE_f95)
