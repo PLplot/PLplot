@@ -1,133 +1,88 @@
+# bindings/java/CMakeLists.txt
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Andrew Ross
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### install files ###############
+IF(ENABLE_java)
 
-INSTALL_FILES(  FILES  jar-stamp )
+# Swig generated java files
+SET(SWIG_JAVA_FILES
+  plplotjavacJNI.java 
+  PLGraphicsIn.java 
+  plplotjavacConstants.java
+  plplotjavac.java
+)
+
+# Full list of generated java files
+SET(JAVA_GEN_FILES
+ config.java
+ ${SWIG_JAVA_FILES}
+)
+
+# List of generated java files with full path names
+# Need this otherwise cmake will look in the source directory for the
+# .java files.
+STRING( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
+MESSAGE("Full paths: ${JAVA_GEN_FILES_FULL}")
+
+# Create config.java
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
+${CMAKE_CURRENT_BINARY_DIR}/config.java
+)
 
 
+# This is currently the include list for swig, the C wrapper and the
+# the java classpath. Not particular pretty...
+INCLUDE_DIRECTORIES(
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/include
+  ${JAVA_INCLUDE_PATH}
+  ${CMAKE_SOURCE_DIR}/bindings/swig-support
+  ${CMAKE_BINARY_DIR}/CMakeFiles/plplot.dir
+)
 
-#original Makefile.am contents follow:
+# Can't use source file properties as we have to quote the flags in that 
+# case and it breaks swig. Doh! I would call this a cmake bug.
+SET(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_JAVA -package plplot.core)
 
-## bindings/java/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002, 2003, 2004  Alan W. Irwin
-## Copyright (C) 2003, 2004  Rafael Laboissiere
-## 
-## This file is part of PLplot.
-##
-## This file is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## This file is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with the file; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-#
-#SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
-#PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
-#SWIG_JAVA_DIR = $(top_srcdir)/bindings/java
-#
-#SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_JAVA_DIR) -DPL_DOUBLE -DSWIG_JAVA -java 
-#
-#swigjavafiles = \
-#	plplotjavacJNI.java \
-#	PLGraphicsIn.java \
-#	plplotjavac.java
-#
-## This required for swig-1.3.21, but not for swig-1.3.17
-#swigjavafiles += plplotjavacConstants.java
-#
-#swigcfiles = plplotjavac_wrap.c
-#
-#swiggenfiles = $(swigjavafiles) $(swigcfiles)
-#
-#javafiles = \
-#	$(top_srcdir)/bindings/java/PLStream.java \
-#	config.java \
-#	$(swigjavafiles)
-#
-## Note : the order of these is important since there is no formal 
-## dependency checking.
-#javaclasses = \
-#	config.class \
-#	plplotjavacJNI.class \
-#	PLGraphicsIn.class \
-#	plplotjavacConstants.class \
-#	plplotjavac.class \
-#	PLStream.class
-#
-#### FIXME: Brute force inclusion in dist tarball.  The files below may
-#### be treated in a different way for installation [RL, 2003-03-06]
-#EXTRA_DIST = \
-#	PLStream.java \
-#	README.javaAPI \
-#	plplotjavac.i \
-#	$(swiggenfiles)
-#
-#$(swiggenfiles): $(PLPLOTJAVAC_I) plplotjavac.i $(PLPLOTCAPI_I)
-#	$(SWIG_CMD) -package plplot.core plplotjavac.i
-#
-## Must have "exec" in the name.
-#execjavawrapperdir = $(JAVAWRAPPER_DIR)
-#
-#libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
-#
-#AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(JAVAINCCMD)
-#
-#nodist_plplotjavac_wrap_la_SOURCES  = plplotjavac_wrap.c
-#
-## no-undefined should work on all platforms here since libplplot should
-## resolve all symbols.
-#plplotjavac_wrap_la_LDFLAGS = \
-#	-rpath $(execjavawrapperdir) \
-#	-module \
-#	-avoid-version \
-#	-no-undefined \
-#	$(libplplot)
-#
-#if enable_java
-#
-## Use javaJAVA for gcj support once gcc-3.2 use becomes
-## widespread.
-#
-## Can't use java support for now since jikes doesn't handle dependencies 
-## properly - instead do it using DATA and with an explicit rule.
-##noinst_JAVA = $(javafiles)
-#
-#.java.class: 
-#	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath .
-#	cp plplot/core/$@ .
-#
-#noinst_DATA = jar-stamp
-#
-#jar-stamp: $(javaclasses) $(javafiles) $(top_srcdir)/bindings/java/README.javaAPI
-#	$(mkdir_p) plplot/core
-#	$(mkdir_p) plplot/core/src
-#	cp $(top_srcdir)/bindings/java/README.javaAPI plplot/core
-#	cp $(javafiles) plplot/core/src
-#	touch jar-stamp
-#
-#execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
-#
-## if enable_java
-#endif
-#
-## Remove unneeded *.a *.la files that are installed by Libtool
-#install-exec-hook:
-#if enable_java
-#	( cd $(DESTDIR)$(execjavawrapperdir) ; \
-#	  rm -f *.a *.la )
-#endif
-#
-#clean-local:
-#	rm -rf plplot
-#
-#CLEANFILES = $(javaclasses) jar-stamp
-#
-#MAINTAINERCLEANFILES = $(swiggenfiles)
+SET( CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR} )
+
+SET_SOURCE_FILES_PROPERTIES(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
+
+# Set up swig + c wrapper
+SWIG_ADD_MODULE( plplotjavac_wrap java plplotjavac.i )
+SWIG_LINK_LIBRARIES( plplotjavac_wrap plplot${LIB_TAG} )
+
+# Create java library
+ADD_LIBRARY(plplot STATIC ${JAVA_GEN_FILES_FULL} PLStream.java )
+
+# Ensure that swig is excecuted before we try to compile the java
+# classes.
+ADD_DEPENDENCIES(plplot plplotjavac_wrap)
+
+# Java compiler doesn't support -D option.
+REMOVE_DEFINITIONS("-DHAVE_CONFIG_H")
+
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
+
+ENDIF(ENABLE_java)
+

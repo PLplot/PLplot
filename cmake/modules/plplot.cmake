@@ -43,10 +43,14 @@ CHECK_FUNCTION_EXISTS(isnan HAVE_ISNAN)
 # Language bindings
 # =======================================================================
 
+# Find swig - no version checking at present
+FIND_PACKAGE(SWIG)
+include(${SWIG_USE_FILE})
+
+# Load language specific files
 include(c++)
 include(fortran)
-#include(f77)
-#include(f95)
+include(java)
 
 # =======================================================================
 # pkg-config support
