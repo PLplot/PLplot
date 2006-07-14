@@ -1,0 +1,56 @@
+# cmake/modules/java.cmake
+#
+# Java binding configuration
+#
+# Copyright (C) 2006  Andrew Ross
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the file PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+# Module for determining Java bindings configuration options
+
+# Options to enable Java bindings
+OPTION(ENABLE_java "Enable Java bindings" ON)
+
+IF (ENABLE_java)
+
+# Check for java environment
+ENABLE_LANGUAGE(Java)
+
+FIND_PACKAGE(JNI)
+
+# If CMake doesn't find jni.h you need set JAVA_INCLUDE_PATH
+IF( "${JAVA_INCLUDE_PATH}" MATCHES "NOTFOUND$" )
+  MESSAGE(STATUS "Unable to find jni.h - disabling Java bindings\n" 
+  "Set JAVA_INCLUDE_PATH to point to the directory containing jni.h")
+  SET(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+ENDIF( "${JAVA_INCLUDE_PATH}" MATCHES "NOTFOUND$" )
+
+# Set up installation locations for java specific files.
+# Java .jar files.
+set(JAR_INSTALL_DIR share/java)
+set(JAR_DIR ${CMAKE_INSTALL_PREFIX}/${JAR_INSTALL_DIR})
+# JNI .so files.
+SET(JAVAWRAPPER_DIR ${LIB_DIR}/jni)
+GET_FILENAME_COMPONENT(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
+# Library name will be system dependent. For now assume .so
+# We're not currently using libtool so we can't use the autotools
+# trick to guess. 
+# This will definitely need changing for windows.
+SET(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap.so)
+
+ENDIF (ENABLE_java)
+
+
