@@ -36,6 +36,10 @@ to, for example, get help with the ADD_SUBDIRECTORY command.
 * Useful intro to CMake from the KDE perspective
 (http://wiki.kde.org/tiki-index.php?page=KDECMakeIntro).
 
+* CMake is an easy language to understand so the cmake modules in
+$cmake_prefix/share/CMake/Modules, where cmake_prefix is the prefix for your
+cmake install, are a good source of ideas.
+
 * KDE and Scribus CMakeLists.txt files and *.cmake modules.  I got access to
 the latest KDE and Scribus work following the instructions at
 http://developer.kde.org/source/anonsvn.html and
