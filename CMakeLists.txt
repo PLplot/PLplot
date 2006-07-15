@@ -117,6 +117,7 @@ add_subdirectory(data)
 add_subdirectory(bindings)
 # pkgcfg directory needs no cmake processing
 #add_subdirectory(pkgcfg)
+add_subdirectory(examples)
 
 #
 # Packing stuff
