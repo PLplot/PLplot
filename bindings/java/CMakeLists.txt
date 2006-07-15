@@ -56,6 +56,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/include
   ${JAVA_INCLUDE_PATH}
+  ${JAVA_INCLUDE_PATH2}
   ${CMAKE_SOURCE_DIR}/bindings/swig-support
   ${CMAKE_BINARY_DIR}/CMakeFiles/plplot.dir
 )
