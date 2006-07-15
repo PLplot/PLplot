@@ -50,7 +50,7 @@ include(drivers-init)
 # and set appropriate PLD_devicename to OFF if the required resources are 
 # not available.
 #include(cgm)
-#include(gcw)
+include(gcw)
 #include(gd)
 #include(gnome)
 #include(linuxvga)

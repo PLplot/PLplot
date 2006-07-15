@@ -21,6 +21,10 @@
 
 # Module for determining all configuration variables for PLplot.
 
+# Need this module to check for C header files in included modules
+# below using the check_include_files macro.
+include(CheckIncludeFiles)
+
 # =======================================================================
 # Compilation and build options (PLFLT, install locations, and rpath)
 # Note, must come before java since that depends on, e.g., LIB_DIR.
