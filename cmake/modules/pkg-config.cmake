@@ -34,8 +34,12 @@
 # PKG_CONFIG_ENV	  - the string PKG_CONFIG_PATH=${PKG_CONFIG_DIR} which
 #  			    is used in example builds.
 
+
 message(STATUS "Looking for pkg-config")
-find_program(PKGCONFIG_EXECUTABLE NAMES pkg-config PATHS /usr/local/bin)
+# Following line is in UsePkgConfig.cmake so comment it out.
+# find_program(PKGCONFIG_EXECUTABLE NAMES pkg-config PATHS /usr/local/bin)
+# Make PKGCONFIG_EXECUTABLE available as well as the PKGCONFIG macro.
+include(UsePkgConfig)
 
 set(pkg_config_false "#")
 
