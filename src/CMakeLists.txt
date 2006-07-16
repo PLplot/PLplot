@@ -77,6 +77,8 @@ ${CMAKE_BINARY_DIR}/include
 )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
+TARGET_LINK_LIBRARIES(plplot${LIB_TAG} m)
+
 if(NOT ENABLE_DYNDRIVERS)
   TARGET_LINK_LIBRARIES(plplot${LIB_TAG} ${DRIVERS_LINK_FLAGS})
   set(libplplot${LIB_TAG}_LINK_FLAGS
