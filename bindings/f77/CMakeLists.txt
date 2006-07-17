@@ -18,85 +18,125 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF(ENABLE_f77)
+if(ENABLE_f77)
 
 ## Generate source files depending on type of PLFLT
 ## Note: Sed will possibly fail on windows. Would this be better 
 ## done using the cmake configure_file option eventually?
-IF(PL_DOUBLE)
-  ADD_CUSTOM_COMMAND(
+if(PL_DOUBLE)
+  ADD_CUSTOM_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
   )
-ELSE(PL_DOUBLE)
-  ADD_CUSTOM_COMMAND(
+else(PL_DOUBLE)
+  add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     COMMAND sed
     ARGS -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4a > ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
   )
-ENDIF(PL_DOUBLE)
+endif(PL_DOUBLE)
 
-IF (F77_CMD_LINE)
-  SET(HAVE_F77PARSE_CL_FALSE C)
-ELSE (F77_CMD_LINE)
-  SET(HAVE_F77PARSE_CL_TRUE C)
-ENDIF (F77_CMD_LINE)
+if(F77_CMD_LINE)
+  set(HAVE_F77PARSE_CL_FALSE C)
+else(F77_CMD_LINE)
+  set(HAVE_F77PARSE_CL_TRUE C)
+endif(F77_CMD_LINE)
 
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/configurable.f.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/configurable.f
 )
-SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/configurable.f 
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/configurable.f 
 PROPERTIES GENERATED ON)
 
 # Set the include path
-INCLUDE_DIRECTORIES(
+include_directories(
 ${CMAKE_CURRENT_SOURCE_DIR}
 ${CMAKE_SOURCE_DIR}/include
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
 
-
 ## Build C part of F77 bindings
-
-SET(plplotf77c${LIB_TAG}_LIB_SRCS
+set(plplotf77c${LIB_TAG}_LIB_SRCS
 sc3d.c 
 sccont.c 
 scstubs.c
 )
 
-ADD_LIBRARY(plplotf77c${LIB_TAG} SHARED ${plplotf77c${LIB_TAG}_LIB_SRCS})
+add_library(plplotf77c${LIB_TAG} SHARED ${plplotf77c${LIB_TAG}_LIB_SRCS})
 
-TARGET_LINK_LIBRARIES(plplotf77c${LIB_TAG}  plplot${LIB_TAG})
+target_link_libraries(plplotf77c${LIB_TAG} plplot${LIB_TAG})
 
-SET_TARGET_PROPERTIES(plplotf77c${LIB_TAG} 
+set_target_properties(plplotf77c${LIB_TAG} 
 PROPERTIES SOVERSION ${plplotf77_SOVERSION} VERSION ${plplotf77_VERSION}
 )
 
-INSTALL(TARGETS plplotf77c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
-
+install(TARGETS plplotf77c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 ## Build fortran part of F77 bindings
-
-SET(plplotf77${LIB_TAG}_LIB_SRCS
+set(plplotf77${LIB_TAG}_LIB_SRCS
 strutil.f 
 sfstubs.f 
 configurable.f
 )
 
-ADD_LIBRARY(plplotf77${LIB_TAG} SHARED ${plplotf77${LIB_TAG}_LIB_SRCS})
+add_library(plplotf77${LIB_TAG} SHARED ${plplotf77${LIB_TAG}_LIB_SRCS})
 
-TARGET_LINK_LIBRARIES(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
+target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
 
-SET_TARGET_PROPERTIES(plplotf77${LIB_TAG}  
+set_target_properties(plplotf77${LIB_TAG}  
 PROPERTIES SOVERSION ${plplotf77_SOVERSION} VERSION ${plplotf77_VERSION}
 LINKER_LANGUAGE C
 )
 
-INSTALL(TARGETS plplotf77${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplotf77${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
+# Configure pkg-config *.pc file corresponding to libplplotf77${LIB_TAG}
+if(PKGCONFIG_EXECUTABLE)
+  if(LIB_TAG)
+    set(PC_PRECISION "double")
+  else(LIB_TAG)
+    set(PC_PRECISION "single")
+  endif(LIB_TAG)
+  # Each list element must consist of a colon-separated string with the
+  # following fields which are parsed out in the foreach loop below and
+  # used to configure the corresponding pkg-config *.pc file.
+  # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
+  # 			    binding has been enabled (ON) or not (OFF).
+  #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
+  #			    which helps to determine name of configured 
+  #			    *.pc file.
+  # PC_SHORT_NAME	  - Used in *.pc NAME: field
+  # PC_LONG_NAME	  - Used in *.pc Description: field
+  # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
+  #                         Also used to determine PC_LINK_FLAGS and
+  #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
+  #			    fields.
+  set(PC_DATA "f77:F77:F77 bindings, :plplotf77${LIB_TAG}")
+
+  string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
+  set(PC_FILE_SUFFIX "-${BINDING}")
+  set(PC_REQUIRES "plplot${LIB_TAG}")
+  string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
+  set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
+  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
+  set(PC_LINK_FLAGS
+  "-l${PC_LIBRARY_NAME} -lplplotf77c${LIB_TAG} ${PC_LINK_FLAGS}"
+  )
+  set(PC_CONFIGURED_FILE
+  ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
+  )
+  configure_file(
+  ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+  ${PC_CONFIGURED_FILE}
+  @ONLY
+  )
+  install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
+endif(PKGCONFIG_EXECUTABLE)
 ENDIF(ENABLE_f77)

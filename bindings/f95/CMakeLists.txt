@@ -18,10 +18,10 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF(ENABLE_f95)
+if(ENABLE_f95)
 
 # Set the include path
-INCLUDE_DIRECTORIES(
+include_directories(
 ${CMAKE_SOURCE_DIR}/include
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
@@ -30,41 +30,40 @@ ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # Build plflt to determine KIND for PLFLT
-SET(plflt_SRC
+set(plflt_SRC
 plflt.c
 )
 
-ADD_EXECUTABLE(plflt ${plflt_SRC})
+add_executable(plflt ${plflt_SRC})
 
-ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc
   COMMAND ${CMAKE_CURRENT_BINARY_DIR}/plflt
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plflt
 )
 
-SET_SOURCE_FILES_PROPERTIES(plflt.inc PROPERTIES GENERATED ON)
+set_source_files_properties(plflt.inc PROPERTIES GENERATED ON)
 
 ## Build C part of F95 bindings
-
-SET(plplotf95c${LIB_TAG}_LIB_SRCS
+set(plplotf95c${LIB_TAG}_LIB_SRCS
 plstubs.h
 sc3d.c
 sccont.c
 scstubs.c
 )
 
-ADD_LIBRARY(plplotf95c${LIB_TAG} SHARED ${plplotf95c${LIB_TAG}_LIB_SRCS})
+add_library(plplotf95c${LIB_TAG} SHARED ${plplotf95c${LIB_TAG}_LIB_SRCS})
 
-TARGET_LINK_LIBRARIES(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
+target_link_libraries(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
 
-SET_TARGET_PROPERTIES(plplotf95c${LIB_TAG}
+set_target_properties(plplotf95c${LIB_TAG}
 PROPERTIES SOVERSION ${plplotf95_SOVERSION} VERSION ${plplotf95_VERSION}
 )
 
-INSTALL(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 
 ## Build fortran part of F95 bindings
-SET(plplotf95${LIB_TAG}_LIB_SRCS
+set(plplotf95${LIB_TAG}_LIB_SRCS
 strutil.f90 
 configurable.f90 
 sfstubsf95.f90 
@@ -72,28 +71,71 @@ sfstubs.h
 )
 
 # Explicitly include dependancies for sfstubsf95.f90
-INCLUDE(AddFileDependencies)
-ADD_FILE_DEPENDENCIES(sfstubsf95.f90 ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc)
+include(AddFileDependencies)
+add_file_dependencies(sfstubsf95.f90 ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc)
 
-ADD_LIBRARY(plplotf95${LIB_TAG} SHARED ${plplotf95${LIB_TAG}_LIB_SRCS})
+add_library(plplotf95${LIB_TAG} SHARED ${plplotf95${LIB_TAG}_LIB_SRCS})
 
-TARGET_LINK_LIBRARIES(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
+target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
 
-SET_TARGET_PROPERTIES(plplotf95${LIB_TAG}
+set_target_properties(plplotf95${LIB_TAG}
 PROPERTIES SOVERSION ${plplotf95_SOVERSION} VERSION ${plplotf95_VERSION}
 LINKER_LANGUAGE C
 )
 
-INSTALL(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 # Yuk! All Makefiles are run from the top level build directory and
 # so the f90 .mod files end up there rather than in the bindings/f95
 # directory. Ifort and pgf90 both have a -module command line option to 
 # override this location, but I'm not sure how portable that?
-INSTALL( 
+install( 
 FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod  
 DESTINATION ${F95_MOD_DIR}
 )
 
-ENDIF(ENABLE_f95)
+# Configure pkg-config *.pc file corresponding to libplplotf95${LIB_TAG}
+if(PKGCONFIG_EXECUTABLE)
+  if(LIB_TAG)
+    set(PC_PRECISION "double")
+  else(LIB_TAG)
+    set(PC_PRECISION "single")
+  endif(LIB_TAG)
+  # Each list element must consist of a colon-separated string with the
+  # following fields which are parsed out in the foreach loop below and
+  # used to configure the corresponding pkg-config *.pc file.
+  # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
+  # 			    binding has been enabled (ON) or not (OFF).
+  #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
+  #			    which helps to determine name of configured 
+  #			    *.pc file.
+  # PC_SHORT_NAME	  - Used in *.pc NAME: field
+  # PC_LONG_NAME	  - Used in *.pc Description: field
+  # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
+  #                         Also used to determine PC_LINK_FLAGS and
+  #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
+  #			    fields.
+  set(PC_DATA "f95:F95:F95 bindings, :plplotf95${LIB_TAG}")
 
+  string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
+  set(PC_FILE_SUFFIX "-${BINDING}")
+  set(PC_REQUIRES "plplot${LIB_TAG}")
+  string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
+  set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
+  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
+  set(PC_LINK_FLAGS
+  "-l${PC_LIBRARY_NAME} -lplplotf95c${LIB_TAG} ${PC_LINK_FLAGS}"
+  )
+  set(PC_CONFIGURED_FILE
+  ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
+  )
+  configure_file(
+  ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+  ${PC_CONFIGURED_FILE}
+  @ONLY
+  )
+  install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
+endif(PKGCONFIG_EXECUTABLE)
+endif(ENABLE_f95)
