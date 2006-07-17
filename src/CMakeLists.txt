@@ -121,27 +121,34 @@ if(PKGCONFIG_EXECUTABLE)
   #			    *.pc file.
   # PC_SHORT_NAME	  - Used in *.pc NAME: field
   # PC_LONG_NAME	  - Used in *.pc Description: field
-  # PC_LINK_FLAGS	  - Used in *.pc Libs: field
-  # PC_COMPILE_FLAGS	  - Used in *.pc Cflags: field
-  set(PC_DATA
-  "c++:C++:C++ bindings:${libplplot${LIB_TAG}_LINK_FLAGS}:${libplplot${LIB_TAG}_COMPILE_FLAGS}"
-  )
+  # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
+  #                         Also used to determine PC_LINK_FLAGS and
+  #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
+  #			    fields.
+  set(PC_DATA "c:::plplot${LIB_TAG}")
+  # Other possibilities:
+  # set(PC_DATA "c++:C++:C++ bindings, :plplot${LIB_TAG})"
+  # set(PC_DATA "f77:F77:Fortran77 bindings, :plplot${LIB_TAG}")
+  # set(PC_DATA "f95:F95:Fortran95 bindings, :plplot${LIB_TAG}")
+  # set(PC_DATA "gnome2:Gnome:Gnome/GTK bindings, :plplot${LIB_TAG}")
+  # set(PC_DATA "tcl:Tcl/Tk:Tcl/Tk bindings, :plplot${LIB_TAG}")
 
-  string(REGEX REPLACE "^(.*):.*:.*:.*:.*$" "\\1" BINDING ${PC_DATA})
+  string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
   set(PC_FILE_SUFFIX "")
   set(PC_REQUIRES "")
-  string(REGEX REPLACE "^.*:(.*):.*:.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-  string(REGEX REPLACE "^.*:.*:(.*):.*:.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-  string(REGEX REPLACE "^.*:.*:.*:(.*):.*$" "\\1" PC_LINK_FLAGS ${PC_DATA})
-  set(PC_LINK_FLAGS "-L${LIB_DIR} -lplplotd ${PC_LINK_FLAGS}")
-  string(REGEX REPLACE "^.*:.*:.*:.*:(.*)$" "\\1" PC_COMPILE_FLAGS ${PC_DATA})
-  set(PC_COMPILE_FLAGS "-I${INCLUDE_DIR} ${PC_COMPILE_FLAGS}")
+  string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
+  string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
+  set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
+  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
+  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
   set(PC_CONFIGURED_FILE
   ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
   )
   configure_file(
   ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
   ${PC_CONFIGURED_FILE}
+  @ONLY
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
 endif(PKGCONFIG_EXECUTABLE)
