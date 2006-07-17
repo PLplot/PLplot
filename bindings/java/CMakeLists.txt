@@ -38,7 +38,6 @@ SET(JAVA_GEN_FILES
 # Need this otherwise cmake will look in the source directory for the
 # .java files.
 STRING( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
-MESSAGE("Full paths: ${JAVA_GEN_FILES_FULL}")
 
 # Create config.java
 configure_file(
