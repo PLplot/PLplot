@@ -34,7 +34,12 @@ if(PLD_xwin)
     xwin_COMPILE_FLAGS
     "-I${X11_INCLUDE_DIR}"
     )
-    set(xwin_LINK_FLAGS ${X11_LIBRARIES})
+    # N.B. X11_LIBRARY_DIR is used internally by FindX11.cmake but not
+    # documented for external use so we may have to replace this
+    # some day by the appropriate 
+    # "GET_FILENAME_COMPONENT(X11_LIBRARY_DIR ??? PATH)" logic.
+    # But this works for now....
+    set(xwin_LINK_FLAGS "-L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
     option(HAVE_PTHREAD "use pthreads with the xwin driver" OFF)
     if(HAVE_PTHREAD)
       find_package(Threads)
