@@ -26,6 +26,19 @@ OPTION(ENABLE_java "Enable Java bindings" ON)
 
 IF (ENABLE_java)
 
+# Check for java compiler
+INCLUDE(CMakeDetermineJavaCompiler)
+
+IF (CMAKE_Java_COMPILER MATCHES "NOTFOUND$")
+  MESSAGE(STATUS "WARNING: "
+    "java compiler not found. Disabling java bindings")
+  SET(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+ENDIF (CMAKE_Java_COMPILER MATCHES "NOTFOUND$")
+
+ENDIF (ENABLE_java)
+
+IF (ENABLE_java)
+
 # Check for java environment
 ENABLE_LANGUAGE(Java)
 
