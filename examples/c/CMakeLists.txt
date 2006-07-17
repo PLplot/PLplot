@@ -21,33 +21,49 @@
 set(c_SRCS
 plcdemos.h
 tutor.c
-x01c.c
-x02c.c
-x03c.c
-x04c.c
-x05c.c
-x06c.c
-x07c.c
-x08c.c
-x09c.c
-x10c.c
-x11c.c
-x12c.c
-x13c.c
-x14c.c
-x15c.c
-x16c.c
-x17c.c
-x18c.c
-x19c.c
-x20c.c
-x21c.c
-x22c.c
-x23c.c
-x24c.c
-x25c.c
-x26c.c
 )
+
+set(c_STRING_INDICES
+"01"
+"02"
+"03"
+"04"
+"05"
+"06"
+"07"
+"08"
+"09"
+"10"
+"11"
+"12"
+"13"
+"14"
+"15"
+"16"
+"17"
+"18"
+"19"
+"20"
+"21"
+"22"
+"23"
+"24"
+"25"
+"26"
+)
+
+#set(ENABLE_BUILDTREE_EXAMPLES ON)
+if(ENABLE_BUILDTREE_EXAMPLES)
+  remove_definitions("-DHAVE_CONFIG_H")
+  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
+endif(ENABLE_BUILDTREE_EXAMPLES)
+foreach(STRING_INDEX ${c_STRING_INDICES})
+  set(c_SRCS ${c_SRCS} x${STRING_INDEX}c.c)
+  if(ENABLE_BUILDTREE_EXAMPLES)
+    add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)
+    target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} m)
+  endif(ENABLE_BUILDTREE_EXAMPLES)
+endforeach(STRING_INDEX ${c_STRING_INDICES})
 
 set(plplotcanvas_SRCS
 plplotcanvas_demo.c
