@@ -24,6 +24,10 @@ SET(plplotcxx${LIB_TAG}_LIB_SRCS
 plstream.cc
 )
 
+SET(plplotcxx${LIB_TAG}_INSTALLED_HEADERS
+plstream.h
+)
+
 # Set the include path
 INCLUDE_DIRECTORIES(
 ${CMAKE_SOURCE_DIR}/include
@@ -46,5 +50,8 @@ PROPERTIES SOVERSION ${plplotcxx_SOVERSION} VERSION ${plplotcxx_VERSION}
 
 # Install library in lib/
 install(TARGETS plplotcxx${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+
+install(FILES ${plplotcxx${LIB_TAG}_INSTALLED_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR})
+
 
 ENDIF(ENABLE_c++)
