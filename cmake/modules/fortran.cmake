@@ -28,6 +28,20 @@ OPTION(ENABLE_f95 "Enable f95 bindings" ON)
 IF (ENABLE_f77 OR ENABLE_f95)
 
 # Check for fortran compiler
+INCLUDE(CMakeDetermineFortranCompiler)
+
+IF (CMAKE_Fortran_COMPILER MATCHES "NOTFOUND$")
+  MESSAGE(STATUS "WARNING: " 
+  "fortran compiler not found. Disabling f77/f95 bindings")
+  SET(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
+  SET(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+ENDIF (CMAKE_Fortran_COMPILER MATCHES "NOTFOUND$")
+
+ENDIF (ENABLE_f77 OR ENABLE_f95)
+
+IF (ENABLE_f77 OR ENABLE_f95)
+
+# Enable fortran language
 ENABLE_LANGUAGE(Fortran)
 
 # Don't compile Fortran 95 binding if compiler doesn't support it
