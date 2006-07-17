@@ -1,4 +1,4 @@
-# examples/c/CMakeLists.txt
+# examples/f77/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Alan W. Irwin
@@ -77,7 +77,7 @@ endif(ENABLE_BUILDTREE_EXAMPLES)
 foreach(STRING_INDEX ${f77_STRING_INDICES})
   if(ENABLE_BUILDTREE_EXAMPLES)
     add_executable(x${STRING_INDEX}f ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f)
-    target_link_libraries(x${STRING_INDEX}f plplotf77${LIB_TAG} m)
+    target_link_libraries(x${STRING_INDEX}f plplotf77${LIB_TAG})
   endif(ENABLE_BUILDTREE_EXAMPLES)
 endforeach(STRING_INDEX ${f77_STRING_INDICES})
 
