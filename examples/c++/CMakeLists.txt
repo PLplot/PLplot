@@ -1,7 +1,8 @@
-# examples/c/CMakeLists.txt
+# examples/c++/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
+# Copyright (C) 2006 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,37 +19,55 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF (ENABLE_c++)
-
 set(cxx_SRCS
 plc++demos.h
-x01cc.cc
-x01.cc
-x02.cc
-x03.cc
-x04.cc
-x05.cc
-x06.cc
-x07.cc
-x08.cc
-x09.cc
-x10.cc
-x11.cc
-x12.cc
-x13.cc
-x14.cc
-x15.cc
-x16.cc
-x17.cc
-x18.cc
-x19.cc
-x20.cc
-x21.cc
-x22.cc
-x23.cc
-x24.cc
-x26.cc
 )
+
+set(cxx_STRING_INDICES
+"01cc"
+"01"
+"02"
+"03"
+"04"
+"05"
+"06"
+"07"
+"08"
+"09"
+"10"
+"11"
+"12"
+"13"
+"14"
+"15"
+"16"
+"17"
+"18"
+"19"
+"20"
+"21"
+"22"
+"23"
+"24"
+"26"
+)
+
+#set(ENABLE_BUILDTREE_EXAMPLES ON)
+if(ENABLE_BUILDTREE_EXAMPLES)
+  remove_definitions("-DHAVE_CONFIG_H")
+  include_directories(
+  ${CMAKE_SOURCE_DIR}/bindings/c++
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_BINARY_DIR}/include
+  )
+endif(ENABLE_BUILDTREE_EXAMPLES)
+foreach(STRING_INDEX ${cxx_STRING_INDICES})
+  set(cxx_SRCS ${cxx_SRCS} x${STRING_INDEX}.cc)
+  if(ENABLE_BUILDTREE_EXAMPLES)
+    add_executable(x${STRING_INDEX} x${STRING_INDEX}.cc)
+    target_link_libraries(x${STRING_INDEX} plplotcxx${LIB_TAG} m)
+  endif(ENABLE_BUILDTREE_EXAMPLES)
+endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
 install(FILES ${cxx_SRCS} DESTINATION ${DATA_DIR}/examples/c++)
 
@@ -62,5 +81,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/c++
 RENAME Makefile
 )
-
-ENDIF (ENABLE_c++)

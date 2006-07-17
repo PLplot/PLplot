@@ -18,59 +18,75 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF (ENABLE_f77)
+set(f77_SRCS)
 
-set(f77_SRCS
-x01f.f 
-x02f.f 
-x03f.f
-x04f.f
-x05f.f
-x06f.f
-x07f.f
-x08f.f
-x09f.f
-x10f.f
-x11f.f
-x12f.f
-x13f.f
-x14f.f
-x15f.f
-x16f.f
-x16af.f
-x17f.f
-x18f.f
-x19f.f
-x22f.f
-x23f.f
+set(f77_STRING_INDICES
+"01"
+"02"
+"03"
+"04"
+"05"
+"06"
+"07"
+"08"
+"09"
+"10"
+"11"
+"12"
+"13"
+"14"
+"15"
+"16"
+"16a"
+"17"
+"18"
+"19"
+"22"
+"23"
 )
 
-IF(PL_DOUBLE)
-  FOREACH(srcfile ${f77_SRCS})
-    ADD_CUSTOM_COMMAND(
+foreach(STRING_INDEX ${f77_STRING_INDICES})
+  set(f77_SRCS ${f77_SRCS} x${STRING_INDEX}f.f)
+endforeach(STRING_INDEX ${c_STRING_INDICES})
+
+if(PL_DOUBLE)
+  foreach(srcfile ${f77_SRCS})
+    add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${srcfile}
       COMMAND ${CMAKE_COMMAND} 
       ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${srcfile}m4 ${CMAKE_CURRENT_BINARY_DIR}/${srcfile}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${srcfile}m4
     )
-  ENDFOREACH(srcfile ${f77_SRCS})
-ELSE(PL_DOUBLE)
-  FOREACH(srcfile ${f77_SRCS})
-    ADD_CUSTOM_COMMAND(
+  endforeach(srcfile ${f77_SRCS})
+else(PL_DOUBLE)
+  foreach(srcfile ${f77_SRCS})
+    add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${srcfile}
       COMMAND sed
       ARGS -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/${srcfile}m4 > ${CMAKE_CURRENT_BINARY_DIR}/${srcfile}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${srcfile}m4
     )
-  ENDFOREACH(srcfile ${f77_SRCS})
-ENDIF(PL_DOUBLE)
+  endforeach(srcfile ${f77_SRCS})
+endif(PL_DOUBLE)
+
+#set(ENABLE_BUILDTREE_EXAMPLES ON)
+if(ENABLE_BUILDTREE_EXAMPLES)
+  remove_definitions("-DHAVE_CONFIG_H")
+  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
+endif(ENABLE_BUILDTREE_EXAMPLES)
+foreach(STRING_INDEX ${f77_STRING_INDICES})
+  if(ENABLE_BUILDTREE_EXAMPLES)
+    add_executable(x${STRING_INDEX}f ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f)
+    target_link_libraries(x${STRING_INDEX}f plplotf77${LIB_TAG} m)
+  endif(ENABLE_BUILDTREE_EXAMPLES)
+endforeach(STRING_INDEX ${f77_STRING_INDICES})
 
 # List of generated fortran files with full path names
 # Need this otherwise cmake will look in the source directory for the
 # .f files.
-STRING( REGEX REPLACE "(x[A-za-z0-9]*)\\.f" "${CMAKE_CURRENT_BINARY_DIR}/\\1.f" f77_full_SRCS "${f77_SRCS}" )
+string( REGEX REPLACE "(x[A-za-z0-9]*)\\.f" "${CMAKE_CURRENT_BINARY_DIR}/\\1.f" f77_full_SRCS "${f77_SRCS}" )
 
-ADD_CUSTOM_TARGET(f77_examples ALL DEPENDS ${f77_full_SRCS})
+add_custom_target(f77_examples ALL DEPENDS ${f77_full_SRCS})
 
 install(FILES ${f77_full_SRCS} 
 DESTINATION ${DATA_DIR}/examples/f77
@@ -86,5 +102,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/f77
 RENAME Makefile
 )
-
-ENDIF (ENABLE_f77)
