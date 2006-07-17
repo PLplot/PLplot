@@ -1,4 +1,4 @@
-# examples/c/CMakeLists.txt
+# examples/f95/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Alan W. Irwin
@@ -18,32 +18,45 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF (ENABLE_f95)
+set(f95_SRCS)
 
-set(f95_SRCS
-x01f.f90 
-x02f.f90 
-x03f.f90 
-x04f.f90 
-x05f.f90 
-x06f.f90 
-x07f.f90 
-x08f.f90 
-x09f.f90 
-x10f.f90 
-x11f.f90 
-x12f.f90 
-x13f.f90 
-x14f.f90 
-x15f.f90 
-x16f.f90 
-x16af.f90 
-x17f.f90 
-x18f.f90 
-x19f.f90 
-x22f.f90 
-x23f.f90 
+set(f95_STRING_INDICES
+"01"
+"02"
+"03"
+"04"
+"05"
+"06"
+"07"
+"08"
+"09"
+"10"
+"11"
+"12"
+"13"
+"14"
+"15"
+"16"
+"16a"
+"17"
+"18"
+"19"
+"22"
+"23"
 )
+
+#set(ENABLE_BUILDTREE_EXAMPLES ON)
+if(ENABLE_BUILDTREE_EXAMPLES)
+  remove_definitions("-DHAVE_CONFIG_H")
+  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
+endif(ENABLE_BUILDTREE_EXAMPLES)
+foreach(STRING_INDEX ${f95_STRING_INDICES})
+  set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
+  if(ENABLE_BUILDTREE_EXAMPLES)
+    add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
+    target_link_libraries(x${STRING_INDEX}f plplotf95${LIB_TAG})
+  endif(ENABLE_BUILDTREE_EXAMPLES)
+endforeach(STRING_INDEX ${f95_STRING_INDICES})
 
 install(FILES ${f95_SRCS} 
 DESTINATION ${DATA_DIR}/examples/f95
@@ -59,5 +72,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/f95
 RENAME Makefile
 )
-
-ENDIF (ENABLE_f95)
