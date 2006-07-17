@@ -18,6 +18,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+IF (ENABLE_c++)
+
 set(cxx_SRCS
 plc++demos.h
 x01cc.cc
@@ -60,3 +62,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/c++
 RENAME Makefile
 )
+
+ENDIF (ENABLE_c++)
