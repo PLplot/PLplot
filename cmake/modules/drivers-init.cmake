@@ -47,7 +47,7 @@ OFF
 
 option(DEFAULT_NO_DEVICES
 "disable all (ON) or enable individually (OFF) devices by default"
-ON
+OFF
 )
 
 if(DEFAULT_ALL_DEVICES AND DEFAULT_NO_DEVICES)
@@ -65,36 +65,36 @@ endif(DEFAULT_ALL_DEVICES AND DEFAULT_NO_DEVICES)
 # consumption, but this is not necessary.
 
 set(DRIVERS_DEVICE_LIST
-"aqt:aqt:ON"
-"cgm:cgm:ON"
-"dg300:dg300:OFF"
-"png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"
-"gnome:gnome:OFF"
-"hp7470:hpgl:ON" "hp7580:hpgl:ON" "lj_hpgl:hpgl:ON"
-"imp:impress:OFF"
+#"aqt:aqt:ON"
+#"cgm:cgm:ON"
+#"dg300:dg300:OFF"
+#"png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"
+#"gnome:gnome:OFF"
+#"hp7470:hpgl:ON" "hp7580:hpgl:ON" "lj_hpgl:hpgl:ON"
+#"imp:impress:OFF"
 "gcw:gcw:ON"
-"linuxvga:linuxvga:ON"
-"ljii:ljii:OFF"
-"ljiip:ljiip:OFF"
-"mem:mem:ON"
-"ntk:ntk:OFF"
-"null:null:ON"
-"pbm:pbm:ON"
-"plmeta:plmeta:ON"
+#"linuxvga:linuxvga:ON"
+#"ljii:ljii:OFF"
+#"ljiip:ljiip:OFF"
+#"mem:mem:ON"
+#"ntk:ntk:OFF"
+#"null:null:ON"
+#"pbm:pbm:ON"
+#"plmeta:plmeta:ON"
 "ps:ps:ON"
-"psttf:psttf:ON"
-"xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
-"versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
-"tek4107f:tek:OFF"
-"tk:tk:ON"
-"tkwin:tkwin:ON"
-"wingcc:wingcc:ON"
-"wxwidgets:wxwidgets:ON"
-"xfig:xfig:ON"
+#"psttf:psttf:ON"
+#"xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
+#"versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
+#"tek4107f:tek:OFF"
+#"tk:tk:ON"
+#"tkwin:tkwin:ON"
+#"wingcc:wingcc:ON"
+#"wxwidgets:wxwidgets:ON"
+#"xfig:xfig:ON"
 "xwin:xwin:ON"
 )
 
-set(PRESET_DEFAULT ON)
+set(PRESET_DEFAULT OFF)
 
 if(DEFAULT_ALL_DEVICES)
   set(DEFAULT ON)
