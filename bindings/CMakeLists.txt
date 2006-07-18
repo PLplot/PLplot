@@ -6,7 +6,7 @@ ADD_SUBDIRECTORY( f95 )
 #ADD_SUBDIRECTORY( tk ) 
 #ADD_SUBDIRECTORY( octave ) 
 ADD_SUBDIRECTORY( java ) 
-#ADD_SUBDIRECTORY( gnome2 ) 
+ADD_SUBDIRECTORY( gnome2 ) 
 
 
 ########### install files ###############
