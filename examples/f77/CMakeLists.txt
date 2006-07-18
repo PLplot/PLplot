@@ -18,7 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(f77_SRCS "")
+set(f77_SRCS)
 
 set(f77_STRING_INDICES
 "01"
@@ -49,6 +49,7 @@ foreach(STRING_INDEX ${f77_STRING_INDICES})
   set(f77_SRCS ${f77_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f)
 endforeach(STRING_INDEX ${c_STRING_INDICES})
 
+# Process .fm4 files to set PLFLT to real / double.
 if(PL_DOUBLE)
   foreach(STRING_INDEX ${f77_STRING_INDICES})
     add_custom_command(
