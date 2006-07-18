@@ -20,7 +20,7 @@
 
 set(java_SRCS)
 
-set(f95_STRING_INDICES
+set(java_STRING_INDICES
 "01"
 "02"
 "03"
