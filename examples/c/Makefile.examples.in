@@ -32,7 +32,7 @@ EXEEXT = @EXEEXT@
 @gcw_true@		 plplotcanvas_demo$(EXEEXT) \
 @gcw_true@		 plplotcanvas_animation$(EXEEXT)
 
-EXECUTABLES_list = $(PLPLOTCANVAS_EXECUTABLES_list) \
+EXECUTABLES_list = \
 		 x01c$(EXEEXT) \
 		 x02c$(EXEEXT) \
 		 x03c$(EXEEXT) \
@@ -58,7 +58,8 @@ EXECUTABLES_list = $(PLPLOTCANVAS_EXECUTABLES_list) \
 		 x23c$(EXEEXT) \
 		 x24c$(EXEEXT) \
 		 x25c$(EXEEXT) \
-		 x26c$(EXEEXT)
+		 x26c$(EXEEXT) \
+		 $(PLPLOTCANVAS_EXECUTABLES_list)
 
 all: $(EXECUTABLES_list)
 
