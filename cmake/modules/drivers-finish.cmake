@@ -39,6 +39,24 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
     endforeach(DRIVER_IN_LIST ${DRIVERS_LIST})
     if(APPEND_DRIVER)
       set(DRIVERS_LIST ${DRIVERS_LIST} ${DRIVER})
+      if(DRIVER STREQUAL "wxwidgets")
+        set(${DRIVER}_SOURCE 
+	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
+	${${DRIVER}_SOURCE}
+	)
+      else(DRIVER STREQUAL "wxwidgets")
+        if(DRIVER STREQUAL "psttf")
+          set(${DRIVER}_SOURCE
+	  ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cc
+	  ${${DRIVER}_SOURCE}
+	  )
+        else(DRIVER STREQUAL "psttf")
+          set(${DRIVER}_SOURCE
+	  ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.c
+	  ${${DRIVER}_SOURCE}
+	  )
+        endif(DRIVER STREQUAL "psttf")
+      endif(DRIVER STREQUAL "wxwidgets")
     endif(APPEND_DRIVER)
   endif(PLD_${DEVICE})
 endforeach(DRIVERS_DEVICE)
