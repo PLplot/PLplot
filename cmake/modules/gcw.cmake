@@ -44,17 +44,17 @@ if(PLD_gcw)
   if(linkflags AND cflags)
     pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1)
     if(linkflags1 AND cflags1)
-      set(GCW_CFLAGS ${cflags} ${cflags1})
-      set(GCW_LIBS ${linkflags} ${linkflags1})
+      set(gcw_COMPILE_FLAGS "${cflags} ${cflags1}")
+      set(gcw_LINK_FLAGS "${linkflags} ${linkflags1}")
     else(linkflags1 AND cflags1)
-      message(STATUS "WARNING: because libgnomeprintui-2.2 not found"
+      message(STATUS "WARNING: because libgnomeprintui-2.2 not found "
       "setting PLD_gcw and ENABLE_pygcw to OFF"
       )
       set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
       set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
   else(linkflags AND cflags)
-    message(STATUS "WARNING: because libgnomeui-2.0 not found"
+    message(STATUS "WARNING: because libgnomeui-2.0 not found "
     "setting PLD_gcw and ENABLE_pygcw to OFF"
     )
     set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
@@ -66,23 +66,32 @@ if(PLD_gcw)
 #  anywhere in the autotools configuration so we comment it out here.
 #  pkgconfig(gthread-2.0 includedir libdir linkflags cflags)
   set(include_files_to_check
-  math.h
-  glib.h
-  gtk/gtk.h
-  libgnomecanvas/libgnomecanvas.h
-  libart_lgpl/libart.h
-  libgnomeprint/gnome-print.h
+  "math.h"
+  "glib.h"
+  "gtk/gtk.h"
+  "libgnomecanvas/libgnomecanvas.h"
+  "libart_lgpl/libart.h"
+  "libgnomeprint/gnome-print.h"
   )
-  set(CMAKE_REQUIRED_INCLUDES ${GCW_CFLAGS})
-  check_include_files(${include_files_to_check} gcw_HEADERS)
-  set(CMAKE_REQUIRED_INCLUDES)
+  set(CMAKE_REQUIRED_FLAGS "${gcw_COMPILE_FLAGS}")
+  check_include_files("${include_files_to_check}" gcw_HEADERS)
+  set(CMAKE_REQUIRED_FLAGS)
   if(NOT gcw_HEADERS)
-    message(STATUS "WARNING: because required headers not found"
+    message(STATUS "WARNING: because required headers not found "
     "setting PLD_gcw and ENABLE_pygcw to OFF"
     )
     set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
     set(ENABLE_pygcw OFF)
   endif(NOT gcw_HEADERS)
+endif(PLD_gcw)
+if(PLD_gcw)
+  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gcw_LINK_FLAGS})
+  #requires blank-separated string starting with blank
+  set(gcw_SOURCE
+  ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/plplotcanvas.c
+  ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/gcw-lib.c
+  ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
+  )
 endif(PLD_gcw)
 if(PLD_gcw AND ENABLE_pygcw)
   pkgconfig(pygtk-2.0 includedir libdir linkflags cflags)
@@ -91,34 +100,34 @@ if(PLD_gcw AND ENABLE_pygcw)
     if(linkflags1 AND cflags1)
       set(PYGCW_CFLAGS cflags)
       set(PYGCW_LIBS linkflags)
-      set(CMAKE_REQUIRED_INCLUDES ${PYGCW_CFLAGS})
+      set(CMAKE_REQUIRED_FLAGS ${PYGCW_CFLAGS})
       check_include_files(glib-object.h pygcw_HEADERS)
-      set(CMAKE_REQUIRED_INCLUDES)
+      set(CMAKE_REQUIRED_FLAGS)
       if(pygcw_HEADERS)
         EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE}
 	ARGS pygtk-2.0 --variable=codegendir
 	OUTPUT_VARIABLE codegen
 	)
 	if(NOT codegen)
-          message(STATUS "WARNING: because pygtk/codegen not found"
+          message(STATUS "WARNING: because pygtk/codegen not found "
 	  "setting ENABLE_pygcw to OFF"
 	  )
 	  set(ENABLE_pygcw OFF)
 	endif(NOT codegen)
       else(pygcw_HEADERS)
-        message(STATUS "WARNING: because required headers not found"
+        message(STATUS "WARNING: because required headers not found "
 	"setting ENABLE_pygcw to OFF"
 	)
 	set(ENABLE_pygcw OFF)
       endif(pygcw_HEADERS)
     else(linkflags1 AND cflags1)
-      message(STATUS "WARNING: because gnome-python-2.0 not found"
+      message(STATUS "WARNING: because gnome-python-2.0 not found "
       "setting ENABLE_pygcw to OFF"
       )
       set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
   else(linkflags AND cflags)
-    message(STATUS "WARNING: because pygtk-2.0 not found"
+    message(STATUS "WARNING: because pygtk-2.0 not found "
     "setting ENABLE_pygcw to OFF"
     )
     set(ENABLE_pygcw OFF)
