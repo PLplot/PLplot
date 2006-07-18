@@ -18,10 +18,10 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-IF(ENABLE_java)
+if(ENABLE_java)
 
 # Swig generated java files
-SET(SWIG_JAVA_FILES
+set(SWIG_JAVA_FILES
   plplotjavacJNI.java 
   PLGraphicsIn.java 
   plplotjavacConstants.java
@@ -29,7 +29,7 @@ SET(SWIG_JAVA_FILES
 )
 
 # Full list of generated java files
-SET(JAVA_GEN_FILES
+set(JAVA_GEN_FILES
  config.java
  ${SWIG_JAVA_FILES}
 )
@@ -37,7 +37,7 @@ SET(JAVA_GEN_FILES
 # List of generated java files with full path names
 # Need this otherwise cmake will look in the source directory for the
 # .java files.
-STRING( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
+string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
 
 # Create config.java
 configure_file(
@@ -48,41 +48,48 @@ ${CMAKE_CURRENT_BINARY_DIR}/config.java
 
 # This is currently the include list for swig, the C wrapper and the
 # the java classpath. Not particular pretty...
-INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/include
-  ${JAVA_INCLUDE_PATH}
-  ${JAVA_INCLUDE_PATH2}
-  ${CMAKE_SOURCE_DIR}/bindings/swig-support
-  ${CMAKE_BINARY_DIR}/CMakeFiles/plplot.dir
+set(java_interface_INCLUDE_PATHS
+${CMAKE_SOURCE_DIR}
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_CURRENT_BINARY_DIR}
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+${JAVA_INCLUDE_PATH}
+${CMAKE_SOURCE_DIR}/bindings/swig-support
+${CMAKE_BINARY_DIR}/CMakeFiles/plplot.dir
 )
+# On some systems JAVA_INCLUDE_PATH2 returns JAVA_INCLUDE_PATH2-NOTFOUND
+if(JAVA_INCLUDE_PATH2)
+  set(java_interface_INCLUDE_PATHS
+  ${java_interface_INCLUDE_PATHS}
+  ${JAVA_INCLUDE_PATH2}
+  )
+endif(JAVA_INCLUDE_PATH2)
+include_directories(${java_interface_INCLUDE_PATHS})
 
 # Can't use source file properties as we have to quote the flags in that 
 # case and it breaks swig. Doh! I would call this a cmake bug.
-SET(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_JAVA -package plplot.core)
+set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_JAVA -package plplot.core)
 
-SET( CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR} )
+set( CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR} )
 
-SET_SOURCE_FILES_PROPERTIES(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
+set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
 
 # Set up swig + c wrapper
-SWIG_ADD_MODULE( plplotjavac_wrap java plplotjavac.i )
-SWIG_LINK_LIBRARIES( plplotjavac_wrap plplot${LIB_TAG} )
+swig_add_module( plplotjavac_wrap java plplotjavac.i )
+swig_link_libraries( plplotjavac_wrap plplot${LIB_TAG} )
 
 # Create java library
-ADD_LIBRARY(plplot STATIC ${JAVA_GEN_FILES_FULL} PLStream.java )
+add_library(plplot STATIC ${JAVA_GEN_FILES_FULL} PLStream.java )
 
 # Ensure that swig is excecuted before we try to compile the java
 # classes.
-ADD_DEPENDENCIES(plplot plplotjavac_wrap)
+add_dependencies(plplot plplotjavac_wrap)
 
 # Java compiler doesn't support -D option.
-REMOVE_DEFINITIONS("-DHAVE_CONFIG_H")
+remove_definitions("-DHAVE_CONFIG_H")
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
 
-ENDIF(ENABLE_java)
+endif(ENABLE_java)
 
