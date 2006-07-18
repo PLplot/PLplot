@@ -33,11 +33,22 @@ set(JAVA_GEN_FILES
  config.java
  ${SWIG_JAVA_FILES}
 )
+# All source files
+set(JAVA_FILES
+ ${JAVA_GEN_FILES}
+ PLStream.java
+)
 
 # List of generated java files with full path names
 # Need this otherwise cmake will look in the source directory for the
 # .java files.
 string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
+# Class list
+string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/plplot/core/\\1.class" JAVA_CLASSES "${JAVA_FILES}" )
+set(JAVA_FILES_FULL
+  ${JAVA_GEN_FILES_FULL}
+  ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
+)
 
 # Create config.java
 configure_file(
@@ -56,7 +67,6 @@ ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 ${JAVA_INCLUDE_PATH}
 ${CMAKE_SOURCE_DIR}/bindings/swig-support
-${CMAKE_BINARY_DIR}/CMakeFiles/plplot.dir
 )
 # On some systems JAVA_INCLUDE_PATH2 returns JAVA_INCLUDE_PATH2-NOTFOUND
 if(JAVA_INCLUDE_PATH2)
@@ -78,18 +88,31 @@ set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
 # Set up swig + c wrapper
 swig_add_module( plplotjavac_wrap java plplotjavac.i )
 swig_link_libraries( plplotjavac_wrap plplot${LIB_TAG} )
+install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_HARDDIR})
 
 # Create java library
-add_library(plplot STATIC ${JAVA_GEN_FILES_FULL} PLStream.java )
+#add_library(plplot STATIC ${JAVA_GEN_FILES_FULL} PLStream.java )
+
+foreach( srcfile ${JAVA_FILES_FULL} )
+  get_filename_component( fileroot ${srcfile} NAME_WE )
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot/core/${fileroot}.class
+    COMMAND ${CMAKE_Java_COMPILER} 
+    ARGS -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${srcfile}
+  )
+endforeach( srcfile ${JAVA_FILES_FULL} )
+add_custom_target(plplot_core ALL DEPENDS ${JAVA_CLASSES})
 
 # Ensure that swig is excecuted before we try to compile the java
 # classes.
-add_dependencies(plplot plplotjavac_wrap)
+add_dependencies(plplot_core plplotjavac_wrap)
 
 # Java compiler doesn't support -D option.
 remove_definitions("-DHAVE_CONFIG_H")
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
+# Installed as part of the example/java directory
+#install(FILES ${CMAKE_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
 
 endif(ENABLE_java)
 

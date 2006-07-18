@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(java_SRCS)
+set(java_CLASSES)
 
 set(java_STRING_INDICES
 "01"
@@ -50,13 +51,39 @@ set(java_STRING_INDICES
 
 foreach(STRING_INDEX ${java_STRING_INDICES})
   set(java_SRCS ${java_SRCS} x${STRING_INDEX}.java)
+  set(java_CLASSES ${java_CLASSES} ${CMAKE_CURRENT_BINARY_DIR}/plplot/examples/x${STRING_INDEX}.class)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot/examples/x${STRING_INDEX}.class
+    COMMAND ${CMAKE_Java_COMPILER}
+    ARGS -classpath ${CMAKE_BINARY_DIR}/bindings/java ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java -d ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java
+  )
 endforeach(STRING_INDEX ${java_STRING_INDICES})
+
+add_custom_target(plplot_examples DEPENDS ${java_CLASSES})
+add_dependencies(plplot_examples plplot_core)
 
 install(FILES ${java_SRCS} README.javademos
 DESTINATION ${DATA_DIR}/examples/java
 )
 
-set(JAVAC javac)
+# Check that plplot core is up to date
+add_custom_target( plplot_core
+  ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR}/bindings/java ${CMAKE_MAKE_PROGRAM}
+)
+
+# Custom command to build plplot.jar
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
+  COMMAND ${CMAKE_Java_ARCHIVE}
+  ARGS -cf ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar -C ${CMAKE_BINARY_DIR}/bindings/java plplot -C ${CMAKE_CURRENT_BINARY_DIR} plplot
+)
+
+
+add_custom_target( plplot.jar ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar )
+add_dependencies( plplot.jar plplot_core plplot_examples )
+
+set(JAVAC ${CMAKE_Java_COMPILER})
 set(JAVADATA_HARDDIR ${JAR_DIR})
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
@@ -66,4 +93,8 @@ ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
 DESTINATION ${DATA_DIR}/examples/java
 RENAME Makefile
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
+DESTINATION ${JAR_DIR}
 )
