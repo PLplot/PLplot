@@ -53,14 +53,14 @@ plvect.c
 if(NOT ENABLE_DYNDRIVERS)
   # Static device drivers must be included in the core PLplot library.
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
-    message("SOURCE_ROOT_NAME = ${SOURCE_ROOT_NAME}")
+    message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     set(plplot${LIB_TAG}_LIB_SRCS 
        ${plplot${LIB_TAG}_LIB_SRCS} 
-       ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
+       ${${SOURCE_ROOT_NAME}_SOURCE}
        )
        if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
          set_source_files_properties(
-         ${CMAKE_SOURCE_DIR}/drivers/${SOURCE_ROOT_NAME}.c
+         ${${SOURCE_ROOT_NAME}_SOURCE}
          PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS})
 	 set(libplplot${LIB_TAG}_COMPILE_FLAGS
 	 ${libplplot${LIB_TAG}_COMPILE_FLAGS}
@@ -80,12 +80,11 @@ add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 TARGET_LINK_LIBRARIES(plplot${LIB_TAG} m)
 
 if(NOT ENABLE_DYNDRIVERS)
-  TARGET_LINK_LIBRARIES(plplot${LIB_TAG} ${DRIVERS_LINK_FLAGS})
   set(libplplot${LIB_TAG}_LINK_FLAGS
-  ${libplplot${LIB_TAG}_LINK_FLAGS}
   ${DRIVERS_LINK_FLAGS}
   )
 endif(NOT ENABLE_DYNDRIVERS)
+TARGET_LINK_LIBRARIES(plplot${LIB_TAG} ${libplplot${LIB_TAG}_LINK_FLAGS})
 
 set_target_properties(plplot${LIB_TAG}
 PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
@@ -140,8 +139,8 @@ if(PKGCONFIG_EXECUTABLE)
   string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
   string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
   set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
+  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_CONFIGURED_FILE
   ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
   )
