@@ -63,7 +63,7 @@ class x15 {
 
     public static void main( String[] args ) 
     {
-        x15 x = new x15( args );
+        new x15( args );
     }
 
     public x15( String[] args )

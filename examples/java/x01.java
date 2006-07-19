@@ -49,7 +49,7 @@ class x01 {
 
    public static void main( String[] args ) 
      {
-        x01 x = new x01( args );
+        new x01( args );
      }
    
    public x01( String[] args )

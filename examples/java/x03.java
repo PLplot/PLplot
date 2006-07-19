@@ -38,7 +38,7 @@ class x03 {
 
     public static void main( String[] args ) 
     {
-        x03 x = new x03( args );
+        new x03( args );
     }
 
     public x03( String[] args )

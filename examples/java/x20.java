@@ -408,7 +408,7 @@ class x20 {
     }
 
     public static void main( String[] args ) {
-	x20 x = new x20( args );
+	new x20( args );
     }
 
 }

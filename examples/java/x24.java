@@ -157,7 +157,7 @@ class x24 {
 
     public static void main( String[] args )
     {
-	x24 x = new x24( args );
+	new x24( args );
     }
 
 }

@@ -288,7 +288,7 @@ class x22 {
     }
 
     public static void main( String[] args ) {
-	x22 x = new x22( args );
+	new x22( args );
 
     }
 }

@@ -64,7 +64,7 @@ class x09 {
 
     public static void main( String[] args ) 
     {
-        x09 x = new x09( args );
+        new x09( args );
     }
 
     public x09( String[] args )

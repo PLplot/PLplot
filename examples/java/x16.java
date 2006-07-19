@@ -68,7 +68,7 @@ class x16 {
 
    public static void main( String[] args ) 
      {
-        x16 x = new x16( args );
+        new x16( args );
      }
 
    public x16( String[] args )

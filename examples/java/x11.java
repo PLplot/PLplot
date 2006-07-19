@@ -83,7 +83,7 @@ class x11 {
 
     public static void main( String[] args ) 
     {
-        x11 x = new x11( args );
+        new x11( args );
     }
 
     public x11( String[] args )

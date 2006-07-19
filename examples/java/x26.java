@@ -100,7 +100,7 @@ class x26 {
 
     public static void main( String[] args ) 
     {
-        x26 x = new x26( args );
+        new x26( args );
     }
 
     public x26( String[] args )

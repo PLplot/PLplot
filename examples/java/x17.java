@@ -172,7 +172,7 @@ class x17 {
     }
     
     public static void main( String[] args ) {
-	x17 x = new x17( args );
+	new x17( args );
 	
     }
 }

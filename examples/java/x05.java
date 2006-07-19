@@ -39,7 +39,7 @@ class x05 {
 
     public static void main( String[] args ) 
     {
-        x05 x = new x05( args );
+        new x05( args );
     }
 
     public x05( String[] args )

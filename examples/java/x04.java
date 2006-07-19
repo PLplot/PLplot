@@ -39,7 +39,7 @@ class x04 {
 
     public static void main( String[] args ) 
     {
-        x04 x = new x04( args );
+        new x04( args );
     }
 
     public x04( String[] args )

@@ -40,7 +40,7 @@ class x13 {
 
     public static void main( String[] args ) 
     {
-        x13 x = new x13( args );
+        new x13( args );
     }
 
     public x13( String[] args )

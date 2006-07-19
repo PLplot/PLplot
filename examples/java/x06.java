@@ -37,7 +37,7 @@ class x06 {
 
     public static void main( String[] args ) 
     {
-        x06 x = new x06( args );
+        new x06( args );
     }
 
     public x06( String[] args )

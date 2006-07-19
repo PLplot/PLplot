@@ -42,7 +42,7 @@ class x14 {
 
    public static void main( String[] args ) 
      {
-        x14 x = new x14( args );
+        new x14( args );
      }
    
    public x14( String[] args )

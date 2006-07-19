@@ -42,7 +42,7 @@ class x07 {
 
     public static void main( String[] args ) 
     {
-        x07 x = new x07( args );
+        new x07( args );
     }
 
     public x07( String[] args )

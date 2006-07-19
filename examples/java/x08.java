@@ -102,7 +102,7 @@ class x08 {
 
     public static void main( String[] args )
     {
-        x08 x = new x08( args );
+        new x08( args );
     }
 
     public x08( String[] args )

@@ -41,7 +41,7 @@ class x12 {
    
     public static void main( String[] args ) 
     {
-        x12 x = new x12( args );
+        new x12( args );
     }
 
     public x12( String[] args )

@@ -375,7 +375,7 @@ class x21 {
     }
 
     public static void main( String[] args ) {
-	x21 x = new x21( args );
+	new x21( args );
     }
 
 }

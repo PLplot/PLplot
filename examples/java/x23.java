@@ -245,7 +245,7 @@ class x23 {
 
     public static void main ( String[] args )
     {
-	x23 x = new x23( args );
+	new x23( args );
 
     }
 

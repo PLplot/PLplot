@@ -113,7 +113,7 @@ class x18 {
    // viewing options in each plot.
    public static void main( String[] args ) 
      {
-	x18 x = new x18( args );
+	new x18( args );
      }
    
    public x18( String[] args )
