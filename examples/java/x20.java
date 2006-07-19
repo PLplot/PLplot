@@ -36,7 +36,8 @@ package plplot.examples;
 import plplot.core.*;
 
 import java.io.*;
-import java.lang.*;
+import java.lang.Math;
+import java.lang.Integer;
 import java.util.*;
 
 class x20 {
