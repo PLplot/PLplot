@@ -55,7 +55,7 @@ foreach(STRING_INDEX ${java_STRING_INDICES})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot/examples/x${STRING_INDEX}.class
     COMMAND ${CMAKE_Java_COMPILER}
-    ARGS -classpath ${CMAKE_BINARY_DIR}/bindings/java ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java -d ${CMAKE_CURRENT_BINARY_DIR}
+    ARGS -classpath ${CMAKE_BINARY_DIR}/bindings/java ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf8
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java
   )
 endforeach(STRING_INDEX ${java_STRING_INDICES})
@@ -76,7 +76,7 @@ add_custom_target( plplot_core
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
   COMMAND ${CMAKE_Java_ARCHIVE}
-  ARGS -cf ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar -C ${CMAKE_BINARY_DIR}/bindings/java plplot -C ${CMAKE_CURRENT_BINARY_DIR} plplot
+  ARGS -cf ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar -C ${CMAKE_BINARY_DIR}/bindings/java plplot/core -C ${CMAKE_CURRENT_BINARY_DIR} plplot/examples
 )
 
 

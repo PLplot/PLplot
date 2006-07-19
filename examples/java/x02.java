@@ -44,8 +44,6 @@ class x02 {
 
     x02( String[] args )
     {
-        int i, j;
-        double vmin, vmax;
 
         pls = new PLStream();
 

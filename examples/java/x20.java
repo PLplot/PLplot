@@ -262,7 +262,6 @@ class x20 {
 	double[][] img;
 	String line;
 	StringTokenizer st;
-	int c;
 	int i, j, w, h;
 
 	/* naive grayscale binary ppm reading. If you know how to, improve it */

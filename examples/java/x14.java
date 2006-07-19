@@ -356,7 +356,7 @@ class x14 {
         double[][] z = new double[XPTS][YPTS];
         double[][] w = new double[XPTS][YPTS];
 	
-        double xx, yy, argx, argy, distort;
+        double xx, yy;
 	final int[] mark = {1500};
         final int[] space = {1500};
 	final int[] mark0 = {};
