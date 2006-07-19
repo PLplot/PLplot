@@ -59,7 +59,7 @@ if(PLD_xwin)
     endif(HAVE_PTHREAD)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${xwin_LINK_FLAGS})
   else(X11_FOUND)
-    set(PLD_xwin OFF)
+    set(PLD_xwin OFF CACHE BOOL "enable xwin device" FORCE)
   endif(X11_FOUND)
 endif(PLD_xwin)
 
