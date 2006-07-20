@@ -36,12 +36,39 @@ include(rpath)
 # =======================================================================
 # System checks for headers etc
 # =======================================================================
+
+# Reasonable approximation to AC_HEADER_DIRENT without the SCO stuff.
+include(CheckDIRSymbolExists)
+check_dirsymbol_exists("sys/types.h;dirent.h" HAVE_DIRENT_H)
+if(NOT HAVE_DIRENT_H)
+  check_dirsymbol_exists("sys/types.h;sys/ndir.h" HAVE_SYS_NDIR_H)
+  if(NOT HAVE_SYS_NDIR_H)
+    check_dirsymbol_exists("sys/types.h;sys/dir.h" HAVE_SYS_DIR_H)
+    if(NOT HAVE_SYS_DIR_H)
+      check_dirsymbol_exists("sys/types.h;ndir.h" HAVE_NDIR_H)
+      if(NOT HAVE_NDIR_H)
+        message(FATAL_ERROR 
+	"FATAL_ERROR for plplot.cmake: "
+	"DIR symbol must be defined by system headers."
+	)
+      endif(NOT HAVE_NDIR_H)
+    endif(NOT HAVE_SYS_DIR_H)
+  endif(NOT HAVE_SYS_NDIR_H)
+endif(NOT HAVE_DIRENT_H)
+# Note the above tests #include <sys/types.h> to follow how
+# AC_HEADER_DIRENT does its testing.  Therefore, always do our
+# own #defines that way for the cmake build system.  Note, this
+# sys/types.h requirement occurs for Mac OS X and possibly other systems.
+# It is possible it will go away in the future, but we will follow whatever
+# is done by AC_HEADER_DIRENT here until that changes.
+set(NEED_SYS_TYPE_H ON)
+
 include(CheckFunctionExists)
-CHECK_FUNCTION_EXISTS(popen HAVE_POPEN)
-CHECK_FUNCTION_EXISTS(usleep HAVE_USLEEP)
-CHECK_FUNCTION_EXISTS(isinf HAVE_ISINF)
-CHECK_FUNCTION_EXISTS(finite HAVE_FINITE)
-CHECK_FUNCTION_EXISTS(isnan HAVE_ISNAN)
+check_function_exists(popen HAVE_POPEN)
+check_function_exists(usleep HAVE_USLEEP)
+check_function_exists(isinf HAVE_ISINF)
+check_function_exists(finite HAVE_FINITE)
+check_function_exists(isnan HAVE_ISNAN)
 
 # =======================================================================
 # Language bindings
