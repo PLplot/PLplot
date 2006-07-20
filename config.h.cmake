@@ -25,38 +25,38 @@
 #cmakedefine ENABLE_DYNDRIVERS
 
 /* Define to 1 if you have the <cmath> header file. */
-#cmakedefine HAVE_CMATH
+#cmakedefine HAVE_CMATH 1
 
 /* Define if you have c++ accessible stdint.h */
 #cmakedefine HAVE_CXX_STDINT_H
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
-#cmakedefine HAVE_DIRENT_H
+#cmakedefine HAVE_DIRENT_H 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#cmakedefine HAVE_DLFCN_H
+#cmakedefine HAVE_DLFCN_H 1
 
 /* Define if finite is available */
 #cmakedefine HAVE_FINITE
 
 /* Define to 1 if you have the `fork' function. */
-#cmakedefine HAVE_FORK
+#cmakedefine HAVE_FORK 1
 
 /* Define if [freetype] is available */
 #cmakedefine HAVE_FREETYPE
 
 /* Define to 1 if you have the <glib.h> header file. */
-#cmakedefine HAVE_GLIB_H
+#cmakedefine HAVE_GLIB_H 1
 
 /* Define to 1 if you have the <glib-object.h> header file. */
-#cmakedefine HAVE_GLIB_OBJECT_H
+#cmakedefine HAVE_GLIB_OBJECT_H 1
 
 /* Define to 1 if you have the <gtk/gtk.h> header file. */
-#cmakedefine HAVE_GTK_GTK_H
+#cmakedefine HAVE_GTK_GTK_H 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#cmakedefine HAVE_INTTYPES_H
+#cmakedefine HAVE_INTTYPES_H 1
 
 /* Define if isinf is available */
 #cmakedefine HAVE_ISINF
@@ -68,38 +68,38 @@
 #cmakedefine HAVE_ITCL
 
 /* Define to 1 if you have the <itclDecls.h> header file. */
-#cmakedefine HAVE_ITCLDECLS_H
+#cmakedefine HAVE_ITCLDECLS_H 1
 
 /* Define if [incr], [Tk] is available */
 #cmakedefine HAVE_ITK
 
 /* Define to 1 if you have the <jni.h> header file. */
-#cmakedefine HAVE_JNI_H
+#cmakedefine HAVE_JNI_H 1
 
 /* Define to 1 if you have the <libart_lgpl/libart.h> header file. */
-#cmakedefine HAVE_LIBART_LGPL_LIBART_H
+#cmakedefine HAVE_LIBART_LGPL_LIBART_H 1
 
 /* Define to 1 if you have the <libgnomecanvas/libgnomecanvas.h> header file.
    */
-#cmakedefine HAVE_LIBGNOMECANVAS_LIBGNOMECANVAS_H
+#cmakedefine HAVE_LIBGNOMECANVAS_LIBGNOMECANVAS_H 1
 
 /* Define to 1 if you have the <libgnomeprint/gnome-print.h> header file. */
-#cmakedefine HAVE_LIBGNOMEPRINT_GNOME_PRINT_H
+#cmakedefine HAVE_LIBGNOMEPRINT_GNOME_PRINT_H 1
 
 /* Define to 1 if you have the `m' library (-lm). */
-#cmakedefine HAVE_LIBM
+#cmakedefine HAVE_LIBM 1
 
 /* Define if libunicode is available */
 #cmakedefine HAVE_LIBUNICODE
 
 /* Define to 1 if you have the <math.h> header file. */
-#cmakedefine HAVE_MATH_H
+#cmakedefine HAVE_MATH_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine HAVE_MEMORY_H
+#cmakedefine HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
-#cmakedefine HAVE_NDIR_H
+#cmakedefine HAVE_NDIR_H 1
 
 /* Define if popen is available */
 #cmakedefine HAVE_POPEN
@@ -111,60 +111,60 @@
 #cmakedefine HAVE_QHULL
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine HAVE_STDINT_H
+#cmakedefine HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-#cmakedefine HAVE_STDLIB_H
+#cmakedefine HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H
+#cmakedefine HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
-#cmakedefine HAVE_STRING_H
+#cmakedefine HAVE_STRING_H 1
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
-#cmakedefine HAVE_SYS_DIR_H
+#cmakedefine HAVE_SYS_DIR_H 1
 
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
-#cmakedefine HAVE_SYS_NDIR_H
+#cmakedefine HAVE_SYS_NDIR_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-#cmakedefine HAVE_SYS_STAT_H
+#cmakedefine HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#cmakedefine HAVE_SYS_TYPES_H
+#cmakedefine HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
-#cmakedefine HAVE_SYS_WAIT_H
+#cmakedefine HAVE_SYS_WAIT_H 1
 
 /* Define to 1 if you have the <termios.h> header file. */
-#cmakedefine HAVE_TERMIOS_H
+#cmakedefine HAVE_TERMIOS_H 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_UNISTD_H 1
 
 /* Define if usleep is available */
 #cmakedefine HAVE_USLEEP
 
 /* Define to 1 if you have the `vfork' function. */
-#cmakedefine HAVE_VFORK
+#cmakedefine HAVE_VFORK 1
 
 /* Define to 1 if you have the <vfork.h> header file. */
-#cmakedefine HAVE_VFORK_H
+#cmakedefine HAVE_VFORK_H 1
 
 /* Define to 1 if `fork' works. */
-#cmakedefine HAVE_WORKING_FORK
+#cmakedefine HAVE_WORKING_FORK 1
 
 /* Define to 1 if `vfork' works. */
-#cmakedefine HAVE_WORKING_VFORK
+#cmakedefine HAVE_WORKING_VFORK 1
 
 /* Include sys/type.h if needed */
 #cmakedefine NEED_SYS_TYPE_H
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#cmakedefine NO_MINUS_C_MINUS_O
+#cmakedefine NO_MINUS_C_MINUS_O 1
 
 /* Name of package */
 #define PACKAGE "${PACKAGE}"
@@ -396,10 +396,11 @@
 #cmakedefine PL_FREETYPE_SYMBOL_OBLIQUE
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#cmakedefine RETSIGTYPE
+/* Frozen at void for now, NEEDS TEST */
+#define RETSIGTYPE void
 
 /* Define to 1 if you have the ANSI C header files. */
-#cmakedefine STDC_HEADERS
+#cmakedefine STDC_HEADERS 1
 
 /* Location of Tcl stuff */
 #define TCL_DIR "${TCL_DIR}"
@@ -414,7 +415,7 @@
 #cmakedefine WITH_CSA
 
 /* Define to 1 if the X Window System is missing or not being used. */
-#cmakedefine X_DISPLAY_MISSING
+#cmakedefine X_DISPLAY_MISSING 1
 
 /* Define to `char *' if <sys/types.h> does not define. */
 #cmakedefine caddr_t
