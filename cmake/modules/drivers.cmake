@@ -51,7 +51,7 @@ include(drivers-init)
 # not available.
 #include(cgm)
 include(gcw)
-#include(gd)
+include(gd)
 #include(gnome)
 #include(linuxvga)
 include(xwin)

@@ -68,7 +68,7 @@ set(DRIVERS_DEVICE_LIST
 #"aqt:aqt:ON"
 #"cgm:cgm:ON"
 "dg300:dg300:OFF"
-#"png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"
+"png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"
 #"gnome:gnome:OFF"
 "hp7470:hpgl:ON" "hp7580:hpgl:ON" "lj_hpgl:hpgl:ON"
 "imp:impress:OFF"
