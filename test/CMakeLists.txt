@@ -6,7 +6,7 @@ set(TEST_ENVIRONMENT
 set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
 configure_file(
-  plplot-test.sh.cmake
+  plplot-test.sh.in
   ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh 
   @ONLY
   )
