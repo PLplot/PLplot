@@ -95,6 +95,11 @@ ${CMAKE_CURRENT_BINARY_DIR}/config.h
 ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 # Install top-level files
 
+# Enable testing framework for examples
+enable_testing()
+
+
+
 set(top_level_DOCFILES
 AUTHORS
 COPYING.LIB
@@ -121,6 +126,7 @@ add_subdirectory(bindings)
 # pkgcfg directory needs no cmake processing
 #add_subdirectory(pkgcfg)
 add_subdirectory(examples)
+add_subdirectory(test)
 
 #
 # Packing stuff
