@@ -52,7 +52,7 @@ set(cxx_STRING_INDICES
 "26"
 )
 
-#set(ENABLE_BUILDTREE_EXAMPLES ON)
+set(ENABLE_BUILDTREE_EXAMPLES ON)
 if(ENABLE_BUILDTREE_EXAMPLES)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(
@@ -81,3 +81,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/c++
 RENAME Makefile
 )
+
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../c/lena.pgm lena.pgm WORKING_DIRECTORY ${DATA_DIR}/examples/c++)")

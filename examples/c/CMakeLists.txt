@@ -52,7 +52,7 @@ set(c_STRING_INDICES
 "26"
 )
 
-#set(ENABLE_BUILDTREE_EXAMPLES ON)
+set(ENABLE_BUILDTREE_EXAMPLES ON)
 if(ENABLE_BUILDTREE_EXAMPLES)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
@@ -87,4 +87,8 @@ ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
 DESTINATION ${DATA_DIR}/examples/c
 RENAME Makefile
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+DESTINATION ${DATA_DIR}/examples/c
 )
