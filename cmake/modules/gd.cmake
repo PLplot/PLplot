@@ -62,14 +62,45 @@ if (PLD_jpeg)
 endif(PLD_jpeg)
 
 if(PLD_png OR PLD_jpeg OR PLD_gif)
-  string(REGEX REPLACE ";" " -I" 
-    gd_COMPILE_FLAGS
-    "-I${GDINCCMD}"
-    )
-  string(REGEX REPLACE ";" " " 
-    gd_LINK_FLAGS
-    "${GDLIBCMD}"
-    )  
+  # Strip duplicate include directory entries out
+  set(GDINCTRIM)
+  foreach(DIR ${GDINCCMD})
+    set(FOUND OFF)
+    foreach(TRIMMED ${GDINCTRIM})
+      if ("${DIR}" STREQUAL "${TRIMMED}")
+	SET(FOUND ON)
+      endif ("${DIR}" STREQUAL "${TRIMMED}")
+    endforeach(TRIMMED ${GDINCTRIM})
+    if (NOT FOUND)
+      set(GDINCTRIM "${GDINCTRIM}" "${DIR}")
+    endif (NOT FOUND)
+  endforeach(DIR ${GDINCCMD})
+  # Convert directory list to compile flags
+  set(gd_COMPILE_FLAGS)
+  foreach(DIR ${GDINCTRIM})
+    set(gd_COMPILE_FLAGS ${gd_COMPILE_FLAGS} "-I${DIR}")
+  endforeach(DIR ${GDINCTRIM})
+
+  set(GDLIBCMDTRIM)
+  set(GDLIBSTRIM)
+  set(GDLIBDIRS)
+  # Generate trimmed list of library directories and list of libraries
+  foreach(LIB ${GDLIBCMD})
+    get_filename_component(LIBDIR ${LIB} PATH)
+    get_filename_component(LIBNAME ${LIB} NAME_WE)
+    set(FOUND OFF)
+    foreach(TRIMMED ${GDLIBSTRIM})
+      if ("${LIBDIR}" STREQUAL "${TRIMMED}")
+	set(FOUND ON)
+      endif ("${LIBDIR}" STREQUAL "${TRIMMED}")
+    endforeach(TRIMMED ${GDLIBSTRIM})
+    if (NOT FOUND)
+      set(GDLIBSTRIM ${GDLIBSTRIM} ${LIBDIR})
+      set(gd_LINK_FLAGS "${gd_LINK_FLAGS} -L${LIBDIR}")
+    endif (NOT FOUND)
+    string(REGEX REPLACE "^lib" "-l" LIBSHORT ${LIBNAME})
+    set(gd_LINK_FLAGS "${gd_LINK_FLAGS} ${LIBSHORT}")    
+  endforeach(LIB ${GDLIBCMD})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gd_LINK_FLAGS})
 endif(PLD_png OR PLD_jpeg OR PLD_gif)
 
