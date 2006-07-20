@@ -50,7 +50,12 @@ plgridd.c
 plvect.c
 )
 
-if(NOT ENABLE_DYNDRIVERS)
+if(ENABLE_DYNDRIVERS)
+  set_source_files_properties(
+  plcore.c
+  PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR}"
+  )
+else(ENABLE_DYNDRIVERS)
   # Static device drivers must be included in the core PLplot library.
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
@@ -68,7 +73,7 @@ if(NOT ENABLE_DYNDRIVERS)
 	 )
        endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
-endif(NOT ENABLE_DYNDRIVERS)
+endif(ENABLE_DYNDRIVERS)
 
 include_directories(
 ${CMAKE_SOURCE_DIR}/include
@@ -77,14 +82,12 @@ ${CMAKE_BINARY_DIR}/include
 )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
-TARGET_LINK_LIBRARIES(plplot${LIB_TAG} m)
-
-if(NOT ENABLE_DYNDRIVERS)
-  set(libplplot${LIB_TAG}_LINK_FLAGS
-  ${DRIVERS_LINK_FLAGS}
-  )
-endif(NOT ENABLE_DYNDRIVERS)
-TARGET_LINK_LIBRARIES(plplot${LIB_TAG} ${libplplot${LIB_TAG}_LINK_FLAGS})
+if(ENABLE_DYNDRIVERS)
+  set(libplplot${LIB_TAG}_LINK_FLAGS ${LTDL_LIBRARIES})
+else(ENABLE_DYNDRIVERS)
+  set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
+endif(ENABLE_DYNDRIVERS)
+TARGET_LINK_LIBRARIES(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
 
 set_target_properties(plplot${LIB_TAG}
 PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
