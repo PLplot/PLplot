@@ -66,10 +66,10 @@
 #cmakedefine HAVE_CXX_STDINT_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine HAVE_STDINT_H
+#cmakedefine HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_UNISTD_H 1
 
 /* Define if usleep is available */
 #cmakedefine HAVE_USLEEP
@@ -80,8 +80,8 @@
 /* Define if C++ compiler accepts using namespace */
 #cmakedefine USE_NAMESPACE
 
-/* Define if <cmath> header file is available */
-#cmakedefine HAVE_CMATH
+/* Define to 1 if <cmath> header file is available */
+#cmakedefine HAVE_CMATH 1
 
 /* Define if isnan is present in <math.h> but not in <cmath> 
  * - broken Mac OSX systems */
