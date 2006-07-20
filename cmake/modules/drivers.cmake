@@ -36,9 +36,26 @@
 
 option(ENABLE_DYNDRIVERS "enable dynamic loading of device drivers" OFF)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
-  message("ENABLE_DYNDRIVERS set to OFF because shared libaries are not being built")
-  set(ENABLE_DYNDRIVERS OFF)
+  message(STATUS
+  "ENABLE_DYNDRIVERS set to OFF because shared libraries "
+  "are not being built"
+  )
+  set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
+  "enable dynamic loading of device drivers" FORCE)
 endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
+if(ENABLE_DYNDRIVERS)
+  find_package(LTDL)
+  if(NOT LTDL_FOUND)
+    message(STATUS
+    "ENABLE_DYNDRIVERS set to OFF because libltld cannot be found.  "
+    "Please install that library and/or specify LTDL_INC_SEARCH_PATH and "
+    "LTDL_LIB_SEARCH_PATH."
+    )
+    set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
+    "enable dynamic loading of device drivers" FORCE)
+  endif(NOT LTDL_FOUND)
+endif(ENABLE_DYNDRIVERS)
+
 
 # Decide whether to enable each device or not and find special resources
 # when required.
