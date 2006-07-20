@@ -32,6 +32,7 @@ include(CheckIncludeFiles)
 include(double)
 include(instdirs)
 include(rpath)
+option(BUILD_TEST "Compile examples in the build tree and enable ctest" OFF)
 
 # =======================================================================
 # System checks for headers etc
