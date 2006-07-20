@@ -27,6 +27,14 @@
 # gd_COMPILE_FLAGS    - individual COMPILE_FLAGS required to compile gd device.
 # gd_LINK_FLAGS       - individual LINK_FLAGS for dynamic gd device.
 # DRIVERS_LINK_FLAGS  - list of LINK_FLAGS for all static devices.
+#
+# Include file searches use FindPath. To add extra search directories to 
+# set the environment variable CMAKE_INCLUDE_PATH or the CMake variable 
+# CMAKE_INCLUDE_PATH (using cmake -D option).
+# Library searches use FindLibrary. To add extra search directories to 
+# set the environment variable CMAKE_LIBRARY_PATH or the CMake variable 
+# CMAKE_LIBRARY_PATH (using cmake -D option).
+# See cmake documentation for further details.
 
 # Look for gd libraries
 if(PLD_png OR PLD_jpeg OR PLD_gif)
