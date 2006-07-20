@@ -19,6 +19,9 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# Version 2.4.2 or above of cmake is required!
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
+
 project(plplot)
 
 # Start of version area that needs modification for each release.
@@ -63,15 +66,7 @@ set(plplotgnome2_VERSION ${plplotgnome2_SOVERSION}.0.0)
 
 # End of version area that needs modification for each release.
 
-# Version 2.4.2 or above of cmake is required!
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
-
 # parameters to control overall cmake behaviour.
-
-# Print out complete Makefile commands.
-# This is commented out because if ever need this, just
-# use "make VERBOSE=1"
-#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # libraries are all shared for now.
 set(BUILD_SHARED_LIBS ON)
@@ -121,6 +116,8 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
 add_subdirectory(lib)
 add_subdirectory(include)
 add_subdirectory(src)
+add_subdirectory(drivers)
+
 add_subdirectory(data)
 add_subdirectory(bindings)
 # pkgcfg directory needs no cmake processing
