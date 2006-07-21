@@ -60,18 +60,19 @@ else(ENABLE_DYNDRIVERS)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     set(plplot${LIB_TAG}_LIB_SRCS 
-       ${plplot${LIB_TAG}_LIB_SRCS} 
-       ${${SOURCE_ROOT_NAME}_SOURCE}
-       )
-       if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
-         set_source_files_properties(
-         ${${SOURCE_ROOT_NAME}_SOURCE}
-         PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS})
-	 set(libplplot${LIB_TAG}_COMPILE_FLAGS
-	 ${libplplot${LIB_TAG}_COMPILE_FLAGS}
-	 ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
-	 )
-       endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+    ${plplot${LIB_TAG}_LIB_SRCS} 
+    ${${SOURCE_ROOT_NAME}_SOURCE}
+    )
+    if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+      set_source_files_properties(
+      ${${SOURCE_ROOT_NAME}_SOURCE}
+      PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+      )
+      set(libplplot${LIB_TAG}_COMPILE_FLAGS
+      ${libplplot${LIB_TAG}_COMPILE_FLAGS}
+      ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+      )
+    endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(ENABLE_DYNDRIVERS)
 
@@ -87,7 +88,7 @@ if(ENABLE_DYNDRIVERS)
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
 endif(ENABLE_DYNDRIVERS)
-TARGET_LINK_LIBRARIES(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
+target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
 
 set_target_properties(plplot${LIB_TAG}
 PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
