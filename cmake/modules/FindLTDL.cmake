@@ -76,7 +76,7 @@ endif(LTDL_INCLUDE_DIR)
 	    
 if(LTDL_FOUND)
   if(NOT LTDL_FIND_QUIETLY)
-    message(STATUS "Found LTDL library")
+    message(STATUS "Found LTDL: ${LTDL_LIBRARIES}")
   endif(NOT LTDL_FIND_QUIETLY)
 else(LTDL_FOUND)
   if(LTDL_FIND_REQUIRED)

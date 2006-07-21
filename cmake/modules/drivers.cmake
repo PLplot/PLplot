@@ -46,7 +46,7 @@ if(ENABLE_DYNDRIVERS)
   find_package(LTDL)
   if(NOT LTDL_FOUND)
     message(STATUS 
-       "WARNING: libltld library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
+       "WARNING: libltdl library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
     "   Please install that library and/or set the environment variables\n"
     "   CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH appropriately."
     )
