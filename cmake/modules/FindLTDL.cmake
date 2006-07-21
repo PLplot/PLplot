@@ -1,28 +1,17 @@
 # - Find ltdl header and library
 #
 
-# This module is controlled by two variables optionally defined by the user.
-#  LTDL_INC_SEARCH_PATH, the first PATH(s) to check for the header, ltdl.h.
-#  LTDL_LIB_SEARCH_PATH, the first PATH(s) to check for the library.
-
 # This module defines
 #  LTDL_FOUND, if false, do not try to use LTDL.
 #  LTDL_INCLUDE_DIR, where to find ltdl.h.
 #  LTDL_LIBRARIES, the libraries to link against to use libltdl.
 
-set(LTDL_INC_SEARCH_PATH CACHE PATH
-"User-specified search path for ltdl.h")
-set(LTDL_LIB_SEARCH_PATH CACHE PATH 
-"User-specified search path for ltdl library")
-
-find_path(LTDL_INCLUDE_DIR ltdl.h
-${LTDL_INC_SEARCH_PATH} /usr/local/include /usr/include
-)
+find_path(LTDL_INCLUDE_DIR ltdl.h /usr/local/include /usr/include)
 
 if(LTDL_INCLUDE_DIR)
   find_library(LTDL_LIBRARIES
   NAMES ltdl
-  PATHS ${LTDL_LIB_SEARCH_PATH} /usr/local/lib /usr/lib
+  PATHS /usr/local/lib /usr/lib
   )
   if(LTDL_LIBRARIES)
 
@@ -85,6 +74,16 @@ if(LTDL_INCLUDE_DIR)
   endif(LTDL_LIBRARIES)
 endif(LTDL_INCLUDE_DIR)
 	    
+if(LTDL_FOUND)
+  if(NOT LTDL_FIND_QUIETLY)
+    message(STATUS "Found LTDL library")
+  endif(NOT LTDL_FIND_QUIETLY)
+else(LTDL_FOUND)
+  if(LTDL_FIND_REQUIRED)
+    message(FATAL_ERROR "Could not find LTDL library")
+  endif(LTDL_FIND_REQUIRED)
+endif(LTDL_FOUND)
+
 mark_as_advanced(
 LTDL_LTDL_ADDLIB0 LTDL_LTDL_HAVE_ADDLIB0
 LTDL_LTDL_ADDLIB1 LTDL_LTDL_HAVE_ADDLIB1
