@@ -19,6 +19,11 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+install(
+FILES README.drivers README.wxwidgets 
+DESTINATION ${DOC_DIR}
+)
+
 if(ENABLE_DYNDRIVERS)
   set_source_files_properties(
   get-drv-info.c
@@ -32,15 +37,73 @@ if(ENABLE_DYNDRIVERS)
   )
 
   add_executable(get-drv-info get-drv-info.c)
-  TARGET_LINK_LIBRARIES(get-drv-info
+  target_link_libraries(get-drv-info
   plplot${LIB_TAG}
   ${LTDL_LIBRARIES}
   )
-
-  SET(plplotdrv_STAT_SRCS
+  set_target_properties(
+  get-drv-info
+  PROPERTIES
+  INSTALL_RPATH ".:${CMAKE_BINARY_DIR}/src"
+  BUILD_WITH_INSTALL_RPATH ON
   )
 
-#INSTALL_FILES(  FILES  $(drivers_LTLIBRARIES:.la=.rc) )
-#INSTALL_FILES(  FILES  README.drivers README.wxwidgets )
-endif(ENABLE_DYNDRIVERS)
+  foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
+    message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
+    if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+      set_source_files_properties(
+      ${${SOURCE_ROOT_NAME}_SOURCE}
+      PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+      )
+    endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+    add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+    target_link_libraries(
+    ${SOURCE_ROOT_NAME}
+    plplot${LIB_TAG}
+    m
+    ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+    )
+    # Our implementation of dynamic loading using libltdl assumes
+    # the prefix should always be nothing (rather than lib) and the suffix
+    # should always be ".so" regardless of platform.
+    set_target_properties(
+    ${SOURCE_ROOT_NAME}
+    PROPERTIES
+    PREFIX ""
+    SUFFIX ".so"
+    )
+# This is a clumsy way to do it since we have to put in dependencies on
+# get-drv-info so it will always be built first, but the better 
+# alternative below does not work (probably a bug in 2.4.2).
+    add_dependencies(${SOURCE_ROOT_NAME} get-drv-info)
+    add_custom_command(
+    TARGET
+    ${SOURCE_ROOT_NAME}
+    POST_BUILD
+    COMMAND
+    ${CMAKE_CURRENT_BINARY_DIR}/get-drv-info
+    ARGS
+    ${SOURCE_ROOT_NAME}
+    > ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+    )
+# Should work, but does not (for cmake 2.4.2, at least) so comment out.
+#    add_custom_command(
+#    OUTPUT 
+#    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+#    COMMAND
+#    ${CMAKE_CURRENT_BINARY_DIR}/get-drv-info
+#    ARGS
+#    ${SOURCE_ROOT_NAME}
+#    > ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+#    DEPENDS
+#    ${CMAKE_CURRENT_BINARY_DIR}/get-drv-info 
+#    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.so
+#    )
+    install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
+    install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
+    DESTINATION ${DRV_DIR}
+    )
+  endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 
+endif(ENABLE_DYNDRIVERS)
