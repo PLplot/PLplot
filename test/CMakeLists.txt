@@ -13,20 +13,16 @@ configure_file(
 
 configure_file(test_c.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh @ONLY)
 set(SCRIPTS test_c.sh)
-if (BUILD_TEST)
 add_test(examples_c
   sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c"
   )
-endif (BUILD_TEST)
 
 if(ENABLE_c++)
   configure_file(test_cxx.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_cxx.sh)
-  if (BUILD_TEST)
   add_test(examples_cxx
     sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=cxx"
   )
-  endif (BUILD_TEST)
 endif(ENABLE_c++)
 
 if(ENABLE_f77)
@@ -46,11 +42,9 @@ if(ENABLE_java)
     @ONLY
     )
   set(SCRIPTS ${SCRIPTS} test_java.sh)
-  if (BUILD_TEST)
   add_test(examples_java
     sh -c "${JAVA_TEST_ENVIRONMENT} ./plplot-test.sh --front-end=java" 
   )
-  endif (BUILD_TEST)
 endif(ENABLE_java)
 
 if(ENABLE_octave)

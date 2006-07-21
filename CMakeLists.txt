@@ -91,7 +91,9 @@ ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 # Install top-level files
 
 # Enable testing framework for examples
-enable_testing()
+if (BUILD_TEST)
+  enable_testing()
+endif (BUILD_TEST)
 
 
 
