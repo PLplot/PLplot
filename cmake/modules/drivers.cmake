@@ -36,9 +36,8 @@
 
 option(ENABLE_DYNDRIVERS "enable dynamic loading of device drivers" OFF)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
-  message(STATUS
-  "ENABLE_DYNDRIVERS set to OFF because shared libraries "
-  "are not being built"
+  message(STATUS 
+  "WARNING: Shared libraries not built. Setting ENABLE_DYNDRIVERS OFF."
   )
   set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
   "enable dynamic loading of device drivers" FORCE)
@@ -46,10 +45,10 @@ endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
 if(ENABLE_DYNDRIVERS)
   find_package(LTDL)
   if(NOT LTDL_FOUND)
-    message(STATUS
-    "ENABLE_DYNDRIVERS set to OFF because libltld cannot be found.  "
-    "Please install that library and/or specify LTDL_INC_SEARCH_PATH and "
-    "LTDL_LIB_SEARCH_PATH."
+    message(STATUS 
+       "WARNING: libltld library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
+    "   Please install that library and/or set the environment variables\n"
+    "   CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH appropriately."
     )
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
     "enable dynamic loading of device drivers" FORCE)

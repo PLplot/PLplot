@@ -46,8 +46,11 @@ FIND_PACKAGE(JNI)
 
 # If CMake doesn't find jni.h you need set JAVA_INCLUDE_PATH
 IF( "${JAVA_INCLUDE_PATH}" MATCHES "NOTFOUND$" )
-  MESSAGE(STATUS "Unable to find jni.h - disabling Java bindings\n" 
-  "Set JAVA_INCLUDE_PATH to point to the directory containing jni.h")
+  MESSAGE(STATUS
+      "WARNING: jni.h header not found. Disabling Java bindings.\n" 
+  "   Please install that header and/or set the environment variable\n"
+  "   CMAKE_INCLUDE_PATH appropriately."
+  )
   SET(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
 ENDIF( "${JAVA_INCLUDE_PATH}" MATCHES "NOTFOUND$" )
 
