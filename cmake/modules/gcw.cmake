@@ -44,6 +44,8 @@ if(PLD_gcw)
   if(linkflags AND cflags)
     pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1)
     if(linkflags1 AND cflags1)
+      # N.B. pkgconfig returns blank-delimited strings so must concatanate
+      # results the same way.
       set(gcw_COMPILE_FLAGS "${cflags} ${cflags1}")
       set(gcw_LINK_FLAGS "${linkflags} ${linkflags1}")
     else(linkflags1 AND cflags1)
@@ -85,13 +87,18 @@ if(PLD_gcw)
   endif(NOT gcw_HEADERS)
 endif(PLD_gcw)
 if(PLD_gcw)
-  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gcw_LINK_FLAGS})
-  #requires blank-separated string starting with blank
-  set(gcw_SOURCE
-  ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/plplotcanvas.c
-  ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/gcw-lib.c
-  ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
-  )
+  if(ENABLE_DYNDRIVERS)
+    set(gcw_SOURCE
+    ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
+    )
+  else(ENABLE_DYNDRIVERS)
+    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gcw_LINK_FLAGS})
+    set(gcw_SOURCE
+    ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/plplotcanvas.c
+    ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/gcw-lib.c
+    ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
+    )
+  endif(ENABLE_DYNDRIVERS)
 endif(PLD_gcw)
 if(PLD_gcw AND ENABLE_pygcw)
   pkgconfig(pygtk-2.0 includedir libdir linkflags cflags)
