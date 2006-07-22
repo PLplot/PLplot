@@ -113,19 +113,26 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
 # Process other directories including using configured variables to 
 # process configurable files in those directories.
 
-# fonts directory needs no cmake processing
+# needs no cmake processing
 #add_subdirectory(fonts)
 add_subdirectory(lib)
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(drivers)
-
 add_subdirectory(data)
 add_subdirectory(bindings)
-# pkgcfg directory needs no cmake processing
-#add_subdirectory(pkgcfg)
+add_subdirectory(drivers)
 add_subdirectory(examples)
+####not yet implemented
+#add_subdirectory(utils)
 add_subdirectory(test)
+####not yet implemented
+#add_subdirectory(scripts)
+####not yet implemented
+#add_subdirectory(doc)
+# needs no cmake processing
+#add_subdirectory(pkgcfg)
+# needs no cmake processing
+#add_subdirectory(cf)
 
 #
 # Packing stuff
