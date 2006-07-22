@@ -40,9 +40,9 @@
 if(PLD_png OR PLD_jpeg OR PLD_gif)
   include(FindGD)
   if (NOT GD_FOUND)
-    set(PLD_png OFF)
-    set(PLD_jpeg OFF)
-    set(PLD_gif OFF)
+    set(PLD_png OFF CACHE BOOL "Enable png device" FORCE)
+    set(PLD_jpeg OFF CACHE BOOL "Enable jpeg device" FORCE)
+    set(PLD_gif OFF CACHE BOOL "Enable gif device" FORCE)
   else (NOT GD_FOUND)
 
     set(GDINCCMD ${GD_INCLUDE_DIR})
@@ -52,15 +52,15 @@ endif(PLD_png OR PLD_jpeg OR PLD_gif)
 
 if (GD_FOUND)
   if (NOT GD_SUPPORTS_PNG)
-    set(PLD_png OFF)
+    set(PLD_png OFF CACHE BOOL "Enable png device" FORCE)
   endif(NOT GD_SUPPORTS_PNG)
   
   if (NOT GD_SUPPORTS_JPEG)
-    set(PLD_jpeg OFF)
+    set(PLD_jpeg OFF CACHE BOOL "Enable jpeg device" FORCE)
   endif(NOT GD_SUPPORTS_JPEG)
   
   if (NOT GD_SUPPORTS_GIF)
-    set(PLD_gif OFF)
+    set(PLD_gif OFF CACHE BOOL "Enable gif device" FORCE)
   endif(NOT GD_SUPPORTS_GIF)
 endif (GD_FOUND)
 
