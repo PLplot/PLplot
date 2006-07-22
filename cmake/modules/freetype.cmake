@@ -87,10 +87,19 @@ foreach(FONT_ENTRY ${PL_FREETYPE_FONT_LIST})
 endforeach(FONT_ENTRY PL_FREETYPE_FONT_LIST) 
 
 # Check a couple of fonts actually exists
-if (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS} AND EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})  
-else (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS} AND EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})
+if (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS})
+  if (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})  
+  else (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})
+    message("Fonts not found - disabling freetype")
+    set(WITH_FREETYPE OFF CACHE BOOL 
+    "Enable driver options for using freetype library for fonts" FORCE
+    )  
+  endif (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})  
+else (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS})
   message("Fonts not found - disabling freetype")
-  set(WITH_FREETYPE OFF CACHE BOOL "Enable driver options for using freetype library for fonts" FORCE)  
+  set(WITH_FREETYPE OFF CACHE BOOL 
+  "Enable driver options for using freetype library for fonts" FORCE
+  )
 endif (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS} AND EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})
 
 endif (WITH_FREETYPE)
