@@ -303,100 +303,100 @@
 #cmakedefine PL_DOUBLE
 
 /* Directory containing fonts that are accessible from freetype */
-#cmakedefine PL_FREETYPE_FONT_DIR
+#define PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_DIR}"
 
 /* MONO font accessible from freetype */
-#cmakedefine PL_FREETYPE_MONO
+#define PL_FREETYPE_MONO "${PL_FREETYPE_MONO}"
 
 /* MONO_BOLD font accessible from freetype */
-#cmakedefine PL_FREETYPE_MONO_BOLD
+#define PL_FREETYPE_MONO_BOLD "${PL_FREETYPE_MONO_BOLD}"
 
 /* MONO_BOLD_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_MONO_BOLD_ITALIC
+#define PL_FREETYPE_MONO_BOLD_ITALIC "${PL_FREETYPE_MONO_BOLD_ITALIC}"
 
 /* MONO_BOLD_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_MONO_BOLD_OBLIQUE
+#define PL_FREETYPE_MONO_BOLD_OBLIQUE "${PL_FREETYPE_MONO_BOLD_OBLIQUE}"
 
 /* MONO_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_MONO_ITALIC
+#define PL_FREETYPE_MONO_ITALIC "${PL_FREETYPE_MONO_ITALIC}"
 
 /* MONO_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_MONO_OBLIQUE
+#define PL_FREETYPE_MONO_OBLIQUE "${PL_FREETYPE_MONO_OBLIQUE}"
 
 /* SANS font accessible from freetype */
-#cmakedefine PL_FREETYPE_SANS
+#define PL_FREETYPE_SANS "${PL_FREETYPE_SANS}"
 
 /* SANS_BOLD font accessible from freetype */
-#cmakedefine PL_FREETYPE_SANS_BOLD
+#define PL_FREETYPE_SANS_BOLD "${PL_FREETYPE_SANS_BOLD}"
 
 /* SANS_BOLD_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SANS_BOLD_ITALIC
+#define PL_FREETYPE_SANS_BOLD_ITALIC "${PL_FREETYPE_SANS_BOLD_ITALIC}"
 
 /* SANS_BOLD_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SANS_BOLD_OBLIQUE
+#define PL_FREETYPE_SANS_BOLD_OBLIQUE "${PL_FREETYPE_SANS_BOLD_OBLIQUE}"
 
 /* SANS_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SANS_ITALIC
+#define PL_FREETYPE_SANS_ITALIC "${PL_FREETYPE_SANS_ITALIC}"
 
 /* SANS_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SANS_OBLIQUE
+#define PL_FREETYPE_SANS_OBLIQUE "${PL_FREETYPE_SANS_OBLIQUE}"
 
 /* SCRIPT font accessible from freetype */
-#cmakedefine PL_FREETYPE_SCRIPT
+#define PL_FREETYPE_SCRIPT "${PL_FREETYPE_SCRIPT}"
 
 /* SCRIPT_BOLD font accessible from freetype */
-#cmakedefine PL_FREETYPE_SCRIPT_BOLD
+#define PL_FREETYPE_SCRIPT_BOLD "${PL_FREETYPE_SCRIPT_BOLD}"
 
 /* SCRIPT_BOLD_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SCRIPT_BOLD_ITALIC
+#define PL_FREETYPE_SCRIPT_BOLD_ITALIC "${PL_FREETYPE_SCRIPT_BOLD_ITALIC}"
 
 /* SCRIPT_BOLD_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SCRIPT_BOLD_OBLIQUE
+#define PL_FREETYPE_SCRIPT_BOLD_OBLIQUE "${PL_FREETYPE_SCRIPT_BOLD_OBLIQUE}"
 
 /* SCRIPT_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SCRIPT_ITALIC
+#define PL_FREETYPE_SCRIPT_ITALIC "${PL_FREETYPE_SCRIPT_ITALIC}"
 
 /* SCRIPT_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SCRIPT_OBLIQUE
+#define PL_FREETYPE_SCRIPT_OBLIQUE "${PL_FREETYPE_SCRIPT_OBLIQUE}"
 
 /* SERIF font accessible from freetype */
-#cmakedefine PL_FREETYPE_SERIF
+#define PL_FREETYPE_SERIF "${PL_FREETYPE_SERIF}"
 
 /* SERIF_BOLD font accessible from freetype */
-#cmakedefine PL_FREETYPE_SERIF_BOLD
+#define PL_FREETYPE_SERIF_BOLD "${PL_FREETYPE_SERIF_BOLD}"
 
 /* SERIF_BOLD_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SERIF_BOLD_ITALIC
+#define PL_FREETYPE_SERIF_BOLD_ITALIC "${PL_FREETYPE_SERIF_BOLD_ITALIC}"
 
 /* SERIF_BOLD_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SERIF_BOLD_OBLIQUE
+#define PL_FREETYPE_SERIF_BOLD_OBLIQUE "${PL_FREETYPE_SERIF_BOLD_OBLIQUE}"
 
 /* SERIF_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SERIF_ITALIC
+#define PL_FREETYPE_SERIF_ITALIC "${PL_FREETYPE_SERIF_ITALIC}"
 
 /* SERIF_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SERIF_OBLIQUE
+#define PL_FREETYPE_SERIF_OBLIQUE "${PL_FREETYPE_SERIF_OBLIQUE}"
 
 /* Symbol font accessible from freetype */
-#cmakedefine PL_FREETYPE_SYMBOL
+#define PL_FREETYPE_SYMBOL "${PL_FREETYPE_SYMBOL}"
 
 /* SYMBOL_BOLD font accessible from freetype */
-#cmakedefine PL_FREETYPE_SYMBOL_BOLD
+#define PL_FREETYPE_SYMBOL_BOLD "${PL_FREETYPE_SYMBOL_BOLD}"
 
 /* SYMBOL_BOLD_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SYMBOL_BOLD_ITALIC
+#define PL_FREETYPE_SYMBOL_BOLD_ITALIC "${PL_FREETYPE_SYMBOL_BOLD_ITALIC}"
 
 /* SYMBOL_BOLD_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SYMBOL_BOLD_OBLIQUE
+#define PL_FREETYPE_SYMBOL_BOLD_OBLIQUE "${PL_FREETYPE_SYMBOL_BOLD_OBLIQUE}"
 
 /* SYMBOL_ITALIC font accessible from freetype */
-#cmakedefine PL_FREETYPE_SYMBOL_ITALIC
+#define PL_FREETYPE_SYMBOL_ITALIC "${PL_FREETYPE_SYMBOL_ITALIC}"
 
 /* SYMBOL_OBLIQUE font accessible from freetype */
-#cmakedefine PL_FREETYPE_SYMBOL_OBLIQUE
+#define PL_FREETYPE_SYMBOL_OBLIQUE "${PL_FREETYPE_SYMBOL_OBLIQUE}"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE ${RETSIGTYPE} 
+#define RETSIGTYPE ${RETSIGTYPE}
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1

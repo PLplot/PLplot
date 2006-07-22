@@ -45,8 +45,10 @@ if(PLD_png OR PLD_jpeg OR PLD_gif)
     set(PLD_gif OFF CACHE BOOL "Enable gif device" FORCE)
   else (NOT GD_FOUND)
 
-    set(GDINCCMD ${GD_INCLUDE_DIR})
-    set(GDLIBCMD ${GD_LIBRARIES})
+    if (WITH_FREETYPE)
+      set(GD_INCLUDE_DIR ${GD_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIR})
+      set(GD_LIBRARIES ${GD_LIBRARIES} ${FREETYPE_LIBRARIES})
+    endif (WITH_FREETYPE)
   endif (NOT GD_FOUND)
 endif(PLD_png OR PLD_jpeg OR PLD_gif)
 

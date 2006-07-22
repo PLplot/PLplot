@@ -90,6 +90,11 @@ else(ENABLE_DYNDRIVERS)
 endif(ENABLE_DYNDRIVERS)
 target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
 
+if (WITH_FREETYPE)
+  set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "-I${FREETYPE_INCLUDE_DIR}")
+  target_link_libraries(plplot${LIB_TAG} ${FREETYPE_LIBRARIES})
+endif (WITH_FREETYPE)
+
 set_target_properties(plplot${LIB_TAG}
 PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
 )
