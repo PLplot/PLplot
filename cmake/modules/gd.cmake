@@ -82,7 +82,5 @@ if(PLD_png OR PLD_jpeg OR PLD_gif)
     set(gd_LINK_FLAGS "${gd_LINK_FLAGS} ${LIBSHORT}")    
   endforeach(LIB ${GD_LIBRARIES})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gd_LINK_FLAGS})
-  MESSAGE("${gd_COMPILE_FLAGS}")
-  MESSAGE("${gd_LINK_FLAGS}")
 endif(PLD_png OR PLD_jpeg OR PLD_gif)
 
