@@ -1,7 +1,7 @@
 # - Find GD
 # Find the native GD includes and library
 # This module defines
-#  GD_INCLUDE_DIR, where to find jpeglib.h, etc.
+#  GD_INCLUDE_DIR, where to find gd.h, etc.
 #  GD_LIBRARIES, the libraries needed to use GD.
 #  GD_FOUND, If false, do not try to use GD.
 # also defined, but not for general use are
