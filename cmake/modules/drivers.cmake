@@ -34,7 +34,7 @@
 # DRIVERS_LIST: list of device drivers (e.g., gd for the png and jpeg devices)
 #   where at least one of the associated devices is enabled.
 
-option(ENABLE_DYNDRIVERS "enable dynamic loading of device drivers" OFF)
+option(ENABLE_DYNDRIVERS "enable dynamic loading of device drivers" ON)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
   message(STATUS 
   "WARNING: Shared libraries not built. Setting ENABLE_DYNDRIVERS OFF."
