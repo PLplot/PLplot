@@ -40,14 +40,20 @@ if(PLD_gcw)
   else(ENABLE_python)
     set(ENABLE_pygcw OFF)
   endif(ENABLE_python)
-  pkgconfig(libgnomeui-2.0 includedir libdir linkflags cflags)
-  if(linkflags AND cflags)
+# linkflags and cflags ignored because not used in autotools side and
+# there is a question whether all that ton of extra potentially interfering
+# libraries might be causing a segfault that is observed for the
+# dynamic devices case.
+#  pkgconfig(libgnomeui-2.0 includedir libdir linkflags cflags)
+#  if(linkflags AND cflags)
     pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1)
     if(linkflags1 AND cflags1)
       # N.B. pkgconfig returns blank-delimited strings so must concatanate
       # results the same way.
-      set(gcw_COMPILE_FLAGS "${cflags} ${cflags1}")
-      set(gcw_LINK_FLAGS "${linkflags} ${linkflags1}")
+      #set(gcw_COMPILE_FLAGS "${cflags} ${cflags1}")
+      #set(gcw_LINK_FLAGS "${linkflags} ${linkflags1}")
+      set(gcw_COMPILE_FLAGS "${cflags1}")
+      set(gcw_LINK_FLAGS "${linkflags1}")
     else(linkflags1 AND cflags1)
       message(STATUS "WARNING: because libgnomeprintui-2.2 not found "
       "setting PLD_gcw and ENABLE_pygcw to OFF"
@@ -55,13 +61,13 @@ if(PLD_gcw)
       set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
       set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
-  else(linkflags AND cflags)
-    message(STATUS "WARNING: because libgnomeui-2.0 not found "
-    "setting PLD_gcw and ENABLE_pygcw to OFF"
-    )
-    set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
-    set(ENABLE_pygcw OFF)
-  endif(linkflags AND cflags)
+#  else(linkflags AND cflags)
+#    message(STATUS "WARNING: because libgnomeui-2.0 not found "
+#    "setting PLD_gcw and ENABLE_pygcw to OFF"
+#    )
+#    set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
+#    set(ENABLE_pygcw OFF)
+#  endif(linkflags AND cflags)
 endif(PLD_gcw)
 if(PLD_gcw)
 #  Check for gthread-2.0 done in cf/gcw.ac, but result not actually used
@@ -91,6 +97,7 @@ if(PLD_gcw)
     set(gcw_SOURCE
     ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
     )
+    set(gcw_LINK_FLAGS ${gcw_LINK_FLAGS} plplotgnome2${LIB_TAG})
   else(ENABLE_DYNDRIVERS)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gcw_LINK_FLAGS})
     set(gcw_SOURCE
