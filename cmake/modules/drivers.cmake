@@ -34,13 +34,13 @@
 # DRIVERS_LIST: list of device drivers (e.g., gd for the png and jpeg devices)
 #   where at least one of the associated devices is enabled.
 
-option(ENABLE_DYNDRIVERS "enable dynamic loading of device drivers" ON)
+option(ENABLE_DYNDRIVERS "Enable dynamic loading of device drivers" ON)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
   message(STATUS 
   "WARNING: Shared libraries not built. Setting ENABLE_DYNDRIVERS OFF."
   )
   set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
-  "enable dynamic loading of device drivers" FORCE)
+  "Enable dynamic loading of device drivers" FORCE)
 endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
 if(ENABLE_DYNDRIVERS)
   find_package(LTDL)
@@ -51,7 +51,7 @@ if(ENABLE_DYNDRIVERS)
     "   CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH appropriately."
     )
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
-    "enable dynamic loading of device drivers" FORCE)
+    "Enable dynamic loading of device drivers" FORCE)
   endif(NOT LTDL_FOUND)
 endif(ENABLE_DYNDRIVERS)
 

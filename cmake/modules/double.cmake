@@ -23,7 +23,7 @@
 # double/single precision.
 
 option(PL_DOUBLE 
-"compile the library with double precision floating point" ON)
+"Compile the library with double precision floating point" ON)
 
 if(PL_DOUBLE)
   set(LIB_TAG "d")

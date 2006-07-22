@@ -41,12 +41,12 @@
 # to be compiled based on which devices are selected.
 
 option(DEFAULT_ALL_DEVICES
-"enable all (ON) or enable individually (OFF) devices by default"
+"Enable all (ON) or enable individually (OFF) devices by default"
 OFF
 )
 
 option(DEFAULT_NO_DEVICES
-"disable all (ON) or enable individually (OFF) devices by default"
+"Disable all (ON) or enable individually (OFF) devices by default"
 OFF
 )
 
@@ -111,5 +111,5 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   if(NOT PRESET_DEFAULT)
     string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" DEFAULT ${DRIVERS_DEVICE})
   endif(NOT PRESET_DEFAULT)
-  option(PLD_${DEVICE} "enable ${DEVICE} device" ${DEFAULT})
+  option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
 endforeach(DRIVERS_DEVICE)

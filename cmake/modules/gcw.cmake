@@ -30,7 +30,7 @@ if(PLD_gcw)
     message(STATUS "WARNING: "
     "because pkg-config not found setting PLD_gcw and ENABLE_pygcw to OFF"
     )
-    set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
+    set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
     set(ENABLE_pygcw OFF)
   endif(NOT PKGCONFIG_EXECUTABLE)
 endif(PLD_gcw)
@@ -58,14 +58,14 @@ if(PLD_gcw)
       message(STATUS "WARNING: because libgnomeprintui-2.2 not found "
       "setting PLD_gcw and ENABLE_pygcw to OFF"
       )
-      set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
+      set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
       set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
 #  else(linkflags AND cflags)
 #    message(STATUS "WARNING: because libgnomeui-2.0 not found "
 #    "setting PLD_gcw and ENABLE_pygcw to OFF"
 #    )
-#    set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
+#    set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
 #    set(ENABLE_pygcw OFF)
 #  endif(linkflags AND cflags)
 endif(PLD_gcw)
@@ -88,7 +88,7 @@ if(PLD_gcw)
     message(STATUS "WARNING: because required headers not found "
     "setting PLD_gcw and ENABLE_pygcw to OFF"
     )
-    set(PLD_gcw OFF CACHE BOOL "enable gcw device" FORCE)
+    set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
     set(ENABLE_pygcw OFF)
   endif(NOT gcw_HEADERS)
 endif(PLD_gcw)

@@ -22,7 +22,7 @@
 # Module for determining treatment of rpath for PLplot.  Must be
 # included after the instdirs module which defines LIB_DIR.
 
-option(USE_RPATH "use -rpath when linking libraries" ON)
+option(USE_RPATH "Use -rpath when linking libraries" ON)
 if(USE_RPATH)
   set(CMAKE_INSTALL_RPATH ${LIB_DIR})
   set(RPATHCMD "-Wl,-rpath -Wl,${LIB_DIR}")

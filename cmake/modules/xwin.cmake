@@ -40,7 +40,7 @@ if(PLD_xwin)
     # "GET_FILENAME_COMPONENT(X11_LIBRARY_DIR ??? PATH)" logic.
     # But this works for now....
     set(xwin_LINK_FLAGS "-L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
-    option(HAVE_PTHREAD "use pthreads with the xwin driver" OFF)
+    option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
     if(HAVE_PTHREAD)
       find_package(Threads)
       if(CMAKE_USE_PTHREADS_INIT)
@@ -59,7 +59,7 @@ if(PLD_xwin)
     endif(HAVE_PTHREAD)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${xwin_LINK_FLAGS})
   else(X11_FOUND)
-    set(PLD_xwin OFF CACHE BOOL "enable xwin device" FORCE)
+    set(PLD_xwin OFF CACHE BOOL "Enable xwin device" FORCE)
   endif(X11_FOUND)
 endif(PLD_xwin)
 
