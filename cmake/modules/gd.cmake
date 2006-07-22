@@ -17,7 +17,8 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Configuration for the gd device (supporting png, gif and/or jpeg drivers)
+# Configuration for the gd device driver (supporting png, gif and/or jpeg
+# devices.)
 #
 # The following variables are set / modified
 #
@@ -28,12 +29,10 @@
 # gd_LINK_FLAGS       - LINK_FLAGS for dynamic gd device driver.
 # DRIVERS_LINK_FLAGS  - list of LINK_FLAGS for all static device drivers.
 #
-# Include file searches use FindPath. To add extra search directories to 
-# set the environment variable CMAKE_INCLUDE_PATH or the CMake variable 
-# CMAKE_INCLUDE_PATH (using cmake -D option).
-# Library searches use FindLibrary. To add extra search directories to 
-# set the environment variable CMAKE_LIBRARY_PATH or the CMake variable 
-# CMAKE_LIBRARY_PATH (using cmake -D option).
+# Include file searches use FindPath. To add extra search directories
+# set the environment variable CMAKE_INCLUDE_PATH.
+# Library searches use FindLibrary. To add extra search directories
+# set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
 
 # Look for gd libraries
