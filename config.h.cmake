@@ -396,8 +396,7 @@
 #cmakedefine PL_FREETYPE_SYMBOL_OBLIQUE
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-/* Frozen at void for now, NEEDS TEST */
-#define RETSIGTYPE void
+#define RETSIGTYPE ${RETSIGTYPE} 
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1

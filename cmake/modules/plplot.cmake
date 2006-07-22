@@ -64,6 +64,9 @@ endif(NOT HAVE_DIRENT_H)
 # is done by AC_HEADER_DIRENT here until that changes.
 set(NEED_SYS_TYPE_H ON)
 
+# Test signal handler return type (mimics AC_TYPE_SIGNAL)
+include(TestSignalType)
+
 include(CheckFunctionExists)
 check_function_exists(popen HAVE_POPEN)
 check_function_exists(usleep HAVE_USLEEP)
