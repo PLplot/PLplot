@@ -24,9 +24,9 @@
 # PLD_png             - ON means the png device is enabled
 # PLD_jpeg            - ON means the jpeg device is enabled
 # PLD_gif             - ON means the gif device is enabled
-# gd_COMPILE_FLAGS    - individual COMPILE_FLAGS required to compile gd device.
-# gd_LINK_FLAGS       - individual LINK_FLAGS for dynamic gd device.
-# DRIVERS_LINK_FLAGS  - list of LINK_FLAGS for all static devices.
+# gd_COMPILE_FLAGS    - COMPILE_FLAGS required to compile gd device driver.
+# gd_LINK_FLAGS       - LINK_FLAGS for dynamic gd device driver.
+# DRIVERS_LINK_FLAGS  - list of LINK_FLAGS for all static device drivers.
 #
 # Include file searches use FindPath. To add extra search directories to 
 # set the environment variable CMAKE_INCLUDE_PATH or the CMake variable 
