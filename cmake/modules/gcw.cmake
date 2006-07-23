@@ -24,11 +24,13 @@
 # gcw_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile gcw
 # 			    device.
 # gcw_LINK_FLAGS	  - individual LINK_FLAGS for dynamic gcw device.
+# gcw_TARGETS		  - list of targets which the gcw dynamic device
+# 			    depends on.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 if(PLD_gcw)
   if(NOT PKGCONFIG_EXECUTABLE)
-    message(STATUS "WARNING: "
-    "because pkg-config not found setting PLD_gcw and ENABLE_pygcw to OFF"
+    message(STATUS 
+    "WARNING: pkg-config not found. Setting PLD_gcw and ENABLE_pygcw to OFF"
     )
     set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
     set(ENABLE_pygcw OFF)
@@ -55,15 +57,16 @@ if(PLD_gcw)
       set(gcw_COMPILE_FLAGS "${cflags1}")
       set(gcw_LINK_FLAGS "${linkflags1}")
     else(linkflags1 AND cflags1)
-      message(STATUS "WARNING: because libgnomeprintui-2.2 not found "
-      "setting PLD_gcw and ENABLE_pygcw to OFF"
+      message(STATUS
+      "WARNING: libgnomeprintui-2.2 not found.  Setting PLD_gcw and "
+      "ENABLE_pygcw to OFF."
       )
       set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
       set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
 #  else(linkflags AND cflags)
-#    message(STATUS "WARNING: because libgnomeui-2.0 not found "
-#    "setting PLD_gcw and ENABLE_pygcw to OFF"
+#    message(STATUS "WARNING: libgnomeui-2.0 not found.  "
+#    "Setting PLD_gcw and ENABLE_pygcw to OFF."
 #    )
 #    set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
 #    set(ENABLE_pygcw OFF)
@@ -85,8 +88,9 @@ if(PLD_gcw)
   check_include_files("${include_files_to_check}" gcw_HEADERS)
   set(CMAKE_REQUIRED_FLAGS)
   if(NOT gcw_HEADERS)
-    message(STATUS "WARNING: because required headers not found "
-    "setting PLD_gcw and ENABLE_pygcw to OFF"
+    message(STATUS
+    "WARNING: Required headers not found. "
+    "Setting PLD_gcw and ENABLE_pygcw to OFF."
     )
     set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
     set(ENABLE_pygcw OFF)
@@ -97,7 +101,7 @@ if(PLD_gcw)
     set(gcw_SOURCE
     ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
     )
-    set(gcw_LINK_FLAGS ${gcw_LINK_FLAGS} plplotgnome2${LIB_TAG})
+    set(gcw_TARGETS plplotgnome2${LIB_TAG})
   else(ENABLE_DYNDRIVERS)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gcw_LINK_FLAGS})
     set(gcw_SOURCE
@@ -123,26 +127,26 @@ if(PLD_gcw AND ENABLE_pygcw)
 	OUTPUT_VARIABLE codegen
 	)
 	if(NOT codegen)
-          message(STATUS "WARNING: because pygtk/codegen not found "
-	  "setting ENABLE_pygcw to OFF"
+          message(STATUS "WARNING: pygtk/codegen not found.  "
+	  "Setting ENABLE_pygcw to OFF."
 	  )
 	  set(ENABLE_pygcw OFF)
 	endif(NOT codegen)
       else(pygcw_HEADERS)
-        message(STATUS "WARNING: because required headers not found "
-	"setting ENABLE_pygcw to OFF"
+        message(STATUS "WARNING: required headers not found.  "
+	"Setting ENABLE_pygcw to OFF."
 	)
 	set(ENABLE_pygcw OFF)
       endif(pygcw_HEADERS)
     else(linkflags1 AND cflags1)
-      message(STATUS "WARNING: because gnome-python-2.0 not found "
-      "setting ENABLE_pygcw to OFF"
+      message(STATUS "WARNING: gnome-python-2.0 not found. "
+      "Setting ENABLE_pygcw to OFF."
       )
       set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
   else(linkflags AND cflags)
-    message(STATUS "WARNING: because pygtk-2.0 not found "
-    "setting ENABLE_pygcw to OFF"
+    message(STATUS "WARNING: pygtk-2.0 not found.  "
+    "Setting ENABLE_pygcw to OFF"
     )
     set(ENABLE_pygcw OFF)
   endif(linkflags AND cflags)
