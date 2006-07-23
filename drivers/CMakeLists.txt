@@ -44,7 +44,7 @@ if(ENABLE_DYNDRIVERS)
   set_target_properties(
   get-drv-info
   PROPERTIES
-  INSTALL_RPATH ".:${CMAKE_BINARY_DIR}/src"
+  INSTALL_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}/src"
   BUILD_WITH_INSTALL_RPATH ON
   )
 
@@ -62,16 +62,29 @@ if(ENABLE_DYNDRIVERS)
     plplot${LIB_TAG}
     m
     ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+    ${${SOURCE_ROOT_NAME}_TARGETS}
     )
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
     # should always be ".so" regardless of platform.
-    set_target_properties(
-    ${SOURCE_ROOT_NAME}
-    PROPERTIES
-    PREFIX ""
-    SUFFIX ".so"
-    )
+    if(${SOURCE_ROOT_NAME}_RPATH)
+      # If ${SOURCE_ROOT_NAME}_RPATH exists, apply it as well
+      set_target_properties(
+      ${SOURCE_ROOT_NAME}
+      PROPERTIES
+      PREFIX ""
+      SUFFIX ".so"
+      INSTALL_RPATH "${${SOURCE_ROOT_NAME}_RPATH}"
+      BUILD_WITH_INSTALL_RPATH ON
+      )
+    else(${SOURCE_ROOT_NAME}_RPATH)
+      set_target_properties(
+      ${SOURCE_ROOT_NAME}
+      PROPERTIES
+      PREFIX ""
+      SUFFIX ".so"
+      )
+    endif(${SOURCE_ROOT_NAME}_RPATH)
 # This is a clumsy way to do it since we have to put in dependencies on
 # get-drv-info so it will always be built first, but the better 
 # alternative below does not work (probably a bug in 2.4.2).
