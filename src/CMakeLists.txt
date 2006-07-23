@@ -95,9 +95,13 @@ if (WITH_FREETYPE)
   target_link_libraries(plplot${LIB_TAG} ${FREETYPE_LIBRARIES})
 endif (WITH_FREETYPE)
 
-set_target_properties(plplot${LIB_TAG}
-PROPERTIES SOVERSION ${plplot_SOVERSION} VERSION ${plplot_VERSION}
+set_target_properties(
+plplot${LIB_TAG}
+PROPERTIES 
+SOVERSION ${plplot_SOVERSION}
+VERSION ${plplot_VERSION}
 )
+
 install(TARGETS plplot${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
 string(REGEX REPLACE ";" " " 
