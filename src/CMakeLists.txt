@@ -85,10 +85,17 @@ add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
 if(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${LTDL_LIBRARIES})
+  target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
+  set_target_properties(
+  plplot${LIB_TAG}
+  PROPERTIES
+  INSTALL_RPATH "${LTDL_LIBRARY_DIR}"
+  BUILD_WITH_INSTALL_RPATH ON
+  )
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
+  target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
 endif(ENABLE_DYNDRIVERS)
-target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
 
 if (WITH_FREETYPE)
   set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "-I${FREETYPE_INCLUDE_DIR}")

@@ -5,6 +5,7 @@
 #  LTDL_FOUND, if false, do not try to use LTDL.
 #  LTDL_INCLUDE_DIR, where to find ltdl.h.
 #  LTDL_LIBRARIES, the libraries to link against to use libltdl.
+#  LTDL_LIBRARY_DIR, the directory where libltdl is found.
 
 find_path(LTDL_INCLUDE_DIR ltdl.h /usr/local/include /usr/include)
 
@@ -15,6 +16,9 @@ if(LTDL_INCLUDE_DIR)
   )
   if(LTDL_LIBRARIES)
 
+    set(LTDL_LIBRARY_DIR "")
+    get_filename_component(LTDL_LIBRARY_DIR ${LTDL_LIBRARIES} PATH)
+    
     # Define useful internal macro for finding and checking a library
     include(CheckLibraryExists)
     macro(_find_check_libs _library_name _function_name _lib _have_lib)
