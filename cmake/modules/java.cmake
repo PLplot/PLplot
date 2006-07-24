@@ -24,6 +24,12 @@
 # Options to enable Java bindings
 OPTION(ENABLE_java "Enable Java bindings" ON)
 
+if(ENABLE_java AND NOT SWIG_FOUND)
+  message(STATUS "WARNING: "
+    "swig not found. Disabling java bindings")
+  set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+endif(ENABLE_java AND NOT SWIG_FOUND)
+
 IF (ENABLE_java)
 
 # Check for java compiler

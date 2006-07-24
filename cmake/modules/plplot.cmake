@@ -80,16 +80,15 @@ check_function_exists(isnan HAVE_ISNAN)
 
 # Find swig - no version checking at present
 FIND_PACKAGE(SWIG)
-IF (SWIG_FOUND)
+if(SWIG_FOUND)
   include(${SWIG_USE_FILE})
-ELSE (SWIG_FOUND)
-  SET(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
-ENDIF (SWIG_FOUND)
+endif(SWIG_FOUND)
 
 # Load language specific files
 include(c++)
 include(fortran)
 include(java)
+#include(python)
 
 # =======================================================================
 # additional library support
