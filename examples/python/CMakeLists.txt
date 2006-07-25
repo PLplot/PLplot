@@ -79,7 +79,7 @@ GROUP_EXECUTE
 WORLD_READ
 WORLD_EXECUTE
 )
-install(FILES ${python_SRCS} 
+install(FILES ${python_SCRIPTS} 
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_SCRIPTS}
 )
@@ -113,7 +113,7 @@ OWNER_WRITE
 GROUP_READ
 WORLD_READ
 )
-install(FILES ${python_SRCS} 
+install(FILES ${python_DATA} 
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_DATA}
 )
