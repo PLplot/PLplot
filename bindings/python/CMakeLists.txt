@@ -23,11 +23,10 @@ if(ENABLE_python)
 # This is currently the include list for swig, the C wrapper and the
 # the Python headers. Not particular pretty...
 set(python_interface_INCLUDE_PATHS
-${CMAKE_SOURCE_DIR}
 ${CMAKE_SOURCE_DIR}/include
-${CMAKE_CURRENT_BINARY_DIR}
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
+${CMAKE_CURRENT_BINARY_DIR}
 ${PYTHON_INCLUDE_PATH}
 ${CMAKE_SOURCE_DIR}/bindings/swig-support
 )
