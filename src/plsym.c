@@ -1221,7 +1221,7 @@ plP_FCI2FontName ( PLUNICODE fci,
 	  /* We have found it!
 	   * fci == lookup[jmid].fci 
 	   */
-	  return (lookup[jmid].pfont);
+	  return (char *) (lookup[jmid].pfont);
      }
    /* jlo is invalid or it is valid and fci > lookup[jlo].Unicode.
     * jhi is invalid or it is valid and fci < lookup[jhi].Unicode.
