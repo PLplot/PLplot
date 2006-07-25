@@ -88,7 +88,7 @@ endif(SWIG_FOUND)
 include(c++)
 include(fortran)
 include(java)
-#include(python)
+include(python)
 
 # =======================================================================
 # additional library support
