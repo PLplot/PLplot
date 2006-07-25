@@ -47,26 +47,26 @@ EXTRA_DIST = \
 
 ### Only swig version 1.3.21 (and above?) will work here.
 ### Ordinarily this detail only matters for CVS users because the tarball
-### version of PLplot always has both plplotcmodule_p_double.c and
-### plplotcmodule_p_single.c pre-generated.
+### version of PLplot always has both plplotcmodule_double.c and
+### plplotcmodule_single.c pre-generated.
 ### Note plplotc.py is generated in both cases as well, but that file
 ### contents are independent of the single-double question and the
 ### following logic depends on that.
-plplotcmodule_p_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
-	$(SWIG_CMD) -DPL_DOUBLE -o plplotcmodule_p_double.c plplotcmodule.i
+plplotcmodule_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
+	$(SWIG_CMD) -DPL_DOUBLE -o plplotcmodule_double.c plplotcmodule.i
 
 # swig-1.3.21+ does not handle documentation strings properly so run this
 # script to make documentation strings.
-plplotcmodule_double.c: plplotcmodule_p_double.c $(MAKEDOCSTRINGS_PY)
-	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_double.c plplotcmodule_double.c
+#plplotcmodule_double.c: plplotcmodule_p_double.c $(MAKEDOCSTRINGS_PY)
+#	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_double.c plplotcmodule_double.c
 
 ### Note plplotc.py generated here as well, but it is identical to the
 ### one generated above and we cannot mention it as a duplicate target here.
-plplotcmodule_p_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
-	$(SWIG_CMD) -o plplotcmodule_p_single.c plplotcmodule.i
+plplotcmodule_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
+	$(SWIG_CMD) -o plplotcmodule_single.c plplotcmodule.i
 
-plplotcmodule_single.c: plplotcmodule_p_single.c $(MAKEDOCSTRINGS_PY)
-	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_single.c plplotcmodule_single.c
+#plplotcmodule_single.c: plplotcmodule_p_single.c $(MAKEDOCSTRINGS_PY)
+#	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_single.c plplotcmodule_single.c
 
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
@@ -150,5 +150,5 @@ CLEANFILES = \
 
 MAINTAINERCLEANFILES = \
 	plplotc.py \
-	plplotcmodule_p_double.c \
-	plplotcmodule_p_single.c
+	plplotcmodule_double.c \
+	plplotcmodule_single.c

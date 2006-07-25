@@ -35,8 +35,8 @@ cd ../..
 
 # Swig-generate both the single and double-precision python wrappers.
 cd bindings/python
-swig -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE plplotcmodule.i
-swig -python -o plplotcmodule_p_single.c -c++ plplotcmodule.i
+swig -python -o plplotcmodule_double.c -c++ -DPL_DOUBLE plplotcmodule.i
+swig -python -o plplotcmodule_single.c -c++ plplotcmodule.i
 cd ../..
 
 # Swig-generate the java wrapper.
