@@ -376,7 +376,7 @@ plgpage(PLFLT *OUTPUT, PLFLT *OUTPUT,
 void
 plgra(void);
 
-%feature("autodoc", "Grid irregular sample data") plgriddata;
+%feature("autodoc", "Grid irregular sample data.") plgriddata;
 void
 plgriddata(PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
            PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY,  PLINT ny,
@@ -424,7 +424,7 @@ plhist(PLINT n, PLFLT *Array, PLFLT datmin, PLFLT datmax,
 void
 plhls(PLFLT h, PLFLT l, PLFLT s);
 
-%feature("autodoc", "Transform from HLS to RGB form of colours") plhlsrgb;
+%feature("autodoc", "Transform from HLS to RGB form of colours.") plhlsrgb;
 void
 plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
@@ -518,7 +518,7 @@ plpoin(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT code);
 void
 plpoin3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT code);
 
-%feature("autodoc", "Draw a polygon in 3 space. ") plpoly3;
+%feature("autodoc", "Draw a polygon in 3 space.") plpoly3;
 void
 plpoly3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLBOOL *ArrayCkMinus1,
 	    PLBOOL flag);
@@ -539,7 +539,7 @@ plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
 void
 plreplot(void);
 
-%feature("autodoc", "Transform from RGB to HLS form of colours") plrgbhls;
+%feature("autodoc", "Transform from RGB to HLS form of colours.") plrgbhls;
 void
 plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
@@ -694,7 +694,7 @@ plstar(PLINT nx, PLINT ny);
 void
 plstart(const char *devname, PLINT nx, PLINT ny);
 
-%feature("autodoc", "Add a point to a stripchart. ") plstripa;
+%feature("autodoc", "Add a point to a stripchart.") plstripa;
 void
 plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 
@@ -708,7 +708,7 @@ plstripc(PLINT *OUTPUT, char *xspec, char *yspec,
 	PLINT *Array, PLINT *ArrayCk, char *legline[4],
 	char *labx, char *laby, char *labtop);
 
-%feature("autodoc", "Deletes and releases memory used by a stripchart. ") plstripd;
+%feature("autodoc", "Deletes and releases memory used by a stripchart.") plstripd;
 void
 plstripd(PLINT id);
 
@@ -732,11 +732,11 @@ plsxax(PLINT digmax, PLINT digits);
 void
 plsyax(PLINT digmax, PLINT digits);
 
-%feature("autodoc", "Plot array y against x for n points using Hershey symbol \"code\"") plsym;
+%feature("autodoc", "Plot array y against x for n points using Hershey symbol \"code\".") plsym;
 void
 plsym(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT code);
 
-%feature("autodoc", "Set z axis labeling parameters") plszax;
+%feature("autodoc", "Set z axis labeling parameters.") plszax;
 void
 plszax(PLINT digmax, PLINT digits);
 
@@ -1058,7 +1058,7 @@ plMinMax2dGrid(PLFLT **Matrix, PLINT nx, PLINT ny, PLFLT *OUTPUT, PLFLT *OUTPUT)
 
 /* Wait for graphics input event and translate to world coordinates */
 
-%feature("autodoc", "Wait for graphics input event and translate to world coordinates") plGetCursor;
+%feature("autodoc", "Wait for graphics input event and translate to world coordinates.") plGetCursor;
 PLINT
 plGetCursor(PLGraphicsIn *gin);
 
