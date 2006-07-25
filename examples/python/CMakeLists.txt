@@ -1,4 +1,4 @@
-# examples/f95/CMakeLists.txt
+# examples/python/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Alan W. Irwin
@@ -18,9 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(f95_SRCS)
-
-set(f95_STRING_INDICES
+set(python_STRING_INDICES
 "01"
 "02"
 "03"
@@ -34,41 +32,88 @@ set(f95_STRING_INDICES
 "11"
 "12"
 "13"
-"14"
 "15"
 "16"
-"16a"
-"17"
 "18"
 "19"
 "22"
 "23"
+"24"
+"26"
 )
 
-#set(ENABLE_BUILDTREE_EXAMPLES ON)
-if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
-  remove_definitions("-DHAVE_CONFIG_H")
-  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
-endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
-foreach(STRING_INDEX ${f95_STRING_INDICES})
-  set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
-  if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
-    add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
-    target_link_libraries(x${STRING_INDEX}f plplotf95${LIB_TAG})
-  endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
-endforeach(STRING_INDEX ${f95_STRING_INDICES})
+set(python_SCRIPTS)
+set(python_DATA)
+foreach(STRING_INDEX ${python_STRING_INDICES})
+  set(python_SCRIPTS ${python_SCRIPTS} x${STRING_INDEX})
+  set(python_DATA ${python_DATA} xw${STRING_INDEX}.py)
+endforeach(STRING_INDEX ${python_STRING_INDICES})
 
-install(FILES ${f95_SRCS} 
-DESTINATION ${DATA_DIR}/examples/f95
+# This list contains standalone scripts which are executable and which
+# should be installed in the examples/python directory.
+set(
+python_SCRIPTS
+${python_SCRIPTS}
+prova.py
+pythondemos.py
+x14
+x17
+xw14.py
+xw17.py
+)
+if(ENABLE_pygcw)
+  set(
+  python_SCRIPTS 
+  ${python_SCRIPTS}
+  plplotcanvas_demo.py
+  plplotcanvas_animation.py
+ )
+endif(ENABLE_pygcw)
+
+set(PERM_SCRIPTS
+OWNER_READ
+OWNER_WRITE
+OWNER_EXECUTE
+GROUP_READ
+GROUP_EXECUTE
+WORLD_READ
+WORLD_EXECUTE
+)
+install(FILES ${python_SRCS} 
+DESTINATION ${DATA_DIR}/examples/python
+PERMISSIONS ${PERM_SCRIPTS}
 )
 
-set(FC ${CMAKE_Fortran_COMPILER})
+# This list contains python modules which are not executable on their own and
+# data files that should be installed in the examples/python directory.
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.in
+${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
 )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
-DESTINATION ${DATA_DIR}/examples/f95
-RENAME Makefile
+set(
+python_DATA
+${python_DATA}
+README.pythondemos
+qplplot.py
+${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
+)
+
+if(ENABLE_pygcw)
+  set(
+  python_DATA
+  ${python_DATA}
+  README.plplotcanvas
+  )
+endif(ENABLE_pygcw)
+
+set(PERM_DATA
+OWNER_READ
+OWNER_WRITE
+GROUP_READ
+WORLD_READ
+)
+install(FILES ${python_SRCS} 
+DESTINATION ${DATA_DIR}/examples/python
+PERMISSIONS ${PERM_DATA}
 )
