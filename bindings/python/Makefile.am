@@ -55,7 +55,7 @@ EXTRA_DIST = \
 plplotcmodule_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -DPL_DOUBLE -o plplotcmodule_double.c plplotcmodule.i
 
-# swig-1.3.21+ does not handle documentation strings properly so run this
+# swig-1.3.21+ does handle documentation strings properly so do not run this
 # script to make documentation strings.
 #plplotcmodule_double.c: plplotcmodule_p_double.c $(MAKEDOCSTRINGS_PY)
 #	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_double.c plplotcmodule_double.c
@@ -67,6 +67,8 @@ plplotcmodule_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
 
 #plplotcmodule_single.c: plplotcmodule_p_single.c $(MAKEDOCSTRINGS_PY)
 #	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_single.c plplotcmodule_single.c
+
+EXTRA_DIST = plplotcmodule_double.c plplotcmodule_single.c
 
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
@@ -104,9 +106,9 @@ plplot_widgetmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS)
 if enable_python
 
 if with_double
-nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_double.c
+UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_double.c
 else
-nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_single.c
+UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_single.c
 endif
 
 # plplot.py is our hand-crafted user-friendly interface wrapper to plplotc.py
