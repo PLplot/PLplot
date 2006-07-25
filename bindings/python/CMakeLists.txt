@@ -1,164 +1,84 @@
+# bindings/python/CMakeLists.txt
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### install files ###############
+if(ENABLE_python)
 
-INSTALL_FILES(  FILES  plplot.py plplotc.py )
-INSTALL_FILES(  FILES  .libs/check-stamp )
+# This is currently the include list for swig, the C wrapper and the
+# the Python headers. Not particular pretty...
+set(python_interface_INCLUDE_PATHS
+${CMAKE_SOURCE_DIR}
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_CURRENT_BINARY_DIR}
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+${PYTHON_INCLUDE_PATH}
+${CMAKE_SOURCE_DIR}/bindings/swig-support
+)
+include_directories(${python_interface_INCLUDE_PATHS})
 
+set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_PYTHON -python)
 
+set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-#original Makefile.am contents follow:
+# Set up swig + c wrapper.
+# N.B. the python target has an underscore prepended automatically.
+swig_add_module(plplotcmodule python plplotcmodule.i)
+swig_link_libraries(plplotcmodule plplot${LIB_TAG})
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
+set_target_properties(
+_plplotcmodule
+PROPERTIES
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+)
 
-## examples/python/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002, 2003, 2004  Alan W. Irwin
-## Copyright (C) 2003, 2004  Rafael Laboissiere
-##
-## This file is part of PLplot.
-##
-## This file is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## This file is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with the file; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-#
-## N.B.  This treatment probably will need changes or else a complete
-## replacement to work cross-platform as indicated by ?cross-platform?
-## comment below, but it works quite nicely on Linux.
-#
-#SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
-#PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
-#SWIG_PYTHON_DIR = $(top_srcdir)/bindings/python
-#MAKEDOCSTRINGS_PY = $(SWIG_PYTHON_DIR)/makedocstrings.py
-#
-#SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_PYTHON_DIR) -DSWIG_PYTHON -python
-#
-#### FIXME: Brute force inclusion in dist tarball.  The files below may
-#### be treated in a different way for installation [RL, 2003-03-06]
-#EXTRA_DIST = \
-#        1.4b3 \
-#	fragments.i \
-#	plplotcmodule.i \
-#	makedocstrings.py \
-#	plplot_widgetmodule.c \
-#	plplot.py \
-#	Plframe.py \
-#	README.pythonbuild \
-#	TclSup.py \
-#	$(MAINTAINERCLEANFILES)
-#
-#### Only swig version 1.3.21 (and above?) will work here.
-#### Ordinarily this detail only matters for CVS users because the tarball
-#### version of PLplot always has both plplotcmodule_p_double.c and
-#### plplotcmodule_p_single.c pre-generated.
-#### Note plplotc.py is generated in both cases as well, but that file
-#### contents are independent of the single-double question and the
-#### following logic depends on that.
-#plplotcmodule_p_double.c plplotc.py: plplotcmodule.i $(PLPLOTCAPI_I)
-#	$(SWIG_CMD) -DPL_DOUBLE -o plplotcmodule_p_double.c plplotcmodule.i
-#
-## swig-1.3.21+ does not handle documentation strings properly so run this
-## script to make documentation strings.
-#plplotcmodule_double.c: plplotcmodule_p_double.c $(MAKEDOCSTRINGS_PY)
-#	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_double.c plplotcmodule_double.c
-#
-#### Note plplotc.py generated here as well, but it is identical to the
-#### one generated above and we cannot mention it as a duplicate target here.
-#plplotcmodule_p_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
-#	$(SWIG_CMD) -o plplotcmodule_p_single.c plplotcmodule.i
-#
-#plplotcmodule_single.c: plplotcmodule_p_single.c $(MAKEDOCSTRINGS_PY)
-#	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_single.c plplotcmodule_single.c
-#
-## Must have "exec" in the name.
-#ourexecpythondir = $(pythondir)
-#
-#libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
-#
-## NUMERICINCCMD only required until we quit supporting python 1.5
-## X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
-#AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(PYTHONINCCMD) $(NUMERICINCCMD) $(X_CFLAGS)
-#
-## For Mac OS X/fink we have found that dropping -no-undefined $(PYTHON_LDFLAGS)
-## solves an unknown linking problem that causes python to be unable to import
-## the extension module, but this hack is not necessary on other platforms.
-## and it causes errors for Cygwin.  We also hope this hack
-## won't be necessary in the future when we have better versions of
-## libtool/Mac OS X/fink.
-#if darwin_os
-#extra_ldflags = 
-#else
-## -no-undefined should work on all (other) platforms here since symbols should 
-## all be resolved by $(PYTHON_LDFLAGS) and libplplot
-#extra_ldflags = -no-undefined $(PYTHON_LDFLAGS)
-#endif
-#
-#UNDERSCORE_plplotcmodule_la_LDFLAGS  = \
-#	-rpath $(ourexecpythondir) \
-#	-module \
-#	-avoid-version \
-#	$(extra_ldflags) \
-#	$(libplplot)
-#
-#plplot_widgetmodule_la_SOURCES  = plplot_widgetmodule.c
-#plplot_widgetmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS)
-#
-#if enable_python
-#
-#if with_double
-#nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_double.c
-#else
-#nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_single.c
-#endif
-#
-## plplot.py is our hand-crafted user-friendly interface wrapper to plplotc.py
-## (generated by swig) which in turn is a wrapper to the extension module.
-#ourexecpython_DATA = plplot.py plplotc.py
-#ourexecpython_LTLIBRARIES = UNDERSCORE_plplotcmodule.la plplot_widgetmodule.la
-#
-#### Do a similar job as install-exec-hook in the .libs directory, but
-#### also removing "module" from the file names.  This regards make
-#### check.
-#
-#check_DATA = .libs/check-stamp
-#.libs/check-stamp:
-#	( cd .libs ; \
-#	  for f in UNDERSCORE_plplot* ; do \
-#             cp $$f `echo $$f | sed s/UNDERSCORE// | sed s/module//` ; \
-#          done ; \
-#	  touch check-stamp )
-#
-## enable_python
-#endif
-#
-#### Use UNDERSCORE_plplotcmodule above to beat a potential problem with
-#### cross-platform make programmes.  But need the "_" version of the
-#### name installed.  Use install-hook to do this.  Also, remove the
-#### unneeded (by python) *.a and *.la files
-#
-#install-exec-hook:
-#if enable_python
-#	( cd $(DESTDIR)$(ourexecpythondir) ; \
-#	  rm -f *plplot*.a *plplot*.la; \
-#	  for file in UNDERSCORE_plplot* ; do \
-#	      mv $$file `echo $$file | sed s/UNDERSCORE//`;  \
-#          done )
-#endif
-#
-#CLEANFILES = \
-#	plplotcmodule_double.c \
-#	plplotcmodule_single.c \
-#	*.pyc
-#
-#MAINTAINERCLEANFILES = \
-#	plplotc.py \
-#	plplotcmodule_p_double.c \
-#	plplotcmodule_p_single.c
+add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
+set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
+target_link_libraries(plplot_widgetmodule plplot${LIB_TAG})
+set_target_properties(
+plplot_widgetmodule
+PROPERTIES
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+)
+
+install(
+TARGETS plplot_widgetmodule _plplotcmodule 
+LIBRARY 
+DESTINATION ${PYTHON_INSTDIR}
+)
+
+set(PERM_SCRIPTS
+OWNER_READ
+OWNER_WRITE
+OWNER_EXECUTE
+GROUP_READ
+GROUP_EXECUTE
+WORLD_READ
+WORLD_EXECUTE
+)
+install(
+FILES plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+DESTINATION ${PYTHON_INSTDIR}
+PERMISSIONS ${PERM_SCRIPTS}
+)
+
+endif(ENABLE_python)
