@@ -71,8 +71,15 @@ add_library(plplotf77c${LIB_TAG} SHARED ${plplotf77c${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf77c${LIB_TAG} plplot${LIB_TAG})
 
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
 set_target_properties(plplotf77c${LIB_TAG} 
-PROPERTIES SOVERSION ${plplotf77_SOVERSION} VERSION ${plplotf77_VERSION}
+PROPERTIES
+SOVERSION ${plplotf77_SOVERSION}
+VERSION ${plplotf77_VERSION}
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 )
 
 install(TARGETS plplotf77c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
@@ -89,7 +96,10 @@ add_library(plplotf77${LIB_TAG} SHARED ${plplotf77${LIB_TAG}_LIB_SRCS})
 target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
 
 set_target_properties(plplotf77${LIB_TAG}  
-PROPERTIES SOVERSION ${plplotf77_SOVERSION} VERSION ${plplotf77_VERSION}
+PROPERTIES
+SOVERSION ${plplotf77_SOVERSION}
+VERSION ${plplotf77_VERSION}
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 LINKER_LANGUAGE C
 )
 

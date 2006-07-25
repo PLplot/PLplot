@@ -58,7 +58,7 @@ if(ENABLE_DYNDRIVERS)
 else(ENABLE_DYNDRIVERS)
   # Static device drivers must be included in the core PLplot library.
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
-    message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
+    #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     set(plplot${LIB_TAG}_LIB_SRCS 
     ${plplot${LIB_TAG}_LIB_SRCS} 
     ${${SOURCE_ROOT_NAME}_SOURCE}
@@ -86,12 +86,13 @@ add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 if(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${LTDL_LIBRARIES})
   target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
+  #message("libplplot${LIB_TAG}_LINK_FLAGS =  ${libplplot${LIB_TAG}_LINK_FLAGS}")
   set_target_properties(
   plplot${LIB_TAG}
   PROPERTIES
-  INSTALL_RPATH "${LTDL_LIBRARY_DIR}"
-  BUILD_WITH_INSTALL_RPATH ON
+  INSTALL_RPATH ${libplplot${LIB_TAG}_RPATH}
   )
+  #message("libplplot${LIB_TAG}_RPATH = ${libplplot${LIB_TAG}_RPATH}")
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
   target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
@@ -115,13 +116,13 @@ string(REGEX REPLACE ";" " "
 libplplot${LIB_TAG}_LINK_FLAGS
 "${libplplot${LIB_TAG}_LINK_FLAGS}"
 )
-message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
+#message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
 
 string(REGEX REPLACE ";" " " 
 libplplot${LIB_TAG}_COMPILE_FLAGS
 "${libplplot${LIB_TAG}_COMPILE_FLAGS}"
 )
-message("libplplot${LIB_TAG}_COMPILE_FLAGS = ${libplplot${LIB_TAG}_COMPILE_FLAGS}")
+#message("libplplot${LIB_TAG}_COMPILE_FLAGS = ${libplplot${LIB_TAG}_COMPILE_FLAGS}")
 
 # Configure pkg-config *.pc file corresponding to libplplot${LIB_TAG}
 if(PKGCONFIG_EXECUTABLE)

@@ -44,7 +44,9 @@ if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
 endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
 if(ENABLE_DYNDRIVERS)
   find_package(LTDL)
-  if(NOT LTDL_FOUND)
+  if(LTDL_FOUND)
+    set(libplplot${LIB_TAG}_RPATH ${LTDL_LIBRARY_DIR})
+  else(LTDL_FOUND)
     message(STATUS 
        "WARNING: libltdl library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
     "   Please install that library and/or set the environment variables\n"
@@ -52,7 +54,7 @@ if(ENABLE_DYNDRIVERS)
     )
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
     "Enable dynamic loading of device drivers" FORCE)
-  endif(NOT LTDL_FOUND)
+  endif(LTDL_FOUND)
 endif(ENABLE_DYNDRIVERS)
 
 

@@ -40,9 +40,15 @@ add_library(plplotcxx${LIB_TAG} ${plplotcxx${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotcxx${LIB_TAG} plplot${LIB_TAG})
 
-# Set version number
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
 set_target_properties(plplotcxx${LIB_TAG}
-PROPERTIES SOVERSION ${plplotcxx_SOVERSION} VERSION ${plplotcxx_VERSION}
+PROPERTIES
+SOVERSION ${plplotcxx_SOVERSION}
+VERSION ${plplotcxx_VERSION}
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 )
 
 # Install library in lib/

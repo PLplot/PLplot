@@ -55,8 +55,15 @@ add_library(plplotf95c${LIB_TAG} SHARED ${plplotf95c${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
 
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
 set_target_properties(plplotf95c${LIB_TAG}
-PROPERTIES SOVERSION ${plplotf95_SOVERSION} VERSION ${plplotf95_VERSION}
+PROPERTIES
+SOVERSION ${plplotf95_SOVERSION}
+VERSION ${plplotf95_VERSION}
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 )
 
 install(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
@@ -79,7 +86,10 @@ add_library(plplotf95${LIB_TAG} SHARED ${plplotf95${LIB_TAG}_LIB_SRCS})
 target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
 
 set_target_properties(plplotf95${LIB_TAG}
-PROPERTIES SOVERSION ${plplotf95_SOVERSION} VERSION ${plplotf95_VERSION}
+PROPERTIES
+SOVERSION ${plplotf95_SOVERSION}
+VERSION ${plplotf95_VERSION}
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 LINKER_LANGUAGE C
 )
 

@@ -49,12 +49,13 @@ if(ENABLE_DYNDRIVERS)
   )
 
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
-    message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
+    #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
       ${${SOURCE_ROOT_NAME}_SOURCE}
       PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
       )
+      #message("${SOURCE_ROOT_NAME}_COMPILE_FLAGS = ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
     target_link_libraries(
@@ -64,27 +65,27 @@ if(ENABLE_DYNDRIVERS)
     ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
     ${${SOURCE_ROOT_NAME}_TARGETS}
     )
+    #message("${SOURCE_ROOT_NAME}_LINK_FLAGS = ${${SOURCE_ROOT_NAME}_LINK_FLAGS}")
+    #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
-    # should always be ".so" regardless of platform.
-    if(${SOURCE_ROOT_NAME}_RPATH)
-      # If ${SOURCE_ROOT_NAME}_RPATH exists, apply it as well
-      set_target_properties(
-      ${SOURCE_ROOT_NAME}
-      PROPERTIES
-      PREFIX ""
-      SUFFIX ".so"
-      INSTALL_RPATH "${${SOURCE_ROOT_NAME}_RPATH}"
-      BUILD_WITH_INSTALL_RPATH ON
-      )
-    else(${SOURCE_ROOT_NAME}_RPATH)
-      set_target_properties(
-      ${SOURCE_ROOT_NAME}
-      PROPERTIES
-      PREFIX ""
-      SUFFIX ".so"
-      )
-    endif(${SOURCE_ROOT_NAME}_RPATH)
+    # should always be ".so" regardless of platform so that libltdl can
+    # always find the result.
+    set(
+    ${SOURCE_ROOT_NAME}_RPATH
+    ${${SOURCE_ROOT_NAME}_RPATH}
+    ${libplplot${LIB_TAG}_RPATH}
+    ${LIB_DIR}
+    )
+    #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
+    set_target_properties(
+    ${SOURCE_ROOT_NAME}
+    PROPERTIES
+    PREFIX ""
+    SUFFIX ".so"
+    INSTALL_RPATH
+    "${${SOURCE_ROOT_NAME}_RPATH}"
+    )
 # This is a clumsy way to do it since we have to put in dependencies on
 # get-drv-info so it will always be built first, but the better 
 # alternative below does not work (probably a bug in 2.4.2).
