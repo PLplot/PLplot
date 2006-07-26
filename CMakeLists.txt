@@ -128,7 +128,7 @@ add_subdirectory(test)
 ####not yet implemented
 #add_subdirectory(scripts)
 ####not yet implemented
-#add_subdirectory(doc)
+add_subdirectory(doc)
 # needs no cmake processing
 #add_subdirectory(pkgcfg)
 # needs no cmake processing

@@ -51,6 +51,10 @@ set(DRV_DIR ${CMAKE_INSTALL_PREFIX}/${DRV_INSTALL_DIR})
 set(DOC_INSTALL_DIR share/doc/${PACKAGE})
 set(DOC_DIR ${CMAKE_INSTALL_PREFIX}/${DOC_INSTALL_DIR})
 
+# Man pages.
+set(MAN_INSTALL_DIR man)
+set(MAN_DIR ${CMAKE_INSTALL_PREFIX}/${MAN_INSTALL_DIR})
+
 # Other path-related variables.
 
 # Absolute path of top-level build directory.
