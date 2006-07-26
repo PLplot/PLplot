@@ -30,7 +30,7 @@
 if(PLD_gcw)
   if(NOT PKGCONFIG_EXECUTABLE)
     message(STATUS 
-    "WARNING: pkg-config not found. Setting PLD_gcw and ENABLE_pygcw to OFF"
+    "WARNING: pkg-config not found. Setting PLD_gcw and ENABLE_pygcw to OFF."
     )
     set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
     set(ENABLE_pygcw OFF)
