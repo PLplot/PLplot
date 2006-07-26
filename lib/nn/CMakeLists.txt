@@ -30,10 +30,15 @@ nnai.c
 nnpi.c
 nncommon.c
 )
+
 add_library(csironn ${csironn_LIB_SRCS})
-SET_TARGET_PROPERTIES(csironn
-PROPERTIES SOVERSION ${csironn_SOVERSION} VERSION ${csironn_VERSION}
+set_target_properties(
+csironn
+PROPERTIES
+SOVERSION ${csironn_SOVERSION}
+VERSION ${csironn_VERSION}
 )
+target_link_libraries(csironn ${QHULL_LIB})
 install(TARGETS csironn DESTINATION ${LIB_INSTALL_DIR})
 
 set(nn_DOCFILES

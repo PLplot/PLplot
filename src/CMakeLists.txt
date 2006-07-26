@@ -100,7 +100,7 @@ if(WITH_CSA)
 endif(WITH_CSA)
 
 if(HAVE_QHULL)
-  target_link_libraries(plplot${LIB_TAG} csironn ${QHULL_LIB})
+  target_link_libraries(plplot${LIB_TAG} csironn)
 endif(HAVE_QHULL)
 
 if(WITH_FREETYPE)
