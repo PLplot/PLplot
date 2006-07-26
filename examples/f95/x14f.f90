@@ -240,7 +240,7 @@
       subroutine plot3()
 !
 !      For the final graph we wish to override the default tick intervals,
-!      and so do not use PLENV
+!      and so do not use_ PLENV
 
       use plplot, PI => PL_PI
       implicit none
@@ -251,7 +251,7 @@
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       call pladv(0)
 
-!      Use standard viewport, and define X range from 0 to 360 degrees,
+!      Use_ standard viewport, and define X range from 0 to 360 degrees,
 !      Y range from -1.2 to 1.2.
 
       call plvsta()

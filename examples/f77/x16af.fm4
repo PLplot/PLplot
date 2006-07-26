@@ -118,7 +118,7 @@ C      Plot using identity transform
 
       end
 
-C      Routine for demonstrating use of transformation arrays in contour plots.
+C      Routine for demonstrating use_ of transformation arrays in contour plots.
 
       subroutine polar()
 

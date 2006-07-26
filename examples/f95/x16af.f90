@@ -118,7 +118,7 @@
 
       end
 
-!      Routine for demonstrating use of transformation arrays in contour plots.
+!      Routine for demonstrating use_ of transformation arrays in contour plots.
 
       subroutine polar()
 

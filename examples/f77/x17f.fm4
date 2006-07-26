@@ -152,7 +152,7 @@ C      Let's try a random walk process
       y4 = 0.0d0
       dt = 0.1d0
 C      start random number generator.
-C      (This use of rand should work for g77 and Solaris and ?)
+C      (This use_ of rand should work for g77 and Solaris and ?)
       noise = rand(1)
 
       do n = 1,nsteps
@@ -164,7 +164,7 @@ C        you drop sleep altogether from this loop.
 !        call sleep(1)
 
         t = dble(n) * dt
-C        (This use of rand should work for g77 and Solaris and ?)
+C        (This use_ of rand should work for g77 and Solaris and ?)
         noise = rand(0) - 0.5d0
         y1 = y1 + noise
         y2 = sin(t*PI/18.d0)
@@ -186,7 +186,7 @@ C        points or beeing equally time spaced.
         if ( mod(n,5) .ne. 0 ) then
           call plstripa(id1, 3, t, y4)
         endif
-C        use double buffer (-db on command line)
+C        use_ double buffer (-db on command line)
         call pleop()
       enddo
 

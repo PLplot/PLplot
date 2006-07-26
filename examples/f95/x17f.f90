@@ -149,7 +149,7 @@
       y4 = 0.0_plflt
       dt = 0.1_plflt
 !      start random number generator.
-!      (This use of rand should work for g77 and Solaris and ?)
+!      (This use_ of rand should work for g77 and Solaris and ?)
       noise = rand(1)
 
       do n = 1,nsteps
@@ -161,7 +161,7 @@
 !        call sleep(1)
 
         t = dble(n) * dt
-!        (This use of rand should work for g77 and Solaris and ?)
+!        (This use_ of rand should work for g77 and Solaris and ?)
         noise = rand(0) - 0.5_plflt
         y1 = y1 + noise
         y2 = sin(t*PI/18._plflt)
@@ -183,7 +183,7 @@
         if ( mod(n,5) .ne. 0 ) then
           call plstripa(id1, 3, t, y4)
         endif
-!        use double buffer (-db on command line)
+!        use_ double buffer (-db on command line)
         call pleop()
       enddo
 

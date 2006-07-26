@@ -195,7 +195,7 @@ C      Plot using identity transform
 
       call plpsty(8)
 
-C      Use plshade0 instead of plshade1 - identity mapping
+C      Use_ plshade0 instead of plshade1 - identity mapping
       call plshade0(z, XPTS, YPTS, undefined,
      &  -1.d0, 1.d0, -1.d0, 1.d0,
      &  shade_min, shade_max,
@@ -246,7 +246,7 @@ C      Plot using identity transform
         shade_max = zmin + (zmax - zmin) * i / 10.0d0
         sh_color = i+5
         call plpsty(mod((i + 1),8) + 1)
-C        Use plshade0 instead of plshade1 - identity mapping
+C        Use_ plshade0 instead of plshade1 - identity mapping
         call plshade0(z, XPTS, YPTS, undefined,
      &    -1.d0, 1.d0, -1.d0, 1.d0,
      &    shade_min, shade_max,

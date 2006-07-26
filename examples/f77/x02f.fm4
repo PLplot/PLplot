@@ -90,7 +90,7 @@ C     Vary hue uniformly from left to right
          h = (360.d0/10.d0)*mod(i,10)
 C     Vary lightness uniformly from top to bottom, between min and max
          l = lmin + (lmax - lmin) * (i / 10) / 9.d0
-C     Use max saturation
+C     Use_ max saturation
          s = 1.d0
 
          call plhlsrgb(h, l, s, r1, g1, b1)

@@ -91,7 +91,7 @@
          h = (360._plflt/10._plflt)*mod(i,10)
 !     Vary lightness uniformly from top to bottom, between min and max
          l = lmin + (lmax - lmin) * (i / 10) / 9._plflt
-!     Use max saturation
+!     Use_ max saturation
          s = 1._plflt
 
          call plhlsrgb(h, l, s, r1, g1, b1)

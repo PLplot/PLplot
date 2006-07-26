@@ -185,7 +185,7 @@
 
       call plpsty(8)
 
-!      Use plshade0 instead of plshade1 - identity mapping
+!      Use_ plshade0 instead of plshade1 - identity mapping
       call plshade(z(:XPTS,:YPTS), undefined, &
         -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
         shade_min, shade_max, &
@@ -237,7 +237,7 @@
         shade_max = zmin + (zmax - zmin) * i / 10.0_plflt
         sh_color = i+5
         call plpsty(mod((i + 1),8) + 1)
-!        Use plshade0 instead of plshade1 - identity mapping
+!        Use_ plshade0 instead of plshade1 - identity mapping
         call plshade(z(:XPTS,:YPTS), undefined, &
           -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
           shade_min, shade_max, &

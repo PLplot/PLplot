@@ -28,6 +28,9 @@ endif(ENABLE_c++)
 if(ENABLE_f77)
   configure_file(test_f77.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_f77.sh)
+  add_test(examples_f77
+    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=f77"
+  )
 endif(ENABLE_f77)
 
 if(ENABLE_f95)
