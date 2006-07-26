@@ -19,6 +19,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+if(HAVE_QHULL)
+
 set(csironn_LIB_SRCS
 delaunay.c
 hash.c
@@ -40,3 +42,5 @@ README.1st
 )
 install(FILES README DESTINATION ${DOC_INSTALL_DIR} RENAME README.nn)
 install(FILES README.1st DESTINATION ${DOC_INSTALL_DIR} RENAME README.1st.nn)
+
+endif(HAVE_QHULL)

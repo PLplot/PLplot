@@ -83,31 +83,37 @@ ${CMAKE_BINARY_DIR}/include
 )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
+set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${LTDL_LIBRARIES})
   target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
   #message("libplplot${LIB_TAG}_LINK_FLAGS =  ${libplplot${LIB_TAG}_LINK_FLAGS}")
-  set_target_properties(
-  plplot${LIB_TAG}
-  PROPERTIES
-  INSTALL_RPATH ${libplplot${LIB_TAG}_RPATH}
-  )
   #message("libplplot${LIB_TAG}_RPATH = ${libplplot${LIB_TAG}_RPATH}")
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
   target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
 endif(ENABLE_DYNDRIVERS)
 
-if (WITH_FREETYPE)
+if(WITH_CSA)
+  target_link_libraries(plplot${LIB_TAG} csirocsa)
+endif(WITH_CSA)
+
+if(HAVE_QHULL)
+  target_link_libraries(plplot${LIB_TAG} csironn ${QHULL_LIB})
+endif(HAVE_QHULL)
+
+if(WITH_FREETYPE)
   set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "-I${FREETYPE_INCLUDE_DIR}")
   target_link_libraries(plplot${LIB_TAG} ${FREETYPE_LIBRARIES})
-endif (WITH_FREETYPE)
+endif(WITH_FREETYPE)
 
 set_target_properties(
 plplot${LIB_TAG}
 PROPERTIES 
 SOVERSION ${plplot_SOVERSION}
 VERSION ${plplot_VERSION}
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 )
 
 install(TARGETS plplot${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})

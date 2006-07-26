@@ -19,6 +19,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+if(WITH_CSA)
+
 set(csirocsa_LIB_SRCS
 csa.c
 )
@@ -34,3 +36,5 @@ README.1st
 )
 install(FILES README DESTINATION ${DOC_INSTALL_DIR} RENAME README.csa)
 install(FILES README.1st DESTINATION ${DOC_INSTALL_DIR} RENAME README.1st.csa)
+
+endif(WITH_CSA)

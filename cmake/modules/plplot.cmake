@@ -1,7 +1,5 @@
 # cmake/modules/plplot.cmake
 #
-# Start driver initializations
-#
 # Copyright (C) 2006  Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -94,6 +92,7 @@ include(python)
 # additional library support
 # =======================================================================
 include(freetype)
+include(csiro)
 
 # =======================================================================
 # pkg-config support
