@@ -37,7 +37,7 @@ IF("CMAKE_CXX_STDINT_H" MATCHES "^CMAKE_CXX_STDINT_H$")
     MESSAGE(STATUS "Check for using stdint.h with CXX compiler - not found")
     SET (HAVE_CXX_STDINT_H 0 CACHE INTERNAL
       "Does the CXX compiler support using stdint.h")
-      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
+      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
       "Determining if the CXX compiler supports using stdint.h passed with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_CXX_STDINT_H)

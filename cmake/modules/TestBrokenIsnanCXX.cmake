@@ -37,7 +37,7 @@ IF("CMAKE_BROKEN_ISNAN_CXX" MATCHES "^CMAKE_BROKEN_ISNAN_CXX$")
     MESSAGE(STATUS "Check for isnan in <cmath> - not found")
     SET (BROKEN_ISNAN_CXX 1 CACHE INTERNAL
       "Does <cmath> contain isnan")
-      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
+      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
       "Determining if <cmath> contains isnan with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_BROKEN_ISNAN_CXX)

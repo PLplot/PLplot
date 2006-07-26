@@ -40,7 +40,7 @@ IF("CMAKE_TEST_SIGNAL_TYPE" MATCHES "^CMAKE_TEST_SIGNAL_TYPE$")
     MESSAGE(STATUS "Check for signal handler return type type void  - not found")
     SET (RETSIGTYPE int CACHE INTERNAL
       "Signal return type")
-      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
+      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
       "Determining if signal handler return type is void "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_TEST_SIGNAL_TYPE)
