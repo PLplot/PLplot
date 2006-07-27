@@ -41,10 +41,18 @@ if(ENABLE_DYNDRIVERS)
   plplot${LIB_TAG}
   ${LTDL_LIBRARIES}
   )
+  set(get-drv-info_RPATH
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/src
+  ${CMAKE_BINARY_DIR}/lib/csa
+  ${CMAKE_BINARY_DIR}/lib/nn
+  ${libplplot${LIB_TAG}_RPATH}
+  )
+  
   set_target_properties(
   get-drv-info
   PROPERTIES
-  INSTALL_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}/src"
+  INSTALL_RPATH "${get-drv-info_RPATH}"
   BUILD_WITH_INSTALL_RPATH ON
   )
 
