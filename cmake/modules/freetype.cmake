@@ -19,7 +19,11 @@
 #
 # Configuration for the freetype support in plplot.
 
-option(WITH_FREETYPE "Enable driver options for using freetype library for fonts" OFF)
+option(
+WITH_FREETYPE 
+"Enable driver options for using freetype library for fonts"
+ON
+)
 
 # Look for freetype libraries
 if (WITH_FREETYPE)
