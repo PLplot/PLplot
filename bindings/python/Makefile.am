@@ -68,7 +68,7 @@ plplotcmodule_single.c: plplotcmodule.i $(PLPLOTCAPI_I)
 #plplotcmodule_single.c: plplotcmodule_p_single.c $(MAKEDOCSTRINGS_PY)
 #	$(PYTHON) $(MAKEDOCSTRINGS_PY) plplotcmodule_p_single.c plplotcmodule_single.c
 
-EXTRA_DIST = plplotcmodule_double.c plplotcmodule_single.c
+EXTRA_DIST += plplotcmodule_double.c plplotcmodule_single.c
 
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
