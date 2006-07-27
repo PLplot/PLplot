@@ -153,8 +153,13 @@ export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perld
 fe=""
 
 case "$device" in
-   ps|psc|psttf|psttfc)
+   ps|psc)
       dsuffix=ps
+      options=
+      export dsuffix options
+      ;;
+   psttf|psttfc)
+      dsuffix=psttf
       options=
       export dsuffix options
       ;;
