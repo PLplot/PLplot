@@ -22,6 +22,17 @@
 # Version 2.4.2 or above of cmake is required!
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 
+# Recommended way to do user overrides of C-related variables, is given at
+# http://public.kitware.com/pipermail/cmake/2006-July/010334.html.
+# See also, CMakeCInformation.cmake.  There are also C++, and Fortran-specific
+# overrides that can be done.  However, I prefer putting overrides in just
+# one file so I use the overall variable CMAKE_USER_MAKE_RULES_OVERRIDE
+# instead.
+set(
+CMAKE_USER_MAKE_RULES_OVERRIDE
+${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
+)
+
 project(plplot)
 
 # Start of version area that needs modification for each release.
