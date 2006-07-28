@@ -96,8 +96,8 @@ endif (BUILD_PRINT)
 ########### install files ###############
 
 #INSTALL_FILES(  FILES  $(shell ls *.html) )
-INSTALL_FILES(  FILES  ${BASE}.dvi ${BASE}.ps.gz ${BASE}.pdf )
-INSTALL_FILES(  FILES  ${HTML_MANIFEST} ${MAN_MANIFEST} ${INFO_MANIFEST} )
+#INSTALL_FILES(  FILES  ${BASE}.dvi ${BASE}.ps.gz ${BASE}.pdf )
+#INSTALL_FILES(  FILES  ${HTML_MANIFEST} ${MAN_MANIFEST} ${INFO_MANIFEST} )
 #INSTALL_FILES(  FILES  $(shell ls *.info*) )
 
 
