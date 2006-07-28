@@ -1,10 +1,104 @@
 
+set(MASTER_XML plplotdoc.xml)
+set(MASTER_XML_IN ${MASTER_XML}.in)
+
+configure_file(${MASTER_XML_IN} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML})
+
+set(SOURCE_FILES
+  advanced.xml
+  api.xml
+  api-c.xml
+  api-compat.xml
+  api-fortran77.xml
+  api-fortran95.xml
+  api-obsolete.xml
+  bibliography.xml
+  c.xml
+  deploying.xml
+  fortran77.xml
+  fortran95.xml
+  cplus.xml
+  drivers.xml
+  gui.xml
+  inline-html.ent
+  inline-print.ent
+  intro.xml
+  os_notes.xml
+  perl.xml
+  python.xml
+  simple.xml
+  tcl.xml
+  wish.xml
+  math.ent
+)
+
+if (NOT "${CMAKE_SOURCE_DIR}" MATCHES "^${CMAKE_BINARY_DIR}$")
+  foreach(file ${SOURCE_FILES})
+    exec_program(
+      ${CMAKE_COMMAND}
+      ARGS -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      )
+  endforeach(file ${SOURCE_FILES})
+endif (NOT "${CMAKE_SOURCE_DIR}" MATCHES "^${CMAKE_BINARY_DIR}$")
+
+set(INCLUDED_FILES
+  plplot-symbols.txt
+  plplot-structs.txt
+)
+
+set(STYLESHEET_HTML plplotdoc-html.dsl)
+set(STYLESHEET_PRINT plplotdoc-print.dsl)
+set(STYLESHEET_HTML_IN ${STYLESHEET_HTML}.in)
+set(STYLESHEET_PRINT_IN ${STYLESHEET_PRINT}.in)
+
+configure_file(${STYLESHEET_HTML_IN} ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML})
+configure_file(${STYLESHEET_PRINT_IN} ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT})
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
+  COMMAND ${PERL_EXECUTABLE}
+  ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-symbols.pl ${CMAKE_SOURCE_DIR}/include/plplot.h
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+  COMMAND ${PERL_EXECUTABLE}
+  ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-symbols.pl ${CMAKE_SOURCE_DIR}/include/plplot.h
+)
+
+add_custom_target(validate
+  ${ONSGMLS} ${XML_DECL} plplotdoc.xml ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
+  COMMAND ${CMAKE_COMMAND} 
+  ARGS -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${CMAKE_COMMAND} 
+  ARGS -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${OPENJADE} 
+  ARGS ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+)
+
+add_custom_command(
+  OUTPUT ${BASE}.pdf
+  COMMAND ${PDFJADETEX} 
+  ARGS ${BASE}.jadetex jadetex.cfg
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex jadetex.cfg ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+)
+
+if (BUILD_PRINT)
+  add_custom_target(print DEPENDS ${BASE}.pdf)
+endif (BUILD_PRINT)
+
 ########### install files ###############
 
-INSTALL_FILES(  FILES  $(shell ls *.html) )
-INSTALL_FILES(  FILES  $(BASE).dvi $(BASE).ps.gz $(BASE).pdf )
-INSTALL_FILES(  FILES  $(HTML_MANIFEST) $(MAN_MANIFEST) $(INFO_MANIFEST) )
-INSTALL_FILES(  FILES  $(shell ls *.info*) )
+#INSTALL_FILES(  FILES  $(shell ls *.html) )
+INSTALL_FILES(  FILES  ${BASE}.dvi ${BASE}.ps.gz ${BASE}.pdf )
+INSTALL_FILES(  FILES  ${HTML_MANIFEST} ${MAN_MANIFEST} ${INFO_MANIFEST} )
+#INSTALL_FILES(  FILES  $(shell ls *.info*) )
 
 
 

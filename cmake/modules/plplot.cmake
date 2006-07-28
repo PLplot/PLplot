@@ -104,3 +104,8 @@ include(pkg-config)
 # Device drivers
 # =======================================================================
 include(drivers)
+
+# =======================================================================
+# Miscellaneous other features - including docbook documentation
+# =======================================================================
+include(docbook)

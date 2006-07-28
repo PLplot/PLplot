@@ -7,7 +7,7 @@ if (ENABLE_tcl)
   set(manpages ${manpages} ${tcl_manpages})
 endif (ENABLE_tcl)
 
-#add_subdirectory( docbook ) 
+add_subdirectory( docbook ) 
 
 install(FILES ${manpages} DESTINATION ${MAN_DIR}/man1)
 
