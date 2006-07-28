@@ -86,9 +86,6 @@
 /* Define to 1 if you have the <libgnomeprint/gnome-print.h> header file. */
 #cmakedefine HAVE_LIBGNOMEPRINT_GNOME_PRINT_H 1
 
-/* Define to 1 if you have the `m' library (-lm). */
-#cmakedefine HAVE_LIBM 1
-
 /* Define if libunicode is available */
 #cmakedefine HAVE_LIBUNICODE
 
@@ -162,9 +159,6 @@
 
 /* Include sys/type.h if needed */
 #cmakedefine NEED_SYS_TYPE_H
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#cmakedefine NO_MINUS_C_MINUS_O 1
 
 /* Name of package */
 #define PACKAGE "${PACKAGE}"
