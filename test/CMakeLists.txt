@@ -36,6 +36,9 @@ endif(ENABLE_f77)
 if(ENABLE_f95)
   configure_file(test_f95.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_f95.sh)
+  add_test(examples_f95
+    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=f95"
+  )
 endif(ENABLE_f95)
 
 if(ENABLE_java)
