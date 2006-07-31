@@ -37,7 +37,7 @@ project(plplot)
 
 # 2.4.2 bug workarounds here.
 
-message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
  SET(CMAKE_SHARED_LIBRARY_SONAME_Fortran_FLAG "-Wl,-soname,")
 endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
