@@ -1,0 +1,26 @@
+#
+# Check that specified perl modules are installed.
+#
+# CHECK_PERL_MODULES(VARIABLE PERLMODS)
+#
+# VARIABLE - variable to store the result
+# PERLMODS - list of modules to check
+#
+MACRO(CHECK_PERL_MODULES VARIABLE PERLMODS)
+    IF("${VARIABLE}" MATCHES "^${VARIABLE}$")
+      SET(${VARIABLE} ON)
+      FOREACH(MOD ${PERLMODS})
+	WRITE_FILE(conftest.pl "use ${MOD};")
+	EXECUTE_PROCESS(
+	  COMMAND ${PERL} conftest.pl
+	  RESULT_VARIABLE RESULT
+	  OUTPUT_QUIET
+	  ERROR_QUIET
+	  )
+	IF (NOT RESULT EQUAL 0)
+	  SET(${VARIABLE} OFF)
+	  MESSAGE("Perl module ${MOD} not found")
+	ENDIF (NOT RESULT EQUAL 0)
+      ENDFOREACH(MOD ${PERLMODS})
+    ENDIF("${VARIABLE}" MATCHES "^${VARIABLE}$")
+ENDMACRO(CHECK_PERL_MODULES)
