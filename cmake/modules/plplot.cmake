@@ -40,7 +40,7 @@ include(rpath)
 option(BUILD_TEST "Compile examples in the build tree and enable ctest" OFF)
 
 # =======================================================================
-# System checks for headers etc
+# Headers
 # =======================================================================
 
 # AC_HEADER_STDC is gross overkill since the current PLplot code only uses 
@@ -112,6 +112,18 @@ endif(NOT HAVE_DIRENT_H)
 # It is possible it will go away in the future, but we will follow whatever
 # is done by AC_HEADER_DIRENT here until that changes.
 set(NEED_SYS_TYPE_H ON)
+
+#=======================================================================
+# Typedefs
+#=======================================================================
+
+# ToDo
+# Some X11 headers require "caddr_t" even on systems that claim POSIX.1
+# compliance, which is illegal.  This makes it impossible to compile
+# programs that include X11 headers if _POSIX_SOURCE is defined.  I work
+# around this potential problem by just defining caddr_t to 'char *' on all
+# systems (unless it is set already), whether it will be needed or not.
+# AC_CHECK_TYPE(caddr_t, char *)
 
 # Test signal handler return type (mimics AC_TYPE_SIGNAL)
 include(TestSignalType)
