@@ -74,7 +74,7 @@ if (BUILD_DOC)
 
   if (NOT OPENJADE) 
     set(BUILD_HTML OFF)
-    message("Not building htmldocumentation - required programs are missing")
+    message("Not building html documentation - required programs are missing")
   endif (NOT OPENJADE)
 
   if (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
