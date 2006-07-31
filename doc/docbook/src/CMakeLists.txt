@@ -140,25 +140,23 @@ add_custom_command(
 
 set(INFO_TMPDIR ${CMAKE_CURRENT_BINARY_DIR}/info)
 
+file(MAKE_DIRECTORY ${INFO_TMPDIR})
+
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
-  COMMAND ${RM}
-  ARGS -rf ${INFO_TMPDIR}
-  COMMAND ${MKDIR}
-  ARGS -p ${INFO_TMPDIR}
+  COMMAND ${CMAKE_COMMAND}
+  ARGS -E remove -f ${INFO_TMPDIR}/*
   COMMAND ${MAKEINFO} 
   ARGS --force -o ${INFO_TMPDIR}/plplotdoc.info ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
   COMMAND ${CMAKE_COMMAND}
   ARGS -E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
   COMMAND ${MV}
   ARGS ${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
-  COMMAND ${RM}
-  ARGS -f ${INFO_TMPDIR}
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
 )
 
 if (BUILD_INFO)
-  add_custom_target(info ALL DEPENDS plplotdoc.info)
+  add_custom_target(info ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST})
 endif (BUILD_INFO)
 
 
