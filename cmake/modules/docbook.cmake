@@ -22,14 +22,30 @@
 option(BUILD_DOC "Enable build of DocBook documentation" OFF)
 option(PREBUILT_DOC "Assume documentation is already built and present in doc/docbooks/src, ready to be installed. This option is useful for package maintainers" OFF)
 
-if (BUILD_DOC AND PREBUILTDOC)
+if (BUILD_DOC AND PREBUILT_DOC)
   message(FATAL_ERROR "Options BUILD_DOC and PREBUILT_DOC are logically exclusive and must not be set simultaneously. Giving up.")
-endif (BUILD_DOC AND PREBUILTDOC)
+endif (BUILD_DOC AND PREBUILT_DOC)
+
+# Website configuration
+if (NOT DEFINED PLPLOT_WEBSITE)
+  set(PLPLOT_WEBSITE "plplot.sf.net")
+endif (NOT DEFINED PLPLOT_WEBSITE)
 
 find_program(ONSGMLS onsgmls)
 
+# Check for required programs and perl libraries.
 if (BUILD_DOC)
   include(FindPerl)
+  if (PERL_FOUND)
+    include(CheckPerlModules)
+    check_perl_modules(PERL_XML_SAX XML::SAX::Expat)
+    check_perl_modules(PERL_XML_PARSER XML::Parser)
+    check_perl_modules(PERL_XML_DOM XML::DOM)
+  else (PERL_FOUND)
+    set(PERL_XML_SAX OFF)
+    set(PERL_XML_PARSER OFF)
+    set(PERL_XML_DOM OFF)
+  endif (PERL_FOUND)
   find_program(DB2X_TEXIXML db2x_texixml)
   find_program(DB2X_XSLTPROC db2x_xsltproc)
   find_program(OPENJADE openjade)
@@ -37,6 +53,8 @@ if (BUILD_DOC)
   find_program(PDFJADETEX pdfjadetex)
   find_program(DVIPS dvips)
   find_program(MAKEINFO makeinfo)
+  include(FindUnixCommands)
+  find_program(MKDIR mkdir)
 
   # Check requirements for different doc types
   set(BUILD_INFO ON)
@@ -44,21 +62,25 @@ if (BUILD_DOC)
   set(BUILD_HTML ON)
   set(BUILD_PRINT ON)
 
-  if (NOT PERL_FOUND OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+  if (NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     set(BUILD_INFO OFF)
-  endif (NOT PERL_FOUND OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+    message("Not building info documentation - required programs are missing")
+  endif (NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     
-  if (NOT PERL_FOUND)
+  if (NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
     set(BUILD_MAN OFF)
-  endif (NOT PERL_FOUND)
+    message("Not building man documentation - required programs are missing")
+  endif (NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
 
   if (NOT OPENJADE) 
     set(BUILD_HTML OFF)
+    message("Not building htmldocumentation - required programs are missing")
   endif (NOT OPENJADE)
 
-  if (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS)
+  if (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     set(BUILD_PRINT OFF)
-  endif (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS)
+    message("Not building print documentation - required programs are missing")
+  endif (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     
 endif (BUILD_DOC)
 

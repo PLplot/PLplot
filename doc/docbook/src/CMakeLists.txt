@@ -2,6 +2,8 @@
 set(MASTER_XML plplotdoc.xml)
 set(MASTER_XML_IN ${MASTER_XML}.in)
 
+set(BINDIR ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
+
 configure_file(${MASTER_XML_IN} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML})
 
 set(SOURCE_FILES
@@ -57,21 +59,22 @@ configure_file(${STYLESHEET_PRINT_IN} ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_P
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
   COMMAND ${PERL_EXECUTABLE}
-  ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-symbols.pl ${CMAKE_SOURCE_DIR}/include/plplot.h
+  ARGS ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+  DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
   COMMAND ${PERL_EXECUTABLE}
-  ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../bin/get-library-symbols.pl ${CMAKE_SOURCE_DIR}/include/plplot.h
+  ARGS ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
+  DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
 )
 
 add_custom_target(validate
   ${ONSGMLS} ${XML_DECL} plplotdoc.xml ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
 )
 
+# Custom commands for building print version of documentation
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
   COMMAND ${CMAKE_COMMAND} 
@@ -83,22 +86,137 @@ add_custom_command(
 )
 
 add_custom_command(
-  OUTPUT ${BASE}.pdf
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
   COMMAND ${PDFJADETEX} 
   ARGS ${BASE}.jadetex jadetex.cfg
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex jadetex.cfg ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
 )
 
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
+  COMMAND ${JADETEX} 
+  ARGS ${BASE}.jadetex jadetex.cfg
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex jadetex.cfg ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+  COMMAND ${DVIPS} 
+  ARGS ${BASE}.dvi
+  COMMAND ${GZIP}
+  ARGS ${BASE}.ps
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
+)
+
 if (BUILD_PRINT)
-  add_custom_target(print DEPENDS ${BASE}.pdf)
+  add_custom_target(print ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz)
 endif (BUILD_PRINT)
+
+# Custom commands for building info version of documentation
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+  COMMAND ${CMAKE_COMMAND} 
+  ARGS -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${CMAKE_COMMAND} 
+  ARGS -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${PERL} 
+  ARGS ${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+  DEPENDS ${SOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt inline-info.ent
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
+  COMMAND ${DB2X_XSLTPROC}
+  ARGS -s texi -o ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
+  COMMAND ${DB2X_TEXIXML}
+  ARGS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
+)
+
+set(INFO_TMPDIR ${CMAKE_CURRENT_BINARY_DIR}/info)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
+  COMMAND ${RM}
+  ARGS -rf ${INFO_TMPDIR}
+  COMMAND ${MKDIR}
+  ARGS -p ${INFO_TMPDIR}
+  COMMAND ${MAKEINFO} 
+  ARGS --force -o ${INFO_TMPDIR}/plplotdoc.info ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
+  COMMAND ${CMAKE_COMMAND}
+  ARGS -E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
+  COMMAND ${MV}
+  ARGS ${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND ${RM}
+  ARGS -f ${INFO_TMPDIR}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
+)
+
+if (BUILD_INFO)
+  add_custom_target(info ALL DEPENDS plplotdoc.info)
+endif (BUILD_INFO)
+
+
+# Custom commands for building man version of documentation
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
+  COMMAND ${PERL}
+  ARGS ${CMAKE_CURRENT_BINARY_DIR}/../bin/api2man.pl ${MASTER_XML} api.xml ${MANVOL} > ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} api.xml
+)
+
+if (BUILD_MAN)
+  add_custom_target(man ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST})
+endif (BUILD_MAN)
+
+# Custom commands for building html version of documentation
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+  COMMAND ${CMAKE_COMMAND} 
+  ARGS -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${CMAKE_COMMAND} 
+  ARGS -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${OPENJADE}
+  ARGS ${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+  COMMAND ${PERL}
+  ARGS -pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
+  DEPENDS ${SOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt inline-html.ent
+)
+
+if (BUILD_HTML)
+  add_custom_target(html ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST})
+endif (BUILD_HTML)
+
 
 ########### install files ###############
 
-#INSTALL_FILES(  FILES  $(shell ls *.html) )
-#INSTALL_FILES(  FILES  ${BASE}.dvi ${BASE}.ps.gz ${BASE}.pdf )
-#INSTALL_FILES(  FILES  ${HTML_MANIFEST} ${MAN_MANIFEST} ${INFO_MANIFEST} )
-#INSTALL_FILES(  FILES  $(shell ls *.info*) )
+if (BUILD_HTML OR PREBUILT_DOC)
+  install(CODE "file(GLOB HTML_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.html)")
+  install(CODE "message(\"\${HTML_FILES}\")")
+  install(CODE "foreach(file \${HTML_FILE}) \n file(INSTALL DESTINATION ${DOC_DIR}/html TYPE FILE FILES \${file}) \n endforeach (file \${HTML_FILE})")
+  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} DESTINATION ${DOC_DIR}/html )
+endif (BUILD_HTML OR PREBUILT_DOC)
+
+if (BUILD_PRINT OR PREBUILT_DOC)
+  install(  FILES  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf DESTINATION ${DOC_DIR})
+endif (BUILD_PRINT OR PREBUILT_DOC)
+
+if (BUILD_MAN OR PREBUILT_DOC)
+  install_files(${MAN_DIR}/man3 "${CMAKE_CURRENT_BINARY_DIR}/*.${MANVOL}")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST} DESTINATION ${MAN_DIR}/man3 )
+endif (BUILD_MAN OR PREBUILT_DOC)
+
+if (BUILD_INFO OR PREBUILT_DOC)
+  install(CODE "file(GLOB INFO_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.info*)")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} ${INFO_FILES} DESTINATION ${INFO_DIR} )
+endif (BUILD_INFO OR PREBUILT_DOC)
 
 
 

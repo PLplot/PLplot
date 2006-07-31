@@ -1,3 +1,4 @@
+ADD_SUBDIRECTORY( bin ) 
 ADD_SUBDIRECTORY( src ) 
 
 
