@@ -84,6 +84,9 @@ endif(NOT STDC_HEADERS)
 check_include_files(unistd.h HAVE_UNISTD_H)
 check_include_files(termios.h HAVE_TERMIOS_H)
 
+# AC_HEADER_SYS_WAIT
+include(TestForStandardHeaderwait)
+
 # Reasonable approximation to AC_HEADER_DIRENT without the SCO stuff.
 include(CheckDIRSymbolExists)
 check_dirsymbol_exists("sys/types.h;dirent.h" HAVE_DIRENT_H)
