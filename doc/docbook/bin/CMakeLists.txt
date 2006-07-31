@@ -1,0 +1,1 @@
+configure_file(api2man.pl.in ${CMAKE_CURRENT_BINARY_DIR}/api2man.pl @ONLY)
