@@ -38,7 +38,7 @@ IF("CMAKE_USE_NAMESPACE" MATCHES "^CMAKE_USE_NAMESPACE$")
     SET (USE_NAMESPACE 0 CACHE INTERNAL
       "Does the compiler support using namespace")
       FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-      "Determining if the CXX compiler has using namespace passed with "
+      "Determining if the CXX compiler has using namespace failed with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_USE_NAMESPACE)
 ENDIF("CMAKE_USE_NAMESPACE" MATCHES "^CMAKE_USE_NAMESPACE$")

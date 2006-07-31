@@ -46,7 +46,7 @@ IF("CMAKE_F77_CMD_LINE" MATCHES "^CMAKE_F77_CMD_LINE$")
     SET (F77_CMD_LINE 0 CACHE INTERNAL
       "Does the f77 compiler support command line arguments")
       FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-      "Determining if the f77 compiler has command line argument support passed with "
+      "Determining if the f77 compiler has command line argument support failedd with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_F77_CMD_LINE)
 ENDIF("CMAKE_F77_CMD_LINE" MATCHES "^CMAKE_F77_CMD_LINE$")
