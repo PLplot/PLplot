@@ -29,8 +29,6 @@
 # psttf_RPATH	       - RPATH directory list for psttf device driver.
 # psttf_TARGETS	       - Full Name of libLASi so that cmake can figure out
 # 		       	 RPATH stuff in the build tree.
-# DRIVERS_LINK_FLAGS   - list of LINK_FLAGS for all static device drivers.
-#
 # Include file searches use FindPath. To add extra search directories
 # set the environment variable CMAKE_INCLUDE_PATH.
 # Library searches use FindLibrary. To add extra search directories
