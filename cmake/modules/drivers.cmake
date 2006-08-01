@@ -72,7 +72,7 @@ include(gcw)
 include(gd)
 # Do not implement gnome which is superseded by gcw
 #include(gnome)
-#include(linuxvga)
+include(linuxvga)
 include(xwin)
 #include(tk)
 include(psttf)

@@ -74,7 +74,9 @@ set(DRIVERS_DEVICE_LIST
 "hp7470:hpgl:ON" "hp7580:hpgl:ON" "lj_hpgl:hpgl:ON"
 "imp:impress:OFF"
 "gcw:gcw:ON"
-#"linuxvga:linuxvga:ON"
+# Default off because poorly maintained (colours are incorrect)
+# must use software fill, and must run as root.
+"linuxvga:linuxvga:OFF"
 "ljii:ljii:OFF"
 "ljiip:ljiip:OFF"
 "mem:mem:ON"
