@@ -19,8 +19,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Version 2.4.2 or above of cmake is required!
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
+# Version 2.4.3 or above of cmake is required!
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.3 FATAL_ERROR)
 
 # Recommended way to do user overrides of C-related variables, is given at
 # http://public.kitware.com/pipermail/cmake/2006-July/010334.html.
