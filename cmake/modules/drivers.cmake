@@ -67,9 +67,10 @@ include(drivers-init)
 # Find *_COMPILE_FLAGS and *_LINK_FLAGS resources for device drivers that need them,
 # and set appropriate PLD_devicename to OFF if the required resources are 
 # not available.
-#include(cgm)
+include(cgm)
 include(gcw)
 include(gd)
+# Do not implement gnome which is superseded by gcw
 #include(gnome)
 #include(linuxvga)
 include(xwin)
