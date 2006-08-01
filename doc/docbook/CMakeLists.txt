@@ -1,5 +1,5 @@
 ADD_SUBDIRECTORY( bin ) 
-ADD_SUBDIRECTORY( src ) 
+#ADD_SUBDIRECTORY( src ) 
 
 
 ########### install files ###############
