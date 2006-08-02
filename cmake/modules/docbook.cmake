@@ -103,10 +103,77 @@ set(BASE_MAN "${PACKAGE}-man-${VERSION}")
 
 set(MANVOL "3plplot")
 
+set(JADELOG "jadeout.log")
+
 # DTD definitions
 set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
 set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
 set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
 set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.2//EN")
+
+# Check public identifiers
+include(CheckDTD)
+
+CheckDTD(HAVE_DSSSL_DTD  
+  "DSSSL Style Sheet DTD" 
+  "" 
+  "" 
+  "" 
+  "[<!ELEMENT book - O (#PCDATA)>]" 
+  "sgml" 
+  "\"${DSSSL_DTD_PUBID}\"" 
+  "style-sheet.dtd" 
+  "jade"
+  )
+
+CheckDTD(HAVE_HTML_SS
+  "DocBook HTML Stylesheet"
+  "[<!ENTITY dbstyle PUBLIC \"${DB_SS_HTML_PUBID}\" CDATA DSSSL>]"
+  "use=\"docbook\""
+  "<external-specification id=\"docbook\" document=\"dbstyle\">"
+  "[<!ELEMENT book - O (#PCDATA)>]"
+  "sgml"
+  "\"${DB_SS_HTML_PUBID}\""
+  "html/docbook.dsl"
+  "docbook-stylesheets"
+  )
+
+CheckDTD(HAVE_PRINT_SS
+  "DocBook Print Stylesheet"
+  "[<!ENTITY dbstyle PUBLIC \"${DB_SS_PRINT_PUBID}\" CDATA DSSSL>]"
+  "use=\"docbook\""
+  "<external-specification id=\"docbook\" document=\"dbstyle\">"
+  "[<!ELEMENT book - O (#PCDATA)>]"
+  "tex"
+  "\"${DB_SS_PRINT_PUBID}\""
+  "print/docbook.dsl"
+  "docbook-stylesheets"
+  )
+
+CheckDTD(HAVE_DB_DTD
+  "DocBook DTD"
+  ""
+  ""
+  ""
+  "PUBLIC \"${DOCBOOK_DTD_PUBID}\""
+  "sgml"
+  "\"${DOCBOOK_DTD_PUBID}\""
+  "docbookx.dtd"
+  "docbook-xml (DTD version 3.1.3)"
+  )
+
+if (BUILD_PRINT)
+  if(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
+    set (BUILD_PRINT OFF)
+    message("Not building print documentation - dtd files / style sheets are missing")
+  endif (NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
+endif (BUILD_PRINT)
+
+if (BUILD_HTML)
+  if (NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
+    set (BUILD_HTML OFF)
+    message("Not building html documentation - dtd files / style sheets are missing")
+  endif (NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
+endif (BUILD_HTML)
 
 endif (BUILD_DOC OR PREBUILT_DOC)
