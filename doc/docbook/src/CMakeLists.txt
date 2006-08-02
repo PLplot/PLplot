@@ -1,4 +1,6 @@
 
+if (BUILD_DOC)
+
 set(MASTER_XML plplotdoc.xml)
 set(MASTER_XML_IN ${MASTER_XML}.in)
 
@@ -85,18 +87,35 @@ add_custom_command(
   ARGS ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
 )
 
+# The following trick with tex auxillary file ensures that
+# jadetex is run 3 times to correctly generated the documentation with
+# references. Taken from the CMake FAQ.
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
+  COMMAND ${PDFJADETEX} 
+  ARGS ${BASE}.jadetex 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex jadetex.cfg ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log
+  COMMAND ${PDFJADETEX} 
+  ARGS ${BASE}.jadetex 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux 
+)
+
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
   COMMAND ${PDFJADETEX} 
-  ARGS ${BASE}.jadetex jadetex.cfg
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex jadetex.cfg ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+  ARGS ${BASE}.jadetex 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log 
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
   COMMAND ${JADETEX} 
-  ARGS ${BASE}.jadetex jadetex.cfg
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex jadetex.cfg ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+  ARGS ${BASE}.jadetex 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log 
 )
 
 add_custom_command(
@@ -104,7 +123,7 @@ add_custom_command(
   COMMAND ${DVIPS} 
   ARGS ${BASE}.dvi
   COMMAND ${GZIP}
-  ARGS ${BASE}.ps
+  ARGS -f ${BASE}.ps
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
 )
 
@@ -192,6 +211,7 @@ if (BUILD_HTML)
   add_custom_target(html ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST})
 endif (BUILD_HTML)
 
+endif (BUILD_DOC)
 
 ########### install files ###############
 
@@ -202,11 +222,11 @@ endif (BUILD_HTML)
 
 if (BUILD_HTML OR PREBUILT_DOC)
   install(CODE "file(GLOB HTML_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.${HTML_EXT})\n foreach(file \${HTML_FILES}) \n file(INSTALL DESTINATION ${DOC_DIR}/html TYPE FILE FILES \"\${file}\") \n endforeach (file \"\${HTML_FILES}\")")
-  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} DESTINATION ${DOC_DIR}/html )
+  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} stylesheet.css DESTINATION ${DOC_DIR}/html )
 endif (BUILD_HTML OR PREBUILT_DOC)
 
 if (BUILD_PRINT OR PREBUILT_DOC)
-  install(  FILES  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf DESTINATION ${DOC_DIR})
+  install(  FILES  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz DESTINATION ${DOC_DIR})
 endif (BUILD_PRINT OR PREBUILT_DOC)
 
 if (BUILD_MAN OR PREBUILT_DOC)
