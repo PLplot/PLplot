@@ -76,14 +76,14 @@ if(ENABLE_tcl)
   set(SCRIPTS ${SCRIPTS} test_tcl.sh)
 endif(ENABLE_tcl)
 
-if(ENABLE_perl)
+if(ENABLE_pdl)
   configure_file(
     test_perl.sh.in 
     ${CMAKE_CURRENT_BINARY_DIR}/test_perl.sh 
     @ONLY
     )
   set(SCRIPTS ${SCRIPTS} test_perl.sh)
-endif(ENABLE_perl)
+endif(ENABLE_pdl)
 
 set(PERM_SCRIPTS
 OWNER_READ

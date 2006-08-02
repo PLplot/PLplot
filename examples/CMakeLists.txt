@@ -40,9 +40,9 @@ endif(ENABLE_tk)
 if(ENABLE_java)
   add_subdirectory(java)
 endif(ENABLE_java)
-if(ENABLE_perl)
-#  add_subdirectory(perl)
-endif(ENABLE_perl)
+if(ENABLE_pdl)
+  add_subdirectory(perl)
+endif(ENABLE_pdl)
 
 install(FILES Makefile.examples 
 DESTINATION ${DATA_DIR}/examples

@@ -24,6 +24,18 @@ include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckPrototypeExists)
 
+macro(TRANSFORM_VERSION _numerical_result _version)
+# _version must be a period-delimited triplet string of the form 
+# "major.minor.patch".
+# This macro transforms that into a numerical result that can be compared.
+string(REGEX REPLACE "^(.*)\\..*\\..*$" "\\1" _major ${_version})
+string(REGEX REPLACE "^.*\\.(.*)\\..*$" "\\1" _minor ${_version})
+string(REGEX REPLACE "^.*\\..*\\.(.*)$" "\\1" _patch ${_version})
+math(EXPR ${_numerical_result} 
+"${_major}*10000 + ${_minor}*100 + ${_patch}
+")
+endmacro(TRANSFORM_VERSION)
+
 # =======================================================================
 # Compilation and build options (PLFLT, install locations, and rpath)
 # Note, must come before java since that depends on, e.g., LIB_DIR.
@@ -155,6 +167,7 @@ include(c++)
 include(fortran)
 include(java)
 include(python)
+include(pdl)
 
 # =======================================================================
 # additional library support
