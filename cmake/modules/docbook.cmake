@@ -35,7 +35,6 @@ find_program(ONSGMLS onsgmls)
 
 # Check for required programs and perl libraries.
 if (BUILD_DOC)
-  include(FindPerl)
   if (PERL_FOUND)
     include(CheckPerlModules)
     check_perl_modules(PERL_XML_SAX XML::SAX::Expat)

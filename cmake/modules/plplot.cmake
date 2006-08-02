@@ -139,11 +139,16 @@ check_function_exists(isnan HAVE_ISNAN)
 # Language bindings
 # =======================================================================
 
-# Find swig - no version checking at present
-FIND_PACKAGE(SWIG)
+# Find swig.  Required for python and java bindings.
+# There is no version checking of swig at present
+find_package(SWIG)
 if(SWIG_FOUND)
   include(${SWIG_USE_FILE})
 endif(SWIG_FOUND)
+
+# Find Perl.  Required in several places in the build system (e.g.,
+# tcl and docbook).
+find_package(Perl)
 
 # Load language specific files
 include(c++)
