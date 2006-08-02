@@ -35,14 +35,14 @@ ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
 
 project(plplot)
 
-# 2.4.2 bug workarounds here.
+# 2.4.3 bug workarounds here.
 
 message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
  SET(CMAKE_SHARED_LIBRARY_SONAME_Fortran_FLAG "-Wl,-soname,")
 endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-# End of 2.4.2 bug workarounds.
+# End of 2.4.3 bug workarounds.
 
 # Start of version area that needs modification for each release.
 set(VERSION 5.6.1)
