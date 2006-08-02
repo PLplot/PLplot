@@ -52,6 +52,8 @@ if (BUILD_DOC)
   find_program(PDFJADETEX pdfjadetex)
   find_program(DVIPS dvips)
   find_program(MAKEINFO makeinfo)
+  # Use include style here since FindUnixCommands is a simple module and
+  # clearly not meant to be an official FindXXX module.
   include(FindUnixCommands)
   find_program(MKDIR mkdir)
 

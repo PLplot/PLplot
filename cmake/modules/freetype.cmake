@@ -27,7 +27,7 @@ ON
 
 # Look for freetype libraries
 if (WITH_FREETYPE)
-  include(FindFreetype)
+  find_package(Freetype)
   if (NOT FREETYPE_FOUND)
     set(WITH_FREETYPE OFF CACHE BOOL "Enable driver options for using freetype library for fonts" FORCE)
   endif (NOT FREETYPE_FOUND)

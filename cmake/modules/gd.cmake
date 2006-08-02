@@ -37,7 +37,7 @@
 
 # Look for gd libraries
 if(PLD_png OR PLD_jpeg OR PLD_gif)
-  include(FindGD)
+  find_package(GD)
   if (NOT GD_FOUND)
     set(PLD_png OFF CACHE BOOL "Enable png device" FORCE)
     set(PLD_jpeg OFF CACHE BOOL "Enable jpeg device" FORCE)
