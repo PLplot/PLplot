@@ -31,6 +31,7 @@ if (NOT DEFINED PLPLOT_WEBSITE)
   set(PLPLOT_WEBSITE "plplot.sf.net")
 endif (NOT DEFINED PLPLOT_WEBSITE)
 
+# Required for validation regardless of whether BUILD_DOC is set
 find_program(ONSGMLS onsgmls)
 
 # Check for required programs and perl libraries.

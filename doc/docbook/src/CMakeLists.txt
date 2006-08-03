@@ -1,5 +1,22 @@
-
-if (BUILD_DOC)
+# doc/docbook/src/CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Andrew Ross
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
 
 set(MASTER_XML plplotdoc.xml)
 set(MASTER_XML_IN ${MASTER_XML}.in)
@@ -36,19 +53,64 @@ set(SOURCE_FILES
   math.ent
 )
 
-if (NOT "${CMAKE_SOURCE_DIR}" MATCHES "^${CMAKE_BINARY_DIR}$")
-  foreach(file ${SOURCE_FILES})
-    exec_program(
-      ${CMAKE_COMMAND}
-      ARGS -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
-      )
-  endforeach(file ${SOURCE_FILES})
-endif (NOT "${CMAKE_SOURCE_DIR}" MATCHES "^${CMAKE_BINARY_DIR}$")
-
 set(INCLUDED_FILES
   plplot-symbols.txt
   plplot-structs.txt
 )
+
+set(TARBALL tarball.tgz)
+set(HTML_TARBALL ${BASE_HTML}.tar.gz)
+set(INFO_TARBALL ${BASE_INFO}.tar.gz)
+set(MAN_TARBALL ${BASE_MAN}.tar.gz)
+set(INDEX_HTML ../www/index.html)
+
+# The following files are included in plplotdoc.xml and are
+# required for validation
+if (PERL_FOUND)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
+    COMMAND ${PERL_EXECUTABLE}
+    ARGS ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+    DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
+    )
+  
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+    COMMAND ${PERL_EXECUTABLE}
+    ARGS ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
+    DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
+    )
+endif (PERL_FOUND)
+  
+# Custom command for validating xml file
+if (PERL_FOUND AND ONSGMLS)
+
+  set(VALIDATE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/validate.out)
+
+  add_custom_target(validate
+    ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+    COMMAND ${ONSGMLS}  ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml > ${VALIDATE_OUTPUT}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+    )
+else (PERL_FOUND AND ONSGMLS)
+  add_custom_target(validate
+    ${CMAKE COMMAND} -E echo "Unable to validate xml file - missing dependencies"
+    )
+endif (PERL_FOUND AND ONSGMLS)
+
+if (BUILD_DOC)
+
+if (NOT "${CMAKE_SOURCE_DIR}" MATCHES "^${CMAKE_BINARY_DIR}$")
+  foreach(file ${SOURCE_FILES})
+    if ( NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
+      exec_program(
+	${CMAKE_COMMAND}
+	ARGS -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	)
+    endif ( NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
+  endforeach(file ${SOURCE_FILES})
+endif (NOT "${CMAKE_SOURCE_DIR}" MATCHES "^${CMAKE_BINARY_DIR}$")
 
 set(STYLESHEET_HTML plplotdoc-html.dsl)
 set(STYLESHEET_PRINT plplotdoc-print.dsl)
@@ -70,10 +132,6 @@ add_custom_command(
   COMMAND ${PERL_EXECUTABLE}
   ARGS ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
   DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
-)
-
-add_custom_target(validate
-  ${ONSGMLS} ${XML_DECL} plplotdoc.xml ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
 )
 
 # Custom commands for building print version of documentation
