@@ -40,12 +40,17 @@ if(ENABLE_pdl)
       set(PDL_MINIMUM_VERSION "2.4.1")
       transform_version(NUMERICAL_PDL_MINIMUM_VERSION ${PDL_MINIMUM_VERSION})
       transform_version(NUMERICAL_PDL_VERSION ${PDL_VERSION})
-      if(NUMERICAL_PDL_VERSION LESS ${NUMERICAL_PDL_MINIMUM_VERSION})
+      if(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
         message(STATUS "WARNING: "
         "perl PDL version < ${PDL_MINIMUM_VERSION}. "
 	"Disabling Perl/PDL examples")
         set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
-      endif(NUMERICAL_PDL_VERSION LESS ${NUMERICAL_PDL_MINIMUM_VERSION})
+      else(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
+        message(STATUS 
+	   "Perl and PDL are available and PDL passes version test.\n"
+	"   Enable Perl/PDL examples in tests"
+	)
+      endif(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
     else(NOT PDL_RETURNCODE)
       message(STATUS "WARNING: "
       "perl PDL module not found. Disabling Perl/PDL examples")
