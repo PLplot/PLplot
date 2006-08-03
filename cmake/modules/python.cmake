@@ -1,7 +1,5 @@
 # cmake/modules/python.cmake
 #
-# Python binding configuration
-#
 # Copyright (C) 2006  Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -27,7 +25,7 @@ option(ENABLE_python "Enable Python bindings" ON)
 if(ENABLE_python AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
     "swig not found. Disabling python bindings")
-  set(ENABLE_python OFF CACHE BOOL "Enable Pava bindings" FORCE)
+  set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
 endif(ENABLE_python AND NOT SWIG_FOUND)
 
 if(ENABLE_python)
