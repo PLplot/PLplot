@@ -47,6 +47,17 @@ option(ENABLE_itk "Enable incr TK interface code" ON)
 #			 Otherwise, undefined.
 #			 Used for source file configuration.)
 
+if(ENABLE_tcl AND NOT PERL_FOUND)
+  message(STATUS 
+  "WARNING: perl not found which is required to generate Tcl interface"
+  )
+  message(STATUS "Disabling everything that is Tcl/Tk related")
+  set(ENABLE_tcl OFF CACHE BOOL "Enable Tcl bindings" FORCE)
+  set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
+  set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
+  set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
+endif(ENABLE_tcl AND NOT PERL_FOUND)
+
 if(ENABLE_tcl)
   message(STATUS "Looking for include paths and libraries for Tcl/Tk")
   find_package(TCL)
