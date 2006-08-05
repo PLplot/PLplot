@@ -167,6 +167,7 @@ include(c++)
 include(fortran)
 include(java)
 include(python)
+include(tcl-related)
 include(pdl)
 
 # =======================================================================
