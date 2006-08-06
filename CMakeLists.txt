@@ -112,8 +112,7 @@ add_subdirectory(examples)
 ####not yet implemented
 #add_subdirectory(utils)
 add_subdirectory(test)
-####not yet implemented
-#add_subdirectory(scripts)
+add_subdirectory(scripts)
 ####not yet implemented
 add_subdirectory(doc)
 # needs no cmake processing
