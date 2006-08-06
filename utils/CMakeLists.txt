@@ -1,88 +1,71 @@
+# utils/CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### next target ###############
-
-SET(plrender_SRCS
-plrender.c
+include_directories(
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
 )
 
-KDE3_AUTOMOC(${plrender_SRCS})
+add_executable(plrender plrender.c)
 
-KDE3_ADD_EXECUTABLE(plrender ${plrender_SRCS})
+target_link_libraries(plrender plplot${LIB_TAG})
 
-TARGET_LINK_LIBRARIES(plrender  ${QT_AND_KDECORE_LIBS} )
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
 
-INSTALL_TARGETS(/bin plrender )
-
-
-########### next target ###############
-
-SET(pltek_SRCS
-pltek.c
+set_target_properties(plrender
+PROPERTIES
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 )
 
-KDE3_AUTOMOC(${pltek_SRCS})
+install(TARGETS plrender DESTINATION ${BIN_DIR})
 
-KDE3_ADD_EXECUTABLE(pltek ${pltek_SRCS})
+add_executable(pltek pltek.c)
 
-TARGET_LINK_LIBRARIES(pltek  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(pltek plplot${LIB_TAG})
 
-INSTALL_TARGETS(/bin pltek )
+set_target_properties(pltek
+PROPERTIES
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+)
 
+install(TARGETS pltek DESTINATION ${BIN_DIR})
 
-########### install files ###############
+if(ENABLE_tcl)
+  include_directories(
+  ${CMAKE_SOURCE_DIR}/bindings/tcl
+  ${TCL_INCLUDE_PATH}
+  )
 
+  add_executable(pltcl pltcl.c)
 
+  target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
+  set_target_properties(pltcl
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  )
 
-#original Makefile.am contents follow:
-
-## drivers/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002, 2004  Alan W. Irwin
-## Copyright (C) 2004  Rafael Laboissiere
-##
-## This file is part of PLplot.
-##
-## PLplot is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## PLplot is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with PLplot; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-#
-#libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
-#libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
-#
-#AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) -I$(top_srcdir)/bindings/tcl \
-#              $(TCLINCCMD) $(ITCLINCCMD)
-#
-#bin_PROGRAMS = plrender pltek 
-#
-#if enable_tcl
-#bin_PROGRAMS += pltcl
-#pltcl_SOURCES = pltcl.c
-#pltcl_LDFLAGS = $(RPATH) -no-undefined
-#pltcl_LDADD = $(libplplot) $(libplplottcltk)
-#endif
-#
-#plrender_SOURCES = plrender.c
-#plrender_LDFLAGS = $(RPATH) -no-undefined
-#plrender_LDADD = $(libplplot)
-#
-#pltek_SOURCES = pltek.c
-#pltek_LDFLAGS = $(RPATH) -no-undefined
-#pltek_LDADD = $(libplplot)
-#
-#### FIXME: Brute force inclusion in dist tarball.  The files below may
-#### be treated in a different way for installation [RL, 2003-03-06]
-#EXTRA_DIST =      \
-#	tektest.c \
-#	xform.c
+  install(TARGETS pltcl DESTINATION ${BIN_DIR})
+endif(ENABLE_tcl)

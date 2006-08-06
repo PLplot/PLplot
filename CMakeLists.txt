@@ -109,11 +109,9 @@ add_subdirectory(data)
 add_subdirectory(bindings)
 add_subdirectory(drivers)
 add_subdirectory(examples)
-####not yet implemented
-#add_subdirectory(utils)
+add_subdirectory(utils)
 add_subdirectory(test)
 add_subdirectory(scripts)
-####not yet implemented
 add_subdirectory(doc)
 # needs no cmake processing
 #add_subdirectory(pkgcfg)
