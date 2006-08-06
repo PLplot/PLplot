@@ -57,7 +57,7 @@ DESTINATION ${INCLUDE_INSTALL_DIR}
 )
 # end tclmatrix
 
-# plottcltk
+# plplottcltk
 set(
 tclgenfiles
 ${CMAKE_CURRENT_BINARY_DIR}/tclgen.h
@@ -81,13 +81,13 @@ tclAPI.c
 PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
 )
 
-set(plottcltk${LIB_TAG}_LIB_SRCS
+set(plplottcltk${LIB_TAG}_LIB_SRCS
 tclAPI.c
 tclMain.c
 )
 
 set(
-plottcltk${LIB_TAG}_link_libraries
+plplottcltk${LIB_TAG}_link_libraries
 tclmatrix${LIB_TAG}
 plplot${LIB_TAG}
 ${TCL_LIBRARY}
@@ -95,15 +95,15 @@ ${TCL_LIBRARY}
 
 if(ENABLE_itcl)
   include_directories(${ITCL_INCLUDE_PATH})
-  set(plottcltk${LIB_TAG}_link_libraries
-  ${plottcltk${LIB_TAG}_link_libraries}
+  set(plplottcltk${LIB_TAG}_link_libraries
+  ${plplottcltk${LIB_TAG}_link_libraries}
   ${ITCL_LIBRARY}
   )
 endif(ENABLE_itcl)
 
 if(ENABLE_tk)
-  set(plottcltk${LIB_TAG}_LIB_SRCS
-  ${plottcltk${LIB_TAG}_LIB_SRCS}
+  set(plplottcltk${LIB_TAG}_LIB_SRCS
+  ${plplottcltk${LIB_TAG}_LIB_SRCS}
   ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
   ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
   ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
@@ -111,48 +111,48 @@ if(ENABLE_tk)
   ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
   )
   include_directories(${TK_INCLUDE_PATH})
-  set(plottcltk${LIB_TAG}_link_libraries
-  ${plottcltk${LIB_TAG}_link_libraries}
+  set(plplottcltk${LIB_TAG}_link_libraries
+  ${plplottcltk${LIB_TAG}_link_libraries}
   ${TK_LIBRARY}
   )
   if(ENABLE_itk)
     include_directories(${ITK_INCLUDE_PATH})
-    set(plottcltk${LIB_TAG}_link_libraries
-    ${plottcltk${LIB_TAG}_link_libraries}
+    set(plplottcltk${LIB_TAG}_link_libraries
+    ${plplottcltk${LIB_TAG}_link_libraries}
     ${ITK_LIBRARY}
     )
   endif(ENABLE_itk)
 endif(ENABLE_tk)
 
-add_library(plottcltk${LIB_TAG} ${plottcltk${LIB_TAG}_LIB_SRCS})
+add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 target_link_libraries(
-plottcltk${LIB_TAG} 
-${plottcltk${LIB_TAG}_link_libraries}
+plplottcltk${LIB_TAG} 
+${plplottcltk${LIB_TAG}_link_libraries}
 )
 
 if(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
 endif(ENABLE_DYNDRIVERS)
 
-set_target_properties(plottcltk${LIB_TAG}
+set_target_properties(plplottcltk${LIB_TAG}
 PROPERTIES
 SOVERSION ${plplottcltk_SOVERSION}
 VERSION ${plplottcltk_VERSION}
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 )
 
-install(TARGETS plottcltk${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplottcltk${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-set(plottcltk${LIB_TAG}_INSTALLED_HEADERS
+set(plplottcltk${LIB_TAG}_INSTALLED_HEADERS
 pltcl.h
 )
 
 install(
-FILES ${plottcltk${LIB_TAG}_INSTALLED_HEADERS}
+FILES ${plplottcltk${LIB_TAG}_INSTALLED_HEADERS}
 DESTINATION ${INCLUDE_INSTALL_DIR}
 )
 
-# end plottcltk
+# end plplottcltk
 
 # Configure pkg-config *.pc file corresponding to libplplottcltk${LIB_TAG}
 if(PKGCONFIG_EXECUTABLE)
