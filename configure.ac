@@ -217,13 +217,16 @@ dnl =======================================================================
 dnl Typedefs
 dnl =======================================================================
 
-dnl Some X11 headers require "caddr_t" even on systems that claim POSIX.1
-dnl compliance, which is illegal.  This makes it impossible to compile
-dnl programs that include X11 headers if _POSIX_SOURCE is defined.  I work
-dnl around this potential problem by just defining caddr_t to 'char *' on all
-dnl systems (unless it is set already), whether it will be needed or not.
+dnl In the past, some X11 headers required "caddr_t" even on systems that 
+dnl claimed POSIX.1 compliance, which was illegal.  This made it impossible
+dnl to compile programs that included X11 headers if _POSIX_SOURCE was
+dnl defined.  We used to work around this potential problem by just defining
+dnl caddr_t to 'char *' on all systems (unless it is set already), whether
+dnl it was needed or not. Now we ignore the issue because we don't expect
+dnl such broken X behaviour any more and because this kind of argument list
+dnl for AC_CHECK_TYPE is now deprecated in the autoconf documentation.
 
-AC_CHECK_TYPE(caddr_t, char *)
+dnl AC_CHECK_TYPE(caddr_t, char *)
 
 dnl The following is primarily for use in drivers/get-drv-info.c
 
