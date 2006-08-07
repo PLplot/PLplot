@@ -96,10 +96,11 @@ if(ENABLE_tcl)
     # ------------------------------------------------------------------------
     # figure out how to build tclIndex
     # ------------------------------------------------------------------------
+    set(MKTCLINDEX ${CMAKE_SOURCE_DIR}/scripts/mktclIndex)
     if(ENABLE_itcl)
-      set(MKINDEX "${CMAKE_SOURCE_DIR}scripts/mktclIndex -itcl")
+      set(MKTCLINDEX_ARGS "-itcl")
     else(ENABLE_itcl)
-      set(MKINDEX "${CMAKE_SOURCE_DIR}scripts/mktclIndex -tcl")
+      set(MKTCLINDEX_ARGS "-tcl")
     endif(ENABLE_itcl)
     if(ENABLE_itk)
       message(STATUS "Looking for itk.h")
