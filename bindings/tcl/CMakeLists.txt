@@ -20,6 +20,13 @@
 
 if(ENABLE_tcl)
 
+set(include_INSTALLED_HEADERS
+pltcl.h
+tclMatrix.h
+)
+
+install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR})
+
 # tclmatrix
 set(tclmatrix${LIB_TAG}_LIB_SRCS
 tclMatrix.c
@@ -153,6 +160,57 @@ DESTINATION ${INCLUDE_INSTALL_DIR}
 )
 
 # end plplottcltk
+
+add_custom_target(plplot.tcl ALL
+COMMAND ${CMAKE_COMMAND} 
+-E copy 
+${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
+plplot.tcl
+DEPENDS
+${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
+)
+
+install(
+FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+DESTINATION ${TCL_DIR}
+)
+
+add_custom_target(tclIndex ALL
+COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+)
+
+install(
+FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+DESTINATION ${TCL_DIR}
+)
+
+set(LIB_HARDDIR ${LIB_DIR})
+
+get_target_property(
+DLNAME_LIBPLPLOTTCLTK
+plplottcltk${LIB_TAG}
+LOCATION
+)
+get_filename_component(
+DLNAME_LIBPLPLOTTCLTK
+${DLNAME_LIBPLPLOTTCLTK} 
+NAME
+)
+string(REPLACE "plplottcltkd" "plplottcltk"
+DLNAME_LIBPLPLOTTCLTK
+${DLNAME_LIBPLPLOTTCLTK}
+)
+string(REPLACE "plplottcltk" "plplottcltkd"
+DLNAME_LIBPLPLOTTCLTKD
+${DLNAME_LIBPLPLOTTCLTK}
+)
+
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in 
+${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+@ONLY
+)
 
 # Configure pkg-config *.pc file corresponding to libplplottcltk${LIB_TAG}
 if(PKGCONFIG_EXECUTABLE)
