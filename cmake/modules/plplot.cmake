@@ -129,12 +129,17 @@ set(NEED_SYS_TYPE_H ON)
 # Typedefs
 #=======================================================================
 
-# ToDo
-# Some X11 headers require "caddr_t" even on systems that claim POSIX.1
-# compliance, which is illegal.  This makes it impossible to compile
-# programs that include X11 headers if _POSIX_SOURCE is defined.  I work
-# around this potential problem by just defining caddr_t to 'char *' on all
-# systems (unless it is set already), whether it will be needed or not.
+# In the past, some X11 headers required "caddr_t" even on systems that
+# claimed POSIX.1 compliance, which was illegal.  This made it impossible
+# to compile programs that included X11 headers if _POSIX_SOURCE was
+# defined.  We used to work around this potential problem by just defining
+# caddr_t to 'char *' on all systems (unless it is set already), whether
+# it was needed or not. Now we ignore the issue because we don't expect
+# such broken X behaviour any more and because this kind of argument list
+# for AC_CHECK_TYPE is now deprecated in the autoconf documentation.
+
+# Do not implement the equivalent of this since commented out in the ABS
+# system.
 # AC_CHECK_TYPE(caddr_t, char *)
 
 # Test signal handler return type (mimics AC_TYPE_SIGNAL)
