@@ -1027,8 +1027,8 @@ proc_str (PLStream *pls, EscText *args)
 		 
 	       case 'u':
 	       case 'U':
-		 if(up<0.) scale *= 1.25;  /* Subscript scaling parameter */
-		 else scale *= 0.8;  /* Subscript scaling parameter */
+		 if(up<0.) scale *= 1.25;  /* Superscript scaling parameter */
+		 else scale *= 0.8;  /* Superscript scaling parameter */
 		 up += font_factor * ENLARGE * ft_ht / 2.;
 		 break;
 		 
@@ -1071,7 +1071,7 @@ proc_str (PLStream *pls, EscText *args)
 	   
 	   /* back to baseline */
 	   if (up!=0.) 
-	     doc->osBody() << "grestore (" << str << ") stringwidth rmoveto\n";
+	     doc->osBody() << "grestore " << TRMFLT(xAdvance*tt[0]) << " " << TRMFLT(xAdvance*tt[2]) << " rmoveto\n";
 	   
 	}while(*cur_strp);
 	
