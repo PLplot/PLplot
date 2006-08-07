@@ -76,7 +76,7 @@ include(linuxvga)
 include(xwin)
 include(tk)
 include(psttf)
-#include(wingcc)
+include(wingcc)
 #include(aqt)
 #include(wxwidgets)
 

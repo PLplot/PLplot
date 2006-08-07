@@ -91,7 +91,7 @@ set(DRIVERS_DEVICE_LIST
 "tek4107f:tek:OFF"
 "tk:tk:ON"
 #"tkwin:tkwin:ON"
-#"wingcc:wingcc:ON"
+"wingcc:wingcc:ON"
 #"wxwidgets:wxwidgets:ON"
 "xfig:xfig:ON"
 "xwin:xwin:ON"
