@@ -40,9 +40,6 @@
 /* Define if finite is available */
 #cmakedefine HAVE_FINITE
 
-/* Define to 1 if you have the `fork' function. */
-#cmakedefine HAVE_FORK 1
-
 /* Define if [freetype] is available */
 #cmakedefine HAVE_FREETYPE
 
@@ -151,32 +148,11 @@
 /* Define to 1 if you have the <vfork.h> header file. */
 #cmakedefine HAVE_VFORK_H 1
 
-/* Define to 1 if `fork' works. */
-#cmakedefine HAVE_WORKING_FORK 1
-
-/* Define to 1 if `vfork' works. */
-#cmakedefine HAVE_WORKING_VFORK 1
-
 /* Include sys/type.h if needed */
 #cmakedefine NEED_SYS_TYPE_H
 
 /* Name of package */
 #define PACKAGE "${PACKAGE}"
-
-/* Define to the address where bug reports for this package should be sent. */
-#cmakedefine PACKAGE_BUGREPORT
-
-/* Define to the full name of this package. */
-#cmakedefine PACKAGE_NAME
-
-/* Define to the full name and version of this package. */
-#cmakedefine PACKAGE_STRING
-
-/* Define to the one symbol short name of this package. */
-#cmakedefine PACKAGE_TARNAME
-
-/* Define to the version of this package. */
-#cmakedefine PACKAGE_VERSION
 
 /* Define if aqt driver is present */
 #cmakedefine PLD_aqt
@@ -406,9 +382,6 @@
 
 /* Define if csa is desired */
 #cmakedefine WITH_CSA
-
-/* Define to 1 if the X Window System is missing or not being used. */
-#cmakedefine X_DISPLAY_MISSING 1
 
 /* Define to `char *' if <sys/types.h> does not define. */
 #cmakedefine caddr_t
