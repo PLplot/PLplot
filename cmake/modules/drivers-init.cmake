@@ -80,7 +80,7 @@ set(DRIVERS_DEVICE_LIST
 "ljii:ljii:OFF"
 "ljiip:ljiip:OFF"
 "mem:mem:ON"
-#"ntk:ntk:OFF"
+"ntk:ntk:OFF"
 "null:null:ON"
 "pbm:pbm:ON"
 "plmeta:plmeta:ON"

@@ -19,16 +19,27 @@
 
 # Module for determining all configuration variables related to the Tk
 # related device drivers (tk, ntk, tkwin).
-# The following variables are set/modified:
-# PLD_xwin		  - ON means the xwin device is enabled.
-# xwin_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile xwin
+# The following variables are set/modified for the ntk device:
+# PLD_ntk		  - ON means the xwin device is enabled.
+# ntk_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile ntk
 # 			    device.
-# xwin_LINK_FLAGS	  - individual LINK_FLAGS for dynamic xwin device.
+# ntk_LINK_FLAGS	  - individual LINK_FLAGS for dynamic ntk device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
-# HAVE_PTHREAD		  - ON means use pthreads with xwin driver.
-# PLPLOT_MUTEX_RECURSIVE  - Portable definition for PTHREAD_MUTEX_RECURSIVE
-# temporary to make libplplottcltk work properly.
+
+#temporary
 set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
+
+if(NOT ENABLE_tk)
+  message(STATUS "WARNING: ENABLE_tk OFF.  Setting PLD_tk and PLD_ntk OFF.")
+  set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
+  set(PLD_ntk OFF CACHE BOOL "Enable ntk device" FORCE)
+endif(NOT ENABLE_tk)
+
+if(PLD_ntk)
+  set(ntk_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH}")
+  set(ntk_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ntk_LINK_FLAGS})
+endif(PLD_ntk)
 
 if(not_implemented_yet)
 if(PLD_xwin)
@@ -66,15 +77,4 @@ if(PLD_xwin)
     set(PLD_xwin OFF CACHE BOOL "Enable xwin device" FORCE)
   endif(X11_FOUND)
 endif(PLD_xwin)
-
-if(NOT PLD_tk)
-  # The Tk C code in libplplottcltk is controlled by PLD_tk and has
-  # no knowledge of ENABLE_TK.  On the other hand the
-  # Tk C code is included in libplplottcltk depending on ENABLE_tk.
-  # This blurring of the distinction between the Tk part of the library
-  # and the tk device means ENABLE_tk must be consistent with PLD_tk.
-  set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
-  # In addition, ENABLE_itk must be OFF if ENABLE_tk is OFF.
-  set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
-endif(NOT PLD_tk)
 endif(not_implemented_yet)
