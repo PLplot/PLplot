@@ -29,21 +29,30 @@ ON
 if (WITH_FREETYPE)
   find_package(Freetype)
   if (NOT FREETYPE_FOUND)
-    set(WITH_FREETYPE OFF CACHE BOOL "Enable driver options for using freetype library for fonts" FORCE)
+    set(WITH_FREETYPE OFF
+    CACHE BOOL "Enable driver options for using freetype library for fonts"
+    FORCE
+    )
   endif (NOT FREETYPE_FOUND)
 endif (WITH_FREETYPE)
 
 if (WITH_FREETYPE)
 
-if (NOT PL_FREETYPE_FONT_DIR)
-  if(WINDOWS)
-    set(PL_FREETYPE_FONT_DIR "c:/windows/fonts")
-  else(WINDOWS)
-    set(PL_FREETYPE_FONT_DIR "/usr/share/fonts/truetype/freefont")
-  endif(WINDOWS)
-endif (NOT PL_FREETYPE_FONT_DIR)
-# We need a trailing slash. 
-set(PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_DIR}/")
+if(WINDOWS)
+  set(
+  PL_FREETYPE_FONT_PATH
+  "c:/windows/fonts"
+  CACHE PATH "Path for TrueType fonts"
+  )
+else(WINDOWS)
+  set(
+  PL_FREETYPE_FONT_PATH
+  "/usr/share/fonts/truetype/freefont"
+  CACHE PATH "Path for TrueType fonts"
+  )
+endif(WINDOWS)
+# PLplot internally needs a trailing slash for this path. 
+set(PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_PATH}/")
 
 set(PL_FREETYPE_FONT_LIST
 "PL_FREETYPE_MONO:FreeMono.ttf:cour.ttf"
@@ -85,9 +94,9 @@ foreach(FONT_ENTRY ${PL_FREETYPE_FONT_LIST})
   else (windows)
     string(REGEX REPLACE "^.*:(.*):.*$" "\\1" FONT ${FONT_ENTRY})
   endif (windows)
-  if (NOT ${NAME})
-    set(${NAME} ${FONT})
-  endif (NOT ${NAME})
+  set(${NAME} ${FONT}
+  CACHE FILEPATH "Font file for ${NAME}"
+  )
 endforeach(FONT_ENTRY PL_FREETYPE_FONT_LIST) 
 
 # Check a couple of fonts actually exists
