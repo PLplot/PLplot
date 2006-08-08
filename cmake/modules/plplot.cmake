@@ -108,12 +108,12 @@ if(NOT HAVE_DIRENT_H)
     check_dirsymbol_exists("sys/types.h;sys/dir.h" HAVE_SYS_DIR_H)
     if(NOT HAVE_SYS_DIR_H)
       check_dirsymbol_exists("sys/types.h;ndir.h" HAVE_NDIR_H)
-      if(NOT HAVE_NDIR_H)
+      if(NOT HAVE_NDIR_H AND UNIX)
         message(FATAL_ERROR 
 	"FATAL_ERROR for plplot.cmake: "
-	"DIR symbol must be defined by system headers."
+	"DIR symbol must be defined by Unix system headers."
 	)
-      endif(NOT HAVE_NDIR_H)
+      endif(NOT HAVE_NDIR_H AND UNIX)
     endif(NOT HAVE_SYS_DIR_H)
   endif(NOT HAVE_SYS_NDIR_H)
 endif(NOT HAVE_DIRENT_H)

@@ -39,13 +39,13 @@ add_executable(plhershey-unicode-gen ${plhershey-unicode-gen_SRCS})
 
 add_custom_target(
 plhershey-unicode.h ALL
-${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode-gen
+${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode-gen${EXEEXT}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 plhershey-unicode.h
 DEPENDS
-plhershey-unicode-gen
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 )
+add_dependencies(plhershey-unicode.h plhershey-unicode-gen)
 
 ########### header files ###############
 
