@@ -67,7 +67,7 @@
 #include <keys.h>
 #endif
 
-#include <strings.h>
+#include <string.h>
 
 
 /* Prototypes:  Since GNU CC, we can rest in the safety of ANSI prototyping. */
