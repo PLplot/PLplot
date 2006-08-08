@@ -1,127 +1,128 @@
+# bindings/tk/CMakeLists.txt
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-########### next target ###############
+if(ENABLE_tk)
 
-SET(plserver_SRCS
-plserver.c
+set(include_INSTALLED_HEADERS
+pltk.h
 )
 
-KDE3_AUTOMOC(${plserver_SRCS})
+install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR})
 
-KDE3_ADD_EXECUTABLE(plserver ${plserver_SRCS})
+set(tcldata
+FileSelector.tcl
+Pltkwin.tcl
+about.tcl
+help_gui.tcl
+help_keys.tcl
+help_tcltk.tcl
+plclient.tcl
+plcolor.tcl
+plconfig.tcl
+pldefaults.tcl
+plplot.tcl
+plserver.tcl
+pltools.tcl
+plwidget.tcl
+)
 
-TARGET_LINK_LIBRARIES(plserver  ${QT_AND_KDECORE_LIBS} )
+set(itkdata
+PLWin.itk
+PLXWin.itk
+)
 
-INSTALL_TARGETS(/bin plserver )
+set(paldata
+cmap0a.pal
+cmap1a.pal
+cmap1a1.pal
+cmap1b.pal
+cmap1c.pal
+cmap1d.pal
+)
 
+install(
+FILES ${tcldata} ${itkdata} ${paldata}
+DESTINATION ${TCL_DIR}
+)
 
-########### install files ###############
+include_directories(
+${TCL_INCLUDE_PATH}
+${TK_INCLUDE_PATH}
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/bindings/tcl
+${CMAKE_CURRENT_SOURCE_DIR}
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+)
 
-INSTALL_FILES(  FILES  $(tcldata) $(itkdata) $(paldata) )
-INSTALL_FILES(  FILES  $(top_srcdir)/bindings/tk/tclIndex )
-INSTALL_FILES(  FILES  pltk.h )
+add_executable(plserver plserver.c)
+target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
 
+set_target_properties(plserver
+PROPERTIES
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+)
 
-#original Makefile.am contents follow:
+install(TARGETS plserver DESTINATION ${BIN_DIR})
 
-## bindings/tk/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002  Alan W. Irwin
-## Copyright (C) 2003, 2004  Rafael Laboissiere
-## 
-## This file is part of PLplot.
-##
-## This file is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## This file is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with the file; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-#
-#tcldir = $(TCL_DIR)
-#
-#libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
-#libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
-#
-#tcldata = \
-#	FileSelector.tcl \
-#	Pltkwin.tcl \
-#	about.tcl \
-#	help_gui.tcl \
-#	help_keys.tcl \
-#	help_tcltk.tcl \
-#	plclient.tcl \
-#	plcolor.tcl \
-#	plconfig.tcl \
-#	pldefaults.tcl \
-#	plplot.tcl \
-#	plserver.tcl \
-#	pltools.tcl \
-#	plwidget.tcl
-#
-#itkdata = \
-#	PLWin.itk \
-#	PLXWin.itk
-#
-#paldata = \
-#	cmap0a.pal \
-#	cmap1a.pal \
-#	cmap1a1.pal \
-#	cmap1b.pal \
-#	cmap1c.pal \
-#	cmap1d.pal
-#
-#if enable_tk
-#
-## ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
-#AM_CPPFLAGS = \
-#	-I$(top_srcdir)/include \
-#	-I$(top_srcdir)/bindings/tcl/ \
-#	$(INCLTDL) \
-#	$(TCLINCCMD) \
-#	$(TKINCCMD)
-#
-#pkginclude_HEADERS = pltk.h
-#bin_PROGRAMS = plserver
-#plserver_SOURCES = plserver.c
-#plserver_LDFLAGS = $(RPATH) -no-undefined
-#plserver_LDADD = $(libplplot) $(libplplottcltk)
-#
-#if enable_itcl
-#mkindex = ../../scripts/mktclIndex -itcl
-#else
-#mkindex = ../../scripts/mktclIndex -tcl
-#endif
-#
-#$(top_srcdir)/bindings/tk/tclIndex: $(tcldata) $(itkdata)
-#	cd $(top_srcdir)/bindings/tk ; \
-#	$(mkindex)
-#
-#nodist_tcl_DATA = $(top_srcdir)/bindings/tk/tclIndex
-#tcl_DATA = $(tcldata) $(itkdata) $(paldata)
-#
-#endif
-#
-#CLEANFILES = $(top_srcdir)/bindings/tk/tclIndex
-#
-#### FIXME: Brute force inclusion in dist tarball.  The files below may
-#### be treated in a different way for installation [RL, 2003-03-06]
-#EXTRA_DIST = \
-#	pltk.h \
-#	pltkd.h \
-#	plserver.h \
-#	tcpip.h \
-#	tkshell.c \
-#	stupidtk.c \
-#	app-defaults \
-#	$(tcldata) \
-#	$(itkdata) \
-#	$(paldata)
+add_custom_target(tclIndex_tk ALL
+COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+DEPENDS ${tcldata} ${itkdata}
+)
+
+install(
+FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+DESTINATION ${TCL_DIR}
+)
+
+set(DRV_HARDDIR ${DRV_DIR})
+set(LIB_HARDDIR ${LIB_DIR})
+
+get_target_property(
+DLNAME_LIBPLPLOT
+plplot${LIB_TAG}
+LOCATION
+)
+get_filename_component(
+DLNAME_LIBPLPLOT
+${DLNAME_LIBPLPLOT} 
+NAME
+)
+string(REPLACE "plplotd" "plplot"
+DLNAME_LIBPLPLOT
+${DLNAME_LIBPLPLOT}
+)
+string(REPLACE "plplot" "plplotd"
+DLNAME_LIBPLPLOTD
+${DLNAME_LIBPLPLOT}
+)
+
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in 
+${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+@ONLY
+)
+
+endif(ENABLE_tk)

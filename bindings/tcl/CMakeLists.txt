@@ -161,7 +161,10 @@ DESTINATION ${INCLUDE_INSTALL_DIR}
 
 # end plplottcltk
 
-add_custom_target(plplot.tcl ALL
+# _target suffix to avoid nameclash with filename plplot.tcl.  This
+# nameclash screwed up ../tk/configuration which had a non-generated file 
+# of the same name which was a dependency of a custom target.
+add_custom_target(plplot.tcl_target ALL
 COMMAND ${CMAKE_COMMAND} 
 -E copy 
 ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
@@ -175,7 +178,7 @@ FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
 DESTINATION ${TCL_DIR}
 )
 
-add_custom_target(tclIndex ALL
+add_custom_target(tclIndex_tcl ALL
 COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
 )

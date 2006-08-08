@@ -67,6 +67,9 @@
 /* Define to 1 if you have the <itclDecls.h> header file. */
 #cmakedefine HAVE_ITCLDECLS_H 1
 
+/* Define if Tk is available */
+#cmakedefine ENABLE_tk
+
 /* Define if [incr], [Tk] is available */
 #cmakedefine HAVE_ITK
 

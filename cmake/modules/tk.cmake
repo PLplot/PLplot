@@ -66,7 +66,6 @@ if(PLD_xwin)
     set(PLD_xwin OFF CACHE BOOL "Enable xwin device" FORCE)
   endif(X11_FOUND)
 endif(PLD_xwin)
-endif(not_implemented_yet)
 
 if(NOT PLD_tk)
   # The Tk C code in libplplottcltk is controlled by PLD_tk and has
@@ -78,3 +77,4 @@ if(NOT PLD_tk)
   # In addition, ENABLE_itk must be OFF if ENABLE_tk is OFF.
   set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
 endif(NOT PLD_tk)
+endif(not_implemented_yet)
