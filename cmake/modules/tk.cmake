@@ -43,9 +43,6 @@
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 # tkwin_SOURCE		  - list of source files other than tkwin.c
 
-# temporary disable of tkwin which isn't working yet.
-set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
-
 if(NOT ENABLE_tk)
   message(STATUS 
   "WARNING: ENABLE_tk OFF.  Setting PLD_tk, PLD_ntk, and PLD_tkwin OFF."
@@ -57,7 +54,7 @@ endif(NOT ENABLE_tk)
 
 if(PLD_tk)
   set(tk_COMPILE_FLAGS 
-  "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk"
+  "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_BINARY_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk"
   )
   set(tk_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
@@ -83,9 +80,11 @@ if(PLD_ntk)
 endif(PLD_ntk)
 
 if(PLD_tkwin)
-  set(tkwin_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH}")
-  set(tkwin_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
-  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${tkwin_LINK_FLAGS})
+  set(tkwin_COMPILE_FLAGS 
+  "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_BINARY_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk-x-plat -I${CMAKE_SOURCE_DIR}/bindings/tk"
+  )
+  set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
   set(
   tkwin_SOURCE
   ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c

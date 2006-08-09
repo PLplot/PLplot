@@ -1,5 +1,4 @@
-# bindings/CMakeLists.txt for PLplot
-###
+# bindings/tk-x-plat/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Alan W. Irwin
@@ -19,35 +18,34 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-add_subdirectory(c++)
-add_subdirectory(f77)
-add_subdirectory(f95)
-add_subdirectory(python)
-add_subdirectory(tcl)
-add_subdirectory(tk)
-add_subdirectory(tk-x-plat)
-#add_subdirectory(octave)
-add_subdirectory(java)
-add_subdirectory(gnome2)
-
-set(index)
-if(ENABLE_tcl)
-  set(index ${index} ${CMAKE_CURRENT_BINARY_DIR}/tcl/pkgIndex.tcl)
-endif(ENABLE_tcl)
-if(ENABLE_tk)
-  set(index ${index} ${CMAKE_CURRENT_BINARY_DIR}/tk/pkgIndex.tcl)
-endif(ENABLE_tk)
 if(PLD_tkwin)
-  set(index ${index} ${CMAKE_CURRENT_BINARY_DIR}/tk-x-plat/pkgIndex.tcl)
-endif(PLD_tkwin)
 
-if(index)
-  add_custom_target(pkgIndex.tcl ALL
-  COMMAND cat ${index} > pkgIndex.tcl
-  DEPENDS ${index}
-  )
-  install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
-  DESTINATION ${DATA_DIR}
-  )
-endif(index)
+set(DRV_HARDDIR ${DRV_DIR})
+set(LIB_HARDDIR ${LIB_DIR})
+
+get_target_property(
+DLNAME_LIBPLPLOT
+plplot${LIB_TAG}
+LOCATION
+)
+get_filename_component(
+DLNAME_LIBPLPLOT
+${DLNAME_LIBPLPLOT} 
+NAME
+)
+string(REPLACE "plplotd" "plplot"
+DLNAME_LIBPLPLOT
+${DLNAME_LIBPLPLOT}
+)
+string(REPLACE "plplot" "plplotd"
+DLNAME_LIBPLPLOTD
+${DLNAME_LIBPLPLOT}
+)
+
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in 
+${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+@ONLY
+)
+
+endif(PLD_tkwin)
