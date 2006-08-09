@@ -161,32 +161,38 @@ DESTINATION ${INCLUDE_INSTALL_DIR}
 
 # end plplottcltk
 
-# _target suffix to avoid nameclash with filename plplot.tcl.  This
-# nameclash screwed up ../tk/configuration which had a non-generated file 
-# of the same name which was a dependency of a custom target.
-add_custom_target(plplot.tcl_target ALL
-COMMAND ${CMAKE_COMMAND} 
--E copy 
-${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
-plplot.tcl
-DEPENDS
-${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
-)
+# Only install next two if the equivalent files are not going to
+# be installed by the action of ../tk/CMakeLists.txt
 
-install(
-FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
-DESTINATION ${TCL_DIR}
-)
+if(NOT ENABLE_tk)
+  # _target suffix to avoid nameclash with filename plplot.tcl.  This
+  # nameclash screwed up ../tk/configuration which had a non-generated file 
+  # of the same name which was a dependency of a custom target.
+  add_custom_target(plplot.tcl_target ALL
+  COMMAND ${CMAKE_COMMAND} 
+  -E copy 
+  ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
+  plplot.tcl
+  DEPENDS
+  ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
+  )
 
-add_custom_target(tclIndex_tcl ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
-)
+  install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+  DESTINATION ${TCL_DIR}
+  )
 
-install(
-FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-DESTINATION ${TCL_DIR}
-)
+  add_custom_target(tclIndex_tcl ALL
+  COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+  install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/tclIndex
+  DESTINATION ${TCL_DIR}
+  )
+endif(NOT ENABLE_tk)
 
 set(LIB_HARDDIR ${LIB_DIR})
 
