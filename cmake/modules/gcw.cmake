@@ -27,6 +27,7 @@
 # gcw_TARGETS		  - list of targets which the gcw dynamic device
 # 			    depends on.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
+# gcw_SOURCE		  - list of source files other than gcw.c
 if(PLD_gcw)
   if(NOT PKGCONFIG_EXECUTABLE)
     message(STATUS 
