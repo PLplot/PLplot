@@ -90,9 +90,9 @@ set(DRIVERS_DEVICE_LIST
 "versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
 "tek4107f:tek:OFF"
 "tk:tk:ON"
-#"tkwin:tkwin:ON"
+"tkwin:tkwin:ON"
 "wingcc:wingcc:ON"
-#"wxwidgets:wxwidgets:ON"
+"wxwidgets:wxwidgets:ON"
 "xfig:xfig:ON"
 "xwin:xwin:ON"
 )

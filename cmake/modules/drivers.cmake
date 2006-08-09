@@ -78,7 +78,7 @@ include(tk)
 include(psttf)
 include(wingcc)
 #include(aqt)
-#include(wxwidgets)
+include(wxwidgets)
 
 # Finalize device options.
 include(drivers-finish)
