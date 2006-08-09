@@ -19,21 +19,62 @@
 
 # Module for determining all configuration variables related to the Tk
 # related device drivers (tk, ntk, tkwin).
+
+# The following variables are set/modified for the tk device:
+# PLD_tk		  - ON means the tk device is enabled.
+# tk_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile
+# 			    the tk device.
+# tk_LINK_FLAGS	  	  - individual LINK_FLAGS for the dynamic tk device.
+# DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
+# tk_SOURCE		  - list of source files other than tk.c
+
 # The following variables are set/modified for the ntk device:
-# PLD_ntk		  - ON means the xwin device is enabled.
-# ntk_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile ntk
-# 			    device.
-# ntk_LINK_FLAGS	  - individual LINK_FLAGS for dynamic ntk device.
+# PLD_ntk		  - ON means the ntk device is enabled.
+# ntk_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile
+# 			    the ntk device.
+# ntk_LINK_FLAGS	  - individual LINK_FLAGS for the dynamic ntk device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
-#temporary
-set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
+# The following variables are set/modified for the tkwin device:
+# PLD_tkwin		  - ON means the tkwin device is enabled.
+# tkwin_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile
+# 			    the tkwin device.
+# tkwin_LINK_FLAGS	  - individual LINK_FLAGS for the dynamic tkwin device.
+# DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
+# tkwin_SOURCE		  - list of source files other than tkwin.c
+
+# temporary disable of tkwin which isn't working yet.
+set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
 
 if(NOT ENABLE_tk)
-  message(STATUS "WARNING: ENABLE_tk OFF.  Setting PLD_tk and PLD_ntk OFF.")
+  message(STATUS 
+  "WARNING: ENABLE_tk OFF.  Setting PLD_tk, PLD_ntk, and PLD_tkwin OFF."
+  )
   set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
   set(PLD_ntk OFF CACHE BOOL "Enable ntk device" FORCE)
+  set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
 endif(NOT ENABLE_tk)
+
+if(PLD_tk)
+  set(tk_COMPILE_FLAGS 
+  "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk"
+  )
+  set(tk_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
+  if(NOT ENABLE_DYNDRIVERS)
+    # All source that is in libplplottcltk
+    set(
+    tk_SOURCE
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMain.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
+    )
+  endif(NOT ENABLE_DYNDRIVERS)
+endif(PLD_tk)
 
 if(PLD_ntk)
   set(ntk_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH}")
@@ -41,40 +82,26 @@ if(PLD_ntk)
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ntk_LINK_FLAGS})
 endif(PLD_ntk)
 
-if(not_implemented_yet)
-if(PLD_xwin)
-  find_package(X11)
-  if(X11_FOUND)
-    string(REGEX REPLACE ";" ";-I" 
-    xwin_COMPILE_FLAGS
-    "-I${X11_INCLUDE_DIR}"
+if(PLD_tkwin)
+  set(tkwin_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH}")
+  set(tkwin_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${tkwin_LINK_FLAGS})
+  set(
+  tkwin_SOURCE
+  ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c
+  ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/plplotter.c
+  )
+  if(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
+    # All source that is in libplplottcltk
+    set(
+    tkwin_SOURCE ${tkwin_SOURCE}
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMain.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
     )
-    # N.B. X11_LIBRARY_DIR is used internally by FindX11.cmake but not
-    # documented for external use so we may have to replace this
-    # some day by the appropriate 
-    # "GET_FILENAME_COMPONENT(X11_LIBRARY_DIR ??? PATH)" logic.
-    # But this works for now....
-    set(xwin_LINK_FLAGS "-L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
-    option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
-    if(HAVE_PTHREAD)
-      find_package(Threads)
-      if(CMAKE_USE_PTHREADS_INIT)
-        set(xwin_LINK_FLAGS ${xwin_LINK_FLAGS} ${CMAKE_THREAD_LIBS_INIT})
-	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
-	else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE")
-	endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-      else(CMAKE_USE_PTHREADS_INIT)
-        # I am being super-careful here to follow the autotools model.  In
-        # fact, it is possible other thread systems will work as well as
-	# pthreads.  So something to investigate for later.
-        set(HAVE_PTHREAD OFF)
-      endif(CMAKE_USE_PTHREADS_INIT)
-    endif(HAVE_PTHREAD)
-    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${xwin_LINK_FLAGS})
-  else(X11_FOUND)
-    set(PLD_xwin OFF CACHE BOOL "Enable xwin device" FORCE)
-  endif(X11_FOUND)
-endif(PLD_xwin)
-endif(not_implemented_yet)
+  endif(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
+endif(PLD_tkwin)
