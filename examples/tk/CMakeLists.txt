@@ -18,22 +18,14 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if(not_implemented)
-add_custom_target(tclIndex ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+set(tk_FILES
+README.tkdemos
+runAllDemos.tcl
+runExtendedDemos.tcl
+tkdemos.tcl
 )
 
-set(tcl_FILES
-README.tcldemos
-plgrid.tcl
-plot.dat
-plot.tcl
-r.dat
-stats.log
-tcldemos.tcl
-)
-
-set(tcl_STRING_INDICES
+set(tk_STRING_INDICES
 "01"
 "02"
 "03"
@@ -56,12 +48,54 @@ set(tcl_STRING_INDICES
 "22"
 )
 
-set(tcl_SCRIPTS)
-foreach(STRING_INDEX ${tcl_STRING_INDICES})
-  set(tcl_FILES ${tcl_FILES} x${STRING_INDEX}.tcl)
-  set(tcl_SCRIPTS ${tcl_SCRIPTS} x${STRING_INDEX})
-endforeach(STRING_INDEX ${tcl_STRING_INDICES})
+foreach(STRING_INDEX ${tk_STRING_INDICES})
+  set(_file x${STRING_INDEX}.tcl)
+  add_custom_command(
+  OUTPUT ${_file}
+  COMMAND ${CMAKE_COMMAND} 
+  -E copy 
+  ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
+  ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
+  DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
+  )
+  set(tk_FILES ${tk_FILES} ${_file})
+endforeach(STRING_INDEX ${tk_STRING_INDICES})
 
-install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
-endif(not_implemented)
+install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
+
+add_custom_target(tclIndex_examples_tk ALL
+COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+DEPENDS ${tk_FILES}
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+install(FILES tclIndex DESTINATION ${DATA_DIR}/examples/tk)
+
+set(tk_SCRIPTS
+tk01
+tk02
+tk03
+tk04
+)
+
+install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
+
+set(tk_SRC
+xtk01.c
+xtk02.c
+xtk04.c
+)
+
+install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
+
+set(CC ${CMAKE_C_COMPILER})
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+DESTINATION ${DATA_DIR}/examples/tk
+RENAME Makefile
+)
+
