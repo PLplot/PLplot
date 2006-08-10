@@ -18,10 +18,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-add_custom_target(tclIndex ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-)
-
 set(tcl_FILES
 README.tcldemos
 plgrid.tcl
@@ -63,3 +59,14 @@ endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
 install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
 install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
+
+add_custom_target(tclIndex_examples_tcl ALL
+COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+DEPENDS ${tcl_FILES} ${tcl_SCRIPTS}
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+install(
+FILES ${CMAKE_CURRENT_SOURCE_DIR}/tclIndex
+DESTINATION ${DATA_DIR}/examples/tcl
+)
