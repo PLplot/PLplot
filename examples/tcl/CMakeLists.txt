@@ -66,7 +66,4 @@ DEPENDS ${tcl_FILES} ${tcl_SCRIPTS}
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-install(
-FILES ${CMAKE_CURRENT_SOURCE_DIR}/tclIndex
-DESTINATION ${DATA_DIR}/examples/tcl
-)
+install(FILES tclIndex DESTINATION ${DATA_DIR}/examples/tcl)
