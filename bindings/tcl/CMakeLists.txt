@@ -41,6 +41,11 @@ ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
 
+set(
+libplplottcltk${LIB_TAG}_COMPILE_FLAGS
+"-I${TCL_INCLUDE_PATH}"
+)
+
 add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
 target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})
 
@@ -99,12 +104,24 @@ tclmatrix${LIB_TAG}
 plplot${LIB_TAG}
 ${TCL_LIBRARY}
 )
+set(
+libplplottcltk${LIB_TAG}_LINK_FLAGS
+"-ltclmatrix${LIB_TAG} ${TCL_LIBRARY}"
+)
 
 if(ENABLE_itcl)
   include_directories(${ITCL_INCLUDE_PATH})
+  set(
+  libplplottcltk${LIB_TAG}_COMPILE_FLAGS
+  "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
+  )
   set(plplottcltk${LIB_TAG}_link_libraries
   ${plplottcltk${LIB_TAG}_link_libraries}
   ${ITCL_LIBRARY}
+  )
+  set(
+  libplplottcltk${LIB_TAG}_LINK_FLAGS
+  "${libplplottcltk${LIB_TAG}_LINK_FLAGS} ${ITCL_LIBRARY}"
   )
 endif(ENABLE_itcl)
 
@@ -118,15 +135,31 @@ if(ENABLE_tk)
   ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
   )
   include_directories(${TK_INCLUDE_PATH})
+  set(
+  libplplottcltk${LIB_TAG}_COMPILE_FLAGS
+  "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} -I${TK_INCLUDE_PATH}"
+  )
   set(plplottcltk${LIB_TAG}_link_libraries
   ${plplottcltk${LIB_TAG}_link_libraries}
   ${TK_LIBRARY}
   )
+  set(
+  libplplottcltk${LIB_TAG}_LINK_FLAGS
+  "${libplplottcltk${LIB_TAG}_LINK_FLAGS} ${TK_LIBRARY}"
+  )
   if(ENABLE_itk)
     include_directories(${ITK_INCLUDE_PATH})
+    set(
+    libplplottcltk${LIB_TAG}_COMPILE_FLAGS
+    "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
+    )
     set(plplottcltk${LIB_TAG}_link_libraries
     ${plplottcltk${LIB_TAG}_link_libraries}
     ${ITK_LIBRARY}
+    )
+    set(
+    libplplottcltk${LIB_TAG}_LINK_FLAGS
+    "${libplplottcltk${LIB_TAG}_LINK_FLAGS} ${ITK_LIBRARY}"
     )
   endif(ENABLE_itk)
 endif(ENABLE_tk)
