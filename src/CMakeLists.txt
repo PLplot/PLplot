@@ -86,13 +86,21 @@ add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${LTDL_LIBRARIES})
-  target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
+  target_link_libraries(
+  plplot${LIB_TAG}
+  ${MATH_LIB}
+  ${libplplot${LIB_TAG}_LINK_FLAGS}
+  )
   #message("libplplot${LIB_TAG}_LINK_FLAGS =  ${libplplot${LIB_TAG}_LINK_FLAGS}")
   #message("libplplot${LIB_TAG}_RPATH = ${libplplot${LIB_TAG}_RPATH}")
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
-  target_link_libraries(plplot${LIB_TAG} m ${libplplot${LIB_TAG}_LINK_FLAGS})
+  target_link_libraries(
+  plplot${LIB_TAG}
+  ${MATH_LIB}
+  ${libplplot${LIB_TAG}_LINK_FLAGS}
+  )
 endif(ENABLE_DYNDRIVERS)
 
 if(WITH_CSA)
