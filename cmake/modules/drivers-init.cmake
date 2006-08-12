@@ -65,7 +65,7 @@ endif(DEFAULT_ALL_DEVICES AND DEFAULT_NO_DEVICES)
 # consumption, but this is not necessary.
 
 set(DRIVERS_DEVICE_LIST
-#"aqt:aqt:ON"
+"aqt:aqt:ON"
 "cgm:cgm:ON"
 "dg300:dg300:OFF"
 "png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"

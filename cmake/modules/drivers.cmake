@@ -77,7 +77,7 @@ include(xwin)
 include(tk)
 include(psttf)
 include(wingcc)
-#include(aqt)
+include(aqt)
 include(wxwidgets)
 
 # Finalize device options.
