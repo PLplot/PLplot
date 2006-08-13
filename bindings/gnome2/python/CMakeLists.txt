@@ -24,7 +24,7 @@ EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE}
 ARGS pygtk-2.0 --variable=defsdir
 OUTPUT_VARIABLE PYGTK_DEFS
 )
-message("PYGTK_DEFS = ${PYGTK_DEFS}")
+#message("PYGTK_DEFS = ${PYGTK_DEFS}")
 
 ### Prepare gcwmodule_SRCS.
 # Use sed to rename PLINT and PLFLT so that h2def.py knows what to do.
