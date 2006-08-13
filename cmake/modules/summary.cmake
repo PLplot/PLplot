@@ -67,6 +67,7 @@ ENABLE_f77:		${ENABLE_f77}		ENABLE_f95:	${ENABLE_f95}
 ENABLE_cxx:		${ENABLE_cxx}		ENABLE_java:	${ENABLE_java}
 ENABLE_python:		${ENABLE_python}		ENABLE_octave:	${ENABLE_octave}
 ENABLE_tcl:		${ENABLE_tcl}		ENABLE_itcl:	${ENABLE_itcl}
+ENABLE_tk:		${ENABLE_tk}		ENABLE_itk:	${ENABLE_itk}
 ENABLE_pdl:		${ENABLE_pdl}
 ")
 message("${_output_results}")
