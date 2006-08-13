@@ -21,9 +21,11 @@
 
 macro(summary)
 set(_output_results "
-Important CMake options:
+Important CMake results:
 
 CMAKE_SYSTEM_NAME:	${CMAKE_SYSTEM_NAME}
+SWIG_FOUND:		${SWIG_FOUND}
+PERL_FOUND:		${PERL_FOUND}
 X11_FOUND:		${X11_FOUND}
 CMAKE_INSTALL_PREFIX:	${CMAKE_INSTALL_PREFIX}
 CMAKE_BUILD_TYPE:	${CMAKE_BUILD_TYPE}
