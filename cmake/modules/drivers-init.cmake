@@ -40,20 +40,25 @@
 # and drivers.  This will be inspected to build up the set of drivers
 # to be compiled based on which devices are selected.
 
-option(DEFAULT_ALL_DEVICES
-"Enable all (ON) or enable individually (OFF) devices by default"
-OFF
-)
-
 option(DEFAULT_NO_DEVICES
 "Disable all (ON) or enable individually (OFF) devices by default"
 OFF
 )
 
-if(DEFAULT_ALL_DEVICES AND DEFAULT_NO_DEVICES)
-  message(FATAL_ERROR 
-  "DEFAULT_ALL_DEVICES AND DEFAULT_NO_DEVICES must not be ON simultaneously")
-endif(DEFAULT_ALL_DEVICES AND DEFAULT_NO_DEVICES)
+option(DEFAULT_ALL_DEVICES
+"Enable all (ON) or enable individually (OFF) devices by default"
+OFF
+)
+
+if(DEFAULT_NO_DEVICES AND DEFAULT_ALL_DEVICES)
+  message(STATUS
+  "WARNING. DEFAULT_NO_DEVICES ON supersedes DEFAULT_ALL_DEVICES ON.")
+  set(DEFAULT_ALL_DEVICES OFF
+  CACHE BOOL
+  "Enable all (ON) or enable individually (OFF) devices by default"
+  FORCE
+  )
+endif(DEFAULT_NO_DEVICES AND DEFAULT_ALL_DEVICES)
 
 
 # The DRIVERS_DEVICE_LIST defined below is a list of
