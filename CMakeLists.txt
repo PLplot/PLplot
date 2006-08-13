@@ -114,6 +114,7 @@ add_subdirectory(doc)
 #add_subdirectory(pkgcfg)
 # needs no cmake processing
 #add_subdirectory(cf)
+summary()
 
 #
 # Packing stuff
