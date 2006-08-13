@@ -19,9 +19,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 add_subdirectory(c)
-if(ENABLE_c++)
+if(ENABLE_cxx)
   add_subdirectory(c++)
-endif(ENABLE_c++)
+endif(ENABLE_cxx)
 if(ENABLE_f77)
   add_subdirectory(f77)
 endif(ENABLE_f77)

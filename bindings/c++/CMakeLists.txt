@@ -18,7 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if(ENABLE_c++)
+if(ENABLE_cxx)
 
 set(plplotcxx${LIB_TAG}_LIB_SRCS
 plstream.cc
@@ -99,4 +99,4 @@ if(PKGCONFIG_EXECUTABLE)
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
 endif(PKGCONFIG_EXECUTABLE)
-endif(ENABLE_c++)
+endif(ENABLE_cxx)

@@ -17,13 +17,13 @@ add_test(examples_c
   sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c"
   )
 
-if(ENABLE_c++)
+if(ENABLE_cxx)
   configure_file(test_cxx.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_cxx.sh)
   add_test(examples_cxx
     sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=cxx"
   )
-endif(ENABLE_c++)
+endif(ENABLE_cxx)
 
 if(ENABLE_f77)
   configure_file(test_f77.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh @ONLY)

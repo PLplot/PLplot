@@ -201,7 +201,7 @@ esac
 # Find out what front-ends have been configured
 if test -z "$FRONT_END" ; then
    FRONT_END=c
-   test "@ENABLE_c++@" = ON && FRONT_END="$FRONT_END cxx"
+   test "@ENABLE_cxx@" = ON && FRONT_END="$FRONT_END cxx"
    test "@ENABLE_f77@" = ON    && FRONT_END="$FRONT_END f77"
    test "@ENABLE_f95@" = ON    && FRONT_END="$FRONT_END f95"
    test "@ENABLE_java@" = ON   && FRONT_END="$FRONT_END java"
