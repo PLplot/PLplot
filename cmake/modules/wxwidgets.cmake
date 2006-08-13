@@ -26,6 +26,13 @@
 # wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
+if(PLD_wxwidgets AND NOT ENABLE_DYNDRIVERS)
+  message(STATUS 
+     "WARNING: This device requires ENABLE_DYNDRIVERS ON, but it is OFF.\n"
+  "   Setting PLD_wxwidgets to OFF."
+  )
+  set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+endif(PLD_wxwidgets AND NOT ENABLE_DYNDRIVERS)
 if(PLD_wxwidgets)
   find_package(wxWidgets)
   if(wxWidgets_FOUND)
