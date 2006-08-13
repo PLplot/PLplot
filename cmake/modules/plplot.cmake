@@ -19,6 +19,9 @@
 
 # Module for determining all configuration variables for PLplot.
 
+# libraries are all shared by default
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
 # Need these modules to do subsequent checks.
 include(CheckIncludeFiles)
 include(CheckFunctionExists)

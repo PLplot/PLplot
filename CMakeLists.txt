@@ -51,17 +51,14 @@ endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
 # End of 2.4.3 bug workarounds.
 
+set(PACKAGE plplot)
+
 # Location where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 # Version data that need modification for each release.
 include(plplot_version)
 # parameters to control overall cmake behaviour.
-
-# libraries are all shared for now.
-set(BUILD_SHARED_LIBS ON)
-
-set(PACKAGE plplot)
 
 # Configure PLplot component variables....
 
