@@ -27,6 +27,7 @@ csa.c
 add_library(csirocsa ${csirocsa_LIB_SRCS})
 SET_TARGET_PROPERTIES(csirocsa
 PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
+INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
 )
 install(TARGETS csirocsa DESTINATION ${LIB_INSTALL_DIR})
 

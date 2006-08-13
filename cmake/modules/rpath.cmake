@@ -22,8 +22,13 @@
 # Module for determining treatment of rpath for PLplot.  Must be
 # included after the instdirs module which defines LIB_DIR.
 
-option(USE_RPATH "Use -rpath when linking libraries" ON)
-if(USE_RPATH)
-  set(CMAKE_INSTALL_RPATH ${LIB_DIR})
-  set(RPATHCMD "-Wl,-rpath -Wl,${LIB_DIR}")
-endif(USE_RPATH)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  # No rpath on Darwin. Setting it will only cause trouble.
+else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  option(USE_RPATH "Use -rpath when linking libraries" ON)
+  if(USE_RPATH)
+    set(CMAKE_INSTALL_RPATH ${LIB_DIR})
+    set(RPATHCMD "-Wl,-rpath -Wl,${LIB_DIR}")
+  endif(USE_RPATH)
+endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+
