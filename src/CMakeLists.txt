@@ -85,36 +85,71 @@ add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
-  set(libplplot${LIB_TAG}_LINK_FLAGS ${LTDL_LIBRARIES})
-  target_link_libraries(
-  plplot${LIB_TAG}
-  ${MATH_LIB}
-  ${libplplot${LIB_TAG}_LINK_FLAGS}
-  )
-  #message("libplplot${LIB_TAG}_LINK_FLAGS =  ${libplplot${LIB_TAG}_LINK_FLAGS}")
+  set(libplplot${LIB_TAG}_LINK_LIBRARIES ${LTDL_LIBRARIES})
+  #message("libplplot${LIB_TAG}_LINK_LIBRARIES =  ${libplplot${LIB_TAG}_LINK_LIBRARIES}")
   #message("libplplot${LIB_TAG}_RPATH = ${libplplot${LIB_TAG}_RPATH}")
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
 else(ENABLE_DYNDRIVERS)
-  set(libplplot${LIB_TAG}_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
-  target_link_libraries(
-  plplot${LIB_TAG}
-  ${MATH_LIB}
-  ${libplplot${LIB_TAG}_LINK_FLAGS}
-  )
+  set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
 endif(ENABLE_DYNDRIVERS)
 
+string(REGEX REPLACE ";" " " 
+libplplot${LIB_TAG}_LINK_FLAGS
+"${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+)
+if(MATH_LIB)
+  set(
+  libplplot${LIB_TAG}_LINK_LIBRARIES
+  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  ${MATH_LIB}
+  )
+  set(
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_FLAGS} -l${MATH_LIB}"
+  )
+endif(MATH_LIB)
+
 if(WITH_CSA)
-  target_link_libraries(plplot${LIB_TAG} csirocsa)
+  set(
+  libplplot${LIB_TAG}_LINK_LIBRARIES
+  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  csirocsa
+  )
+  set(
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsirocsa"
+  )
 endif(WITH_CSA)
 
 if(HAVE_QHULL)
-  target_link_libraries(plplot${LIB_TAG} csironn)
+  set(
+  libplplot${LIB_TAG}_LINK_LIBRARIES
+  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  csironn
+  )
+  set(
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
+  )
 endif(HAVE_QHULL)
 
 if(WITH_FREETYPE)
   set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "-I${FREETYPE_INCLUDE_DIR}")
-  target_link_libraries(plplot${LIB_TAG} ${FREETYPE_LIBRARIES})
+  set(
+  libplplot${LIB_TAG}_LINK_LIBRARIES
+  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  ${FREETYPE_LIBRARIES}
+  )
+  set(
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_FLAGS} ${FREETYPE_LIBRARIES}"
+  )
 endif(WITH_FREETYPE)
+
+target_link_libraries(
+plplot${LIB_TAG}
+${libplplot${LIB_TAG}_LINK_LIBRARIES}
+)
 
 set_target_properties(
 plplot${LIB_TAG}
@@ -126,10 +161,6 @@ INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 
 install(TARGETS plplot${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
 
-string(REGEX REPLACE ";" " " 
-libplplot${LIB_TAG}_LINK_FLAGS
-"${libplplot${LIB_TAG}_LINK_FLAGS}"
-)
 #message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
 
 string(REGEX REPLACE ";" " " 
@@ -160,12 +191,6 @@ if(PKGCONFIG_EXECUTABLE)
   #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
   #			    fields.
   set(PC_DATA "c:::plplot${LIB_TAG}")
-  # Other possibilities:
-  # set(PC_DATA "c++:C++:C++ bindings, :plplot${LIB_TAG})"
-  # set(PC_DATA "f77:F77:Fortran77 bindings, :plplot${LIB_TAG}")
-  # set(PC_DATA "f95:F95:Fortran95 bindings, :plplot${LIB_TAG}")
-  # set(PC_DATA "gnome2:Gnome:Gnome/GTK bindings, :plplot${LIB_TAG}")
-  # set(PC_DATA "tcl:Tcl/Tk:Tcl/Tk bindings, :plplot${LIB_TAG}")
 
   string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
   set(PC_FILE_SUFFIX "")
@@ -174,7 +199,7 @@ if(PKGCONFIG_EXECUTABLE)
   string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
   string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
   set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
+  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${MATH_LIB_FLAG} ${PC_LINK_FLAGS}")
   set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_CONFIGURED_FILE
   ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
@@ -187,25 +212,3 @@ if(PKGCONFIG_EXECUTABLE)
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
 endif(PKGCONFIG_EXECUTABLE)
 
-#original Makefile.am contents follow:
-
-#
-#lib_LTLIBRARIES = libplplot@LIB_TAG@.la
-#
-#version = -version-info $(SOVERSION)
-#
-#sources = \
-#
-#AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL) \
-#  $(UNICODEINCS)
-#
-#libplplot@LIB_TAG@_la_SOURCES  = $(sources)
-#libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined \
-#  $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) -lm $(UNICODELIBS)
-#if !enable_dyndrivers
-#libplplot@LIB_TAG@_la_LIBADD = $(top_builddir)/drivers/libplplotdrv.la
-#else
-#libplplot@LIB_TAG@_la_LIBADD = $(LIBLTDL)
-#endif
-#
-#
