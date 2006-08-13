@@ -96,11 +96,9 @@ set_target_properties(
 plplotjavac_wrap
 PROPERTIES
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+INSTALL_NAME_DIR "${JAVAWRAPPER_HARDDIR}"
 )
 install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_HARDDIR})
-
-# Create java library
-#add_library(plplot STATIC ${JAVA_GEN_FILES_FULL} PLStream.java )
 
 foreach( srcfile ${JAVA_FILES_FULL} )
   get_filename_component( fileroot ${srcfile} NAME_WE )

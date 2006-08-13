@@ -37,10 +37,10 @@ csironn
 PROPERTIES
 SOVERSION ${csironn_SOVERSION}
 VERSION ${csironn_VERSION}
-INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+INSTALL_NAME_DIR "${LIB_DIR}"
 )
 target_link_libraries(csironn ${QHULL_LIB})
-install(TARGETS csironn DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS csironn DESTINATION ${LIB_DIR})
 
 set(nn_DOCFILES
 README

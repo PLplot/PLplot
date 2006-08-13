@@ -64,10 +64,10 @@ PROPERTIES
 SOVERSION ${plplotf95_SOVERSION}
 VERSION ${plplotf95_VERSION}
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+INSTALL_NAME_DIR "${LIB_DIR}"
 )
 
-install(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_DIR})
 
 
 ## Build fortran part of F95 bindings
@@ -91,10 +91,10 @@ PROPERTIES
 SOVERSION ${plplotf95_SOVERSION}
 VERSION ${plplotf95_VERSION}
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+INSTALL_NAME_DIR "${LIB_DIR}"
 )
 
-install(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_DIR})
 
 # Yuk! All Makefiles are run from the top level build directory and
 # so the f90 .mod files end up there rather than in the bindings/f95

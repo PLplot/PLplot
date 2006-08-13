@@ -57,6 +57,7 @@ set_target_properties(
 plplot_widgetmodule
 PROPERTIES
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
 )
 
 install(

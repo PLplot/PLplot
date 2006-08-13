@@ -55,8 +55,9 @@ PROPERTIES
 SOVERSION ${plplotgnome2_SOVERSION} 
 VERSION ${plplotgnome2_VERSION}
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+INSTALL_NAME_DIR "${LIB_DIR}"
 )
-install(TARGETS plplotgnome2${LIB_TAG} DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plplotgnome2${LIB_TAG} DESTINATION ${LIB_DIR})
 
 # Configure pkg-config *.pc file corresponding to libplplotgnome2${LIB_TAG}
 if(PKGCONFIG_EXECUTABLE)
