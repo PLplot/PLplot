@@ -24,6 +24,12 @@
 # Options to enable Java bindings
 OPTION(ENABLE_java "Enable Java bindings" ON)
 
+if(ENABLE_java AND NOT BUILD_SHARED_LIBS)
+  message(STATUS "WARNING: "
+    "Java requires shared libraries. Disabling java bindings")
+  set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+endif(ENABLE_java AND NOT BUILD_SHARED_LIBS)
+
 if(ENABLE_java AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
     "swig not found. Disabling java bindings")

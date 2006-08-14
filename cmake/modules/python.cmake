@@ -22,6 +22,12 @@
 # Options to enable Python bindings
 option(ENABLE_python "Enable Python bindings" ON)
 
+if(ENABLE_python AND NOT BUILD_SHARED_LIBS)
+  message(STATUS "WARNING: "
+    "Python requires shared libraries. Disabling python bindings")
+  set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+endif(ENABLE_python AND NOT BUILD_SHARED_LIBS)
+
 if(ENABLE_python AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
     "swig not found. Disabling python bindings")
