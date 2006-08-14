@@ -56,6 +56,25 @@ if(ENABLE_DYNDRIVERS)
   PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR}"
   )
 else(ENABLE_DYNDRIVERS)
+  set(
+  tclgenfiles
+  ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.h
+  ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen_s.h
+  ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.c
+  )
+
+  add_custom_command(
+  OUTPUT ${tclgenfiles}
+  COMMAND ${PERL_EXECUTABLE}
+  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen
+  ${CMAKE_SOURCE_DIR}/bindings/tcl
+  DEPENDS
+  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen
+  ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
+  ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
+  )
+
   # Static device drivers must be included in the core PLplot library.
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
@@ -72,6 +91,18 @@ else(ENABLE_DYNDRIVERS)
       ${libplplot${LIB_TAG}_COMPILE_FLAGS}
       ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
       )
+      if(SOURCE_ROOT_NAME STREQUAL "tk")
+        set_source_files_properties(
+	${${SOURCE_ROOT_NAME}_SOURCE}
+	PROPERTIES OBJECT_DEPENDS ${tclgenfiles}
+	)
+      endif(SOURCE_ROOT_NAME STREQUAL "tk")
+      if(SOURCE_ROOT_NAME STREQUAL "tkwin")
+        set_source_files_properties(
+	${${SOURCE_ROOT_NAME}_SOURCE}
+	PROPERTIES OBJECT_DEPENDS ${tclgenfiles}
+	)
+      endif(SOURCE_ROOT_NAME STREQUAL "tkwin")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(ENABLE_DYNDRIVERS)

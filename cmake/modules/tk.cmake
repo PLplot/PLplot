@@ -70,6 +70,25 @@ if(PLD_tk)
     ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
     )
+    # All source that is in libtclmatrix
+    set(
+    tk_SOURCE
+    ${tk_SOURCE}
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMatrix.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/matrixInit.c
+    )
+    if(ENABLE_itcl)
+      set(tk_COMPILE_FLAGS
+      "${tk_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
+      )
+      set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITCL_LIBRARY})
+    endif(ENABLE_itcl)
+    if(ENABLE_itk)
+      set(tk_COMPILE_FLAGS
+      "${tk_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
+      )
+      set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITK_LIBRARY})
+    endif(ENABLE_itk)
   endif(NOT ENABLE_DYNDRIVERS)
 endif(PLD_tk)
 
@@ -93,7 +112,8 @@ if(PLD_tkwin)
   if(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
     # All source that is in libplplottcltk
     set(
-    tkwin_SOURCE ${tkwin_SOURCE}
+    tkwin_SOURCE
+    ${tkwin_SOURCE}
     ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
     ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMain.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
@@ -102,5 +122,24 @@ if(PLD_tkwin)
     ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
     )
+    # All source that is in libtclmatrix
+    set(
+    tkwin_SOURCE
+    ${tkwin_SOURCE}
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMatrix.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/matrixInit.c
+    )
+    if(ENABLE_itcl)
+      set(tkwin_COMPILE_FLAGS
+      "${tkwin_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
+      )
+      set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITCL_LIBRARY})
+    endif(ENABLE_itcl)
+    if(ENABLE_itk)
+      set(tkwin_COMPILE_FLAGS
+      "${tkwin_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
+      )
+      set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITK_LIBRARY})
+    endif(ENABLE_itk)
   endif(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
 endif(PLD_tkwin)
