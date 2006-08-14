@@ -132,12 +132,12 @@ void plot(PlplotCanvas *canvas,gdouble offset,char* title)
 }
 
 /* Delete event callback */
-gint delete_event( GtkWidget *widget,GdkEvent *event,gpointer data ) {
+gint delete_event_local( GtkWidget *widget,GdkEvent *event,gpointer data ) {
   return FALSE;
 }
 
 /* Destroy event calback */
-void destroy(GtkWidget *widget,gpointer data) {
+void destroy_local(GtkWidget *widget,gpointer data) {
   G_LOCK(gtkstate);
   gtkstate=GTKSTATE_QUIT;
   G_UNLOCK(gtkstate);
@@ -275,8 +275,8 @@ int main(int argc,char *argv[] )
   
   /* Connect the signal handlers to the window decorations */
   g_signal_connect(G_OBJECT(window),"delete_event",
-		   G_CALLBACK(delete_event),NULL);
-  g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy),NULL);
+		   G_CALLBACK(delete_event_local),NULL);
+  g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy_local),NULL);
   
   /* Put the vbox into the window */
   gtk_container_add(GTK_CONTAINER(window),GTK_WIDGET(vbox));

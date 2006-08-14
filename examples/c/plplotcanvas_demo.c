@@ -40,12 +40,12 @@
 #define HEIGHT 600 /* 300 */
 
 /* Delete event callback */
-gint delete_event( GtkWidget *widget,GdkEvent *event,gpointer data ) {
+gint delete_event_local( GtkWidget *widget,GdkEvent *event,gpointer data ) {
   return FALSE;
 }
 
 /* Destroy event calback */
-void destroy(GtkWidget *widget,gpointer data) {
+void destroy_local(GtkWidget *widget,gpointer data) {
   gtk_main_quit ();
 }
 
@@ -80,8 +80,8 @@ int main(int argc,char *argv[] )
 
   /* Connect the signal handlers to the window decorations */
   g_signal_connect(G_OBJECT(window),"delete_event",
-		   G_CALLBACK(delete_event),NULL);
-  g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy),NULL);
+		   G_CALLBACK(delete_event_local),NULL);
+  g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy_local),NULL);
 
   /* Display everything */
   gtk_widget_show_all(window);
