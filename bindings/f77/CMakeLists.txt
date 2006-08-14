@@ -67,7 +67,7 @@ sccont.c
 scstubs.c
 )
 
-add_library(plplotf77c${LIB_TAG} SHARED ${plplotf77c${LIB_TAG}_LIB_SRCS})
+add_library(plplotf77c${LIB_TAG} ${plplotf77c${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf77c${LIB_TAG} plplot${LIB_TAG})
 
@@ -92,7 +92,7 @@ sfstubs.f
 configurable.f
 )
 
-add_library(plplotf77${LIB_TAG} SHARED ${plplotf77${LIB_TAG}_LIB_SRCS})
+add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
 

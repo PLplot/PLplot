@@ -51,7 +51,7 @@ sccont.c
 scstubs.c
 )
 
-add_library(plplotf95c${LIB_TAG} SHARED ${plplotf95c${LIB_TAG}_LIB_SRCS})
+add_library(plplotf95c${LIB_TAG} ${plplotf95c${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
 
@@ -82,7 +82,7 @@ sfstubs.h
 include(AddFileDependencies)
 add_file_dependencies(sfstubsf95.f90 ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc)
 
-add_library(plplotf95${LIB_TAG} SHARED ${plplotf95${LIB_TAG}_LIB_SRCS})
+add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
 
