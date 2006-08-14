@@ -81,7 +81,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
 add_custom_command(
 OUTPUT ${tclgenfiles}
 COMMAND ${PERL_EXECUTABLE}
-ARGS ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen ${CMAKE_CURRENT_SOURCE_DIR}
+${CMAKE_CURRENT_SOURCE_DIR}/pltclgen ${CMAKE_CURRENT_SOURCE_DIR}
 DEPENDS
 ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen
 ${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
@@ -91,7 +91,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 set_source_files_properties(
 tclAPI.c
-PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
+PROPERTIES OBJECT_DEPENDS "${tclgenfiles}"
 )
 
 set(plplottcltk${LIB_TAG}_LIB_SRCS
