@@ -28,13 +28,13 @@ include(CheckFunctionExists)
 include(CheckPrototypeExists)
 
 macro(TRANSFORM_VERSION _numerical_result _version)
-# _version must be a period-delimited triplet string of the form 
+# _version must be a period-delimited triplet string of the form
 # "major.minor.patch".
 # This macro transforms that into a numerical result that can be compared.
 string(REGEX REPLACE "^(.*)\\..*\\..*$" "\\1" _major ${_version})
 string(REGEX REPLACE "^.*\\.(.*)\\..*$" "\\1" _minor ${_version})
 string(REGEX REPLACE "^.*\\..*\\.(.*)$" "\\1" _patch ${_version})
-math(EXPR ${_numerical_result} 
+math(EXPR ${_numerical_result}
 "${_major}*10000 + ${_minor}*100 + ${_patch}
 ")
 endmacro(TRANSFORM_VERSION)
@@ -58,7 +58,7 @@ option(BUILD_TEST "Compile examples in the build tree and enable ctest" OFF)
 # Headers
 # =======================================================================
 
-# AC_HEADER_STDC is gross overkill since the current PLplot code only uses 
+# AC_HEADER_STDC is gross overkill since the current PLplot code only uses
 # this for whether or not atexit can be used.  But implement the full suite
 # of AC_HEADER_STDC checks to keep the cmake version in synch with autotools
 # and just in case some PLplot developer assumes the complete check for
@@ -112,7 +112,7 @@ if(NOT HAVE_DIRENT_H)
     if(NOT HAVE_SYS_DIR_H)
       check_dirsymbol_exists("sys/types.h;ndir.h" HAVE_NDIR_H)
       if(NOT HAVE_NDIR_H AND UNIX)
-        message(FATAL_ERROR 
+        message(FATAL_ERROR
 	"FATAL_ERROR for plplot.cmake: "
 	"DIR symbol must be defined by Unix system headers."
 	)
@@ -153,7 +153,9 @@ check_function_exists(popen HAVE_POPEN)
 check_function_exists(usleep HAVE_USLEEP)
 check_function_exists(isinf HAVE_ISINF)
 check_function_exists(finite HAVE_FINITE)
-check_function_exists(isnan HAVE_ISNAN)
+check_function_exists(_finite HAVE_FINITE)
+check_function_exists(_isnan HAVE_ISNAN)
+check_function_exists(_isnan PREFIX_UNDERSCORE)
 
 # =======================================================================
 # Language bindings
