@@ -25,9 +25,22 @@ static const double NaN = 0.0 / 0.0;
 
 #elif defined(_WIN32)
 
+#if !defined(_MSC_VER)
+
 static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63) - 1;
 
 #define NaN (*(double*)&lNaN)
+
+#else
+
+#include <float.h>
+#include <ymath.h>
+#undef NaN
+#define NaN _Nan._D
+#define isnan _isnan
+#define copysign _copysign
+
+#endif
 
 #else
 
