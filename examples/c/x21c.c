@@ -24,8 +24,9 @@
 #include "plcdemos.h"
 #include <time.h>
 
-/* #include "..\\..\\lib\csa\\nan.h" */
-#include "nan.h"
+#if defined(_WIN32) && defined(_MSC_VER)
+#define isnan _isnan
+#endif
 
 #if !defined(HAVE_ISNAN)
 #  define isnan(x) ((x) != (x))
