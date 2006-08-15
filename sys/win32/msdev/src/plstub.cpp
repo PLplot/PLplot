@@ -92,6 +92,14 @@ plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 		zopt,zlabel,ztick,nsubz);
 }
 
+/* Calculate world coordinates and subpage from relative device coordinates. */
+
+void WINAPI
+plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window) {
+
+	c_plcalc_world(rx, ry, wx, wy, window);
+}
+
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
 void WINAPI

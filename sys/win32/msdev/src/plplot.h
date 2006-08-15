@@ -507,6 +507,7 @@ typedef struct {
 #define    plgdiori     c_plgdiori
 #define    plgdiplt     c_plgdiplt
 #define    plgfam       c_plgfam
+#define    plgfamadv    c_plgfamadv
 #define    plgfci       c_plgfci
 #define    plgfnam      c_plgfnam
 #define    plglevel     c_plglevel
