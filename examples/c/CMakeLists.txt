@@ -61,7 +61,7 @@ foreach(STRING_INDEX ${c_STRING_INDICES})
   set(c_SRCS ${c_SRCS} x${STRING_INDEX}c.c)
   if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
     add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)
-    target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} m)
+    target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} ${MATH_LIB})
   endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
 endforeach(STRING_INDEX ${c_STRING_INDICES})
 
