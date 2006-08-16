@@ -3,31 +3,28 @@
 
 # This module defines the following uncached variables:
 #  GDI32_FOUND, if false, do not try to use gdi32.
-#  GDI32_INCLUDE_DIRS, where to find cd.h.
 #  GDI32_LIBRARIES, the libraries to link against to use gdi32
-#  GDI32_LIBRARY_DIRS, the directory where libgdi32.a is found.
 
-SET(GDI32_LIBRARY gdi32)
+set(GDI32_LIBRARY gdi32)
 
-TRY_COMPILE(TESTGDI32
+try_compile(TESTGDI32
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/cmake/modules/FindGDI32.c
   CMAKE_FLAGS -DLINK_LIBRARIES=${GDI32_LIBRARY}
   OUTPUT_VARIABLE OUTPUT)
-FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
-  "Determining if gdi32 is available with "
-  "the following output:\n${OUTPUT}\n\n")
-IF(TESTGDI32)
+if(TESTGDI32)
   set(GDI32_FOUND ON)
-  set(GDI32_INCLUDE_DIRS "")
-  set(GDI32_LIBRARY_DIRS "")
   set(GDI32_LIBRARIES ${GDI32_LIBRARY})
-ELSE(TESTGDI32)
+  file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
+  "Determining if gdi32 is available passed with "
+  "the following output:\n${OUTPUT}\n\n")
+else(TESTGDI32)
   set(GDI32_FOUND OFF)
-  set(GDI32_INCLUDE_DIRS "")
-  set(GDI32_LIBRARY_DIRS "")
   set(GDI32_LIBRARIES "")
-ENDIF(TESTGDI32)
+  file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+  "Determining if gdi32 is available failed with "
+  "the following output:\n${OUTPUT}\n\n")
+endif(TESTGDI32)
 
 if(GDI32_FOUND)
   if(NOT GDI32_FIND_QUIETLY)
