@@ -27,14 +27,14 @@
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
 if(PLD_wingcc)
-  message(STATUS "Looking for windows.h and libgdi32.a")
+  message(STATUS "Looking for gdi32 header and library")
   find_package(GDI32)
   if(GDI32_FOUND)
-    message(STATUS "Looking for windows.h and libgdi32.a - found")
+    message(STATUS "Looking for gdi32 header and library - found")
     set(wingcc_LINK_FLAGS "${GDI32_LIBRARIES}")
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${wingcc_LINK_FLAGS})
   else(GDI32_FOUND)
-    message(STATUS "Looking for windows.h and libgdi32.a - not found")
+    message(STATUS "Looking for gdi32 header and library - not found")
     message(STATUS "WARNING: Setting PLD_wingcc to OFF.")
     set(PLD_wingcc OFF CACHE BOOL "Enable wingcc device" FORCE)    
   endif(GDI32_FOUND)
