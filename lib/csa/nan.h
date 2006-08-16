@@ -25,7 +25,7 @@ static const double NaN = 0.0 / 0.0;
 
 #elif defined(_WIN32)
 
-#if !defined(_MSC_VER)
+#if !defined(_MSC_VER) || _MSC_VER != 600
 
 static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63) - 1;
 
