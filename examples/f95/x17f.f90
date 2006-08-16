@@ -35,7 +35,7 @@
       character*20 legline(4)
       character*20 toplab
 
-      logical      errcode
+      logical      pl_errcode
       character*80 errmsg
 
 !      some fortran compilers demand typing of intrinsic rand, and
@@ -115,7 +115,7 @@
 !      Register our error variables with PLplot
 !      From here on, we're handling all errors here
 
-!      TODO: call plsError(&errcode, errmsg)
+!      TODO: call plsError(&pl_errcode, errmsg)
 
       call plstripc(id1, 'bcnst', 'bcnstv', &
         tmin, tmax, tjump, ymin, ymax, &
@@ -125,8 +125,8 @@
         colline, styline, legline, &
         't', ' ', 'Strip chart demo')
 
-      errcode = .false.
-      if ( errcode ) then
+      pl_errcode = .false.
+      if ( pl_errcode ) then
         write(*,*) errmsg
         stop
       endif

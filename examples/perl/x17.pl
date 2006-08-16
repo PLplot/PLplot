@@ -91,7 +91,7 @@ plvsta ();
 # Register our error variables with PLplot
 # From here on, we're handling all errors here
 # N.B : plsError is not implement in the PErlDL binding
-# plsError (&errcode, errmsg);
+# plsError (&pl_errcode, errmsg);
 
 my $id1 = plstripc ($tmin, $tmax, $tjump, $ymin, $ymax,
                     $xlab, $ylab,
@@ -102,7 +102,7 @@ my $id1 = plstripc ($tmin, $tmax, $tjump, $ymin, $ymax,
                     "t", "", "Strip chart demo");
 
 # N.B : plsError is not implement in the PErlDL binding
-# if (errcode) {
+# if (pl_errcode) {
 #   fprintf(stderr, "%s\n", errmsg);
 #   exit(1);
 # }

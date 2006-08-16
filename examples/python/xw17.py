@@ -85,7 +85,7 @@ def main():
 # Register our error variables with PLplot 
 # From here on, we're handling all errors here 
 
-    #plsError(&errcode, errmsg)
+    #plsError(&pl_errcode, errmsg)
 
     id1 = plstripc("bcnst", "bcnstv",
                    tmin, tmax, tjump, ymin, ymax,

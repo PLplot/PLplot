@@ -38,7 +38,7 @@ class x17 {
     PLStream pls = new PLStream();
     
     // plerror is not implement in java at this time
-    static int errcode = 0;
+    static int pl_errcode = 0;
     static String errmsg = null;
 
 
@@ -106,7 +106,7 @@ class x17 {
 	// Register our error variables with PLplot
 	// From here on, we're handling all errors here
 	
-	//pls.sError(&errcode, errmsg);
+	//pls.sError(&pl_errcode, errmsg);
 
 	pls.stripc(id1, "bcnst", "bcnstv",
 		   tmin, tmax, tjump, ymin, ymax,
@@ -116,7 +116,7 @@ class x17 {
 		   colline, styline, legline,
 		   "t", "", "Strip chart demo");
        
-	if (errcode != 0) {
+	if (pl_errcode != 0) {
 	    System.out.println(errmsg);
 	    pls.end();
 	    System.exit(1);

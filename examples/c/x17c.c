@@ -17,7 +17,7 @@
 
 /* Variables for holding error return info from PLplot */
 
-static PLINT errcode;
+static PLINT pl_errcode;
 static char errmsg[160];
 
 /*--------------------------------------------------------------------------*\
@@ -94,7 +94,7 @@ main(int argc, char *argv[])
 /* Register our error variables with PLplot */
 /* From here on, we're handling all errors here */
 
-    plsError(&errcode, errmsg);
+    plsError(&pl_errcode, errmsg);
 
     plstripc(&id1, "bcnst", "bcnstv",
 	     tmin, tmax, tjump, ymin, ymax,
@@ -104,7 +104,7 @@ main(int argc, char *argv[])
 	     colline, styline, legline, 
 	     "t", "", "Strip chart demo"); 
 
-    if (errcode) {
+    if (pl_errcode) {
 	fprintf(stderr, "%s\n", errmsg);
 	exit(1);
     }

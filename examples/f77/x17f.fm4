@@ -35,7 +35,7 @@ C--------------------------------------------------------------------------
       real*8 PI
       parameter ( PI = 3.1415926535897932384d0 )
 
-      logical      errcode
+      logical      pl_errcode
       character*80 errmsg
 
       integer PL_PARSE_FULL
@@ -118,7 +118,7 @@ C      Initialize plplot
 C      Register our error variables with PLplot
 C      From here on, we're handling all errors here
 
-C      TODO: call plsError(&errcode, errmsg)
+C      TODO: call plsError(&pl_errcode, errmsg)
 
       call plstripc(id1, 'bcnst', 'bcnstv',
      &  tmin, tmax, tjump, ymin, ymax,
@@ -128,8 +128,8 @@ C      TODO: call plsError(&errcode, errmsg)
      &  colline, styline, legline,
      &  't', ' ', 'Strip chart demo')
 
-      errcode = .false.
-      if ( errcode ) then
+      pl_errcode = .false.
+      if ( pl_errcode ) then
         write(*,*) errmsg
         stop
       endif

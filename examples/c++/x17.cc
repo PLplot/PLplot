@@ -49,12 +49,12 @@ private:
   plstream *pls;
 
 public:
-  static PLINT errcode;
+  static PLINT pl_errcode;
   static char errmsg[160];
 
 };
 
-PLINT x17::errcode = 0;
+PLINT x17::pl_errcode = 0;
 char x17::errmsg[160] = "";
 
 x17::x17( int argc, char ** argv ) {
@@ -120,7 +120,7 @@ x17::x17( int argc, char ** argv ) {
   // Register our error variables with PLplot
   // From here on, we're handling all errors here
 
-  pls->sError(&errcode, errmsg);
+  pls->sError(&pl_errcode, errmsg);
 
   pls->stripc(&id1, "bcnst", "bcnstv",
              tmin, tmax, tjump, ymin, ymax,
@@ -130,7 +130,7 @@ x17::x17( int argc, char ** argv ) {
              colline, styline, legline,
              "t", "", "Strip chart demo");
 
-  if (errcode) {
+  if (pl_errcode) {
     cout << errmsg << endl;
     delete pls;
     exit(1);
