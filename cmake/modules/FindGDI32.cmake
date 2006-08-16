@@ -7,32 +7,34 @@
 #  GDI32_LIBRARIES, the libraries to link against to use gdi32
 #  GDI32_LIBRARY_DIRS, the directory where libgdi32.a is found.
 
-check_include_files(windows.h HAVE_WINDOWS_H)
+SET(GDI32_LIBRARY gdi32)
 
-if(HAVE_WINDOWS_H)
-  # finding the path where libgdi32.a resides is kind of a hack and only works for mingw
-  # should the wingcc driver also work for visual c++?
-  get_filename_component(GDI32_LIBRARY_DIRS ${CMAKE_CXX_COMPILER} PATH)
-  SET( GDI32_LIBRARY_DIRS ${GDI32_LIBRARY_DIRS}/../lib)
-  find_library(
-    GDI32_LIBRARY
-    NAMES gdi32
-    PATHS ${GDI32_LIBRARY_DIRS}
-    NO_SYSTEM_ENVIRONMENT_PATH
-  )
-  if(GDI32_LIBRARY)
-    set(GDI32_FOUND ON)
-    set(GDI32_INCLUDE_DIRS "")
-    set(GDI32_LIBRARIES ${GDI32_LIBRARY})
-  endif(GDI32_LIBRARY)
-endif(HAVE_WINDOWS_H)
-	    
+TRY_COMPILE(TESTGDI32
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/cmake/modules/FindGDI32.c
+  CMAKE_FLAGS -DLINK_LIBRARIES=${GDI32_LIBRARY}
+  OUTPUT_VARIABLE OUTPUT)
+FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
+  "Determining if gdi32 is available with "
+  "the following output:\n${OUTPUT}\n\n")
+IF(TESTGDI32)
+  set(GDI32_FOUND ON)
+  set(GDI32_INCLUDE_DIRS "")
+  set(GDI32_LIBRARY_DIRS "")
+  set(GDI32_LIBRARIES ${GDI32_LIBRARY})
+ELSE(TESTGDI32)
+  set(GDI32_FOUND OFF)
+  set(GDI32_INCLUDE_DIRS "")
+  set(GDI32_LIBRARY_DIRS "")
+  set(GDI32_LIBRARIES "")
+ENDIF(TESTGDI32)
+
 if(GDI32_FOUND)
   if(NOT GDI32_FIND_QUIETLY)
-    message(STATUS "FindGDI32: Found both windows.h and libgdi32.a")
+    message(STATUS "FindGDI32: Found gdi32 header file and library")
   endif(NOT GDI32_FIND_QUIETLY)
 else(GDI32_FOUND)
   if(GDI32_FIND_REQUIRED)
-    message(FATAL_ERROR "FindGDI32: Could not find windows.h and/or libgdi32.a")
+    message(FATAL_ERROR "FindGDI32: Could not find gdi32 header file and/or library")
   endif(GDI32_FIND_REQUIRED)
 endif(GDI32_FOUND)
