@@ -38,7 +38,7 @@ ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode-gen.c
 add_executable(plhershey-unicode-gen ${plhershey-unicode-gen_SRCS})
 
 add_custom_target(
-plhershey-unicode.h ALL
+plhershey-unicode.h
 ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode-gen${EXEEXT}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 plhershey-unicode.h
