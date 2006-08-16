@@ -153,9 +153,15 @@ check_function_exists(popen HAVE_POPEN)
 check_function_exists(usleep HAVE_USLEEP)
 check_function_exists(isinf HAVE_ISINF)
 check_function_exists(finite HAVE_FINITE)
-check_function_exists(_finite HAVE_FINITE)
-check_function_exists(_isnan HAVE_ISNAN)
-check_function_exists(_isnan PREFIX_UNDERSCORE)
+if(NOT HAVE_FINITE)
+  check_function_exists(_finite _HAVE_FINITE)
+  set(HAVE_FINITE ${_HAVE_FINITE} CACHE INTERNAL "Have function _finite")
+endif(NOT HAVE_FINITE)
+check_function_exists(isnan HAVE_ISNAN)
+if(NOT HAVE_ISNAN)
+  check_function_exists(_isnan _HAVE_ISNAN)
+  set(HAVE_ISNAN ${_HAVE_ISNAN} CACHE INTERNAL "Have function _isnan")
+endif(NOT HAVE_ISNAN)
 
 # =======================================================================
 # Language bindings
