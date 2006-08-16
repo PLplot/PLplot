@@ -26,13 +26,20 @@
 # wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
+# Must have dynamic devices enabled since wxwidgets is written in C++ which
+# in the static devices case is put in with C objects in libplplot(d)
+# which won't work for some platforms.  However, as an experiment we are
+# allowing this for WIN32 (bare windows, Cygwin, and MinGW) platforms.
 if(PLD_wxwidgets AND NOT ENABLE_DYNDRIVERS)
-  message(STATUS 
-     "WARNING: This device requires ENABLE_DYNDRIVERS ON, but it is OFF.\n"
-  "   Setting PLD_wxwidgets to OFF."
-  )
-  set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+  if(NOT WIN32)
+    message(STATUS 
+       "WARNING: This device requires ENABLE_DYNDRIVERS ON, but it is OFF.\n"
+    "   Setting PLD_wxwidgets to OFF."
+    )
+    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+  endif(NOT WIN32)
 endif(PLD_wxwidgets AND NOT ENABLE_DYNDRIVERS)
+
 if(PLD_wxwidgets)
   find_package(wxWidgets)
   if(wxWidgets_FOUND)

@@ -35,6 +35,20 @@
 # set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
 
+# Must have dynamic devices enabled since psttf is written in C++ which
+# in the static devices case is put in with C objects in libplplot(d)
+# which won't work for some platforms.  However, as an experiment we are
+# allowing this for WIN32 (bare windows, Cygwin, and MinGW) platforms.
+if(PLD_psttf AND NOT ENABLE_DYNDRIVERS)
+  if(NOT WIN32)
+    message(STATUS 
+       "WARNING: This device requires ENABLE_DYNDRIVERS ON, but it is OFF.\n"
+    "   Setting PLD_psttf to OFF."
+    )
+    set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+  endif(NOT WIN32)
+endif(PLD_psttf AND NOT ENABLE_DYNDRIVERS)
+
 # Look for psttf headers and libraries with pkg-config
 if(PLD_psttf)
   if(NOT PKGCONFIG_EXECUTABLE)
@@ -44,17 +58,6 @@ if(PLD_psttf)
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
   endif(NOT PKGCONFIG_EXECUTABLE)
 endif(PLD_psttf)
-
-# Must have dynamic devices enabled since psttf is written in C++ which
-# in the static devices case is put in with C objects in libplplot(d)
-# which won't work for some platforms.
-if(PLD_psttf AND NOT ENABLE_DYNDRIVERS)
-  message(STATUS 
-     "WARNING: This device requires ENABLE_DYNDRIVERS ON, but it is OFF.\n"
-  "   Setting PLD_psttf to OFF."
-  )
-  set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
-endif(PLD_psttf AND NOT ENABLE_DYNDRIVERS)
 
 if(PLD_psttf)
   pkgconfig("pango;pangoft2;lasi" includedir libdir linkflags cflags)
