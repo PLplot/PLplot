@@ -78,7 +78,7 @@ sfstubsf95.f90
 sfstubs.h
 )
 
-# Explicitly include dependancies for sfstubsf95.f90
+# Explicitly include dependencies for sfstubsf95.f90
 include(AddFileDependencies)
 add_file_dependencies(sfstubsf95.f90 ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc)
 
