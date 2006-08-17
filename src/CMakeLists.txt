@@ -113,7 +113,7 @@ ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
-add_dependencies(plplot${LIB_TAG} plhershey-unicode.h)
+add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built)
 
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
