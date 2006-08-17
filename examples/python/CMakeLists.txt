@@ -86,17 +86,12 @@ PERMISSIONS ${PERM_SCRIPTS}
 
 # This list contains python modules which are not executable on their own and
 # data files that should be installed in the examples/python directory.
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.in
-${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
-)
 
 set(
 python_DATA
 ${python_DATA}
 README.pythondemos
 qplplot.py
-${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
 )
 
 if(ENABLE_pygcw)
@@ -116,4 +111,43 @@ WORLD_READ
 install(FILES ${python_DATA} 
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_DATA}
+)
+
+if(BUILD_TEST AND
+NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+  # equivalent to install commands but at "make" time rather than
+  # "make install" time, to the build tree if different than the source
+  # tree, and skipping plplot_python_start.py since it is already
+  # in the build tree.
+  foreach(file ${python_SCRIPTS} ${python_DATA})
+    add_custom_target(${CMAKE_CURRENT_BINARY_DIR}/${file} ALL
+    COMMAND ${CMAKE_COMMAND} -E copy 
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+    )
+  endforeach(file ${python_SCRIPTS} ${python_DATA})
+endif(BUILD_TEST AND 
+NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
+set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
+${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
+@ONLY
+)
+
+set(python_location1 ${PYTHON_INSTDIR})
+set(python_location2)
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
+${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
+@ONLY
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
+DESTINATION ${DATA_DIR}/examples/python
+PERMISSIONS ${PERM_DATA}
+RENAME plplot_python_start.py
 )

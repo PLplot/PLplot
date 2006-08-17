@@ -49,7 +49,7 @@ if(ENABLE_java)
     )
   set(SCRIPTS ${SCRIPTS} test_java.sh)
   add_test(examples_java
-    sh -c "${JAVA_TEST_ENVIRONMENT} ./plplot-test.sh --front-end=java" 
+    sh -c "${JAVA_TEST_ENVIRONMENT} ./plplot-test.sh --front-end=java"
   )
 endif(ENABLE_java)
 
@@ -69,6 +69,9 @@ if(ENABLE_python)
     @ONLY
     )
   set(SCRIPTS ${SCRIPTS} test_python.sh)
+  add_test(examples_python
+    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=python"
+  )
 endif(ENABLE_python)
 
 if(ENABLE_tcl)
@@ -108,4 +111,3 @@ FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
 DESTINATION ${DATA_DIR}/examples
 PERMISSIONS ${PERM_SCRIPTS}
 )
-
