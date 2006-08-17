@@ -48,19 +48,27 @@ set(f95_STRING_INDICES
 set(ENABLE_BUILDTREE_EXAMPLES ON)
 if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
   remove_definitions("-DHAVE_CONFIG_H")
-  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include ${CMAKE_BINARY_DIR})
+  # N.B. This is required because it's the location of plplot.mod
+  # generated as a by-product of building libplplotf95${LIB_TAG}.
+  include_directories(${CMAKE_BINARY_DIR})
+
+  # Temporary workaround for module handling bug in CMake 2.4.3.  Create a
+  # file with arbitrary contents called plplot.mod.proxy in top-level
+  # build tree.  As a temporary measure we use cmake_workaround.f as the
+  # generator of this file.  (cmake_workaround.f was previously compiled,
+  # but that is no longer the case.)  Note, once CMake is fixed this comment
+  # the following configure_file command and cmake_workaround.f should all
+  # just disappear.
+  configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake_workaround.f
+  ${CMAKE_BINARY_DIR}/plplot.mod.proxy
+  COPYONLY
+  )
 endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
 foreach(STRING_INDEX ${f95_STRING_INDICES})
   set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
   if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
-# CMake fortran support is currently broken with respect to generating
-# dependencies with external modules. To work around this requires
-# the additional fortran file cmake_workaround.f. This is only required
-# for building the examples in the build tree for testing. Once cmake
-# is fixed all references to it should be removed.
-# See comments in cmake_workaround.f for more details. 
-# Andrew Ross 30/07/2006
-    add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90 cmake_workaround.f)
+    add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
     target_link_libraries(x${STRING_INDEX}f plplotf95${LIB_TAG})
   endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
 endforeach(STRING_INDEX ${f95_STRING_INDICES})

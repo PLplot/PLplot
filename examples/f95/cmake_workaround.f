@@ -1,3 +1,9 @@
+c     This is now simply a file configured by CMake into plplot.mod.proxy
+c     in the top-level build tree.  It turns out that any file with any
+c     contents with that name is all that is required to work around the
+c     CMake 2.4.3 bug described below.  So this file is no longer actually
+c     compiled. Alan W. Irwin 2006-08-17.
+
 c     This is a dummy fortran file needed to work around a bug in the
 c     current (2.4.2) cmake code when compiling the fortran examples 
 c     in the build tree. Once cmake is fixed this file and all
