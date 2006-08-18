@@ -342,7 +342,7 @@ void x14::plot4(plstream *pls)
 /* Draw radial spokes for polar grid */
 
 	pls->join(0.0, 0.0, dx, dy);
-	sprintf(text, "%d", (int)rint(theta));
+	sprintf(text, "%d", (int)ROUND(theta));
 
 /* Write labels for angle */
 

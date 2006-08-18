@@ -33,6 +33,11 @@
   #define isnan(x) ((x) != (x))
 #endif
 
+#if defined(_WIN32) && defined(_MSC_VER) 
+  #undef isnan
+  #define isnan _isnan
+#endif
+
 // Need for some Mac OSX systems with broken <cmath> header
 #ifdef BROKEN_ISNAN_CXX
 extern "C" int isnan (double);
@@ -41,6 +46,11 @@ extern "C" int isnan (double);
 #ifdef USE_NAMESPACE
 using namespace std;
 #endif
+
+/* Function drand48() does not exist on all platforms
+   and is deprecated on others. Use rand() instead
+*/
+#define drand48 (1.0/RAND_MAX)*(PLFLT)rand
 
 class x21 {
 

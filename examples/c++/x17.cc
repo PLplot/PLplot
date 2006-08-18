@@ -158,7 +158,7 @@ x17::x17( int argc, char ** argv ) {
 # endif
 #endif
     t = (double)n * dt;
-    noise = drand48() - 0.5;
+    noise = ((double)rand()/(RAND_MAX+1.0)) - 0.5;
     y1 = y1 + noise;
     y2 = sin(t*M_PI/18.);
     y3 = y2 * noise;
