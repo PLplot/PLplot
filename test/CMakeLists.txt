@@ -77,6 +77,9 @@ endif(ENABLE_python)
 if(ENABLE_tcl)
   configure_file(test_tcl.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_tcl.sh)
+  add_test(examples_tcl
+    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=tcl"
+  )
 endif(ENABLE_tcl)
 
 if(ENABLE_pdl)

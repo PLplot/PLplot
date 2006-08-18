@@ -60,10 +60,38 @@ endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
 install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
 
-add_custom_target(tclIndex_examples_tcl ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-DEPENDS ${tcl_FILES} ${tcl_SCRIPTS}
-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+set(tclIndex_DEPENDS ${tcl_FILES} ${tcl_SCRIPTS})
+set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+if(BUILD_TEST AND
+NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+  # equivalent to install commands but at "make" time rather than
+  # "make install" time, to the build tree if different than the source
+  # tree.
+  set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set(tclIndex_DEPENDS)
+  foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
+    set(
+    tclIndex_DEPENDS
+    ${tclIndex_DEPENDS}
+    ${CMAKE_CURRENT_BINARY_DIR}/${file}
+    )
+    add_custom_target(${CMAKE_CURRENT_BINARY_DIR}/${file} ALL
+    COMMAND ${CMAKE_COMMAND} -E copy 
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+    )
+  endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
+endif(BUILD_TEST AND 
+NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-install(FILES tclIndex DESTINATION ${DATA_DIR}/examples/tcl)
+add_custom_target(tclIndex_examples_tcl ALL
+COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+DEPENDS ${tclIndex_DEPENDS}
+WORKING_DIRECTORY ${tclIndex_WORKING_DIRECTORY}
+)
+
+install(
+FILES ${tclIndex_WORKING_DIRECTORY}/tclIndex 
+DESTINATION ${DATA_DIR}/examples/tcl
+)
