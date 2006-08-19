@@ -147,9 +147,11 @@ static void CopySCRtoBMP(PLStream *pls);
 /*--------------------------------------------------------------------------*\
  *  Some debugging macros
 \*--------------------------------------------------------------------------*/
-
+/*
 #define Verbose(...) do {if (pls->verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
 #define Debug(...) do {if (pls->debug){fprintf(stderr,__VA_ARGS__);}}while(0)
+*/
+#define Debug(a) do {if (pls->debug){fprintf(stderr,(a));}}while(0)
 
 #define ReportWinError() do { \
 LPVOID lpMsgBuf; \
