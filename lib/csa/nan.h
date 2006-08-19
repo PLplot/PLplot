@@ -23,9 +23,9 @@
 
 static const double NaN = 0.0 / 0.0;
 
-#elif defined(_WIN32)
+#elif defined(WIN32)
 
-#if !defined(_MSC_VER) || _MSC_VER != 600
+#if !defined(_MSC_VER)
 
 static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63) - 1;
 
@@ -33,10 +33,18 @@ static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63) - 1;
 
 #else
 
+/* MSVC/C++ 6.0 reports a version 1200,
+   MSVC/C++ 2003 reports a version 1300
+*/
 #include <float.h>
 #include <ymath.h>
 #undef NaN
+#if _MSC_VER < 1300
 #define NaN _Nan._D
+#else
+#define NaN _Nan._Double
+#endif
+
 #define isnan _isnan
 #define copysign _copysign
 
