@@ -97,7 +97,6 @@ typedef struct {
     char          waiting;             /* Flag to indicate drawing is done, and it is waiting; */
                                        /* we only do a windows redraw if plplot is plotting */
     char          enterresize;         /* Used to keep track of reszing messages from windows */
-    char          resize;              /* When "entersize" is set and "reszie" isnt, user maximised the window */
     char          already_erased;      /* Used to track first and only first backgroudn erases */
 
   } wingcc_Dev;
@@ -270,7 +269,6 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                 else if ((dev->waiting==1)&&(dev->already_erased==2))
                   {
                     dev->oldobject = SelectObject(dev->hdc2,dev->bitmap);
-/*                    BitBlt(dev->hdc,0,0,dev->rect.right,dev->rect.bottom,dev->hdc2,0,0,SRCCOPY); */
                     BitBlt(dev->hdc,dev->paintrect.left,dev->paintrect.top,
                            dev->paintrect.right,dev->paintrect.bottom,
                            dev->hdc2,dev->paintrect.left,dev->paintrect.top,SRCCOPY);
@@ -289,10 +287,10 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
         if (dev)
           {
             Debug("WM_SIZE\t");
+
             if (dev->enterresize==0)
               Resize(pls);
-            else
-              dev->resize=1;
+
           }
         return(0);
       break;
@@ -313,13 +311,12 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
           	Debug("WM_EXITSIZEMOVE\t");
             Resize(pls);
           	dev->enterresize=0;   /* Reset the variables that track sizing ops */
-          	dev->resize=0;
           }
-
           return(0);
-			break;
+      break;
 
       case WM_ERASEBKGND:
+
       if (dev)
         {
           if (dev->already_erased==0)
@@ -331,26 +328,15 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
            *    supposidely this executes faster than creating a brush and
            *    filling a rectangle - go figure ?
            */
-/*          GetClientRect(dev->hwnd,&dev->rect); */
+
+           /*GetClientRect(dev->hdc,&dev->rect);*/
            dev->oldcolour = SetBkColor(dev->hdc, RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
            ExtTextOut(dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0);
            SetBkColor(dev->hdc, dev->oldcolour);
 
-          /*
-           *   This is the old "low speed" way of filling the background
-
-
-          dev->bgbrush = CreateSolidBrush(RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
-          GetClientRect(dev->hwnd,&dev->rect);
-          SelectObject (dev->hdc, dev->bgbrush);
-          FillRect(dev->hdc, &dev->rect,dev->bgbrush);
-          DeleteObject (dev->bgbrush);
-
-          */
            dev->already_erased=1;
+           return(1);
           }
-
-          return(1);
         }
         return(0);
         break;
@@ -722,7 +708,6 @@ plD_fill_polygon_wingcc(PLStream *pls)
 static void CopySCRtoBMP(PLStream *pls)
 {
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
-  RECT rect;
 
   /*
    *   Clean up the old bitmap and DC
@@ -732,11 +717,10 @@ static void CopySCRtoBMP(PLStream *pls)
   if (dev->bitmap!=NULL) DeleteObject(dev->bitmap);
 
   dev->hdc2=CreateCompatibleDC(dev->hdc);
-/*  GetClipBox(dev->hdc,&rect);
-  GetClientRect(dev->hwnd,&dev->rect); */
+  GetClientRect(dev->hwnd,&dev->rect);
   dev->bitmap=CreateCompatibleBitmap(dev->hdc,dev->rect.right,dev->rect.bottom);
   dev->oldobject=SelectObject(dev->hdc2,dev->bitmap);
-  BitBlt(dev->hdc2,0,0,rect.right,rect.bottom,dev->hdc,0,0,SRCCOPY);
+  BitBlt(dev->hdc2,0,0,dev->rect.right,dev->rect.bottom,dev->hdc,0,0,SRCCOPY);
   SelectObject(dev->hdc2,dev->oldobject);
 }
 
@@ -928,9 +912,9 @@ static void Resize( PLStream *pls )
  	if (dev->waiting==1)     /* Only resize the window IF plplot has finished with it */
   	{
   	   memcpy(&dev->oldrect,&dev->rect,sizeof(RECT));
-/*   	GetClipBox(dev->hdc,&dev->rect); */                 /* Find out how big the region is NOW */
       GetClientRect(dev->hwnd,&dev->rect);
       Debug("[%d %d]",dev->rect.right,dev->rect.bottom);
+
    	if ((dev->rect.right>0)&&(dev->rect.bottom>0))    /* Check to make sure it isn't just minimised (i.e. zero size) */
         {
           if (memcmp(&dev->rect,&dev->oldrect,sizeof(RECT))!=0)   /* See if the window's changed size or not */
@@ -955,9 +939,7 @@ static void Resize( PLStream *pls )
                 }
 #endif
            }
-          RedrawWindow(dev->hwnd,NULL,NULL,RDW_INVALIDATE|RDW_ERASE|RDW_ERASENOW);
-          SendMessage(dev->hwnd,WM_PAINT,0,0);
-          dev->already_erased=2;
+          RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_ERASENOW);
         }
        else
          {
