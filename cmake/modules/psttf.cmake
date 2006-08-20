@@ -35,19 +35,17 @@
 # set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
 
-# Must have dynamic devices enabled since psttf is written in C++ which
-# in the static devices case is put in with C objects in libplplot(d)
-# which won't work for some platforms.  However, as an experiment we are
-# allowing this for WIN32 (bare windows, Cygwin, and MinGW) platforms.
-if(PLD_psttf AND NOT ENABLE_DYNDRIVERS)
-  if(NOT WIN32)
-    message(STATUS 
-       "WARNING: This device requires ENABLE_DYNDRIVERS ON, but it is OFF.\n"
-    "   Setting PLD_psttf to OFF."
-    )
-    set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
-  endif(NOT WIN32)
-endif(PLD_psttf AND NOT ENABLE_DYNDRIVERS)
+# psttf is written in C++ which in the static devices case is put in
+# with C objects in libplplot(d) which won't work for some tool chains.
+# So only allow this device in the dynamic devices case or if the user has
+# specifically enabled the option of mixing C++ code into libplplot.
+if(PLD_psttf AND NOT ENABLE_DYNDRIVERS AND NOT ENABLE_MIX_CXX)
+  message(STATUS 
+     "WARNING: This device requires ENABLE_DYNDRIVERS ON or\n"
+  "   ENABLE_MIX_CXX ON.  Both are OFF.  Setting PLD_psttf to OFF."
+  )
+  set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+endif(PLD_psttf AND NOT ENABLE_DYNDRIVERS AND NOT ENABLE_MIX_CXX)
 
 # Look for psttf headers and libraries with pkg-config
 if(PLD_psttf)

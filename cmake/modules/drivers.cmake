@@ -55,8 +55,21 @@ if(ENABLE_DYNDRIVERS)
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
     "Enable dynamic loading of device drivers" FORCE)
   endif(LTDL_FOUND)
+else(ENABLE_DYNDRIVERS)
+  option(ENABLE_MIX_CXX
+  "Allow mixing C++ device object code into libplplot C library"
+  OFF
+  )
+  if(ENABLE_MIX_CXX)
+    message(STATUS 
+       "WARNING: ENABLE_MIX_CXX ON has been specified.  This experimental\n"
+    "   option allows mixing C++ device object code into the core PLplot C \n"
+    "   library which will cause linking issues (unresolved references)\n"
+    "   on many platforms.  If such problems occur use the default\n"
+    "   (ENABLE_MIX_CXX OFF)."
+    )
+  endif(ENABLE_MIX_CXX)
 endif(ENABLE_DYNDRIVERS)
-
 
 # Decide whether to enable each device or not and find special resources
 # when required.
