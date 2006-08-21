@@ -265,7 +265,15 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 
                 if ((dev->waiting==1)&&(dev->already_erased==1))
                   {
-                    Debug("Remaking\t");
+                      Debug("Remaking\t");
+
+                      if (dev->ps.fErase)
+                        {
+                          dev->oldcolour = SetBkColor(dev->hdc, RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
+                          ExtTextOut(dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0);
+                          SetBkColor(dev->hdc, dev->oldcolour);
+                        }
+
                       plRemakePlot(pls);
                       CopySCRtoBMP(pls);
                       dev->already_erased++;
@@ -477,7 +485,7 @@ plD_init_wingcc(PLStream *pls)
 	dev->wndclass.cbSize = sizeof(WNDCLASSEX);
 
 	/* All windows of this class redraw when resized. */
-	dev->wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_SAVEBITS | CS_DBLCLKS;
+	dev->wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC | CS_PARENTDC	;
 
 	/* All windows of this class use the WndProc window function. */
 	dev->wndclass.lpfnWndProc = PlplotWndProc;
