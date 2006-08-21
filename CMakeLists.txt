@@ -79,7 +79,9 @@ if (BUILD_TEST)
   enable_testing()
 endif (BUILD_TEST)
 
-
+if(WIN32)
+  ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
+endif(WIN32)
 
 set(top_level_DOCFILES
 AUTHORS

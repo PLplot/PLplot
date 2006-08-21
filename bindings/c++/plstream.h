@@ -68,7 +68,7 @@ class Coord_2d {
     virtual void min_max( PLFLT& _min, PLFLT& _max ) =0;
 };
 
-class cxx_pltr2 : public Coord_Xformer {
+class PLDLLIMPEXP cxx_pltr2 : public Coord_Xformer {
     Coord_2d& xg;
     Coord_2d& yg;
   public:
@@ -82,7 +82,7 @@ class cxx_pltr2 : public Coord_Xformer {
 // Cool stuff.
 //===========================================================================//
 
-class plstream {
+class PLDLLIMPEXP plstream {
 
     PLINT stream;
 

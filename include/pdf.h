@@ -17,6 +17,11 @@
 #ifndef __PDF_H__
 #define __PDF_H__
 
+/*--------------------------------------------------------------------------*\
+ * dll functions
+\*--------------------------------------------------------------------------*/
+#include "pldll.h"
+
 /* Some unsigned types */
 
 #ifndef U_CHAR
@@ -80,28 +85,28 @@ typedef struct {
 void pdf_set		PLARGS((char *option, int value));
 PDFstrm *pdf_fopen	PLARGS((char *fileName, char *mode));
 PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
-PDFstrm *pdf_finit	PLARGS((FILE *file));
+PLDLLIMPEXP PDFstrm *pdf_finit	PLARGS((FILE *file));
 PDFstrm *plLibOpenPdfstrm PLARGS((char *fn));
-int  pdf_close		PLARGS((PDFstrm *pdfs));
+PLDLLIMPEXP int  pdf_close		PLARGS((PDFstrm *pdfs));
 
 int  pdf_putc		PLARGS((int c, PDFstrm *pdfs));
 int  pdf_getc		PLARGS((PDFstrm *pdfs));
 int  pdf_ungetc		PLARGS((int c, PDFstrm *pdfs));
 int  pdf_rdx	        PLARGS((U_CHAR *x, long nitems, PDFstrm *pdfs));
 
-int  pdf_rd_header	PLARGS((PDFstrm *pdfs, char *header));
+PLDLLIMPEXP int  pdf_rd_header	PLARGS((PDFstrm *pdfs, char *header));
 int  pdf_wr_header	PLARGS((PDFstrm *pdfs, char *header));
 int  pdf_wr_string	PLARGS((PDFstrm *pdfs, const char *string));
 int  pdf_rd_string	PLARGS((PDFstrm *pdfs, char *string, int nmax));
 int  pdf_wr_1byte	PLARGS((PDFstrm *pdfs, U_CHAR s));
-int  pdf_rd_1byte	PLARGS((PDFstrm *pdfs, U_CHAR *ps));
+PLDLLIMPEXP int  pdf_rd_1byte	PLARGS((PDFstrm *pdfs, U_CHAR *ps));
 int  pdf_wr_2bytes	PLARGS((PDFstrm *pdfs, U_SHORT s));
-int  pdf_rd_2bytes 	PLARGS((PDFstrm *pdfs, U_SHORT *ps));
+PLDLLIMPEXP int  pdf_rd_2bytes 	PLARGS((PDFstrm *pdfs, U_SHORT *ps));
 int  pdf_wr_2nbytes	PLARGS((PDFstrm *pdfs, U_SHORT *s, PLINT n));
-int  pdf_rd_2nbytes 	PLARGS((PDFstrm *pdfs, U_SHORT *s, PLINT n));
+PLDLLIMPEXP int  pdf_rd_2nbytes 	PLARGS((PDFstrm *pdfs, U_SHORT *s, PLINT n));
 int  pdf_wr_4bytes	PLARGS((PDFstrm *pdfs, U_LONG s));
-int  pdf_rd_4bytes 	PLARGS((PDFstrm *pdfs, U_LONG *ps));
+PLDLLIMPEXP int  pdf_rd_4bytes 	PLARGS((PDFstrm *pdfs, U_LONG *ps));
 int  pdf_wr_ieeef	PLARGS((PDFstrm *pdfs, float f));
-int  pdf_rd_ieeef	PLARGS((PDFstrm *pdfs, float *pf));
+PLDLLIMPEXP int  pdf_rd_ieeef	PLARGS((PDFstrm *pdfs, float *pf));
 
 #endif	/* __PDF_H__ */

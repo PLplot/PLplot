@@ -86,7 +86,7 @@ static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
 
 /* Current stream pointer.  Global, for easier access to state info */
 
-PLStream *plsc = &pls0;
+PLDLLIMPEXP_DATA(PLStream) *plsc = &pls0;
 
 /* Only now can we include this */
 

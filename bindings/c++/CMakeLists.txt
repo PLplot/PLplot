@@ -38,6 +38,11 @@ ${CMAKE_BINARY_DIR}/include
 # Create plplotcxx[d] library
 add_library(plplotcxx${LIB_TAG} ${plplotcxx${LIB_TAG}_LIB_SRCS})
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(${plplotcxx${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+endif(WIN32 AND BUILD_SHARED_LIBS)
+
 target_link_libraries(plplotcxx${LIB_TAG} plplot${LIB_TAG})
 
 set(LIB_INSTALL_RPATH ${LIB_DIR})

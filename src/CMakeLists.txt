@@ -50,6 +50,11 @@ plgridd.c
 plvect.c
 )
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(${plplot${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+endif(WIN32 AND BUILD_SHARED_LIBS)
+
 if(ENABLE_DYNDRIVERS)
   set_source_files_properties(
   plcore.c

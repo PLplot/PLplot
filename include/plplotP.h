@@ -188,7 +188,7 @@ typedef char * caddr_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern PLStream	*plsc;
+extern PLDLLIMPEXP_DATA(PLStream)	*plsc;
 #ifdef __cplusplus
 }
 #endif
@@ -444,7 +444,7 @@ plfill_soft(short *x, short *y, PLINT npts);
 /* In case of an abort this routine is called.  It just prints out an */
 /* error message and tries to clean up as much as possible. */
 
-void
+PLDLLIMPEXP void
 plexit(char *errormsg);
 
 /* Just a front-end to exit().  */
@@ -454,12 +454,12 @@ pl_exit(void);
 
 /* A handy way to issue warnings, if need be. */
 
-void
+PLDLLIMPEXP void
 plwarn(char *errormsg);
 
 /* Same as plwarn(), but appends ", aborting plot" to the error message */
 
-void
+PLDLLIMPEXP void
 plabort(char *errormsg);
 
 /* Loads either the standard or extended font. */
@@ -620,17 +620,17 @@ plP_sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax);
 
 /* Get physical device limits in physical coordinates */
 
-void
+PLDLLIMPEXP void
 plP_gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax);
 
 /* Get number of subpages on physical device and current subpage */
 
-void
+PLDLLIMPEXP void
 plP_gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs);
 
 /* Set number of subpages on physical device and current subpage */
 
-void
+PLDLLIMPEXP void
 plP_ssub(PLINT nx, PLINT ny, PLINT cs);
 
 /* Set up plot parameters according to the number of subpages. */
@@ -640,7 +640,7 @@ plP_subpInit(void);
 
 /* Get number of pixels to a millimeter */
 
-void
+PLDLLIMPEXP void
 plP_gpixmm(PLFLT *p_x, PLFLT *p_y);
 
 /* All the drivers call this to set physical pixels/mm. */
@@ -690,7 +690,7 @@ plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax);
 
 /* Set up the subpage boundaries according to the current subpage selected */
 
-void
+PLDLLIMPEXP void
 plP_setsub(void);
 
 /* Get the floating point precision (in number of places) in numeric labels. */
@@ -859,12 +859,12 @@ plP_image(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny, PLFLT xmin,
 
 /* End of page */
 
-void
+PLDLLIMPEXP void
 plP_eop(void);
 
 /* End of page */
 
-void
+PLDLLIMPEXP void
 plP_bop(void);
 
 /* Tidy up device (flush buffers, close file, etc.) */
@@ -874,7 +874,7 @@ plP_tidy(void);
 
 /* Change state. */
 
-void
+PLDLLIMPEXP void
 plP_state(PLINT op);
 
 /* Escape function, for driver-specific commands. */

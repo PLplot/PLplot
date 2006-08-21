@@ -27,6 +27,11 @@ ${CMAKE_BINARY_DIR}/include
 
 add_executable(plrender plrender.c)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(plrender.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
+endif(WIN32 AND BUILD_SHARED_LIBS)
+    
 target_link_libraries(plrender plplot${LIB_TAG})
 
 set(LIB_INSTALL_RPATH ${LIB_DIR})
@@ -42,6 +47,11 @@ INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 install(TARGETS plrender DESTINATION ${BIN_DIR})
 
 add_executable(pltek pltek.c)
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(pltek.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
+endif(WIN32 AND BUILD_SHARED_LIBS)
 
 target_link_libraries(pltek plplot${LIB_TAG})
 
