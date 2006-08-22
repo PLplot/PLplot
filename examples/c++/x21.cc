@@ -33,9 +33,9 @@
   #define isnan(x) ((x) != (x))
 #endif
 
-#if defined(_WIN32) && defined(_MSC_VER) 
-  #undef isnan
-  #define isnan _isnan
+#if defined(WIN32) && defined(_MSC_VER)
+#undef isnan
+#define isnan _isnan
 #endif
 
 // Need for some Mac OSX systems with broken <cmath> header
