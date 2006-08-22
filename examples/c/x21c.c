@@ -24,14 +24,13 @@
 #include "plcdemos.h"
 #include <time.h>
 
-#if defined(WIN32) && defined(_MSC_VER)
-#define isnan _isnan
-#define copysign _copysign
-#endif
-
-
 #if !defined(HAVE_ISNAN)
 #  define isnan(x) ((x) != (x))
+#endif
+
+#if defined(WIN32) && defined(_MSC_VER)
+#undef isnan
+#define isnan _isnan
 #endif
 
 /* Options data structure definition. */
