@@ -32,16 +32,32 @@ extern char* csa_version;
 struct csa;
 typedef struct csa csa;
 
+#if defined(MAKINGPLDLL)
+#include "pldll.h"
+#else
+#define PLDLLIMPEXP
+#endif
+
+PLDLLIMPEXP
 csa* csa_create();
+PLDLLIMPEXP
 void csa_destroy(csa* a);
+PLDLLIMPEXP
 void csa_addpoints(csa* a, int n, point points[]);
+PLDLLIMPEXP
 void csa_calculatespline(csa* a);
+PLDLLIMPEXP
 void csa_approximate_point(csa* a, point* p);
+PLDLLIMPEXP
 void csa_approximate_points(csa* a, int n, point* points);
 
+PLDLLIMPEXP
 void csa_setnpmin(csa* a, int npmin);
+PLDLLIMPEXP
 void csa_setnpmax(csa* a, int npmax);
+PLDLLIMPEXP
 void csa_setk(csa* a, int k);
+PLDLLIMPEXP
 void csa_setnpps(csa* a, double npps);
 
 #endif

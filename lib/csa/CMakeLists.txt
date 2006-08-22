@@ -24,6 +24,15 @@ if(WITH_CSA)
 set(csirocsa_LIB_SRCS
 csa.c
 )
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(${csirocsa_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+  include_directories(
+      ${CMAKE_SOURCE_DIR}/include
+  )
+endif(WIN32 AND BUILD_SHARED_LIBS)
+
 add_library(csirocsa ${csirocsa_LIB_SRCS})
 SET_TARGET_PROPERTIES(csirocsa
 PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
