@@ -39,7 +39,13 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 # Set up swig + c wrapper.
 # N.B. the python target has an underscore prepended automatically.
 swig_add_module(plplotcmodule python plplotcmodule.i)
+
+if(APPLE)
+	set(CMAKE_MODULE_LINKER_FLAGS "${PYTHON_LIBRARIES}")
+endif(APPLE)
+
 swig_link_libraries(plplotcmodule plplot${LIB_TAG})
+
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
