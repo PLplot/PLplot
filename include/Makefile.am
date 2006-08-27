@@ -27,6 +27,7 @@ dist_pkginclude_HEADERS = \
 	drivers.h \
 	pdf.h \
 	pldebug.h \
+	pldll.h \
 	plevent.h \
 	plplot.h \
 	plplotP.h \
