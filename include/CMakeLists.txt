@@ -56,6 +56,7 @@ disptab.h
 drivers.h
 pdf.h
 pldebug.h
+pldll.h
 plevent.h
 plplot.h
 plplotP.h
