@@ -61,9 +61,7 @@ if(PLD_psttf)
   pkgconfig("pango;pangoft2;lasi" includedir libdir linkflags cflags)
   if(linkflags AND cflags)
     set(psttf_COMPILE_FLAGS "${cflags}")
-    # N.B. as long as we support lasi-1.0.5 we must compensate for bug
-    # of dropped -lLASi option in liblasi.pc file
-    set(psttf_LINK_FLAGS "${linkflags} -lLASi")
+    set(psttf_LINK_FLAGS "${linkflags}")
     # Convert from blank-delimited to a cmake list
     string(REGEX REPLACE " +" ";" psttf_RPATH ${libdir})
     # Put libLASI pkg-config information into a form that

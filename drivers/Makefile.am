@@ -211,10 +211,8 @@ plmeta_la_LDFLAGS = $(ldflags) $(libplplot)
 ps_la_SOURCES = ps.c
 ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 
-## Currently pkg-config --libs lasi does not return -lLASi as I think
-## it should - needs adding manually.
 psttf_la_SOURCES = psttf.cc
-psttf_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSTTF_LIBS) -lLASi
+psttf_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag) $(PSTTF_LIBS)
 
 ##pstex_la_SOURCES = ps.c pstex.c
 ##pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
