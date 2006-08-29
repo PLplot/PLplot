@@ -34,7 +34,7 @@ CONFIGURE_OPTIONS =				\
     --with-pthreads --with-ltdlsystem		\
     --disable-linuxvga  --enable-psttf		\
     --enable-f95 --enable-psttfc		\
-    --with-java-home=/usr/lib/jvm/java-gcj
+    --disable-java
 
 autotools: autotools-stamp
 autotools-stamp:
@@ -105,9 +105,8 @@ install-stamp: build-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-gnome2 libplplot9-java			\
-		plplot9-driver-wxwidgets plplot9-driver-psttf		\
-		libplplot-fortran9 ; do					\
+		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
+		plplot9-driver-psttf libplplot-fortran9 ; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 

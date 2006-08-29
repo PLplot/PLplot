@@ -1,3 +1,11 @@
+plplot (5.6.1-8) unstable; urgency=low
+
+  * debian/control, debian/rules: Do not build the libplplot9-java pacakge
+    anymore, at least until the problems in building the PLplot Java
+    buildings in the autobuilders is fixed (closes: #384329)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 29 Aug 2006 22:39:05 +0200
+
 plplot (5.6.1-7) unstable; urgency=low
 
   * debian/patches/50_check-for-octave2.1.dpatch: Do string comparisons

@@ -6,14 +6,13 @@ Standards-Version: 3.7.2
 Build-Depends: debhelper (>= 5.0.37.2), tcl8.4-dev, tk8.4-dev, itcl3-dev,
  libx11-dev, libxext-dev, libxi-dev, gfortran, itk3-dev,
  octave2.1-headers (>= 2.1.65), libgd2-noxpm-dev | libgd2-xpm-dev,
- libgnome2-dev, libgnomeprintui2.2-dev, libgnomeui-dev, m4, libqhull-dev,
- libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev,
- libltdl3-dev, pkg-config, dpatch, atlas3-base-dev [!arm !m68k],
- refblas3-dev [arm m68k], lapack3-dev [arm m68k], python-gtk2-dev,
- java-gcj-compat-dev, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
+ libgnome2-dev, libgnomeprintui2.2-dev, libgnomeui-dev, m4,
+ libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap,
+ autotools-dev, libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
+ [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
+ python-gtk2-dev, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
  python-gnome2-dev, python-all-dev (>= 2.3.5-11),
- python-central (>= 0.4.17), python-numeric (>= 24.2-3),
- ttf-freefont
+ python-central (>= 0.5), python-numeric (>= 24.2-3), ttf-freefont
 Build-Conflicts: libplplot5
 XS-Python-Version: all
 
@@ -223,16 +222,6 @@ Description: Documentation for PLplot, a plotting library
  This package contains the HTML, PDF, PostScript and info forms of the
  PLplot documentation.  It also contains the man pages for the API
  functions.
- .
-  Homepage: http://www.plplot.org
-
-Package: libplplot9-java
-Architecture: any
-Section: libs
-Depends: gcj-3.4 | java1-runtime | java2-runtime, ${shlibs:Depends}
-Recommends: gcj-3.4 | java-compiler
-Description: Java binding for PLplot, a plotting library
- This package contains the Java binding for PLplot, a plotting library.
  .
   Homepage: http://www.plplot.org
 
