@@ -32,6 +32,17 @@ if(PLD_wingcc)
   if(GDI32_FOUND)
     message(STATUS "Looking for gdi32 header and library - found")
     set(wingcc_LINK_FLAGS "${GDI32_LIBRARIES}")
+    if(WITH_FREETYPE)
+      set(
+      wingcc_COMPILE_FLAGS
+      "${wingcc_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
+      )
+      set(
+      wingcc_LINK_FLAGS
+      ${wingcc_LINK_FLAGS}
+      ${FREETYPE_LIBRARIES}
+      )
+    endif(WITH_FREETYPE)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${wingcc_LINK_FLAGS})
   else(GDI32_FOUND)
     message(STATUS "Looking for gdi32 header and library - not found")

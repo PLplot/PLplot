@@ -65,23 +65,21 @@
  *
  */
 
-#ifndef WIN32
-#ifndef MINGW
-#include <unistd.h>
+#if !defined(WIN32) || defined(__GNUC__)
+  #include <unistd.h>
 #else
-#define F_OK 1
-#include <stdio.h>
-int access( char *filename, int flag ) {
-    FILE *infile ;
-    infile = fopen( filename, "r" ) ;
-    if ( infile != NULL ) {
-        fclose(infile) ;
-        return 0 ;
-    } else {
-        return 1 ;
-    }
-}
-#endif
+  #define F_OK 1
+  #include <stdio.h>
+  int access( char *filename, int flag ) {
+      FILE *infile ;
+      infile = fopen( filename, "r" ) ;
+      if ( infile != NULL ) {
+          fclose(infile) ;
+          return 0 ;
+      } else {
+          return 1 ;
+      }
+  }
 #endif
 
 #include "plDevs.h"
