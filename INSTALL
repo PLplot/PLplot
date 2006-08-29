@@ -96,8 +96,8 @@ The pango and pangoft2 libraries are widely distributed with most
 Linux distributions at least. The LASi library is not part of most
 distributions at this time. The source code can be downloaded from
 http://www.unifont.org/lasi/. The library is small and
-easy to build and install. You must have at least version 1.0.5 of 
-LASi.
+easy to build and install. You must have at least version 1.0.5p1 of 
+LASi.  N.B. version 1.0.5 of LASi will no longer work.
 
 This driver is enabled by default. You can change this using the 
 --enable-psttf option to configure.
