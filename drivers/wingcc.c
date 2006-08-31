@@ -71,6 +71,11 @@ typedef struct {
     PLINT       width;               /* Window width (which can change) */
     PLINT       height;              /* Window Height */
 
+    PLFLT       PRNT_scale;
+    PLINT       PRNT_width;
+    PLINT       PRNT_height;
+
+    char FT_smooth_text;
 /*
  * WIN32 API variables
  */
@@ -83,6 +88,8 @@ typedef struct {
     HPEN          pen;                 /* Windows pen used for drawing */
     HDC           hdc;                 /* Driver Context */
     HDC           hdc2;                /* Driver Context II - used for Blitting */
+    HDC           SCRN_hdc;            /* The screen's context */
+    HDC           PRNT_hdc;            /* used for printing */
     PAINTSTRUCT   ps;                  /* used to paint the client area of a window owned by that application */
     RECT		      rect;                /* defines the coordinates of the upper-left and lower-right corners of a rectangle */
     RECT		      oldrect;             /* used for re-sizing comparisons */
@@ -91,6 +98,7 @@ typedef struct {
     HCURSOR       cursor;              /* Current windows cursor for this window */
     HBITMAP       bitmap;              /* Bitmap of current display; used for fast redraws via blitting */
     HGDIOBJ       oldobject;           /* Used for tracking objects… probably not really needed but… */
+    HMENU         PopupMenu;
 
     PLINT         draw_mode;
     char          truecolour;          /* Flag to indicate 24 bit mode */
@@ -99,6 +107,8 @@ typedef struct {
     char          enterresize;         /* Used to keep track of reszing messages from windows */
     char          already_erased;      /* Used to track first and only first backgroudn erases */
 
+    struct wingcc_Dev    *push;        /* A copy of the entire structure used when printing */
+                                       /* We push and pop it off a virtual stack */
   } wingcc_Dev;
 
 
@@ -136,6 +146,8 @@ static int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, 
 static void Resize ( PLStream *pls );
 static void plD_fill_polygon_wingcc(PLStream *pls);
 static void CopySCRtoBMP(PLStream *pls);
+static void PrintPage ( PLStream *pls );
+static void UpdatePageMetrics ( PLStream *pls, char flag );
 
 #define SetRegStringValue(a,b,c) SetRegValue(a, b, c, REG_SZ, strlen(c)+1 )
 #define SetRegBinaryValue(a,b,c,d) SetRegValue(a, b, (char *)c, REG_BINARY, d )
@@ -180,6 +192,10 @@ SetCursor(dev->cursor);}while(0)
 dev->cursor = LoadCursor(NULL,IDC_WAIT); \
 SetClassLong(dev->hwnd,GCL_HCURSOR,(long)dev->cursor); \
 SetCursor(dev->cursor);}while(0)
+
+#define PopupPrint              0x08A1
+#define PopupNextPage           0x08A2
+#define PopupQuit               0x08A3
 
 
 void plD_dispatch_init_wingcc( PLDispatchTable *pdt )
@@ -537,7 +553,17 @@ plD_init_wingcc(PLStream *pls)
  */
 
 SetWindowLong(dev->hwnd,GWL_USERDATA,(long)pls);
-dev->hdc = GetDC (dev->hwnd);
+dev->SCRN_hdc = dev->hdc = GetDC (dev->hwnd);
+
+/*
+ *  Setup the popup menu
+ */
+
+dev->PopupMenu=CreatePopupMenu();
+AppendMenu(dev->PopupMenu, MF_STRING, PopupPrint, "Print");
+AppendMenu(dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page…");
+AppendMenu(dev->PopupMenu, MF_STRING, PopupQuit, "Quit");
+
 
 #ifdef HAVE_FREETYPE
 
@@ -568,15 +594,15 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
     */
 
 
-     if (pls->xdpi<=0) /* Get DPI from windows */
-     {
-         plspage(GetDeviceCaps(dev->hdc,HORZRES)/GetDeviceCaps(dev->hdc,HORZSIZE)*25.4,
-         GetDeviceCaps(dev->hdc,VERTRES)/GetDeviceCaps(dev->hdc,VERTSIZE)*25.4, 0, 0, 0, 0);
-     }
-     else
-     {
+    if (pls->xdpi<=0) /* Get DPI from windows */
+      {
+        plspage(GetDeviceCaps(dev->hdc,HORZRES)/GetDeviceCaps(dev->hdc,HORZSIZE)*25.4,
+        GetDeviceCaps(dev->hdc,VERTRES)/GetDeviceCaps(dev->hdc,VERTSIZE)*25.4, 0, 0, 0, 0);
+      }
+    else
+      {
         pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-     }
+      }
 
 
 /*
@@ -757,6 +783,12 @@ plD_eop_wingcc(PLStream *pls)
                 switch((int)dev->msg.message)
                   {
 
+                    case WM_CONTEXTMENU:
+                    case WM_RBUTTONDOWN:
+                       TrackPopupMenu(dev->PopupMenu,TPM_CENTERALIGN | TPM_RIGHTBUTTON,LOWORD(dev->msg.lParam),
+                          HIWORD(dev->msg.lParam),0,dev->hwnd,NULL);
+                    break;
+
                     case WM_CHAR:
                     if (((TCHAR)(dev->msg.wParam)== 32)||
                         ((TCHAR)(dev->msg.wParam)== 13))
@@ -776,6 +808,25 @@ plD_eop_wingcc(PLStream *pls)
                     Debug("WM_LBUTTONDBLCLK\t");
                       dev->waiting=0;
                     break;
+
+                    case WM_COMMAND:
+                      switch(LOWORD(dev->msg.wParam))
+                            {
+                              case PopupPrint:
+                                Debug("PopupPrint");
+                                PrintPage(pls);
+                              break;
+                              case PopupNextPage:
+                                Debug("PopupNextPage");
+                                dev->waiting=0;
+                              break;
+                              case PopupQuit:
+                                Debug("PopupQuit");
+                                dev->waiting=0;
+                                PostQuitMessage(0);
+                              break;
+                            }
+                     break;
 
                     default:
                       DispatchMessage (&dev->msg);
@@ -828,9 +879,16 @@ plD_tidy_wingcc(PLStream *pls)
   if (pls->dev!=NULL)
     {
       dev = (wingcc_Dev *)pls->dev;
+
+      DeleteMenu(dev->PopupMenu, PopupPrint, 0);
+      DeleteMenu(dev->PopupMenu, PopupNextPage, 0);
+      DeleteMenu(dev->PopupMenu, PopupQuit, 0);
+      DestroyMenu(dev->PopupMenu);
+
       if (dev->hdc2!=NULL) DeleteDC(dev->hdc2);
       if (dev->hdc!=NULL) ReleaseDC(dev->hwnd,dev->hdc);
       if (dev->bitmap!=NULL) DeleteObject(dev->bitmap);
+
       free_mem(pls->dev);
     }
 
@@ -1148,6 +1206,166 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
         FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
       }
 }
+
+/*--------------------------------------------------------------------------*\
+ *  static void UpdatePageMetrics ( PLStream *pls, char flag )
+ *
+ *      UpdatePageMetrics is a simple function which simply gets new vales for
+ *      a changed DC, be it swapping from printer to screen or vice-versa.
+ *      The flag variable is used to tell the function if it is updating
+ *      from the printer (1) or screen (0).
+\*--------------------------------------------------------------------------*/
+
+static void UpdatePageMetrics ( PLStream *pls, char flag )
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+  #ifdef HAVE_FREETYPE
+  FT_Data *FT=(FT_Data *)pls->FT;
+  #endif
+
+  if (flag==1)
+    {
+      dev->width=GetDeviceCaps(dev->hdc,HORZRES);   /* Get the page size from the printer */
+      dev->height=GetDeviceCaps(dev->hdc,VERTRES);
+    }
+  else
+    {
+      GetClientRect(dev->hwnd,&dev->rect);
+      dev->width=dev->rect.right;
+      dev->height=dev->rect.bottom;
+    }
+
+  if (dev->width>dev->height)           /* Work out the scaling factor for the  */
+    {                                   /* "virtual" (oversized) page           */
+      dev->scale=(PLFLT)PIXELS_X/dev->width;
+    }
+  else
+    {
+      dev->scale=(PLFLT)PIXELS_Y/dev->height;
+    }
+
+  #ifdef HAVE_FREETYPE
+    if (FT)           /* If we are using freetype, then set it up next */
+      {
+        FT->scale=dev->scale;
+        FT->ymax=dev->height;
+        if (GetDeviceCaps(dev->hdc,RASTERCAPS) & RC_BITBLT)
+          FT->pixel= (plD_pixel_fp)plD_pixelV_wingcc;
+        else
+          FT->pixel= (plD_pixel_fp)plD_pixel_wingcc;
+      }
+  #endif
+
+  pls->xdpi=GetDeviceCaps(dev->hdc,HORZRES)/GetDeviceCaps(dev->hdc,HORZSIZE)*25.4;
+  pls->ydpi=GetDeviceCaps(dev->hdc,VERTRES)/GetDeviceCaps(dev->hdc,VERTSIZE)*25.4;
+  plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
+  plP_setphy(0, dev->scale*dev->width, 0, dev->scale*dev->height);
+
+}
+
+/*--------------------------------------------------------------------------*\
+ *  static void PrintPage ( PLStream *pls )
+ *
+ *     Function brings up a standard printer dialog and, after the user
+ *     has selected a printer, replots the current page to the windows
+ *     printer.
+\*--------------------------------------------------------------------------*/
+
+static void PrintPage ( PLStream *pls )
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+  #ifdef HAVE_FREETYPE
+  FT_Data *FT=(FT_Data *)pls->FT;
+  #endif
+  PRINTDLG  Printer;
+  DOCINFO docinfo;
+  char *PrinterName;
+  BOOL ret;
+
+  /*
+   *    Reset the docinfo structure to 0 and set it's fields up
+   *    This structure is used to supply a name to the print queue
+   */
+
+  ZeroMemory(&docinfo,sizeof(docinfo));
+  docinfo.cbSize=sizeof(docinfo);
+  docinfo.lpszDocName="Plplot Page";
+
+  /*
+   *   Reset out printer structure to zero and initialise it
+   */
+
+  ZeroMemory(&Printer,sizeof(PRINTDLG));
+  Printer.lStructSize=sizeof(PRINTDLG);
+  Printer.hwndOwner=dev->hwnd;
+  Printer.Flags=PD_NOPAGENUMS|PD_NOSELECTION|PD_RETURNDC;
+  Printer.nCopies=1;
+
+  /*
+   *   Call the printer dialog function.
+   *   If the user has clicked on "Print", then we will continue
+   *   processing and print out the page.
+   */
+
+  if (PrintDlg(&Printer)!=0)
+    {
+
+      /*
+       *  Before doing anything, we will take some backup copies
+       *  of the existing values for page size and the like, because
+       *  all we are going to do is a quick and dirty modification
+       *  of plplot's internals to match the new page size and hope
+       *  it all works out ok. After that, we will manip the values,
+       *  and when all is done, restore them.
+       */
+
+      if ((dev->push=GlobalAlloc(GMEM_ZEROINIT,sizeof(wingcc_Dev)))!=NULL)
+        {
+          BusyCursor();
+          memcpy(dev->push,dev,sizeof(wingcc_Dev));
+    
+          dev->hdc=dev->PRNT_hdc=Printer.hDC;      /* Copy the printer HDC */
+    
+          UpdatePageMetrics ( pls, 1 );
+    
+          #ifdef HAVE_FREETYPE
+            if (FT)           /* If we are using freetype, then set it up next */
+              {
+                dev->FT_smooth_text=FT->smooth_text; /* When printing, we don't want smoothing */
+                FT->smooth_text=0;
+              }
+          #endif
+    
+          /*
+           *   Now the stuff that actually does the printing !!
+           */
+    
+          StartDoc(dev->hdc,&docinfo);
+          plRemakePlot(pls);
+          EndDoc(dev->hdc);
+    
+          /*
+           *  Now to undo everything back to what it was for the screen
+           */
+    
+          dev->hdc=dev->SCRN_hdc;      /* Reset the screen HDC to the default */
+          UpdatePageMetrics ( pls, 0 );
+    
+          #ifdef HAVE_FREETYPE
+            if (FT)           /* If we are using freetype, then set it up next */
+              {
+                FT->smooth_text=dev->FT_smooth_text;
+              }
+          #endif
+          memcpy(dev,dev->push,sizeof(wingcc_Dev));   /* POP our "stack" now to restore the values */
+    
+          GlobalFree(dev->push);
+          NormalCursor();
+          RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_ERASENOW);
+        }
+  }
+}
+
 
 #endif
 

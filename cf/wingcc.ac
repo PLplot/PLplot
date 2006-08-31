@@ -87,7 +87,7 @@ if test "$enable_wingcc" = "yes"; then
     if test "$with_gdi32_libdir" = "/usr/lib"; then
         with_gdi32_libdir=default
     fi
-    GDI32LIBSTR=-lgdi32
+    GDI32LIBSTR="-lgdi32 -lcomdlg32"
     GDI32LIBCMD=""
     GDI32LIBPATH=""
     PL_ADD_TO_LIBS($with_gdi32_libdir, $GDI32LIBSTR, GDI32LIBCMD, GDI32LIBPATH)
