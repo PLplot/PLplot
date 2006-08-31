@@ -467,6 +467,7 @@ typedef struct {
 #define    pl_setcontlabelformat c_pl_setcontlabelformat
 #define    pl_setcontlabelparam c_pl_setcontlabelparam
 #define    pladv	c_pladv
+#define    plarrows	c_plarrows
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
 #define    plbop	c_plbop
@@ -654,8 +655,8 @@ c_pladv(PLINT page);
 /* simple arrow plotter. */
 
 PLDLLIMPEXP void
-plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-         PLFLT scale, PLFLT dx, PLFLT dy) ;
+c_plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+           PLFLT scale, PLFLT dx, PLFLT dy) ;
 
 PLDLLIMPEXP void
 c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,

@@ -31,7 +31,7 @@
 static void plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale);
 
 /*--------------------------------------------------------------------------*\
- * void plarrows()
+ * void c_plarrows()
  *
  * simple arrow plotter
  * copyright 1993 Wesley Ebisuzaki
@@ -59,7 +59,7 @@ static PLFLT arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
 static PLFLT arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
 
 void
-plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+c_plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	 PLFLT scale, PLFLT dx, PLFLT dy)
 {
     PLFLT uu, vv;
