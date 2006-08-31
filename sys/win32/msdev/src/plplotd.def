@@ -1,5 +1,7 @@
 LIBRARY plplotd
 EXPORTS
+	pl_setcontlabelformat
+	pl_setcontlabelparam
 	pladv
 	plaxes
 	plbin

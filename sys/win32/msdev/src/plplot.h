@@ -474,6 +474,7 @@ typedef struct {
 #define    pl_setcontlabelformat c_pl_setcontlabelformat
 #define    pl_setcontlabelparam c_pl_setcontlabelparam
 #define    pladv        c_pladv
+#define    plarrows     c_plarrows
 #define    plaxes       c_plaxes
 #define    plbin        c_plbin
 #define    plbop        c_plbop
@@ -617,7 +618,10 @@ typedef struct {
 
 #define API WINAPI
 
+#define    c_pl_setcontlabelformat pl_setcontlabelformat
+#define    c_pl_setcontlabelparam pl_setcontlabelparam
 #define    c_pladv          pladv
+#define    c_plarrows       plarrows
 #define    c_plaxes         plaxes
 #define    c_plbin          plbin
 #define    c_plbop          plbop
@@ -815,8 +819,8 @@ c_pladv(PLINT page);
 /* simple arrow plotter. */
 
 void API
-plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-         PLFLT scale, PLFLT dx, PLFLT dy) ;
+c_plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+           PLFLT scale, PLFLT dx, PLFLT dy) ;
 
 void API
 c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
@@ -1428,7 +1432,7 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	  PLINT min_color, PLINT min_width,
 	  PLINT max_color, PLINT max_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
+	  void (API *fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
 
@@ -1896,7 +1900,10 @@ plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 #endif
 
 #ifdef __PLSTUBS_H__
+#undef    c_pl_setcontlabelformat
+#undef    c_pl_setcontlabelparam
 #undef    c_pladv
+#undef    c_plarrows
 #undef    c_plaxes
 #undef    c_plbin
 #undef    c_plbop

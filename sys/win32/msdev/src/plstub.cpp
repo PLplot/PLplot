@@ -26,6 +26,21 @@ extern "C" {
 
 	/* All void types */
 
+/* Set label format for contour plots */
+
+void WINAPI
+pl_setcontlabelformat(PLINT lexp, PLINT sigdig) {
+        c_pl_setcontlabelformat(lexp, sigdig);
+}
+
+/* Set spacing and other parameters for labels in contour plots */
+
+void WINAPI
+pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active) {
+        c_pl_setcontlabelparam( offset, size, spacing, active);
+}
+// ... Eric
+
 	/* C routines callable from stub routines come first */
 
 /* Advance to subpage "page", or to the next one if "page" = 0. */
@@ -48,6 +63,13 @@ void WINAPI
 win_plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny) {
 	plFree2dGrid(f, nx, ny);
 }
+
+/* Simple arrow plotter */
+
+void WINAPI
+plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+         PLFLT scale, PLFLT dx, PLFLT dy) ;
+	c_plarrows(u, v, x, y, n, scale, dx, dy) ;
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */

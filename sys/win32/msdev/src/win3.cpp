@@ -230,7 +230,7 @@ FILE *tmpfile( void )
 
 /* Create a plot window
  */
-void create_plot_window(PLStream *pls) 
+void create_plot_window(PLStream *pls)
 {
 	HINSTANCE hInstance;
 	WNDCLASS  wndclass;
@@ -275,13 +275,13 @@ void create_plot_window(PLStream *pls)
  */
 
 /* This function is passed to the CreateThread call in order to create a plot window and
- * process messages for that window.  This will allow the message queue to be processed all 
- * the time instead of only when eop() is called.  Without the thread, the message queue is 
+ * process messages for that window.  This will allow the message queue to be processed all
+ * the time instead of only when eop() is called.  Without the thread, the message queue is
  * blocked and that can cause problems (e.g. things get plotted in the wrong window if a window
  * is moved and there are multiple plots)
  */
-DWORD WINAPI message_handler( LPVOID lpParam ) 
-{ 
+DWORD WINAPI message_handler( LPVOID lpParam )
+{
 	PLStream *pls = (PLStream *)lpParam;
 	WinDev *dev = (WinDev *)pls->dev;
 	MSG msg;
@@ -306,26 +306,26 @@ DWORD WINAPI message_handler( LPVOID lpParam )
 	} while(1);
 
     return(0);
-} 
+}
 
 /* Creates a window in a seperate thread so that messages can be processed without
- * blocking the main execution thread.  If the thread creation fails, we degrade 
+ * blocking the main execution thread.  If the thread creation fails, we degrade
  * gracefully by going to a non-threaded implementation.
  */
 void create_window_thread(PLStream *pls)
 {
 	DWORD dwThreadId;
 	WinDev *dev = (WinDev *)pls->dev;
-    
-    dev->hThread = CreateThread( 
-        NULL,                        // default security attributes 
-        0,                           // use default stack size  
-        message_handler,             // thread function 
-        pls,                         // argument to thread function 
-        0,                           // use default creation flags 
-        &dwThreadId);                // returns the thread identifier 
- 
-   // Check the return value for success. 
+
+    dev->hThread = CreateThread(
+        NULL,                        // default security attributes
+        0,                           // use default stack size
+        message_handler,             // thread function
+        pls,                         // argument to thread function
+        0,                           // use default creation flags
+        &dwThreadId);                // returns the thread identifier
+
+   // Check the return value for success.
    if (dev->hThread == NULL) {
       // Thread creation failed
    }
@@ -649,7 +649,7 @@ void plD_eop_win3(PLStream *pls)
 	// If the window has not been created outside the Plplot library...
 	if (!dev->externalWindow) {
 		// EnableMenuItem(dev->hMenu,CM_PRINTPLOT,MF_ENABLED);
-	    // EnableMenuItem(dev->hMenu,CM_NEXTPLOT,MF_ENABLED); 
+	    // EnableMenuItem(dev->hMenu,CM_NEXTPLOT,MF_ENABLED);
 
 		// Load and set the cursor
 		hCursor = LoadCursor(NULL,IDC_ARROW);
@@ -675,9 +675,9 @@ void plD_eop_win3(PLStream *pls)
 					/* Error getting message */
 				} else if(bRet != 0) {
 					/* Successfully got a message */
-					if(dev->hwnd != msg.hwnd) 
+					if(dev->hwnd != msg.hwnd)
 						printf(
-							"***** pls(%lx) dev(%lx) Got message %x for hwnd(%lx) and I am hwnd(%lx)\n", 
+							"***** pls(%lx) dev(%lx) Got message %x for hwnd(%lx) and I am hwnd(%lx)\n",
 							pls, dev, msg.message, msg.hwnd, dev->hwnd);
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
@@ -691,7 +691,7 @@ void plD_eop_win3(PLStream *pls)
 				// This plot is supposed to pause
 
 				// Clear the nextplot flag and wait for it to change
-				for(dev->nextPlot = 0; !dev->nextPlot && !dev->isDead; ) ; 
+				for(dev->nextPlot = 0; !dev->nextPlot && !dev->isDead; ) ;
 			}
 		}
 	}
@@ -1060,7 +1060,7 @@ void plD_DrawImage_win3(PLStream *pls)
 	SelectObject(hdcMemory, bitmapOld);
 	DeleteObject(bitmap);
 	ReleaseDC(dev->hwnd,hdcMemory);				
-  
+
 	free(byteArray);
 }
 
@@ -1093,7 +1093,7 @@ static void imageops(PLStream *pls, PLINT *ptr)
 
 /* Message dispatcher for the win3 driver
  */
-LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd, UINT message,
+LRESULT CALLBACK PlPlotWndProc (HWND hwnd, UINT message,
 	UINT wParam, LONG lParam)
 {
 	PLStream *pls = (PLStream *)GetWindowLong(hwnd, GWL_USERDATA);
@@ -1151,7 +1151,7 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd, UINT message,
 				dev->rePaint = 1;
 			break;
 		case WM_PAINT :
-			printf("  Processing message %x for pls(%lx), dev(%lx), dev->hwnd(%lx) hwnd(%lx)\n", 
+			printf("  Processing message %x for pls(%lx), dev(%lx), dev->hwnd(%lx) hwnd(%lx)\n",
 				message, pls, dev, dev->hwnd, hwnd);
 
 			/* Determine if there is a region that needs to be updated.
@@ -1228,7 +1228,7 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd, UINT message,
 					plD_state_win3(pls, PLSTATE_COLOR0); /* Set drawing color */
 				} else {
 					/* There is a region that needs to be redrawn, but we are not ready
-					 * to do it.  The BeginPaint() call needs to happen in order to 
+					 * to do it.  The BeginPaint() call needs to happen in order to
 					 * notify the system that we have handled the request.
 					 */
 					HDC dummy;
@@ -1524,7 +1524,7 @@ static void init_freetype_lv2 (PLStream *pls)
 		 * color palette to be consistent with cmap0. */
 		{
 			PLINT level_save;
-          
+
 			level_save = pls->level;
 			pls->level = 0;
 			pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
