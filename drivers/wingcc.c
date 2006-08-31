@@ -148,8 +148,10 @@ static void CopySCRtoBMP(PLStream *pls);
  *  Some debugging macros
 \*--------------------------------------------------------------------------*/
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
   #define Debug(a) do {if (pls->debug){fprintf(stderr,(a));}}while(0)
+#elif defined(__BORLANDC__)
+  #define Debug //
 #else
   #define Verbose(...) do {if (pls->verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
   #define Debug(...) do {if (pls->debug){fprintf(stderr,__VA_ARGS__);}}while(0)
