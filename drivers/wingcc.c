@@ -148,11 +148,11 @@ static void CopySCRtoBMP(PLStream *pls);
  *  Some debugging macros
 \*--------------------------------------------------------------------------*/
 
-#ifndef __VISUALC__
+#ifdef _MSC_VER
+  #define Debug(a) do {if (pls->debug){fprintf(stderr,(a));}}while(0)
+#else
   #define Verbose(...) do {if (pls->verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
   #define Debug(...) do {if (pls->debug){fprintf(stderr,__VA_ARGS__);}}while(0)
-#else
-  #define Debug(a) do {if (pls->debug){fprintf(stderr,(a));}}while(0)
 #endif
 
 #define ReportWinError() do { \
@@ -265,19 +265,19 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 
                 if ((dev->waiting==1)&&(dev->already_erased==1))
                   {
-                      Debug("Remaking\t");
+                    Debug("Remaking\t");
 
-                      if (dev->ps.fErase)
-                        {
-                          dev->oldcolour = SetBkColor(dev->hdc, RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
-                          ExtTextOut(dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0);
-                          SetBkColor(dev->hdc, dev->oldcolour);
-                        }
+                    if (dev->ps.fErase)
+                      {
+                        dev->oldcolour = SetBkColor(dev->hdc, RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
+                        ExtTextOut(dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0);
+                        SetBkColor(dev->hdc, dev->oldcolour);
+                      }
 
-                      plRemakePlot(pls);
-                      CopySCRtoBMP(pls);
-                      dev->already_erased++;
-                   }
+                    plRemakePlot(pls);
+                    CopySCRtoBMP(pls);
+                    dev->already_erased++;
+                  }
                 else if ((dev->waiting==1)&&(dev->already_erased==2))
                   {
                     dev->oldobject = SelectObject(dev->hdc2,dev->bitmap);
@@ -341,7 +341,6 @@ LRESULT CALLBACK PlplotWndProc (HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
            *    filling a rectangle - go figure ?
            */
 
-           /*GetClientRect(dev->hdc,&dev->rect);*/
            dev->oldcolour = SetBkColor(dev->hdc, RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
            ExtTextOut(dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0);
            SetBkColor(dev->hdc, dev->oldcolour);
@@ -395,7 +394,7 @@ plD_init_wingcc(PLStream *pls)
 
     DrvOpt wingcc_options[] = {
 #ifdef HAVE_FREETYPE
-                              	{"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
+                            	{"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
                               {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
                               {"save", DRV_INT, &save_reg, "Save defaults to registary"},
 
@@ -501,14 +500,14 @@ plD_init_wingcc(PLStream *pls)
 	/* Color the background white */
 	dev->wndclass.hbrBackground = NULL;
 
-    dev->wndclass.cbWndExtra = sizeof(pls);
+   dev->wndclass.cbWndExtra = sizeof(pls);
 
 
 	/*
 	 * Now register the window class for use.
 	 */
 
-     RegisterClassEx (&dev->wndclass);
+    RegisterClassEx (&dev->wndclass);
 
 
 	/*
@@ -586,7 +585,6 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
  */
 
   	 GetClientRect(dev->hwnd,&dev->rect);
-/*    GetClipBox(dev->hdc,&dev->rect); */
     dev->width=dev->rect.right;
     dev->height=dev->rect.bottom;
 
@@ -602,7 +600,6 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
      Debug("Scale = %f (FLT)\n",dev->scale);
 
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
-
      plP_setphy(0, dev->scale*dev->width, 0, dev->scale*dev->height);
 
 #ifdef HAVE_FREETYPE
@@ -814,6 +811,7 @@ plD_bop_wingcc(PLStream *pls)
 void
 plD_tidy_wingcc(PLStream *pls)
 {
+  wingcc_Dev *dev = NULL;
 
 #ifdef HAVE_FREETYPE
   if (pls->dev_text)
@@ -823,9 +821,17 @@ plD_tidy_wingcc(PLStream *pls)
       plD_FreeType_Destroy(pls);
     }
 #endif
+  Debug("plD_tidy_wingcc");
 
   if (pls->dev!=NULL)
-    free(pls->dev);
+    {
+      dev = (wingcc_Dev *)pls->dev;
+      if (dev->hdc2!=NULL) DeleteDC(dev->hdc2);
+      if (dev->hdc!=NULL) ReleaseDC(dev->hwnd,dev->hdc);
+      if (dev->bitmap!=NULL) DeleteObject(dev->bitmap);
+      free_mem(pls->dev);
+    }
+
 }
 
 
