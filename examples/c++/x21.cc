@@ -33,7 +33,7 @@
   #define isnan(x) ((x) != (x))
 #endif
 
-#if defined(WIN32) && defined(_MSC_VER)
+#if defined(WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #undef isnan
 #define isnan _isnan
 #endif

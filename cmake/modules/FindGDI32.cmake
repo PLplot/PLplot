@@ -5,7 +5,10 @@
 #  GDI32_FOUND, if false, do not try to use gdi32.
 #  GDI32_LIBRARIES, the libraries to link against to use gdi32
 
-set(GDI32_LIBRARY gdi32)
+# Borland compiler doesn't know the gdi32 library
+IF(NOT BORLAND)
+  set(GDI32_LIBRARY gdi32)
+ENDIF(NOT BORLAND)
 
 try_compile(TESTGDI32
   ${CMAKE_BINARY_DIR}

@@ -19,9 +19,14 @@
 #if !defined(_NAN_H)
 #define _NAN_H
 
-#if defined(__GNUC__) && !defined(__ICC)
+#if (defined(__GNUC__) && !defined(__ICC)) || defined(__BORLANDC__)
 
 static const double NaN = 0.0 / 0.0;
+
+#ifdef __BORLANDC__
+  #define isnan _isnan
+  #define copysign _copysign
+#endif
 
 #elif defined(WIN32)
 

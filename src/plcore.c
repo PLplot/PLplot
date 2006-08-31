@@ -2099,7 +2099,7 @@ int plInBuildTree()
    name is _getcwd, this is a problem in the case of DLLs, like with
    the Java bindings.
 */
-#ifdef WIN32
+#if defined(WIN32) && !defined(__BORLANDC__) 
 #define getcwd _getcwd
 #endif
 
