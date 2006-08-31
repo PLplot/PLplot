@@ -1,10 +1,20 @@
+PLplot installation
+===================
+
+PLplot can be built and installed using one of several methods:
+
+- On UNIX-like systems (UNIX, Linux, MacOS X, Cygwin and MingW on
+  Windows) via the automake buid system (ABS)
+
+- Non-UNIX systems, using the native tools available for that system.
+  See the notes in the directory sys/<system name>
+
+- On all systems that are supported by PLplot via the CMake build
+  system.
+
+
 PLplot installation notes for our traditional ABS (automake build system).
 =========================================================================
-
-For installation notes for our new CBS (CMake build system) look for CBS
-section at the end of this file.
-
-For non Unix-based systems, refer to the notes in sys/<system name>.
 
 ------------------------------------------------------------------------------
 General instructions for Unix-based systems
@@ -29,7 +39,7 @@ location.  Another alternative is some convenient location under your home
 account such as $HOME/local/plplot where you have write access under your
 ordinary user account.
 
-VERSION stands symbolically for the version.  Currently, that is 5.5.1, but
+VERSION stands symbolically for the version.  Currently, that is 5.6.1, but
 it will change.
 
 IMPORTANT.  In prior versions we only supported the Gnu form of the make
@@ -69,7 +79,7 @@ ITKLIBDIR
 VGALIBDIR
 
 ------------------------------------------------------------------------------
-Additional note for the --enable-f95 option.  
+Additional note for the --enable-f95 option.
 
 This option enables the build and install of our new fortran 95 interface
 and examples.  So far, good results have been obtained with gfortran.  But
@@ -90,23 +100,23 @@ situation.
 ------------------------------------------------------------------------------
 Additional note for the psttf driver.
 
-This version of the postscript driver supports TrueType fonts, allowing 
-access to a far greater range of fonts and characters than is possible 
-using purely postscript fonts. 
+This version of the postscript driver supports TrueType fonts, allowing
+access to a far greater range of fonts and characters than is possible
+using purely postscript fonts.
 
 The driver requires the LASi, pango and pangoft2 libraries to work.
 The pango and pangoft2 libraries are widely distributed with most
 Linux distributions at least. The LASi library is not part of most
 distributions at this time. The source code can be downloaded from
 http://www.unifont.org/lasi/. The library is small and
-easy to build and install. You must have at least version 1.0.5p1 of 
+easy to build and install. You must have at least version 1.0.5p1 of
 LASi.  N.B. version 1.0.5 of LASi will no longer work.
 
-This driver is enabled by default. You can change this using the 
+This driver is enabled by default. You can change this using the
 --enable-psttf option to configure.
 
-If you have installed libLASi in a non-standard location you will need 
-to set the PKG_CONFIG_PATH variable to point to the location of the 
+If you have installed libLASi in a non-standard location you will need
+to set the PKG_CONFIG_PATH variable to point to the location of the
 libLASi pkg-config information. E.g. (for bash)
 export PKG_CONFIG_PATH=/home/software/libLASi/install/lib/pkgconfig
 
@@ -147,7 +157,7 @@ To compile your own programs, there are two ways possible:
    and the variables PLPLOT_CFLAGS and PLPLOT_LIBS will be set.
 
 ------------------------------------------------------------------------------
-Build Instructions for Cygwin 
+Build Instructions for Cygwin
 ------------------------------------------------------------------------------
 
 addendum: According to Arjen Markus shared libraries now work on Cygwin if
@@ -343,20 +353,20 @@ Build Instructions for MacOS X 10.3 & 10.4 (06-05-06 HPB)
 
 Installing PLplot using fink on Mac OS X.
 
-The most recent version of PLplot is available for 10.4 users using 
-the fink package manager (http://fink.sourceforge.net). Fink will 
-take care of installing all the required packages, and setting the 
-appropriate environment variables. After installing the fink package, 
-make sure you enable the so-called 'unstable tree' 
+The most recent version of PLplot is available for 10.4 users using
+the fink package manager (http://fink.sourceforge.net). Fink will
+take care of installing all the required packages, and setting the
+appropriate environment variables. After installing the fink package,
+make sure you enable the so-called 'unstable tree'
 (see http://fink.sourceforge.net/faq/usage-fink.php#unstable for instructions).
-Now you can install the PLplot package using the command "fink install plplot". 
-Note that PLplot depends on some big packages, such as octave and fortran, so 
+Now you can install the PLplot package using the command "fink install plplot".
+Note that PLplot depends on some big packages, such as octave and fortran, so
 it may take a long time before all the packages are installed.
 
 For 10.3 users an older version of PLplot is available
 
 
-Installing PLplot by compiling it yourself from the source. 
+Installing PLplot by compiling it yourself from the source.
 
 To install the CVS version of PLplot you will need :
 
@@ -382,7 +392,7 @@ make install
 make check
 
 2) With g77 [GNU Fortran (GCC) 3.4 20031015 (experimental)]
-./configure --disable-dyndrivers 
+./configure --disable-dyndrivers
 make LIBS="-Wl,-framework -Wl,Foundation" FFLAGS="-Wl,-single_module"
 make install
 make check
@@ -415,14 +425,14 @@ to sudo).
 
 Notes :
 
-Make check is only necessary if you want to compile the examples. It may 
+Make check is only necessary if you want to compile the examples. It may
 complain during the testing process, but it should build the examples.
 
-In OS-X 10.3 Dynamic drivers don't seem to be compatible with Objective C 
-and by extension the AquaTerm driver, but can be used if you don't plan to 
+In OS-X 10.3 Dynamic drivers don't seem to be compatible with Objective C
+and by extension the AquaTerm driver, but can be used if you don't plan to
 use the AquaTerm driver.
 
-The extra LIBS flags at the make step are only necessary if you have OS-X 10.3 
+The extra LIBS flags at the make step are only necessary if you have OS-X 10.3
 and are trying to use the AquaTerm driver, which uses the Foundation framework.
 
 If you want to be able to display plots you will need either X11 from Apple
@@ -668,7 +678,7 @@ export CMAKE_INCLUDE_PATH=/home/software/autotools/install/include:/home/softwar
 
  + (Optional) set environment variables to specify the compilers and compiler
    flags.
-   
+
 export CC="gcc -O2"
 export CXX="g++ -O2"
 export FC="g77 -O2"
@@ -680,11 +690,11 @@ export FC="g77 -O2"
    no optimization and no debugging symbols) are used for gcc-related
    compilers for our CBS which makes for very fast builds, but slow
    execution.
-   
+
  + execute cmake to configure files and generate Makefiles in the build
    tree. (Note this step is much faster than the equivalent cf/bootstrap.sh
    and ./configure commands you use with our ABS).
-   
+
 mkdir build_dir
 cd build_dir
 cmake -DCMAKE_INSTALL_PREFIX=/my/prefix \
@@ -714,9 +724,69 @@ make >& make_examples.out
    device.
 
    Links to useful CMake documentation are given in cmake/README.cmake_doc.
-   
-* Here is a typical way to use cmake on windows systems.
 
+* Here is a typical way to use cmake on windows systems.
+CMake comes with a graphical user-interface that allows you to set the
+various build parameters interactively. It will try and find the
+available compilers and other language tools that can be used for
+PLplot and then generate a set of makefiles or project files depending
+on what you chose.
+
+Alternatively you can use the command-line version. This is particularly
+useful if you need to set one or more environment variables - you can
+do that in a small batch file and then run CMake several times until
+you have fine-tuned the build system.
+
+Once you have the makefiles or project files, you can use nmake or
+Visual Studio to actually build the library and the examples.
+
+Typically the steps are:
+
+   + Set any environment variables you need to set (if the
+     right compilers are not already in your path for instance)
+     - If you set them in a DOS-box, be sure to run CMake in
+     that same DOS-box!
+
+   + Run CMakeSetup (the GUI version of CMake) or cmake (the
+     command-line version) to set the build parameters and
+     generate the make/project files
+
+   + Run nmake or Visual Studio to build the library and
+     the examples
+
+CMake supports most flavours of Visual Studio project files (ranging
+from VS 6.0 to VS.net 2005) and it can create makefiles suitable for
+the nmake utility.
+
+Currently (august 2006) there are the following limitations:
+
+   + No support for Compaq Visual Fortran yet
+   + No support for Java, Perl, Python or Tcl/Tk yet
+   + Support for additional libraries is limited:
+     - freetype (antialiasing fonts, smooth text): see notes below
+     - BGD (output in the form of GIF, JPEG or PNG files): none yet
+     - Qhull (advanced spatial interpolation): none yet
+
+     (An important issue is that on Windows there is no standard
+     location to install _libraries_ as opposed to programs.)
+
+On the other hand:
+
+   + Bindings for C and C++ (MSVC compiler) are no problem
+   + You can build both static (.lib) and dynamic link libraries (.dll)
+
+Note on the examples
+--------------------
+If you want to run the examples _before_ actually installing PLplot,
+then you must copy some files into the directory holding the example
+programs:
+
+   + plstnd5.fnt and plxtnd5.fnt in the directory ...\data
+   + plplotd.dll and csirocsa.dll in the directories ...\lib and
+     ...\lib\csa respectively.
+
+Dealing with freetype on Windows
+--------------------------------
 N.B. We need a lot more information here.  For now we only have Werner's
 instructions for dealing with the freetype library on two different windows
 systems.
@@ -744,5 +814,4 @@ Visual C++ 2005
 * set PATH=%FREETYPEDIR%\objs;%PATH%
 * set CMAKE_INCLUDE_PATH=%FREETYPEDIR%\include
 * run cmake with your options
-	  
 
