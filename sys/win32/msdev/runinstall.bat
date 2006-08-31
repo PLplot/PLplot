@@ -7,11 +7,12 @@ rem should be stored
 
 rem If the directory exist, assume we can simply copy the files
 rem
-if exists %1 goto copy
+if exist %1 goto copy
 md "%1"
 md "%1\doc"
 md "%1\include"
 md "%1\lib"
+md "%1\bin"
 
 :copy
 copy .\plplib\plplot.lib "%1\lib"
