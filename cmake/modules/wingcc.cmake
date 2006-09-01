@@ -31,7 +31,7 @@ if(PLD_wingcc)
   find_package(GDI32)
   if(GDI32_FOUND)
     message(STATUS "Looking for gdi32 header and library - found")
-    set(wingcc_LINK_FLAGS "${GDI32_LIBRARIES}")
+    set(wingcc_LINK_FLAGS "${GDI32_LIBRARIES};comdlg32")
     if(WITH_FREETYPE)
       set(
       wingcc_COMPILE_FLAGS
