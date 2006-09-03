@@ -52,8 +52,8 @@ foreach(STRING_INDEX ${tk_STRING_INDICES})
   set(_file x${STRING_INDEX}.tcl)
   add_custom_command(
   OUTPUT ${_file}
-  COMMAND ${CMAKE_COMMAND} 
-  -E copy 
+  COMMAND ${CMAKE_COMMAND}
+  -E copy
   ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
   ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
   DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
@@ -64,7 +64,7 @@ endforeach(STRING_INDEX ${tk_STRING_INDICES})
 install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
 
 add_custom_target(tclIndex_examples_tk ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 DEPENDS ${tk_FILES}
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

@@ -78,10 +78,23 @@ ${CMAKE_CURRENT_BINARY_DIR}/tclgen_s.h
 ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
 )
 
+#add_custom_command(
+#OUTPUT ${tclgenfiles}
+#COMMAND ${PERL_EXECUTABLE}
+#${CMAKE_CURRENT_SOURCE_DIR}/pltclgen ${CMAKE_CURRENT_SOURCE_DIR}
+#DEPENDS
+#${CMAKE_CURRENT_SOURCE_DIR}/pltclgen
+#${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
+#${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
+#)
+
+#INCLUDE(FindTclsh)
+set(TCL_TCLSH "tclsh")
+
 add_custom_command(
 OUTPUT ${tclgenfiles}
-COMMAND ${PERL_EXECUTABLE}
-${CMAKE_CURRENT_SOURCE_DIR}/pltclgen ${CMAKE_CURRENT_SOURCE_DIR}
+COMMAND ${TCL_TCLSH}
+${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl
 DEPENDS
 ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen
 ${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
@@ -167,7 +180,7 @@ endif(ENABLE_tk)
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 target_link_libraries(
-plplottcltk${LIB_TAG} 
+plplottcltk${LIB_TAG}
 ${plplottcltk${LIB_TAG}_link_libraries}
 )
 
@@ -200,19 +213,20 @@ DESTINATION ${INCLUDE_INSTALL_DIR}
 # is always needed for build-tree tests of tcl examples.
 
 # _target suffix to avoid nameclash with filename plplot.tcl.  This
-# nameclash screwed up ../tk/configuration which had a non-generated file 
+# nameclash screwed up ../tk/configuration which had a non-generated file
 # of the same name which was a dependency of a custom target.
 add_custom_target(plplot.tcl_target ALL
-COMMAND ${CMAKE_COMMAND} 
--E copy 
+COMMAND ${CMAKE_COMMAND}
+-E copy
 ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
 plplot.tcl
 DEPENDS
 ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
 )
 
+set(TCL_TCLSH "tclsh")
 add_custom_target(tclIndex_tcl ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 add_dependencies(tclIndex_tcl plplot.tcl_target)
@@ -241,7 +255,7 @@ LOCATION
 )
 get_filename_component(
 DLNAME_LIBPLPLOTTCLTK
-${DLNAME_LIBPLPLOTTCLTK} 
+${DLNAME_LIBPLPLOTTCLTK}
 NAME
 )
 string(REPLACE "plplottcltkd" "plplottcltk"
@@ -254,7 +268,7 @@ ${DLNAME_LIBPLPLOTTCLTK}
 )
 
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in 
+${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
 ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
 @ONLY
 )
@@ -272,7 +286,7 @@ if(PKGCONFIG_EXECUTABLE)
   # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
   # 			    binding has been enabled (ON) or not (OFF).
   #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-  #			    which helps to determine name of configured 
+  #			    which helps to determine name of configured
   #			    *.pc file.
   # PC_SHORT_NAME	  - Used in *.pc NAME: field
   # PC_LONG_NAME	  - Used in *.pc Description: field

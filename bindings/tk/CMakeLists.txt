@@ -88,7 +88,7 @@ INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 install(TARGETS plserver DESTINATION ${BIN_DIR})
 
 add_custom_target(tclIndex_tk ALL
-COMMAND ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 DEPENDS ${tcldata} ${itkdata}
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -108,7 +108,7 @@ LOCATION
 )
 get_filename_component(
 DLNAME_LIBPLPLOT
-${DLNAME_LIBPLPLOT} 
+${DLNAME_LIBPLPLOT}
 NAME
 )
 string(REPLACE "plplotd" "plplot"
@@ -121,7 +121,7 @@ ${DLNAME_LIBPLPLOT}
 )
 
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in 
+${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
 ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
 @ONLY
 )

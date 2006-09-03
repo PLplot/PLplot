@@ -37,6 +37,11 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#else
+#ifdef _MSC_VER
+#define getcwd _getcwd
+#include <direct.h>
+#endif
 #endif
 
 #include "tclgen.h"
@@ -73,7 +78,7 @@ typedef struct Command {
 
 typedef struct {
     char *name;
-    int (*proc)();
+    int (*proc)(void *, struct Tcl_Interp *, int, char **);
 } CmdInfo;
 
 /* Built-in commands, and the procedures associated with them */

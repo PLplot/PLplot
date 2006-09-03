@@ -47,8 +47,10 @@ option(ENABLE_itk "Enable incr TK interface code" ON)
 #			 Otherwise, undefined.
 #			 Used for source file configuration.)
 
+# AM: Hack - replace Perl script by equivalent Tcl script
+set(PERL_FOUND TRUE)
 if(ENABLE_tcl AND NOT PERL_FOUND)
-  message(STATUS 
+  message(STATUS
   "WARNING: perl not found which is required to generate Tcl interface"
   )
   message(STATUS "Disabling everything that is Tcl/Tk related")

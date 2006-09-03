@@ -42,8 +42,14 @@ if(PLD_tkwin)
 endif(PLD_tkwin)
 
 if(index)
+  FIND_PROGRAM( CAT NAMES cat )
+  if(${CAT} STREQUAL "CAT-NOTFOUND")
+    set( CAT "type" )
+  endif(${CAT} STREQUAL "CAT-NOTFOUND")
+  FILE(TO_NATIVE_PATH ${index} indexn)
+
   add_custom_target(pkgIndex.tcl ALL
-  COMMAND cat ${index} > pkgIndex.tcl
+  COMMAND ${CAT} ${indexn} > pkgIndex.tcl
   DEPENDS ${index}
   )
   install(
