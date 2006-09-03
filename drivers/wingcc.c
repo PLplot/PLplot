@@ -1206,6 +1206,7 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
         FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
       }
 }
+#endif
 
 /*--------------------------------------------------------------------------*\
  *  static void UpdatePageMetrics ( PLStream *pls, char flag )
@@ -1323,11 +1324,11 @@ static void PrintPage ( PLStream *pls )
         {
           BusyCursor();
           memcpy(dev->push,dev,sizeof(wingcc_Dev));
-    
+
           dev->hdc=dev->PRNT_hdc=Printer.hDC;      /* Copy the printer HDC */
-    
+
           UpdatePageMetrics ( pls, 1 );
-    
+
           #ifdef HAVE_FREETYPE
             if (FT)           /* If we are using freetype, then set it up next */
               {
@@ -1335,22 +1336,22 @@ static void PrintPage ( PLStream *pls )
                 FT->smooth_text=0;
               }
           #endif
-    
+
           /*
            *   Now the stuff that actually does the printing !!
            */
-    
+
           StartDoc(dev->hdc,&docinfo);
           plRemakePlot(pls);
           EndDoc(dev->hdc);
-    
+
           /*
            *  Now to undo everything back to what it was for the screen
            */
-    
+
           dev->hdc=dev->SCRN_hdc;      /* Reset the screen HDC to the default */
           UpdatePageMetrics ( pls, 0 );
-    
+
           #ifdef HAVE_FREETYPE
             if (FT)           /* If we are using freetype, then set it up next */
               {
@@ -1358,7 +1359,7 @@ static void PrintPage ( PLStream *pls )
               }
           #endif
           memcpy(dev,dev->push,sizeof(wingcc_Dev));   /* POP our "stack" now to restore the values */
-    
+
           GlobalFree(dev->push);
           NormalCursor();
           RedrawWindow(dev->hwnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_ERASENOW);
@@ -1367,7 +1368,6 @@ static void PrintPage ( PLStream *pls )
 }
 
 
-#endif
 
 #else
 int
