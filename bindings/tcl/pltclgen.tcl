@@ -293,7 +293,7 @@ proc process_pltclcmd {cmd rtype} {
 set verbose [expr {[lsearch $argv "-v"] >= 0}]
 
 # Find the source tree directory that must be specified on the command line.
-# Note this logic depends on "/pltclgen.tcl having 13 letters.
+# Note this logic depends on "/pltclgen.tcl" having 13 letters.
 set sourcedir [string range $argv0 0 [expr [string length $argv0] - 13]]
 # puts "sourcedir = $sourcedir"
 set specfile  [file join $sourcedir "plapi.tpl"]  ;# PLplot API template specification file.
