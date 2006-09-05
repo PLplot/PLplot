@@ -254,6 +254,8 @@ typedef struct {
  * db		int	Set if you want to double buffer output
  *			(only pixmap is drawn to directly; it is blitted
  *			to output window on EOP or an Expose)
+ * ext_resize_draw int  Set if you want to control the redraw caused by a
+ *                      window resize by an external agent.
  ***************************************************************************
  *
  * These are for support of the TK driver.
@@ -578,7 +580,7 @@ typedef struct {
 
     char *geometry;
     long window_id;
-    int  nopixmap, db;
+    int  nopixmap, db, ext_resize_draw;
 
 /* Stuff used by TK, DP drivers */
 
