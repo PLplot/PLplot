@@ -2226,6 +2226,9 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 	CreatePixmap(pls);
     }
 
+/* This allows an external agent to take over the redraw */
+    if (pls->ext_resize_draw) return;
+
 /* Initialize & redraw (to pixmap, if available). */
 
     plD_bop_xw(pls);
