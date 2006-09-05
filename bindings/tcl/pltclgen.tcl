@@ -158,6 +158,7 @@ proc process_pltclcmd {cmd rtype} {
                     }
                     if { $argref($i) } {
                         puts $GENFILE "/* $argname($i) is for output. */"
+                        continue
                     }
                     switch -- $argtype($i) {
                         "PLINT *" {
@@ -183,7 +184,7 @@ proc process_pltclcmd {cmd rtype} {
                             puts $GENFILE "    $argname($i) = argv\[1+$i\]\[0\];"
                         }
                         default {
-                            puts "Unrecognized argtype : $tmpline"
+                            puts "Unrecognized argtype : $argtype($i)"
                         }
                     }
                     if { $ndefs > 0 } {
