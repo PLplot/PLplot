@@ -46,6 +46,15 @@ libplplottcltk${LIB_TAG}_COMPILE_FLAGS
 "-I${TCL_INCLUDE_PATH}"
 )
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET(libvar "tclmatrix${LIB_TAG}_LIB_SRCS")
+  SET_SOURCE_FILES_PROPERTIES(${${libvar}}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+  include_directories(
+      ${CMAKE_SOURCE_DIR}/include
+  )
+endif(WIN32 AND BUILD_SHARED_LIBS)
+
 add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
 target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})
 
@@ -88,13 +97,13 @@ ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
 #${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
 #)
 
-#INCLUDE(FindTclsh)
-set(TCL_TCLSH "tclsh")
+INCLUDE(FindTclsh)
+#set(TCL_TCLSH "tclsh")
 
 add_custom_command(
 OUTPUT ${tclgenfiles}
 COMMAND ${TCL_TCLSH}
-${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl
+${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl ${CMAKE_CURRENT_SOURCE_DIR}
 DEPENDS
 ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen
 ${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl

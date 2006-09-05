@@ -293,9 +293,7 @@ proc process_pltclcmd {cmd rtype} {
 set verbose [expr {[lsearch $argv "-v"] >= 0}]
 
 # Find the source tree directory that must be specified on the command line.
-# Note this logic depends on "/pltclgen.tcl" having 13 letters.
-set sourcedir [string range $argv0 0 [expr [string length $argv0] - 13]]
-# puts "sourcedir = $sourcedir"
+set sourcedir [lindex $argv 0]                    ;# Get the current source directory - for "out of source tree builds"
 set specfile  [file join $sourcedir "plapi.tpl"]  ;# PLplot API template specification file.
 set genfile   "tclgen.c"                          ;# Generated functions go here.
 set genhead   "tclgen.h"                          ;# Prototypes for generated functions.
