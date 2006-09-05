@@ -42,12 +42,20 @@ if(PLD_tkwin)
 endif(PLD_tkwin)
 
 if(index)
-  FIND_PROGRAM( CAT NAMES cat )
-  if(${CAT} STREQUAL "CAT-NOTFOUND")
-    set( CAT "type" )
-  endif(${CAT} STREQUAL "CAT-NOTFOUND")
-  FILE(TO_NATIVE_PATH ${index} indexn)
-
+  find_program(CAT NAMES cat)
+  if(NOT CAT)
+    find_program(TYPE NAMES type)
+    if(TYPE)
+      set(CAT ${TYPE} CACHE FILEPATH "program to concatanate files")
+    else(TYPE)
+      message(FATAL_ERROR "program to concatanate files not found")
+    endif(TYPE)
+  endif(NOT CAT)
+  set(indexn)
+  foreach(file ${index})
+    file(TO_NATIVE_PATH ${file} filen)
+    set(indexn ${indexn} ${filen})
+  endforeach(file ${index})
   add_custom_target(pkgIndex.tcl ALL
   COMMAND ${CAT} ${indexn} > pkgIndex.tcl
   DEPENDS ${index}
