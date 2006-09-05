@@ -1996,6 +1996,10 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     plsc->plbufFile = plsr->plbufFile;
 #else
     plsc->plbuf_buffer = plsr->plbuf_buffer;
+    plsc->plbuf_buffer_grow = plsr->plbuf_buffer_grow;
+    plsc->plbuf_buffer_size = plsr->plbuf_buffer_size;
+    plsc->plbuf_top = plsr->plbuf_top;
+    plsc->plbuf_readpos = plsr->plbuf_readpos;
 #endif
 
 /* Driver interface */
