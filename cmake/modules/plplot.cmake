@@ -183,6 +183,7 @@ include(c++)
 include(fortran)
 include(java)
 include(python)
+include(octave)
 include(tcl-related)
 include(pdl)
 
