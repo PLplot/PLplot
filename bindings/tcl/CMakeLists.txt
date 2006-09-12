@@ -87,25 +87,12 @@ ${CMAKE_CURRENT_BINARY_DIR}/tclgen_s.h
 ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
 )
 
-#add_custom_command(
-#OUTPUT ${tclgenfiles}
-#COMMAND ${PERL_EXECUTABLE}
-#${CMAKE_CURRENT_SOURCE_DIR}/pltclgen ${CMAKE_CURRENT_SOURCE_DIR}
-#DEPENDS
-#${CMAKE_CURRENT_SOURCE_DIR}/pltclgen
-#${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
-#${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
-#)
-
-INCLUDE(FindTclsh)
-#set(TCL_TCLSH "tclsh")
-
 add_custom_command(
 OUTPUT ${tclgenfiles}
 COMMAND ${TCL_TCLSH}
 ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl ${CMAKE_CURRENT_SOURCE_DIR}
 DEPENDS
-${CMAKE_CURRENT_SOURCE_DIR}/pltclgen
+${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl
 ${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
 ${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
 )
@@ -233,7 +220,6 @@ DEPENDS
 ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
 )
 
-set(TCL_TCLSH "tclsh")
 add_custom_target(tclIndex_tcl ALL
 COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
