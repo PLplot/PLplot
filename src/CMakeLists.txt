@@ -70,11 +70,11 @@ else(ENABLE_DYNDRIVERS)
 
   add_custom_command(
   OUTPUT ${tclgenfiles}
-  COMMAND ${PERL_EXECUTABLE}
-  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen
+  COMMAND ${TCL_TCLSH}
+  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
   ${CMAKE_SOURCE_DIR}/bindings/tcl
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen
+  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
   ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
   ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
