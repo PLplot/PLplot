@@ -76,11 +76,14 @@ NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
     ${tclIndex_DEPENDS}
     ${CMAKE_CURRENT_BINARY_DIR}/${file}
     )
-    add_custom_target(${CMAKE_CURRENT_BINARY_DIR}/${file} ALL
+    add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     )
   endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
+  add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
 endif(BUILD_TEST AND
 NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
 )
