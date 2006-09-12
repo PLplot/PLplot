@@ -120,12 +120,21 @@ NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
   # "make install" time, to the build tree if different than the source
   # tree, and skipping plplot_python_start.py since it is already
   # in the build tree.
+  set(command_depends)
   foreach(file ${python_SCRIPTS} ${python_DATA})
-    add_custom_target(${CMAKE_CURRENT_BINARY_DIR}/${file} ALL
+    set(
+    command_DEPENDS
+    ${command_DEPENDS}
+    ${CMAKE_CURRENT_BINARY_DIR}/${file}
+    )
+    add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
     COMMAND ${CMAKE_COMMAND} -E copy 
     ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     )
   endforeach(file ${python_SCRIPTS} ${python_DATA})
+  add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
 endif(BUILD_TEST AND 
 NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
 )
