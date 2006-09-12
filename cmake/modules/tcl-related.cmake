@@ -47,19 +47,6 @@ option(ENABLE_itk "Enable incr TK interface code" ON)
 #			 Otherwise, undefined.
 #			 Used for source file configuration.)
 
-# AM: Hack - replace Perl script by equivalent Tcl script
-set(PERL_FOUND TRUE)
-if(ENABLE_tcl AND NOT PERL_FOUND)
-  message(STATUS
-  "WARNING: perl not found which is required to generate Tcl interface"
-  )
-  message(STATUS "Disabling everything that is Tcl/Tk related")
-  set(ENABLE_tcl OFF CACHE BOOL "Enable Tcl bindings" FORCE)
-  set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
-  set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
-  set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
-endif(ENABLE_tcl AND NOT PERL_FOUND)
-
 if(ENABLE_tcl)
   message(STATUS "Looking for include paths and libraries for Tcl/Tk")
   find_package(TCL)
@@ -68,6 +55,19 @@ if(ENABLE_tcl)
     message(STATUS
     "Looking for include paths and libraries for Tcl/Tk - found"
     )
+    message(STATUS "Looking for tclsh")
+    include(FindTclsh)
+    if(TCL_TCLSH)
+      message(STATUS "Looking for tclsh - found")
+    else(TCL_TCLSH)
+      message(STATUS "Looking for tclsh - not found")
+    endif(TCL_TCLSH)
+  else(TCL_FOUND)
+    message(STATUS
+    "Looking for include paths and libraries for Tcl/Tk - not found"
+    )
+  endif(TCL_FOUND)
+  if(TCL_FOUND AND TCL_TCLSH)
     if(ENABLE_itcl)
       message(STATUS "Looking for itcl.h")
       find_path(ITCL_INCLUDE_PATH itcl.h ${TCL_INCLUDE_PATH})
@@ -129,14 +129,11 @@ if(ENABLE_tcl)
         set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
       endif(ITK_INCLUDE_PATH)
     endif(ENABLE_itk)
-  else(TCL_FOUND)
-    message(STATUS
-    "Looking for include paths and libraries for Tcl/Tk - not found"
-    )
+  else(TCL_FOUND AND TCL_TCLSH)
     message(STATUS "Disabling everything that is Tcl/Tk related")
     set(ENABLE_tcl OFF CACHE BOOL "Enable Tcl bindings" FORCE)
     set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
     set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
     set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
-  endif(TCL_FOUND)
+  endif(TCL_FOUND AND TCL_TCLSH)
 endif(ENABLE_tcl)
