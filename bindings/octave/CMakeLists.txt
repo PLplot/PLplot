@@ -21,8 +21,6 @@
 
 if(ENABLE_octave)
 add_subdirectory(PLplot)
-if(done)
 add_subdirectory(demos)
 add_subdirectory(misc)
-endif(done)
 endif(ENABLE_octave)

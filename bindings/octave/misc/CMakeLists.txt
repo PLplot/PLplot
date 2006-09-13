@@ -1,45 +1,29 @@
-
-########### install files ###############
-
-INSTALL_FILES(  FILES  $(examples) )
-
-
-
-#original Makefile.am contents follow:
-
-## bindings/octave/demos/Makefile.am for PLplot
-####
-#### Process this file with automake to produce Makefile.in
-####
-## Copyright (C) 2002  Alan W. Irwin
-## Copyright (C) 2002  Joao Cardoso
-## Copyright (C) 2003, 2004  Rafael Laboissiere
-##
-## This file is part of PLplot.
-##
-## PLplot is free software; you can redistribute it and/or modify
-## it under the terms of the GNU Library General Public License as published
-## by the Free Software Foundation; version 2 of the License.
-##
-## PLplot is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU Library General Public License for more details.
-##
-## You should have received a copy of the GNU Library General Public License
-## along with the file PLplot; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+# bindings/octave/misc/CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006 Alan W. Irwin
 #
-#examples = \
-#	diffn.m \
-#	gradn.m \
-#	rosenbrock.m
+# This file is part of PLplot.
 #
-#EXTRA_DIST = $(examples)
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
 #
-#if enable_octave
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
 #
-#examples_octavedir = $(DATA_DIR)/examples/octave
-#examples_octave_DATA = $(examples)
-#
-#endif
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+# Install miscellaneous support files for octave examples.
+set(examples_octave
+diffn.m
+gradn.m
+rosenbrock.m
+)
+
+install(FILES ${examples_octave} DESTINATION ${DATA_DIR}/examples/octave)
