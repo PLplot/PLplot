@@ -19,8 +19,46 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# Build and install octave interface to PLplot and octave PLplot examples.
 if(ENABLE_octave)
+
 add_subdirectory(PLplot)
 add_subdirectory(demos)
 add_subdirectory(misc)
+
+# Generate full on-line help for plplot_octave
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt)
+add_custom_command(
+OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+COMMAND ${CMAKE_COMMAND} -E copy
+${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+DEPENDS
+${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
+)
+if(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
+  add_custom_target(
+  make_documentation ALL
+  COMMAND ${PERL_EXECUTABLE}
+  ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
+  ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
+  ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
+  DEPENDS 
+  ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+  ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
+  ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
+  ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt
+  )
+else(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
+  message(STATUS 
+  "WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"
+  "   so cannot generate full online help for plplot_octave"
+  )
+  add_custom_target(
+  make_documentation ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+  )
+endif(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
+
 endif(ENABLE_octave)
