@@ -51,6 +51,10 @@ if(ENABLE_octave)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
+  if (PERL_FOUND)
+    check_perl_modules(PERL_XML_PARSER XML::Parser)
+    check_perl_modules(PERL_XML_DOM XML::DOM)
+  endif (PERL_FOUND)
   #MATWRAP is the path+filename of the matwrap script.
   set(MATWRAP "${CMAKE_CURRENT_SOURCE_DIR}/bindings/octave/matwrap/matwrap")
   message(STATUS "MATWRAP = ${MATWRAP}")

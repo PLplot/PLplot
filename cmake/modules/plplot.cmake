@@ -177,6 +177,9 @@ endif(SWIG_FOUND)
 # Find Perl.  Required in several places in the build system (e.g.,
 # tcl and docbook).
 find_package(Perl)
+if(PERL_FOUND)
+    include(CheckPerlModules)
+endif(PERL_FOUND)
 
 # Load language specific files
 include(c++)
