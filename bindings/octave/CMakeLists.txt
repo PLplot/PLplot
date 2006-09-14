@@ -49,7 +49,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
 DEPENDS
 ${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
 )
-if(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
+if(PERL_XML_DOM AND PERL_XML_PARSER)
   add_custom_target(
   make_documentation ALL
   COMMAND ${PERL_EXECUTABLE}
@@ -63,7 +63,7 @@ if(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
   ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt
   )
-else(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
+else(PERL_XML_DOM AND PERL_XML_PARSER)
   message(STATUS 
   "WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"
   "   so cannot generate full online help for plplot_octave"
@@ -72,6 +72,46 @@ else(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
   make_documentation ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
   )
-endif(PERL_FOUND AND PERL_XML_DOM AND PERL_XML_PARSER)
+endif(PERL_XML_DOM AND PERL_XML_PARSER)
+
+# Generate source code for octave interface to PLplot.
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave.h.in
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
+@ONLY
+)
+add_custom_command(
+OUTPUT 
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
+${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+COMMAND ${PERL_EXECUTABLE}
+-I${MATWRAP_PATH} ${MATWRAP} 
+-language octave -o plplot_octave.cc -stub tmp_stub
+-cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR} 
+-cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_rej.h
+-cpp ${CMAKE_C_COMPILER} -D__builtin_va_list=void -E 
+-I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_BINARY_DIR} -C plplot_octave.h
+DEPENDS
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
+)
+
+# Compile octave interface.
+add_custom_command(
+OUTPUT 
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
+COMMAND
+touch
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
+DEPENDS
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
+)
+
+# Link octave interface.
+add_custom_target(
+plplot_octave-libdir.oct ALL
+DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
+)
 
 endif(ENABLE_octave)
