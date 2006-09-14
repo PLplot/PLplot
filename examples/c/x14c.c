@@ -283,7 +283,7 @@ plot4(void)
 {
     int i, j;
     PLFLT dtr, theta, dx, dy, r;
-    char text[3];
+    char text[4];
     PLFLT x0[361], y0[361];
     PLFLT x[361], y[361];
 
