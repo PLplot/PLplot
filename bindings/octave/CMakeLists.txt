@@ -26,6 +26,19 @@ add_subdirectory(PLplot)
 add_subdirectory(demos)
 add_subdirectory(misc)
 
+# Install renamed documentation files.
+set(docfiles
+BUGS
+FGA
+INSTALL
+README
+ToDo
+USAGE
+)
+foreach(doc ${docfiles})
+  install(FILES ${doc} DESTINATION ${DOC_DIR} RENAME ${doc}.octave)
+endforeach(doc ${docfiles})
+
 # Generate full on-line help for plplot_octave
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt)
 add_custom_command(

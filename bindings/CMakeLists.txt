@@ -26,7 +26,7 @@ add_subdirectory(python)
 add_subdirectory(tcl)
 add_subdirectory(tk)
 add_subdirectory(tk-x-plat)
-#add_subdirectory(octave)
+add_subdirectory(octave)
 add_subdirectory(java)
 add_subdirectory(gnome2)
 
