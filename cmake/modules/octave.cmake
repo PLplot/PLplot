@@ -28,6 +28,12 @@ if(ENABLE_octave AND NOT BUILD_SHARED_LIBS)
   set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
 endif(ENABLE_octave AND NOT BUILD_SHARED_LIBS)
 
+if(ENABLE_octave AND NOT PERL_FOUND)
+  message(STATUS "WARNING: "
+    "The octave build requires perl. Disabling octave bindings")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+endif(ENABLE_octave AND NOT PERL_FOUND)
+
 if(ENABLE_octave)
   find_program(OCTAVE octave)
   if(OCTAVE)
@@ -51,13 +57,14 @@ if(ENABLE_octave)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
-  if (PERL_FOUND)
-    check_perl_modules(PERL_XML_PARSER XML::Parser)
-    check_perl_modules(PERL_XML_DOM XML::DOM)
-  endif (PERL_FOUND)
+  check_perl_modules(PERL_XML_PARSER XML::Parser)
+  check_perl_modules(PERL_XML_DOM XML::DOM)
   #MATWRAP is the path+filename of the matwrap script.
   set(MATWRAP "${CMAKE_CURRENT_SOURCE_DIR}/bindings/octave/matwrap/matwrap")
   message(STATUS "MATWRAP = ${MATWRAP}")
+  #MATWRAP_PATH is the path of the matwrap script
+  get_filename_component(MATWRAP_PATH ${MATWRAP} PATH)
+  message(STATUS "MATWRAP_PATH = ${MATWRAP_PATH}")
 
   #OCTAVE_VERSION is the (dotted triplet) octave version.
   execute_process(
