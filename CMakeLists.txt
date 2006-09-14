@@ -112,8 +112,7 @@ add_subdirectory(utils)
 add_subdirectory(test)
 add_subdirectory(scripts)
 add_subdirectory(doc)
-# needs no cmake processing
-#add_subdirectory(pkgcfg)
+add_subdirectory(pkgcfg)
 # needs no cmake processing
 #add_subdirectory(cf)
 summary()
