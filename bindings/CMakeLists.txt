@@ -44,22 +44,41 @@ endif(PLD_tkwin)
 if(index)
   find_program(CAT NAMES cat)
   if(NOT CAT)
-    find_program(TYPE NAMES type)
-    if(TYPE)
-      set(CAT ${TYPE} CACHE FILEPATH "program to concatanate files")
-    else(TYPE)
-      message(FATAL_ERROR "program to concatanate files not found")
-    endif(TYPE)
+    find_program(COPY NAMES cmd)
+    if(NOT COPY)
+      find_program(COPY NAMES command)
+    endif(NOT COPY)
+    if(COPY)
+      set(CAT  ${COPY} CACHE INTERNAL "program to concatenate files" FORCE)
+      set(COPY "copy"  CACHE INTERNAL "program to concatenate files" FORCE)
+    else(COPY)
+      message(FATAL_ERROR "program to concatenate files not found")
+    endif(COPY)
+    message(STATUS "Copy: ${COPY} - ${CAT}")
   endif(NOT CAT)
-  set(indexn)
-  foreach(file ${index})
-    file(TO_NATIVE_PATH ${file} filen)
-    set(indexn ${indexn} ${filen})
-  endforeach(file ${index})
-  add_custom_target(pkgIndex.tcl ALL
-  COMMAND ${CAT} ${indexn} > pkgIndex.tcl
-  DEPENDS ${index}
-  )
+  if(NOT COPY)
+    set(indexn)
+    foreach(file ${index})
+      file(TO_NATIVE_PATH ${file} filen)
+      set(indexn ${indexn} ${filen})
+    endforeach(file ${index})
+    add_custom_target(pkgIndex.tcl ALL
+    COMMAND ${CAT} ${indexn} > pkgIndex.tcl
+    DEPENDS ${index}
+    )
+  else(NOT COPY)
+    set(indexn)
+    set(prefix)
+    foreach(file ${index})
+      file(TO_NATIVE_PATH ${file} filen)
+      set(indexn ${indexn} ${prefix}${filen})
+      set(prefix +)
+    endforeach(file ${index})
+    add_custom_target(pkgIndex.tcl ALL
+    COMMAND ${COPY} ${indexn} pkgIndex.tcl
+    DEPENDS ${index}
+    )
+  endif(NOT COPY)
   install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
   DESTINATION ${DATA_DIR}
