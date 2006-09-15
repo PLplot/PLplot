@@ -194,7 +194,6 @@ include(pdl)
 # additional library support
 # =======================================================================
 include(freetype)
-include(agg)
 include(csiro)
 # On windows systems the math library is not separated so do not specify
 # it unless you are on a non-windows system.

@@ -20,20 +20,36 @@
 # Configuration for the freetype support in plplot.
 
 option(
-WITH_AGG
+HAVE_AGG
 "Enable driver options for using AGG library for antializing"
 OFF
 )
 
-# Look for agg libraries
-if (WITH_AGG)
-  find_package(AGG)
-  if (NOT AGG_FOUND)
-    set(WITH_AGG OFF
+if(HAVE_AGG)
+  if(NOT PKGCONFIG_EXECUTABLE)
+    message(STATUS 
+    "WARNING: pkg-config not found. Setting HAVE_AGG to OFF."
+    )
+    set(HAVE_AGG OFF
     CACHE BOOL "Enable driver options for using AGG library for antializing"
     FORCE
     )
-  else (NOT AGG_FOUND)
-	  set(HAVE_AGG ON)
-  endif (NOT AGG_FOUND)
-endif (WITH_AGG)
+  endif(NOT PKGCONFIG_EXECUTABLE)
+endif(HAVE_AGG)
+# Look for agg libraries
+if (HAVE_AGG)
+  message(STATUS "Looking for AGG")
+  find_package(AGG)
+  if(AGG_FOUND)
+    message(STATUS "Looking for AGG -- found")
+  else(AGG_FOUND)
+    message(STATUS "Looking for AGG -- not found")
+    message(STATUS 
+    "WARNING: Setting HAVE_AGG to OFF."
+    )
+    set(HAVE_AGG OFF
+    CACHE BOOL "Enable driver options for using AGG library for antializing"
+    FORCE
+    )
+  endif(AGG_FOUND)
+endif (HAVE_AGG)
