@@ -57,6 +57,18 @@ if(PLD_wxwidgets)
       ${FREETYPE_LIBRARIES}
       )
     endif(WITH_FREETYPE)
+    if(WITH_AGG)
+			message( "${AGG_INCLUDE_DIR} ${AGG_LIBRARIES} ${AGG_DEFINITIONS}" )
+      set(
+      wxwidgets_COMPILE_FLAGS
+      "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIR}"
+      )
+      set(
+      wxwidgets_LINK_FLAGS
+      ${wxwidgets_LINK_FLAGS}
+      ${AGG_LIBRARIES}
+      )
+    endif(WITH_AGG)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${wxwidgets_LINK_FLAGS})
   else(wxWidgets_FOUND)
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
