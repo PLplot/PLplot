@@ -57,15 +57,6 @@ if(ENABLE_octave)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
-  check_perl_modules(PERL_XML_PARSER XML::Parser)
-  check_perl_modules(PERL_XML_DOM XML::DOM)
-  #MATWRAP is the path+filename of the matwrap script.
-  set(MATWRAP "${CMAKE_CURRENT_SOURCE_DIR}/bindings/octave/matwrap/matwrap")
-  message(STATUS "MATWRAP = ${MATWRAP}")
-  #MATWRAP_PATH is the path of the matwrap script
-  get_filename_component(MATWRAP_PATH ${MATWRAP} PATH)
-  message(STATUS "MATWRAP_PATH = ${MATWRAP_PATH}")
-
   #OCTAVE_VERSION is the (dotted triplet) octave version.
   execute_process(
   COMMAND ${OCTAVE} --version
@@ -78,7 +69,52 @@ if(ENABLE_octave)
   ${_OCTAVE_VERSION}
   )
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
-  
+
+  find_path(
+  OCTAVE_INCLUDE_PATH
+  oct.h
+  PATH_SUFFIXES octave-${OCTAVE_VERSION}/octave
+  )
+  message(STATUS "OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}")
+
+  find_library(
+  OCTAVE_LIBRARIES
+  octave
+  PATH_SUFFIXES octave-${OCTAVE_VERSION}
+  )
+  message(STATUS "OCTAVE_LIBRARIES = ${OCTAVE_LIBRARIES}")
+
+  if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES)
+    #Must always have second octave include path which is identical
+    #to the first with trailing "/octave" trimmed off.
+    string(REGEX REPLACE "/octave$" ""
+    octave_include_path_trimmed 
+    ${OCTAVE_INCLUDE_PATH}
+    )
+    set(OCTAVE_INCLUDE_PATH 
+    ${octave_include_path_trimmed} ${OCTAVE_INCLUDE_PATH}
+    CACHE INTERNAL ""
+    )
+    message(STATUS 
+    "(transformed) OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}"
+    )
+  else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES)
+    message(STATUS "WARNING: "
+    "octave headers and/or library not found. Disabling octave bindings")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+  endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES) 
+endif(ENABLE_octave)
+
+if(ENABLE_octave)
+  check_perl_modules(PERL_XML_PARSER XML::Parser)
+  check_perl_modules(PERL_XML_DOM XML::DOM)
+  #MATWRAP is the path+filename of the matwrap script.
+  set(MATWRAP "${CMAKE_CURRENT_SOURCE_DIR}/bindings/octave/matwrap/matwrap")
+  message(STATUS "MATWRAP = ${MATWRAP}")
+  #MATWRAP_PATH is the path of the matwrap script
+  get_filename_component(MATWRAP_PATH ${MATWRAP} PATH)
+  message(STATUS "MATWRAP_PATH = ${MATWRAP_PATH}")
+
   # PLPLOT_OCTAVE_DIR is the directory for installation of the PLplot_Octave
   # specific m files
   set(PLPLOT_OCTAVE_DIR ${CMAKE_INSTALL_PREFIX}/share/plplot_octave)
