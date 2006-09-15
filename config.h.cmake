@@ -43,6 +43,9 @@
 /* Define if [freetype] is available */
 #cmakedefine HAVE_FREETYPE
 
+/* Define if [agg] is available */
+#cmakedefine HAVE_AGG
+
 /* Define to 1 if you have the <glib.h> header file. */
 #cmakedefine HAVE_GLIB_H 1
 
