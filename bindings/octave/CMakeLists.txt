@@ -80,6 +80,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave.h.in
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
 @ONLY
 )
+# Extra sed step is a correction to allow gcc 3.2 (and later) to compile.
+# This correction also still works on gcc 2.95
 add_custom_command(
 OUTPUT 
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
@@ -91,11 +93,85 @@ COMMAND ${PERL_EXECUTABLE}
 -cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_rej.h
 -cpp ${CMAKE_C_COMPILER} -D__builtin_va_list=void -E 
 -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_BINARY_DIR} -C plplot_octave.h
+COMMAND mv 
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
+${CMAKE_CURRENT_BINARY_DIR}/tmp_plplot_octave.cc
+COMMAND sed "s/ string / std::string /" 
+${CMAKE_CURRENT_BINARY_DIR}/tmp_plplot_octave.cc > 
+${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
 DEPENDS
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
 )
 
-# Compile octave interface.
+# Build octave interface.
+set(octave_interface_INCLUDE_PATHS
+${CMAKE_SOURCE_DIR}/include
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/include
+${CMAKE_CURRENT_SOURCE_DIR}
+${CMAKE_CURRENT_BINARY_DIR}
+${OCTAVE_INCLUDE_PATH}
+)
+include_directories(${octave_interface_INCLUDE_PATHS})
+
+set(CMAKE_MODULE_LINKER_FLAGS "${OCTAVE_LIBRARIES}")
+
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+if(ENABLE_DYNDRIVERS)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+endif(ENABLE_DYNDRIVERS)
+
+add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
+set_target_properties(plplot_octave 
+PROPERTIES PREFIX "" SUFFIX ".oct")
+target_link_libraries(plplot_octave plplot${LIB_TAG})
+set_target_properties(
+plplot_octave
+PROPERTIES
+INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+INSTALL_NAME_DIR "${PLPLOT_OCTAVE_DIR}"
+)
+
+install(TARGETS plplot_octave LIBRARY DESTINATION ${PLPLOT_OCTAVE_DIR})
+
+# Build and install plplot_stub.m
+add_executable(massage massage.c)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m_part2 
+"# It was also massaged to add online documentation\n"
+"# extracted from some PLplot distribution files\n"
+"\n"
+"1;\n"
+"\n"
+)
+add_custom_command(
+OUTPUT 
+${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+${CMAKE_CURRENT_BINARY_DIR}/missing_help
+COMMAND head -5 tmp_stub > plplot_stub.m
+COMMAND
+cat plplot_stub.m_part2 >> plplot_stub.m
+COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def >> plplot_stub.m
+COMMAND echo >> plplot_stub.m
+COMMAND 
+${CMAKE_CURRENT_BINARY_DIR}/massage$(EXEEXT) >> plplot_stub.m 2> missing_help
+DEPENDS
+${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
+${CMAKE_CURRENT_BINARY_DIR}/massage$(EXEEXT)
+)
+
+add_custom_target(
+plplot_stub.m_built ALL
+DEPENDS
+${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+)
+
+install(FILES 
+${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+DESTINATION ${PLPLOT_OCTAVE_DIR}
+)
+
+if(never)
 add_custom_command(
 OUTPUT 
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
@@ -113,5 +189,5 @@ add_custom_target(
 plplot_octave-libdir.oct ALL
 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
 )
-
+endif(never)
 endif(ENABLE_octave)
