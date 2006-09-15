@@ -58,15 +58,15 @@
   
 // antigrain headers (for antialzing)
 #ifdef HAVE_AGG
-  #include "../lib/agg/agg_basics.h"
-  #include "../lib/agg/agg_rendering_buffer.h"
-  #include "../lib/agg/agg_rasterizer_scanline_aa.h"
-  #include "../lib/agg/agg_scanline_u.h"
-  #include "../lib/agg/agg_conv_stroke.h"
-  #include "../lib/agg/agg_pixfmt_rgb.h"
-  #include "../lib/agg/agg_renderer_base.h"
-  #include "../lib/agg/agg_renderer_scanline.h"
-  #include "../lib/agg/agg_path_storage.h"
+  #include "agg2/agg_basics.h"
+  #include "agg2/agg_rendering_buffer.h"
+  #include "agg2/agg_rasterizer_scanline_aa.h"
+  #include "agg2/agg_scanline_u.h"
+  #include "agg2/agg_conv_stroke.h"
+  #include "agg2/agg_pixfmt_rgb.h"
+  #include "agg2/agg_renderer_base.h"
+  #include "agg2/agg_renderer_scanline.h"
+  #include "agg2/agg_path_storage.h"
   
   typedef agg::pixfmt_rgb24 pixfmt;
   typedef agg::renderer_base<pixfmt> ren_base;
@@ -283,7 +283,7 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-//#define _DEBUG
+#define _DEBUG
 //#define _DEBUG_VERBOSE
 
 /*--------------------------------------------------------------------------*\
@@ -1069,9 +1069,8 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
   if( antialized ) {
 #ifdef HAVE_AGG
     dev->m_buffer->SetRGB( x, y, dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke );    
-#endif HAVE_AGG
-  }
-  else  
+#endif
+  } else  
     dev->dc->DrawPoint( x, y );
 
   if( !(dev->resizing) && dev->ownGUI )
@@ -1276,6 +1275,11 @@ int wxRunApp( PLStream *pls, bool runonce )
     callOnExit.exit=true;
     wxGetApp().SetAdvanceFlag( runonce );
     wxGetApp().SetRefreshFlag();
+
+		// to add an idle event is necessary for Linux (wxGTK2)
+		// and not for Windows, but it doesn't harm
+	  wxIdleEvent event;
+    dev->m_frame->AddPendingEvent( event );
     return wxGetApp().OnRun();   // start wxWidgets application    
     callOnExit.exit=false;
   }
@@ -1385,9 +1389,9 @@ void wxPLplotFrame::OnPaint( wxPaintEvent& WXUNUSED(event) )
 }
  
 
-void wxPLplotFrame::OnChar(wxKeyEvent& event)
+void wxPLplotFrame::OnChar( wxKeyEvent& event )
 {
-  Log_Verbose( "wxPLplotFrame::OnChar" );
+  Log_Debug( "wxPLplotFrame::OnChar" );
 
   int keycode = event.GetKeyCode();
   switch( keycode ) {
@@ -1410,7 +1414,7 @@ void wxPLplotFrame::OnChar(wxKeyEvent& event)
 
 void wxPLplotFrame::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotFrame::OnIdle" );
+  Log_Debug( "wxPLplotFrame::OnIdle" );
 
   if( wxGetApp().GetExitFlag() )
     wxGetApp().ExitMainLoop();
@@ -1449,7 +1453,7 @@ void wxPLplotFrame::OnSize( wxSizeEvent & WXUNUSED(event) )
           m_dev->m_buffer = new wxImage( m_dev->bm_width, m_dev->bm_height );
 #ifdef HAVE_AGG  
           if( m_dev->m_rendering_buffer )
-            delete m_rendering_buffer;
+            delete m_dev->m_rendering_buffer;
           m_dev->m_rendering_buffer = new agg::rendering_buffer;
           m_dev->m_rendering_buffer->attach( m_dev->m_buffer->GetData(), m_dev->bm_width,
                                               m_dev->bm_height, m_dev->bm_width*3 );
