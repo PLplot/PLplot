@@ -17,12 +17,12 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 #
-# Configuration for the freetype support in plplot.
+# Configuration for AGG support in plplot.
 
 option(
 HAVE_AGG
 "Enable driver options for using AGG library for antializing"
-OFF
+ON
 )
 
 if(HAVE_AGG)
@@ -38,18 +38,14 @@ if(HAVE_AGG)
 endif(HAVE_AGG)
 # Look for agg libraries
 if (HAVE_AGG)
-  message(STATUS "Looking for AGG")
   find_package(AGG)
-  if(AGG_FOUND)
-    message(STATUS "Looking for AGG -- found")
-  else(AGG_FOUND)
-    message(STATUS "Looking for AGG -- not found")
+  if(NOT AGG_FOUND)
     message(STATUS 
-    "WARNING: Setting HAVE_AGG to OFF."
+    "WARNING: AGG not found.  Setting HAVE_AGG to OFF."
     )
     set(HAVE_AGG OFF
     CACHE BOOL "Enable driver options for using AGG library for antializing"
     FORCE
     )
-  endif(AGG_FOUND)
+  endif(NOT AGG_FOUND)
 endif (HAVE_AGG)

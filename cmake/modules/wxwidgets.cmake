@@ -59,7 +59,9 @@ if(PLD_wxwidgets)
     endif(WITH_FREETYPE)
     include(agg)
     if(HAVE_AGG)
-      message( "${AGG_INCLUDE_DIR} ${AGG_LIBRARIES} ${AGG_DEFINITIONS}" )
+      message(STATUS "AGG_INCLUDE_DIR = ${AGG_INCLUDE_DIR}")
+      message(STATUS "AGG_LIBRARIES = ${AGG_LIBRARIES}")
+      message(STATUS "AGG_DEFINITIONS = ${AGG_DEFINITIONS}")
       set(
       wxwidgets_COMPILE_FLAGS
       "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIR}"
