@@ -60,6 +60,9 @@ if(ENABLE_octave)
     @ONLY
     )
   set(SCRIPTS ${SCRIPTS} test_octave.sh)
+  add_test(examples_octave
+    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=octave"
+  )
 endif(ENABLE_octave)
 
 if(ENABLE_python)
