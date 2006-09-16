@@ -146,7 +146,15 @@ tcldir=$EXAMPLES_DIR/tcl
 perldir=$SRC_EXAMPLES_DIR/perl
 javadir=$EXAMPLES_DIR/java
 octave=@OCTAVE@
-octavedir=$SRC_EXAMPLES_DIR/../bindings/octave//:$SRC_EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:
+octavedir=\
+$EXAMPLES_DIR/../bindings/octave//:\
+$SRC_EXAMPLES_DIR/../bindings/octave/PLplot//:\
+$SRC_EXAMPLES_DIR/../bindings/octave/demos//:\
+$SRC_EXAMPLES_DIR/../bindings/octave/misc//:\
+$SRC_EXAMPLES_DIR/octave//:\
+@PLPLOT_OCTAVE_DIR@//:\
+@OCTAVE_M_DIR@//:\
+@OCTAVE_OCT_DIR@//:
 PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
 export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir PATH
 
