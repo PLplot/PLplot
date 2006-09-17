@@ -194,13 +194,11 @@ private:
 };
 
 /* definition of the actual window/frame shown */
-class wxPLplotFrame : public wxFrame
+class wxPLplotWindow : public wxWindow
 {
 public:
-  wxPLplotFrame( const wxString& title, PLStream* pls );
-  wxPLdev* GetPLplotDevice( void )  { return m_dev; };
+	wxPLplotWindow( wxWindow* parent, PLStream *pls );
 
-  void OnQuit( wxCommandEvent& event );
   void OnPaint( wxPaintEvent& event );
   void OnChar( wxKeyEvent& event );
   void OnIdle( wxIdleEvent& event );
@@ -215,17 +213,35 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
+/* event table */
+BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
+  EVT_PAINT( wxPLplotWindow::OnPaint )               /* (re)draw the plot in window */
+  EVT_CHAR( wxPLplotWindow::OnChar )
+  EVT_IDLE( wxPLplotWindow::OnIdle )
+	EVT_ERASE_BACKGROUND( wxPLplotWindow::OnErase )
+  EVT_SIZE( wxPLplotWindow::OnSize )
+  EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
+END_EVENT_TABLE()
+
+/* definition of the actual window/frame shown */
+class wxPLplotFrame : public wxFrame
+{
+public:
+  wxPLplotFrame( const wxString& title, PLStream* pls );
+  void OnQuit( wxCommandEvent& event );
+
+private:
+  wxPanel* m_panel;
+  wxPLplotWindow* m_window;
+
+  DECLARE_EVENT_TABLE()
+};
+
 enum { wxPL_Quit = wxID_EXIT };
 
 /* event table */
 BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
   EVT_MENU( wxPL_Quit, wxPLplotFrame::OnQuit )      /* quit program */
-  EVT_PAINT( wxPLplotFrame::OnPaint )               /* (re)draw the plot in window */
-  EVT_CHAR( wxPLplotFrame::OnChar )
-  EVT_IDLE( wxPLplotFrame::OnIdle )
-	EVT_ERASE_BACKGROUND( wxPLplotFrame::OnErase )
-  EVT_SIZE( wxPLplotFrame::OnSize )
-  EVT_MAXIMIZE( wxPLplotFrame::OnMaximize )
 END_EVENT_TABLE()
 
 // Use this macro if you want to define your own main() or WinMain() function
@@ -283,7 +299,7 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-#define _DEBUG
+//#define _DEBUG
 //#define _DEBUG_VERBOSE
 
 /*--------------------------------------------------------------------------*\
@@ -1280,7 +1296,7 @@ int wxRunApp( PLStream *pls, bool runonce )
 		// and not for Windows, but it doesn't harm
 	  wxIdleEvent event;
     dev->m_frame->AddPendingEvent( event );
-    return wxGetApp().OnRun();   // start wxWidgets application    
+		return wxGetApp().OnRun();   // start wxWidgets application    
     callOnExit.exit=false;
   }
   wxCATCH_ALL( wxGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )
@@ -1318,9 +1334,13 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 {
   Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
 
-  m_pls=pls;
-  m_dev=(wxPLdev*)pls->dev;
-  
+  m_panel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN );
+	m_window = new wxPLplotWindow( m_panel, pls );
+  wxBoxSizer* box = new wxBoxSizer( wxHORIZONTAL );
+  box->Add( m_window, 1, wxEXPAND );
+  m_panel->SetSizer( box );
+	m_window->SetFocus();
+	  
   wxMenu* fileMenu = new wxMenu;
   fileMenu->Append( wxPL_Quit, _T("E&xit\tAlt-X"), _T("Quit this program") );
 
@@ -1346,16 +1366,32 @@ void wxPLplotFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 
 
 /*----------------------------------------------------------------------*\
- *  void wxPLplotFrame::OnPaint( wxPaintEvent& WXUNUSED(event) )
+ *  wxPLplotWindow::wxPLplotWindow( const wxString& title )
+ *
+ *  Constructor of wxPLplotFrame, where we create the menu.
+\*----------------------------------------------------------------------*/
+wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
+             : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                         wxNO_BORDER|wxWANTS_CHARS|wxCLIP_CHILDREN )
+{
+  Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
+
+  m_pls=pls;
+  m_dev=(wxPLdev*)pls->dev;
+}
+
+
+/*----------------------------------------------------------------------*\
+ *  void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
  *
  *  Event method where the plots are actually drawn. Since the plots
  *  are already drawn into bitmaps, which just copy them into to client
  *  area. This method is also called, if (part) of the client area was
  *  invalidated and a refresh is necessary.
 \*----------------------------------------------------------------------*/
-void wxPLplotFrame::OnPaint( wxPaintEvent& WXUNUSED(event) )
+void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotFrame::OnPaint" );
+  Log_Verbose( "wxPLplotWindow::OnPaint" );
 
   // copy bitmap into client area
   wxPaintDC dc( this );
@@ -1389,9 +1425,9 @@ void wxPLplotFrame::OnPaint( wxPaintEvent& WXUNUSED(event) )
 }
  
 
-void wxPLplotFrame::OnChar( wxKeyEvent& event )
+void wxPLplotWindow::OnChar( wxKeyEvent& event )
 {
-  Log_Debug( "wxPLplotFrame::OnChar" );
+  Log_Verbose( "wxPLplotWindow::OnChar" );
 
   int keycode = event.GetKeyCode();
   switch( keycode ) {
@@ -1412,9 +1448,9 @@ void wxPLplotFrame::OnChar( wxKeyEvent& event )
   event.Skip();
 }
 
-void wxPLplotFrame::OnIdle( wxIdleEvent& WXUNUSED(event) )
+void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
-  Log_Debug( "wxPLplotFrame::OnIdle" );
+  Log_Verbose( "wxPLplotWindow::OnIdle" );
 
   if( wxGetApp().GetExitFlag() )
     wxGetApp().ExitMainLoop();
@@ -1429,15 +1465,15 @@ void wxPLplotFrame::OnIdle( wxIdleEvent& WXUNUSED(event) )
 }
 
 
-void wxPLplotFrame::OnErase( wxEraseEvent &WXUNUSED(event) )
+void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
 {  
-  Log_Verbose( "wxPLplotFrame::OnErase" );
+  Log_Verbose( "wxPLplotWindow::OnErase" );
 }
 
 
-void wxPLplotFrame::OnSize( wxSizeEvent & WXUNUSED(event) )
+void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotFrame::OnSize" );
+  Log_Verbose( "wxPLplotWindow::OnSize" );
 
   int width, height;
   GetClientSize( &width, &height );
@@ -1479,9 +1515,9 @@ void wxPLplotFrame::OnSize( wxSizeEvent & WXUNUSED(event) )
 }
 
 
-void wxPLplotFrame::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
+void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotFrame::OnMax" );
+  Log_Verbose( "wxPLplotWindow::OnMax" );
 
   wxSizeEvent event( GetClientSize() );
   AddPendingEvent( event );
