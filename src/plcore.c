@@ -197,7 +197,7 @@ plP_esc(PLINT op, void *ptr)
       difilt(&(args->x),&(args->y),1,&clpxmi,&clpxma,&clpymi,&clpyma);
     }
   }
-  
+
   (*plsc->dispatch_table->pl_esc) ((struct PLStream_struct *) plsc, op, ptr);
 }
 
@@ -496,27 +496,27 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
 	 /* Now process the text string */
 
-	 if (string!=NULL) {        /* If the string isn't blank, then we will 
-                                     * continue 
+	 if (string!=NULL) {        /* If the string isn't blank, then we will
+                                     * continue
 				     */
 
-	    len=strlen(string);     /* this length is only used in the loop 
-				     * counter, we will work out the length of 
+	    len=strlen(string);     /* this length is only used in the loop
+				     * counter, we will work out the length of
 				     * the unicode string as we go */
 	    plgesc(&esc);
 	
-	    /* At this stage we will do some translations into unicode, like 
-	     * conversion to Greek , and will save other translations such as 
-	     * superscript for the driver to do later on. As we move through 
+	    /* At this stage we will do some translations into unicode, like
+	     * conversion to Greek , and will save other translations such as
+	     * superscript for the driver to do later on. As we move through
 	     * the string and do the translations, we will get
-	     * rid of the esc character sequence, just replacing it with 
+	     * rid of the esc character sequence, just replacing it with
 	     * unicode.
 	     */
 	
-	    /* Obtain FCI (font characterization integer) for start of 
+	    /* Obtain FCI (font characterization integer) for start of
 	     * string. */
 	    plgfci(&fci);
-	    for (j=i=0;i<len;i++) {    /* Walk through the string, and convert 
+	    for (j=i=0;i<len;i++) {    /* Walk through the string, and convert
 					* some stuff to unicode on the fly */
 	       skip=0;
 	
@@ -532,11 +532,11 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     unicode_buffer[j++] = \
 		       (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 
-		     /* if unicode_buffer[j-1] corresponds to the escape 
-		      * character must unescape it by appending one more.  
-		      * This will probably always be necessary since it is 
-		      * likely unicode_buffer will always have to contain 
-		      * escape characters that are interpreted by the device 
+		     /* if unicode_buffer[j-1] corresponds to the escape
+		      * character must unescape it by appending one more.
+		      * This will probably always be necessary since it is
+		      * likely unicode_buffer will always have to contain
+		      * escape characters that are interpreted by the device
 		      * driver.
 		      */
 		     if (unicode_buffer[j-1]==esc) unicode_buffer[j++]=esc;
@@ -552,11 +552,11 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++]=code;
-		     /* if unicode_buffer[j-1] corresponds to the escape 
-		      * character must unescape it by appending one more.  
-		      * This will probably always be necessary since it is 
-		      * likely unicode_buffer will always have to contain 
-		      * escape characters that are interpreted by the device 
+		     /* if unicode_buffer[j-1] corresponds to the escape
+		      * character must unescape it by appending one more.
+		      * This will probably always be necessary since it is
+		      * likely unicode_buffer will always have to contain
+		      * escape characters that are interpreted by the device
 		      * driver.
 		      */
 		     if (unicode_buffer[j-1]==esc) unicode_buffer[j++]=esc;
@@ -602,8 +602,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		
 		   case 'f':  /* Deprecated Hershey-style font change*/
 		   case 'F':  /* Deprecated Hershey-style font change*/
-		     /* We implement an approximate response here so that 
-		      * reasonable results are obtained for unicode fonts, 
+		     /* We implement an approximate response here so that
+		      * reasonable results are obtained for unicode fonts,
 		      * but this method is deprecated and the #<nnn> or
 		      * #<command string> methods should be used instead
 		      * to change unicode fonts in mid-string.
@@ -650,15 +650,15 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			unicode_buffer[j++] = \
 			  (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 			i+=2;
-			skip=1;  /* skip is set if we have copied something 
+			skip=1;  /* skip is set if we have copied something
 				  * into the unicode table */
 		     }
 		     else {
-			/* Use "unknown" unicode character if string[i+2] 
+			/* Use "unknown" unicode character if string[i+2]
 			 * is not in the Greek array.*/
 			unicode_buffer[j++]=(PLUNICODE)0x00;
 			i+=2;
-			skip=1;  /* skip is set if we have copied something 
+			skip=1;  /* skip is set if we have copied something
 				  * into  the unicode table */
 		     }
 		     fci = fcisave;
@@ -685,7 +685,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                   unicode_buffer [j] = unichar;
                   i += ptr - (string + i) - 1;
 
-		  /* Search for escesc (an unescaped escape) in the input 
+		  /* Search for escesc (an unescaped escape) in the input
 		   * string and adjust unicode_buffer accordingly).
 		   */
 		  if (unicode_buffer[j] == esc && string[i+1] == esc) {
@@ -696,11 +696,11 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	       j++;
 	    }
 	    if (j > 0) {
-	       args.unicode_array_len=j; /* Much easier to set the length than 
+	       args.unicode_array_len=j; /* Much easier to set the length than
 					  * work it out later :-) */
-	       args.unicode_array=&unicode_buffer[0]; /* Get address of the 
-						       * unicode buffer (even 
-						       * though it is 
+	       args.unicode_array=&unicode_buffer[0]; /* Get address of the
+						       * unicode buffer (even
+						       * though it is
 						       * currently  static) */
 	    } else
 	      /* Don't print anything, if there is no unicode to print! */
@@ -730,7 +730,7 @@ utf8_to_ucs4(const char *ptr, PLUNICODE *unichar)
    char tmp;
    int isFirst = 1;
    int cnt = 0;
-   
+
    do {
       /* Get next character in string */
       tmp = *ptr++;
@@ -797,7 +797,7 @@ ucs4_to_utf8(PLUNICODE unichar, char *ptr)
     *tmp = (unsigned char) 0xe0 | (unichar >> 12);
     tmp++;
     *tmp = (unsigned char) 0x80 | ((unichar >> 6) & 0x3f);
-    tmp++;      
+    tmp++;
     *tmp = (unsigned char) 0x80 | (unichar & 0x3f);
     tmp++;
     len = 3;
@@ -806,9 +806,9 @@ ucs4_to_utf8(PLUNICODE unichar, char *ptr)
     *tmp = (unsigned char) 0xf0 | (unichar >> 18);
     tmp++;
     *tmp = (unsigned char) 0x80 | ((unichar >> 12) & 0x3f);
-    tmp++;      
+    tmp++;
     *tmp = (unsigned char) 0x80 | ((unichar >> 6) & 0x3f);
-    tmp++;      
+    tmp++;
     *tmp = (unsigned char) 0x80 | (unichar & 0x3f);
     tmp++;
     len = 4;
@@ -2091,7 +2091,7 @@ pllib_devinit()
     plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
-int plInBuildTree()
+int PLDLLIMPEXP plInBuildTree()
 {
   static int inited = 0;
   static int inBuildTree = 0;
@@ -2103,7 +2103,7 @@ int plInBuildTree()
    name is _getcwd, this is a problem in the case of DLLs, like with
    the Java bindings.
 */
-#if defined(WIN32) && !defined(__BORLANDC__) 
+#if defined(WIN32) && !defined(__BORLANDC__)
 #define getcwd _getcwd
 #endif
 

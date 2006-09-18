@@ -52,7 +52,7 @@
 /* Static functions */
 
 /* Used by any external init code to suggest a path */
-char* plplotLibDir = 0;
+char PLDLLIMPEXP * plplotLibDir = 0;
 
 static void
 color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name );
@@ -1575,21 +1575,21 @@ plP_getmember(PLStream *pls)
 {
     char tmp[256];
     char prefix[256];
-    char* suffix; 
+    char* suffix;
 
     if (pls->FileName == NULL)
 	pls->FileName = (char *) malloc(10 + strlen(pls->BaseName));
 
     suffix = strstr (pls->BaseName, "%n");
 
-    if (suffix == NULL) 
+    if (suffix == NULL)
       sprintf (tmp, "%s.%%0%1ii", pls->BaseName, (int) pls->fflen);
     else {
       strncpy (prefix, pls->BaseName, 256);
       prefix [suffix - pls->BaseName] = 0;
       sprintf (tmp, "%s%%0%1ii%s", prefix, (int) pls->fflen, suffix + 2);
     }
-  
+
     sprintf(pls->FileName, tmp, pls->member);
 }
 
@@ -1821,7 +1821,7 @@ plGetFlt(char *s)
  * Caller responsible for freeing the allocated memory.
 \*--------------------------------------------------------------------------*/
 
-char *
+char PLDLLIMPEXP *
 plstrdup(const char *src)
 {
     char *dest = (char *) malloc( (strlen(src) + 1) * sizeof(char) );

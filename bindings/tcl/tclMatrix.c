@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "pldll.h"
 #include "tclMatrix.h"
 
 /* Cool math macros */
@@ -348,7 +349,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
  *
 \*--------------------------------------------------------------------------*/
 
-tclMatrix *
+tclMatrix PLDLLIMPEXP *
 Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName)
 {
     Tcl_HashEntry *hPtr;

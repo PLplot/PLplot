@@ -23,9 +23,10 @@
 
 */
 
+#include "pldll.h"
 #include "tclMatrix.h"
 
-int Matrix_Init( Tcl_Interp *interp ) {
+int PLDLLIMPEXP Matrix_Init( Tcl_Interp *interp ) {
 
     /* matrix -- matrix	support	command	*/
     Tcl_CreateCommand(interp, "matrix",	(Tcl_CmdProc *) Tcl_MatrixCmd,

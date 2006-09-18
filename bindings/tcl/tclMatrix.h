@@ -320,7 +320,7 @@ extern "C" {
 
 /* Tcl package initialisation function */
 
-int Matrix_Init	(Tcl_Interp*);
+int PLDLLIMPEXP Matrix_Init	(Tcl_Interp*);
 
 /* This procedure is invoked to process the "matrix" Tcl command. */
 
@@ -330,7 +330,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Returns a pointer to the specified matrix operator's data. */
 
-tclMatrix *
+tclMatrix PLDLLIMPEXP *
 Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName);
 
 /* Some stuff for handling extension subcommands. */

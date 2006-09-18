@@ -188,7 +188,7 @@ typedef char * caddr_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern PLDLLIMPEXP_DATA(PLStream)	*plsc;
+extern PLStream PLDLLIMPORT *plsc;
 #ifdef __cplusplus
 }
 #endif
@@ -474,7 +474,7 @@ plfontrel(void);
 
 /* A replacement for strdup(), which isn't portable. */
 
-char *
+char PLDLLIMPEXP *
 plstrdup(const char *src);
 
 /* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
@@ -933,7 +933,7 @@ RestoreWrite2BufferPixmap(void);
 void
 grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny);
 
-int
+int PLDLLIMPEXP
 plInBuildTree();
 
 void
@@ -990,7 +990,7 @@ ucs4_to_utf8(PLUNICODE unichar, char *ptr);
 
 /* wraps fwrite */
 
-void 
+void
 plio_fwrite(void *, size_t, size_t, FILE *);
 
 /* wraps fread */
@@ -1002,7 +1002,7 @@ plio_fread(void *, size_t, size_t, FILE *);
 
 void
 plio_fgets(char *, int, FILE *);
- 
+
 #ifdef __cplusplus
 }
 #endif
