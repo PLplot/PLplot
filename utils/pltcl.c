@@ -28,6 +28,7 @@
  */
 
 #include "plplotP.h"
+#define USINGPLDLL
 #include "pltcl.h"
 #ifdef HAVE_ITCL
 # ifndef HAVE_ITCLDECLS_H

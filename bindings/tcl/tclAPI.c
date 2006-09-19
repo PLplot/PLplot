@@ -31,6 +31,7 @@
     driver, in principle.
 */
 
+#define MAKINGPLDLL
 #include "plplotP.h"
 #include "pltcl.h"
 #ifndef __WIN32__
@@ -509,7 +510,7 @@ PlbasicInit( Tcl_Interp *interp )
  * interfacing to PLplot.  Should not be used in a widget-based system.
 \*--------------------------------------------------------------------------*/
 
-int
+int PLDLLEXPORT
 Pltcl_Init( Tcl_Interp *interp )
 {
     register CmdInfo *cmdInfoPtr;

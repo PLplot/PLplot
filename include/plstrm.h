@@ -29,6 +29,7 @@
 #define __PLSTRM_H__
 
 #include "disptab.h"
+#include "pldll.h"
 
 /*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.
@@ -707,7 +708,7 @@ typedef struct {
    * Pointer to postscript document class used by psttf
    */
   void *psdoc;
-  
+
 
 } PLStream;
 
@@ -721,7 +722,7 @@ extern "C" {
 
 /* Get the current stream pointer */
 
-void
+void PLDLLIMPEXP
 plgpls(PLStream **p_pls);
 
 /* Initializes device cmap 1 entry by interpolation from pls->cmap1 entries */

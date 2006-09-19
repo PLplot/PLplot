@@ -50,6 +50,8 @@
 
 #include <tcl.h>
 #include "plplot.h"
+#define MAKINGPLDLL
+#include "pldll.h"
 
 /* From tclIntDecls.h */
 
@@ -205,7 +207,7 @@ char *TclGetStartupScriptFileName(void)
  *----------------------------------------------------------------------
  */
 
-int
+int PLDLLEXPORT
 pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
 	  int (*appInitProc)(Tcl_Interp *interp))
 {

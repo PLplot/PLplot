@@ -11,6 +11,7 @@
 #define __PLTCL_H__
 
 #include "plplot.h"
+#include "pldll.h"
 #include <tcl.h>
 #include "tclMatrix.h"
 
@@ -21,7 +22,7 @@ extern "C" {
 /* tclMain.c */
 /* Main program for a Tcl-based shell that reads Tcl commands from stdin. */
 
-int
+int PLDLLIMPEXP
 pltclMain(int argc, char **argv, char *RcFileName,
 	  int (*AppInit)(Tcl_Interp *interp));
 
@@ -34,7 +35,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp,
 
 /* Initialization routine for PLplot-extended tclsh's (like pltcl). */
 
-int
+int PLDLLIMPEXP
 Pltcl_Init( Tcl_Interp *interp );
 
 int
