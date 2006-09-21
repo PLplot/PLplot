@@ -84,7 +84,14 @@ if(ENABLE_octave)
   )
   message(STATUS "OCTAVE_LIBRARIES = ${OCTAVE_LIBRARIES}")
 
-  if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES)
+  find_library(
+  OCTINTERP_LIBRARIES
+  octinterp
+  PATH_SUFFIXES octave-${OCTAVE_VERSION}
+  )
+  message(STATUS "OCTINTERP_LIBRARIES = ${OCTINTERP_LIBRARIES}")
+
+  if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
     #Must always have second octave include path which is identical
     #to the first with trailing "/octave" trimmed off.
     string(REGEX REPLACE "/octave$" ""
@@ -98,11 +105,11 @@ if(ENABLE_octave)
     message(STATUS 
     "(transformed) OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}"
     )
-  else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES)
+  else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
     message(STATUS "WARNING: "
     "octave headers and/or library not found. Disabling octave bindings")
     set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
-  endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES) 
+  endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES) 
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
