@@ -18,6 +18,13 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# Sort out RPATH issues for build of installed examples.
+if(USE_RPATH)
+  get_target_property(_LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
+  set(RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}")
+endif(USE_RPATH)
+
 add_subdirectory(c)
 if(ENABLE_cxx)
   add_subdirectory(c++)

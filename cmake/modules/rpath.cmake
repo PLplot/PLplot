@@ -25,10 +25,6 @@
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   # No rpath on Darwin. Setting it will only cause trouble.
 else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  option(USE_RPATH "Use -rpath when linking libraries" ON)
-  if(USE_RPATH)
-    set(CMAKE_INSTALL_RPATH ${LIB_DIR})
-    set(RPATHCMD "-Wl,-rpath -Wl,${LIB_DIR}")
-  endif(USE_RPATH)
+  option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
