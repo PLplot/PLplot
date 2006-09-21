@@ -75,11 +75,7 @@ ${CMAKE_BINARY_DIR}/include
 add_executable(plserver plserver.c)
 target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
-set(LIB_INSTALL_RPATH ${LIB_DIR})
-if(ENABLE_DYNDRIVERS)
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
-endif(ENABLE_DYNDRIVERS)
-
+get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 set_target_properties(plserver
 PROPERTIES
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"

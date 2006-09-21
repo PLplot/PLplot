@@ -88,10 +88,7 @@ set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
 # Set up swig + c wrapper
 swig_add_module( plplotjavac_wrap java plplotjavac.i )
 swig_link_libraries( plplotjavac_wrap plplot${LIB_TAG} )
-set(LIB_INSTALL_RPATH ${LIB_DIR})
-if(ENABLE_DYNDRIVERS)
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
-endif(ENABLE_DYNDRIVERS)
+get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 set_target_properties(
 plplotjavac_wrap
 PROPERTIES

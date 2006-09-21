@@ -180,10 +180,7 @@ plplottcltk${LIB_TAG}
 ${plplottcltk${LIB_TAG}_link_libraries}
 )
 
-if(ENABLE_DYNDRIVERS)
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
-endif(ENABLE_DYNDRIVERS)
-
+get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 set_target_properties(plplottcltk${LIB_TAG}
 PROPERTIES
 SOVERSION ${plplottcltk_SOVERSION}

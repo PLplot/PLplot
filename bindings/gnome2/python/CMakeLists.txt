@@ -104,11 +104,6 @@ ${CMAKE_BINARY_DIR}/include
 ${PYTHON_INCLUDE_PATH}
 )
 
-set(LIB_INSTALL_RPATH ${LIB_DIR})
-if(ENABLE_DYNDRIVERS)
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
-endif(ENABLE_DYNDRIVERS)
-
 ### Build and install the gcw module
 add_library(gcwmodule MODULE ${gcwmodule_SRCS})
 
@@ -120,6 +115,7 @@ ${gcw_LINK_FLAGS}
 ${PYGCW_LIBS}
 )
 
+get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 set_target_properties(
 gcwmodule
 PROPERTIES 

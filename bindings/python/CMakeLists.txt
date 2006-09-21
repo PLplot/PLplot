@@ -40,16 +40,9 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 # N.B. the python target has an underscore prepended automatically.
 swig_add_module(plplotcmodule python plplotcmodule.i)
 
-if(APPLE)
-	set(CMAKE_MODULE_LINKER_FLAGS "${PYTHON_LIBRARIES}")
-endif(APPLE)
-
 swig_link_libraries(plplotcmodule plplot${LIB_TAG})
 
-set(LIB_INSTALL_RPATH ${LIB_DIR})
-if(ENABLE_DYNDRIVERS)
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
-endif(ENABLE_DYNDRIVERS)
+get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 set_target_properties(
 _plplotcmodule
 PROPERTIES
@@ -58,7 +51,7 @@ INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 
 add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
 set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
-target_link_libraries(plplot_widgetmodule plplot${LIB_TAG})
+target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
 set_target_properties(
 plplot_widgetmodule
 PROPERTIES
