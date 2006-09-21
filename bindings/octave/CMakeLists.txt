@@ -114,25 +114,46 @@ ${OCTAVE_INCLUDE_PATH}
 )
 include_directories(${octave_interface_INCLUDE_PATHS})
 
-set(CMAKE_MODULE_LINKER_FLAGS "${OCTAVE_LIBRARIES}")
-
-set(LIB_INSTALL_RPATH ${LIB_DIR})
-if(ENABLE_DYNDRIVERS)
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
-endif(ENABLE_DYNDRIVERS)
-
+get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    
 add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
-set_target_properties(plplot_octave 
-PROPERTIES PREFIX "" SUFFIX ".oct")
-target_link_libraries(plplot_octave plplot${LIB_TAG})
+target_link_libraries(
+plplot_octave
+plplot${LIB_TAG}
+"${OCTAVE_LIBRARIES}"
+"${OCTINTERP_LIBRARIES}"
+)
+# (Reasonable) assumption here is that OCTAVE_LIBRARIES and
+# OCTINTERP_LIBRARIES have the same path.
+get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
+set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
 set_target_properties(
 plplot_octave
 PROPERTIES
+PREFIX "" 
+SUFFIX ".oct"
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 INSTALL_NAME_DIR "${PLPLOT_OCTAVE_DIR}"
 )
 
-install(TARGETS plplot_octave LIBRARY DESTINATION ${PLPLOT_OCTAVE_DIR})
+# Have to be specific about permissions for some reason (probably oct suffix).
+set(PERM_MODULES
+OWNER_READ
+OWNER_WRITE
+OWNER_EXECUTE
+GROUP_READ
+GROUP_EXECUTE
+WORLD_READ
+WORLD_EXECUTE
+)
+
+install(
+TARGETS
+plplot_octave
+LIBRARY
+DESTINATION ${PLPLOT_OCTAVE_DIR}
+PERMISSIONS ${PERM_MODULES}
+)
 
 # Build and install plplot_stub.m
 add_executable(massage massage.c)
