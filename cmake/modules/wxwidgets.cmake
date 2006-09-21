@@ -24,19 +24,7 @@
 # wxwidgets_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wxwidgets
 # 			    device.
 # wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
-# DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
-
-# wxwidgets is written in C++ which in the static devices case is put in
-# with C objects in libplplot(d) which won't work for some tool chains.
-# So only allow this device in the dynamic devices case or if the user has
-# specifically enabled the option of mixing C++ code into libplplot.
-if(PLD_wxwidgets AND NOT ENABLE_DYNDRIVERS AND NOT ENABLE_MIX_CXX)
-  message(STATUS 
-     "WARNING: This device requires ENABLE_DYNDRIVERS ON or\n"
-  "   ENABLE_MIX_CXX ON.  Both are OFF.  Setting PLD_wxwidgets to OFF."
-  )
-  set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
-endif(PLD_wxwidgets AND NOT ENABLE_DYNDRIVERS AND NOT ENABLE_MIX_CXX)
+# DRIVERS_LINK_FLAGS  	  - list of LINK_FLAGS for all static devices.
 
 if(PLD_wxwidgets)
   find_package(wxWidgets)
@@ -72,7 +60,10 @@ if(PLD_wxwidgets)
       ${AGG_LIBRARIES}
       )
     endif(HAVE_AGG)
-    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${wxwidgets_LINK_FLAGS})
+    set(DRIVERS_LINK_FLAGS
+    ${DRIVERS_LINK_FLAGS} 
+    ${wxwidgets_LINK_FLAGS}
+    )
   else(wxWidgets_FOUND)
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
   endif(wxWidgets_FOUND)

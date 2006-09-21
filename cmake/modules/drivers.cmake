@@ -29,11 +29,12 @@
 #   device.
 # devicename_LINK_FLAGS: link options (e.g., -L  and -l) for each
 #   individual device.
-# DRIVERS_LINK_FLAGS: concatanated link options for all devices
+# DRIVERS_LINK_FLAGS: concatanated link options for all devices.
 # DEVICES_LIST: list of devices (e.g. png, jpeg),where PLD_devicename is ON
 # DRIVERS_LIST: list of device drivers (e.g., gd for the png and jpeg devices)
 #   where at least one of the associated devices is enabled.
 
+set(DRIVERS_LINK_FLAGS)
 option(ENABLE_DYNDRIVERS "Enable dynamic loading of device drivers" ON)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
   message(STATUS 
@@ -55,20 +56,6 @@ if(ENABLE_DYNDRIVERS)
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
     "Enable dynamic loading of device drivers" FORCE)
   endif(LTDL_FOUND)
-else(ENABLE_DYNDRIVERS)
-  option(ENABLE_MIX_CXX
-  "Allow mixing C++ device object code into libplplot C library"
-  OFF
-  )
-  if(ENABLE_MIX_CXX)
-    message(STATUS 
-       "WARNING: ENABLE_MIX_CXX ON has been specified.  This experimental\n"
-    "   option allows mixing C++ device object code into the core PLplot C \n"
-    "   library which will cause linking issues (unresolved references)\n"
-    "   on many platforms.  If such problems occur use the default\n"
-    "   (ENABLE_MIX_CXX OFF)."
-    )
-  endif(ENABLE_MIX_CXX)
 endif(ENABLE_DYNDRIVERS)
 
 # Decide whether to enable each device or not and find special resources

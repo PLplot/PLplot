@@ -22,30 +22,21 @@
 #
 # The following variables are set / modified
 #
-# PLD_psttf            - ON means the psttf and psttfc devices are enabled.
-# psttf_COMPILE_FLAGS  - COMPILE_FLAGS (string) required to compile psttf
-# 		         device driver.
-# psttf_LINK_FLAGS     - LINK_FLAGS (string) for dynamic psttf device driver.
-# psttf_RPATH	       - RPATH directory list for psttf device driver.
-# psttf_TARGETS	       - Full Name of libLASi so that cmake can figure out
-# 		       	 RPATH stuff in the build tree.
+# PLD_psttf               - ON means the psttf and psttfc devices are enabled.
+# psttf_COMPILE_FLAGS  	  - COMPILE_FLAGS (string) required to compile psttf
+# 		            device driver.
+# psttf_LINK_FLAGS     	  - LINK_FLAGS (string) for dynamic psttf device driver.
+# psttf_RPATH	       	  - RPATH directory list for psttf device driver.
+# psttf_TARGETS	       	  - Full Name of libLASi so that cmake can figure out
+# 		       	    RPATH stuff in the build tree.
+# DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS and TARGETS for case
+# 			    when ENABLE_DYNDRIVERS OFF.
+
 # Include file searches use FindPath. To add extra search directories
 # set the environment variable CMAKE_INCLUDE_PATH.
 # Library searches use FindLibrary. To add extra search directories
 # set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
-
-# psttf is written in C++ which in the static devices case is put in
-# with C objects in libplplot(d) which won't work for some tool chains.
-# So only allow this device in the dynamic devices case or if the user has
-# specifically enabled the option of mixing C++ code into libplplot.
-if(PLD_psttf AND NOT ENABLE_DYNDRIVERS AND NOT ENABLE_MIX_CXX)
-  message(STATUS 
-     "WARNING: This device requires ENABLE_DYNDRIVERS ON or\n"
-  "   ENABLE_MIX_CXX ON.  Both are OFF.  Setting PLD_psttf to OFF."
-  )
-  set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
-endif(PLD_psttf AND NOT ENABLE_DYNDRIVERS AND NOT ENABLE_MIX_CXX)
 
 # Look for psttf headers and libraries with pkg-config
 if(PLD_psttf)
@@ -74,6 +65,11 @@ if(PLD_psttf)
       )
     endif(NOT psttf_TARGETS)
     get_filename_component(psttf_RPATH ${psttf_TARGETS} PATH)
+    set(DRIVERS_LINK_FLAGS
+    ${DRIVERS_LINK_FLAGS}
+    ${psttf_LINK_FLAGS}
+    ${psttf_TARGETS}
+    )
   else(linkflags AND cflags)
     message(STATUS
        "WARNING: pango, pangoft2, or lasi not found with pkg-config.\n"
