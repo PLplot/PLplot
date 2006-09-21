@@ -75,16 +75,16 @@ if(ENABLE_DYNDRIVERS)
     )
     #message("${SOURCE_ROOT_NAME}_LINK_FLAGS = ${${SOURCE_ROOT_NAME}_LINK_FLAGS}")
     #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
-    # Our implementation of dynamic loading using libltdl assumes
-    # the prefix should always be nothing (rather than lib) and the suffix
-    # should always be ".so" regardless of platform so that libltdl can
-    # always find the result.
     set(
     ${SOURCE_ROOT_NAME}_RPATH
     ${${SOURCE_ROOT_NAME}_RPATH}
     ${libplplot${LIB_TAG}_RPATH}
     ${LIB_DIR}
     )
+    # Our implementation of dynamic loading using libltdl assumes
+    # the prefix should always be nothing (rather than lib) and the suffix
+    # should always be ".so" regardless of platform so that libltdl can
+    # always find the result.
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
     set_target_properties(
     ${SOURCE_ROOT_NAME}
