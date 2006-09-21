@@ -26,7 +26,10 @@
 # gcw_LINK_FLAGS	  - individual LINK_FLAGS for dynamic gcw device.
 # gcw_TARGETS		  - list of targets which the gcw dynamic device
 # 			    depends on.
-# DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
+# DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for case when 
+# 			    ENABLE_DYNDRIVERS OFF.  (gcw_TARGETS not included
+#			    since source code used instead of this target
+#			    for ENABLE_DYNDRIVERS OFF.)
 # gcw_SOURCE		  - list of source files other than gcw.c
 if(PLD_gcw)
   if(NOT PKGCONFIG_EXECUTABLE)
@@ -104,7 +107,13 @@ if(PLD_gcw)
     )
     set(gcw_TARGETS plplotgnome2${LIB_TAG})
   else(ENABLE_DYNDRIVERS)
-    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${gcw_LINK_FLAGS})
+    # N.B. no gcw_TARGETS here since use appropriate source code (see below)
+    # instead to break circular linking.
+    set(
+    DRIVERS_LINK_FLAGS
+    ${DRIVERS_LINK_FLAGS}
+    ${gcw_LINK_FLAGS}
+    )
     set(gcw_SOURCE
     ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/plplotcanvas.c
     ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/gcw-lib.c
