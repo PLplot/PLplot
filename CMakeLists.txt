@@ -98,6 +98,12 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
 
 # Process other directories including using configured variables to 
 # process configurable files in those directories.
+# N.B. Order is important here at the cmake stage because targets must
+# be processed by cmake in a specific order e.g., due to get_target_property
+# invocations.  Note, this order has nothing to do with the order which make
+# processes these subdirectories at build time.  That build-time order
+# is determined by the dependencies between targets and also by file
+# dependencies that are established by the cmake configuration files.
 
 # needs no cmake processing
 #add_subdirectory(fonts)
