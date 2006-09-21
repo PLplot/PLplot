@@ -81,6 +81,7 @@ else(ENABLE_DYNDRIVERS)
   )
 
   # Static device drivers must be included in the core PLplot library.
+  set(DRIVERS_RPATH)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     set(plplot${LIB_TAG}_LIB_SRCS 
@@ -109,6 +110,9 @@ else(ENABLE_DYNDRIVERS)
 	)
       endif(SOURCE_ROOT_NAME STREQUAL "tkwin")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+    if(${SOURCE_ROOT_NAME}_RPATH)
+      set(DRIVERS_RPATH ${DRIVERS_RPATH} ${${SOURCE_ROOT_NAME}_RPATH})
+    endif(${SOURCE_ROOT_NAME}_RPATH)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(ENABLE_DYNDRIVERS)
 
@@ -128,6 +132,7 @@ if(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 
 string(REGEX REPLACE ";" " " 
