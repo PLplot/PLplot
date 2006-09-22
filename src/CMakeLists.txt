@@ -61,24 +61,29 @@ if(ENABLE_DYNDRIVERS)
   PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR}"
   )
 else(ENABLE_DYNDRIVERS)
-  set(
-  tclgenfiles
-  ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.h
-  ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen_s.h
-  ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.c
-  )
+  if(ENABLE_tcl)
+    set(
+    tclgenfiles
+    ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.h
+    ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen_s.h
+    ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.c
+    )
 
-  add_custom_command(
-  OUTPUT ${tclgenfiles}
-  COMMAND ${TCL_TCLSH}
-  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
-  ${CMAKE_SOURCE_DIR}/bindings/tcl
-  DEPENDS
-  ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
-  ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
-  ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
-  )
+    # Only need to set up this special command if either the tk and tkwin
+    # non-dynamic devices are enabled (see below) since at build time
+    # this special command is only fired in that case.
+    add_custom_command(
+    OUTPUT ${tclgenfiles}
+    COMMAND ${TCL_TCLSH}
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
+    ${CMAKE_SOURCE_DIR}/bindings/tcl
+    DEPENDS
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
+    )
+  endif(ENABLE_tcl)
 
   # Static device drivers must be included in the core PLplot library.
   set(DRIVERS_RPATH)
@@ -135,10 +140,32 @@ else(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 
+# libplplot${LIB_TAG}_LINK_FLAGS is a blank-delimited string used for
+# configuring the pkg-config file for libplotd.
 string(REGEX REPLACE ";" " " 
-libplplot${LIB_TAG}_LINK_FLAGS
+__libplplot${LIB_TAG}_LINK_FLAGS
 "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
 )
+#message("__libplplot${LIB_TAG}_LINK_FLAGS = ${__libplplot${LIB_TAG}_LINK_FLAGS}")
+# Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
+# since it appears pkg-config handles that latter form much better (with
+# regard to keeping the correct order and eliminating duplicates).
+
+# These REGEX REPLACE's won't actually replace anything on bare windows since
+# library names are not of the form /path/to/library/libname.so (or .a) on
+# that platform.  On the other hand, pkg-config does not work on windows
+# either so it doesn't matter.
+string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
+_libplplot${LIB_TAG}_LINK_FLAGS
+${__libplplot${LIB_TAG}_LINK_FLAGS}
+)
+#message("_libplplot${LIB_TAG}_LINK_FLAGS = ${_libplplot${LIB_TAG}_LINK_FLAGS}")
+string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.a" "-L\\1 -l\\2"
+libplplot${LIB_TAG}_LINK_FLAGS
+${_libplplot${LIB_TAG}_LINK_FLAGS}
+)
+#message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
+
 if(MATH_LIB)
   set(
   libplplot${LIB_TAG}_LINK_LIBRARIES
@@ -182,9 +209,19 @@ if(WITH_FREETYPE)
   ${libplplot${LIB_TAG}_LINK_LIBRARIES}
   ${FREETYPE_LIBRARIES}
   )
+  
+  # Convert to -L... -l... form.
+  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
+  _FREETYPE_LINK_FLAGS
+  ${FREETYPE_LIBRARIES}
+  )
+  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
+  FREETYPE_LINK_FLAGS
+  ${_FREETYPE_LINK_FLAGS}
+  )
   set(
   libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} ${FREETYPE_LIBRARIES}"
+  "${libplplot${LIB_TAG}_LINK_FLAGS} ${FREETYPE_LINK_FLAGS}"
   )
 endif(WITH_FREETYPE)
 
@@ -242,7 +279,7 @@ if(PKGCONFIG_EXECUTABLE)
   string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
   string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
   set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${MATH_LIB_FLAG} ${PC_LINK_FLAGS}")
+  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
   set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_CONFIGURED_FILE
   ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
