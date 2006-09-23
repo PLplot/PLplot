@@ -136,4 +136,12 @@ if(ENABLE_tcl)
     set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
     set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
   endif(TCL_FOUND AND TCL_TCLSH)
+else(ENABLE_tcl)
+  message(STATUS 
+  "ENABLE_tcl is off so disabling everything else that "
+  "is Tcl/Tk related"
+  )
+  set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
+  set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
+  set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
 endif(ENABLE_tcl)
