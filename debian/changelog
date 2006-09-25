@@ -1,3 +1,10 @@
+plplot (5.6.1-9) unstable; urgency=low
+
+  * debian/control: Applied patch from Tomas Pospisek tomake list in
+    description render nicely in aptitude (closes: #389142)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 25 Sep 2006 01:47:57 +0200
+
 plplot (5.6.1-8) unstable; urgency=low
 
   * debian/control, debian/rules: Do not build the libplplot9-java pacakge
