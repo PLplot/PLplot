@@ -40,7 +40,7 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 # N.B. the python target has an underscore prepended automatically.
 swig_add_module(plplotcmodule python plplotcmodule.i)
 
-swig_link_libraries(plplotcmodule plplot${LIB_TAG})
+swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
 
 get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 set_target_properties(
