@@ -22,43 +22,39 @@
 # Module for determining F77/F95 bindings configuration options
 
 # Options to enable Fortran bindings
-OPTION(ENABLE_f77 "Enable f77 bindings" ON)
-OPTION(ENABLE_f95 "Enable f95 bindings" ON)
+option(ENABLE_f77 "Enable f77 bindings" ON)
+option(ENABLE_f95 "Enable f95 bindings" ON)
 
-IF (ENABLE_f77 OR ENABLE_f95)
+if(ENABLE_f77 OR ENABLE_f95)
+  # Check for fortran compiler
+  include(CMakeDetermineFortranCompiler)
+  if(NOT CMAKE_Fortran_COMPILER)
+    message(STATUS "WARNING: " 
+    "fortran compiler not found. Disabling f77/f95 bindings"
+    )
+    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+  endif(NOT CMAKE_Fortran_COMPILER)
+endif (ENABLE_f77 OR ENABLE_f95)
 
-# Check for fortran compiler
-INCLUDE(CMakeDetermineFortranCompiler)
+if(ENABLE_f77 OR ENABLE_f95)
+  # Enable fortran language
+  enable_language(Fortran)
 
-IF (CMAKE_Fortran_COMPILER MATCHES "NOTFOUND$")
-  MESSAGE(STATUS "WARNING: " 
-  "fortran compiler not found. Disabling f77/f95 bindings")
-  SET(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
-  SET(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
-ENDIF (CMAKE_Fortran_COMPILER MATCHES "NOTFOUND$")
+  # Don't compile Fortran 95 binding if compiler doesn't support it
+  if(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
+    message(STATUS "WARNING: " 
+    "fortran compiler does not support f90/95. Disabling f95 bindings"
+    )
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+  endif(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
-ENDIF (ENABLE_f77 OR ENABLE_f95)
+  # Set installation location for f95 modules.
+  set(F95_MOD_INSTALL_DIR lib/fortran/modules/${PACKAGE})
+  set(F95_MOD_DIR ${CMAKE_INSTALL_PREFIX}/${F95_MOD_INSTALL_DIR})
 
-IF (ENABLE_f77 OR ENABLE_f95)
-
-# Enable fortran language
-ENABLE_LANGUAGE(Fortran)
-
-# Don't compile Fortran 95 binding if compiler doesn't support it
-IF (ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
-  MESSAGE(STATUS "WARNING: " 
-  "fortran compiler does not support f90/95. Disabling f95 bindings")
-  SET(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
-ENDIF (ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
-
-# Set installation location for f95 modules.
-set(F95_MOD_INSTALL_DIR lib/fortran/modules/${PACKAGE})
-set(F95_MOD_DIR ${CMAKE_INSTALL_PREFIX}/${F95_MOD_INSTALL_DIR})
-
-# Check if f77 command line parsing is possible
-IF (ENABLE_f77)
-INCLUDE(TestF77CmdLine)
-ENDIF (ENABLE_f77)
-
-ENDIF (ENABLE_f77 OR ENABLE_f95)
-
+  # Check if f77 command line parsing is possible
+  if(ENABLE_f77)
+    include(TestF77CmdLine)
+  endif(ENABLE_f77)
+endif(ENABLE_f77 OR ENABLE_f95)
