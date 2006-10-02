@@ -91,25 +91,29 @@ if(ENABLE_octave)
   )
   message(STATUS "OCTINTERP_LIBRARIES = ${OCTINTERP_LIBRARIES}")
 
-  if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
-    #Must always have second octave include path which is identical
-    #to the first with trailing "/octave" trimmed off.
-    string(REGEX REPLACE "/octave$" ""
-    octave_include_path_trimmed 
-    ${OCTAVE_INCLUDE_PATH}
-    )
-    set(OCTAVE_INCLUDE_PATH 
-    ${octave_include_path_trimmed} ${OCTAVE_INCLUDE_PATH}
-    CACHE INTERNAL ""
-    )
-    message(STATUS 
-    "(transformed) OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}"
-    )
-  else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
-    message(STATUS "WARNING: "
-    "octave headers and/or library not found. Disabling octave bindings")
-    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
-  endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES) 
+  if(NOT DEFINED OCTAVE_INCLUDE_PATH_TRIMMED)
+    if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
+      # If first octave include path has trailing /octave, then must have
+      # second include path without that trailing /octave.
+      string(REGEX REPLACE "/octave$" ""
+      OCTAVE_INCLUDE_PATH_TRIMMED
+      ${OCTAVE_INCLUDE_PATH}
+      )
+      if(NOT OCTAVE_INCLUDE_PATH_TRIMMED STREQUAL "${OCTAVE_INCLUDE_PATH}")
+        set(OCTAVE_INCLUDE_PATH 
+	${OCTAVE_INCLUDE_PATH_TRIMMED} ${OCTAVE_INCLUDE_PATH}
+	CACHE INTERNAL ""
+	)
+	message(STATUS 
+	"(transformed) OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}"
+	)
+      endif(NOT OCTAVE_INCLUDE_PATH_TRIMMED STREQUAL "${OCTAVE_INCLUDE_PATH}")
+    else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
+      message(STATUS "WARNING: "
+      "octave headers and/or library not found. Disabling octave bindings")
+      set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES) 
+  endif(NOT DEFINED OCTAVE_INCLUDE_PATH_TRIMMED)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
