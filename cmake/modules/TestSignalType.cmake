@@ -23,7 +23,7 @@
 # returning void RETSIGTYPE is defined as void. Otherwise RETSIGTYPE is
 # defined as int.
 
-IF("CMAKE_TEST_SIGNAL_TYPE" MATCHES "^CMAKE_TEST_SIGNAL_TYPE$")
+IF(NOT DEFINED CMAKE_TEST_SIGNAL_TYPE)
   MESSAGE(STATUS "Check for signal return type in <signal.h>")
   TRY_COMPILE(CMAKE_TEST_SIGNAL_TYPE
     ${CMAKE_BINARY_DIR}
@@ -44,5 +44,4 @@ IF("CMAKE_TEST_SIGNAL_TYPE" MATCHES "^CMAKE_TEST_SIGNAL_TYPE$")
       "Determining if signal handler return type is void failed with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_TEST_SIGNAL_TYPE)
-ENDIF("CMAKE_TEST_SIGNAL_TYPE" MATCHES "^CMAKE_TEST_SIGNAL_TYPE$")
-
+ENDIF(NOT DEFINED CMAKE_TEST_SIGNAL_TYPE)

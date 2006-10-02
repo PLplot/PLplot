@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Check if iargc() works
-IF("CMAKE_F77_CMD_LINE" MATCHES "^CMAKE_F77_CMD_LINE$")
+IF(NOT DEFINED CMAKE_F77_CMD_LINE)
   MESSAGE(STATUS "Check for using namespace support")
   TRY_COMPILE(CMAKE_F77_CMD_LINE
     ${CMAKE_BINARY_DIR}
@@ -49,5 +49,5 @@ IF("CMAKE_F77_CMD_LINE" MATCHES "^CMAKE_F77_CMD_LINE$")
       "Determining if the f77 compiler has command line argument support failedd with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_F77_CMD_LINE)
-ENDIF("CMAKE_F77_CMD_LINE" MATCHES "^CMAKE_F77_CMD_LINE$")
+ENDIF(NOT DEFINED CMAKE_F77_CMD_LINE)
 

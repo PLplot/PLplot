@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Check if isnan is in <math.h> but not in <cmath> 
-IF("CMAKE_BROKEN_ISNAN_CXX" MATCHES "^CMAKE_BROKEN_ISNAN_CXX$")
+IF(NOT DEFINED CMAKE_BROKEN_ISNAN_CXX)
   MESSAGE(STATUS "Check for broken isnan support in <cmath>")
   TRY_COMPILE(CMAKE_BROKEN_ISNAN_CXX
     ${CMAKE_BINARY_DIR}
@@ -41,6 +41,4 @@ IF("CMAKE_BROKEN_ISNAN_CXX" MATCHES "^CMAKE_BROKEN_ISNAN_CXX$")
       "Determining if <cmath> contains isnan failed with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_BROKEN_ISNAN_CXX)
-ENDIF("CMAKE_BROKEN_ISNAN_CXX" MATCHES "^CMAKE_BROKEN_ISNAN_CXX$")
-
-
+ENDIF(NOT DEFINED CMAKE_BROKEN_ISNAN_CXX)

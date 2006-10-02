@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Check if "using namespace std;" works
-if("CMAKE_CXX_STDINT_H" MATCHES "^CMAKE_CXX_STDINT_H$")
+if(NOT DEFINED CMAKE_CXX_STDINT_H)
   message(STATUS "Check for using stdint.h with CXX compiler")
   try_compile(CMAKE_CXX_STDINT_H  
     ${CMAKE_BINARY_DIR}
@@ -41,4 +41,4 @@ if("CMAKE_CXX_STDINT_H" MATCHES "^CMAKE_CXX_STDINT_H$")
       "Determining if the CXX compiler supports using stdint.h failed with "
       "the following output:\n${OUTPUT}\n\n")
   endif(CMAKE_CXX_STDINT_H)
-endif("CMAKE_CXX_STDINT_H" MATCHES "^CMAKE_CXX_STDINT_H$")
+endif(NOT DEFINED CMAKE_CXX_STDINT_H)

@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Check if "using namespace std;" works
-IF("CMAKE_USE_NAMESPACE" MATCHES "^CMAKE_USE_NAMESPACE$")
+IF(NOT DEFINED CMAKE_USE_NAMESPACE)
   MESSAGE(STATUS "Check for using namespace support")
   TRY_COMPILE(CMAKE_USE_NAMESPACE  
     ${CMAKE_BINARY_DIR}
@@ -41,6 +41,6 @@ IF("CMAKE_USE_NAMESPACE" MATCHES "^CMAKE_USE_NAMESPACE$")
       "Determining if the CXX compiler has using namespace failed with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_USE_NAMESPACE)
-ENDIF("CMAKE_USE_NAMESPACE" MATCHES "^CMAKE_USE_NAMESPACE$")
+ENDIF(NOT DEFINED CMAKE_USE_NAMESPACE)
 
 

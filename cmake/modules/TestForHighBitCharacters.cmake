@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Check if ctype.h macros work on characters with the high bit set.
-if("CMAKE_HIGH_BIT_CHARACTERS" MATCHES "^CMAKE_HIGH_BIT_CHARACTERS$")
+if(NOT DEFINED CMAKE_HIGH_BIT_CHARACTERS)
    message(STATUS 
       "Check for whether ctype.h macros work on characters with the\n"
    "   high bit set."
@@ -42,4 +42,4 @@ if("CMAKE_HIGH_BIT_CHARACTERS" MATCHES "^CMAKE_HIGH_BIT_CHARACTERS$")
       "Determining if ctype.h macros work on high-bit characters failed with "
       "the following output:\n${OUTPUT}\n\n")
   endif(CMAKE_HIGH_BIT_CHARACTERS)
-endif("CMAKE_HIGH_BIT_CHARACTERS" MATCHES "^CMAKE_HIGH_BIT_CHARACTERS$")
+endif(NOT DEFINED CMAKE_HIGH_BIT_CHARACTERS)

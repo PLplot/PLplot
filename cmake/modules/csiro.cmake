@@ -38,7 +38,7 @@ if(HAVE_QHULL OR WITH_CSA)
       endif(CMAKE_C_COMPILER MATCHES "gcc")
     endif(CMAKE_SYSTEM_PROCESSOR MATCHES "alpha.*")
   endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
-  if("NaNAwareCCompiler" MATCHES "^NaNAwareCCompiler$")
+  if(NOT DEFINED NaNAwareCCompiler)
     message(STATUS "Check for NaN awareness in C compiler")
     try_run(NaNAwareCCompiler COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
@@ -65,7 +65,7 @@ if(HAVE_QHULL OR WITH_CSA)
       "the following output:\n${OUTPUT}\n\n"
       )
     endif(NaNAwareCCompiler)
-  endif("NaNAwareCCompiler" MATCHES "^NaNAwareCCompiler$")
+  endif(NOT DEFINED NaNAwareCCompiler)
 endif(HAVE_QHULL OR WITH_CSA)
 
 if(HAVE_QHULL)
