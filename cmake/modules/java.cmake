@@ -22,7 +22,7 @@
 # Module for determining Java bindings configuration options
 
 # Options to enable Java bindings
-OPTION(ENABLE_java "Enable Java bindings" ON)
+option(ENABLE_java "Enable Java bindings" ON)
 
 if(ENABLE_java AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
@@ -36,50 +36,43 @@ if(ENABLE_java AND NOT SWIG_FOUND)
   set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
 endif(ENABLE_java AND NOT SWIG_FOUND)
 
-IF (ENABLE_java)
+if(ENABLE_java)
+  # Check for java compiler
+  include(CMakeDetermineJavaCompiler)
+  if(NOT CMAKE_Java_COMPILER)
+    message(STATUS "WARNING: "
+      "java compiler not found. Disabling java bindings")
+    set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+  endif(NOT CMAKE_Java_COMPILER)
+endif(ENABLE_java)
 
-# Check for java compiler
-INCLUDE(CMakeDetermineJavaCompiler)
-
-IF (CMAKE_Java_COMPILER MATCHES "NOTFOUND$")
-  MESSAGE(STATUS "WARNING: "
-    "java compiler not found. Disabling java bindings")
-  SET(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
-ENDIF (CMAKE_Java_COMPILER MATCHES "NOTFOUND$")
-
-ENDIF (ENABLE_java)
-
-IF (ENABLE_java)
-
-# Check for java environment
-ENABLE_LANGUAGE(Java)
-
-FIND_PACKAGE(JNI)
-
-# If CMake doesn't find jni.h you need set JAVA_INCLUDE_PATH
-IF( "${JAVA_INCLUDE_PATH}" MATCHES "NOTFOUND$" )
-  MESSAGE(STATUS
+if(ENABLE_java)
+  # Check for java environment
+  enable_language(Java)
+  find_package(JNI)
+  # If CMake doesn't find jni.h you need set CMAKE_INCLUDE_PATH
+  if(NOT JAVA_INCLUDE_PATH)
+    message(STATUS
       "WARNING: jni.h header not found. Disabling Java bindings.\n" 
-  "   Please install that header and/or set the environment variable\n"
-  "   CMAKE_INCLUDE_PATH appropriately."
-  )
-  SET(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
-ENDIF( "${JAVA_INCLUDE_PATH}" MATCHES "NOTFOUND$" )
+    "   Please install that header and/or set the environment variable\n"
+    "   CMAKE_INCLUDE_PATH appropriately."
+    )
+    set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+  endif(NOT JAVA_INCLUDE_PATH)
+endif(ENABLE_java)
 
-# Set up installation locations for java specific files.
-# Java .jar files.
-set(JAR_INSTALL_DIR share/java)
-set(JAR_DIR ${CMAKE_INSTALL_PREFIX}/${JAR_INSTALL_DIR})
-get_filename_component(JAVADATA_HARDDIR ${JAR_DIR} ABSOLUTE)
-# JNI .so files.
-SET(JAVAWRAPPER_DIR ${LIB_DIR}/jni)
-GET_FILENAME_COMPONENT(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
-# Library name will be system dependent. For now assume .so
-# We're not currently using libtool so we can't use the autotools
-# trick to guess. 
-# This will definitely need changing for windows.
-SET(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap.so)
-
-ENDIF (ENABLE_java)
-
-
+if(ENABLE_java)
+  # Set up installation locations for java specific files.
+  # Java .jar files.
+  set(JAR_INSTALL_DIR share/java)
+  set(JAR_DIR ${CMAKE_INSTALL_PREFIX}/${JAR_INSTALL_DIR})
+  get_filename_component(JAVADATA_HARDDIR ${JAR_DIR} ABSOLUTE)
+  # JNI .so files.
+  set(JAVAWRAPPER_DIR ${LIB_DIR}/jni)
+  get_filename_component(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
+  # Library name will be system dependent. For now assume .so
+  # We're not currently using libtool so we can't use the autotools
+  # trick to guess. 
+  # This will definitely need changing for windows.
+  set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap.so)
+endif(ENABLE_java)
