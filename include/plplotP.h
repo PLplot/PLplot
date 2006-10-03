@@ -951,7 +951,8 @@ typedef struct {
  * and vector transformations.
  * This is not currently intended to be called direct by the user
  */
-void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
+void PLDLLIMPEXP
+plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLPointer f2evalv_data, PLPointer f2evalc_data,
 		PLINT nx, PLINT ny, PLFLT scale,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
