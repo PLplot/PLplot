@@ -52,6 +52,7 @@
 #define STUB_L		2
 #define STUB_U		3
 #define STUB_FORTRAN	4
+#define STUB_STDCALL	5
 
 #ifndef STUB_LINKAGE
 
@@ -93,6 +94,10 @@
 #define STUB_LINKAGE STUB_FORTRAN
 #endif
 
+#ifdef _MSC_VER				/* MSVC/CVF based */
+#define STUB_LINKAGE STUB_STDCALL
+#endif
+
 #ifndef STUB_LINKAGE			/* The default */
 #define STUB_LINKAGE STUB_LAU
 #endif
@@ -107,15 +112,23 @@
 
 #if STUB_LINKAGE==STUB_LAU
 #define FNAME(x,y)	y##_
+#define FNAME_(x,y)	y##_
 
 #elif STUB_LINKAGE == STUB_L
 #define FNAME(x,y)	y
+#define FNAME_(x,y)	y
 
 #elif STUB_LINKAGE == STUB_U
 #define FNAME(x,y)	x
+#define FNAME_(x,y)	x
 
 #elif STUB_LINKAGE == STUB_FORTRAN
 #define FNAME(x,y)	fortran x
+#define FNAME_(x,y)	x
+
+#elif STUB_LINKAGE == STUB_STDCALL
+#define FNAME(x,y)	__stdcall x
+#define FNAME_(x,y)	x
 
 #else
 #error "Illegal setting for STUB_LINKAGE"
@@ -208,7 +221,8 @@
 #define    PLMKSTRM	FNAME(PLMKSTRM,plmkstrm)
 #define    PLMTEX7	FNAME(PLMTEX7,plmtex7)
 #define    PLOT3D	FNAME(PLOT3D,plot3d)
-#define    PLOT3DC	FNAME(PLOT3DC,plot3dc)
+#define    PLOT3DC_	FNAME_(PLOT3DC_,plot3dc_)
+#define    PLOT3DC	FNAME(PLOT3DC_,plot3dc_)
 #define    PLPARSEOPTS7	FNAME(PLPARSEOPTS7,plparseopts7)
 #define    PLPAT	FNAME(PLPAT,plpat)
 #define    PLPOIN	FNAME(PLPOIN,plpoin)

@@ -240,7 +240,7 @@ PLGCOMPRESSION(PLINT *compression)
 }
 
 void
-PLGDEV7(char *dev)
+PLGDEV7(char *dev, int length)
 {
     c_plgdev(dev);
 }
@@ -270,7 +270,7 @@ PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 }
 
 void
-PLGFNAM7(char *fnam)
+PLGFNAM7(char *fnam, int length)
 {
     c_plgfnam(fnam);
 }
