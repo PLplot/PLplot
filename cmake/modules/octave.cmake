@@ -70,28 +70,32 @@ if(ENABLE_octave)
   )
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
 
-  find_path(
-  OCTAVE_INCLUDE_PATH
-  oct.h
-  PATH_SUFFIXES octave-${OCTAVE_VERSION}/octave
-  )
-  message(STATUS "OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}")
+  # The following if block is required to keep from repeated pre-pending
+  # of OCTAVE_INCLUDE_PATH_TRIMMED onto OCTAVE_INCLUDE_PATH which would
+  # create 2^n components to OCTAVE_INCLUDE_PATH for n cmake calls.
+  # Note, all externally used results (OCTAVE_INCLUDE_PATH, OCTAVE_LIBRARIES,
+  # OCTINTERP_LIBRARIES, and ENABLE_octave) are cached so skipping everything
+  # if OCTAVE_INCLUDE_PATH is defined from the previous cmake run should be
+  # fine.
+  if(NOT DEFINED OCTAVE_INCLUDE_PATH)
+    find_path(
+    OCTAVE_INCLUDE_PATH
+    oct.h
+    PATH_SUFFIXES octave-${OCTAVE_VERSION}/octave
+    )
 
-  find_library(
-  OCTAVE_LIBRARIES
-  octave
-  PATH_SUFFIXES octave-${OCTAVE_VERSION}
-  )
-  message(STATUS "OCTAVE_LIBRARIES = ${OCTAVE_LIBRARIES}")
+    find_library(
+    OCTAVE_LIBRARIES
+    octave
+    PATH_SUFFIXES octave-${OCTAVE_VERSION}
+    )
+    
+    find_library(
+    OCTINTERP_LIBRARIES
+    octinterp
+    PATH_SUFFIXES octave-${OCTAVE_VERSION}
+    )
 
-  find_library(
-  OCTINTERP_LIBRARIES
-  octinterp
-  PATH_SUFFIXES octave-${OCTAVE_VERSION}
-  )
-  message(STATUS "OCTINTERP_LIBRARIES = ${OCTINTERP_LIBRARIES}")
-
-  if(NOT DEFINED OCTAVE_INCLUDE_PATH_TRIMMED)
     if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
       # If first octave include path has trailing /octave, then must have
       # second include path without that trailing /octave.
@@ -104,16 +108,16 @@ if(ENABLE_octave)
 	${OCTAVE_INCLUDE_PATH_TRIMMED} ${OCTAVE_INCLUDE_PATH}
 	CACHE INTERNAL ""
 	)
-	message(STATUS 
-	"(transformed) OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}"
-	)
       endif(NOT OCTAVE_INCLUDE_PATH_TRIMMED STREQUAL "${OCTAVE_INCLUDE_PATH}")
     else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
       message(STATUS "WARNING: "
       "octave headers and/or library not found. Disabling octave bindings")
       set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
     endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES) 
-  endif(NOT DEFINED OCTAVE_INCLUDE_PATH_TRIMMED)
+  endif(NOT DEFINED OCTAVE_INCLUDE_PATH)
+  message(STATUS "OCTAVE_LIBRARIES = ${OCTAVE_LIBRARIES}")
+  message(STATUS "OCTINTERP_LIBRARIES = ${OCTINTERP_LIBRARIES}")
+  message(STATUS "OCTAVE_INCLUDE_PATH = ${OCTAVE_INCLUDE_PATH}")
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
