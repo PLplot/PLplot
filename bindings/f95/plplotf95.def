@@ -1,0 +1,11 @@
+LIBRARY plplotf95.dll
+EXPORTS
+    _PLSETOPT@12
+    _PLSDEV@8
+    _PLGDEV@8
+    _PLSFNAM@8
+    _PLSFNAM@8
+    _PLGFNAM@8
+    _PLGFVER@8
+    _PLAXES@64
+    _PLBOX@24
