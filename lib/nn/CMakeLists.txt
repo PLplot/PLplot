@@ -37,9 +37,10 @@ csironn
 PROPERTIES
 SOVERSION ${csironn_SOVERSION}
 VERSION ${csironn_VERSION}
+COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
 INSTALL_NAME_DIR "${LIB_DIR}"
 )
-target_link_libraries(csironn ${QHULL_LIB})
+target_link_libraries(csironn ${QHULL_LIBRARIES})
 install(TARGETS csironn DESTINATION ${LIB_DIR})
 
 set(nn_DOCFILES
