@@ -200,6 +200,9 @@ if(HAVE_QHULL)
   libplplot${LIB_TAG}_LINK_FLAGS
   "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
   )
+  include_directories(
+    ${QHULL_INCLUDE_DIRS}
+  )
 endif(HAVE_QHULL)
 
 if(WITH_FREETYPE)
