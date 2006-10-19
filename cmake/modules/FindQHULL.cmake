@@ -3,9 +3,9 @@
 
 # This module defines the following uncached variables:
 #  QHULL_FOUND, if false, do not try to use qhull.
-#  QHULL_INCLUDE_DIRS, where to find qhull_a.h.
-#  QHULL_LIBRARIES, the libraries to link against to use libqhull.a
-#  QHULL_LIBRARY_DIRS, the directory where libqhull.a is found.
+#  QHULL_INCLUDE_DIRS, where to find qhull/qhull_a.h.
+#  QHULL_LIBRARIES, the libraries to link against to use the qhull library
+#  QHULL_LIBRARY_DIRS, the directory where the qhull library is found.
 
 find_path(
   QHULL_INCLUDE_DIR
