@@ -69,11 +69,17 @@ install(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_DIR})
 
 ## Build fortran part of F95 bindings
 set(plplotf95${LIB_TAG}_LIB_SRCS
-strutil.f90 
-configurable.f90 
-sfstubsf95.f90 
+strutil.f90
+configurable.f90
+sfstubsf95.f90
 sfstubs.h
 )
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95.def)
+  SET_SOURCE_FILES_PROPERTIES(${plplotf95c${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Explicitly include dependencies for sfstubsf95.f90
 include(AddFileDependencies)
@@ -95,10 +101,10 @@ install(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_DIR})
 
 # Yuk! All Makefiles are run from the top level build directory and
 # so the f90 .mod files end up there rather than in the bindings/f95
-# directory. Ifort and pgf90 both have a -module command line option to 
+# directory. Ifort and pgf90 both have a -module command line option to
 # override this location, but I'm not sure how portable that?
-install( 
-FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod  
+install(
+FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod
 DESTINATION ${F95_MOD_DIR}
 )
 
@@ -115,7 +121,7 @@ if(PKGCONFIG_EXECUTABLE)
   # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
   # 			    binding has been enabled (ON) or not (OFF).
   #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-  #			    which helps to determine name of configured 
+  #			    which helps to determine name of configured
   #			    *.pc file.
   # PC_SHORT_NAME	  - Used in *.pc NAME: field
   # PC_LONG_NAME	  - Used in *.pc Description: field

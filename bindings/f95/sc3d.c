@@ -97,7 +97,7 @@ PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
    PLFLT clevel = 0.;
 
    optlocal = *opt | MESH;
-   PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
+   CALL_PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 
 void
@@ -107,7 +107,7 @@ PLMESHC(PLFLT *x, PLFLT *y, PLFLT *z,
 {
    PLINT optlocal;
    optlocal = *opt | MESH;
-   PLOT3DC(x, y, z, nx, ny, &optlocal, clevel, nlevel, lx);
+   CALL_PLOT3DC(x, y, z, nx, ny, &optlocal, clevel, nlevel, lx);
 }
 
 
@@ -119,6 +119,6 @@ PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
    PLFLT clevel = 0.;
 
    optlocal = *opt | (*side != 0 ? DRAW_SIDES : 0);
-   PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
+   CALL_PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 

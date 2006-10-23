@@ -188,7 +188,8 @@ typedef char * caddr_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern PLStream PLDLLIMPORT *plsc;
+/* extern PLStream PLDLLIMPORT *plsc; */
+extern PLDLLIMPEXP_DATA(PLStream *)plsc;
 #ifdef __cplusplus
 }
 #endif

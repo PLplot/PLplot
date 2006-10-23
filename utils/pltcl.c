@@ -54,6 +54,7 @@ AppInit(Tcl_Interp *interp);
 int
 main(int argc, char **argv)
 {
+    printf( "In main\n") ;
     exit(pltclMain(argc, argv, NULL, AppInit));
 }
 
@@ -140,8 +141,10 @@ AppInit(Tcl_Interp *interp)
  *
  * where "Mod" is the name of the module.
  */
+    printf( "In AppInit\n") ;
 
     if (Tcl_Init(interp) == TCL_ERROR) {
+    printf( "Error Tcl_Init\n") ;
 	return TCL_ERROR;
     }
 #ifdef HAVE_ITCL
@@ -150,6 +153,7 @@ AppInit(Tcl_Interp *interp)
     }
 #endif
     if (Pltcl_Init(interp) == TCL_ERROR) {
+    printf( "Error Pltcl_Init\n") ;
 	return TCL_ERROR;
     }
 
@@ -169,5 +173,6 @@ AppInit(Tcl_Interp *interp)
 
     Tcl_SetVar(interp, "tcl_prompt1", "pr_prompt", 0);
 
+    printf( "Done App_Init\n") ;
     return TCL_OK;
 }

@@ -723,7 +723,7 @@ PLSHADES7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 }
 
 void
-PLGRIDDATAF77(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
+PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
 	 PLINT *nx, PLFLT *yg, PLINT *ny, PLFLT *zg, PLINT *type, PLFLT *data )
 {
    PLFLT ** a;
