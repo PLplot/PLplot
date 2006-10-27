@@ -2,7 +2,7 @@
 #define __CSA_DLL_H
 
 #ifdef USINGDLL
-  #define USINGNNDLL
+  #define USINGCSADLL
 #endif
 
 #if defined(WIN32)

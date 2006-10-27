@@ -17,6 +17,9 @@
 #if !defined(_CSA_H)
 #define _CSA_H
 
+/* include header file for dll definitions */
+#include "csadll.h"
+
 #if !defined(_POINT_STRUCT)
 #define _POINT_STRUCT
 typedef struct {
@@ -32,32 +35,26 @@ extern char* csa_version;
 struct csa;
 typedef struct csa csa;
 
-#if defined(MAKINGPLDLL)
-#include "pldll.h"
-#else
-#define PLDLLIMPEXP
-#endif
-
-PLDLLIMPEXP
+CSADLLIMPEXP
 csa* csa_create();
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_destroy(csa* a);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_addpoints(csa* a, int n, point points[]);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_calculatespline(csa* a);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_approximate_point(csa* a, point* p);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_approximate_points(csa* a, int n, point* points);
 
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_setnpmin(csa* a, int npmin);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_setnpmax(csa* a, int npmax);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_setk(csa* a, int k);
-PLDLLIMPEXP
+CSADLLIMPEXP
 void csa_setnpps(csa* a, double npps);
 
 #endif
