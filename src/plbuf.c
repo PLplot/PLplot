@@ -155,11 +155,11 @@ plbuf_bop(PLStream *pls)
     if (pls->plbufFile == NULL)
 	plexit("plbuf_bop: Error opening plot data storage file.");
 #else
-// Need a better place to initialize this value
+    /* Need a better place to initialize this value */
     pls->plbuf_buffer_grow = 128 * 1024;
 
     if (pls->plbuf_buffer == NULL) {
-    // We have not allocated a buffer, so do it now
+    /* We have not allocated a buffer, so do it now */
         if ((pls->plbuf_buffer = malloc(pls->plbuf_buffer_grow)) == NULL)
             plexit("plbuf_bop: Error allocating plot buffer.");
 
@@ -167,7 +167,7 @@ plbuf_bop(PLStream *pls)
         pls->plbuf_top = 0;
         pls->plbuf_readpos = 0;
     } else {
-    // Buffer is allocated, move the top to the beginning
+    /* Buffer is allocated, move the top to the beginning */
         pls->plbuf_top = 0;
     }
 #endif
@@ -902,7 +902,7 @@ wr_command(PLStream *pls, U_CHAR c)
     plio_fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
 #else
     if ((pls->plbuf_top + sizeof(U_CHAR)) >= pls->plbuf_buffer_size) {
-    // Not enough space, need to grow the buffer
+    /* Not enough space, need to grow the buffer */
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
 
         if (pls->verbose)
@@ -929,7 +929,7 @@ wr_data(PLStream *pls, void *buf, size_t buf_size)
     plio_fwrite(buf, buf_size, 1, pls->plbufFile);
 #else
     if ((pls->plbuf_top + buf_size) >= pls->plbuf_buffer_size) {
-    // Not enough space, need to grow the buffer
+    /* Not enough space, need to grow the buffer */
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
 
         if ((pls->plbuf_buffer = realloc(pls->plbuf_buffer, pls->plbuf_buffer_size)) == NULL) 

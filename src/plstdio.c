@@ -40,18 +40,18 @@ plio_fwrite(void *buf, size_t size, size_t nmemb, FILE *stream)
 
   dbug_enter("plio_fwrite");
 
-  // Exit if there is nothing to write
+  /* Exit if there is nothing to write */
   if(size == 0 || nmemb == 0) return;
 
-  // Clear the error flag for this steam
+  /* Clear the error flag for this steam */
   clearerr(stream);
 
   bytes = fwrite(buf, size, nmemb, stream);
   
   if(ferror(stream)) {
-    // Perhaps we can add a flag (global or per output stream)
-    // in order to decide if we should abort or warn.  I think
-    // I/O errors should generate an abort 
+    /* Perhaps we can add a flag (global or per output stream)
+       in order to decide if we should abort or warn.  I think
+       I/O errors should generate an abort  */
     plabort("Error writing to file");
   }
 }
@@ -70,19 +70,19 @@ plio_fread(void *buf, size_t size, size_t nmemb, FILE *stream)
 
   dbug_enter("plio_fread");
 
-  // If the buffer has a size of zero, we should complain
+  /* If the buffer has a size of zero, we should complain */
   if(size == 0 || nmemb == 0) {
     plwarn("Zero length buffer size in plio_read, returning");    
     return;
   }
 
-  // Clear the error flag for this steam
+  /* Clear the error flag for this steam */
   clearerr(stream);
 
   bytes = fread(buf, size, nmemb, stream);
 
   if(ferror(stream)) {
-    // The read resulted in an error
+    /* The read resulted in an error */
     plabort("Error reading from file");
   }
 }
@@ -113,19 +113,19 @@ plio_fgets(char *buf, int size, FILE *stream)
 
   dbug_enter("plio_fgets");
 
-  // If the buffer has a size of zero, we should complain
+  /* If the buffer has a size of zero, we should complain */
   if(size == 0) {
     plwarn("Zero length buffer size in plio_fgets, returning");    
     return;
   }
 
-  // Clear the error flag for this steam
+  /* Clear the error flag for this steam */
   clearerr(stream);
 
   s = fgets(buf, size, stream);
 
   if(s == NULL && ferror(stream)) {
-    // The read resulted in an error
+    /* The read resulted in an error */
     plabort("Error reading from file");
   }
 }
