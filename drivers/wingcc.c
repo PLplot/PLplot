@@ -163,7 +163,7 @@ static void UpdatePageMetrics ( PLStream *pls, char flag );
 #if defined(_MSC_VER)
   #define Debug(a) do {if (pls->debug){fprintf(stderr,(a));}}while(0)
 #elif defined(__BORLANDC__)
-  #define Debug //
+  #define Debug if (pls->debug) printf
 #else
   #define Verbose(...) do {if (pls->verbose){fprintf(stderr,__VA_ARGS__);}}while(0)
   #define Debug(...) do {if (pls->debug){fprintf(stderr,__VA_ARGS__);}}while(0)
