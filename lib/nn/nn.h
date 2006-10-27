@@ -18,6 +18,8 @@
 #if !defined(_NN_H)
 #define _NN_H
 
+#include "nndll.h"
+
 typedef enum { SIBSON, NON_SIBSONIAN } NN_RULE;
 
 #if !defined(_POINT_STRUCT)
@@ -162,6 +164,7 @@ void lpi_interpolate_point(lpi* l, point* p);
  * @param nout Number of ouput points
  * @param pout Array of output points [nout]
  */
+NNDLLIMPEXP
 void lpi_interpolate_points(int nin, point pin[], int nout, point pout[]);
 
 /** `nnpi' -- "Natural Neighbours point interpolator" is a
@@ -203,6 +206,7 @@ void nnpi_interpolate_point(nnpi* nn, point* p);
  * @param nout Number of output points
  * @param pout Array of output points [nout]
  */
+NNDLLIMPEXP
 void nnpi_interpolate_points(int nin, point pin[], double wmin, int nout, point pout[]);
 
 /** Sets minimal allowed weight for Natural Neighbours interpolation.
@@ -307,7 +311,7 @@ extern int nn_verbose;
  * SIBSON -- classic Sibson method
  * NON_SIBSONIAN -- simpler and (I think) more robust method
  */
-extern NN_RULE nn_rule;
+extern NNDLLIMPEXP_DATA(NN_RULE) nn_rule;
 
 /* Contains version string for the nn package.
  */
