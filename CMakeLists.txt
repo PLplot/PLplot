@@ -79,9 +79,15 @@ if (BUILD_TEST)
   enable_testing()
 endif (BUILD_TEST)
 
-if(WIN32)
-  ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
-endif(WIN32)
+# Disable warnings about deprecated functions (Visual C++ 2005)
+if(MSVC_VERSION GREATER 1399)
+  ADD_DEFINITIONS("/D_CRT_SECURE_NO_DEPRECATE")
+endif(MSVC_VERSION GREATER 1399)
+
+# Borland Compiler must compile in ANSII mode
+if(BORLAND)
+  ADD_DEFINITIONS(-A)
+endif(BORLAND)
 
 set(top_level_DOCFILES
 AUTHORS
