@@ -129,6 +129,48 @@ add_subdirectory(pkgcfg)
 #add_subdirectory(cf)
 summary()
 
+if(PREBUILD_DIST)
+  # Pre-build everything required for a distribution tarball and copy it to
+  # the source tree (if build tree is different from source tree).
+  
+  # List of targets that must be (pre-)built.
+  set(
+  DIST_TARGETS
+  plhershey-unicode.h_built
+  )
+  if(BUILD_PRINT)
+    set(DIST_TARGETS ${DIST_TARGETS} print)
+  endif(BUILD_PRINT)
+
+  if(BUILD_INFO)
+    set(DIST_TARGETS ${DIST_TARGETS} info)
+  endif(BUILD_INFO)
+
+  if(BUILD_MAN)
+    set(DIST_TARGETS ${DIST_TARGETS} man)
+  endif(BUILD_MAN)
+
+  if(BUILD_HTML)
+    set(DIST_TARGETS ${DIST_TARGETS} html)
+  endif(BUILD_HTML)
+
+  if(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    add_custom_target(prebuild_dist)
+  else(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    add_custom_target(
+    prebuild_dist
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h 
+    ${CMAKE_SOURCE_DIR}/include
+    COMMAND cp 
+    `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
+    ${CMAKE_SOURCE_DIR}/doc/docbook/src
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/doc/docbook/src
+    )
+  endif(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+  add_dependencies(prebuild_dist ${DIST_TARGETS})
+endif(PREBUILD_DIST)
+
 #
 # Packing stuff
 #
