@@ -102,7 +102,7 @@ foreach( srcfile ${JAVA_FILES_FULL} )
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot/core/${fileroot}.class
     COMMAND ${CMAKE_Java_COMPILER} 
-    ARGS -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
+    -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${srcfile}
   )
 endforeach( srcfile ${JAVA_FILES_FULL} )

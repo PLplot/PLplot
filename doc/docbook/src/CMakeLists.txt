@@ -77,14 +77,14 @@ if(PERL_FOUND)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
   COMMAND ${PERL_EXECUTABLE}
-  ARGS ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+  ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
   DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
   )
   
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
   COMMAND ${PERL_EXECUTABLE}
-  ARGS ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
+  ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
   DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
   )
   file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
@@ -121,7 +121,7 @@ if (BUILD_DOC)
       if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
         exec_program(
 	${CMAKE_COMMAND}
-	ARGS -E create_symlink 
+	-E create_symlink 
 	${CMAKE_CURRENT_SOURCE_DIR}/${file}
 	${CMAKE_CURRENT_BINARY_DIR}/${file}
 	)
@@ -141,13 +141,13 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
   COMMAND ${CMAKE_COMMAND} 
-  ARGS -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${CMAKE_COMMAND} 
-  ARGS -E create_symlink 
+  -E create_symlink 
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
   ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${OPENJADE} 
-  ARGS ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+  ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
   )
 
   # The following trick with tex auxillary file ensures that
@@ -156,7 +156,7 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
   COMMAND ${PDFJADETEX} 
-  ARGS ${BASE}.jadetex 
+  ${BASE}.jadetex 
   DEPENDS 
   ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
   jadetex.cfg 
@@ -166,30 +166,30 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log
   COMMAND ${PDFJADETEX} 
-  ARGS ${BASE}.jadetex 
+  ${BASE}.jadetex 
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux 
   )
 
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
   COMMAND ${PDFJADETEX} 
-  ARGS ${BASE}.jadetex 
+  ${BASE}.jadetex 
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log 
   )
 
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
   COMMAND ${JADETEX} 
-  ARGS ${BASE}.jadetex 
+  ${BASE}.jadetex 
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log 
   )
   
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
   COMMAND ${DVIPS} 
-  ARGS ${BASE}.dvi
+  ${BASE}.dvi
   COMMAND ${GZIP}
-  ARGS -f ${BASE}.ps
+  -f ${BASE}.ps
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
   )
 
@@ -212,13 +212,13 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
   COMMAND ${CMAKE_COMMAND} 
-  ARGS -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${CMAKE_COMMAND} 
-  ARGS -E create_symlink 
+  -E create_symlink 
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
   ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${PERL_EXECUTABLE} 
-  ARGS ${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+  ${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
   DEPENDS
   ${SOURCE_FILES} 
   ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} 
@@ -229,14 +229,14 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
   COMMAND ${DB2X_XSLTPROC}
-  ARGS -s texi -o ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+  -s texi -o ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
   )
 
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
   COMMAND ${DB2X_TEXIXML}
-  ARGS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
   )
 
@@ -247,13 +247,13 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
   COMMAND ${CMAKE_COMMAND}
-  ARGS -E remove -f ${INFO_TMPDIR}/*
+  -E remove -f ${INFO_TMPDIR}/*
   COMMAND ${MAKEINFO} 
-  ARGS --force -o ${INFO_TMPDIR}/plplotdoc.info ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
+  --force -o ${INFO_TMPDIR}/plplotdoc.info ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
   COMMAND ${CMAKE_COMMAND}
-  ARGS -E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
+  -E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
   COMMAND ${MV}
-  ARGS ${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
+  ${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
   )
 
@@ -274,7 +274,7 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
   COMMAND ${PERL_EXECUTABLE}
-  ARGS ${CMAKE_CURRENT_BINARY_DIR}/../bin/api2man.pl ${MASTER_XML} api.xml ${MANVOL} > ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
+  ${CMAKE_CURRENT_BINARY_DIR}/../bin/api2man.pl ${MASTER_XML} api.xml ${MANVOL} > ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} api.xml
   )
 
@@ -292,15 +292,15 @@ if (BUILD_DOC)
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
   COMMAND ${CMAKE_COMMAND} 
-  ARGS -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${CMAKE_COMMAND} 
-  ARGS -E create_symlink 
+  -E create_symlink 
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent 
   ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${OPENJADE}
-  ARGS ${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+  ${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
   COMMAND ${PERL_EXECUTABLE}
-  ARGS -pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
+  -pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
   DEPENDS
   ${SOURCE_FILES} 
   ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}

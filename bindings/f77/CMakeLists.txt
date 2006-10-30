@@ -24,17 +24,17 @@ if(ENABLE_f77)
 ## Note: Sed will possibly fail on windows. Would this be better 
 ## done using the cmake configure_file option eventually?
 if(PL_DOUBLE)
-  ADD_CUSTOM_command(
+  add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
+    -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
   )
 else(PL_DOUBLE)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     COMMAND sed
-    ARGS -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4a > ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
+    -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4a > ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
   )
 endif(PL_DOUBLE)
@@ -147,4 +147,4 @@ if(PKGCONFIG_EXECUTABLE)
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
 endif(PKGCONFIG_EXECUTABLE)
-ENDIF(ENABLE_f77)
+endif(ENABLE_f77)
