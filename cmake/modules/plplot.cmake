@@ -53,6 +53,13 @@ include(double)
 include(instdirs)
 include(rpath)
 option(BUILD_TEST "Compile examples in the build tree and enable ctest" OFF)
+option(PREBUILD_DIST "Pre-build all components required for distribution" OFF)
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  set(
+  PREBUILD_DIST OFF CACHE INTERNAL 
+  "Pre-build all components required for distribution"
+  )
+endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 # =======================================================================
 # Headers
