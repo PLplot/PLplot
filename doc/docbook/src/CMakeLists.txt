@@ -30,36 +30,35 @@ ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
 
 set(
 SOURCE_FILES
-advanced.xml
-api.xml
-api-c.xml
-api-compat.xml
-api-fortran77.xml
-api-fortran95.xml
-api-obsolete.xml
-bibliography.xml
-c.xml
-deploying.xml
-fortran77.xml
-fortran95.xml
-cplus.xml
-drivers.xml
-gui.xml
-inline-html.ent
-inline-print.ent
-intro.xml
-os_notes.xml
-perl.xml
-python.xml
-simple.xml
-tcl.xml
-wish.xml
-math.ent
+${CMAKE_CURRENT_SOURCE_DIR}/advanced.xml
+${CMAKE_CURRENT_SOURCE_DIR}/api.xml
+${CMAKE_CURRENT_SOURCE_DIR}/api-c.xml
+${CMAKE_CURRENT_SOURCE_DIR}/api-compat.xml
+${CMAKE_CURRENT_SOURCE_DIR}/api-fortran77.xml
+${CMAKE_CURRENT_SOURCE_DIR}/api-fortran95.xml
+${CMAKE_CURRENT_SOURCE_DIR}/api-obsolete.xml
+${CMAKE_CURRENT_SOURCE_DIR}/bibliography.xml
+${CMAKE_CURRENT_SOURCE_DIR}/c.xml
+${CMAKE_CURRENT_SOURCE_DIR}/deploying.xml
+${CMAKE_CURRENT_SOURCE_DIR}/fortran77.xml
+${CMAKE_CURRENT_SOURCE_DIR}/fortran95.xml
+${CMAKE_CURRENT_SOURCE_DIR}/cplus.xml
+${CMAKE_CURRENT_SOURCE_DIR}/drivers.xml
+${CMAKE_CURRENT_SOURCE_DIR}/gui.xml
+${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
+${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+${CMAKE_CURRENT_SOURCE_DIR}/intro.xml
+${CMAKE_CURRENT_SOURCE_DIR}/os_notes.xml
+${CMAKE_CURRENT_SOURCE_DIR}/perl.xml
+${CMAKE_CURRENT_SOURCE_DIR}/python.xml
+${CMAKE_CURRENT_SOURCE_DIR}/simple.xml
+${CMAKE_CURRENT_SOURCE_DIR}/tcl.xml
+${CMAKE_CURRENT_SOURCE_DIR}/wish.xml
+${CMAKE_CURRENT_SOURCE_DIR}/math.ent
 )
 
 set(
 INCLUDED_FILES
-${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
 ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
 )
 
@@ -91,6 +90,18 @@ if(PERL_FOUND)
   "plplot-symbols.txt\n"
   "plplot-structs.txt\n"
   )
+  
+  # libplplot should be created before plplot-symbols.txt since
+  # get-library-symbols.pl depends upon libplplot and this is enforced
+  # (from the good results I have gotten so far) via the add_dependencies 
+  # command below.
+  add_custom_target(
+  docbook_plplot-symbols_txt
+  DEPENDS
+  ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
+  )
+  add_dependencies(docbook_plplot-symbols_txt plplot${LIB_TAG})
+
 endif(PERL_FOUND)
   
 # Custom command for validating xml file
@@ -108,6 +119,7 @@ if(PERL_FOUND AND ONSGMLS)
   ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml
   ${INCLUDED_FILES}
   )
+  add_dependencies(validate docbook_plplot-symbols_txt)
 else(PERL_FOUND AND ONSGMLS)
   add_custom_target(validate
   ${CMAKE COMMAND} -E echo "Unable to validate xml file - missing dependencies"
@@ -118,14 +130,15 @@ if (BUILD_DOC)
 
   if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
     foreach(file ${SOURCE_FILES})
-      if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
+      get_filename_component(filename ${file} NAME)
+      if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
         exec_program(
 	${CMAKE_COMMAND}
-	-E create_symlink 
-	${CMAKE_CURRENT_SOURCE_DIR}/${file}
-	${CMAKE_CURRENT_BINARY_DIR}/${file}
+	ARGS -E create_symlink 
+	${CMAKE_CURRENT_SOURCE_DIR}/${filename}
+	${CMAKE_CURRENT_BINARY_DIR}/${filename}
 	)
-      endif(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
+      endif(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
     endforeach(file ${SOURCE_FILES})
   endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
 
@@ -140,23 +153,35 @@ if (BUILD_DOC)
   # Custom commands for building print version of documentation
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
-  COMMAND ${CMAKE_COMMAND} 
-  -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-  COMMAND ${CMAKE_COMMAND} 
-  -E create_symlink 
+  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+  COMMAND ${CMAKE_COMMAND} -E create_symlink 
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
   ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${OPENJADE} 
-  ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+  ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} 
+  -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
+  ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+  DEPENDS
+  ${SOURCE_FILES}
+  ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
+  ${INCLUDED_FILES}
+  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
   )
 
-  # The following trick with tex auxillary file ensures that
-  # jadetex is run 3 times to correctly generated the documentation with
-  # references. Taken from the CMake FAQ.
+  # The following tricks with dependencies and copy_if_different means
+  # pdf jadetex will be run three times starting from a clean build tree, and
+  # on subsequent makes whenever the contents of ${BASE}.aux changes.
+  # (The problem with the old version based on the CMake FAQ was pdfjadetex
+  # was run once on subsequent makes even when it didn't need to be.  This
+  # added a lot of unnecessary latency when re-running make for minor
+  # CMake changes.)
   add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
-  COMMAND ${PDFJADETEX} 
-  ${BASE}.jadetex 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux1
+  COMMAND ${PDFJADETEX} ${BASE}.jadetex
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
+  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux1
   DEPENDS 
   ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
   jadetex.cfg 
@@ -164,32 +189,30 @@ if (BUILD_DOC)
   )
 
   add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log
-  COMMAND ${PDFJADETEX} 
-  ${BASE}.jadetex 
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
+  COMMAND ${PDFJADETEX} ${BASE}.jadetex 
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
+  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux1
   )
 
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-  COMMAND ${PDFJADETEX} 
-  ${BASE}.jadetex 
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log 
+  COMMAND ${PDFJADETEX} ${BASE}.jadetex 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
   )
 
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
-  COMMAND ${JADETEX} 
-  ${BASE}.jadetex 
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.log 
+  COMMAND ${JADETEX} ${BASE}.jadetex 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
   )
   
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-  COMMAND ${DVIPS} 
-  ${BASE}.dvi
-  COMMAND ${GZIP}
-  -f ${BASE}.ps
+  COMMAND ${DVIPS} ${BASE}.dvi
+  COMMAND ${GZIP} -f ${BASE}.ps
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
   )
 
@@ -206,6 +229,7 @@ if (BUILD_DOC)
     "${BASE}.ps.gz\n"
     "${BASE}.pdf\n"
     )
+    add_dependencies(print docbook_plplot-symbols_txt)
   endif(BUILD_PRINT)
 
   # Custom commands for building info version of documentation
@@ -213,8 +237,7 @@ if (BUILD_DOC)
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
   COMMAND ${CMAKE_COMMAND} 
   -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-  COMMAND ${CMAKE_COMMAND} 
-  -E create_symlink 
+  COMMAND ${CMAKE_COMMAND} -E create_symlink 
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
   ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${PERL_EXECUTABLE} 
@@ -267,6 +290,7 @@ if (BUILD_DOC)
     "plplotdoc.texi\n"
     "${INFO_MANIFEST}\n"
     )
+    add_dependencies(info docbook_plplot-symbols_txt)
   endif(BUILD_INFO)
 
   # Custom commands for building man version of documentation
@@ -293,8 +317,7 @@ if (BUILD_DOC)
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
   COMMAND ${CMAKE_COMMAND} 
   -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-  COMMAND ${CMAKE_COMMAND} 
-  -E create_symlink 
+  COMMAND ${CMAKE_COMMAND} -E create_symlink 
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent 
   ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
   COMMAND ${OPENJADE}
@@ -315,6 +338,7 @@ if (BUILD_DOC)
     file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "${HTML_MANIFEST}\n"
     )
+    add_dependencies(html docbook_plplot-symbols_txt)
   endif(BUILD_HTML)
 
 endif(BUILD_DOC)
