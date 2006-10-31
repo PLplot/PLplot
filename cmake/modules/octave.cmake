@@ -63,7 +63,7 @@ if(ENABLE_octave)
   OUTPUT_VARIABLE _OCTAVE_VERSION
   )
   string(REGEX REPLACE
-  "^.*version ([0-9]\\.[0-9]\\.[0-9][0-9]).*$" 
+  "^.*version ([0-9]\\.[0-9]\\.[0-9]*).*$" 
   "\\1"
   OCTAVE_VERSION
   ${_OCTAVE_VERSION}
