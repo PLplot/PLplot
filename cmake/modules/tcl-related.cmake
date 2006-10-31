@@ -68,6 +68,8 @@ if(ENABLE_tcl)
     )
   endif(TCL_FOUND)
   if(TCL_FOUND AND TCL_TCLSH)
+    message(STATUS "TCL_INCLUDE_PATH = ${TCL_INCLUDE_PATH}")
+    message(STATUS "TCL_LIBRARY = ${TCL_LIBRARY}")
     if(ENABLE_itcl)
       message(STATUS "Looking for itcl.h")
       find_path(ITCL_INCLUDE_PATH itcl.h ${TCL_INCLUDE_PATH})
@@ -95,6 +97,10 @@ if(ENABLE_tcl)
         set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
       endif(ITCL_INCLUDE_PATH)
     endif(ENABLE_itcl)
+    if(ENABLE_itcl)
+      message(STATUS "ITCL_INCLUDE_PATH = ${ITCL_INCLUDE_PATH}")
+      message(STATUS "ITCL_LIBRARY = ${ITCL_LIBRARY}")
+    endif(ENABLE_itcl)
     # ------------------------------------------------------------------------
     # figure out how to build tclIndex
     # ------------------------------------------------------------------------
@@ -104,6 +110,26 @@ if(ENABLE_tcl)
     else(ENABLE_itcl)
       set(MKTCLINDEX_ARGS "-tcl")
     endif(ENABLE_itcl)
+    if(ENABLE_tk AND NOT X11_FOUND)
+      message(STATUS "WARNING: X11 not found, disabling Tk interface code")
+      set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
+    endif(ENABLE_tk AND NOT X11_FOUND)
+    if(ENABLE_tk)
+      set(TK_INCLUDE_PATH ${TK_INCLUDE_PATH} ${X11_INCLUDE_DIR})
+      set(
+      TK_LIBRARY
+      ${TK_LIBRARY}
+      -L${X11_LIBRARY_DIR}
+      ${X11_LIBRARIES}
+      )
+      message(STATUS "TK_INCLUDE_PATH = ${TK_INCLUDE_PATH}")
+      message(STATUS "TK_LIBRARY = ${TK_LIBRARY}")
+    else(ENABLE_tk)
+      message(STATUS
+      "WARNING: Because Tk is disabled must disable incr Tk as well"
+      )
+      set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
+    endif(ENABLE_tk)
     if(ENABLE_itk)
       message(STATUS "Looking for itk.h")
       find_path(ITK_INCLUDE_PATH itk.h ${TK_INCLUDE_PATH})
@@ -129,8 +155,12 @@ if(ENABLE_tcl)
         set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
       endif(ITK_INCLUDE_PATH)
     endif(ENABLE_itk)
+    if(ENABLE_itk)
+      message(STATUS "ITK_INCLUDE_PATH = ${ITK_INCLUDE_PATH}")
+      message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
+    endif(ENABLE_itk)
   else(TCL_FOUND AND TCL_TCLSH)
-    message(STATUS "Disabling everything that is Tcl/Tk related")
+    message(STATUS "WARNING: Disabling everything that is Tcl/Tk related")
     set(ENABLE_tcl OFF CACHE BOOL "Enable Tcl bindings" FORCE)
     set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
     set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
@@ -138,7 +168,7 @@ if(ENABLE_tcl)
   endif(TCL_FOUND AND TCL_TCLSH)
 else(ENABLE_tcl)
   message(STATUS 
-  "ENABLE_tcl is off so disabling everything else that "
+  "ENABLE_tcl is OFF so disabling everything else that "
   "is Tcl/Tk related"
   )
   set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
