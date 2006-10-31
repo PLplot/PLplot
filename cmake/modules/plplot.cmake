@@ -188,6 +188,14 @@ if(PERL_FOUND)
     include(CheckPerlModules)
 endif(PERL_FOUND)
 
+# Find X headers, libraries, and library directory (required by xwin device
+# driver and also everything that is Tk related).
+find_package(X11)
+message(STATUS "X11_FOUND = ${X11_FOUND}")
+message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
+message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
+message(STATUS "X11_LIBRARY_DIR = ${X11_LIBRARY_DIR}")
+
 # Load language specific files
 include(c++)
 include(fortran)

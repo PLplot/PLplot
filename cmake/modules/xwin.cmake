@@ -28,7 +28,6 @@
 # HAVE_PTHREAD		  - ON means use pthreads with xwin driver.
 # PLPLOT_MUTEX_RECURSIVE  - Portable definition for PTHREAD_MUTEX_RECURSIVE
 if(PLD_xwin)
-  find_package(X11)
   if(X11_FOUND)
     string(REGEX REPLACE ";" ";-I" 
     xwin_COMPILE_FLAGS

@@ -52,9 +52,12 @@ if(NOT ENABLE_tk)
   set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
 endif(NOT ENABLE_tk)
 
+# Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
+string(REGEX REPLACE ";" " -I" TKLIB_COMPILE_FLAGS "-I${TK_INCLUDE_PATH}")
+	
 if(PLD_tk)
   set(tk_COMPILE_FLAGS 
-  "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_BINARY_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk"
+  "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_BINARY_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk"
   )
   set(tk_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
@@ -93,14 +96,14 @@ if(PLD_tk)
 endif(PLD_tk)
 
 if(PLD_ntk)
-  set(ntk_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH}")
+  set(ntk_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS}")
   set(ntk_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ntk_LINK_FLAGS})
 endif(PLD_ntk)
 
 if(PLD_tkwin)
   set(tkwin_COMPILE_FLAGS 
-  "-I${TCL_INCLUDE_PATH} -I${TK_INCLUDE_PATH} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_BINARY_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk-x-plat -I${CMAKE_SOURCE_DIR}/bindings/tk"
+  "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I${CMAKE_SOURCE_DIR}/bindings/tcl -I${CMAKE_BINARY_DIR}/bindings/tcl -I${CMAKE_SOURCE_DIR}/bindings/tk-x-plat -I${CMAKE_SOURCE_DIR}/bindings/tk"
   )
   set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})

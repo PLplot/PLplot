@@ -116,7 +116,8 @@ ${TCL_LIBRARY}
 )
 set(
 libplplottcltk${LIB_TAG}_LINK_FLAGS
-"-ltclmatrix${LIB_TAG} ${TCL_LIBRARY}"
+-ltclmatrix${LIB_TAG} 
+${TCL_LIBRARY}
 )
 
 if(ENABLE_itcl)
@@ -131,7 +132,8 @@ if(ENABLE_itcl)
   )
   set(
   libplplottcltk${LIB_TAG}_LINK_FLAGS
-  "${libplplottcltk${LIB_TAG}_LINK_FLAGS} ${ITCL_LIBRARY}"
+  ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
+  ${ITCL_LIBRARY}
   )
 endif(ENABLE_itcl)
 
@@ -145,9 +147,11 @@ if(ENABLE_tk)
   ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
   )
   include_directories(${TK_INCLUDE_PATH})
+  # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
+  string(REGEX REPLACE ";" " -I" TKLIB_COMPILE_FLAGS "-I${TK_INCLUDE_PATH}")
   set(
   libplplottcltk${LIB_TAG}_COMPILE_FLAGS
-  "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} -I${TK_INCLUDE_PATH}"
+  "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
   )
   set(plplottcltk${LIB_TAG}_link_libraries
   ${plplottcltk${LIB_TAG}_link_libraries}
@@ -155,7 +159,8 @@ if(ENABLE_tk)
   )
   set(
   libplplottcltk${LIB_TAG}_LINK_FLAGS
-  "${libplplottcltk${LIB_TAG}_LINK_FLAGS} ${TK_LIBRARY}"
+  ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
+  ${TK_LIBRARY}
   )
   if(ENABLE_itk)
     include_directories(${ITK_INCLUDE_PATH})
@@ -169,10 +174,37 @@ if(ENABLE_tk)
     )
     set(
     libplplottcltk${LIB_TAG}_LINK_FLAGS
-    "${libplplottcltk${LIB_TAG}_LINK_FLAGS} ${ITK_LIBRARY}"
+    ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
+    ${ITK_LIBRARY}
     )
   endif(ENABLE_itk)
 endif(ENABLE_tk)
+
+# Convert libplplottcltk${LIB_TAG}_LINK_FLAGS to a blank-delimited string
+# used for configuring the pkg-config file for libplplottcltkd.
+string(REGEX REPLACE ";" " " 
+__libplplottcltk${LIB_TAG}_LINK_FLAGS
+"${libplplottcltk${LIB_TAG}_LINK_FLAGS}"
+)
+#message("__libplplottcltk${LIB_TAG}_LINK_FLAGS = ${__libplplottcltk${LIB_TAG}_LINK_FLAGS}")
+# Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
+# since it appears pkg-config handles that latter form much better (with
+# regard to keeping the correct order and eliminating duplicates).
+
+# These REGEX REPLACE's won't actually replace anything on bare windows since
+# library names are not of the form /path/to/library/libname.so (or .a) on
+# that platform.  On the other hand, pkg-config does not work on windows
+# either so it doesn't matter.
+string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
+_libplplottcltk${LIB_TAG}_LINK_FLAGS
+${__libplplottcltk${LIB_TAG}_LINK_FLAGS}
+)
+#message("_libplplottcltk${LIB_TAG}_LINK_FLAGS = ${_libplplottcltk${LIB_TAG}_LINK_FLAGS}")
+string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.a" "-L\\1 -l\\2"
+libplplottcltk${LIB_TAG}_LINK_FLAGS
+${_libplplottcltk${LIB_TAG}_LINK_FLAGS}
+)
+#message("libplplottcltk${LIB_TAG}_LINK_FLAGS = ${libplplottcltk${LIB_TAG}_LINK_FLAGS}")
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 target_link_libraries(
