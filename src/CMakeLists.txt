@@ -140,8 +140,8 @@ else(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 
-# libplplot${LIB_TAG}_LINK_FLAGS is a blank-delimited string used for
-# configuring the pkg-config file for libplotd.
+# Create libplplot${LIB_TAG}_LINK_FLAGS, a blank-delimited string used for
+# configuring the pkg-config file for libplplotd.
 string(REGEX REPLACE ";" " " 
 __libplplot${LIB_TAG}_LINK_FLAGS
 "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
