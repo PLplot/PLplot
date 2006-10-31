@@ -50,8 +50,10 @@ DEPENDS
 ${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
 )
 if(PERL_XML_DOM AND PERL_XML_PARSER)
-  add_custom_target(
-  make_documentation ALL
+  # The OUTPUT of this command is representative since there are more than
+  # a hundred *.txt files created by this command.
+  add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plinit.txt
   COMMAND ${PERL_EXECUTABLE}
   ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
   ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
@@ -62,6 +64,11 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
   ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
   ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt
+  )
+  
+  add_custom_target(
+  make_documentation ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plinit.txt
   )
 else(PERL_XML_DOM AND PERL_XML_PARSER)
   message(STATUS 
