@@ -169,46 +169,68 @@ if (BUILD_DOC)
   ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
   )
 
-  # The following tricks with dependencies and copy_if_different means
-  # pdf jadetex will be run three times starting from a clean build tree, and
-  # on subsequent makes whenever the contents of ${BASE}.aux changes.
-  # (The problem with the old version based on the CMake FAQ was pdfjadetex
-  # was run once on subsequent makes even when it didn't need to be.  This
-  # added a lot of unnecessary latency when re-running make for minor
-  # CMake changes.)
+  # Following approach used in our ABS, use shell commands to recurse
+  # ${PDFJADETEX} ${BASE}.jadetex five times or until the *.aux file that is
+  # produced doesn't change.
   add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux1
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
   COMMAND ${PDFJADETEX} ${BASE}.jadetex
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
-  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux1
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-pdf.aux \; 
+  ${PDFJADETEX} ${BASE}.jadetex \; 
+  fi
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-pdf.aux \; 
+  ${PDFJADETEX} ${BASE}.jadetex \; 
+  fi
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-pdf.aux \; 
+  ${PDFJADETEX} ${BASE}.jadetex \; 
+  fi
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-pdf.aux \; 
+  ${PDFJADETEX} ${BASE}.jadetex \; 
+  fi
   DEPENDS 
   ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
   jadetex.cfg 
-  ${INCLUDED_FILES}
   )
 
-  add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
-  COMMAND ${PDFJADETEX} ${BASE}.jadetex 
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux
-  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux1
-  )
-
-  add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-  COMMAND ${PDFJADETEX} ${BASE}.jadetex 
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
-  )
-
+  # Following approach used in our ABS, use shell commands to recurse
+  # ${JADETEX} ${BASE}.jadetex five times or until the *.aux file that is
+  # produced doesn't change.
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
-  COMMAND ${JADETEX} ${BASE}.jadetex 
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.aux2
+  COMMAND ${JADETEX} ${BASE}.jadetex
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-dvi.aux \; 
+  ${JADETEX} ${BASE}.jadetex \; 
+  fi
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-dvi.aux \; 
+  ${JADETEX} ${BASE}.jadetex \; 
+  fi
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-dvi.aux \; 
+  ${JADETEX} ${BASE}.jadetex \; 
+  fi
+  COMMAND 
+  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+  cp -pf ${BASE}.aux prior-dvi.aux \; 
+  ${JADETEX} ${BASE}.jadetex \; 
+  fi
+  DEPENDS 
+  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
+  jadetex.cfg 
   )
-  
+
   add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
   COMMAND ${DVIPS} ${BASE}.dvi
