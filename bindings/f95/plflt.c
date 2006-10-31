@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "plConfig.h"
 
-main(int argc, char *argv[] )
+int main(int argc, char *argv[] )
 {
    FILE *outfile ;
    char *kind ;
@@ -26,4 +26,5 @@ main(int argc, char *argv[] )
       integer, parameter :: plf   = kind(%s)\n\
       integer, parameter :: plflt = plf\n", kind ) ;
   fclose( outfile ) ;
+  return 0 ;
 }
