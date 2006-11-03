@@ -140,7 +140,7 @@ PROPERTIES
 PREFIX "" 
 SUFFIX ".oct"
 INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${PLPLOT_OCTAVE_DIR}"
+INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
 )
 
 # Have to be specific about permissions for some reason (probably oct suffix).
@@ -158,7 +158,7 @@ install(
 TARGETS
 plplot_octave
 LIBRARY
-DESTINATION ${PLPLOT_OCTAVE_DIR}
+DESTINATION ${OCTAVE_OCT_DIR}
 PERMISSIONS ${PERM_MODULES}
 )
 
