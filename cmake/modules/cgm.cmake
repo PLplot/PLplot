@@ -37,7 +37,7 @@ if(PLD_cgm)
   find_package(CD)
   if(CD_FOUND)
     set(cgm_COMPILE_FLAGS "-I${CD_INCLUDE_DIRS}")
-    set(cgm_LINK_FLAGS "-L${CD_LIBRARY_DIRS} -lcd")
+    set(cgm_LINK_FLAGS ${CD_LIBRARIES})
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${cgm_LINK_FLAGS})
   else(CD_FOUND)
     message(STATUS 
