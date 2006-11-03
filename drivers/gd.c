@@ -1215,7 +1215,9 @@ free(bbuf);
 
 void plD_eop_png(PLStream *pls)
 {
-png_Dev *dev=(png_Dev *)pls->dev;
+    png_Dev *dev=(png_Dev *)pls->dev;
+    int im_size=0;
+    void *im_ptr=NULL;
 
     if (pls->family || pls->page == 1) {
 
@@ -1235,7 +1237,16 @@ png_Dev *dev=(png_Dev *)pls->dev;
 #endif
         }
 
-       gdImagePng(dev->im_out, pls->OutFile);
+      
+       /* image is written to output file by the driver
+          since if the gd.dll is linked to a different c
+          lib a crash occurs - this fix works also in Linux */
+       /* gdImagePng(dev->im_out, pls->OutFile); */
+       im_ptr = gdImagePngPtr(dev->im_out, &im_size);
+       if( im_ptr ) {
+         fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         gdFree(im_ptr);
+       }
 
        gdImageDestroy(dev->im_out);
        dev->im_out = NULL;
@@ -1359,10 +1370,20 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
 
 void plD_eop_jpeg(PLStream *pls)
 {
-png_Dev *dev=(png_Dev *)pls->dev;
+    png_Dev *dev=(png_Dev *)pls->dev;
+    int im_size=0;
+    void *im_ptr=NULL;
 
     if (pls->family || pls->page == 1) {
-       gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression);
+       /* image is written to output file by the driver
+          since if the gd.dll is linked to a different c
+          lib a crash occurs - this fix works also in Linux */
+       /* gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression); */
+       im_ptr = gdImageJpegPtr(dev->im_out, &im_size, pls->dev_compression);
+       if( im_ptr ) {
+         fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         gdFree(im_ptr);
+       }
 
        gdImageDestroy(dev->im_out);
        dev->im_out = NULL;
@@ -1381,10 +1402,20 @@ png_Dev *dev=(png_Dev *)pls->dev;
 
 void plD_eop_gif(PLStream *pls)
 {
-png_Dev *dev=(png_Dev *)pls->dev;
+    png_Dev *dev=(png_Dev *)pls->dev;
+    int im_size=0;
+    void *im_ptr=NULL;
 
     if (pls->family || pls->page == 1) {
-       gdImageGif(dev->im_out, pls->OutFile);
+       /* image is written to output file by the driver
+          since if the gd.dll is linked to a different c
+          lib a crash occurs - this fix works also in Linux */
+       /* gdImageGif(dev->im_out, pls->OutFile); */
+       im_ptr = gdImageGifPtr(dev->im_out, &im_size);
+       if( im_ptr ) {
+         fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         gdFree(im_ptr);
+       }
 
        gdImageDestroy(dev->im_out);
        dev->im_out = NULL;
