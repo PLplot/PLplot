@@ -18,6 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Module for determining all configuration variables related to pkg-config
+# Also create a useful macro called pc_transform_link_flags to process link
+# flags into standard form for the configured *.pc files.
 
 # The following variables are set:
 # PKGCONFIG_EXECUTABLE	  - name of pkg-config executable, but can also be
@@ -44,7 +46,7 @@ include(UsePkgConfig)
 set(pkg_config_false "#")
 
 if(PKGCONFIG_EXECUTABLE)
-  MESSAGE(STATUS "Looking for pkg-config - found")
+  message(STATUS "Looking for pkg-config - found")
   set(pkg_config_true "")
   set(PKG_CONFIG_DIR ${LIB_DIR}/pkgconfig)
   set(PKG_CONFIG_ENV PKG_CONFIG_PATH=${PKG_CONFIG_DIR})
@@ -55,3 +57,52 @@ else(PKGCONFIG_EXECUTABLE)
   # commented out.)
   set(pkg_config_true "#")
 endif(PKGCONFIG_EXECUTABLE)
+
+macro(pc_transform_link_flags _link_flags_out _link_flags_in)
+  # Transform link flags into a form that is suitable to be used in
+  # pkg-config (*.pc) files.
+  # N.B. ${_link_flags_in} must be a string and not a list.
+
+  #message("(original link flags) = ${_link_flags_in}")
+  # Convert link flags to a blank-delimited string.
+  string(REGEX REPLACE ";" " " ${_link_flags_out} "${_link_flags_in}")
+  #message("(blanks) ${_link_flags_out} = ${${_link_flags_out}}")
+
+  # Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
+  # since it appears pkg-config handles that latter form much better (with
+  # regard to keeping the correct order and eliminating duplicates).
+
+  # These REGEX REPLACE's won't actually replace anything on bare windows since
+  # library names are not of this form on that platform.  Something to be
+  # considered later if we decide to use pkg-config on bare windows.
+
+  # This logic will need to be expanded for Unix platforms other than
+  # Mac OS X and Linux.
+  if(APPLE)
+    set(suffix_list ".so" ".a" ".dylib")
+  else(APPLE)
+    set(suffix_list ".so" ".a")
+  endif(APPLE)
+
+  foreach(suffix ${suffix_list})
+    string(
+    REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\${suffix}" "-L\\1 -l\\2"
+    ${_link_flags_out}
+    ${${_link_flags_out}}
+    )
+    #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
+  endforeach(suffix ${suffix_list})
+
+  if(APPLE)
+    # For Mac OS X transform frameworks information into correct form.
+    string(
+    REGEX REPLACE
+    "/System/Library/Frameworks/([^ ]*)\\.framework"
+    "-framework \\1"
+    ${_link_flags_out}
+    ${${_link_flags_out}}
+    )
+    #message("(frameworks) ${_link_flags_out} = ${${_link_flags_out}}")
+  endif(APPLE)
+
+endmacro(pc_transform_link_flags)

@@ -180,48 +180,12 @@ if(ENABLE_tk)
   endif(ENABLE_itk)
 endif(ENABLE_tk)
 
-# Convert libplplottcltk${LIB_TAG}_LINK_FLAGS to a blank-delimited string
-# used for configuring the pkg-config file for libplplottcltkd.
-string(REGEX REPLACE ";" " " 
+# Transform "${libplplottcltk${LIB_TAG}_LINK_FLAGS}" string to the 
+# standard pkg-config form.
+pc_transform_link_flags(
 libplplottcltk${LIB_TAG}_LINK_FLAGS
 "${libplplottcltk${LIB_TAG}_LINK_FLAGS}"
 )
-#message("(blanks) libplplottcltk${LIB_TAG}_LINK_FLAGS = ${libplplottcltk${LIB_TAG}_LINK_FLAGS}")
-
-# Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
-# since it appears pkg-config handles that latter form much better (with
-# regard to keeping the correct order and eliminating duplicates).
-
-# These REGEX REPLACE's won't actually replace anything on bare windows since
-# library names are not of this form on that platform.  On the other hand, 
-# pkg-config does not work on windows either so it doesn't matter.
-
-if(APPLE)
-  set(suffix_list ".so" ".a" ".dylib")
-else(APPLE)
-  set(suffix_list ".so" ".a")
-endif(APPLE)
-
-foreach(suffix ${suffix_list})
-  string(
-  REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\${suffix}" "-L\\1 -l\\2"
-  libplplottcltk${LIB_TAG}_LINK_FLAGS
-  ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
-  )
-  #message("(${suffix}) libplplottcltk${LIB_TAG}_LINK_FLAGS = ${libplplottcltk${LIB_TAG}_LINK_FLAGS}")
-endforeach(suffix ${suffix_list})
-
-if(APPLE)
-  # For Mac OS X transform frameworks information into correct form.
-  string(
-  REGEX REPLACE
-  "/System/Library/Frameworks/([^ ]*)\\.framework"
-  "-framework \\1"
-  libplplottcltk${LIB_TAG}_LINK_FLAGS
-  ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
-  )
-  #message("(frameworks) libplplottcltk${LIB_TAG}_LINK_FLAGS = ${libplplottcltk${LIB_TAG}_LINK_FLAGS}")
-endif(APPLE)
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 target_link_libraries(

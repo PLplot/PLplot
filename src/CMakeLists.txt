@@ -140,31 +140,12 @@ else(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 
-# Create libplplot${LIB_TAG}_LINK_FLAGS, a blank-delimited string used for
-# configuring the pkg-config file for libplplotd.
-string(REGEX REPLACE ";" " " 
-__libplplot${LIB_TAG}_LINK_FLAGS
+# Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
+# standard pkg-config form.
+pc_transform_link_flags(
+libplplot${LIB_TAG}_LINK_FLAGS
 "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
 )
-#message("__libplplot${LIB_TAG}_LINK_FLAGS = ${__libplplot${LIB_TAG}_LINK_FLAGS}")
-# Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
-# since it appears pkg-config handles that latter form much better (with
-# regard to keeping the correct order and eliminating duplicates).
-
-# These REGEX REPLACE's won't actually replace anything on bare windows since
-# library names are not of the form /path/to/library/libname.so (or .a) on
-# that platform.  On the other hand, pkg-config does not work on windows
-# either so it doesn't matter.
-string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-_libplplot${LIB_TAG}_LINK_FLAGS
-${__libplplot${LIB_TAG}_LINK_FLAGS}
-)
-#message("_libplplot${LIB_TAG}_LINK_FLAGS = ${_libplplot${LIB_TAG}_LINK_FLAGS}")
-string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.a" "-L\\1 -l\\2"
-libplplot${LIB_TAG}_LINK_FLAGS
-${_libplplot${LIB_TAG}_LINK_FLAGS}
-)
-#message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
 
 if(MATH_LIB)
   set(
