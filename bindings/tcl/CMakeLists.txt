@@ -215,12 +215,12 @@ if(APPLE)
   # For Mac OS X transform frameworks information into correct form.
   string(
   REGEX REPLACE
-  "/System/Library/Frameworks/(/[^ ]*)\\.framework"
+  "/System/Library/Frameworks/([^ ]*)\\.framework"
   "-framework \\1"
   libplplottcltk${LIB_TAG}_LINK_FLAGS
   ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
   )
-  #message("(frameworks) libplplottcltk${LIB_TAG}_LINK_FLAGS = ${libplplottcltk${LIB_TAG}_LINK_FLAGS}")
+  message("(frameworks) libplplottcltk${LIB_TAG}_LINK_FLAGS = ${libplplottcltk${LIB_TAG}_LINK_FLAGS}")
 endif(APPLE)
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
