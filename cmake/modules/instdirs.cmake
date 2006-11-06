@@ -19,34 +19,97 @@
 
 # Module for determining all installation directories for PLplot.
 
-# Relative and absolute install locations.
+# Note, use absolute install locations only since relative ones are
+# automatically prefixed with ${CMAKE_INSTALL_PREFIX} which may destroy
+# the fine-tuning of installation locations that we desire.
+
+# Cached install locations following what is done for the autotools configure
+# script: (CMAKE_INSTALL_SBINDIR, CMAKE_INSTALL_LIBEXECDIR,
+# CMAKE_INSTALL_SHAREDSTATEDIR, CMAKE_INSTALL_LOCALSTATEDIR, and
+# CMAKE_INSTALL_OLDINCLUDEDIR not set because PLplot does not use those
+# install locations).
+
+set(
+CMAKE_INSTALL_EXEC_PREFIX 
+${CMAKE_INSTALL_PREFIX}
+CACHE PATH "install location for architecture-dependent files"
+)
+
+set(
+CMAKE_INSTALL_BINDIR
+${CMAKE_INSTALL_EXEC_PREFIX}/bin
+CACHE PATH "install location for user executables"
+)
+
+set(
+CMAKE_INSTALL_DATADIR
+${CMAKE_INSTALL_PREFIX}/share
+CACHE PATH "install location for read-only architecture-independent data"
+)
+
+set(
+CMAKE_INSTALL_LIBDIR
+${CMAKE_INSTALL_EXEC_PREFIX}/lib
+CACHE PATH "install location for object code libraries"
+)
+
+set(
+CMAKE_INSTALL_INCLUDEDIR
+${CMAKE_INSTALL_PREFIX}/include
+CACHE PATH "install location for C header files"
+)
+
+set(
+CMAKE_INSTALL_INFODIR
+${CMAKE_INSTALL_DATADIR}/info
+CACHE PATH "install location for info documentation"
+)
+
+set(
+CMAKE_INSTALL_MANDIR
+${CMAKE_INSTALL_DATADIR}/man
+CACHE PATH "install location for man documentation"
+)
+
+mark_as_advanced(
+CMAKE_INSTALL_EXEC_PREFIX
+CMAKE_INSTALL_BINDIR
+CMAKE_INSTALL_DATADIR
+CMAKE_INSTALL_LIBDIR
+CMAKE_INSTALL_INCLUDEDIR
+CMAKE_INSTALL_INFODIR
+CMAKE_INSTALL_MANDIR
+)
+
+# Configured PLplot install locations determined from user-updatable
+# cached values above.
 
 # Data.
-set(DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE}${VERSION})
+set(DATA_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${VERSION})
 
 # Libraries.
-set(LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+set(LIB_DIR ${CMAKE_INSTALL_LIBDIR})
 
 # Headers.
-set(INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/${PACKAGE})
+set(INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE})
 
 # Binaries.
-set(BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
+set(BIN_DIR ${CMAKE_INSTALL_BINDIR})
 
 # Tcl files.
-set(TCL_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE}${VERSION}/tcl)
+set(TCL_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${VERSION}/tcl)
 
 # Drivers.
-set(DRV_DIR ${CMAKE_INSTALL_PREFIX}/lib/${PACKAGE}${VERSION}/drivers${LIB_TAG})
+set(DRV_DIR ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${VERSION}/drivers${LIB_TAG})
 
 # Documentation.
-set(DOC_DIR ${CMAKE_INSTALL_PREFIX}/share/doc/${PACKAGE})
-
-# Man pages.
-set(MAN_DIR ${CMAKE_INSTALL_PREFIX}/share/man)
+set(DOC_DIR ${CMAKE_INSTALL_DATADIR}/doc/${PACKAGE})
 
 # Info pages.
-set(INFO_DIR ${CMAKE_INSTALL_PREFIX}/share/info)
+set(INFO_DIR ${CMAKE_INSTALL_INFODIR})
+
+# Man pages.
+set(MAN_DIR ${CMAKE_INSTALL_MANDIR})
 
 # Other path-related variables.
 

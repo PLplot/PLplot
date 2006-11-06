@@ -132,7 +132,7 @@ if(ENABLE_octave)
 
   # PLPLOT_OCTAVE_DIR is the directory for installation of the PLplot_Octave
   # specific m files
-  set(PLPLOT_OCTAVE_DIR ${CMAKE_INSTALL_PREFIX}/share/plplot_octave)
+  set(PLPLOT_OCTAVE_DIR ${CMAKE_INSTALL_DATADIR}/plplot_octave)
   message(STATUS "PLPLOT_OCTAVE_DIR = ${PLPLOT_OCTAVE_DIR}")
   
   # OCTAVE_PREFIX is the prefix where octave was installed.

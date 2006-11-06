@@ -64,8 +64,7 @@ endif(ENABLE_java)
 if(ENABLE_java)
   # Set up installation locations for java specific files.
   # Java .jar files.
-  set(JAR_INSTALL_DIR share/java)
-  set(JAR_DIR ${CMAKE_INSTALL_PREFIX}/${JAR_INSTALL_DIR})
+  set(JAR_DIR ${CMAKE_INSTALL_DATADIR}/java)
   get_filename_component(JAVADATA_HARDDIR ${JAR_DIR} ABSOLUTE)
   # JNI .so files.
   set(JAVAWRAPPER_DIR ${LIB_DIR}/jni)
