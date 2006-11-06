@@ -100,7 +100,7 @@ PROBLEMS
 README
 README.release
 )
-install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_INSTALL_DIR})
+install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 
 # Process other directories including using configured variables to 
 # process configurable files in those directories.

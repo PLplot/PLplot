@@ -57,7 +57,10 @@ INSTALL_NAME_DIR "${LIB_DIR}"
 # Install library in lib/
 install(TARGETS plplotcxx${LIB_TAG} DESTINATION ${LIB_DIR})
 
-install(FILES ${plplotcxx${LIB_TAG}_INSTALLED_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR})
+install(FILES
+${plplotcxx${LIB_TAG}_INSTALLED_HEADERS}
+DESTINATION ${INCLUDE_DIR}
+)
 
 # Configure pkg-config *.pc file corresponding to libplplotcxx${LIB_TAG}
 if(PKGCONFIG_EXECUTABLE)

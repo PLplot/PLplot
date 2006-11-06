@@ -24,7 +24,7 @@ set(include_INSTALLED_HEADERS
 pltk.h
 )
 
-install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR})
+install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
 
 set(tcldata
 FileSelector.tcl

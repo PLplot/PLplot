@@ -25,7 +25,7 @@ pltcl.h
 tclMatrix.h
 )
 
-install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_INSTALL_DIR})
+install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
 
 # tclmatrix
 set(tclmatrix${LIB_TAG}_LIB_SRCS
@@ -75,7 +75,7 @@ tclMatrix.h
 
 install(
 FILES ${tclmatrix${LIB_TAG}_INSTALLED_HEADERS}
-DESTINATION ${INCLUDE_INSTALL_DIR}
+DESTINATION ${INCLUDE_DIR}
 )
 # end tclmatrix
 
@@ -210,7 +210,7 @@ pltcl.h
 
 install(
 FILES ${plplottcltk${LIB_TAG}_INSTALLED_HEADERS}
-DESTINATION ${INCLUDE_INSTALL_DIR}
+DESTINATION ${INCLUDE_DIR}
 )
 
 # end plplottcltk

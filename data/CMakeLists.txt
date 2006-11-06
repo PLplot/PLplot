@@ -28,4 +28,4 @@ usa.map
 usaglobe.map
 )
 
-install(FILES ${data_DATAFILES} DESTINATION ${DATA_INSTALL_DIR})
+install(FILES ${data_DATAFILES} DESTINATION ${DATA_DIR})
