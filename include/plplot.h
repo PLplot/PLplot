@@ -98,8 +98,8 @@
     defined(sun) ||				/* SUN */               \
     defined(CRAY) ||				/* Cray */              \
     defined(__convexc__) ||			/* CONVEX */            \
-    (defined(__alpha) && defined(__osf__))	/* DEC Alpha AXP/OSF */
-
+    (defined(__alpha) && defined(__osf__)) || /* DEC Alpha AXP/OSF */ \
+	defined(__APPLE__)  		/* Max OS-X */
 #ifndef __unix
 #define __unix
 #endif
