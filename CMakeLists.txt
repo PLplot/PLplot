@@ -138,6 +138,11 @@ if(PREBUILD_DIST)
   DIST_TARGETS
   plhershey-unicode.h_built
   )
+  
+  if(ENABLE_octave AND PERL_XML_DOM AND PERL_XML_PARSER)
+    set(DIST_TARGETS ${DIST_TARGETS} make_documentation)
+  endif(ENABLE_octave AND PERL_XML_DOM AND PERL_XML_PARSER)
+
   if(BUILD_PRINT)
     set(DIST_TARGETS ${DIST_TARGETS} print)
   endif(BUILD_PRINT)
@@ -162,6 +167,10 @@ if(PREBUILD_DIST)
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h 
     ${CMAKE_SOURCE_DIR}/include
+    COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
+    COMMAND cp 
+    ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt/*
+    ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
     COMMAND cp 
     `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
     ${CMAKE_SOURCE_DIR}/doc/docbook/src
