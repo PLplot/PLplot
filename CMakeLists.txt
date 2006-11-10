@@ -177,33 +177,22 @@ endif(PREBUILD_DIST)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Scientific Plotting Library PLplot")
 set(CPACK_PACKAGE_VENDOR "PLplot development team")
 set(CPACK_PACKAGE_DESCRIPTION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/README)
-set(CPACK_PACKAGE_VERSION_MAJOR 5)
-set(CPACK_PACKAGE_VERSION_MINOR 6)
-set(CPACK_PACKAGE_VERSION_PATCH 1)
 set(CPACK_GENERATOR TGZ)
+set(
+CPACK_SOURCE_PACKAGE_FILE_NAME
+"plplot-${VERSION}"
+CACHE INTERNAL "tarball basename"
+)
 set(CPACK_SOURCE_GENERATOR TGZ)
 # The following components are regex's to match anywhere (unless anchored)
 # in absolute patch + filename to find files or directories to be excluded
 # from source tarball.
 set(CPACK_SOURCE_IGNORE_FILES
-"Makefile\\\\.in$"
 "~$"
+"\\\\.cvsignore$"
 "^${PROJECT_SOURCE_DIR}.*/CVS/"
-"^${PROJECT_SOURCE_DIR}/bindings/"
-"^${PROJECT_SOURCE_DIR}/cf/"
 "^${PROJECT_SOURCE_DIR}/debian/"
-"^${PROJECT_SOURCE_DIR}/doc/"
-"^${PROJECT_SOURCE_DIR}/drivers/"
-"^${PROJECT_SOURCE_DIR}/examples/"
-"^${PROJECT_SOURCE_DIR}/fonts/"
-"^${PROJECT_SOURCE_DIR}/libltdl/"
 "^${PROJECT_SOURCE_DIR}/old/"
-"^${PROJECT_SOURCE_DIR}/pkgcfg/"
-"^${PROJECT_SOURCE_DIR}/rpm/"
-"^${PROJECT_SOURCE_DIR}/scripts/"
-"^${PROJECT_SOURCE_DIR}/sys/"
-"^${PROJECT_SOURCE_DIR}/test/"
-"^${PROJECT_SOURCE_DIR}/utils/"
 )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)

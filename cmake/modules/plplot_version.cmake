@@ -1,5 +1,11 @@
 # Version data that need review and possible modification for each release.
+
 set(VERSION 5.6.1)
+
+# CPack version numbers for release tarball name.
+set(CPACK_PACKAGE_VERSION_MAJOR 5)
+set(CPACK_PACKAGE_VERSION_MINOR 6)
+set(CPACK_PACKAGE_VERSION_PATCH 1)
 
 # PLplot library version information.
 
@@ -51,3 +57,4 @@ set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.2.0)
 # use the major number from the package version for now.
 
 set(PLPLOT_TCL_VERSION 5)
+
