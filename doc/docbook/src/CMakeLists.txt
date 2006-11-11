@@ -62,10 +62,11 @@ INCLUDED_FILES
 ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
 )
 
+set(TARBALL tarball.tgz)
 set(HTML_TARBALL ${BASE_HTML}.tar.gz)
 set(INFO_TARBALL ${BASE_INFO}.tar.gz)
 set(MAN_TARBALL ${BASE_MAN}.tar.gz)
-set(INDEX_HTML ../www/index.html)
+set(INDEX_HTML ${CMAKE_CURRENT_BINARY_DIR}/../www/index.html)
 
 # Create empty file so that appends below will work.
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/static_built_files "")
@@ -147,8 +148,14 @@ if (BUILD_DOC)
   set(STYLESHEET_HTML_IN ${STYLESHEET_HTML}.in)
   set(STYLESHEET_PRINT_IN ${STYLESHEET_PRINT}.in)
 
-  configure_file(${STYLESHEET_HTML_IN} ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML})
-  configure_file(${STYLESHEET_PRINT_IN} ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT})
+  configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_HTML_IN}
+  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
+  )
+  configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_PRINT_IN}
+  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
+  )
 
   # Custom commands for building print version of documentation
   add_custom_command(
@@ -390,3 +397,95 @@ if(BUILD_INFO OR PREBUILT_DOC)
   install(CODE "file(GLOB INFO_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.info*)\n foreach(file \${INFO_FILES}) \n file(INSTALL DESTINATION ${INFO_DIR} TYPE FILE FILES \"\${file}\") \n endforeach (file \"\${INFO_FILES}\")")
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} DESTINATION ${INFO_DIR} )
 endif(BUILD_INFO OR PREBUILT_DOC)
+
+# Everything below here has to do with the custom target www-install
+if(WWW_USER)
+  set(WWW_USERAT ${WWW_USER}@)
+  set(RCP_PREFIX ${WWW_USERAT}${WWW_HOST}:)
+  set(RSH_COMMAND ${RSH} ${WWW_USERAT}${WWW_HOST})
+
+  add_custom_command(
+  OUTPUT ${HTML_TARBALL}
+  COMMAND rm -rf ${BASE_HTML}
+  COMMAND mkdir ${BASE_HTML}
+  COMMAND cp `cat ${HTML_MANIFEST}` ${BASE_HTML}
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css ${BASE_HTML}
+  COMMAND tar cfz ${HTML_TARBALL} ${BASE_HTML}
+  COMMAND rm -rf ${BASE_HTML}
+  DEPENDS ${HTML_MANIFEST} ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
+  )
+
+  add_custom_command(
+  OUTPUT ${INFO_TARBALL}
+  COMMAND rm -rf ${BASE_INFO}
+  COMMAND mkdir ${BASE_INFO}
+  COMMAND cp `cat ${INFO_MANIFEST}` ${BASE_INFO}
+  COMMAND tar cfz ${INFO_TARBALL} ${BASE_INFO}
+  COMMAND rm -rf ${BASE_INFO}
+  DEPENDS ${INFO_MANIFEST}
+  )
+
+  add_custom_command(
+  OUTPUT ${MAN_TARBALL}
+  COMMAND rm -rf ${BASE_MAN}
+  COMMAND mkdir ${BASE_MAN}
+  COMMAND cp `cat ${MAN_MANIFEST}` ${BASE_MAN}
+  COMMAND tar cfz ${MAN_TARBALL} ${BASE_MAN}
+  COMMAND rm -rf ${BASE_MAN}
+  DEPENDS ${MAN_MANIFEST}
+  )
+
+  add_custom_command(
+  OUTPUT ${INDEX_HTML}
+  COMMAND ${PERL_EXECUTABLE}
+  ${BINDIR}/size-href.pl < ${INDEX_HTML}.in > ${INDEX_HTML}
+  DEPENDS
+  ${BINDIR}/size-href.pl
+  ${INDEX_HTML}.in
+  ${BASE}.ps.gz
+  ${BASE}.pdf
+  ${BASE}.dvi
+  ${INFO_TARBALL}
+  ${MAN_TARBALL}
+  ${HTML_TARBALL}
+  )
+
+  add_custom_command(
+  OUTPUT ${TARBALL}
+  COMMAND tar cfz ${TARBALL}
+  ${HTML_TARBALL}
+  ${INFO_TARBALL}
+  ${MAN_TARBALL}
+  ${BASE}.ps.gz
+  ${BASE}.pdf
+  ${BASE}.dvi
+  -C ${CMAKE_CURRENT_SOURCE_DIR}/.. COPYING
+  -C ${CMAKE_CURRENT_BINARY_DIR}/../www index.html
+  DEPENDS
+  ${HTML_TARBALL}
+  ${INFO_TARBALL}
+  ${MAN_TARBALL}
+  ${BASE}.ps.gz
+  ${BASE}.pdf
+  ${BASE}.dvi
+  ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING
+  ${INDEX_HTML}
+  )
+
+  add_custom_target(www-uninstall COMMAND ${RSH_COMMAND} rm -rf ${WWW_DIR})
+
+  add_custom_target(
+  www-install
+  COMMAND ${RSH_COMMAND} mkdir -p ${WWW_DIR}
+  COMMAND ${RCP} ${TARBALL} ${RCP_PREFIX}${WWW_DIR}
+  COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/${TARBALL} -C ${WWW_DIR}
+  COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/${HTML_TARBALL} -C ${WWW_DIR}
+  COMMAND ${RSH_COMMAND} chgrp -R ${WWW_GROUP} ${WWW_DIR}
+  COMMAND ${RSH_COMMAND} chmod -R g=u ${WWW_DIR}
+  COMMAND ${RSH_COMMAND} rm -f ${WWW_DIR}/${TARBALL}
+  DEPENDS
+  ${TARBALL}
+  )
+
+  add_dependencies(www-install www-uninstall)
+endif(WWW_USER)

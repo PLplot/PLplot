@@ -34,10 +34,19 @@ if(BUILD_DOC AND PREBUILT_DOC)
   message(FATAL_ERROR "Options BUILD_DOC and PREBUILT_DOC are logically exclusive and must not be set simultaneously. Giving up.")
 endif(BUILD_DOC AND PREBUILT_DOC)
 
-# Website configuration
-if(NOT DEFINED PLPLOT_WEBSITE)
-  set(PLPLOT_WEBSITE "plplot.sf.net")
-endif(NOT DEFINED PLPLOT_WEBSITE)
+# Website installation.
+
+set(WWW_USER "" CACHE STRING "User name at WWW host")
+set(WWW_GROUP "plplot" CACHE STRING "Group name at WWW host")
+set(WWW_HOST "shell1.sourceforge.net" CACHE STRING "Host name at WWW host")
+set(
+WWW_DIR "/home/groups/p/pl/plplot/htdocs/docbook-manual" 
+CACHE STRING "Dir name at WWW host"
+)
+set(RSH "ssh" CACHE STRING "Remote shell command")
+set(RCP "scp" CACHE STRING "Remote copy command")
+# Website of the PLplot project
+set(PLPLOT_WEBSITE "plplot.sourceforge.net" CACHE STRING "PLplot web site")
 
 # Required for validation regardless of whether BUILD_DOC is set
 find_program(ONSGMLS onsgmls)
