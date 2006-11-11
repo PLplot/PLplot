@@ -1,6 +1,7 @@
 # cmake/modules/docbook.cmake
 #
 # Copyright (C) 2006  Andrew Ross
+# Copyright (C) 2006  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -29,25 +30,25 @@ endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 option(PREBUILT_DOC "Assume documentation is already built and present in doc/docbooks/src, ready to be installed. This option is useful for package maintainers" OFF)
 
-if (BUILD_DOC AND PREBUILT_DOC)
+if(BUILD_DOC AND PREBUILT_DOC)
   message(FATAL_ERROR "Options BUILD_DOC and PREBUILT_DOC are logically exclusive and must not be set simultaneously. Giving up.")
-endif (BUILD_DOC AND PREBUILT_DOC)
+endif(BUILD_DOC AND PREBUILT_DOC)
 
 # Website configuration
-if (NOT DEFINED PLPLOT_WEBSITE)
+if(NOT DEFINED PLPLOT_WEBSITE)
   set(PLPLOT_WEBSITE "plplot.sf.net")
-endif (NOT DEFINED PLPLOT_WEBSITE)
+endif(NOT DEFINED PLPLOT_WEBSITE)
 
 # Required for validation regardless of whether BUILD_DOC is set
 find_program(ONSGMLS onsgmls)
 
 # Check for required programs and perl libraries.
-if (BUILD_DOC)
-  if (PERL_FOUND)
+if(BUILD_DOC)
+  if(PERL_FOUND)
     check_perl_modules(PERL_XML_SAX XML::SAX::Expat)
     check_perl_modules(PERL_XML_PARSER XML::Parser)
     check_perl_modules(PERL_XML_DOM XML::DOM)
-  endif (PERL_FOUND)
+  endif(PERL_FOUND)
   find_program(DB2X_TEXIXML db2x_texixml)
   find_program(DB2X_XSLTPROC db2x_xsltproc)
   find_program(OPENJADE openjade)
@@ -66,60 +67,40 @@ if (BUILD_DOC)
   set(BUILD_HTML ON)
   set(BUILD_PRINT ON)
 
-  if (NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+  if(NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     set(BUILD_INFO OFF)
     message("Not building info documentation - required programs are missing")
-  endif (NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+  endif(NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     
-  if (NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
+  if(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
     set(BUILD_MAN OFF)
     message("Not building man documentation - required programs are missing")
-  endif (NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
+  endif(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
 
-  if (NOT OPENJADE) 
+  if(NOT OPENJADE) 
     set(BUILD_HTML OFF)
     message("Not building html documentation - required programs are missing")
-  endif (NOT OPENJADE)
+  endif(NOT OPENJADE)
 
-  if (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
+  if(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     set(BUILD_PRINT OFF)
     message("Not building print documentation - required programs are missing")
-  endif (NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
+  endif(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     
-endif (BUILD_DOC)
+  set(XML_DECL /usr/share/xml/declaration/xml.dcl)
 
-if (BUILD_DOC OR PREBUILT_DOC)
-set(XML_DECL /usr/share/xml/declaration/xml.dcl)
+  set(JADELOG "jadeout.log")
 
-set(BASE "${PACKAGE}-${VERSION}")
+  # DTD definitions
+  set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
+  set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
+  set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
+  set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.2//EN")
 
-set(HTML_MANIFEST "HTML-MANIFEST")
-set(BASE_HTML "${PACKAGE}-html-${VERSION}")
+  # Check public identifiers
+  include(CheckDTD)
 
-if(NOT DEFINED HTML_EXT)
-  set(HTML_EXT "html")
-endif(NOT DEFINED HTML_EXT)
-
-set(INFO_MANIFEST "INFO-MANIFEST")
-set(BASE_INFO "${PACKAGE}-info-${VERSION}")
-
-set(MAN_MANIFEST "MAN-MANIFEST")
-set(BASE_MAN "${PACKAGE}-man-${VERSION}")
-
-set(MANVOL "3plplot")
-
-set(JADELOG "jadeout.log")
-
-# DTD definitions
-set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
-set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
-set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
-set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.2//EN")
-
-# Check public identifiers
-include(CheckDTD)
-
-CheckDTD(HAVE_DSSSL_DTD  
+  CheckDTD(HAVE_DSSSL_DTD  
   "DSSSL Style Sheet DTD" 
   "" 
   "" 
@@ -131,7 +112,7 @@ CheckDTD(HAVE_DSSSL_DTD
   "jade"
   )
 
-CheckDTD(HAVE_HTML_SS
+  CheckDTD(HAVE_HTML_SS
   "DocBook HTML Stylesheet"
   "[<!ENTITY dbstyle PUBLIC \"${DB_SS_HTML_PUBID}\" CDATA DSSSL>]"
   "use=\"docbook\""
@@ -143,7 +124,7 @@ CheckDTD(HAVE_HTML_SS
   "docbook-stylesheets"
   )
 
-CheckDTD(HAVE_PRINT_SS
+  CheckDTD(HAVE_PRINT_SS
   "DocBook Print Stylesheet"
   "[<!ENTITY dbstyle PUBLIC \"${DB_SS_PRINT_PUBID}\" CDATA DSSSL>]"
   "use=\"docbook\""
@@ -155,7 +136,7 @@ CheckDTD(HAVE_PRINT_SS
   "docbook-stylesheets"
   )
 
-CheckDTD(HAVE_DB_DTD
+  CheckDTD(HAVE_DB_DTD
   "DocBook DTD"
   ""
   ""
@@ -167,18 +148,37 @@ CheckDTD(HAVE_DB_DTD
   "docbook-xml (DTD version 3.1.3)"
   )
 
-if (BUILD_PRINT)
-  if(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
-    set (BUILD_PRINT OFF)
-    message("Not building print documentation - dtd files / style sheets are missing")
-  endif (NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
-endif (BUILD_PRINT)
+  if(BUILD_PRINT)
+    if(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
+      set(BUILD_PRINT OFF)
+      message("Not building print documentation - dtd files / style sheets are missing")
+    endif(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
+  endif(BUILD_PRINT)
 
-if (BUILD_HTML)
-  if (NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
-    set (BUILD_HTML OFF)
-    message("Not building html documentation - dtd files / style sheets are missing")
-  endif (NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
-endif (BUILD_HTML)
+  if(BUILD_HTML)
+    if(NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
+      set(BUILD_HTML OFF)
+      message("Not building html documentation - dtd files / style sheets are missing")
+    endif(NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
+  endif(BUILD_HTML)
 
-endif (BUILD_DOC OR PREBUILT_DOC)
+endif(BUILD_DOC)
+
+if(BUILD_DOC OR PREBUILT_DOC)
+  set(BASE "${PACKAGE}-${VERSION}")
+
+  set(HTML_MANIFEST "HTML-MANIFEST")
+  set(BASE_HTML "${PACKAGE}-html-${VERSION}")
+
+  if(NOT DEFINED HTML_EXT)
+    set(HTML_EXT "html")
+  endif(NOT DEFINED HTML_EXT)
+
+  set(INFO_MANIFEST "INFO-MANIFEST")
+  set(BASE_INFO "${PACKAGE}-info-${VERSION}")
+
+  set(MAN_MANIFEST "MAN-MANIFEST")
+  set(BASE_MAN "${PACKAGE}-man-${VERSION}")
+
+  set(MANVOL "3plplot")
+endif(BUILD_DOC OR PREBUILT_DOC)
