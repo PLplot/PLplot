@@ -34,7 +34,7 @@ while (<>) {
     $_ = "$3\n";
     redo;
   }
-  if (/(.*)\@SIZE@(.*)/) {
+  if (/(.*)\@SIZE@(.*)/ || /(.*)\${SIZE}(.*)/) {
     if ( -f $file ) {
       $size = get_size ($file);
     }
