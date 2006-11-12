@@ -269,6 +269,7 @@ void plD_eop_svg(PLStream *pls)
 void plD_tidy_svg(PLStream *pls)
 {
    svg_close("document");
+   fclose(svgFile);
 }
 
 //---------------------------------------------------------------------
