@@ -226,6 +226,9 @@
 /* Define if psttf driver is present */
 #cmakedefine PLD_psttf
 
+/* Define if svg driver is present */
+#cmakedefine PLD_svg
+
 /* Define if tek4010 driver is present */
 #cmakedefine PLD_tek4010
 
