@@ -31,7 +31,7 @@
     driver, in principle.
 */
 
-#define MAKINGPLDLL
+#define USINGPLDLL
 #include "plplotP.h"
 #include "pltcl.h"
 #ifndef __WIN32__
