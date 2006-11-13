@@ -194,7 +194,7 @@ CACHE INTERNAL "tarball basename"
 )
 set(CPACK_SOURCE_GENERATOR TGZ)
 # The following components are regex's to match anywhere (unless anchored)
-# in absolute patch + filename to find files or directories to be excluded
+# in absolute path + filename to find files or directories to be excluded
 # from source tarball.
 set(CPACK_SOURCE_IGNORE_FILES
 "~$"
