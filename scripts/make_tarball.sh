@@ -28,11 +28,12 @@
 
 usage () {
   local prog=`basename $0`
-  echo "Usage: $prog [-n] [-u user] [-w remote dir] [-r branch] \\"
+  echo "Usage: $prog [-b] [-n] [-u user] [-w remote dir] [-r branch] \\"
   echo "          [-c [-i prefix] [-o cmake options]] \\"
   echo "       $prog -d"
   echo "       $prog -h"
   echo
+  echo "Option -b prevents tagging."
   echo "Option -n prevents building of the DocBook manual."
   echo "Option -u sets the user name used for CVS and SourceForge access."
   echo "Option -w sets the CVS root directory."
