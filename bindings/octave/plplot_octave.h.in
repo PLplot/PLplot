@@ -151,6 +151,9 @@ typedef long PLINT;
 typedef int PLINT;
 #endif
 
+/* For identifying logical (boolean) arguments */
+typedef PLINT PLBOOL;
+
 /* For passing user data, as with X's XtPointer */
 
 typedef void* PLPointer;
@@ -532,6 +535,7 @@ typedef struct {
 #define    plstripc	c_plstripc
 #define    plstripd	c_plstripd
 #define    plstyl	c_plstyl
+#define    plsvect      c_plsvect
 #define    plsvpa	c_plsvpa
 #define    plsxax	c_plsxax
 #define    plsyax	c_plsyax
@@ -539,6 +543,7 @@ typedef struct {
 #define    plszax	c_plszax
 #define    pltext	c_pltext
 #define    plvasp	c_plvasp
+#define    plvect       c_plvect
 #define    plvpas	c_plvpas
 #define    plvpor	c_plvpor
 #define    plvsta	c_plvsta
@@ -1308,6 +1313,10 @@ void c_plstripd(PLINT id); //%name plstripd
 
 void c_plstyl(PLINT nms, PLINT *mark, PLINT *space); //%name plstyl
 
+/* Set the vector style */
+
+void c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill); //%name plsvect //%input arrowx(npts), arrowy(npts)
+
 /* Sets the edges of the viewport to the specified absolute coordinates */
 
 void c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax); //%name plsvpa
@@ -1340,6 +1349,37 @@ void c_pltext(void); //%name pltext
 /* room for labels. */
 
 void c_plvasp(PLFLT aspect); //%name plvasp
+
+/* Plot an array of vector arrows - uses the same function pointer
+ * convention as plcont */
+
+void my_plvect(PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *tr) {
+  f2c(u,uu,nx,ny);
+  f2c(v,vv,nx,ny);
+  c_plvect(uu,vv,nx,ny,scale,xform,tr);
+}  //%name plvect  //%input u(nx,ny), v(nx,ny), tr(6)
+  
+/* plvect() for use with pltr1 */
+void my_plvect1(PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg, PLFLT *yg) {
+  PLcGrid grid1;
+  grid1.nx = nx;  grid1.ny = ny;
+  grid1.xg = xg;  grid1.yg = yg;
+  f2c(u,uu,nx,ny);
+  f2c(v,vv,nx,ny);
+  c_plvect(uu,vv,nx,ny,scale,pltr1,&grid1);
+}  //%name plvect1  //%input u(nx,ny), v(nx,ny), xg(nx), yg(ny)
+
+/* plvect() for use with pltr2 */
+void my_plvect2(PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg, PLFLT *yg) {
+  PLcGrid2 grid2;
+  f2c(xg,xgg,nx,ny);  f2c(yg,ygg,nx,ny);  
+  grid2.nx = nx;  grid2.ny = ny;
+  grid2.xg = xgg;  grid2.yg = ygg;
+  f2c(u,uu,nx,ny);
+  f2c(v,vv,nx,ny);
+  c_plvect(uu,vv,nx,ny,scale,pltr2,&grid2);
+}  //%name plvect2  //%input u(nx,ny), v(nx,ny), xg(nx,ny), yg(nx,ny)
+
 
 /* Creates the largest viewport of the specified aspect ratio that fits */
 /* within the specified normalized subpage coordinates. */

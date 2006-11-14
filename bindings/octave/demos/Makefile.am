@@ -63,6 +63,7 @@ examples_octave = \
 	x17c.m \
 	x18c.m \
 	x19c.m \
+	x22c.m \
 	lena.img
 
 EXTRA_DIST = $(examples_octave)

@@ -28,7 +28,7 @@ kbhit;
 
 plplot_stub;
 
-for i=[1:19];
+for i=[1:19,22];
   ## To set defaults, use plSetOpt, as used in the command line, e.g.
   ## plSetOpt("dev", "png");
   ## plSetOpt("o", "foo.ps");

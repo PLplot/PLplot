@@ -99,6 +99,12 @@ void c_plstripc(PLINT *id, char *xspec, char *yspec,
 	PLINT *colline, PLINT *styline, char *legline[],
 	char *labx, char *laby, char *labtop); //%nowrap
 
+/* Plot vector arrows */
+void c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	PLPointer pltr_data);
+
+
 /* Set the function pointer for the keyboard event handler */
 
 void plsKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void *KeyEH_data); //%nowrap
