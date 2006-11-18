@@ -39,47 +39,68 @@ foreach(doc ${docfiles})
   install(FILES ${doc} DESTINATION ${DOC_DIR} RENAME ${doc}.octave)
 endforeach(doc ${docfiles})
 
-# Generate full on-line help for plplot_octave
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt)
-add_custom_command(
-OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
-COMMAND ${CMAKE_COMMAND} -E copy
-${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
-${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
-DEPENDS
-${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
-)
-if(PERL_XML_DOM AND PERL_XML_PARSER)
-  # The OUTPUT of this command is representative since there are more than
-  # a hundred *.txt files created by this command.
+# This is a representative generated (or prebuilt) octave documentation file.
+# There are more than a hundred of these *.txt files.  If the (unlikely)
+# event that the plinit command is no longer part of the PLplot API, this
+# representative file would have to be changed.
+set(rep_doc plinit.txt)
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_txt/${rep_doc})
+  # Octave documentation has been prebuilt in the (tarball) source tree.
+  # Copy it to the build tree if that tree is different from source tree.
+  if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
+    ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
+    )
+  endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+  add_custom_target(
+  make_documentation ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
+  )
+else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_txt/${rep_doc})
+  # Generate full on-line help for plplot_octave
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt)
   add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plinit.txt
-  COMMAND ${PERL_EXECUTABLE}
-  ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
-  ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
-  ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
-  DEPENDS 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
   ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
-  ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
-  ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
-  ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt
+  DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/etc/plplot.doc
   )
+  if(PERL_XML_DOM AND PERL_XML_PARSER)
+    add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
+    COMMAND ${PERL_EXECUTABLE}
+    ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
+    ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
+    ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
+    DEPENDS 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+    ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2text.pl
+    ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
+    ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt
+    )
   
-  add_custom_target(
-  make_documentation ALL
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plinit.txt
-  )
-else(PERL_XML_DOM AND PERL_XML_PARSER)
-  message(STATUS 
-  "WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"
-  "   so cannot generate full online help for plplot_octave"
-  )
-  add_custom_target(
-  make_documentation ALL
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
-  )
-endif(PERL_XML_DOM AND PERL_XML_PARSER)
+    add_custom_target(
+    make_documentation ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
+    )
+  else(PERL_XML_DOM AND PERL_XML_PARSER)
+    message(STATUS 
+    "WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"
+    "   so cannot generate full online help for plplot_octave"
+    )
+    add_custom_target(
+    make_documentation ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+    )
+  endif(PERL_XML_DOM AND PERL_XML_PARSER)
+endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_txt/${rep_doc})
 
 # Generate source code for octave interface to PLplot.
 configure_file(

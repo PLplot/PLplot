@@ -134,14 +134,16 @@ if(PREBUILD_DIST)
   # the source tree (if build tree is different from source tree).
   
   # List of targets that must be (pre-)built.
+  # N.B. the plhershey-unicode.h_built target has to be pre-built only because
+  # of the needs of the old windows build at sys/win32/msdev.
   set(
   DIST_TARGETS
   plhershey-unicode.h_built
   )
   
-  if(ENABLE_octave AND PERL_XML_DOM AND PERL_XML_PARSER)
+  if(ENABLE_octave)
     set(DIST_TARGETS ${DIST_TARGETS} make_documentation)
-  endif(ENABLE_octave AND PERL_XML_DOM AND PERL_XML_PARSER)
+  endif(ENABLE_octave)
 
   if(BUILD_PRINT)
     set(DIST_TARGETS ${DIST_TARGETS} print)
