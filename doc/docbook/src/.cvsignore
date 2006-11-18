@@ -11,3 +11,4 @@ plplot-man-*.tar.gz
 plplot-info-*.tar.gz
 plplot-html-*.tar.gz
 *.txt
+static_built_files
