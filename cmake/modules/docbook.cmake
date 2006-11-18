@@ -49,6 +49,8 @@ set(RCP "scp" CACHE STRING "Remote copy command")
 set(PLPLOT_WEBSITE "plplot.sourceforge.net" CACHE STRING "PLplot web site")
 
 # Required for validation regardless of whether BUILD_DOC is set
+set(XML_DECL /usr/share/xml/declaration/xml.dcl)
+set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.2//EN")
 find_program(ONSGMLS onsgmls)
 
 # Check for required programs and perl libraries.
@@ -96,15 +98,12 @@ if(BUILD_DOC)
     message("Not building print documentation - required programs are missing")
   endif(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     
-  set(XML_DECL /usr/share/xml/declaration/xml.dcl)
-
   set(JADELOG "jadeout.log")
 
   # DTD definitions
   set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
   set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
   set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
-  set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.2//EN")
 
   # Check public identifiers
   include(CheckDTD)

@@ -1,3 +1,7 @@
+# For now, must set this by hand before each release.  This value affects
+# at least the documentation build and perhaps other parts of the release.
+set(RELEASE_DATE "2006-05-15")
+
 # Version data that need review and possible modification for each release.
 
 set(VERSION 5.6.1)
