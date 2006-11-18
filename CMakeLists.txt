@@ -162,14 +162,14 @@ if(PREBUILD_DIST)
   if(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
     add_custom_target(prebuild_dist)
   else(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    # copy prebuilds back to source tree.
     add_custom_target(
     prebuild_dist
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h 
     ${CMAKE_SOURCE_DIR}/include
-    COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
-    COMMAND cp 
-    ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt/*
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
     ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
     COMMAND cp 
     `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
