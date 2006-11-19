@@ -527,14 +527,16 @@ void proc_str (PLStream *pls, EscText *args)
 		jst = AQTAlignCenter;                           /* center */
 	
 	/* set the baseline of the string */
+	// Middle and Bottom are set to Middle since this seems to be what PLplot expects
+	// as judged by where it renders the symbols in example 1.
 	
-	if (args->base == 2)
+	if (args->base == 2)      // Top
 		ref = AQTAlignTop;
-	else if (args->base == 1)
-		ref = AQTAlignBaseline;
-	else
+	else if (args->base == 1) // Bottom
 		ref = AQTAlignMiddle;
-
+	else
+		ref = AQTAlignMiddle; // Middle
+	
 	/* create an appropriately formatted, etc... unicode string */
 	
 	str = create_string(args->unicode_array, args->unicode_array_len, ft_ht);
