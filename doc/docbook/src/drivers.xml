@@ -471,6 +471,23 @@
 
   </sect1>
 
+<!-- ================================================================== -->
+<!-- SVG -->
+
+  <sect1 id="svg-driver">
+    <title>The SVG Driver</title>
+
+    <para>
+      The SVG driver produces Scalable Vector Graphics files that are 
+      compliant with the SVG 1.1 specification as defined here:
+      http://www.w3.org/Graphics/SVG/. The driver is unicode enabled
+      and both text and lines are anti-aliased. As SVG is just an
+      XML based graphics language, the visual quality of the resulting 
+      plot will depend on the SVG rendering engine that is used and
+      what fonts that are avaialable to it.
+    </para>
+  </sect1>
+
 </chapter>
 
 <!-- Keep this comment at the end of the file
