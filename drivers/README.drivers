@@ -5,6 +5,48 @@ the drivers in plplot/drivers.  Also, there are several useful sections in
 the DocBook documentation [see, for example, "Output Devices" and "Driver
 Functions" in Chapter 3] that you should look at.)
 
+The following PLplot system files must be modified to add a new driver to
+PLplot:
+
+plplot/config.h.cmake
+plplot/cmake/modules/drivers-init.cmake
+
+
+The following are some short notes on what you need to add to these files
+to add a new driver (which we'll call foo) to PLplot.
+
+1. Add the following 2 lines to config.h.cmake:
+
+/* Define if foo driver is present */
+#cmakedefine PLD_foo
+
+Note that drivers are listed in alphabetical order.
+
+2. Add the following line to drivers-init.cmake in set(DRIVERS_DEVICE_LIST...
+"foo:foo:ON"
+
+This is also (mostly) in alphabetical order.
+
+If the driver requires additional additional files or external libraries for
+compiling and linking then you should add a file called foo.cmake to
+plplot/cmake/modules and add a call to this file in the file plplot/cmake/
+modules/drivers.cmake (include(foo)). The file foo.cmake should consist of 
+cmake instructions for finding and the files and libraries and setting the 
+appropriate environment variables (PLD_foo, foo_COMPILE_FLAGS and 
+foo_LINK_FLAGS).
+
+The code for the driver itself should be in a file called foo.c or foo.cpp in
+the plplot/drivers directory.
+
+
+
+
+
+
+==========================================================================
+Deprecated Autotools Information
+==========================================================================
+
 The following is the list of PLplot system files that must be modified if
 you are creating a new PLplot driver:
 
