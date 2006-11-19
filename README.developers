@@ -1,6 +1,19 @@
 Information for developers on UNIX/Linux
 ----------------------------------------
 
+It is recommended that all developers now use the cmake build system instead 
+of the autotools build system described below. The latest instructions for 
+building PLplot with cmake can be found on the PLplot wiki.
+
+http://www.miscdebris.net/plplot_wiki
+
+
+
+
+
+
+
+
 When you check out the PLplot source tree from CVS, you will need
 to build the ./configure script mentioned in the INSTALL file 
 yourself. Basically, this is done with the cf/bootstrap.sh script:
