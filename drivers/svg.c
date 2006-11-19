@@ -351,7 +351,8 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
 //      remain in force until the end of the text element. It would seem to 
 //      me that they should only apply inside the tspan tag. To get around
 //      this, and because it was easier anyway, I used what is essentially
-//      a list of tspan tags rather than a tree of tspan tags.
+//      a list of tspan tags rather than a tree of tspan tags. Perhaps
+//      better described as a tree with one branch?
 //
 //  (2) Too deal with the some whitespace annoyances, the entire text
 //      element must be written on a single line. If there are lots of
@@ -393,7 +394,7 @@ void proc_str (PLStream *pls, EscText *args)
 
    // apply coordinate transform for text display
    svg_open("g");
-   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], -t[1], t[2], -t[3], args->x, args->y);
+   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], t[2], -t[1], -t[3], args->x, args->y);
    svg_general(">\n");
 
    //--------------
