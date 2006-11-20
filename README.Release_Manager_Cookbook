@@ -1,276 +1,9 @@
 INDEX
+(1) GNU Privacy Gaurd (gpg)
+(2) Creating a PLplot Release
 
-1. Autotool Instructions
-2. Building a Release
 
-
-1. Autotool Instructions
-
-It is extremely important that the release manager builds the release using
-original autotools versions that are available to all from GNU.
-
-The following are Alan Irwin's Instructions on how to get the current set of 
-tools and make sure that they work. My notes (Hazen Babcock) are in <HB: >
-brackets.
-
-(1) cd ~software/autotools
-(Note, I keep a special "software"
-user on my computer for building tools that I need, and ~software/autotools
-is where I built this particular software, but you can use any directory of
-course.)
-
-(2) download all tarballs and corresponding signature files.
-wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.bz2
-wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.bz2.sig
-wget http://ftp.gnu.org/gnu/automake/automake-1.9.6.tar.bz2
-wget http://ftp.gnu.org/gnu/automake/automake-1.9.6.tar.bz2.sig
-wget http://ftp.gnu.org/gnu/libtool/libtool-1.5.22.tar.gz
-wget http://ftp.gnu.org/gnu/libtool/libtool-1.5.22.tar.gz.sig
-
-(3) Check signatures
-
-Make sure you have
-
-keyserver x-hkp://pgp.mit.edu
-
-(or some other keyserver of your choosing) and
-
-keyserver-options auto-key-retrieve
-
-uncommented in ~/.gnupg/gpg.conf so that you can conveniently use gpg --verify
-to check the signatures as follows:
-
-<HB: if you don't have the .gnupg directory, running gpg once will create and
-the gpg.conf file that Alan is referring too>.
-
-******
-software@chickadee> gpg --verify autoconf-2.59.tar.bz2.sig
-gpg: Signature made Tue Dec 16 12:47:47 2003 PST using DSA key ID 69A4726B
-gpg: Good signature from "Paul Eggert <eggert@gnu.org>"
-gpg: Note: This key has expired!
-Primary key fingerprint: 0977 7580 951C E87F 0F3C  83B5 D61E CB34 69A4 726B
-
-software@chickadee> gpg --verify automake-1.9.6.tar.bz2.sig
-gpg: Signature made Sun Jul 10 13:36:33 2005 PDT using DSA key ID 2E236E47
-gpg: Good signature from "Alexandre Duret-Lutz <adl@gnu.org>"
-gpg:                 aka "Alexandre Duret-Lutz <adl@src.lip6.fr>"
-gpg:                 aka "Alexandre Duret-Lutz <duret_g@epita.fr>"
-gpg:                 aka "Alexandre Duret-Lutz <aduret@src.lip6.fr>"
-gpg:                 aka "Alexandre Duret-Lutz <adl@va-et-vient.net>"
-gpg:                 aka "Alexandre Duret-Lutz <duret_g@lrde.epita.fr>"
-gpg:                 aka "Alexandre Duret-Lutz <adl@users.sourceforge.net>"
-gpg:                 aka "Alexandre Duret-Lutz <Alexandre.Duret-Lutz@lip6.fr>"
-gpg:                 aka "Alexandre Duret-Lutz <Alexandre.Duret-Lutz@src.lip6.fr>"
-gpg: WARNING: This key is not certified with a trusted signature!
-gpg:          There is no indication that the signature belongs to the owner.
-Primary key fingerprint: FCA0 8615 0211 941A 2AB9  FA66 3859 C03B 2E23 6E47
-
-software@chickadee> gpg --verify libtool-1.5.22.tar.gz.sig
-gpg: Signature made Sun Dec 18 14:20:50 2005 PST using DSA key ID 5D0CDCFC
-gpg: requesting key 5D0CDCFC from hkp server subkeys.pgp.net
-gpg: key 5D0CDCFC: public key "Ralf Wildenhues <wildenhues@ins.uni-bonn.de>" imported
-gpg: no ultimately trusted keys found
-gpg: Total number processed: 1
-gpg:               imported: 1
-gpg: Good signature from "Ralf Wildenhues <wildenhues@ins.uni-bonn.de>"
-gpg:                 aka "Ralf Wildenhues <Ralf.Wildenhues@gmx.de>"
-gpg:                 aka "Ralf Wildenhues <wildenhu@iam.uni-bonn.de>"
-gpg: WARNING: This key is not certified with a trusted signature!
-gpg:          There is no indication that the signature belongs to the owner.
-Primary key fingerprint: 357D 7084 216B D1CF 46AF  ABB2 3241 9B78 5D0C DCFC
-******
-
-Such signature checking guarantees the tarball is identical to that at the
-gnu site which is an important check that nothing bad happened during the
-download.  That is what the "Good signature" statement means.  Try changing
-one bit of the *.sig files or tarballs, and you will see what I mean.
-
-Beyond that important downloading verification step, the signature
-guarantees the tarball was signed by somebody with access to the private
-keyring of the named person that exported their public key to the key
-servers.  Beyond that, the trust model gets a little problematic (especially
-for the expired key), but nothing is perfect.
-
-(4) unpack each tarball in the normal way
-
-(5) build and install autoconf, automake, and libtool
-
-The first step of this build is to run
-
-export PATH="/home/software/autotools/install/bin:"$PATH
-
-so that these builds will always access these versions rather than system
-versions of autotools.  This trick is also required when you run
-cf/bootstrap.sh as the first step in the PLplot build below.
-
-Build and install the packages in the order autoconf, automake, and
-libtool using "./configure --prefix=/home/software/autotools/install"; "make";
-and "make install".
-
-I encountered no problems during this process, and I hope you have the
-same experience.
-
-<HB: If you are starting with a "clean" system as I was, then you probably 
-won't have any versions of autotools. Regardless, you can check that you
-are using the right versions using "autoconf --version", "automake --version" 
-and "libtool --version".
-
-(6) Prepare a clean checkout tree that has never been used before.
-
-software@chickadee> ls plplot
-ls: plplot: No such file or directory
-
-good result: means no stale plplot directory that will mess stuff up.
-
-cvs checkout plplot
-
-software@chickadee> ls plplot_working
-ls: plplot_working: No such file or directory
-
-Good result: no stale version
-
-cp -a plplot plplot_working
-
-The point here is you keep plplot with absolutely nothing compiled in it
-as a convenience for future clean compiles, and use plplot_working to compile.
-
-(7) Start PLplot cvs build process using your newly built autotools.
-
-Check your PATH variable to be sure that the bin directory for the installed
-autotools is first.
-
-software@chickadee> echo $PATH
-/home/software/autotools/install/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/local/plplot/bin
-
-software@chickadee> cd plplot_working
-software@chickadee> cf/bootstrap.sh Running aclocal (GNU automake) 1.9.6... done
-Running autoheader (GNU Autoconf) 2.59... done
-Running libtoolize (GNU libtool) 1.5.22... done
-Running automake (GNU automake) 1.9.6...configure.ac: installing `cf/install-sh'
-configure.ac: installing `cf/missing'
-bindings/c++/Makefile.am: installing `cf/depcomp'
-bindings/gnome2/python/Makefile.am: installing `cf/compile'
- done
-Running autoconf (GNU Autoconf) 2.59... done
-Regenerating libltdl/aclocal+configure... done
-
-IMPORTANT:
-
-My (Debian stable) system versions of the autotools are autoconf-2.59a-3,
-automake-1.9.5-1, and libtool-1.5.6-6.  Thus, the above output is
-unambiguous evidence that the $PATH variable was set properly to get the
-latest GNU versions that were just compiled rather than the system versions.
-
-Please document this cf/bootstrap.sh output somewhere in the release notes
-or README.release so we have unamibiguous evidence of which autotools
-versions are being used to build the release tarball.  The motivation here
-is to not waste time speculating about this as happened in one intense
-discussion during this last release cycle.
-
-
-(8) Now for the key question; does CVS HEAD PLplot build and install
-properly with these new versions of the autotools?
-
-make a clean install area:
-
-software@chickadee> rm -rf /usr/local/plplot/*
-
-configure, build and install (with wxwidgets and psttf):
-
-software@chickadee> ./configure --prefix=/usr/local/plplot --disable-static \
---with-wxwidgets-bindir=/usr/local/wxwidgets/bin --enable-psttf >& \
-configure.out
-
-software@chickadee> make >& make.out
-
-software@chickadee> make install >& make_install.out
-
-software@chickadee> grep -i error *.out
-configure.out:checking for dlerror... yes
-configure.out:checking for error_t... yes
-
-==> NO build or install problems
-
-software@chickadee> cp -a /usr/local/plplot/share/plplot5.6.0/examples/ /tmp
-software@chickadee> cd /tmp/examples
-software@chickadee> make >& make.out
-software@chickadee> ./plplot-test.sh >& plplot-test.out
-software@chickadee> grep -i error *.out
-
-<HB: plplot-test.sh is located in the directory plplot/test. I was able to
-run it with "./test/plplot-test.sh --examples-dir=./examples/". The tests
-seem to be same as running "make check">
-
-==> NO example build problems and NO example generation problems (with the
-default psc device driver).
-
-Hope the "no problems" result is also true for your equivalent PLplot build
-and example build and execution from the CVS version and also from the
-tarball version you will be creating (making sure the PATH and cf/bootstrap.sh
-output is equivalent to above in both cases).
-
-
-2. Building a Release.
-
-* Be sure to change RELEASE_NUMBER and RELEASE_TAG below to the appropriate
-  values (currently 5.6.0 and v5_6_0) for the release.
-
-Update your local cvs first in case people made any last-minute changes.
-
-Update the release version and date in configure.ac, and commit it 
-to CVS.  Be sure the README.release file is updated for the new 
-version.  These things are best done earlier.
-
-
-Build a release tarball:
-
-  scripts/make-cvs-tarball.sh -v RELEASE_NUMBER 2>&1 | tee build.log
-
-This can take a while depending on computer speed. It is also important that
-your computer's clock is set properly. The recommended way to do this is
-install the debian package "ntp", which should automatically keep your
-computer's clock in sync with internet time servers. 
-
-
-Install the release locally:
-
-  tar -zxvf plplot-RELEASE_NUMBER.tar.gz
-  cd plplot-RELEASE_NUMBER
-  ./configure --with-pkg-config --with-prebuiltdoc
-  make
-  make install
-
-
-Test the release (go to a temp directory first):
-
-  cp -R /usr/local/share/plplotRELEASE_NUMBER/examples ./plplot-RELEASE_NUMBER-examples
-  cd plplot-RELEASE_NUMBER-examples
-  make
-  ./plplot-test.sh
-
-
-Tag the cvs repository (go back to the cvs plplot directory):
-
-  cvs rtag -r cvs-tarball-<date>-<time> RELEASE_TAG plplot
-
-where cvs-tarball-<date>-<time> was obtained earlier (you can also get
-this from the build.log).  This may take some time, but you can move
-on to the next steps in parallel.
-
-
-Upload the tarball to the cvs release page:
-
-  scripts/upload-cvs-tarball.sh plplot-RELEASE_NUMBER.tar.gz
-
-A file called <tarball>.asc containing the detached GPG signature will also
-be generated and uploaded.
-
-<HB: I was not able to get this to work by putting my GPG key id into the
-  above the upload-cvs-tarball.sh script. I had to manually set the GPG
-  key environment variable. (i.e. export GPGKEY=2A8F0248, where the
-  complicated alphanumeric is obtained via the command "gpg --list-keys")
-
-
+(1) GNU Privacy Gaurd (gpg)
 A brief summary of developer relevant gpg commands, see also:
 http://webber.dewinter.com/gnupg_howto/
 man gpg
@@ -288,136 +21,125 @@ gpg --send-keys 6C58D1AC
 command)
 
 
+(2) Creating a PLplot Release
 
-Prepare ChangeLog file:
+Update the docbook documentation to reflect any new drivers or new 
+functionality that has been added to PLplot. Or alternatively, press those
+who made the changes to update the documentation.
 
-  cvs2cl -l "-d > LAST_RELEASE_DATE" --stdout > ChangeLog.release
 
-Where LAST_RELEASE_DATE is the date when the tarball for the previous
-release was created.  Use a standard form for the date (e.g., 
+Update the README.release file.
+  a. Append the README.release file from the last release onto the front of
+     the OLD-README.release file. This is done to preserve a record of the
+     significant changes between versions of PLplot.
+  b. Update README.release file to reflect significant changes made between
+     the current release and the last release.
 
-2004-06-24
 
-or 
+Update cmake/module/plplot_version.cmake to reflect the current version.
 
-2004-06-24 02:00
 
-), and if slightly unsure of the exact date/time don't be afraid to use a
-slightly earlier date than the previous release.  In all cases, edit the
-file afterward to be sure ChangeLog.release represents the exact appropriate
-date/time range for the release.
+Update configure.ac to reflect the current version.
 
-Upload the plplot-RELEASE_NUMBER.tar.gz.* files to SF upload section:
 
-  ftp upload.sourceforge.net  #username is ftp, password is your e-mail address
-  cd incoming
-  bin
-  put plplot-RELEASE_NUMBER.tar.gz
-  put plplot-RELEASE_NUMBER.tar.gz.asc
-  quit
+Commit the above changes & update your local cvs repository in case anyone
+else has made any last minute changes.
+
+
+Verify that your computer has the right date and time using the command date.
+
+
+Change directory to your plplot cvs directory and enter the following command:
+  ./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee build.log 
+
+This script will take a several minutes to execute and will ask you for
+your SourceForge password several times. The script does not otherwise
+provide a lot of feedback so it will appear as if it is doing nothing for
+long periods of time (at least on a slower computer). Be patient. When the
+script is finished, the release tarball will be available in the directory
+/tmp/plplot-dist-prep/
+
+The "-c" option says to unpack the created tarball, build it with "cmake" and
+"make", then test that result with ctest.
+
+The "-i /a/install/directory" specifies the install prefix for the tarball
+test configure and runs "make install" after cmake, make and ctest. When the
+above command finishes executing you should go to this directory and verify
+that the examples build and that plplot_test.sh executes without errors.
+
+
+Tag the cvs repository (go back to the cvs plplot directory):
+cvs rtag -r cvs-tarball-<date>-<time> vX_X_X plplot
+
+Where cvs-tarball-<date>-<time> was obtained earlier (you can also get
+this from the build.log file).
+
+
+Upload the tarball to the cvs release page:
+GPGKEY=YYYYYYYY ./scripts/upload-cvs-tarball /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
+
+A file called <tarball>.asc containing the detached GPG signature will also
+be generated and uploaded. The environment variable GPGKEY specifies which
+GPG key to use to sign the tarball. A list of GPG keys can be obtained with
+via the command "gpg --list-keys".
+
+
+Prepare the ChangeLog file:
+cvs2cl -l "-d< today" --stdout > ChangeLog.release
+
+Edit ChangeLog.release to be the appropriate date range (i.e. only the
+changes that were made since the last release should be included).
+
+
+Upload the plplot-X.X.X.tar.gz.* files to the SF upload section
+
+ftp upload.sourceforge.net #username is ftp, password is your e-mail address
+cd incoming
+bin
+put plplot-X.X.X.tar.gz
+put plplot-X.X.X.tar.gz.asc
+quit
+
+ftp does not provide any feedback re upload progress, so again, be patient.
 
 
 Prepare a file release:
 
-  + login to sf.net
-  + go to PLplot project page
-  + click admin (in shortcuts at top of page)
-  + click file releases (in second (bold face) set of shortcuts at top of
-    admin page)
-  + click "add release" at bottom of page (package name should stay the same
-    as plplot)
-  + enter new release name ("RELEASE_NUMBER Source" to be consistent with previous
-    release names)
+Login to sf.net.
+Go to the PLplot project page.
+Select file releases in the drop down admin menu at the top of the page.
+Click add release at the bottom of the page.
+Enter the new release name and click "create this release".
+
+In the file release GUI (Step1):
+Browse to README.release in "Upload Release Notes".
+Browse to ChangeLog.release in "Upload Change Log".
+Select "preserve my pre-formatted text"
+Click "Submit/Refresh"
+
+In the file release GUI (Step2):
+Select (and only select) the uploaded plplot files.
+Click "Add Files and/or Refresh View"
+
+In the edit file in release GUI (Step3):
+For plplot-X.X.X.tar.gz select "any" for the processor type and "source.gz" for
+the file type.
+For plplot-X.X.X.tar.gz.asc select "any" for the processor type and
+"other source" for the file type.
+
+In the e-mail notification GUI (Step4):
+Select that you are sure that you want to send an e-mail to those who are
+monitoring the PLplot releases.
 
 
-Here is the list of things to do with the SourceForge file release GUI:
-
-  + upload README.release as Notes with "Preserve my pre-formatted 
-    text" checkbox checked.
-  + upload ChangeLog.release as Change Log with "Preserve my pre-formatted 
-    text" checkbox checked.
-  + select plplot-RELEASE_NUMBER.tar.gz and plplot-RELEASE_NUMBER.tar.gz.asc from list of
-    files available.  Note, only select files that you have uploaded in the
-    ftp step above.
-  + for the tarball select a filetype of "source.gz" and processor type
-    of "any".
-  + for the tarball signature file select a filetype of "other source"
-    and processor type of "any".
-  + There is a click box to e-mail a notice to those who have signed
-    up.  Do that.
-
-<HB: You can verify the success or failure of your attempts checking the
-  file release page 
-  (http://sourceforge.net/project/showfiles.php?group_id=2915)
-
-In the event that one of the files is not right you can upload an improved
-version just by going back to the file release area.
-
-
-To test your ability to update the website:
-(This assumes that you have Apache or any HTTP server running on your build
-machine.  Also, PHP must be installed in order to check the examples part of
-the website.) 
-
-1) in plplot directory:
-WWW_USER=joeplotter WWW_GROUP=joesgroup WWW_HOST=localhost WWW_DIR=/var/www/plplot scripts/htdocs-gen_plot-examples.sh
-
-2) in plplot/www:
-make WWW_USER=joeplotter WWW_GROUP=joesgroup WWW_HOST=localhost WWW_DIR=/var/www/plplot/htdocs
-
-3) in plplot:
-./configure --enable-builddoc
-cd doc/docbook/src/
-make
-make WWW_USER=joeplotter WWW_GROUP=joesgroup WWW_HOST=localhost WWW_DIR=/var/www/plplot/htdocs/docbook-manual www-install
-
-4) Check that things look okay:
- a) surf to: 
-  http://127.0.0.1/plplot/htdocs/
- b) document count (as of May 13, 2006):
-  go to the /var/www/plplot/htdocs directory
-  "find -type d |wc -l" -> 42
-  "find -type f |wc -l" -> 756
-
-
-Update the Real Web site:
-
-First you need to get the www directory from CVS (if you don't already
-have it). "cvs checkout www" in your plplot root directory.
-
-1) in plplot/www:
-WWW_USER=joeplplotter make
-  
-(This command depends on eperl, xlmto and passivetex)
-
-2) in plplot directory:
-WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
-
-(if you have already built plplot you can set build=false).
-
-3) in plplot
-./configure --enable-builddoc
-cd doc/docbook/src
-make
-make WWW_USER=joeplplotter www-install
-
-
-Post the release announcement on the News page at:
-
-  http://sourceforge.net/news/?group_id=2915
-
-Be sure to get the links correct, but if you don't you can always edit the
-release announcement by clicking the "admin" tab underneath the annoucment.
-
-
-Send a release announcement to:
-
-  plplot-devel@lists.sourceforge.net, plplot-general@lists.sourceforge.net
-
-
-
-Remove the temporary cvs tags: 
-
-  scripts/rm-cvs-tarball-tags.pl
+Prepare the release notes:
+Return the PLplot project page
+Select Admin -> News
+Click on submit to create a new news item.
+Load an old release news item in another browser window and use that as a 
+template for creating your new release news item. Make sure that you get
+the link to the release notes correct (none of the other links need to be
+changed).
+Click on submit.
 
 
