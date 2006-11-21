@@ -59,7 +59,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/math.ent
 )
 
 if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
-  foreach(file ${SOURCE_FILES})
+  foreach(
+  file 
+  ${SOURCE_FILES}
+  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
+  ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
+  )
     get_filename_component(filename ${file} NAME)
     if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
       exec_program(
@@ -69,7 +74,12 @@ if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
       ${CMAKE_CURRENT_BINARY_DIR}/${filename}
       )
     endif(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
-  endforeach(file ${SOURCE_FILES})
+  endforeach(
+  file 
+  ${SOURCE_FILES}
+  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
+  ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
+  )
 endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
 
 set(
@@ -118,6 +128,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${VALIDATE_OUTPUT}
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
     )
     add_dependencies(validate copy_prebuiltdoc)
   endif(ONSGMLS)
@@ -183,6 +194,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml
     ${INCLUDED_FILES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
     )
     add_dependencies(validate docbook_plplot-symbols_txt)
   else(PERL_FOUND AND ONSGMLS)
@@ -252,7 +264,8 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     fi
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-    jadetex.cfg 
+    ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
+    ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
     )
 
     # Following approach used in our ABS, use shell commands to recurse
@@ -283,7 +296,8 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     fi
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-    jadetex.cfg 
+    ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
+    ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
     )
 
     add_custom_command(
@@ -323,7 +337,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     ${SOURCE_FILES} 
     ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} 
     ${INCLUDED_FILES}
-    inline-info.ent
+    ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
     )
 
     add_custom_command(
@@ -405,7 +419,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     ${SOURCE_FILES} 
     ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
     ${INCLUDED_FILES}
-    inline-html.ent
+    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
     )
 
     if(BUILD_HTML)
