@@ -1,6 +1,7 @@
 INDEX
-(1) GNU Privacy Gaurd (gpg)
-(2) Creating a PLplot Release
+(1) GNU Privacy Gaurd (gpg).
+(2) A Note on Autotools.
+(3) Creating a PLplot Release.
 
 
 (1) GNU Privacy Gaurd (gpg)
@@ -21,7 +22,20 @@ gpg --send-keys 6C58D1AC
 command)
 
 
-(2) Creating a PLplot Release
+(2) A Note on Autotools
+
+For the foreseeable future, the PLplot release will be built with both
+GNU autotools and CMake. Since autotools users are completely dependent on
+the autotools versions that you will use when running cf/bootstrap.sh (called
+by make_tarball.sh below) you must have the correct autotools versions.
+Currently these are:
+
+autoconf (GNU Autoconf) 2.59
+automake (GNU automake) 1.9.6
+ltmain.sh (GNU libtool) 1.5.22
+
+
+(3) Creating a PLplot Release
 
 Update the docbook documentation to reflect any new drivers or new 
 functionality that has been added to PLplot. Or alternatively, press those
@@ -36,7 +50,9 @@ Update the README.release file.
      the current release and the last release.
 
 
-Update cmake/module/plplot_version.cmake to reflect the current version.
+Update cmake/module/plplot_version.cmake to reflect the current version. Also,
+follow the instructions in this file for updating the SOVERSION, the minor
+number and the patch number.
 
 
 Update configure.ac to reflect the current version.
@@ -141,5 +157,6 @@ template for creating your new release news item. Make sure that you get
 the link to the release notes correct (none of the other links need to be
 changed).
 Click on submit.
+
 
 
