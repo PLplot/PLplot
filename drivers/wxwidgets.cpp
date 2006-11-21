@@ -25,8 +25,6 @@
 /* TODO:
  *) x02c gives a lot of warnings regarding the color palette.
     same for gd driver though. Has to do with freetype support.
- *) x14c is stopped by Visual C++ since it corrupts the stack - 
-    but the same happens for wingcc driver.
  *) Do we exit gracefully?
  */
 
@@ -34,11 +32,11 @@
 
 #ifdef PLD_wxwidgets
 
-// plplot headers
+/* plplot headers */
 #include "plplotP.h"
 #include "drivers.h"
 
-// os specific headers
+/* os specific headers */
 #ifdef __WIN32__
   #include <windows.h>
 #endif
@@ -48,15 +46,15 @@
   extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
 #endif
 
-// C/C++ headers
+/* C/C++ headers */
 #include <cstdio>
 
-// wxwidgets headers
+/* wxwidgets headers */
 #include <wx/wx.h>
 #include <wx/except.h>
 #include <wx/image.h>
   
-// antigrain headers (for antialzing)
+/* antigrain headers (for antialzing) */
 #ifdef HAVE_AGG
   #include "agg2/agg_basics.h"
   #include "agg2/agg_rendering_buffer.h"
@@ -73,7 +71,7 @@
   typedef agg::renderer_scanline_aa_solid<ren_base> renderer;
 #endif  
   
-// freetype headers and macros
+/* freetype headers and macros */
 #ifdef HAVE_FREETYPE
   #include "plfreetype.h"
 
@@ -129,7 +127,12 @@ extern "C"
 
 /* struct which contains information about device */
 class wxPLplotFrame;
-typedef struct {
+class wxPLdev {
+public: /* methods */
+	wxPLdev( void );
+	~wxPLdev( void );
+
+public: /* variables */
   bool ready;
   bool ownGUI;
   bool waiting;
@@ -150,13 +153,22 @@ typedef struct {
   PLINT ymin;
   PLINT ymax;
 
-	PLFLT scale;
+	PLFLT scalex;
+	PLFLT scaley;
 
-  bool plstate_width;   // Flags indicating change of state before
-  bool plstate_color0;  // device is fully initialized
-  bool plstate_color1;  // taken from gcw driver
+  bool plstate_width;   /* Flags indicating change of state before */
+  bool plstate_color0;  /* device is fully initialized */
+  bool plstate_color1;  /* taken from gcw driver */
   
-  // variables for antializing
+	/* clipping region */
+	int clipminx, clipmaxx;
+	int clipminy, clipmaxy;
+	bool newclipregion;
+
+  /* variables for antializing */
+	int antialized;
+	int freetype;
+	int smooth_text;
 #ifdef HAVE_AGG
   agg::rendering_buffer *m_rendering_buffer;
 
@@ -169,17 +181,36 @@ typedef struct {
   unsigned char m_colgreenfill;
   unsigned char m_colbluefill;
 #endif
-} wxPLdev;
+};
+
+inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
+{
+	dev->newclipregion=false;
+	if( x1<x2 ) {
+		if( x1<dev->clipminx ) dev->clipminx=x1;
+		if( x2>dev->clipmaxx ) dev->clipmaxx=x2;
+	} else {
+		if( x2<dev->clipminx ) dev->clipminx=x2;
+		if( x1>dev->clipmaxx ) dev->clipmaxx=x1;
+	}
+	if( y1<y2 ) {
+		if( y1<dev->clipminy ) dev->clipminy=y1;
+		if( y2>dev->clipmaxy ) dev->clipmaxy=y2;
+	} else {
+		if( y2<dev->clipminy ) dev->clipminy=y2;
+		if( y1>dev->clipmaxy ) dev->clipmaxy=y1;
+	}
+}
 
 /* after how many commands the window should be refreshed */
-#define MAX_COMCOUNT 100
+#define MAX_COMCOUNT 2000
 
 /* wxwidgets application definition (if needed) */
 class wxPLplotApp : public wxApp
 {
 public:
   virtual bool OnInit();
- // virtual int OnExit();
+  /* virtual int OnExit(); */
   void SetExitFlag( bool flag=true ) { exit=flag; };
   bool GetExitFlag( void ) { return exit; };
   void SetAdvanceFlag( bool flag=true ) { advance=flag; };
@@ -244,10 +275,10 @@ BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
   EVT_MENU( wxPL_Quit, wxPLplotFrame::OnQuit )      /* quit program */
 END_EVENT_TABLE()
 
-// Use this macro if you want to define your own main() or WinMain() function
-// and call wxEntry() from there.
+/* Use this macro if you want to define your own main() or WinMain() function
+   and call wxEntry() from there. */
 #define IMPLEMENT_PLAPP_NO_MAIN(appname)                                      \
-    static wxAppConsole *wxCreateApp()                                             \
+    wxAppConsole *wxCreateApp()                                             \
     {                                                                       \
         wxAppConsole::CheckBuildOptions( WX_BUILD_OPTIONS_SIGNATURE,         \
                                          "your program" );                    \
@@ -266,8 +297,6 @@ static inline void Use(void *) { }
 /* private functions needed by the wxwidgets Driver */
 void install_buffer( PLStream *pls );
 int wxRunApp( PLStream *pls, bool runonce=false );
-
-static int antialized;
 
 /*----------------------------------------------------------------------*\
  *  Declarations for the device.
@@ -293,14 +322,13 @@ int plD_errorexithandler_wxwidgets( char *errormessage );
 void plD_erroraborthandler_wxwidgets( char *errormessage );
 
 
-
 /*----------------------------------------------------------------------*\
  *  Debug functions
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-//#define _DEBUG
-//#define _DEBUG_VERBOSE
+/* #define _DEBUG //*/
+/* #define _DEBUG_VERBOSE //*/
 
 /*--------------------------------------------------------------------------*\
  *  void Log_Verbose( char *fmt, ... )
@@ -373,6 +401,49 @@ void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 }
 
 
+wxPLdev::wxPLdev( void )
+{
+  // Log_Verbose( "wxPLdev::wxPLdev()" );
+
+  ready = false;
+  ownGUI = false;
+  waiting = false;
+  resizing = false;
+
+  comcount = 0;
+	newclipregion=true;
+	clipminx=1024;
+	clipmaxx=0;
+	clipminy=800;
+	clipmaxy=0;
+
+	dc=NULL;
+  m_buffer=NULL;
+  m_bitmap=NULL;
+
+  plstate_width = false;
+  plstate_color0 = false;
+  plstate_color1 = false;
+
+#ifdef HAVE_AGG
+  m_rendering_buffer=NULL;
+  m_strokewidth=1.0;
+  m_StrokeOpacity=255;
+  m_colredstroke=255;
+  m_colgreenstroke=255;
+  m_colbluestroke=255;
+  m_colredfill=0;
+  m_colgreenfill=0;
+  m_colbluefill=0;
+#endif
+}
+
+
+wxPLdev::~wxPLdev( void )
+{
+}
+
+
 /*--------------------------------------------------------------------------*\
  *  plD_init_wxwidgets()
  *
@@ -381,17 +452,15 @@ void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 void
 plD_init_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_init_wxwidgets()" );
+  // Log_Verbose( "plD_init_wxwidgets()" );
 
   wxPLdev* dev;
 
-  // default options
+  /* default options */
 #ifdef HAVE_FREETYPE
-  static int freetype=0;
-  static int smooth_text=0;
-#endif
-#ifndef HAVE_AGG  
-  antialized=0;
+  static int freetype=1;
+  static int smooth_text=1;
+	static int antialized=0;
 #endif
 
 DrvOpt wx_options[] = {
@@ -404,34 +473,31 @@ DrvOpt wx_options[] = {
 #endif
         {NULL, DRV_INT, NULL, NULL}};
 
-// be verbose and write out debug messages
+/* be verbose and write out debug messages */
 #ifdef _DEBUG
   pls->verbose = 1;
   pls->debug = 1;
 #else
   pls->verbose = 0;
-  pls->debug = 0;    
-#endif    
+  pls->debug = 0;
+#endif
 
   /* allocate memory for the device storage */
-  if( (dev = (wxPLdev* )malloc(sizeof(wxPLdev))) == NULL) {
+  dev = (wxPLdev*)new wxPLdev;
+	if( dev == NULL) {
     fprintf( stderr, "Insufficient memory\n" );
     exit( 0 );
   }
-  memset( dev, 0, sizeof(wxPLdev) );
   pls->dev = (void*)dev;
-  
+
   /* Check for and set up driver options */
   plParseDrvOpts( wx_options );
-#ifndef HAVE_AGG  
-  antialized=0;
-#endif
+  dev->antialized=antialized;
+	dev->smooth_text=smooth_text;
+	dev->freetype=freetype;
 
   pls->color = 1;		/* Is a color device */
-  if( antialized )
-    pls->dev_fill0 = 0;		/* Can't handle solid fills if antialized */
-  else
-    pls->dev_fill0 = 1;		/* Can handle solid fills */
+  pls->dev_fill0 = 1;		/* Can handle solid fills */
   pls->dev_fill1 = 0;		/* Can't handle pattern fills */
   pls->dev_dash = 0;
   pls->plbuf_write = 1;    /* use the plot buffer! */
@@ -448,43 +514,24 @@ DrvOpt wx_options[] = {
     FT_Data* FT=(FT_Data *)pls->FT;
     FT->want_smooth_text=smooth_text;
   }
-#endif  
-  
+#endif
+
   /* initialize device storage */
-  dev->ready = false;
-  dev->ownGUI = false;
-  dev->waiting = false;
-  dev->resizing = false;
-  dev->comcount = 0;
   if( pls->xlength <= 0 || pls->ylength <=0 )
     plspage( 0.0, 0.0, (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN), (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN), 0, 0 );
 
   dev->width=pls->xlength;
   dev->height=pls->ylength;
-  dev->m_buffer=NULL;
-  dev->m_bitmap=NULL;
-  if( antialized) {
-#ifdef HAVE_AGG
-    dev->m_rendering_buffer=NULL;
-    dev->m_strokewidth=1.0;
-    dev->m_StrokeOpacity=255;
-    dev->m_colredstroke=255;
-    dev->m_colgreenstroke=255;
-    dev->m_colbluestroke=255;
-    dev->m_colredfill=0;
-    dev->m_colgreenfill=0;
-    dev->m_colbluefill=0;
-#endif
-  }
-  
+  dev->clipminx=pls->xlength;
+  dev->clipminy=pls->ylength;
 
   /* If portrait mode, apply a rotation and set freeaspect */
   if( pls->portrait ) {
     plsdiori( (PLFLT)(4 - ORIENTATION) );
     pls->freeaspect = 1;
   }
-  
-  Log_Verbose( "settings" );
+
+  // Log_Verbose( "settings" );
 
   /* Set the number of pixels per mm */
   plP_setpxl( (PLFLT)VIRTUAL_PIXELS_PER_MM, (PLFLT)VIRTUAL_PIXELS_PER_MM );
@@ -493,26 +540,19 @@ DrvOpt wx_options[] = {
   plP_setphy( (PLINT)0, (PLINT)(CANVAS_WIDTH*VIRTUAL_PIXELS_PER_IN),
 	            (PLINT)0, (PLINT)(CANVAS_HEIGHT*VIRTUAL_PIXELS_PER_IN) );
 
-  // get physical device limits coordinates
+  /* get physical device limits coordinates */
   plP_gphy( &dev->xmin, &dev->xmax, &dev->ymin, &dev->ymax );
 
-  // setting scale factors
-  if( ((PLFLT)dev->width/dev->height) < ((PLFLT)CANVAS_WIDTH/CANVAS_HEIGHT) )
-    dev->scale=(PLFLT)(dev->xmax-dev->xmin)/(dev->width);
-  else
-    dev->scale=(PLFLT)(dev->ymax-dev->ymin)/(dev->height);  
+  /* setting scale factors */
+  dev->scalex=(PLFLT)(dev->xmax-dev->xmin)/(dev->width);
+  dev->scaley=(PLFLT)(dev->ymax-dev->ymin)/(dev->height);  
 
   /* set dpi */    
-  plspage(VIRTUAL_PIXELS_PER_IN/dev->scale, VIRTUAL_PIXELS_PER_IN/dev->scale, 0, 0, 0, 0);
-
-  /* Set the initialization state monitors to false */
-  dev->plstate_width = false;
-  dev->plstate_color0 = false;
-  dev->plstate_color1 = false;
+  plspage(VIRTUAL_PIXELS_PER_IN/dev->scalex, VIRTUAL_PIXELS_PER_IN/dev->scaley, 0, 0, 0, 0);
 
 	/* Set wx error handler for various errors in plplot*/
-  //plsexit(plD_errorexithandler_wxwidgets);
-  //plsabort(plD_erroraborthandler_wxwidgets);
+  /* plsexit(plD_errorexithandler_wxwidgets); */
+  /* plsabort(plD_erroraborthandler_wxwidgets); */
   
 #ifdef HAVE_FREETYPE
   if( pls->dev_text )
@@ -529,17 +569,20 @@ DrvOpt wx_options[] = {
 \*--------------------------------------------------------------------------*/
 void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
-  Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
+  // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
+
+	x1a=(short)(x1a/dev->scalex); y1a=(short)(dev->height-y1a/dev->scaley);
+	x2a=(short)(x2a/dev->scalex);	y2a=(short)(dev->height-y2a/dev->scaley);
 
   if( !(dev->ready) )
     install_buffer( pls );
   
-  Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", (wxCoord)(x1a/dev->scale),
-							 (wxCoord)(dev->height-y1a/dev->scale), (wxCoord)(x2a/dev->scale), (wxCoord)(dev->height-y2a/dev->scale) );
+  // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", (wxCoord)(x1a/dev->scalex),
+	//						 (wxCoord)(dev->height-y1a/dev->scaley), (wxCoord)(x2a/dev->scalex), (wxCoord)(dev->height-y2a/dev->scaley) );
 
-  if(antialized) {
+  if(dev->antialized) {
 #ifdef HAVE_AGG
     agg::rasterizer_scanline_aa<> ras;
     agg::scanline_u8 sl;
@@ -548,8 +591,8 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
     renderer ren( renb );
 
     agg::path_storage path;
-    path.move_to( x1a/dev->scale, dev->height-y1a/dev->scale );
-    path.line_to( x2a/dev->scale, dev->height-y2a/dev->scale );
+    path.move_to( x1a, y1a );
+    path.line_to( x2a, y2a );
 
     agg::conv_stroke<agg::path_storage> stroke(path);
     stroke.line_join( agg::round_join );
@@ -561,17 +604,17 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
       
     agg::render_scanlines( ras, sl, ren );
 #endif
-  } else {
-    dev->dc->DrawLine( (wxCoord) (x1a/dev->scale), (wxCoord) (dev->height-y1a/dev->scale),
-                       (wxCoord) (x2a/dev->scale), (wxCoord) (dev->height-y2a/dev->scale) );
-  }
+  } else 
+    dev->dc->DrawLine( (wxCoord)x1a, (wxCoord)y1a, (wxCoord)x2a, (wxCoord)y2a );
   
-  if( !(dev->resizing) && dev->ownGUI )
-    dev->comcount++;
-  if( dev->comcount>MAX_COMCOUNT ) {
-    wxRunApp( pls, true );
-    dev->comcount=0;
-  }
+  if( !(dev->resizing) && dev->ownGUI ) {
+		AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+		dev->comcount+=10;
+		if( dev->comcount>MAX_COMCOUNT ) {
+			wxRunApp( pls, true );
+			dev->comcount=0;
+		}
+	}
 }
 
 
@@ -583,15 +626,16 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 \*--------------------------------------------------------------------------*/
 void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-  Log_Verbose( "plD_polyline_wxwidgets()" );
+	short x1a, y1a, x2a, y2a;
+  // Log_Verbose( "plD_polyline_wxwidgets()" );
 
-  // should be changed to use the wxDC::DrawLines function?
+  /* should be changed to use the wxDC::DrawLines function? */
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
   if( !(dev->ready) )
     install_buffer( pls );
 
-  if( antialized ) {
+  if( dev->antialized ) {
 #ifdef HAVE_AGG
     agg::rasterizer_scanline_aa<> ras;
     agg::scanline_u8 sl;
@@ -600,9 +644,15 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
     renderer ren( renb );
 
     agg::path_storage path;
-    path.move_to( xa[0]/dev->scale, dev->height-ya[0]/dev->scale );
-    for ( PLINT i=1; i<npts; i++ )
-      path.line_to( xa[i]/dev->scale, dev->height-ya[i]/dev->scale );
+		x2a=(short)(xa[0]/dev->scalex); y2a=(short)(dev->height-ya[0]/dev->scaley);
+    path.move_to( x2a, y2a );
+    for ( PLINT i=1; i<npts; i++ ) {
+			x1a=x2a; y1a=y2a;
+			x2a=(short)(xa[i]/dev->scalex); y2a=(short)(dev->height-ya[i]/dev->scaley);
+      path.line_to( x2a, y2a );
+			if( !(dev->resizing) && dev->ownGUI ) 
+				AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+		}
 
     agg::conv_stroke<agg::path_storage> stroke( path );
     stroke.line_join( agg::round_join );
@@ -615,19 +665,24 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
     agg::render_scanlines( ras, sl, ren );
 #endif
  } else {
-    dev->dc->BeginDrawing();
-    for( PLINT i=1; i<npts; i++ )
-      dev->dc->DrawLine( (wxCoord) (xa[i-1]/dev->scale), (wxCoord) (dev->height-ya[i-1]/dev->scale),
-                         (wxCoord) (xa[i]/dev->scale), (wxCoord) (dev->height-ya[i]/dev->scale) );
-    dev->dc->EndDrawing();
+		x2a=(short)(xa[0]/dev->scalex); y2a=(short)(dev->height-ya[0]/dev->scaley);
+    for( PLINT i=1; i<npts; i++ ) {
+			x1a=x2a; y1a=y2a;
+			x2a=(short)(xa[i]/dev->scalex); y2a=(short)(dev->height-ya[i]/dev->scaley);
+
+      dev->dc->DrawLine( (wxCoord)x1a, (wxCoord)y1a, (wxCoord)x2a, (wxCoord)y2a );
+			if( !(dev->resizing) && dev->ownGUI ) 
+				AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+		}
   }
 
-  if( !(dev->resizing) && dev->ownGUI )
-    dev->comcount++;
-  if( dev->comcount>MAX_COMCOUNT ) {
-    wxRunApp( pls, true );
-    dev->comcount=0;
-  }
+  if( !(dev->resizing) && dev->ownGUI ) {
+    dev->comcount+=10;
+		if( dev->comcount>MAX_COMCOUNT ) {
+			wxRunApp( pls, true );
+			dev->comcount=0;
+		}
+	}
 }
 
 
@@ -641,7 +696,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 \*--------------------------------------------------------------------------*/
 void plD_eop_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_eop_wxwidgets()" );
+  // Log_Verbose( "plD_eop_wxwidgets()" );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
@@ -664,16 +719,16 @@ void plD_eop_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_bop_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_bop_wxwidgets()" );
+  // Log_Verbose( "plD_bop_wxwidgets()" );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
   if( dev->ready ) {
-    // clear background
-		PLINT bgr, bgg, bgb;  // red, green, blue
-		plgcolbg( &bgr, &bgg, &bgb);  // get background color information
+    /* clear background */
+		PLINT bgr, bgg, bgb;  /* red, green, blue */
+		plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
 
-    if( antialized ) {
+    if( dev->antialized ) {
 #ifdef HAVE_AGG
       pixfmt pixf( *dev->m_rendering_buffer );
       ren_base renb( pixf );
@@ -683,7 +738,8 @@ void plD_bop_wxwidgets( PLStream *pls )
       dev->dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
       dev->dc->Clear();
     }
-  
+		AddtoClipRegion( dev, 0, 0, (int)(dev->width), (int)(dev->height) );
+    
     /* Replay escape calls that come in before PLESC_DEVINIT.  All of them
      * required a DC that didn't exist yet.
      */
@@ -699,8 +755,8 @@ void plD_bop_wxwidgets( PLStream *pls )
       plD_state_wxwidgets( pls, PLSTATE_COLOR1 );
     dev->plstate_color1 = false;
 
-		// why this? xwin driver has this
-	  //pls->page++;
+		/* why this? xwin driver has this */
+	  /* pls->page++; */
 	}
 }
 
@@ -714,7 +770,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_tidy_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_tidy_wxwidgets()" );
+  // Log_Verbose( "plD_tidy_wxwidgets()" );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
@@ -727,8 +783,8 @@ void plD_tidy_wxwidgets( PLStream *pls )
 #endif
 
   if( dev->ownGUI ) {
-    Log_Verbose( "delete bitmaps" );
-    if( antialized ) {
+    // Log_Verbose( "delete bitmaps" );
+    if( dev->antialized ) {
       delete dev->m_buffer;
 #ifdef HAVE_AGG
       delete dev->m_rendering_buffer;
@@ -739,7 +795,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
       delete dev->m_bitmap;
     }
       
-    Log_Verbose( "wxUninitialize()" );
+    // Log_Verbose( "wxUninitialize()" );
     wxUninitialize();
   }
 }
@@ -753,30 +809,30 @@ void plD_tidy_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_state_wxwidgets( PLStream *pls, PLINT op )
 {
-  Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
+  // Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
   switch( op ) {
 		
-  case PLSTATE_WIDTH:  // 1
+  case PLSTATE_WIDTH:  /* 1 */
     if( dev->ready ) {
-      if( antialized ) {
+      if( dev->antialized ) {
 #ifdef HAVE_AGG
-        dev->m_strokewidth = pls->width;
+        dev->m_strokewidth = pls->width>0 ? pls->width : 1;  // TODO: why and when ist width 0???
 #endif
       } else {
         dev->dc->SetPen( wxPen(wxColour(pls->curcolor.r, pls->curcolor.g,
                                         pls->curcolor.b),
-                               pls->width) );
+                               pls->width>0 ? pls->width : 1) );
       }
     } else
       dev->plstate_width = true;
     break;
 		
-  case PLSTATE_COLOR0:  // 2
+  case PLSTATE_COLOR0:  /* 2 */
     if( dev->ready ) {
-      if( antialized ) {
+      if( dev->antialized ) {
 #ifdef HAVE_AGG
         dev->m_colredstroke = pls->cmap0[pls->icol0].r;
         dev->m_colgreenstroke = pls->cmap0[pls->icol0].g;
@@ -785,7 +841,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
       } else {
         dev->dc->SetPen( wxPen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                                         pls->cmap0[pls->icol0].b),
-                               pls->width) );
+                               pls->width>0 ? pls->width : 1) );
         dev->dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                                             pls->cmap0[pls->icol0].b)) );
       }
@@ -793,9 +849,9 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
       dev->plstate_color0 = true;
     break;
 		
-  case PLSTATE_COLOR1:  // 3
+  case PLSTATE_COLOR1:  /* 3 */
     if( dev->ready ) {
-      if( antialized ) {
+      if( dev->antialized ) {
 #ifdef HAVE_AGG
         dev->m_colredstroke = pls->curcolor.r;
         dev->m_colgreenstroke = pls->curcolor.g;
@@ -804,7 +860,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
       } else {
         dev->dc->SetPen( wxPen(wxColour(pls->curcolor.r, pls->curcolor.g,
                                         pls->curcolor.b),
-                               pls->width) );
+                               pls->width>0 ? pls->width : 1) );
         dev->dc->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g,
                                             pls->curcolor.b)) );
       }
@@ -828,7 +884,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 \*--------------------------------------------------------------------------*/
 void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 {
-  Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
+  // Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
@@ -839,7 +895,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     break;
 
 	case PLESC_XORMOD:
-		// switch between wxXOR and wxCOPY
+		/* switch between wxXOR and wxCOPY */
     if( dev->ready ) {
 			if( dev->dc->GetLogicalFunction() == wxCOPY )
 				dev->dc->SetLogicalFunction( wxXOR );    
@@ -849,7 +905,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 		break;
 
 	case PLESC_DEVINIT:
-    if( antialized )
+    if( dev->antialized )
       wx_set_buffer( pls, (wxImage*)ptr );
     else
       wx_set_dc( pls, (wxDC*)ptr );      
@@ -868,10 +924,10 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     break;
 
 	case PLESC_CLEAR: {
-			PLINT bgr, bgg, bgb;  // red, green, blue
-			plgcolbg( &bgr, &bgg, &bgb );  // get background color information
+			PLINT bgr, bgg, bgb;  /* red, green, blue */
+			plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
 
-      if( antialized ) {
+      if( dev->antialized ) {
 #ifdef HAVE_AGG
         pixfmt pixf( *dev->m_rendering_buffer );
         ren_base renb( pixf );
@@ -881,6 +937,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         dev->dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
         dev->dc->Clear();
       }
+  		AddtoClipRegion( dev, 0, 0, (int)( dev->width), (int)(dev->height) );
 		}
 		break;
   
@@ -897,30 +954,65 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 \*--------------------------------------------------------------------------*/
 static void fill_polygon( PLStream *pls )
 {
-  // TODO: we need also to do this for antialized driver
-  //       turn it off now for antialized driver
-  Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
+	short x1a, y1a, x2a, y2a;
+  // Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
   if( dev->ready ) {
-    wxPoint *points = new wxPoint[pls->dev_npts];
-  
-    for( int i=0; i < pls->dev_npts; i++ ) {
-      points[i].x=(int) (pls->dev_x[i]/dev->scale);
-      points[i].y=(int) (dev->height-pls->dev_y[i]/dev->scale);
-    }
-  
-    dev->dc->DrawPolygon( pls->dev_npts, points );
-    delete[] points;
+	  if( dev->antialized ) {
+#ifdef HAVE_AGG
+			agg::rasterizer_scanline_aa<> ras;
+			agg::scanline_u8 sl;
+	    pixfmt pixf( *dev->m_rendering_buffer );
+			ren_base renb(pixf);
+			renderer ren(renb);
+
+    	agg::path_storage path;
+			x2a=(short)(pls->dev_x[0]/dev->scalex); y2a=(short)(dev->height-pls->dev_y[0]/dev->scaley);
+			path.move_to( x2a, y2a );
+			for ( PLINT i=1; i<pls->dev_npts; i++ ) {
+				x1a=x2a; y1a=y2a;
+				x2a=(short)(pls->dev_x[i]/dev->scalex); y2a=(short)(dev->height-pls->dev_y[i]/dev->scaley);
+				path.line_to( x2a, y2a );
+				if( !(dev->resizing) && dev->ownGUI ) 
+					AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+			}
+			path.line_to( (pls->dev_x[0]/dev->scalex), (dev->height-pls->dev_y[0]/dev->scaley) );
+			path.close_polygon();
+	
+	    ren.color( agg::rgba8(dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke, dev->m_StrokeOpacity) );
+      ras.add_path( path );
+	    agg::render_scanlines(ras, sl, ren);
+
+			agg::conv_stroke<agg::path_storage> stroke(path);
+			stroke.line_join( agg::round_join );
+			stroke.line_cap( agg::round_cap );
+			stroke.width( dev->m_strokewidth );
+			ras.add_path( stroke );    
+	    ren.color( agg::rgba8(dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke, dev->m_StrokeOpacity) );
+	    agg::render_scanlines( ras, sl, ren );
+#endif
+		} else {
+			wxPoint *points = new wxPoint[pls->dev_npts];
+		
+			for( int i=0; i < pls->dev_npts; i++ ) {
+				points[i].x=(int) (pls->dev_x[i]/dev->scalex);
+				points[i].y=(int) (dev->height-pls->dev_y[i]/dev->scaley);
+			}
+		
+			dev->dc->DrawPolygon( pls->dev_npts, points );
+			delete[] points;
+		}
   }
 
-  if( !(dev->resizing) && dev->ownGUI )
-    dev->comcount++;
-  if( dev->comcount>MAX_COMCOUNT ) {
-    wxRunApp( pls, true );
-    dev->comcount=0;
-  }
+  if( !(dev->resizing) && dev->ownGUI ) {
+    dev->comcount+=10;
+		if( dev->comcount>MAX_COMCOUNT ) {
+			wxRunApp( pls, true );
+			dev->comcount=0;
+		}
+	}
 }
 
 
@@ -932,27 +1024,30 @@ static void fill_polygon( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void wx_set_size( PLStream* pls, int width, int height )
 {
-  // TODO: buffer must be resized here or in wxplotstream
-  Log_Verbose( "wx_set_size()" );
+  /* TODO: buffer must be resized here or in wxplotstream */
+  // Log_Verbose( "wx_set_size()" );
   
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
-	// set new size
+	/* set new size */
 	dev->width = width;
 	dev->height = height;
 
-  // clear background if we have a dc, since it's invalid (TODO: why, since in bop
-  // it must be cleared anyway?)
+  /* clear background if we have a dc, since it's invalid (TODO: why, since in bop
+     it must be cleared anyway?) */
   if( dev->ready ) {
-		PLINT bgr, bgg, bgb;  // red, green, blue
-		plgcolbg( &bgr, &bgg, &bgb);  // get background color information
+		PLINT bgr, bgg, bgb;  /* red, green, blue */
+		plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
 
-    if( antialized ) {
+    if( dev->antialized ) {
 #ifdef HAVE_AGG
 		  if( dev->m_rendering_buffer )
 			  delete dev->m_rendering_buffer;
 		  dev->m_rendering_buffer = new agg::rendering_buffer;
-			dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->width, dev->height, dev->width*3 );
+			if( dev->ownGUI )
+				dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->bm_width, dev->bm_height, dev->bm_width*3 );
+			else
+				dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->width, dev->height, dev->width*3 );
       pixfmt pixf( *dev->m_rendering_buffer );
       ren_base renb( pixf );
       renb.clear( agg::rgba8(bgr, bgg, bgb) );
@@ -961,23 +1056,21 @@ void wx_set_size( PLStream* pls, int width, int height )
       dev->dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
       dev->dc->Clear();
     }
+		AddtoClipRegion( dev, 0, 0, (int)( dev->width), (int)(dev->height) );
 	}
 
-  /*set scale factor */
-  if( ((PLFLT)dev->width/dev->height) < ((PLFLT)CANVAS_WIDTH/CANVAS_HEIGHT) )
-    dev->scale=(PLFLT)(dev->xmax-dev->xmin)/dev->width;
-  else
-    dev->scale=(PLFLT)(dev->ymax-dev->ymin)/dev->height;  
+  dev->scalex=(PLFLT)(dev->xmax-dev->xmin)/dev->width;
+  dev->scaley=(PLFLT)(dev->ymax-dev->ymin)/dev->height;  
     
     /* recalculate the dpi used in calculation of fontsize */
-  pls->xdpi = VIRTUAL_PIXELS_PER_IN/dev->scale;
-  pls->ydpi = VIRTUAL_PIXELS_PER_IN/dev->scale;
+  pls->xdpi = VIRTUAL_PIXELS_PER_IN/dev->scalex;
+  pls->ydpi = VIRTUAL_PIXELS_PER_IN/dev->scaley;
     
-  // freetype parameters must also be changed
+  /* freetype parameters must also be changed */
 #ifdef HAVE_FREETYPE  
   if( pls->dev_text ) {
     FT_Data *FT=(FT_Data *)pls->FT;
-    FT->scale=dev->scale;   
+    FT->scale=dev->scaley;   
     FT->ymax=dev->height;
   }
 #endif
@@ -992,7 +1085,7 @@ void wx_set_size( PLStream* pls, int width, int height )
 \*--------------------------------------------------------------------------*/
 void wx_set_dc( PLStream* pls, wxDC* dc )
 {
-  Log_Verbose( "wx_set_dc()" );
+  // Log_Verbose( "wx_set_dc()" );
   
   wxPLdev* dev = (wxPLdev*)pls->dev;
   dev->dc=dc;  /* Add the dc to the device */
@@ -1012,7 +1105,7 @@ void wx_set_dc( PLStream* pls, wxDC* dc )
 \*--------------------------------------------------------------------------*/
 void wx_set_buffer( PLStream* pls, wxImage* buffer )
 {
-  Log_Verbose( "wx_set_buffer()" );
+  // Log_Verbose( "wx_set_buffer()" );
   
   wxPLdev* dev = (wxPLdev*)pls->dev;
   dev->m_buffer = buffer;
@@ -1023,6 +1116,7 @@ void wx_set_buffer( PLStream* pls, wxImage* buffer )
   dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->width, dev->height, dev->width*3 );
 #endif
   dev->ready = true;
+  dev->ownGUI = false;
 
 	/* replay begin of page call and state settings */
 	plD_bop_wxwidgets( pls );
@@ -1037,14 +1131,14 @@ void wx_set_buffer( PLStream* pls, wxImage* buffer )
 \*----------------------------------------------------------------------*/
 int plD_errorexithandler_wxwidgets( char *errormessage )
 {  
-  //wxPLdev* dev = (wxPLdev*)pls->dev;
+  /* wxPLdev* dev = (wxPLdev*)pls->dev; */
 
-  //if( dev->ownGUI ) {
+  /* if( dev->ownGUI ) { */
     wxMessageDialog dialog( 0,wxString(errormessage, *wxConvCurrent),wxString("wxPlot error",*wxConvCurrent),wxOK );
     dialog.ShowModal();
     plend();
     return 0;
-  //}
+  /*} */
 }
 
 /*----------------------------------------------------------------------*\
@@ -1055,12 +1149,12 @@ int plD_errorexithandler_wxwidgets( char *errormessage )
 \*----------------------------------------------------------------------*/
 void plD_erroraborthandler_wxwidgets( char *errormessage )
 {  
-  //wxPLdev* dev = (wxPLdev*)pls->dev;
+  /* wxPLdev* dev = (wxPLdev*)pls->dev; */
 
-  //if( dev->ownGUI ) {
+  /* if( dev->ownGUI ) { */
     wxMessageDialog dialog( 0,(wxString(errormessage, *wxConvCurrent)+ wxString(" aborting operation...", *wxConvCurrent)), wxString("wxPlot error",*wxConvCurrent), wxOK );
     dialog.ShowModal();
-  //}
+  /* } */
 }
 
 
@@ -1074,27 +1168,29 @@ void plD_erroraborthandler_wxwidgets( char *errormessage )
 \*----------------------------------------------------------------------*/
 static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 {
-  Log_Verbose( "plD_pixel_wxwidgets" );
+  // Log_Verbose( "plD_pixel_wxwidgets" );
 
   wxPLdev *dev=(wxPLdev*)pls->dev;
 
   if( !(dev->ready) )
     install_buffer( pls );
 
-  Log_Verbose( "Draw Pixel @ %d, %d\n", x, y );	
-  if( antialized ) {
+  // Log_Verbose( "Draw Pixel @ %d, %d\n", x, y );	
+  if( dev->antialized ) {
 #ifdef HAVE_AGG
     dev->m_buffer->SetRGB( x, y, dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke );    
 #endif
   } else  
     dev->dc->DrawPoint( x, y );
 
-  if( !(dev->resizing) && dev->ownGUI )
+  if( !(dev->resizing) && dev->ownGUI ) {
+		AddtoClipRegion( dev, x, y, x+1, y+1 );
     dev->comcount++;
-  if( dev->comcount>MAX_COMCOUNT ) {
-    wxRunApp( pls, true );
-    dev->comcount=0;
-  }
+		if( dev->comcount>MAX_COMCOUNT ) {
+			wxRunApp( pls, true );
+			dev->comcount=0;
+		}
+	}
 }
 
 
@@ -1108,7 +1204,7 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 \*----------------------------------------------------------------------*/
 static void init_freetype_lv1( PLStream *pls )
 {
-  Log_Verbose( "init_freetype_lv1" );
+  // Log_Verbose( "init_freetype_lv1" );
 
 	plD_FreeType_init( pls );
 
@@ -1144,12 +1240,12 @@ static void init_freetype_lv1( PLStream *pls )
 
 static void init_freetype_lv2( PLStream *pls )
 {
-  Log_Verbose( "init_freetype_lv2" );
+  // Log_Verbose( "init_freetype_lv2" );
 
   wxPLdev *dev=(wxPLdev *)pls->dev;
   FT_Data *FT=(FT_Data *)pls->FT;
   
-  FT->scale=dev->scale;   
+  FT->scale=dev->scaley;
   FT->ymax=dev->height;
   FT->invert_y=1;
   FT->smooth_text=0;
@@ -1204,14 +1300,14 @@ static void init_freetype_lv2( PLStream *pls )
 \*----------------------------------------------------------------------*/
 void install_buffer( PLStream *pls )
 {
-  Log_Verbose( "install_buffer" );
+  // Log_Verbose( "install_buffer" );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
   static bool initApp=false;
   
   if( !initApp ) {
-    // this hack enables to have a GUI on Mac OSX even if the 
-    // program was called from the command line (and isn't a bundle)
+    /* this hack enables to have a GUI on Mac OSX even if the 
+       program was called from the command line (and isn't a bundle) */
 #ifdef __WXMAC__
     ProcessSerialNumber psn;
 
@@ -1220,7 +1316,7 @@ void install_buffer( PLStream *pls )
     SetFrontProcess( &psn );
 #endif
 
-    // initialize wxWidgets
+    /* initialize wxWidgets */
     wxInitialize();
     wxLog::GetActiveTarget();
 #ifdef __WXMSW__    
@@ -1241,9 +1337,9 @@ void install_buffer( PLStream *pls )
 	
   dev->bm_width=1024;
   dev->bm_height=800;
-  // get a DC and a bitmap or an imagebuffer 
-  if( antialized ) {
-    // get a new wxImage (image buffer)
+  /* get a DC and a bitmap or an imagebuffer */
+  if( dev->antialized ) {
+    /* get a new wxImage (image buffer) */
     dev->m_buffer = new wxImage( dev->bm_width, dev->bm_height );
 #ifdef HAVE_AGG  
     dev->m_rendering_buffer = new agg::rendering_buffer;
@@ -1253,16 +1349,16 @@ void install_buffer( PLStream *pls )
     if( !(dev->dc) )
       dev->dc = new wxMemoryDC();
     
-    // get a new bitmap
+    /* get a new bitmap */
     dev->m_bitmap = new wxBitmap( dev->bm_width, dev->bm_height, -1 );
-    ((wxMemoryDC*)dev->dc)->SelectObject( wxNullBitmap );   // deselect bitmap
-    ((wxMemoryDC*)dev->dc)->SelectObject( *(dev->m_bitmap) );   // select new bitmap
+    ((wxMemoryDC*)dev->dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
+    ((wxMemoryDC*)dev->dc)->SelectObject( *(dev->m_bitmap) );   /* select new bitmap */
   }
   
   dev->ready = true;
   dev->ownGUI = true;
 
-  // replay command we may have missed
+  /* replay command we may have missed */
   plD_bop_wxwidgets( pls );
 }
  
@@ -1283,7 +1379,7 @@ int wxRunApp( PLStream *pls, bool runonce )
     class CallOnExit
     {
     public:
-      // only call OnExit if exit is true (i.e. due an exception)
+      /* only call OnExit if exit is true (i.e. due an exception) */
       ~CallOnExit() { if(exit) wxGetApp().OnExit(); }
       bool exit;
     } callOnExit;
@@ -1292,11 +1388,11 @@ int wxRunApp( PLStream *pls, bool runonce )
     wxGetApp().SetAdvanceFlag( runonce );
     wxGetApp().SetRefreshFlag();
 
-		// to add an idle event is necessary for Linux (wxGTK2)
-		// and not for Windows, but it doesn't harm
+		/* to add an idle event is necessary for Linux (wxGTK2)
+		   and not for Windows, but it doesn't harm */
 	  wxIdleEvent event;
     dev->m_frame->AddPendingEvent( event );
-		return wxGetApp().OnRun();   // start wxWidgets application    
+		return wxGetApp().OnRun();   /* start wxWidgets application     */
     callOnExit.exit=false;
   }
   wxCATCH_ALL( wxGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )
@@ -1312,7 +1408,7 @@ int wxRunApp( PLStream *pls, bool runonce )
 \*----------------------------------------------------------------------*/
 bool wxPLplotApp::OnInit()
 {
-  Log_Verbose( "wxPLplotApp::OnInit" );
+  // Log_Verbose( "wxPLplotApp::OnInit" );
   
   exit=false;
   advance=false;
@@ -1323,21 +1419,22 @@ bool wxPLplotApp::OnInit()
 
 
 /*----------------------------------------------------------------------*\
- *  wxPLplotFrame::wxPLplotFrame( const wxString& title )
+ *  wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
  *
- *  Constructor of wxPLplotFrame, where we create the menu.
+ *  Constructor of wxPLplotFrame, where we create the menu and add the
+ *  wxPLplotWindow. We need also to know the current PLStream.
 \*----------------------------------------------------------------------*/
 wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
              : wxFrame( NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
                         wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION |
-                        wxCLOSE_BOX | wxCLIP_CHILDREN | wxRESIZE_BORDER )
+                        wxCLOSE_BOX | wxRESIZE_BORDER | wxCLIP_CHILDREN ) 
 {
-  Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
+  // Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
 
   m_panel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN );
+  wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
 	m_window = new wxPLplotWindow( m_panel, pls );
-  wxBoxSizer* box = new wxBoxSizer( wxHORIZONTAL );
-  box->Add( m_window, 1, wxEXPAND );
+  box->Add( m_window, 1, wxALL | wxEXPAND, 0 );
   m_panel->SetSizer( box );
 	m_window->SetFocus();
 	  
@@ -1359,7 +1456,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 \*----------------------------------------------------------------------*/
 void wxPLplotFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotFrame::OnQuit" );
+  // Log_Verbose( "wxPLplotFrame::OnQuit" );
 
   wxGetApp().ExitMainLoop();
 }
@@ -1374,10 +1471,12 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
              : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                          wxNO_BORDER|wxWANTS_CHARS|wxCLIP_CHILDREN )
 {
-  Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
+  // Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
 
   m_pls=pls;
   m_dev=(wxPLdev*)pls->dev;
+
+	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 }
 
 
@@ -1391,13 +1490,13 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
 \*----------------------------------------------------------------------*/
 void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnPaint" );
-
-  // copy bitmap into client area
+  // Log_Verbose( "wxPLplotWindow::OnPaint" );
+	//static int counter=0;
+  /* copy bitmap into client area */
   wxPaintDC dc( this );
-  
-  // only update damages regions
-  int vX,vY,vW,vH;                 
+
+  /* only update damaged regions */
+  int vX, vY, vW, vH; 
   wxRegionIterator upd( GetUpdateRegion() ); 
 
   while( upd ) {
@@ -1406,19 +1505,17 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
     vW = upd.GetW();
     vH = upd.GetH();
 
-    if( antialized ) {
+		//printf( "Clipping region: x=%d, y=%d, width=%d, height=%d, counter=%d\n", vX, vY, vW, vH, counter++ );
+  
+    if( m_dev->antialized ) {
       wxMemoryDC MemoryDC;
-      MemoryDC.SelectObject( wxBitmap(*(m_dev->m_buffer), -1) );  
-      dc.BeginDrawing();
-      dc.Blit( vX, vY, vW, vH, &MemoryDC, vX, vY );
-      dc.EndDrawing();
+			wxBitmap bitmap( m_dev->m_buffer->GetSubImage(wxRect(vX, vY, vW, vH)), -1 );
+      MemoryDC.SelectObject( bitmap );
+      dc.Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
       MemoryDC.SelectObject( wxNullBitmap );
     }
-    else { 
-      dc.BeginDrawing();
+    else 
       dc.Blit( vX, vY, vW, vH, m_dev->dc, vX, vY );
-      dc.EndDrawing();
-    }  
 
     upd ++ ;
   }
@@ -1427,7 +1524,7 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 
 void wxPLplotWindow::OnChar( wxKeyEvent& event )
 {
-  Log_Verbose( "wxPLplotWindow::OnChar" );
+  // Log_Verbose( "wxPLplotWindow::OnChar" );
 
   int keycode = event.GetKeyCode();
   switch( keycode ) {
@@ -1450,7 +1547,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
 
 void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnIdle" );
+  // Log_Verbose( "wxPLplotWindow::OnIdle" );
 
   if( wxGetApp().GetExitFlag() )
     wxGetApp().ExitMainLoop();
@@ -1459,7 +1556,21 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
     wxGetApp().ExitMainLoop();  
   
   if( wxGetApp().GetRefreshFlag() ) {
-    Refresh();
+    if(!m_dev->newclipregion) {
+      static wxRect rect;
+			rect.x=m_dev->clipminx;
+			rect.y=m_dev->clipminy;
+			rect.width=m_dev->clipmaxx-m_dev->clipminx+1;
+			rect.height=m_dev->clipmaxy-m_dev->clipminy+1;
+			//Refresh( false, &rect );
+      RefreshRect( rect, false );  /* don't erase background */
+      m_dev->newclipregion=true;
+			m_dev->clipminx=m_dev->width;
+			m_dev->clipmaxx=0;
+			m_dev->clipminy=m_dev->height;
+			m_dev->clipmaxy=0;
+    } else
+      Refresh( false );
     wxGetApp().SetRefreshFlag( false );
   }
 }
@@ -1467,41 +1578,34 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 
 void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
 {  
-  Log_Verbose( "wxPLplotWindow::OnErase" );
+  // Log_Verbose( "wxPLplotWindow::OnErase" );
 }
 
 
 void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnSize" );
+  // Log_Verbose( "wxPLplotWindow::OnSize" );
 
   int width, height;
   GetClientSize( &width, &height );
   
   if( m_dev->waiting ) {
-    if( (width!=m_dev->width) && (height!=m_dev->height) ) {
-      // get a new bitmap if new size is bigger as bitmap size
+    if( (width!=m_dev->width) || (height!=m_dev->height) ) {
+      /* get a new bitmap if new size is bigger as bitmap size */
       if( (width>m_dev->bm_width) || (height>m_dev->bm_height) ) {
-        if( antialized ) {
-          // get a new wxImage (image buffer)
+				m_dev->bm_width = m_dev->bm_width > width ? m_dev->bm_width : width;
+				m_dev->bm_height = m_dev->bm_height > height ? m_dev->bm_height : height;
+        if( m_dev->antialized ) {
+          /* get a new wxImage (image buffer) */
           if( m_dev->m_buffer )
             delete m_dev->m_buffer;
           m_dev->m_buffer = new wxImage( m_dev->bm_width, m_dev->bm_height );
-#ifdef HAVE_AGG  
-          if( m_dev->m_rendering_buffer )
-            delete m_dev->m_rendering_buffer;
-          m_dev->m_rendering_buffer = new agg::rendering_buffer;
-          m_dev->m_rendering_buffer->attach( m_dev->m_buffer->GetData(), m_dev->bm_width,
-                                              m_dev->bm_height, m_dev->bm_width*3 );
-#endif
         } else {
-          ((wxMemoryDC*)m_dev->dc)->SelectObject( wxNullBitmap );   // deselect bitmap
+          ((wxMemoryDC*)m_dev->dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
           if( m_dev->m_bitmap )
             delete m_dev->m_bitmap;
-          m_dev->bm_width = m_dev->bm_width > width ? m_dev->bm_width : width;
-          m_dev->bm_height = m_dev->bm_height > height ? m_dev->bm_height : height;
           m_dev->m_bitmap = new wxBitmap( m_dev->bm_width, m_dev->bm_height, -1 );
-          ((wxMemoryDC*)m_dev->dc)->SelectObject( *(m_dev->m_bitmap) );   // select new bitmap
+          ((wxMemoryDC*)m_dev->dc)->SelectObject( *(m_dev->m_bitmap) );   /* select new bitmap */
         }
       }
 
@@ -1517,11 +1621,12 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 
 void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnMax" );
+  // Log_Verbose( "wxPLplotWindow::OnMax" );
 
   wxSizeEvent event( GetClientSize() );
   AddPendingEvent( event );
 }
+
 #else
 int pldummy_wxwidgets()
 {
