@@ -137,6 +137,8 @@ public: /* variables */
   bool ownGUI;
   bool waiting;
   bool resizing;
+  bool exit;
+
   int comcount;
   
   wxDC* dc;
@@ -239,7 +241,7 @@ public:
 
 private:
   PLStream *m_pls;
-  wxPLdev* m_dev;  /* frame needs to know this structure */
+  wxPLdev* m_dev;  /* windows needs to know this structure */
 
   DECLARE_EVENT_TABLE()
 };
@@ -264,6 +266,7 @@ public:
 private:
   wxPanel* m_panel;
   wxPLplotWindow* m_window;
+  wxPLdev* m_dev;  /* frame needs to know this structure */
 
   DECLARE_EVENT_TABLE()
 };
@@ -296,7 +299,7 @@ static inline void Use(void *) { }
 
 /* private functions needed by the wxwidgets Driver */
 void install_buffer( PLStream *pls );
-int wxRunApp( PLStream *pls, bool runonce=false );
+void wxRunApp( PLStream *pls, bool runonce=false );
 
 /*----------------------------------------------------------------------*\
  *  Declarations for the device.
@@ -409,6 +412,7 @@ wxPLdev::wxPLdev( void )
   ownGUI = false;
   waiting = false;
   resizing = false;
+  exit=false;
 
   comcount = 0;
 	newclipregion=true;
@@ -1319,10 +1323,6 @@ void install_buffer( PLStream *pls )
     /* initialize wxWidgets */
     wxInitialize();
     wxLog::GetActiveTarget();
-#ifdef __WXMSW__    
-    wxSetInstance( GetModuleHandle(NULL) );
-    wxApp::m_nCmdShow = 0;
-#endif
     wxTRY {
       wxGetApp().CallOnInit();
     }
@@ -1364,12 +1364,12 @@ void install_buffer( PLStream *pls )
  
 
 /*----------------------------------------------------------------------*\
- *  int wxRunApp( PLStream *pls, bool runonce )
+ *  void wxRunApp( PLStream *pls, bool runonce )
  *
  *  This is a hacked wxEntry-function, so that wxUninitialize is not
  *  called twice. Here we actually start the wxApplication.
 \*----------------------------------------------------------------------*/
-int wxRunApp( PLStream *pls, bool runonce )
+void wxRunApp( PLStream *pls, bool runonce )
 {
   wxPLdev* dev = (wxPLdev*)pls->dev;
   
@@ -1392,10 +1392,16 @@ int wxRunApp( PLStream *pls, bool runonce )
 		   and not for Windows, but it doesn't harm */
 	  wxIdleEvent event;
     dev->m_frame->AddPendingEvent( event );
-		return wxGetApp().OnRun();   /* start wxWidgets application     */
+		wxGetApp().OnRun();   /* start wxWidgets application     */
     callOnExit.exit=false;
   }
   wxCATCH_ALL( wxGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )
+
+  if( dev->exit ) {
+    wxGetApp().OnExit();
+    plexit("");
+  }
+
   dev->waiting=false;
 }
 
@@ -1430,6 +1436,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
                         wxCLOSE_BOX | wxRESIZE_BORDER | wxCLIP_CHILDREN ) 
 {
   // Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
+  m_dev=(wxPLdev*)pls->dev;
 
   m_panel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN );
   wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
@@ -1458,6 +1465,7 @@ void wxPLplotFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 {
   // Log_Verbose( "wxPLplotFrame::OnQuit" );
 
+  m_dev->exit=true;
   wxGetApp().ExitMainLoop();
 }
 
@@ -1531,6 +1539,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
     case 'q':
     case 'Q':
     case WXK_ESCAPE:
+      m_dev->exit=true;
       wxGetApp().SetExitFlag();
       break;
     case WXK_RETURN:
