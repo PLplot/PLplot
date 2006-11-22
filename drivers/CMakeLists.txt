@@ -69,7 +69,7 @@ if(ENABLE_DYNDRIVERS)
     target_link_libraries(
     ${SOURCE_ROOT_NAME}
     plplot${LIB_TAG}
-    m
+    ${MATH_LIB}
     ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
     ${${SOURCE_ROOT_NAME}_TARGETS}
     )
