@@ -73,5 +73,5 @@ if(ENABLE_java)
   # We're not currently using libtool so we can't use the autotools
   # trick to guess. 
   # This will definitely need changing for windows.
-  set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap.so)
+  set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif(ENABLE_java)
