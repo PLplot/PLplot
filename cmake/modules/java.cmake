@@ -69,9 +69,9 @@ if(ENABLE_java)
   # JNI .so files.
   set(JAVAWRAPPER_DIR ${LIB_DIR}/jni)
   get_filename_component(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
-  # Library name will be system dependent. For now assume .so
-  # We're not currently using libtool so we can't use the autotools
-  # trick to guess. 
-  # This will definitely need changing for windows.
+  # Library name suffix is system dependent.  Tests have shown
+  # that ${CMAKE_SHARED_LIBRARY_SUFFIX} gives the correct suffix on both
+  # Linux and windows, and from CMAKEPREFIX/share/cmake-2.4/Modules/Platform
+  # it appears this CMake variable is defined on Mac OS X and other platforms.
   set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif(ENABLE_java)
