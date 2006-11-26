@@ -68,6 +68,12 @@ if(MSVC_VERSION GREATER 1399)
   ADD_DEFINITIONS("/D_CRT_SECURE_NO_DEPRECATE")
 endif(MSVC_VERSION GREATER 1399)
 
+# in windows all created dlls are gathered in the dll directory
+# if you add this directory to your PATH all shared libraries are available
+if(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
+  SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
+endif(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
+
 # Borland Compiler must compile in ANSII mode
 if(BORLAND)
   ADD_DEFINITIONS(-A)
