@@ -97,4 +97,19 @@ DESTINATION ${DATA_DIR}/examples/c++
 RENAME Makefile
 )
 
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../c/lena.pgm lena.pgm WORKING_DIRECTORY ${DATA_DIR}/examples/c++)")
+add_custom_command(
+OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+COMMAND ${CMAKE_COMMAND} -E copy
+${CMAKE_CURRENT_SOURCE_DIR}/../c/lena.pgm
+${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../c/lena.pgm
+)
+add_custom_target(lena_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+DESTINATION ${DATA_DIR}/examples/c++
+)
+# The following attempt to create a symlink in the install tree worked, but
+# DESTDIR was not honored so use the above copy instead until we can figure
+# out a better way.
+# install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../c/lena.pgm lena.pgm WORKING_DIRECTORY ${DATA_DIR}/examples/c++)")
