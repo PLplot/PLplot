@@ -63,6 +63,7 @@ x17c.m
 x18c.m
 x19c.m
 x22c.m
+x23c.m
 lena.img
 )
 
