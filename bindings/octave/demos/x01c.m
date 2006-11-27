@@ -121,18 +121,17 @@ function plot1(xscale, yscale, xoff, yoff)
 
   m=60;
   i=1:m;
-  x = xoff + xscale * (i + 1) / m;
-  y = yoff + yscale * (x(i).^2.);
+  x = xoff + xscale * i / m;
+  y = yoff + yscale * (x.^2.);
 
   xmin = min(x);
   xmax = max(x);
   ymin = min(y);
   ymax = max(y);
 
-  n=5;
-  i=1:n;
-  xs = x(i * 10 + 3);
-  ys = y(i * 10 + 3);
+  i=0:5;
+  xs = x(i * 10 + 4);
+  ys = y(i * 10 + 4);
 
   ## Set up the viewport and window using PLENV. The range in X is 
   ## * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
@@ -169,8 +168,7 @@ function plot2
 
   ## Fill up the arrays */
 
-  m=100;
-  i=1:m;
+  i=0:99;
   x = (i - 19.0) / 6.0;
   y = sin(x) ./ x;
   y(x==0) = 1;
@@ -214,7 +212,7 @@ function plot3
   plcol0(3);
   pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
-  i=1:100;
+  i=0:100;
   x = 3.6 * i;
   y = sin(x * pi / 180.0);
 
