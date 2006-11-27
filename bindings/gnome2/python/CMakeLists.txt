@@ -30,8 +30,8 @@ OUTPUT_VARIABLE PYGTK_DEFS
 # Use sed to rename PLINT and PLFLT so that h2def.py knows what to do.
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gcw.defs
-COMMAND ${codegen}/h2def.py
-ARGS
+COMMAND $(PYTHON_EXECUTABLE}
+${codegen}/h2def.py
 ${CMAKE_SOURCE_DIR}/include/gcw.h
 | sed -e s/PLINT/gint32/ -e s/PLFLT/double/
 > ${CMAKE_CURRENT_BINARY_DIR}/gcw.defs
@@ -40,7 +40,6 @@ ${CMAKE_SOURCE_DIR}/include/gcw.h
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gcw.c
 COMMAND pygtk-codegen-2.0
-ARGS
 --prefix gcw --override 
 ${CMAKE_CURRENT_SOURCE_DIR}/gcw.override
 ${CMAKE_CURRENT_BINARY_DIR}/gcw.defs
@@ -61,8 +60,8 @@ gcwmodule.c
 # Use sed to rename PLINT and PLFLT so that h2def.py knows what to do.
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
-COMMAND ${codegen}/h2def.py
-ARGS
+COMMAND ${PYTHON_EXECUTABLE}
+${codegen}/h2def.py
 ${CMAKE_SOURCE_DIR}/include/plplotcanvas.h
 | sed -e s/PLINT/gint32/ -e s/PLFLT/double/
 > ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
@@ -71,7 +70,6 @@ ${CMAKE_SOURCE_DIR}/include/plplotcanvas.h
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/cplplotcanvas.c
 COMMAND pygtk-codegen-2.0
-ARGS
 --prefix cplplotcanvas
 --register ${PYGTK_DEFS}/gdk.defs
 --register ${PYGTK_DEFS}/gtk.defs
