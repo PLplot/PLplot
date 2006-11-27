@@ -52,7 +52,7 @@ function plot1(type)
   ## Set up data for log plot */
 
   f0 = 1.0;
-  i=1:100;
+  i=0:100;
   freql = -2.0 + i / 20.0;
   freq = 10.0 .^ freql;
   ampl = 20.0 * log10(1.0 ./ sqrt(1.0 + (freq ./ f0).^ 2.));
