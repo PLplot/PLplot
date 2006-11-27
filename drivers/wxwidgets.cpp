@@ -464,6 +464,8 @@ plD_init_wxwidgets( PLStream *pls )
 #ifdef HAVE_FREETYPE
   static int freetype=1;
   static int smooth_text=1;
+#endif
+#ifdef HAVE_AGG
 	static int antialized=0;
 #endif
 
@@ -496,9 +498,13 @@ DrvOpt wx_options[] = {
 
   /* Check for and set up driver options */
   plParseDrvOpts( wx_options );
-  dev->antialized=antialized;
+#ifdef HAVE_FREETYPE
 	dev->smooth_text=smooth_text;
 	dev->freetype=freetype;
+#endif
+#ifdef HAVE_AGG
+  dev->antialized=antialized;
+#endif
 
   pls->color = 1;		/* Is a color device */
   pls->dev_fill0 = 1;		/* Can handle solid fills */
