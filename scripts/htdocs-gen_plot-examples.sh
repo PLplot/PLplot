@@ -25,28 +25,36 @@
 build=${build:-true}
 
 if test "$build" = true; then
-    make clean
-    make configure
-
-    ./configure --disable-static --enable-dyndrivers --prefix=/tmp/plplot \
-    --disable-cxx --disable-python --disable-java --disable-itcl \
-    --disable-octave --enable-f77 --enable-psttf --enable-psttfc
-
+#    make clean
+#    make configure
+#
+#    ./configure --disable-static --enable-dyndrivers --prefix=/tmp/plplot \
+#    --disable-cxx --disable-python --disable-java --disable-itcl \
+#    --disable-octave --enable-f77 --enable-psttf --enable-psttfc
+#
+    rm -rf htdocsgen/build_dir htdocsgen/install
+    mkdir -p htdocsgen/build_dir htdocsgen/install
+    cd htdocsgen/build_dir
+    # Specifically enable f77 so that examples will be generated.
+    cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../install \
+    -DENABLE_cxx=OFF -DENABLE_f77=ON -DENABLE_f95=OFF \
+    -DENABLE_python=OFF -DENABLE_java=OFF \
+    -DENABLE_tcl=OFF -DENABLE_octave=OFF \
+    -DDEFAULT_NO_DEVICES=ON -DPLD_png=ON -DPLD_psttf=ON \
+    ../../
     make
     make install
+    cd ../..
 fi
 
-# remove htdocs directory, left from a previous script execution
-rm -rf htdocs
-
-# for all C demos executables:
-(cd examples/c; make check)
+EXDIR=htdocs/examples-data
+pushd htdocsgen/install/share/plplot*/examples/c
+export cexamples_dir=`pwd`
+make
+popd
 
 # hack, x20c needs lena in the current directory
 cp examples/c/lena.pgm .
-
-EXDIR=htdocs/examples-data
-TTFDIR=/usr/share/fonts/truetype
 
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25; do
 
@@ -59,18 +67,12 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25;
 	else
 	    SMOOTH=1
 	fi
-        examples/c/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
+        $cexamples_dir/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
 	    -o x${exe} -fam -fflen 2;
-        examples/c/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
+        $cexamples_dir/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
 	    -o prev-x${exe} -fam -fflen 2 -geometry 200x150;
     else
-      # Temporary workaround for CTL problem with -dev png
-      PLPLOT_FREETYPE_SANS_FONT=$TTFDIR/arphic/bkai00mp.ttf		    \
-      PLPLOT_FREETYPE_SERIF_FONT=$TTFDIR/freefont/FreeSerif.ttf 	    \
-      PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-indic-fonts/lohit_hi.ttf	    \
-      PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf		    \
-      PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bangla-fonts/JamrulNormal.ttf \
-      examples/c/x24c -dev psttfc -o test.ps
+      $cexamples_dir/x24c -dev psttfc -o test.ps
       convert -rotate 90 test.ps -geometry 800x600 x24.01.png
       convert -rotate 90 test.ps -geometry 200x150 prev-x24.01.png
       rm test.ps
@@ -87,10 +89,12 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25;
 
     # move to www directory.
     echo populating www directory demo${exe}
+    rm -rf $EXDIR/demo${exe}
     mkdir -p $EXDIR/demo${exe}
-    mv *${exe}.??.png $EXDIR/demo${exe}/
+    mv *${exe}.??.png $EXDIR/demo${exe}
+    # Note fortran 77 examples grabbed from installed examples.
     for f in examples/c/x${exe}c.c examples/tcl/x${exe}.tcl		\
-             examples/java/x${exe}.java examples/f77/x${exe}f.f		\
+             examples/java/x${exe}.java cexamples_dir/../f77/x${exe}f.f		\
              bindings/octave/demos/x${exe}c.m				\
              examples/python/xw${exe}.py examples/c++/x${exe}.cc	\
              examples/perl/x${exe}.pl ; do
@@ -104,7 +108,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25;
 
     # rename executables, to avoid browsers trying to execute files
     # instead of showing them.
-    (cd  htdocs/examples-data/demo${exe};
+    (cd  $EXDIR/demo${exe};
     for j in *.c *.cc *.f *.m *.tcl *.java *.py *.pl; do
 	    mv $j $j-
     done
