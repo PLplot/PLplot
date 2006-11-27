@@ -110,7 +110,7 @@ static Tcl_HashTable cmdTable;
 
 /* Variables for holding error return info from PLplot */
 
-static PLINT errcode;
+static PLINT pl_errcode;
 static char errmsg[160];
 
 /* Library initialization */
@@ -192,7 +192,7 @@ plTclCmd_Init(Tcl_Interp *interp)
 
 /* Register our error variables with PLplot */
 
-    plsError(&errcode, errmsg);
+    plsError(&pl_errcode, errmsg);
 
 /* Initialize hash table */
 
@@ -243,7 +243,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
     register Tcl_HashEntry *hPtr;
     int result = TCL_OK;
 
-    errcode = 0; errmsg[0] = '\0';
+    pl_errcode = 0; errmsg[0] = '\0';
 
 /* Create hash table on first call */
 
@@ -274,7 +274,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
 	register Command *cmdPtr = (Command *) Tcl_GetHashValue(hPtr);
 	result = (*cmdPtr->proc)(cmdPtr->clientData, interp, argc, argv);
 	if (result == TCL_OK) {
-	    if (errcode != 0) {
+	    if (pl_errcode != 0) {
 		result = TCL_ERROR;
 		Tcl_AppendResult(interp, errmsg, (char *) NULL);
 	    }
@@ -521,7 +521,7 @@ Pltcl_Init( Tcl_Interp *interp )
 
 /* Register our error variables with PLplot */
 
-    plsError(&errcode, errmsg);
+    plsError(&pl_errcode, errmsg);
 
 /* PLplot API commands */
 

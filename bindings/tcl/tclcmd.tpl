@@ -9,7 +9,7 @@ static int
 {
 <argdecls>
 
-    errcode = 0; errmsg[0] = '\0';
+    pl_errcode = 0; errmsg[0] = '\0';
 
     if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
 	Tcl_AppendResult( interp, "command syntax: \"",
@@ -33,7 +33,7 @@ static int
 
 <fetch_result>
 
-    if (errcode != 0) {
+    if (pl_errcode != 0) {
 	Tcl_AppendResult(interp, errmsg, (char *) NULL);
 	return TCL_ERROR;
     }
