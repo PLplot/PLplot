@@ -125,6 +125,12 @@ if(PLD_gcw AND ENABLE_pygcw)
   pkgconfig(pygtk-2.0 includedir libdir linkflags cflags)
   if(linkflags AND cflags)
     pkgconfig(gnome-python-2.0 includedir libdir linkflags1 cflags1)
+    # This logic needs review.  It was copied right out of cf/gcw.ac
+    # which checks for the existence of gnome-python-2.0 but uses no
+    # compile or link flag returned by that check.  That made sense
+    # at the time because the returned values were blank, but now (2006-11-27)
+    # Ubuntu dapper drake, for example, returns an interesting value
+    # "-I/usr/include/gnome-python-2.0" for --cflags1.
     if(linkflags1 AND cflags1)
       set(PYGCW_CFLAGS "${cflags}")
       set(PYGCW_LIBS "${linkflags}")
