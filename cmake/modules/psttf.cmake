@@ -50,7 +50,7 @@ endif(PLD_psttf)
 
 if(PLD_psttf)
   pkgconfig("pango;pangoft2;lasi" includedir libdir linkflags cflags)
-  if(linkflags AND cflags)
+  if(linkflags AND cflags AND libdir)
     set(psttf_COMPILE_FLAGS "${cflags}")
     set(psttf_LINK_FLAGS "${linkflags}")
     # Convert from blank-delimited to a cmake list
@@ -70,14 +70,18 @@ if(PLD_psttf)
     ${psttf_LINK_FLAGS}
     ${psttf_TARGETS}
     )
-  else(linkflags AND cflags)
+  else(linkflags AND cflags AND libdir)
+    #message("includedir = ${includedir}")
+    #message("libdir = ${libdir}")
+    #message("linkflags = ${linkflags}")
+    #message("cflags = ${cflags}")
     message(STATUS
        "WARNING: pango, pangoft2, or lasi not found with pkg-config.\n"
     "   Setting PLD_psttf to OFF.  Please install all of these packages\n"
     "   and/or set the environment variable PKG_CONFIG_PATH appropriately."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
-  endif(linkflags AND cflags)
+  endif(linkflags AND cflags AND libdir)
 endif(PLD_psttf)
 # Test for correct version of liblasi by looking
 # for API that was added for 1.0.5 which is required by PLplot.???
