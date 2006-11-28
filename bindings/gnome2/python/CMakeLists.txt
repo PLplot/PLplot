@@ -30,7 +30,7 @@ OUTPUT_VARIABLE PYGTK_DEFS
 # Use sed to rename PLINT and PLFLT so that h2def.py knows what to do.
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gcw.defs
-COMMAND $(PYTHON_EXECUTABLE}
+COMMAND ${PYTHON_EXECUTABLE}
 ${codegen}/h2def.py
 ${CMAKE_SOURCE_DIR}/include/gcw.h
 | sed -e s/PLINT/gint32/ -e s/PLFLT/double/
