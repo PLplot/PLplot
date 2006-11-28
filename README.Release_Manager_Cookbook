@@ -66,7 +66,7 @@ Verify that your computer has the right date and time using the command date.
 
 
 Change directory to your plplot cvs directory and enter the following command:
-  ./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee build.log 
+./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee build.log 
 
 This script will take a several minutes to execute and will ask you for
 your SourceForge password several times. The script does not otherwise
@@ -84,6 +84,11 @@ above command finishes executing you should go to this directory and verify
 that the examples build and that plplot_test.sh executes without errors.
 
 
+Install the documentation on the PLplot website:
+cd /tmp/plplot-dist-prep/build_dir/doc/docbook/src
+make www-install
+
+
 Tag the cvs repository (go back to the cvs plplot directory):
 cvs rtag -r cvs-tarball-<date>-<time> vX_X_X plplot
 
@@ -91,13 +96,10 @@ Where cvs-tarball-<date>-<time> was obtained earlier (you can also get
 this from the build.log file).
 
 
-Upload the tarball to the cvs release page:
-GPGKEY=YYYYYYYY ./scripts/upload-cvs-tarball /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
+Sign the release with your plplot Release Manager gpg key:
+gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
 
-A file called <tarball>.asc containing the detached GPG signature will also
-be generated and uploaded. The environment variable GPGKEY specifies which
-GPG key to use to sign the tarball. A list of GPG keys can be obtained with
-via the command "gpg --list-keys".
+A list of your GPG keys can be obtained using the command "gpg --list-keys".
 
 
 Prepare the ChangeLog file:
@@ -159,4 +161,17 @@ changed).
 Click on submit.
 
 
+Update the project web page, including the examples:
+edit www/index.html to include a link to the latest release.
+edit www/examples/index.html.in to reflect the current release number.
+commit the updated pages to cvs.
+
+Create a directory containing a fresh cvs checkout of PLplot, including the 
+www scripts. Run the following commands in that directory:
+./scripts/htdocs-gen_plot-examples.sh
+cd www
+make
+
+
+DONE!!!
 
