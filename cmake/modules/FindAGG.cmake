@@ -20,6 +20,10 @@ else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
     INCLUDE(UsePkgConfig)
     
     PKGCONFIG(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags)
+    #message(STATUS "_AGGIncDir = ${_AGGIncDir}")
+    #message(STATUS "_AGGLinkDir = ${_AGGLinkDir}")
+    #message(STATUS "_AGGLinkFlags = ${_AGGLinkFlags}")
+    #message(STATUS "_AGGCflags = ${_AGGCflags}")
     
     set(AGG_DEFINITIONS ${_AGGCflags})
   endif(PKGCONFIG_EXECUTABLE)
