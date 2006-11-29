@@ -177,12 +177,11 @@ static inline void NOOP_(id x, ...) {;}
 
 /* helper functions */
 
-void get_cursor(PLStream *, PLGraphicsIn *);
-void proc_str (PLStream *, EscText *);
+static void get_cursor(PLStream *, PLGraphicsIn *);
+static void proc_str (PLStream *, EscText *);
 NSMutableAttributedString * create_string(const PLUNICODE *, int, PLFLT);
-void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
-//char * UCS4_to_UTF8(const PLUNICODE);
-void check_font_environment_variables(void);
+static void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
+static void check_font_environment_variables(void);
 
 /* PLplot interface functions */
 

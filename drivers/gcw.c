@@ -882,7 +882,7 @@ static void fill_polygon (PLStream* pls)
  * This routine is unicode enabled, and requires freetype.
 \*--------------------------------------------------------------------------*/
 
-void proc_str(PLStream *pls, EscText *args)
+static void proc_str(PLStream *pls, EscText *args)
 {
   PLFLT *t = args->xform; /* Transform matrix for string */
 

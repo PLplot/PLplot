@@ -68,29 +68,29 @@ static char curColor[7];
 
 /* Functions for writing XML SVG tags to a file */
 
-void svg_open(char *);
-void svg_open_end(void);
-void svg_attr_value(char *, char *);
-void svg_attr_values(char *, char *, ...);
-void svg_close(char *);
-void svg_general(char *);
-void svg_indent(void);
-void svg_stroke_width(PLStream *);
-void svg_stroke_color(PLStream *);
-void svg_fill_color(PLStream *);
-void svg_fill_background_color(PLStream *);
+static void svg_open(char *);
+static void svg_open_end(void);
+static void svg_attr_value(char *, char *);
+static void svg_attr_values(char *, char *, ...);
+static void svg_close(char *);
+static void svg_general(char *);
+static void svg_indent(void);
+static void svg_stroke_width(PLStream *);
+static void svg_stroke_color(PLStream *);
+static void svg_fill_color(PLStream *);
+static void svg_fill_background_color(PLStream *);
 
 /* General */
 
-void poly_line(PLStream *, short *, short *, PLINT, short);
-void write_hex(unsigned char);
-void write_unicode(PLUNICODE);
-short desired_offset(short, double);
-void specify_font(PLUNICODE);
+static void poly_line(PLStream *, short *, short *, PLINT, short);
+static void write_hex(unsigned char);
+static void write_unicode(PLUNICODE);
+static short desired_offset(short, double);
+static void specify_font(PLUNICODE);
 
 /* String processing */
 
-void proc_str(PLStream *, EscText *);
+static void proc_str(PLStream *, EscText *);
 
 /* PLplot interface functions */
 
