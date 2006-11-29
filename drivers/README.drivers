@@ -16,7 +16,6 @@ The following are some short notes on what you need to add to these files
 to add a new driver (which we'll call foo) to PLplot.
 
 1. Add the following 2 lines to config.h.cmake:
-
 /* Define if foo driver is present */
 #cmakedefine PLD_foo
 
@@ -26,6 +25,18 @@ Note that drivers are listed in alphabetical order.
 "foo:foo:ON"
 
 This is also (mostly) in alphabetical order.
+
+3. Add the following line to drivers.h:
+void plD_dispatch_init_foo      ( PLDispatchTable *pdt );
+
+4. Add the following line to plDevs.h.cmake
+#cmakedefine PLD_foo
+
+5. Add the following 3 lines to plcore.h:
+#if defined(PLD_foo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_foo,
+#endif
+
 
 If the driver requires additional additional files or external libraries for
 compiling and linking then you should add a file called foo.cmake to
