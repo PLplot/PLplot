@@ -173,5 +173,9 @@ cd www
 make
 
 
+Remove the temporary tags on the CVS archives:
+./scripts/rm-cvs-tarball-tags.pl
+
+
 DONE!!!
 
