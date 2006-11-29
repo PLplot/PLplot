@@ -906,6 +906,10 @@ void c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
 void c_plhls(PLFLT h, PLFLT l, PLFLT s); //%name plhls
 
+/* Function for converting between HLS and RGB color space */
+
+void c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b); //%name plhlsrgb //%output p_r, p_g, p_b
+
 /* Initializes PLplot, using preset or default options */
 
 void c_plinit(void); //%name plinit
@@ -1036,6 +1040,10 @@ void c_plrgb(PLFLT r, PLFLT g, PLFLT b); //%name plrgb
 /* Set line color by 8 bit RGB values. */
 
 void c_plrgb1(PLINT r, PLINT g, PLINT b); //%name plrgb1
+
+/* Function for converting between HLS and RGB color space */
+
+void c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s); //%name plrgbhls //%output p_h, p_l, p_s
 
 /* Set character height. */
 
@@ -1195,7 +1203,7 @@ void my_plshades(PLFLT *a, PLINT nx, PLINT ny,
 
 	f2c(a,aa,nx,ny);
 	c_plshades(aa, nx, ny, NULL, left, right, bottom, top,
-		clevel, nlevel-1, fill_width, cont_color, cont_width,
+		clevel, nlevel, fill_width, cont_color, cont_width,
 		plfill, rectangular, NULL, NULL);
 }  //%name plshades //%input a(nx, ny), clevel(nlevel)
 
@@ -1535,12 +1543,6 @@ void plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny); //%nowrap
 /* Frees a block of memory allocated with plAlloc2dGrid(). */
 
 void plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);  //%nowrap
-
-/* Functions for converting between HLS and RGB color space */
-
-void plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b); //%output p_r, p_g, p_b
-
-void plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s); //%output p_h, p_l, p_s
 
 /* Wait for graphics input event and translate to world coordinates */
 
