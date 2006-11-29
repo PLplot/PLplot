@@ -37,7 +37,7 @@ function x05c
   ## Fill up data points */
 
   delta = 2.0 * pi /  NPTS;
-  i=1:NPTS;
+  i=0:NPTS-1;
   data = sin(i * delta);
   
   plcol0(1);

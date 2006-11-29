@@ -196,6 +196,12 @@ function ix09c
 	  global	tr
 
 	  clevel = linspace(-1,1,11)';
+	  ## Hack to ensure that zero contour really is zero
+	  ## and not a very small number.
+	  ## For me problem only occurs on i386 32 bit Debian 3.1 
+	  ## with octave 2.1.69.
+	  ## 64-bit Ubuntu Dapper with octave 2.1.72 seems ok.
+	  clevel(6) = 0.0;
 
 	  mark = 1500; space = 1500;
 
