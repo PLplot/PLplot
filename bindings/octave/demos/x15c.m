@@ -49,10 +49,10 @@ function ix15c
 
   ## Set up data array */
 
-  for i = 0:XPTS-1
-    xx = (i - (XPTS / 2)) / (XPTS / 2);
-    for j = 0:YPTS-1
-      yy = (j - (YPTS / 2)) / (YPTS / 2) - 1.0;
+  for i = 0:XPTS-1;
+      xx = (i - fix(XPTS / 2)) / fix(XPTS / 2);
+    for j = 0:YPTS-1;
+      yy = (j - fix(YPTS / 2)) / fix(YPTS / 2) - 1.0;
       z(i+1,j+1) = xx*xx - yy*yy + (xx - yy)/(xx*xx+yy*yy + 0.1);
     endfor
   endfor

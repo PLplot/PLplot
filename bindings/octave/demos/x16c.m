@@ -68,9 +68,9 @@ function ix16c
   ## Set up data array 
 
   for i = 0:nx-1
-    x = (i - (nx / 2)) / (nx / 2);
+    x = (i - fix(nx / 2)) / fix(nx / 2);
     j = 0:ny-1;
-    y = (j .- (ny / 2)) ./ (ny / 2) - 1.0;
+    y = (j .- fix(ny / 2)) ./ fix(ny / 2) - 1.0;
 
     z(i+1,:) = - sin(7.*x) .* cos(7.*y) .+ x*x - y.*y;
     w(i+1,:) = - cos(7.*x) .* sin(7.*y) .+ 2 .* x .* y;
@@ -81,6 +81,7 @@ function ix16c
 
   i = 0:ns-1;
   clevel = (zmin .+ (zmax - zmin) .* (i + 0.5) ./ ns)';
+  i = 0:ns;
   shedge = zmin + (zmax - zmin) * i / ns;
   
   ## Set up coordinate grids 
@@ -115,13 +116,13 @@ function ix16c
 	   cont_color, cont_width,
 	   1);
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol(2);
+  plcol0(2);
   
   ## plcont(w, 1, nx, 1, ny, clevel, tr);
   
-  pllab("distance", "altitude", "Bogon density 1");
+  pllab("distance", "altitude", "Bogon density");
 
   ## Plot using 1d coordinate transform 
 
@@ -135,13 +136,13 @@ function ix16c
 	    cont_color, cont_width,
 	    1, xg1, yg1);
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol(2);
+  plcol0(2);
 
   ## plcont1(w, 1, nx, 1, ny, clevel, xg1, yg1);
 
-  pllab("distance", "altitude", "Bogon density 2");
+  pllab("distance", "altitude", "Bogon density");
 
   ## Plot using 2d coordinate transform 
 
@@ -155,9 +156,9 @@ function ix16c
 	    cont_color, cont_width,
 	    0, xg2, yg2);
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol(2);
+  plcol0(2);
   plcont2(w, 1, nx, 1, ny, clevel, xg2, yg2);
 
   pllab("distance", "altitude", "Bogon density, with streamlines");
@@ -174,12 +175,12 @@ function ix16c
 	    2, 3,
 	    0, xg2, yg2);
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol(2);
+  plcol0(2);
   ## plcont2(w, 1, nx, 1, ny, clevel, xg2, yg2);
 
-  pllab("distance", "altitude", "Bogon density, with streamlines");
+  pllab("distance", "altitude", "Bogon density");
 
   ## Note this exclusion API will probably change. 
   
@@ -195,9 +196,9 @@ function ix16c
 	      cont_color, cont_width,
 	      0, xg2, yg2);
 
-    plcol(1);
+    plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-    pllab("distance", "altitude", "Bogon density, with streamlines");
+    pllab("distance", "altitude", "Bogon density with exclusion");
   endif
 
 ### Example with polar coordinates. 

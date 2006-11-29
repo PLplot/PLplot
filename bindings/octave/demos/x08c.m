@@ -68,8 +68,8 @@ endfunction
 
     rosen = 1;
 
-    x = ((0:XPTS-1) - (XPTS / 2)) / (XPTS / 2);
-    y = ((0:YPTS-1) - (YPTS / 2)) / (YPTS / 2);
+    x = ((0:XPTS-1) - fix(XPTS / 2)) / fix(XPTS / 2);
+    y = ((0:YPTS-1) - fix(YPTS / 2)) / fix(YPTS / 2);
     if (rosen)
       x = x * 1.5;
       y = y + 0.5;

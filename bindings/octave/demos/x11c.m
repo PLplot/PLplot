@@ -50,8 +50,8 @@ function ix11c
   alt = [33, 17]';
   az = [24, 115]';
 
-  title = ["#frPLplot Example 11 - Alt=33, Az=33, Opt=3",
-	   "#frPLplot Example 11 - Alt=24, Az=115, Opt=3"];
+  title = ["#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
+	   "#frPLplot Example 11 - Alt=17, Az=115, Opt=3"];
 
   ## Parse and process command line arguments */
 
@@ -60,8 +60,9 @@ function ix11c
   ## Initialize plplot */
   plinit();
 
-  xx = linspace(-3, 3, XPTS);
-  yy = linspace(-3, 3, YPTS);
+  xx = 3.0*((0:XPTS-1) - fix(XPTS / 2)) / fix(XPTS / 2);
+  yy = 3.0*((0:YPTS-1) - fix(YPTS / 2)) / fix(YPTS / 2);
+
   [x,y] = meshgrid (xx,yy);
 
   z = 3 * (1-x).^2 .* exp(-(x.^2) - (y+1).^2) - ...
@@ -102,7 +103,7 @@ function ix11c
       endswitch
 
       plcol0(3);
-      plmtex("t", 1.0, 0.5, 0.5, title(k,:));
+      plmtex("t", 1.0, 0.5, 0.5, deblank(title(k,:)));
     endfor
   endfor
   plend1();

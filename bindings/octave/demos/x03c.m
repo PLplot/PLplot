@@ -31,7 +31,7 @@ function x03c
 
   dtr = pi / 180.0;
 
-  i=1:360;
+  i=0:360;
   x0 = cos(dtr * i);
   y0 = sin(dtr * i);
   
@@ -63,7 +63,7 @@ function x03c
 
     ## Write labels for angle */
 
-    if (dx >= 0)
+    if (dx >= -0.00001)
       plptex(dx, dy, dx, dy, -0.15, text);
     else
       plptex(dx, dy, -dx, -dy, 1.15, text);
@@ -72,7 +72,7 @@ function x03c
 
   ## Draw the graph */
 
-  i=1:360;
+  i=0:360;
   r = sin(dtr * (5 * i));
   x = x0 .* r;
   y = y0 .* r;

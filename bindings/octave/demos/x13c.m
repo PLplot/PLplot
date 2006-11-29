@@ -13,7 +13,7 @@
 ##
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
-# Does a simple pie chart.
+## Does a simple pie chart.
 
 function x13c
 
@@ -69,8 +69,6 @@ function x13c
     endfor
     plcol(i+1);
     plpsty(rem((i + 3), 8) + 1);
-    x(j+1:rows(x))=[];
-    y(j+1:rows(y))=[];
     plfill(x', y');
     plcol(1);
     plline(x', y');
@@ -81,8 +79,8 @@ function x13c
     else 
       just = 1.;
     endif
-    plptex((x((j / 2) +1) + dx), (y((j / 2) +1) + dy), 1.0, 0.0, just, text(i+1,:));
-    theta0 = theta - dthet;
+    plptex((x((j / 2) +1) + dx), (y((j / 2) +1) + dy), 1.0, 0.0, just, deblank(text(i+1,:)));
+    theta0 = theta;
   endfor
   plfont(2);
   plschr(0., 1.3);

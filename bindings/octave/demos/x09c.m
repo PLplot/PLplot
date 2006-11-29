@@ -65,7 +65,7 @@ function _polar
 
   plcol0(2);
   plcont2(z, 1, RPTS, 1, THETAPTS, lev, xg', yg');
-
+  plcol0(1);
   pllab("", "", "Polar Contour Plot");
 endfunction
 
@@ -210,8 +210,8 @@ function ix09c
 	  ## Set up function arrays 
 
 	  for i=0:XPTS-1
-	    xx = (i - (XPTS / 2)) /  (XPTS / 2);
-	    yy = ((0:YPTS-1) - (YPTS / 2)) / (YPTS / 2) - 1.0;
+	    xx = (i - fix(XPTS / 2)) /  fix(XPTS / 2);
+	    yy = ((0:YPTS-1) - fix(YPTS / 2)) / fix(YPTS / 2) - 1.0;
 	    z(i+1,:) = xx * xx - yy .* yy;
 	    w(i+1,:) = 2 * xx .* yy;
 	  endfor

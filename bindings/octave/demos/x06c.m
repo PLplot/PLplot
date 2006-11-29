@@ -43,7 +43,7 @@ function x06c
 
   ## Draw the grid using plbox */
 
-  plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0);
+  plbox("bcg", 0.1, 0, "bcg", 0.1, 0);
 
   ## Write the digits below the frame */
 
@@ -64,8 +64,7 @@ function x06c
       x = 0.1 * j + 0.05;
       y = 1.25 - 0.1 * i;
 
-      ## Display the symbols (plpoin expects that x and y are arrays so */
-      ## pass pointers) */
+      ## Display the symbols
 
       if (k < 128)
 	plpoin(x, y, k);
