@@ -1072,7 +1072,7 @@ plfntld(PLINT fnt)
 	pdfs = plLibOpenPdfstrm(PL_SFONT);
 
     if (pdfs == NULL)
-	plexit("Unable to open or allocate memory for font file");
+	plexit("Unable to either (1) open/find or (2) allocate memory for the font file");
 
 /* Read fntlkup[] */
 
