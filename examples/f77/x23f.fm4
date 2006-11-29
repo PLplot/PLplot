@@ -97,22 +97,22 @@ C
       data (title(i) ,i=1,11 )/
      & "#<0x10>PLplot Example 23 - Greek Letters",
      & "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode
-     &(a)",
+     & (a)",
      & "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode
-     &(b)",
+     & (b)",
      & "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode
-     &(c)",
+     & (c)",
      & "#<0x10>PLplot Example 23 - Number Forms Unicode Block",
      & "#<0x10>PLplot Example 23 - Arrows Unicode Block (a)",
      & "#<0x10>PLplot Example 23 - Arrows Unicode Block (b)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     &(a)",
+     & (a)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     &(b)",
+     & (b)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     &(c)",
+     & (c)",
      & "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block
-     &(d)" /
+     & (d)" /
 
       data (lo(i) ,i=1,11) /
      &  z'0',
