@@ -194,6 +194,12 @@ plbuf_tidy(PLStream *pls)
 
     fclose(pls->plbufFile)
     pls->plbufFile = NULL;
+#else
+    if (pls->plbuf_buffer == NULL) 
+	return;
+
+    free(pls->plbuf_buffer);
+    pls->plbuf_buffer = NULL;
 #endif
 }
 
@@ -929,8 +935,12 @@ wr_data(PLStream *pls, void *buf, size_t buf_size)
     plio_fwrite(buf, buf_size, 1, pls->plbufFile);
 #else
     if ((pls->plbuf_top + buf_size) >= pls->plbuf_buffer_size) {
-    /* Not enough space, need to grow the buffer */
-        pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
+        /* Not enough space, need to grow the buffer */
+	/* Must make sure the increase is enough for this data */
+        pls->plbuf_buffer_size += pls->plbuf_buffer_grow *
+		((pls->plbuf_top + buf_size - pls->plbuf_buffer_size) / 
+			pls->plbuf_buffer_grow + 1);
+	while (pls->plbuf_top + buf_size >= pls->plbuf_buffer_size);
 
         if ((pls->plbuf_buffer = realloc(pls->plbuf_buffer, pls->plbuf_buffer_size)) == NULL) 
             plexit("plbuf wr_data:  Plot buffer grow failed");
