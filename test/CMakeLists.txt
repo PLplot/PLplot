@@ -1,3 +1,7 @@
+# Only set up test environment, configure test files, and install them if
+# a shell is available.
+
+if(SH_EXECUTABLE)
 
 set(TEST_ENVIRONMENT
   "EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples PLPLOT_LIB=${CMAKE_SOURCE_DIR}/data/"
@@ -117,3 +121,5 @@ FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
 DESTINATION ${DATA_DIR}/examples
 PERMISSIONS ${PERM_SCRIPTS}
 )
+
+endif(SH_EXECUTABLE)
