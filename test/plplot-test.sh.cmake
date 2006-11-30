@@ -44,7 +44,7 @@ export EXAMPLES_DIR SRC_EXAMPLES_DIR OUTPUT_DIR device
 
 usage()
 {
-   cat <<EOF
+echo '
 Usage: plplot-test.sh [OPTIONS]
 
 Options:
@@ -71,15 +71,22 @@ Environment variables:
    when that tree is separated from the source tree), and output directory.
    These environment variables are overridden by the options --device,
    --front-end, --examples-dir, --src-examples-dir, and --output-dir.
-EOF
+'
    exit $1
 }
 
 while test $# -gt 0; do
-   case "$1" in
-   -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
-   *) optarg= ;;
-   esac
+   if test "@HAVE_BASH@" = ON ; then
+      case "$1" in
+      -*=*) optarg=${1#*=} ;;
+      *) optarg= ;;
+      esac
+   else
+      case "$1" in
+      -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+      *) optarg= ;;
+      esac
+   fi
 
    case $1 in
       --device=*)
@@ -127,11 +134,11 @@ done
 # with a subdirectory called "c".  Check whether this conditions is true.
 
 if test ! -d $EXAMPLES_DIR/c ; then
-cat << EOF
+echo '
 This script is only designed to work when the EXAMPLES_DIR environment
 variable (overridden by option --examples-dir) is a directory with a
 subdirectory called "c".  This condition has been violated.
-EOF
+'
 exit 1
 fi
 
