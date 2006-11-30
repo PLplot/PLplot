@@ -102,9 +102,10 @@ if(NOT STDC_HEADERS)
   set(STDC_HEADERS 0 CACHE INTERNAL "System has ANSI C header files")
 endif(NOT STDC_HEADERS)
 
-# AC_CHECK_HEADERS(unistd.h termios.h)
+# AC_CHECK_HEADERS(unistd.h termios.h stdint.h)
 check_include_files(unistd.h HAVE_UNISTD_H)
 check_include_files(termios.h HAVE_TERMIOS_H)
+check_include_files(stdint.h HAVE_STDINT_H)
 
 # AC_HEADER_SYS_WAIT
 include(TestForStandardHeaderwait)
