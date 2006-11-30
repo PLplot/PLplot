@@ -147,8 +147,10 @@
 
 #if defined(MSDOS)
 typedef long PLINT;
+typedef unsigned long PLUNICODE;
 #else
 typedef int PLINT;
+typedef unsigned PLUNICODE;
 #endif
 
 /* For identifying logical (boolean) arguments */
@@ -433,6 +435,7 @@ typedef struct {
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
 #define    plxormod	c_plxormod
+#define    plcalc_world	c_plcalc_world
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
 #define    pl_setcontlabelparam c_pl_setcontlabelparam
@@ -459,6 +462,7 @@ typedef struct {
 #define    plgdiori	c_plgdiori
 #define    plgdiplt	c_plgdiplt
 #define    plgfam	c_plgfam
+#define    plgfci	c_plgfci
 #define    plgfnam	c_plgfnam
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
@@ -467,6 +471,8 @@ typedef struct {
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
 #define    plgver	c_plgver
+#define    plgvpd	c_plgvpd
+#define    plgvpw	c_plgvpw
 #define    plgxax	c_plgxax
 #define    plgyax	c_plgyax
 #define    plgzax	c_plgzax
@@ -517,6 +523,7 @@ typedef struct {
 #define    plsdiori	c_plsdiori
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
+#define    plsfci	c_plsfci
 #define    plsfnam	c_plsfnam
 #define    plshades	c_plshades
 #define    plshade	c_plshade
@@ -620,9 +627,13 @@ void c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 void c_plxormod(PLINT mode, PLINT *status); //%name plxormod //%output status
 
+/* Calculate world coordinates and subpage from relative device coordinates. */
+
+void c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window); //%name plcalc_world //%output wx, wy, window
+
 /* Clear current subpage. */
 
-  void c_plclear(void); //%name plclear
+void c_plclear(void); //%name plclear
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
@@ -811,7 +822,7 @@ void c_plgcolbg(PLINT *r, PLINT *g, PLINT *b); //%name plgcolbg //%output r, g, 
 
 /* Returns the current compression setting */
 
-void c_plgcompression(PLINT *compression); //%name plgcompression
+void c_plgcompression(PLINT *compression); //%name plgcompression  //%output compression
 
 /* Get the current device (keyword) name */
 
@@ -828,6 +839,10 @@ void c_plgdiori(PLFLT *p_rot); //%name plgdiori //%output p_rot
 /* Retrieve current window into plot space */
 
 void c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax); //%name plgdiplt //%output p_xmin, p_ymin, p_xmax, p_ymax
+
+/* Get FCI (font characterization integer) */
+
+void c_plgfci(PLUNICODE *pfci); //%name plgfci //%output pfci
 
 /* Get family file parameters */
 
@@ -884,6 +899,14 @@ void c_plgstrm(PLINT *p_strm); //%name plgstrm //%output p_strm
 /* Get the current library version number */
 
 void c_plgver(char *p_ver); //%output p_ver(20) //%name plgver
+
+/* Get viewport boundaries in normalized device coordinates */
+
+void c_plgvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax); //%name plgvpd //%output p_xmin, p_xmax, p_ymin, p_ymax
+
+/* Get viewport boundaries in world coordinates */
+
+void c_plgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax); //%name plgvpw //%output p_xmin, p_xmax, p_ymin, p_ymax
 
 /* Get x axis labeling parameters */
 
@@ -1129,6 +1152,10 @@ void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig); //%name pl_setcontlabelf
 /* Set family file parameters */
 
 void c_plsfam(PLINT fam, PLINT num, PLINT bmax); //%name plsfam
+
+/* Set FCI (font characterization integer) */
+
+void c_plsfci(PLUNICODE fci); //%name plsfci
 
 /* Set the output file name. */
 
