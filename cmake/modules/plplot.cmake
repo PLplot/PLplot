@@ -55,7 +55,7 @@ include(rpath)
 
 option(BUILD_TEST "Compile examples in the build tree and enable ctest" OFF)
 # Use bash when available for ctest and install tree test support
-find_program(SH_EXECUTABLE bashxx)
+find_program(SH_EXECUTABLE bash)
 if(SH_EXECUTABLE)
   set(HAVE_BASH ON)
 else(SH_EXECUTABLE)
