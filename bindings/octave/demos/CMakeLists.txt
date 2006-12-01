@@ -68,3 +68,7 @@ lena.img
 )
 
 install(FILES ${examples_octave} DESTINATION ${DATA_DIR}/examples/octave)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.img
+DESTINATION ${DATA_DIR}/examples
+)

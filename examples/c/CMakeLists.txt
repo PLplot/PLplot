@@ -94,5 +94,5 @@ RENAME Makefile
 )
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-DESTINATION ${DATA_DIR}/examples/c
+DESTINATION ${DATA_DIR}/examples
 )

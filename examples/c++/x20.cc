@@ -197,7 +197,7 @@ x20::x20( int argc, char ** argv ) {
 
   /* read Lena image */
   if (read_img("lena.pgm", &img_f, &width, &height, &num_col) && 
-      read_img("examples/c++/lena.pgm", &img_f, &width, &height, &num_col)) {
+      read_img("../lena.pgm", &img_f, &width, &height, &num_col)) {
     cout << "No such file - aborting" << endl;
     delete pls;
     exit(1);

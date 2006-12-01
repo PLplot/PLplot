@@ -154,7 +154,7 @@ main(int argc, char *argv[])
   /* Note we try two different locations to cover the case where this
    * examples is being run from the test_c.sh script */
   if (read_img("lena.pgm", &img_f, &width, &height, &num_col) &&
-      read_img("examples/c/lena.pgm", &img_f, &width, &height, &num_col) ) {
+      read_img("../lena.pgm", &img_f, &width, &height, &num_col) ) {
     plabort("No such file");
     plend();
     exit(1);
