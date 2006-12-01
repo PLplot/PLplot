@@ -52,7 +52,7 @@ if(PKGCONFIG_EXECUTABLE)
   set(PKG_CONFIG_ENV PKG_CONFIG_PATH=${PKG_CONFIG_DIR})
 else(PKGCONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
-  message(STATUS "WARNING: Build of examples will not work.")
+  message(STATUS "WARNING: Build of examples in install tree will not work.")
   # Turn off pkg-config build.  (This means both build methods will be
   # commented out.)
   set(pkg_config_true "#")
