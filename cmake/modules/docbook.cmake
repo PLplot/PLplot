@@ -61,12 +61,33 @@ if(BUILD_DOC)
     check_perl_modules(PERL_XML_DOM XML::DOM)
   endif(PERL_FOUND)
   find_program(DB2X_TEXIXML db2x_texixml)
+  if(NOT DB2X_TEXIXML)
+    message(STATUS "WARNING: db2x_texixml not found")
+  endif(NOT DB2X_TEXIXML)
   find_program(DB2X_XSLTPROC db2x_xsltproc)
+  if(NOT DB2X_XSLTPROC)
+    message(STATUS "WARNING: db2x_xsltproc not found")
+  endif(NOT DB2X_XSLTPROC)
   find_program(OPENJADE openjade)
+  if(NOT OPENJADE)
+    message(STATUS "WARNING: openjade not found")
+  endif(NOT OPENJADE)
   find_program(JADETEX jadetex)
+  if(NOT JADETEX)
+    message(STATUS "WARNING: jadetex not found")
+  endif(NOT JADETEX)
   find_program(PDFJADETEX pdfjadetex)
+  if(NOT PDFJADETEX)
+    message(STATUS "WARNING: pdfjadetex not found")
+  endif(NOT PDFJADETEX)
   find_program(DVIPS dvips)
+  if(NOT DVIPS)
+    message(STATUS "WARNING: dvips not found")
+  endif(NOT DVIPS)
   find_program(MAKEINFO makeinfo)
+  if(NOT MAKEINFO)
+    message(STATUS "WARNING: makeinfo not found")
+  endif(NOT MAKEINFO)
   # Use include style here since FindUnixCommands is a simple module and
   # clearly not meant to be an official FindXXX module.
   include(FindUnixCommands)
@@ -80,22 +101,34 @@ if(BUILD_DOC)
 
   if(NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     set(BUILD_INFO OFF)
-    message("Not building info documentation - required programs are missing")
+    message(STATUS
+    "WARNING: Not building info documentation - "
+    "required programs are missing"
+    )
   endif(NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     
   if(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
     set(BUILD_MAN OFF)
-    message("Not building man documentation - required programs are missing")
+    message(STATUS
+    "WARNING: Not building man documentation - "
+    "required programs are missing"
+    )
   endif(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
 
   if(NOT OPENJADE) 
     set(BUILD_HTML OFF)
-    message("Not building html documentation - required programs are missing")
+    message(STATUS
+    "WARNING: Not building html documentation - "
+    "required programs are missing"
+    )
   endif(NOT OPENJADE)
 
   if(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     set(BUILD_PRINT OFF)
-    message("Not building print documentation - required programs are missing")
+    message(STATUS
+    "WARNING: Not building print documentation - "
+    "required programs are missing"
+    )
   endif(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
     
   set(JADELOG "jadeout.log")
@@ -159,14 +192,20 @@ if(BUILD_DOC)
   if(BUILD_PRINT)
     if(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
       set(BUILD_PRINT OFF)
-      message("Not building print documentation - dtd files / style sheets are missing")
+      message(STATUS
+      "WARNING: Not building print documentation - "
+      "dtd files / style sheets are missing"
+      )
     endif(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
   endif(BUILD_PRINT)
 
   if(BUILD_HTML)
     if(NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
       set(BUILD_HTML OFF)
-      message("Not building html documentation - dtd files / style sheets are missing")
+      message(STATUS
+      "WARNING: Not building html documentation - "
+      "dtd files / style sheets are missing"
+      )
     endif(NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
   endif(BUILD_HTML)
 
