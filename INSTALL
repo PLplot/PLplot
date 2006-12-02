@@ -3,17 +3,20 @@ PLplot installation
 
 PLplot can be built and installed using one of several methods:
 
-- On UNIX-like systems (UNIX, Linux, MacOS X, Cygwin and MingW on
-  Windows) via the automake buid system (ABS)
+- (Deprecated.) On UNIX-like systems (UNIX, Linux, MacOS X, and Cygwin and
+MinGW/MSYS on Windows) via the automake buid system (ABS)
 
-- Non-UNIX systems, using the native tools available for that system.
-  See the notes in the directory sys/<system name>
+- (All but DJGPP deprecated.) Non-UNIX systems, using the native tools
+available for that system. See the notes in the directory sys/<system name>
 
-- On all systems that are supported by PLplot via the CMake build
-  system.
+- DJGPP on (Free)DOS.  Follow the directions at sys/dos/djgpp/readme
+
+- (For UNIX, Linux, MacOS X, Cygwin, MinGW, MinGW/MSYS, and bare windows,
+i.e., all systems other that DJGPP.) Use our new CMake build system (CBS).
 
 
-PLplot installation notes for our traditional ABS (automake build system).
+(Deprecated.) PLplot installation notes for our traditional ABS 
+(automake build system).
 =========================================================================
 
 ------------------------------------------------------------------------------
@@ -651,78 +654,143 @@ xlf expects a different number of arguments than g77.
 PLplot installation notes for our new CBS (CMake build system).
 =========================================================================
 
-* Install cmake following directions at http://cmake.org/HTML/Install.html
+The definitive set of instructions is given at
+http://www.miscdebris.net/plplot_wiki/.  The material below is cut and pasted
+from there as of 2006-12-02.
 
-For all systems, cmake-2.4.4 is a prerequisite.
+Our CMake Build System (CBS) has been made available as part of our
+development releases of PLplot starting with version 5.7.0 and is a
+build-system paradigm shift compared to our traditional Autotools Build
+System (ABS). Thus, it is important to consult the CMake documentation to
+get the most out of our CBS. That documentation is quite thorough but tends
+to be a bit scattered so we have collected what we think are the best
+general CMake documentation links
+(http://www.miscdebris.net/plplot_wiki/index.php?title=General_CMake_documentation_links)
+for your convenience.
 
-* Here is a typical way to use cmake on Unix systems.  Note an empty build
-directory is used to insure a clean start, and plplot_cmake is a freshly
-checked out source tree (which remains clean because you never actually
-create any files in that directory tree).  To start fresh, simply rm -rf
-build_dir.
+After consulting that documentation, install
+(http://cmake.org/HTML/Install.html) the appropriate package of
+CMake for your system platform. Note, you must use at least version 2.4.4 of
+CMake for your PLplot configuration.
+
+------------------------------------------------------------------------------
+Generic Unix instructions for our CBS
+------------------------------------------------------------------------------
 
  + (Optional) set environment variables to help cmake find system components
-   that are installed in non-standard locations.  For example:
+   that are installed in non-standard locations.
 
-export PKG_CONFIG_PATH=/home/software/libLASi/install/lib/pkgconfig
-export CMAKE_LIBRARY_PATH=/home/software/autotools/install/lib:/home/software/cgmlib/cd1.3
-export CMAKE_INCLUDE_PATH=/home/software/autotools/install/include:/home/software/cgmlib/cd1.3
+   Here is one particular example (which must be executed before the cmake
+   invocation discussed below). 
 
-   In these special cases, PKG_CONFIG_PATH helps CMake to use the pkg-config
-   command for a non-standard libLASi install location; CMAKE_LIBRARY_PATH
-   helps CMake to find libltdl and libcd in non-standard install locations;
-   and CMAKE_INCLUDE_PATH helps CMake to find the headers for libltdl and
-   libcd in non-standard install locations.
+   export CMAKE_INCLUDE_PATH=/home/software/autotools/install/include:/home/software/cgmlib/cd1.3
+   export CMAKE_LIBRARY_PATH=/home/software/autotools/install/lib:/home/software/cgmlib/cd1.3
+   export PKG_CONFIG_PATH=/home/software/libLASi/install/lib/pkgconfig
+
+   For this particular example, CMAKE_INCLUDE_PATH helps cmake to find the
+   headers for libltdl and libcd in non-standard install locations;
+   CMAKE_LIBRARY_PATH helps cmake to find the libltdl and libcd libraries in
+   non-standard install locations; and PKG_CONFIG_PATH helps cmake to use
+   the pkg-config command internally to find a libLASi pkg-config module
+   file that is installed in a non-standard location.
+
+   In general, CMAKE_INCLUDE_PATH helps cmake find headers and other files
+   that are installed in non-standard locations; CMAKE_LIBRARY_PATH helps
+   cmake find libraries that are installed in non-standard locations; and
+   PKG_CONFIG_PATH helps pkg-config (either externally or internally from
+   cmake) find pkg-config modules installed in non-standard locations.
+   Finally, although not used in the specific example above, the
+   colon-separated environment variable PATH helps cmake find executables
+   that are installed in non-standard locations.
 
  + (Optional) set environment variables to specify the compilers and compiler
    flags.
 
-export CC="gcc -O2"
-export CXX="g++ -O2"
-export FC="g77 -O2"
+   Here is one particular example (which must be executed before the cmake
+   invocation discussed below).
 
-   Note this is just an example of a brute force way to do this.  A better
-   option is to set CMAKE_BUILD_TYPE to one of Debug, Release,
-   RelWithDebInfo, or MinSizeRel.  If you don't set this variable or set the
-   environment variables above, then by default no compiler options (i.e.,
-   no optimization and no debugging symbols) are used for gcc-related
-   compilers for our CBS which makes for very fast builds, but slow
-   execution.
+   export CC="gcc -O2"
+   export CXX="g++ -O2"
+   export FC="g77 -O2"
 
- + execute cmake to configure files and generate Makefiles in the build
-   tree. (Note this step is much faster than the equivalent cf/bootstrap.sh
-   and ./configure commands you use with our ABS).
+   Note a better option is to set CMAKE_BUILD_TYPE to one of Debug, Release,
+   RelWithDebInfo, or MinSizeRel. If you don't set this variable and don't
+   set the environment variables above, then by default no compiler options
+   (i.e., no optimization and no debugging symbols) are used for gcc-related
+   compilers for our CBS which makes for fast builds, but slow execution.
 
-mkdir build_dir
-cd build_dir
-cmake -DCMAKE_INSTALL_PREFIX=/my/prefix \
--DCMAKE_VERBOSE_MAKEFILE=ON  ../plplot_cmake >& cmake.out
+ + cmake invocation.
 
-   Everything can be controlled with -D options to the cmake command.  In
-   this case we have specified a particular install prefix "/my/prefix" and
+   Here is one typical example.
+
+   mkdir build_dir
+   cd build_dir
+   cmake -DCMAKE_INSTALL_PREFIX=/my/prefix \
+   -DCMAKE_VERBOSE_MAKEFILE=ON  ../plplot_cmake >& cmake.out
+ 
+   Check the cmake.out file for any configuration issues, especially WARNING
+   messages which signal that a component of PLplot has been removed because
+   required system components for that component have not been found. 
+
+   Everything can be controlled with -D options to the cmake command. There
+   are a large number of CMake options for PLplot
+   (http://www.miscdebris.net/plplot_wiki/index.php?title=CMake_options_for_PLplot)
+   which can be set for cmake to personalize your build. Use the ccmake
+   front end to cmake to obtain documentation of all these options. In the
+   above case we have specified a particular install prefix "/my/prefix" and
    verbose make results (essential if you want to see the exact commands
-   used for the build).  You can also specify options using the convenient
-   ccmake command-line interface to cmake.  That interface also presents
-   annotations for the options.
+   used for the build).
 
- + Once cmake has run, then build and install PLplot, build the installed
-   examples, and test them.
+   Note in the above example an empty build directory called build_dir is
+   used to insure a clean start, and ../plplot_cmake is a freshly checked
+   out source tree (which remains clean because you never actually create
+   any files in that directory tree). To start fresh, simply execute "cd
+   build_dir; rm -rf *". Of course, this is an extremely dangerous command
+   (since it removes everything in the current directory and all
+   subdirectories), but you should be okay so long as you cd to the correct
+   directory before executing the "rm" command.
 
-make >& make.out
-make install >& make_install.out
-cp -a /my/prefix/share/plplot5.6.1/examples /tmp
-cd /tmp/examples
-make >& make_examples.out
-./plplot-test.sh >& plplot_test.out
+  + Post-cmake build, install, and build-tree and install-tree tests
 
+   make >& make.out
+   make install >& make_install.out
+
+   ctest
+
+   cp -a /my/prefix/share/plplot5.6.1/examples /tmp
+   cd /tmp/examples
+   make >& make_examples.out
+   ./plplot-test.sh >& plplot_test.out
+
+   Note, the build-tree tests done with ctest are limited to just the psc
+   (colour postscript) device and can only be performed if cmake is invoked
+   with the -DBUILD_TEST=ON option (which roughly doubles the build time
+   because all the examples must be built). 
+   
    Check all the *.out files for any errors.  Check that the large number of
    postscript files generated by plplot-test.sh look good with a postscript
    viewer.  Also, use the --help option to ./plplot-test.sh to see ways you
    can test your PLplot install for devices other than the default psc
    device.
 
-   Links to useful CMake documentation are given in cmake/README.cmake_doc.
+   ---------------------------------------------------------------------------
+   Linux instructions for our CBS.
+   ---------------------------------------------------------------------------
+   
+   No changes from the generic Unix instructions.
+   
+   ---------------------------------------------------------------------------
+   MacOS X instructions for our CBS.
+   ---------------------------------------------------------------------------
 
+   Few changes from the generic Unix instructions which need to be updated
+   from http://www.miscdebris.net/plplot_wiki/.
+
+------------------------------------------------------------------------------
+Windows instructions for our CBS (needs updating from
+http://www.miscdebris.net/plplot_wiki/
+------------------------------------------------------------------------------
+   
 * Here is a typical way to use cmake on windows systems.
 CMake comes with a graphical user-interface that allows you to set the
 various build parameters interactively. It will try and find the
