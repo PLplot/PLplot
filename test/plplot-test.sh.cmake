@@ -246,11 +246,11 @@ status=0
 
 for i in $FRONT_END ; do
    echo "Testing front-end $i"
-   script=@SH_EXECUTABLE@ $scripts_dir/test_$i.sh
+   script=$scripts_dir/test_$i.sh
    if test "@WIN32@" != "1"; then
       chmod +x $script
    fi
-   $script || status=1
+   @SH_EXECUTABLE@ $script || status=1
 done
 
 exit $status
