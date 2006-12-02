@@ -1,4 +1,4 @@
-#!/bin/sh
+#!@SH_EXECUTABLE@
 # $Id$
 #
 # Copyright (C) 2004  Alan W. Irwin

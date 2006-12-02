@@ -1,4 +1,4 @@
-#!/bin/sh
+#!@SH_EXECUTABLE@
 # Test suite for c examples.
 #
 # Copyright (C) 2004  Alan W. Irwin

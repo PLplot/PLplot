@@ -1,4 +1,4 @@
-#!/bin/sh
+#!@SH_EXECUTABLE@
 # $Id$
 #
 # Copyright (C) 2004  Alan W. Irwin
@@ -234,7 +234,11 @@ fi
 if test -n "$dirname" ; then
    scripts_dir=`$dirname $0`
 else
-   scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
+   if test "@WIN32@" = "1"; then
+      scripts_dir=${0%/*}
+   else
+      scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
+   fi
 fi
 
 # Call the front-end scripts
@@ -242,8 +246,10 @@ status=0
 
 for i in $FRONT_END ; do
    echo "Testing front-end $i"
-   script=$scripts_dir/test_$i.sh
-   chmod +x $script
+   script=@SH_EXECUTABLE@ $scripts_dir/test_$i.sh
+   if test "@WIN32@" != "1"; then
+      chmod +x $script
+   fi
    $script || status=1
 done
 

@@ -18,14 +18,14 @@ configure_file(
 configure_file(test_c.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh @ONLY)
 set(SCRIPTS test_c.sh)
 add_test(examples_c
-  sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c"
+  ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c"
   )
 
 if(ENABLE_cxx)
   configure_file(test_cxx.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_cxx.sh)
   add_test(examples_cxx
-    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=cxx"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=cxx"
   )
 endif(ENABLE_cxx)
 
@@ -33,7 +33,7 @@ if(ENABLE_f77)
   configure_file(test_f77.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_f77.sh)
   add_test(examples_f77
-    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=f77"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=f77"
   )
 endif(ENABLE_f77)
 
@@ -41,7 +41,7 @@ if(ENABLE_f95)
   configure_file(test_f95.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_f95.sh)
   add_test(examples_f95
-    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=f95"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=f95"
   )
 endif(ENABLE_f95)
 
@@ -53,7 +53,7 @@ if(ENABLE_java)
     )
   set(SCRIPTS ${SCRIPTS} test_java.sh)
   add_test(examples_java
-    sh -c "${JAVA_TEST_ENVIRONMENT} ./plplot-test.sh --front-end=java"
+    ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ./plplot-test.sh --front-end=java"
   )
 endif(ENABLE_java)
 
@@ -65,7 +65,7 @@ if(ENABLE_octave)
     )
   set(SCRIPTS ${SCRIPTS} test_octave.sh)
   add_test(examples_octave
-    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=octave"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=octave"
   )
 endif(ENABLE_octave)
 
@@ -77,7 +77,7 @@ if(ENABLE_python)
     )
   set(SCRIPTS ${SCRIPTS} test_python.sh)
   add_test(examples_python
-    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=python"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=python"
   )
 endif(ENABLE_python)
 
@@ -85,7 +85,7 @@ if(ENABLE_tcl)
   configure_file(test_tcl.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_tcl.sh)
   add_test(examples_tcl
-    sh -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=tcl"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=tcl"
   )
 endif(ENABLE_tcl)
 
