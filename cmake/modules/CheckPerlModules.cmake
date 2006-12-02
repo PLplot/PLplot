@@ -6,21 +6,21 @@
 # VARIABLE - variable to store the result
 # PERLMODS - list of modules to check
 #
-MACRO(CHECK_PERL_MODULES VARIABLE PERLMODS)
-    IF(NOT DEFINED ${VARIABLE})
-      SET(${VARIABLE} ON)
-      FOREACH(MOD ${PERLMODS})
-	WRITE_FILE(conftest.pl "use ${MOD};")
-	EXECUTE_PROCESS(
+macro(CHECK_PERL_MODULES VARIABLE PERLMODS)
+    if(NOT DEFINED ${VARIABLE})
+      set(${VARIABLE} ON)
+      foreach(MOD ${PERLMODS})
+	write_file(conftest.pl "use ${MOD};")
+	execute_process(
 	  COMMAND ${PERL_EXECUTABLE} conftest.pl
 	  RESULT_VARIABLE RESULT
 	  OUTPUT_QUIET
 	  ERROR_QUIET
 	  )
-	IF(NOT RESULT EQUAL 0)
-	  SET(${VARIABLE} OFF)
-	  MESSAGE("Perl module ${MOD} not found")
-	ENDIF (NOT RESULT EQUAL 0)
-      ENDFOREACH(MOD ${PERLMODS})
-    ENDIF(NOT DEFINED ${VARIABLE})
-ENDMACRO(CHECK_PERL_MODULES)
+	if(NOT RESULT EQUAL 0)
+	  set(${VARIABLE} OFF)
+	  message(STATUS "WARNING: Perl module ${MOD} not found")
+	endif(NOT RESULT EQUAL 0)
+      endforeach(MOD ${PERLMODS})
+    endif(NOT DEFINED ${VARIABLE})
+endmacro(CHECK_PERL_MODULES)
