@@ -34,8 +34,6 @@
 
 version=@VERSION@
 
-dirname=@DIRNAME@
-
 EXAMPLES_DIR=${EXAMPLES_DIR:-.}
 SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
 OUTPUT_DIR=${OUTPUT_DIR:-.}
@@ -228,17 +226,13 @@ if test -z "$FRONT_END" ; then
    test "@ENABLE_pdl@" = ON    && FRONT_END="$FRONT_END perl"
 fi
 
-# Find where the front-end scripts are by looking at the dirname of the
-# current script.  Try to use first the dirname program found by configure.
-# Otherwise, fall back to a sed solution (this fails on Mac OS X!).
-if test -n "$dirname" ; then
-   scripts_dir=`$dirname $0`
+# Find where the front-end scripts are by looking at the directory name of the
+# current script.  
+
+if test "@WIN32@" = "1"; then
+   scripts_dir=${0%/*}
 else
-   if test "@WIN32@" = "1"; then
-      scripts_dir=${0%/*}
-   else
-      scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
-   fi
+   scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
 fi
 
 # Call the front-end scripts
