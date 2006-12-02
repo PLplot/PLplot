@@ -583,11 +583,9 @@ DrvOpt wx_options[] = {
     init_freetype_lv2(pls);
 #endif
   
-  /* find out what drivers are available */
+  /* find out what file drivers are available */
   ndev = NDEV;
   plgFileDevs( &dev->devDesc, &dev->devName, &ndev );
-  for( int i=0; i<ndev; i++ )
-    printf( "dev: %d, name: %s, desc: %s\n", i, dev->devName[i], dev->devDesc[i] );
 }
 
 
@@ -798,7 +796,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_tidy_wxwidgets( PLStream *pls )
 {
-  // LogVerbose( "plD_tidy_wxwidgets()" );
+  // Log_Verbose( "plD_tidy_wxwidgets()" );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
@@ -1201,7 +1199,7 @@ bool SavePlot( PLStream* pls, char* filename, char* devname, int width,  int hei
 	plsdev( devname );
 	if( (sfile = fopen(filename, "wb+")) == NULL) {
     if( dev->ownGUI ) {
-      wxMessageDialog dialog( 0, "Couldn't open file for saving!", "plPlot error", wxOK );
+      wxMessageDialog dialog( 0, wxString("Couldn't open file for saving!"), wxString("plPlot error"), wxOK );
       dialog.ShowModal();
     } else
       fprintf( stderr, "Couldn't open file for saving!\n" );
