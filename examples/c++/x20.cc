@@ -380,18 +380,19 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
       }
     }
     pls->xormod(false, &st); /* leave xor mod */
-  }
 
-  if (xxe < xxi) {
-    t=xxi; xxi=xxe; xxe=t;}
+    if (xxe < xxi) {
+      t=xxi; xxi=xxe; xxe=t;}
 
-  if (yyi < yye) {
-    t=yyi; yyi=yye; yye=t;}
+    if (yyi < yye) {
+      t=yyi; yyi=yye; yye=t;}
 
-  *xe = xxe; *xi = xxi;
-  *ye = yye; *yi = yyi;
+    *xe = xxe; *xi = xxi;
+    *ye = yye; *yi = yyi;
 
-  return (gin.keysym == 'Q');
+    return (gin.keysym == 'Q');
+   } else /* driver has no xormod capability, just do nothing */
+		return 0;
 }
 
 /* set gray colormap */
