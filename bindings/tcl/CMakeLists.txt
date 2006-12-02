@@ -188,6 +188,11 @@ libplplottcltk${LIB_TAG}_LINK_FLAGS
 )
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
+
+#message(STATUS 
+#"plplottcltk${LIB_TAG}_link_libraries = 
+#${plplottcltk${LIB_TAG}_link_libraries}"
+#)
 target_link_libraries(
 plplottcltk${LIB_TAG}
 ${plplottcltk${LIB_TAG}_link_libraries}

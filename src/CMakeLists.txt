@@ -209,6 +209,10 @@ if(WITH_FREETYPE)
   )
 endif(WITH_FREETYPE)
 
+#message(STATUS
+#"libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+#)
+
 target_link_libraries(
 plplot${LIB_TAG}
 ${libplplot${LIB_TAG}_LINK_LIBRARIES}
