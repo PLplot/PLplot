@@ -653,9 +653,7 @@ PLplot installation notes for our new CBS (CMake build system).
 
 * Install cmake following directions at http://cmake.org/HTML/Install.html
 
-On Unix systems, cmake-2.4.3 is a prerequisite.  For windows systems you
-will need the cvs version of cmake since that has essential fixes
-for bugs that exist for the windows version of cmake.
+For all systems, cmake-2.4.4 is a prerequisite.
 
 * Here is a typical way to use cmake on Unix systems.  Note an empty build
 directory is used to insure a clean start, and plplot_cmake is a freshly
