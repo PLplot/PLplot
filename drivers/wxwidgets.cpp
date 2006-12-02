@@ -91,6 +91,7 @@ extern "C"
   #define max_number_of_grey_levels_used_in_text_smoothing 64
 #endif
 
+#define NDEV	100		/* Max number of output device types in menu */
 
 /*=========================================================================*/
 /* Physical dimension constants used by the driver */
@@ -183,6 +184,9 @@ public: /* variables */
   unsigned char m_colgreenfill;
   unsigned char m_colbluefill;
 #endif
+
+  char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
+  char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
 };
 
 inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
@@ -440,11 +444,20 @@ wxPLdev::wxPLdev( void )
   m_colgreenfill=0;
   m_colbluefill=0;
 #endif
+
+  devName = (char **)malloc( NDEV * sizeof(char**) );
+  memset( devName, '\0', NDEV * sizeof(char**) );
+  devDesc = (char **)malloc( NDEV * sizeof(char**) );
+  memset( devDesc, '\0', NDEV * sizeof(char**) );
 }
 
 
 wxPLdev::~wxPLdev( void )
 {
+  if( devDesc )
+    free( devDesc );
+  if( devName )
+    free( devName );
 }
 
 
@@ -459,6 +472,7 @@ plD_init_wxwidgets( PLStream *pls )
   // Log_Verbose( "plD_init_wxwidgets()" );
 
   wxPLdev* dev;
+  int ndev=NDEV;
 
   /* default options */
 #ifdef HAVE_FREETYPE
@@ -568,6 +582,12 @@ DrvOpt wx_options[] = {
   if( pls->dev_text )
     init_freetype_lv2(pls);
 #endif
+  
+  /* find out what drivers are available */
+  ndev = NDEV;
+  plgFileDevs( &dev->devDesc, &dev->devName, &ndev );
+  for( int i=0; i<ndev; i++ )
+    printf( "dev: %d, name: %s, desc: %s\n", i, dev->devName[i], dev->devDesc[i] );
 }
 
 
@@ -774,13 +794,11 @@ void plD_bop_wxwidgets( PLStream *pls )
 /*--------------------------------------------------------------------------*\
  *  void plD_tidy_wxwidgets( PLStream *pls )
  *
- *  This function is called, if all plots are done. If this driver is used
- *  from a command line executable, we actually let wxWidgets take over 
- *  control - a window'll be opened and the plots are shown.
+ *  This function is called, if all plots are done. 
 \*--------------------------------------------------------------------------*/
 void plD_tidy_wxwidgets( PLStream *pls )
 {
-  // Log_Verbose( "plD_tidy_wxwidgets()" );
+  // LogVerbose( "plD_tidy_wxwidgets()" );
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
@@ -793,7 +811,6 @@ void plD_tidy_wxwidgets( PLStream *pls )
 #endif
 
   if( dev->ownGUI ) {
-    // Log_Verbose( "delete bitmaps" );
     if( dev->antialized ) {
       delete dev->m_buffer;
 #ifdef HAVE_AGG
@@ -805,9 +822,11 @@ void plD_tidy_wxwidgets( PLStream *pls )
       delete dev->m_bitmap;
     }
       
-    // Log_Verbose( "wxUninitialize()" );
     wxUninitialize();
   }
+  
+  delete dev;
+  pls->dev=NULL;  /* since in plcore.c pls->dev is free_mem'd */
 }
 
 
@@ -1166,6 +1185,42 @@ void plD_erroraborthandler_wxwidgets( char *errormessage )
     dialog.ShowModal();
   /* } */
 }
+
+/*----------------------------------------------------------------------*\
+ *  bool SavePlot( char* filename, int dev, int width,  int height )
+ *
+ *  If an PLplot error occurs, this function shows a dialog regarding
+ *  this error and than exits.
+\*----------------------------------------------------------------------*/
+bool SavePlot( PLStream* pls, char* filename, char* devname, int width,  int height )
+{  
+  wxPLdev* dev = (wxPLdev*)pls->dev;
+  int pls_save;
+  FILE *sfile;
+
+	plsdev( devname );
+	if( (sfile = fopen(filename, "wb+")) == NULL) {
+    if( dev->ownGUI ) {
+      wxMessageDialog dialog( 0, "Couldn't open file for saving!", "plPlot error", wxOK );
+      dialog.ShowModal();
+    } else
+      fprintf( stderr, "Couldn't open file for saving!\n" );
+  }
+  plsfile( sfile );
+  
+	plmkstrm( &pls_save );  
+	plsstrm( pls_save );
+  plspage( 0., 0., width, height, 0, 0 );
+	plcpstrm( pls_save, 0);
+	pladv(0);
+	plreplot();
+	plflush();
+  plend1();  
+	plsstrm(0);
+
+  return true;
+}
+
 
 
 #ifdef HAVE_FREETYPE
