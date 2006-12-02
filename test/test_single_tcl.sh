@@ -1,4 +1,4 @@
-#!@SH_EXECUTABLE@
+#!/bin/sh
 #
 # Copyright (C) 2004  Alan W. Irwin
 #

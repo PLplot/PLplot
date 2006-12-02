@@ -1,4 +1,4 @@
-#!@SH_EXECUTABLE@
+#!/bin/sh
 # Run *one* python plplot example non-interactively.
 #
 # Copyright (C) 2004  Alan W. Irwin
