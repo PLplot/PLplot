@@ -22,6 +22,11 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+dnl define SH_EXECUTABLE which is needed by most test scripts now because
+dnl of the cmake build system configuring the same files.
+SH_EXECUTABLE=/bin/sh
+AC_SUBST(SH_EXECUTABLE)
+
 dnl Find dirname program, needed by test/plplot-test.sh
 
 AC_CHECK_PROGS(DIRNAME, dirname, [])
