@@ -160,8 +160,15 @@ plP_tidy(void)
 
     (*plsc->dispatch_table->pl_tidy) ((struct PLStream_struct *) plsc);
 
-    if (plsc->plbuf_write)
+    if (plsc->plbuf_write) {
 	plbuf_tidy(plsc);
+#ifndef BUFFERED_FILE
+	if (plsc->plbuf_buffer != NULL) {
+	  free(plsc->plbuf_buffer);
+	  plsc->plbuf_buffer = NULL;
+	}
+#endif
+    }
 
     plsc->OutFile = NULL;
 

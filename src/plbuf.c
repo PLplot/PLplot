@@ -194,12 +194,6 @@ plbuf_tidy(PLStream *pls)
 
     fclose(pls->plbufFile)
     pls->plbufFile = NULL;
-#else
-    if (pls->plbuf_buffer == NULL) 
-	return;
-
-    free(pls->plbuf_buffer);
-    pls->plbuf_buffer = NULL;
 #endif
 }
 
