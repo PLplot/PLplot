@@ -65,23 +65,12 @@ endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
 foreach(STRING_INDEX ${cxx_STRING_INDICES})
   set(cxx_SRCS ${cxx_SRCS} x${STRING_INDEX}.cc)
   if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
-    # disambiguate prefix to workaround 2.4.4 bug which interferes with
-    # all OUTPUTS with x?? if you don't disambiguate.
-    add_executable(disambiguate_x${STRING_INDEX} x${STRING_INDEX}.cc)
+    add_executable(x${STRING_INDEX} x${STRING_INDEX}.cc)
     if(WIN32 AND BUILD_SHARED_LIBS)
         SET_SOURCE_FILES_PROPERTIES(x${STRING_INDEX}.cc
           PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(WIN32 AND BUILD_SHARED_LIBS)
-    target_link_libraries(
-    disambiguate_x${STRING_INDEX}
-    plplotcxx${LIB_TAG}
-    ${MATH_LIB}
-    )
-    # Actual name of executable must not have the disambiguate prefix.
-    set_target_properties(
-    disambiguate_x${STRING_INDEX}
-    PROPERTIES OUTPUT_NAME x${STRING_INDEX}
-    )
+    target_link_libraries(x${STRING_INDEX} plplotcxx${LIB_TAG} ${MATH_LIB})
   endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
 endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
