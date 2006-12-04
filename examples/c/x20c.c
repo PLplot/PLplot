@@ -179,7 +179,7 @@ main(int argc, char *argv[])
   /* selection/expansion demo */
   if (!nointeractive) { 
     xi = 200.; xe = 330.;
-    yi = 280.; ye = 220.;
+    yi = 220.; ye = 280.;
 
     if (get_clip(&xi, &xe, &yi, &ye)) { /* get selection rectangle */
       plend();
@@ -319,17 +319,17 @@ int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
 	sx[4] = xxi; sy[4] = yyi;
       }
 
-      if (gin.state && 0x100) {
+      if (gin.state & 0x100) {
 	xxe = gin.wX; yye = gin.wY;
 	if (start)
 	  plline(5, sx, sy); /* clear previous rectangle */
-
+	
 	start = 1;
-  
+	
 	sx[2] = xxe; sy[2] = yye;
 	sx[1] = xxe; sy[1] = yyi;
 	sx[3] = xxi; sy[3] = yye;
-	plline(5, sx, sy); /* draw new rectangle */
+	  plline(5, sx, sy); /* draw new rectangle */	
       }
 
       if (gin.button == 3 || gin.keysym == PLK_Return || gin.keysym == 'Q') {
@@ -340,18 +340,18 @@ int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
     }
     plxormod(0, &st); /* leave xor mod */
 
-	  if (xxe < xxi) {
-			t=xxi; xxi=xxe; xxe=t;}
-
-		if (yyi < yye) {
-			t=yyi; yyi=yye; yye=t;}
-
-		*xe = xxe; *xi = xxi;
-		*ye = yye; *yi = yyi;
-
-		return (gin.keysym == 'Q');
-	} else /* driver has no xormod capability, just do nothing */
-		return 0;
+    if (xxe < xxi) {
+      t=xxi; xxi=xxe; xxe=t;}
+    
+    if (yyi < yye) {
+      t=yyi; yyi=yye; yye=t;}
+    
+    *xe = xxe; *xi = xxi;
+    *ye = yye; *yi = yyi;
+    
+    return (gin.keysym == 'Q');
+  } else /* driver has no xormod capability, just do nothing */
+    return 0;
 }
 
 /* set gray colormap */
