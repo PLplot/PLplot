@@ -62,8 +62,12 @@ x16c.m
 x17c.m
 x18c.m
 x19c.m
+x20c.m
 x22c.m
 x23c.m
+x24c.m
+x25c.m
+x26c.m
 lena.img
 )
 
