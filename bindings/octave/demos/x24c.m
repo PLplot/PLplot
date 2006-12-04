@@ -139,11 +139,8 @@ endfor
 
 plcol0 (0);
 for i=1:12
-  plptex (sx (i), sy (i), 1.0, 0.0, 0.5, peace (i));
+  plptex (sx (i), sy (i), 1.0, 0.0, 0.5, deblank(peace (i,:)));
 endfor
-
-## Restore defaults
-plcol0(1);
 
 plend1;
 
