@@ -670,7 +670,7 @@ for your convenience.
 
 After consulting that documentation, install
 (http://cmake.org/HTML/Install.html) the appropriate package of
-CMake for your system platform. Note, you must use at least version 2.4.4 of
+CMake for your system platform. Note, you must use at least version 2.4.5 of
 CMake for your PLplot configuration.
 
 ------------------------------------------------------------------------------
