@@ -140,8 +140,8 @@ EOT
   if (not $nointeractive) {
     $xi = 200;
     $xe = 330;
-    $yi = 280;
-    $ye = 220;
+    $yi = 220;
+    $ye = 280;
 
     if (get_clip (\$xi, \$xe, \$yi, \$ye)) { # get selection rectangle
       plend ();
@@ -256,27 +256,27 @@ sub get_clip {
       }
     }
     plxormod (0); # leave xor mod
+    if ($xxe < $xxi) {
+	my $t = $xxi;
+	$xxi = $xxe;
+	$xxe = $t;
+    }
+    
+    if (yyi < yye) {
+	my $t = $yyi;
+	$yyi = $yye;
+	$yye = $t;
+    }
+    
+    $$xe = $xxe;
+    $$xi = $xxi;
+    $$ye = $yye;
+    $$yi = $yyi;
+    
+    return ($gin{keysym} eq 'Q');
   }
 
-  if ($xxe < $xxi) {
-    my $t = $xxi;
-    $xxi = $xxe;
-    $xxe = $t;
-  }
-
-  if (yyi < yye) {
-    my $t = $yyi;
-    $yyi = $yye;
-    $yye = $t;
-  }
-
-  $$xe = $xxe;
-  $$xi = $xxi;
-  $$ye = $yye;
-  $$yi = $yyi;
-
-  return ($gin{keysym} eq 'Q');
-
+  return 0;
 }
 
 # save plot

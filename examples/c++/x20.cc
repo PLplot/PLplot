@@ -220,7 +220,7 @@ x20::x20( int argc, char ** argv ) {
   // selection/expansion demo
   if (!nointeractive) {
     xi = 200.; xe = 330.;
-    yi = 280.; ye = 220.;
+    yi = 220.; ye = 280.;
 
     if (get_clip(&xi, &xe, &yi, &ye)) { // get selection rectangle
       delete pls;
@@ -360,7 +360,7 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
 	sx[4] = xxi; sy[4] = yyi;
       }
 
-      if (gin.state && 0x100) {
+      if (gin.state & 0x100) {
 	xxe = gin.wX; yye = gin.wY;
 	if (start)
 	  pls->line(5, sx, sy); /* clear previous rectangle */

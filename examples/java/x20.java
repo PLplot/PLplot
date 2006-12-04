@@ -209,7 +209,7 @@ class x20 {
 	// selection/expansion demo
 	if (!nointeractive) {
 	    xi[0] = 200.; xe[0] = 330.;
-	    yi[0] = 280.; ye[0] = 220.;
+	    yi[0] = 220.; ye[0] = 280.;
 
 	    if (get_clip(xi, xe, yi, ye)) { // get selection rectangle
 		pls.end();
@@ -376,18 +376,20 @@ class x20 {
 		}
 	    }
 	    pls.xormod(false, st); /* leave xor mod */
+	    if (xxe < xxi) {
+	        t=xxi; xxi=xxe; xxe=t;}
+
+	    if (yyi < yye) {
+	        t=yyi; yyi=yye; yye=t;}
+
+       	    xe[0] = xxe; xi[0] = xxi;
+	    ye[0] = yye; yi[0] = yyi;
+
+	    return (gin.getKeysym() == 'Q');
 	}
+	
+	return 0;
 
-	if (xxe < xxi) {
-	    t=xxi; xxi=xxe; xxe=t;}
-
-	if (yyi < yye) {
-	    t=yyi; yyi=yye; yye=t;}
-
-	xe[0] = xxe; xi[0] = xxi;
-	ye[0] = yye; yi[0] = yyi;
-
-	return (gin.getKeysym() == 'Q');
     }
 
     /* set gray colormap */
