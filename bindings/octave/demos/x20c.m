@@ -180,7 +180,7 @@ function [status, img_f, width, height, num_col] = read_img(fname)
 
   width = fscanf(fp,"%d",1); ## width
   height = fscanf(fp,"%d",1); ## height
-  num_col = fscanf(fp,"%d",1); ## num colors
+  num_col = fscanf(fp,"%d\n",1); ## num colors
 
   img = fread(fp, [width,height],"uchar");
   fclose(fp);

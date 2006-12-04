@@ -252,7 +252,7 @@ int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
   }
   ungetc(i, fp);
 
-  fscanf(fp,"%d%d%d", &w, &h, num_col); /* width, height num colors */
+  fscanf(fp,"%d%d%d\n", &w, &h, num_col); /* width, height num colors */
   /* printf("width=%d height=%d num_col=%d\n", w, h, *num_col); */
 
   img = (unsigned char *) malloc(w*h*sizeof(char));

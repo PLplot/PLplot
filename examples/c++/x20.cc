@@ -296,6 +296,7 @@ int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num
   ifs.putback(c);
 
   ifs >> w >> h >> *num_col;
+  ifs.getline(ver,80);
   //cout << "width=" << w << " height=" << h << " num_col=" << *num_col << endl;
 
   img = new unsigned char[w*h];
