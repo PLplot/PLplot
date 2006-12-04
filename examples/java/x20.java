@@ -209,7 +209,7 @@ class x20 {
 	// selection/expansion demo
 	if (!nointeractive) {
 	    xi[0] = 200.; xe[0] = 330.;
-	    yi[0] = 220.; ye[0] = 280.;
+	    yi[0] = 280.; ye[0] = 220.;
 
 	    if (get_clip(xi, xe, yi, ye)) { // get selection rectangle
 		pls.end();
@@ -388,7 +388,7 @@ class x20 {
 	    return (gin.getKeysym() == 'Q');
 	}
 	
-	return 0;
+	return false;
 
     }
 

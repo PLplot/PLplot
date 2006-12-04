@@ -220,7 +220,7 @@ x20::x20( int argc, char ** argv ) {
   // selection/expansion demo
   if (!nointeractive) {
     xi = 200.; xe = 330.;
-    yi = 220.; ye = 280.;
+    yi = 280.; ye = 220.;
 
     if (get_clip(&xi, &xe, &yi, &ye)) { // get selection rectangle
       delete pls;
