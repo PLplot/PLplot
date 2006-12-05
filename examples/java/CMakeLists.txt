@@ -78,6 +78,7 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
   COMMAND ${CMAKE_Java_ARCHIVE}
   -cf ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar -C ${CMAKE_BINARY_DIR}/bindings/java plplot/core -C ${CMAKE_CURRENT_BINARY_DIR} plplot/examples
+  DEPENDS ${java_CLASSES}
 )
 
 
