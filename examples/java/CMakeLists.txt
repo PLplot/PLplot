@@ -50,6 +50,18 @@ set(java_STRING_INDICES
 "26"
 )
 
+# This information is duplicated from bindings/java/CMakeLists.txt
+# since it is required here to get the dependencies right for 
+# the jar file. 
+set(java_CORE_CLASSES
+${CMAKE_BINARY_DIR}/bindings/java/plplot/core/PLGraphicsIn.class
+${CMAKE_BINARY_DIR}/bindings/java/plplot/core/PLStream.class
+${CMAKE_BINARY_DIR}/bindings/java/plplot/core/config.class
+${CMAKE_BINARY_DIR}/bindings/java/plplot/core/plplotjavac.class
+${CMAKE_BINARY_DIR}/bindings/java/plplot/core/plplotjavacConstants.class
+${CMAKE_BINARY_DIR}/bindings/java/plplot/core/plplotjavacJNI.class
+)
+
 foreach(STRING_INDEX ${java_STRING_INDICES})
   set(java_SRCS ${java_SRCS} x${STRING_INDEX}.java)
   set(java_CLASSES ${java_CLASSES} ${CMAKE_CURRENT_BINARY_DIR}/plplot/examples/x${STRING_INDEX}.class)
@@ -78,12 +90,12 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
   COMMAND ${CMAKE_Java_ARCHIVE}
   -cf ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar -C ${CMAKE_BINARY_DIR}/bindings/java plplot/core -C ${CMAKE_CURRENT_BINARY_DIR} plplot/examples
-  DEPENDS ${java_CLASSES}
+  DEPENDS ${java_CLASSES} ${java_CORE_CLASSES}
 )
 
 
-add_custom_target( plplot.jar ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar )
-add_dependencies( plplot.jar plplot_core plplot_examples )
+add_custom_target( plplot_jar ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar )
+add_dependencies( plplot_jar plplot_core plplot_examples )
 
 set(JAVAC ${CMAKE_Java_COMPILER})
 set(JAVADATA_HARDDIR ${JAR_DIR})

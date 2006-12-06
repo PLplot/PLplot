@@ -43,7 +43,10 @@ set(JAVA_FILES
 # Need this otherwise cmake will look in the source directory for the
 # .java files.
 string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
+
 # Class list
+# A manual copy of this is also maintained in examples/java/CMakeLists.java
+# in order to get the dependencies right for plplot.jar
 string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/plplot/core/\\1.class" JAVA_CLASSES "${JAVA_FILES}" )
 set(JAVA_FILES_FULL
   ${JAVA_GEN_FILES_FULL}
