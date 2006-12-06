@@ -1161,7 +1161,7 @@ int plD_errorexithandler_wxwidgets( char *errormessage )
   /* wxPLdev* dev = (wxPLdev*)pls->dev; */
 
   /* if( dev->ownGUI ) { */
-    wxMessageDialog dialog( 0,wxString(errormessage, *wxConvCurrent),wxString("wxPlot error",*wxConvCurrent),wxOK );
+    wxMessageDialog dialog( 0, wxString(errormessage, *wxConvCurrent),wxString("wxPlot error",*wxConvCurrent),wxOK );
     dialog.ShowModal();
     plend();
     return 0;
@@ -1197,13 +1197,12 @@ bool SavePlot( PLStream* pls, char* filename, char* devname, int width,  int hei
   FILE *sfile;
 
 	plsdev( devname );
-	if( (sfile = fopen(filename, "wb+")) == NULL) {
+	if( (sfile = fopen(filename, "wb+")) == NULL)
     if( dev->ownGUI ) {
-      wxMessageDialog dialog( 0, wxString("Couldn't open file for saving!"), wxString("plPlot error"), wxOK );
+      wxMessageDialog dialog( 0, wxT("Couldn't open file for saving!"), wxT("plPlot error"), wxOK );
       dialog.ShowModal();
-    } else
-      fprintf( stderr, "Couldn't open file for saving!\n" );
-  }
+			return false;
+    } 
   plsfile( sfile );
   
 	plmkstrm( &pls_save );  
