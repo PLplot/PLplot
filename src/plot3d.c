@@ -787,7 +787,7 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 	return;
     }
 
-    if (opt < 1) {
+    if ((opt & 3) == 0) {
 	myabort("plot3dcl: Bad option");
 	return;
     }
