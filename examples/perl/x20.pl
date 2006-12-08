@@ -117,7 +117,7 @@ EOT
 
   # read Lena image
 
-  my $lena = "../c/lena.pgm";
+  my $lena = "lena.pgm";
   my ($img_f, $width, $height, $num_col) = read_img ($lena)
     or die "Cannot find image file $lena";
 
