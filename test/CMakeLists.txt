@@ -96,6 +96,9 @@ if(ENABLE_pdl)
     @ONLY
     )
   set(SCRIPTS ${SCRIPTS} test_perl.sh)
+  add_test(examples_perl
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=perl"
+  )
 endif(ENABLE_pdl)
 
 # Make a copy of lena.pgm in the top level directory so that
