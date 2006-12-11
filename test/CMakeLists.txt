@@ -101,27 +101,27 @@ if(ENABLE_pdl)
   )
 endif(ENABLE_pdl)
 
-# Make a copy of lena.pgm in the top level directory so that
-# example 20 will run from there.
+# Make a copy of lena.pgm to the test subdirectory of the build
+# tree so that example 20 will run from there.
 # Also need a copy of lena.img for the octave bindings
 if(BUILD_TEST)
   add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/lena.pgm
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_SOURCE_DIR}/examples/c/lena.pgm
-    ${CMAKE_BINARY_DIR}/lena.pgm
+    ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
     DEPENDS ${CMAKE_SOURCE_DIR}/examples/c/lena.pgm
   )
-  add_custom_target(lena_file ALL DEPENDS ${CMAKE_BINARY_DIR}/lena.pgm)
+  add_custom_target(lena_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm)
   if(ENABLE_octave)
     add_custom_command(
-      OUTPUT ${CMAKE_BINARY_DIR}/lena.img
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.img
       COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/bindings/octave/demos/lena.img
-      ${CMAKE_BINARY_DIR}/lena.img
+      ${CMAKE_CURRENT_BINARY_DIR}/lena.img
       DEPENDS ${CMAKE_SOURCE_DIR}/bindings/octave/demos/lena.img
     )
-    add_custom_target(lena_octave_file ALL DEPENDS ${CMAKE_BINARY_DIR}/lena.img)
+    add_custom_target(lena_octave_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.img)
   endif(ENABLE_octave)
 endif(BUILD_TEST)
 
