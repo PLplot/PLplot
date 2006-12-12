@@ -53,6 +53,7 @@
 #include <wx/wx.h>
 #include <wx/except.h>
 #include <wx/image.h>
+#include <wx/filedlg.h>
   
 /* antigrain headers (for antialzing) */
 #ifdef HAVE_AGG
@@ -92,6 +93,8 @@ extern "C"
 #endif
 
 #define NDEV	100		/* Max number of output device types in menu */
+// WX_DECLARE_STRING_HASH_MAP( NDEV, mDevFileEnding );
+// mDevFileEnding
 
 /*=========================================================================*/
 /* Physical dimension constants used by the driver */
@@ -187,6 +190,7 @@ public: /* variables */
 
   char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
   char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
+	int ndev;
 };
 
 inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
@@ -209,9 +213,10 @@ inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
 }
 
 /* after how many commands the window should be refreshed */
-#define MAX_COMCOUNT 2000
+#define MAX_COMCOUNT 5000
 
 /* wxwidgets application definition (if needed) */
+WX_DEFINE_ARRAY( wxPLplotFrame*, wxArrayOfwxPLplotFrame );
 class wxPLplotApp : public wxApp
 {
 public:
@@ -221,14 +226,24 @@ public:
   bool GetExitFlag( void ) { return exit; };
   void SetAdvanceFlag( bool flag=true ) { advance=flag; };
   bool GetAdvanceFlag( void ) { return advance; };
-  void SetRefreshFlag( bool flag=true ) { refresh=flag; };
-  bool GetRefreshFlag( void ) { return refresh; };
+  void SetRefreshFlag( bool flag=true );
+	void AddFrame( wxPLplotFrame* frame ) { FrameArray.Add( frame ); };
+	void RemoveFrame( wxPLplotFrame* frame ) { FrameArray.Remove( frame ); };
+  size_t FrameCount( void ) { return FrameArray.GetCount(); }
+  void OnIdle( wxIdleEvent& event );
 
 private:
   bool exit;
   bool advance;
-  bool refresh;
+	wxArrayOfwxPLplotFrame FrameArray;
+
+  DECLARE_EVENT_TABLE()
 };
+
+/* event table */
+BEGIN_EVENT_TABLE( wxPLplotApp, wxApp )
+  EVT_IDLE( wxPLplotApp::OnIdle )
+END_EVENT_TABLE()
 
 /* definition of the actual window/frame shown */
 class wxPLplotWindow : public wxWindow
@@ -236,6 +251,8 @@ class wxPLplotWindow : public wxWindow
 public:
 	wxPLplotWindow( wxWindow* parent, PLStream *pls );
 
+  void SetRefreshFlag( bool flag=true ) { refresh=flag; };
+  bool GetRefreshFlag( void ) { return refresh; };
   void OnPaint( wxPaintEvent& event );
   void OnChar( wxKeyEvent& event );
   void OnIdle( wxIdleEvent& event );
@@ -246,6 +263,7 @@ public:
 private:
   PLStream *m_pls;
   wxPLdev* m_dev;  /* windows needs to know this structure */
+  bool refresh;
 
   DECLARE_EVENT_TABLE()
 };
@@ -261,11 +279,16 @@ BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
 END_EVENT_TABLE()
 
 /* definition of the actual window/frame shown */
+
 class wxPLplotFrame : public wxFrame
 {
 public:
   wxPLplotFrame( const wxString& title, PLStream* pls );
-  void OnQuit( wxCommandEvent& event );
+  void OnMenu( wxCommandEvent& event );
+  void OnClose( wxCloseEvent& event );
+	bool SavePlot( char* filename, char* devname, int width,  int height );
+  void SetRefreshFlag( bool flag=true ) { m_window->SetRefreshFlag( flag ); };
+  bool GetRefreshFlag( void ) { return m_window->GetRefreshFlag(); };
 
 private:
   wxPanel* m_panel;
@@ -275,11 +298,12 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
-enum { wxPL_Quit = wxID_EXIT };
+enum { wxPL_Quit = 10000, wxPL_Save };
 
 /* event table */
 BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
-  EVT_MENU( wxPL_Quit, wxPLplotFrame::OnQuit )      /* quit program */
+  EVT_MENU( -1, wxPLplotFrame::OnMenu )      /* handle menu events */
+  EVT_CLOSE( wxPLplotFrame::OnClose )
 END_EVENT_TABLE()
 
 /* Use this macro if you want to define your own main() or WinMain() function
@@ -449,6 +473,7 @@ wxPLdev::wxPLdev( void )
   memset( devName, '\0', NDEV * sizeof(char**) );
   devDesc = (char **)malloc( NDEV * sizeof(char**) );
   memset( devDesc, '\0', NDEV * sizeof(char**) );
+	ndev=NDEV;
 }
 
 
@@ -472,7 +497,6 @@ plD_init_wxwidgets( PLStream *pls )
   // Log_Verbose( "plD_init_wxwidgets()" );
 
   wxPLdev* dev;
-  int ndev=NDEV;
 
   /* default options */
 #ifdef HAVE_FREETYPE
@@ -584,8 +608,7 @@ DrvOpt wx_options[] = {
 #endif
   
   /* find out what file drivers are available */
-  ndev = NDEV;
-  plgFileDevs( &dev->devDesc, &dev->devName, &ndev );
+  plgFileDevs( &dev->devDesc, &dev->devName, &dev->ndev );
 }
 
 
@@ -819,8 +842,10 @@ void plD_tidy_wxwidgets( PLStream *pls )
       delete dev->dc;
       delete dev->m_bitmap;
     }
-      
-    wxUninitialize();
+    
+    wxGetApp().RemoveFrame( dev->m_frame );
+		if( !wxGetApp().FrameCount() )
+    	wxUninitialize();
   }
   
   delete dev;
@@ -1184,39 +1209,6 @@ void plD_erroraborthandler_wxwidgets( char *errormessage )
   /* } */
 }
 
-/*----------------------------------------------------------------------*\
- *  bool SavePlot( char* filename, int dev, int width,  int height )
- *
- *  If an PLplot error occurs, this function shows a dialog regarding
- *  this error and than exits.
-\*----------------------------------------------------------------------*/
-bool SavePlot( PLStream* pls, char* filename, char* devname, int width,  int height )
-{  
-  wxPLdev* dev = (wxPLdev*)pls->dev;
-  int pls_save;
-  FILE *sfile;
-
-	plsdev( devname );
-	if( (sfile = fopen(filename, "wb+")) == NULL)
-    if( dev->ownGUI ) {
-      wxMessageDialog dialog( 0, wxT("Couldn't open file for saving!"), wxT("plPlot error"), wxOK );
-      dialog.ShowModal();
-			return false;
-    } 
-  plsfile( sfile );
-  
-	plmkstrm( &pls_save );  
-	plsstrm( pls_save );
-  plspage( 0., 0., width, height, 0, 0 );
-	plcpstrm( pls_save, 0);
-	pladv(0);
-	plreplot();
-	plflush();
-  plend1();  
-	plsstrm(0);
-
-  return true;
-}
 
 
 
@@ -1389,6 +1381,7 @@ void install_buffer( PLStream *pls )
   }
   
   dev->m_frame = new wxPLplotFrame( _T("wxWidgets PLplot App"), pls );
+  wxGetApp().AddFrame( dev->m_frame );
   dev->m_frame->SetClientSize( dev->width, dev->height );
   dev->m_frame->Show( true );
   dev->m_frame->Raise();
@@ -1449,7 +1442,7 @@ void wxRunApp( PLStream *pls, bool runonce )
 		/* to add an idle event is necessary for Linux (wxGTK2)
 		   and not for Windows, but it doesn't harm */
 	  wxIdleEvent event;
-    dev->m_frame->AddPendingEvent( event );
+    wxGetApp().AddPendingEvent( event );
 		wxGetApp().OnRun();   /* start wxWidgets application     */
     callOnExit.exit=false;
   }
@@ -1476,9 +1469,44 @@ bool wxPLplotApp::OnInit()
   
   exit=false;
   advance=false;
-  refresh=false;
 
   return true;
+}
+
+
+/*----------------------------------------------------------------------*\
+ *  void wxPLplotApp::SetRefreshFlag( bool flag )
+ *
+ *  XXX - missing
+\*----------------------------------------------------------------------*/
+void wxPLplotApp::SetRefreshFlag( bool flag )
+{
+  // Log_Verbose( "wxPLplotApp::RefreshFrames" );
+
+	for( size_t i=0; i<FrameArray.GetCount(); i++)
+		FrameArray[i]->SetRefreshFlag( flag );
+}
+
+
+/*----------------------------------------------------------------------*\
+ *  void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED(event) )
+ *
+ *  XXX - missing
+\*----------------------------------------------------------------------*/
+void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED(event) )
+{
+  // Log_Verbose( "wxPLplotApp::OnIdle" );
+
+	bool refresh=false;
+
+  if( exit )
+    ExitMainLoop();
+
+	for( size_t i=0; i<FrameArray.GetCount(); i++)
+		refresh |= FrameArray[i]->GetRefreshFlag();
+
+  if( advance && !refresh )
+    ExitMainLoop();
 }
 
 
@@ -1504,6 +1532,9 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 	m_window->SetFocus();
 	  
   wxMenu* fileMenu = new wxMenu;
+	for( size_t i=0; i<m_dev->ndev; i++ ) 
+		if( !strcmp(m_dev->devName[i], "png") )
+		  fileMenu->Append( wxPL_Save, _T("Save as png"), _T("Save this plot as png!") );
   fileMenu->Append( wxPL_Quit, _T("E&xit\tAlt-X"), _T("Quit this program") );
 
   wxMenuBar* menuBar = new wxMenuBar();
@@ -1515,16 +1546,104 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 
 
 /*----------------------------------------------------------------------*\
- *  void wxPLplotFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
+ *  void wxPLplotFrame::OnMenu( wxCommandEvent& event )
  *
- *  Event method, which is called if user wants to quit. We quit.
+ *  Event method, which is called if user 
 \*----------------------------------------------------------------------*/
-void wxPLplotFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
+void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 {
-  // Log_Verbose( "wxPLplotFrame::OnQuit" );
+  // Log_Verbose( "wxPLplotFrame::OnMenu" );
 
-  m_dev->exit=true;
-  wxGetApp().ExitMainLoop();
+  switch( event.GetId( ) )
+  {
+  case wxPL_Quit:
+		{
+			wxMessageDialog dialog( this, wxT("Do you really want to quit?"), wxT("Close wxWidgets PLplot App?"), wxYES_NO |wxNO_DEFAULT| wxICON_EXCLAMATION );
+			if( dialog.ShowModal() == wxID_YES ) {
+				m_dev->exit=true;
+				wxGetApp().ExitMainLoop();
+			}
+		}
+		break;
+	case wxPL_Save:
+		{
+			wxFileDialog dialog( this, wxT("Save plot as png"), wxT(""), wxT(""),
+													 wxT("png files (*.png)|*.png|All Files (*.*)|*.*") ,
+#if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
+													 wxSAVE | wxOVERWRITE_PROMPT );
+#else
+													 wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+#endif	
+			if (dialog.ShowModal() == wxID_OK)
+				SavePlot( "test.png", "png", 800, 600 );
+				//SavePlot( dialog.GetPath().c_str(), "png", 800, 600 );
+		}
+		break;
+	}
+}
+
+
+/*----------------------------------------------------------------------*\
+ *  void wxPLplotFrame::OnClose( wxCloseEvent& event )
+ *
+ *  Event method, which is called if user 
+\*----------------------------------------------------------------------*/
+void wxPLplotFrame::OnClose( wxCloseEvent& event )
+{
+  // Log_Verbose( "wxPLplotFrame::OnClose" );
+
+  // Are you old enough to know that you want really to quit?
+  wxMessageDialog dialog( this, wxT("Do you really want to quit?"), wxT("Close wxWidgets PLplot App?"), wxYES_NO |wxNO_DEFAULT| wxICON_EXCLAMATION );
+  if( dialog.ShowModal() == wxID_YES ) {
+		m_dev->exit=true;
+		wxGetApp().ExitMainLoop();
+	}
+}
+
+
+/*----------------------------------------------------------------------*\
+ *  bool wxPLplotFrame::SavePlot( char* filename, int dev, int width,
+ *                                int height )
+ *
+ *  This function saves the current plot to a file (filename) using a
+ *  device (devname) with given width and height. There is no test if
+ *  the device really exists.
+\*----------------------------------------------------------------------*/
+bool wxPLplotFrame::SavePlot( char* filename, char* devname, int width,  int height )
+{  
+  int pls, pls_save;
+  FILE *sfile;
+
+	if( (sfile = fopen(filename, "wb+")) == NULL) {
+    if( m_dev->ownGUI ) {
+      wxMessageDialog dialog( 0, wxT("Couldn't open file for saving!"), wxT("plPlot error"),
+														  wxOK|wxICON_ERROR );
+      dialog.ShowModal();
+    } 
+		return false;
+	}
+
+	plgstrm( &pls );
+	plmkstrm( &pls_save );  
+	if( pls_save<0 ) {
+    if( m_dev->ownGUI ) {
+      wxMessageDialog dialog( 0, wxT("Couldn't open file for saving!"), wxT("plPlot error"),
+																 wxOK|wxICON_ERROR );
+      dialog.ShowModal();
+    } 
+		return false;
+	}
+	plsdev( devname );
+  plsfile( sfile );
+  
+  plspage( 0., 0., width, height, 0, 0 );
+	plcpstrm( pls, 0);
+	pladv( 0 );
+	plreplot();
+  plend1();
+	plsstrm( pls );
+
+  return true;
 }
 
 
@@ -1541,6 +1660,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
 
   m_pls=pls;
   m_dev=(wxPLdev*)pls->dev;
+	refresh=false;
 
 	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 }
@@ -1616,20 +1736,13 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
   // Log_Verbose( "wxPLplotWindow::OnIdle" );
 
-  if( wxGetApp().GetExitFlag() )
-    wxGetApp().ExitMainLoop();
-
-  if( wxGetApp().GetAdvanceFlag() && !(wxGetApp().GetRefreshFlag()) )
-    wxGetApp().ExitMainLoop();  
-  
-  if( wxGetApp().GetRefreshFlag() ) {
+  if( refresh ) {
     if(!m_dev->newclipregion) {
       static wxRect rect;
 			rect.x=m_dev->clipminx;
 			rect.y=m_dev->clipminy;
 			rect.width=m_dev->clipmaxx-m_dev->clipminx+1;
 			rect.height=m_dev->clipmaxy-m_dev->clipminy+1;
-			//Refresh( false, &rect );
       RefreshRect( rect, false );  /* don't erase background */
       m_dev->newclipregion=true;
 			m_dev->clipminx=m_dev->width;
@@ -1638,7 +1751,7 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 			m_dev->clipmaxy=0;
     } else
       Refresh( false );
-    wxGetApp().SetRefreshFlag( false );
+    refresh=false;
   }
 }
 
