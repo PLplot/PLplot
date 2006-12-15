@@ -64,18 +64,15 @@ else(SH_EXECUTABLE)
 endif(SH_EXECUTABLE)
 
 if(NOT SH_EXECUTABLE)
-   message(STATUS 
-   "WARNING: shell not found, disabling ctest and install tree examples tests"
-   )
-   set(BUILD_TEST OFF 
-   CACHE BOOL "Compile examples in the build tree and enable ctest" FORCE
+   message(STATUS
+   "WARNING: bash shell not found, ctest will not work properly"
    )
 endif(NOT SH_EXECUTABLE)
 
 option(PREBUILD_DIST "Pre-build all components required for distribution" OFF)
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(
-  PREBUILD_DIST OFF CACHE INTERNAL 
+  PREBUILD_DIST OFF CACHE INTERNAL
   "Pre-build all components required for distribution"
   )
 endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
