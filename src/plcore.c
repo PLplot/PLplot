@@ -162,12 +162,6 @@ plP_tidy(void)
 
     if (plsc->plbuf_write) {
 	plbuf_tidy(plsc);
-#ifndef BUFFERED_FILE
-	if (plsc->plbuf_buffer != NULL) {
-	  free(plsc->plbuf_buffer);
-	  plsc->plbuf_buffer = NULL;
-	}
-#endif
     }
 
     plsc->OutFile = NULL;
@@ -1822,6 +1816,9 @@ c_plend1(void)
     free_mem(plsc->geometry);
     free_mem(plsc->dev);
     free_mem(plsc->BaseName);
+#ifndef BUFFERED_FILE
+    free_mem(plsc->plbuf_buffer);
+#endif
     if (plsc->program) free_mem(plsc->program);
     if (plsc->server_name) free_mem(plsc->server_name);
     if (plsc->server_host) free_mem(plsc->server_host);
