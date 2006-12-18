@@ -20,13 +20,6 @@
 
 if(ENABLE_tcl)
 
-set(include_INSTALLED_HEADERS
-pltcl.h
-tclMatrix.h
-)
-
-install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
-
 # tclmatrix
 set(tclmatrix${LIB_TAG}_LIB_SRCS
 tclMatrix.c
