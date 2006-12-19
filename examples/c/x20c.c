@@ -153,11 +153,12 @@ main(int argc, char *argv[])
   /* read Lena image */
   /* Note we try two different locations to cover the case where this
    * examples is being run from the test_c.sh script */
-  if (read_img("lena.pgm", &img_f, &width, &height, &num_col) &&
-      read_img("../lena.pgm", &img_f, &width, &height, &num_col) ) {
-    plabort("No such file");
-    plend();
-    exit(1);
+  if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) { 
+    if (read_img("../lena.pgm", &img_f, &width, &height, &num_col)) {
+      plabort("No such file");
+      plend();
+      exit(1);
+    }
   }
 
   /* set gray colormap */

@@ -182,11 +182,12 @@ class x20 {
 
 
 	/* read Lena image */
-	if ((img_f = read_img("lena.pgm", n)) == null && 
-	    (img_f = read_img("../lena.pgm", n)) == null ) {
-	    System.out.println("File error - aborting"); 
-	    pls.end();
-	    System.exit(1);
+	if ((img_f = read_img("lena.pgm", n)) == null) {  
+	    if ((img_f = read_img("../lena.pgm", n)) == null ) {
+	        System.out.println("File error - aborting"); 
+	        pls.end();
+	        System.exit(1);
+	    }
 	}
 	num_col = n[0];
 	width = img_f.length;

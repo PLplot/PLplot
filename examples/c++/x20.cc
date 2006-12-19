@@ -196,11 +196,12 @@ x20::x20( int argc, char ** argv ) {
   pls->Free2dGrid(z, XDIM, YDIM);
 
   /* read Lena image */
-  if (read_img("lena.pgm", &img_f, &width, &height, &num_col) && 
-      read_img("../lena.pgm", &img_f, &width, &height, &num_col)) {
-    cout << "No such file - aborting" << endl;
-    delete pls;
-    exit(1);
+  if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) {
+    if (read_img("../lena.pgm", &img_f, &width, &height, &num_col)) {
+      cout << "No such file - aborting" << endl;
+      delete pls;
+      exit(1);
+    }
   }
 
   /* set gray colormap */
