@@ -146,8 +146,8 @@ EOT
   if (not $nointeractive) {
     $xi = 200;
     $xe = 330;
-    $yi = 220;
-    $ye = 280;
+    $yi = 280;
+    $ye = 220;
 
     if (get_clip (\$xi, \$xe, \$yi, \$ye)) { # get selection rectangle
       plend ();
@@ -194,7 +194,10 @@ sub read_img {
   my $fname = shift;
   if (-r $fname) {
     my $img = rpnm ($fname);
-    return ($img, $img->dims (), $img->max);
+    # We want the number of colours from the header, not the maximum 
+    # colour. We can't get this via PDL, so hard code it to 255.
+    #return ($img, $img->dims (), $img->max);
+    return ($img, $img->dims (), 255);
   }
   else {
     return (0,0,0,0);
