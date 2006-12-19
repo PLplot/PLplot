@@ -118,8 +118,14 @@ EOT
   # read Lena image
 
   my $lena = "lena.pgm";
-  my ($img_f, $width, $height, $num_col) = read_img ($lena)
-    or die "Cannot find image file $lena";
+  my ($img_f, $width, $height, $num_col) = read_img ($lena);
+  if ($width == 0 && $height == 0) {
+    my $lena = "../lena.pgm";
+    ($img_f, $width, $height, $num_col) = read_img ($lena);
+    if ($width == 0 && $height == 0) {
+      die "Cannot find image file $lena";
+    }
+  }
 
   # set gray colormap
 
@@ -186,8 +192,13 @@ sub gray_cmap {
 
 sub read_img {
   my $fname = shift;
-  my $img = rpnm ($fname);
-  return ($img, $img->dims (), $img->max);
+  if (-r $fname) {
+    my $img = rpnm ($fname);
+    return ($img, $img->dims (), $img->max);
+  }
+  else {
+    return (0,0,0,0);
+  }
 }
 
 # Get selection square interactively
