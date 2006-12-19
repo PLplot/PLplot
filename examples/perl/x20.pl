@@ -273,7 +273,7 @@ sub get_clip {
 	$xxe = $t;
     }
     
-    if (yyi < yye) {
+    if ($yyi < $yye) {
 	my $t = $yyi;
 	$yyi = $yye;
 	$yye = $t;
