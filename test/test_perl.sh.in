@@ -29,6 +29,15 @@
 # skip 14 because it requires two output files.
 # skip 17 because it is interactive.
 # skip 25 and 26 because they are not yet implemented.
+
+# Ensure correct version of the libraries are picked up in the build
+# tree. Has no impact in the install tree.
+if [ "$LD_LIBRARY_PATH" == "" ] ; then
+  export LD_LIBRARY_PATH=../src
+else
+  export LD_LIBRARY_PATH=../src:$LD_LIBRARY_PATH
+fi
+
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24; do
   $perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}pdl.$dsuffix $options
 done
