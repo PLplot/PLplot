@@ -74,8 +74,8 @@ plinit ();
 
 $z = zeroes (XPTS, YPTS);
 
-my $x = 3 * (sequence (XPTS) - (XPTS / 2)) / (XPTS / 2);
-my $y = 3 * (sequence (YPTS) - (YPTS / 2)) / (YPTS / 2);
+my $x = 3 * (sequence (XPTS) - int(XPTS / 2)) / int(XPTS / 2);
+my $y = 3 * (sequence (YPTS) - int(YPTS / 2)) / int(YPTS / 2);
 
 # The code below may be vectorized to improve speed
 for (my $i = 0; $i < XPTS; $i++) {

@@ -167,15 +167,15 @@ sub potential {
 
   my $dz = ($zmax - $zmin) / PNLEVEL;
   my $clevel = $zmin + (sequence (PNLEVEL) + 0.5) * $dz;;
-  my $clevelneg = zeroes (PNLEVEL);
-  my $clevelpos = zeroes (PNLEVEL);
 
   my $idx = which ($clevel <= 0);
-  $clevelneg->index ($idx) .= $clevel->index ($idx);
   my $nlevelneg = $idx->dim (0);
+  my $clevelneg = zeroes ($nlevelneg);
+  $clevelneg .= $clevel->index ($idx);
   $idx = which ($clevel > 0);
-  $clevelpos->index ($idx) .= $clevel->index ($idx);
   my $nlevelpos = $idx->dim (0);
+  my $clevelpos = zeroes ($nlevelpos);
+  $clevelpos .= $clevel->index ($idx);
 
   # Colours!
 
@@ -242,8 +242,8 @@ plinit ();
 
 # Set up function arrays
 
-$xx = ((sequence (XPTS) - (XPTS / 2)) / (XPTS / 2))->dummy (1, YPTS);
-$yy = ((sequence (YPTS) - (YPTS / 2)) / (YPTS / 2) - 1.0)->dummy (0, XPTS);
+$xx = ((sequence (XPTS) - int(XPTS / 2)) / int(XPTS / 2))->dummy (1, YPTS);
+$yy = ((sequence (YPTS) - int(YPTS / 2)) / int(YPTS / 2) - 1.0)->dummy (0, XPTS);
 my $z = $xx * $xx - $yy * $yy;
 my $w = 2 * $xx * $yy;
 

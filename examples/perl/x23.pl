@@ -197,7 +197,7 @@ for (my $page = 0; $page < 11; $page++) {
     for (my $i = 0; $i < $nxcells [$page]; $i++) {
       $x  = (0.5 + $i) * $deltax;
       if ($slice < $length) {
-	my $cmsString;
+	my $cmdString;
         if ($page == 0) {
           $cmdString = $Greek[$slice];
         }

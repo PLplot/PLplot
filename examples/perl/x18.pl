@@ -129,7 +129,7 @@ for ($k = 0; $k < 4; $k++) {
   plcol0 (3);
   $title = sprintf ("#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
                     $alt[$k], $az[$k]);
-  plmtex (1.0, 0.5, 0.5, "t", title);
+  plmtex (1.0, 0.5, 0.5, "t", $title);
 }
 
 plend ();

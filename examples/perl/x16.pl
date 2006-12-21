@@ -141,8 +141,8 @@ plinit ();
 
 @tr = (2 / ($nx - 1), 0.0, -1.0, 0.0, 2 / ($ny - 1), -1.0);
 
-my $x = ((sequence ($nx) - $nx / 2) / ($nx / 2))->dummy (1, $ny);
-my $y = ((sequence ($ny) - $ny / 2) / ($ny / 2) - 1.0)->dummy (0, $nx);;
+my $x = ((sequence ($nx) - int($nx / 2)) / int($nx / 2))->dummy (1, $ny);
+my $y = ((sequence ($ny) - int($ny / 2)) / int($ny / 2) - 1.0)->dummy (0, $nx);;
 
 my $z = -sin (7 * $x) * cos (7 * $y) + $x ** 2 - $y ** 2;
 my $w = -cos (7 * $x) * sin (7 * $y) + 2 * $x * $y;

@@ -67,8 +67,8 @@ sub main {
 
   # Set up data array
 
-  my $xx = (sequence (XPTS) - (XPTS / 2)) / (XPTS / 2);
-  my $yy = (sequence (YPTS) - (YPTS / 2)) / (YPTS / 2) - 1.0;
+  my $xx = (sequence (XPTS) - int(XPTS / 2)) / int(XPTS / 2);
+  my $yy = (sequence (YPTS) - int(YPTS / 2)) / int(YPTS / 2) - 1.0;
   for (my $i = 0; $i < XPTS; $i++) {
     my $xi = $xx->index ($i);
     for (my $j = 0; $j < YPTS; $j++) {

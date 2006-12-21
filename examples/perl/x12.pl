@@ -51,7 +51,7 @@ for (my $i = 0; $i < 10; $i++) {
   myplfbox ((1980. + $i), $y0->index ($i));
   my $string = sprintf ("%.0f", $y0->index ($i));
   plptex ((1980. + $i + .5), ($y0->index ($i) + 1.), 1.0, 0.0, .5, $string);
-  $string = sprintf ("%d", 1980 + i);
+  $string = sprintf ("%d", 1980 + $i);
   plmtex (1.0, (($i + 1) * .1 - .05), 0.5, "b", $string);
 }
 
