@@ -27,6 +27,7 @@
 # DRIVERS_LINK_FLAGS  	  - list of LINK_FLAGS for all static devices.
 
 if(PLD_wxwidgets)
+  SET(wxWidgets_USE_LIBS base core)
   find_package(wxWidgets)
   if(wxWidgets_FOUND)
     string(REGEX REPLACE ";" " -I" 
