@@ -81,7 +81,7 @@ ADD_EXECUTABLE( rbox src/rbox.c )
 
 INSTALL(
   TARGETS
-    qhull qhull_EXE qhullx qdelaunay rbox )
+    qhull ${qhull_EXE} qhullx qdelaunay rbox
   ARCHIVE DESTINATION 
     lib
   LIBRARY DESTINATION 
