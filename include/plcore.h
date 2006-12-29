@@ -261,6 +261,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_svg) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_svg,
 #endif
+#if defined(PLD_pdf) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_pdf,
+#endif
 #if defined(PLD_psttf) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_psttfm,
     plD_dispatch_init_psttfc,

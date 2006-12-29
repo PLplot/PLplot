@@ -76,5 +76,6 @@
 #cmakedefine PLD_wingcc
 #cmakedefine PLD_wxwidgets
 #cmakedefine PLD_svg
+#cmakedefine PLD_pdf
 
 #endif	/* __PLDEVS_H__ */
