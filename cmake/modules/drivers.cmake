@@ -79,6 +79,7 @@ include(psttf)
 include(wingcc)
 include(aqt)
 include(wxwidgets)
+include(pdf)
 
 # Finalize device options.
 include(drivers-finish)

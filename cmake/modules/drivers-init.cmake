@@ -88,6 +88,7 @@ set(DRIVERS_DEVICE_LIST
 "ntk:ntk:OFF"
 "null:null:ON"
 "pbm:pbm:ON"
+"pdf:pdf:OFF"
 "plmeta:plmeta:ON"
 "ps:ps:ON"
 "psttf:psttf:ON"
