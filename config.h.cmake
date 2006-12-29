@@ -214,6 +214,9 @@
 /* Define if pbm driver is present */
 #cmakedefine PLD_pbm
 
+/* Define if pdf driver is present */
+#cmakedefine PLD_pdf
+
 /* Define if plmeta driver is present */
 #cmakedefine PLD_plmeta
 
