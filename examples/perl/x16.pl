@@ -216,7 +216,7 @@ plwind (-1.0, 1.0, -1.0, 1.0);
 plpsty (0);
 
 plshades ($z, -1., 1., -1., 1., $shedge, $fill_width,
-	  $cont_color, $cont_width, 1, 0, \&pltr2, $cgrid2);
+	  $cont_color, $cont_width, 0, 0, \&pltr2, $cgrid2);
 
 plcol0 (1);
 plbox (0.0, 0, 0.0, 0, "bcnst", "bcnstv");
@@ -233,7 +233,7 @@ plwind (-1.0, 1.0, -1.0, 1.0);
 plpsty (0);
 
 plshades ($z, -1., 1., -1., 1., $shedge, $fill_width,
-          2, 3, 1, 0, \&pltr2, $cgrid2);
+          2, 3, 0, 0, \&pltr2, $cgrid2);
 
 plcol0 (1);
 plbox (0.0, 0, 0.0, 0, "bcnst", "bcnstv");
