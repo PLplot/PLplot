@@ -280,7 +280,7 @@ $z = exp (- $r ** 2) * cos (5 * pi * $r) * cos (5 * $t);
 # Need a new shedge to go along with the new data set
 
 ($zmin, $zmax) =  f2mnmx ($z);
-$shedge = $zmin + ($zmax - $zmin) * sequence ($ns) / $ns;
+$shedge = $zmin + ($zmax - $zmin) * sequence ($ns+1) / $ns;
 
 # Now we can shade the interior region
 
