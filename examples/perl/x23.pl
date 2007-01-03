@@ -199,13 +199,13 @@ for (my $page = 0; $page < 11; $page++) {
       if ($slice < $length) {
 	my $cmdString;
         if ($page == 0) {
-          $cmdString = $Greek[$slice];
+          $cmdString = "$Greek[$slice]";
         }
         elsif (($page >= 1) and ($page <= 3)) {
-          $cmdString = sprintf ("[0x%.4x]", $Type1 [$offset [$page] + $slice]);
+          $cmdString = sprintf ("#[0x%.4x]", $Type1 [$offset [$page] + $slice]);
 	}
 	else {
-	  $cmdString = sprintf ("[0x%.4x]", $lo [$page] + $slice);
+	  $cmdString = sprintf ("#[0x%.4x]", $lo [$page] + $slice);
         }
         plptex ($x, $y + $yoffset, 1., 0., 0.5, $cmdString);
         plptex ($x, $y - $yoffset, 1., 0., 0.5, "#$cmdString");
