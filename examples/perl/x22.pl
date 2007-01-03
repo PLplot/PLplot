@@ -37,14 +37,89 @@ use constant nlevel => 10;
 
 # Pairs of points making the line segments used to plot the user defined
 # arrow
-my $arrow_x = pdl [-0.5, 0.3, 0.3, 0.5, 0.3, 0.3];
+my $arrow_x = pdl [-0.5, 0.5, 0.3, 0.5, 0.3, 0.5];
 my $arrow_y = pdl [0.0, 0.0,   0.2, 0.0, -0.2, 0.0];
+my $arrow2_x = pdl [-0.5, 0.3, 0.3, 0.5, 0.3, 0.3];
+my $arrow2_y = pdl [0.0, 0.0,   0.2, 0.0, -0.2, 0.0];
+
+#
+# Vector plot of the circulation about the origin
+#
+sub circulation {
+
+    my $dx = 1.0;
+    my $dy = 1.0;
+
+    my $nx = nx;
+    my $ny = ny;
+
+    my $xmin = -$nx/2*$dx;
+    my $xmax = $nx/2*$dx;
+    my $ymin = -$ny/2*$dy;
+    my $ymax = $ny/2*$dy;
+
+    my $x = ((sequence($nx)-int($nx/2)+0.5)*$dx)->dummy(1,$ny);
+    my $y = ((sequence($ny)-int($ny/2)+0.5)*$dy)->dummy(0,$nx);
+
+    # Create data - circulation around the origin.
+    my $cgrid2 = plAlloc2dGrid($x, $y);
+    my $u = $y;
+    my $v = -$x;
+
+    # Plot vectors with default arrows
+    plenv($xmin, $xmax, $ymin, $ymax, 0, 0);
+    pllab("(x)", "(y)", "#frPLplot Example 22 - circulation");
+    plcol0(2);
+    plvect($u,$v,0.0,\&pltr2,$cgrid2);
+    plcol0(1);
+
+}
+
+#
+# Vector plot of flow through a constricted pipe
+#
+sub constriction {
+
+    my $nx = nx;
+    my $ny = ny;
+
+    my $dx = 1.0;
+    my $dy = 1.0;
+
+    my $xmin = -$nx/2*$dx;
+    my $xmax = $nx/2*$dx;
+    my $ymin = -$ny/2*$dy;
+    my $ymax = $ny/2*$dy;
+
+    my $x = ((sequence($nx)-int($nx/2)+0.5)*$dx)->dummy(1,$ny);
+    my $y = ((sequence($ny)-int($ny/2)+0.5)*$dy)->dummy(0,$nx);
+    my $cgrid2 = plAlloc2dGrid($x, $y);
+
+    my $u;
+    my $v;
+    
+    my $Q = 2.0;
+    my $b = $ymax/4.0*(3-cos(pi*$x/$xmax));
+    my $dbdx = $ymax/4.0*sin(pi*$x/$xmax)*$y/$b;
+    $u = $Q*4*$ymax/$b;
+    $v = $dbdx*$u;
+    $u->where(abs($y)>=$b) .= 0;
+    $v->where(abs($y)>=$b) .= 0;
+
+    plenv($xmin, $xmax, $ymin, $ymax, 0, 0);
+    pllab("(x)", "(y)", "#frPLplot Example 22 - constriction");
+    plcol0(2);
+    plvect($u,$v,-0.5,\&pltr2,$cgrid2);
+    plcol0(1);
+
+}
+
 
 sub f2mnmx {
   $f = shift;
   my $fmin = min ($f);
   my $fmax = max ($f);
-  return ($fmin, $fmax)
+  return ($fmin, $fmax);
 }
 
 # Vector plot of the gradient of a shielded potential (see example 9)
@@ -116,7 +191,6 @@ sub potential {
   my $py = $rmax * sin ($theta);
   plline ($px , $py);
 
-  plFree2dGrid ($cgrid2);
 }
 
 #--------------------------------------------------------------------------
@@ -133,38 +207,19 @@ plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit ();
 
-my $npts = nx * ny;
+circulation();
 
-my $xmin = -1.6;
-my $xmax = 1.6;
-my $ymin = -0.55;
-my $ymax = 0.55;
+# Set arrow style using arrow_x and arrow_y then
+# plot using these arrows.
+my $fill = 0;
+plsvect($arrow_x, $arrow_y, $fill);
+constriction();
 
-# Create the data to plot
-# - use the gradient of the rosen function in example 8
-
-my $x = (1.5 * ((sequence (nx) - nx / 2) + 0.5)/(nx / 2))->dummy (1, ny);
-my $y = (0.5 * ((sequence (ny) - ny / 2) + 0.5)/(ny / 2))->dummy (0, nx);
-my $cgrid2 = plAlloc2dGrid ($x, $y);
-my $u = -2 * (1 - $x) - 200 * ($y - $x ** 2);
-my $v = 200 * ($y - $x * $x);
-
-# Plot vectors using default arrow style
-plenv ($xmin, $xmax, $ymin, $ymax, 0, 0);
-pllab ("(x)", "(y)", "#frPLplot Example 22 - vector plot");
-plcol0 (2);
-plvect ($u, $v, -0.5, \&pltr2, $cgrid2);
-plcol0 (1);
-
+# Set arrow style using arrow2_x and arrow2_y then
+# plot using these filled arrows.
 my $fill = 1;
-
-# Create user defined arrow style and plot vectors using new style
-plsvect ($arrow_x, $arrow_y, $fill);
-plenv ($xmin, $xmax, $ymin, $ymax, 0, 0);
-pllab ("(x)", "(y)", "#frPLplot Example 22 - filled arrow");
-plcol0 (2);
-plvect ($u, $v, 0.0005, \&pltr2, $cgrid2);
-plcol0 (1);
+plsvect($arrow2_x, $arrow2_y, $fill);
+constriction();
 
 # Example of polar plot
 
@@ -172,4 +227,3 @@ potential ();
 
 plend ();
 
-plFree2dGrid ($cgrid2);
