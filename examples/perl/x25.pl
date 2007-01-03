@@ -50,17 +50,17 @@ for ( $j = 0; $j < 4; $j ++ ) {
 	$x0 = pdl( 0, -100, 0, 100);
 	$y0 = pdl( -100, 0, 100, 0);
     }
-    if ( j == 1 ) {
+    if ( $j == 1 ) {
 # Polygon 1: a diamond - reverse direction
 	$x0 = pdl( 100, 0, -100, 0);
 	$y0 = pdl( 0, 100, 0, -100);
     }
-    if ( j == 2 ) {
+    if ( $j == 2 ) {
 # Polygon 2: a square with punctures
 	$x0 = pdl( -100, -100, 80, -100, -100, -80, 0, 80, 100, 100);
 	$y0 = pdl( -100, -80, 0, 80, 100, 100, 80, 100, 100, -100);
     }
-    if ( j == 3 ) {
+    if ( $j == 3 ) {
 # Polygon 2: a square with punctures - reversed direction 
 	$x0 = pdl( 100, 100, 80, 0, -80, -100, -100, 80, -100, -100);
 	$y0 = pdl( -100, 100, 100, 80, 100, 100, 80, 0, -80, -100);
