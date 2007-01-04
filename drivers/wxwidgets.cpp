@@ -1011,51 +1011,52 @@ static void fill_polygon( PLStream *pls )
 
   wxPLdev* dev = (wxPLdev*)pls->dev;
 
-  if( dev->ready ) {
-	  if( dev->antialized ) {
+  if( !(dev->ready) )
+    install_buffer( pls );
+
+  if( dev->antialized ) {
 #ifdef HAVE_AGG
-			agg::rasterizer_scanline_aa<> ras;
-			agg::scanline_u8 sl;
-	    pixfmt pixf( *dev->m_rendering_buffer );
-			ren_base renb(pixf);
-			renderer ren(renb);
+    agg::rasterizer_scanline_aa<> ras;
+    agg::scanline_u8 sl;
+    pixfmt pixf( *dev->m_rendering_buffer );
+    ren_base renb(pixf);
+    renderer ren(renb);
 
-    	agg::path_storage path;
-			x2a=(short)(pls->dev_x[0]/dev->scalex); y2a=(short)(dev->height-pls->dev_y[0]/dev->scaley);
-			path.move_to( x2a, y2a );
-			for ( PLINT i=1; i<pls->dev_npts; i++ ) {
-				x1a=x2a; y1a=y2a;
-				x2a=(short)(pls->dev_x[i]/dev->scalex); y2a=(short)(dev->height-pls->dev_y[i]/dev->scaley);
-				path.line_to( x2a, y2a );
-				if( !(dev->resizing) && dev->ownGUI ) 
-					AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
-			}
-			path.line_to( (pls->dev_x[0]/dev->scalex), (dev->height-pls->dev_y[0]/dev->scaley) );
-			path.close_polygon();
-	
-	    ren.color( agg::rgba8(dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke, dev->m_StrokeOpacity) );
-      ras.add_path( path );
-	    agg::render_scanlines(ras, sl, ren);
+    agg::path_storage path;
+    x2a=(short)(pls->dev_x[0]/dev->scalex); y2a=(short)(dev->height-pls->dev_y[0]/dev->scaley);
+    path.move_to( x2a, y2a );
+    for ( PLINT i=1; i<pls->dev_npts; i++ ) {
+      x1a=x2a; y1a=y2a;
+      x2a=(short)(pls->dev_x[i]/dev->scalex); y2a=(short)(dev->height-pls->dev_y[i]/dev->scaley);
+      path.line_to( x2a, y2a );
+      if( !(dev->resizing) && dev->ownGUI ) 
+        AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+    }
+    path.line_to( (pls->dev_x[0]/dev->scalex), (dev->height-pls->dev_y[0]/dev->scaley) );
+    path.close_polygon();
 
-			agg::conv_stroke<agg::path_storage> stroke(path);
-			stroke.line_join( agg::round_join );
-			stroke.line_cap( agg::round_cap );
-			stroke.width( dev->m_strokewidth );
-			ras.add_path( stroke );    
-	    ren.color( agg::rgba8(dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke, dev->m_StrokeOpacity) );
-	    agg::render_scanlines( ras, sl, ren );
+    ren.color( agg::rgba8(dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke, dev->m_StrokeOpacity) );
+    ras.add_path( path );
+    agg::render_scanlines(ras, sl, ren);
+
+    agg::conv_stroke<agg::path_storage> stroke(path);
+    stroke.line_join( agg::round_join );
+    stroke.line_cap( agg::round_cap );
+    stroke.width( dev->m_strokewidth );
+    ras.add_path( stroke );    
+    ren.color( agg::rgba8(dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke, dev->m_StrokeOpacity) );
+    agg::render_scanlines( ras, sl, ren );
 #endif
-		} else {
-			wxPoint *points = new wxPoint[pls->dev_npts];
-		
-			for( int i=0; i < pls->dev_npts; i++ ) {
-				points[i].x=(int) (pls->dev_x[i]/dev->scalex);
-				points[i].y=(int) (dev->height-pls->dev_y[i]/dev->scaley);
-			}
-		
-			dev->dc->DrawPolygon( pls->dev_npts, points );
-			delete[] points;
-		}
+  } else {
+    wxPoint *points = new wxPoint[pls->dev_npts];
+  
+    for( int i=0; i < pls->dev_npts; i++ ) {
+      points[i].x=(int) (pls->dev_x[i]/dev->scalex);
+      points[i].y=(int) (dev->height-pls->dev_y[i]/dev->scaley);
+    }
+  
+    dev->dc->DrawPolygon( pls->dev_npts, points );
+    delete[] points;
   }
 
   if( !(dev->resizing) && dev->ownGUI ) {
