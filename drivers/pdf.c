@@ -65,7 +65,6 @@ static jmp_buf env;
 /* General */
 
 static short desired_offset(short, double);
-HPDF_Error_Handler error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data );
 static void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill);
 
 /* String processing */
@@ -83,6 +82,19 @@ void plD_bop_pdf                (PLStream *);
 void plD_tidy_pdf               (PLStream *);
 void plD_state_pdf              (PLStream *, PLINT);
 void plD_esc_pdf                (PLStream *, PLINT, void *);
+
+#ifdef HPDF_DLL
+void  __stdcall
+#else
+void
+#endif
+error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data )
+{
+  /* invoke longjmp() when an error has occurred */
+  printf( "ERROR: error_no=%04X, detail_no=%d\n", (unsigned int)error_no, (int)detail_no );
+  longjmp(env, 1);
+}
+
 
 //---------------------------------------------------------------------
 // dispatch_init_init()
@@ -338,10 +350,3 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 }
 
 
-HPDF_Error_Handler error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data )
-{
-  /* invoke longjmp() when an error has occurred */
-  printf ("ERROR: error_no=%04X, detail_no=%d\n", (unsigned int)error_no,    
-          (int)detail_no);
-  longjmp(env, 1);
-}
