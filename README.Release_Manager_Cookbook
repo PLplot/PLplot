@@ -1,10 +1,10 @@
 INDEX
-(1) GNU Privacy Gaurd (gpg).
+(1) GNU Privacy Guard (gpg).
 (2) A Note on Autotools.
 (3) Creating a PLplot Release.
 
 
-(1) GNU Privacy Gaurd (gpg)
+(1) GNU Privacy Guard (gpg)
 A brief summary of developer relevant gpg commands, see also:
 http://webber.dewinter.com/gnupg_howto/
 man gpg
@@ -24,10 +24,12 @@ command)
 
 (2) A Note on Autotools
 
-For the foreseeable future, the PLplot release will be built with both
-GNU autotools and CMake. Since autotools users are completely dependent on
-the autotools versions that you will use when running cf/bootstrap.sh (called
-by make_tarball.sh below) you must have the correct autotools versions.
+Our old autotools build system is now deprecated in favour of our new CMake
+build system, but nevertheless our release tarball includes
+autotools-generated files such as configure for those users who have not
+made the switch yet. Since autotools users are completely dependent on the
+autotools versions that you will use when running cf/bootstrap.sh (called by
+make_tarball.sh below) you must have the correct autotools versions.
 Currently these are:
 
 autoconf (GNU Autoconf) 2.59
@@ -128,6 +130,11 @@ Go to the PLplot project page.
 Select file releases in the drop down admin menu at the top of the page.
 Click add release at the bottom of the page.
 Enter the new release name and click "create this release".
+
+N.B. Release names guide our users to the release they want when they browse
+our file release area.  The source release names should be of the form
+"5.x.y Source" (e.g., "5.6.1 Source").  The reason for this suggestion is to
+keep source release names distinct from binary release names.
 
 In the file release GUI (Step1):
 Browse to README.release in "Upload Release Notes".
