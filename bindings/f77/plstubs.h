@@ -127,7 +127,7 @@
 #define FNAME_(x,y)	x
 
 #elif STUB_LINKAGE == STUB_STDCALL
-#define FNAME(x,y)	__stdcall x
+#define FNAME(x,y)	PLDLLIMPEXP __stdcall x
 #define FNAME_(x,y)	x
 
 #else

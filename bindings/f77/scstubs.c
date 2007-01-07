@@ -32,63 +32,63 @@
 static void (*plmapform)(PLINT *, PLFLT *, PLFLT *) ; /* Note: slightly different prototype than
                                                          (*mapform)! */
 
-PLDLLEXPORT void
+void
 PL_SETCONTLABELFORMAT(PLINT *lexp, PLINT *sigdig)
 {
     c_pl_setcontlabelformat(*lexp, *sigdig);
 }
 
-PLDLLEXPORT void
+void
 PL_SETCONTLABELFORMATa(PLINT *lexp, PLINT *sigdig)
 {
     c_pl_setcontlabelformat(*lexp, *sigdig);
 }
 
-PLDLLEXPORT void
+void
 PL_SETCONTLABELPARAM(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
 {
     c_pl_setcontlabelparam(*offset, *size, *spacing, *active);
 }
 
-PLDLLEXPORT void
+void
 PL_SETCONTLABELPARAMa(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
 {
     c_pl_setcontlabelparam(*offset, *size, *spacing, *active);
 }
 
-PLDLLEXPORT void
+void
 PLADV(PLINT *sub)
 {
     c_pladv(*sub);
 }
 
-PLDLLEXPORT void
+void
 PLAXES7(PLFLT *x0, PLFLT *y0, char *xopt, PLFLT *xtick,
 	PLINT *nxsub, char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plaxes(*x0, *y0, xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
 
-PLDLLEXPORT void
+void
 PLBIN(PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center)
 {
     c_plbin(*nbin, x, y, *center);
 }
 
-PLDLLEXPORT void
+void
 PLBOP(void)
 {
     c_plbop();
 }
 
-PLDLLEXPORT void
+void
 PLBOX7(char *xopt, PLFLT *xtick, PLINT *nxsub,
        char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plbox(xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
 
-PLDLLEXPORT void
+void
 PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
 	char *yopt, char *ylabel, PLFLT *ytick, PLINT *nysub,
 	char *zopt, char *zlabel, PLFLT *ztick, PLINT *nzsub)
@@ -98,31 +98,31 @@ PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
 	     zopt, zlabel, *ztick, *nzsub);
 }
 
-PLDLLEXPORT void
+void
 PLCALC_WORLD(PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window)
 {
     c_plcalc_world(*rx, *ry, wx, wy, window);
 }
 
-PLDLLEXPORT void
+void
 PLCALC_WORLDa(PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window)
 {
     c_plcalc_world(*rx, *ry, wx, wy, window);
 }
 
-PLDLLEXPORT void
+void
 PLCLEAR(void)
 {
     c_plclear();
 }
 
-PLDLLEXPORT void
+void
 PLCOL0(PLINT *icol)
 {
     c_plcol0(*icol);
 }
 
-PLDLLEXPORT void
+void
 PLCOL1(PLFLT *col)
 {
     c_plcol1(*col);
@@ -130,171 +130,171 @@ PLCOL1(PLFLT *col)
 
 /* The old way, same as plcol0 */
 
-PLDLLEXPORT void
+void
 PLCOL(PLINT *icol)
 {
     c_plcol0(*icol);
 }
 
-PLDLLEXPORT void
+void
 PLCPSTRM(PLINT *iplsr, PLBOOL *flags)
 {
     c_plcpstrm(*iplsr, *flags);
 }
 
-PLDLLEXPORT void
+void
 PLEND(void)
 {
     c_plend();
 }
 
-PLDLLEXPORT void
+void
 PLEND1(void)
 {
     c_plend1();
 }
 
-PLDLLEXPORT void
+void
 PLENV(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
       PLINT *just, PLINT *axis)
 {
     c_plenv(*xmin, *xmax, *ymin, *ymax, *just, *axis);
 }
 
-PLDLLEXPORT void
+void
 PLEOP(void)
 {
     c_pleop();
 }
 
-PLDLLEXPORT void
+void
 PLERRX(PLINT *n, PLFLT *xmin, PLFLT *xmax, PLFLT *y)
 {
     c_plerrx(*n, xmin, xmax, y);
 }
 
-PLDLLEXPORT void
+void
 PLERRY(PLINT *n, PLFLT *x, PLFLT *ymin, PLFLT *ymax)
 {
     c_plerry(*n, x, ymin, ymax);
 }
 
-PLDLLEXPORT void
+void
 PLFAMADV(void)
 {
     c_plfamadv();
 }
 
-PLDLLEXPORT void
+void
 PLFILL(PLINT *n, PLFLT *x, PLFLT *y)
 {
     c_plfill(*n, x, y);
 }
 
-PLDLLEXPORT void
+void
 PLFILL3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z)
 {
     c_plfill3(*n, x, y, z);
 }
 
-PLDLLEXPORT void
+void
 PLFLUSH(void)
 {
     c_plflush();
 }
 
-PLDLLEXPORT void
+void
 PLFONT(PLINT *font)
 {
     c_plfont(*font);
 }
 
-PLDLLEXPORT void
+void
 PLFONTLD(PLINT *charset)
 {
     c_plfontld(*charset);
 }
 
-PLDLLEXPORT void
+void
 PLGCHR(PLFLT *chrdef, PLFLT *chrht)
 {
     c_plgchr(chrdef, chrht);
 }
 
-PLDLLEXPORT void
+void
 PLGCOL0(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b)
 {
     c_plgcol0(*icol0, r, g, b);
 }
 
-PLDLLEXPORT void
+void
 PLGCOLBG(PLINT *r, PLINT *g, PLINT *b)
 {
     c_plgcolbg(r, g, b);
 }
 
-PLDLLEXPORT void
+void
 PLGCOMPRESSION(PLINT *compression)
 {
     c_plgcompression(compression);
 }
 
-PLDLLEXPORT void
+void
 PLGDEV7(char *dev, int length)
 {
     c_plgdev(dev);
 }
 
-PLDLLEXPORT void
+void
 PLGDIDEV(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy)
 {
     c_plgdidev(p_mar, p_aspect, p_jx, p_jy);
 }
 
-PLDLLEXPORT void
+void
 PLGDIORI(PLFLT *p_rot)
 {
     c_plgdiori(p_rot);
 }
 
-PLDLLEXPORT void
+void
 PLGDIPLT(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
 {
     c_plgdiplt(p_xmin, p_ymin, p_xmax, p_ymax);
 }
 
-PLDLLEXPORT void
+void
 PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 {
     c_plgfam(fam, num, bmax);
 }
 
-PLDLLEXPORT void
+void
 PLGFNAM7(char *fnam, int length)
 {
     c_plgfnam(fnam);
 }
 
-PLDLLEXPORT void
+void
 PLGLEVEL(PLINT *level)
 {
     c_plglevel(level);
 }
 
-PLDLLEXPORT void
+void
 PLGPAGE(PLFLT *xpmm, PLFLT *ypmm, PLINT *xwid, PLINT *ywid,
 	PLINT *xoff, PLINT *yoff)
 {
     c_plgpage(xpmm, ypmm, xwid, ywid, xoff, yoff);
 }
 
-PLDLLEXPORT void
+void
 PLGRA(void)
 {
     c_plgra();
 }
 
-PLDLLEXPORT void
+void
 PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts,
 	   PLFLT *xg, PLINT *nptsx, PLFLT *yg,  PLINT *nptsy,
 	   PLFLT **zg, PLINT *type, PLFLT *data)
@@ -304,110 +304,110 @@ PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts,
 		 zg, *type, *data);
 }
 
-PLDLLEXPORT void
+void
 PLGSPA(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {
     c_plgspa(xmin, xmax, ymin, ymax);
 }
 
-PLDLLEXPORT void
+void
 PLGSTRM(PLINT *strm)
 {
     c_plgstrm(strm);
 }
 
-PLDLLEXPORT void
+void
 PLGVER7(char *ver)
 {
     c_plgver(ver);
 }
 
-PLDLLEXPORT void
+void
 PLGVPD(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
     c_plgvpd(p_xmin, p_xmax, p_ymin, p_ymax);
 }
 
-PLDLLEXPORT void
+void
 PLGVPW(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
     c_plgvpw(p_xmin, p_xmax, p_ymin, p_ymax);
 }
 
-PLDLLEXPORT void
+void
 PLGXAX(PLINT *digmax, PLINT *digits)
 {
     c_plgxax(digmax, digits);
 }
 
-PLDLLEXPORT void
+void
 PLGYAX(PLINT *digmax, PLINT *digits)
 {
     c_plgyax(digmax, digits);
 }
 
-PLDLLEXPORT void
+void
 PLGZAX(PLINT *digmax, PLINT *digits)
 {
     c_plgzax(digmax, digits);
 }
 
-PLDLLEXPORT void
+void
 PLHIST(PLINT *n, PLFLT *data, PLFLT *datmin, PLFLT *datmax,
        PLINT *nbin, PLINT *oldwin)
 {
     c_plhist(*n, data, *datmin, *datmax, *nbin, *oldwin);
 }
 
-PLDLLEXPORT void
+void
 PLHLS(PLFLT *hue, PLFLT *light, PLFLT *sat)
 {
     c_plhls(*hue, *light, *sat);
 }
 
-PLDLLEXPORT void
+void
 PLHLSRGB(PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b)
 {
     c_plhlsrgb(*h, *l, *s, r, g, b);
 }
 
-PLDLLEXPORT void
+void
 PLINIT(void)
 {
     c_plinit();
 }
 
-PLDLLEXPORT void
+void
 PLJOIN(PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2)
 {
     c_pljoin(*x1, *y1, *x2, *y2);
 }
 
-PLDLLEXPORT void
+void
 PLLAB7(char *xlab, char *ylab, char *title)
 {
     c_pllab(xlab, ylab, title);
 }
 
-PLDLLEXPORT void
+void
 PLLIGHTSOURCE(PLFLT *x, PLFLT *y, PLFLT *z)
 {
     c_pllightsource(*x, *y, *z);
 }
 
-PLDLLEXPORT void
+void
 PLLINE(PLINT *n, PLFLT *x, PLFLT *y)
 {
     c_plline(*n, x, y);
 }
 
-PLDLLEXPORT void
+void
 PLLINE3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z)
 {
     c_plline3(*n, x, y, z);
 }
 
-PLDLLEXPORT void
+void
 PLLSTY(PLINT *lin)
 {
     c_pllsty(*lin);
@@ -419,7 +419,7 @@ plmapf2c( PLINT n, PLFLT *x, PLFLT *y )
     (*plmapform)( &n, x, y );
 }
 
-PLDLLEXPORT void
+void
 PLMAPC( char *type,
         PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 
@@ -428,26 +428,26 @@ PLMAPC( char *type,
 }
 
 
-PLDLLEXPORT void
+void
 PLMERIDIANSC( PLFLT *dlong, PLFLT *dlat,
               PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 {
     c_plmeridians(plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat);
 }
 
-PLDLLEXPORT void
+void
 PLMKSTRM(PLINT *p_strm)
 {
     c_plmkstrm(p_strm);
 }
 
-PLDLLEXPORT void
+void
 PLMTEX7(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
 {
     c_plmtex(side, *disp, *pos, *just, text);
 }
 
-PLDLLEXPORT void
+void
 PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
 {
 /* Same as in plparseopts fortran subroutine that calls this one. */
@@ -464,146 +464,146 @@ PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
      fprintf(stderr,"plparseopts7: numargs too large\n");
 }
 
-PLDLLEXPORT void
+void
 PLPAT(PLINT *nlin, PLINT *inc, PLINT *del)
 {
     c_plpat(*nlin, inc, del);
 }
 
-PLDLLEXPORT void
+void
 PLPOIN(PLINT *n, PLFLT *x, PLFLT *y, PLINT *code)
 {
     c_plpoin(*n, x, y, *code);
 }
 
-PLDLLEXPORT void
+void
 PLPOIN3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *code)
 {
     c_plpoin3(*n, x, y, z, *code);
 }
 
-PLDLLEXPORT void
+void
 PLPOLY3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL *ifcc)
 {
     c_plpoly3(*n, x, y, z, draw, *ifcc);
 }
 
-PLDLLEXPORT void
+void
 PLPREC(PLINT *setp, PLINT *prec)
 {
     c_plprec(*setp, *prec);
 }
 
-PLDLLEXPORT void
+void
 PLPSTY(PLINT *patt)
 {
     c_plpsty(*patt);
 }
 
-PLDLLEXPORT void
+void
 PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text)
 {
     c_plptex(*x, *y, *dx, *dy, *just, text);
 }
 
-PLDLLEXPORT void
+void
 PLREPLOT(void)
 {
     c_plreplot();
 }
 
-PLDLLEXPORT void
+void
 PLRGB(PLFLT *red, PLFLT *green, PLFLT *blue)
 {
     c_plrgb(*red, *green, *blue);
 }
 
-PLDLLEXPORT void
+void
 PLRGB1(PLINT *r, PLINT *g, PLINT *b)
 {
     c_plrgb1(*r, *g, *b);
 }
 
-PLDLLEXPORT void
+void
 PLRGBHLS(PLFLT *r, PLFLT *g, PLFLT *b, PLFLT *h, PLFLT *l, PLFLT *s)
 {
     c_plrgbhls(*r, *g, *b, h, l, s);
 }
 
-PLDLLEXPORT void
+void
 PLSCHR(PLFLT *def, PLFLT *scale)
 {
     c_plschr(*def, *scale);
 }
 
-PLDLLEXPORT void
+void
 PLSCMAP0(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0)
 {
     c_plscmap0(r, g, b, *ncol0);
 }
 
-PLDLLEXPORT void
+void
 PLSCMAP0N(PLINT *n)
 {
     c_plscmap0n(*n);
 }
 
-PLDLLEXPORT void
+void
 PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
 {
     c_plscmap1(r, g, b, *ncol1);
 }
 
-PLDLLEXPORT void
+void
 PLSCMAP1L(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev)
 {
     c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, rev);
 }
 
-PLDLLEXPORT void
+void
 PLSCMAP1N(PLINT *n)
 {
     c_plscmap1n(*n);
 }
 
-PLDLLEXPORT void
+void
 PLSCOL0(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b)
 {
     c_plscol0(*icol0, *r, *g, *b);
 }
 
-PLDLLEXPORT void
+void
 PLSCOLBG(PLINT *r, PLINT *g, PLINT *b)
 {
     c_plscolbg(*r, *g, *b);
 }
 
-PLDLLEXPORT void
+void
 PLSCOLOR(PLINT *color)
 {
     c_plscolor(*color);
 }
 
-PLDLLEXPORT void
+void
 PLSCOMPRESSION(PLINT *compression)
 {
     c_plscompression(*compression);
 }
 
-PLDLLEXPORT void
+void
 PLSDEV7(char *dev)
 {
     c_plsdev(dev);
 }
 
-PLDLLEXPORT void
+void
 PLSDIDEV(PLFLT *mar, PLFLT *aspect, PLFLT *jx, PLFLT *jy)
 {
     c_plsdidev(*mar, *aspect, *jx, *jy);
 }
 
-PLDLLEXPORT void
+void
 PLSDIMAP(PLINT *dimxmin, PLINT *dimxmax, PLINT *dimymin, PLINT *dimymax,
 	 PLFLT *dimxpmm, PLFLT *dimypmm)
 {
@@ -611,128 +611,128 @@ PLSDIMAP(PLINT *dimxmin, PLINT *dimxmax, PLINT *dimymin, PLINT *dimymax,
 	       *dimxpmm, *dimypmm);
 }
 
-PLDLLEXPORT void
+void
 PLSDIORI(PLFLT *rot)
 {
     c_plsdiori(*rot);
 }
 
-PLDLLEXPORT void
+void
 PLSDIPLT(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 {
     c_plsdiplt(*xmin, *ymin, *xmax, *ymax);
 }
 
-PLDLLEXPORT void
+void
 PLSDIPLZ(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 {
     c_plsdiplz(*xmin, *ymin, *xmax, *ymax);
 }
 
-PLDLLEXPORT void
+void
 PLSESC(PLINT *esc)
 {
     c_plsesc((char) *esc);
 }
 
-PLDLLEXPORT void
+void
 PLSETMAPFORMC( void (*mapform)(PLINT *, PLFLT *, PLFLT *) )
 {
     plmapform = mapform ;
 }
 
-PLDLLEXPORT void
+void
 PLSETOPT7(char *opt, char *optarg)
 {
     c_plsetopt(opt, optarg);
 }
 
-PLDLLEXPORT void
+void
 PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 {
     c_plsfam(*fam, *num, *bmax);
 }
 
-PLDLLEXPORT void
+void
 PLSFNAM7(char *fnam)
 {
     c_plsfnam(fnam);
 }
 
-PLDLLEXPORT void
+void
 PLSMAJ(PLFLT *def, PLFLT *scale)
 {
     c_plsmaj(*def, *scale);
 }
 
-PLDLLEXPORT void
+void
 PLSMEM(PLINT *maxx, PLINT *maxy, void *plotmem)
 {
     c_plsmem(*maxx, *maxy, plotmem);
 }
 
-PLDLLEXPORT void
+void
 PLSMIN(PLFLT *def, PLFLT *scale)
 {
     c_plsmin(*def, *scale);
 }
 
-PLDLLEXPORT void
+void
 PLSORI(PLINT *ori)
 {
     c_plsori(*ori);
 }
 
-PLDLLEXPORT void
+void
 PLSPAGE(PLFLT *xpmm, PLFLT *ypmm,
 	PLINT *xwid, PLINT *ywid, PLINT *xoff, PLINT *yoff)
 {
     c_plspage(*xpmm, *ypmm, *xwid, *ywid, *xoff, *yoff);
 }
 
-PLDLLEXPORT void
+void
 PLSPAUSE(PLBOOL *pause)
 {
     c_plspause(*pause);
 }
 
-PLDLLEXPORT void
+void
 PLSSTRM(PLINT *strm)
 {
     c_plsstrm(*strm);
 }
 
-PLDLLEXPORT void
+void
 PLSSUB(PLINT *nx, PLINT *ny)
 {
     c_plssub(*nx, *ny);
 }
 
-PLDLLEXPORT void
+void
 PLSSYM(PLFLT *def, PLFLT *scale)
 {
     c_plssym(*def, *scale);
 }
 
-PLDLLEXPORT void
+void
 PLSTAR(PLINT *nx, PLINT *ny)
 {
     c_plstar(*nx, *ny);
 }
 
-PLDLLEXPORT void
+void
 PLSTART7(char *devname, PLINT *nx, PLINT *ny)
 {
     c_plstart(devname, *nx, *ny);
 }
 
-PLDLLEXPORT void
+void
 PLSTRIPA(PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y)
 {
     c_plstripa(*id, *pen, *x, *y);
 }
 
-PLDLLEXPORT void
+void
 PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *xlpos, PLFLT *ylpos,
@@ -757,85 +757,85 @@ PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
 	      labx, laby, labtop);
 }
 
-PLDLLEXPORT void
+void
 PLSTRIPD(PLINT *id)
 {
     c_plstripd(*id);
 }
 
-PLDLLEXPORT void
+void
 PLSTYL(PLINT *n, PLINT *mark, PLINT *space)
 {
     c_plstyl(*n, mark, space);
 }
 
-PLDLLEXPORT void
+void
 PLSVECT(PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill)
 {
     c_plsvect(arrowx, arrowy, *npts, *fill);
 }
 
-PLDLLEXPORT void
+void
 PLSVPA(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {
     c_plsvpa(*xmin, *xmax, *ymin, *ymax);
 }
 
-PLDLLEXPORT void
+void
 PLSXAX(PLINT *digmax, PLINT *digits)
 {
     c_plsxax(*digmax, *digits);
 }
 
-PLDLLEXPORT void
+void
 PLSYAX(PLINT *digmax, PLINT *digits)
 {
     c_plsyax(*digmax, *digits);
 }
 
-PLDLLEXPORT void
+void
 PLSYM(PLINT *n, PLFLT *x, PLFLT *y, PLINT *code)
 {
     c_plsym(*n, x, y, *code);
 }
 
-PLDLLEXPORT void
+void
 PLSZAX(PLINT *digmax, PLINT *digits)
 {
     c_plszax(*digmax, *digits);
 }
 
-PLDLLEXPORT void
+void
 PLTEXT(void)
 {
     c_pltext();
 }
 
-PLDLLEXPORT void
+void
 PLVASP(PLFLT *aspect)
 {
     c_plvasp(*aspect);
 }
 
-PLDLLEXPORT void
+void
 PLVPAS(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *aspect)
 {
     c_plvpas(*xmin, *xmax, *ymin, *ymax, *aspect);
 }
 
-PLDLLEXPORT void
+void
 PLVPOR(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {
     c_plvpor(*xmin, *xmax, *ymin, *ymax);
 }
 
-PLDLLEXPORT void
+void
 PLVSTA(void)
 {
     c_plvsta();
 }
 
-PLDLLEXPORT void
+void
 PLW3D(PLFLT *basex, PLFLT *basey, PLFLT *height,
       PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
       PLFLT *zmin, PLFLT *zmax,
@@ -845,19 +845,19 @@ PLW3D(PLFLT *basex, PLFLT *basey, PLFLT *height,
 	    *xmin, *xmax, *ymin, *ymax, *zmin, *zmax, *alt, *az);
 }
 
-PLDLLEXPORT void
+void
 PLWID(PLINT *width)
 {
     c_plwid(*width);
 }
 
-PLDLLEXPORT void
+void
 PLWIND(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {
     c_plwind(*xmin, *xmax, *ymin, *ymax);
 }
 
-PLDLLEXPORT void
+void
 PLXORMOD(PLBOOL *mode, PLBOOL *status)
 {
     c_plxormod(*mode, status);

@@ -226,7 +226,7 @@ pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 
 /* no transformation */
 
-PLDLLEXPORT void
+void
 PLCON07(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel)
 {
@@ -243,7 +243,7 @@ PLCON07(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 
 /* 1-d transformation */
 
-PLDLLEXPORT void
+void
 PLCON17(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
 	PLFLT *xg, PLFLT *yg)
@@ -267,7 +267,7 @@ PLCON17(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 
 /* 2-d transformation */
 
-PLDLLEXPORT void
+void
 PLCON27(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
 	PLFLT *xg, PLFLT *yg)
@@ -304,7 +304,7 @@ PLCON27(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 
 /* no transformation */
 
-PLDLLEXPORT void
+void
 PLVEC07(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale)
 {
     PLfGrid fgrid1, fgrid2;
@@ -323,7 +323,7 @@ PLVEC07(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale)
 
 /* 1-d transformation */
 
-PLDLLEXPORT void
+void
 PLVEC17(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
 	PLFLT *xg, PLFLT *yg)
 {
@@ -350,7 +350,7 @@ PLVEC17(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
 
 /* 2-d transformation */
 
-PLDLLEXPORT void
+void
 PLVEC27(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
 	PLFLT *xg, PLFLT *yg)
 {
@@ -388,7 +388,7 @@ pltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-PLDLLEXPORT void
+void
 PLCONT7(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel, PLFLT *ftr)
 {
@@ -403,7 +403,7 @@ PLCONT7(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	    pltr, (void *) ftr);
 }
 
-PLDLLEXPORT void
+void
 PLVECT7(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
 	PLFLT *ftr)
 {
@@ -437,7 +437,7 @@ PLVECT7(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
  *
 \*----------------------------------------------------------------------*/
 
-PLDLLEXPORT void
+void
 PLSHADE07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *shade_min, PLFLT *shade_max,
@@ -471,7 +471,7 @@ PLSHADE07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 
 /* 1-d transformation */
 
-PLDLLEXPORT void
+void
 PLSHADE17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *shade_min, PLFLT *shade_max,
@@ -510,7 +510,7 @@ PLSHADE17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 
 /* 2-d transformation */
 
-PLDLLEXPORT void
+void
 PLSHADE27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *shade_min, PLFLT *shade_max,
@@ -552,7 +552,7 @@ PLSHADE27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 
 }
 
-PLDLLEXPORT void
+void
 PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	 PLFLT *shade_min, PLFLT *shade_max,
@@ -593,7 +593,7 @@ PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
  *              then pass tr as last argument of PLSHADES7)
 \*----------------------------------------------------------------------*/
 
-PLDLLEXPORT void
+void
 PLSHADES07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
@@ -621,7 +621,7 @@ PLSHADES07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    plFree2dGrid(a, *nx, *ny);
 }
 
-PLDLLEXPORT void
+void
 PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
@@ -656,7 +656,7 @@ PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    plFree2dGrid(a, *nx, *ny);
 }
 
-PLDLLEXPORT void
+void
 PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
@@ -694,7 +694,7 @@ PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    plFree2dGrid(cgrid2.yg, *nx, *ny);
 }
 
-PLDLLEXPORT void
+void
 PLSHADES7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
 	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
