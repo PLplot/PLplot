@@ -16,6 +16,8 @@ setlocal
 rem set this to 1 if you have mingw
 set MINGW=0
 
+set VERSION=5.7.1
+
 if %MINGW%==1 (
   @rem *** MINGW SETTINGS ***
   @rem * INSTALLDIR is the absolute path to the installed plplot directory (make install)
@@ -31,7 +33,7 @@ if %MINGW%==1 (
   set WXDLLDIR=%WXWIN%\lib\gcc_dll
 
   @rem * Name of the package
-  set PACKAGE_NAME=plplot-5.7.1-win32-mingw
+  set PACKAGE_NAME=plplot-%VERSION%-mingw-binary
 ) else (
   @rem *** VISUALC SETTINGS ***
   @rem * INSTALLDIR is the absolute path to the installed plplot directory (make install)
@@ -47,7 +49,7 @@ if %MINGW%==1 (
   set WXDLLDIR=%WXWIN%\lib\vc_dll
 
   @rem * Name of the package
-  set PACKAGE_NAME=plplot-5.7.1-win32-vc
+  set PACKAGE_NAME=plplot-%VERSION%-visualc-binary
 )
 
 @rem **************************************************************
