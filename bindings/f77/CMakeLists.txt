@@ -67,6 +67,11 @@ sccont.c
 scstubs.c
 )
 
+if( WIN32 AND BUILD_SHARED_LIBS )
+  SET_SOURCE_FILES_PROPERTIES( ${plplotf77c${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+endif( WIN32 AND BUILD_SHARED_LIBS )
+
 add_library(plplotf77c${LIB_TAG} ${plplotf77c${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf77c${LIB_TAG} plplot${LIB_TAG})

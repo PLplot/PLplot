@@ -24,7 +24,7 @@
 
 #include "plstubs.h"
 
-void
+PLDLLEXPORT void
 PLOT3DC(PLFLT *x, PLFLT *y, PLFLT *z,
 	PLINT *nx, PLINT *ny, PLINT *opt,
 	PLFLT *clevel, PLINT *nlevel, PLINT *lx)
@@ -47,7 +47,7 @@ PLOT3DC(PLFLT *x, PLFLT *y, PLFLT *z,
 
 }
 
-void
+PLDLLEXPORT void
 PLSURF3D(PLFLT *x, PLFLT *y, PLFLT *z,
        PLINT *nx, PLINT *ny, PLINT *opt,
        PLFLT *clevel, PLINT *nlevel, PLINT *lx)
@@ -89,7 +89,7 @@ PLSURF3D(PLFLT *x, PLFLT *y, PLFLT *z,
     free((void *) temp);
 }
 
-void
+PLDLLEXPORT void
 PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
        PLINT *nx, PLINT *ny, PLINT *opt, PLINT *lx)
 {
@@ -100,7 +100,7 @@ PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
    PLOT3DC_(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 
-void
+PLDLLEXPORT void
 PLMESHC(PLFLT *x, PLFLT *y, PLFLT *z,
        PLINT *nx, PLINT *ny, PLINT *opt,
        PLFLT *clevel, PLINT *nlevel, PLINT *lx)
@@ -111,7 +111,7 @@ PLMESHC(PLFLT *x, PLFLT *y, PLFLT *z,
 }
 
 
-void
+PLDLLEXPORT void
 PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
        PLINT *nx, PLINT *ny, PLINT *opt, PLINT *side, PLINT *lx)
 {
