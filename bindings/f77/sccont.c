@@ -32,7 +32,7 @@
 * Fortran paradigm for array index is used, i.e. starting at 1.
 \*----------------------------------------------------------------------*/
 
-PLDLLEXPORT void
+void
 pltr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 {
     *tx = x + 1.0;
@@ -52,7 +52,7 @@ pltr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 * if everything works correctly.
 \*----------------------------------------------------------------------*/
 
-PLDLLEXPORT void
+void
 pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 {
     PLINT ul, ur, vl, vr;
