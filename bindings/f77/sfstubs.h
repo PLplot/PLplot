@@ -37,6 +37,6 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       common /zzplstr4/ string4
       common /zzplstr5/ string5
       common /zzplstr6/ string6
-      common /zzplstr6/ string7
-      common /zzplstr6/ string8
-      common /zzplstr6/ string9
+      common /zzplstr7/ string7
+      common /zzplstr8/ string8
+      common /zzplstr9/ string9
