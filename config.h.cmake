@@ -101,6 +101,9 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #cmakedefine HAVE_NDIR_H 1
 
+/* Define if libpango is available */
+#cmakedefine HAVE_PANGO
+
 /* Define if popen is available */
 #cmakedefine HAVE_POPEN
 
