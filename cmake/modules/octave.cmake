@@ -227,7 +227,7 @@ if(ENABLE_octave)
    "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
    )
   # Replace the OCTAVE_PREFIX with the PLplot prefix in OCTAVE_M_DIR
-  string(REGEX REPLACE
+  string(REPLACE
   "${OCTAVE_PREFIX}" 
   "${CMAKE_INSTALL_PREFIX}"
   OCTAVE_M_DIR
