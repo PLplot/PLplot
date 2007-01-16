@@ -26,11 +26,21 @@ if(PKGCONFIG_EXECUTABLE)
   pango
   PANGO_INCLUDE_DIR PANGO_LINK_DIR PANGO_LINK_FLAGS PANGO_CFLAGS
   )
+  if(NOT PANGO_INCLUDE_DIR)
+    message(STATUS
+    "WARNING: pkg-config does not find pango."
+    )
+  endif(NOT PANGO_INCLUDE_DIR)
 
   pkgconfig(
   pangoft2
   PANGOFT2_INCLUDE_DIR PANGOFT2_LINK_DIR PANGOFT2_LINK_FLAGS PANGOFT2_CFLAGS
   )
+  if(NOT PANGOFT2_INCLUDE_DIR)
+    message(STATUS
+    "WARNING: pkg-config does not find pangoft2."
+    )
+  endif(NOT PANGOFT2_INCLUDE_DIR)
 else(PKGCONFIG_EXECUTABLE)
   message(STATUS 
   "WARNING: pango not found because pkg-config not available."
