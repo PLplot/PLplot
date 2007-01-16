@@ -20,17 +20,20 @@
 # Module for determining all configuration variables for libpango.
 
 if(PKGCONFIG_EXECUTABLE)
-
   # This is the deprecated cmake pkgconfig command.  Convert to the more
   # modern command if more pkg-config information is required.
   pkgconfig(
-  pango  
+  pango
   PANGO_INCLUDE_DIR PANGO_LINK_DIR PANGO_LINK_FLAGS PANGO_CFLAGS
   )
 
   pkgconfig(
   pangoft2
   PANGOFT2_INCLUDE_DIR PANGOFT2_LINK_DIR PANGOFT2_LINK_FLAGS PANGOFT2_CFLAGS
+  )
+else(PKGCONFIG_EXECUTABLE)
+  message(STATUS 
+  "WARNING: pango not found because pkg-config not available."
   )
 endif(PKGCONFIG_EXECUTABLE)
 
