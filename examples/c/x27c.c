@@ -1,6 +1,6 @@
 /* $Id$
 
-	Drawing "spirograph"curves - epitrochoids, cycolids, roulettes
+	Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 
    Copyright (C) 2007  Arjen Markus
 
@@ -109,9 +109,9 @@ cycloid( void )
 void
 spiro( PLFLT params[] )
 {
-#define NPNT 2000
-    PLFLT xcoord[NPNT+1] ;
-    PLFLT ycoord[NPNT+1] ;
+#define NPNT 20000
+    static PLFLT xcoord[NPNT+1] ;
+    static PLFLT ycoord[NPNT+1] ;
 
     int   windings     ;
     int   steps        ;
