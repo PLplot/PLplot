@@ -53,10 +53,10 @@ At present, PLplot is actively supported on the following systems:
 		SunOS		(Sun)
 
 	MS-DOS (DJGPP)
-	Windows (95?, 98, NT, 2000)
+	Windows (95?, 98, NT, 2000, XP)
 
 Many different output device drivers are available, including postscript,
-tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
+PDF, tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
 portable metafile format, among others.  The Tk driver under Unix/X provides
 a full user interface based on the plframe plotting widget (see below).  The
 metafile renderer (plrender) supports all of the standard operations as well
