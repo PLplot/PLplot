@@ -1,3 +1,70 @@
+PLplot Release 5.7.1
+~~~~~~~~~~~~~~~~~~~~
+
+This is a routine development release of PLplot. It represents the ongoing 
+efforts of the community to improve the PLplot plotting package. Development 
+releases in the 5.7.x series will be available every few months. The next full 
+release will be 5.8.0.
+
+     If you encounter a problem that is not already documented in the
+PROBLEMS file, then please send bug reports to PLplot developers via the
+mailing lists at http://sourceforge.net/mail/?group_id=2915 .
+
+     Please see the license under which this software is distributed
+(LGPL), and the disclaimer of all warrantees, given in the COPYING.LIB
+file.
+
+
+INDEX
+
+1. Changes relative to PLplot 5.6.1
+  1.1 CMake build system
+  1.2 Plot Buffering 
+  1.3 Drivers
+    1.3.1 psttf
+    1.3.2 svg
+    1.3.3 wxwidgets
+
+
+1. Changes relative to PLplot 5.6.1 (the previous stable release)
+
+1.1 CMake build system
+
+   PLplot now uses the CMake build system (www.cmake.org) and the older
+autotools build system has been deprecated. The switch to CMake was made due
+its superior support for Windows platforms and its relative simplicity
+compared to autotools. 
+
+1.2 Plot Buffering
+
+   PLplot core has been modified to buffer plot commands in memory rather than
+via a unix pipe or temporary file. Testing has shown that there is 20-30%
+improvement in plotting performance (i.e. speed). This is likely to be system
+dependent and some may see a much larger benefit. This also resolves a problem 
+with some windows platforms where the temporary files were not getting deleted.
+
+1.3 Drivers
+  1.3.1 psttf
+    This device driver now requires LASi version 1.0.6 or 1.0.5pl.  See
+    http://www.unifont.org/lasi/ for instructions (depending on installed
+    version of FreeType library) on which to choose.
+
+  1.3.2 svg
+    This is a new device driver that creates Scalable Vector Graphics files 
+    (http://www.w3.org/Graphics/SVG/). SVG is a XML language describing
+    graphics that is supported directly or via plug-ins in most modern web
+    browsers. The driver is off by default as its text handling has not been
+    perfected.
+
+  1.3.3 wxwidgets
+    This driver has been updated a great deal. The most important improvements
+    have been to the antializing part of the driver. It is now about 4 times
+    faster than it was, and is nearly comparable in speed to the driver
+    with the antializing turned off. In addition the antializing code can
+    now handle filled polygons and window resizing.
+
+
+
 PLplot Bug Fix Release 5.6.1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
