@@ -94,7 +94,7 @@ set(DRIVERS_DEVICE_LIST
 "psttf:psttf:ON"
 "xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
 "versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
-"svg:svg:OFF"
+"svg:svg:ON"
 "tek4107f:tek:OFF"
 "tk:tk:ON"
 "tkwin:tkwin:ON"
