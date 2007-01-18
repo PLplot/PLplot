@@ -129,6 +129,14 @@ if(PLD_png)
   endif(NOT TEST_DEVICE STREQUAL "png")
 endif(PLD_png)
 
+if(PLD_plmeta)
+  if (NOT TEST_DEVICE STREQUAL "plmeta")
+  add_test(examples_plmeta
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=plmeta"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "plmeta")
+endif(PLD_plmeta)
+
 # Make a copy of lena.pgm to the test subdirectory of the build
 # tree so that example 20 will run from there.
 # Also need a copy of lena.img for the octave bindings
