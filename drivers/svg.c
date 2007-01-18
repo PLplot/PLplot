@@ -354,7 +354,7 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
 //      a list of tspan tags rather than a tree of tspan tags. Perhaps
 //      better described as a tree with one branch?
 //
-//  (2) Too deal with the some whitespace annoyances, the entire text
+//  (2) To deal with the some whitespace annoyances, the entire text
 //      element must be written on a single line. If there are lots of
 //      format characters then this line might end up being too long
 //      for some SVG implementations.
@@ -392,9 +392,11 @@ void proc_str (PLStream *pls, EscText *args)
    // determine the font height
    ftHt = 1.5 * pls->chrht * DPI/25.4;
 
-   // apply coordinate transform for text display
+   // Apply coordinate transform for text display.
+   // The transformation also defines the location of the text in x and y.
+   
    svg_open("g");
-   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], t[2], -t[1], -t[3], args->x, args->y);
+   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], t[2], -t[1], -t[3], args->x, (int)(args->y - 0.3*ftHt + 0.5));
    svg_general(">\n");
 
    //--------------
@@ -410,12 +412,17 @@ void proc_str (PLStream *pls, EscText *args)
    
    // The text goes at zero in x since the coordinate transform also defined the location of the text
    svg_attr_value("x", "0");
+   svg_attr_value("y", "0");
+
+/* Tentavively removed. The examples, or at least Example 1, seem to expect
+   the driver to ignore the text baseline, so the baseline adjustment is
+   now done the text transform is applied above.
 
    // Set the baseline of the string by adjusting the y offset
    // Values were arrived at by trial and error. Unfortunately they don't seem to
    // right in all cases, presumably due to adjustments being performed by
    // my svg renderer.
-   
+
    if (args->base == 2){
       // Align to the top of the text, and probably wrong.
       svg_attr_values("y", "%d", (int)(0.7*ftHt + 0.5));
@@ -438,6 +445,7 @@ void proc_str (PLStream *pls, EscText *args)
       //
       svg_attr_values("y", "%d", (int)(0.3*ftHt + 0.5));
    }
+*/
    
    // set font color
    svg_fill_color(pls);
@@ -694,9 +702,9 @@ void svg_fill_color(PLStream *pls)
 }
 
 //---------------------------------------------------------------------
-// svg_fill_color ()
+// svg_fill_background_color ()
 //
-// sets the fill color based on the current color
+// sets the background fill color based on the current background color
 //---------------------------------------------------------------------
 
 void svg_fill_background_color(PLStream *pls)
