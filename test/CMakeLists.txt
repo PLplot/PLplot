@@ -104,6 +104,31 @@ if(ENABLE_pdl)
   )
 endif(ENABLE_pdl)
 
+# Run C examples with different drivers
+if(PLD_psc)
+  if (NOT TEST_DEVICE STREQUAL "psc")
+  add_test(examples_psttfc
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=psttfc"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "psc")
+endif(PLD_psc)
+
+if(PLD_psttf)
+  if (NOT TEST_DEVICE STREQUAL "psttfc")
+  add_test(examples_psttfc
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=psttfc"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "psttfc")
+endif(PLD_psttf)
+
+if(PLD_png)
+  if (NOT TEST_DEVICE STREQUAL "png")
+  add_test(examples_png
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=png"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "png")
+endif(PLD_png)
+
 # Make a copy of lena.pgm to the test subdirectory of the build
 # tree so that example 20 will run from there.
 # Also need a copy of lena.img for the octave bindings
