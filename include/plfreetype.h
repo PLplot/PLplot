@@ -37,7 +37,24 @@
 
 #define FT_Data _FT_Data_
 
-typedef void (*plD_pixel_fp)     (PLStream *, PLINT, PLINT);
+#ifndef GetGValue
+#define GetGValue(rgb)   ((unsigned char) (((unsigned short) (rgb)) >> 8))
+#endif
+#ifndef GetRValue
+#define GetRValue(rgb)   ((unsigned char) (rgb))
+#endif
+#ifndef GetBValue
+#define GetBValue(rgb)   ((unsigned char) ((rgb) >> 16))
+#endif
+#ifndef RGB
+#define RGB(r, g ,b) (((r) | \
+                      ((g) << 8) | \
+                       (b) << 16))
+#endif
+
+typedef void (*plD_pixel_fp)           (PLStream *, PLINT, PLINT);
+typedef PLINT (*plD_read_pixel_fp)     (PLStream *, PLINT, PLINT);
+typedef PLINT (*plD_set_pixel_fp)      (PLStream *, PLINT, PLINT, PLINT);
 
 /*--------------------------------------------------------------------------*\
  * Define the FT_Data data structure.
@@ -82,6 +99,8 @@ typedef struct FT_Data {
 
 
     plD_pixel_fp        pixel;          /* pointer to a function which draws a single pixel */
+    plD_set_pixel_fp    set_pixel;      /* pointer to a function which draws a single pixel directly */
+    plD_read_pixel_fp   read_pixel;     /* pointer to a function which reads the RGB value of a pixel and returns it*/
 
 
     int want_smooth_text; /* flag to request text smoothing (won't */
@@ -140,6 +159,13 @@ typedef struct FT_Data {
     short               colour;         /* depreciated ?? must check code */
 
     PLINT shade, col_idx;		/* Used for antialiasing */
+
+/*
+ *  If a driver is 24Bit, and supports reading pixel values as well as writing,
+ *  we can use a more advanced antialiasing algorithm, which blends the text
+ *  with the background. Set to 1 if you have this.
+ */
+    unsigned char BLENDED_ANTIALIASING;
 
 } FT_Data;
 

@@ -127,6 +127,9 @@ void plD_esc_wingcc        (PLStream *, PLINT, void *);
 
 static void plD_pixel_wingcc (PLStream *pls, short x, short y);
 static void plD_pixelV_wingcc (PLStream *pls, short x, short y);
+static PLINT plD_read_pixel_wingcc (PLStream *pls, short x, short y);
+static void plD_set_pixel_wingcc (PLStream *pls, short x, short y, PLINT colour);
+static void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour);
 static void init_freetype_lv1 (PLStream *pls);
 static void init_freetype_lv2 (PLStream *pls);
 
@@ -563,7 +566,6 @@ dev->PopupMenu=CreatePopupMenu();
 AppendMenu(dev->PopupMenu, MF_STRING, PopupPrint, "Print");
 AppendMenu(dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page…");
 AppendMenu(dev->PopupMenu, MF_STRING, PopupQuit, "Quit");
-
 
 #ifdef HAVE_FREETYPE
 
@@ -1098,20 +1100,54 @@ static int GetRegValue(char *key_name, char *key_word, char *buffer, int size)
  *  pixel is set in the current colour.
 \*----------------------------------------------------------------------*/
 
-void plD_pixel_wingcc (PLStream *pls, short x, short y)
+static void plD_pixel_wingcc (PLStream *pls, short x, short y)
 {
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
 
    SetPixel(dev->hdc, x, y,dev->colour);
-
 }
 
-void plD_pixelV_wingcc (PLStream *pls, short x, short y)
+static void plD_pixelV_wingcc (PLStream *pls, short x, short y)
 {
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
 
    SetPixelV(dev->hdc, x, y,dev->colour);
+}
 
+/*----------------------------------------------------------------------*\
+ *  void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour)
+ *
+ *  callback function, of type "plD_set_pixel_fp", which specifies how a 
+ *  single pixel is set in the s[ecified colour. This colour
+ *  by-passes plplot's internal table, and directly 'hits the hardware'.
+\*----------------------------------------------------------------------*/
+
+static void plD_set_pixel_wingcc (PLStream *pls, short x, short y, PLINT colour)
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+
+   SetPixel(dev->hdc, x, y,colour);
+}
+
+static void plD_set_pixelV_wingcc (PLStream *pls, short x, short y, PLINT colour)
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+
+   SetPixelV(dev->hdc, x, y,colour);
+}
+
+
+/*--------------------------------------------------------------------------*\
+ *  void plD_read_pixel_wingcc (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is read.
+\*--------------------------------------------------------------------------*/
+static PLINT plD_read_pixel_wingcc (PLStream *pls, short x, short y)
+{
+  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
+
+   return(GetPixel(dev->hdc, x, y));
 }
 
 
@@ -1135,6 +1171,7 @@ plD_FreeType_init(pls);
 FT=(FT_Data *)pls->FT;
 
 
+
 /*
  *  Work out if our device support "fast" pixel setting
  *  and if so, use that instead of "slow" pixel setting
@@ -1147,6 +1184,21 @@ if (x & RC_BITBLT)
 else
   FT->pixel= (plD_pixel_fp)plD_pixel_wingcc;
 
+/*
+ *  See if we have a 24 bit device (or better), in which case
+ *  we can use the better antialaaising.
+ */
+
+if (GetDeviceCaps(dev->hdc,BITSPIXEL)>24)
+{
+  FT->BLENDED_ANTIALIASING=1;
+  FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wingcc;
+
+  if (x & RC_BITBLT)
+    FT->set_pixel= (plD_set_pixel_fp)plD_set_pixelV_wingcc;
+  else
+    FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wingcc;
+}
 
 }
 
@@ -1155,7 +1207,7 @@ else
  *
  *  "Level 2" initialisation of the freetype library.
  *  "Level 2" fills in a few setting that aren't public until after the
- *  graphics sub-syetm has been initialised.
+ *  graphics sub-system has been initialised.
  *  The "level 2" initialisation fills in a few things that are defined
  *  later in the initialisation process for the GD driver.
  *
@@ -1184,7 +1236,7 @@ FT->scale=dev->scale;
 FT->ymax=dev->height;
 FT->invert_y=1;
 
-if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? */
+if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==0))    /* do we want to at least *try* for smoothing ? */
    {
     FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
     FT->ncol0_xtra=16777216-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
@@ -1204,7 +1256,11 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
           pls->level = level_save;
          }
         FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
-      }
+    }
+else if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==1))    /* If we have a truecolour device, we wont even bother trying to change the palette */
+   {
+     FT->smooth_text=1;
+   }
 }
 #endif
 

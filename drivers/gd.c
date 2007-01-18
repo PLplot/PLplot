@@ -27,8 +27,8 @@
  *  Following the expiration of Unisys's worldwide patents on lzw compression
  *  GD 2.0.28+ have reinstated support for GIFs, and so support for this
  *  format has been added to the GD family of drivers. GIF's only support
- *  1, 4 and 8 bit, so no truecolour. Why would you want GIFs though ? PNG is 
- *  a far superior format, not only giving you 1,4,8 and 24 bit, but also 
+ *  1, 4 and 8 bit, so no truecolour. Why would you want GIFs though ? PNG is
+ *  a far superior format, not only giving you 1,4,8 and 24 bit, but also
  *  better compression and just about all browsers now support them.
  */
 
@@ -178,6 +178,8 @@ static void     plD_init_gif_Dev(PLStream *pls);
 #ifdef HAVE_FREETYPE
 
 static void plD_pixel_gd (PLStream *pls, short x, short y);
+static PLINT plD_read_pixel_gd (PLStream *pls, short x, short y);
+static void plD_set_pixel_gd (PLStream *pls, short x, short y, PLINT colour);
 static void init_freetype_lv1 (PLStream *pls);
 static void init_freetype_lv2 (PLStream *pls);
 
@@ -242,8 +244,10 @@ typedef struct {
         int black15;                            /* Flag used for forcing a black colour */
         int red15;                              /* Flag for swapping red and 15 */
 
+        unsigned char TRY_BLENDED_ANTIALIASING;  /* Flag to try and set up BLENDED ANTIALIASING */
+
 #if GD2_VERS >= 2
-        int truecolour;                         /* Flag to ALWAYS force 24 bit mode */
+        int truecolour;                          /* Flag to ALWAYS force 24 bit mode */
         int palette;                            /* Flag to ALWAYS force  8 bit mode */
 #endif
 
@@ -420,9 +424,21 @@ if (freetype)
     pls->dev_text = 1; /* want to draw text */
     pls->dev_unicode = 1; /* want unicode */
 
+    /* As long as we aren't optimising, we'll try to use better antialaising
+     * We can also only do this if the user wants smoothing, and hasn't
+     * selected a palette mode.
+     */
+
+
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
     FT->want_smooth_text=smooth_text;
+    if ((dev->optimise==0)&&(dev->palette==0)&&(smooth_text!=0))
+      {
+        FT->BLENDED_ANTIALIASING=1;
+        dev->truecolour=1;
+      }
+
    }
 
 #endif
@@ -577,6 +593,7 @@ if (freetype)
 
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
+
     FT->want_smooth_text=smooth_text;
    }
 
@@ -1237,12 +1254,16 @@ void plD_eop_png(PLStream *pls)
 #endif
         }
 
-      
+
        /* image is written to output file by the driver
           since if the gd.dll is linked to a different c
           lib a crash occurs - this fix works also in Linux */
        /* gdImagePng(dev->im_out, pls->OutFile); */
-       im_ptr = gdImagePngPtr(dev->im_out, &im_size);
+       #if GD2_VERS >= 2
+         im_ptr = gdImagePngPtrEx (dev->im_out, &im_size, pls->dev_compression >9 ? (pls->dev_compression/10) : pls->dev_compression);
+       #else
+         im_ptr = gdImagePngPtr(dev->im_out, &im_size);
+       #endif
        if( im_ptr ) {
          fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
          gdFree(im_ptr);
@@ -1273,6 +1294,52 @@ png_Dev *dev=(png_Dev *)pls->dev;
 }
 
 /*----------------------------------------------------------------------*\
+ *  void plD_set_pixel_gd (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is set directly to hardware, using the colour provided
+\*----------------------------------------------------------------------*/
+
+void plD_set_pixel_gd (PLStream *pls, short x, short y, PLINT colour)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+int R,G,B;
+int Colour;
+
+   G=GetGValue(colour);
+   R=GetRValue(colour);
+   B=GetBValue(colour);
+
+   Colour=gdImageColorResolve(dev->im_out,R,G,B);
+   gdImageSetPixel(dev->im_out, x, y,Colour);
+}
+
+/*----------------------------------------------------------------------*\
+ *  PLINT plD_read_pixel_gd (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_read_pixel_gd", which specifies how a
+ *  single pixel's RGB is read (in the destination context), then
+ *  returns an RGB encoded int with the info for blending.
+\*----------------------------------------------------------------------*/
+
+PLINT plD_read_pixel_gd (PLStream *pls, short x, short y)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+PLINT colour;
+unsigned char R,G,B;
+
+   colour=gdImageGetTrueColorPixel(dev->im_out, x, y);
+
+   R=gdTrueColorGetRed(colour);
+   G=gdTrueColorGetGreen(colour);
+   B=gdTrueColorGetBlue(colour);
+
+   colour=RGB(R,G,B);
+   return(colour);
+}
+
+
+/*----------------------------------------------------------------------*\
  *  void init_freetype_lv1 (PLStream *pls)
  *
  *  "level 1" initialisation of the freetype library.
@@ -1289,8 +1356,8 @@ plD_FreeType_init(pls);
 
 FT=(FT_Data *)pls->FT;
 FT->pixel= (plD_pixel_fp)plD_pixel_gd;
-
-
+FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_gd;
+FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_gd;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1328,7 +1395,7 @@ FT->ymax=dev->pngy;
 FT->invert_y=1;
 FT->smooth_text=0;
 
-if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? */
+if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==0))    /* do we want to at least *try* for smoothing ? */
    {
     FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
     FT->ncol0_xtra=NCOLOURS-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
@@ -1355,6 +1422,11 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
     else
       plwarn("Insufficient colour slots available in CMAP0 to do text smoothing.");
    }
+else if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==1))    /* If we have a truecolour device, we wont even bother trying to change the palette */
+   {
+     FT->smooth_text=1;
+   }
+
 }
 
 #endif

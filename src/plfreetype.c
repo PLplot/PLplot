@@ -391,6 +391,8 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     unsigned char bittest;
     short i,k,j;
     int n=slot->bitmap.pitch;
+    int current_pixel_colour;
+    int R,G,B;
 
     if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {
 	x+=slot->bitmap_left;
@@ -409,26 +411,49 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     }
 
 /* this is the anti-aliased stuff */
-/* At present only one anti-aliased mode is supported, using a
-   fixed background and palette. That might change eventually */
 
     else {
-	x+=slot->bitmap_left;
-	y-=slot->bitmap_top;
-
-	for(i=0;i<slot->bitmap.rows;i++) {
-	    for (k=0;k<slot->bitmap.width;k++) {
-		FT->shade=(slot->bitmap.buffer[(i*slot->bitmap.width)+k]);
-		if (FT->shade>0) {
-		    FT->col_idx=FT->ncol0_width-((FT->ncol0_width*FT->shade)/255);
-		    FT->last_icol0=pls->icol0;
-		    plcol0(pls->icol0+(FT->col_idx*(FT->ncol0_org-1)));
-		    FT->pixel(pls,x+k,y+i);
-		    plcol0(FT->last_icol0);
-                }
-	    }
+           x+=slot->bitmap_left;
+           y-=slot->bitmap_top;
+        
+           for(i=0;i<slot->bitmap.rows;i++)
+              {
+                for (k=0;k<slot->bitmap.width;k++)
+                  {
+                    FT->shade=(slot->bitmap.buffer[(i*slot->bitmap.width)+k]);
+                    if (FT->shade>0)
+                      {
+                        if ((FT->BLENDED_ANTIALIASING==1)&&(FT->read_pixel!=NULL))
+                          /* The New anti-aliasing technique */
+                          {
+                            if (FT->shade==255)
+                              {
+                                FT->pixel(pls,x+k,y+i);
+                              }
+                            else
+                              {
+                                current_pixel_colour=FT->read_pixel(pls,x+k,y+i);
+                                G=GetGValue(current_pixel_colour);
+                                R=GetRValue(current_pixel_colour);
+                                B=GetBValue(current_pixel_colour);
+                                R+=(plsc->cmap0[pls->icol0].r*FT->shade)/255;
+                                G+=(plsc->cmap0[pls->icol0].g*FT->shade)/255;
+                                B+=(plsc->cmap0[pls->icol0].b*FT->shade)/255;
+                                FT->set_pixel(pls,x+k,y+i,RGB(R>255 ? 255 : R,G>255 ? 255 : G,B>255 ? 255 : B));
+                              }
+                          }
+                        else /* The old anti-aliasing technique */
+                          {
+                            FT->col_idx=FT->ncol0_width-((FT->ncol0_width*FT->shade)/255);
+                            FT->last_icol0=pls->icol0;
+                            plcol0(pls->icol0+(FT->col_idx*(FT->ncol0_org-1)));
+                            FT->pixel(pls,x+k,y+i);
+                            plcol0(FT->last_icol0);
+                          }
+                      }
+                  }
+              }
         }
-    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -917,7 +942,7 @@ void plD_FreeType_Destroy(PLStream *pls)
     extern int FT_Done_Library( FT_Library  library );
 
     if (FT) {
-	if (FT->smooth_text==1) plscmap0n(FT->ncol0_org);
+	if ((FT->smooth_text==1)&&(FT->BLENDED_ANTIALIASING==0)) plscmap0n(FT->ncol0_org);
 
 	FT_Done_Library(FT->library);
 	free(pls->FT);
