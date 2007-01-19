@@ -108,6 +108,11 @@
  *  way of making a nice web-friendly png without having to redefine the
  *  cmaps within your program.
  *
+ *  smooth
+ *
+ *  -drvopt smooth=2 turns on anti-aliased line and polygong drawing if
+ *  you are using a 24bit mode. Unfortunately gd doesn't honour line
+ *  width when anti-aliasing, so by default it is off.
  */
 
 
@@ -247,8 +252,9 @@ typedef struct {
         unsigned char TRY_BLENDED_ANTIALIASING;  /* Flag to try and set up BLENDED ANTIALIASING */
 
 #if GD2_VERS >= 2
-        int truecolour;                          /* Flag to ALWAYS force 24 bit mode */
+        int truecolour;                         /* Flag to ALWAYS force 24 bit mode */
         int palette;                            /* Flag to ALWAYS force  8 bit mode */
+        unsigned char smooth;                   /* Flag to ask for line smoothing */
 #endif
 
 } png_Dev;
@@ -407,6 +413,8 @@ plD_init_png_Dev(PLStream *pls)
     dev->palette=palette;
     dev->truecolour=truecolour;
 
+
+
     if ((dev->truecolour>0) && (dev->palette>0))
        plwarn("Selecting both \"truecolor\" AND \"palette\" driver options is contradictory, so\nI will just use my best judgment.\n");
     else if (dev->truecolour>0)
@@ -415,6 +423,8 @@ plD_init_png_Dev(PLStream *pls)
        {
         NCOLOURS=16777216;
        }
+
+    if ((dev->palette==0)&&(dev->optimise==0)&&(smooth_text>1)) dev->smooth=1; /* Allow smoothing of lines if we have a truecolour device */
 
 #endif
 
@@ -432,13 +442,12 @@ if (freetype)
 
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
-    FT->want_smooth_text=smooth_text;
+    FT->want_smooth_text=smooth_text>0 ? 1 : 0;
     if ((dev->optimise==0)&&(dev->palette==0)&&(smooth_text!=0))
       {
         FT->BLENDED_ANTIALIASING=1;
         dev->truecolour=1;
       }
-
    }
 
 #endif
@@ -594,7 +603,7 @@ if (freetype)
     init_freetype_lv1(pls);
     FT=(FT_Data *)pls->FT;
 
-    FT->want_smooth_text=smooth_text;
+    FT->want_smooth_text=smooth_text > 0 ? 1 : 0;
    }
 
 #endif
@@ -698,7 +707,19 @@ plD_line_png(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = dev->pngy - y1;
     y2 = dev->pngy - y2;
 
-    gdImageLine(dev->im_out, x1, y1, x2, y2, dev->colour);
+    #if GD2_VERS >= 2
+      if (dev->smooth==1)
+        {
+          gdImageSetAntiAliased(dev->im_out,dev->colour);
+          gdImageLine(dev->im_out, x1, y1, x2, y2, gdAntiAliased);
+        }
+      else
+        {
+          gdImageLine(dev->im_out, x1, y1, x2, y2, dev->colour);
+        }
+    #else
+      gdImageLine(dev->im_out, x1, y1, x2, y2, dev->colour);
+    #endif
 
 }
 
@@ -743,7 +764,20 @@ png_Dev *dev=(png_Dev *)pls->dev;
 	   points[i].y = dev->pngy - (pls->dev_y[i]/dev->scale);
          }
 
-   gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour);
+    #if GD2_VERS >= 2
+      if (dev->smooth==1)
+        {
+          gdImageSetAntiAliased(dev->im_out,dev->colour);
+          gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, gdAntiAliased);
+        }
+      else
+        {
+          gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour);
+        }
+    #else
+      gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour);
+    #endif
+
    free(points);
 
 }
