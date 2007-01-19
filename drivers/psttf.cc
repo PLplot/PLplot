@@ -964,23 +964,90 @@ proc_str (PLStream *pls, EscText *args)
 	doc->osBody() << "[" << TRMFLT(tt[0]) << " " << TRMFLT(tt[2]) << " " << TRMFLT(tt[1])
 		      << " " << TRMFLT(tt[3]) << " 0 0] concat\n";
 	
-	/* Purge escape sequences from string, to find it's 
-	 * length. The string length is computed with the current font, 
-	 * and can thus be wrong if there are font change escape sequences 
-	 * in the string 
-	 */	
-	esc_purge(str, cur_str);
+	xmax = 0;
+	/* Dummy run through the string first to work out the
+	 * length, including any font changes */
+	cur_strp = cur_str;
+	f = 0;
+	do {
+	   strp = str;
+	   
+	   if (*cur_strp == esc) {
+	      cur_strp++;
+	      
+	      if (*cur_strp == esc) { /* <esc><esc> */
+		 *strp++ = *cur_strp++;
+	      }
+	      else if (*cur_strp == 'f') {
+		 cur_strp++;
+		 if (*cur_strp++ != 'f') {
+		    /* escff occurs because of logic above. But any suffix
+		     * other than "f" should never happen. */
+		    plabort("proc_str, internal PLplot logic error;"
+			    "wrong escf escape sequence");
+		    return;
+		 }
+		 font = fonts[f];
+		 style = styles[f];
+		 weight = weights[f];
+		 f++;
+		 continue;
+	      }
+	      else switch (*cur_strp++) {
+		 
+	       case 'd':
+	       case 'D':
+		 if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
+		 else scale *= 0.8;  /* Subscript scaling parameter */
+		 up -= font_factor * ENLARGE * ft_ht / 2.;
+		 break;
+		 
+	       case 'u':
+	       case 'U':
+		 if(up<0.) scale *= 1.25;  /* Superscript scaling parameter */
+		 else scale *= 0.8;  /* Superscript scaling parameter */
+		 up += font_factor * ENLARGE * ft_ht / 2.;
+		 break;
+		 
+		 /* ignore the next sequences */
+		 
+	       case '+':
+	       case '-':
+	       case 'b':
+	       case 'B':
+		 plwarn("'+', '-', and 'b/B' text escape sequences not processed.");
+		 break;
+	      }
+	   }
+	   
+	   /* copy from current to next token, adding a postscript escape 
+	    * char '\' if necessary 
+	    */
+	   while(*cur_strp && *cur_strp != esc) {
+	      *strp++ = *cur_strp++;
+	   }
+	   *strp = '\0';
+	   
+	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
+	   
+	   /* Set the font size */
+	   doc->setFont(font,style,weight);
+	   doc->setFontSize(font_factor*ENLARGE*ft_ht*scale);
+	   doc->get_dimensions((const char *)str, &lineSpacing, &xAdvance, &ymintmp, &ymaxtmp);
+	   xmax += xAdvance;
 
-	doc->setFont(font,style,weight);
-	doc->setFontSize(font_factor*ENLARGE*ft_ht);
-
-	// Get the approximate length of the string to calculate offset
+	}while(*cur_strp);
+	
+	// Use the length of the string to calculate offset
 	// Also used later for bounding box
-	doc->get_dimensions((const char *)str, &lineSpacing, &xAdvance);
-	xmin = -xAdvance*args->just;
+	xmin = -xmax*args->just;
 	xmax = xmin;
 	ymin = 0;
 	ymax = 0;
+
+	/* Reset parameters */
+	scale = 1.0;
+	up = 0.0;
 
 	/* Move relative to position to account for justification */
 	doc->osBody() << " gsave " << TRMFLT(xmin*tt[0]) << " " <<
@@ -1054,8 +1121,8 @@ proc_str (PLStream *pls, EscText *args)
 	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
 	   
 	   /* Set the font size */
-	   doc->setFontSize(font_factor*ENLARGE*ft_ht*scale);
 	   doc->setFont(font,style,weight);
+	   doc->setFontSize(font_factor*ENLARGE*ft_ht*scale);
 	   doc->get_dimensions((const char *)str, &lineSpacing, &xAdvance, &ymintmp, &ymaxtmp);
 	   ymin = MIN(ymintmp+up,ymin);
 	   ymax = MAX(ymaxtmp+up,ymax);
