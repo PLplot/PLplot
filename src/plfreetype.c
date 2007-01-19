@@ -393,6 +393,7 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     int n=slot->bitmap.pitch;
     int current_pixel_colour;
     int R,G,B;
+    PLFLT alpha_a,alpha_b;
 
     if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {
 	x+=slot->bitmap_left;
@@ -415,7 +416,7 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     else {
            x+=slot->bitmap_left;
            y-=slot->bitmap_top;
-        
+
            for(i=0;i<slot->bitmap.rows;i++)
               {
                 for (k=0;k<slot->bitmap.width;k++)
@@ -433,12 +434,31 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                             else
                               {
                                 current_pixel_colour=FT->read_pixel(pls,x+k,y+i);
+
                                 G=GetGValue(current_pixel_colour);
                                 R=GetRValue(current_pixel_colour);
                                 B=GetBValue(current_pixel_colour);
-                                R+=(plsc->cmap0[pls->icol0].r*FT->shade)/255;
-                                G+=(plsc->cmap0[pls->icol0].g*FT->shade)/255;
-                                B+=(plsc->cmap0[pls->icol0].b*FT->shade)/255;
+                                alpha_a=(float)FT->shade/255.0;
+
+                                /* alpha_b=1.0-alpha_a;
+                                R=(plsc->cmap0[pls->icol0].r*alpha_a)+(R*alpha_b);
+                                G=(plsc->cmap0[pls->icol0].g*alpha_a)+(G*alpha_b);
+                                B=(plsc->cmap0[pls->icol0].b*alpha_a)+(B*alpha_b);
+                                 */
+
+                                /*  This next bit of code is, I *think*, computationally
+                                 *  more efficient than the bit above. It results in
+                                 *  an indistinguishable plot, but file sizes are different
+                                 *  suggesting subtle variations doubtless caused by rounding
+                                 *  and/or floating point conversions. Questions are - which is
+                                 *  better ? Which is more "correct" ? Does it make a difference ?
+                                 *  Is one faster than the other so that you'd ever notice ?
+                                 */
+
+                                R=(((plsc->cmap0[pls->icol0].r-R)*alpha_a)+R);
+                                G=(((plsc->cmap0[pls->icol0].g-G)*alpha_a)+G);
+                                B=(((plsc->cmap0[pls->icol0].b-B)*alpha_a)+B);
+
                                 FT->set_pixel(pls,x+k,y+i,RGB(R>255 ? 255 : R,G>255 ? 255 : G,B>255 ? 255 : B));
                               }
                           }
@@ -549,7 +569,7 @@ void plD_FreeType_init(PLStream *pls)
     else
 	plwarn("Could not find font path; I sure hope you have defined fonts manually !");
 
-    fprintf( stderr, "%s\n", font_dir ) ;
+    if (pls->debug) fprintf( stderr, "%s\n", font_dir ) ;
 #else
 
 /*
