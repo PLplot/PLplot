@@ -47,7 +47,7 @@ Usage: plplot-test.sh [OPTIONS]
 
 Options:
    [--device=DEVICE] (DEVICE = one of psc [default], ps, psttf, psttfc, png, gif, jpeg, cgm,
-                      xfig, or plmeta)
+                      svg, xfig, or plmeta)
    [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, or perl)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
@@ -191,6 +191,11 @@ case "$device" in
    jpeg)
       dsuffix=jpeg
       options="-fam -fflen 2"
+      export dsuffix options
+      ;;
+   svg)
+      dsuffix=svg
+      options=
       export dsuffix options
       ;;
    cgm)

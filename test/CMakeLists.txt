@@ -129,6 +129,14 @@ if(PLD_png)
   endif(NOT TEST_DEVICE STREQUAL "png")
 endif(PLD_png)
 
+if(PLD_svg)
+  if (NOT TEST_DEVICE STREQUAL "svg")
+  add_test(examples_svg
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=svg"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "svg")
+endif(PLD_svg)
+
 if(PLD_plmeta)
   if (NOT TEST_DEVICE STREQUAL "plmeta")
   add_test(examples_plmeta
