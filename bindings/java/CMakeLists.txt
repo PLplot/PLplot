@@ -82,7 +82,12 @@ include_directories(${java_interface_INCLUDE_PATHS})
 
 # Can't use source file properties as we have to quote the flags in that 
 # case and it breaks swig. Doh! I would call this a cmake bug.
-set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_JAVA -package plplot.core)
+if(SWIG_JAVA_NOPGCPP)
+  #This version of swig supports the -nopgcpp option
+  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_JAVA -package plplot.core -nopgcpp)
+else(SWIG_JAVA_NOPGCPP)
+  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_JAVA -package plplot.core)
+endif(SWIG_JAVA_NOPGCPP)
 
 set( CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR} )
 
