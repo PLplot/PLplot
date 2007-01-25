@@ -714,6 +714,7 @@ plD_fill_polygon_wingcc(PLStream *pls)
   wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
   int i;
   POINT *points=NULL;
+  HPEN hpen, hpenOld;
 
   if (pls->dev_npts > 0)
     {
@@ -729,10 +730,14 @@ plD_fill_polygon_wingcc(PLStream *pls)
         }
 
       dev->fillbrush = CreateSolidBrush(dev->colour);
+      hpen = CreatePen(PS_SOLID, 1, dev->colour);
       dev->oldobject = SelectObject (dev->hdc, dev->fillbrush);
+      hpenOld = SelectObject(dev->hdc, hpen);
       Polygon(dev->hdc,points,pls->dev_npts);
       SelectObject (dev->hdc, dev->oldobject);
       DeleteObject (dev->fillbrush);
+      SelectObject (dev->hdc, hpenOld);
+      DeleteObject (hpen);
       GlobalFree(points);
     }
 }
