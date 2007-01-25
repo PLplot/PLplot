@@ -81,6 +81,13 @@ typedef struct FT_Data {
  */
     PLFLT		scale;
 
+  /*
+   * If different scales are used for x and y, set the next variables instead
+   * of scale.
+   */
+    PLFLT		scalex;
+    PLFLT		scaley;
+
     unsigned char       greek;
 
 /*

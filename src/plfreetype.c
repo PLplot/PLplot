@@ -856,13 +856,21 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  *   Convert into normal coordinates from virtual coordinates
  */
 
-  x=args->x/FT->scale;
+  if( FT->scale!=0.0 ) {  /* scale was set */
+      x=args->x/FT->scale;
 
- if (FT->invert_y==1)
-    y=FT->ymax-(args->y/FT->scale);
- else
-    y=args->y/FT->scale;
+     if (FT->invert_y==1)
+        y=FT->ymax-(args->y/FT->scale);
+     else
+        y=args->y/FT->scale;
+  } else {
+      x=args->x/FT->scalex;
 
+     if (FT->invert_y==1)
+        y=FT->ymax-(args->y/FT->scaley);
+     else
+        y=args->y/FT->scaley;
+ }
 
  /*          Adjust for the justification and character height
   *
@@ -1055,13 +1063,21 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
     FT_Vector  adjust;
     PLUNICODE fci;
 
-    x=args->x/FT->scale;
+    if( FT->scale!=0.0 ) {  /* scale was set */
+      x=args->x/FT->scale;
 
- if (FT->invert_y==1)
-    y=FT->ymax-(args->y/FT->scale);
- else
-    y=args->y/FT->scale;
+      if (FT->invert_y==1)
+        y=FT->ymax-(args->y/FT->scale);
+      else
+        y=args->y/FT->scale;
+    } else {
+      x=args->x/FT->scalex;
 
+      if (FT->invert_y==1)
+        y=FT->ymax-(args->y/FT->scaley);
+      else
+        y=args->y/FT->scaley;
+    }
 
 
 /*
