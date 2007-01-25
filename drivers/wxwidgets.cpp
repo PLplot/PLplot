@@ -50,10 +50,11 @@
 #include <cstdio>
 
 /* wxwidgets headers */
-#include <wx/wx.h>
-#include <wx/except.h>
-#include <wx/image.h>
-#include <wx/filedlg.h>
+#include "wx/wx.h"
+#include "wx/except.h"
+#include "wx/image.h"
+#include "wx/filedlg.h"
+#include "wx/display.h"
   
 /* antigrain headers (for antialzing) */
 #ifdef HAVE_AGG
@@ -77,6 +78,8 @@
   #include "plfreetype.h"
 
   static void plD_pixel_wxwidgets( PLStream *pls, short x, short y );
+  static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y );
+  static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour );
   static void init_freetype_lv1( PLStream *pls );
   static void init_freetype_lv2( PLStream *pls );
 extern "C"
@@ -128,6 +131,33 @@ extern "C"
 #define PLOT_WIDTH 800
 #define PLOT_HEIGHT 600
 /*=========================================================================*/
+
+/* Application icon as XPM */
+static char *graph[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 2",
+"   c black",
+".  c #BA1825",
+"X  c gray100",
+"UX c None",
+/* pixels */
+"UX. . . . . . . . . . . . . . UX",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . X X . . . . X X . . . ",
+". . . . . X X . . . . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . X X X X X X X X X X . . . ",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . . . . . . ",
+"UX. . . . . . . . . . . . . . UX"
+};
 
 /* struct which contains information about device */
 class wxPLplotFrame;
@@ -604,7 +634,7 @@ DrvOpt wx_options[] = {
   
 #ifdef HAVE_FREETYPE
   if( pls->dev_text )
-    init_freetype_lv2(pls);
+    init_freetype_lv2( pls );
 #endif
   
   /* find out what file drivers are available */
@@ -1123,7 +1153,8 @@ void wx_set_size( PLStream* pls, int width, int height )
 #ifdef HAVE_FREETYPE  
   if( pls->dev_text ) {
     FT_Data *FT=(FT_Data *)pls->FT;
-    FT->scale=dev->scaley;   
+    FT->scalex=dev->scalex;   
+    FT->scaley=dev->scaley;   
     FT->ymax=dev->height;
   }
 #endif
@@ -1250,6 +1281,74 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 
 
 /*----------------------------------------------------------------------*\
+ *  static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is set in the current colour.
+\*----------------------------------------------------------------------*/
+static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour)
+{
+  // Log_Verbose( "plD_set_pixel_wxwidgets" );
+
+  wxPLdev *dev=(wxPLdev*)pls->dev;
+
+  if( !(dev->ready) )
+    install_buffer( pls );
+
+  // Log_Verbose( "Draw Pixel @ %d, %d\n", x, y );	
+  if( dev->antialized ) {
+#ifdef HAVE_AGG
+    dev->m_buffer->SetRGB( x, y, GetRValue(colour), GetGValue(colour), GetBValue(colour) );    
+#endif
+  } else  {
+    dev->dc->SetPen( wxPen(wxColour(GetRValue(colour), GetGValue(colour), GetBValue(colour)), 1) );
+    dev->dc->DrawPoint( x, y );
+  }
+
+  if( !(dev->resizing) && dev->ownGUI ) {
+		AddtoClipRegion( dev, x, y, x+1, y+1 );
+    dev->comcount++;
+		if( dev->comcount>MAX_COMCOUNT ) {
+			wxRunApp( pls, true );
+			dev->comcount=0;
+		}
+	}
+}
+
+
+/*--------------------------------------------------------------------------*\
+ *  void plD_read_pixel_wingcc (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is read.
+\*--------------------------------------------------------------------------*/
+static PLINT plD_read_pixel_wxwidgets ( PLStream *pls, short x, short y )
+{
+  // Log_Verbose( "plD_read_pixel_wxwidgets" );
+
+  wxPLdev *dev=(wxPLdev*)pls->dev;
+  PLINT colour;
+  
+  if( !(dev->ready) )
+    install_buffer( pls );
+
+  if( dev->antialized ) {
+#ifdef HAVE_AGG
+    colour = RGB( dev->m_buffer->GetRed( x, y ), dev->m_buffer->GetGreen( x, y ),
+                  dev->m_buffer->GetBlue( x, y ) );    
+#endif
+  } else {  
+    wxColour col;
+    dev->dc->GetPixel( x, y, &col );
+  
+    colour = RGB( col.Red(), col.Green(), col.Blue() );    
+	}
+
+  return colour;
+}
+
+
+/*----------------------------------------------------------------------*\
  *  void init_freetype_lv1 (PLStream *pls)
  *
  *  "level 1" initialisation of the freetype library.
@@ -1261,10 +1360,30 @@ static void init_freetype_lv1( PLStream *pls )
 {
   // Log_Verbose( "init_freetype_lv1" );
 
+  wxPLdev *dev=(wxPLdev*)pls->dev;
+
 	plD_FreeType_init( pls );
 
 	FT_Data *FT=(FT_Data *)pls->FT;
 	FT->pixel = (plD_pixel_fp)plD_pixel_wxwidgets;
+
+  /*
+   *  See if we have a 24 bit device (or better), in which case
+   *  we can use the better antialaaising.
+   */
+  if( dev->antialized ) {
+    FT->BLENDED_ANTIALIASING=1;
+    FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
+    FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
+  } else {
+    //wxDisplay display(0);
+    //printf("bitmap depth=%d\n", display->GetDepth() );
+    //if( display->GetDepth()>=24) {
+      FT->BLENDED_ANTIALIASING=1;
+      FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
+      FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
+    //}
+  }
 }
 
 
@@ -1300,12 +1419,13 @@ static void init_freetype_lv2( PLStream *pls )
   wxPLdev *dev=(wxPLdev *)pls->dev;
   FT_Data *FT=(FT_Data *)pls->FT;
   
-  FT->scale=dev->scaley;
+  FT->scalex=dev->scalex;
+  FT->scaley=dev->scaley;
   FT->ymax=dev->height;
   FT->invert_y=1;
   FT->smooth_text=0;
   
-  if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? */
+  if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==0))    /* do we want to at least *try* for smoothing ? */
   {
     FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
     FT->ncol0_xtra=16777216-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
@@ -1329,9 +1449,11 @@ static void init_freetype_lv2( PLStream *pls )
          }
         FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
       }
-    else
-      plwarn("Insufficient colour slots available in CMAP0 to do text smoothing.");
-  }
+  } else if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==1))    /* If we have a truecolour device, we wont even bother trying to change the palette */
+   {
+     FT->smooth_text=1;
+   } else
+     plwarn("Insufficient colour slots available in CMAP0 to do text smoothing.");
 }
 
 #endif
@@ -1543,6 +1665,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
   SetMenuBar( menuBar );
 
   SetTitle( _T("wxWidgets PLplot App") );
+  SetIcon( wxIcon(graph) );
 }
 
 
