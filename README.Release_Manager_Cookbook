@@ -65,6 +65,20 @@ else has made any last minute changes.
 
 
 Verify that your computer has the right date and time using the command date.
+The easiest way to make sure the time and date are correct is to do the 
+following:
+1. Install the debian ntpdate package.
+2. Execute the command "/usr/sbin/ntpdate pool.ntp.org", which you will
+   have to do as root.
+This will immediately change your system clock. It is not recommended if you
+have other apps running on your system that expect time to increase in a
+smooth and linear fashion.
+
+If you would like your computer to always have the correct time and date, you 
+can install the debian ntp package, which must be properly configured to work.
+Some notes about how to do this can be found in the PLplot mailing list 
+archive. Look for the thread titled "PLplot 5.7.2 is now available" dated 
+Jan 22/23 2007.
 
 
 Change directory to your plplot cvs directory and enter the following command:
