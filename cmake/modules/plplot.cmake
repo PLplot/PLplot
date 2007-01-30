@@ -204,7 +204,7 @@ if(SWIG_FOUND)
   message(STATUS "SWIG_VERSION = ${SWIG_VERSION}")
   # Logic that depends on swig version
   transform_version(NUMERICAL_SWIG_MINIMUM_VERSION "1.3.22")
-  transform_version(NUMERICAL_SWIG_VERSION ${SWIG_VERSION})
+  transform_version(NUMERICAL_SWIG_VERSION "${SWIG_VERSION}")
   if(NUMERICAL_SWIG_VERSION LESS "${NUMERICAL_SWIG_MINIMUM_VERSION}")
     message(STATUS "WARNING: swig version too old.  SWIG_FOUND set to OFF")
     set(SWIG_FOUND OFF)

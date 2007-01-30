@@ -37,12 +37,11 @@ if(ENABLE_pdl)
       "-e use PDL; print \"$PDL::VERSION\""
       OUTPUT_VARIABLE PDL_VERSION
       )
-      set(PDL_MINIMUM_VERSION "2.4.1")
-      transform_version(NUMERICAL_PDL_MINIMUM_VERSION ${PDL_MINIMUM_VERSION})
-      transform_version(NUMERICAL_PDL_VERSION ${PDL_VERSION})
+      transform_version(NUMERICAL_PDL_MINIMUM_VERSION "2.4.1")
+      transform_version(NUMERICAL_PDL_VERSION "${PDL_VERSION}")
       if(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
         message(STATUS "WARNING: "
-        "perl PDL version < ${PDL_MINIMUM_VERSION}. "
+        "perl PDL version < 2.4.1. "
 	"Disabling Perl/PDL examples")
         set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
       else(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
