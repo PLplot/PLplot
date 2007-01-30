@@ -55,7 +55,7 @@ else(PKGCONFIG_EXECUTABLE)
   message(STATUS "WARNING: Build of examples in install tree will not work.")
   # Turn off pkg-config build.  (This means both build methods will be
   # commented out.)
-  set(pkg_config_true "")
+  set(pkg_config_true "#")
 endif(PKGCONFIG_EXECUTABLE)
 
 macro(pc_transform_link_flags _link_flags_out _link_flags_in)
