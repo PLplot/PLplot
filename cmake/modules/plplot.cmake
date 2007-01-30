@@ -31,12 +31,16 @@ macro(TRANSFORM_VERSION _numerical_result _version)
 # _version must be a period-delimited triplet string of the form
 # "major.minor.patch".
 # This macro transforms that into a numerical result that can be compared.
-string(REGEX REPLACE "^(.*)\\..*\\..*$" "\\1" _major ${_version})
-string(REGEX REPLACE "^.*\\.(.*)\\..*$" "\\1" _minor ${_version})
-string(REGEX REPLACE "^.*\\..*\\.(.*)$" "\\1" _patch ${_version})
-math(EXPR ${_numerical_result}
-"${_major}*10000 + ${_minor}*100 + ${_patch}
-")
+if(${_version} MATCHES "^[0-9]*\\.[0-9]*\\.[0-9]*$")
+  string(REGEX REPLACE "^([0-9]*)\\.[0-9]*\\.[0-9]*$" "\\1" _major ${_version})
+  string(REGEX REPLACE "^[0-9]*\\.([0-9]*)\\.[0-9]*$" "\\1" _minor ${_version})
+  string(REGEX REPLACE "^[0-9]*\\.[0-9]*\\.([0-9]*)$" "\\1" _patch ${_version})
+  math(EXPR ${_numerical_result}
+  "${_major}*1000000 + ${_minor}*1000 + ${_patch}
+  ")
+else(${_version} MATCHES "^[0-9]*\\.[0-9]*\\.[0-9]*$")
+  set(${_numerical_result} 0)
+endif(${_version} MATCHES "^[0-9]*\\.[0-9]*\\.[0-9]*$")
 endmacro(TRANSFORM_VERSION)
 
 # =======================================================================
