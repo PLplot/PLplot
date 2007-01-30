@@ -132,7 +132,7 @@
  *  and finally one of each.
  */
 
-char* plD_DEVICE_INFO_gd = 
+char* plD_DEVICE_INFO_gd =
 #if defined(PLD_png)
   "png:PNG file:0:gd:39:png\n"
 #endif
@@ -144,6 +144,11 @@ char* plD_DEVICE_INFO_gd =
 #endif
 ;
 
+#if GD2_VERS >= 2
+#ifdef HAVE_FREETYPE
+#define SMOOTH_LINES_OK
+#endif
+#endif
 
 #ifdef HAVE_FREETYPE
 
@@ -707,7 +712,7 @@ plD_line_png(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = dev->pngy - y1;
     y2 = dev->pngy - y2;
 
-    #if GD2_VERS >= 2
+    #ifdef SMOOTH_LINES_OK
       if (dev->smooth==1)
         {
           gdImageSetAntiAliased(dev->im_out,dev->colour);
@@ -764,7 +769,7 @@ png_Dev *dev=(png_Dev *)pls->dev;
 	   points[i].y = dev->pngy - (pls->dev_y[i]/dev->scale);
          }
 
-    #if GD2_VERS >= 2
+    #ifdef SMOOTH_LINES_OK
       if (dev->smooth==1)
         {
           gdImageSetAntiAliased(dev->im_out,dev->colour);
