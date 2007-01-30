@@ -28,7 +28,7 @@
 # pkg_config_true	  - if null string, then example builds done with
 #  			    pkg-config method.  if "#" then that method is
 #			    commented out.
-# pkg_config_false	  - always "#" to comment out example builds with 
+# pkg_config_false	  - always "#" to comment out example builds with
 #  			    plplot_config method which does not exist for
 #			    cmake build system.
 # PKG_CONFIG_DIR	  - install location for configured PLplot
@@ -55,7 +55,7 @@ else(PKGCONFIG_EXECUTABLE)
   message(STATUS "WARNING: Build of examples in install tree will not work.")
   # Turn off pkg-config build.  (This means both build methods will be
   # commented out.)
-  set(pkg_config_true "#")
+  set(pkg_config_true "")
 endif(PKGCONFIG_EXECUTABLE)
 
 macro(pc_transform_link_flags _link_flags_out _link_flags_in)

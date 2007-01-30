@@ -75,7 +75,8 @@ if(ENABLE_f77 OR ENABLE_f95)
 set(
 _output_results
 "${_output_results}
-CMAKE_Fortran_COMPILER CMAKE_Fortran_FLAGS:	${CMAKE_Fortran_COMPILER} ${CMAKE_Fortran_FLAGS}")
+CMAKE_Fortran_COMPILER CMAKE_Fortran_FLAGS:	${CMAKE_Fortran_COMPILER} ${CMAKE_Fortran_FLAGS}
+Target Fortran:	${TARGET_FORTRAN}")
 endif(ENABLE_f77 OR ENABLE_f95)
 
 set(

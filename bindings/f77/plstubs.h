@@ -90,13 +90,19 @@
 #endif
 #endif
 
-#ifdef MSDOS				/* MS-DOS based */
+#ifdef WIN32				/* Windows 32-bit */
+#ifdef IVF				/* Intel Visual Fortran */
+#define STUB_LINKAGE STUB_U
+#elif defined(CVF)				/* MSVC/CVF */
+#define STUB_LINKAGE STUB_U
+#elif defined(MSDOS)				/* MS-DOS based */
 #define STUB_LINKAGE STUB_FORTRAN
-#endif
-
-#ifdef _MSC_VER				/* MSVC/CVF based */
+#elif defined(_MSC_VER)
 #define STUB_LINKAGE STUB_STDCALL
 #endif
+#elif defined(MSDOS)				/* MS-DOS based */
+#define STUB_LINKAGE STUB_FORTRAN
+#endif /* Windows 32-bit */
 
 #ifndef STUB_LINKAGE			/* The default */
 #define STUB_LINKAGE STUB_LAU

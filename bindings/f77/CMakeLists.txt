@@ -21,7 +21,7 @@
 if(ENABLE_f77)
 
 ## Generate source files depending on type of PLFLT
-## Note: Sed will possibly fail on windows. Would this be better 
+## Note: Sed will possibly fail on windows. Would this be better
 ## done using the cmake configure_file option eventually?
 if(PL_DOUBLE)
   add_custom_command(
@@ -39,6 +39,16 @@ else(PL_DOUBLE)
   )
 endif(PL_DOUBLE)
 
+if(WIN32)
+  # Set the flags for the C compiler. The C stubs need to have the
+  # correction case and calling convention for the Fortran compiler
+  IF(TARGET_FORTRAN MATCHES "IVF")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DIVF")
+  ELSEIF(TARGET_FORTRAN MATCHES "CVF")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
+  ENDIF(TARGET_FORTRAN MATCHES "IVF")
+endif(WIN32)
+
 if(F77_CMD_LINE)
   set(HAVE_F77PARSE_CL_FALSE C)
 else(F77_CMD_LINE)
@@ -49,7 +59,7 @@ configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/configurable.f.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/configurable.f
 )
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/configurable.f 
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/configurable.f
 PROPERTIES GENERATED ON)
 
 # Set the include path
@@ -62,8 +72,8 @@ ${CMAKE_BINARY_DIR}/include
 
 ## Build C part of F77 bindings
 set(plplotf77c${LIB_TAG}_LIB_SRCS
-sc3d.c 
-sccont.c 
+sc3d.c
+sccont.c
 scstubs.c
 )
 
@@ -77,7 +87,7 @@ add_library(plplotf77c${LIB_TAG} ${plplotf77c${LIB_TAG}_LIB_SRCS})
 target_link_libraries(plplotf77c${LIB_TAG} plplot${LIB_TAG})
 
 get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(plplotf77c${LIB_TAG} 
+set_target_properties(plplotf77c${LIB_TAG}
 PROPERTIES
 SOVERSION ${plplotf77_SOVERSION}
 VERSION ${plplotf77_VERSION}
@@ -89,8 +99,8 @@ install(TARGETS plplotf77c${LIB_TAG} DESTINATION ${LIB_DIR})
 
 ## Build fortran part of F77 bindings
 set(plplotf77${LIB_TAG}_LIB_SRCS
-strutil.f 
-sfstubs.f 
+strutil.f
+sfstubs.f
 configurable.f
 )
 
@@ -98,7 +108,7 @@ add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
 
-set_target_properties(plplotf77${LIB_TAG}  
+set_target_properties(plplotf77${LIB_TAG}
 PROPERTIES
 SOVERSION ${plplotf77_SOVERSION}
 VERSION ${plplotf77_VERSION}
@@ -121,7 +131,7 @@ if(PKGCONFIG_EXECUTABLE)
   # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
   # 			    binding has been enabled (ON) or not (OFF).
   #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-  #			    which helps to determine name of configured 
+  #			    which helps to determine name of configured
   #			    *.pc file.
   # PC_SHORT_NAME	  - Used in *.pc NAME: field
   # PC_LONG_NAME	  - Used in *.pc Description: field

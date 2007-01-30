@@ -1,6 +1,6 @@
 # cmake/modules/fortran.cmake
 #
-# F77/F95 binding configuration 
+# F77/F95 binding configuration
 #
 # Copyright (C) 2006  Andrew Ross
 #
@@ -29,7 +29,7 @@ if(ENABLE_f77 OR ENABLE_f95)
   # Check for fortran compiler
   include(CMakeDetermineFortranCompiler)
   if(NOT CMAKE_Fortran_COMPILER)
-    message(STATUS "WARNING: " 
+    message(STATUS "WARNING: "
     "fortran compiler not found. Disabling f77/f95 bindings"
     )
     set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
@@ -43,7 +43,7 @@ if(ENABLE_f77 OR ENABLE_f95)
 
   # Don't compile Fortran 95 binding if compiler doesn't support it
   if(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
-    message(STATUS "WARNING: " 
+    message(STATUS "WARNING: "
     "fortran compiler does not support f90/95. Disabling f95 bindings"
     )
     set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
@@ -56,4 +56,28 @@ if(ENABLE_f77 OR ENABLE_f95)
   if(ENABLE_f77)
     include(TestF77CmdLine)
   endif(ENABLE_f77)
+
+  # Determine which Fortran compiler we have.  We do not need to
+  # this for all compilers, just the ones that have a test in
+  # bindings/f77/plstubs.h and bindings/f95/plstubs.h
+
+  message(STATUS "NOTICE: " "Found: ${CMAKE_Fortran_COMPILER}")
+  if(CMAKE_Fortran_COMPILER MATCHES ".*/ifort.*")
+    # Intel Visual Fortran
+    message(STATUS "NOTICE: " "Found Intel Visual Fortran")
+    set(TARGET_FORTRAN "IVF" CACHE STRING "Target Fortran Compiler")
+  endif(CMAKE_Fortran_COMPILER MATCHES ".*/ifort.*")
+
+  if(CMAKE_Fortran_COMPILER MATCHES ".*/DF.*")
+    # Compaq Visual Fortran
+    message(STATUS "NOTICE: " "Found Compaq Visual Fortran")
+    set(TARGET_FORTRAN "CVF" CACHE STRING "Target Fortran Compiler")
+  endif(CMAKE_Fortran_COMPILER MATCHES ".*/DF.*")
+
+  if(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32)
+    # Compaq Visual Fortran - alternative name
+    message(STATUS "NOTICE: " "Found Compaq Visual Fortran")
+    set(TARGET_FORTRAN "CVF" CACHE STRING "Target Fortran Compiler")
+  endif(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32)
+
 endif(ENABLE_f77 OR ENABLE_f95)
