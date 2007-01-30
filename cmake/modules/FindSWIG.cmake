@@ -32,22 +32,17 @@ IF(SWIG_EXECUTABLE)
       SET(SWIG_USE_FILE ${CMAKE_ROOT}/Modules/UseSWIG.cmake)
       EXECUTE_PROCESS(COMMAND ${SWIG_EXECUTABLE} -version
 	OUTPUT_VARIABLE SWIG_version_output
-	ERROR_VARIABLE SWIG_version_error
+	ERROR_VARIABLE SWIG_version_output
 	RESULT_VARIABLE SWIG_version_result)
       IF(SWIG_version_result)
         MESSAGE(SEND_ERROR "Command \"${SWIG_EXECUTABLE} -version\" failed with output:\n${SWIG_version_error}")
       ELSE(SWIG_version_result)
-        IF(SWIG_version_output STREQUAL "")
-        STRING(REGEX REPLACE ".*SWIG Version[^0-9.]*\([0-9.]+\).*" "\\1"
-	  SWIG_version_output "${SWIG_version_error}")
-        ELSE(SWIG_version_output STREQUAL "")
         STRING(REGEX REPLACE ".*SWIG Version[^0-9.]*\([0-9.]+\).*" "\\1"
 	  SWIG_version_output "${SWIG_version_output}")
-        ENDIF(SWIG_version_output STREQUAL "")
         SET(SWIG_VERSION ${SWIG_version_output} CACHE STRING "Swig version" FORCE)
-      ENDIF(SWIG_swiglib_result)
+      ENDIF(SWIG_version_result)
     ENDIF(SWIG_DIR)
-  ENDIF(SWIG_version_result)
+  ENDIF(SWIG_swiglib_result)
 ENDIF(SWIG_EXECUTABLE)
 
 IF(NOT SWIG_FOUND)
