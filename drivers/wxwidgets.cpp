@@ -1867,7 +1867,11 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 			rect.y=m_dev->clipminy;
 			rect.width=m_dev->clipmaxx-m_dev->clipminx+1;
 			rect.height=m_dev->clipmaxy-m_dev->clipminy+1;
+#if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=5)
+      RefreshRect( rect ); 
+#else			
       RefreshRect( rect, false );  /* don't erase background */
+#endif
       m_dev->newclipregion=true;
 			m_dev->clipminx=m_dev->width;
 			m_dev->clipmaxx=0;
