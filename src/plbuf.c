@@ -650,9 +650,10 @@ rdbuf_image(PLStream *pls)
 	 * we still allocate and copy the data because I think that method works
 	 * better in a multithreaded environment.  I could be wrong.
 	 */
-    dev_ix=(short *)malloc(npts*sizeof(short));
-    dev_iy=(short *)malloc(npts*sizeof(short));
-    dev_z=(unsigned short *)malloc((nptsX-1)*(nptsY-1)*sizeof(unsigned short));
+    if (((dev_ix=(short *)malloc(npts*sizeof(short)))==NULL)||
+        ((dev_iy=(short *)malloc(npts*sizeof(short)))==NULL)||
+        ((dev_z=(unsigned short *)malloc((nptsX-1)*(nptsY-1)*sizeof(unsigned short)))==NULL))
+        plexit("rdbuf_image: Insufficient memory");
 
     rd_data(pls, dev_ix, sizeof(short) * npts);
     rd_data(pls, dev_iy, sizeof(short) * npts);
@@ -907,7 +908,7 @@ wr_command(PLStream *pls, U_CHAR c)
 
         if (pls->verbose)
             printf("Growing buffer to %d KB\n", pls->plbuf_buffer_size / 1024);
-        if ((pls->plbuf_buffer = realloc(pls->plbuf_buffer, pls->plbuf_buffer_size)) == NULL) 
+        if ((pls->plbuf_buffer = realloc(pls->plbuf_buffer, pls->plbuf_buffer_size)) == NULL)
             plexit("plbuf wr_data:  Plot buffer grow failed");
     }
 
@@ -1016,7 +1017,7 @@ void * plbuf_save(PLStream *pls, void *state)
             if(plot_state->size < save_size) {
                 /* Yes, reallocate a larger one */
                 if((plot_state = (struct _state *)realloc(state, save_size)) == NULL) {
-                    /* NOTE: If realloc fails, then plot_state ill be NULL.  
+                    /* NOTE: If realloc fails, then plot_state ill be NULL.
                      * This will leave the original buffer untouched, thus we
                      * mark it as invalid and return it back to the caller.
                      */
@@ -1024,7 +1025,7 @@ void * plbuf_save(PLStream *pls, void *state)
                     plot_state->valid = 0;
 
                     return state;
-                } 
+                }
                 plot_state->size = save_size;
             }
         } else {

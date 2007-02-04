@@ -541,11 +541,17 @@ c_plscmap0n(PLINT ncol0)
 /* Allocate the space */
 
     if (plsc->cmap0 == NULL) {
-	plsc->cmap0 = (PLColor *) calloc(1, size);
+	if ((plsc->cmap0 = (PLColor *) calloc(1, size))==NULL)
+     {
+       plexit("c_plscmap0n: Insufficient memory");
+     }
 	imin = 0;
     }
     else {
-	plsc->cmap0 = (PLColor *) realloc(plsc->cmap0, size);
+	if ((plsc->cmap0 = (PLColor *) realloc(plsc->cmap0, size))==NULL)
+     {
+       plexit("c_plscmap0n: Insufficient memory");
+     }
 	imin = plsc->ncol0;
     }
 
@@ -592,9 +598,19 @@ c_plscmap1n(PLINT ncol1)
 /* Allocate the space */
 
     if (plsc->ncol1 > 0)
-	plsc->cmap1 = (PLColor *) realloc(plsc->cmap1, size);
+      {
+        if ((plsc->cmap1 = (PLColor *) realloc(plsc->cmap1, size))==NULL)
+          {
+            plexit("c_plscmap1n: Insufficient memory");
+          }
+      }
     else
-	plsc->cmap1 = (PLColor *) calloc(ncol, sizeof(PLColor));
+      {
+        if ((plsc->cmap1 = (PLColor *) calloc(ncol, sizeof(PLColor)))==NULL)
+          {
+            plexit("c_plscmap1n: Insufficient memory");
+          }
+      }
 
 /* Fill in default entries */
 
@@ -1431,7 +1447,10 @@ plGetName(char *dir, char *subdir, char *filename, char **filespec)
     free_mem(*filespec);
     lfilespec = 10;
     lfilespec = strlen(dir) + strlen(subdir) + strlen(filename) + 10;
-    *filespec = (char *) malloc(lfilespec);
+    if ((*filespec = (char *) malloc(lfilespec))==NULL)
+      {
+        plexit("plGetName: Insufficient memory");
+      }
 
     strcpy(*filespec, dir);
 
@@ -1578,7 +1597,12 @@ plP_getmember(PLStream *pls)
     char* suffix;
 
     if (pls->FileName == NULL)
-	pls->FileName = (char *) malloc(10 + strlen(pls->BaseName));
+      {
+        if ((pls->FileName = (char *) malloc(10 + strlen(pls->BaseName)))==NULL)
+          {
+            plexit("plP_getmember: Insufficient memory");
+          }
+      }
 
     suffix = strstr (pls->BaseName, "%n");
 
@@ -1608,14 +1632,20 @@ plP_sfnam(PLStream *pls, const char *fnam)
     if (pls->FileName != NULL)
 	free((void *) pls->FileName);
 
-    pls->FileName = (char *) malloc(10 + strlen(fnam));
+    if ((pls->FileName = (char *) malloc(10 + strlen(fnam)))==NULL)
+      {
+        plexit("plP_sfnam: Insufficient memory");
+      }
 
     strcpy(pls->FileName, fnam);
 
     if (pls->BaseName != NULL)
 	free((void *) pls->BaseName);
 
-    pls->BaseName = (char *) malloc(10 + strlen(fnam));
+    if ((pls->BaseName = (char *) malloc(10 + strlen(fnam)))==NULL)
+      {
+        plexit("plP_sfnam: Insufficient memory");
+      }
 
     strcpy(pls->BaseName, fnam);
 }
