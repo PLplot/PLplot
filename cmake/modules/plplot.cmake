@@ -248,6 +248,14 @@ include(octave)
 include(tcl-related)
 include(pdl)
 
+# Find wxWidgets needed for driver and bindings
+option( ENABLE_wxwidgets "Enable wxWidgets bindings" ON )
+SET(wxWidgets_USE_LIBS core base)
+find_package(wxWidgets)
+if( NOT wxWidgets_FOUND )
+  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
+endif( NOT wxWidgets_FOUND )  
+
 # =======================================================================
 # additional library support
 # =======================================================================

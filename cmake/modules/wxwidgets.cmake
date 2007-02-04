@@ -26,46 +26,43 @@
 # wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
 # DRIVERS_LINK_FLAGS  	  - list of LINK_FLAGS for all static devices.
 
+if( NOT wxWidgets_FOUND )
+  set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+endif( NOT wxWidgets_FOUND )  
+
 if(PLD_wxwidgets)
-  SET(wxWidgets_USE_LIBS core base)
-  find_package(wxWidgets)
-  if(wxWidgets_FOUND)
-    string(REGEX REPLACE ";" " -I" 
+  string(REGEX REPLACE ";" " -I" 
+  wxwidgets_COMPILE_FLAGS
+  "-I${wxWidgets_INCLUDE_DIRS} ${wxWidgets_DEFINITIONS}"
+  )
+  set(wxwidgets_LINK_FLAGS ${wxWidgets_LIBRARIES})
+  if(WITH_FREETYPE)
+    set(
     wxwidgets_COMPILE_FLAGS
-    "-I${wxWidgets_INCLUDE_DIRS} ${wxWidgets_DEFINITIONS}"
+    "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
     )
-    set(wxwidgets_LINK_FLAGS ${wxWidgets_LIBRARIES})
-    if(WITH_FREETYPE)
-      set(
-      wxwidgets_COMPILE_FLAGS
-      "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
-      )
-      set(
-      wxwidgets_LINK_FLAGS
-      ${wxwidgets_LINK_FLAGS}
-      ${FREETYPE_LIBRARIES}
-      )
-    endif(WITH_FREETYPE)
-    include(agg)
-    if(HAVE_AGG)
-      message(STATUS "AGG_INCLUDE_DIR = ${AGG_INCLUDE_DIR}")
-      message(STATUS "AGG_LIBRARIES = ${AGG_LIBRARIES}")
-      message(STATUS "AGG_DEFINITIONS = ${AGG_DEFINITIONS}")
-      set(
-      wxwidgets_COMPILE_FLAGS
-      "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIR}"
-      )
-      set(
-      wxwidgets_LINK_FLAGS
-      ${wxwidgets_LINK_FLAGS}
-      ${AGG_LIBRARIES}
-      )
-    endif(HAVE_AGG)
-    set(DRIVERS_LINK_FLAGS
-    ${DRIVERS_LINK_FLAGS} 
+    set(
+    wxwidgets_LINK_FLAGS
     ${wxwidgets_LINK_FLAGS}
+    ${FREETYPE_LIBRARIES}
     )
-  else(wxWidgets_FOUND)
-    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
-  endif(wxWidgets_FOUND)
+  endif(WITH_FREETYPE)
+  include(agg)
+  if(HAVE_AGG)
+    set(
+    wxwidgets_COMPILE_FLAGS
+    "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIR}"
+    )
+    set(
+    wxwidgets_LINK_FLAGS
+    ${wxwidgets_LINK_FLAGS}
+    ${AGG_LIBRARIES}
+    )
+  endif(HAVE_AGG)
+  set(DRIVERS_LINK_FLAGS
+  ${DRIVERS_LINK_FLAGS} 
+  ${wxwidgets_LINK_FLAGS}
+  )
+else(PLD_wxwidgets)
+  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(PLD_wxwidgets)
