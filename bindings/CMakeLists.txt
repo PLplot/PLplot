@@ -29,6 +29,7 @@ add_subdirectory(tk-x-plat)
 add_subdirectory(octave)
 add_subdirectory(java)
 add_subdirectory(gnome2)
+add_subdirectory(wxwidgets)
 
 set(index)
 if(ENABLE_tcl)
