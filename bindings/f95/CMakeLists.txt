@@ -64,7 +64,11 @@ INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 INSTALL_NAME_DIR "${LIB_DIR}"
 )
 
-install(TARGETS plplotf95c${LIB_TAG} DESTINATION ${LIB_DIR})
+install(TARGETS plplotf95c${LIB_TAG}
+ARCHIVE DESTINATION ${LIB_DIR}
+LIBRARY DESTINATION ${LIB_DIR}
+RUNTIME DESTINATION ${BIN_DIR}
+)
 
 
 ## Build fortran part of F95 bindings
@@ -97,7 +101,11 @@ INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 INSTALL_NAME_DIR "${LIB_DIR}"
 )
 
-install(TARGETS plplotf95${LIB_TAG} DESTINATION ${LIB_DIR})
+install(TARGETS plplotf95${LIB_TAG}
+ARCHIVE DESTINATION ${LIB_DIR}
+LIBRARY DESTINATION ${LIB_DIR}
+RUNTIME DESTINATION ${BIN_DIR}
+)
 
 # Yuk! All Makefiles are run from the top level build directory and
 # so the f90 .mod files end up there rather than in the bindings/f95
