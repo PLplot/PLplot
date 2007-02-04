@@ -147,8 +147,11 @@ c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill) {
     if (plsc->arrow_x) free_mem(plsc->arrow_x);
     if (plsc->arrow_y) free_mem(plsc->arrow_y);
 
-    plsc->arrow_x = (PLFLT *)malloc(npts*sizeof(PLFLT));
-    plsc->arrow_y = (PLFLT *)malloc(npts*sizeof(PLFLT));
+    if (((plsc->arrow_x = (PLFLT *)malloc(npts*sizeof(PLFLT)))==NULL)||
+        ((plsc->arrow_y = (PLFLT *)malloc(npts*sizeof(PLFLT)))==NULL))
+        {
+          plexit("c_plsvect: Insufficient memory");
+        }
 
     plsc->arrow_npts = npts;
     plsc->arrow_fill = fill;
@@ -173,8 +176,11 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 
     if(uu == 0.0 && vv == 0.0) return;
 
-    a_x = (PLINT *)malloc(sizeof(PLINT)*(plsc->arrow_npts));
-    a_y = (PLINT *)malloc(sizeof(PLINT)*(plsc->arrow_npts));
+    if (((a_x = (PLINT *)malloc(sizeof(PLINT)*(plsc->arrow_npts)))==NULL)||
+        ((a_y = (PLINT *)malloc(sizeof(PLINT)*(plsc->arrow_npts)))==NULL))
+        {
+          plexit("plP_plotvect: Insufficient memory");
+        }
 
     px0 = plP_wcpcx(x);
     py0 = plP_wcpcy(y);

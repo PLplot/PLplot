@@ -204,7 +204,10 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   csa* a = NULL;
   int i, j, nptsg;
 
-  pin = (point *) malloc(npts * sizeof(point));
+  if ((pin = (point *) malloc(npts * sizeof(point)))==NULL)
+    {
+      plexit("grid_csa: Insufficient memory");
+    }
 
   xt = x; yt = y; zt = z; pt = pin;
   for(i=0; i<npts; i++) {
@@ -215,7 +218,10 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 
   nptsg = nptsx * nptsy;
-  pgrid =  (point *) malloc(nptsg * sizeof(point));
+  if ((pgrid =  (point *) malloc(nptsg * sizeof(point)))==NULL)
+    {
+      plexit("grid_csa: Insufficient memory");
+    }
 
   yt = yg; pt = pgrid;
   for(j=0; j<nptsy; j++) {
@@ -521,7 +527,10 @@ grid_dtli(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     return;
   }
 
-  pin = (point *) malloc(npts * sizeof(point));
+  if ((pin = (point *) malloc(npts * sizeof(point)))==NULL)
+    {
+      plexit("grid_dtli: Insufficient memory");
+    }
 
   xt = x; yt = y; zt = z; pt = pin;
   for(i=0; i<npts; i++) {
@@ -532,7 +541,11 @@ grid_dtli(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 
   nptsg = nptsx * nptsy;
-  pgrid =  (point *) malloc(nptsg * sizeof(point));
+
+  if ((pgrid =  (point *) malloc(nptsg * sizeof(point)))==NULL)
+    {
+      plexit("grid_dtli: Insufficient memory");
+    }
 
   yt = yg; pt = pgrid;
   for(j=0; j<nptsy; j++) {
@@ -584,7 +597,10 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     wmin =  -PLFLT_MAX;
   }
 
-  pin = (point *) malloc(npts * sizeof(point));
+  if ((pin = (point *) malloc(npts * sizeof(point)))==NULL)
+    {
+      plexit("plgridata: Insufficient memory");
+    }
 
   xt = x; yt = y; zt = z; pt = pin;
   for(i=0; i<npts; i++) {
@@ -595,7 +611,11 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 
   nptsg = nptsx * nptsy;
-  pgrid =  (point *) malloc(nptsg * sizeof(point));
+
+  if ((pgrid =  (point *) malloc(nptsg * sizeof(point)))==NULL)
+    {
+      plexit("plgridata: Insufficient memory");
+    }
 
   yt = yg; pt = pgrid;
   for(j=0; j<nptsy; j++) {
@@ -740,7 +760,11 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   /* Could pass extra args to qhull through the 'data' argument of
      plgriddata() */
   sprintf(flags, "qhull d Qbb Qt");
-  points = (coordT *) malloc(npts * (dim+1) * sizeof(coordT));
+  
+  if ((points = (coordT *) malloc(npts * (dim+1) * sizeof(coordT)))==NULL)
+    {
+      plexit("grid_adtli: Insufficient memory");
+    }
 
   for (i=0; i<npts; i++) {
     points[i*dim] = x[i];

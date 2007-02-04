@@ -190,7 +190,10 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   nnx = (Dxmax-Dxmin)/dx + 1;
   nny = (Dymax-Dymin)/dy + 1;
 
-  Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short));
+  if ((Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short)))==NULL)
+    {
+      plexit("plimage: Insufficient memory");
+    }
 
   xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
   lzmin = lzmax = idata[xm][ym];
@@ -232,8 +235,11 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   /* The X and Y arrays has size nnx*nny */
   nnx++; nny++;
 
-  Xf = (short *) malloc(nny*nnx*sizeof(short));
-  Yf = (short *) malloc(nny*nnx*sizeof(short));
+  if (((Xf = (short *) malloc(nny*nnx*sizeof(short)))==NULL)||
+      ((Yf = (short *) malloc(nny*nnx*sizeof(short)))==NULL))
+      {
+        plexit("plimage: Insufficient memory");
+      }
 
   /* adjust the step for the X/Y arrays */
   dx = dx*(nx-1)/nx;

@@ -1811,6 +1811,9 @@ opt_fsiz(char *opt, char *optarg, void *client_data)
     char lastchar = optarg[len-1];
     PLFLT multiplier = 1.0e6;
     char *spec = (char*)malloc(len+1);
+    
+    if (spec==NULL)
+      plexit("opt_fsiz: Insufficient memory");
 
 /* Interpret optional suffix */
 
@@ -1980,7 +1983,10 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
-    plsc->plwindow = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    if ((plsc->plwindow = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char)))==NULL)
+      {
+        plexit("opt_plwindow: Insufficient memory");
+      }
     strcpy (plsc->plwindow, optarg);
     return 0;
 }
@@ -1998,7 +2004,11 @@ opt_tcl_cmd(char *opt, char *optarg, void *client_data)
 {
     char *newcmd;
 
-    newcmd = (char *) malloc((size_t)(strlen(optarg)+9)*sizeof(char));
+    if ((newcmd = (char *) malloc((size_t)(strlen(optarg)+9)*sizeof(char)))==NULL)
+      {
+        plexit("opt_tcl_cmd: Insufficient memory");
+      }
+
     strcpy(newcmd,"tcl_cmd=");
     strcat(newcmd,optarg);
 
@@ -2071,7 +2081,11 @@ opt_geo(char *opt, char *optarg, void *client_data)
 
 /* The TK driver uses the geometry string directly */
 
-    plsc->geometry = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    if ((plsc->geometry = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char)))==NULL)
+      {
+        plexit("opt_geo: Insufficient memory");
+      }
+
     strcpy (plsc->geometry, optarg);
 
 /* Set up plplot dimensions */
@@ -2121,7 +2135,11 @@ opt_geo(char *opt, char *optarg, void *client_data)
 static int
 opt_tk_file(char *opt, char *optarg, void *client_data)
 {
-    plsc->tk_file = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    if ((plsc->tk_file = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char)))==NULL)
+      {
+        plexit("opt_tk_file: Insufficient memory");
+      }
+
     strcpy (plsc->tk_file, optarg);
     return 0;
 }

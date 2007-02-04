@@ -237,8 +237,10 @@ pdf_putc(int c, PDFstrm *pdfs)
 	    pldebug("pdf_putc",
 		    "Increasing buffer to %d bytes\n", pdfs->bufmax);
 	    pdfs->bufmax += 512;
-	    pdfs->buffer = (U_CHAR *)
-		realloc((void *) pdfs->buffer, pdfs->bufmax);
+	    if ((pdfs->buffer = (U_CHAR *) realloc((void *) pdfs->buffer, pdfs->bufmax))==NULL)
+        {
+          plexit("pdf_putc: Insufficient memory");
+        }
 	}
 	pdfs->buffer[pdfs->bp++] = c;
 	result = c;
@@ -336,8 +338,11 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
 		pldebug("pdf_wrx",
 			"Increasing buffer to %d bytes\n", pdfs->bufmax);
 		pdfs->bufmax += 512;
-		pdfs->buffer = (U_CHAR *)
-		    realloc((void *) (pdfs->buffer), pdfs->bufmax);
+		if ((pdfs->buffer = (U_CHAR *)
+		    realloc((void *) (pdfs->buffer), pdfs->bufmax))==NULL)
+		    {
+            plexit("pdf_wrx: Insufficient memory");
+          }
 	    }
 	    pdfs->buffer[pdfs->bp++] = x[i];
 	}

@@ -511,8 +511,11 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
         xclp = _xclp;
         yclp = _yclp;
     } else {
-        xclp = (short *) malloc( npts*sizeof(short) ) ;
-        yclp = (short *) malloc( npts*sizeof(short) ) ;
+        if (((xclp = (short *) malloc( npts*sizeof(short) ))==NULL)||
+            ((yclp = (short *) malloc( npts*sizeof(short) ))==NULL))
+            {
+              plexit("plP_pllclp: Insufficient memory");
+            }
     }
 
     for (i = 0; i < npts - 1; i++) {
@@ -657,8 +660,11 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
         xclp = _xclp;
         yclp = _yclp;
     } else {
-        xclp = (short *) malloc( (2*npts+2)*sizeof(short) ) ;
-        yclp = (short *) malloc( (2*npts+2)*sizeof(short) ) ;
+        if (((xclp = (short *) malloc( (2*npts+2)*sizeof(short) ))==NULL)||
+            ((yclp = (short *) malloc( (2*npts+2)*sizeof(short) ))==NULL))
+            {
+              plexit("plP_plfclp: Insufficient memory");
+            }
     }
 
 

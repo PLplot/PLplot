@@ -485,6 +485,8 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     int np = NPTS;
     PLFLT *zz = (PLFLT *) malloc(NPTS*sizeof(PLFLT));
 
+    if (zz==NULL) plexit("plsurf3dl: Insufficient memory");
+
     /* get the contour lines */
 
     /* prepare cont_store input */
@@ -529,7 +531,10 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       do { /* there are several lines that make up the contour */
 	if (cline->npts > np) {
 	  np = cline->npts;
-	  zz = (PLFLT *) realloc(zz, np*sizeof(PLFLT));
+	  if ((zz = (PLFLT *) realloc(zz, np*sizeof(PLFLT)))==NULL)
+  	     {
+          plexit("c_plsurf3dl: Insufficient memory");
+        }
 	}
 	for (j=0; j<cline->npts; j++)
 	  zz[j] = plsc->ranmi;
@@ -855,9 +860,12 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
       }
 
       /* allocate storage for new versions of the input vectors */
-      _x = (PLFLT*)malloc(_nx * sizeof(PLFLT));
-      _y = (PLFLT*)malloc(_ny * sizeof(PLFLT));
-      _z = (PLFLT**)malloc(_nx * sizeof(PLFLT*));
+      if (((_x = (PLFLT*)malloc(_nx * sizeof(PLFLT)))==NULL)||
+          ((_y = (PLFLT*)malloc(_ny * sizeof(PLFLT)))==NULL)||
+          ((_z = (PLFLT**)malloc(_nx * sizeof(PLFLT*)))==NULL))
+          {
+            plexit("c_plot3dcl: Insufficient memory");
+          }
 
       clipped = 1;
 
@@ -873,7 +881,12 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 
       /* copy the data array so we can interpolate around the edges */
       for(i=0; i<_nx; i++)
-	_z[i] = (PLFLT*)malloc(_ny * sizeof(PLFLT));
+      {
+       if ((_z[i] = (PLFLT*)malloc(_ny * sizeof(PLFLT)))==NULL)
+         {
+           plexit("c_plot3dcl: Insufficient memory");
+         }
+      }
 
       /* interpolation factors for the 4 edges */
       ty0 = (_y[0] - y[iymin]) / (y[iymin+1] - y[iymin]);
@@ -943,7 +956,10 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
    }
 
    if (opt & MAG_COLOR) {     /* If enabled, use magnitude colored wireframe  */
-     ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
+     if ((ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT))))==NULL)
+     {
+       plexit("c_plot3dcl: Insufficient memory");
+     }
    } else
      ctmp = NULL;
 
@@ -1032,10 +1048,15 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 
       PLINT *uu = (PLINT *) malloc(NPTS*sizeof(PLINT));
       PLINT *vv = (PLINT *) malloc(NPTS*sizeof(PLINT));
-
       /* prepare cont_store input */
       PLFLT **zstore;
       PLcGrid2 cgrid2;
+
+      if ((uu==NULL)||(vv==NULL))
+        {
+          plexit("c_plot3dcl: Insufficient memory");
+        }
+
       cgrid2.nx = nx;
       cgrid2.ny = ny;
       plAlloc2dGrid(&cgrid2.xg, nx, ny);
@@ -1070,8 +1091,11 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
 	  PLFLT tx, ty;
 	  if (cline->npts > np) {
 	    np = cline->npts;
-	    uu = (PLINT *) realloc(uu, np*sizeof(PLINT));
-	    vv = (PLINT *) realloc(vv, np*sizeof(PLINT));
+	    if (((uu = (PLINT *) realloc(uu, np*sizeof(PLINT)))==NULL)||
+	        ((vv = (PLINT *) realloc(vv, np*sizeof(PLINT)))==NULL))
+	        {
+             plexit("c_plot3dcl: Insufficient memory");
+           }
 	  }
 
 	  /* the hidden line plotter plnxtv() only works OK if the x points are in increasing order.

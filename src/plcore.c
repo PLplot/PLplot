@@ -2039,7 +2039,11 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     if (plsc->cmap0 != NULL)
 	free((void *) plsc->cmap0);
 
-    plsc->cmap0 = (PLColor *) calloc(1, plsc->ncol0 * sizeof(PLColor));
+    if ((plsc->cmap0 = (PLColor *) calloc(1, plsc->ncol0 * sizeof(PLColor)))==NULL)
+      {
+        plexit("c_plcpstrm: Insufficient memory");
+      }
+
     for (i = 0; i < plsc->ncol0; i++)
 	pl_cpcolor(&plsc->cmap0[i], &plsr->cmap0[i]);
 
@@ -2050,7 +2054,11 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     if (plsc->cmap1 != NULL)
 	free((void *) plsc->cmap1);
 
-    plsc->cmap1 = (PLColor *) calloc(1, plsc->ncol1 * sizeof(PLColor));
+    if ((plsc->cmap1 = (PLColor *) calloc(1, plsc->ncol1 * sizeof(PLColor)))==NULL)
+      {
+        plexit("c_plcpstrm: Insufficient memory");
+      }
+
     for (i = 0; i < plsc->ncol1; i++)
 	pl_cpcolor(&plsc->cmap1[i], &plsr->cmap1[i]);
 
@@ -2253,8 +2261,11 @@ plInitDispatchTable()
 #endif
 
 /* Allocate space for the dispatch table. */
-    dispatch_table = (PLDispatchTable **)
-	malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
+    if ((dispatch_table = (PLDispatchTable **)
+	malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) ))==NULL)
+     {
+       plexit("plInitDispatchTable: Insufficient memory");
+     }
 
 /* Initialize the dispatch table entries for the static devices by calling
    the dispatch table initialization function for each static device.  This
@@ -2274,8 +2285,11 @@ plInitDispatchTable()
 /* Allocate space for the device and driver specs.  We may not use all of
  * these driver descriptors, but we obviously won't need more drivers than
  * devices... */
-    loadable_device_list = malloc( npldynamicdevices * sizeof(PLLoadableDevice) );
-    loadable_driver_list = malloc( npldynamicdevices * sizeof(PLLoadableDriver) );
+    if (((loadable_device_list = malloc( npldynamicdevices * sizeof(PLLoadableDevice) ))==NULL)||
+        ((loadable_driver_list = malloc( npldynamicdevices * sizeof(PLLoadableDriver) ))==NULL))
+       {
+         plexit("plInitDispatchTable: Insufficient memory");
+       }
 
     rewind( fp_drvdb );
 
@@ -2300,7 +2314,10 @@ plInitDispatchTable()
 
         n = npldrivers++;
 
-        dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
+        if ((dispatch_table[n] = malloc( sizeof(PLDispatchTable) ))==NULL)
+          {
+            plexit("plInitDispatchTable: Insufficient memory");
+          }
 
     /* Fill in the dispatch table entries. */
         dispatch_table[n]->pl_MenuStr = plstrdup(devdesc);
@@ -3409,8 +3426,12 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
   if (plsc->difilt) { /* isn't this odd? when replaying the plot buffer, e.g., when resizing the window, difilt() is caled again! the plot buffer should already contain the transformed data--it would save a lot of time! (and allow for differently oriented plots when in multiplot mode) */
     PLINT clpxmi, clpxma, clpymi, clpyma;
 
-    xscl = (short *) malloc(nx*ny*sizeof(short));
-    yscl = (short *) malloc(nx*ny*sizeof(short));
+    if (((xscl = (short *) malloc(nx*ny*sizeof(short)))==NULL)||
+        ((yscl = (short *) malloc(nx*ny*sizeof(short)))==NULL))
+       {
+         plexit("plP_image: Insufficient memory");
+       }
+
     for (i = 0; i < npts; i++) {
       xscl[i] = x[i];
       yscl[i] = y[i];

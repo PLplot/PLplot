@@ -109,9 +109,19 @@ alloc_line(CONT_LEVEL *node)
 {
   CONT_LINE *line;
 
-  line = (CONT_LINE *) malloc(sizeof(CONT_LINE));
+  if ((line = (CONT_LINE *) malloc(sizeof(CONT_LINE)))==NULL)
+    {
+      plexit("alloc_line: Insufficient memory");
+    }
+
   line->x = (PLFLT *) malloc(LINE_ITEMS*sizeof(PLFLT));
   line->y = (PLFLT *) malloc(LINE_ITEMS*sizeof(PLFLT));
+
+  if ((line->x==NULL)||(line->y==NULL))
+    {
+      plexit("alloc_line: Insufficient memory");
+    }
+
   line->npts = 0;
   line->next = NULL;
 
@@ -123,7 +133,10 @@ alloc_level(PLFLT level)
 {
   CONT_LEVEL *node;
 
-  node = (CONT_LEVEL *) malloc(sizeof(CONT_LEVEL));
+  if ((node = (CONT_LEVEL *) malloc(sizeof(CONT_LEVEL)))==NULL)
+    {
+      plexit("alloc_level: Insufficient memory");
+    }
   node->level = level;
   node->next = NULL;
   node->line = alloc_line(node);
@@ -134,10 +147,11 @@ alloc_level(PLFLT level)
 static void
 realloc_line(CONT_LINE *line)
 {
-  line->x = (PLFLT *) realloc(line->x,
-			      (line->npts + LINE_ITEMS)*sizeof(PLFLT));
-  line->y = (PLFLT *) realloc(line->y,
-			      (line->npts + LINE_ITEMS)*sizeof(PLFLT));
+  if (((line->x = (PLFLT *) realloc(line->x,
+			      (line->npts + LINE_ITEMS)*sizeof(PLFLT)))==NULL)||
+  ((line->y = (PLFLT *) realloc(line->y,
+			      (line->npts + LINE_ITEMS)*sizeof(PLFLT)))==NULL))
+    plexit("realloc_line: Insufficient memory");
 }
 
 
@@ -512,9 +526,16 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	return;
     }
 
-    ipts = (PLINT **) malloc(nx*sizeof(PLINT *));
+    if ((ipts = (PLINT **) malloc(nx*sizeof(PLINT *)))==NULL)
+      {
+      plexit("plfcont: Insufficient memory");
+      }
+
     for (i = 0; i < nx; i++) {
-      ipts[i] = (PLINT *) malloc(ny*sizeof(PLINT *));
+      if ((ipts[i] = (PLINT *) malloc(ny*sizeof(PLINT *)))==NULL)
+        {
+          plexit("plfcont: Insufficient memory");
+        }
     }
 
     for (i = 0; i < nlevel; i++) {
