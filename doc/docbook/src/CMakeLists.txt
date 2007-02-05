@@ -199,7 +199,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     add_dependencies(validate docbook_plplot-symbols_txt)
   else(PERL_FOUND AND ONSGMLS)
     add_custom_target(validate
-    ${CMAKE COMMAND} -E echo "Unable to validate xml file - missing dependencies"
+    ${CMAKE_COMMAND} -E echo "Unable to validate xml file - missing dependencies"
     )
   endif(PERL_FOUND AND ONSGMLS)
   if(BUILD_DOC)
