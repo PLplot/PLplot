@@ -2274,7 +2274,10 @@ plInitDispatchTable()
 
     for( n=0; n < nplstaticdevices; n++ )
     {
-        dispatch_table[n] = (PLDispatchTable *)malloc( sizeof(PLDispatchTable) );
+        if ((dispatch_table[n] = (PLDispatchTable *)malloc( sizeof(PLDispatchTable) ))==NULL)
+           {
+             plexit("plInitDispatchTable: Insufficient memory");
+           }
 
         (*static_device_initializers[n])( dispatch_table[n] );
     }
