@@ -38,13 +38,13 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, long style ) :
   sdev( "wxwidgets" );
   spage( 0.0, 0.0, m_width, m_height, 0, 0 );
 
-  // use freetype?
-  wxString option=wxString::Format(
-    "text=%d,smooth=%d,antialized=%d",
+  // use freetype, antialized canvas?
+  char buffer[64];
+  snprintf( buffer, 64, "text=%d,smooth=%d,antialized=%d",
     m_style & wxPLPLOT_FREETYPE ? 1 : 0,
     m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0,
     m_style & wxPLPLOT_ANTIALIZED ? 1 : 0 );
-  SetOpt( "-drvopt", (char*)option.mb_str(*wxConvCurrent) );
+  SetOpt( "-drvopt", buffer );
 
   init();
   if( m_style & wxPLPLOT_ANTIALIZED ) {
