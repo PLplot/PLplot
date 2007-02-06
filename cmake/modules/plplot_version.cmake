@@ -54,6 +54,9 @@ set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.2.0)
 set(plplottcltk_SOVERSION 9)
 set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.2.0)
 
+set(plplotwxwidgets_SOVERSION 0)
+set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.0.0)
+
 # According to man package, PLPLOT_TCL_VERSION (used in the various
 # pkgIndex.tcl scripts) should be strictly numbers alternativing with
 # decimal points with the first number (the major number) signifying
