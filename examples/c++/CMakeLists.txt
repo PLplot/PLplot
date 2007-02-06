@@ -74,7 +74,11 @@ foreach(STRING_INDEX ${cxx_STRING_INDICES})
   endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
 endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
-install(FILES ${cxx_SRCS} DESTINATION ${DATA_DIR}/examples/c++)
+set(wxPLplotDemo_SRCS
+wxPLplotDemo.cpp
+)
+
+install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} DESTINATION ${DATA_DIR}/examples/c++)
 
 set(CXX ${CMAKE_CXX_COMPILER})
 configure_file(
