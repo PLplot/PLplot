@@ -40,9 +40,9 @@
     <title>The PLplot Plotting Library</title>
 
 <para> PLplot is a library of C functions that are useful for making
-scientific plots from programs written in C, C++, Fortran, Octave, Python,
-and Tcl/Tk. The PLplot project is being developed by a world-wide team who
-interact via the facilities provided by SourceForge (<ulink
+scientific plots from programs written in C, C++, Fortran77, Fortran95, Java, Octave, 
+Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide 
+team who interact via the facilities provided by SourceForge (<ulink
 url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>)
 </para>
 
@@ -51,15 +51,20 @@ plots, log-log plots, contour plots, 3D plots, shade (gray-scale and color)
 plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same
 or different sizes) may be placed on a single page with multiple lines in
 each graph. Different line styles, widths and colors are supported. A
-virtually infinite number of distinct area fill patterns may be used. There
-are almost 1000 characters in the extended character set.  This includes
-four different fonts, the Greek alphabet and a host of mathematical,
-musical, and other symbols.  The fonts can be scaled to any desired size.  A
-variety of output devices and file formats are supported including a
-metafile format which can be subsequently rendered to any device/file.  New
-devices and file formats can be easily added by writing a driver routine.
-For example, we have recently added PNG and JPEG file drivers, and a GNOME
-interactive driver is being developed. </para>
+virtually infinite number of distinct area fill patterns may be used. 
+There is full unicode support in the PLplot library, and most of the
+display drivers are capable of displaying any of the millions(?) of
+characters in the unicode standard. Those driver that are not unicode
+enables can still display almost 1000 characters in the extended character set. 
+This includes four different fonts, the Greek alphabet and a host of 
+mathematical, musical, and other symbols. A variety of output devices and 
+file formats are supported including a metafile format which can be 
+subsequently rendered to any device/file.  New devices and file formats can 
+be easily added by writing a driver routine. For example, we have recently 
+added a postscript driver with TrueType font support (PS-TTF), a SVG file 
+driver and a PDF file driver. A wxWidgets interactive driver is currently 
+in development. 
+</para>
 
     <para>
       PLplot was originally developed by Sze Tan of the University of
@@ -146,7 +151,7 @@ interactive driver is being developed. </para>
     </para>
     <para>
       PLplot is currently known to work on the following systems:
-      Unix/Linux, OS/2, Mac, MS-DOS, and Win9x.  The Unix/Linux version is
+      Unix/Linux, Mac OS-X and Windows XP. The Unix/Linux version is
       the best supported of these possibilities.
       The PLplot package is freely
       distributable, but <emphasis>not</emphasis> in the public domain.
@@ -186,8 +191,8 @@ interactive driver is being developed. </para>
     </para>
     <para>
       After the library has been created, you can write your main program
-      to make the desired PLplot calls.  Example programs in C, C++, and
-      Fortran are included as a guide.
+      to make the desired PLplot calls.  Example programs in C, C++,
+      Fortran77, Fortran95 and Java are included as a guide.
       Plots generated from the example programs are shown
       <ulink url="http://&PLplot-website;/examples/index.html">here</ulink>.
     </para>
@@ -197,17 +202,13 @@ interactive driver is being developed. </para>
       <xref linkend="os-notes"/> for more details).
     </para>
     <para>
-      You can also use Tcl/Tk scripts or Python scripts to generate plots
+      You can also use Tcl/Tk, Perl and Python scripts to generate plots
       using the PLplot libraries.  Examples of these possibilities are
       also included as a guide.
-
     </para>
   </sect1>
   <sect1 id="organization">
     <title>Organization of this Manual</title>
-    <para>
-      OLD DOCS, NEEDS UPDATING!
-    </para>
     <para>
       The PLplot library has been designed so that it is easy to write
       programs producing graphical output without having to set up large
@@ -224,32 +225,37 @@ interactive driver is being developed. </para>
     </para>
     <para>
       Because the PLplot kernel is written in C, standard C syntax is used
-      in the description of each PLplot function.  The C and Fortran
-      language interfaces are discussed in Appendix \ref{ap:lang}; look
-      there if you have difficulty interpreting the call syntax as
-      described in this manual.  The meaning of function (subroutine)
-      arguments is typically the same regardless of whether you are calling
-      from C or Fortran (but there are some exceptions to this).  The
+      in the description of each PLplot function. If you have difficulty
+      interpreting the call syntax as described in this manual, please refer
+      to part III, Language Bindings. This manual includes:
+      C (<xref linkend="c"/>), 
+      C++ (<xref linkend="cplusplus"/>), 
+      Fortran 95 (<xref linkend="fortran95"/>), 
+      Fortran 77 (<xref linkend="fortran77"/>),
+      Java (???),
+      Tcl (<xref linkend="tcl"/>),
+      Perl (<xref linkend="perl"/>) and
+      Python (<xref linkend="python"/>). Since PLplot has a long
+      history, bindings to your language of choice are probably available
+      though not necessarily in the PLplot distribution. It is a good idea
+      to ask around and do a quick search before rolling your own.
+    </para>
+    <para>
+      The meaning of the function (subroutine)
+      arguments is typically the same regardless of what language you are
+      using to call PLplot (but there are some exceptions to this).  The
       arguments for each function are usually specified in terms of PLBOOL,
       PLINT,and PLFLT&mdash;these are the internal PLplot representations for
       logical, integer, and floating point, and are typically a zero (false) or
       non-zero (true) contained in a long, a long, and a float (or
-      a LOGICAL, INTEGER, and a REAL, for Fortran programmers).  See Appendix
-      \ref{ap:lang} for more detail.
+      a LOGICAL, INTEGER, and a REAL, for Fortran programmers).  See
+      <xref linkend="c"/> for more detail.
     </para>
     <para>
-      Also, you can use PLplot from C++ just as you would from C.  No
-      special classes are available at this time, just use it as any other
-      procedural type library.  Simply include
-      <filename>plplot.h</filename>, and invoke as you would from C.
-    </para>
-    <para>
-      The output devices supported by PLplot are listed in Appendix
-      \ref{ap:dev}, along with description of the device driver--PLplot
-      interface, metafile output, family files, and vt100/tek4010
-      emulators.  In Appendix\ref{ap:sys} the usage and installation for
-      each system supported by PLplot is described (not guaranteed to be
-      entirely up-to-date; check the release notes to be sure).
+      Most of the output devices supported by PLplot are listed in
+      <xref linkend="x-drivers"/> and <xref linkend="output-drivers"/>, 
+      along with description of the device driver--PLplot interface, 
+      metafile output, family files, and vt100/tek4010 emulators.
     </para>
   </sect1>
   <sect1 id="copyrights">
