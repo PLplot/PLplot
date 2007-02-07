@@ -448,7 +448,7 @@
       A basic version of a pdf driver has been added to PLplot. This driver 
       is based on the libharu library see:
       <ulink url="http://libharu.sourceforge.net/">
-      http://libharu.sourceforge.net/</ulink>
+      http://libharu.sourceforge.net/</ulink>.
       At present only the hershey fonts are used and there is no support for 
       pdf or ttf fonts. Compression of the pdf output is not enabled and the 
       paper size can't be chosen. All these issues will be addressed in 
@@ -547,7 +547,7 @@
       and both text and lines are anti-aliased. As SVG is just an
       XML based graphics language, the visual quality of the resulting 
       plot will depend on the SVG rendering engine that is used and
-      what fonts that are avaialable to it.
+      what fonts that are available to it.
     </para>
   </sect1>
 
