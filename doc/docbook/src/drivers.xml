@@ -399,40 +399,6 @@
 
 
 <!-- ================================================================== -->
-<!-- PS -->
-
-  <sect1 id="postscript-driver">
-    <title>The Postscript Driver</title>
-    
-    <para> 
-      The Postscript driver produces publication-quality postscript
-      output.  The driver provides two devices: the ps device for 
-      black-and-white plots, and the psc device for color plots.
-    </para>
-
-    <para>
-      This driver is unicode enabled, and PostScript Type I fonts are used.
-      Type I fonts do not have all of the available unicode symbols
-      represented.  For this reason, Hershey fonts are used for drawing 
-      symbols by default, unless specified otherwise using the driver options.
-    </para>
-
-    <para>
-      The available driver options are:
-      <itemizedlist>
-        <listitem><para>
-          text: Use Postscript text (0|1); default 1
-        </para></listitem>
-	<listitem><para>
-          hrshsym: Use Hershey fonts for symbols (0|1); default 1
-        </para></listitem>
-      </itemizedlist>
-    </para>
-
-  </sect1>
-
-
-<!-- ================================================================== -->
 <!-- GD -->
 
   <sect1 id="gd-driver">
@@ -470,6 +436,103 @@
     </para>
 
   </sect1>
+
+
+<!-- ================================================================== -->
+<!-- PDF -->
+
+  <sect1 id="pdf-driver">
+    <title>The PDF Driver</title>
+    
+    <para>
+      A basic version of a pdf driver has been added to PLplot. This driver 
+      is based on the libharu library see:
+      <ulink url="http://libharu.sourceforge.net/">
+      http://libharu.sourceforge.net/</ulink>
+      At present only the hershey fonts are used and there is no support for 
+      pdf or ttf fonts. Compression of the pdf output is not enabled and the 
+      paper size can't be chosen. All these issues will be addressed in 
+      later releases.
+    </para>
+
+    <para>
+      Options?
+    </para>
+
+  </sect1>
+
+
+<!-- ================================================================== -->
+<!-- PS -->
+
+  <sect1 id="postscript-driver">
+    <title>The Postscript Driver</title>
+    
+    <para> 
+      The Postscript driver produces publication-quality postscript
+      output.  The driver provides two devices: the ps device for 
+      black-and-white plots, and the psc device for color plots.
+    </para>
+
+    <para>
+      This driver is unicode enabled, and PostScript Type I fonts are used.
+      Type I fonts do not have all of the available unicode symbols
+      represented.  For this reason, Hershey fonts are used for drawing 
+      symbols by default, unless specified otherwise using the driver options.
+    </para>
+
+    <para>
+      The available driver options are:
+      <itemizedlist>
+        <listitem><para>
+          text: Use Postscript text (0|1); default 1
+        </para></listitem>
+	<listitem><para>
+          hrshsym: Use Hershey fonts for symbols (0|1); default 1
+        </para></listitem>
+      </itemizedlist>
+    </para>
+
+  </sect1>
+
+
+<!-- ================================================================== -->
+<!-- PS-TTF -->
+
+  <sect1 id="truetype-postscript-driver">
+    <title>The TrueType Postscript Drive</title>
+    
+    <para>
+      This is a postscript driver that supports TrueType fonts. This 
+      allows access to a far greater range of fonts and characters than 
+      is possible using Type 1 postscript fonts 
+      (see <xref linkend="postscript-driver"/>).
+      It is the driver to use for generating publication quality output
+      using PLplot. The driver provides two devices: the ps-ttf device
+      for black-and-white plots and the ps-ttfc device for color plots.
+    </para>
+
+    <para>
+      The driver requires the LASi (v1.0.5), pango and pangoft2 libraries 
+      to work. The pango and pangoft2 libraries are widely distributed 
+      with most Linux distributions and give the psttf driver full complex 
+      text layout (CTL) capability (see 
+      <ulink url="http://plplot.sourceforge.net/examples/demo24.php">
+      http://plplot.sourceforge.net/examples/demo24.php</ulink>
+      for an example of this capability).  The LASi library is not part of 
+      most distributions at this time. The source code can be downloaded 
+      from http://www.unifont.org/lasi/. The library is small and easy to 
+      build and install.  Make sure you use LASi-1.0.5.  The psttf device 
+      driver uses new capabilities in this version of LASi and no longer 
+      works with LASi-1.0.4.
+    </para>
+
+    <para>
+      Options?
+    </para>
+
+  </sect1>
+
 
 <!-- ================================================================== -->
 <!-- SVG -->
