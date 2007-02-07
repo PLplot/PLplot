@@ -22,10 +22,9 @@
 */
 
 
-/* TODO:
- *) x02c gives a lot of warnings regarding the color palette.
-    same for gd driver though. Has to do with freetype support.
- *) Do we exit gracefully?
+/* TODO: - implement the GraphicsIn stuff
+ *       - provide helper functions for bindings (freetype support, etc.)
+ *         we need a header file for this
  */
 
 #include "plDevs.h"
@@ -133,6 +132,7 @@ extern "C"
 /*=========================================================================*/
 
 /* Application icon as XPM */
+/* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
 static char *graph[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 4 2",
@@ -158,6 +158,10 @@ static char *graph[] = {
 ". . . . . . . . . . . . . . . . ",
 "UX. . . . . . . . . . . . . . UX"
 };
+
+/* These need to be distinguished since the handling is slightly different. */
+#define LOCATE_INVOKED_VIA_API		1
+#define LOCATE_INVOKED_VIA_DRIVER	2
 
 /* struct which contains information about device */
 class wxPLplotFrame;
@@ -196,6 +200,10 @@ public: /* variables */
   bool plstate_color0;  /* device is fully initialized */
   bool plstate_color1;  /* taken from gcw driver */
   
+  PLGraphicsIn gin;			/* Graphics input structure */
+  int locate_mode;		  /* Set while in locate mode */
+  bool	draw_xhairs;		/* Set during xhair draws */
+
 	/* clipping region */
 	int clipminx, clipmaxx;
 	int clipminy, clipmaxy;
@@ -289,11 +297,13 @@ public:
 	void OnErase( wxEraseEvent& WXUNUSED(event) );
   void OnSize( wxSizeEvent & WXUNUSED(event) );
   void OnMaximize( wxMaximizeEvent & WXUNUSED(event) );
-
+  void OnMouse( wxMouseEvent& event );
+  
 private:
   PLStream *m_pls;
   wxPLdev* m_dev;  /* windows needs to know this structure */
   bool refresh;
+  int mouse_x, mouse_y, old_mouse_x, old_mouse_y;
 
   DECLARE_EVENT_TABLE()
 };
@@ -303,6 +313,7 @@ BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
   EVT_PAINT( wxPLplotWindow::OnPaint )               /* (re)draw the plot in window */
   EVT_CHAR( wxPLplotWindow::OnChar )
   EVT_IDLE( wxPLplotWindow::OnIdle )
+  EVT_MOUSE_EVENTS( wxPLplotWindow::OnMouse )
 	EVT_ERASE_BACKGROUND( wxPLplotWindow::OnErase )
   EVT_SIZE( wxPLplotWindow::OnSize )
   EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
@@ -356,8 +367,9 @@ static inline void Use(void *) { }
 #define WX_SUPPRESS_UNUSED_WARN( x ) Use( &x )
 
 /* private functions needed by the wxwidgets Driver */
-void install_buffer( PLStream *pls );
-void wxRunApp( PLStream *pls, bool runonce=false );
+static void install_buffer( PLStream *pls );
+static void wxRunApp( PLStream *pls, bool runonce=false );
+static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
 
 /*----------------------------------------------------------------------*\
  *  Declarations for the device.
@@ -1023,6 +1035,10 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 		}
 		break;
   
+  case PLESC_GETC:
+	  GetCursorCmd( pls, (PLGraphicsIn *) ptr );
+	  break;
+
   default:
     break;
   }
@@ -1459,6 +1475,31 @@ static void init_freetype_lv2( PLStream *pls )
 #endif
 
 
+/*--------------------------------------------------------------------------*\
+ * GetCursorCmd()
+ *
+ * Waits for a graphics input event and returns coordinates.
+\*--------------------------------------------------------------------------*/
+static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
+{
+  wxPLdev *dev=(wxPLdev *)pls->dev;
+  PLGraphicsIn *gin = &(dev->gin);
+
+  /* Initialize */
+  plGinInit( gin );
+  dev->locate_mode = LOCATE_INVOKED_VIA_API;  
+  dev->draw_xhairs=true;
+
+  /* Run event loop until a point is selected */
+  wxRunApp( pls, false );
+  
+  *ptr = *gin;
+  if (dev->locate_mode) {
+    dev->locate_mode = 0;
+    dev->draw_xhairs=false;
+  }
+}
+
 
 
 
@@ -1475,7 +1516,7 @@ static void init_freetype_lv2( PLStream *pls )
  *  from within a wxWidgets program), this function prepares a DC and a
  *  bitmap to plot into.
 \*----------------------------------------------------------------------*/
-void install_buffer( PLStream *pls )
+static void install_buffer( PLStream *pls )
 {
   // Log_Verbose( "install_buffer" );
 
@@ -1543,7 +1584,7 @@ void install_buffer( PLStream *pls )
  *  This is a hacked wxEntry-function, so that wxUninitialize is not
  *  called twice. Here we actually start the wxApplication.
 \*----------------------------------------------------------------------*/
-void wxRunApp( PLStream *pls, bool runonce )
+static void wxRunApp( PLStream *pls, bool runonce )
 {
   wxPLdev* dev = (wxPLdev*)pls->dev;
   
@@ -1785,6 +1826,8 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
   m_pls=pls;
   m_dev=(wxPLdev*)pls->dev;
 	refresh=false;
+  mouse_x=old_mouse_x=0;
+  mouse_y=old_mouse_y=0;
 
 	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 }
@@ -1801,7 +1844,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
 void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
   // Log_Verbose( "wxPLplotWindow::OnPaint" );
-	//static int counter=0;
+	//static int counter=0;  
   /* copy bitmap into client area */
   wxPaintDC dc( this );
 
@@ -1838,6 +1881,10 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
 
   int keycode = event.GetKeyCode();
   switch( keycode ) {
+    case 'l': case 'L':
+      m_dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;  
+      m_dev->draw_xhairs=true;
+      break;
     case 'q':
     case 'Q':
     case WXK_ESCAPE:
@@ -1933,6 +1980,66 @@ void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 
   wxSizeEvent event( GetClientSize() );
   AddPendingEvent( event );
+}
+
+void wxPLplotWindow::OnMouse( wxMouseEvent &event )
+{
+  // Log_Verbose( "wxPLplotWindow::OnMouse" );
+  static bool xhairs_drawn=false;
+
+  PLGraphicsIn *gin = &(m_dev->gin);
+  int width, height;
+  GetClientSize( &width, &height );
+  wxPoint pos( event.GetPosition() );
+
+  mouse_x = pos.x;
+  mouse_y = pos.y;
+  
+  if( event.LeftDown() ) {    
+    gin->pX = pos.x;
+    gin->pY = pos.y;
+    gin->dX = (PLFLT) pos.x / (width - 1);
+    gin->dY = 1.0 - (PLFLT) pos.y / (height - 1);
+
+    gin->button = 1;  // X11/X.h: #define Button1	1
+    gin->state = 1<<8;  // X11/X.h: #define Button1Mask	(1<<8)
+    gin->keysym = 0x20;  // TODO: ????? from xwin.c
+  }
+
+  if( event.LeftDown() ) {    
+  	if( plTranslateCursor(gin) ) {
+      /* If invoked by the API, we're done */
+      /* Otherwise send report to stdout */
+	    if( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
+		    printf( "%f %f\n", gin->wX, gin->wY );
+    } else {
+      /* Selected point is out of bounds, so end locate mode */
+        m_dev->locate_mode = 0;
+        m_dev->draw_xhairs=false;
+    }
+  }
+
+  /* draw cross hair */
+  wxClientDC dc(this);
+  if( m_dev->draw_xhairs ) {
+    if( (mouse_x!=old_mouse_x) || (mouse_y!=old_mouse_y) ) {
+      dc.SetLogicalFunction(wxINVERT);
+      if(xhairs_drawn)
+        dc.CrossHair( old_mouse_x, old_mouse_y );
+      dc.CrossHair( mouse_x, mouse_y );
+      dc.SetLogicalFunction(wxCOPY);
+      old_mouse_x=mouse_x;
+      old_mouse_y=mouse_y;
+      xhairs_drawn=true;  
+    }
+  } else {
+    if( xhairs_drawn ) {
+      dc.SetLogicalFunction(wxINVERT);
+      dc.CrossHair( old_mouse_x, old_mouse_y );
+      dc.SetLogicalFunction(wxCOPY);
+      xhairs_drawn=false;
+    }
+  }  
 }
 
 #else
