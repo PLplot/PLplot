@@ -55,13 +55,13 @@ virtually infinite number of distinct area fill patterns may be used.
 There is full unicode support in the PLplot library, and most of the
 display drivers are capable of displaying any of the millions(?) of
 characters in the unicode standard. Those driver that are not unicode
-enables can still display almost 1000 characters in the extended character set. 
+enabled can still display almost 1000 characters in the extended character set. 
 This includes four different fonts, the Greek alphabet and a host of 
 mathematical, musical, and other symbols. A variety of output devices and 
 file formats are supported including a metafile format which can be 
 subsequently rendered to any device/file.  New devices and file formats can 
 be easily added by writing a driver routine. For example, we have recently 
-added a postscript driver with TrueType font support (PS-TTF), a SVG file 
+added a postscript driver with TrueType font support (PSTTF), a SVG file 
 driver and a PDF file driver. A wxWidgets interactive driver is currently 
 in development. 
 </para>
