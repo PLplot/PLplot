@@ -96,7 +96,7 @@ if(ENABLE_wxwidgets)
 
     string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
     set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplotcxx${LIB_TAG}")
+    set(PC_REQUIRES "plplot${LIB_TAG}-c++")
     string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
     string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
     string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
