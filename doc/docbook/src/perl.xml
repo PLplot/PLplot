@@ -42,9 +42,26 @@
     Data Language (PDL) since version 2.4.0.  If the PLplot library is
     installed in the system, it is automatically detected by the PDL
     configuration script, such that PLplot support for PDL should work out
-    of the box.  For further informations see the <ulink
-    url="http://pdl.perl.org">PDL homepage</ulink>.  Here is an usage
-    example:
+    of the box.  For further information see the <ulink
+    url="http://pdl.perl.org">PDL homepage</ulink>.
+  </para>
+
+  <para>
+    The PDL PLplot interface (PDL::Graphics::PLplot) can interact with
+    PLplot in two ways: (1) A low level mapping one to one mapping of
+    perl functions to PLplot API functions and (2) A high level object
+    oriented wrapper that simplifies generating 2D plots. The PLplot
+    source distribution contains multiple examples of how to use the
+    low level interface (see examples/perl). A key thing to note is
+    that, due to the architecture of PDL, all the array arguments to
+    a function come first, followed by the scalars. This means that
+    the argument order for some of the functions in the PLplot API
+    is different when called from PDL.
+  </para>
+
+  <para>
+    Here is an usage example comparing the low level and the
+    object oriented interfaces to PLplot.
   </para>
 
     <para>
@@ -52,8 +69,10 @@
 use PDL;
 use PDL::Graphics::PLplot;
 
-$x = pdl (0..5);
-$y = $x ** 2;
+my $x = pdl (0..5);
+my $y = $x ** 2;
+
+# low level interface
 
 plsdev ("xwin");
 plinit ();
@@ -63,7 +82,16 @@ plenv (-0.5, 5.5, -1, 26, 0, 0);
 plline ($x, $y);
 
 plend ();
+
+# OO interface
+
+my $pl = PDL::Graphics::PLplot->new (DEV => "xwin");
+$pl->xyplot($x, $y);
+$pl->close;
     </programlisting>
+  </para>
+
+  <para>
   </para>
 
   <para>
