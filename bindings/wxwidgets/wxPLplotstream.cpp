@@ -19,7 +19,7 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include "plplotP.h"
+#include "plplotP.h" 
 #include "wxPLplotstream.h"
 #include "wx/image.h"
 #include "wx/dcmemory.h"
@@ -39,18 +39,30 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, long style ) :
   spage( 0.0, 0.0, m_width, m_height, 0, 0 );
 
   // use freetype, antialized canvas?
-  char buffer[64];
-  snprintf( buffer, 64, "text=%d,smooth=%d,antialized=%d",
-    m_style & wxPLPLOT_FREETYPE ? 1 : 0,
-    m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0,
-    m_style & wxPLPLOT_ANTIALIZED ? 1 : 0 );
-  SetOpt( "-drvopt", buffer );
-
+  char drvopt[64], buffer[64];
+  drvopt[0]='\0';
+#ifdef WX_TEMP_HAVE_FREETYPE_IS_ON  
+  snprintf( buffer, 64, "text=%d,smooth=%d",
+            m_style & wxPLPLOT_FREETYPE ? 1 : 0,
+            m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0 );
+  strncat( drvopt, buffer, 64-strlen(drvopt) );
+#endif  
+#ifdef WX_TEMP_HAVE_AGG_IS_ON  
+  if( drvopt[0] != '\0' )
+    strncat( drvopt, ",", 64-strlen(drvopt) );
+  snprintf( buffer, 64, "antialized=%d",
+            m_style & wxPLPLOT_ANTIALIZED ? 1 : 0 );
+  strncat( drvopt, buffer, 64-strlen(drvopt) );
+#endif
+  SetOpt( "-drvopt", drvopt );
+  
   init();
+#ifdef WX_TEMP_HAVE_AGG_IS_ON  
   if( m_style & wxPLPLOT_ANTIALIZED ) {
     m_image = new wxImage( m_width, m_height );
     cmd( PLESC_DEVINIT, (void*)m_image );
   } else
+#endif
     cmd( PLESC_DEVINIT, (void*)m_dc );
 }
 
@@ -73,9 +85,11 @@ void wxPLplotstream::SetSize( int width, int height )
 	m_width=width;
 	m_height=height;
 
+#ifdef WX_TEMP_HAVE_AGG_IS_ON  
   if( m_style & wxPLPLOT_ANTIALIZED )
     m_image->Resize( wxSize(m_width, m_height), wxPoint(0, 0) );
-
+#endif
+  
   wxSize size( m_width, m_height );
   cmd( PLESC_RESIZE, (void*)&size );
 }
@@ -89,11 +103,13 @@ void wxPLplotstream::RenewPlot()
   cmd( PLESC_CLEAR, NULL );
   replot();
 
+#ifdef WX_TEMP_HAVE_AGG_IS_ON  
   if( m_style & wxPLPLOT_ANTIALIZED ) {
     wxMemoryDC MemoryDC;
     MemoryDC.SelectObject( wxBitmap(m_image, -1) );
     m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
     MemoryDC.SelectObject( wxNullBitmap );
   }
+#endif
 }
 

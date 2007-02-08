@@ -24,8 +24,15 @@ if(ENABLE_wxwidgets)
     wxPLplotwindow.cpp
   )
 
+  # configure header file - we need to make sure, that the user of the bindings
+  # can't set the wrong options (use freetype/agg)
+  CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/wxPLplotstream.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/wxPLplotstream.h
+  )
+
   set(plplotwxwidgets${LIB_TAG}_INSTALLED_HEADERS
-    wxPLplotstream.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wxPLplotstream.h
     wxPLplotwindow.h
   )
 
@@ -35,6 +42,7 @@ if(ENABLE_wxwidgets)
     ${CMAKE_SOURCE_DIR}/bindings/c++
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}
   )
 
   # Create plplotwxwidgets[d] library
