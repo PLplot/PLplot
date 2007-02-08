@@ -24,6 +24,13 @@
 #include "wx/image.h"
 #include "wx/dcmemory.h"
 
+/* Visual C++ and Borland C++ do not define snprintf, but _snprintf - we
+   therefore redefine it, but this check should actually done by cmake */
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  #ifndef snprintf
+    #define snprintf _snprintf
+  #endif
+#endif
 
 /*! Constructor of wxPLplotstream class which is inherited from plstream.
  *  Here we set the driver (wxwidgets :), and tell plplot in which dc to
