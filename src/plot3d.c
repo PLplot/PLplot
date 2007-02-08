@@ -483,15 +483,14 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   if (clevel != NULL && opt & BASE_CONT) {
 #define NPTS 100
     int np = NPTS;
+    PLFLT **zstore;
+    PLcGrid2 cgrid2;
     PLFLT *zz = (PLFLT *) malloc(NPTS*sizeof(PLFLT));
-
     if (zz==NULL) plexit("plsurf3dl: Insufficient memory");
 
     /* get the contour lines */
 
     /* prepare cont_store input */
-    PLFLT **zstore;
-    PLcGrid2 cgrid2;
     cgrid2.nx = nx;
     cgrid2.ny = ny;
     plAlloc2dGrid(&cgrid2.xg, nx, ny);
