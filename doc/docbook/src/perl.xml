@@ -85,8 +85,8 @@ plend ();
 
 # OO interface
 
-my $pl = PDL::Graphics::PLplot->new (DEV => "xwin");
-$pl->xyplot($x, $y);
+my $pl = PDL::Graphics::PLplot->new (DEV => "xwin", );
+$pl->xyplot($x, $y, TITLE => 'X vs. Y');
 $pl->close;
     </programlisting>
   </para>
