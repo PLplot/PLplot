@@ -39,21 +39,111 @@
   <title>The Common API for PLplot</title>
 
   <para>
-  The purpose of this chapter is to document the API for every C function in
-  PLplot that should have a counterpart in other PLplot language bindings such as
-  Fortran 77.  These common API routines have a special
-  <quote>c_</quote> prefix name assigned to them in <filename>plplot.h</filename>.
-  This common API between the various languages constitutes the
-  most important part of the PLplot API that programmers need to know.
-  Additional PLplot API specialized for each language binding is documented
-  in <xref linkend="API-C"/> and subsequent chapters.
+    The purpose of this chapter is to document the API for every PLplot
+    function that should be available across all PLplot language bindings.
+    This common API between the various languages constitutes the
+    most important part of the PLplot API that programmers need to know.
+    Note that in C, these common API routines have a special 
+    <quote>c_</quote> prefix name assigned to them in 
+    <filename>plplot.h</filename>.
   </para>
 
   <para>
-All common API functions of the current CVS HEAD are listed here with their
-arguments except for obsolete/deprecated API which is listed in <xref
-linkend="API-OBSOLETE"/>.
-All functions have a short description, and all parameters are documented.
+    What follows is a list of all common API functions of the current 
+    CVS HEAD with their arguments except for obsolete/deprecated API 
+    functions which are listed in <xref linkend="API-OBSOLETE"/>. The
+    following information is provided for each function:
+    <orderedlist>
+      <listitem>
+         <para>
+           The function name and a brief description.
+         </para>
+      </listitem>
+      <listitem>
+         <para>
+         The function as it would be called from C.
+         </para>
+      </listitem>
+      <listitem>
+         <para>
+         A complete description of the function.
+         </para>
+      </listitem>
+      <listitem>
+         <para>
+         A description of each argument that the function takes.
+         </para>
+      </listitem>
+      <listitem>
+         <para>
+         The redacted argument form of the function, currently used 
+         by the programming languages Fortran95, Python, Java and 
+         Perl, as well as any language specific variations that 
+         might occur on the general calling scheme described in 
+         the following paragraph.
+         </para>
+      </listitem>
+      <listitem>
+         <para>
+         A list of PLplot examples that demonstrate how to use
+         the function.
+         </para>
+      </listitem>
+    </orderedlist>
+    Additional PLplot API specialized for each language binding is 
+    documented in <xref linkend="API-C"/> and subsequent chapters.
+  </para>
+
+  <para>
+    The general calling scheme for the other languages supported
+    by PLplot is as follows, using the function 
+    <function>plline</function> as an example.
+    <itemizedlist>
+      <listitem>
+        <para>
+        C: <function>plline(n,x,y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        F77: <function>plline(n,x,y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        F95: <function>plline(x,y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        C++: <function>pls->line(n,x,y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Java: <function>pls.line(x,y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Perl: <function>plline($x,$y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Python: <function>plline(x,y)</function>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Tcl/Tk: <function>$w cmd plline $n x y</function>
+        </para>
+      </listitem>
+    </itemizedlist>
+    Note that in some languages the argument n (which specifies
+    the length of the arrays x and y) is not necessary, this
+    is what we refer to above as the <quote>redacted argument
+    form</quote> of the function.
   </para>
 
   <sect1 id="pl_setcontlabelformat" renderas="sect3">
