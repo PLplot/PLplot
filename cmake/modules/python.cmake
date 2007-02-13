@@ -82,7 +82,7 @@ if(ENABLE_python)
   set(
   PYTHON_ARG_STRING
   "-c \"from distutils import sysconfig\;"
-  "print sysconfig.get_python_lib(0,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')\""
+  "print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')\""
   )
   exec_program(
   ${PYTHON_EXECUTABLE}
