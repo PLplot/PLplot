@@ -202,7 +202,7 @@ public: /* variables */
   
   PLGraphicsIn gin;			/* Graphics input structure */
   int locate_mode;		  /* Set while in locate mode */
-  bool	draw_xhairs;		/* Set during xhair draws */
+  bool	draw_xhair;		/* Set during xhair draws */
 
 	/* clipping region */
 	int clipminx, clipmaxx;
@@ -291,6 +291,8 @@ public:
 
   void SetRefreshFlag( bool flag=true ) { refresh=flag; };
   bool GetRefreshFlag( void ) { return refresh; };
+  
+private:
   void OnPaint( wxPaintEvent& event );
   void OnChar( wxKeyEvent& event );
   void OnIdle( wxIdleEvent& event );
@@ -298,11 +300,12 @@ public:
   void OnSize( wxSizeEvent & WXUNUSED(event) );
   void OnMaximize( wxMaximizeEvent & WXUNUSED(event) );
   void OnMouse( wxMouseEvent& event );
+  void DrawCrosshair();
   
-private:
   PLStream *m_pls;
   wxPLdev* m_dev;  /* windows needs to know this structure */
   bool refresh;
+  bool xhair_drawn;
   int mouse_x, mouse_y, old_mouse_x, old_mouse_y;
 
   DECLARE_EVENT_TABLE()
@@ -1488,7 +1491,7 @@ static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
   /* Initialize */
   plGinInit( gin );
   dev->locate_mode = LOCATE_INVOKED_VIA_API;  
-  dev->draw_xhairs=true;
+  dev->draw_xhair=true;
 
   /* Run event loop until a point is selected */
   wxRunApp( pls, false );
@@ -1496,7 +1499,7 @@ static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
   *ptr = *gin;
   if (dev->locate_mode) {
     dev->locate_mode = 0;
-    dev->draw_xhairs=false;
+    dev->draw_xhair=false;
   }
 }
 
@@ -1826,8 +1829,9 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
   m_pls=pls;
   m_dev=(wxPLdev*)pls->dev;
 	refresh=false;
-  mouse_x=old_mouse_x=0;
-  mouse_y=old_mouse_y=0;
+  mouse_x=old_mouse_x=-1;
+  mouse_y=old_mouse_y=-1;
+  xhair_drawn=false;
 
 	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 }
@@ -1852,6 +1856,13 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
   int vX, vY, vW, vH; 
   wxRegionIterator upd( GetUpdateRegion() ); 
 
+  if( m_dev->draw_xhair && upd && xhair_drawn ) {
+    dc.SetLogicalFunction( wxINVERT );
+    dc.CrossHair( mouse_x, mouse_y );
+    dc.SetLogicalFunction( wxCOPY );
+    xhair_drawn = false;
+  }
+
   while( upd ) {
     vX = upd.GetX();
     vY = upd.GetY();
@@ -1872,6 +1883,13 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 
     upd ++ ;
   }
+
+  if( m_dev->draw_xhair && !xhair_drawn ) {
+    dc.SetLogicalFunction( wxINVERT );
+    dc.CrossHair( mouse_x, mouse_y );
+    dc.SetLogicalFunction( wxCOPY );
+    xhair_drawn=true;
+  }  
 }
  
 
@@ -1881,11 +1899,11 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
 
   int keycode = event.GetKeyCode();
   switch( keycode ) {
-    case 'l': case 'L':
+    case 'L':
       m_dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;  
-      m_dev->draw_xhairs=true;
+      m_dev->draw_xhair=true;
+      DrawCrosshair();
       break;
-    case 'q':
     case 'Q':
     case WXK_ESCAPE:
       m_dev->exit=true;
@@ -1985,17 +2003,17 @@ void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 void wxPLplotWindow::OnMouse( wxMouseEvent &event )
 {
   // Log_Verbose( "wxPLplotWindow::OnMouse" );
-  static bool xhairs_drawn=false;
 
   PLGraphicsIn *gin = &(m_dev->gin);
-  int width, height;
-  GetClientSize( &width, &height );
   wxPoint pos( event.GetPosition() );
 
   mouse_x = pos.x;
   mouse_y = pos.y;
   
   if( event.LeftDown() ) {    
+    int width, height;
+    GetClientSize( &width, &height );
+
     gin->pX = pos.x;
     gin->pY = pos.y;
     gin->dX = (PLFLT) pos.x / (width - 1);
@@ -2015,29 +2033,35 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
     } else {
       /* Selected point is out of bounds, so end locate mode */
         m_dev->locate_mode = 0;
-        m_dev->draw_xhairs=false;
+        m_dev->draw_xhair=false;
     }
   }
 
+  DrawCrosshair();
+}
+
+void wxPLplotWindow::DrawCrosshair()
+{
   /* draw cross hair */
   wxClientDC dc(this);
-  if( m_dev->draw_xhairs ) {
+  if( m_dev->draw_xhair ) {
     if( (mouse_x!=old_mouse_x) || (mouse_y!=old_mouse_y) ) {
-      dc.SetLogicalFunction(wxINVERT);
-      if(xhairs_drawn)
+      dc.SetLogicalFunction( wxINVERT );
+      if( xhair_drawn )
         dc.CrossHair( old_mouse_x, old_mouse_y );
       dc.CrossHair( mouse_x, mouse_y );
-      dc.SetLogicalFunction(wxCOPY);
+      dc.SetLogicalFunction( wxCOPY );
       old_mouse_x=mouse_x;
       old_mouse_y=mouse_y;
-      xhairs_drawn=true;  
+      xhair_drawn=true;  
     }
   } else {
-    if( xhairs_drawn ) {
-      dc.SetLogicalFunction(wxINVERT);
+    if( xhair_drawn ) {
+      dc.SetLogicalFunction( wxINVERT );
       dc.CrossHair( old_mouse_x, old_mouse_y );
-      dc.SetLogicalFunction(wxCOPY);
-      xhairs_drawn=false;
+      dc.SetLogicalFunction( wxCOPY );
+      xhair_drawn=false;
+      old_mouse_x=old_mouse_y=-1;
     }
   }  
 }
