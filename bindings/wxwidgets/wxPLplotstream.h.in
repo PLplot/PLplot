@@ -63,7 +63,8 @@ public:
   wxPLplotstream( wxDC *dc, int width, int height, long style = wxPLPLOT_NONE );  //!< Constructor.
   void set_stream();   //!< Calls some code before every PLplot command.
 	void SetSize( int width, int height );   //!< Set new size of plot area.
-	void RenewPlot();   //!< Redo plot.
+	void RenewPlot();   //!< Redo plot and update memory dc
+  void Update();   //!< Update memory dc, but don't redo lpot
 
 private:
 	wxDC* m_dc;   //!< Pointer to wxDC to plot into.

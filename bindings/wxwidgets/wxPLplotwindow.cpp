@@ -70,7 +70,8 @@ wxPLplotwindow::~wxPLplotwindow( void )
 	if( m_stream )
 	  delete m_stream;
 
-	delete MemPlotDC;
+	if( MemPlotDC )
+  	delete MemPlotDC;
 }
 
 
@@ -84,7 +85,7 @@ void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
   GetSize( &width, &height );
 
 	// Check if we window was resized (or dc is invalid)
-	if( (m_stream == NULL) || (MemPlotDC_width!=width) || (MemPlotDC_height!=height) )
+	if( (MemPlotDC_width!=width) || (MemPlotDC_height!=height) )
 	{
     MemPlotDC->SelectObject( wxNullBitmap );
 
@@ -98,10 +99,11 @@ void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
     MemPlotDC_width = width;
     MemPlotDC_height = height;
-	}
+	} else
+    m_stream->Update();
 
   wxPaintDC dc( this );
-	dc.SetClippingRegion( GetUpdateRegion() );
+	//dc.SetClippingRegion( GetUpdateRegion() );
   dc.Blit( 0, 0, width, height, MemPlotDC, 0, 0 );
 }
 
@@ -120,6 +122,6 @@ void wxPLplotwindow::RenewPlot( void )
 {
 	if( m_stream ) {
 		m_stream->RenewPlot();
-		Refresh( true );
+		Refresh( false );
 	}
 }

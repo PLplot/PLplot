@@ -120,3 +120,19 @@ void wxPLplotstream::RenewPlot()
 #endif
 }
 
+
+/* After calling plot commands it is not sure, that the dc 
+ * gets updated properly, therefore you need to call this function.
+ */
+void wxPLplotstream::Update()
+{
+#ifdef WX_TEMP_HAVE_AGG_IS_ON  
+  if( m_style & wxPLPLOT_ANTIALIZED ) {
+    wxMemoryDC MemoryDC;
+    MemoryDC.SelectObject( wxBitmap(m_image, -1) );
+    m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
+    MemoryDC.SelectObject( wxNullBitmap );
+  }
+#endif
+}
+
