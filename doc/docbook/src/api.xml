@@ -126,7 +126,7 @@
       </listitem>
       <listitem>
         <para>
-        Perl: <function>plline($x,$y)</function>
+        Perl/PDL: <function>plline($x,$y)</function>
         </para>
       </listitem>
       <listitem>
@@ -193,6 +193,14 @@ format of numerical label for contours</title>
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>pl_setcontlabelformat(lexp, sigdig)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -268,6 +276,14 @@ contour labelling other than format of numerical label</title>
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>pl_setcontlabelparam(offset, size, spacing, active)</function>
+    </para>
+
+    <para>
+      This function is used in example 9.
+    </para>
+
   </sect1>
 
   <sect1 id="pladv" renderas="sect3">
@@ -315,6 +331,14 @@ contour labelling other than format of numerical label</title>
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>pladv(sub)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,2,4,6-12,14-18,20,21,23-27.
+    </para>
 
   </sect1>
 
@@ -549,6 +573,26 @@ origin
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plaxes(x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plaxes(x0, y0, xtick, nxsub, ytick, nysub, xopt, yopt)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plbin" renderas="sect3">
@@ -672,6 +716,32 @@ origin
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plbin(x, y, opt)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plbin(nbin, x, y, opt)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+
   </sect1>
 
   <sect1 id="plbop" renderas="sect3">
@@ -699,6 +769,14 @@ origin
       page advance via &pladv;, but enable familying (see &plsfam;) with a
       small limit on the file size so that a new family member file will be
       created on each page break.
+    </para>
+
+    <para>
+      Redacted form: <function>plbop()</function>
+    </para>
+
+    <para>
+      This function is used in examples 2,20.
     </para>
 
   </sect1>
@@ -903,6 +981,26 @@ origin
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plbox(xopt, xtick, nxsub, yopt, ytick, nysub)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plbox(xtick, nxsub, ytick, nysub, xopt, yopt)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 1,2,4,6,6-12,14-18,21,23-26.
+    </para>
 
   </sect1>
 
@@ -1229,6 +1327,26 @@ origin
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plbox3(xopt, xlabel, xtick, nxsub, yopt, ylabel, ytick, nysub, zopt, zlabel, ztick, nzsub)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plbox3(xtick, nxsub, ytick, nysub, ztick, nzsub, xopt, xlabel, yopt, ylabel, zopt, zlabel)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 8,11,18,21.
+    </para>
+
   </sect1>
 
   <sect1 id="plcalc_world" renderas="sect3">
@@ -1348,6 +1466,26 @@ from relative device coordinates,
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plcalc_world(rx, ry, wx, wy, window)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL, Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plclear" renderas="sect3">
@@ -1372,6 +1510,26 @@ from relative device coordinates,
       does not support this, the page is filled with the background color in use.
       If the current page is divided into subpages, only the current subpage
       is erased.  The nth subpage can be selected with &pladv;(n).
+    </para>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plclear()</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL, Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
     </para>
 
   </sect1>
@@ -1432,6 +1590,14 @@ from relative device coordinates,
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plcol0(color)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1-9,11-16,18-27.
+    </para>
+
   </sect1>
 
   <sect1 id="plcol1" renderas="sect3">
@@ -1470,6 +1636,14 @@ from relative device coordinates,
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plcol1(col1)</function>
+    </para>
+
+    <para>
+      This function is used in example 12.
+    </para>
 
   </sect1>
 
@@ -1625,6 +1799,37 @@ from relative device coordinates,
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: [PLEASE UPDATE!]
+      <itemizedlist>
+        <listitem>
+          <para>
+	  F95: <function>plcont(z, kx, lx, ky, ly, clevel, tr?)</function> or
+	  <function>plcont(z, kx, lx, ky, ly, clevel, xgrid, ygrid)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Java: <function>pls.cont(z, kx, lx, ky, ly, clevel, xgrid, ygrid)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plcont(z, kx, lx, ky, ly, clevel, pltr, pltr_data)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Python: <function>plcont2(z, kx, lx, ky, ly, clevel)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 9,14,16,22.
+    </para>
+
   </sect1>
 
   <sect1 id="plcpstrm" renderas="sect3">
@@ -1687,6 +1892,14 @@ reference stream to the current stream
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plcpstrm(iplsr, flags)</function>
+    </para>
+
+    <para>
+      This function is used in example 1,20.
+    </para>
+
   </sect1>
 
   <sect1 id="plend" renderas="sect3">
@@ -1711,6 +1924,14 @@ reference stream to the current stream
       was allocated.  Must be called before end of program.
     </para>
 
+    <para>
+      Redacted form: <function>plend()</function>
+    </para>
+
+    <para>
+      This function is used in all of the examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plend1" renderas="sect3">
@@ -1732,6 +1953,14 @@ reference stream to the current stream
     <para>
       Ends a plotting session for the current output stream only.  See
       &plsstrm; for more info.
+    </para>
+
+    <para>
+      Redacted form: <function>plend1()</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,20.
     </para>
 
   </sect1>
@@ -1983,6 +2212,14 @@ positions in both coordinates.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plenv0(xmin, xmax, ymin, ymax, just, axis)</function>
+    </para>
+
+    <para>
+      This function is used in example 21.
+    </para>
+
   </sect1>
 
   <sect1 id="plenv" renderas="sect3">
@@ -2232,6 +2469,14 @@ positions in both coordinates.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plenv(xmin, xmax, ymin, ymax, just, axis)</function>
+    </para>
+
+    <para>
+      This function is used in example 1,3,9,13,14,19-22.
+    </para>
+
   </sect1>
 
   <sect1 id="pleop" renderas="sect3">
@@ -2253,6 +2498,14 @@ positions in both coordinates.
     <para>
       Clears the graphics screen of an interactive device, or ejects a page
       on a plotter.  See &plbop; for more information.
+    </para>
+
+    <para>
+      Redacted form: <function>pleop()</function>
+    </para>
+
+    <para>
+      This function is used in example 2,14,17.
     </para>
 
   </sect1>
@@ -2336,6 +2589,31 @@ error bar.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plerrx(xmin, ymax, y)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plerrx(n, xmin, xmax, y)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plerry" renderas="sect3">
@@ -2416,6 +2694,31 @@ error bar.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plerry(x, ymin, ymax)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plerry(n, x, ymin, ymax)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plfamadv" renderas="sect3">
@@ -2437,6 +2740,26 @@ next new page
 
     <para>
       Advance to the next family file on the next new page.
+    </para>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plfamadv()</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
     </para>
 
   </sect1>
@@ -2508,6 +2831,14 @@ next new page
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plfill(x,y)</function>
+    </para>
+
+    <para>
+      This function is used in examples 12,13,15,16,21,24,25.
+    </para>
 
   </sect1>
 
@@ -2594,6 +2925,31 @@ next new page
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plfill3(x, y, z)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: <function>plfill3(n, x, y, z)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plflush" renderas="sect3">
@@ -2614,6 +2970,26 @@ next new page
 
     <para>
       Flushes the output stream. Use sparingly, if at all.
+    </para>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plflush()</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 1,14.
     </para>
 
   </sect1>
@@ -2676,6 +3052,14 @@ next new page
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plfont(font)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,2,4,7,13,24,26.
+    </para>
+
   </sect1>
 
   <sect1 id="plfontld" renderas="sect3">
@@ -2725,6 +3109,14 @@ next new page
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plfontld(set)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,7.
+    </para>
+
   </sect1>
 
   <sect1 id="plgchr" renderas="sect3">
@@ -2773,6 +3165,26 @@ next new page
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plgchr(p_def, p_ht)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 23.
+    </para>
 
   </sect1>
 
@@ -2849,6 +3261,26 @@ from color map0
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plgcol0(icol0, r, g, b)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 2.
+    </para>
+
   </sect1>
 
   <sect1 id="plgcolbg" renderas="sect3">
@@ -2912,6 +3344,26 @@ from color map0
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plgcolbg(r, g, b)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Python: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
