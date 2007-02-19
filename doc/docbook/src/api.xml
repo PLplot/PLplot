@@ -731,7 +731,7 @@ origin
         </listitem>
         <listitem>
           <para>
-          Python: Not available?
+          Python: <function>plbin(nbin, x, y, opt)</function>
           </para>
         </listitem>
       </itemizedlist>
@@ -1476,7 +1476,7 @@ from relative device coordinates,
         </listitem>
         <listitem>
           <para>
-          Perl/PDL, Python: Not available?
+          Perl/PDL: Not available?
           </para>
         </listitem>
       </itemizedlist>
@@ -1522,7 +1522,7 @@ from relative device coordinates,
         </listitem>
         <listitem>
           <para>
-          Perl/PDL, Python: Not available?
+          Perl/PDL: Not available?
           </para>
         </listitem>
       </itemizedlist>
@@ -1800,7 +1800,7 @@ from relative device coordinates,
     </variablelist>
 
     <para>
-      Redacted form: [PLEASE UPDATE!]
+      Redacted form: [PLEASE UPDATE! ONLY PERL INFO IS LIKELY CORRECT!]
       <itemizedlist>
         <listitem>
           <para>
@@ -2602,11 +2602,13 @@ error bar.
           Perl/PDL: <function>plerrx(n, xmin, xmax, y)</function>
           </para>
         </listitem>
+<!--
         <listitem>
           <para>
           Python: Not available?
           </para>
         </listitem>
+-->
       </itemizedlist>
     </para>
 
@@ -2707,11 +2709,13 @@ error bar.
           Perl/PDL: <function>plerry(n, x, ymin, ymax)</function>
           </para>
         </listitem>
+<!--
         <listitem>
           <para>
           Python: Not available?
           </para>
         </listitem>
+-->
       </itemizedlist>
     </para>
 
@@ -2743,19 +2747,7 @@ next new page
     </para>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plfamadv()</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Python: Not available?
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plfamadv()</function>
     </para>
 
     <para>
@@ -2938,11 +2930,13 @@ next new page
           Perl/PDL: <function>plfill3(n, x, y, z)</function>
           </para>
         </listitem>
+<!--
         <listitem>
           <para>
           Python: Not available?
           </para>
         </listitem>
+-->
       </itemizedlist>
     </para>
 
@@ -2973,19 +2967,7 @@ next new page
     </para>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plflush()</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Python: Not available?
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plflush()</function>
     </para>
 
     <para>
@@ -3167,19 +3149,7 @@ next new page
     </variablelist>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plgchr(p_def, p_ht)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Python: Not available?
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plgchr(p_def, p_ht)</function>
     </para>
 
     <para>
@@ -3262,19 +3232,7 @@ from color map0
     </variablelist>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plgcol0(icol0, r, g, b)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Python: Not available?
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plgcol0(icol0, r, g, b)</function>
     </para>
 
     <para>
@@ -3346,19 +3304,7 @@ from color map0
     </variablelist>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plgcolbg(r, g, b)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Python: Not available?
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plgcolbg(r, g, b)</function>
     </para>
 
     <para>
@@ -3404,6 +3350,14 @@ from color map0
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgcompression(compression)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgdev" renderas="sect3">
@@ -3441,6 +3395,14 @@ space for this (80 characters is safe).
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plgdev(p_dev)</function>
+    </para>
+
+    <para>
+      This function is used in example 14.
+    </para>
 
   </sect1>
 
@@ -3522,6 +3484,14 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgdidev(p_mar, p_aspect, p_jx, p_jy)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgdiori" renderas="sect3">
@@ -3565,6 +3535,14 @@ space for this (80 characters is safe).
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plgdiori(p_rot)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -3647,6 +3625,14 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgdiplt(p_xmin, p_ymin, p_xmax, p_ymax)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgfam" renderas="sect3">
@@ -3710,7 +3696,17 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgfam(fam, num, bmax)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
+
+
   <sect1 id="plgfci" renderas="sect3">
     <title>
       <function>plgfci</function>: Get FCI (font characterization integer)
@@ -3747,6 +3743,14 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgfci(fci)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgfnam" renderas="sect3">
@@ -3782,6 +3786,14 @@ space for this (80 characters is safe).
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plgfnam(fnam)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -3825,8 +3837,7 @@ space for this (80 characters is safe).
     </para>
     </listitem>
     </itemizedlist>
-
-</para>
+  </para>
 
     <variablelist>
       <varlistentry>
@@ -3841,6 +3852,14 @@ space for this (80 characters is safe).
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plglevel(p_level)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -3941,6 +3960,14 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgpage(xp, yp, xleng, yleng, xoff, yoff)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgra" renderas="sect3">
@@ -3967,6 +3994,14 @@ space for this (80 characters is safe).
       graphics mode, this command is ignored.  It is also ignored on
       devices which only support a single window or use a different method
       for shifting focus.  See also &pltext;.
+    </para>
+
+    <para>
+      Redacted form: <function>plgra()</function>
+    </para>
+
+    <para>
+      This function is used in example 1.
     </para>
 
   </sect1>
@@ -4214,6 +4249,26 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plgriddata(x, y, z, xg, yg, zg, type, data)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 1,14.
+    </para>
+
   </sect1>
 
   <sect1 id="plgspa" renderas="sect3">
@@ -4293,6 +4348,14 @@ space for this (80 characters is safe).
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgspa(xmin, xmax, ymin, ymax)</function>
+    </para>
+
+    <para>
+      This function is used in example 23.
+    </para>
+
   </sect1>
 
   <sect1 id="plgstrm" renderas="sect3">
@@ -4328,6 +4391,15 @@ space for this (80 characters is safe).
 	</listitem>
       </varlistentry>
     </variablelist>
+
+
+    <para>
+      Redacted form: <function>plgstrm(strm)</function>
+    </para>
+
+    <para>
+      This function is used in example 1,20.
+    </para>
 
   </sect1>
 
@@ -4365,6 +4437,14 @@ space for this (80 characters is safe).
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plgver(p_ver)</function>
+    </para>
+
+    <para>
+      This function is used in example 1.
+    </para>
 
   </sect1>
 
@@ -4439,6 +4519,26 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plgvpd(p_xmin, p_xmax, p_ymin, p_ymax)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgvpw" renderas="sect3">
@@ -4511,6 +4611,26 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plgvpw(p_xmin, p_xmax, p_ymin, p_ymax)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgxax" renderas="sect3">
@@ -4569,6 +4689,14 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgxax(digmax, digits)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgyax" renderas="sect3">
@@ -4622,6 +4750,14 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plgyax(digmax, digits)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plgzax" renderas="sect3">
@@ -4674,6 +4810,14 @@ device coordinates
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plgzax(digmax, digits)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
