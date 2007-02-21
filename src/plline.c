@@ -1008,7 +1008,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	else if (xclp[0] == xmin && yclp[iclp-1] == ymax && dir < 0)
 	{
 	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
-	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
+	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
 	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
 	}
     }
