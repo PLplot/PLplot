@@ -4969,6 +4969,14 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plhist(data, datmin, datmax, nbin, opt)</function>
+    </para>
+
+    <para>
+      This function is used in example 5.
+    </para>
+
   </sect1>
 
   <sect1 id="plhlsrgb" renderas="sect3">
@@ -5067,6 +5075,26 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plhlsrgb(h, l, s, p_r, p_g, p_b)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: Not available? Implemented as plhls?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 2.
+    </para>
+
   </sect1>
 
   <sect1 id="plinit" renderas="sect3">
@@ -5098,6 +5126,14 @@ device coordinates
       independently.  If &plinit; is called again during a program, the
       previously opened file will be closed.  The subroutine &pladv; is
       used to advance from one subpage to the next.
+    </para>
+
+    <para>
+      Redacted form: <function>plinit()</function>
+    </para>
+
+    <para>
+      This function is used in all of the examples.
     </para>
 
   </sect1>
@@ -5175,6 +5211,14 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>pljoin(x1,y1,x2,y2)</function>
+    </para>
+
+    <para>
+      This function is used in examples 3,14.
+    </para>
+
   </sect1>
 
   <sect1 id="pllab" renderas="sect3">
@@ -5236,6 +5280,14 @@ device coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>pllab(xlabel, ylabel, tlabel)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,5,9,12,14-16,20-22.
+    </para>
+
   </sect1>
 
   <sect1 id="pllightsource" renderas="sect3">
@@ -5296,6 +5348,14 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>pllightsource(x, y, z)</function>
+    </para>
+
+    <para>
+      This function is used in example 8.
+    </para>
 
   </sect1>
 
@@ -5359,6 +5419,14 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plline(x, y)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,3,4,9,12-14,16,18,20,22,25-27.
+    </para>
 
   </sect1>
 
@@ -5439,6 +5507,14 @@ source
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plline3(x, y, z)</function>
+    </para>
+
+    <para>
+      This function is used in example 18.
+    </para>
+
   </sect1>
 
   <sect1 id="pllsty" renderas="sect3">
@@ -5478,6 +5554,14 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>pllsty(n)</function>
+    </para>
+
+    <para>
+      This function is used in examples 9,12,22,25.
+    </para>
 
   </sect1>
 
@@ -5613,6 +5697,28 @@ source
 	  </listitem>
      </varlistentry>
     </variablelist>
+
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plmap(mapform, type, minlong, maxlong, minlat, maxlat)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          F95, Java, Perl/PDL, Python: Not implemented?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 19.
+    </para>
+
   </sect1>
 
   <sect1 id="plmeridians" renderas="sect3">
@@ -5735,6 +5841,27 @@ source
 	  </listitem>
      </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plmeridians(mapform, dlong, dlat, minlong, maxlong, minlat, maxlat)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          F95, Java, Perl/PDL, Python: Not implemented?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 19.
+    </para>
+
   </sect1>
 
   <sect1 id="plmesh" renderas="sect3">
@@ -5873,8 +6000,16 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
-  </sect1>
 
+    <para>
+      Redacted form: <function>plmesh(x, y, z, opt)</function>
+    </para>
+
+    <para>
+      This function is used in example 11.
+    </para>
+
+  </sect1>
 
 
   <sect1 id="plmeshc" renderas="sect3">
@@ -6051,7 +6186,16 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
-    </sect1>
+
+    <para>
+      Redacted form: <function>plmeshc(x, y, z, opt, clevel)</function>
+    </para>
+
+    <para>
+      This function is used in example 11.
+    </para>
+
+  </sect1>
 
   <sect1 id="plmkstrm" renderas="sect3">
     <title>
@@ -6093,6 +6237,14 @@ default
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plmkstrm(p_strm)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,20.
+    </para>
 
   </sect1>
 
@@ -6248,6 +6400,26 @@ default
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plmtex(side, disp, pos, just, text)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: <function>plmtex(disp, pos, just, side, text)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 3,4,6-8,11,12,14,18,23,26.
+    </para>
 
   </sect1>
 
@@ -6405,6 +6577,14 @@ default
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plot3d(x, y, z, opt, side)</function>
+    </para>
+
+    <para>
+      This function is used in examples 11,21.
+    </para>
+
   </sect1>
 
 
@@ -6441,7 +6621,27 @@ default
     &plot3dc; only draws the surface as viewed from the top.
     </para>
 
-    </sect1>
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plot3dc(x, y, z, opt, clevel)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 21.
+    </para>
+
+  </sect1>
 
   <sect1 id="plparseopts" renderas="sect3">
     <title>
@@ -6544,6 +6744,26 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plparseopts(argv, mode)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in all of the examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plpat" renderas="sect3">
@@ -6614,6 +6834,26 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plpat(inc, del)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: <function>plpat(nlin, inc, del)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
     </sect1>
 
@@ -6696,6 +6936,14 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plpoin(x, y, code)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,6,14,18,21.
+    </para>
 
   </sect1>
 
@@ -6792,6 +7040,14 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plpoin3(x, y, z, code)</function>
+    </para>
+
+    <para>
+      This function is used in example 18.
+    </para>
 
   </sect1>
 
@@ -6925,6 +7181,14 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plpoly3(x, y, z, code)</function>
+    </para>
+
+    <para>
+      This function is used in example 18.
+    </para>
+
   </sect1>
 
   <sect1 id="plprec" renderas="sect3">
@@ -6980,6 +7244,14 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plprec(set, prec)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plpsty" renderas="sect3">
@@ -7018,6 +7290,14 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plpsty(n)</function>
+    </para>
+
+    <para>
+      This function is used in examples 12,13,15,16,25.
+    </para>
 
   </sect1>
 
@@ -7138,6 +7418,14 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plptex(x, y, dx, dy, just, text)</function>
+    </para>
+
+    <para>
+      This function is used in example 2-4,10,12-14,20,23,24,26.
+    </para>
+
   </sect1>
 
   <sect1 id="plreplot" renderas="sect3">
@@ -7159,6 +7447,14 @@ current device/file
 
     <para>
       Replays contents of plot buffer to current device/file.
+    </para>
+
+    <para>
+      Redacted form: <function>plreplot()</function>
+    </para>
+
+    <para>
+      This function is used in example 1,20.
     </para>
 
   </sect1>
@@ -7259,6 +7555,26 @@ current device/file
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plrgbhls(r, g, b, p_h, p_l, p_s)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Perl/PDL: Not available? Implemented as plrgb/plrgb1?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 2.
+    </para>
+
   </sect1>
 
   <sect1 id="plschr" renderas="sect3">
@@ -7310,6 +7626,14 @@ current device/file
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plschr(def, scale)</function>
+    </para>
+
+    <para>
+      This function is used in example 2,13,23,24.
+    </para>
 
   </sect1>
 
@@ -7391,6 +7715,14 @@ values
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plscmap0(r, g, b, ncol0)</function>
+    </para>
+
+    <para>
+      This function is used in examples 2,24.
+    </para>
+
   </sect1>
 
   <sect1 id="plscmap0n" renderas="sect3">
@@ -7434,6 +7766,14 @@ values
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plscmap0n(ncol0)</function>
+    </para>
+
+    <para>
+      This function is used in examples 15,16,24.
+    </para>
 
   </sect1>
 
@@ -7513,6 +7853,14 @@ values
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plscmap1(r, g, b, ncol1)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -7675,6 +8023,14 @@ piece-wise linear relationship
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plscmap1l(itype, pos, coord1, coord2, coord3, rev)</function>
+    </para>
+
+    <para>
+      This function is used in examples 8,11,15,20,21.
+    </para>
+
   </sect1>
 
   <sect1 id="plscmap1n" renderas="sect3">
@@ -7713,6 +8069,14 @@ piece-wise linear relationship
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plscmap1n(ncol1)</function>
+    </para>
+
+    <para>
+      This function is used in examples 8,11,20,21.
+    </para>
 
   </sect1>
 
@@ -7791,6 +8155,14 @@ bit RGB value
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plscol0(icol0, r, g, b)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plscolbg" renderas="sect3">
@@ -7856,6 +8228,14 @@ by 8-bit RGB value
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plscolbg(r, g, b)</function>
+    </para>
+
+    <para>
+      This function is used in example 15.
+    </para>
+
   </sect1>
 
   <sect1 id="plscolor" renderas="sect3">
@@ -7893,6 +8273,14 @@ by 8-bit RGB value
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plscolor(color)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -7934,6 +8322,14 @@ by 8-bit RGB value
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plscompression(compression)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsdev" renderas="sect3">
@@ -7969,6 +8365,14 @@ by 8-bit RGB value
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsdev(devname)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,14,20.
+    </para>
 
   </sect1>
 
