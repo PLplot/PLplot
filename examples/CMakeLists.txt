@@ -50,6 +50,9 @@ endif(ENABLE_java)
 if(ENABLE_pdl)
   add_subdirectory(perl)
 endif(ENABLE_pdl)
+if(ENABLE_ada)
+  add_subdirectory(ada)
+endif(ENABLE_ada)
 
 install(FILES Makefile.examples 
 DESTINATION ${DATA_DIR}/examples

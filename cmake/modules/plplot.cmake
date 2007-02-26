@@ -247,6 +247,7 @@ include(python)
 include(octave)
 include(tcl-related)
 include(pdl)
+include(ada)
 
 # Find wxWidgets needed for driver and bindings
 option( ENABLE_wxwidgets "Enable wxWidgets bindings" ON )

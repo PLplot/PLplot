@@ -30,6 +30,7 @@ add_subdirectory(octave)
 add_subdirectory(java)
 add_subdirectory(gnome2)
 add_subdirectory(wxwidgets)
+add_subdirectory(ada)
 
 set(index)
 if(ENABLE_tcl)
