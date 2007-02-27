@@ -20,74 +20,32 @@
 
 if(ENABLE_ada)
 
-  add_custom_command(
-  OUTPUT
-  ${CMAKE_CURRENT_BINARY_DIR}/libplplotada${LIB_TAG}.so
-  COMMAND
-  ${CMAKE_COMMAND} -E copy_if_different
+  set(plplotada${LIB_TAG}_LIB_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/plplot.adb
-  ${CMAKE_CURRENT_BINARY_DIR}/plplot.adb
-  COMMAND
-  ${CMAKE_COMMAND} -E copy_if_different
   ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ads
-  ${CMAKE_CURRENT_BINARY_DIR}/plplot.ads
-  COMMAND
-  ${CMAKE_COMMAND} -E copy_if_different
   ${CMAKE_CURRENT_SOURCE_DIR}/plplotthin.adb
-  ${CMAKE_CURRENT_BINARY_DIR}/plplotthin.adb
-  COMMAND
-  ${CMAKE_COMMAND} -E copy_if_different
   ${CMAKE_CURRENT_SOURCE_DIR}/plplotthin.ads
-  ${CMAKE_CURRENT_BINARY_DIR}/plplotthin.ads
-  COMMAND
-  ${GNATMAKE_EXECUTABLE} -c -fPIC plplot.adb
-  COMMAND
-  gcc -fPIC -shared
-  ${CMAKE_CURRENT_BINARY_DIR}/plplot.o
-  ${CMAKE_CURRENT_BINARY_DIR}/plplotthin.o
-  -Wl,-soname,libplplotada${LIB_TAG}.so.${plplotada_SOVERSION}
-  -Wl,-rpath,${CMAKE_BINARY_DIR}/src
-  -o libplplotada${LIB_TAG}.so.${plplotada_VERSION}
-  -L${GNAT_DIR} -lgnat
-  -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG}
-  COMMAND
-  ${CMAKE_COMMAND} -E cmake_symlink_library
-  libplplotada${LIB_TAG}.so.${plplotada_VERSION}
-  libplplotada${LIB_TAG}.so.${plplotada_SOVERSION}
-  libplplotada${LIB_TAG}.so
-#  COMMAND
-#  rm -f 
-#  ${CMAKE_CURRENT_BINARY_DIR}/plplot.o
-#  ${CMAKE_CURRENT_BINARY_DIR}/plplotthin.o
-  DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplotthin.adb
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  
-  add_custom_target(plplotada${LIB_TAG} ALL
-  DEPENDS
-  ${CMAKE_CURRENT_BINARY_DIR}/libplplotada${LIB_TAG}.so
+
+  add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
+
+  target_link_libraries(plplotada${LIB_TAG}
+  plplot${LIB_TAG} ${GNAT_LIB}
   )
-  
-#  set(plplotthinada{LIB_TAG}_LIB_SRCS
-#  ${CMAKE_CURRENT_BINARY_DIR}/plplotthin.o
-#  )
 
-#  add_library(plplotthinada${LIB_TAG} ${plplotthinada${LIB_TAG}_LIB_SRCS})
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(plplotada${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotada_SOVERSION}
+  VERSION ${plplotada_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
 
-#  target_link_libraries(plplotthinada${LIB_TAG}  plplot${LIB_TAG})
-
-#  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-#  set_target_properties(plplotthinada${LIB_TAG}
-#  PROPERTIES
-#  SOVERSION ${plplotthinada_SOVERSION}
-#  VERSION ${plplotthinada_VERSION}
-#  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-#  INSTALL_NAME_DIR "${LIB_DIR}"
-#  )
-
-#  install(TARGETS plplotthinada${LIB_TAG}
+# The commands below have been tested to work fine for the shared libraries,
+# but comment this out until we can decide on an install location for
+# all the Ada stuff that is required beyond just the library.
+#  install(TARGETS plplotada${LIB_TAG}
 #  ARCHIVE DESTINATION ${LIB_DIR}
 #  LIBRARY DESTINATION ${LIB_DIR}
 #  RUNTIME DESTINATION ${BIN_DIR}
