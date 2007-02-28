@@ -142,18 +142,41 @@ IF(NOT CMAKE_Ada_COMPILE_OBJECT)
     "<CMAKE_Ada_COMPILER> <FLAGS> -o <OBJECT> -c <SOURCE>")
 ENDIF(NOT CMAKE_Ada_COMPILE_OBJECT)
 
-# The only way to link an executable is with gnatmake (or the equivalent
-# gnatbind and gnatlink commands).  But those commands need
-# <SOURCE> which is not available.  Under these
-# circumstances, no linking can be done.  Thus, 
-# add_executable only compiles but does no linking, so the user must follow
-# it with the appropriate gnatmake command to get the binding and linking
-# done correctly.
-#IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
+# Assumption:
+# The programme gnatmake is assumed available since gnatgcc has already
+# been proved to be available.
+# Constraints:
+# gnatmake is required to do the binding and linking of Ada executables,
+# and it requires a source file name which is constructed from
+# <TARGET>.adb.  The source file arguments of add_executable are
+# all compiled by the above rule (which must remain that form since it
+# is also used to compile objects for Ada libraries), but the results are
+# ignored since they are put in a different directory while gnatmake assumes
+# objects are located in the _current_ directory.  Thus, put in a minimal
+# source file (with correct .adb suffix to identify the Ada language)
+# to reduce this useless compilation to a minimum.  Usually, the main Ada
+# routine qualifies since it is normally small.  Thus, the normal usage is
+# add_executable(foo foo.adb), but  add_executable(foo path/minimal.adb) would
+# work as well so long as both path/minimal.adb existed and foo.adb existed.
+# Also, note there is no way to specify 
+# ${CMAKE_CURRENT_SOURCE_DIR}/<TARGET>.adb as the code for gnatmake to compile
+# because in this context ${CMAKE_CURRENT_SOURCE_DIR} is set to the top
+# of the source tree and not the expected sub-directory of the source tree.
+# Thus, LINK_FLAGS -aI${CMAKE_CURRENT_SOURCE_DIR} must be set using
+# set_target_properties in order to specify the directory where <TARGET>.adb
+# exists. Note, LINK_FLAGS can also be used to set other gnatmake flags
+# such as -aL.
+
+# In sum, you have to be careful of your target name, the nominal source file
+# name has to be compilable, but otherwise it is ignored, and you must specify
+# the required -aI and other gnatmake options using LINK_FLAGS specified
+# with set_target_properties.  However, so long as you pay attention to these
+# constraints, add_executable should work for the Ada language.
+
+IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
   SET(CMAKE_Ada_LINK_EXECUTABLE
-    "")
-#    "<CMAKE_Ada_COMPILER> <FLAGS> <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>"
-#ENDIF(NOT CMAKE_Ada_LINK_EXECUTABLE)
+    "gnatmake <FLAGS> <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET>.adb -largs <LINK_LIBRARIES>")
+ENDIF(NOT CMAKE_Ada_LINK_EXECUTABLE)
 
 IF(CMAKE_Ada_STANDARD_LIBRARIES_INIT)
   SET(CMAKE_Ada_STANDARD_LIBRARIES "${CMAKE_Ada_STANDARD_LIBRARIES_INIT}"
