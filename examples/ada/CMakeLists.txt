@@ -20,48 +20,32 @@
 
 if(BUILD_TEST)
 
-  # N.B. The following special RPATH_SPEC logic and custom command and custom
-  # target are all required because add_executable only compiles (and does not
-  # gnatbind or gnatlink).  The reason for this limited Ada language support
-  # for add_executable is <SOURCE> is not currently available in the 
-  # link_executable context of CMake.
-
-  if(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG AND
-  CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP
-  )
-    set(RPATH_SPEC
-    "${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG}${CMAKE_BINARY_DIR}/src${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP}${CMAKE_BINARY_DIR}/bindings/ada"
-    )
-  endif(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG AND
-  CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP
-  )
-
-  # -aI must point to location of libplplotata(d) spec (*.ads) files.
-  # -aL must point to location of libplplotada(d) *.ali files.
-  # N.B. that latter location works for cmake-2.4.6 and will presumably
-  # be fine for quite a while, but that location is not guaranteed
-  # indefinitely for all future versions of cmake.
-  add_custom_command(
-  OUTPUT
-  ${CMAKE_CURRENT_BINARY_DIR}/ada_plplot
-  COMMAND
-  ${GNATMAKE_EXECUTABLE}
-  -aI${CMAKE_SOURCE_DIR}/bindings/ada
-  -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir
-  ${CMAKE_CURRENT_SOURCE_DIR}/ada_plplot.adb
-  -largs -L${CMAKE_BINARY_DIR}/bindings/ada -lplplotada${LIB_TAG}
-  ${RPATH_SPEC}
-  DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/ada_plplot.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/x01.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/x01.ads
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+# Note due to limitations of the Ada language support for CMake, the
+# the nominal source file for add_executable is compiled (which is why a
+# real file has to be specified), but otherwise it is ignored except for its
+# .adb suffix which identifies the Ada language.  The actual source file
+# name for the internal gnatmake command that creates the executable is
+# constructed from <TARGET>.adb.  Since no directory can be specified from
+# this construction (don't ask), you must specify the directory of
+# <TARGET>.adb with a -aI option (see below).
+  
+  add_executable(ada_plplot ${CMAKE_CURRENT_SOURCE_DIR}/ada_plplot.adb)
+  
+# The first -aI option is required to find <TARGET>.adb (see above comment).
+# The second -aI option gives access to the libplplotada spec files.
+# The -aL option gives access to the libplplotada *.ali files.
+# (That location currently works but is probably not guaranteed indefinitely
+# for future versions of CMake.)
+  set_target_properties(ada_plplot
+  PROPERTIES
+  LINK_FLAGS
+  "\\
+  -aI${CMAKE_SOURCE_DIR}/examples/ada \\
+  -aI${CMAKE_SOURCE_DIR}/bindings/ada \\
+  -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir \\
+  "
   )
   
-  add_custom_target(ada_plplot_target ALL
-  DEPENDS
-  ${CMAKE_CURRENT_BINARY_DIR}/ada_plplot
-  )
-  add_dependencies(ada_plplot_target plplotada${LIB_TAG})
-  
+  target_link_libraries(ada_plplot plplotada${LIB_TAG})
+
 endif(BUILD_TEST)
