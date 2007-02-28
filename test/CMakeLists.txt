@@ -104,6 +104,18 @@ if(ENABLE_pdl)
   )
 endif(ENABLE_pdl)
 
+if(ENABLE_ada)
+  configure_file(
+    test_ada.sh.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/test_ada.sh 
+    @ONLY
+    )
+  set(SCRIPTS ${SCRIPTS} test_ada.sh)
+  add_test(examples_ada
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=ada"
+  )
+endif(ENABLE_ada)
+
 # Run C examples with different drivers
 if(PLD_psc)
   if (NOT TEST_DEVICE STREQUAL "psc")

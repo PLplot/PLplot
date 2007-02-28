@@ -1,7 +1,7 @@
 #!@SH_EXECUTABLE@
 # $Id$
 #
-# Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004, 2007  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
@@ -48,7 +48,7 @@ Usage: plplot-test.sh [OPTIONS]
 Options:
    [--device=DEVICE] (DEVICE = one of psc [default], ps, psttf, psttfc, png, gif, jpeg, cgm,
                       svg, xfig, or plmeta)
-   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, or perl)
+   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, perl, or ada)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -106,6 +106,7 @@ while test $# -gt 0; do
               -o $i = "python" \
               -o $i = "tcl"    \
               -o $i = "perl"    \
+              -o $i = "ada"    \
          || usage 0 1>&2
          done
 	 ;;
@@ -150,6 +151,7 @@ pythondir=$EXAMPLES_DIR/python
 tcldir=$EXAMPLES_DIR/tcl
 perldir=$SRC_EXAMPLES_DIR/perl
 javadir=$EXAMPLES_DIR/java
+adadir=$EXAMPLES_DIR/ada
 octave=@OCTAVE@
 octavedir=\
 $EXAMPLES_DIR/../bindings/octave:\
@@ -163,7 +165,7 @@ $SRC_EXAMPLES_DIR/octave:\
 @OCTAVE_M_DIR@/PLplot:\
 @OCTAVE_OCT_DIR@:
 PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
-export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir PATH
+export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir PATH
 
 fe=""
 
@@ -229,6 +231,7 @@ if test -z "$FRONT_END" ; then
    test "@ENABLE_python@" = ON && FRONT_END="$FRONT_END python"
    test "@ENABLE_tcl@" = ON    && FRONT_END="$FRONT_END tcl"
    test "@ENABLE_pdl@" = ON    && FRONT_END="$FRONT_END perl"
+   test "@ENABLE_ada@" = ON    && FRONT_END="$FRONT_END ada"
 fi
 
 # Find where the front-end scripts are by looking at the directory name of the
