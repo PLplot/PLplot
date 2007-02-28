@@ -31,7 +31,7 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
   ${ada_SRCS}
   x${STRING_INDEX}a.adb
   x${STRING_INDEX}.adb
-  x${STRING_INDEX}.adc
+  x${STRING_INDEX}.ads
   )
   if(BUILD_TEST)
     # Note due to limitations of the Ada language support for CMake, the the
