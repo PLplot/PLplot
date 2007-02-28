@@ -1,11 +1,11 @@
--- Driver program for running various PLplot example programs.
+-- Driver program for running the x01 example program.
 
 with
     x01;
 use
     x01;
 
-procedure Ada_PLplot is
+procedure x01a is
 begin
     Example_x01;
-end Ada_PLplot;
+end x01a;

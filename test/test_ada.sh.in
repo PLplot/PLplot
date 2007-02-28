@@ -27,4 +27,6 @@
 # pushd $adadir; make; popd
 
 # Do the standard non-interactive examples.
-$adadir/ada_plplot -dev $device -o ${OUTPUT_DIR}/ada_plplot.$dsuffix $options
+for index in 01; do
+  $adadir/x${index}a -dev $device -o ${OUTPUT_DIR}/x${index}a.$dsuffix $options
+done
