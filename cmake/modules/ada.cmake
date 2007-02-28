@@ -22,15 +22,6 @@
 option(ENABLE_ada "Enable Ada bindings" OFF)
 
 if(ENABLE_ada)
-  find_program(GNATMAKE_EXECUTABLE gnatmake)
-  if(NOT GNATMAKE_EXECUTABLE)
-    message(STATUS "WARNING: "
-      "gnatmake not found. Disabling ada bindings")
-      set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
-  endif(NOT GNATMAKE_EXECUTABLE)
-endif(ENABLE_ada)
-
-if(ENABLE_ada)
   find_library(GNAT_LIB gnat)
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
