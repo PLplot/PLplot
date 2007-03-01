@@ -610,14 +610,13 @@ circulation(PLINT *x, PLINT *y, PLINT npts)
     int i;
 
     xproduct = 0.0 ;
-    for (i = 0; i < npts - 1; i++) {
-	x1 = x[i]; x2 = x[i+1];
-	y1 = y[i]; y2 = y[i+1];
-	if (i < npts-2) {
-	    x3 = x[i+2]; y3 = y[i+2];
-	} else {
-	    x3 = x[0]; y3 = y[0];
-	}
+    x1 = x[0];
+    y1 = y[0];
+    for (i = 1; i < npts - 2; i++) {
+	x2 = x[i+1];
+	y2 = y[i+1];
+	x3 = x[i+2];
+	y3 = y[i+2];
 	xproduct = xproduct + (x2-x1)*(y3-y2) - (y2-y1)*(x3-x2);
     }
 
@@ -816,26 +815,13 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 */
 
     if (iclp == 0) {
-	PLINT xmin1, xmax1, ymin1, ymax1;
-	xmin1 = xmax1 = x[0];
-	ymin1 = ymax1 = y[0];
-	for (i = 1; i < npts; i++) {
-	    if (x[i] < xmin1) xmin1 = x[i];
-	    if (x[i] > xmax1) xmax1 = x[i];
-	    if (y[i] < ymin1) ymin1 = y[i];
-	    if (y[i] > ymax1) ymax1 = y[i];
-	}
-	if (xmin1 <= xmin && xmax1 >= xmax && ymin1 <= ymin && ymax1 >= ymax ) {
-	    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
-	    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
-	    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
-	    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
+	if ( inside_lb ) {
 	    (*draw)(xclp, yclp, iclp);
 
-	    if ( xclp != _xclp ) {
-	        free( xclp );
-	        free( yclp );
-	    }
+	if ( xclp != _xclp ) {
+	    free( xclp );
+	    free( yclp );
+	}
 
 
 	    return;
