@@ -43,15 +43,18 @@ procedure x10a is
   begin   
     -- plplot initialization
     
+--    plparseopts(PL_PARSE_FULL);
     Parse_Command_Line_Arguments(PL_PARSE_FULL);
     plinit;
     pladv(0);
     plvpor(0.0, 1.0, 0.0, 1.0);
     plwind(0.0, 1.0, 0.0, 1.0);
-    plbox("bc", 0.0, 0, "bc", 0.0, 0);
+--    plbox("bc", 0.0, 0, "bc", 0.0, 0);
+    Box_Around_Viewport(TUB("bc"), 0.0, 0, TUB("bc"), 0.0, 0);
     plsvpa(50.0, 150.0, 50.0, 100.0);
     plwind(0.0, 1.0, 0.0, 1.0);
-    plbox("bc", 0.0, 0, "bc", 0.0, 0);
+--    plbox("bc", 0.0, 0, "bc", 0.0, 0);
+    Box_Around_Viewport(TUB("bc"), 0.0, 0, TUB("bc"), 0.0, 0);
     plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
     plend;
 end x10a;
