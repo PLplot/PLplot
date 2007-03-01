@@ -20,6 +20,7 @@
 
 set(ada_STRING_INDICES
 "01"
+"10"
 )
 
 if(BUILD_TEST)
