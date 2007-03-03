@@ -113,7 +113,8 @@ void wxPLplotstream::RenewPlot()
 #ifdef WX_TEMP_HAVE_AGG_IS_ON  
   if( m_style & wxPLPLOT_ANTIALIZED ) {
     wxMemoryDC MemoryDC;
-    MemoryDC.SelectObject( wxBitmap(m_image, -1) );
+    wxBitmap bitmap( *m_image, -1 );
+    MemoryDC.SelectObject( bitmap );
     m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
     MemoryDC.SelectObject( wxNullBitmap );
   }
@@ -129,7 +130,8 @@ void wxPLplotstream::Update()
 #ifdef WX_TEMP_HAVE_AGG_IS_ON  
   if( m_style & wxPLPLOT_ANTIALIZED ) {
     wxMemoryDC MemoryDC;
-    MemoryDC.SelectObject( wxBitmap(m_image, -1) );
+    wxBitmap bitmap( *m_image, -1 );
+    MemoryDC.SelectObject( bitmap );
     m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
     MemoryDC.SelectObject( wxNullBitmap );
   }
