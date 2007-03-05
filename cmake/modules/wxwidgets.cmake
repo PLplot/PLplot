@@ -63,6 +63,18 @@ if(PLD_wxwidgets)
   ${DRIVERS_LINK_FLAGS} 
   ${wxwidgets_LINK_FLAGS}
   )
+endif(PLD_wxwidgets)
+
+if(PLD_wxwidgets)
+  if(DEFAULT_NO_BINDINGS)
+    option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
+  else(DEFAULT_NO_BINDINGS)
+    option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
+  endif(DEFAULT_NO_BINDINGS)
 else(PLD_wxwidgets)
+  message(STATUS
+  "WARNING: PLD_wxwidgets is OFF so "
+  "Setting ENABLE_wxwidgets to OFF."
+  )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(PLD_wxwidgets)

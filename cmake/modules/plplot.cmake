@@ -239,6 +239,10 @@ message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
 message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 message(STATUS "X11_LIBRARY_DIR = ${X11_LIBRARY_DIR}")
 
+option(DEFAULT_NO_BINDINGS
+"All language bindings are disabled by default"
+OFF
+)
 # Load language specific files
 include(c++)
 include(fortran)
@@ -250,12 +254,8 @@ include(pdl)
 include(ada)
 
 # Find wxWidgets needed for driver and bindings
-option( ENABLE_wxwidgets "Enable wxWidgets bindings" ON )
 SET(wxWidgets_USE_LIBS core base)
 find_package(wxWidgets)
-if( NOT wxWidgets_FOUND )
-  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
-endif( NOT wxWidgets_FOUND )  
 
 # =======================================================================
 # additional library support
