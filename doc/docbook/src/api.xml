@@ -6,6 +6,7 @@
     Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
     Copyright (C) 2004  Andrew Ross
+    Copyright (C) 2007  Hazen Babcock
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -8457,6 +8458,14 @@ by 8-bit RGB value
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsdidev(mar, aspect, jx, jy)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsdimap" renderas="sect3">
@@ -8557,6 +8566,14 @@ coordinates
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsdimap(dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsdiori" renderas="sect3">
@@ -8600,6 +8617,14 @@ coordinates
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsdiori(rot)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -8679,6 +8704,14 @@ coordinates
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsdiplt(xmin, ymin, xmax, ymax)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -8760,6 +8793,14 @@ coordinates
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsdiplz(xmin, ymin, xmax, ymax)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -8850,6 +8891,26 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plsesc(esc)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsetopt" renderas="sect3">
@@ -8901,6 +8962,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsetopt(opt, optarg)</function>
+    </para>
+
+    <para>
+      This function is used in examples 14,17.
+    </para>
 
   </sect1>
 
@@ -8965,6 +9034,14 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsfam(fam, num, bmax)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsfci" renderas="sect3">
@@ -9002,6 +9079,26 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plsfci(fci)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -9042,6 +9139,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsfnam(fnam)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,20.
+    </para>
 
   </sect1>
 
@@ -9325,6 +9430,26 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plshades(a, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, fill, rectangular, pltr, pltr_data)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: <function>plshades(a, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, fill, rectangular, defined, pltr, pltr_data)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in examples 16,21.
+    </para>
+
   </sect1>
 
   <sect1 id="plshade" renderas="sect3">
@@ -9584,6 +9709,26 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plshade(a, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, fill, rectangular, pltr, pltr_data)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: Not available?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 16.
+    </para>
 
   </sect1>
 
@@ -9927,6 +10072,25 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plshade1(a, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, fill, rectangular, pltr, pltr_data)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: <function>plshade1(a, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, fill, rectangular, defined, pltr, pltr_data)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 15.
+    </para>
   </sect1>
 
   <sect1 id="plsmaj" renderas="sect3">
@@ -9978,6 +10142,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsmaj(def, scale)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -10048,6 +10220,14 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsmem(maxx, maxy, plotmem)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsmin" renderas="sect3">
@@ -10100,6 +10280,14 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsmin(def, scale)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsori" renderas="sect3">
@@ -10142,6 +10330,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsori(ori)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -10243,6 +10439,14 @@ characters and their corresponding decimal ASCII values:
        </varlistentry>
      </variablelist>
 
+    <para>
+      Redacted form: <function>plspage(xp, yp, xleng, yleng, xoff, yoff)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
    </sect1>
 
   <sect1 id="plspause" renderas="sect3">
@@ -10280,6 +10484,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plspause(pause)</function>
+    </para>
+
+    <para>
+      This function is in examples 14,20.
+    </para>
 
   </sect1>
 
@@ -10319,6 +10531,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsstrm(strm)</function>
+    </para>
+
+    <para>
+      This function is examples 1,14,20.
+    </para>
 
   </sect1>
 
