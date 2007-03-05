@@ -103,6 +103,7 @@ ENABLE_python:		${ENABLE_python}		ENABLE_octave:		${ENABLE_octave}
 ENABLE_tcl:		${ENABLE_tcl}		ENABLE_itcl:		${ENABLE_itcl}
 ENABLE_tk:		${ENABLE_tk}		ENABLE_itk:		${ENABLE_itk}
 ENABLE_pdl:		${ENABLE_pdl}		ENABLE_wxwidgets:	${ENABLE_wxwidgets}
+ENABLE_gnome2:		${ENABLE_gnome2}		ENABLE_pygcw:		${ENABLE_pygcw}
 ")
 message("${_output_results}")
 endmacro(summary)
