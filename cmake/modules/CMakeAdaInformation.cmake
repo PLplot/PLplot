@@ -118,18 +118,18 @@ INCLUDE(CMakeCommonLanguageInclude)
 # <CMAKE_RANLIB>
 
 
-# create a Ada shared library
+# create an Ada shared library
 IF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
   SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
-      "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+      "${GNAT_SHARED_LINKER} <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 ENDIF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
 
-# create a Ada shared module just copy the shared library rule
+# create an Ada shared module just copy the shared library rule
 IF(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
   SET(CMAKE_Ada_CREATE_SHARED_MODULE ${CMAKE_Ada_CREATE_SHARED_LIBRARY})
 ENDIF(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
 
-# create a Ada static library
+# create an Ada static library
 IF(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
   SET(CMAKE_Ada_CREATE_STATIC_LIBRARY
       "<CMAKE_AR> cr <TARGET> <LINK_FLAGS> <OBJECTS> "
@@ -139,15 +139,13 @@ ENDIF(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
 # compile a Ada file into an object file
 IF(NOT CMAKE_Ada_COMPILE_OBJECT)
   SET(CMAKE_Ada_COMPILE_OBJECT
-    "<CMAKE_Ada_COMPILER> <FLAGS> -o <OBJECT> -c <SOURCE>")
+    "<CMAKE_Ada_COMPILER> <FLAGS> -c <SOURCE> -o <OBJECT>
+    ")
 ENDIF(NOT CMAKE_Ada_COMPILE_OBJECT)
 
-# Assumption:
-# The programme gnatmake is assumed available since gnatgcc has already
-# been proved to be available.
-# Constraints:
-# gnatmake is required to do the binding and linking of Ada executables,
-# and it requires a source file name which is constructed from
+# Constraints:  GNAT_EXECUTABLE_BUILDER = gnatmake
+# is required to do the compile+bind+link of
+# Ada executables, and it requires a source file name which is constructed from
 # <TARGET>.adb.  The source file arguments of add_executable are
 # all compiled by the above rule (which must remain that form since it
 # is also used to compile objects for Ada libraries), but the results are
@@ -169,13 +167,14 @@ ENDIF(NOT CMAKE_Ada_COMPILE_OBJECT)
 
 # In sum, you have to be careful of your target name, the nominal source file
 # name has to be compilable, but otherwise it is ignored, and you must specify
-# the required -aI and other gnatmake options using LINK_FLAGS specified
-# with set_target_properties.  However, so long as you pay attention to these
+# the required -aI and other CMAKE_Ada_COMPILER = gnatmake options
+# using LINK_FLAGS specified with set_target_properties.  
+# However, so long as you pay attention to these
 # constraints, add_executable should work for the Ada language.
 
 IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
   SET(CMAKE_Ada_LINK_EXECUTABLE
-    "gnatmake <FLAGS> <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET>.adb -largs <LINK_LIBRARIES>")
+    "${GNAT_EXECUTABLE_BUILDER} <FLAGS> <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET>.adb -largs <LINK_LIBRARIES>")
 ENDIF(NOT CMAKE_Ada_LINK_EXECUTABLE)
 
 IF(CMAKE_Ada_STANDARD_LIBRARIES_INIT)
