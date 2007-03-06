@@ -22,7 +22,11 @@
 # Module for determining Java bindings configuration options
 
 # Options to enable Java bindings
-option(ENABLE_java "Enable Java bindings" ON)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_java "Enable Java bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_java "Enable Java bindings" ON)
+endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_java AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "

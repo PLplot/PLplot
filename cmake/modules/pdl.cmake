@@ -20,7 +20,11 @@
 
 # Module for determining configuration options related to PDL examples
 
-option(ENABLE_pdl "Enable Perl/PDL examples in tests" OFF)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_pdl "Enable Perl/PDL examples in tests" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_pdl "Enable Perl/PDL examples in tests" OFF)
+endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_pdl)
   if(PERL_FOUND)

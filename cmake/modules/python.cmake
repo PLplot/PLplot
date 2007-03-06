@@ -20,7 +20,11 @@
 # Module for determining Python bindings configuration options
 
 # Options to enable Python bindings
-option(ENABLE_python "Enable Python bindings" ON)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_python "Enable Python bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_python "Enable Python bindings" ON)
+endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_python AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "

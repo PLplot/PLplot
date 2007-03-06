@@ -19,7 +19,11 @@
 
 # Module for determining Ada bindings configuration options
 
-option(ENABLE_ada "Enable Ada bindings" OFF)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_ada "Enable Ada bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_ada "Enable Ada bindings" OFF)
+endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ada)
   find_library(GNAT_LIB gnat)

@@ -22,7 +22,11 @@
 # Module for determining C++ bindings configuration options
 
 # Option to enable C++ bindings
-OPTION(ENABLE_cxx "Enable C++ bindings" ON)
+if(DEFAULT_NO_BINDINGS)
+  OPTION(ENABLE_cxx "Enable C++ bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  OPTION(ENABLE_cxx "Enable C++ bindings" ON)
+endif(DEFAULT_NO_BINDINGS)
 
 IF (ENABLE_cxx)
 # Check if "using namespace std;" works

@@ -20,10 +20,17 @@
 # Module for determining all tcl-related configuration options not directly
 # related to the tk device driver.
 
-option(ENABLE_tcl "Enable Tcl bindings" ON)
-option(ENABLE_itcl "Enable incr Tcl interface code" ON)
-option(ENABLE_tk "Enable Tk interface code" ON)
-option(ENABLE_itk "Enable incr TK interface code" ON)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_tcl "Enable Tcl bindings" OFF)
+  option(ENABLE_itcl "Enable incr Tcl interface code" OFF)
+  option(ENABLE_tk "Enable Tk interface code" OFF)
+  option(ENABLE_itk "Enable incr TK interface code" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_tcl "Enable Tcl bindings" ON)
+  option(ENABLE_itcl "Enable incr Tcl interface code" ON)
+  option(ENABLE_tk "Enable Tk interface code" ON)
+  option(ENABLE_itk "Enable incr TK interface code" ON)
+endif(DEFAULT_NO_BINDINGS)
 
 # Depending on these above options and system resources may also determine
 # the following variables which are largely self-explantory unless documented

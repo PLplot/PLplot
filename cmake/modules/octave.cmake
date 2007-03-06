@@ -20,7 +20,11 @@
 # Module for determining octave bindings configuration options
 
 # Options to enable Octave bindings
-option(ENABLE_octave "Enable Octave bindings" ON)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_octave "Enable Octave bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_octave "Enable Octave bindings" ON)
+endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_octave AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
