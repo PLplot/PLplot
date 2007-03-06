@@ -34,18 +34,12 @@
 if(PLD_gcw)
   if(NOT PKGCONFIG_EXECUTABLE)
     message(STATUS 
-    "WARNING: pkg-config not found. Setting PLD_gcw and ENABLE_pygcw to OFF."
+    "WARNING: pkg-config not found. Setting PLD_gcw to OFF."
     )
     set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
-    set(ENABLE_pygcw OFF)
   endif(NOT PKGCONFIG_EXECUTABLE)
 endif(PLD_gcw)
 if(PLD_gcw)
-  if(ENABLE_python)
-    set(ENABLE_pygcw ON)
-  else(ENABLE_python)
-    set(ENABLE_pygcw OFF)
-  endif(ENABLE_python)
 # linkflags and cflags ignored because not used in autotools side and
 # there is a question whether all that ton of extra potentially interfering
 # libraries might be causing a segfault that is observed for the
@@ -62,18 +56,16 @@ if(PLD_gcw)
       set(gcw_LINK_FLAGS "${linkflags1}")
     else(linkflags1 AND cflags1)
       message(STATUS
-      "WARNING: libgnomeprintui-2.2 not found.  Setting PLD_gcw and "
-      "ENABLE_pygcw to OFF."
+      "WARNING: libgnomeprintui-2.2 not found.  Setting PLD_gcw "
+      "to OFF."
       )
       set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
-      set(ENABLE_pygcw OFF)
     endif(linkflags1 AND cflags1)
 #  else(linkflags AND cflags)
 #    message(STATUS "WARNING: libgnomeui-2.0 not found.  "
-#    "Setting PLD_gcw and ENABLE_pygcw to OFF."
+#    "Setting PLD_gcw to OFF."
 #    )
 #    set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
-#    set(ENABLE_pygcw OFF)
 #  endif(linkflags AND cflags)
 endif(PLD_gcw)
 if(PLD_gcw)
@@ -94,18 +86,53 @@ if(PLD_gcw)
   if(NOT gcw_HEADERS)
     message(STATUS
     "WARNING: Required headers not found. "
-    "Setting PLD_gcw and ENABLE_pygcw to OFF."
+    "Setting PLD_gcw to OFF."
     )
     set(PLD_gcw OFF CACHE BOOL "Enable gcw device" FORCE)
-    set(ENABLE_pygcw OFF)
   endif(NOT gcw_HEADERS)
 endif(PLD_gcw)
+
+if(PLD_gcw)
+  if(DEFAULT_NO_BINDINGS)
+    option(ENABLE_gnome2 "Enable Gnome2 bindings" OFF)
+    option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
+  else(DEFAULT_NO_BINDINGS)
+    option(ENABLE_gnome2 "Enable Gnome2 bindings" ON)
+    option(ENABLE_pygcw "Enable Python Gnome2 bindings" ON)
+  endif(DEFAULT_NO_BINDINGS)
+else(PLD_gcw)
+  message(STATUS
+  "WARNING: PLD_gcw is OFF so "
+  "Setting ENABLE_gnome2 and ENABLE_pygcw to OFF."
+  )
+  set(ENABLE_gnome2 OFF CACHE BOOL "Enable Gnome2 bindings" FORCE)
+  set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
+endif(PLD_gcw)
+  
+if(ENABLE_gnome2)
+  set(gcw_true "")
+  set(gcw_false "#")
+else(ENABLE_gnome2)
+  set(gcw_true "#")
+  set(gcw_false "")
+endif(ENABLE_gnome2)
+
 if(PLD_gcw)
   if(ENABLE_DYNDRIVERS)
-    set(gcw_SOURCE
-    ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
-    )
-    set(gcw_TARGETS plplotgnome2${LIB_TAG})
+    if(ENABLE_gnome2)
+      set(gcw_SOURCE
+      ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
+      )
+      set(gcw_TARGETS plplotgnome2${LIB_TAG})
+    else(ENABLE_gnome2)
+      # if gnome2 disabled, then must include full source and forget
+      # gcw_TARGETS for this dynamic device.
+      set(gcw_SOURCE
+      ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/plplotcanvas.c
+      ${CMAKE_SOURCE_DIR}/bindings/gnome2/lib/gcw-lib.c
+      ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
+      )
+    endif(ENABLE_gnome2)
   else(ENABLE_DYNDRIVERS)
     # N.B. no gcw_TARGETS here since use appropriate source code (see below)
     # instead to break circular linking.
@@ -121,7 +148,16 @@ if(PLD_gcw)
     )
   endif(ENABLE_DYNDRIVERS)
 endif(PLD_gcw)
-if(PLD_gcw AND ENABLE_pygcw)
+
+if(ENABLE_pygcw AND NOT ENABLE_python)
+  message(STATUS
+  "WARNING: Python is disabled so "
+  "Setting ENABLE_pygcw to OFF."
+  )
+  set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
+endif(ENABLE_pygcw AND NOT ENABLE_python)
+
+if(ENABLE_pygcw)
   pkgconfig(pygtk-2.0 includedir libdir linkflags cflags)
   if(linkflags AND cflags)
     pkgconfig(gnome-python-2.0 includedir libdir linkflags1 cflags1)
@@ -146,19 +182,19 @@ if(PLD_gcw AND ENABLE_pygcw)
           message(STATUS "WARNING: pygtk/codegen not found.  "
 	  "Setting ENABLE_pygcw to OFF."
 	  )
-	  set(ENABLE_pygcw OFF)
+          set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
 	endif(NOT codegen)
       else(pygcw_HEADERS)
         message(STATUS "WARNING: required headers not found.  "
 	"Setting ENABLE_pygcw to OFF."
 	)
-	set(ENABLE_pygcw OFF)
+        set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
       endif(pygcw_HEADERS)
     else(linkflags1 AND cflags1)
       message(STATUS "WARNING: gnome-python-2.0 not found. "
       "Setting ENABLE_pygcw to OFF."
       )
-      set(ENABLE_pygcw OFF)
+      set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
     endif(linkflags1 AND cflags1)
   else(linkflags AND cflags)
     message(STATUS "WARNING: pygtk-2.0 not found.  "
@@ -166,13 +202,4 @@ if(PLD_gcw AND ENABLE_pygcw)
     )
     set(ENABLE_pygcw OFF)
   endif(linkflags AND cflags)
-endif(PLD_gcw AND ENABLE_pygcw)
-if(PLD_gcw)
-  set(gcw_true "")
-  set(gcw_false "#")
-  set(ENABLE_gnome2 ON)
-else(PLD_gcw)
-  set(gcw_true "#")
-  set(gcw_false "")
-  set(ENABLE_gnome2 OFF)
-endif(PLD_gcw)
+endif(ENABLE_pygcw)
