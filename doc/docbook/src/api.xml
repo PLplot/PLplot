@@ -10091,6 +10091,7 @@ characters and their corresponding decimal ASCII values:
     <para>
       This function is used in example 15.
     </para>
+
   </sect1>
 
   <sect1 id="plsmaj" renderas="sect3">
@@ -10588,6 +10589,14 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plssub(nx, ny)</function>
+    </para>
+
+    <para>
+      This function is examples 1,2,14,21,25,27.
+    </para>
+
   </sect1>
 
   <sect1 id="plssym" renderas="sect3">
@@ -10639,6 +10648,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plssym(def, scale)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -10697,6 +10714,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plstar(nx, ny)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -10771,6 +10796,26 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plstart(device, nx, ny)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: <function>plstart(nx, ny, device)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -10847,6 +10892,14 @@ characters and their corresponding decimal ASCII values:
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plstripa(id, p, x, y)</function>
+    </para>
+
+    <para>
+      This function is used in example 17.
+    </para>
 
   </sect1>
 
@@ -11122,6 +11175,26 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline, labx, laby, labz)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  Perl/PDL: <function>plstripc(xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, id, xspec, ypsec, legline, labx, laby, labtop)</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 17.
+    </para>
+
   </sect1>
 
   <sect1 id="plstripd" renderas="sect3">
@@ -11158,6 +11231,14 @@ stripchart
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plstripd(id)</function>
+    </para>
+
+    <para>
+      This function is used in example 17.
+    </para>
 
   </sect1>
 
@@ -11234,6 +11315,14 @@ stripchart
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plstyl(nels, mark, space)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,9,14.
+    </para>
 
   </sect1>
 
@@ -11410,6 +11499,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsurf3d(x, y, z, opt, clevel)</function>
+    </para>
+
+    <para>
+      This function is used in example 8.
+    </para>
+
   </sect1>
 
   <sect1 id="plsvect" renderas="sect3">
@@ -11478,6 +11575,14 @@ stripchart
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsvect(arrowx, arrowy, fill)</function>
+    </para>
+
+    <para>
+      This function is used in example 22.
+    </para>
 
   </sect1>
 
@@ -11558,6 +11663,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsvpa(xmin, xmax, ymin, ymax)</function>
+    </para>
+
+    <para>
+      This function is used in example 10.
+    </para>
+
   </sect1>
 
   <sect1 id="plsxax" renderas="sect3">
@@ -11615,6 +11728,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsxax(digmax, digits)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="plsyax" renderas="sect3">
@@ -11669,6 +11790,14 @@ stripchart
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plsyax(digmax, digits)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,14.
+    </para>
 
   </sect1>
 
@@ -11748,6 +11877,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plsym(x, y, code)</function>
+    </para>
+
+    <para>
+      This function is used in example 7.
+    </para>
+
   </sect1>
 
   <sect1 id="plszax" renderas="sect3">
@@ -11803,6 +11940,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plszax(digmax, digits)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
   </sect1>
 
   <sect1 id="pltext" renderas="sect3">
@@ -11834,6 +11979,14 @@ stripchart
       command is ignored.  It is also ignored on devices which only support
       a single window or use a different method for shifting focus (see
       also &plgra;).
+    </para>
+
+    <para>
+      Redacted form: <function>pltext()</function>
+    </para>
+
+    <para>
+      This function is used in example 1.
     </para>
 
   </sect1>
@@ -11873,6 +12026,14 @@ stripchart
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plvasp(aspect)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
 
   </sect1>
 
@@ -11994,6 +12155,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plvect(u, v, scale, pltr, pltr_data)</function>
+    </para>
+
+    <para>
+      This function is used in example 22.
+    </para>
+
   </sect1>
 
   <sect1 id="plvpas" renderas="sect3">
@@ -12087,6 +12256,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plvpas(xmin, xmax, ymin, ymax, aspect)</function>
+    </para>
+
+    <para>
+      This function is used in example 9.
+    </para>
+
   </sect1>
 
   <sect1 id="plvpor" renderas="sect3">
@@ -12167,6 +12344,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plvpor(xmin, xmax, ymin, ymax)</function>
+    </para>
+
+    <para>
+      This function is used in examples 2,6-8,10,11,15,16,18,21,23,24,26,27.
+    </para>
+
   </sect1>
 
   <sect1 id="plvsta" renderas="sect3">
@@ -12189,6 +12374,14 @@ stripchart
       Sets up a standard viewport, leaving a left-hand margin of seven
       character heights, and four character heights around the other three
       sides.
+    </para>
+
+    <para>
+      Redacted form: <function>plvsta()</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,12,14,17,25.
     </para>
 
   </sect1>
@@ -12381,6 +12574,14 @@ stripchart
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plw3d(basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az)</function>
+    </para>
+
+    <para>
+      This function is examples 8,11,18,21.
+    </para>
+
   </sect1>
 
   <sect1 id="plwid" renderas="sect3">
@@ -12421,6 +12622,14 @@ dependent.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plwid(width)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,2.
+    </para>
 
   </sect1>
 
@@ -12494,6 +12703,14 @@ dependent.
       </varlistentry>
     </variablelist>
 
+    <para>
+      Redacted form: <function>plwind(xmin, xmax, ymin, ymax)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,2,4,6-12,14-16,18,21,23-27.
+    </para>
+
   </sect1>
   <sect1 id="plxormod" renderas="sect3">
     <title>
@@ -12551,6 +12768,14 @@ dependent.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plxormod(mode, status)</function>
+    </para>
+
+    <para>
+      This function is used in examples 1,20.
+    </para>
 
   </sect1>
 </chapter>
