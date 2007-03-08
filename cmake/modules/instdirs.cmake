@@ -71,16 +71,6 @@ ${CMAKE_INSTALL_DATADIR}/man
 CACHE PATH "install location for man documentation"
 )
 
-mark_as_advanced(
-CMAKE_INSTALL_EXEC_PREFIX
-CMAKE_INSTALL_BINDIR
-CMAKE_INSTALL_DATADIR
-CMAKE_INSTALL_LIBDIR
-CMAKE_INSTALL_INCLUDEDIR
-CMAKE_INSTALL_INFODIR
-CMAKE_INSTALL_MANDIR
-)
-
 # Configured PLplot install locations determined from user-updatable
 # cached values above.
 
