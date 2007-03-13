@@ -21,6 +21,7 @@
 set(ada_STRING_INDICES
 "01"
 "10"
+"12"
 )
 
 if(BUILD_TEST)
