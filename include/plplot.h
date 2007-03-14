@@ -543,6 +543,7 @@ typedef struct {
 #define    plprec	c_plprec
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
+#define    plptex3	c_plptex3
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
@@ -1142,6 +1143,12 @@ c_plpsty(PLINT patt);
 
 PLDLLIMPEXP void
 c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
+
+/* Prints out "text" at world cooordinate (x,y,z). */
+
+PLDLLIMPEXP void
+c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
+	     PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
 /* Replays contents of plot buffer to current device/file. */
 

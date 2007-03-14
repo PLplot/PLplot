@@ -1269,7 +1269,6 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
     // local storage
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
-//    PLFLT cxx, cxy, cyx, cyy, cyz;
     PLFLT chrdef, chrht;
     
 	// calculated
@@ -1285,7 +1284,6 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     }
 	
 	// get plotting environment information
-//    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     plP_gdom(&xmin, &xmax, &ymin, &ymax);
     plP_grange(&zscale, &zmin, &zmax);
     plgchr(&chrdef, &chrht);
@@ -1571,6 +1569,81 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 		}
 
 	}
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plptex3()
+ *
+ * Prints out "text" at world cooordinate (wx,wy,wz).
+ *
+ * The text is drawn parallel to the line between (wx,wy,wz) and 
+ * (wx+dx,wy+dy,wz+dz).
+ *
+ * The text is sheared so that it is "vertically" parallel to the
+ * line between (wx,wy,wz) and (wx+sx, wy+sy, wy+sz). If sx=sy=sz=0 then
+ * the text is simply rotated to parallel to the baseline.
+ *
+ * "just" adjusts the horizontal justification of the string:
+ *	just = 0.0 => left hand edge of string is at (wx,wy)
+ *	just = 1.0 => right hand edge of string is at (wx,wy)
+ *	just = 0.5 => center of string is at (wx,wy) etc.
+ *
+ * Calculations are done in physical coordinates.
+ *
+\*--------------------------------------------------------------------------*/
+
+void
+c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
+	PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text)
+{
+    PLFLT xpc, ypc, xrefpc, yrefpc, tpcx, tpcy, shift;
+    PLFLT theta, phi, xform[4];
+
+	// check that the plotting environment is set up
+    if (plsc->level < 3) {
+		plabort("plptex3: Please set up window first");
+		return;
+    }
+
+	// compute text x,y location in physical coordinates	
+	xpc = plP_wcpcx(plP_w3wcx(wx, wy, wz));
+	ypc = plP_wcpcy(plP_w3wcy(wx, wy, wz));
+		
+	// determine angle to rotate text in the x-y plane
+	tpcx = plP_wcpcx(plP_w3wcx(wx+dx, wy+dy, wz+dz));
+	tpcy = plP_wcpcy(plP_w3wcy(wx+dx, wy+dy, wz+dz));
+	theta = atan2(tpcy - ypc, tpcx - xpc);
+
+	// determine angle to shear text in the x-y plane
+	
+	if(sx == sy == sz == 0.0){
+		phi = 0.0;
+	} else {
+		tpcx = plP_wcpcx(plP_w3wcx(wx+sx, wy+sy, wz+sz));
+		tpcy = plP_wcpcy(plP_w3wcy(wx+sx, wy+sy, wz+sz));
+		phi = atan2(tpcy - ypc, tpcx - xpc);
+	}
+	
+	// compute the reference point	
+	xpc = plP_dcmmx(plP_pcdcx(xpc));
+	ypc = plP_dcmmy(plP_pcdcy(ypc));
+	
+	shift = plstrl(text) * just;
+	xrefpc = xpc + cos(theta) * shift;
+	yrefpc = ypc + sin(theta) * shift;
+	
+	xpc = plP_mmpcx(xpc);
+	ypc = plP_mmpcy(ypc);
+	xrefpc = plP_mmpcx(xrefpc);
+	yrefpc = plP_mmpcy(yrefpc);
+
+	// compute the transform
+    xform[0] = cos(theta);
+    xform[1] = cos(theta) * sin(phi) - sin(theta);
+    xform[2] = sin(theta);
+    xform[3] = sin(theta) * cos(phi) + cos(theta);
+
+	plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);	
 }
 
 #undef PLSYM_H
