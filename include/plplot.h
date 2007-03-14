@@ -531,6 +531,7 @@ typedef struct {
 #define    plmeshc	c_plmeshc
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
+#define    plmtex3	c_plmtex3
 #define    plot3d	c_plot3d
 #define    plot3dc	c_plot3dc
 #define    plot3dcl	c_plot3dcl
@@ -1051,6 +1052,12 @@ PLDLLIMPEXP void
 c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	 const char *text);
 
+/* Prints out "text" at specified position relative to viewport (3D)*/
+
+PLDLLIMPEXP void
+c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+	 const char *text);
+	 
 /* Plots a 3-d representation of the function z[x][y]. */
 
 PLDLLIMPEXP void
