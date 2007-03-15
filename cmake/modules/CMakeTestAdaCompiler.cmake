@@ -15,36 +15,25 @@ end;
   "
   )
 
-#  FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
-#  "
-#set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-#project(test Ada)
-#add_executable(testadacompiler testadacompiler.adb)
-#  "
-#  )
-
-  execute_process(
-  COMMAND ${GNAT_EXECUTABLE_BUILDER} testadacompiler.adb
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp
-  RESULT_VARIABLE CMAKE_Ada_COMPILER_WORKS
-  OUTPUT_VARIABLE OUTPUT
-  ERROR_VARIABLE OUTPUT
+  FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
+  "
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+project(test Ada)
+add_executable(testadacompiler testadacompiler.adb)
+  "
   )
-  if(NOT CMAKE_Ada_COMPILER_WORKS)
-    set(CMAKE_Ada_COMPILER_WORKS ON)
-  else(NOT CMAKE_Ada_COMPILER_WORKS)
-    set(CMAKE_Ada_COMPILER_WORKS OFF)
-  endif(NOT CMAKE_Ada_COMPILER_WORKS)
 
-# Other languages avoid infinite try_compile recursion, but I don't know
-# how to do that for Ada.  Anyhow, use the above execute_process alternative
-# instead for now.
-#  try_compile(CMAKE_Ada_COMPILER_WORKS
-#  ${CMAKE_BINARY_DIR}
-#  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp
-#  projectName
-#  OUTPUT_VARIABLE OUTPUT
-#  )
+# To avoid try_compile recurse error, use any binary directory other than
+# ${CMAKE_BINARY_DIR}.  The choice of
+# bindir = ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp is
+# especially advantageous since it makes an in-source build which
+# means that no special variables need to be set to find files.
+  try_compile(CMAKE_Ada_COMPILER_WORKS
+  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp
+  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp
+  projectName
+  OUTPUT_VARIABLE OUTPUT
+  )
   SET(ADA_TEST_WAS_RUN 1)
 ENDIF(NOT CMAKE_Ada_COMPILER_WORKS)
 
