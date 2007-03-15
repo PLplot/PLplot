@@ -18,8 +18,13 @@ end;
   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
   "
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-project(test Ada)
-add_executable(testadacompiler testadacompiler.adb)
+set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
+add_custom_target(temporary ALL
+COMMAND ${CMAKE_COMMAND} -E echo 
+\"This is a no-op rather than a real Ada build test\"
+)
+#project(test Ada)
+#add_executable(testadacompiler testadacompiler.adb)
   "
   )
 
