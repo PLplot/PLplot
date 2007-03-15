@@ -177,10 +177,10 @@ IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
     # Temporary fixup for one user's Ada/Mac OS X problems when using the
     # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
     SET(CMAKE_Ada_LINK_EXECUTABLE
-    "${GNAT_EXECUTABLE_BUILDER} <FLAGS> <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -largs <LINK_LIBRARIES> -lgcc_s.1")
+    "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES> -lgcc_s.1")
   ELSE(APPLE)
     SET(CMAKE_Ada_LINK_EXECUTABLE
-    "${GNAT_EXECUTABLE_BUILDER} <FLAGS> <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -largs <LINK_LIBRARIES>")
+    "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES>")
   ENDIF(APPLE)
 ENDIF(NOT CMAKE_Ada_LINK_EXECUTABLE)
 
