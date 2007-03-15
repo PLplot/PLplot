@@ -82,6 +82,8 @@
   }
 #endif
 
+#define makeunixslash( b ) do { char *I; for (I=b;*I!=0;*I++) if (*I=='\\') *I='/';}while(0)
+
 #include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
@@ -528,9 +530,14 @@ void plD_FreeType_init(PLStream *pls)
 #if defined(MSDOS) || defined(WIN32)
     static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
 				       "symbol.ttf"};
+    char WINDIR_PATH[255];
+    char *b;
+    b=getenv("WINDIR");
+    strcpy(WINDIR_PATH,b);
 #else
     const char *default_unix_font_dir=PL_FREETYPE_FONT_DIR;
 #endif
+
 
     if (pls->FT) {
 	plwarn("Freetype seems already to have been initialised!");
@@ -560,14 +567,31 @@ void plD_FreeType_init(PLStream *pls)
  * At present, it only looks in two places, on one drive. I might change this
  * soon.
  */
-    if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
-        strcpy(font_dir,"c:/windows/fonts/");
-    }
-    else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
-        strcpy(font_dir,"c:/windows/system/");
+    if (WINDIR_PATH==NULL)
+    {
+        if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
+            strcpy(font_dir,"c:/windows/fonts/");
+        }
+        else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
+            strcpy(font_dir,"c:/windows/system/");
+        }
+        else
+        plwarn("Could not find font path; I sure hope you have defined fonts manually !");
     }
     else
-	plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+    {
+      strcat(WINDIR_PATH,"\\fonts\\arial.ttf");
+      if (access(WINDIR_PATH, F_OK)==0)
+        {
+          b=strrchr(WINDIR_PATH,'\\');
+          b++;
+          *b=0;
+          makeunixslash(WINDIR_PATH);
+          strcpy(font_dir,WINDIR_PATH);
+        }
+      else
+        plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+    }
 
     if (pls->debug) fprintf( stderr, "%s\n", font_dir ) ;
 #else
