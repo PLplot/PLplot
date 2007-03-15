@@ -26,11 +26,13 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ada)
-  find_library(GNAT_LIB gnat)
+  find_library(GNAT_LIB NAMES gnat gnat-4.1)
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
       "gnat library not found. Disabling ada bindings")
-      set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+  else(NOT GNAT_LIB)
+    message(STATUS "FOUND gnat library ${GNAT_LIB}")
   endif(NOT GNAT_LIB)
 endif(ENABLE_ada)
 
