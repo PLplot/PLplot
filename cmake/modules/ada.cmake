@@ -26,7 +26,7 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ada)
-  find_library(GNAT_LIB NAMES gnat gnat-4.1)
+  find_library(GNAT_LIB NAMES gnat gnat-4.1 gnat-4.2 gnat-4.3)
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
       "gnat library not found. Disabling ada bindings")
