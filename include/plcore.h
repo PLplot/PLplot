@@ -268,6 +268,9 @@ static PLDispatchInit static_device_initializers[] = {
     plD_dispatch_init_psttfm,
     plD_dispatch_init_psttfc,
 #endif
+#if defined(PLD_xwinttf) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_xwinttf,
+#endif
     NULL
 };
 

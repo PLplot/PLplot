@@ -89,6 +89,7 @@ void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
 void plD_dispatch_init_wxwidgets	( PLDispatchTable *pdt );
 void plD_dispatch_init_svg	( PLDispatchTable *pdt );
 void plD_dispatch_init_pdf	( PLDispatchTable *pdt );
+void plD_dispatch_init_xwinttf	( PLDispatchTable *pdt );
 
 /* Prototypes for plot buffer calls. */
 
