@@ -831,7 +831,13 @@ plP_w3wcx(PLFLT x, PLFLT y, PLFLT z);
 PLFLT
 plP_w3wcy(PLFLT x, PLFLT y, PLFLT z);
 
-	/* Driver calls */
+/* Returns the rotation and shear angle from a plplot transformation matrix */
+
+void
+plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear);
+
+
+    /* Driver calls */
 
 /* Initialize device. */
 

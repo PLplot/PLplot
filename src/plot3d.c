@@ -2364,3 +2364,22 @@ pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
 	*cy = (PLINT) (sy1 + (fb * y21) / fa + .5);
     }
 }
+
+/*--------------------------------------------------------------------------*\
+ * void plRotationShear
+ *
+ * Calculates the rotation and shear angles from a plplot transformation matrix
+\*--------------------------------------------------------------------------*/
+
+void
+plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear)
+{
+  *rotation = acos(xFormMatrix[0]);
+  if(xFormMatrix[2] < 0.0){
+    *rotation = -*rotation;
+  }
+
+  *shear = -asin(xFormMatrix[0]*xFormMatrix[1] +
+		 xFormMatrix[2]*xFormMatrix[3]);  
+}
+
