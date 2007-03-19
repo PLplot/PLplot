@@ -376,7 +376,9 @@ void proc_str (PLStream *pls, EscText *args)
    short lastOffset = 0;
    double ftHt;
    PLUNICODE fci;
-   PLFLT *t = args->xform;
+   PLFLT rotation, shear, cos_rot, sin_rot, sin_shear;
+   PLFLT t[4];
+   //   PLFLT *t = args->xform;
    PLUNICODE *ucs4 = args->unicode_array;
 
    // check that we got unicode
@@ -392,11 +394,21 @@ void proc_str (PLStream *pls, EscText *args)
    // determine the font height
    ftHt = 1.5 * pls->chrht * DPI/25.4;
 
+   // Calculate the tranformation matrix for SVG based on the
+   // transformation matrix provived by PLplot.
+   plRotationShear(args->xform, &rotation, &shear);
+   cos_rot = cos(rotation);
+   sin_rot = sin(rotation);
+   sin_shear = sin(shear);
+   t[0] = cos_rot;
+   t[1] = sin_rot;
+   t[2] = sin_rot + cos_rot * sin_shear;
+   t[3] = -cos_rot + sin_rot * sin_shear;
+
    // Apply coordinate transform for text display.
    // The transformation also defines the location of the text in x and y.
-   
    svg_open("g");
-   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], t[2], -t[1], -t[3], args->x, (int)(args->y - 0.3*ftHt + 0.5));
+   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], t[1], t[2], t[3], args->x, (int)(args->y - 0.3*ftHt + 0.5));
    svg_general(">\n");
 
    //--------------
