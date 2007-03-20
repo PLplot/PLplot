@@ -229,6 +229,9 @@
 /* Define if ps driver is present */
 #cmakedefine PLD_ps
 
+/* Define if pstex driver is present */
+#cmakedefine PLD_pstex
+
 /* Define if psttf driver is present */
 #cmakedefine PLD_psttf
 
