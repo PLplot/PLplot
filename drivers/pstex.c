@@ -62,7 +62,7 @@ plD_init_pstex(PLStream *pls)
     plD_init_psm(pls); /* init monochrome postscript driver */
 
   pls->dev_text = 1; /* want to draw text */
-	pls->dev_unicode = 0; /* want unicode */
+	pls->dev_unicode = 0; /* don't want unicode */
 
   /* open latex output file */
   strncpy(ofile, pls->FileName, 80);
