@@ -507,8 +507,24 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
     }
     if (ucs4[i] < PL_FCI_MARK){	// not a font change
       if (ucs4[i] != (PLUNICODE)plplotEsc) {  // a character to display
-	ucs4_to_utf8(ucs4[i],utf8);
-	strcat(pangoMarkupString, utf8);
+	// we have to handle "<", ">" and "&" separately 
+	// since they throw off the XML
+	switch(ucs4[i])
+	  {
+	  case 38:
+	    strcat(pangoMarkupString, "&#38;");
+	    break;
+	  case 60:
+	    strcat(pangoMarkupString, "&#60;");
+	    break;
+	  case 62:
+	    strcat(pangoMarkupString, "&#62;");
+	    break;
+	  default:
+	    ucs4_to_utf8(ucs4[i],utf8);
+	    strcat(pangoMarkupString, utf8);
+	    break;
+	  }
 	i++;
 	continue;
       }
@@ -560,7 +576,7 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
 
   strcat(pangoMarkupString, "</span>");
 
-  //  printf("%s\n", pangoMarkupString);
+  //printf("%s\n", pangoMarkupString);
 
   return pangoMarkupString;
 }
