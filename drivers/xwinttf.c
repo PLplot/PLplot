@@ -47,6 +47,7 @@
 
 /* constants */
 
+#define MAXPAGES 50
 #define DPI 72
 #define XWINTTF_DEFAULT_X 720
 #define XWINTTF_DEFAULT_Y 540
@@ -57,16 +58,17 @@
 
 char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf";
 
+static int currentPage = -1;
 static int XScreen;
 static Display *XDisplay = NULL;
 static Window rootWindow ;
-static Window XWindow;
+static Window XWindow[MAXPAGES];
 
 static int windowXSize = XWINTTF_DEFAULT_X;
 static int windowYSize = XWINTTF_DEFAULT_Y;
 
-static cairo_surface_t *cairoSurface;
-static cairo_t *cairoContext;
+static cairo_surface_t *cairoSurface[MAXPAGES];
+static cairo_t *cairoContext[MAXPAGES];
 
 //-----------------------------------------------
 // Font style and weight lookup tables (copied
@@ -165,8 +167,8 @@ void plD_init_xwinttf(PLStream *pls)
   int i;
   char *a;
 
-  pls->termin = 1;			/* interactive device */
-  pls->color = 1;			/* supports color */
+  pls->termin = 1;		/* interactive device */
+  pls->color = 1;		/* supports color */
   pls->width = 1;
   pls->verbose = 1;
   pls->bytecnt = 0;
@@ -193,6 +195,7 @@ void plD_init_xwinttf(PLStream *pls)
 
   XDisplay = XOpenDisplay(NULL);
   if(XDisplay == NULL){
+    printf("Failed to open X Windows display\n");
     // some sort of error here
   }
   XScreen = DefaultScreen(XDisplay);
@@ -208,6 +211,12 @@ void plD_init_xwinttf(PLStream *pls)
       strcpy(familyLookup[i],defaultFamilyLookup[i]);
     }
   }
+
+  // Set all cairo pointers to NULL
+  for(i=0;i<MAXPAGES;i++){
+    cairoSurface[i] = NULL;
+    cairoContext[i] = NULL;
+  }
 }
 
 //----------------------------------------------------------------------
@@ -218,38 +227,46 @@ void plD_init_xwinttf(PLStream *pls)
 
 void plD_bop_xwinttf(PLStream *pls)
 {
+  char plotTitle[40];
   cairo_matrix_t *flipVertical;
   Visual *defaultVisual;
   XGCValues values;
-  
+
+  // Increment the page number.
+  currentPage++;
+  if(currentPage > MAXPAGES){
+    currentPage = 0;
+  }
+  pls->page++;
+
+  // Initialize plot title
+  sprintf(plotTitle, "PLplot (%d)", currentPage);
+
   // Create a X Window.
-  XWindow = XCreateSimpleWindow(XDisplay, rootWindow, 0, 0, windowXSize, windowYSize, 
-				1, BlackPixel(XDisplay, XScreen), BlackPixel(XDisplay, XScreen));
-  XStoreName(XDisplay, XWindow, "PLplot");
-  XSelectInput(XDisplay, XWindow, ExposureMask|ButtonPressMask);
-  XMapWindow(XDisplay, XWindow);
+  XWindow[currentPage] = XCreateSimpleWindow(XDisplay, rootWindow, 0, 0, windowXSize, windowYSize, 
+					     1, BlackPixel(XDisplay, XScreen), BlackPixel(XDisplay, XScreen));
+  XStoreName(XDisplay, XWindow[currentPage], plotTitle);
+  XSelectInput(XDisplay, XWindow[currentPage], ExposureMask|ButtonPressMask);
+  XMapWindow(XDisplay, XWindow[currentPage]);
 
   // Create an cairo surface & context that are associated with the window.
   defaultVisual = DefaultVisual(XDisplay, 0);
-  cairoSurface = cairo_xlib_surface_create(XDisplay, XWindow, defaultVisual, windowXSize, windowYSize);
-  cairoContext = cairo_create(cairoSurface);
+  cairoSurface[currentPage] = cairo_xlib_surface_create(XDisplay, XWindow[currentPage], defaultVisual, windowXSize, windowYSize);
+  cairoContext[currentPage] = cairo_create(cairoSurface[currentPage]);
 
   // Fill in the window with the background color.
-  cairo_rectangle(cairoContext, 0.0, 0.0, windowXSize, windowYSize);
-  cairo_set_source_rgb(cairoContext,
+  cairo_rectangle(cairoContext[currentPage], 0.0, 0.0, windowXSize, windowYSize);
+  cairo_set_source_rgb(cairoContext[currentPage],
 		       pls->cmap0[0].r,
 		       pls->cmap0[0].g,
 		       pls->cmap0[0].b);
-  cairo_fill(cairoContext);
+  cairo_fill(cairoContext[currentPage]);
 
   // Invert the coordinate system so the graphs are drawn right side up.
   flipVertical = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
   cairo_matrix_init(flipVertical, 1.0, 0.0, 0.0, -1.0, 0.0, windowYSize);
-  cairo_set_matrix(cairoContext, flipVertical);
+  cairo_set_matrix(cairoContext[currentPage], flipVertical);
   free(flipVertical);
-
-  // Increment the page number.
-  pls->page++;
 }
 
 //---------------------------------------------------------------------
@@ -262,9 +279,9 @@ void plD_line_xwinttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
   set_current_context(pls);
 
-  cairo_move_to(cairoContext, (double) x1a, (double) y1a);
-  cairo_line_to(cairoContext, (double) x2a, (double) y2a);
-  cairo_stroke(cairoContext);
+  cairo_move_to(cairoContext[currentPage], (double) x1a, (double) y1a);
+  cairo_line_to(cairoContext[currentPage], (double) x2a, (double) y2a);
+  cairo_stroke(cairoContext[currentPage]);
 }
 
 //---------------------------------------------------------------------
@@ -276,7 +293,7 @@ void plD_line_xwinttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 void plD_polyline_xwinttf(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   poly_line(pls, xa, ya, npts);
-  cairo_stroke(cairoContext);
+  cairo_stroke(cairoContext[currentPage]);
 }
 
 //---------------------------------------------------------------------
@@ -298,11 +315,18 @@ void plD_eop_xwinttf(PLStream *pls)
 
 void plD_tidy_xwinttf(PLStream *pls)
 {
+  int i;
+
   printf("Key <Return> to finish\n");
   getc(stdin);
 
-  cairo_destroy(cairoContext);
-  cairo_surface_destroy(cairoSurface);
+  for(i=0;i<MAXPAGES;i++){
+    if(cairoContext[i] != NULL){
+      cairo_destroy(cairoContext[i]);
+      cairo_surface_destroy(cairoSurface[i]);
+    }
+  }
+
   XCloseDisplay(XDisplay);
   free(XDisplay);
 }
@@ -332,7 +356,7 @@ void plD_esc_xwinttf(PLStream *pls, PLINT op, void *ptr)
     {
     case PLESC_FILL:  // filled polygon
       poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      cairo_fill(cairoContext);
+      cairo_fill(cairoContext[currentPage]);
       break;
     case PLESC_HAS_TEXT: // render rext
       proc_str(pls, (EscText *) ptr);
@@ -391,25 +415,25 @@ void proc_str(PLStream *pls, EscText *args)
   sprintf(fontString, "%s,%s,%s", familyLookup[fontFamily], styleLookup[fontStyle], weightLookup[fontWeight]);
 
   // Convert the escape characters into the appropriate Pango markup
-  textWithPangoMarkup =  ucs4_to_pango_markup_format(args->unicode_array, args->unicode_array_len, fontSize);
+  textWithPangoMarkup = ucs4_to_pango_markup_format(args->unicode_array, args->unicode_array_len, fontSize);
 
   // Create the Pango text layout so we can figure out how big it is
-  layout = pango_cairo_create_layout(cairoContext);
+  layout = pango_cairo_create_layout(cairoContext[currentPage]);
   pango_layout_set_markup(layout, textWithPangoMarkup, -1);
   fontDescription = pango_font_description_from_string(fontString);
   pango_layout_set_font_description(layout, fontDescription);
   pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
 
   // Move to the string reference point
-  cairo_move_to(cairoContext, (double) args->x, (double) args->y);
+  cairo_move_to(cairoContext[currentPage], (double) args->x, (double) args->y);
 
   // Save current transform matrix
-  cairo_save(cairoContext);
+  cairo_save(cairoContext[currentPage]);
 
   // Invert the coordinate system so that the text is drawn right side up
   cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
   cairo_matrix_init(cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
-  cairo_transform(cairoContext, cairoTransformMatrix);
+  cairo_transform(cairoContext[currentPage], cairoTransformMatrix);
 
   // Extract rotation angle and shear from the PLplot tranformation matrix.
   // Compute sines and cosines of the angles as an optimization.
@@ -425,19 +449,19 @@ void proc_str(PLStream *pls, EscText *args)
 		    cos_rot * sin_shear + sin_rot,
 		    -sin_rot * sin_shear + cos_rot,
 		    0,0);
-  cairo_transform(cairoContext, cairoTransformMatrix);
+  cairo_transform(cairoContext[currentPage], cairoTransformMatrix);
   free(cairoTransformMatrix);
 
   // Move to the text starting point
-  cairo_rel_move_to(cairoContext, 
+  cairo_rel_move_to(cairoContext[currentPage], 
 		    (double)(-1.0 * args->just * (double)textXExtent), 
 		    (double)(-0.5 * textYExtent));
 
   // Render the text
-  pango_cairo_show_layout(cairoContext, layout);
+  pango_cairo_show_layout(cairoContext[currentPage], layout);
 
   // Restore the transform matrix to its state prior to the text transform
-  cairo_restore(cairoContext);
+  cairo_restore(cairoContext[currentPage]);
   
   // Free the layout object & the text
   g_object_unref(layout);
@@ -550,11 +574,11 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
 
 void set_current_context(PLStream *pls)
 {
-  cairo_set_source_rgb(cairoContext, 
+  cairo_set_source_rgb(cairoContext[currentPage],
 		       (double)pls->curcolor.r/255.0, 
   		       (double)pls->curcolor.g/255.0,
   		       (double)pls->curcolor.b/255.0);
-  cairo_set_line_width(cairoContext, (double) pls->width);
+  cairo_set_line_width(cairoContext[currentPage], (double) pls->width);
 }
 
 //---------------------------------------------------------------------
@@ -571,8 +595,8 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
 
   set_current_context(pls);
   
-  cairo_move_to(cairoContext, (double) xa[0], (double) ya[0]);
+  cairo_move_to(cairoContext[currentPage], (double) xa[0], (double) ya[0]);
   for(i=1;i<npts;i++){
-    cairo_line_to(cairoContext, (double) xa[i], (double) ya[i]);
+    cairo_line_to(cairoContext[currentPage], (double) xa[i], (double) ya[i]);
   }
 }
