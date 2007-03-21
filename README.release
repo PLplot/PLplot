@@ -25,6 +25,7 @@ INDEX
     1.4.1 ADA language binding
   1.5 Drivers
     1.5.1 wxwidgets applications bindings
+    1.5.2 xwinttf
 
 2. Changes relative to PLplot 5.6.1
   2.1 CMake build system
@@ -37,6 +38,7 @@ INDEX
     2.5.3 wxwidgets
     2.5.4 pdf
     2.5.5 gd, wingcc (freetype)
+
 
 1. Changes relative to PLplot 5.7.2 (the previous development release)
 
@@ -73,6 +75,12 @@ been expanded to include a list of which examples each function is used in
        A wxwidget application interface to PLplot has been added that provides
     binding similar to the Gnome2 bindings. More info here... 
  
+  1.5.2 xwinttf driver
+       This is a new driver for X Windows that uses Cairo for rendering
+    graphics and Pango for rendering text. The graphics and the text are both
+    anti-aliased. It is unicode enabled and Truetype fonts are used by 
+    default.
+
 
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
 
