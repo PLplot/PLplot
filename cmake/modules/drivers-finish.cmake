@@ -44,18 +44,16 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
 	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
 	${${DRIVER}_SOURCE}
 	)
+      elseif(DRIVER STREQUAL "psttf")
+        set(${DRIVER}_SOURCE
+	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cc
+	${${DRIVER}_SOURCE}
+	)
       else(DRIVER STREQUAL "wxwidgets")
-        if(DRIVER STREQUAL "psttf")
-          set(${DRIVER}_SOURCE
-	  ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cc
-	  ${${DRIVER}_SOURCE}
-	  )
-        else(DRIVER STREQUAL "psttf")
-          set(${DRIVER}_SOURCE
-	  ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.c
-	  ${${DRIVER}_SOURCE}
-	  )
-        endif(DRIVER STREQUAL "psttf")
+        set(${DRIVER}_SOURCE
+	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.c
+	${${DRIVER}_SOURCE}
+	)
       endif(DRIVER STREQUAL "wxwidgets")
     endif(APPEND_DRIVER)
   endif(PLD_${DEVICE})
