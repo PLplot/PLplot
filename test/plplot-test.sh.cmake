@@ -46,8 +46,8 @@ echo '
 Usage: plplot-test.sh [OPTIONS]
 
 Options:
-   [--device=DEVICE] (DEVICE = one of psc [default], ps, psttf, psttfc, png, gif, jpeg, cgm,
-                      svg, xfig, or plmeta)
+   [--device=DEVICE] (DEVICE = one of psc [default], ps, psttfc, psttf, pstex,
+                      png, gif, jpeg, cgm,svg, xfig, or plmeta)
    [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, perl, or ada)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
@@ -172,6 +172,11 @@ fe=""
 case "$device" in
    ps|psc)
       dsuffix=ps
+      options=
+      export dsuffix options
+      ;;
+   pstex)
+      dsuffix=eps
       options=
       export dsuffix options
       ;;

@@ -133,6 +133,14 @@ if(PLD_psttf)
   endif(NOT TEST_DEVICE STREQUAL "psttfc")
 endif(PLD_psttf)
 
+if(PLD_pstex)
+  if (NOT TEST_DEVICE STREQUAL "pstex")
+  add_test(examples_pstex
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=pstex"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "pstex")
+endif(PLD_pstex)
+
 if(PLD_png)
   if (NOT TEST_DEVICE STREQUAL "png")
   add_test(examples_png

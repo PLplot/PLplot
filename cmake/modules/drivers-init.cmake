@@ -91,12 +91,9 @@ set(DRIVERS_DEVICE_LIST
 "pdf:pdf:OFF"
 "plmeta:plmeta:ON"
 "ps:ps:ON"
-# Commented out because according to Miguel de Val Borro's experiments, this
-# undocumented device does not build for the default ENABLE_DYNDRIVERS ON.  
-# It does build with ENABLE_DYNDRIVERS OFF, but all attempts at execution 
-# using this device segfault for unknown reasons.  In any case, ps or psttf
-# produce better-looking results than pstex.
-#"pstex:pstex:OFF"
+# Default OFF because this device is not well maintained (it currently
+# segfaults).
+"pstex:pstex:OFF"
 "psttf:psttf:ON"
 "xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
 "versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
