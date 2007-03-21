@@ -59,11 +59,12 @@ procedure x01a is
         xmax := x(x'Last);
         ymin := y(y'First);
         ymax := y(y'Last);
-         for i in xs'Range loop
+        for i in xs'Range loop
             xs(i) := x(i * 10 + 3);
             ys(i) := y(i * 10 + 3);
         end loop;
-         -- Set up the viewport and window using Set_Environment. The range in X is 
+
+        -- Set up the viewport and window using Set_Environment. The range in X is 
         -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
         -- scaled separately (just = 0), and we just draw a labelled 
         -- box (axis = 0). 
@@ -71,13 +72,17 @@ procedure x01a is
         Set_Environment(xmin, xmax, ymin, ymax, Not_Justified, Linear_Box_Plus);
         Set_Color(Yellow);
         Write_Labels(TUB("(x)"), TUB("(y)"), TUB("#frPLplot Example 1 - y=x#u2"));
-         -- Plot the data points
+
+        -- Plot the data points
         Set_Color(Aquamarine);
         Draw_Points(xs, ys, 9);
-         -- Draw the line through the data
+
+        -- Draw the line through the data
         Set_Color(Green);
         Draw_Curve(x, y);
     end plot1;
+
+
     procedure plot2 is
         x, y : Real_Vector (0 .. 99);
     begin
@@ -88,7 +93,8 @@ procedure x01a is
         Set_Environment(-2.0, 10.0, -0.4, 1.2, Not_Justified, Linear_Zero_Axes);
         Set_Color(Yellow);
         Write_Labels(TUB("(x)"), TUB("sin(x)/x"), TUB("#frPLplot Example 1 - Sinc Function"));
-         -- Fill up the arrays
+
+        -- Fill up the arrays
         for i in x'Range loop
             x(i) := (Long_Float(i) - 19.0) / 6.0;
             y(i) := 1.0;
@@ -113,10 +119,12 @@ procedure x01a is
         -- Y range from -1.2 to 1.2.
         Set_Viewport_Standard;
         Set_Viewport_World(0.0, 360.0, -1.2, 1.2);
-         -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
+
+        -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
         Set_Color(Red);
         Box_Around_Viewport(TUB("bcnst"), 60.0, 2, TUB("bcnstv"), 0.2, 2);
-         -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+
+        -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
         -- plstyl expects a pointer! (-- Not Ada.)
         Set_Line_Style(mark1, space1);
         Set_Color(Yellow);
@@ -134,6 +142,7 @@ procedure x01a is
         Set_Color(Aquamarine);
         Draw_Curve(x, y);
     end plot3;
+
 begin   
     -- plplot initialization
     
@@ -145,9 +154,11 @@ begin
     
     -- Get version number, just for kicks
     Put_Line("PLplot library version: " & Get_Version_Number);
-     -- Initialize plplot
+
+    -- Initialize plplot
     Initialize_Plotter;
-     -- Set up the data
+
+    -- Set up the data
     -- Original case
     xscale := 6.0;
     yscale := 1.0;
@@ -156,15 +167,18 @@ begin
     
     -- Do a plot
     plot1;
-     -- Set up the data
+
+    -- Set up the data
     xscale := 1.0;
     yscale := 0.0014;
     yoff   := 0.0185;
+
     -- Do a plot
     Set_Floating_Point_Display_Y(Max_Digits => 5, Field_Digits => 0);
-     plot1;
+    plot1;
     plot2;
     plot3;
-     -- Don't forget to call PLEND to finish off!
+
+    -- Don't forget to call PLEND to finish off!
     Plot_End;
 end x01a;

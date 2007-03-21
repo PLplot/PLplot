@@ -22,7 +22,7 @@
     ----------------------------------------------------------------------------
  
 
--- SOME NOTES ABOUT THE ADA BINDINGS J.B.
+-- SOME NOTES ABOUT THE ADA BINDINGS (JB)
 -- Some C-arguments of the form PLINT *a are supposed to point at 8-bit unsigned chars
 -- and are said to carry information out of the function, according to the PLplot docs.
 -- I hope that this is wrong and that they are really PLINTs like the API says.
@@ -239,17 +239,19 @@ package PLplotThin is
 
     -- Global mode settings 
     -- These override per-option settings 
-
-    PL_PARSE_PARTIAL  : constant Integer := 16#0000#; -- For backward compatibility 
-    PL_PARSE_FULL     : constant Integer := 16#0001#; -- Process fully & exit if error 
-    PL_PARSE_QUIET    : constant Integer := 16#0002#; -- Don't issue messages 
-    PL_PARSE_NODELETE : constant Integer := 16#0004#; -- Don't delete options after 
-    -- processing 
-    PL_PARSE_SHOWALL   : constant Integer := 16#0008#; -- Show invisible options 
-    PL_PARSE_OVERRIDE  : constant Integer := 16#0010#; -- Obsolete 
-    PL_PARSE_NOPROGRAM : constant Integer := 16#0020#; -- Program name NOT in *argv[0].. 
-    PL_PARSE_NODASH    : constant Integer := 16#0040#; -- Set if leading dash NOT required 
-    PL_PARSE_SKIP      : constant Integer := 16#0080#; -- Skip over unrecognized args 
+    
+    type Parse_Mode_Type is range 16#0000# .. 16#0001# + 16#0002# + 16#0004# + 
+        16#0008# + 16#0010# + 16#0020# + 16#0040# + 16#0080#;
+    
+    PL_PARSE_PARTIAL   : constant Parse_Mode_Type := 16#0000#; -- For backward compatibility 
+    PL_PARSE_FULL      : constant Parse_Mode_Type := 16#0001#; -- Process fully & exit if error 
+    PL_PARSE_QUIET     : constant Parse_Mode_Type := 16#0002#; -- Don't issue messages 
+    PL_PARSE_NODELETE  : constant Parse_Mode_Type := 16#0004#; -- Don't delete options after processing 
+    PL_PARSE_SHOWALL   : constant Parse_Mode_Type := 16#0008#; -- Show invisible options 
+    PL_PARSE_OVERRIDE  : constant Parse_Mode_Type := 16#0010#; -- Obsolete 
+    PL_PARSE_NOPROGRAM : constant Parse_Mode_Type := 16#0020#; -- Program name NOT in *argv[0].. 
+    PL_PARSE_NODASH    : constant Parse_Mode_Type := 16#0040#; -- Set if leading dash NOT required 
+    PL_PARSE_SKIP      : constant Parse_Mode_Type := 16#0080#; -- Skip over unrecognized args 
 
     -- FCI (font characterization integer) related constants. 
     PL_FCI_MARK                : constant Integer := 16#10000000#;
@@ -1561,21 +1563,33 @@ package PLplotThin is
 
 
 --------------------------------------------------------------------------------
---         Functions for use from C or C++ only
+--         Functions for use from C or C++ only                               --
+--         (Not really ;).                                                    --
 --------------------------------------------------------------------------------
 -- THESE FUNCTIONS ^^^ ARE NOT IMPLEMENTED FOR THE ADA BINDING
 -- EXCEPT FOR THE FOLLOWING.
 
-    -- The functionality of plparseopts is completely handled by the
-    -- procedure Parse_Command_Line_Arguments in the thick binding. 
-    -- See plplot.adb and plplot.ads.
+    -- plparseopts here is an exact copy (exept for the name) of 
+    -- Parse_Command_Line_Arguments in the thick binding. The reason for
+    -- departing from the usual method of simply pragma Import-ing as in
+    -- most or all of the other interfaces to C is because of the need to 
+    -- figure out what the command lines arguments are by also pragma 
+    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argment version is made 
+    -- at the request of the development team rather than the three-argument 
+    -- version of the documetation. The caller specifies only the parse mode.
     
     -- Process options list using current options info.
-    --    procedure
-    --    plparseopts(argc : Gnat_Argc_Access_Type;
-    --                argv : System.Address;
-    --                mode : PLINT);
-    --    pragma Import(C, plparseopts, "c_plparseopts");
+    procedure plparseopts(Mode : Parse_Mode_Type);
+
+
+    -- This is a three-argument version of plparseopts as indicated in the
+    -- documentation.
+
+    -- Process options list using current options info.
+    procedure plparseopts
+       (Gnat_Argc : Integer;
+        Gnat_Argv : System.Address;
+        Mode      : Parse_Mode_Type);
 
 
     -- Process input strings, treating them as an option and argument pair.

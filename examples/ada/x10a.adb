@@ -1,6 +1,6 @@
 -- $Id$
 
--- Simple line plot and multiple windows demo.
+-- 	Window positioning demo.
 
 -- Copyright (C) 2007 Alan W. Irwin
 
@@ -25,14 +25,14 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Bounded,
-    PLplot,
+    Interfaces.C,
     PlplotThin;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Bounded,
-    PLplot,
+    Interfaces.C,
     PlplotThin;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
@@ -40,21 +40,21 @@ use
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 
 procedure x10a is
-  begin   
-    -- plplot initialization
+begin   
+    -- Parse and process command line arguments    
+    plparseopts(PL_PARSE_FULL);
     
---    plparseopts(PL_PARSE_FULL);
-    Parse_Command_Line_Arguments(PL_PARSE_FULL);
+    -- Initialize plplot
     plinit;
+    
     pladv(0);
     plvpor(0.0, 1.0, 0.0, 1.0);
     plwind(0.0, 1.0, 0.0, 1.0);
---    plbox("bc", 0.0, 0, "bc", 0.0, 0);
-    Box_Around_Viewport(TUB("bc"), 0.0, 0, TUB("bc"), 0.0, 0);
+    plbox(To_C("bc"), 0.0, 0, To_C("bc"), 0.0, 0);
+    
     plsvpa(50.0, 150.0, 50.0, 100.0);
     plwind(0.0, 1.0, 0.0, 1.0);
---    plbox("bc", 0.0, 0, "bc", 0.0, 0);
-    Box_Around_Viewport(TUB("bc"), 0.0, 0, TUB("bc"), 0.0, 0);
-    plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
+    plbox(To_C("bc"), 0.0, 0, To_C("bc"), 0.0, 0);
+    plptex(0.5, 0.5, 1.0, 0.0, 0.5, To_C("BOX at (50,150,50,100)"));
     plend;
 end x10a;

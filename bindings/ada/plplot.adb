@@ -2725,7 +2725,7 @@ package body PLplot is
     -- This procedure is currently GNAT-specific, importing Gnat_Argc and Gnat_Argv.
     -- Process options list using current options info.
     -- plparseopts
-    procedure Parse_Command_Line_Arguments(Mode : Integer) is
+    procedure Parse_Command_Line_Arguments(Mode : Parse_Mode_Type) is
 
         Gnat_Argc : aliased Integer;
         pragma Import (C, Gnat_Argc);
@@ -2739,8 +2739,9 @@ package body PLplot is
         procedure
         plparseopts_local(argc : Gnat_Argc_Access_Type;
                           argv : System.Address;
-                          mode : PLINT);
+                          mode : Parse_Mode_Type);
         pragma Import(C, plparseopts_local, "c_plparseopts");
+
     begin
         Gnat_Argc_Access := Gnat_Argc'access;
         plparseopts_local(Gnat_Argc_Access, Gnat_Argv, Mode);

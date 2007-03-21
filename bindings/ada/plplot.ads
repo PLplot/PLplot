@@ -129,13 +129,13 @@ package PLplot is
     subtype Fill_Pattern_Type is Integer range 0..7; -- Guessing; not documented
     
     -- Modes for parsing command line arguments.
-    Parse_Full       : constant Integer := 1;
-    Parse_Quiet      : constant Integer := 2;
-    Parse_No_Delete  : constant Integer := 4;
-    Parse_Show_All   : constant Integer := 8;
-    Parse_No_Program : constant Integer := 32;
-    Parse_No_Dash    : constant Integer := 64;
-    Parse_Skip       : constant Integer := 128;
+    Parse_Full       : constant Parse_Mode_Type := 1;
+    Parse_Quiet      : constant Parse_Mode_Type := 2;
+    Parse_No_Delete  : constant Parse_Mode_Type := 4;
+    Parse_Show_All   : constant Parse_Mode_Type := 8;
+    Parse_No_Program : constant Parse_Mode_Type := 32;
+    Parse_No_Dash    : constant Parse_Mode_Type := 64;
+    Parse_Skip       : constant Parse_Mode_Type := 128;
 
     -- Descriptions of map outlines for continents, countries, and US states.
     type Map_Type is (Continents, USA_and_States, Continents_and_Countries, USA_States_and_Continents);
@@ -1447,7 +1447,7 @@ package PLplot is
     -- This procedure is currently GNAT-specific, importing Gnat_Argc and Gnat_Argv.
     -- Process options list using current options info.
     -- plparseopts
-    procedure Parse_Command_Line_Arguments(Mode : Integer);
+    procedure Parse_Command_Line_Arguments(Mode : Parse_Mode_Type);
 
 
     -- Process input strings, treating them as an option and argument pair.

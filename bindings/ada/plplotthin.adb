@@ -117,4 +117,71 @@ package body PLplotThin is
         return x_As_Pointers;
     end Matrix_To_Pointers;
 
+
+--------------------------------------------------------------------------------
+--         Functions for use from C or C++ only                               --
+--         (Not really ;).                                                    --
+--------------------------------------------------------------------------------
+-- THESE FUNCTIONS ^^^ ARE NOT IMPLEMENTED FOR THE ADA BINDING
+-- EXCEPT FOR THE FOLLOWING.
+
+    -- plparseopts here is an exact copy (exept for the name) of 
+    -- Parse_Command_Line_Arguments in the thick binding. The reason for
+    -- departing from the usual method of simply pragma Import-ing as in
+    -- most or all of the other interfaces to C is because of the need to 
+    -- figure out what the command lines arguments are by also pragma 
+    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argment version is made 
+    -- at the request of the development team rather than the three-argument 
+    -- version of the documetation. The caller specifies only the parse mode.
+    
+    -- Process options list using current options info.
+    procedure plparseopts(Mode : Parse_Mode_Type) is
+
+        Gnat_Argc : aliased Integer;
+        pragma Import (C, Gnat_Argc);
+
+        Gnat_Argv : System.Address;
+        pragma Import (C, Gnat_Argv);
+
+        type Gnat_Argc_Access_Type is access all Integer;
+        Gnat_Argc_Access : Gnat_Argc_Access_Type;
+
+        procedure
+        plparseopts_local(argc : Gnat_Argc_Access_Type;
+                          argv : System.Address;
+                          mode : Parse_Mode_Type);
+        pragma Import(C, plparseopts_local, "c_plparseopts");
+
+    begin
+        Gnat_Argc_Access := Gnat_Argc'access;
+        plparseopts_local(Gnat_Argc_Access, Gnat_Argv, Mode);
+    end plparseopts;
+
+
+    -- This is a three-argument version of plparseopts as indicated in the
+    -- documentation.
+
+    -- Process options list using current options info.
+    procedure plparseopts
+       (Gnat_Argc : Integer;
+        Gnat_Argv : System.Address;
+        Mode      : Parse_Mode_Type) is
+
+        Gnat_Argc_Dummy : aliased Integer;
+        
+        type Gnat_Argc_Access_Type is access all Integer;
+        Gnat_Argc_Access : Gnat_Argc_Access_Type;
+
+        procedure
+        plparseopts_local(argc : Gnat_Argc_Access_Type;
+                          argv : System.Address;
+                          mode : Parse_Mode_Type);
+        pragma Import(C, plparseopts_local, "c_plparseopts");
+
+    begin
+        Gnat_Argc_Dummy := Gnat_Argc;
+        Gnat_Argc_Access := Gnat_Argc_Dummy'access;
+        plparseopts_local(Gnat_Argc_Access, Gnat_Argv, Mode);
+    end plparseopts;
+
 end PLplotThin;
