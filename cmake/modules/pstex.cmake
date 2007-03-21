@@ -34,7 +34,7 @@ if(PLD_pstex AND NOT PLD_ps)
 endif(PLD_pstex AND NOT PLD_ps)
 
 if(PLD_pstex AND ENABLE_DYNDRIVERS)
-  # N.B. the pstex.c code is parasitic on the ps.c code so must include
-  # the latter for the ENABLE_DYNDRIVERS case.
+  # N.B. the pstex.c code is parasitic on the ps.c code so must be combined
+  # with the latter in the plug-in for the ENABLE_DYNDRIVERS case.
   set(pstex_SOURCE ${CMAKE_SOURCE_DIR}/drivers/ps.c)
 endif(PLD_pstex AND ENABLE_DYNDRIVERS)
