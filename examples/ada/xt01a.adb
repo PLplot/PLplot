@@ -25,26 +25,27 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Bounded,
-    Interfaces.C,
+    PLplot,
     PlplotThin;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Bounded,
-    Interfaces.C,
+    PLplot,
     PlplotThin;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 
-procedure x01a is
+procedure xt01a is
     xs, ys : Real_Vector (0 .. 5);
     xscale, yscale, xoff, yoff : Long_Float;
     fontset : Integer := 1;
     notes : String := "Make sure you get it right!";
-    PL_Version_Number : char_array(0..79);    
+    ver : String_80;
+    
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
         x, y : Real_Vector (0 .. 59);
@@ -67,18 +68,18 @@ procedure x01a is
         -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
         -- scaled separately (just = 0), and we just draw a labelled 
         -- box (axis = 0). 
-        plcol0(1);
-        plenv(xmin, xmax, ymin, ymax, 0, 0);
-        plcol0(2);
-        pllab(To_C("(x)"), To_C("(y)"), To_C("#frPLplot Example 1 - y=x#u2"));
+        Set_Color(Red);
+        Set_Environment(xmin, xmax, ymin, ymax, Not_Justified, Linear_Box_Plus);
+        Set_Color(Yellow);
+        Write_Labels(TUB("(x)"), TUB("(y)"), TUB("#frPLplot Example 1 - y=x#u2"));
 
         -- Plot the data points
-        plcol0(4);
-        plpoin(6, xs, ys, 9);
+        Set_Color(Aquamarine);
+        Draw_Points(xs, ys, 9);
 
         -- Draw the line through the data
-        plcol0(3);
-        plline(60, x, y);
+        Set_Color(Green);
+        Draw_Curve(x, y);
     end plot1;
 
 
@@ -88,10 +89,10 @@ procedure x01a is
         -- Set up the viewport and window using PLENV. The range in X is -2.0 to
         -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
         -- (just = 0), and we draw a box with axes (axis = 1). 
-        plcol0(1);
-        plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
-        plcol0(2);
-        pllab(To_C("(x)"), To_C("sin(x)/x"), To_C("#frPLplot Example 1 - Sinc Function"));
+        Set_Color(Red);
+        Set_Environment(-2.0, 10.0, -0.4, 1.2, Not_Justified, Linear_Zero_Axes);
+        Set_Color(Yellow);
+        Write_Labels(TUB("(x)"), TUB("sin(x)/x"), TUB("#frPLplot Example 1 - Sinc Function"));
 
         -- Fill up the arrays
         for i in x'Range loop
@@ -103,60 +104,59 @@ procedure x01a is
         end loop;
         
         -- Draw the line
-        plcol0(3);
-        plwid(2);
-        plline(100, x, y);
-        plwid(1);
+        Set_Color(Green);
+        Set_Pen_Width(2);
+        Draw_Curve(x, y);
+        Set_Pen_Width(1);
     end plot2;
     procedure plot3 is
         x, y : Real_Vector (0 .. 100);
---      space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
         space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
     begin
-        pladv(0);
+        Advance_To_Subpage(Next_SubPage);
         
         -- Use standard viewport, and define X range from 0 to 360 degrees,
         -- Y range from -1.2 to 1.2.
-        plvsta;
-        plwind(0.0, 360.0, -1.2, 1.2);
+        Set_Viewport_Standard;
+        Set_Viewport_World(0.0, 360.0, -1.2, 1.2);
 
         -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
-        plcol0(1);
-        plbox(To_C("bcnst"), 60.0, 2, To_C("bcnstv"), 0.2, 2);
+        Set_Color(Red);
+        Box_Around_Viewport(TUB("bcnst"), 60.0, 2, TUB("bcnstv"), 0.2, 2);
 
         -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
-        plstyl(1, mark1, space1);
-        plcol0(2);
-        plbox(To_C("g"), 30.0, 0, To_C("g"), 0.2, 0);
-        plstyl(0, mark1, space1);
-
-        plcol0(3);
-        pllab(To_C("Angle (degrees)"), To_C("sine"), To_C("#frPLplot Example 1 - Sine function"));
-
+        -- plstyl expects a pointer! (-- Not Ada.)
+        Set_Line_Style(mark1, space1);
+        Set_Color(Yellow);
+        Box_Around_Viewport(TUB("g"), 30.0, 0, TUB("g"), 0.2, 0);
+        Set_Line_Style(Default_Continuous_Line);
+        
+        Set_Color(Green);
+        Write_Labels(TUB("Angle (degrees)"), TUB("sine"), TUB("#frPLplot Example 1 - Sine function"));
+        
         for i in x'Range loop
             x(i) := 3.6 * Long_Float(i);
             y(i) := sin(x(i) * pi / 180.0);
         end loop;
         
-        plcol0(4);
-	plline(101, x, y);
+        Set_Color(Aquamarine);
+        Draw_Curve(x, y);
     end plot3;
 
 begin   
     -- plplot initialization
     
     -- Divide page into 2x2 plots unless user overrides
-    plssub(2, 2);
+    Set_Number_Of_Subpages(2, 2);
     
     -- Parse and process command line arguments
-    plparseopts(PL_PARSE_FULL); 
+    Parse_Command_Line_Arguments(PL_PARSE_FULL); 
     
     -- Get version number, just for kicks
-    plgver(PL_Version_Number);
-    Put_Line("PLplot library version: " & To_Ada(PL_Version_Number, True));
+    Put_Line("PLplot library version: " & Get_Version_Number);
 
     -- Initialize plplot
-    plinit;
+    Initialize_Plotter;
 
     -- Set up the data
     -- Original case
@@ -174,11 +174,11 @@ begin
     yoff   := 0.0185;
 
     -- Do a plot
-    plsyax(5, 0);
+    Set_Floating_Point_Display_Y(Max_Digits => 5, Field_Digits => 0);
     plot1;
     plot2;
     plot3;
 
     -- Don't forget to call PLEND to finish off!
-    plend;
-end x01a;
+    Plot_End;
+end xt01a;

@@ -27,6 +27,6 @@
 # pushd $adadir; make; popd
 
 # Do the standard non-interactive examples.
-for index in 01 10 12; do
+for index in t01 01 10 12; do
   $adadir/x${index}a -dev $device -o ${OUTPUT_DIR}/x${index}a.$dsuffix $options
 done
