@@ -124,11 +124,11 @@ IF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
     # Temporary fixup for one user's Ada/Mac OS X problems when using the
     # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
     SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
-    "${GNAT_SHARED_LINKER} <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> -lgcc_s.1"
+    "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> -lgcc_s.1"
     )
   ELSE(APPLE)
     SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
-    "${GNAT_SHARED_LINKER} <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
+    "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
     )
   ENDIF(APPLE)
 ENDIF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
@@ -176,12 +176,19 @@ ENDIF(NOT CMAKE_Ada_COMPILE_OBJECT)
 
 # In sum, you have to be careful of your target name, the nominal source file
 # name has to be compilable, but otherwise it is ignored, and you must specify
-# the required -aI and other CMAKE_Ada_COMPILER = gnatmake options
+# the required -aI and other GNAT_EXECUTABLE_BUILDER = gnatmake options
 # using LINK_FLAGS specified with set_target_properties.  
 # However, so long as you pay attention to these
 # constraints, add_executable should work for the Ada language.
 
 IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
+  # N.B. under some circumstances (build tests) GNAT_EXECUTABLE_BUILDER is not
+  # defined at this stage for unknown reasons so try to find it again as a 
+  # last resort.
+  GET_FILENAME_COMPONENT(COMPILER_LOCATION "${CMAKE_Ada_COMPILER}"
+    PATH)
+  FIND_PROGRAM(GNAT_EXECUTABLE_BUILDER NAMES gnatmake PATHS ${COMPILER_LOCATION} )
+
   IF(APPLE)
     # Temporary fixup for one user's Ada/Mac OS X problems when using the
     # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
