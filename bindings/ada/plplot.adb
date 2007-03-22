@@ -2209,7 +2209,7 @@ package body PLplot is
         -- If there ever become available other fill routines, this pointer
         -- assignment will have to be handled by the caller and the function
         -- pointer passed as an argument, breaking backward compatibility a little.
-        Fill_Routine_Pointer := plfill'access;
+        Fill_Routine_Pointer := plfillada'access;
 
         if Preserve_Rectangles then
             Preserve_Rectangles_As_Integer := 1;
@@ -2251,7 +2251,7 @@ package body PLplot is
         -- If there ever become available other fill routines, this pointer
         -- assignment will have to be handled by the caller and the function
         -- pointer passed as an argument, breaking backward compatibility a little.
-        Fill_Routine_Pointer := plfill'access;
+        Fill_Routine_Pointer := plfillada'access;
 
         if Preserve_Rectangles then
             Preserve_Rectangles_As_Integer := 1;
@@ -2291,7 +2291,7 @@ package body PLplot is
         -- If there ever become available other fill routines, this pointer
         -- assignment will have to be handled by the caller and the function
         -- pointer passed as an argument, breaking backward compatibility a little.
-        Fill_Routine_Pointer := plfill'access;
+        Fill_Routine_Pointer := plfillada'access;
 
         if Preserve_Rectangles then
             Preserve_Rectangles_As_Integer := 1;

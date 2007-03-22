@@ -658,11 +658,19 @@ package PLplotThin is
     pragma Import(C, plfamadv, "c_plfamadv");
 
 
+    -- Pattern fills the polygon bounded by the input points.
+    -- (This Ada variation required by plplot.adb).
+
+    procedure
+    plfillada(n : PLINT; x : PL_Float_Array; y : PL_Float_Array);
+    pragma Import(Ada, plfillada, "c_plfill");
+
+
     -- Pattern fills the polygon bounded by the input points. 
 
     procedure
     plfill(n : PLINT; x : PL_Float_Array; y : PL_Float_Array);
-    pragma Import(Ada, plfill, "c_plfill");
+    pragma Import(C, plfill, "c_plfill");
 
 
     -- Pattern fills the 3d polygon bounded by the input points. 
