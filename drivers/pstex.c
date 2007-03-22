@@ -72,7 +72,8 @@ plD_init_pstex(PLStream *pls)
   fprintf(fp,"\\begin{picture}(0,0)(0,0)%%\n");
   fprintf(fp,"\\includegraphics[scale=1.,clip]{%s}%%\n",pls->FileName); 
   fprintf(fp,"\\end{picture}%%\n");
-  fprintf(fp,"\\setlength{\\unitlength}{%fbp}%%\n", 72./25.4/pls->xpmm);
+/*  fprintf(fp,"\\setlength{\\unitlength}{%fbp}%%\n", 72./25.4/pls->xpmm); */
+  fprintf(fp,"\\setlength{\\unitlength}{%fbp}%%\n", 1.0/ENLARGE);
   fprintf(fp,"\\begingroup\\makeatletter\\ifx\\SetFigFont\\undefined%%\n");
   fprintf(fp,"\\gdef\\SetFigFont#1#2#3#4#5{%%\n");
   fprintf(fp,"\\reset@font\\fontsize{#1}{#2pt}%%\n");
