@@ -22,22 +22,30 @@ INDEX
   1.2 malloc/calloc clean up
   1.3 Documentation
   1.4 Language bindings
-    1.4.1 ADA language binding
+    1.4.1 Experimental ADA language binding
+    1.4.2 wxwidgets applications bindings
   1.5 Drivers
-    1.5.1 wxwidgets applications bindings
-    1.5.2 xwinttf
+    1.5.1 xwinttf
+    1.5.2 pstex
 
 2. Changes relative to PLplot 5.6.1
   2.1 CMake build system
   2.2 Plot Buffering
   2.3 Updated INSTALL/README
-  2.4 Updated examples
-  2.5 Drivers
-    2.5.1 psttf
-    2.5.2 svg
-    2.5.3 wxwidgets
-    2.5.4 pdf
-    2.5.5 gd, wingcc (freetype)
+  2.4 malloc/calloc clean up
+  2.5 Documentation
+  2.6 Language bindings
+    2.6.1 Experimental ADA language binding
+    2.6.2 wxwidgets applications bindings
+  2.7 Updated examples
+  2.8 Drivers
+    2.8.1 psttf
+    2.8.2 svg
+    2.8.3 wxwidgets
+    2.8.4 pdf
+    2.8.5 gd, wingcc (freetype)
+    2.8.6 xwinttf
+    2.8.7 pstex
 
 
 1. Changes relative to PLplot 5.7.2 (the previous development release)
@@ -65,22 +73,29 @@ been expanded to include a list of which examples each function is used in
 
 1.4 Language bindings
   1.4.1 ADA
-       Jerry Bauck has donated bindings to the ADA programming language. These
-    have been included into the CMake build system, and should be generated
-    automatically if you have an ADA compiler. Work on a complete set of
-    examples is ongoing.
+       Jerry Bauck has donated bindings to the ADA programming language. 
+    These are considered experimental in nature and the API is subject to
+    change.  These bindings have been included into the CMake build system,
+    and should be generated automatically if you have an ADA compiler and
+    you specify the cmake option -DENABLE_ada=ON.  Four standard examples
+    have been completed and work on a complete set of examples is ongoing.
 
-1.5 Drivers
-  1.5.1 wxwidgets applications bindings
+  1.4.2 wxwidgets applications bindings
        A wxwidget application interface to PLplot has been added that provides
     binding similar to the Gnome2 bindings. More info here... 
  
-  1.5.2 xwinttf driver
+1.5 Drivers
+ 
+  1.5.1 xwinttf driver
        This is a new driver for X Windows that uses Cairo for rendering
     graphics and Pango for rendering text. The graphics and the text are both
     anti-aliased. It is unicode enabled and Truetype fonts are used by 
     default.
 
+  1.5.2 pstex driver
+       This Latex driver has now been resurrected from years of neglect and
+    aside from bounding box issues seems to be working well.  Should be
+    useful for Latex enthusiasts.
 
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
 
@@ -89,7 +104,9 @@ been expanded to include a list of which examples each function is used in
    PLplot now uses the CMake build system (www.cmake.org) and the older
 autotools build system has been deprecated. The switch to CMake was made due
 its superior support for Windows platforms and its relative simplicity
-compared to autotools. CMake 2.4.5 is the minimum required version of cmake. 
+compared to autotools. CMake 2.4.5 is the minimum required version of cmake.
+Finding swig has been improved such that it should now be found as long as
+it is in your path.
 
 2.2 Plot Buffering
 
@@ -105,32 +122,61 @@ with some windows platforms where the temporary files were not getting deleted.
 instructions for building plplot using the new CMake build system on linux
 and windows.
 
-2.4 Updated examples
+2.4 malloc/calloc clean up
+
+   Checks have been added to many (all?) of the calls to calloc and malloc in
+the PLplot core. The purpose of the check is to verify that the memory 
+requested was actually allocated prior to attempting to use it.
+
+2.5 Documentation
+
+   The API section has been expanded to include information about how to call
+the functions from Fortran95, Java, Perl/PDL and Python. Since array dimension
+information is typically redundant in these languages it is dropped in many
+of the relevant function. Additionally, some of the Perl/PDL function calls 
+have a different argument order than their C equivalent. This section has also 
+been expanded to include a list of which examples each function is used in 
+(if any).
+
+2.6 Language bindings
+  2.6.1 ADA
+       Jerry Bauck has donated bindings to the ADA programming language. 
+    These are considered experimental in nature and the API is subject to
+    change.  These bindings have been included into the CMake build system,
+    and should be generated automatically if you have an ADA compiler and
+    you specify the cmake option -DENABLE_ada=ON.  Four standard examples
+    have been completed and work on a complete set of examples is ongoing.
+
+  2.6.2 wxwidgets applications bindings
+       A wxwidget application interface to PLplot has been added that provides
+    binding similar to the Gnome2 bindings. More info here... 
+ 
+2.7 Updated examples
 
    The examples have been checked over to make sure that they all work
 and to make them more consistent across different programming languages.   
 
-2.5 Drivers
-  2.5.1 psttf
+2.8 Drivers
+  2.8.1 psttf
     This device driver now requires LASi version 1.0.6 or 1.0.5pl.  See
     http://www.unifont.org/lasi/ for instructions (depending on installed
     version of FreeType library) on which to choose.
 
-  2.5.2 svg
+  2.8.2 svg
     This is a new device driver that creates Scalable Vector Graphics files 
     (http://www.w3.org/Graphics/SVG/). SVG is a XML language describing
     graphics that is supported directly or via plug-ins in most modern web
     browsers. The driver is off by default as its text handling has not been
     perfected.
 
-  2.5.3 wxwidgets
+  2.8.3 wxwidgets
     This driver has been updated a great deal. The most important improvements
     have been to the antializing part of the driver. It is now about 4 times
     faster than it was, and is nearly comparable in speed to the driver
     with the antializing turned off. In addition the antializing code can
     now handle filled polygons and window resizing.
 
-  2.5.4 pdf
+  2.8.4 pdf
     A basic version of a pdf driver was added to the latest PLplot release. 
     This driver is based on the libharu library 
     (http://libharu.sourceforge.net/). At present only the hershey fonts are 
@@ -138,8 +184,20 @@ and to make them more consistent across different programming languages.
     output is not enabled and the paper size can't be chosen. All these issues 
     will be addressed in later releases.
 
-  2.5.5 gd, wingcc (freetype)
+  2.8.5 gd, wingcc (freetype)
     Improved anti-aliasing routines have been added to plplot's freetype
     font rendering engine. The gd and wingcc drivers have been modified in 
     turn to take advantage of these new routines, leading to improved text
     rendering.
+
+  2.8.6 xwinttf driver
+       This is a new driver for X Windows that uses Cairo for rendering
+    graphics and Pango for rendering text. The graphics and the text are both
+    anti-aliased. It is unicode enabled and Truetype fonts are used by 
+    default.
+
+  2.8.7 pstex driver
+       This Latex driver has now been resurrected from years of neglect and
+    aside from bounding box issues seems to be working well.  Should be
+    useful for Latex enthusiasts.
+
