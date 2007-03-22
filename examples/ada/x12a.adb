@@ -21,20 +21,18 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
-    Interfaces.C,
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Bounded,
-    PLplot,
+    Interfaces.C,
     PlplotThin;
 use
-    Interfaces.C,
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Bounded,
-    PLplot,
+    Interfaces.C,
     PlplotThin;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
@@ -50,8 +48,8 @@ procedure x12a is
     procedure plfbox(x0 : PLFLT; y0 : PLFLT) is
         x, y : PL_Float_Array (0 .. 3);
     begin
-			  x(0) := x0;
-			  y(0) := 0.0;
+        x(0) := x0;
+        y(0) := 0.0;
         x(1) := x0;
         y(1) := y0;
         x(2) := x0 + 1.0;
@@ -62,44 +60,43 @@ procedure x12a is
         plcol0(1);
         pllsty(1);
         plline(4, x, y);
-		end;
+    end;
 
-begin
-			-- plplot initialization
+    begin
+    -- plplot initialization
 			
-			-- plparseopts(PL_PARSE_FULL);
-			Parse_Command_Line_Arguments(PL_PARSE_FULL);
+       plparseopts(PL_PARSE_FULL);
 	
-			plinit;
+       plinit;
 	
-			pladv(0);
-			plvsta;
-			plwind(1980.0, 1990.0, 0.0, 35.0);
-			plbox("bc" & Nul, 1.0, 0, "bcnv" & Nul, 10.0, 0);
-			plcol0(2);
-			pllab("Year" & Nul, "Widget Sales (millions)" & Nul, "#frPLplot Example 12" & Nul);
+       pladv(0);
+       plvsta;
+       plwind(1980.0, 1990.0, 0.0, 35.0);
+       plbox(To_C("bc"), 1.0, 0, To_C("bcnv"), 10.0, 0);
+       plcol0(2);
+       pllab(To_C("Year"), To_C("Widget Sales (millions)"), To_C("#frPLplot Example 12"));
 	
-			y0(0) := 5.0;
-			y0(1) := 15.0;
-			y0(2) := 12.0;
-			y0(3) := 24.0;
-			y0(4) := 28.0;
-			y0(5) := 30.0;
-			y0(6) := 20.0;
-			y0(7) := 8.0;
-			y0(8) := 12.0;
-			y0(9) := 3.0;
+       y0(0) := 5.0;
+       y0(1) := 15.0;
+       y0(2) := 12.0;
+       y0(3) := 24.0;
+       y0(4) := 28.0;
+       y0(5) := 30.0;
+       y0(6) := 20.0;
+       y0(7) := 8.0;
+       y0(8) := 12.0;
+       y0(9) := 3.0;
 
-			for i in y0'Range loop
+       for i in y0'Range loop
           plcol0(i + 1);
           plpsty(0);
           plfbox(Long_Float(1980 + i), y0(i));
-          sprintf(string, "%.0f" & Nul, y0(i));
+          sprintf(string, To_C("%.0f"), y0(i));
           plptex(Long_Float(1980 + i) + 0.5, (y0(i) + 1.0), 1.0, 0.0, 0.5, string);
-          sprintf(string, "%.0f" & Nul, Long_Float(1980 + i));
-          plmtex("b" & Nul, 1.0, (Long_Float(i + 1) * 0.1 - 0.05), 0.5, string);
-			end loop;
+          sprintf(string, To_C("%.0f"), Long_Float(1980 + i));
+          plmtex(To_C("b"), 1.0, (Long_Float(i + 1) * 0.1 - 0.05), 0.5, string);
+       end loop;
 
-			-- Don't forget to call plend() to finish off!
-	    plend;
-	end x12a;
+       -- Don't forget to call plend() to finish off!
+       plend;
+end x12a;
