@@ -3180,7 +3180,7 @@ from color map0
     </para>
 
     <para>
-      Returns 8-bit RGB values (-255) for given color from color map0 (see
+      Returns 8-bit RGB values (0-255) for given color from color map0 (see
       <xref linkend="color-map-0"/>).  Values are
       negative if an invalid color id is given.
     </para>
@@ -4080,7 +4080,7 @@ space for this (80 characters is safe).
 	  <para>
 	    The input <literal>z</literal> array. Each triple
             <literal>x[i]</literal>, <literal>y[i]</literal>,
-            <literal>z[i]</literal> represents one data sample coordinates.
+            <literal>z[i]</literal> represents one data sample coordinate.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4105,7 +4105,7 @@ space for this (80 characters is safe).
 	  <para>
 	    The input array that specifies the grid spacing in the x
 	    direction. Usually <literal>xg</literal> has
-            <literal>nptsx</literal> equaly spaced values from the mininum
+            <literal>nptsx</literal> equally spaced values from the mininum
             to the maximum values of the <literal>x</literal> input array.
 	  </para>
 	</listitem>
@@ -4146,16 +4146,16 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sg</parameter>
+	  <parameter>zg</parameter>
 	  (<literal>PLFLT **</literal>, output)
 	</term>
 	<listitem>
 	  <para>
 	    The output array, where data lies in the regular grid
 	    specified by <literal>xg</literal> and <literal>yg.</literal>
-            the <literal>zg</literal> array must exists or be allocated by
-            the user prior to the calling, and must have dimension
-            <literal>zg[nptsx][xptsy]</literal>.
+            the <literal>zg</literal> array must exist or be allocated by
+            the user prior to the call, and must have dimension
+            <literal>zg[nptsx][nptsy]</literal>.
           </para>
 	</listitem>
       </varlistentry>
@@ -4206,7 +4206,7 @@ space for this (80 characters is safe).
             </listitem>
           </itemizedlist>
           <para>
-            For details on the algorithm read the source file
+            For details of the algorithms read the source file
             <filename>plgridd.c</filename>.
           </para>
 	</listitem>
@@ -4219,7 +4219,7 @@ space for this (80 characters is safe).
 	<listitem>
 	  <para>
 	    Some gridding algorithms require extra data, which can be
-	    specified through this argument. Currently, for algoritm:
+	    specified through this argument. Currently, for algorithm:
           </para>
           <itemizedlist>
             <listitem>
@@ -4241,7 +4241,7 @@ space for this (80 characters is safe).
             <listitem>
               <para>
                 <literal>GRID_NNI</literal>, only weights greater than
-                <literal>data</literal> will be accepted. If 0, all weigths
+                <literal>data</literal> will be accepted. If 0, all weights
                 will be accepted.
               </para>
             </listitem>
@@ -7489,7 +7489,7 @@ current device/file
       <varlistentry>
 	<term>
 	  <parameter>r</parameter>
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7500,7 +7500,7 @@ current device/file
       <varlistentry>
 	<term>
 	  <parameter>g</parameter>
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7511,7 +7511,7 @@ current device/file
       <varlistentry>
 	<term>
 	  <parameter>b</parameter>
-	  (<literal>PLFLT</literal>, output)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7522,7 +7522,7 @@ current device/file
       <varlistentry>
 	<term>
 	  <parameter>p_h</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
@@ -7533,7 +7533,7 @@ current device/file
       <varlistentry>
 	<term>
 	  <parameter>p_l</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
@@ -7545,7 +7545,7 @@ current device/file
       <varlistentry>
 	<term>
 	  <parameter>p_s</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
@@ -8357,7 +8357,7 @@ by 8-bit RGB value
       <varlistentry>
 	<term>
 	  <parameter>devname</parameter>
-	  (<literal>const char *</literal>, output)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8941,7 +8941,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>opt</parameter>
-	  (<literal>const char *</literal>, output)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8952,7 +8952,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>optarg</parameter>
-	  (<literal>const char *</literal>, output)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
