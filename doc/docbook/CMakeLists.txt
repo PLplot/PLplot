@@ -4,7 +4,5 @@ if(BUILD_DOC)
   add_subdirectory(bin) 
 endif(BUILD_DOC)
 
-if(BUILD_DOC OR PREBUILT_DOC)
-  add_subdirectory(src) 
-endif(BUILD_DOC OR PREBUILT_DOC)
-
+# Always need to process this directory if only to validate.
+add_subdirectory(src) 
