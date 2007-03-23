@@ -81,8 +81,12 @@ been expanded to include a list of which examples each function is used in
     have been completed and work on a complete set of examples is ongoing.
 
   1.4.2 wxwidgets applications bindings
-       A wxwidget application interface to PLplot has been added that provides
-    binding similar to the Gnome2 bindings. More info here... 
+       The wxWidgets bindings provide an interface to the PLplot API and a 
+    simple widget to be used in a wxWidgets application. The class 
+    'wxPLplotstream' inherited from the PLplot class 'plstream' allows access
+    to the complete PLplot API. 'wxPLplotWindow' is a simple wxWidget which
+    takes care of some preparational work for convenient use of the PLplot
+    Library within a wxWidgets application.
  
 1.5 Drivers
  
@@ -148,8 +152,12 @@ been expanded to include a list of which examples each function is used in
     have been completed and work on a complete set of examples is ongoing.
 
   2.6.2 wxwidgets applications bindings
-       A wxwidget application interface to PLplot has been added that provides
-    binding similar to the Gnome2 bindings. More info here... 
+       The wxWidgets bindings provide an interface to the PLplot API and a 
+    simple widget to be used in a wxWidgets application. The class 
+    'wxPLplotstream' inherited from the PLplot class 'plstream' allows access
+    to the complete PLplot API. 'wxPLplotWindow' is a simple wxWidget which
+    takes care of some preparational work for convenient use of the PLplot
+    Library within a wxWidgets application.
  
 2.7 Updated examples
 
