@@ -484,7 +484,6 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 
 void proc_str (PLStream *pls, EscText *args)
 {
-//	PLFLT   	*t = args->xform;
 	PLFLT   	a1, ft_ht, angle, shear;
 	PLINT   	clxmin, clxmax, clymin, clymax;
 	int     	i, jst, ref;
