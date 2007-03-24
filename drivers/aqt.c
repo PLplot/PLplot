@@ -236,6 +236,7 @@ void plD_init_aqt(PLStream *pls)
    [adapter setBackgroundColorRed:0.5 green:0.5 blue:0.5];
 
    pls->termin = 1;			/* interactive device */
+   pls->dev_flush = 1;		/* Handle our own flushes */
    pls->color = 1;			/* supports color */
    pls->width = 1;
    pls->verbose = 1;
@@ -427,6 +428,7 @@ void plD_esc_aqt(PLStream *pls, PLINT op, void *ptr)
       case PLESC_DI:                  // handle DI command
          break;
       case PLESC_FLUSH:               // flush output
+         [adapter renderPlot];
          break;
       case PLESC_EH:                  // handle Window events
          break;
