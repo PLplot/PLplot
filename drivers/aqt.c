@@ -484,7 +484,7 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 
 void proc_str (PLStream *pls, EscText *args)
 {
-	PLFLT   	*t = args->xform;
+//	PLFLT   	*t = args->xform;
 	PLFLT   	a1, ft_ht, angle, shear;
 	PLINT   	clxmin, clxmax, clymin, clymax;
 	int     	i, jst, ref;
@@ -509,14 +509,9 @@ void proc_str (PLStream *pls, EscText *args)
 	ft_ht = 1.2 * pls->chrht * DPI/25.4; 	/* ft_ht in points. ht is in mm */
 
    	/* given transform, calculate rotation angle & shear angle */
-	
-	a1 = acos(t[0]) * 180. / PI;
-	if (t[2] > 0.)
-		angle = a1;
-	else
-		angle = 360. - a1;
-
-	shear = 90.0 - acos(t[0]*t[1] + t[2]*t[3]) * 180.0 / PI;
+    plRotationShear(args->xform, &angle, &shear);
+    angle *= 180.0/PI;
+    shear *= -180.0/PI;
 
 	/* text justification, AquaTerm only supports 3 options, so we round appropriately */
 	
