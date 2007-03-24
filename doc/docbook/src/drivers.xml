@@ -466,10 +466,10 @@
 <!-- PS -->
 
   <sect1 id="postscript-driver">
-    <title>The Postscript Driver</title>
+    <title>The PostScript Driver</title>
     
     <para> 
-      The Postscript driver produces publication-quality postscript
+      The PostScript driver produces publication-quality PostScript
       output.  The driver provides two devices: the ps device for 
       black-and-white plots, and the psc device for color plots.
     </para>
@@ -485,7 +485,10 @@
       The available driver options are:
       <itemizedlist>
         <listitem><para>
-          text: Use Postscript text (0|1); default 1
+          text: Use PostScript text (0|1); default 1
+        </para></listitem>
+        <listitem><para>
+          color: Use color (0|1); default 1
         </para></listitem>
 	<listitem><para>
           hrshsym: Use Hershey fonts for symbols (0|1); default 1
@@ -500,12 +503,12 @@
 <!-- PS-TTF -->
 
   <sect1 id="truetype-postscript-driver">
-    <title>The TrueType Postscript Drive</title>
+    <title>The TrueType PostScript Driver</title>
     
     <para>
-      This is a postscript driver that supports TrueType fonts. This 
+      This is a PostScript driver that supports TrueType fonts. This 
       allows access to a far greater range of fonts and characters than 
-      is possible using Type 1 postscript fonts 
+      is possible using Type 1 PostScript fonts 
       (see <xref linkend="postscript-driver"/>).
       It is the driver to use for generating publication quality output
       using PLplot. The driver provides two devices: the ps-ttf device
@@ -528,7 +531,67 @@
     </para>
 
     <para>
-      Options?
+      The available driver options are:
+      <itemizedlist>
+        <listitem><para>
+          text: Use TrueType fonts for text (0|1); default 1
+        </para></listitem>
+        <listitem><para>
+          color: Use color (0|1); default 1
+        </para></listitem>
+	<listitem><para>
+          hrshsym: Use Hershey fonts for symbols (0|1); default 0
+        </para></listitem>
+      </itemizedlist>
+    </para>
+
+  </sect1>
+
+
+<!-- ================================================================== -->
+<!-- PS-TeX -->
+
+  <sect1 id="latex-postscript-driver">
+    <title>The LaTeX PostScript Driver</title>
+    
+    <para> 
+      This is a PostScript device driver that writes out its results in two
+      files.  (1) The encapsulated postscript (EPS) file contains all the
+      postscript commands for rendering the plot without characters, and (2)
+      the LaTeX file contains a fragment of LaTeX that reads in the EPS file
+      and renders the plot characters using LaTeX commands (and LaTeX
+      fonts!) in alignment with the EPS file to produce a combined result.
+    </para>
+    
+    <para>
+      
+      Suppose you create the EPS and LaTeX files with the following command:
+      <userinput>./x01c -dev pstex -o x01c.eps</userinput>.  The EPS file
+      is then stored in <filename>x01c.eps</filename> and the LaTeX fragment
+      is stored in <filename>x01c.eps_t</filename>.  Then
+      you may use the generated files with the <filename>x01c.tex</filename>
+      latex code that follows:
+    </para>
+    
+    <para>
+<programlisting>\documentclass{article}
+\usepackage[dvips]{graphicx}
+\begin{document}
+\input{x01c.eps_t}
+\end{document}
+</programlisting>
+    </para>
+
+    <para>
+    and generate PostScript results using the LaTex fonts with the following
+    command: <userinput>latex x01c.tex; dvips -f &lt;x01c.dvi &gt;x01c.ps
+    </userinput>.  The results look good (aside from an obvious bounding-box
+    problem that still needs to be fixed with this device) and should be
+    useful for Latex enthusiasts.
+    </para>
+
+    <para>
+      There are no available driver options.
     </para>
 
   </sect1>
