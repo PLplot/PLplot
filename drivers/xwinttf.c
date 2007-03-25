@@ -167,21 +167,13 @@ void plD_init_xwinttf(PLStream *pls)
   int i;
   char *a;
 
-  pls->termin = 1;		/* interactive device */
-  pls->color = 1;		/* supports color */
-  pls->width = 1;
-  pls->verbose = 1;
-  pls->bytecnt = 0;
-  pls->debug = 1;
-  pls->dev_text = 1;		/* handles text */
-  pls->dev_unicode = 1; 	/* wants text as unicode */
+  pls->termin = 1;		/* Interactive device */
+  pls->dev_flush = 1;		/* Handles flushes */
+  pls->color = 1;		/* Supports color */
+  pls->dev_text = 1;		/* Handles text */
+  pls->dev_unicode = 1; 	/* Wants unicode text */
   pls->page = 0;
-  pls->dev_fill0 = 1;		/* supports hardware solid fills */
-  pls->dev_fill1 = 1;
-  
-  pls->graphx = GRAPHICS_MODE;
-  
-  if (!pls->colorset) pls->color = 1;
+  pls->dev_fill0 = 1;		/* Supports hardware solid fills */
   
   plP_setpxl(DPI/25.4, DPI/25.4);
   
@@ -257,9 +249,9 @@ void plD_bop_xwinttf(PLStream *pls)
   // Fill in the window with the background color.
   cairo_rectangle(cairoContext[currentPage], 0.0, 0.0, windowXSize, windowYSize);
   cairo_set_source_rgb(cairoContext[currentPage],
-		       pls->cmap0[0].r,
-		       pls->cmap0[0].g,
-		       pls->cmap0[0].b);
+		       (double)pls->cmap0[0].r/255.0,
+		       (double)pls->cmap0[0].g/255.0,
+		       (double)pls->cmap0[0].b/255.0);
   cairo_fill(cairoContext[currentPage]);
 
   // Invert the coordinate system so the graphs are drawn right side up.
@@ -336,7 +328,7 @@ void plD_tidy_xwinttf(PLStream *pls)
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
 //
-// Nothing is done here because these attributes are aquired from 
+// Nothing is done here because these attributes are acquired from 
 // PLStream for each element that is drawn.
 //---------------------------------------------------------------------
 
@@ -507,8 +499,7 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
     }
     if (ucs4[i] < PL_FCI_MARK){	// not a font change
       if (ucs4[i] != (PLUNICODE)plplotEsc) {  // a character to display
-	// we have to handle "<", ">" and "&" separately 
-	// since they throw off the XML
+	// we have to handle "<", ">" and "&" separately since they throw off the XML
 	switch(ucs4[i])
 	  {
 	  case 38:
@@ -594,7 +585,12 @@ void set_current_context(PLStream *pls)
 		       (double)pls->curcolor.r/255.0, 
   		       (double)pls->curcolor.g/255.0,
   		       (double)pls->curcolor.b/255.0);
-  cairo_set_line_width(cairoContext[currentPage], (double) pls->width);
+  // In Cairo, zero width lines are not hairlines, they are completely invisible.
+  if(pls->width < 1){
+    cairo_set_line_width(cairoContext[currentPage], 1.0);
+  } else{
+    cairo_set_line_width(cairoContext[currentPage], (double) pls->width);
+  }
 }
 
 //---------------------------------------------------------------------
