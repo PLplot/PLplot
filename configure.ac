@@ -49,7 +49,7 @@ dnl Date of release.  This can be set by hand, but the prefered method
 dnl is by specifying one of the option --version of --date-version to
 dnl bootstrap.sh
 
-RELEASE_DATE=2007-01-21
+RELEASE_DATE=2007-03-25
 AC_SUBST(RELEASE_DATE)
 
 dnl Check if we are in the right directory (this used to be done by
