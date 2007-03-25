@@ -192,8 +192,21 @@ Generic Unix instructions for our CBS
    MacOS X instructions for our CBS.
    ---------------------------------------------------------------------------
 
-   Few changes from the generic Unix instructions which need to be updated
-   from http://www.miscdebris.net/plplot_wiki/.
+   No changes from the generic Unix instructions.
+   
+   Things to be aware of on OS-X are the following:
+   1. The wxWidgets driver should be off as the version of wxWidgets that
+      OS-X (10.4) ships with is not a recent enough version.
+      (PLD_wxwidgets = OFF).
+   2. Cmake is really good at finding libraries, but not so good at figuring
+      out which is the right library to use when multiple options are present.
+      Since a typical OS-X installation will often (unfortunately) have
+      multiple versions of the same library in different locations (e.g.
+      /sw, /opt, /usr and various Framework directories), care must be taken
+      to make sure that the desired library is being used. Furthermore it is
+      important to make sure it is the only one being used, and that you are
+      not instead pulling the header files from one place and the library
+      itself from another.
 
 ------------------------------------------------------------------------------
 Windows instructions for our CBS (needs updating from
