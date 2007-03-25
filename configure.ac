@@ -41,7 +41,7 @@ dnl   including the version number, otherwise it will fool up the
 dnl   bootstrap.sh script.  By the way, the line below can be changed using
 dnl   options --version and --date-version of that script. ]
 
-AC_INIT(plplot, 5.7.2, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.7.3, plplot-devel@lists.sourceforge.net)
 AC_PREREQ(2.50)
 AC_REVISION($Revision$)
 
@@ -83,7 +83,7 @@ dnl =======================================================================
 
 dnl Version numbers for the shared C libraries.
 
-SOVERSION=11:0:2
+SOVERSION=11:1:0
 AC_SUBST(SOVERSION)
 
 dnl Version number for the shared C++ library.  After version 5.2.1 was
