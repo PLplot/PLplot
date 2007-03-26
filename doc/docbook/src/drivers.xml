@@ -570,7 +570,7 @@
       is then stored in <filename>x01c.eps</filename> and the LaTeX fragment
       is stored in <filename>x01c.eps_t</filename>.  Then
       you may use the generated files with the <filename>x01c.tex</filename>
-      latex code that follows:
+      LaTeX code that follows:
     </para>
     
     <para>
@@ -583,11 +583,11 @@
     </para>
 
     <para>
-    and generate PostScript results using the LaTex fonts with the following
+    and generate PostScript results using the LaTeX fonts with the following
     command: <userinput>latex x01c.tex; dvips -f &lt;x01c.dvi &gt;x01c.ps
     </userinput>.  The results look good (aside from an obvious bounding-box
     problem that still needs to be fixed with this device) and should be
-    useful for Latex enthusiasts.
+    useful for LaTeX enthusiasts.
     </para>
 
     <para>
