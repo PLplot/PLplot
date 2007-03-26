@@ -36,7 +36,7 @@ are mature, the Java front end is almost there (most examples work), and
 the Perl front end is still quite incomplete.
 
 The main documentation for PLplot is available on-line at
-http://plplot.sourceforge.net/resources/docbook-manual/.  This is generated
+http://plplot.sourceforge.net/docbook-manual/.  This is generated
 from DocBook source within the doc/docbook tree. In some cases the
 documentation lags actual improvements to the code, so consult "NEWS" to see
 a list of recent changes.
