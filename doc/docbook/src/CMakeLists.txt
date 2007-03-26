@@ -458,12 +458,12 @@ endif(BUILD_PRINT OR PREBUILT_DOC)
 
 if(BUILD_MAN OR PREBUILT_DOC)
   install(CODE "file(GLOB MAN_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.${MANVOL})\n foreach(file \${MAN_FILES}) \n file(INSTALL DESTINATION ${MAN_DIR}/man3 TYPE FILE FILES \"\${file}\") \n endforeach (file \"\${MAN_FILES}\")")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST} DESTINATION ${MAN_DIR}/man3 )
+#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST} DESTINATION ${MAN_DIR}/man3 )
 endif(BUILD_MAN OR PREBUILT_DOC)
 
 if(BUILD_INFO OR PREBUILT_DOC)
   install(CODE "file(GLOB INFO_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.info*)\n foreach(file \${INFO_FILES}) \n file(INSTALL DESTINATION ${INFO_DIR} TYPE FILE FILES \"\${file}\") \n endforeach (file \"\${INFO_FILES}\")")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} DESTINATION ${INFO_DIR} )
+#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} DESTINATION ${INFO_DIR} )
 endif(BUILD_INFO OR PREBUILT_DOC)
 
 # Everything below here has to do with the custom target www-install
