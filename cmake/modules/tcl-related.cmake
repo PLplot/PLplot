@@ -83,9 +83,10 @@ if(ENABLE_tcl)
       if(ITCL_INCLUDE_PATH)
         message(STATUS "Looking for itcl.h - found")
         message(STATUS "Looking for itcl library")
+	get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
         set(itcl_library_versions 3.3 3.2 3.1 3.0 2.1 2.0)
         foreach(version ${itcl_library_versions})
-          find_library(ITCL_LIBRARY itcl${version} ${TCL_LIBRARY}
+          find_library(ITCL_LIBRARY itcl${version} PATHS ${TCL_LIBRARY_PATH}
                        PATH_SUFFIXES itcl${version})
         endforeach(version ${itcl_library_versions})
         if(ITCL_LIBRARY)
