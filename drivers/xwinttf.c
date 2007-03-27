@@ -78,11 +78,11 @@ static cairo_t *cairoContext[MAXPAGES];
 #define NPANGOLOOKUP 5
 
 const char *defaultFamilyLookup[NPANGOLOOKUP] = {
-  "Arial,Bitstream-Vera-Sans,sans",
-  "Times-Roman,Bitstream-Vera-Serif,serif",
-  "Courier,Bitstream-Vera-Sans-Mono,monospace",
-  "Arial,Bitstream-Vera-Sans,sans,serif",
-  "Arial,Bitstream-Vera-Sans,sans,serif"
+  "Sans",
+  "Serif",
+  "Monospace",
+  "Sans",
+  "Sans"
 };
 
 const char *envFamilyLookup[NPANGOLOOKUP] = {
@@ -114,6 +114,8 @@ const char *styleLookup[3] = {
 
 static void proc_str(PLStream *, EscText *);
 static char *ucs4_to_pango_markup_format(PLUNICODE *, int, float);
+static void open_span_tag(char *, PLUNICODE, float, int);
+static void close_span_tag(char *, int);
 
 /* Graphics */
 
@@ -369,10 +371,7 @@ void proc_str(PLStream *pls, EscText *args)
 {
   int i;
   float fontSize;
-  PLUNICODE fci;
-  unsigned char fontFamily, fontStyle, fontWeight;
   int textXExtent, textYExtent;
-  char fontString[200];
   char *textWithPangoMarkup;
   PLFLT rotation, shear, cos_rot, sin_rot, sin_shear;
   cairo_matrix_t *cairoTransformMatrix;
@@ -396,24 +395,14 @@ void proc_str(PLStream *pls, EscText *args)
   // Calculate the font size (in pixels)
   fontSize = pls->chrht * DPI/25.4;
 
-  // Determine the font family, style and weight
-  plgfci(&fci);
-  plP_fci2hex(fci, &fontFamily, PL_FCI_FAMILY);
-  plP_fci2hex(fci, &fontStyle, PL_FCI_STYLE);
-  plP_fci2hex(fci, &fontWeight, PL_FCI_WEIGHT);
-  for(i=0;i<200;i++){
-    fontString[i] = 0;
-  }
-  sprintf(fontString, "%s,%s,%s", familyLookup[fontFamily], styleLookup[fontStyle], weightLookup[fontWeight]);
-
   // Convert the escape characters into the appropriate Pango markup
   textWithPangoMarkup = ucs4_to_pango_markup_format(args->unicode_array, args->unicode_array_len, fontSize);
 
   // Create the Pango text layout so we can figure out how big it is
   layout = pango_cairo_create_layout(cairoContext[currentPage]);
   pango_layout_set_markup(layout, textWithPangoMarkup, -1);
-  fontDescription = pango_font_description_from_string(fontString);
-  pango_layout_set_font_description(layout, fontDescription);
+  // fontDescription = pango_font_description_from_string(fontString);
+  // pango_layout_set_font_description(layout, fontDescription);
   pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
 
   // Move to the string reference point
@@ -452,10 +441,10 @@ void proc_str(PLStream *pls, EscText *args)
   // Render the text
   pango_cairo_show_layout(cairoContext[currentPage], layout);
 
-  // Restore the transform matrix to its state prior to the text transform
+  // Restore the transform matrix to its state prior to the text transform.
   cairo_restore(cairoContext[currentPage]);
   
-  // Free the layout object & the text
+  // Free the layout object and the markup string.
   g_object_unref(layout);
   free(textWithPangoMarkup);
 }
@@ -487,8 +476,9 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
   // Get PLplot escape character
   plgesc(&plplotEsc);
 
-  // Set the font size
-  sprintf(pangoMarkupString, "<span font_desc=\"%.2f\">", fontSize);
+  // Get the curent font and open the first span tag
+  plgfci(&fci);
+  open_span_tag(pangoMarkupString, fci, fontSize, 0);
 
   // Parse the string to generate the tags
   i = 0;
@@ -546,12 +536,72 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
       }
     }
     else { // a font change
-      // FIXME: These are ignored
+      close_span_tag(pangoMarkupString, upDown);
+      open_span_tag(pangoMarkupString, ucs4[i], fontSize, upDown);
       i++;
     }
   }
 
-  // Close out sub and superscript tags
+  // Close the last span tag.
+  close_span_tag(pangoMarkupString, upDown);
+
+  //printf("%s\n", pangoMarkupString);
+
+  return pangoMarkupString;
+}
+
+//---------------------------------------------------------------------
+// open_span_tag
+//
+// 1. Opens a span tag with the appropriate font description given the
+//    current fci.
+// 2. Add the appropriate number of <sub> or <sup> tags to bring us
+//    back to our current sub/super-script level.
+//---------------------------------------------------------------------
+
+void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int upDown)
+{
+  int i;
+  unsigned char fontFamily, fontStyle, fontWeight;
+  char openTag[200];
+
+  // Generate the font info for the open tag & concatenate this
+  // onto the markup string.
+  plP_fci2hex(fci, &fontFamily, PL_FCI_FAMILY);
+  plP_fci2hex(fci, &fontStyle, PL_FCI_STYLE);
+  plP_fci2hex(fci, &fontWeight, PL_FCI_WEIGHT);
+  sprintf(openTag, "<span font_desc=\"%s %.2f\" ", familyLookup[fontFamily], fontSize);
+  strcat(pangoMarkupString, openTag);
+
+  sprintf(openTag, "style=\"%s\" ", styleLookup[fontStyle]);
+  strcat(pangoMarkupString, openTag);
+
+  sprintf(openTag, "weight=\"%s\">", weightLookup[fontWeight]);
+  strcat(pangoMarkupString, openTag);
+
+  // Move to the right sub/super-script level
+  if(upDown > 0){
+    while(upDown > 0){
+      strcat(pangoMarkupString, "<sup>");
+      upDown--;
+    }
+  }
+  if(upDown < 0){
+    while(upDown < 0){
+      strcat(pangoMarkupString, "<sub>");
+      upDown++;
+    }
+  }
+}
+
+//---------------------------------------------------------------------
+// close_span_tag
+//
+// Close a span tag & brings us down to zero sub/super-script level
+//---------------------------------------------------------------------
+
+void close_span_tag(char *pangoMarkupString, int upDown)
+{
   if(upDown > 0){
     while(upDown > 0){
       strcat(pangoMarkupString, "</sup>");
@@ -566,12 +616,8 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
   }
 
   strcat(pangoMarkupString, "</span>");
-
-  //printf("%s\n", pangoMarkupString);
-
-  return pangoMarkupString;
 }
-				
+
 //---------------------------------------------------------------------
 // set_current_context()
 //
