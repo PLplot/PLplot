@@ -34,6 +34,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/cursorfont.h>
 
 #include <cairo.h>
 #include <cairo-xlib.h>
@@ -119,6 +120,7 @@ static void close_span_tag(char *, int);
 
 /* Graphics */
 
+static void get_cursor(PLStream *, PLGraphicsIn *);
 static void set_current_context(PLStream *);
 static void poly_line(PLStream *, short *, short *, PLINT);
 
@@ -240,7 +242,7 @@ void plD_bop_xwinttf(PLStream *pls)
   XWindow[currentPage] = XCreateSimpleWindow(XDisplay, rootWindow, 0, 0, windowXSize, windowYSize, 
 					     1, BlackPixel(XDisplay, XScreen), BlackPixel(XDisplay, XScreen));
   XStoreName(XDisplay, XWindow[currentPage], plotTitle);
-  XSelectInput(XDisplay, XWindow[currentPage], ExposureMask|ButtonPressMask);
+  XSelectInput(XDisplay, XWindow[currentPage], NoEventMask);
   XMapWindow(XDisplay, XWindow[currentPage]);
 
   // Create an cairo surface & context that are associated with the window.
@@ -357,6 +359,10 @@ void plD_esc_xwinttf(PLStream *pls, PLINT op, void *ptr)
       break;
     case PLESC_FLUSH: // forced update of the window
       XFlush(XDisplay);
+      break;
+    case PLESC_GETC:                // get cursor position
+      XFlush(XDisplay);
+      get_cursor(pls, (PLGraphicsIn*)ptr);
       break;
     }
 }
@@ -616,6 +622,41 @@ void close_span_tag(char *pangoMarkupString, int upDown)
   }
 
   strcat(pangoMarkupString, "</span>");
+}
+
+//---------------------------------------------------------------------
+// get_cursor()
+//
+// returns the location of the next mouse click
+//---------------------------------------------------------------------
+
+void get_cursor(PLStream *pls, PLGraphicsIn *gin)
+{
+  XEvent mouseEvent;
+  Cursor xHairCursor;
+
+  // Initialize PLplot mouse event structure
+  plGinInit(gin);
+
+  // Create cross hair cursor & switch to using it
+  xHairCursor = XCreateFontCursor(XDisplay, XC_crosshair);
+  XDefineCursor(XDisplay, XWindow[currentPage], xHairCursor);
+
+  // Get the next mouse button release event
+  XSelectInput(XDisplay, XWindow[currentPage], ButtonReleaseMask);
+  XMaskEvent(XDisplay, ButtonReleaseMask, &mouseEvent);
+  XSelectInput(XDisplay, XWindow[currentPage], NoEventMask);
+
+  // Update PLplot's mouse event structure
+  gin->button = 0;
+  gin->pX = mouseEvent.xbutton.x;
+  gin->pY = mouseEvent.xbutton.y;
+  gin->dX = (PLFLT)mouseEvent.xbutton.x/((PLFLT)(pls->xlength));
+  gin->dY = (PLFLT)mouseEvent.xbutton.y/((PLFLT)(pls->ylength));
+
+  // Switch back to normal cursor
+  XUndefineCursor(XDisplay, XWindow[currentPage]);
+  XFlush(XDisplay);
 }
 
 //---------------------------------------------------------------------
