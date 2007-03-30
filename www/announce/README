@@ -1,0 +1,32 @@
+Release announcements for PLplot in DocBook-XML format
+------------------------------------------------------
+
+This directory contains the source files in DocBook-XML format for the
+PLplot release announcements starting at version > 5.2.1.  It contains also
+the stylesheets and the Makefile for building the output files.
+
+XHTML, PDF, and text versions can be obtained from a XML source.  The
+Makefile has generic (pattern) rules to build the output formats.  For
+instance, if one has a source file called announce.xml, then the following
+command:
+
+    make SOURCES=announce
+
+will build the files announce.xhtml, announce.pdf, and announce.txt.
+Notice that the value of the SOURCES variable is the name of the input file
+with the extension ".xml" stripped off.  This also works:
+
+    make announce.txt
+
+There are also "clean" and "validate" make targets.  The "validate" target
+runs an XML validation program.
+
+The Makefile uses specific constructs of GNU make and is unlikely to be
+widely portable.  The programs and respective (Debian) packages needed are:
+
+    xmlto     xmlto_0.0.14
+    links     elinks_0.4.2
+    onsgmls   opensp_1.5release
+
+ -- Rafael Laboissiere <rlaboiss@users.sf.net>, Fri Oct 24 10:05:00 CEST 2003
+
