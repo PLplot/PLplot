@@ -1,3 +1,7 @@
+2007-03-31: Since the conversion to subversion these instructions are even
+more dated, but we keep them for a historical reference.  Instead, follow the
+directions in ../README.Release_Manager_Cookbook.
+
 11-27-06: This may work, but it is deprecated. Please follow the 
 instructions contained in README.Release_Manager_Cookbook.
 
