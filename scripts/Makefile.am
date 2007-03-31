@@ -31,13 +31,7 @@ nodist_bin_SCRIPTS = plplot-config
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
-	check-tarball-cvs.sh \
-	check-year-author.pl \
-	fixfort \
 	get-dependency-libs.sh \
 	htdocs-gen_plot-examples.sh \
-	htdocs-replace.sh \
-	make-cvs-tarball.sh \
 	make_tarball.sh \
 	mktclIndex \
-	upload-cvs-tarball.sh
