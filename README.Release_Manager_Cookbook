@@ -60,8 +60,8 @@ number and the patch number.
 Update configure.ac to reflect the current version.
 
 
-Commit the above changes & update your local cvs repository in case anyone
-else has made any last minute changes.
+Using svn, commit the above changes & update your local working copy of
+PLplot in case anyone else has made any last minute changes.
 
 
 Verify that your computer has the right date and time using the command date.
@@ -81,8 +81,9 @@ archive. Look for the thread titled "PLplot 5.7.2 is now available" dated
 Jan 22/23 2007.
 
 
-Change directory to your plplot cvs directory and enter the following command:
-./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee build.log 
+Change directory to your updated plplot working copy and enter the following
+command: ./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee
+build.log 
 
 This script will take a several minutes to execute and will ask you for
 your SourceForge password several times. The script does not otherwise
@@ -104,7 +105,7 @@ Install the documentation on the PLplot website:
 cd /tmp/plplot-dist-prep/build_dir/doc/docbook/src
 make www-install
 
-
+NEEDS SVN CHANGE (create an svn tag by doing "svn copy" see the svn book).
 Tag the cvs repository (go back to the cvs plplot directory):
 cvs rtag -r cvs-tarball-<date>-<time> vX_X_X plplot
 
@@ -117,7 +118,8 @@ gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.
 
 A list of your GPG keys can be obtained using the command "gpg --list-keys".
 
-
+NEEDS SVN CHANGE (use svn2cl [http://ch.tudelft.nl/~arthur/svn2cl/] instead
+which has different syntax).
 Prepare the ChangeLog file:
 cvs2cl -l "-d< today" --stdout > ChangeLog.release
 
@@ -185,15 +187,16 @@ Click on submit.
 Update the project web page, including the examples:
 edit www/index.html to include a link to the latest release.
 edit www/examples/index.html.in to reflect the current release number.
-commit the updated pages to cvs.
+svn commit the updated pages.
 
-Create a directory containing a fresh cvs checkout of PLplot, including the 
+Create a directory containing a fresh svn checkout of PLplot, including the 
 www scripts. Run the following commands in that directory:
 ./scripts/htdocs-gen_plot-examples.sh
 cd www
 make
 
-
+NEEDS SVN CHANGE (to remove an svn tag use the svn delete command, see the
+svn book).
 Remove the temporary tags on the CVS archives:
 ./scripts/rm-cvs-tarball-tags.pl
 
