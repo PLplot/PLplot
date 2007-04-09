@@ -26,6 +26,10 @@
 # wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
 # DRIVERS_LINK_FLAGS  	  - list of LINK_FLAGS for all static devices.
 
+# Find wxWidgets needed for driver and bindings
+SET(wxWidgets_USE_LIBS core base)
+find_package(wxWidgets QUIET)
+
 if( NOT wxWidgets_FOUND )
   set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
 endif( NOT wxWidgets_FOUND )  
@@ -78,3 +82,10 @@ else(PLD_wxwidgets)
   )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(PLD_wxwidgets)
+
+if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
+  message(STATUS
+  "WARNING: ENABLE_cxx is OFF so "
+  "Setting ENABLE_wxwidgets to OFF."
+  )
+endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
