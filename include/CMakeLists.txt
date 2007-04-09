@@ -35,13 +35,19 @@ ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode-gen.c
 
 add_executable(plhershey-unicode-gen ${plhershey-unicode-gen_SRCS})
 
+get_target_property(
+plhershey-unicode-gen_LOCATION
+plhershey-unicode-gen
+LOCATION
+)
+
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
 COMMAND ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode-gen${EXEEXT}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 plhershey-unicode.h
 DEPENDS
-${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode-gen${EXEEXT}
+${plhershey-unicode-gen_LOCATION}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 )
 
