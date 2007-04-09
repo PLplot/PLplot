@@ -6424,6 +6424,173 @@ default
 
   </sect1>
 
+  <sect1 id="plmtex3" renderas="sect3">
+    <title>
+      <function>plmtex3</function>: Write text relative to viewport boundaries
+      in 3D plots.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plmtex3</function>
+	</funcdef>
+        <paramdef><parameter>side</parameter></paramdef>
+        <paramdef><parameter>disp</parameter></paramdef>
+        <paramdef><parameter>pos</parameter></paramdef>
+        <paramdef><parameter>just</parameter></paramdef>
+        <paramdef><parameter>text</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Writes text at a specified position relative to the viewport
+      boundaries.  Text may be written inside or outside the viewport, but
+      is clipped at the subpage boundaries.  The reference point of a
+      string lies along a line passing through the string at half the
+      height of a capital letter.  The position of the reference point
+      along this line is determined by
+      <literal><parameter>just</parameter></literal>, and the position of
+      the reference point relative to the viewport is set by
+      <literal><parameter>disp</parameter></literal> and
+      <literal><parameter>pos</parameter></literal>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>side</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Specifies the side of the viewport along which the text is to
+	    be written. The string should contain one or more of the
+	    following characters: <literal>[xyz][ps][v]</literal>. 
+	    Only one label is drawn at a time, i.e. <literal>xyp</literal>
+	    will only label the X axis, not both the X and Y axises.
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal>x</literal>: Label the X axis.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>y</literal>: Label the Y axis.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>z</literal>: Label the Z axis.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>p</literal>: Label the <quote>primary</quote>
+		  axis. For Z this is the leftmost Z axis. For X it is
+		  the axis that starts at y-min. For Y it is the axis that
+		  starts at x-min.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>s</literal>: Label the <quote>secondary</quote>
+		  axis.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>v</literal>: Draw the text perpendicular to the
+		  axis.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>disp</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Position of the reference point of string, measured outwards
+	    from the specified viewport edge in units of the current
+	    character height.  Use negative
+	    <literal><parameter>disp</parameter></literal> to write within
+	    the viewport.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pos</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Position of the reference point of string along the specified
+	    edge, expressed as a fraction of the length of the edge.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>just</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Specifies the position of the string relative to its reference
+	    point.  If <literal><parameter>just</parameter>=0</literal>,
+	    the reference point is at the left and if
+	    <literal><parameter>just</parameter>=1</literal>, it is at the
+	    right of the string.  Other values of
+	    <literal><parameter>just</parameter></literal> give
+	    intermediate justifications.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The string to be written out.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plmtex3(side, disp, pos, just, text)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  F95, Java, Perl/PDL, Python: <function>Not implemented.</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+
   <sect1 id="plot3d" renderas="sect3">
     <title>
       <function>plot3d</function>: Plot 3-d surface plot
@@ -7428,6 +7595,228 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
     </para>
 
   </sect1>
+
+
+  <sect1 id="plptex3" renderas="sect3">
+    <title>
+      <function>plptex3</function>: Write text inside the viewport of a 3D plot.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plptex3</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+        <paramdef><parameter>dx</parameter></paramdef>
+        <paramdef><parameter>dy</parameter></paramdef>
+        <paramdef><parameter>dz</parameter></paramdef>
+        <paramdef><parameter>sx</parameter></paramdef>
+        <paramdef><parameter>sy</parameter></paramdef>
+        <paramdef><parameter>sz</parameter></paramdef>
+        <paramdef><parameter>just</parameter></paramdef>
+        <paramdef><parameter>text</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Writes text at a specified position and inclination within the
+      viewport.  Text is clipped at the viewport boundaries.  The reference
+      point of a string lies along a line passing through the string at
+      half the height of a capital letter.  The position of the reference
+      point along this line is determined by
+      <literal><parameter>just</parameter></literal>, the reference point
+      is placed at world coordinates <literal>(<parameter>x</parameter>,
+      <parameter>y</parameter>,<parameter>z</parameter>)</literal> within 
+      the viewport. The inclination and shear of the string is specified in 
+      terms of differences of world coordinates making it easy to write text 
+      parallel to a line in a graph.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    x coordinate of reference point of string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    y coordinate of reference point of string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    z coordinate of reference point of string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>dx</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Together with <literal><parameter>dy</parameter>,<parameter>
+	    dz</parameter></literal>, this specifies the inclination of 
+            the string.  The baseline of the string is parallel to a line 
+	    joining <literal>(<parameter>x</parameter>,<parameter>y</parameter>,
+	    <parameter>z</parameter>)</literal> to <literal>
+	    (<parameter>x</parameter>+<parameter>dx</parameter>,
+	    <parameter>y</parameter>+<parameter>dy</parameter>,
+	    <parameter>z</parameter>+<parameter>dz</parameter>)</literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>dy</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Together with <literal><parameter>dx</parameter>,
+	    <parameter>dy</parameter></literal>,
+	    this specifies the inclination of the string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>dz</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Together with <literal><parameter>dx</parameter>,
+	    <parameter>dy</parameter></literal>,
+	    this specifies the inclination of the string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sx</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Together with <literal><parameter>sy</parameter>,<parameter>
+	    sz</parameter></literal>, this specifies the shear of 
+            the string.  The string is sheared so that the characters are 
+	    vertically parallel to a line joining <literal>
+	    (<parameter>x</parameter>,<parameter>y</parameter>,
+	    <parameter>z</parameter>)</literal> to <literal>
+	    (<parameter>x</parameter>+<parameter>sx</parameter>,
+	    <parameter>y</parameter>+<parameter>sy</parameter>,
+	    <parameter>z</parameter>+<parameter>sz</parameter>)</literal>.
+	    If <literal><parameter>sx</parameter>=<parameter>sy</parameter>
+	    =<parameter>sz</parameter>=0)</literal> then the text is not
+	    sheared.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sy</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Together with <literal><parameter>sx</parameter>,
+	    <parameter>sy</parameter></literal>,
+	    this specifies shear of the string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sz</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Together with <literal><parameter>sx</parameter>,
+	    <parameter>sy</parameter></literal>,
+	    this specifies shear of the string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>just</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Specifies the position of the string relative to its reference
+	    point.  If <literal><parameter>just</parameter>=0</literal>,
+	    the reference point is at the left and if
+	    <literal><parameter>just</parameter>=1</literal>, it is at the
+	    right of the string.  Other values of
+	    <literal><parameter>just</parameter></literal> give
+	    intermediate justifications.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The string to be written out.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+	  General: <function>plptex3(x, y, z, dx, dy, dz, sx, sy, sz, 
+	  just, text)
+	  </function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+	  F95, Java, Perl/PDL, Python: <function>Not implemented.</function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
 
   <sect1 id="plreplot" renderas="sect3">
     <title>
