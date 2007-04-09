@@ -255,7 +255,7 @@ include(ada)
 
 # Find wxWidgets needed for driver and bindings
 SET(wxWidgets_USE_LIBS core base)
-find_package(wxWidgets)
+find_package(wxWidgets QUIET)
 
 # =======================================================================
 # additional library support
