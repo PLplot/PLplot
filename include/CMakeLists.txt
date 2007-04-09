@@ -43,9 +43,9 @@ LOCATION
 
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
-COMMAND ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode-gen${EXEEXT}
+COMMAND ${plhershey-unicode-gen_LOCATION}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
-plhershey-unicode.h
+${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
 DEPENDS
 ${plhershey-unicode-gen_LOCATION}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
