@@ -86,6 +86,28 @@ if(ENABLE_wxwidgets)
     else(LIB_TAG)
       set(PC_PRECISION "single")
     endif(LIB_TAG)
+    
+    # Determine libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
+    STRING(REGEX REPLACE ";" " "
+    libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
+    "${wxWidgets_DEFINITIONS}"
+    )
+    STRING(REGEX REPLACE ";" " -I"
+    wxWidgets_IFLAGS
+    "-I${wxWidgets_INCLUDE_DIRS}"
+    )
+    set(libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
+    "${libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS} ${wxWidgets_IFLAGS}"
+    )
+    
+    # Determine libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
+    message("DEBUG, wxWidgets_LIBRARIES = ${wxWidgets_LIBRARIES}")
+    pc_transform_link_flags(
+    libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
+    "${wxWidgets_LIBRARIES}"
+    )
+    message("DEBUG, libplplotwxwidgets${LIB_TAG}_LINK_FLAGS = ${libplplotwxwidgets${LIB_TAG}_LINK_FLAGS}")
+
     # Each list element must consist of a colon-separated string with the
     # following fields which are parsed out in the foreach loop below and
     # used to configure the corresponding pkg-config *.pc file.
