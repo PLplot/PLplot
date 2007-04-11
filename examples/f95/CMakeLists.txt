@@ -45,8 +45,7 @@ set(f95_STRING_INDICES
 "23"
 )
 
-set(ENABLE_BUILDTREE_EXAMPLES ON)
-if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
+if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   # N.B. This is required because it's the location of plplot.mod
   # generated as a by-product of building libplplotf95${LIB_TAG}.
@@ -64,13 +63,13 @@ if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
   ${CMAKE_BINARY_DIR}/plplot.mod.proxy
   COPYONLY
   )
-endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
+endif(BUILD_TEST)
 foreach(STRING_INDEX ${f95_STRING_INDICES})
   set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
-  if(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
+  if(BUILD_TEST)
     add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
     target_link_libraries(x${STRING_INDEX}f plplotf95${LIB_TAG})
-  endif(BUILD_TEST AND ENABLE_BUILDTREE_EXAMPLES)
+  endif(BUILD_TEST)
 endforeach(STRING_INDEX ${f95_STRING_INDICES})
 
 install(FILES ${f95_SRCS} 
