@@ -28,6 +28,9 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
 
+@wxwidgets_true@@pkg_config_true@PLPLOTWXWIDGETS_EXECUTABLES_list = \
+@wxwidgets_true@@pkg_config_true@	wxPLplotDemo$(EXEEXT)
+
 EXECUTABLES_list = \
 		 x01cc$(EXEEXT) \
 		 x01$(EXEEXT) \
@@ -55,11 +58,16 @@ EXECUTABLES_list = \
 		 x23$(EXEEXT) \
 		 x24$(EXEEXT) \
 		 x25$(EXEEXT) \
-		 x26$(EXEEXT)
+		 x26$(EXEEXT) \
+		 $(PLPLOTWXWIDGETS_EXECUTABLES_list)
+		 
 all: $(EXECUTABLES_list)
 
 clean:
 	rm -f $(EXECUTABLES_list)
+
+@wxwidgets_true@@pkg_config_true@wxPLplotDemo$(EXEEXT): wxPLplotDemo.cpp
+@wxwidgets_true@@pkg_config_true@	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-wxwidgets`
 
 .cc$(EXEEXT):
 @pkg_config_true@	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-c++`

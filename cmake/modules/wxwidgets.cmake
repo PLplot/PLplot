@@ -88,4 +88,10 @@ if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
   "WARNING: ENABLE_cxx is OFF so "
   "Setting ENABLE_wxwidgets to OFF."
   )
+  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
+if(ENABLE_wxwidgets)
+  set(wxwidgets_true "")
+else(ENABLE_wxwidgets)
+  set(wxwidgets_true "#")
+endif(ENABLE_wxwidgets)
