@@ -144,13 +144,14 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 	// add the wxPLplot
 	wxPanel* panel = new wxPanel( this );
 	wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
+	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0,
 #if defined(WX_TEMP_HAVE_AGG_IS_ON)
-	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0, wxPLPLOT_ANTIALIZED );
-#elif defined(WX_TEMP_HAVE_FREETYPE_IS_ON)
-	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0, wxPLPLOT_FREETYPE | wxPLPLOT_SMOOTHTEXT );
-#else
-	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0, 0 );
+																   wxPLPLOT_ANTIALIZED |
 #endif
+#if defined(WX_TEMP_HAVE_FREETYPE_IS_ON)
+																	 wxPLPLOT_FREETYPE | wxPLPLOT_SMOOTHTEXT |
+#endif
+	                                 wxPLPLOT_DUMMY );
 
 	box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
   panel->SetSizer( box );
