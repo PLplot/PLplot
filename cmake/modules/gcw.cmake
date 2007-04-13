@@ -92,23 +92,30 @@ if(PLD_gcw)
   endif(NOT gcw_HEADERS)
 endif(PLD_gcw)
 
-if(PLD_gcw)
-  if(DEFAULT_NO_BINDINGS)
-    option(ENABLE_gnome2 "Enable Gnome2 bindings" OFF)
-    option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
-  else(DEFAULT_NO_BINDINGS)
-    option(ENABLE_gnome2 "Enable Gnome2 bindings" ON)
-    option(ENABLE_pygcw "Enable Python Gnome2 bindings" ON)
-  endif(DEFAULT_NO_BINDINGS)
-else(PLD_gcw)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_gnome2 "Enable Gnome2 bindings" OFF)
+  option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_gnome2 "Enable Gnome2 bindings" ON)
+  option(ENABLE_pygcw "Enable Python Gnome2 bindings" ON)
+endif(DEFAULT_NO_BINDINGS)
+
+if(ENABLE_gnome2 AND NOT PLD_gcw)
   message(STATUS
   "WARNING: PLD_gcw is OFF so "
-  "setting ENABLE_gnome2 and ENABLE_pygcw to OFF."
+  "setting ENABLE_gnome2 to OFF."
   )
   set(ENABLE_gnome2 OFF CACHE BOOL "Enable Gnome2 bindings" FORCE)
+endif(ENABLE_gnome2 AND NOT PLD_gcw)
+
+if(ENABLE_pygcw AND NOT PLD_gcw)
+  message(STATUS
+  "WARNING: PLD_gcw is OFF so "
+  "setting ENABLE_pygcw to OFF."
+  )
   set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
-endif(PLD_gcw)
-  
+endif(ENABLE_pygcw AND NOT PLD_gcw)
+
 if(ENABLE_gnome2)
   set(gcw_true "")
   set(gcw_false "#")
