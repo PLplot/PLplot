@@ -103,7 +103,7 @@ if(PLD_gcw)
 else(PLD_gcw)
   message(STATUS
   "WARNING: PLD_gcw is OFF so "
-  "Setting ENABLE_gnome2 and ENABLE_pygcw to OFF."
+  "setting ENABLE_gnome2 and ENABLE_pygcw to OFF."
   )
   set(ENABLE_gnome2 OFF CACHE BOOL "Enable Gnome2 bindings" FORCE)
   set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
