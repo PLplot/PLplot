@@ -61,7 +61,9 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, long style ) :
             m_style & wxPLPLOT_ANTIALIZED ? 1 : 0 );
   strncat( drvopt, buffer, 64-strlen(drvopt) );
 #endif
-  SetOpt( "-drvopt", drvopt );
+
+  if( drvopt[0] != '\0' )
+	  SetOpt( "-drvopt", drvopt );
   
   init();
 #ifdef WX_TEMP_HAVE_AGG_IS_ON  
