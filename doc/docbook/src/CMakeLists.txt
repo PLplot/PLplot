@@ -67,9 +67,9 @@ if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
   )
     get_filename_component(filename ${file} NAME)
     if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
-      exec_program(
-      ${CMAKE_COMMAND}
-      ARGS -E create_symlink 
+      execute_process(
+      COMMAND
+      ${CMAKE_COMMAND} -E create_symlink 
       ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
       ${CMAKE_CURRENT_BINARY_DIR}/${filename}
       )
