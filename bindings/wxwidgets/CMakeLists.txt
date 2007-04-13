@@ -101,12 +101,10 @@ if(ENABLE_wxwidgets)
     )
     
     # Determine libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
-    message("DEBUG, wxWidgets_LIBRARIES = ${wxWidgets_LIBRARIES}")
     pc_transform_link_flags(
     libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
     "${wxWidgets_LIBRARIES}"
     )
-    message("DEBUG, libplplotwxwidgets${LIB_TAG}_LINK_FLAGS = ${libplplotwxwidgets${LIB_TAG}_LINK_FLAGS}")
 
     # Each list element must consist of a colon-separated string with the
     # following fields which are parsed out in the foreach loop below and
