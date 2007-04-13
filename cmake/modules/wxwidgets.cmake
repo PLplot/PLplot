@@ -31,6 +31,10 @@ SET(wxWidgets_USE_LIBS core base)
 find_package(wxWidgets QUIET)
 
 if( NOT wxWidgets_FOUND )
+  message(STATUS
+  "WARNING: wxWidgets not found so "
+  "setting PLD_wxwidgets to OFF."
+  )
   set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
 endif( NOT wxWidgets_FOUND )  
 
