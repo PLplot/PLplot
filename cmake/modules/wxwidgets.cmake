@@ -69,24 +69,24 @@ if(PLD_wxwidgets)
   )
 endif(PLD_wxwidgets)
 
-if(PLD_wxwidgets)
-  if(DEFAULT_NO_BINDINGS)
-    option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
-  else(DEFAULT_NO_BINDINGS)
-    option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
-  endif(DEFAULT_NO_BINDINGS)
-else(PLD_wxwidgets)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
+endif(DEFAULT_NO_BINDINGS)
+
+if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
   message(STATUS
   "WARNING: PLD_wxwidgets is OFF so "
-  "Setting ENABLE_wxwidgets to OFF."
+  "setting ENABLE_wxwidgets to OFF."
   )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
-endif(PLD_wxwidgets)
+endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
 if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
   message(STATUS
   "WARNING: ENABLE_cxx is OFF so "
-  "Setting ENABLE_wxwidgets to OFF."
+  "setting ENABLE_wxwidgets to OFF."
   )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
