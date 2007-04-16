@@ -285,7 +285,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
 )
 
 # Configure pkg-config *.pc file corresponding to libplplottcltk${LIB_TAG}
-if(PKGCONFIG_EXECUTABLE)
+if(PKG_CONFIG_EXECUTABLE)
   if(LIB_TAG)
     set(PC_PRECISION "double")
   else(LIB_TAG)
@@ -325,5 +325,5 @@ if(PKGCONFIG_EXECUTABLE)
   @ONLY
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-endif(PKGCONFIG_EXECUTABLE)
+endif(PKG_CONFIG_EXECUTABLE)
 endif(ENABLE_tcl)

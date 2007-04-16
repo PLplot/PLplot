@@ -242,7 +242,7 @@ libplplot${LIB_TAG}_COMPILE_FLAGS
 #message("libplplot${LIB_TAG}_COMPILE_FLAGS = ${libplplot${LIB_TAG}_COMPILE_FLAGS}")
 
 # Configure pkg-config *.pc file corresponding to libplplot${LIB_TAG}
-if(PKGCONFIG_EXECUTABLE)
+if(PKG_CONFIG_EXECUTABLE)
   if(LIB_TAG)
     set(PC_PRECISION "double")
   else(LIB_TAG)
@@ -282,5 +282,5 @@ if(PKGCONFIG_EXECUTABLE)
   @ONLY
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-endif(PKGCONFIG_EXECUTABLE)
+endif(PKG_CONFIG_EXECUTABLE)
 

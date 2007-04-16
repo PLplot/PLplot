@@ -127,7 +127,7 @@ RUNTIME DESTINATION ${BIN_DIR}
 )
 
 # Configure pkg-config *.pc file corresponding to libplplotf77${LIB_TAG}
-if(PKGCONFIG_EXECUTABLE)
+if(PKG_CONFIG_EXECUTABLE)
   if(LIB_TAG)
     set(PC_PRECISION "double")
   else(LIB_TAG)
@@ -169,5 +169,5 @@ if(PKGCONFIG_EXECUTABLE)
   @ONLY
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-endif(PKGCONFIG_EXECUTABLE)
+endif(PKG_CONFIG_EXECUTABLE)
 endif(ENABLE_f77)
