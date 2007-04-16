@@ -185,6 +185,12 @@ PERMISSIONS ${PERM_MODULES}
 
 # Build and install plplot_stub.m
 add_executable(massage massage.c)
+get_target_property(
+massage_LOCATION
+massage
+LOCATION
+)
+
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m_part2 
 "# It was also massaged to add online documentation\n"
 "# extracted from some PLplot distribution files\n"
@@ -202,11 +208,11 @@ cat plplot_stub.m_part2 >> plplot_stub.m
 COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def >> plplot_stub.m
 COMMAND echo >> plplot_stub.m
 COMMAND 
-${CMAKE_CURRENT_BINARY_DIR}/massage$(EXEEXT) >> plplot_stub.m 2> missing_help
+${massage_LOCATION} >> plplot_stub.m 2> missing_help
 DEPENDS
 ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
 ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
-${CMAKE_CURRENT_BINARY_DIR}/massage$(EXEEXT)
+${massage_LOCATION}
 )
 
 add_custom_target(
