@@ -60,8 +60,15 @@ LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
 
+# Transform "${gcw_LINK_FLAGS}" to the 
+# standard pkg-config form.
+pc_transform_link_flags(
+libplplot${LIB_TAG}_LINK_FLAGS
+"${gcw_LINK_FLAGS}"
+)
+
 # Configure pkg-config *.pc file corresponding to libplplotgnome2${LIB_TAG}
-if(PKGCONFIG_EXECUTABLE)
+if(PKG_CONFIG_EXECUTABLE)
   if(LIB_TAG)
     set(PC_PRECISION "double")
   else(LIB_TAG)
@@ -89,10 +96,10 @@ if(PKGCONFIG_EXECUTABLE)
   string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
   string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
   string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-#  set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
+  set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
+  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
 #  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_COMPILE_FLAGS "${gcw_COMPILE_FLAGS}")
-  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${gcw_LINK_FLAGS}")
   set(PC_CONFIGURED_FILE
   ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
   )
@@ -102,5 +109,5 @@ if(PKGCONFIG_EXECUTABLE)
   @ONLY
   )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-endif(PKGCONFIG_EXECUTABLE)
+endif(PKG_CONFIG_EXECUTABLE)
 endif(ENABLE_gnome2)
