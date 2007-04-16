@@ -19,34 +19,32 @@
 
 # Module for determining all configuration variables for libpango.
 
-if(PKGCONFIG_EXECUTABLE)
-  # This is the deprecated cmake pkgconfig command.  Convert to the more
-  # modern command if more pkg-config information is required.
-  pkgconfig(
+if(PKG_CONFIG_EXECUTABLE)
+  pkg_check_pkgconfig(
   pango
-  PANGO_INCLUDE_DIR PANGO_LINK_DIR PANGO_LINK_FLAGS PANGO_CFLAGS
+  PANGO_INCLUDE_DIR PANGO_LINK_DIR PANGO_LINK_FLAGS PANGO_CFLAGS _PANGO1
   )
-  if(NOT PANGO_INCLUDE_DIR)
+  if(NOT PANGO_LINK_FLAGS)
     message(STATUS
     "WARNING: pkg-config does not find pango."
     )
-  endif(NOT PANGO_INCLUDE_DIR)
+  endif(NOT PANGO_LINK_FLAGS)
 
-  pkgconfig(
+  pkg_check_pkgconfig(
   pangoft2
-  PANGOFT2_INCLUDE_DIR PANGOFT2_LINK_DIR PANGOFT2_LINK_FLAGS PANGOFT2_CFLAGS
+  PANGOFT2_INCLUDE_DIR PANGOFT2_LINK_DIR PANGOFT2_LINK_FLAGS PANGOFT2_CFLAGS _PANGO2
   )
-  if(NOT PANGOFT2_INCLUDE_DIR)
+  if(NOT PANGOFT2_LINK_FLAGS)
     message(STATUS
     "WARNING: pkg-config does not find pangoft2."
     )
-  endif(NOT PANGOFT2_INCLUDE_DIR)
-else(PKGCONFIG_EXECUTABLE)
+  endif(NOT PANGOFT2_LINK_FLAGS)
+else(PKG_CONFIG_EXECUTABLE)
   message(STATUS 
   "WARNING: pango not found because pkg-config not available."
   )
-endif(PKGCONFIG_EXECUTABLE)
+endif(PKG_CONFIG_EXECUTABLE)
 
-if(PANGO_INCLUDE_DIR AND PANGOFT2_INCLUDE_DIR)
+if(PANGO_LINK_FLAGS AND PANGOFT2_LINK_FLAGS)
   set(HAVE_PANGO ON)
-endif(PANGO_INCLUDE_DIR AND PANGOFT2_INCLUDE_DIR)
+endif(PANGO_LINK_FLAGS AND PANGOFT2_LINK_FLAGS)

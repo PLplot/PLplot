@@ -23,14 +23,14 @@
 # The following variables are set / modified
 #
 # PLD_xwinttf               - ON means the psttf and psttfc devices are enabled.
-# xwinttf_COMPILE_FLAGS  	  - COMPILE_FLAGS (string) required to compile psttf
-# 		            device driver.
-# xwinttf_LINK_FLAGS     	  - LINK_FLAGS (string) for dynamic psttf device driver.
-# xwinttf_RPATH	       	  - RPATH directory list for psttf device driver.
-# xwinttf_TARGETS	       	  - Full Name of libLASi so that cmake can figure out
-# 		       	    RPATH stuff in the build tree.
-# DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS and TARGETS for case
-# 			    when ENABLE_DYNDRIVERS OFF.
+# xwinttf_COMPILE_FLAGS	    - Blank-delimited COMPILE_FLAGS required to
+#			      compile psttf device driver.
+# xwinttf_LINK_FLAGS	    - LINK_FLAGS (string) for dynamic psttf device driver.
+# xwinttf_RPATH		    - RPATH directory list for psttf device driver.
+# xwinttf_TARGETS	    - Full Name of libLASi so that cmake can figure out
+#			      RPATH stuff in the build tree.
+# DRIVERS_LINK_FLAGS	    - list of device LINK_FLAGS and TARGETS for case
+#			      when ENABLE_DYNDRIVERS OFF.
 
 # Include file searches use FindPath. To add extra search directories
 # set the environment variable CMAKE_INCLUDE_PATH.
@@ -40,19 +40,21 @@
 
 # Look for xwinttf headers and libraries with pkg-config
 if(PLD_xwinttf)
-  if(NOT PKGCONFIG_EXECUTABLE)
+  if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS 
     "WARNING: pkg-config not found. Setting PLD_xwinttf to OFF."
     )
     set(PLD_xwinttf OFF CACHE BOOL "Enable xwinttf device" FORCE)
-  endif(NOT PKGCONFIG_EXECUTABLE)
+  endif(NOT PKG_CONFIG_EXECUTABLE)
 endif(PLD_xwinttf)
 
 if(PLD_xwinttf)
-  pkgconfig("pango;cairo;pangocairo" includedir libdir linkflags cflags)
-  if(linkflags AND cflags AND libdir)
-    set(xwinttf_COMPILE_FLAGS "${cflags} -I${X11_INCLUDE_DIR}")
+  pkg_check_pkgconfig("pangocairo;pango;cairo" includedir libdir linkflags cflags _XWINTTF)
+  if(linkflags)
+    # Blank-delimited required.
+    string(REGEX REPLACE ";" " " xwinttf_COMPILE_FLAGS "${cflags} -I${X11_INCLUDE_DIR}")
     set(xwinttf_LINK_FLAGS "${linkflags} -L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
+    message("xwinttf_COMPILE_FLAGS = ${xwinttf_COMPILE_FLAGS}")
 
 #    # Convert from blank-delimited to a cmake list
 #    string(REGEX REPLACE " +" ";" psttf_RPATH ${libdir})
@@ -72,7 +74,7 @@ if(PLD_xwinttf)
     ${psttf_LINK_FLAGS}
     ${psttf_TARGETS}
     )
-  else(linkflags AND cflags AND libdir)
+  else(linkflags)
     #message("includedir = ${includedir}")
     #message("libdir = ${libdir}")
     #message("linkflags = ${linkflags}")
@@ -83,5 +85,5 @@ if(PLD_xwinttf)
     "   and/or set the environment variable PKG_CONFIG_PATH appropriately."
     )
     set(PLD_xwinttf OFF CACHE BOOL "Enable xwinttf device" FORCE)
-  endif(linkflags AND cflags AND libdir)
+  endif(linkflags)
 endif(PLD_xwinttf)

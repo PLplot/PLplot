@@ -23,9 +23,9 @@
 # The following variables are set / modified
 #
 # PLD_psttf               - ON means the psttf and psttfc devices are enabled.
-# psttf_COMPILE_FLAGS  	  - COMPILE_FLAGS (string) required to compile psttf
-# 		            device driver.
-# psttf_LINK_FLAGS     	  - LINK_FLAGS (string) for dynamic psttf device driver.
+# psttf_COMPILE_FLAGS  	  - blank-separated COMPILE_FLAGS required to
+#			    compile psttf device driver.
+# psttf_LINK_FLAGS     	  - list of LINK_FLAGS for dynamic psttf device driver.
 # psttf_RPATH	       	  - RPATH directory list for psttf device driver.
 # psttf_TARGETS	       	  - Full Name of libLASi so that cmake can figure out
 # 		       	    RPATH stuff in the build tree.
@@ -40,21 +40,21 @@
 
 # Look for psttf headers and libraries with pkg-config
 if(PLD_psttf)
-  if(NOT PKGCONFIG_EXECUTABLE)
+  if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS 
     "WARNING: pkg-config not found. Setting PLD_psttf to OFF."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
-  endif(NOT PKGCONFIG_EXECUTABLE)
+  endif(NOT PKG_CONFIG_EXECUTABLE)
 endif(PLD_psttf)
 
 if(PLD_psttf)
-  pkgconfig("pango;pangoft2;lasi" includedir libdir linkflags cflags)
-  if(linkflags AND cflags AND libdir)
-    set(psttf_COMPILE_FLAGS "${cflags}")
+  pkg_check_pkgconfig("lasi;pangoft2;pango" includedir libdir linkflags cflags _PSTTF)
+  if(linkflags)
+    #blank-separated required.
+    string(REGEX REPLACE ";" " " psttf_COMPILE_FLAGS "${cflags}")
     set(psttf_LINK_FLAGS "${linkflags}")
-    # Convert from blank-delimited to a cmake list
-    string(REGEX REPLACE " +" ";" psttf_RPATH ${libdir})
+    set(psttf_RPATH ${libdir})
     # Put libLASI pkg-config information into a form that
     # target_link_libraries can interpret properly with respect to RPATH
     # for the build tree.
@@ -70,18 +70,18 @@ if(PLD_psttf)
     ${psttf_LINK_FLAGS}
     ${psttf_TARGETS}
     )
-  else(linkflags AND cflags AND libdir)
-    #message("includedir = ${includedir}")
-    #message("libdir = ${libdir}")
-    #message("linkflags = ${linkflags}")
-    #message("cflags = ${cflags}")
+  else(linkflags)
+    message("includedir = ${includedir}")
+    message("libdir = ${libdir}")
+    message("linkflags = ${linkflags}")
+    message("cflags = ${cflags}")
     message(STATUS
        "WARNING: pango, pangoft2, or lasi not found with pkg-config.\n"
     "   Setting PLD_psttf to OFF.  Please install all of these packages\n"
     "   and/or set the environment variable PKG_CONFIG_PATH appropriately."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
-  endif(linkflags AND cflags AND libdir)
+  endif(linkflags)
 endif(PLD_psttf)
 # Test for correct version of liblasi by looking
 # for API that was added for 1.0.5 which is required by PLplot.???

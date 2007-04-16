@@ -17,14 +17,17 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining all configuration variables related to pkg-config
-# Also create a useful macro called pc_transform_link_flags to process link
-# flags into standard form for the configured *.pc files.
+# Module for determining pkg-config configuration variables related to the
+# install-tree build of the examples.
+# Also create useful macros called pkg_check_pkgconfig to emulate the
+# pkgconfig macro using the pkg_check_modules macro and 
+# pc_transform_link_flags to process link flags into standard form for
+# the configured *.pc files.
 
 # The following variables are set:
-# PKGCONFIG_EXECUTABLE	  - name of pkg-config executable, but can also be
+# PKG_CONFIG_EXECUTABLE	  - name of pkg-config executable, but can also be
 # 			    used for logical control with, e.g.,
-# 			    if(PKGCONFIG_EXECUTABLE)
+# 			    if(PKG_CONFIG_EXECUTABLE)
 # pkg_config_true	  - if null string, then example builds done with
 #  			    pkg-config method.  if "#" then that method is
 #			    commented out.
@@ -36,27 +39,57 @@
 # PKG_CONFIG_ENV	  - the string PKG_CONFIG_PATH=${PKG_CONFIG_DIR} which
 #  			    is used in example builds.
 
-
-message(STATUS "Looking for pkg-config")
-# Following line is in UsePkgConfig.cmake so comment it out.
-# find_program(PKGCONFIG_EXECUTABLE NAMES pkg-config PATHS /usr/local/bin)
-# Make PKGCONFIG_EXECUTABLE available as well as the PKGCONFIG macro.
-include(UsePkgConfig)
+include(FindPkgConfig)
 
 set(pkg_config_false "#")
 
-if(PKGCONFIG_EXECUTABLE)
+if(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - found")
   set(pkg_config_true "")
   set(PKG_CONFIG_DIR ${LIB_DIR}/pkgconfig)
   set(PKG_CONFIG_ENV PKG_CONFIG_PATH=${PKG_CONFIG_DIR})
-else(PKGCONFIG_EXECUTABLE)
+else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
-  message(STATUS "WARNING: Build of examples in install tree will not work.")
+  message(STATUS
+  "WARNING: Install-tree build will be disabled.")
   # Turn off pkg-config build.  (This means both build methods will be
   # commented out.)
   set(pkg_config_true "#")
-endif(PKGCONFIG_EXECUTABLE)
+endif(PKG_CONFIG_EXECUTABLE)
+
+macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags)
+  # Similar to legacy pkgconfig only these results are derived
+  # from pkg_check_modules and therefore are returned as lists rather than
+  # blank-delimited strings.
+
+  # N.B. if using this macro in more than one context, cache clashes will
+  # occur unless optional trailing prefix argument is specified to distinguish
+  # different contexts.
+  set(_prefix ${ARGN})
+  if(NOT _prefix)
+    set(_prefix "_PKGCONFIG_TMP")
+  endif(NOT _prefix)
+  
+  _pkg_check_modules_internal(0 0 ${_prefix} "${_package}")
+  if (${_prefix}_FOUND)
+    set(${_include_DIR} ${${_prefix}_INCLUDE_DIRS})
+    set(${_link_DIR}    ${${_prefix}_LIBRARY_DIRS})
+    set(${_link_FLAGS}  ${${_prefix}_LDFLAGS})
+    set(${_cflags}      ${${_prefix}_CFLAGS})
+    set(_return_VALUE 0)
+  else(${_prefix}_FOUND)
+    set(${_include_DIR})
+    set(${_link_DIR})
+    set(${_link_FLAGS})
+    set(${_cflags})
+    set(_return_VALUE 1)
+  endif(${_prefix}_FOUND)
+  #message("${_prefix}_FOUND = ${${_prefix}_FOUND}")
+  #message("${_include_DIR} = ${${_include_DIR}}")
+  #message("${_link_DIR} = ${${_link_DIR}}")
+  #message("${_link_FLAGS} = ${${_link_FLAGS}}")
+  #message("${_cflags} = ${${_cflags}}")
+endmacro(pkg_check_pkgconfig)
 
 macro(pc_transform_link_flags _link_flags_out _link_flags_in)
   # Transform link flags into a form that is suitable to be used in

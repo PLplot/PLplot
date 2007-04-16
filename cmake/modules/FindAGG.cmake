@@ -14,19 +14,16 @@ if (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
 
 else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
 
-  if(PKGCONFIG_EXECUTABLE)
-    # use pkg-config to get the directories and then use these values
-    # in the FIND_PATH() and FIND_LIBRARY() calls
-    INCLUDE(UsePkgConfig)
-    
-    PKGCONFIG(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags)
+  if(PKG_CONFIG_EXECUTABLE)
+    pkg_check_pkgconfig(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags _AGG)
     #message(STATUS "_AGGIncDir = ${_AGGIncDir}")
     #message(STATUS "_AGGLinkDir = ${_AGGLinkDir}")
     #message(STATUS "_AGGLinkFlags = ${_AGGLinkFlags}")
     #message(STATUS "_AGGCflags = ${_AGGCflags}")
     
-    set(AGG_DEFINITIONS ${_AGGCflags})
-  endif(PKGCONFIG_EXECUTABLE)
+    # Blank-delimited is required.
+    string(REGEX REPLACE ";" " " AGG_DEFINITIONS "${_AGGCflags}")
+  endif(PKG_CONFIG_EXECUTABLE)
   
   FIND_PATH(AGG_INCLUDE_DIR agg2/agg_pixfmt_gray.h
     ${_AGGIncDir}
