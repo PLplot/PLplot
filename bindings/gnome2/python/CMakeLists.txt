@@ -20,9 +20,12 @@
 
 if(ENABLE_pygcw)
 
-EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE}
-ARGS pygtk-2.0 --variable=defsdir
+execute_process(
+COMMAND
+${PKG_CONFIG_EXECUTABLE}
+pygtk-2.0 --variable=defsdir
 OUTPUT_VARIABLE PYGTK_DEFS
+OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 #message("PYGTK_DEFS = ${PYGTK_DEFS}")
 
