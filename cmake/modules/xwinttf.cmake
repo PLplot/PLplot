@@ -54,7 +54,7 @@ if(PLD_xwinttf)
     # Blank-delimited required.
     string(REGEX REPLACE ";" " " xwinttf_COMPILE_FLAGS "${cflags} -I${X11_INCLUDE_DIR}")
     set(xwinttf_LINK_FLAGS "${linkflags} -L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
-    message("xwinttf_COMPILE_FLAGS = ${xwinttf_COMPILE_FLAGS}")
+    #message("xwinttf_COMPILE_FLAGS = ${xwinttf_COMPILE_FLAGS}")
 
 #    # Convert from blank-delimited to a cmake list
 #    string(REGEX REPLACE " +" ";" psttf_RPATH ${libdir})
