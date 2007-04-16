@@ -83,14 +83,10 @@ endif(ENABLE_python)
 if(ENABLE_python)
   # N.B. This is a nice way to obtain all sorts of python information
   # using distutils.
-  set(
-  PYTHON_ARG_STRING
-  "-c \"from distutils import sysconfig\;"
-  "print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')\""
-  )
-  exec_program(
-  ${PYTHON_EXECUTABLE}
-  ARGS ${PYTHON_ARG_STRING}
+  execute_process(
+  COMMAND
+  ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')"
   OUTPUT_VARIABLE PYTHON_INSTDIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 endif(ENABLE_python)
