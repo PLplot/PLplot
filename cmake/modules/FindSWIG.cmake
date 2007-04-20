@@ -35,7 +35,7 @@ IF(SWIG_EXECUTABLE)
 	ERROR_VARIABLE SWIG_version_output
 	RESULT_VARIABLE SWIG_version_result)
       IF(SWIG_version_result)
-        MESSAGE(SEND_ERROR "Command \"${SWIG_EXECUTABLE} -version\" failed with output:\n${SWIG_version_error}")
+        MESSAGE(SEND_ERROR "Command \"${SWIG_EXECUTABLE} -version\" failed with output:\n${SWIG_version_output}")
       ELSE(SWIG_version_result)
         STRING(REGEX REPLACE ".*SWIG Version[^0-9.]*\([0-9.]+\).*" "\\1"
 	  SWIG_version_output "${SWIG_version_output}")
