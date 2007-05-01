@@ -200,9 +200,9 @@ package PLplot is
         y3 : Real_Vector := Dont_Plot_This;
         y4 : Real_Vector := Dont_Plot_This;
         y5 : Real_Vector := Dont_Plot_This;
-        X_Label     : Unbounded_String := Default_Label_String;
-        Y_Label     : Unbounded_String := Default_Label_String;
-        Title_Label : Unbounded_String := Default_Label_String);
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String));
     
     
     -- Simple log x plotter for single x array and multiple y arrays
@@ -213,9 +213,9 @@ package PLplot is
         y3 : Real_Vector := Dont_Plot_This;
         y4 : Real_Vector := Dont_Plot_This;
         y5 : Real_Vector := Dont_Plot_This;
-        X_Label     : Unbounded_String := Default_Label_String;
-        Y_Label     : Unbounded_String := Default_Label_String;
-        Title_Label : Unbounded_String := Default_Label_String);
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String));
     
     
     -- Simple log y plotter for multiple x arrays and single y array
@@ -226,16 +226,16 @@ package PLplot is
         x3 : Real_Vector := Dont_Plot_This;
         x4 : Real_Vector := Dont_Plot_This;
         x5 : Real_Vector := Dont_Plot_This;
-        X_Label     : Unbounded_String := Default_Label_String;
-        Y_Label     : Unbounded_String := Default_Label_String;
-        Title_Label : Unbounded_String := Default_Label_String);
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String));
     
     
     -- Simple log x - log y plotter
     procedure Simple_Plot_Log_XY(x, y : Real_Vector;
-        X_Label     : Unbounded_String := Default_Label_String;
-        Y_Label     : Unbounded_String := Default_Label_String;
-        Title_Label : Unbounded_String := Default_Label_String);
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String));
 
 
     -- Simple plotter for multiple x-y arrays specified pairwise.
@@ -250,9 +250,9 @@ package PLplot is
         y4 : Real_Vector := Dont_Plot_This;
         x5 : Real_Vector := Dont_Plot_This;
         y5 : Real_Vector := Dont_Plot_This;
-        X_Label     : Unbounded_String := Default_Label_String;
-        Y_Label     : Unbounded_String := Default_Label_String;
-        Title_Label : Unbounded_String := Default_Label_String);
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String));
 
 
 --------- Plotter requiring somewhat more arguments ------
@@ -261,9 +261,9 @@ package PLplot is
     -- Similar to Multiplot_Pairs except single trace and no attribute arrays.
     procedure Single_Plot
        (x, y          : Real_Vector;
-        X_Label       : Unbounded_String   := Default_Label_String;
-        Y_Label       : Unbounded_String   := Default_Label_String;
-        Title_Label   : Unbounded_String   := Default_Label_String;
+        X_Label       : String             := To_String(Default_Label_String);
+        Y_Label       : String             := To_String(Default_Label_String);
+        Title_Label   : String             := To_String(Default_Label_String);
         Axis_Style    : Axis_Style_Type    := Linear_Major_Grid;
         Color         : Plot_Color_Type    := Red;
         Line_Width    : Integer            := 1;
@@ -279,10 +279,10 @@ package PLplot is
 
     procedure Simple_Contour
        (z             : Real_Matrix;
-        Number_Levels : Integer            := 10;
-        X_Label       : Unbounded_String   := Default_Label_String;
-        Y_Label       : Unbounded_String   := Default_Label_String;
-        Title_Label   : Unbounded_String   := Default_Label_String);
+        Number_Levels : Integer := 10;
+        X_Label       : String  := To_String(Default_Label_String);
+        Y_Label       : String  := To_String(Default_Label_String);
+        Title_Label   : String  := To_String(Default_Label_String));
 
 
 --------- Simple 3D Mesh Plotter ------
@@ -296,9 +296,9 @@ package PLplot is
         y_Max    : Long_Float := 0.0;
         Altitude : Long_Float := 30.0; -- viewing elevation angle in degrees
         Azimuth  : Long_Float := 30.0; -- viewing azimuth in degrees
-        X_Label  : Unbounded_String := TUB("x");
-        Y_Label  : Unbounded_String := TUB("y");
-        Z_Label  : Unbounded_String := TUB("z"));
+        X_Label  : String := "x";
+        Y_Label  : String := "y";
+        Z_Label  : String := "z");
 
 
 --------- Simple 3D Surface Plotter ------
@@ -312,9 +312,9 @@ package PLplot is
         y_Max    : Long_Float := 0.0;
         Altitude : Long_Float := 30.0; -- viewing elevation angle in degrees
         Azimuth  : Long_Float := 30.0; -- viewing azimuth in degrees
-        X_Label  : Unbounded_String := TUB("x");
-        Y_Label  : Unbounded_String := TUB("y");
-        Z_Label  : Unbounded_String := TUB("z"));
+        X_Label  : String := "x";
+        Y_Label  : String := "y";
+        Z_Label  : String := "z");
 
 
 --------- Simple color table manipulatons -----
@@ -397,10 +397,10 @@ package PLplot is
     -- plaxes
     procedure Box_Around_Viewport_With_Origin
        (X_Origin, Y_Origin       : Long_Float;
-        X_Option_String          : Unbounded_String;
+        X_Option_String          : String;
         X_Major_Tick_Interval    : Long_Float;
         X_Number_Of_Subintervals : Natural;
-        Y_Option_String          : Unbounded_String;
+        Y_Option_String          : String;
         Y_Major_Tick_Interval    : Long_Float;
         Y_Number_Of_Subintervals : Natural);
 
@@ -421,10 +421,10 @@ package PLplot is
     -- This draws a box around the current viewport.
     -- plbox
     procedure Box_Around_Viewport
-       (X_Option_String          : Unbounded_String;
+       (X_Option_String          : String;
         X_Major_Tick_Interval    : Long_Float;
         X_Number_Of_Subintervals : Natural := 0;
-        Y_Option_String          : Unbounded_String;
+        Y_Option_String          : String;
         Y_Major_Tick_Interval    : Long_Float;
         Y_Number_Of_Subintervals : Natural);
 
@@ -434,20 +434,20 @@ package PLplot is
     -- This is the 3-d analogue of plbox().
     -- plbox3
     procedure Box_Around_Viewport_3D
-       (X_Option_String          : Unbounded_String;
-        X_Label                  : Unbounded_String := Default_Label_String;
+       (X_Option_String          : String;
+        X_Label                  : String := To_String(Default_Label_String);
         X_Major_Tick_Interval    : Long_Float := 0.0;
         X_Number_Of_Subintervals : Natural := 0;
 
-        Y_Option_String          : Unbounded_String;
-        Y_Label                  : Unbounded_String := Default_Label_String;
+        Y_Option_String          : String;
+        Y_Label                  : String := To_String(Default_Label_String);
         Y_Major_Tick_Interval    : Long_Float := 0.0;
         Y_Number_Of_Subintervals : Natural := 0;
 
-        Z_Option_String          : Unbounded_String;
-        Z_Label                  : Unbounded_String := Default_Label_String;
+        Z_Option_String          : String;
+        Z_Label                  : String := To_String(Default_Label_String);
         Z_Major_Tick_Interval    : Long_Float := 0.0;
-        Z_Number_Of_Subintervals : Natural := 0);    
+        Z_Number_Of_Subintervals : Natural := 0);
 
 
     -- Calculate world coordinates and subpage from relative device coordinates.
@@ -802,7 +802,7 @@ package PLplot is
 
     -- Simple routine for labelling graphs.
     -- pllab
-    procedure Write_Labels(X_Label, Y_Label, Title_Label : Unbounded_String := Default_Label_String);
+    procedure Write_Labels(X_Label, Y_Label, Title_Label : String := To_String(Default_Label_String));
 
 
     -- Sets position of the light source
@@ -1284,7 +1284,7 @@ package PLplot is
     -- plstripc
     procedure Create_Stripchart
        (ID                                   : out Integer;
-        X_Options, Y_Options                 : Unbounded_String;
+        X_Options, Y_Options                 : String;
         x_Min, x_Max                         : Long_Float;
         x_Jump                               : Long_Float;
         y_Min, y_Max                         : Long_Float;
@@ -1295,7 +1295,7 @@ package PLplot is
         Pen_Colors                           : Integer_Array_1D;
         Line_Styles                          : Integer_Array_1D;
         Pen_Labels                           : Stripchart_Label_String_Array_Type;
-        x_Label, y_Label, Title_Label        : Unbounded_String);
+        X_Label, Y_Label, Title_Label        : String := To_String(Default_Label_String));
 
 
     -- Deletes and releases memory used by a stripchart.
@@ -1452,7 +1452,7 @@ package PLplot is
 
     -- Process input strings, treating them as an option and argument pair.
     -- plsetopt
-    procedure Set_Command_Line_Option(Option, Argument : Unbounded_String);
+    procedure Set_Command_Line_Option(Option, Argument : String);
 
 
 	-- Transformation routines
