@@ -118,7 +118,7 @@ package PLplotThin is
     -- Short name for To_Unbounded_String
     function TUB(arg : String) return Ada.Strings.Unbounded.Unbounded_String renames Ada.Strings.Unbounded.To_Unbounded_String;
 
-    -- Convenient string of length 80
+    -- Convenient string of length 80 (Is this used?)
     package Bounded_String_80 is
         new Ada.Strings.Bounded.Generic_Bounded_Length(80);
     subtype String_80 is Bounded_String_80.Bounded_String;
