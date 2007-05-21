@@ -108,9 +108,9 @@
  *  way of making a nice web-friendly png without having to redefine the
  *  cmaps within your program.
  *
- *  smooth
+ *  smoothlines
  *
- *  -drvopt smooth=2 turns on anti-aliased line and polygong drawing if
+ *  -drvopt smoothlines=1 turns on anti-aliased line and polygong drawing if
  *  you are using a 24bit mode. Unfortunately gd doesn't honour line
  *  width when anti-aliasing, so by default it is off.
  */
@@ -364,6 +364,7 @@ plD_init_png_Dev(PLStream *pls)
 #if GD2_VERS >= 2
     static int truecolour=0;
     static int palette=0;
+    static int smooth_line=0;
 #endif
 #ifdef HAVE_FREETYPE
     static int freetype=1;
@@ -377,6 +378,7 @@ plD_init_png_Dev(PLStream *pls)
 #if GD2_VERS >= 2
                               {"8bit", DRV_INT, &palette, "Palette (8 bit) mode"},
                               {"24bit", DRV_INT, &truecolour, "Truecolor (24 bit) mode"},
+                              {"smoothlines", DRV_INT, &smooth_line, "Turn line Anti Aliasing on (1) or off (0)"},
 #endif
 #ifdef HAVE_FREETYPE
                               {"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
@@ -429,7 +431,7 @@ plD_init_png_Dev(PLStream *pls)
         NCOLOURS=16777216;
        }
 
-    if ((dev->palette==0)&&(dev->optimise==0)&&(smooth_text>1)) dev->smooth=1; /* Allow smoothing of lines if we have a truecolour device */
+    if ((dev->palette==0)&&(dev->optimise==0)&&(smooth_line==1)) dev->smooth=1; /* Allow smoothing of lines if we have a truecolour device */
 
 #endif
 
