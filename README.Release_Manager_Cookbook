@@ -60,10 +60,11 @@ number and the patch number.
 Update configure.ac to reflect the current version.
 
 
-Using svn, commit the above changes & update your local working copy of
-PLplot in case anyone else has made any last minute changes.
+Using svn, commit the above changes.
 
 
+(While it is useful to have the correct time on your computer, this is no 
+longer strictly necessary).
 Verify that your computer has the right date and time using the command date.
 The easiest way to make sure the time and date are correct is to do the 
 following:
@@ -81,12 +82,45 @@ archive. Look for the thread titled "PLplot 5.7.2 is now available" dated
 Jan 22/23 2007.
 
 
-Change directory to your updated plplot working copy and enter the following
-command: ./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee
-build.log 
+Based on suggestions in the svn manual, the PLplot svn archive is configured
+as follows:
 
-This script will take a several minutes to execute and will ask you for
-your SourceForge password several times. The script does not otherwise
+/trunk/plplot
+/tags/older_plplot_versions
+/branches/??
+
+For the release, you will be creating (and eventually committing) what is
+essentially a branch of PLplot that is a record of the project at the time
+of the release. This branch will be located in the /tags directory and
+should follow the current naming convention, vX_Y_Z (v5_7_0 for example).
+
+The easiest way to get started is to make a directory on your computer
+called, for example plplot_releases. Then in this directory enter the
+following command:
+
+svn co https://plplot.svn.sourceforge.net/svnroot/plplot plplot
+
+This will check out the *entire* plplot project, including all the old
+versions. Strictly speaking this is not necessary, all you really need
+are the trunk and the tags directories, but you'll only have to do this
+once and hard drives are pretty big these days.
+
+If you already have this directory, you will need to make sure that
+trunk is up to date. In the trunk directory, type:
+
+svn update
+
+Now to create the branch for the new PLplot release, type the following
+command in the root plplot directory:
+
+svn copy trunk/ tags/vX_Y_Z
+
+
+cd to tags/vX_Y_Z and enter the following command: 
+
+./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee build.log 
+
+This script will take a several minutes to execute and does not otherwise
 provide a lot of feedback so it will appear as if it is doing nothing for
 long periods of time (at least on a slower computer). Be patient. When the
 script is finished, the release tarball will be available in the directory
@@ -101,27 +135,29 @@ above command finishes executing you should go to this directory and verify
 that the examples build and that plplot_test.sh executes without errors.
 
 
+In the event that problems are found in PLplot during the release process, 
+corrections should be made to trunk/ and then merged into the tags/vX_Y_Z 
+branch as follows:
+
+cd tags/vX_Y_Z
+svn merge -r A:B /path/to/trunk
+
+Where A and B specify the range of revisions in trunk to be applied
+to tags/vX_Y_Z in the merge process. These can be determined by commit
+messages.
+
+
 Install the documentation on the PLplot website:
 cd /tmp/plplot-dist-prep/build_dir/doc/docbook/src
 make www-install
-
-NEEDS SVN CHANGE (create an svn tag by doing "svn copy" see the svn book).
-Tag the cvs repository (go back to the cvs plplot directory):
-cvs rtag -r cvs-tarball-<date>-<time> vX_X_X plplot
-
-Where cvs-tarball-<date>-<time> was obtained earlier (you can also get
-this from the build.log file).
-
 
 Sign the release with your plplot Release Manager gpg key:
 gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
 
 A list of your GPG keys can be obtained using the command "gpg --list-keys".
 
-NEEDS SVN CHANGE (use svn2cl [http://ch.tudelft.nl/~arthur/svn2cl/] instead
-which has different syntax).
-Prepare the ChangeLog file:
-cvs2cl -l "-d< today" --stdout > ChangeLog.release
+Prepare the ChangeLog file (in the trunk/ directory):
+svn log -v > ChangeLog.release
 
 Edit ChangeLog.release to be the appropriate date range (i.e. only the
 changes that were made since the last release should be included).
@@ -207,11 +243,9 @@ www scripts. Run the following commands in that directory:
 cd www
 make
 
-NEEDS SVN CHANGE (to remove an svn tag use the svn delete command, see the
-svn book).
-Remove the temporary tags on the CVS archives:
-./scripts/rm-cvs-tarball-tags.pl
+Finally, commit the release directory to Sourceforge using the following 
+command:
 
+svn commit -m "Creating tags/vX_Y_Z containing the latest PLplot release."
 
 DONE!!!
-
