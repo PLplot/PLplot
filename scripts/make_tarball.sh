@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This will prepare a distribution tarball directly from the CVS sources of
+# This will prepare a distribution tarball directly from the svn sources of
 # the PLplot project.
 # CAVEAT: this script silently and completely deletes a directory called
 # /tmp/plplot-dist-prep
@@ -28,16 +28,18 @@
 
 usage () {
   local prog=`basename $0`
-  echo "Usage: $prog [-b] [-n] [-u user] [-w remote dir] [-r branch] \\"
+  echo "Usage: $prog -t tagname [-n] [-w URL] \\"
   echo "          [-c [-i prefix] [-o cmake options]] \\"
   echo "       $prog -d"
   echo "       $prog -h"
   echo
-  echo "Option -b prevents tagging."
+  echo "Option -t is mandatory and is used for specifying the subdirectory"
+  echo "  of the svn URL.  By default the svn URL points to the tags"
+  echo "  subdirectory so normally the -t option is a version tag"
+  echo "  (e.g., v5_7_4) used for the _already committed_ tags subdirectory"
+  echo "  of the release existing at the SourceForge svn repository."
   echo "Option -n prevents building of the DocBook manual."
-  echo "Option -u sets the user name used for CVS and SourceForge access."
-  echo "Option -w sets the CVS root directory."
-  echo "Option -r sets the -r option (revision tag) used for CVS retrieval."
+  echo "Option -w sets the svn repository URL."
   echo "When option -c is given, the generated tarball is"
   echo "  unpacked, configured with cmake and built with make, and"
   echo "  the ctest (build-tree tests) is run afterward."
@@ -53,11 +55,9 @@ usage () {
 }
 
 DOC_ARG=${DOC_ARG:--DBUILD_DOC=ON}
-WWW_USER=${WWW_USER:-hbabcock}
-CVSROOTDIR=${CVSROOTDIR:-plplot.cvs.sourceforge.net:/cvsroot/plplot}
-BRANCH=${BRANCH:--D now}
+SVN_URL=${SVN_URL:-https://plplot.svn.sourceforge.net/svnroot/plplot/tags}
 # Just easier to always keep this temporary directory in the same location
-CVSTMPDIR=/tmp/plplot-dist-prep
+SVNTMPDIR=/tmp/plplot-dist-prep
 
 # Put here extra cmake options that should always be used when
 # generating a tarball
@@ -65,49 +65,42 @@ config_opt=""
 
 print_defaults () {
   local v
-  for v in DOC_ARG WWW_USER CVSROOTDIR BRANCH ; do
+  for v in DOC_ARG SVN_URL ; do
     eval "echo $v=\\\"\$$v\\\""
   done
   exit 0
 }
 
-bypass_rtag=no
 do_check=no
 prefix=""
 
-while getopts "bcdhi:no:r:u:w:" option
+while getopts "cdhi:no:t:u:w:" option
 do
   case $option in
-    b) bypass_rtag=yes ;;
     c) do_check=yes ;;
     d) print_defaults ;;
     h) usage 0 ;;
     i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
     n) DOC_ARG= ;;
     o) config_opt="$config_opt $OPTARG" ;;
-    r) test -n "$OPTARG" || usage 1 ; BRANCH="-r $OPTARG" ;;
-    u) test -n "$OPTARG" || usage 1 ; WWW_USER=$OPTARG ;;
-    w) test -n "$OPTARG" || usage 1 ; CVSROOTDIR=$OPTARG ;;
+    t) test -n "$OPTARG" || usage 1 ; TAG=$OPTARG ;;
+    w) test -n "$OPTARG" || usage 1 ; SVN_URL=$OPTARG ;;
     *) usage 1 ;;
   esac
 done
 
+test -n "$TAG" || usage 1
+
 cleanup ( ) {
-    rm -rf $CVSTMPDIR
+    rm -rf $SVNTMPDIR
 }
 
 #trap "cleanup" 0 HUP INT QUIT PIPE TERM
 
-test $bypass_rtag = yes \
-  || date_tag=cvs-tarball_`date --utc +%Y-%m-%d-%H-%M-%S` \
-  && echo "Tagging repository with $date_tag" \
-  && cvs -d${WWW_USER}@$CVSROOTDIR rtag $BRANCH $date_tag plplot \
-  && BRANCH="-r $date_tag"
-
 cleanup
-mkdir $CVSTMPDIR
-cd $CVSTMPDIR
-cvs -d${WWW_USER}@$CVSROOTDIR export $BRANCH plplot \
+mkdir $SVNTMPDIR
+cd $SVNTMPDIR
+svn export $SVN_URL/$TAG plplot \
   && cd plplot \
   && cf/bootstrap.sh >& bootstrap.sh.out \
   && mkdir ../build_dir \
@@ -122,7 +115,7 @@ cvs -d${WWW_USER}@$CVSROOTDIR export $BRANCH plplot \
   && DISTDIR=`echo $TARBALL | sed s/.tar.gz//` \
   && mv $TARBALL .. \
   && cd .. \
-  && echo "CVS distribution tarball: $TARBALL" \
+  && echo "distribution tarball: $TARBALL" \
   && test "$do_check" = yes \
   && tar xfz $TARBALL \
   && mkdir ctest_build_dir \
