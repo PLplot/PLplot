@@ -80,6 +80,13 @@ CMAKE_Fortran_COMPILER CMAKE_Fortran_FLAGS:	${CMAKE_Fortran_COMPILER} ${CMAKE_Fo
 Target Fortran:	${TARGET_FORTRAN}")
 endif(ENABLE_f77 OR ENABLE_f95)
 
+if(ENABLE_python)
+set(
+_output_results
+"${_output_results}
+PYTHON_EXECUTABLE:				${PYTHON_EXECUTABLE}")
+endif(ENABLE_python)
+
 set(
 _output_results
 "${_output_results}
