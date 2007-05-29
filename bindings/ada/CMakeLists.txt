@@ -33,14 +33,23 @@ if(ENABLE_ada)
   plplot${LIB_TAG} ${GNAT_LIB}
   )
 
-  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-  set_target_properties(plplotada${LIB_TAG}
-  PROPERTIES
-  SOVERSION ${plplotada_SOVERSION}
-  VERSION ${plplotada_VERSION}
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  INSTALL_NAME_DIR "${LIB_DIR}"
-  )
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    set_target_properties(plplotada${LIB_TAG}
+    PROPERTIES
+    SOVERSION ${plplotada_SOVERSION}
+    VERSION ${plplotada_VERSION}
+    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
+  else(USE_RPATH)
+    set_target_properties(plplotada${LIB_TAG}
+    PROPERTIES
+    SOVERSION ${plplotada_SOVERSION}
+    VERSION ${plplotada_VERSION}
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
+  endif(USE_RPATH)
 
 # The commands below have been tested to work fine for the shared libraries,
 # but comment this out until we can decide on an install location for

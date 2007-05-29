@@ -116,13 +116,21 @@ ${gcw_LINK_FLAGS}
 ${PYGCW_LIBS}
 )
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(
-gcwmodule
-PROPERTIES 
-PREFIX ""
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-)
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(
+  gcwmodule
+  PROPERTIES 
+  PREFIX ""
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  gcwmodule
+  PROPERTIES 
+  PREFIX ""
+  )
+endif(USE_RPATH)
 
 install(
 TARGETS gcwmodule
@@ -142,12 +150,20 @@ ${gcw_LINK_FLAGS}
 ${PYGCW_LIBS}
 )
 
-set_target_properties(
-cplplotcanvasmodule
-PROPERTIES 
-PREFIX ""
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-)
+if(USE_RPATH)
+  set_target_properties(
+  cplplotcanvasmodule
+  PROPERTIES 
+  PREFIX ""
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  cplplotcanvasmodule
+  PROPERTIES 
+  PREFIX ""
+  )
+endif(USE_RPATH)
 
 install(
 TARGETS cplplotcanvasmodule

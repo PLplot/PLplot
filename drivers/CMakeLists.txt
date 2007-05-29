@@ -86,14 +86,23 @@ if(ENABLE_DYNDRIVERS)
     # should always be ".so" regardless of platform so that libltdl can
     # always find the result.
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
-    set_target_properties(
-    ${SOURCE_ROOT_NAME}
-    PROPERTIES
-    PREFIX ""
-    SUFFIX ".so"
-    INSTALL_RPATH
-    "${${SOURCE_ROOT_NAME}_RPATH}"
-    )
+    if(USE_RPATH)
+      set_target_properties(
+      ${SOURCE_ROOT_NAME}
+      PROPERTIES
+      PREFIX ""
+      SUFFIX ".so"
+      INSTALL_RPATH
+      "${${SOURCE_ROOT_NAME}_RPATH}"
+      )
+    else(USE_RPATH)
+      set_target_properties(
+      ${SOURCE_ROOT_NAME}
+      PROPERTIES
+      PREFIX ""
+      SUFFIX ".so"
+      )
+    endif(USE_RPATH)
 # This is a clumsy way to do it since we have to put in dependencies on
 # get-drv-info so it will always be built first, but the better 
 # alternative below does not work (probably a bug in 2.4.2).

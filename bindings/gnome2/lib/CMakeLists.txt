@@ -46,14 +46,24 @@ plplot${LIB_TAG}
 ${gcw_LINK_FLAGS}
 )
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(plplotgnome2${LIB_TAG}
-PROPERTIES 
-SOVERSION ${plplotgnome2_SOVERSION} 
-VERSION ${plplotgnome2_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(plplotgnome2${LIB_TAG}
+  PROPERTIES 
+  SOVERSION ${plplotgnome2_SOVERSION} 
+  VERSION ${plplotgnome2_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(plplotgnome2${LIB_TAG}
+  PROPERTIES 
+  SOVERSION ${plplotgnome2_SOVERSION} 
+  VERSION ${plplotgnome2_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
+
 install(TARGETS plplotgnome2${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}
 LIBRARY DESTINATION ${LIB_DIR}

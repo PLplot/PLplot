@@ -218,14 +218,24 @@ plplot${LIB_TAG}
 ${libplplot${LIB_TAG}_LINK_LIBRARIES}
 )
 
-set_target_properties(
-plplot${LIB_TAG}
-PROPERTIES 
-SOVERSION ${plplot_SOVERSION}
-VERSION ${plplot_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+if(USE_RPATH)
+  set_target_properties(
+  plplot${LIB_TAG}
+  PROPERTIES 
+  SOVERSION ${plplot_SOVERSION}
+  VERSION ${plplot_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  plplot${LIB_TAG}
+  PROPERTIES 
+  SOVERSION ${plplot_SOVERSION}
+  VERSION ${plplot_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
 
 install(TARGETS plplot${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}

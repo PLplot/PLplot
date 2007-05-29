@@ -96,13 +96,23 @@ set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
 # Set up swig + c wrapper
 swig_add_module( plplotjavac_wrap java plplotjavac.i )
 swig_link_libraries( plplotjavac_wrap plplot${LIB_TAG} )
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(
-plplotjavac_wrap
-PROPERTIES
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${JAVAWRAPPER_HARDDIR}"
-)
+
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(
+  plplotjavac_wrap
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${JAVAWRAPPER_HARDDIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  plplotjavac_wrap
+  PROPERTIES
+  INSTALL_NAME_DIR "${JAVAWRAPPER_HARDDIR}"
+  )
+endif(USE_RPATH)
+
 install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_HARDDIR})
 
 foreach( srcfile ${JAVA_FILES_FULL} )

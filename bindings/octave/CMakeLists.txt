@@ -142,8 +142,6 @@ ${OCTAVE_INCLUDE_PATH}
 )
 include_directories(${octave_interface_INCLUDE_PATHS})
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    
 add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
 target_link_libraries(
 plplot_octave
@@ -151,18 +149,30 @@ plplot${LIB_TAG}
 "${OCTAVE_LIBRARIES}"
 "${OCTINTERP_LIBRARIES}"
 )
-# (Reasonable) assumption here is that OCTAVE_LIBRARIES and
-# OCTINTERP_LIBRARIES have the same path.
-get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
-set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
-set_target_properties(
-plplot_octave
-PROPERTIES
-PREFIX "" 
-SUFFIX ".oct"
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
-)
+
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
+  # OCTINTERP_LIBRARIES have the same path.
+  get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
+  set_target_properties(
+  plplot_octave
+  PROPERTIES
+  PREFIX "" 
+  SUFFIX ".oct"
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  plplot_octave
+  PROPERTIES
+  PREFIX "" 
+  SUFFIX ".oct"
+  INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
+  )
+endif(USE_RPATH)
 
 # Have to be specific about permissions for some reason (probably oct suffix).
 set(PERM_MODULES

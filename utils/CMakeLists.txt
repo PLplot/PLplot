@@ -34,12 +34,13 @@ endif(WIN32 AND BUILD_SHARED_LIBS)
     
 target_link_libraries(plrender plplot${LIB_TAG})
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(plrender
-PROPERTIES
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-)
-
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(plrender
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  )
+endif(USE_RPATH)
 install(TARGETS plrender DESTINATION ${BIN_DIR})
 
 add_executable(pltek pltek.c)
@@ -51,10 +52,12 @@ endif(WIN32 AND BUILD_SHARED_LIBS)
 
 target_link_libraries(pltek plplot${LIB_TAG})
 
-set_target_properties(pltek
-PROPERTIES
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-)
+if(USE_RPATH)
+  set_target_properties(pltek
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  )
+endif(USE_RPATH)
 
 install(TARGETS pltek DESTINATION ${BIN_DIR})
 
@@ -68,10 +71,12 @@ if(ENABLE_tcl)
 
   target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
-  set_target_properties(pltcl
-  PROPERTIES
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  )
+  if(USE_RPATH)
+    set_target_properties(pltcl
+    PROPERTIES
+    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+    )
+  endif(USE_RPATH)
 
   install(TARGETS pltcl DESTINATION ${BIN_DIR})
 endif(ENABLE_tcl)

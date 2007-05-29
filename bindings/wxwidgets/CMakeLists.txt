@@ -58,14 +58,23 @@ if(ENABLE_wxwidgets)
 
   target_link_libraries(plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${wxWidgets_LIBRARIES})
 
-  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-  set_target_properties(plplotwxwidgets${LIB_TAG}
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    set_target_properties(plplotwxwidgets${LIB_TAG}
     PROPERTIES
     SOVERSION ${plplotwxwidgets_SOVERSION}
     VERSION ${plplotwxwidgets_VERSION}
     INSTALL_RPATH "${LIB_INSTALL_RPATH}"
     INSTALL_NAME_DIR "${LIB_DIR}"
-  )
+    )
+  else(USE_RPATH)
+    set_target_properties(plplotwxwidgets${LIB_TAG}
+    PROPERTIES
+    SOVERSION ${plplotwxwidgets_SOVERSION}
+    VERSION ${plplotwxwidgets_VERSION}
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
+  endif(USE_RPATH)
 
   # Install library in lib/
   install(TARGETS plplotwxwidgets${LIB_TAG}

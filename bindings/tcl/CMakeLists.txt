@@ -51,14 +51,23 @@ endif(WIN32 AND BUILD_SHARED_LIBS)
 add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
 target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})
 
-set(LIB_INSTALL_RPATH ${LIB_DIR})
-set_target_properties(tclmatrix${LIB_TAG}
-PROPERTIES
-SOVERSION ${tclmatrix_SOVERSION}
-VERSION ${tclmatrix_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+if(USE_RPATH)
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  set_target_properties(tclmatrix${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${tclmatrix_SOVERSION}
+  VERSION ${tclmatrix_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(tclmatrix${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${tclmatrix_SOVERSION}
+  VERSION ${tclmatrix_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
 
 install(TARGETS tclmatrix${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}
@@ -195,14 +204,23 @@ plplottcltk${LIB_TAG}
 ${plplottcltk${LIB_TAG}_link_libraries}
 )
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(plplottcltk${LIB_TAG}
-PROPERTIES
-SOVERSION ${plplottcltk_SOVERSION}
-VERSION ${plplottcltk_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(plplottcltk${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplottcltk_SOVERSION}
+  VERSION ${plplottcltk_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(plplottcltk${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplottcltk_SOVERSION}
+  VERSION ${plplottcltk_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
 
 install(TARGETS plplottcltk${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}

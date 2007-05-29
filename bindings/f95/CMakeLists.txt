@@ -55,14 +55,23 @@ add_library(plplotf95c${LIB_TAG} ${plplotf95c${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(plplotf95c${LIB_TAG}
-PROPERTIES
-SOVERSION ${plplotf95_SOVERSION}
-VERSION ${plplotf95_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(plplotf95c${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotf95_SOVERSION}
+  VERSION ${plplotf95_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(plplotf95c${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotf95_SOVERSION}
+  VERSION ${plplotf95_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
 
 install(TARGETS plplotf95c${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}
@@ -93,13 +102,22 @@ add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
 
-set_target_properties(plplotf95${LIB_TAG}
-PROPERTIES
-SOVERSION ${plplotf95_SOVERSION}
-VERSION ${plplotf95_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+if(USE_RPATH)
+  set_target_properties(plplotf95${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotf95_SOVERSION}
+  VERSION ${plplotf95_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(plplotf95${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotf95_SOVERSION}
+  VERSION ${plplotf95_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
 
 install(TARGETS plplotf95${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}

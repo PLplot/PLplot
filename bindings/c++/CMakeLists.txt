@@ -45,15 +45,23 @@ endif(WIN32 AND BUILD_SHARED_LIBS)
 
 target_link_libraries(plplotcxx${LIB_TAG} plplot${LIB_TAG})
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(plplotcxx${LIB_TAG}
-PROPERTIES
-SOVERSION ${plplotcxx_SOVERSION}
-VERSION ${plplotcxx_VERSION}
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
-
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(plplotcxx${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotcxx_SOVERSION}
+  VERSION ${plplotcxx_VERSION}
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(plplotcxx${LIB_TAG}
+  PROPERTIES
+  SOVERSION ${plplotcxx_SOVERSION}
+  VERSION ${plplotcxx_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
 # Install library in lib/
 install(TARGETS plplotcxx${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}

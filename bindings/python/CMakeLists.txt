@@ -42,22 +42,32 @@ swig_add_module(plplotcmodule python plplotcmodule.i)
 
 swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
 
-get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-set_target_properties(
-_plplotcmodule
-PROPERTIES
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-)
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(
+  _plplotcmodule
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  )
+endif(USE_RPATH)
 
 add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
 set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
 target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
-set_target_properties(
-plplot_widgetmodule
-PROPERTIES
-INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-)
+if(USE_RPATH)
+  set_target_properties(
+  plplot_widgetmodule
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  plplot_widgetmodule
+  PROPERTIES
+  INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+  )
+endif(USE_RPATH)
 
 install(
 TARGETS plplot_widgetmodule _plplotcmodule 
