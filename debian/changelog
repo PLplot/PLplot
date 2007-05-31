@@ -1,3 +1,9 @@
+plplot (5.7.4.svn.20070523-1) unstable; urgency=low
+
+  * Initial port of debian packaging files to use new cmake build system
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 23 May 2007 13:35:43 +0100
+
 plplot (5.6.1-9) unstable; urgency=low
 
   * debian/control: Applied patch from Tomas Pospisek tomake list in

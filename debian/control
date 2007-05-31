@@ -3,12 +3,13 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.7.2
-Build-Depends: debhelper (>= 5.0.37.2), tcl8.4-dev, tk8.4-dev, itcl3-dev,
- libx11-dev, libxext-dev, libxi-dev, gfortran, itk3-dev,
- octave2.1-headers (>= 2.1.65), libgd2-noxpm-dev | libgd2-xpm-dev,
- libgnome2-dev, libgnomeprintui2.2-dev, libgnomeui-dev, m4,
+Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.37.2), 
+ tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev, 
+ libxi-dev, gfortran, itk3-dev, octave2.1-headers (>= 2.1.65), 
+ libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev, 
+ libgnomeprintui2.2-dev, libgnomeui-dev, liblasi-dev, m4,
  libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap,
- autotools-dev, libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
+ libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
  [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
  python-gtk2-dev, liblasi-dev (>= 1.0.5-2), libwxgtk2.6-dev,
  python-gnome2-dev, python-all-dev (>= 2.3.5-11),
