@@ -40,7 +40,7 @@ INSTALL_NAME_DIR "${LIB_DIR}"
 
 if(MATH_LIB)
   target_link_libraries(csirocsa ${MATH_LIB})
-if(MATH_LIB)  
+endif(MATH_LIB)  
 
 install(TARGETS csirocsa DESTINATION
 ARCHIVE DESTINATION ${LIB_DIR}
