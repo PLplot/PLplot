@@ -1,6 +1,6 @@
 -- $Id$
 
--- 	Window positioning demo.
+-- 	Window positioning demo
 
 -- Copyright (C) 2007 Alan W. Irwin
 

@@ -870,11 +870,11 @@ package PLplot is
     -- Prints out "text" at specified position relative to viewport
     -- plmtex
     procedure Write_Text_Viewport
-       (Side : String;
-        Position_From_Edge : Long_Float;
+       (Side                : String;
+        Position_From_Edge  : Long_Float;
         Position_Along_Edge : Long_Float;
-        Justification : Long_Float_0_1_Type;
-        The_Text : String);
+        Justification       : Long_Float_0_1_Type;
+        The_Text            : String);
 
 
     -- Plots a 3-d representation of the function z[x][y].

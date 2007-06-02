@@ -1,6 +1,6 @@
 -- $Id$
 
--- Simple line plot and multiple windows demo.
+-- Simple line plot and multiple windows demo
 
 -- Copyright (C) 2006  Jerry Bauck
 
