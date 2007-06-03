@@ -39,39 +39,38 @@
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
 
-
 /* PLplot header files */
 
 #include "plplotP.h"
 #include "drivers.h"
 
 //---------------------------------------------
-// Constants & globel (to this file) variables 
+// Constants & global (to this file) variables 
 //---------------------------------------------
 
 #define MAX_STRING_LEN 500
 #define MAX_MARKUP_LEN MAX_STRING_LEN * 10
 
+typedef struct {
+   cairo_surface_t *cairoSurface;
+   cairo_t *cairoContext;
+   Display *XDisplay;
+   Window XWindow;
+} PLCairo;
+
 /* xwintff specific constants and variables */
 
-#define MAXPAGES 50
 #define DPI 72
 #define XWINTTF_DEFAULT_X 720
 #define XWINTTF_DEFAULT_Y 540
 
-char* plD_DEVICE_INFO_cairo = "xwinttf:TrueType X Windows Driver:1:cairo:59:xwinttf";
-
-static int currentPage = -1;
 static int XScreen;
-static Display *XDisplay = NULL;
-static Window rootWindow ;
-static Window XWindow[MAXPAGES];
+static Window rootWindow;
 
 static int windowXSize = XWINTTF_DEFAULT_X;
 static int windowYSize = XWINTTF_DEFAULT_Y;
 
-static cairo_surface_t *cairoSurface[MAXPAGES];
-static cairo_t *cairoContext[MAXPAGES];
+char* plD_DEVICE_INFO_cairo = "xwinttf:TrueType X Windows Driver:1:cairo:59:xwinttf\n";
 
 //-----------------------------------------------
 // Font style and weight lookup tables (copied
@@ -172,14 +171,20 @@ void plD_init_xwinttf(PLStream *pls)
 {
   int i;
   char *a;
+  char plotTitle[40];
+  Visual *defaultVisual;
+  XGCValues values;
+  cairo_matrix_t *flipVertical;
+  PLCairo *aStream;
 
-  pls->termin = 1;		/* Interactive device */
-  pls->dev_flush = 1;		/* Handles flushes */
-  pls->color = 1;		/* Supports color */
-  pls->dev_text = 1;		/* Handles text */
-  pls->dev_unicode = 1; 	/* Wants unicode text */
+  // Stream setup
+  pls->termin = 1;      /* Interactive device */
+  pls->dev_flush = 1;   /* Handles flushes */
+  pls->color = 1;       /* Supports color */
+  pls->dev_text = 1;    /* Handles text */
+  pls->dev_unicode = 1; /* Wants unicode text */
   pls->page = 0;
-  pls->dev_fill0 = 1;		/* Supports hardware solid fills */
+  pls->dev_fill0 = 1;   /* Supports hardware solid fills */
   
   plP_setpxl(DPI/25.4, DPI/25.4);
   
@@ -191,13 +196,42 @@ void plD_init_xwinttf(PLStream *pls)
     plP_setphy((PLINT) 0, (PLINT) pls->xlength, (PLINT) 0, (PLINT) pls->ylength);
   }
 
-  XDisplay = XOpenDisplay(NULL);
-  if(XDisplay == NULL){
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // X Windows setup
+  aStream->XDisplay = NULL;
+  aStream->XDisplay = XOpenDisplay(NULL);
+  if(aStream->XDisplay == NULL){
     printf("Failed to open X Windows display\n");
     // some sort of error here
   }
-  XScreen = DefaultScreen(XDisplay);
-  rootWindow = RootWindow(XDisplay, XScreen);
+  XScreen = DefaultScreen(aStream->XDisplay);
+  rootWindow = RootWindow(aStream->XDisplay, XScreen);
+  
+  // Initialize plot title
+  sprintf(plotTitle, "PLplot");
+    
+  // Create a X Window.
+  aStream->XWindow = XCreateSimpleWindow(aStream->XDisplay, rootWindow, 0, 0, windowXSize, windowYSize, 
+					    1, BlackPixel(aStream->XDisplay, XScreen), BlackPixel(aStream->XDisplay, XScreen));
+  XStoreName(aStream->XDisplay, aStream->XWindow, plotTitle);
+  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
+  XMapWindow(aStream->XDisplay, aStream->XWindow);
+
+  // Create an cairo surface & context that are associated with the X window.
+  defaultVisual = DefaultVisual(aStream->XDisplay, 0);
+  aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, windowXSize, windowYSize);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Invert the coordinate system so the graphs are drawn right side up.
+  flipVertical = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
+  cairo_matrix_init(flipVertical, 1.0, 0.0, 0.0, -1.0, 0.0, windowYSize);
+  cairo_set_matrix(aStream->cairoContext, flipVertical);
+  free(flipVertical);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
 
   // Initialize font table with either enviroment variables or defaults.
   // This was copied from the psttf driver.
@@ -209,12 +243,6 @@ void plD_init_xwinttf(PLStream *pls)
       strcpy(familyLookup[i],defaultFamilyLookup[i]);
     }
   }
-
-  // Set all cairo pointers to NULL
-  for(i=0;i<MAXPAGES;i++){
-    cairoSurface[i] = NULL;
-    cairoContext[i] = NULL;
-  }
 }
 
 //----------------------------------------------------------------------
@@ -225,46 +253,17 @@ void plD_init_xwinttf(PLStream *pls)
 
 void plD_bop_xwinttf(PLStream *pls)
 {
-  char plotTitle[40];
-  cairo_matrix_t *flipVertical;
-  Visual *defaultVisual;
-  XGCValues values;
+  PLCairo *aStream;
 
-  // Increment the page number.
-  currentPage++;
-  if(currentPage > MAXPAGES){
-    currentPage = 0;
-  }
-  pls->page++;
-
-  // Initialize plot title
-  sprintf(plotTitle, "PLplot (%d)", currentPage);
-
-  // Create a X Window.
-  XWindow[currentPage] = XCreateSimpleWindow(XDisplay, rootWindow, 0, 0, windowXSize, windowYSize, 
-					     1, BlackPixel(XDisplay, XScreen), BlackPixel(XDisplay, XScreen));
-  XStoreName(XDisplay, XWindow[currentPage], plotTitle);
-  XSelectInput(XDisplay, XWindow[currentPage], NoEventMask);
-  XMapWindow(XDisplay, XWindow[currentPage]);
-
-  // Create an cairo surface & context that are associated with the window.
-  defaultVisual = DefaultVisual(XDisplay, 0);
-  cairoSurface[currentPage] = cairo_xlib_surface_create(XDisplay, XWindow[currentPage], defaultVisual, windowXSize, windowYSize);
-  cairoContext[currentPage] = cairo_create(cairoSurface[currentPage]);
+  aStream = (PLCairo *)pls->dev;
 
   // Fill in the window with the background color.
-  cairo_rectangle(cairoContext[currentPage], 0.0, 0.0, windowXSize, windowYSize);
-  cairo_set_source_rgb(cairoContext[currentPage],
+  cairo_rectangle(aStream->cairoContext, 0.0, 0.0, windowXSize, windowYSize);
+  cairo_set_source_rgb(aStream->cairoContext,
 		       (double)pls->cmap0[0].r/255.0,
 		       (double)pls->cmap0[0].g/255.0,
 		       (double)pls->cmap0[0].b/255.0);
-  cairo_fill(cairoContext[currentPage]);
-
-  // Invert the coordinate system so the graphs are drawn right side up.
-  flipVertical = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
-  cairo_matrix_init(flipVertical, 1.0, 0.0, 0.0, -1.0, 0.0, windowYSize);
-  cairo_set_matrix(cairoContext[currentPage], flipVertical);
-  free(flipVertical);
+  cairo_fill(aStream->cairoContext);  
 }
 
 //---------------------------------------------------------------------
@@ -275,11 +274,15 @@ void plD_bop_xwinttf(PLStream *pls)
 
 void plD_line_xwinttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
   set_current_context(pls);
 
-  cairo_move_to(cairoContext[currentPage], (double) x1a, (double) y1a);
-  cairo_line_to(cairoContext[currentPage], (double) x2a, (double) y2a);
-  cairo_stroke(cairoContext[currentPage]);
+  cairo_move_to(aStream->cairoContext, (double) x1a, (double) y1a);
+  cairo_line_to(aStream->cairoContext, (double) x2a, (double) y2a);
+  cairo_stroke(aStream->cairoContext);
 }
 
 //---------------------------------------------------------------------
@@ -290,8 +293,12 @@ void plD_line_xwinttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 void plD_polyline_xwinttf(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
   poly_line(pls, xa, ya, npts);
-  cairo_stroke(cairoContext[currentPage]);
+  cairo_stroke(aStream->cairoContext);
 }
 
 //---------------------------------------------------------------------
@@ -302,7 +309,13 @@ void plD_polyline_xwinttf(PLStream *pls, short *xa, short *ya, PLINT npts)
 
 void plD_eop_xwinttf(PLStream *pls)
 {
-  XFlush(XDisplay);
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  XFlush(aStream->XDisplay);
+  printf("Key <Return> to finish\n");
+  getc(stdin);
 }
 
 //---------------------------------------------------------------------
@@ -313,20 +326,20 @@ void plD_eop_xwinttf(PLStream *pls)
 
 void plD_tidy_xwinttf(PLStream *pls)
 {
-  int i;
+  PLCairo *aStream;
 
-  printf("Key <Return> to finish\n");
-  getc(stdin);
+  aStream = (PLCairo *)pls->dev;
 
-  for(i=0;i<MAXPAGES;i++){
-    if(cairoContext[i] != NULL){
-      cairo_destroy(cairoContext[i]);
-      cairo_surface_destroy(cairoSurface[i]);
-    }
-  }
+  // Free the cairo context and surface.
+  cairo_destroy(aStream->cairoContext);
+  cairo_surface_destroy(aStream->cairoSurface);
 
-  XCloseDisplay(XDisplay);
-  free(XDisplay);
+  // Close the window and the display.
+  XFlush(aStream->XDisplay);
+  XDestroyWindow(aStream->XDisplay, aStream->XWindow);
+
+  XCloseDisplay(aStream->XDisplay);
+  free(aStream->XDisplay);
 }
 
 //---------------------------------------------------------------------
@@ -350,20 +363,24 @@ void plD_state_xwinttf(PLStream *pls, PLINT op)
 
 void plD_esc_xwinttf(PLStream *pls, PLINT op, void *ptr)
 {
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
   switch(op)
     {
-    case PLESC_FILL:  // filled polygon
+    case PLESC_FILL:     // filled polygon
       poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      cairo_fill(cairoContext[currentPage]);
+      cairo_fill(aStream->cairoContext);
       break;
     case PLESC_HAS_TEXT: // render rext
       proc_str(pls, (EscText *) ptr);
       break;
-    case PLESC_FLUSH: // forced update of the window
-      XFlush(XDisplay);
+    case PLESC_FLUSH:    // forced update of the window
+      XFlush(aStream->XDisplay);
       break;
-    case PLESC_GETC:                // get cursor position
-      XFlush(XDisplay);
+    case PLESC_GETC:     // get cursor position
+      XFlush(aStream->XDisplay);
       get_cursor(pls, (PLGraphicsIn*)ptr);
       break;
     }
@@ -385,6 +402,9 @@ void proc_str(PLStream *pls, EscText *args)
   cairo_matrix_t *cairoTransformMatrix;
   PangoLayout *layout;
   PangoFontDescription *fontDescription;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
 
   set_current_context(pls);
 
@@ -407,22 +427,22 @@ void proc_str(PLStream *pls, EscText *args)
   textWithPangoMarkup = ucs4_to_pango_markup_format(args->unicode_array, args->unicode_array_len, fontSize);
 
   // Create the Pango text layout so we can figure out how big it is
-  layout = pango_cairo_create_layout(cairoContext[currentPage]);
+  layout = pango_cairo_create_layout(aStream->cairoContext);
   pango_layout_set_markup(layout, textWithPangoMarkup, -1);
   // fontDescription = pango_font_description_from_string(fontString);
   // pango_layout_set_font_description(layout, fontDescription);
   pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
 
   // Move to the string reference point
-  cairo_move_to(cairoContext[currentPage], (double) args->x, (double) args->y);
+  cairo_move_to(aStream->cairoContext, (double) args->x, (double) args->y);
 
   // Save current transform matrix
-  cairo_save(cairoContext[currentPage]);
+  cairo_save(aStream->cairoContext);
 
   // Invert the coordinate system so that the text is drawn right side up
   cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
   cairo_matrix_init(cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
-  cairo_transform(cairoContext[currentPage], cairoTransformMatrix);
+  cairo_transform(aStream->cairoContext, cairoTransformMatrix);
 
   // Extract rotation angle and shear from the PLplot tranformation matrix.
   // Compute sines and cosines of the angles as an optimization.
@@ -438,19 +458,19 @@ void proc_str(PLStream *pls, EscText *args)
 		    cos_rot * sin_shear + sin_rot,
 		    -sin_rot * sin_shear + cos_rot,
 		    0,0);
-  cairo_transform(cairoContext[currentPage], cairoTransformMatrix);
+  cairo_transform(aStream->cairoContext, cairoTransformMatrix);
   free(cairoTransformMatrix);
 
   // Move to the text starting point
-  cairo_rel_move_to(cairoContext[currentPage], 
+  cairo_rel_move_to(aStream->cairoContext, 
 		    (double)(-1.0 * args->just * (double)textXExtent), 
 		    (double)(-0.5 * textYExtent));
 
   // Render the text
-  pango_cairo_show_layout(cairoContext[currentPage], layout);
+  pango_cairo_show_layout(aStream->cairoContext, layout);
 
   // Restore the transform matrix to its state prior to the text transform.
-  cairo_restore(cairoContext[currentPage]);
+  cairo_restore(aStream->cairoContext);
   
   // Free the layout object and the markup string.
   g_object_unref(layout);
@@ -636,18 +656,21 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin)
 {
   XEvent mouseEvent;
   Cursor xHairCursor;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
 
   // Initialize PLplot mouse event structure
   plGinInit(gin);
 
   // Create cross hair cursor & switch to using it
-  xHairCursor = XCreateFontCursor(XDisplay, XC_crosshair);
-  XDefineCursor(XDisplay, XWindow[currentPage], xHairCursor);
+  xHairCursor = XCreateFontCursor(aStream->XDisplay, XC_crosshair);
+  XDefineCursor(aStream->XDisplay, aStream->XWindow, xHairCursor);
 
   // Get the next mouse button release event
-  XSelectInput(XDisplay, XWindow[currentPage], ButtonReleaseMask);
-  XMaskEvent(XDisplay, ButtonReleaseMask, &mouseEvent);
-  XSelectInput(XDisplay, XWindow[currentPage], NoEventMask);
+  XSelectInput(aStream->XDisplay, aStream->XWindow, ButtonReleaseMask);
+  XMaskEvent(aStream->XDisplay, ButtonReleaseMask, &mouseEvent);
+  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
 
   // Update PLplot's mouse event structure
   gin->button = 0;
@@ -657,8 +680,8 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin)
   gin->dY = (PLFLT)mouseEvent.xbutton.y/((PLFLT)(pls->ylength));
 
   // Switch back to normal cursor
-  XUndefineCursor(XDisplay, XWindow[currentPage]);
-  XFlush(XDisplay);
+  XUndefineCursor(aStream->XDisplay, aStream->XWindow);
+  XFlush(aStream->XDisplay);
 }
 
 //---------------------------------------------------------------------
@@ -670,15 +693,19 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin)
 
 void set_current_context(PLStream *pls)
 {
-  cairo_set_source_rgb(cairoContext[currentPage],
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  cairo_set_source_rgb(aStream->cairoContext,
 		       (double)pls->curcolor.r/255.0, 
   		       (double)pls->curcolor.g/255.0,
   		       (double)pls->curcolor.b/255.0);
   // In Cairo, zero width lines are not hairlines, they are completely invisible.
   if(pls->width < 1){
-    cairo_set_line_width(cairoContext[currentPage], 1.0);
+    cairo_set_line_width(aStream->cairoContext, 1.0);
   } else{
-    cairo_set_line_width(cairoContext[currentPage], (double) pls->width);
+    cairo_set_line_width(aStream->cairoContext, (double) pls->width);
   }
 }
 
@@ -693,11 +720,14 @@ void set_current_context(PLStream *pls)
 void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   int i;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
 
   set_current_context(pls);
   
-  cairo_move_to(cairoContext[currentPage], (double) xa[0], (double) ya[0]);
+  cairo_move_to(aStream->cairoContext, (double) xa[0], (double) ya[0]);
   for(i=1;i<npts;i++){
-    cairo_line_to(cairoContext[currentPage], (double) xa[i], (double) ya[i]);
+    cairo_line_to(aStream->cairoContext, (double) xa[i], (double) ya[i]);
   }
 }
