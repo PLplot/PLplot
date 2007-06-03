@@ -278,7 +278,7 @@
 #cmakedefine PLD_xwin
 
 /* Define if xwin driver is present */
-#cmakedefine PLD_xwintff
+#cmakedefine PLD_xwinttf
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
 #define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
