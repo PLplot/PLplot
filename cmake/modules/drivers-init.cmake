@@ -105,7 +105,7 @@ set(DRIVERS_DEVICE_LIST
 "wxwidgets:wxwidgets:ON"
 "xfig:xfig:ON"
 "xwin:xwin:ON"
-"xwinttf:xwinttf:OFF"
+"xwinttf:cairo:OFF"
 )
 
 set(PRESET_DEFAULT OFF)

@@ -67,6 +67,7 @@ include(drivers-init)
 # Find *_COMPILE_FLAGS and *_LINK_FLAGS resources for device drivers that need them,
 # and set appropriate PLD_devicename to OFF if the required resources are 
 # not available.
+include(cairo)
 include(cgm)
 include(gcw)
 include(gd)
@@ -81,7 +82,6 @@ include(wingcc)
 include(aqt)
 include(wxwidgets)
 include(pdf)
-include(xwinttf)
 
 # Finalize device options.
 include(drivers-finish)
