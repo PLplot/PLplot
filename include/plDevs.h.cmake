@@ -77,6 +77,12 @@
 #cmakedefine PLD_wxwidgets
 #cmakedefine PLD_svg
 #cmakedefine PLD_pdf
-#cmakedefine PLD_xwinttf
+#cmakedefine PLD_xcairo
+#cmakedefine PLD_pdfcairo
+#cmakedefine PLD_pscairo
+#cmakedefine PLD_svgcairo
+#cmakedefine PLD_pngcairo
+#cmakedefine PLD_memcairo
+
 
 #endif	/* __PLDEVS_H__ */

@@ -268,9 +268,25 @@ static PLDispatchInit static_device_initializers[] = {
     plD_dispatch_init_psttfm,
     plD_dispatch_init_psttfc,
 #endif
-#if defined(PLD_xwinttf) && !defined(ENABLE_DYNDRIVERS)
-    plD_dispatch_init_xwinttf,
+#if defined(PLD_xcairo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_xcairo,
 #endif
+#if defined(PLD_pdfcairo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_pdfcairo,
+#endif
+#if defined(PLD_pscairo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_pscairo,
+#endif
+#if defined(PLD_svgcairo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_svgcairo,
+#endif
+#if defined(PLD_pngcairo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_pngcairo,
+#endif
+#if defined(PLD_memcairo) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_memcairo,
+#endif
+
     NULL
 };
 

@@ -85,12 +85,16 @@ set(DRIVERS_DEVICE_LIST
 "ljii:ljii:OFF"
 "ljiip:ljiip:OFF"
 "mem:mem:ON"
+"memcairo:cairo:OFF"
 "ntk:ntk:OFF"
 "null:null:ON"
 "pbm:pbm:ON"
 "pdf:pdf:OFF"
+"pdfcairo:cairo:OFF"
 "plmeta:plmeta:ON"
+"pngcairo:cairo:OFF"
 "ps:ps:ON"
+"pscairo:cairo:OFF"
 # Default OFF because this device is not well maintained (it currently
 # segfaults).
 "pstex:pstex:OFF"
@@ -98,14 +102,15 @@ set(DRIVERS_DEVICE_LIST
 "xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
 "versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
 "svg:svg:ON"
+"svgcairo:cairo:OFF"
 "tek4107f:tek:OFF"
 "tk:tk:ON"
 "tkwin:tkwin:ON"
 "wingcc:wingcc:ON"
 "wxwidgets:wxwidgets:ON"
+"xcairo:cairo:OFF"
 "xfig:xfig:ON"
 "xwin:xwin:ON"
-"xwinttf:cairo:OFF"
 )
 
 set(PRESET_DEFAULT OFF)

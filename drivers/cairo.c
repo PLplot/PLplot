@@ -22,9 +22,9 @@
    	
 */
 
-//---------------------------------------------
-// Header files, defines and local variables
-//---------------------------------------------
+//---------------------------------------------------------------------
+// Header files
+//---------------------------------------------------------------------
 
 #include <stdio.h>
 #include <string.h>
@@ -34,19 +34,25 @@
 #include <cairo-xlib.h>
 #include <pango/pangocairo.h>
 
+//#if defined(PLD_xcairo)
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <X11/Xutil.h> 
 #include <X11/cursorfont.h>
+//#endif
 
-/* PLplot header files */
+// PLplot header files
 
 #include "plplotP.h"
 #include "drivers.h"
 
-//---------------------------------------------
+//---------------------------------------------------------------------
 // Constants & global (to this file) variables 
-//---------------------------------------------
+//---------------------------------------------------------------------
+
+#define DPI 72
+#define PLCAIRO_DEFAULT_X 720
+#define PLCAIRO_DEFAULT_Y 540
 
 #define MAX_STRING_LEN 500
 #define MAX_MARKUP_LEN MAX_STRING_LEN * 10
@@ -54,28 +60,40 @@
 typedef struct {
    cairo_surface_t *cairoSurface;
    cairo_t *cairoContext;
+#if defined(PLD_xcairo)
    Display *XDisplay;
    Window XWindow;
+#endif
+#if defined(PLD_memcairo)
+   unsigned char *memory;
+#endif
 } PLCairo;
 
-/* xwintff specific constants and variables */
+char* plD_DEVICE_INFO_cairo = 
+#if defined(PLD_xcairo)
+  "xcairo:Cairo X Windows Driver:1:cairo:59:xcairo\n"
+#endif
+#if defined(PLD_pdfcairo)
+  "pdfcairo:Cairo PDF Driver:0:cairo:60:pdfcairo\n"
+#endif
+#if defined(PLD_pscairo)
+  "pscairo:Cairo PS Driver:0:cairo:61:pscairo\n"
+#endif
+#if defined(PLD_svgcairo)
+  "svgcairo:Cairo SVG Driver:0:cairo:62:svgcairo\n"
+#endif
+#if defined(PLD_pngcairo)
+  "pngcairo:Cairo PNG Driver:0:cairo:63:pngcairo\n"
+#endif
+#if defined(PLD_memcairo)
+  "memcairo:Cairo Memory Driver:0:cairo:64:memcairo\n"
+#endif
+;
 
-#define DPI 72
-#define XWINTTF_DEFAULT_X 720
-#define XWINTTF_DEFAULT_Y 540
-
-static int XScreen;
-static Window rootWindow;
-
-static int windowXSize = XWINTTF_DEFAULT_X;
-static int windowYSize = XWINTTF_DEFAULT_Y;
-
-char* plD_DEVICE_INFO_cairo = "xwinttf:TrueType X Windows Driver:1:cairo:59:xwinttf\n";
-
-//-----------------------------------------------
+//---------------------------------------------------------------------
 // Font style and weight lookup tables (copied
 // from the psttf driver).
-//-----------------------------------------------
+//---------------------------------------------------------------------
 
 #define NPANGOLOOKUP 5
 
@@ -108,9 +126,22 @@ const char *styleLookup[3] = {
   "oblique"
 };
 
-//-----------------------------------------------
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is common to all the Cairo Drivers
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+//---------------------------------------------------------------------
 // function declarations
-//-----------------------------------------------
+//---------------------------------------------------------------------
+
+/* General */
+
+void stream_and_font_setup(PLStream *, int);
 
 /* String processing */
 
@@ -121,144 +152,35 @@ static void close_span_tag(char *, int);
 
 /* Graphics */
 
-static void get_cursor(PLStream *, PLGraphicsIn *);
 static void set_current_context(PLStream *);
 static void poly_line(PLStream *, short *, short *, PLINT);
+static void rotate_cairo_surface(PLStream *, float, float, float, float, float, float);
 
 /* PLplot interface functions */
 
-void plD_dispatch_init_xwinttf      (PLDispatchTable *pdt);
-void plD_init_xwinttf               (PLStream *);
-void plD_line_xwinttf               (PLStream *, short, short, short, short);
-void plD_polyline_xwinttf   	    (PLStream *, short *, short *, PLINT);
-void plD_eop_xwinttf                (PLStream *);
-void plD_bop_xwinttf                (PLStream *);
-void plD_tidy_xwinttf               (PLStream *);
-void plD_state_xwinttf              (PLStream *, PLINT);
-void plD_esc_xwinttf                (PLStream *, PLINT, void *);
-
-//---------------------------------------------------------------------
-// dispatch_init_init()
-//
-// Initialize device dispatch table
-//----------------------------------------------------------------------
-
-void plD_dispatch_init_xwinttf(PLDispatchTable *pdt)
-{
-#ifndef ENABLE_DYNDRIVERS
-   pdt->pl_MenuStr  = "TrueType X Windows Driver";
-   pdt->pl_DevName  = "xwinttf";
-#endif
-   pdt->pl_type     = plDevType_Interactive;
-   pdt->pl_seq      = 59;
-   pdt->pl_init     = (plD_init_fp)     plD_init_xwinttf;
-   pdt->pl_line     = (plD_line_fp)     plD_line_xwinttf;
-   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_xwinttf;
-   pdt->pl_eop      = (plD_eop_fp)      plD_eop_xwinttf;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_xwinttf;
-   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_xwinttf;
-   pdt->pl_state    = (plD_state_fp)    plD_state_xwinttf;
-   pdt->pl_esc      = (plD_esc_fp)      plD_esc_xwinttf;
-}
-
-//---------------------------------------------------------------------
-// xwinttf_init()
-//
-// Initialize device
-//----------------------------------------------------------------------
-
-void plD_init_xwinttf(PLStream *pls)
-{
-  int i;
-  char *a;
-  char plotTitle[40];
-  Visual *defaultVisual;
-  XGCValues values;
-  cairo_matrix_t *flipVertical;
-  PLCairo *aStream;
-
-  // Stream setup
-  pls->termin = 1;      /* Interactive device */
-  pls->dev_flush = 1;   /* Handles flushes */
-  pls->color = 1;       /* Supports color */
-  pls->dev_text = 1;    /* Handles text */
-  pls->dev_unicode = 1; /* Wants unicode text */
-  pls->page = 0;
-  pls->dev_fill0 = 1;   /* Supports hardware solid fills */
-  
-  plP_setpxl(DPI/25.4, DPI/25.4);
-  
-  if (pls->xlength <= 0 || pls->ylength <= 0){
-    plP_setphy((PLINT) 0, (PLINT) XWINTTF_DEFAULT_X, (PLINT) 0, XWINTTF_DEFAULT_Y);
-  } else {
-    windowXSize = pls->xlength;
-    windowYSize = pls->ylength;
-    plP_setphy((PLINT) 0, (PLINT) pls->xlength, (PLINT) 0, (PLINT) pls->ylength);
-  }
-
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
-
-  // X Windows setup
-  aStream->XDisplay = NULL;
-  aStream->XDisplay = XOpenDisplay(NULL);
-  if(aStream->XDisplay == NULL){
-    printf("Failed to open X Windows display\n");
-    // some sort of error here
-  }
-  XScreen = DefaultScreen(aStream->XDisplay);
-  rootWindow = RootWindow(aStream->XDisplay, XScreen);
-  
-  // Initialize plot title
-  sprintf(plotTitle, "PLplot");
-    
-  // Create a X Window.
-  aStream->XWindow = XCreateSimpleWindow(aStream->XDisplay, rootWindow, 0, 0, windowXSize, windowYSize, 
-					    1, BlackPixel(aStream->XDisplay, XScreen), BlackPixel(aStream->XDisplay, XScreen));
-  XStoreName(aStream->XDisplay, aStream->XWindow, plotTitle);
-  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
-  XMapWindow(aStream->XDisplay, aStream->XWindow);
-
-  // Create an cairo surface & context that are associated with the X window.
-  defaultVisual = DefaultVisual(aStream->XDisplay, 0);
-  aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, windowXSize, windowYSize);
-  aStream->cairoContext = cairo_create(aStream->cairoSurface);
-
-  // Invert the coordinate system so the graphs are drawn right side up.
-  flipVertical = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
-  cairo_matrix_init(flipVertical, 1.0, 0.0, 0.0, -1.0, 0.0, windowYSize);
-  cairo_set_matrix(aStream->cairoContext, flipVertical);
-  free(flipVertical);
-
-  // Save the pointer to the structure in the PLplot stream
-  pls->dev = aStream;
-
-  // Initialize font table with either enviroment variables or defaults.
-  // This was copied from the psttf driver.
-  for(i=0;i<NPANGOLOOKUP;i++){
-    if((a = getenv(envFamilyLookup[i])) != NULL){
-      strcpy(familyLookup[i],a);
-    }
-    else {
-      strcpy(familyLookup[i],defaultFamilyLookup[i]);
-    }
-  }
-}
+// general
+void plD_bop_cairo               (PLStream *);
+void plD_eop_cairo               (PLStream *);
+void plD_state_cairo             (PLStream *, PLINT);
+void plD_esc_cairo               (PLStream *, PLINT, void *);
+void plD_tidy_cairo              (PLStream *);
+void plD_line_cairo              (PLStream *, short, short, short, short);
+void plD_polyline_cairo          (PLStream *, short *, short *, PLINT);
 
 //----------------------------------------------------------------------
-// xwinttf_bop()
+// plD_bop_cairo()
 //
 // Set up for the next page.
 //----------------------------------------------------------------------
 
-void plD_bop_xwinttf(PLStream *pls)
+void plD_bop_cairo(PLStream *pls)
 {
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
 
   // Fill in the window with the background color.
-  cairo_rectangle(aStream->cairoContext, 0.0, 0.0, windowXSize, windowYSize);
+  cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
   cairo_set_source_rgb(aStream->cairoContext,
 		       (double)pls->cmap0[0].r/255.0,
 		       (double)pls->cmap0[0].g/255.0,
@@ -267,12 +189,12 @@ void plD_bop_xwinttf(PLStream *pls)
 }
 
 //---------------------------------------------------------------------
-// xwinttf_line()
+// plD_line_cairo()
 //
 // Draw a line in the current color from (x1,y1) to (x2,y2).
 //----------------------------------------------------------------------
 
-void plD_line_xwinttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+void plD_line_cairo(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
   PLCairo *aStream;
 
@@ -286,12 +208,12 @@ void plD_line_xwinttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 //---------------------------------------------------------------------
-// xwinttf_polyline()
+// plD_polyline_cairo()
 //
 // Draw a polyline in the current color.
 //---------------------------------------------------------------------
 
-void plD_polyline_xwinttf(PLStream *pls, short *xa, short *ya, PLINT npts)
+void plD_polyline_cairo(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   PLCairo *aStream;
 
@@ -302,29 +224,26 @@ void plD_polyline_xwinttf(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 //---------------------------------------------------------------------
-// xwinttf_eop()
+// plD_eop_cairo()
 //
-// End of page
+// Generic end of page.
 //---------------------------------------------------------------------
 
-void plD_eop_xwinttf(PLStream *pls)
+void plD_eop_cairo(PLStream *pls)
 {
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
-
-  XFlush(aStream->XDisplay);
-  printf("Key <Return> to finish\n");
-  getc(stdin);
+  cairo_show_page(aStream->cairoContext);
 }
 
 //---------------------------------------------------------------------
-// xwinttf_tidy()
+// plD_tidy_cairo()
 //
-// Close graphics file or otherwise clean up.
+// General: Close graphics file or otherwise clean up.
 //---------------------------------------------------------------------
 
-void plD_tidy_xwinttf(PLStream *pls)
+void plD_tidy_cairo(PLStream *pls)
 {
   PLCairo *aStream;
 
@@ -333,17 +252,10 @@ void plD_tidy_xwinttf(PLStream *pls)
   // Free the cairo context and surface.
   cairo_destroy(aStream->cairoContext);
   cairo_surface_destroy(aStream->cairoSurface);
-
-  // Close the window and the display.
-  XFlush(aStream->XDisplay);
-  XDestroyWindow(aStream->XDisplay, aStream->XWindow);
-
-  XCloseDisplay(aStream->XDisplay);
-  free(aStream->XDisplay);
 }
 
 //---------------------------------------------------------------------
-// plD_state_xwinttf()
+// plD_state_cairo()
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
 //
@@ -351,17 +263,17 @@ void plD_tidy_xwinttf(PLStream *pls)
 // PLStream for each element that is drawn.
 //---------------------------------------------------------------------
 
-void plD_state_xwinttf(PLStream *pls, PLINT op)
+void plD_state_cairo(PLStream *pls, PLINT op)
 {
 }
 
 //---------------------------------------------------------------------
-// xwinttf_esc()
+// plD_esc_cairo()
 //
-// Escape function.
+// Generic escape function.
 //---------------------------------------------------------------------
 
-void plD_esc_xwinttf(PLStream *pls, PLINT op, void *ptr)
+void plD_esc_cairo(PLStream *pls, PLINT op, void *ptr)
 {
   PLCairo *aStream;
 
@@ -375,13 +287,6 @@ void plD_esc_xwinttf(PLStream *pls, PLINT op, void *ptr)
       break;
     case PLESC_HAS_TEXT: // render rext
       proc_str(pls, (EscText *) ptr);
-      break;
-    case PLESC_FLUSH:    // forced update of the window
-      XFlush(aStream->XDisplay);
-      break;
-    case PLESC_GETC:     // get cursor position
-      XFlush(aStream->XDisplay);
-      get_cursor(pls, (PLGraphicsIn*)ptr);
       break;
     }
 }
@@ -410,13 +315,13 @@ void proc_str(PLStream *pls, EscText *args)
 
   // Check that we got unicode, warning message and return if not
   if(args->unicode_array_len == 0){
-    printf("Non unicode string passed to xwinttf driver, ignoring\n");
+    printf("Non unicode string passed to a cairo driver, ignoring\n");
     return;
   }
 	
   // Check that unicode string isn't longer then the max we allow	
   if(args->unicode_array_len >= MAX_STRING_LEN){
-    printf("Sorry, the xwinttf driver only handles strings of length < %d\n", MAX_STRING_LEN);
+    printf("Sorry, the cairo drivers only handles strings of length < %d\n", MAX_STRING_LEN);
     return;
   }
 
@@ -647,41 +552,46 @@ void close_span_tag(char *pangoMarkupString, int upDown)
 }
 
 //---------------------------------------------------------------------
-// get_cursor()
+// stream_and_font_setup()
 //
-// returns the location of the next mouse click
+// Initializes the PLStream structure for the cairo devices.
+// Initializes the font lookup table.
 //---------------------------------------------------------------------
 
-void get_cursor(PLStream *pls, PLGraphicsIn *gin)
+void stream_and_font_setup(PLStream *pls, int interactive)
 {
-  XEvent mouseEvent;
-  Cursor xHairCursor;
-  PLCairo *aStream;
+  int i;
+  char *a;
 
-  aStream = (PLCairo *)pls->dev;
+  // Stream setup
+  pls->termin = interactive; /* Interactive device */
+  pls->dev_flush = 1;        /* Handles flushes */
+  pls->color = 1;            /* Supports color */
+  pls->dev_text = 1;         /* Handles text */
+  pls->dev_unicode = 1;      /* Wants unicode text */
+  pls->page = 0;
+  pls->dev_fill0 = 1;        /* Supports hardware solid fills */
+  
+  plP_setpxl(DPI/25.4, DPI/25.4);
+  
+  if (pls->xlength <= 0 || pls->ylength <= 0){
+    pls->xlength = PLCAIRO_DEFAULT_X;
+    pls->ylength = PLCAIRO_DEFAULT_Y;
+  }
+  plP_setphy((PLINT) 0, (PLINT) pls->xlength, (PLINT) 0, (PLINT) pls->ylength);
 
-  // Initialize PLplot mouse event structure
-  plGinInit(gin);
-
-  // Create cross hair cursor & switch to using it
-  xHairCursor = XCreateFontCursor(aStream->XDisplay, XC_crosshair);
-  XDefineCursor(aStream->XDisplay, aStream->XWindow, xHairCursor);
-
-  // Get the next mouse button release event
-  XSelectInput(aStream->XDisplay, aStream->XWindow, ButtonReleaseMask);
-  XMaskEvent(aStream->XDisplay, ButtonReleaseMask, &mouseEvent);
-  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
-
-  // Update PLplot's mouse event structure
-  gin->button = 0;
-  gin->pX = mouseEvent.xbutton.x;
-  gin->pY = mouseEvent.xbutton.y;
-  gin->dX = (PLFLT)mouseEvent.xbutton.x/((PLFLT)(pls->xlength));
-  gin->dY = (PLFLT)mouseEvent.xbutton.y/((PLFLT)(pls->ylength));
-
-  // Switch back to normal cursor
-  XUndefineCursor(aStream->XDisplay, aStream->XWindow);
-  XFlush(aStream->XDisplay);
+  // Initialize font table with either enviroment variables or defaults.
+  // This was copied from the psttf driver.
+  if(familyLookup[i] == NULL){
+    for(i=0;i<NPANGOLOOKUP;i++){
+      if((a = getenv(envFamilyLookup[i])) != NULL){
+        strcpy(familyLookup[i],a);
+      }
+      else {
+        strcpy(familyLookup[i],defaultFamilyLookup[i]);
+      }
+    }
+  }
 }
 
 //---------------------------------------------------------------------
@@ -731,3 +641,652 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
     cairo_line_to(aStream->cairoContext, (double) xa[i], (double) ya[i]);
   }
 }
+
+//---------------------------------------------------------------------
+// rotate_cairo_surface()
+//
+// Rotates the cairo surface to the appropriate orientation.
+//---------------------------------------------------------------------
+
+void rotate_cairo_surface(PLStream *pls, float x11, float x12, float x21, float x22, float x0, float y0)
+{
+  cairo_matrix_t *matrix;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  // Invert the coordinate system so the graphs are drawn right side up.
+  matrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
+  cairo_matrix_init(matrix, x11, x12, x21, x22, x0, y0);
+  cairo_transform(aStream->cairoContext, matrix);
+  free(matrix);
+}
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the xcairo driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_xcairo)
+
+static int XScreen;
+static Window rootWindow;
+
+void plD_dispatch_init_xcairo    (PLDispatchTable *pdt);
+void plD_init_xcairo             (PLStream *);
+void plD_eop_xcairo              (PLStream *);
+void plD_tidy_xcairo             (PLStream *);
+void plD_esc_xcairo              (PLStream *, PLINT, void *);
+static void xcairo_get_cursor    (PLStream *, PLGraphicsIn *);
+
+//---------------------------------------------------------------------
+// plD_dispatch_init_xcairo()
+//
+// xcairo dispatch table initialization.
+//----------------------------------------------------------------------
+
+void plD_dispatch_init_xcairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo X Windows Driver";
+   pdt->pl_DevName  = "xcairo";
+#endif
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 59;
+   pdt->pl_init     = (plD_init_fp)     plD_init_xcairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_xcairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_xcairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_xcairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_xcairo()
+//
+// Initialize Cairo X Windows device.
+//----------------------------------------------------------------------
+
+void plD_init_xcairo(PLStream *pls)
+{
+  char plotTitle[40];
+  Visual *defaultVisual;
+  XGCValues values;
+  PLCairo *aStream;
+
+  // Setup the PLStream and the font lookup table
+  stream_and_font_setup(pls, 1);
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // X Windows setup
+  aStream->XDisplay = NULL;
+  aStream->XDisplay = XOpenDisplay(NULL);
+  if(aStream->XDisplay == NULL){
+    printf("Failed to open X Windows display\n");
+    // some sort of error here
+  }
+  XScreen = DefaultScreen(aStream->XDisplay);
+  rootWindow = RootWindow(aStream->XDisplay, XScreen);
+  
+  // Initialize plot title
+  sprintf(plotTitle, "PLplot");
+    
+  // Create a X Window.
+  aStream->XWindow = XCreateSimpleWindow(aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength, 
+					    1, BlackPixel(aStream->XDisplay, XScreen), BlackPixel(aStream->XDisplay, XScreen));
+  XStoreName(aStream->XDisplay, aStream->XWindow, plotTitle);
+  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
+  XMapWindow(aStream->XDisplay, aStream->XWindow);
+
+  // Create an cairo surface & context that are associated with the X window.
+  defaultVisual = DefaultVisual(aStream->XDisplay, 0);
+  aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
+
+  // Invert the surface so that the graphs are drawn right side up.
+  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+}
+
+//---------------------------------------------------------------------
+// plD_eop_xcairo()
+//
+// X Windows specific end of page.
+//---------------------------------------------------------------------
+
+void plD_eop_xcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  XFlush(aStream->XDisplay);
+  printf("Key <Return> to finish\n");
+  getc(stdin);
+}
+
+//---------------------------------------------------------------------
+// plD_tidy_xcairo()
+//
+// X Windows: close graphics file or otherwise clean up.
+//---------------------------------------------------------------------
+
+void plD_tidy_xcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  plD_tidy_cairo(pls);
+
+  // Close the window and the display.
+  XFlush(aStream->XDisplay);
+  XDestroyWindow(aStream->XDisplay, aStream->XWindow);
+
+  XCloseDisplay(aStream->XDisplay);
+  free(aStream->XDisplay);
+}
+
+//---------------------------------------------------------------------
+// plD_esc_xcairo()
+//
+// Escape function, specialized for the xcairo driver
+//---------------------------------------------------------------------
+
+void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  switch(op)
+    {
+    case PLESC_FILL:     // filled polygon
+      poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
+      cairo_fill(aStream->cairoContext);
+      break;
+    case PLESC_HAS_TEXT: // render rext
+      proc_str(pls, (EscText *) ptr);
+      break;
+    case PLESC_FLUSH:    // forced update of the window
+      XFlush(aStream->XDisplay);
+      break;
+    case PLESC_GETC:     // get cursor position
+      XFlush(aStream->XDisplay);
+      xcairo_get_cursor(pls, (PLGraphicsIn*)ptr);
+      break;
+    }
+}
+
+//---------------------------------------------------------------------
+// xcairo_get_cursor()
+//
+// X Windows: returns the location of the next mouse click
+//---------------------------------------------------------------------
+
+void xcairo_get_cursor(PLStream *pls, PLGraphicsIn *gin)
+{
+  XEvent mouseEvent;
+  Cursor xHairCursor;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  // Initialize PLplot mouse event structure
+  plGinInit(gin);
+
+  // Create cross hair cursor & switch to using it
+  xHairCursor = XCreateFontCursor(aStream->XDisplay, XC_crosshair);
+  XDefineCursor(aStream->XDisplay, aStream->XWindow, xHairCursor);
+
+  // Get the next mouse button release event
+  XSelectInput(aStream->XDisplay, aStream->XWindow, ButtonReleaseMask);
+  XMaskEvent(aStream->XDisplay, ButtonReleaseMask, &mouseEvent);
+  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
+
+  // Update PLplot's mouse event structure
+  gin->button = 0;
+  gin->pX = mouseEvent.xbutton.x;
+  gin->pY = mouseEvent.xbutton.y;
+  gin->dX = (PLFLT)mouseEvent.xbutton.x/((PLFLT)(pls->xlength));
+  gin->dY = (PLFLT)mouseEvent.xbutton.y/((PLFLT)(pls->ylength));
+
+  // Switch back to normal cursor
+  XUndefineCursor(aStream->XDisplay, aStream->XWindow);
+  XFlush(aStream->XDisplay);
+}
+
+#endif
+
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the cairo PDF driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_pdfcairo)
+
+void plD_dispatch_init_pdfcairo  (PLDispatchTable *pdt);
+void plD_init_pdfcairo           (PLStream *);
+
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//----------------------------------------------------------------------
+
+// pdfcairo
+void plD_dispatch_init_pdfcairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo PDF Driver";
+   pdt->pl_DevName  = "pdfcairo";
+#endif
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 60;
+   pdt->pl_init     = (plD_init_fp)     plD_init_pdfcairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_pdfcairo()
+//
+// Initialize Cairo PDF device
+//----------------------------------------------------------------------
+
+void plD_init_pdfcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  // Setup the PLStream and the font lookup table
+  stream_and_font_setup(pls, 0);
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // Prompt for a file name if not already set, and close the file
+  // since we just need the name, not an open file.
+  plOpenFile(pls);
+  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
+
+  // Create an cairo surface & context for PDF file.
+  aStream->cairoSurface = cairo_pdf_surface_create((const char *)pls->FileName, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
+
+  // Invert the surface so that the graphs are drawn right side up.
+  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+}
+
+#endif
+
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the cairo PS driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_pscairo)
+
+void plD_dispatch_init_pscairo  (PLDispatchTable *pdt);
+void plD_init_pscairo           (PLStream *);
+
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//----------------------------------------------------------------------
+
+// pscairo
+void plD_dispatch_init_pscairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo PS Driver";
+   pdt->pl_DevName  = "pscairo";
+#endif
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 61;
+   pdt->pl_init     = (plD_init_fp)     plD_init_pscairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_pscairo()
+//
+// Initialize Cairo PS device
+//----------------------------------------------------------------------
+
+void plD_init_pscairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  // Setup the PLStream and the font lookup table
+  stream_and_font_setup(pls, 0);
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // Prompt for a file name if not already set, and close the file
+  // since we just need the name, not an open file.
+  plOpenFile(pls);
+  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
+
+  // Create an cairo surface & context for PS file.
+  aStream->cairoSurface = cairo_ps_surface_create((const char *)pls->FileName, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
+
+  // Rotate the surface to landscape.
+  rotate_cairo_surface(pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->ylength);
+
+  // Invert the surface so that the graphs are drawn right side up.
+  // rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0);
+}
+
+#endif
+
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the cairo SVG driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_svgcairo)
+
+void plD_dispatch_init_svgcairo  (PLDispatchTable *pdt);
+void plD_init_svgcairo           (PLStream *);
+
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//----------------------------------------------------------------------
+
+// svgcairo
+void plD_dispatch_init_svgcairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo SVG Driver";
+   pdt->pl_DevName  = "svgcairo";
+#endif
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 62;
+   pdt->pl_init     = (plD_init_fp)     plD_init_svgcairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_svgcairo()
+//
+// Initialize Cairo SVG device
+//----------------------------------------------------------------------
+
+void plD_init_svgcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  // Setup the PLStream and the font lookup table
+  stream_and_font_setup(pls, 0);
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // Prompt for a file name if not already set, and close the file
+  // since we just need the name, not an open file.
+  plOpenFile(pls);
+  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
+
+  // Create an cairo surface & context for SVG file.
+  aStream->cairoSurface = cairo_svg_surface_create((const char *)pls->FileName, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
+
+  // Invert the surface so that the graphs are drawn right side up.
+  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+}
+
+#endif
+
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the cairo PNG driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_pngcairo)
+
+void plD_dispatch_init_pngcairo  (PLDispatchTable *pdt);
+void plD_init_pngcairo           (PLStream *);
+void plD_tidy_pngcairo           (PLStream *);
+
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//----------------------------------------------------------------------
+
+// svgcairo
+void plD_dispatch_init_pngcairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo PNG Driver";
+   pdt->pl_DevName  = "pngcairo";
+#endif
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 62;
+   pdt->pl_init     = (plD_init_fp)     plD_init_pngcairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_pngcairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_pngcairo()
+//
+// Initialize Cairo PNG device
+//----------------------------------------------------------------------
+
+void plD_init_pngcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  printf("Cairo memory device called\n");
+  
+  // Setup the PLStream and the font lookup table
+  stream_and_font_setup(pls, 0);
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // Prompt for a file name if not already set, and close the file
+  // since we just need the name, not an open file.
+  plOpenFile(pls);
+  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
+
+  // Create a cairo surface & context for PNG file.
+  aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
+
+  // Invert the surface so that the graphs are drawn right side up.
+  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+}
+
+//---------------------------------------------------------------------
+// plD_tidy_pngcairo()
+//
+// PNG: Close graphics file or otherwise clean up.
+//---------------------------------------------------------------------
+
+void plD_tidy_pngcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+  cairo_surface_write_to_png(aStream->cairoSurface, (const char *)pls->FileName);
+  
+  plD_tidy_cairo(pls);
+}
+                                             
+#endif
+
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the cairo memory driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_memcairo)
+
+void plD_dispatch_init_memcairo  (PLDispatchTable *pdt);
+void plD_init_memcairo           (PLStream *);
+void plD_eop_memcairo            (PLStream *);
+
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//----------------------------------------------------------------------
+
+// svgcairo
+void plD_dispatch_init_memcairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo memory driver";
+   pdt->pl_DevName  = "memcairo";
+#endif
+   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_seq      = 63;
+   pdt->pl_init     = (plD_init_fp)     plD_init_memcairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_memcairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_memcairo()
+//
+// Initialize Cairo memory device
+//----------------------------------------------------------------------
+
+void plD_init_memcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  // Set the plot size to the memory buffer size, on the off chance
+  // that they are different.
+  pls->xlength = pls->phyxma;
+  pls->ylength = pls->phyyma;
+  
+  // Setup the PLStream and the font lookup table
+  stream_and_font_setup(pls, 0);
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // Check that user supplied us with some memory to draw in
+  if(pls->dev == NULL){
+    plexit("Must call plsmem first to set user plotting area!");
+  }
+  
+  // Save a pointer to the memory.
+  aStream->memory = pls->dev;
+
+  // Create a cairo surface & context.
+  aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Save the pointer to the structure in the PLplot stream.
+  // Note that this wipes out the direct pointer to the memory buffer.
+  pls->dev = aStream;
+
+  // Invert the surface so that the graphs are drawn right side up.
+  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+}
+      
+//---------------------------------------------------------------------
+// plD_eop_memcairo()
+//
+// Memory device specific end of page. This copies the contents
+// of the cairo surface into the user supplied memory buffer.
+//---------------------------------------------------------------------
+
+void plD_eop_memcairo(PLStream *pls)
+{
+  int i;
+  unsigned char *memory;
+  unsigned char *cairo_surface_data;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+  memory = aStream->memory;
+  cairo_surface_data = cairo_image_surface_get_data(aStream->cairoSurface);
+
+  for(i = 0;i < (pls->phyxma * pls->phyyma); i++){
+    memory[0] = cairo_surface_data[1];
+    memory[1] = cairo_surface_data[2];
+    memory[2] = cairo_surface_data[3];
+    memory += 3;
+    cairo_surface_data += 4;
+  }
+}
+                                       
+#endif

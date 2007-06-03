@@ -220,14 +220,26 @@
 /* Define if pdf driver is present */
 #cmakedefine PLD_pdf
 
+/* Define if Cairo PDF driver is present */
+#cmakedefine PLD_pdfcairo
+
 /* Define if plmeta driver is present */
 #cmakedefine PLD_plmeta
+
+/* Define if Cairo memory driver is present */
+#cmakedefine PLD_memcairo
 
 /* Define if png driver is present */
 #cmakedefine PLD_png
 
+/* Define if Cairo PNG driver is present */
+#cmakedefine PLD_pngcairo
+
 /* Define if ps driver is present */
 #cmakedefine PLD_ps
+
+/* Define if Cairo PS driver is present */
+#cmakedefine PLD_pscairo
 
 /* Define if pstex driver is present */
 #cmakedefine PLD_pstex
@@ -237,6 +249,9 @@
 
 /* Define if svg driver is present */
 #cmakedefine PLD_svg
+
+/* Define if Cairo SVG driver is present */
+#cmakedefine PLD_svgcairo
 
 /* Define if tek4010 driver is present */
 #cmakedefine PLD_tek4010
@@ -268,6 +283,9 @@
 /* Define if wxwidgets driver is present */
 #cmakedefine PLD_wxwidgets
 
+/* Define if the cairo X windows driver is present */
+#cmakedefine PLD_xcairo
+
 /* Define if xfig driver is present */
 #cmakedefine PLD_xfig
 
@@ -276,9 +294,6 @@
 
 /* Define if xwin driver is present */
 #cmakedefine PLD_xwin
-
-/* Define if xwin driver is present */
-#cmakedefine PLD_xwinttf
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
 #define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
