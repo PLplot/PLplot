@@ -24,7 +24,8 @@ with
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
+    Ada.Strings,
+    Ada.Strings.Fixed,
     Interfaces.C,
     PLplotThin,
     PLplot;
@@ -32,7 +33,8 @@ use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
+    Ada.Strings,
+    Ada.Strings.Fixed,
     Interfaces.C,
     PLplotThin,
     PLplot;
@@ -50,7 +52,7 @@ procedure x12a is
     y0 : Real_Vector (0 .. 9);
     
     procedure plfbox (x0, y0 : Long_Float) is
-        x, y : Real_Vector (0 ..3);
+        x, y : Real_Vector (0 .. 3);
     begin
         x(0) := x0;
         y(0) := 0.0;
@@ -64,10 +66,10 @@ procedure x12a is
         x(3) := x0 + 1.0;
         y(3) := 0.0;
 
-        Fill_Polygon(x, y);
-        Set_Color(Red);
-        Select_Line_Style(1);
-        Draw_Curve(x, y);
+        plfill(x'Length, x, y);
+        plcol0(1);
+        pllsty(1);
+        plline(x'Length, x, y);
     end plfbox;
 
 begin
@@ -99,8 +101,10 @@ begin
         plcol0(i + 1);
         plpsty(0);
         plfbox(1980.0 + Long_Float(i), y0(i));
-        plptex(Long_Float(1980 + i) + 0.5, (y0(i) + 1.0), 1.0, 0.0, 0.5, To_C(Integer'image(Integer(y0(i)))));
-        plmtex(To_C("b"), 1.0, (Long_Float(i + 1) * 0.1 - 0.05), 0.5, To_C(Integer'image((1980 + i))));
+        plptex(Long_Float(1980 + i) + 0.5, (y0(i) + 1.0), 1.0, 0.0, 0.5, 
+            To_C(Trim(Integer'image(Integer(y0(i))), Left)));
+        plmtex(To_C("b"), 1.0, (Long_Float(i + 1) * 0.1 - 0.05), 0.5, 
+            To_C(Trim(Integer'image((1980 + i)), Left)));
     end loop;
 
     -- Don't forget to call plend() to finish off!

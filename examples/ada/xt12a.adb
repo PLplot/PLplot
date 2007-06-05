@@ -24,14 +24,16 @@ with
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
+    Ada.Strings,
+    Ada.Strings.Fixed,
     PLplotThin,
     PLplot;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
+    Ada.Strings,
+    Ada.Strings.Fixed,
     PLplotThin,
     PLplot;
 
@@ -97,8 +99,8 @@ begin
         Set_Color(i + 1);
         Select_Fill_Pattern(0);
         plfbox((1980.0 + Long_Float(i)), y0(i));
-        Write_Text_World((1980.0 + Long_Float(i) + 0.5), (y0(i) + 1.0), 1.0, 0.0, 0.5, Integer'image(Integer(y0(i))));
-        Write_Text_Viewport("b", 1.0, (Long_Float(i) + 1.0) * 0.1 - 0.05, 0.5, Integer'image((1980 + i)));
+        Write_Text_World(1980.0 + Long_Float(i) + 0.5, y0(i) + 1.0, 1.0, 0.0, 0.5, Trim(Integer'image(Integer(y0(i))), Left));
+        Write_Text_Viewport("b", 1.0, (Long_Float(i) + 1.0) * 0.1 - 0.05, 0.5, Trim(Integer'image(1980 + i), Left));
     end loop;
 
     -- Don't forget to call Plot_End to finish off!
