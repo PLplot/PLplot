@@ -793,7 +793,6 @@ void plD_tidy_xcairo(PLStream *pls)
   XDestroyWindow(aStream->XDisplay, aStream->XWindow);
 
   XCloseDisplay(aStream->XDisplay);
-  free(aStream->XDisplay);
 }
 
 //---------------------------------------------------------------------
