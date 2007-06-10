@@ -246,7 +246,7 @@ void plD_eop_cairo(PLStream *pls)
 void plD_tidy_cairo(PLStream *pls)
 {
   PLCairo *aStream;
-
+  
   aStream = (PLCairo *)pls->dev;
 
   // Free the cairo context and surface.
@@ -1101,7 +1101,8 @@ void plD_init_svgcairo(PLStream *pls)
 
 void plD_dispatch_init_pngcairo  (PLDispatchTable *pdt);
 void plD_init_pngcairo           (PLStream *);
-void plD_tidy_pngcairo           (PLStream *);
+void plD_bop_pngcairo            (PLStream *);
+void plD_eop_pngcairo            (PLStream *);
 
 //---------------------------------------------------------------------
 // dispatch_init_init()
@@ -1109,7 +1110,7 @@ void plD_tidy_pngcairo           (PLStream *);
 // Initialize device dispatch table
 //----------------------------------------------------------------------
 
-// svgcairo
+// pngcairo
 void plD_dispatch_init_pngcairo(PLDispatchTable *pdt)
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -1117,13 +1118,13 @@ void plD_dispatch_init_pngcairo(PLDispatchTable *pdt)
    pdt->pl_DevName  = "pngcairo";
 #endif
    pdt->pl_type     = plDevType_Interactive;
-   pdt->pl_seq      = 62;
+   pdt->pl_seq      = 63;
    pdt->pl_init     = (plD_init_fp)     plD_init_pngcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
-   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
-   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_pngcairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_pngcairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_pngcairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
    pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
 }
@@ -1138,46 +1139,84 @@ void plD_init_pngcairo(PLStream *pls)
 {
   PLCairo *aStream;
 
-  printf("Cairo memory device called\n");
-  
   // Setup the PLStream and the font lookup table
   stream_and_font_setup(pls, 0);
 
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
+  // Initialize family file info
+  plFamInit(pls);
 
   // Prompt for a file name if not already set, and close the file
   // since we just need the name, not an open file.
   plOpenFile(pls);
-  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
 
-  // Create a cairo surface & context for PNG file.
-  aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, (double)pls->xlength, (double)pls->ylength);
-  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+  // Allocate a cairo stream structure.
+  //
+  // NOTE: The check below is necessary since, in family mode, this function
+  //   will be called multiple times. While you might think that it is
+  //   sufficient to update what *should* be the only pointer to the contents
+  //   of pls->dev, i.e. the pointer pls->dev itself, it appears that
+  //   something else somewhere else is also pointing to pls->dev. If you
+  //   change what pls->dev points to then you will get a "bus error", from
+  //   which I infer the existence of a said bad stale pointer.
+  //
+  if(pls->dev == NULL){
+    aStream = malloc(sizeof(PLCairo));
+  } else {
+    aStream = pls->dev;
+  }
 
   // Save the pointer to the structure in the PLplot stream
   pls->dev = aStream;
+
+  // Create a new cairo surface & context for PNG file.
+  aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   // Invert the surface so that the graphs are drawn right side up.
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 }
 
-//---------------------------------------------------------------------
-// plD_tidy_pngcairo()
+//----------------------------------------------------------------------
+// plD_bop_pngcairo()
 //
-// PNG: Close graphics file or otherwise clean up.
-//---------------------------------------------------------------------
+// PNG: Set up for the next page.
+//----------------------------------------------------------------------
 
-void plD_tidy_pngcairo(PLStream *pls)
+void plD_bop_pngcairo(PLStream *pls)
 {
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
-  cairo_surface_write_to_png(aStream->cairoSurface, (const char *)pls->FileName);
-  
-  plD_tidy_cairo(pls);
+
+  // Plot familying stuff. Not really understood, just copying gd.c
+  plGetFam(pls);
+  pls->famadv = 1;
+  pls->page++;
+
+  // Fill in the window with the background color.
+  cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
+  cairo_set_source_rgb(aStream->cairoContext,
+		       (double)pls->cmap0[0].r/255.0,
+		       (double)pls->cmap0[0].g/255.0,
+		       (double)pls->cmap0[0].b/255.0);
+  cairo_fill(aStream->cairoContext);
 }
-                                             
+
+//---------------------------------------------------------------------
+// plD_eop_pngcairo()
+//
+// PNG: End of page.
+//---------------------------------------------------------------------
+
+void plD_eop_pngcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
+  cairo_surface_write_to_png(aStream->cairoSurface, (const char *)pls->FileName);
+}
+
 #endif
 
 
@@ -1201,7 +1240,7 @@ void plD_eop_memcairo            (PLStream *);
 // Initialize device dispatch table
 //----------------------------------------------------------------------
 
-// svgcairo
+// memcairo
 void plD_dispatch_init_memcairo(PLDispatchTable *pdt)
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -1209,7 +1248,7 @@ void plD_dispatch_init_memcairo(PLDispatchTable *pdt)
    pdt->pl_DevName  = "memcairo";
 #endif
    pdt->pl_type     = plDevType_Interactive;
-   pdt->pl_seq      = 63;
+   pdt->pl_seq      = 64;
    pdt->pl_init     = (plD_init_fp)     plD_init_memcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
