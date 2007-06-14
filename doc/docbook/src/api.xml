@@ -11706,7 +11706,7 @@ stripchart
     </variablelist>
 
     <para>
-      Redacted form: <function>plstyl(nels, mark, space)</function>
+      Redacted form: <function>plstyl(mark, space)</function>
     </para>
 
     <para>
