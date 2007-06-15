@@ -203,7 +203,8 @@ function ix09c
 	  ## 64-bit Ubuntu Dapper with octave 2.1.72 seems ok.
 	  clevel(6) = 0.0;
 
-	  mark = 1500; space = 1500;
+          mark0 = []; space0 = [];
+	  mark1 = [1500]; space1 = [1500];
 
 	  ## Parse and process command line arguments 
 
@@ -228,10 +229,10 @@ if (0)
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
 	  plcont(z, 1, XPTS, 1, YPTS, clevel, tr);
-	  plstyl(1, mark, space);
+	  plstyl(mark1, space1);
 	  plcol0(3);
 	  plcont(w, 1, XPTS, 1, YPTS, clevel, tr);
-	  plstyl(0, mark, space);
+	  plstyl(mark0, space0);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 endif
@@ -239,10 +240,10 @@ endif
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
 	  plcont(z, 1, XPTS, 1, YPTS, clevel, tr);
-	  plstyl(1, mark, space);
+	  plstyl(mark1, space1);
 	  plcol0(3);
 	  plcont(w, 1, XPTS, 1, YPTS, clevel, tr);
-	  plstyl(0, mark, space);
+	  plstyl(mark0, space0);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
@@ -272,10 +273,10 @@ endif
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
 	  plcont1(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1);
-	  plstyl(1, mark, space);
+	  plstyl(mark1, space1);
 	  plcol0(3);
 	  plcont1(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1);
-	  plstyl(0, mark, space);
+	  plstyl(mark0, space0);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 if(0)
@@ -283,10 +284,10 @@ if(0)
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
 	  plcont1(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1);
-	  plstyl(1, mark, space);
+	  plstyl(mark1, space1);
 	  plcol0(3);
 	  plcont1(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1);
-	  plstyl(0, mark, space);
+	  plstyl(mark0, space0);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 endif
@@ -296,10 +297,10 @@ endif
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
 	  plcont2(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2);
-	  plstyl(1, mark, space);
+	  plstyl(mark1, space1);
 	  plcol(3);
 	  plcont2(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2);
-	  plstyl(0, mark, space);
+	  plstyl(mark0, space0);
 	  plcol(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 if(0)
@@ -307,10 +308,10 @@ if(0)
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
 	  plcont1(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1);
-	  plstyl(1, mark, space);
+	  plstyl(mark1, space1);
 	  plcol0(3);
 	  plcont1(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1);
-	  plstyl(0, mark, space);
+	  plstyl(mark0, space0);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 endif

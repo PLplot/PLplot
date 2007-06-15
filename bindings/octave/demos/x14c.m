@@ -207,7 +207,7 @@ endfunction
 
 function plot3()
 
-  space0 = 0; mark0 = 0; space1 = 1500; mark1 = 1500;
+  space0 = []; mark0 = []; space1 = [1500]; mark1 = [1500];
   ## For the final graph we wish to override the default tick intervals, and
   ##       so do not use PLENV */
 
@@ -227,10 +227,10 @@ function plot3()
   ## Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
   ##       expects a pointer!! */
 
-  plstyl(1, mark1, space1);
+  plstyl(mark1, space1);
   plcol(2);
   plbox("g", 30.0, 0, "g", 0.2, 0);
-  plstyl(0, mark0, space0);
+  plstyl(mark0, space0);
 
   plcol(3);
   pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
@@ -324,7 +324,7 @@ function plot5()
 
   clevel =[-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.]';
 
-  mark = 1500; space = 1500;
+  mark = [1500]; space = [1500];
 
   ## Set up function arrays */
 
@@ -340,7 +340,7 @@ function plot5()
   plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
   plcol(2);
   plcont(z, 1, XPTS, 1, YPTS, clevel, tr, 0);
-  plstyl(1, mark, space);
+  plstyl(mark, space);
   plcol(3);
   plcont(w, 1, XPTS, 1, YPTS, clevel, tr, 0);
   plcol(1);

@@ -1346,7 +1346,7 @@ void c_plstripd(PLINT id); //%name plstripd
 
 /* Set up a new line style */
 
-void c_plstyl(PLINT nms, PLINT *mark, PLINT *space); //%name plstyl
+void c_plstyl(PLINT nms, PLINT *mark, PLINT *space); //%name plstyl //%input mark(nms), space(nms)
 
 /* Set the vector style */
 
