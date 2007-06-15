@@ -1032,12 +1032,12 @@ static inline int
 _dim(const octave_value &o_obj, int dim_idx)
 {
   if (dim_idx == 0)
-    return max(o_obj.rows(), 1);
+    return max(o_obj.rows(), 0);
 				// max is necessary because sometimes
 				// rows() or columns() return -1 or 0 for
 				// scalars.
   else if (dim_idx == 1)
-    return max(o_obj.columns(), 1);
+    return max(o_obj.columns(), 0);
   else
     return 1;
 }
