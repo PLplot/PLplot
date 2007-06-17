@@ -303,7 +303,7 @@ void proc_str(PLStream *pls, EscText *args)
   float fontSize;
   int textXExtent, textYExtent;
   char *textWithPangoMarkup;
-  PLFLT rotation, shear, cos_rot, sin_rot, sin_shear;
+  PLFLT rotation, shear, cos_rot, sin_rot, tan_shear;
   cairo_matrix_t *cairoTransformMatrix;
   PangoLayout *layout;
   PangoFontDescription *fontDescription;
@@ -354,18 +354,18 @@ void proc_str(PLStream *pls, EscText *args)
   plRotationShear(args->xform, &rotation, &shear);
   cos_rot = cos(rotation);
   sin_rot = sin(rotation);
-  sin_shear = sin(shear);
+  tan_shear = tan(shear);
 
   // Apply the transform matrix
-  cairo_matrix_init(cairoTransformMatrix,
+  cairo_matrix_init(cairoTransformMatrix,             
 		    cos_rot,
 		    -sin_rot,
-		    cos_rot * sin_shear + sin_rot,
-		    -sin_rot * sin_shear + cos_rot,
+		    cos_rot * tan_shear + sin_rot,
+		    -sin_rot * tan_shear + cos_rot,
 		    0,0);
   cairo_transform(aStream->cairoContext, cairoTransformMatrix);
   free(cairoTransformMatrix);
-
+  
   // Move to the text starting point
   cairo_rel_move_to(aStream->cairoContext, 
 		    (double)(-1.0 * args->just * (double)textXExtent), 
@@ -606,7 +606,6 @@ void set_current_context(PLStream *pls)
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
-
   cairo_set_source_rgb(aStream->cairoContext,
 		       (double)pls->curcolor.r/255.0, 
   		       (double)pls->curcolor.g/255.0,
@@ -1157,7 +1156,7 @@ void plD_init_pngcairo(PLStream *pls)
   //   of pls->dev, i.e. the pointer pls->dev itself, it appears that
   //   something else somewhere else is also pointing to pls->dev. If you
   //   change what pls->dev points to then you will get a "bus error", from
-  //   which I infer the existence of a said bad stale pointer.
+  //   which I infer the existence of said bad stale pointer.
   //
   if(pls->dev == NULL){
     aStream = malloc(sizeof(PLCairo));
