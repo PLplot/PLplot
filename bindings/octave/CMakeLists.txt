@@ -108,8 +108,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave.h.in
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
 @ONLY
 )
-# Extra sed step is a correction to allow gcc 3.2 (and later) to compile.
-# This correction also still works on gcc 2.95
 add_custom_command(
 OUTPUT 
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
@@ -121,12 +119,6 @@ COMMAND ${PERL_EXECUTABLE}
 -cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_rej.h
 -cpp ${CMAKE_C_COMPILER} -D__builtin_va_list=void -E 
 -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_BINARY_DIR} -C plplot_octave.h
-COMMAND mv 
-${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
-${CMAKE_CURRENT_BINARY_DIR}/tmp_plplot_octave.cc
-COMMAND sed "s/ string / std::string /" 
-${CMAKE_CURRENT_BINARY_DIR}/tmp_plplot_octave.cc > 
-${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
 DEPENDS
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
 )
