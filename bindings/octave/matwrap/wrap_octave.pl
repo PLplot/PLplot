@@ -10,6 +10,11 @@
 # Copyright (c) 1997 Gary R. Holt.  This is distributed under the terms of the 
 # perl artistic license (http://language.perl.com/misc/Artistic.html).
 #
+# Modifications 2007 Andrew Ross 
+# This version contains two local fixes for plplot
+# 1) Change _dim function to allow a zero length array (required by plstyl)
+# 2) Alter string to std::string for compatibility with gcc3.2 and later
+#
 
 package octave;			# Everything should be in this package.
 
@@ -648,7 +653,7 @@ $typemap_get_scalar{'double'} = $typemap_get_scalar{'float'} =
 
 $typemap_get_scalar{'char *'} = sub {
   my ($arg, $argname) = @_;	# Name the arguments.
-  ("  string _$argname = $arg->{oct_expr}.string_value();\n" .
+  ("  std::string _$argname = $arg->{oct_expr}.string_value();\n" .
 				# Get the string.
    "  _$argname += '\\0';\n" .	# Make sure it's null terminated.
    "  $arg->{c_var_name} = (char *)_$argname.data();\n");
