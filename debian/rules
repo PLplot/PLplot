@@ -30,7 +30,7 @@ PYVERS = $(shell pyversions -vr)
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=ON -DCMAKE_INSTALL_PREFIX=/usr
 
-BUILD_DIR = debian/build_tmp
+BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
 
 config: config-stamp
@@ -62,12 +62,11 @@ clean: unpatch
 	rm -rf $(debbase)/$(libpkg)
 	dh_clean
 
-#install: install-stamp install-python
-install: install-stamp 
+install: install-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 		     --no-package=plplot-bin --no-package=python-plplot
 	dh_movefiles -i
-#	dh_movefiles --package=python-plplot
+	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
@@ -109,7 +108,7 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-stamp
 	( cd $(BUILD_DIR) ; \
-	  PYTHON=python$* cmake $(BUILD_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON ; \
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DENABLE_pygcw=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH=/usr/include/python$* -DNUMERIC_INCLUDE_PATH=/usr/include/python$*/Numeric ; \
 	  for d in gnome2/python python ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
@@ -140,8 +139,8 @@ binary-arch: build install
 	dh_installdocs --package=$(libpkg) --package=libcsiro0
 	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
 
-#	dh_pycentral --package=python-plplot
-#	dh_python --package=python-plplot
+	dh_pycentral --package=python-plplot
+	dh_python --package=python-plplot
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
