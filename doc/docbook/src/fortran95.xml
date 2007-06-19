@@ -85,8 +85,8 @@ however, other than by this note.
   </para>
   <para>
 There is one slight complication: PLplot can be compiled with either
-single-precision reals or double-precision reals. It is <emph>very
-important</emph> to keep the variables that are passed to PLplot in
+single-precision reals or double-precision reals. It is <emphasis>very
+important</emphasis> to keep the variables that are passed to PLplot in
 the same precision. Fortunately, Fortran 95 provides the
 <literal>KIND</literal> mechanism for this.
   </para>
