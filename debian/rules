@@ -37,7 +37,8 @@ config: config-stamp
 config-stamp: 
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
-	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran		\
+	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
+	JAVA_HOME=/usr/lib/kaffe		\
 	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=OFF )
 	touch config-stamp
 
@@ -95,9 +96,13 @@ install-stamp: build-stamp
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
 		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
-		plplot9-driver-psttf libplplot-fortran9 ; do		\
+		plplot9-driver-psttf libplplot-fortran9			\
+		libplplot9-java; do					\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
+
+	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
+	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 
 	touch install-stamp
 
@@ -140,7 +145,6 @@ binary-arch: build install
 	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
 
 	dh_pycentral --package=python-plplot
-	dh_python --package=python-plplot
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a

@@ -1,3 +1,16 @@
+plplot (5.7.4.svn.20070523-2) unstable; urgency=low
+
+  * debian/control, debian/rules: Fix python packages to work with
+    cmake build system.
+  * debian/control, debian/rules: Re-enable the libplplot9-java package. 
+    Now uses jikes / kaffe to build.
+  * debian/control: Tidy up dependencies and include dependencies for 
+    building documentation from source.
+  * debian/libplplot9.README.Debian: Update list to describe current  
+    packages.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 19 Jun 2007 08:35:59 +0100
+
 plplot (5.7.4.svn.20070523-1) unstable; urgency=low
 
   * Initial port of debian packaging files to use new cmake build system

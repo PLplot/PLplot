@@ -4,9 +4,10 @@ plplot for Debian
 1. INTRODUCTION & ORIGIN
 
     These are the debianized packages for PLplot, a scientific plotting
-    library.  They were put together by Rafael Laboissiere.
+    library.  They were put together by Rafael Laboissiere. The porting 
+    to the new CMake build system was done by Andrew Ross.
 
-    The packages were built directly from the CVS sources and are considered
+    The packages were built directly from the SVN sources and are considered
     experimental.
 
 
@@ -15,24 +16,39 @@ plplot for Debian
     The original PLplot distribution was broken down in several Debian
     packages:
 
-      * libplplot9: Contains the shared libraries for C, C++ and Fortran77,
-	as well as the data files and the driver modules that do not depend
-	on other libraries.  Some miscellaneous utilities that used to be in
-	the plplot-bin package in the past have been moved into libplplot9.
+      * libplplot9: Contains the shared C libraries, as well as the 
+	data files and the driver modules that do not depend on other 
+	libraries.  
 
       * libplplot-dev: Headers and static libraries for developing programs
         using the PLplot API, as well as many examples in C, C++, and
         Fortran77.
 
-      * plplot-doc: HTML and PDF formats of the PLplot manual.
+      * plplot-bin: Contains various utilities associated with PLplot.
+
+      * plplot-doc: HTML, PS and PDF formats of the PLplot manual.
 
       * plplot9-driver-xwin: Provides the xwin driver module.
 
       * plplot9-driver-gd: Provides the GD driver module, which allows
         direct generation of PNG and JPEG files.
 
-      * plplot9-driver-gnome: Provides the Gnome canvas driver module.  This
-        is highly experimental.
+      * plplot9-driver-gnome2: Provides the Gnome canvas driver module.  
+
+      * plplot9-driver-psttf: Provides the psttf driver module. This uses
+	liblasi0 to produce postscript with higher quality text using
+	truetype fonts.  
+
+      * plplot9-driver-wxwidgets: Provides the WXWidgets driver module.
+
+      * libplplot-c++9c2: Contains the library for using the C++ PLplot 
+	classes.
+
+      * libplplot-fortran9: Contains the F77 and F90 binding for
+	the PLplot functions.
+
+      * libplplot9-java: Contains the bindings for using the PLplot 
+	functions from java.
 
       * plplot-tcl: Modules allowing binding of the PLplot functions
         for Tcl/Tk.  Contains also the Tk driver module and some interactive
@@ -40,7 +56,7 @@ plplot for Debian
 
       * plplot-tcl-dev: Development files for the Tcl/Tk biondings.
 
-      * python-plplot: Glue library with bindings for Python 2.2.
+      * python-plplot: Glue library with bindings for Python.
 
       * octave-plplot: Glue library with bindings for Octave 2.1.  In order
 	to use this package, issue the command "use_plplot" at the Octave
@@ -51,7 +67,7 @@ plplot for Debian
 3. DOCUMENTATION
 
     Further documentation for PLplot can be found in the plplot-doc
-    package.  The entry point is
+    package.  The entry point is /usr/share/doc/plplot-doc.
 
 
 4. DEMOS & EXAMPLES
