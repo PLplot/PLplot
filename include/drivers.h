@@ -106,6 +106,8 @@ void plbuf_bop		(PLStream *);
 void plbuf_tidy		(PLStream *);
 void plbuf_state	(PLStream *, PLINT);
 void plbuf_esc		(PLStream *, PLINT, void *);
+void * plbuf_save	(PLStream *, void *);
+void * plbuf_switch	(PLStream *, void *);
 
 void plRemakePlot	(PLStream *);
 
