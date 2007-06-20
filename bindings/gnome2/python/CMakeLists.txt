@@ -30,13 +30,13 @@ OUTPUT_STRIP_TRAILING_WHITESPACE
 #message("PYGTK_DEFS = ${PYGTK_DEFS}")
 
 ### Prepare gcwmodule_SRCS.
-# Use sed to rename PLINT and PLFLT so that h2def.py knows what to do.
+# Use sed to rename PLINT, PLFLT and PLUNICODE so that h2def.py knows what to do.
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gcw.defs
 COMMAND ${PYTHON_EXECUTABLE}
 ${codegen}/h2def.py
 ${CMAKE_SOURCE_DIR}/include/gcw.h
-| sed -e s/PLINT/gint32/ -e s/PLFLT/double/
+| sed -e s/PLINT/gint32/ -e s/PLFLT/double/ -e s/PLUNICODE/guint32/
 > ${CMAKE_CURRENT_BINARY_DIR}/gcw.defs
 )
 
@@ -60,13 +60,13 @@ gcwmodule.c
 ### gcwmodule_SRCS is now prepared.
 
 ### Prepare cplplotcanvasmodule_SRCS
-# Use sed to rename PLINT and PLFLT so that h2def.py knows what to do.
+# Use sed to rename PLINT, PLFLT and PLUNICODE so that h2def.py knows what to do.
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
 COMMAND ${PYTHON_EXECUTABLE}
 ${codegen}/h2def.py
 ${CMAKE_SOURCE_DIR}/include/plplotcanvas.h
-| sed -e s/PLINT/gint32/ -e s/PLFLT/double/
+| sed -e s/PLINT/gint32/ -e s/PLFLT/double/ -e s/PLUNICODE/guint32/
 > ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
 )
 
