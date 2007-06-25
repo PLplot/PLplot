@@ -48,6 +48,7 @@
   <para>
   Normally, the common API is wrapped in such a way for Fortran 95 that there is
   and one-to-one correspondence between each Fortran 95 and C argument
+  with the exception of arguments that indicate array sizes
   (see <xref linkend="fortran95"/>
   for discussion).  However, for certain routines documented in this
   chapter the Fortran 95 argument lists
@@ -64,17 +65,184 @@
     </title>
 
     <para>
-      This is an overloaded function with a variety of argument lists
-      which NEED DOCUMENTATION.
+      This is an overloaded function with a variety of argument lists:
+
+      <programlisting>
+          interface plcont
+              subroutine plcontour_0(z,kx,lx,ky,ly,clevel)
+                  integer                          :: kx,lx,ky,ly
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+              end subroutine plcontour_0
+
+              subroutine plcontour_1(z,kx,lx,ky,ly,clevel,xg,yg)
+                  integer                          :: kx,lx,ky,ly
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+                  real(kind=plflt), dimension(:)   :: xg
+                  real(kind=plflt), dimension(:)   :: yg
+              end subroutine plcontour_1
+
+              subroutine plcontour_2(z,kx,lx,ky,ly,clevel,xg,yg)
+                  integer                          :: kx,lx,ky,ly
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+                  real(kind=plflt), dimension(:,:) :: xg
+                  real(kind=plflt), dimension(:,:) :: yg
+              end subroutine plcontour_2
+
+              subroutine plcontour_tr(z,kx,lx,ky,ly,clevel,tr)
+                  integer                          :: kx,lx,ky,ly
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+                  real(kind=plflt), dimension(6)   :: tr
+              end subroutine plcontour_tr
+
+              subroutine plcontour_0_all(z,clevel)
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+              end subroutine plcontour_0_all
+
+              subroutine plcontour_1_all(z,clevel,xg,yg)
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+                  real(kind=plflt), dimension(:)   :: xg
+                  real(kind=plflt), dimension(:)   :: yg
+              end subroutine plcontour_1_all
+
+              subroutine plcontour_2_all(z,clevel,xg,yg)
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+                  real(kind=plflt), dimension(:,:) :: xg
+                  real(kind=plflt), dimension(:,:) :: yg
+              end subroutine plcontour_2_all
+
+              subroutine plcontour_tr_all(z,clevel,tr)
+                  real(kind=plflt), dimension(:,:) :: z
+                  real(kind=plflt), dimension(:)   :: clevel
+                  real(kind=plflt), dimension(6)   :: tr
+              end subroutine plcontour_tr_all
+          end interface
+      </programlisting>
     </para>
 
     <para>
-      When called from Fortran 95, this overloaded routine has the same 
+      When called from Fortran 95, this overloaded routine has the same
       effect as when invoked from C.  See
       <filename>examples/f95/x??f.f90</filename> for various ways to call
       plcont from Fortran 95.
     </para>
 
+    <para>
+      The meaning of the various arguments is as follows:
+      <variablelist>
+        <varlistentry>
+          <term>
+            <parameter>z</parameter>
+            (<literal>real(kind=plflt), dimension(:,:)</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              Matrix containing the values to be plotted.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>kx, lx</parameter>
+            (<literal>integer</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              Range for the first index in the matrix <literal>z</literal> to consider.
+              If not given, then the whole first index is considered.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>clevel</parameter>
+            (<literal>real(kind=plflt), dimension(:)</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              Levels at which the contours are computed and drawn.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>kx, lx</parameter>
+            (<literal>integer</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              Range for the first index in the matrix <literal>z</literal> to consider.
+              If not given, then the whole first index is considered.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>ky, ly</parameter>
+            (<literal>integer</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              Range for the second index in the matrix <literal>z</literal> to consider.
+              If not given, then the whole second index is considered.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>xg</parameter>
+            (<literal>real(kind=plft), dimension(:)</literal> or
+             <literal>real(kind=plft), dimension(:,:)</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              The x-coordinates for the grid lines (if one-dimensional)
+              or the x-coordinates of the grid vertices (if two-dimensional).
+              The values in the matrix are plotted at these coordinates.
+              If not given, implicit coordinates are used (equal to the
+              indices in the matrix).
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>yg</parameter>
+            (<literal>real(kind=plft), dimension(:)</literal> or
+             <literal>real(kind=plft), dimension(:,:)</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              The y-coordinates for the grid lines (if one-dimensional)
+              or the x-coordinates of the grid vertices (if two-dimensional).
+              The values in the matrix are plotted at these coordinates.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>tr</parameter>
+            (<literal>real(kind=plft), dimension(6)</literal>, input)
+          </term>
+          <listitem>
+            <para>
+              The coefficients of an affine transformation:
+
+              <programlisting>
+                x = tr(1) * ix + tr(2) * iy + tr(3)
+                y = tr(4) * ix + tr(5) * iy + tr(6)
+              </programlisting>
+
+              The indices of the matrix element are used to compute the
+              "actual" coordinates according to the above formulae.
+            </para>
+          </listitem>
+        </varlistentry>
   </sect1>
 
   <sect1 id="plshadefortran95" renderas="sect3">
@@ -88,7 +256,7 @@
     </para>
 
     <para>
-      When called from Fortran 95, this overloaded routine has the same 
+      When called from Fortran 95, this overloaded routine has the same
       effect as when invoked from C.  See
       <filename>examples/f95/x??f.f90</filename> for various ways to call
       plshade from Fortran 95.
@@ -107,7 +275,7 @@
     </para>
 
     <para>
-      When called from Fortran 95, this overloaded routine has the same 
+      When called from Fortran 95, this overloaded routine has the same
       effect as when invoked from C.  See
       <filename>examples/f95/x??f.f90</filename> for various ways to call
       plshades from Fortran 95.
@@ -126,7 +294,7 @@
     </para>
 
     <para>
-      When called from Fortran 95, this overloaded routine has the same 
+      When called from Fortran 95, this overloaded routine has the same
       effect as when invoked from C.  See
       <filename>examples/f95/x??f.f90</filename> for various ways to call
       plvect from Fortran 95.
@@ -242,11 +410,11 @@
     <para> When called from Fortran 95, this routine has the same effect as
       when invoked from C (see &plparseopts;) except that the argument list
       just contains the parsing mode and the Fortran 95 system routines
-      <function>iargc</function> and <function>getarg</function> 
+      <function>iargc</function> and <function>getarg</function>
       are used internally to obtain the number of arguments and
       argument values.  (Note, during configuration, the user's
       Fortran 95 compiler
-      is checked to see whether it supports 
+      is checked to see whether it supports
       <function>iargc</function> and <function>getarg</function>.  If it
       does not, the Fortran 95 plparseopts simply writes a warning message
       and returns.
