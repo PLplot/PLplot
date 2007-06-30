@@ -84,7 +84,9 @@ if(ENABLE_python)
 set(
 _output_results
 "${_output_results}
-PYTHON_EXECUTABLE:				${PYTHON_EXECUTABLE}")
+PYTHON_EXECUTABLE:				${PYTHON_EXECUTABLE}
+PYTHON_INCLUDE_PATH:				${PYTHON_INCLUDE_PATH}
+PYTHON_LIBRARIES:				${PYTHON_LIBRARIES}")
 endif(ENABLE_python)
 
 set(
