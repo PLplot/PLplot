@@ -60,7 +60,7 @@ if(ENABLE_python)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
 
-if(ENABLE_python)
+if(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
   # Check for Python Numeric header in same include path or Numeric
   # subdirectory of that path to avoid version mismatch.
   find_path(
@@ -78,7 +78,7 @@ if(ENABLE_python)
     "Numeric header not found. Disabling python bindings")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NUMERIC_INCLUDE_PATH)
-endif(ENABLE_python)
+endif(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
 
 if(ENABLE_python)
   # N.B. This is a nice way to obtain all sorts of python information
