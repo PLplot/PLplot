@@ -60,7 +60,7 @@ ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 
 # Enable testing framework for examples
 if (BUILD_TEST)
-  enable_testing()
+  include(CTest)
 endif (BUILD_TEST)
 
 # Disable warnings about deprecated functions (Visual C++ 2005)
