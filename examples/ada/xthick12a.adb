@@ -26,7 +26,7 @@ with
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
-    PLplotThin,
+    PLplot_Thin,
     PLplot;
 use
     Ada.Text_IO,
@@ -34,7 +34,7 @@ use
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
-    PLplotThin,
+    PLplot_Thin,
     PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
@@ -46,7 +46,7 @@ use
 -- unavailable, pattern fill is used instead (automatic).
 ------------------------------------------------------------------------------
 
-procedure xt12a is
+procedure xthick12a is
     y0 : Real_Vector (0 .. 9);
     
     procedure plfbox (x0, y0 : Long_Float) is
@@ -103,6 +103,6 @@ begin
         Write_Text_Viewport("b", 1.0, (Long_Float(i) + 1.0) * 0.1 - 0.05, 0.5, Trim(Integer'image(1980 + i), Left));
     end loop;
 
-    -- Don't forget to call Plot_End to finish off!
-    Plot_End;
-end xt12a;
+    -- Don't forget to call End_PLplot to finish off!
+    End_PLplot;
+end xthick12a;

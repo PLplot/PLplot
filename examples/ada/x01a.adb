@@ -24,30 +24,28 @@ with
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
-    Interfaces.C,
-    PlplotThin;
+    PLplot_Traditional,
+    PLplot_Thin;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
-    Interfaces.C,
-    PlplotThin;
+    PLplot_Traditional;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 
 procedure x01a is
-    xs, ys : Real_Vector (0 .. 5);
+    xs, ys : PLplot_Thin.Real_Vector (0 .. 5);
     xscale, yscale, xoff, yoff : Long_Float;
     fontset : Integer := 1;
     notes : String := "Make sure you get it right!";
-    PL_Version_Number : char_array(0..79);    
+    ver : PLplot_Thin.String_80;
+    
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
-        x, y : Real_Vector (0 .. 59);
+        x, y : PLplot_Thin.Real_Vector (0 .. 59);
     begin
         for i in x'Range loop
             x(i) := xoff + xscale * Long_Float(i + 1) / Long_Float(x'Length);
@@ -63,27 +61,27 @@ procedure x01a is
             ys(i) := y(i * 10 + 3);
         end loop;
 
-        -- Set up the viewport and window using Set_Environment. The range in X is 
+        -- Set up the viewport and window using plenv. The range in X is 
         -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
         -- scaled separately (just = 0), and we just draw a labelled 
         -- box (axis = 0). 
         plcol0(1);
         plenv(xmin, xmax, ymin, ymax, 0, 0);
         plcol0(2);
-        pllab(To_C("(x)"), To_C("(y)"), To_C("#frPLplot Example 1 - y=x#u2"));
+        pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
         -- Plot the data points
-        plcol0(4);
-        plpoin(6, xs, ys, 9);
+        plcol0(Aquamarine);
+        plpoin(xs, ys, 9);
 
         -- Draw the line through the data
         plcol0(3);
-        plline(60, x, y);
+        plline(x, y);
     end plot1;
 
 
     procedure plot2 is
-        x, y : Real_Vector (0 .. 99);
+        x, y : PLplot_Thin.Real_Vector (0 .. 99);
     begin
         -- Set up the viewport and window using PLENV. The range in X is -2.0 to
         -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
@@ -91,7 +89,7 @@ procedure x01a is
         plcol0(1);
         plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
         plcol0(2);
-        pllab(To_C("(x)"), To_C("sin(x)/x"), To_C("#frPLplot Example 1 - Sinc Function"));
+        pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
         -- Fill up the arrays
         for i in x'Range loop
@@ -105,15 +103,14 @@ procedure x01a is
         -- Draw the line
         plcol0(3);
         plwid(2);
-        plline(100, x, y);
+        plline(x, y);
         plwid(1);
     end plot2;
     procedure plot3 is
-        x, y : Real_Vector (0 .. 100);
---      space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
-        space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
+        x, y : PLplot_Thin.Real_Vector (0 .. 100);
+        space1, mark1 : PLplot_Thin.Integer_Array_1D(1 .. 1) := (others => 1500);
     begin
-        pladv(0);
+        pladv(Next_SubPage);
         
         -- Use standard viewport, and define X range from 0 to 360 degrees,
         -- Y range from -1.2 to 1.2.
@@ -122,24 +119,25 @@ procedure x01a is
 
         -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
         plcol0(1);
-        plbox(To_C("bcnst"), 60.0, 2, To_C("bcnstv"), 0.2, 2);
+        plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
         -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
-        plstyl(1, mark1, space1);
+        -- plstyl expects a pointer! (-- Not Ada.)
+        plstyl(mark1, space1);
         plcol0(2);
-        plbox(To_C("g"), 30.0, 0, To_C("g"), 0.2, 0);
-        plstyl(0, mark1, space1);
-
+        plbox("g", 30.0, 0, "g", 0.2, 0);
+        plstyl(Default_Continuous_Line);
+        
         plcol0(3);
-        pllab(To_C("Angle (degrees)"), To_C("sine"), To_C("#frPLplot Example 1 - Sine function"));
-
+        pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
+        
         for i in x'Range loop
             x(i) := 3.6 * Long_Float(i);
             y(i) := sin(x(i) * pi / 180.0);
         end loop;
         
-        plcol0(4);
-	plline(101, x, y);
+        plcol0(Aquamarine);
+        plline(x, y);
     end plot3;
 
 begin   
@@ -149,11 +147,10 @@ begin
     plssub(2, 2);
     
     -- Parse and process command line arguments
-    plparseopts(PL_PARSE_FULL); 
+    plparseopts(PLplot_Thin.PL_PARSE_FULL); 
     
     -- Get version number, just for kicks
-    plgver(PL_Version_Number);
-    Put_Line("PLplot library version: " & To_Ada(PL_Version_Number, True));
+    Put_Line("PLplot library version: " & plgver);
 
     -- Initialize plplot
     plinit;
@@ -174,7 +171,7 @@ begin
     yoff   := 0.0185;
 
     -- Do a plot
-    plsyax(5, 0);
+    plsyax(Max_Digits => 5, Field_Digits => 0);
     plot1;
     plot2;
     plot3;

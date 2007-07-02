@@ -24,22 +24,20 @@ with
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
     PLplot,
-    PlplotThin;
+    PLplot_Thin;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Strings.Bounded,
     PLplot,
-    PlplotThin;
+    PLplot_Thin;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 
-procedure xt01a is
+procedure xthick01a is
     xs, ys : Real_Vector (0 .. 5);
     xscale, yscale, xoff, yoff : Long_Float;
     fontset : Integer := 1;
@@ -156,7 +154,7 @@ begin
     Put_Line("PLplot library version: " & Get_Version_Number);
 
     -- Initialize plplot
-    Initialize_Plotter;
+    Initialize_PLplot;
 
     -- Set up the data
     -- Original case
@@ -179,6 +177,6 @@ begin
     plot2;
     plot3;
 
-    -- Don't forget to call PLEND to finish off!
-    Plot_End;
-end xt01a;
+    -- Don't forget to call End_PLplot to finish off!
+    End_PLplot;
+end xthick01a;

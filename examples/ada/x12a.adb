@@ -26,18 +26,15 @@ with
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
-    Interfaces.C,
-    PLplotThin,
-    PLplot;
+    PLplot_Traditional,
+    PLplot_Thin;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
-    Interfaces.C,
-    PLplotThin,
-    PLplot;
+    PLplot_Traditional;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
@@ -49,10 +46,10 @@ use
 ------------------------------------------------------------------------------
 
 procedure x12a is
-    y0 : Real_Vector (0 .. 9);
+    y0 : PLplot_Thin.Real_Vector (0 .. 9);
     
     procedure plfbox (x0, y0 : Long_Float) is
-        x, y : Real_Vector (0 .. 3);
+        x, y : PLplot_Thin.Real_Vector (0 ..3);
     begin
         x(0) := x0;
         y(0) := 0.0;
@@ -66,25 +63,25 @@ procedure x12a is
         x(3) := x0 + 1.0;
         y(3) := 0.0;
 
-        plfill(x'Length, x, y);
+        plfill(x, y);
         plcol0(1);
         pllsty(1);
-        plline(x'Length, x, y);
+        plline(x, y);
     end plfbox;
 
 begin
     -- Parse and process command line arguments.
-    plparseopts(PL_PARSE_FULL);
-	
+    plparseopts(PLplot_Thin.PL_PARSE_FULL); 
+
     -- Initialize plplot.
     plinit;
 
-    pladv(0);
+    pladv(Next_Subpage);
     plvsta;
     plwind(1980.0, 1990.0, 0.0, 35.0);
-    plbox(To_C("bc"), 1.0, 0, To_C("bcnv"), 10.0, 0);
+    plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
     plcol0(2);
-    pllab(To_C("Year"), To_C("Widget Sales (millions)"), To_C("#frPLplot Example 12"));
+    pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
 
     y0(0) :=  5.0;
     y0(1) := 15.0;
@@ -97,16 +94,14 @@ begin
     y0(8) := 12.0;
     y0(9) :=  3.0;
 
-    for i in y0'Range loop
+    for i in y0'range loop
         plcol0(i + 1);
         plpsty(0);
-        plfbox(1980.0 + Long_Float(i), y0(i));
-        plptex(Long_Float(1980 + i) + 0.5, (y0(i) + 1.0), 1.0, 0.0, 0.5, 
-            To_C(Trim(Integer'image(Integer(y0(i))), Left)));
-        plmtex(To_C("b"), 1.0, (Long_Float(i + 1) * 0.1 - 0.05), 0.5, 
-            To_C(Trim(Integer'image((1980 + i)), Left)));
+        plfbox((1980.0 + Long_Float(i)), y0(i));
+        plptex(1980.0 + Long_Float(i) + 0.5, y0(i) + 1.0, 1.0, 0.0, 0.5, Trim(Integer'image(Integer(y0(i))), Left));
+        plmtex("b", 1.0, (Long_Float(i) + 1.0) * 0.1 - 0.05, 0.5, Trim(Integer'image(1980 + i), Left));
     end loop;
 
-    -- Don't forget to call plend() to finish off!
+    -- Don't forget to call plend to finish off!
     plend;
 end x12a;
