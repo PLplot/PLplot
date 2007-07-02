@@ -12,7 +12,7 @@ use
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 
-package PLplot is
+package PLplot_Traditional is
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -147,6 +147,12 @@ package PLplot is
 --        High-Level subroutines for thick binding                            --
 --------------------------------------------------------------------------------
 
+    -- Initialization. Must be called before starting to plot.
+    -- Certain other procedures, if used, must be called first.
+    -- Removed June 26, 2007 as being redundant wrt Initialize_PLplot.
+--    procedure Initialize_Plotter;
+
+    
     -- When asked to draw white lines on black background, do it.
     -- This is the default.
     procedure Draw_White_On_Black;
@@ -349,15 +355,13 @@ package PLplot is
 -- These correspond to the section in plot.h called "Function Prototypes".
 
     -- set the format of the contour labels
-    -- pl_setcontlabelformat
-    procedure Set_Contour_Label_Format
+    procedure pl_setcontlabelformat
        (Limit_Exponent     : Integer := 4;
         Significant_Digits : Integer := 2);
 
 
     -- set offset and spacing of contour labels
-    -- pl_setcontlabelparam
-    procedure Set_Contour_Label_Parameters
+    procedure pl_setcontlabelparam
        (Label_Offset       : Long_Float := 0.006; -- Units are ???
         Label_Font_Height  : Long_Float := 0.3;   -- Units are ???
         Label_Spacing      : Long_Float := 0.1;  -- Units are???
@@ -367,34 +371,29 @@ package PLplot is
     Next_Subpage : constant Integer := 0;
 
     -- Advance to subpage "page", or to the next one if "page" = 0.
-    -- pladv
-    procedure Advance_To_Subpage(Page : Natural);
+    procedure pladv(Page : Natural);
 
 
     -- simple arrow plotter.
-    -- plarrows
-    procedure Arrow_Plotter;
+    procedure plarrows;
 
 
     -- Draw a 2D vector plot.
-    -- plvect
-    procedure Vector_Plot
+    procedure plvect
        (u, v                             : Real_Matrix;
         Scale                            : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data              : Transformation_Data_Type);
 
     -- Set the style for the arrow used by plvect to plot vectors.
-    -- plsvect
-    procedure Set_Arrow_Style_For_Vector_Plots
+    procedure plsvect
        (X_Vertices, Y_Vertices : Real_Vector;
         Fill_Arrow             : Boolean);
     
 
     -- This functions similarly to plbox() except that the origin of the axes
     -- is placed at the user-specified point (x0, y0).
-    -- plaxes
-    procedure Box_Around_Viewport_With_Origin
+    procedure plaxes
        (X_Origin, Y_Origin       : Long_Float;
         X_Option_String          : String;
         X_Major_Tick_Interval    : Long_Float;
@@ -405,21 +404,18 @@ package PLplot is
 
 
     -- Plot a histogram using x to store data values and y to store frequencies
-    -- plbin
-    procedure Histogram_Binned
+    procedure plbin
        (Bin_Values     : Real_Vector; -- "x"
         Bin_Counts     : Real_Vector; -- "y"
         Options        : Integer); -- Options are not defined in plplot.h.
 
 
     -- Start new page. Should only be used with pleop().
-    -- plbop
-    procedure Begin_New_Page;
+    procedure plbop;
 
 
     -- This draws a box around the current viewport.
-    -- plbox
-    procedure Box_Around_Viewport
+    procedure plbox
        (X_Option_String          : String;
         X_Major_Tick_Interval    : Long_Float;
         X_Number_Of_Subintervals : Natural := 0;
@@ -431,8 +427,7 @@ package PLplot is
 
 
     -- This is the 3-d analogue of plbox().
-    -- plbox3
-    procedure Box_Around_Viewport_3D
+    procedure plbox3
        (X_Option_String          : String;
         X_Label                  : String := To_String(Default_Label_String);
         X_Major_Tick_Interval    : Long_Float := 0.0;
@@ -450,32 +445,27 @@ package PLplot is
 
 
     -- Calculate world coordinates and subpage from relative device coordinates.
-    -- plcalc_world
-    procedure World_From_Relative_Coordinates
+    procedure plcalc_world
        (x_Relative, y_Relative : Long_Float_0_1_Type;
         x_World,    y_World    : out Long_Float;
         Last_Window_Index      : out Integer);
 
 
     -- Clear current subpage.
-    -- plclear
-    procedure Clear_Current_Subpage;
+    procedure plclear;
 
 
     -- Set color, map 0. Argument is integer between 0 and 15.
-    -- plcol0
-    procedure Set_Color(A_Color : Plot_Color_Type);
+    procedure plcol0(A_Color : Plot_Color_Type);
 
 
     -- Set color, map 1. Argument is a float between 0. and 1.
-    -- plcol1
-    procedure Set_Color_Map_1(Color : Long_Float_0_1_Type);
+    procedure plcol1(Color : Long_Float_0_1_Type);
 
 
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to plfcont,
     -- with a particular choice for f2eval and f2eval_data.
-    -- plcont
-    procedure Contour_Plot
+    procedure plcont
        (z                                : Real_Matrix;
         x_Min_Index, x_Max_Index         : Integer;
         y_Min_Index, y_Max_Index         : Integer;
@@ -495,9 +485,7 @@ package PLplot is
     -- Draws a contour plot using the function evaluator f2eval and data stored
     -- by way of the f2eval_data pointer. This allows arbitrary organizations
     -- of 2d array data to be used.
-
-    -- plfcont
-    procedure Contour_Plot_Irregular_Data
+    procedure plfcont
        (Function_Evaluator_Pointer       : Function_Evaluator_Pointer_Type;
         Irregular_Data                   : Real_Matrix;
         x_Min_Index, x_Max_Index         : Integer;
@@ -508,37 +496,31 @@ package PLplot is
 
 
     -- Copies state parameters from the reference stream to the current stream.
-    -- plcpstrm
-    procedure Copy_State_Parameters
+    procedure plcpstrm
        (Stream_ID                      : Integer;
         Do_Not_Copy_Device_Coordinates : Boolean);
 
 
     -- Converts input values from relative device coordinates to relative plot
     -- coordinates.
-    -- pldid2pc
-    procedure pldid2pc_Placeholder;
+    procedure pldid2pc;
 
 
     -- Converts input values from relative plot coordinates to relative
     -- device coordinates.
-    -- pldip2dc
-    procedure pldip2dc_Placeholder;
+    procedure pldip2dc;
 
 
     -- End a plotting session for all open streams.
-    -- plend
-    procedure End_PLplot;
+    procedure plend;
 
 
     -- End a plotting session for the current stream only.
-    -- plend1
-    procedure End_PLplot_Current_Stream;
+    procedure plend1;
 
 
     -- Simple interface for defining viewport and window.
-    -- plenv
-    procedure Set_Environment
+    procedure plenv
        (x_Min, x_Max, y_Min, y_Max : Long_Float;
         Justification              : Justification_Type;
         Axis_Style                 : Axis_Style_Type);
@@ -546,89 +528,73 @@ package PLplot is
 
     -- similar to plenv() above, but in multiplot mode does not advance the subpage,
     -- instead the current subpage is cleared
-    -- plenv0
-    procedure Set_Environment_Clear_Subpage
+    procedure plenv0
        (x_Min, x_Max, y_Min, y_Max : Long_Float;
         Justification              : Justification_Type;
         Axis_Style                 : Axis_Style_Type);
 
 
     -- End current page. Should only be used with plbop().
-    -- pleop
-    procedure Eject_Current_Page;
+    procedure pleop;
     
 
     -- Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i))
-    -- plerrx
-    procedure Draw_Error_Bars_X(x_Min, x_Max, y : Real_Vector);
+    procedure plerrx(x_Min, x_Max, y : Real_Vector);
 
 
     -- Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i))
-    -- plerry
-    procedure Draw_Error_Bars_Y(x, y_Min, y_Max : Real_Vector);
+    procedure plerry(x, y_Min, y_Max : Real_Vector);
 
 
     -- Advance to the next family file on the next new page
-    -- plfamadv
-    procedure Next_Family_File_On_New_Page;
+    procedure plfamadv;
 
 
     -- Pattern fills the polygon bounded by the input points.
-    -- plfill
-    procedure Fill_Polygon(x, y : Real_Vector);
+    procedure plfill(x, y : Real_Vector);
 
 
     -- Pattern fills the 3d polygon bounded by the input points.
-    -- plfill3
-    procedure Fill_Polygon_3D (x, y, z : Real_Vector);
+    procedure plfill3 (x, y, z : Real_Vector);
 
 
     -- Flushes the output stream. Use sparingly, if at all.
-    -- plflush
-    procedure Flush_Output_Stream;
+    procedure plflush;
 
 
     -- Sets the global font flag to 'ifont'.
-    -- plfont
-    procedure Set_Font_Style(Font_Style : Font_Style_Type);
+    procedure plfont(Font_Style : Font_Style_Type);
 
 
     -- Load specified font set.
-    -- plfontld
-    procedure Set_Characer_Set(Character_Set : Character_Set_Type);
+    procedure plfontld(Character_Set : Character_Set_Type);
 
 
     -- Get character default height and current (scaled) height
-    -- plgchr
-    procedure Get_Character_Height(Default_Height, Current_Height : out Long_Float);
+    procedure plgchr(Default_Height, Current_Height : out Long_Float);
 
 
     -- Returns 8 bit RGB values for given color from color map 0
-    -- plgcol0
-    procedure Get_Color_RGB
+    procedure plgcol0
        (Color_Index      : Integer;
         Red_Component, Green_Component, Blue_Component : out Color_Component_Type);
 
 
     -- Returns the background color by 8 bit RGB value
-    -- plgcolbg
-    procedure Get_Background_Color_RGB
+    procedure plgcolbg
        (Red_Component, Green_Component, Blue_Component : out Color_Component_Type);
 
 
     -- Returns the current compression setting
-    -- plgcompression
-    procedure Get_Compression_Level(Compression_Level : out Integer);
+    procedure plgcompression(Compression_Level : out Integer);
 
 
     -- Get the current device (keyword) name
-    -- plgdev
-    procedure Get_Device_Name(Device_Name : out String);
+    procedure plgdev(Device_Name : out String);
 
 
     -- Retrieve current window into device space
-    -- plgdidev
-    procedure Get_Device_Window_Parameters
+    procedure plgdidev
        (Relative_Margin_Width : out Long_Float;
         Aspect_Ratio          : out Long_Float;
         x_Justification       : out Long_Float;
@@ -636,13 +602,11 @@ package PLplot is
 
 
     -- Get plot orientation
-    -- plgdiori
-    procedure Get_Plot_Orientation(Rotation : out Long_Float);
+    procedure plgdiori(Rotation : out Long_Float);
 
 
     -- Retrieve current window into plot space
-    -- plgdiplt
-    procedure Get_Device_Window_Extrema
+    procedure plgdiplt
        (x_Min : out Long_Float;
         y_Min : out Long_Float;
         x_Max : out Long_Float;
@@ -650,39 +614,33 @@ package PLplot is
 
 
     -- Get FCI (font characterization integer)
-    -- plgfci
-    procedure Get_Font_Characterization_Integer(Font_Characterization_Integer : out PLUNICODE);
+    procedure plgfci(Font_Characterization_Integer : out PLUNICODE);
 
 
     -- Get family file parameters
-    -- plgfam
-    procedure Get_File_Family_Parameters
+    procedure plgfam
        (Family_Enabled : out Boolean;
         Family_File_Number : out Integer;
         Maximum_File_Size : out Integer);
 
 
     -- Get the (current) output file name. Must be preallocated to >80 bytes
-    -- plgfnam
-    procedure Get_Output_File_Name(Output_File_Name : out String);
+    procedure plgfnam(Output_File_Name : out String);
 
 
     -- Get the (current) run level.
-    -- plglevel
-    procedure Get_Run_Level(Run_Level : out Integer);
+    procedure plglevel(Run_Level : out Integer);
 
 
     -- Get output device parameters.
-    -- plgpage
-    procedure Get_Page_Parameters
+    procedure plgpage
        (x_Pixels, y_Pixels           : out Long_Float;
         x_Page_Length, y_Page_Length : out Integer;
         x_Page_Offset, y_Page_Offset : out Integer);
 
 
     -- Switches to graphics screen.
-    -- plgra
-    procedure Use_Graphics_Mode;
+    procedure plgra;
 
 
     -- Gridding algorithm
@@ -707,8 +665,7 @@ package PLplot is
     
 
     -- Grid irregularly sampled data.
-    -- plgriddata
-    procedure Grid_Data
+    procedure plgriddata
        (x, y, z                : Real_Vector; -- ungridded x- and y-points; z is height
         x_Grid, y_Grid         : Real_Vector;
         z_Gridded              : in out Real_Matrix;
@@ -718,52 +675,42 @@ package PLplot is
 
     -- Get subpage boundaries in absolute coordinates
     -- Results are millimeters from the lower left corner.
-    -- plgspa
-    procedure Get_Subpage_Boundaries
+    procedure plgspa
        (Left_Edge, Right_Edge, Bottom_Edge, Top_Edge : out Long_Float);
 
 
     -- Get current stream number.
-    -- plgstrm
-    procedure Get_Stream_Number(Stream_Number : out Integer);
+    procedure plgstrm(Stream_Number : out Integer);
 
 
     -- Get the current library version number
-    -- plgver
-    procedure Get_Version_Number(Version_Number : out String);
+    procedure plgver(Version_Number : out String);
 
     -- Function version of the procedure Get_Version_Number; not part of the PLplot API.
-    -- plgver
-    function Get_Version_Number return String;
+    function plgver return String;
 
     -- Get viewport boundaries in normalized device coordinates
-    -- plgvpd
-    procedure Get_Viewport_Normalized(x_Min, x_Max, y_Min, y_Max : out Long_Float);
+    procedure plgvpd(x_Min, x_Max, y_Min, y_Max : out Long_Float);
 
 
     -- Get viewport boundaries in world coordinates
-    -- plgvpw
-    procedure Get_Viewport_World(x_Min, x_Max, y_Min, y_Max : out Long_Float);
+    procedure plgvpw(x_Min, x_Max, y_Min, y_Max : out Long_Float);
 
 
     -- Get x axis labeling parameters
-    -- plgxax
-    procedure Get_X_Label_Parameters(Max_Digits, Actual_Digits : out Integer);
+    procedure plgxax(Max_Digits, Actual_Digits : out Integer);
 
 
     -- Get y axis labeling parameters
-    -- plgyax
-    procedure Get_Y_Label_Parameters(Max_Digits, Actual_Digits : out Integer);
+    procedure plgyax(Max_Digits, Actual_Digits : out Integer);
     
 
     -- Get z axis labeling parameters
-    -- plgzax
-    procedure Get_Z_Label_Parameters(Max_Digits, Actual_Digits : out Integer);
+    procedure plgzax(Max_Digits, Actual_Digits : out Integer);
 
 
     -- Draws a histogram of n values of a variable in array data[0..n-1]
-    -- plhist
-    procedure Histogram_Unbinned
+    procedure plhist
        (Data           : Real_Vector;
         Data_Min       : Long_Float; -- left  edge of left-most bin
         Data_Max       : Long_Float; -- right edge of right-most bin
@@ -772,16 +719,14 @@ package PLplot is
 
 
     -- Set current color (map 0) by hue, lightness, and saturation.
-    -- plhls
-    procedure Set_Color_HLS
+    procedure plhls
        (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
         Lightness_Component  : Long_Float_0_1_Type;
         Saturation_Component : Long_Float_0_1_Type);
 
 
     -- Functions for converting between HLS and RGB color space
-    -- plhlsrgb
-    procedure HLS_To_RGB
+    procedure plhlsrgb
        (Hue_Component        : Long_Float;
         Lightness_Component  : Long_Float_0_1_Type;
         Saturation_Component : Long_Float_0_1_Type;
@@ -793,46 +738,38 @@ package PLplot is
     -- Initialization. Must be called before starting plot.
     -- Certain other procedures, if used, must be called first.
     -- Initializes PLplot, using preset or default options
-    -- plinit
-    procedure Initialize_PLplot;
+    procedure plinit;
 
 
     -- Draws a line segment from (x1, y1) to (x2, y2).
-    -- pljoin
-    procedure Draw_Line(x1, y1, x2, y2 : Long_Float);
+    procedure pljoin(x1, y1, x2, y2 : Long_Float);
 
 
     -- Simple routine for labelling graphs.
-    -- pllab
-    procedure Write_Labels(X_Label, Y_Label, Title_Label : String := To_String(Default_Label_String));
+    procedure pllab(X_Label, Y_Label, Title_Label : String := To_String(Default_Label_String));
 
 
     -- Sets position of the light source
-    -- pllightsource
-    procedure Set_Light_Source
+    procedure pllightsource
        (x : Long_Float := 1.0;
         y: Long_Float := 1.0;
         z: Long_Float := 1.0);
 
 
     -- Draws line segments connecting a series of points.
-    -- plline
-    procedure Draw_Curve(x, y : Real_Vector);
+    procedure plline(x, y : Real_Vector);
 
 
     -- Draws a line in 3 space.
-    -- plline3
-    procedure Draw_Curve_3D(x, y, z : Real_Vector);
+    procedure plline3(x, y, z : Real_Vector);
 
 
     -- Set line style.
-    -- pllsty
-    procedure Select_Line_Style(Line_Style : Line_Style_Type);
+    procedure pllsty(Line_Style : Line_Style_Type);
 
 
     -- plot continental outline in world coordinates
-    -- plmap
-    procedure Draw_Map
+    procedure plmap
        (Map_Form_Function_Pointer            : Map_Form_Function_Pointer_Type;
         Map_Kind                             : Map_Type;
         Minimum_Longitude, Maximum_Longitude : Long_Float;
@@ -840,8 +777,7 @@ package PLplot is
 
 
     -- Plot the latitudes and longitudes on the background.
-    -- plmeridians
-    procedure Draw_Latitude_Longitude
+    procedure plmeridians
        (Map_Form_Function_Pointer            : Map_Form_Function_Pointer_Type;
         Delta_Longitude, Delta_Latitude      : Long_Float;
         Minimum_Longitude, Maximum_Longitude : Long_Float;
@@ -849,15 +785,13 @@ package PLplot is
 
 
     -- Plots a mesh representation of the function z[x][y].
-    -- plmesh
-    procedure Mesh_3D
+    procedure plmesh
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
         Options : Integer);
 
     -- Plots a mesh representation of the function z[x][y] with contour
-    -- plmeshc
-    procedure Mesh_3D_Base_Contour
+    procedure plmeshc
        (x, y           : Real_Vector; -- surface definition points
         z              : in Real_Matrix; -- height of surface at definition points
         Options        : Integer;
@@ -865,13 +799,11 @@ package PLplot is
 
 
     -- Creates a new stream and makes it the default.
-    -- plmkstrm
-    procedure Make_Stream(New_Stream_Number : out Integer);
+    procedure plmkstrm(New_Stream_Number : out Integer);
 
 
     -- Prints out "text" at specified position relative to viewport
-    -- plmtex
-    procedure Write_Text_Viewport
+    procedure plmtex
        (Side                : String;
         Position_From_Edge  : Long_Float;
         Position_Along_Edge : Long_Float;
@@ -880,8 +812,7 @@ package PLplot is
 
 
     -- Plots a 3-d representation of the function z[x][y].
-    -- plot3d
-    procedure Plot_3D
+    procedure plot3d
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
         Options : Integer;
@@ -889,8 +820,7 @@ package PLplot is
 
 
     -- Plots a 3-d representation of the function z[x][y] with contour.
-    -- plot3dc
-    procedure Plot_3D_Base_Contour
+    procedure plot3dc
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
         Options        : Integer;
@@ -899,8 +829,7 @@ package PLplot is
 
     -- Plots a 3-d representation of the function z[x][y] with contour and
     -- y index limits.
-    -- plot3dcl
-    procedure Plot_3D_Base_Contour_Limits -- Lacks documentation in Chapter 17 of Ref. Man.
+    procedure plot3dcl -- Lacks documentation in Chapter 17 of Ref. Man.
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
         Options        : Integer;
@@ -935,49 +864,42 @@ package PLplot is
  
 
     -- Set fill pattern directly.
-    -- plpat
-    procedure Set_Fill_Pattern
+    procedure plpat
        (Inclinations : Integer_Array_1D;
         Spacings     : Integer_Array_1D);
 
 
     -- Plots array y against x for n points using ASCII code "code".
-    -- plpoin
-    procedure Draw_Points
+    procedure plpoin
        (x, y : Real_Vector;
         Symbol_As_Number : Integer);
 
 
     -- Draws a series of points in 3 space.
-    -- plpoin3
-    procedure Draw_Points_3D
+    procedure plpoin3
        (x, y, z          : Real_Vector;
         Symbol_As_Number : Integer);
 
 
     -- Draws a polygon in 3 space.
-    -- plpoly3
-    procedure Draw_Polygon_3D
+    procedure plpoly3
        (x, y, z : Real_Vector;
         Draw_Segments : Boolean_Array_1D;
         Draw_Counterclockwise : Boolean);
 
 
     -- Set the floating point precision (in number of places) in numeric labels.
-    -- plprec
-    procedure Set_Numeric_Label_Precision
+    procedure plprec
        (Set_Automatically : Boolean := False;
         Number_Digits_After_Decimal_Point : Integer := 2);
 
 
     -- Set fill pattern, using one of the predefined patterns.
-    -- plpsty
-    procedure Select_Fill_Pattern(Fill_Pattern : Fill_Pattern_Type);
+    procedure plpsty(Fill_Pattern : Fill_Pattern_Type);
 
 
     -- Prints out "text" at world cooordinate (x,y).
-    -- plptex
-    procedure Write_Text_World
+    procedure plptex
        (x, y             : Long_Float;
         Delta_X, Delta_Y : Long_Float;
         Justification    : Long_Float_0_1_Type;
@@ -985,23 +907,19 @@ package PLplot is
 
 
     -- Replays contents of plot buffer to current device/file.
-    -- plreplot
-    procedure Replot;
+    procedure plreplot;
 
 
     -- Set line color by red, green, blue from  0. to 1.
-    -- plrgb
-    procedure Set_Line_Color_RGB_0_1(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type);
+    procedure plrgb(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type);
 
 
     -- Set line color by 8 bit RGB values.
-    -- plrgb1
-    procedure Set_Line_Color_RGB_0_255(Red_Component, Blue_Component, Green_Component : Color_Component_Type);
+    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Color_Component_Type);
 
 
     -- Functions for converting between HLS and RGB color space
-    -- plrgbhls
-    procedure RGB_To_HLS
+    procedure plrgbhls
        (Red_Component        : Long_Float_0_1_Type;
         Green_Component      : Long_Float_0_1_Type;
         Blue_Component       : Long_Float_0_1_Type;
@@ -1011,23 +929,19 @@ package PLplot is
 
 
     -- Set character height.
-    -- plschr
-    procedure Set_Character_Height(Default_Height, Scale_Factor : Long_Float);
+    procedure plschr(Default_Height, Scale_Factor : Long_Float);
 
 
     -- Set color map 0 colors by 8 bit RGB values
-    -- plscmap0
-    procedure Set_Color_Map_0(Red_Components, Green_Components, Blue_Components : Integer_Array_1D);
+    procedure plscmap0(Red_Components, Green_Components, Blue_Components : Integer_Array_1D);
 
 
     -- Set number of colors in cmap 0
-    -- plscmap0n
-    procedure Set_Number_Of_Colors_Map_0(Number_Of_Colors : Integer);
+    procedure plscmap0n(Number_Of_Colors : Integer);
 
 
     -- Set color map 1 colors by 8 bit RGB values
-    -- plscmap1
-    procedure Set_Color_Map_1_RGB
+    procedure plscmap1
        (Red_Component, Green_Component, Blue_Component : Integer_0_255_Array);
 
 
@@ -1037,8 +951,7 @@ package PLplot is
 
     -- Set color map 1 colors using a piece-wise linear relationship between
     -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
-    -- plscmap1l
-    procedure Set_Color_Map_1_Piecewise
+    procedure plscmap1l
        (Color_Model    : Color_Model_Type;    -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
         H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
@@ -1048,41 +961,34 @@ package PLplot is
 
 
     -- Set number of colors in cmap 1
-    -- plscmap1n
-    procedure Set_Number_Of_Colors_In_Color_Map_1(Number_Of_Colors : Integer);
+    procedure plscmap1n(Number_Of_Colors : Integer);
 
 
     -- Set a given color from color map 0 by 8 bit RGB value
-    -- plscol0
-    procedure Set_One_Color_Map_0
+    procedure plscol0
        (Plot_Color : Plot_Color_Type;
         Red_Component, Green_Component, Blue_Component : Color_Component_Type);
 
     -- Set the background color by 8 bit RGB value
-    -- plscolbg
-    procedure Set_Background_Color_RGB
+    procedure plscolbg
        (Red_Component, Green_Component, Blue_Component : Color_Component_Type);
 
 
     -- Used to globally turn color output on/off
-    -- plscolor
-    procedure Enable_Color_Output(Enable_Color : Boolean);
+    procedure plscolor(Enable_Color : Boolean);
 
 
     -- Set the compression level
-    -- plscompression
-    procedure Set_Compression_Level(Compression_Level : Integer);
+    procedure plscompression(Compression_Level : Integer);
 
 
     -- Set the device (keyword) name
-    -- plsdev
-    procedure Set_Device_Name(Device_Name : String);
+    procedure plsdev(Device_Name : String);
 
 
     -- Set window into device space using margin, aspect ratio, and
     -- justification
-    -- plsdidev
-    procedure Set_Device_Window_Parameters
+    procedure plsdidev
        (Margin          : Long_Float;
         Aspect_Ratio    : Long_Float;
         x_Justification : Long_Float;
@@ -1090,8 +996,7 @@ package PLplot is
 
 
     -- Set up transformation from metafile coordinates.
-    -- plsdimap
-    procedure Set_Metafile_Transformation
+    procedure plsdimap
        (dimxmin : Integer;
         dimxmax : Integer;
         dimymin : Integer;
@@ -1101,13 +1006,11 @@ package PLplot is
 
 
     -- Set plot orientation, specifying rotation in units of pi/2.
-    -- plsdiori
-    procedure Set_Plot_Orientation(Rotation : Long_Float);
+    procedure plsdiori(Rotation : Long_Float);
 
 
     -- Set window into plot space
-    -- plsdiplt
-    procedure Set_Device_Window_Extrema
+    procedure plsdiplt
        (x_Min : Long_Float := 0.0;
         y_Min : Long_Float := 0.0;
         x_Max : Long_Float := 1.0;
@@ -1115,8 +1018,7 @@ package PLplot is
 
 
     -- Set window into plot space incrementally (zoom)
-    -- plsdiplz
-    procedure Set_Zoom
+    procedure plsdiplz
        (x_Min_Relative : Long_Float;
         y_Min_Relative : Long_Float;
         x_Max_Relative : Long_Float;
@@ -1124,30 +1026,25 @@ package PLplot is
 
 
     -- Set the escape character for text strings.
-    -- plsesc
-    procedure Set_Escape_Character(Escape_Character : Character);
+    procedure plsesc(Escape_Character : Character);
 
 
     -- Set family file parameters
-    -- plsfam
-    procedure Set_File_Family_Parameters
+    procedure plsfam
        (Enable_Family : Boolean;
         Family_File_Number : Integer := 1;
         Maximum_File_Size : Integer := 1_000_000);
 
 
     -- Set FCI (font characterization integer)
-    -- plsfci
-    procedure Set_Font_Characterization_Integer(Font_Characterization_Integer : PLUNICODE);
+    procedure plsfci(Font_Characterization_Integer : PLUNICODE);
 
     -- Set the output file name.
-    -- plsfnam
-    procedure Set_Output_File_Name(Output_File_Name : String);
+    procedure plsfnam(Output_File_Name : String);
 
 
     -- Shade region.
-    -- plshade
-    procedure Shade_Region
+    procedure plshade
        (z                                        : Real_Matrix;
         Mask_Function_Pointer                    : Mask_Function_Pointer_Type;
         x_Min, x_Max, y_Min, y_Max               : Long_Float; -- world mins and maxes
@@ -1160,9 +1057,7 @@ package PLplot is
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
         Transformation_Data                      : Transformation_Data_Type);
-
-    -- plshade1
-    procedure Shade_Region_1
+    procedure plshade1
        (z                                        : Real_Matrix;
         Mask_Function_Pointer                    : Mask_Function_Pointer_Type;
         x_Min, x_Max, y_Min, y_Max               : Long_Float; -- world mins and maxes
@@ -1175,10 +1070,7 @@ package PLplot is
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
         Transformation_Data                      : Transformation_Data_Type);
-
-
-    -- plshades
-    procedure Shade_Regions
+    procedure plshades
        (z                               : Real_Matrix;
         Mask_Function_Pointer           : Mask_Function_Pointer_Type;
         x_Min, x_Max, y_Min, y_Max      : Long_Float; -- world mins and maxes
@@ -1213,79 +1105,66 @@ package PLplot is
     --
 
     -- Set up lengths of major tick marks.
-    -- plsmaj
-    procedure Set_Major_Tick_Length(Default_Length, Scale_Factor : Long_Float);
+    procedure plsmaj(Default_Length, Scale_Factor : Long_Float);
 
 
     -- Set the memory area to be plotted (with the 'mem' driver)
-    -- plsmem
-    procedure Plot_From_Memory
+    procedure plsmem
        (x_Size, y_Size : Integer;
         Plot_This      : System.Address);
 
 
     -- Set up lengths of minor tick marks.
-    -- plsmin
-    procedure Set_Minor_Tick_Length(Default_Length, Scale_Factor : Long_Float);
+    procedure plsmin(Default_Length, Scale_Factor : Long_Float);
 
 
     -- Set orientation. Must be done before calling plinit.
-    -- plsori
-    procedure Set_Orientation(Orientation : Orientation_Type);
+    procedure plsori(Orientation : Orientation_Type);
 
 
     -- Set output device parameters. Usually ignored by the driver.
-    -- plspage
-    procedure Set_Page_Parameters
+    procedure plspage
        (x_Pixels, y_Pixels : Long_Float;
         x_Length, y_Length : Integer;
         x_Offset, y_Offset : Integer);
 
 
     -- Set the pause (on end-of-page) status
-    -- plspause
-    procedure Set_Pause(Pause : Boolean);
+    procedure plspause(Pause : Boolean);
 
 
     -- Set stream number.
-    -- plsstrm
-    procedure Set_Stream_Number(Stream_Number : Integer);
+    procedure plsstrm(Stream_Number : Integer);
 
 
     -- Set the number of subwindows in x and y
-    -- plssub
-    procedure Set_Number_Of_Subpages(x_Number, y_Number : Integer);
+    procedure plssub(x_Number, y_Number : Integer);
 
 
     -- Set symbol height.
-    -- plssym
-    procedure Set_Symbol_Size(Default_Height, Scale_Factor : Long_Float);
+    procedure plssym(Default_Height, Scale_Factor : Long_Float);
 
 
     -- Initialize PLplot, passing in the windows/page settings.
-    -- plstar
-    procedure Initialize_Query_Device
+    procedure plstar
        (Number_Horizontal_Subpages, Number_Vertical_Subpages : Integer := 1);
 
 
     -- Initialize PLplot, passing the device name and windows/page settings.
-    -- plstart
-    procedure Initialize_Set_Device
+    procedure plstart
        (Device_Name                                          : String;
         Number_Horizontal_Subpages, Number_Vertical_Subpages : Integer := 1);
 
 
     -- Add a point to a stripchart.
-    -- plstripa
-    procedure Update_Stripchart
+    procedure plstripa
        (ID         : Integer;
         Pen_Number : Integer;
         x, y       : Long_Float);
 
 
     -- Create 1d stripchart
-    -- plstripc
-    procedure Create_Stripchart
+    procedure plstripc
        (ID                                   : out Integer;
         X_Options, Y_Options                 : String;
         x_Min, x_Max                         : Long_Float;
@@ -1302,13 +1181,11 @@ package PLplot is
 
 
     -- Deletes and releases memory used by a stripchart.
-    -- plstripd
-    procedure Delete_Stripchart(ID : Integer);
+    procedure plstripd(ID : Integer);
 
 
     -- plots a 2d image (or a matrix too large for plshade() )
-    -- plimage
-    procedure Draw_Image -- No documentation in Chapter 17 of Programmer's Reference Manual
+    procedure plimage -- No documentation in Chapter 17 of Programmer's Reference Manual
        (Data : Real_Matrix;
         x_Min, x_Max : Long_Float;
         y_Min, y_Max : Long_Float;
@@ -1318,21 +1195,17 @@ package PLplot is
 
 
     -- Set up a new line style
-    -- plstyl
-    procedure Set_Line_Style(Marks, Spaces : Integer_Array_1D);
+    procedure plstyl(Marks, Spaces : Integer_Array_1D);
 
-
-    Default_Continuous_Line : constant Integer := 0;
 
     -- This is an overloaded procedure equivalent to calling plstyl with its
     -- first argument zero.
-    -- plstyl
-    procedure Set_Line_Style(Default_Continuous_Line : Integer);
+    Default_Continuous_Line : constant Integer := 0;
+    procedure plstyl(Default_Continuous_Line : Integer);
 
 
     -- Plots the 3d surface representation of the function z[x][y].
-    -- plsurf3d
-    procedure Shaded_Surface_3D
+    procedure plsurf3d
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
         Options        : Integer;
@@ -1345,8 +1218,7 @@ package PLplot is
 
 
     -- Sets the edges of the viewport to the specified absolute coordinates
-    -- plsvpa
-    procedure Set_Viewport_Absolute
+    procedure plsvpa
        (Left_Edge   : Long_Float;  -- millimeters from edge of subpage
         Right_Edge  : Long_Float;  -- millimeters from edge of subpage
         Bottom_Edge : Long_Float;  -- millimeters from edge of subpage
@@ -1355,57 +1227,48 @@ package PLplot is
 
     -- Set x axis labeling parameters
     -- "digits" changed to "field_digits".
-    -- plsxax
-    procedure Set_Floating_Point_Display_X(Max_Digits, Field_Digits : Integer);
+    procedure plsxax(Max_Digits, Field_Digits : Integer);
 
 
     -- Set inferior X window
-    -- plsxwin
-    procedure Set_Inferior_Window(Window_ID : Integer);
+    procedure plsxwin(Window_ID : Integer);
 
 
     -- Set y axis labeling parameters
     -- "digits" changed to "field_digits".
-    -- plsyax
-    procedure Set_Floating_Point_Display_Y(Max_Digits, Field_Digits : Integer);
+    procedure plsyax(Max_Digits, Field_Digits : Integer);
 
 
     -- Plots array y against x for n points using Hershey symbol "code"
-    -- plsym
-    procedure Draw_Hershey_Symbol
+    procedure plsym
        (x, y : Real_Vector;
         Hershey_Code : Integer);
 
 
     -- Set z axis labeling parameters
     -- "digits" changed to "field_digits".
-    -- plszax
-    procedure Set_Floating_Point_Display_Z(Max_Digits, Field_Digits : Integer);
+    procedure plszax(Max_Digits, Field_Digits : Integer);
 
 
     -- Switches to text screen.
-    -- pltext
-    procedure Use_Text_Mode;
+    procedure pltext;
 
 
     -- Sets the edges of the viewport with the given aspect ratio, leaving
     -- room for labels.
-    -- plvasp
-    procedure Set_Viewport_Aspect_Ratio(Aspect_Ratio : Long_Float);
+    procedure plvasp(Aspect_Ratio : Long_Float);
 
 
     -- Creates the largest viewport of the specified aspect ratio that fits
     -- within the specified normalized subpage coordinates.
-    -- plvpas
-    procedure Set_Viewport_Maximized_For_Aspect_Ratio
+    procedure plvpas
        (x_Min, x_Max : Long_Float;
         y_Min, y_Max : Long_Float;
         Aspect_Ratio : Long_Float);
 
 
     -- Creates a viewport with the specified normalized subpage coordinates.
-    -- plvpor
-    procedure Set_Viewport_Normalized
+    procedure plvpor
        (Left_Edge   : Long_Float := 0.0;
         Right_Edge  : Long_Float := 1.0;
         Bottom_Edge : Long_Float := 0.0;
@@ -1413,34 +1276,29 @@ package PLplot is
 
     -- Defines a "standard" viewport with seven character heights for
     -- the left margin and four character heights everywhere else.
-    -- plvsta
-    procedure Set_Viewport_Standard;
+    procedure plvsta;
 
 
     -- Set up a window for three-dimensional plotting.
-    -- plw3d
-    procedure Set_Up_3D
+    procedure plw3d
        (X_Box, Y_Box, Z_Box                      : Long_Float; -- Extents of enclosing box; world coordinates
         X_Min, X_Max, Y_Min, Y_Max, Z_Min, Z_Max : Long_Float; -- Data limits; user coordinates
         Altitude, Azimuth                        : Long_Float); -- Viewing angles in world coordinates
 
 
     -- Set pen width.
-    -- plwid
-    procedure Set_Pen_Width(Pen_Width : Integer);
+    procedure plwid(Pen_Width : Integer);
 
 
     -- Set up world coordinates of the viewport boundaries (2d plots).
-    -- plwind
-    procedure Set_Viewport_World
+    procedure plwind
        (Left_Edge   : Long_Float;
         Right_Edge  : Long_Float;
         Bottom_Edge : Long_Float;
         Top_Edge    : Long_Float);
 
     -- set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device 
-    -- plxormod
-    procedure Set_XOR_Mode
+    procedure plxormod
        (Use_XOR : Boolean;
         Supports_XOR : out Boolean);
 
@@ -1454,13 +1312,11 @@ package PLplot is
 
     -- This procedure is currently GNAT-specific, importing Gnat_Argc and Gnat_Argv.
     -- Process options list using current options info.
-    -- plparseopts
-    procedure Parse_Command_Line_Arguments(Mode : Parse_Mode_Type);
+    procedure plparseopts(Mode : Parse_Mode_Type);
 
 
     -- Process input strings, treating them as an option and argument pair.
-    -- plsetopt
-    procedure Set_Command_Line_Option(Option, Argument : String);
+    procedure plsetopt(Option, Argument : String);
 
 
 	-- Transformation routines
@@ -1469,16 +1325,14 @@ package PLplot is
     -- subroutines having non-Ada conventions (I suppose).
 
     -- Identity transformation.
-    -- pltr0
-    procedure Plot_Transformation_0
+    procedure pltr0
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
         Data             : PLpointer);
         
 
     -- Does linear interpolation from singly dimensioned coord arrays.
-    -- pltr1
-    procedure Plot_Transformation_1
+    procedure pltr1
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
         Data_Pointer     : PLpointer);
@@ -1486,12 +1340,11 @@ package PLplot is
 
     -- Does linear interpolation from doubly dimensioned coord arrays
     -- (column dominant, as per normal C 2d arrays).
-    -- pltr2
-    procedure Plot_Transformation_2
+    procedure pltr2
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
         Data_Pointer     : PLpointer);
         
         
 
-end PLplot;
+end PLplot_Traditional;

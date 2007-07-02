@@ -23,8 +23,10 @@ if(ENABLE_ada)
   set(plplotada${LIB_TAG}_LIB_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/plplot.adb
   ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ads
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplotthin.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplotthin.ads
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_thin.adb
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_thin.ads
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_traditional.adb
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_traditional.ads
   )
 
   add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
