@@ -19,14 +19,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(ada_STRING_INDICES
--"t01"
 "01"
 "10"
 "12"
--"t12"
-+"thick01"
-+"thick10"
-+"thick12"
+"thick01"
+"thick10"
+"thick12"
 )
 
 if(BUILD_TEST)
