@@ -2368,7 +2368,10 @@ package body PLplot_Traditional is
             PL_Pen_Labels(Index) := To_C(To_String(Pen_Labels(Index)), True);
         end loop;
 
-        PLplot_Thin.plstripc(ID, To_C(X_Options), To_C(Y_Options), x_Min, x_Max, x_Jump, y_Min, y_Max, x_LP, y_LP, PL_Autoscale_Y, PL_Accumulate, Box_Color, Legend_Color, Pen_Colors, Line_Styles, PL_Pen_Labels, To_C(x_Label), To_C(y_Label), To_C(Title_Label));
+        PLplot_Thin.plstripc(ID, To_C(X_Options), To_C(Y_Options), 
+	  x_Min, x_Max, x_Jump, y_Min, y_Max, x_LP, y_LP, PL_Autoscale_Y,
+	  PL_Accumulate, Box_Color, Legend_Color, Pen_Colors, Line_Styles,
+	  PL_Pen_Labels, To_C(x_Label), To_C(y_Label), To_C(Title_Label));
     end plstripc;
 
 
