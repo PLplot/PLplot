@@ -49,7 +49,7 @@ use
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
     
-package PLplotThin is
+package PLplot_Thin is
     subtype PLINT  is Integer;
     subtype PLFLT  is Long_Float;
     PLfalse : constant Integer := 0;
@@ -817,7 +817,7 @@ package PLplotThin is
     GRID_CSA    : constant Integer := 1; -- Bivariate Cubic Spline approximation
     GRID_DTLI   : constant Integer := 2; -- Delaunay Triangulation Linear Interpolation
     GRID_NNI    : constant Integer := 3; -- Natural Neighbors Interpolation
-    GRID_NNIDW  : constant Integer := 4;-- Nearest Neighbors Inverse Distance Weighted
+    GRID_NNIDW  : constant Integer := 4; -- Nearest Neighbors Inverse Distance Weighted
     GRID_NNLI   : constant Integer := 5; -- Nearest Neighbors Linear Interpolation
     GRID_NNAIDW : constant Integer := 6; -- Nearest Neighbors Around Inverse Distance Weighted
 
@@ -1627,4 +1627,4 @@ package PLplotThin is
     pragma Import(C, pltr2, "pltr2");
     
 
-end PLplotThin;
+end PLplot_Thin;

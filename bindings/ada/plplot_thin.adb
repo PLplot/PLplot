@@ -1,7 +1,7 @@
 with Ada.Text_IO;
 use  Ada.Text_IO;
 
-package body PLplotThin is
+package body PLplot_Thin is
 
     -- Find minimum in a 1D array.
     function Vector_Min(x : Real_Vector) return Long_Float is
@@ -184,4 +184,4 @@ package body PLplotThin is
         plparseopts_local(Gnat_Argc_Access, Gnat_Argv, Mode);
     end plparseopts;
 
-end PLplotThin;
+end PLplot_Thin;
