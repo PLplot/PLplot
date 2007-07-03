@@ -27,14 +27,16 @@ with
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Traditional,
-    PLplot_Thin;
+    PLplot_Auxiliary;
+
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
-    PLplot_Traditional;
+    PLplot_Traditional,
+    PLplot_Auxiliary;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
@@ -46,10 +48,10 @@ use
 ------------------------------------------------------------------------------
 
 procedure x12a is
-    y0 : PLplot_Thin.Real_Vector (0 .. 9);
+    y0 : Real_Vector (0 .. 9);
     
     procedure plfbox (x0, y0 : Long_Float) is
-        x, y : PLplot_Thin.Real_Vector (0 ..3);
+        x, y : Real_Vector (0 ..3);
     begin
         x(0) := x0;
         y(0) := 0.0;
@@ -71,7 +73,7 @@ procedure x12a is
 
 begin
     -- Parse and process command line arguments.
-    plparseopts(PLplot_Thin.PL_PARSE_FULL); 
+    plparseopts(PL_PARSE_FULL); 
 
     -- Initialize plplot.
     plinit;

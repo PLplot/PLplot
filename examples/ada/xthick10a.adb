@@ -24,14 +24,12 @@ with
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Thin;
+    PLplot;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Thin;
+    PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
@@ -40,7 +38,7 @@ use
 procedure xthick10a is
 begin   
     -- Parse and process command line arguments    
-    Parse_Command_Line_Arguments(PL_PARSE_FULL);
+    Parse_Command_Line_Arguments(Parse_Full);
     
     -- Initialize plplot
     Initialize_PLplot;

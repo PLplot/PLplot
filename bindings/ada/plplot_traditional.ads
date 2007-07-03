@@ -1,11 +1,13 @@
 with
     PLplot_Thin,
+    PLplot_Auxiliary,
     System,
     Interfaces.C.Pointers,
     Ada.Strings.Unbounded,
     Ada.Strings.Maps;
 use
     PLplot_Thin,
+    PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
@@ -131,16 +133,89 @@ package PLplot_Traditional is
     subtype Fill_Pattern_Type is Integer range 0..7; -- Guessing; not documented
     
     -- Modes for parsing command line arguments.
-    Parse_Full       : constant Parse_Mode_Type := 1;
-    Parse_Quiet      : constant Parse_Mode_Type := 2;
-    Parse_No_Delete  : constant Parse_Mode_Type := 4;
-    Parse_Show_All   : constant Parse_Mode_Type := 8;
-    Parse_No_Program : constant Parse_Mode_Type := 32;
-    Parse_No_Dash    : constant Parse_Mode_Type := 64;
-    Parse_Skip       : constant Parse_Mode_Type := 128;
+    Parse_Partial    : constant Parse_Mode_Type := 0;   -- For backward compatibility
+    Parse_Full       : constant Parse_Mode_Type := 1;   -- Process fully & exit if error
+    Parse_Quiet      : constant Parse_Mode_Type := 2;   -- Don't issue messages
+    Parse_No_Delete  : constant Parse_Mode_Type := 4;   -- Don't delete options after processing
+    Parse_Show_All   : constant Parse_Mode_Type := 8;   -- Show invisible options
+    Parse_Override   : constant Parse_Mode_Type := 16;  -- Obsolete
+    Parse_No_Program : constant Parse_Mode_Type := 32;  -- Program name NOT in *argv[0]..
+    Parse_No_Dash    : constant Parse_Mode_Type := 64;  -- Set if leading dash NOT required
+    Parse_Skip       : constant Parse_Mode_Type := 128; -- Skip over unrecognized args
 
     -- Descriptions of map outlines for continents, countries, and US states.
     type Map_Type is (Continents, USA_and_States, Continents_and_Countries, USA_States_and_Continents);
+
+    -- definitions for the opt argument in plot3dc() and plsurf3d()
+    -- DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
+    No_3D_Options             : constant Integer := 0;   -- None of the options
+    Lines_Parallel_To_X       : constant Integer := 1;   -- draw lines parallel to the X axis
+    Lines_Parallel_To_Y       : constant Integer := 2;   -- draw lines parallel to the Y axis
+    Lines_Parallel_To_X_And_Y : constant Integer := 3;   -- draw lines parallel to both the X and Y axis
+    Magnitude_Color           : constant Integer := 4;   -- draw the mesh with a color dependent of the magnitude
+    Base_Contour              : constant Integer := 8;   -- draw contour plot at bottom xy plane
+    Top_Contour               : constant Integer := 16;  -- draw contour plot at top xy plane
+    Surface_Contour           : constant Integer := 32;  -- draw contour plot at surface
+    Sides                     : constant Integer := 64;  -- draw sides
+    Facets                    : constant Integer := 128; -- draw outline for each square that makes up the surface
+    Meshed                    : constant Integer := 256; -- draw mesh
+
+    subtype Gridding_Algorithm_Type is Integer range 1..6;
+
+    -- Type of gridding algorithm for plgriddata()
+    -- "Long form" gridding algorithm names
+    Grid_Bivariate_Cubic_Spline_Approximation               : constant Gridding_Algorithm_Type := 1; -- GRID_CSA
+    Grid_Delaunay_Triangulation_Linear_Interpolation        : constant Gridding_Algorithm_Type := 2; -- GRID_DTLI
+    Grid_Natural_Neighbors_Interpolation                    : constant Gridding_Algorithm_Type := 3; -- GRID_NNI
+    Grid_Nearest_Neighbors_Inverse_Distance_Weighted        : constant Gridding_Algorithm_Type := 4; -- GRID_NNIDW
+    Grid_Nearest_Neighbors_Linear_Interpolation             : constant Gridding_Algorithm_Type := 5; -- GRID_NNLI
+    Grid_Nearest_Neighbors_Around_Inverse_Distance_Weighted : constant Gridding_Algorithm_Type := 6; -- GRID_NNAIDW
+
+
+--------------------------------------------------------------------------------
+-- Constants copied from PLplot_Thin.ads so that it doesn't have to be seen.  --
+-- These are replicated herein with other names. Either name may be used,     --
+-- e.g., Parse_Full is the same as PL_PARSE_FULL.    --
+--------------------------------------------------------------------------------
+
+    -- Modes for parsing command line arguments (redux).
+    PL_PARSE_PARTIAL   : constant Parse_Mode_Type := 16#0000#; -- For backward compatibility
+    PL_PARSE_FULL      : constant Parse_Mode_Type := 16#0001#; -- Process fully & exit if error
+    PL_PARSE_QUIET     : constant Parse_Mode_Type := 16#0002#; -- Don't issue messages
+    PL_PARSE_NODELETE  : constant Parse_Mode_Type := 16#0004#; -- Don't delete options after processing
+    PL_PARSE_SHOWALL   : constant Parse_Mode_Type := 16#0008#; -- Show invisible options
+    PL_PARSE_OVERRIDE  : constant Parse_Mode_Type := 16#0010#; -- Obsolete
+    PL_PARSE_NOPROGRAM : constant Parse_Mode_Type := 16#0020#; -- Program name NOT in *argv[0]..
+    PL_PARSE_NODASH    : constant Parse_Mode_Type := 16#0040#; -- Set if leading dash NOT required
+    PL_PARSE_SKIP      : constant Parse_Mode_Type := 16#0080#; -- Skip over unrecognized args
+
+    -- definitions for the opt argument in plot3dc() and plsurf3d()
+    DRAW_LINEX  : constant Integer := 1;   -- draw lines parallel to the X axis
+    DRAW_LINEY  : constant Integer := 2;   -- draw lines parallel to the Y axis
+    DRAW_LINEXY : constant Integer := 3;   -- draw lines parallel to both the X and Y axis
+    MAG_COLOR   : constant Integer := 4;   -- draw the mesh with a color dependent of the magnitude
+    BASE_CONT   : constant Integer := 8;   -- draw contour plot at bottom xy plane
+    TOP_CONT    : constant Integer := 16;  -- draw contour plot at top xy plane
+    SURF_CONT   : constant Integer := 32;  -- draw contour plot at surface
+    DRAW_SIDES  : constant Integer := 64;  -- draw sides
+    FACETED     : constant Integer := 128; -- draw outline for each square that makes up the surface
+    MESH        : constant Integer := 256; -- draw mesh
+
+    -- Type of gridding algorithm for plgriddata()
+    GRID_CSA    : constant Gridding_Algorithm_Type := 1;
+    GRID_DTLI   : constant Gridding_Algorithm_Type := 2;
+    GRID_NNI    : constant Gridding_Algorithm_Type := 3;
+    GRID_NNIDW  : constant Gridding_Algorithm_Type := 4;
+    GRID_NNLI   : constant Gridding_Algorithm_Type := 5;
+    GRID_NNAIDW : constant Gridding_Algorithm_Type := 6;
+
+
+--------------------------------------------------------------------------------
+-- A convenient string function                                               --
+--------------------------------------------------------------------------------
+
+    -- Short name for To_Unbounded_String
+    function TUB(arg : String) return Ada.Strings.Unbounded.Unbounded_String renames Ada.Strings.Unbounded.To_Unbounded_String;
     
 
 --------------------------------------------------------------------------------
@@ -643,25 +718,25 @@ package PLplot_Traditional is
     procedure plgra;
 
 
-    -- Gridding algorithm
-    subtype Gridding_Algorithm_Type is Integer range 1..6;
-
-    -- Type of gridding algorithm for plgriddata()
-    -- "Long form" gridding algorithm names
-    Grid_Bivariate_Cubic_Spline_Approximation               : constant Gridding_Algorithm_Type := 1; -- GRID_CSA
-    Grid_Delaunay_Triangulation_Linear_Interpolation        : constant Gridding_Algorithm_Type := 2; -- GRID_DTLI
-    Grid_Natural_Neighbors_Interpolation                    : constant Gridding_Algorithm_Type := 3; -- GRID_NNI
-    Grid_Nearest_Neighbors_Inverse_Distance_Weighted        : constant Gridding_Algorithm_Type := 4; -- GRID_NNIDW
-    Grid_Nearest_Neighbors_Linear_Interpolation             : constant Gridding_Algorithm_Type := 5; -- GRID_NNLI
-    Grid_Nearest_Neighbors_Around_Inverse_Distance_Weighted : constant Gridding_Algorithm_Type := 6; -- GRID_NNAIDW
-
-    -- "Short form" gridding algorithm names
-    GRID_CSA    : constant Gridding_Algorithm_Type := 1;
-    GRID_DTLI   : constant Gridding_Algorithm_Type := 2;
-    GRID_NNI    : constant Gridding_Algorithm_Type := 3;
-    GRID_NNIDW  : constant Gridding_Algorithm_Type := 4;
-    GRID_NNLI   : constant Gridding_Algorithm_Type := 5;
-    GRID_NNAIDW : constant Gridding_Algorithm_Type := 6;
+-----    -- Gridding algorithm
+-----    subtype Gridding_Algorithm_Type is Integer range 1..6;
+-----
+-----    -- Type of gridding algorithm for plgriddata()
+-----    -- "Long form" gridding algorithm names
+-----    Grid_Bivariate_Cubic_Spline_Approximation               : constant Gridding_Algorithm_Type := 1; -- GRID_CSA
+-----    Grid_Delaunay_Triangulation_Linear_Interpolation        : constant Gridding_Algorithm_Type := 2; -- GRID_DTLI
+-----    Grid_Natural_Neighbors_Interpolation                    : constant Gridding_Algorithm_Type := 3; -- GRID_NNI
+-----    Grid_Nearest_Neighbors_Inverse_Distance_Weighted        : constant Gridding_Algorithm_Type := 4; -- GRID_NNIDW
+-----    Grid_Nearest_Neighbors_Linear_Interpolation             : constant Gridding_Algorithm_Type := 5; -- GRID_NNLI
+-----    Grid_Nearest_Neighbors_Around_Inverse_Distance_Weighted : constant Gridding_Algorithm_Type := 6; -- GRID_NNAIDW
+-----
+-----    -- "Short form" gridding algorithm names
+-----    GRID_CSA    : constant Gridding_Algorithm_Type := 1;
+-----    GRID_DTLI   : constant Gridding_Algorithm_Type := 2;
+-----    GRID_NNI    : constant Gridding_Algorithm_Type := 3;
+-----    GRID_NNIDW  : constant Gridding_Algorithm_Type := 4;
+-----    GRID_NNLI   : constant Gridding_Algorithm_Type := 5;
+-----    GRID_NNAIDW : constant Gridding_Algorithm_Type := 6;
     
 
     -- Grid irregularly sampled data.
@@ -838,20 +913,20 @@ package PLplot_Traditional is
         indexymin, indexymax : Integer_Array_1D); -- levels at which to draw contours
 
 
-    -- definitions for the opt argument in plot3dc() and plsurf3d()
-    -- DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
-
-    No_3D_Options             : constant Integer := 0;   -- None of the options
-    Lines_Parallel_To_X       : constant Integer := 1;   -- draw lines parallel to the X axis
-    Lines_Parallel_To_Y       : constant Integer := 2;   -- draw lines parallel to the Y axis
-    Lines_Parallel_To_X_And_Y : constant Integer := 3;   -- draw lines parallel to both the X and Y axis
-    Magnitude_Color           : constant Integer := 4;   -- draw the mesh with a color dependent of the magnitude
-    Base_Contour              : constant Integer := 8;   -- draw contour plot at bottom xy plane
-    Top_Contour               : constant Integer := 16;  -- draw contour plot at top xy plane
-    Surface_Contour           : constant Integer := 32;  -- draw contour plot at surface
-    Sides                     : constant Integer := 64;  -- draw sides
-    Facets                    : constant Integer := 128; -- draw outline for each square that makes up the surface
-    Meshed                    : constant Integer := 256; -- draw mesh
+-----    -- definitions for the opt argument in plot3dc() and plsurf3d()
+-----    -- DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
+-----
+-----    No_3D_Options             : constant Integer := 0;   -- None of the options
+-----    Lines_Parallel_To_X       : constant Integer := 1;   -- draw lines parallel to the X axis
+-----    Lines_Parallel_To_Y       : constant Integer := 2;   -- draw lines parallel to the Y axis
+-----    Lines_Parallel_To_X_And_Y : constant Integer := 3;   -- draw lines parallel to both the X and Y axis
+-----    Magnitude_Color           : constant Integer := 4;   -- draw the mesh with a color dependent of the magnitude
+-----    Base_Contour              : constant Integer := 8;   -- draw contour plot at bottom xy plane
+-----    Top_Contour               : constant Integer := 16;  -- draw contour plot at top xy plane
+-----    Surface_Contour           : constant Integer := 32;  -- draw contour plot at surface
+-----    Sides                     : constant Integer := 64;  -- draw sides
+-----    Facets                    : constant Integer := 128; -- draw outline for each square that makes up the surface
+-----    Meshed                    : constant Integer := 256; -- draw mesh
 
        --  valid options for plot3dc():
        --

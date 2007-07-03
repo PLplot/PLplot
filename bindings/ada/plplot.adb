@@ -1,5 +1,6 @@
 with
     PLplot_Thin,
+    PLplot_Auxiliary,
     Ada.Text_IO,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Unbounded,
@@ -12,6 +13,7 @@ with
     Interfaces.C;
 use
     PLplot_Thin,
+    PLplot_Auxiliary,
     Ada.Text_IO,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Unbounded,

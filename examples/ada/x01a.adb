@@ -25,27 +25,28 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Traditional,
-    PLplot_Thin;
+    PLplot_Auxiliary;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot_Traditional;
+    PLplot_Traditional,
+    PLplot_Auxiliary;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 
 procedure x01a is
-    xs, ys : PLplot_Thin.Real_Vector (0 .. 5);
+    xs, ys : Real_Vector (0 .. 5);
     xscale, yscale, xoff, yoff : Long_Float;
     fontset : Integer := 1;
     notes : String := "Make sure you get it right!";
-    ver : PLplot_Thin.String_80;
+    ver : String_80;
     
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
-        x, y : PLplot_Thin.Real_Vector (0 .. 59);
+        x, y : Real_Vector (0 .. 59);
     begin
         for i in x'Range loop
             x(i) := xoff + xscale * Long_Float(i + 1) / Long_Float(x'Length);
@@ -81,7 +82,7 @@ procedure x01a is
 
 
     procedure plot2 is
-        x, y : PLplot_Thin.Real_Vector (0 .. 99);
+        x, y : Real_Vector (0 .. 99);
     begin
         -- Set up the viewport and window using PLENV. The range in X is -2.0 to
         -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
@@ -106,9 +107,11 @@ procedure x01a is
         plline(x, y);
         plwid(1);
     end plot2;
+
+
     procedure plot3 is
-        x, y : PLplot_Thin.Real_Vector (0 .. 100);
-        space1, mark1 : PLplot_Thin.Integer_Array_1D(1 .. 1) := (others => 1500);
+        x, y : Real_Vector (0 .. 100);
+        space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
     begin
         pladv(Next_SubPage);
         
@@ -147,7 +150,7 @@ begin
     plssub(2, 2);
     
     -- Parse and process command line arguments
-    plparseopts(PLplot_Thin.PL_PARSE_FULL); 
+    plparseopts(PL_PARSE_FULL); 
     
     -- Get version number, just for kicks
     Put_Line("PLplot library version: " & plgver);
@@ -171,7 +174,7 @@ begin
     yoff   := 0.0185;
 
     -- Do a plot
-    plsyax(Max_Digits => 5, Field_Digits => 0);
+    plsyax(5, 0);
     plot1;
     plot2;
     plot3;

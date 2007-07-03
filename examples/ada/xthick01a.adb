@@ -25,13 +25,13 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot,
-    PLplot_Thin;
+    PLplot_Auxiliary;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot,
-    PLplot_Thin;
+    PLplot_Auxiliary;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
@@ -107,6 +107,8 @@ procedure xthick01a is
         Draw_Curve(x, y);
         Set_Pen_Width(1);
     end plot2;
+
+
     procedure plot3 is
         x, y : Real_Vector (0 .. 100);
         space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
@@ -148,7 +150,7 @@ begin
     Set_Number_Of_Subpages(2, 2);
     
     -- Parse and process command line arguments
-    Parse_Command_Line_Arguments(PL_PARSE_FULL); 
+    Parse_Command_Line_Arguments(Parse_Full); 
     
     -- Get version number, just for kicks
     Put_Line("PLplot library version: " & Get_Version_Number);

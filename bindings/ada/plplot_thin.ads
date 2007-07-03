@@ -33,6 +33,7 @@
 -- this is right.
 
 with
+    PLplot_Auxiliary,
     Interfaces.C,
     Interfaces.C.Pointers,
     System,
@@ -40,6 +41,7 @@ with
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 use
+    PLplot_Auxiliary,
     Interfaces.C,
     Ada.Text_IO,
     Ada.Strings.Bounded,
@@ -57,13 +59,13 @@ package PLplot_Thin is
     subtype PLBOOL is Integer range PLfalse..PLtrue;
     type PLUNICODE is range 0..2**32-1;
 
-    type Boolean_Array_1D is array (Integer range <>) of Boolean;
-    type Integer_Array_1D is array (Integer range <>) of Integer;
+-----    type Boolean_Array_1D is array (Integer range <>) of Boolean;
+-----    type Integer_Array_1D is array (Integer range <>) of Integer;
 
     -- UN-COMMENT THESE TWO LINES IF YOUR COMPILER DOES NOT INCLUDE THESE 
     -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
-    type Real_Vector is array (Integer range <>) of Long_Float;
-    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
+-----    type Real_Vector is array (Integer range <>) of Long_Float;
+-----    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 
     subtype PL_Integer_Array  is Integer_Array_1D;
     subtype PL_Float_Array    is Real_Vector;
@@ -78,30 +80,30 @@ package PLplot_Thin is
 
 
 --------------------------------------------------------------------------------
---        PROCEDURE DECLARATIONS                                              --
+--        UTILITY PROCEDURE DECLARATIONS                                      --
 --------------------------------------------------------------------------------
 
-    -- Find minimum in a 1D array.
-    function Vector_Min(x : Real_Vector) return Long_Float;
-
-    -- Find minimum and its location in a 1D array.
-    procedure Vector_Min(x               : Real_Vector;
-                         The_Minimum     : out Long_Float;
-                         Location_Of_Min : out Integer);
-
-    -- Find maximum in a 1D array.
-    function Vector_Max(x : Real_Vector) return Long_Float;
-
-    -- Find maximum and its location in a 1D array.
-    procedure Vector_Max(x               : Real_Vector;
-                         The_Maximum     : out Long_Float;
-                         Location_Of_Max : out Integer);
-    
-    -- Find minimum in a 2D array.
-    function Matrix_Min(x : Real_Matrix) return Long_Float;
-    
-    -- Find maximum in a 2D array.
-    function Matrix_Max(x : Real_Matrix) return Long_Float;
+-----    -- Find minimum in a 1D array.
+-----    function Vector_Min(x : Real_Vector) return Long_Float;
+-----
+-----    -- Find minimum and its location in a 1D array.
+-----    procedure Vector_Min(x               : Real_Vector;
+-----                         The_Minimum     : out Long_Float;
+-----                         Location_Of_Min : out Integer);
+-----
+-----    -- Find maximum in a 1D array.
+-----    function Vector_Max(x : Real_Vector) return Long_Float;
+-----
+-----    -- Find maximum and its location in a 1D array.
+-----    procedure Vector_Max(x               : Real_Vector;
+-----                         The_Maximum     : out Long_Float;
+-----                         Location_Of_Max : out Integer);
+-----    
+-----    -- Find minimum in a 2D array.
+-----    function Matrix_Min(x : Real_Matrix) return Long_Float;
+-----    
+-----    -- Find maximum in a 2D array.
+-----    function Matrix_Max(x : Real_Matrix) return Long_Float;
 
 
 --------------------------------------------------------------------------------
@@ -115,13 +117,13 @@ package PLplot_Thin is
 -- Convenient string things                                                 --
 --------------------------------------------------------------------------------
 
-    -- Short name for To_Unbounded_String
-    function TUB(arg : String) return Ada.Strings.Unbounded.Unbounded_String renames Ada.Strings.Unbounded.To_Unbounded_String;
-
-    -- Convenient string of length 80
-    package Bounded_String_80 is
-        new Ada.Strings.Bounded.Generic_Bounded_Length(80);
-    subtype String_80 is Bounded_String_80.Bounded_String;
+-----    -- Short name for To_Unbounded_String
+-----    function TUB(arg : String) return Ada.Strings.Unbounded.Unbounded_String renames Ada.Strings.Unbounded.To_Unbounded_String;
+-----
+-----    -- Convenient string of length 80
+-----    package Bounded_String_80 is
+-----        new Ada.Strings.Bounded.Generic_Bounded_Length(80);
+-----    subtype String_80 is Bounded_String_80.Bounded_String;
 
 
 --------------------------------------------------------------------------------
@@ -1285,7 +1287,7 @@ package PLplot_Thin is
 
 
     procedure
-    plshade1(a : Real_Matrix; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
+    plshade1(a : PL_Float_Array_2D; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
           left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
           shade_min : PLFLT; shade_max : PLFLT;
           sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLINT;
