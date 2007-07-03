@@ -56,7 +56,6 @@ find_program(ONSGMLS onsgmls)
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
   if(PERL_FOUND)
-    check_perl_modules(PERL_XML_SAX XML::SAX::Expat)
     check_perl_modules(PERL_XML_PARSER XML::Parser)
     check_perl_modules(PERL_XML_DOM XML::DOM)
   endif(PERL_FOUND)
@@ -99,13 +98,13 @@ if(BUILD_DOC)
   set(BUILD_HTML ON)
   set(BUILD_PRINT ON)
 
-  if(NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+  if(NOT PERL_FOUND OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     set(BUILD_INFO OFF)
     message(STATUS
     "WARNING: Not building info documentation - "
     "required programs are missing"
     )
-  endif(NOT PERL_FOUND OR NOT PERL_XML_SAX OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+  endif(NOT PERL_FOUND OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
     
   if(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
     set(BUILD_MAN OFF)
