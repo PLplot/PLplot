@@ -238,6 +238,13 @@
 <book id="plplot-docbook">
   <bookinfo>
     <title>The PLplot Plotting Library</title>
+    <titleabbrev role="texinfo-file">plplotdoc</titleabbrev>
+    <abstract role="texinfo-node">
+      <para>The PLplot Plotting Library</para>
+    </abstract>
+    <subjectset scheme="texinfo-directory">
+      <subject><subjectterm>Scientific Visualization</subjectterm></subject>
+    </subjectset>
     <abbrev>DocBook</abbrev>
     <subtitle>Programmer's Reference Manual</subtitle>
     <releaseinfo>Version 5.0</releaseinfo>
