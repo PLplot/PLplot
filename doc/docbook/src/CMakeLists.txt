@@ -349,9 +349,8 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
 
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
-    COMMAND ${DB2X_TEXIXML} --to-stdout
+    COMMAND ${DB2X_TEXIXML}
     ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
-    > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
     )
 
