@@ -45,7 +45,7 @@ begin
     -- Initialize plplot
     plinit;
     
-    pladv(Next_Subpage);
+    pladv(0);
     plvpor(0.0, 1.0, 0.0, 1.0);
     plwind(0.0, 1.0, 0.0, 1.0);
     plbox("bc", 0.0, 0, "bc", 0.0, 0);

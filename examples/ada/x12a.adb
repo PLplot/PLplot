@@ -78,7 +78,7 @@ begin
     -- Initialize plplot.
     plinit;
 
-    pladv(Next_Subpage);
+    pladv(0);
     plvsta;
     plwind(1980.0, 1990.0, 0.0, 35.0);
     plbox("bc", 1.0, 0, "bcnv", 10.0, 0);

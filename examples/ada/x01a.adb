@@ -72,7 +72,7 @@ procedure x01a is
         pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
         -- Plot the data points
-        plcol0(Aquamarine);
+        plcol0(4);
         plpoin(xs, ys, 9);
 
         -- Draw the line through the data
@@ -113,7 +113,7 @@ procedure x01a is
         x, y : Real_Vector (0 .. 100);
         space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
     begin
-        pladv(Next_SubPage);
+        pladv(0);
         
         -- Use standard viewport, and define X range from 0 to 360 degrees,
         -- Y range from -1.2 to 1.2.
@@ -139,7 +139,7 @@ procedure x01a is
             y(i) := sin(x(i) * pi / 180.0);
         end loop;
         
-        plcol0(Aquamarine);
+        plcol0(4);
         plline(x, y);
     end plot3;
 
