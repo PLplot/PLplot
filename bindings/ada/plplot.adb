@@ -176,13 +176,13 @@ package body PLplot is
 
 
         -- Set environment and its color.
-        Set_Color(White);
+        Set_Pen_Color(White);
 --        Set_Environment_Clear_Subpage(x_Min, x_Max, y_Min, y_Max, Justification, Axis_Style);
         Set_Environment(x_Min, x_Max, y_Min, y_Max, Justification, Axis_Style);
         
         if x1'length /= 1 and y1'length /= 1 then
             Write_Labels(To_String(X_Labels(1)), To_String(Y_Labels(1)), To_String(Title_Labels(1)));
-            Set_Color(Colors(1));
+            Set_Pen_Color(Colors(1));
             --Set_Pen_Width(Line_Widths(1));
             Select_Line_Style(Line_Styles(1));
             Draw_Curve(x1, y1);
@@ -190,7 +190,7 @@ package body PLplot is
 
         if x2'length /= 1 and y2'length /= 1 then
             Write_Labels(To_String(X_Labels(2)), To_String(Y_Labels(2)), To_String(Title_Labels(2)));
-            Set_Color(Colors(2));
+            Set_Pen_Color(Colors(2));
             --Set_Pen_Width(Line_Widths(2));
             Select_Line_Style(Line_Styles(2));
             Draw_Curve(x2, y2);
@@ -198,7 +198,7 @@ package body PLplot is
 
         if x3'length /= 1 and y3'length /= 1 then
             Write_Labels(To_String(X_Labels(3)), To_String(Y_Labels(3)), To_String(Title_Labels(3)));
-            Set_Color(Colors(3));
+            Set_Pen_Color(Colors(3));
             --Set_Pen_Width(Line_Widths(3));
             Select_Line_Style(Line_Styles(3));
             Draw_Curve(x3, y3);
@@ -206,7 +206,7 @@ package body PLplot is
 
         if x4'length /= 1 and y4'length /= 1 then
             Write_Labels(To_String(X_Labels(4)), To_String(Y_Labels(4)), To_String(Title_Labels(4)));
-            Set_Color(Colors(4));
+            Set_Pen_Color(Colors(4));
             --Set_Pen_Width(Line_Widths(4));
             Select_Line_Style(Line_Styles(4));
             Draw_Curve(x4, y4);
@@ -214,13 +214,13 @@ package body PLplot is
 
         if x5'length /= 1 and y5'length /= 1 then
             Write_Labels(To_String(X_Labels(5)), To_String(Y_Labels(5)), To_String(Title_Labels(5)));
-            Set_Color(Colors(5));
+            Set_Pen_Color(Colors(5));
             --Set_Pen_Width(Line_Widths(5));
             Select_Line_Style(Line_Styles(5));
             Draw_Curve(x5, y5);
         end if;
         
-        Set_Color(White);
+        Set_Pen_Color(White);
         Set_Default_Pen_Width;
         Select_Line_Style(1); --solid
     end Multiplot_Pairs;
@@ -559,11 +559,11 @@ package body PLplot is
         Advance_To_Subpage(Next_Subpage);
         Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
         Set_Viewport_World(1.0, 35.0, 1.0, 46.0); -- fix
-        Set_Color(White);
+        Set_Pen_Color(White);
         Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-        Set_Color(White);
+        Set_Pen_Color(White);
         Write_Labels(X_Label, Y_Label, Title_Label);
-        Set_Color(White);
+        Set_Pen_Color(White);
         Set_Contour_Label_Parameters(0.008, 0.6, 0.1, True);
         Contour_Plot(z, z'First(1), z'Last(1), z'First(2), z'Last(2), 
             Contour_Levels, Transformation_Procedure_Pointer, Transformation_Data);          
@@ -607,7 +607,7 @@ package body PLplot is
         
         Quick_Set_Color_Map_1(Blue_Green_Red); -- no way to restore after doing this
         Advance_To_Subpage(Next_Subpage);
-        Set_Color(White);
+        Set_Pen_Color(White);
         Set_Viewport_Normalized(0.0, 1.0, 0.0, 1.0);
         Set_Viewport_World(-0.9, 0.9, -0.8, 1.5);
         Set_Up_3D(1.0, 1.0, 1.0, x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local, 
@@ -657,7 +657,7 @@ package body PLplot is
         
         Quick_Set_Color_Map_1(Blue_Green_Red); -- no way to restore after doing this
         Advance_To_Subpage(Next_Subpage);
-        Set_Color(White);
+        Set_Pen_Color(White);
         Set_Viewport_Normalized(0.0, 1.0, 0.0, 1.0);
         Set_Viewport_World(-0.9, 0.9, -0.8, 1.5);
         Set_Up_3D(1.0, 1.0, 1.0, x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local, 
@@ -672,6 +672,142 @@ package body PLplot is
 
 
 --------- Simple color table manipulatons -----
+
+    -- Things for manipulating color map 0 --
+
+    -- Make a snapshot of color map 0 for possible later full or partial restoration.
+    -- This is automatically called at package initialization with results stored
+    -- in Default_Red_Components, Default_Green_Components, Default_Blue_Components.
+    procedure Make_Snapshot_Of_Color_Map_0 
+       (Reds, Greens, Blues : out Integer_Array_1D) is
+    begin
+        for i in Reds'range loop
+            Get_Color_RGB(i, Reds(i), Greens(i), Blues(i));
+        end loop;
+    end Make_Snapshot_Of_Color_Map_0;
+    
+    
+    -- Restore an arbitray snapshot of color map 0.
+    procedure Restore_Snapshot_Of_Color_Map_0
+       (Reds, Greens, Blues : Integer_Array_1D) is
+    begin
+        Set_Color_Map_0(Reds, Greens, Blues);
+    end Restore_Snapshot_Of_Color_Map_0;
+    
+    
+    -- Restore the default colors of color map 0 taken as a snapshot at initialization.
+    procedure Restore_Default_Snapshot_Of_Color_Map_0 is
+    begin
+        Set_Number_Of_Colors_Map_0(Number_Of_Default_Colors);
+        Set_Color_Map_0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
+    end Restore_Default_Snapshot_Of_Color_Map_0;
+    
+    
+    -- Functions which correspond to the default colors of color map 0. Calling
+    -- one of these (1) resets the corresponding slot in color map 0 to its 
+    -- default value, and (2) returns the correct integer value for the default 
+    -- color specified. Thus, using Set_Pen_Color(Reset_Red) instead of 
+    -- Set_Pen_Color(Red) guarantees that the color will be set to Red even if 
+    -- there have been prior manipulations of color 1.
+    
+    function Reset_Black return Integer is
+    begin
+        Set_One_Color_Map_0(0, Default_Red_Components(0), Default_Green_Components(0), Default_Blue_Components(0));
+        return 0;
+    end Reset_Black;
+    
+    function Reset_Red return Integer is
+    begin
+        Set_One_Color_Map_0(1, Default_Red_Components(1), Default_Green_Components(1), Default_Blue_Components(1));
+        return 1;
+    end Reset_Red;
+    
+    function Reset_Yellow return Integer is
+    begin
+        Set_One_Color_Map_0(2, Default_Red_Components(2), Default_Green_Components(2), Default_Blue_Components(2));
+        return 2;
+    end Reset_Yellow;
+    
+    function Reset_Green return Integer is
+    begin
+        Set_One_Color_Map_0(3, Default_Red_Components(3), Default_Green_Components(3), Default_Blue_Components(3));
+        return 3;
+    end Reset_Green;
+    
+    function Reset_Aquamarine return Integer is
+    begin
+        Set_One_Color_Map_0(4, Default_Red_Components(4), Default_Green_Components(4), Default_Blue_Components(4));
+        return 4;
+    end Reset_Aquamarine;
+    
+    function Reset_Pink return Integer is
+    begin
+        Set_One_Color_Map_0(5, Default_Red_Components(5), Default_Green_Components(5), Default_Blue_Components(5));
+        return 5;
+    end Reset_Pink;
+    
+    function Reset_Wheat return Integer is
+    begin
+        Set_One_Color_Map_0(6, Default_Red_Components(6), Default_Green_Components(6), Default_Blue_Components(6));
+        return 6;
+    end Reset_Wheat;
+    
+    function Reset_Grey return Integer is
+    begin
+        Set_One_Color_Map_0(7, Default_Red_Components(7), Default_Green_Components(7), Default_Blue_Components(7));
+        return 7;
+    end Reset_Grey;
+    
+    function Reset_Brown return Integer is
+    begin
+        Set_One_Color_Map_0(8, Default_Red_Components(8), Default_Green_Components(8), Default_Blue_Components(8));
+        return 8;
+    end Reset_Brown;
+    
+    function Reset_Blue return Integer is
+    begin
+        Set_One_Color_Map_0(9, Default_Red_Components(9), Default_Green_Components(9), Default_Blue_Components(9));
+        return 9;
+    end Reset_Blue;
+    
+    function Reset_BlueViolet return Integer is
+    begin
+        Set_One_Color_Map_0(10, Default_Red_Components(10), Default_Green_Components(10), Default_Blue_Components(10));
+        return 10;
+    end Reset_BlueViolet;
+    
+    function Reset_Cyan return Integer is
+    begin
+        Set_One_Color_Map_0(11, Default_Red_Components(11), Default_Green_Components(11), Default_Blue_Components(11));
+        return 11;
+    end Reset_Cyan;
+    
+    function Reset_Turquoise return Integer is
+    begin
+        Set_One_Color_Map_0(12, Default_Red_Components(12), Default_Green_Components(12), Default_Blue_Components(12));
+        return 12;
+    end Reset_Turquoise;
+    
+    function Reset_Magenta return Integer is
+    begin
+        Set_One_Color_Map_0(13, Default_Red_Components(13), Default_Green_Components(13), Default_Blue_Components(13));
+        return 13;
+    end Reset_Magenta;
+    
+    function Reset_Salmon return Integer is
+    begin
+        Set_One_Color_Map_0(14, Default_Red_Components(14), Default_Green_Components(14), Default_Blue_Components(14));
+        return 14;
+    end Reset_Salmon;
+    
+    function Reset_White return Integer is
+    begin
+        Set_One_Color_Map_0(15, Default_Red_Components(15), Default_Green_Components(15), Default_Blue_Components(15));
+        return 15;
+    end Reset_White;
+
+
+    -- Things for manipulating color map 1 --
 
     -- Quick application of pre-fabricated color schemes to color map 1.
     procedure Quick_Set_Color_Map_1(Color_Theme : Color_Themes_For_Map_1_Type) is
@@ -1082,10 +1218,10 @@ package body PLplot is
 
     -- Set color, map 0. Argument is integer between 0 and 15.
     -- plcol0
-    procedure Set_Color(A_Color : Plot_Color_Type) is
+    procedure Set_Pen_Color(A_Color : Plot_Color_Type) is
     begin
         plcol0(A_Color);
-    end Set_Color;
+    end Set_Pen_Color;
 
 
     -- Set color, map 1. Argument is a float between 0. and 1.
@@ -1337,7 +1473,7 @@ package body PLplot is
     -- plgcol0
     procedure Get_Color_RGB
        (Color_Index      : Integer;
-        Red_Component, Green_Component, Blue_Component : out Color_Component_Type) is
+        Red_Component, Green_Component, Blue_Component : out Integer) is
     begin
         plgcol0(Color_Index, Red_Component, Green_Component, Blue_Component);
     end Get_Color_RGB;
@@ -1346,7 +1482,7 @@ package body PLplot is
     -- Returns the background color by 8 bit RGB value
     -- plgcolbg
     procedure Get_Background_Color_RGB
-       (Red_Component, Green_Component, Blue_Component : out Color_Component_Type) is
+       (Red_Component, Green_Component, Blue_Component : out Integer) is
     begin
         plgcolbg(Red_Component, Green_Component, Blue_Component);
     end Get_Background_Color_RGB;
@@ -1570,10 +1706,10 @@ package body PLplot is
         Number_Of_Bins : Positive; -- equal-sized, between Data_Min and Data_Max
         Options : Integer) is -- Options are not defined in plplot.h.
     begin
-        Set_Color(White);
+        Set_Pen_Color(White);
         plhist
            (Data'length, Data, Data_Min, Data_Max, Number_Of_Bins, Options);
-        Set_Color(White);
+        Set_Pen_Color(White);
     end Histogram_Unbinned;
 
 
@@ -1914,7 +2050,7 @@ package body PLplot is
 
     -- Set line color by 8 bit RGB values.
     -- plrgb1
-    procedure Set_Line_Color_RGB_0_255(Red_Component, Blue_Component, Green_Component : Color_Component_Type) is
+    procedure Set_Line_Color_RGB_0_255(Red_Component, Blue_Component, Green_Component : Integer) is
     begin
         plrgb1(Red_Component, Blue_Component, Green_Component);
     end Set_Line_Color_RGB_0_255;
@@ -1942,6 +2078,8 @@ package body PLplot is
     end Set_Character_Height;
 
 
+    -- The PLplot docs say that the arguments to this procedure are arrays of 8-bit numbers
+    -- but plplot.h says that they are arrays of 32-bit integers.
     -- Set color map 0 colors by 8 bit RGB values
     -- plscmap0
     procedure Set_Color_Map_0(Red_Components, Green_Components, Blue_Components : Integer_Array_1D) is
@@ -2021,7 +2159,7 @@ package body PLplot is
     -- plscol0
     procedure Set_One_Color_Map_0
        (Plot_Color : Plot_Color_Type;
-        Red_Component, Green_Component, Blue_Component : Color_Component_Type) is
+        Red_Component, Green_Component, Blue_Component : Integer) is
     begin
         plscol0(Plot_Color, Red_Component, Green_Component, Blue_Component);
     end Set_One_Color_Map_0;
@@ -2030,7 +2168,7 @@ package body PLplot is
     -- Set the background color by 8 bit RGB value
     -- plscolbg
     procedure Set_Background_Color_RGB
-       (Red_Component, Green_Component, Blue_Component : Color_Component_Type) is
+       (Red_Component, Green_Component, Blue_Component : Integer) is
     begin
         plscolbg(Red, Green, Blue);
     end Set_Background_Color_RGB;
@@ -2814,5 +2952,13 @@ begin -- package body for PLplot
     -- Set_Orientation(Landscape); -- Optional; before Initialize_PLplot if used.
 
     -- Initialize_PLplot;
-    null;
+
+
+    -- Capture the initial, default, settings of color map 0 since these will be  
+    -- lost if the settings for color map 0 are set by the user. They can be 
+    -- restored collectively by calling Restore_Default_Snapshot_Of_Color_Map_0 
+    -- or individually by calling functions such as Reset_Red etc. for each of 
+    -- the 16 default colors of color map 0.
+    Make_Snapshot_Of_Color_Map_0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
+
 end PLplot;

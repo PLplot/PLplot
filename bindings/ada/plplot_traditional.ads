@@ -19,12 +19,16 @@ package PLplot_Traditional is
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
 --------------------------------------------------------------------------------
-    
+
     -- Default dummy arrays for various plotters which take multiple inputs.
     subtype Length_One_Real_Vector is Real_Vector(1..1);
     Dont_Plot_This : Length_One_Real_Vector := (1..1 => 0.0);
     
     -- Default colors for Color Map 0.
+    -- These are hard-wired to the current colors of color map 0; if that 
+    -- colors map has been changed, then these colors will return surprising 
+    -- results. Color map 0 can always be restored to its default state using 
+    -- Set_Color_Map_0(
     subtype Plot_Color_Type is Integer range 0..15;
     Black      : constant Plot_Color_Type := 0;
     Red        : constant Plot_Color_Type := 1;
@@ -42,9 +46,6 @@ package PLplot_Traditional is
     Magenta    : constant Plot_Color_Type := 13;
     Salmon     : constant Plot_Color_Type := 14;
     White      : constant Plot_Color_Type := 15;
-    
-    -- 8-bit color components represented as Integers.
-    subtype Color_Component_Type is Integer range 0..255;
 
     Max_Lines_For_Multiplot : constant := 5;
     
@@ -216,18 +217,12 @@ package PLplot_Traditional is
 
     -- Short name for To_Unbounded_String
     function TUB(arg : String) return Ada.Strings.Unbounded.Unbounded_String renames Ada.Strings.Unbounded.To_Unbounded_String;
-    
+
 
 --------------------------------------------------------------------------------
 --        High-Level subroutines for thick binding                            --
 --------------------------------------------------------------------------------
 
-    -- Initialization. Must be called before starting to plot.
-    -- Certain other procedures, if used, must be called first.
-    -- Removed June 26, 2007 as being redundant wrt Initialize_PLplot.
---    procedure Initialize_Plotter;
-
-    
     -- When asked to draw white lines on black background, do it.
     -- This is the default.
     procedure Draw_White_On_Black;
@@ -396,6 +391,78 @@ package PLplot_Traditional is
 
 
 --------- Simple color table manipulatons -----
+
+    -- Things for manipulating color map 0 --
+
+    -- Current default number of colors provided by PLplot. There is no way to 
+    -- get this number under program control. The actual number can be set by 
+    -- the user with Set_Number_Of_Colors_Map_0.
+    Number_Of_Default_Colors : constant Integer := 16;
+
+    -- The default color map 0 is captured at initialization of PLplot.adb with 
+    -- a call to Make_Snapshot_Of_Color_Map_0 stored here.
+    Default_Red_Components   : Integer_Array_1D(0 .. Number_Of_Default_Colors - 1);
+    Default_Green_Components : Integer_Array_1D(0 .. Number_Of_Default_Colors - 1);
+    Default_Blue_Components  : Integer_Array_1D(0 .. Number_Of_Default_Colors - 1);
+
+
+    -- Make a snapshot of color map 0 for possible later full or partial restoration.
+    -- This is automatically called at package initialization with results stored
+    -- in Default_Red_Components, Default_Green_Components, Default_Blue_Components.
+    procedure Make_Snapshot_Of_Color_Map_0 
+       (Reds, Greens, Blues : out Integer_Array_1D);
+
+ 
+       -- Restore an arbitray snapshot of color map 0.
+    procedure Restore_Snapshot_Of_Color_Map_0
+       (Reds, Greens, Blues : Integer_Array_1D);
+
+
+    -- Restore the default colors of color map 0 taken as a snapshot at initialization.
+    procedure Restore_Default_Snapshot_Of_Color_Map_0;
+
+
+    -- Functions which correspond to the default colors of color map 0. Calling
+    -- one of these (1) resets the corresponding slot in color map 0 to its 
+    -- default value, and (2) returns the correct integer value for the default 
+    -- color specified. Thus, using plcol0(Reset_Red) instead of 
+    -- plcol0(Red) guarantees that the color will be set to Red even if 
+    -- there have been prior manipulations of color 1.
+    
+    function Reset_Black return Integer;
+    
+    function Reset_Red return Integer;
+    
+    function Reset_Yellow return Integer;
+    
+    function Reset_Green return Integer;
+    
+    function Reset_Aquamarine return Integer;
+    
+    function Reset_Pink return Integer;
+    
+    function Reset_Wheat return Integer;
+    
+    function Reset_Grey return Integer;
+    
+    function Reset_Brown return Integer;
+    
+    function Reset_Blue return Integer;
+    
+    function Reset_BlueViolet return Integer;
+    
+    function Reset_Cyan return Integer;
+    
+    function Reset_Turquoise return Integer;
+    
+    function Reset_Magenta return Integer;
+    
+    function Reset_Salmon return Integer;
+    
+    function Reset_White return Integer;
+
+
+    -- Things for manipulating color map 1 --
 
     type Color_Themes_For_Map_1_Type is (Gray, Blue_Green_Red, Red_Green_Blue, 
         Red_Cyan_Blue, Blue_Black_Red, Red_Blue_Green, Red_Yellow);
@@ -652,12 +719,12 @@ package PLplot_Traditional is
     -- Returns 8 bit RGB values for given color from color map 0
     procedure plgcol0
        (Color_Index      : Integer;
-        Red_Component, Green_Component, Blue_Component : out Color_Component_Type);
+        Red_Component, Green_Component, Blue_Component : out Integer);
 
 
     -- Returns the background color by 8 bit RGB value
     procedure plgcolbg
-       (Red_Component, Green_Component, Blue_Component : out Color_Component_Type);
+       (Red_Component, Green_Component, Blue_Component : out Integer);
 
 
     -- Returns the current compression setting
@@ -717,27 +784,6 @@ package PLplot_Traditional is
     -- Switches to graphics screen.
     procedure plgra;
 
-
------    -- Gridding algorithm
------    subtype Gridding_Algorithm_Type is Integer range 1..6;
------
------    -- Type of gridding algorithm for plgriddata()
------    -- "Long form" gridding algorithm names
------    Grid_Bivariate_Cubic_Spline_Approximation               : constant Gridding_Algorithm_Type := 1; -- GRID_CSA
------    Grid_Delaunay_Triangulation_Linear_Interpolation        : constant Gridding_Algorithm_Type := 2; -- GRID_DTLI
------    Grid_Natural_Neighbors_Interpolation                    : constant Gridding_Algorithm_Type := 3; -- GRID_NNI
------    Grid_Nearest_Neighbors_Inverse_Distance_Weighted        : constant Gridding_Algorithm_Type := 4; -- GRID_NNIDW
------    Grid_Nearest_Neighbors_Linear_Interpolation             : constant Gridding_Algorithm_Type := 5; -- GRID_NNLI
------    Grid_Nearest_Neighbors_Around_Inverse_Distance_Weighted : constant Gridding_Algorithm_Type := 6; -- GRID_NNAIDW
------
------    -- "Short form" gridding algorithm names
------    GRID_CSA    : constant Gridding_Algorithm_Type := 1;
------    GRID_DTLI   : constant Gridding_Algorithm_Type := 2;
------    GRID_NNI    : constant Gridding_Algorithm_Type := 3;
------    GRID_NNIDW  : constant Gridding_Algorithm_Type := 4;
------    GRID_NNLI   : constant Gridding_Algorithm_Type := 5;
------    GRID_NNAIDW : constant Gridding_Algorithm_Type := 6;
-    
 
     -- Grid irregularly sampled data.
     procedure plgriddata
@@ -913,21 +959,6 @@ package PLplot_Traditional is
         indexymin, indexymax : Integer_Array_1D); -- levels at which to draw contours
 
 
------    -- definitions for the opt argument in plot3dc() and plsurf3d()
------    -- DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
------
------    No_3D_Options             : constant Integer := 0;   -- None of the options
------    Lines_Parallel_To_X       : constant Integer := 1;   -- draw lines parallel to the X axis
------    Lines_Parallel_To_Y       : constant Integer := 2;   -- draw lines parallel to the Y axis
------    Lines_Parallel_To_X_And_Y : constant Integer := 3;   -- draw lines parallel to both the X and Y axis
------    Magnitude_Color           : constant Integer := 4;   -- draw the mesh with a color dependent of the magnitude
------    Base_Contour              : constant Integer := 8;   -- draw contour plot at bottom xy plane
------    Top_Contour               : constant Integer := 16;  -- draw contour plot at top xy plane
------    Surface_Contour           : constant Integer := 32;  -- draw contour plot at surface
------    Sides                     : constant Integer := 64;  -- draw sides
------    Facets                    : constant Integer := 128; -- draw outline for each square that makes up the surface
------    Meshed                    : constant Integer := 256; -- draw mesh
-
        --  valid options for plot3dc():
        --
        --  DRAW_SIDES, BASE_CONT, TOP_CONT (not yet),
@@ -990,7 +1021,7 @@ package PLplot_Traditional is
 
 
     -- Set line color by 8 bit RGB values.
-    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Color_Component_Type);
+    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Integer);
 
 
     -- Functions for converting between HLS and RGB color space
@@ -1007,6 +1038,8 @@ package PLplot_Traditional is
     procedure plschr(Default_Height, Scale_Factor : Long_Float);
 
 
+    -- The PLplot docs say that the arguments to this procedure are arrays of 8-bit numbers
+    -- but plplot.h says that they are arrays of 32-bit integers.
     -- Set color map 0 colors by 8 bit RGB values
     procedure plscmap0(Red_Components, Green_Components, Blue_Components : Integer_Array_1D);
 
@@ -1042,11 +1075,11 @@ package PLplot_Traditional is
     -- Set a given color from color map 0 by 8 bit RGB value
     procedure plscol0
        (Plot_Color : Plot_Color_Type;
-        Red_Component, Green_Component, Blue_Component : Color_Component_Type);
+        Red_Component, Green_Component, Blue_Component : Integer);
 
     -- Set the background color by 8 bit RGB value
     procedure plscolbg
-       (Red_Component, Green_Component, Blue_Component : Color_Component_Type);
+       (Red_Component, Green_Component, Blue_Component : Integer);
 
 
     -- Used to globally turn color output on/off
@@ -1132,6 +1165,8 @@ package PLplot_Traditional is
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
         Transformation_Data                      : Transformation_Data_Type);
+
+
     procedure plshade1
        (z                                        : Real_Matrix;
         Mask_Function_Pointer                    : Mask_Function_Pointer_Type;
@@ -1145,6 +1180,8 @@ package PLplot_Traditional is
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
         Transformation_Data                      : Transformation_Data_Type);
+
+
     procedure plshades
        (z                               : Real_Matrix;
         Mask_Function_Pointer           : Mask_Function_Pointer_Type;
@@ -1273,9 +1310,10 @@ package PLplot_Traditional is
     procedure plstyl(Marks, Spaces : Integer_Array_1D);
 
 
+    Default_Continuous_Line : constant Integer := 0;
+
     -- This is an overloaded procedure equivalent to calling plstyl with its
     -- first argument zero.
-    Default_Continuous_Line : constant Integer := 0;
     procedure plstyl(Default_Continuous_Line : Integer);
 
 

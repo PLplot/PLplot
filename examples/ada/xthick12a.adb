@@ -65,7 +65,7 @@ procedure xthick12a is
         y(3) := 0.0;
 
         Fill_Polygon(x, y);
-        Set_Color(Red);
+        Set_Pen_Color(Red);
         Select_Line_Style(1);
         Draw_Curve(x, y);
     end plfbox;
@@ -81,7 +81,7 @@ begin
     Set_Viewport_Standard;
     Set_Viewport_World(1980.0, 1990.0, 0.0, 35.0);
     Box_Around_Viewport("bc", 1.0, 0, "bcnv", 10.0, 0);
-    Set_Color(Yellow);
+    Set_Pen_Color(Yellow);
     Write_Labels("Year", "Widget Sales (millions)", "#frPLplot Example 12");
 
     y0(0) :=  5.0;
@@ -96,7 +96,7 @@ begin
     y0(9) :=  3.0;
 
     for i in y0'range loop
-        Set_Color(i + 1);
+        Set_Pen_Color(i + 1);
         Select_Fill_Pattern(0);
         plfbox((1980.0 + Long_Float(i)), y0(i));
         Write_Text_World(1980.0 + Long_Float(i) + 0.5, y0(i) + 1.0, 1.0, 0.0, 0.5, Trim(Integer'image(Integer(y0(i))), Left));

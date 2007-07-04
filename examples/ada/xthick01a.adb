@@ -66,17 +66,17 @@ procedure xthick01a is
         -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
         -- scaled separately (just = 0), and we just draw a labelled 
         -- box (axis = 0). 
-        Set_Color(Red);
+        Set_Pen_Color(Red);
         Set_Environment(xmin, xmax, ymin, ymax, Not_Justified, Linear_Box_Plus);
-        Set_Color(Yellow);
+        Set_Pen_Color(Yellow);
         Write_Labels("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
         -- Plot the data points
-        Set_Color(Aquamarine);
+        Set_Pen_Color(Aquamarine);
         Draw_Points(xs, ys, 9);
 
         -- Draw the line through the data
-        Set_Color(Green);
+        Set_Pen_Color(Green);
         Draw_Curve(x, y);
     end plot1;
 
@@ -87,9 +87,9 @@ procedure xthick01a is
         -- Set up the viewport and window using PLENV. The range in X is -2.0 to
         -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
         -- (just = 0), and we draw a box with axes (axis = 1). 
-        Set_Color(Red);
+        Set_Pen_Color(Red);
         Set_Environment(-2.0, 10.0, -0.4, 1.2, Not_Justified, Linear_Zero_Axes);
-        Set_Color(Yellow);
+        Set_Pen_Color(Yellow);
         Write_Labels("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
         -- Fill up the arrays
@@ -102,7 +102,7 @@ procedure xthick01a is
         end loop;
         
         -- Draw the line
-        Set_Color(Green);
+        Set_Pen_Color(Green);
         Set_Pen_Width(2);
         Draw_Curve(x, y);
         Set_Pen_Width(1);
@@ -121,17 +121,17 @@ procedure xthick01a is
         Set_Viewport_World(0.0, 360.0, -1.2, 1.2);
 
         -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
-        Set_Color(Red);
+        Set_Pen_Color(Red);
         Box_Around_Viewport("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
         -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
         -- plstyl expects a pointer! (-- Not Ada.)
         Set_Line_Style(mark1, space1);
-        Set_Color(Yellow);
+        Set_Pen_Color(Yellow);
         Box_Around_Viewport("g", 30.0, 0, "g", 0.2, 0);
         Set_Line_Style(Default_Continuous_Line);
         
-        Set_Color(Green);
+        Set_Pen_Color(Green);
         Write_Labels("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
         
         for i in x'Range loop
@@ -139,7 +139,7 @@ procedure xthick01a is
             y(i) := sin(x(i) * pi / 180.0);
         end loop;
         
-        Set_Color(Aquamarine);
+        Set_Pen_Color(Aquamarine);
         Draw_Curve(x, y);
     end plot3;
 

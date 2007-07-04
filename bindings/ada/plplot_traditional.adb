@@ -28,15 +28,6 @@ package body PLplot_Traditional is
 --        High-Level subroutines for thick binding                            --
 --------------------------------------------------------------------------------
 
-    -- Initialization. Must be called before starting to plot.
-    -- Certain other procedures, if used, must be called first.
-    -- Removed June 26, 2007 as being redundant wrt Initialize_PLplot.
---    procedure Initialize_Plotter is
---    begin
---        Initialize_PLplot;
---    end Initialize_Plotter;
-    
-
     -- When asked to draw white lines on black background, do it.
     -- This is the default.
     procedure Draw_White_On_Black is
@@ -681,6 +672,142 @@ package body PLplot_Traditional is
 
 --------- Simple color table manipulatons -----
 
+    -- Things for manipulating color map 0 --
+
+    -- Make a snapshot of color map 0 for possible later full or partial restoration.
+    -- This is automatically called at package initialization with results stored
+    -- in Default_Red_Components, Default_Green_Components, Default_Blue_Components.
+    procedure Make_Snapshot_Of_Color_Map_0 
+       (Reds, Greens, Blues : out Integer_Array_1D) is
+    begin
+        for i in Reds'range loop
+            plgcol0(i, Reds(i), Greens(i), Blues(i));
+        end loop;
+    end Make_Snapshot_Of_Color_Map_0;
+    
+    
+    -- Restore an arbitray snapshot of color map 0.
+    procedure Restore_Snapshot_Of_Color_Map_0
+       (Reds, Greens, Blues : Integer_Array_1D) is
+    begin
+        plscmap0(Reds, Greens, Blues);
+    end Restore_Snapshot_Of_Color_Map_0;
+    
+    
+    -- Restore the default colors of color map 0 taken as a snapshot at initialization.
+    procedure Restore_Default_Snapshot_Of_Color_Map_0 is
+    begin
+        plscmap0n(Number_Of_Default_Colors);
+        plscmap0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
+    end Restore_Default_Snapshot_Of_Color_Map_0;
+    
+    
+    -- Functions which correspond to the default colors of color map 0. Calling
+    -- one of these (1) resets the corresponding slot in color map 0 to its 
+    -- default value, and (2) returns the correct integer value for the default 
+    -- color specified. Thus, using plcol0(Reset_Red) instead of 
+    -- plcol0(Red) guarantees that the color will be set to Red even if 
+    -- there have been prior manipulations of color 1.
+    
+    function Reset_Black return Integer is
+    begin
+        plscol0(0, Default_Red_Components(0), Default_Green_Components(0), Default_Blue_Components(0));
+        return 0;
+    end Reset_Black;
+    
+    function Reset_Red return Integer is
+    begin
+        plscol0(1, Default_Red_Components(1), Default_Green_Components(1), Default_Blue_Components(1));
+        return 1;
+    end Reset_Red;
+    
+    function Reset_Yellow return Integer is
+    begin
+        plscol0(2, Default_Red_Components(2), Default_Green_Components(2), Default_Blue_Components(2));
+        return 2;
+    end Reset_Yellow;
+    
+    function Reset_Green return Integer is
+    begin
+        plscol0(3, Default_Red_Components(3), Default_Green_Components(3), Default_Blue_Components(3));
+        return 3;
+    end Reset_Green;
+    
+    function Reset_Aquamarine return Integer is
+    begin
+        plscol0(4, Default_Red_Components(4), Default_Green_Components(4), Default_Blue_Components(4));
+        return 4;
+    end Reset_Aquamarine;
+    
+    function Reset_Pink return Integer is
+    begin
+        plscol0(5, Default_Red_Components(5), Default_Green_Components(5), Default_Blue_Components(5));
+        return 5;
+    end Reset_Pink;
+    
+    function Reset_Wheat return Integer is
+    begin
+        plscol0(6, Default_Red_Components(6), Default_Green_Components(6), Default_Blue_Components(6));
+        return 6;
+    end Reset_Wheat;
+    
+    function Reset_Grey return Integer is
+    begin
+        plscol0(7, Default_Red_Components(7), Default_Green_Components(7), Default_Blue_Components(7));
+        return 7;
+    end Reset_Grey;
+    
+    function Reset_Brown return Integer is
+    begin
+        plscol0(8, Default_Red_Components(8), Default_Green_Components(8), Default_Blue_Components(8));
+        return 8;
+    end Reset_Brown;
+    
+    function Reset_Blue return Integer is
+    begin
+        plscol0(9, Default_Red_Components(9), Default_Green_Components(9), Default_Blue_Components(9));
+        return 9;
+    end Reset_Blue;
+    
+    function Reset_BlueViolet return Integer is
+    begin
+        plscol0(10, Default_Red_Components(10), Default_Green_Components(10), Default_Blue_Components(10));
+        return 10;
+    end Reset_BlueViolet;
+    
+    function Reset_Cyan return Integer is
+    begin
+        plscol0(11, Default_Red_Components(11), Default_Green_Components(11), Default_Blue_Components(11));
+        return 11;
+    end Reset_Cyan;
+    
+    function Reset_Turquoise return Integer is
+    begin
+        plscol0(12, Default_Red_Components(12), Default_Green_Components(12), Default_Blue_Components(12));
+        return 12;
+    end Reset_Turquoise;
+    
+    function Reset_Magenta return Integer is
+    begin
+        plscol0(13, Default_Red_Components(13), Default_Green_Components(13), Default_Blue_Components(13));
+        return 13;
+    end Reset_Magenta;
+    
+    function Reset_Salmon return Integer is
+    begin
+        plscol0(14, Default_Red_Components(14), Default_Green_Components(14), Default_Blue_Components(14));
+        return 14;
+    end Reset_Salmon;
+    
+    function Reset_White return Integer is
+    begin
+        plscol0(15, Default_Red_Components(15), Default_Green_Components(15), Default_Blue_Components(15));
+        return 15;
+    end Reset_White;
+
+
+    -- Things for manipulating color map 1 --
+
     -- Quick application of pre-fabricated color schemes to color map 1.
     procedure Quick_Set_Color_Map_1(Color_Theme : Color_Themes_For_Map_1_Type) is
     
@@ -1311,7 +1438,7 @@ package body PLplot_Traditional is
     -- Returns 8 bit RGB values for given color from color map 0
     procedure plgcol0
        (Color_Index      : Integer;
-        Red_Component, Green_Component, Blue_Component : out Color_Component_Type) is
+        Red_Component, Green_Component, Blue_Component : out Integer) is
     begin
         PLplot_Thin.plgcol0(Color_Index, Red_Component, Green_Component, Blue_Component);
     end plgcol0;
@@ -1319,7 +1446,7 @@ package body PLplot_Traditional is
 
     -- Returns the background color by 8 bit RGB value
     procedure plgcolbg
-       (Red_Component, Green_Component, Blue_Component : out Color_Component_Type) is
+       (Red_Component, Green_Component, Blue_Component : out Integer) is
     begin
         PLplot_Thin.plgcolbg(Red_Component, Green_Component, Blue_Component);
     end plgcolbg;
@@ -1837,7 +1964,7 @@ package body PLplot_Traditional is
 
 
     -- Set line color by 8 bit RGB values.
-    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Color_Component_Type) is
+    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Integer) is
     begin
         PLplot_Thin.plrgb1(Red_Component, Blue_Component, Green_Component);
     end plrgb1;
@@ -1936,7 +2063,7 @@ package body PLplot_Traditional is
     -- Set a given color from color map 0 by 8 bit RGB value
     procedure plscol0
        (Plot_Color : Plot_Color_Type;
-        Red_Component, Green_Component, Blue_Component : Color_Component_Type) is
+        Red_Component, Green_Component, Blue_Component : Integer) is
     begin
         PLplot_Thin.plscol0(Plot_Color, Red_Component, Green_Component, Blue_Component);
     end plscol0;
@@ -1944,7 +2071,7 @@ package body PLplot_Traditional is
 
     -- Set the background color by 8 bit RGB value
     procedure plscolbg
-       (Red_Component, Green_Component, Blue_Component : Color_Component_Type) is
+       (Red_Component, Green_Component, Blue_Component : Integer) is
     begin
         PLplot_Thin.plscolbg(Red, Green, Blue);
     end plscolbg;
@@ -2678,5 +2805,13 @@ begin -- package body for PLplot
     -- Set_Orientation(Landscape); -- Optional; before Initialize_PLplot if used.
 
     -- Initialize_PLplot;
-    null;
+
+
+    -- Capture the initial, default, settings of color map 0 since these will be  
+    -- lost if the settings for color map 0 are set by the user. They can be 
+    -- restored collectively by calling Restore_Default_Snapshot_Of_Color_Map_0 
+    -- or individually by calling functions such as Reset_Red etc. for each of 
+    -- the 16 default colors of color map 0.
+    Make_Snapshot_Of_Color_Map_0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
+
 end PLplot_Traditional;
