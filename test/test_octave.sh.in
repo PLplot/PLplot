@@ -84,3 +84,7 @@ if ! isempty (failed)
     exit (1);
 endif
 EOF
+status_code=$?
+if [ "$status_code" -ne 0 ]; then
+  exit $status_code
+fi
