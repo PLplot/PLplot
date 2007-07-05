@@ -27,6 +27,11 @@
 # pushd $adadir; make; popd
 
 # Do the standard non-interactive examples.
-for index in 01 10 12 thick01 thick10 thick12; do
+for index in 01 02 10 12 thick01 thick10 thick12; do
   $adadir/x${index}a -dev $device -o ${OUTPUT_DIR}/x${index}a.$dsuffix $options
+  return_value=$?
+  if [ "$return_value" -ne 0 ]
+  then
+    exit $return_value
+  fi
 done
