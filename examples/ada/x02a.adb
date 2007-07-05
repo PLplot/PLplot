@@ -136,7 +136,6 @@ procedure x02a is
 	    -- approximately like C to match that example.  -0.5 produces
 	    -- at least one -1 result (rather than zero) so we subtract
 	    -- something with a slightly smaller absolute value.
-	    5252Hence suMust convert float to integer like C here.
             r(i+16) := Integer((r1 * 255.0)-0.4999999);
             g(i+16) := Integer((g1 * 255.0)-0.4999999);
             b(i+16) := Integer((b1 * 255.0)-0.4999999);
