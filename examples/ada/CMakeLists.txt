@@ -21,9 +21,11 @@
 set(ada_STRING_INDICES
 "01"
 "02"
+"04"
 "10"
 "12"
 "thick01"
+"thick04"
 "thick10"
 "thick12"
 )
