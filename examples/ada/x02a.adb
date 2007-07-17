@@ -1,4 +1,4 @@
--- $Id: x12a.adb 7744 2007-07-04 15:24:15Z airwin $
+-- $Id: xthick02a.adb xxxxx $
 
 -- Multiple window and color map 0 demo.
 
@@ -21,7 +21,6 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
-    Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
@@ -30,7 +29,6 @@ with
     PLplot_Auxiliary;
 
 use
-    Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
@@ -86,6 +84,7 @@ procedure x02a is
     procedure demo1 is
     begin
         plbop;
+
         -- Divide screen into 16 regions
         plssub(4, 4);
         draw_windows(16, 0);
@@ -104,56 +103,54 @@ procedure x02a is
         r, g, b: Integer_Array_1D(0..115);
 
         -- Min & max lightness values
-        lmin : Long_Float := 0.15; lmax : Long_Float := 0.85;
+        lmin : Long_Float := 0.15;
+        lmax : Long_Float := 0.85;
         h, l, s : Long_Float;
         r1, g1, b1 : Long_Float;
-        --package Int_IO is new Ada.Text_IO.Integer_IO(INTEGER); use Int_IO;
     begin
         plbop;
 
         -- Divide screen into 100 regions.
-
         plssub(10, 10);
 
         for i in 0..99 loop
 
-            -- Bounds on HLS, from plhlsrgb() commentary --
-            -- hue		[0., 360.]	degrees
-            -- lightness	[0., 1.]	magnitude
-            -- saturation	[0., 1.]	magnitude
+            -- Bounds on HLS, from plhlsrgb() commentary
+            -- hue        [0., 360.] degrees
+            -- lightness  [0., 1.]   magnitude
+            -- saturation [0., 1.]   magnitude
 
             -- Vary hue uniformly from left to right
-	    h := (360.0 / 10.0 ) * Long_Float( i mod 10 );
-            -- Vary lightness uniformly from top to bottom, 
-	    -- between min & max.
-	    l := lmin + (lmax - lmin) * Long_Float(i / 10) / 9.0;
-    	    -- Use max saturation.
-	    s := 1.0;
+            h := (360.0 / 10.0 ) * Long_Float( i mod 10 );
+            
+            -- Vary lightness uniformly from top to bottom, between min & max.
+            l := lmin + (lmax - lmin) * Long_Float(i / 10) / 9.0;
+            
+            -- Use max saturation.
+            s := 1.0;
 
             plhlsrgb(h, l, s, r1, g1, b1);
 
-	    -- Ada rounds to nearest integer.  We want to truncate
-	    -- approximately like C to match that example.  -0.5 produces
-	    -- at least one -1 result (rather than zero) so we subtract
-	    -- something with a slightly smaller absolute value.
+            -- Ada rounds to nearest integer.  We want to truncate
+            -- approximately like C to match that example.  -0.5 produces
+            -- at least one -1 result (rather than zero) so we subtract
+            -- something with a slightly smaller absolute value.
             r(i+16) := Integer((r1 * 255.0)-0.4999999);
             g(i+16) := Integer((g1 * 255.0)-0.4999999);
             b(i+16) := Integer((b1 * 255.0)-0.4999999);
-	    -- Put("i+16, r(i+16), g(i+16), b(i+16) =");
-	    -- Put(i+16); Put(r(i+16)); Put(g(i+16)); Put(b(i+16)); New_Line;
-	end loop;
+        end loop;
 
         -- Load default cmap0 colors into our custom set.
         for i in 0..15 loop
-	    plgcol0(i, r(i), g(i), b(i));
-	end loop;
+            plgcol0(i, r(i), g(i), b(i));
+        end loop;
 
-	-- Now set cmap0 all at once (faster, since fewer driver calls).
-	plscmap0(r, g, b);
+        -- Now set cmap0 all at once (faster, since fewer driver calls).
+        plscmap0(r, g, b);
 
-	draw_windows( 100, 16 );
+        draw_windows(100, 16);
 
-	pleop;
+        pleop;
     end demo2;
 
 begin
