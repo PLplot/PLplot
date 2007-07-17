@@ -29,7 +29,7 @@ package PLplot is
     -- color map has been changed, then these colors will return surprising 
     -- results. Color map 0 can always be restored to its default state using 
     -- Restore_Default_Snapshot_Of_Color_Map_0.
-    subtype Plot_Color_Type is Integer range 0..255;
+    subtype Plot_Color_Type is Integer;
     Black      : constant Plot_Color_Type := 0;
     Red        : constant Plot_Color_Type := 1;
     Yellow     : constant Plot_Color_Type := 2;
