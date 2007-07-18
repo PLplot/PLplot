@@ -121,7 +121,7 @@ macro(pc_transform_link_flags _link_flags_out _link_flags_in)
     string(
     REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\${suffix}" "-L\\1 -l\\2"
     ${_link_flags_out}
-    ${${_link_flags_out}}
+    "${${_link_flags_out}}"
     )
     #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
   endforeach(suffix ${suffix_list})
