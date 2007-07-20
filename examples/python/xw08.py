@@ -88,8 +88,8 @@ def cmap1_init(gray):
 def main():
 
     rosen = 1
-    x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
-    y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
+    x = (arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
+    y = (arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
     if rosen == 1:
 	x = 1.5*x
 	y = 0.5 + y

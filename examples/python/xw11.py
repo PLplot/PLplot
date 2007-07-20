@@ -68,8 +68,8 @@ def cmap1_init(gray):
 
 def main():
 
-    x = 3.*(arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
-    y = 3.*(arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
+    x = 3.*(arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
+    y = 3.*(arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
     x.shape = (-1,1)
     z = 3. * (1.-x)*(1.-x) * exp(-(x*x) - (y+1.)*(y+1.)) - \
         10. * (x/5. - pow(x,3.) - pow(y,5.)) * exp(-x*x-y*y) - \

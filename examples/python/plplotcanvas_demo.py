@@ -55,7 +55,7 @@ def destroy(widget, data=None):
 plplot.plparseopts(sys.argv,plplot.PL_PARSE_FULL);
 
 # The data to plot
-x = Numeric.arange(11)
+x = arange(11)
 y = x**2/10.
 
 # Create the canvas and set its size; during the creation process,

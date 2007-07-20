@@ -50,14 +50,14 @@ import Numeric
 
 def main():
 
-    red =   Numeric.array([240, 204, 204, 204,   0,  39, 125])
-    green = Numeric.array([240,   0, 125, 204, 204,  80,   0])
-    blue =  Numeric.array([240,   0,   0,   0,   0, 204, 125])
+    red =   array([240, 204, 204, 204,   0,  39, 125])
+    green = array([240,   0, 125, 204, 204,  80,   0])
+    blue =  array([240,   0,   0,   0,   0, 204, 125])
 
-    px = Numeric.array([0.0, 0.0, 1.0, 1.0])
-    py = Numeric.array([0.0, 0.25, 0.25, 0.0])
+    px = array([0.0, 0.0, 1.0, 1.0])
+    py = array([0.0, 0.25, 0.25, 0.0])
     
-    sx = Numeric.array([
+    sx = array([
         0.16374,
         0.15844,
         0.15255,
@@ -72,7 +72,7 @@ def main():
         0.82647
         ])
     
-    sy = Numeric.array([
+    sy = array([
         0.125,
 	0.375,
 	0.625,

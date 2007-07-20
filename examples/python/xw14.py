@@ -102,7 +102,7 @@ def main():
 
 def plot1(xscale, yscale, xoff, yoff):
 
-    x = xoff + (xscale/60.)*(1+arrayrange(60))
+    x = xoff + (xscale/60.)*(1+arange(60))
     y = yoff + yscale*pow(x,2.)
 
     xmin = x[0]
@@ -150,7 +150,7 @@ def plot2():
 
     # Fill up the arrays
 
-    x = (arrayrange(100)-19)/6.0
+    x = (arange(100)-19)/6.0
     if 0.0 in x:
 	#use index method on x if/when Numeric provides it.
 	#replace 0.0 by small value that gives the same sinc(x) result.
@@ -194,7 +194,7 @@ def plot3():
     plcol0(3)
     pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function")
 
-    x = 3.6*arrayrange(101)
+    x = 3.6*arange(101)
     y = sin((pi/180.)*x)
 
     plcol0(4)
@@ -206,16 +206,16 @@ def plot3():
 def plot4():
 
     dtr = pi / 180.0
-    x0 = cos(dtr*arrayrange(361))
-    y0 = sin(dtr*arrayrange(361))
+    x0 = cos(dtr*arange(361))
+    y0 = sin(dtr*arange(361))
 
     # Set up viewport and window, but do not draw box
 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
-    i = 0.1*arrayrange(1,11)
+    i = 0.1*arange(1,11)
     #outerproduct(i,x0) and outerproduct(i,y0) is what we are 
-    #mocking up here since old numpy version does not have outerproduct.
+    #mocking up here since old Numeric version does not have outerproduct.
     i.shape = (-1,1)
     x=i*x0
     y=i*y0
@@ -245,7 +245,7 @@ def plot4():
 
     # Draw the graph
 
-    r = sin((dtr*5.)*arrayrange(361))
+    r = sin((dtr*5.)*arange(361))
     x = x0*r
     y = y0*r
 
@@ -277,8 +277,8 @@ def plot5():
     
     clevel = -1. + 0.2*arange(11)
 
-    xx = (arrayrange(XPTS) - XPTS/2) / float((XPTS/2))
-    yy = (arrayrange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
+    xx = (arange(XPTS) - XPTS/2) / float((XPTS/2))
+    yy = (arange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
     xx.shape = (-1,1)
     z = (xx*xx)-(yy*yy)
     # 2.*outerproduct(xx,yy) for new versions of Numeric which have outerproduct.

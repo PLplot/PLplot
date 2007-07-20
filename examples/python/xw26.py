@@ -104,7 +104,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label):
 
     pladv(0)
     f0 = 1.0
-    freql = -2.0 + arrayrange(101)/20.0
+    freql = -2.0 + arange(101)/20.0
     freq = pow(10.0, freql)
     ampl = 20.0 * log10(1.0 / sqrt(1.0 + pow((freq / f0), 2.)))
     phase = -(180.0 / pi) * arctan(freq / f0)

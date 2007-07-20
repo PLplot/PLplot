@@ -12,8 +12,8 @@ def main():
     # Furthermore, if you do fiddle with cmap1, it will screw up other
     # plots (unless you return to default cmap1 like is done with eighth
     # example.
-    x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
-    y = ((arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)) - 1.
+    x = (arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
+    y = ((arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)) - 1.
     x.shape = (-1,1)
     z = x*x - y*y + (x - y)/(x*x+y*y + 0.1)
     x.shape = (-1,)
@@ -47,8 +47,8 @@ def plot1(z, zmin, zmax):
     
     # Just use identity transform on indices of z mapped to -1, 1 range
     # in X and Y coordinates
-    plshade( z, -1., 1., -1., 1.,
-    shade_min, shade_max, sh_cmap, sh_color, sh_width,
+    plshade( z, -1., 1., -1., 1., 
+    shade_min, shade_max, sh_cmap, sh_color, sh_width, 
     min_color, min_width, max_color, max_width, 1)
 							
     plcol0(1)

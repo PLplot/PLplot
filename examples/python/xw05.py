@@ -12,7 +12,7 @@ def main():
     # Fill up data points
 
     delta = 2.0 * pi / NPTS
-    data = sin(delta*arrayrange(NPTS))
+    data = sin(delta*arange(NPTS))
 
     plcol0(1)
     plhist(data, -1.1, 1.1, 44, 0)

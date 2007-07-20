@@ -21,9 +21,9 @@ def main():
 
 	# From the mind of a sick and twisted physicist...
 	
-	z = -1. + (2./NPTS) * arrayrange(NPTS)
-	x = z*cos((2.*pi*6./NPTS)*arrayrange(NPTS))
-	y = z*sin((2.*pi*6./NPTS)*arrayrange(NPTS))
+	z = -1. + (2./NPTS) * arange(NPTS)
+	x = z*cos((2.*pi*6./NPTS)*arange(NPTS))
+	y = z*sin((2.*pi*6./NPTS)*arange(NPTS))
 
 	for k in range(4):
 		pladv(0)
@@ -80,18 +80,18 @@ def test_poly(k):
 ##      z = r cos(phi)
 ##      r = 1 :=)
 
-	cosi0 = cos(THETA(arrayrange(20)))
-	cosi1 = cos(THETA(arrayrange(1,21)))
-	sini0 = sin(THETA(arrayrange(20)))
-	sini1 = sin(THETA(arrayrange(1,21)))
+	cosi0 = cos(THETA(arange(20)))
+	cosi1 = cos(THETA(arange(1,21)))
+	sini0 = sin(THETA(arange(20)))
+	sini1 = sin(THETA(arange(1,21)))
 	cosi0.shape = (-1,1)
 	cosi1.shape = (-1,1)
 	sini0.shape = (-1,1)
 	sini1.shape = (-1,1)
-	cosj0 = cos(PHI(arrayrange(20)))
-	cosj1 = cos(PHI(arrayrange(1,21)))
-	sinj0 = sin(PHI(arrayrange(20)))
-	sinj1 = sin(PHI(arrayrange(1,21)))
+	cosj0 = cos(PHI(arange(20)))
+	cosj1 = cos(PHI(arange(1,21)))
+	sinj0 = sin(PHI(arange(20)))
+	sinj1 = sin(PHI(arange(1,21)))
 
 	x0 = cosi0*sinj0
 	y0 = sini0*sinj0

@@ -29,7 +29,7 @@ def main():
 	if i == 4:
 	    theta1 = 500
 
-	theta = arrayrange(theta0,theta1+1)
+	theta = arange(theta0,theta1+1)
 	x = concatenate((array([5.]), (5. + 3.*cos((2.*pi/500.)*theta))))
 	y = concatenate((array([5.]), (5. + 3.*sin((2.*pi/500.)*theta))))
 

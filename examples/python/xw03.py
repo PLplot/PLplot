@@ -8,16 +8,16 @@ from plplot import *
 def main():
 
     dtr = pi / 180.0
-    x0 = cos(dtr*arrayrange(361))
-    y0 = sin(dtr*arrayrange(361))
+    x0 = cos(dtr*arange(361))
+    y0 = sin(dtr*arange(361))
 
     # Set up viewport and window, but do not draw box
 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
-    i = 0.1*arrayrange(1,11)
+    i = 0.1*arange(1,11)
     #outerproduct(i,x0) and outerproduct(i,y0) is what we are 
-    #mocking up here since old numpy version does not have outerproduct.
+    #mocking up here since old Numeric version does not have outerproduct.
     i.shape = (-1,1)
     x=i*x0
     y=i*y0
@@ -47,7 +47,7 @@ def main():
 
     # Draw the graph
 
-    r = sin((dtr*5.)*arrayrange(361))
+    r = sin((dtr*5.)*arange(361))
     x = x0*r
     y = y0*r
 

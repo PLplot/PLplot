@@ -24,17 +24,17 @@ def main():
 
     # Set up data array
 
-    x = (arrayrange(NX) - (NX/2)) / float(NX/2)
+    x = (arange(NX) - (NX/2)) / float(NX/2)
     x.shape = (-1,1)
-    y = (arrayrange(NY) - (NY/2)) / float(NY/2) - 1.
+    y = (arange(NY) - (NY/2)) / float(NY/2) - 1.
     zz = -sin(7.*x) * cos(7.*y) + x*x - y*y
     ww = -cos(7.*x) * sin(7.*y) + 2.*x*y
     
     zmin = min(zz.flat)
     zmax = max(zz.flat)
 
-    clevel = zmin + (zmax - zmin) * (arrayrange(NS)+0.5)/NS
-    shedge = zmin + (zmax - zmin) * (arrayrange(NS+1))/NS
+    clevel = zmin + (zmax - zmin) * (arange(NS)+0.5)/NS
+    shedge = zmin + (zmax - zmin) * (arange(NS+1))/NS
 
     # Build the identity transformation between grid and world coordinates
     # using mypltr.
@@ -142,9 +142,9 @@ def main():
 
     # Build new coordinate matrices.
     
-    r = arrayrange(NX)/(NX-1.)
+    r = arange(NX)/(NX-1.)
     r.shape = (-1,1)
-    t = (2.*pi/(NY-1.))*arrayrange(NY-1)
+    t = (2.*pi/(NY-1.))*arange(NY-1)
     xg = r*cos(t)
     yg = r*sin(t)
     z = exp(-r*r)*cos(5.*pi*r)*cos(5.*t)
@@ -153,7 +153,7 @@ def main():
 
     zmin = min(z.flat)
     zmax = max(z.flat)
-    shedge = zmin + ((zmax - zmin)/NS) * (arrayrange(NS+1))
+    shedge = zmin + ((zmax - zmin)/NS) * (arange(NS+1))
 
     plpsty(0)
 
@@ -162,7 +162,7 @@ def main():
     plshades(z, shedge, fill_width, 0, pltr2, xg, yg, 2)
 
     # Now we can draw the perimeter.  (If do before, plshades may overlap.)
-    t = 2.*pi*arrayrange(PERIMETERPTS)/(PERIMETERPTS-1.)
+    t = 2.*pi*arange(PERIMETERPTS)/(PERIMETERPTS-1.)
     px = cos(t)
     py = sin(t)
 

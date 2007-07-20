@@ -68,7 +68,7 @@ canvas0=None
 canvas1=None
 
 # Create the x array
-x = Numeric.arange(NPTS)
+x = arange(NPTS)
 
 # Lock on the gtkstate so that we don't try to plot after gtk_main_quit
 GTKSTATE_CONTINUE=True
@@ -109,7 +109,7 @@ def plot(canvas,offset,title):
     Nstream = canvas.get_stream_number()
 
     # Generate the sinusoid
-    y = Numeric.sin(2.*3.14*(x+offset*(Nstream+1))/PERIOD/(Nstream+1))
+    y = sin(2.*3.14*(x+offset*(Nstream+1))/PERIOD/(Nstream+1))
     
     # Draw the line
     canvas.line(x, y)

@@ -66,8 +66,8 @@ title = (
 lo = (
 "0x0",
 "0x0",
-"0x0",
-"0x0",
+"0x40",
+"0x80",
 "0x2153",
 "0x2190",
 "0x21d0",
@@ -78,10 +78,10 @@ lo = (
 )
 
 hi = (
-"0x0",
-"0x0",
-"0x0",
-"0x0",
+"0x30",
+"0x40",
+"0x80",
+"0xA6",
 "0x2184",
 "0x21d0",
 "0x2200",
@@ -155,28 +155,22 @@ def main():
 	deltay = 1./float(nycells[page])
 	plbox("bcg", deltax, 0, "bcg", deltay, 0)
 	plcol0(15)
-	if page == 0:
-	    # Greek letters.
-	    CommandString = Greek
-	elif 1 <= page and page <= 3:
-	    # Unicode for Type 1 Symbol Glyphs.
-	    # Work around Numeric bug which only allows you to add one-character
-	    # strings to arrays of Pyobjects.
-	    CommandString = "#" + ("[" + array(Type1,PyObject)\
-	    [offset[page]:offset[page]+(nxcells[page]*nycells[page])] + "]")
-	elif page >= 4:
-	    numarray = arange(int(lo[page],16),int(hi[page],16))
-	    symbolarray = []
-	    for number in numarray:
-		symbolarray.append(hex(number))
-	    CommandString = "#" + ("[" + array(symbolarray,PyObject) + "]")
-	length = len(CommandString)
+	length = int(hi[page],16) - int(lo[page],16)
 	slice = 0
 	for y in (0.5+arange(nycells[page]-1,-1,-1))*deltay:
 	    for x in (0.5+arange(nxcells[page]))*deltax:
 		if slice < length:
-		    plptex(x,y+yoffset,1.,0.,0.5, CommandString[slice])
-		    plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString[slice])
+	            if page == 0:
+		        # Greek letters.
+		        CommandString = str(Greek[slice]);
+	            elif 1 <= page and page <= 3:
+	    		# Unicode for Type 1 Symbol Glyphs.
+			CommandString = "#[" + str(Type1\
+	    		[offset[page]+slice]) + "]"
+		    elif page >= 4:
+			CommandString = "#[" + str(int(lo[page],16)+slice) + "]"
+		    plptex(x,y+yoffset,1.,0.,0.5, CommandString)
+		    plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString)
 		slice += 1
 
 	plschr(0., 1.0)

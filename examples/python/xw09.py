@@ -114,11 +114,11 @@ def potential():
     dz = (zmax-zmin)/float(nlevel)
     clevel = zmin + (arange(20)+0.5)*dz
     try:
-	#This works with numpy 20.3
+	#This works with Numeric 20.3
 	clevelpos = compress(clevel > 0., clevel)
 	clevelneg = compress(clevel <= 0., clevel)
     except:
-	#Eventually eliminate this as we quit supporting old numpy versions.
+	#Eventually eliminate this as we quit supporting old Numeric versions.
 	print "Calculate negative and positive contours the old-fashioned way"
 	clevelpos = zeros(20,"double")
 	clevelneg = zeros(20,"double")
@@ -176,8 +176,8 @@ def main():
     
     clevel = -1. + 0.2*arange(11)
 
-    xx = (arrayrange(XPTS) - XPTS/2) / float((XPTS/2))
-    yy = (arrayrange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
+    xx = (arange(XPTS) - XPTS/2) / float((XPTS/2))
+    yy = (arange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
     xx.shape = (-1,1)
     z = (xx*xx)-(yy*yy)
     # 2.*outerproduct(xx,yy) for new versions of Numeric which have outerproduct.

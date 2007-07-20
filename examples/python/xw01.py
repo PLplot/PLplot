@@ -47,7 +47,7 @@ def main():
 
 def plot1(xscale, yscale, xoff, yoff):
 
-    x = xoff + (xscale/60.)*(1+arrayrange(60))
+    x = xoff + (xscale/60.)*(1+arange(60))
     y = yoff + yscale*pow(x,2.)
 
     xmin = x[0]
@@ -94,7 +94,7 @@ def plot2():
 
     # Fill up the arrays
 
-    x = (arrayrange(100)-19)/6.0
+    x = (arange(100)-19)/6.0
     if 0.0 in x:
 	#use index method on x if/when Numeric provides it.
 	#replace 0.0 by small value that gives the same sinc(x) result.
@@ -139,7 +139,7 @@ def plot3():
     plcol0(3)
     pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function")
 
-    x = 3.6*arrayrange(101)
+    x = 3.6*arange(101)
     y = sin((pi/180.)*x)
 
     plcol0(4)
