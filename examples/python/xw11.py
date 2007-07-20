@@ -119,6 +119,6 @@ def main():
 	    plmtex("t", 1.0, 0.5, 0.5, title[k])
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
     restore_cmap1()
 main()

@@ -147,7 +147,7 @@ def main():
 		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
     restore_cmap1()
 
 main()

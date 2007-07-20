@@ -98,7 +98,7 @@ def main():
 
     # Restore defaults
     plfont(1)
-    plcol0(1)
+    #plcol0(1)
     
 def plot1(type, x_label, y_label, alty_label, title_label, line_label):
 

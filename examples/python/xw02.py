@@ -89,7 +89,7 @@ def main():
     # Restore defaults
     plssub(1, 1)
     plfont(1)
-    plcol0(1)
+#    plcol0(1)
     pleop()
 
 main()

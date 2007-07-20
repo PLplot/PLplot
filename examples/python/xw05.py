@@ -21,6 +21,6 @@ def main():
 	   "#frPLplot Example 5 - Probability function of Oscillator")
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
 
 main()

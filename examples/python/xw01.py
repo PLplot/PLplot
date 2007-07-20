@@ -39,7 +39,7 @@ def main():
     plot3()
 
     # Restore defaults
-    plcol0(1)
+#    plcol0(1)
     plssub(1, 1)
     pleop()
 

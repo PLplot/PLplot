@@ -27,7 +27,7 @@ def main():
 	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
 
 def fbox( x0, y0 ):
 

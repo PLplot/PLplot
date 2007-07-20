@@ -24,7 +24,7 @@ def main():
     plot2(z, zmin, zmax)
     
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
 	
 def plot1(z, zmin, zmax):
 # Illustrates a single shaded region

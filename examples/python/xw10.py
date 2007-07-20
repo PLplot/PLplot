@@ -18,6 +18,6 @@ def main():
     plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)")
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
     
 main()

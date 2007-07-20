@@ -49,6 +49,6 @@ def main():
 	plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols")
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
 
 main()

@@ -49,7 +49,7 @@ def main():
 		plmtex("t", 1.0, 0.5, 0.5, title)
 
 	# Restore defaults
-	plcol0(1)
+	#plcol0(1)
 
 def THETA(a):
     return 2. * pi * (a) / 20.

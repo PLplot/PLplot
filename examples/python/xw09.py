@@ -292,7 +292,7 @@ def main():
 #    potential()
 
 # Restore defaults
-    plcol0(1)
+    #plcol0(1)
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
 
 main()

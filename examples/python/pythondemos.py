@@ -47,6 +47,9 @@ for i in range(1, 14) + [15, 16, 18, 22, 23, 26]:
 	__import__(script, globals(), locals(), [])
     except:
 	failed.append(script)
+    # Reset color here rather than in individual examples to ensure results
+    # for individual tests are identical to C versions
+    plcol0(1)
 
 # Terminate plplot
 plend()

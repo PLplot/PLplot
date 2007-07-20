@@ -176,6 +176,6 @@ def main():
     pllab( "", "",  "Tokamak Bogon Instability" )
 
     # Restore defaults
-    plcol0(1)
+    #plcol0(1)
 
 main()

@@ -56,6 +56,6 @@ def main():
 
     # Restore defaults
     plfont(1)
-    plcol0(1)
+    #plcol0(1)
 	
 main()
