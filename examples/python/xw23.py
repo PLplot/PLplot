@@ -168,7 +168,7 @@ def main():
 			CommandString = "#[" + str(Type1\
 	    		[offset[page]+slice]) + "]"
 		    elif page >= 4:
-			CommandString = "#[" + str(int(lo[page],16)+slice) + "]"
+			CommandString = "#[" + hex(int(lo[page],16)+slice) + "]"
 		    plptex(x,y+yoffset,1.,0.,0.5, CommandString)
 		    plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString)
 		slice += 1
