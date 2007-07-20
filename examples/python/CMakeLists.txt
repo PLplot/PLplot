@@ -147,7 +147,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
 @ONLY
 )
 
-set(python_location1)
+set(python_location1 ${PYTHON_INSTDIR})
 set(python_location2)
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
