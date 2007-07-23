@@ -32,7 +32,7 @@ NOTICE
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301  USA
 """
-import Numeric
+import ${PYTHON_NUMERIC_NAME}
 import plplot_python_start
 import plplotcanvas
 import plplot
@@ -55,7 +55,7 @@ def destroy(widget, data=None):
 plplot.plparseopts(sys.argv,plplot.PL_PARSE_FULL);
 
 # The data to plot
-x = arange(11)
+x = ${PYTHON_NUMERIC_NAME}.arange(11)
 y = x**2/10.
 
 # Create the canvas and set its size; during the creation process,

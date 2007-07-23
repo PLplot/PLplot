@@ -20,6 +20,14 @@
 
 if(ENABLE_python)
 
+# Configure the python scripts to use the correct version of the Numeric library
+if (NUMPY_FOUND)
+  configure_file(plplot.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
+else (NUMPY_FOUND)
+  configure_file(plplot.py.Numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
+endif (NUMPY_FOUND)
+
+
 # This is currently the include list for swig, the C wrapper and the
 # the Python headers. Not particular pretty...
 set(python_interface_INCLUDE_PATHS
@@ -85,7 +93,7 @@ WORLD_READ
 WORLD_EXECUTE
 )
 install(
-FILES plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
 DESTINATION ${PYTHON_INSTDIR}
 PERMISSIONS ${PERM_SCRIPTS}
 )

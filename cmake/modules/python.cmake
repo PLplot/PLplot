@@ -61,13 +61,36 @@ if(ENABLE_python)
 endif(ENABLE_python)
 
 if(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
-  # Check for Python Numeric header in same include path or Numeric
-  # subdirectory of that path to avoid version mismatch.
-  find_path(
-  NUMERIC_INCLUDE_PATH
-  arrayobject.h
-  ${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_PATH}/Numeric
+  option(HAVE_NUMPY "New version of numpy available" OFF)
+  if (HAVE_NUMPY)
+  # First check for new version of numpy (replaces Numeric)
+  execute_process(
+  COMMAND
+  ${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
+  OUTPUT_VARIABLE NUMPY_INCLUDE_PATH
+  RESULT_VARIABLE NUMPY_ERR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
   )
+  if (NUMPY_ERR)
+    set(HAVE_NUMPY OFF)
+  endif (NUMPY_ERR)
+  endif (HAVE_NUMPY)
+  if (HAVE_NUMPY)
+    # Set include path to find numpy headers
+    set(NUMERIC_INCLUDE_PATH ${NUMPY_INCLUDE_PATH}/numpy CACHE PATH "Path to python Numeric/numpy include files")
+    set(PYTHON_NUMERIC_NAME numpy CACHE INTERNAL "")
+  else (HAVE_NUMPY)
+    # Check for Python Numeric header in same include path or Numeric
+    # subdirectory of that path to avoid version mismatch.
+    find_path(
+    NUMERIC_INCLUDE_PATH
+    arrayobject.h
+    ${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_PATH}/Numeric
+    )
+    if (NUMERIC_INCLUDE_PATH)
+      set(PYTHON_NUMERIC_NAME Numeric CACHE INTERNAL "")
+    endif (NUMERIC_INCLUDE_PATH)
+  endif (HAVE_NUMPY)
   if(NUMERIC_INCLUDE_PATH)
     set(
     PYTHON_INCLUDE_PATH

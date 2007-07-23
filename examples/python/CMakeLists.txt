@@ -43,30 +43,46 @@ set(python_STRING_INDICES
 )
 
 set(python_SCRIPTS)
+set(python_SCRIPTS_CREATE)
 set(python_DATA)
+set(python_DATA_CREATE)
 foreach(STRING_INDEX ${python_STRING_INDICES})
+  configure_file(xw${STRING_INDEX}.py.in ${CMAKE_CURRENT_BINARY_DIR}/xw${STRING_INDEX}.py)
   set(python_SCRIPTS ${python_SCRIPTS} x${STRING_INDEX})
-  set(python_DATA ${python_DATA} xw${STRING_INDEX}.py)
+  set(python_DATA_CREATE ${python_DATA_CREATE} ${CMAKE_CURRENT_BINARY_DIR}/xw${STRING_INDEX}.py)
 endforeach(STRING_INDEX ${python_STRING_INDICES})
+
+configure_file(xw14.py.in ${CMAKE_CURRENT_BINARY_DIR}/xw14.py)
+configure_file(xw17.py.in ${CMAKE_CURRENT_BINARY_DIR}/xw17.py)
+configure_file(prova.py.in ${CMAKE_CURRENT_BINARY_DIR}/prova.py)
+configure_file(qplplot.py.in ${CMAKE_CURRENT_BINARY_DIR}/qplplot.py)
+if (ENABLE_pygcw)
+  configure_file(plplotcanvas_demo.py.in ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_demo.py)
+  configure_file(plplotcanvas_animation.py.in ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_animation.py)
+endif (ENABLE_pygcw)
 
 # This list contains standalone scripts which are executable and which
 # should be installed in the examples/python directory.
 set(
 python_SCRIPTS
 ${python_SCRIPTS}
-prova.py
 pythondemos.py
 x14
 x17
-xw14.py
-xw17.py
+)
+set(
+python_SCRIPTS_CREATE
+${python_SCRIPTS_CREATE}
+${CMAKE_CURRENT_BINARY_DIR}/prova.py
+${CMAKE_CURRENT_BINARY_DIR}/xw14.py
+${CMAKE_CURRENT_BINARY_DIR}/xw17.py
 )
 if(ENABLE_pygcw)
   set(
-  python_SCRIPTS 
-  ${python_SCRIPTS}
-  plplotcanvas_demo.py
-  plplotcanvas_animation.py
+  python_SCRIPTS_CREATE
+  ${python_SCRIPTS_CREATE}
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_demo.py
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_animation.py
  )
 endif(ENABLE_pygcw)
 
@@ -83,6 +99,10 @@ install(FILES ${python_SCRIPTS}
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_SCRIPTS}
 )
+install(FILES ${python_SCRIPTS_CREATE} 
+DESTINATION ${DATA_DIR}/examples/python
+PERMISSIONS ${PERM_SCRIPTS}
+)
 
 # This list contains python modules which are not executable on their own and
 # data files that should be installed in the examples/python directory.
@@ -91,7 +111,11 @@ set(
 python_DATA
 ${python_DATA}
 README.pythondemos
-qplplot.py
+)
+set(
+python_DATA_CREATE
+${python_DATA_CREATE}
+${CMAKE_CURRENT_BINARY_DIR}/qplplot.py
 )
 
 if(ENABLE_pygcw)
@@ -109,6 +133,10 @@ GROUP_READ
 WORLD_READ
 )
 install(FILES ${python_DATA} 
+DESTINATION ${DATA_DIR}/examples/python
+PERMISSIONS ${PERM_DATA}
+)
+install(FILES ${python_DATA_CREATE} 
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_DATA}
 )

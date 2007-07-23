@@ -30,7 +30,7 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 # Initialize plplot
 plinit()
 
-from Numeric import *
+from ${PYTHON_NUMERIC_NAME} import *
 from random import random
 from time import sleep
 

@@ -1,4 +1,4 @@
-from Numeric import *
+from ${PYTHON_NUMERIC_NAME} import *
 from plplot import *
 
 # Demonstrates multiple windows and default color map 0 palette.

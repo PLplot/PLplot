@@ -2,7 +2,7 @@ import qt
 from qt import QWidget 
 import plplot
 import plplot_widget
-from Numeric import array
+from ${PYTHON_NUMERIC_NAME} import array
 
 class qplplot(QWidget):
 

@@ -1,4 +1,4 @@
-from Numeric import *
+from ${PYTHON_NUMERIC_NAME} import *
 from plplot import *
 
 text = ["Maurice",
