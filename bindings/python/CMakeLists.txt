@@ -21,11 +21,11 @@
 if(ENABLE_python)
 
 # Configure the python scripts to use the correct version of the Numeric library
-if (NUMPY_FOUND)
+if (HAVE_NUMPY)
   configure_file(plplot.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
-else (NUMPY_FOUND)
+else (HAVE_NUMPY)
   configure_file(plplot.py.Numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
-endif (NUMPY_FOUND)
+endif (HAVE_NUMPY)
 
 
 # This is currently the include list for swig, the C wrapper and the
