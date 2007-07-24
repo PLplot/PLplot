@@ -198,6 +198,13 @@ set(CPACK_SOURCE_IGNORE_FILES
 "^${PROJECT_SOURCE_DIR}.*/CVS/"
 "^${PROJECT_SOURCE_DIR}/debian/"
 "^${PROJECT_SOURCE_DIR}/old/"
+"^${PROJECT_SOURCE_DIR}/sys/mac"
+"^${PROJECT_SOURCE_DIR}/sys/os2"
+"^${PROJECT_SOURCE_DIR}/sys/unix"
+"^${PROJECT_SOURCE_DIR}/sys/dos/msc"
+"^${PROJECT_SOURCE_DIR}/sys/dos/bcc"
+"^${PROJECT_SOURCE_DIR}/sys/dos/emx"
+"^${PROJECT_SOURCE_DIR}/sys/win-tk"
 )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
