@@ -58,7 +58,11 @@ woody).
 #define  PyArray_PLFLT PyArray_FLOAT
 #endif
 
-#define  PyArray_PLINT PyArray_LONG
+#ifdef HAVE_NUMPY
+#define  PyArray_PLINT PyArray_INT32
+#else
+#define  PyArray_PLINT PyArray_INT
+#endif
 /* python-1.5 compatibility mode? */
 #define PySequence_Fast_GET_ITEM PySequence_GetItem
 #define PySequence_Size PySequence_Length
@@ -70,7 +74,9 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
-typedef long PLINT;
+/* This assumes that C int is 32-bit - swig doesn't know about int32_t */
+/* Ideally we should have a typemap for it */
+typedef int PLINT;
 typedef unsigned int PLUNICODE;
 typedef PLINT PLBOOL;
 
@@ -105,9 +111,33 @@ Naming rules:
 			 PLINT arrays
 **********************************************************************************/
 
+/* If Python integers are not 32-bit then we need to do some casting */
+#if SIZEOF_LONG != 4
+%wrapper %{
+/* some really twisted stuff to allow calling a single precision library from python */
+PyArrayObject* myIntArray_ContiguousFromObject(PyObject* in, int type, int mindims, int maxdims)
+{
+  PyArrayObject* tmp = (PyArrayObject*)PyArray_ContiguousFromObject(in, PyArray_PLINT,
+                                                                    mindims, maxdims);
+  if (!tmp) {
+    /* could be an incoming long array which can't be "safely" converted, do it anyway */
+    if(PyArray_Check(in)) {
+      PyErr_Clear();
+      tmp = (PyArrayObject*)PyArray_Cast((PyArrayObject*)in, PyArray_PLINT);
+    }
+  }
+  return tmp;
+}
+ %}
+#else
+%wrapper %{
+#define myIntArray_ContiguousFromObject PyArray_ContiguousFromObject
+  %}
+#endif
+ 
 /* With preceding count */
 %typemap(in) (PLINT n, PLINT *Array) (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   $1 = Alen = tmp->dimensions[0];
   $2 = (PLINT*)tmp->data;
@@ -116,7 +146,7 @@ Naming rules:
 
 /* Trailing count and check consistency with previous */
 %typemap(in) (PLINT *ArrayCk, PLINT n) (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Alen) {
     PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
@@ -129,7 +159,7 @@ Naming rules:
 
 /* No count but check consistency with previous */
 %typemap(in) PLINT *ArrayCk (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Alen) {
     PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
@@ -141,7 +171,7 @@ Naming rules:
 
 /* Weird case to allow argument to be one shorter than others */
 %typemap(in) PLINT *ArrayCkMinus1 (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] < Alen-1) {
     PyErr_SetString(PyExc_ValueError, "Vector must be at least length of others minus 1.");
@@ -152,7 +182,7 @@ Naming rules:
 %typemap(freearg) PLINT *ArrayCkMinus1 { Py_DECREF(tmp$argnum);}
 
 %typemap(in) PLINT *ArrayCkMinus1Null (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] < Alen-1) {
     PyErr_SetString(PyExc_ValueError, "Vector must be at least length of others minus 1.");
@@ -164,7 +194,7 @@ Naming rules:
 
 /* No length but remember size to check others */
 %typemap(in) PLINT *Array (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
   if(tmp == NULL) return NULL;
   Alen = tmp->dimensions[0];
   $1 = (PLINT*)tmp->data;

@@ -101,6 +101,9 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #cmakedefine HAVE_NDIR_H 1
 
+/* Define if python numpy is available */
+#cmakedefine HAVE_NUMPY
+
 /* Define if libpango is available */
 #cmakedefine HAVE_PANGO
 
