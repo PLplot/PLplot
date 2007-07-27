@@ -46,7 +46,9 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
-typedef long PLINT;
+/* This assumes that C int is 32-bit - swig doesn't know about int32_t */
+/* Ideally we should have a typemap for it */
+typedef int PLINT;
 typedef unsigned int PLUNICODE;
 typedef PLINT PLBOOL;
 
