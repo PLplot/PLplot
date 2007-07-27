@@ -723,6 +723,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    ai = (jobject *) malloc( nx * sizeof(jobject) );
    adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
 
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
+
    for( i=0; i < nx; i++ )
      {
 	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
@@ -783,6 +785,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    ai = (jobject *) malloc( nx * sizeof(jobject) );
    adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
 
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
+
    for( i=0; i < nx; i++ )
      {
 	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
@@ -836,6 +840,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    ai = (jobject *) malloc( nx * sizeof(jobject) );
    adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
 
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
+
    for( i=0; i < nx; i++ )
      {
 	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
@@ -886,6 +892,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    int i, j;
    ai = (jobject *) malloc( nx * sizeof(jobject) );
    adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
 
    for( i=0; i < nx; i++ )
      {
@@ -942,6 +950,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    int nx = (*jenv)->GetArrayLength( jenv, $input );
    int ny = -1;
    int i;
+
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
 
    for ( i=0; i < nx ; i++)
      {
@@ -1039,6 +1049,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    ai = (jobject *) malloc( nx * sizeof(jobject) );
    adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
 
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
+
    for( i=0; i < nx; i++ )
      {
 	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
@@ -1101,6 +1113,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    PLcGrid2 cgrid;
    ai = (jobject *) malloc( nx * sizeof(jobject) );
    adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
 
    for( i=0; i < nx; i++ )
      {
