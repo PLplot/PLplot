@@ -286,6 +286,16 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 }
 %typemap(freearg) PLFLT *ArrayCkY { Py_DECREF(tmp$argnum);}
 
+/* set X length for later consistency checking, with trailing count */
+%typemap(in) (PLFLT *ArrayX, PLINT nx) (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
+  if(tmp == NULL) return NULL;
+  Xlen = tmp->dimensions[0];
+  $2 = Xlen;
+  $1 = (PLFLT*)tmp->data;
+}
+%typemap(freearg) (PLFLT *ArrayX, PLINT nx) {Py_DECREF(tmp$argnum); }
+
 /* set X length for later consistency checking */
 %typemap(in) PLFLT *ArrayX (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
@@ -295,6 +305,16 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 }
 %typemap(freearg) PLFLT *ArrayX {Py_DECREF(tmp$argnum);}
 
+/* Set Y length for later consistency checking, with trailing count */
+%typemap(in) (PLFLT *ArrayY, PLINT ny) (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
+  if(tmp == NULL) return NULL;
+  Ylen = tmp->dimensions[0];
+  $2 = Ylen;
+  $1 = (PLFLT*)tmp->data;
+}
+%typemap(freearg) (PLFLT *ArrayY, PLINT ny) {Py_DECREF(tmp$argnum); }
+
 /* set Y length for later consistency checking */
 %typemap(in) PLFLT *ArrayY (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
@@ -303,6 +323,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   $1 = (PLFLT*)tmp->data;
 }
 %typemap(freearg) (PLFLT *ArrayY) {Py_DECREF(tmp$argnum);}
+
 
 /* with trailing count */
 %typemap(in) (PLFLT *Array, PLINT n) (PyArrayObject* tmp) {
@@ -407,6 +428,27 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   Py_DECREF(tmp$argnum);
   free($1);
 }
+
+/* 2D array, check for consistency input / output version */
+%typemap(in) PLFLT **OutMatrixCk (PyArrayObject* tmp) {
+  int i, size;
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] != Xlen || tmp->dimensions[1] != Ylen) {
+    printf("%d %d %d %d\n",tmp->dimensions[0],Xlen,tmp->dimensions[1],Ylen);
+    PyErr_SetString(PyExc_ValueError, "Vectors must match matrix.");
+    return NULL;
+  }
+  size = sizeof(PLFLT)*Ylen;
+  $1 = (PLFLT**)malloc(sizeof(PLFLT*)*Xlen);
+  for(i=0; i<Xlen; i++)
+    $1[i] = (PLFLT*)(tmp->data + i*size);
+}
+%typemap(freearg) PLFLT **OutMatrixCk {
+  Py_DECREF(tmp$argnum);
+  free($1);
+}
+
 
 /***************************
 	String returning functions
