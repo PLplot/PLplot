@@ -41,10 +41,9 @@ DESCRIPTION
   to the two graphs is handled in two different threads.
 """
 import sys,threading
-import ${PYTHON_NUMERIC_NAME}
 import plplot_python_start
+import plplot_py_demos
 import plplotcanvas
-import plplot
 import gtk
 
 

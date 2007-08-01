@@ -1,5 +1,4 @@
-from plplot import *
-from ${PYTHON_NUMERIC_NAME} import *
+from plplot_py_demos import *
 
 # Pairs of points making the line segments used to plot the user defined arrow
 arrow_x = [-0.5, 0.5, 0.3, 0.5, 0.3, 0.5]

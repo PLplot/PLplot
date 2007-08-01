@@ -1,5 +1,4 @@
-from ${PYTHON_NUMERIC_NAME} import *
-from plplot import *
+from plplot_py_demos import *
 
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y

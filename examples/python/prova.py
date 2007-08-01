@@ -7,7 +7,7 @@ from plplot_python_start import *
 
 import sys
 from qt import *
-from ${PYTHON_NUMERIC_NAME} import *
+from plplot_py_demos import *
 import math
 import qplplot
 from  qt import *

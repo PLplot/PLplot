@@ -1,8 +1,7 @@
 import qt
 from qt import QWidget 
-import plplot
+import plplot_py_demos
 import plplot_widget
-from ${PYTHON_NUMERIC_NAME} import array
 
 class qplplot(QWidget):
 

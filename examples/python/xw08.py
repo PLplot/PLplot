@@ -18,8 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from ${PYTHON_NUMERIC_NAME} import *
-from plplot import *
+from plplot_py_demos import *
 
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y

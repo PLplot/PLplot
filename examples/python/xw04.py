@@ -1,5 +1,4 @@
-from ${PYTHON_NUMERIC_NAME} import *
-from plplot import *
+from plplot_py_demos import *
 
 # main
 # 

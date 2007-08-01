@@ -54,8 +54,7 @@
 # (5) decade represents a factor of 10, see 
 #     http://en.wikipedia.org/wiki/Decade_(log_scale) .
 
-from ${PYTHON_NUMERIC_NAME} import *
-from plplot import *
+from plplot_py_demos import *
 
 # main
 # 

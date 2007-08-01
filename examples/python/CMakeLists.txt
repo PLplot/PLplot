@@ -36,6 +36,7 @@ set(python_STRING_INDICES
 "16"
 "18"
 "19"
+"21"
 "22"
 "23"
 "24"
@@ -43,23 +44,11 @@ set(python_STRING_INDICES
 )
 
 set(python_SCRIPTS)
-set(python_SCRIPTS_CREATE)
 set(python_DATA)
-set(python_DATA_CREATE)
 foreach(STRING_INDEX ${python_STRING_INDICES})
-  configure_file(xw${STRING_INDEX}.py.in ${CMAKE_CURRENT_BINARY_DIR}/xw${STRING_INDEX}.py)
   set(python_SCRIPTS ${python_SCRIPTS} x${STRING_INDEX})
-  set(python_DATA_CREATE ${python_DATA_CREATE} ${CMAKE_CURRENT_BINARY_DIR}/xw${STRING_INDEX}.py)
+  set(python_DATA ${python_DATA} xw${STRING_INDEX}.py)
 endforeach(STRING_INDEX ${python_STRING_INDICES})
-
-configure_file(xw14.py.in ${CMAKE_CURRENT_BINARY_DIR}/xw14.py)
-configure_file(xw17.py.in ${CMAKE_CURRENT_BINARY_DIR}/xw17.py)
-configure_file(prova.py.in ${CMAKE_CURRENT_BINARY_DIR}/prova.py)
-configure_file(qplplot.py.in ${CMAKE_CURRENT_BINARY_DIR}/qplplot.py)
-if (ENABLE_pygcw)
-  configure_file(plplotcanvas_demo.py.in ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_demo.py)
-  configure_file(plplotcanvas_animation.py.in ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_animation.py)
-endif (ENABLE_pygcw)
 
 # This list contains standalone scripts which are executable and which
 # should be installed in the examples/python directory.
@@ -69,20 +58,17 @@ ${python_SCRIPTS}
 pythondemos.py
 x14
 x17
+prova.py
+xw14.py
+xw17.py
 )
-set(
-python_SCRIPTS_CREATE
-${python_SCRIPTS_CREATE}
-${CMAKE_CURRENT_BINARY_DIR}/prova.py
-${CMAKE_CURRENT_BINARY_DIR}/xw14.py
-${CMAKE_CURRENT_BINARY_DIR}/xw17.py
-)
+
 if(ENABLE_pygcw)
   set(
-  python_SCRIPTS_CREATE
-  ${python_SCRIPTS_CREATE}
-  ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_demo.py
-  ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_animation.py
+  python_SCRIPTS
+  ${python_SCRIPTS}
+  plplotcanvas_demo.py
+  plplotcanvas_animation.py
  )
 endif(ENABLE_pygcw)
 
@@ -99,10 +85,6 @@ install(FILES ${python_SCRIPTS}
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_SCRIPTS}
 )
-install(FILES ${python_SCRIPTS_CREATE} 
-DESTINATION ${DATA_DIR}/examples/python
-PERMISSIONS ${PERM_SCRIPTS}
-)
 
 # This list contains python modules which are not executable on their own and
 # data files that should be installed in the examples/python directory.
@@ -111,11 +93,7 @@ set(
 python_DATA
 ${python_DATA}
 README.pythondemos
-)
-set(
-python_DATA_CREATE
-${python_DATA_CREATE}
-${CMAKE_CURRENT_BINARY_DIR}/qplplot.py
+qplplot.py
 )
 
 if(ENABLE_pygcw)
@@ -133,10 +111,6 @@ GROUP_READ
 WORLD_READ
 )
 install(FILES ${python_DATA} 
-DESTINATION ${DATA_DIR}/examples/python
-PERMISSIONS ${PERM_DATA}
-)
-install(FILES ${python_DATA_CREATE} 
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_DATA}
 )
@@ -187,4 +161,15 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
 DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_DATA}
 RENAME plplot_python_start.py
+)
+
+if (HAVE_NUMPY)
+  configure_file(plplot_py_demos.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
+else (HAVE_NUMPY)
+  configure_file(plplot_py_demos.py.numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
+endif (HAVE_NUMPY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py
+DESTINATION ${DATA_DIR}/examples/python
+PERMISSIONS ${PERM_DATA}
 )

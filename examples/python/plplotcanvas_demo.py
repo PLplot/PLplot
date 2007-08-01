@@ -32,10 +32,9 @@ NOTICE
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301  USA
 """
-import ${PYTHON_NUMERIC_NAME}
 import plplot_python_start
+import plplot_py_demos
 import plplotcanvas
-import plplot
 import gtk
 import sys
 

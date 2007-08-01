@@ -22,7 +22,7 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+from plplot_py_demos import *
 
 # Parse and process command line arguments
 plparseopts(sys.argv, PL_PARSE_FULL)

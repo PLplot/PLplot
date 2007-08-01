@@ -13,8 +13,7 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 
 #	Simple line plot and multiple windows demo.
 
-from ${PYTHON_NUMERIC_NAME} import *
-from plplot import *
+from plplot_py_demos import *
 
 def main():
     

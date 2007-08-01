@@ -44,8 +44,7 @@
 #
 #  Translated from x24c.c into python by Thomas J. Duck
 
-from plplot import *
-from ${PYTHON_NUMERIC_NAME} import *
+from plplot_py_demos import *
 
 
 def main():
