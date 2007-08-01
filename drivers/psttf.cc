@@ -607,11 +607,11 @@ plD_tidy_psttf(PLStream *pls)
 /* Write out postscript document to file and close*/
     /* For C++ stream we first need to close the file using 
        the C FILE * handle, then reopen as a ofstream. Yuck! */
-    fclose(pls->OutFile);
     if (! strcmp(pls->FileName,"-")) {
       doc->write(cout,dev->llx,dev->lly,dev->urx,dev->ury);
     }
     else {      
+      fclose(pls->OutFile);
       ofstream out;
       out.open(pls->FileName);
       doc->write(out,dev->llx,dev->lly,dev->urx,dev->ury);
