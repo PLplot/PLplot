@@ -951,9 +951,9 @@ proc_str (PLStream *pls, EscText *args)
 	         &clipx[2], &clipy[2]);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
 	         &clipx[3], &clipy[3]);
-// 	doc->osBody() << " gsave " << clipx[0] << " " << clipy[0] << " " << 
-// 	  clipx[1] << " " << clipy[1] << " " << clipx[2] << " " << 
-// 	  clipy[2] << " " << clipx[3] << " " << clipy[3] << " CL\n";
+ 	doc->osBody() << " gsave " << clipx[0] << " " << clipy[0] << " " << 
+ 	  clipx[1] << " " << clipy[1] << " " << clipx[2] << " " << 
+ 	  clipy[2] << " " << clipx[3] << " " << clipy[3] << " CL\n";
 	
 	/* move to string reference point */
 	doc->osBody() << " " << args->x << " " << args->y << " M\n";
@@ -1142,6 +1142,7 @@ proc_str (PLStream *pls, EscText *args)
 	   
 	}while(*cur_strp);
 	
+	doc->osBody() << "grestore\n";
 	doc->osBody() << "grestore\n";
 	doc->osBody() << "grestore\n";
 	
