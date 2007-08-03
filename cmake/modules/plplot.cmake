@@ -141,9 +141,9 @@ if(NOT HAVE_DIRENT_H)
       check_dirsymbol_exists("sys/types.h;ndir.h" HAVE_NDIR_H)
       if(NOT HAVE_NDIR_H AND UNIX)
         message(FATAL_ERROR
-	"FATAL_ERROR for plplot.cmake: "
-	"DIR symbol must be defined by Unix system headers."
-	)
+        "FATAL_ERROR for plplot.cmake: "
+        "DIR symbol must be defined by Unix system headers."
+        )
       endif(NOT HAVE_NDIR_H AND UNIX)
     endif(NOT HAVE_SYS_DIR_H)
   endif(NOT HAVE_SYS_NDIR_H)
@@ -234,6 +234,39 @@ endif(PERL_FOUND)
 # Find X headers, libraries, and library directory (required by xwin device
 # driver and also everything that is Tk related).
 find_package(X11)
+if(X11_INCLUDE_DIR)
+  # remove duplicates in the X11_INCLUDE_DIR list since those screw up
+  # certain of our modules and also slow down compilation if any of
+  # those duplicates leak through to the compile -I options.
+  list(SORT X11_INCLUDE_DIR)
+  set(copy_X11_INCLUDE_DIR ${X11_INCLUDE_DIR})
+  set(listindex 0)
+  set(listindexplus 1)
+  foreach(copy_listelement ${copy_X11_INCLUDE_DIR})
+    # need to get list elements corresponding to list indices.
+    list(LENGTH X11_INCLUDE_DIR listlength)
+    if(listindexplus LESS ${listlength})
+      list(GET X11_INCLUDE_DIR ${listindex} listelement)
+      list(GET X11_INCLUDE_DIR ${listindexplus} listelementplus)
+    else(listindexplus LESS ${listlength})
+      set(listelement)
+      set(listelementplus)
+    endif(listindexplus LESS ${listlength})
+    if(copy_listelement STREQUAL "${listelement}" AND
+    copy_listelement STREQUAL "${listelementplus}"
+    )
+      list(REMOVE_AT X11_INCLUDE_DIR ${listindex})
+    else(copy_listelement STREQUAL "${listelement}" AND
+    copy_listelement STREQUAL "${listelementplus}"
+    )
+      # update list indices
+      math(EXPR listindex "${listindex} + 1")
+      math(EXPR listindexplus "${listindex} + 1")
+    endif(copy_listelement STREQUAL "${listelement}" AND
+    copy_listelement STREQUAL "${listelementplus}"
+    )
+  endforeach(copy_listelement ${copy_X11_INCLUDE_DIR})
+endif(X11_INCLUDE_DIR)
 message(STATUS "X11_FOUND = ${X11_FOUND}")
 message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
 message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
