@@ -29,10 +29,7 @@
 # PLPLOT_MUTEX_RECURSIVE  - Portable definition for PTHREAD_MUTEX_RECURSIVE
 if(PLD_xwin)
   if(X11_FOUND)
-    string(REGEX REPLACE ";" ";-I" 
-    xwin_COMPILE_FLAGS
-    "-I${X11_INCLUDE_DIR}"
-    )
+    set(xwin_COMPILE_FLAGS "${X11_COMPILE_FLAGS}")
     # N.B. X11_LIBRARY_DIR is used internally by FindX11.cmake but not
     # documented for external use so we may have to replace this
     # some day by the appropriate 

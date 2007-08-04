@@ -54,17 +54,19 @@ if(PLD_xcairo OR PLD_pdfcairo OR PLD_pscairo OR PLD_svgcairo OR PLD_pngcairo OR 
   pkg_check_pkgconfig("pangocairo;pango;cairo" includedir libdir linkflags cflags _CAIRO)
   if(linkflags)
     # Blank-delimited required.
-    if(PLD_xcairo AND X11_INCLUDE_DIR)
-      string(REGEX REPLACE ";" " " cairo_COMPILE_FLAGS "${cflags} -I${X11_INCLUDE_DIR}")
+    if(PLD_xcairo AND X11_COMPILE_FLAGS)
+      string(REGEX REPLACE ";" " " 
+      cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
+      )
       set(cairo_LINK_FLAGS "${linkflags} -L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
-    else(PLD_xcairo AND X11_INCLUDE_DIR)
+    else(PLD_xcairo AND X11_COMPILE_FLAGS)
       string(REGEX REPLACE ";" " " cairo_COMPILE_FLAGS "${cflags}")
       set(cairo_LINK_FLAGS "${linkflags}")
       message(STATUS 
        "WARNING: X windows not found. Setting xcairo driver to OFF."
       )
       set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
-    endif(PLD_xcairo AND X11_INCLUDE_DIR)
+    endif(PLD_xcairo AND X11_COMPILE_FLAGS)
     
     # message("cairo_COMPILE_FLAGS = ${cairo_COMPILE_FLAGS}")
 

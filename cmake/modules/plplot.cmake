@@ -266,9 +266,11 @@ if(X11_INCLUDE_DIR)
     copy_listelement STREQUAL "${listelementplus}"
     )
   endforeach(copy_listelement ${copy_X11_INCLUDE_DIR})
+  string(REGEX REPLACE ";" " -I" X11_COMPILE_FLAGS "-I${X11_INCLUDE_DIR}")
 endif(X11_INCLUDE_DIR)
 message(STATUS "X11_FOUND = ${X11_FOUND}")
 message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
+message(STATUS "X11_COMPILE_FLAGS = ${X11_COMPILE_FLAGS}")
 message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 message(STATUS "X11_LIBRARY_DIR = ${X11_LIBRARY_DIR}")
 
