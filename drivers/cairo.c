@@ -142,6 +142,7 @@ const char *styleLookup[3] = {
 /* General */
 
 void stream_and_font_setup(PLStream *, int);
+cairo_status_t write_to_stream(void *, unsigned char *, unsigned int);
 
 /* String processing */
 
@@ -530,7 +531,7 @@ void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int u
 //---------------------------------------------------------------------
 // close_span_tag
 //
-// Close a span tag & brings us down to zero sub/super-script level
+// Close a span tag & brings us down to zero sub/super-script level.
 //---------------------------------------------------------------------
 
 void close_span_tag(char *pangoMarkupString, int upDown)
@@ -549,6 +550,26 @@ void close_span_tag(char *pangoMarkupString, int upDown)
   }
 
   strcat(pangoMarkupString, "</span>");
+}
+
+//---------------------------------------------------------------------
+// write_to_stream()
+//
+// Writes data to a open file stream. This function is passed to the
+// Cairo file IO devices.
+//---------------------------------------------------------------------
+
+cairo_status_t write_to_stream(void *filePointer, unsigned char *data, unsigned int length)
+{
+  int bytes_written;
+
+  bytes_written = fwrite(data, 1, length, (FILE*) filePointer);
+  if(bytes_written == length){
+    return CAIRO_STATUS_SUCCESS;
+  }
+  else{
+    return CAIRO_STATUS_WRITE_ERROR;
+  }
 }
 
 //---------------------------------------------------------------------
@@ -920,13 +941,11 @@ void plD_init_pdfcairo(PLStream *pls)
   // Allocate a cairo stream structure
   aStream = malloc(sizeof(PLCairo));
 
-  // Prompt for a file name if not already set, and close the file
-  // since we just need the name, not an open file.
+  // Prompt for a file name if not already set.
   plOpenFile(pls);
-  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
 
   // Create an cairo surface & context for PDF file.
-  aStream->cairoSurface = cairo_pdf_surface_create((const char *)pls->FileName, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoSurface = cairo_pdf_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   // Save the pointer to the structure in the PLplot stream
@@ -993,13 +1012,11 @@ void plD_init_pscairo(PLStream *pls)
   // Allocate a cairo stream structure
   aStream = malloc(sizeof(PLCairo));
 
-  // Prompt for a file name if not already set, and close the file
-  // since we just need the name, not an open file.
+  // Prompt for a file name if not already set.
   plOpenFile(pls);
-  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
 
   // Create an cairo surface & context for PS file.
-  aStream->cairoSurface = cairo_ps_surface_create((const char *)pls->FileName, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoSurface = cairo_ps_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   // Save the pointer to the structure in the PLplot stream
@@ -1011,6 +1028,7 @@ void plD_init_pscairo(PLStream *pls)
   // Invert the surface so that the graphs are drawn right side up.
   // rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0);
 }
+
 
 #endif
 
@@ -1069,13 +1087,11 @@ void plD_init_svgcairo(PLStream *pls)
   // Allocate a cairo stream structure
   aStream = malloc(sizeof(PLCairo));
 
-  // Prompt for a file name if not already set, and close the file
-  // since we just need the name, not an open file.
+  // Prompt for a file name if not already set.
   plOpenFile(pls);
-  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
 
   // Create an cairo surface & context for SVG file.
-  aStream->cairoSurface = cairo_svg_surface_create((const char *)pls->FileName, (double)pls->xlength, (double)pls->ylength);
+  aStream->cairoSurface = cairo_svg_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   // Save the pointer to the structure in the PLplot stream
@@ -1212,8 +1228,7 @@ void plD_eop_pngcairo(PLStream *pls)
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
-  if(pls->OutFile != NULL){ fclose(pls->OutFile); }
-  cairo_surface_write_to_png(aStream->cairoSurface, (const char *)pls->FileName);
+  cairo_surface_write_to_png_stream(aStream->cairoSurface, (cairo_write_func_t)write_to_stream, pls->OutFile);
 }
 
 #endif
