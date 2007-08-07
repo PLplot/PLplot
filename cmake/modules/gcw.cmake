@@ -55,6 +55,13 @@ if(PLD_gcw)
       # Requires blank-delimited list.
       string(REGEX REPLACE ";" " " gcw_COMPILE_FLAGS "${cflags1}")
       set(gcw_LINK_FLAGS "${linkflags1}")
+      # Add freetype includes / libraries if required
+      if (WITH_FREETYPE)
+        foreach(DIR ${FREETYPE_INCLUDE_DIR})
+          set(gcw_COMPILE_FLAGS "${gcw_COMPILE_FLAGS} -I${DIR}")
+        endforeach(DIR ${FREETYPE_INCLUDE_DIR})
+        set(gcw_LINK_FLAGS ${gcw_LINK_FLAGS} ${FREETYPE_LIBRARIES})
+      endif (WITH_FREETYPE)
     else(linkflags1)
       message(STATUS
       "WARNING: libgnomeprintui-2.2 not found.  Setting PLD_gcw "
