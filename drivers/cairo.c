@@ -51,6 +51,7 @@
 //---------------------------------------------------------------------
 
 #define DPI 72
+#define DOWNSCALE 0.1
 #define PLCAIRO_DEFAULT_X 720
 #define PLCAIRO_DEFAULT_Y 540
 
@@ -203,8 +204,8 @@ void plD_line_cairo(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
   set_current_context(pls);
 
-  cairo_move_to(aStream->cairoContext, (double) x1a, (double) y1a);
-  cairo_line_to(aStream->cairoContext, (double) x2a, (double) y2a);
+  cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) x1a, DOWNSCALE * (double) y1a);
+  cairo_line_to(aStream->cairoContext, DOWNSCALE * (double) x2a, DOWNSCALE * (double) y2a);
   cairo_stroke(aStream->cairoContext);
 }
 
@@ -327,7 +328,7 @@ void proc_str(PLStream *pls, EscText *args)
   }
 
   // Calculate the font size (in pixels)
-  fontSize = pls->chrht * DPI/25.4;
+  fontSize = pls->chrht * DPI/25.4 * DOWNSCALE;
 
   // Convert the escape characters into the appropriate Pango markup
   textWithPangoMarkup = ucs4_to_pango_markup_format(args->unicode_array, args->unicode_array_len, fontSize);
@@ -340,7 +341,7 @@ void proc_str(PLStream *pls, EscText *args)
   pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
 
   // Move to the string reference point
-  cairo_move_to(aStream->cairoContext, (double) args->x, (double) args->y);
+  cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) args->x, DOWNSCALE * (double) args->y);
 
   // Save current transform matrix
   cairo_save(aStream->cairoContext);
@@ -599,7 +600,7 @@ void stream_and_font_setup(PLStream *pls, int interactive)
     pls->xlength = PLCAIRO_DEFAULT_X;
     pls->ylength = PLCAIRO_DEFAULT_Y;
   }
-  plP_setphy((PLINT) 0, (PLINT) pls->xlength, (PLINT) 0, (PLINT) pls->ylength);
+  plP_setphy((PLINT) 0, (PLINT) pls->xlength / DOWNSCALE, (PLINT) 0, (PLINT) pls->ylength / DOWNSCALE);
 
   // Initialize font table with either enviroment variables or defaults.
   // This was copied from the psttf driver.
@@ -656,9 +657,9 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
 
   set_current_context(pls);
   
-  cairo_move_to(aStream->cairoContext, (double) xa[0], (double) ya[0]);
+  cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) xa[0], DOWNSCALE * (double) ya[0]);
   for(i=1;i<npts;i++){
-    cairo_line_to(aStream->cairoContext, (double) xa[i], (double) ya[i]);
+    cairo_line_to(aStream->cairoContext, DOWNSCALE * (double) xa[i], DOWNSCALE * (double) ya[i]);
   }
 }
 
