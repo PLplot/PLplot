@@ -333,6 +333,7 @@ void
 c_plstyl(PLINT nms, PLINT *mark, PLINT *space)
 {
     short int i;
+    short int flag;
 
     if (plsc->level < 1) {
 	plabort("plstyl: Please call plinit first");
@@ -342,11 +343,20 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space)
 	plabort("plstyl: Broken lines cannot have <0 or >10 elements");
 	return;
     }
+    flag = 1;
     for (i = 0; i < nms; i++) {
 	if ((mark[i] < 0) || (space[i] < 0)) {
 	    plabort("plstyl: Mark and space lengths must be > 0");
 	    return;
 	}
+	if ((mark[i] != 0) || (space[i] != 0)) {
+            flag = 0;
+        }
+    }
+    /* Check for blank style */
+    if ((nms > 0) && (flag == 1)) {
+      plabort("plstyl: At least one mark or space must be > 0");
+      return;
     }
 
     plsc->nms = nms;
