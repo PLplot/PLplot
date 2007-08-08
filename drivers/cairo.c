@@ -328,7 +328,7 @@ void proc_str(PLStream *pls, EscText *args)
   }
 
   // Calculate the font size (in pixels)
-  fontSize = pls->chrht * DPI/25.4 * DOWNSCALE;
+  fontSize = pls->chrht * DPI/25.4;
 
   // Convert the escape characters into the appropriate Pango markup
   textWithPangoMarkup = ucs4_to_pango_markup_format(args->unicode_array, args->unicode_array_len, fontSize);
@@ -594,7 +594,7 @@ void stream_and_font_setup(PLStream *pls, int interactive)
   pls->page = 0;
   pls->dev_fill0 = 1;        /* Supports hardware solid fills */
   
-  plP_setpxl(DPI/25.4, DPI/25.4);
+  plP_setpxl(DPI/25.4/DOWNSCALE, DPI/25.4/DOWNSCALE);
   
   if (pls->xlength <= 0 || pls->ylength <= 0){
     pls->xlength = PLCAIRO_DEFAULT_X;
