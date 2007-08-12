@@ -19,7 +19,12 @@ INDEX
 
 1. Changes relative to PLplot 5.7.3
   1.1 CVS to Subversion conversion
-
+  1.2 Drivers
+    1.2.1 xwinttf -> xcairo
+  1.3 Ada bindings
+  1.4 Python bindings
+  1.5 Fortran95 Documentation
+  
 2. Changes relative to PLplot 5.6.1
   2.1 CVS to Subversion conversion
   2.2 CMake build system
@@ -38,8 +43,10 @@ INDEX
     2.10.3 wxwidgets
     2.10.4 pdf
     2.10.5 gd, wingcc (freetype)
-    2.10.6 xwinttf
+    2.10.6 cairo
     2.10.7 pstex
+  2.11 Python bindings
+  2.12 Fortran95 Documentation
 
 
 1. Changes relative to PLplot 5.7.3 (the previous development release)
@@ -48,6 +55,30 @@ INDEX
 
    PLplot now uses the Subversion (svn) version control system. Records of
 all the changes and release tags have been preserved from the CVS repository.
+
+1.2 Drivers
+   1.2.1 xwinttf -> xcairo
+        The xwinttf driver has been renamed xcairo. In addition most of the
+     the other output devices that Cairo supports are now supported. These
+     include a postscript driver (pscairo), a PDF driver (pdfcairo), a
+     SVG driver (svgcairo), a PNG driver (pngcairo) and a memory driver
+     (memcairo). This driver is still considered experimental. Known issues 
+     include improper text rendering with the SVG driver and the memory 
+     driver does not work at all.
+
+1.3 Ada bindings
+
+    The ADA bindings are now considered complete and the current focus is on
+implementing all of the examples in ADA.
+
+1.4 Python bindings
+
+    The Python bindings have been updated to use numpy rather than the now
+deprecated Numeric python numeric library.
+
+1.5 Fortran95 documentation
+
+    The Fortran95 documentation has been updated.
 
 
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
@@ -158,14 +189,28 @@ and to make them more consistent across different programming languages.
     turn to take advantage of these new routines, leading to improved text
     rendering.
 
-  2.10.6 xwinttf driver
-       This is a new driver for X Windows that uses Cairo for rendering
-    graphics and Pango for rendering text. The graphics and the text are both
+  2.10.6 cairo 
+       This is a family of drivers that use the Cairo graphics library to
+    render text and graphics. The graphics and the text are both
     anti-aliased. It is unicode enabled and Truetype fonts are used by 
-    default.
+    default. Most of the the output devices that Cairo supports are 
+    supported. These include a X windows driver (xcairo), a postscript 
+    driver (pscairo), a PDF driver (pdfcairo), a SVG driver (svgcairo), a 
+    PNG driver (pngcairo) and a memory driver (memcairo). This driver is 
+    still considered experimental. Known issues include improper text 
+    rendering with the SVG driver and the memory driver does not work at 
+    all.
 
   2.10.7 pstex driver
        This Latex driver has now been resurrected from years of neglect and
     aside from bounding box issues seems to be working well.  Should be
     useful for Latex enthusiasts.
 
+1.4 Python bindings
+
+    The Python bindings have been updated to use numpy rather than the now
+deprecated Numeric python numeric library.
+
+1.5 Fortran95 documentation
+
+    The Fortran95 documentation has been updated.
