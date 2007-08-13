@@ -60,6 +60,8 @@ if(ENABLE_python)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
 
+option(HAVE_NUMPY "Use numpy rather than depreciated Numeric" ON)
+
 if(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
   if (HAVE_NUMPY)
   # First check for new version of numpy (replaces Numeric)
