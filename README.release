@@ -74,7 +74,8 @@ implementing all of the examples in ADA.
 1.4 Python bindings
 
     The Python bindings have been updated to use numpy rather than the now
-deprecated Numeric python numeric library.
+deprecated Numeric python numeric library. If you need to revert to the old
+Numeric support, then you should specify the cmake option -DHAVE_NUMPY=OFF.
 
 1.5 Fortran95 documentation
 

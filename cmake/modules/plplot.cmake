@@ -278,6 +278,9 @@ option(DEFAULT_NO_BINDINGS
 "All language bindings are disabled by default"
 OFF
 )
+
+option(HAVE_NUMPY "Use numpy rather than depreciated Numeric" ON)
+
 # Load language specific files
 include(c++)
 include(fortran)

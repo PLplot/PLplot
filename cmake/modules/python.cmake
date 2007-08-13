@@ -61,7 +61,6 @@ if(ENABLE_python)
 endif(ENABLE_python)
 
 if(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
-  option(HAVE_NUMPY "New version of numpy available" OFF)
   if (HAVE_NUMPY)
   # First check for new version of numpy (replaces Numeric)
   execute_process(
