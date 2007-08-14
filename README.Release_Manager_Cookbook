@@ -115,10 +115,14 @@ command in the root plplot directory:
 
 svn copy trunk/ tags/vX_Y_Z
 
+The commit the new tag:
 
-cd to tags/vX_Y_Z and enter the following command: 
+cd tags/vX_Y_Z
+svn commit -m "Adding a tag for the X.Y.Z release."
 
-./scripts/make_tarball.sh -c -i /a/install/directory 2>&1 | tee build.log 
+cd to tags/ and enter the following command: 
+
+./scripts/make_tarball.sh -t v5_7_4 2>&1 | tee build.log 
 
 This script will take a several minutes to execute and does not otherwise
 provide a lot of feedback so it will appear as if it is doing nothing for
@@ -242,10 +246,5 @@ www scripts. Run the following commands in that directory:
 ./scripts/htdocs-gen_plot-examples.sh
 cd www
 make
-
-Finally, commit the release directory to Sourceforge using the following 
-command:
-
-svn commit -m "Creating tags/vX_Y_Z containing the latest PLplot release."
 
 DONE!!!
