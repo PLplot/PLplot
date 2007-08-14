@@ -3,7 +3,6 @@
 # Copyright (C) 2007 Andrew Ross
 
 from plplot_py_demos import *
-import RandomArray
 import time
 
 pts = 500
