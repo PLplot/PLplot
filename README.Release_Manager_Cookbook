@@ -230,11 +230,11 @@ Pick the Default platform.  Then click on the pencil icons to change the
 primary download file, and the corresponding armored ascii signature file.
 (I would leave the references to the previous 5.6.1 files and the historical
 cd release as is.) Then preview and once you are satisfied with the Default
-platform, then save it.  After that, use the first menu box to change from
-the Default platform to the Copy To function to copy the Default platform to
-all the additional platforms (taken one at a time). N.B. I could not get any
-of this functionality to work with my usual browser (konqueror) or an old
-version of firefox.  But a modern version (Ubuntu Dapper) of firefox worked.
+platform, then save it.  At this stage, I don't think there is any necessity
+of copying information to platform-specific download pages. N.B. I could not
+get any of this functionality to work with my usual browser (konqueror) or
+an old version of firefox.  But a modern version (Ubuntu Dapper) of firefox
+worked.
 
 Update the project web page, including the examples:
 edit www/index.html to include a link to the latest release.
