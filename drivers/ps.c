@@ -533,6 +533,7 @@ plD_tidy_ps(PLStream *pls)
         fprintf(OF, "%%%%Pages: %d\n", (int) pls->page);
 
     fprintf(OF, "@end\n");
+    fprintf(OF, "%%%%EOF\n");
 
 /* Backtrack to write the BoundingBox at the beginning */
 /* Some applications don't like it atend */
