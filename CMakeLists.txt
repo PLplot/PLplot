@@ -51,7 +51,7 @@ include(plplot)
 # Use configured variables to process configurable top-level files.
 
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake 
+${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 # Allow access to the generated config.h for this build.
@@ -92,7 +92,7 @@ README.release
 )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 
-# Process other directories including using configured variables to 
+# Process other directories including using configured variables to
 # process configurable files in those directories.
 # N.B. Order is important here at the cmake stage because targets must
 # be processed by cmake in a specific order e.g., due to get_target_property
@@ -122,7 +122,7 @@ summary()
 if(PREBUILD_DIST)
   # Pre-build everything required for a distribution tarball and copy it to
   # the source tree (if build tree is different from source tree).
-  
+
   # List of targets that must be (pre-)built.
   # N.B. the plhershey-unicode.h_built target has to be pre-built only because
   # of the needs of the old windows build at sys/win32/msdev.
@@ -130,7 +130,7 @@ if(PREBUILD_DIST)
   DIST_TARGETS
   plhershey-unicode.h_built
   )
-  
+
   if(ENABLE_octave)
     set(DIST_TARGETS ${DIST_TARGETS} make_documentation)
   endif(ENABLE_octave)
@@ -158,12 +158,12 @@ if(PREBUILD_DIST)
     add_custom_target(
     prebuild_dist
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h 
+    ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h
     ${CMAKE_SOURCE_DIR}/include
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
     ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
-    COMMAND cp 
+    COMMAND cp
     `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
     ${CMAKE_SOURCE_DIR}/doc/docbook/src
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/doc/docbook/src
@@ -205,6 +205,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 "^${PROJECT_SOURCE_DIR}/sys/dos/bcc"
 "^${PROJECT_SOURCE_DIR}/sys/dos/emx"
 "^${PROJECT_SOURCE_DIR}/sys/win-tk"
+"^${PROJECT_SOURCE_DIR}/sys/win32"
 )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
