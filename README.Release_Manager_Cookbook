@@ -122,7 +122,8 @@ svn commit -m "Adding a tag for the X.Y.Z release."
 
 cd to tags/ and enter the following command: 
 
-./scripts/make_tarball.sh -t v5_7_4 2>&1 | tee build.log 
+export WWW_USER=your_sf_user_name
+../trunk/scripts/make_tarball.sh -c -i /tmp/vX_Y_Z -t vX_Y_Z 2>&1 | tee build.log
 
 This script will take a several minutes to execute and does not otherwise
 provide a lot of feedback so it will appear as if it is doing nothing for
@@ -133,7 +134,7 @@ script is finished, the release tarball will be available in the directory
 The "-c" option says to unpack the created tarball, build it with "cmake" and
 "make", then test that result with ctest.
 
-The "-i /a/install/directory" specifies the install prefix for the tarball
+The "-i /tmp/vX_Y_Z" specifies the install prefix for the tarball
 test configure and runs "make install" after cmake, make and ctest. When the
 above command finishes executing you should go to this directory and verify
 that the examples build and that plplot_test.sh executes without errors.
@@ -149,7 +150,6 @@ svn merge -r A:B /path/to/trunk
 Where A and B specify the range of revisions in trunk to be applied
 to tags/vX_Y_Z in the merge process. These can be determined by commit
 messages.
-
 
 Install the documentation on the PLplot website:
 cd /tmp/plplot-dist-prep/build_dir/doc/docbook/src
