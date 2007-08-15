@@ -121,7 +121,7 @@ svn export $SVN_URL/$TAG plplot \
   && mkdir ctest_build_dir \
   && ( cd ctest_build_dir \
        && cmake ${config_opt} -DCMAKE_INSTALL_PREFIX=${prefix} \
-          -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DCMAKE_VERBOSE_MAKEFILE=ON -DPREBUILT_DOC=ON\
 	  -DWWW_USER=${WWW_USER} -DBUILD_TEST=ON \
 	  ../plplot >& cmake.out \
        && make >& make.out \
