@@ -1,3 +1,11 @@
+plplot (5.7.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control, debian/rules: Fix python settings to work with 
+    numpy rather than Numeric. 
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 14 Aug 2007 15:32:07 +0100
+
 plplot (5.7.4.svn.20070523-2) unstable; urgency=low
 
   * debian/control, debian/rules: Fix python packages to work with

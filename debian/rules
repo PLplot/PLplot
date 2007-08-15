@@ -26,9 +26,14 @@ debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 
+JAVA_HOME = /usr/lib/kaffe
+
 PYVERS = $(shell pyversions -vr)
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
-	-DBUILD_DOC=ON -DCMAKE_INSTALL_PREFIX=/usr
+	-DBUILD_DOC=ON -DCMAKE_INSTALL_PREFIX=/usr \
+	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
+	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
+	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
@@ -38,7 +43,7 @@ config-stamp:
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
-	JAVA_HOME=/usr/lib/kaffe		\
+	JAVA_HOME=$(JAVA_HOME) \
 	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=OFF )
 	touch config-stamp
 
@@ -51,7 +56,8 @@ build-stamp: patch config-stamp
 	#( cd src ; $(MAKE) )
 	#( cd bindings/octave ; \
 	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
-	( cd $(BUILD_DIR) ; $(MAKE) ; ctest )
+	#( cd $(BUILD_DIR) ; $(MAKE) ; ctest )
+	( cd $(BUILD_DIR) ; $(MAKE)  )
 	touch build-stamp
 
 clean: unpatch
@@ -113,7 +119,7 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DENABLE_pygcw=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH=/usr/include/python$* -DNUMERIC_INCLUDE_PATH=/usr/include/python$*/Numeric ; \
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DENABLE_pygcw=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/lib/python$*/site-packages/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/lib/python$*/site-packages/numpy/core/include/numpy ; \
 	  for d in gnome2/python python ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
