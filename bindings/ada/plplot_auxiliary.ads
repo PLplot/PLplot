@@ -8,21 +8,22 @@ use
 
 package PLplot_Auxiliary is
 
+-- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
+-- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
+--with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
+
 --------------------------------------------------------------------------------
 --           Utility type declarations used by the bindings                   --
 --------------------------------------------------------------------------------
 
-    -- UN-COMMENT THESE TWO LINES IF YOUR COMPILER DOES NOT INCLUDE THESE 
+    -- UN-COMMENT THE NEXT TWO LINES IF YOUR COMPILER DOES NOT INCLUDE THESE 
     -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 
     -- COMMENT THESE TWO LINES IF YOUR COMPILER DECLARES SIMILAR TYPES (E.G. IT 
-    -- IS ADA 2005 WITH ANNEX G.3) IN THAT CASE, YOU WILL NEED TO ADD A LINE 
-    -- LIKE THIS SOMEWHERE:
-    -- with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
+    -- IS ADA 2005 WITH ANNEX G.3)
     -- ALSO, YOU WILL NEED TO MAKE A SINGLE-LINE EDIT TO THESE BINDING FILES: 
     -- plplot.ads, plplot.adb, plplot_traditional.ads, plplot_traditional.adb, 
     -- and plplot_thin.ads.
-    -- 
     type Real_Vector is array (Integer range <>) of Long_Float;
     type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 

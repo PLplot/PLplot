@@ -258,6 +258,8 @@ package body PLplot_Traditional is
     
     
     -- Simple log x plotter for single x array and multiple y arrays
+    -- fix this: Automatically skip zero-valued abscissa; place marker at the
+    -- left-hand side of the plot at the ordinate of the deleted point.
     procedure Simple_Plot_Log_X
        (x  : Real_Vector;
         y1 : Real_Vector := Dont_Plot_This;
@@ -267,7 +269,8 @@ package body PLplot_Traditional is
         y5 : Real_Vector := Dont_Plot_This;
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
-        Title_Label : String := To_String(Default_Label_String)) is
+        Title_Label : String := To_String(Default_Label_String);
+        Log_Base : Long_Float := 10.0) is -- Should this default to e?
 
         X_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
         Y_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
@@ -281,7 +284,7 @@ package body PLplot_Traditional is
         Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
 
         for i in x_Log'range loop
-            x_Log(i) := Log(x(i), 10.0);
+            x_Log(i) := Log(x(i), Log_Base);
         end loop;        
         Multiplot_Pairs(x_Log, y1, x_Log, y2, x_Log, y3, x_Log, y4, x_Log, y5, 
             X_Labels     => X_Label_String_Array,
@@ -292,6 +295,8 @@ package body PLplot_Traditional is
     
     
     -- Simple log y plotter for multiple x arrays and single y array
+    -- fix this: Automatically skip zero-valued ordinate; place marker at the
+    -- bottom of the plot at the abscissa of the deleted point.
     procedure Simple_Plot_Log_Y
        (x1 : Real_Vector := Dont_Plot_This;
         y  : Real_Vector := Dont_Plot_This; -- Beware of argument order.
@@ -301,7 +306,8 @@ package body PLplot_Traditional is
         x5 : Real_Vector := Dont_Plot_This;
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
-        Title_Label : String := To_String(Default_Label_String)) is
+        Title_Label : String := To_String(Default_Label_String);
+        Log_Base : Long_Float := 10.0) is -- Should this default to e?
 
         X_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
         Y_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
@@ -315,7 +321,7 @@ package body PLplot_Traditional is
         Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
 
         for i in y_Log'range loop
-            y_Log(i) := Log(y(i), 10.0);
+            y_Log(i) := Log(y(i), Log_Base);
         end loop;        
         Multiplot_Pairs(x1, y_Log, x2, y_Log, x3, y_Log, x4, y_Log, x5, y_Log, 
             X_Labels     => X_Label_String_Array,
@@ -326,10 +332,12 @@ package body PLplot_Traditional is
     
     
     -- Simple log x - log y plotter
-    procedure Simple_Plot_Log_XY(x, y : Real_Vector;
+    procedure Simple_Plot_Log_XY
+       (x, y        : Real_Vector;
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
-        Title_Label : String := To_String(Default_Label_String)) is
+        Title_Label : String := To_String(Default_Label_String);
+        x_Log_Base, y_Log_Base : Long_Float := 10.0) is -- Should this default to e?
 
         X_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
         Y_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
@@ -343,8 +351,8 @@ package body PLplot_Traditional is
         Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
 
         for i in x_Log'range loop
-            x_Log(i) := Log(x(i), 10.0);
-            y_Log(i) := Log(y(i), 10.0);
+            x_Log(i) := Log(x(i), x_Log_Base);
+            y_Log(i) := Log(y(i), y_Log_Base);
         end loop;        
         Multiplot_Pairs(x_Log, y_Log, 
             X_Labels     => X_Label_String_Array,

@@ -22,7 +22,7 @@ package PLplot is
 
     -- Default dummy arrays for various plotters which take multiple inputs.
     subtype Length_One_Real_Vector is Real_Vector(1..1);
-    Dont_Plot_This : Length_One_Real_Vector := (1..1 => 0.0);
+    Dont_Plot_This : Length_One_Real_Vector := (1..1 => Long_Float'small);
     
     -- Default colors for Color Map 0.
     -- These are hard-wired to the current colors of color map 0; if that 
@@ -289,7 +289,8 @@ package PLplot is
         y5 : Real_Vector := Dont_Plot_This;
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
-        Title_Label : String := To_String(Default_Label_String));
+        Title_Label : String := To_String(Default_Label_String);
+        Log_Base : Long_Float := 10.0); -- Should this default to e?
     
     
     -- Simple log y plotter for multiple x arrays and single y array
@@ -302,14 +303,17 @@ package PLplot is
         x5 : Real_Vector := Dont_Plot_This;
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
-        Title_Label : String := To_String(Default_Label_String));
+        Title_Label : String := To_String(Default_Label_String);
+        Log_Base : Long_Float := 10.0); -- Should this default to e?
     
     
     -- Simple log x - log y plotter
-    procedure Simple_Plot_Log_XY(x, y : Real_Vector;
+    procedure Simple_Plot_Log_XY
+       (x, y        : Real_Vector;
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
-        Title_Label : String := To_String(Default_Label_String));
+        Title_Label : String := To_String(Default_Label_String);
+        x_Log_Base, y_Log_Base : Long_Float := 10.0); -- Should this default to e?
 
 
     -- Simple plotter for multiple x-y arrays specified pairwise.
