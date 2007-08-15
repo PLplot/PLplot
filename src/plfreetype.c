@@ -396,17 +396,75 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     int current_pixel_colour;
     int R,G,B;
     PLFLT alpha_a,alpha_b;
+    int xx;
+    short imin, imax, kmin, kmax;
+
+    /* Corners of the clipping rectangle */
+    PLINT clipxmin, clipymin, clipxmax,clipymax, tmp;
+    PLINT clpxmi, clpxma, clpymi, clpyma;
+
+    /* Convert clipping box into normal coordinates */
+    clipxmin=pls->clpxmi;
+    clipxmax=pls->clpxma;
+    clipymin=pls->clpymi;
+    clipymax=pls->clpyma;
+
+    if (plsc->difilt) {
+      difilt(&clipxmin,&clipymin,1,&clpxmi,&clpxma,&clpymi,&clpyma);
+      difilt(&clipxmax,&clipymax,1,&clpxmi,&clpxma,&clpymi,&clpyma);
+    }
+
+
+    if( FT->scale!=0.0 ) {  /* scale was set */
+      clipxmin = clipxmin/FT->scale;
+      clipxmax = clipxmax/FT->scale;
+      if (FT->invert_y==1) {
+	clipymin=FT->ymax-(clipymin/FT->scale);
+	clipymax=FT->ymax-(clipymax/FT->scale);
+      }
+      else {
+	clipymin=clipymin/FT->scale;
+	clipymax=clipymax/FT->scale;
+      }
+    } 
+    else {
+      clipxmin=clipxmin/FT->scalex;
+      clipxmax=clipxmax/FT->scalex;
+      
+      if (FT->invert_y==1) {
+	clipymin=FT->ymax-(clipymin/FT->scaley);
+	clipymax=FT->ymax-(clipymax/FT->scaley);
+      } 
+      else {
+	clipymin=clipymin/FT->scaley;
+	clipymax=clipymax/FT->scaley;
+      }
+    }
+    if (clipxmin > clipxmax) {
+      tmp = clipxmax;
+      clipxmax = clipxmin;
+      clipxmin = tmp;
+    }
+    if (clipymin > clipymax) {
+      tmp = clipymax;
+      clipymax = clipymin;
+      clipymin = tmp;
+    }
 
     if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {
 	x+=slot->bitmap_left;
 	y-=slot->bitmap_top;
 
-	for(i=0;i<slot->bitmap.rows;i++) {
+        imin = MAX(0,clipymin-y);
+        imax = MIN(slot->bitmap.rows,clipymax-y);
+	for(i=imin;i<imax;i++) {
 	    for (k=0;k<n;k++) {
 		bittest=128;
 		for (j=0;j<8;j++) {
 		    if ((bittest&(unsigned char)slot->bitmap.buffer[(i*n)+k])==bittest)
-			FT->pixel(pls, x+(k*8)+j, y+i);
+			xx = x+(k*8)+j;
+			if ( (xx >= clipxmin) && (xx <= clipxmax) )
+			  FT->pixel(pls, xx, y+i);
 		    bittest>>=1;
 		}
             }
@@ -419,9 +477,13 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
            x+=slot->bitmap_left;
            y-=slot->bitmap_top;
 
-           for(i=0;i<slot->bitmap.rows;i++)
+          imin = MAX(0,clipymin-y);
+          imax = MIN(slot->bitmap.rows,clipymax-y);
+          kmin = MAX(0,clipxmin-x);
+          kmax = MIN(slot->bitmap.width,clipxmax-x);
+           for(i=imin;i<imax;i++)
               {
-                for (k=0;k<slot->bitmap.width;k++)
+                for (k=kmin;k<kmax;k++)
                   {
                     FT->shade=(slot->bitmap.buffer[(i*slot->bitmap.width)+k]);
                     if (FT->shade>0)
