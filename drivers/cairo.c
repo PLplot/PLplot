@@ -340,11 +340,15 @@ void proc_str(PLStream *pls, EscText *args)
   // pango_layout_set_font_description(layout, fontDescription);
   pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
 
+  // Save current transform matrix & clipping region
+  cairo_save(aStream->cairoContext);
+
+  // Setup the clipping region
+  cairo_rectangle(aStream->cairoContext, DOWNSCALE * pls->clpxmi, DOWNSCALE * pls->clpymi, DOWNSCALE * (pls->clpxma - pls->clpxmi), DOWNSCALE * (pls->clpyma - pls->clpymi));
+  cairo_clip(aStream->cairoContext);
+
   // Move to the string reference point
   cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) args->x, DOWNSCALE * (double) args->y);
-
-  // Save current transform matrix
-  cairo_save(aStream->cairoContext);
 
   // Invert the coordinate system so that the text is drawn right side up
   cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
