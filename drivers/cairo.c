@@ -344,8 +344,8 @@ void proc_str(PLStream *pls, EscText *args)
   cairo_save(aStream->cairoContext);
 
   // Setup the clipping region
-  cairo_rectangle(aStream->cairoContext, DOWNSCALE * pls->clpxmi, DOWNSCALE * pls->clpymi, DOWNSCALE * (pls->clpxma - pls->clpxmi), DOWNSCALE * (pls->clpyma - pls->clpymi));
-  cairo_clip(aStream->cairoContext);
+  // cairo_rectangle(aStream->cairoContext, DOWNSCALE * pls->clpxmi, DOWNSCALE * pls->clpymi, DOWNSCALE * (pls->clpxma - pls->clpxmi), DOWNSCALE * (pls->clpyma - pls->clpymi));
+  // cairo_clip(aStream->cairoContext);
 
   // Move to the string reference point
   cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) args->x, DOWNSCALE * (double) args->y);
@@ -358,6 +358,7 @@ void proc_str(PLStream *pls, EscText *args)
   // Extract rotation angle and shear from the PLplot tranformation matrix.
   // Compute sines and cosines of the angles as an optimization.
   plRotationShear(args->xform, &rotation, &shear);
+  rotation -= pls->diorot * 3.14159 / 2.0;
   cos_rot = cos(rotation);
   sin_rot = sin(rotation);
   tan_shear = tan(shear);
