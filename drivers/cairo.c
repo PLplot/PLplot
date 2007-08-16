@@ -1023,11 +1023,13 @@ void plD_init_pscairo(PLStream *pls)
   // Save the pointer to the structure in the PLplot stream
   pls->dev = aStream;
 
-  // Rotate the surface to landscape.
-  rotate_cairo_surface(pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength);
+  // Handle portrait or landscape
+  if(pls->portrait){
+    rotate_cairo_surface(pls, (float)(pls->ylength)/(float)(pls->xlength), 0.0, 0.0, -(float)(pls->xlength)/(float)(pls->ylength), 0.0, pls->xlength);
+  } else {
+    rotate_cairo_surface(pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength);
+  }
 
-  // Invert the surface so that the graphs are drawn right side up.
-  // rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0, pls->ylength);
 }
 
 
