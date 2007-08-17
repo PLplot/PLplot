@@ -1030,11 +1030,10 @@ void plD_init_pscairo(PLStream *pls)
 
   // Handle portrait or landscape
   if(pls->portrait){
-    rotate_cairo_surface(pls, (float)(pls->ylength)/(float)(pls->xlength), 0.0, 0.0, -(float)(pls->xlength)/(float)(pls->ylength), 0.0, pls->xlength);
-  } else {
-    rotate_cairo_surface(pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength);
+    plsdiori(1);
+    pls->freeaspect = 1;
   }
-
+  rotate_cairo_surface(pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength);
 }
 
 
