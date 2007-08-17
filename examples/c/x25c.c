@@ -1,12 +1,9 @@
 /* $Id$
 
-	Bar chart demo.
+	Filling and clipping polygons.
 */
 
 #include "plcdemos.h"
-
-void
-plfbox(PLFLT x0, PLFLT y0);
 
 /*--------------------------------------------------------------------------*\
  * main
