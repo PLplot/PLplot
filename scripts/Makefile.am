@@ -34,4 +34,4 @@ EXTRA_DIST = \
 	get-dependency-libs.sh \
 	htdocs-gen_plot-examples.sh \
 	make_tarball.sh \
-	mktclIndex \
+	mktclIndex
