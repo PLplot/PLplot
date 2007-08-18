@@ -58,9 +58,14 @@
 #define MAX_STRING_LEN 500
 #define MAX_MARKUP_LEN MAX_STRING_LEN * 10
 
+static int text_clipping;
+static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
+                                 {NULL, DRV_INT, NULL, NULL}};
+
 typedef struct {
    cairo_surface_t *cairoSurface;
    cairo_t *cairoContext;
+   short text_clipping;
 #if defined(PLD_xcairo)
    Display *XDisplay;
    Window XWindow;
@@ -142,7 +147,7 @@ const char *styleLookup[3] = {
 
 /* General */
 
-void stream_and_font_setup(PLStream *, int);
+PLCairo *stream_and_font_setup(PLStream *, int);
 cairo_status_t write_to_stream(void *, unsigned char *, unsigned int);
 
 /* String processing */
@@ -343,9 +348,11 @@ void proc_str(PLStream *pls, EscText *args)
   // Save current transform matrix & clipping region
   cairo_save(aStream->cairoContext);
 
-  // Setup the clipping region
-  // cairo_rectangle(aStream->cairoContext, DOWNSCALE * pls->clpxmi, DOWNSCALE * pls->clpymi, DOWNSCALE * (pls->clpxma - pls->clpxmi), DOWNSCALE * (pls->clpyma - pls->clpymi));
-  // cairo_clip(aStream->cairoContext);
+  // Set up the clipping region if we are doing text clipping
+  if(aStream->text_clipping){
+    cairo_rectangle(aStream->cairoContext, DOWNSCALE * pls->clpxmi, DOWNSCALE * pls->clpymi, DOWNSCALE * (pls->clpxma - pls->clpxmi), DOWNSCALE * (pls->clpyma - pls->clpymi));
+    cairo_clip(aStream->cairoContext);
+  }
 
   // Move to the string reference point
   cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) args->x, DOWNSCALE * (double) args->y);
@@ -583,12 +590,15 @@ cairo_status_t write_to_stream(void *filePointer, unsigned char *data, unsigned 
 //
 // Initializes the PLStream structure for the cairo devices.
 // Initializes the font lookup table.
+// Checks for cairo specific user options.
+// Returns a new PLCairo structure.
 //---------------------------------------------------------------------
 
-void stream_and_font_setup(PLStream *pls, int interactive)
+PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
 {
   int i;
   char *a;
+  PLCairo *aStream;
 
   // Stream setup
   pls->termin = interactive; /* Interactive device */
@@ -619,6 +629,23 @@ void stream_and_font_setup(PLStream *pls, int interactive)
       }
     }
   }
+
+  // Allocate a cairo stream structure
+  aStream = malloc(sizeof(PLCairo));
+
+  // Set text clipping off as this makes the driver pretty slow
+  aStream->text_clipping = 0;
+  text_clipping = 0;
+
+  // Check for cairo specific options
+  plParseDrvOpts(cairo_options);
+
+  // Turn on text clipping if the user desires this
+  if(text_clipping){
+    aStream->text_clipping = 1;
+  }
+
+  return aStream;
 }
 
 //---------------------------------------------------------------------
@@ -746,10 +773,7 @@ void plD_init_xcairo(PLStream *pls)
   PLCairo *aStream;
 
   // Setup the PLStream and the font lookup table
-  stream_and_font_setup(pls, 1);
-
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
+  aStream = stream_and_font_setup(pls, 1);
 
   // X Windows setup
   aStream->XDisplay = NULL;
@@ -942,10 +966,7 @@ void plD_init_pdfcairo(PLStream *pls)
   PLCairo *aStream;
 
   // Setup the PLStream and the font lookup table
-  stream_and_font_setup(pls, 0);
-
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
+  aStream = stream_and_font_setup(pls, 0);
 
   // Prompt for a file name if not already set.
   plOpenFile(pls);
@@ -1013,10 +1034,7 @@ void plD_init_pscairo(PLStream *pls)
   PLCairo *aStream;
 
   // Setup the PLStream and the font lookup table
-  stream_and_font_setup(pls, 0);
-
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
+  aStream = stream_and_font_setup(pls, 0);
 
   // Prompt for a file name if not already set.
   plOpenFile(pls);
@@ -1089,10 +1107,7 @@ void plD_init_svgcairo(PLStream *pls)
   PLCairo *aStream;
 
   // Setup the PLStream and the font lookup table
-  stream_and_font_setup(pls, 0);
-
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
+  aStream = stream_and_font_setup(pls, 0);
 
   // Prompt for a file name if not already set.
   plOpenFile(pls);
@@ -1161,17 +1176,8 @@ void plD_init_pngcairo(PLStream *pls)
 {
   PLCairo *aStream;
 
-  // Setup the PLStream and the font lookup table
-  stream_and_font_setup(pls, 0);
-
-  // Initialize family file info
-  plFamInit(pls);
-
-  // Prompt for a file name if not already set, and close the file
-  // since we just need the name, not an open file.
-  plOpenFile(pls);
-
-  // Allocate a cairo stream structure.
+  // Setup the PLStream and the font lookup table and allocate a cairo 
+  // stream structure.
   //
   // NOTE: The check below is necessary since, in family mode, this function
   //   will be called multiple times. While you might think that it is
@@ -1182,10 +1188,17 @@ void plD_init_pngcairo(PLStream *pls)
   //   which I infer the existence of said bad stale pointer.
   //
   if(pls->dev == NULL){
-    aStream = malloc(sizeof(PLCairo));
+    aStream = stream_and_font_setup(pls, 0);
   } else {
+    stream_and_font_setup(pls, 0);
     aStream = pls->dev;
   }
+
+  // Initialize family file info
+  plFamInit(pls);
+
+  // Prompt for a file name if not already set.
+  plOpenFile(pls);
 
   // Save the pointer to the structure in the PLplot stream
   pls->dev = aStream;
@@ -1296,10 +1309,7 @@ void plD_init_memcairo(PLStream *pls)
   pls->ylength = pls->phyyma;
   
   // Setup the PLStream and the font lookup table
-  stream_and_font_setup(pls, 0);
-
-  // Allocate a cairo stream structure
-  aStream = malloc(sizeof(PLCairo));
+  aStream = stream_and_font_setup(pls, 0);
 
   // Check that user supplied us with some memory to draw in
   if(pls->dev == NULL){
