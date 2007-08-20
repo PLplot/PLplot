@@ -1016,7 +1016,7 @@ plabort(char *errormsg)
 	*(plsc->errcode) = 1;
 
     if (plsc->errmsg != NULL) {
-	sprintf(plsc->errmsg, "\n*** PLPLOT ERROR ***\n");
+	sprintf(plsc->errmsg, "\n*** PLPLOT ERROR, ABORTING OPERATION ***\n");
 	if (*errormsg != '\0')
 	    sprintf(plsc->errmsg, "%s, aborting operation\n", errormsg);
 
@@ -1028,7 +1028,7 @@ plabort(char *errormsg)
 	    pltext();
 	}
 
-	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
+	fprintf(stderr, "\n*** PLPLOT ERROR, ABORTING OPERATION ***\n");
 	if (*errormsg != '\0')
 	    fprintf(stderr, "%s, aborting operation\n", errormsg);
 
@@ -1072,7 +1072,7 @@ plexit(char *errormsg)
 
     plsc->nopause = 1;
     if (*errormsg != '\0') {
-	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
+	fprintf(stderr, "\n*** PLPLOT ERROR, IMMEDIATE EXIT ***\n");
 	fprintf(stderr, "%s\n", errormsg);
     }
     plend();
