@@ -934,6 +934,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 }
 
 
+#if 0
 %typemap(in) PLGraphicsIn *gin (PLGraphicsIn tmp) {
   if(!PySequence_Check($input) || PySequence_Size($input) != 2) {
     PyErr_SetString(PyExc_ValueError, "Expecting a sequence of 2 numbers.");
@@ -950,5 +951,6 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   o = PyFloat_FromDouble($1->wY);
   resultobj = t_output_helper(resultobj, o);
 }
+#endif
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
