@@ -36,6 +36,7 @@ set(python_STRING_INDICES
 "16"
 "18"
 "19"
+"20"
 "21"
 "22"
 "23"
