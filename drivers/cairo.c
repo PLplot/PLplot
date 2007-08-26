@@ -31,20 +31,31 @@
 #include <math.h>
 
 #include <cairo.h>
-#include <cairo-xlib.h>
 #include <pango/pangocairo.h>
-
-//#if defined(PLD_xcairo)
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h> 
-#include <X11/cursorfont.h>
-//#endif
 
 // PLplot header files
 
 #include "plplotP.h"
 #include "drivers.h"
+
+// Driver-dependent includes
+#if defined(PLD_xcairo)
+#include <cairo-xlib.h>
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h> 
+#include <X11/cursorfont.h>
+#endif
+#if defined(PLD_pdfcairo)
+#include <cairo-pdf.h>
+#endif
+#if defined(PLD_pscairo)
+#include <cairo-ps.h>
+#endif
+#if defined(PLD_svgcairo)
+#include <cairo-svg.h>
+#endif
+
 
 //---------------------------------------------------------------------
 // Constants & global (to this file) variables 
