@@ -321,7 +321,7 @@ void proc_str(PLStream *pls, EscText *args)
   float fontSize;
   int textXExtent, textYExtent;
   char *textWithPangoMarkup;
-  PLFLT rotation, shear, cos_rot, sin_rot, tan_shear;
+  PLFLT rotation, shear, cos_rot, sin_rot, cos_shear, sin_shear, tan_shear;
   cairo_matrix_t *cairoTransformMatrix;
   PangoLayout *layout;
   PangoFontDescription *fontDescription;
@@ -379,14 +379,18 @@ void proc_str(PLStream *pls, EscText *args)
   rotation -= pls->diorot * 3.14159 / 2.0;
   cos_rot = cos(rotation);
   sin_rot = sin(rotation);
-  tan_shear = tan(shear);
+  cos_shear = cos(shear);
+  sin_shear = sin(shear);
+  //  tan_shear = tan(shear);
 
   // Apply the transform matrix
   cairo_matrix_init(cairoTransformMatrix,             
 		    cos_rot,
 		    -sin_rot,
-		    cos_rot * tan_shear + sin_rot,
-		    -sin_rot * tan_shear + cos_rot,
+		    // cos_rot * tan_shear + sin_rot,
+		    // -sin_rot * tan_shear + cos_rot,
+		    cos_rot * sin_shear + sin_rot * cos_shear,
+		    -sin_rot * sin_shear + cos_rot * cos_shear,
 		    0,0);
   cairo_transform(aStream->cairoContext, cairoTransformMatrix);
   free(cairoTransformMatrix);
