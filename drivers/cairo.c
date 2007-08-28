@@ -70,19 +70,26 @@
 #define MAX_MARKUP_LEN MAX_STRING_LEN * 10
 
 static int text_clipping;
+static int text_aliasing;
+static int non_text_aliasing;
+
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
+				 {"text_aliasing", DRV_INT, &text_aliasing, "Set desired text aliasing (text_aliasing=0|1|2|3)"},
+				 {"non_text_aliasing", DRV_INT, &non_text_aliasing, "Set desired non-text (i.e. graphics) aliasing (non_text_aliasing=0|1|2|3)"},
                                  {NULL, DRV_INT, NULL, NULL}};
 
 typedef struct {
-   cairo_surface_t *cairoSurface;
-   cairo_t *cairoContext;
-   short text_clipping;
+  cairo_surface_t *cairoSurface;
+  cairo_t *cairoContext;
+  short text_clipping;
+  short text_aliasing;
+  short non_text_aliasing;
 #if defined(PLD_xcairo)
-   Display *XDisplay;
-   Window XWindow;
+  Display *XDisplay;
+  Window XWindow;
 #endif
 #if defined(PLD_memcairo)
-   unsigned char *memory;
+  unsigned char *memory;
 #endif
 } PLCairo;
 
@@ -321,8 +328,10 @@ void proc_str(PLStream *pls, EscText *args)
   float fontSize;
   int textXExtent, textYExtent;
   char *textWithPangoMarkup;
-  PLFLT rotation, shear, cos_rot, sin_rot, cos_shear, sin_shear, tan_shear;
+  PLFLT rotation, shear, cos_rot, sin_rot, cos_shear, sin_shear;
   cairo_matrix_t *cairoTransformMatrix;
+  cairo_font_options_t *cairoFontOptions;
+  PangoContext *context;
   PangoLayout *layout;
   PangoFontDescription *fontDescription;
   PLCairo *aStream;
@@ -352,9 +361,15 @@ void proc_str(PLStream *pls, EscText *args)
   // Create the Pango text layout so we can figure out how big it is
   layout = pango_cairo_create_layout(aStream->cairoContext);
   pango_layout_set_markup(layout, textWithPangoMarkup, -1);
-  // fontDescription = pango_font_description_from_string(fontString);
-  // pango_layout_set_font_description(layout, fontDescription);
   pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
+
+  // Set font aliasing
+  context = pango_layout_get_context(layout);
+  cairoFontOptions = cairo_font_options_create();
+  cairo_font_options_set_antialias(cairoFontOptions, aStream->text_aliasing);
+  pango_cairo_context_set_font_options(context, cairoFontOptions);
+  pango_layout_context_changed(layout);
+  cairo_font_options_destroy(cairoFontOptions);
 
   // Save current transform matrix & clipping region
   cairo_save(aStream->cairoContext);
@@ -381,14 +396,11 @@ void proc_str(PLStream *pls, EscText *args)
   sin_rot = sin(rotation);
   cos_shear = cos(shear);
   sin_shear = sin(shear);
-  //  tan_shear = tan(shear);
 
   // Apply the transform matrix
   cairo_matrix_init(cairoTransformMatrix,             
 		    cos_rot,
 		    -sin_rot,
-		    // cos_rot * tan_shear + sin_rot,
-		    // -sin_rot * tan_shear + cos_rot,
 		    cos_rot * sin_shear + sin_rot * cos_shear,
 		    -sin_rot * sin_shear + cos_rot * cos_shear,
 		    0,0);
@@ -651,6 +663,8 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   // Set text clipping off as this makes the driver pretty slow
   aStream->text_clipping = 0;
   text_clipping = 0;
+  text_aliasing = 0;     // use default text aliasing by default
+  non_text_aliasing = 0; // use default graphics aliasing by default
 
   // Check for cairo specific options
   plParseDrvOpts(cairo_options);
@@ -659,6 +673,10 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   if(text_clipping){
     aStream->text_clipping = 1;
   }
+
+  // Record users desired text and graphics aliasing
+  aStream->text_aliasing = text_aliasing;
+  aStream->non_text_aliasing = non_text_aliasing;
 
   return aStream;
 }
@@ -820,6 +838,9 @@ void plD_init_xcairo(PLStream *pls)
 
   // Invert the surface so that the graphs are drawn right side up.
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
+  // Set graphics aliasing
+  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
 }
 
 //---------------------------------------------------------------------
@@ -995,6 +1016,9 @@ void plD_init_pdfcairo(PLStream *pls)
 
   // Invert the surface so that the graphs are drawn right side up.
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
+  // Set graphics aliasing
+  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
 }
 
 #endif
@@ -1136,6 +1160,9 @@ void plD_init_svgcairo(PLStream *pls)
 
   // Invert the surface so that the graphs are drawn right side up.
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
+  // Set graphics aliasing
+  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
 }
 
 #endif
@@ -1224,6 +1251,9 @@ void plD_init_pngcairo(PLStream *pls)
 
   // Invert the surface so that the graphs are drawn right side up.
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
+  // Set graphics aliasing
+  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
 }
 
 //----------------------------------------------------------------------
@@ -1344,6 +1374,9 @@ void plD_init_memcairo(PLStream *pls)
 
   // Invert the surface so that the graphs are drawn right side up.
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
+  // Set graphics aliasing
+  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
 }
       
 //---------------------------------------------------------------------
