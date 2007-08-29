@@ -74,8 +74,8 @@ static int text_aliasing;
 static int non_text_aliasing;
 
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
-				 {"text_aliasing", DRV_INT, &text_aliasing, "Set desired text aliasing (text_aliasing=0|1|2|3)"},
-				 {"non_text_aliasing", DRV_INT, &non_text_aliasing, "Set desired non-text (i.e. graphics) aliasing (non_text_aliasing=0|1|2|3)"},
+				 {"text_aliasing", DRV_INT, &text_aliasing, "Set desired text aliasing (text_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
+				 {"non_text_aliasing", DRV_INT, &non_text_aliasing, "Set desired non-text (i.e. graphics) aliasing (non_text_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
                                  {NULL, DRV_INT, NULL, NULL}};
 
 typedef struct {
