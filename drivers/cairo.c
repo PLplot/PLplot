@@ -70,20 +70,20 @@
 #define MAX_MARKUP_LEN MAX_STRING_LEN * 10
 
 static int text_clipping;
-static int text_aliasing;
-static int non_text_aliasing;
+static int text_anti_aliasing;
+static int graphics_anti_aliasing;
 
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
-				 {"text_aliasing", DRV_INT, &text_aliasing, "Set desired text aliasing (text_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
-				 {"non_text_aliasing", DRV_INT, &non_text_aliasing, "Set desired non-text (i.e. graphics) aliasing (non_text_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
+				 {"text_anti_aliasing", DRV_INT, &text_anti_aliasing, "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
+				 {"graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
                                  {NULL, DRV_INT, NULL, NULL}};
 
 typedef struct {
   cairo_surface_t *cairoSurface;
   cairo_t *cairoContext;
   short text_clipping;
-  short text_aliasing;
-  short non_text_aliasing;
+  short text_anti_aliasing;
+  short graphics_anti_aliasing;
 #if defined(PLD_xcairo)
   Display *XDisplay;
   Window XWindow;
@@ -366,7 +366,7 @@ void proc_str(PLStream *pls, EscText *args)
   // Set font aliasing
   context = pango_layout_get_context(layout);
   cairoFontOptions = cairo_font_options_create();
-  cairo_font_options_set_antialias(cairoFontOptions, aStream->text_aliasing);
+  cairo_font_options_set_antialias(cairoFontOptions, aStream->text_anti_aliasing);
   pango_cairo_context_set_font_options(context, cairoFontOptions);
   pango_layout_context_changed(layout);
   cairo_font_options_destroy(cairoFontOptions);
@@ -663,8 +663,8 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   // Set text clipping off as this makes the driver pretty slow
   aStream->text_clipping = 0;
   text_clipping = 0;
-  text_aliasing = 0;     // use default text aliasing by default
-  non_text_aliasing = 0; // use default graphics aliasing by default
+  text_anti_aliasing = 0;     // use 'default' text aliasing by default
+  graphics_anti_aliasing = 0; // use 'default' graphics aliasing by default
 
   // Check for cairo specific options
   plParseDrvOpts(cairo_options);
@@ -675,8 +675,8 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   }
 
   // Record users desired text and graphics aliasing
-  aStream->text_aliasing = text_aliasing;
-  aStream->non_text_aliasing = non_text_aliasing;
+  aStream->text_anti_aliasing = text_anti_aliasing;
+  aStream->graphics_anti_aliasing = graphics_anti_aliasing;
 
   return aStream;
 }
@@ -840,7 +840,7 @@ void plD_init_xcairo(PLStream *pls)
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 
   // Set graphics aliasing
-  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
+  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
 }
 
 //---------------------------------------------------------------------
@@ -1018,7 +1018,7 @@ void plD_init_pdfcairo(PLStream *pls)
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 
   // Set graphics aliasing
-  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
+  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
 }
 
 #endif
@@ -1162,7 +1162,7 @@ void plD_init_svgcairo(PLStream *pls)
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 
   // Set graphics aliasing
-  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
+  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
 }
 
 #endif
@@ -1253,7 +1253,7 @@ void plD_init_pngcairo(PLStream *pls)
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 
   // Set graphics aliasing
-  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
+  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
 }
 
 //----------------------------------------------------------------------
@@ -1376,7 +1376,7 @@ void plD_init_memcairo(PLStream *pls)
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 
   // Set graphics aliasing
-  cairo_set_antialias(aStream->cairoContext, aStream->non_text_aliasing);
+  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
 }
       
 //---------------------------------------------------------------------
