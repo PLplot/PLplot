@@ -91,7 +91,11 @@ set(DRIVERS_DEVICE_LIST
 "pbm:pbm:ON"
 "pdf:pdf:OFF"
 "pdfcairo:cairo:OFF"
-"plmeta:plmeta:ON"
+# (2007-09-01) As discussed on list, don't enable plmeta until we sort
+# out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
+# This is going to take time/energy for some volunteer who has not volunteered
+# yet.... :-)
+"plmeta:plmeta:OFF"
 "pngcairo:cairo:OFF"
 "ps:ps:ON"
 "pscairo:cairo:OFF"

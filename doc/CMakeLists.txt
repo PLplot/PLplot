@@ -1,5 +1,9 @@
 set(core_manpages plm2gif.1 plpr.1 pltek.1 pstex2eps.1)
-set(tcl_manpages plrender.1 plserver.1 pltcl.1)
+if(PLD_plmeta)
+  set(core_manpages ${core_manpages} plrender.1)
+endif(PLD_plmeta)
+
+set(tcl_manpages plserver.1 pltcl.1)
 
 set(manpages ${core_manpages})
 if (ENABLE_tcl)
