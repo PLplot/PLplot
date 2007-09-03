@@ -71,6 +71,15 @@ endif(DEFAULT_NO_DEVICES AND DEFAULT_ALL_DEVICES)
 
 set(DRIVERS_DEVICE_LIST
 "aqt:aqt:ON"
+# memcairo does not work and svgcairo does not render text so turn them off
+# by default.  The remaining cairo devices work well so turn them on by
+# default.
+"memcairo:cairo:OFF"
+"pdfcairo:cairo:ON"
+"pngcairo:cairo:ON"
+"pscairo:cairo:ON"
+"svgcairo:cairo:OFF"
+"xcairo:cairo:ON"
 "cgm:cgm:ON"
 "dg300:dg300:OFF"
 "png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"
@@ -85,20 +94,16 @@ set(DRIVERS_DEVICE_LIST
 "ljii:ljii:OFF"
 "ljiip:ljiip:OFF"
 "mem:mem:ON"
-"memcairo:cairo:OFF"
 "ntk:ntk:OFF"
 "null:null:ON"
 "pbm:pbm:ON"
 "pdf:pdf:OFF"
-"pdfcairo:cairo:OFF"
 # (2007-09-01) As discussed on list, don't enable plmeta until we sort
 # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
 # This is going to take time/energy for some volunteer who has not volunteered
 # yet.... :-)
 "plmeta:plmeta:OFF"
-"pngcairo:cairo:OFF"
 "ps:ps:ON"
-"pscairo:cairo:OFF"
 # Default OFF because this device is not well maintained (it currently
 # segfaults).
 "pstex:pstex:OFF"
@@ -106,13 +111,11 @@ set(DRIVERS_DEVICE_LIST
 "xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
 "versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
 "svg:svg:ON"
-"svgcairo:cairo:OFF"
 "tek4107f:tek:OFF"
 "tk:tk:ON"
 "tkwin:tkwin:ON"
 "wingcc:wingcc:ON"
 "wxwidgets:wxwidgets:ON"
-"xcairo:cairo:OFF"
 "xfig:xfig:ON"
 "xwin:xwin:ON"
 )
