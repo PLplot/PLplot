@@ -11,12 +11,12 @@ PROBLEMS file, then please send bug reports to PLplot developers via the
 mailing lists at http://sourceforge.net/mail/?group_id=2915 .
 
      Please see the license under which this software is distributed
-(LGPL), and the disclaimer of all warrantees, given in the COPYING.LIB
+(LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
 file.
 
 N.B. This is the official notice that our deprecated autotools-based build
 system is scheduled for removal starting with the 5.9.0 release.  The reason
-for this decision is the PLPlot developers and users are happy with our
+for this decision is the PLplot developers and users are happy with our
 CMake-based build system (see below), and nobody has been willing to spend
 time maintaining our old autotools-based build system.
 
@@ -57,13 +57,18 @@ all the changes and release tags have been preserved from the CVS repository.
 
 1.2 Drivers
    1.2.1 xwinttf -> xcairo
-        The xwinttf driver has been renamed xcairo. In addition most of the
-     the other output devices that Cairo supports are now supported. These
-     include a postscript driver (pscairo), a PDF driver (pdfcairo), a
-     SVG driver (svgcairo), a PNG driver (pngcairo) and a memory driver
-     (memcairo). This driver is still considered experimental. Known issues 
-     include improper text rendering with the SVG driver and the memory 
-     driver does not work at all.
+     The xwinttf driver has been renamed xcairo. In addition most of the
+     other devices that are theoretically possible with Cairo have been
+     implemented. These are a PostScript device (pscairo), a PNG device
+     (pngcairo), a PDF device (pdfcairo), an SVG device (svgcairo), and a
+     memory device (memcairo). The cairo device driver is still considered
+     experimental as a whole. Known issues include improper text rendering
+     with svgcairo and memcairo not working at all so those two devices are
+     disabled by default.  The pngcairo, pscairo, and xcairo devices appear
+     to work without problems and also give outstanding-looking antialiased
+     and hinted results so are enabled by default. The pdfcairo device
+     appears to work reasonably well so is enabled by default although it is
+     not as mature as the other Cairo devices that are enabled.
 
    1.2.2 The combination of the plmeta device and the plrender application
      that renders plmeta results is unmaintained and has some known issues
@@ -116,8 +121,8 @@ with some windows platforms where the temporary files were not getting deleted.
 2.4 Updated INSTALL/README
 
    The INSTALL and README files have been updated. They now include detailed
-instructions for building plplot using the new CMake build system on linux
-and windows.
+instructions for building plplot using the new CMake build system on Linux
+and Windows.
 
 2.5 malloc/calloc clean up
 
@@ -158,7 +163,7 @@ equivalent of plptex and plmtex3 is the 3D equivalent of plmtex.
     simple widget to be used in a wxWidgets application. The class 
     'wxPLplotstream' inherited from the PLplot class 'plstream' allows access
     to the complete PLplot API. 'wxPLplotWindow' is a simple wxWidget which
-    takes care of some preparational work for convenient use of the PLplot
+    takes care of some preparatory work for convenient use of the PLplot
     Library within a wxWidgets application.
  
   2.8.3 Python bindings
@@ -185,36 +190,42 @@ and to make them more consistent across different programming languages.
 
   2.10.3 wxwidgets
     This driver has been updated a great deal. The most important improvements
-    have been to the antializing part of the driver. It is now about 4 times
+    have been to the antialiasing part of the driver. It is now about 4 times
     faster than it was, and is nearly comparable in speed to the driver
-    with the antializing turned off. In addition the antializing code can
+    with the antialiasing turned off. In addition the antialiasing code can
     now handle filled polygons and window resizing.
 
   2.10.4 pdf
     A basic version of a pdf driver was added to the latest PLplot release. 
     This driver is based on the libharu library 
-    (http://libharu.sourceforge.net/). At present only the hershey fonts are 
-    used and there is no support for pdf or ttf fonts. Compression of the pdf 
+    (http://libharu.sourceforge.net/). At present only the Hershey fonts are 
+    used and there is no support for pdf or TrueType fonts. Compression of the pdf 
     output is not enabled and the paper size can't be chosen. All these issues 
     will be addressed in later releases.
 
   2.10.5 gd, wingcc (freetype)
-    Improved anti-aliasing routines have been added to plplot's freetype
+    Improved anti-aliasing routines have been added to PLplot's freetype
     font rendering engine. The gd and wingcc drivers have been modified in 
     turn to take advantage of these new routines, leading to improved text
     rendering.
 
   2.10.6 cairo 
-       This is a family of drivers that use the Cairo graphics library to
+    This is a family of drivers that use the Cairo graphics library to
     render text and graphics. The graphics and the text are both
-    anti-aliased. It is unicode enabled and Truetype fonts are used by 
-    default. Most of the the output devices that Cairo supports are 
-    supported. These include a X windows driver (xcairo), a postscript 
-    driver (pscairo), a PDF driver (pdfcairo), a SVG driver (svgcairo), a 
-    PNG driver (pngcairo) and a memory driver (memcairo). This driver is 
-    still considered experimental. Known issues include improper text 
-    rendering with the SVG driver and the memory driver does not work at 
-    all.
+    anti-aliased which yields some outstanding-looking results. This driver
+    is unicode enabled, and Truetype fonts are used by default. Most of the
+    devices that are theoretically possible with Cairo have been
+    implemented. These are an X device (xcairo), a PostScript device
+    (pscairo), a PNG device (pngcairo, a PDF device (pdfcairo), an SVG
+    device (svgcairo), and a memory device (memcairo). The cairo device
+    driver is still considered experimental as a whole. Known issues include
+    improper text rendering with svgcairo and memcairo not working at all so
+    those two devices are disabled by default.  The pngcairo, pscairo, and
+    xcairo devices appear to work without problems and also give
+    outstanding-looking antialiased and hinted results so are enabled by
+    default. The pdfcairo device appears to work reasonable well so is
+    enabled by default although it is not as mature as the other three cairo
+    devices that are enabled.
 
   2.10.7 pstex driver
        This Latex driver has now been resurrected from years of neglect and
