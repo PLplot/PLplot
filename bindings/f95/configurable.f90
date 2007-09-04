@@ -42,6 +42,7 @@
       do 10 iargs = 0, numargs
         call getarg(iargs, arg)
         call plstrf2c(arg, string1, maxlen)
+        s1 = transfer( string1, s1 )
         do 5 index = 1, maxindex
           iargsarr(index, iargs+1) = s1(index)
     5     continue

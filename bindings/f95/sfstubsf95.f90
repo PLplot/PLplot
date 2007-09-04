@@ -1024,7 +1024,7 @@
          enddo
          call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, irev )
       end subroutine plscmap1l
-      
+
       subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3)
             logical                        :: rgbtype
             real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
@@ -1063,6 +1063,15 @@
       iy_ascl = convert_to_int( y_ascl )
       iacc = convert_to_int( acc )
 
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      s3 = transfer( string3, s3 )
+      s4 = transfer( string4, s4 )
+      s5 = transfer( string5, s5 )
+      s6 = transfer( string6, s6 )
+      s7 = transfer( string7, s7 )
+      s8 = transfer( string8, s8 )
+      s9 = transfer( string9, s9 )
       call plstripcf77(id, s1, s2, xmin, xmax, xjump, &
         ymin, ymax, xlpos, ylpos, iy_ascl, iacc, &
         colbox, collab, colline, styline, &

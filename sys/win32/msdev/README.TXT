@@ -1,8 +1,17 @@
 README file for the win32/msdev port of plplot
 ==============================================
 
-Belongs to PLplot version: 5.6.0
-Information updated:       april 2006
+Belongs to PLplot version: 5.8.0
+Information updated:       september 2007
+
+
+Information dd. september 2007
+------------------------------
+This is the last release to contain the Windows-specific build
+system. With the adoption of CMake, it is no longer necessary
+to use this system. As it is much less capable than the
+CMake-based build system, we strongly advise you to switch to
+that system.
 
 
 Information dd. april 2006

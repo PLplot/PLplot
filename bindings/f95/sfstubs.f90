@@ -45,6 +45,8 @@
 
       call plstrf2c(opt, string1, maxlen)
       call plstrf2c(optarg, string2, maxlen)
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
       call plsetopt7(s1, s2)
 
       end subroutine
@@ -59,6 +61,7 @@
       include 'sfstubs.h'
 
       call plstrf2c(dnam, string1, maxlen)
+      s1 = transfer( string1, s1 )
       call plsdev7(s1)
 
       end subroutine
@@ -87,6 +90,7 @@
       include 'sfstubs.h'
 
       call plstrf2c(fnam, string1, maxlen)
+      s1 = transfer( string1, s1 )
       call plsfnam7(s1)
 
       end subroutine
@@ -115,6 +119,7 @@
       include 'sfstubs.h'
 
       call plgver7(s1)
+      string1 = transfer( s1, string1 )
       call plstrc2f(string1, ver)
 
       end subroutine
@@ -133,6 +138,8 @@
       call plstrf2c(xopt, string1, maxlen)
       call plstrf2c(yopt, string2, maxlen)
 
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
       call plaxes7(x0,y0,s1,xtick,nxsub,s2,ytick,nysub)
 
       end subroutine
@@ -151,6 +158,8 @@
       call plstrf2c(xopt, string1, maxlen)
       call plstrf2c(yopt, string2, maxlen)
 
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string1, s2 )
       call plbox7(s1,xtick,nxsub,s2,ytick,nysub)
 
       end subroutine
@@ -174,6 +183,12 @@
       call plstrf2c(zopt, string5, maxlen)
       call plstrf2c(zlabel, string6, maxlen)
 
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string1, s2 )
+      s3 = transfer( string1, s3 )
+      s4 = transfer( string1, s4 )
+      s5 = transfer( string1, s5 )
+      s6 = transfer( string1, s6 )
       call plbox37(s1,s2,xtick,nxsub, &
         s3,s4,ytick,nysub, &
         s5,s6,ztick,nzsub)
@@ -359,6 +374,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshade07(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
@@ -387,6 +403,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshade17(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
@@ -416,6 +433,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshade27(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
@@ -443,6 +461,7 @@
 
       include 'sfstubs.h'
 
+      s1 = transfer( string1, s1 )
       call plshade7(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
@@ -468,6 +487,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshades07(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
@@ -493,6 +513,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshades17(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
@@ -518,6 +539,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshades27(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
@@ -543,6 +565,7 @@
 
 !	call plstrf2c(dnam, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plshades7(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
@@ -563,6 +586,9 @@
       call plstrf2c(ylab, string2, maxlen)
       call plstrf2c(title, string3, maxlen)
 
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      s3 = transfer( string3, s3 )
       call pllab7(s1,s2,s3)
 
       end subroutine
@@ -580,6 +606,8 @@
       call plstrf2c(side, string1, maxlen)
       call plstrf2c(text, string2, maxlen)
 
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
       call plmtex7(s1,disp,pos,xjust,s2)
 
       end subroutine
@@ -596,6 +624,7 @@
 
       call plstrf2c(text, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plptex7(x,y,dx,dy,xjust,s1)
 
       end subroutine
@@ -612,6 +641,7 @@
 
       call plstrf2c(devname, string1, maxlen)
 
+      s1 = transfer( string1, s1 )
       call plstart7(s1, nx, ny)
 
       end subroutine
@@ -630,6 +660,7 @@
       call plstrf2c(mapname, string1, maxlen)
 
       call plsetmapformc(mapform)
+      s1 = transfer( string1, s1 )
       call plmapc(s1,minx,maxx,miny,maxy)
 
       end subroutine

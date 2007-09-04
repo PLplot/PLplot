@@ -1,9 +1,9 @@
 PLplot Release 5.8.0
 ~~~~~~~~~~~~~~~~~~~~
 
-This is a stable release of PLplot. It represents the ongoing efforts of the 
-community to improve the PLplot plotting package. Development releases in the 
-5.9.x series will be available every few months. The next stable release will 
+This is a stable release of PLplot. It represents the ongoing efforts of the
+community to improve the PLplot plotting package. Development releases in the
+5.9.x series will be available every few months. The next stable release will
 be 5.10.0.
 
      If you encounter a problem that is not already documented in the
@@ -20,11 +20,19 @@ for this decision is the PLplot developers and users are happy with our
 CMake-based build system (see below), and nobody has been willing to spend
 time maintaining our old autotools-based build system.
 
+Note for Windows users:
+The same holds for the old Windows build system in sys/win32/msdev. This
+build system is much less flexible than the CMake-based system. It also
+lacks a larger number of important features - freetype text, language
+bindings and so on. With the 5.9.0 release the source distribution will
+no longer contain this directory. Hence you should switch to the new
+build system described below.
+
 INDEX
 
 1. Changes relative to PLplot 5.7.4
   ...
-    
+
 2. Changes relative to PLplot 5.6.1
   2.1 CVS to Subversion conversion
   2.2 CMake build system
@@ -115,7 +123,7 @@ http://www.miscdebris.net/plplot_wiki/.
    PLplot core has been modified to buffer plot commands in memory rather than
 via a unix pipe or temporary file. Testing has shown that there is 20-30%
 improvement in plotting performance (i.e. speed). This is likely to be system
-dependent and some may see a much larger benefit. This also resolves a problem 
+dependent and some may see a much larger benefit. This also resolves a problem
 with some windows platforms where the temporary files were not getting deleted.
 
 2.4 Updated INSTALL/README
@@ -127,7 +135,7 @@ and Windows.
 2.5 malloc/calloc clean up
 
    Checks have been added to many (all?) of the calls to calloc and malloc in
-the PLplot core. The purpose of the check is to verify that the memory 
+the PLplot core. The purpose of the check is to verify that the memory
 requested was actually allocated prior to attempting to use it.
 
 2.6 Documentation
@@ -135,9 +143,9 @@ requested was actually allocated prior to attempting to use it.
    The API section has been expanded to include information about how to call
 the functions from Fortran95, Java, Perl/PDL and Python. Since array dimension
 information is typically redundant in these languages it is dropped in many
-of the relevant function. Additionally, some of the Perl/PDL function calls 
-have a different argument order than their C equivalent. This section has also 
-been expanded to include a list of which examples each function is used in 
+of the relevant function. Additionally, some of the Perl/PDL function calls
+have a different argument order than their C equivalent. This section has also
+been expanded to include a list of which examples each function is used in
 (if any).
 
    The Fortran95 documentation has been updated.
@@ -147,25 +155,25 @@ been expanded to include a list of which examples each function is used in
    The functions plptex3 and plmtex3 have been added to the PLplot API. These
 allow the user to draw text in "3D" on the 3D plots. plptex3 is the 3D
 equivalent of plptex and plmtex3 is the 3D equivalent of plmtex.
- 
+
 2.8 Language bindings
   2.8.1 ADA
-       Jerry Bauck has donated bindings to the ADA programming language. 
+       Jerry Bauck has donated bindings to the ADA programming language.
     These bindings have been included into the CMake build system,
     and should be generated automatically if you have an ADA compiler and
-    you specify the cmake option -DENABLE_ada=ON. The ADA bindings are now 
-    considered complete and the current focus is on implementing all of the 
+    you specify the cmake option -DENABLE_ada=ON. The ADA bindings are now
+    considered complete and the current focus is on implementing all of the
     examples in ADA to help test the bindings.
 
 
   2.8.2 wxwidgets applications bindings
-       The wxWidgets bindings provide an interface to the PLplot API and a 
-    simple widget to be used in a wxWidgets application. The class 
+       The wxWidgets bindings provide an interface to the PLplot API and a
+    simple widget to be used in a wxWidgets application. The class
     'wxPLplotstream' inherited from the PLplot class 'plstream' allows access
     to the complete PLplot API. 'wxPLplotWindow' is a simple wxWidget which
     takes care of some preparatory work for convenient use of the PLplot
     Library within a wxWidgets application.
- 
+
   2.8.3 Python bindings
     The Python bindings have been updated to use numpy rather than the now
     deprecated Numeric python numeric library.
@@ -173,7 +181,7 @@ equivalent of plptex and plmtex3 is the 3D equivalent of plmtex.
 2.9 Updated examples
 
    The examples have been checked over to make sure that they all work
-and to make them more consistent across different programming languages.   
+and to make them more consistent across different programming languages.
 
 2.10 Drivers
   2.10.1 psttf
@@ -182,7 +190,7 @@ and to make them more consistent across different programming languages.
     version of FreeType library) on which to choose.
 
   2.10.2 svg
-    This is a new device driver that creates Scalable Vector Graphics files 
+    This is a new device driver that creates Scalable Vector Graphics files
     (http://www.w3.org/Graphics/SVG/). SVG is a XML language describing
     graphics that is supported directly or via plug-ins in most modern web
     browsers. The driver is off by default as its text handling has not been
@@ -196,20 +204,20 @@ and to make them more consistent across different programming languages.
     now handle filled polygons and window resizing.
 
   2.10.4 pdf
-    A basic version of a pdf driver was added to the latest PLplot release. 
-    This driver is based on the libharu library 
-    (http://libharu.sourceforge.net/). At present only the Hershey fonts are 
-    used and there is no support for pdf or TrueType fonts. Compression of the pdf 
-    output is not enabled and the paper size can't be chosen. All these issues 
+    A basic version of a pdf driver was added to the latest PLplot release.
+    This driver is based on the libharu library
+    (http://libharu.sourceforge.net/). At present only the Hershey fonts are
+    used and there is no support for pdf or TrueType fonts. Compression of the pdf
+    output is not enabled and the paper size can't be chosen. All these issues
     will be addressed in later releases.
 
   2.10.5 gd, wingcc (freetype)
     Improved anti-aliasing routines have been added to PLplot's freetype
-    font rendering engine. The gd and wingcc drivers have been modified in 
+    font rendering engine. The gd and wingcc drivers have been modified in
     turn to take advantage of these new routines, leading to improved text
     rendering.
 
-  2.10.6 cairo 
+  2.10.6 cairo
     This is a family of drivers that use the Cairo graphics library to
     render text and graphics. The graphics and the text are both
     anti-aliased which yields some outstanding-looking results. This driver
@@ -232,7 +240,7 @@ and to make them more consistent across different programming languages.
     aside from bounding box issues seems to be working well.  Should be
     useful for Latex enthusiasts.
 
-  2.10.8 plmeta driver 
+  2.10.8 plmeta driver
     The combination of the plmeta device and the plrender application that
     renders plmeta results is unmaintained and has some known issues with
     strings, aspect ratio changes, and fonts.  Therefore, the plmeta device
