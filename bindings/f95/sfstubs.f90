@@ -159,7 +159,7 @@
       call plstrf2c(yopt, string2, maxlen)
 
       s1 = transfer( string1, s1 )
-      s2 = transfer( string1, s2 )
+      s2 = transfer( string2, s2 )
       call plbox7(s1,xtick,nxsub,s2,ytick,nysub)
 
       end subroutine
