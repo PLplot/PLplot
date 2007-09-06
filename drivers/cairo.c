@@ -122,11 +122,11 @@ char* plD_DEVICE_INFO_cairo =
 #define NPANGOLOOKUP 5
 
 const char *defaultFamilyLookup[NPANGOLOOKUP] = {
-  "Sans",
-  "Serif",
-  "Monospace",
-  "Sans",
-  "Sans"
+  "Arial,Bitstream-Vera-Sans,sans",
+  "Times-Roman,Bitstream-Vera-Serif,serif",
+  "Courier,Bitstream-Vera-Sans-Mono,monospace",
+  "Arial,Bitstream-Vera-Sans,sans,serif",
+  "Arial,Bitstream-Vera-Sans,sans,serif"
 };
 
 const char *envFamilyLookup[NPANGOLOOKUP] = {
@@ -646,14 +646,12 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
 
   // Initialize font table with either enviroment variables or defaults.
   // This was copied from the psttf driver.
-  if(familyLookup[i] == NULL){
-    for(i=0;i<NPANGOLOOKUP;i++){
-      if((a = getenv(envFamilyLookup[i])) != NULL){
-        strcpy(familyLookup[i],a);
-      }
-      else {
-        strcpy(familyLookup[i],defaultFamilyLookup[i]);
-      }
+  for(i=0;i<NPANGOLOOKUP;i++){
+    if((a = getenv(envFamilyLookup[i])) != NULL){
+      strcpy(familyLookup[i],a);
+    }
+    else {
+      strcpy(familyLookup[i],defaultFamilyLookup[i]);
     }
   }
 
