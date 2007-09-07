@@ -5,6 +5,7 @@
 from plplot_py_demos import *
 
 import os.path
+import sys
 
 XDIM = 260
 YDIM = 220
@@ -208,7 +209,7 @@ def main():
         if (err):
             plabort("No such file")
             plend()
-            exit(1)
+            sys.exit(1)
 
     # Set gray colormap
     gray_cmap(num_col)
@@ -233,7 +234,7 @@ def main():
         [err, xi, xe, yi, ye] = get_clip(xi, xe, yi, ye)
         if (err):
             plend()
-            exit(0)
+            sys.exit(0)
             
         plspause(0)
         pladv(0)
@@ -249,7 +250,7 @@ def main():
         plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
         pladv(0)
     plend()
-    exit(0)
+    sys.exit(0)
 
     
 main()
