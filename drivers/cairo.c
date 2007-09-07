@@ -33,7 +33,7 @@
 #include <cairo.h>
 #include <pango/pangocairo.h>
 
-// PLplot header files
+// PLplot header files (must occur before driver-dependent includes)
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -45,6 +45,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h> 
 #include <X11/cursorfont.h>
+#include <X11/keysym.h>
 #endif
 #if defined(PLD_pdfcairo)
 #include <cairo-pdf.h>
