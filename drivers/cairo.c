@@ -85,6 +85,7 @@ typedef struct {
   short text_anti_aliasing;
   short graphics_anti_aliasing;
 #if defined(PLD_xcairo)
+  short exit_event_loop;
   Display *XDisplay;
   Window XWindow;
 #endif
@@ -816,7 +817,8 @@ void plD_init_xcairo(PLStream *pls)
   }
   XScreen = DefaultScreen(aStream->XDisplay);
   rootWindow = RootWindow(aStream->XDisplay, XScreen);
-  
+  aStream->exit_event_loop = 0;
+
   // Initialize plot title
   sprintf(plotTitle, "PLplot");
     
@@ -850,13 +852,42 @@ void plD_init_xcairo(PLStream *pls)
 
 void plD_eop_xcairo(PLStream *pls)
 {
+  int number_chars;
+  long event_mask;
+  char event_string[10];
+  KeySym keysym;
+  XComposeStatus cs;
+  XEvent event;
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
 
   XFlush(aStream->XDisplay);
-  printf("Key <Return> to finish\n");
-  getc(stdin);
+
+  // Loop, handling selected events, till the user elects to close the plot.
+  printf("Click on the plot and key <Return> to exit.\n");
+  event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
+  XSelectInput(aStream->XDisplay, aStream->XWindow, event_mask);
+  while(!aStream->exit_event_loop){
+    XWindowEvent(aStream->XDisplay, aStream->XWindow, event_mask, &event);
+    switch(event.type){
+    case KeyPress:
+      number_chars = XLookupString((XKeyEvent *)&event, event_string, 10, &keysym, &cs);
+      event_string[number_chars] = '\0';
+      if(keysym == XK_Return){
+	aStream->exit_event_loop = 1;
+      }
+      break;
+    case Expose:
+      plD_bop_cairo(pls);
+      plRemakePlot(pls);
+      XFlush(aStream->XDisplay);
+      break;
+    }
+  }
+
+  //  printf("Key <Return> to finish\n");
+  //getc(stdin);
 }
 
 //---------------------------------------------------------------------
