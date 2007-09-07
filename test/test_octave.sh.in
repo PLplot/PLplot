@@ -85,6 +85,7 @@ if ! isempty (failed)
 endif
 EOF
 status_code=$?
+cat test.error
 if [ "$status_code" -ne 0 ]; then
   exit $status_code
 fi
@@ -94,4 +95,3 @@ is_error=`grep -l 'PLPLOT ERROR' test.error`
 if test -n "$is_error"; then
   exit 1
 fi
-
