@@ -29,6 +29,8 @@ from plplot import *
 
 # Parse and process command line arguments
 plparseopts(sys.argv, PL_PARSE_FULL)
+version = plgver()
+print "PLplot library version: " + version
 
 # Initialize plplot
 plinit()
