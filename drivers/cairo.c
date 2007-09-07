@@ -886,6 +886,7 @@ void plD_eop_xcairo(PLStream *pls)
       break;
     }
   }
+  aStream->exit_event_loop = 0;
 
   //  printf("Key <Return> to finish\n");
   //getc(stdin);
