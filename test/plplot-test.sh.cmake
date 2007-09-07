@@ -46,8 +46,7 @@ echo '
 Usage: plplot-test.sh [OPTIONS]
 
 Options:
-   [--device=DEVICE] (DEVICE = one of psc [default], ps, psttfc, psttf, pstex,
-                      png, gif, jpeg, cgm,svg, xfig, or plmeta)
+   [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
    [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, perl, or ada)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
@@ -169,61 +168,93 @@ export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perld
 
 fe=""
 
+# List of non-interactive (i.e., file) devices for PLplot that 
+# _might_ be enabled.  For completeness you may want to specify all devices
+# here, but be sure to comment out the interactive ones since the configured
+# plplot-test.sh script does not work with interactive devices.
+
+#interactive PLD_aqt=@PLD_aqt@
+PLD_cgm=@PLD_cgm@
+PLD_conex=@PLD_conex@
+PLD_dg300=@PLD_dg300@
+#interactive PLD_gcw=@PLD_gcw@
+PLD_gif=@PLD_gif@
+#interactive PLD_gnome=@PLD_gnome@
+PLD_hp7470=@PLD_hp7470@
+PLD_hp7580=@PLD_hp7580@
+PLD_imp=@PLD_imp@
+PLD_jpeg=@PLD_jpeg@
+PLD_linuxvga=@PLD_linuxvga@
+PLD_lj_hpgl=@PLD_lj_hpgl@
+PLD_ljii=@PLD_ljii@
+PLD_ljiip=@PLD_ljiip@
+#not a file device PLD_mem=@PLD_mem@
+#not a file device PLD_memcairo=@PLD_memcairo@
+PLD_mskermit=@PLD_mskermit@
+#interactive PLD_ntk=@PLD_ntk@
+PLD_null=@PLD_null@
+PLD_pbm=@PLD_pbm@
+PLD_pdf=@PLD_pdf@
+PLD_pdfcairo=@PLD_pdfcairo@
+PLD_plmeta=@PLD_plmeta@
+PLD_png=@PLD_png@
+PLD_pngcairo=@PLD_pngcairo@
+PLD_ps=@PLD_ps@
+# special case
+PLD_psc=@PLD_ps@
+PLD_pscairo=@PLD_pscairo@
+PLD_pstex=@PLD_pstex@
+PLD_psttf=@PLD_psttf@
+# special case
+PLD_psttfc=@PLD_psttf@
+PLD_svg=@PLD_svg@
+PLD_svgcairo=@PLD_svgcairo@
+PLD_tek4010=@PLD_tek4010@
+PLD_tek4010f=@PLD_tek4010f@
+PLD_tek4107=@PLD_tek4107@
+PLD_tek4107f=@PLD_tek4107f@
+#interactive PLD_tk=@PLD_tk@
+#interactive PLD_tkwin=@PLD_tkwin@
+PLD_versaterm=@PLD_versaterm@
+PLD_vlt=@PLD_vlt@
+#interactive PLD_wingcc=@PLD_wingcc@
+#interactive PLD_wxwidgets=@PLD_wxwidgets@
+#interactive PLD_xcairo=@PLD_xcairo@
+PLD_xfig=@PLD_xfig@
+PLD_xterm=@PLD_xterm@
+#interactive PLD_xwin=@PLD_xwin@
+
+eval pld_device='$'PLD_$device
+if test -z "$pld_device" ; then
+echo '
+Never heard of this file '"$device"'.  Either this is not a legitimate 
+file device (i.e. non-interactive) device for PLplot or else 
+plplot-test.sh.cmake needs some maintenance to include this file device in
+the list of possible PLplot file devices.
+'
+exit 1
+fi
+
+if test ! "$pld_device" = ON; then
+echo '
+PLD_'"$device"' is defined as '"$pld_device"'.  It must be ON (i.e., enabled
+by your cmake configuration and built properly) before you can use this
+script with DEVICE='"$device"'.
+'
+exit 1
+fi
+
+# Some devices require familying others do not.
 case "$device" in
-   ps|psc)
-      dsuffix=ps
-      options=
-      export dsuffix options
-      ;;
-   pstex)
-      dsuffix=eps
-      options=
-      export dsuffix options
-      ;;
-   psttf|psttfc)
-      dsuffix=psttf
-      options=
-      export dsuffix options
-      ;;
-   png)
-      dsuffix=png
+   png|pngcairo|gif|jpeg|xfig)
       options="-fam -fflen 2"
-      export dsuffix options
-      ;;
-   gif)
-      dsuffix=gif
-      options="-fam -fflen 2"
-      export dsuffix options
-      ;;
-   jpeg)
-      dsuffix=jpeg
-      options="-fam -fflen 2"
-      export dsuffix options
-      ;;
-   svg)
-      dsuffix=svg
-      options=
-      export dsuffix options
-      ;;
-   cgm)
-      dsuffix=cgm
-      options=
-      export dsuffix options
-      ;;
-   xfig)
-      dsuffix=fig
-      options="-fam -fflen 2"
-      export dsuffix options
-      ;;
-   plmeta)
-      dsuffix=plmeta
-      options=
-      export dsuffix options
       ;;
    *)
-      usage 1 1>&2
+      options=
       ;;
 esac
+dsuffix=$device
+export dsuffix options
 
 # Find out what front-ends have been configured
 if test -z "$FRONT_END" ; then

@@ -13,7 +13,7 @@ plplot/cmake/modules/drivers-init.cmake
 plplot/include/drivers.h
 plplot/include/plDevs.h.cmake
 plplot/include/plcore.h
-
+plplot/test/plplot-test.sh.cmake
 
 The following are some short notes on what you need to add to these files
 to add a new driver (which we'll call foo) to PLplot.
@@ -40,6 +40,11 @@ void plD_dispatch_init_foo      ( PLDispatchTable *pdt );
     plD_dispatch_init_foo,
 #endif
 
+6. For each _file_ device of the driver add the following line to 
+test/plplot-test.sh.cmake.  For completeness you may want to specify
+the interactive devices there as well but be sure to comment them out since
+the configured plplot-test.sh script does not work with interactive devices.
+PLD_foo=@PLD_foo@
 
 If the driver requires additional additional files or external libraries for
 compiling and linking then you should add a file called foo.cmake to
