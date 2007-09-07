@@ -227,8 +227,8 @@ PLD_xterm=@PLD_xterm@
 eval pld_device='$'PLD_$device
 if test -z "$pld_device" ; then
 echo '
-Never heard of this file '"$device"'.  Either this is not a legitimate 
-file device (i.e. non-interactive) device for PLplot or else 
+Never heard of a file device called '"$device"'.  Either this is not a
+legitimate file (i.e. non-interactive) device for PLplot or else 
 plplot-test.sh.cmake needs some maintenance to include this file device in
 the list of possible PLplot file devices.
 '
