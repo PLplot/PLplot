@@ -36,7 +36,7 @@
 
 !  Print plplot version
    call plgver(version)
-   write (0,'(a,a)') 'PLplot library version: ', trim(version)
+   write (*,'(a,a)') 'PLplot library version: ', trim(version)
 
 !  Initialize plplot
    call plinit()

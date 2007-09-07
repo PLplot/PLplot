@@ -40,7 +40,7 @@ C      Divide page into 2x2 plots
 
 C      Print plplot version
       call plgver(version)
-      write (0,'(a,a)') 'PLplot library version: ',
+      write (*,'(a,a)') 'PLplot library version: ',
      &  version(:lnblnk(version))
 
 C      Initialize plplot

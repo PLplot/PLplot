@@ -95,7 +95,7 @@ EOT
   # Get version number, just for kicks */
 
   my $ver = plgver ();
-  print STDERR "PLplot library version: $ver\n";
+  print STDOUT "PLplot library version: $ver\n";
 
   # Initialize plplot
 
