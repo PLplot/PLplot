@@ -25,6 +25,9 @@ ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
 
+if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+endif(USE_RPATH)
 
 if(PLD_plmeta)
   add_executable(plrender plrender.c)
@@ -38,7 +41,6 @@ if(PLD_plmeta)
   target_link_libraries(plrender plplot${LIB_TAG})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
     set_target_properties(plrender
     PROPERTIES
     INSTALL_RPATH "${LIB_INSTALL_RPATH}"
