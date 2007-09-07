@@ -636,6 +636,7 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   pls->dev_unicode = 1;      /* Wants unicode text */
   pls->page = 0;
   pls->dev_fill0 = 1;        /* Supports hardware solid fills */
+  pls->plbuf_write = 1;      /* Activate plot buffer */
   
   plP_setpxl(DPI/25.4/DOWNSCALE, DPI/25.4/DOWNSCALE);
   
