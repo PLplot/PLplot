@@ -485,6 +485,7 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
       }
       i++;
       if (ucs4[i] == (PLUNICODE)plplotEsc){   // a escape character to display
+	ucs4_to_utf8(ucs4[i],utf8);
 	strcat(pangoMarkupString, utf8);
 	i++;
 	continue;
@@ -739,7 +740,6 @@ void rotate_cairo_surface(PLStream *pls, float x11, float x12, float x21, float 
 
   aStream = (PLCairo *)pls->dev;
 
-  // Invert the coordinate system so the graphs are drawn right side up.
   matrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
   cairo_matrix_init(matrix, x11, x12, x21, x22, x0, y0);
   cairo_transform(aStream->cairoContext, matrix);
