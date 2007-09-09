@@ -28,6 +28,9 @@ bindings and so on. With the 5.9.0 release the source distribution will
 no longer contain this directory. Hence you should switch to the new
 build system described below.
 
+Note for gfortran users of our f95 interface: gfortran version 4.1.2 or later
+is a requirement, see fortran 95 interface remarks below.
+
 INDEX
 
 1. Changes relative to PLplot 5.7.4
@@ -45,6 +48,7 @@ INDEX
     2.8.1 ADA language binding
     2.8.2 wxwidgets applications bindings
     2.8.3 Python bindings
+    2.8.3 f95 bindings
   2.9 Updated examples
   2.10 Drivers
     2.10.1 psttf
@@ -97,7 +101,17 @@ implementing all of the examples in ADA to help test the bindings.
 deprecated Numeric python numeric library. If you need to revert to the old
 Numeric support, then you should specify the cmake option -DHAVE_NUMPY=OFF.
 
-1.5 Fortran95 documentation
+1.5 Fortran 95 bindings
+
+    Equivalance statements in our F95 interface were causing problems for
+    one fortran 95 compiler so we have dropped those equivalence statements
+    and use the transfer intrinsic instead.  However, for gfortran that
+    intrinsic was only implemented for version 4.1.2 so that is the
+    minimum version requirement for gfortran now if you attempt to build
+    the f95 bindings.  Note, earlier versions of gfortran build the f77
+    bindings with no problems.
+
+1.6 Fortran95 documentation
 
     The Fortran95 documentation has been updated.
 
@@ -178,6 +192,15 @@ equivalent of plptex and plmtex3 is the 3D equivalent of plmtex.
     The Python bindings have been updated to use numpy rather than the now
     deprecated Numeric python numeric library.
 
+  2.8.4 Fortran 95 bindings
+    Equivalance statements in our F95 interface were causing problems for
+    one fortran 95 compiler so we have dropped those equivalence statements
+    and use the transfer intrinsic instead.  However, for gfortran that
+    intrinsic was only implemented for version 4.1.2 so that is the
+    minimum version requirement for gfortran now if you attempt to build
+    the f95 bindings.  Note, earlier versions of gfortran build the f77
+    bindings with no problems.
+    
 2.9 Updated examples
 
    The examples have been checked over to make sure that they all work
