@@ -71,6 +71,7 @@ for ( $j = 0; $j < 4; $j ++ ) {
 	plvsta();
 	plwind($xextreme->at($i,0), $xextreme->at($i,1), $yextreme->at($i,0), $yextreme->at($i,1));
 
+	plcol0(2) ;
 	plbox(1.0, 0, 10.0, 0, "bc", "bcnv", );
 	plcol0(1) ;
 	plpsty(0) ;

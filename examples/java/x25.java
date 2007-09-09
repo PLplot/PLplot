@@ -113,6 +113,7 @@ class x25 {
 		pls.vsta();
 		pls.wind(xextreme[i][0], xextreme[i][1], yextreme[i][0], yextreme[i][1]);
 
+		pls.col0(2) ;
 		pls.box("bc", 1.0, 0, "bcnv", 10.0, 0);
 		pls.col0(1) ;
 		pls.psty(0) ;
