@@ -98,6 +98,7 @@ main(int argc, char *argv[])
             plvsta();
             plwind(xextreme[i][0], xextreme[i][1], yextreme[i][0], yextreme[i][1]);
 
+            plcol0(2) ;
             plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
             plcol0(1) ;
             plpsty(0) ;
