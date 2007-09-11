@@ -3834,7 +3834,7 @@ space for this (80 characters is safe).
     </listitem>
     <listitem>
     <para>
-    3,  world coords defined
+    3,  world coordinates defined
     </para>
     </listitem>
     </itemizedlist>
@@ -4105,7 +4105,7 @@ space for this (80 characters is safe).
 	  <para>
 	    The input array that specifies the grid spacing in the x
 	    direction. Usually <literal>xg</literal> has
-            <literal>nptsx</literal> equally spaced values from the mininum
+            <literal>nptsx</literal> equally spaced values from the minimum
             to the maximum values of the <literal>x</literal> input array.
 	  </para>
 	</listitem>
@@ -6470,7 +6470,7 @@ default
 	    be written. The string should contain one or more of the
 	    following characters: <literal>[xyz][ps][v]</literal>. 
 	    Only one label is drawn at a time, i.e. <literal>xyp</literal>
-	    will only label the X axis, not both the X and Y axises.
+	    will only label the X axis, not both the X and Y axes.
 	    <itemizedlist>
 	      <listitem>
 		<para>
@@ -6627,7 +6627,7 @@ default
       which the surface is displayed.  For further details see <xref
       linkend="tri-d-plots"/>.
       The only difference between &plmesh; and &plot3d; is that &plmesh; draws
-      the botton side of the surface, while &plot3d; only draws the surface as
+      the bottom side of the surface, while &plot3d; only draws the surface as
       viewed from the top.
     </para>
 
@@ -6785,7 +6785,7 @@ default
     a contour plot can be drawn at the base XY plane, and a curtain can be drawn between
     the plotted function border and the base XY plane.
     The arguments are identical to <function>plmeshc</function>. The only difference between
-    &plmeshc; and &plot3dc; is that &plmeshc; draws the botton side of the surface, while
+    &plmeshc; and &plot3dc; is that &plmeshc; draws the bottom side of the surface, while
     &plot3dc; only draws the surface as viewed from the top.
     </para>
 
@@ -6903,7 +6903,7 @@ PL_PARSE_NODASH (64) -- Set if leading dash is NOT required.
 </listitem>
 <listitem>
 <para>
-PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
+PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 </para>
 </listitem>
 </itemizedlist>
@@ -7266,7 +7266,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
 
     <para>
       <emphasis>Bugs</emphasis>:  If one of the first two segments is of
-      zero length, or if they are colinear, the calculation of visibility
+      zero length, or if they are co-linear, the calculation of visibility
       has a 50/50 chance of being correct.  Avoid such situations :-).  See
       <filename>x18c.c</filename> for an example of this problem.
       (Search for <quote>20.1</quote>).
@@ -9775,7 +9775,7 @@ characters and their corresponding decimal ASCII values:
 	  is set to true, plshade tries to save time by
 	  filling large rectangles.  This optimization fails if
 	  the coordinate transformation distorts the shape of rectangles.
-	  For example a plot in polor coordinates has to have 
+	  For example a plot in polar coordinates has to have 
 	  <literal><parameter>rectangular</parameter></literal>
 	  set to false.
 	  </para>
@@ -10417,7 +10417,7 @@ characters and their corresponding decimal ASCII values:
 	  is set to true, plshade tries to save time by
 	  filling large rectangles.  This optimization fails if
 	  the coordinate transformation distorts the shape of rectangles.
-	  For example a plot in polor coordinates has to have
+	  For example a plot in polar coordinates has to have
 	  <literal><parameter>rectangular</parameter></literal>
 	  set to false.
 	  </para>
@@ -11615,7 +11615,7 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-            Identitification number of stripchart to delete.
+            Identification number of stripchart to delete.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12941,7 +12941,7 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    The viewing altitude in degrees above the xy plane.
+	    The viewing altitude in degrees above the XY plane.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12954,10 +12954,10 @@ stripchart
 	  <para>
 	    The viewing azimuth in degrees.  When
 	    <literal><parameter>az</parameter>=0</literal>, the observer is
-	    looking face onto the zx plane, and as
+	    looking face onto the ZX plane, and as
 	    <literal><parameter>az</parameter></literal> is increased, the
 	    observer moves clockwise around the box when viewed from above
-	    the xy plane.
+	    the XY plane.
 	  </para>
 	</listitem>
       </varlistentry>
