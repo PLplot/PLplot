@@ -72,21 +72,19 @@ main(int argc, char *argv[])
    First an overview, then all curves one by one
 */
     plssub(3, 3) ; /* Three by three window */
-    pladv(0) ;
 
     for ( i = 0; i < 9; i ++ ) {
+        pladv(0) ;
         plvpor( 0.0, 1.0, 0.0, 1.0 ) ;
         spiro( &params[i][0] ) ;
-        pladv(0) ;
     }
 
-    plssub(1, 1) ; /* One window per curve */
     pladv(0) ;
-    plvpor( 0.0, 1.0, 0.0, 1.0 ) ;
+    plssub(1, 1) ; /* One window per curve */
 
     for ( i = 0; i < 9; i ++ ) {
-
         pladv(0) ;
+        plvpor( 0.0, 1.0, 0.0, 1.0 ) ;
         spiro( &params[i][0] ) ;
     }
 
