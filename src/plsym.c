@@ -1580,7 +1580,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
  * (wx+dx,wy+dy,wz+dz).
  *
  * The text is sheared so that it is "vertically" parallel to the
- * line between (wx,wy,wz) and (wx+sx, wy+sy, wy+sz). If sx=sy=sz=0 then
+ * line between (wx,wy,wz) and (wx+sx, wy+sy, wz+sz). If sx=sy=sz=0 then
  * the text is simply rotated to parallel to the baseline.
  *
  * "just" adjusts the horizontal justification of the string:
