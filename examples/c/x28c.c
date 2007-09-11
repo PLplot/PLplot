@@ -54,22 +54,30 @@ int main(int argc, char *argv[])
 	  "bcdmntv", "", 0.0, 0);
    plmtex3("xpv", 2.5, 0.5, 1.0, "one");
    plmtex3("xs", -1.0, 0.5, 0.5, "two");
-   plmtex3("ypv", -0.5, 0.5, 0.0, "three");
+   plmtex3("ypv", -0.5, 0.6, 0.0, "three");
    plmtex3("ys", 3.0, 0.5, 0.5, "------- four ------");
    plmtex3("zpv", 2.5, 0.5, 1.0, "five");
    plmtex3("zs", 3.0, 0.5, 0.5, "six");
-   plptex3(-1.0, 0.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.0, 0.0,  0.0,
-	   "seven");
-   plptex3(-1.0, 0.0, 1.0,  1.0, 0.0, 0.0,  1.0, 0.0, 0.0,  0.0,
-	   "eight");
-   plptex3(-1.0, 0.0, 2.0,  1.0, 0.0, 0.0,  2.0, 0.0, 0.0,  0.0,
-	   "nine");
-   plptex3(-1.0, 1.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.0, 0.0,  0.0,
-	   "ten");
-   plptex3(-1.0, 1.0, 1.0,  1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0,
-	   "eleven");
-   plptex3(-1.0, 1.0, 2.0,  1.0, 0.0, 0.0,  0.0, 2.0, 0.0,  0.0,
-	   "twelve");
+   plptex3(xmin, 0.0, 0.0,  1.0, 0.0, 0.0,  0.2, 0.0, 0.0,  0.0,
+	   "seven(a)");
+   plptex3(xmin, 0.0, 0.5,  1.0, 0.0, 0.0,  0.2, 0.1, 0.0,  0.0,
+	   "eight(a)");
+   plptex3(xmin, 0.0, 1.0,  1.0, 0.0, 0.0,  0.2, 0.2, 0.0,  0.0,
+	   "nine(a)");
+   plptex3(xmin, 0.0, 1.5,  1.0, 0.0, 0.0,  0.2, 0.3, 0.0,  0.0,
+	   "ten(a)");
+   plptex3(xmin, 0.0, 2.0,  1.0, 0.0, 0.0,  0.2, 0.4, 0.0,  0.0,
+	   "eleven(a)");
+   plptex3(xmin, 1.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.0, 0.2,  0.0,
+	   "seven(b)");
+   plptex3(xmin, 1.0, 0.5,  1.0, 0.0, 0.0,  0.0, 0.1, 0.2,  0.0,
+	   "eight(b)");
+   plptex3(xmin, 1.0, 1.0,  1.0, 0.0, 0.0,  0.0, 0.2, 0.2,  0.0,
+	   "nine(b)");
+   plptex3(xmin, 1.0, 1.5,  1.0, 0.0, 0.0,  0.0, 0.3, 0.2,  0.0,
+	   "ten(b)");
+   plptex3(xmin, 1.0, 2.0,  1.0, 0.0, 0.0,  0.0, 0.4, 0.2,  0.0,
+	   "eleven(b)");
    /* Draw 3D grid (where the grid lines correspond to tick marks because
     * of XPTS, YPTS choice) at Z = 0. */
    plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY);
