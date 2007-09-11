@@ -6380,9 +6380,9 @@ default
 	<listitem>
 	  <para>
 	    Specifies the position of the string relative to its reference
-	    point.  If <literal><parameter>just</parameter>=0</literal>,
+	    point.  If <literal><parameter>just</parameter>=0.</literal>,
 	    the reference point is at the left and if
-	    <literal><parameter>just</parameter>=1</literal>, it is at the
+	    <literal><parameter>just</parameter>=1.</literal>, it is at the
 	    right of the string.  Other values of
 	    <literal><parameter>just</parameter></literal> give
 	    intermediate justifications.
@@ -6546,9 +6546,9 @@ default
 	<listitem>
 	  <para>
 	    Specifies the position of the string relative to its reference
-	    point.  If <literal><parameter>just</parameter>=0</literal>,
+	    point.  If <literal><parameter>just</parameter>=0.</literal>,
 	    the reference point is at the left and if
-	    <literal><parameter>just</parameter>=1</literal>, it is at the
+	    <literal><parameter>just</parameter>=1.</literal>, it is at the
 	    right of the string.  Other values of
 	    <literal><parameter>just</parameter></literal> give
 	    intermediate justifications.
@@ -7564,9 +7564,9 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	<listitem>
 	  <para>
 	    Specifies the position of the string relative to its reference
-	    point.  If <literal><parameter>just</parameter>=0</literal>,
+	    point.  If <literal><parameter>just</parameter>=0.</literal>,
 	    the reference point is at the left and if
-	    <literal><parameter>just</parameter>=1</literal>, it is at the
+	    <literal><parameter>just</parameter>=1.</literal>, it is at the
 	    right of the string.  Other values of
 	    <literal><parameter>just</parameter></literal> give
 	    intermediate justifications.
@@ -7678,7 +7678,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	</term>
 	<listitem>
 	  <para>
-	    Together with <literal><parameter>dy</parameter>,<parameter>
+	    Together with <literal><parameter>dy</parameter> and <parameter>
 	    dz</parameter></literal>, this specifies the inclination of 
             the string.  The baseline of the string is parallel to a line 
 	    joining <literal>(<parameter>x</parameter>,<parameter>y</parameter>,
@@ -7696,8 +7696,8 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	</term>
 	<listitem>
 	  <para>
-	    Together with <literal><parameter>dx</parameter>,
-	    <parameter>dy</parameter></literal>,
+	    Together with <literal><parameter>dx</parameter> and
+	    <parameter>dz</parameter></literal>,
 	    this specifies the inclination of the string.
 	  </para>
 	</listitem>
@@ -7709,7 +7709,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	</term>
 	<listitem>
 	  <para>
-	    Together with <literal><parameter>dx</parameter>,
+	    Together with <literal><parameter>dx</parameter> and
 	    <parameter>dy</parameter></literal>,
 	    this specifies the inclination of the string.
 	  </para>
@@ -7722,7 +7722,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	</term>
 	<listitem>
 	  <para>
-	    Together with <literal><parameter>sy</parameter>,<parameter>
+	    Together with <literal><parameter>sy</parameter> and <parameter>
 	    sz</parameter></literal>, this specifies the shear of 
             the string.  The string is sheared so that the characters are 
 	    vertically parallel to a line joining <literal>
@@ -7744,8 +7744,8 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	</term>
 	<listitem>
 	  <para>
-	    Together with <literal><parameter>sx</parameter>,
-	    <parameter>sy</parameter></literal>,
+	    Together with <literal><parameter>sx</parameter> and
+	    <parameter>sz</parameter></literal>,
 	    this specifies shear of the string.
 	  </para>
 	</listitem>
@@ -7757,7 +7757,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	</term>
 	<listitem>
 	  <para>
-	    Together with <literal><parameter>sx</parameter>,
+	    Together with <literal><parameter>sx</parameter> and
 	    <parameter>sy</parameter></literal>,
 	    this specifies shear of the string.
 	  </para>
@@ -7771,9 +7771,9 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	<listitem>
 	  <para>
 	    Specifies the position of the string relative to its reference
-	    point.  If <literal><parameter>just</parameter>=0</literal>,
+	    point.  If <literal><parameter>just</parameter>=0.</literal>,
 	    the reference point is at the left and if
-	    <literal><parameter>just</parameter>=1</literal>, it is at the
+	    <literal><parameter>just</parameter>=1.</literal>, it is at the
 	    right of the string.  Other values of
 	    <literal><parameter>just</parameter></literal> give
 	    intermediate justifications.
