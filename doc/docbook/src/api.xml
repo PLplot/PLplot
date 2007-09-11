@@ -7624,17 +7624,18 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
     </para>
 
     <para>
-      Writes text at a specified position and inclination within the
-      viewport.  Text is clipped at the viewport boundaries.  The reference
-      point of a string lies along a line passing through the string at
-      half the height of a capital letter.  The position of the reference
-      point along this line is determined by
-      <literal><parameter>just</parameter></literal>, the reference point
-      is placed at world coordinates <literal>(<parameter>x</parameter>,
-      <parameter>y</parameter>,<parameter>z</parameter>)</literal> within 
-      the viewport. The inclination and shear of the string is specified in 
-      terms of differences of world coordinates making it easy to write text 
-      parallel to a line in a graph.
+      Writes text at a specified position and inclination and with a
+      specified shear within the viewport.  Text is clipped at the viewport
+      boundaries.  The reference point of a string lies along a line passing
+      through the string at half the height of a capital letter.  The
+      position of the reference point along this line is determined by
+      <literal><parameter>just</parameter></literal>, and the reference
+      point is placed at world coordinates
+      <literal>(<parameter>x</parameter>, <parameter>y</parameter>,
+      <parameter>z</parameter>)</literal> within the viewport. The
+      inclination and shear of the string is specified in terms of
+      differences of world coordinates making it easy to write text parallel
+      to a line in a graph.
     </para>
 
     <variablelist>
@@ -7681,7 +7682,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	    Together with <literal><parameter>dy</parameter> and <parameter>
 	    dz</parameter></literal>, this specifies the inclination of 
             the string.  The baseline of the string is parallel to a line 
-	    joining <literal>(<parameter>x</parameter>,<parameter>y</parameter>,
+	    joining <literal>(<parameter>x</parameter>, <parameter>y</parameter>,
 	    <parameter>z</parameter>)</literal> to <literal>
 	    (<parameter>x</parameter>+<parameter>dx</parameter>,
 	    <parameter>y</parameter>+<parameter>dy</parameter>,
@@ -7726,13 +7727,13 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
 	    sz</parameter></literal>, this specifies the shear of 
             the string.  The string is sheared so that the characters are 
 	    vertically parallel to a line joining <literal>
-	    (<parameter>x</parameter>,<parameter>y</parameter>,
+	    (<parameter>x</parameter>, <parameter>y</parameter>,
 	    <parameter>z</parameter>)</literal> to <literal>
 	    (<parameter>x</parameter>+<parameter>sx</parameter>,
 	    <parameter>y</parameter>+<parameter>sy</parameter>,
 	    <parameter>z</parameter>+<parameter>sz</parameter>)</literal>.
-	    If <literal><parameter>sx</parameter>=<parameter>sy</parameter>
-	    =<parameter>sz</parameter>=0)</literal> then the text is not
+	    If <literal><parameter>sx</parameter> = <parameter>sy</parameter>
+	    = <parameter>sz</parameter> = 0.)</literal> then the text is not
 	    sheared.
 	  </para>
 	</listitem>
