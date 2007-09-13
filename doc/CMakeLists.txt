@@ -1,4 +1,9 @@
-set(core_manpages plm2gif.1 plpr.1 pltek.1 pstex2eps.1)
+set(core_manpages plm2gif.1 plpr.1 pltek.1)
+
+if(PLD_pstex)
+   set(core_manpages ${core_manpages} pstex2eps.1)
+endif(PLD_pstex)
+
 if(PLD_plmeta)
   set(core_manpages ${core_manpages} plrender.1)
 endif(PLD_plmeta)

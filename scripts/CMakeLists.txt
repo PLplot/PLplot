@@ -22,7 +22,9 @@
 set(scripts_SCRIPTS
 plm2gif
 plpr
-pstex2eps
 )
+if(PLD_pstex)
+  set(scripts_SCRIPTS ${scripts_SCRIPTS} pstex2eps)
+endif(PLD_pstex)
 install(PROGRAMS ${scripts_SCRIPTS} DESTINATION ${BIN_DIR})
 
