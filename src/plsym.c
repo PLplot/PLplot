@@ -1596,54 +1596,69 @@ void
 c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
 	PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text)
 {
-    PLFLT xpc, ypc, xrefpc, yrefpc, tpcx, tpcy, shift;
-    PLFLT theta, phi, xform[4];
+  PLFLT xpc, ypc, xrefpc, yrefpc, xdpc, ydpc, xspc, yspc, ld, ls, cp, shift;
+  PLFLT theta, phi, xform[4];
 
-	// check that the plotting environment is set up
-    if (plsc->level < 3) {
-		plabort("plptex3: Please set up window first");
-		return;
-    }
+  // check that the plotting environment is set up
+  if (plsc->level < 3) {
+    plabort("plptex3: Please set up window first");
+    return;
+  }
+  
+  // compute text x,y location in physical coordinates	
+  xpc = plP_wcpcx(plP_w3wcx(wx, wy, wz));
+  ypc = plP_wcpcy(plP_w3wcy(wx, wy, wz));
+  
+  // determine angle to rotate text in the x-y plane
+  xdpc = plP_wcpcx(plP_w3wcx(wx+dx, wy+dy, wz+dz));
+  ydpc = plP_wcpcy(plP_w3wcy(wx+dx, wy+dy, wz+dz));
+  theta = atan2(ydpc - ypc, xdpc - xpc);
 
-	// compute text x,y location in physical coordinates	
-	xpc = plP_wcpcx(plP_w3wcx(wx, wy, wz));
-	ypc = plP_wcpcy(plP_w3wcy(wx, wy, wz));
-		
-	// determine angle to rotate text in the x-y plane
-	tpcx = plP_wcpcx(plP_w3wcx(wx+dx, wy+dy, wz+dz));
-	tpcy = plP_wcpcy(plP_w3wcy(wx+dx, wy+dy, wz+dz));
-	theta = atan2(tpcy - ypc, tpcx - xpc);
-
-	// determine angle to shear text in the x-y plane
-	
-	if(sx == sy == sz == 0.0){
-		phi = 0.0;
-	} else {
-		tpcx = plP_wcpcx(plP_w3wcx(wx+sx, wy+sy, wz+sz));
-		tpcy = plP_wcpcy(plP_w3wcy(wx+sx, wy+sy, wz+sz));
-		phi = atan2(tpcy - ypc, tpcx - xpc);
-	}
-	
-	// compute the reference point	
-	xpc = plP_dcmmx(plP_pcdcx(xpc));
-	ypc = plP_dcmmy(plP_pcdcy(ypc));
-	
-	shift = plstrl(text) * just;
-	xrefpc = xpc + cos(theta) * shift;
-	yrefpc = ypc + sin(theta) * shift;
-	
-	xpc = plP_mmpcx(xpc);
-	ypc = plP_mmpcy(ypc);
-	xrefpc = plP_mmpcx(xrefpc);
-	yrefpc = plP_mmpcy(yrefpc);
-
-	// compute the transform
-    xform[0] = cos(theta);
-    xform[1] = cos(theta) * sin(phi) - sin(theta);
-    xform[2] = sin(theta);
-    xform[3] = sin(theta) * cos(phi) + cos(theta);
-
-	plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);	
+  // Determine angle to shear text in the x-y plane. This is a little
+  // messy, but basically the idea is:
+  //
+  // Compute the dot product of the vector d and the vector s to
+  // determine the angle between them (acos(t) = d . s / |d| |s|).
+  // Then, because the vector s could go "down" from the text
+  // baseline rather than "up", compute the cross product and
+  // if this is negative use 180 minus the angle instead, as this
+  // is the angle between the "up" vector and the text baseline.
+  // Finally we subtract the angle from 90 as shear is specified
+  // relative to a line that is perpendicular to the text baseline.
+  
+  if((sx == 0.0) && (sy == 0.0) && (sz == 0.0)){
+    phi = 0.0;
+  } else {
+    xspc = plP_wcpcx(plP_w3wcx(wx+sx, wy+sy, wz+sz));
+    yspc = plP_wcpcy(plP_w3wcy(wx+sx, wy+sy, wz+sz));
+    ld = sqrt((xpc - xdpc) * (xpc - xdpc) + (ypc - ydpc) * (ypc - ydpc));
+    ls = sqrt((xpc - xspc) * (xpc - xspc) + (ypc - yspc) * (ypc - yspc));
+    phi = acos(((xdpc - xpc) * (xspc - xpc) + (ydpc - ypc) * (yspc - ypc))/(ld * ls));
+    cp = (xdpc - xpc) * (yspc - ypc) - (ydpc - ypc) * (xspc - xpc);
+    if(cp < 0.0){ phi = 3.14159 - phi; }
+    phi = 1.570796 - phi;
+  }
+  
+  // compute the reference point	
+  xpc = plP_dcmmx(plP_pcdcx(xpc));
+  ypc = plP_dcmmy(plP_pcdcy(ypc));
+  
+  shift = plstrl(text) * just;
+  xrefpc = xpc + cos(theta) * shift;
+  yrefpc = ypc + sin(theta) * shift;
+  
+  xpc = plP_mmpcx(xpc);
+  ypc = plP_mmpcy(ypc);
+  xrefpc = plP_mmpcx(xrefpc);
+  yrefpc = plP_mmpcy(yrefpc);
+  
+  // compute the transform
+  xform[0] = cos(theta);
+  xform[1] = cos(theta) * sin(phi) - sin(theta);
+  xform[2] = sin(theta);
+  xform[3] = sin(theta) * sin(phi) + cos(theta);
+  
+  plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);	
 }
 
 #undef PLSYM_H
