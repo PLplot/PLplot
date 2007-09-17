@@ -1394,16 +1394,16 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     		xform[0] = 0.0;
     		xform[1] = -1.0;
     		xform[2] = 1.0;
-    		xform[3] = -sin(theta);
+    		xform[3] = -tan(theta);
 			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
     	}
 
     	// parallel, rotate & shear by angle
     	else {
     		xform[0] = cos(theta);
-    		xform[1] = cos(theta)*sin(theta) - sin(theta);
+    		xform[1] = cos(theta)*tan(theta) - sin(theta);
     		xform[2] = sin(theta);
-    		xform[3] = sin(theta)*sin(theta) + cos(theta);
+    		xform[3] = sin(theta)*tan(theta) + cos(theta);
 
 			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
 		}
@@ -1552,9 +1552,9 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 
     	if(plP_stindex(side, "v") != -1){
     		xform[0] = cos(theta);
-    		xform[1] = cos(theta)*sin(theta) - sin(theta);
+    		xform[1] = cos(theta)*tan(theta) - sin(theta);
     		xform[2] = sin(theta);
-    		xform[3] = sin(theta)*sin(theta) + cos(theta);
+    		xform[3] = sin(theta)*tan(theta) + cos(theta);
 
 			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
     	}
@@ -1563,7 +1563,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     		xform[0] = 0.0;
     		xform[1] = -1.0;
     		xform[2] = 1.0;
-    		xform[3] = -sin(theta);
+    		xform[3] = -tan(theta);
 
 			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
 		}
@@ -1654,10 +1654,10 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   
   // compute the transform
   xform[0] = cos(theta);
-  xform[1] = cos(theta) * sin(phi) - sin(theta);
+  xform[1] = cos(theta) * tan(phi) - sin(theta);
   xform[2] = sin(theta);
-  xform[3] = sin(theta) * sin(phi) + cos(theta);
-  
+  xform[3] = sin(theta) * tan(phi) + cos(theta);
+
   plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);	
 }
 

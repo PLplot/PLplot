@@ -2379,7 +2379,7 @@ plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear)
     *rotation = -*rotation;
   }
 
-  *shear = -asin(xFormMatrix[0]*xFormMatrix[1] +
+  *shear = -atan(xFormMatrix[0]*xFormMatrix[1] +
 		 xFormMatrix[2]*xFormMatrix[3]);  
 }
 
