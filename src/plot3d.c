@@ -2369,6 +2369,14 @@ pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
  * void plRotationShear
  *
  * Calculates the rotation and shear angles from a plplot transformation matrix
+ *
+ * N.B. The plot transformation matrix is the product of the following
+ * rotation and shear matrices:
+ *
+ * [c(t) -s(t)] [1 s(p)]
+ * [s(t)  c(t)] [0 c(p)]
+ * 
+ * Where t is the rotation angle and phi is the shear angle.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -2379,7 +2387,7 @@ plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear)
     *rotation = -*rotation;
   }
 
-  *shear = -atan(xFormMatrix[0]*xFormMatrix[1] +
+  *shear = -asin(xFormMatrix[0]*xFormMatrix[1] +
 		 xFormMatrix[2]*xFormMatrix[3]);  
 }
 
