@@ -34,8 +34,12 @@ is a requirement, see fortran 95 bindings remarks below.
 INDEX
 
 1. Changes relative to PLplot 5.7.4
-  ...
-
+  1.1 Drivers
+    1.1.1 cairo devices
+    1.1.2 plmeta/plrender
+  1.2 Fortran 95 bindings
+  1.3 plmtex3/plptex3
+  
 2. Changes relative to PLplot 5.6.1
   2.1 CVS to Subversion conversion
   2.2 CMake build system
@@ -60,15 +64,11 @@ INDEX
     2.10.7 pstex
     2.10.8 plmeta (and plrender application to render plmeta results).
 
+
 1. Changes relative to PLplot 5.7.4 (the previous development release)
 
-1.1 CVS to Subversion conversion
-
-   PLplot now uses the Subversion (svn) version control system. Records of
-all the changes and release tags have been preserved from the CVS repository.
-
-1.2 Drivers
-   1.2.1 xwinttf -> xcairo
+1.1 Drivers
+   1.1.1 cairo devices
      The xwinttf driver has been renamed xcairo. In addition most of the
      other devices that are theoretically possible with Cairo have been
      implemented. These are a PostScript device (pscairo), a PNG device
@@ -82,7 +82,8 @@ all the changes and release tags have been preserved from the CVS repository.
      appears to work reasonably well so is enabled by default although it is
      not as mature as the other Cairo devices that are enabled.
 
-   1.2.2 The combination of the plmeta device and the plrender application
+   1.1.2 plmeta/plrender
+     The combination of the plmeta device and the plrender application
      that renders plmeta results is unmaintained and has some known issues
      with strings, aspect ratio changes, and fonts.  Therefore, the plmeta
      device is now not enabled by default, and must be specifically enabled
@@ -90,18 +91,7 @@ all the changes and release tags have been preserved from the CVS repository.
      plrender is not built or installed and the plrender man page is not
      installed unless the plmeta device is specifically enabled.
 
-1.3 Ada bindings
-
-    The ADA bindings are now considered complete and the current focus is on
-implementing all of the examples in ADA to help test the bindings.
-
-1.4 Python bindings
-
-    The Python bindings have been updated to use numpy rather than the now
-deprecated Numeric python numeric library. If you need to revert to the old
-Numeric support, then you should specify the cmake option -DHAVE_NUMPY=OFF.
-
-1.5 Fortran 95 bindings
+1.2 Fortran 95 bindings
 
     Equivalance statements in our F95 bindings were causing problems for
     one fortran 95 compiler so we have dropped those equivalence statements
@@ -111,9 +101,11 @@ Numeric support, then you should specify the cmake option -DHAVE_NUMPY=OFF.
     the f95 bindings.  Note, earlier versions of gfortran build the f77
     bindings with no problems.
 
-1.6 Fortran95 documentation
+1.3  plmtex3/plptex3
 
-    The Fortran95 documentation has been updated.
+    These two functions, which were added in release 5.7.3, had a number
+    of bugs. These have hopefully been cleaned up. Example 28 demonstrates
+    how to use these functions.
 
 
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
@@ -168,7 +160,8 @@ been expanded to include a list of which examples each function is used in
 
    The functions plptex3 and plmtex3 have been added to the PLplot API. These
 allow the user to draw text in "3D" on the 3D plots. plptex3 is the 3D
-equivalent of plptex and plmtex3 is the 3D equivalent of plmtex.
+equivalent of plptex and plmtex3 is the 3D equivalent of plmtex. Their
+use is demonstrated by example 28.
 
 2.8 Language bindings
   2.8.1 ADA
@@ -230,9 +223,9 @@ and to make them more consistent across different programming languages.
     A basic version of a pdf driver was added to the latest PLplot release.
     This driver is based on the libharu library
     (http://libharu.sourceforge.net/). At present only the Hershey fonts are
-    used and there is no support for pdf or TrueType fonts. Compression of the pdf
-    output is not enabled and the paper size can't be chosen. All these issues
-    will be addressed in later releases.
+    used and there is no support for pdf or TrueType fonts. Compression of the 
+    pdf output is not enabled and the paper size can't be chosen. All these 
+    issues will be addressed in later releases.
 
   2.10.5 gd, wingcc (freetype)
     Improved anti-aliasing routines have been added to PLplot's freetype
