@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
    }
 
    pladv(0);
-   plvpor(0.0, 1.0, 0.0, 0.9);
+   plvpor(-0.15, 1.05, -0.05, 0.9);
    plwind(-1.2, 1.2, -0.8, 1.5);
    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 
 	 40.0, 60.0 + 270.0);
@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
    plmtex3("xpv", 2.5, 0.5, 1.0, "one");
    plmtex3("xs", -1.0, 0.5, 0.5, "two");
    plmtex3("ypv", -0.5, 0.6, 0.0, "three");
-   plmtex3("ys", 3.0, 0.5, 0.5, "------- four ------");
-   plmtex3("zpv", 2.5, 0.5, 1.0, "five");
-   plmtex3("zs", 3.0, 0.5, 0.5, "six");
+   plmtex3("ys", 3.5, 0.5, 0.5, "--- four ---");
+   plmtex3("zpv", 3.0, 0.5, 1.0, "five");
+   plmtex3("zs", 4.0, 0.5, 0.5, "six");
    plptex3(xmin, 0.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.2, 0.0,  0.0,
 	   "seven(a)");
    plptex3(xmin, 0.0, 0.5,  1.0, 0.0, 0.0,  0.1, 0.2, 0.0,  0.0,
