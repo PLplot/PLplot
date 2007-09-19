@@ -5,8 +5,10 @@
 
 #include "plcdemos.h"
 /* Choose these values to correspond to tick marks. */
-#define XPTS 7
-#define YPTS 5
+#define XPTS 2
+#define YPTS 2
+#define NREVOLUTION 16
+#define NROTATION 8
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -17,14 +19,21 @@
 
 int main(int argc, char *argv[])
 {
-   PLFLT *x, *y, **z, xmin=-1.5, xmax=1.5, ymin=-0.5, 
-     ymax=1.5, zmin=0., zmax = 2.;
+   PLFLT *x, *y, **z,
+     xmin=0., xmax=1.0, xmid = 0.5*(xmax + xmin), xrange = xmax - xmin,
+     ymin=0., ymax=1.0, ymid = 0.5*(ymax + ymin), yrange = ymax - ymin,
+     zmin=0., zmax=1.0, zmid = 0.5*(zmax + zmin), zrange = zmax - zmin,
+     x_inclination, y_inclination, z_inclination,
+     x_shear, y_shear, z_shear,
+     omega, sin_omega, cos_omega;
    int i,j;
    /* Parse and process command line arguments */
    
    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
    
    plinit();
+
+   /* Allocate data structures */
    x = (PLFLT *) calloc(XPTS, sizeof(PLFLT));
    y = (PLFLT *) calloc(YPTS, sizeof(PLFLT));
 
@@ -46,19 +55,63 @@ int main(int argc, char *argv[])
    plvpor(-0.15, 1.15, -0.05, 1.05);
    plwind(-1.2, 1.2, -0.8, 1.5);
    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 
-	 40.0, 60.0 + 270.0);
+	 40.0, 45);
    
    plcol0(2);
-   plbox3("bnt", "", 0.5, 0,
-	  "bnt", "", 0.0, 0,
-	  "bcdmntv", "", 0.0, 0);
-   plmtex3("xpv", 3.0, 0.5, 1.0, "one");
-   plmtex3("xs", -1.0, 0.5, 0.5, "two");
-   plmtex3("ypv", -0.5, 0.6, 0.0, "three");
-   plmtex3("ys", 3.5, 0.5, 0.5, "--- four ---");
-   plmtex3("zpv", 3.0, 0.5, 1.0, "five");
-   plmtex3("zs", 4.0, 0.5, 0.5, "six");
-   plptex3(xmin, 0.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.2, 0.0,  0.0,
+   plbox3("b", "", xmax-xmin, 0,
+	  "b", "", ymax-ymin, 0,
+	  "bcd", "", zmax-zmin, 0);
+   plmtex3("xp", 3.0, 0.5, 0.5, "Arbitrarily displaced");
+   plmtex3("xp", 4.5, 0.5, 0.5, "primary X-axis label");
+   plmtex3("xs", -2.5, 0.5, 0.5, "Arbitrarily displaced");
+   plmtex3("xs", -1.0, 0.5, 0.5, "secondary X-axis label");
+   plmtex3("yp", 3.0, 0.5, 0.5, "Arbitrarily displaced");
+   plmtex3("yp", 4.5, 0.5, 0.5, "primary Y-axis label");
+   plmtex3("ys", -2.5, 0.5, 0.5, "Arbitrarily displaced");
+   plmtex3("ys", -1.0, 0.5, 0.5, "secondary Y-axis label");
+   plmtex3("zp", 4.5, 0.5, 0.5, "Arbitrarily displaced");
+   plmtex3("zp", 3.0, 0.5, 0.5, "primary Z-axis label");
+   plmtex3("zs", -2.5, 0.5, 0.5, "Arbitrarily displaced");
+   plmtex3("zs", -1.0, 0.5, 0.5, "secondary Z-axis label");
+   
+   plschr(0., 1.0);
+   for (i = 0; i < NREVOLUTION; i++) {
+      omega = 2.*M_PI*((PLFLT)i/(PLFLT)NREVOLUTION);
+      sin_omega = sin(omega);
+      cos_omega = cos(omega);
+      x_inclination = 0.5*xrange*cos_omega;
+      y_inclination = 0.5*yrange*sin_omega;
+      z_inclination = 0.;
+      x_shear = -0.5*xrange*sin_omega;
+      y_shear = 0.5*yrange*cos_omega;
+      z_shear = 0.;
+      plptex3(
+	      xmid, ymid, zmin,
+	      x_inclination, y_inclination, z_inclination,
+	      x_shear, y_shear, z_shear, 
+	      0.0, "  revolution");
+   }
+
+   plschr(0., 3.0);
+   for (i = 0; i < NROTATION; i++) {
+      omega = 2.*M_PI*((PLFLT)i/(PLFLT)NROTATION);
+      sin_omega = sin(omega);
+      cos_omega = cos(omega);
+      x_inclination = 1.;
+      y_inclination = 0.;
+      z_inclination = 0.;
+      x_shear = 0.;
+      y_shear = 0.5*yrange*sin_omega;
+      z_shear = 0.5*zrange*cos_omega;
+      plptex3(
+	      xmid, ymax, zmax -(zmax-0.2)*((PLFLT)i/(PLFLT)(NROTATION-1)),
+	      x_inclination, y_inclination, z_inclination,
+	      x_shear, y_shear, z_shear,
+	      0.5, "rotation");
+   }
+
+   plschr(0., 1.0);
+/*   plptex3(xmin, 0.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.2, 0.0,  0.0,
 	   "seven(a)");
    plptex3(xmin, 0.0, 0.5,  1.0, 0.0, 0.0,  0.1, 0.2, 0.0,  0.0,
 	   "eight(a)");
@@ -77,10 +130,14 @@ int main(int argc, char *argv[])
    plptex3(xmin, 1.0, 1.5,  1.0, 0.0, 0.0,  0.0, 0.3, 0.2,  0.0,
 	   "ten(b)");
    plptex3(xmin, 1.0, 2.0,  1.0, 0.0, 0.0,  0.0, 0.4, 0.2,  0.0,
-	   "eleven(b)");
+	   "eleven(b)"); */
    /* Draw 3D grid (where the grid lines correspond to tick marks because
     * of XPTS, YPTS choice) at Z = 0. */
    plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY);
    
+   /* Clean up. */
+   free((void *) x);
+   free((void *) y);
+   plFree2dGrid(z, XPTS, YPTS);
    plend();
 }
