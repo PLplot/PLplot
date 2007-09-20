@@ -1083,6 +1083,7 @@ if (dev->red15) plD_red15_gd(pls);
        else
          {
          dev->im_out = gdImageCreateTrueColor(pls->xlength, pls->ylength);
+         plP_state(PLSTATE_COLOR0);
 
 /*
  * In truecolour mode, the background colour GD makes is ALWAYS black, so to
